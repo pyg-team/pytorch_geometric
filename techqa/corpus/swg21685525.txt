@@ -1,0 +1,18 @@
+Title: IBM How to suppress Java dumps for Java OutOfMemoryError exceptions for RDz - United States
+
+Text:
+OOM; OutOfMemoryException; OutOfMemory; Exception; Out; Memory TECHNOTE (FAQ)
+
+QUESTION
+ How do you suppress Java dumps for Java OutOfMemoryError (OOM) Exceptions for IBM Rational Developer for system z (RDz)? 
+
+CAUSE
+You may see the following error on the zOS operator console because a user has tried searching for text on a very large PDS (for example): 
+JVMDUMP039I Processing dump event 'systhrow', detail ''java/lang/OutOfMemoryError' at 2014/09/11 09:56:37" 
+
+
+ANSWER
+To suppress writing dumps for an OutOfMemoryError exception, you need to add the Xdump line to the RDz configuration file rsed.envvars.
+
+Example:
+_RSE_JAVAOPTS= -Xdump:none:events=systhrow,filter=java/lang/OutOfMemoryError

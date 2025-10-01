@@ -1,0 +1,30 @@
+Title: IBM Configuring FP_MAXCONNECTIONS for Centera SDK on FileNet Content Manager content engine - United States
+
+Text:
+MaxConnection; Centera TECHNOTE (FAQ)
+
+QUESTION
+ How to set FP_MAXCONNECTIONS for Centera SDK on P8 Content Engine? 
+
+ANSWER
+For Content Engine 4.5.1:
+The option is configured when creating a P8 Centera Fixed Content Device in FEM, see the Maximum Connections parameter. In the P8 docs, see IBM FileNet P8 documentation > System Administration > Content Engine Administration > Content Engine Wizards > Create a fixed content device, Vendor and configuration parameters (EMC Centera) - Maximum Connections. 
+
+The value configured as Maximum Connections is used to set the FP_OPTION_MAXCONNECTIONS Centera SDK value from within the Content Engine.
+
+For Content Engine 3.5.2:
+The Centera provider supports using the Windows registry to over-ride the default SDK values set via FPPool_SetGlobalOption and FPPool_SetIntOption. The registry values are defined as DWORD values under the key name listed below – note that these values apply to all instances of the Centera provider on the computer where they are defined (and only on the computer where they are defined). Also note that all values are applied ‘as is’, there is no interpretation of the value by the provider (for example, if a zero value is defined, a zero value will be applied, it will not be treated as ‘no value’).
+
+For a complete description of each parameter see the Centera SDK documentation (API Reference Guide).
+
+Key Name, define under HKEY_LOCAL_MACHINE
+SOFTWARE\FileNet\ECM\Content Engine\Fixed Content\Centera
+
+FPPool_SetGlobalOption values 
+
+Centera SDK parameter name Registry string literal Potential application FP_OPTION_MAXCONNECTIONS maxconnections The default setting limits a process to 100 connections, this value might be used if the number of concurrent readers is set to a value GT 100. 
+
+HISTORICAL NUMBER
+ 31608
+082
+000

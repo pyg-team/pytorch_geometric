@@ -1,0 +1,42 @@
+Title: IBM Can't disable DASH TimeSet and dataRefresh in Events configuration - United States
+
+Text:
+DASHL2; timeSet; dataRefresh; Events; WIdgets.; Pages TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Any Widget added to a Page after the initial "Save" or "Save and Exit" will not retain the Events settings when trying to disable the TimeSet and dataRefresh Events in the Edit -> Events pull down configuration window. 
+
+SYMPTOM
+TimeSet and dataRefresh Events can't be disabled after any "Save" for previous added Widgets on a Page.
+
+
+CAUSE
+This has been identified as a product defect under APAR IV83442
+
+ENVIRONMENT
+Any DASH version, this was a problem since DASH 3.1.0
+
+DIAGNOSING THE PROBLEM
+Create a Page in DASH, add Widgets then save and exit. Access the Page again, edit the page to add another Widget, Edit the Events in the new Widget then unselect the TimeSet and dataRefresh options. Save the changes.
+
+
+Edit the new Page:
+
+[/support/docview.wss?uid=swg21984540&amp;aid=1]
+
+Unselect the TimeSet and dataRefresh options.
+
+[/support/docview.wss?uid=swg21984540&amp;aid=2]
+
+After a "save" or "save and exit" you will see that they are enabled again. 
+
+
+[/support/docview.wss?uid=swg21984540&amp;aid=3]
+
+
+RESOLVING THE PROBLEM
+Currently, the only workaround is to Place and configure the Events for all widgets wanted on the page before doing first "Save" or "Save and Exit". All widgets will retain values for subscribed events such as 'dataRefresh' and 'timeSet' 
+
+To use 'dataRefresh' and 'timeSet' properties of subscribed events for any widgets which are added after first "Save" or "Save and Exit", DASH support will need to be contacted. 
+
+Note: This issue is with the widgets which are placed on the page after first "Save" or "Save & Exit"

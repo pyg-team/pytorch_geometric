@@ -1,0 +1,188 @@
+Title: IBM PK47140: MSGDFHLD0002 A SEVERE ERROR (CODE X'1927') HAS OCCURRED IN MODULE DFHLDLD1 AND CICS MUST BE CANCELED DUE TO BAD TCTTE - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Immediately after an EXCI program purges some transactions, the
+   region receives:
+   DFHLD0002 A severe error (code X'1927') has occurred in module
+   DFHLDLD1
+   followed by:
+   DFHPC0401 CICST20 Abend AEXZ issued by TCP task.
+   After issuing DFHPC0401, the CICS asid hangs and had to be
+   canceled.
+   An abend0c4 occurs in program DFHZACT at offset x'1FA' on a
+   TM instruction 9180 80B4 with reg8 invalid.  Reg8 contains
+   x'40404040' and has been loaded from regA +x'230'.  Register
+   10 does not point to a valid TCTTE.
+   The problem is that the CATD task was purged while in the middle
+   of SYNCPOINTing the deletion of the terminal. The abend was
+   deferred until after returning from DFHSPP.  At that point, the
+   TCTTE has been successfully committed.  DFHAPLI then abends the
+   task.  This drives the handle abend exit of DFHZATD which calls
+   DELETE_TERMINAL_ERROR.  A SYNCPOINT ROLLBACK is issued but the
+   TCTTE is not re-instated because deletion of the TCTTE has been
+   successfully committed.
+   The code assumed that it has a TCTTE now and put it back on the
+   activate scan queue to retry the terminal delete.
+   When DFHZACT runs, it finds the TCTTE that is not valid
+   resulting in an ABEND0C4 in DFHZACT.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All.                                         *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Abend0C4 in DFHZACT at X'1FE' following *
+   *                      abend of CATD task. CICS abends with    *
+   *                      DFHSR0601 Program interrupt occurred    *
+   *                      with system task TCP in control.        *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   While deleting an autoinstalled terminal, CATD gets forcepurged
+   during SYNCPOINT of the deleted terminal. The AKC3 abend is
+   deferred and on return to DFHZATD control passes to the abend
+   handler routine ZATDDTEE.
+   Routine DELETE_TERMINAL_ERROR is called to perform a SYNCPOINT
+   ROLLBACK to restore the terminal and to place the TCTTE back on
+   activate scan queue so that the delete can be retried.
+   However, in this case the terminal had already been
+   deleted successfully and the TCTTE storage freed and reused.
+   When TCP ran subsequently and processed the activate scan queue
+   this reused TCTTE storage caused an abend0C4 in DFHZACT. This
+   led to message DFHSR0601 'Program interrupt occurred with system
+   task TCP in control' being issued and CICS being terminated.
+   However other unpredictable results could occur.
+   Additional keywords: AbendAKC3 DFHZATD ZACT Abends0C4 S0C4 0C4
+                        AKC3
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  DFHZATD has been altered to check if the terminal still
+   exists before rescheduling for deletion.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  FIX AVAILABLE BY PTF ONLY
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK47140
+   
+   
+ * REPORTED COMPONENT NAME
+   CICSTS V3 Z/OS
+   
+   
+ * REPORTED COMPONENT ID
+   5655M1500
+   
+   
+ * REPORTED RELEASE
+   400
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2007-06-14
+   
+   
+ * CLOSED DATE
+   2007-10-26
+   
+   
+ * LAST MODIFIED DATE
+   2007-11-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UK30680 UK30681
+   
+   
+
+MODULES/MACROS
+ *     DFHZATD
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CICSTS V3 Z/OS
+   
+   
+ * FIXED COMPONENT ID
+   5655M1500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R400 PSY UK30680 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK30680]
+   UP07/11/01 P F710
+   
+   
+ * R500 PSY UK30681 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK30681]
+   UP07/10/31 P F710
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

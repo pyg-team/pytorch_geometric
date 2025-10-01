@@ -1,0 +1,136 @@
+Title: IBM Documentation updates for IBM InfoSphere eDiscovery Manager Version 2.1.1 - United States
+
+Text:
+ PREVENTIVE SERVICE PLANNING
+
+ABSTRACT
+ This document summarizes changes and corrections to the eDiscovery Manager Version 2.1.1 information center and online help system. 
+
+CONTENT
+Product information for tasks that are performed by using the eDiscovery Manager Web client is contained in the client's help system. The information that follows is newer than the documentation in both the information center and the help system.
+
+TAB NAVIGATION
+ *  Solution overview 
+ *  Installing 
+ *  Migrating 
+ *  Configuring 
+ *  Developing 
+
+ *  Managing cases 
+ *  Monitoring 
+ *  Troubleshooting 
+ *  Help system 
+
+
+SOLUTION OVERVIEW
+There are currently no changes or corrections to the solution overview information.
+
+Back to top
+
+
+MIGRATING
+There are currently no changes or corrections to the migrating information.
+
+Back to top
+
+
+MANAGING CASES
+There are currently no changes or corrections to the managing cases information.
+
+Back to top
+
+
+MONITORING
+There are currently no changes or corrections to the monitoring information.
+
+Back to top
+
+
+HELP SYSTEM
+This section contains changes or corrections to the help system information. You can access the online help system from the Help button on any eDiscovery Manager Web client page or window.
+
+SEARCH TIPS
+The logical operators && (for AND) and || (for OR) are not currently supported. You cannot use the characters && and || in place of AND and OR, respectively. 
+
+The relevant section in the "Search basics" section of the Search tips topic should read: 
+
+To combine search terms within a search field, use the logical operators AND, OR, and NOT. Use AND to find documents that contain multiple terms, OR to find documents that contain at least one of the terms, and NOT to find documents that do not contain the specified term. 
+
+For example: 
+
+ * To find documents that contain both of the words plants and animals, specify plants AND animals. For more detailed information about using AND, see the section "Simple keyword search (AND)." 
+ * To find documents that contain either of the words plants or animals, specify plants OR animals. For more detailed information about using OR, see the section "Requiring at least one of the search terms to appear (OR)." 
+ * To find documents that contain either of the words fauna or flora, but do not contain the words plants and animals, specify fauna OR flora NOT plants NOT animals. You can also use the minus sign (-) in place of NOT, for example, specify: fauna OR flora -plants -animals. For more detailed information about using NOT, see "Excluding terms (NOT)."
+
+
+The logical operators && (for AND) and || (for OR) should be removed from the table in the "Searching for special characters" section. Users do not need to use a backslash (\) in front of && or ||.
+
+
+
+ADVANCED SEARCH TIPS: FUZZY SEARCH
+The numerical similarity value of a fuzzy search term must be explicitly specified. There is no assumed default value if the similarity value is not specified. 
+
+The relevant text in the "Fuzzy search" section of the Advanced search tips topic should read: 
+
+ * A fuzzy search takes the following form:
+   
+   Term~n
+   
+   where Term is a search word and n is a similarity value between 0.0 and 1.0, with 1.0 being an exact match. 
+ * Lear~0.5
+   
+   Searches with a similarity value of 0.5. 
+ * King AND Lear~0.5 
+   
+   Searches for exact matches to King and fuzzy matches to Lear 
+ * Lear~0.5 NOT lean
+   
+   Searches for a fuzzy match to Lear but does not return matches for the word lean, which might be a fuzzy match to Lear
+
+
+
+ADVANCED SEARCH TIPS: EXCLUDING TERMS (NOT)
+The last two examples in the "Excluding terms (NOT)" section of the topic are incorrect. The space after the closing parenthesis is interpreted as the Boolean operator AND, not the Boolean operator OR. 
+
+The last two examples in this section of the help topic should read: 
+
+(cougar OR jaguar) NOT car
+Equivalent to (cougar OR jaguar) AND (NOT car) 
+
+(cougar OR jaguar) -car
+Equivalent to (cougar OR jaguar) AND (NOT car)
+
+
+
+EXPORTING DOCUMENTS
+Step 2b implies that a file name prefix can be specified only when exporting Lotus Domino e-mail documents, however, you must specify a prefix when exporting documents of any type. 
+
+Step 2b should read:
+
+b. Enter a prefix for the export files. All files from this export will be prepended with this prefix. The prefix can be up to 40 characters in length and it cannot contain any spaces.
+
+
+
+SELECTING SEARCH FIELDS AND CREATING GROUPED FIELDS
+You cannot control the display order of grouped fields. Step 3c should be removed. Step 3 should read: 
+
+3. Optional: Create grouped fields that will be displayed on the Search pane as search fields. 
+
+a. Click the Create a grouped field icon. 
+
+b. In the Collection Fields column, select the collection fields to be grouped. Be sure to select only search fields that are from the same collection. 
+
+Restriction: If a grouped field exists, the individual field that comprise the grouped field are disabled on the Search Fields tab of the Search Templates pane of the Administration page. The individual fields remain disabled even if you clear the grouped field. To enable the individual fields for selection, delete the grouped field. 
+
+
+
+CREATING CASES
+Step 3 is missing information about administrators being automatically assigned to all cases. 
+
+Step 3 should read:
+
+3. Select those users that you want to have access to the case.
+(Note that eDiscovery Manager automatically gives administrators full access to cases, so members of the EDISC_ADMIN_GROUP group do not appear in the list of assignable users.)
+
+
+Back to top

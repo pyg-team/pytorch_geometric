@@ -1,0 +1,13 @@
+Title: IBM C&DS Scoring Service Request Latency - United States
+
+Text:
+CADS CNDS cnds cads scoring latency first touch performance score configuration PEB web portal websphere application server slow initial first attempt delay time out time-out TECHNOTE (FAQ)
+
+QUESTION
+ The first time we POST a scoring service request in a REST client, we're seeing a long delay. However, subsequent requests are fast, until no requests are made for a period of time. Then the initial request is slow again. It looks like some sort of latency/time-out delay where the system is going into some sort of sleep state after a set number of seconds or minutes. For example, our first request will always take 6000 or more milliseconds, while the subsequent requests take only about 20 milliseconds or so. Is there a setting in C&DS that will allow us to modify this so that the first and any subsequent requests always have none of that sleep latency? 
+
+ANSWER
+That type of latency can be caused by a connection timeout within WebSphere. So to adjust that timeout value, login to the WebSphere admin console and then expand Resources from the left pane. Then expand JMS below that. Then click on Queue connection factories. Next click on CDSQueueConnFactory and then finally under the right hand side of that screen in "Additional Properties" click on "Connection pool properties". From that screen, you will see the Connection timeout setting with a default value of 180 seconds (or 3 minutes). Simply change this timeout value to be whatever you deem appropriate to increase the amount of time that WebSphere will retain its connections.
+
+RELATED INFORMATION
+ Need more help? Our C&DS forum is Live! [https://developer.ibm.com/answers/topics/collaboration.html?smartspace=predictive-analytics]

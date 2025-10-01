@@ -1,0 +1,109 @@
+Title: IBM System Requirements for IBM Cloud Orchestrator - United States
+
+Text:
+system requirements DETAILED SYSTEM REQUIREMENTS
+
+ABSTRACT
+ Review the system requirements for IBM Cloud Orchestrator for the details regarding which hardware and software is supported for use with this product. 
+
+CONTENT
+ 
+
+Always up-to-date system requirement reports can be dynamically generated using the Software Product Compatibility Reports (SPCR) tool [http://www-969.ibm.com/software/reports/compatibility/clarity/index.html]. 
+
+For your convenience, the tabs below identify the supported releases of IBM Cloud Orchestrator from which you can select detailed system requirement reports for different contexts (by Operating System, by component). Note that clicking a link will always generate a new, up-to-date report.
+
+TAB NAVIGATION
+ * 2.5- selected tab,
+ * 2.4
+ * 2.3
+ * 2.2
+
+2.5 RELEASE
+REQUIREMENTS
+BY PLATFORM
+ * Linux [http://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1386584144400&osPlatforms=Linux]
+
+
+
+
+
+REQUIREMENTS
+BY COMPONENT
+ * Manage-from [http://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1386584144400&duComponentIds=Server_936BAC103F3211E58B2CB2A838CE4F20]
+
+ * Manage-to [http://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1386584144400&duComponentIds=Server_931D16E03F3211E58B2CB2A838CE4F20]
+
+
+
+
+RELATED REQUIREMENTS
+No related requirements.
+
+2.4 RELEASE
+REQUIREMENTS
+BY PLATFORM
+ * AIX [http://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1386583651228&osPlatforms=AIX]
+ * Linux [http://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1386583651228&osPlatforms=Linux]
+
+ * Windows [http://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1386583651228&osPlatforms=Windows]
+
+ * Supported Hypervisors [http://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/vesForProduct?deliverableId=1386583651228]
+
+
+
+
+REQUIREMENTS
+BY COMPONENT
+ * Manage-from [http://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1386583651228&duComponentIds=Server_B76D443066FC11E39EBAF3C8D5105327]
+
+ * Manage-to [http://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1386583651228&duComponentIds=Server_5EFD3C5008D811E483BDDB71FE947A2B]
+
+
+
+
+RELATED REQUIREMENTS
+No related requirements.
+
+2.3 RELEASE
+REQUIREMENTS
+BY PLATFORM
+ * Linux [http://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1364370682621&osPlatforms=Linux]
+
+
+
+
+
+REQUIREMENTS
+BY COMPONENT
+ * Management Server [http://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1364370682621&duComponentIds=Server_022EE880162011E38F7D228059AF1569]
+
+
+
+
+RELATED REQUIREMENTS
+No related requirements.
+
+2.2 RELEASE
+REQUIREMENTS
+BY PLATFORM
+ * Linux [http://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1329135862028&osPlatforms=Linux]
+
+
+
+
+
+REQUIREMENTS
+BY COMPONENT
+ * Management Server [http://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1329135862028&duComponentIds=Server_66540400A82311E2A4CA497F0925FE1B]
+
+
+
+
+RELATED REQUIREMENTS
+No related requirements.
+
+RELATED INFORMATION
+ Software Product Compatibility Reports [http://pic.dhe.ibm.com/infocenter/prodguid/v1r0/clarity/index.jsp]
+V.R.M.F. Maintenance Stream Delivery Vehicle glossary [http://www.ibm.com/support/docview.wss?uid=swg27008656]
+IBM Cloud Support Blog [https://www.ibm.com/developerworks/community/blogs/ibmcloudsupport/]

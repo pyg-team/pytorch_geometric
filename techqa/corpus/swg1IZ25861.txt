@@ -1,0 +1,183 @@
+Title: IBM IZ25861: WINDOWS OS AGENT NOT ABLE TO READ THE EVENT LOG ON WINDOWS 2008 RUNNING IN 64BIT - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Env=
+   Windows2008 running in 64bit
+   Tivoli Monitoring 6.2 FP1
+   
+   Desc=
+   It concerns the Windows OS Agent not being able to read the
+   event log on Windows2008 running in 64bit.
+   
+   KBC has made the architectural decision that that interface
+   will consist of SCOM writing events to the local windows event
+   log, and the ITM OS agent picking those up. You guessed it...
+   the SCOM server runs on W2008 64bit.
+   
+   The short version:
+   The visit from Linwood Lassitter to KBC was succesful. He
+   created a version of the agent that KBC can use to fullfill
+   KBC's wishes.
+   
+   The long version:
+   The problem definitely is related to the fact that Windows2008
+   runs on 64bit and not on 32bit. There are multiple reasons for
+   this, for example the way the registry needs to be read is
+   different. The registry needs to be read to find the location
+   of the event logs.
+   That is how Linwood determined that the problem was the
+   following:
+   Our agent uses a Windows API to 'ask' wether we are running
+   32bit or 64bit.
+   Somehow what that API returned was not interpreted by the agent
+   correctly. Linwood fixed the problem. The fix was tested by KBC
+   on both a 64bit and a 32bit W2008 instance. At least it did
+   read the windows event log correctly. Some immediate simple
+   tests with other agent features did not reveal any problem. KBC
+   will continue testing with the newly compiled agent. Linwood
+   will create the APAR to create the official fix that will
+   become part of the the product.
+   
+   Patrick was already in touch with L3 (Linwood Lassiter, Tom Hemp
+   and Tim Buckley), and they replied:
+   I need this APAR opened on Monday (7/7). I am trying to include
+   this in the LA that we are pushing out now.  This is a critical
+   LA and I can not hold it up. If we can't get this APAR opened
+   and  miss this LA then the next opportunity will be August.
+   
+   Upon Linwood's suggestion, I ask if you could open an APAR for
+   the issue that KBC has with monitoring the eventlog on a
+   Windows 2008 system running in 64 bit. Linwood has the details
+   of this problem and the suggested fix.
+   I can pass the code change I made to the L3 team for
+   integration into the Code Library for build of an LA on 6.2FP1.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  The Monitoring agent for Windows OS was not able to read the
+   event log on Microsoft Windows 2008 Server running on 64-bit
+   sysyems. The registry is read to find the location of the event
+   logs. The Monitoring  agent for Windows OS uses a Windows API to
+   determine whether it is running on a 32-bit or 64-bit system.
+   The data returned by the API was not interpreted by the Monitori
+   ng agent for Windows OS correctly. The monitored logs in the
+   System workspace in the Tivoli Enterprise Portal do not show any
+   value. This fix resolves the problem and the Windows event log
+   is read correctly.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This APAR has been fixed and delivered in a limited availability
+   fix 6.2.0.1-TIV-ITM_WIN-LA0002. This maintenance delivery
+   vehicle is a limited availability patch and therefore is in a
+   "hidden directory." Level 2 Support can provide down load
+   instructions to you. Contact level 2 support at:
+   
+   http://www.ibm.com/software/sysmgmt/products/support/Contact_L2
+   Support.html [http://www.ibm.com/software/sysmgmt/products/support/Contact_L2Support.html]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ25861
+   
+   
+ * REPORTED COMPONENT NAME
+   ITM AGENT WINDO
+   
+   
+ * REPORTED COMPONENT ID
+   5724C040W
+   
+   
+ * REPORTED RELEASE
+   620
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-07-07
+   
+   
+ * CLOSED DATE
+   2008-07-24
+   
+   
+ * LAST MODIFIED DATE
+   2008-07-24
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ITM AGENT WINDO
+   
+   
+ * FIXED COMPONENT ID
+   5724C040W
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R620 PSY
+   UP

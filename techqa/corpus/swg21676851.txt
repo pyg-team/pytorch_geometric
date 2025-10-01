@@ -1,0 +1,58 @@
+Title: IBM Can't register pages in Case Manager Client because the Case Manager Page Settings in the Action menu is missing - United States
+
+Text:
+Case Manager setting; ICM; Business Space; register; pages TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Unable to access the 'Case Manager Page settings' in the Action menu for Case Manager Client in the development profile environment in order to register a new Business Space page. 
+
+SYMPTOM
+A developer is trying to register pages in Case Manager Client by following the steps documented in the reference links below, but the 'Case Manager Page Settings' is missing from the Action menu. 
+
+Creating a page in the Case Pages space
+http://pic.dhe.ibm.com/infocenter/casemgmt/v5r1m1/topic/com.ibm.casemgmt.help.doc/acmwrh12.htm [http://pic.dhe.ibm.com/infocenter/casemgmt/v5r1m1/topic/com.ibm.casemgmt.help.doc/acmwrh12.htm]
+
+Creating a page in the Step Pages space
+http://pic.dhe.ibm.com/infocenter/casemgmt/v5r1m1/topic/com.ibm.casemgmt.help.doc/acmwrh13.htm [http://pic.dhe.ibm.com/infocenter/casemgmt/v5r1m1/topic/com.ibm.casemgmt.help.doc/acmwrh13.htm]
+
+Here is the sample screen shot showing the missing 'Case Manager Page Settings' in the Action menu.
+
+[/support/docview.wss?uid=swg21676851&aid=1] [/support/docview.wss?uid=swg21676851&aid=1]
+
+Here is the screen shot showing the expected 'Case Manager Page Settings' in the Action menu.
+
+[/support/docview.wss?uid=swg21676851&aid=2] [/support/docview.wss?uid=swg21676851&aid=2] 
+
+
+CAUSE
+The banner.html file in the customer's environment is incorrect for their development profile. They have a banner.html from a production profile, when they are on a development profile.
+
+
+RESOLVING THE PROBLEM
+ 
+
+ 1. Use a webDav client such as cyberduck to access the /icm/banner.html file in the webDav store in Business Space. See the sample screen shot below.[/support/docview.wss?uid=swg21676851&aid=3] [/support/docview.wss?uid=swg21676851&aid=3] 
+ 2. Download and verify the banner.html content. It may look something like this:
+
+
+<li class="bannerActionLinksDiv"> 
+<div class="iw-iWidget iw-Standalone" id="bannerActionLinks"> 
+<a class="iw-Definition" href="/BusinessSpace/iWidget/widgets/system/bannerActionLinks/bannerActionLinks.xml" style="display:none;"></a> 
+</div> 
+</li> 
+
+The main thing to look for is the href. If it points to BusinessSpace/iWidget.... then it will explain why the Case Manager Page settings is not showing up in the Action menu. It should show the /CaseWidgets/banner instead. 
+
+3. Replace the /icm/banner.html file with the one that is taken from a development profile. You should be able to get this file from one of your environments. If you do not have one, use the attached one below. 
+banner.html [/support/docview.wss?uid=swg21676851&aid=5]banner.html [/support/docview.wss?uid=swg21676851&aid=4] 
+
+4. After the banner.html file has been replaced, restart WebSphere and clear and temp files on the application server. 
+
+If the banner.html has the expected content, try to verify all of the appropriate flags and parameters set for Business Space. 
+These include: 
+- Resource environment providers -> Mashups ConfigService -> Custom properties -> com.ibm.mashups.lockedown is set to false. 
+- Resource environment providers -> Mashups Endpoints -> Custom properties -> com.ibm.acm.client.sandboxFlag is set to true 
+- Resource environment providers > Mashups_DynamicSpotMapping > Custom properties, look for the bannerHTML property, the value should look something like this: 
+res:/mum/mycontenthandler/mm/dav/filestore/public/themes/bspaceTheme/banner/icm/banner.html : 
+
+Also verify the user has appropriate access to the space and pages.

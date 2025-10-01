@@ -1,0 +1,103 @@
+Title: IBM Troubleshooting WebSphere MQ for z/OS performance problems - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ You are experiencing a performance problem in WebSphere MQ (WMQ) for z/OS. You would like information about common problems and ways to find the root cause of the problem. 
+
+The IBM Software Support Handbook states that analyzing performance is one of the activities that often require some form of Advance Support Offering. If analysis reveals a suspected defect in the product, refer to the "Collect troubleshooting data..." link below. 
+
+SYMPTOM
+High CPU
+Slow throughput or response
+Hangs
+
+
+ENVIRONMENT
+This information applies to IBM MQ V8.0 and WebSphere MQ V7.1, V7.0.1, V7.0 and V6.0 on z/OS. Refer to the IBM MQ Read First page for instructions on other operating systems:
+
+
+ * IBM MQ Read First [http://www.ibm.com/support/docview.wss?uid=swg21618796]
+
+ * 
+ * Collect troubleshooting data for a performance problem in WebSphere MQ for z/OS [http://www.ibm.com/support/docview.wss?uid=swg21291192]
+
+RESOLVING THE PROBLEM
+
+
+ * Troubleshooting hints and tips
+ * Learn more about this component
+
+
+TROUBLESHOOTING HINTS AND TIPS
+
+
+
+ * Review Webcast replay: WebSphere MQ for z/OS - Performance Topics [http://www.ibm.com/support/docview.wss?uid=swg27023457] 
+ * See developerWorks Blog: MQ Key Performance indicators [https://www.ibm.com/developerworks/community/blogs/c4142f9d-6cf1-44ef-a44a-b09428ad96d1/entry/mq_key_performance_indicators?lang=en] 
+ * Check for CSQP020E [https://www.ibm.com/support/knowledgecenter/en/SSFKSJ_8.0.0/com.ibm.mq.ref.doc/csq_p.htm] messages logged in the MQ MSTR joblog. This would indicate a problem with the buffer pool. 
+ * Set the INDXTYPE [https://www.ibm.com/support/knowledgecenter/en/SSFKSJ_8.0.0/com.ibm.mq.ref.adm.doc/q085690_.htm?view=kc#q085690___endxtype] for queues if appropriate. See Performance issues getting messages from a queue with a large CURDEPTH [http://www.ibm.com/support/docview.wss?uid=swg21028497]. PI16027 [http://www.ibm.com/support/docview.wss?uid=swg1PI16027] for MQ 7.1.0 and PI19991 [http://www.ibm.com/support/docview.wss?uid=swg1PI19991] for MQ 8.0.0 issue a warning message CSQI004I once per checkpoint when a local queue is accessed by message id or correlation id without an index configured and a large number of messages are skipped. 
+ * Avoid large units of work with many uncommitted gets or puts. See Why am I getting high CPU in MQ module CSQLLPLM? [https://developer.ibm.com/answers/questions/315152/why-am-i-getting-high-cpu-in-mq-module-csqllplm.html] 
+ * Check your z/OS workload management importance and velocity goals [http://www.ibm.com/support/knowledgecenter/SSFKSJ_8.0.0/com.ibm.mq.pla.doc/q005940_.htm] 
+ * Search the [http://www.ibm.com/software/htp/cics/tserver/support/]WebSphere MQ support site [http://www.ibm.com/support/entry/portal/Software/WebSphere/WebSphere_MQ] for known problems using symptoms such as an error or informational message number or error codes or using the term "performance". 
+ * Review RMF reports to look for CPU, I/O, or storage constraints. 
+ * Review SMF data to look for problem areas or narrow down the scope of the problem. PM61284 [http://www.ibm.com/support/docview.wss?uid=swg1PM61284] for V7.0.1. and V7.1.0 provides enhanced log manager statistics. 
+   
+   See Monitoring performance and resource usage [https://www.ibm.com/support/knowledgecenter/en/SSFKSJ_8.0.0/com.ibm.mq.mon.doc/q038140_.htm]. Use a performance monitor or SupportPac MP1B [http://www.ibm.com/support/docview.wss?uid=swg24005907] to interpret accounting (SMF 116) and statistics (SMF 115) data. Documentation provided with the SupportPac provides assistance with interpretation.
+   
+ * If there are delays on the z/OS queue manager, use the REXX utility to do compact LISTCAT for WebSphere MQ datasets and report the size and number of DASD stripes [http://www.ibm.com/support/docview.wss?uid=swg27025138]. This information will be useful if I/O to active logs is a factor in the problem.
+   
+
+
+Back to top
+
+
+
+LEARN MORE ABOUT THIS COMPONENT
+ * SupportPac MP16: WebSphere MQ for z/OS - Capacity planning & tuning [http://www.ibm.com/support/docview.wss?uid=swg24007421] 
+ * SupportPac MP1B: WebSphere MQ - Interpreting accounting and statistics data [http://www.ibm.com/support/docview.wss?uid=swg24005907] 
+ * WebSphere MQ Family - Performance Reports [http://www.ibm.com/support/docview.wss?uid=swg27007150] 
+ * Library and Product Documentation [http://www.ibm.com/software/integration/wmq/library/] [http://www-306.ibm.com/software/integration/wmq/library/]
+
+
+Back to top
+
+
+
+ADDITIONAL INFORMATION
+IBM MQ V9.0
+
+ * Dealing with performance problems on z/OS [http://www.ibm.com/support/knowledgecenter/SSFKSJ_9.0.0/com.ibm.mq.tro.doc/q040010_.htm]
+ * WebSphere MQ for z/OS performance constraints [http://www.ibm.com/support/knowledgecenter/SSFKSJ_9.0.0/com.ibm.mq.tro.doc/q039780_.htm]
+
+IBM MQ V8.0
+
+ * Dealing with performance problems on z/OS [http://www.ibm.com/support/knowledgecenter/SSFKSJ_8.0.0/com.ibm.mq.tro.doc/q040010_.htm]
+ * WebSphere MQ for z/OS performance constraints [http://www.ibm.com/support/knowledgecenter/SSFKSJ_8.0.0/com.ibm.mq.tro.doc/q039780_.htm]
+
+WEBSPHERE MQ V7.1
+
+ * Dealing with performance problems on z/OS [http://www.ibm.com/support/knowledgecenter/SSFKSJ_7.1.0/com.ibm.mq.doc/zp10820_.htm]
+ * WebSphere MQ for z/OS performance constraints [http://www.ibm.com/support/knowledgecenter/SSFKSJ_7.1.0/com.ibm.mq.doc/zp10840_.htm]
+
+
+WEBSPHERE MQ V7.0.1
+
+ * Dealing with performance problems [http://www.ibm.com/support/knowledgecenter/SSFKSJ_7.0.1/com.ibm.mq.csqsaq.doc/zp10820_.htm?cp=SSFKSJ_7.0.1%2F0-29-1-2]
+ * WebSphere MQ for z/OS considerations [http://www.ibm.com/support/knowledgecenter/SSFKSJ_7.0.1/com.ibm.mq.csqsaq.doc/zp10840_.htm?cp=SSFKSJ_7.0.1%2F0-29-1-2-1]
+
+WEBSPHERE MQ V6.0
+
+ * GC34-6600-00: WebSphere MQ for z/OS Problem Determination Guide (1.52MiB) [http://www.ibm.com/e-business/linkweb/publications/servlet/pbi.wss?CTY=US&FNC=PBL&PBL=GC34-6600-00]
+
+Back to top
+
+RELATED INFORMATION
+ IBM Software Support Handbook [http://www14.software.ibm.com/webapp/set2/sas/f/handbook/getsupport.html]
+
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ IBMMQ MQ WMQ

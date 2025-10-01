@@ -1,0 +1,302 @@
+Title: IBM IT16294: Incorrect error about JNI library 'mqjbnd' when connecting to queue manager in client transport - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The MQ classes for JMS application is running on a system that
+   does not have a MQ installation locally installed on it, and
+   connecting to a remote queue manager using CLIENT transport.
+   
+   A "javax.jms.JMSException" is thrown containing an linked
+   "com.ibm.mq.MQException" which incorrectly reports that it could
+   not load 'mqjbnd':
+   
+   com.ibm.msg.client.jms.DetailedJMSException: JMSWMQ2002: Failed
+   to get a message from destination '<queue name>'. WebSphere MQ
+   classes for JMS attempted to perform an MQGET; however WebSphere
+   MQ reported an error. Use the linked exception to determine the
+   cause of this error.
+   at
+   com.ibm.msg.client.wmq.common.internal.Reason.reasonToException
+   at com.ibm.msg.client.wmq.common.internal.Reason.createException
+   at
+   com.ibm.msg.client.wmq.internal.WMQMessageConsumer.checkJmqiCall
+   Success
+   at com.ibm.msg.client.wmq.internal.WMQConsumerShadow.getMsg
+   at
+   com.ibm.msg.client.wmq.internal.WMQSyncConsumerShadow.receiveInt
+   ernal
+   at com.ibm.msg.client.wmq.internal.WMQConsumerShadow.receive
+   at com.ibm.msg.client.wmq.internal.WMQMessageConsumer.receive
+   at
+   com.ibm.msg.client.jms.internal.JmsMessageConsumerImpl.receiveIn
+   boundMessage
+   at
+   com.ibm.msg.client.jms.internal.JmsMessageConsumerImpl.receive
+   at com.ibm.mq.jms.MQMessageConsumer.receive
+        :    :    :    :    :    :    :    :    :    :    :    :
+      :
+   Caused by: com.ibm.mq.MQException: JMSCMQ0001: WebSphere MQ call
+   failed with compcode '2' ('MQCC_FAILED') reason '2195'
+   ('MQRC_UNEXPECTED_ERROR').
+   at com.ibm.msg.client.wmq.common.internal.Reason.createException
+     ... 10 more
+   Caused by: com.ibm.mq.jmqi.JmqiException: CC=2;RC=2495;AMQ8568:
+   The native JNI library 'mqjbnd64' was not found. For a client
+   installation this is expected. [3=mqjbnd64]
+   at com.ibm.mq.jmqi.local.LocalMQ.loadLib
+   at com.ibm.mq.jmqi.local.LocalMQ.loadLib
+        :    :    :    :    :    :    :    :    :    :    :    :
+      :
+   Caused by: java.lang.UnsatisfiedLinkError: mqjbnd64 (Not found
+   in java.library.path)
+   at java.lang.ClassLoader.loadLibraryWithPath
+   at java.lang.ClassLoader.loadLibraryWithClassLoader
+   at java.lang.System.loadLibrary
+   at com.ibm.mq.jmqi.local.LocalMQ.loadLib
+   ... 35 more
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   This issue affects users of:
+   
+   - The IBM MQ V8.0 classes for JMS.
+   - The IBM MQ V8.0 resource adapter.
+   
+   - The IBM MQ V9.0 classes for JMS.
+   - The IBM MQ V8.0 resource adapter.
+   
+   - The WebSphere Application Server V9.0 MQ messaging provider.
+   
+   who have applications that connect to a queue manager using the
+   CLIENT transport and MQ messaging provider normal mode, and call
+   one of the following methods:
+   
+   - MessageConsumer.receive()
+   - MessageConsumer.receive(long timeout)
+   - MessageConsumer.receiveNoWait()
+   
+   
+   Platforms affected:
+   MultiPlatform
+   
+   ****************************************************************
+   PROBLEM DESCRIPTION:
+   When a JMS application connects to a queue manager using the
+   CLIENT transport and MQ messaging provider normal mode, the
+   following behaviour will occur when the application calls
+   MessageConsumer.receive(long timeout):
+   
+   - The MQ classes for JMS use the application thread to send an
+   MQGET request to the queue manager.
+   - The MQ classes for JMS then put the application thread into a
+   wait state, to wait for a message to arrive.
+   - The internal "Remote Receive Thread" associated with the
+   TCP/IP connection that the application thread is using will
+   receive the MQGET reply from the queue manager, and put the
+   message contained within the reply onto an internal proxy queue.
+   - The application thread is then woken up. The MQ classes for
+   JMS get the message from the proxy queue and return it back to
+   the application.
+   
+   If another thread within the application called
+   "Thread.interrupt()" while the application thread was in the
+   wait state mentioned above, then the classes for JMS generated
+   an FDC containing the following information:
+   
+   ****************************************************************
+   ****************************************************************
+   ****
+   Source Class     :-
+   Source Method    :- proxyMQGET(RemoteTls,MQMD,MQGMO,int,byte [
+   ],Pint,Pint,Pint)
+   ProbeID          :- JO275010
+   Thread           :- name=Thread-5 priority=5 group=main
+   ccl=sun.misc.Launcher$AppClassLoader@ebefacf6
+   
+                                         Data
+                                         ----
+   
+   |   INSERT1     :-  0
+   |   INSERT2     :-  0
+   |   INSERT3     :-  Thread interrupted while waiting for lock
+   |   INSERT4     :-  java.lang.InterruptedException
+   |   INSERT5     :-
+   com.ibm.mq.jmqi.remote.internal.system.RemoteProxyQueue@d24dcc
+   |   RETURNCODE  :-  0
+   ****************************************************************
+   ****************************************************************
+   ****
+   
+   While generating the FDC, the classes for JMS attempted to load
+   MQ Java native library 'mqjbnd', in order to get the version
+   information of this library for inclusion in the FDC. If the
+   native library could not be loaded (because the application was
+   running on a system that did not have a queue manager installed
+   on it, for example) an internal exception containing the
+   message:
+   
+   CC=2;RC=2495;AMQ8598: Failed to load the WebSphere MQ native JNI
+   library: 'mqjbnd'.
+   
+   was generated and handled as part of the FDC generation
+   routines. Details of the exception were also stored in case it
+   was needed later.
+   
+   After the FDC had been generated, the MQ classes for JMS
+   constructed a new JMSException which contains an MQException
+   with reason code 2195 (MQRC_UNEXPECTED_ERROR). While
+   constructing this JMSException, the classes for JMS would add
+   any stored exceptions as the cause of the MQException. For
+   applications that connected to a queue manager using the CLIENT
+   transport, this could lead to the internal exception:
+   
+   com.ibm.mq.jmqi.JmqiException: CC=2;RC=2495;AMQ8568: The native
+   JNI library 'mqjbnd' was not found. For a client installation
+   this is expected.
+   
+   being incorrectly added as the cause for the JMS Exception which
+   was thrown back to the application.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The MQ classes for JMS have been updated to ensure that any
+   internal exceptions that occur while generating an FDC are not
+   added as the cause for any MQExceptions which are themselves the
+   cause for JMSExceptions thrown back to applications. As a result
+   of these changes, the internal exception:
+   
+   com.ibm.mq.jmqi.JmqiException: CC=2;RC=2495;AMQ8568: The native
+   JNI library 'mqjbnd' was not found. For a client installation
+   this is expected.
+   
+   is no longer added as the cause for the MQException containing
+   MQ Reason Code 2195, which is the cause of the JMSException
+   thrown if an application interrupts a thread while it is calling
+   one of the methods shown below:
+   
+   - MessageConsumer.receive()
+   - MessageConsumer.receive(long timeout)
+   - MessageConsumer.receiveNoWait()
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+   Version    Maintenance Level
+   v8.0       8.0.0.7
+   v9.0 CD    9.0.2
+   v9.0 LTS   9.0.0.1
+   
+   The latest available maintenance can be obtained from
+   'WebSphere MQ Recommended Fixes'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037]
+   
+   If the maintenance level is not yet available information on
+   its planned availability can be found in 'WebSphere MQ
+   Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT16294
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ BASE MULTIP
+   
+   
+ * REPORTED COMPONENT ID
+   5724H7251
+   
+   
+ * REPORTED RELEASE
+   800
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-07-26
+   
+   
+ * CLOSED DATE
+   2016-12-21
+   
+   
+ * LAST MODIFIED DATE
+   2017-06-01
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ BASE MULTIP
+   
+   
+ * FIXED COMPONENT ID
+   5724H7251
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R800 PSY
+   UP

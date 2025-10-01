@@ -1,0 +1,167 @@
+Title: IBM IJ00849: ADDING FIREWALL RULES TO BLOCK SSH CONNECTIONS MAY RESULT IN UPGRADE FROM 7.2.8 TO 7.3.X TO FAIL. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PERMANENT RESTRICTION.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Blocking an SSH connection will result in the final phase of
+   the upgrade to fail. During this phase a series of docker
+   services install which require SSH access.
+   
+   Should your upgrade fail look in
+   /var/log/setup-7.3.0.20xxxxxxxxxxxx/qradar_netsetup.log for
+   similar messages:
+   
+    ERROR: Failed to install microservices infrastructure
+   components. (1)
+   qradar_netsetup.py[26857]: qradar_netsetup installQradar [INFO]
+       result of the restoring pre-upgrade configuration: 1
+   qradar_netsetup.py[26857]: ibm_logging error [ERROR] Failed to
+   restore pre-upgrade configuration! After resolving the issue,
+   run /root/complete_upgrade.sh.
+   qradar_netsetup.py[26857]: qradar_netsetup finalBlock [INFO] ...
+   qradar_netsetup.py[26857]: ibm_command_utils run_and_log [INFO]
+   systemctl restart network
+   qradar_netsetup.py[26857]: qradar_netsetup finalBlock [ERROR]
+   Exceptions:
+   qradar_netsetup.py[26857]: qradar_netsetup finalBlock [ERROR]
+   Traceback (most recent call last):
+   qradar_netsetup.py[26857]: qradar_netsetup finalBlock [ERROR]
+   File "/opt/qradar/bin/qradar_netsetup.py", line 3741, in main
+   qradar_netsetup.py[26857]: qradar_netsetup finalBlock [ERROR]
+     qradarNetsetup.doJob()
+   qradar_netsetup.py[26857]: qradar_netsetup finalBlock [ERROR]
+   File "/opt/qradar/bin/qradar_netsetup.py", line 881, in doJob
+   qradar_netsetup.py[26857]: qradar_netsetup finalBlock [ERROR]
+     self.installQradar()
+   qradar_netsetup.py[26857]: qradar_netsetup finalBlock [ERROR]
+   File "/opt/qradar/bin/qradar_netsetup.py", line 1684, in
+   installQradar
+   qradar_netsetup.py[26857]: qradar_netsetup finalBlock [ERROR]
+     "Failed to restore pre-upgrade configuration! "
+   qradar_netsetup.py[26857]: qradar_netsetup finalBlock [ERROR]
+   File "/opt/qradar/lib/python/ibm_logging.py", line 80, in error
+   qradar_netsetup.py[26857]: qradar_netsetup finalBlock [ERROR]
+     sysExit(255)
+   qradar_netsetup.py[26857]: qradar_netsetup finalBlock [ERROR]
+   File "/opt/qradar/lib/python/ibm_logging.py", line 46, in
+   sysExit
+   qradar_netsetup.py[26857]: qradar_netsetup finalBlock [ERROR]
+     raise Exception(message)
+   qradar_netsetup.py[26857]: qradar_netsetup finalBlock [ERROR]
+   Exception
+   qradar_netsetup.py[26857]: ibm_logging error [ERROR] Failed.
+   Exit code: 255. Case 1.
+   qradar_netsetup.py[26857]: ibm_logging error [ERROR]
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Remove any custom firewall rules that may block SSH
+   connectivity that you have added. Do not remove SSH rules
+   created by QRadar.
+   
+   If need help to determine if a firewall rule is the issue,
+   please contact support for assistance.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  If users can modify iptables, blocking 443, or 22 inbound from
+   QRadar console, or any of the other 32xxx ports will make the
+   system unable to work. This is not the normal state of the
+   system.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  If users can modify iptables, blocking 443, or 22 inbound from
+   QRadar console, or any of the other 32xxx ports will make the
+   system unable to work. This is not the normal state of the
+   system.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IJ00849
+   
+   
+ * REPORTED COMPONENT NAME
+   QRADAR SOFTWARE
+   
+   
+ * REPORTED COMPONENT ID
+   5725QRDSW
+   
+   
+ * REPORTED RELEASE
+   730
+   
+   
+ * STATUS
+   CLOSED PRS
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-10-19
+   
+   
+ * CLOSED DATE
+   2018-03-26
+   
+   
+ * LAST MODIFIED DATE
+   2018-03-26
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

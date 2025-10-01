@@ -1,0 +1,121 @@
+Title: IBM Customizing the ClearCase Windows Interface - United States
+
+Text:
+clearmenuadmin; menu option missing; 1158221 TECHNOTE (FAQ)
+
+QUESTION
+ What are the capabilities of the IBM® Rational® ClearCase® application called clearmenuadmin which is used to add, modify, or remove context menu shortcuts from the ClearCase Explorer and or Microsoft® Windows® interface? 
+
+ANSWER
+ 
+
+ClearCase on Windows presents the ability to customize the graphical user interfaces of Windows Explorer and ClearCase Explorer.
+
+The tool that allows you to change the behavior of existing dialog boxes in Windows and ClearCase Explorer is ClearCase Context Menu Editor (tool called clearmenuadmin typical found in C:\Program Files\Rational\ClearCase\bin\clearmenuadmin.exe) which is available on all ClearCase Windows installations. 
+With the Context Menu Editor it is possible to: 
+
+ * Create new commands and other menu items available to ClearCase context menus. 
+ * Change properties of built-in and custom ClearCase context menu items. 
+ * Add items to or remove items from ClearCase context menus. 
+ * Test the changes to ClearCase context menus.
+   
+
+
+How to Display the Context Menu Editor
+
+To display the Context Menu Editor click Start > Run type clearmenuadmin
+
+Below is a screenshot of the basic interface of the tool. This document will give some basic guidance of the tools potential and will help define some common terminology.
+
+
+[/support/docview.wss?uid=swg21158221&amp;aid=1]
+
+Creating a new context menu choice
+
+First select the application for which the command shortcut will appear.
+In our example we will work on a shortcut for Windows Explorer.
+
+
+[/support/docview.wss?uid=swg21158221&amp;aid=2]
+
+
+Defining Object Type and State You must define an Object Type and Object State, these determine the context or conditions the menu choice will be available to users. 
+
+ 
+
+[/support/docview.wss?uid=swg21158221&amp;aid=3] 
+
+We will define that our command shortcut for notepad will be available on file objects that are checked in and we will assume the user will only select one (single selection) at a time. 
+
+ 
+
+Note: Multiple Selection Specifies that the shortcut applies only to multiple selections of the object type and state indicated. 
+
+
+Defining Menu Item Properties
+
+Under available menu choices, click the New button.
+You will be presented with the Menu Item Properties dialog box.
+
+[/support/docview.wss?uid=swg21158221&amp;aid=4]
+
+
+The Menu Item Properties dialog box defines the following shortcut menu command properties: 
+
+ *  Menu Text: The label that appears in the shortcut menu item. Help Text: Brief information about the menu item. Command Type: The type of program that the shortcut invokes, 
+
+Command type Description About Dialog Opens an About dialog box CheckItem Check box with label Executable Starts the executable named in the Command box Executable/Regentry Starts the executable that is the value of the Registry key named in the Command box OLE Automation Uses OLE automation Separator Separator 
+ *  Command: The path (including the file name) of the program that the shortcut executes. Initial Directory: The directory that is set as current when the program runs. Arguments: Arguments to be passed to the program when it runs. Comment: A comment for the shortcut. 
+
+In this example we will create a very simple context menu shortcut that will allow users to display the contents of text files. 
+
+Modify the Menu Item Properties dialog box with the following information. 
+
+[/support/docview.wss?uid=swg21158221&amp;aid=5] 
+
+Click OK 
+
+After the dialog closes, you should see the new menu shortcut "FileContents" presented in the Available Menu Choices list. This context menu is not yet implemented. 
+
+[/support/docview.wss?uid=swg21158221&amp;aid=6] 
+
+ 
+
+The shortcut isn't in bold type; bold menu items are available and will be on the “This Menu Contents” list to the left. 
+
+You can add and remove menu options using the Add or Remove buttons. The below illustration indicates that the new Menu Choice "FileContents" has been added (as it is in the Menu Contents on the left and is now in bold type). 
+
+[/support/docview.wss?uid=swg21158221&amp;aid=7] 
+
+ 
+
+ Implementing a Context Menu Shortcut. 
+
+To have a context menu show up, you need to apply the configuration. This will modify the Windows registry on the local computer 
+
+[/support/docview.wss?uid=swg21158221&amp;aid=8] 
+
+ 
+
+Sharing context menu configurations 
+
+Exporting menu changes to a distributed group 
+
+If you need to implement this context menu against many users instance of ClearCase this can be accomplished by distributing a registry file (.reg) that can be generated using the options in the tool Configuration > Save to File… 
+
+ 
+
+Importing menu changes 
+
+If you need to introduce a pre-defined menu configuration, Import the changes from a generated Windows Registry key Configuration> Load from File …
+
+
+RELATED INFORMATION
+#Changing context menus without loading an export file [http://www.ibm.com/support/docview.wss?uid=swg21245921]
+
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Software Development Rational ClearCase GUI

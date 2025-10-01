@@ -1,0 +1,19 @@
+Title: IBM Latest data are not generated in Case Analyzer - United States
+
+Text:
+internal resources TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ No latest data are generated in IBM Case Analyzer though service is running. 
+
+SYMPTOM
+Error in log: 
+
+"CAPublisher c2dce3b9 [Error] Unexpected exception occurred while processing task CAPublisher for store CASTORE.; Exception: com.microsoft.sqlserver.jdbc.SQLServerException: The query processor 
+ran out of internal resources and could not produce a query plan. This is a rare event and only expected for extremely complex queries or queries that reference a very large number of tables or partitions. 
+Please simplify the query. If you believe you have received this message in error, contact Customer Support Services for more information." 
+
+
+RESOLVING THE PROBLEM
+The batch update mode is causing the issue here. Update the batch update mode to ‘BATCH’ and see if you are still getting that issue. For more info, please check the below link. 
+http://www-01.ibm.com/support/docview.wss?uid=swg22004617 [http://www-01.ibm.com/support/docview.wss?uid=swg22004617]

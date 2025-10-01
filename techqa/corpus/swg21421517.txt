@@ -1,0 +1,57 @@
+Title: IBM How to delete DOORS module baselines - United States
+
+Text:
+delete baseline; option to delete is grayed-out; database configuration; module function TECHNOTE (FAQ)
+
+QUESTION
+ How do you delete a module baseline in IBM Rational DOORS ? 
+
+CAUSE
+There is no menu option to delete a baseline, or it is grayed out.
+
+ANSWER
+When a baseline is no longer needed it can be deleted. However, you must be a DOORS user type:Database Manager or Custom user with Manage database powers. 
+If you do not have correct permission the option to delete a baseline is not displayed. 
+
+Steps to delete a baseline: 
+
+ 1.  Log into DOORS as a user with delete baseline privilege
+    
+    
+ 2. Open the module exclusive edit mode
+    Using READ only, or Shareable edit mode the delete option is grayed out
+    
+    
+ 3. Click File > Baseline > Delete
+    
+
+
+Note: The database must be enabled to permit baseline deletion. 
+If it is not a message will display prompting you to contact your Administrator. 
+
+
+[/support/docview.wss?uid=swg21421517&aid=1] [/support/docview.wss?uid=swg21421517&aid=1] 
+
+
+
+The database default setting for a DOORS database is to not allow baseline deletion. 
+To enable baseline deletion you must log in as the user Administrator. 
+
+Steps to enable baseline deletion:  1. Log into DOORS as user Administrator
+    The option to enable baseline deletion is grayed out for all other users
+    
+    
+ 2. Click the yellow database icon in the database explorer window
+    
+    
+ 3. Click File > Properties (F2) 
+    In the database properties window select the General Tab
+    
+    
+ 4. Check the box to Allow deletion of module baselines in the section labeled Baseline Deletion
+    
+    
+ 5. Click OK
+
+RELATED INFORMATION
+#

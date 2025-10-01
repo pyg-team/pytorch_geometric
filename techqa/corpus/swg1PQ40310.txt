@@ -1,0 +1,203 @@
+Title: IBM PQ40310: HTTP SERVER PLANNING, INSTALLING AND USING MANUAL DOES NOT DESCRIBE FRCA CACHEING SECURITY ISSUE THOROUGHLY. - United States
+
+Text:
+z/os SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When using FRCA (FAST RESPONSE CACHE ACCELERATOR) any cached
+   documents will no longer require any authentication or
+   authorization to retrieve. This means a Client does not even
+   require a valid USERID , in the case of " Userid %%CLIENT%% "
+   to access the document. Any Browser that accesses the Port the
+   WebServer is listening on, has access to FRCA documents.
+      So, be certain to protect documents, protected documents are
+   NOT cached, as necessary. Our documentation will be updated to
+   make this information clear.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All users of the webserver version 5         *
+   *                 (release 1 and higher) that use FRCA         *
+   *                 caching are affected by this APAR.           *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: The documentation should indicate more  *
+   *                      clearly that 1) cached objects are not  *
+   *                      secured by a userID and password and    *
+   *                      that 2) all secure objects should be    *
+   *                      protected in order to prevent their     *
+   *                      inclusion in the FRCA cache.            *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   The documentation should indicate more clearly 1) that cached
+   objects are not secured by authentication and 2) what objects
+   are cache-eligible.  All objects that are loaded into the FRCA
+   cache can be openly accessed without requiring authentication.
+   In order to prevent objects that require authentication from
+   being cached, the user must take steps to verify that those
+   objects are configured to be cache-ineligible.  The
+   documentation should state this more explicitly.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The documentation is changed to clarify the need to protect
+   secure documents when the FRCA cache is enabled.
+   
+   Doc changes:
+   In each of the following documents:
+   IBM HTTP Server for OS/390 Version 5.1, Planning, Installing,
+      and Using: Advanced Configuration, Tuning your Web server
+      for better performance, Customizing cache management,
+      "Using the Fast Response Cache Accelerator"
+   http://www-4.ibm.com/software/webservers/httpservers/doc51.html [http://www-4.ibm.com/software/webservers/httpservers/doc51.html]
+   
+   IBM HTTP Server for OS/390 Version 5.2, Planning, Installing,
+      and Using: Managing your Webserver, Advanced Configuration,
+      "Customizing cache management with the Fast Response Cache
+      Accelerator"
+   http://www-4.ibm.com/software/webservers/httpservers/doc52.html [http://www-4.ibm.com/software/webservers/httpservers/doc52.html]
+   
+   IBM HTTP Server for OS/390 Version 5.3, Planning, Installing,
+      and Using: Managing your Webserver, Advanced Configuration,
+      "Customizing cache management with the Fast Response Cache
+      Accelerator"
+   http://www-4.ibm.com/software/webservers/httpservers/doc53.html [http://www-4.ibm.com/software/webservers/httpservers/doc53.html]
+   
+   A) Under the "Overview" header, in the sentence:
+   
+   "The Fast Response Cache Accelerator can improve the
+   performance of the HTTP Server when serving text and image
+   files; dynamic content and protected pages are not cached."
+   
+   Remove the clause: "dynamic content and protected pages are not
+   cached." and place a period after "files".
+   
+   B) Under the "Overview" section and above the "Planning
+   Considerations" section, add the following section:
+   
+   Cache Accelerator Eligibility
+   
+   Requests for the following objects are not eligible for
+   inclusion in the Cache Accelerator:
+   
+   - dynamically-generated content
+   - objects with associated meta data (as configured in the
+      MetaDir and MetaSuffix directives)
+   - objects generated with SSI
+   - proxy requests
+   - objects served over SSL connections
+   - objects specified by the FRCANoCache (or not specified by
+      FRCACacheOnly) directives
+   
+   Other special cases include the following:
+   - Objects that are protected using the Protect directive are not
+      eligible for loading into the Cache Accelerator unless the
+      mask used is a predefined generic group, such as "Users, All,
+      Anybody, Anyone, Anonymous", or '*'.
+   - When virtual hosting support is enabled, client requests that
+      omit the hostname header are not eligible for loading into
+      the Cache Accelerator.
+   - When the UseACLs directive is configured to "always", then no
+      objects will be loaded into the Cache Accelerator.
+   
+   Once an object is loaded into the Cache Accelerator, it is
+   openly accessible without requiring authentication.  As such,
+   the user should explicitly configure the webserver (as shown
+   above) to prevent objects that require authentication from being
+   loaded into the Cache Accelerator.
+   
+   (Example: While configuring the UserID directive to %%CLIENT%%
+   causes the webserver to require user authentication on the
+   initial request, its use does not affect the Cache Accelerator
+   eligibility of that request.  Hence, the request could still be
+   cached following the initial request.  From that point on, the
+   request would no longer require authentication for access on
+   subsequent requests.)
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PQ40310
+   
+   
+ * REPORTED COMPONENT NAME
+   DGW/WAS OS/390
+   
+   
+ * REPORTED COMPONENT ID
+   5697D4300
+   
+   
+ * REPORTED RELEASE
+   520
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2000-07-31
+   
+   
+ * CLOSED DATE
+   2001-04-04
+   
+   
+ * LAST MODIFIED DATE
+   2001-04-04
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+Publications Referenced SC31869002 SC31869001 FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

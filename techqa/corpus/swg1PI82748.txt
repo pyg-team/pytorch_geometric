@@ -1,0 +1,200 @@
+Title: IBM PI82748: RACF SECURITY MESSAGE ICH408I FOLLOWED BY DFHCE3541 SECURITY INTERFACE ERROR (00000030). SIGN-ON IS TERMINATED. - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  You've installed maintenance to RSU/1701.  You start to receive
+   RACF message:
+   ICH408I USER(  ) GROUP(NOTERM  ) NAME(  )
+     LOGON/JOB INITIATION - NOT AUTHORIZED TO TERMINAL CONSOLE1
+   
+   DFHCE3541  APPLID Security interface error (00000030). Sign-on
+   is terminated.
+   
+   You also see DFHSN1108  APPLID Signon at console CONSOLE1 by
+   user USERID has failed.
+   
+   The trace shows:
+   XS FE04 XSSB  *EXC* FUNCTION(INQUIRE_PASSWORD_DATA)
+   RESPONSE(EXCEPTION) REASON(UNKNOWN_ESM_RESPONSE)
+   SAF_RESPONSE(8) SAF_REASON(0)
+   ESM_RESPONSE(30) ESM_REASON(0) PASSWORD_FAILURES(0)
+   
+   The problem occurs after the installation of CICS APARs PI62428 [http://www-01.ibm.com/support/docview.wss?uid=swg1PI62428]
+   and PI64443 [http://www-01.ibm.com/support/docview.wss?uid=swg1PI64443].
+   
+   PI62428 [http://www-01.ibm.com/support/docview.wss?uid=swg1PI62428] added POE onto the RACROUTE REQUEST=VERIFYX call made
+   by  DFHXSSB to verify the password.  It did not add the SESSION
+   parameter to specify the type of the entry port.  The VERIFYX
+   call was only ever used when the IRRSPW00 call failed.  In this
+   case the pasword is valid so IRRSPW00 would work and the
+   VERIFYX call would never get issued. The subsequent VERIFY
+   ENVIR=CREATE passes both POE and SESSION and so
+   the signon would succeed.
+   
+   
+   PI64443 [http://www-01.ibm.com/support/docview.wss?uid=swg1PI64443] changed DFHXSSB to use the updated version of the
+   IRRSPW00 and to set the fast fail option.  This causes the
+   first IRRSPW00 call to fail immediately (because there isn't a
+   cache entry) and for CICS to use the VERIFYX call to perform
+   the valid signon.  This VERIFYX call fails because it passes
+   POE but does not pass SESSION and the supplied
+   port of entry is a console and not the default of a
+   TSO/terminal session.
+   
+   Additional Symptom(s) Search Keyword(s): KIXREVSWM
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All users with apars PI46508 [http://www-01.ibm.com/support/docview.wss?uid=swg1PI46508] and/or PI62428 [http://www-01.ibm.com/support/docview.wss?uid=swg1PI62428]  *
+   *                 applied.                                     *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: CICS signon error accompanied with      *
+   *                      messages DFHCE3541 and ICH408I.         *
+   ****************************************************************
+   * RECOMMENDATION: .                                            *
+   ****************************************************************
+   UI33709 UI43780 UI33707 UI43779 UI38004 UI42764
+   
+   A user attempts to signon to CICS at a console.  This user only
+   has access via certain consoles and has no access to CICS from
+   a regular terminal.  After the fix for APAR PI46508 [http://www-01.ibm.com/support/docview.wss?uid=swg1PI46508] and/or
+   PI62428 [http://www-01.ibm.com/support/docview.wss?uid=swg1PI62428] is applied the console signon will fail if the user
+   currently has a non-zero password failure count.
+                                                                  .
+   The failure occurs because PI6508/PI62428 added the POE
+   parameter to the RACROUTE REQUEST=VERIFYX call made by DFHXSSB
+   but did not also add the SESSION parameter.  This causes the
+   external security manager to use the default SESSION value which
+   is a standard TSO terminal session.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  UI33709 UI43780 UI33707 UI43779 UI38004 UI42764
+   
+   CICS security code has been amended to pass a SESSION parameter
+   on the RACROUTE=VERIFYX call from within DFHXSSB.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI82748
+   
+   
+ * REPORTED COMPONENT NAME
+   CICS TS Z/OS V5
+   
+   
+ * REPORTED COMPONENT ID
+   5655Y0400
+   
+   
+ * REPORTED RELEASE
+   000
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-06-07
+   
+   
+ * CLOSED DATE
+   2017-09-14
+   
+   
+ * LAST MODIFIED DATE
+   2017-10-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    PI84714 [http://www-01.ibm.com/support/docview.wss?uid=swg1PI84714] PI87053 [http://www-01.ibm.com/support/docview.wss?uid=swg1PI87053] UI50300 UI50301 UI50302
+   
+   
+
+MODULES/MACROS
+ *  DFHUSAD  DFHXSPW  DFHXSPWT DFHXSSB  DFHXSSBT
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CICS TS Z/OS V5
+   
+   
+ * FIXED COMPONENT ID
+   5655Y0400
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R000 PSY UI50300 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI50300]
+   UP17/09/20 P F709
+   
+   
+ * R800 PSY UI50301 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI50301]
+   UP17/09/20 P F709
+   
+   
+ * R900 PSY UI50302 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI50302]
+   UP17/09/20 P F709
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

@@ -1,0 +1,181 @@
+Title: IBM JR34024: WPS 6.1 TO 6.2 MIGRATION FAILS WHEN USING FILESTORES FOR MESSAGING ENGINES IN WINDOWS OPERATING SYSTEM - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Migration of 6.1 to 6.2 fails in Windows operating system due to
+   a case mismatch in the ProfileRegistry.xml file created in the
+   backup directory. The failure happens only when filestores are
+   used for Messaging Engines.
+   
+   The issue - migration code is using the
+   ProfileRegistry.xml file to find the value it can use for source
+   profile root. Here if
+   some entries are using lower case "d:\" and some are using
+   "D:\".
+   
+   If pre-migration the values for sib-engines.xml contain
+   {USER_INSTALL_ROOT} as the path Migration code replaces it with
+   the values we get from profileRegistry.xml.
+   
+   This will later affect the SIB properties in the migrated
+   profile:
+   
+   sib.msgstore.omPermanentStoreOriginalPrefix
+   sib.msgstore.omTemporaryStoreOriginalPrefix
+   
+   The messaging engine using the filestore will not startup since
+   the older profile contained a filestore path as "d:\...." and
+   new profile has "D:\...." set in the above properties.
+   
+   The error message will be:
+   
+   SibMessage    E
+   [BPC.n01aww003Node01Cell.Bus:n01aww003Node01.server1-
+   BPC.n01aww003Node01Cell.Bus] CWSIS0002E: The messaging engine
+   encountered an exception while starting. Exception:
+   com.ibm.ws.sib.
+   msgstore.SeverePersistenceException: ObjectStore not found after
+   warm
+   start!".
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  Windows users migrating to WebSphere        *
+   *                  Process Server v6.2 and using file store as *
+   *                  an Messaging Engine Database                *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Post migration messaging engine         *
+   *                      throws error if filestore is used       *
+   *                      in WebSphere Process Server v6.1        *
+   *                      before migration.                       *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   SIB-Engines.xml file has mismatch of filestore location if
+   the value for profile path in
+   INSTALL\properties\profileRegistry.xml does not match the
+   value of USER_INSTALL_ROOT websphere variable in source
+   profile. This causes messaging engine not able to access the
+   filestore. Problem is only for windows where customers can
+   use different sting case for USER_INSTALL_ROOT and profile
+   location.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The problem is fixed by specifying the file store location in
+   SIB-Engines.xml file to use the exact value specified for
+   variable USER_INSTALL_ROOT with the value being case
+   sensitive. Fix will be provided in the next fixpack of
+   WebSphere Process Server v6.2.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  A tech note has been published for the manual work around.
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR34024
+   
+   
+ * REPORTED COMPONENT NAME
+   WEB PROC SERVER
+   
+   
+ * REPORTED COMPONENT ID
+   5724L0100
+   
+   
+ * REPORTED RELEASE
+   620
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-08-20
+   
+   
+ * CLOSED DATE
+   2009-10-16
+   
+   
+ * LAST MODIFIED DATE
+   2009-10-16
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEB PROC SERVER
+   
+   
+ * FIXED COMPONENT ID
+   5724L0100
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R620 PSY
+   UP

@@ -1,0 +1,46 @@
+Title: IBM Using a CCDT file to connect to multiple WebSphere MQ queue managers using JMS - United States
+
+Text:
+ WHITE PAPER
+
+ABSTRACT
+ The objective of this technical document is to describe in detail how to exploit a client application that is using the WebSphere MQ V7 classes for JMS to connect to multiple queue managers by using an MQ "Client Channel Definition Table" (CCDT). These queue managers are specified in a "queue manager group". 
+
+CONTENT
+ 
+
+Note:
+A WebSphere Support Technical Exchange webcast (audio MP3 file and PDF file) on this subject is available at:
+
+Using a Client Channel Definition Table (CCDT) in WebSphere MQ V7 for Queue Manager Groups [http://www.ibm.com/support/docview.wss?uid=swg27024109]
+
+The objective of this webcast is to describe in detail how to exploit a client application that is using the MQ interface in C or the WebSphere MQ Classes for JMS V7 to connect to multiple queue managers by using an MQ "Client Channel Definition Table" (CCDT).
+
++++
+
+The QMNAME attribute in the CCDT corresponds to the QMANAGER attribute in the Connection Factory.
+
+The JMS testing of the following scenarios will be described from the JMS perspective:
+Scenario 1 - Simplest case, using same QMNAME for a single queue manager (QM3 in host1)
+Scenario 2 - Simplest case, using same QMNAME for a single queue manager (QM3 in another host: host2)
+Scenario 3 - Queue Manager Group: QM1 (no leading asterisk)
+Scenario 4 - Queue Manager Group: *QM1 (with leading asterisk)
+Scenario 5 - Queue Manager Group: ' ' (1 blank character)
+Scenario 6 - Queue Manager Group: QMGROUP1
+Scenario 7 - Multi-Instance Queue Manager
+
+The creation of the CCDT and the above scenarios are described in detail for C-based programs, in the following techdoc.
+
+IBM Techdoc: 7020848
+
+Using a Client Channel Definition Table (CCDT) in WebSphere MQ V7 for Queue Manager Groups [http://www.ibm.com/support/docview.wss?uid=swg27020848]
+
+The referenced techdoc provides more information on what a queue manager group is, how to set the appropriate server-connection channels and client-connection channels, and how to perform the scenarios using samples that are written in C-code.
+
+
+File: Using_CCDT_Multiple_Queue_Managers-JMS.pdf 
+
+Using_CCDT_Multiple_Queue_Managers-JMS.pdf [/support/docview.wss?uid=swg27020862&aid=2]Using_CCDT_Multiple_Queue_Managers-JMS.pdf [/support/docview.wss?uid=swg27020862&aid=1]
+
+PRODUCT ALIAS/SYNONYM
+ WebSphere MQ WMQ

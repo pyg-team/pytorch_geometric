@@ -1,0 +1,76 @@
+Title: IBM Registry Services database installation fails because the database user cannot access files created by non-root user - United States
+
+Text:
+jazzsm11relnotes TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ 
+When you try to install the Registry Services database with non-root user, this installation fails because the database user does not have permission to read the temporary files created by the non-root user.
+
+
+SYMPTOM
+ 
+
+When you run the Jazz for Service Management installer to install the Registry Services database, the installation process fails with the following error messages: 
+
+ 
+
+SEVERE: CTJFN1079E The Registry Services installer was not able to execute the following command: [sh, -c, "/<JAZZSM_HOME>/registry/bin/auxbin/aixinstall.sh" db2inst1 'chmod -R o-w,g-w /tmp/dis_install/db_install_1370262683431/frsDb2Setup/logs' "/<JAZZSM_HOME>/registry/bin/auxbin" "/<JAZZSM_HOME>/registry/bin"].
+Jun 3, 2013 6:01:24 PM com.ibm.frs.install.cli.InstallCli run
+SEVERE: CTJFN0103E The Registry Services installation failed due to the error: CTJFN0028E The script finished the execution with the exit code 127. 
+
+ 
+
+These error messages are recorded in the log files located at <JAZZSM_HOME>/registry/logs directory.
+
+
+CAUSE
+ 
+
+During the installation process, JazzSM extracts the database scripts into the temporary directory.
+
+This problem is caused by any database user who does not have permission to read these temporary files, which are created by the non-root user that is installing Jazz for Service Management.
+
+
+
+ENVIRONMENT
+ 
+
+All UNIX platforms supported by Jazz for Services Management.
+
+
+
+DIAGNOSING THE PROBLEM
+ 
+
+Open the log files located at the <JAZZSM_HOME>/registry/logs directory and look for the error messages CTJFN1079E and CTJFN0103E . 
+
+These messages indicate that Registry Services database installation failed as part of Jazz for Service Management installation.
+
+
+
+RESOLVING THE PROBLEM
+ 
+
+The permanent fix for the defect to prevent the problem is available in the 1.1.0-TIV-JazzSM-Registry-multi-FP001 package. 
+
+
+Ensure that you have this Registry Services Fix Pack 1.1.0.1 version or later installed in your environment.
+
+
+However, if the problem was identified prior to the application of FP1, there are two workarounds available: 
+
+ 
+
+1) Run the Jazz for Service Management installer with the root user to install the Registry Services database. 
+
+ 
+
+2) Change the umask non-root user to grant the database user with access permission to the temporary directories that are created during the installation process. 
+
+For example, run the command umask 022. With this configuration, the default directory permissions are 775 and the default file permissions are 664. 
+
+In this case, set the umask non-root user to its default value after completing the database installation process.
+
+RELATED INFORMATION
+#Installation command [http://pic.dhe.ibm.com/infocenter/tivihelp/v3r1/topic/com.ibm.psc.doc_1.1.0/rs_original/cli/rs_r_install_command.html]

@@ -1,0 +1,26 @@
+Title: IBM Deploying Rule Execution Server resources and handling of different archives - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Why would deploying a managed XOM resource to Rule Execution Server fail with error message 
+GBRXC0126E
+"A resource with the same name and content (identical checksum) already exists in the repository." ?
+Why is it possible to deploy a new .jar file version that does not contain any code change from the earlier .jar version? 
+
+ANSWER
+Before a resource file can be stored, a check is performed to make sure that a file with the same name and content does not already exist in the repository. The check is done differently based on the file extension: 
+
+ * .jar files are considered as a whole as opposed to the individual parts that make up the archive: the checksum is computed on the bytes of the whole file, and it is possible that even though the content of the individual files has not changed, the overall checksum of the .jar file changes (it was created with different timestamps on the contained files, different file metadata or compression level of the archive for example). 
+ * .zip files are not considered as a single file, but rather as the sum of its contained files: the checksum is computed using the checksums of the files that are contained inside the .zip archive, so that if they have not changed, the overall archive is considered not changed, even though the .zip file itself may have changed. 
+
+
+For example, two .jar files created from the same .class files and with different compression level can be deployed as distinct versions, because the overall .jar file checksums are different. The same cannot be done with .zip resources: even though the .zip files have different checksums, their respective contents are made of the same files with identical individual checksum.  
+
+Note that because of APAR RS01267 [http://www-01.ibm.com/support/docview.wss?uid=swg1RS01267] the checksum computed for a .zip resource may be incorrect and prevent from deploying a new version, even though content of files has actually changed.
+
+RELATED INFORMATION
+#Deploying resources [http://pic.dhe.ibm.com/infocenter/dmanager/v8r0m1/topic/com.ibm.wodm.dserver.rules.res.console/topics/tsk_rescons_jxom_res_deploy.html]
+Managed Java XOM [http://pic.dhe.ibm.com/infocenter/dmanager/v8r0m1/topic/com.ibm.wodm.dserver.rules.deploying/topics/tpc_res_managed_jxom_intro.html]
+APAR RS01267 [http://www-01.ibm.com/support/docview.wss?uid=swg1RS01267]

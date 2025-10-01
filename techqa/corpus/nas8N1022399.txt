@@ -1,0 +1,27 @@
+Title: IBM CPD5D1D on CRTPGM or CRTSRVPGM - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ What does it mean when I get a CPD5D1D when creating a program or a service program? 
+
+ANSWER
+Customers frequently report that when creating a program or service program they get a CPD5D1D. This message states that an object in a binding directory was not found. The most common example we see is this:
+
+Message ID . . . . . . : CPD5D1D Severity . . . . . . . : 20 
+Message type . . . . . : Diagnostic 
+Date sent . . . . . . : 12/11/17 Time sent . . . . . . : 09:55:49
+
+Message . . . . : *SRVPGM object QZDMMDTA in library QSOC not found. 
+Cause . . . . . : *SRVPGM object QZDMMDTA in library QSOC was specified in 
+binding directory QUSAPIBD in library *LIBL, but was not found for 
+binding. 
+Recovery . . . : Contact your application provider or service 
+representative. 
+
+This message is not causing the compile to fail. It is simply noting that there is service program or module your binding directory that is not found. The compile will look for every service program and module listed in the BNDDIR, however, that doesn't necessarily mean it needs every one. 
+
+If your compile completes successfully, that means it did not need that service program or module. For the example above, QSOC is 5770SS1 option 23 (Opticonnect). Generally we find that when customers get this, it is because they do not have this option installed (and and presumably do not need it). You can ignore the message. If you do not want to see the message, you can use the RMVBNDDIRE command to remove the entry from the binding directory. 
+
+If you compile is failing, it is not because of the CPD5D1D message. Look for another message (such as CPD5D02) that will explain why your compile is failing. Most likely it is because it is unable to find an export. You will need to figure out where the missing export is supposed to come from, and make sure it is included in your compile either in the MODULE, BNDSRVPGM , or BNDDIR parm of your compile.

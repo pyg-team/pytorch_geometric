@@ -1,0 +1,114 @@
+Title: IBM Detailed System Requirements for WebSphere ILOG Rules for COBOL 7.1 on Windows - United States <a name="CH" >WebSphere ILOG Rules for COBOL 7.1</a 
+
+Text:
+DSRdoc PRODUCT DOCUMENTATION
+
+ABSTRACT
+ This document describes the system requirements for WebSphere ILOG Rules for COBOL 7.1 on Windows 
+
+CONTENT
+ <a name="CH" >WebSphere ILOG Rules for COBOL 7.1</a 
+
+WEBSPHERE ILOG RULES FOR COBOL 7.1
+TAB NAVIGATION
+ *  Windows [http://www.ibm.com/support/docview.wss?uid=swg27019005] - selected tab, 
+ *  z/OS [http://www.ibm.com/support/docview.wss?uid=swg27019004] 
+
+TAB NAVIGATION
+ *  Windows Server 2003 
+ *  Windows Server 2008 
+ *  Windows Vista 
+ *  Windows XP 
+
+
+
+
+OUTLINE
+ * Software Requirements
+ *  Operating System Eclipse Java Runtime Environment 
+ * Compatible with (but not required)
+ *  Tooling Virtualization 
+
+
+
+
+OPERATING SYSTEMS
+Operating System Attributes Applicable Component Notes Windows Platform listing of supported OS Windows Server 2003 R2 Datacenter Edition x86-32 Bitness: 32 Bit
+Deployment Role: Desktop
+Hardware platform: x86-32 Rule Studio plug-in Windows Server 2003 R2 Datacenter Edition x86-64 Bitness: 64 Bit Exploit
+Deployment Role: Desktop
+Hardware platform: x86-64 Rule Studio plug-in Windows Server 2003 R2 Enterprise Edition x86-32 Bitness: 32 Bit
+Deployment Role: Desktop
+Hardware platform: x86-32 Rule Studio plug-in Windows Server 2003 R2 Enterprise Edition x86-64 Bitness: 64 Bit Exploit
+Deployment Role: Desktop
+Hardware platform: x86-64 Rule Studio plug-in Windows Server 2003 R2 Standard Edition x86-32 Bitness: 32 Bit
+Deployment Role: Desktop
+Hardware platform: x86-32 Rule Studio plug-in Windows Server 2003 R2 Standard Edition x86-64 Bitness: 64 Bit Exploit
+Deployment Role: Desktop
+Hardware platform: x86-64 Rule Studio plug-in Windows Server 2003 SP2 Datacenter Edition x86-32 Bitness: 32 Bit
+Deployment Role: Desktop
+Hardware platform: x86-32 Rule Studio plug-in Windows Server 2003 SP2 Datacenter Edition x86-64 Bitness: 64 Bit Exploit
+Deployment Role: Desktop
+Hardware platform: x86-64 Rule Studio plug-in Windows Server 2003 SP2 Enterprise Edition x86-32 Bitness: 32 Bit
+Deployment Role: Desktop
+Hardware platform: x86-32 Rule Studio plug-in Windows Server 2003 SP2 Enterprise Edition x86-64 Bitness: 64 Bit Exploit
+Deployment Role: Desktop
+Hardware platform: x86-64 Rule Studio plug-in Windows Server 2003 SP2 Standard Edition x86-32 Bitness: 32 Bit
+Deployment Role: Desktop
+Hardware platform: x86-32 Rule Studio plug-in Windows Server 2003 SP2 Standard Edition x86-64 Bitness: 64 Bit Exploit
+Deployment Role: Desktop
+Hardware platform: x86-64 Rule Studio plug-in Windows Server 2008 Datacenter Edition x86-32 Bitness: 32 Bit
+Deployment Role: Desktop
+Hardware platform: x86-32 Rule Studio plug-in Windows Server 2008 Datacenter Edition x86-64 Bitness: 64 Bit Exploit
+Deployment Role: Desktop
+Hardware platform: x86-64 Rule Studio plug-in Windows Server 2008 Enterprise Edition x86-32 Bitness: 32 Bit
+Deployment Role: Desktop
+Hardware platform: x86-32 Rule Studio plug-in Windows Server 2008 Enterprise Edition x86-64 Bitness: 64 Bit Exploit
+Deployment Role: Desktop
+Hardware platform: x86-64 Rule Studio plug-in Windows Server 2008 SP2 Datacenter Edition x86-32 Bitness: 32 Bit
+Deployment Role: Desktop
+Hardware platform: x86-32 Rule Studio plug-in Windows Server 2008 SP2 Datacenter Edition x86-64 Bitness: 32 Bit
+Deployment Role: Desktop
+Hardware platform: x86-64 Rule Studio plug-in Windows Server 2008 SP2 Enterprise Edition x86-32 Bitness: 32 Bit
+Deployment Role: Desktop
+Hardware platform: x86-32 Rule Studio plug-in Windows Server 2008 SP2 Enterprise Edition x86-64 Bitness: 32 Bit
+Deployment Role: Desktop
+Hardware platform: x86-64 Rule Studio plug-in Windows Server 2008 SP2 Standard Edition x86-32 Bitness: 32 Bit
+Deployment Role: Desktop
+Hardware platform: x86-32 Rule Studio plug-in Windows Server 2008 SP2 Standard Edition x86-64 Bitness: 32 Bit
+Deployment Role: Desktop
+Hardware platform: x86-64 Rule Studio plug-in Windows Server 2008 Standard Edition x86-32 Bitness: 32 Bit
+Deployment Role: Desktop
+Hardware platform: x86-32 Rule Studio plug-in Windows Server 2008 Standard Edition x86-64 Bitness: 64 Bit Exploit
+Deployment Role: Desktop
+Hardware platform: x86-64 Rule Studio plug-in Windows Vista Business x86-32 Bitness: 32 Bit
+Deployment Role: Desktop
+Hardware platform: x86-32 Rule Studio plug-in Windows Vista Enterprise x86-32 Bitness: 32 Bit
+Deployment Role: Desktop
+Hardware platform: x86-32 Rule Studio plug-in Windows Vista SP1 Business x86-32 Bitness: 32 Bit
+Deployment Role: Desktop
+Hardware platform: x86-32 Rule Studio plug-in Windows Vista SP1 Enterprise x86-32 Bitness: 32 Bit
+Deployment Role: Desktop
+Hardware platform: x86-32 Rule Studio plug-in Windows Vista SP1 Ultimate x86-32 Bitness: 32 Bit
+Deployment Role: Desktop
+Hardware platform: x86-32 Rule Studio plug-in Windows Vista SP2 Business x86-32 Bitness: 32 Bit
+Deployment Role: Desktop
+Hardware platform: x86-32 Rule Studio plug-in Windows Vista SP2 Enterprise x86-32 Bitness: 32 Bit
+Deployment Role: Desktop
+Hardware platform: x86-32 Rule Studio plug-in Windows Vista SP2 Ultimate x86-32 Bitness: 32 Bit
+Deployment Role: Desktop
+Hardware platform: x86-32 Rule Studio plug-in Windows Vista Ultimate x86-32 Bitness: 32 Bit
+Deployment Role: Desktop
+Hardware platform: x86-32 Rule Studio plug-in Windows XP SP2 Professional x86-32 Bitness: 32 Bit
+Deployment Role: Desktop
+Hardware platform: x86-32 Rule Studio plug-in Windows XP SP3 Professional x86-32 Bitness: 32 Bit
+Deployment Role: Desktop
+Hardware platform: x86-32 Rule Studio plug-in  Back to top 
+
+SOFTWARE REQUIREMENTS
+Group Product Applicable OS Applicable Component Notes Eclipse WebSphere ILOG JRules Version 7.0 and future mod levels, and their fix packs.(overview) [http://www.ibm.com/software/integration/business-rule-management/jrules/] (support) [http://www.ibm.com/software/integration/business-rule-management/jrules/support/] All Applicable OS Rule Studio plug-in WebSphere ILOG JRules Version 7.1 and future mod levels, and their fix packs.(overview) [http://www.ibm.com/software/integration/business-rule-management/jrules/] (support) [http://www.ibm.com/software/integration/business-rule-management/jrules/support/] All Applicable OS Rule Studio plug-in Java Runtime Environment Developer Kit for Java Version 5.0 GA and future fix packs. All Applicable OS All Applicable Components IBM SDK for Multiplatforms Java 2 Technology Edition Version 6.0 GA and future fix packs.(overview) [http://www.ibm.com/software/webservers/appserv/runtimes/] (support) [http://www.ibm.com/software/webservers/appserv/runtimes/support/] All Applicable OS All Applicable Components Sun Java SDK/JRE/JDK Version 5.0/1.5 and future fix packs. All Applicable OS All Applicable Components Sun Java SDK/JRE/JDK Version 6.0/1.6 and future fix packs. All Applicable OS All Applicable Components  Back to top 
+
+COMPATIBLE WITH (BUT NOT REQUIRED)
+Group Product Applicable OS Applicable Component Notes Tooling IBM Eclipse SDK 3.4.0 and future fix packs. All Applicable Windows OS Rule Studio plug-in Rational Application Developer 7.5.3 and future mod levels, and their fix packs. All Applicable Windows OS Rule Studio plug-in Rational Software Architect for WebSphere Software 7.5.3 and future mod levels, and their fix packs.(overview) [http://www.ibm.com/software/awdtools/swarchitect/websphere/] (support) [http://www.ibm.com/software/awdtools/swarchitect/websphere/support/] All Applicable Windows OS Rule Studio plug-in WebSphere Business Modeler Advanced 6.2 and future fix packs.(overview) [http://www.ibm.com/software/integration/wbimodeler/advanced/] (support) [http://www.ibm.com/software/integration/wbimodeler/advanced/support/] All Applicable Windows OS Rule Studio plug-in WebSphere Business Modeler Advanced 7.0 and future fix packs.(overview) [http://www.ibm.com/software/integration/wbimodeler/advanced/] (support) [http://www.ibm.com/software/integration/wbimodeler/advanced/support/] All Applicable Windows OS Rule Studio plug-in WebSphere Integration Developer 6.2 and future fix packs.(overview) [http://www.ibm.com/software/integration/wid/] (support) [http://www.ibm.com/software/integration/wid/support/] All Applicable Windows OS Rule Studio plug-in WebSphere Integration Developer 7.0 and future fix packs.(overview) [http://www.ibm.com/software/integration/wid/] (support) [http://www.ibm.com/software/integration/wid/support/] All Applicable Windows OS Rule Studio plug-in Virtualization VMware ESX and ESXi 4.0 and future releases, mod levels, and their fix packs. All Applicable Windows OS Rule Studio plug-in  Back to top 
+
+NOTES / COMMENTS

@@ -1,0 +1,228 @@
+Title: IBM Sametime on IBM i: Common reasons for server not starting - United States
+
+Text:
+Sametime Server; Companion Products; Sametime; Administration; iseries; server; fails to start; os/400; i5/os TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+Your Lotus® Sametime® server fails to start. When you check the messages in the Lotus® Domino® server console, you cannot find the following messages: 
+
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+
+
+You might have just performed a new install of Sametime or an upgrade from an earlier release, and now you are starting the Sametime server for the first time since the install or upgrade. It is also possible that sometimes you are able to start the server successfully, but at other times it fails to start. Note: this document pertains only to Sametime servers running on Lotus Domino, not to the WAS-based servers introduced in Sametime 8.5. 
+
+
+RESOLVING THE PROBLEM
+The most common causes for IBM i Sametime server startup failures are configuration problems or that the process is taking too long, causing internal timeouts to occur. 
+
+Typically, the problem can be solved by correcting the configuration problems, adding additional resources (disk and/or memory) to the system, or by updating the Sametime server configuration to increase its internal timeout values and allow more time for startup to complete.
+
+This technote contains the following sections: 
+
+ * 
+ * Symptoms of Timeout problems
+ * 
+ * Most Common Reasons for Timeout Problems
+ * 
+ * Increasing Sametime's internal timeout values
+ * 
+ * Other Possible Reasons for Server not starting
+
+
+
+
+
+
+Symptoms of Timeout problems If the server is taking too long to start and the process is timing out, you will typically find a Domino console message stating that "Service failed to initialize in the allowed time": 
+
+<date> 09:55:14 AM Sametime: Starting service Event Bridge. 
+<date> 09:55:15 AM Sametime: Service started successfully. 
+<date> 09:55:15 AM Sametime: Starting service Logger. 
+<date> 09:55:15 AM Sametime: Service started successfully. 
+<date> 09:55:15 AM Sametime: Starting service Token Server. 
+<date> 09:55:20 AM Sametime: Service started successfully. 
+<date> 09:55:20 AM Sametime: Starting service T.120 MCU. 
+<date> 09:58:23 AM Sametime: Service failed to initialize in allowed time. 
+<date> 09:58:24 AM Sametime: Service failed to start. 
+<date> 09:58:24 AM Sametime: One or more services failed to start. 
+<date> 09:58:24 AM Sametime: Server startup failed. Shutting down... 
+<date> 09:58:24 AM Sametime: Stopping services... 
+
+Or you find a message in the Domino console like this: 
+
+<date> 02:45:12 PM Sametime: Meeting server: child process died! Ending server. 
+
+and the Domino data directory contains an .nsd file created at the time of failure which contains a call stack similar to this:
+
+[/support/docview.wss?uid=swg21097835&amp;aid=1]
+If it does not appear that your server is timing out during startup, see "Other Possible Reasons for Server not starting" later in this document.
+
+
+
+
+
+
+Most Common Reasons for Timeout Problems There are several known issues that can result in timeouts during the server startup process. 
+
+
+
+
+
+
+Unsupported model or insufficient resources (memory, disk space) 
+
+First you should ensure that your system meets the minimum hardware requirements as documented in "Sametime for IBM i: System Requirements", #1092193 [http://www.ibm.com/support/docview.wss?rs=203&uid=swg21092193]). Startup issues can occur if the you are not using one of the supported system models and processor features. 
+
+Of particular importance during server startup are the number of disk drives and the amount of available memory. We recommend that you have at least 4 disk drives, 2 GB of free disk space for each Sametime server (1 GB minimum) and at least 1 GB of available memory for each Sametime and Domino server on the system. Increasing these should result in faster startup times. 
+
+While you may be able to temporarily work around the resource constraints by increasing internal timeout values (as described further below) or starting the Sametime server when other system activity is low, you will likely still be dissatisfied by the length of time needed to start the server. The proper solution is to upgrade the server to a supported configuration. 
+
+
+
+
+
+
+Insufficient available resources (resources are allocated to other applications) 
+
+Startup issues will occur if the system meets the minimum resource requirements for Sametime but the resources are being used by other applications. 
+
+You can use the online workload estimator to determine an appropriately sized system to run all of your applications. See http://www.ibm.com/systems/support/tools/estimator/ [http://www.ibm.com/systems/support/tools/estimator/] 
+
+Again, you may be able to temporarily work around the resource constraints by increasing internal timeout values (as described below). 
+
+
+
+
+
+
+Increasing Sametime's internal timeout values 
+
+Increasing the internal timeout values in the meetingserver.ini file allows the server to take more time to start up before signalling an error. Normally, this should be viewed as a temporary workaround.
+
+1. From any IBM i command line, type WRKDOMSVR and press Enter. 
+
+2. Type option 12 (Work object links) next to the Sametime server and press Enter. This displays a list of the files and directories in the Sametime server data directory. 
+
+3. Page down until you find meetingserver.ini. Type option 2 (Edit) next to the meetingserver.ini file and press Enter. 
+
+4. Increase the value for the ConfigWaitTime parameter. 
+
+ * 
+ * 
+ * ConfigWaitTime
+ * 
+ * Control
+ * 
+ * ConfigWaitTime=60000 
+ * The value is in milliseconds so the default value is 60 seconds. Increase the value.
+
+
+5. At top of display where it says Control, type StartWaitTime and press Shift-F4 to find the StartWaitTime parameter. You should find the parameter in the [SOFTWARE\Lotus\Sametime\MeetingServer\Services]section of the file:  * 
+ * 
+ * The value is in milliseconds so the default value is 3 minutes. Increase the value. 
+ * NOTE: There is another StartWaitTime parameter in the [SOFTWARE\Lotus\Sametime\MeetingServer\Services\CommunityServer] section of the meetingserver.ini file for which the default value is 0. Do NOT change this value.
+
+
+6. Press F3 twice to Save the file and Exit. 7. Restart the Domino server so the changes take effect. 
+
+If you are running a Sametime 8.5 (or later) Entry server, also see the following technote: 
+
+Sametime on IBM i: Entry server shuts down during startup (# 1417605 [http://www.ibm.com/support/docview.wss?rs=203&uid=swg21417605] ) 
+
+
+
+
+
+
+Other Possible Reasons for Server not starting 
+
+This section describes additional situations which may prevent the server from starting. 
+
+General configuration issues or missing required software 
+
+See "Sametime for IBM i: Most Common Problems" (#1108423 [http://www.ibm.com/support/docview.wss?rs=203&uid=swg21108423] ) for additional information about possible issues with your Server document, host name configuration, Java installation, etc.
+
+
+
+
+
+Very large Domino Directory or directory structure 
+
+Sametime startup issues can occur if the Domino Directory is very large (for example, 800 MB) or the Directory structure includes cascading Address Books or Directory Assistance.
+
+As it starts, Sametime attempts to read the entire Directory or Directory structure into memory. If Sametime is unable to read all the information into memory before the specified timeout period, the startup issues described above occur.
+
+The solution is to increase the internal timeout values in the MeetingServer.ini file (described earlier).
+
+
+
+
+
+Sametime server has not been properly configured to work with SSL 
+
+If this is a Sametime server enabled for SSL and the specific service that fails to start is the configuration bridge, then it is likely related to SSL configuration problems. Please refer to the following technote for additional information:
+
+Sametime server Configuration Bridge service fails to start (#1098735 [http://www.ibm.com/support/docview.wss?rs=203&uid=swg21098735] ) 
+
+
+
+
+
+"Domino Servlet Manager" is not enabled in the server document 
+
+This is likely the problem if the only Sametime job running is STADDIN2. Also, the Domino console indicates that none of the Sametime servlets were initialized, and there is no indication of any attempt to start Sametime services in the console. You do not see the following messages in the Domino console: 
+
+ * 
+ * 
+ * 
+ * 
+
+
+To correct the problem: 1. Open the server document in the Domino directory (names.nsf). 
+
+2. Select the Internet Protocol tab and then select the Domino Web Engine tab. 
+
+3. In the Java Servlets section, set the Java Servlet support field to "Domino Servlet Manager". 
+
+5. Save the server document and restart the server. 
+
+
+
+
+
+
+Extraneous entries in the server task list 
+
+Assuming that your Domino server is dedicated to running Sametime (as recommended), you should check the "ServerTasks" entry in the notes.ini file to ensure you are not starting unnecessary tasks such as QNNINADD, and LEI. Make sure your notes.ini file does not include the following entries:
+
+
+ * 
+ * 
+ * 
+ * 
+
+
+
+
+Problem with PASE installation 
+
+See the following technote for more information: 
+
+Sametime IBM i: Sametime server fails to start, #1256919 [http://www.ibm.com/support/docview.wss?rs=203&uid=swg21256919] 
+
+
+RELATED INFORMATION
+ Sametime on Windows Platforms: Server Fails to Start; " [http://www.ibm.com/support/docview.wss?uid=swg21088815]
+Sametime server Configuration Bridge service fails to [http://www.ibm.com/support/docview.wss?uid=swg21098735]
+Sametime for IBM i: System Requirements [http://www.ibm.com/support/docview.wss?uid=swg21092193]
+
+
+
+
+HISTORICAL NUMBER
+ 197099

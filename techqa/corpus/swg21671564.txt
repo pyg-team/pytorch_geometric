@@ -1,0 +1,51 @@
+Title: IBM A NullPointerException message occurs while accessing the BPC Explorer in IBM Business Process Manager (BPM) - United States
+
+Text:
+beforePhase; BPC Explorer; NullPointerException. setNames TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When you access the Business Process Choreographer (BPC) Explorer, an error is displayed in the browser such as "Problem occured during redirection!" 
+
+SYMPTOM
+In the FFDC file, you see the following messages:
+
+[14-4-17 16:01:06:777 CST] 0000004d lifecycle W JSF1053: (Listener: com.ibm.bpc.explorer.util.InitListener.beforePhase(), Phase ID: RESTORE_VIEW 1, View ID: "") Exception thrown during phase-listener execution: java.lang.NullPointerException
+[14-4-17 16:01:06:779 CST] 0000004d lifecycle W com.ibm.bpc.explorer.beans.UserBean.setNames(UserBean.java:195)
+com.ibm.bpc.explorer.beans.UserBean.initialize(UserBean.java:357)
+com.ibm.bpc.explorer.util.InitListener.beforePhase(InitListener.java:77)
+com.sun.faces.lifecycle.Phase.handleBeforePhase(Phase.java:214)
+com.sun.faces.lifecycle.Phase.doPhase(Phase.java:96)
+com.sun.faces.lifecycle.RestoreViewPhase.doPhase(RestoreViewPhase.java:104)
+com.sun.faces.lifecycle.LifecycleImpl.execute(LifecycleImpl.java:118)
+javax.faces.webapp.FacesServlet.service(FacesServlet.java:265)
+com.ibm.ws.webcontainer.servlet.ServletWrapper.service(ServletWrapper.java:1658)
+com.ibm.ws.webcontainer.servlet.ServletWrapper.service(ServletWrapper.java:1598)
+com.ibm.ws.webcontainer.filter.WebAppFilterChain.doFilter(WebAppFilterChain.java:149)
+com.ibm.bpm.servlet.filters.CachingFilter.doFilter(CachingFilter.java:94)
+com.ibm.ws.webcontainer.filter.FilterInstanceWrapper.doFilter(FilterInstanceWrapper.java:190)
+com.ibm.ws.webcontainer.filter.WebAppFilterChain.doFilter(WebAppFilterChain.java:125)
+com.ibm.bpm.servlet.filters.CompressionFilter.doFilter(CompressionFilter.java:100)
+com.ibm.ws.webcontainer.filter.FilterInstanceWrapper.doFilter(FilterInstanceWrapper.java:190)
+com.ibm.ws.webcontainer.filter.WebAppFilterChain.doFilter(WebAppFilterChain.java:125)
+com.ibm.bpc.explorer.util.SessionCheckFilter.doFilter(SessionCheckFilter.java:191)
+com.ibm.ws.webcontainer.filter.FilterInstanceWrapper.doFilter(FilterInstanceWrapper.java:190)
+com.ibm.ws.webcontainer.filter.WebAppFilterChain.doFilter(WebAppFilterChain.java:125)
+com.ibm.bpe.jsf.util.UnicodeFilter.doFilter(UnicodeFilter.java:118)
+
+
+CAUSE
+The Configuring administrative and application security [http://www.ibm.com/support/knowledgecenter/SSFPJS_7.5.1/com.ibm.wbpm.admin.doc/topics/tsec_enablingglobal.html?cp=SSFPJS_7.5.1&lang=en] topic mentions the following information: 
+
+Important: Application security is required by IBM Business Process Manager and must not be turned off in the administrative console. Application security is also enabled by default, and is in effect only when administrative security is enabled.
+
+
+RESOLVING THE PROBLEM
+To resolve this issue, enable the administrative security and application security of IBM Business Process Manager.
+
+ 
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Business Process Manager Standard Business Process Choreographer AIX, Linux, Solaris, Windows 8.5, 8.0.1, 8.0 Business Integration IBM Business Process Manager Express Business Process Choreographer Linux, Windows 8.5, 8.0.1, 8.0 
+PRODUCT ALIAS/SYNONYM
+ BPM

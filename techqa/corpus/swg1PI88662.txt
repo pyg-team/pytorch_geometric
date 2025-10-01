@@ -1,0 +1,151 @@
+Title: IBM PI88662: MEMORY ISSUES/SEG FAULTS WITH ACTIVE COMPOSITIONS - United States
+
+Text:
+  A FIX IS AVAILABLE
+IBM Rational Rhapsody 8.3.0 [http://www-01.ibm.com/support/docview.wss?uid=swg24044061]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  when I create an active class(A) that has a composition
+   relationship with another active class(B) I will often
+   experience segmentation faults when I try to destroy class A.
+   This often happens in unit testing when I frequently setup and
+   teardown the class under test.  When I run valgrind on the
+   component, I also see numerous memory issues from these linux
+   configurations.
+   
+   I understand there are some timing issues with starting /
+   stopping threads  what I d like to know is how to resolve these
+   options without having to resort to arbitrary delays?
+   Even when I don t see segmentation faults, I m seeing memory
+   errors when run under valgrind.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  The possible solution is to override this function in the model
+   and add OXFTDelay(0) call, which doesn't delay anything but
+   switches context to other ready threads.
+   
+   According to the user, using OXFTDelay with an argument > 0 does
+   resolve the segfaults, but a value of 0 does not.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * Rhapsody                                                     *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * Active thread should take control to end dispatching of      *
+   * events. It is not done for inner active part of active       *
+   * composite object. As a result, queue semaphore stays locked  *
+   * in Linux and causes crash.                                   *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Switching context added to OMThread::endDispatching function if
+   it is called from different thread.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI88662
+   
+   
+ * REPORTED COMPONENT NAME
+   TLOGIC RHAPSODY
+   
+   
+ * REPORTED COMPONENT ID
+   5724V74RP
+   
+   
+ * REPORTED RELEASE
+   821
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-10-11
+   
+   
+ * CLOSED DATE
+   2017-12-04
+   
+   
+ * LAST MODIFIED DATE
+   2017-12-04
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TLOGIC RHAPSODY
+   
+   
+ * FIXED COMPONENT ID
+   5724V74RP
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R821 PSY
+   UP

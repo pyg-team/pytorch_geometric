@@ -1,0 +1,84 @@
+Title: IBM 【セキュリティ情報】 IBM WebSphere MQ Internet Pass-Thru の IBM SDK, Java™ Technology Edition, Version 7 に脆弱性 (CVE-2014-4263, CVE-2014-4244, CVE-2014-3068) - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ IBM WebSphere MQ Internet Pass-Thru で提供されているIBM SDK, Java™ Technology Edition Version 7 に複数の脆弱性が存在しています。
+修正ファイルService Refresh 7 Fix Pack 1が公開されました。
+
+
+
+VULNERABILITY DETAILS
+次のCVEに対する修正が含まれます。 
+
+CVEID: CVE-2014-4263 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-4263]
+DESCRIPTION: An unspecified vulnerability related to the Security component has partial confidentiality impact, partial integrity impact, and no availability impact.
+CVSS Base Score: 4
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/94606 [https://exchange.xforce.ibmcloud.com/vulnerabilities/94606] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:H/Au:N/C:P/I:P/A:N) 
+
+CVEID: CVE-2014-4244 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-4244]
+DESCRIPTION: An unspecified vulnerability related to the Security component has partial confidentiality impact, partial integrity impact, and no availability impact.
+CVSS Base Score: 4
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/94605 [https://exchange.xforce.ibmcloud.com/vulnerabilities/94605] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:H/Au:N/C:P/I:P/A:N) 
+
+CVEID: CVE-2014-3068 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-3068]
+DESCRIPTION: A vulnerability in the Java Certificate Management System (CMS) keystore provider potentially allows brute-force private key recovery from CMS keystores. 
+CVSS Base Score: 2.4
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/93756 [https://exchange.xforce.ibmcloud.com/vulnerabilities/93756] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:L/AC:H/Au:S/C:P/I:P/A:N)
+
+AFFECTED PRODUCTS AND VERSIONS
+次の製品に影響があります。 
+
+-WebSphere MQIPT 2.1 で提供しているIBM SDK, Java™ Technology Edition, Version 7 (SR7 FP1より古いレベル)
+
+REMEDIATION/FIXES
+修正策： 
+
+
+下記のリンクの Download package セクションから Security update for JRE - SupportPac MS81 を選択、Updated JREs for MQIPT をダウンロードしてください。
+MS81: WebSphere MQ Internet Pass-Thru [http://www.ibm.com/support/docview.wss?uid=swg24006386] 
+
+下記のリンクを参照し、JREを更新してください。
+http://www.ibm.com/support/docview.wss?uid=swg21678663 [http://www-01.ibm.com/support/docview.wss?uid=swg21678663]
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v2 Guide [http://www.first.org/cvss/v2/guide] 
+On-line Calculator v2 [http://nvd.nist.gov/CVSS-v2-Calculator] 
+[IBMサイト] 
+この文書は、米国 IBM 社の資料を翻訳した参考文書です。翻訳元の文書は、以下のリンクよりご参照ください。 
+Security Bulletin: IBM WebSphere MQ Internet Pass-Thru is affected by multiple vulnerabilities in IBM SDK, Java™ Technology Edition, Version 7 (CVE-2014-4263, CVE-2014-4244, CVE-2014-3068) [http://www.ibm.com/support/docview.wss?uid=swg21693145] 
+
+公開済みのフィックスパックについては、以下のサイトよりご利用いただけます。 
+Recommended fixes for WebSphere MQ [http://www-01.ibm.com/support/docview.wss?rs=171&uid=swg27006037] 
+
+フィックス・パックの公開予定については、以下のサイトよりご確認いただけます。 
+WebSphere MQ planned maintenance release dates [http://www-01.ibm.com/support/docview.wss?rs=171&uid=swg27006309] 
+
+[CVSS情報] 
+独立行政法人 情報処理推進機構: 共通脆弱性評価システムCVSS概説 [http://www.ipa.go.jp/security/vuln/CVSS.html] 
+JVN iPedia: CVSS計算ソフトウェア日本語版 [http://jvndb.jvn.jp/cvss/ja.html] 
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] 
+. 
+【お問合せ先】 
+技術的な内容に関して、サービス契約のあるお客様はIBMサービス・ラインにお問い合わせください。 
+IBM サービス・ライン [http://www.ibm.com/jp/news/20070420001.html] 
+. 
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY. 
+
+関連情報
+ An US English translation is available [http://www.ibm.com/support/docview.wss?uid=swg21693145]

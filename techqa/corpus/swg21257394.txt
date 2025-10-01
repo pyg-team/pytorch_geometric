@@ -1,0 +1,42 @@
+Title: IBM Announcement Letter for CICS Transaction Server for z/OS V3.2 - United States
+
+Text:
+Announcement Letters ; announcements ; CICS TS 3.2 V3.2 ; 5655M1500 R650 650 R500 500 HCI6500 5655-M15 5655M15 KIXINFO kixdcfpi32a retention32 PRODUCT LIFECYCLE
+
+ABSTRACT
+ General Availability (GA) of CICS Transaction Server for z/OS (CICS TS) V3.2 was 29 June 2007. CICS TS V3.2 delivers significant innovation for application connectivity, application reuse, and service management. This document contains a brief overview of CICS TS V3.1. It also contains a link to the announcement letter, information center, and a Webcast replay. 
+
+CONTENT
+Following is the Overview from the CICS TS V3.2 Announcement Letter. For more details: 
+
+ * See the US Announcement Letter for CICS TS V3.2 [http://www.ibm.com/common/ssi/fcgi-bin/ssialias?infotype=an&subtype=ca&supplier=897&appname=IBMLinkRedirect&letternum=ENUS207-051]. Information for other country announcement letters is located here [http://www.ibm.com/common/ssi/index.wss].
+   
+ * See the CICS TS V3.2 information center [http://publib.boulder.ibm.com/infocenter/cicsts/v3r2/index.jsp]. 
+   
+ * Listen to the Webcast replay on CICS Transaction Server V3.2 [http://www.ibm.com/support/docview.wss?uid=swg27009566].
+
+
+_______________________________________________________ 
+
+Overview 
+
+CICS Transaction Server for z/OS (CICS TS) V3.2 provides open standards-based connectivity, enabling CICS applications to be integrated within a service-oriented architecture (SOA), while preserving the long-established CICS qualities of security, reliability, data integrity, and optimal application responsiveness. 
+
+The major new functions in CICS TS V3.2 fall into three main areas: 
+
+Application connectivity — New Web services capabilities include support for recent standards, interoperability profiles, and the ability to send large amounts of binary data efficiently. The ability to interconnect CICS regions over TCP/IP for Distributed Program Link (DPL) allows exploitation of System z IP networking, and provides an alternative to Systems Network Architecture (SNA). All CICS TCP/IP workloads benefit from simple and robust systems and workload management facilities. 
+
+Application reuse — Enhancements to the efficiency of deploying Web services into CICS include handling a wider range of programming language and XML data types and attributes, and improvements to performance and diagnostics. Applications will now automatically utilize 64-bit storage for data held in containers, providing for improved scalability and performance. The CICS integrated translator is now supported by the z/OS XL C/C++ compiler, delivering more comprehensive development and debug capabilities. 
+
+Service management — Online management of program libraries makes it easier to maintain continuous system availability while bringing new or changed applications into production. Support for Enterprise Workload Manager (EWLM) makes possible end-to-end workload monitoring in heterogeneous environments. Potential for performance enhancements is offered by making threadsafe the core APIs for accessing local and RLS VSAM files, journals, WebSphere MQ, and system autoinstalled Global User Exits. There is improved management of Java™ workloads. The CICSPlex SM Web User Interface has new help and map capabilities and usability enhancements. 
+
+Larger amounts of data can now be stored in shared data tables (>2 GB) and VSAM entry sequenced data set (ESDS) files (>4 GB). Improvements to monitoring and statistics facilities include more precise timing data and compression of monitoring records. The default internal trace table size has been increased for better problem diagnosis. The limit on the number of CICS regions supported in a sysplex is increased by enabling a CICS region to join a named XCF group. 
+RELATED INFORMATION
+#Announcement Letters for CICS Products [http://www.ibm.com/support/docview.wss?uid=swg21227090]
+IBM Software Support Lifecycle [http://www.ibm.com/software/support/lifecycle/index_c.html]
+
+
+
+
+PRODUCT ALIAS/SYNONYM
+ CICS/TS CICS TS CICS Transaction Server

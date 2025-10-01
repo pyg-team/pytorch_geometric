@@ -1,0 +1,177 @@
+Title: IBM IV06659: SQL EXCEPTION "RESULT SET IS CLOSED" IN TOPOLOGYBUILDER AGENTS - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  An intermittent error may occur when TopologyBuilder
+   agents process a very large numbers of objects. The error may
+   occur when using DB2 or Oracle and it has been reported for four
+   different TopologyBuilder agents:
+   
+   ComputerSystemConsolidationAgent
+   ConnectionDependencyAgent2
+   L2Agent
+   PortAppScanConsolidationAgent
+   
+   
+   The following log messages include the information that is
+   common to all occurrences:
+   
+   javax.jdo.JDODataStoreException: Failed to read the result set :
+   [jcc][t4][10120][10898][3.59.81] Invalid operation: result set
+   is closed. ERRORCODE=-4470, SQLSTATE=null
+           at
+   org.datanucleus.jdo.JDOAdapter.getDataStoreExceptionForException
+   (JDOAdapter.java:1106)
+           at
+   org.datanucleus.store.rdbms.query.legacy.LegacyScrollableQueryRe
+   sult.getObjectForIndex(LegacyScrollableQueryResult.java:213)
+           at
+   org.datanucleus.store.rdbms.query.legacy.LegacyScrollableQueryRe
+   sult$ryResultIterator.next(LegacyScrollableQueryResult.java:338)
+    .
+    .
+    .
+   NestedThrowablesStackTrace:
+   com.ibm.db2.jcc.am.SqlException:
+   [jcc][t4][10120][10898][3.59.81]
+   Invalid operation: result set is closed. ERRORCODE=-4470,
+   SQLSTATE=null
+           at com.ibm.db2.jcc.am.dd.a(dd.java:660)
+           at com.ibm.db2.jcc.am.dd.a(dd.java:60)
+           at com.ibm.db2.jcc.am.dd.a(dd.java:103)
+           at com.ibm.db2.jcc.am.qm.Db(qm.java:4381)
+           at com.ibm.db2.jcc.am.qm.o(qm.java:1493)
+           at com.ibm.db2.jcc.am.qm.absolute(qm.java:2127)
+           at
+   org.apache.commons.dbcp.DelegatingResultSet.absolute(DelegatingR
+   esultSet.java:373)
+           at
+   org.apache.commons.dbcp.DelegatingResultSet.absolute(DelegatingR
+   esultSet.java:373)
+           at
+   org.datanucleus.store.rdbms.query.legacy.LegacyScrollableQueryRe
+   sult.getObjectForIndex(LegacyScrollableQueryResult.java:195)
+           at
+   org.datanucleus.store.rdbms.query.legacy.LegacyScrollableQueryRe
+   sult$ryResultIterator.next(LegacyScrollableQueryResult.java:338)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  During TopologyBuilder execution, if a very large number
+   of objects were being processed, an SQL exception with error
+   code -4470 and text "result set is closed" could occur
+   preventing the TopologyBuilder agent from completing its
+   processing.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The code was modified to prevent the exception from occurring.
+   
+   
+   
+   The fix for this APAR is contained in the following maintenance
+   packages:
+   | Fix Pack | 7.2.1-TIV-ITADDM-FP0001
+   
+   
+   Check the IBM Software Support web site for availability of the
+   above maintenance packages.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV06659
+   
+   
+ * REPORTED COMPONENT NAME
+   APP DEPENDENCY
+   
+   
+ * REPORTED COMPONENT ID
+   5724N5500
+   
+   
+ * REPORTED RELEASE
+   721
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-08-22
+   
+   
+ * CLOSED DATE
+   2011-10-11
+   
+   
+ * LAST MODIFIED DATE
+   2011-10-11
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   APP DEPENDENCY
+   
+   
+ * FIXED COMPONENT ID
+   5724N5500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R721 PSY
+   UP

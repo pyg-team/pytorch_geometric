@@ -1,0 +1,126 @@
+Title: IBM Information Server Pack for Salesforce.com requires IS changes when SSL 3.0 encryption is disabled by Salesforce - United States
+
+Text:
+Received fatal alert: handshake_failure; handshake_failure Salesforce.com TLS disable SSL v3.0 SSLHandshakeException FLASH (ALERT)
+
+ABSTRACT
+ Salesforce is disabling SSL 3.0 encryption and changes are needed for Information Server (IS) 8.5 and 8.7 to conect using TLS. No changes are needed on IS 9.1. 
+
+CONTENT
+Salesforce will be disabling SSL 3.0 encryption. This was announced in Salesforce Knowledge Article Number 000206013 [https://help.salesforce.com/apex/HTViewSolution?urlname=Salesforce-disabling-SSL-3-0-encryption&language=en_US&elq_mid=7926&elq_cid=19583161]. After Salesforce disables SSL 3.0 encryption, the Pack for Salesforce.com will need to use TLS encryption, which requires configuration changes in Information Server 8.5 and 8.7. IS 9.1 does not require any configuration changes. The switch from SSL 3.0 to TLS will be transparent.
+
+
+Below are the changes that need to be made for IS 8.5 and 8.7.
+
+
+
+ 1. On each server hosting the Engine tier locate the file ssl.client.props.  * On IS 8.5 ssl.client.props is located in <install_directory>/ASBNode/eclipse/plugins/com.ibm.isf.client_8.5.0.0
+       
+       
+     * On IS 8.7 ssl.client.props is located in <install_directory>/ASBNode/eclipse/plugins/com.ibm.isf.client
+       
+       
+       Where <install_directory> is the location where Information Server is installed.
+       
+       
+    
+    
+ 2. Edit the file ssl.client.props and update the property com.ibm.ssl.protocol to use the SSL_TLS This is done by editing the following two lines:
+    
+     * Locate com.ibm.ssl.protocol=SSL and add a hash, e.g. "#" to the beginning of the line. The updated line should now be: #com.ibm.ssl.protocol=SSL
+       
+       
+     * Locate #com.ibm.ssl.protocol=SSL_TLS and remove the hash, e.g. "#" from the beginning of the line. The updated line should now be: 
+       com.ibm.ssl.protocol=SSL_TLS
+       
+       
+     * Save the file.
+    
+    
+
+
+Information Server is now configured to use SSL v3.0 or TLS and jobs will now be able to connect to Salesforce using TLS. If the update is not made you will see an error similar to the following when trying to connect to Salesforce after SSL 3.0 is disabled: 
+
+main_program: Fatal Error: Information: error code: 8 
+error message: ; nested exception is: 
+javax.net.ssl.SSLHandshakeException: Received fatal alert: handshake_failure 
+AxisFault 
+faultCode: {http://schemas.xmlsoap.org/soap/envelope/}Server.userException 
+faultSubcode: 
+faultString: javax.net.ssl.SSLHandshakeException: Received fatal alert: handshake_failure 
+faultActor: 
+faultNode: 
+faultDetail: 
+{http://xml.apache.org/axis/}stackTrace:javax.net.ssl.SSLHandshakeException: Received fatal alert: handshake_failure 
+at com.ibm.jsse2.n.a(n.java:8) 
+at com.ibm.jsse2.n.a(n.java:14) 
+at com.ibm.jsse2.tc.b(tc.java:654) 
+at com.ibm.jsse2.tc.a(tc.java:599) 
+at com.ibm.jsse2.tc.g(tc.java:416) 
+at com.ibm.jsse2.tc.a(tc.java:461) 
+at com.ibm.jsse2.j.write(j.java:23) 
+at java.io.BufferedOutputStream.flushBuffer(BufferedOutputStream.java:76) 
+at java.io.BufferedOutputStream.flush(BufferedOutputStream.java:134) 
+at org.apache.commons.httpclient.ChunkedOutputStream.flush(ChunkedOutputStream.java:191) 
+at org.apache.commons.httpclient.methods.EntityEnclosingMethod.writeRequestBody(EntityEnclosingMethod.java:506) 
+at org.apache.commons.httpclient.HttpMethodBase.writeRequest(HttpMethodBase.java:2114) 
+at org.apache.commons.httpclient.HttpMethodBase.execute(HttpMethodBase.java:1096) 
+at org.apache.commons.httpclient.HttpMethodDirector.executeWithRetry(HttpMethodDirector.java:398) 
+at org.apache.commons.httpclient.HttpMethodDirector.executeMethod(HttpMethodDirector.java:171) 
+at org.apache.commons.httpclient.HttpClient.executeMethod(HttpClient.java:397) 
+at org.apache.axis.transport.http.CommonsHTTPSender.invoke(CommonsHTTPSender.java:196) 
+at org.apache.axis.strategies.InvocationStrategy.visit(InvocationStrategy.java:32) 
+at org.apache.axis.SimpleChain.doVisiting(SimpleChain.java:118) 
+at org.apache.axis.SimpleChain.invoke(SimpleChain.java:83) 
+at org.apache.axis.client.AxisClient.invoke(AxisClient.java:165) 
+at org.apache.axis.client.Call.invokeEngine(Call.java:2784) 
+at org.apache.axis.client.Call.invoke(Call.java:2767) 
+at org.apache.axis.client.Call.invoke(Call.java:2443) 
+at org.apache.axis.client.Call.invoke(Call.java:2366) 
+at org.apache.axis.client.Call.invoke(Call.java:1812) 
+at com.sforce.soap.partner.SoapBindingStub.login(SoapBindingStub.java:2248) 
+at com.ibm.is.erp.salesforce.core.SalesForceConnection.login(SalesForceConnection.java:534) 
+at com.ibm.is.erp.salesforce.core.SalesForceConnection.&lt;init&gt;(SalesForceConnection.java:133) 
+at com.ibm.is.erp.salesforce.core.SalesForceConnection.creatConnection(SalesForceConnection.java:188) 
+at com.ibm.is.erp.salesforce.jcconnector.CC_SALESFORCEJCConnection.connect(CC_SALESFORCEJCConnection.java:403) 
+{http://xml.apache.org/axis/}hostname:ipsaix00035.swg.usma.ibm.com 
+javax.net.ssl.SSLHandshakeException: Received fatal alert: handshake_failure 
+at org.apache.axis.AxisFault.makeFault(AxisFault.java:101) 
+at org.apache.axis.transport.http.CommonsHTTPSender.invoke(CommonsHTTPSender.java:301) 
+at org.apache.axis.strategies.InvocationStrategy.visit(InvocationStrategy.java:32) 
+at org.apache.axis.SimpleChain.doVisiting(SimpleChain.java:118) 
+at org.apache.axis.SimpleChain.invoke(SimpleChain.java:83) 
+at org.apache.axis.client.AxisClient.invoke(AxisClient.java:165) 
+at org.apache.axis.client.Call.invokeEngine(Call.java:2784) 
+at org.apache.axis.client.Call.invoke(Call.java:2767) 
+at org.apache.axis.client.Call.invoke(Call.java:2443) 
+at org.apache.axis.client.Call.invoke(Call.java:2366) 
+at org.apache.axis.client.Call.invoke(Call.java:1812) 
+at com.sforce.soap.partner.SoapBindingStub.login(SoapBindingStub.java:2248) 
+at com.ibm.is.erp.salesforce.core.SalesForceConnection.login(SalesForceConnection.java:534) 
+at com.ibm.is.erp.salesforce.core.SalesForceConnection.<init>(SalesForceConnection.java:133) 
+at com.ibm.is.erp.salesforce.core.SalesForceConnection.creatConnection(SalesForceConnection.java:188) 
+at com.ibm.is.erp.salesforce.jcconnector.CC_SALESFORCEJCConnection.connect(CC_SALESFORCEJCConnection.java:403) 
+Caused by: javax.net.ssl.SSLHandshakeException: Received fatal alert: handshake_failure 
+at com.ibm.jsse2.n.a(n.java:8) 
+at com.ibm.jsse2.n.a(n.java:14) 
+at com.ibm.jsse2.tc.b(tc.java:654) 
+at com.ibm.jsse2.tc.a(tc.java:599) 
+at com.ibm.jsse2.tc.g(tc.java:416) 
+at com.ibm.jsse2.tc.a(tc.java:461) 
+at com.ibm.jsse2.j.write(j.java:23) 
+at java.io.BufferedOutputStream.flushBuffer(BufferedOutputStream.java:76) 
+at java.io.BufferedOutputStream.flush(BufferedOutputStream.java:134) 
+at org.apache.commons.httpclient.ChunkedOutputStream.flush(ChunkedOutputStream.java:191) 
+at org.apache.commons.httpclient.methods.EntityEnclosingMethod.writeRequestBody(EntityEnclosingMethod.java:506) 
+at org.apache.commons.httpclient.HttpMethodBase.writeRequest(HttpMethodBase.java:2114) 
+at org.apache.commons.httpclient.HttpMethodBase.execute(HttpMethodBase.java:1096) 
+at org.apache.commons.httpclient.HttpMethodDirector.executeWithRetry(HttpMethodDirector.java:398) 
+at org.apache.commons.httpclient.HttpMethodDirector.executeMethod(HttpMethodDirector.java:171) 
+at org.apache.commons.httpclient.HttpClient.executeMethod(HttpClient.java:397) 
+at org.apache.axis.transport.http.CommonsHTTPSender.invoke(CommonsHTTPSender.java:196) 
+... 14 more 
+
+
+Related Information 
+Security Bulletin: Vulnerability in SSLv3 affects IBM WebSphere Application Server (CVE-2014-3566) [http://www.ibm.com/support/docview.wss?uid=swg21687173]

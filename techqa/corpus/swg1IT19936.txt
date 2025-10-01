@@ -1,0 +1,143 @@
+Title: IBM IT19936: PUREAPPLICATION SYSTEM: UNABLE TO UPDATE DOCKER CONTAINER VERSION - United States
+
+Text:
+  A FIX IS AVAILABLE
+IBM PureApplication System Version 2.2.3.0 [http://www-01.ibm.com/support/docview.wss?uid=swg24043076]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Docker containers cannot be updated using PureApplication
+   Service 2.2.2.1.
+   For a pattern with Docker container IBM Integration Bus
+   v10.0.0.6 and IIB container v10.0.0.7 in private Docker
+   registry, no new versions of IIB container are available.
+   
+   In instance console: Operations > Container part > Update image,
+   no new version of IIB container appears, so it cannot be
+   updated.
+   
+   The docker registry certificate file location has already been
+   changed on the virtual machine (VM), but the operation is still
+   looking for the old path.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  The work around is manually copy the  certificate file to the
+   old path.
+   Run this command on the VM (should be all on one line).
+   cp
+   /etc/pki/ca-trust/source/anchors/wl169050150136.pureapplication.
+   ibmcloud.com.crt /etc/ssl/certs/ca-certificates.crt
+   Then reopen the management console and select the operation
+   again.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  The certificate location needs to be updated to the
+   new location in the updated docker code.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A code fix is being provided in PureApplication System and
+   BlueMix Local System version 2.2.3.0.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT19936
+   
+   
+ * REPORTED COMPONENT NAME
+   PAPP SVC PLATFO
+   
+   
+ * REPORTED COMPONENT ID
+   5725R7200
+   
+   
+ * REPORTED RELEASE
+   222
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-03-29
+   
+   
+ * CLOSED DATE
+   2017-04-20
+   
+   
+ * LAST MODIFIED DATE
+   2017-04-20
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   PAPP SYS 8382 I
+   
+   
+ * FIXED COMPONENT ID
+   5725G3200
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R223 PSY
+   UP

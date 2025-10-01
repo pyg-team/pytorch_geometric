@@ -1,0 +1,164 @@
+Title: IBM MustGather: Overview of Application Server, Node Agent, and Deployment Manager Hang Problems for IBM i (i5/OS) - United States
+
+Text:
+mustgather; mustgather; mustgather; MustGatherDocument TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ If you are experiencing performance or hang issues with WebSphere Application Server on the IBM i OS, this MustGather document will assist you in collecting the data necessary to diagnose and resolve the issue. 
+
+SYMPTOM
+Web applications being hosted by WebSphere Application Server become unresponsive or inaccessible.
+
+
+ENVIRONMENT
+WebSphere Application Server v6.1 and later for IBM i OS
+
+DIAGNOSING THE PROBLEM
+Gathering this MustGather information before calling IBM support will help you understand the problem and save time analyzing the data.
+
+RESOLVING THE PROBLEM
+If you are experiencing performance or hang issues with the following, please collect the data outlined below:
+
+
+ * Application Server - Extend a Web server's capabilities to handle Web application requests, typically using Java™ technology. An application server makes it possible for a server to generate a dynamic, customized response to a client request. The Application Server product provides multiple application servers that can be either separately configured processes or nearly identical clones.
+
+ * Node Agent - Node agents are administrative agents that represent a node to your system and manage the servers on that node. Node agents monitor application servers on a host system and route administrative requests to servers. A node agent is created automatically when a node is added to a cell.
+
+ * Deployment Manager - Deployment managers are administrative agents that provide a centralized management view for all nodes in a cell, as well as management of clusters and workload balancing of application servers across one or several nodes in some editions. A deployment manager hosts the administrative console. A deployment manager provides a single, central point of administrative control for all elements of the entire Application Server distributed cell.
+
+
+All of the preceding processes represent a Java Virtual Machine (JVM™). For all the Java Virtual Machine (JVM) hang issues, collect the following information. There is a list of links provided at the bottom of this document that routes you to the how-to documents for steps that require additional instructions. 
+
+Collect the following information when the application server process (job) is experiencing the problem: 
+
+Note: If you are running the Network Deployment (ND) edition of WebSphere Application Server, complete the following steps for the Deployment Manager AND the Federated Node experiencing the problem. 
+ 1. Run the following commands to collect system information to be sent to IBM:
+    WRKPTFGRP (use F6 to print or send a screen shot showing the installed status of PTFs)
+    
+    DSPPTF OUTPUT(*PRINT)
+    
+    WRKSYSSTS OUTPUT(*PRINT)
+    
+    WRKSBS OUTPUT(*PRINT)
+    
+    WRKSHRPOOL OUTPUT(*PRINT)
+    
+    WRKACTJOB OUTPUT(*PRINT)
+    
+ 2. Java Thread Dumps from the hung JVM. Appendix A: How to collect a JVM thread dump for a server in a hung state.
+    
+ 3. WebSphere Collector tool output. Running the collector tool V8.5.5, V8.5 [http://pic.dhe.ibm.com/infocenter/wasinfo/v8r5/topic/com.ibm.websphere.express.iseries.doc/ae/ttrb_runct.html], V8.0 [http://pic.dhe.ibm.com/infocenter/wasinfo/v8r0/topic/com.ibm.websphere.express.iseries.doc/info/iseriesexp/ae/ttrb_runct.html], V7.0 [http://pic.dhe.ibm.com/infocenter/wasinfo/v7r0/topic/com.ibm.websphere.express.iseries.doc/info/iseriesexp/ae/ttrb_runct.html], V6.1 [http://pic.dhe.ibm.com/infocenter/wasinfo/v7r0/topic/com.ibm.websphere.express.iseries.doc/info/iseriesexp/ae/ttrb_runct.html] (search on collector). [http://publib.boulder.ibm.com/infocenter/wasinfo/v5r0/index.jsp?topic=/com.ibm.websphere.base.doc/info/welcome_base.html] NOTE: This should be gathered immediately after the problem is recreated.
+    
+ 4. Follow instructions to send diagnostic information to IBM support. Appendix B: How to send diagnostic information to IBM support.
+
+
+For a listing of all technotes, downloads, and educational materials specific to the component, search the WebSphere Application Server support site [http://www.ibm.com/software/webservers/appserv/was/support/]. 
+
+
+Appendix A: How to collect a JVM thread dump for a server in a hung state 
+Multiple JVMs are available on IBM i 5.4 and higher. The original JVM is known as the "Classic JVM" and is considered depricated. The new, preferred JVM is called "IBM Technology for Java." The approach to gather data is different for each JVM, so you will need to figure out which JVM is in use before you proceed. The easiest way to find this is by displaying the job log for the job experiencing the problem. 
+
+For example, if the server is called 'server1', you would run the following from the CL command line: 
+
+WRKJOB SERVER1 <enter>
+Choose option 1 to select the active job.
+Choose option 10 to display the job log.
+Press F10 to see all messages The joblog will show: 
+
+Java Virtual Machine is IBM Technology for Java. PID(xxx) OR 
+
+Java Virtual Machine is Classic. 
+Java Virtual Machine is IBM Technology for Java 
+Gather 3-4 Java Thread Dumps about 1-2 minutes apart and 1 GcCycles Dump for the JVM when it is in the hung state. 
+
+NOTE: The "Classic" JDK is no longer supported by IBM and thus is not covered in this document. 
+The GcCycles Dump should be taken after the Java Dumps have been gathered. 
+
+Java Dump: WRKJVMJOB, Enter option 5 next to the job and press ENTER. Then, proceed to enter option 32 and press ENTER to request a Java dump. 
+
+GcCycles Dump: WRKJVMJOB, Enter option 9 next to the job and press ENTER. Then, proceed to press F7 to print the GC tables. 
+
+
+Appendix B: How to send diagnostic information to IBM support 
+Java Virutal Machine is IBM Technology for Java 
+ 1. Collect the following:  * WRKPTFGRP 
+     * DSPPTF 
+     * WRKSYSSTS 
+     * WRKSBS 
+     * WRKSHRPOOL 
+     * Java Dumps 
+     * GcCycles Dump
+    
+    
+    To retrieve the file:  1. Open the System i Navigator.
+        
+     2. Expand your system, log in as the user profile who created the spool file.
+        
+     3. Expand Basic Operations, and then left-click on Printer Output to display the output files.
+        
+     4. Locate the following spool files:  * QSYSPRT (WRKPTFGRP) 
+         * QSYSPRT (DSPPTF) 
+         * QPDSPSTS (WRKSYSSTS) 
+         * QPDSPSBS (WRKSBS) 
+         * QSYSPRT (WRKSHRPOOL) 
+         * QPJVAWRKVM (GcCycles)
+           
+        
+        
+     5. Finally, drag and drop the files from the System i Navigator to your Desktop. Plain text files will be created.
+    
+    [/support/docview.wss?uid=swg21376056&amp;aid=1] 
+ 2. Collect the javacore.txt from the location specified in the server's joblog.
+    
+    
+ 3. Collect the Collector host_name-cell_name-node_name-profile_name.JAR output file.
+    
+    Note: The collector program writes its output JAR file to the current directory.
+    
+    
+ 4. Send the diagnostic information to IBM support using Uploading files directly to ECuRep using FTP [http://www.ibm.com/support/docview.wss?rs=180&uid=swg21153852#ecurep].
+
+
+Java Virtual Machine is Classic 
+ 1. Collect the following spool files:  * WRKPTFGRP 
+     * DSPPTF 
+     * WRKSYSSTS 
+     * WRKSBS 
+     * WRKSHRPOOL 
+     * QDMPJVM 
+     * QPCSMPRT
+    
+    
+    To retrieve the file:  1. Open the System i Navigator.
+        
+     2. Expand your system, log in as the user profile who created the spool file.
+        
+     3. Expand Basic Operations, and then left-click on Printer Output to display the output files.
+        
+     4. Locate the following spool files:  * QSYSPRT (WRKPTFGRP) 
+         * QSYSPRT (DSPPTF) 
+         * QPDSPSTS (WRKSYSSTS) 
+         * QPDSPSBS (WRKSBS) 
+         * QSYSPRT (WRKSHRPOOL) 
+         * QDMPJVM (DMPJVM) 
+         * QCPSMPRT (GcCycles)
+           
+        
+        
+     5. Finally, drag and drop the files from System i Navigator to your Desktop. Plain text files will be created.
+    
+    [/support/docview.wss?uid=swg21376056&amp;aid=1] 
+ 2. Collect the Collector host_name-cell_name-node_name-profile_name.JAR output file. 
+    
+    Note: The collector program writes its output JAR file to the current directory.
+    
+    
+ 3. Send the diagnostic information to IBM support using Uploading files directly to ECuRep using FTP [http://www.ibm.com/support/docview.wss?rs=180&uid=swg21153852#ecurep].
+
+RELATED INFORMATION
+ Recording your screen to share with IBM Support [https://www.ibm.com/developerworks/community/blogs/IBMElectronicSupport/entry/recording_your_screen_to_share_with_support?lang=en]
+
+
+ 
+
+Cross reference information Segment Product Component Platform Version Edition Application Servers WebSphere Application Server - Express IBM i Operating System IBM i WebSphere Application Server iSeries, IBM i 7.1.0, 7.1, 6.1.1, 6.1.0, 6.1, 5.4.5, 5.4.0

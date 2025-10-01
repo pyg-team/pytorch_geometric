@@ -1,0 +1,27 @@
+Title: IBM WebSEAL receives POST requests from Internet Explorer without data. - United States
+
+Text:
+XMLHTTP; InternetWriteFile TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ WebSEAL returns a "HTTP/1.1 500 Internal Server Error" with error "DPWWA1238E An HTTP message body sent in a response by a third-party server is too short" to POST requests from Internet Explorer without a request body.. 
+
+CAUSE
+Internet Explorer expects that an HTTP server will maintain a persistent connection for 60 seconds. When a connection is closed prior to this, and Internet Explorer receives a TCP Reset from a POST request on the closed connection, Internet Explorer retries the POST on a new connection without the POST body. This is discussed in Microsoft Support article 895954.
+
+RESOLVING THE PROBLEM
+As suggested in the Workaround of Microsoft Support article 831167, increase the WebSEAL [server] persistent-con-timeout to 61 seconds. 
+
+In Access Manager 7.0 WebSEAL and the Access Manager Reverse Proxy, a separate cache is used for idle persistent connections, without using additional worker threads. It may be necessary to increase the [server] max-idle-persistent-connections value. 
+
+In Access Manager 6.1.* WebSEAL, each persistent connection uses a worker thread, so it may also be necessary to increase the [server] worker-threads value as well.
+
+RELATED INFORMATION
+ Microsoft Support article 831167 [https://support.microsoft.com/kb/831167]
+Microsoft Support article 895954 [https://support.microsoft.com/kb/895954]
+
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Security IBM Security Access Manager Reverse Proxy Version Independent

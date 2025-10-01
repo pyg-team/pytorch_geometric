@@ -1,0 +1,96 @@
+Title: IBM Migrating Production Data to Test in the Same Authentication Domain - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Customer has two P8 Domains, used for test and production. They would like to replace the test data with a current copy of the production P8 Domain. They would like to know how to make a copy of a P8 Domain within the same authentication domain. 
+
+ANSWER
+Prerequisites 
+
+Customer has existing production and test Content Engine servers already installed. Both servers are in the same Active Directory domain and use the same directory server for authentication, but have different server names. 
+
+The steps below are intended to replace the current test environment with an updated copy of the data in production. 
+
+Prepare for migration 
+
+On the both Production and Test Application Engine 
+
+1. Shut down Workplace 
+
+On the Production Content Engine 
+
+Before performing the migration it is important to quell all activity on the original FileNet P8 deployment. Failure to properly shutdown the source system will cause problems in the early stages of bringing the system up on the target machine (queued work will be launched as services are started, but the work may be undoable until the migration is complete, flooding the event logs with misleading error messages). 
+
+2. Determine the ‘SYSINIT Path’ of the source system (from Enterprise Manager right click on the top level node, go to Properties, General tab). 
+
+3. Stop all client activity. 
+
+4. For each Object Store, check the queueitem database table. Make sure the row count is zero (if not zero, wait until the count reaches zero – i.e. let the Object Store Services complete processing of the queueitem table). 
+
+5. Shutdown all Content Engine services and the Apache service. 
+
+6. For each File Store Service computer, examine the File Store transaction log files (C:\Program Files\FileNet\Content Engine\Log). The control.dat file will not be zero length (ignore that file), but the files named using a GUID must be zero length – if not zero length, restart the File Store Service (only on that computer) and wait three minutes. Stop the service and check the files, the GUID files should be zero length. If not, there may be a re-index operation in progress, and it will be necessary to wait for re-indexing to complete. (If database content or properties are being re-indexed it will be necessary to restart the Object Store Service). Do not continue until all File Store Service transaction log files (GUID based name) are zero length. 
+
+Backup the Production Data 
+
+On the Production Content Engine 
+
+1. Complete the filestore validation and backup described in the documentation of the Move Filestore Wizard: ce_help/wizardhelp/movefilestore/_start_here_mf.htm. This will create a backup of the production filestore (ie \\<prod server>\<filestore share>\FS_<filestore>) using backup tools such as NTBackup. 
+
+Note: Do not remove the indexes from the file store in production. The content indexes in production can be backed up and restored to the test server along with the file store. 
+
+2. Exit FileNet Enterprise Manager and shutdown all Content Engine services and the Apache service. 
+
+3. Backup the GCD (sysinit.dat) located in the SYSINIT Path above eg. \Program Files\FileNet\Content engine\sysconfig\sysinit\sysinit.dat file 
+
+
+
+
+On the Database Server 
+
+4. Using database tools, export the production SQL database or Oracle tablespace. In the case of Oracle, specifically everything owned by the object store tablespace owner. 
+
+Restore the Data to Test 
+
+On the Test Content Engine 
+
+1. Shutdown all Content Engine services and the Apache service. 
+2. Move the SYSINIT\sysinit.dat file eg \Program Files\FileNet\Content engine\sysconfig\sysinit\sysinit.dat to a backup location. 
+3. Restore the sysinit.dat file obtained from the production server to the SYSINIT directory on test.
+4. Verify the sysconfig\LLF.txt points to the correct sysinit.dat file. 
+
+On the Database Server 
+
+5. Restore the production data into the SQL database or Oracle tablespace with a new name for the test environment. Care should be taken to ensure that the test database/tablespace is the one being recreated, so that the production database is left unchanged. 
+If using SQL, the backup of the production database could be restored over the existing test database using the force restore over existing database checkbox
+If using Oracle, the script in the P8 installation guide can be used to drop and recreate the test tablespace. A command such as Oracle import with fromuser and touser parameters could be used to import into the tablespace with a new name for test. 
+
+On the Test Content Engine 
+
+6. Run the sysinitadd command line tool to update the servername: sysinitadd ServerName =<testServer> 
+7. Start the object store service
+8. Run FileNet Enterprise Manager and login to the P8 Domain
+9. Bring up the properties of the object store. Click on the database tab and update the values to match the new test database or tablespace.
+10. Exit FileNet Enterprise Manager.
+11. Restart the Object Store Service.
+12. Using FileNet Enterprise Manager, login to the P8 Domain in test again and create a new temporary folder in the object store 
+
+On the Production Content Engine 
+
+13. Restart the services 
+14. Make sure the folder created in test (previous step) does not exist in the production object store. This check verifies that the test environment is configured to point to the correct tablespace. 
+
+On the Test Content Engine 
+
+15. Start the File Store Service.
+16. Complete the remainder of the Move File Store wizard steps per the documentation: ce_help/wizardhelp/movefilestore/_start_here_mf.htm. These steps include restoring the filestore backup to the test server using backup/restore tool such as NTBackup; setting correct permissions on the parent folder and share; and using the Move File Store wizard to update the P8 Domain with the new filestore configuration. At the Specify File Store Folder dialog of the Move File Store wizard, be sure to enter the UNC path to the file store folder on the test server (eg \\<test server>\<parent_share>\fs_<filestore>) and the name of the test server in the File Store Service drop down.
+17. Once the Move File Store wizard is complete, right click on the file store and select Enable to enable the file store.
+18. Use FileNet Enterprise Manager to test adding a document to File Store storage on the test Content Engine
+19. If the file store was configured for full text indexing, the indexes on the test server should now be removed and recreated using FileNet Enterprise Manager.
+
+
+On the Production Content Engine 
+
+20. Using FileNet Enterprise Manager, login to the P8 Domain in production and right click on the file store and select Enable to enable the file store

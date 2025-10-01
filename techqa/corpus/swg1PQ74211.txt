@@ -1,0 +1,188 @@
+Title: IBM PQ74211: REQUEST APAR TO CHANGE THE NUMBER OF ENQUE TIMES. - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  A lot of jobs(PIF jobs) which used JCL variables to modify AD
+   run concurrently. But JV file was busy and couldn't get enque
+    despite 15 retries.Error batch job got return code 8 with a
+   message as below,
+    EQQX268W Update rejected, data set used by another OPC/ESA func
+   It looks like that request couldn't get enque despite 15
+   retries which was thought to be failure because other jobs
+   appeared to use JV file. There could be seen 93( uses jcl
+   variables) jobs during 1 or 2 minutes period of time.
+    Now customer wants to increase the number of ENQ retries in
+   EQQGSENV for OPC 2.3.0 to prevent many jobs getting error
+   in peak time.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: Users with heavy load of PIF programs.       *
+   *                 FUNCTION=GS                                  *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: A PIF application updating an OPC       *
+   *                      database record failed.                 *
+   *                      Its message log contained MSGEQQX268W,  *
+   *                      indicating that an OPC batch program    *
+   *                      was using the file in update mode.      *
+   *                      Also dialog users may get message       *
+   *                      EQQX268W, or EQQX267W, and the record   *
+   *                      update is not saved.                    *
+   *                      The problem occurred for JCL and for    *
+   *                      JCL Variable table record updates.      *
+   ****************************************************************
+   * RECOMMENDATION: APPLY THE PTF FIXING THIS APAR               *
+   ****************************************************************
+   When several PIF programs were submitted within a couple of
+   minutes an update request may be locked out due to the locking
+   mechanism used. In General Service before starting an update
+   request to a database record an ENQ lock of type ADUPD must be
+   taken to prevent from updating the vsam file while a batch
+   program is using it, like the daily planning programs.
+   However if several read requests are coming while an request
+   is waiting for updating the same record type the read requests
+   may lock out the update request as each read request starts
+   immediately as long as the update request has not started.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A longer ENQ retry time is set for pif programs, 3 minutes.
+   Dialog requests remains as today waiting up to 1.5 minutes.
+   The checking for lock availability is changed to each 0.3
+   second from the previous each 6:th second.
+   For JCL Variable table updates the ENQs are done without
+   parameter ret(USE) as scope is STEP and the ENQs serialize
+   within the Controller only and not for batch jobs.
+   JCL record handling is changed in same manner as JCL variable
+   tables.
+   102Y
+   202Y
+   EQQGSENV
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  The apar fix IQ74211 (for JWSZ102) has been sent to customer
+   and is available on request from the C/T.
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PQ74211
+   
+   
+ * REPORTED COMPONENT NAME
+   TIV WRKLD SCHD
+   
+   
+ * REPORTED COMPONENT ID
+   5697WSZ01
+   
+   
+ * REPORTED RELEASE
+   102
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2003-05-15
+   
+   
+ * CLOSED DATE
+   2003-09-15
+   
+   
+ * LAST MODIFIED DATE
+   2003-12-03
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    PQ70188 [http://www-01.ibm.com/support/docview.wss?uid=swg1PQ70188]
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UQ79998 UQ80007
+   
+   
+
+MODULES/MACROS
+ *  EQQGSENV
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TIV WRKLD SCHD
+   
+   
+ * FIXED COMPONENT ID
+   5697WSZ01
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R102 PSY UQ79998 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UQ79998]
+   UP03/11/25 P F311
+   
+   
+ * R202 PSY UQ80007 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UQ80007]
+   UP03/11/25 P F311
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

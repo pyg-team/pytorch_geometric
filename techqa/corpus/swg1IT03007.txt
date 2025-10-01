@@ -1,0 +1,150 @@
+Title: IBM IT03007: THE VIRTUAL SYSTEM MANAGER JVM IS TERMINATED PERIODICALLY CAUSING WORKLOAD CONSOLE OUTAGES - United States
+
+Text:
+  FIXES ARE AVAILABLE
+IBM PureApplication System Version 2.0.0.0 [http://www-01.ibm.com/support/docview.wss?uid=swg24038058]
+IBM PureApplication System Version 1.1.0.5 [http://www-01.ibm.com/support/docview.wss?uid=swg24038486]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Occasionally the virtual system manager JVM on the
+   PureSystems Manager stops abruptly and causes Workload
+   Console outages lasting from 5 to 10 minutes.
+   One or both of these events may also appear in the events log:
+   Message key: CWZIP6078W()
+   Event text: CWZIP6078W The management node is not healthy on
+   high availability.
+   Source: PureSystems Manager SN#XXXXXXXX
+   Message key: CWZIP9602W("Service10","tsaXXXXXXX")
+   Event text: CWZIP9602W The state of Service10 is failed offline
+   at node tsaXXXXXX.
+   Source: TSA Node tsaXXXXXXX
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  The workload console will automatically recover after 5 to 10
+   minutes
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  A method that was designed to kill a specific process was not
+   filtering process IDs correctly and killing the wrong process
+   ID.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The code has been updated to pass in a match string to identify
+   the correct process ID before killing it.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT03007
+   
+   
+ * REPORTED COMPONENT NAME
+   PAPP SYS 8382 I
+   
+   
+ * REPORTED COMPONENT ID
+   5725G3200
+   
+   
+ * REPORTED RELEASE
+   110
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-07-07
+   
+   
+ * CLOSED DATE
+   2014-07-24
+   
+   
+ * LAST MODIFIED DATE
+   2014-09-17
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   PAPP SYS 8382 I
+   
+   
+ * FIXED COMPONENT ID
+   5725G3200
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R110 PSY
+   UP
+   
+   
+ * R200 PSY
+   UP
+   
+   
+ * R100 PSN
+   UP
+   
+   
+ * RESP PSN
+   UP

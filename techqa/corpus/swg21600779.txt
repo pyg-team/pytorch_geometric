@@ -1,0 +1,44 @@
+Title: IBM Portal cluster not starting after db2 HADR switches to failover - United States
+
+Text:
+JCRSeedBus Portal JVM terminated cluster DB2 HADR failover TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+In a portal cluster one or more portal nodes could fail to start after a database switchover occurs when using a DB2 HADR configuration.
+
+SYMPTOM
+The following exception is noted in the failing portal node SystemOut.log:
+
+[6/7/12 11:21:34:290 EDT] 00000051 ConnectionEve W J2CA0206W: A connection error occurred. To help determine the problem, enable the Diagnose Connection Usage option on the Connection Factory or DataSource.This is the multithreaded access detection option.
+[6/7/12 11:21:34:294 EDT] 00000051 ConnectionEve A J2CA0056I: The Connection Manager received a fatal connection error from the Resource Adapter for resource jdbc/wpdbDS. The exception is:
+com.ibm.db2.jcc.am.ClientRerouteException: [jcc][t4][2027][11212][4.7.112] A connection failed but has been
+re-established. The host name or IP address is "myDB2Hostname" and the service name or port number is 50,000. Special registers may or may not be re-attempted (Reason code = 1).
+ERRORCODE=-4498, SQLSTATE=08506
+.
+.
+.
+[6/7/12 11:23:43:112 EDT] 00000014 SibMessage E [JCRSeedBus:PortalCluster.000-JCRSeedBus] CWSID0046E: Messaging engine PortalCluster.000-JCRSeedBus detected an error and cannot continue to
+run in this server.
+[6/7/12 11:23:43:113 EDT] 00000014 HAGroupImpl I HMGR0130I: The local member of group
+IBM_hc=PortalCluster,WSAF_SIB_BUS=JCRSeedBus,WSAF_SIB_MESSAGING_ENGINE=PortalCluster.000-JCRSeedBus,type=WSAF_SIB has indicated that is it not alive. The JVM will be terminated.
+[6/7/12 11:23:43:113 EDT] 00000014 SystemOut O Panic:component requested panic from isAlive
+[6/7/12 11:23:43:114 EDT] 00000014 SystemOut O java.lang.RuntimeException: emergencyShutdown called:
+[6/7/12 11:23:43:115 EDT] 00000014 SystemOut O at com.ibm.ws.runtime.component.ServerImpl.emergencyShutdown(ServerImpl.java:632)
+[6/7/12 11:23:43:115 EDT] 00000014 SystemOut O at com.ibm.ws.hamanager.runtime.RuntimeProviderImpl.panicJVM(RuntimeProviderImpl.java:92)
+[6/7/12 11:23:43:115 EDT] 00000014 SystemOut O at com.ibm.ws.hamanager.coordinator.impl.JVMControllerImpl.panicJVM(JVMControllerImpl.java:56)
+
+
+
+CAUSE
+This is an expected behaviour. From WAS v7.x onwards the property 
+sib.msgstore.jdbcFailoverOnDBConnectionLoss is set to true by default. So when a messaging engine looses its connection to the datastore, the jvm gets terminated instead of retrying the connection.
+
+ENVIRONMENT
+WebSphere Portal 7 and above w/DB2 HADR configuration.
+
+RESOLVING THE PROBLEM
+Please refer to the following infocenter link for more info: Configuring messaging engine and server behavior when a data store connection is lost for resolution.
+
+http://www-01.ibm.com/support/knowledgecenter/SSAW57_8.5.5/com.ibm.websphere.nd.doc/ae/rjj_custom_props.html?lang=en [http://www-01.ibm.com/support/knowledgecenter/SSAW57_8.5.5/com.ibm.websphere.nd.doc/ae/rjj_custom_props.html?lang=en]
+
+If this behavior is not needed and portal JVM needs to be up and running, then one can set the property, sib.msgstore.jdbcFailoverOnDBConnectionLoss to false which will cause the messaging engine to retry the connection instead of terminating the jvm

@@ -1,0 +1,229 @@
+Title: IBM PI69900: IIB SERVER DEADLOCK DURING SHUTDOWN AFTER RESTART EXCEPTION THROWN - United States
+
+Text:
+z/os SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Having been requested to shutdown as a result of a restart
+   exception being thrown, the integration server may become
+   deadlocked if it attempts to process a configuration message
+   whilst the server is trying to shutdown.
+   
+   The following is an example of a restart exception after a DB2
+   failure when a transaction fails to commit/rollback:
+   
+    BIP2124E (Msg 1/5) NODE1 ISERV1 33 THE INTEGRATION SERVER
+    HAS DETECTED A CONDITION ON THREAD NUMBER '78' WITH NAME
+    'restartFlow', WHICH REQUIRES IT TO SHUTDOWN AND RESTART.
+    BIP2398E (Msg 2/5) NODE1 ISERV1 33 A FAILURE OCCURRED DURING
+    THE PROCESS OF COMMITTING OR ROLLING BACK A DATABASE
+    TRANSACTION, THEREFORE THE INTEGRATION SERVER WILL BE
+   RESTARTED.
+   
+   A dump of the integration server process will show the main
+   thread with the stack:
+   
+     ImbAsymetricMutex::lockRight(int)
+     ImbDataFlowManager::lockForUpdateInternal(bool,int)
+     ImbDataFlowManager::lockForUpdate(bool)
+     ImbDataFlowManager::~ImbDataFlowManager()
+     ImbDeployedResourceGroup::clearInternalDataFlowResources()
+     ImbDataFlowApplication::~ImbDataFlowApplication()
+     ImbExecutionGroupDirector::terminateInner()
+   
+   An the configuration flow thread with the stack:
+   
+     ImbMutex::lock(int)
+     ImbConfigurationNode::evaluate(const ImbMessageAssembly&,con
+     ImbDataFlowTerminal::evaluate(const ImbMessageAssembly&)
+     ImbDataFlowTerminal::propagateInner(const ImbMessageAssembly
+     ImbDataFlowTerminal::propagate(const ImbMessageAssembly&)
+     ImbCallableTemplateNode::processMessage(ImbCallableTemplateN
+     ImbInputTemplateNode::processData(ImbOsThread*,bool,ImbCalla
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   All users of IBM Integration Bus v10.
+   
+   
+   Platforms affected:
+   MultiPlatform, z/OS
+   
+   ****************************************************************
+   PROBLEM DESCRIPTION:
+   Having been requested to shutdown as a result of a restart
+   exception being thrown, the integration server may become
+   deadlocked if it attempts to process a configuration message
+   whilst the server is trying to shutdown.
+   
+   The following is an example of a restart exception after a DB2
+   failure when a transaction fails to commit/rollback:
+   
+    BIP2124E (Msg 1/5) NODE1 ISERV1 33 THE INTEGRATION SERVER
+    HAS DETECTED A CONDITION ON THREAD NUMBER '78' WITH NAME
+    'restartFlow', WHICH REQUIRES IT TO SHUTDOWN AND RESTART.
+    BIP2398E (Msg 2/5) NODE1 ISERV1 33 A FAILURE OCCURRED DURING
+    THE PROCESS OF COMMITTING OR ROLLING BACK A DATABASE
+    TRANSACTION, THEREFORE THE INTEGRATION SERVER WILL BE
+   RESTARTED.
+   
+   A dump of the integration server process will show the
+   main thread with the stack:
+   
+     ImbAsymetricMutex::lockRight(int)
+     ImbDataFlowManager::lockForUpdateInternal(bool,int)
+     ImbDataFlowManager::lockForUpdate(bool)
+     ImbDataFlowManager::~ImbDataFlowManager()
+     ImbDeployedResourceGroup::clearInternalDataFlowResources()
+     ImbDataFlowApplication::~ImbDataFlowApplication()
+     ImbExecutionGroupDirector::terminateInner()
+   
+   An the configuration flow thread with the stack:
+   
+     ImbMutex::lock(int)
+     ImbConfigurationNode::evaluate(const ImbMessageAssembly&,con
+     ImbDataFlowTerminal::evaluate(const ImbMessageAssembly&)
+     ImbDataFlowTerminal::propagateInner(const ImbMessageAssembly
+     ImbDataFlowTerminal::propagate(const ImbMessageAssembly&)
+     ImbCallableTemplateNode::processMessage(ImbCallableTemplateN
+     ImbInputTemplateNode::processData(ImbOsThread*,bool,ImbCalla
+   
+   The main thread ends up holding the configuration lock and
+   waiting for the configuration flow thread to shutdown and the
+   configuration flow thread is waiting to get the configuration
+   lock. This results in a deadlock.
+   
+   There are a number of resource name changes between WebSphere
+   Message Broker and IBM Integration Bus Version 9.0.  For details
+   visit
+   http://pic.dhe.ibm.com/infocenter/wmbhelp/v9r0m0/topic/com.ibm.e
+   tools.mft.doc/bb23814_.htm [http://pic.dhe.ibm.com/infocenter/wmbhelp/v9r0m0/topic/com.ibm.etools.mft.doc/bb23814_.htm]
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The configuration flow thread now considers whether the
+   integration server is shutting down when trying to obtain the
+   configuration lock.
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+   Version    Maintenance Level
+   v10.0      10.0.0.7
+   
+   The latest available maintenance can be obtained from:
+   http://www-01.ibm.com/support/docview.wss?rs=849&uid=swg27006041 [http://www-01.ibm.com/support/docview.wss?rs=849&uid=swg27006041]
+   
+   If the maintenance level is not yet available,information on
+   its planned availability can be found on:
+   http://www-1.ibm.com/support/docview.wss?rs=849&uid=swg27006308 [http://www-1.ibm.com/support/docview.wss?rs=849&uid=swg27006308]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI69900
+   
+   
+ * REPORTED COMPONENT NAME
+   IIB Z/OS
+   
+   
+ * REPORTED COMPONENT ID
+   5655AB100
+   
+   
+ * REPORTED RELEASE
+   A00
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-09-28
+   
+   
+ * CLOSED DATE
+   2016-11-24
+   
+   
+ * LAST MODIFIED DATE
+   2016-12-21
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   IIB Z/OS
+   
+   
+ * FIXED COMPONENT ID
+   5655AB100
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * RA00 PSY
+   UP

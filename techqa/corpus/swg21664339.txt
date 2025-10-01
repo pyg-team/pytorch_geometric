@@ -1,0 +1,51 @@
+Title: IBM Deleting SWD task does not automatic delete SHA1 folder(s) stored in BES Server\wwwrootbes\Uploads folder. - United States
+
+Text:
+80107; 012; 649 TECHNOTE (FAQ)
+
+QUESTION
+ Deleting SWD task does not automatic delete SHA1 folder(s) stored in BES Server\wwwrootbes\Uploads folder. 
+
+CAUSE
+After deleting a SWD task, its package(s) in the SHA1 folder stored in the C:\Program Files\BigFix Enterprise\BES Server\wwwrootbes\Uploads folder are not being deleted automatically. This causes the diskspace usage of Uploads folder to fill up very quickly. Now it is making even harder to determine which SHA1 folder is to remove as a SWD task is deleted since there are way too many.
+
+ANSWER
+Deleting the SWD task won't necessary delete the package or source file located in the C:\Program Files (x86)\BigFix Enterprise\BES Server\wwwrootbes\Uploads folder. 
+
+The C:\Program Files (x86)\BigFix Enterprise\BES Server\wwwrootbes\Uploads is the location of files uploaded and used by a software distribution task, created by the "Manage Software Distribution" dashboard or the Software Distribution Wizard. The content of "wwwrootbes\Uploads" is static and will NOT purge automatically. It will also NOT rebuild again automatically if someone has deleted it. 
+
+Keep in mind, if using the old SWD wizard to create a fixlet or task, deleting the fixlet or task won't delete the SHA1 folder in C:\Program Files (x86)\BigFix Enterprise\BES Server\wwwrootbes\Uploads automatically. This is working as expected.
+
+However if using the new SWD dashboard instead to build your SWD package | upload files in the package | create task(s), when deleting the task or fixlet created by the SWD dashboard, MUST also need to do the following steps: 
+. 
+- deleted the file from the SWD package 
+- deleted all tasks that reference the file 
+- stopped all open actions that reference the file 
+. 
+Any of the above can prevent the file & sha1 folder from being removed. 
+
+===============
+
+The following steps can be used to determine which SHA1 folder can be deleted:
+
+
+1. In the console, type ctrl-alt-shift-D to enable the debug option on the top of the menu option. 
+
+2. In the debug window that comes up, check the box 'Show Debug Menu' option. 
+
+3. From the debug menu, select 'Presentation Debugger'. 
+
+4. Make sure the 'presentation' radio button is selected and paste the relevance code below into the top box. 
+
+
+unique values of (following texts of firsts "/Uploads/" of preceding texts of lasts "/" of it) of (substrings separated by "%0a" of it as trimmed string) whose ((it starts with "download" or it starts with 
+"prefetch" or it starts with "add prefetch item") and it contains ":52311/Uploads/") of elements of union of (set of scripts of actions of bes fixlets; set of action scripts of bes actions)
+
+
+5. Leave other settings as default and click on Evaluate button. 
+
+6. Check the results. This generates a list of SHA1 values from the active fixlets excluding deleted fixlets. 
+
+This listing should match up with what it is in the C:\Program Files (x86)\BigFix Enterprise\BES Server\wwwrootbes\Uploads folder. For those SHA1 values that are not listed in this listing, they can be deleted as the fixlets are no longer existed in the TEM server database. 
+
+Create a dummy SWD fixlet using the SWD Wizard to test it out before proceed deleting any SHA1 in the C:\Program Files (x86)\BigFix Enterprise\BES Server\wwwrootbes\Uploads folder.

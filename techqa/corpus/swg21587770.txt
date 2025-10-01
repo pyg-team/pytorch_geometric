@@ -1,0 +1,50 @@
+Title: IBM "Rule model extensions are different" warning at synchronization after upgrading to V7.1.x - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ After migrating to v7.1.x, synchronization between Rule Studio and Rule Team Server fails because the model extensions are not the same, even though the default model extensions are being used. 
+
+SYMPTOM
+The warning "Rule model extensions are different" is displayed when connecting Rule Studio to Rule Team Server:
+
+
+[/support/docview.wss?uid=swg21587770&amp;aid=1] 
+
+CAUSE
+The default extension file in Rule Studio has annotations for effectiveDate: 
+
+
+<property extractable="true" name="effectiveDate" type="Date"> 
+<annotation id="validator-class" 
+value="ilog.rules.teamserver.web.validator.IlrComparablePropertyValidator" /> 
+<annotation id="validator-compared-property" value="expirationDate" />
+<annotation id="validator-constraint" value="LESSTHAN" /> 
+</property> 
+
+In RTS, the default model extension does not have the above annotations : it is possible that when migrating to RTS V7.1.x, the model extension files were not updated. 
+
+However, since the Rule Studio model extension files were updated as expected, the synchronization with RTS fails.
+
+
+RESOLVING THE PROBLEM
+Update the model extensions in Rule Team Server: 
+
+ 
+
+ * Navigate to the "Configure" tab and click on "Installation Manager" . 
+ * Go to "Step 1: Configure Database". 
+ * Under "Select the extension files you want to use:" choose "Custom extensions" and navigate to the default extensions used by Rule Studio, which can be found under <JRulesInstallDir>\studio\eclipse\plugins\ilog.rules.commonbrm.extension_7.1.1.4\resources\, if working with JRules v7.1.1.4. 
+ * Select "Upload Only". 
+ * Click on "Apply". 
+ * This should take you to a "Processing" view, and then back to the "Configure Rule Team Server database" page with a message that says "Step execution successful". 
+ * Click on "Exit". 
+
+
+This will upload the v7.1.x extensions, and you should be able to synchronize with Studio properly. 
+
+For any additional synchronization issues, please refer to this document [http://www.ibm.com/support/docview.wss?uid=swg21427772]. RELATED INFORMATION
+#Migrating to JRules V7.1 [http://publib.boulder.ibm.com/infocenter/brjrules/v7r1/topic/com.ibm.websphere.ilog.jrules.doc/Content/Business_Rules/Documentation/_pubskel/JRules/ps_JRules_Global70.html]
+Synchronization issues between Rule Studio and RTS [http://www.ibm.com/support/docview.wss?uid=swg21427772]
+Migrating to RTS v7.0 and v7.1 [http://www.ibm.com/support/docview.wss?uid=swg21591798]

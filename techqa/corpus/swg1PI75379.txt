@@ -1,0 +1,183 @@
+Title: IBM PI75379: DOCUMENTATION REGARDING JAVA REQUIREMENTS FOR SILENT INSTALLATION OF SPSS STATISTICS 24 ON MAC OSX 10.12 SIERRA IS UNCLEAR - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  You would like to perform a silent installation of IBM SPSS
+   Statistics 24 on Apple Macintosh OSX 10.12 Sierra.
+   
+   From Passport Advantage you downloaded the silent installer file
+   SPSS_Statistics_24_mac_silent.dmg from below package:
+   
+   IBM SPSS Statistics Client 24.0 Mac OS Silent Multilingual
+   (CND2FML )
+   Size 1,457MB, Date posted: 23 Jun 2016
+   
+   Then, on the documentation below you read, that as prerequisite
+   Java must be installed on the Mac first but you wonder which
+   Java? The latest Oracle JRE or the latest JDK?
+   
+   Authorized_User_License_Administrator_Guide.pdf  for Macintosh
+   from:
+   
+   ftp://public.dhe.ibm.com/software/analytics/spss/documentation/s
+   tatistics/24.0/en/client/InstallationDocuments/MacOS/Authorized_
+   User_License_Administrator_Guide.pdf
+   
+   Go to the chapter about silent installation for Macintosh, page
+   5 and 6.
+   
+   On page 6 you only see below sentence:
+   
+   "Note: To run the silent installer on Mac OS, Java must be
+   installed."
+   
+   However, for customers it is not clear what Java needs to be
+   installed.
+   
+   If for example you like to install SPSS 24 on Mac OSX Sierra
+   10.12 you have to install the JDK first in order for silent
+   installation to work on MacOSX 10.12 Sierra. Silent installtion
+   works fine if the JDK is installed first.
+   
+   To get to the Java JDK download page, you can navigate to it
+   from Oracles Java website
+   1. Go to https://www.java.com/en/ [https://www.java.com/en/]
+   
+   2. Select 'Dowload'
+   
+   3 Select 'See All Java downloads'
+   
+   4. Select 'Looking for the JDK?'
+   
+   5. Select 'Go to JDK downloads' under 'Where do I get JDK
+   download', which takes you here:
+   
+   http://www.oracle.com/technetwork/java/javase/downloads/index-js [http://www.oracle.com/technetwork/java/javase/downloads/index-js]
+   p-138363.html#javasejdk
+   
+   6. Select Download button under JDK for Java SE 8u121
+   
+   7. Select the Download file for Mac OS X
+   
+   Or the Download page for the latest JDK  (Java SE 8u121) is
+   here:
+   
+   http://www.oracle.com/technetwork/java/javase/downloads/jdk8-dow
+   nloads-2133151.html [http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html]
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  This issue is expected to be addressed in a future documentation
+   release of IBM SPSS Statistics
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * This affects all users of SPSS Statistics on a Mac osX       *
+   * platform.                                                    *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * DOCUMENTATION REGARDING JAVA REQUIREMENTS FOR SILENT         *
+   * INSTALLATION OF SPSS STATISTICS 24 ON MAC OSX 10.12 SIERRA   *
+   * IS UNCLEAR                                                   *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Please upgrade to IBM SPSS Statistics 25.0 to resolve this   *
+   * issue.                                                       *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This documentation issue is resolved in IBM SPSS Statistics 25.0
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI75379
+   
+   
+ * REPORTED COMPONENT NAME
+   SPSS STATISTICS
+   
+   
+ * REPORTED COMPONENT ID
+   5725A54ST
+   
+   
+ * REPORTED RELEASE
+   O00
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-01-24
+   
+   
+ * CLOSED DATE
+   2017-08-09
+   
+   
+ * LAST MODIFIED DATE
+   2017-08-09
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

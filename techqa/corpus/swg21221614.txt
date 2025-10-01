@@ -1,0 +1,35 @@
+Title: IBM instructions for receiving diagnostic load module in XMIT format - United States
+
+Text:
+diagnosis module; load library TECHNOTE (FAQ)
+
+QUESTION
+ How should I do with a diagnostic load module received from IBM? 
+
+ANSWER
+IBM usually sends the XMIT format load module in the email or put it in the ftp site. For example, if they send you module named CACLOG, before uploading this module, please rename the current module, CACLOG, in the SCACLOAD library.
+
+Create an empty sequential data set on the mainframe with the following attributes: (PS, FB, 80, 3120). For example, you can create 'CAC.TEST.CACLOG'. After the data set is created, issue a separate FTP binary transfer for the attached load module into the respective sequential data set. When it is uploaded, issue a RECEIVE command on z/OS to load it into your load library. 
+
+1. From the ISPF Command Shell, or from the TSO prompt, type the following command and press Enter: 
+
+receive indataset('CAC.TEST.CACLOG') 
+
+Information in the following format should be displayed after you press Enter: 
+
+INMR901I Dataset RFERNAN.PROD0818.LOAD from WCA009 on N1 
+INMR902I Members: CACLOG 
+INMR906A Enter restore parameters or 'DELETE' or 'END' + 
+
+Enter the following command and press Enter: 
+
+da('hlq.SCACLOAD') 
+
+where 'hlq' is your high-level qualifier for the WebSphere Information Integrator Classic Federation data sets. 
+
+You should then see IEBCOPY messages showing that the load modules are being copied into the indicated load library. If successful, the following message should be displayed last:
+
+IEB147I END OF JOB - 0 WAS HIGHEST SEVERITY CODE 
+INMR001I Restore successful to dataset 'hlq.SCACLOAD' 
+
+You might also see a return code of 4 if re-blocking occurred. This is OK.

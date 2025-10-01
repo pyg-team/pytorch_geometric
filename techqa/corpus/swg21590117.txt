@@ -1,0 +1,50 @@
+Title: IBM Stopping a WebSphere Application Server server or node process appears to hang - United States
+
+Text:
+WASV85RNotes TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ If you stop an IBM WebSphere Application Server server or node that is configured to use IBM WebSphere SDK Java Technology Edition Version 7.0, the process might appear to hang but it eventually finishes. This is an intermittent problem. 
+
+SYMPTOM
+ 
+
+ * When you stop a server using the stopServer command, the process appears to hang, but it eventually finishes (after approximately 10 to 15 minutes). There are no error messages. 
+
+ * When you issue the stopNode command with the -stopServers parameter, the process appears to hang. The following messages are produced: 
+   
+   ADMU0510I: Server server_name is now STOPPED
+   ADMU0021E: Error occurred stopping server {0}
+   ADMU0111E: Program exiting with error: 
+   com.ibm.websphere.management.exception.AdminException: ADMU3060E:
+   Timed out waiting for server shutdown.
+   ADMU0211I: Error details may be seen in the file:
+   WAS_USER_ROOT/profiles/profile_name/logs/nodeagent/stopServer.log
+   
+   where server_name, WAS_USER_ROOT, and profile_name are placeholders for the actual names that apply to the command used.
+
+
+ENVIRONMENT
+IBM i Version 7.1
+
+
+
+RESOLVING THE PROBLEM
+Before configuring a WebSphere Application Server Version 8.5 profile, node, or server to use IBM WebSphere SDK Java Technology Edition Version 7.0, apply the corresponding PTF for the appropriate option: 
+
+ * IBM Technology for Java 7 32 bit (Option 14)
+   Product: 5761-JV1
+   PTF: SI46212
+   
+   http://www-912.ibm.com/a_dir/as4ptf.NSF/d448bcf26ed42614862566db006cbd34/5d3437971e5ee496862579d200009d24?OpenDocument [http://www-912.ibm.com/a_dir/as4ptf.NSF/d448bcf26ed42614862566db006cbd34/5d3437971e5ee496862579d200009d24?OpenDocument] 
+ * IBM Technology for Java 7 64 bit (Option 15)
+   Product: 5761-JV1
+   PTF: SI46211
+   
+   http://www-912.ibm.com/a_dir/as4ptf.NSF/d448bcf26ed42614862566db006cbd34/e62a3364fd92997c862579d200009d14?OpenDocument [http://www-912.ibm.com/a_dir/as4ptf.NSF/d448bcf26ed42614862566db006cbd34/e62a3364fd92997c862579d200009d14?OpenDocument] 
+
+
+Note: You can optionally install Version 8.5.0.1 to resolve this issue. 
+
+RELATED INFORMATION
+#WebSphere Application Server Version 8.5 release notes [http://www14.software.ibm.com/webapp/wsbroker/redirect?version=phil&product=was-nd-mp&topic=relnotes]

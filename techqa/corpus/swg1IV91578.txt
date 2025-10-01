@@ -1,0 +1,151 @@
+Title: IBM IV91578: SITUATION FILES ARE NOT CREATED FOR APM AGENTS IF ITM AGENTS WITH SAME MSN DID EVER CONNECT TO SERVER THROUGH HYBRID GATEWAY - United States
+
+Text:
+  READMES ARE AVAILABLE
+8.1.3.0-IBM-IPM-SERVER-IF0008 [http://www-01.ibm.com/support/docview.wss?uid=isg400003156]
+8.1.3.0-IBM-IPM-SERVER-IF0009 [http://www-01.ibm.com/support/docview.wss?uid=isg400003265]
+8.1.3.0-IBM-IPM-SERVER-IF0010 [http://www-01.ibm.com/support/docview.wss?uid=isg400003329]
+8.1.3.0-IBM-IPM-SERVER-IF0011 [http://www-01.ibm.com/support/docview.wss?uid=isg400003678]
+8.1.3.0-IBM-IPM-SERVER-IF0012 [http://www-01.ibm.com/support/docview.wss?uid=isg400003854]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Severity:  2
+   APM 8.1.3
+   Compid:  CCS(Central Configuration Service)
+   
+   Problem Description:
+   
+   If ITM agents ever connected to APM server through Hybrid
+   Gateway, and then at a later point in time, APM V8 agent on
+   the same host are connected to the APM server with the same MSN
+   (Managed System Name) as that of ITM agent, the situation files
+   for the APM agent MSN do not get created, and events for
+   thresholds do not raise for the APM V8 agent.
+   
+   Detailed Recreation Procedure:
+   1. Connected ITM agents to APM server through Hybrid Gateway,
+   and they can be seen on APM UI and their situation files can be
+   downloaed to local and events can be fired.
+   2. install matching APMv8 agents on the same computer box,
+   3. disconnect former ITM agents, and connect new APM agents to
+   APM server. the new agents can be seen in APM UI
+   4. for APMv8 agents with same MSN with former ITM agents, their
+   situation files can NOT be downloaded and their events can not
+   be fired.
+   
+   
+   Related Files and Output:
+   files: CCS main backend eba SMCCSApp.eba under
+   <wlp_dir>/usr/servers/server1/apps
+   output: server1 log file under
+   <wlp_dir>/usr/servers/server1/logs and CCS gaianDB data dump via
+   tool script
+   
+   Messages found in logs:
+   In server1 log file,
+   1. those former ITM agents can be found in agent topic message
+   with "ITM" domain field for the first time.
+   2. when new APM agents are connected, same MSN agent topic
+   message can be found but with "ON-PREMISE" domain field.
+   3. new APM agents situation file creating are skipped because
+   their domain are kept ITM in CCS gaianDB
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Fixed
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV91578
+   
+   
+ * REPORTED COMPONENT NAME
+   CENTRAL CONFIG
+   
+   
+ * REPORTED COMPONENT ID
+   5725U05CS
+   
+   
+ * REPORTED RELEASE
+   813
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-12-19
+   
+   
+ * CLOSED DATE
+   2017-03-06
+   
+   
+ * LAST MODIFIED DATE
+   2017-03-06
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R813 PSY
+   UP

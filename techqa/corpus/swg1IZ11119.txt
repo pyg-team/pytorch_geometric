@@ -1,0 +1,156 @@
+Title: IBM IZ11119: THE USERID CALLING THE CCMS MONITOR NEEDS ADDITIONAL SAP AUTHORITY TO BE ABLE TO RECEIVE THIS CENTRAL CCMS DATA - United States
+
+Text:
+  FIXES ARE AVAILABLE
+IBM Tivoli Monitoring for Applications: mySAP Agent, 6.2.0-TIV-ITM_SAP-IF0008 [http://www-01.ibm.com/support/docview.wss?uid=swg24024762]
+IBM Tivoli Monitoring for Applications: mySAP Agent, 6.2.0-TIV-ITM_SAP-IF0015 [http://www-01.ibm.com/support/docview.wss?uid=swg24033394]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The problem seems with the authority that the default userid
+   IBMMON_AGENT has. An additional authority has to be added to the
+   existing userid/profile to get the alerts in TEP.
+   
+   Please advise the customer to follow the below instructions with
+   the help of SAP sysadmin and report us back the outcomes -
+   
+   The userid calling the CCMS monitor needs the following SAP
+   authority to be able to receive this central CCMS data.
+   
+   Authority object = S_CCM_RECEIVE (Authorizations for
+   Transferring Central SysRepos Data) , activity = P0 (Accept
+   CCMS CSM data) and table = DUMMY (Table name) - we should used
+   table = * just to be sure we have all authority covered.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Workaround -
+   
+   Modify ZITM_610AUTH profile to include the missing authority. We
+   create the IBMMON_AGENT userid and assign it the ZITM_610AUTH
+   profile (not the role)
+   
+   If the customer prefers to use maintain the ZITM_610AUTH role
+   they can add the missing authority to our role but the
+   ZITM_610AUTH role must then be added to the IBMMON_AGENT userid.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  The agent provided role and profile, ZITM_610AUTH, did not have
+   the authorities required to obtain alerts from a Centralized
+   CCMS system. This resulted in missing alerts in the Alets
+   Workspace. The required authorities have been added to both the
+   ZITM_610AUTH role and ZITM_610AUTH profile and thus the
+   IBMMON_AGENT userid.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This APAR has been fixed and delivered in a limited availability
+   fix 6.1.0-TIV-ITM_SAP-LA0009. This maintenance delivery vehicle
+   is a limited availability patch and therefore is in a "hidden
+   directory." Level 2 Support can provide down load instructions
+   to you. Contact level 2 support at:
+   
+   http://www.ibm.com/software/sysmgmt/products/support/Contact_L2
+   Support.html [http://www.ibm.com/software/sysmgmt/products/support/Contact_L2Support.html]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ11119
+   
+   
+ * REPORTED COMPONENT NAME
+   ITMF APPL - SAP
+   
+   
+ * REPORTED COMPONENT ID
+   5724B97SO
+   
+   
+ * REPORTED RELEASE
+   610
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2007-12-14
+   
+   
+ * CLOSED DATE
+   2008-01-17
+   
+   
+ * LAST MODIFIED DATE
+   2008-03-20
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ITMF APPL - SAP
+   
+   
+ * FIXED COMPONENT ID
+   5724B97SO
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R610 PSY
+   UP

@@ -1,0 +1,83 @@
+Title: IBM DE upgrade fails due to stale DE entries - United States
+
+Text:
+Registry Entries Incorrect TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ CheckerException error thrown during DE upgrade due to older misleading DE entries appearing as active. 
+
+SYMPTOM
+Sometimes DE upgrade may fail due to previously existing DE stale entries.
+
+In such cases , the following exception is thrown
+Caused by: com.ibm.ac.si.checker.CheckerException:
+ACUDCI0711E Dependency Checker determined that the following IUInstance:
+SoftwareInstance\[9d964d42a90194d1:1c094808:127533028ae:-8000,RootIUTypeID[D94240D11C8B11D99F2D00061BDE7AEA,1.4.0.x]
+,Install IU,mrid:[w3.ibm.com/namespaces/2003/OS_componentTypes:Operating_System,C:/Program] Files/IBM/Common/acsi,0\] cannot be created because another version of that instance already exists in the IURegistry 
+
+
+
+RESOLVING THE PROBLEM
+Follow the below mentioned steps (in same order) to clean up the stale entries. 
+
+On Windows : 
+
+
+1) User has to run de_version command and listIU command. compare the DE entries. If entries are different it means there are stale entries, make changes to C:/Program Files/IBM/Common/acsi\dat\descriptors\SI_packagedIU.xml related to version, replace version element entries with DE version entries from listIU command output 
+
+
+2)From C:/Program Files/IBM/Common/acsi/bin location, Run 
+
+ #manageIU -o delete -r "C:/Program Files/IBM/Common/acsi" -p "C:/Program Files/IBM/Common/acsi\dat\descriptors\SI_packagedIU.xml" 
+
+
+This command will remove stale entries. User will see success count 2 and errorcount 0 in the output
+
+
+3) Once the delete operation is successful, modify C:/Program Files/IBM/Common/acsi\dat\descriptors\SI_packagedIU.xml file version entries with DE version value from de_version command output. 
+
+
+4) Run command C:\Program Files\IBM\Common\acsi\bin\manageIU -o
+create -r "C:/Program Files/IBM/common/acsi" -p "C:/Program Files/IBM/Common/acsi\dat\descriptors\SI_packagedIU.xml". User will see success count 2 and errorcount 0 in the output once create operation is successful 
+
+
+5) Delete packagedIU.xml located at C:/Program Files/IBM/common/acsi/dat/descriptors 
+
+
+6) At C:/Program Files/IBM/common/acsi/dat/descriptors, please check DE version from de_version command matches version entries in these files SI_packagedIU.xml, SIUpgrade_packagedIU.xml, if not replace version entries with version from de_version command. 
+
+
+7) You may now proceed with your Product Installation 
+
+ 
+
+On Unix platforms : 
+
+1) User has to run de_version command and listIU command. compare the DE entries. If entries are different it means there are stale entries, make changes to /var/ibm/common/acsi\dat\descriptors\SI_packagedIU.xml related to version, replace version element entries with DE version entries from listIU command output 
+
+
+2) From /usr/ibm/common/acsi/bin location, Run:
+
+#manageIU -o delete -r "/usr/ibm/common/acsi" -p "/var/ibm/common/acsi\dat\descriptors\SI_packagedIU.xml" 
+
+This command will remove stale entries. User will see success count 2 and errorcount 0 in the output
+
+3) Once the delete operation is successful, modify /var/ibm/common/acsi\dat\descriptors\SI_packagedIU.xml file version entries with DE version value from de_version command output.
+
+4) From /usr/ibm/common/acsi/bin location, Run command:
+
+#manageIU -o create -r "/usr/ibm/common/acsi" -p "/var/ibm/common/acsi\dat\descriptors\SI_packagedIU.xml" 
+
+User will see success count 2 and errorcount 0 in the output once create operation is successful
+
+5) Delete packagedIU.xml located at /var/ibm/common/acsi/dat/descriptors
+
+6) At /var/ibm/common/acsi/dat/descriptors, please check DE version from de_version command output matches version entries in the SI_packagedIU.xml if not replace version entries with version from de_version command.
+
+7) You may now proceed with your Product Installation
+
+
+
+
+PRODUCT ALIAS/SYNONYM
+ DE

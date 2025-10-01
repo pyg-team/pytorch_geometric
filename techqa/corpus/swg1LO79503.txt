@@ -1,0 +1,141 @@
+Title: IBM LO79503: TRAVELER SHUTDOWN MAY CRASH DOMINO SERVER. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  We found internally that on shutdown of the Traveler service one
+   of the threads may become hung.  Subsequent the Domino server
+   sometimes will crash as a result.
+   
+   This isn't very common but seen enough times to warrent fixing
+   the problem with shutting down the particular thread in
+   question.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Simple restart of Domino server clears things up.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Occasionaly during shutdown of Traveler task one thread will
+   become hung and cause issues with the Domino server or restart
+   of Notes Traveler.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The Notes Traveler server was updated to ensure timely shutdown
+   of all threads.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  his fix is included in Notes Traveler 9.0.1 IF4 and 9.0.0.1 IF5
+   and all future releases.  For the latest Notes Traveler
+   maintenance release information please see this technote:
+   
+   http://www.ibm.com/support/docview.wss?uid=swg24019529 [http://www.ibm.com/support/docview.wss?uid=swg24019529]
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   LO79503
+   
+   
+ * REPORTED COMPONENT NAME
+   LOTUS NOTES TRA
+   
+   
+ * REPORTED COMPONENT ID
+   5724E6204
+   
+   
+ * REPORTED RELEASE
+   901
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-03-13
+   
+   
+ * CLOSED DATE
+   2014-03-23
+   
+   
+ * LAST MODIFIED DATE
+   2014-03-23
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   LOTUS NOTES TRA
+   
+   
+ * FIXED COMPONENT ID
+   5724E6204
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R900 PSY
+   UP
+   
+   
+ * R901 PSY
+   UP

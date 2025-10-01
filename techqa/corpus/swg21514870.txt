@@ -1,0 +1,64 @@
+Title: IBM getstat.vbs ending with rc = -1073741819 - United States
+
+Text:
+getstat.vbs -1073741819 0xC0000005 getinstances.vbs cscript mcAfee watchdog itm TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When getstat.vbs returns return code rc < -1073741819 >, watchdog seems to stop the monitored agent and does not restart it again. 
+
+SYMPTOM
+ITM watchdog feature uses two scripts, getstat.vbs and getinstances.vbs, to retrieve the status of the monitored processes. 
+
+From time to time, getstat.vbs fails and exit with < -1073741819 > 
+
+---------------------------
+(2011/07/29,15:45:48.007B-3EBC:kcacmd.cpp,178,"executeCmd") Executing command < cscript C:\IBM\ITM\TMAITM6\getstat.vbs 6g >.
+(2011/07/29,15:45:48.007D-3EBC:kcaproclist.cpp,269,"unlockList") Exit: 0x1 (2011/07/29,15:45:48.007F-3EBC:kcacmdw.cpp,123,"serializeCommand") Exit: 0x0 (2011/07/29,15:45:48.0081-3EBC:kcacmdw.cpp,194,"executeCmd") Waiting for command to complete for 30 seconds. 
+(2011/07/29,15:45:49.0000-3EBC:kcacmdw.cpp,267,"executeCmd") data available - 111 (2011/07/29,15:45:49.0002-3EBC:kcacmdw.cpp,305,"executeCmd") Exit: 0xC0000005 (2011/07/29,15:45:49.0003-3EBC:kcaproclist.cpp,228,"lockList") Entry 
+(2011/07/29,15:45:49.0005-3EBC:kcacmd.cpp,218,"executeCmd") Command rc <-1073741819 >.
+--------------------------
+
+In this case, the watchdog stops the monitored process and does not restart it, causing an unexpected outage.
+
+
+CAUSE
+The negative return code -1073741819 is actually the translation of 0xC0000005. 
+This code mean ACCESS_VIOLATION and it is returned directly from the cscript manager. Usually this kind of problem is caused by an AntiVirus software running on the machine.
+
+
+DIAGNOSING THE PROBLEM
+If you are using McAfee,the problem is most likely caused by the SCRIPTSN.dll, which is installed with McAfee Version 8.8 (this dll is responsible for the script virus scan) even if the ScriptScan component is disabled. 
+
+This McAfee technote explains the cause of the problem:
+
+https://kc.mcafee.com/corporate/index?page=content&id=KB71660&actp=search&viewlocale=en_US&searchid=1313422826655 [https://kc.mcafee.com/corporate/index?page=content&id=KB71660&actp=search&viewlocale=en_US&searchid=1313422826655]
+
+The problem occurs on Windows 2008 R2 and McAfee 8.8.
+Basically, the SCRIPTSN.dll is hooked into the scripting engine (cscript) even if ScriptScan is disabled.
+Watchdog on Windows platform strongly leverages on cscript engine, so it may be impacted by this configuration.
+
+
+RESOLVING THE PROBLEM
+The McAfee technote above describes two possible workarounds: 
+
+
+1) Enable the ScriptScan
+2) Unregister the SCRIPTSN.dll library as follow:
+
+- Open a command prompt windows
+
+- Change to the right directory:
+32 bit computers:
+cd c:\Program Files\Common Files\McAfee\SystemCore
+
+64 bit computers:
+cd c:\Program Files (x86)\Common Files\McAfee\SystemCore
+cd c:\Program Files\Common Files\McAfee\SystemCore
+
+- To completely disable the scriptscan dll, type the command below and press ENTER:
+regsvr32.exe /u SCRIPTSN.dll
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ IBM Tivoli Monitoring V6.2.x Windows OS agent

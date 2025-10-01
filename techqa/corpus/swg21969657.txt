@@ -1,0 +1,22 @@
+Title: IBM OMNIbus DE directories with world write permission - United States
+
+Text:
+de_security singleuser world writable permission DE multi-user others DE Deployment Engine TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Can world write permission be change for DE directories and how can it be done? 
+
+ENVIRONMENT
+UNIX/LINUX
+
+RESOLVING THE PROBLEM
+When installing as root the default installation setting is multi-user mode for the Deployment Engine. A multi-user mode DE is installed with world write permissions enabled for the DE directories.
+The de_security.sh command can be used to change the system protection settings of the multi-user mode DE to protect it from unauthorized modifications.
+Use the option of -singleUser such that only the user that installed the Deployment Engine can modify it or use it to install or remove products.
+.
+The de_security.sh script in the /usr/ibm/common/acsi/bin directory can be run to change the DE mode to -singeUser and this will remove the write permission for others for the DE directories
+/var/ibm/common/acsi
+/usr/ibm/common/acsi
+except for the /usr/ibm/common/acsi/logs directory and existing log files which are left with world write permission. However, you can manually remove the world write permission for others for that directory and the files under it.
+
+Please refer to the OMNIbus Installation and Deployment Guide on the use of the de_security.sh script.

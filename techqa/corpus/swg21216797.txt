@@ -1,0 +1,13 @@
+Title: IBM Flat Files Adapter: Access permissions to the file system on UNIX - United States
+
+Text:
+waffv60rnote; Flat File; Permission; CR 73159 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The Adapter for Flat Files access permissions to the file system depend on the permissions of the user ID that starts up WebSphere Process Server. If the Outbound operation that needs to be performed is Retrieve, and the directory does not have read permissions, the adapter should generate an exception with the message that the directory does not have read permissions. This does not happen, however, if WebSphere Process Server is started with a super user ID. 
+
+CAUSE
+If WebSphere Process Server is started with a super user ID, it has read, write, and execute permission's to all the files and directories on the file system, regardless of the permission's set on those files and directories.
+
+RESOLVING THE PROBLEM
+If certain directories or files require read permission's only, ensure that WebSphere Process Server is started with a non-super user ID that has only read permission's go to those directories and files.

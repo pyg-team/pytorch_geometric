@@ -1,0 +1,25 @@
+Title: IBM Maps failing due to work files not found. - United States
+
+Text:
+WTX TX Launcher work files error 17 unique .FNL TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ IBM Transformation Extender (ITX) maps executed using the Launcher failing due to work files not found. 
+
+SYMPTOM
+The following error is in the launcher log.
+
+ERROR : I/O Creat RunMap=MapName.mmc Failed to open MapName.FNL Error=17 (mercio.c:3169)
+
+
+CAUSE
+If work files are not unique and you have multiple different launchers (separate launcher processes) using the same run map, this problem can happen.
+
+ENVIRONMENT
+Using the IBM Transformation Extender (ITX) Launcher to run multiple ITX Maps using RUN Maps.
+
+DIAGNOSING THE PROBLEM
+Error 17 means that the file already exists. 
+
+RESOLVING THE PROBLEM
+Change that RUN map to use unique work files.

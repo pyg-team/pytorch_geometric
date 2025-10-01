@@ -1,0 +1,92 @@
+Title: IBM The locale preference in Process Center fails to change in IBM Business Process Manager (BPM) Version 7.5 - United States
+
+Text:
+v750rnotes; local preference; local; process center TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ You attempt to change the locale preference in Process Center. When you check the locale preference after logging into Process Center again, the original locale is still selected. 
+
+SYMPTOM
+You can see the following exceptions in the SystemOut.log file:
+
+
+com.lombardisoftware.client.delegate.BusinessDelegateException: com.lombardisoftware.client.delegate.BusinessDelegateException: Cannot find POReference with id 7694bcf0-e35d-4fb7-b49e-f92e136c8391
+...
+...
+at com.lombardisoftware.client.delegate.BusinessDelegateException.asBusinessDelegateException(BusinessDelegateException.java:41)
+at com.lombardisoftware.client.delegate.SecurityDelegateDefault.listUserAttributeDefinitions(SecurityDelegateDefault.java:799)
+at com.lombardisoftware.utility.spring.PSCoreEntryInterceptor.invoke(PSCoreEntryInterceptor.java:14)
+at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:171)
+at org.springframework.aop.framework.JdkDynamicAopProxy.invoke(JdkDynamicAopProxy.java:204)
+at $Proxy49.getUserLocalePreferences(Unknown Source)
+at com.lombardisoftware.server.ejb.security.SecurityBean$28.execute(SecurityBean.java:411)
+at com.lombardisoftware.server.ejb.security.SecurityBean$28.execute(SecurityBean.java:409)
+at com.lombardisoftware.server.ejb.EjbServerUtils.handleEjbCall(EjbServerUtils.java:90)
+at com.lombardisoftware.server.ejb.security.SecurityBean.handleEjbCall(SecurityBean.java:49)
+at com.lombardisoftware.server.ejb.security.SecurityBean.getUserLocalePreferences(SecurityBean.java:409)
+...
+...
+Caused by: java.lang.IllegalStateException: Cannot find POReference with id 7694bcf0-e35d-4fb7-b49e-f92e136c8391
+at com.lombardisoftware.server.ejb.persistence.versioning.BranchContextImpl$SequencedDependencyRowMapper.mapRow(BranchContextImpl.java:1960)
+at com.lombardisoftware.server.ejb.persistence.versioning.BranchContextImpl$SequencedDependencyRowMapper.mapRow(BranchContextImpl.java:1940)
+at org.springframework.jdbc.core.RowMapperResultSetExtractor.extractData(RowMapperResultSetExtractor.java:92)
+at org.springframework.jdbc.core.JdbcTemplate$1.doInPreparedStatement(JdbcTemplate.java:653)
+at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:591)
+at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:641)
+at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:670)
+at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:678)
+at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:710)
+at org.springframework.jdbc.core.simple.SimpleJdbcTemplate.query(SimpleJdbcTemplate.java:187)
+at com.lombardisoftware.server.ejb.persistence.versioning.BranchContextImpl.loadDeltaSnapshot(BranchContextImpl.java:1391)
+
+
+CAUSE
+This issue is caused by a IBM Business Process Manager defect.
+
+
+RESOLVING THE PROBLEM
+To resolve the issue, upgrade to IBM Business Process Manger Version 7.5.0 Fix Pack 1 [http://www.ibm.com/support/docview.wss?uid=swg24030569]. If you do not want to install IBM Business Process Manager V7.5.0 Fix Pack 1, complete the following steps to work around the issue.
+
+
+
+Note: The workaround is not recommended as it might affect the system performance.
+
+
+
+ 1. Stop all Business Process Manager servers, tools, and editors.
+    
+    
+ 2. Find the 00Static.xml file, which is located in the BPM_Server_Install_Root\BPM\Lombardi directory.
+    
+    
+ 3. Open the 00Static.xml file in a text editor.
+    
+    
+ 4. Locate the following repository entry:
+    <repository>
+    <snapshot-cache-size-per-branch>64</snapshot-cache-size-per-branch>
+    <concrete-snapshot-gap>64</concrete-snapshot-gap>
+    <max-cached-objects-during-refactoring>256
+    </max-cached-objects-during-refactoring>
+    </repository>
+    
+    
+ 5. Change the concrete-snapshot-gap attribute to 0, 
+    After you make the change, the repository entry should look like this:
+    <repository>
+    <snapshot-cache-size-per-branch>64</snapshot-cache-size-per-branch>
+    <concrete-snapshot-gap>0</concrete-snapshot-gap>
+    <max-cached-objects-during-refactoring>256
+    </max-cached-objects-during-refactoring>
+    </repository>
+    
+    
+ 6. Restart the process server and reopen the process application.
+
+RELATED INFORMATION
+ A simplified Chinese translation is available [http://www.ibm.com/support/docview.wss?uid=swg21618930]
+
+
+ 
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Business Process Manager Standard Process Center AIX, Linux, Linux zSeries, Solaris, Windows 7.5 Business Integration IBM Business Process Manager Express Process Center Linux, Linux zSeries, Windows 7.5

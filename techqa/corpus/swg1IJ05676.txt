@@ -1,0 +1,174 @@
+Title: IBM IJ05676: BMXAA4214E - AN UNKNOWN ERROR HAS OCCURRED. PLEASE CONTACT YOUR SYSTEM ADMINISTRATOR FOR ASSISTANCE. - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  1) Create a new route (e.g. TEST)
+   
+   2) Add the following location to the route:
+       - OFF101
+   
+   Make sure to set route configured to generate route stops as
+   work order tasks.
+   
+   
+   3) Modify job plan 401 so that each task has an FS predecessor
+   to the previous task. So add 10 as a predecessor for 20 and 20
+   as step 30 and so on till you get to last one.
+   
+   4) Create a new PM at site BEDFORD (e.g. 1020):
+       - Route: Route-TEST
+       - Frequency: 1 DAYS
+       - Estimated next due date: Today
+       - Job plan: 401
+   
+   5) Set PM to ACTIVE
+   
+   6) Disable GL component ACTIVITY: 300
+   
+   1) Go To > Financial > Chart of Accounts
+   2) Select Action -> GL Component Maintenance
+   3) Select Component ACTIVITY
+   4) Unselect Active for GL Component Value 300.
+   
+   7) Generate work orders for PM 1020 using frequency criteria
+   for 7 days. You will get error of:
+   
+   BMXAA4214E - An unknown error has occurred. Please contact your
+   system administrator for assistance. Gather the logs from the
+   <HOME> directory and determine where and why the error is
+   thrown.
+   
+   PRODUCT VERSION:
+   Issue was reproduced against Maximo 7609 with
+   Scheduler 767 installed.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  n/a
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * Users of Scheduler Plus 767                                  *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * Problem to show invalid GL Account                           *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The message is show according with the expected.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IJ05676
+   
+   
+ * REPORTED COMPONENT NAME
+   MAXIMO SCHEDULE
+   
+   
+ * REPORTED COMPONENT ID
+   5724R46SE
+   
+   
+ * REPORTED RELEASE
+   767
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2018-04-12
+   
+   
+ * CLOSED DATE
+   2018-05-24
+   
+   
+ * LAST MODIFIED DATE
+   2018-05-24
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  maximo
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   MAXIMO SCHEDULE
+   
+   
+ * FIXED COMPONENT ID
+   5724R46SE
+   
+   
+
+APPLICABLE COMPONENT LEVELS

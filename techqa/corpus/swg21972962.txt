@@ -1,0 +1,41 @@
+Title: IBM CORS violation between  WebSphere Portal 8.5 and  Watson Content Analytics API - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ We are implementing a Custom Portlet using the WebSphere Portal 8.5 and that making REST APIs call to the collections inside Watson Content Analytics 3.5. When we invoke the REST apis from the Custom Portlet inside the Portal, its throwing CORS header exception, though when hitting the rest URLs directly inside the browser, we are able to get response from Watson Content Analytics. 
+
+CAUSE
+The browser won't send the AJAX request. Same origin request policy is implemented in your browser, it is NOT something the server can handle. There's no way to configure the server to allow it, because the request has not reached the Watson Content Analytics REST server.
+
+You will see a 405 error, as if the server responded. However there's no actual transaction between your browser and the server. The error is misleading. 
+
+DIAGNOSING THE PROBLEM
+You can test CORS by installing this html file on your web server:
+
+
+test.html [/support/docview.wss?uid=swg21972962&aid=2]test.html [/support/docview.wss?uid=swg21972962&aid=1]
+
+
+RESOLVING THE PROBLEM
+First, you must enable your application with code like the following: 
+
+ 
+
+$.ajaxSetup({
+crossDomain: true,
+xhrFields: {
+withCredentials: true
+}
+}); 
+
+ 
+
+ * To prevent the CORS, consider using Portal application proxy. See this topic in the Infocenter:
+
+http://www-01.ibm.com/support/knowledgecenter/SSHRKX_8.5.0/mp/dev-portlet/w2_ovu.dita?lang=en [http://www-01.ibm.com/support/knowledgecenter/SSHRKX_8.5.0/mp/dev-portlet/w2_ovu.dita?lang=en] 
+ *  Here are the instructions for setting up the application proxy:
+
+http://www-01.ibm.com/support/knowledgecenter/SS6KJL_8.5.1/FEB/in_portlet_before_you_install_feb_portlet.dita [http://www-01.ibm.com/support/knowledgecenter/SS6KJL_8.5.1/FEB/in_portlet_before_you_install_feb_portlet.dita] RELATED INFORMATION
+ Setting up the proxy [http://www-01.ibm.com/support/knowledgecenter/SS6KJL_8.5.1/FEB/in_portlet_before_you_install_feb_portlet.dita]

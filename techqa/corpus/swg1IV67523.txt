@@ -1,0 +1,153 @@
+Title: IBM IV67523: Move local data from CANDLEHOME to another file system - United States
+
+Text:
+  A FIX IS AVAILABLE
+IBM Tivoli Monitoring 6.3.0 Fix Pack 5 (6.3.0-TIV-ITM-FP0005) [http://www-01.ibm.com/support/docview.wss?uid=swg24039236]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Change IBM Tivoli Monitoring so that its local data can reside
+   in a file system separately from CANDLEHOME.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  See http://www.ibm.com/support/docview.wss?uid=swg21515256. [http://www.ibm.com/support/docview.wss?uid=swg21515256.]
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Since its inception, IBM Tivoli Monitoring (ITM) has stored
+   local data such as configuration files, log files, and
+   historical data together with the installation files in
+   CANDLEHOME.  For example, ITM normally installs in a directory
+   named /opt/IBM/ITM.  Within that directory, it stores programs
+   in subdirectory names like /opt/IBM/ITM/bin and
+   /opt/IBM/ITM/classes.  It also stores local data in subdirectory
+    names like /opt/IBM/ITM/config and /opt/IBM/ITM/logs.  This
+   homogeneous design is a problem for installations that require
+   an approach that keeps code in /opt and stores data in the /var
+   file system.
+   
+   Under this APAR, ITM added a new mechanism to move local data to
+   a different file system.  For example, data typically stored in
+   /opt/IBM/ITM/config and /opt/IBM/ITM/logs can be redirected to
+   /var/IBM/ITM/config and /var/IBM/ITM/logs.  This new file system
+   location is designated by the user at installation time, and it
+   is referred to as CANDLEDATA.  A conversion utility is provided
+   to implement CANDLEDATA for existing installations.
+   
+   Complete documentation for the new CANDLEDATA mechanism is
+   available here:
+   
+      http://www.ibm.com/support/docview.wss?uid=swg21695194 [http://www.ibm.com/support/docview.wss?uid=swg21695194]
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Install Actions:
+   See Problem Summary.
+   
+   
+   The fix for this APAR is contained in the following maintenance
+   packages:
+   
+     | fix pack | 6.3.0-TIV-ITM-FP0005
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV67523
+   
+   
+ * REPORTED COMPONENT NAME
+   OMEG DIST INSTA
+   
+   
+ * REPORTED COMPONENT ID
+   5608A41CI
+   
+   
+ * REPORTED RELEASE
+   630
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-12-04
+   
+   
+ * CLOSED DATE
+   2015-05-15
+   
+   
+ * LAST MODIFIED DATE
+   2015-06-29
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   OMEG DIST INSTA
+   
+   
+ * FIXED COMPONENT ID
+   5608A41CI
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R630 PSY
+   UP

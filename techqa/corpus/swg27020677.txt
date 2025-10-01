@@ -1,0 +1,64 @@
+Title: IBM Upgrading a Tivoli Storage Manager V6.1 server to V6.2 in a clustered environment on a Windows operating system - United States
+
+Text:
+supdates610; supdates611; supdates612; supdates613; supdates614; supdates620; supdates621; supdates622; supdates623; supdates624; supdates625; Tivoli Storage Manager; upgrade; upgrading; V6.1.x; V6.2.x; clustered environment; Windows; TSM server; Tivoli Storage Manager server PRODUCT DOCUMENTATION
+
+ABSTRACT
+ You can upgrade a Tivoli Storage Manager server from any level of V6.1 to any level of V6.2 in a clustered environment on a Windows operating system. 
+
+CONTENT
+
+Tip: Some steps in this procedure require you to run the Microsoft Management Console (MMC). When you do so, you might get error message ANRU1203E. The message is generated because a response is expected from the server that is not fully initialized. To continue, click OK > NEXT. This operation might require several attempts. 
+
+Procedure
+1. Ensure that the cluster is running on the primary node. Unless otherwise noted, perform the following steps on the primary node.
+2. In the Failover Cluster Manager window, take the Tivoli Storage Manager server and the DB2 server offline: 
+
+ * 
+ * Services and Applications
+ * 
+ * Other Resources
+ * 
+ * 
+ * 
+ * TSM Instance(x) Server
+ * 
+ * Take this resource Offline
+ * 
+
+3. Record the network name and IP address, and then delete them:  * 
+ * Services and applications 
+ * 
+ * 
+ * 
+ * Server Name
+ * 
+ * 
+ * 
+ * 
+ * 
+ * Other Resources 
+ * 
+ * TSM Instance(x) Server
+ * 
+
+4. Ensure that all nodes in the cluster are running. 
+5. To remove DB2 clustering from the instance, for each Tivoli Storage Manager instance in the cluster, issue the following command:  * db2mscs -u:instancename
+
+6. In the Failover Cluster Manager window, verify that nothing but the shared disks remains in the cluster. 
+7. Move the cluster from the primary node to the node that is being updated. On each secondary node, go to the MMC and delete the server instance. The MMC provides a choice of resources to delete. Delete the server instance and the registry entries for the server and console. Do not remove any files. Exit the MMC before moving to the next node. 
+Tip: Before installing the server code, ensure that no windows are opened to DB2 directories; otherwise, the DB2 installation fails. 
+8. Starting with the primary node, switch the cluster to the node that is being updated, and install Tivoli Storage Manager V6.2 on each node in the cluster. 
+9. Ensure that the primary node owns the cluster resources and that all nodes in the cluster are running. From the MMC on the primary node, run the Cluster Configuration wizard. If you have multiple instances, repeat this procedure for each instance that you plan to reuse. Update these instances in the same order that was used originally. The first server instance is named SERVER1, the second is named SERVER2, and so on. 
+10. Move the cluster resources to the next node to be configured. To initialize and configure the server, in MMC, run the Initial Configuration wizard on the appropriate node. When the last node in the cluster is added, the MMC creates cluster entries for Tivoli Storage Manager. 
+
+Tip: When you configure the second node, you might see the ANRU1119E error message: 
+
+A problem was encountered while interpreting TSM admin results. The wizard will not continue. Report this to TSM technical support. 
+
+If you see this message, click OK and Finish. 
+
+
+
+PRODUCT ALIAS/SYNONYM
+ TSM

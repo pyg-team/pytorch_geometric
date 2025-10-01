@@ -1,0 +1,96 @@
+Title: IBM ITCAM4Tx : Robotic RPT script playback fails on t6 agent while using proxy service - United States
+
+Text:
+71RRT-RPTPLAY; 71RRT-RPTWV; 71RRT-RPTTS; 71RRT-CONF; 71RRT-PLAY; 71RRT-TS TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Robotic Response Time agent (t6) can't play back successfully a RPT test script, while using proxy info. 
+
+SYMPTOM
+The proxy rejects the request sent by the RPT runtime during script playback; TEP Robotic verification point failures workspace reports a vp failure : 'Web Page Blocked'
+
+
+CAUSE
+Robotic Response Time agent (t6) is running as SYSTEM account, and it doesn't work well with the proxy service co-resident on same Windows system
+
+ENVIRONMENT
+RRT (t6) 7.3
+
+
+RPT v8.2 test script, with proxy info recorded inside the script, as seen in RPT Workbench test script, under Server Access Configurations,
+with proxy data defined, like :
+host = 127.0.0.1
+port : 80 
+
+Symantec proxy service : Symantec Could solution (Symantec proxy); an agent (a service) named “Symantec Message Labs Web Security Cloud Smart Connect” is running on the t6 machine that plays the script.
+
+
+DIAGNOSING THE PROBLEM
+Enable the RPT runtime Common Base Events (CBE) logs tracing on the T6 agent, by doing : 
+
+
+Make a backup copy of ITM_HOME\TMAITM6\app\RPT\config\itcamrt-logging.properties. 
+
+Edit itcamrt-logging.properties file
+
+Set the following trace entries in the 'RPT' section to DEBUG_MAX. Set the corresponding logging levels to 'true'. 
+
+# RPT Playback Controller TRACE
+BWM.trc.rpt.pc.level=DEBUG_MAX
+BWM.trc.rpt.pc.logging=true
+
+# RPT Utility TRACE
+BWM.trc.rpt.util.level=DEBUG_MAX
+BWM.trc.rpt.util.logging=true
+
+# RPT Managed JVM TRACE
+BWM.trc.rpt.managed.level=DEBUG_MAX
+BWM.trc.rpt.managed.logging=true
+
+# RPT Playback Manager TRACE
+BWM.trc.rpt.pm.level=DEBUG_MAX
+BWM.trc.rpt.pm.logging=true
+
+# RPT Test TRACE
+BWM.trc.rpt.rpttest.level=DEBUG_MAX
+BWM.trc.rpt.rpttest.logging=true
+
+# RPT External TRACE
+BWM.trc.rpt.external.level=DEBUG_MAX
+BWM.trc.rpt.external.logging=true
+
+# RPT Event TRACE
+BWM.trc.rpt.event.level=DEBUG_MAX
+BWM.trc.rpt.event.logging=true
+
+Restart the T6 agent
+
+Reproduce the problem
+
+Review the CommonBaseEvent* (CBE) logs; CBE logs location on Windows :
+ITM_HOME\TMAITM6\app\RPT\runtimes\{RPT RUNTIME VERSION}\
+
+They should contain reference to the proxy service, for example:
+"DestinationAddress=127.0.0.1:80"
+and proxy connection trace like : "Proxy-Connection: Keep-Alive"
+
+
+RESOLVING THE PROBLEM
+Reconfigure/change Robotic Response Time agent (t6) "ITCAM for Robotic Response Time" Windows Service settings -> properties -> Log on -> Log on as : 
+
+ from "Local SYSTEM account" 
+
+ to 
+
+"This account" 
+
+and give here the same account details as the user account running the Symantec proxy service. 
+
+ 
+
+Restart the "ITCAM for Robotic Response Time" Windows service
+
+
+
+PRODUCT ALIAS/SYNONYM
+ itcam itcam4tx itcam for tx rational performance tester

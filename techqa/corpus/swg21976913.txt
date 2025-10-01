@@ -1,0 +1,22 @@
+Title: IBM Web GUI 8.1 FP3 and later versions: how to access the Event Viewer's preferences when the button has been disabled - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ A Web GUI user with sufficient privileges may be able to disable the preferences button in the Event Viewer's toolbar. 
+
+This setting would impact on all Event Viewer widgets as seen by the user, where the preferences button would not be visible anymore. 
+
+Since disabling or enabling the button is performed through the preferences themselves (at user level), this might become an issue, if the user needs to access the preferences once again after disabling the button. 
+
+RESOLVING THE PROBLEM
+In order to access the preferences despite having disabled the button, the user can shift focus on any Event Viewer instance (e.g. click an event) and press 
+
+shift-P
+
+This will bring up the modal with the available preferences, and may allow re-enabling the button (amongst other features), if so desired. 
+
+Note: the available preferences for a given user may be subject to administrator restrictions. For instance, check boxes representing layout options may be grayed out if the administrator has disabled that choice for users - in which case, changing the state of the check box at user level will not produce any change. 
+
+Versions: this tech note applies to Web GUI 8.1 FP3 and later versions (earlier versions of Web GUI 8.1 do not feature user preferences for the Event Viewer).

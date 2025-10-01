@@ -1,0 +1,37 @@
+Title: IBM Processes stay in active state on step 0 while on a cluster - SI 5003 - United States
+
+Text:
+STERLINGNFX TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Processes stay in active state on step 0 while on a cluster - SI 5003 
+
+SYMPTOM
+
+
+SI 5003
+
+When these processes run on single node they work fine but when ran on a cluster they just hang on first step and will go in to interrupted_man eventually when Recovery runs.
+
+Cluster configuration is setup correctly. Same issue with both UDP and TCP.
+
+The testMulticast BP fails. 
+
+We do see the "Member joined" message in all the noapp.log(dated) for all the nodes of the cluster.
+
+Error Message No specific error messages, but the BPs are not getting load balanced to the rest of the nodes of the cluster.
+
+
+RESOLVING THE PROBLEM
+
+
+After reviewing the sandbox.cfg for the nodes of the cluster, it was noticed that the customer was using a different IP address (an internal IP address) so that they could do multicasting on. The IP was different than the EXT_HOST_ADDR per sandbox.cfg That internal IP Address had been propagated to jgroups_cluster.properties
+
+We used the EXT_HOST_ADDR (which is in sandbox.cfg) so that jgroups_cluster.properties uses that one instead of the internal one that was originally set up. After the property file change, the customer was able to get the cluster working. 
+
+The reason why the customer had taken it upon themselves to do this change, was to prevent from doing multicasting on their external IP addresses. It was explained to them that in SI 5.0, we don't have to do broadcast (UDP) multicasting, but rather you can do TCP communications for node to node communications. The customer ended up using the TCP option in jgroups to do the node to node communications. 
+
+ 
+
+HISTORICAL NUMBER
+ NFX9666

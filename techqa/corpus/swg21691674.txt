@@ -1,0 +1,46 @@
+Title: IBM Installing IBM Stewardship Center with Business Process Manager - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ We have several Process Servers running on multiple servers in our environment. These Process Servers are managed bya single Process Center (Online and Offline mode). We are planning to install DataStewardship Interface on those process servers. What would be the best way to perform a new install to one of these other Process Servers? 
+
+CAUSE
+MDM currently supports only BPM Standard and Express editions, not BPM Advanced Edition. IBM Process Manager has two types of profiles that we can create.
+Process Server: 
+This is the environment where BPM applications are run after they are built in Process Center. 
+
+Process Center: 
+This is the environment where BPM applications are developed and stored. It also includes a unit test runtime which has most of the features of Process Server, although the behavior is tailored to a unit test system. 
+
+
+ANSWER
+If you just have the Process Server, then the installation scripts are run the Process Server directly. But if you have Process Center managing the Process Servers, then the installation scripts should be executed in a Process Center environment and then later, it should be installed from Process Center to Process Server (online or offline). The steps for doing so in BPM are detailed in the following link: http://www-01.ibm.com/support/knowledgecenter/SSFTDH_8.5.0/com.ibm.wbpm.admin.doc/topics/deploying_introduction.html [http://www-01.ibm.com/support/knowledgecenter/SSFTDH_8.5.0/com.ibm.wbpm.admin.doc/topics/deploying_introduction.html]
+
+From MDM perspective, it includes:
+1) Perform the import of process application on the Process Center and install all the process apps. The process applications can be found in the following directory: <STEWARDSHIP_CENTER_INSTALL_HOME>/mdmg/processes.
+
+2) Install the snapshot of all the applications to the connected Process Server from Process Center. Common applications include the following:
+i) MDM_DataStewardship_Dashboard
+ii) MDM_Party_Maintenance
+iii) MDM_Physical_Suspected_Duplicates
+iv) MDM_Virtual_Suspected_Duplicates.
+
+3) The snapshots might contain information of process center which may be on a different server than process center. So modify the MDMBPMIntegration.properties with the parameters that corresponds to Process Server and the MDM Instance.
+
+4) Edit the build file <STEWARDSHIP_CENTER_INSTALL_HOME>/mdmg/install/scripts/build-utils-governance.xml and comment out the following line in target "install_configure_governance_apps"
+<antcall target="run_import_process_application"></antcall> 
+
+5) Run the installation of Governance application with the install_configure_governance_apps target
+InstallGovernanceApplication.sh[.bat] install_configure_governance_apps
+
+
+
+PRODUCT ALIAS/SYNONYM
+ Master Data Management
+Reference Data Management
+MDM Server
+Physical MDM
+Hybrid MDM
+BPM

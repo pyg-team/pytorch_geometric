@@ -1,0 +1,184 @@
+Title: IBM IT13672: GLM-LOCK LIST AVAILABLE VALUE FLIP-FLOPS IN A SHORT PERIOD OF TIME - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+DB2 Version 10.5 Fix Pack 9 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24044110]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  In pureScale environment, "GLM-lock list available" value in
+   db2diag.log may jump up and down in miliseconds due to an old
+   cached value in each agent.
+   
+   2016-01-25-00.43.13.961294+540 E12265A608           LEVEL:
+   Warning
+   PID     : 15663322             TID : 186028         PROC :
+   db2sysc 2
+   INSTANCE: db2inst1             NODE : 002           DB   :
+   SAMPLE
+   APPHDL  : 2-20867              APPID:
+   192.168.1.1.38253.160117103453
+   AUTHID  : DB2INST1             HOSTNAME: purescale1
+   EDUID   : 186028               EDUNAME: db2agent (SAMPLE) 2
+   FUNCTION: DB2 UDB, lock manager, sqlpUpdateMemStatus, probe:611
+   DATA #1 : <preformatted>
+   Locking memory management: GLM-status normal, all GLM-thresholds
+   resolved.
+   GLM-lock list size = 32456767
+   GLM-lock list available = 30715515
+   
+    ..(snip)..
+   
+   2016-01-25-00.43.13.962041+540 E12874A685           LEVEL:
+   Warning
+   PID     : 15663322             TID : 153400         PROC :
+   db2sysc 2
+   INSTANCE: db2inst1             NODE : 002           DB   :
+   SAMPLE
+   APPHDL  : 2-13204              APPID:
+   192.168.1.2.37450.160117052905
+   AUTHID  : DB2INST1             HOSTNAME: purescale1
+   EDUID   : 153400               EDUNAME: db2agent (SAMPLE) 2
+   FUNCTION: DB2 UDB, lock manager, sqlpUpdateMemStatus, probe:611
+   DATA #1 : <preformatted>
+   Locking memory management: GLM-memory low.
+   Escalation threshold activated.
+   Remove Sticky Locks threshold activated.
+   Stop Prefetching threshold activated.
+   GLM-lock list size = 32456767
+   GLM-lock list available = 861338
+   
+    ..(snip)..
+   
+   2016-01-25-00.43.13.968445+540 E22988A608           LEVEL:
+   Warning
+   PID     : 15663322             TID : 186028         PROC :
+   db2sysc 2
+   INSTANCE: db2inst1             NODE : 002           DB   :
+   SAMPLE
+   APPHDL  : 2-20867              APPID:
+   192.168.1.1.38253.160117103453
+   AUTHID  : DB2INST1             HOSTNAME: purescale1
+   EDUID   : 186028               EDUNAME: db2agent (SAMPLE) 2
+   FUNCTION: DB2 UDB, lock manager, sqlpUpdateMemStatus, probe:611
+   DATA #1 : <preformatted>
+   Locking memory management: GLM-status normal, all GLM-thresholds
+   resolved.
+   GLM-lock list size = 32456767
+   GLM-lock list available = 30715515
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * ALL                                                          *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * See Error Description                                        *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Upgrade to Db2 10.5 Fix Pack 9 or higher                     *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  First fixed in Db2 10.5 Fix Pack 9
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT13672
+   
+   
+ * REPORTED COMPONENT NAME
+   DB2 FOR LUW
+   
+   
+ * REPORTED COMPONENT ID
+   DB2FORLUW
+   
+   
+ * REPORTED RELEASE
+   A50
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-02-08
+   
+   
+ * CLOSED DATE
+   2017-09-29
+   
+   
+ * LAST MODIFIED DATE
+   2017-09-29
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    IT15210 [http://www-01.ibm.com/support/docview.wss?uid=swg1IT15210]
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   DB2 FOR LUW
+   
+   
+ * FIXED COMPONENT ID
+   DB2FORLUW
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * RA50 PSN
+   UP

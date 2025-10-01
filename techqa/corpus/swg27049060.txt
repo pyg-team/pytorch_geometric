@@ -1,0 +1,38 @@
+Title: IBM Content Navigator Version 3.0.0 known problems, issues and limitations - United States
+
+Text:
+ PRODUCT DOCUMENTATION
+
+ABSTRACT
+ This document contains a list of problems, issues, and limitations that were known at the time of publication. 
+
+CONTENT
+In addition to reviewing this list, you should search the IBM Support site for any updates that might be available. 
+
+To search the IBM Support site for IBM Content Navigator, go to the IBM Content Navigator Support Portal [http://www.ibm.com/support/entry/portal/overview/software/enterprise_content_management/content_navigator].
+
+
+
+
+IBM CONTENT NAVIGATOR
+
+GENERAL PROBLEMS, ISSUES, AND LIMITATIONS
+You cannot use IBM Content Navigator to upload files larger than 2 GB to your repository [http://www.ibm.com/support/knowledgecenter/SSEUEX_2.0.3/com.ibm.installingeuc.doc/eucpl002.htm] 
+This information is included in the documentation about planning for your content repository. Jaws v18 does not read the flyover Help [http://www.ibm.com/support/docview.wss?uid=swg27049134] Sync connection error is not displayed [http://www.ibm.com/support/docview.wss?uid=swg27049194] Box users with 'Viewer Uploader' and 'Previewer Uploader' rights are not allowed to edit template metadata [http://www.ibm.com/support/docview.wss?uid=swg27049195] Email attachment names or the Subject are corrupt [http://www.ibm.com/support/docview.wss?uid=swg27049219] Java applets with Firefox 42 may not work when upgrading the JRE [http://www.ibm.com/support/docview.wss?uid=swg21985912] 
+CONFIGURATION AND DEPLOYMENT KNOWN PROBLEMS, ISSUES, AND LIMITATIONS
+Resolving connector exceptions that cause IBM Content Navigator deployment to fail on a clustered high availability WebSphere Application Server environment [http://www.ibm.com/support/docview.wss?uid=swg27043271] 
+TASK MANAGER KNOWN PROBLEMS, ISSUES, AND LIMITATIONS
+"Configure the Task Manager" task in Configuration tool does not validate the password [http://www.ibm.com/support/docview.wss?uid=swg27049133] 
+IBM CONTENT NAVIGATOR SHAREPOINT PLUG-IN PROBLEMS, ISSUES, AND LIMITATIONS
+The SharePoint CMIS connector does not support some search operators [http://www.ibm.com/support/docview.wss?uid=swg27041330] 
+ADDITIONAL DOCUMENTATION
+Cross-repository searches use a different limit than the limit set on the repository [http://www.ibm.com/support/docview.wss?uid=swg27043347] 
+IBM CONTENT NAVIGATOR VIEWERS
+
+KNOWN PROBLEMS, ISSUES, AND LIMITATIONS
+Saving documents with permanent redactions fail when the filename contains special characters [http://www.ibm.com/support/docview.wss?uid=swg27049118] Redaction annotation buttons should be hidden if the user does not have edit permissions [http://www.ibm.com/support/docview.wss?uid=swg27049128] Role-based redactions are not applied to a PDF file created by using the Apache PDFBox library [http://www.ibm.com/support/docview.wss?uid=swg27049225] Role-based redaction supports only documents that contain one content element [http://www.ibm.com/support/docview.wss?uid=swg27049250] ADDITIONAL DOCUMENTATION
+Configuring the IBM Daeja ViewONE Professional Edition viewer and IBM Daeja ViewONE Virtual viewer (IBM FileNet Content Manager) [http://www.ibm.com/support/docview.wss?uid=swg27043272] Enabling logging for Daeja ViewONE viewers [http://www.ibm.com/support/docview.wss?uid=swg27043161] 
+IBM CONTENT NAVIGATOR FOR MICROSOFT OFFICE
+KNOWN PROBLEMS, ISSUES, AND LIMITATIONS
+IBM Content Navigator creating and editing of .docm documents fail [http://www.ibm.com/support/docview.wss?uid=swg27049161] ADDITIONAL DOCUMENTATION
+IBM Content Navigator configuration settings that impact IBM Content Navigator for Microsoft Office [http://www.ibm.com/support/docview.wss?uid=swg27042155] [/support/docview.wss?uid=swg27049060&amp;aid=1]

@@ -1,0 +1,189 @@
+Title: IBM LO59087: PANIC: THE NOTES2 PROCESS (PID=5836) EXITED UNEXPECTEDLY - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Environment:
+   
+   Notes client 8.5.2FP1 SHF119 (32-bit client)
+   Windows 32
+   
+   Problem:
+   Notes Client 8.5.2 Crash
+   
+   
+   NSD file-> PANIC: The notes2 process (pid=5836) exited
+   unexpectedly.
+   
+   The core file -> showing a crash but the thread is not clear
+   
+   
+   0SECTION       TITLE subcomponent dump routine
+   NULL           ===============================
+   1TISIGINFO     Dump Event "gpf" (00002000) received
+   1TIDATETIME    Date:                 2011/03/07 at 10:52:56
+   1TIFILENAME    Javacore filename:    C:/Documents and
+   Settings/srzxlh/Local Settings/Application
+   Data/Lotus/Notes/Data/workspace/logs\javacore.20110307.105059.58
+   36.0003.
+   txt
+   1TIREQFLAGS    Request Flags: 0x81 (exclusive+preempt)
+   1TIPREPSTATE   Prep State: 0x0
+   1TIPREPINFO    Exclusive VM access not taken: data may not be
+   consistent
+   across javacore sections
+   
+   ===
+   1XMCURTHDINFO  Current thread
+   NULL           ----------------------
+   3XMTHREADINFO      "Worker-27" J9VMThread:0x06267400,
+   j9thread_t:0x055F1F04, java/lang/Thread:0x125F1778, state:R,
+   prio=5
+   3XMTHREADINFO1            (native thread ID:0x1450, native
+   priority:0x5,
+   native policy:UNKNOWN)
+   3XMTHREADINFO3           Java callstack:
+   4XESTACKTRACE                at
+   org/eclipse/osgi/framework/internal/core/ServiceRegistrationImpl
+   $Propert
+   ies.cloneValue(Bytecode PC:16)
+   3XMTHREADINFO3           Native callstack:
+   4XENATIVESTACK               (0x7FF04C4A [j9vm24+0x14c4a])
+   4XENATIVESTACK               (0x0015B7C8)
+   4XENATIVESTACK               (0x061CD578)
+   
+   ===========
+   
+   Crash stack:
+   ============
+   PANIC: The notes2 process (pid=5836) exited unexpectedly.
+   
+   
+   ############################################################
+   ### thread 7/28: [ NLNOTES:  1554:  0270]
+   ### FP=0x0363dbb0, PC=0x7c90e514, SP=0x0363db4c
+   ### stkbase=0x03640000, total stksize=262144, used stksize=9396
+   ############################################################
+    [ 1] 0x7c90e514 ntdll.KiFastSystemCallRet+0
+   (814,493e0,0,363e360)
+    [ 2] 0x7c802542 kernel32.WaitForSingleObject+18
+   (814,493e0,363eaf4,363e79f)
+   @[ 3] 0x6020c615 nnotes.FRSendCommandToService+789
+   (363e380,363e780,363e79f,0)
+   @[ 4] 0x6020d458 nnotes.OSRunExternalScript@8+1064 (12c,1)
+   @[ 5] 0x6020d9cf nnotes.FRTerminateWindowsResources+975
+   (1,1010,1,0)
+   @[ 6] 0x6020ddf8 nnotes.OSFaultCleanupExt@24+984
+   (e36a68,1010,0,0,0,363ee1c)
+   @[ 7] 0x6020de7a nnotes.OSFaultCleanup@12+26 (0,1010,0)
+   @[ 8] 0x60219734 nnotes.OSNTUnhandledExceptionFilter@4+276
+   (363fe54)
+   @[ 9] 0x601dae7d nnotes.Panic@4+589 (363fe6c)
+   @[10] 0x601daf54 nnotes.OSWCTPanicShutdown+84
+   (16cc,c0000005,14f2ee8,14f57f0)
+   @[11] 0x636bfb5c nnotesws.WCTShutdownThread+220
+   (16cc,138204,7c910041,0)
+   @[12] 0x6015586f nnotes.ThreadWrapper@4+175 (0)
+    [13] 0x7c80b729 kernel32.GetModuleFileNameA+442
+   (601557c0,0,0,3)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  This APAR is closed as FIN. We have deferred the fix to a
+    future release.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *  This APAR is associated with SPR# SHEZ8ESBTH.
+   This APAR is closed as FIN. We have deferred the fix to a
+    future release.
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   LO59087
+   
+   
+ * REPORTED COMPONENT NAME
+   NOTES CLIENT
+   
+   
+ * REPORTED COMPONENT ID
+   5724E6255
+   
+   
+ * REPORTED RELEASE
+   850
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-03-09
+   
+   
+ * CLOSED DATE
+   2011-08-04
+   
+   
+ * LAST MODIFIED DATE
+   2011-08-04
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R850 PSN
+   UP

@@ -1,0 +1,12 @@
+Title: IBM Support for Oracle Exadata in P8 system - United States
+
+Text:
+oracle exadata TECHNOTE (FAQ)
+
+QUESTION
+ Does IBM ECM FileNet P8 (P8) system support Oracle Exadata? 
+
+ANSWER
+Yes, it is supported from P8 5.0 onwards.
+
+From November 2012 onwards, IBM removed the restriction on Oracle's Exadata platform, which is another piece of hardware that is supported by Oracle 11g and Oracle RAC. IBM supports both Oracle 11g and Oracle RAC, and generally does not place any restrictions on what hardware is allowed to run on those databases, so if Oracle supports it, IBM supports it also.

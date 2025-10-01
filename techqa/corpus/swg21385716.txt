@@ -1,0 +1,30 @@
+Title: IBM Error when changing the maximum string length of a document class property using IBM FileNet Enterprise Manager - United States
+
+Text:
+document class; maximum string length; content engine; ce; filenet enterprise manager; fem TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Administrators get a FileNet Content Engine Administration Error Message using IBM FileNet Enterprise Manager when changing the maximum string length of a document class property and are unable to change the property.
+
+Error Message: 
+An automation operation threw a dispatch exception, code=0. The operation violates a contraint of the implementation. 
+
+SYMPTOM
+Error Message: 
+
+An automation operation threw a dispatch exception, code=0. The operation violates a constraint of the implementation. 
+
+ * Document class property's Maximum String Length cannot be changed. 
+ * Document class property is a string data type
+
+
+CAUSE
+The Document Class Property was inherited from a parent Document Class. Changes to the property must be done in the Document Class where it is defined and not in Document Classes that inherit the property.
+
+DIAGNOSING THE PROBLEM
+Check the Property Definitions tab of the Document Class where the change is being attempted. If the Inherited Properties checkbox is not selected and the property is no longer visible, it was not defined in this class.
+
+
+
+RESOLVING THE PROBLEM
+Make the desired changes in the Document Class where the property is defined and then propagate the change to the classes that inherit the property.

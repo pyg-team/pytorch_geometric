@@ -1,0 +1,24 @@
+Title: IBM A File copied from IBM Sterling Connect:Direct for z/OS to IBM Sterling Connect:Direct for i5/OS the IFS file is missing the CRLF characters at the end of the records. - United States
+
+Text:
+z/OS i5/OS CRLF missing TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ A File copied from z/OS to i5/OS the IFS is missing the CRLF characters at the end of the records. 
+
+SYMPTOM
+File copied from z/OS to i5/OS the IFS is missing the CRLF characters at the end of the records .
+
+
+RESOLVING THE PROBLEM
+Add TEXTFILE(*YES) EORCHAR(0D0A) in the SYSOPTS for the i5/OS file. 
+
+example is: SYSOPTS="TYPE(FILE) CODEPAGE(37,819) CCSID(819) TEXTFILE(*YES) EORCHAR(0D0A)")
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Commerce Sterling Connect:Direct for i5/OS i5/OS, IBM i 3.7, 3.6, 3.5 
+HISTORICAL NUMBER
+ PRI30879
+SCI80018

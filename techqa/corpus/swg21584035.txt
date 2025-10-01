@@ -1,0 +1,69 @@
+Title: IBM Clarity Server - Recommended Internet Explorer 7 and 8 settings - United States
+
+Text:
+IE8; IE7; browser; compatible TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ IBM Clarity Server is a web based application that is compatible with Microsoft Internet Explorer. Several issues can occur when loading the application in the browser. 
+
+SYMPTOM
+Several symptoms can be encountered: 
+
+ * The menus not displaying correctly 
+ * The menus disappear when you hover over them 
+ * There are warning messages when saving, exporting or importing 
+ * The ActiveX control cannot be downloaded
+
+
+
+CAUSE
+There are several Internet Settings that are not applied
+
+
+
+ENVIRONMENT
+Microsoft Internet Explorer 6, 7, 8 
+
+IBM Clarity Server 6 or 7
+
+
+DIAGNOSING THE PROBLEM
+Load Clarity and attempt to use the menu to load templates 
+
+Make changes and attempt to save to export to Excel
+
+
+RESOLVING THE PROBLEM
+Apply the recommended Internet Explorer 7 and 8 settings as mentioned in the Install Guide:
+
+Trusted sites - Add the Clarity server
+Custom level for trusted sites (these need to be enabled) 
+
+ *  ActiveX controls and plug-ins Allow previously unused ActiveX controls to run without prompting (though this may be enabled by default) Binary and script behaviours Download signed ActiveX controls (prompt is fine) Download unsigned ActiveX controls (prompt is fine) Initialize and script ActiveX controls not marked as safe for scripting Run ActiveX controls and plug-ins Script ActiveX controls marked safe for scripting
+   
+
+
+Downloads  *  Automatic prompting for file downloads File download 
+
+
+Miscellaneous  *  allow META REFRESH Allow script-initiated windows without size or position constraints Allow websites to open without address or status bars Include local directory path when uploading files to server Submit non-encrypted form data Disable phishing filter Disable pop-up blocker 
+
+
+Scripting  * Active scripting 
+ * Allow programmatic clipboard access 
+ * Allow status bar updates via script 
+ * Allow websites to prompt for information using scripted windows
+
+
+
+Enter Tools >> Internet Options >> Advanced tab: Uncheck the "Enable automatic crash recovery" feature. About security zones in Internet Explorer (Tools >>Internet Options >> Security Tab)
+
+The Clarity web site will be added in the Trusted sites. As most of the Clarity web sites are hosted in company's network, they might be seen as Local Intranet. In order to avoid that, please go to the Local Intranet zone, click on Settings, uncheck the "Automatically detect intranet network" and check the "Include all local (intranet) sites not listed in other sites"
+
+
+
+
+
+
+HISTORICAL NUMBER
+ 3261

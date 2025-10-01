@@ -1,0 +1,225 @@
+Title: IBM PK80629: THE addHttpOnlyAttributeToCookies CUSTOM PROPERTY IS NOT DOCUMENTED IN THE VERSION 6.1 DOCUMENTATION - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The "Security custom properties" topic in the Information
+   Center for WebSphere Application Server Version 6.1 does not
+   document the following custom property:
+   
+   com.ibm.ws.security.addHttpOnlyAttributeToCookies=true
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  n/a
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  This APAR affects users who are using the   *
+   *                  WebSphere Application Server Version        *
+   *                  6.1.0, or Version 7.0 Information Center.   *
+   *                  These customers need WebSphere Application  *
+   *                  Server to recognize and process HTTP-only   *
+   *                  cookies that inhibit any cross-site         *
+   *                  scripting from accessing sensitive cookie   *
+   *                  information.                                *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: The Information Centers for WebSphere   *
+   *                      Application Server Version 6.1 and      *
+   *                      Version 7.0 do not document how to      *
+   *                      sensitize WebSphere Application         *
+   *                      Server to recognize, accept, and        *
+   *                      process HTTP-Only cookies.              *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   The Information Centers for WebSphere Application Server
+   Version 6.1 and Version 7.0 do not document the use of the
+   com.ibm.ws.security.addHttpOnlyAttributeToCookies security
+   custom property.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The "Security custom properties" topic in the Information
+   Center for WebSphere Application Server Version 6.1 and
+   Version 7.0 will be updated with the following information to
+   describe the com.ibm.ws.security.addHttpOnlyAttributeToCookies
+   security custom property:
+   
+   com.ibm.ws.security.addHttpOnlyAttributeToCookies
+   Cookies that contain sensitive values need to be protected by
+   setting the secure and HTTP-only flags for cookies whose
+   values are set by the server. You configure WebSphere
+   Application Server so that it sets the HTTP-only flag for the
+   LTPA cookies by setting
+   the com.ibm.ws.security.addHttpOnlyAttributeToCookies custom
+   property with a true value.
+   
+   A common security problem plaguing Web servers is cross-site
+   scripting. Cross-site scripting is a server-side vulnerability
+   that is often created when rendering user input as HTML.
+   Cross-site scripting attacks can expose sensitive information
+   about the users of the Web site. In order to help mitigate the
+   risk of cross-site scripting, a new feature has been
+   introduced in Microsoft Internet Explorer 6. This Microsoft
+   Internet Explorer 6 feature is a new attribute for cookies,
+   which prevents them from being accessed through client-side
+   script. A cookie with this attribute is called an HTTP-only
+   cookie. Any information contained in an HTTP-only cookie is
+   less likely to be disclosed to a hacker or a malicious Web site.
+   You use the com.ibm.ws.security.addHttpOnlyAttributeToCookies
+   custom property with a true value to allow WebSphere
+   Application Server to properly recognize, accept and process
+   HTTP-Only cookies and inhibit any cross-site scripting from
+   accessing sensitive cookie information.
+   Default false
+   
+   Update from APAR PK82764 [http://www-01.ibm.com/support/docview.wss?uid=swg1PK82764]
+   This APAR changed the "Security custom properties" topic
+   in the Information Center for WebSphere Application
+   Server Versions 6.1 and 7.0.
+   The com.ibm.ws.security.addHttpOnlyAttributeToCookies
+   property description now reads as follows:
+   com.ibm.ws.security.addHttpOnlyAttributeToCookies
+   This custom property enables you to set the HTTPOnly attribute
+   for single sign-on (SSO) cookies.
+   
+   You can use the
+   com.ibm.ws.security.addHttpOnlyAttributeToCookies custom
+   property to protect cookies that contain sensitive values.
+   When you set this custom property value to true, the
+   application server sets the secure and HTTPOnly attribute for
+   SSO cookies whose values are set by the server. The HTTPOnly
+   attribute enables the protection of sensitive values in
+   cookies.
+   
+   Also, a true value enables the application server to properly
+   recognize, accept, and process inbound cookies with HTTPOnly
+   attributes and inhibit any cross-site scripting from accessing
+   sensitive cookie information.
+   
+   A common security problem, which impacts Web servers, is
+   cross-site scripting. Cross-site scripting is a server-side
+   vulnerability that is often created when user input is
+   rendered as HTML. Cross-site scripting attacks can expose
+   sensitive information about the users of the Web site. Most
+   modern Web browsers honor the HTTPOnly attribute to prevent
+   this attack. A cookie with this attribute is called an
+   HTTPOnly cookie. Information that exists in an HTTPOnly cookie
+   is less likely to be disclosed to a hacker or a malicious Web
+   site. For more information about the HTTPOnly attribute, see
+   the Open Web Application Security Project (OWASP) Web site.
+   
+   Important: When you use this custom property, HTTPOnly
+   attribute is not added to every cookie that passes through the
+   application server. Also, the attribute is not added to other
+   non-secure cookies that are created by the application server.
+   A list of non-HTTPOnly cookies includes:
+   - JSESSIONID cookies
+   - SSO cookies that are created by authenticators or providers
+   from another software vendor
+   - Client or browser cookies that do not already contain the
+   HTTPOnly attribute
+   Default: false
+   
+   
+   Periodically, we update the documentation in our information
+   centers. Thus, the changes might exist in the current
+   documentation before you read this text. To access the latest
+   on-line documentation, go to the product library page at
+   http://www.ibm.com/software/webservers/appserv/library [http://www.ibm.com/software/webservers/appserv/library]
+   and select the version and product that is appropriate for
+   your WebSphere Application Server environment. The modified
+   documentation will be available in the October 2009 update to
+   the Information Centers.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK80629
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSPHERE APP S
+   
+   
+ * REPORTED COMPONENT ID
+   5724J0800
+   
+   
+ * REPORTED RELEASE
+   60I
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-02-13
+   
+   
+ * CLOSED DATE
+   2009-02-25
+   
+   
+ * LAST MODIFIED DATE
+   2009-10-04
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

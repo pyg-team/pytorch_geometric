@@ -1,0 +1,46 @@
+Title: IBM Frequently asked questions on how to set up and use default values when using ACIF to load data into OnDemand - United States
+
+Text:
+ACIF; data loading; arsload; default values; TLE; group trigger; floating trigger TECHNOTE (FAQ)
+
+QUESTION
+ This document contains frequently asked questions concerning how to set up and use default values when using ACIF to load data into OnDemand. 
+
+ANSWER
+Question:
+If trigger one is found on the first page of a group but none of the fields that are located using trigger one are found (that is they are blank), are records for the indexes using these fields written into the .ind file?
+
+Answer:
+If trigger one is found on the first (or any) page of a group, fields are collected whether they contain the data you are looking for (for example, an account number or statement date) or not. ACIF will pick up whatever is in the locations you specify even if there are only blanks there. These values are passed to the .ind file and a TLE (Tagged Logical Element) is written. OnDemand uses the values specified in the TLE to load. The exception is if the file format is variable record length line data. Should one of the index specifications fall beyond the record length of any of the records you attempting to search, ACIF will issue an error message (0425-449 INDEX FIELDS REFERENCE OUTSIDE OF THE RECORD, FIELD# nn INPUT RECORD# nnnn). In this case, you'll want to use the ACIF default value, which is written in hex into the indexing parameters (rather than the OnDemand default value - which can be found in the Application definition on the Load Information tab) in order to allow ACIF to complete indexing successfully. 
+
+Question:
+If trigger two (a group trigger) is not found in a group (and thus none of the fields located using trigger two are found), are records for the indexes using these fields written into the .ind file?
+
+Answer:
+If trigger two is a group trigger, both trigger one (which must be a group trigger) AND trigger two must be found before any fields are collected. If trigger two is not found, no group is created. Trigger one - which is constantly being searched for - will likely be found again and once trigger two is found, fields will be collected based on the indexing specifications. In this case the group will begin on the page where trigger one was found the second time. 
+
+Question:
+Would this be different if trigger two was a floating trigger?
+
+Answer:
+Yes, this would be different if the trigger were defined as a floating trigger. Floating triggers work independently of group triggers. They are to be used in cases where the trigger may be found multiple times in a group or not at all. In the case of a floating trigger (which cannot break/define a group), indexing will not fail if it is not found within a group. 
+
+Question:
+If blank index records are written in the .ind file, does the load use the default value for the index, or does it load blanks into the database.
+
+Answer:
+If by 'blank index records', you mean a string of blanks, arsload uses the string to attempt to load because blanks are real hex characters. If the field that you are attempting to load into is a string field, arsload will load blanks (a valid string) into the database. However, if the field you are attempting to load into is a date field, arsload will fail and complain that it cannot convert ' ' into a date field %m/%d/%y (based on date format information you supply in the Application). arsload will not use the default value unless no TLE record is written to the index file. 
+
+Question:
+If no index records are written in the .ind file (for example if the field is not found in the group), does the load use the default value for the index?
+
+Answer:
+Yes, but this will only occur if the field was based off of a floating trigger and the floating trigger was not found.
+
+Question:
+When are the default values for indexes used?
+
+Answer:
+Default values are used within ACIF when the field location specified may appear beyond the end of a record to allow ACIF to complete indexing. Default values are used by OnDemand (found in the Application definition on the Load Information tab) when no TLE is written to the index file. Most commonly this is used with a floating trigger for instances where the trigger is not found. It is also used to load values into the database which are not found (and not searched) for during indexing.
+
+If the trigger which the field is based on is found in the file, some value will be is written to the index file. If this value is all blanks and you direct to have blanks - embedded, leading or trailing - removed, the default value in the Application will NOT be used, and OnDemand will end with an error message of the form "x fields submitted by the indexer, y expected".

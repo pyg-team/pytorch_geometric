@@ -1,0 +1,28 @@
+Title: IBM Preserving Administration Center configuration - United States
+
+Text:
+Admin Center settings configuration account user TIP TECHNOTE (FAQ)
+
+QUESTION
+ How can the configuration settings for the Administration Center be saved? 
+
+ANSWER
+If the environment only has the Tivoli Storage Manager Administration Center installed, and no other product with Tivoli Integrated Portal (Fastback, Tivoli Common Reporting, etc.) then simply backup the file 'tsmservers.xml' in the \IBM\tivoli\tsmac\props directory, then copy it back to that location after the new Administration Center installation is completed, and restart the Administration Center. 
+Perform the following if there is Tivoli Integrated Portal user account information which needs to be preserved. For example, multiple administrator accounts are defined and avoiding the need to recreate all the accounts is desired:
+
+In the Tivoli Integrated Portal GUI under 'Settings' there is an 'Export Wizard' that will export the configuration and settings to a file.
+
+[/support/docview.wss?uid=swg21648678&aid=1] [/support/docview.wss?uid=swg21648678&aid=1]
+
+Use the wizard to complete the export, the default selection of 'All TIP settings and customizations' should be used.
+
+The command line command below may be used to import the file as below:
+
+C:\IBM\Tivoli\tipv2\profiles\TIPProfile\bin>tipcli.bat Import --username <tip_admin> --password <tip_pass> --importFile <path\filename.zip>
+
+Specify the administrator name and password and the fully qualified path\filename for the previously exported file. 
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ TSM

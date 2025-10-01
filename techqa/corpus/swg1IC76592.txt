@@ -1,0 +1,151 @@
+Title: IBM IC76592: UNEXPECTED RESTART MAY OCCUR WHILE POLLING DATAPOWER FOR DPSTATUSSYSTEMUSAGETABLETABLE USING SNMP - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  While polling DataPower for dpStatusSystemUsageTableTable using
+   an SNMP agent such as the ITCAM agent for DataPower, the
+   appliance
+   may become unresponsive for a period of time which may lead to
+   an unexpected appliance restart. This issue might occur during
+   an appliance boot up or while the appliance is under load.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  The following may be used to work around or reduce the
+   occurrence of this issue:
+   1. Instead of using SNMP, use a CLI script to obtain the
+   required status. Or
+   2. Increase the polling/refresh interval for this particular
+   metric to a large value.
+   If using ITCAM for SOA Platform - ITCAM agent for DataPower,
+   then the refresh interval may be set to the max value of
+   2147483647 seconds. The refresh interval can be set using the
+   'CDP_SYSTEMUSAGETABLE_REFRESH_INTERVAL' variable. On Windows
+   systems, the variable is defined in the agent
+   KBNENV_instancename file. On UNIX and Linux systems, the
+   variable can be set in the agent $CANDLEHOME/config/bn.ini file.
+   The agent must be restarted for the new setting to take effect.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  This table is now cached by the device so that repeated gets of
+   the OID within 5 seconds will use the cached value; this will
+   reduce the load on the device and help minimize the occurence of
+   a watchdog.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix will be in 3.8.0.14, 3.8.1.14, 3.8.2.5, 4.0.1.2
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC76592
+   
+   
+ * REPORTED COMPONENT NAME
+   DATAPOWER
+   
+   
+ * REPORTED COMPONENT ID
+   DP1234567
+   
+   
+ * REPORTED RELEASE
+   380
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-05-24
+   
+   
+ * CLOSED DATE
+   2011-07-20
+   
+   
+ * LAST MODIFIED DATE
+   2011-08-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   DATAPOWER
+   
+   
+ * FIXED COMPONENT ID
+   DP1234567
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R380 PSY
+   UP
+   
+   
+ * R381 PSY
+   UP
+   
+   
+ * R382 PSY
+   UP
+   
+   
+ * R401 PSY
+   UP

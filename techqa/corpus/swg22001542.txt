@@ -1,0 +1,38 @@
+Title: IBM Why am I seeing a "STMM global benefit structure size mismatch" or a "Global benefit is invalid" message in the db2diag.log? - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Why am I seeing a "STMM global benefit structure size mismatch" or a "Global benefit is invalid" message in the db2diag.log? 
+
+CAUSE
+For example from the db2diag.log
+EDUID : 51 EDUNAME: db2stmm (DB2INST1) 0
+FUNCTION: DB2 UDB, Self tuning memory manager, stmmGetGlobalBenefit, 
+probe:2363 
+MESSAGE : ZRC=0x82AE0093=-2102525805=STMM_DBMEM_INVALID_GLOBAL_BENEFIT 
+"Global benefit is invalid" 
+DATA #1 : String, 102 bytes 
+STMM global benefit structure size mismatch. Structure ends at 
+0x3ff863fb3a0, expected 0x3ff863fb390. 
+
+
+EDUID : 51 EDUNAME: db2stmm (DB2INST1) 0 
+FUNCTION: DB2 UDB, Self tuning memory manager, stmmUpdateGlobalBenefit, 
+probe:3289 
+MESSAGE : ZRC=0x82AE0093=-2102525805=STMM_DBMEM_INVALID_GLOBAL_BENEFIT 
+"Global benefit is invalid" 
+DATA #1 : String, 47 bytes 
+STMM global benefit is corrupt, reinitializing. 
+
+
+
+ANSWER
+The above scenario has been confirmed to be a defect in DB2 LUW v11 for SUSE Linux at this time. 
+
+"APAR IT20046 - STMM global benefit is invalid" will be used to correct this defect. 
+
+This is a cosmetic defect, no impact should be noted and the above messages in the db2diag.log can be ignored too. 
+
+At this time there is no fixpack selected to include this APAR.

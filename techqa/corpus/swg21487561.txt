@@ -1,0 +1,27 @@
+Title: IBM Copy/Paste always overwrites top cell in the variable column instead of copying to the desired cell, sometimes I see only question marks displayed - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ I am working with IBM SPSS Statistics 19.0.0 on a Client operating system (Windows, Macintosh, or Linux). I have created a new variable in a blank Data Editor window and inserted for example this values in the first five cells of the variable:
+1,2,3,4,5
+
+After that I copy the value at record two (2) and paste it on record four (4). However, after pasting the value at record 4 the cell remains '4' whereas the value at record one (1) becomes '2'. So now I have five records with this values 2,2,3,4,5 instead of the desired values 1,2,3,2,5, why is this?
+
+Additionally I have noticed that pasting also sometimes results in all cells displaying question marks until I do something that causes the Data Editor to refresh the view. 
+
+RESOLVING THE PROBLEM
+This issue is resolved with the IBM SPSS Statistics 19.0.0.1 FixPack (what would have been known as the 19.0.1 Patch). View the installation instructions and choose the downloads for your Client or Server operating system on the IBM SPSS Statistics 19.0.0.1 FixPack [http://www.ibm.com/support/docview.wss?uid=swg24028679] download page.
+
+We apologize for the inconvenience.
+
+
+RELATED INFORMATION
+ Need more help? Our Statistics forum is Live! [https://developer.ibm.com/answers/topics/statistics.html?smartspace=predictive-analytics]
+
+
+ 
+
+HISTORICAL NUMBER
+ 90923

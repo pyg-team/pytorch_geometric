@@ -1,0 +1,17 @@
+Title: IBM HTTP Secure Flag not set on JSESSION and Commerce Session Cookies. - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Security scans often report that there are Commerce Session cookies and JSESSIONID do not have the HTTP Secure Flag set. Is this a security concern? 
+
+CAUSE
+When looking in the browser, you notice many cookies without the HTTP Secure Flag set, resulting in these cookies being allowed to be sent over non-SSL or non-TLS.
+
+ANSWER
+For users to access secure pages, clients need to have both the WC_AUTHENTICATION cookie along with other session cookies like WC_USERACTIVITY. We only require that the WC_AUTHENTICATION cookie have the secure flag set, as without this cookie, no secure pages can be accessed. So long as you are noticing that WC_AUTHENTICATION has the secure flag set, then this is the designed behavior, and is expected.
+
+For more information on our cookies both secure and non-secure cookies, you can refer to the following page:
+
+http://www-01.ibm.com/support/knowledgecenter/SSZLC2_7.0.0/com.ibm.commerce.admin.doc/concepts/csesmsession_mgmt.htm [http://www-01.ibm.com/support/knowledgecenter/SSZLC2_7.0.0/com.ibm.commerce.admin.doc/concepts/csesmsession_mgmt.htm]

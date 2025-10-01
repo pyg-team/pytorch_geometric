@@ -1,0 +1,54 @@
+Title: IBM Upgrade from IBM Tivoli Common Reporting v2.1 to v2.1.1 fails due to many Interim Fixes - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ If a customer has IBM Tivoli Common Reporting (TCR) v2.1 installed and they have applied v2.1 Interim Fix 3 onwards, and then they choose to upgrade v2.1 to v2.1.1, at this time upgrade fails. 
+
+SYMPTOM
+Upgrade fails at TCRCore_Upgrade step of the install
+
+
+CAUSE
+Cause of the issue is because of mentioning only Interim Fix1 and Interim Fix2 in the <TCR2.1.1_image_extract>/TCRInstaller/COI/PackageSteps/TCRCore_Upgrade/META-INF/packagedIU.xml 
+
+<supersededFixes>TCR-2100-0001 TCR-2100-0002</supersededFixes>
+<supersededFixes>SIU-TCR-2100-0001 SIU-TCR-2100-0002</supersededFixes>
+
+This file and the above tags are used during TCR upgrade and as per the above statement, TCR v2.1.1 installation will override only the first 2 Interim Fixes and not the rest (Interim Fix3 onwards) and hence the problem.
+
+
+ENVIRONMENT
+All supported TCR environments with v2.1 and Interim Fix 3 onwards installed
+
+
+
+RESOLVING THE PROBLEM
+The problem can be resolved just by editing an XML file and then restarting the installation, as per the steps given below. 
+
+1. Go to the path: <TCR2.1.1_image_extract>/TCRInstaller/COI/PackageSteps/TCRCore_Upgrade/META-INF and open the file packagedIU.xml 
+
+2. Find the line mentioned in 'Existing' and modify the line with the one given in 'Replace with' 
+
+Existing: <supersededFixes>TCR-2100-0001 TCR-2100-0002</supersededFixes> 
+
+Replace with: <supersededFixes>TCR-2100-0001 TCR-2100-0002 TCR-2100-0003 TCR-2100-0004 TCR-2100-0005 TCR-2100-0006</supersededFixes> 
+
+ 
+
+Existing: <supersededFixes>SIU-TCR-2100-0001 SIU-TCR-2100-0002</supersededFixes> 
+
+Replace with: <supersededFixes>SIU-TCR-2100-0001 SIU-TCR-2100-0002 SIU-TCR-2100-0003 SIU-TCR-2100-0004 SIU-TCR-2100-0005 SIU-TCR-2100-0006</supersededFixes> 
+
+ 
+
+3. Save the file 
+
+4. Restart the TCR 2.1.1 upgrade from the installer
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ Tivoli Common Reporting
+TCR

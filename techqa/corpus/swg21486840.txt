@@ -1,0 +1,22 @@
+Title: IBM It is possible to use a specific Collaboration & Deployment Services (CADS) feature that allows integration with Tivoli? - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ It is possible to use a specific Collaboration & Deployment Services (CADS) feature that allows integration with Tivoli? 
+In other words, if Tivoli (TWS Tivoli workload Scheduler) can invoke CADS processes or jobs, and also if CADS can invoke Tivoli jobs? 
+
+RESOLVING THE PROBLEM
+Collaboration & Deployment Services (CADS) has the ability to execute jobs/job steps based on the actions of an outside program (in this case Tivoli). 
+CADS will monitor a topic attached to a JMS (Java Message Server) queue. Once a specific message is received, CADS will launch the job/job step. 
+A similar behavior is now available for CADS to triggers external jobs/tasks, review the Message-Based Schedule Settings within the User Guide
+
+RELATED INFORMATION
+ Need more help? Our C&DS forum is Live! [https://developer.ibm.com/answers/topics/collaboration.html?smartspace=predictive-analytics]
+
+
+ 
+
+HISTORICAL NUMBER
+ 89050

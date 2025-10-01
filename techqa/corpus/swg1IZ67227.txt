@@ -1,0 +1,203 @@
+Title: IBM IZ67227: UNSOLICITED SQL UPDATE STATEMENT PRODUCED BY FUNCTION CALL WHEN LOOPING THROUGH GETBY* RESULT SET - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Impact 5.1 Interim Fix 1 (build 57)
+   
+   I've replicated the behaviour being observed by the client.  The
+   Policy:
+   
+   function myFunction(str)
+   {
+       NodeLength=Length(str);
+   }
+   MyDataType="PMR_38861_AlertsStatus_DT";
+   MyFilter="Class=1111";
+   Events=GetByFilter(MyDataType, MyFilter, false);
+   NumEvents=Length(Events);
+   If(false)
+   {
+       ANN=ANN+": LookupFailed";
+       Log(2,PN+ID+ANN);
+   }
+   Else
+   {
+       LoopCount=0;
+       While(LoopCount<NumEvents)
+       {
+           event=Events[LoopCount];
+           myFunction(event.Node);
+           LoopCount=LoopCount+1;
+       }
+   }
+   
+   Against the test event:
+   
+   insert into alerts.status (Identifier,Node,Class,Severity)
+   values ('Identifier','test',1111,5);
+   
+   Produces the SQL output in the PolicyLogger (with SQL logging
+   enabled):
+   
+   SQL: SELECT Identifier, Node, Class FROM alerts.status WHERE
+   Class=1111;
+   SQL: UPDATE alerts.status VIA 'Identifier' SET Node = 'test';
+   
+   At no point in the Policy is an update performed against the
+   event and there should be no SQL update statement being formed.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  There is a work around consisting of setting a variable then
+   parse the variable in the user-define function.
+   
+    While(LoopCount<NumEvents)
+       {
+           event=Events[LoopCount];
+           eNode = event.Node;
+           myFunction(eNode );
+           LoopCount=LoopCount+1;
+       }
+   
+   To put this into the example Policy used to describe the
+   problem:
+   
+   function myFunction(str)
+   {
+       NodeLength=Length(str);
+   }
+   MyDataType="PMR_38861_AlertsStatus_DT";
+   MyFilter="Class=1111";
+   Events=GetByFilter(MyDataType, MyFilter, false);
+   NumEvents=Length(Events);
+   If(false)
+   {
+       ANN=ANN+": LookupFailed";
+       Log(2,PN+ID+ANN);
+   }
+   Else
+   {
+       LoopCount=0;
+       While(LoopCount<NumEvents)
+       {
+           event=Events[LoopCount];
+           eNode = event.Node;
+           myFunction(eNode );
+           LoopCount=LoopCount+1;
+       }
+   }
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   Tivoli Netcool impact 51
+   ****************************************************************
+   PROBLEM DESCRIPTION:
+   When a field from the result of any SQL Query operation (for
+   example, DirectSQL or GetbyFilter) is passed to a user-defined
+   function within a policy, Impact will run an SQL Update to
+   update that field
+   
+   ****************************************************************
+   RECOMMENDATION:
+   Use the instruction provided in the Technote from the following
+   url:
+   http://www-01.ibm.com/support/docview.wss?uid=swg21421783 [http://www-01.ibm.com/support/docview.wss?uid=swg21421783]
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Technote:
+   http://www-01.ibm.com/support/docview.wss?uid=swg21421783 [http://www-01.ibm.com/support/docview.wss?uid=swg21421783]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ67227
+   
+   
+ * REPORTED COMPONENT NAME
+   NETCOOL/IMPACT
+   
+   
+ * REPORTED COMPONENT ID
+   5724O59IS
+   
+   
+ * REPORTED RELEASE
+   510
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-12-21
+   
+   
+ * CLOSED DATE
+   2010-02-22
+   
+   
+ * LAST MODIFIED DATE
+   2010-02-22
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

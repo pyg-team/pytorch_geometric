@@ -1,0 +1,199 @@
+Title: IBM JR41993: Connector jobs on server canvas faces an issue in handling Microseconds resolution of Timestamp data - United States
+
+Text:
+  A FIX IS AVAILABLE
+IBM InfoSphere Information Server, Version 8.5 Fix Pack 3 [http://www-01.ibm.com/support/docview.wss?uid=swg24033513]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Design Change Proposal (CC_SE_TIMESTAMP_FF)
+   
+   .
+   The Server Bridge Team will introduce a new environment variable
+   to
+   control the TIMESTAMP behavior.  The environment variable will
+   be
+   called something like CC_SE_TIMESTAMP_FF.  The environment
+   variable
+   will accommodate the migration as well as the new users using
+   the
+   Connectors on the Server canvas.  This fix will not be selective
+   to
+   the Oracle connector.
+   After the code changes the behavior would be like this.
+   1. When the environment variable is not added, the jobs would
+   behave
+   the same way as they are behaving today.
+   2. When the environment variable is added and its value is set
+   to
+   MICROSECONDS, it would be same behavior as (1).
+   3. When the environment variable is added with a value of SCALE,
+   then
+   it is expected that the scale is mentioned in the timestamp
+   fields in
+   the schema and whatever scale is mentioned the microsecond
+   resolution
+   for each of the fields, that value would be used and the
+   microsecond
+   resolution would be set accordingly.  If the Scale column
+   attribute is
+    not set, the value 0 will be assumed.
+   4. When the environment variable is added and its value is set
+   to
+   NONE, then the behavior would be same as DS_NO_FF (or SCALE with
+   the
+   scale in the timestamp fields being set to 0).  If we wanted to
+   100%
+   mimic the behavior of the OCI plug-in, then specifying NONE
+   should
+   omit everything after the seconds part (e.g. "2012-02-21
+   08:56:20"),
+   but specifying SCALE with the Scale column attribute unset (i.e.
+   set
+   to 0) would leave the period after seconds (e.g. "2012-02-21
+   08:56:20.").
+   Case (2), (3) and (4) are to accommodate the various possible
+   migration scenarios to the best of our ability.
+   .
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  n/a
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Problem:
+   An issue with SEBridge in handling Microseconds resolution of
+   Timestamp data
+   
+   Details:
+   Here in SEBridge, Microseconds resolution is hardcoded. So we
+   are always seeing 6 fraction digits irrespective of scale and
+   other properties
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Resolution:
+   To handle microseconds correctly, we added an environment
+   variable which does:
+   
+   1. When the environment variable is not added, the jobs would
+   behave the same way as they are behaving today.
+      This is to ensure that any of the customers who are using the
+   Connectors on Server canvas and are comfortable with the
+      hard coded microseconds that is coming in their data.
+   2. When the environment variable is added and its value is set
+   to MICROSECONDS, it would be same behavior as (1).
+   3. When the environment variable is added with a value of SCALE,
+   then it is expected that the scale is mentioned in the
+      timestamp fields in the schema and whatever scale is
+   mentioned the microsecond resolution would be set to that.
+   4. When the environment variable is added and its value is set
+   to NONE, then the behavior would be same as DS_NO_FF (
+      or SCALE with the scale in the timestamp fields being set to
+   0).
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR41993
+   
+   
+ * REPORTED COMPONENT NAME
+   WIS DATASTAGE
+   
+   
+ * REPORTED COMPONENT ID
+   5724Q36DS
+   
+   
+ * REPORTED RELEASE
+   850
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-02-21
+   
+   
+ * CLOSED DATE
+   2012-05-29
+   
+   
+ * LAST MODIFIED DATE
+   2012-09-04
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WIS DATASTAGE
+   
+   
+ * FIXED COMPONENT ID
+   5724Q36DS
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R850 PSY
+   UP
+   
+   
+ * R870 PSY
+   UP

@@ -1,0 +1,56 @@
+Title: IBM Ask Professor Sort - United States
+
+Text:
+ PRODUCT DOCUMENTATION
+
+ABSTRACT
+ In the SORTASKP paper, the good Professor answers the questions about DFSORT listed below. 
+
+CONTENT
+ 
+
+In the SORTASKP paper, the good Professor answers the questions about DFSORT listed below. PDF [http://www.ibm.com/i/v14/icons/pdf.gif] View a PDF version of SORTASKP [ ftp://ftp.software.ibm.com/storage/dfsort/mvs/sortaskp.pdf] (107KB) List of questions
+
+ * Introduction: Details of functions used in answers
+ * How can I determine my DFSORT PTF function level?
+ * What level of DFSORT features does the DFSORT website describe?
+ * Where can I find information to help me use DFSORT more effectively?
+ * Where can I ask specific questions about DFSORT?
+ * Can I set DFSORT installation options from PARMLIB members?
+ * How can I let DFSORT use more resources on weekends and off-shift?
+ * What are the advantages of dynalloc over SORTWKdd DDs?
+ * How can I list my site's DFSORT installation defaults?
+ * How can I supply control statements for a program that calls DFSORT?
+ * What should I know about migrating to DFSORT from other sort products?
+ * What are the equivalent DFSORT formats for various COBOL data types?
+ * Can DFSORT obtain information from my tape management system?
+ * How does DFSORT take advantage of central storage?
+ * How can memory objects, data spaces and Hiperspaces be customized?
+ * How can I reformat my records?
+ * What is JOINKEYS and how can it help me?
+ * What is ICETOOL and how can it help me?
+ * What kind of reports can I produce with ICETOOL?
+ * What is ICEGENER and how can I use it?
+ * What is OUTFIL and how can it help me?
+ * What are DFSORT symbols and how can they help me?
+ * How can I produce ICETOOL reports without ANSI carriage control characters?
+ * How can I produce OUTFIL reports without ANSI carriage control characters?
+ * How can I suppress page ejects in OUTFIL reports?
+ * How can I convert a VB data set to an FB data set?
+ * How can I convert an FB data set to a VB data set?
+ * How can I put timestamps in my output records?
+ * How can I make SMF, TOD and ETOD date and time values readable?
+ * How can I use INCLUDE/OMIT with numeric or non-numeric values?
+ * How can I use INCLUDE/OMIT with current, past and future dates?
+ * How can I use INCLUDE/OMIT with "short" fields?
+ * Can DFSORT use large tape block sizes?
+ * How can I recover data sets with incomplete spanned records?
+ * How many work and merge data sets can DFSORT use?
+ * How much main storage does DFSORT need to sort most efficiently?
+ * What is Dynamic Storage Adjustment and how can it help me?
+ * Is it important to install the DFSORT SVC?
+ * How can DFSORT be used to analyze data produced by DCOLLECT, DFSMSrmm, etc?
+ * How can I create a report with just statistics?
+ * How can I have DFSMS place my work data sets on volumes with adequate space?
+ * What kind of performance improvements are possible with OUTFIL?
+ * How can DFSORT help with the Year 2000 challenge?

@@ -1,0 +1,151 @@
+Title: IBM RS02016: WARNINGS ABOUT ENCODING WHEN USING JBOSS 6.1 EAP AND IBM JDK - United States
+
+Text:
+  A FIX IS AVAILABLE
+Operational Decision Manager V8.7.1.1 Fix Pack [http://www-01.ibm.com/support/docview.wss?uid=swg24040633]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When ODM is deployed on JBoss 6.1 EAP and running with an IBM
+   JDK the following warnings are seen in the server log when
+   deploying a ruleapp from the Business Console:
+   [2015-05-27 16:53:07,553] ERROR [stderr] (http-/10.202.41.206:
+   8080-10) [WARNING 0008] Warning: The encoding 'UTF-16' is not
+   supported, using 'UTF-8'.
+   [2015-05-27 16:53:07,572] ERROR [stderr] (http-/10.202.41.206:
+   8080-10) [WARNING 0008] Warning: The encoding 'UTF-16' is not
+   supported, using 'UTF-8'.
+   [2015-05-27 16:53:07,575] ERROR [stderr] (http-/10.202.41.206:
+   8080-10) [WARNING 0008] Warning: The encoding 'UTF-16' is not
+   supported, using 'UTF-8'.
+   ...
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  add    <path name="org/apache/xml/serializer" />  in jrules-res-
+   management-JBOSS61EAP.ear\META-INF\jboss-deployment-structure.
+   xml
+   as in:
+   ...
+         <!-- Add path for the IBM JDK -->
+             <path name="org/apache/xerces/dom" />
+             <path name="org/apache/xml/serializer" />
+   ...
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  jboss EAP6.1 classloading policy is very different and require
+   special instructions.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  the package of Jboss EAR is modified
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   RS02016
+   
+   
+ * REPORTED COMPONENT NAME
+   WDS FOR RULES
+   
+   
+ * REPORTED COMPONENT ID
+   5725B6903
+   
+   
+ * REPORTED RELEASE
+   860
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-06-02
+   
+   
+ * CLOSED DATE
+   2015-08-16
+   
+   
+ * LAST MODIFIED DATE
+   2015-08-16
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  999
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WDS FOR RULES
+   
+   
+ * FIXED COMPONENT ID
+   5725B6903
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R871 PSY
+   UP

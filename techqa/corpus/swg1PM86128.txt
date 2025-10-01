@@ -1,0 +1,176 @@
+Title: IBM PM86128: 404 "FILE NOT FOUND" RETURNED DUE TO THE ODR USING AN INCORRECT HOST NAME TO SEND UDP MESSAGES TO THE DEPLOYMENT MANAGER. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  404 "File not found" returned due to the ODR using an incorrect
+   host name to send UDP messages to the Deployment Manager. The
+   ODR exhausts the number of retries and the message is timed out.
+   
+   The hostName attribute from the Dmgr's serverindex.xml is used
+   instead of the host defined for overlay ports.
+   
+   Sample UDP message with wrong host name:
+   
+   [3/28/13 18:12:11:549 CDT] 0000000d Peer          3   Boot
+   170.49.108.15
+     udp_port=11007  tcp_port=11008 retryCount=0  Boot from machine
+   tier1ve7dmgrtr.bnsf.com/170.49.104.67:11001
+   [3/28/13 18:12:11:559 CDT] 0000000d Peer          3   UDP: Send
+   to
+   tier1ve7dmgrtr.bnsf.com/170.49.104.67:11001 a new message
+   id:400395032
+   type:6 170.49.108.15:11007 ip=170.49.108.15 udpPort=11007
+   tcpPort=11008
+   bootTime=1364512331296
+   nodeProperty=version=0;properties={MEMBER_STARTUP_TIME=136451232
+   6982,
+   MEMBER_VERSION=4,
+   memberName=TIER1VE7TrialCell\TIER1VE7TrialODRNode01\TIER1VE7Tria
+   lODR01,
+   epoch=1364512331456, inOdc=1}, and start the timeout job with
+   delay 1000
+   
+   This is then timing out since there are no more retries left,
+   
+   [3/28/13 18:12:18:561 CDT] 0000000d Peer          3   My message
+   [addr:tier1ve7dmgrtr.bnsf.com/170.49.104.67:11001 id:400395032
+   retries:3] timed out. Remove it from notAckedMsgs.
+   [3/28/13 18:12:18:561 CDT] 0000000d Peer          3   UDP: Retry
+   message
+   400395032 to tier1ve7dmgrtr.bnsf.com/170.49.104.67:11001, 0
+   times left.
+   
+   The result is that the ODR does not register with the deployment
+   manager and configuration data, like the permit rules, is never
+   sent from the dmgr to the ODR since the ODR was not discovered
+   by the dmgr.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  All users of WebSphere Virtual Enterprise.  *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: 404 File not found error occurs: the    *
+   *                      on demand router uses incorrect host    *
+   *                      name to send UDP messages to the        *
+   *                      deployment manager.                     *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   For a web request, the resource cannot be accessed by the on
+   demand router (ODR)and therefore a 404 "File not found" error
+   occurs. This problem happens when there are multiple network
+   interfaces, and in the serverindex.xml file the value of the
+   "hostName" attribute is set to be different than the value of
+   the "host" attribute in the UDP overlay endpoint.
+   As a result, the ODR does not register with the deployment
+   manager. Configuration data, like the permit rules, is never
+   sent from the deployment manager to the ODR, because the ODR
+   was not discovered by the deployment manager.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The code was modified to correctly use the host from the UDP
+   overlay endpoint.
+   
+   This fix will be included in the next available fix pack for
+   WebSphere Virtual Enterprise.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM86128
+   
+   
+ * REPORTED COMPONENT NAME
+   WAS VIRTUAL ENT
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9203
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-04-02
+   
+   
+ * CLOSED DATE
+   2013-06-13
+   
+   
+ * LAST MODIFIED DATE
+   2013-06-13
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    PM86832 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM86832]
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WAS VIRTUAL ENT
+   
+   
+ * FIXED COMPONENT ID
+   5725C9203
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R700 PSY
+   UP

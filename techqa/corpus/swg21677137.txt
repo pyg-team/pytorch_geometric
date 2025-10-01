@@ -1,0 +1,45 @@
+Title: IBM Withdrawal of support for the IBM WebSphere DataPower SOA Appliances 5.0 firmware level - United States
+
+Text:
+ NEWS
+
+ABSTRACT
+ Effective 30 June 2015, IBM withdrew support for the WebSphere DataPower SOA Appliances 5.0 firmware level. 
+
+CONTENT
+Effective 30 June 2015, IBM withdrew support for firmware level 5.0 on the following WebSphere DataPower SOA Appliances: 
+
+
+
+ 
+
+ * XG45 
+ * XG45 Virtual Edition 
+ * XI52 
+ * XI52 Virtual Edition 
+ * XB62 
+
+
+ 
+
+Note: Standard firmware support (all releases) for XA35, XS40, XI50, XB60, XM70 ended 3/31/2014. Standard firmware support (all releases) for XI50B ended on 4/30/2015. See IBM WebSphere DataPower Appliance Support Lifecycle [http://www.ibm.com/support/docview.wss?rs=2362&uid=swg21246298] and announcement letters 913-076 [http://www-01.ibm.com/common/ssi/ShowDoc.wss?docURL=/common/ssi/rep_ca/6/897/ENUS913-076/index.html&lang=en&request_locale=en] and 914-067 [http://www-01.ibm.com/common/ssi/ShowDoc.wss?docURL=/common/ssi/rep_ca/7/897/ENUS914-067/index.html&lang=en&request_locale=en] for more information. 
+
+
+
+ 
+
+Customers running firmware level 5.0 (or any earlier level) are advised to plan to upgrade to the latest supported releases of WebSphere DataPower firmware in order to continue receiving technical support, as well as proactively avoiding problems that are already resolved. Refer to Supported Firmware versions and recommended upgrade levels [http://www-01.ibm.com/support/docview.wss?uid=swg21237631] for more information. 
+
+
+
+ 
+
+IBM recommends that users consider applying the 6.0 latest fixpack version (or later) of the firmware. Of course, in the case of upgrading firmware for any critical embedded system, IBM recommends that users test their configurations and surrounding applications before moving into production. To easily find the latest fixpack levels, please use this link: http://www-01.ibm.com/support/docview.wss?uid=swg21237631 [http://www-01.ibm.com/support/docview.wss?uid=swg21237631] . 
+
+
+
+
+In addition, refer to the following documents: 
+
+ * IBM WebSphere DataPower Appliance Support Lifecycle [http://www.ibm.com/support/docview.wss?rs=2362&uid=swg21246298] 
+ * Critical updates for IBM WebSphere DataPower SOA appliances [http://www-01.ibm.com/support/docview.wss?rs=2362&uid=swg21390112] (for guidance when migration to a later firmware level)

@@ -1,0 +1,198 @@
+Title: IBM IV73189: FIX APAR IV55720: JSSE CONNECTION FAILED WHEN USING HASHDRBG IN FIPS MODE - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Error Message: javax.net.ssl.SSLKeyException: RSA premaster
+   secret error
+   .
+   Stack Trace: javax.net.ssl.SSLKeyException: RSA premaster secret
+   errorat com.ibm.jsse2.z.<init>(z.java:102)at
+   com.ibm.jsse2.bb.a(bb.java:292)at
+   com.ibm.jsse2.bb.a(bb.java:273)at
+   com.ibm.jsse2.ab.r(ab.java:554)at
+   com.ibm.jsse2.ab.a(ab.java:325)at
+   com.ibm.jsse2.qc.a(qc.java:617)at
+   com.ibm.jsse2.qc.h(qc.java:103)at
+   com.ibm.jsse2.qc.a(qc.java:166)at
+   com.ibm.jsse2.qc.startHandshake(qc.java:649)atcom.ibm.net.ssl.ww
+   w2.protocol.https.c.afterConnect(c.java:62)atcom.ibm.net.ssl.www
+   2.protocol.https.d.connect(d.java:22)atcom.ibm.net.ssl.www2.prot
+   ocol.https.b.connect(b.java:37)at
+   ConnectionTest.doHandshake(ConnectionTest.java:30)at
+   RunMe.main(RunMe.java:112)Caused by:
+   java.lang.IndexOutOfBoundsExceptionat
+   java.nio.ByteBuffer.wrap(ByteBuffer.java:371)at
+   com.ibm.crypto.fips.provider.HASHDRBG.b(UnknownSource)atcom.ibm.
+   crypto.fips.provider.HASHDRBG.engineSetSeed(UnknownSource)atjava
+   .security.SecureRandom.setSeed(SecureRandom.java:418)at
+   com.ibm.crypto.fips.provider.RSA.a(Unknown Source)at
+   com.ibm.crypto.fips.provider.RSA.b(Unknown
+   Source)atcom.ibm.crypto.fips.provider.RSA.engineDoFinal(Unknown
+   Source)at com.ibm.crypto.fips.provider.RSA.b(Unknown Source)at
+   com.ibm.crypto.fips.provider.RSA.engineWrap(UnknownSource)atcom.
+   ibm.crypto.fips.provider.RSASSL.engineWrap(Unknown Source)at
+   javax.crypto.Cipher.wrap(Unknown Source)at
+   com.ibm.jsse2.z.<init>(z.java:57)... 13 more
+   .
+   The problem happens when testing TLSv1.2 connections with
+   com.ibm.jsse2.usefipsprovider=true and HASHDRBG random number
+   generator was used. This RNG was used to get NIST compliant.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  The current IBMJCEFIPS, Version 1.7, has two random number
+   generators: IBMSecureRandom and HASHDRBG and its
+   variants(SHA2DRBG, SHA5DRBG). By the end of 2015, due to changes
+   in NIST rules, the use of IBMSecureRandom will result in
+   non-compliance with FIPS140-2 random number rules.
+   In the current certified jar, HASHDRBG is not being re-seeded
+   properly by the RSA algorithm and IBMSecureRandom goes out of
+   NIST compliance at the end of 2015.  FIPS 140-2 certified fix to
+   the re-seeding of HASHDRBG will fix those calling applications
+   using HASHDRBG. Calling applications using IBMSecureRandom will
+   have to pick up the updated jars and also make a small code
+   change to call HASHDRBG.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A fix is made to IBMJCEFIPS and IBMJSSE2 provider. When in FIPS
+   140-2 compliance mode, IBMJSSE2 was changed to use SHA2DRBG as
+   default secure random generator.
+   The associated Hursley RTC Problem Report is 91195
+   The associated Austin CMVC defects are 116495, 116497, 116585
+   and 116617
+   JVMs affected: Java 6.0, Java 626, Java 7.0, Java 727 and Java 8
+   The fix was delivered for Java 6 SR16FP5, Java 626 SR8FP5, Java
+   7 SR9FP10, Java 727 SR3FP10 and Java 8 SR1FP10.
+   The level for fixed ibmjcefips.jar is 20150505 (version 1.71).
+   The level for fixed ibmjsseprovider2.jar is 20150506.
+   .
+   This APAR will be fixed in the following Java Releases:
+      7    SR9 FP 10 (7.0.9.10)
+      6 R1 SR8 FP7   (6.1.8.7)
+      7 R1 SR3 FP10  (7.1.3.10)
+      8    SR1 FP10  (8.0.1.10)
+      6    SR16 FP7  (6.0.16.7)
+   .
+   Contact your IBM Product's Service Team for these Service
+   Refreshes and Fix Packs.
+   For those running stand-alone, information about the available
+   Service Refreshes and Fix Packs can be found at:
+              https://www.ibm.com/developerworks/java/jdk/ [https://www.ibm.com/developerworks/java/jdk/]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV73189
+   
+   
+ * REPORTED COMPONENT NAME
+   SECURITY
+   
+   
+ * REPORTED COMPONENT ID
+   620700125
+   
+   
+ * REPORTED RELEASE
+   260
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-05-12
+   
+   
+ * CLOSED DATE
+   2015-05-19
+   
+   
+ * LAST MODIFIED DATE
+   2015-06-29
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   SECURITY
+   
+   
+ * FIXED COMPONENT ID
+   620700125
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R260 PSY
+   UP
+   
+   
+ * R270 PSY
+   UP
+   
+   
+ * R600 PSY
+   UP

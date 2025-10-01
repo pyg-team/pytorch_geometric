@@ -1,0 +1,150 @@
+Title: IBM Intermittent "The ConnectionString property has not been initialized" errors triggered by IIS AppPool recycling - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ User launches Controller. User successfully uses Controller functionality for some time. After a while, user receives error message. 
+
+The problem may appear to occur at random. It can potentially appear when performing any functionality. 
+
+SYMPTOM
+The exact error will vary depending on the function being used. Below is an example when running a standard report: 
+
+[/support/docview.wss?uid=swg21973433&aid=1] [/support/docview.wss?uid=swg21973433&aid=1]
+Standard Error 
+
+Number: 5
+Source: FrangoDirect.AccountReportsD.CreateCodesRsCRN#System.Web.Services.frmAccountRep.CreateCodesRs
+Description: System.Web.Services.Protocols.SoapException: Server was unable to process request. ---> System.ArgumentException: The ConnectionString property has not been initialized.
+at Microsoft.VisualBasic.ErrObject.Raise(Int32 Number, Object Source, Object Description, Object HelpFile, Object HelpContext)
+at ControllerServerCommon.RaiseErrSrv.RaiseError(String sUser, Int32 lErrNo, String sErrSource, String sErrDesc, String sErrHelpFile, Int32 lErrHelpContext)
+at FrMiscS.ConfigSet.ISet_SelectRecord(String sGuid, String sSelectCriterion, Array& vKey, String sUser, Int32 lLLocale)
+at Cognos.Controller.SEC.ControllerConfigData.GetRow(String sGuid, String sTyp1, String sTyp2, String sAnvid)
+at Cognos.Controller.SEC.ValidateSecurity..ctor(String sGuid, String sUser)
+at Cognos.Controller.SEC.ParameterValidator.GetValidateSecurity()
+at Cognos.Controller.SEC.ParameterValidator.IsMenuItemAllowed(String sMenus, String sReadWrite)
+at Cognos.Controller.Proxy.SoapExtension.ServerExtension.RightsValueObject.IsAllowed(SoapMessage& message, String& Guid, String& User, Int32& iError)
+at Cognos.Controller.Proxy.SoapExtension.ServerExtension.CheckAccessControl(SoapMessage& message)
+at Cognos.Controller.Proxy.SoapExtension.ServerExtension.ProcessMessage(SoapMessage message)
+at System.Web.Services.Protocols.SoapMessage.RunExtensions(SoapExtension[] extensions, Boolean throwOnException)
+at System.Web.Services.Protocols.SoapServerProtocol.CreateServerInstance()
+at System.Web.Services.Protocols.WebServiceHandler.Invoke()
+at System.Web.Services.Protocols.WebServiceHandler.CoreProcessRequest()
+--- End of inner exception stack trace ---
+at Microsoft.VisualBasic.ErrObject.Raise(Int32 Number, Object Source, Object Description, Object HelpFile, Object HelpContext)
+at Cognos.Controller.Common.RaiseErrCli.RaiseError(Int32 lErrNo, String sErrSource, String sErrDesc, String sErrHelpFile, Int32 lErrHelpContext)
+at Cognos.Controller.Forms.Form.frmAccountRep.CreateCodesRsCRN(XmlDocument& xmlDoc)
+at Cognos.Controller.Forms.Form.frmAccountRep.IFormStandardReport_CreateReportData(IStandardReport& cIStandardReport)
+
+
+CAUSE
+There are several different possible causes for a similar error. 
+
+ * TIP: See separate IBM Technote #1963432 for more examples.
+
+
+This Technote specifically relates to the scenario where the cause is a defect (reference APAR PI54534) in early versions of Controller 10.2.1. 
+
+This defect is triggered when both of the following are true:  * 
+ *  from within the main Controller client (CCR.EXE)
+ *  for example they have clicked "Company - Data Entry - Reported Values" or they have clicked 'Reports - Run' or they have clicked the green 'X' button (the 'Controller Link' button, which launches Excel) 
+ * 
+
+
+More Information on IIS Application Pool recycles 
+By default, IIS application pools are set to recycle every 1740 minutes (29 hours): 
+[/support/docview.wss?uid=swg21973433&aid=2] [/support/docview.wss?uid=swg21973433&aid=2] 
+
+This means that the time (when the error occurs) will vary by 5 hours each day. 
+ENVIRONMENT
+Early versions of Controller 10.2.1 (10.2.5100.95 to 10.2.5120.82 inclusive).
+
+
+
+DIAGNOSING THE PROBLEM
+Inside the Microsoft Event Viewer 'System Log', there typically will be an event similar to this one: 
+
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * A worker process with process id of '1940' serving application pool '.NET 2.0' has requested a recycle because the worker process reached its allowed processing time limit. 
+
+
+TIP: If the above entries do not appear (rare), this may be because your application pool is not configured to log its recycle events. 
+
+ * Therefore, some customers may benefit from ticking all the available boxes (when configuring their application pool - see steps inside 'Solution') as follows:
+
+[/support/docview.wss?uid=swg21973433&aid=3] [/support/docview.wss?uid=swg21973433&aid=3] 
+[This will ensure that the Event Viewer gets an event recorded when the application pool recycles in the future]. 
+RESOLVING THE PROBLEM
+Fix: 
+
+Upgrade to Controller 10.2.1 FP3 (10.2.5130.56) or later. 
+
+ 
+
+Workaround: 
+
+Modify the Controller application pool settings so that it does not recycle during the time period when users are using the system. 
+
+ 
+
+Steps: 
+
+The following steps are based on Windows 2012. The steps may need to be varied slightly if using a different operating system. 
+
+1. Logon to the Controller application server 
+
+2. Launch 'Internet Information Services (IIS) Manager' 
+
+3. Locate the application pool that is being used by Controller 
+
+ * TIP: By default it is called '.NET 2.0':
+
+[/support/docview.wss?uid=swg21973433&aid=4] [/support/docview.wss?uid=swg21973433&aid=4]  
+
+4. Right-click on the relevant application pool, and choose 'Recycling':
+[/support/docview.wss?uid=swg21973433&aid=5] [/support/docview.wss?uid=swg21973433&aid=5]
+
+5. Change the setting so that it does not conflict with your users.
+
+Example #1
+In one real-life customer case, the customer never had any users working on the system overnight. Therefore the solution was to: 
+
+ * Untick "Regular time intervals" 
+ * Tick "Specific times", and set to: 01:00
+
+[/support/docview.wss?uid=swg21973433&aid=6] [/support/docview.wss?uid=swg21973433&aid=6] 
+
+Example #2 
+In a different real-life customer case, the customer always had users working on the system overnight.  * However, the server was always regularly automatically rebooted once a week (every Sunday morning), so the system was never running for more than 7 days.
+
+
+Therefore the solution was to:  * Modify the value "Regular time intervals" to be 10080
+
+[/support/docview.wss?uid=swg21973433&aid=7] [/support/docview.wss?uid=swg21973433&aid=7] 
+
+(In other words, the application pool would recycle after 7 days continuous use. Effectively, this means that it would never recycle.) 
+
+6. Click 'Next' - 'Finish' (to save changes). RELATED INFORMATION
+ 1963432 - ** Troubleshooting ** Intermittent "The Conne [http://www.ibm.com/support/docview.wss?uid=swg21963432]
+APAR PI54534 - INTERMITTENT "THE CONNECTIONSTRING PROPE [http://www-01.ibm.com/support/docview.wss?uid=swg1PI54534]

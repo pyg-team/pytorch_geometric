@@ -1,0 +1,61 @@
+Title: IBM 在启动Rational Performance Tester时报Eclipse Exit code=8096 - United States
+
+Text:
+1454033; RPT; 崩溃; 8096; Java; RPT; 8.2; 许可证 TECHNOTE (TROUBLESHOOTING)
+
+问题（摘要）
+ [Simplified Chinese]在启动IBM Rational Performance Tester (RPT) 8.2时报错"Java was started but ..."。 
+
+症状
+错误信息如下： 
+
+
+Error: Java was started but returned exit code=8096 
+
+C:\Program Files\IBM\jdk\jre\bin\javaw.exe 
+
+<parameters>
+
+
+
+
+错误发生时，RPT正从许可证服务器7.x上检出一个许可证。该Eclipse错误弹出，RPT停止工作。 
+
+
+[/support/docview.wss?uid=swg21570990&aid=1] [/support/docview.wss?uid=swg21570990&aid=1]
+
+原因
+Rational Performance Tester 8.2需要Rational License Server 8.1.1。这个问题已被确认为一个产品缺陷并记录在APAR PM26331。
+
+
+
+环境
+Rational Performance Tester 8.2. 
+
+Rational License Server 7.x.
+
+
+解决问题
+将Rational License Server升级到8.1.1。 
+
+备注： 
+
+ * 您可从IBM Passport Advantage [http://www.ibm.com/software/howtobuy/passportadvantage/pao_customers.htm]下载Rational License Key Server。 
+ * 在RPT8.2.0.2中包含修补该缺陷的补丁。该补丁将报错信息修改如下：
+
+ * 
+   本软件与您使用的许可证服务器不兼容。当前配置不支持，建议升级许可证服务器到最新版本。
+   
+
+
+相关信息
+#Rational License Server Delivery and Support [http://www.ibm.com/support/docview.wss?uid=swg21265239]
+IBM PassportAdvantage Helpdesk [https://www-112.ibm.com/software/howtobuy/passportadvantage/paocustomer/docs/en_US/ecare_ap.html]
+An US English translation is available [http://www.ibm.com/support/docview.wss?uid=swg21454033]
+
+
+
+
+
+
+交叉引用信息 分段 产品 组件 平台 版本 修订版 Software Development Rational Common Licensing Licensing Linux, Windows 7.0, 7.1, 7.5, 8.0

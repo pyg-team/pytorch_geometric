@@ -1,0 +1,261 @@
+Title: IBM JR58525: YOU RECEIVE A NULLPOINTEREXCEPTION AFTER A PROJECTED PATH CALCULATION TIMEOUT FOR THE SET PATH OF A PROCESS - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+ DIRECT LINK TO FIX
+bpm.8600.cf2017.12.delta.repository [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Standard&fixids=bpm.8600.cf2017.12.delta.repository&source=SAR]
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When the project path management is enabled for a large process
+   and the calculation of the projected path fails in the Set Path
+   tab of the Process Performance dashboard because of a timeout
+   then the projected path data is left unassigned.
+   
+   The stack trace is similar to this one :
+   
+   [04/10/17 07:41:46:729 CEST] 00000157 webapp        E
+   com.ibm.ws.webcontainer.webapp.WebApp logServletError SRVE0293E:
+   [Servlet Error]-[CriticalPathServlet]:
+   java.lang.NullPointerException
+    at
+   com.lombardisoftware.portal.servlet.criticalpath.CriticalPathGet
+   Handler.traverseActivities(CriticalPathGetHandler.java:453)
+    at
+   com.lombardisoftware.portal.servlet.criticalpath.CriticalPathGet
+   Handler.traverseMilestones(CriticalPathGetHandler.java:410)
+    at
+   com.lombardisoftware.portal.servlet.criticalpath.CriticalPathGet
+   Handler.process(CriticalPathGetHandler.java:152)
+    at
+   com.lombardisoftware.portal.servlet.CriticalPathServlet.service(
+   CriticalPathServlet.java:79)
+    at javax.servlet.http.HttpServlet.service(HttpServlet.java:668)
+    at
+   com.ibm.ws.webcontainer.servlet.ServletWrapper.service(ServletWr
+   apper.java:1233)
+    at
+   com.ibm.ws.webcontainer.servlet.ServletWrapper.handleRequest(Ser
+   vletWrapper.java:782)
+    at
+   com.ibm.ws.webcontainer.servlet.ServletWrapper.handleRequest(Ser
+   vletWrapper.java:481)
+    at
+   com.ibm.ws.webcontainer.servlet.ServletWrapperImpl.handleRequest
+   (ServletWrapperImpl.java:178)
+    at
+   com.ibm.ws.webcontainer.filter.WebAppFilterChain.invokeTarget(We
+   bAppFilterChain.java:136)
+    at
+   com.ibm.ws.webcontainer.filter.WebAppFilterChain.doFilter(WebApp
+   FilterChain.java:97)
+    at
+   com.lombardisoftware.portal.servlet.ClearThreadCachesFilter.doFi
+   lter(ClearThreadCachesFilter.java:39)
+    at
+   com.ibm.ws.webcontainer.filter.FilterInstanceWrapper.doFilter(Fi
+   lterInstanceWrapper.java:195)
+    at
+   com.ibm.ws.webcontainer.filter.WebAppFilterChain.doFilter(WebApp
+   FilterChain.java:91)
+    at
+   com.lombardisoftware.servlet.SetUserTimeZoneFilter.doFilter(SetU
+   serTimeZoneFilter.java:69)
+    at
+   com.ibm.ws.webcontainer.filter.FilterInstanceWrapper.doFilter(Fi
+   lterInstanceWrapper.java:195)
+    at
+   com.ibm.ws.webcontainer.filter.WebAppFilterChain.doFilter(WebApp
+   FilterChain.java:91)
+    at
+   com.lombardisoftware.servlet.CrossSiteScriptingFilter.doFilter(C
+   rossSiteScriptingFilter.java:83)
+    at
+   com.ibm.ws.webcontainer.filter.FilterInstanceWrapper.doFilter(Fi
+   lterInstanceWrapper.java:195)
+    at
+   com.ibm.ws.webcontainer.filter.WebAppFilterChain.doFilter(WebApp
+   FilterChain.java:91)
+    at
+   com.lombardisoftware.servlet.SetCharacterEncodingFilter.doFilter
+   (SetCharacterEncodingFilter.java:33)
+    at
+   com.ibm.ws.webcontainer.filter.FilterInstanceWrapper.doFilter(Fi
+   lterInstanceWrapper.java:195)
+    at
+   com.ibm.ws.webcontainer.filter.WebAppFilterChain.doFilter(WebApp
+   FilterChain.java:91)
+    at
+   com.ibm.bpm.servlet.filters.GenericSecurityServletFilter.doFilte
+   r(GenericSecurityServletFilter.java:199)
+    at
+   com.ibm.ws.webcontainer.filter.FilterInstanceWrapper.doFilter(Fi
+   lterInstanceWrapper.java:195)
+    at
+   com.ibm.ws.webcontainer.filter.WebAppFilterChain.doFilter(WebApp
+   FilterChain.java:91)
+    at
+   com.ibm.ws.webcontainer.filter.WebAppFilterManager.doFilter(WebA
+   ppFilterManager.java:967)
+    at
+   com.ibm.ws.webcontainer.filter.WebAppFilterManager.invokeFilters
+   (WebAppFilterManager.java:1107)
+    at
+   com.ibm.ws.webcontainer.servlet.CacheServletWrapper.handleReques
+   t(CacheServletWrapper.java:87)
+    at
+   com.ibm.ws.webcontainer.WebContainer.handleRequest(WebContainer.
+   java:949)
+    at
+   com.ibm.ws.webcontainer.WSWebContainer.handleRequest(WSWebContai
+   ner.java:1817)
+    at
+   com.ibm.ws.webcontainer.channel.WCChannelLink.ready(WCChannelLin
+   k.java:200)
+    at
+   com.ibm.ws.http.channel.inbound.impl.HttpInboundLink.handleDiscr
+   imination(HttpInboundLink.java:463)
+    at
+   com.ibm.ws.http.channel.inbound.impl.HttpInboundLink.handleNewRe
+   quest(HttpInboundLink.java:530)
+    at
+   com.ibm.ws.http.channel.inbound.impl.HttpInboundLink.processRequ
+   est(HttpInboundLink.java:316)
+    at
+   com.ibm.ws.http.channel.inbound.impl.HttpICLReadCallback.complet
+   e(HttpICLReadCallback.java:88)
+    at
+   com.ibm.ws.ssl.channel.impl.SSLReadServiceContext$SSLReadComplet
+   edCallback.complete(SSLReadServiceContext.java:1820)
+    at
+   com.ibm.ws.tcp.channel.impl.AioReadCompletionListener.futureComp
+   leted(AioReadCompletionListener.java:175)
+    at
+   com.ibm.io.async.AbstractAsyncFuture.invokeCallback(AbstractAsyn
+   cFuture.java:217)
+    at
+   com.ibm.io.async.AsyncChannelFuture.fireCompletionActions(AsyncC
+   hannelFuture.java:161)
+    at com.ibm.io.async.AsyncFuture.completed(AsyncFuture.java:138)
+    at
+   com.ibm.io.async.ResultHandler.complete(ResultHandler.java:204)
+    at
+   com.ibm.io.async.ResultHandler.runEventProcessingLoop(ResultHand
+   ler.java:775)
+    at com.ibm.io.async.ResultHandler$2.run(ResultHandler.java:905)
+    at com.ibm.ws.util.ThreadPool$Worker.run(ThreadPool.java:1892)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  The calculation of the projected path is not shown as undefined
+   on the Set Path tab of the Process Performance dashboard when
+   the calculation fails because of a timeout.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A fix will be included in a future release of IBM BPM that
+   ensures the calculation of the projected path is shown as
+   undefined on the Set Path tab of the Process Performance
+   dashboard when the calculation fails because of a timeout.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR58525
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM EXPRESS
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9600
+   
+   
+ * REPORTED RELEASE
+   860
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-10-04
+   
+   
+ * CLOSED DATE
+   2017-10-05
+   
+   
+ * LAST MODIFIED DATE
+   2017-10-05
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   BPM EXPRESS
+   
+   
+ * FIXED COMPONENT ID
+   5725C9600
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R860 PSY
+   UP

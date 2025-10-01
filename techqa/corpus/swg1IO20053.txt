@@ -1,0 +1,149 @@
+Title: IBM IO20053: HELD BATCHES FROM OTHER STATIONS DISPLAYING IN DOTSCAN/DOTEDIT WHEN WE QUEUE BY STATION - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+ DIRECT LINK TO FIX
+IBM Datacap Taskmaster Capture 8.1 Fix Pack 3 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FDatacap+Taskmaster+Capture&fixids=8.1.0.3-Datacap-Taskmaster-WIN-FP003&source=SAR]
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Testing using APT OOTB application.
+   Using the Demo.
+   Go to TMWeb and set the following.
+   
+   1. VScan task to Store by Station ID
+   2. Batch Profiler task to Queue by Station
+   3. Verify task to Queue by Station
+   4. Set both the Verify and Batch Profiler Shortcuts to be Mode =
+   Manual
+   5. Launch DotScan and logon as Admin to Station 1.
+       Select Demo to pull in images to the batch.
+       Launch DotScan and logon as Admin to Station 2.
+       Select Demo to pull in images to the batch.
+       Go to TMWeb and set the batch for Station 1 to be on HOLD
+       Launch DotScan and logon as Admin to Station 2
+       Select BatchProfiler task shortcut.
+       See the HOLD batch from Station 1 showing up in DotScan
+   eventhough logon as Station 2.
+   6. Same behavior as in DotEdit.
+       HOLD batch from Station 2 is showing up when logon to
+   DotEdit with Station 1
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * windows users                                                *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * See Error Description                                        *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * apply fix pack 3                                             *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  apply fix pack 3
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IO20053
+   
+   
+ * REPORTED COMPONENT NAME
+   DATACAP TASKMST
+   
+   
+ * REPORTED COMPONENT ID
+   5725C1500
+   
+   
+ * REPORTED RELEASE
+   810
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-11-14
+   
+   
+ * CLOSED DATE
+   2015-05-01
+   
+   
+ * LAST MODIFIED DATE
+   2015-05-01
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   DATACAP TASKMST
+   
+   
+ * FIXED COMPONENT ID
+   5725C1500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R810 PSY
+   UP

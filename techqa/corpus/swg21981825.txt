@@ -1,0 +1,42 @@
+Title: IBM Software/Hardware data may not appear in the ILMT/BFI UI after successfull ETL import because of the BigFix FillDB APAR IV83671 . - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ ILMT/BFI customer who run the BigFix platform version 9.2.5, 9.2.6, 9.2.7, 9.5.0 or 9.5.1 may hit a problem of not updated software/hardware inventory after the successfull ETL import from BigFix. 
+
+SYMPTOM
+BFI/ILMT fixlets related to software/hardware scan execution/upload are positively accomplished however still after the ETL import the software/hardware inventory is not updated on the UI.
+
+
+CAUSE
+The issue is caused by the BigFix Platform APAR IV83671
+
+ENVIRONMENT
+BigFix version 9.2.5, 9.2.6, 9.2.7, 9.5.0 or 9.5.1 with ILMT/BFI installed. Please note that the ILMT/BFI version is not important here. Also, the issue may appear on any environment size!
+
+DIAGNOSING THE PROBLEM
+See more under:
+
+
+https://www-01.ibm.com/support/entdocview.wss?uid=swg1IV83671 [https://www-304.ibm.com/support/entdocview.wss?uid=swg1IV83671]
+
+Customer may check individual files being uploaded into the BigFix server directory
+wwwrootbes/Uploads/UploadManagerData/BufferDir/sha1 
+which should by default explicitly have been reflected on the ILMT/BFI UI after successful ETL import . On the affected environment data will be not imported and hence not visible on the ILMT/BFI UI.
+
+
+RESOLVING THE PROBLEM
+In order to mitigate the issue, please periodically restart the FillDB service on the BigFix server. 
+
+Pleas note that the official fix will be delivered in the following BigFix product versions:
+9.2.8 - tentative plan for delivery is end of June
+9.5.2 - tentative plan for delivery is end of May
+
+Customers running BigFix Platform version 9.2.6 may also contact BigFix support to receive a hot fix on this particular version.
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Security IBM License Metric Tool

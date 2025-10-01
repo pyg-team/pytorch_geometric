@@ -1,0 +1,35 @@
+Title: IBM Support Statement for installing WebSphere Portal on an AIX V6.1 Workload Partition (WPAR) - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Can IBM WebSphere Portal install and function properly on an IBM AIX V6.1 Workload Partition? 
+
+ANSWER
+WebSphere Portal V6.1 has not been formally tested on AIX workload partitions (WPAR), but initial testing results have found that complying with the documented WebSphere Application Server limitations and recommendations can lead to a successful installation of WebSphere Portal or Lotus Web Content Management V6.1. The following additional notes should be considered as well: 
+
+ * AIX Version 6 Release 1 Technology level 4 Service release 2 (6100-04-02) is a minimum recommended service level, which includes the fix for AIX APAR IZ63931 [http://www.ibm.com/support/docview.wss?uid=isg1IZ63931]. Refer to technote "An insufficient free disk space error might occur when you install WebSphere Application Server within an AIX Version 6.1 WPAR [http://www.ibm.com/support/docview.wss?uid=swg21420491]" (#1420491 [http://www.ibm.com/support/docview.wss?uid=swg21420491]) for more information.
+
+ * WebSphere Application Server V6.1.0.13 or V7.0 is a minimum required level. Refer to the technote "Guidelines for installing WebSphere Application Server into an AIX Version 6.1 system WPAR from the global environment [http://www.ibm.com/support/docview.wss?uid=swg21291889]" (#1291889 [http://www.ibm.com/support/docview.wss?uid=swg21291889]) for more information.
+
+ * Because of the Application Server levels supported, WebSphere Portal V6.0, Lotus Workplace Web Content Management V6.0 or Lotus Quickr services for WebSphere Portal V8.1 are not supported in a workload partition.
+
+ * Install the WebSphere Application Server instance first in accordance with the Application Server notes, then install the Portal onto the existing instance.
+
+ * Installing into a shared system WPAR is not supported.
+   WebSphere Application Server only supports installing into a WPAR that was created with the -l option so that it is a non-shared system WPAR with writeable file systems.
+
+
+This technote will be updated as more information becomes available. 
+
+Change history: 
+01 April 2010 - initial release RELATED INFORMATION
+ Application Server notes regarding WPARs [http://www.ibm.com/search/csass/search?q=WPAR&sn=spe&filter=language%3Aen+collection%3Astgsysx%2Cdblue%2Cic%2Cpubs%2Cdevrel1&prod=C578916B44100K52]
+Basic management of Workload Partitions in AIX [http://www.ibm.com/developerworks/aix/library/au-workload/]
+
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Enterprise Content Management IBM Web Content Manager Installation & Configuration AIX 6.1 Java edition

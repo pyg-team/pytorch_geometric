@@ -1,0 +1,30 @@
+Title: IBM MSSQL monitoring agent displays no data - United States
+
+Text:
+5724B96MOTR TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ ITCAM monitoring agent for Microsoft SQL Server displays no data in Tivoli Enterprise Portal (TEP) for default SQL server instance. 
+
+CAUSE
+The cause of this issue can be due to incorrect monitoring agent configuration setting KOQ_NAMED_INSTANCE which is used by agent to determine if the monitored MS SQL server instance is a 'named' or a 'default' instance.
+
+DIAGNOSING THE PROBLEM
+Review the agent collector log named <host>_OQ_<Instance>_col.out. If you find entries like the following, it indicates that the monitoring agent is looking for a named SQL server instance, instead of a default SQL server instance.
+
+CAT2035I (133351) (6956)Time = 2014/08/04 13:33:51 
+CML1526I (133351) (6956)Checking 'MSSQL$MSSQL1' service status. 
+CML1526I (133451) (6956)waiting for 'MSSQL$MSSQL1' service to start 
+from '1' minutes..... 
+... 
+CML1526I (164153) (6956)waiting for 'MSSQL$MSSQL1' service to start 
+from '188' minutes..... 
+
+RESOLVING THE PROBLEM
+Check the registry value of KOQ_NAMED_INSTANCE key at: 
+HEY_LOCAL_MACHINE\SOFTWARE\Candle\KOQ\610\MSSQL1\Environment 
+
+Edit this registry entry and set it to 0 to indicate that this is a default instance. 
+KOQ_NAMED_INSTANCE = 0 
+
+Restart the agent instance.

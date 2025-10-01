@@ -1,0 +1,83 @@
+Title: IBM Software Delivery Platform version 8.0 製品起動時 「JVM terminated. Exit code=8096」 が表示される問題 - United States
+
+Text:
+J9VMThread; checking license status; Exit code=8096; RATLC00423544; PM22221; ライセンス; フローティング TECHNOTE(トラブルシューティング)
+
+問題(概要)
+ [Japanese] IBM Rational Software Architect for WebSphere, IBM Rational Software Architect および IBM Rational Application Developer といった IBM Software Delivery Platform 製品のバージョン 8.0 で、フローティング･ライセンス･キーを確認中に「JVM terminated. Exit code=8096」 エラーが発生する、「Checking license status...」 ダイアログ進行中に製品がクラッシュするなどの現象がみられます。 
+
+症状
+IBM Rational Software Architect for WebSphere バージョン 8.0 は、以下のダイアログ表示中にフリーズする可能性があります: 
+
+[/support/docview.wss?uid=swg21449514&amp;aid=1] 
+
+そして、以下のメッセージ表示後クラッシュします。 
+
+
+[/support/docview.wss?uid=swg21449514&aid=2] [/support/docview.wss?uid=swg21449514&aid=2]
+
+製品インストール･ディレクトリ (デフォルト: C:\Program Files\IBM\SDP) 内にて javacore/dump ファイル (例: javacore.20100901.102628.1060.0003.txt, core.20100901.102628.1060.0001.dmp) を確認することが出来ます。 javacore ファイル内には、以下のような情報が存在します。
+
+
+
+
+1XHEXCPMODULE Module: C:\Program Files\IBM\SDPShared\plugins\com.ibm.cic.licensing.flexlm.win32_1.0.0.v20100714_1023\os\win32\x86\ibmratl_lic.dll
+1XHEXCPMODULE Module_base_address: 4C040000
+1XHEXCPMODULE Offset_in_DLL: 00068540
+
+1XMCURTHDINFO Current thread
+NULL ----------------------
+3XMTHREADINFO "Thread-10" J9VMThread:0x4A520C00, j9thread_t:0x461FE5F4, java/lang/Thread:0x3F1C40E0, state:R, prio=6
+3XMTHREADINFO1 (native thread ID:0xD44, native priority:0x6, native policy:UNKNOWN)
+3XMTHREADINFO3 Java callstack:
+4XESTACKTRACE at com/telelogic/licensing/FLEXLicenseControl.doHeartbeatNative(Native Method)
+4XESTACKTRACE at com/telelogic/licensing/FLEXLicenseControl.doHeartbeat(Bytecode PC:0)
+4XESTACKTRACE at com/ibm/cic/licensing/flexlm/TLHeartbeatListener.handleLicUserActivityEvent(Bytecode PC:41)
+4XESTACKTRACE at com/ibm/cic/licensing/common/util/LicUserActivityEventManager.fireAfterUserActivityChange(Bytecode PC:57)
+4XESTACKTRACE at com/ibm/cic/licensing/common/ui/UiActivityTracker$1.run(Bytecode PC:38)
+4XESTACKTRACE at java/util/Timer$TimerImpl.run(Bytecode PC:280)
+3XMTHREADINFO3 Native callstack:
+4XENATIVESTACK tl_CheckoutName_ibmRatl+0x61622 (0x4C0A8540 [ibmratl_lic+0x68540])
+4XENATIVESTACK tl_CheckoutName_ibmRatl+0x60b46 (0x4C0A7A64 [ibmratl_lic+0x67a64])
+4XENATIVESTACK tl_CheckoutName_ibmRatl+0x607ad (0x4C0A76CB [ibmratl_lic+0x676cb])
+4XENATIVESTACK tl_CheckoutName_ibmRatl+0x5c6a5 (0x4C0A35C3 [ibmratl_lic+0x635c3])
+4XENATIVESTACK tl_DoHeartbeat+0x1b (0x4C044A5B [ibmratl_lic+0x4a5b])
+4XENATIVESTACK VMprJavaSendNative+0x4b0 (jnisend.asm:481, 0x7FF0B320 [j9vm24+0x1b320])
+4XENATIVESTACK javaProtectedThreadProc+0x7d (vmthread.c:1668, 0x7FF2C82D [j9vm24+0x3c82d])
+4XENATIVESTACK j9sig_protect+0x41 (j9signal.c:144, 0x7FECC2E1 [J9PRT24+0xc2e1])
+4XENATIVESTACK javaThreadProc+0x35 (vmthread.c:261, 0x7FF2D055 [j9vm24+0x3d055])
+4XENATIVESTACK thread_wrapper+0xbf (j9thread.c:947, 0x7FFA3F2F [J9THR24+0x3f2f])
+4XENATIVESTACK _endthread+0xaa (0x7C34940F [msvcr71+0x940f])
+4XENATIVESTACK GetModuleHandleA+0xdf (0x77E6482F [kernel32+0x2482f])
+
+
+原因
+この問題は障害 APAR PM22221 として登録されています。
+
+
+IBM Rational License Server のバージョンが v8.1.1 より古いことが原因です。
+
+
+バージョン 8.0 の Rational Software Architect for WebSphere, Rational Software Architect, Rational Application Developer は Rational License Server v8.1.1 以降を使用する必要があります。
+
+
+解決方法
+この問題を解決するためには、 Rational License server v8.1.1 をインストールし、IBM Installation Manager でフローティング･ライセンスを認識させる必要があります。 
+
+Information Center にある 「Installation Manager を使用してフローティング キーを使用するようにクライアントを設定する」 [http://publib.boulder.ibm.com/infocenter/rational/v0r0m0/topic/com.ibm.rational.license.doc/topics/t_config_client_float_keys.htm] もしくは英文技術文書 1403623 [http://www-01.ibm.com/support/docview.wss?&uid=swg21403623]を参照してください。
+
+
+関連情報
+#Activating your product topic in the RSA infocenter [http://publib.boulder.ibm.com/infocenter/rsahelp/v8/topic/com.ibm.xtools.installation.rsaws.doc/topics/c_license_enablement.html]
+Licensing Requirements of RSA for Websphere 8.0 [http://www.ibm.com/support/docview.wss?uid=swg27019519#EILReqs]
+Licensing Requirements for RSA [http://www.ibm.com/support/docview.wss?uid=swg27019496]
+Licensing Requirements for RSA RealTime [http://www.ibm.com/support/docview.wss?uid=swg27019522#EILReqs]
+Configurating client computers to use floating [http://publib.boulder.ibm.com/infocenter/rational/v0r0m0/index.jsp?topic=/com.ibm.rational.license.doc/topics/t_config_client_float_keys.html]
+English Technote 1445652 [http://www.ibm.com/support/docview.wss?uid=swg21445652]
+
+
+
+
+
+
+クロスリファレンス情報 区分 製品 コンポーネント プラットフォーム バージョン エディション Software Development Rational Software Architect for WebSphere Software Licensing Linux, Windows 8.0 Software Development Rational Application Developer Standard Edition for WebSphere Software Licensing Windows, Linux 8.0

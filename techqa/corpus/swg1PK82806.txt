@@ -1,0 +1,175 @@
+Title: IBM PK82806: INCREASE IN MQ USAGE CHARGES WHEN USING CICS TS 3.2 AND LATER - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  After upgrading to CICS TS 3.2 an increase in MULC usage
+   charges for MQ is seen.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All users of IBM WebSphere MQ for z/OS       *
+   *                 Version 7 using Measured Usage Licence       *
+   *                 Charging ('MULC') and CICS 3.2               *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Increased MULC charges when using       *
+   *                      WebSphere MQ with IBM CICS Transaction  *
+   *                      Server version 3.2 and OTE threads      *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   With CICS 3.1 and earlier, all MQ work is performed on
+   dedicated threads in the qmgr address space, and all work on
+   those threads is chargeable against MQ.
+   Changes to the way CICS 3.2 and later connect to MQ mean that
+   MQ work can now run on OTE threads that also perform non-MQ
+   work, and this requires a change in where MQ begins/ends
+   collection of MULC data.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  MULC charges will be measured between the first and last MQ
+   API calls made by a CICS 3.2 transaction. This conclusion is
+   designed to be equivalent to the way batch and RRS applications
+   are currently measured between MQCONN and MQDISC (CICS
+   applications do not perform MQCONN/MQDISC), and to be the least
+    obtrusive (in terms of runtime performance overhead). This
+   methodology supports applications that perform minimal non-MQ
+   work between MQ calls.
+   
+   We are aware of some applications where a more refined
+   methodology might be more desirable; therefore this APAR
+   additionally provides an alternative method for Batch, RRS and
+   CICS 3.2 applications, whereby each MQ call is explicitly
+   measured, and can be enabled using a Service Parameter under
+   MQ Level 3 instruction. Note that a performance overhead is
+   associated for using this alternative method: this overhead
+   would mean an increase of around 5% to the cost of an
+   application that performs minimal non-MQ work between MQ calls.
+   000Y
+   CSQCOPTI
+   CSQMCPRH
+   CSQ3ID30
+   CSQ3ID80
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+ *  &#158;**** PE10/09/16 FIX IN ERROR. SEE APAR PM22549 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM22549]  FOR DESCRIPTION
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK82806
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ Z/OS V7
+   
+   
+ * REPORTED COMPONENT ID
+   5655R3600
+   
+   
+ * REPORTED RELEASE
+   000
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   YesSpecatt / Pervasive
+   
+   
+ * SUBMITTED DATE
+   2009-03-18
+   
+   
+ * CLOSED DATE
+   2009-05-14
+   
+   
+ * LAST MODIFIED DATE
+   2010-09-21
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    PK73461 [http://www-01.ibm.com/support/docview.wss?uid=swg1PK73461]
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UK46588
+   
+   
+
+MODULES/MACROS
+ *  CSQCOPTI CSQMCPRH CSQ3ID30 CSQ3ID80
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ Z/OS V7
+   
+   
+ * FIXED COMPONENT ID
+   5655R3600
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R000 PSY UK46588 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK46588]
+   UP09/06/17 P F906
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

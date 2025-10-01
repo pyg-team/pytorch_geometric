@@ -1,0 +1,121 @@
+Title: IBM JR41206: BPC ERROR RESILIENCY ENHANCEMENT FOR UNEXPECTED BPEDB DATABASE INCONSISTENCIES - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  With Workmanager-based navigation, the BPC engine can be caught
+   in infinite message processing loops, if process context
+   information for certain instances in the BPEDB has been
+   corrupted. The fix will change the handling
+    of database errors to avoid such loops and to allow for the
+   continued processing of unaffected instances.  Rationale: If
+   there is no database corruption, then this Fix is not needed.
+   But if there is a database corruption, then without the fix the
+    whole system can be rendered unusable, while with the fix only
+   the affected process instances stop working.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  avoid database corruption
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Problem will be fixed with next release
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR41206
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM ADVANCED
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9400
+   
+   
+ * REPORTED RELEASE
+   750
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-11-14
+   
+   
+ * CLOSED DATE
+   2012-08-15
+   
+   
+ * LAST MODIFIED DATE
+   2012-08-15
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    IV10523
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   BPM ADVANCED
+   
+   
+ * FIXED COMPONENT ID
+   5725C9400
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R751 PSY
+   UP

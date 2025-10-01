@@ -1,0 +1,47 @@
+Title: IBM Receiving emails from Cognos Scheduled Jobs which are disabled - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When a Scheduled Job has more than the maximum recipient limit set on SMTP servers, cognos will continuously send email with same data in report outputs.
+
+In this case the recipient limit on SMTP Server was set to 100 and there were around 400 recipients added as recipients in Cognos Job. Even the cancel operation will not work. 
+
+CAUSE
+This issue occurs because of the corrupted Notice Cast(NC) tables. 
+
+DIAGNOSING THE PROBLEM
+Below errors are observed in Run history:
+
+CNC-SDS-0409 The email messages were sent to 100 recipients.
+
+CNC-SDS-0335 Error returned from SMTP Server. The error message was: [452-4.5.3 Your message has too many recipients. For more information regarding 452-4.5.3 Google's sending limits, please visit: 452-4.5.3 https://support.google.com/mail/answer/22839 [https://support.google.com/mail/answer/22839] f19sm3270433igo.4-gsmtp]. The message could not be sent.
+
+CNC-SDS-0410 The email message was not sent. Approximate message size:[85KB] The mail server returned the error: [250 2.0.0 OK 1460944931 f1sm1147365iga.0 - gsmtp]
+
+CNC-MON-0039 Unable to forward the cancel request, waiting task may still complete.
+
+
+RESOLVING THE PROBLEM
+Run NC Drop Script to resolve the issue.
+
+
+
+
+Steps:
+1. Stop Cognos Service
+2. Have the Database Administrator back up the Complete Cognos content store database.
+3. Connect to content store database using a database tool and with the same login as provided for Content store in Cognos configuration run the NC_DROP script found in the appropriate location depending on the database on which your content store is:
+
+<Install Location>\configuration\schemas\delivery\oracle\NC_DROP_ORA.sql
+<Install Location>\configuration\schemas\delivery\db2\NC_DROP_DB2.sql
+<Install Location>\configuration\schemas\delivery\sqlserver\NC_DROP_MS.sql
+
+You should not receive any error message in the script that you execute.
+
+4. Start the Cognos service from within Cognos Configuration. This will recreate all the NC tables.
+
+Note :- If you have a notification database configured then you will have to carry out the above steps only on notification database and not on content store. So, whatever steps are mentioned for content store needs to be done for Notification database.
+
+Apart from the above solution if the company policy permits to increase the number of recipients on the SMTP server you can involve your SMTP Administrator and increase the recipient limit restriction in order to avoid such a situation.

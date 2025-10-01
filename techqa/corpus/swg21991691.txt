@@ -1,0 +1,38 @@
+Title: IBM Using IBM Cloud Object Storage as an advanced storage device in Content Platform Engine - United States
+
+Text:
+IBM Cloud Object Storage; CleverSafe; Content Platform Engine; OpenStack TECHNOTE (FAQ)
+
+QUESTION
+ How can I use IBM Cloud Object Storage (formerly known as Cleversafe) as an advanced storage device in Content Platform Engine? 
+
+ANSWER
+Starting with Content Platform Engine 5.2.1 Fix Pack 06, you can use IBM Cloud Object Storage as an Advanced Storage Device in Content Platform Engine. 
+
+IBM Cloud Object Storage is a software defined object storage solution. It supports OpenStack Object Storage API v1.0 and allows applications to access object vaults on a system. The IBM Cloud Object Storage OpenStack Object Storage API is available on Access Pool and can be set as the default API to improve application compatibility. The implementation of the IBM Cloud Object Storage OpenStack Object Storage API supports the most commonly used subset of OpenStack API operations that are implemented by the reference OpenStack software. 
+
+To configure IBM Cloud Object Storage in Content Platform Engine, you create an OpenStack cloud storage device in Content Platform Engine. For more information about creating an OpenStack Cloud Storage Device, see the FileNet P8 Platform documentation. (http://www.ibm.com/support/knowledgecenter/SSNW2F_5.2.1/com.ibm.p8.ce.admin.tasks.doc/p8pcc232.htm [http://www.ibm.com/support/knowledgecenter/SSNW2F_5.2.1/com.ibm.p8.ce.admin.tasks.doc/p8pcc232.htm]). 
+
+The following section highlights the differences between a standard OpenStack cloud storage device and an IBM Cloud Object Storage storage device: 
+
+ 1. When you create an IBM Cloud Object Storage storage device by using the "New OpenStack Cloud Storage Device" wizard, the meaning and value for certain configuration fields are slightly different, including the following fields:  * OpenStack container name: For IBM Cloud Object Storage, it is the name of the object vault that you will access. 
+     * Device Connection URL: The URL of the namespace access point for the device. In the "Storage Device Creation" wizard, a default value "www.softlayer.com [www.softlayer.com]" is pre-filled for this configuration property. For IBM Cloud Object Storage, change the value to the IP address or host name of the Accesser appliance or load balancer. 
+     * OpenStack authentication URL: The URL for the OpenStack authentication service. An example of OpenStack authentication URL is https://dal05.objectstorage.softlayer.net/auth/v1.0/ [https://dal05.objectstorage.softlayer.net/auth/v1.0/]. For IBM Cloud Object Storage, Content Platform Engine uses Open Stack Storage API v1 authentication. The authentication URL may be a little different than the OpenStack one, for example, https://10.0.34.56/v1.0. Check with your IBM Cloud Object Storage administrator to get the correct value for the authentication URL.
+       
+       Here is an example of the configuration values for an IBM Cloud Object Storage storage device:
+       OpenStack container name: BA01011
+       Device connection URL: 10.0.34.56
+       OpenStack authentication URL: https://10.0.34.56/v1.0
+    
+    
+ 2. Before you can create an IBM Cloud Object Storage storage device, you must first create the object vault (container in OpenStack terminology) in IBM Cloud Object Storage. 
+ 3. IBM Cloud Object Storage does not segment content that is larger than 5 GB, and content larger than 5 GB can be uploaded in one request. To work with content larger than 5 GB, you must set the following configuration parameter to a number larger than the size of the largest content that will be handled, for example:
+    
+    OpenStack.Segment.Size= 10737418240
+    
+    This example sets the segment size to 10 GB (1024*1024*1024*10). The created IBM Cloud Object Storage advanced storage device will be able to correctly handle any content that is less than 10 GB.
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Enterprise Content Management Content Foundation Content Platform Engine 5.2.1

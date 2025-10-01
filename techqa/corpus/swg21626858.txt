@@ -1,0 +1,43 @@
+Title: IBM WebSphere business-level application containing an SCA module gets redeployed when the SCA module invokes a business process definition (BPD) in IBM Business Process Manager (BPM) Advanced - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When a business process definition is invoked by an SCA module in IBM Business Process Manager Advanced without any user authentication, the Busiess Process Manager runtime cannot determine the status of the business-level application and redeploys it. 
+
+SYMPTOM
+For example, SCA Module A invokes business process definition B. Module A consists of a WS Expot, a Java™ Component, and an SCA import. When the WS Export in Module A is invoked without any user authentication, the runtime redeploys the business-level application and the following messages are shown (if deployment traces are on): 
+
+[10/15/12 17:35:21:035 PDT] 00000d97 BLADeployment 3 Caller in MONITOR role: false
+[10/15/12 17:35:21:035 PDT] 00000d97 BLADeployment 3 BLADeploymentManager Run As Subject: Subject:
+Principal: /UNAUTHENTICATED
+Public Credential: com.ibm.ws.security.auth.WSCredentialImpl@1fd4cfe
+[10/15/12 17:35:21:145 PDT] 00000d97 BLADeployment 3 Application state on local server for BLA DT1-Tip is UNDEPLOYED
+[10/15/12 17:35:21:145 PDT] 00000d97 BLADeployment < com.ibm.bpm.fds.core.deploy.BLADeploymentManager getStatus RETURN [Ljava.lang.Object;@5bd0844
+[10/15/12 17:35:21:145 PDT] 00000d97 ProcessApplic 1 PAL: BLA is undeployed, OptimizedOpeationType = DEPLOY
+
+
+CAUSE
+An unauthenticated user causes an incorrect deployment status, which results in redeployment.
+
+
+RESOLVING THE PROBLEM
+To prevent the redeployment from occurring, SCA module must invoke the business process definition with an authenticated user. The following options provide an authenticated user in the SCA module: 
+
+ * Pass user credentials using a protocol-specific mechanism to the export for the module. Configure the export to propagate the authenticated user to the import that invokes the business process definition. For example, when you use a WS export, propagate the user credentials that are provided by the SOAP header.
+   
+   
+ * Set a security identity in one of the SCA components in the module (Java component in previous example). If an SCA component does not exist, create one to be used for this purpose.
+
+
+
+Note: With both options, the user must have at least the deployer and monitor roles assigned to it. RELATED INFORMATION
+ SOAP header propagation [http://publib.boulder.ibm.com/infocenter/dmndhelp/v7r5m1/index.jsp?topic=/com.ibm.wbpm.main.doc/topics/cadm_webservicebindingpropagate.html]
+Security identity qualifier [http://publib.boulder.ibm.com/infocenter/dmndhelp/v7r5m1/index.jsp?topic=/com.ibm.wbpm.wid.admin.doc/qos/topics/rsecureid.html]
+
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ BPM

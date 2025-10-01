@@ -1,0 +1,177 @@
+Title: IBM Unable to force an SSL connection to the Change Management Server (CM Server) - United States
+
+Text:
+SRX; RN7.1; RN7.1.0.1; RN7.1.0.2; RN7.1.1; Change Management Server; CM Server; SSL; Secure Socket Layer; SSL connection; port 12080; disabling port 12080; disable port 12080; Forcing an SSL Connection; ClearCase Remote Client; CCRC; gddcccm TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ After following the Information Center help topic "Forcing an SSL connection with CM Server", port 12080 still functions. This tech note describes two ways to disable port 12080 for CM Server. 
+
+SYMPTOM
+Port 12080 still functions after enabling application security in CM Server.
+
+RESOLVING THE PROBLEM
+
+
+Note: If using CM Server and ClearCase Remote Client version 7.1 and SSL does not work, see Unable to connect via SSL in ClearCase Remote Client version 7.1 [http://www-01.ibm.com/support/docview.wss?uid=swg21327881].
+
+There are two options for disabling port 12080. 
+
+ 
+
+Option 1 
+
+Option 1 is preferred if load balancing is not enabled. 
+
+This option can still be used if load balancing is enabled. Note, however, that traffic between the load balancer host and the CM Server cluster will not be secure. This might not be a problem in some environments because users will perceive the connection to be secure. 
+
+ 
+
+To disable port 12080 using Option 1: 
+
+ 
+
+ 1. Log in to the CM Server administrative console. The console is typically located at the following URL: https://<CM server hostname>:12043/ibm/console
+    
+ 2. Click Servers -> Application Servers -> server1 -> Ports -> WC_defaulthost
+    
+ 3. Change the value of the Host field from * to the name of the CM Server host. If load balancing is used, change the value of the Host field from * to the name of the load balancer host. 
+ 4. Click Apply. 
+ 5. Save the configuration and restart CM Server.
+    
+
+
+Option 2 Option 2 is more secure but more difficult to configure. With this option, all traffic between end users, the load balancer hosts, and the CM Server cluster is secured by SSL encryption. 
+
+The following steps assume that load balancing is configured. Load balancing is discussed in the technote titled, Change Management (CM) Server load balancing with IBM HTTP Server for CCRC - new in 7.1.0.2. 
+
+ 
+
+To disable port 12080 using Option 2: 
+
+
+
+ 1.  Enable administrative and application security for CM Server if it is not already enabled. See the ClearCase Information Center for details.
+ 2.  
+ 3.  For each CM Server, update the default SSL certificate with ikeyman. The default SSL file key.p12 resides in the following directory:
+ 4.  
+ 5.   On the Unix system and Linux: /opt/IBM/RationalSDLC/common/CM/profiles/cmprofile/config/cells/dfltCell/nodes/dfltNode 
+     
+     On Windows: 7.1.0.x:C:\Program Files\IBM\RationalSDLC\common\CM\profiles\cmprofile\config\cells\<machine>CMProfileNode01Cell\nodes\<machine>CMProfileNode01 
+     
+     7.1.1: C:\Program Files\IBM\RationalSDLC\common\CM\profiles\cmprofile\config\cells\dfltCell\nodes\dfltNode
+     
+     
+ 6.  
+ 7.   
+     
+     Open ikeyman. 
+     
+      * On the Unix system and Linux: /opt/IBM/RationalSDLC/common/IHS/bin/ikeyman
+      * 
+      * On Windows: C:\Program Files\IBM\RationalSDLC\common\IHS\bin\ikeyman.bat
+     
+     
+     
+     Select Key Database File -> Open. Select a database type of PKCS12 and browse to the location of key.p12. The default password for key.p12 is WebAS 
+     
+     Click Export/Import. 
+     
+      * Action type: Export Key
+      * 
+      * Key file type: PKCS12
+      * 
+      * File Name: <hostname>.p12
+     
+     
+     
+     Click OK. You are prompted to create a password for the key file. 
+     
+     
+ 8.  
+ 9.  For each CM Server, modify the file plugin-cfg.xml, which is located in the following directory:
+ 10. 
+ 11.  On the Unix system and Linux: /opt/IBM/RationalSDLC/common/eWAS/profiles/plugin-cfg.xml 
+     
+     On Windows: C:\Program Files\IBM\RationalSDLC\common\eWAS\profiles\plugin-cfg.xml 
+ 12. 
+ 13.  Replace the following line:  
+     
+     <Transport Hostname="localhost" Port="12080" Protocol="http"/> 
+     
+     with these lines: 
+     
+     <Transport Hostname="localhost" Port="12443" Protocol="https"> 
+     
+     <Property Name="keyring" value="/opt/IBM/RationalSDLC/common/IHS/key.kdb"/> 
+     
+     <Property Name="stashfile" value="/opt/IBM/RationalSDLC/common/IHS/key.sth"/> 
+     
+     </Transport> 
+     
+      
+     
+      
+     
+     Note the additional Property lines. Verify that the path to the key file is the same as is defined in common/IHS/conf/ssl.conf.  
+     
+     For the system designated as the the IHS (IBM HTTP Server) load balancer: Follow the steps to configure an IHS load balancer in addition to making the substitution for the Transport line just mentioned. 
+ 14. 
+ 15. On each server you should now have a <hostname>.p12 file. Gather those files together on the system designated as the IHS load balancer.
+ 16. 
+ 17.  Using ikeyman, open or create the following file:  
+     
+      * On the Unix system and Linux: /opt/IBM/RationalSDLC/common/IHS/key.kdb
+      * 
+      * On Windows:
+        C:\Program Files\IBM\RationalSDLC\common\IHS\key.kdb
+      * 
+      * If you are creating the key, ensure that you stash the password to a file.
+     
+     
+     
+     Go to the Personal Certificates area. Import the <hostname>.p12 files gathered from each CM server. You'll be prompted for the SSL certificate passwords that you created in step 2. 
+     
+     Exit ikeyman. 
+ 18. 
+ 19. For each CM Server, disable port 12080 by using the Web administrative console to perform the following steps:
+ 20. 
+ 21.  
+     
+     Select Servers->Application servers->server1: Expand Web Container Settings 
+     
+     Click Web container transport chains. 
+     
+     Click WCInboundDefault. 
+     
+     Deselect Enabled and save settings. 
+ 22. 
+ 23. Reboot or restart the WebSphere Application Server and IHS for the changes to take effect.
+
+ 
+
+Result 
+
+Observe the following behaviors with either option: 
+
+ 
+
+ 1. In a browser window,http://<CM server hostname>/TeamWeb/services/Team should redirect to https://<CM server hostname>/TeamWeb/services/Team. In the CCRC eclipse client, only the SSL URL should function. 
+ 2. http://<CM server hostname>:12060/ibm/console should redirect to https://<CM server hostname>:12043/ibm/console 
+ 3. http://<CM server hostname>:12080/TeamWeb/services/Team should fail. 
+ 4. https://<CM server hostname>:12043/ibm/console should function. 
+ 5. https://<CM server hostname>:12443/TeamWeb/services/Team should function.
+
+
+Troubleshooting tips 
+
+Review the log file /opt/IBM/RationalSDLC/common/IHS/logs/http_plugin.log for errors. Set TRACE on in the file /opt/IBM/RationalSDLC/common/IHS/conf/httpd.conf to get finer details.
+
+
+RELATED INFORMATION
+#Unable to connect via SSL in ClearCase Remote Client ve [http://www.ibm.com/support/docview.wss?uid=swg21327881]
+
+
+
+
+PRODUCT ALIAS/SYNONYM
+ ClearCase

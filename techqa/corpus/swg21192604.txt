@@ -1,0 +1,210 @@
+Title: IBM MustGather: Sessions and session management problems in WebSphere Application Server - United States
+
+Text:
+MustGather; MustGather; MustGather; httpsession; session; session manager; isa; collector; autopd; auto pd; MustGatherDocument TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Collecting data for problems with the IBM WebSphere Application Server sessions and session management component. Gathering this MustGather information before calling IBM support will help you understand the problem and save time analyzing the data. 
+
+RESOLVING THE PROBLEM
+
+
+Collecting data for problems with the IBM WebSphere Application Server sessions and session management component. Gathering this MustGather information before calling IBM support will help you understand the problem and save time analyzing the data.
+
+To improve the accuracy of complete data collection, IBM recommends you use the automated data collectors within IBM Support Assistant. Not only will the automated collector gather the equivalent of the manual process, it will also provide a secure file transfer of the collection to IBM.
+
+COLLECTING DATA USING THE IBM SUPPORT ASSISTANT DATA COLLECTOR
+ 1.  
+ 2.  WebSphere Application Server V8.0.0.6
+ 3.  
+ 4.  (ISADC)
+ 5.  
+ 6.  ISADC
+ 7.  
+ 8.  Using the IBM Support Assistant Data Collector.
+ 9.  
+ 10. 
+ 11. 
+ 12. Using the ISA Data Collector:  * To run ISADC from command line, go to your app_server_root/bin directory and run isadc.[sh|bat]
+        
+        
+      *  To download, install and run ISADC locally:
+        > Obtain the IBM Support Assistant Data collector online ISA Data Collector site for WebSphere Application Server. [http://public.dhe.ibm.com/software/isa/isadc/?taxonomy=ApplicationServer] 
+        
+        >  >  Select the option to collect from this or another system using a downloadable utility. Download and extract the zip file to your WAS_HOME directory. From a command line, run isadc.[sh|bat] or launch index.html to use the web interface.
+        
+        
+        
+        
+     
+     
+ 13.  To download and run ISADC in your browser: 
+     > Obtain the IBM Support Assistant Data collector online ISA Data Collector site for WebSphere Application Server. [http://public.dhe.ibm.com/software/isa/isadc/?taxonomy=ApplicationServer] 
+     
+     >  Select the option to collect from this system using the current browser and click Start Collection.
+     
+     
+     
+ 14. Select the Runtime > Session Management Problem collector and click Start.
+     
+     
+ 15. Follow the prompts to automatically submit the collected data to IBM Support.
+
+COLLECTING DATA MANUALLY
+ 
+Sessions and Session Management specific MustGather information:
+The first step in solving a problem with your HTTPSession in Application Server is to reproduce the problem with session tracing enabled. Adding debug code to the application simplifies the task of identifying the problem.
+
+Instructions for setting up the trace: 
+
+ 1.  In the WebSphere Application Server administrative console, expand the Troubleshooting section and click Logs and Trace.
+     
+     
+ 2.  Click the link for your server.
+     
+     
+ 3.  Click Diagnostic Trace.
+     
+     
+ 4.  Make sure Enable Log is checked, Maximum File Size is 100MB, Historical Files is 10, and specify a File Name. You may have to select different values for Maximum File Size and Historical Files as per the frequency of the problem or as suggested by support team.
+     
+     
+ 5.  Click OK.
+     
+     
+ 6.  Click on Change Log Level Details.
+     
+     
+ 7.  In the text box for Trace Specification, enter the following string (type without spaces) depending on the method that you persist session data:  * Trace strings for V7.0 and V8.0 releases  * If you do not use any persistence:
+           com.ibm.ws.session.*=all:com.ibm.ws.webcontainer.srt.*=all
+           
+           
+         * If you use database persistence:
+           com.ibm.ws.session.*=all:com.ibm.ws.webcontainer.srt.*=all:WAS.j2c=all:RRA=all
+           
+           
+         * If you use memory-to-memory persistence:
+           com.ibm.ws.session.*=all:com.ibm.ws.webcontainer.srt.*=all:com.ibm.ws.drs.*=all
+           
+           
+        
+        
+      * Trace strings for V6.0 and V6.1 releases  * If you do not use any persistence:
+           com.ibm.ws.webcontainer.httpsession.*=all:com.ibm.ws.webcontainer.srt.*=all
+           
+           
+         * If you use database persistence:
+           com.ibm.ws.webcontainer.httpsession.*=all:com.ibm.ws.webcontainer.srt.*=all:WAS.j2c=all:RRA=all
+           
+           
+         * If you use memory-to-memory persistence:
+           com.ibm.ws.webcontainer.httpsession.*=all:com.ibm.ws.webcontainer.srt.*=all:com.ibm.ws.drs.*=all
+           
+           
+        
+        
+     
+     
+ 8.  Click apply and save your configuration.
+     
+     
+ 9.  Stop the Application Server.
+     
+     
+ 10. Enable a plug-in trace by changing the LogLevel attribute from Error to Trace in the plugin-cfg.xml file. This file is located in the following directory:
+     
+     install_root/profiles/profile_name/config/cells/cell_name/nodes/
+     web_server_node_name/servers/server_name
+     
+     
+     For more information on capturing plug-in trace, refer MustGather document for plug-in [http://www.ibm.com/support/docview.wss?rs=180&uid=swg21174894].
+     
+ 11. Stop the Web server.
+     
+     
+ 12. Clear all logs for the Application Server:  * trace.log 
+      * SystemOut.log 
+      * SystemErr.log
+        
+        
+     
+     
+ 13. Start the Application Server.
+     
+     
+ 14. Start the Web server.
+     
+     
+ 15. Reproduce your problem. 
+     
+     
+ 16. Capture the cookie information from the browser by typing the following text in the address bar:
+     javascript:document.cookie
+     
+     
+ 17. Collect the following:  * Trace file from the diagnostic trace.
+        
+      * All files in the following directory:
+        install_root/profiles/profile_name/logs/server_name
+        
+        
+      * All files in the following directory:
+        install_root/profiles/profile_name/logs/ffdc
+        
+        
+      * The server.xml file located in the following directory:
+        install_root/profiles/profile_name/config/cells/cell_name/nodes/
+        node_name/servers/server_name
+        
+        
+      * The http_plugin.log file.
+        
+        
+      * The sessionID that encountered the problem or was captured in step 16.
+        
+        
+      * historyReport.html generated by running the tool genHistoryReport.bat or genHistoryReport.sh, located in the install_root/bin directory; historyreport.html is generated in the working directory of where the genHistoryReport tool is run.
+     
+     
+     
+ 18. Follow instructions to send diagnostic information to IBM support [http://www.ibm.com/support/docview.wss?rs=180&uid=swg21153852].
+
+
+
+For a listing of all technotes, downloads, and educational materials specific to the Session and Sessions Management component, search the WebSphere Application Server support site [http://www.ibm.com/software/webservers/appserv/was/support/]. 
+
+Related information 
+Submitting information to IBM support [http://www.ibm.com/support/docview.wss?rs=180&uid=swg21153852] 
+Steps to getting support for WebSphere Application Server [http://www.ibm.com/developerworks/websphere/support/appserver_support.html] 
+MustGather: Read first for WebSphere Application Server [http://www.ibm.com/support/docview.wss?rs=180&uid=swg21145599] 
+Troubleshooting guide for WebSphere Application Server [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27005324] 
+EXCHANGING DATA WITH IBM SUPPORT
+To diagnose or identify a problem, it is sometimes necessary to provide Technical Support with data and information from your system. In addition, Technical Support might also need to provide you with tools or utilities to be used in problem determination. You can submit files using one of following methods to help speed problem diagnosis: 
+
+ * IBM Support Assistant (ISA) 
+ * Service Request (SR)
+ * E-mail 
+ * FTP to the Enhanced Customer Data Repository (ECuRep)
+
+
+
+
+Instructions for exchanging information with IBM Support [http://www.ibm.com/support/docview.wss?uid=swg21153852]
+
+READ FIRST AND RELATED MUSTGATHERS
+MustGather: Read first for WebSphere Application Server [http://www.ibm.com/support/docview.wss?uid=swg21145599]
+
+
+
+
+ Classloader problem [http://www.ibm.com/support/docview.wss?uid=swg21196187] Dynamic Cache Problem [http://www.ibm.com/support/docview.wss?uid=swg21193837] JNDI Problem [http://www.ibm.com/support/docview.wss?uid=swg21143296] JTS Problem [http://www.ibm.com/support/docview.wss?uid=swg21153216] ORB Problem [http://www.ibm.com/support/docview.wss?uid=swg21157005] Scheduler Problem [http://www.ibm.com/support/docview.wss?uid=swg21220349] Workload Management Problem [http://www.ibm.com/support/docview.wss?uid=swg21052165] 
+
+RELATED INFORMATION
+ Recording your screen to share with IBM Support [https://www.ibm.com/developerworks/community/blogs/IBMElectronicSupport/entry/recording_your_screen_to_share_with_support?lang=en]
+
+
+ 
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Application Servers WebSphere Application Server - Express Java SDK AIX, HP-UX, Linux, Solaris, Windows Application Servers Runtimes for Java Technology Java SDK

@@ -1,0 +1,60 @@
+Title: IBM NullPointerException and CWLAE0005I occurs when loading artifacts during server startup for WebSphere Process Server (WPS) - United States
+
+Text:
+v602rnotes; CWLAE0005I; classloader; class loader; artifact loader; NullPointerException; shared library; classpath TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ If you have a shared library defined, the class path value references a Java archive (JAR) file with external resources. If you then add a directory path to the classpath entry, you can see relationshipService-related exceptions when you restart the server. 
+
+SYMPTOM
+ 
+
+You might see the following exceptions when you restart the server:
+
+
+com.ibm.wbiserver.relationshipservice.util.
+ArtifactLoaderUtility
+stateChanged CWLAE0005I: RelationshipService encountered
+the exception:java.lang.NullPointerException
+at
+com.ibm.wbiserver.relationshipservice.util.
+ArtifactLoaderUtility.loadAllRelAndRoles
+(ArtifactLoaderUtility.java:502)
+at
+com.ibm.wbiserver.relationshipservice.util.
+ArtifactLoaderUtility.stateChanged(
+ArtifactLoaderUtility.java:198)
+at com.ibm.ws.al.bootstrap.WASBootstrap.
+relayToInterestedComponents(WASBootstrap.java:1068)
+at com.ibm.ws.al.bootstrap.WASBootstrap.stateChanged
+(WASBootstrap.java:477)
+at com.ibm.ws.runtime.component.ApplicationMgrImpl.
+stateChanged(ApplicationMgrImpl.java(Compiled Code))
+at
+com.ibm.ws.runtime.component.DeployedApplicationImpl.
+fireDeployedObjectEvent(DeployedApplicationImpl.java:1059)
+at com.ibm.ws.runtime.component.DeployedApplicationImpl.
+setState(DeployedApplicationImpl.java:213)
+at com.ibm.ws.runtime.component.DeployedApplicationImpl.
+setState(DeployedApplicationImpl.java:208)
+at com.ibm.ws.runtime.component.DeployedApplicationImpl.
+start(DeployedApplicationImpl.java:766)
+...
+
+Other exceptions can occur afterwards, such as PackageNotFoundException and FileNotFoundException exceptions.
+
+Even though the server starts, the previous exception is logged in the SystemOut.log file as well as the following message:
+WSVR0002I: Server {0} open for e-business, problems occurred during startup
+
+Additionally, the resource reference that you added to the class path variable in the shared library is not picked up by the class loader. 
+
+
+RESOLVING THE PROBLEM
+To resolve this issue, complete the following steps: 
+
+ 1. Define separate shared libraries for the external directory and the external JAR file. 
+ 2. Create a new class loader to pick up the referenced classes.
+
+
+The 
+By-reference sharing of Java binaries, XML schemas, and interface definitions in WebSphere Process Server (using Shared Libraries) [http://www.ibm.com/support/docview.wss?uid=swg21322617] document provides additional detail on implementing this solution.

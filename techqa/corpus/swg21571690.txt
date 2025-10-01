@@ -1,0 +1,36 @@
+Title: IBM Passing a literal value using the nzsql -v argument - United States
+
+Text:
+NPS; Netezza; IBM Netezza TECHNOTE (FAQ)
+
+QUESTION
+ How do I pass a literal via the nzsql -v argument? 
+
+ANSWER
+When using the
+nzsql -v <variable>=<value> -f <file>
+one can perform a variable substitution such that the value of the variable is passed into the SQL of the file.
+
+For example, if the file, sql.1, contains the following:
+select * from orders where order_num > :low_order_num
+and a user runs
+nzsql -v low_order_num=80012 -f sql.1
+then this will result in the following query being run:
+select * from orders where order_num > 80012
+
+If one wants to pass a date to an sql file such as sql.2, which contains the following:
+select * from orders where ord_dt = :order_date
+then one can do this as follows:
+nzsql -v order_date="'01-Jun-08'" -f sql.2 (the value of 01-Jun-08 is enclosed in a single quotes inside double quotes)
+which will result in the following SQL being run:
+select * from orders where ord_dt = '01-Jun-08'
+
+Another example is to pass the value of the file for a CREATE EXTERNAL TABLE. Using an sql file such as sql.3, which contains the following:
+create external table orders_backup sameas orders using (dataobject (:directory));
+then one can pass the directory name for the dataobject as follows:
+nzsql -v directory"'/tmp/order_backup.ext'" -f sql.3 (the directory name is enclosed in single quotes inside double quotes) 
+
+ 
+
+HISTORICAL NUMBER
+ NZ935663

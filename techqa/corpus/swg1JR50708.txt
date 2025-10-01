@@ -1,0 +1,237 @@
+Title: IBM JR50708: TIMEOUT OF STATEFUL SESSION BEAN MAKES PROCESS PORTAL UNUSABLE - United States
+
+Text:
+  DIRECT LINKS TO FIXES
+7.5.1.2-WS-BPM-IFJR50708 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Standard&fixids=7.5.1.2-WS-BPM-IFJR50708&source=SAR]
+8.0.1.3-WS-BPM-IFJR50708 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Standard&fixids=8.0.1.3-WS-BPM-IFJR50708&source=SAR]
+8.0.1.2-WS-BPM-IFJR50708 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Standard&fixids=8.0.1.2-WS-BPM-IFJR50708&source=SAR]
+Version 8.5 Refresh Pack 6 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24039185]
+Version 8.5.0 Fix Pack 2 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24040683]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  While working with IBM Process Portal, you might see the
+   following message:
+   
+   "Java.rmi.NoSuchObjectException: Stateful bean
+   BeanId(IBM_BPM_Teamworks_nodename1_server1#twcore-ejb.jar#
+   EJBWorkflowManager, D5432F8C-0147-4000-E000-13680998CDF5) was
+   removed or timed out.",
+   
+   It is no longer possible to work with tasks that you have open
+   in the current Process Portal session. You must log out of
+   Process Portal and log in again to be able to work with these
+   tasks. If you click Details in the error message window, the
+   following exception is displayed:
+   
+   com.lombardisoftware.core.TeamWorksException:
+   java.rmi.NoSuchObjectException: Stateful bean
+   BeanId(IBM_BPM_Teamworks_nodename1_server1#twcore-ejb.jar#
+   EJBWorkflowManager, D5432F8C-0147-4000-E000-13680998CDF5) was
+   removed or timed out.
+     at com.lombardisoftware.core.TeamWorksException.
+       asTeamWorksException(TeamWorksException.java:130)
+     at com.lombardisoftware.core.RegexExceptionRewriter.
+       rewrite(RegexExceptionRewriter.java:76)
+     at com.lombardisoftware.core.ExceptionHandler.
+       returnProcessedException(ExceptionHandler.java:311)
+     at com.lombardisoftware.servlet.ControllerServlet.
+       processError(ControllerServlet.java:174)
+     at com.lombardisoftware.servlet.ControllerServlet.
+       doError(ControllerServlet.java:170)
+     at com.lombardisoftware.servlet.ControllerServlet.
+       doCommon(ControllerServlet.java:486)
+     at com.lombardisoftware.servlet.ControllerServlet.
+       doPost(ControllerServlet.java:155)
+     at javax.servlet.http.HttpServlet.service
+       (HttpServlet.java:738)
+     at javax.servlet.http.HttpServlet.service
+       (HttpServlet.java:831)
+     at com.ibm.ws.webcontainer.servlet.ServletWrapper.
+       service(ServletWrapper.java:1657)
+     ...
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  IBM BPM keeps a cache of stateful session beans (one session
+   bean for each human service that a user works with). This cache
+   is stored inside the user's HTTP session. The cache update
+   policy removes a stateful session bean from the cache if it has
+   not been accessed for more than one hour. If a session bean
+   expires, it still is kept in the cache and the expired session
+   bean is reused from the cache if you try to work with the
+   service again.
+   
+   For human services of user tasks in a business process
+   definition (BPD) instance, the state of the stateful session
+   bean is saved in the database with the associated task;
+   therefore, the cache for these human services is not needed.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A fix is available for IBM BPM V7.5.1.0 that handles expiration
+   of stateful session beans. If IBM BPM detects that a session
+   bean is expired, it removes this session bean from the cache and
+   displays a more user friendly error message to the user. The new
+   message is
+   
+   "A timeout occurred while the task with ID xxxx was being
+   processed. To start over or resume this task, run this task
+   again."
+   
+   In addition, session beans for human services of user tasks in a
+   BPD instance are no longer kept in the cache. Human services
+   that start directly from Process Portal (exposed as startable)
+   don't have an associated task and, therefore, the cache is not
+   modified for these services.
+   
+   This fix makes the cache timeout configurable. To modify the
+   default timeout (60 minutes), edit 100Custom.xml, which is
+   located in the following directory:
+   
+   <profile-root>/config/cells/<cell-name>/nodes/<node-name>
+    /servers/<server-name>/<server-type>/config
+   
+   where <server-type> can be either process-center or
+   process-server.
+   
+   Add the following definition to the <server> element:
+   
+     <web-workflow-manager merge="mergeChildren">
+       <session-bean-cache-expiry-timeout>timeout in
+         minutes</session-bean-cache-expiry-timeout>
+     </web-workflow-manager>
+   
+   An example 100Custom.xml that sets the timeout value to 50
+   minutes would look like this:
+   
+   <properties>
+       <server>
+           <web-workflow-manager merge="mergeChildren">
+               <session-bean-cache-expiry-timeout>50
+               </session-bean-cache-expiry-timeout>
+           </web-workflow-manager>
+       </server>
+   </properties>
+   
+   If your processes run on a cluster, you must make this change
+   for each cluster member.
+   
+   On Fix Central (http://www.ibm.com/support/fixcentral), search
+   for JR50708:
+   
+   1. Select IBM Business Process Manager with your edition from
+     the product selector, the installed version to the fix pack
+     level, and your platform, and then click Continue.
+   
+   2. Select APAR or SPR, enter JR50708, and click Continue.
+   
+   When you download fix packages, ensure that you also download
+   the readme file for each fix. Review each readme file for
+   additional installation instructions and information about the
+   fix.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  Not applicable
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR50708
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM EXPRESS
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9600
+   
+   
+ * REPORTED RELEASE
+   751
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2014-07-06
+   
+   
+ * CLOSED DATE
+   2014-09-09
+   
+   
+ * LAST MODIFIED DATE
+   2014-09-09
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   BPM STANDARD
+   
+   
+ * FIXED COMPONENT ID
+   5725C9500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R751 PSY
+   UP

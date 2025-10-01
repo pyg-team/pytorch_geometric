@@ -1,0 +1,93 @@
+Title: IBM Packaging Utility, Version 1.0.0.5 - United States
+
+Text:
+IBM Packaging Utility; Version 1005 fix pack; Packaging Utility; v1005; fix pack 1005; 1005; fix pack DOWNLOADABLE FILES
+
+ABSTRACT
+ This document describes how to download and install this fix pack to IBM Packaging Utility, Version 1.0. 
+
+DOWNLOAD DESCRIPTION
+IMPORTANT: This update has been superseded and is no longer available for download from ibm.com. You should update your product with the most recent version available. See http://www.ibm.com/support/docview.wss?uid=swg27025142 [http://www.ibm.com/support/docview.wss?uid=swg27025142] [http://www-01.ibm.com/support/docview.wss?rs=2042&uid=swg27007823] for the most recent version.
+
+
+
+
+This fix pack contains fixes to the version 1.0 release of IBM Packaging Utility.
+
+The IBM® Packaging Utility is a program used to generate a new repository for packages, copy packages to a new repository, and delete packages that are no longer needed.
+
+PREREQUISITES
+Before you can install this fix pack, you must install IBM Installation Manager, Version 1.0.0.5; by default, it is automatically installed when you attempt to update or install packages by using an earlier version.
+
+For more information, refer to the version 1.0.0.5 readme file.
+
+URL LANGUAGE SIZE(Bytes) IBM Packaging Utility v1.0.0.5 Readme [http://download.boulder.ibm.com/ibmdl/pub/software/rationalsdp/v7/pu/1005/docs/readme/readme.html] English 26000 
+INSTALLATION INSTRUCTIONS
+To download and install the fix pack: 
+
+
+ 1. 
+ 2. Download the fix pack from the download URL below.
+ 3. 
+ 4. Extract the compressed file in an appropriate directory. For example, choose to extract to C:\temp.
+ 5. 
+ 6. Add the fix pack's repository location in IBM Installation Manager:
+     1.  
+     2.  Start IBM Installation Manager.
+     3.  
+     4.  On the Start page of Installation Manager, click File > Preferences, and then click Repositories. The Repositories page opens.
+     5.  
+     6.  On the Repositories page, click Add Repository.
+     7.  
+     8.  On the Add repository window, browse to and enter the file path to the C:\temp\pu\updates directory. For example, enter C:\temp\pu\updates\repository.config and then click OK.
+     9.  
+     10. Click OK to close the Preference page.
+    
+    
+ 7. 
+
+
+If IBM Packaging Utility is currently installed, you can perform an update to install this version by completing the following steps:
+
+
+ 1. On the Start page of Installation Manager, click Update Packages.
+ 2. 
+ 3. Select IBM Packaging Utility and follow the wizard pages to update it.
+
+
+If IBM Packaging Utility is not currently installed, install it by completing the following steps: 
+
+
+ 1. On the Start page of Installation Manager, click Install Packages
+ 2. 
+ 3. Select IBM Packaging Utility and follow the wizard pages to install it.
+ 4. 
+
+DOWNLOAD PACKAGE
+
+
+
+
+Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options 
+What is Fix Central(FC)? [https://www.ibm.com/support/fixcentral/help?page=swfaqs] pu-1.0.0.5.zip 7/13/2007 English 156511190 HTTP [http://download.boulder.ibm.com/ibmdl/pub/software/rationalsdp/v7/pu/1005/zips/pu-1.0.0.5.zip] 
+TECHNICAL SUPPORT
+ IBM Rational Software Support provides you with technical assistance.
+
+
+For contact information and guidelines or reference materials that you will need when you require support, read the IBM Software Support Handbook at: http://techsupport.services.ibm.com/guides/handbook.html [http://techsupport.services.ibm.com/guides/handbook.html]
+
+
+Before you contact IBM Rational Software Support, gather the background information that you will need to describe your problem. When describing a problem to an IBM software support specialist, be as specific as possible and include all relevant background information so that the specialist can help you solve the problem efficiently. To save time, know the answers to these questions: 
+ * 
+ * What software versions were you running when the problem occurred?
+ * 
+ * Do you have logs, traces, or messages that are related to the problem?
+ * 
+ * Can you reproduce the problem? If so, what steps do you take to reproduce it?
+ * 
+ * Are you using a workaround for the problem? If so, be prepared to describe the workaround.
+ * 
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Software Development Rational Application Developer for WebSphere Software Packaging Utility Windows, Linux 7.0.0.3 Software Development Rational Software Architect Packaging Utility Linux, Windows 7.0.0.3 Software Development Rational Software Modeler Packaging Utility Windows, Linux 7.0.0.3 Software Development Rational Systems Developer Packaging Utility Linux, Windows 7.0.0.3 Software Development Rational Modeling Extension for Microsoft .NET Packaging Utility Linux, Windows 7.0.0.3 Software Development Rational Business Developer Extension Linux, Windows 7.0.0.3 Software Development Rational Functional Tester Packaging Utility 7.0.0.2

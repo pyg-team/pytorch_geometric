@@ -1,0 +1,183 @@
+Title: IBM PI62804: FILE MANAGER PLUGIN MISCELLANEOUS PROBLEMS MAY 2016 - United States
+
+Text:
+z/os SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  File Manager Plugin miscellaneous problems May 2016.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: PDTools Studio and Aqua users.               *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: This APAR resolves various problems for *
+   *                      PDTools Studio and Aqua users.          *
+   *                      1. File Manager problems:               *
+   *                         - Check if IMS subsystems have       *
+   *                           canonical config before freeing.   *
+   *                         - Fixed issue where IMS records      *
+   *                           could not be deleted.              *
+   *                         - Now show more progress during      *
+   *                           export to Desktop for Base/DB2.    *
+   *                         - Fixed issue where after clicking   *
+   *                           save in DB2 template editor        *
+   *                           dialog,                            *
+   *                           the title changes to ...{1}.       *
+   *                         - Fixed IMS Extract Wizard not       *
+   *                           working for V12 host.              *
+   *                         - Fixed bad TD names causing         *
+   *                           unhandled exceptions               *
+   *                      2. Fault Analyzer problems:             *
+   *                         - Improved Fault Entry list          *
+   *                           performance on linux.              *
+   *                         - Fixed Invalid Thread exception     *
+   *                           when opening analytics.            *
+   *                         - Improve handling of user           *
+   *                           cancellation requests.             *
+   *                         - Add an indicator to drill down     *
+   *                           charts so it is possible to        *
+   *                           differentiate a regular vs drill   *
+   *                           down chart.                        *
+   *                         - The ChartEditor is not activated   *
+   *                           again if already open, but not in  *
+   *                           focus.                             *
+   *                      3. Problem Determination Tools Common   *
+   *                         Component problems:                  *
+   *                         - Improved security certificate      *
+   *                           management so they are not lost if *
+   *                           Eclipse crashes.                   *
+   *                         - Improved memory efficiency of      *
+   *                           Lookup View.                       *
+   *                         - Resolved issue where double        *
+   *                           clicking a file node no longer     *
+   *                           works.                             *
+   ****************************************************************
+   * RECOMMENDATION: Please upgrade to Aqua and install the       *
+   *                 latest updates.                              *
+   *                                                              *
+   *                 Users remaining on PDTools Studio should     *
+   *                 install release v13.1.0.23 (or later).       *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The various problems for File Manager, Fault Analyzer and
+   PDTools Common Component have been resolved and details for
+   installing these fixes can be found below.
+   
+   The latest Problem Determination Tools Studio and plugins
+   pack for RDz 9 - 9.5.0 has been made available at:
+   http://www-01.ibm.com/support/
+   docview.wss?uid=swg24033351#STinstall [http://www-01.ibm.com/support/docview.wss?uid=swg24033351#STinstall]
+   
+   
+   The latest Problem Determination Tools Plugin for RDz 9.5.1
+   and newer are now available from:
+   http://public.dhe.ibm.com/ibmdl/export/pub/software/ [http://public.dhe.ibm.com/ibmdl/export/pub/software/]
+   htp/zos/tools/aqua
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI62804
+   
+   
+ * REPORTED COMPONENT NAME
+   FILE MANAGER Z/
+   
+   
+ * REPORTED COMPONENT ID
+   5655Q1200
+   
+   
+ * REPORTED RELEASE
+   D10
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-05-20
+   
+   
+ * CLOSED DATE
+   2016-06-02
+   
+   
+ * LAST MODIFIED DATE
+   2016-06-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *     INTLPRTS
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   FILE MANAGER Z/
+   
+   
+ * FIXED COMPONENT ID
+   5655Q1200
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * RD10 PSN
+   UP

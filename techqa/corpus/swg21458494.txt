@@ -1,0 +1,50 @@
+Title: IBM Conditions of BAL rules unexpectedly evaluated - United States
+
+Text:
+error; exception; AND; condition; order; evaluation TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Based on the way in which a BAL rule was written (definition statements / order of conditions), some of its conditions seem to be evaluated although they should not. 
+
+SYMPTOM
+Some conditions of a rule are evaluated although the restrictions set in the rule definitions are not met or, for example, a ruleset throws a NullPointerException on a rule condition that should not be evaluated, because it is in the second part of an 'AND' condition and the first part is false.
+
+
+CAUSE
+This is probably due to the fact that you are executing that rule with the default algorithm, RetePlus, which gives no guaranty as to the order in which the rule conditions are evaluated.
+
+RESOLVING THE PROBLEM
+Because of the optimizations it performs in the evaluation of the conditions, the RetePlus mode provides no guaranty as to the order in which the tests are evaluated.
+
+
+This includes tests performed in the rule definitions of the BAL rules; namely, those tests are to be considered as conditions (or "pre-conditions" as the JRules 7.1 documentation [http://publib.boulder.ibm.com/infocenter/brjrules/v7r1/topic/com.ibm.websphere.ilog.jrules.doc/Content/Business_Rules/Documentation/_pubskel/JRules/ps_JRules_Global496.html] says at "Rule Studio > Writing rules > Business rules > Rule definitions") where the engine evaluates the presence of objects and eventually tests the values of those objects in the "where" clause before it selects the rule for execution, just as it does in rule conditions. 
+
+ 
+
+To understand how the definitions and conditions translate at the engine level, you can use the IRL (rule engine language) view of the rule, which shows the code that the engine runs. 
+
+ 
+
+If the evaluation order is an important design factor (for example, to minimize a costly database access by certain conditions), consider using the sequential or Fastpath execution modes. However, remember to take other factors into account to make that decision: RetePlus is the default algorithm but it is appropriate for certain applications and not for others. Therefore, you also need to consider which algorithm best suits the type of application you are running. 
+
+ 
+
+Refer to the following documentation pages to understand how each execution mode behaves and what type of processing it is appropriate for:
+
+
+ * 
+ * Rule Studio > Optimizing execution > Engine execution modes
+ * 
+ * 
+ * Rule Studio > Optimizing execution > Choosing an execution mode
+
+
+
+If RetePlus remains the appropriate algorithm, you cannot rely on the order of your rule conditions to prevent such errors as NPEs. As with the other execution algorithms or any other Java application, you need to prevent possible runtime errors by inserting checks for NULLs, for example, in your application or ruleset (see technote Check for null values in rules [http://www.ibm.com/support/docview.wss?uid=swg21585612]). You also need to test and debug the ruleset before deploying it with our Decision Validation Services [http://publib.boulder.ibm.com/infocenter/brjrules/v7r1/topic/com.ibm.websphere.ilog.jrules.doc/Content/Business_Rules/Documentation/_pubskel/JRules/ps_JRules_Global705.html] module and Rule Studio debugging tools [http://publib.boulder.ibm.com/infocenter/brjrules/v7r1/topic/com.ibm.websphere.ilog.jrules.doc/Content/Business_Rules/Documentation/_pubskel/JRules/ps_JRules_Global663.html]. RELATED INFORMATION
+#Check for null values in rules [http://www.ibm.com/support/docview.wss?uid=swg21585612]
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Operational Decision Manager Platform Independent 8.5, 8.0, 7.5

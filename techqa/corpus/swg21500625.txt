@@ -1,0 +1,61 @@
+Title: IBM After a InfoSphere DataStage job was modified some of the link dissapeared - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ After a InfoSphere DataStage Job was saved and then re-edited some of the links were missing. 
+
+CAUSE
+The InfoSphere Information Server 8.5 Pre-checker ignores the Oracle Repository check for required characterset. An invalid character set in the xmeta database can cause this behavior.
+
+RESOLVING THE PROBLEM
+To resolve the problem XMETA must be set to the following character sets : 
+
+1) NLS_CHARACTERSET must be set to AL32UTF8 
+
+2) NLS_NVAR_CHARACTERSETmust be set to AL32UTF16 
+
+3) To verify the above is set properly please execute the following sql command :
+
+SELECT * FROM NLS_DATABASE_PARAMETERS; 
+
+4) If the above command comes back with the incorrect character set the following must be done: 
+
+ a. dropping xmeta and re-creating it with the above format and then re-installing Information Server 
+
+ b. or changing the database character format to UTF8 by using some Oracle tools. 
+
+
+For Example
+
+
+ * Execute Character Scan Utility: This utility reports scan report and any exceptions that may cause data loss. 
+
+1) Go to <ORACLE_HOME>/oracle/product/10.2.0/db_1/rdbms/admin where<ORACLE_HOME> is home directory or Oracle i.e: /opt/Oracle 
+
+2) Execute character scan utility csscan : 
+command: csscan system/oracle@xmeta full=y tochar=AL32UTF8 ARRAY=10240 PROCESS=3 
+This step also generates reports, including error report which describe any loss if the data is converted. 
+ * Take full backup of the database 
+
+ * Execute script to change the character set
+
+If there are no errors or if the errors are acceptable, run csalter.plb script to do the conversion. 
+
+1) Shutdown the database: 
+shutdown immediate 
+2) Start database in restricted mode 
+startup restrict 
+3) Execute csalter.plb from sql prompt 
+@@csalter.plb 
+
+After the script is executed, database needs to started back in normal mode 
+
+4) Shutdown the database 
+shutdown immediate 
+5) Start database in normal mode 
+startup 
+
+6) then verify that the character set was properly by executing command : 
+SELECT * FROM NLS_DATABASE_PARAMETERS;

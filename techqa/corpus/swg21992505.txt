@@ -1,0 +1,36 @@
+Title: IBM Unable to display document in the IBM Content Navigator, Daeja virtual viewer. - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Content Navigator users are getting the error:
+Unable to display document: Error: Inconsistent State, retrieveFromRegisty returned null.
+
+
+
+CAUSE
+The server hosting Content Navigator ran out of space on the mount point (or drive/disk) used by the application server used for the deployment of Content Navigator.
+
+ANSWER
+Review the application server and Daeja virtual viewer logs for errors that say: 'No space left on device'. 
+
+Examples: 
+
+SystemErr log:
+[10/12/16 6:11:15:968 CDT] 000000fa SystemErr R java.io.IOException: No space left on device
+
+SystemOut log:
+[10/12/16 6:11:15:966 CDT] 000000fa SystemOut O 2016-10-12 06:11:15,965 ERROR [Timer-42] - System Manager: Unable to write to history file: No space left on device 
+
+Daeja virtual server log:
+WebContainer : 4 Oct 12, 2016 10:39:53 AM (267969247/267968652):ViewOnePlatform.navigator.clientlog> Couldn't create file for logging.
+WebContainer : 4 Oct 12, 2016 10:39:53 AM (267969247/000000000):java.io.IOException: No space left on device.
+
+
+In this particular scenario a network trace had been left running and consumed all the space on a mount point used by the the application server.
+
+Investigate the cause of the lack of space and take measures to rectify or allocate more space. 
+
+RELATED INFORMATION
+ Enabling logging for IBM Daeja ViewONE Virtual viewer [http://www.ibm.com/support/knowledgecenter/SSEUEX_2.0.3/com.ibm.installingeuc.doc/eucts065.htm]

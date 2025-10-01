@@ -1,0 +1,59 @@
+Title: IBM Unable to access live.com (Hotmail/Outlook) when Outbound SSL is enabled on QRadar Network Security sensors - United States
+
+Text:
+XGS; OSSL; hotmail; outlook; email TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When Outbound SSL Inspection is enabled and set to decrypt traffic going to live.com (such as to Hotmail and Outlook), the page might appear unreachable as the SSL decryption on the QRadar Network Security (XGS) sensor is failing. 
+
+CAUSE
+Google and Microsoft have been driving a new TLS extension that is called the Extended Master Secret extension. This standard is still in draft so a decryption solution has not been implemented. However, Microsoft has already implemented that standard draft on their live production server live.com. As a result, the man-in-the-middle (MITM) that is supposed to decrypt the traffic on the XGS is not working properly.
+
+This feature will be added in a future XGS firmware, but no date is available at this time due to the standard still being in draft.
+
+For more information on the Extended Master Secret TLS extension, see RFC 7627 [https://tools.ietf.org/html/rfc7627].
+
+
+RESOLVING THE PROBLEM
+Until this is addressed in a future firmware updated (again, no date for this has been set at this time), you can either disable the Extended Master Secret extension on the browser side or use an Outbound SSL Inspection rule.
+
+Disable the Extended Master Secret extension 
+
+
+For details on disabling the Extended Master Secret TLS extension, see MS15-121: Security update for Schannel to address spoofing: November 10, 2015 [https://support.microsoft.com/en-us/kb/3081320] on Microsoft's website. 
+
+Using an Outbound SSL Inspection rule
+
+You can create an Outbound SSL Inspection rule that ignores traffic that is going to the concerned servers. IBM is also working on a different workaround that is not yet implemented to avoid future cases.
+
+To ignore traffic that is going to the concerned servers, you need to create a new Domain Certificate List and then an Outbound SSL Inspection rule to ignore the traffic. Follow the instructions below to do this:
+
+
+ 1. Open the Outbound SSL Inspection policy.
+    
+ 2. In the left pane where you see Address, Applications, and Identity, click New > Application > Domain Certificate Lists.
+    [/support/docview.wss?uid=swg21976382&amp;aid=1]
+    
+ 3. An Add Domain Certificate List box displays. Enter the following details:
+    Name: Enter your wanted name for the new Domain Certificate List here.
+    CN List: *live.com
+    Comment: This field is optional and can be used for any additional comments.
+    For more information on creating customer Domain Certificate Lists, see Configuring custom domain certificate list objects [https://www.ibm.com/support/knowledgecenter/SSHLHV_5.3.2/com.ibm.alps.doc/tasks/alps_configuring_custom_domain_certificate_objects.htm] on IBM Knowledge Center.
+    
+ 4. Create a new Outbound SSL Inspection rule as follows:
+    Action: Ignore
+    Source: Any
+    Destination: Any
+    Domain: Enter the Domain Certificate List that was created in Step 3.
+    
+ 5. Move this rule to the top of your Outbound SSL Inspection policy and save/deploy the policy.
+
+
+
+
+
+[/support/docview.wss?uid=swg21976382&aid=2] [https://ibm.biz/BdHdZx] [/support/docview.wss?uid=swg21976382&aid=3] [http://ibm.biz/InfraSecForumTechnote] [/support/docview.wss?uid=swg21976382&aid=4] [http://ibm.biz/SecSuptUTube] [/support/docview.wss?uid=swg21976382&aid=5] [http://ibm.biz/InfraSecFixes] [/support/docview.wss?uid=swg21976382&aid=6] [http://ibm.biz/FlexLicLogin] [/support/docview.wss?uid=swg21976382&aid=7] [http://ibm.biz/MyNotification] [/support/docview.wss?uid=swg21976382&aid=8] [http://ibm.biz/ContactSecSupport] 
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Security IBM Security Network Protection Protocol Analysis Module (PAM) Firmware 5.3.3

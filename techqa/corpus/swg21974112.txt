@@ -1,0 +1,88 @@
+Title: IBM ITCAM4Tx - ISM 7.3 to 7.4 with SDA - Upgrade  - Installation steps needed - United States
+
+Text:
+71INS-ISM; 71INS-APPSUP; 71ISM-PLAN; 71ISM-INS; 71ISM-CONF TECHNOTE (FAQ)
+
+QUESTION
+ What are the steps needed or recommendations available, in order to upgrade an ISM agent from v7.3 to v7.4, while SDA is already configured ? 
+
+CAUSE
+not enough details in docs
+
+ANSWER
+A) use/check configuration of the SDA (Self-Describing Agents) mechanism on the TEMS/TEPS, so the ISM new application support is deployed automatically on TEMS, TEPS.
+You can refer to : 
+
+ISM agent and SDA
+http://www-01.ibm.com/support/knowledgecenter/SS5MD2_7.4.0.1/com.ibm.itcamt.doc/common/sda.html?cp=SS5MD2_7.4.0.1%2F6-1-4-0&lang=en [http://www-01.ibm.com/support/knowledgecenter/SS5MD2_7.4.0.1/com.ibm.itcamt.doc/common/sda.html?cp=SS5MD2_7.4.0.1%2F6-1-4-0&lang=en]
+
+
+ITM 6.3 self-describing monitoring agents
+http://www-01.ibm.com/support/knowledgecenter/SSTFXA_6.3.0/com.ibm.itm.doc_6.3/adminuse/agentadmin_sda_intro.htm?lang=en [http://www-01.ibm.com/support/knowledgecenter/SSTFXA_6.3.0/com.ibm.itm.doc_6.3/adminuse/agentadmin_sda_intro.htm?lang=en] 
+
+ 
+
+B) if you are planning to install new fresh ISM 7.4 agent as well as upgrading old ISM 7.3 agent, install new ISM 7.4 fresh agent first. 
+
+You can refer to : 
+
+ISM 7.4 agent installation
+http://www-01.ibm.com/support/knowledgecenter/SS5MD2_7.4.0.1/com.ibm.itcamt.doc/ism/dita/ag/topic/ISM_install_chapter.html?lang=en [http://www-01.ibm.com/support/knowledgecenter/SS5MD2_7.4.0.1/com.ibm.itcamt.doc/ism/dita/ag/topic/ISM_install_chapter.html?lang=en] 
+
+
+C) upgrade your existing ISM 7.3 agent to v7.4
+you can refer to : 
+
+ISM agent upgrade
+http://www-01.ibm.com/support/knowledgecenter/SS5MD2_7.4.0.1/com.ibm.itcamt.doc/ism/dita/ag/task/ISM_in_upgrade.html?lang=en [http://www-01.ibm.com/support/knowledgecenter/SS5MD2_7.4.0.1/com.ibm.itcamt.doc/ism/dita/ag/task/ISM_in_upgrade.html?lang=en]
+
+
+
+
+Remarks :
+
+- if you are planning to use recent OS version for your new ISM agent, like for example Windows 2012 R2, you need to install and use ISM 7.4.0.1 (not ISM 7.4.0.0); 
+
+see prerequisites web site report for ISM :
+http://www-969.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProductByComponent?deliverableId=1364203661236&duComponent=Miscellaneous_3F551130952E11E290021D5C0925FE1B [http://www-969.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProductByComponent?deliverableId=1364203661236&duComponent=Miscellaneous_3F551130952E11E290021D5C0925FE1B]
+
+
+- Don't forget to install ISM 7401 application support on all your TEP client systems as well. Application support is not automatically applied to the Tivoli Enterprise Portal clients.
+you can refer to : 
+
+http://www-01.ibm.com/support/knowledgecenter/SS5MD2_7.4.0.1/com.ibm.itcamt.doc/ism/dita/ag/topic/ISM_install_elements.html?lang=en [http://www-01.ibm.com/support/knowledgecenter/SS5MD2_7.4.0.1/com.ibm.itcamt.doc/ism/dita/ag/topic/ISM_install_elements.html?lang=en] 
+
+
+- An Application support event - new indicator is displayed on these clients to tell the user that they need to recycle their client to apply new or modified application support.
+
+- If you are using the Tivoli Enterprise Portal desktop client, you must use the monitoring agent's installation images to install the Tivoli Enterprise Portal application support on each of the desktop clients.
+
+- If you are using the Tivoli Enterprise Portal browser client or Java™ WebStart client and you have the required user permissions to view the updated application, after the indicator is displayed, you can choose to close and restart these clients to see the new updates.
+
+- Clear the java cache on your TEP client systems before accessing the TEP GUI after your upgrade is complete.
+(possibly useful technote for this :
+http://www-01.ibm.com/support/docview.wss?uid=swg21631843 [http://www-01.ibm.com/support/docview.wss?uid=swg21631843]
+
+- Generally speaking after the ISM application support has been deployed on all TEMS (hub and remote) and TEPS, it's safer to restart all these components (TEMS/TEPS), but not mandatory with SDA.
+
+- SDA function is only supported on ITM IBM Tivoli Monitoring V6.2.3 and later. So make sure that your ITM (TEMS/TEPS) environment is already at right level, or upgrade it.
+
+- ISM 74 prereqs ITM 6.23. fp3 at minimum, or ITM 6.30 fp1, see the 'prerequisites' tab of this web page :
+http://www-969.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProductByComponent?deliverableId=1364203661236&duComponent=Miscellaneous_3F551130952E11E290021D5C0925FE1B [http://www-969.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProductByComponent?deliverableId=1364203661236&duComponent=Miscellaneous_3F551130952E11E290021D5C0925FE1B]
+
+
+- If you have a ISM agent 7.3 co-resident on TEMS or TEPS system, and upgrade it to ISM v7.4, the installation process will attempt to stop automatically the co-resident ITM components like TEMS or TEPS, prior to running the upgrade; so you should be aware of that stop that is needed; so you can plan such upgrade at a time that is convenient for you, in order not to impact your environment and administrators or the monitoring solution currently in use.
+
+
+- We did identify however a possible issue AFTER the ISM 7.3 to 7.4 upgrade was done, if DNS monitor was in use : 
+
+when redeploying the existing DNS profile to the new ISM agent, specifically one of the profiles was causing instant "out of sync" errors. For some reason it was identified that the DNS host field was using actual hostname values, and not IPs. 
+
+This clearly was allowed in the older ISM versions (pre 7.3.0.1), however ISM 7.4's data validation would only allow IPs in that field. Once change of those host values to the IP addresses was done, this resolved the issue with the profile and allowed it to be deployed against the systems without causing them to go out of sync. 
+
+The check for the DNS server being an IP address was not in some early ISM v7.3 code, so if using ISM version pre v7.3.0.1, the DNS server could set as a hostname.
+
+
+
+PRODUCT ALIAS/SYNONYM
+ itcam itcam4tx itcam4trans itcamfortrans itcamfortx internet services monitoring

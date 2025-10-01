@@ -1,0 +1,158 @@
+Title: IBM PM26842: FMI GENERATES MANY ERRORS IN THE LOG WHEN RUNNING WITH THE LATEST RELEASE (VERSION 11) OF FILE MANAGER - United States
+
+Text:
+z/os SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DUPLICATE OF ANOTHER APAR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The File Manager Integration reports errors every
+   time the user selects a data set.
+   
+   This is caused by the request from FMI to FM
+   FM_COMMAND_23_DSI_DATASET_INFORMATION
+   This request seems to return the data but within the data
+   returns a negative length of a buffer.
+   This negative length causes a trap.
+   --------------------------------------------------------------
+   Fri Nov 12 11:29:19 EST 2010
+   ERROR FMIVSAMInformationHandler: CRRZF6590e: Cannot get data set
+   information without the data set name.
+   java.lang.NegativeArraySizeException
+    at
+   com.ibm.fmi.server.dataprovider.fm.utils.ByteBufferUtils.getStri
+   ng(ByteBufferUtils.java:52)
+    at
+   com.ibm.fmi.server.dataprovider.fm.response.FMDataSetInformation
+   Response.parseResponse(FMDataSetInformationResponse.java:108)
+    at
+   com.ibm.fmi.server.dataprovider.fm.response.FMResponse.?init?(FM
+   Response.java:88)
+    at
+   com.ibm.fmi.server.dataprovider.fm.response.FMDataSetInformation
+   Response.?init?(FMDataSetInformationResponse.java:73)
+    at
+   com.ibm.fmi.server.dataprovider.fm.request.FM_COMMAND_23_DSI_DAT
+   ASET_INFORMATION_Request.getResponsePrototype(FM_COMMAND_23_DSI
+   DATASET_INFORMATION_Request.java:78)
+    at
+   com.ibm.fmi.server.dataprovider.fm.FMConnection.sendRequest(FMCo
+   nnection.java:152)
+    at
+   com.ibm.fmi.server.dataprovider.fm.FMConnectionManager.sendReque
+   st(FMConnectionManager.java:709)
+    at
+   com.ibm.fmi.server.dataprovider.fm.FMConnectionManager.sendReque
+   st(FMConnectionManager.java:682)
+    at
+   com.ibm.fmi.server.dataprovider.fm.FMDataProvider.getDatasetDeta
+   ils(FMDataProvider.java:719)
+    at
+   com.ibm.fmi.server.handler.FMIVSAMInformationHandler.handleComma
+   nd(FMIVSAMInformationHandler.java:91)
+    at
+   com.ibm.fmi.server.FMIMVSMinerExtension.handleCommand(FMIMVSMine
+   rExtension.java:703)
+    at
+   com.ibm.ftt.rse.mvs.server.miners.MVSFileSystemMiner.internalHan
+   dleCommand(MVSFileSystemMiner.java:403)
+    at
+   com.ibm.ftt.rse.mvs.server.miners.MVSFileSystemMiner.handleComma
+   nd(MVSFileSystemMiner.java:360)
+    at org.eclipse.dstore.core.miners.Miner.command(Miner.java:303)
+    at org.eclipse.dstore.core.miners.Miner.handle(Miner.java:221)
+    at org.eclipse.dstore.core.model.Handler.run(Handler.java:135)
+   --------------------------------------------------------------
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  n/a
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *  This problem was fixed in changes made im PM25541 [http://www-01.ibm.com/support/docview.wss?uid=isg1PM25541] (PTF UK62808).
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM26842
+   
+   
+ * REPORTED COMPONENT NAME
+   FILE MANAGER Z/
+   
+   
+ * REPORTED COMPONENT ID
+   5655W4700
+   
+   
+ * REPORTED RELEASE
+   B10
+   
+   
+ * STATUS
+   CLOSED DUB
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2010-11-16
+   
+   
+ * CLOSED DATE
+   2010-12-15
+   
+   
+ * LAST MODIFIED DATE
+   2010-12-15
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

@@ -1,0 +1,153 @@
+Title: IBM IZ93329: ITMPATCH FAILS TO UPDATE MULTI-INSTANCE AGENT ON WIX64 - United States
+
+Text:
+  FIXES ARE AVAILABLE
+IBM Tivoli Monitoring 6.2.2 Fix Pack 8 (6.2.2-TIV-ITM-FP0008) [http://www-01.ibm.com/support/docview.wss?uid=swg24031354]
+IBM Tivoli Monitoring 6.2.2 Fix Pack 9 (6.2.2-TIV-ITM-FP0009) [http://www-01.ibm.com/support/docview.wss?uid=swg24032067]
+IBM Tivoli Monitoring 6.2.2 Fix Pack 6 (6.2.2-TIV-ITM-FP0006) [http://www-01.ibm.com/support/docview.wss?uid=swg24030135]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The itmpatch command completes successfully and the 64bit
+   kvmagent.exe in the CANDLEHOME\tmaitm6_x64 gets updated, but
+   the multi-instance copies of kvmagent_<instance>.exe do not get
+   updated.  The itmpatch.log states:
+   
+   TRACE 13:41:02 (patchprocessor.cpp,2245):
+   PatchProcessor::updateProductEXEFiles() entry
+   TRACE 13:41:02 (patchprocessor.cpp,2118):
+   PatchProcessor::findProductEXEFiles() entry
+   TRACE 13:41:02 (patchprocessor.cpp,2126): ProductEXE =
+   kvmagent.exe
+   TRACE 13:41:02 (patchprocessor.cpp,2153): Checking for matching
+   productEXE files in c:\IBM\ITM\tmaitm6, matching kvmagent
+   TRACE 13:41:02 (file.cpp,675): loadDir() entry
+   TRACE 13:41:02 (file.cpp,724): loadDir() exit
+   TRACE 13:41:02 (patchprocessor.cpp,2239):
+   PatchProcessor::findProductEXEFiles() exit
+   TRACE 13:41:02 (patchprocessor.cpp,2306):
+   PatchProcessor::updateProductEXEFiles() = 1
+   
+   The key seems to be that itmpatch only looks in
+   CANDLEHOME\tmaitm6 and not CANDLEHOME\tmaitm6_x64.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  When the "itmpatch" command is used to install a patch for a
+   multi-instance agent with a Windows 64-bit binary, the binary in
+   the %CANDLE_HOME%\tmaitm6_x64 gets updated, but the
+   multi-instance copies of k<pc>agent_<instance>.exe do not get
+   updated.  If the patch file name is
+   <component>_wix64_<patchname>.zip, the product .EXE file
+   directory is incorrectly set to tmaitm6 and not tmaitm6_x64.
+   The .EXE files for the agent's instances are not located and
+   therefore not updated.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Check if the patch file name contains winx64, and if so, set the
+   directory containing the agent's .EXE files to tmaitm6_x64.
+   
+   
+   The fix for this APAR is included in the following maintenance
+   vehicle:
+       | fix pack | 6.2.2-TIV-ITM-FP0004
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ93329
+   
+   
+ * REPORTED COMPONENT NAME
+   TEMS
+   
+   
+ * REPORTED COMPONENT ID
+   5724C04MS
+   
+   
+ * REPORTED RELEASE
+   622
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-01-27
+   
+   
+ * CLOSED DATE
+   2011-02-06
+   
+   
+ * LAST MODIFIED DATE
+   2011-04-06
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TEMS
+   
+   
+ * FIXED COMPONENT ID
+   5724C04MS
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R622 PSY
+   UP

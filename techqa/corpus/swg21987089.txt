@@ -1,0 +1,11 @@
+Title: IBM WebSphere Application Server Classic: timeout settings with ACM - United States
+
+Text:
+What is this document:
+This document has the abstract of a technical article that is available to authorized users after you have logged on. Please use the link to actual document below to access the full document. You will be asked to log on if you are not already logged in. After log in, if you do not have the right authorization for this document, there will be instructions on what to do next.
+
+abstract text
+Business users are facing idle session timeouts at 5 minutes. We would like to increase the session time-out to 15 minutes such that Business users do not disconnect when processing a Credit application request. Do you have best practice documentation for ACM?
+
+link to actual document
+http://www.ibm.com/support/docview.wss?uid=swg21987089 [http://www.ibm.com/support/docview.wss?uid=swg21987089]

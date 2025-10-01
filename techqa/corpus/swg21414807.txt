@@ -1,0 +1,25 @@
+Title: IBM Netcool/OMNIbus Integrations Release Notice - nco-g-odbc-5_0 - United States
+
+Text:
+release notice; downloads; nco-g-odbc; Gateway for ODBC NEWS
+
+ABSTRACT
+A new version of the Netcool/OMNIbus Gateway for ODBC will be available to download from November 13, 2009. 
+
+CONTENT
+ 
+
+This probe has been repackaged to be compatible with Tivoli Netcool/OMNIbus V7.3.0.
+
+You can download the installation package from the IBM Passport Advantage website: 
+www.ibm.com/software/howtobuy/passportadvantage/pao_customers.htm [http://www.ibm.com/software/howtobuy/passportadvantage/pao_customers.htm]
+
+To obtain this new package, search for the part number that corresponds to your operating system as shown in the table below. You can also search for the package by name, or by operating system.
+
+Part number Operating System CZ8LGEN AIX CZ8LHEN HP-UX PA-RISC CZ8LIEN Linux CZ8LJEN Solaris CZ8LKEN Windows The repackaging requires a different installation method.
+
+For details about the new method of installing gateways on Netcool/OMNIbus V7.1.0, 7.2.0, and 7.2.1, see the following technote: 
+http://www-01.ibm.com/support/docview.wss?uid=swg21410057&myns=swgtiv&mynp=OCSSSHTQ&mync=R [http://www-01.ibm.com/support/docview.wss?uid=swg21410057&myns=swgtiv&mynp=OCSSSHTQ&mync=R]
+
+For details about the new method of installing gateways on Netcool/OMNIbus 7.3.0, see the following technote: 
+http://www-01.ibm.com/support/docview.wss?uid=swg21410058&myns=swgtiv&mynp=OCSSSHTQ&mync=R [http://www-01.ibm.com/support/docview.wss?uid=swg21410058&myns=swgtiv&mynp=OCSSSHTQ&mync=R]

@@ -1,0 +1,178 @@
+Title: IBM IC64137: SQL QUERIES USED BY TIVOLI STORAGE MANAGER MONITORING AND REPORTING AGENT CAN CAUSE PERFORMANCE ISSUES - United States
+
+Text:
+AIX  A FIX IS AVAILABLE
+IBM Tivoli Storage Manager V6.1 Fix Pack 3 (6.1.3) Server Downloads [http://www-01.ibm.com/support/docview.wss?uid=swg24025591]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Some of the SQL queries that the Tivoli Storage Manager
+   Monitoring Agent issues can cause a performance problem. The
+   symptoms may seem similar to APAR IC63755 [http://www-01.ibm.com/support/docview.wss?uid=swg1IC63755], but the cause of the
+   performance degradation is different. Both APARs will need to be
+   applied.
+   Initial Impact: Low
+   Tivoli Storage Manager Versions Affected: All Reporting and
+        Monitoring
+   Additional Keywords: TSM zz61 zzrm61 ITM TCR hang perf IC63755 [http://www-01.ibm.com/support/docview.wss?uid=swg1IC63755]
+                        55941 NLS
+   .
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Set the KSK_SCHED_ON to zero (ex:  KSK_SCHED_ON=0) in the
+   agent's configuration file. The default locations for these
+   files are located:
+   .
+   /opt/tivoli/tsm/reporting/itm/config/sk.ini on UNIX
+   C:\IBM\itm\tmaitm6\KSKENV_<instance_name> on Windows
+   .
+   The KSK_SCHED_ON option turns off the schedule attribute group.
+   This is the same as stopping data collection for the schedule in
+   the Historical Configuration window. The "Schedule" workspace in
+   TEPS will still work.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All users of IBM Tivoli Storage Manager.     *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: See Error Description.  Any character   *
+   *                      set conversions will be affected,       *
+   *                      including queries performed by the      *
+   *                      Tivoli Storage Manager Monitoring       *
+   *                      Agent or the Tivoli Storage Manager     *
+   *                      Admin Center as well as NDMP backup     *
+   *                      of NetApp or IBM n-Series filers.       *
+   ****************************************************************
+   * RECOMMENDATION: Apply fixing level when available.  This     *
+   *                 problem is currently projected to be fixed   *
+   *                 in server level 6.1.3 .  Note that this is   *
+   *                 subject to change at the discretion of IBM.  *
+   ****************************************************************
+   See Error Description.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The performance has been improved.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC64137
+   
+   
+ * REPORTED COMPONENT NAME
+   TSM SERVER
+   
+   
+ * REPORTED COMPONENT ID
+   5698ISMSV
+   
+   
+ * REPORTED RELEASE
+   61S
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-10-23
+   
+   
+ * CLOSED DATE
+   2009-11-10
+   
+   
+ * LAST MODIFIED DATE
+   2009-11-10
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  PSXPG
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TSM SERVER
+   
+   
+ * FIXED COMPONENT ID
+   5698ISMSV
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R61A PSY
+   UP
+   
+   
+ * R61H PSY
+   UP
+   
+   
+ * R61L PSY
+   UP
+   
+   
+ * R61S PSY
+   UP

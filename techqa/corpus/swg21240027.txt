@@ -1,0 +1,23 @@
+Title: IBM RMI option in WebSphere Test Environment 6.0.x fails to start server - United States
+
+Text:
+WTE; v6; server; console; rmi; soap; starting; console output; RAD; RSA; PK13182; RWD; PMR 86034 49R 000; 1240027; botp 312094/apar PK13182; PK21510; 4012358 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When you are using the Remote Method Invocation (RMI) option in WebSphere® Test Environment (WTE) version 6.0.x to start the WebSphere Application Server (WAS) version 6.0.x server in Rational® Application Developer (RAD) version 6.0.x, the server might fail to start. 
+
+RESOLVING THE PROBLEM
+This issue is still under investigation.
+If you are experiencing problems with the server state not displaying correctly, or the server is not starting, try switching the communication type from RMI to SOAP. There are a few known problems with RMI, and these problems are currently being investigated in work that is in progress towards a future release involving both RAD and WAS.
+
+An APAR exists for RAD version 6 and the secured WAS version 6.0.x server scenario:
+APAR PK21510: PROBLEMS COMMUNICATING WITH A SECURED SERVER USING REMOTE METHOD INVOCATION (RMI) OBJECT REQUEST BROKER (ORB) BOOTSTRAP PORT
+
+APAR PK13182: WAS v6.x server output inconsistent with Systemout,Systemerr logs. . .was fixed in the RAD 6.0.1.1 Interim Fix 002. With this interim fix, the WAS version 6 console now reads directly from the file-system (as the version 5.x WTE does) to get console output. SOAP is needed to read the server state such as started and stopped, if RMI is not working. (See the link to this published APAR and a link for information on the RAD 6.0.1.1 iFix 002 under the "Related information" section at the bottom of this technote.)
+
+
+ 
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Software Development Rational Software Architect Integrated WebSphere Test Environment Windows, Linux 6.0, 6.0.0.1, 6.0.1.0, 6.0.1.1 Software Development Rational Web Developer for WebSphere Software Integrated WebSphere Test Environment Windows, Linux 6.0, 6.0.0.1, 6.0.1.0, 6.0.1.1

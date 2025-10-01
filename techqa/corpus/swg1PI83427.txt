@@ -1,0 +1,149 @@
+Title: IBM PI83427: JRS REPORT SHOWS DUPLICATE RESULTS WHEN EXECUTION STATE HAS BEEN RENAMED IN ANOTHER RQM PROJECT AREA - United States
+
+Text:
+  A FIX IS AVAILABLE
+Rational Quality Manager 6.0.5 [http://www-01.ibm.com/support/docview.wss?uid=swg24044316]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Jazz Reporting Service (JRS) report using LifeCycle Query Engine
+   (LQE) shows duplicate results when execution state has been
+   renamed in another IBM Rational Quality Manager (RQM) project
+   area.  This is because of the enumeration resource that RQM
+   publishes when an execution state is renamed.
+   
+   Steps to Reproduce:
+   1. Create 2 RQM project areas project1 and project2.
+   2. Rename an execution state, for example, Inconclusive to
+   Inconclusive2 in only 1 of the 2 RQM project areas, say
+   'project1'
+   3. Create a Test Suite in 'project2'. Add a Test Case with a
+   Manual Test Script to the Test Suite.
+   4. Run the Test Suite and set the Execution result to
+   Inconclusive.
+   5. Create a JRS report using the LQE data source on QM Suite
+   Result scoped to the RQM project area 'project2' with display
+   columns Project Area, QM Test Suite Result ID, QM Test Suite
+   Result, URL, Verdict.
+   6. Run the report.
+   
+   Expected Result:
+   The report has only one row for each Test Suite Result.
+   
+   Current result:
+   The report has duplicate entries for the Test Suite result
+   created in step 4. It shows a row with the renamed execution
+   state as verdict in project1 and another row with the correct
+   verdict in project2.
+   
+   Review the following work item on Jazz.net for details:
+   https://jazz.net/jazz02/web/projects/Rational%20Quality%20Manage
+   r#action=com.ibm.team.workitem.viewWorkItem&id=164241 [https://jazz.net/jazz02/web/projects/Rational%20Quality%20Manager#action=com.ibm.team.workitem.viewWorkItem&id=164241]
+   
+   Work around:
+   There is no known workaround.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  See Jazz Work Item 164241 on jazz.net
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fixed in 6.0.5 M5
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI83427
+   
+   
+ * REPORTED COMPONENT NAME
+   RATL QUALITY MG
+   
+   
+ * REPORTED COMPONENT ID
+   5724V1000
+   
+   
+ * REPORTED RELEASE
+   600
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-06-21
+   
+   
+ * CLOSED DATE
+   2018-03-21
+   
+   
+ * LAST MODIFIED DATE
+   2018-03-21
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   RATL QUALITY MG
+   
+   
+ * FIXED COMPONENT ID
+   5724V1000
+   
+   
+
+APPLICABLE COMPONENT LEVELS

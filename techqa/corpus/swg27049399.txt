@@ -1,0 +1,68 @@
+Title: IBM Security Guardium - How to convert a non-GIM database server to a GIM-based database server - United States
+
+Text:
+non-GIM STAP to GIM based; GIM; STAP PRODUCT DOCUMENTATION
+
+ABSTRACT
+ Follow the steps to install the GIM client on DB server with STAP already installed and without rebooting server 
+
+CONTENT
+1. You have STAP installed on DB server without GIM.
+
+
+Example- STAP v9-r85844 is installed without GIM 
+
+
+[/support/docview.wss?uid=swg27049399&aid=1] [/support/docview.wss?uid=swg27049399&aid=1]
+[/support/docview.wss?uid=swg27049399&aid=2] [/support/docview.wss?uid=swg27049399&aid=2]
+
+2. Download and execute BUNDLE-GIM shell installer on the database server. GIM installation does not require server reboot.
+
+Example- Installing GIM v9-r85844 
+
+[/support/docview.wss?uid=swg27049399&aid=3] [/support/docview.wss?uid=swg27049399&aid=3]
+
+You will notice GIM and STAP running under different directory.
+
+[/support/docview.wss?uid=swg27049399&aid=4] [/support/docview.wss?uid=swg27049399&aid=4]
+
+[/support/docview.wss?uid=swg27049399&aid=5] [/support/docview.wss?uid=swg27049399&aid=5]
+
+3. Download BUNDLE-STAP from Fixcentral. Upload to the Guardium appliance and then schedule installation.
+
+(a) If this BUNDLE matches the revision number that was previously installed on the server, reboot will not be required
+
+Example: After installing STAP v9-r85844 using GIM v9-r85844, you will notice STAP running under GIM directory and this STAP is fully managed by GIM
+
+[/support/docview.wss?uid=swg27049399&aid=6] [/support/docview.wss?uid=swg27049399&aid=6]
+
+[/support/docview.wss?uid=swg27049399&aid=7] [/support/docview.wss?uid=swg27049399&aid=7]
+
+(b) If revision is not exactly matched, system will prompt for a reboot and after reboot the newer S-TAP/KTAP is installed and managed by GIM.
+
+Example: Installing STAP with different revision V9-r89422 using GIM
+
+Installation status appears as “IP-PR” (In Process-Pending Reboot) status. In this case, DB server reboot is required. 
+
+[/support/docview.wss?uid=swg27049399&aid=8] [/support/docview.wss?uid=swg27049399&aid=8]
+
+On DB server, you will notice STAP with new revision is installed under GIM install directory <usr/local/Guardium/modules> but KTAP module is still older revision. Reboot is required at this stage. 
+
+
+[/support/docview.wss?uid=swg27049399&aid=9] [/support/docview.wss?uid=swg27049399&aid=9]
+
+
+After server reboot, you will notice KTAP with new revision is loaded and STAP is running and managed by GIM 
+
+[/support/docview.wss?uid=swg27049399&aid=10] [/support/docview.wss?uid=swg27049399&aid=10]
+
+
+Note: In case you face any issue, Open a PMR with IBM Guardium support and send STAP diags from DB server.
+
+
+
+
+
+PRODUCT ALIAS/SYNONYM
+ IBM Guardium
+IBM InfoSphere Guardium

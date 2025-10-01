@@ -1,0 +1,19 @@
+Title: IBM InfoMan question about Summary display - United States
+
+Text:
+infoman pmf panel modification facility externals summary attribute TECHNOTE (FAQ)
+
+QUESTION
+ When displaying an Information Management for z/OS (InfoMan) panel in PMF (Panel Modification Facility) the Summary display does not show the attributes as expected. 
+
+CAUSE
+The panel being displayed contained up to four attributes per line.
+
+ANSWER
+When using the Information Management for z/OS (InfoMan) Panel Modification Facility (PMF) to modify/view a panel and selecting option 4. SUMMARY, it assumes you only have two attributes per line, so when you use more, the attributes do not appear in the expected order. 
+
+To ensure you are looking at the correct control information for each attribute, you can select PMF option 1. EXTERNALS, then use the CONTROL (can be abbreviated to CON) command for each attribute you need to check/change. Remember to type CANCEL (can abbreviate cancel to CA) and not F3, to prevent unwanted changes.
+
+To ensure you are looking at the correct control information, type FIELD SHOW and press Enter. This will show all the control information. Type CON (for control)on the command line (DO NOT press Enter yet), move the cursor down to the line for the attribute you want to check, make SURE you position the cursor to the right of the % (percent sign) then only press Enter. Failure to do this will result in Control information being generated for the first attribute byte to the left of the cursor that did not previously have any control information, and if you don't notice the message stating that control information was not found, and is now being created....this could be very confusing and tough to figure out. To turn off field show, type FIELD OFF and press Enter. You do not have to turn off field show before pressing F3 to save any panel changes.
+
+When in doubt, type CA (cancel) and press Enter, keep repeating this until you get back to the BLM8CU00 PMF update panel where you initially entered the Panel name and Data set definition label. If you type End and hit Enter, or hit PF3 prematurely, the panel you were 'looking' at will be saved in Write Panels. This will not affect production users, as they do not see panels in the write panels data set.

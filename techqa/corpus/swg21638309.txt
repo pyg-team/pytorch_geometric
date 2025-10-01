@@ -1,0 +1,43 @@
+Title: IBM Websphere Application Server profile creation failed due to JVMSHRC287E and JVMJ9VM015W - United States
+
+Text:
+profile creation; JVMSHRC287E; JVMJ9VM015W; -Xshareclasses; manageprofiles; NFS TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Profile creation failed, the following error messages appear in collect_metadata.log: 
+
+JVMSHRC287E Persistent cache cannot be located on a networked file 
+system. Either select "nonpersistent" or a different cacheDir. 
+
+JVMJ9VM015W Initialization error for library j9shr26(11): JVMJ9VM009E J9VMDllMain failed 
+Could not create the Java virtual machine. 
+
+SYMPTOM
+The profile creation failed with the following error messages showing in /[WAS_Install_root]/logs/manageprofiles/[profile_name]/collect_metadata.log: 
+
+
+JVMSHRC287E Persistent cache cannot be located on a networked file system. Either select "nonpersistent" or a different cacheDir. 
+
+
+JVMJ9VM015W Initialization error for library j9shr26(11): JVMJ9VM009E J9VMDllMain failed 
+Could not create the Java virtual machine. 
+
+
+CAUSE
+When the wsadmin listener was getting initialized and the 'collect metadata task' was being invoked via manageprofiles script, "-Xshareclasses" option was specified as a performance improvement for WebSphere Application Server version 8.5. However, since the default cache location which is /tmp/javasharedresources is on a network file system (NFS), the JVM is having problems obtaining a lock in file system, therefore, profile creation fails with error. 
+
+
+RESOLVING THE PROBLEM
+In order to work around this issue, the following files need to be modified to avoid caching java class objects under /tmp/javasharedresources directory. 
+
+/[WAS_Install_root]/bin/manageprofiles.sh 
+/[WAS_Install_root]/bin/launchWsadminListener.sh 
+/[WAS_Install_root]/profileTemplates/cell/dmgr/actions/scripts/collectNodeMetadata.sh 
+/[WAS_Install_root]/profileTemplates/cell/default/actions/scripts/collectNodeMetadata.sh 
+/[WAS_Install_root]/profileTemplates/default/actions/scripts/collectNodeMetadata.sh 
+/[WAS_Install_root]/profileTemplates/managed/actions/scripts/collectNodeMetadata.sh 
+/[WAS_Install_root]/profileTemplates/management/actions/scripts/collectNodeMetadata.sh 
+/[WAS_Install_root]/profileTemplates/secureproxy/actions/scripts/collectNodeMetadata.sh 
+
+In each of the above files, search for "-Xshareclasses" entry for your current platform "linux", and then change it to "-Xshareclasses:none". 
+"-Xshareclasses:nonpersistent" should also work as well.

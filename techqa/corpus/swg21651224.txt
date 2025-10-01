@@ -1,0 +1,37 @@
+Title: IBM IZE0106E Connect failed with error Missing CMAS Record - United States
+
+Text:
+IZE0106E Connect failed Missing CMAS Record 5655Y0400 R680 680 R800 800 HCI6800 5655-Y04 5655Y04 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ You are trying to connect the CICS Explorer V5.1.1.0 for the first time to a Web User Interface (WUI) Server using a CMCI connection type and get the error: IZE0106E Connect failed with error "Missing CMAS Record" 
+
+SYMPTOM
+IZE0106E [http://pic.dhe.ibm.com/infocenter/ratdevz/v8r5/topic/com.ibm.cics.zos.help/topics/reference/ize0106e.html] Connect failed with error "Missing CMAS Record"
+
+
+CAUSE
+An incorrect Host Name is being used that does not resolve to a correct IP Address.
+
+DIAGNOSING THE PROBLEM
+Reviewing the trace shows that a 403 Forbidden is being returned:
+
+SMCPSMConnection.get() [403, Forbidden, text/html; charset=utf-8]
+SMCPSMConnection.get() [SMResponse[CMAS, 0, 15e10ab]]
+SMCPSMConnection.fetch() [SMResponse[CMAS, 0, 15e10ab], CMAS, CICSCICSManagingAddressSpace]
+SMCPSMConnection.fetch() [SMResponse[CMAS, 0, 15e10ab]]
+SMCPSMConnection.discard() [SMResponse[CMAS, 0, 15e10ab]]
+SMCPSMConnection.discard() [0]
+SMConnection.connect() [com.ibm.cics.sm.comm.SystemManagerConnectionException: Missing CMAS Record ]
+
+However, when you look at the WUI logs, there is no indication of a security failure. Looking at the response data that came back, because it contains no CMAS records, it appears that the request is not even reaching the WUI server.
+
+This is due to an incorrect host name being specified on the CMCI connection.
+
+RESOLVING THE PROBLEM
+Ensure that the correct host name is being used for the CMCI connection and that it resolves to a valid IP address.
+
+
+
+PRODUCT ALIAS/SYNONYM
+ CICS/TS CICS TS CICS Transaction Server

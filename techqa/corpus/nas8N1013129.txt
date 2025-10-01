@@ -1,0 +1,37 @@
+Title: IBM QHST Message Queue Troubleshooting - United States
+
+Text:
+history; HST; MESSAGES; MSGCPD2446; MSGCPD2537; MSGCPF2456; MSGCPF2460; MSGCPF2469; MSGCPF2477; MSGCPF2503; MSGCPF2553; MSGCPF4167; MSGCPI2413; MSGCPI2414; SCPF TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This document provides troubleshooting information regarding the QHST message queue. 
+
+RESOLVING THE PROBLEM
+This document provides troubleshooting information regarding the QHST message queue. 
+
+QHST
+
+The history (QHST) log consists of a message queue and a physical file known as a log-version. Messages sent to the log message queue are written by the system to the current log-version physical file. It is the role of the SCPF job to move messages from the QHST message queue to the log-version physical file. There are numerous errors that can cause the logging to QHST to stop. If the SCPF job has errors or is not getting enough time to run, the messages will not be removed from QHST. This can cause the QHST message queue to extend and eventually fill to the point where no more messages are allowed to be posted to the QHST message queue. 
+
+Command DSPOBJD OBJ(QSYS/QHST) OBJTYPE(*MSGQ) will show the current size of the QHST message queue. QHST, as well as all message queues, can reach a maximum size of 16 MB. When the QHST message queue has been extended the maximum number of times, message CPF2460 will appear that says it has been extended the maximum number of 488 times. This limit is based on the 16 MB maximum size of the message queue. 
+
+Under normal conditions, the amount of messages put to the QHST message queue will vary throughout the day. When the queue is at certain thresholds, the QMHLOGER code in the SCPF job is run to move the messages from the QHST message queue to the QHST physical file. If the system determines it is getting too far behind, it will change the priority of the SCPF job to 0. When this happens, message CPI2413 is logged (run priority for SCPF has been changed to 0.). When the SCPF job catches up, message CPI2414 is logged (original run priority for SCPF has been reinstated), and the priority is returned to normal. 
+
+System value QHSTLOGSIZ plays a part in how often a new history log version needs to be created. If that is larger, the system does not have to create a physical file as often. 
+
+Some of the common reasons that messages stop logging to QHST are as follows: 1. Excessive messages. A job or a large number of jobs generate messages faster than the system can move them from the QHST message queue to the log-file. 2. The QHST message queue is corrupted. No messages are able to be logged to QHST. 3. There is a problem with the SCPF job that is preventing it from removing messages from the QHST message queue. 
+What are some potential messages that indicate a problem with QHST? 1. CPF2469 - Error occurred when sending message&1. 2. CPF2460 - Message queue QHST could not be extended. 3. CPF4167 - Job cannot create any more spooled files. If this is in SCPF job, then it may not be able to remove messages from the QHST message queue due to some corruption. 4. CPF2503 - Message queue for system log QHST damaged. 5. CPF2477 - Message queue QHST currently in use. Seen by issuing the DSPLOG command or sending a message to QHST. 6. CPD2537 - All messages have not been logged to the history log. Seen by issuing the DSPLOG command. 7. CPI2413 – Run priority for SCPF has been changed to 0. Indicates the system recognized it was falling behind moving messages from QHST message queue to the file log. 8. CPI2414 - Original run priority for SCPF has been reinstated. System determines is has caught up with QHST message logging. 9. CPF2456 - Log version &1 in &2 closed and should be saved. 10. CPF2553 - Message queue &1 extended. 11. CPD2446 - Message queue was extended. 
+You should try the following steps when a QHST problem occurs: 1. Try to send a message to QHST: SNDMSG TEST QHST. What happens? If this fails, send in the job log showing the command and its error messages. 2. Dump QHST message queue (will show IBM if it is corrupted): DMPOBJ QHST *MSGQ 3. What happens with DSPLOG or DSPLOG with a time specified? If it fails, send in the job log showing the command and its error messages. If it is successful, send in the last page from the current date. 4. SCPF job log. Use WRKJOB JOB(000000/QSYS/SCPF) OUTPUT(*PRINT) OPTION(*ALL). 5. QMHLOGER needs to be running in the SCPF job. Get multiple dumps of the SCPF job call stack. Use WRKJOB JOB(000000/QSYS/SCPF) OUTPUT(*PRINT) OPTION(*PGMSTK). 6. If the SCPF job is related to the QHST issue, collect any spooled files created under the SCPF job as this information may be related. 7. 
+
+Is the message queue in use?
+
+After all necessary data is collected, if logging has stopped and issuing the DSPLOG command does not cause QMHLOGER to start running in the SCPF job, and you do not mind losing messages that are in the QHST message queue, sometimes deleting QHST (DLTMSGQ QHST) will get logging started again. After the delete, try SNDMSG TEST QHST and then issue the DSPLOG command a couple times to see if the TEST message appears using DSPLOG. 
+To monitor for QHST filling the Start Watch ( STRWCH) command to start a watch and then a user exit program could be created to act on the watch event. For example, it could watch for CPI2413 being sent to QSYSOPR. STRWCH SSNID(WCHCPI2413) WCHPGM(MYLIB/MONQHST) WCHMSG((CPI2413)) 
+
+We recommend getting and staying current on the latest PTFs for QMHLOGER and QMHLDISP. 
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Operating System IBM i 7.1 Operating System IBM i 6.1 Operating System IBM i 7.3 Operating System IBM i 7.2 
+HISTORICAL NUMBER
+ 516471946

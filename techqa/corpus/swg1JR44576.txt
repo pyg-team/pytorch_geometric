@@ -1,0 +1,127 @@
+Title: IBM JR44576: BPC EXPLORER DOES NOT SHOW UP IF APPLICATION SECURITY IS DISABLED - United States
+
+Text:
+  A FIX IS AVAILABLE
+Version 7.5.1 Fix Pack 2 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24036462]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  BPC Explorer requires a user name in order to retrieve data from
+   Business Flow Manager and Task Flow Manager.
+   
+   If Application Security is disabled the user is not set
+   correctly in BPC Explorer so that the application cannot be
+   properly initialized and BPC Explorer does not show up.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  No additional information available.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A fix for this issue is included in 7.5.1 SP2.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  Not applicable
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR44576
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM ADVANCED
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9400
+   
+   
+ * REPORTED RELEASE
+   751
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-10-29
+   
+   
+ * CLOSED DATE
+   2014-11-14
+   
+   
+ * LAST MODIFIED DATE
+   2014-11-14
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    JR44577 [http://www-01.ibm.com/support/docview.wss?uid=swg1JR44577]
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   BPM ADVANCED
+   
+   
+ * FIXED COMPONENT ID
+   5725C9400
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R751 PSY
+   UP

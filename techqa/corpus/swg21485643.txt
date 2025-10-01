@@ -1,0 +1,31 @@
+Title: IBM How can we change the session timeout for Deployment Portal users? - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How can we change the session timeout for Deployment Portal (or PEM) users? 
+
+ANSWER
+For WebSphere, edit this file....
+
+/qibm/UserData/WebSphere/AppServer/V61/Express/profiles/<CADS SERVER>/config/cells/<CADS CELL NAME>/applications/peb.ear/deployments/peb/peb.war/WEB-INF/web.xml 
+
+Modify this value....
+
+<session-config>
+<session-timeout>30</session-timeout>
+</session-config>
+
+The value is in minutes, and the default is 30. 
+
+Restart your WebSphere instanceure.
+
+RELATED INFORMATION
+ Need more help? Our C&DS forum is Live! [https://developer.ibm.com/answers/topics/collaboration.html?smartspace=predictive-analytics]
+
+
+ 
+
+HISTORICAL NUMBER
+ 92702

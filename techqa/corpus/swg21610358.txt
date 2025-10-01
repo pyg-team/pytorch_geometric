@@ -1,0 +1,60 @@
+Title: IBM Providing SSL Certificates for IBM Content Collector Connectors - United States
+
+Text:
+ PREVENTIVE SERVICE PLANNING
+
+ABSTRACT
+ If an IBM Content Collector installation includes any source or target connector that requires configuration with SSL, additional environment configuration is needed so that the IBM Content Collector components can properly connect to the respective source or target server. 
+
+CONTENT
+When a target or source system is configured with SSL, the corresponding IBM Content Collector connector service user requires a valid SSL certificate so that the service can successfully connect to its server during connection validation and archival processing.
+Two types of certificate installation instructions are provided below. The first set shows how to install the certificate so that it can be used only by the currently logged on Windows user. The second set shows how to export the certificate to the certificate store for the local computer and how to install the certificate for use by any user on the IBM Content Collector server.
+
+Importing certificates for single users
+
+If you want to install the certificate for only one particular user account that is reserved for running the IBM Content Collector service, follow these steps.
+
+
+ 1. Log on to the IBM Content Collector server with the user account for which you want to install the certificate. 
+ 2. Launch the Microsoft Internet Explorer browser. 
+ 3. Enter the respective IBM Content Collector URL address to invoke the certificate prompt. For the IBM FileNet P8 Connector, for example, use the URL of the FileNet P8 Content Engine ping page 
+    (https://<ce_server>:<ssl_port>/FileNet/Engine). 
+ 4. View the certificate and add it to the Trusted Root Certification Authorities store. If you want to import the certificate for multiple users, write down the name of the certificate for use in the additional installation steps described in Importing certificates for multiple users. 
+ 5. Repeat steps 3 and 4 for all IBM Content Collector connectors as required. 
+
+
+Importing certificates for multiple users 
+
+By default, the IBM Content Collector connector services are installed running under the Local System or local computer account. If you keep these default settings, and if you have any target or source servers configured to use SSL, simply importing the certificate for the current user is not sufficient. You must also import the certificate for the local computer account into the local machine certificate store to allow the services to make valid connections to their servers. You must do this for each IBM Content Collector connector service that requires an SSL certificate. Follow these steps : 
+
+Export the certificate from the user store 
+ 1.  Log on to the IBM Content Collector server with the same user account that you used to import a certificate for a single user. 
+ 2.  Open the Microsoft Management Console (MMC). Click Start, type mmc in the Search programs and files box, and press Enter. 
+ 3.  Select File > Add/Remove Snap-in. 
+ 4.  Under Available Snap-ins, select Certificates and click Add. 
+ 5.  In the Certificates snap-in window, select My user account and click Finish. 
+ 6.  Click OK in the Add/Remove Snap-in window. 
+ 7.  In the console tree, expand Certificates - Current User > Trusted Root Certification Authorities > Certificates. All certificates that you installed for single-user usage should be listed here. 
+ 8.  Right-click the certificate that you want to export and select All Tasks > Export. The Certificate Export Wizard opens. Click Next. 
+ 9.  Accept the default file format on this page of the Certificate Export Wizard and click Next. 
+ 10. On the next page, enter a file name to identify the certificate that you are exporting. Write down the file name for later use and click Next. 
+ 11. In the summary window, click Finish. You should get confirmation that the export was successful. Click OK. 
+ 12. Repeat steps 8 to 11 for each certificate that you want to export. 
+ 13. Select File > Exit to close MMC.
+
+
+Import the certificate into the local machine store 
+ 1.  Log on to the IBM Content Collector server as a local administrator. 
+ 2.  Open the Microsoft Management Console (MMC). Click Start, type mmc in the Search programs and files box, and press Enter. 
+ 3.  Select File > Add/Remove Snap-in. 
+ 4.  Under Available Snap-ins, select Certificates and click Add. 
+ 5.  In the Certificates snap-in window, select Computer account and click Next. 
+ 6.  In the Select computer window, leave Local computer selected and click Finish. 
+ 7.  Click OK in the Add/Remove Snap-in window. 
+ 8.  In the console tree, expand Certificates (Local Computer) >Trusted Root Certification Authorities > Certificates. 
+ 9.  Right-click Certificates and select All Tasks > Import. The Certificate Import Wizard opens. Click Next. 
+ 10. Browse to the previously exported certificate and click Next.. 
+ 11. Accept the default settings and click Next.. 
+ 12. In the summary window, click Finish. You should get confirmation that the import was successful. Click OK.. 
+ 13. If you exported more than one certificate, repeat steps 9 to 12 for each one. 
+ 14. Select File > Exit to close MMC.

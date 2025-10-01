@@ -1,0 +1,180 @@
+Title: IBM IT15182: VALIDATE NODES REPORTS ERROR AND SUCCESS - United States
+
+Text:
+  A FIX IS AVAILABLE
+Download Information: Version 8.1.0 IBM Spectrum Protect for Virtual Environments [http://www-01.ibm.com/support/docview.wss?uid=swg24042955]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Validate nodes from the Data Protection for VMware GUI reports a
+   successful message, but also reports an error icon.
+   The success message reported is:
+   ANS0302I (RC0) Successfully done.
+   However, a red X icon next the node name suggests an error.
+   This behavior can occur when there are no VM guests in the
+   environment.
+   Customer/L2 Diagnostics:
+   Review the messages.log file located in C:\IBM\tivoli\tsm\
+   tdpvmware\webserver\usr\servers\veProfile\ VMwarePlugin\logs
+   for the following:
+   [4/13/16 8:51:41:227 PDT] 000000d0 SystemOut
+   O DONE [10]: vmcli.cmd -f inquire_detail -t TSM -q dmverify -d
+   <DC node name> -o <DM node name>, 7.049 seconds
+   [4/13/16 8:51:41:773 PDT] 0000002e SystemOut
+   O [queryDMVerify] Synchronous return code: 2
+   Running the inquire_detail command manually will result in the
+   following:
+   #ERROR ANS0302I (RC0)    Successfully done.
+   #ERROR
+   #PARAM STATUS=success
+   Initial Impact: Low
+   Tivoli Storage Manager Versions Affected:
+   All IBM Spectrum Protect Data Protection for VMware levels on
+   Windows and Linux.
+   Additional Keywords:
+   TSM TDP VE plugin
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Create a dummy VM guest to bypass the error.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * Tivoli Storage Manager for Virtual Environments Data         *
+   * Protection for VMware versions 7.1, 6.4 and 6.3 running on   *
+   * all Microsoft Windows x64 and Linux x86_64 platforms         *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * See ERROR DESCRIPTION                                        *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * -                                                            *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *  If there is a next release of IBM Spectrum Protect after 7.1,
+   this APAR will be fixed in that next release.
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT15182
+   
+   
+ * REPORTED COMPONENT NAME
+   TSM FOR VE DP V
+   
+   
+ * REPORTED COMPONENT ID
+   5725TVEVM
+   
+   
+ * REPORTED RELEASE
+   71W
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-05-09
+   
+   
+ * CLOSED DATE
+   2016-06-13
+   
+   
+ * LAST MODIFIED DATE
+   2016-06-13
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  tsmcli
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R71W PSN
+   UP
+   
+   
+ * R71L PSN
+   UP
+   
+   
+ * R64W PSN
+   UP
+   
+   
+ * R64L PSN
+   UP
+   
+   
+ * R63W PSN
+   UP
+   
+   
+ * R63L PSN
+   UP

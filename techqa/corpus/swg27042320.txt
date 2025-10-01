@@ -1,0 +1,30 @@
+Title: IBM Support Resources for Tivoli Netcool OMNIbus (OMNIbus Core) - United States
+
+Text:
+Landing Page; OMNIbus core; Support resources RECOMMENDED RESOURCES
+
+ABSTRACT
+ Consider this the home page for the support of the OMNIbus product. Each button below will take you to a collection of information, documents, or links that have been identified as most relevant to the given category. 
+
+CONTENT
+ 
+
+TAB NAVIGATION
+ * Hot Links [http://www.ibm.com/support/docview.wss?uid=swg27039575]
+ * OMNIbus Core [http://www.ibm.com/support/docview.wss?uid=swg27042320]
+ * Web GUI [http://www.ibm.com/support/docview.wss?uid=swg27042323]
+ * Gateways [http://www.ibm.com/support/docview.wss?uid=swg27042352]
+ * Probes [http://www.ibm.com/support/docview.wss?uid=swg27042331]
+ * More [http://www.ibm.com/support/docview.wss?uid=swg27042386]
+
+
+PLANNING
+The Prerequisite Scanner for Tivoli Netcool/OMNIbus should be used to validate the prerequisites are met prior to an installation of OMNIbus. OMNIbus 8.1 Sizing Guide with recommendations on CPU Cores and RAM OMNIbus 8.1 Supported Operating Systems IBM Education Assistant Module recording on Object Server and Object Server Gateway Multiiter Architecture Overview OMNIbus 8.1 (latest version) product documentation for planning a new OMNIbus installation or upgrade 
+INSTALLATION AND MIGRATION
+Best Practices including OMNIbus 7.4 Best Practice Guide, Large Scale and geographically distributed architectures, and other best practice documentation on Developerworks OMNIbus 8.1 Example Installation Scenarios for OMNIbus and WebGUI OMNIbus 8.1 Multitier Architecture and High Availability Upgrading from OMNIbus 7.4 and earlier to OMNIbus 8.1 Recommended Fixpacks for Omnibus Core and Omnibus WebGUI 
+CONFIGURATION AND ADMINISTRATION
+Configuring the Object Server to use LDAP authentication Configuring the Object Server to use PAM authentication Configuring OMNIbus and the Process Agent to launch external actions. Understanding Object Server Backup and Recovery OMNIbus v7.3.0-v7.4.0 Deployment Engine installer Backup and Restore OMNIbus 8.1 Administering the Server Components 
+OBJECT SERVER TRIGGERS AND AUTOMATIONS
+OMNIbus 8.1 Best Practices for Creating Triggers Introduction to the generic_clear trigger IBM Education Assistant Module IBM Support's Guide to Triggers in a Production Environment. Support Technical Exchange Training on Object Server Triggers IBM Support's Guide to SubSecond Triggers 
+TROUBLESHOOTING
+IBM Education Assistant Module on Object Server Key Performance Indicators Best Practices for Performance Tuning Post questions to the OMNIbus User's Forum Information to collect when opening a problem ticket with IBM Support.

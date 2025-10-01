@@ -1,0 +1,167 @@
+Title: IBM PM22347: OUT OF MEMORY EXCEPTION EXPORTING FULL SET OF FORMS STRUCTURES. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Exporting a full set of structures in 8.5.1 generates an Out Of
+   Memory exception, I have tested the exact same database in
+   8.4FP1 in which the export completes without errors. Selecting
+   roughly half of the forms and exporting the structures twice
+   will let the export run through successfully, and can be used as
+   a workaround.??I have looked at the memory consumption on the
+   server and the client, it's not immediately visible where the
+   out of memory exception occurs (client or server, but the only
+   errors that are logged is on the client, which suggests that the
+   exception occurs on the client:??Event Type:?Warning?Event
+   Source:?Cognos Controller?Event Category:?None?Event
+   ID:?0?Date:??2010-09-01?Time:??15:02:26?User:??N/A?Computer:?CLI
+   ENTMACHINE?Description:?Standard
+   Error?Number:?7?Source:?FrangoDirect.ExportStructuresD.SelectExp
+   Server#ControllerProxyClient?Description:?Exception
+   of type 'System.OutOfMemoryException' was thrown.?   at
+   Microsoft.VisualBasic.ErrObject.Raise(Int32 Number, Object
+   Source, Object Description, Object HelpFile, Object
+   HelpContext)?   at
+   Cognos.Controller.Common.RaiseErrCli.RaiseError(Int32 lErrNo,
+   String sErrSource, String sErrDesc, String sErrHelpFile, Int32
+   lErrHelpContext)?   at
+   Cognos.Controller.Direct.ExportStructuresD.SelectExpServer(DataS
+   et[]
+   rsSelections, DataSet[] rsSelections2, String sXmlDoc)?   at
+   Cognos.Controller.Forms.Form.frmExportStruc.DoExportServer()??Fo
+   r
+   more information, see Help and Support Center at
+   http://go.microsoft.com/fwlink/events.asp.???Event [http://go.microsoft.com/fwlink/events.asp.???Event]
+   Type:?Warning?Event Source:?Cognos Controller?Event
+   Category:?None?Event
+   ID:?0?Date:??2010-09-01?Time:??15:02:26?User:??N/A?Computer:?CLI
+   ENTMACHINE?Description:?Error
+   occured at 2010-09-01 15:02:26 in IBM Cognos 8 Controller, Error
+   No=7,
+   Source=FrangoDirect.ExportStructuresD.SelectExpServer#Controller
+   ProxyClient,
+   Description=Exception of type 'System.OutOfMemoryException' was
+   thrown., HelpFile= HelpContext=0??For more information, see Help
+   and Support Center at http://go.microsoft.com/fwlink/events.asp. [http://go.microsoft.com/fwlink/events.asp.]
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Selecting roughly half of the forms and exporting the structures
+    twice will let the export run through successfully.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * All Users                                                    *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * See Error Description                                        *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Upgrade to IBM Cognos Controller 10.2                        *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Code Fix
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM22347
+   
+   
+ * REPORTED COMPONENT NAME
+   COG CONTROLLER
+   
+   
+ * REPORTED COMPONENT ID
+   5724W24CO
+   
+   
+ * REPORTED RELEASE
+   851
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-09-13
+   
+   
+ * CLOSED DATE
+   2014-06-06
+   
+   
+ * LAST MODIFIED DATE
+   2014-06-06
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   COG CONTROLLER
+   
+   
+ * FIXED COMPONENT ID
+   5724W24CO
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * RA20 PSN
+   UP

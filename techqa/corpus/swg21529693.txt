@@ -1,0 +1,65 @@
+Title: IBM How do you set up RosettaNet to encrypt or decrypt RNIF V02.00 messages? (SCI46404) - Sterling Gentran:Server for Microsoft Windows - United States
+
+Text:
+STERLINGPRI TECHNOTE (FAQ)
+
+QUESTION
+ How do you set up RosettaNet to encrypt or decrypt RNIF V02.00 messages? (SCI46404) 
+
+ANSWER
+
+
+The Payload or Payload Container of RNIF V02.00 messages can be encrypted. 
+
+
+
+Note: 
+
+Public Keys Encrypt data 
+
+Private Keys Decrypt data 
+
+
+
+
+
+
+
+If sending encrypted data, the PUBLIC key needs to be imported into the Security Profile Manager. 
+
+If the receiving encrypted data, the PRIVATE key needs to be imported into the Security Profile Manager. 
+
+
+
+In the PIP Profiler for the PIP that needs to be encrypted, for each step that needs encrypted/decrypted they need to choose either the Payload or Payload Container in the Content drop down box. If Encrypting, then choose either TripleDES or RC2 in the Algorithm drop down box. 
+
+
+
+
+
+Please see the RosettaNetUsersGuide.pdf for more information on setting up the system for encrypting/decryption of RNIF V02.00 messages. 
+
+
+
+ 
+
+HISTORICAL NUMBER
+ PRI33480 
+
+PRODUCT ALIAS/SYNONYM
+ 
+
+Fact
+
+
+Gentran:Server for Windows, Release 4.0 
+Gentran:Server for Windows, 
+Release 4.0.01 
+Gentran Server RosettaNet Server 
+SCI46404
+
+
+Goal
+
+
+FAQ: How do you set up RosettaNet to encrypt or decrypt RNIF V02.00 messages?

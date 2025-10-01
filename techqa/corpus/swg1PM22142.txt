@@ -1,0 +1,176 @@
+Title: IBM PM22142: LOG ANALYSIS WORKSPACE MISSES COMPONENT ATTRIBUTE - United States
+
+Text:
+  FIXES ARE AVAILABLE
+7.1.0-TIV-ITCAMAD-FP0003: ITCAM for Application Diagnostics V7.1 Fix Pack 3 [http://www-01.ibm.com/support/docview.wss?uid=swg24032604]
+7.1.0.3-TIV-ITCAMAD-IF0001: ITCAM for Application Diagnostics V7.1 FP3 IF1 [http://www-01.ibm.com/support/docview.wss?uid=swg24032985]
+7.1.0.3-TIV-ITCAMAD-IF0004: ITCAM for Application Diagnostics V7.1 FP3 IF4 [http://www-01.ibm.com/support/docview.wss?uid=swg24033735]
+7.1.0.3-TIV-ITCAMAD-IF0005: ITCAM for Application Diagnostics V7.1 FP3 IF5 [http://www-01.ibm.com/support/docview.wss?uid=swg24033938]
+7.1.0.3-TIV-ITCAMAD-IF0004: ITCAM for Application Diagnostics V7.1 FP3 IF6 [http://www-01.ibm.com/support/docview.wss?uid=swg24034668]
+7.1.0.3-TIV-ITCAMAD-IF0008: ITCAM for Application Diagnostics V7.1 FP3 IF8 [http://www-01.ibm.com/support/docview.wss?uid=swg24037994]
+7.1.0-TIV-ITCAMAD-FP0004: ITCAM for Application Diagnostics V7.1 Fix Pack 4 [http://www-01.ibm.com/support/docview.wss?uid=swg24041705]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  ITCAM workspace Log Analysis misses component attribute.
+   Although this item is shown in the related queries, it is not
+   shown in the corresponding workspace.
+   
+   Attribute "Component" of "Log Analysis" attribute group is
+   contained in the 3 pre-defined associated queries (Log Analysis,
+   Log Analysisand Log Analysis 6.2).
+   
+   If one tries to create a query starting from either of the
+   above, one can't actually add "Component" as an attribute.
+   Attribute "Component" can't be used as a valid
+   filter, hence can't be displayed in the Log Analysis table view.
+   
+   However, going into the attribute file kyn.atr, one can see that
+   this attribute is the only one defined for YN agent as "hidden":
+   
+   entr HIDDEN
+   name Log_Analysis.Component
+   usag H
+   affi 0000m0000000000000000000000000I1##000000000
+   colu COMPONENT
+   atom Y
+   type 10
+   slng 32
+   cost 9
+   msid KYN1512
+   opgr 0
+   atid 00030114
+   
+   This attribute should display the abbreviated name of the
+   logging component that issued the message or trace event.
+   This is typically the class name for WebSphere Application
+   Server internal components, but can be some other identifier for
+   user applications.
+   
+   This APAR has been opened to remove the hidden condition.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  ITCAM for WebSphere TEMA using Log Analysis
+   * workspace to view the WebSphere logs.
+   *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:
+   *
+   * The component part of the WebSphere log entries are not
+   * displayed in the Log Analysis workspace.
+   *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This fix will display the component part of the WebSphere log
+   messages for "basic" log setting only.  The support is not
+   provided for "advanced" log format.
+   
+   The fix for this APAR is contained in the following maintenance
+   packages:
+   
+     | interim fix | 6.2.0.5-TIV-ITCAM_WAS_TEMA-IF015
+   
+     | interim fix | 7.1.0.1-TIV-ITCAMfAD_WAS-IF0004
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM22142
+   
+   
+ * REPORTED COMPONENT NAME
+   ITCAM WAS DIS T
+   
+   
+ * REPORTED COMPONENT ID
+   5724L62TM
+   
+   
+ * REPORTED RELEASE
+   610
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-09-09
+   
+   
+ * CLOSED DATE
+   2010-11-26
+   
+   
+ * LAST MODIFIED DATE
+   2010-11-26
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ITCAM WAS DIS T
+   
+   
+ * FIXED COMPONENT ID
+   5724L62TM
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R620 PSY
+   UP

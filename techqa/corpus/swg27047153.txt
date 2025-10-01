@@ -1,0 +1,25 @@
+Title: IBM Surveillance Insight for Financial Services Supported Software Environments - United States
+
+Text:
+ PRODUCT DOCUMENTATION
+
+ABSTRACT
+ This document provides links to the software compatibility reports for your product. These reports provide up-to-date information about the supported environments. 
+
+CONTENT
+The following reports are available from the IBM Software Product Compatibility Reports [http://pic.dhe.ibm.com/infocenter/prodguid/v1r0/clarity/index.jsp] tool.
+
+
+ 
+
+IBM SURVEILLANCE INSIGHT FOR FINANCIAL SERVICES 2.0.1
+ * Detailed System Requirements [https://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=92BFCFE05B6811E7B14781FC94CC4741&osPlatforms=Linux&duComponentIds=S001|S004|S003|S002&mandatoryCapIds=30|47|130|22|9|13|25|28|26|40&optionalCapIds=30|47|130|22|9|13|25|41|26|40] 
+
+IBM SURVEILLANCE INSIGHT FOR FINANCIAL SERVICES 2.0
+ * Detailed System Requirements [http://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=53E738B0C0D811E6850FCEFFCB21B294&osPlatforms=Linux&duComponentIds=S004|S001|S002|S003&mandatoryCapIds=30|130|22|9|13|25|28|26|40&optionalCapIds=30|130|22|9|13|25|41|26|40] 
+
+IBM SURVEILLANCE INSIGHT FOR FINANCIAL SERVICES 1.2
+ * Detailed System Requirements [http://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=89CD8290D1B911E59F24EFAA317531D1&osPlatforms=Linux&duComponentIds=S023|S022|S021|S024&mandatoryCapIds=47|130|184|26|40&optionalCapIds=30|130|9|13|121|40] 
+
+IBM SURVEILLANCE INSIGHT FOR FINANCIAL SERVICES 1.0
+ * Detailed System Requirements [http://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=973B2F205B1411E5AAAA084C1D9D5D44&osPlatforms=Linux|Windows&duComponentIds=D002|D005|D006|S001|S004|S003&mandatoryCapIds=183|26&optionalCapIds=30|126|9|122|13|121|184|19]

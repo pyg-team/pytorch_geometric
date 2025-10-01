@@ -1,0 +1,54 @@
+Title: IBM Data Studio Web Console fails to launch within Data Studio because the Flash plugin is not installed. - United States
+
+Text:
+Data Studio; Web Console; DSWC; browser; flash; adobe; plugin TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Data Studio Web Console fails to launch within Data Studio because the Flash plugin is not installed. 
+
+SYMPTOM
+Data Studio/Eclipse has a built-in web browser that would handle a Web Console request but could fail to open with a message indicating that Adobe Flash is required. Even after installing the Adobe Flash plugin the error can continue. 
+
+For example via the Data Studio Administer Databases perspective: 
+
+ *  In the Administration Explorer drill down to a DB2 database and establish a connection 
+ *  Right-click on that database and choose Monitor->Health Summary 
+ *  Data Studio Web Console will try to establish a connection and then launch the Health Summary in the browser window. This can fail with a message indicating Adobe Flash is required even though it was already installed.
+
+
+CAUSE
+The Eclipse built-in browser may not be compatible with Internet Explorer v11 and workarounds will need to be implemented to make it work. 
+
+
+RESOLVING THE PROBLEM
+A workaround could be to launch an external web browser when Data Studio Web Console opens instead of using the built-in Eclipse browser. 
+
+To accomplish this you can do the following: 
+
+ 1. In Data Studio go to Window->Preferences->General->Web Browser. 
+    
+ 2. Click "Use External Browser" and select the browser that you want (the default will be the default browser you configured for Windows).
+    
+ 3. In Data Studio again, go to Window->Preferences->Data Management->Data Studio Web Console.
+    
+ 4. Click "Open the web console in an external browser".
+    
+
+
+
+
+If you prefer to use the built-in browser and are using Internet Explorer v11 do the following: 
+ 1. Go to your Data Studio installation directory (eg, C:\Program Files\IBM\DS4.1.0) and open eclipse.ini file in notepad. 
+    
+ 2. Add the following two lines to the bottom of that file:
+    -Dorg.eclipse.swt.browser.DefaultType=ie
+    -Dorg.eclipse.swt.browser.IEVersion=9999
+    
+ 3. Open the Windows registry editor (via regedit).
+    
+ 4. Go to the following registry key: 
+    HKEY_CURRENT_USER\Software\Microsoft\Internet Explorer\Main\FeaturControl\FEATURE_BROWSER_EMULATION
+    
+ 5. Change the value for javaw.exe from 8000 to 9999. 
+    
+ 6. Close Data Studio, and reopen it and check to see if Data Studio Web Console is launched in the built-in browser properly without error.

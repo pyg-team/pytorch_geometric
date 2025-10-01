@@ -1,0 +1,51 @@
+Title: IBM Processing Elements Listed as Unhealthy after Restart or Relocation. - United States
+
+Text:
+unhealthy PE; unhealthy job TECHNOTE (FAQ)
+
+QUESTION
+ What actions can you take for Processing Elements (PEs) that are unhealthy after a restart or relocation? 
+
+CAUSE
+Relocated or Restarted PEs will be listed as Unhealthy if the original operating system(OS) processes are still running. 
+
+ANSWER
+Identify and terminate the original operating system processes. Restart the unhealthy PEs. Use the following steps to perform this task. 
+
+1. Identify any ghost PEs on each Streams host. Compare lspes output with ps output. Any Linux Process ID(PID) that is not on the lspes output is a ghost PE. If you discover ghost PEs continue to step 2. 
+
+ 
+
+ * 
+ * 
+ * ps -el | grep streams-pe
+ * 
+ * 0 S 41436 19170 15075 0 80 0 - 288035 hrtime ? 00:00:00 streams-pec 
+ * 
+ * 0 S 22157 36680 58732 0 80 0 - 455124 hrtime ? 00:00:00 streams-pec 
+   
+   streamtool lspes -d 
+ * domain_id
+ * -i 
+ * instance_id
+ * 
+   Instance: 
+ * instance_id
+ * 
+   Id State RC Healthy Resource PID JobId JobName Operators
+   0 Running - no 
+ * Resource 
+ * 19170 0 Main_0 features
+ * 
+
+
+2. Terminate the ghost PE.  * 
+ * 
+ * kill -9 36680
+
+
+3. Restart the PEs 
+
+ * 
+ * 
+ * streamtool restartpe -d domain_id-i instance_id0

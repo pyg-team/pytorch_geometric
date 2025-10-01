@@ -1,0 +1,72 @@
+Title: IBM How to apply JViews fix pack to an ODM Enterprise installation - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ What are the steps to apply JViews fix pack to an existing ODM Enterprise installation? 
+
+ANSWER
+Below are the steps for updating ODM Enterprise installation with JViews fix pack 
+
+ 1. Install JViews fix pack
+    Get appropriate version of JViews fix pack from fix central. For example JViews Enterprise 8.7 fix pack 11 is available at:
+    http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~WebSphere&product=ibm/WebSphere/IBM+ILOG+JViews+Enterprise&release=8.7&platform=Windows&function=all [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~WebSphere&product=ibm/WebSphere/IBM+ILOG+JViews+Enterprise&release=8.7&platform=Windows&function=all]
+    
+    Follow the instructions provided with fix pack to apply it to existing JViews installation
+    
+    Note-1: ODM Enterprise 3.5.0.1 fix pack has JViews version already updated to 8.7 fix pack 11
+    
+    Note-2: For end-users that have ODM Enterprise client editions and no separate JViews installation, JViews libraries can be manually updated by copying them (from a machine that has JViews updated) to locations shown in ant target "-jviews.update.lib" of attached script 
+ 2. Install Ant  1. As per your platform, download latest version of ANT from:
+        http://ant.apache.org/bindownload.cgi [http://ant.apache.org/bindownload.cgi] 
+     2. Unzip downloaded file to install ANT 
+     3. On Windows platform:
+        Create an environment variable ANT_HOME and set its value to the location of ANT installation
+        
+        For example: ANT_HOME=C:\apache-ant-1.8.2
+        
+        Add %ANT_HOME%\bin to the PATH environment variable.
+        
+        Download latest version of ant-contrib (ant-contrib-1.0b3-bin.zip) from: http://sourceforge.net/projects/ant-contrib/files/ [http://sourceforge.net/projects/ant-contrib/files/] 
+        Unzip this file and copy the jar ant-contrib-<version>.jar to ANT_HOME/lib directory 
+     4. On AIX platform:
+        Export ANT_HOME to the PATH environment variable 
+        for example: export ANT_HOME=/opt/apache-ant-1.8.2
+    
+    
+ 3. Use attached script to update ODM Enterprise installation  1. Command On Windows:
+        
+        updateJViewsPatch.bat [developer | client | server | all] odme.home=<ODME_HOME> jviews.home=<JVIEWS_HOME> 
+        
+        Command Options:
+        developer: update JViews in ODM Enterprise Developer Edition
+        client: update JViews in ODM Enterprise Client editions
+        server: update JViews in ODM Enterprise Server Edition
+        all: update JViews in all ODM Enterprise Editions (default)
+        
+        Mandatory Input parameters:
+        odme.home must point to ODM Enterprise installation directory
+        jviews.home must point to JViews Enterprise installation directory
+        
+        Example Usage:
+        Update JViews in ODM Enterprise Developer Edition
+        updateJViewsPatch.bat developer odme.home="C:\Program Files\IBM\ILOG\ODME35" jviews.home="C:\Program Files\IBM\ILOG\ODME35\Developer\JViews" 
+     2. Command On AIX:
+        updateJViewsPatch.sh server odme.home <ODME_HOME> jviews.home <JVIEW_HOME>
+        
+        Command Options:
+        server: Update JViews in ODME Server Edition
+        
+        Mandatory Input parameters:
+        odme.home must point to ODM Enterprise installation directory
+        jviews.home must point to JViews Enterprise installation directory
+        
+        Example Usage:
+        ./updateJViewsPatch.sh server odme.home /opt/IBM/ILOG/ODME35 jviews.home /opt/IBM/ILOG/ODME35/JViews
+    
+    
+
+Script for Windows platform: odme_patch_jviews_win.zip [/support/docview.wss?uid=swg21508553&aid=2] [/support/docview.wss?uid=swg21508553&aid=1] 
+
+Script for AIX platform: odme_patch_jviews_aix.zip [/support/docview.wss?uid=swg21508553&aid=4] [/support/docview.wss?uid=swg21508553&aid=3]

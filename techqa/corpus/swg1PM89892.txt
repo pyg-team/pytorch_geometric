@@ -1,0 +1,203 @@
+Title: IBM PM89892: WMQ JMS RESOURCE ADAPTER: REASON 2012 (MQRC_ENVIRONMENT_ERROR) WHEN HANDLING A POISON MESSAGE IN RRS-ENABLED BINDINGS MODE - United States
+
+Text:
+z/os  FIXES ARE AVAILABLE
+Fix Pack 7.1.0.5 for WebSphere MQ V7.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24037553]
+8.5.5.5: WebSphere Application Server V8.5.5 Fix Pack 5 [http://www-01.ibm.com/support/docview.wss?uid=swg24039425]
+8.5.5.6: WebSphere Application Server V8.5.5 Fix Pack 6 [http://www-01.ibm.com/support/docview.wss?uid=swg24040035]
+8.5.5.7: WebSphere Application Server V8.5.5 Fix Pack 7 [http://www-01.ibm.com/support/docview.wss?uid=swg24040533]
+8.5.5.8: WebSphere Application Server V8.5.5 Fix Pack 8 [http://www-01.ibm.com/support/docview.wss?uid=swg24041178]
+8.5.5.9: WebSphere Application Server V8.5.5 Fix Pack 9 [http://www-01.ibm.com/support/docview.wss?uid=swg24041819]
+8.5.5.10: WebSphere Application Server V8.5.5 Fix Pack 10 [http://www-01.ibm.com/support/docview.wss?uid=swg24042150]
+8.5.5.11: WebSphere Application Server V8.5.5 Fix Pack 11 [http://www-01.ibm.com/support/docview.wss?uid=swg24043005]
+8.5.5.12: WebSphere Application Server V8.5.5 Fix Pack 12 [http://www-01.ibm.com/support/docview.wss?uid=swg24043844]
+8.5.5.13: WebSphere Application Server V8.5.5 Fix Pack 13 [http://www-01.ibm.com/support/docview.wss?uid=swg24044479]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DUPLICATE OF ANOTHER APAR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  An application encounters a poison message.  The message should
+   go to the backout queue ( BOQNAME on the queue definition ).
+   Instead, it remains on the application queue.  The application
+   is not able to process subsequent messages on the queue.
+   
+   For bindings mode connections on z/OS, the processing to handle
+   backout requeue of a message may incorrectly believe that the
+   session state is suitable to commit the backout, but the
+   session's transaction is being managed by WebSphere Application
+   Server (WAS) using RRS. This results in MQRC_ENVIRONMENT_ERROR
+   being returned on the MQCMIT call.
+   
+   The error in the WAS log is:
+    com.ibm.msg.client.jms.DetailedJMSException.setLinkedException(
+   Exception)
+    (com.ibm.msg.client.jms.DetailedJMSException)
+    ExtendedMessage: Entry; com.ibm.mq.MQException:
+    JMSCMQ0001: WebSphere MQ call failed with compcode '2'
+    ('MQCC_FAILED') reason '2012' ('MQRC_ENVIRONMENT_ERROR').
+   at
+   com.ibm.msg.client.wmq.common.internal.Reason.createException
+      (Reason.java:223)
+   at
+   com.ibm.msg.client.wmq.common.internal.Reason.createException
+      (Reason.java:275)
+   at com.ibm.msg.client.wmq.internal.WMQSession.syncpoint
+      (WMQSession.java:1644)
+   at com.ibm.msg.client.wmq.internal.WMQSession.commit
+      (WMQSession.java:798)
+   at com.ibm.msg.client.wmq.internal.WMQPoison.syncpoint
+      (WMQPoison.java:739)
+   at
+   com.ibm.msg.client.wmq.internal.WMQPoison.handlePoisonMessage
+      (WMQPoison.java:391)
+   ...
+   
+   Additional Symptom(s) Search Keyword(s):
+   BOQNAME JMSCMQ0001 WAS back out
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Delete the poison message and restart WebSphere Application
+   Server
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *  Problem summary:
+   A JMS application, running in WebSphere Application Server,
+   uses a bindings mode JMS Connection to receive messages from MQ.
+   At the time of the receive the application has a WSAS
+   transaction in progress, so the MQ work is enlisted as part of
+   the RRS global transaction.
+   
+   If the message received by the MQ JMS code has a backout count
+   at or above the backout threshold defined on the MQ queue, the
+   message will be handled as a poison message and will be requeued
+   to the specified backout requeue queue.
+   
+   If no previous in-syncpoint work has been done by the JMS
+   Session, then the poison message processing attempts to commit
+   the requeue of the message.  This is not valid while an RRS
+   global transaction is in progress, so the MQCMIT call fails with
+   reason code 2012 (MQRC_ENVIRONMENT_ERROR).
+   
+   com.ibm.msg.client.jms.DetailedJMSException: JMSCMQ0002: The
+   method 'MQCMIT' failed. A WebSphere MQ call failed.
+   Please see the linked exception for more
+   information.:com.ibm.mq.MQException: JMSCMQ0001: WebSphere MQ
+   call failed with compcode '2' ('MQCC_FAILED') reason '2012'
+   ('MQRC_ENVIRONMENT_ERROR').
+   
+   
+   Problem resolution:
+   The MQ JMS code has been updated so that it will not call MQCMIT
+   while handling a poison message as part of an RRS global
+   transaction.
+   
+   
+   This fix changes the Java component of MQ, and will be
+   included in a FixPack APAR.
+   
+   
+   The fix is targeted for delivery in the following PTFs:
+   
+   Version    Maintenance Level
+   v7.0       7.0.1.12 (PM96878 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM96878] on z/OS)
+   v7.1       7.1.0.5  (PM96881 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM96881] on z/OS)
+   v7.5       7.5.0.3  (Distributed platforms only)
+   
+   The latest available maintenance can be obtained from
+   'WebSphere MQ Recommended Fixes'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037]
+   
+   If the maintenance level is not yet available information on
+   its planned availability can be found in 'WebSphere MQ
+   Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309]
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM89892
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ Z/OS V7
+   
+   
+ * REPORTED COMPONENT ID
+   5655R3600
+   
+   
+ * REPORTED RELEASE
+   018
+   
+   
+ * STATUS
+   CLOSED DUB
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-05-28
+   
+   
+ * CLOSED DATE
+   2013-09-27
+   
+   
+ * LAST MODIFIED DATE
+   2014-03-14
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

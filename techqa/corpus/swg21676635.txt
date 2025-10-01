@@ -1,0 +1,37 @@
+Title: IBM Support for Xming as a browser for ADT launchpad installation - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Attempts to install ADT using the launchpad program over the command line and use Xming for the GUI interface is not a supported configuration. 
+
+ENVIRONMENT
+Command line installation of WDT where Xming is used instead of a supported web browser.
+
+RESOLVING THE PROBLEM
+If you are using Xming instead of using a supported web browser, this is not a supported configuration. Xming is an X11 display server for Microsoft Windows operating systems.
+
+If you wish to install ADT, it is required to use one of the browsers from the ADT system requirements page. If there is no system requirements page, refer to the supported browsers for the IBM Rational Application Developer for WebSphere Software (RAD) version with which ADT was packaged and shipped.
+
+If you wish to install ADT through the command line, it is not a supported configuration to run the launchpad program. Instead, use the following command line command to install ADT.
+
+Note: You need to have Installation Manager (IM) installed to run this command.
+
+### INSTALLING ADT FROM THE COMMAND LINE ###
+
+- In a command line, go to {IM INSTALL DIRECTORY}/eclipse/tools
+- Run the following command
+
+
+Note: For Windows, you would use the "imcl.exe" command and you would use the "imcl.sh" command in Linux.
+
+imcl install {OFFERING ID - The product we wish to install} -repositories {LOCATION OF THE "repository.config" FILE} -acceptLicense -installationDirectory {LOCATION WHERE THE PRODUCT WILL BE INSTALLED} 
+
+Example (Windows): imcl install com.ibm.rational.application.developer.ad.v80 -repositories C:\Users\Administrator\DownloadDirector\ADT_SETUP\repository.config -acceptLicense -installationDirectory C:\tmp 
+
+Example (Linux): imcl.sh install com.ibm.rational.application.developer.ad.v80 -repositories /tmp/ADT_SETUP/repository.config -acceptLicense -installationDirectory /opt/IBM/SDP 
+
+To find the offering ID, open the ADT_SETUP folder (which will also contain the repository.config file) and open the "repository.xml" in a text editor. In the "repository.xml" file, you should be able to find the offering id in the 7th line. Since we are not specifying any version in particular, there is no need to input the "version" value in our command.
+
+All of this information can be found in the Installing packages by using imcl commands [http://www.ibm.com/support/knowledgecenter/SSDV2W_1.7.3/com.ibm.cic.commandline.doc/topics/t_imcl_install.html] topic of the product documentation.

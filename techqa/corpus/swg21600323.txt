@@ -1,0 +1,42 @@
+Title: IBM Data Changes Not Propogating Between Weblogic Clustered (load balanced) Servers - United States
+
+Text:
+xa transactions load balanced caching updates TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Administrative changes made on one server in a Weblogic clustered configuration are not displayed on other servers in the cluster until the servers are restarted. Examples include modifying a user or modifying a field description. 
+
+CAUSE
+XA Transactions should be enabled in order to ensure synchronization between database updates and the notification to cluster members to update their caches
+
+ENVIRONMENT
+Weblogic on Windows
+
+DIAGNOSING THE PROBLEM
+Use the following tests to see if your cluster members are properly synchronizing changes.
+
+
+
+
+ 1. Log into OpenPages on any cluster member server. 
+ 2. Edit a user. 
+ 3. Edit a field description. 
+ 4. Log into different cluster members to see if the changes have propagated.
+
+RESOLVING THE PROBLEM
+Steps to Enable XA in Weblogic: 
+
+ 1.  Navigate to Weblogic console. http://<server-name>:7001/console where you replace <server-name> with the appropriate server name. 
+ 2.  Login in using the appropriate console credentials. 
+ 3.  On the home page, click on the JMS Modules link under Domain Configurations > Messaging. 
+ 4.  Under JMS Modules, click on OpenPagesJMS Module 
+ 5.  Under Summary of Resources, click on OpenPagesTCF. 
+ 6.  Under Settings for OpenPagesTCF, click on Transactions tab. 
+ 7.  Click on “Lock & Edit” button on the Upper left hand corner. 
+ 8.  Enable the check box “XA Connection Factory Enabled” and click save. 
+ 9.  Once you click on save, you will see “Settings updated successfully” message. 
+ 10. Click on “Activate Changes” on the Upper left hand corner. 
+ 11. Confirm “All changes have been activated. No restarts are necessary.” message appears. 
+ 12. Logout of Weblogic console. 
+ 13. Repeat this above procedure for the IBPM admin server. http://<server-name>:49901/console where you replace <server-name> with the appropriate value. 
+ 14. Restart services (required despite the earlier no restart needed message)

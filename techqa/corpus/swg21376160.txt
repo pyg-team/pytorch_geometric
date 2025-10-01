@@ -1,0 +1,40 @@
+Title: IBM About adding metadata for J2EE projects to source code control - United States
+
+Text:
+RAD; RSA; v7; SCM; ClearCase; metadata; meta-data; checkin; check-in; check in; J2EE; project; source control; CVS TECHNOTE (FAQ)
+
+QUESTION
+ IBM Rational Application Developer for WebSphere Software v7.0 and later creates several configuration and property metadata files about a project. When J2EE projects are checked in to a source code control application, such as Rational ClearCase, is it OK to leave these files outside the source control? 
+
+CAUSE
+Questions asked:
+
+
+ 1. When using the option "Import Existing Project into Workspace", what metadata is necessary for Rational Application Developer to recognize a project? Is .project only? We want to clean as much as possible of metadata when creating the initial UCM components, so we do not add to source control files not related exclusively to the project.
+    
+    
+ 2. What is the role of .settings directory in a project? Is it necessary to keep it under source control?
+    
+    
+ 3. While you are working in a project, Rational Application Developer creates several files. Is it OK to leave these files outside the source control? 
+
+ANSWER
+ 
+
+All project metadata files need to be checked into the Source Configuration Management (SCM) systems (such as Rational ClearCase or CVS used with Rational Application Developer/Eclipse). 
+These metadata files are core to identifying the project as a Rational Application Developer/Eclipse project and its unique project natures and properties (such as what make the project a J2EE Dynamic Web Project.) This is basic to Eclipse. 
+
+All ".[some project metadata file]"(s) are part of a project and have to be checked in if you expect to share a project with other developers in a Rational Application Developer/Eclipse Team development environment. Similarly if you export a project as a Project Interchange, you will see the various metadata files included. Without this metadata, a project when imported back into Rational Application Developer/Rational Software Architect v7.x will not be recognized as a project. Both the .settings and .project files are especially crucial as is this regard. Other metadata files, such as .classpath, are also important. 
+
+These technotes in the related information section below should help explain the roles of most of these metadata files.
+
+
+
+
+
+RELATED INFORMATION
+#What is new in RAD version 7.0 J2EE Projects [http://www.ibm.com/support/docview.wss?uid=swg21313092]
+About J2EE classpath Container Preferences [http://www.ibm.com/support/docview.wss?uid=swg21304802]
+RAD Web service code generation and deploy information [http://www.ibm.com/support/docview.wss?uid=swg21289115]
+EJBDeploy generation and deletion of stubs... [http://www.ibm.com/support/docview.wss?uid=swg21244438]
+Best practices: derived resources not checked in [http://www.ibm.com/support/docview.wss?uid=swg21221651]

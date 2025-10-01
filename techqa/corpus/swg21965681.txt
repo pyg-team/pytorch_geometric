@@ -1,0 +1,81 @@
+Title: IBM Incorrect port number after registering DataBase in repository - United States
+
+Text:
+Product Limitation; need to address the feature in the future release. TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ RepositoryAdmin.sh could not register the ESDB with the port defined in the esdb_repository.properties file 
+
+SYMPTOM
+Registering the ESDB database via RepositoryAdmin.sh incorrectly registered the ESDB connection port
+
+
+CAUSE
+Ths is a limitation of the current software. There is an underlying assumption that there will be only one set of connection information per database hostname. 
+
+So if the setup is DB2, the RepositoryAdmin code expects only one database instance on a given hostname. There can be multiple databases in that instance, but the connection port, connection user, connection password, etc. would all be the same.
+
+The same is true for Oracle. It expects only one Listener per hostname. So the Listener port, etc. will be the same.
+
+It will not then allow you to 'change' anything about a db hostname definition in a new registration command. Once it has the port, etc. set for a given hostname, host information in subsequent registration commands involving the same hostname are taken from what was previously registered for that hostname, not from the properties file. This is to avoid inadvertently breaking the previous definitions. If you wish to switch to a new port, you have to remove and re-enter previous definitions using that new port too.
+
+
+ENVIRONMENT
+Two different databases under the same host server with different listening port. 
+
+
+
+DIAGNOSING THE PROBLEM
+ I have created dsodb (oracle database) with listening port 1521 on server rh62superman1, then register dsodb into IS 11.3.1.1 instance.
+RepositoryAdmin.sh -displayRepository -reposName dsodb return the result as below
+DatabasePlatform.databaseType=ORACLE
+DatabasePlatform.version=11g
+DatabaseServer.host=rh62superman2
+DatabaseServer.port=1521
+Database.name=dsodb
+Database.alias=dsodb
+Database.location=
+Repository.name=dsodb
+Repository.description=
+Repository.tool=DataStage
+Repository.context=
+Repository.schema=dsodb
+RepositoryConnection.name=dsodb
+RepositoryConnection.userName=dsodb
+RepositoryConnection.password={iisenc}N2RHakj6gLz7fCJ2yknhIg==
+RepositoryConnection.connectionURL=jdbc:ibm:oracle://rh62superman2:1521;SID=dsodb
+RepositoryConnection.managedDataSourceName=dsodb
+Tablespace.name=DSODBSPACE
+
+Then I create the ESDB into the same server rh62superman2 with listening port 1544, then update tnsname.ora file with correct SID and port for ESDB, and update esdb_repository.properties with same port as well.
+After I run RepositoryAdmin.sh to register ESDB, I have following outcome from displayRepository command for ESDB
+./RepositoryAdmin.sh -displayRepository -rn ESDB
+DatabasePlatform.databaseType=ORACLE
+DatabasePlatform.version=11g
+DatabaseServer.host=rh62superman2
+DatabaseServer.port=1521
+Database.name=ESDB
+Database.alias=null
+Database.location=/home/oracle/app/oracle/oradata/ESDB
+Repository.name=ESDB
+Repository.description=
+Repository.tool=DataQualityConsole
+Repository.context=
+Repository.schema=esuser
+RepositoryConnection.name=ESDB
+RepositoryConnection.userName=esuser
+RepositoryConnection.password={iisenc}MX00d4Dg8Jheyv7DVyQbgg==
+RepositoryConnection.connectionURL=jdbc:ibm:oracle://rh62superman2:1521;SID=ESDB
+RepositoryConnection.managedDataSourceName=ESDB
+Tablespace.name=ESDBSPACE
+
+In fact, it should be 1544, not 1521.
+
+
+
+
+RESOLVING THE PROBLEM
+This will require an Enhancement request for adding the feature into future release.
+
+The workaround is to use RepositoryAdmin.sh -updateRepositoryConnection command to correct connection URL as below
+./RepositoryAdmin.sh -uc -rn ESDB -cr 'jdbc:ibm:oracle://rh62superman2:1544;SID=ESDB'

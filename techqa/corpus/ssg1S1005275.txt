@@ -1,0 +1,58 @@
+Title: IBM Security Bulletin: - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ The LogJam Attack on Diffie-Hellman ciphers (CVE-2015-4000) affects some versions of the DS8000. 
+
+VULNERABILITY DETAILS
+CVEID: CVE-2015-4000 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-4000]
+
+DESCRIPTION: The TLS protocol could allow a remote attacker to obtain sensitive information, caused by the failure to properly convey a DHE_EXPORT ciphersuite choice. An attacker could exploit this vulnerability using man-in-the-middle techniques to force a downgrade to 512-bit export-grade cipher. Successful exploitation could allow an attacker to recover the session key as well as modify the contents of the traffic. This vulnerability is commonly referred to as "Logjam".
+
+CVSS Base Score: 4.3
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/103294 [https://exchange.xforce.ibmcloud.com/vulnerabilities/103294] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:M/Au:N/C:P/I:N/A:N) 
+
+AFFECTED PRODUCTS AND VERSIONS
+DS8870 prior to R7.2 
+
+DS8800/DS8700 prior to R6.3 SP9 ( 86.31.142.0 / 76.31.121.0 respectively) which have not applied ISO CD patch named RemoveWeakCertificatesv1.0 or RemoveWeakCertificatesV1.1
+
+REMEDIATION/FIXES
+As noted DS8870 at R7.2 and above (87.21.5.0) and and DS8800/DS8700 at R6.3 SP9 and above (86.31.142.0 / 76.31.121.0) are not impacted. 
+
+ 
+
+DS8700/DS8800/DS8870 customers should upgrade to a version which is not impacted or apply the patch noted below. 
+
+ 
+
+ 
+
+Patch Release
+
+
+
+Product VRMF APAR Remediation/First Fix DS8870 prior to R7.2 N/A CVE_WEAK_CIPHER_PATCH_v1.0 03/23/2015 DS8800 prior to R6.3 SP9 N/A CVE_WEAK_CIPHER_PATCH_v1.0 03/23/2015 DS8700 prior to R6.3 SP9 N/A CVE_WEAK_CIPHER_PATCH_v1.0 03/23/2015 GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v2 Guide [http://www.first.org/cvss/v2/guide] 
+On-line Calculator v2 [http://nvd.nist.gov/CVSS-v2-Calculator] 
+
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY. 
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Disk Storage Systems System Storage DS8800 Platform Independent Version Independent N/A Disk Storage Systems System Storage DS8700 Platform Independent Version Independent N/A

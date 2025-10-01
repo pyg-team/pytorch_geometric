@@ -1,0 +1,12 @@
+Title: IBM PureApplication System Release Note: Some component attributes are not available to configure during pattern deployment - United States
+
+Text:
+v2001rlsnotes RELEASE NOTES
+
+ABSTRACT
+ Some component attributes are not available to configure during pattern deployment 
+
+CONTENT
+Problem: If your virtual system pattern includes a component (such as an image, software component or script package) that has a data dependency on another component, but does not have any locked attributes, then the attributes for the component with the data dependency are not presented for configuration during pattern deployment.
+
+Resolution: To show missing component attributes for configuration, lock any one of the attributes, such as the name attribute. This action causes the other component attributes to be displayed for configuration.

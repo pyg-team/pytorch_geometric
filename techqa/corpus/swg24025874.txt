@@ -1,0 +1,51 @@
+Title: IBM Full Arabic support added to the Madisons starter store - United States
+
+Text:
+ DOWNLOADABLE FILES
+
+ABSTRACT
+ The Madisons starter store supports the Arabic language (ar_EG). 
+
+DOWNLOAD DESCRIPTION
+This interim fix enables the Arabic locale (ar_EG) in the WebSphere Commerce Version 7 Madisons starter store. The store is fully tested, with all pages behaving correctly using the bidirectional aspect of the Arabic locale.
+
+
+To support Arabic in the Madisons starter store, perform the following steps:
+
+
+ 1. Apply this interim fix. 
+ 2. Ensure that you also select Arabic as a supported language when creating the WebSphere Commerce instance. 
+ 3. Execute the following SQL statement. This statement creates a global language fallback for the Arabic language, where the English message is displayed if a translation is not available in Arabic locale files:
+    
+    insert into langpair (storeent_id, language_id, language_id_alt, sequence) values (-1, -23, -1, 100);
+
+
+
+If you are using WebSphere Commerce Developer, you must also perform the following steps: 
+ 1. Ensure the server is stopped. 
+ 2. Open a command line window and navigate to the WC_InstallDir\bin directory. 
+ 3. Execute the following command:
+    massload WC_InstallDir\schema\xml\wcs.bootstrap_multi_ar_EG.xml 
+ 4. Edit the WC_InstallDir\workspace\WC\xml\config\wc-server.xml file. 
+ 5. Search for SupportedLanguages, add -23 to the comma separated list of supported languages. 
+ 6. Save and Close the file. 
+ 7. Start the server.
+
+
+You can now go to the WebSphere Commerce Administration Console and publish the Madisons starter store to get started. PREREQUISITES
+Obtain the WebSphere Commerce Update Installer v7.0.0.0 (or higher) at the link below to install this fix 
+
+URL LANGUAGE SIZE(Bytes) WebSphere Commerce Update Installer [http://www-1.ibm.com/support/docview.wss?rs=3046&uid=swg24013502] English 1 
+INSTALLATION INSTRUCTIONS
+The download packages contain readme files that provide installation instructions 
+
+DOWNLOAD PACKAGE
+This interim fix can be applied using Roll Out Update [http://publib.boulder.ibm.com/infocenter/wchelp/v6r0m0/index.jsp?topic=/com.ibm.commerce.admin.doc/tasks/tigrolloutupdt.htm].
+
+
+
+
+Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options 
+What is Fix Central(FC)? [https://www.ibm.com/support/fixcentral/help?page=swfaqs] Runtime / Server 2/26/2010 English 51768424 FC [http://www.ibm.com/support/fixcentral/quickorder?fixids=7.0.0.0-WS-WCServer-IFJR34924&product=ibm%2FWebSphere%2FWebSphere%20Commerce&source=dbluesearch] [ ] Developer Toolkit 2/26/2010 English 56224142 FC [http://www.ibm.com/support/fixcentral/quickorder?fixids=7.0.0.0-WS-WCDeveloper-IFJR34924&product=ibm%2FWebSphere%2FWebSphere%20Commerce&source=dbluesearch] [ ] 
+ [/support/docview.wss?uid=swg24025874&aid=1]Problems (APARS) fixed [/support/docview.wss?uid=swg24025874&aid=2]Problems (APARS) fixed
+JR34924

@@ -1,0 +1,31 @@
+Title: IBM Rulerunner (Quattro) service slower compared to using the thick client application with "page ocr_s" action - United States
+
+Text:
+Datacap; Rulerunner; ocr_s TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ A slowdown in performance is experienced when using the IBM Datacap 8.0.1 Rulerunner (Quattro) service, compared to using the thick client application with "page ocr_s" action. 
+
+SYMPTOM
+In Datacap 8.0.1 FP3, when Rulerunner is configured to run tasks, they run significantly slower than when run through the Datacap Taskmaster Client.
+
+
+CAUSE
+The Quattro service is configured to use a roaming profile user, but this user has never physically logged into the machine and therefore has never created a local profile.
+
+ENVIRONMENT
+Datacap Server
+Windows 2008 64bit Enterprise SP2
+Windows regional settings set to English (United Kingdom), short date is
+20/09/2012 and long date is 20 September 2012
+
+SQL Server
+Windows 2008 64bit Enterprise SP2
+SQL Server 2008 SP3 (10.0.5500)
+Windows regional Setting set to English (United Kingdom), short date is
+20/09/2012 and long date is 20 September 2012
+SQL for SQL Server: language is English (United States) and
+CurrentDateTime is 2012-09-20 10:42:41.827
+
+RESOLVING THE PROBLEM
+Once the user with the roaming profile logs into the machine, a local profile is created and performance improves immediately.

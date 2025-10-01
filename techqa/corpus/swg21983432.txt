@@ -1,0 +1,78 @@
+Title: IBM WebSphere® "not at supported level" error when installing Sametime System Console - United States
+
+Text:
+SSC; WAS; install error; WAS ND; versioninfo TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+Attempting to install IBM Sametime System Console 9.0.1 using Installation Manager fails
+with error "WebSphere version[7.0.9.30] is not at supported level. WebSphere version[8.5.5] is required"
+
+
+CAUSE
+Installed WebSphere® Java 7.0.9.30 and WebSphere® Application server 8.5.5.9 using the silent install method. The Java option was listed first in the versionInfo output and being interpreted as the WebSphere® Application Server Network Deployment version.
+
+DIAGNOSING THE PROBLEM
+Run the versionInfo command from the correct location according to platform:
+
+
+Linux location: was_install_root/bin directory 
+
+Run this Linux command: ./versionInfo.sh -maintenancePackages > version.txt 
+
+Windows location: was_install_root\bin directory 
+
+Run this Windows command: versionInfo.bat -maintenancePackages > version.txt 
+
+Example VERSIONINFO output where WebSphere® is not listed first. WebSphere® has to be listed first!
+----------------------------------------------------------------------------
+IBM WebSphere Product Installation Status Report 
+----------------------------------------------------------------------------
+
+Report at date and time May 3, 2016 11:54:26 AM EDT 
+
+Installation 
+------------------------------------------------------------------------
+Product Directory /opt/IBM/WebSphere/AppServer 
+Version Directory /opt/IBM/WebSphere/AppServer/properties/version
+DTD Directory 
+/opt/IBM/WebSphere/AppServer/properties/version/dtd 
+Log Directory /syshome/wasad/var/ibm/InstallationManager/logs
+
+Product List 
+------------------------------------------------------------------------
+IBMJAVA7 installed 
+ND installed 
+
+Installed Product 
+------------------------------------------------------------------------
+Name IBM WebSphere SDK Java Technology Edition 
+(Optional) 
+Version 7.0.9.30 
+ID IBMJAVA7 
+Build Level cf091608.04 
+Build Date 2/24/16 
+Package com.ibm.websphere.IBMJAVA.v70_7.0.9030.20160224_1826 Architecture x86-64 (64 bit) 
+Installed Features IBM WebSphere SDK for Java Technology Edition 7 
+
+Installed Product 
+------------------------------------------------------------------------
+Name IBM WebSphere Application Server Network 
+Deployment 
+Version 8.5.5.9 
+ID ND 
+Build Level cf091608.05 
+Build Date 2/25/16 
+Package com.ibm.websphere.ND.v85_8.5.5009.20160225_0435 
+Architecture x86-64 (64 bit) 
+Installed Features IBM 64-bit WebSphere SDK for Java 
+WebSphere Application Server Full Profile 
+EJBDeploy tool for pre-EJB 3.0 modules 
+------------------------------------------------------------------------
+End Installation Status Report 
+
+
+RESOLVING THE PROBLEM
+Un-installed WebSphere® Application Server Network Deployment and WebSphere® SDK Java option, then installed WAS ND 8.5.5.X using Installation Manager. The error no longer occurs and the Sametime System console installation continues. 
+
+Sametime 9.0.1 documentation instructs the Administrator to install WebSphere® Network Deployment using Installation Manager:
+http://www.ibm.com/support/knowledgecenter/SSKTXQ_9.0.1/admin/install/inst_wasnd_winux.dita [http://www.ibm.com/support/knowledgecenter/SSKTXQ_9.0.1/admin/install/inst_wasnd_winux.dita]

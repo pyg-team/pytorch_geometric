@@ -1,0 +1,76 @@
+Title: IBM Download Tivoli Network Manager IP Edition V3.8 for Linux zSeries - United States
+
+Text:
+PAODownloadDocument; download Network Manager IP Edition; download ITNM; download Network Manager v3.8; download Network Manager 3.8; Network Manager DOWNLOADABLE FILES
+
+ABSTRACT
+ This document describes how to download and install IBM Tivoli Network Manager IP Edition Version 3.8 using the Passport Advantage Web site. 
+
+DOWNLOAD DESCRIPTION
+
+
+[http://www.ibm.com/i/c.gif] IBM Tivoli Network Manager IP Edition discovers telecommunications networks, including layer 2 and 3 network devices, interfaces and connectivity, and integrates inventory and connection data with IBM Tivoli Netcool/OMNIbus alerts. Network management staff can visualize and understand the layout of complex networks, and the impact of network events and failures. Network Manager IP Edition also integrates with IBM Tivoli Netcool/Webtop so that operators can work with the alerts to locate, diagnose, and solve network problems in real time. 
+
+After logging into IBM's Passport Advantage Online [http://www.ibm.com/software/howtobuy/passportadvantage/pao_customers.htm] Web site, click Software download & media access, then click Download finder, then select Find by product description and type in Tivoli Network Manager. Expand the Tivoli Software eAssembly, and select the images you wish to download from that list. All Tivoli Network Manager IP Edition download images are described below.
+
+More information
+The IBM Tivoli Network Manager IP Edition V3.8 library of publications are available from this Web site: IBM Tivoli Network Management Knowledge Center [https://www.ibm.com/support/knowledgecenter/SSSHRK_3.8.0/com.ibm.networkmanagerip.doc_3.8/tivnetmgrwelcome.html]
+
+Downloading and assembling the product
+
+ 1. Download all of the parts that you need, both required and optional. The parts are listed by operating system in the tabs below. 
+ 2. Unpack each of the parts into a single temporary directory on your system. 
+ 3. Follow the instructions in the Quick Start Guide to install the product. 
+
+[http://www.ibm.com/i/c.gif] [http://www.ibm.com/i/c.gif] AIX [http://www.ibm.com/support/docview.wss?rs=3118&uid=swg24020628] [http://www.ibm.com/i/c.gif] Linux [http://www.ibm.com/support/docview.wss?rs=3118&uid=swg24020841] [http://www.ibm.com/i/c.gif] Linux zSeries [http://www.ibm.com/support/docview.wss?rs=3118&uid=swg24020863] [http://www.ibm.com/i/c.gif] Solaris [http://www.ibm.com/support/docview.wss?rs=3118&uid=swg24020864] 2 [http://www.ibm.com/i/c.gif] Windows [http://www.ibm.com/support/docview.wss?rs=3118&uid=swg24020865] 1 [http://www.ibm.com/i/c.gif] [http://www.ibm.com/i/c.gif] Supported operating systems
+
+ * Red Hat Enterprise Linux 4.0 and 5.0 (x86-32, x86-64, s390, and s390x)
+ * SUSE Enterprise Linux 9, 10, and 11 (x86-32, x86-64, s390, and s390x) 
+
+Downloadable parts
+
+There are downloadable parts for each supported platform upon which IBM Tivoli Network Manager IP Edition can be installed. Refer to the tables below for details about what each part contains. At a minimum, you must download the required parts.
+
+Required parts
+
+To install IBM Tivoli Network Manager IP Edition V3.8 Multilingual on Linux zSeries, you need to download the following parts: 
+
+Part # Description CZ7ZLML.tar.gz IBM Tivoli Network Manager IP Edition V3.8 for Linux zSeries Multilingual Includes the base product including the Tivoli Integrated Portal, Topoviz Web application, Tivoli Netcool/Webtop, and IBM Java Runtime Environment (JRE) 1.5.
+
+(English, Brazilian Portuguese, French, German, Italian, Spanish, Japanese, Korean, Hungarian, Simplified Chinese, and Traditional Chinese) 
+
+C1PI2ML.pdf IBM Tivoli Network Manager IP Edition V3.8 Quick Start Guide 
+Additional parts
+
+In addition to the required parts, you must also have or download the following software which is not provided in this eAssembly:
+
+Part # Description CZ9C6ML.tar.gz IBM Tivoli Netcool/OMNIbus Version 7.3.
+
+Refer to the Network Manager Quick Start Guide for instructions about installing Tivoli Netcool/OMNIbus with Network Manager.
+
+Optional parts 
+
+These optional parts are included in this eAssembly.
+
+Part # Description CZ5XJML.tar.gz IBM Tivoli Monitoring V6.2.2 Language Support Multiplatform Multilingual CZ5XGEN.tar.gz IBM Tivoli Monitoring V6.2.2 Base, Linux, English C1HR7EN.tar.gz IBM DB2 for Linux, UNIX and Windows V9.5 - Limited Use for Linux(R) on System z, English C1HS6ML.tar.gz IBM DB2 National Language Pack V9.5 for Linux(R) on System z™, Multilingual 
+[http://www.ibm.com/i/c.gif] Change history
+
+ * November 13, 2009: Update of this document for release of Fix Pack 2.
+
+PREREQUISITES
+The prerequisites for installation of Tivoli Network Manager IP Edition are in the Tivoli Network Manager IP Edition Installation and Deployment Guide. See the following information:
+
+URL LANGUAGE SIZE(Bytes) Tivoli Network Manager IP Edition Knowledge Center [https://www-01.ibm.com/support/knowledgecenter/SSSHRK_3.8.0/com.ibm.networkmanagerip.doc_3.8/tivnetmgrwelcome.html] US English 1 
+INSTALLATION INSTRUCTIONS
+Follow the instructions in the Quick Start Guide to install the product.
+
+URL LANGUAGE SIZE(Bytes) Quick Start Guide [http://www.ibm.com/support/docview.wss?rs=3118&uid=swg27013898] Language Independent 713950 
+DOWNLOAD PACKAGE
+Download IBM Tivoli Network Manager IP Edition V3.8 from the Passport Advantage Online Web site.
+
+Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options Passport Advantage Online 11/27/2008 US English 1 HTTP [http://www.ibm.com/software/howtobuy/passportadvantage/pao_customers.htm] 
+TECHNICAL SUPPORT
+ You can access Passport Advantage Online support at http://www.ibm.com/software/howtobuy/passportadvantage/paocustomer/docs/en_US/ecare.html [http://www.ibm.com/software/howtobuy/passportadvantage/paocustomer/docs/en_US/ecare.html].
+
+You can access IBM Tivoli Network Manager IP Edition support at
+http://www-01.ibm.com/software/sysmgmt/products/support/IBMTivoliNetworkManagerIPEdition.html [http://www-01.ibm.com/software/sysmgmt/products/support/IBMTivoliNetworkManagerIPEdition.html].

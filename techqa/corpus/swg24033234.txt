@@ -1,0 +1,212 @@
+Title: IBM Download Tivoli Netcool/OMNIbus V7.4 for AIX - United States
+
+Text:
+ DOWNLOADABLE FILES
+
+ABSTRACT
+ This document describes how to download Tivoli Netcool/OMNIbus V7.4 installation images from the IBM Passport Advantage Online website. 
+
+DOWNLOAD DESCRIPTION
+
+
+Tivoli Netcool/OMNIbus is a service level management (SLM) system that delivers real-time, centralized monitoring of complex networks and IT domains.
+
+More information
+
+The Tivoli Netcool/OMNIbus V7.4 library of publications is available from this website: IBM Tivoli Network Management Information Center [http://www.ibm.com/support/knowledgecenter/SSSHTQ/landingpage/NetcoolOMNIbus.html].
+
+Downloading and assembling the product
+
+ 1. Navigate your browser to the Find Downloads and Media [http://www.ibm.com/software/howtobuy/passportadvantage/paocustomer/sdma/SDMA?PO=DOWNLOAD_FIND_BY_PART_NUMBER] page on the IBM Passport Advantage Online website. You must log on to continue. 
+ 2. Select the Find by part number search option under Download finder options.
+ 3. Search for each downloadable image by part number (parts are listed and described by operating system, in the tabbed section of this document). 
+ 4. Download all of the parts that you need.
+ 5. Unpack each of the parts into a single, temporary directory on your system. 
+ 6. Open the Quick Start image and follow the instructions in the Quick Start Guide to install the base product. See also the IBM Tivoli Netcool/OMNIbus Installation and Deployment Guide for complete installation instructions.
+
+[http://www.ibm.com/i/c.gif] [http://www.ibm.com/i/c.gif] AIX [http://www.ibm.com/support/docview.wss?rs=3120&uid=swg24033234] [http://www.ibm.com/i/c.gif] HP-UX [http://www.ibm.com/support/docview.wss?rs=3120&uid=swg24033294] [http://www.ibm.com/i/c.gif] Linux [http://www.ibm.com/support/docview.wss?rs=3120&uid=swg24033295] [http://www.ibm.com/i/c.gif] Linux zSeries [http://www.ibm.com/support/docview.wss?rs=3120&uid=swg24033296] [http://www.ibm.com/i/c.gif] Solaris [http://www.ibm.com/support/docview.wss?rs=3120&uid=swg24033297] [http://www.ibm.com/i/c.gif] Windows [http://www.ibm.com/support/docview.wss?rs=3120&uid=swg24033298] [http://www.ibm.com/i/c.gif] [http://www.ibm.com/i/c.gif] Supported operating systems
+
+See the Software Product Compatibility Reports [http://pic.dhe.ibm.com/infocenter/prodguid/v1r0/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1311792011350&osPlatform=AIX ] website for the AIX operating systems on which Tivoli Netcool/OMNIbus is supported.
+
+Downloadable parts
+
+There are downloadable parts for the base Tivoli Netcool/OMNIbus V7.4 product, and for IBM Tivoli Monitoring, IBM Tivoli Netcool/Impact, IBM Websphere Application Server, IBM DB2, and their component applications. Refer to the tables below for details about what each part contains. 
+
+At a minimum, you must download the required parts for the base product. Note that the IBM Tivoli Monitoring product is required if you intend to use the IBM Tivoli Monitoring agent with Tivoli Netcool/OMNIbus.
+
+Required parts To install Tivoli Netcool/OMNIbus V7.4 on AIX, you must download the relevant parts in the IBM Tivoli Netcool/OMNIbus Base 7.4 Multi-platform, Multilingual eAssembly with the assembly number CRK8JML. This eAssembly has the following base and supporting parts for AIX.
+
+Base product Part # Description CIEX1ML
+
+Quick Start Guide IBM Tivoli Netcool/OMNIbus 7.4, Multi-platform, Multilingual
+
+CIEY2ML
+
+IBM Tivoli Netcool/OMNIbus Core 7.4 for AIX, Multilingual
+
+CIEY0ML
+
+IBM Tivoli Netcool/OMNIbus Web GUI 7.4 for AIX, 32-bit, Multilingual
+
+CIEY1ML
+
+IBM Tivoli Netcool/OMNIbus Web GUI 7.4 for AIX, 64-bit, Multilingual
+
+[http://www.ibm.com/i/c.gif] Supporting products Part # Description CI4ZPEN
+
+Event Integration Facility (EIF) SDK for Netcool/OMNIbus 7.4, Multi-platform
+
+CIDR9EN
+
+Netcool/OMNIbus Gateway Ticketing Abstraction Layer (libtal 5_0) for AIX, English
+
+CIDS5EN
+
+Netcool/OMNIbus Gateway for Tivoli Service Request Manager (nco-g-tsrm-4_0) for AIX, English
+
+CIDT2EN
+
+Netcool/OMNIbus Gateway Java Support Package (libngjava 5_0) for AIX, English
+
+CIDT9EN
+
+Netcool/OMNIbus JDBC Gateway Configuration Scripts (Reporting Mode : nco-g-jdbc-reporting-scripts 1_0) for AIX, English
+
+CIDU6EN
+
+Netcool/OMNIbus Gateway NGtkTK Support Package (libngtktk 4_0) for AIX, English
+
+CIDV3EN
+
+Netcool/OMNIbus Gateway for JDBC (nco-g-jdbc 4_0) for AIX, English
+
+CIDW2EN
+
+Netcool/OMNIbus Gateway for Tivoli EIF (nco-g-tivoli-eif 4_0) for AIX, English
+
+[http://www.ibm.com/i/c.gif] Optional parts Additional components are provided for use with the base Tivoli Netcool/OMNIbus V7.4 product. Download the relevant operating system parts in these secondary eAssemblies.
+
+The following parts are provided for AIX in the eAssembly CRE0CML.
+
+Assembly # Description CZW08EN
+
+IBM Tivoli Monitoring Agent for Netcool/OMNIbus 7.4 for Multi-platform, English
+
+CZW06ML
+
+IBM Tivoli Monitoring Agent for Netcool/OMNIbus 7.4 Language Support, Multiplatform
+
+The following parts are provided for AIX in the eAssembly CRKR9ML.
+
+Assembly # Description CI38DML
+
+Quick Start Guide for IBM Tivoli Netcool Impact 6.1, Multilingual
+
+CI4W1ML
+
+IBM Tivoli Netcool Impact 6.1 AIX, 32-Bit, Multilingual
+
+CI4W2ML
+
+IBM Tivoli Netcool Impact 6.1, AIX, 64-Bit Multilingual
+
+The following parts are provided for AIX in the eAssembly CRKS0ML.
+
+Assembly # Description CI62DML
+
+IBM Tivoli Monitoring V6.2.3 Fix Pack 1 Quick Start Guide, Multilingual
+
+CI62HEN
+
+IBM Tivoli Monitoring V6.2.3 Fix Pack 1 Base, UNIX, English
+
+CI6G5EN
+
+IBM Tivoli Monitoring V6.2.3 Fix Pack 1 Tools, Multiplatform, English
+
+C17J6ML
+
+IBM Tivoli Monitoring V6.2 DM Upgrade Toolkit Language Support
+
+CI62KML
+
+IBM Tivoli Monitoring V6.2.3 Fix Pack 1 Language Support
+
+C17J7ML
+
+IBM Tivoli Monitoring V6.2 ITM 5.1.2 Migration Toolkit Language Support
+
+CI62LML
+
+BM Tivoli Performance Analyzer V6.2.3 Fix Pack 1: Reports and Domain Definitions, Multiplatform, Multilingual
+
+CI62PEN
+
+IBM Tivoli Monitoring V6.2.3 Fix Pack 1 Agent, Multiplatform, English
+
+CI62QEN
+
+IBM Tivoli Monitoring V6.2.3 Fix Pack 1 Agent Reports
+
+CI6MBML
+
+IBM Tivoli Monitoring V6.2.3 Fix Pack 1 Agent Builder Language Support
+
+CI6WIEN
+
+IBM Tivoli Monitoring V6.2.3 Fix Pack 1 Agent Builder, Multilingual, Multiplatform
+
+For installation instructions about installing IBM Tivoli Monitoring and the IBM Tivoli Monitoring agent, see the IBM Tivoli Monitoring Installation and Setup Guide and the IBM Tivoli Monitoring for Tivoli Netcool/OMNIbus Agent User's Guide, which are available from Tivoli Documentation Central [http://publib.boulder.ibm.com/tividd/td/link/tdprodlist.html].
+
+The following parts are provided for AIX in the eAssembly CRKS1ML.
+
+Assembly # Description CZY0FML
+
+IBM Tivoli Common Reporting V2.1.1 Quick Start Guide, Multi-platform, Multilingual
+
+CZZM9ML
+
+IBM Tivoli Common Reporting 2.1.1 AIX, 32-Bit, Multilingual
+
+CI01KML
+
+IBM Tivoli Common Reporting 2.1.1, AIX, 64-Bit, Multilingual
+
+CZZN3ML
+
+IBM Tivoli Common Reporting 2.1.1 Cognos Framework Manager, Multi-platform, Multilingual
+
+The following parts are provided for AIX in the eAssembly CRKS2ML.
+
+Assembly # Description CI1VSEN
+
+IBM DB2 9.7.0.4, Limited Use for 64-bit, AIX
+
+CI1W0ML
+
+IBM DB2 9.7, National Language Pack 9.7.0.4 for AIX 
+
+The following parts are provided for AIX in the eAssembly CRL12ML.
+
+Assembly # Description C1G2RML 
+
+IBM WebSphere Application Server Network Deployment V7.0 Supplements for AIX on PowerPC 64-bit (IBM HTTP Server, Web Server Plug-ins and Update Installer), Multilingual
+
+C1G2NML
+
+IBM WebSphere Application Server Network Deployment V7.0 Supplements for AIX on PowerPC 32-bit (Application Client, IBM HTTP Server, Web Server Plug-ins and Update Installer), Multilingual
+
+[http://www.ibm.com/i/c.gif] Change history
+
+ * 30 November 2012: First release of this document.
+
+URL LANGUAGE SIZE(Bytes) IBM Tivoli Netcool/OMNIbus V7.4 Documentation [http://www.ibm.com/support/knowledgecenter/SSSHTQ/landingpage/NetcoolOMNIbus.html] English 1 
+INSTALLATION INSTRUCTIONS
+
+
+Follow the instructions in the Quick Start Guide to install the product. You can find the Quick Start Guide at www.ibm.com/support/docview.wss?rs=3120&uid=swg27036639 [http://www.ibm.com/support/docview.wss?rs=3120&uid=swg27036639].
+
+DOWNLOAD PACKAGE
+
+
+Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options IBM Passport Advantage Online 30 Nov 12 English 1 HTTP [http://www-01.ibm.com/software/howtobuy/passportadvantage/pao_customers.htm]

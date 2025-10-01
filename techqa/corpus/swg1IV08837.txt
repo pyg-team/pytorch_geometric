@@ -1,0 +1,120 @@
+Title: IBM IV08837: JAR FILES SHOULD BE PLACED INTO A SPECIFIC LOCATION - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Probe:nco_p_alcatel_5620_sam_vX
+   
+   It is necessary function that probe can place jar files required
+   into a specific location instead of $OMNIHOME/probes/java
+   directory which is considered not easy to maintain; possibly
+   cause jar files conflicted between different probes.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Manually create a .env script for probe to use
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * All users of the probe nco_p_ping                            *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * Jar files for the probes need to be in separate directories  *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Customer was provided the following test fix and which       *
+   * customer provided a feedback saying the issue is resolved.   *
+   * Fixed in nco-p-alcatel-5620-sam-v8-1_1                       *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV08837
+   
+   
+ * REPORTED COMPONENT NAME
+   ALCATEL 5620 SA
+   
+   
+ * REPORTED COMPONENT ID
+   5724P17AS
+   
+   
+ * REPORTED RELEASE
+   100
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-10-07
+   
+   
+ * CLOSED DATE
+   2011-10-28
+   
+   
+ * LAST MODIFIED DATE
+   2011-10-28
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R100 PSY
+   UP

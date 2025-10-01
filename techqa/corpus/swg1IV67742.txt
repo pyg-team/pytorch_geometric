@@ -1,0 +1,114 @@
+Title: IBM IV67742: REGISTRY & RPRTING SRVC INSTALLATION FAILS W/ ERROR "PORT NUMBER SHOULD BE AN INTGR BETWN 0 AND 65535. INVALID PORT - United States
+
+Text:
+  DIRECT LINK TO FIX
+1.1.2.0-TIV-JazzSM-multi [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FJazz+for+Service+Management&fixids=1.1.2.0-TIV-JazzSM-multi&source=SAR]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Customer is installing JazzSM using Launchpad -> Custom flow.
+   Registry and reporting services installation fails with error
+   message as "Port number should be an integer between 0 and
+   65535. You have entered an invalid port number.Enter valid port
+   number."
+   Problem identified in customer environment is that DB2 instance
+   was not properly configured for TCPIP communication protocol.
+   DB2 command "db2 get dbm cfg" was returning empty value for
+   Service Name. But installer log did not mention about this
+   specific error and after enabling install debug level, root
+   cause is found. Install log should be able to tell about
+   improper DB2 configuration.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  More detailed error statements are added to fix this issue in
+   next JazzSM release.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV67742
+   
+   
+ * REPORTED COMPONENT NAME
+   JAZZ SM INSTAL
+   
+   
+ * REPORTED COMPONENT ID
+   5724C04JI
+   
+   
+ * REPORTED RELEASE
+   110
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-12-10
+   
+   
+ * CLOSED DATE
+   2015-02-12
+   
+   
+ * LAST MODIFIED DATE
+   2015-02-12
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R110 PSY
+   UP

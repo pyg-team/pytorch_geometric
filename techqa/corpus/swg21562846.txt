@@ -1,0 +1,57 @@
+Title: IBM How to Migrate System Certificate from one GIS instance to another - United States
+
+Text:
+Upgrade; Migrate; STERLINGHTG TECHNOTE (FAQ)
+
+QUESTION
+ How to Migrate System Certificate from one GIS instance to another 
+
+ANSWER
+
+
+GIS 4.x
+
+How to Export the System Certificate from one GIS instance and Import into another:
+
+Log in as Administrator
+
+select Deployment > Resource Manager > Import Export > select Export Resources, click Go!
+
+ select the output format type, click Next
+
+select if you wish to export resources based on a tag name, click Next
+
+select the export type, click Next
+
+select Which type of Resource(s) you wish to export, check Digital Certificates, click Next
+
+select Which type of Digital Certificate, check System Certificates, click Next
+
+from the available list select your System Certificate and click the right arrow (to be exported), click Next
+
+enter a Security Passphrase (this will be used upon importing in later steps), click Next
+
+confirm and select Finish, and download the file in an accessible location to the second GIS instance
+
+How to Import the Resource into the second instance of GIS:
+
+Log in as Administrator
+
+select Deployment > Resource Manager > Import/Export , click Import Resources, click Go!
+
+browse to the exported resource from the first GIS instance, enter the Security Passphrase (from previous steps), click Next
+
+create Resource Tag (optional), click Next
+
+Update Objects, click Next
+
+select your System Certificate (to be imported) and click the Single Right Arrow ,click Next
+
+click Finish to Confirm
+
+ 
+
+ 
+
+HISTORICAL NUMBER
+ HTG1182

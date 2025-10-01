@@ -1,0 +1,105 @@
+Title: IBM MustGather: SCA (Service Component Architecture) problems for WebSphere Application Server - United States
+
+Text:
+MustGatherDocument TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ MustGather for SCA Feature Pack problems for IBM WebSphere Application Server Gathering this information before calling IBM support will help familiarize you with the troubleshooting process and save you time. 
+
+RESOLVING THE PROBLEM
+If you have already contacted support, continue on to the component-specific MustGather information. Otherwise, click: MustGather: Read first for all WebSphere Application Server products [http://www.ibm.com/support/docview.wss?rs=180&uid=swg21145599].
+
+
+
+ 1. Provide a simplified test case that exhibits the problem. 
+    
+    Include instructions for running the test case. Due to the complex nature of SCA problems, the fastest way for us to resolve your issue is through a test case. Problem determination might be prolonged without a test case.
+    
+    If a simplified test case is not possible, please provide the actual application with source code including all the composite files and all referenced WSDL and XML schema (XSD) files, including imported/included WSDL/XSD files.
+    
+    
+ 2. Provide a description of the WebSphere Application Server installation topology (Base, Network Deployment, Cluster) along with version information. Indicate where clients and services are installed.
+    
+    
+ 3. Did this work at one time before changes were made? Explain.
+    
+    
+ 4. Is the application developed in a top-down manner? 
+    
+    In other words, did you start with WSDL/XSD interface/data definitions and then generate Java™ classes from WSDL/XSD using a tool like wsimport?
+    
+    
+ 5. Is this a deployment issue (for example, trying to install a SCA business level application)? If YES, then do the following:  1. Is the application using contribution dependencies or a shared library? 
+     2. Enable SCA deployment tracing:  1. In the Application Server Administrative Console, expand Troubleshooting and select Logs and Trace. 
+         2. On the Logging and Tracing page, select your server and then Diagnostic Trace. 
+         3. Under Trace Output:
+            Select File. 
+            Change the Maximum File Size to 50 MB. 
+            Change the Maximum Number of Historical Files to 5. 
+         4. Ensure that the Trace Output Format is set to Basic (Compatible). 
+         5. Click OK and save your configuration. 
+         6. Again, expand Troubleshooting and select Logs and Trace. 
+         7. On the Logging and Tracing page, select your server and then Change Log Detail Levels. 
+         8. Enter the following trace string:
+            *=info:SCAAdmin=all:SCAQoS=all:SCASecurity=all:SCA=all:com.ibm.ws.soa.sca.aries.*=all:com.ibm.ws.soa.sca.implementation.aries.*=all 
+         9. Restart your server.
+        
+        
+     3. Reproduce the problem with the SCA deployment tracing turned on. 
+     4. Collect the traces and logs which were generated: SystemOut.logs, SystemErr.logs, trace*.log files, and the FFDC files (inside the ffdc folder).
+        
+        
+    
+    
+ 6. Is this a run-time problem? For example, a server and client interacting. If YES, then answer the following:  1.  What is the SCA client? An application running on WebSphere Application Server, a standalone Java application, etc? 
+     2.  What is the SCA service provider? WebSphere Application Server, or an unknown third party? 
+     3.  Is the failure coming from the client or provider? 
+     4.  When does the problem occur? 
+     5.  How often does the problem occur? 
+     6.  What binding does the application use? Enterprise JavaBeans, web services, or default binding. 
+     7.  Is administrative and application security enabled? If YES, then answer the following:  1. Does the application use web services policy sets? If yes, what policy sets are being used? 
+          2. Does the application use SCA authorization policy?
+         
+         
+     8.  Enable SCA runtime tracing:  1. In the Application Server Administrative Console, expand Troubleshooting and select Logs and Trace. 
+          2. On the Logging and Tracing page, select your server and then Diagnostic Trace. 
+          3. Under Trace Output:
+             Select File. 
+             Change the Maximum File Size to 50 MB. 
+             Change the Maximum Number of Historical Files to 5. 
+          4. Ensure that the Trace Output Format is set to Basic (Compatible). 
+          5. Click OK and save your configuration. 
+          6. Again, expand Troubleshooting and select Logs and Trace. 
+          7. On the Logging and Tracing page, select your server and then Change Log Detail Levels. 
+          8. Enter the following trace string (as one line - it is broken up here for display purposes only):
+             *=info:SCAAdmin=all:SCA=all:SCARTB=all:SCAQoS=all:SCASecurity=
+             all:com.ibm.ws.policyset.*=all:org.apache.tuscany.*=
+             all:org.apache.tuscany.sca.databinding.impl.DirectedGraph*=
+             info:org.apache.tuscany.sca.contribution.*=
+             info:org.apache.tuscany.sca.policy.*=
+             info:org.apache.tuscany.sca.extensibility.ServiceDeclaration=info:com.ibm.ws.soa.sca.aries.*=all:com.ibm.ws.soa.sca.implementation.aries.*=all 
+          9. Restart your server.
+         
+         
+     9.  Reproduce the problem with SCA runtime tracing turned on. 
+     10. Provide a brief description of the application logic and data flow. 
+     11. Collect the traces and logs which were generated: SystemOut.logs, SystemErr.logs, trace*.log files, and the FFDC files (inside the ffdc folder).
+         
+    
+    
+
+ * Note that there are certain code paths relating to XML<--> Java marshalling/unmarshalling which are affected by enabling trace. Turning on trace can cause XML-related objects to be built in different ways than when trace is not enabled. This can actually cause certain problems to be bypassed completely, meaning you 
+ * will not be able to recreate with the MustGather trace enabled.
+ *  In particular, there is a set of such problems that happen on the first invocation but not on the second and subsequent invocations.
+ * 
+ * 
+ * If this occurs, then please gather the MustGather trace anyway, performing the same action which originally provoked the problem, with trace enabled, even if this does not result in a recreation of the problem.
+ *   * 
+   
+   
+ * 7. Follow instructions to 
+ * send diagnostic information to IBM support
+ * .
+
+RELATED INFORMATION
+ Recording your screen to share with IBM Support [https://www.ibm.com/developerworks/community/blogs/IBMElectronicSupport/entry/recording_your_screen_to_share_with_support?lang=en]

@@ -1,0 +1,35 @@
+Title: IBM SiteProtector 3.0.0.9 -- Core XPU Content - United States
+
+Text:
+ FIX README
+
+ABSTRACT
+ This update addresses several known issues in IBM Security SiteProtector 3.0.0.8. For more information about changes covered in this update, see the following details.
+
+NOTE: After applying this update, the SiteProtector Core version column in the Agent view will show 3.0.0.9. However, since this Core update does not replace the SiteProtector.jar file, the "Console Version" and "Server Version" displayed in the Help -> About SiteProtector menu option will continue to show 3.0.0.8. 
+
+CONTENT
+
+SP Workitem 78126 / APAR IV79170
+
+When starting the Application Server service, it can start up in a bad state some of the time. When the Application Server starts in a bad state, then you may see an error such as the following in the iss-services.log: 
+
+ * 
+ * 
+ * 
+ * 
+
+
+The main noticeable effect this has is if you have an XGS or GX agent that is making requests through the Agent Manager, then the Agent Manager may fail while attempting to make the request with a HTTP 401 error. 
+As a result, the XGS or GX agents may show an Unhealthy status while the Application Server is in a bad state. 
+
+This update allows SiteProtector to properly update its startup information to the database, which allows the Agent Managers to connect to the Application Server. 
+
+
+SP Workitem 76176 / APAR IV78004 
+
+When configuring SiteProtector to use an SSL configuration for the Application Server, it may be possible to experience a hang when the Application Server is starting and attempts to connect to the database. 
+
+This update allows the SiteProtector Application Server to connect to the database when using an SSL configuration. 
+
+Note: Additional SQL Server requirements for using an SSL configuration on the Application Server can be found here:  * http://www.ibm.com/support/docview.wss?uid=swg21967428

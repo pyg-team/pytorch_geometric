@@ -1,0 +1,188 @@
+Title: IBM RS02907: ERROR IN DECISION CENTER WHEN OPENING "SUBBRANCHES AND BASELINES " - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Operational Decision Manager V8.8.1.3: Interim Fix 76 [http://www-01.ibm.com/support/docview.wss?uid=swg24044308]
+Operational Decision Manager V8.7.1.2: Interim Fix 73 [http://www-01.ibm.com/support/docview.wss?uid=swg24044357]
+Operational Decision Manager V8.8.1.3: Interim Fix 77 [http://www-01.ibm.com/support/docview.wss?uid=swg24044387]
+Operational Decision Manager V8.7.1.2: Interim Fix 75 [http://www-01.ibm.com/support/docview.wss?uid=swg24044599]
+Operational Decision Manager V8.9.2 Download Document [http://www-01.ibm.com/support/docview.wss?uid=swg24044455]
+Operational Decision Manager V8.9.2 Mod Pack [http://www-01.ibm.com/support/docview.wss?uid=swg24044456]
+Operational Decision Manager for z/OS 8.9.2 Mod Pack [http://www-01.ibm.com/support/docview.wss?uid=swg24044642]
+Operational Decision Manager V8.7.1.2: Interim Fix 76 [http://www-01.ibm.com/support/docview.wss?uid=swg24044722]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When opening Decision Center > Project > Manage Subbranches and
+   Baselines
+   
+   
+   
+   The below error appears in the logs:
+   
+   [31/Aug/2017:15:53:18 +0200] "POST
+   /teamserver/faces/internalError.jsp
+   HTTP/1.1" 200 25948
+   
+   
+   
+   And this exception is displayed on the UI:
+   
+   
+   
+   Unexpected error
+   
+   
+   
+   Decision Center has encountered an unexpected error. The
+   internal error message is:
+   
+   Cannot get value for expression '#{
+   ManageDeploymentBaselinesBean.table. rowCount == 0}'
+   Could this be something wrong with the table of the baseline or
+   DeploymentBaseline table? I see the exception shows:
+   ]]></stack><cause><stack><![CDATA[ ilog.rules.teamserver.model.
+   IlrInvalidElementException: Working baseline is undefined
+   Working baseline is undefined at ilog.rules.teamserver.ejb.
+   service.dao.IlrElementDAOJDBC.getLastBaselineHandle(
+   IlrElementDAOJDBC.java:5506) at ilog.rules.teamserver.ejb.
+   service.IlrSessionFacadeUtil$1.run(IlrSessionFacadeUtil.java:
+   138) at ilog.rules.teamserver.ejb.service.IlrSessionFacadeUtil.
+   findInElementBranch(IlrSessionFacadeUtil.java:212) at ilog.
+   rules.teamserver.ejb.service.IlrSessionFacadeUtil.getClientId(
+   IlrSessionFacadeUtil.java:146) at ilog.rules.teamserver.ejb.
+   service.IlrSessionFacadeUtil.getClientElementSummary(
+   IlrSessionFacadeUtil.java:123) at ilog.rules.teamserver.ejb.
+   service.IlrSessionFacadeUtil.getElementSummary(
+   IlrSessionFacadeUtil.java:71) at ilog.rules.teamserver.ejb.
+   service.IlrSessionFacadeImpl.getElementSummaryForThisHandle(
+   IlrSessionFacadeImpl.java:2992) at ilog.rules.teamserver.ejb.
+   service.IlrSessionFacadeImpl$2.run(IlrSessionFacadeImpl.java:
+   3108) at ilog.rules.teamserver.ejb.service.IlrSessionFacadeUtil.
+   findInElementBranch(IlrSessionFacadeUtil.java:212) at ilog.
+   rules.teamserver.ejb.service.IlrSessionFacadeImpl.
+   findInternalCurrentVersionOf(IlrSessionFacadeImpl.java:3123) at
+   ilog.rules.teamserver.ejb.service.IlrSessionFacadeImpl.
+   findCurrentVersionOf(IlrSessionFacadeImpl.java:3128) at ilog.
+   rules.teamserver.ejb.service.IlrSessionFacadeImpl.
+   findCurrentVersionOf(IlrSessionFacadeImpl.java:3141) at sun.
+   reflect.GeneratedMethodAccessor151.invoke(Unknown Source)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  When opening Manage Subbranches and Baselines for a project in
+   Decision Center we got sometimes unexpected error displayed on
+   the UI, The exception IlrObjectNotFoundException occurs when
+   trying to retrieve the ruleset from the deployment baseline.
+   To avoid that we need to check if the ruleset is not deleted.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The code is fixed
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   RS02907
+   
+   
+ * REPORTED COMPONENT NAME
+   WS DECISION CTR
+   
+   
+ * REPORTED COMPONENT ID
+   5725B6900
+   
+   
+ * REPORTED RELEASE
+   851
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-09-25
+   
+   
+ * CLOSED DATE
+   2017-09-29
+   
+   
+ * LAST MODIFIED DATE
+   2017-09-29
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  999
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WS DECISION CTR
+   
+   
+ * FIXED COMPONENT ID
+   5725B6900
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R890 PSY
+   UP

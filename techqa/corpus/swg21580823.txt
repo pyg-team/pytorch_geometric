@@ -1,0 +1,17 @@
+Title: IBM How do you re-order Virtual Interview questions? - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How do you re-order Virtual Interview questions? 
+
+ANSWER
+To change the order of Interview Questions, you need to hit the "Enter" key after you make the changes to the ordering in the text boxes for the question number. The questions will dynamically reorder themselves after you hit the "Enter" key. At that point when you save the Interview the new order for the questions will take effect.
+
+If you just enter in the new order for the questions and save the Interview right away, the order will not change.
+
+
+
+HISTORICAL NUMBER
+ 750

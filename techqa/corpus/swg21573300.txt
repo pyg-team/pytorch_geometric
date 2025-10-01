@@ -1,0 +1,18 @@
+Title: IBM nzbackup on mixed case database name - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How do I run nzbackup on a database name with mixed case characters? 
+
+ANSWER
+To run /nz/kit/bin/nzbackup on a database that has both upper and lowercase characters, the -db argument needs to escape the <database> value as shown below: 
+
+ * 
+ * nzbackup -db "\\"Your Database\\"" 
+
+ 
+
+HISTORICAL NUMBER
+ NZ494652

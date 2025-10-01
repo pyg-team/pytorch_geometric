@@ -1,0 +1,43 @@
+Title: IBM FA Handler – the Shocking Truth  - Sterling Gentran:Server for UNIX - United States
+
+Text:
+ PRODUCT DOCUMENTATION
+
+ABSTRACT
+ When browsing through the .init file of an inbound-type data manager, you might have encountered two initialization parameters, FA_HANDLER and FA_MAIL, and wondered what they do. But, being the busy EDI coordinator that you are and not having time to research the subject, you closed the file and added FA_HANDLER and FA_MAIL to your list of Things-To-Research-When-I-Have-Time. This information will give you some insight into the use and benefits of the FA_HANDLER and FA_MAIL parameters. 
+
+CONTENT
+Questions and answers:
+
+
+Q. What does FA_HANDLER and FA_MAIL do? 
+A. FA_HANDLER and FA_MAIL enable Gentran:Server to send you an e-mail when an outbound document is rejected by your trading partner. 
+
+Q. How do I activate them? 
+A. Just set FA_HANDLER to 1 (On) in the .init file of your inbound-type data manager, then stop and start the data manager. 
+
+Q. Do I need FA_HANDLER in order to process my inbound functional acknowledgments? 
+A. No, Gentran:Server does not require FA_HANDLER and FA_MAIL to process inbound Functional Acknowledgments. If a map, trading partner record, and inbound Server flow have been defined, your inbound 
+acknowledgments will process successfully without FA_HANDLER and FA_MAIL. Activate these two parameters only if you want Gentran:Server to notify you via e-mail when you receive a Functional Acknowledgment indicating an error in one of your outbound documents. 
+
+Q. I did what you said, and for the most part, everything works fine. I checked my e-mail when I logged on and found I had received a message from Gentran:Server alerting me that one of my outbound 850s was rejected. The trouble is that the FA report I printed shows the outbound 850 with a status of "Waiting". I expected it to show a status of ‘Rejected’. Why the discrepancy? 
+A. When a Functional Acknowledgment (FA) with an error status is received, Gentran:Server informs you via e-mail and stops processing that inbound FA. Gentran:Server does not pass the document to the translation data manager or change the status of the outbound document in the FA report. This is to give you an opportunity to correct and resend the data so you can receive an acknowledgment indicating acceptance. 
+
+Q. Can Gentran:Server inform me of rejected transactions and send me e-mail? 
+A. Yes. Follow this procedure to configure Gentran:Server to perform both of these functions. 
+
+ 1. Create a translation-type data manager (called xlfa for this example) and configure it to read from a directory instead of a queue. 
+ 2. Create a configuration record for this data manager. Use badfa as the trading partner name. When you add the record, the system will display a warning indicating that this trading partner does not exist. You can ignore this warning. 
+ 3. Edit the inbound-type data manager .init file. Under the Errors section, we file find a line that reads: 
+    FA_ERROR default default 
+ 4. Using a text editor, modify this line so that it reads 
+    FA_ERROR fa_error default 
+ 5. Lastly, we must add a line to the .init file under the Handlers section: 
+    fa_error: move_e xlfa/badfa 
+
+
+This will route functional acknowledgments with a rejected status into the scan directory of the data manager that you created in Step 1, prompt Gentran:Server to send you an e-mail regarding the rejected transactions, and update the FA status in one brilliant move. 
+
+
+ORIGINAL PUBLICATION DATE
+ 2018/3/10

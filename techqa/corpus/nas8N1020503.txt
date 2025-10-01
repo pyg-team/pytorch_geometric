@@ -1,0 +1,31 @@
+Title: IBM Leap Second and IBM i - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Is the IBM i Operating System Affected by the Leap Second Adjustment 
+
+ANSWER
+Leap Second and IBM i.
+A leap second is a one-second adjustment that is occasionally applied to Coordinated Universal Time (UTC) in order to keep its time of day close to the mean solar time. Without such a correction, time reckoned by Earth's rotation drifts away from atomic time because of irregularities in the Earth's rate of rotation. Since this system of correction was implemented in 1972, 26 such leap seconds have been inserted. The most recent one happened on June 30, 2015 at 23:59:60 UTC. A leap second will again be inserted on December 31, 2016, at 23:59:60 UTC. 
+
+The IBM i Operating System will not be affected by the Leap Second Adjustment. The IBM i Operating System will not automatically add the leap second at the end of December 31, 2016, at 23:59:60 UTC. 
+
+If your IBM i Operating System is configured to to utilize the NTP time protocol service via the network, the leap second will be adjusted by this service. 
+
+If your IBM i Operating System is not configured to utilize the NTP time protocol service via the network, you will need to make the leap second adjustment manually by changing the QTIME system value. 
+
+ 
+
+ 
+
+ 
+
+
+
+ 
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Operating System IBM i 7.2 Operating System IBM i 7.1 Operating System IBM i 6.1

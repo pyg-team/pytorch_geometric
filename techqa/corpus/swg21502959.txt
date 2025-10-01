@@ -1,0 +1,108 @@
+Title: IBM ITCAM for WAS/AD User Roles of the Managing Server - United States
+
+Text:
+roles in the managing server TECHNOTE (FAQ)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ US English 
+
+QUESTION
+ What is the definition of Users Roles that can be created on the Managing Server? 
+
+ANSWER
+Although the ITCAM for AD guides do not provide a great deal of information defining the pre-defined roles, here is basic information with respect to Problem Determination. All user roles can perform functions for Availability and Performance Analysis(Reports). The exceptions are the following, 
+ADMINISTRATION 
+
+1. Administrator (access to everything) 
+
+ *  Admins can do everything the with the ITCAM VE. 
+
+
+2. Operator  *  The operator can only administer the following, 
+ *  Web Server Administration(View Only) 
+ *  Managing Server Self Diagnosis 
+ *  Can view whether or not all the MS components are up and running. 
+
+3. User  *  The only function the regular User can do is Web Server Administration (View Only) 
+
+
+PROBLEM DETERMINATION 
+
+1. Administrator (access to everything): 
+ *  Admins can do everything with the ITCAM VE. 
+
+
+2. Operator (no access to Traps, cannot modify Accounts): 
+ *  Problem Determination wise, the operator user can do everything the Admin does except the following,
+
+
+2.1 Server Activity Display (View Only)  * 
+ * 
+ * 
+ * 
+
+*User cannot force heapdumps 
+*User cannot schedule heapdumps 
+*User can only view when and where the heap dump exists on the Data Collector system. 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+
+
+3.User (limited access) 
+ *  Problem Determination wise, the basic User can do everything the Admin can do, except the following, 
+
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+
+
+CUSTOM  *  You can tailor the user to whatever Problem Determination functions 
+
+you deem necessary. 
+
+===========  
+
+HISTORICAL NUMBER
+ 02216
+49R
+000 
+
+PRODUCT ALIAS/SYNONYM
+ AD AppDiagnostics ITCAM WAS ITCAMfAD ITCAM4AD

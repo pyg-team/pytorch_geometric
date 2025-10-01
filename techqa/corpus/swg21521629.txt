@@ -1,0 +1,54 @@
+Title: IBM How to import a digital certificate for RosettaNet data (SCI91110) - Sterling Gentran:Server for Microsoft Windows - United States
+
+Text:
+STERLINGPRI TECHNOTE (FAQ)
+
+QUESTION
+ How to import a digital certificate for RosettaNet data (SCI91110) 
+
+ANSWER
+
+
+ 1.  
+ 2.  
+ 3.  Open RosettaNet Management Console
+ 4.  
+ 5.  
+ 6.  Select <Security Profile Manager>
+ 7.  
+ 8.  
+ 9.  Select <Import>
+ 10. 
+ 11. 
+ 12. Within Step #1 "Partner ID for imported certificates", select the receiving partner for the public key that will be imported (This will encrypt\sign the data to this partner when sent outbound). If this is the private key, then type in the Receiving DUNS number (This will decrypt\except the data when received by all partners inbound, when the relationship is set to encrypt\signed). If this is a new business partner and it is not displayed in the drop down list, then insure that a partner has been created in the Partner Editor before attempting to import a public certificate. 
+ 13. 
+ 14. 
+ 15. Select "Import a public certificate or "Import Certificate with a private key associated with it" in Step #2. Private keys are for inbound data and public keys are for outbound data. This must correspond with the previous step. If partner was selected from list then it is a public key and if it was typed in with this systems sites DUNS number, then it should be private. 
+ 16. 
+ 17. 
+ 18. Select the agreed methods of use in Step #3. If Both is selected all methods can be used in the PIP profile. 
+ 19. 
+ 20. 
+ 21. Select OK
+
+ 
+
+HISTORICAL NUMBER
+ PRI16412 
+
+PRODUCT ALIAS/SYNONYM
+ 
+
+Fact
+
+
+Gentran:Server for Windows, All Releases 
+SCI91110 
+Gentran:Server 
+RosettaNet for Windows, All Releases
+
+
+Goal
+
+
+How to import a digital certificate for RosettaNet data

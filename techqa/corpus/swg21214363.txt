@@ -1,0 +1,168 @@
+Title: IBM Upgrading ClearCase on Windows - United States
+
+Text:
+upgrade; SR5; 2002.05; 2003.06.15; 2003.06.13; 2003.06.14; sr4; sr3; sr2; upgrade procedure; previous version; migration; plan; SR6; 2003.06.16; 1214363; windows upgrade; clearcase upgrade on windows; cc windows upgrade; domain migration PREVENTIVE SERVICE PLANNING
+
+ABSTRACT
+ This technote provides supplemental data to the Installation Guide that you can employ when upgrading IBM Rational ClearCase on Microsoft Windows. 
+
+CONTENT
+
+
+About this document
+
+
+
+Sections: 
+
+Before Upgrading - Files to Preserve
+
+
+Schema Upgrade
+
+
+Apply Patches
+
+
+MultiSite Considerations
+
+
+Service Releases
+
+
+
+
+
+
+
+
+
+About this document 
+
+This document serves to supplement the information in the installation guide by providing additional content which may be useful to you. 
+
+It is important to review the appropriate installation guide for information about installing or upgrading ClearCase: 
+
+[https://pic.dhe.ibm.com/infocenter/cchelp/v7r1m0/index.jsp?topic=/com.ibm.rational.clearcase.hlp.doc]  * 7.1 Upgrading Rational ClearCase [https://pic.dhe.ibm.com/infocenter/cchelp/v7r1m0/index.jsp?topic=/com.ibm.rational.clearcase.hlp.doc]
+   
+   
+
+
+Documentation for versions prior to 7.1 is available in the IBM Publications Center [http://www.ibm.com/shop/publications/order] [http://www.ibm.com/shop/publications/order]. 
+
+To find the ClearCase Release Notes, select your Country/Region/Language, then select Search for publications and enter the Service Release version string (for example 2003.06.15) in the Search on field. 
+
+The links have been provided here for your convenience: 
+
+
+ClearCase 7.1 Initial Release -- 7.1 [https://publib.boulder.ibm.com/infocenter/cchelp/v7r1m0/index.jsp?topic=/com.ibm.rational.clearcase.relnotes.doc/topics/c_cc_relnotes.htm] 
+ClearCase 7.0 and 7.0.1 Initial Release -- 7.0 [http://publib.boulder.ibm.com/infocenter/cchelp/v7r0m1/index.jsp?topic=/com.ibm.rational.clearcase.hlp.doc] 
+ Back to top 
+
+
+
+
+
+
+Before Upgrading - Files to Preserve: 
+
+The section titled General Considerations for Upgrading All Server Hosts states: 
+
+If you have modified any files in ccase-home-dir (by default, C:\Program Files\Rational\ClearCase), you must save them before installing ClearCase. 
+
+Here are examples of the most common items modified and the steps you need to take to back them up: 
+ 1.  ClearCase registry located in C:\Program Files\Rational\ClearCase\var\rgy.
+     
+     
+ 2.  Scheduled Job settings. Backup using the command:
+     
+     cleartool schedule -get > c:\temp\scheduled.jobs.output.txt
+     
+     
+ 3.  Customizations to the Scheduled Job scripts that reside in C:\Program Files\Rational\ClearCase\config\scheduler\tasks.
+     
+     
+ 4.  Customized magic files that may have unique file extension to application mappings. Backup the magic file. The default magic file is stored in C:\Program Files\Rational\ClearCase\config\magic.
+     
+     
+ 5.  VOB scrubber parameters file (vob_scrubber_params) located in C:\Program Files\Rational\ClearCase\config\vob.
+     
+     
+ 6.  Request for mastership options file (rfm_shipping.conf) located in C:\Program Files\Rational\ClearCase\var\config.
+     
+     
+ 7.  If the upgrade machine is also a ClearCase License server:
+      1. Go to the ClearCase applet in the Windows Control Panel 
+      2. Click the Licensing tab 
+      3. Copy the entire license string(s) to a backup file outside of ClearCase
+         
+     
+     
+ 8.  Customized MultiSite synchronization configuration file (Msimport_export.conf)
+     located in: C:\program files\rational\clearcase\var\config
+     
+ 9.  If the upgrade machine is an Rational Web Platform (RWP) server, you should also backup the directory that contains references to your CCWeb views located in:C:\Program Files\Rational\ClearCase\var\ccweb 
+ 10. If you have WebSphere for your WAN Server, you should also backup "C:\Program Files (x86)\IBM\WebSphere\Plugins\config\webserver1\plugin-cfg.xml"
+     
+
+
+Windows registry keys If lock manager settings have been customized, backup the following Windows registry keys that contain those settings:
+HKEY_LOCAL_MACHINE\SOFTWARE\Atria\ClearCase\CurrentVersion\LockMgrCmdLine (32 bit)
+or 
+HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node\Atria\ClearCase\CurrentVersion
+\LockMgrCmdLine (64 bit)
+
+
+
+Advisory: Although it is not necessary to do so, it is recommended as a best-practice to resolve all checkouts and hijacks before upgrading ClearCase. This helps to ensure that (in the event of an irreversible problem during the upgrade that) all versions are stored safely within the VOB databases.
+
+
+ Back to top 
+
+
+
+
+
+
+Schema Upgrade: 
+
+
+Consider upgrading to schema 54 if you have not done so already as VOB schema 53 is not supported in ClearCase 7.0 or later. See technote 1201579 [http://www-1.ibm.com/support/docview.wss?uid=swg21201579]. 
+
+If the upgrade fails, consider the steps advised in technote 1179647 [http://www-1.ibm.com/support/docview.wss?uid=swg21179647] to completely uninstall ClearCase. 
+ Back to top 
+
+
+
+
+
+
+
+Apply Patches: 
+
+Download and apply the latest patches to the ClearCase 7.x release area or directly to the ClearCase 2003.06 host. 
+ * Refer to download document 1265307 [http://www-01.ibm.com/support/docview.wss?rcss=rtlcc&rs=984&uid=swg21265307] for the latest 7.x updates.
+   Also refer to technote 1242322 [http://www-01.ibm.com/support/docview.wss?uid=swg21242322]Applying a Rational iFix or Fix Pack on Windows
+   
+ * Refer to technote 1228099 [http://www-1.ibm.com/support/docview.wss?&rs=984&uid=swg21228099] for a list of the available updates for ClearCase 2003.06.00.
+
+[http://www-1.ibm.com/support/docview.wss?rs=984&uid=swg24012808] 
+ Back to top 
+
+
+
+
+
+
+MultiSite Considerations:
+
+Follow the steps in the solution of technote 1192503 [http://www-1.ibm.com/support/docview.wss?uid=swg21192503] and use the cleartool hostinfo -long and multitool lssetting -site -inquire commands to help ensure that everything was upgraded correctly. 
+ Back to top 
+
+
+
+
+
+RELATED INFORMATION
+ Available 2003.06.00 Service Releases and Patches [http://www.ibm.com/support/docview.wss?uid=swg21228099]
+Manually uninstall ClearCase on Windows [http://www.ibm.com/support/docview.wss?uid=swg21179647]

@@ -1,0 +1,175 @@
+Title: IBM PI61504: SUPPORT INFORMATICA PLUG-IN ACTIONS FROM DWC - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  An error occurs while trying the available actions in the
+   Workflow details hyperlink from DWC for an Informatica
+   PowerCenter job.
+   The following error message are issued:
+   AWSUI0833E The operation could not be completed. There has been
+   a communication failure.
+   The internal message is:
+   AWSJZC125E Error streaming data from/to the broker server.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: Workload Scheduler for z/OS users            *
+   *                 who submit z-centric end-to-end plug-in      *
+   *                 jobs defined through the Dynamic Workload    *
+   *                 Console.                                     *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: If a DWC user tries the actions for a   *
+   *                      z-centric plug-in job after clicking    *
+   *                      on the hyperlink Workflow details the   *
+   *                      following error occurs:                 *
+   *                      AWSUI0833E The operation could not be   *
+   *                      completed. There has been a             *
+   *                      communication failure.                  *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   It is possible for some z-centric end-to-end plug-in jobs
+   to click on the hyperlink Workflow details from the DWC
+   monitoring jobs view. In some cases if the user tries the
+   available actions the following error messages are issued:
+   "AWSUI0833E The operation could not be completed. There has
+   been a communication failure."
+   The internal message is: "AWSJZC125E Error streaming data
+   from/to the broker server."
+   The action cannot be executed.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The problem is caused by an incorrect processing of the buffer
+   containing the jobCommand sent to the agent.
+   The error has been corrected and now the actions can be
+   performed successfully.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI61504
+   
+   
+ * REPORTED COMPONENT NAME
+   TIV WRKLD SCHD
+   
+   
+ * REPORTED COMPONENT ID
+   5697WSZ01
+   
+   
+ * REPORTED RELEASE
+   930
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-04-27
+   
+   
+ * CLOSED DATE
+   2016-05-11
+   
+   
+ * LAST MODIFIED DATE
+   2016-06-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UI37737 UI37738 UI37739 UI37740
+   
+   
+
+MODULES/MACROS
+ *  EQQZHTGS
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TIV WRKLD SCHD
+   
+   
+ * FIXED COMPONENT ID
+   5697WSZ01
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R602 PSY UI37737 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI37737]
+   UP16/05/27 P F605
+   
+   
+ * R912 PSY UI37738 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI37738]
+   UP16/05/27 P F605
+   
+   
+ * R922 PSY UI37739 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI37739]
+   UP16/05/27 P F605
+   
+   
+ * R932 PSY UI37740 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI37740]
+   UP16/05/27 P F605
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

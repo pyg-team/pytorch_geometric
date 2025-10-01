@@ -1,0 +1,86 @@
+Title: IBM i Access for Windows Toolkit - Data queues - United States
+
+Text:
+ 
+ 
+
+The following sample programs are available to help develop applications using the IBM i Access for Windows data queue APIs:
+
+
+
+
+ActiveX automation objects and controls
+
+ * d_allobj.exe – Delphi 4 sample using the IBM i Access for Windows automation objects. This Delphi 4 sample uses the IBM i Access for Windows automation objects to perform the following:
+   
+    * Retrieve the list of IBM i systems which have previously been connected
+    * Specify a new IBM i system to access
+    * Retrieve information about an IBM i, such as the: IP address, host version and release levels, password expiration date, number of active connections, etc.
+    * Call an IBM i Access for Windows API to retrieve a list of user libraries on the system
+    * Call an IBM i API to retrieve a list of data queues in a library
+    * Create and delete libraries
+    * Create and delete data queues
+    * Query the attributes of data queues
+    * Send and receive data using data queues
+    * Convert strings and numeric data between host and PC formats
+    * Retrieve information about the IBM i Access for Windows code installed on the PC
+   
+    * Download d_allobj.exe (EXE, 124KB) [ftp://public.dhe.ibm.com/as400/products/clientaccess/win32/files/toolkit/d_allobj.exe]
+   
+   
+ * dqrmtcm2.exe – Sample using ActiveX controls and automation objects for data queues and remote command. This Visual Basic sample uses the IBM i Access for Windows ActiveX custom controls and automation objects to retrieve a list of IBM i systems (which have been previously connected), create and delete libraries, create and delete data queues, and send and receive data using data queues.
+   
+    * Download dqrmtcm2.exe (EXE, 20KB) [ftp://public.dhe.ibm.com/as400/products/clientaccess/win32/files/toolkit/dqrmtcm2.exe]
+   
+   
+ * vballobj.exe – Visual Basic sample using the IBM i Access for Windows automation objects. This Visual Basic sample uses the IBM i Access for Windows automation objects to perform the following:
+   
+    * Retrieve the list of System is which have previously been connected
+    * Specify a new System i to access
+    * Retrieve information about an System i, such as the: IP address, host version and release levels, password expiration date, number of active connections, etc.
+    * Call an System i API to retrieve a list of user libraries on the system
+    * Call an System i API to retrieve a list of data queues in a library
+    * Create and delete libraries
+    * Create and delete data queues
+    * Query the attributes of data queues
+    * Send and receive data using data queues
+    * Convert strings and numeric data between host and PC formats
+    * Retrieve information about the IBM i Access for Windows code installed on the PC
+   
+    * Download vballobj.exe (EXE, 34.2KB) [ftp://public.dhe.ibm.com/as400/products/clientaccess/win32/files/toolkit/vballobj.exe]
+   
+   
+ * vbsallob.exe – Visual Basic Script sample using the iSeries Access for Windows automation objects. This Visual Basic Script sample uses the IBM i Access for Windows automation objects to perform the following:
+   
+    * Retrieve the list of IBM i systems which have previously been connected
+    * Specify a new IBM i to access
+    * Retrieve information about an IBM i, such as the: IP address, host version and release levels, password expiration date, number of active connections, etc.
+    * Call an IBM i API to retrieve a list of user libraries on the server
+    * Call an IBM i API to retrieve a list of data queues in a library
+    * Create and delete libraries
+    * Create and delete data queues
+    * Query the attributes of data queues
+    * Send and receive data using data queues
+    * Convert strings and numeric data between host and PC formats
+    * Retrieve information about the IBM i Access for Windows code installed on the PC
+   
+   This sample requires the file cwbxvbs.inc which is installed in the Include directory as part of the IBM i Access for Windows Toolkit. This file must be in the same directory as the files from this sample.
+   
+   Note: If you get the following error while running this script:
+   "ActiveX component can't create object: 'createobject'"
+   please see Microsoft Knowledge Base article Q195826.
+   
+    * Download vbsallob.exe (EXE, 31.3KB) [ftp://public.dhe.ibm.com/as400/products/clientaccess/win32/files/toolkit/vbsallob.exe]
+   
+   
+
+
+
+
+C/C++ APIs
+
+ * dqsamp.exe – Data queue sample written in Visual C++ 4.2 using MFC and the Data Queue APIs. This sample uses the IBM i Access for Windows Data Queue APIs to do simple client/system transaction processing and keyed storage. The interface uses the Microsoft Foundation Classes (MFC) for displaying graphical dialogs, storage objects, and for Windows message processing. The code that does the actual data queue operations consists of a set of classes which call the Data Queue APIs.
+   
+   Two separate types of data queues are used in the sample. A First-In First-Out (FIFO) queue for transaction messages and a keyed queue for item storage. These queues may reside on different systems.
+   
+    * Download dqsamp.exe (EXE, 56KB) [ftp://public.dhe.ibm.com/as400/products/clientaccess/win32/files/toolkit/dqsamp.exe]

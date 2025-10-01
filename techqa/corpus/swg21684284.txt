@@ -1,0 +1,20 @@
+Title: IBM Rulerunner intermittently cannot write file with Datacap Taskmaster Capture - United States
+
+Text:
+rulerunner; rrs log; NAS; nas; SAN; san; DCO err TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Intermittently batches abort when run in Rulerunner. A check of the rrs log shows an error like the following:
+
+04:25:27.776 (0) t:1F50 p:BC0768 warning! couldn't save dco;
+DCO err:Error writting in file \\DatacapServer\BatchesFolder\Batches\20140811.000527\Rulerunner.xml; 
+
+CAUSE
+Rulerunner performs many file I/O operations very quickly. If there are a sufficient number of threads and/or Rulerunner servers running simultaneously, this can overwhelm the file system. This is particularly true with NAS or SAN servers, as they are also processing file I/O requests from many other locations.
+
+RESOLVING THE PROBLEM
+Reduce the load on the file system. Some possible methods include: 
+
+ 1. Reduce the number of threads running on the Rulerunner servers or reduce the total number of Rulerunner servers running simultaneously. 
+ 2. Reduce or turn off logging. In particular, make sure any Log Reflush options are unchecked. 
+ 3. Move the batches folder to a location that can handle a higher volume of file I/O.

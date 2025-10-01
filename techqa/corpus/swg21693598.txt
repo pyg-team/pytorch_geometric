@@ -1,0 +1,57 @@
+Title: IBM Can't deploy CPE 5.2.1, ear files are missing - United States
+
+Text:
+Engine-ws.ear; CMUI TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ After what seems to be a successful install of IBM Content Platform Engine (CPE) 5.2.1, no Engine-xx.ear files were created in /IBM/FileNet/ContentEngine/lib/ so CPE can not be deployed. 
+
+SYMPTOM
+When running the deployment task in Configuration Manager, browsing to /IBM/FileNet/ContentEngine/lib/ notice there are no ear files such as Engine-ws-ear .
+
+
+
+
+CAUSE
+Insufficient disk space allotted for the installation. As of CPE 5.2.1, the ear files (Engine-ws.ear, Engine-wl.ear, Engine-jb.ear) are no longer shipped on the media. The ear files are built on the fly during the CPE installation.
+
+ENVIRONMENT
+Identified on AIX, but this could occur on any platform with insufficient space.
+
+DIAGNOSING THE PROBLEM
+Collect the following logs. Default locations listed below:
+opt/IBM/FileNet/ContentEngine/ce_install_log_5.2.1.0.txt
+/tmp/ce521_install_stdout.txt
+/tmp/ce521_install_stderr.txt
+
+The errors to diagnose this issue were in ce521_install_stderr.txt:
+...
+Command.run(): /opt/IBM/FileNet/downloads/IATEMPDIR/773194.tmp/executeScriptTmp0:stderr [BUILD FAILED]
+Command.run(): /opt/IBM/FileNet/downloads/IATEMPDIR/773194.tmp/executeScriptTmp0:stderr [/opt/IBM/FileNet/CPE/ContentEngine/lib/mergepe.xml:329: The following error occurred while executing this line:]
+Command.run(): /opt/IBM/FileNet/downloads/IATEMPDIR/773194.tmp/executeScriptTmp0:stderr [/opt/IBM/FileNet/CPE/ContentEngine/lib/mergepe.xml:134: The following error occurred while executing this line:]
+Command.run(): /opt/IBM/FileNet/downloads/IATEMPDIR/773194.tmp/executeScriptTmp0:stderr [/opt/IBM/FileNet/CPE/ContentEngine/lib/mergepe.xml:158: Problem creating zip: There is not enough space in the file system.]
+...
+
+
+RESOLVING THE PROBLEM
+Follow the Compatibility Report's disk space requirements and allow for sufficient space. For AIX, CPE 5.2.1 requires 5GB of free space, plus 5GB of temp space. 
+
+To recover from an install that failed to create the ear files due to lack of disk space:
+
+
+
+
+ 1. Follow the product documentation to uninstall CPE http://www.ibm.com/support/knowledgecenter/SSNW2F_5.2.1/com.ibm.p8.install.doc/p8prm002.htm [http://www-01.ibm.com/support/knowledgecenter/SSNW2F_5.2.1/com.ibm.p8.install.doc/p8prm002.htm] 
+ 2. Increase the free disk space for the install and temp space to 5 GB, each. 
+ 3. Reinstall CPE as before 
+ 4. Check the logs listed below for any errors:
+    opt/IBM/FileNet/ContentEngine/ce_install_log_5.2.1.0.txt
+    /tmp/ce521_install_stdout.txt
+    /tmp/ce521_install_stderr.txt 
+ 5. Check /opt/IBM/FileNet/ContentEngine/lib and validate the Engine-xx.ear files were created. 
+ 6. Proceed with the post install, configuration steps in the product documentation.
+    
+
+RELATED INFORMATION
+ Compatibility Reports for Harware/Software prerequisite [http://www.ibm.com/support/docview.wss?uid=swg21613499]
+Installing or Upgrading FileNet P8 documentation: [http://www.ibm.com/support/knowledgecenter/SSNW2F_5.2.1/com.ibm.p8toc.doc/installing.htm]

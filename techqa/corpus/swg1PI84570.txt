@@ -1,0 +1,162 @@
+Title: IBM PI84570: MAP COMPILATION ERROR M113 WHEN TEXT IN MAP RULE - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Map compilation error M113 when Text in map rule.
+   
+   For example: =TEXT(1+1) should be considered valid when the map
+   rule is analyzed, but gives M113 error.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  TXCQ - ITX00058001
+   GK / GK
+   Circumvention: None
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Users Affected:
+   IBM Transformation Extender Map Analyzer (Design Studio,
+   mcompile) users
+   
+   Problem Description:
+   Map Analyzer fails map compilation of a map during map analysis
+   due improper handling of expression types used in functions like
+   TEXT in the map rules which lead to M113 error.
+   
+   Platforms Affected:
+   Windows
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fixed a problem with Map Analyzer where it now analyzes map
+   rules properly instead of reporting an M113 error when a numeric
+    or text expression is provided for a function like TEXT as an
+   argument.
+   
+   Applies to:
+   8.4.0.5, 8.4.1.5, 9.0.0.2
+   
+   Fixed in the next service packs and releases.
+   
+   To obtain the fix for this APAR:
+   
+   To see if the next service pack or product release is available,
+   check the IBM Transformation Extender Downloads page:
+   http://www.ibm.com/support/entry/portal/product/other_software/t [http://www.ibm.com/support/entry/portal/product/other_software/t]
+   ransformation_extender
+   
+   If the service pack or product release is available, download it
+   from Fix Central:
+   http://www.ibm.com/support/fixcentral/ [http://www.ibm.com/support/fixcentral/]
+   
+   If the service pack or product release is not available and you
+   require the APAR fix immediately, request a Limited Availability
+   Interim Fix (LAIF) by opening a PMR:
+   http://www.ibm.com/support/servicerequest/Home.action [http://www.ibm.com/support/servicerequest/Home.action]
+   
+   Prior to version 9.0.0, IBM Transformation Extender was called
+   IBM WebSphere Transformation Extender.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI84570
+   
+   
+ * REPORTED COMPONENT NAME
+   ITX
+   
+   
+ * REPORTED COMPONENT ID
+   5724Q2300
+   
+   
+ * REPORTED RELEASE
+   900
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-07-18
+   
+   
+ * CLOSED DATE
+   2017-07-31
+   
+   
+ * LAST MODIFIED DATE
+   2018-02-10
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ITX
+   
+   
+ * FIXED COMPONENT ID
+   5724Q2300
+   
+   
+
+APPLICABLE COMPONENT LEVELS

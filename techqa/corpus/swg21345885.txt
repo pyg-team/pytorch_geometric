@@ -1,0 +1,34 @@
+Title: IBM Error on a failed Upload and Import File macro. - United States
+
+Text:
+Import Data, Upload and Import File, Oracle, Bulk Load TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Error on a failed &quot;Upload and Import File&quot; macro. 
+
+SYMPTOM
+Unable to Bulk Load the data.~~~~BulkLoad Execution returned 2.~~Output file (c:\PROPContribLoadFiles\f4CntCOP{A6FE3E7B-AAAF-4986-B4FD-0214B17CEB22}.out):~~~~SQL*Loader: Release 9.2.0.6.0 - Production on Mon Jul 24 15:00:11 2006~~~~Copyright (c) 1982, 2002, Oracle Corporation. All rights reserved.~~~~Control File: C:\PROPCO~1\f4CntCOP.ctl~~Data File: C:\PROPCO~1\f4CntCOP.txt~~ Bad File: C:\PROPCO~1\f4CntCOP.bad~~ Discard File: none specified~~ ~~ (Allow all discards)~~~~Number to load: ALL~~Number to skip: 0~~Errors allowed: 50~~Bind array: 64 rows, maximum of 256000 bytes~~Continuation: none specified~~Path used: Conventional~~~~Table PROP_RF_FXN.IM_GFE_INPUT, loaded from every logical record.~~Insert option in effect for this table: APPEND~~TRAILING NULLCOLS option in effect~~~~ Column Name Position Len Term Encl Datatype~~------------------------------ ---------- ----- ---- ---- ---------------------~~DIMENSION_ACCOUNTS FIRST 100 WHT CHARACTER ~~DIMENSION_ELIST NEXT 100 WHT CHARACTER ~~DIMENSION_TIME_RF NEXT 100 WHT CHARACTER ~~DIMENSION_VERSIONS NEXT 100 WHT CHARACTER ~~IMPORT_VALUE NEXT 255 WHT CHARACTER ~~~~Record 56196: Discarded - all columns null.~~~~Table PROP_RF_FXN.IM_GFE_INPUT:~~ 56195 Rows successfully loaded.~~ 0 Rows not loaded due to data errors.~~ 0 Rows not loaded because all WHEN clauses were failed.~~ 1 Row not loaded because all fields were null.~~~~~~Space allocated for bind array: 42624 bytes(64 rows)~~Read buffer bytes: 1048576~~~~Total logical records skipped: 0~~Total logical records read: 56196~~Total logical records rejected: 0~~Total logical records discarded: 1~~~~Run began on Mon Jul 24 15:00:11 2006~~Run ended on Mon Jul 24 15:00:23 2006~~~~Elapsed time was: 00:00:11.68~~CPU time was: 00:00:00.83
+
+Note: Running the Import Data from CAC also generate the same error.
+
+
+CAUSE
+Records with no values in the import file are stopping the data import. The Oracle Import Table does not allow NULL columns.
+
+ENVIRONMENT
+Oracle DB
+
+RESOLVING THE PROBLEM
+Remove the invalid contents from the import text file.
+
+Steps:1. Open the source file and find cells with no values. 2. Add a value or remove the record.
+
+3. Save the file.
+
+4. Execute the "Upload and Import File" macro again.
+
+ 
+
+Cross reference information Segment Product Component Platform Version Edition Business Analytics Cognos 8 Planning Contributor 8.1 
+HISTORICAL NUMBER
+ 1022902

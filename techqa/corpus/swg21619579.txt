@@ -1,0 +1,44 @@
+Title: IBM Firefox ESR and Internet Explorer 9 support with Tivoli Storage Productivity Center 5.1.0 - United States
+
+Text:
+tcr; ifix TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Tivoli Storage Productivity Center 5.1.0 does not support using any Mozilla Firefox ESR or Microsoft Internet Explorer 9 browsers unless Tivoli Common Reporting 2.1.1.0 interim fix 6 has been applied. 
+
+SYMPTOM
+Firefox ESR 
+
+When Cognos Report Studio is opened, the menu bar is frozen and Report Studio cannot be used. 
+
+Internet Explorer 9 
+
+No errors were encountered, but the underlying components did not have official support for it.
+
+
+RESOLVING THE PROBLEM
+You have three separate options to resolve the browser support issues with Tivoli Storage Productivity Center 5.1.0. Choose the one that works best for you. 
+
+ 
+
+ 1. Apply Tivoli Common Reporting 2.1.1.0 interim fix 6 to your Tivoli Storage Productivity Center 5.1.0 environment. See steps listed below. 
+ 2. Use another certified browser, such as Internet Explorer 8 or Firefox 3.6. Older versions of the Firefox browser are available on the Mozilla web site [http://support.mozilla.org/en-US/kb/install-older-version-of-firefox]. 
+ 3. Upgrade to Tivoli Storage Productivity Center 5.1.1, when available.
+    Latest TPC Downloads [https://www-304.ibm.com/support/docview.wss?uid=swg21320822]
+
+
+Instructions to apply Tivoli Common Reporting 2.1.1.0 interim fix 6.
+Interim Fix 6 for Tivoli Common Reporting 2.1.1.0 contains the upgrade of Cognos BI from 8.4.1 FP3 to 8.4.1 FP4 and provides support for the Firefox ESR 10 and Internet Explorer 9 browsers. 
+
+
+ 1. Download 2.1.1.0-TIV-TCR-{arch}-IF6.zip from Fix Central [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~Tivoli&product=ibm/Tivoli/IBM+Tivoli+Common+Reporting&release=2.1.1.0&platform=All&function=all]. 
+ 2. Extract 2.1.1.0-TIV-TCR-{arch}-IF6.zip to a temporary directory. 
+ 3. cd to <temporary directory>/2.1.1.0-TIV-TCR-{arch}-IF6 
+ 4. Stop the Tivoli Common Reporting server and confirm it is down . 
+ 5. Launch the install script for Tivoli Common Reporting 2.1.1 interim fix 6 
+    install.{bat|sh} -i <install_dir>/tipv2Components/TCRComponent -username tipadmin -password {password} 
+
+
+Do not upgrade to Tivoli Integrated Portal (TIP) 2.2.0 fix pack 7, even if the Tivoli Common Reporting 2.1.1.0 interim fix 6 readme suggests doing that. RELATED INFORMATION
+ 5.1.x Platform Support [http://www.ibm.com/support/docview.wss?uid=swg27024859]
+Latest Downloads for TPC [http://www.ibm.com/support/docview.wss?uid=swg21320822]

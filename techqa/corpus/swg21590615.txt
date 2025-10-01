@@ -1,0 +1,23 @@
+Title: IBM "Insert unknown counter company found in xdb" inside FAP log, caused by counter companies that are not active in the company structure - United States
+
+Text:
+log; Financial application publisher insert unknown countercompany found in xdbtable TECHNOTE (FAQ)
+
+QUESTION
+ Customer is using the Controller FAP function to publish data to a TM1 data mart.
+
+As part of this process, the customer runs an "initial publish". This publish appears to work OK. The data mart status is 'Running'.
+
+However, the superuser then looks at the FAP log. There are one or more entries similar to: 
+
+14.03.2012 11:41;20;<company_name> ;Initial publish ;10;Insert unknown counter company found in xdb table 
+
+What does this entry mean? 
+
+CAUSE
+The message "Insert unknown counter company found in xdb" is informing the user that the FAP process will add a counter company (which currently exists in the xdb tables that you are trying to publish) that is currently not active in the company structure.
+
+ANSWER
+This message is purely for information only - it is not an 'error' as such. 
+
+ * In other words, the message is simply telling the user that the system is adding these counter companies (which are not actually active in the company structure).

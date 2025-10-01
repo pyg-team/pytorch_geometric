@@ -1,0 +1,30 @@
+Title: IBM How  do I uninstall  Informix 4GL on Unix? - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How do I uninstall Informix 4GL on Unix? 
+
+ANSWER
+Unfortunately, there is no uninstall script for 4GL. The file $INFORMIXDIR/etc/fglfiles lists all the files installed with the product. You could remove the files listed here but there are some files that are shared with the database server. Once you remove these files, you might have to reinstall the database server. 
+
+If you only have 4GL and IDS installed in the same $INFORMIXDIR, it would be simpler to rename the current $INFORMIXDIR, then re-create it and re-install IDS. 
+
+ 
+
+you could follow these steps: 
+
+ 1. Shutdown all database instances 
+ 2. If you use ISM stop it as well 
+ 3. Rename existing $INFORMIXDIR, make sure no dbspaces or chunks reside here. 
+ 4. Create a new $INFORMIXDIR 
+ 5. Install IDS into the new $INFORMIXDIR 
+ 6. Copy sqlhosts, onconfig*, ixbar.*, oncfg.*, any modified scripts from the old $INFORMIXDIR to the new $INFORMIXDIR. 
+ 7.  Start up all database instances one by one 
+ 8.  If things do not turn out the way you would want you can always point to the original $INFORMIXDIR and you are back where you were. 
+
+
+By following the above steps correctly shouldn't effect the any of your 
+
+database instances.

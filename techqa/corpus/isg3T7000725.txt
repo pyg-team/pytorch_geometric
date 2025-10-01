@@ -1,0 +1,109 @@
+Title: IBM Changing SSP (Shared Storage Pool) Cluster Network To Use Specified IP Address On VIO Server Nodes. - United States
+
+Text:
+ WHITE PAPER
+
+ABSTRACT
+ VIO I/O Server can have multiple IP address. 
+For example: 
+1. Management IP - management LAN
+2. Backup IP - backup / restore network
+3. SSP IP - shared storage pool cluster network
+
+
+CONTENT
+Changing the Uni-Cast IP used by SSP (Shared Storage Pool). 
+
+
+
+
+ 
+
+NOTE 1: This was tested using SSP cluster nodes at the same levels (2.2.4.22). Please ensure all the SSP cluster nodes are at same level before making any changes. Also allow few minutes between each node changes to make sure the client lpars and the SSP nodes are healthy. 
+
+NOTE 2: One of the pre-requisite is to ensure that there is routing between the two networks .i.e. All nodes should be able to communicate with all other nodes during these steps regardless on which interface the cluster communication is configured over. 
+
+
+1) Ensure all the cluster nodes are healthy ( "State" showing OK) using command below. 
+
+ $ cluster -status -clustername [cluster-name] -verbose 
+
+ 
+
+2) Capture "lscluster -m" output from oem_setup_env. 
+
+ 
+
+3) On all VIO Servers create /etc/hosts to include the IP Address, FQN (Fully Qualified Name), for all SSP nodes. 
+
+ Example. 
+
+ 1.1.1.1 hostname1.ibm.com hostname1 
+
+ 1.1.1.2 hostname2.ibm.com hostname2 
+
+
+4) Add below /etc/netsvc.conf entry to all VIO Server nodes. 
+Set the node to use IPV 4 protocol. 
+
+ hosts = local4, bind4 
+
+ 
+
+5) Stop the cluster services for each node for which the new IP is being assigned. This must be run from SSP node that is UP.
+$ clstartstop -stop -n [clustername] -m [node_name] 
+
+ 
+
+6) The following steps must also be run from an SSP node that is UP. 
+
+ Assign the new IP address to node (sample [node_name_1] to [node_name_10]). 
+
+ # chcluster -m [node_name_1]{+cle_ip=[SSP_IP_node1]}
+...
+...
+# chcluster -m [node_name_10]{+cle_ip=[SSP_IP_node10]}
+
+Example: Adding new IP 10.10.10.10
+
+# chcluster -m node_name{+cle_ip=10.10.10.10} 
+
+
+7) Check the status of all the nodes.
+
+# lscluster -m (make sure all nodes are UP and cluster is healthy)
+
+# /usr/lib/cluster/clras dumprepos -v 
+(Search for ip_gw to confirm the new IP address under each node)
+
+8) Removing the IP address from the cluster that is no longer required. 
+Note: 
+The argument "-cle_ip" is to remove the IP, Step above used "+cle_ip" to add an IP.
+
+# chcluster -m [node_name_1]{-cle_ip=[MGT_IP_node1_to_remove]}
+...
+...
+# chcluster -m [node_name_10]{-cle_ip=[MGT_IP_node10_to_remove]} 
+
+
+Example: Removing old IP 1.1.1.1 
+
+ # chcluster -m node_name{-cle_ip=1.1.1.1} 
+
+ 
+
+ 9) Confirm that the /etc/hosts file on all SSP cluster nodes have the new IP address. 
+
+ 
+
+ 10) Restart the cluster services for which the new IP address has been added. 
+
+ 
+
+ 11) For problems, immediately capture the snaps from all nodes and " # lscluster -m " 
+
+ 
+
+ Contact Owner: Rajendra D Patel ( Raj ) - rajpat@us.ibm.com 
+
+ Last Modifies: October 05, 2017

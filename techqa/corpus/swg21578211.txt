@@ -1,0 +1,28 @@
+Title: IBM Installing and using versions of ODM/JRules modules (Rule Designer, Rule Execution Server, Decision Center and Decision Validation Services) that are different from each other - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ When upgrading the existing ODM/JRules installation to the latest version, can different versions of ODM/JRules modules be used together? 
+
+For example, would it be possible to use Rule Designer 8.5.1.1 with Decision Center 8.5.1.2? Can we use Rule Designer 8.7 together with Decision Center 8.5? 
+
+ANSWER
+Mixing different versions: Rule Designer 8.5.1.1 with Decision Center 8.5.1.2, Rule Designer 8.7 with Decision Center 8.5, would NOT work properly because the ODM/JRules modules (Rule Designer, Rule Execution Server, Decision Center and Decision Validation Services) are not compatible. The version here is identified with four digits V.R.M.F (version, release, modification, fix). 
+We recommend that you upgrade all the modules to the same version level and the same fix pack level to ensure consistency, compatibility and stability. 
+
+For example, if upgrading to Decision Center 8.5.1.2, make sure that you also upgrade to Rule Designer 8.5.1.2, Rule Execution Server 8.5.1.2, and Decision Validation Services 8.5.1.2 (assuming all of those modules are installed).
+
+Note: Support will assist with problems on such inconsistent configurations by testing with all modules at the same version/fix pack. If the issue happens to be caused by the mix of versions/fix packs, the solution will be to put all modules at the same version/fix pack.
+
+RELATED INFORMATION
+#Migrating from JRules to ODM [http://www-01.ibm.com/support/docview.wss?uid=swg21589725]
+Find the version of JRules/WODM components [http://www-01.ibm.com/support/docview.wss?uid=swg21400738]
+V.R.M.F Maintenance Stream Delivery Vehicle terminology [http://www-01.ibm.com/support/docview.wss?uid=swg27008656]
+
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Operational Decision Manager General Platform Independent 8.7, 8.6, 8.5, 8.0, 7.5

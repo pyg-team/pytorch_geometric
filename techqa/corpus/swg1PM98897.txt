@@ -1,0 +1,148 @@
+Title: IBM PM98897: [WI 283200] - Fix handling of deprecated presentations in migration to new widgets - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Rational Team Concert 4.0.5 [http://www-01.ibm.com/support/docview.wss?uid=swg24036429]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Problem description
+   When opening work items or creating a new work items a blank
+   page with a java error is displayed in the Web UI.
+   
+   Error:
+   'this.$.currentStyle' is null or not an object
+   ckeditor.js
+   Code: 0
+   
+   In the RTC eclipse client, the work items can be opened and new
+   work items can be created.
+   
+   How to reproduce:
+   There are deprecated presentations in the work item editor
+   presentation. There are attributes of type HTML but have a
+   string presentation or there are attributes of type string but
+   have an HTML presentation. Such presentations were added in
+   earlier versions. Since 4.0 such presentations  are deprecated.
+   After upgrading to 4.0.4 create a Work Item with such
+   presentations in the Web UI or view an existing Work Item.
+   
+   Workaround:
+   Edit the presentations of the Work Item. Make sure that all
+   attributes of type string have a string presentation. Make sure
+   that all attributes of type html have an html presentation
+   
+   For more information see Work Item
+   https://jazz.net/jazz/resource/itemName/com.ibm.team.workitem.Wo [https://jazz.net/jazz/resource/itemName/com.ibm.team.workitem.Wo]
+   rkItem/283200
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  See
+   https://jazz.net/jazz/resource/itemName/com.ibm.team.workitem.Wo [https://jazz.net/jazz/resource/itemName/com.ibm.team.workitem.Wo]
+   rkItem/283200
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  https://jazz.net/jazz/resource/itemName/com.ibm.team.workitem.Wo [https://jazz.net/jazz/resource/itemName/com.ibm.team.workitem.Wo]
+   rkItem/283200
+   was resolved/fixed in 4.0.5
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM98897
+   
+   
+ * REPORTED COMPONENT NAME
+   JAZZ TEAM SRVR
+   
+   
+ * REPORTED COMPONENT ID
+   5724V8210
+   
+   
+ * REPORTED RELEASE
+   400
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-10-11
+   
+   
+ * CLOSED DATE
+   2013-12-10
+   
+   
+ * LAST MODIFIED DATE
+   2013-12-10
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   JAZZ TEAM SRVR
+   
+   
+ * FIXED COMPONENT ID
+   5724V8210
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R405 PSY
+   UP

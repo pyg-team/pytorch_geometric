@@ -1,0 +1,53 @@
+Title: IBM Error: Object not found, and how to handle them within Rational Functional Tester - United States
+
+Text:
+objectnotfound; exception; object map; find; highlight; update; recognition; property; RFT; Rational Functional Tester; 1266308 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This technote provides information on "Object not found” errors that can occur in IBM® Rational® Functional Tester (RFT) and how to handle these errors. 
+
+RESOLVING THE PROBLEM
+Causes for “object not found” errors and how to handle these errors within the Rational Functional Tester: 
+
+ * During playback of a script, Rational Functional Tester uses a test object’s recognition property values and their associated weight values to derive a score for the object. The score is used to determine if Rational Functional Tester has found the object specified in the map. The higher the score that is generated, the less exact the match. Here’s an example: If a property is an exact match, it is given the score of zero (0). If one property is different, that generates a score of 100. If the weight of that property is 100, the total score for that property is 100 x 100 (weight) = 10,000. If that property were weighted 50, the resulting score would be 100 x 50 (weight) = 5000. If two properties, each weighted 100, don’t match, that is a score of 20,000 (10,000 + 10,000). So, the higher the score, the less exact the match is. In summary, the recognition score settings determine what at what levels of ambiguity you would like to establish a match/no match policy, and generate warnings in the log.
+   
+   The recognition score for an object is cumulative for its entire hierarchy. So if Rational Functional Tester gets a poor recognition for the parent (or grandparent...), it will affect the recognition for all the children and grandchildren. Therefore, it is possible for an object to generate a failing score due to differences in the parent hierarchy, not in the object itself. 
+ * If Rational Functional Tester does not find an object, it raises an onObjectNotFound event. If your script implements the onObjectNotFound() method, it will be called whenever an object is not found during script execution. From the event handler, you can silently abort the method call, find the test object yourself and have the method called on the specified object, etc. If you do not handle the onObjectNotFound() event, an ObjectNotFoundException will be thrown. You can catch this exception and handle the situation there. There is a related onAmbiguousRecognition event and an AmbiguousRecognitionException as well. 
+ * To locate objects in the application-under-test:  1. Start the application. Verify that the page that contains the object is visible. 
+    2. To highlight the object:  1. In the test object map, select the object to locate and either click the Highlight: Test Object button [/support/docview.wss?uid=swg21266308&amp;aid=1]in the test object map toolbar or click Test Object > Highlight in the test object map menu. 
+        2. In the Script Explorer, right-click the object to locate and click Highlight.
+       
+       
+   
+   Functional Tester highlights in the application the object you selected. If Functional Tester finds more than one instance of the test object, you can display neither or the top two candidates. If Functional Tester cannot find the object, it displays an error message. Some possible reasons for the error: 
+   
+    *  The application is not running or enabled. The environment is not enabled. The test object is not visible. The recognition properties for the test object no longer reflect the test object in the application 
+   
+   
+ * To update recognition properties for a test object in the application_under_test: 
+ * Select a test object in the test object map.  1. If the application is not running, start it. 
+    2. Click Test Object > Update Recognition Properties.
+       Functional Tester highlights the control in the application and displays the Choose Test Object to Update page. 
+    3. In the Choose Test Object to Update Page, select the test object to update and click Next.Functional Tester displays the Update Test Object Recognition Properties page that contains the updated test object properties, the original recognition properties, and all the active properties for the object. 
+    4. In the Update Recognition Properties page, change the Updated Test Object Properties.
+       
+       For example, to include any of the All Active Properties in the updated test object properties, double-click the source property. You can also copy from the Original Recognition Properties or the All Active Properties grids to the updated test object properties. In the Updated Test Object Properties grid, you can convert recognition property values to regular expressions or to numeric ranges. 
+    5. Click Finish.
+   
+   
+ * To find all test objects that do not have references in the scripts associated with the shared test object map: 
+
+
+1. In the Test Object Map menu, click Find > Find Not Used.  2. In the Test Object Map toolbar, click the Find: Not Used button. 
+
+ * Test objects highlighted in red are not used in the scripts associated with the test object map.
+
+
+To find the test objects that do not have references in the scripts associated with the shared test object map and selectively delete them:  1. Open the Delete All Not Used Test Objects dialog box. 
+ 2. In the test object map menu, click Delete All Not Used. 
+ 3. In the test object map toolbar, click the Delete All Not Used button. Clear the check boxes of test objects that you do not want to delete.
+    Note: When parents are deleted, all children are deleted also. To keep one or more children, clear the parent check box and clear the check boxes of the children you do not want to delete. 
+ 4. Click OK.
+
+
+Functional Tester removes the test objects from the test object map.

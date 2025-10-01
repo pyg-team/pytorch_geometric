@@ -1,0 +1,214 @@
+Title: IBM IZ72130: ""BMXAA2278E - YOU DO NOT HAVE AUTHORIZATION FOR LOCATIONS (SP) APPLICATIONS - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Upon 1st SAVE throws out error prompt ""BMXAA2278E - You do not
+   have
+   authorization for Locations (SP) applications.""
+   2nd SAVE attempt successful with no error prompts.
+   This seems to be a defect with Maximo Security Configuration
+   Settings
+   (Product Defect).
+   Following is the way to replicate it:
+   1. User Group should have access to Storeroom Application
+   2. User Group should NOT have access to Locations (SP)
+   application
+   (Add, Modify, Delete and Save)
+   Now when the user belonging to the User Group, tries to create a
+   Storeroom in Storeroom Application, User gets the above
+   mentioned error
+   message. However, Maximo saves the records behind the scenes.
+   The error
+   message should not be prompted to the user.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All                                          *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Upon 1st SAVE throws out error prompt   *
+   *                      ""BMXAA2278E - You do not               *
+   *                                                              *
+   *                      have                                    *
+   *                                                              *
+   *                      authorization for Locations (SP)        *
+   *                      applications.""                         *
+   *                                                              *
+   *                      2nd SAVE attempt successful with no     *
+   *                      error prompts.                          *
+   *                                                              *
+   *                      This seems to be a defect with Maximo   *
+   *                      Security Configuration                  *
+   *                                                              *
+   *                      Settings                                *
+   *                                                              *
+   *                      (Product Defect).                       *
+   *                                                              *
+   *                      Following is the way to replicate it:   *
+   *                                                              *
+   *                      1. User Group should have access to     *
+   *                      Storeroom Application                   *
+   *                                                              *
+   *                      2. User Group should NOT have access to *
+   *                      Locations (SP)                          *
+   *                                                              *
+   *                      application                             *
+   *                                                              *
+   *                      (Add, Modify, Delete and Save)          *
+   *                                                              *
+   *                      Now when the user belonging to the User *
+   *                      Group, tries to create a                *
+   *                                                              *
+   *                      Storeroom in Storeroom Application,     *
+   *                      User gets the above                     *
+   *                                                              *
+   *                      mentioned error                         *
+   *                                                              *
+   *                      message. However, Maximo saves the      *
+   *                      records behind the scenes.              *
+   *                                                              *
+   *                      The error                               *
+   *                                                              *
+   *                      message should not be prompted to the   *
+   *                      user.                                   *
+   *                                                              *
+   *                      LOCAL FIX:                              *
+   *                                                              *
+   *                      N/A                                     *
+   *                                                              *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   *                                                              *
+   *                                                              *
+   *                                                              *
+   ****************************************************************
+   ""BMXAA2278E - YOU DO NOT HAVE AUTHORIZATION FOR LOCATIONS (SP)
+   APPLICATIONS
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Original issue described has been fixed in 10-10849. But there
+   was a new problem with the error saying Location is read-only,
+   and can't be saved.  This has been fixed.
+   
+   
+   
+   
+   
+   The fix for this APAR is contained in the following maintenance
+   package:
+   
+     | release\fix pack | REL 7.1.1.7 - BS
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ72130
+   
+   
+ * REPORTED COMPONENT NAME
+   MAXIMO SYS CONF
+   
+   
+ * REPORTED COMPONENT ID
+   5724R46S1
+   
+   
+ * REPORTED RELEASE
+   711
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-03-03
+   
+   
+ * CLOSED DATE
+   2010-03-15
+   
+   
+ * LAST MODIFIED DATE
+   2010-03-15
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  MAXIMO
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   MAXIMO SYS CONF
+   
+   
+ * FIXED COMPONENT ID
+   5724R46S1
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R711 PSY
+   UP

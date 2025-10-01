@@ -1,0 +1,47 @@
+Title: IBM Out of memory (OOM) error when database connectivity is broken between Device Manager Server (DMS) and Tivoli Provisioning Manager (TPM) database. - United States
+
+Text:
+TPM; TIO; tpm511relnotes; tpm5112relnotes; tpm71relnotes; tpm711relnotes; tpm72relnotes; tpm721relnotes TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This technote provides troubleshooting methods for broken database connectivity between Device Manager Server and the provisioning database. Ignoring this error for more than 5 days can lead to potentially out of memory error. 
+
+SYMPTOM
+Different errors are recorded, depending on environment. These errors are recorded in WAS_HOME\profiles\ctgAppSrv01\logs\MXServer\TraceDMS.log 
+
+Example 1: The wrong user name or password is specified in the DMS transaction.properties file.
+--------------------------------------------------------------------------------------------------------------------------------------
+DYM2794E: Failed to create the database connection pool. See nested exception for details. : DYA1006E An unknown error occurred. : com.ibm.db2.jcc.b.ao: [jcc][t4][2013][11249][3.53.70] Connection authorization failure occurred. Reason: User ID or Password invalid. ERRORCODE=-4214, SQLSTATE=28000
+
+Example 2: The wrong database server host name is specified in the DMS transaction.properties file.
+-------------------------------------------------------------------------------------------------------------------------------------------
+DYM2794E: Failed to create the database connection pool. See nested exception for details. : DYA1006E An unknown error occurred. : com.ibm.db2.jcc.b.bo: [jcc][t4][10380][11951][3.53.70] Required property "localhosts" is unknown host. ERRORCODE=-4222, SQLSTATE=08001
+
+Example 3: The wrong database server port is specified in the DMS transaction.properties file.
+-------------------------------------------------------------------------------------------------------------------------------------------
+DYM2794E: Failed to create the database connection pool. See nested exception for details. : DYA1006E An unknown error occurred. : com.ibm.db2.jcc.b.tn: [jcc][t4][2043][11550][3.53.70] Exception java.net.ConnectException: Error opening socket to server localhost/127.0.0.1 on port 50,001 with message: Connection refused: connect. ERRORCODE=-4499, SQLSTATE=08001
+
+
+
+CAUSE
+When the database connectivity is broken between Device Manager Server and the provisioning database server, DMS tries to create multiple threads to handle database query related operations. If this error is not fixed for a long time, new thread creation in Device Manager Server will ultimately lead to an out of memory error.
+
+
+
+RESOLVING THE PROBLEM
+Check the content of the transaction.properties file. This file is available at: WAS_HOME\profiles\ctgAppSrv01\installedApps\ctgCell01\DMS_WebApp.ear\dmserver.war\WEB-INF\classes. This file has following properties: 
+
+ 
+
+ * 
+ * 
+ * 
+ * 
+ * JDBC.dbPassword=password
+ * 
+ * 
+ * 
+ * 
+
+
+After making changes to this file, restart the provisioning server for the new settings to go into effect.

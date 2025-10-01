@@ -1,0 +1,29 @@
+Title: IBM Updating VMware products when Outbound SSL Inspection is enabled on Security Network Protection sensors - United States
+
+Text:
+XGS; SSL; VMware TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Users might find that WMware product updates fail when the update traffic passes through a Security Network Protection (XGS) sensor that has Outbound SSL inspection configured. 
+
+CAUSE
+Only encrypted traffic from web browsers with the outbound CA installed can be inspected by the XGS. Other client applications in which we cannot replace the CA will experience disconnection issues unless an ignore rule is created for the traffic.
+
+RESOLVING THE PROBLEM
+This issue can be resolved by adding a rule to the sensor to ignore traffic to the VMware sites.
+
+
+ 1. Edit the Outbound SSL Inspection policy.
+    
+ 2. Add a rule to the policy to ignore traffic to *.wmware.com. Detailed instructions for configuring rules in this policy can be found in the Outbound SSL Inspection rules documentation [http://www.ibm.com/support/knowledgecenter/SSHLHV_5.3.1/com.ibm.alps.doc/tasks/alps_configuring_outbound_ssl_inspection.htm?lang=en].
+    
+ 3. Save and deploy your changes.
+
+
+
+
+[/support/docview.wss?uid=swg21967594&aid=1] [https://ibm.biz/BdHdZx] [/support/docview.wss?uid=swg21967594&aid=2] [http://ibm.biz/InfraSecForumTechnote] [/support/docview.wss?uid=swg21967594&aid=3] [http://ibm.biz/SecSuptUTube] [/support/docview.wss?uid=swg21967594&aid=4] [http://ibm.biz/InfraSecFixes] [/support/docview.wss?uid=swg21967594&aid=5] [http://ibm.biz/FlexLicLogin] [/support/docview.wss?uid=swg21967594&aid=6] [http://ibm.biz/MyNotification] [/support/docview.wss?uid=swg21967594&aid=7] [http://ibm.biz/ContactSecSupport] 
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Security IBM Security Network Protection SSL Inspection Firmware 5.3.1, 5.3.2, 5.3.3

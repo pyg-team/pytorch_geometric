@@ -1,0 +1,33 @@
+Title: IBM PVU Value for processors - United States
+
+Text:
+PVU; subcapacity; cluster; subcap@us.ibm.com TECHNOTE (FAQ)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ English 
+
+QUESTION
+ Are PVU values missing from Hardware/Processors page? 
+
+ANSWER
+It is normal and expected that there is no PVU information on 
+Processors panel for cluster because hypothetically clusters can 
+consists from a not homogeneous ESX server (with different processors). 
+So it is possible that e.g. there are two server within one cluster but 
+one with processors charged 70PVU per core and the second charged 50PVU 
+per core. 
+So this is expected behavior to not show the PVU for clusters on 
+Processors panel and that the processor type is 'Cluster x86 All'. 
+
+This was changed in ILMT 7.2.2. Starting from 7.2.2 all PVU 
+calculations are being done on the physical server layer (not on the 
+cluster layer any more). So in 7.2.2 customer will not see the clusters 
+in Processors panel but the physical ESX server on which particular 
+virtual machines currently are (with the correct processor and PVU 
+information). 
+The changes in 7.2.2 version was done due to changes in PVU counting 
+rules introduced by IBM SWG pricing team. The new PVU 
+counting rules has not been announced yet by IBM SWG pricing team so in 
+case of any question on how the new rules for counting the PVU 
+subcapacity will look like please ask the IBM SWG pricing team directly 
+(subcap@us.ibm.com).

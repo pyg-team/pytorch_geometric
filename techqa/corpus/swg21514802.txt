@@ -1,0 +1,32 @@
+Title: IBM ncp_oql case-insensitive - United States
+
+Text:
+ncp_oql case-insensitive TECHNOTE (FAQ)
+
+QUESTION
+ How to make ncp_oql to be case insensitive while doing queries against a Service (for e.g. Disco, Model etc) ? 
+
+ANSWER
+By default, ncp_oql is case-sensitive, and if you use (?i) in front of the pattern it will become case-insensitive. See example below for more details:
+> select EntityName from scratchTopology.entityByName where EntityName like 'MOUSE';
+> go
+.
+( 0 record(s) : Transaction complete )
+
+> select EntityName from scratchTopology.entityByName where EntityName like 'mouse';
+> go
+.
+{
+EntityName='mouse.nv.private.lab';
+}
+( 1 record(s) : Transaction complete )
+
+In-order to retrieve all records matching the EntityName 'mouse' or 'MOUSE' - add above pattern to the query i.e.
+
+> select EntityName from scratchTopology.entityByName where EntityName like '(?i)^MOUSE';
+> go
+.
+{
+EntityName='mouse.nv.private.lab';
+}
+( 1 record(s) : Transaction complete )

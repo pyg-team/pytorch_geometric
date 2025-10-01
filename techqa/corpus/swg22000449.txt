@@ -1,0 +1,31 @@
+Title: IBM Configuring eDiscovery Manager for ICCMail2 class after the ICC email data model migration - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How do I configure eDiscovery Manager (eDM) to add ICCMail2 class to a Content Search Services Compound collection after the IBM Content Collector (ICC) Email Data Migration? 
+
+
+CAUSE
+ 
+
+ * The ICC email data migration is required when P8 was upgraded from 4.5.x to 5.2.x and the search engine was upgraded from the IBM Legacy Content Search Engine (LCSE) to IBM Content Search Services (CSS). 
+ * After the migration, ICCMail2 class needs to be added to an eDM collection of type Content Search Services Compound. But when I try to add it, I do not see the ICCMail2 class in the drop down list. 
+ * There is also no eDM data prior to this, so there had not been any eDM case migration being performed along with the ICC email data migration. 
+   Important: If there is prior data in eDM, a case migration needs to be performed. Please contact the consultant who performed the ICC email data migration or IBM support for more information.
+
+ANSWER
+To be able to select ICCMail2, enable migration toleration mode in eDM: 
+
+ 1. Stop the eDM server. 
+ 2. Edit the file in EDM_HOME\config\ral.properties and add the following property:
+    verityCSSMigrationToleration=true 
+ 3. Save the ral.properties file. 
+ 4. Restart the eDiscovery Manager server.
+    
+
+
+Now, you should see ICCMail2 class in the drop down list when you try to add it to a Content Search Services Compound collection in eDM. 
+
+After you have successfully created the eDM collection, you can remove the property from ral.properties file.

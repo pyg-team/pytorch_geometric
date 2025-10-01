@@ -1,0 +1,47 @@
+Title: IBM Security Bulletin: Venom vulnerability affects IBM PureApplication System (CVE-2015-3456) - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ IBM PureApplication System is vulnerable to Venom: "Virtualized Environment Neglected Operation Manipulation". 
+
+VULNERABILITY DETAILS
+CVEID: [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-2808]CVE-2015-3456 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-3456]
+DESCRIPTION: QEMU is vulnerable to a buffer overflow, caused by improper bounds checking by the Floppy Disk Controller (FDC) emulation. By sending specially crafted FDC commands, a guest operating system attacker with access to the FDC I/O ports could overflow a buffer and execute arbitrary code on the system with root privileges. Note: This vulnerability is also being called VENOM. 
+
+CVSS Base Score: 7.7
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/103116 [https://exchange.xforce.ibmcloud.com/vulnerabilities/103116] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:A/AC:L/Au:S/C:C/I:C/A:C)
+
+AFFECTED PRODUCTS AND VERSIONS
+IBM PureApplication System V2.0
+IBM PureApplication System V2.1
+
+REMEDIATION/FIXES
+The IBM PureApplication System may be affected. Contact IBM Support for information regarding mitigation. 
+
+IBM recommends that you review your entire environment to identify vulnerable releases of the open-source hypervisor QEMU and virtualization infrastructures that utilize QEMU and take appropriate mitigation and remediation actions.
+
+WORKAROUNDS AND MITIGATIONS
+None
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v2 Guide [http://www.first.org/cvss/v2/guide] 
+On-line Calculator v2 [http://nvd.nist.gov/CVSS-v2-Calculator] 
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/PSIRT] ACKNOWLEDGEMENT
+None 
+
+CHANGE HISTORY
+ 27 May 2015: Original Version Published 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.

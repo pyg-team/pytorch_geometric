@@ -1,0 +1,59 @@
+Title: IBM Cognos Metrics Reports graph showing "No data available" but tables display correctly - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+Cognos Metrics Reports graph showing "No data available" but tables display correctly
+
+CAUSE
+The Transformer cubes were not being updated, due to the DB2 drivers not loading.
+
+ENVIRONMENT
+IBM Connections Metrics with Cognos (10.1.1)
+
+DIAGNOSING THE PROBLEM
+Test the database connection from Cognos itself 
+
+- Log into the IBM Cognos Administration tool (http://<host:port>/cognos/servlet/dispatch/ext) as the cognos admin user 
+- In top-right click Launch - IBM Cognos Administration -> click on Configuration tab -> click on METRICS_CUBE_DS (will be taken to another page that has METRICS_CUBE_DS) -> click on the 'set properties' icon -> click on Connection tab and "Test the connection"
+
+Checking the logs, which reported an incorrect password or database configuration for the database. 
+
+The MetricsTrxCube.log (opt/IBM/Cognos/Transformer/logs) shows the following error:
+
+UDA-SQL-0569 Unable to load the driver manager library ( libdb2.so [http://libdb2.so/] ).
+UDA-SQL-0571 The operating system returned an error message ( libdb2.so [http://libdb2.so/]: cannot open shared object file: No such file or directory ).
+End processing 0 records from data source 'D_SOURCE~1'.
+Timing, READ DATA SOURCE,00:00:04
+End cube update.
+Timing, TOTAL TIME (CREATE CUBE),00:00:07
+(TR3703) The user ID or password is either missing or invalid. Please re-enter the credentials. 
+
+The Cognos server systemout.log: 
+
+The Connection Manager received a fatal connection error from the Resource Adapter for resource jdbc/oauthp. The exception is: com.ibm.db2.jcc.am.DisconnectNonTransientConnectionException: [jcc][t4][2030][11211][3.65.131] A communication error occurred during operations on the connection's underlying socket, socket input stream, or socket output stream. Error location: Reply.fill() - socketInputStream.read (-1). Message: Connection timed out. ERRORCODE=-4499, SQLSTATE=08001:java.net.SocketException: Connection timed out 
+
+Caused by: java.sql.SQLException: [jcc][t4][10335][10366][3.65.131] Invalid operation: Connection is closed. ERRORCODE=-4470, SQLSTATE=08003 DSRA0010E: SQL State = 08003, Error Code = -4,470 
+
+
+We therefore checked the passwords in cognos-setup.properties and ran cognos-installation-verify.bat as per the documentation provided below and send in the cognos-verify.log 
+https://www.ibm.com/support/knowledgecenter/SSYGQH_5.5.0/admin/install/t_install_cognos_validate.html [https://www.ibm.com/support/knowledgecenter/SSYGQH_5.5.0/admin/install/t_install_cognos_validate.html]
+
+
+
+
+RESOLVING THE PROBLEM
+Make sure the Cognos Transformer server can load DB2 libraries. 
+
+https://www.ibm.com/support/knowledgecenter/en/SSYGQH_5.5.0/admin/install/t_install_cognos_db_client_db2.html [https://www.ibm.com/support/knowledgecenter/en/SSYGQH_5.5.0/admin/install/t_install_cognos_db_client_db2.html]
+https://www.ibm.com/support/knowledgecenter/en/SSYGQH_5.5.0/admin/install/db2_instructions_for_linux.html [https://www.ibm.com/support/knowledgecenter/en/SSYGQH_5.5.0/admin/install/db2_instructions_for_linux.html] 
+
+For example:
+export DB2_HOME=/opt/ibm/db2/V10.5_01
+export DB2_INSTANCE=db2inst1 
+export LD_LIBRARY_PATH=$DB2_HOME/lib64:/opt/IBM/InformationServer/Server/DSEngine/lib:
+export PATH=$PATH:/opt/ibm/db2/V10.5_01/bin 
+
+
+After correcting the settings above, run the daily-refresh and the weekly-rebuild to resolve the problem.

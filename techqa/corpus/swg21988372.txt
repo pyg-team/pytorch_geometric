@@ -1,0 +1,26 @@
+Title: IBM Applying interim fixes to the Websphere Liberty Profile installed with Information Server - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Can I apply Interim fixes to the WebSpehere Liberty profile installed with Information Server and if so how? 
+
+CAUSE
+Need to apply security fixes
+
+ANSWER
+Yes you can install the updates that are offered for the Liberty profile. Please see the link for applying an interim fix to a Liberty Archive installation in the related information section below. 
+
+The original Liberty profile did not use the installation manger for its install so this is not required to apply the interim fix. The jar file you will need to download from fix central will be of the form wlp-nd-all-8.5.5.x.jar. 
+
+
+See the following url for downloading the 8.5.5.9 jar file, modify for the download you require.
+
+https://www-945.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm/WebSphere&product=ibm/WebSphere/WebSphere+Application+Server&release=All&platform=All&function=fixId&fixids=wlp-nd-all-8.5.5.9&includeSupersedes=0&source=fc [https://www-945.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm/WebSphere&product=ibm/WebSphere/WebSphere+Application+Server&release=All&platform=All&function=fixId&fixids=wlp-nd-all-8.5.5.9&includeSupersedes=0&source=fc]
+
+Essentially you will need to replace your wlp directory with this one by first shutting down the current WebSphere Liberty profile, copying the current wlp to a new name and then copying over the old wlp/usr to the new wlp directory. I have found that older versions of wlp have a wlp/etc/server.env file that will need to be copied to the new wlp, however the etc directory is missing. If the wlp/etc directory is missing do not copy to wlp/etc but to the wlp/usr/servers/iis directory.
+
+
+RELATED INFORMATION
+ Applying an Intermin fix [http://www.ibm.com/support/knowledgecenter/SSAW57_8.5.5/com.ibm.websphere.wlp.nd.doc/ae/twlp_inst_interimfix.html]

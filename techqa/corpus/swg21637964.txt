@@ -1,0 +1,79 @@
+Title: IBM Error: Not installed for aix5 ITNM - United States
+
+Text:
+Not installed for aix5 ITNM TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ After deploying a FixPack, when trying to start the domain, it throws a single error line in ncp_ctrl.<DOMAIN>.log (Error: Not installed for aix5 ITNM) and exits - how to fix it? 
+
+SYMPTOM
+If you look at $NCHOME/log/install/Configuration.log - it has the following excerpt: 
+
+<snip>
+FixPack Update (CONSOLE)
+==============
+Date: 2013/05/09 06:04:07
+
+Fixpack plan for IBM Tivoli Network Manager IP V3.9 Fixpack 3:
+- Install user interface updates into /opt/netcool/tipv2
+- Install core component updates into /opt/netcool
+
+27 customized files found (see /opt/netcool/log/install/manuallyUpdate.log)
+
+Deployment engine file upgrade completed/returned with a value of SUCCESS/SUCCESS.
+The following java stack exceptions were found in the DE trace log found in the /usr/ibm/common/acsi/logs directory:
+
+/usr/ibm/common/acsi/logs/root/de_trace.log:4861: Caused by: com.ibm.ac.si.ap.service.ServiceException: ACUASI0135E Stream copy failed, the identifier was: B
+ACKUP - /opt/netcool/precision/platform/aix5/lib/libNco.so.1.0, the exception was: com.ibm.ac.si.common.WriteFailedException
+/usr/ibm/common/acsi/logs/root/de_trace.log:4873: Caused by: com.ibm.ac.si.common.WriteFailedException
+/usr/ibm/common/acsi/logs/root/de_trace.log:4877: Caused by: java.io.IOException: No space left on device
+
+
+73 automatic updates performed (see /opt/netcool/log/install/manuallyUpdate.log)
+8 manual updates required (see /opt/netcool/log/install/manuallyUpdate.txt)
+
+The $NCHOME/etc/itnm.cfg file was updated.
+Fixpack installation completed.
+IBM Tivoli Network Manager IP V3.9 Fixpack 3 (3.9.0.97) completed installation successfully.
+</snip>
+
+
+CAUSE
+Deployment Engine(DE) has failed due to a lack of disk space in one of the partitions, in this case it's a 'root' user install and DE gets laid down under /usr & /var partitions and /usr was 100% full without any free space.
+
+# df -k
+Filesystem 1024-blocks Free %Used Iused %Iused Mounted on
+/dev/hd4 917504 797264 14% 6805 4% /
+/dev/hd2 4194304 4804 100% 72822 69% /usr
+/dev/hd9var 1048576 411024 61% 5622 6% /var
+/dev/hd3 1048576 655892 38% 1091 1% /tmp
+/dev/hd1 524288 236156 55% 4566 8% /home
+/proc - - - - - /proc
+/dev/hd10opt 2097152 1151360 46% 9381 4% /opt
+/dev/tsmlv 131072 129696 2% 8 1% /var/tsm
+/dev/lv01 2097152 1799564 15% 798 1% /var/spool/Tivoli
+/dev/lv02 2097152 1708224 19% 4857 1% /usr/local/Tivoli
+/dev/lv03 4194304 3928296 7% 2268 1% /tivoli
+/dev/lv04 3145728 3046940 4% 17 1% /oracle
+/dev/fslv00 12582912 2491596 81% 2269 1% /usr/OV
+/dev/fslv03 131072 104472 21% 4120 14% /var/metron
+/dev/fslv02 16777216 1944240 89% 162472 24% /opt/netcool
+/dev/bl_lv 786432 520368 34% 386 1% /usr/bladelogic
+/dev/hd11admin 131072 130692 1% 5 1% /admin
+
+
+But the 'Configuration.log' is saying it was successful (see above two lines in blue) when it's not and that's misleading and should be ignored.
+
+
+RESOLVING THE PROBLEM
+You need to re-run the Fixpack upgrade so that we overwrite existing files as if it's being done for the first time. To re-run the installation (in this case it's FixPack3 of ITNM v3.9) - you can modify the following file and re-do the install: 
+
+1) Edit $NCHOME/etc/itnm.cfg and remove following two lines:
+upgrade=3.9.0.97 
+fixpack=3 
+
+Note - If you are experiencing the problem using FixPack1 or 2, find the relevant lines and delete them as needed.
+
+2) Ensure you have enough disk space (at least 2gb free space) for '/usr' partition.
+
+3) Restart the installation of FixPack3

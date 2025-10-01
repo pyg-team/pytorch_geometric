@@ -1,0 +1,66 @@
+Title: IBM Error when testing Event Isolation and Correlation (EIC) feature - United States
+
+Text:
+Error when testing Event Isolation and Correlation; EIC; 'Test SQL'; 'EIC_requestHandler'; 'EIC_utils'; Opview_EIC_requestHandler TECHNOTE (TROUBLESHOOTING)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ English 
+
+PROBLEM(ABSTRACT)
+ Testing the 'SQL filter' from the 'Primary Event' on the Event Isolation and Correlation configuration page, results in a pop-up error. 
+
+SYMPTOM
+When clicking on 'Test SQL' on the EIC configuration page, an error pop-up window appears:
+
+Exception in policy: Opview_EIC_requestHandler at line: 42.Syntax, Duplicate or Resync Error ...
+
+
+CAUSE
+ 
+
+Un-escaped characters such as ' & " < > = are used as part of the filter
+
+
+
+DIAGNOSING THE PROBLEM
+ 
+
+Confirm if when using these characters, they go un-escapted in the query used by Impact, when looking in '$IMPACT_HOME/logs/netcool.log', like: 
+
+
+[/support/docview.wss?uid=swg21657345&aid=1] [/support/docview.wss?uid=swg21657345&aid=1]
+
+15 Aug 2013 14:35:05,357 ERROR [JDBCVirtualStatement] Error executing query 'SELECT Identifier, Serial, Node, NodeAlias, Manager, Agent, AlertGroup, AlertKey, Severity, Summary, StateChange, FirstOccurrence, LastOccurrence, InternalLast, Poll, Type, Tally, Class, Grade, Location, OwnerUID, OwnerGID, Acknowledged, Flash, EventId, ExpireTime, ProcessReq, SuppressEscl, Customer, Service, PhysicalSlot, PhysicalPort, PhysicalCard, TaskList, NmosSerial, NmosObjInst, NmosCauseType, NmosDomainName, NmosEntityId, NmosManagedStatus, LocalNodeAlias, LocalPriObj, LocalSecObj, LocalRootObj, RemoteNodeAlias, RemotePriObj, RemoteSecObj, RemoteRootObj, X733EventType, X733ProbableCause, X733SpecificProb, X733CorrNotif, ServerName, ServerSerial, URL, ExtendedAttr, BSM_Identity, NmosEventMap, OldRow, ProbeSubSecondId, AdditionalInfo, Cleared FROM alerts.status WHERE PhysicalCard = &#39;Victor&#39;;
+
+
+
+RESOLVING THE PROBLEM
+ 
+
+The function unescapeHTMLCharacters in 'EIC_utils' Policy needs to be updated to decode these characters.
+
+function unescapeHTMLCharacters(inString, oString ) { 
+
+Log(3,"Incoming String : " + inString); 
+encodedStr = 
+{"&#39;","&amp","\\\\&quot;","&quot;","&lt;","&gt;"}; 
+replacementStr = {"'","&",'"','"',"<",">"}; 
+
+
+And also in 'EIC_requestHandler' Policy, the filter being fed into getbyfilter needs to be escaped. 
+
+
+function showEvents(resp,query,results,errMsg) { 
+log(1,'Method Entry : ' + showEvents); 
+eventdatatype=getglobalvar('EVENT_DATATYPE'); 
+log(3,'Event Datatype : ' + eventdatatype); 
+filter = query; 
+EIC_utils.unescapeHTMLCharacters(filter,escapedfilter); 
+GetByFilter(eventdatatype,escapedfilter,false);
+
+The fix for this issue is contained in the following maintenance package:
+
+6.1.1-TIV-NCI-FP0001
+
+RELATED INFORMATION
+ 6.1.1-TIV-NCI-FP0001 [http://www-01.ibm.com/support/docview.wss?uid=swg24035816]

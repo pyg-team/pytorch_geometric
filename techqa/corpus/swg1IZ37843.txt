@@ -1,0 +1,150 @@
+Title: IBM IZ37843: CURRENT HOWTO_SECUREMODE3X.TXT DOCUMENTATION STILL DESCRIBES THE SETTING OF OBSOLETE PROPERTIES, DOCUMENT REQUIRES UPDATING. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Current HOWTO_SecureMode3x.txt documentation still describes the
+   setting of obsolete properties, document requires updating.
+   
+   The ImpactServer properties:
+   
+   impact.authentication.objectserver.host
+   impact.authentication.objectserver.port
+   
+   are no longer referenced by either a DataSource or EventReader
+   when configuring connection to a single or failover pair of
+   SecureMode ObjectServer(s).
+   
+   Current documentation requires updating to reflect current
+   configuration requirements to achieve connection to a single or
+   failover pair of SecureMode ObjectServer(s).
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  I'm creating a DCF TechNote to provide information on how to
+   connect to a pair of SecureMode ObjectServers.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Current HOWTO_SecureMode3x.txt documentation still describes
+   the
+   setting of obsolete properties, document requires updating.
+   
+   The ImpactServer properties:
+   
+   impact.authentication.objectserver.host
+   impact.authentication.objectserver.port
+   
+   are no longer referenced by either a DataSource or EventReader
+   when configuring connection to a single or failover pair of
+   SecureMode ObjectServer(s).
+   
+   Current documentation requires updating to reflect current
+   configuration requirements to achieve connection to a single or
+   failover pair of SecureMode ObjectServer(s).
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix for this APAR is contained in the following maintenance
+   package:
+   |Fix Pack|4.0.2-TIV-NCI-FP0001
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ37843
+   
+   
+ * REPORTED COMPONENT NAME
+   NETCOOL/IMPACT
+   
+   
+ * REPORTED COMPONENT ID
+   5724O59IS
+   
+   
+ * REPORTED RELEASE
+   310
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-11-19
+   
+   
+ * CLOSED DATE
+   2009-01-29
+   
+   
+ * LAST MODIFIED DATE
+   2009-01-29
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   NETCOOL/IMPACT
+   
+   
+ * FIXED COMPONENT ID
+   5724O59IS
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R402 PSY
+   UP

@@ -1,0 +1,106 @@
+Title: IBM WebSphere Application Server Hypervisor Edition default Java heap size, disk and thread pool settings in ESX VMWARE environment - United States
+
+Text:
+WAS HVE; HVE; tuning; configuration; performance; planning; system defaults; OS tuning PREVENTIVE SERVICE PLANNING
+
+ABSTRACT
+ Default drive space is 2GB, Default webcontainer thread pool size is 10 per CPU and default Java Heap Size is approximately half the virtual memory on the system. 
+
+CONTENT
+
+
+
+
+
+ * Disk space size
+ * WebSphere Application Server tuning
+ * Java heap size
+ * WebSphere Application Server web container threads
+
+
+
+
+
+
+
+
+Disk Space Size 
+Default: 2 GB
+
+The disk that contains the WebSphere Application Server profiles is set to 2 GB by default. This is where the profile logs are generated and written too. Depending on the amount of server activity and cases where additional tracing or data collection is needed, the default allocated Disk Space may not be sufficient and can be increased using the instructions below
+
+ESX 3.5 or newer: 
+
+
+ 1. Open VMware Infrastructure (VI) Client and connect to VirtualCenter or the ESX host. 
+ 2. Right-click the virtual machine. 
+ 3. Click Edit Settings. 
+ 4. Select Virtual Disk. 
+ 5. Increase the size of the disk. 
+ 6. Follow the steps in Increasing the size of a disk partition (1004071) [http://kb.vmware.com/selfservice/microsites/search.do?language=en_US&cmd=displayKC&externalId=1004071] so the guest operating system is aware of the change in disk size. 
+
+
+Note: as indicated in step 6, you will need to extend the size of the OS partition in order to take advantage of the extra disk. 
+
+Detailed Reference: 
+Increasing the size of a virtual disk [http://kb.vmware.com/selfservice/microsites/search.do?language=en_US&cmd=displayKC&externalId=1004047] 
+Back to top
+
+
+
+WebSphere Application Server Tuning 
+WebSphere Hypervisor Edition automatically tunes application servers and deployment managers based on the virtual resources allocated to the virtual image. The automatic tuning attempts to optimize your virtual system for performance, but can easily be changed to meet the specific needs of your application. The Java heap size is sized based on the allocated virtual memory, WebSphere Application Server web container threads are sized based on the number of virtual CPUs.
+
+Back to top
+
+
+
+Java Heap Size
+
+The formula used to calculate the Java heap size varies depending on the architecture:
+
+A. WebSphere Application Server Hypervisor Edition 64-bit image 
+Minimum/Maximum JVM Heap = max(min((Virtual Memory - 1280MB) / # Application Server Instances, 4096MB), 256MB) 
+
+Based on the amount of virtual memory allocated to a virtual image, the intent is to distribute as much memory as possible to each application server and deployment manager instance. After reserving 1280MB for the OS and other native processes, the remaining memory is divided evenly between JVMs. The automatic tuning algorithm will assign no less than 256MB, and no more than 4096MB for a given JVM.
+
+Exception: WebSphere Application Server Hypervisor Edition 7.0.0.21 64-bit uses the 32-bit Java Heap formula. This is a defect and will be fixed in release 7.0.0.23 64-bit
+
+B. WebSphere Application Server Hypervisor Edition 32-bit image 
+Minimum/Maximum JVM Heap = max(min((Virtual Memory - 768MB) / # Application Server Instances, 2048MB), 256MB) 
+
+Based on the amount of virtual memory allocated to a virtual image, the intent is to distribute as much memory as possible to each application server and deployment manager instance. After reserving 768MB for the OS and other native processes, the remaining memory is divided evenly between JVMs. The automatic tuning algorithm will assign no less than 256MB, and no more than 2048MB for a given JVM.
+
+Java Heap Size settings can be changed in the administrative console if desired by navigating to
+Servers => Application Servers => server_name
+
+Then in the Server Infrastructure section open Java and Process Management
+and select Process Definition. Next, In the Additional Properties select Java Virtual Machine. 
+
+After changing the min and max settings, Press OK, and save the configuration. 
+
+Back to top
+
+
+
+
+WebSphere Application Server Web Container Threads 
+Default: 10 threads per CPU 
+
+The formula used to calculate the number of web container threads is: 
+
+Minimum/Maximum Threads = # Virtual CPUs * 10. A factor of 10 modifies the number of web container threads according to the number of virtual processors in the virtual image. The purpose is to provide additional worker threads to effectively utilize systems with more virtual CPU resource. 
+
+Thread pool settings can be changed in the administrative console by navigating to 
+Servers => Application Servers => server_name => Thread Pool 
+
+
+Additional Reference: WebSphere Application Server tuning and recommendations 
+Case study: Tuning WebSphere Application Server V7 and V8 for performance [http://www.ibm.com/developerworks/websphere/techjournal/0909_blythe/0909_blythe.html] 
+Back to top
+
+ 
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Application Servers WebSphere Application Server Not Applicable Linux 7.0 Network Deployment

@@ -1,0 +1,35 @@
+Title: IBM ESS Server component fails to install - United States
+
+Text:
+ESSServer; installation; configureESS.py TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Installation of WebGUI fails with error in MachinePlan_localhost.log relating to ESSServer.post.install.xml and wsadmin.out reports a FileNotFound exception for configureESS.py 
+
+CAUSE
+This error will occur when the ESS Server component has not been cleaned up properly from a previous installation (successful or failed).
+
+RESOLVING THE PROBLEM
+Ensure that the any previous installation is properly cleaned up. Removing the following directories should be sufficient:
+/tmp/install.txt
+/tmp/responsefile.updiinstaller.txt
+
+root install:
+/usr/ibm/common/acsi
+/var/ibm/common/acsi
+/.coi
+
+/usr/.ibm/.nif
+
+on Solaris and Linux:
+/opt/.ibm/.nif
+
+user install:
+~/.acsi_*
+~/.coi
+~/.ibm/.nif
+
+Windows:
+C:\\Program Files\IBM\Common\acsi
+C:\\WINDOWS\.nifregistry
+C:\\Users\<username>\Administrator\.coi (Windows 2008)

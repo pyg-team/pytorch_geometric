@@ -1,0 +1,16 @@
+Title: IBM Datastage job accessing MySQL database aborts with the error, Connections to versions of MySQL prior to version 5.0 are not supported. - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Datastage job accessing MySQL database aborts with following error despite the fact that the MySQL database version is greater than 5.0:
+
+DSR.MetaGeta(GET.DSNINFO)(SQLConnect('MyConnection','prod')) : BCI Error: SQLSTATE=S1000,CODE=0,[DataStage][SQL Client][ODBC][IBM(DataDirect OEM)] [ODBC MySQL Wire Protocol driver]Connections to versions of MySQL prior to version 5.0 are not supported. 
+
+RESOLVING THE PROBLEM
+There are 2 possible causes for this issue:
+
+
+ 1. The above error is received when you connect to a *MySQL* database v. 5.1.50 with the DataDirect ODBC *MySQL* v 5.3 driver, patch 5.30.0.69; this is a known issue with DataDirect. If you are running this driver version, then you should upgrade your ODBC driver to more current version. 
+ 2. This error may also be seen if you are trying to connect to *MySQL* Community Server Edition. The DataDirect ODBC drivers support 5.0 and later versions of *MySQL* Commercial or *MySQL* Enterprise servers. They do not support any of the *MySQL* Community servers. You must use either the Commercial or Enterprise edition with the ODBC drivers.

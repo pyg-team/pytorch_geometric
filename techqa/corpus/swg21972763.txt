@@ -1,0 +1,86 @@
+Title: IBM AS2 sender used Signing Algorithm SHA-256 to SBI 5.2.4.2 and it posted signature verification error - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ An AS2 remote trading partner was configured to use a SHA256 certificate as both the 
+"Exchange" and "Signing" certificate, and "Signing Algorithm" as SHA256 by selecting value SHA-256, but the authentication is failing within Sterling B2B Integrator (SBI) 5.2.4.2 on receive side. The Sterling B2B Integrator BP EDIINTParse failed and the Pipeline log (debug on) posted a signature verification error. 
+
+SYMPTOM
+- The remote AS2 partner, that is sending a file to SBI, is using an AS2 application that is not SBI. 
+
+- SBI receive side BP EDIINTParse failed and the Pipeline log (debug on) posted a signature verification error below:
+[2015-09-09 16:38:39.976] DEBUG DetachedSignatureVerifierDT.transform(DTC) adding [SHA-256] digest Digest Length: 32
+00000001 df 97 ec e9 a3 c1 83 d7 05 dd eb cd 8b db b8 bf ï¿Ÿï¾—ï¿¬ï¿©ï¾£ï¿ï¾ƒï¿—.ï¿ï¿«ï¿ï¾‹ï¿›ï¾¸ï¾¿
+00000011 6b 1e 04 9d 12 fd 75 95 f7 08 01 3f e9 0e ba 18 k..ï¾.ï¿½uï¾•ï¿·..?ï¿©.ï¾º.
+
+[2015-09-09 16:38:39.986] ERROR DetachedSignatureVerifierDT.transform(DTC) exception during signature verification
+[2015-09-09 16:38:39.986] ERROR [1441831119986] Could not locate digest for SHA256withRSA (digest alg is SHA256)
+[2015-09-09 16:38:39.986] DEBUG QueueDataPipe.makeFinalReport(FR) pipe-CMSDecoderDT-25
+[2015-09-09 16:38:39.986] DEBUG QueueDataPipe.makeFinalReport(FR) pipe-CMSDecoderDT-25 scheduling notification.
+[2015-09-09 16:38:39.986] ALL DataFlowStage.sendUpstreamFinalReportIfReady() [ZLIBInflaterDT-31] setting future result.
+[2015-09-09 16:38:39.986] DEBUG QueueDataPipe.makeFinalReport(FR) pipe-ZLIBInflaterDT-26 sent.
+[2015-09-09 16:38:39.986] ERRORDTL [1441831119986]java.security.SignatureException: Could not locate digest for SHA256withRSA (digest alg is SHA256)
+at com.trustpoint.cms.SignedData.verifySignature(Unknown Source)
+at com.trustpoint.cms.SignedData.verifySignatures(Unknown Source)
+at com.trustpoint.pkcs.pkcs7.BaseSignedData.verifySignatures(Unknown Source)
+at com.sterlingcommerce.woodstock.packager.dataflow.dt.DetachedSignatureVerifierDT.transform(DetachedSignatureVerifierDT.java:330)
+at com.sterlingcommerce.woodstock.packager.dataflow.DataFlowStage.doTransform(DataFlowStage.java:255)
+at com.sterlingcommerce.woodstock.packager.dataflow.DataFlowStage.access$1200(DataFlowStage.java:52)
+at com.sterlingcommerce.woodstock.packager.dataflow.DataFlowStage$6.run(DataFlowStage.java:282)
+at com.sterlingcommerce.perimeter.api.scheduler.TaskNode.run(TaskNode.java:62)
+at com.sterlingcommerce.perimeter.api.scheduler.DebugPooledExecutor$Worker.run(DebugPooledExecutor.java:786)
+at java.lang.Thread.run(Thread.java:804) 
+
+ 
+
+- Here is a closer look and the AS2 header information in the message SBI received from the remote AS2 partner. It's important to note that the MIC algorithm (micalg) is set to a value of sha-256 which was selected by the remote AS2 partner:
+
+Date:Mon, 17 Aug 2015 07:35:17 GMT
+From:Interchange_Stage@abcd.com
+Message-ID:<1439796916598.1795447@bersap30_rw>
+Subject:01-ABC;ZZTEST
+MIME-Version:1.0
+Content-Type:application/pkcs7-mime; smime-type=enveloped-data;
+name=smime.p7m
+Content-Transfer-Encoding:binary
+Content-Disposition:attachment; filename=smime.p7m
+Disposition-Notification-To:Interchange_Stage@abcd.com
+Disposition-Notification-Options:signed-receipt-protocol=optional,
+pkcs7-signature; signed-receipt-micalg=optional, sha-256 <------ MIC algorithm here
+Receipt-Delivery-Option:http://abcd.efgh.net:7080/exchange/Test
+EDIINT-Features:CEM, multiple-attachments, AS2-Reliability
+AS2-Version:1.2
+AS2-To:FarmersMarket-US
+AS2-From:TestCompany
+X-Cyclone-True-Sender:ZZTEST
+X-Cyclone-True-Receiver:01-ABC
+Content-Length:5956
+User-Agent:abcdef/1.0.11 build-6825
+Host:filegateway.ab.abcd.com:1500
+Connection:close
+URI:/as2
+
+
+CAUSE
+The AS2 remote sending partner selected the Signing Algorithm of 'sha-256' in their AS2 application and SBI 5.2.4.2 do not support this value.
+
+
+Errors in SBI pipeline log are not related to a certificate issue, they are related to the remote Trading Partner has requested their MDN to be sent back to them (sent from SBI) using a SHA256 Signing Algorithm and SBI is unable to locate the digest for SHA256withRSA.
+
+
+DIAGNOSING THE PROBLEM
+- After SBI fails to receive the file from the remote trading partner, review the BP EDIINTParse, and the SBI pipeline log (debug on). 
+
+- Find out the Signing Algorithm that the sending AS2 trading selected in their application and verify that the SBI receiver supports the selected Signing Algorithm.
+
+
+RESOLVING THE PROBLEM
+There are 2 options: 
+
+1. The AS2 Sending partner selected the Signing Algorithm of 'SHA256', but SBI 5.2.4.2 on the receive side does not support this value. The AS2 Sending partner must select a value that SBI 5.2.4.2 supports, for example SHA1, sha1, MD5, md5; otherwise SBI will fail the session with a signature verification error. 
+
+or
+
+2. The SBI customer can upgrade from SBI 5.2.4.2 to SBI 5.2.5 which does support Signing Algorithm of 'SHA256'.

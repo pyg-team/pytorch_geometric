@@ -1,0 +1,263 @@
+Title: IBM PK21665: NO SAMPLE JCL ( JOB ) PROVIDED TO BIND PLAN(EEEPLIN). ( 29704 ). - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  No sample JCL ( JOB ) provided to BIND PLAN(EEEPLIN).
+   ( 29704 ).
+   .
+   
+   ADDITIONAL SYMPTOMS:
+   
+   1) While running SQLPA with DB2 V8 in Compatability mode
+      receive EEE ( Easy Explain ) error message
+   MSGEEE680E ALTER TABLE ... COLUMN failed for table
+   DBDB2SM.PLAN_TABLE -
+   SQL-c
+      with DB2 errors:
+   DSNT408I SQLCODE = -4700, ERROR: ATTEMPT TO USE NEW FUNCTION
+   BEFORE NEW
+   FUNCTION MODE
+   DSNT418I SQLSTATE = 56038 SQLSTATE RETURN CODE
+   DSNT415I SQLERRP = DSNXIALC SQL PROCEDURE DETECTING ERROR
+   DSNT416I SQLERRD = 25 0 0 -1 0 0 SQL DIAGNOSTIC INFORMATION
+   DSNT416I SQLERRD = X'00000019' X'00000000' X'00000000'
+   X'FFFFFFFF'
+   X'00000000' X'00000000' SQL DIAGNOSTIC INFORMATION
+   EEE538E EXPLAIN of supplied SQL-statement failed, SQL-code: -220
+       and / or
+   DSNT408I SQLCODE = -220, ERROR: THE COLUMN TABLE_ENCODE IN
+   EXPLANATION
+   TABLE DBDB2SM.PLAN_TABLE IS NOT DEFINED PROPERLY
+   DSNT418I SQLSTATE = 55002 SQLSTATE RETURN CODE
+   DSNT415I SQLERRP = DSNXOD0P SQL PROCEDURE DETECTING ERROR
+   DSNT416I SQLERRD = -230 0 0 -1 0 0 SQL DIAGNOSTIC INFORMATION
+   DSNT416I SQLERRD = X'FFFFFF1A' X'00000000' X'00000000'
+   X'FFFFFFFF'  ( 77374 )
+   2) After receiving a legitimate error in the EEE panels the
+      user may be forced to ATTENTION out of the dialog to get
+      out of the error path. For instance if he enters the wrong
+      DB2 SSID on the EEE main menu he receives:
+   DSNE110E XXXX NOT VALID SUBSYSTEM ID, COMMAND TERMINATED
+   IKJ56712I INVALID KEYWORD, PLAN(EEE)
+   IKJ56703A REENTER THIS OPERAND -
+     If he then tries to hit enter to get out of the error
+      messages and back to the main menu to enter the correct
+      SSID he receives:
+   IKJ56712I INVALID KEYWORD, END
+   IKJ56703A REENTER THIS OPERAND -
+      and
+   IKJ56712I INVALID KEYWORD, PARMS('/Y')
+   IKJ56703A REENTER THIS OPERAND -
+   ( 05008 )
+   3) SQLPA / EEE ( Easy Explain ) dialogs do not preserve
+      the DB2 SSID from one session to another.
+      ( 87933 ).
+   4) DSNT231I  -DB21 BIND DBRM ERROR
+            USING R028 AUTHORITY
+      PLAN=ANLITST
+      DBRM ANLITST IS IN AN INCONSISTENT STATE
+      ( 32109 )
+   5)  EEE using DB2 V8 compatibility mode receives an error
+     -EEE374W Package not found
+   6) EEE Looping and displays invalid SQL on reports
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: Users of DB2 SQL Performance Analyzer.       *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: 1. No sample JCL ( JOB ) provided to    *
+   *                      BIND PLAN(EEEPLIN). ( 29704 ).          *
+   *                      2. While running SQLPA with DB2 V8 in   *
+   *                      Compatability mode receive EEE ( Easy   *
+   *                      Explain ) error message MSGEEE680E      *
+   *                      ALTER TABLE ... COLUMN failed for table *
+   *                      DBDB2SM.PLAN_TABLE - SQL-c with DB2     *
+   *                      errors: DSNT408I SQLCODE = -4700,       *
+   *                      ERROR: ATTEMPT TO USE NEW FUNCTION      *
+   *                      BEFORE NEW FUNCTION MODE DSNT418I       *
+   *                      SQLSTATE = 56038 SQLSTATE RETURN CODE   *
+   *                      DSNT415I SQLERRP = DSNXIALC SQL         *
+   *                      PROCEDURE DETECTING ERROR DSNT416I      *
+   *                      SQLERRD = 25 0 0 -1 0 0 SQL DIAGNOSTIC  *
+   *                      INFORMATION DSNT416I SQLERRD =          *
+   *                      X'00000019' X'00000000' X'00000000'     *
+   *                      X'FFFFFFFF' X'00000000' X'00000000'     *
+   *                      SQL DIAGNOSTIC INFORMATION              *
+   *                      EEE538E EXPLAIN of supplied             *
+   *                      SQL-statement failed, SQL-code: -220    *
+   *                      and / or DSNT408I SQLCODE = -220,       *
+   *                      ERROR: THE COLUMN TABLE_ENCODE IN       *
+   *                      EXPLANATION TABLE DBDB2SM.PLAN_TABLE    *
+   *                      IS NOT DEFINED PROPERLY                 *
+   *                      DSNT418I SQLSTATE = 55002 SQLSTATE      *
+   *                       RETURN CODE                            *
+   *                      DSNT415I SQLERRP = DSNXOD0P SQL         *
+   *                       PROCEDURE DETECTING ERROR              *
+   *                      DSNT416I SQLERRD = -230 0 0 -1 0 0 SQL  *
+   *                       DIAGNOSTIC INFORMATION                 *
+   *                      DSNT416I SQLERRD = X'FFFFFF1A'          *
+   *                      X'00000000' X'00000000'                 *
+   *                      X'FFFFFFFF'  ( 77374 )                  *
+   *                      3. After receiving a legitimate error   *
+   *                      in the EEE panels the user may be       *
+   *                      forced to ATTENTION out of the dialog   *
+   *                      to get out of the error path. For       *
+   *                      instance if he enters the wrong DB2     *
+   *                      SSID on the EEE main menu he receives:  *
+   *                      DSNE110E XXXX NOT VALID SUBSYSTEM ID,   *
+   *                      COMMAND TERMINATED                      *
+   *                      IKJ56712I INVALID KEYWORD, PLAN(EEE)    *
+   *                      IKJ56703A REENTER THIS OPERAND -        *
+   *                      If he then tries to hit enter to get    *
+   *                      out of the error messages and back to   *
+   *                      the main menu to enter the correct      *
+   *                      SSID he receives:                       *
+   *                      IKJ56712I INVALID KEYWORD, END          *
+   *                      IKJ56703A REENTER THIS OPERAND - and    *
+   *                      IKJ56712I INVALID KEYWORD, PARMS('/Y')  *
+   *                      IKJ56703A REENTER THIS OPERAND -        *
+   *                      ( 05008 )                               *
+   *                      4. SQLPA / EEE ( Easy Explain )         *
+   *                      dialogs do not preserve the DB2 SSID    *
+   *                      from one session to another. ( 87933 )  *
+   *                      5. DSNT231I  -DB21 BIND DBRM ERROR      *
+   *                      USING R028 AUTHORITY PLAN=ANLITST       *
+   *                      DBRM ANLITST IS IN AN INCONSISTENT      *
+   *                      STATE ( 32109 )                         *
+   *                      6. EEE using DB2 V8 compatibility mode  *
+   *                      receives an error -EEE374W Package not  *
+   *                      found.                                  *
+   *                      7. EEE Looping and displays invalid     *
+   *                      SQL on reports.                         *
+   ****************************************************************
+   * RECOMMENDATION: APPLY the PTF.                               *
+   ****************************************************************
+   Code has been changed to correct these conditions.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  APPLY the PTF.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK21665
+   
+   
+ * REPORTED COMPONENT NAME
+   DB2 SQL PERF AN
+   
+   
+ * REPORTED COMPONENT ID
+   5697F5701
+   
+   
+ * REPORTED RELEASE
+   220
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2006-03-16
+   
+   
+ * CLOSED DATE
+   2006-07-14
+   
+   
+ * LAST MODIFIED DATE
+   2006-08-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UK16276 UK16277
+   
+   
+
+MODULES/MACROS
+ *     ANLEEE   ANLITST  ANLMAIN  ANLPLAN  ANLPLIN
+   ANLSERV  ANLSQ2M  ANLTABS  ANLUNIC  ANLVER8  EEE      EEEITST
+   EEEJBIND EEEMAIN  EEEPLAN  EEEPLIN  EEESERV  EEESQ2M  EEETABS
+   EEEUNIC  EEEVER8
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   DB2 SQL PERF AN
+   
+   
+ * FIXED COMPONENT ID
+   5697F5701
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R220 PSY UK16276 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK16276]
+   UP06/07/27 P F607
+   
+   
+ * R310 PSY UK16277 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK16277]
+   UP06/07/27 P F607
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

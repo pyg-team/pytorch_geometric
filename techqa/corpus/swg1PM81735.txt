@@ -1,0 +1,161 @@
+Title: IBM PM81735: Rational Developer for System z (RDz) HATS RCP application fails with HPS5142 - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  ***************************************************************
+   Rational Developer for System z - RDz - v8.0.3.2
+   
+   Running HATS RCP application from RDz it appears to hang, but
+   in the message.txt there is the HATS message:
+   com.ibm.hats.runtime.connmgr.Pool  createConnection
+   
+   ERROR HPS5142 License limit has been reached. No further
+   connections
+   are allowed.  For more information on licensing enablement, see
+   the
+   InfoCenter at (http://publib.boulder.ibm.
+   
+   com/infocenter/hatshelp/v80/topic/com.ibm.hats.doc/doc/gslicense
+   .htm).
+   
+   In other cases, the RCP application will fail with this message:
+   Disconnected
+     The application has been disconnected for one of the following
+   reasons:
+       The disconnect button was pressed.
+       The application ended due to inactivity.
+       The applcation ended due to an error.
+       The application ended normally.
+   If you click on the 'More Information' button you will see the
+   HPS5142 License Limit has been reached error.
+   
+   ***************************************************************
+   Local fix: None
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED: Host Connect Emulator users who map the keyboard
+   control keys
+   
+   ****************************************************************
+   PROBLEM DESCRIPTION: The RDz code that interfaces with the HATS
+   runtime was unable to find the required license enablement
+   interface needed to satisfy the HATS license requirement.
+   
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  ****************************************************************
+   Problem Resolution:
+   Updated the Host Connect plugin to define dependency on HATS
+   Core Runtime.  Allows the plugin to find the necessary license
+   enablement interface.
+   
+   ****************************************************************
+   Additional Keywords: HATS RCP RDz license enablement limit
+   
+   The problem listed in this APAR has been resolved with
+   IBM Rational Developer for System z V8.0.3.5 Fix Pack which
+   is available from the Recommended Fixes support download page:
+   http://www-1.ibm.com/support/docview.wss?rs=2294&uid=swg27006335 [http://www-1.ibm.com/support/docview.wss?rs=2294&uid=swg27006335]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM81735
+   
+   
+ * REPORTED COMPONENT NAME
+   RATL DEV FOR SY
+   
+   
+ * REPORTED COMPONENT ID
+   5724T0700
+   
+   
+ * REPORTED RELEASE
+   850
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-01-30
+   
+   
+ * CLOSED DATE
+   2013-07-31
+   
+   
+ * LAST MODIFIED DATE
+   2013-07-31
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   RATL DEV FOR SY
+   
+   
+ * FIXED COMPONENT ID
+   5724T0700
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R803 PSY
+   UP

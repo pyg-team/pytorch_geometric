@@ -1,0 +1,198 @@
+Title: IBM ZZ00687: ICO INSTALL PREREQ CHECKER DOES NOT ACCOUNT FOR OPENSTACK ENDPOINTS BEING BOUND TO MULTIPLE NETWORK INTERFACES. - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When running the ICO prereq-checker.sh script it indicates that
+   it cannot see the v3 endpoints in OpenStack.
+   The message is ....
+   - Checking that the API for endpoints is available and required
+   entries exist
+   - Status: Failed
+   - Message text: V3 endpoints [http://10.1.2.9:5000/v3,
+   internal] [http://10.1.2.9:5000/v3, public] must have been
+   created in OpenStack
+   ERROR: Required items not found: [http://10.1.2.9:5000/v3,
+   internal]
+   - User response: Check that the Openstack instance is
+   configured correctly. See:
+   https://www.ibm.com/support/knowledgecenter/SS4KMC_2.5.0.3/com [https://www.ibm.com/support/knowledgecenter/SS4KMC_2.5.0.3/com]
+   .i
+   bm.ico.doc_2.5/t_prep_openstack.html
+   This is because it is expecting the admin, internal and public
+   IPs to be the same, which they are not.
+   We have a cluster of 3 controllers, and they have multiple
+   interfaces to support the different functions (as per OpenStack
+   standards) each has a VIP associated so that it connects to the
+   correct controller.
+   The OpenStack endpoints look like this (different IPs just
+   connecting on different interfaces on the same controller) ...
+   $ openstack endpoint list|grep v3|grep keystone
+   | b063a4bc5c2b49f598ea1ff22df071fd | regionOne | keystone |
+   identity | True | public | http://10.1.2.9:5000/v3 |
+   | b383abb17ac4408092e2cec6cbbbcd8b | regionOne | keystone |
+   identity | True | internal | http://10.2.2.9:5000/v3 |
+   | fde4ec54845d43fc985bbe36d56f5ab7 | regionOne | keystone |
+   identity | True | admin | http://10.3.2.9:35357/v3 [http://10.3.2.9:35357/v3]
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Lines to be commented in
+   /installer/validator/openstackServices.py
+   
+   # checkService(resp_json, 'cinder', 'volumes',
+   '/volumes', token, True,params)
+   # checkService(resp_json, 'cinderv2', 'volumes',
+   '/volumes', token, True,params)
+   # checkService(resp_json, 'glance', 'images',
+   '/v2/images', token, True,params)
+   # checkService(resp_json, 'nova', 'servers', '/servers',
+   token, True,params)
+   # if not checkService(resp_json, 'neutron', 'networks',
+   '/v2.0/networks', token, False,params) and not
+   checkService(resp_json, 'nova', 'networks', '/os-networks',
+   token,   #False,params):
+   #   errorMsg.append(_("ERROR: The network service API
+   is not enabled"))
+   #  user_response = _("User response: Ensure that the
+   openstack services are available")
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  When running the ICO prereq-checker.sh script it indicates that
+   it cannot see the v3 endpoints in OpenStack.
+   The message is ....
+   - Checking that the API for endpoints is available and required
+   entries exist
+   - Status: Failed
+   - Message text: V3 endpoints [http://10.1.2.9:5000/v3,
+   internal] [http://10.1.2.9:5000/v3, public] must have been
+   created in OpenStack
+   ERROR: Required items not found: [http://10.1.2.9:5000/v3,
+   internal]
+   - User response: Check that the Openstack instance is
+   configured correctly. See:
+   https://www.ibm.com/support/knowledgecenter/SS4KMC_2.5.0.3/com [https://www.ibm.com/support/knowledgecenter/SS4KMC_2.5.0.3/com]
+   .i
+   bm.ico.doc_2.5/t_prep_openstack.html
+   This is because it is expecting the admin, internal and public
+   IPs to be the same, which they are not.
+   We have a cluster of 3 controllers, and they have multiple
+   interfaces to support the different functions (as per OpenStack
+   standards) each has a VIP associated so that it connects to the
+   correct controller.
+   The OpenStack endpoints look like this (different IPs just
+   connecting on different interfaces on the same controller) ...
+   $ openstack endpoint list|grep v3|grep keystone
+   | b063a4bc5c2b49f598ea1ff22df071fd | regionOne | keystone |
+   identity | True | public | http://10.1.2.9:5000/v3 |
+   | b383abb17ac4408092e2cec6cbbbcd8b | regionOne | keystone |
+   identity | True | internal | http://10.2.2.9:5000/v3 |
+   | fde4ec54845d43fc985bbe36d56f5ab7 | regionOne | keystone |
+   identity | True | admin | http://10.3.2.9:35357/v3 [http://10.3.2.9:35357/v3]
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Prereq-checker modified to mitigate the issue.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   ZZ00687
+   
+   
+ * REPORTED COMPONENT NAME
+   SMRTCLOUD ORCHS
+   
+   
+ * REPORTED COMPONENT ID
+   5725H2800
+   
+   
+ * REPORTED RELEASE
+   250
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2018-01-17
+   
+   
+ * CLOSED DATE
+   2018-02-20
+   
+   
+ * LAST MODIFIED DATE
+   2018-02-20
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   SMRTCLOUD ORCHS
+   
+   
+ * FIXED COMPONENT ID
+   5725H2800
+   
+   
+
+APPLICABLE COMPONENT LEVELS

@@ -1,0 +1,140 @@
+Title: IBM PM17378: The display state of greyed-out tick boxes shall be inline with the real properties they represent. - United States
+
+Text:
+  A FIX IS AVAILABLE
+IBM Rational DOORS version 9.3.0.4 [http://www-01.ibm.com/support/docview.wss?uid=swg24030148]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The display state of greyed-out tick boxes shall be inline with
+   the real properties they represent.
+   
+   The non-modifyable tick boxes in the group field ?Attribute feat
+   ures? appear (except of inherit value) as being ticked. This ind
+   icates to the user that changes to the attribute do affect chang
+   e bars, change dates and generate history. Since this is not the
+    case, the fact that the boxes look ticked is misleading.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   The display state of greyed-out tick boxes shall be inline
+   with the real properties they represent.
+   
+   The non-modifyable tick boxes in the group field ?Attribute
+   features? appear (except of inherit value) as being ticked.
+   This indicates to the user that changes to the attribute do
+   affect change bars, change dates and generate history. Since
+   this is not the case, the fact that the boxes look ticked is
+   misleading.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The check-boxes change bars, change dates and generate
+   history are checked and unchecked automatically based on the
+   value of DXL attribute.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM17378
+   
+   
+ * REPORTED COMPONENT NAME
+   TLOGIC DOORS
+   
+   
+ * REPORTED COMPONENT ID
+   5724V61DR
+   
+   
+ * REPORTED RELEASE
+   920
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-06-28
+   
+   
+ * CLOSED DATE
+   2011-06-29
+   
+   
+ * LAST MODIFIED DATE
+   2011-06-29
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TLOGIC DOORS
+   
+   
+ * FIXED COMPONENT ID
+   5724V61DR
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R920 PSN
+   UP

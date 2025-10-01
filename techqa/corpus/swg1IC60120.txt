@@ -1,0 +1,151 @@
+Title: IBM IC60120: JAVA EXCEPTIONS RECEIVED WHILE DEPLYING JAR FILES FOR JAVACOMPUTENODES - United States
+
+Text:
+  A FIX IS AVAILABLE
+WebSphere Message Broker V6.1 - Fix Pack 6.1.0.7 [http://www-01.ibm.com/support/docview.wss?uid=swg24026355]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Java Exceptions received while deplying JAR files for
+   JavaComputeNodes
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All users of WebSphere Message Broker        *
+   *                 Version 6 or later deploying MessageSet or   *
+   *                 Jar file artifacts.                          *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: When MessageSet objects or Jar files    *
+   *                      are deployed to an Execution Group      *
+   *                      while they are in use there is a        *
+   *                      window where the deploy can conflict    *
+   *                      with the running flow resulting in a    *
+   *                      deadlock in the case of messagesets,    *
+   *                      or a zero length file being deployed    *
+   *                      on the broker filesystem in the case    *
+   *                      of Jar Files.                           *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   When deploying an MRM MessageSet object or a Jar file the
+   Broker is unable to determine in advance which, if any,
+   currently running flows are using the resource. As a result it
+   is possible for the flow to require access to the resource
+   before the deploy has been committed but after the database or
+   file system resource has been overwritten. This can result in
+   the Broker becoming unresponsive and issuing a BIP2066
+   exception in the case of MessageSets and zero length Jar files
+   being written to the filesystem accompanied by BIP4510
+   exception being issued indicating a ClassNotFound exception in
+   the case of Jar files.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  WebSphere Message Broker has been updated to take a lock on
+   all flows in the ExecutionGroup while deploying MessageSet
+   or Jar file artifacts thereby avoiding the concurrant
+   usage which lead to the locking problems.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC60120
+   
+   
+ * REPORTED COMPONENT NAME
+   WMB WINDOWS V6
+   
+   
+ * REPORTED COMPONENT ID
+   5724J0500
+   
+   
+ * REPORTED RELEASE
+   610
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-02-20
+   
+   
+ * CLOSED DATE
+   2009-05-29
+   
+   
+ * LAST MODIFIED DATE
+   2009-09-30
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMB WINDOWS V6
+   
+   
+ * FIXED COMPONENT ID
+   5724J0500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R100 PSY
+   UP
+   
+   
+ * R610 PSY
+   UP

@@ -1,0 +1,50 @@
+Title: IBM Collecting Data: reporting a problem with ILOG JRules Rule Execution Server - United States
+
+Text:
+Collecting Data; Collecting Data; Collecting Data; MustGather; MustGather; MustGather; MustGatherDocument TECHNOTE (FAQ)
+
+QUESTION
+ Collecting data for problems with ILOG JRules Rule Execution Server component. Collecting this MustGather information before calling IBM support will help you understand the problem and save time analyzing the data. 
+
+ANSWER
+You can use the Rule Execution Server Console to monitor execution traces from Decision Warehouse, test ruleset execution in Diagnostics, manage ruleapps, rulesets, and transparent decision services, and retrieve server information. 
+
+If you have not already contacted support, proceed with Collecting Data: Read first for all ILOG Business Rule Management Systems Components [http://www.ibm.com/support/docview.wss?uid=swg21423343]. Otherwise collect the following ILOG Rule Execution Server data:
+
+
+Collecting Rule Execution Server specific information
+
+
+ 1. Version and Patch information for  1. RES (About menu in RES Console) 
+     2. The Application Server or Web Server RES is installed on. 
+     3. The JDK used. 
+     4. The browser used. 
+     5. The database driver used for the datasource.
+    
+    
+ 2. Topology of RES  1. The server(s) on which RES Console is deployed. 
+     2. The server(s) on which XUs are deployed. 
+     3. The server(s) on which the application invoking rules is deployed. 
+     4. The use of cluster, multiple nodes topology of cells or domains. 
+     5. The type of rule session used.
+    
+    
+ 3. The settings used by the XU  1. Pool settings from the Application Server . 
+     2. ra.xml file if edited.
+    
+    
+ 4. Log files  1. RES console log, if the problem is related to deployment or RuleApp management. 
+     2. XU logs if the problem is related to the rule execution. 
+     3. All Application Server or Web Server log files.
+        
+    
+    
+ 5. Follow instructions to send diagnostic data to IBM support [http://www.ibm.com/support/docview.wss?rs=180&uid=swg21153852].
+    
+    
+
+What to do next 
+Once you have collected the preceding information, you can simply submit the diagnostic data to IBM support. 
+
+
+For a listing of all technotes, downloads, and educational materials specific to the Rule Execution Server component, search the WebSphere ILOG JRule Support [http://www-947.ibm.com/support/entry/portal/Overview/Software/WebSphere/WebSphere_ILOG_JRules] site .

@@ -1,0 +1,159 @@
+Title: IBM PM71955: THE HT AGENT INTRODUCES HIGH CPU USAGE IN THE SNMP MAGT SERVER - United States
+
+Text:
+  FIXES ARE AVAILABLE
+7.1.0.3-TIV-ITCAMAD-IF0004: ITCAM for Application Diagnostics V7.1 FP3 IF4 [http://www-01.ibm.com/support/docview.wss?uid=swg24033735]
+7.1.0.3-TIV-ITCAMAD-IF0005: ITCAM for Application Diagnostics V7.1 FP3 IF5 [http://www-01.ibm.com/support/docview.wss?uid=swg24033938]
+7.1.0.3-TIV-ITCAMAD-IF0004: ITCAM for Application Diagnostics V7.1 FP3 IF6 [http://www-01.ibm.com/support/docview.wss?uid=swg24034668]
+7.1.0.3-TIV-ITCAMAD-IF0008: ITCAM for Application Diagnostics V7.1 FP3 IF8 [http://www-01.ibm.com/support/docview.wss?uid=swg24037994]
+7.1.0-TIV-ITCAMAD-FP0004: ITCAM for Application Diagnostics V7.1 Fix Pack 4 [http://www-01.ibm.com/support/docview.wss?uid=swg24041705]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Cust is using the Oracle iPlanet web server Master SNMP agent
+   
+   (magt) which has two instances defined.
+   
+   To monitor these instances, he uses our HT monitoring agent.
+   The problem is that when the khtagent is started, CPU usage
+   jumps up from 0.1% minimal on the SNMP magt server to about 25%
+   range and stays in that range.  If the khtagent is disabled, or
+   not used, the CPU drops down to normal 0.1% usage.
+   
+   So it looks like our khtagent is somehow introducing high CPU to
+   the Sun magt server process.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: ITCAM for HTTP agent users, monitoring
+   * multiple Sun Java Web Server (Oracle iPlanet) with the same
+   * KHT agent.
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Master SNMP agent (magt) causes high
+   * CPU usage.
+   ****************************************************************
+   * RECOMMENDATION: Update KHT agent to version 7.1.0.3 IF4
+   * or newer.
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  KHT agent polls monitoring data from SNMP agent. In environment
+   with many instances of Web Server, parallel calls from KHT may
+   overload SNMP agent, what causes high CPU.
+   Fix avoids parallel calls, and introduces new configuration
+   parameter KHT_pollingTimeout_msec, what makes possible increase
+   of default interval (5000 msec) between two subsequent SNMP
+   calls.
+   Instruction of change:
+   Modify file khtwb.properties, adding new line:
+   -DKHT_pollingTimeout_msec=value
+      where value is a number of miliseconds between 2 subsequent
+      data requests from SNMP agent. Default it is 5000.
+      For example, for 1 minute timeout, you should set:
+   -DKHT_pollingTimeout_msec=60000
+   
+   
+   The fix for this APAR is contained in the following maintenance
+   packages:
+           | interim fix | 7.1.0.3-TIV-ITCAMAD-IF0004
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM71955
+   
+   
+ * REPORTED COMPONENT NAME
+   TCAM AD WEBSVR
+   
+   
+ * REPORTED COMPONENT ID
+   5724Y92WS
+   
+   
+ * REPORTED RELEASE
+   710
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-08-31
+   
+   
+ * CLOSED DATE
+   2012-10-31
+   
+   
+ * LAST MODIFIED DATE
+   2012-10-31
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TCAM AD WEBSVR
+   
+   
+ * FIXED COMPONENT ID
+   5724Y92WS
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R710 PSY
+   UP

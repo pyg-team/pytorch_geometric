@@ -1,0 +1,26 @@
+Title: IBM Red Hat operating system requirements for IBM PureData System for Analytics enhanced cryptography enablement - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ What are the Red Hat release requirements for me to use the IBM Netezza enhanced cryptography feature? 
+
+ANSWER
+If you are currently using or planning to use the enhanced cryptography features of the Netezza Platform Software (NPS) release, note the following important information related to the IBM PureData System for Analytics OS Security program. 
+
+In addition to the minimum releases required for entrance to the RHEL Security patch program [http://www.ibm.com/support/docview.wss?uid=swg21979254], there are also NPS release requirements. Red Hat 5.11 and Red Hat 6.6 upgrades detect whether the NPS level is supported before permitting an operating system upgrade.
+The following table shows the NPS release minimums for Enhanced Cryptography support. A check indicates that the combined Red Hat and NPS releases support the enhanced cryptography feature.
+
+
+
+Red Hat version NPS 7.1 NPS 7.1.0.9 NPS 7.2.0.0 NPS 7.2.0.8 NPS 7.2.1.0 NPS 7.2.1.2 RHEL 5.9 ✓ ✓ ✓ ✓ ✓ ✓ RHEL 5.10 [/support/docview.wss?uid=swg21979255&amp;aid=1] ✓ ✓ ✓ ✓ ✓ RHEL 5.11+ [/support/docview.wss?uid=swg21979255&amp;aid=1] ✓ [/support/docview.wss?uid=swg21979255&amp;aid=1] ✓ [/support/docview.wss?uid=swg21979255&amp;aid=1] ✓ RHEL 6.4 ✓ ✓ ✓ ✓ ✓ ✓ RHEL 6.5 [/support/docview.wss?uid=swg21979255&amp;aid=1] ✓ ✓ ✓ ✓ ✓ RHEL 6.6+ [/support/docview.wss?uid=swg21979255&amp;aid=1] ✓ [/support/docview.wss?uid=swg21979255&amp;aid=1] ✓ [/support/docview.wss?uid=swg21979255&amp;aid=1] ✓ The ‘+’ indicates Red Hat versions at or beyond these levels. These updates are delivered through the RHEL Security Patch program, and are supported starting with the associated NPS releases. 
+Related topics: 
+
+Red Hat Enterprise Linux (RHEL) Security Patching for IBM PureData System for Analytics appliances [http://www.ibm.com/support/docview.wss?uid=swg21615012] 
+
+Red Hat Enterprise Linux (RHEL) Security Program Requirements for IBM PureData System for Analytics appliances (April 2016 and later) [http://www.ibm.com/support/docview.wss?uid=swg21979254] 
+
+Frequently asked questions about IBM PureData System for Analytics Red Hat security patches and upgrade prerequisites [http://www.ibm.com/support/docview.wss?uid=swg21979340] 
+
+IBM PureData System for Analytics Host Platform (HPF) upgrade of DRBD from version HPF 5.5 [http://www.ibm.com/support/docview.wss?uid=swg21979339]

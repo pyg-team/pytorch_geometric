@@ -1,0 +1,185 @@
+Title: IBM IV12834: ITM623 TEP VIA HTTP CONNECTION NOT WORKING WHEN USING HTTP PROXY - United States
+
+Text:
+  FIXES ARE AVAILABLE
+IBM Tivoli Monitoring 6.2.3 Fix Pack 5 (6.2.3-TIV-ITM-FP0005) [http://www-01.ibm.com/support/docview.wss?uid=swg24035801]
+IBM Tivoli Monitoring 6.2.3 Fix Pack 2 (6.2.3-TIV-ITM-FP0002) [http://www-01.ibm.com/support/docview.wss?uid=swg24032429]
+IBM Tivoli Monitoring 6.2.3 Fix Pack 4 (6.2.3-TIV-ITM-FP0004) [http://www-01.ibm.com/support/docview.wss?uid=swg24034252]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Severity:         2
+   Approver:        sm
+   Reported Release:623
+   Compid:          5724C04PS Tivoli Enterprise Portal Server
+   
+   Environment:
+   ITM623
+   TEPS on Linux 32bit
+   TEP jnlp client on windows
+   
+   Problem Description:
+   Using the new feature to have the TEP connection set up via HTTP
+   instead of using the CORBA connection, we found that this
+   doesn't work
+   when using a HTTP proxy to connect from the TEP client to the
+   TEPS.
+   A connection without a proxy, or via a SOCKS proxy works fine,
+   but when
+   we use a HTTP proxy (which is the one used in our prod
+   environment),
+   the TEP client can't connect.
+   
+   Detailed Recreation Procedure:
+   1)Configure the tep.jnlpt & reconfigure TEPS to use http instead
+   of
+   iiop/corba
+   2)On the client pc, the proxy settings for the pc have a http
+   proxy
+   server (not a socks proxy) specified, which will also be used by
+   java
+   to connect to the TEPS server
+   3)Open the TEP url, the TEP client downloads normally, login
+   window
+   appears
+   4)Log in with user&pass ->fails
+   -> Last connection, analyzed with wireshark shows the successful
+   download of the servercert.ser file, and nothing after that
+   -> Java console on the TEP client shows the following error:
+   ...
+   (4eba7f38.2719c400-(null)Thread-10:QueryModelMgr,0,"QueryModelMg
+   r.
+   make()") HTTP/HTTPS protocol
+   (4eba7f38.37d97c40-(null)Thread-10:DataBusProxy,0,"DataBusProxy.
+   bind()")
+    ****************connecting to server*************************
+   JNLP JREDesc in Component ignored:
+   http://<hostname>:80/log4j-1.1.1.jar.jnlp [http://<hostname>:80/log4j-1.1.1.jar.jnlp]
+   Nov 9, 2011 2:25:13 PM
+   org.apache.commons.httpclient.HttpMethodDirector
+   executeWithRetry
+   INFO: I/O exception (java.net.SocketException) caught when
+   processing
+   request: Unknown proxy type : HTTP
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Using the new feature to have the TEP connection set up via HTTP
+   instead of using the CORBA connection, we found that this
+   doesn't work when using a HTTP proxy to connect from the TEP
+   client to the TEPS. A connection without a proxy, or via a
+   SOCKS proxy works fine, but when we use a HTTP proxy (which is
+   the one used in our prod environment), the TEP client can't
+   connect.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Correct HTTP server and port will now be used together.
+   The fix for this APAR is contained in the following maintenance
+   packages:
+   | fix pack | 6.2.3-TIV-ITM-FP0001
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV12834
+   
+   
+ * REPORTED COMPONENT NAME
+   TEP
+   
+   
+ * REPORTED COMPONENT ID
+   5724C04EP
+   
+   
+ * REPORTED RELEASE
+   623
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-01-06
+   
+   
+ * CLOSED DATE
+   2012-02-07
+   
+   
+ * LAST MODIFIED DATE
+   2012-02-07
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TEPS
+   
+   
+ * FIXED COMPONENT ID
+   5724C04PS
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R623 PSY
+   UP

@@ -1,0 +1,25 @@
+Title: IBM Determining if a TIP 2.2 fix pack can be installed on a target server. - United States
+
+Text:
+TIPL2INST; TIPL2; 2.2 fixpack; FP upgrade installation certified TECHNOTE (FAQ)
+
+QUESTION
+ What method can be used to determine if a product installed with TIP are "certified" for a particular TIP 2.2 fix pack? 
+
+ANSWER
+The target TIP instance must have only "certified" products installed. Otherwise TIP 2.2.0.9 will not install. The list of compatible IBM products will change over time as other IBM products team certify on TIP 2.2 fix packs. For that reason, customer's should always obtain the latest FIT file for the TIP fix pack from Fix Central. 
+http://www-933.ibm.com/support/fixcentral/ [http://www-933.ibm.com/support/fixcentral/] 
+
+The TIP FIT package will be named similar to: "2.2.0-TIV-TIP-FITSuit-FP000X". (For example, "2.2.0-TIV-TIP-FITSuit-FP0009"). 
+
+To determine if the TIP fix pack can be applied to a particular target TIP install review the list of certified products and product fix packs on the following DeveloperWorks post: TIP 2.2 fix pack certified products [https://www.ibm.com/developerworks/mydeveloperworks/groups/service/html/communityview?communityUuid=26d4aa47-4fd6-460d-a93b-3ee8945324d6]. 
+
+Alternatively, the fit.sh utility packaged with the FIT package can be used to test the target TIP install.
+
+1. Copy the FIT package file to the <TIP HOME>/profiles/TIPProfile/etc directory. 
+2. Unzip the FIT file
+3. cd to the fit directory
+4. Execute the command:
+./fit.sh -showReport true
+
+The above command will scan the install registry for the target TIP install and return either "PASS" or "FAILURE" results. "FAILURE" is returned if the target TIP install has a product deployed which is not certified on the TIP fix pack. The failure report will return the product that is not certified

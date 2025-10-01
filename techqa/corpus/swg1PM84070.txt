@@ -1,0 +1,150 @@
+Title: IBM PM84070: Analyze Topology for Automation Signature matches hangs in v8.0.4 - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Rational Software Architect Fix Pack 1 (9.0.0.1) for 9.0 [http://www-01.ibm.com/support/docview.wss?uid=swg24036445]
+Rational Software Architect for WebSphere Software Fix Pack 1 (9.0.0.1) for 9.0 [http://www-01.ibm.com/support/docview.wss?uid=swg24036446]
+Rational Software Architect Interim Fix 1 for 8.0.4.2 [http://www-01.ibm.com/support/docview.wss?uid=swg24036852]
+Rational Software Architect for WebSphere Software Interim Fix 1 for 8.0.4.2 [http://www-01.ibm.com/support/docview.wss?uid=swg24036853]
+Rational Software Architect Fix Pack 1 (8.5.5.1) for 8.5.5 [http://www-01.ibm.com/support/docview.wss?uid=swg24036832]
+Rational Software Architect for WebSphere Software Fix Pack 1 (8.5.5.1) for 8.5.5 [http://www-01.ibm.com/support/docview.wss?uid=swg24036833]
+Rational Software Architect Fix Pack 2 (8.5.5.2) for 8.5.5 [http://www-01.ibm.com/support/docview.wss?uid=swg24038307]
+Rational Software Architect for WebSphere Software Fix Pack 2 (8.5.5.2) for 8.5.5 [http://www-01.ibm.com/support/docview.wss?uid=swg24038308]
+Rational Software Architect Fix Pack 3 (8.5.5.3) for 8.5.5 [http://www-01.ibm.com/support/docview.wss?uid=swg24039397]
+Rational Software Architect for WebSphere Software Fix Pack 3 (8.5.5.3) for 8.5.5 [http://www-01.ibm.com/support/docview.wss?uid=swg24039398]
+Rational Software Architect Fix Pack 4 (8.5.5.4) for 8.5.5 [http://www-01.ibm.com/support/docview.wss?uid=swg24041240]
+Rational Software Architect for WebSphere Software Fix Pack 4 (8.5.5.4) for 8.5.5 [http://www-01.ibm.com/support/docview.wss?uid=swg24041241]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Headline:
+   Running Analyze Topology for Automation Signature matches
+   results in RSA crashing or java exit error
+   abstract:
+    Attempts to run Analyze Topology for Automation Signature
+   matches  in RSA results in RSA crashing or java exit error
+   error_description:
+    1. Create a topology with at least 250 units
+   2. Open the topology
+   3. Analyze Topology for Automation Signature matches
+   
+   4. RSA will hang and/or eventually crash or java exit error
+   workaround:
+    No workaround found
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   Analyze Topology for Automation Signature matches hangs.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  There have been memory and time improvements made in
+   automation matching and create workflow operations and
+   customers would be able to run these operations on models
+   with larger number of units.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM84070
+   
+   
+ * REPORTED COMPONENT NAME
+   SW ARCHITECT WI
+   
+   
+ * REPORTED COMPONENT ID
+   5724I7001
+   
+   
+ * REPORTED RELEASE
+   850
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-03-04
+   
+   
+ * CLOSED DATE
+   2013-12-13
+   
+   
+ * LAST MODIFIED DATE
+   2013-12-13
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   SW ARCHITECT WI
+   
+   
+ * FIXED COMPONENT ID
+   5724I7001
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R850 PSN
+   UP

@@ -1,0 +1,36 @@
+Title: IBM How To use a Run Task to invoke a shell script on the UNIX System Services (USS) on the same mainframe LPAR. - United States
+
+Text:
+I TECHNOTE (FAQ)
+
+QUESTION
+ How To use a Run Task to invoke a shell script on the UNIX System Services (USS) on the same mainframe LPAR. 
+
+ANSWER
+The following is a sample that has been tested using PNODE=SNODE. "USER1" must be changed to a valid user-id.
+
+This sample needs to be modified to fit your installation requirements. You must change permissions on the rename.sh file so it's executable.
+
+USSRTASK PROC SNODE=pnode_name -
+NOTIFY=%USERID -
+PNODEID=(USER1,PSWD) -
+SNODEID=(USER1, PSWD) -
+&CKPT=1000K -
+&COMPRESS=,
+STEP01 COPY -
+FROM ( -
+DSN="/u/user1/test.data5" -
+DISP=SHR -
+) -
+TO ( -
+DSN="/u/user1/test.rename" -
+DISP=(rpl) -
+) -
+COMPRESS EXT -
+CKPT=&CKPT
+STEP02 RUN TASK PNODE (PGM=BPXBATCH) -
+SYSOPTS="C'SH /u/user1/rename.sh'"
+
+Below is theshell script "rename.sh"
+
+mv /u/user1/test.rename /u/user1/newname

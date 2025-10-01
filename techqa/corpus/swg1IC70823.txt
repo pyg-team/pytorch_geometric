@@ -1,0 +1,161 @@
+Title: IBM IC70823: WSDL SERVICE SCHEMA IS NOT INLINE (IMPORTED VIA SCHEMALOCATION) AND RESULTS IN 401 IF BACKEND REQUIRES FOR BASIC AUTHENTICATION - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Backend server is set to Basic Authentication.
+   
+   In a DataPower WSP service, the XML Manager's user agent is
+   configured for basic authentication. Customer queries wsdl with
+   ?wsdl through DataPower without problem. The returned wsdl
+   has xsd stored separately, indicated by 'schemalocation'.
+   However, when customer tries to query this xsd, he gets a
+   response "401 unauthorized".
+   
+   How to re-create:
+   
+   1. Configure a backend sever as http basic authentication for
+   providing a WSDL.
+   
+   2. Import a configuration export with a WS-proxy
+   
+   
+   3. Issue
+   http://<DP_IP:port>/ABCService/services/ABC?wsdl [http://<DP_IP:port>/ABCService/services/ABC?wsdl]
+   from a web browser. If the wsdl is stored separately, you will
+   get a WSDL back including contents such as:
+   
+   
+   <xsd:schema><xsd:import schemaLocation="ABC.xsd1.xsd"
+   namespace="http://www.datapower.com/Eli/ABC"/></xsd:schema>
+   
+   4. Issue
+   http://<DP_IP:port>/ABCService/services/ABC.xsd1.xsd [http://<DP_IP:port>/ABCService/services/ABC.xsd1.xsd]
+   You will get an "Internal Error" back indicating you could
+   not get the schema back.
+   
+   The more detailed errors from the Error Report or default-log
+   are as follows:
+   
+   14:50:04 network error    6531830 request    0x80e00040 xslproxy
+   (wsgw-myLoop): url-open: Remote error on url
+   'https://<host:ip>/myapp/ABC?xsd=1'
+   
+   HTTP invalid response returned 401 Authorization Required, from
+   URL 'http://<DP_IP:port>/ABCService.swaref.R288wsdl'
+   (WWW-Authenticate: Basic , Authorization: N/A)
+   
+   Error occurred when connecting to URL
+   'http://<DP_IP:port>/ABCService.swaref.R288.wsdl'
+   
+   wsdl: Request failed to compile. Unable to retrieve
+   http://<DP_IP:port>/ABCService.swaref.R288.wsdl. This is
+   referenced by http://<DP_IP:port>/APCService.swaref.R288.wsdl. [http://<DP_IP:port>/APCService.swaref.R288.wsdl.]
+   
+   The wsdl 'ABCService.swaref.R288.wsdl' could not be parsed or
+   failed validation.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Create a proxy for all fetches of the WSDL and XSD
+   through a local XML Firewall/Multi-Protocol
+   Gateway where the firewall adds the correct
+   header.  In the WSProxy, the remote location
+   of the WSDL would be defined as a local port.  If this
+   sounds like something you might want to try in lieu of
+   upgrading firmware, we can get additional information for
+   you.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  The authorization issue will be resolved.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC70823
+   
+   
+ * REPORTED COMPONENT NAME
+   DATAPOWER
+   
+   
+ * REPORTED COMPONENT ID
+   DP1234567
+   
+   
+ * REPORTED RELEASE
+   381
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-08-31
+   
+   
+ * CLOSED DATE
+   2010-11-02
+   
+   
+ * LAST MODIFIED DATE
+   2012-01-17
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R381 PSN
+   UP

@@ -1,0 +1,106 @@
+Title: IBM Setting up an Oracle DataSource in WebSphere Studio version 5.x - United States
+
+Text:
+oracle; datasource; wsi; data; source; v5.1_accepted; WSSD; WSAD-IE; WSADIE; WSED; WDSC; developer; site; integration; 1113202 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ How do I set up an Oracle DataSource in WebSphere® Studio version 5.x? 
+
+RESOLVING THE PROBLEM
+The following is a simple example of how to set up an Oracle DataSource in WebSphere Studio version 5.x:
+1. Create a server project
+a) File > New > Other
+b) Server > Server project > Next > Project Name: Servers > Finish
+
+2. Create the server instance and configuration
+a) File > New > Other.
+b) Server > Server and Server Configuration > Next
+c) Server Name: Default > Expand on Websphere version 5.X >select Test 
+Environment > Finish
+
+3. Configure the server.
+a) Go to the Server Perspective
+b) Open by double clicking the WebSphere Server Instance file which can be found in the Navigation view, under the Servers project folder. The file has an extension of .wsi for local WebSphere Server Instances or .wrsi for remote WebSphere Server Instances.
+c) Select the tab Data source
+
+Creating an Oracle Datasource
+
+4. Create a JDBC driver in the Server Configuration
+a) In the JDBC provider list, click Add...> Database type: Select Oracle > JDBC 
+provider type: select Oracle JDBC Thin Driver > Next
+b) In the Create a JDBC Provider wizard > Name: OracleJdbcDriver
+c) Make sure your classpath is set up correctly. If you are connecting to a remote Oracle database you'll need to add the classpath to the local JDBC driver classes12.zip. This can be done by selecting ${ORACLE_JDBC_DRIVER_PATH}/classes12.zip-> click Remove. Select Add External JARs...> navigate to the local copy of classes12.zip > Open > Finish
+
+5. Create a datasource
+a) In the Data source defined in the JDBC provider selected above, click Add...-> select Oracle JDBC Thin Driver, select Version 5.0 data source > Next
+b) Name: OracleDatasource > JDNI: jdbc/OracleDatasource > Next
+c) In the wizard, Create a data source(or Modify Resource Properties), create 4 Resource Properties by entering the appropriate values for each variable:
+
+i) Name: databaseName 
+Type: java.lang.String
+Value: The database name. For example, enter sample to make your Data Source point 
+to sample.
+
+ii) Name: URL
+Type: java.lang.String
+Value: jdbc:oracle:thin:@servername.domain.com:1521:databaseName
+
+iii) Name: portNumber
+Type: java.lang.Integer
+Value: 1521
+
+iv) Name: serverName
+Type: java.lang.String
+Value: servername.domain.com 
+
+d) Click Finish
+
+e) Save the changes to the server, type Ctrl-s. Close the WebSphere Server Instance file in the editor.
+
+Testing the DataSource
+
+6. Create a Web project. 
+a) File > New > Project > Web > Dynamic Web Project > Next
+b) Project Name: TestDataSource > Finish
+
+7. Import the two attachment files (by double-clicking): DataSourceTestServlet.java and DataSourceTest.java into the TestDataSource Web project. 
+DataSourceTestServlet.java [/support/docview.wss?uid=swg21113202&aid=2] [/support/docview.wss?uid=swg21113202&aid=1]DataSourceTest.java [/support/docview.wss?uid=swg21113202&aid=4] [/support/docview.wss?uid=swg21113202&aid=3]
+
+
+a) Go to the Web perspective, highlight the project TestDataSource > File > Import > File System > Next.
+b) Browse to the directory where you have placed a local copy of the two files > OK
+c) Select the files: DataSourceTestServlet.java and DataSourceTest.java.
+d) Select the folder: TestDataSource/JavaSource. Click Finish
+e) In the file, DataSourceTest.java, find this line of code and replace userid and password with the user ID and password to the Oracle database, leaving the quote marks in place:
+Connection conn = ds.getConnection("userid","password");
+
+TIP: Verify that the userid has the correct database permission to connect and execute queries on the tables you will be accessing.
+
+f) In the file, DataSourceTest.java, find this line of code and replace TABLE with the relational table name that you are connecting to:
+ResultSet rs = stmt.executeQuery("Select * from TABLE");
+g) Save the changes to DataSourceTest.java. Ctrl-s.
+
+8) Ensure the Server is associated with the Web project. 
+a) In the Server Configuration view, expand the Servers folder, right click the default server: 
+
+ * In WebSphere Studio v5.0.x click Add, then select the project, DefaultEAR. 
+ * In WebSphere Studio v5.1.x click Add & Remove Projects... > select DefaultEAR > Add > Finished
+
+
+9) In the Navigator view of the Server perspective, right click DataSourceTestServlet.java > Run on Server>Finish . 
+
+Further information:  * Refer to the prerequisites for WebSphere Application Server, for supported databases and JDBC drivers or refer to the below link: WebSphere Application Server Prerequisites. 
+ * Refer to the online help topics: Creating JDBC connections and Connecting to databases or refer to the below link to WebSphere Studio Application Developer v5.0.1's InfoCenter. 
+
+RELATED INFORMATION
+#Setting up a DB2 data source in WebSphere Studio 5.x [http://www.ibm.com/support/docview.wss?uid=swg21113210]
+WebSphere Application Server System Requirements [http://www.ibm.com/support/docview.wss?uid=swg27006921]
+Information Center: Connecting to databases [http://publib.boulder.ibm.com/infocenter/adiehelp/v5r1m1/topic/com.ibm.etools.rad.templates.wizard.doc/html/tconnectingtoadatabase.htm]
+Specify a userid and password for version 5.0 [http://www.ibm.com/support/docview.wss?uid=swg21161664]
+
+
+ 
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration WebSphere Development Studio Client for iSeries Server Windows 2000, Windows NT, Windows XP 5.0 All Editions Software Development WebSphere Studio Site Developer - Windows 5.0, 5.0.1, 5.1 All Editions Software Development WebSphere Studio Application Developer Integration Edition - Windows 5.0, 5.0.1 All Editions Software Development WebSphere Studio Enterprise Developer - Windows 5.0, 5.0.1 All Editions Software Development Rational Application Developer for WebSphere Software -

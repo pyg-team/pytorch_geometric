@@ -1,0 +1,53 @@
+Title: IBM How do I clear the BigFix Console cache? - United States
+
+Text:
+233; Cache; Clear Cache; Console Cache; Enterprise Console; Console; googlebigfix TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The BigFix Console caches information about computers, actions, Fixlet, Tasks, etc. in the local sub folders of the BigFix Console. By default, the local cache is written to disk when you close your BigFix Console and read when you login. In most cases, it is faster to read data from the local cache instead of reloading it each time from the database. 
+
+RESOLVING THE PROBLEM
+Clearing your local BigFix Console cache:
+Through the console:
+1. Open your BigFix Console and go to File->Preferences.
+2. Click the 'Clear Cache' button.
+3. Close and reopen the BigFix Console to reload the cache.
+
+Through the file system:
+1. Close your BigFix console.
+2. Navigate to \Users\{USERNAME}\AppData\Local\BigFix
+3. Delete the Enterprise Console directory
+4. Start up your console (Note: you may be prompted to re-trust the certificate, click YES) 
+
+Clearing all console caches:
+1. Open up a command line on the server and cd to <%Program Files%>\Program Files\BigFix Enterprise\BES Server
+2. Run the command: BESAdmin /resetDatabaseEpoch
+
+Note: The DatabaseEpoch is not to be confused with the ActionSiteEpoch. The DatabaseEpoch is used to detect situations where console caches are stale and must be discarded, but where the additional behaviors of an ActionSiteEpoch reset are not desired. 
+
+Note: The files for the BigFix Console cache can be found here:
+
+
+ * Documents and Settings\<current user>\Local Settings\Application Data\BigFix\Enterprise Console\<DSN>\<BigFix UserName>\SessionCache.dat 
+ * Documents and Settings\<current user>\Local Settings\Application Data\BigFix\Enterprise Console\<DSN>\<BigFix UserName>\PropertyResults 
+
+Note: The files for the BigFix Console cache may also be defined by a registry setting. 
+
+You can change the location of the BigFix Console local cache data with the following registry key in the HKEY_CURRENT_USER branch. 
+
+[HKCU\Software\BigFix\Enterprise Console\Preferences] 
+Name: Data Directory (REG_SZ) 
+Value: A directory to store the cache files. 
+Example: D:\AppData\BES Console Cache 
+
+This REG_SZ will not exist if you have not overridden the default location. 
+
+If set correctly, you should see folders and files created in the specified directory the next time you launch the BigFix Console. 
+
+Related Video:
+
+
+ 
+
+HISTORICAL NUMBER
+ 233

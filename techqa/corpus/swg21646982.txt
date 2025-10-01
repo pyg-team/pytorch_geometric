@@ -1,0 +1,39 @@
+Title: IBM Tivoli Integrated Portal won't allow LDAP users to log in "Login failed..." error - United States
+
+Text:
+TIPL2; TIPL2LDAP; CWWIM4520E; DSID-03100641; referral; follow; ignore TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Logins for LDAP users are suddenly failing with "Login failed. Check User ID and password and try again". The <TIP HOME>/profiles/TIPProfile/logs/server/systemOut.log includes the following WIM and LDAP error strings: "CWWIM4520E" and "DSID-03100641" 
+
+SYMPTOM
+Local file based users can log in. Only LDAP users are affected.
+
+
+CAUSE
+A change in the LDAP environment is requiring the WAS referrals option to be set to "follow"
+
+DIAGNOSING THE PROBLEM
+Check the SystemOut.log for errors similar to:
+
+###
+[8/14/13 12:08:23:395 CDT] 0000001e exception E com.ibm.ws.wim.adapter.ldap.LdapConnection getAttributes CWWIM4520E The 'javax.naming.PartialResultException: [LDAP: error code 10 - 0000202B: RefErr: DSID-03100641, data 0, 1 access points
+ref 1: 'dmz.companyname.org'
+�]; Remaining name: 'CN=Tivoli,OU=General,OU=company Groups,DC=dmz,DC=company,DC=org'; Resolved object: 'com.sun.jndi.ldap.LdapCtx@436c436c'' naming exception occurred during processing.
+###
+
+RESOLVING THE PROBLEM
+Method 1.
+1. Login to the Integrated Solutions Console.
+2. Navigate to Secure administration, applications, and infrastructure
+--> Federated repositories --> Manage repositories --> repository name.
+3. In the drop-down list for "Support referrals to other LDAP servers",
+select Follow.
+4. Save the changes and restart the servers.
+
+Method 2.
+1. Open the <was_profile>/config/cells/<cell
+name>/wim/config/wimconfig.xml file.
+2. Search for referal="ignore".
+3. Change this to referal="follow".
+4. Save the changes and restart the servers.

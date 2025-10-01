@@ -1,0 +1,27 @@
+Title: IBM Considerations when installing and configuring WebSphere software for the Privileged Session Recorder Server - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ What are the considerations when installing and configuring WebSphere software, Version 7.0 and Version 8.5? 
+
+ANSWER
+Review the following considerations to avoid problems when you install and configure WebSphere software, Version 8.5, for the Privileged Session Recorder Server. 
+
+ * For WebSphere software, Version 8.5, you must install Fix Pack 2 for WebSphere Application Server and the Java SDK. You can download Fix Pack 2 from 8.5.0.2: WebSphere Application Server V8.5 Fix Pack 2. [http://www.ibm.com/support/docview.wss?uid=swg24034672] 
+   For information about installing the fix packs and any interim fixes, see the topic Installing WebSphere Application Server, Version 8.5 [http://www.ibm.com/support/knowledgecenter/SSRQBP_1.0.1.1/com.ibm.ispim.doc_1.0.1.1/Installation_Guide/tasks/t_installing_was85.html].
+   
+   For WebSphere software, Version 7.0, you must install at least Fix Pack 29 for WebSphere Application Server and the Java SDK.
+   For information about installing the fix pack for WebSphere Application Server and the Java SDK, see the topic Installing WebSphere Application Server Version 7.0 fix packs [http://www.ibm.com/support/knowledgecenter/SSRQBP_1.0.1.1/com.ibm.ispim.doc_1.0.1.1/Installation_Guide/tasks/installing_was_fixpack.html]. 
+ * For WebSphere software, Version 8.5.0.2, you must install at least the 8.5.0.0-WS-WASJavaSDK-WinX64-IFPM98574 interim fix for the WebSphere Application Server Java SDK component.
+   For information about installing the fix packs and any interim fixes, see the topic Installing WebSphere Application Server Version 8.5 [http://www.ibm.com/support/knowledgecenter/SSRQBP_1.0.1.1/com.ibm.ispim.doc_1.0.1.1/Installation_Guide/tasks/t_installing_was85.html]. 
+ * The WebSphere Application Server Web 2.0 and Mobile feature pack are not required for WebSphere Application Server, Version 8.5. These software are only required if you are installing on WebSphere Application Server, Version 7.0. 
+ * IBM HTTP Server and web server plug-ins, Version 8.5, require the Microsoft Visual C++ 2008 Redistributable Package. For installations on x86 computers, install the x86 version of the Microsoft Visual C++ 2008 Redistributable Package. For installation on x64 computers, install both the x86 and x64 version of the Microsoft Visual C++ 2008 Redistributable Package.
+   
+   You can download the Microsoft Visual C++ 2008 Redistributable Package from the following links: Microsoft Visual C++ 2008 Redistributable Package (x86) [http://www.microsoft.com/en-us/download/details.aspx?id=29] 
+   
+   Microsoft Visual C++ 2008 Redistributable Package (x64) [http://www.microsoft.com/en-us/download/details.aspx?id=15336] 
+   
+   
+ * You must install the WebSphere Customization Toolbox V8.5 to set up the web server plug-ins and the IBM HTTP Server Administrator server.

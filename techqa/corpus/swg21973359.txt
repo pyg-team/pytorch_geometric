@@ -1,0 +1,15 @@
+Title: IBM Sterling B2B Integrator support for Oracle 12C RAC - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ What version of IBM Sterling B2B Integrator supports Oracle 12c RAC? 
+
+ANSWER
+ 
+
+Support for Oracle 12c RAC will be available in Sterling Integrator 5.2.6.1, specifically, it will support 
+installing against a service name as well as SID.
+
+It will still only support using fail-over and not load balancing across the RAC nodes.

@@ -1,0 +1,66 @@
+Title: IBM WebSphere SDK Java Technology Edition 7.1 Minimum Supported Operating Systems - United States
+
+Text:
+ RELEASE NOTES
+
+ABSTRACT
+ IBM WebSphere SDK Java Technology Edition 7.1 Supported Minimum Operating Systems 
+
+CONTENT
+WebSphere 8.5.5 Fix Pack 2 announced IBM WebSphere SDK Java Technology Edition 7.1 as an option for Java. The following are the minimum supported OS levels for IBM WebSphere SDK Java Technology Edition 7.1.
+
+
+AIX 
+
+AIX 6.1 TL7 
+
+AIX 7.1 TL1 
+
+ 
+
+IBM i 
+
+IBM i V7R1 
+
+ 
+
+Linux 
+
+Red Hat 6 Update 4 
+
+SLES 11 Service Pack 2 
+
+Ubuntu 12.04 LTS 
+
+ 
+
+Windows 
+
+Windows Vista service pack 2 
+
+Windows 7 service pack 1 
+
+Windows 8 
+
+Windows 8.1 
+
+Windows Server 2008 service pack 2 
+
+Windows Server 2008 R2 service pack 1 
+
+Windows Server 2012 
+
+Windows Server 2012 R2
+
+
+z/OS
+z/OS 1.11 (extended support only)
+z/OS 1.12
+z/OS 1.13
+z/OS 2.1
+
+
+
+RELATED INFORMATION
+ WebSphere Application Server V8.5.5 Fix Pack 2 [http://www-01.ibm.com/support/docview.wss?uid=swg24037250]
+IBM® SDK Java™ Technology Edition Version 7 Release 1 [http://www-01.ibm.com/support/knowledgecenter/SSYKE2_7.0.0/welcome/welcome_javasdk_version71.html?lang=en]

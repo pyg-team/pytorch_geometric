@@ -1,0 +1,27 @@
+Title: IBM Unable to recreate an Oracle Text index as the database continually throws a "DRG-10507: duplicate index name" error - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Unable to recreate an Oracle Text index as the database continually throws a "DRG-10507: duplicate index name" error 
+
+ANSWER
+In some situations like an upgrade of the application or restoring the database, the Oracle Text indexes used by the application need to be recreated. In a few rare cases we've see issues where the Oracle database gets into a state where it will not allow some of the Oracle Text indexes to be recreated. This seems to happen when the Oracle jobs gets into a state where some processes start blocking others from executing.
+
+If this problem happens in your environment, you may see some of these symptoms:
+
+(1) When trying to drop one of the Oracle Text indexes that should exist you get a "ORA-01418: specified index does not exist" error.
+
+(2) When creating an index that supposedly was dropped you receive a "ORA-20000: Oracle Text error: DRG-10507: duplicate index name" error.
+
+To help resolve this situation we have a couple recommendations.
+
+(1) Try to have the Oracle database restarted while the application is shutdown. This should clear up the blocking processes. Then attempt to execute the scripts to recreate the Oracle Text.
+
+(2) In our Upgrade Guide there is a section called "Halt the Oracle Jobs". These instructions will help you run scripts to temporarily stop the Oracle jobs from executing to prevent any type of blocking behavior while you are executing the scripts to recreate the Oracle Text indexes.
+
+
+
+HISTORICAL NUMBER
+ 1337

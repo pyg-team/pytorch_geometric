@@ -1,0 +1,47 @@
+Title: IBM How to enable Oracle trace for Dynamic Query Mode - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This document describes a method of enabling logging of the Oracle JDBC driver. This is useful when troubleshooting issues between IBM Cognos and the Oracle datasource in Dynamic Query mode. 
+
+CAUSE
+Need to verify communication at oracle JDBC driver level.
+
+RESOLVING THE PROBLEM
+Oracle provides debug jdbc drivers with their clients. They are located at ...\client\jdbc\lib
+They can be identified by a trailing _g in the name of the jar file. For example ojdbc6_g.jar is the debug version of ojdbc6.jar
+
+Steps: 
+
+1. Download the ojdbc6_g.jar from Oracle or copy it from any client installation
+
+2. Stop the IBM Cognos Service
+
+3. Move the <cognos_installation>/webapps/p2pd/WEB-INF/lib/ojdbc6.jar and <cognos_installation>/v5dataserver/lib/ojdbc6.jar to a safe place. Instead of original file insert the ojdbc6_g.jar to <cognos_installation>/webapps/p2pd/WEB-INF/lib and <cognos_installation>/v5dataserver/lib (no need to rename the file!)
+
+4. Create a file OracleLog.properties with below content:
+.level=ALL
+oracle.jdbc.level=FINE
+oracle.jdbc.handlers=java.util.logging.FileHandler
+java.util.logging.FileHandler.level=FINE
+java.util.logging.FileHandler.pattern = orajdbc.log
+java.util.logging.FileHandler.count = 1
+java.util.logging.FileHandler.formatter = java.util.logging.SimpleFormatter
+
+5. Copy the OracleLog.properties to <cognos_installation>/bin and to <cognos_installation>/bin64
+
+6. Start Cognos
+
+7. Go to Cognos Administration > Configuration > Dispatchers and services > dispatcher name > find Query Service. Open properties for Query Service and find "Additional JVM arguments for the query service (Requires QueryService restart)" . Add line:
+-Doracle.jdbc.Trace=true -Djava.util.logging.config.file=OracleLog.properties
+
+8. Click 'More' next to Query Service, stop and then start the service.
+
+9. Reproduce the issue and locate orajdbc.log in <cognos_installation>/bin or <cognos_installation>/bin64 depends on execution mode.
+
+If similar trace is required for Compatible Mode please follow technote1342992.
+
+RELATED INFORMATION
+#How to trace the Oracle jdbc driver (Compatible Mode) [http://www.ibm.com/support/docview.wss?uid=swg21342992]

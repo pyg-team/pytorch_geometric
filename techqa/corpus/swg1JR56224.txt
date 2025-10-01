@@ -1,0 +1,176 @@
+Title: IBM JR56224: CONSTRAINT VIOLATION OCCURS WHILE SEARCH OPTIMIZATION IS ENABLED WITH BUSINESS DATA VARIABLES THAT USE MICROSOFT SQL SERVER - United States
+
+Text:
+  DIRECT LINKS TO FIXES
+bpm.8570.cf2016.09.delta.repository.2of2 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Standard&fixids=bpm.8570.cf2016.09.delta.repository.2of2&source=SAR]
+bpm.8570.cf2016.09.delta.repository.1of2 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Standard&fixids=bpm.8570.cf2016.09.delta.repository.1of2&source=SAR]
+8.5.5.0-WS-BPM-IFJR56224 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Standard&fixids=8.5.5.0-WS-BPM-IFJR56224&source=SAR]
+Downloading IBM Business Process Manager V8.5.7 Cumulative Fix 2016.09 [http://www-01.ibm.com/support/docview.wss?uid=swg24042580]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  While enabling search optimization with business data variables
+   that use Microsoft SQL Server as runtime database, you see a
+   constraint violation.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  When you use Microsoft SQL Server as the runtime database and
+   use the SchemaGenerator tool, SchemaGenerator fails with an
+   constraint violation because business data search aliases have
+   various spellings, which prevents you to enable the search
+   optimization.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A fix is available for IBM BPM V8.5.5.0 that handles the various
+   spellings of business data search aliases to avoid the
+   constraint violation and to save it in one column.
+   
+    On Fix Central (http://www.ibm.com/support/fixcentral), search
+   for JR56224:
+   
+   1. Select IBM Business Process Manager with your edition from
+     the product selector, the installed version to the fix pack
+     level, and your platform, and then click Continue.
+   
+   2. Select APAR or SPR, enter JR56224, and click Continue.
+   
+    When you download fix packages, ensure that you also download
+   the readme file for each fix. Review each readme file for
+   additional installation instructions and information about the
+   fix.
+   
+    To apply the fix, complete the following steps:
+   
+    1. Shut down the IBM BPM server in a controlled and complete
+   manner to ensure that all transactions completed.
+   
+    2. Extract the .zip file to a directory. For example, extract
+   the file to C:\temp.
+   
+    3. Add the fix pack repository location in IBM Installation
+   Manager:
+       a. Start IBM Installation Manager.
+       b. In Installation Manager, select File > Preferences >
+   Repositories.
+       c. Click Add Repository.
+       d. Browse to or enter the file path to the repository.config
+   file. The repository.config file is located in the directory
+   where you extracted the compressed files, for example, enter
+   C:\temp\repository.config. Click OK.
+   
+    4. On the main page of the Installation Manager, click Update.
+   
+    5. Restart the IBM BPM server.
+   
+   
+   To remove the fix, complete the following steps:
+   
+    IMPORTANT NOTE:  Remove fixes in the reverse order than the
+   order in which they were applied. Do not remove a fix unless all
+   fixes applied after it are removed. You may reapply a removed
+   fix.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR56224
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM ADVANCED
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9400
+   
+   
+ * REPORTED RELEASE
+   857
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-06-29
+   
+   
+ * CLOSED DATE
+   2016-07-08
+   
+   
+ * LAST MODIFIED DATE
+   2016-07-08
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   BPM STANDARD
+   
+   
+ * FIXED COMPONENT ID
+   5725C9500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R855 PSY
+   UP
+   
+   
+ * R857 PSY
+   UP

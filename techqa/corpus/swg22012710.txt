@@ -1,0 +1,106 @@
+Title: IBM Create a fresh Derby database on Impact 7.1.0 NOI installations - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How do I reset my Derby database on a NOI installation? 
+
+CAUSE
+It may be necessary to reset a Derby database to quickly clean down old configurations and data, or in the case of database corruption.
+
+ANSWER
+
+It is IMPORTANT to note that any data entries, which were in your Maintenance Window Management (MWM), Reporting, and/or NOI configurations and report data, are going to be completely lost. Verify this is OK before continuing.
+
+1. Using the following steps. reset to the GA level database (this information can also be found in the Impact Administration Guide under topic Resetting the database [https://www.ibm.com/support/knowledgecenter/SSSHYH_7.1.0.11/com.ibm.netcoolimpact.doc/admin/imag_database_resetting_the_database_t.html].) 
+
+(i) Either shut the Impact Server completely down or just stop your ImpactDatabase Service. Note: in a clustered env the secondary servers should be shutdown.
+
+(ii) Remove the ImpactDB/ directory from $IMPACT_HOME/db/<SERVER_NAME>/derby/ directory. 
+
+(iii) Copy the ImpactDB/ directory from $IMPACT_HOME/install/dbcore directory to the $IMPACT_HOME/db/<SERVER_NAME>/derby/ directory.
+
+(iv) Either start the Impact Server or just start your ImpactDatabase Service. Note: in a clustered env the secondary servers should stay down.
+
+
+2. Editing the connect string in the .sql files listed below. 
+
+$IMPACT_HOME/install/configuration/sql/alter_tables_fp5.sql * GA file
+$IMPACT_HOME/add-ons/NOI/db/noi_derby.sql * GA file
+$IMPACT_HOME/add-ons/RelatedEvents/db/relatedevents_derby.sql * GA file
+$IMPACT_HOME/add-ons/Seasonality/db/seasonality_derby.sql * GA file
+$IMPACT_HOME/add-ons/NOI/db/noi_derby_upgrade_71fp2.sql * for FP2
+$IMPACT_HOME/add-ons/Seasonality/db/seasonality_derby_upgrade_71fp2.sql * for FP2
+$IMPACT_HOME/add-ons/NOI/db/noi_derby_updatefp03.sql * for FP3
+$IMPACT_HOME/add-ons/NOI/db/noi_derby_updatefp04.sql * for FP4
+$IMPACT_HOME/add-ons/NOI/db/noi_derby_updatefp05.sql * for FP5
+$IMPACT_HOME/add-ons/NOI/db/noi_derby_updateif04.sql * for IF4
+$IMPACT_HOME/add-ons/NOI/db/noi_derby_updatefp06.sql * for FP6
+$IMPACT_HOME/add-ons/NOI/db/noi_derby_updatefp08.sql * for FP8
+$IMPACT_HOME/add-ons/NOI/db/noi_derby_updatefp12.sql * for FP12
+
+Note: that the file list may vary depending on the latest Fix Pack installed (above are all files up to and including Fix Pack 12)
+
+Change from:
+
+connect 'jdbc:derby://__PRIMARY_HOST__:__PRIMARY_PORT__/__PRIMARY_DB__;user=__DBUSER__;password=__DBPASSWORD__;';
+
+To: 
+
+connect 'jdbc:derby://localhost:1527/ImpactDB;user=impact;password=derbypass;';
+
+This is the default port, username and password. Be sure to adjust your connect string accordingly. To ensure the correct host name is used, check the HOST setting in the <server name>_ImpactDB.ds file in $IMPACT_HOME/etc directory.
+
+
+3. Replace __DBUSER__ with the impact user in the following file: 
+
+$IMPACT_HOME/install/configuration/sql/alter_tables_fp5.sql
+
+By default this is IMPACT
+
+
+4. Run the SQL files in the following order from your $IMPACT_HOME/bin/ directory:
+=======================================================
+./nci_db connect -sqlfile $IMPACT_HOME/install/configuration/sql/alter_tables_fp5.sql
+./nci_db connect -sqlfile $IMPACT_HOME/add-ons/NOI/db/noi_derby.sql
+./nci_db connect -sqlfile $IMPACT_HOME/add-ons/Seasonality/db/seasonality_derby.sql
+./nci_db connect -sqlfile $IMPACT_HOME/add-ons/RelatedEvents/db/relatedevents_derby.sql
+./nci_db connect -sqlfile $IMPACT_HOME/add-ons/NOI/db/noi_derby_upgrade_71fp2.sql
+./nci_db connect -sqlfile $IMPACT_HOME/add-ons/Seasonality/db/seasonality_derby_upgrade_71fp2.sql
+./nci_db connect -sqlfile $IMPACT_HOME/add-ons/NOI/db/noi_derby_updatefp03.sql
+./nci_db connect -sqlfile $IMPACT_HOME/add-ons/NOI/db/noi_derby_updatefp04.sql
+./nci_db connect -sqlfile $IMPACT_HOME/add-ons/NOI/db/noi_derby_updatefp05.sql
+
+
+5. Connect to derby and drop the following view
+
+DROP VIEW SEASONALITY.VIEW_RESULT_WITH_RULE;
+
+
+6. Run the SQL files in the following order from your $IMPACT_HOME/bin/ directory:
+=======================================================
+./nci_db connect -sqlfile $IMPACT_HOME/add-ons/NOI/db/noi_derby_updateif04.sql
+./nci_db connect -sqlfile $IMPACT_HOME/add-ons/NOI/db/noi_derby_updatefp06.sql
+./nci_db connect -sqlfile $IMPACT_HOME/add-ons/NOI/db/noi_derby_updatefp08.sql
+./nci_db connect -sqlfile $IMPACT_HOME/add-ons/NOI/db/noi_derby_updatefp12.sql
+=======================================================
+
+7. Connect to derby and create the following view
+
+CREATE VIEW SEASONALITY.VIEW_RESULT_WITH_RULE
+AS
+SELECT GROUPNAME,
+CASE WHEN re.RECOUNT IS NULL THEN 0 ELSE re.RECOUNT END AS RECOUNT,
+rall.*,
+review.CUSTOMERID AS REVIEWED_BY,
+CASE WHEN rule.RULE_NAME IS NOT NULL THEN rule.RULE_NAME ELSE mapper.RULE_NAME END AS RULE_NAME
+FROM SEASONALITY.ROLLUPS_DATA_WITH_CONFIG_VIEW AS rall
+LEFT JOIN (SELECT COUNT(*) AS RECOUNT, GROUPNAME, CONFIGNAME FROM RELATEDEVENTS.RE_GROUPEVENTS GROUP BY CONFIGNAME,GROUPNAME) AS re ON rall.CONFIGNAME = re.CONFIGNAME
+AND re.GROUPNAME = (SELECT GROUPNAME FROM RELATEDEVENTS.RE_GROUPEVENTS WHERE EVENTIDENTITY = rall.EVENTIDENTITY AND CONFIGNAME = (SELECT RESULTNAME FROM SEASONALITY.RESULT_CONFIGURATION WHERE RESULTID = rall.RESULTID)) 
+LEFT JOIN (SELECT RESULTID, ENTRYID, CUSTOMERID FROM SEASONALITY.RESULTS_VIEWDETAIL) AS review ON rall.RESULTID = review.RESULTID and rall.ENTRYID = review.ENTRYID
+LEFT JOIN (SELECT EVENTIDENTITY, RULE_NAME, CONFIGNAME FROM SEASONALITY.SE_RULE_RELATEDEVENTS) AS rule ON rall.EVENTIDENTITY = rule.EVENTIDENTITY AND rall.CONFIGNAME = rule.CONFIGNAME
+LEFT JOIN (SELECT EVENTIDENTITY, RULE_NAME, RESULTID, ENTRYID FROM SEASONALITY.SE_RULE_CONFIGURATION_EVENT_MAPPER) AS mapper ON rall.EVENTIDENTITY = mapper.EVENTIDENTITY AND rall.RESULTID = mapper.RESULTID and rall.ENTRYID = mapper.ENTRYID;
+
+
+8. Now start secondary members to enable the changes on the Primary derby to be replicated to all cluster members.

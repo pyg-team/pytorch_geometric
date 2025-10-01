@@ -1,0 +1,48 @@
+Title: IBM Callhome SRC E3325009 +PA_Error - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Callhome SRC E3325009 +PA_Error with remaster failed 
+
+SYMPTOM
+Callhome SRC E3325009 is listed on the HMC, under Manage Serviceable Events or in lssvcevents -t hardware, reported against the HMC MTMS. 
+
+
+CAUSE
+The server has 10 minutes to remaster and establish a primary analyzing HMC after a connection drop event. If it doesn't, the HMC will issue the SRC and call home to IBM. This is to report that the customer has a managed system without a primary HMC to perform problem analysis and call home system level errors, ie SRC events. This SRC is critical to resolve to ensure the customer has valid call home setup for all the systems in their environment. 
+
+ENVIRONMENT
+
+
+
+Version 8.x.x (All Releases of Version 8) 
+
+Version 7 Release 790
+
+
+DIAGNOSING THE PROBLEM
+Callhome SRC E3325009 is generated 
+
+
+
+RESOLVING THE PROBLEM
+Check the connection between your managed systems and the reporting HMC. Use lssysconn -r all to list the systems and the current state. All systems should show a good "Connected" state. For any other states either clean up the old connection rmsysconn -o remove --ip x.x.x.x or resolve any connectivity issues, then reverify the HMC is communicating with all the systems lssysconn -r all . If the connections are fine, but the HMC is still not able to remaster, contact your next level of support. 
+
+If there is no connectivity issue to the managed system, one cause of this SRC has been resolved in the following versions: 
+
+Version 8 Release 8.5.0 Service Pack 3 
+
+Version 8 Release 8.6.0 Service Pack 2 
+
+Version 8 Release 8.7.0 Mandatory PTF MH01706 
+
+Fixed a problem where the HMC incorrectly called home serviceable event E3325009 when no problem should have been reported. 
+
+Customers should update to these levels to avoid the reporting of this event when its not necessary.
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Power PE Power HMC

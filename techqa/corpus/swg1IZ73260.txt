@@ -1,0 +1,159 @@
+Title: IBM IZ73260: THE SOA AGENT SHOULD BE ABLE TO HANDLE THE LARGE TID VALUES. - United States
+
+Text:
+  A README IS AVAILABLE
+Release Notes and Install Instructions 7.1.1-TIV-ITCAMSOA-FP0002 [http://www-01.ibm.com/support/docview.wss?uid=isg400000413]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Problem Description :
+   The DataPower tid is mapped to ITCAM SOA field ThreadID when
+    DataPower data is collected by ITCAM SOA.  The ITCAM SOA agent
+    code has defined the ThreadID field as a 32-bit integer, which
+    can contain a maximum value of 2,147,483,647.
+    When the ITCAM SOA agent tries to process tid values like
+    2,796,862,897 that exceed the maximum ThreadID value, the
+    agent code fails with a Java exceptiom and cannot start.
+   
+    The SOA agent should be able to handle the large tid values.
+   
+   Approver : GC, KD
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  To workaround the problem in the short term, DataPower can be
+    restarted with the shutdown - reload firmware selection on the
+    System Control page.  When DataPower is reloaded, the tid
+    unique identifier will be reset to its initial value, a four
+    digit numeric, which can be handled by the ITCAM SOA agent.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  The Transaction ID data field interchange between DataPower
+   device and ITCAM for SOA is not aligned, causing a Data
+   Collector Java exception and failure.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The Transaction ID field on the ITCAM for SOA Data Collector for
+   DataPower has been modified and will be offered as a limited
+   availability patch (7.1.0-TIV-ITCAMSOA-LA0007)
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ73260
+   
+   
+ * REPORTED COMPONENT NAME
+   ITCAM FOR SOA-D
+   
+   
+ * REPORTED COMPONENT ID
+   5724SOA00
+   
+   
+ * REPORTED RELEASE
+   710
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-03-23
+   
+   
+ * CLOSED DATE
+   2010-07-29
+   
+   
+ * LAST MODIFIED DATE
+   2010-07-29
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ITCAM FOR SOA-D
+   
+   
+ * FIXED COMPONENT ID
+   5724SOA00
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R710 PSY
+   UP
+   
+   
+ * R711 PSY
+   UP
+   
+   
+ * R600 PSN
+   UP
+   
+   
+ * R610 PSN
+   UP

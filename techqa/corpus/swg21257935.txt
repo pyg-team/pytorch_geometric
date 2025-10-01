@@ -1,0 +1,27 @@
+Title: IBM CSV028I 806-04 for DWWMHTBB when running DWWMIW to migrate CICS VR RCDS - United States
+
+Text:
+migrates 4.2 4.1 3.3 3.2 3.1 RCDS 569501001 R300 HCCV300 5655H9101 5655H91 5655-H91 R320 HCCV320 5655-P30 5655P30 5655P3000 kixdcfcvr32 kixdcfcvr33 kixdcfcvr41 kixdcfcvr42 R410 R41K R41E R420 R42E R42K R430 R43E R43K HCCV410 HCCV420 JCCV41E JCCV42E JCCV41K JCCV42K HCCV430 JCCV43E JCCV43K TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ You are migrating your RCDS from a prior release of CICS VSAM Recovery for z/OS (CICS VR). When you run the DWWMIH migration utility you receive message CICCSV003I REQUESTED MODULE DWWMHTBB NOT FOUND and CSV028I ABEND806-04 JOBNAME=xxxxxxxx STEPNAME=MIGRATE. 
+
+CAUSE
+Not adding the language dependent load module data set to your LNKLSTxx SYS1.PARMLIB member as described in section 5.6.2 Required PARMLIB updates for the CICS VR server (address space) of the CICS VSAM Recovery Version 4 Program Directory [http://www.ibm.com/support/search.wss?rs=3526&lang=en&loc=en_US&r=10&cs=utf-8&rankfile=0&cc=&coll=0&spc=&stc=&apar=include&q1=program+directory&sort=desc&tc=SSQJMU%2BSSWU2Y&dc=DA410+DA450&dtm].
+
+RESOLVING THE PROBLEM
+Add the &hlq..SDWWLENU dataset (for English FMID JCCV43E) or the &hlq..SDWWLJPN dataset (for Japanese FMID JCCV43K) to your SYS1.PARMLIB LNKLSTxx member.
+
+As an alternative to updating linklist, you can concatenate the language dataset to the &hlq..SDWWLOAD dataset in STEPLIB for the DWWMIW job. 
+
+CICS VR supplies a JCL skeleton in the ISPF dialogs that includes the language dataset in the JCL built by CICS VR. If you are not using the ISPF dialogs in your existing JCL, you will need to carefully review your existing jobs and add the language dataset to the STEPLIB concatenation until you can update your z/OS linklist member.
+
+RELATED INFORMATION
+#Migration considerations [http://publib.boulder.ibm.com/infocenter/cicsts/v4r2/topic/com.ibm.cics.cvr.doc/dwwig/migv4ts.html]
+Customizing the CICSVR ISPF JCL skeleton [http://publib.boulder.ibm.com/infocenter/cicsts/v4r2/topic/com.ibm.cics.cvr.doc/dwwug/getjcl.html]
+
+
+
+
+PRODUCT ALIAS/SYNONYM
+ CICSVR CICS/VR CICS VSAM RECOVERY

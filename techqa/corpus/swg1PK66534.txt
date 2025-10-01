@@ -1,0 +1,239 @@
+Title: IBM PK66534: AN UNSATISFIEDLINK ERROR MIGHT OCCUR IF YOU ATTEMPT TO USE THE ORACLE JDBC DRIVER FOR OCI - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The Information Center for WebSphere Application Server
+   Version 6.0.x does not contain information on how to configure
+   the Oracle Java database connectivity (JDBC) driver for OCI.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  This APAR affects customers who need to     *
+   *                  configure the Oracle JDBC Driver for OCI    *
+   *                  provider with WebSphere Application Server  *
+   *                  Version 6.0.x.                              *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: The Information Center does not         *
+   *                      include information on the Oracle       *
+   *                      JDBC Driver for OCI provider.           *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   The Information Center does not include information on the
+   Oracle JDBC Driver for OCI provider.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The Information Center for WebSphere Application Server
+   Version 6.0.x will be updated to include information on the
+   Oracle JDBC Driver for OCI.
+   
+   In the Information Center, the "Minimum required settings for
+   Oracle" topic will be updated to include the following
+   information:
+   
+   "Oracle JDBC Driver for OCI"
+   The Oracle JDBC Driver provides JDBC access to the Oracle
+   database that uses the Oracle Call Interface (OCI).
+   This JDBC provider:
+   -Supports the oracle.jdbc.pool.OracleConnectionPoolDataSource
+    one phase data source.
+   -Requires the following JDBC driver file:
+    ojdbc14.jar. If you require Oracle trace, use ojdbc14_g.jar.
+   -Requires the following DataStoreHelper classes:
+    com.ibm.websphere.rsadapter.OracleDataStoreHelper
+    Oracle 10g:
+      com.ibm.websphere.rsadapter.Oracle10gDataStoreHelper
+   -Requires a valid authentication alias.
+   -Requires the following properties:
+    URL - The URL that indicates the database from which the data
+    source obtains connections. For example:
+    jdbc:oracle:oci:@<tsname_alias>
+   
+    You must define <tsname_alias> in the
+    ${ORACLE_HOME}/network/admin/tnsnames.ora file.
+   
+   For more information on configuring this JDBC provider, refer
+   to the information center topic on creating a data source that
+   uses the Oracle JDBC Driver for OCI.
+   --------------------------
+   In the Information Center, the following topic will be added:
+   
+   "Creating a data source that uses the Oracle JDBC Driver for
+   OCI"
+   You can use the Oracle JDBC for OCI with Version 6.0.x of the
+   Application Server.
+   
+   To create a data source in Version 6.0.x of the Application
+   Server that takes advantage of the Oracle Call Interface
+   (OCI), you might want to use the Oracle JDBC OCI driver. This
+   JDBC provider can be configured with the Application Server.
+   
+   1. From the administrative console, create the JDBC provider.
+      a. Click Resources > JDBC Providers.
+      b. Select the scope for the JDBC Provider. The scope can be
+         set to a cell, node, or server level.
+      c. Click Apply.
+      d. Click New to create the JDBC Provider.
+   2. Configure the settings for the JDBC provider.
+      a. In the Configuration tab, under General Properties,
+         configure the settings for an Oracle JDBC driver.
+         i.   In Step 1: Select the database type, select Oracle
+              from the list.
+         ii.  In Step 2: Select the provider type, select Oracle
+              JDBC Driver from the list.
+         iii. In Step 3: Select the Implementation type, select
+              Connection pool data source or XA data source from
+              the list.
+         iv.  Click Next.
+      b. Enter database class path and native library path
+         information.
+         Best practice: Application Server variables can be used
+         in the class path or the native library path. For
+         example, you can use variables like
+         ${ORACLE_JDBC_DRIVER_PATH} and ${ORACLE_HOME} in the
+         paths for the class path and native library path, but
+         you must define the variables ORACLE_JDBC_DRIVER_PATH
+         and ORACLE_HOME to the Application Server. Define or
+         change the paths for these variables in the
+         administrative console by clicking Environment > Manage
+         WebSphere Variables.
+   
+         i.   In the class path field, enter the following:
+              ${ORACLE_JDBC_DRIVER_PATH}/ojdbc14.jar
+         ii.  In the native library field, enter the following:
+              ${ORACLE_HOME}/lib
+              where ORACLE_HOME is configured to the location in
+              which Oracle Network client is installed.
+   
+   3. Create the data source in Application Server.
+      a. Click Resources > JDBC providers > Oracle JDBC Driver for
+         OCI > Data sources > New.
+      b. Enter the name for the data source.
+      c. Enter the JNDI name for the data source.
+      d. Select the name of the data store helper class  that
+         corresponds to the type of JDBC provider that you
+         configured.
+      e. Select Component-managed authentication alias, and enter
+         the database specific properties for the data source.
+      f. For the URL, enter the URL for the data source. For
+         example:
+         jdbc:oracle:oci:@<tnsname_alias>
+         The value for <tnsname_alias> must be defined in the
+         ${ORACLE_HOME}/network/admin/tnsnames.ora file.
+      g. Click OK and save the configuration.
+   
+   Date that the information will be available externally to
+   customers:
+   Periodically, we update the documentation in our information
+   centers. Thus, the changes might have been made before you
+   read this text. To access the latest on-line documentation,
+   complete the following steps:
+   1. Go to the product library page at the following Web site:
+      http://www.ibm.com/software/webservers/appserv/library [http://www.ibm.com/software/webservers/appserv/library]
+   2. Locate the appropriate version and product.
+   3. Under "Documentation - Information center format", click
+      the appropriate link. In most cases, the WebSphere
+      Application Server documentation is available in both an
+      online version and in an IBM Eclipse Help System version.
+      For more information on the IBM Eclipse Help system, see
+      the following Web site:
+      http://www.alphaworks.ibm.com/tech/iehs [http://www.alphaworks.ibm.com/tech/iehs]
+   If you install the IBM Eclipse Help System, you must also
+   install the appropriate help system plug-in for the WebSphere
+   Application Server documentation in its eclipse/plugins
+   directory. The plug-in is available from our product library
+   page.
+   
+   The modified documentation will be available in the September
+   2008 update to the information centers.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK66534
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSPH APP SERV
+   
+   
+ * REPORTED COMPONENT ID
+   5724J0800
+   
+   
+ * REPORTED RELEASE
+   60S
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-05-22
+   
+   
+ * CLOSED DATE
+   2008-06-26
+   
+   
+ * LAST MODIFIED DATE
+   2008-06-26
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

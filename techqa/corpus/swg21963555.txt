@@ -1,0 +1,81 @@
+Title: IBM "'Controller_ExcelLink' has fired an exception" when disabling the Controller add-in (inside Excel) - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ User launches Excel. User clicks "Options -> Add-Ins", then selects "Excel Add-ins" and clicks "Go".
+
+User disables (unticks) the box for "Cognos Controller Link for Microsoft Excel" and clicks OK.
+
+[NOTE: It will now be disabled. However, if you close excel and start it again it will be re-enabled].
+
+User now clicks "Options -> Add-ins". User selects "COM Add-ins" and clicks "Go". User unticks/disables "Cognos Controller Link for Microsoft Excel" and clicks OK.
+
+An error appears. 
+
+SYMPTOM
+'Controller_ExcelLink' has fired an exception. Click the 'Details' button to see the detailed information about the error.
+
+Details:
+Detailed technical information follows:
+---
+(Inner Exception)
+Date and Time: 4/27/2015 3:31:50 PM
+Machine Name: PCNAME
+IP Address: fe80::306a:27f2:f67b:6136%6
+Current User: username
+
+Application Domain: C:\Program Files (x86)\IBM\IBM Cognos Controller\
+Assembly Codebase: file:///C:/Windows/assembly/GAC_MSIL/Microsoft.Office.Interop.Excel/15.0.0.0__71e9bce111e9429c/Microsoft.Office.Interop.Excel.dll [file:///C:/Windows/assembly/GAC_MSIL/Microsoft.Office.Interop.Excel/15.0.0.0__71e9bce111e9429c/Microsoft.Office.Interop.Excel.dll]
+Assembly Full Name: Microsoft.Office.Interop.Excel, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c
+Assembly Version: 15.0.0.0
+
+Exception Source: Microsoft.Office.Interop.Excel
+Exception Type: System.Runtime.InteropServices.COMException
+Exception Message: Exception from HRESULT: 0x800AC472
+Exception Target Site: set_UserControl
+
+---- Stack Trace ----
+Microsoft.Office.Interop.Excel._Application.set_UserControl(RHS As Boolean)
+Microsoft.Office.Interop.Excel.dll: N 00000 (0x0) JIT
+Controller.ExcelLink.AddinModule.AddinModule_AddinBeginShutdown(sender As Object, e As EventArgs)
+Microsoft.Office.Interop.Excel.dll: N 0018 (0x12) IL
+AddinExpress.MSO.ADXAddinModule.AddinExpress.MSO.IDTExtensibility2.OnBeginShutdown(custom As Array&)
+Microsoft.Office.Interop.Excel.dll: N 0064 (0x40) IL
+
+(Outer Exception)
+Date and Time: 4/27/2015 3:31:50 PM
+Machine Name: PCNAME
+IP Address: fe80::306a:27f2:f67b:6136%6
+Current User: username
+
+Application Domain: C:\Program Files (x86)\IBM\IBM Cognos Controller\
+Assembly Codebase: file:///C:/Program [file:///C:/Program] Files (x86)/IBM/IBM Cognos Controller/AddinExpress.MSO.2005.DLL
+Assembly Full Name: AddinExpress.MSO.2005, Version=7.5.4072.2005, Culture=neutral, PublicKeyToken=4416dd98f0861965
+Assembly Version: 7.5.4072.2005
+
+Exception Source:
+Exception Type: AddinExpress.MSO.ADXExternalException
+Exception Message: An error has occurred in the code of the add-in.
+Exception Target Site: Object reference not set to an instance of an object.
+
+
+CAUSE
+There are several possible causes for the generic 'Controller_ExcelLink' has fired an exception' message. 
+
+ * TIP: See separate IBM Technote #2004500 for more examples.
+
+
+This Technote specifically relates to the scenario where the cause is a defect (reference APAR PI40705) in early versions of Controller 10.2.1. 
+DIAGNOSING THE PROBLEM
+Read the 'details' section carefully, to make sure that the detailed errors match the ones described in this Technote.
+
+
+
+RESOLVING THE PROBLEM
+Upgrade to Controller 10.2.1 Fix Pack 1 (10.2.5110.85) or later.
+
+RELATED INFORMATION
+ APAR PI40705 - DISABLING THE CONTROLLER EXCEL COM ADD-I [http://www-01.ibm.com/support/docview.wss?uid=swg1PI40705]
+2004500 - ** Troubleshooting ** "'Controller_ExcelLink' [http://www.ibm.com/support/docview.wss?uid=swg22004500]

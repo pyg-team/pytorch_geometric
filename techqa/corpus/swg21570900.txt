@@ -1,0 +1,36 @@
+Title: IBM CTGTRE040W error encountered in Tivoli Common Reporting for ITIM reports - United States
+
+Text:
+TCR tivoli common reporting ITIM TIM ISIM SIM report reports CTGTRE040W SQLCODE=-204 SQLSTATE=42704 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When trying to use the Tivoli Identity Manager canned reports for Tivoli Common Reporting (TCR), the reports do not return any data. 
+
+SYMPTOM
+Looking at the SystemOut.log for TCR, the following is found: 
+
+[10/29/11 5:18:20:187 YEKST] 00000033 impl W com.ibm.tivoli.reporting.reportEngine.impl.BIRTReportEngineRunRenderHandler generateSnapshot(UserContext,ReportRun,Map) CTGTRE040W An error [ reference id = SNAPSHOTID_100005 ] occurred attempting to run the report [ 100005 ] with design [ /itim/services.rptdesign ] . The error message received from the report engine is [ Cannot get the result set metadata.
+SQL statement does not return a ResultSet object.
+SQL error #1: DB2 SQL Error: SQLCODE=-204, SQLSTATE=42704, SQLERRMC=DB2ADMIN.SERVICE, DRIVER=3.50.152
+
+
+CAUSE
+One possible cause is that the schema name being used by TCR when executing the reports is wrong. 
+
+
+RESOLVING THE PROBLEM
+To correct the issue, the JDBC URL needs to have the currentSchema parameter added that specifies the schema that should be used when connecting to DB2 via the data source defined for the reports. The format of the JDBC URL would be: 
+
+ 
+
+ * 
+ * 
+ * 
+ * 
+ * 
+ *  <hostname> is the host name of the machine hosting the DB2 Database instance <port> is the port number for the TCP/IP connection to the DB2 Database instance <database> is the name of the ITIM DB2 database <schema> is the schema used for the ITIM Tables in the DB2 database 
+
+Note: The case of currentSchema parameter is case sensitive and the semi-colon after the schema name is required!  
+
+PRODUCT ALIAS/SYNONYM
+ ITIM TIM ISIM SIM

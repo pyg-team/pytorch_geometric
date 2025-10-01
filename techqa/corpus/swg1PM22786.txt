@@ -1,0 +1,160 @@
+Title: IBM PM22786: Documentation: information center topic "Planning for virtual   portals" needs restriction on default realm with WCM deployed - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Affected URL:
+   http://publib.boulder.ibm.com/infocenter/wpdoc/v6r1/topic/com.ib
+   m.wp.ent.doc_v615/admin/advppln.html [http://publib.boulder.ibm.com/infocenter/wpdoc/v6r1/topic/com.ibm.wp.ent.doc_v615/admin/advppln.html]
+   (also affects V7.0)
+   
+   TEXT READS:
+   Preparing the user populations for your virtual portals
+   If you plan to use realms for your virtual portals, you need to
+   configure Virtual Member Manager and the realms before creating
+   your virtual portals. Each realm must specify the repository
+   nodes (base entries) that belong to the user population
+   represented by this realm.
+   In addition to the realms that you create to define the user
+   populations of the individual virtual portals, you must create a
+   super realm. This super realm spans all other realms and
+   contains all the users of those other realms; it is also known
+   as the default realm.
+   By default WebSphere Portal is configured with Federated
+   Repositories as User Registry provider. By default only the
+   super realm, or default realm, is configured. After you have
+   configured your portal instance against your user backend
+   repositories you can use tasks provided by the portal to
+   configure the realms that the Virtual Member Manager provides.
+   For the task that describes how to add a realm and modify the
+   base entries or nodes inside that realm refer to the topics
+   about adding realm support.
+   
+   
+   TEXT SHOULD READ:
+   Preparing the user populations for your virtual portals
+   If you plan to use realms for your virtual portals, you need to
+   configure Virtual Member Manager and the realms before creating
+   your virtual portals. Each realm must specify the repository
+   nodes (base entries) that belong to the user population
+   represented by this realm.
+   In addition to the realms that you create to define the user
+   populations of the individual virtual portals, you must create a
+   super realm. This super realm spans all other realms and
+   contains all the users of those other realms; it is also known
+   as the default realm.
+   By default WebSphere Portal is configured with Federated
+   Repositories as User Registry provider. By default only the
+   super realm, or default realm, is configured. After you have
+   configured your portal instance against your user backend
+   repositories you can use tasks provided by the portal to
+   configure the realms that the Virtual Member Manager provides.
+   While the realm for the base portal installation can be
+   reconfigured to a non-default realm, such a configuration should
+   be avoided if Web Content Management (WCM) is being used due to
+   WCM's lack of virtual portal awareness.  For the task that
+   describes how to add a realm and modify the base entries or
+   nodes inside that realm refer to the topics about adding realm
+   support.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Refer to the above.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  See above.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Corrected in the product documentation.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM22786
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSPHERE PORTA
+   
+   
+ * REPORTED COMPONENT ID
+   5724E7600
+   
+   
+ * REPORTED RELEASE
+   610
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-09-17
+   
+   
+ * CLOSED DATE
+   2010-12-29
+   
+   
+ * LAST MODIFIED DATE
+   2010-12-29
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

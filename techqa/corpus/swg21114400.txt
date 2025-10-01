@@ -1,0 +1,49 @@
+Title: IBM Directories Hidden After Upgrade of Domino Server - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+Upon upgrading the Domino server, an Administrator discovers that a directory that was once visible to Notes clients is no longer visible. You can, however view the contents of the directory from the Notes client if you type the directory name into an Open Database dialog window (File, Database, Open).
+
+ANSWER
+IBM Lotus Domino allows Administrators to hide directories in the server's \data directory when viewed from a Notes client by use of a Directory Access Control List (ACL). 
+
+To resolve this issue, you can either edit the Directory ACL to allow the desired groups access while restricting others, or you can simply delete the Directory ACL and allow all users to see the directory. Note that if no groups or names are listed in the Directory ACL this will allow all users to view the directory. 
+
+
+NOTE: A Directory ACL cannot be applied directly to the root \Data folder. It can only be applied to folders under the \Data folder. The following message will appear if you attempt to create a Directory ACL to the root of the \Data directory:
+
+"You cannot apply an ACL to the root data folder. Select a folder under the root folder." 
+
+To edit the Directory ACL using the Domino Administrator:
+
+1. From the Domino Administrator client, select the appropriate server and select the Files tab.
+
+2. Right-click the desired folder and choose Manage Directory ACL (or select the desired folder, and from the Tools drop-down menu, choose Folder, Manage ACL). 
+
+3. Add the people you wish to be able to access this directory and click OK. 
+
+To edit a Directory ACL using any text editor:
+Alternatively, you can edit any Directory ACL in any text editor without using the Domino Administrator client as they are simply text files created in the Domino\data directory. The files use the naming convention of FOLDERNAME.ACL where 'FOLDERNAME' is the name of the folder to be protected. For example, a file named MAIL02.ACL with the appropriate content would protect the MAIL02 folder\subdirectory. Below is a sample of such a text file where Joe Administrator is given explicit access and members of the Administrators and Selected Users groups are given group access to view the protected folder:
+
+<begin file>
+.
+Joe Administrator/Organizationname
+Administrators
+Selected Users
+
+<end file>
+
+Simply add the appropriate groups or individuals using the format shown in the example above and save the file.
+
+NOTE: The first line of the file is a period (.) only. This line must exist or the file will not work correctly.
+
+
+Deleting a Directory ACL:
+To completely remove a Directory ACL and thereby allow all Notes clients to see the directory, simply delete the appropriate text file stored in the Domino\data directory that has the same name with the as the directory it is designed to protect, but has a .ACL extension. For example, if MyDirectory is the directory that is hidden, just delete the text file named MyDirectory.ACL (or rename it with a different extension, such as .BAK, if you may wish to implement this functionality later).
+
+IMPORTANT NOTE: This feature is not a substitute for database ACL security. Hiding directories from users does not prevent them from typing in the name of the folder if it is known to them. Doing so will allow them access to view the folder contents, if it is not protected. 
+
+RELATED INFORMATION
+#

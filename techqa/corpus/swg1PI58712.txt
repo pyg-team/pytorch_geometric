@@ -1,0 +1,11 @@
+Title: IBM PI58712: PORT THE SUPPORT FOR WEBSPHERE HPEL FOR ITCAM FOR WEBSPHERE 7.1.X AGENT FROM 7.2 - United States
+
+Text:
+What is this document:
+This document has the abstract of a technical article that is available to authorized users after you have logged on. Please use the link to actual document below to access the full document. You will be asked to log on if you are not already logged in. After log in, if you do not have the right authorization for this document, there will be instructions on what to do next.
+
+abstract text
+Port the support for WebSphere HPEL for ITCAM for WebSphere 7.1.x agent from 7.2
+
+link to actual document
+http://www.ibm.com/support/docview.wss?uid=swg1PI58712 [http://www.ibm.com/support/docview.wss?uid=swg1PI58712]

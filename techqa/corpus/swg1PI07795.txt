@@ -1,0 +1,163 @@
+Title: IBM PI07795: [wi 102040]RAM 7.5.2: Administration:community:categorySchema:Ca tegory Configuration is editable but can't save - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Rational Asset Manager Fix Pack 1 (7.5.2.1) for 7.5.2 [http://www-01.ibm.com/support/docview.wss?uid=swg24037232]
+Rational Asset Manager Fix Pack 2 (7.5.2.2) for 7.5.2 [http://www-01.ibm.com/support/docview.wss?uid=swg24038494]
+Rational Asset Manager Fix Pack 3 (7.5.2.3) for 7.5.2 [http://www-01.ibm.com/support/docview.wss?uid=swg24039990]
+Rational Asset Manager Fix Pack 4 (7.5.2.4) for 7.5.2 [http://www-01.ibm.com/support/docview.wss?uid=swg24041310]
+Rational Asset Manager 7.5.3 [http://www-01.ibm.com/support/docview.wss?uid=swg24042292]
+Rational Asset Manager 7.5.3.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24044016]
+Rational Asset Manager 7.5.3.2 [http://www-01.ibm.com/support/docview.wss?uid=swg24044076]
+Rational Asset Manager 7.5.3.3 [http://www-01.ibm.com/support/docview.wss?uid=swg24044595]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Environment:
+   Rational Asset Manager version 7.5.2
+   
+   Title
+   Administration:community:categorySchema:Category Configuration
+   is editable but can't save
+   
+   Description:
+   When going to the Administration Tab:
+   Select a community
+   Go to the Category Schema tab
+   Select one
+   The OK button is disabled while the Category Configuration in
+   the bottom is editable.
+   So if you edit any of the Category Configuration, the OK button
+   is still disabled.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * RAM                                                          *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * Environment:                                                 *
+   * Rational Asset Manager version 7.5.2                         *
+   *                                                              *
+   * Title                                                        *
+   * Administration:community:categorySchema:Category             *
+   * Configuration is editable but can't save                     *
+   *                                                              *
+   * Description:                                                 *
+   * When going to the Administration Tab:                        *
+   * Select a community                                           *
+   * Go to the Category Schema tab                                *
+   * Select one                                                   *
+   * The OK button is disabled while the Category Configuration   *
+   * in the bottom is editable.                                   *
+   * So if you edit any of the Category Configuration, the OK     *
+   * button is still disabled.                                    *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fixed in
+   https://jazz.net/jazz02/web/projects/Rational%20Asset%20Manager#
+   action=com.ibm.team.workitem.viewWorkItem&id=102040 [https://jazz.net/jazz02/web/projects/Rational%20Asset%20Manager#action=com.ibm.team.workitem.viewWorkItem&id=102040]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI07795
+   
+   
+ * REPORTED COMPONENT NAME
+   RATL ASSET MGR
+   
+   
+ * REPORTED COMPONENT ID
+   5724R4200
+   
+   
+ * REPORTED RELEASE
+   752
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-12-10
+   
+   
+ * CLOSED DATE
+   2014-06-15
+   
+   
+ * LAST MODIFIED DATE
+   2014-06-15
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   RATL ASSET MGR
+   
+   
+ * FIXED COMPONENT ID
+   5724R4200
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R752 PSY
+   UP

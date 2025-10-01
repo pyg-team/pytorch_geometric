@@ -1,0 +1,175 @@
+Title: IBM JR49015: UNPARSEABLE DATE REPORTED WHEN PROCESSING DATETIME VALUE WITHOUT MILLION SECONDS - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Version 8.5 Refresh Pack 5 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24037683]
+Download Version 8.0.1 Fix Pack 3 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24037734]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When you process the datetime value and the input string does
+   not contain a million seconds section, you might see the
+   following error:
+   
+   com.lombardisoftware.core.TeamWorksException: Unparseable
+   date:  "2013-11-20T11:19:15-05:"
+   
+   The date format string must be adjusted with the input
+   datetime string.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  IBM Business Process Manager V8.0.1.2       *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Usually the input string in XML or      *
+   *                      SOAP message for the datetime value     *
+   *                      is in the following time zone format:   *
+   *                      YYYY-mm-dd HH:MM:SS.fff. For example,   *
+   *                      a datetime value could be               *
+   *                      2013-11-20T11:19:15.012-05:00.          *
+   *                      However, in some case, as in the        *
+   *                      following example, the input string     *
+   *                      might not contain a million seconds     *
+   *                      section:                                *
+   *                      2013-11-20T11:19:15-05:00               *
+   *                      If the input string does not have a     *
+   *                      million seconds section and but         *
+   *                      contains the time zone information in   *
+   *                      the +/-hh:mm format, for example        *
+   *                      2013-11-20T11:19:15-05:00, you          *
+   *                      receive the following error:            *
+   *                      com.lombardisoftware.core.TeamWorksExce *
+   *                      ption: Unparseable date:                *
+   *                      "2013-11-20T11:19:15-05:"               *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   This error occurs when the input
+   string does not have a million
+   seconds section but contains the time
+   zone information in the +/-hh:mm
+   format. When parsing the datetime
+   value, the wrong algorithm is used to
+   check whether the million seconds
+   section is in the string. If the
+   million seconds section is not in the
+   string, you receive an error.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A fix is available that updates related code so that the
+   parser recognizes whether the million seconds section has been
+   included when parsing the datetime value and parses the value
+   with correct date format, even without million seconds.
+   
+   On Fix Central (http://www.ibm.com/support/fixcentral), search
+   for JR49015:
+   
+   1.Select the product group, product, installed version, and
+   platform, and click Continue.
+   2.Select APAR or SPR, enter JR49015, and click Continue.
+   
+   When downloading fix packages, ensure that you also download
+   the readme file for each fix. Review each readme file for
+   additional installation instructions and information about the
+   fix.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR49015
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM ADVANCED
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9400
+   
+   
+ * REPORTED RELEASE
+   801
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-01-09
+   
+   
+ * CLOSED DATE
+   2014-02-26
+   
+   
+ * LAST MODIFIED DATE
+   2014-02-26
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   BPM ADVANCED
+   
+   
+ * FIXED COMPONENT ID
+   5725C9400
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R800 PSY
+   UP

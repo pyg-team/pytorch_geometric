@@ -1,0 +1,272 @@
+Title: IBM Integration Bus Healthcare Pack V4.0 release notes - United States
+
+Text:
+ RELEASE NOTES
+
+ABSTRACT
+ This document contains the release notes for IBM Integration Bus Healthcare Pack V4.0, including the tooling and runtime components. 
+
+CONTENT
+Release notes file for: IBM Integration Bus Healthcare Pack
+Product Release: 4.0
+Update name: 4.0.0.0
+Versions and fix packs:
+* V4.0.0.0 (electronic availability: 25 June 2015)
+Document first published: 25 June 2015
+Document last modified: 25 June 2015
+
+
+
+
+Contents 
+
+ * Download location 
+ * Installation information:  * Prior to installation 
+    * Installing 
+    * Documentation 
+    * Support 
+    * Feature updates
+   
+   
+ * Additional information 
+ * Known problems and their workarounds (if any):  * Installation 
+    * IBM Integration Toolkit
+   
+   
+ * Copyright and trademark information 
+ * Useful websites
+
+
+
+
+
+Download location Download IBM Integration Bus Healthcare Pack V4.0 using the following instructions:
+http://www.ibm.com/support/docview.wss?uid=swg24040117 [http://www.ibm.com/support/docview.wss?uid=swg24040117] 
+
+
+Installation information 
+
+Always use the latest version of this release notes file, which is available in English only at:
+http://www.ibm.com/support/docview.wss?uid=swg27006917 [http://www.ibm.com/support/docview.wss?uid=swg27006917] 
+
+Translated release notes files are available at: 
+ftp://public.dhe.ibm.com/software/integration/integrationbus/docs/healthcare/V4.0/ [ftp://public.dhe.ibm.com/software/integration/integrationbus/docs/healthcare/V4.0/] 
+
+
+Prior to installation 
+
+For information about the tasks you must complete before you install the product, refer to the IBM Integration Bus Healthcare Pack product documentation at:
+http://www.ibm.com/support/knowledgecenter/SSMKHH_10.0.0/com.ibm.healthcare.doc/ha00090.htm [http://www.ibm.com/support/knowledgecenter/SSMKHH_10.0.0/com.ibm.healthcare.doc/ha00090.htm]
+
+Installing 
+
+Installation information is available in the IBM Integration Bus Healthcare Pack product documentation at:
+http://www.ibm.com/support/knowledgecenter/SSMKHH_10.0.0/com.ibm.healthcare.doc/ha00090.htm [http://www.ibm.com/support/knowledgecenter/SSMKHH_10.0.0/com.ibm.healthcare.doc/ha00090.htm] 
+
+
+
+
+
+
+
+Documentation The online product documentation for IBM Integration Bus Healthcare Pack is available at: 
+http://www.ibm.com/support/knowledgecenter/SSMKHH_10.0.0/com.ibm.healthcare.doc/ha00000.htm [http://www.ibm.com/support/knowledgecenter/SSMKHH_10.0.0/com.ibm.healthcare.doc/ha00000.htm] 
+
+Always refer to the online product documentation for the latest information. 
+
+The stand-alone product documentation is available for download at: 
+ftp://public.dhe.ibm.com/software/integration/integrationbus/docs/healthcare/V4.0/iib_healthcare_help.zip [ftp://public.dhe.ibm.com/software/integration/integrationbus/docs/healthcare/V4.0/iib_healthcare_help.zip] (Windows and Linux (x86-64) version)
+
+Read the How to add the Healthcare plug-in to a help system.txt file that is included in the iib_healthcare_help.zip file. 
+
+
+
+
+
+
+
+Support Defects: This release notes file might contain references to defect numbers. These numbers refer to internal IBM problem numbers; you might find these numbers useful when discussing problems with your IBM service representative. 
+
+Technotes: For current information about known problems and available fixes, see the IBM Integration Bus support website at:
+http://www.ibm.com/support/entry/portal/Software/WebSphere/WebSphere_Message_Broker [http://www.ibm.com/support/entry/portal/Software/WebSphere/WebSphere_Message_Broker] 
+To find information, click Troubleshooting documentation. IBM Integration Bus and IBM Integration Bus Healthcare Pack Technotes are displayed and can be ordered and searched. 
+
+For information about downloading IBM Integration Bus Healthcare Pack V4.0 installation images from the Passport Advantage website, see the Accessing the Installer topic in the IBM Integration Bus product documentation, which is available at:
+http://www.ibm.com/support/knowledgecenter/SSMKHH_10.0.0/com.ibm.healthcare.doc/ha03080.htm [http://www.ibm.com/support/knowledgecenter/SSMKHH_10.0.0/com.ibm.healthcare.doc/ha03080.htm] 
+
+Versions: For the latest information about which particular versions of operating systems are supported by IBM Integration Bus Healthcare Pack, see the system requirements page at:
+http://www.ibm.com/software/integration/wbimessagebroker/requirements/index.html [http://www.ibm.com/software/integration/wbimessagebroker/requirements/index.html] 
+
+
+
+
+
+
+
+Feature updates Check periodically for updates to the toolkit, including documentation updates in English and in other supported languages. Recommended fixes for IBM Integration Bus Healthcare Pack can be found at: 
+http://www.ibm.com/support/docview.wss?uid=swg27006041 [http://www.ibm.com/support/docview.wss?uid=swg27006041] 
+
+
+
+
+
+
+TOP Additional information 
+Known problems and their workarounds (if any): This section outlines the known problems and their workarounds (if any) of the IBM Integration Bus Healthcare Pack, by component. 
+
+
+
+
+
+
+TOP Installation 
+ * Installation of IBM Integration Bus Healthcare Pack V4.0.0.0 on computers that have a previous version installed is not supported To install IBM Integration Bus Healthcare Pack V4.0.0.0 you must first remove any existing installations of the IBM Integration Bus Healthcare Pack or IBM WebSphere Message Broker Connectivity Pack for Healthcare.
+   
+   
+
+
+
+
+
+TOP IBM Integration Toolkit 
+ * HL7® FHIR® Draft Standard for Trial Use The HL7® FHIR® standard is used in the Healthcare: FHIR transformation pattern. The standard is a Draft Standard for Trial Use (DSTU), rather than a full normative specification.
+   
+   
+
+
+
+
+
+TOP Copyright and trademark information 
+http://www.ibm.com/legal/copytrade.shtml [http://www.ibm.com/legal/copytrade.shtml] 
+
+This information was developed for products and services offered in the U.S.A. 
+
+IBM may not offer the products, services, or features discussed in this information in other countries. Consult your local IBM representative for information on the products and services currently available in your area. Any reference to an IBM product, program, or service is not intended to state or imply that only that IBM product, program, or service may be used. Any functionally equivalent product, program, or service that does not infringe any IBM intellectual property right may be used instead. However, it is the user's responsibility to evaluate and verify the operation of any non-IBM product, program, or service. 
+
+IBM may have patents or pending patent applications covering subject matter described in this information. The furnishing of this information does not give you any license to these patents. You can send license inquiries, in writing, to: 
+
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+
+
+For license inquiries regarding double-byte character set (DBCS) information, contact the IBM Intellectual Property Department in your country or send inquiries, in writing, to:  * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+
+
+The following paragraph does not apply to the United Kingdom or any other country where such provisions are inconsistent with local law: INTERNATIONAL BUSINESS MACHINES CORPORATION PROVIDES THIS PUBLICATION "AS IS" WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF NON-INFRINGEMENT, MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE. Some states do not allow disclaimer of express or implied warranties in certain transactions, therefore, this statement may not apply to you. 
+
+This information could include technical inaccuracies or typographical errors. Changes are periodically made to the information herein; these changes will be incorporated in new editions of the information. IBM may make improvements and/or changes in the product(s) and/or the program(s) described in this information at any time without notice. 
+
+Any references in this information to non-IBM Web sites are provided for convenience only and do not in any manner serve as an endorsement of those Web sites. The materials at those Web sites are not part of the materials for this IBM product and use of those Web sites is at your own risk. 
+
+IBM may use or distribute any of the information you supply in any way it believes appropriate without incurring any obligation to you. 
+
+Licensees of this program who wish to have information about it for the purpose of enabling: (i) the exchange of information between independently created programs and other programs (including this one) and (ii) the mutual use of the information which has been exchanged, should contact: 
+
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+
+
+Such information may be available, subject to appropriate terms and conditions, including in some cases, payment of a fee. The licensed program described in this information and all licensed material available for it are provided by IBM under terms of the IBM Customer Agreement, IBM International Programming License Agreement, or any equivalent agreement between us. 
+
+Information concerning non-IBM products was obtained from the suppliers of those products, their published announcements or other publicly available sources. IBM has not tested those products and cannot confirm the accuracy of performance, compatibility or any other claims related to non-IBM products. Questions on the capabilities of non-IBM products should be addressed to the suppliers of those products. 
+
+This information includes examples of data and reports used in daily business operations. To illustrate them as completely as possible, the examples include the names of individuals, companies, brands, and products. All of these names are fictitious and any similarity to the names and addresses used by an actual business enterprise is entirely coincidental. 
+
+COPYRIGHT LICENSE: 
+
+This information contains sample application programs in source language, which illustrate programming techniques on various operating platforms. You may copy, modify, and distribute these sample programs in any form without payment to IBM, for the purposes of developing, using, marketing or distributing application programs conforming to the application programming interface for the operating platform for which the sample programs are written. These examples have not been thoroughly tested under all conditions. IBM, therefore, cannot guarantee or imply reliability, serviceability, or function of these programs. You may copy, modify, and distribute these sample programs in any form without payment to IBM for the purposes of developing, using, marketing, or distributing application programs conforming to IBM's application programming interfaces. 
+
+The following terms are trademarks of International Business Machines Corporation in the United States, other countries, or both:
+
+AIX, developerWorks, IBM, Passport Advantage, WebSphere.
+
+Java and all Java-based trademarks and logos are trademarks or registered trademarks of Oracle and/or its affiliates in the United States, other countries, or both
+
+Microsoft and Windows are trademarks of Microsoft Corporation in the United States, other countries, or both. 
+
+UNIX is a registered trademark of The Open Group in the United States and other countries.
+
+Linux is a trademark of Linus Torvalds in the United States, other countries, or both.
+
+Other company, product or service names might be trademarks or service marks of others. 
+
+
+
+
+
+
+TOP Useful websites IBM Integration Bus product page
+http://www.ibm.com/software/products/us/en/ibm-integration-bus/ [http://www.ibm.com/software/products/us/en/ibm-integration-bus] 
+
+WebSphere MQ Fix Packs
+http://www.ibm.com/support/entry/portal/Software/WebSphere/WebSphere_MQ [http://www.ibm.com/support/entry/portal/Software/WebSphere/WebSphere_MQ] 
+
+IBM Integration Bus Fix Packs
+http://www.ibm.com/support/docview.wss?uid=swg27006041 [http://www.ibm.com/support/docview.wss?uid=swg27006041] 
+
+IBM Integration Bus Requirements
+http://www.ibm.com/software/integration/wbimessagebroker/requirements/ [http://www.ibm.com/software/integration/wbimessagebroker/requirements/] 
+
+IBM Integration Bus release notes and readme files
+http://www.ibm.com/support/docview.wss?uid=swg27006917 [http://www.ibm.com/support/docview.wss?uid=swg27006917] 
+
+IBM Integration Bus V10.0 stand-alone product documentation
+For Linux:
+ftp://public.dhe.ibm.com/software/integration/integrationbus/docs/V10.0/ib_help_linux.tgz [ftp://public.dhe.ibm.com/software/integration/integrationbus/docs/V10.0/ib_help_linux.tgz]
+For Windows:
+ftp://public.dhe.ibm.com/software/integration/integrationbus/docs/V10.0/ib_help_win.zip [ftp://public.dhe.ibm.com/software/integration/integrationbus/docs/V10.0/ib_help_win.zip] 
+
+IBM Integration Bus Healthcare Pack V4.0 online product documentation
+http://www.ibm.com/support/knowledgecenter/SSMKHH_10.0.0/com.ibm.healthcare.doc/ha00000.htm [http://www.ibm.com/support/knowledgecenter/SSMKHH_10.0.0/com.ibm.healthcare.doc/ha00000.htm] 
+
+IBM Centre for Java™ Technology Development Downloads
+http://www.ibm.com/developerworks/java/jdk/ [http://www.ibm.com/developerworks/java/jdk/] 
+
+IBM Integration Bus developerWorks Zone
+http://www.ibm.com/developerworks/websphere/zones/businessintegration/wmb.html [http://www.ibm.com/developerworks/websphere/zones/businessintegration/wmb.html] 
+
+IBM Messaging blog
+https://www.ibm.com/developerworks/mydeveloperworks/blogs/c565c720-fe84-4f63- 873f-607d87787327 [https://www.ibm.com/developerworks/mydeveloperworks/blogs/c565c720-fe84-4f63-873f-607d87787327] 
+
+
+
+
+
+
+
+TOP (C) Copyright IBM Corporation 2015. All rights reserved. 
+
+
+COPYRIGHT DATE
+ 2015 
+
+ORIGINAL PUBLICATION DATE
+ 2015/6/25 
+
+PRODUCT ALIAS/SYNONYM
+ IIB IBMIB

@@ -1,0 +1,94 @@
+Title: IBM Post-upgrade tasks for IBM Business Process Manager V8.5.7 Cumulative Fix 2017.06 - United States
+
+Text:
+ PRODUCT README
+
+ABSTRACT
+ After you successfully upgrade your IBM Business Process Manager (BPM) V8.5.7 environment, some additional configuration steps might be required. Although most actions are optional, you might have to perform them to ensure applications continue working as expected. 
+
+CONTENT
+
+
+TAB NAVIGATION
+ * Fix list [http://www.ibm.com/support/docview.wss?uid=swg27049933]
+ * What's new [http://www.ibm.com/support/docview.wss?uid=swg27049910]
+ * Downloading the cumulative fix [http://www.ibm.com/support/docview.wss?uid=swg24043591]
+ * Installing the cumulative fix [http://www.ibm.com/support/docview.wss?uid=swg27049857]
+ * Upgrading the profiles [http://www.ibm.com/support/docview.wss?uid=swg27049858]
+ * Post-upgrade tasks [http://www.ibm.com/support/docview.wss?uid=swg27049932]- selected tab,
+
+
+Important notes
+
+
+ * Depending on the version of IBM BPM version you are upgrading from, you must also look at earlier post-upgrade tasks:
+
+ *  Post-installation tasks for IBM Business Process Manager V8.5.6 CF02 and V8.5.6 CF01 [http://www.ibm.com/support/docview.wss?uid=swg27047155] Post-upgrade tasks for IBM Business Process Manager V8.5.7 [http://www.ibm.com/support/docview.wss?uid=swg27047585] Post-upgrade tasks for IBM Business Process Manager V8.5.7 Cumulative Fix (CF) 2016.09 and CF2016.06 [http://www.ibm.com/support/docview.wss?uid=swg27048418] Post-upgrade tasks for IBM Business Process Manager V8.5.7 Cumulative Fix (CF) 2016.12 [http://www.ibm.com/support/docview.wss?uid=swg27049143] Post-upgrade tasks for IBM Business Process Manager V8.5.7 Cumulative Fix (CF) 2017.03 [http://www.ibm.com/support/docview.wss?uid=swg27049396]
+   
+   For example, if you are upgrading from IBM BPM V8.5.6 CF02, also look at the Post-upgrade tasks for IBM Business Process Manager V8.5.7 [http://www.ibm.com/support/docview.wss?uid=swg27047585], the Post-upgrade tasks for IBM Business Process Manager V8.5.7 Cumulative Fix (CF) 2016.09 and CF2016.06 [http://www.ibm.com/support/docview.wss?uid=swg27048418], the Post-upgrade tasks for IBM Business Process Manager V8.5.7 Cumulative Fix (CF) 2016.12 [http://www.ibm.com/support/docview.wss?uid=swg27049143], and the Post-upgrade tasks for IBM Business Process Manager V8.5.7 Cumulative Fix (CF) 2017.03 [http://www.ibm.com/support/docview.wss?uid=swg27049396].
+   
+ * After IBM Process Center is successfully upgraded, update your process applications to the latest IBM BPM toolkit levels so you can integrate the latest improvements and defect fixes associate with the toolkit objects. After you update to the latest IBM BPM toolkit levels, you might notice small behavior changes in your process application, such as to the user interfaces, which you might need to modify.
+   
+ * Installing cumulative fixes can modify the existing system toolkits for the associated version. If your applications are associated with the latest system toolkits, they will automatically include the changes. 
+
+
+Post-upgrade steps for 2017.06 Interim fix (APAR) Description Tasks to enable the function JR57536 [http://www.ibm.com/support/docview.wss?uid=swg1JR57536] DURING DEBUGGING, ILLEGAL XML CHARACTERS CAUSE AN ILLEGALDATAEXCEPTION To autocorrect illegal XML characters during debugging, set the following parameter in your 100Custom.xml files for IBM Process Center and IBM Process Server in your deployment environment
+
+<server>
+<autocorrect-xml merge="replace">true</autocorrect-xml>
+</server>
+
+by following this procedure:
+ 1. Stop the servers of your IBM BPM deployment environment. 
+ 2. Start the scripting client in disconnected mode as described in updateBPMConfig command [https://www.ibm.com/support/knowledgecenter/SSFPJS_8.5.7/com.ibm.wbpm.ref.doc/topics/rref_updatebpmconfig.html]. 
+ 3. Run the following commands:
+    
+    wsadmin> AdminTask.updateBPMConfig( [ '-create', '/server' ] )
+    wsadmin> AdminTask.updateBPMConfig( [ '-create', '/server/autocorrect-xml', '-xNodeValue', 'true' ] )
+    wsadmin> AdminConfig.save()
+    
+ 4. Restart the servers of your IBM BPM environment.
+
+
+For more information, seeModifying runtime server configuration properties [https://www.ibm.com/support/knowledgecenter/SSFPJS_8.5.7/com.ibm.wbpm.admin.doc/topics/cadm_modconfigprops.html]andChanging server properties in 100Custom.xml [https://www.ibm.com/support/knowledgecenter/en/SSFPJS_8.5.7/com.ibm.wbpm.admin.doc/topics/managing_twks_config_settings.html]. JR57975 [http://www.ibm.com/support/docview.wss?uid=swg1JR57975] YOU EXPERIENCE ISSUES WITH PERFORMANCE OF THE WEB SERVICE SERVER DEFINITION SEARCH ALGORITHM The fix changes the search algorithm from depth-first to breadth-first. To revert to a depth-first search, set the following parameter in your 100Custom.xml files for IBM Process Center and IBM Process Server in your deployment environment
+
+<common>
+<webservices>
+<use-breadth-first-search-wsserver merge="replace">false</use-breadth-first-search-wsserver>
+</webservices>
+</common>
+
+by following this procedure:
+ 1. Stop the servers of your IBM BPM deployment environment. 
+ 2. Start the scripting client in disconnected mode as described in updateBPMConfig command [https://www.ibm.com/support/knowledgecenter/SSFPJS_8.5.7/com.ibm.wbpm.ref.doc/topics/rref_updatebpmconfig.html]. 
+ 3. Run the following commands:
+    
+    wsadmin> AdminTask.updateBPMConfig( [ '-create', '/common' ] )
+    wsadmin> AdminTask.updateBPMConfig( [ '-create', '/common/webservices' ] )
+    wsadmin> AdminTask.updateBPMConfig( [ '-create', '/common/webservices/use-breadth-first-search-wsserver', '-xNodeValue', 'false' ] )
+    wsadmin> AdminConfig.save()
+    
+ 4. Restart the servers of your IBM BPM environment.
+
+
+For more information, seeModifying runtime server configuration properties [https://www.ibm.com/support/knowledgecenter/SSFPJS_8.5.7/com.ibm.wbpm.admin.doc/topics/cadm_modconfigprops.html]andChanging server properties in 100Custom.xml [https://www.ibm.com/support/knowledgecenter/en/SSFPJS_8.5.7/com.ibm.wbpm.admin.doc/topics/managing_twks_config_settings.html]. Not applicable The Hiring Sample does not load the BPM UI Theme after you upgrade to CF2017.06. Update the Hiring Sample:
+ 1. Log in to Process Center with the IBM BPM administrative user ID. 
+ 2. Open the Hiring Sample (HSS) process app in the Designer. 
+ 3. On the Process App Settings page, find the Coach Designer Settings heading. Temporarily load another theme before you select the BPM Theme. When you switch to the BPM Theme, it compiles correctly. 
+    a. Click Select and choose a theme, such as the SPARK UI Theme.
+    b. Click Select again and choose the BPM Theme. 
+
+Not applicable The Discover BPM UI Sample does not have the correct permissions. Update permissions for the Discover BPM UI Sample.
+ 1. Log in to Process Center with the IBM BPM administrative user ID. 
+ 2. Click the Discover BPM UI Sample (DBPMUIS) process app to view its snapshots. 
+ 3.  Click the Manage item in the toolbar and click the Add Groups button. 
+ 4. In the Search for Names field, type tw_ and select tw_admins and tw_authors. 
+ 5. Click Add Selected. 
+ 6. In the Admin column, give both groups administrative authority for this process app.
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Business Process Manager Express Installation / Configuration Linux, Windows 8.5.7.CF201706, 8.5.7 Business Integration IBM Business Process Manager Standard Installation / Configuration AIX, Linux, Solaris, Windows 8.5.7.CF201706, 8.5.7 PRODUCT ALIAS/SYNONYM
+ BPM

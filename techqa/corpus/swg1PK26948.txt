@@ -1,0 +1,173 @@
+Title: IBM PK26948: CSQX027E RC=00000004 CAUSED BY STORAGE LEAKS IN SUBPOOL 0 KEY 8,AND SUBPOOL 2 KEY 8. - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The customer reported the following:
+   .
+   Operating System:  z/OS
+   Product Group:  MQSeries for OS/390-ESA
+   Environment:    z/OS 1.7  WMQ V600
+   .
+   Channel initiator received error msg CSQX027E (CSQXRESP Unable
+   to get storage, RC=00000004).  After restart "chin" works
+   normally and accept connections.  The dump showed that the error
+   was caused by a Storage Leaks of XSPNPOOL blocks in subpool 0
+   key 8, and GSKSOC blocks in subpool 2 Key 8.
+   .
+   Additional keywords:
+   sp0 sp2 key8
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All users of Websphere MQ for z/OS Version 6 *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: After receiving continuous 'CSQX634E    *
+   *                      CSQXRESP SSL certificate failed remote  *
+   *                      check' messages on a connection from    *
+   *                      a remote client, a storage shortage     *
+   *                      occurred causing 'CSQX027E CSQXRCTL     *
+   *                      Unable to get storage,RC=00000004'.     *
+   *                      It was necessary to recycle the CHINIT  *
+   *                      to recover functionality.               *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   There was a storage leak of 'CSQXPOOL' cellpool blocks in
+   subpool 0 key8 and excessive heap usage ('HANC' LE eyeballs) in
+   the SSL Server tasks containing many GSKSOC SSL open sockets
+   in subpool 1/2 Key8.
+   Module csqccis routine cciSSLSecureAcceptConv fails to free the
+   cellpool storage he obtained for the DN and Issuer DN if the
+   gsk_secure_socket_init call fails.
+   Module CSQXGSSI fails to close the SSL socket if he encounters
+   an error because bSSLSocketOpenOK is not set if hSocHandlewas
+   not NULL on entry (Socket opened on a previous call).
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Module csqxccis has been changed to free the CSQXPOOL getcells
+   for the DN and Issuer DN if any problem is detected.
+   Module CSQXGSSI has been changed to set bSSLSocketOpenOK = TRUE
+   on entry IF hSocHandle ª= NULL, This ensures that if a problem
+   is detected later then the SSL socket will be closed at exit
+   from the module.
+   000Y
+   CSQXCCIS
+   CSQXGSSI
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK26948
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ Z/OS V6
+   
+   
+ * REPORTED COMPONENT ID
+   5655L8200
+   
+   
+ * REPORTED RELEASE
+   000
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2006-06-22
+   
+   
+ * CLOSED DATE
+   2006-07-06
+   
+   
+ * LAST MODIFIED DATE
+   2008-12-19
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UK16228
+   
+   
+
+MODULES/MACROS
+ *     CSQXCCIS CSQXGSSI
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ Z/OS V6
+   
+   
+ * FIXED COMPONENT ID
+   5655L8200
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R000 PSY UK16228 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK16228]
+   UP06/07/21 P F607
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

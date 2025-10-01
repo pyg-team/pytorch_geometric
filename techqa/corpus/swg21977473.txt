@@ -1,0 +1,72 @@
+Title: IBM Upgrading to  IBM Sterling B2B Integrator 5.2.6.1 fails with error "Unsupported major.minor version 51.0" - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Upgrading IBM Sterling B2B Integrator version 5.2.4.0 to version 5.2.6.1 using the IBM Installation Manager on the Windows platform fails with ' Unsupported major.minor version 51.0'. 
+
+SYMPTOM
+The InstallSI.log shows the stack trace::
+
+Check for patcher updates
+java.lang.UnsupportedClassVersionError: com/sterlingcommerce/woodstock/install/module_loader/PatchPreInstall : Unsupported major.minor version 51.0
+at java.lang.ClassLoader.defineClass1(Native Method)
+at java.lang.ClassLoader.defineClassCond(ClassLoader.java:632)
+at java.lang.ClassLoader.defineClass(ClassLoader.java:616)
+at java.security.SecureClassLoader.defineClass(SecureClassLoader.java:141)
+at java.net.URLClassLoader.defineClass(URLClassLoader.java:283)
+at java.net.URLClassLoader.access$000(URLClassLoader.java:58)
+at java.net.URLClassLoader$1.run(URLClassLoader.java:197)
+at java.security.AccessController.doPrivileged(Native Method)
+at java.net.URLClassLoader.findClass(URLClassLoader.java:190)
+at java.lang.ClassLoader.loadClass(ClassLoader.java:307)
+at sun.misc.Launcher$AppClassLoader.loadClass(Launcher.java:301)
+at java.lang.ClassLoader.loadClass(ClassLoader.java:248)
+Could not find the main class: com.sterlingcommerce.woodstock.install.module_loader.PatchPreInstall. Program will exit.
+Exception in thread "main" Error 1 installing service pre-installation files.
+
+Exception in thread "main" java.io.IOException: Cannot run program "E:\SI_5\AS2\install\bin\upgradeJDK.cmd" (in directory "E:\SI_5\AS2\install\bin"): CreateProcess error=2, The system cannot find the file specified
+
+
+
+
+CAUSE
+IBM Sterling B2B Integrator 5.2.4.0 uses Java Development Kit 1.6. It is necessary to upgrade the JDK to IBM JDK 1.7 before upgrading the application.
+
+ENVIRONMENT
+Windows
+
+RESOLVING THE PROBLEM
+Follow the IBM documentation for upgrading the JDK before upgrading IBM Sterling B2B Integrator.
+
+
+
+
+The documentation at:
+
+http://public.dhe.ibm.com/software/commerce/doc/sb2bi/v5r2/SI526_install_upgrade_book.pdf [http://public.dhe.ibm.com/software/commerce/doc/sb2bi/v5r2/SI526_install_upgrade_book.pdf]
+
+provides the necessary steps. 
+
+Note: the application should not be running when performing these steps: 
+
+Page 9: Upgrading your JDK (Windows and UNIX)
+
+If you have V5.2.4.0 or lower installed, follow the steps below to upgrade your JDK. 
+
+
+Procedure
+
+1. Download the Unrestricted.zip policy file for the IBM JDK.
+2. Back up the existing JDK in <Install Dir>/jdk. Change the folder name to jdk_back.
+3. Copy the new IBM JDK (1.7.0 ) folder to the installation Directory. Directory Name should be jdk.
+4. Copy all the jars present in <Install Dir >jdk_back\jre\lib\ext to <installDir>jdk\jre\lib\ext directory.
+5. If your installation of V5.2.4 or lower was built using the SUN JDK, continue to the next step. Otherwise skip to step 6.
+a. Edit the sandbox.cfg property file.
+b. Set JCE_DIST_FILE=<New Path of Unrestricted.zip File>. For example, JCE_DIST_FILE=D\:\\IBM\\unrestricted.zip.
+c. Back up the local_policy.jar and US_export_policy.jar files present in <Install Dir>jdk\jre\lib\security.
+d. Unzip the Unrestricted.zip file and copy local_policy.jar and US_export_policy.jar to <Install Dir>jdk\jre\lib\security.
+6. Run updateJavaSecurity.cmd.
+7. Verify that security providers have been updated in<InstallDir>\jdk\jre\lib\security\java.security.
+8. Follow the Upgrade Guide instructions for your upgrade scenario.

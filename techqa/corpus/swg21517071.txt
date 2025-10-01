@@ -1,0 +1,72 @@
+Title: IBM Safely rebooting host servers - PureData System for Analytics - United States
+
+Text:
+nz Netezza reboot failover migrate pda TECHNOTE (FAQ)
+
+QUESTION
+ How do I safely reboot both hosts in a PureData System for Analytics environment? 
+
+ANSWER
+You can use the following procedure to safely reboot both PureData System for Analytics N1000/1001, N2001/2002 and N3001-002 or larger appliance hosts and test migration at the same time. 
+
+Note: You must have root access available as well as nz user access. 
+
+This article assumes that HA1 is the active host and HA2 is the standby host. Verify active and standby hosts with the crm_resource -r nps -W command: This command must be run as root user. 
+
+For example, the following output (resource nps is running on: nz55555-h1) indicates that the active host is 'nz55555-h1': 
+
+[root@NZ55555-H1 ~]# crm_resource -r nps -W
+crm_resource[16959]: 2011/06/15_14:52:09 info: Invoked: crm_resource -r nps -W
+resource nps is running on: nz55555-h1
+
+
+Note: Connect to the physical (not virtual) address while executing the following procedure:
+
+1. Stop the database on the active host (HA1) as 'nz' user: 
+
+ * 
+ * [nz@NZ55555-H1 ~]#
+ * nzstop
+
+
+2. Reboot the standby host (HA2) as 'root' user:  * 
+ * [root@NZ55555-H2 ~]#
+ * service heartbeat stop
+ * [root@NZ55555-H2 ~]#service drbd stop 
+ * [root@NZ55555-H2 ~]#shutdown -r now
+
+
+
+3. Once the standby host has rebooted and is reachable (verify HERE [http://www-01.ibm.com/support/docview.wss?uid=swg21981854]), wait 5 minutes for the cluster services to complete startup and then execute below commands as 'root' user to migrate/relocate the database:  * 
+ * [root@NZ55555-H1 ~]#
+ * /nzlocal/scripts/heartbeat_admin.sh --migrate
+
+
+Monitor cluster status with the following command to verify that HA2 has become the active host:  * 
+ * [root@NZ55555-H1 ~]#
+ * crm_mon -i5
+
+
+Note: You can run above command to monitor cluster status from either hosts, although on the active host you must run it from different terminal. 
+
+4. Stop the database as 'nz' user: 
+ * [nz@NZ55555-H2 ~]#
+ * nzstop
+
+
+5. Reboot HA1 using similar methods as in step 2 as 'root' user. 
+It should now be the standby host since the database was migrated to HA2 in step 3 above: 
+
+
+6. After HA1 has rebooted and is back in the cluster as standby (verify health using similar methods as before in step 3), migrate back to HA1: 
+
+[root@NZ55555-H2 ~]# /nzlocal/scripts/heartbeat_admin.sh --migrate 
+
+7. Monitor cluster status at five second intervals using the following command: 
+ * [root@NZ55555-H2 ~]#
+ * crm_mon -i5
+
+
+
+HISTORICAL NUMBER
+ NZ278564

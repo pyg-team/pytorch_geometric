@@ -1,0 +1,16 @@
+Title: IBM Cross-domain.xml file support in DataPower SOA Appliances - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Can a flex client access a "cross-domain.xml" file using Web Service Proxy exposed through the DataPower appliance? 
+
+CAUSE
+How can a Flex client access a "cross-domain.xml" policy file hosted in the WebSphere DataPower SOA appliance.
+
+ANSWER
+It is important to note that a "crossdomain.xml" (see link below) is a Flex client requirement and doesn't have anything specific to do with DataPower. The file (created by the customer) simply needs to be returned to the Flex client; it can be served from DataPower or from the back-end server. Serving or letting the 'GET /crossdomain.xml' through a WS-Proxy service is likely a bit involved but, it is possible. A dummy WSDL with a GET binding that matches on /crossdomain.xml is one way to accomplish this.
+
+RELATED INFORMATION
+#Cross Domain Policy File Specification [http://www.adobe.com/devnet/articles/crossdomain_policy_file_spec.html]

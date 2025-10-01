@@ -1,0 +1,45 @@
+Title: IBM Some sample deployments display an error for a missing WebSphere Liberty library - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When you import some samples in the Operational Decision Manager Rule Designer Samples Console, you get an error about a missing application server library. 
+
+CAUSE
+The sample server in ODM 8.9 and 8.9.0.1 uses Liberty 16.0.0.3, and the sample server in ODM 8.9.0.2 uses Liberty 16.0.0.4. The sample projects use libraries in Liberty, and the names of the libraries change according to the version of the application server. If the build path for a sample does not correctly reference your installed version of Liberty, you get an error. 
+
+This issue affects the following tutorial and samples: 
+
+ * Getting started with business rules [http://engtest01w.fr.eurolabs.ibm.com:9190/support/knowledgecenter/SSQP76_8.9.1/com.ibm.odm.dserver.rules.tutorials/tut_gs_topics/odm_dserver_rules_gs.html] (Decision Server tutorial) 
+ * Java EE rule session [http://engtest01w.fr.eurolabs.ibm.com:9190/support/knowledgecenter/SSQP76_8.9.1/com.ibm.odm.dserver.rules.samples/res_smp_topics/smp_res_javaee.html] (Rule Execution Server sample) 
+ * Enterprise console GUI customization [http://engtest01w.fr.eurolabs.ibm.com:9190/support/knowledgecenter/SSQP76_8.9.1/com.ibm.odm.dcenter.bu.econsole/samples/smp_tsauth_guicust.html] (Decision Center sample) 
+ * Business console custom value editor [http://engtest01w.fr.eurolabs.ibm.com:9190/support/knowledgecenter/SSQP76_8.9.1/com.ibm.odm.dserver.rules.samples/designer_smp_topics/smp_rd_authcusteditor.html] (Decision Center sample) 
+ * GUI customization [http://engtest01w.fr.eurolabs.ibm.com:9190/support/knowledgecenter/SSQP76_8.9.1/com.ibm.odm.dcenter.samples/topics/smp_dc_bc_guicust.html] (Decision Center sample)
+
+
+RESOLVING THE PROBLEM
+Rule Designer projects 
+
+To resolve this problem, change the build paths of the samples as follows to use your installed version of Liberty: 
+
+ 
+
+Liberty version Build path 16.0.0.3 IBM_DM_SAMPLES_SERVER_HOME/dev/api/spec/com.ibm.ws.javaee.servlet.3.1_1.0.14.jar IBM_DM_SAMPLES_SERVER_HOME/dev/api/spec/com.ibm.ws.javaee.jsonp.1.0_1.0.14.jar 16.0.0.4 IBM_DM_SAMPLES_SERVER_HOME/dev/api/spec/com.ibm.websphere.javaee.servlet.3.1_1.0.15.jar IBM_DM_SAMPLES_SERVER_HOME/dev/api/spec/com.ibm.websphere.javaee.jsonp.1.0_1.0.15.jar 
+GUI customization sample for ODM 8.9.0.1 
+
+To set up the GUI customization sample deployment: 
+
+ 1. Open the file <InstallDir>/teamserver/samples/businesscustomui/build.xml. 
+ 2. Locate the build path at line 38 in the file:
+    <path id="build.path">
+    ... <fileset dir="${wlp.home}/dev/api/spec/">
+    <include name="com.ibm.ws.javaee.servlet.3.*.jar"/>
+    </fileset
+    ... 
+ 3. Change the build path to give a more generic name to the added library for the servlet. Change ws in the path as follows:
+    <path id="build.path">
+    ... <fileset dir="${wlp.home}/dev/api/spec/">
+    <include name="com.ibm.*.javaee.servlet.3.*.jar"/>
+    </fileset>
+    ...

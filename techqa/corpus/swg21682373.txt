@@ -1,0 +1,13 @@
+Title: IBM Do not apply the August TPAE IFIX 7.5.0.6 to SCCD 7.5.1.2 - United States
+
+Text:
+sccd; tpaeupgrade; 7506; 7512; UI; GUI; left hand pane; left hand nav; return with value; fixpack; IFIX; TPAE FLASH (ALERT)
+
+ABSTRACT
+ The August TPAE 7.5.0.6 IFIX breaks the SCCD UI Feature Pack. The symptoms are issues with the look of the goto menu in the left hand pane, missing recent applications in the go to menu, missing return / return-with-value buttons, etc. 
+
+CONTENT
+If running with SCCD 7.5.1.2, do not install the TPAE 7.5.0.6 IFIX with the August date. That is, stay away from TPAE_7506_IFIX.20140814-1534, also known as IF003.
+APAR IV63717 has been created to address the issue. This APAR has been fixed with the September IFIX and later. Make sure the README file of any TPAE 7.5.0.6 IFIX lists APAR IV63717 as resolved.
+
+That is, it is fixed in TPAE_7506_IFIX.20140916-1153 (also known as IF004) and later.

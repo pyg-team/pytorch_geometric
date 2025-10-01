@@ -1,0 +1,40 @@
+Title: IBM When building a deployment policy configuration match for an IBM WebSphere DataPower SOA Appliance, specify the Name, Property and  Value. - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Why do some properties in a Deployment Policy for an IBM Websphere DataPower SOA Appliance need only a Name and Property specified in the Configuration Match, but some properties need a Name, Property, and Value specified in the Configuration Match? 
+
+ANSWER
+Only specifying Name and Property in a Configuration Match, but not including the Value, will only work in the case of a "simple" property. 
+
+Since the support for "complex" properties was added for the Deployment Policy feature in firmware version 3.7.3 and later, the Value needs to be specified in the Configuration Match to work properly.
+
+To be consistent, always specify the Value in the Configuration Match as a best practice.
+
+This particularly applies to the following "complex" properties:
+
+RemoteEndpointPort, RemoteEndpointProtocol, and RemoteEndpointHostname.
+
+For example, the following syntax is correct (using just Name and Property):
+
+NOTE: Substitute the actual XML Firewall object name for <xmlfirewallname>
+
+*/*/services/xmlfirewall?Name=<xmlfirewallname>&Property=LocalPort
+
+However, for the "complex" property RemoteEndpointHostname setting, a Value is required in the Configuration Match.
+
+For example, the following syntax is correct (using Name, Property, & Value):
+
+NOTE: Substitute the actual Web Service Proxy object name for <wspName>
+
+*/*/wsm/wsm-endpointrewrite?Name=<wspName>&Property=WSEndpointRemoteRewriteRule/RemoteEndpointHostname&Value=.*
+
+
+[/support/docview.wss?uid=swg21407208&aid=1] [/support/docview.wss?uid=swg21407208&aid=1]
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration WebSphere DataPower XML Security Gateway XS40 Not Applicable Firmware 3.7.3, 3.7.2, 3.7.1 Edition Independent Business Integration WebSphere DataPower XML Accelerator XA35 Not Applicable Firmware 3.7.3, 3.7.2, 3.7.1 Edition Independent Business Integration WebSphere DataPower SOA Appliances Not Applicable Firmware 3.7.3, 3.7.2, 3.7.1 Edition Independent

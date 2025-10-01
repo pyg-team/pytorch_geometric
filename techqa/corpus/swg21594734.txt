@@ -1,0 +1,38 @@
+Title: IBM Problem creating shortcuts when installing without administrative privileges on Windows 7 64-bit - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When installing InfoSphere Optim Query Workload Tuner for DB2 for Linux, UNIX, and Windows on Windows 7 64-bit as a non-administrative user, you encounter an error similar to this one:
+
+Error during "install" phase:
+Cannot create shortcut file "C:\Users\nonroot\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\IBM Data Studio\Data Studio 3.1.1 Full Client.lnk" for "C:\Users\nonroot\IBM\DS3.1.1\eclipse.exe". Before re-installing the product verify that a valid shortcut file can be created at this location.
+
+
+CAUSE
+The product media (both the packages that you can download from IBM Passport Advantage and the product DVD) are missing an executable file that you must run instead of setup.exe when you are a non-administrative user on a Windows 7 64-bit system. Although the error states that the installer could not create a shortcut to the file for launching the product, in fact the product is NOT installed on your system.
+
+RESOLVING THE PROBLEM
+In the error message window, select the Delete fetched files option and click OK. 
+
+
+Then, download the missing executable file from Fix Central [http://www-933.ibm.com/support/fixcentral/options] and run it by following these steps: 
+
+1. Click the "Select product" tab and search for the fix by using the following information: 
+
+ * Product Group: Information Management 
+ * Select from Information Management: Optim Query Workload Tuner for DB2 for Linux, UNIX, and Windows 
+ * Installed Version: 3.1.1 
+ * Platform: Windows
+
+
+2. Click Continue. 3. On the "Identify Fixes" page, select the option "Individual fix IDs". Type "3.1.1-Information_Management-OQWT4DB2LUW-IFix0001" in the search text box and then click Continue. 
+
+4. Download the fix. If you downloaded InfoSphere Optim Query Workload Tuner for DB2 for Linux, UNIX, and Windows, Version 3.1.1 from IBM Passport Advantage, skip to step 6. 
+
+5. Copy the content of the product DVD to a temporary location on your computer. 
+
+6. Unzip the fix into the directory where the setup.exe file for InfoSphere Optim Query Workload Tuner for DB2 for Linux, UNIX, and Windows is located. After you unzip the fix there, you will see two additional files in the directory: setup_win7_nonadmin64.exe and setup_win7_nonadmin64.ini. 
+
+7. Double-click the file setup_win7_nonadmin64.exe to install InfoSphere Optim Query Workload Tuner for DB2 for Linux, UNIX, and Windows.

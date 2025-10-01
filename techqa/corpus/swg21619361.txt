@@ -1,0 +1,73 @@
+Title: IBM Importing IBM Rational ClearCase 8.0 license results in "system not a license server" error - United States
+
+Text:
+not a license server error; ClearCase 8.0 license import; CC; license server TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Attempts to import a new IBM Rational ClearCase 8.0 license into IBM Rational License Key Server 8.1.3 results in the error "You are attempting to import a floating license on a system that is not a license server. You must install the Rational License Server software in order to install a floating license." 
+
+SYMPTOM
+Steps to reproduce:
+
+
+
+ 1. Open the License Key Administrator
+    
+    
+ 2. Select import license key
+    
+    
+ 3. Navigate to the license key
+    
+    
+ 4. Select the license key
+
+
+Expected result: License key is successfully imported 
+
+Actual result: The import fails 
+
+
+The following error is seen: "You are attempting to import a floating license on a system that is not a license server. You must install the Rational License Server software in order to install a floating license."
+
+CAUSE
+The license file rational_server_permanent is corrupted and can not be updated using the License Key Administrator.
+
+
+
+RESOLVING THE PROBLEM
+To resolve the issue:
+
+
+
+ 1. Open the rational_server_perm.dat file
+    
+    
+ 2. Remove one of the duplicate entries for the ibmratl daemon
+    
+    
+ 3. Add an entry for the rational daemon
+    
+    
+ 4. Remove the increment lines for the old licenses
+    
+    
+ 5. Add the increment lines for the new licenses
+    
+    
+ 6. Save the file
+    
+    
+ 7. Open LMTOOLS
+    
+    
+ 8. Go to the Stop/Start/Reread tab
+    
+    
+ 9. Perform a stop/start/reread 
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Software Development Rational ClearCase Licensing 8.0

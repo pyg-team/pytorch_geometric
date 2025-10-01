@@ -1,0 +1,154 @@
+Title: IBM Open Mic Webcast: What's New in IBM SmartCloud Notes? – 10 September 2013 [slides + audio recording attached] - United States
+
+Text:
+lste_webcast STEwebcastDocument WEBCAST
+
+ABSTRACT
+ The IBM SmartCloud team wants to help you take full advantage of your products. IBM hosted an Open Mic webcast with Product Management, Development and Support on September 10, 2013. The topic was "What's New in IBM SmartCloud Notes?". 
+
+CONTENT
+Topic: What's New in IBM SmartCloud Notes? 
+
+Day: Tuesday, September 10, 2013
+
+
+
+Presentation 
+IBM SCSB Open Mic SmartCloud Notes What is New 10Sep13.pdf [/support/docview.wss?uid=swg27039094&aid=2]IBM SCSB Open Mic SmartCloud Notes What is New 10Sep13.pdf [/support/docview.wss?uid=swg27039094&aid=1] 
+
+
+Audio recording (MP3) 
+What's New in IBM SmartCloud Notes Open Mic Sep 10 2013.mp3 [/support/docview.wss?uid=swg27039094&aid=4]What's New in IBM SmartCloud Notes Open Mic Sep 10 2013.mp3 [/support/docview.wss?uid=swg27039094&aid=3] 
+
+
+50:30 min long 
+
+Q&A starts at the 39:52 min mark 
+
+Q&A written transcript 
+Q: With the Traveler update, are MS clients (Surface in particular) on the supported list as well? 
+A: Surface is not supported at this time. Also see Client requirements 
+http://www-01.ibm.com/support/docview.wss?uid=swg27023486 [http://www-01.ibm.com/support/docview.wss?uid=swg27023486] 
+
+
+
+
+
+Q: Any ETA on ActiveSync access from the later Win devices? 
+A: We are working on support for Windows devices for later this year. 
+
+
+
+
+Q: Are there plans to implement the Notes ID pw change => Web password option, as can be currently done with a security policy? 
+A: That is not possible today in the service. The way it is currently done with a security policy is by updating a web password which is not the same web password that you use in the service. We've talked about synching the Notes ID password change to the service and that has not been a high enough priority at this time. We do have it as a requirement and we look to quantify all requirements that come up and we try to balance what is most important. So we would like to hear from people if they think that is really important. But, we have not seen that to date to be the high priority. So, we started with synching from the browser password to the Notes Client ID. 
+
+Related documentation: Enabling password synchronization (service-only) [http://www-10.lotus.com/ldd/bhwiki.nsf/xpDocViewer.xsp?lookupName=Administering+SmartCloud+Notes%3A+Service-only+Environment#action=openDocument&res_title=Enabling_password_synchronization_SO&content=pdcontent] and Enabling password synchronization (hybrid) [http://www-10.lotus.com/ldd/bhwiki.nsf/xpDocViewer.xsp?lookupName=Administering+SmartCloud+Notes%3A+Hybrid+Environment#action=openDocument&res_title=Enabling_password_synchronization_HY&content=pdcontent] 
+
+
+
+
+Q: Are there Smartcloud servers that are located in Canada? 
+A: US, Europe and AP at this time. 
+We have SmartCloud Notes, iNotes, Meetings, and Engage clients from Latin America and Canada successfully hosted in our US data center. 
+
+
+
+
+Q: When will the option 'iCalender feed overlay' be available? 
+A: iCal overlay is not available with SmartCloud Notes web in the current service release. It will be considered for a future upgrade. Thanks for the inquiry. 
+
+
+
+
+Q: Are there possibilities to have a mixed environment : Notes DB on local (on-premise) servers and Notes mail in SmartCloud? 
+A: Yes, that is known as an IBM SmartCloud Notes Hybrid environment. 
+
+
+
+
+Q: How do I migrate my mail db from Domino on- premises to SmartCloud? Are there are any tools? 
+A: To transfer mail files, you contract the services of an IBM Software Services for Collaboration [http://www-01.ibm.com/software/lotus/services/] representative or a Certified IBM Business Partner. 
+
+
+
+
+Q: Is the Name Finder for the webUI or Notes Client user interface or both? 
+
+A: It is only available on the WebUI 
+
+Related documentation:  * Configuring the Name finder (service-only doclink) http://ibm.co/18K3f18 [http://ibm.co/18K3f18]
+   AND
+   Standard and Advanced Name finder options
+   http://ibm.co/18Qawes [http://ibm.co/18Qawes] 
+ * Configuring the Name finder (hybrid)
+   http://ibm.co/17SiWDf [http://ibm.co/17SiWDf]
+
+
+
+
+
+Q: Is vault mandatory for hybrid environment ? 
+A: The vault is not mandatory. However, the vault is critical to SmartCloud Notes operation. If for some reason you don't have IDs, IBM would work with you. 
+
+
+
+
+Q: In the Notes Client UI can you right-click to report spam from the in-box? 
+A: For now you need to select the message(s) and click the Report as Spam button. The "Report as spam" feature needs to be enabled by the Administrator. Once enabled, then the menu item is available in the action bar under More in SmartCloud Notes web UI. And for the Notes client you need to use a custom Notes 8.5.3 mail template . 
+Related documentation: Enabling the Report as Spam feature [http://www-10.lotus.com/ldd/bhwiki.nsf/xpDocViewer.xsp?lookupName=Administering+SmartCloud+Notes%3A+Service-only+Environment#action=openDocument&res_title=Enabling_the_Report_as_Spam_feature_SO&content=pdcontent] 
+
+
+
+
+Q: Are there any plans to have a view display all of the mobile devices using Traveler? 
+A: It is not available in the service today but we do have that an enhancement request in our system. 
+
+
+
+
+Q: Are there any plans to update the password reset for users (i.e. implement a self service reset)? 
+A: There are no plans at this time but it is a topic of discussion. 
+
+
+
+
+Q: With regard to filtering email and moving it to the junk folder, I'm wondering if there are any plans for an option where for example, if a message is in a junk folder for 2 weeks to then move it to the trash folder. 
+A: It's possible for the end user to set up a mail rule in their client to process the email in whatever way they wish. Are you looking for a default for all users? 
+reply: Well a default that the administrator could set..... 
+response: Right now there is not one (not a default that the administrator could set). Right now there is an agent that scans the junk mail folder and can send the end user a report about what has come into their junk mail and the end user can review that and decide whether they want to keep messages or delete them but there is no automatic time-out and delete of junk mail. 
+
+
+
+
+Q: Can you personally search an archive - use it as a backup? 
+A: The archive essentials is not a personal mail search. 
+
+
+
+
+Q: Are there any Sametime integration options? 
+A: Sametime Webchat is part of the SmartCloud service. Sametime meetings is also included in the Engage Advanced offerings 
+
+
+
+
+Q: Any plans to allow resource reservations in SmartCloud so I don't need it on site? 
+A: That capability is under consideration and being evaluated. No specific time frame is available at this point. 
+
+
+
+
+Q: In filtering of email can you have rules that would send a newsletter to a newsletter folder? 
+A: Right now we don't have that capability but it's something we can take into consideration. 
+
+
+
+
+Q: My question is about address translation. I notice when I send emails that if I include internal people and external people, meaning internet addresses, when they come back the addresses aren't translated so if I hit reply, everything goes to internet addresses rather than routing to the internal addresses and then internet addresses required. Was that fixed? 
+
+Summary of scenario experienced - An email is sent with a mixture of internal and external addresses and someone externally replies. Then all the addresses are shifted. If someone internally replies they're all appropriate (the external addresses stay external and the internal addresses stay internal). The moment somebody external gets engaged in the conversation, everybody ends up using external addresses, rather than routing internally for the internal people. When the external person replies and it hits the internal person's inbox, when you look at the email of the internal person, the entire list of addresses is all external. 
+A: May we request for you to open a PMR. We will absolutely validate what the correct answer to the question (of how it is designed to work) as part of the PMR. 
+
+Q: Are there any plans to update notification of password expiration as it relates to Traveler users? 
+A: We've heard that and we are discussing that as a requirement; no plans at the moment though.

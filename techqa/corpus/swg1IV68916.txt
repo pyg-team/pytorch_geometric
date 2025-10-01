@@ -1,0 +1,216 @@
+Title: IBM IV68916: DISCOVER MANAGEMENT CONSOLE FAILS TO LOAD SCOPES, CANNOT START DISCOVERY. - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When trying to start discovery in the discovery management
+   portal, or access the scopes, the action may hang and never
+   return. This problem has been observed in TADDM 7222 and 730.
+   
+   This typically occurs if the scope on the anchors or gateways
+   have been modified in any way.
+   
+   In the javaws log, you will see the last action is getScopeSets;
+   
+   
+   (ServerFacade)DEBUG Calling the server to perform :
+   com.collation.proxy.clientproxy.server.action.ScopeProxyCommand:
+   getScopeSets on version:0
+   
+   In the TADDM discovery server ClientProxy log you will see the
+   same method called but never see it return on that thread;
+   
+   ClientProxy.log:2015-01-21 12:38:33,054 ClientProxy [RMI TCP
+   Connection(185)-1.2.3.4]  DEBUG
+   topomgr.TopologyManagerFactory -
+   Invoking getScopeSets on storage server <storage server>
+   
+   
+   In a thread dump of StorageService on the storage server
+   indicated in the above message, you will see ScopeFileWrite with
+   a THREADBLOCK;
+   
+   3XMTHREADINFO      "ScopeFileWriter"
+   J9VMThread:0x000000000116EA00,
+   j9thread_t:0x00007FB2F8E3A8E0,
+   java/lang/Thread:0x00000007C9A171D8,
+   state:P, prio=5
+   3XMJAVALTHREAD            (java/lang/Thread getId:0x5C,
+   isDaemon:true)
+   3XMTHREADINFO1            (native thread ID:0x1B83, native
+   priority:0x5,
+   native policy:UNKNOWN)
+   3XMTHREADINFO2            (native stack address range
+   from:0x00007FB2E6B64000, to:0x00007FB2E6BA5000, size:0x41000)
+   3XMCPUTIME               CPU usage total: 0.000468503 secs
+   3XMTHREADBLOCK     Parked on:
+   java/util/concurrent/locks/AbstractQueuedSynchronizer$ConditionO
+   bject@0x
+   00000007C9C393F0 Owned by: <unknown>
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  There is no workaround other then if you restart the PSS you can
+   see the scopes on the PSS. However if you use the DS to see
+   scopes they will be blocked again. An efix is the only
+   correction.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  When trying to start discovery in the discovery management
+   portal, or access the scopes, the action may hang and never
+   return. This problem has been observed in TADDM 7222 and 730.
+   
+   This typically occurs if the scope on the anchors or gateways
+   have been modified in any way.
+   
+   In the javaws log, you will see the last action is getScopeSets;
+   
+   
+   (ServerFacade)DEBUG Calling the server to perform :
+   com.collation.proxy.clientproxy.server.action.ScopeProxyCommand:
+   getScopeSets on version:0
+   
+   In the TADDM discovery server ClientProxy log you will see the
+   same method called but never see it return on that thread;
+   
+   ClientProxy.log:2015-01-21 12:38:33,054 ClientProxy &#237;RMI TCP
+   Connection(185)-1.2.3.4&#249;  DEBUG
+   topomgr.TopologyManagerFactory -
+   Invoking getScopeSets on storage server <storage server>
+   
+   
+   In a thread dump of StorageService on the storage server
+   indicated in the above message, you will see ScopeFileWrite with
+   a THREADBLOCK;
+   
+   3XMTHREADINFO      "ScopeFileWriter"
+   J9VMThread:0x000000000116EA00,
+   j9thread_t:0x00007FB2F8E3A8E0,
+   java/lang/Thread:0x00000007C9A171D8,
+   state:P, prio=5
+   3XMJAVALTHREAD            (java/lang/Thread getId:0x5C,
+   isDaemon:true)
+   3XMTHREADINFO1            (native thread ID:0x1B83, native
+   priority:0x5,
+   native policy:UNKNOWN)
+   3XMTHREADINFO2            (native stack address range
+   from:0x00007FB2E6B64000, to:0x00007FB2E6BA5000, size:0x41000)
+   3XMCPUTIME               CPU usage total: 0.000468503 secs
+   3XMTHREADBLOCK     Parked on:
+   java/util/concurrent/locks/AbstractQueuedSynchronizer$ConditionO
+   bject@0x
+   00000007C9C393F0 Owned by: <unknown>
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix for this APAR is contained in the following maintenance
+   packages:
+   | Fix Pack | 7.2.2-TIV-ITADDM-FP0004
+   | Fix Pack | 7.3.0-TIV-ITADDM-FP0001
+   Check the IBM Software Support web site for availability of the
+   above maintenance packages.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV68916
+   
+   
+ * REPORTED COMPONENT NAME
+   APP DEPENDENCY
+   
+   
+ * REPORTED COMPONENT ID
+   5724N5500
+   
+   
+ * REPORTED RELEASE
+   722
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-01-23
+   
+   
+ * CLOSED DATE
+   2015-02-25
+   
+   
+ * LAST MODIFIED DATE
+   2015-02-25
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   APP DEPENDENCY
+   
+   
+ * FIXED COMPONENT ID
+   5724N5500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R722 PSY
+   UP

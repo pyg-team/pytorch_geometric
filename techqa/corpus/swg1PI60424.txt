@@ -1,0 +1,213 @@
+Title: IBM PI60424: MQ MSTR ADDRESS SPACE RECEIVED ABEND=S026,REASON=08118001 WITH REASON=00C510AB - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  MQ MSTR asid abended.
+   CSQV086E <ssid>  QUEUE MANAGER ABNORMAL TERMINATION
+   REASON=00C510AB
+   ABEND=S026,REASON=08118001,CONNECTOR HANG:
+   CONNAME=<conname>,JOBNAME=<ssidMSTR>
+   QUEUE MANAGER TERMINATION REQUESTED, REASON=00C510AB
+   .
+   The S026 abends are occurring when QMGR receives
+   a disconnfail event for CSQx's connection to
+   structure <structure> as a result of the RESET
+   CFSTRUCT(<structure>) ACTION(FAIL) command
+   (normally QMGR would have also disconnected and
+   would not receive this event, however this does
+   not appear to be the case here).
+   
+   During event processing, the QMGR compares the
+   instance number of the structure with that in the
+   admin structure, and as they are the same requests
+   a shared ENQ on CSQx's connection to the admin
+   structure.
+   However CSQx holds this ENQ exclusively and will
+   continue to do so until it disconnects from the
+   admin structure (usually at qmgr shutdown), and
+   so QMGR suspends without responding to the event.
+   
+   XCF detects that QMGR has not responded to the event,
+   and after several minutes abends S026-08118001,
+   followed several minutes later by S026-08118002
+   which causes QMGR MSTR asid to terminate abnormally.
+   .
+   Additional Symptom(s) Search Keyword(s):
+   .
+   IXL041E CONNECTOR NAME: <structure> JOBNAME: ssidMSTR,
+   HAS NOT RESPONDED TO THE DISCONNECTED/FAILED CONNECTION
+   EVENT FOR SUBJECT CONNECTION: <conname>.
+   DISCONNECT/FAILURE PROCESSING FOR STRUCTURE <structure>
+   CANNOT CONTINUE.
+   ..
+   IXL040E CONNECTOR NAME: <structure>, JOBNAME: ssidMSTR,
+   HAS NOT RESPONDED TO THE USER SYNC POINT EVENT.
+   USER SYNC POINT PROCESSING
+   
+   FOR STRUCTURE <structure> CANNOT CONTINUE.
+   
+   ABEND026 ABENDS026 026 S026 S0026
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All users of WebSphere MQ for z/OS Version 8 *
+   *                 Release 0 Modification 0.                    *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: The command RESET CFSTRUCT('xx')        *
+   *                      ACTION(FAIL) can cause other queue      *
+   *                      managers in a QSG to hang.              *
+   *                      This can result in error messages       *
+   *                      IXL040E, IXL049E, IXL050I and abend     *
+   *                      S026 reason 08118001 or 08110102,       *
+   *                      followed by the queue manager           *
+   *                      terminating with reason 00C510AB.       *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   When command RESET CFSTRUCT('xx') ACTION(FAIL) is executed in a
+   member of a QSG that is not connected to structure 'XX' causes
+   XCF and XES notification events that are not properly handled by
+   the other queue managers in the QSG resulting in queue managers
+   hanging without responding to XES events.
+   
+   When XES events are not responded to, abend S026 is generated
+   and the XES connector hang resolution terminates the queue
+   manager.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The XCF and XES notifications properly force disconnects from
+   failed application structures as requested by the RESET
+   CFSTRUCT('XX') ACTION(FAIL) command without causing connector
+   hang and XES abends.
+   000Y
+   CSQECLOS
+   CSQEDSC1
+   CSQESEX
+   CSQESTE
+   CSQESTFA
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  *********
+   * HIPER *
+   *********
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI60424
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ Z/OS 8
+   
+   
+ * REPORTED COMPONENT ID
+   5655W9700
+   
+   
+ * REPORTED RELEASE
+   000
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   YesHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-04-07
+   
+   
+ * CLOSED DATE
+   2016-06-14
+   
+   
+ * LAST MODIFIED DATE
+   2016-08-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UI38667
+   
+   
+
+MODULES/MACROS
+ *  CSQECLOS CSQEDSC1 CSQESEX  CSQESTE  CSQESTFA
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ Z/OS 8
+   
+   
+ * FIXED COMPONENT ID
+   5655W9700
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R000 PSY UI38667 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI38667]
+   UP16/07/06 P F607 ¢
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

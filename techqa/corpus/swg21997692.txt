@@ -1,0 +1,51 @@
+Title: IBM [java.lang.IllegalStateException: Dojo profile not initialized - United States
+
+Text:
+Read-enabled HADR; login; Dojo profile not initialized TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Attempts to login to IBM Sterling Store Web leads to the error [java.lang.IllegalStateException: Dojo profile not initialized 
+
+SYMPTOM
+The error message is as follows:
+-----------------------------------------
+000000d2 ServletWrappe Ecom.ibm.ws.webcontainer.servlet.ServletWrapper service SRVE0068E: An
+exception was thrown by one of the service methods of the servlet [/wsc/desktop/login/login.jsp] in application [Sterling Applications]. Exception created : [java.lang.IllegalStateException: Dojo profile not
+initialized
+at
+com.ibm.sterling.afc.dojo.util.ProfileUtil.getDojoModuleList(ProfileUtil
+.java:614)
+at
+com.ibm.sterling.afc.dojo.util.ProfileUtil.getCSSFilePath(ProfileUtil.ja
+va:736)
+at
+com.ibm.sterling.afc.dojo.util.ProfileUtil.getCSSFilePath(ProfileUtil.ja
+va:730)
+at com.ibm._jsp._login._jspService(_login.java:259)
+at
+com.ibm.ws.jsp.runtime.HttpJspBase.service(HttpJspBase.java:99)
+at javax.servlet.http.HttpServlet.service(HttpServlet.java:668) 
+
+-----------------------------------------
+
+
+
+CAUSE
+The database is in read only mode.
+
+
+DIAGNOSING THE PROBLEM
+With reference to the FFDC logs:
+============================
+<Errors>
+<Error ErrorCode="-1773"
+ErrorDescription="The statement or command failed because itrequires functionality that is not supported on a read-enabled HADR standby database. Reason code = &quot;5&quot;.. SQLCODE=-1773, SQLSTATE= , DRIVER=3.69.49" ErrorRelatedMoreInfo="">
+============================
+
+
+
+
+RESOLVING THE PROBLEM
+Read-enabled HADR standby database is not supported. You have to switch DB to RW mode. 
+
+NOTE: Consult you database administrator to make the required changes

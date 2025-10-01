@@ -1,0 +1,202 @@
+Title: IBM PM22705: CEA FEATURE PACK RUNTIME ANNOTATION SCANS DO NOT PROCESS WEB MODULE JARS. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The annotation scan of a web modules (WAR file) which is
+   performed from the IBM WebSphere Application server runtime
+   does not process the child jar files of the web module.  As a
+   result, all annotations on classes contained by the web module
+   are not detected.
+   
+   This problem was noted in relation to the SIP annotation type
+   "javax.servlet.sip.annotation.SipApplicationKey".
+   
+   This problem is specific to the Feature Pack for
+   Communications Enabled Applications (CEA), installed on
+   top of the IBM WebSphere Application Server v7.0 or on top of a
+   v7.0 fix pack.  This problem does not occur in any IBM
+   Application Server v7.0 installation or fix pack installation
+   which does not have the Feature Pack for CEA installed.
+   
+   This problem is specific to annotation scans which occur from
+   the application server runtime. In particular, annotation scans
+   which are performed during application deployment do not have
+   this problem.
+   
+   Description:
+   
+   When scanning the annotations of a web module (WAR file),
+   annotation processing is required to scan all classes in the web
+   module classes directory (WEB-INF/classes) as well as all
+   classes in jar files in the web module library directory
+   (WEB-INF/lib).  In the IBM WebSphere Application Server
+   Feature Pack for CEA, errors in the code which performs
+   annotations scans cause jars in the web module library
+   directory to be skipped.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Work-Around:
+   
+   This problem may be avoided by moving classes which contain
+   annotations from jars in the web module library directory into
+   the web module classes directory (from jars under WEB-INF/lib to
+   WEB-INF/classes).
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  All users of the IBM WebSphere Application  *
+   *                  Server Feature Pack for Communications      *
+   *                  Enabled Applications (CEA).                 *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Runtime scans of annotations in Web     *
+   *                      Module Archives omit annotations        *
+   *                      contained by classes in Web Module      *
+   *                      libraries.                              *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   Annotation scans of Web Module Archives (WAR files) must scan
+   all classes of the Web Module Archive.  Classes may be present
+   under the Web Module classes directory (WEB-INF/classes), and
+   may be present in Web Module libraries (Java Archives under
+   the Web Module library directory, WEB-INF/lib).
+   
+   Annotation scans initiated by the runtime Web Container were
+   not processing classes in Web Module libraries (Java Archives
+   under the Web Module library directory, WEB-INF/lib).
+   
+   As a result, the Web Container did not have full metadata
+   for all Web Modules.  This omission of metadata caused Web
+   Modules to function incorrectly.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A code update was made that adds steps to process classes in
+   Web Module libraries (Java Archives under the Web Module
+   library directory, WEB-INF/lib).
+   
+   The fix for this APAR is currently targeted for inclusion in
+   the IBM WebSphere Application Server Feature Pack for
+   Communications Enabled Applications (CEA) v1.0.0.11.  Please
+   refer to the Recommended Updates page for delivery information:
+   http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+   
+   This problem is specific to the IBM WebSphere Application
+   Server Feature Pack for Communications Enabled Applications
+   (CEA), installed on top of the IBM WebSphere Application
+   Server v7.0.  This problem does not occur in any IBM
+   Application Server v7.0 installation or fix pack installation
+   which does not have the IBM WebSphere Application Server
+   Feature Pack for Communications Enabled Applications (CEA)
+   installed.  The problem occurs depending on the particular CEA
+   feature pack level which is installed, and does not depend on
+   the particular application server service pack level which is
+   installed.
+   
+   This problem is specific to annotation scans which are
+   performed by the application server runtime. In particular,
+   annotation scans which are performed during application
+   deployment do not have this problem.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM22705
+   
+   
+ * REPORTED COMPONENT NAME
+   CEA FEATUREPACK
+   
+   
+ * REPORTED COMPONENT ID
+   5724J0855
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-09-16
+   
+   
+ * CLOSED DATE
+   2011-03-01
+   
+   
+ * LAST MODIFIED DATE
+   2011-03-01
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CEA FEATUREPACK
+   
+   
+ * FIXED COMPONENT ID
+   5724J0855
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R700 PSY
+   UP

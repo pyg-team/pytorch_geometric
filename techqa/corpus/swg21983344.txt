@@ -1,0 +1,118 @@
+Title: IBM WEBGUI 8.1 High Availability (HA) cluster configuration - United States
+
+Text:
+IBM DASH; WEBGUI; HA cluster; join disjoin TECHNOTE (FAQ)
+
+QUESTION
+ How can I disjoin/remove nodes from high availabilty cluster in WebGUI/DASH and rejoin/add them again? 
+
+ANSWER
+This technote is applicable to DASH installs version 3.1.2 and higher. 
+IBM Dashboard Application Services Hub (DASH) supports load balancing for high availability. Some time it is required to remove nodes from the cluster and join them again.
+
+Below are some commands you may use to check the status of the cluster:
+
+1. Run below command to check the status of the cluster and how many nodes are in the cluster. This command can be run from any node in the cluster.
+If you get an error (as below) then either there are no nodes in the cluster or there is some issue with DB2 database used for cluster.
+
+Relplace user name and password in below command based on your installation.
+
+nc9053113223:> cd JazzSM/ui/bin
+./consolecli.sh ListHANodes --username smadmin --password smadmin
+
+Error : CTGWA4340E ListHANodes failed
+
+Alternatively you can login into DB2 using DB2 default schema owner (typically db2inst1).
+List the DB2 schemas name and corresponding directories by using below command:
+db2inst1:> db2 list db directory
+
+Enter db2 on the Unix command line and then connect to the database used for DASH. In the following we assume that database name is DASH:
+db2inst1:> db2
+
+db2 => connect to DASH
+
+Run below command to list tables in the database. You should see below tables.
+
+db2 => list tables
+
+GLOBAL_CONFIG
+MODULES
+NODES
+NODES_STORES
+STORES
+
+Below SQL can be used to list the number of nodes in the cluster.
+db2 => SELECT * FROM NODES
+
+2. WEBGUI uses its own database to store data related to WebGUI. You can run below command to list the tables in OMNIBUS_WEB_GUI database.
+
+db2> list tables for schema OMNIBUS_WEB_GUI
+
+CONFIG_ITEMS
+NODES
+NODES_CONFIG_ITEMS
+
+If you like to check how many records are in each table you can run below command.
+select count (*) from OMNIBUS_WEB_GUI.CONFIG_ITEMS
+select count (*) from OMNIBUS_WEB_GUI.NODES_CONFIG_ITEMS
+select count (*) from OMNIBUS_WEB_GUI.NODES
+
+See below URL for list of commands to manage HA:
+https://www.ibm.com/support/knowledgecenter/SSEKCU_1.1.2.1/com.ibm.psc.doc/tip_original/ctip_config_ha_diag.html [https://www.ibm.com/support/knowledgecenter/SSEKCU_1.1.2.1/com.ibm.psc.doc/tip_original/ctip_config_ha_diag.html]
+
+Steps to remove nodes from the cluster:
+
+1. On all of the WEBGUI servers run below command to remove nodes from cluster. Replace user id and password in the command based on your environment.
+Make sure the user Id you use in below command has ncw_admin roles.
+
+nc9053113223:> cd <BASE_PATH>/omnibus_webgui
+
+./waapi/bin/runwaapi -file ./waapi/etc/samples/cluster_removenode.xml -user webadmin -password webadmin 
+
+2. Now check the DB2 schema OMNIBUS_WEB_GUI
+login as db2inst1 or other user into DB2
+
+3. Run below command:
+db2inst1:>db2
+db2> list tables for schema OMNIBUS_WEB_GUI
+
+Run select count(*) for all the tables. If WEBGUI is successfully removed from cluster then there should not be any record left in these tables.
+select count (*) from OMNIBUS_WEB_GUI.CONFIG_ITEMS
+select count (*) from OMNIBUS_WEB_GUI.NODES_CONFIG_ITEMS
+select count (*) from OMNIBUS_WEB_GUI.NODES
+
+4. If you do not want a particular WEBGUI node to join the cluster next time it is started, then update server.init file in "omnibus_webgui/etc" dir and set below property to off.
+
+cluster.mode:off
+
+5. Remove DASH servers from the cluster one by one using below steps. Repeat these steps for all the nodes except the last node.
+
+a). Stop DASH (by running stopServer.sh command) on one server and then from other server in the cluster run RemoveHANode command to remove it from the cluster. 
+Replace user, password, host and port number in RemoveHANode command (you can run ListHANodes command to get list of nodes, as described above).
+
+b). Remove DASH from cluster:
+nc9053113223:> cd JazzSM/ui/bin
+./consolecli.sh RemoveHANode --username smadmin --password smadmin --nodename host:16311
+
+c). On the last node which is still up, run below command:
+./consolecli.sh RemoveHANode --username smadmin --password smadmin --active active
+
+6. At this point the DASH schema should be dropped since no node are joined to the cluster.
+
+7. Stop DASH on the last servers, by using stopServer.sh command.
+
+8. Create empty database for DASH by running below db2 command.
+db2inst1> db2 create database DASH
+
+9. Now join the nodes to the cluster again. To do this just start server using startServer.sh command. 
+
+Once you start the first node it should create DASH database tables (named above) and load data into these tables and OMNIBUS_WEB_GUI tables.
+
+10. To verify the status check the database tables or run ListHANodes command.
+
+11. If all looks good so far then start DASH on other servers. You may want to check the status of the cluster by using ListHANodes command or by checking tables in the cluster after starting each node.
+
+12. Check if the data replication is working between the nodes. You may want to create a page or a filter and see if this is replicating to the other node(s) in the cluster. You must logout and login again on other servers to see the replicated pages/filters etc.
+
+Note: If you do not want DASH to disjoin the cluster next time server is started, then follow instructions in below URL to disable it.
+https://www.ibm.com/support/knowledgecenter/SSEKCU_1.1.2.1/com.ibm.psc.doc/tip_original/ttip_config_ha_unjoin_temp.html [https://www.ibm.com/support/knowledgecenter/SSEKCU_1.1.2.1/com.ibm.psc.doc/tip_original/ttip_config_ha_unjoin_temp.html]

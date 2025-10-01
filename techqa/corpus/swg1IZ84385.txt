@@ -1,0 +1,277 @@
+Title: IBM IZ84385: GETTING A BMXAA4214E - AN UNKNOWN ERROR HAS OCCURED. PLEASE CONTACT YOUR SYSTEM ADMINISTRATOR - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Getting a BMXAA4214E - An unknown error has occured. Please
+   contact your
+   system administrator for assistance. when entering new Crew into
+   the
+   Crew field of WO (T&D)
+   
+   Environment :
+   
+   Maximo 7116 - BS
+   Maximo for Utilities 7110
+   Maximo for Scheduler 7110
+   
+   Replication Steps:
+   
+   1. Create three crafts in the Crafts application with rates
+   associated.
+   
+   2. Go to Organization (T&D) and add the three crafts into the
+   T&D
+   Options ? Configure Crafts section.
+   
+   3. Go to Administration, Resources, Crew Types (T&D).
+   
+   4. Create a new Crew Type with the three crafts.
+   
+   5. Go to Administration, Resources, Crew Management (T&D).
+   
+   6. Create a new Crew in Crew Management and associate the new
+   crew type
+   with a calendar and shift.
+   
+   7. Add Labor Assignments for each Craft on the Labor Assignments
+   tab.
+   
+   8. Go to Work Orders ? Work Orders (T&D)
+   
+   9. Create a new WO, go to the Plans tab, click new row under the
+   Labor
+   window.
+   
+   10. Add the new Crew into the Crew field and press tab.
+   
+   11. The following error is received.
+   
+   Client is getting a BMXAA4214E - An unknown error has occured.
+   Please
+   contact your system administrator for assistance.
+   
+   12. If you enter the crew a second time and tab out it works
+   fine.
+   
+   
+   L3 has accepted this as an Issue and advised L2 to log an APAR
+   against Maximo for Scheduler 7110
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: UTILITIES USERS USING 7100 VERSION OR NEWER  *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Getting a BMXAA4214E - An unknown error *
+   *                      has occured. Please                     *
+   *                                                              *
+   *                      contact your                            *
+   *                                                              *
+   *                      system administrator for assistance.    *
+   *                      when entering new Crew into             *
+   *                                                              *
+   *                      the                                     *
+   *                                                              *
+   *                      Crew field of WO (T&D)                  *
+   *                                                              *
+   *                      Environment :                           *
+   *                                                              *
+   *                      Maximo 7116 - BS                        *
+   *                                                              *
+   *                      Maximo for Utilities 7110               *
+   *                                                              *
+   *                      Maximo for Scheduler 7110               *
+   *                                                              *
+   *                      Replication Steps:                      *
+   *                                                              *
+   *                      1. Create three crafts in the Crafts    *
+   *                      application with rates                  *
+   *                                                              *
+   *                      associated.                             *
+   *                                                              *
+   *                      2. Go to Organization (T&D) and add the *
+   *                      three crafts into the                   *
+   *                                                              *
+   *                      T&D                                     *
+   *                                                              *
+   *                      Options ? Configure Crafts section.     *
+   *                                                              *
+   *                      3. Go to Administration, Resources,     *
+   *                      Crew Types (T&D).                       *
+   *                                                              *
+   *                      4. Create a new Crew Type with the      *
+   *                      three crafts.                           *
+   *                                                              *
+   *                      5. Go to Administration, Resources,     *
+   *                      Crew Management (T&D).                  *
+   *                                                              *
+   *                      6. Create a new Crew in Crew Management *
+   *                      and associate the new                   *
+   *                                                              *
+   *                      crew type                               *
+   *                                                              *
+   *                      with a calendar and shift.              *
+   *                                                              *
+   *                      7. Add Labor Assignments for each Craft *
+   *                      on the Labor Assignments                *
+   *                                                              *
+   *                      tab.                                    *
+   *                                                              *
+   *                      8. Go to Work Orders ? Work Orders      *
+   *                      (T&D)                                   *
+   *                                                              *
+   *                      9. Create a new WO, go to the Plans     *
+   *                      tab, click new row under the            *
+   *                                                              *
+   *                      Labor                                   *
+   *                                                              *
+   *                      window.                                 *
+   *                                                              *
+   *                      10. Add the new Crew into the Crew      *
+   *                      field and press tab.                    *
+   *                                                              *
+   *                      11. The following error is received.    *
+   *                                                              *
+   *                      Client is getting a BMXAA4214E - An     *
+   *                      unknown error has occured.              *
+   *                                                              *
+   *                      Please                                  *
+   *                                                              *
+   *                      contact your system administrator for   *
+   *                      assistance.                             *
+   *                                                              *
+   *                      12. If you enter the crew a second time *
+   *                      and tab out it works                    *
+   *                                                              *
+   *                      fine.                                   *
+   *                                                              *
+   *                      L3 has accepted this as an Issue and    *
+   *                      advised L2 to log an APAR               *
+   *                                                              *
+   *                      against Maximo for Scheduler 7110       *
+   *                                                              *
+   *                      LOCAL FIX:                              *
+   *                                                              *
+   *                      None                                    *
+   *                                                              *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   *                                                              *
+   *                                                              *
+   *                                                              *
+   ****************************************************************
+   GETTING A BMXAA4214E - AN UNKNOWN ERROR HAS OCCURED. PLEASE
+   CONTACT YOUR SYSTEM ADMINISTRATOR
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A wrong consideration from Scheduler using labor, it never
+   consider crews and utilities avoid the error without impact the
+   hole process
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ84385
+   
+   
+ * REPORTED COMPONENT NAME
+   MAXIMO SCHEDULE
+   
+   
+ * REPORTED COMPONENT ID
+   5724R46SE
+   
+   
+ * REPORTED RELEASE
+   711
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-09-06
+   
+   
+ * CLOSED DATE
+   2010-11-05
+   
+   
+ * LAST MODIFIED DATE
+   2010-11-05
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  MAXIMO
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   MAXIMO SCHEDULE
+   
+   
+ * FIXED COMPONENT ID
+   5724R46SE
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R711 PSY
+   UP

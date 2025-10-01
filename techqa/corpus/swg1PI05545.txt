@@ -1,0 +1,152 @@
+Title: IBM PI05545: [wi288331] 'ORA-01795: maximum number of expressions in a list is 1000' when running datawarehouse reports - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Getting error "ORA-01795: maximum number of expressions in a
+   list is 1000" when running data warehouse reports.
+   Steps to repro:
+   1. Set up IBM Rational Collaborative Lifecycle Management (CLM)
+   4.0.* version with Oracle for data warehouse.
+   2. Create  1000 Test Plans in Rational Quality Manager (RQM).
+   3. Run the data warehouse jobs.
+   4. Try to run any data warehouse report  like "Test cases
+   Impacted by defects",  "Plan Requirements Execution using TCER
+   Count". "Requirements Traceability" .
+   You will see an error message like below:
+   ****************
+   The following items have errors:
+   TextData (id = 5572):
+   + Cannot execute the statement.
+       org.eclipse.datatools.connectivity.oda.OdaException:
+   ORA-01795: maximum number of expressions in a list is 1000
+   TextData (id = 5161):
+   + Cannot execute the statement.
+       org.eclipse.datatools.connectivity.oda.OdaException:
+   ORA-01795: maximum number of expressions in a list is 1000
+   TextData (id = 5167):
+   + Cannot execute the statement.
+       org.eclipse.datatools.connectivity.oda.OdaException:
+   ORA-01795: maximum number of expressions in a list is 1000
+   *******************
+   Review the following Work Item on jazz.net for details:
+   https://jazz.net/jazz/web/projects/Jazz%20Foundation#action=com.
+   ibm.team.workitem.viewWorkItem&id=288331 [https://jazz.net/jazz/web/projects/Jazz%20Foundation#action=com.ibm.team.workitem.viewWorkItem&id=288331]
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   Getting error "ORA-01795: maximum number of expressions in a
+   list is 1000" when running data warehouse reports.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  implemented:
+    an optimization so that selecting all parameter values
+   should behave the same as selecting no parameter values.
+     only apply this optimization to non-cascading parameters
+   or to the first parameter in a parameter group cascade.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI05545
+   
+   
+ * REPORTED COMPONENT NAME
+   RATL JAZZ TEAM
+   
+   
+ * REPORTED COMPONENT ID
+   5724V04JZ
+   
+   
+ * REPORTED RELEASE
+   401
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-11-05
+   
+   
+ * CLOSED DATE
+   2014-02-28
+   
+   
+ * LAST MODIFIED DATE
+   2014-02-28
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   RATL JAZZ TEAM
+   
+   
+ * FIXED COMPONENT ID
+   5724V04JZ
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R401 PSN
+   UP

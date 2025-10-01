@@ -1,0 +1,151 @@
+Title: IBM JR52618: DATETIME INPUT FORMAT DOES NOT WORK FOR INPUT OF DATE ATTRIBUTE VALUE. - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+ DIRECT LINK TO FIX
+IBM InfoSphere Master Data Management Collaboration Server Version 11.4.0, Fix Pack 3 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FInfoSphere+Master+Data+Management+Collaboration+Server&fixids=11.4.0-WS-MDMCS-FP003&source=SAR]
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When the datetime input format is set to a date only without
+   time portion, the input of a date attribute does not adhere to
+   the format.
+   
+   For example:
+   
+   Datetime Output Format in MY SETTINGS is set to dd-MMM-yyyy and
+   the Datetime Input Format is set to MM-dd-yyyy HH:mm:ss, when a
+   user attempts to input a value for a date attribute, the time
+   portion is missing.  The date attribute input entry field
+   should adhere to the Datetime input format
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * All InfoSphere Master Data Management Collaborative Edition  *
+   * implementations are affected by this issue.                  *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * When the datetime input format is set to a date only without *
+   * time portion, the input of a date attribute does not adhere  *
+   * to the format. For example: Datetime Output Format in MY     *
+   * SETTINGS is set to dd-MMM-yyyy and the Datetime Input Format *
+   * is set to MM-dd-yyyy HH:mm:ss, when a user attempts to input *
+   * a value for a date attribute, the time portion is missing.   *
+   * The date attribute input entry field should adhere to the    *
+   * Datetime input format                                        *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Customers facing this issue should apply IBM InfoSphere      *
+   * Master Data Management Collaboration Server Version 11.4.0,  *
+   * Fix Pack 3 to gain resolution for this problem.              *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This issue was fixed in IBM InfoSphere Master Data Management
+   Collaboration Server Version 11.4.0, Fix Pack 3 and is available
+   on the IBM Support site.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR52618
+   
+   
+ * REPORTED COMPONENT NAME
+   MDM SERVER FOR
+   
+   
+ * REPORTED COMPONENT ID
+   5724V5100
+   
+   
+ * REPORTED RELEASE
+   B40
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-02-19
+   
+   
+ * CLOSED DATE
+   2015-07-07
+   
+   
+ * LAST MODIFIED DATE
+   2015-07-07
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   MDM SERVER FOR
+   
+   
+ * FIXED COMPONENT ID
+   5724V5100
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * RB40 PSY
+   UP

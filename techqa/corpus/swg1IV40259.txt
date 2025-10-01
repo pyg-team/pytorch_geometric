@@ -1,0 +1,166 @@
+Title: IBM IV40259: MUST RE-AUTHENTICATE EVEN WITH SINGLE SIGN-ON CONFIGURED - United States
+
+Text:
+  FIXES ARE AVAILABLE
+IBM Tivoli Monitoring 6.3.0 Fix Pack 1 (6.3.0-TIV-ITM-FP0001) [http://www-01.ibm.com/support/docview.wss?uid=swg24034843]
+IBM Tivoli Monitoring 6.3.0 Fix Pack 2 (6.3.0-TIV-ITM-FP0002) [http://www-01.ibm.com/support/docview.wss?uid=swg24035402]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When the connection from Server Dashboards in Dashboard
+   Application Services Hub (DASH) is set up to use the credentials
+   of the user, and single sign on is in use, the user is unable to
+   launch from the Server Dashboards pages to the TEP without
+   re-authenticating to the TEP.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  After installing ITM 6.3 and configuring for single-signon
+   (SSO), launching to the portal from another application hosted
+   by the Dashboard Application Services Hub (DASH) results in the
+   portal logon panel being displayed. Since ITM has been
+   configured for single-signon, this behavior is incorrect.
+   WebSphere v8.x (WAS and eWAS), packaged with ITM 6.3 and JazzSM
+   1.1, introduced a security feature to help prevent cross-site
+   scripting vulnerabilities that involve access to domain cookies
+   that encode user and session authentication credentials. This
+   feature adds the HttpOnly attribute to domain cookies generated
+   by WAS. A modern browser will prevent cookies tagged in this
+   manner to be accessed by client-side script (e.g., javascript).
+   When ITM is configured for single-signon (SSO), the portal, when
+    deployed as a browser applet, relies on access to these cookies
+    in order to successfully authenticate with the portal server
+   without challenging the end-user with a logon panel. However,
+   the cookie security enhancement introduced with WebSphere v8.x
+   prevents the portal from gaining access to these authentication
+   cookies, which results in the portal logon dialog being
+   displayed whenever the portal is the target of a
+   launch-in-context scenario (e.g., when launching to the portal
+   using a DASH-hosted application).
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  To address this problem, the portal was modified to no longer
+   use client-side javascript to access the authentication domain
+   cookies. Instead, a request is now made to a servlet hosted by
+   the portal server to access the authentication token generated
+   by WAS.
+   
+   The fix for this APAR is included in the following maintenance
+   vehicle:
+   
+      | fix pack | 6.3.0-TIV-ITM-FP0001 |
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  The default use of the HttpOnly attribute can be deactivated
+   from the WAS server via the WebSphere administration console.
+   The property named
+   com.ibm.ws.security.addHttpOnlyAttributeToCookies can be
+   disabled from the Security &gt; Global security &gt; Custom
+   properties panel by setting the property value to false.  All
+   WAS servers defined in the same security domain that are hosting
+    applications that launch to the TEP need to have this
+   configuration change applied in order to enable the desired
+   single-signon behavior.
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV40259
+   
+   
+ * REPORTED COMPONENT NAME
+   TEP
+   
+   
+ * REPORTED COMPONENT ID
+   5724C04EP
+   
+   
+ * REPORTED RELEASE
+   630
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-04-22
+   
+   
+ * CLOSED DATE
+   2013-05-08
+   
+   
+ * LAST MODIFIED DATE
+   2013-05-08
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TEP
+   
+   
+ * FIXED COMPONENT ID
+   5724C04EP
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R630 PSY
+   UP

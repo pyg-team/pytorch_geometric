@@ -1,0 +1,191 @@
+Title: IBM PK64466: FIX REQUIRED FOR COEXISTENCE OF V7 AND V6 QMGRS IN A QSG - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS NEW FUNCTION.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  A Queue Sharing Group with a mixture of Queue Managers at
+   V6 and V7 need to be able to tolerate the differences in
+   each version in order to work together.
+   .
+   Additional keywords:
+   MQ0701C/K
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All users of WebSphere MQ for z/OS Version 6 *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Enable Version 6 and Version 7 queue    *
+   *                      managers to coexist in a queue sharing  *
+   *                      group.                                  *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   This APAR provides the coexistence PTF, documented in the
+   "Migrating queue-sharing groups to Version 7.0" section of the
+   Migration Information manual, which will allow both Version 6
+   and Version 7 queue managers to coexist in the same
+   queue sharing group.
+   
+   Once the PTF for this APAR has been applied and the actions in
+   the hold information followed, a Version 6 queue manager will be
+   able to participate in a queue sharing group which already
+   contains Version 7 queue managers. In addition, once the PTF has
+   been applied to all the queue managers in a queue sharing group
+   that currently only contains version 6 queue queue managers, a
+   version 7 queue manager will be able to participate in the queue
+   sharing group.
+   
+   If the coexistence PTF has not been applied, as detailed above,
+   then the queue manager that is attempting to participate in the
+   queue sharing group will fail to start. Message CSQ5005E will be
+   issued and the queue manager will terminate with reason
+   00F50029. Also, the ADD QMGR function of CSQ5PQSG will fail with
+   error message CSQU555E, and the MIGRATE QSG (or DSG) function
+   will fail with error message CSQU584E (or CSQU581E).
+   
+   After applying the PTF it is necessary to start a queue manager
+   in a queue sharing group to update its compatibility
+   characteristics which are visible to peers.
+   
+   Application of the PTF to all queue managers in a queue sharing
+   group is a prerequisite for migrating any of the queue managers
+   in that queue sharing group to Version 7. The PTF must be
+   applied to all queue managers in a queue sharing group prior to
+   running the Version 7 supplied CSQ45ATB job which performs the
+   queue-sharing group migration actions (for further information
+   refer to the "Migrating queue-sharing groups to Version 7.0"
+   section of the Migration Information manual).
+   
+   Prior to migrating from V6 to V7 you should also review the
+   backward migration APAR, PK64463 [http://www-01.ibm.com/support/docview.wss?uid=swg1PK64463].
+   
+   Additional keywords:
+   MSGCSQ5005E MSGCSQU555E MSGCSQU584E MSGCSQU581E
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *  The coexistence functions provided in this APAR broadly cover:
+    - only recognizing QSGDISP(GROUP) objects and their attributes
+      which are relevant to a Version 6 queue manager
+    - handling responses to DISPLAY commands which have been
+      routed via CMDSCOPE to Version 7 queue managers
+    - changing configuration information in the ADMIN_B_QMGR
+      table so that other queue managers in the queue sharing
+      group can recognize this enhanced capability.
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK64466
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ Z/OS V6
+   
+   
+ * REPORTED COMPONENT ID
+   5655L8200
+   
+   
+ * REPORTED RELEASE
+   000
+   
+   
+ * STATUS
+   CLOSED UR1
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   YesSpecatt / Installability
+   
+   
+ * SUBMITTED DATE
+   2008-04-16
+   
+   
+ * CLOSED DATE
+   2008-11-20
+   
+   
+ * LAST MODIFIED DATE
+   2012-04-25
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UK41686
+   
+   
+
+MODULES/MACROS
+ *     CSQOKYTB CSQORINI CSQOXATR CSQUDEFS CSQUXPRM
+   CSQ45BPL CSQ45GEX CSQ5AUOB CSQ5PLNU CSQ5PQSG CSQ5U600
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ Z/OS V6
+   
+   
+ * FIXED COMPONENT ID
+   5655L8200
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R000 PSY UK41686 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK41686]
+   UP08/11/28 P F811
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

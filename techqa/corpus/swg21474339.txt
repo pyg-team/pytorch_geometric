@@ -1,0 +1,54 @@
+Title: IBM How do I Index the Meeting server database and configure the indexing frequency. - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+How do I Index the Meeting server database and configure the indexing frequency.
+
+ANSWER
+In order to create and configure Meeting Room indexing, the following procedure is used in the Sametime Information Center located here - 
+Make sure to do the following first.
+http://publib.boulder.ibm.com/infocenter/sametime/v8r5/topic/com.ibm.help.sametime.v851.doc/admin/admin_meet_search_mrc.html [http://publib.boulder.ibm.com/infocenter/sametime/v8r5/topic/com.ibm.help.sametime.v851.doc/admin/admin_meet_search_mrc.html]. 
+
+NOTE: The correct syntax to run the "enableFullTextIndexing" script is as follows: enableFullTextIndexing <DB_NAME> EX: enableFullTextIndex STMS
+
+Option 1 - Pre Index Creation and Configuration:
+
+By default, this procedure (documented in the linked page above) sets up the Meeting Index update interval to be daily every 12 hours starting at Midnght. For some implementations, this may be too long or infrequent an interval. This can be changed prior to performing Step 2 in the above referenced document and making some changes to the "enableFullTextIndexing" script ahead of time. Here is how to make that change:
+
+
+ 1. Locate the enableFullTextIndexing.bat/sh script that you copied over to the DB2 server in the path \SQLLIB\bin. Open that script in a text editor. 
+ 2. Currently the following command "db2ts create index MTG.ROOM_NAME_FI for text on MTG.ROOM(ROOM_NAME) format text update frequency D(*) H(0,12) M(0) update minimum 1 connect to %1" indicates that the Full Text Index will happen every day at midnight every 12 hours. The key is in the statement "format text update frequency" part of the command that will be changed. 
+ 3. To make a change say to update the index frequency to every hour starting at the top of the hour the command would like this:
+    db2ts create index MTG.ROOM_NAME_FI for text on MTG.ROOM(ROOM_NAME) format text update frequency D(*) H(*) M(0) update minimum 1 connect to %1 
+ 4. Note that the "update minimum 1" indicates that at least one change has been made since the last time the index changed. So that is also an important part of the command. 
+ 5. Update the next line to be as follows:
+    db2ts create index MTG.OWNER_NAME_FI for text on MTG.ROOM(OWNER_NAME) format text update frequency D(*) H(*) M(0) update minimum 1 connect to %1 
+ 6. Save the changes to the script file. 
+ 7. Execute the script file with these changes from a DB2 Command Window - enableFullTextIndexing <DB_NAME>
+
+
+So essentially if you want to alter how frequently the index gets updated we would need to modify the two "db2ts create index" statements for both Room Name and Owner Name to what we want according to the DB2 Info center link here - http://publib.boulder.ibm.com/infocenter/db2luw/v9r5/topic/com.ibm.db2.luw.sql.rtn.doc/doc/r0051989.html [http://publib.boulder.ibm.com/infocenter/db2luw/v9r5/topic/com.ibm.db2.luw.sql.rtn.doc/doc/r0051989.html] in the "enableFullTextIndexing" script prior to running it. 
+
+NOTE: The ALTER INDEX command can be used to alter the frequency after an initial frequency was established. 
+
+Option 2 - Post Index Creation and Configuration: 
+
+In order to modify the existing Full text Indexing options for the Meeting Room, a different command can be used to update the Indexing configuration. This is using the ALTER INDEX command used with the DB2 Text Searching (db2ts) Service. 
+
+To alter the existing Indexing options for the Meeting Room database - perform the following steps: 
+ 1. Log onto the DB2 Server as the db2admin user for your system. This is the SYSADM user for your system and typically the db2admin is also the schema owner of the database. 
+ 2. Open up the DB2 Window Command on your server. For Windows this is Start --> All Programs --> IBM DB2 --> DB2COPY1 --> Command Line Tools --> Command Window. 
+ 3. At the command prompt ensure that the DB2DBDFT variable is set to your Meeting Room Database name. To find out what it is set to or if it exists enter the command db2set DB2DBDFT then ENTER 
+ 4. If it is not set to your Meeting Room database, then issue the following command db2set DB2DBDFT=<DBNAME> EX: db2set DB2DBDFT=STMTGDB then ENTER 
+ 5. Next, enter the command db2ts start for text in order to ensure the DB2 Text Searching Service is started. 
+ 6. Next, use the ALTER INDEX command to make changes to your Meeting Room Indexing interval:
+    db2ts ALTER INDEX MTG.ROOM_NAME_FI FOR TEXT UPDATE FREQUENCY D(*) H(*) M(0) UPDATE MINIMUM 1 CONNECT TO STMTGDB USER DB2ADMIN USING <db2admin_password> 
+ 7. This will change your Meeting Room Indexing for Room Name searches to update Daily, every hour, at the top of the hour. Now repeat this command again for Owner Name searching.
+    db2ts ALTER INDEX MTG.OWNER_NAME_FI FOR TEXT UPDATE FREQUENCY D(*) H(*) M(0) UPDATE MINIMUM 1 CONNECT TO STMTGDB USER DB2ADMIN USING <db2admin_password> 
+ 8. This sets up the Meeting Room Indexing on Owner Name searches to update daily, every hour, at the top of the hour. 
+ 9. Then the last command in order to disconnect from your database cleanly is th issue the command DB2 TERMINATE.
+
+
+For more details on the ALTER INDEX command, please see this document in DB2 Information Center --> http://publib.boulder.ibm.com/infocenter/db2luw/v9r5/topic/com.ibm.db2.luw.admin.cmd.doc/doc/r0052054.html [http://publib.boulder.ibm.com/infocenter/db2luw/v9r5/topic/com.ibm.db2.luw.admin.cmd.doc/doc/r0052054.html].

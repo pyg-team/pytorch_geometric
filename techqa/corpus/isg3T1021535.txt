@@ -1,0 +1,36 @@
+Title: IBM PPM cleanup policy - United States
+
+Text:
+JS_HISTORY_CLEAN_PERIOD JS_IM_ACTIVEPOLICY TECHNOTE (FAQ)
+
+QUESTION
+ How to automatically clean up flow history 
+
+CAUSE
+Try to control PPM work directory size
+
+ANSWER
+PPM provides following parameters in $JS_ENVDIR/js.conf file to automate flow history cleanup: 
+
+JS_HISTORY_CLEAN_PERIOD specifies retention period in days for flow history files in $JS_HOME/work/history. Default value is 15.
+
+JS_IM_ACTIVEPOLICY is used together with either of two parameters below and specifies retention period for completed flows in $JS_HOME/work/storage/flow_instance_storage/finished. JS_IM_ACTIVEPOLICY default value is JF_IM_IPolicy.
+
+If its value is instance policy JF_IM_IPolicy, JS_IM_POLICY_NOOFFLOWS takes effect and by default keeps only latest 36 copies of completed flow instances for every flow. 
+
+If its value is time policy JF_IM_TPolicy, JS_IM_POLICY_LIFETIME takes effect and by default keeps only recent 5 days of completed flow instances for every flow. 
+
+Here are three configuration examples:
+Example #1:
+JS_HISTORY_CLEAN_PERIOD = 15 <------- remove files older than 15 days in $JS_HOME/work/history
+
+Example #2:
+JS_IM_ACTIVEPOLICY = JF_IM_IPolicy
+JS_IM_POLICY_NOOFFLOWS = 36 <--------- remove completed flow instances older than 36 copies 
+$JS_HOME/work/storage/flow_instance_storage/finished
+
+Example #3:
+JS_IM_ACTIVEPOLICY = JF_IM_TPolicy
+JS_IM_POLICY_LIFETIME = 5 <---------- remove completed flow instances older than 5 days in $JS_HOME/work/storage/flow_instance_storage/finished
+
+Any change to all these parameters is only effective after PPM restart. Please run "jadmin stop" and "jadmin start" as root to recycle PPM.

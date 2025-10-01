@@ -1,0 +1,162 @@
+Title: IBM PM72840: UNABLE TO SELECTED DOCUMENTS/FOLDERS FROM IBM CONNECTIONS CMIS SERVER WITH CF01 INSTALLED - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  After installing CF01 customer are no longer able to select
+   folder or document from the IBM Connections server via CMIS
+   using the federated documents feature in WCM richtext Editor
+   or PZN federated documents collection.
+   
+   The following can be found in the log:
+   EJCBD0021E: The URI
+   [https://<host>/connections/files/basic/cmis/my/servicedoc?
+   filter=cmis%3AbaseTypeId%2Ccmis%3Aname%2Ccmis%3AlastModification
+   Date%2Ccm
+   is%3AcreationDate%2Ccmis%3AcontentStreamLength%2Ccmis
+   %3AcontentStreamMimeType%2Ccmis%3AlastModifiedBy%2Ccmis%3Acreate
+   dBy&hpaa.
+   slotid=w3connections_shared&hpaa.authtype=http-
+   basic&hpaa.sso=false] and parameters []] could not be
+   processed:
+   
+   [EJCBD0022E: Access to the URL
+   [https://<host>/connections/files/basic/cmis/my/servicedoc?
+   filter=cmis%3AbaseTypeId%2Ccmis%3Aname%2Ccmis%3AlastModification
+   
+   Date%2Ccmis%3AcreationDate%2Ccmis%3AcontentStreamLength%2Ccmis
+   %3AcontentStreamMimeType%2Ccmis%3AlastModifiedBy%2Ccmis%3Acreate
+   dBy]
+   resulted in status code [404] and the message [<HTML>
+   <TITLE>404 - Not Found</TITLE><BODY><h1>
+   404 Not Found</h1></BODY></HTML>].]].
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  None available
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  A code fix for this issue is integrated into the 8.0.0.0
+   Combined Cumulative Fix 003 (PM74094 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM74094]) which is available from
+   Fix Central:
+   
+   http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent
+   =ibm~WebSphere&product=ibm/WebSphere/WebSphere+Portal&release=8. [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~WebSphere&product=ibm/WebSphere/WebSphere+Portal&release=8.]
+   0.0.0&platform=All&function=aparId&apars=PM74094
+   
+   You might need to type or paste the complete address into your
+   Web browser.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A code fix for this issue is integrated into the 8.0.0.0
+   Combined Cumulative Fix 003 (PM74094 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM74094]) which is available from
+   Fix Central:
+   
+   http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent
+   =ibm~WebSphere&product=ibm/WebSphere/WebSphere+Portal&release=8. [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~WebSphere&product=ibm/WebSphere/WebSphere+Portal&release=8.]
+   0.0.0&platform=All&function=aparId&apars=PM74094
+   
+   You might need to type or paste the complete address into your
+   Web browser.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM72840
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSPHERE PORTA
+   
+   
+ * REPORTED COMPONENT ID
+   5724E7600
+   
+   
+ * REPORTED RELEASE
+   800
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-09-13
+   
+   
+ * CLOSED DATE
+   2012-11-20
+   
+   
+ * LAST MODIFIED DATE
+   2012-11-20
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBSPHERE PORTA
+   
+   
+ * FIXED COMPONENT ID
+   5724E7600
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R800 PSY
+   UP

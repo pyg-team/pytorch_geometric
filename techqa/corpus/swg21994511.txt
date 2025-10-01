@@ -1,0 +1,46 @@
+Title: IBM In IBM Case Manager [ICM], text area displays as a normal text box in Internal Explorer [IE]11. - United States
+
+Text:
+ICM; IE 11 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ In ICM Case Builder, define a text area for a String type property. Fill in the value in ICM Case Client with IE 11, text area displays as a normal text box. Click "Enter" button from keyboard won't start a new line. 
+
+SYMPTOM
+Steps to test: 
+
+1. In ICM Case Builder, create a solution with a property of String type. 
+
+2. Create a case type and add the property to the case type. 
+
+3. Add a customized view in the case type with a property list container in it. 
+
+4. Add the String property to property list and change the property editor to text area. 
+
+5. In ICM Case Client, add a case of the case type. In the text area of the String property, fill in some words and then click "Enter" button from keyboard. No new line is started as expected. 
+
+Issue only exists with IE 11 and it works well in FireFox. 
+
+
+CAUSE
+This is a defect of ICM 5.2.1.4. 
+
+
+ENVIRONMENT
+ICM 5.2.1.4, IE 11
+
+
+
+DIAGNOSING THE PROBLEM
+N\A
+
+
+
+RESOLVING THE PROBLEM
+This is a defect of ICM 5.2.1.4 and will be fixed in 5.2.1.6-ICM-FP006.
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Enterprise Content Management Case Manager

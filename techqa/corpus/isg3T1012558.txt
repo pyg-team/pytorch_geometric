@@ -1,0 +1,50 @@
+Title: IBM Command Line On The HMC - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How can a user get a command line session on HMC 7? 
+
+CAUSE
+Methods for HMC command line access
+
+ANSWER
+The HMC can be accessed through the command line (CLI) from the HMC console or a remote SSH session.
+
+
+First check these boxes under HMC Management on the GUI: 
+
+- Remote Command Execution 
+
+- Remote Virtual Terminal 
+
+ 
+
+From the HMC console you can bring up a CLI session by clicking on 
+
+HMC Management -> Open a Restricted Shell Terminal 
+
+ 
+
+If you are remote to the HMC you will need to check the above boxes on the GUI and open Port 22 on the HMC internal firewall. 
+
+HMC Management -> Change Network Settings 
+
+From there go to the Lan Adapters tab and select Details... on the adapter you use for your Open network. Then select the Firewall Settings tab. You will have a screen that looks like this with 2 tables: 
+
+
+[/support/docview.wss?uid=isg3T1012558&aid=1] [/support/docview.wss?uid=isg3T1012558&aid=1]
+
+The table on the top lists all of the Applications and Ports you can open on the internal HMC firewall. The bottom table lists the Applications and Ports that are currently open. There is a Select column with a radio button that can be used to add or remove Ports from the bottom table. To add a Port select it on the top table and then hit the button that says Allow Incoming. Add Secure Shell Port 22:tcp from the top table if it is not already on the bottom table. 
+
+If you do not have an SSH client you can download the free SSH client PuTTY from the Internet:
+http://www.chiark.greenend.org.uk/~sgtatham/putty/download.html [http://www.chiark.greenend.org.uk/~sgtatham/putty/download.html]
+
+PuTTY is freeware developed by the AT&T labs in the UK and is widely used for SSH connections at IBM. Once you have PuTTY
+installed you can create an SSH session and login as hscroot and run HMC commands.
+
+This link has a list of all of the HMC 7 command specifications:
+http://www14.software.ibm.com/webapp/set2/sas/f/hmcl/resources.html [http://www14.software.ibm.com/webapp/set2/sas/f/hmcl/resources.html]
+
+If you need any help with this please contact p series HMC support.

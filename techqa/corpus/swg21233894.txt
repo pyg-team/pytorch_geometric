@@ -1,0 +1,208 @@
+Title: IBM Common Timeouts effecting Web Services, HTTP and SOAP clients - United States
+
+Text:
+WSWS3228E java.io.IOException TRAS0014I TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ IOException,SocketTimeoutException results from Intermediary Server timeouts, Network Problems and Configuration Tuning problems on Client and Server ends. 
+
+RESOLVING THE PROBLEM
+
+Client Timers, connectionIdleTimeout and syncTimeout:
+
+
+
+ 1. HttpOutboundC 1 WSWS3228E: Error: Exception: java.io.IOException: Connection close: Read failed. Possible end of stream encountered. ... 
+    
+    In this situation, the keep alive on the http client is very low, 3 or so seconds. This closes the socket, but the web services engine does not recognize this as being closed and tries to reuse it, resulting in exceptions like:
+    
+    WSE JVM or HttpOutboundServiceContextImpl should recognize the current state of TCP connection... 
+    What is relevant is the value of the web services client property named com.ibm.websphere.webservices.http.connectionIdleTimeout, a JVM system property. What this means is that the client-side engine allows the HTTP outbound connection object--the object responsible for sending SOAP over HTTP requests and reading resulting responses--to remain idle for x seconds. 
+    
+    If the last time the outbound connection object was used is less than x seconds, the engine will reuse this same object for performance reasons (and to provide persistent connections as part of HTTP/1.1). But if the server or intermediate server for http client, closes the Socket prior to x seconds, then the engine will not know that the Socket is closed until it actually tries to read or write to the Socket and encounters the IOException. 
+    
+    This is the nature of Java™, not a limitation or bug in the web services engine or HTTP channel framework. There is no way for either of those components to know if the Socket is open or closed until it tries a request, and is either successful in reading from or writing to the Socket, or catches an IOException when it tries to do so. When the latter happens, the client-side engine marks that the connection object currently in use to be destroyed. A new connection object will be created for subsequent requests.
+    
+    
+    There are two options for avoiding the IOException:
+    
+
+ * 
+ * com.ibm.websphere.webservices.http.connectionIdleTimeout
+ * 
+ * KeepAlive
+ * 
+ * 
+ * 
+ * 
+ * 
+ * HTTP transport custom properties for web services applications 
+   
+ * 
+   Note:
+ * 
+ * 
+ * 
+ * 
+ * 
+ *  Set the TCP KeepAlive or timeout value effecting http client to a value greater than the web service client default connectionIdleTimeout.
+   
+   The bottom line is that there is no bug in either the engine or HTTP channel framework, and the customer has multiple options available to avoid the IOException. 
+   
+   
+ * 
+ * 06/01/30 19:51:50:411 JST 0000002c enterprise I 
+ * TRAS0014I:
+ * 
+ * 
+ * 
+ * {
+ * 
+ * Server.generalException 
+   faultString: 
+ * java.net.SocketTimeoutException
+ * 
+ * Socket operation timed o ut before it could be completed faultActor: null 
+   faultDetail: 
+   . 
+   java.net.SocketTimeoutException: Socket operation timed out before it could be completed 
+   at com.ibm.ws.webservices.engine.WebServicesFault.makeFault(WebService 
+   sFault.java:179) 
+   at com.ibm.ws.webservices.engine.transport.http.HTTPSender.invoke(HTTP 
+   Sender.java:358) 
+   
+   
+ * Caused by:
+ *  java.net.SocketTimeoutException: Socket operation timed out 
+   before it could be completed at com.ibm.ws.tcp.channel.impl
+ * SocketRWChannelSelector.checkForTimeout
+ * 
+   s(SocketRWChannelSelector.java(Compiled Code)) 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * syncTimeout from bm-webservicesclient-bnd.xmi assembly properties for JAX applications
+   
+
+
+
+Server Timer ConnectionIOTimeOut from Web services client runtime troubleshooting tips 
+
+
+
+Increase the value of the ConnectionIOTimeOut parameter to avoid receiving an exception when hosting Web services on WebSphere Application Server 
+
+When hosting Web services on WebSphere Application Server, the following exception displays: java.net.SocketTimeOutException: Read Timed Out. 
+
+A slow network connection between the client and the Web service causes this problem. In such cases, the HTTP socket might time out before the Web service engine completely reads the SOAP request. In the majority of cases, a sudden increase in overall network activity causes this problem. The problem can also occur when the client is accessing the Web service from a slow network connection and when the SOAP request has a lot of data. 
+
+To solve the problem, increase the ConnectionIOTimeOut parameter for the Web container HTTP transport. The default value is 5 seconds. Increase the value to 30 seconds or greater. Set the value using the administrative console. 
+
+Click Servers > Application Servers > server_name > Web Container > HTTP Transports > port_number > Custom Properties > New. Type the following property name and value: 
+ * 
+ * 
+ * 
+ * 
+
+If the Web service is hosted in a clustered environment, set the property on each application server in the cluster. If your application server is listening on more than one port number, set the property on all ports. 
+
+* HTTP transport custom properties [http://www.ibm.com/support/knowledgecenter/en/SSEQTP_8.0.0/com.ibm.websphere.nd.doc/info/ae/ae/xrun_transport.html] (deprecated in newer 8.5.5 and 9.0 product releases) : 
+
+
+ConnectionIOTimeOut 
+Use the ConnectionIOTimeOut property to specify the maximum amount of time, in seconds, that the J2EE server waits for the complete HTTP request to arrive. Set this variable for each of the HTTP transport definitions on the server. You will need to set this variable for both SSL transport and non-SSL transport. The J2EE server starts the timer after the connection has been established, and cancels the connection if a complete request does not arrive within the specified maximum time limit. Specifying a value of zero disables the time out function. 
+
+Data type Integer 
+Default For the i5/OS and distributed platforms: 5 seconds 
+
+ConnectionKeepAliveTimeout 
+Use the ConnectionKeepAliveTimeout property to specify the maximum number of seconds to wait for the next request on a keep alive connection. 
+
+Data type Integer 
+Default For the i5/OS and distributed platforms: 5 seconds 
+
+
+OTHER related TimeOuts at different protocol layers: 
+
+HTTP transport channel settings [http://www.ibm.com/support/knowledgecenter/en/SSEQTP_8.5.5/com.ibm.websphere.nd.doc/ae/urun_chain_typehttp.html] : 
+
+
+Read timeout 
+Specifies the amount of time, in seconds, the HTTP transport channel waits for a read request to complete on a socket after the first read request occurs. The read being waited for could be an HTTP body (such as a POST) or part of the headers if they were not all read as part of the first read request on the socket. 
+
+Data type Integer 
+Default 60 seconds 
+
+Write timeout 
+Specifies the amount of time, in seconds, that the HTTP transport channel waits on a socket for each portion of response data to be transmitted. This timeout usually only occurs in situations where the writes are lagging behind new requests. This can occur when a client has a low data rate or the server's network interface card (NIC) is saturated with I/O. 
+
+Data type Integer 
+Default 60 seconds 
+
+Persistent timeout 
+Specifies the amount of time, in seconds, that the HTTP transport channel allows a socket to remain idle between requests. 
+
+Data type Integer 
+Default 30 seconds 
+
+* TCP transport channel settings [http://www.ibm.com/support/knowledgecenter/en/SSEQTP_8.0.0/com.ibm.websphere.nd.doc/info/ae/ae/urun_chain_typetcp.html] (deprecated in newer 8.5.5 and 9.0 product releases) : 
+
+
+Inactivity timeout 
+Specifies the amount of time, in seconds, that the TCP transport channel waits for a read or write request to complete on a socket. 
+
+Note: The value specified for this property might be overridden by the wait times established for channels above this channel. For example, the wait time established for an HTTP transport channel overrides the value specified for this property for every operation except the initial read on a new socket. 
+
+Data type Integer 
+Default 60 seconds 
+
+Java Management Extensions connector properties [http://www.ibm.com/support/knowledgecenter/en/SSEQTP_8.5.5/com.ibm.websphere.nd.multiplatform.doc/ae/ragt_rconnector_customp.html] 
+
+
+This section discusses JMX connector properties that pertain to SOAP connectors. 
+
+SOAP request timeout 
+
+The value that you choose depends on a number of factors, such as the size and the number of the applications that are installed on the server, the speed of your machine, and the usage of your machine. 
+
+The program default value for the request timeout is 600 seconds. However, other components that connect to the SOAP client can override the default. Components that use the soap.client.props file have a default value of 180 seconds. 
+
+Set the property by using one of the following options: 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+
+
+A Java administrative client. The property is 
+AdminClient.CONNECTOR_SOAP_REQUEST_TIMEOUT. 
+
+
+Cross reference information Segment Product Component Platform Version Edition Application Servers Runtimes for Java Technology Java SDK

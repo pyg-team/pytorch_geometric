@@ -1,0 +1,51 @@
+Title: IBM Update TDS configuration IBMLDAP_ATTR_INCLUDE_BINARY to FALSE - United States
+
+Text:
+ldap reconciliation inactive accounts empty 'Individual Accounts by Role associated with a provisioning policy' report TECHNOTE (FAQ)
+
+QUESTION
+ Why are all my ITIM LDAP accounts inactive after an LDAP adapter reconcliation?
+
+Why am I not getting any data in 'Individual Accounts by Role associated with a provisioning policy' report? 
+
+CAUSE
+Due to the below APARs, the default behaviors in below versions, has:
+IBMLDAP_ATTR_INCLUDE_BINARY=TRUE
+
+With this setting on Attributes of a syntax with the binary transfer requirement, if returned, SHALL be returned in the binary form (i.e., with the binary option in the attribute description and the associated attribute values BER encoded) regardless of whether the binary option was present in the request 
+(for the attribute or for one of its supertypes)
+
+IO20253 is in 6.1.0.59
+IO20254 is in 6.2.0.34
+IO19599 is in 6.3.0.26
+IO21537 is in 6.3.1.5
+
+In the case of the LDAP recon, if your target TDS is at the above version, the adapter does not bring back the userPassword value, thus it marks the accounts inactive in ITIM.
+
+In the case of the 'Individual Accounts by Role associated with a provisioning policy',
+there is no data returned during data synchronization, in the ProvPolicy_targets table for the DN values, they're all dummydn.
+
+
+
+
+ANSWER
+The binary option is not present in the ITIM request, and to resolve the above issues, do change ISIM's TDS configuration (in case of the report issue) or target TDS configuration (in case of LDAP adapter reconciliation issue), by editing TDS's ibmslapd.conf, and add under "cn=Front End, cn=Configuration" entry: 
+
+
+ibm-slapdSetenv: IBMLDAP_ATTR_INCLUDE_BINARY=FALSE
+
+Restart TDS for change to take effect.
+
+Or upgrade TDS to the below versions, where the behavior is non-default setting.
+
+IO23615 is in 6.2.0.47
+IO23918 is in 6.3.0.40
+IO23919 is in 6.3.1.14
+IO23920 is in 6.4.0.5
+
+Last, redo the ITIM request, e.g. LDAP reconciliation, data synchronization.
+
+
+
+PRODUCT ALIAS/SYNONYM
+ ITIM ISIM LDAP TDS IDS

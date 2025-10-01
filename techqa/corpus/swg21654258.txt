@@ -1,0 +1,28 @@
+Title: IBM Tablespace TDA files not being deleted and are filling up the filesystem - United States
+
+Text:
+TDA; SORTHEAP TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The temporary tablespace is creating TDA files in the tablespace directory and they are filling up the filesystem. 
+
+SYMPTOM
+TDA files being created by the system temp tablespaces and filling up the file system/disk
+
+
+CAUSE
+Some query statements require temporary tables for processing such as a work file for sorting operations that cannot be done in memory (sortheap). These temporary tables require disk space and the amount of space required is dependent upon the size, number, and nature of the queries, as well as the size of the returned tables. Normally, a process which creates a .TDA file will truncate the file to 0 length once it is done using it., however sometimes the process may not have the chance to do so due to some uncommon reasons. 
+
+The information within the .TDA file, though, is of no real use once the process using it is terminated, they are only useful during the lifetime in which they would be used. 
+Also, these files are not allocated in fixed sizes. They are normally generated during sort time, since we normally do the sorting inside the sortheap, if the sort heap is not big enough then we will create a temp table in the bufferpool to hold the sorted/unsorted data. If during the sorting some of these pages in the bufferpool are victimized, then they will reside in the TDA files. These files are not removed during runtime (while the database is active) once the usage is complete to avoid the overhead of deleting and recreating them..
+
+RESOLVING THE PROBLEM
+The file size can be forced to be reduced to 0 bytes using these DB2 Registry Variables:
+DB2_SMS_TRUNC_TMPTABLE_THRESH=0 
+and DB2_OPT_MAX_TEMP_SIZE to limit the amount of temporary table space used by queries
+
+A database deactivate/activate will also clear these files.
+
+RELATED INFORMATION
+ Temporary Tablespaces [http://pic.dhe.ibm.com/infocenter/db2luw/v9r7/topic/com.ibm.db2.luw.admin.dbobj.doc/doc/c0004975.html]
+Space requirements for tables [http://publib.boulder.ibm.com/infocenter/db2luw/v9r7/topic/com.ibm.db2.luw.admin.dbobj.doc/doc/c0052385.html]

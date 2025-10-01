@@ -1,0 +1,141 @@
+Title: IBM PO06039: MODAL BECOMES ALL WHITE WHEN USING SPELL CHECKER AND BROWSER USED IS MICROSOFT INTERNET EXPLORER (MS IE) - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  In IBM Curam Social Program Management Platform, when using the
+   Spell Checker from within a modal, the modal can become all
+   white, if the browser used is MS IE, and certain input text is
+   used.  The issue occurs after clicking the "Replace" or
+   "Replace All" buttons a certain number of times, which can vary
+   depending on the input text used.  A javascript error in
+   ckeditor.js similar to the one below, can be observed if using
+   the F12 Developer Tools in MS IE:
+   SCRIPT5007: Unable to get property 'type' of undefined or null
+   reference
+   This issue has been reproduced in MS IE 8, 9, and 10 without
+   any emulation.  The issue is not reproducible, however, in MS
+   IE 11 unless emulating MS IE 8, 9, or 10.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  MODAL BECOMES ALL WHITE WHEN USING SPELL CHECKER AND BROWSER
+   USED IS MICROSOFT INTERNET EXPLORER (MS IE)
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  APAR was included in release 6.0.5.9 iFix3
+   Please see release Notes:
+   http://www-01.ibm.com/support/docview.wss?uid=swg27048220. [http://www-01.ibm.com/support/docview.wss?uid=swg27048220.]
+    Previously, the spell checker used by the rich text editor, had
+   issues with certain characters in the text. The presence of
+   these characters could cause the rich text editor modal to
+   become all white and therefore block out all actions and
+   content from view. This would prevent the user from completing
+   the spell check and also from saving the text entered. To
+   resolve this, the spell checker now handles these characters
+   correctly and will complete successfully.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PO06039
+   
+   
+ * REPORTED COMPONENT NAME
+   CURAM SOCIAL PG
+   
+   
+ * REPORTED COMPONENT ID
+   5725H2600
+   
+   
+ * REPORTED RELEASE
+   605
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-03-01
+   
+   
+ * CLOSED DATE
+   2016-09-27
+   
+   
+ * LAST MODIFIED DATE
+   2016-09-27
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  SPMP
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R620 PSY
+   UP

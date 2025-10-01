@@ -1,0 +1,175 @@
+Title: IBM PM68768: DUPLICATE KEY EXCEPTION IN SCHEDULER SR - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  ossLog: { 0168} 2011/08/10 12:11:47.858 02 SYSTEM=S0F
+   CELL=S0FMCSF1 NODE=S0FNSF1 CLUSTER=JSCLUST1 SERVER=W70FSB1
+   PID=0X00040625 TI
+    D=0X00000048 0X495F89EC  c=./bbgrjtr.cpp  at line:+886 ...
+   BBOO0220E: CWLRB5340E: [Long Running Job Scheduler mbean
+   S0FMCLF1/S0FNLF1
+    /S0FserverF1/com/ibm/ws/batch/SchedulerSRMBean] failed:
+   com.ibm.websphere.ce.cm.DuplicateKeyException: DB2 SQL Error:
+   SQLCODE=-803,
+    SQLSTATE=23505, SQLERRMC=JCMCJIX;0000014201, DRIVER=3.61.84
+     at
+   sun.reflect.NativeConstructorAccessorImpl.newInstance0(Native
+   Method)
+     at
+   sun.reflect.NativeConstructorAccessorImpl.newInstance(NativeCons
+   tructorAccessorImpl.java:56)
+     at
+   sun.reflect.DelegatingConstructorAccessorImpl.newInstance(Delega
+   tingConstructorAccessorImpl.java:39)
+     at
+   java.lang.reflect.Constructor.newInstance(Constructor.java:527)
+     at
+   com.ibm.websphere.rsadapter.GenericDataStoreHelper.mapExceptionH
+   elper(GenericDataStoreHelper.java:608)
+     at
+   com.ibm.websphere.rsadapter.GenericDataStoreHelper.mapException(
+   GenericDataStoreHelper.java:670)
+     at
+   com.ibm.ws.rsadapter.AdapterUtil.mapException(AdapterUtil.java:2
+   111)
+     at
+   com.ibm.ws.rsadapter.jdbc.WSJdbcUtil.mapException(WSJdbcUtil.jav
+   a:1034)
+     at
+   com.ibm.ws.rsadapter.jdbc.WSJdbcPreparedStatement.executeUpdate(
+   WSJdbcPreparedStatement.java:827)
+     at
+   com.ibm.ws.batch.JobClassMaxConcJobStoreImpl.create(JobClassMaxC
+   oncJobStoreImpl.java:66)
+     at
+   com.ibm.ws.batch.SchedulerSingleton.getCurrentOutStandingJobs(Sc
+   hedulerSingleton.java:12154)
+     at
+   com.ibm.ws.batch.SchedulerSingleton.incrementOutStandingJobs(Sch
+   edulerSingleton.java:12034)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  All IBM WebSphere Application Server,       *
+   *                  Feature Pack for Modern Batch users         *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Duplicate key exception in scheduler    *
+   *                      log.                                    *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   com.ibm.websphere.ce.cm.DuplicateKeyException: DB2 SQL Error:
+   SQLCODE=-803,SQLSTATE=23505, SQLERRMC=JCMCJIX;0000014201,
+   DRIVER=3.61.84 trigger when there are no entries in the
+   scheduler database and multiple jobs are submitted to the
+   scheduler at the same time.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Multiple operations concurrently try to initialize the database
+   table, causing DuplicateKeyException. This has been corrected.
+   
+   The fix for this APAR is currently targeted for inclusion in
+   fix pack 1.0.0.5. Please refer to the Recommended Updates
+   page for delivery information:
+   http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM68768
+   
+   
+ * REPORTED COMPONENT NAME
+   MODERN BATCH FE
+   
+   
+ * REPORTED COMPONENT ID
+   5724J0858
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-07-12
+   
+   
+ * CLOSED DATE
+   2012-08-21
+   
+   
+ * LAST MODIFIED DATE
+   2012-08-21
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   MODERN BATCH FE
+   
+   
+ * FIXED COMPONENT ID
+   5724J0858
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R700 PSY
+   UP

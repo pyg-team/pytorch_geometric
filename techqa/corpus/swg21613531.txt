@@ -1,0 +1,108 @@
+Title: IBM "DB2 SQL Error: SQLCODE=-204, SQLSTATE=42704" when connecting to new Controller DB - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Administrator is attempting to connect to (or create a new) Controller database, which is based on DB2. Administrator launches Controller Configuration, and launches the 'Database Conversion Utility'. 
+
+User clicks 'Create DB'. An error appears. throws an error that includes "DB2 SQL Error: SQLCODE=-204, SQLSTATE=42704, SQLERRMC=<UserID>.USER_TABLES". 
+
+SYMPTOM
+When the 'Create DB' button is pressed: 
+
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * ** ERROR: com.ibm.db2.jcc.am.io: DB2 SQL Error: SQLCODE=-104, SQLSTATE=42601, SQLERRMC=DECLARE 
+ * 
+ * sSql VARCHAR2(4000); 
+ * 
+ * BEGIN ;BEGIN-OF-STATEMENT;<create_proc>, DRIVER=3.57.82
+ * 
+ * ** ERROR: com.ibm.db2.jcc.am.io: DB2 SQL Error: SQLCODE=-204, SQLSTATE=42704, SQLERRMC=<UserID>.USER_TABLES, DRIVER=3.57.82
+
+
+When the 'Connect' button is pressed:  * ** ERROR: com.ibm.db2.jcc.am.io: DB2 SQL Error: SQLCODE=-204, SQLSTATE=42704, SQLERRMC=<UserID>.USER_TABLES, DRIVER=3.57.82
+
+
+CAUSE
+There are several possible causes for similar "SQLCODE=-204, SQLSTATE=-42704" errors. 
+
+TIP: See separate IBM Technote #1681892 for more examples. 
+This Technote specifically relates to the scenario where the cause is that the USER_TABLES object does not exist in the DB2 Controller tablespace.  * In turn, this is because the database was not created when the DB2 server was using/running-in Oracle Compatibility Mode. 
+
+
+More Information:
+"SQLCODE=-204, SQLSTATE=42704" is a DB2 error code indicating 'object does not exist'; in this case, it is indicating that either the USER_TABLES object is not present, or that the <UserID> user does not have access to read this.  * USER_TABLES is an Oracle compatibility feature. Therefore the "SQLCODE=-204, SQLSTATE=42704" error (referencing USER_TABLES) typically implies that Oracle Compatibility was not switched on when the Controller Tablespace was created.
+
+ENVIRONMENT
+Controller with DB2 database.
+
+
+
+DIAGNOSING THE PROBLEM
+Use the command DB2SET to check the DB2 server's settings. 
+
+ 
+Steps:
+The following is based on DB2 server running on Windows: 
+
+ 1. Click "Start - Programs - IBM DB2 - DB2COPY1 (Default) - Command Line Tools - Command Window" 
+ 2. Type "db2set"
+
+[/support/docview.wss?uid=swg21613531&aid=1] [/support/docview.wss?uid=swg21613531&aid=1] 
+On a correctly-configured server, the settings should include the following:  * DB2_DEFERRED_PREPARE_SEMANTICS=YES
+ * 
+ * DB2_COMPATIBILITY_VECTOR=ORA
+
+RESOLVING THE PROBLEM
+Ensure that DB2 is set to run in Oracle Compatibility Mode before creating any Controller tablespaces. 
+
+
+Modify the DB2 database server to be Oracle compatible. Specifically, reconfigure it so that DB2_COMPATIBILITY_VECTOR=ORA. 
+
+ * TIP: This setting may have adverse consequences for other (non-Controller) software, so please check before making the change.
+
+
+Steps: 
+
+Assuming your DB2 database server is hosted on Windows: 
+
+1. Obtain some downtime (nobody using ANY databases hosted on the DB2 server) 
+
+2. Shutdown Controller application server (to ensure that there are no connections to the DB2 database) 
+
+3. Logon to DB2 database server as an administrator
+4. Click "Start - Programs - IBM DB2 - DB2COPY1 (Default) - Command Line Tools - Command Window"
+
+5. Type the following: 
+
+ * db2set DB2_COMPATIBILITY_VECTOR=ORA
+
+
+6. If necessary (if this has not already been done in the past), also type:  * db2set DB2_DEFERRED_PREPARE_SEMANTICS=YES
+
+
+7. Stop the DB2 server by running the following command:  * db2stop
+
+
+8. Start the DB2 server by running the following command:  * db2start
+
+
+9. Delete the old (bad) Controller application repository database (the one that failed earlier) 
+10. Create a new DB2 database, to be your Controller application repository database  * TIP: For advice on how to do this, see separate IBM Technote #1570572.
+
+
+11. Start the Controller application server 
+12. Re-try. RELATED INFORMATION
+ 1681892 - ** Troubleshooting ** "SQLCODE=-204 SQLSTATE [http://www.ibm.com/support/docview.wss?uid=swg21681892]
+1570572 - How to create a brand new blank DB2 database [http://www.ibm.com/support/docview.wss?uid=swg21570572]

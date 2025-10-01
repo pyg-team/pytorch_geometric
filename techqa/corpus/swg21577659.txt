@@ -1,0 +1,56 @@
+Title: IBM ITCAM4Tx : ISM HTTP / HTTPS monitor - 'Bad Status From Server' is returned - United States
+
+Text:
+71ISM-CONF; 71ISM-GEN; 71ISM-TS TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Using ITCAM for Tx with ISM agent, the HTTP or HTTPS monitor for some HTTP/S server targets is reporting our http servers as "unavailable" and HTTP Page Status like '403' or '500' is reported. 
+
+SYMPTOM
+In Tivoli Enterprise Portal (TEP console), "ISM Elements" workspace is showing some of the HTTP servers with 'bad' column counter not being 0, and red pie chart graph for some of the http servers; although using an internet browser from the ISM agent machine itself, and browsing the same URL as the one monitored by the http monitor, is successful.
+
+
+CAUSE
+The targeted http/ https server is expecting to receive the User Agent info as part of the HEAD request of the HTTP/S test.
+
+ENVIRONMENT
+ITCAM for Tx, ISM agent with HTTP or HTTPS monitor
+
+DIAGNOSING THE PROBLEM
+For example, after having enabled "debug" trace in http.props, 
+
+
+with the line (uncommented!, no # at the start) :
+MessageLevel : "debug"
+
+and ISM agent was restarted,
+
+http.log file is reporting status code (500) message for the http targets, like : 
+Debug: Attempting connection 
+Debug: fromURL: url input <url>" 
+Debug: xxxxxxxxxxxx: Receiving responses 
+Debug: xxxxxxxxxxxx: Receiving response 
+[HTTP/1.0 500 Internal Server Error] 
+Debug: Regexps all matched 
+Debug: xxxxxxxxxxxx: Received version (1.0), 
+status code (500) and status message (Internal Server Error)
+
+
+RESOLVING THE PROBLEM
+Follow these instructions available from ITCAM4Tx Troubleshooting Guide on Knowledge Centre : http://www.ibm.com/support/knowledgecenter/en/SS5MD2_7.4.0.1/com.ibm.itcamt.doc/ism/dita/tsg/topic/tsg_kis_http500err.html [http://www.ibm.com/support/knowledgecenter/en/SS5MD2_7.4.0.1/com.ibm.itcamt.doc/ism/dita/tsg/topic/tsg_kis_http500err.html] 
+
+which consists of using TEP ISM GUI configuration tool, and using the "Parameters" tab of the http profile, create an entry as follows: 
+
+* Name: User-Agent 
+* Value: Mozilla/4.0 (compatible; MSIE 5.01; Windows NT 5.0) 
+* Type: HEAD 
+
+
+
+HISTORICAL NUMBER
+ 48891
+001
+862 
+
+PRODUCT ALIAS/SYNONYM
+ itcam itcam4tx itcamfortransactions internet service monitoring

@@ -1,0 +1,22 @@
+Title: IBM Why does DataPower report that WebSphere Application Server terminated the connection? - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When using a DataPower appliance in front of WebSphere Application server(s) the DataPower appliance may throw an error such as:
+"Connection terminated and no response headers read because of the server 
+terminated the connection, URL: "
+
+
+
+RESOLVING THE PROBLEM
+This can be due to two possible configuration values,
+1) If the HTTP transport of the WAS App server is set to a lower value than the DataPower service. For example the DataPower Back Persistent timeout is at the default value of 180 seconds and the WAS HTTP transport is set to 120 seconds. This will open the opportunity for WAS to close what DataPower believes to be an open reusable connection.
+This is also described in technote http://www-01.ibm.com/support/docview.wss?uid=swg21417934 [http://www-01.ibm.com/support/docview.wss?uid=swg21417934]
+
+2) The other possible source of this error is when the WAS HTTP transport option "Maximum persistent requests per connection" is configured. This again allows for the server side of the connection to close a connection when the client, DataPower, believes the connection is reusable.
+
+The client side of the connection should be in controll of the reuse and timeout to prevent these type of failures.
+
+If these two are eliminated and the problem persists then a packet trace along with the error running from the same time would be needed to find the root cause and resolve.

@@ -1,0 +1,28 @@
+Title: IBM Predictive Customer Intelligence Supported Software Environments - United States
+
+Text:
+ PRODUCT DOCUMENTATION
+
+ABSTRACT
+ This document provides links to the software compatibility reports for your product. These reports provide up-to-date information about the supported environments. 
+
+CONTENT
+The following reports are available from the IBM Software Product Compatibility Reports [http://pic.dhe.ibm.com/infocenter/prodguid/v1r0/clarity/index.jsp] tool.
+
+
+ 
+
+IBM PREDICTIVE CUSTOMER INTELLIGENCE 1.1.2
+ *  Detailed System Requirements [https://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=4796CF804F8511E7AA10752A2F494A7C&osPlatforms=Linux|Windows&duComponentIds=S000&mandatoryCapIds=183|26&optionalCapIds=9|13] Supported Operating Systems [https://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/osForProduct?deliverableId=4796CF804F8511E7AA10752A2F494A7C&osPlatforms=Linux|Windows&duComponentIds=S000] Related software [https://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/prereqsForProduct?deliverableId=4796CF804F8511E7AA10752A2F494A7C&osPlatforms=Linux|Windows&duComponentIds=S000&mandatoryCapIds=183|26&optionalCapIds=9|13 ] Detailed Hardware Requirements [https://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/hardwareReqsForProduct?deliverableId=4796CF804F8511E7AA10752A2F494A7C&osPlatforms=Linux&duComponentIds=S000] 
+
+IBM PREDICTIVE CUSTOMER INTELLIGENCE 1.1.1
+ *  Detailed System Requirements [http://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=FD9855A0FD9D11E59F0A8FFE2AA0D031&osPlatforms=Linux|Windows&duComponentIds=D002|D005|D006|S001|S004|S003&mandatoryCapIds=183|26&optionalCapIds=30|126|9|122|13|121|184|19] Supported Operating Systems [http://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/osForProduct?deliverableId=FD9855A0FD9D11E59F0A8FFE2AA0D031&osPlatforms=Linux|Windows&duComponentIds=D002|D005|D006|S001|S004|S003] Related software [https://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/prereqsForProduct?deliverableId=FD9855A0FD9D11E59F0A8FFE2AA0D031&osPlatforms=Linux|Windows&duComponentIds=S000&mandatoryCapIds=183|26&optionalCapIds=9|13] Detailed Hardware Requirements [http://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/hardwareReqsForProduct?deliverableId=FD9855A0FD9D11E59F0A8FFE2AA0D031&osPlatforms=Linux&osPlatforms=Windows] 
+
+IBM PREDICTIVE CUSTOMER INTELLIGENCE 1.1
+ *  Detailed System Requirements [http://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1412024455515&osPlatforms=Linux|Windows&duComponentIds=D002|D005|D006|S001|S004|S003&mandatoryCapIds=183|26&optionalCapIds=30|126|9|122|13|121|184|19] Supported Operating Systems [http://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/osForProduct?deliverableId=1412024455515&osPlatforms=Linux|Windows&duComponentIds=D002|D005|D006|S001|S004|S003] Related software [http://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/prereqsForProduct?deliverableId=1412024455515&osPlatforms=Linux|Windows&duComponentIds=D002|D005|D006|S001|S004|S003&mandatoryCapIds=183|26&optionalCapIds=30|126|9|122|13|121|184|19] Detailed Hardware Requirements [http://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/hardwareReqsForProduct?deliverableId=1412024455515&osPlatforms=Linux&osPlatforms=Windows] 
+
+IBM PREDICTIVE CUSTOMER INTELLIGENCE 1.0.1
+ *  Detailed System Requirements [http://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1384875304750&osPlatforms=Linux|Windows&duComponentIds=D002|D005|D006|S001|S004|S003&mandatoryCapIds=183|26&optionalCapIds=30|126|9|122|13|121|184|19] Supported Operating Systems [http://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/osForProduct?deliverableId=1384875304750&osPlatforms=Linux|Windows&duComponentIds=D002|D005|D006|S001|S004|S003] Related software [http://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/prereqsForProduct?deliverableId=1384875304750&osPlatforms=Linux|Windows&duComponentIds=D002|D005|D006|S001|S004|S003&mandatoryCapIds=183|26&optionalCapIds=30|126|9|122|13|121|184|19] Detailed Hardware Requirements [http://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/hardwareReqsForProduct?deliverableId=1384875304750&osPlatforms=Linux&osPlatforms=Windows] 
+
+IBM PREDICTIVE CUSTOMER INTELLIGENCE 1.0
+ *  Detailed System Requirements [http://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1374244940533&osPlatforms=Linux|Windows&duComponentIds=D002|D005|D006|S001|S004|S003&mandatoryCapIds=183|26&optionalCapIds=30|126|9|122|13|121|184|19] Supported Operating Systems [http://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/osForProduct?deliverableId=1374244940533&osPlatforms=Linux|Windows&duComponentIds=D002|D005|D006|S001|S004|S003] Related software [http://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/prereqsForProduct?deliverableId=1374244940533&osPlatforms=Linux|Windows&duComponentIds=D002|D005|D006|S001|S004|S003&mandatoryCapIds=183|26&optionalCapIds=30|126|9|122|13|121|184|19] Detailed Hardware Requirements [http://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/hardwareReqsForProduct?deliverableId=1374244940533&osPlatforms=Linux&osPlatforms=Windows]

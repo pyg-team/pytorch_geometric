@@ -1,0 +1,58 @@
+Title: IBM Setting up single sign-on for IBM DB2 Document Manager Desktop in an IBM Tivoli Access Manager for e-business/WebSEAL environment - United States
+
+Text:
+ PRODUCT DOCUMENTATION
+
+ABSTRACT
+ This document provides input for setting up the IBM® DB2® Document Manager Desktop to support single sign-on (SSO) in a Tivoli® Access Manager/WebSEAL environment. 
+
+CONTENT
+Following are the steps required to configure SSO using DB2 Document Manager with a trusted connection to DB2 Content Manager Version 8.3 in a Tivoli Access Manager/WebSEAL environment. 
+
+Assumption: The DB2 Content Manager library server is set up for trusted mode login.
+
+The following configurations are expected in the Tivoli Access Manager/WebSEAL environment:
+
+
+ * Failover cookies
+   
+   Failover cookies should be enabled in the WebSEAL configuration file. Once the failover cookie is configured, the failover information will be embedded in the cookie string that is provided to the client.
+
+ * 
+ * 
+ * 
+ * http://publib.boulder.ibm.com/tividd/td/ITAME/SC32-1359-00/en_US/PDF/am51_webseal_guide.pdf
+ * 
+ * 
+ * 
+
+ * SSL
+   
+   Proper configuration of the Web server and client is required for DB2 Document Manager SSO over SSL. The client's Internet Explorer browser must be able to open the SSL credentials URL with no SSL certificate warning messages. Simply accepting the warnings will not allow the DB2 Document Manager client to later retrieve the credentials URL contents. If an SSL certificate warning does appear, the server's SSL certificate or the root certificate that signed the server's SSL certificate must be imported into the client's trusted root certificate store. After the import, no warnings should appear. If the certificate server name does not match the Web server name, a warning message will be presented that cannot be disabled. The Web server should be properly configured with a matching SSL certificate.
+
+
+The following changes must be made to the DdmCaSrv.ini file: 
+
+; SSOCredentialsURL <String> -- Returns the set of web SSO credentials under which the Desktop web page was loaded. 
+; 
+; The returned credentials string should 
+; be formatted as: 
+; 
+; <Credentials userName="{UserId}" /> 
+; 
+; where {UserId} should be replaced with 
+; the identity of the user, for example: 
+; 
+; <Credentials userName="jdoe" /> 
+; 
+; Currently used for Content Manager 
+; libraries only. 
+; 
+; The DB2 Content Manager library and user 
+; must be configured for trusted sign-on. 
+
+
+The attached "credentials.asp" sample script returns the credentials described above, with the user name extracted from the HTTP_IV_USER variable that is populated by Tivoli Access Manager. Place this script on any IIS server that is available through the Tivoli Access Manager server (junctioned via WebSEAL). Assign the URL to the script as the value of the SSOCredentialsURL parameter under the library definition in the DB2 Document Manager configuration file DdmCaSrv.ini. For example: 
+
+SSOCredentialsURL=https://tamserver1/dm/credentials.asp 
+credentials.asp [/support/docview.wss?uid=swg27006106&aid=2] [/support/docview.wss?uid=swg27006106&aid=1]

@@ -1,0 +1,43 @@
+Title: IBM Open Mic Replay: WebSphere MQ Problem Diagnostics - Reading Traces - United States
+
+Text:
+wste_webcast; WSTE; Support Technical Exchange; education; presentation; webcast; STEwebcastDocument; Trace Diagnostics WEBCAST
+
+ABSTRACT
+ WebSphere MQ traces are provided to help diagnose MQ and customer problems. Different trace options are required to trace different components of the WebSphere MQ product. This session gives you the opportunity to ask questions related to using traces to diagnose MQ and application problems. 
+
+CONTENT
+Open Mic sessions are conducted in a question and answer format. The table below provides a time index (minutes:seconds) to the recording and describes the questions or topics discussed. You can fast forward to any question using the time index, a table containing the panel of experts is also included.
+
+
+To play or download the audio of this Open Mic session, see the Audio Section of this document.
+
+
+
+
+
+
+
+
+Open Mic session 
+24 March 2010 - 11:00 a.m. - 12:00 p.m. EDT 
+
+Time Questions asked 00:00 Silence 00:00 General introduction 02:07 Technical introduction 02:41 How do I collect WebSphere MQ trace? 17:59 What are the most common issues when collecting trace? 22:58 What is the performance impact of trace? 25:42 Does IBM have any scripts or tools that I can run to go through the accumulated traces? 28:19 What do the columns and parameters mean in WebSphere MQ trace? 35:14 How can I debug my application using WebSphere MQ trace? 45:13 Do you have a strategy for debugging transient return code problems in the JMS client? 47:36 There was a comment at the beginning of the slide deck regarding starting a trace and capturing a limited amount of data from the message. Is that number in byte or kilobyte? 48:26 There was a comment regarding statistics in tracing of the CHIN, and the comment on the slide is that there wasn't a significant amount of utilization, the values that would be recorded for this statistics, is that documented on the IBM site? 50:43 I have FDCs generated on 13Ds, but I don't know when they are generated. For example, one FDC was generated on March 1st, and the other one on March 23rd. When submitting a PMR, support asks me to run a trace on it, but I do not know when FDCs are generated. 54:40 If I have an application running on a client connected to a queue manager on another computer, should I consider running traces on the client side or the queue manager side? 56:10 The new features that you talked about, specially the -p option in trace, is that in 7.0 or 7.01? 56:50 If I want to collect a trace of all the messages coming through a particular queue on a queue manager, can I use the -m option or is there a better way to do it? Would the trace capture any expired messages? 60:41 When you enable a WebSphere MQ wrapping trace, I have noticed that the SSL file does not wrap - is that by design or is that a bug? 61:55 Which files for which processes are for debugging response time issues, and are there any shortcut commands one can use to search these files? 65:45 Closing remarks 66:28 End of Call 
+Panel of Experts: Chris Andrews WebSphere MQ JMS Level 3 Software Developer Rick Armstrong WebSphere MQ for z/OS Level 2 Customer Support Douglas Burns WebSphere MQ for z/OS Level 3 Software Developer Damon Cross WebSphere MQ for z/OS Level 3 Software Developer Jason Edmeades WebSphere MQ Service Architect Rhys Francis WebSphere MQ for z/OS Level 3 Software Developer Justin Fries WebSphere Platform Messaging Support Lauranette Wheeler WebSphere MQ for z/OS Level 2 Customer Support 
+
+PRESENTATION
+[http://www.ibm.com/i/v16/icons/weblecture.gif]WSTE-03242010-OpenMic-WMQReadingTraces-Wheeler.pdf [/support/docview.wss?uid=swg27018159&aid=2] [/support/docview.wss?uid=swg27018159&aid=1]
+
+[http://www.ibm.com/i/v14/icons/sout.gif] Get Adobe Reader [http://www.adobe.com/products/acrobat/readstep2.html] to view PDF
+
+AUDIO
+[http://www.ibm.com/i/v16/icons/aud.gif]Click on Download Audio [ftp://public.dhe.ibm.com/software/websphere/techexchange/Mar-24-2010-Wheeler.mp3] to play the recording of this 66 minutes conference call (7.0MB - MP3 format). Right-click and select Save As to store the file on your local computer for later playback. Remember that you can fast forward to any question using the time index.
+
+RELATED INFORMATION
+ WebSphere Support Technical Exchange [http://www.ibm.com/software/websphere/webcast]
+
+
+
+
+PRODUCT ALIAS/SYNONYM
+ WMQ WebSphere MQ

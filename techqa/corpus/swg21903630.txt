@@ -1,0 +1,32 @@
+Title: IBM Sterling Control Center crashes. - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ IBM Sterling Control Center crashes. Too many open files. 
+
+SYMPTOM
+SEVERE: SAAJ0009: Message send failed
+
+ERROR
+RuleExecutionSetHelper - RULE024E Exception occurred writing XSL to disk
+
+ERROR
+RuleExecutionSetHelper - RuleEngine-Execution-Set-Xsl.xml (Too many
+open files)
+
+java.io.FileNotFoundException: RuleEngine-Execution-Set-Xsl.xml (Too many open files)
+
+
+
+
+
+CAUSE
+The amount of open files was higher than set by ulimit, 4096
+
+DIAGNOSING THE PROBLEM
+See in Engine log - java.io.FileNotFoundException: RuleEngine-Execution-Set-Xsl.xml (Too many open files)
+
+RESOLVING THE PROBLEM
+Raise ulimit for number of open files to 102040 or higher

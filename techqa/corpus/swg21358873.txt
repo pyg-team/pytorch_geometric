@@ -1,0 +1,38 @@
+Title: IBM How to maintain the size of a UDA trace. - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Is there a method to maintain UDA trace files so that they don't grow to file system limit? 
+
+CAUSE
+When troubleshooting UDA issues relating to intermittent problems, a UDA Trace may need to be enabled for an extended period. This can cause large file generation and exhaust physical resources.
+
+DIAGNOSING THE PROBLEM
+UDA tracing is a troubleshooting tool used for investigation issues related to the UDA component of the product and is usually only enabled at the request of IBM Cognos Support.
+
+RESOLVING THE PROBLEM
+There is nothing within the product or the trace that makes this possible. 
+
+
+The work around is to create a batch file that will stop the Cognos service, rename or delete the UDA trace file and restart the Cognos Service and then schedule the batch file to run at specific intervals.
+Example: 
+
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+
+
+
+
+
+Cross Reference information Segment Product Component Platform Version Edition Business Analytics Cognos 8 Business Intelligence Report Studio Business Analytics Cognos ReportNet ReportNet 
+HISTORICAL NUMBER
+ 1009295

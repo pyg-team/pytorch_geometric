@@ -1,0 +1,28 @@
+Title: IBM SmartCloud for Social Business Services Not Vulnerable to OpenSSL Heartbleed Bug (CVE-2014-0160) - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+Are SmartCloud for Social Business services affected by the Open SSL Heartbleed bug (CVE-2014-0160)?
+
+ANSWER
+The Heartbleed bug (CVE-2014-0160) is a worldwide security vulnerability affecting services with SSL/TLS encryption using the OpenSSL library. We have reviewed all the systems hosting each of the SmartCloud for Social Business services; and would like to assure you of the following: 
+
+ * All SmartCloud for Social business systems have been tested and verified that they do not exhibit the vulnerability. 
+ * Some of our applications use acceleration provided by Akamai. For their statement of support, refer to the Akamai Heartbleed FAQ [https://blogs.akamai.com/2014/04/heartbleed-faq-akamai-systems-patched.html].
+
+
+Related Information  * US National Vulnerability Database description [http://web.nvd.nist.gov/view/vuln/detail?vulnId=CVE-2014-0160] 
+ * IBM X-Force vulnerability description [https://exchange.xforce.ibmcloud.com/vulnerabilities/92322] 
+ * Related IBM Technotes for customers with hybrid software deployments  * IBM Connections technote 1669946 [http://www.ibm.com/support/docview.wss?uid=swg21669946] 
+    * IBM HTTP Server and OpenSSL technote 1383959 [http://www.ibm.com/support/docview.wss?uid=swg21383959] 
+    * IBM Notes / Domino technote 1669782 [http://www.ibm.com/support/docview.wss?uid=swg21669782] 
+    * IBM WebSphere Application Server and IHS technote 1669774 [http://www.ibm.com/support/docview.wss?&uid=swg21669774]
+   
+   
+
+
+For questions or concerns, please contact support@collabserv.com. 
+
+Note: IBM SmartCloud for Social Business was renamed to IBM Connections Cloud with the September 2014 update to the service.

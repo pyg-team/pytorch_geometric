@@ -1,0 +1,340 @@
+Title: IBM PK13000: ADD SERVICE REFERENCE WIZARD ADDS THE WSDL FILE TO THE FOLDER WEB-INF/WSDL BUT IN WEB.XML IT LISTS IT IN: META-INF/WSDL - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Environment:
+   - OS (name, language, version or SP)
+   Microsoftﾩ Windowsﾩ XP SP1
+    - Product name (Build ID or version/patch level)
+   IBMﾩ Rationalﾩ Application Developer v. 6.0.1
+   Reproducible Y/N:  Y
+   Description of problem:
+   When adding a Service Reference to a Dynamic Web Project, the
+   WSDL file is copied to the WEB-INF/wsdl folder but in the
+   web.xml it is listed as in the META-INF folder.
+   
+   Steps to reproduce:
+   
+   CReate a Stateless session Bean:
+   1. Create an Enterprise Application Project called Services
+   2. Add an EJB module called ServicesEJB and a Dynamic web
+   project called ServicesWeb
+   3. Create a Session Bean called Test, select only the remote
+   interface
+   4. Add the following method
+   public String sayHello(String name) {
+   return "Hello "+name;
+   }
+   5. Promote the method to Remote Interface
+   
+   Expose the EJB as a Web Services
+   1. Start the Web services wizard and leave default all options
+   that are not described:
+    First page:
+   2. let the option: Start the Web Service in Web Project remain
+   checked
+   3. Web service Type: EJB Web Service
+   Second Page:
+   4. Select Services as EAR project and Test as Stateless EJB from
+   ServicesEJB
+   Third page:
+   5. Select ServicesEJB as ServiceProject and services as EAR
+   Project
+   Fourth page:
+   6. select ServiceWeb as the router project and SOAP over HTTP
+   Fifth page:
+   WEB service URI is:
+   http://localhost:9080/ServicesWeb/services/Test [http://localhost:9080/ServicesWeb/services/Test]
+   WSDL folder is:
+   platform:/resource/ServicesEJB/ejbModule/META-INF/wsdl
+   WSDL File: Test.wsdl
+   7. Finish the Wizard
+   
+   Test the web Service from the Web Service Explorer and verify
+   that it works fine, from the RouterProject ServicesWeb.
+   
+   Create Client Project that uses a Service Reference
+   1. Create a new Dynamic Web Project, called ClientWeb in a new
+   EAR file: ClientWebEAR
+   2. Add a Servlet to ClientWeb, called com.ibm.TestServlet, of
+   type HttpServlet, with doPost and doGet
+   
+   3. Add the service reference
+   3.1. Edit the Deployment Descriptor of ClientWeb project
+   3.2. Switch to References tab
+   3.3. Click Add? button
+   3.4. Select Service reference then Next
+   3.5. Select the only Web Service available:
+   http://ejbs:TestService (Name service/TestService)
+   3.6. Click Next : you will see:
+   Name: service/TestService
+   WSDL File: META-INF/wsdl/Test.wsdl
+   Namespace URI://ejbs
+   LocalPart: TestService
+   Click Finish
+   
+   The wizard completes without any errors. Note however that the
+   wizard shows that the location of the WSDL file is in:
+   META-INF/wsdl/Test.wsdl
+   while you can see that the actual location where the wsdl file
+   was created is:
+   WEB-INF/wsdl/Test.wsdl
+   
+   
+   
+   
+   Use the web service in the servlet:
+   1. Implement the "doGet" in TestServlet.java as follows:
+   
+   protected void doGet(HttpServletRequest arg0,HttpServletResponse
+   arg1){
+    TestProxy myTestproxy = new TestProxy();
+    PrintWriter out = arg1.getWriter();
+      out.print("End Point: "+ myTestProxy.getEndPoint());
+   }
+   
+   
+   2. Select the TestServlet from the Deployment descriptor of
+   ClientWeb in Project Explorer and choose Run on Server
+   
+   Result:
+   
+   The servlet runs fine on URL:
+   http://localhost:9080/ClientWeb/TestServlet [http://localhost:9080/ClientWeb/TestServlet]
+   
+   and it prints:
+   
+   End Point: http://localhost:9080/ServicesWeb/services/Test [http://localhost:9080/ServicesWeb/services/Test]
+   
+   but the following Deployment error appears:
+   ----------------------------------------------------------------
+   
+   Deployment from
+   com.ibm.etools.webservice.was.deployer.WSDeployer had errors:
+   ClientWebEAR
+   Deployment error:
+   Error messages were issued.
+   WSWS3574E: ---------- FATAL ERRORS ENCOUNTERED ----------
+    GENERATION OF ARTIFACTS HAS BEEN SUSPENDED.
+    See messages to follow for more details.
+   WSWS3490E: Error: The system cannot load the file referenced
+   within
+   platform:/resource/ClientWeb/WebContent/META-INF/wsdl/Test.wsdl.
+   The problem is with
+   <path>\workspace\ClientWeb\WebContent\META-INF\wsdl\Test.wsdl
+   (The handle is invalid.
+   ).
+   Error:
+   <path>\workspace\ClientWeb\WebContent\META-INF\wsdl\Test.wsdl
+   (The handle is invalid.
+   )
+   java.io.FileNotFoundException:
+   <path>\workspace\ClientWeb\WebContent\META-INF\wsdl\Test.wsdl
+   (The handle is invalid.
+   )
+    at java.io.FileInputStream.open(Native Method)
+   ....
+   java.lang.Exception: ClientWebEAR
+   Deployment error:
+   Error messages were issued.
+   WSWS3574E: ---------- FATAL ERRORS ENCOUNTERED ----------
+    GENERATION OF ARTIFACTS HAS BEEN SUSPENDED.
+    See messages to follow for more details.
+   WSWS3490E: Error: The system cannot load the file referenced
+   within
+   platform:/resource/ClientWeb/WebContent/META-INF/wsdl/Test.wsdl.
+   The problem is with
+   <path>\workspace\ClientWeb\WebContent\META-INF\wsdl\Test.wsdl
+   (The handle is invalid.
+   ).
+   Error:
+   <path>\workspace\ClientWeb\WebContent\META-INF\wsdl\Test.wsdl
+   (The handle is invalid.
+   )
+   java.io.FileNotFoundException:
+   <path>\workspace\ClientWeb\WebContent\META-INF\wsdl\Test.wsdl
+   (The handle is invalid.
+   )
+    at java.io.FileInputStream.open(Native Method)
+   ....
+     Deployment from com.ibm.etools.ejbdeploy.EJBDeployer completed
+   successfully
+     Deployment from
+   com.ibm.etools.webservice.was.deployer.WSDeployer had errors:
+   ClientWebEAR
+   Deployment error:
+   Error messages were issued.
+   WSWS3574E: ---------- FATAL ERRORS ENCOUNTERED ----------
+    GENERATION OF ARTIFACTS HAS BEEN SUSPENDED.
+    See messages to follow for more details.
+   WSWS3490E: Error: The system cannot load the file referenced
+   within
+   platform:/resource/ClientWeb/WebContent/META-INF/wsdl/Test.wsdl.
+   The problem is with
+   <path>\workspace\ClientWeb\WebContent\META-INF\wsdl\Test.wsdl
+   (The handle is invalid.
+   ).
+   Error:
+   <path>\workspace\ClientWeb\WebContent\META-INF\wsdl\Test.wsdl
+   (The handle is invalid.
+   )
+   java.io.FileNotFoundException:
+   <path>\workspace\ClientWeb\WebContent\META-INF\wsdl\Test.wsdl
+   (The handle is invalid.
+   )
+    at java.io.FileInputStream.open(Native Method)
+   
+   ----
+   
+   The  web.xml file contains:
+   
+   
+    <service-ref>
+     <description />
+     <service-ref-name>service/TestService</service-ref-name>
+     <service-interface>ejbs.TestService</service-interface>
+     <wsdl-file>META-INF/wsdl/Test.wsdl</wsdl-file>
+   
+   <jaxrpc-mapping-file>WEB-INF/Test_mapping.xml</jaxrpc-mapping-fi
+   le>
+     <service-qname
+   xmlns:prefix="http://ejbs">prefix:TestService</service-qname>
+    <port-component-ref>
+   
+   <service-endpoint-interface>ejbs.Test</service-endpoint-interfac
+   e>
+     </port-component-ref>
+     </service-ref>
+   
+   
+   It should contain:
+   
+      <wsdl-file>WEB-INF/wsdl/Test.wsdl</wsdl-file>
+   
+   instead of:
+   
+     <wsdl-file>META-INF/wsdl/Test.wsdl</wsdl-file>
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Manually alter the web.xml file before deploying
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  The WSDL file is set to the wrong path in the deployment
+   descrip
+   tor.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  We now use the WSDL file path which is generated by web
+   services to stay in synch.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK13000
+   
+   
+ * REPORTED COMPONENT NAME
+   APP DEV V6 WIN
+   
+   
+ * REPORTED COMPONENT ID
+   5724J1901
+   
+   
+ * REPORTED RELEASE
+   600
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2005-10-06
+   
+   
+ * CLOSED DATE
+   2006-03-17
+   
+   
+ * LAST MODIFIED DATE
+   2006-03-17
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  na
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   APP DEV V6 WIN
+   
+   
+ * FIXED COMPONENT ID
+   5724J1901
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R600 PSN
+   UP

@@ -1,0 +1,19 @@
+Title: IBM FSR - Performance under Citrix - United States
+
+Text:
+Citrix; performance TECHNOTE (FAQ)
+
+QUESTION
+ What can be done to increase the IBM Cognos Financial Statement Reporting performance under Citrix? 
+
+CAUSE
+FSR ( 6.6.1.0 up to 6.6.1.1 HotFix 8 ) is running slowly under Citrix.
+
+ANSWER
+Most of the suggestions below are general suggestions and not related to Citrix/VMs, as FSR does not have any specific settings or tweaks that would improve performance in this scenario:
+
+1. The Citrix version matters, as old versions can cause performance issues. We have obtained the best results on Citrix 6.5;
+2. Install FixPack 2 for FSR 6.6.1;
+3. Use Office 2010;
+4. Upgrade all objects to the 2010 format;
+5. Make sure the Citrix box has enough resources to handle all processes and connections.

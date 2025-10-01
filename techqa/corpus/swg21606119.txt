@@ -1,0 +1,33 @@
+Title: IBM Alcatel 5620 SAM probe error "Bad version number in .class file" - United States
+
+Text:
+bad version; alcatel sam probe; alcatel-lucent; .class; java_home TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The Alcatel 5620 SAM probe fails to start and reports the error "Bad version number in .class file". 
+
+SYMPTOM
+ 
+
+03/22/12 1:43:45 PM: Information: [stderr] log4j:WARN Please initialize the log4j system properly. 
+03/22/12 1:43:46 PM: Information: [stderr] 
+java.lang.UnsupportedClassVersionError: Bad version number in .class file 
+03/22/12 1:43:46 PM: Information: [stderr] at java.lang.ClassLoader.defineClass1(Native Method) 
+03/22/12 1:43:46 PM: Information: [stderr] at java.lang.ClassLoader.defineClass(ClassLoader.java:621) 
+
+
+CAUSE
+The error indicates a mismatch between the required java version for the SAM jar files and the java in use by the probe. 
+
+
+Alcatel SAM v9 R5 and above require Java 1.6. Earlier versions required Java 1.5.
+
+
+RESOLVING THE PROBLEM
+Install a Java 1.6.0_20 or later package on the server. 
+
+Update the file $OMNIHOME/probes/java/nco_p_alcatel_5620_sam_v9.env file, adding a line for the JAVA_HOME jre location. 
+
+For example, if the java 1.6 executable is located in /usr/jdk/instances/jdk1.6.0/jre/bin/java, set JAVA_HOME as follows: 
+
+JAVA_HOME=/usr/jdk/instances/jdk1.6.0/jre

@@ -1,0 +1,102 @@
+Title: IBM How out of range dates like 9 June in the year 10,007 and timestamps like 10007-06-09 00:0000 get into tables - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Netezza dates are stored in a 4 byte integer holding the number of days before or after January 1st in the year 2000. The earliest allowed date is January 1st in the year 0001, which is stored as -730,119.
+The latest allowed date is December 31st in the year 9999, which is stored as 2,921,939.
+
+Timestamps are stored in an 8 byte integer as the number of microseconds since midnight on January 1st in the year 2000. The earliest allowed datetime is 00:00:00 (midnight) on January 1st in the year 0001, 
+which is stored as -63,082,281,600,000,000. 
+
+The latest allowed date time is 23:59:59.999999 on December 31st in the year 9999 which is stored as 
+252,455,615,999,999,999.
+
+A 4 byte integer can actually hold a much greater range of values (from -2,147,483,648 (or -1 * 2^31) to 2,147,483,647 (or 2^31 -1)), and an 8 byte integer can actually hold a much greater range of values (from 
+-9,223,372,036,854,775,808 (or -1 * 2^63) to 9,223,372,036,854,775,807 (or 2^63 -1)). 
+
+The year 0001 to year 9999 range limitation is enforced because other date and timestamp parsing and casting functions need to be able to set limits on input and output field sizes. 
+See http://www-01.ibm.com/support/knowledgecenter/SSULQD_7.2.0/com.ibm.nz.sproc.doc/c_sproc_data_types_aliases.html [http://www-01.ibm.com/support/knowledgecenter/SSULQD_7.2.0/com.ibm.nz.sproc.doc/c_sproc_data_types_aliases.html] 
+for more.
+
+
+SYMPTOM
+You see dates like 09-Jun-10007 or timestamps like 10007-06-09 00:0000
+
+
+CAUSE
+ 
+
+Numeric and string data is cast into a date value using INTERVAL arithmetic. For example, we work out how many days are between 2014-10-30 and 2000-01-01 by adding:
+0 (the value for 01-01-2000 ) 
++ (2014 - 2000) years of 365 days = 14 *365 = 5110
++ 4 for the leap years = 4
++ (10 - 01) months of 30 days each = 270
++ 5 * 1 (for the 31 day months January, March, May, July, and August)
+- 2 for 28 day February
++ 30 
+- 1 (because 01-01-0001 is day zero, not day 1)
+
+5110 + 4 + 270 + 5 - 2 + 30 -1 = 5416 
+
+nzsql -c "select 20141030::date as ddate, 20141030::date - 20000101::date as days;"
+DDATE | DAYS
+------------+------
+2014-10-30 | 5416
+(1 row)
+
+
+Note that NPS "considers a month to be 30 days for the purposes of interval comparisons". This is documented here:
+http://www-01.ibm.com/support/knowledgecenter/SSULQD_7.2.0/com.ibm.nz.dbu.doc/r_dbuser_data_types_ntz_sql_interval_support.html [http://www-01.ibm.com/support/knowledgecenter/SSULQD_7.2.0/com.ibm.nz.dbu.doc/r_dbuser_data_types_ntz_sql_interval_support.html]
+
+
+
+
+DIAGNOSING THE PROBLEM
+ 
+
+Unfortunately, some early versions of NPS did not enforce sanity checking on the values in the date part fields. If the date above was provided in DDMMYYYY fashion as 30102014 but no format string was also passed to tell NPS that, then it will be parsed as if it was YYYYMMDD. So 30102014 is read as the 14th day in the 20th month of the year 3010, and we do similar same maths: 
+
+0 (the value for 01-01-2000 ) 
++ (3010 - 2000) years of 365 days = 1010 *365 = 368650
++ 245 for the 29 Februarys in the leap years 
++ (20 -12 -01) months of 30 days each = 210
++ 365 for the extra 12 months
++ 4 * 1 (for the 31 day months January, March, May and July)
+- 1 (because 01-01-0001 is day zero, not day 1)
+= 369487
+
+nzsql -c "select 30102014::date as ddate, 30102014::date - 20000101::date as days ;"
+DDATE | DAYS
+------------+--------
+3011-08-16 | 369487
+
+February 3011 isn't recognised as having 28 days because it is the 14th month, not the second, so the -2 correction is not applied, and we end up adding 2 days to the date when we reformat the date integer value back to a YYYY-MM-DD string. That is a defect, but given we should reject a date involving month 20 well before we get to this point, it is irrelevant.
+
+It is not only the months where we were accepting illegal values (i.e. above 12). Days of month above
+28/29/30/31 as appropriate, and hours, minutes and seconds values of up to 99 were also parsed:
+
+nzsql -c "select 99999999::date as ddate, 99999999::date - 20000101::date as days ;"
+DDATE | DAYS
+-------------+---------
+10007-06-09 | 2924656
+
+nzsql -c "select 99999999::timestamp as tstamp ;"
+TSTAMP
+---------------------
+10007-06-09 00:0000
+
+nzsql -c "select '99999999 999999'::timestamp as tstamp ;"
+TSTAMP
+---------------------
+10007-06-13 04:4039
+
+This is where the June 9th in the year 10007 values come from - some customer applications use 99999999 in a date field to mean unknown/never/the far future, and this sorts them to the end.
+
+99999999 is year 9999, month 99 and day 99. There are only 12 months, so 99 months is rewritten as 8x12 + 3, then we add 8 to the year 9999 to get 10007-03-99. There aren't 99 days in the 3rd month so 99 days is rewritten as 3x30 + 9, and we add 3 more to the months value to get 6 and end up with month 6 and day 9, or 10007-06-09.
+
+
+
+RESOLVING THE PROBLEM
+Parsing date/time values that should be rejected for being too big is defect 73794, and is fixed in 6.0.8 P15, 7.0 P14, 7.0.2 P11, 7.0.4 P3, 7.1 and 8.0

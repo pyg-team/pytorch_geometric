@@ -1,0 +1,137 @@
+Title: IBM HE12543: UNABLE TO CREATE A COLLECTION PLAN AFTER UPGRADING TO ATLAS 6.0.3.3 INTERIM FIX1 - United States
+
+Text:
+  DIRECT LINKS TO FIXES
+6.0.3-ATLAS-WINDOWS-FP0004 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FGlobal+Retention+Policy+and+Schedule+Management&fixids=6.0.3-ATLAS-WINDOWS-FP0004&source=SAR]
+6.0.3-ATLAS-SOLARIS-FP0004 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FGlobal+Retention+Policy+and+Schedule+Management&fixids=6.0.3-ATLAS-SOLARIS-FP0004&source=SAR]
+6.0.3-ATLAS-LINUX-FP0004 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FGlobal+Retention+Policy+and+Schedule+Management&fixids=6.0.3-ATLAS-LINUX-FP0004&source=SAR]
+6.0.3-ATLAS-AIX-FP0004 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FGlobal+Retention+Policy+and+Schedule+Management&fixids=6.0.3-ATLAS-AIX-FP0004&source=SAR]
+IBM Atlas Policy Suite Version 6.0.3 Fix Pack 4 Download Document [http://www-01.ibm.com/support/docview.wss?uid=swg24043136]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  A message "System error has occured  on the client" is thrown
+   in the browser while creating a collection plan after upgrading
+   to Atlas 6.0.3.3 Interim Fix1. There is no error in the Atlas
+   log file and you will not be able to create a collection plan.
+   This happens only when the "Ongoing" check box is unchecked and
+   the due is not populated
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Populate the due date for the Collection Plan
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  A message "System error has occured  on the client" is thrown
+   in the browser while creating a collection plan after upgrading
+   to Atlas 6.0.3.3 Interim Fix1. There is no error in the Atlas
+   log file and you will not be able to create a collection plan.
+   This happens only when the "Ongoing" check box is unchecked and
+   the due is not populated
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix is available now on Fix Central, as part of Atlas 6.0.3
+   Fix pack 4
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   HE12543
+   
+   
+ * REPORTED COMPONENT NAME
+   ATLAS EDISCOVER
+   
+   
+ * REPORTED COMPONENT ID
+   5725D7500
+   
+   
+ * REPORTED RELEASE
+   601
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-05-26
+   
+   
+ * CLOSED DATE
+   2016-12-14
+   
+   
+ * LAST MODIFIED DATE
+   2016-12-14
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ATLAS EDISCOVER
+   
+   
+ * FIXED COMPONENT ID
+   5725D7500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R603 PSY
+   UP

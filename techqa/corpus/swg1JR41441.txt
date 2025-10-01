@@ -1,0 +1,188 @@
+Title: IBM JR41441: TW_AUTHORS GROUP USERS INTERMITTENTLY FAILING TO LOG IN PROCESS DESIGNER WITH ERROR "DOES NOT HAVE THE REQUIRED ROLE" - United States
+
+Text:
+  A FIX IS AVAILABLE
+Version 7.5.1 Fix Pack 1 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24033036]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Users that are part of tw_author group and not part of the WAS
+   admin role cannot login via ProcessDesigner. User may be first
+   time can login but further attempts fails till they restart the
+   cluster member. Client added the user to WAS admin role as a
+   work around.
+   
+   Note: Client can login into process designer after restarting
+         the cluster member.
+   Note: Client can login into process designer if the user added
+         to WAS admin role.
+   
+   From process center logs we see the following error.
+   
+   [9/1/11 6:40:11:821 CDT] 0000004b FileRepositor A ADMR0024E:
+   User defaultWIMFileBasedRealm/L840044 does not have the required
+   role to access 1 document(s).
+   [9/1/11 6:40:11:826 CDT] 0000004b WorkSpaceMast E WKSP0012E:
+   Exception while extracting cells/cell_rispc_bpm/cell.xml from
+   ConfigRepository--com.ibm.websphere.management.exception.Reposit
+   oryException: Caller is not in the required role to access
+   restricted document(s)
+   at
+   com.ibm.ws.management.repository.FileRepository.throwRepositoryE
+   xception(FileRepository.java:1445)
+   at
+   com.ibm.ws.management.repository.FileRepository.extract(FileRepo
+   sitory.java:1102)
+   at
+   com.ibm.ws.management.repository.FileRepository.extract(FileRepo
+   sitory.java:1057)
+   at
+   com.ibm.ws.management.repository.FileRepository.extract(FileRepo
+   sitory.java:1046)
+   at
+   com.ibm.ws.management.repository.client.LocalConfigRepositoryCli
+   ent.extract(LocalConfigRepositoryClient.java:141)
+   at
+   com.ibm.ws.sm.workspace.impl.WorkSpaceMasterRepositoryAdapter.ex
+   tract(WorkSpaceMasterRepositoryAdapter.java:833)
+   at
+   com.ibm.ws.sm.workspace.impl.WorkSpaceMasterRepositoryAdapter.ex
+   tract(WorkSpaceMasterRepositoryAdapter.java:824)
+   at
+   com.ibm.ws.sm.workspace.impl.RepositoryContextImpl.extract(Repos
+   itoryContextImpl.java:658)
+   at
+   com.ibm.ws.sm.workspace.impl.RepositoryContextImpl.extractOnly(R
+   epositoryContextImpl.java:625)
+   at
+   com.ibm.ws.sm.workspace.impl.RepositoryContextImpl.extract(Repos
+   itoryContextImpl.java:609)
+   
+   Caused by: com.ibm.wbi.utils.configservice.WBIConfigException:
+   No cells found.
+   at
+   com.ibm.wbi.utils.configservice.WBIConfigServiceHelper.getCell(W
+   BIConfigServiceHelper.java:111)
+   at
+   com.ibm.wbi.utils.configservice.WBIConfigServiceHelper.isStandal
+   one(WBIConfigServiceHelper.java:271)
+   at
+   com.ibm.ws.bpm.repo.services.bootstrap.BootstrapUtil.getBootstra
+   pInfo(BootstrapUtil.java:51)
+   
+   This issue was reported through JIRA WLE-7847. As per developer
+   update required code changes to add runAs block whenever
+   WBIConfigServiceHelper being invoked.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Fixed
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Published
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR41441
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM ADVANCED
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9400
+   
+   
+ * REPORTED RELEASE
+   750
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-12-09
+   
+   
+ * CLOSED DATE
+   2012-02-14
+   
+   
+ * LAST MODIFIED DATE
+   2012-02-14
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   BPM ADVANCED
+   
+   
+ * FIXED COMPONENT ID
+   5725C9400
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R751 PSY
+   UP

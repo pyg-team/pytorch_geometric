@@ -1,0 +1,168 @@
+Title: IBM IZ99340: "BMXAA0876E - CANNOT DELETE THIS RECORD" WHEN TRYING TO DELETE A FOLDER FOR ATTACHED DOCUMENTS - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  "BMXAA0876E - Cannot delete this record" when trying to delete a
+   folder for attached documents.
+   
+   Steps:
+   Launch an application for example Work Order Traking
+   Select Action menu, select Attachment Library/Folders option and
+   then select Manage Folders.
+   Add a new folder and save.
+   Without attaching any documents to the folder, basically as soon
+   as you create it and save, bring up the folder from the same
+   option and try deleting it using the trash can.
+   Get the cannot delete this record message.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: N/A                                          *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: "BMXAA0876E - Cannot delete this        *
+   *                      record" when trying to delete a         *
+   *                                                              *
+   *                      folder for attached documents.          *
+   *                                                              *
+   *                      Steps:                                  *
+   *                                                              *
+   *                      Launch an application for example Work  *
+   *                      Order Traking                           *
+   *                                                              *
+   *                      Select Action menu, select Attachment   *
+   *                      Library/Folders option and              *
+   *                                                              *
+   *                      then select Manage Folders.             *
+   *                                                              *
+   *                      Add a new folder and save.              *
+   *                                                              *
+   *                      Without attaching any documents to the  *
+   *                      folder, basically as soon               *
+   *                                                              *
+   *                      as you create it and save, bring up the *
+   *                      folder from the same                    *
+   *                                                              *
+   *                      option and try deleting it using the    *
+   *                      trash can.                              *
+   *                                                              *
+   *                      Get the cannot delete this record       *
+   *                      message.                                *
+   *                                                              *
+   *                      LOCAL FIX:                              *
+   *                                                              *
+   *                      N/A                                     *
+   *                                                              *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   *                                                              *
+   *                                                              *
+   *                                                              *
+   ****************************************************************
+   "BMXAA0876E - CANNOT DELETE THIS RECORD" WHEN TRYING TO DELETE
+   A  FOLDER FOR ATTACHED DOCUMENTS
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This is not a bug.  By design, a doc folder can not be deleted
+   if it is associated with one or more application.  In this
+   case, the doc type is automatically associated with the WoTrack
+   application when it is created.  To delete this doc type, you
+   need to go to the action menu Associate Folders, and delete all
+   the associations with this doctype.  Then go back to Manage
+   Folders, and now you can delete the doc folder.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ99340
+   
+   
+ * REPORTED COMPONENT NAME
+   ADMINISTRATION
+   
+   
+ * REPORTED COMPONENT ID
+   5724R46A1
+   
+   
+ * REPORTED RELEASE
+   711
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-04-22
+   
+   
+ * CLOSED DATE
+   2011-05-04
+   
+   
+ * LAST MODIFIED DATE
+   2011-05-04
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

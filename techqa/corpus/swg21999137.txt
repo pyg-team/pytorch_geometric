@@ -1,0 +1,54 @@
+Title: IBM Monitoring IBM ODM usage on premises with Hybrid Entitlement or Consumption-based Pricing (in J2SE and on Liberty app servers only) - United States
+
+Text:
+ NEWS
+
+ABSTRACT
+ A customer who buys a license for hybrid entitlement or for consumption-based pricing is required to enable usage reporting and to send the usage information to IBM upon request. The usage information will be sent for visualization to the Bluemix Product Insights cloud service. For more information, see https://developer.ibm.com/product-insights [https://developer.ibm.com/product-insights] and https://www.ibm.com/us-en/marketplace/product-insights [https://www.ibm.com/us-en/marketplace/product-insights]. 
+
+CONTENT
+
+
+IBM Operational Decision Manager Hybrid Entitlement (ODM HE) Clients are entitled to access the functionality in the ODM on Cloud environment or to download and install the IBM ODM Program in their environment of choice. The ODM HE entitlements can be divided between use of the ODM on Cloud service and use on the Client’s computing environment. At any given time, the total number of entitlements acquired cannot be exceeded across the combined usage.
+
+While the ODM on Cloud usage is tracked automatically, the Client can follow their ODM on Cloud usage by providing the API key of the Product Insights service instance they created to ODM operations at supportodmoncloud@us.ibm.com (see https://www.ibm.com/support/knowledgecenter/en/SS7J8H/com.ibm.odm.distrib.overview/topics/con_ctc.html [https://www.ibm.com/support/knowledgecenter/en/SS7J8H/com.ibm.odm.distrib.overview/topics/con_ctc.html]). In the Client's on-premises computing environment, the Client must configure the ODM components so that the Product Insights service instance that they created in Bluemix tracks their ODM usage, and the Client must send the usage reports to IBM on a monthly basis. This applies to the on-premises part of a hybrid entitlement and to an ODM on-premises installation that uses the consumption-based pricing method. 
+
+In this way, the Client is able to view the usage and to get a report of the combined usage on the cloud and on premises. 
+
+Steps to enable usage reporting:
+
+ 1. Modify the tagging of the installed ODM components.
+    Failure to modify the tagging of the ODM installed archives will result in the ILMT audit tool reporting erroneous data.  
+    
+    <odm_install_dir>/shared/tools/ant/bin/ant -f update_ilmt_ear.8.9.0.xml -Dcomponent=dsr -Dlicense=hybrid -DisProd=true 
+    <odm_install_dir>/shared/tools/ant/bin/ant -f update_ilmt_ear.8.9.0.xml -Dcomponent=dc -Dlicense=hybrid -DisProd=true
+    
+    
+    
+    
+ 2. Configure your ODM components to connect to Product Insights on Bluemix as described in https://www.ibm.com/support/knowledgecenter/en/SSQP76_8.9.0/com.ibm.odm.distrib.config/topics/con_ctc_configuring.html [https://www.ibm.com/support/knowledgecenter/en/SSQP76_8.9.0/com.ibm.odm.distrib.config/topics/con_ctc_configuring.html]. 
+ 3. Export the usage reports as described hereafter.
+
+EXPORTING USAGE REPORTS
+Managed Decision Artifacts (Decision Center):
+
+ 1. In the Product Insights dashboard , select an "IBM Operational Decision Manager - Decision Center" instance (finest level).
+ 2. Under Usage, select Artifacts in the first drop down and 6 Months in the second drop down.
+ 3.  Click Export to CSV to download the usage report for the selected Decision Center instance.
+ 4. Repeat the operation for each Decision Center instance. 
+
+Rules Decisions (Decision Server):
+
+ 1. In the Product Insights dashboard , select an "IBM Operational Decision Manager - Decision Server" instance (finest level).
+ 2. Under Usage, select Decisions in the first drop down and 6 Months in the second drop down.
+ 3.  Click Export to CSV to download the usage report for the selected Decision Server instance.
+ 4. Repeat the operation for each Decision Server instance. 
+
+NOTE: Some data in the Product Insights dashboard appear to be irrelevant. The dashboard will be improved in a future release of ODM. In the meantime, please focus on the sum of monthly decisions and on the maximum number of artifacts. 
+
+Collect the generated CSV files (or compress them all in a ZIP archive that you rename <companyname>.<mo>.<year>.usage.zip). Email the CSV files or the ZIP archive to ODMTRACK@us.ibm.com before the 5th working day of the following calendar month. Note that the pricing is based on calendar month boundaries, independent of when you purchased the products. Each month starts on the first calendar day of that month and ends on the last one.
+
+RELATED INFORMATION
+ [IBM Cloud Product Insights Technical Community [https://developer.ibm.com/product-insights]
+IBM Cloud Product Insights [https://www.ibm.com/us-en/marketplace/product-insights]
+Configuring for IBM Cloud Product Insights [https://www.ibm.com/support/knowledgecenter/en/SSQP76_8.9.0/com.ibm.odm.distrib.config/topics/con_ctc_configuring.html]

@@ -1,0 +1,31 @@
+Title: IBM Cognos Business Intelligence stack ulimit settings - United States
+
+Text:
+ RELEASE NOTES
+
+ABSTRACT
+ Stack ulimit settings on Linux operating systems affect memory usage of IBM Cognos Business Intelligence components and can cause errors when processing large reports. Ensuring
+the correct stack ulimit settings can prevent these problems.
+
+Note: On UNIX, issues can arise if the stack ulimit settings are too low. 
+
+CONTENT
+Symptom 
+
+On Linux operating systems, problems caused by stack ulimit settings include unusually high memory usage of BIBusTKServerMain or BIBusTKServerMain errors when processing large reports. 
+
+ * If you are using the 32-bit report service, reports can fail. 
+ * If you are using the 64-bit report service, running reports or idle BIBusTKServerMain processes can use all of your available RAM.
+
+
+For example, if the stack ulimit setting on Linux is 32768 MB, then the BIBusTKServerMain might use approximately 1.5 GB of RAM on startup. As a result, when using 32 Bit report service the memory usage is already close to the 2 GB limit, and large reports can crash upon reaching that limit. 
+
+Resolving the problem To resolve these issues on Linux operating systems, set the ulimit value for the stack to unlimited. Using unlimited allows the operating system to manage the stack memory usage. 
+
+The recommended stack ulimit settings are as follows: 
+
+ * On Linux (x and z): ulimit -s unlimited 
+ * On UNIX (AIX, Solaris, and HP-UX): ulimit -s 8192 (minimum value)
+
+RELATED INFORMATION
+ IBM Cognos Business Intelligence stack ulimit settings [http://www-01.ibm.com/support/docview.wss?uid=swg21662594]

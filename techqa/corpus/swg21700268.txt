@@ -1,0 +1,23 @@
+Title: IBM Using TCR Reports for the BN DataPower agent. - United States
+
+Text:
+DataPower agent BN TCR Template RFE# 68440 CAMADALL TECHNOTE (FAQ)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ US English 
+
+QUESTION
+ Is there a way to use TCR Reporting for the BN DataPower agent? 
+
+ANSWER
+Currently as of 1H2015, there is no TCR Template available for the BN DataPower agent (v7.01 FP1). So, if you are looking to download a TCR template for this agent, you will not find any on Passport Advantage. There is an open RFE out on the RFE website which documents this requirement. 
+
+The RFE link is:
+http://www.ibm.com/developerworks/rfe/execute?use_case=viewRfe&CR_ID=68440 [http://www.ibm.com/developerworks/rfe/execute?use_case=viewRfe&CR_ID=68440]
+
+So, if you want to use TCR for the DataPower agent, you have to Custom reporting inside of TCR itself.
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ ITCAM ITCAM for DataPower agent

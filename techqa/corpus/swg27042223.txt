@@ -1,0 +1,46 @@
+Title: IBM Changing the web service transport method for IBM Content Collector P8 connections from WSE to WCF - United States
+
+Text:
+ PRODUCT DOCUMENTATION
+
+ABSTRACT
+ Starting with IBM Content Collector 3.0 Fix Pack 2, Content Collector supports Microsoft's Windows Communication Foundation (WCF). If you are currently using Microsoft's Web Services Enhancements (WSE), you can change the web service transport method for existing IBM Content Collector P8 connections from WSE to WCF. 
+
+CONTENT
+Complete the following steps to start using WCF for P8 connections: 
+
+ 1. Activate WCF. For details about how to do this, go to the Internet Information Services (IIS) for Windows Server web site [http://www.iis.net/] and search for Windows Communication Foundation. 
+ 2. Install the SSL certificate of the IBM FileNet P8 Content Engine server for use on the IBM Content Collector server as described in the Providing SSL Certificates for IBM Content Collector Connectors technote at http://www.ibm.com/support/docview.wss?uid=swg21610358 [http://www.ibm.com/support/docview.wss?uid=swg21610358]. 
+ 3. To be able to modify a P8 connection that is currently used by a task route, edit the file ICCInstallDir\ctms\ApplicationSettings.xml:
+     1. Change the value of the <MigrationMode> element from false to true.
+        
+     2. Save the change. 
+        
+    
+    
+ 4. Open IBM Content Collector Configuration Manager and edit the P8 connection:
+     1. Change the connection type from http to https.
+        
+     2. Change the port number as required, for example, from 9080 to 9443.
+        
+     3. Save the changes.
+        
+    
+    
+ 5. Uninstall WSE from the IBM Content Collector server.
+    Important: If you leave WSE installed, IBM Content Collector uses it by default for all P8 connections. WCF is used only if WSE is not installed. 
+ 6. Edit the ApplicationSettings.xml file again:
+     1. Change the value of the <MigrationMode> element from true to false.
+        
+     2. Save the change.
+        
+    
+    
+ 7. Ensure that all required SSL certificates are in place before you start the Configuration Manager for the first time:
+    - You have imported the certificate for the FileNet P8 server into the keystore of the Content Collector Java Runtime Environment. See the topic IBM FileNet P8 validation fails using HTTPS connection in Initial Configuration/Setup Tools [http://www.ibm.com/support/knowledgecenter/api/content/SSAE9L_4.0.0/com.ibm.content.collector.doc_kc/troubleshooting/ts_afu_p8_validation_install.html] in the IBM Content Collector documentation.
+    - You have imported the certificate for the FileNet P8 server into the keystore of the Content Collector server. See the topic SSL certificate configuration for IBM Content Collector connectors [http://www.ibm.com/support/knowledgecenter/api/content/SSAE9L_4.0.0/com.ibm.content.collector.doc_kc/security/c_afu_ssl_certificates_connectors.html] in the IBM Content Collector documentation.
+    - You have established a trust relationship between the FileNet P8 server and the web application server. See the topic Establishing a trust relationship between the web application server and IBM FileNet P8 [http://www.ibm.com/support/knowledgecenter/api/content/SSAE9L_4.0.0/com.ibm.content.collector.doc_kc/installing/t_afu_establish_trust_relationship.html] in the IBM Content Collector documentation.
+    
+
+
+Important: If you prefer to use WSE as web service transport method for P8 connections, ensure that you have KB943508 [http://support.microsoft.com/kb/943508] installed.

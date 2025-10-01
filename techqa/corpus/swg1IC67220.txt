@@ -1,0 +1,182 @@
+Title: IBM IC67220: OUTSTANDING PROCESSING OCCURS IN AN AGGREGATION BLOCK AFTER A   MESSAGE IS RECEIVED BY THE STOP TERMINAL OF THE FANIN PRIMITIVE - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When there are multiple outstanding service
+   invoke operations (using asyncdeferred response) within an
+   aggregation block and a message is received at the stop
+   terminal of the FanIn primitive processing from the Service
+   Invokes will continue. This should not  happen,
+   and the results of the invocations should be removed.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: Users of WebSphere Enterprise Service Bus    *
+   *                 and WebSphere Process Server v6.2 or v7      *
+   *                 using a Stop terminal with Fan In/Fan Out    *
+   *                 and an async callout.                        *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: When there are multiple outstanding     *
+   *                      service invokes (using async            *
+   *                      deferred response) within an            *
+   *                      aggregation block and a message is      *
+   *                      received at the Stop terminal of the    *
+   *                      Fan In primitive, processing            *
+   *                      will continue from the service          *
+   *                      invokes. This should not happen,        *
+   *                      and the results of the invocations      *
+   *                      should be removed                       *
+   ****************************************************************
+   * RECOMMENDATION: When using invocation style async for        *
+   *                 multiple service invoke primitives, this     *
+   *                 APAR should be applied to prevent the stop   *
+   *                 terminal of the fan in primitive from        *
+   *                 generating an error.                         *
+   ****************************************************************
+   With multiple Service Invoke primitives leading to a Fan In
+   primitive, the invocation style of the Service Invoke can be
+   set to either sync or async. After connecting a Stop terminal
+   to the Fan In primitive and setting the invocation style of
+   the Service Invoke primitive to async, a message received at
+   the Stop terminal will not halt the service invokes and cause
+   an error such as:
+   
+   "CWSXM0100E: Multiple replies have been produced for a single
+   request"
+   
+   NOTE: This was also the case when using a sync invocation
+   style and was fixed with IC59660 [http://www-01.ibm.com/support/docview.wss?uid=swg1IC59660].
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The code was modified such that outstanding processing is
+   stopped
+   
+   There are no known side effects associated with this fix.
+   There is no known alternative workaround should you encounter
+   this problem.
+   
+   This code fix was targeted to be included in the following fix
+   packs:
+        6.2.0 Fix Pack 4 (v6.2.0.4)
+        7.0.0 Fix Pack 3 (v7.0.0.3)
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC67220
+   
+   
+ * REPORTED COMPONENT NAME
+   WEB ESB FOR WIN
+   
+   
+ * REPORTED COMPONENT ID
+   5724I8200
+   
+   
+ * REPORTED RELEASE
+   620
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-03-17
+   
+   
+ * CLOSED DATE
+   2010-05-17
+   
+   
+ * LAST MODIFIED DATE
+   2010-07-06
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEB ESB FOR WIN
+   
+   
+ * FIXED COMPONENT ID
+   5724I8200
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R100 PSN
+   UP
+   
+   
+ * R200 PSN
+   UP
+   
+   
+ * R300 PSN
+   UP
+   
+   
+ * R612 PSN
+   UP
+   
+   
+ * R620 PSY
+   UP
+   
+   
+ * R700 PSY
+   UP

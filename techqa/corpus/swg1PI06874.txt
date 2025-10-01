@@ -1,0 +1,139 @@
+Title: IBM PI06874: CICS VSAM RECOVERY DOCUMENTATION INCORRECTLY REFERS TO UTILITY DFHJUP INSTEAD OF DWWJUP - United States
+
+Text:
+z/os SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  There are several locations in the CICS VSAM Recovery
+   publications where references are made to the CICS TS utility
+   DFHJUP. These are incorrect. The references must be changed to
+   DWWJUP since DFHJUP will be unable to handle some logstreams if
+   CICS VR has written to them. An indication that this might be
+   the case is an error similar to the following:
+   
+   DFHLG0194 ERROR DETECTED BY CICS SUBSYSTEM.
+             INVALID HEADER ID  18400000 04081840 6EC4E6E6
+   
+   The last 4 bytes of the invalid header data above is '>DWW'
+   
+   The DFHJUP utility expects '>DFH' not '>DWW'.
+   
+   Additional Symptom(s) Search Keyword(s): KIXREVRJL
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Use DWWJUP for any logstream that has CICS VR records written
+   to it
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: This APAR affects CICS VR 5.1 and 4.3 users  *
+   *                 that use the DWWJUP utility.                 *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: CICS VR documentation incorrect refers  *
+   *                      to utility DFHJUP instead of DWWJUP.    *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   CICSVR 5.1 and 4.3 publications "Implementation Guide and
+   Reference" and "Messages and Problem Determination" were
+   updated to change DFHJUP references to DWWJUP.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Doc changes to the CICS VR 5.1 documents are in the infocenter
+   refresh that went out on 13 December 2013, for example:
+   http://pic.dhe.ibm.com/infocenter/cicsts/v5r1/topic/
+   com.ibm.cics.cvr.doc/dwwig/lscu.html [http://pic.dhe.ibm.com/infocenter/cicsts/v5r1/topic/com.ibm.cics.cvr.doc/dwwig/lscu.html]
+   Doc changes to the CICS VR 4.3 documents are in ftp://public.dhe
+   ibm.com/software/htp/cics/toolssoftware.cics.cvr.doc_4.3.4.jar
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI06874
+   
+   
+ * REPORTED COMPONENT NAME
+   CICS VSAM RECOV
+   
+   
+ * REPORTED COMPONENT ID
+   5655Y2400
+   
+   
+ * REPORTED RELEASE
+   510
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-11-25
+   
+   
+ * CLOSED DATE
+   2013-12-16
+   
+   
+ * LAST MODIFIED DATE
+   2013-12-16
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+Publications Referenced SC34281300 SC34281200 SC34691500 SC34691600 FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

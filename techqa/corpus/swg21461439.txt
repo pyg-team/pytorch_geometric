@@ -1,0 +1,34 @@
+Title: IBM Unexpected Token DXL errors and projects / folders Missing in Rational DOORS Database - United States
+
+Text:
+DOORS; project; folder; corrupt; corruption; empty; DXL; error; token; unexpected TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When I login to my Rational DOORS client I get DXL errors and then once the Rational DOORS database explorer displays, I don't see any of my projects or folders. 
+
+SYMPTOM
+When I login to my Rational DOORS client I get the following DXL errors:
+-R-E- DXL: <config/dbExplorerGlobals.inc:527> An unexpected error has 
+occurred: Unexpected Token 
+Backtrace: 
+<config/baseWindowCallbacks.inc:62> 
+<config/baseWindowCallbacks.inc:105> 
+<wizard/tip/tipwiz:444> 
+And then once the Rational DOORS database explorer displays, I don't see any of my projects or folders.
+
+CAUSE
+It is possible that the index files that contain information about the root level database projects and folders has been corrupt.
+
+RESOLVING THE PROBLEM
+You will need to open a PMR with the Rational DOORS support team and send the below listed files for further review. 
+
+
+On the Rational DOORS database server, in the $SERVERDATA\v6data folder, please locate the following files: 
+
+ * module.ixc 
+ * module.ixb 
+ * project.ixc 
+ * project.ixb
+
+
+Once located, please deliver them to IBM Rational Client Support via the PMR process.

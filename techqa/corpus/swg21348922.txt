@@ -1,0 +1,81 @@
+Title: IBM Cannot view IWR reports exported to CSV format in MS Excel - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Error
+
+'<server drive>\WinNT40\Profiles\<NTusername>\Temporary.xls'
+could not be found. Check the spelling of the file name,
+verify that the file location is correct.
+If you are trying to open the file from your list of most recently
+used files on the File menu, make sure that the file has not been
+renamed, moved, or deleted.
+(click OK)
+'Internet.xls' could not be found.
+Check the spelling of the file name,
+verify that the file location is correct.
+If you are trying to open the file from your list of most recently
+used files on the File menu, make sure that the file has not been
+renamed, moved, or deleted.
+(click OK)
+'Files\Y!CHUT8B\imrap.xls' could not be found.
+Check the spelling of the file name,
+verify that the file location is correct.
+If you are trying to open the file from your list of most recently
+used files on the File menu, make sure that the file 
+has not been
+renamed, moved, or deleted.
+
+These 3 errors occurs when you are attempting to view reports, exported in CSV format, in Excel. Internet Explorer browser will not view the CSV file in the Excel. Excel produces these 3 warning messages and will launch with a blank spreadsheet. 
+
+RESOLVING THE PROBLEM
+This occurs because the MIME [Multipurpose Internet Mail Extensions] types are not set for the CSV file type on the workstation and web server level.
+
+To set the CSV MIME on the workstation level, peform the following Steps:1. Open My Computer
+2. View menu |Options, go the File Types tab
+3. Search for Comma Separated value or Microsoft Excel Comma Separated
+Value. If none of these found, Add one with the following values:
+Mime Type: application/csv
+Default extension: .csv
+Check Confirm open after download
+Action: Open (with characteristics):
+Application used: "...\Microsoft Office\Office\excel.exe" /E
+Check DDE
+DDE Message: [open("%1"]
+Application: Excel
+Topic: system
+(save with these characteristics).
+
+
+To set the CSV MIME on the workstation level:
+
+For IIS web server:
+
+1. Start button, Programs, Windows NT 4.0 Option Pack,
+Microsoft Web Server, Internet Service Manager
+2. In the Microsoft Management Console, expand Console Root,
+Internet information Server, <server>, select Default Web site,
+right-click, select Properties
+3. Under the HTTP Headers tab, in the MIME Map section,
+click the File types button, register a New Type:
+Associated Extension: .csv
+Content Type (MIME): application/csv
+
+For Netscape Enterprise Server:
+
+1. Start button, Programs, Netscape SuiteSpot, Administration.
+2. Under Netscape Enterprise Server, click the server button
+3. Under the Server Preferences tab, select the MIME Types link
+3. Configure New Type:
+Category: Type
+Content-type: application/csv
+Suffix: csv
+Save changes.
+
+
+
+Cross Reference information Segment Product Component Platform Version Edition Business Analytics Cognos 8 Business Intelligence Cognos Connection Business Analytics Cognos Series 7 Impromptu Web Reports 
+HISTORICAL NUMBER
+ 79418

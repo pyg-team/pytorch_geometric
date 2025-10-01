@@ -1,0 +1,31 @@
+Title: IBM Webcast Replay: Using ITCAM to monitor MQ queue managers in Linux and Windows - United States
+
+Text:
+wste_webcast; WSTE; Support Technical Exchange; education; presentation; webcast; STEwebcastDocument; Monitoring; MQ; Linux; Windows WEBCAST
+
+ABSTRACT
+ This WebSphere Support Technical Exchange is designed to present an introduction on basic installation of IBM Tivoli Monitoring (ITM) and IBM Tivoli Composite Application Manager (ITCAM) Agents for WebSphere Messaging to monitor MQ queue managers in Linux and Windows.
+
+Level of Difficulty: Beginner 
+
+Presenter: Angel Rivera
+
+Date: 14 Sep 2016 
+
+PRESENTATION
+[http://www.ibm.com/i/v16/icons/weblecture.gif]WSTE-2016-09-14-MQ-monitoring-ITCAM-Rivera-v2.pdf [/support/docview.wss?uid=swg27048572&aid=2]WSTE-2016-09-14-MQ-monitoring-ITCAM-Rivera-v2.pdf [/support/docview.wss?uid=swg27048572&aid=1]
+Click the PDF file above to play the slide presentation for this Webcast. Right-click and select Save As to store the file on your local computer for later review.
+
+Get Adobe Reader [http://www.adobe.com/products/acrobat/readstep2.html] to view PDF
+
+AUDIO
+[http://www.ibm.com/i/v16/icons/aud.gif]To replay the recording of this Webcast, click on Download Audio [ftp://ftp.software.ibm.com/software/websphere/techexchange/Sep-14-2016-Rivera.mp3] (audio in MP3 format; Length 56 minutes, 27 seconds ) then open the PDF file above.
+
+Right-click and select Save As to store the file on your local computer for later playback.
+
+Problem listening to the audio replay?
+If you are having a problem listening to the audio when you use a left-click on the audio link above, you need to download the MP3 file to your local computer before playback by doing a right-click and Save As.
+
+RELATED INFORMATION
+ WebSphere Support Technical Exchange [http://www.ibm.com/software/websphere/webcast]
+Time Zone Converter [http://www.timeanddate.com/worldclock/converter.html]

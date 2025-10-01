@@ -1,0 +1,135 @@
+Title: IBM SQL0501N when a SELECT statement is issued from a DB2 Client connecting to DB2 z/OS database - United States
+
+Text:
+SQL0501N; -501; control center; command line; z/OS; SELECT; DB2 Client TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ How to resolve SQL0501N error when a SELECT statement is issued from a DB2 Client command line or Control Center connecting to a DB2 database running on z/OS? 
+
+SYMPTOM
+SQL statement issued from DB2 client command line 
+
+db2 "select count(*) from sysibm.sysvolumes"; 
+
+ * 
+ * 
+ * SQL0965W There is no message text corresponding to SQL warning "98" in the message file on this workstation. The warning was returned from module "DSNHTOKR" with original tokens "". SQLSTATE=01568 
+ * SQL0501N The cursor specified in a FETCH statement or CLOSE statement is not open or a cursor variable in a cursor scalar function reference is not open. SQLSTATE=24501 
+
+
+Snippet of db2trace.fmt from DB2 Client showing -501 error: 
+
+ 
+
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ *  sqlcode: -501
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+
+
+
+CAUSE
+The reason for the -501 error is that application received SQLCODE 0 with ENDQRYRM which is supposed be SQLCODE +100. This is a DB2 z/OS issue. 
+
+
+
+Snippet of db2trace.fmt from DB2 Client showing SQLCODE 0:
+
+
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 0000000000
+ * 
+ * 
+ * ==> SQLCODE is 0, but DB2 z/OS has to send SQLCODE 100
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+
+RESOLVING THE PROBLEM
+To resolve the problem, contact your z/OS administrator to turn off the ASG-TMON, a DB2 monitoring tool used on z/OS. 
+
+
+
+RELATED INFORMATION
+#sqlcode 100=>SQL0100W [http://publib.boulder.ibm.com/infocenter/db2luw/v9/index.jsp?topic=%2Fcom.ibm.db2.udb.msg-search.doc%2Fdoc%2Fsql0100-sch.htm&resultof=%22SQL0100%22%20%22sql0100%22]
+SQL0151N [http://publib.boulder.ibm.com/infocenter/db2luw/v9/index.jsp?topic=%2Fcom.ibm.db2.udb.msg-search.doc%2Fdoc%2Fsql0100-sch.htm&resultof=%22SQL0100%22%20%22sql0100%22]

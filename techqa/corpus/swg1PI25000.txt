@@ -1,0 +1,121 @@
+Title: IBM PI25000: DOC V8.5: HTTP://WWW-01.IBM.COM/SUPPORT/KNOWLEDGECENTER/SSHRKX_8.5.0/MP/INSTALL/RM_PRODUCTION_FARM.DITA NEEDS UPDATE - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  AFFECTED URL:
+   http://www-01.ibm.com/support/knowledgecenter/SSHRKX_8.5.0/mp/in [http://www-01.ibm.com/support/knowledgecenter/SSHRKX_8.5.0/mp/in]
+   stall/rm_production_farm.dita
+   .
+   TEXT READS:
+   The image of the Topology is incorrect as it indicates that
+   release and jcr db domains should be unique and the write up for
+   that section would need to be modified.
+   .
+   TEXT SHOULD READ:
+   The image should be updated to show only release as unique.
+   write up for section should indicate that only release would be
+   unique (in a unique Portal farm) while all db domains are shared
+   (in a shared Portal farm).
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Refer to the above.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  This is planned to be changed in the product documentation.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This is planned to be changed in the product documentation.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI25000
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSPHERE PORTA
+   
+   
+ * REPORTED COMPONENT ID
+   5724E7600
+   
+   
+ * REPORTED RELEASE
+   850
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-09-03
+   
+   
+ * CLOSED DATE
+   2014-12-03
+   
+   
+ * LAST MODIFIED DATE
+   2014-12-03
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

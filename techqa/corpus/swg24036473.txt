@@ -1,0 +1,59 @@
+Title: IBM Recommended interim fixes for IBM Business Process Manager V8.5.0 Fix Pack 1 (8.5.0.1) - United States
+
+Text:
+ DOWNLOADABLE FILES
+
+ABSTRACT
+ Interim fixes, including fixes for IBM WebSphere Application Server, are required for several business process management products. 
+
+DOWNLOAD DESCRIPTION
+
+
+TAB NAVIGATION
+ * Fix Pack installation instructions [http://www.ibm.com/support/docview.wss?uid=swg27039247]
+ * Profile upgrade instructions [http://www.ibm.com/support/docview.wss?uid=swg27039081]
+ * Recommended fixes [http://www.ibm.com/support/docview.wss?uid=swg24036473]
+
+
+Recommended Interim Fixes
+This document provides you with links to the interim fixes that are recommended for V8.5.0 Fix Pack 1 for the following products,: 
+
+ * IBM Business Process Manager Standard 
+ * IBM Business Process Manager Express 
+ * IBM Business Process Manager Advanced 
+ * IBM Business Process Manager Advanced – Process Server 
+
+Note: You need to clear the Show recommended only option in Installation Manager to see the recommended WebSphere Application Server fixes. 
+
+Recommended : WebSphere Application Server V8.5.5 Fix Pack 1 interim fixes for the IBM Business Process Manager V8.5.0 Fix Pack 1 products 
+Fix Name Package file 8.5.5.1-WS-WASProd-IFPI05987
+8.5.5.0-WS-WASProd-IFPI04967  * 8.5.5.1-WS-WASProd-IFPI05987.zip
+   8.5.5.0-WS-WASProd-IFPI04967.zip
+
+
+Recommended Interim fixes for IBM Business Process Manager Standard V8.5.0.1 [http://www-933.ibm.com/support/fixcentral/swg/quickorder?parent=ibm%7EWebSphere&product=ibm/WebSphere/IBM+Business+Process+Manager+Standard&release=8.5.0.1&platform=All&function=recommended&source=fc]
+
+
+
+Recommended Interim fixes for IBM Business Process Manager Express V8.5.0.1 [http://www-933.ibm.com/support/fixcentral/swg/quickorder?parent=ibm%7EWebSphere&product=ibm/WebSphere/IBM+Business+Process+Manager+Express&release=8.5.0.1&platform=All&function=recommended&source=fc] 
+
+Recommended Interim fixes for IBM Business Process Manager Advanced V8.5.0.1 [http://www-933.ibm.com/support/fixcentral/swg/quickorder?parent=ibm%7EWebSphere&product=ibm/WebSphere/IBM+Business+Process+Manager+Advanced&release=8.5.0.1&platform=All&function=recommended&source=fc]
+
+
+
+Recommended Interim fixes for IBM Business Process Manager Advanced - Process Server V8.5.0.1 [http://www-933.ibm.com/support/fixcentral/swg/quickorder?parent=ibm%7EWebSphere&product=ibm/WebSphere/IBM+Business+Process+Manager+Advanced&release=8.5.0.1&platform=All&function=recommended&source=fc]
+
+INSTALLATION INSTRUCTIONS
+The following links contain the download, installation, and upgrade instructions for the fix pack. You are strongly encouraged to read these documents prior to installing the fix pack and the interim fixes. 
+
+URL LANGUAGE SIZE(Bytes) Fix pack download information [http://www.ibm.com/support/docview.wss?uid=swg24035702] English 9999 Install instructions [http://www.ibm.com/support/docview.wss?uid=swg27039247] English 9999 Profile upgrade instructions [http://www.ibm.com/support/docview.wss?uid=swg27039081] English 9999 
+DOWNLOAD PACKAGE
+
+
+
+
+Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options 
+What is Fix Central(FC)? [https://www.ibm.com/support/fixcentral/help?page=swfaqs] 8.5.5.1-WS-WASProd-IFPI05987.zip 15 Nov 2013 English 252577 FC [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~WebSphere&product=ibm/WebSphere/WebSphere Application Server&release=8.5.5.1&platform=All&function=aparId&apars=PI05987] [ ] 8.5.5.0-WS-WASProd-IFPI04967.zip 31 Oct 2013 English 266247 FC [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~WebSphere&product=ibm/WebSphere/WebSphere Application Server&release=8.5.5.0&platform=All&function=aparId&apars=PI04967] [ ] 
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Business Process Manager Standard Installation / Configuration AIX, Linux, Linux zSeries, Solaris, Windows 8.5.0.1 Business Integration IBM Business Process Manager Express Installation / Configuration Linux, Windows 8.5.0.1 
+PRODUCT ALIAS/SYNONYM
+ BPM

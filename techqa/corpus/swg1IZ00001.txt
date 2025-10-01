@@ -1,0 +1,159 @@
+Title: IBM IZ00001: PROBE REQUIRES PROBE-NONNATIVE-BASE-0" AND ITS NOT AVAILABLE ON XL - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  '
+   
+   
+   bash-2.05# nco_patch -install
+   /opt/muse/Omnibus7/probe/5620/omnibus-3.x-solaris2-probe-nco-p-a
+   lcatel-5620-sam-v4-0_0
+   Installing Patch
+   "/opt/muse/Omnibus7/probe/5620/omnibus-3.x-solaris2-probe-nco-p-
+   alcatel-5620-sam-v4-0_0" ...
+   ......
+   Are you sure you want to install this patch? (y/n)? [default: y]
+   ERROR : Cannot install patch
+   "/opt/muse/Omnibus7/probe/5620/omnibus-3.x-solaris2-probe-nco-p-
+   alcatel-5620-sam-v4-0_0" because of the following reason(s)
+   ERROR :    * Requires patch "probe-nonnative-base-0" to be
+   installed
+   ERROR :      Contact Micromuse Support for patch
+   "probe-nonnative-base-0"
+   
+   
+   '
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  NA
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All users of the Probe for Alcatel 5020 SAM. *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: A customer has reported difficulty in   *
+   *                      locating the probe-nonnative-base-0     *
+   *                      patch that is listed in the             *
+   *                      Netcool/OMNIbus Probe for Alcatel 5620  *
+   *                      SAM Reference Guide as a requirement    *
+   *                      for running this probe.                 *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   *                                                              *
+   ****************************************************************
+   The following information will be added in the requirements
+   section of the Summary table of the Probe for Alcatel 5620 SAM
+   Reference Guide:
+   
+   To obtain the probe-nonnative-base-0 patch, access the Passport
+   Advantage website: http//www.ibm.com/software/passportadvantage
+   
+   Select Software Downloads. Perform a text search on nonnative.
+   Select Expand All to see all search results. Select the patch
+   that corresponds to your hardware platform.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The product documentation will be updated with the next release
+   of Tivoli Netcool/OMNIbus Probe for Alcatel 5620 SAM.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ00001
+   
+   
+ * REPORTED COMPONENT NAME
+   NETCOOL/OMNIBUS
+   
+   
+ * REPORTED COMPONENT ID
+   5724O4800
+   
+   
+ * REPORTED RELEASE
+   100
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2007-06-13
+   
+   
+ * CLOSED DATE
+   2007-10-31
+   
+   
+ * LAST MODIFIED DATE
+   2007-10-31
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+Publications Referenced SC23766300 FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ALCATEL SAM V4
+   
+   
+ * FIXED COMPONENT ID
+   5724P17AV
+   
+   
+
+APPLICABLE COMPONENT LEVELS

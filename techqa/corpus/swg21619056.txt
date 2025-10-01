@@ -1,0 +1,113 @@
+Title: IBM ncp_ncogate unable to connect to objectserver - United States
+
+Text:
+ncp_ncogate; objectserver TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ After an ITNM restart, the ncp_ncogate process will not start. 
+
+SYMPTOM
+On an ITNM process restart (itnm_start -domain XYZ ncp) the ncp_ncogate process attempts to restart 5 times then fails. 
+
+The log and trace files for ncp_ncogate report that connection to ObjectServer is refused.
+
+
+ncp_ncogate.XYZ.log: 
+
+ 
+
+08/03/11 19:08:34: Warning: W-MOM-001-001: [1t] ncp_ncogate[20185286] Becoming Primary
+08/03/11 19:08:36: Warning: W-NCO-001-007: [2571t] Using entity 'papa03' as the ITNM Server
+08/03/11 19:08:36: Warning: W-RIV-002-128: [2571t] NcoConnect.cc(1154) 
+08/03/11 19:08:36: Fatal: F-RIV-002-208: [2571t] CNcoGateNcoEventMgr.cc(364) Exit function called Unable to connect to ObjectServer named: NETCOMNI
+
+
+ncp_ncogate.XYZ.trace: 
+
+ 
+
+Attempting topology download...ncp_ncogate[20185290] Becoming Primary for tier 1
+Precision Server EntityName: ITNM
+Error on socket 19. NcoConnect::ConnectToObjectServer: connect(). Reason: A remote host refused an attempted connect operation. Error No: 79
+Wed Aug 3 19:08:46 2011 Warning:A generic non-fatal error has occurred found in file NcoConnect.cc at line 1154
+Wed Aug 3 19:08:46 2011 Termination: Exit function called found in file CNcoGateNcoEventMgr.cc at line 364
+Unable to connect to ObjectServer named: NETCOMNI
+ncp_ncogate is dead.
+
+
+CAUSE
+The name resolution (DNS and /etc/hosts) had been changed. The domain-name had been removed from the /etc/resolv.conf file. The /etc/hosts file only had the IP Address and Hostname of the ObjectServer.
+
+
+
+DIAGNOSING THE PROBLEM
+Edit the CtrlServices.XPZ.cfg so that ncp_ncogate is in debug 4 when starting up. 
+
+(
+"ncp_ncogate",
+"$PRECISION_HOME/platform/$PLATFORM/bin",
+"$PRECISION_DOMAIN",
+[ "-domain" , "$PRECISION_DOMAIN", "-server", "XPZOMNI_P", "-latency", "100000" , "-debug", "4", "-messagelevel", "warn"],
+[ "ncp_f_amos" ],
+5
+); 
+
+Restart the ncp_ncogate process. 
+
+Review the ncp_ncogate.trace file for the statement 
+
+ "RivGetHostByName_r()" - make sure it is successful. 
+
+If connection to objectserver is successful, it will look like this:
+
+RSMProcessOQL: select * from connection.credentials;
+Select
+CNcoConnection::IsRecordValid:
+{
+m_Username='root';
+m_Password='';
+m_EncryptedPwd=0;
+}
+Making the connection...
+Connection established.
+RivGetHostByName_r()
+IDUC connection established.
+RivIoctl()
+RivIoctl_FION()
+NcoConnect::ConnectToObjectServer() succeeded 
+
+------------------------------------------------------------------------------------------------- 
+
+In this case when it was failing, these messages were being displayed: 
+
+
+RivGetHostByName_r()
+Error on socket 19. NcoConnect::ConnectToObjectServer: connect().
+Reason: A remote host refused an attempted connect operation. ErrorNo: 79
+Wed Aug 3 19:08:26 2011 Warning:A generic non-fatal error has occurred found in file NcoConnect.cc at line 1154 
+Wed Aug 3 19:08:26 2011 Termination: Exit function called found in file CNcoGateNcoEventMgr.cc at line 364 
+
+ 
+
+On a check whether pings to the OMNIbus server were successful, found the following: 
+
+Only a ping to hostname or ip address was successful. 
+
+ping netcomni # Successful pings 
+
+ping 172.30.14.24 # Successful pings 
+
+A ping to the hostname.domain failed to find an IP address. 
+
+ping netcomni.boulder.ibm.com # FAILED to respond, unable to locate IP Address 
+
+The customer's machine did not a have a DNS domain defined in the /etc/resolv.conf. Switched from a DNS based name, IP lookup to file based /etc/hosts lookup only, after the IBM Tivoli Netcool/OMNIbus and ITNM-IP had already been installed, configured and operational.
+
+
+
+RESOLVING THE PROBLEM
+The /etc/hosts file entry for the ObjectServer was updated to include the hostname.domain. 
+
+i.e: 172.30.15.10 netcomni netcomni.ibm.com 
+
+Now the ncp_ncogate process is able to connect to objectserver and ncp_ncogate successfully started.

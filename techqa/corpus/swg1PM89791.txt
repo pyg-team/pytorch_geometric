@@ -1,0 +1,188 @@
+Title: IBM PM89791: ACCESSING MULTIPLE TM1 SERVER INSTANCES FROM TM1 WEB DOES NOT WORK AS DOCUMENTED - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  On accessing multiple TM1 server instances from TM1 Web see the
+   manual IBM Cognos TM1 10.1.1 TM1 Installation and Configuration
+   Guide -> ??   ??
+   ??http://pic.dhe.ibm.com/infocenter/ctm1/v10r1m0/topic/com.ibm.s
+   wg.ba.cognos.tm1_inst.10.1.1.doc/c_accessingmultipletm1serversfr
+   omtm1web_n500b7.html?path=0_3_4_1_0#AccessingMultipleTM1Serversf
+   romTM1Web_N500B7??TM1
+   Installation and Configuration Guide 10.1.1 ??Architecture >
+   Cognos TM1 Web architecture >??   ??Accessing multiple Cognos
+   TM1 servers from Cognos TM1 Web??   ??IBM Cognos TM1 Web
+   provides multi-database support, allowing users to access
+   multiple Cognos TM1 servers that are registered on the same
+   Cognos TM1 Admin Server and where users have the same user name
+   and password combination.??   ??When you log in, Cognos TM1 Web
+   displays the Navigation pane for the primary server that you
+   selected on the login screen. However, if your user name and
+   password combination matches other Cognos TM1 servers registered
+   under the same Cognos TM1 Admin Server, then IBM Cognos TM1 Web
+   will automatically log you in to these other servers on an
+   as-needed basis. This behavior is different from Cognos TM1
+   Architect and Cognos TM1 Perspectives where you have to log into
+   other Cognos TM1 servers as a separate, manual step.??
+   ??Multi-database support mainly applies to Websheets because
+   they can contain Cognos TM1 formulas and references that point
+   to other Cognos TM1 servers. For example, if you open a Websheet
+   that does contain Cognos TM1 references to another server
+   registered under the same Admin Server, Cognos TM1 Web will
+   attempt to log you into this other server using your current
+   user name and password.??   ??   ??So if there are four TM1
+   server instances A, B, C and D which are all registered with the
+   same TM1 Admin Server, and a user has the same TM1 username and
+   password on all four instances, and in TM1 Web that user logs on
+   to one of the four TM1 server instances, he can query all four
+   TM1 server instance not only the one he logged on to.??   ??So
+   the user can log on to the TM1 server instance A and in addition
+   to the instance A also query the instances B, C and D.??Or the
+   user can log on to the TM1 server instance B and in addition to
+   the instance B also query the instances A, C and D.??Or the user
+   can log on to the TM1 server instance C and in addition to the
+   instance C also query the instances A, B and D.??Or the user can
+   log on to the TM1 server instance D and in addition to the
+   instance D also query the instances A, B and C.??   ??To
+   summarize:??All TM1 server instances are equal. There is no
+   hierarchy of TM1 server instances.??   ??   ??But that is not
+   how it worked in my tests with TM1 Web Version 10.1.1 and 10.1.1
+   FP1:??What I experienced was a hierarchy of TM1 server
+   instances, an alphabetically descending order,  based on the
+   servername of the instances.??When the servername of a TM1
+   server instance I queried (using a DBRW formula in a websheet)
+   was before the instance I logged on to, the query returned
+   results.??When the servername of a TM1 server instance I queried
+   (using a DBRW formula in a websheet) was behind the instance I
+   logged on to, the query did not return results.??   ??   ??When
+   a user logged on to the TM1 server instance A and queried the
+   instances B, C and D he got no results from the instances B, C
+   and D.??When a user logged on to the TM1 server instance B and
+   queried the instances A, C and D he got results from the
+   instance A, but he got no results from the instances C and
+   D.??When a user logged on to the TM1 server instance C and
+   queried the instances A, B and D he got results from the
+   instance A and B, but he got no results from the instance
+   D.??When a user logged on to the TM1 server instance D and
+   queried the instances A, B and C he got results from the
+   instances A, B and C.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * All Users                                                    *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * See error description.                                       *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Please upgrade to IBM Cognos TM1 10.2                        *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Code Fix
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM89791
+   
+   
+ * REPORTED COMPONENT NAME
+   TM1 WEB
+   
+   
+ * REPORTED COMPONENT ID
+   5724W49WB
+   
+   
+ * REPORTED RELEASE
+   A11
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-05-25
+   
+   
+ * CLOSED DATE
+   2013-09-12
+   
+   
+ * LAST MODIFIED DATE
+   2013-09-12
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TM1 WEB
+   
+   
+ * FIXED COMPONENT ID
+   5724W49WB
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * RA20 PSN
+   UP

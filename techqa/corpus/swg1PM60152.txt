@@ -1,0 +1,192 @@
+Title: IBM PM60152: [wi 201063]RTC plugin for RDZ corrupts other plugins. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The RTC plugin for RDZ currently causes any changes to other
+   installed custom plugins to fail.  This was a problem for RSA as
+   well, but was limited to the P2 based install of the plugin (we
+   got around this by  using the IM based installation of the
+   plugin).  However, this work around does not work for RDZ
+   version 8.0.3.  Both types of  installations cause this issue
+   for RDZ.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   The RTC plugin for RDZ currently causes any changes to other
+   installed custom plugins to fail.  This was a problem for
+   RSA as well, but was limited to the P2 based install of the
+   plugin (we got around this by  using the IM based
+   installation of the plugin).  However, this work around does
+   not work for RDZ version 8.0.3.  Both types of
+   installations cause this issue for RDZ.
+   
+   When they added the RTC plugins they were no longer able to
+   take in any updated plugins from RDz.
+   Even when they removed the RTC plugins they ran into the
+   same problem. They were required to reinstall RDz.
+   
+   Environment:
+   RTC 3.0.1
+   RDz 8.0.3
+   Windows XP 32 bit
+   
+   
+   1. Scenario
+   Scenario (choose:  Install | Update | Modify | Rollback |
+   Uninstall):
+   It sounds like an Install, can you confirm?
+   
+   2. Products and versions:
+   Full offering name and version of the product:
+   Rational Team Concert -Eclipse IDE 3.0.1
+   
+   Installation Manager version:
+   
+   
+   3. Steps:
+   Steps to reproduce the problem:
+   1) Install RDz 8.0.3 (please attach the details of the
+   install)
+   2) Install RTC 3.0.1 on top of it??
+   ?) What next? How do you reproduce the problem?
+   
+   3.1 Do not forget to add this information:
+   Indicate the optional features or applications that you are
+   installing (languages)
+   Indicate the install directory that you are using
+   Repositories of all the products in the package group
+   
+   4. Mutimedia:
+   Do you have logs? Please attach them
+   
+   Screen shot(s) of the error(s).
+   
+   5. Machine information
+   Machine Operative System version:
+   Windows XP
+   
+   Machine Architecture (x86|x86_64|PPC (64)|s390 (64)|Sparc):
+   x86
+   
+   Are you using the web-installer a.k.a Launchpad?
+   
+   Is the problem reproducible by others?
+   
+   6. Special scenarios
+   Other information that can help us to identify the defect:
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The RTC plugin for RDZ currently causes any changes to other
+   installed custom plugins to fail.  This was a problem for
+   RSA as well, but was limited to the P2 based install of the
+   plugin (we got around this by  using the IM based
+   installation of the plugin).  However, this work around does
+   not work for RDZ version 8.0.3.  Both types of
+   installations cause this issue for RDZ.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM60152
+   
+   
+ * REPORTED COMPONENT NAME
+   RATL ASSET MGR
+   
+   
+ * REPORTED COMPONENT ID
+   5724R4200
+   
+   
+ * REPORTED RELEASE
+   301
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-03-09
+   
+   
+ * CLOSED DATE
+   2012-06-20
+   
+   
+ * LAST MODIFIED DATE
+   2012-06-20
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   RATL TEAM CONCE
+   
+   
+ * FIXED COMPONENT ID
+   5724V0400
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R301 PSN
+   UP

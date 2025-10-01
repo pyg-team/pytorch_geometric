@@ -1,0 +1,31 @@
+Title: IBM While migrating to WebSphere Portal V. 8 from 6.1.x or 7.x one may get SAXException during running upgrade-profile task when using MSSQL for database. - United States
+
+Text:
+migration; upgrade-profile; SAXException TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+While executing upgrade-profile task it fails with following : 
+
+From the ConfigTrace.log : 
+
+
+/usr/IBM/WebSphere8/PortalServer/jcr/wp.content.repository.install/config/includes/jcr.mig_cfg.xml:215: java.lang.Exception: org.xml.sax.SAXException: The database name component of the object qualifier must be the name of the current database. 
+at com.ibm.cm.jcr.migrator.MigrationController.execute(MigrationController.java:139) at org.apache.tools.ant.UnknownElement.execute(UnknownElement.java:275) 
+at org.apache.tools.ant.Task.perform(Task.java:364) 
+
+
+RESOLVING THE PROBLEM
+MSSQL is case-sensitive. 
+
+
+In this particular case, the name of database would be in upper case in the server, but the name specified in wkplc_dbdomain.properties is in lower case. 
+
+Hence update in wkplc_dbdomain.properties appropriately and re-run the upgrade-profile task. 
+For instance, 
+Change jcr.DbName=jcr615db to jcr.DbName=JCR615DB
+
+
+
+
+ * 
+ *

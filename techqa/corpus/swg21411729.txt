@@ -1,0 +1,44 @@
+Title: IBM Preview Microsoft Office 2007 documents in Lotus Quickr 8.1.1 - United States
+
+Text:
+ms office; word; powerpoint; excel; preview; previewing TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+Users cannot preview Microsoft Office 2007 documents in Lotus Quickr 8.1.1 services for WebSphere Portal.
+
+CAUSE
+The MIME types and convertor definitions for these formats are not set by default.
+
+RESOLVING THE PROBLEM
+To add preview for Microsoft Office 2007 documents in Lotus Quickr 8.1.1, follow these steps: 
+
+ 1. Navigate to <Quickr>/AppServer/java/jre/lib and edit content-types.properties
+    Add the following MIME type definitions (add them after the application/vnd.ms-excel entry):
+    
+    application/vnd.openxmlformats-officedocument.wordprocessingml.document: \
+    description=MS Word Document;\
+    file_extensions=.docx
+    
+    application/vnd.openxmlformats-officedocument.presentationml.presentation: \
+    description=MS Powerpoint Presentation;\
+    file_extensions=.pptx
+    
+    application/vnd.openxmlformats-officedocument.spreadsheetml.sheet
+    : \
+    description=MS Excel Spreadsheet;\
+    file_extensions=.xlsx
+    
+ 2. Navigate to <Quickr>/PortalServer/shared/app and edit convertors.xml
+    Add the following inputs (Add them to the convertors having inputs like <input>application/vnd.ms-powerpoint</input>)
+    
+    <input>application/vnd.openxmlformats-officedocument.wordprocessingml.document</input>
+    <input>application/vnd.openxmlformats-officedocument.presentationml.presentation</input>
+    <input>application/vnd.openxmlformats-officedocument.spreadsheetml.sheet</input>
+    
+ 3. Restart your Lotus Quickr server 
+ 4. Upload an Office 2007 doc and Preview
+
+
+
+ * 
+ *

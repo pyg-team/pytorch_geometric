@@ -1,0 +1,198 @@
+Title: IBM PI19036: PROVIDE TLSV1.1 AND TLSV1.2 PROTOCOL SUPPORT FOR DAEMON SYSTEM SSL - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Provide TLSv1.1 and TLSv1.2 protocol support for Daemon System
+   SSL
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All users of z/OS IBM WebSphere Application  *
+   *                 Server V7.0.                                 *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: z/OS Daemon does not have               *
+   *                      protocol TLS1.1 and TLS1.2 support.     *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   Customers wanting to implement TLS1.1 and TLS1.2 protocol
+   communications between clients and the z/OS Location Server
+   Daemon can not.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  TLS1.1 and TLS1.2 protocol communications to the z/OS Location
+   Server Daemon have been enabled. The Infocenter has been
+   update with the following enablement instructions:
+   
+   The SSL and TLS protocols can be set in the z/OS Daemon using
+   the following WebSphere variables. Setting the variable to 1
+   enables the protocol, while 0 disables it.
+   
+   note: PTF coverletters are delimited with the use of the
+   characters slash followed by asterick. Since the text below is
+   included in the PTF coverletter associated with this APAR, the
+   slash asterick pairs below have been changed to
+   slash-dash-asterisk to deal with this issue.
+   
+   DAEMON_com_ibm_DAEMON_protocol_TLSv1_enabled    //-* default 1
+   DAEMON_com_ibm_DAEMON_protocol_TLSv1_1_enabled  //-* default 0
+   DAEMON_com_ibm_DAEMON_protocol_TLSv1_2_enabled  //-* default 0
+   
+   DAEMON_com_ibm_DAEMON_protocol_SSLv2_enabled    //-* default 0
+   DAEMON_com_ibm_DAEMON_protocol_SSLv3_enabled    //-* default 1
+   
+   APAR PM99397 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM99397] requires a change to documention.
+   
+   Note: We update our information centers monthly. The following
+   Version 7.0 modifications will be available in the April 2014
+   update to the Information Centers. To access the latest
+   on-line documentation, go to the product library page at
+   http://www.ibm.com/software/webservers/appserv/library and
+   select the version and product that is appropriate for your
+   WebSphere Application Server environment.
+   
+   The following Version 7.0 issue will be addressed:
+   
+   Problem: New function has been added to enable the TLS1.1 and
+   TLS1.2 protocols
+   
+   Resolution: a new paragraph has been added to the topic that
+   states the following:
+   
+   The SSL and TLS protocols can be set in the z/OS Daemon using
+   the following WebSphere variables. Setting the variable to 1
+   enables the protocol, while 0 disables it.
+   DAEMON_com_ibm_DAEMON_protocol_TLSv1_enabled    //-* default 1
+   DAEMON_com_ibm_DAEMON_protocol_TLSv1_1_enabled  //-* default 0
+   DAEMON_com_ibm_DAEMON_protocol_TLSv1_2_enabled  //-* default 0
+   
+   DAEMON_com_ibm_DAEMON_protocol_SSLv2_enabled    //-* default 0
+   DAEMON_com_ibm_DAEMON_protocol_SSLv3_enabled    //-* default 1
+   
+   This update applies also to the Version  V8.0, V8.5, and
+   V8.5.5 information centers.
+   
+   APAR PI19036 is currently targeted for inclusion in Fix Pack
+   7.0.0.33 of WebSphere Application Server
+   
+   Please refer to URL:
+   //www.ibm.com/support/docview.wss?rs=404&uid=swg27006970
+   for Fix Pack availability.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI19036
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSPHERE FOR Z
+   
+   
+ * REPORTED COMPONENT ID
+   5655I3500
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-05-30
+   
+   
+ * CLOSED DATE
+   2014-06-03
+   
+   
+ * LAST MODIFIED DATE
+   2014-07-01
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    PM99397 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM99397]
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  BBGUBINF BBOUBINF
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBSPHERE FOR Z
+   
+   
+ * FIXED COMPONENT ID
+   5655I3500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R700 PSY UI18561 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI18561]
+   UP14/06/21 P F406
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

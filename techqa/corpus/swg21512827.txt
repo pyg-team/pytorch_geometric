@@ -1,0 +1,15 @@
+Title: IBM How to drop openpages user without using the Oracle system password - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ How to drop openpages user without using the Oracle system password 
+
+RESOLVING THE PROBLEM
+Attached is the script that you can execute as "openpages" and delete all the objects created by it. To use the script do the following sqlplus openpages/openpages@SOX9I sql>@DeleteAll-user-object.txt C:\temp; This will identify all the objects created by openpages and clean it up. To confirm that all the objects has been deleted you can run sqlplus openpages/openpages@SOX9I sql>select count(*) from user_objects; This should return 0. The only minor glitch with systems where the DB was loaded as "system" user (imp system/oracle file= ... touser =... fromuser=...) is that the Cleanup JOB and Types gets created under "system" user and openpages does not have permissions to drop them. To get around it the DBA can execute the dbms_job.remove(jobid) and remove the job using the system login. Again if the DBA does not cooperate on this either then we can make a minor tweak to AuroraProcCreate.sql to comment out dbms_job.submit(retcode,'JOBS_aurora.Search_cleanUP(5);',sysdate,'sysdate+1/24/60*5'); . This will prevent the job from being created twice. Please use this script with system on 302 Update 4 and under only.
+
+DeleteAll-user-object.txt [/support/docview.wss?uid=swg21512827&aid=2] - DeleteAll-user-object.txt [/support/docview.wss?uid=swg21512827&aid=1]
+
+HISTORICAL NUMBER
+ 164

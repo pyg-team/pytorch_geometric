@@ -1,0 +1,259 @@
+Title: IBM IT14509: MFT 7.5 AND 8 LOGGING STOPS AFTER TURNING OFF TRACE AFTER APAR IT04219 APPLIED - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Trace is enabled on an MQ Managed File Transfer agent, using the
+   command:
+   
+   fteSetAgentTraceLevel -traceAgent <trace specification>=<level>
+   <agent name>
+   
+   When trace is turned off, using the command:
+   
+   fteSetAgentTraceLevel -traceAgent <trace specification>=off
+   <agent name>
+   
+   no more messages are written to the agent's output0.log file
+   until the agent is stopped and restarted.
+   
+   
+   For example, when using an MQ V8.0.0.2 Managed File Transfer
+   agent, running the commands
+   
+   fteSetAgentTraceLevel -traceAgent com.ibm.wmqfte=all <agent
+   name>
+   fteSetAgentTraceLevel -traceAgent com.ibm.wmqfte=off <agent
+   name>
+   fteStopAgent <agent name>
+   
+   result in the following messages being written to the agent's
+   output0.log file:
+   
+   BFGUT0001I: The trace specification has changed to
+   "com.ibm.wmqfte=all".
+   BFGUT0001I: The trace specification has changed to
+   "com.ibm.wmqfte=off".
+   BFGAG0169I: A request to shut down this agent has been received.
+   BFGAG0060I: The agent has completed its current transfers and is
+   now stopping.
+   
+   When the same commands are run using an MQ V8.0.0.4 Managed File
+   Transfer agent, only the message shown below is written to the
+   agent's output0.log file:
+   
+   BFGUT0001I: The trace specification has changed to
+   "com.ibm.wmqfte=all".
+   
+   No more messages are written to the file until the agent is
+   restarted.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   This issue affects two categories of user:
+   
+   Category 1:
+   -----------------
+   Users of:
+   
+   - The WebSphere MQ V7.5.0.6 Managed File Transfer component.
+   - The MQ V8.0.0.3 and V8.0.0.4 Managed File Transfer component.
+   
+   who enable and then disable trace for an agent.
+   
+   Category 2:
+   -----------------
+   Users of:
+   
+   - The WebSphere MQ V7.5.0.5 Managed File Transfer component (and
+   earlier).
+   - The MQ V8.0.0.2 Managed File Transfer component (and earlier).
+   
+   who have applied an interim fix for APAR IT04219 [http://www-01.ibm.com/support/docview.wss?uid=swg1IT04219], and enable and
+   then disable trace for an agent.
+   
+   who enable and disable trace for an agent.
+   
+   
+   Platforms affected:
+   MultiPlatform
+   
+   ****************************************************************
+   PROBLEM DESCRIPTION:
+   APAR IT04219 [http://www-01.ibm.com/support/docview.wss?uid=swg1IT04219] addressed an issue where running the command:
+   
+   fteSetAgentTraceLevel -traceAgent <trace specification>=off
+   <agent name>
+   
+   did not completely turn off trace as expected. After the command
+   was run, trace entries from the Java Message Queueing Interface
+   (JMQI) component (which is used by Managed File Transfer agents
+   to communicate with MQ queue managers) continued to be written
+   to the trace file. The fix for IT04219 [http://www-01.ibm.com/support/docview.wss?uid=swg1IT04219] ensured that tracing of
+   the JMQI component was explicitly turned off if the
+   fteSetAgentTraceLevel command was run specifying a trace level
+   of "off".
+   
+   As a result of the fix for IT04219 [http://www-01.ibm.com/support/docview.wss?uid=swg1IT04219], the mechanism used by an
+   agent to publish information to it's Event Log (output0.log),
+   which is closely coupled to the tracing infrastructure, was also
+   turned off when the fteSetAgentTraceLevel command was run
+   specifying a trace level of "off". This meant that once trace
+   was turned off, no more messages would be written to the agent's
+   Event Log until the agent was restarted.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Since APAR IT04219 [http://www-01.ibm.com/support/docview.wss?uid=swg1IT04219] was taken, two additional APARs have been
+   raised and closed which ensure that Managed File Transfer agent
+   trace only contains information from the Java Message Queueing
+   Interface (JMQI) component if the trace specification used to
+   enable trace includes the package "com.ibm.mq". These APARs are:
+   
+   IT09433 [http://www-01.ibm.com/support/docview.wss?uid=swg1IT09433] :
+   MQ MANAGED FILE TRANSFER TRACE GENERATES UNWANTED TRACE POINTS
+   
+   IT11278 [http://www-01.ibm.com/support/docview.wss?uid=swg1IT11278]:
+   WEBSPHERE MQ AMS ALWAYS GENERATE TRACE POINTS IN MFT, CLASSES
+   FOR JAVA AND CLASSES FOR JMS TRACE OUTPUT
+   
+   As a result of these APARs, the issue that was originally
+   reported in IT04219 [http://www-01.ibm.com/support/docview.wss?uid=swg1IT04219] will no longer occur. Because of this, the
+   changes for IT04219 [http://www-01.ibm.com/support/docview.wss?uid=swg1IT04219] have been backed out, which means that
+   information will continue to be written to an agent's Event Log
+   after agent trace has been turned off.
+   
+   NOTE:
+   The "Problem Conclusion" section of IT04219 [http://www-01.ibm.com/support/docview.wss?uid=swg1IT04219] contains the
+   following information:
+   
+   "[The code changes for IT04219 [http://www-01.ibm.com/support/docview.wss?uid=swg1IT04219]] allows the release of the lock
+   on the trace output file..."
+   
+   The fix for this APAR reverts this behaviour, so that the trace
+   file will now be locked until the agent is stopped.
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+   Version    Maintenance Level
+   v7.5       7.5.0.7
+   v8.0       8.0.0.5
+   
+   The latest available FTE maintenance can be obtained from
+   'Fix List for WebSphere MQ File Transfer Edition 7.0'
+   http://www-01.ibm.com/support/docview.wss?uid=swg27015313 [http://www-01.ibm.com/support/docview.wss?uid=swg27015313]
+   
+   The latest available MQ maintenance can be obtained from
+   'WebSphere MQ Recommended Fixes'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037]
+   
+   If the maintenance level is not yet available information on
+   its planned availability can be found in 'WebSphere MQ
+   Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT14509
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ MFT
+   
+   
+ * REPORTED COMPONENT ID
+   5724H7242
+   
+   
+ * REPORTED RELEASE
+   750
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-03-29
+   
+   
+ * CLOSED DATE
+   2016-04-25
+   
+   
+ * LAST MODIFIED DATE
+   2016-05-03
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ MFT
+   
+   
+ * FIXED COMPONENT ID
+   5724H7242
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R750 PSY
+   UP

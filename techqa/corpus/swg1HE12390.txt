@@ -1,0 +1,133 @@
+Title: IBM HE12390: User is incorrectly allowed to delete Data Source from a Request when there is Notice in draft state. - United States
+
+Text:
+  DIRECT LINKS TO FIXES
+6.0.3.3-ATLAS-IF001-README.pdf [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FGlobal+Retention+Policy+and+Schedule+Management&fixids=6.0.3.3-ATLAS-IF001-README&source=SAR]
+6.0.3.3-ATLAS-IF001 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FGlobal+Retention+Policy+and+Schedule+Management&fixids=6.0.3.3-ATLAS-IF001&source=SAR]
+Download IBM Atlas Policy Suite V6.0.3.3 Interim Fix 1 [http://www-01.ibm.com/support/docview.wss?uid=swg24042026]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  User is incorrectly able to delete Data Source from a Request
+   when there is a Notice in draft state. This results in
+   custodians listed in
+   $Recipients & $RecipientNames in the Hold Notice not being
+   updated.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  No
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  User cannot delete Data Source from the Request->Data Sources In
+    Scope -> Edit tab when there is a Notice in draft state.
+   However the same delete operation is allowed if user edits a
+   Request and tries to delete a Data Source from there. User
+   should NOT be allowed to delete Data Sources in scope from the
+   Request Edit page as well."
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fix is available in Fix Central in 6033 iFix1.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   HE12390
+   
+   
+ * REPORTED COMPONENT NAME
+   ATLAS EDISCOVER
+   
+   
+ * REPORTED COMPONENT ID
+   5725D7500
+   
+   
+ * REPORTED RELEASE
+   603
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2015-08-25
+   
+   
+ * CLOSED DATE
+   2016-04-18
+   
+   
+ * LAST MODIFIED DATE
+   2016-04-18
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ATLAS EDISCOVER
+   
+   
+ * FIXED COMPONENT ID
+   5725D7500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R603 PSY
+   UP

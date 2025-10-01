@@ -1,0 +1,138 @@
+Title: IBM IV88814: DATA POWER DATA COLLECTOR DOESN'T LIMIT SIZE OF METRIC LOG FILES. - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+ A README IS AVAILABLE
+IBM Tivoli Composite Application Manager for SOA 7.2 Interim Fix 12 README 7.2.0.1-TIV-ITCAMSOA-IF0012 [http://www-01.ibm.com/support/docview.wss?uid=isg400003852]
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  If the kd4agent has stopped or is running behind, the Data Power
+   Data Collector may continue writing to a single log file
+   indefinitely. This can create very large metric log files. The
+   Data Power Data Collector should limit the size of a metric log
+   file and write a new file if grows beyond a configurable size.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: Users of ITCAM for SOA Data Collectors for
+   * Data Power on all platforms.
+   ****************************************************************
+   * PROBLEM DESCRIPTION: If the kd4agent has stopped or is running
+   behind, the
+   * Data Power Data Collector may continue writing to a single log
+   file
+   * indefinitely. This can create very large metric log files. The
+   * Data Power Data Collector should limit the size of a metric
+   log
+   * file and write a new file if grows beyond a configurable size.
+   ****************************************************************
+   * RECOMMENDATION: Apply IFix 12.
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix for this APAR is contained in the following maintenance
+   packages and later version:
+   | interim fix | 7.2.0.1-TIV-ITCAMSOA-IF0012
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV88814
+   
+   
+ * REPORTED COMPONENT NAME
+   ITCAM FOR SOA-D
+   
+   
+ * REPORTED COMPONENT ID
+   5724SOA00
+   
+   
+ * REPORTED RELEASE
+   720
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-09-01
+   
+   
+ * CLOSED DATE
+   2018-05-04
+   
+   
+ * LAST MODIFIED DATE
+   2018-05-04
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ITCAM FOR SOA-D
+   
+   
+ * FIXED COMPONENT ID
+   5724SOA00
+   
+   
+
+APPLICABLE COMPONENT LEVELS

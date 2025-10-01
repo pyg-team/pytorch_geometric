@@ -1,0 +1,78 @@
+Title: IBM Traffic Prediction is inhibited when the road network graph is incorrectly linked - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How can I check that traffic data from each road link is used in traffic predictions for neighboring links? 
+
+CAUSE
+One source of error in Traffic Prediction (TP) is disconnected subgraphs within the link network in the shape file. TP does not consider links from disconnected subgraphs in its relationship model. If these links represent roads that are geographically connected, data from one link cannot be used in predictions for the other links.
+Potential reasons for disconnected subgraphs are: 
+
+ * Variations in the end node definitions for links can result in the end node of one link not matching the start node of the next link. 
+ * A split in the road might be defined such that the start node of the splitting link is within the middle of the parent link, not at the end node.
+
+ANSWER
+When subgraphs are disconnected, TP does not consider links from different disconnected subgraphs in its relationship model even if the links are physically connected. This leads to issues wherein traffic predictions for one link might not reflect changes in traffic data from a geographically connected link, or predictions might not be produced for links with disconnected neighbors. 
+
+
+The administrator of IBM Intelligent Operations for Transportation with Traffic Prediction must identify and address these issues.
+
+You can use the trans_tptool utility on the analytics server to find disconnected subgraphs. Run this utility after installation, or after updates to the link network, to analyze the information that is stored for your network and to generate a connectivity report. 
+
+Verify that the information in this report correctly describes the connectivity of your network. Ensure that the parameters listed in the report, such as Number of links and Total number of orphan links, have the values that you expect. If you make corrections to the network graph, reload the shape file and run the trans_tptool utility again to verify the changes. 
+
+Usage
+Start the utility through your browser by entering the URL: 
+http://hostName:portNumber/trans_tptool/ShapeFileValidator?category=roadtype
+where:
+hostName is the name of your analytics server,
+portNumber is the TCP/IP port to use (usually 443),
+roadtype is the road classification, for example freeway or highway.
+You can specify all to show all road types.
+
+For example:
+https://analytic.myhost.com:443/trans_tptool/ShapeFileValidator?category=all
+
+An example of the report output for category all follows.
+Some lines of the report are replaced with "----------------------------------------" for clarity. 
+
+------------------------------------------------------
+Chains for all road categories
+Chain for link 59---> No of links: 34
+freeway '37'
+freeway '36'
+----------------------------------------
+freeway '13'
+freeway '12'
+
+
+Chain for link 50---> No of links : 25
+freeway '12'
+freeway '13'
+----------------------------------------
+freeway '23'
+freeway '22'
+
+
+Chain for link 47---> No of links : 16
+freeway '31'
+freeway '86'
+----------------------------------------
+freeway '100'
+freeway '35'
+
+
+----------------------------------------
+----------------------------------------
+
+Conclusion
+Number of links: 100
+Total number of link chains: 8
+Total number of orphan links: 0
+Total number of chains in which only two links are connected: 0
+Total number of chains in which FIVE or less links connected: 0
+Total number of chains in which TEN or less links connected: 0
+END
+***********************

@@ -1,0 +1,186 @@
+Title: IBM IZ94626: UX AGENT IS NOT STOPPED/STARTED BY TACMD UPDATEAGENT - United States
+
+Text:
+  FIXES ARE AVAILABLE
+IBM Tivoli Monitoring 6.2.2 Fix Pack 8 (6.2.2-TIV-ITM-FP0008) [http://www-01.ibm.com/support/docview.wss?uid=swg24031354]
+IBM Tivoli Monitoring 6.2.2 Fix Pack 9 (6.2.2-TIV-ITM-FP0009) [http://www-01.ibm.com/support/docview.wss?uid=swg24032067]
+IBM Tivoli Monitoring 6.2.2 Fix Pack 6 (6.2.2-TIV-ITM-FP0006) [http://www-01.ibm.com/support/docview.wss?uid=swg24030135]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  For a UX agent on an AIX endpoint that was installed as a
+   non-root user, tacmd updateagent does not stop/restart the
+   agent.
+   
+   In CANDLEHOME/tmaitm6/agentdepot/stderr.txt, this additional
+   symptom occurs:
+   
+   >> csh: The file access permissions do not allow the specified
+   >> action.
+      install.sh warning:  Silent install option to ignore running
+      processes detected, continuing ...
+   >> /opt/IBM/ITM/tmaitm6/agentdepot//ci/install.sh[163]: -:
+   >> not found.
+   >> /opt/IBM/ITM/tmaitm6/agentdepot//ci/install.sh[163]: -:
+   >> not found.
+   
+   To reproduce the problem:
+   
+   a) Install, configure, and start the TEMS.
+   b) Install the current UX agent in the TEMS depot.
+   c) Install, configure, and start a backlevel agent as a
+      non-root user.
+   d) On the agent endpoint, invoke cinfo -r to get the agent
+      process id and to verify that it is running as non-root.
+   e) On the TEMS machine, use tacmd updateagent to update the
+      agent to the current level that was added to the TEMS
+      depot.
+   f) On the agent endpoint, invoke cinfo -r and note that the
+      agent process id did not change.
+   g) On the agent endpoint, observe the csh and shell errors
+      in CANDLEHOME/tmaitm6/agentdepot/stderr.txt.
+   
+   This same problem does not exist for the LZ agent on Linux. It
+   is unknown whether this problem exists for the UX agent on
+   Solaris or HP-UX.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Start the agent as root, update the agent, and then restart the
+   agent as the non-root user.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  UX Agent is not stopped / started by "tacmd updateagent"
+   
+   For a UX agent on an AIX endpoit that is running as a non-root
+   user, tacmd updateagent does not stop/restart the agent. In
+   CANDLEHOME/tmaitm6/agentdepot/stderr.txt, this additional
+   symptom occurs:
+   
+   >> csh: The file access permissions do not allow the specified
+   >> action.
+      install.sh warning:  Silent install option to ignore running
+      processes detected, continuing ...
+   >> /opt/IBM/ITM/tmaitm6/agentdepot//ci/install.sh[163]: -:
+   >> not found.
+   >> /opt/IBM/ITM/tmaitm6/agentdepot//ci/install.sh[163]: -:
+   >> not found.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The code was changed to reliably locate the directory where the
+   su command resides. Failure to do this is the underlying cause
+   of the problem.
+   
+   The fix for this APAR is included in the following maintenance
+   vehicle:
+       | fix pack | 6.2.2-TIV-ITM-FP0005
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  Start the agent with the root user, update the agent, and then
+   restart the agent with the non-root user.
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ94626
+   
+   
+ * REPORTED COMPONENT NAME
+   OMEG DIST INSTA
+   
+   
+ * REPORTED COMPONENT ID
+   5608A41CI
+   
+   
+ * REPORTED RELEASE
+   622
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-02-07
+   
+   
+ * CLOSED DATE
+   2011-04-06
+   
+   
+ * LAST MODIFIED DATE
+   2011-07-08
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   OMEG DIST INSTA
+   
+   
+ * FIXED COMPONENT ID
+   5608A41CI
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R622 PSY
+   UP

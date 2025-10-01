@@ -1,0 +1,52 @@
+Title: IBM Stop TDWC without specifying a user and password at the command line - United States
+
+Text:
+stopWas.sh; TDWC; password; direct; webui TECHNOTE (FAQ)
+
+QUESTION
+ How can a Tivoli Dynamic Workload Console (TDWC) instance on UNIX be stopped without specifying the username and password of the WebSphere administrator user at the command line? 
+
+CAUSE
+For a stand-alone instance of TDWC the <TDWCHome>/wastools/stopWas.sh script requires the -direct, -user, and -password flags and appropriate arguments to be specified when stopping TDWC's WebSphere Application Server (WAS).
+
+ANSWER
+Locate the soap.client.props file for your TDWC instance: 
+
+ * TDWC v8.5.1: eWAS/profiles/twaprofile/properties/soap.client.props 
+ * TDWC v8.6: <TWAHome>/eWAS/profiles/TIPProfile/properties/soap.client.props 
+ * TDWC v9.1 and v9.2: <JazzSMHome>/profile/properties/soap.client.props
+
+
+Confirm that the TDWC's WebSphere profile soap.client.props file has the following entries: 
+
+ * com.ibm.SOAP.loginUserid=<userid> 
+ * com.ibm.SOAP.loginPassword=<password>
+
+
+
+To change the value of the above entries in soap.client.props, run the following as root: 
+
+TDWC v8.5.1 and v8.6: 
+<TWAHome>/wastools/updateWas.sh -user <WasAdminId> -password <password> 
+
+TDWC v9.1 and v9.2: 
+<TWAUIHome>/wastools/updateWas.sh -user <WasAdminId> -password <password> 
+
+The soap.client.props file will be updated with the specified user and password and the password will be encrypted. 
+
+To stop TDWC (TDWC's WebSphere server) run the following script as root: 
+
+TDWC v8.5.1: 
+<TWAHome>/eWAS/profiles/twaprofile/bin/stopServer.sh twaserver1 
+
+NOTE: If multiple v8.5.x WebSphere instances are installed to the same system, the WebSphere server name may be twaserver2, twaserver3, etc. 
+
+TDWC v8.6: 
+<TWAHome>/eWAS/profiles/TIPProfile/bin/stopServer.sh server1 
+
+TDWC v9.1 and v9.2: 
+<JazzSMHome>/profile/bin/stopServer.sh server1  
+
+PRODUCT ALIAS/SYNONYM
+ TDWC
+DWC

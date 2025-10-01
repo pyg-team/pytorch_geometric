@@ -1,0 +1,95 @@
+Title: IBM TIP FP15 installation:  global lock caused .war file redeployment failure. - United States
+
+Text:
+TIPL2INST; global.lock; FP15; HA; TIPL2; WASX7017E; redeploy; system lock; war file TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Tivoli Integrated Portal Post Configuration step fails at the point where it's trying to redeploy the .war files. This failure was triggered by the upgrade script's attempt to get a lock on a file, but was unable to because the lock file already existed. 
+
+SYMPTOM
+The upgrade will fail at the TIP Post Configuration portion of the upgrade, and will output this error when done: TIP 2.2.0.15 - FAILURE: The overall installation failed.
+
+
+CAUSE
+System global.lock file already exists in this directory: 
+
+<TIP_HOME>/profiles/TIPProfile/config/cells/TIPCell/applications/isc.ear/deployments/isc/isclite.war/WEB-INF
+
+
+ENVIRONMENT
+AIX or LINUX, when upgrading to TIP FP15, with server not in a HA environment.
+
+
+
+DIAGNOSING THE PROBLEM
+Errors similar to these: 
+
+TIPFPInstaller-00.log: 
+
+
+2015-06-09 18:15:57.092+01:00 : FINE : PlanStepEventOccurred(Failed target 'step_00007_TIPCorePostConfig') (from com.ibm.ac.coi.ext.ia.COIWrapperPluginImpl.eventOccurred)
+2015-06-09 18:15:57.100+01:00 : FINE : COIEventType.ERROR (from com.ibm.ac.coi.ext.ia.COIWrapperPluginImpl.eventOccurred) 
+
+MachinePlan_localhost.log: 
+
+
+Caused by: /opt/IBM/Netcool/tipv2/_uninst/TIPInstall22015/plan/install/MachinePlan_localhost/00007_TIPCorePostConfig/TIPCorePostConfig.xml:613: exec returned: 105 
+
+ 
+
+<TIP_HOME>/logs/redeploy_connMgr_fp_inst.out
+
+WASX7017E : Exception received while running file 
+"/opt/IBM/Netcool/tipv2/profiles/TIPProfile/bin/tipUpdateISCJ2EEWar.py"; 
+exception information: com.ibm.ws.scripting.ScriptingException: 
+WASX7418E: Application update for isc failed: see previous messages for 
+details. 
+
+
+
+<TIP_HOME>/profiles/TIPProfile/logs/server1/SystemOut.log: 
+
+
+[6/9/15 18:15:53:939 BST] 00000036 ISCAppUtil I 
+com.ibm.isclite.common.util.ISCAppUtil parseServerIndex Port 16313 for 
+SOAP_CONNECTOR_ADDRESS 
+[6/9/15 18:15:53:953 BST] 00000036 DeployManager E 
+com.ibm.isc.ha.runtime.DeployManagerAdapter preAction Unable to get the lock!
+[6/9/15 18:15:54:153 BST] 00000036 SystemErr R
+com.ibm.websphere.management.exception.AdminException: HA: Unable to get the lock! 
+
+
+RESOLVING THE PROBLEM
+1) Check to confirm TIP sever is NOT in a HA environment: 
+
+ If the TIP server is in a HA Cluster, you need to disjoin the server before upgrading: 
+
+ www-01.ibm.com/support/docview.wss?uid=swg21687056 [http://www-01.ibm.com/support/docview.wss?uid=swg21687056] 
+
+ 2) Remove the lock using this Technote, it mentions TIP FP13, but also applies in this case: 
+
+ www-01.ibm.com/support/docview.wss?uid=swg21687751 [http://www-01.ibm.com/support/docview.wss?uid=swg21687751]
+
+3) Make a backup of the TIPCorePostConfig.xml file on the cdimage in this directory: 
+
+ cdimage.fixpack/COI/PackageSteps/TIPCorePostConfig 
+
+ 
+
+ Edit the tipPostConfigurtion.xml file and remove the fixConfigFile from the target description: 
+
+ 
+
+ BEFORE:
+
+<target description="Configure a package" name="configure" depends="fixConfigFile,retrieveSigners, propagateTIPRoles,fixpackPatch,deployOSLC"> 
+
+ 
+
+ AFTER: 
+
+ <target description="Configure a package" name="configure" depends="retrieveSigners, propagateTIPRoles,fixpackPatch,deployOSLC"> 
+
+ 
+
+Save the file and retry the FP15 upgrade. No need to uninstall anything.

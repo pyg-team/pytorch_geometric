@@ -1,0 +1,199 @@
+Title: IBM PM85590: [wi 247581] Error in retrieving UUID of custom Contributor attribute in script-based Calculated Value (251587) - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Error in retrieving UUID of custom Contributor attribute in
+   script-based Calculated Value
+   
+   RTC Version/Build Label : RTC 4.0.0.1
+   Client OS Vendor : Windows
+   Client OS Version : Windows 2008
+   Database Vendor : SQL
+   Database Server OS Vendor : Windows 2008
+   Repository OS Vendor : Windows 2008
+   Java Version/JVM Used : 1.6
+   LDAP Vendor/ Version : N/A
+   Application Server: WAS
+   
+   Reproducible in House?:
+   Yes
+   
+   Steps to Reproduce :
+   1? Create a new PA using the scrum Template
+   2? Add members to the project area and assign them the 'Team
+   Member' role
+   3? Click on Open on the PA--?Click on Process Configuration
+   4? Click on Attribute Customization
+   5? Right click on Calculated Values--?click on Add
+   6? Give a Name--?Category set as 'Calculated Values--?Type set
+   as--?Script based Calculated Values
+   7? Click on Download Example--?and save the file in a specific
+   location
+   8? Click on Attributes--?Click on Task or any attribute--? on
+   New
+   9? Give a Name and set the Type as Contributor--?calculated
+   value set as the new one that was just created
+   10? Add this attribute to the workflow--?Attribute the new one
+   that was created--?Kind set to Generic Combo
+   11? Create a new work item from the WI that was chosen earlier
+   during customization
+   12? You should see a new field that was added in the form
+   section of the presentation.
+   13? Set any value against that field for any user
+   14? Click on 'Save' to save the changes.
+   15? Once this is done, you will notice that the value set
+   against the field would have got reset to 'Unassigned'.
+   16? Attached is a screen shot for your reference
+   
+   Summary of Problem including exact error messages:
+   
+   'Script-based calculated value' when applied on a 'Contributor'
+   attribute switches to 'Unassigned' value from the actual
+   Cotributor value after a save operation
+   
+   Full Description :
+   Script based calculated values fails to save the actual data and
+   gets refreshed back to 'Unassigned' value after the save
+   operation.
+   
+   Create a new 'Script-based calculated value' for a PA and use
+   the default example DOJO scripts that have been provided.
+   Add this new attribute to the WI life cycle and use this to
+   create a new WI
+   
+   Set the newer attribute value to the user in the Team Area and
+   save the WI
+   As soon as the Save is complete the Attribute values gets
+   reset'ed to 'Unassigned' from the Actual value that was set
+   prior to the save operation
+   
+   This issue is tested and is not working as expected in RTC
+   4.0.1.
+   This issue is tested and is working as expected in RTC 3.0.x
+   
+   ?Expected result?
+   The Value for the attribute must remain unchanged on Save
+   operation
+   
+   ?Actual result?
+   
+   The Value of the attribute is getting unset to ''Unassigned''
+   value from the actual Cotributor value after a save operation
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   Error in retrieving UUID of custom Contributor attribute in
+   script-based Calculated Value
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The change fixes the problem in WorkItemAPIType#getValue().
+   It adds item extensions to value resolution chain. Item
+   values in custom attribute have never been resolved properly
+   before.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM85590
+   
+   
+ * REPORTED COMPONENT NAME
+   RATL TEAM CONCE
+   
+   
+ * REPORTED COMPONENT ID
+   5724V0400
+   
+   
+ * REPORTED RELEASE
+   400
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-03-26
+   
+   
+ * CLOSED DATE
+   2013-06-11
+   
+   
+ * LAST MODIFIED DATE
+   2013-06-11
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   RATL TEAM CONCE
+   
+   
+ * FIXED COMPONENT ID
+   5724V0400
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R400 PSN
+   UP

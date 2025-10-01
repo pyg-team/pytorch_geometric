@@ -1,0 +1,68 @@
+Title: IBM Browser Configuration and Known Issues with CDP for Files v3.1.x, v6.3.x / FastBack for Workstations v6.1.x, v6.3.x, v7.x - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Recommended settings and known issues are documented below for Continuous Data Protection for Files and FastBack for Workstations 
+
+RESOLVING THE PROBLEM
+ If a user experiences a browser error: clear the error, then refresh the browser. This will usually resolve any browser error. 
+The product was designed to be optimally viewed with the following settings: 
+
+ *  1024 X 768 resolution maximize the browser window remove extra tool bars from the browser 
+
+
+The Activity Report window must be manually refreshed.  * 
+ * 
+
+
+Internet Explorer-specific issues Client 
+
+ * 
+ * 
+ * 
+ * 
+ * If you are running Microsoft's Internet Explorer 6.x and find that you cannot navigate the restore folder view tree with your mouse, try installing Microsoft's cumulative security update for Internet Explorer, MS05-038. 
+   
+ * 
+ * If you are running Internet Explorer version 7 and receive an error message after installation, please check to be sure your Internet Explorer Security Settings are set as in the box below: 
+ * 
+
+
+Central Administration Console  * 
+ * 
+ * 
+ * 
+
+
+Mozilla Firefox-specific issue Links from the Backup Reports page do not work in Mozilla Firefox. 
+
+ * 
+ * 
+ * 
+ *  Error: Content at url may not load or link to file:/// xxxx 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * user_pref("security.checkloaduri", false); 
+ * 
+ * 
+ * 
+ * On Windows XP/2000, the path is 
+   %AppData%\Mozilla\Firefox\Profiles\ xxxxxxxx.default\, where xxxxxxxx is a random 
+   string of 8 characters. Browse to C:\Documents and Settings\[User 
+   Name]\Application Data\Mozilla\Firefox\Profiles\. 
+   
+   %AppData% is a shortened expression for the Application Data path on Windows 
+   2000/XP. To use it, click Start -> Run, type %AppData%, and then press Enter. You 
+   will be directed to the appropriate folder, which is normally C:\Documents and 
+   Settings\ <user_name>\Application Data. 
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Storage Management Tivoli Storage Manager FastBack for Workstations Windows 6.1, 6.3, 7.1 All Editions

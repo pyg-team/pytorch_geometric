@@ -1,0 +1,40 @@
+Title: IBM Performance Problems on PowerPlay Reports - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Performance problems on PowerPlay reports (PowerPlay Client or PowerPlay Enterprise Server) that nest many levels or high-cardinality levels. 
+pwrplay.exe or ppdsweb.exe may consume 100% CPU for a very long time. 
+
+Error Description: 
+
+Sometimes the request may terminate with this message on PowerPlay Web :
+
+"The request failed because it is too complex. IBM Cognos PowerPlay Web is out of memory. Try to simplify your request. Please try again or contact your administrator."
+or in a large environment with many users :
+a lot of "Powerplay Server is busy" messages on the client side because at some point the whole server is busy with many large requests , even with a high value of "Maximum processes" and "Queued request timeout". 
+
+CAUSE
+In most cases, performance problems come from nesting several levels from distinct dimensions, or levels with a high number of categories.
+For example, users may attempt to list all products bought by each client. To do this, they insert as rows the lowest level of the Client dimension, and then nest the level Products to the right of clients.
+
+If the cube contains 2000 clients and 500 products, the result is a one million-row report containing many irrelevant rows. Users apply "zero suppression" to keep the report details that are actually needed.
+
+Such reports can be very time-consuming, and may sometimes never terminate. Even rendering a million lines of static HTML, with no back-end processing, will take a lot of time to complete.
+
+
+RESOLVING THE PROBLEM
+To avoid these "cross-products", the PowerPlay Transformer model can be modified by adding a new dimension called "Products by client" that is formed with the two levels that the users need to nest. 
+
+
+Using this new hybrid dimension can result in a significant, and even outstanding, improvement.
+
+Dimensions "Products" and "Clients" are just basic samples to illustrate the issue ; this can be applied to many kinds of dimensions.
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Analytics PowerPlayClient PowerPlayClient Business Analytics Cognos Series 7 PowerPlay Enterprise Server Business Analytics Cognos Series 7 Upfront 
+HISTORICAL NUMBER
+ 1027661

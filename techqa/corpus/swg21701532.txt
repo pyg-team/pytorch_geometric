@@ -1,0 +1,35 @@
+Title: IBM Unable to create p8 domain using Administrative Console for Content Engine (ACCE) - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When attempting to create the P8 domain in IBM FileNet Content Platform Engine (CPE) can't search for users and groups to apply security. 
+
+SYMPTOM
+None of users and groups can be search for during the process of creating P8 domain. Users and groups can be searched and seen from web application server. 
+
+com.filenet.api.exception.EngineRuntimeException: FNRCE0051E:
+E_OBJECT_NOT_FOUND: The requested item was not found.
+propertyName=Permissions, referenced
+principal=cn=vscms_admin,ou=VSCMS,ou=appgroups,ou=groups,dc=gm,dc=com
+in Domain {00000000-0000-0000-0000-000000000000}
+
+
+CAUSE
+Group attribute and Group Search filter did not match
+
+
+ENVIRONMENT
+CPE 5.2.1
+Oracle Directory Server Enterprise 11g R1
+
+
+
+
+RESOLVING THE PROBLEM
+In ACCE, validate Group Name Attribute and Group Search Filter are the same in the Directory Configuration 
+
+
+Oracle Directory Server example: 
+If "uid" is used in Group Name Attribute, the equivalent for Group Search filter should be: "(&(objectClass=groupOfUniqueNames)(uid={0}))".

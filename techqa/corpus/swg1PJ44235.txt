@@ -1,0 +1,170 @@
+Title: IBM PJ44235: UNABLE TO OPEN NEWLY ADDED DOCUMENT WHEN "SELECT THE FIRST DOCUMENT IN THE LIST BY DEFAULT" OPTION IS CHOSEN - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+ DIRECT LINKS TO FIXES
+IBM Case Manager V5.2.1 Fix Pack 5 for Linux for System Z [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FCase+Manager&fixids=5.2.1.5-ICM-ZLINUX-FP005&source=SAR]
+IBM Case Manager V5.2.1 Fix Pack 5 for Windows [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FCase+Manager&fixids=5.2.1.5-ICM-WIN-FP005&source=SAR]
+IBM Case Manager V5.2.1 Fix Pack 5 for Linux [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FCase+Manager&fixids=5.2.1.5-ICM-LINUX-FP005&source=SAR]
+IBM Case Manager V5.2.1 Fix Pack 5 for AIX [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FCase+Manager&fixids=5.2.1.5-ICM-AIX-FP005&source=SAR]
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The Open button is disabled (greyed out) after one or more
+   documents are added to the case.  This issue is only
+   reproducible when the "Select the first document in the list by
+   default" is selected/set via the Case Information widget.  The
+   Open button is not disabled when "Select the first document in
+   the list by default" is not selected/set.
+   
+   Steps to reproduce:
+   1. Create a new solution (or use an existing solution)
+   2. Open the Work Details Page, click on Edit Setting from the
+   Case Information Widget
+   3. Expand the Documents twistee, select/set "Select the first
+   document in the list by default"
+   4. For a new solution, create a case type, add a task, edit the
+   task to add a role lane, and step
+   5. Save and deploy the solution
+   6. Create a new case
+   7. Add a document to the case
+   
+   Expected behavior:
+   Document is added to the case with the Open button enabled
+   allowing the user to open the newly attached document
+   
+   Actual result:
+   Document is added to the case, however the Open button is
+   disabled thus user is not able to open the newly attached
+   document
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  When there is only 1 document attached to the case, the user is
+   required to either refresh the page, or close/reopen the item in
+   order to enable the Open button.  When there are multiple
+   documents attached to the case, the user can click on a
+   different attached document to enable the Open button.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * Case Client users needing to open newly attached document    *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * See Error Description                                        *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * It is recommended to apply 5.2.1.5-ICM-FP005 or a later      *
+   * release.                                                     *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The code has been corrected to enable the open button after a
+   document is added to the case in 5.2.1.5-ICM-FP005 GA Release.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PJ44235
+   
+   
+ * REPORTED COMPONENT NAME
+   CASE MGR CLIENT
+   
+   
+ * REPORTED COMPONENT ID
+   5725A1501
+   
+   
+ * REPORTED RELEASE
+   521
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-06-16
+   
+   
+ * CLOSED DATE
+   2016-08-15
+   
+   
+ * LAST MODIFIED DATE
+   2016-08-15
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CASE MGR CLIENT
+   
+   
+ * FIXED COMPONENT ID
+   5725A1501
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R521 PSY
+   UP

@@ -1,0 +1,160 @@
+Title: IBM PI08859: WMQ MULTIPLE CSQX027E MESSAGES CSQX027E CSQXRCTL UNABLE TO GET STORAGE, RC=00000004 - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Several message CSQX027E CSQXRCTL Unable to get storage,
+   RC=00000004 messages are issued for a full repository.
+   .
+   Subpool 0 key 8 is the largest storage user, with many XSPNPOOL
+   elements for the storage pool related to SSL peer names.
+   *
+   Additional Keywords:
+   SP0 KEY8
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All users of WebSphere MQ for z/OS Version 7 *
+   *                 Release 1 Modification 0.                    *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Storage leak when using SSLPEER         *
+   *                      attribute on channels. Message CSQX027E *
+   *                      may be issued along with SC78 and S878  *
+   *                      abends.                                 *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   When using a channel with an SSLPEER attribute defined, if the
+   channel enters retry state it may leak cell pool storage which
+   can be identified by large numbers of the 'XSPNPOOL' identifier.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Processing has been amended to ensure that the storage is freed
+   when the channel enters retry state.
+   100Y
+   CSQXRCSI
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  *********
+   * HIPER *
+   *********
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI08859
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ Z/OS V7
+   
+   
+ * REPORTED COMPONENT ID
+   5655R3600
+   
+   
+ * REPORTED RELEASE
+   100
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   YesHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-01-02
+   
+   
+ * CLOSED DATE
+   2014-03-12
+   
+   
+ * LAST MODIFIED DATE
+   2014-05-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UI15920
+   
+   
+
+MODULES/MACROS
+ *  CSQXRCSI
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ Z/OS V7
+   
+   
+ * FIXED COMPONENT ID
+   5655R3600
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R100 PSY UI15920 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI15920]
+   UP14/04/08 P F404 ½
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

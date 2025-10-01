@@ -1,0 +1,106 @@
+Title: IBM Automating software installations for 2.4.0 of IBM Algo Financial Modeler - United States
+
+Text:
+ PRODUCT DOCUMENTATION
+
+ABSTRACT
+ How to automate the process of deploying IBM® Algo Financial Modeler® 2.4.0 software within your organisation 
+
+CONTENT
+Introduction 
+
+This document is for the benefit of IT personnel who wish to automate the process of deploying IBM Algo Financial Modeler software within their organisation. This can be done by invoking the IBM Algo Financial Modeler MSI installer file from the command-line using the MSIEXEC program. This document assumes familiarity with this program.
+
+All of the IBM Algo Financial Modeler components are packaged into a single MSI installer file which has a 32-bit and a 64-bit version. There are also license and model installers that enable the purchased options and a Side By Side installer that installs just the Development Software alongside an installation of a future version. The appropriate files can be downloaded from Passport Advantage [http://www-01.ibm.com/software/howtobuy/passportadvantage/?lnk=msdDO-shop-usen].
+
+Important note: Before any installation takes place, it is essential that you read the Installation Guide [http://www.ibm.com/support/knowledgecenter/SSNLUM_2.4.0/algo_afm/installation/foundation/cover_page.html] for the current release. These pages contain details of: 
+
+ * What needs to be installed to use the features you require, including any prerequisites 
+ * Changes to the system which may affect the installation 
+ * How to test that the installation is successful
+
+
+Automated installation 
+
+Standard installation of the IBM Algo Financial Modeler software packages by running the MSI installer file is interactive and displays a number of dialog boxes to the user so that they can select the software they require and fill in any necessary parameters. The purpose of automated installation is to preset the required software and parameters via the command-line so that user interaction is not required. Consequently, by invoking the MSI installer file with the MSIEXEC program, the installation can be made to proceed silently and in a manner tailored to individual company requirements. 
+
+The MSIEXEC command-line option /I is used to perform an installation and the option /qb is used to remove the dialog boxes from the installation as follows: 
+
+MSIEXEC /I "C:\IBM_Algo_Financial_Modeler_Base.msi" /qb 
+
+Here the 32-bit installer MSI file has been saved to the C:\ drive on the local machine. For more information regarding the command-line options for MSIEXEC please refer to the Microsoft website [http://technet.microsoft.com/en-gb/library/bb490936.aspx]. 
+
+IBM Algo Financial Modeler installation parameters 
+
+In addition to the command-line options, the IBM Algo Financial Modeler MSI installer file has several command-line parameters which can be used to preset the corresponding installation parameters. Some of these parameters have default values and are, therefore, optional; please check the installation instructions for the installer on the installation page for more information. 
+
+Please note that this section applies to both the 32 and 64-bit versions of the Base MSI installer. 
+
+INSTALLLEVEL 
+
+A value should be specified for the INSTALLLEVEL parameter in order to specify the software to install. If no INSTALLLEVEL parameter is specified a default value of 100 is used, meaning that all software would be installed, apart from the Standard Code. 
+
+Value Purpose 40 Installs the IBM Algo Financial Modeler add-in for Microsoft® Excel 50 Installs the IBM Algo Financial Modeler add-in for Microsoft Access 60 Installs the IBM Algo Financial Modeler ODBC Driver 70 Installs the IBM Algo Financial Modeler Worker software for distributed processing 80 Installs a shortcut to automatically run the Worker Admin and Worker software when a user logs on 90 Installs the IBM Algo Financial Modeler Toolkit 100 Installs the IBM Algo Financial Modeler Development Software 110 Installs the IBM Algo Financial Modeler Standard Code 
+Specifying an INSTALLLEVEL means that all software with an INSTALLLEVEL value of less than or equal to that number will be installed. 
+
+For example, the following command-line instruction to silently install the IBM Algo Financial Modeler software would install the Development Software itself, along with the Toolkit, Worker startup shortcut, Worker software, ODBC Driver and the Add-ins for Microsoft Access and Excel. 
+
+MSIEXEC /I "C:\IBM_Algo_Financial_Modeler_Base.msi" AGREETOLICENSE=YES /qb 
+
+Software with a lower INSTALLLEVEL value can be explicitly excluded using some of the optional parameters detailed below. 
+
+Optional parameters 
+
+Parameter Purpose AGREETOLICENSE Specify AGREETOLICENSE=YES to agree to the license agreement and install the software (must always be explicitly set to YES for the installation to proceed) NO_ADDINS Specify NO_ADDINS=YES to exclude the Microsoft Office Add-ins from the silent installation NO_DEVSOFTWARE Specify NO_DEVSOFTWARE=YES to exclude the Development Software from the silent installation NO_TOOLKIT Specify NO_TOOLKIT=YES to exclude the Toolkit from the silent installation
+(* this will only take effect if NO_DEVSOFTWARE is also set to YES as it is not possible to install the Development software without the Toolkit) NO_ODBC Specify NO_ODBC=YES to exclude the ODBC Driver from the silent installation NO_WORKER Specify NO_WORKER=YES to exclude the Worker from the silent installation ODBCCOMPATIBILITY Specify ODBCCOMPATIBILITY=YES to install components that provide backward compatibility with connection strings for the VIPitech ODBC Driver without needing to have the VIPitech ODBC driver installed
+(* can only be used if INSTALLLEVEL>=60 and NO_ODBC is not set to YES) WS_DOMAIN Each of these parameters must be supplied in order to install the IBM Algo Financial Modeler Worker as a windows service
+(* can only be used if INSTALLLEVEL>=70 and NO_WORKER is not set to YES) WS_USERNAME WS_PASSWORD INSTALLDIR Specify INSTALLDIR="C:\My Installation Path\" - in all cases, we recommend installing to the default locations. If the installation locations must be changed, it is important to note that: 64-bit components must not be installed into the same folder used for the 32-bit installation and installations should be in a version specific folder separate from the installation location of other versions. 
+Examples 
+
+The following command-line instruction will silently install just the Development software only to D:\My AFM Installation\2.4.0: 
+
+MSIEXEC /I "C:\IBM_Algo_Financial_Modeler_Base.msi" AGREETOLICENSE=YES INSTALLDIR="D:\My AFM Installation\2.4.0" NO_ADDINS=YES NO_ODBC=YES NO_WORKER=YES /qb 
+
+The following command-line instruction will silently install the Standard Code as well as the Development software to the default installation directory: 
+
+MSIEXEC /I "C:\IBM_Algo_Financial_Modeler_Base.msi" INSTALLLEVEL=110 AGREETOLICENSE=YES NO_ADDINS=YES NO_ODBC=YES NO_WORKER=YES /qb 
+
+The following command-line instruction will silently install the ODBC Driver (with backward compatibility for VIPitech ODBC Driver connection strings) and the Add-ins for Microsoft Excel and Access (but not the Worker software) to the default installation directory: 
+
+MSIEXEC /I "C:\IBM_Algo_Financial_Modeler_Base.msi" AGREETOLICENSE=YES INSTALLLEVEL=60 ODBCCOMPATIBILITY=YES /qb 
+
+To include the Worker, simply increase the INSTALLLEVEL to 80. The following example adds the Worker and Windows service to run the Worker as a service to the previous example: 
+
+MSIEXEC /I "C:\IBM_Algo_Financial_Modeler_Base.msi" AGREETOLICENSE=YES INSTALLLEVEL=80 ODBCCOMPATIBILITY=YES WS_DOMAIN="Domain Name" WS_USERNAME=MyUsername WS_PASSWORD=MyP#ssw0rd /qb 
+
+To install just the 64-bit ODBC driver (with backward compatibility): 
+
+MSIEXEC /I "C:\IBM_Algo_Financial_Modeler_Base_64bit.msi" AGREETOLICENSE=YES INSTALLLEVEL=60 ODBCCOMPATIBILITY=YES NO_ADDINS=YES /qb 
+
+Please note that quotation marks are required around a parameter value when that value contains spaces and that the "YES" values are case sensitive and must all be upper case. 
+
+License / Model Installers 
+
+In addition to the IBM Algo Financial Modeler base MSI installers that install the required features for 32-bit and 64-bit applications, the appropriate license/model installers must also be run on the client machines to enable the chargeable components/options that have been purchased. 
+
+There are no optional command line parameters and all license/model installers should be invoked as per the examples for the Grid Connector license and Solvency II Standard Formula Models installers below (the latter specifying the installation path as D:\My AFM Installation\2.4.0): 
+
+MSIEXEC /I "C:\IBM_Algo_Financial_Modeler_Connector.msi" AGREETOLICENSE=YES /qb 
+
+MSIEXEC /I "C:\IBM_Algo_Financial_Modeler_SolvencyII_SF_Models" AGREETOLICENSE=YES INSTALLDIR="D:\My AFM Installation\2.4.0" /qb 
+
+Side By Side Installers 
+
+The Side By Side installer can only be run once a future version of IBM Algo Financial Modeler has been installed (2.4.1 or above) and allows you to run version 2.4.0 of the Development Software 'side by side' with the future version. Again, there are no optional command line parameters and the installer should be invoked as per the examples below (the latter specifying the installation path as D:\My AFM Installation\2.4.0): 
+
+MSIEXEC /I "C:\IBM_Algo_Financial_Modeler_SideBySide" AGREETOLICENSE=YES /qb 
+
+MSIEXEC /I "C:\ IBM_Algo_Financial_Modeler_SideBySide " AGREETOLICENSE=YES INSTALLDIR="D:\My AFM Installation\2.4.0" /qb 
+RELATED INFORMATION
+ IBM Algo Financial Modeler 2.4.0 Installation Guide [http://www-01.ibm.com/support/knowledgecenter/SSNLUM_2.4.0/algo_afm/installation/foundation/cover_page.html]
+
+
+
+
+ORIGINAL PUBLICATION DATE
+ 2014/4/14

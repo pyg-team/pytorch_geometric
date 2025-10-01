@@ -1,0 +1,115 @@
+Title: IBM "SQL0964C ... The transaction log for the database is full" when performing a database optimise - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ User runs a database optimise. User received an error message. 
+
+SYMPTOM
+[/support/docview.wss?uid=swg21903039&aid=1] [/support/docview.wss?uid=swg21903039&aid=1] 
+
+Standard Error
+Number: 5
+Source: FrangoDirect.Optimize.DeletePeriodZeroValues#System.Web.Services
+Description: System.Web.Services.Protocols.SoapException: Server was unable to process request. ---> System.Exception: [DB2/NT64] SQL0964C The transaction log for the database is full. SQLSTATE=57011
+at Microsoft.VisualBasic.ErrObject.Raise(Int32 Number, Object Source, Object Description, Object HelpFile, Object HelpContext)
+at ControllerServerCommon.RaiseErrSrv.RaiseError(String sUser, Int32 lErrNo, String sErrSource, String sErrDesc, String sErrHelpFile, Int32 lErrHelpContext)
+at FrDatabaseBT.OptimizeT.DeletePeriodZeroValues(String sGuid, String sUser, Int32 nYear)
+at Cognos.Controller.Proxy.CCRWS.OptimizeT_DeletePeriodZeroValues(String sGuid, String sUser, Int32 nYear)
+--- End of inner exception stack trace ---
+at Microsoft.VisualBasic.ErrObject.Raise(Int32 Number, Object Source, Object Description, Object HelpFile, Object HelpContext)
+at Cognos.Controller.Common.RaiseErrCli.RaiseError(Int32 lErrNo, String sErrSource, String sErrDesc, String sErrHelpFile, Int32 lErrHelpContext)
+at Cognos.Controller.Direct.Optimize.DeletePeriodZeroValues(Int32 nYear)
+at Cognos.Controller.Forms.Form.frmOptimize.IRun_DoRun()
+
+
+CAUSE
+The Controller application repository's DB2 database's transaction log subsystem is full.
+
+More Information:
+Most customers will find the following log file settings sufficient: 
+
+ * logprimary 100 logsecond 20 logfilsiz 1024
+
+
+TIP: For full details about best practices for creating new Controller databases (on DB2), see separate IBM Technote #1570572. 
+ENVIRONMENT
+Controller application repository hosted on DB2 database server.
+
+
+
+DIAGNOSING THE PROBLEM
+To check the current log file settings (for your database) ask your DBA to perform the following steps: 
+
+ * TIP: The following are based on Windows. If your DB2 server's operating system is non-Windows, then adjust them accordingly.
+
+
+1. Launch "DB2 Command Window - Administrator" 2. Type the following commands: 
+
+ 
+
+ * db2 connect to <database> 
+ * 
+ * db2 get db config for <database>
+
+
+Naturally, change <database> for the name of your database. 
+
+3. Examine the log-file-related settings, for example: 
+ *  Log file size (4KB) (LOGFILSIZ) = 1024
+ * 
+ *  Number of primary log files (LOGPRIMARY) = 20
+ * 
+ *  Number of secondary log files (LOGSECOND) = 4
+ * 
+ *  Changed path to log files (NEWLOGPATH) =
+ * 
+ *  Path to log files = D:\DB2\NODE0000\SQL00
+ * 
+ * 006\LOGSTREAM0000\
+ * 
+ *  Overflow log path (OVERFLOWLOGPATH) =
+ * 
+ *  Mirror log path (MIRRORLOGPATH) =
+ * 
+ *  First active log file =
+ * 
+ *  Block log on disk full (BLK_LOG_DSK_FUL) = NO
+ * 
+ *  Block non logged operations (BLOCKNONLOGGED) = NO
+ * 
+ *  Percent max primary log space by transaction (MAX_LOG) = 0
+ * 
+ *  Num. of active log files for 1 active UOW(NUM_LOG_SPAN) = 0
+ * 
+ * 
+ *  Percent log file reclaimed before soft chckpt (SOFTMAX) = 0
+ * 
+ *  Target for oldest page in LBP (PAGE_AGE_TRGT_MCR) = 240
+
+
+In the above real-life example, the values for 'LOGPRIMARY' and 'LOGSECOND' were less than the recommended (for most customers) settings:  * logprimary 100 logsecond 20 logfilsiz 1024
+
+
+However, in some situations, even those values are too small (and will therefore need to be increased). 
+RESOLVING THE PROBLEM
+Reconfigure the DB2 database so that its transaction log is not full. 
+
+ * Contact your I.T. department's database administrator (DBA) to perform this task.
+
+
+Example: 
+
+In one real-life example, the solution was to run the following script: 
+
+ 
+
+ * CONNECT TO <database>;
+ * 
+ * UPDATE DB CFG USING logprimary 200 logsecond 50 logfilsiz 2048;
+ * 
+ * CONNECT RESET;
+
+RELATED INFORMATION
+#1570572 - How to create a brand new blank DB2 database [http://www.ibm.com/support/docview.wss?uid=swg21570572]

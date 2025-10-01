@@ -1,0 +1,23 @@
+Title: IBM Why does my BP not complete successfully when using BP Start Stop persistence level? - United States
+
+Text:
+Extensions; Adapters; STERLINGFAQ TECHNOTE (FAQ)
+
+QUESTION
+ Why does my BP not complete successfully when using BP Start Stop persistence level? 
+
+ANSWER
+
+
+BP Start Stop Only and BP Start Stop (engine may override) persistence levels record less information from step to step in the BP. Some services and adapters require higher persistence levels in order to function. The documentation states:
+
+>  BP Start Stop - Engine May Override - Choose this level if you know you do not need persisted status data for successful processing. Because service level settings override the selection, you may have additional data in a recovery scenario. BP Start Stop Only - Retains only error information. Choose this setting when you are certain your process will execute successfully without persisted data, and when your recovery needs do not depend on process step data being saved. Error Only-Persist business process start/stop only if there is an error; also persist any error steps. Choose this setting if you want process start/stop and error information saved only in the event of an error, you are comfortable not seeing any tracking data for your process when it is successful, you are certain your process will execute successfully without persisted data, and your recovery needs do not depend on process step data being saved.
+
+Zero-Persist nothing; no steps and no start/stop. The business process does not keep any tracking information. Choose this setting only when you are certain your process will run successfully without persisted data, and you do not need any process tracking or process recovery. Zero persistence level is available in Synchronous mode only.
+
+
+If your BP contains an InvokeBusinessProcessService as the last step, and runs correctly at Full Persistence, try adding an assign statement after the invoke as the last step of the BP. This should allow the business process to complete at the BP Start Stop persistence levels.  
+
+Cross reference information Segment Product Component Platform Version Edition Commerce Sterling B2B Integrator Adapters 
+HISTORICAL NUMBER
+ FAQ1389

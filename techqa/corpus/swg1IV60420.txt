@@ -1,0 +1,153 @@
+Title: IBM IV60420: THE IMPACT OF LOAD ON THE (FRONT END) PERSISTEN-CON-TIMEOUT VALUE - United States
+
+Text:
+AIX SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  WebSEAL 6.1.1.X
+   
+   Need documentation updates regarding the effect of load on the
+   (front end) persisten-con-timeout value and related values...
+   
+   topic 1:
+   
+   Front-end Persistent Connection Timeout in Seconds
+   
+   settings of concern:
+   
+   [ssl]
+   persistent-con-timeout
+   connection-request-limit
+   disable-tiemout-reduction
+   
+   ----------------------
+   
+   topic 2:
+   
+   Front-end Timeout in Seconds
+   
+   settings of concern:
+   
+   [ssl]
+   client-connect-timeout
+   persistent-con-timeout
+   intra-connection-timeout
+   disable-timeout-reduction
+   
+   
+   PMR 38473,999,616
+   
+   Doc APAR opened at the request of TAM L3...
+   
+   ** second method to address should be via DCF with document
+   attachments...
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  NA
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  The following IBM TechNote has been published to elaborate on
+   the documentation issues reported in by this APAR -
+   This TechNote will be reviewed for the next release of ISAM and
+   integrated into the official documentation if needed.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The following IBM TechNote has been published to correct the
+   documentation issues reported in by this APAR -
+   
+   http://www-01.ibm.com/support/docview.wss?uid=swg21682266 [http://www-01.ibm.com/support/docview.wss?uid=swg21682266]
+   
+   This TechNote will be reviewed for the next release of ISAM and
+   integrated into the official documentation if needed.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV60420
+   
+   
+ * REPORTED COMPONENT NAME
+   ACCESS MGR WEBS
+   
+   
+ * REPORTED COMPONENT ID
+   5724C0811
+   
+   
+ * REPORTED RELEASE
+   611
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-05-13
+   
+   
+ * CLOSED DATE
+   2014-08-22
+   
+   
+ * LAST MODIFIED DATE
+   2014-09-23
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

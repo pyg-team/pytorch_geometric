@@ -1,0 +1,60 @@
+Title: IBM Higher than expected I/O in CICS region containing a Liberty profile enabled JVM server - United States
+
+Text:
+5655Y0400 R680 680 R800 800 HCI6800 5655-Y04 5655Y04 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ You experience excessive I/O (EXCP) in your CICS region when you enable a JVMSERVER resource that is configured for the WebSphere Application Server Liberty profile. 
+
+SYMPTOM
+High I/O in CICS region with a Liberty profile enabled JVM server
+
+
+CAUSE
+By default, WebSphere Application Server Liberty profile monitor periodically checks for configuration and application changes by reading the z/OS UNIX® file system.
+
+ENVIRONMENT
+JVM server
+
+DIAGNOSING THE PROBLEM
+You see the EXCP count rising for the CICS region even though the region is performing no work.
+
+You have a JVMSERVER resource enabled that is configured with the WebSphere Application Server Liberty profile, the JVM profile contains an entry for WLP_INSTALL_DIR.
+
+RESOLVING THE PROBLEM
+Monitoring is controlled by elements in the Liberty profile server.xml file. Application monitoring is controlled by the <applicationMonitor> element and configuration update is controlled by the <config> element. You have a number of options to reduce I/O.
+
+Edit the server.xml file, that is found by default in WORK_DIR/CICS_APPLID/JVMSERVER_NAME/wlp/usr/servers/defaultServer. If you have set WLP_USER_DIR in the JVM profile, append servers/server_name to value to find server.xml (where server_name is either "defaultServer" or the value of -Dcom.ibm.cics.jvmserver.wlp.server.name in the JVM profile).
+
+
+
+
+
+Add or change the elements as follows: 
+
+ * If you are not using the dropins directory to deploy your web applications, disable monitoring of the dropins directory:
+   
+   <applicationMonitor dropins="dropins" dropinsEnabled="false">
+   
+   
+ * Increase the configuration monitoring interval and the application monitor polling rate:
+   
+   <config monitorInterval="5s" updateTrigger="polled"/>
+   <applicationMonitor dropins="dropins" dropinsEnabled="false" pollingRate="5s" updateTrigger="polled"/> 
+   
+   
+ * If your Liberty server configuration is static and you will not be performing any updates while the server is active, disable dynamic configuration monitoring:
+   
+   <config updateTrigger="disabled"/>
+   
+   
+   
+
+
+Note: If you want to use CICS bundles to install your web applications, application monitoring update trigger (applicationMonitor updateTrigger) and configuration monitoring update trigger (config updateTrigger) must be set to polled. 
+
+Further information can be found in the Controlling dynamic updates [http://pic.dhe.ibm.com/infocenter/wasinfo/v8r5/topic/com.ibm.websphere.wlp.nd.multiplatform.doc/ae/twlp_setup_dyn_upd.html] section of the WebSphere Application Server V8.5 information center. 
+
+
+PRODUCT ALIAS/SYNONYM
+ CICS/TS CICS TS CICS Transaction Server

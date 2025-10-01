@@ -1,0 +1,56 @@
+Title: IBM Security Bulletin: Multiple vulnerabilities in the IBM Java SDK affects IBM Rational Application Developer for WebSphere Software (CVE-2015-4872) - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ There are multiple vulnerabilities in IBM® SDKs Java™ Technology Edition, Versions 6 and 7 that is used by IBM Rational Application Developer for WebSphere Software. These issues were disclosed as part of the IBM Java SDK updates in October 2015. 
+
+VULNERABILITY DETAILS
+CVEID: CVE-2015-4872 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-4872]
+
+DESCRIPTION: An unspecified vulnerability in Oracle Java SE and JRockit related to the Security component has no confidentiality impact, partial integrity impact, and no availability impact.
+
+CVSS Base Score: 5
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/107361 [https://exchange.xforce.ibmcloud.com/vulnerabilities/107361] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:L/Au:N/C:N/I:P/A:N)
+
+AFFECTED PRODUCTS AND VERSIONS
+Rational Application Developer 9.5.0.1 and earlier.
+
+REMEDIATION/FIXES
+Update the IBM SDK, Java Technology Edition of the product to address this vulnerability:
+
+
+
+Product VRMF APAR Remediation/First Fix Rational Application Developer 8.0 through 9.5.0.1 PI53703  * For all versions, apply IBM SDK Java Technology Edition Critical Patch Update - July and October 2015 [http://www.ibm.com/support/docview.wss?uid=swg24041517]. 
+ * For the WebSphere Application Server 7.0 Test Environment, apply WebSphere Application Server 7.0 Test Environment Extension Fix Pack 39 (7.0.0.39) [http://www.ibm.com/support/docview.wss?uid=swg24041415] 
+ * For WebSphere Application Server versions 8.0 and 8.5, see Security Bulletin: Multiple vulnerabilities in IBM® Java SDK affect WebSphere Application Server July 2015 CPU [http://www-01.ibm.com/support/docview.wss?uid=swg21962931]
+
+Rational Agent Controller 7.0 through to 9.5 PI53703  * Apply Rational Agent Controller Fixpack 1 (9.5.0.1) for 9.5 [http://www.ibm.com/support/docview.wss?uid=swg24041466]
+
+Rational Build Utility 8.0 through to 9.5.0.1 PI53703  * For use on Windows or Linux: apply IBM SDK Java Technology Edition Critical Patch Update - July and October 2015 [http://www.ibm.com/support/docview.wss?uid=swg24041517]. 
+ * For use on System z:  * Version 8.0: Apply the latest Java Technology Edition, V6.0.0 PTF [http://www-03.ibm.com/systems/z/os/zos/tools/java/]. 
+    * Version 8.5, 9.0 and 9.1: Apply the latest Java Technology Edition, V7.0.0 [http://www-03.ibm.com/systems/z/os/zos/tools/java/].
+   
+   
+
+WORKAROUNDS AND MITIGATIONS
+None
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v2 Guide [http://www.first.org/cvss/v2/guide] 
+On-line Calculator v2 [http://nvd.nist.gov/CVSS-v2-Calculator] 
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/PSIRT] CHANGE HISTORY
+ 31 December 2015: Original version published 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.

@@ -1,0 +1,50 @@
+Title: IBM Operational Decision Manager Decision Center 8.9 fails to deploy a decision service to a Business Rules instance on Bluemix - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Deployment of a decision service from Decision Center 8.9 (Business console or Enterprise console) to a Business Rules instance on Bluemix fails. This solution applies if the failure is related to a certificate.
+
+Each Bluemix domain has a certificate authority (CA) certificate:
+- *.ng.bluemix.net
+- *.eu-gb.bluemix.net
+- *.eu-de.bluemix.net
+- *.au-syd.bluemix.net
+
+Normally, you do not have to import or export a certificate because the Bluemix certificate authority is aleady in the browsers and JDKs. 
+
+However, you must import a certificate under the following scenarios:
+- Decision Center was started with a truststore that does not include the common CA certificates. This can be determined on a case-by-case basis, and depends on the application server and the truststore.
+- You want to control which websites Decision Center connects to, your truststore contains the minimum number of entries, and you prefer to import the certificate only when needed.
+
+If you have one of these scenarios, follow the solution below to import a certificate. 
+
+RESOLVING THE PROBLEM
+You export a Bluemix server certificate by using a tool or a browser, and then you import the certificate into the Decision Center truststore. You must first locate the truststore file that is used by Decision Center. This depends on the application server, the truststore settings, and your ability to make changes (free access or administrator access). 
+
+To export a certificate:
+
+
+ 1. If you have openssl, follow these steps:  1. Log in to Bluemix. 
+     2. Select your Business Rules service instance. 
+     3. Open the Connection settings tab and get the URL for Rule Execution Server. 
+     4. In a command line, enter the following command:
+        openssl s_client -connect <host>:<port>
+        The command connects to the specified host and port, and displays information about the server, including its certificate. Copy the certificate output, which begins with BEGIN CERTIFICATE and ends with END CERTIFICATE, to a new file, for example, example.crt.
+    
+    
+ 2. If you use a browser, follow steps 1-9 in Importing a self-signed certificate for ODM Rule Designer [https://www.ibm.com/support/knowledgecenter/en/SSXJFX_2.0.0/install_import_cert_odm.html] to export the certificate. See the documentation of your application server for information about how to import the certificate.
+
+
+To import a certificate: 
+
+There are several ways to import a certificate, including openssl, the Java keytool, and a UI tool such as Keystore Explorer. This example uses the Java keytool, which is the most common method: 
+
+keytool -importcert -file example .crt -keystore <your truststore file> -storepass < password > 
+
+Note: We use the keytool to import the certificate because Decision Center runs in Java and the most widely used keystore format is the Java keystore ( .jks files). Because openssl does not operate directly on the Java keystore, you must convert the keystore format before you use openssl. Java can also use other keystore formats. For more information about the openssl command, see OpenSSL for Windows [http://gnuwin32.sourceforge.net/packages/openssl.htm] and OpenSSL Binaries [https://wiki.openssl.org/index.php/Binaries]. 
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Cloud and Virtualization Management IBM Bluemix

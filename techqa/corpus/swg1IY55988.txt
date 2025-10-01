@@ -1,0 +1,156 @@
+Title: IBM IY55988: s12840 - Ace agent getting error messages - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Problem Description:  When starting up the ACE agent 4.4.1001,
+   getting
+   this message:
+   
+   # ./StartAgent.sh
+   AceSvr51Agent server started and ready to use...
+   # cat startlog
+   exec(): 0509-036 Cannot load program ./AceSvr51Agent because of
+   the
+   following er
+   rors:
+           0509-150   Dependent module
+   /home/mandar/ADK/ADK_BUILD/lib/aix4.3.0/libA
+   dkApi.so could not be loaded.
+           0509-022 Cannot load module
+   /home/mandar/ADK/ADK_BUILD/lib/aix4.3.0/libA
+   dkApi.so.
+           0509-026 System error: A file or directory in the path
+   name does
+   not exi
+   st.
+   
+   The start script needs to be corrected.
+   
+   Customer Recreate: Yes
+   
+   Desired Behavior: Proper agent start script
+   
+   Steps to Duplicate:  Start the script.  It will give you the
+   Mandar
+   reference.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  s12840
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *   Fix shipped in Ace51 Agent v4.5.1
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *   Fix shipped in Ace51 Agent v4.5.1
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IY55988
+   
+   
+ * REPORTED COMPONENT NAME
+   ITIM AGENTS
+   
+   
+ * REPORTED COMPONENT ID
+   5724C34AG
+   
+   
+ * REPORTED RELEASE
+   431
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2004-04-21
+   
+   
+ * CLOSED DATE
+   2004-05-08
+   
+   
+ * LAST MODIFIED DATE
+   2004-05-08
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *     AGENT
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ITIM AGENTS
+   
+   
+ * FIXED COMPONENT ID
+   5724C34AG
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R450 PSY
+   UP

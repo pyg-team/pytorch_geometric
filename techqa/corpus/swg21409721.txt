@@ -1,0 +1,36 @@
+Title: IBM Permission Denied: DOORS Module related to this proposal was not readable by you when the proposal was submitted - United States
+
+Text:
+Permission Denied; doors/change; integration TECHNOTE (FAQ)
+
+QUESTION
+How do I fix the error message: “Permission Denied: DOORS Module related to this proposal was not readable by you when the proposal was submitted.” 
+
+CAUSE
+Permission are actually stored as part of the proposal and are not updated later if the permissions change. The permission denied errors can usually be caused by having read access defined at the attribute level that the user may not have access to. By default, everybody is allowed to read all the attributes in the module. 
+If there are some groups defined that are explicitly set as being allowed to read the attributes, but others are not then the user that is attempting to look at the ActiveX control and is not a member of any of the defined groups, will not be able to view the RC comments.
+
+ANSWER
+If the permissions for you (the IBM Rational DOORS users) are set after the fact and a new change is made to an object, you should be able to view those new changes in IBM Rational Change. Of course, you will still get the permission denied errors due to the original object changes but should not get it for the newer changes. 
+
+
+This is reported mostly by end users, as they encounter this issue and modify the users access permission (RMCD) later on. But the RCR is already saved in the IBM Rational Synergy database, which has insufficient access right for the user and it cannot be modified once saved. 
+
+ 
+
+The attribute in cvtype=problem stores this Rational DOORS module permissions in some inherited attribute, which is not viewable or editable from CLI. 
+
+ 
+
+For example, try to show this attribute for RCR17 from the command line interface (CLI): 
+
+ * 
+ * 
+ * >ccm attr -la @1
+
+
+From the list of the problem attribute, you cannot locate any particular attribute which stores the DOORS module RC data. 
+
+ 
+
+In this case, there is no workaround to resolve this issue, as this is expected if the permissions were not set correctly before the Changes were made. you will not get this error after modifying the Rational DOORS module permissions (RMCD) for the changes made afterwords.

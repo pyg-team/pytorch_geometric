@@ -1,0 +1,233 @@
+Title: IBM IT17247: MQ JAVA CLIENT IGNORES EXCEPTIONS IF CLIENT AMS INTERCEPTOR COULD NOT BE LOADED - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When using the IBM MQ Java client (either the classes for JMS
+   API or the classes for Java API), any exceptions that occurred
+   while loading the Advanced Message Security (AMS) Java
+   Interceptor code were ignored and were not propagated to
+   applications.  This meant that client side AMS Interception for
+   Java application was disabled and applications could receive
+   messages with encrypted payloads.
+   
+   If this occurred within an MQ classes for JMS application, for
+   example, calling the getText() or toString() method on the JMS
+   TextMessage object resulted in the following JMSException being
+   thrown:
+   
+   JMSCMQ1049: The character set '1208(UTF-8) Unmappable Action:
+   REPORT Unmappable Replacement: 63' cannot convert some or all of
+   the string '[B@16d143b'
+   [com.ibm.msg.client.jms.DetailedJMSException]
+   sun.reflect.NativeConstructorAccessorImpl.newInstance0
+   sun.reflect.NativeConstructorAccessorImpl.newInstance
+   sun.reflect.DelegatingConstructorAccessorImpl.newInstance
+   java.lang.reflect.Constructor.newInstance
+   com.ibm.msg.client.commonservices.j2se.NLSServices.createExcepti
+   on
+   com.ibm.msg.client.commonservices.nls.NLSServices.createExceptio
+   n
+   com.ibm.msg.client.wmq.common.internal.WMQUtils.computeTextFromB
+   ytes
+   com.ibm.msg.client.wmq.common.internal.WMQUtils.computeTextFromB
+   yteBuffer
+   com.ibm.msg.client.wmq.common.internal.messages.WMQTextMessage.g
+   etText
+   com.ibm.msg.client.jms.internal.JmsTextMessageImpl.getText
+   com.ibm.msg.client.jms.internal.JmsTextMessageImpl.toString
+   com.ibm.jms.JMSMessage.toString
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Ensure that the only version of the Bouncy Castle library
+   available in the application environment is version 1.52, which
+   is included alongside the IBM MQ V9 standalone Java client jar
+   files and within the JCA Resource Adapter.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   This issue affects users of the:
+   
+     - IBM MQ V9 classes for Java
+     - IBM MQ V9 classes for JMS
+     - IBM MQ V9 JCA Resource Adapter
+     - IBM MQ V9 OSGi bundles
+   
+   
+   Platforms affected:
+   MultiPlatform
+   
+   ****************************************************************
+   PROBLEM DESCRIPTION:
+   The IBM MQ V9 Java Message Queuing Interface (JMQI), which
+   underpins the MQ classes for JMS and classes for Java APIs, will
+   always attempt load the Advanced Message Security (AMS) Java
+   Interceptor code when instantiated for client side message
+   encrypted and decryption.
+   
+   Any exceptions that were caught during this operation were
+   ignored and AMS Interception within the JMQI was disabled.  This
+   meant that message encryption and decryption could not take
+   place.  As a results, messages returned to applications would
+   still have encrypted payloads.
+   
+   One scenario in which this problem has been observed was when an
+   MQ classes for JMS application, using the MQ V9 Resource
+   Adapter, was deployed into Oracle WebLogic application server.
+    In this environment the issue was due to an incompatibility
+   between different versions of the open source Bouncy Castle
+   library.  IBM MQ Advanced Message Security (AMS) implements
+   Cryptographic Message Syntax (CMS), which is used to digitally
+   sign, digest, authenticate, or encrypt arbitrary message
+   content.  IBM MQ V9 AMS support in IBM MQ classes for Java and
+   IBM MQ classes for JMS uses the Bouncy Castle V1.52 library to
+   support CMS.  Oracle WebLogic ships an earlier version of the
+   Bouncy Castle library which is not compatible with the IBM MQ
+   Java AMS Interceptor.
+   
+   Any exceptions thrown within the MQ Java client while loading
+   the AMS Java Interceptor code were ignored and AMS Interception
+   within the MQ Java client code was disabled.  If a classes for
+   JMS application, for example, then consumed a JMS TextMessage
+   that was encrypted with AMS when it was put, the message payload
+   would remain encrypted when it was returned to the application.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The IBM MQ V9 Java MQI (JMQI) has been updated such that any
+   exceptions that occur while loading the Advanced Message
+   Security (AMS) Java Interceptor are thrown to the application.
+    This will highlight unexpected errors in the environment and
+   avoid encrypted messages being returned to the application.
+   
+   If exceptions are now being thrown because the AMS Java
+   Interceptor code cannot be loaded, but AMS function is not being
+   used, the AMQ_DISABLE_CLIENT_AMS property can be used to avoid
+   the JMQI attempting to load the AMS Java Interceptor code:
+   
+   http://www.ibm.com/support/knowledgecenter/SSFKSJ_9.0.0/com.ibm.
+   mq.sec.doc/q127080_.htm [http://www.ibm.com/support/knowledgecenter/SSFKSJ_9.0.0/com.ibm.mq.sec.doc/q127080_.htm]
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+   Version    Maintenance Level
+   v9.0 CD    9.0.4
+   v9.0 LTS   9.0.0.2
+   
+   The latest available maintenance can be obtained from
+   'WebSphere MQ Recommended Fixes'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037]
+   
+   If the maintenance level is not yet available information on
+   its planned availability can be found in 'WebSphere MQ
+   Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT17247
+   
+   
+ * REPORTED COMPONENT NAME
+   IBM MQ BASE M/P
+   
+   
+ * REPORTED COMPONENT ID
+   5724H7261
+   
+   
+ * REPORTED RELEASE
+   900
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-09-27
+   
+   
+ * CLOSED DATE
+   2017-05-26
+   
+   
+ * LAST MODIFIED DATE
+   2017-05-26
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   IBM MQ BASE M/P
+   
+   
+ * FIXED COMPONENT ID
+   5724H7261
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R900 PSY
+   UP

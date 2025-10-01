@@ -1,0 +1,17 @@
+Title: IBM Why does the notice name drop down is blank when generating Atlas Hold Notice Confirmation report? - United States
+
+Text:
+atlas TECHNOTE (FAQ)
+
+QUESTION
+ Why does the notice name drop down is blank when generating Atlas Hold Notice Confirmation report even there is a active notice for a matter ? 
+
+CAUSE
+Having incorrect location for ReportBaseFolder parameter will cause this issue
+
+ANSWER
+ 
+
+ 1. Go to Admin --> Components --> Reporting. 
+ 2. Edit the Reporting component and correct the value for ReportBaseFolder. 
+ 3. Save the change and retry the report.

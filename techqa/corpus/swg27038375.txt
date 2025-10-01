@@ -1,0 +1,110 @@
+Title: IBM Knowledge Collection: Usage documents for IBM Business Monitor - United States
+
+Text:
+knowledgecollection; using; business monitor; ibm business monitor; monitor EDUCATION
+
+ABSTRACT
+ This Knowledge Collection is a focused compilation of links to documents for using IBM Business Monitor. 
+
+CONTENT
+A Knowledge Collection is a focused compilation of links to documents that share a common theme. Knowledge Collections are navigation aids that organize content to help users quickly find relevant information. Knowledge Collections are not designed to be an all-inclusive list of all documents dealing with the specific theme.
+
+The applicable version is included in each entry.
+
+
+
+
+Usage documents for IBM Business Monitor 
+Other Knowledge Collections for IBM Business Monitor 
+
+
+
+
+
+Usage documents for IBM Business Monitor 
+
+Default welcome space for Business Space in IBM Business Monitor is not translated (1429708) [http://www.ibm.com/support/docview.wss?uid=swg21429708&acss=dakc] 
+Versions: 7.5, 7.5.0.1, 7.5.1 and 8.0 
+When you first set up Business Space in IBM Business Monitor and then log into it, the default welcome space is not translated. 
+
+IBM Business Monitor Data Movement Service (DMS) fails on z/OS server (1502726) [http://www.ibm.com/support/docview.wss?uid=swg21502726&acss=dakc] 
+Version: 7.5 
+After IBM Business Monitor attempts to run DMS on DB2 for z/OS, the SystemOut.log reports errors. 
+
+Running a Jython script to purge a monitor model version (1566533) [http://www.ibm.com/support/docview.wss?uid=swg21566533&acss=dakc] 
+Versions: 7.5, 7.5.0.1 and 7.5.1 
+If any errors occur while a monitor model version is being uninstalled, you can use wsadmin to purge the model version by running the Jython script that is described in this document. If you would like to purge ALL versions, see "Uninstallation of a monitor model fails" in the related information link. 
+
+Deploying a snapshot with monitoring for IBM Business Monitor to a network deployment environment fails (1569450) [http://www.ibm.com/support/docview.wss?uid=swg21569450&acss=dakc] 
+Versions: 7.5, 7.5.0.1, 7.5.1 and 7.5.1.1 
+When you attempt to deploy a process application snapshot with monitoring for IBM Business Monitor to a network deployment runtime environment, deployment fails. You must install a deployment service. 
+
+Cannot connect to Business Space WebDAV (1590077) [http://www.ibm.com/support/docview.wss?uid=swg21590077&acss=dakc] 
+Versions: 7.5 and 7.5.1 
+Attempts to connect to the WebDAV using Microsoft Windows 7 or Windows 2008 result in an error message. 
+
+DB2 errors are logged when running IBM Business Monitor (1608365) [http://www.ibm.com/support/docview.wss?uid=swg21608365&acss=dakc] 
+Versions: 7.5, 7.5.0.1 and 7.5.1 
+The IBM DB2 database can cause errors while IBM Business Monitor is running. 
+
+IBM Business Monitor Showcase model fails to install using First Steps (1612924) [http://www.ibm.com/support/docview.wss?uid=swg21612924&acss=dakc] 
+Version: 8.0 
+IBM Business Monitor Showcase model with custom database tables fails to install using First Steps. 
+
+In IBM Business Monitor V8.0.1, the statistical histogram of the IBM Cognos Report Viewer and Report Designer Monitor widget is not displayed properly in non-English environments (1615769) [http://www.ibm.com/support/docview.wss?uid=swg21615769&acss=dakc] 
+Version: 8.0.1 
+In IBM Business Monitor V8.0.1, the statistical histogram of the IBM Cognos Report Viewer and Report Designer Monitor widget is not properly mirrored under bidirectional locales (Arabic and Hebrew for example). 
+
+Some Simplified Chinese characters are missing or corrupted when IBM Business Monitor tools are used with Google Chrome or Apple Safari browsers (1616800) [http://www.ibm.com/support/docview.wss?uid=swg21616800&acss=dakc] 
+Version: 8.0.1 
+If you use web-based Business Monitor tools in a Google Chrome or Apple iPad Safari browser, and if you are using the GB18030 Simplified Chinese character set, you might notice the characters you input are missing or corrupted. This can happen in the KPI Manager, the Alert Manager, the administrative console, and the widgets available in business spaces. 
+
+Business Space welcome content and help content is missing after an IBM Business Monitor profile upgrade from 8.0. to 8.0.1 (1617233) [http://www.ibm.com/support/docview.wss?uid=swg21617233&acss=dakc] 
+Version: 8.0.1 
+When you upgrade the IBM Business Monitor profile from 8.0 to 8.0.1, you might encounter the following problems in the Business Monitor test environment: the Welcome space displays a "Topic Not Found" message and the help displays the same message. The help navigation also contains a single book and no Business Monitor content. 
+
+DB2 server type should be DB2_DATASERVER in IBM Business Monitor V8.0 and subsequent versions (1623441) [http://www.ibm.com/support/docview.wss?uid=swg21623441&acss=dakc] 
+Versions: 8.0, 8.0.1 and 8.0.1.1 
+Manually creating a Business Monitor profile fails when the issued command uses DB2_UNIVERSAL as the database type. 
+
+Table-based routing between WebSphere Process Server V7.0 and IBM Business Monitor V8.0 does not work (1628146) [http://www.ibm.com/support/docview.wss?uid=swg21628146&acss=dakc] 
+Versions: 8.0, 8.0.1, 8.0.1.1 
+In a topology where IBM Business Monitor Version 8.0 and WebSphere Process Server (WPS) Version 7.0 are in separate cells, how do I get table-based routing from WPS to Monitor to work? 
+
+How do I automate the deployment of a Monitor model? (1633731) [http://www.ibm.com/support/docview.wss?uid=swg21633731&acss=dakc] 
+Versions: 7.5, 7.5.0.1, 7.5.1, 7.5.1.1, 8.0, 8.0.1 and 8.0.1.1 
+You want to install a Monitor model using wsadmin in non-interactive mode as described by the information center article, but you don't want to accept the default values. 
+
+Upgraded IBM Eclipse Help System (IEHS) for V7.5 BPM products on Windows (4032867) [http://www.ibm.com/support/docview.wss?uid=swg24032867&acss=dakc] 
+Version: 7.5 
+The IBM Eclipse Help System (IEHS) has been upgraded to a newer version with more features and additional fixes. 
+
+Upgraded IBM Eclipse Help System (IEHS) for V7.5 BPM products on Linux (4032869) [http://www.ibm.com/support/docview.wss?uid=swg24032869&acss=dakc] 
+Version: 7.5 
+The IBM Eclipse Help System (IEHS) has been upgraded to a newer version with more features and additional fixes. 
+
+Upgraded IBM Eclipse Help System (IEHS) for V7.5 BPM products on AIX (4032870) [http://www.ibm.com/support/docview.wss?uid=swg24032870&acss=dakc] 
+Version: 7.5 
+The IBM Eclipse Help System (IEHS) has been upgraded to a newer version with more features and additional fixes. 
+
+Upgraded IBM Eclipse Help System (IEHS) for V7.5.1 BPM products on AIX (4033061) [http://www.ibm.com/support/docview.wss?uid=swg24033061&acss=dakc] 
+Version: 7.5.1 
+The IBM Eclipse Help System (IEHS) has been upgraded to a newer version with more features and additional fixes. 
+
+Upgraded IBM Eclipse Help System (IEHS) for V7.5.1 BPM products on Linux (4033065) [http://www.ibm.com/support/docview.wss?uid=swg24033065&acss=dakc] 
+Version: 7.5.1 
+The IBM Eclipse Help System (IEHS) has been upgraded to a newer version with more features and additional fixes. 
+
+Upgraded IBM Eclipse Help System (IEHS) for V7.5.1 BPM products on Windows (4033069) [http://www.ibm.com/support/docview.wss?uid=swg24033069&acss=dakc] 
+Version: 7.5.1 
+The IBM Eclipse Help System (IEHS) has been upgraded to a newer version with more features and additional fixes. 
+
+
+Back to Top 
+
+Other Knowledge Collections for IBM Business Monitor 
+ * Knowledge Collection: Troubleshooting documents for IBM Business Monitor (7038376) [http://www.ibm.com/support/docview.wss?uid=swg27038376]
+
+
+
+Back to top

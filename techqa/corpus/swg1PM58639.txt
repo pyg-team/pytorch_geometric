@@ -1,0 +1,137 @@
+Title: IBM PM58639: No message displayed when user tries to delete an orthogonal state. - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Rational Rhapsody 8.0 [http://www-01.ibm.com/support/docview.wss?uid=swg24032982]
+Rational Rhapsody 8.0.6 [http://www-01.ibm.com/support/docview.wss?uid=swg24037021]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When a user tries to delete an and-state from the statechart
+   diagram, Rhapsody doesnt perform any action however if the same
+   and-state is tried to delete from browser, Rhapsody prompts for
+   'Cannot Delete orthogonal State'
+   
+   To reproduce the behavior:
+   
+   1.Create a class and add a statechart
+   2.Create and-states
+   3.Right click on the an-state and perform 'delete from model',
+   Rhapsody doesnt perform any action, no message pop up.
+   4.Perform 'delete from model' of the and-state from the browser,
+   Rhapsody prompts for 'Cannot Delete And States'
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   No message displayed when user tries to delete an orthogonal
+   state.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fixed in Scorpio
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM58639
+   
+   
+ * REPORTED COMPONENT NAME
+   TLOGIC RHAPSODY
+   
+   
+ * REPORTED COMPONENT ID
+   5724V74RP
+   
+   
+ * REPORTED RELEASE
+   760
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-02-21
+   
+   
+ * CLOSED DATE
+   2012-09-21
+   
+   
+ * LAST MODIFIED DATE
+   2012-09-21
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TLOGIC RHAPSODY
+   
+   
+ * FIXED COMPONENT ID
+   5724V74RP
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R760 PSN
+   UP

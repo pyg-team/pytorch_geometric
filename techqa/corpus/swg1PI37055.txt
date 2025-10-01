@@ -1,0 +1,267 @@
+Title: IBM PI37055: MSI INSTALLATION OF IBM SPSS STATISTICS 23: ONLY FILE,VIEW AND CUSTOM MENU ARE VISIBLE - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  (Note: The below scenario can also happen on 32 bit
+   Installations)
+   You download the 64 bit zip file for release IBM SPSS Statistics
+   23 for Windows and extract it to a local folder on your hard
+   disc on a 64 bit Windows machine. The name of the file is:
+   SPSSSC_64-BIT_23.0_MW_ML.zip.
+   For example you extract the content of the zip file to
+   C:\Temp\SPSSSC_64-BIT_23.0_MW_ML
+   You click Start - All Programs - Accessories and right click on
+   Command Prompt and select 'Run as Administrator'
+   On Command prompt you change directory to folder
+   C:\Temp\SPSSSC_64-BIT_23.0_MW_ML
+   Then you run the below command which is also documented on
+   Authorized User License Administrator Guide.pdf for push
+   installation of release 23:
+   
+   MsiExec.exe /i "IBM SPSS Statistics 23.msi" /qn /L*v logfile.txt
+   
+   ftp://public.dhe.ibm.com/software/analytics/spss/documentation/s
+   tatistics/23.0/en/client/InstallationDocuments/Windows/Authorize
+   d_User_License_Administrator_Guide.pdf
+   
+   You wait until the installer has finished. The program
+   installation with MSI went through and the product is installed
+   to C:\Program Files\IBM\SPSS\Statistics\23.
+   After MSI install you notice the program directory folder has
+   1.12GB, while the size of the folder when using the Interactive
+   Installation is about 1.37 GB.
+   You launch release 23 either without license, or with temporary
+   license enabled manually ar with a proper authorized user
+   license.
+   When you launch the product you see only the menu File, View and
+   Custom but when you click on these menus you see not the full
+   content of the normal menus as well. Also no toolbar is visible
+   
+   The problem is caused by spssprod.inf not filled in with no-net
+   on daemon host line:
+   On DaemonHost=
+   There is no-net parameter:
+   
+   [Language]
+   SPSSLanguage=en
+   [ProductRegistration]
+   URL=http://www.ibm.com/software/analytics/spss/register/
+   [Product]
+   LicenseDescription=
+   FixPack=0
+   CustomerName=ADMINIBM
+   VersionPatch=0
+   Organization=IBM
+   ProductName=IBM SPSS Statistics 23
+   ProductNickName=IBM SPSS Statistics
+   RegistryRoot=SPSS Statistics\23
+   CommonRoot=C:\Program Files\IBM\SPSS\Statistics\23\common
+   Version=23.0.0.0
+   VersionMajor=23
+   VersionMinor=0
+   StartJVMAtStartup=no
+   DaemonHost=
+   FeatureCode=1200
+   PreferencesRoot=Statistics
+   CodePage=65001
+   Copyright=Copyright (c) IBM Corp. 1989, 2013.
+   CommuterMaxLife=7
+   
+   Please note that when you edit spssprod.inf manually and insert
+   DaemonHost=no-net and save the file, after that launch release
+   23 again all menus are available.
+   
+   This issue was reported to IBM SPSS development. It can also
+   happen for 32 bit pushed  installations of release 23.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  As part of fixing an issue with respect to
+   redundant licensing the Daemonhost variable cannot be empty now.
+   It has to be either no-net in the case of authorized license or
+   license server in case of network license.
+   According to documentation you now should use AUTHCODE when
+   pushing via command line.
+   In order to perform silent installations for release 23 you
+   should
+   provide either authorization code or network license parameter.
+   DaemonHost value needs either one of these to get populated.
+   
+   See Authorized User License Administrators Guide:
+   
+   Command line example:
+   Following is a command line that you could use to push a product
+   installation. Enter all of the text on one line.
+   MsiExec.exe /i "IBM SPSS Statistics 23.msi" /qn /L*v logfile.txt
+   INSTALLDIR="C:\Statistics" AUTHCODE="3241a2314b23c4d5f6ea"
+   
+   For Network License:
+   MsiExec.exe /i "IBM SPSS Statistics 23.msi" /qn /L*v logfile.txt
+   INSTALLDIR="C:\Statistics" LICENSETYPE="Network"
+   LSHOST="mylicserver"
+   
+   However, there can be circumstances where using AUTHCODE
+   parameter on push installations is not convenient.
+   In order to run a pushed installation for authorized user
+   license installation without using AUTHCODE like on the below
+   example
+   
+   MsiExec.exe /i "IBM SPSS Statistics 23.msi" /qn /L*v logfile.txt
+   INSTALLDIR="C:\Program Files\IBM\SPSS\Statistics\23"
+   there was Interim Fix developed as well where an installer file
+   just populate the file
+   spssprod.inf with the value DaemonHost=no-net for customers who
+   would not want to change this value manually.
+   
+   If you encounter the issue described above and would like to
+   have the installer file to populate spssprod.inf please open a
+   Service Request
+   with IBM SPSS Technical Support.
+   
+   Please contact Technical Support with reference to APAR PI37055
+   and technote 1700572 about about Interim Fix 002
+   for IBM SPSS Statistics 23.
+   
+   Note: Interim fixes are limited corrections to specific issues
+   reported by one or more customers.
+   They are normally sent only to customers who have reported one
+   of the corrected problems, and who require
+   an immediate correction. Interim Fixes do not address customer
+   enhancement requests, and not all defect
+   corrections can be delivered as Interim Fixes. Due to their
+   urgency Interim Fixes undergo only targeted
+   testing of specific fixes, not full regression testing. If the
+   fix is not urgently required, you may prefer
+   to wait for a scheduled Fix Pack Release, which will be fully
+   regression tested. Interim Fix
+   corrections, once fully regression tested, are automatically
+   included in a future Fix Pack.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * see APAR text                                                *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * This issue has been addressed in IBM SPSS Statistics 23      *
+   * FixPack 2, please upgrade to this fixpack level              *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * This issue has been addressed in IBM SPSS Statistics 23      *
+   * FixPack 2, please upgrade to this fixpack level              *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This issue has been addressed in IBM SPSS Statistics 23 FixPack
+   2, please upgrade to this fixpack level
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI37055
+   
+   
+ * REPORTED COMPONENT NAME
+   SPSS STATISTICS
+   
+   
+ * REPORTED COMPONENT ID
+   5725A54ST
+   
+   
+ * REPORTED RELEASE
+   N00
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-03-16
+   
+   
+ * CLOSED DATE
+   2015-11-04
+   
+   
+ * LAST MODIFIED DATE
+   2015-11-04
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   SPSS STATISTICS
+   
+   
+ * FIXED COMPONENT ID
+   5725A54ST
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * RN00 PSN
+   UP
+   
+   
+ * RN00 PSY
+   UP

@@ -1,0 +1,166 @@
+Title: IBM OA48884: SINGLE QUOTES ARE NECESSARY WHEN FILTERING FOR COMMON NAME - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When filtering for CommonName in Panel CKRP3R52 (RA.5.1) single
+   quotes are required when filtering for Common Names that
+   include periods.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Insert quotes around dataset name, or specify it as a substring
+   with an initial colon.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: Users of zSecure Admin/Audit processing      *
+   *                 digital certificate data in interactive      *
+   *                 mode.                                        *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: zSecure Admin/Audit performs no record  *
+   *                      selection in cases where the additional *
+   *                      selection criteria on the SubjectsDN    *
+   *                      and/or IssuersDN fields on RA.5         *
+   *                      (C2RP3R5@) panel is used and the search *
+   *                      filter is not enclosed in quotes.       *
+   ****************************************************************
+   * RECOMMENDATION: Apply the PTF provided.                      *
+   ****************************************************************
+   When the additional selection criteria on SubjectsDN/IssuersDN
+   field(s) is used on RA.5 (C2RP3R5@) panel, the zSecure
+   Admin/Audit not provide any information that the search filter
+   must be enclosed in quotes in order to get the desired results.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  zSecure Admin/Audit has been modified so that the panels
+   offering the selection criteria on SubjectsDN/IssuersDN fields
+   (CKRP3R52/CKRP3R53) display the suggestion that the search
+   filters must be enclosed in single quotes to get an exact match.
+   Online help has also been updated to reflect that. Please note
+   the documentation changes as specified in the APAR tracking
+   comment data.
+   211Y
+   CKRP3R52
+   CKRP3R53
+   C2R3R5P
+   C2R3R5Q
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   OA48884
+   
+   
+ * REPORTED COMPONENT NAME
+   ZSEC BASE,ADMIN
+   
+   
+ * REPORTED COMPONENT ID
+   5655T0100
+   
+   
+ * REPORTED RELEASE
+   211
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-09-10
+   
+   
+ * CLOSED DATE
+   2015-09-25
+   
+   
+ * LAST MODIFIED DATE
+   2015-10-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UA79148
+   
+   
+
+MODULES/MACROS
+ *     CKRP3R52 CKRP3R53 C2R3R5P  C2R3R5Q
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ZSEC BASE,ADMIN
+   
+   
+ * FIXED COMPONENT ID
+   5655T0100
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R211 PSY UA79148 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UA79148]
+   UP15/09/26 P F509
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

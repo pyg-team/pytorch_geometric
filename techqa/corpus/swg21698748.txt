@@ -1,0 +1,72 @@
+Title: IBM Security Bulletin: Multiple security vulnerabilities in IBM Java Runtime affect IBM Rational ClearCase (CVE-2014-3566, CVE-2014-6457) - United States
+
+Text:
+CVE-2014-3566; CVE-2014-6457 SECURITY BULLETIN
+
+SUMMARY
+ There are multiple vulnerabilities in IBM® Runtime Environment Java™ Technology Edition, Versions 5 and 6 that are used by IBM Rational ClearCase. This also includes a fix for the Padding Oracle On Downgraded Legacy Encryption (POODLE) SSLv3 vulnerability (CVE-2014-3566). These were disclosed as part of the IBM Java SDK updates in October 2014. 
+
+VULNERABILITY DETAILS
+CVE-ID: CVE-2014-3566 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-3566] 
+
+DESCRIPTION: Product could allow a remote attacker to obtain sensitive information, caused by a design error when using the SSLv3 protocol. A remote user with the ability to conduct a man-in-the-middle attack could exploit this vulnerability via a POODLE (Padding Oracle On Downgraded Legacy Encryption) attack to decrypt SSL sessions and access the plaintext of encrypted connections. 
+
+CVSS Base Score: 4.3
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/97013 [https://exchange.xforce.ibmcloud.com/vulnerabilities/97013] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:M/Au:N/C:P/I:N/A:N)
+
+CVEID: CVE-2014-6457 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-6457] 
+
+DESCRIPTION: An unspecified vulnerability related to the JSSE component has partial confidentiality impact, partial integrity impact, and no availability impact. 
+
+CVSS Base Score: 4
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/97148 [https://exchange.xforce.ibmcloud.com/vulnerabilities/97148] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:H/Au:N/C:P/I:P/A:N)
+
+AFFECTED PRODUCTS AND VERSIONS
+Only the ClearCase Remote Client/ClearTeam Explorer component of ClearCase is affected.
+
+
+
+ClearCase Remote Client/ClearTeam Explorer version Status 8.0.1 through 8.0.1.6 Affected 8.0 through 8.0.0.13 Affected 7.1.2 through 7.1.2.16 Affected 7.1.0.x, 7.1.1.x (all versions and fix packs) Affected REMEDIATION/FIXES
+The solution is to upgrade to a newer fix pack of ClearCase. Please see below for information on the fixes available.
+
+
+
+Affected Versions Applying the fix 8.0.1.x Install Rational ClearCase Fix Pack 7 (8.0.1.7) for 8.0.1 [http://www.ibm.com/support/docview.wss?uid=swg24039409] 8.0.0.x Install Rational ClearCase Fix Pack 14 (8.0.0.14) for 8.0 [http://www.ibm.com/support/docview.wss?uid=swg24039407] 7.1.2.x 
+7.1.1.x 
+7.1.0.x Customers on extended support contracts should install Rational ClearCase Fix Pack 17 (7.1.2.17) for 7.1.2 [http://www.ibm.com/support/docview.wss?uid=swg24039405] Notes: 
+
+ * If you use CCRC as an extension offering installed into an Eclipse shell (one not provided as part of a ClearCase release), you should update the Java™ Virtual Machine used by Eclipse to include a fix for CVE-2014-3566 and CVE-2014-6457. Contact the supplier of your Eclipse or Java™ Virtual Machine for instructions on updating Eclipse.
+
+
+
+IBM recommends that you review your entire environment to identify areas that enable the SSLv3 protocol and take appropriate mitigation and remediation actions. The most immediate mitigation action that can be taken is disabling SSLv3. You should verify disabling SSLv3 does not cause any compatibility issues. WORKAROUNDS AND MITIGATIONS
+None
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+IMPORTANT NOTE
+ IBM strongly suggests that all System z customers be subscribed to the System z Security Portal to receive the latest critical System z security and integrity service. If you are not subscribed, see the instructions on the System z Security web site [http://www.ibm.com/systems/z/solutions/security_subintegrity.html]. Security and integrity APARs and associated fixes will be posted to this portal. IBM suggests reviewing the CVSS scores and applying all security or integrity fixes as soon as possible to minimize any potential risk. 
+
+REFERENCES
+Complete CVSS v2 Guide [http://www.first.org/cvss/v2/guide] 
+On-line Calculator v2 [http://nvd.nist.gov/CVSS-v2-Calculator] 
+IBM Java SDK Security Bulletin [http://www-01.ibm.com/support/docview.wss?uid=swg21688283] 
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] 
+
+ACKNOWLEDGEMENT
+None 
+
+CHANGE HISTORY
+ * 18 March 2014: Original copy published 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.

@@ -1,0 +1,161 @@
+Title: IBM JR53189: INSTANCE MIGRATION FAILURE DUE TO BPD CANNOT BE FOUND ERROR. - United States
+
+Text:
+  DIRECT LINKS TO FIXES
+8.0.1.3-WS-BPM-IFJR53189 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Standard&fixids=8.0.1.3-WS-BPM-IFJR53189&source=SAR]
+8.0.1.2-WS-BPM-IFJR53189 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Standard&fixids=8.0.1.2-WS-BPM-IFJR53189&source=SAR]
+Version 8.5.0 Fix Pack 2 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24040683]
+Version 8.5 Refresh Pack 7 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24041575]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When migrating process instances, if the instance
+   being migrated is currently executing on a BPD that
+   does not exist in the target snapshot, runtime and migration
+   errors will occur.
+   The migration to the target snapshot will succeed without any
+   errors.
+   However, when trying to resume the instance, a runtime error
+   will occur.
+    Also, attempting to migrate the instance back to the old
+   snapshot will fail as well with the following exception in the
+   logs:
+   
+   RuntimeServic E SERVER_MIGRATION_FAILURE when migrating BPD
+   with instance ID = BPDInstance.1097 from snapshot
+   Snapshot.bf11bb48-e195-40de-964a-c602940909ec to target
+   snapshot Snapshot.f2e19ff9-1717-4e2f-9afa-008197488184
+   
+   com.lombardisoftware.core.TeamWorksException: Business Process
+   Diagram with ID BPD.14f4494d-930a-4d36-871a-381138da076d not
+   found.
+   
+   The exception during resuming the instance is expected since
+   runtime cannot find the BPD model to resume from.
+   However, the process instance should be able to migrate back to
+   the old snapshot so the process instance may continue and
+   complete.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ERROR DESCRIPTION -
+   When migrating instances from one snapshot to another, the
+   migration fails due to a missing service or BPD in the source
+   snapshot.
+   The following error may be seen when attempting to migrate:
+   CWLLG0234E: An attempt to get a process instance
+   (id=100,115,502) failed because of an unexpected exception.
+   Error: Service with ID
+   TWProcess.d908445e-2f52-4874-8a37-5ddc5a9fdf1b not found.
+   
+   
+   PRODUCTS AFFECTED
+   IBM Business Process Manager (BPM) Advanced
+   IBM BPM Standard
+   IBM BPM Express
+   
+   LOCAL FIX -
+   None
+   
+   
+   PROBLEM SUMMARY
+   Instance migration will fail if you try to migrate an instance
+   which has a service or BPD that does not exist in the source
+   snapshot.  To get into this case scenario, the initial migration
+   of instances to the new snapshot will succeed even when the
+   target snapshot is missing some artifacts.  However, when the
+   user tries to migrate these instance back to the initial
+   snapshot, the migration fails as the current snapshot's model
+   does not have the missing artifacts.
+   In this case, the instances are stuck running on the current
+   snapshot and may encounter runtime failures due to the missing
+   artifacts.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR53189
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM STANDARD
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9500
+   
+   
+ * REPORTED RELEASE
+   801
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2015-04-24
+   
+   
+ * CLOSED DATE
+   2015-07-07
+   
+   
+ * LAST MODIFIED DATE
+   2015-07-07
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R856 PSY
+   UP

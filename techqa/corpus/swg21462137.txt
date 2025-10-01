@@ -1,0 +1,59 @@
+Title: IBM RTS repository migration to JRules V7.1 when persistence locale is defined with 2 letters - United States
+
+Text:
+Rule Team Server; is; or; missing; expected; unknown word TECHNOTE (FAQ)
+
+QUESTION
+ If you are using Rule Team Server (RTS) as your production repository, how do you migrate a rule repository that uses two-letter locales (from older versions of JRules, for example V6.5 - V6.7) to JRules V7.1, which supports four-letter locales? 
+
+CAUSE
+
+In JRules V6.5 - V6.7, the persistence locale is given by two letters such as fr. Starting in JRules V7.1, the persistence locale should be set using four letters such as fr_FR. 
+
+In the event if the teamserver.locale is not well defined in RTS V6.X and the migration is conducted without following the steps mentioned below, the persistence locale in RTS V7.1 can be assigned with default en_US. The rule artifacts migrated may become uneditable and full of syntax errors such as:
+col: 1: The word 'each' is expected in place of 'la'.
+col: 1: The word 'is' is missing.
+...
+col: 1: The word 'or' is missing.
+
+[/support/docview.wss?uid=swg21462137&aid=1] [/support/docview.wss?uid=swg21462137&aid=1]
+
+
+ANSWER
+For a migration from JRules 6.x to 7.1 where RTS is the production repository and the original locale is fr, (that is, your rules are written in French in the V6.x RTS repository), follow the steps below for a proper migration and locale update: 
+
+
+Note: In the following, fr is used to illustrate the steps. This recommendation applies for any persistence locale defined with two letters.
+
+
+ *  Before migrating, sign in to the RTS V6.x console using an rtsAdministrator role. 
+   Go to Step 5 of the Installation Manager and check that there is a configuration parameter named teamserver.locale with the value fr. If it exists, go directly to step 5 (below) to prepare the RTS V7.1 database.
+   If the teamserver.locale configuration parameter is not found, go to Step 4 of the Installation Manager (Set Persistence Locale) and manually enter the value fr and apply the change. The locale of persistence currently used is specified in the message for this step. 
+   Sign out and sign in again to the RTS V6.X console, and then verify in Step 5 of the Installation Manager that the parameter teamserver.locale is present and set to fr.
+   Prepare the RTS V7.1 database. Sign in as an rtsAdminstrator, and go through the steps in the Installation Manager to create the RTS V7.1 database with the appropriate model extension. If your old RTS repository uses a customized model extension, you will also need to apply the same model extension to the new one. Refer to this technote for additional details about migrating models: Priority property and migration from JRules 6.x to 7.x [http://www-01.ibm.com/support/docview.wss?uid=swg21448570] 
+   Launch the migration ANT task (for example: gen-migration65-script) and execute the generated SQL script (execute-schema) in the RTS 7.1 database. WebSphere ILOG JRules BRMS V7.1 > Migrating > Migrating from JRules 6.x > Migrating rule projects for rule authors > Rule Team Server database migration > Ant tasks for migration [http://publib.boulder.ibm.com/infocenter/brjrules/v7r1/index.jsp?topic=/com.ibm.websphere.ilog.jrules.doc/Content/Business_Rules/Documentation/_pubskel/JRules/ps_JRules_Global112.html]
+   Upon successful execution of the migration scripts, sign in to the RTS V7.1 console, go to the Installation Manager and verify that the persistence locale is set to fr
+   To update the locale to fr_FR, manually perform the following update to the RTS V7.1 database. 
+ *  Note: Back up the database before performing the update. The script should be executed by a DBA to ensure proper operation: 
+
+ * ===================================================================== 
+   update usersetting set value = 'fr_FR' where ilrkey = 'teamserver.locale' and username = '__ilog_rule_teamserver__'; 
+   update ruleartifact set locale = 'fr_FR' where locale = 'fr' ; 
+   update ruleflow set locale = 'fr_FR' where locale = 'fr' ; 
+   update vocabulary set locale = 'fr_FR' where locale = 'fr' ; 
+   ===================================================================== 
+
+
+This script updates the locale from "fr" to "fr_FR" in all the necessary RTS tables. 
+
+After this script is executed, when you sign in again to RTS, Step 4 of the Installation Manager should display the locale as fr_FR. 
+
+Note: RELATED INFORMATION
+#Migrating RuleApps [http://www-01.ibm.com/support/docview.wss?uid=swg21590082]
+
+
+ 
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Operational Decision Manager Platform Independent 7.5 Enterprise

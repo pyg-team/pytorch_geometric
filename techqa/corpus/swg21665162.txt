@@ -1,0 +1,69 @@
+Title: IBM Omnibus Fixpack installation error "Incorrect install location" - United States
+
+Text:
+Incorrect install location; The path you entered did not have any Netcool/OMNIbus components installed. TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When running an Omnibus Fixpack installation, receive the error "The path you entered did not have any Netcool/OMNIbus components installed." 
+
+SYMPTOM
+=============================================================================== 
+
+Choose Install Folder
+---------------------
+
+Where would you like to install?
+
+Default Install Folder: /opt/IBM/tivoli/netcool
+
+->Chosen Install Folder: /opt/christina/netcool74
+
+ENTER AN ABSOLUTE PATH, TYPE 'default' TO RESTORE THE DEFAULT FOLDER,
+OR PRESS <ENTER> TO ACCEPT THE CHOSEN FOLDER:
+
+
+
+===============================================================================
+Incorrect install location
+--------------------------
+
+The path you entered did not have any Netcool/OMNIbus components installed.
+Please check and try again.
+
+
+CAUSE
+Often the installation was ran as a different user, which created temporary files in /tmp that cannot be written by the non-root user.
+
+
+
+RESOLVING THE PROBLEM
+1. Verify the user running the Fixpack installation is the same user that installed Omnibus. Check the ownership of the files in $OMNIHOME to determine the correct user. 
+
+2. As the user that installed OMNIbus, run the listIU.sh command. If the user is a non-root user, this is located in the user's home directory/.acsi_hostname/bin. If the user is the root user, this is located in /usr/ibm/common/acsi/bin. Verify the listIU output shows the Omnibus version installed. 
+
+If the listIU output does not show the Omnibus version installed, open a ticket with IBM support to restore the deployment engine registry. 
+
+3. Clean up the temporary files created by the Deployment engine. In the /tmp directory, delete the following - 
+drwxrwxr-x. 4 clgrimes74 clgrimes74 4096 Feb 18 16:20 install.dir.15856
+-rw-rw-r--. 1 clgrimes74 clgrimes74 0 Feb 18 16:20 8df2c3d71444715f224.notes
+-rw-rw-r--. 1 clgrimes74 clgrimes74 2471 Feb 19 08:33 8df2c3d71444715f224.details
+drwxr-xr-x. 2 clgrimes74 clgrimes74 4096 Feb 19 08:36 hsperfdata_clgrimes74
+-rw-rw-r--. 1 clgrimes74 clgrimes74 17238 Feb 19 08:37 de_lsrootiu.out.xml
+-rw-rw-r--. 1 clgrimes74 clgrimes74 420 Feb 19 08:39 Linux_ospt_append_clgrimes74.xml
+drwxrwxr-x. 2 clgrimes74 clgrimes74 4096 Feb 19 08:40 acsiTemp_clgrimes74
+
+Once the files are removed, re-run the Fixpack installation.
+
+If the Fixpack installation still fails, please open a PMR with IBM. Collect the log files using the nc_install_logs utility. If the problem is with an Omnibus 7.4 Fixpack, nc_install_logs is included in the Fixpack package. Go to the directory where the Fixpack is untared and run it as follows - 
+
+./nc_install_logs --pmr 12345,999,000 $NCHOME
+Collecting DE logs from /home/clgrimes74/.acsi_clgrimes74
+Collecting DE logs from /home/clgrimes74/.acsi_nc9053113208
+Collecting product logs from /opt/christina/netcool74
+The package of log files is 12345,999,000.nc_install_logs.20140219T085418.tar.gz
+
+
+For Omnibus 7.3.0 and 7.3.1, the nc_install_logs utility can be downloaded from:
+https://www.ibm.com/developerworks/community/wikis/home?lang=en#!/wiki/Tivoli%20Netcool%20OMNIbus/page/Installer%20problems [https://www.ibm.com/developerworks/community/wikis/home?lang=en#!/wiki/Tivoli%20Netcool%20OMNIbus/page/Installer%20problems]
+Or you can manually collect the logs and output listed at
+http://www.ibm.com/support/docview.wss?uid=swg21637170 [http://www.ibm.com/support/docview.wss?uid=swg21637170]

@@ -1,0 +1,159 @@
+Title: IBM IC49796: NAMENOTFOUNDEXCEPTION WHEN INVOKING AN OPERATION USING COMPTEST IN WID USING WESB/WPS 6.0.1.2 - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  In WebSphere Integration Developer v6.0.1, when used in
+   conjunction with WebSphere Enterprise Service Bus or
+   WebSphere Process Server v6.0.1.2, a NameNotFoundException
+   is seen when using the Component Test functionality.
+   Exception is:
+   
+   com.ibm.wsspi.sibx.mediation.flow.MFCNotFoundException:
+   CWSXM1010E: Could not locate the runtime mediation flow for
+   mediation component in X module com.ibm.wbit.comptest.runtime
+   
+   Caused by: javax.naming.NameNotFoundException: Name
+   ejb/scax/mediation/com.ibm.wbit.comptest.runtime not found in
+   context "local:".
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All users of WebSphere Integration           *
+   *                 Developer v6.0.1.2 with WebSphere            *
+   *                 Enterprise Service Bus / WebSphere Process   *
+   *                 Server v6.0.1.2                              *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: In WebSphere Integration Developer      *
+   *                      v6.0.1, when used in conjunction with   *
+   *                      WebSphere Enterprise Service Bus or     *
+   *                      WebSphere Process Server v6.0.1.2,      *
+   *                      a NameNotFoundException is seen when    *
+   *                      using the Component Test                *
+   *                      functionality.  The Exception is:       *
+   *                                                              *
+   *                      com.ibm.wsspi.sibx.mediation.flow.      *
+   *                      MFCNotFoundException:                   *
+   *                      CWSXM1010E: Could not locate the        *
+   *                      runtime mediation flow for mediation    *
+   *                      component in X module                   *
+   *                      com.ibm.wbit.comptest.runtime           *
+   *                                                              *
+   *                      Caused by:                              *
+   *                      javax.naming.NameNotFoundException:     *
+   *                      Name ejb/scax/mediation/                *
+   *                      com.ibm.wbit.comptest.runtime not       *
+   *                      found in context "local:".              *
+   *                                                              *
+   *                      This prevents the test component        *
+   *                      functionality from running.             *
+   ****************************************************************
+   * RECOMMENDATION: All affected users should apply this fix.    *
+   ****************************************************************
+   javax.naming.NameNotFoundException exception thrown when
+   using the Component Test functionality in WebSphere Integration
+   Developer v6.0.1.2 in conjunction with WebSphere Enterprise
+   Service Bus or WebSphere Process Server v6.0.1.2.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This fix resolves the problem.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC49796
+   
+   
+ * REPORTED COMPONENT NAME
+   WEB ESB FOR WIN
+   
+   
+ * REPORTED COMPONENT ID
+   5724I8200
+   
+   
+ * REPORTED RELEASE
+   100
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2006-06-28
+   
+   
+ * CLOSED DATE
+   2006-07-04
+   
+   
+ * LAST MODIFIED DATE
+   2006-07-04
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEB ESB FOR WIN
+   
+   
+ * FIXED COMPONENT ID
+   5724I8200
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R100 PSY
+   UP

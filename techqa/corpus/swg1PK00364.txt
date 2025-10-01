@@ -1,0 +1,202 @@
+Title: IBM PK00364: ABEND U4042 WRITING TO A FILE WHOSE ENVIRONMENT ATTRIBUTES CONFLICT WITH THE DCB PARAMETERS IN THE JC 05/02/18 PTF PECHANGE - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  ABEND U4042 writing to a file whose ENVIRONMENT attributes
+   conflict with the DCB parameters in the JCL.
+                                                                  .
+   The customer reporting this problem found the ABEND U4042-01 was
+   happening with UQ95852 active (restoring UQ95852 fixed problem).
+   Messages received were:
+   CEE3701W HEAP DAMAGE FOUND BY HEAPCHK RUN-TIME OPTION.
+   CEE3703I IN HANC CONTROL BLOCK, THE Next pointer IS DAMAGED.
+   CEE3705I POINTER AT 0009F004 SHOULD POINT TO A VALID HANC
+                                                                  .
+   Application code had the following declare for an output file:
+   DCL FLS     FILE RECORD OUTPUT ENV(VB RECSIZE(84));
+   The JCL had the following data definition for the same file:
+   17 ++FLS      DD    DISP=(NEW,CATLG,DELETE),
+      ++             DSN=&D..RFL&VGN..FLS.SOURCE.G&TBN.V&GEN,
+      ++             UNIT=SYSDA,
+      ++             LABEL=RETPD=0,
+      ++             SPACE=(80,(10,10),RLSE),AVGREC=M,
+      ++             LRECL=80,RECFM=FB,DSORG=PS
+                                                                  .
+   The reporting customer found that resolving the DCB attribute
+   conflict (i.e. - making the ENV and DCB RECFM and LRECL match)
+   made the problem go away.
+   -
+   This apar also resolves an SMP problem trying to restore the
+   ptf for PQ95212 [http://www-01.ibm.com/support/docview.wss?uid=isg1PQ95212]. User will receive messages such as:
+   IEW2454W 9203 SYMBOL IBMPOPNA UNRESOLVED
+   GIM23901E ** LINK-EDIT PROCESSING FOR SYSMOD FAILED
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Make certain the ENV and DCB file attributes do not conflict.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: Enterprise PL/I users who use record I/O     *
+   *                 and have applied the PTF for APAR PQ95212 [http://www-01.ibm.com/support/docview.wss?uid=isg1PQ95212].   *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: 1/ ABEND U4042 ABENDU4042 writing to a  *
+   *                      file whose environment attributes       *
+   *                      conflict with the DCB parameters in     *
+   *                      the DD statement.                       *
+   *                      2/ ZERODIVIDE condititon raised when    *
+   *                      the record length is not specified or   *
+   *                      the DD statement is missing.            *
+   *                      3/ File attribute FBM is not honored.   *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   1/ The DCB parameters could be used for the data set allocation
+   and thus can lead to unpredictable problems as the program write
+   records to the data set based on the ENVIRONMENT attributes.
+   2/ A test for zero record length is missing before the test for
+   blocksize being a multiple of record length.
+   3/ The file attribute M is not put into the DCB before OPEN.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  1/ For a new data set, the attributes in the program will be
+   used if there is a conflict with the attributes in the DD
+   statement.
+   2/ Raise the UNDEFINEDFILE condition if the DD statement is
+   missing. Also, use a default value for the record length if
+   it is not specified.
+   3/ Allocate the file as FBM if it is so specified.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+ *  &#215;**** PE05/03/04 FIX IN ERROR. SEE APAR PK02053 [http://www-01.ibm.com/support/docview.wss?uid=isg1PK02053]  FOR DESCRIPTION
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK00364
+   
+   
+ * REPORTED COMPONENT NAME
+   LE VA PL/I
+   
+   
+ * REPORTED COMPONENT ID
+   568819806
+   
+   
+ * REPORTED RELEASE
+   708
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   YesPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2005-02-01
+   
+   
+ * CLOSED DATE
+   2005-02-21
+   
+   
+ * LAST MODIFIED DATE
+   2005-04-01
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UK00741 UK00742 UK00743
+   
+   
+
+MODULES/MACROS
+ *  IBMPOPBA IBMPOPFA IBMVDDS
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   LE VA PL/I
+   
+   
+ * FIXED COMPONENT ID
+   568819806
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R707 PSY UK00741 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK00741]
+   UP05/03/04 P F503 Ø
+   
+   
+ * R708 PSY UK00742 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK00742]
+   UP05/03/04 P F503 Ø
+   
+   
+ * R709 PSY UK00743 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK00743]
+   UP05/03/04 P F503 Ø
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

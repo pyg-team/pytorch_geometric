@@ -1,0 +1,29 @@
+Title: IBM Cannot open secured PDF files in ICN Viewer - United States
+
+Text:
+ICN CM secured PDF applet viewer Daeja Virtual Viewer TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Opening a secured Adobe PDF file stored on an IBM Content Manager (CM) system is not possible through IBM Content Navigator(ICN) 2.0.2. 
+
+SYMPTOM
+The document fails to open and the error below occurs in the Java console logs: 
+
+security: Revocation Status Unknown
+com.sun.deploy.security.RevocationChecker$StatusUnknownException: java.net.UnknownHostException: ocsp.verisign.com
+
+
+CAUSE
+Adobe PDF documents stored on CM systems are opened using applet viewer; Snowboard; in ICN, and this doesn't support the opening of secured pdf documents with ICN 2.0.2.
+
+
+RESOLVING THE PROBLEM
+ 
+
+ * Upgrade to ICN 2.0.3 
+ * Go to Settings\Viewer Maps 
+ * Create a new Viewer Map 
+ * Change the Content Manager Viewer from applet viewer to Daeja ViewOne Virtual:
+
+
+[/support/docview.wss?uid=swg21691874&aid=1] [/support/docview.wss?uid=swg21691874&aid=1]

@@ -1,0 +1,26 @@
+Title: IBM VScan intermittently aborts with IBM Datacap Taskmaster Capture - United States
+
+Text:
+vscan abort rulerunner quattro TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When running VScan using Rulerunner Quattro, intermittent aborts occur. This may happen even with long periods of inactivity or when no images are waiting to be processed. 
+
+SYMPTOM
+This issue can also cause Rulerunner Quattro to appear to hang.
+
+
+CAUSE
+When VScan is run by Rulerunner Quattro, it repeatedly checks for incoming files, with no delay between requests. This can create too much overhead for the file system to keep up with, causing file access to fail and the batch to abort.
+
+RESOLVING THE PROBLEM
+Configure Rulerunner Quattro to add a small delay between reruns of VScan. 
+
+ 1. Run Rulerunner Quattro Manager. 
+ 2. On the Datacap Quattro tab, stop the service. 
+ 3. On the Datacap Login tab, click Connect. 
+ 4. On the Workflow tab, expand the hierarchy on the right and highlight VScan. 
+ 5. In the Settings section in the lower right, set skipsamebatch to 1. 
+ 6. Highlight the line labeled <dbs> above VScan in the thread hierarchy. 
+ 7. Set skipsamebatch to 1 there also. 
+ 8. Click Save, then go back to the Datacap Quattro tab and start the service.

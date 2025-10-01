@@ -1,0 +1,30 @@
+Title: IBM Configuring a load-balanced ClearQuest Web environment with OSLC integrations - United States
+
+Text:
+oslc; load-balance; load balance; server rename; RNCQ8.0.1.1 TECHNOTE (FAQ)
+
+QUESTION
+ What changes are needed to take advantage of a load-balanced ClearQuest Web environment with OSLC integrations? 
+
+CAUSE
+Technote 1579391 [http://www-01.ibm.com/support/docview.wss?uid=swg21579391] describes a problem with using ClearQuest Web as an OSLC provider in a load-balanced environment and gives some suggestions on how to work around this limitation.
+
+ANSWER
+Starting with Rational ClearQuest 8.0.1.1, the limitation described in Technote 1579391 is resolved. This technote describes potential changes to your ClearQuest Web environment if you want to configure ClearQuest as a load-balanced enabled OSLC provider. 
+
+If you faced the problem described in Technote 1579391 and implemented a work around, you might need to reconfigure portions of your OSLC consumers and your IBM HTTP Server routing to take advantage of ClearQuest as a load-balanced enabled OSLC provider. The requirements for reconfiguration depend on how your environment was configured and what goals you have for the load-balanced ClearQuest OSLC provider.
+
+If the prior configuration bypassed IBM HTTP Server and pointed to a specific application server, consider the following information to determine how to reconfigure your environment: 
+
+ * To continue using ClearQuest as a non-load balanced OSLC provider, no action is required. 
+ * To preserve existing links, add a friendship using the load-balanced ClearQuest OSLC provider and keep the non-load-balanced friendship. Evaluate this option carefully because it might cause user confusion to have to select from between two project relationships for the ClearQuest providers. In this scenario, users can still create links using the non-load-balanced ClearQuest OSLC provider. 
+ * Replacing the non-load-balanced friendship with the load-balanced friendship requires updates to the consumer's friendship and to any of the links stored in the consumer's data. Many OSLC consumers have a mechanism for updating friendship and links, which is commonly referred to as server rename. 
+
+If the prior configuration used a secondary IBM HTTP Server instance (an instance other than your primary ClearQuest Web IBM HTTP Server instance) which routed all requests to a single application server, consider the following information to determine how to reconfigure your environment:  * To continue using ClearQuest as a non-load balanced OSLC provider, no action is required. 
+ * If you configure the secondary IBM HTTP Server instance for load balancing across your ClearQuest Web application servers, the OSLC consumer configuration does not require any updates. 
+ * If you remove your secondary IBM HTTP Server instance and use the primary IBM HTTP Server instance to handle both ClearQuest Web and OSLC requests, you must update the consumer's friendship and any of the links stored in the consumer's data. Many OSLC consumers have a mechanism for updating friendship and links, which is commonly referred to as server rename. 
+
+To learn more about server rename for the Rational Solution for Collaborative Lifecycle Management products, see: 
+http://pic.dhe.ibm.com/infocenter/clmhelp/v4r0/topic/com.ibm.jazz.install.doc/topics/c_redeploy_server.html [http://pic.dhe.ibm.com/infocenter/clmhelp/v4r0/topic/com.ibm.jazz.install.doc/topics/c_redeploy_server.html] 
+
+In some deployments, ClearQuest can be configured as both an OSLC provider and an OSLC consumer. In these deployments, if the ClearQuest provider is being reconfigured to provide load-balanced OSLC services, you must run the ClearQuest server rename [http://pic.dhe.ibm.com/infocenter/cqhelp/v8r0m1/index.jsp?topic=/com.ibm.rational.clearquest.integrations.doc/topics/t_clm_int_svr_url_remap.htm] operation for the ClearQuest consumer.

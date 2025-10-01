@@ -1,0 +1,164 @@
+Title: IBM IZ32259: KDDSIGNL COREDUMPS ON LINUX - United States
+
+Text:
+  FIXES ARE AVAILABLE
+IBM Tivoli Monitoring for Databases:Sybase Server Agent 6.1.0-TIV-ITM_SYB-LA0006 [http://www-01.ibm.com/support/docview.wss?uid=swg24021335]
+IBM Tivoli Monitoring for Databases:Sybase Server Agent 6.1.0-TIV-ITM_SYB-IF0008 [http://www-01.ibm.com/support/docview.wss?uid=swg24029755]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Environment:
+   
+     OS :-> SUSE Linux Enterprise Server 10 SP1 (i586)  (Intel 32)
+            Kernel:
+            Linux  2.6.16.46-0.14-bigsmp #1 SMP Thu May 17 14:00:09
+            UTC2007 i686 i686 GNU/Linux
+     Database:->  Oracle 10.2
+     ITM     :->  Oracle agent :-> 6.2 LA0004
+   Problem Description:
+   
+     Stopping the oracle agent throw the below error :->
+   
+     ./itmcmd agent stop or
+   
+    *** glibc detected ***
+   /usr/local/Tivoli/IBM/ITM/tmp/winda1_or_MONIT/kddsignl:
+   corrupted
+   double-linked list: 0x08077210 ***
+   Detailed Recreation Procedure:
+   1) Login as root
+   2) Install and configure the 6.2 Oracle Agent without errors
+   3) Start the Oracle agent :-> itmcmd agent start or
+   4) Allow the agent to run for a while.
+   5) The core files appear in the directory
+      /usr/local/Tivoli/IBM/ITM/tmp/<hostname>_or_<oracle_inst>
+   6) Stop the Oracle Agent :-> itmcmd agent stop or
+   winda1:/usr/local/Tivoli/IBM/ITM/bin # ./itmcmd agent stop or
+   itmcmd agent        : considering servers: MONIT.
+   kddexec: Continue with the stop
+   kddexec: normal stop: kill 19801
+   *** glibc detected ***
+   /usr/local/Tivoli/IBM/ITM/tmp/winda1_or_MONIT/kddsignl:
+   corrupted
+   double-linked list: 0x08077210 ***
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  When stopping the Monitoring Agent for  Oracle, the following
+   error occurs:
+   
+   > ./itmcmd agent stop or
+   *** glibc detected ***
+   /usr/local/Tivoli/IBM/ITM/tmp/winda1_or_MONIT/kddsignl:corrupted
+   double-linked list: 0x08077210
+    ***
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This APAR has been fixed and delivered in a limited availability
+   fix 6.2.0-TIV-ITM_ORA-LA0006. This maintenance delivery
+   vehicle is a limited availability patch and therefore is in a
+   "hidden directory." Level 2 Support can provide down load
+   instructions to you. Contact level 2 support at:
+   
+   http://www.ibm.com/software/sysmgmt/products/support/Contact_L2
+   Support.html [http://www.ibm.com/software/sysmgmt/products/support/Contact_L2Support.html]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ32259
+   
+   
+ * REPORTED COMPONENT NAME
+   TIV MON ORACLE
+   
+   
+ * REPORTED COMPONENT ID
+   5724B96OO
+   
+   
+ * REPORTED RELEASE
+   620
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-09-15
+   
+   
+ * CLOSED DATE
+   2008-10-21
+   
+   
+ * LAST MODIFIED DATE
+   2008-10-21
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TIV MON ORACLE
+   
+   
+ * FIXED COMPONENT ID
+   5724B96OO
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R620 PSY
+   UP

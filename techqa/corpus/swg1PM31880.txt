@@ -1,0 +1,146 @@
+Title: IBM PM31880: UPDATE IBM WEBSPHERE MQ JCA RESOURCE ADAPTER TO VERSION 7.0.1.4 - United States
+
+Text:
+  FIXES ARE AVAILABLE
+7.0.0.17: Java SDK 1.6 SR9 FP1 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24029894]
+7.0.0.27: Java SDK 1.6 SR13 FP2 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24035324]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Update the IBM WebSphere MQ JCA Resource Adapter shipped with
+   IBM WebSphere Application Server Version 7.0 to WebSphere MQ fix
+    pack 7.0.1.4
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  Users of the WebSphere MQ messaging         *
+   *                  provider for WebSphere Application Server v7*
+   ****************************************************************
+   * PROBLEM DESCRIPTION: The WebSphere MQ JCA Resource Adapter   *
+   *                      within WebSphere Application Server     *
+   *                      Version 7.0 requires updating           *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   The WebSphere MQ JCA Resource Adapter shipped within WebSphere
+   Application Server Version 7.0 is used by all applications
+   connecting to WebSphere MQ from within the application server.
+   
+   WebSphere MQ fix pack 7.0.1.4 includes a number of updates to
+   the WebSphere MQ JCA resource adapter that apply to WebSphere
+   Application Server users.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix for this APAR updates the WebSphere MQ JCA resource
+   adapter shipped with WebSphere Application Server.
+   With the fix applied, the following log entry should be seen
+   on all servers on all nodes (except those where the 'Update
+   resource adapter...' button has been used to manually update
+   the resource adapter):
+   WMSG1703I: RAR implementation version 7.0.1.4-k701-104-110104
+   
+   The fix for this APAR is currently targeted for inclusion in
+   fix pack 7.0.0.17.  Please refer to the Recommended Updates
+   page for delivery information:
+   http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM31880
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSPHERE APP S
+   
+   
+ * REPORTED COMPONENT ID
+   5724J0800
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-02-03
+   
+   
+ * CLOSED DATE
+   2011-02-22
+   
+   
+ * LAST MODIFIED DATE
+   2011-02-22
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBSPHERE APP S
+   
+   
+ * FIXED COMPONENT ID
+   5724J0800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R700 PSY
+   UP

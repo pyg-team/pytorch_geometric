@@ -1,0 +1,16 @@
+Title: IBM.RecoveryRM starts and exits immediately after node onlined - United States
+
+Text:
+tsa; tsamp; rsct; cthags; cthats; srcmstr TECHNOTE (FAQ)
+
+QUESTION
+ Can the following message be ignored : 
+"2621-402 IBM.RecoveryRM daemon stopped by SRC command or exiting due to an error condition ." 
+
+CAUSE
+IBM.RecoveryRM exits by design if there is no domain online, which is the case if RSCT's cthags and cthats are not yet started or fully initialized. 
+
+ANSWER
+It is possible for RecoveryRM to be started before the RSCT infrastructure is initialized ... there is no start sequence order or dependency control available ... so when IBM.RecoveryRM does start prior to cthags and/or cthats, IBM.RecoveryRM will just exit. 
+
+This message/situation, if observed during node or domain startup, can be safely ignored, provided the RecoveryRM is starting correctly some seconds later after the RSCT infrastructure is fully initialized.

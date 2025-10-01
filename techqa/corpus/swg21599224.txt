@@ -1,0 +1,104 @@
+Title: IBM Availability of ClearCase fix packs 7.1.2.7 and 8.0.0.3 - United States
+
+Text:
+RRANNOUNCE; cc; download; 7.1.2.7; 8.0.0.3; fix pack; fixpack; update; patch; upgrade; available; install; installation NEWS
+
+ABSTRACT
+ Fix packs 7.1.2.7 and 8.0.0.3 for the IBM Rational ClearCase 7.1.2 and 8.0 releases are available. 
+
+CONTENT
+ 
+
+Fix packs 7.1.2.7 and 8.0.0.3 which contain defect fixes and include added platform support are available for download. 
+
+Important note: Before installing either of these fix packs on Red Hat Enterprise Linux (RHEL) 6.x review technote 1599399 [http://www.ibm.com/support/docview.wss?uid=swg21599399] ClearCase file operations may cause system hang on Red Hat 6 
+
+ 
+
+
+
+
+
+
+Links to the download documents  
+
+ * ClearCase 8.0
+   
+   Fix Pack 8.0.0.3 [http://www.ibm.com/support/docview.wss?uid=swg24032774]
+
+
+ * ClearCase 7.1.2
+   
+   Fix Pack 7.1.2.7 [http://www.ibm.com/support/docview.wss?uid=swg24032772]
+
+
+
+Refer to Fixes by version for Rational ClearCase [https://www.ibm.com/support/docview.wss?uid=swg27023149] for a [http://www.ibm.com/support/docview.wss?&uid=swg21265307]full list of ClearCase 7.x and 8.0 fix packs and iFixes. 
+
+
+
+
+
+Platform support changes 
+
+[https://www.ibm.com/support/docview.wss?uid=swg27023149]  * Support has been added for the following:
+   
+    * Red Hat Enterprise Linux 5 Update 8 (RHEL 5.8) with ClearCase 8.0.0.3 and 7.1.2.7
+      
+    * Oracle Solaris 11 with ClearCase 8.0.0.3
+      
+    * SUSE Linux Enterprise Server (SLES) and Desktop (SLED) 11 SP2 with ClearCase 8.0.0.3 and 7.1.2.7
+      
+    * Samba 3.5.14 with ClearCase 8.0.0.3 and 7.1.2.7
+      
+    * Apple Mac OS X 10.7 with ClearCase 8.0.0.3
+      
+      
+   
+   
+
+Refer to the Rational ClearCase System Requirements List [http://www.ibm.com/support/docview.wss?uid=swg27008776] for further details. 
+
+
+
+
+
+Defects fixed 
+For a list of defects that are fixed in each of these fix packs, refer to the readme files which are located in the fix pack download document under the download package section. 
+
+ 
+
+
+
+
+
+
+Testfixes that have been incorporated into these fix packs 
+For a list of testfixes that have been resolved or not resolved in these fix packs, refer to the following technotes which are also referenced on each of the fix pack download pages. 
+
+ 
+
+ClearCase 8.0: Technote 1566655 [http://www.ibm.com/support/docview.wss?uid=swg21566655] 
+
+
+ClearCase 7.x: Technote 1322828 [http://www.ibm.com/support/docview.wss?uid=swg21322828]
+
+
+
+
+
+
+
+References 
+
+
+
+Technote 1598917 [http://www.ibm.com/support/docview.wss?uid=swg21598917]New features in ClearCase and ClearCase MultiSite V8.0.0.3 
+
+
+Technote 1597897 [http://www.ibm.com/support/docview.wss?uid=swg21597897]IBM Rational ClearCase Release Notes version 8.0.0.3 
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Software Development Rational ClearCase General Information AIX, HP-UX, Linux, Solaris, Windows 7.1.2.7, 8.0.0.3

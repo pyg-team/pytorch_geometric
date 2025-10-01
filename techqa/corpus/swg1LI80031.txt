@@ -1,0 +1,151 @@
+Title: IBM LI80031: PROBLEM WITH CHINESE CHARACTERS - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+ DIRECT LINKS TO FIXES
+App Connect Professional V7.5.2.0 cumulative ifix 009 for Studio 64-bit installer [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FApp+Connect+Professional&fixids=7.5.2.0-WS-ACP-20180730-1311_H8_64-CUMUIFIX-009.sc-win&source=SAR]
+App Connect Professional V7.5.2.0 cumulative ifix 009 for Secure connector 64-bit installer for Linux [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FApp+Connect+Professional&fixids=7.5.2.0-WS-ACP-20180730-1311_H8_64-CUMUIFIX-009.sc-linux&source=SAR]
+App Connect Professional V7.5.2.0 cumulative ifix 009 for Studio 64-bit installer [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FApp+Connect+Professional&fixids=7.5.2.0-WS-ACP-20180730-0844_H9_64-CUMUIFIX-009.studio&source=SAR]
+7.5.2.0-WS-ACP-20180730-1311_H8_64-CUMUIFIX-009.32bit.sc-win [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FApp+Connect+Professional&fixids=7.5.2.0-WS-ACP-20180730-1311_H8_64-CUMUIFIX-009.32bit.sc-win&source=SAR]
+7.5.2.0-WS-ACP-20180730-1311_H8_64-CUMUIFIX-009.32bit.sc-linux.sh [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FApp+Connect+Professional&fixids=7.5.2.0-WS-ACP-20180730-1311_H8_64-CUMUIFIX-009.32bit.sc-linux&source=SAR]
+7.5.2.0-WS-ACP-20180730-0844_H9_64-CUMUIFIX-009.32bit.studio [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FApp+Connect+Professional&fixids=7.5.2.0-WS-ACP-20180730-0844_H9_64-CUMUIFIX-009.32bit.studio&source=SAR]
+7.5.2.0-WS-ACP-20180730-1311_H8_64-CUMUIFIX-009.vcrypt2 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FApp+Connect+Professional&fixids=7.5.2.0-WS-ACP-20180730-1311_H8_64-CUMUIFIX-009.vcrypt2&source=SAR]
+7.5.2.0-WS-ACP-20180730-1311_H8_64-CUMUIFIX-009.docker [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FApp+Connect+Professional&fixids=7.5.2.0-WS-ACP-20180730-1311_H8_64-CUMUIFIX-009.docker&source=SAR]
+WebSphere Cast Iron V7.5.1.0 cumulativeifix 021 for Secure connector 64-bit installer for Linux [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FWebSphere+Cast+Iron+Cloud+integration&fixids=7.5.1.0-WS-WCI-20180604-1919_H7_64-CUMUIFIX-021.sc-linux&source=SAR]
+WebSphere Cast Iron V7.5.1.0 cumulative ifix 021 for Secure connector 32-bit installer for Linux [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FWebSphere+Cast+Iron+Cloud+integration&fixids=7.5.1.0-WS-WCI-20180604-1919_H7_64-CUMUIFIX-021.32bit.sc-linux&source=SAR]
+7.5.1.0-WS-WCI-20180604-1920_H11_64-CUMUIFIX-021.studio [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FWebSphere+Cast+Iron+Cloud+integration&fixids=7.5.1.0-WS-WCI-20180604-1920_H11_64-CUMUIFIX-021.studio&source=SAR]
+7.5.1.0-WS-WCI-20180604-1920_H11_64-CUMUIFIX-021.32bit.studio [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FWebSphere+Cast+Iron+Cloud+integration&fixids=7.5.1.0-WS-WCI-20180604-1920_H11_64-CUMUIFIX-021.32bit.studio&source=SAR]
+7.5.1.0-WS-WCI-20180604-1919_H7_64-CUMUIFIX-021.sc-win [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FWebSphere+Cast+Iron+Cloud+integration&fixids=7.5.1.0-WS-WCI-20180604-1919_H7_64-CUMUIFIX-021.sc-win&source=SAR]
+7.5.1.0-WS-WCI-20180604-1919_H7_64-CUMUIFIX-021.32bit.sc-win [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FWebSphere+Cast+Iron+Cloud+integration&fixids=7.5.1.0-WS-WCI-20180604-1919_H7_64-CUMUIFIX-021.32bit.sc-win&source=SAR]
+7.5.1.0-WS-WCI-20180604-1919_H7_64-CUMUIFIX-021.sc-linux [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FWebSphere+Cast+Iron+Cloud+integration&fixids=7.5.1.0-WS-WCI-20180604-1919_H7_64-CUMUIFIX-021.sc-linux.sh&source=SAR]
+7.5.1.0-WS-WCI-20180604-1919_H7_64-CUMUIFIX-021.32bit.sc-linux [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FWebSphere+Cast+Iron+Cloud+integration&fixids=7.5.1.0-WS-WCI-20180604-1919_H7_64-CUMUIFIX-021.32bit.sc-linux.sh&source=SAR]
+7.5.1.0-WS-WCI-20180604-1919_H7_64-CUMUIFIX-021.vcrypt2 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FWebSphere+Cast+Iron+Cloud+integration&fixids=7.5.1.0-WS-WCI-20180604-1919_H7_64-CUMUIFIX-021.vcrypt2&source=SAR]
+7.5.1.0-WS-WCI-20180604-1919_H7_64-CUMUIFIX-021.scrypt2 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FWebSphere+Cast+Iron+Cloud+integration&fixids=7.5.1.0-WS-WCI-20180604-1919_H7_64-CUMUIFIX-021.scrypt2&source=SAR]
+7.5.1.0-WS-WCI-20180604-1919_H7_64-CUMUIFIX-021.docker [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FWebSphere+Cast+Iron+Cloud+integration&fixids=7.5.1.0-WS-WCI-20180604-1919_H7_64-CUMUIFIX-021.docker&source=SAR]
+App Connect Professional V7.5.2.0 cumulative ifix 008 for Secure connector 32-bit installer for Linux [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FApp+Connect+Professional&fixids=7.5.2.0-WS-ACP-20180416-0822_H11_64-CUMUIFIX-008.32bit.sc-linux&source=SAR]
+App Connect Professional V7.5.2.0 cumulative ifix 008 for Studio 64-bit installer [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FApp+Connect+Professional&fixids=7.5.2.0-WS-ACP-20180416-0836_H8_64-CUMUIFIX-008.studio&source=SAR]
+App Connect Professional V7.5.2.0 cumulative ifix 008 for Studio 32-bit installer [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FApp+Connect+Professional&fixids=7.5.2.0-WS-ACP-20180416-0836_H8_64-CUMUIFIX-008.32bit.studio&source=SAR]
+App Connect Professional V7.5.2.0 cumulative ifix 008 for Secure connector 64-bit installer for Windows [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FApp+Connect+Professional&fixids=7.5.2.0-WS-ACP-20180416-0822_H11_64-CUMUIFIX-008.sc-win&source=SAR]
+App Connect Professional V7.5.2.0 cumulative ifix 008 for Secure connector 32-bit installer for Windows [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FApp+Connect+Professional&fixids=7.5.2.0-WS-ACP-20180416-0822_H11_64-CUMUIFIX-008.32bit.sc-win&source=SAR]
+App Connect Professional V7.5.2.0 cumulative ifix 008 for Secure connector 64-bit installer for Linux [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FApp+Connect+Professional&fixids=7.5.2.0-WS-ACP-20180416-0822_H11_64-CUMUIFIX-008.sc-linux&source=SAR]
+App Connect Professional V7.5.2.0 cumulative ifix 008 for docker build [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FApp+Connect+Professional&fixids=7.5.2.0-WS-ACP-20180416-0822_H11_64-CUMUIFIX-008.docker&source=SAR]
+7.5.2.0-WS-ACP-20180416-0822_H11_64-CUMUIFIX-008.vcrypt2 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FApp+Connect+Professional&fixids=7.5.2.0-WS-ACP-20180416-0822_H11_64-CUMUIFIX-008.vcrypt2&source=SAR]
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Currently the Chinese characters are showing as "?" symbols in
+   the received notification mails configured using SEND MAIL
+   activity.After trying with different MIME attributes by adding
+   UTF-8/.., customer observed that Send Mail output activity
+   showing chinese character but when we see in Email body showing
+   '????'.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Chinese characters are not interpreted since the content is not
+   passed as UTF-8.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix is targeted for inclusion if WebSphere Cast Iron fixpack
+   V7.5.1.1, V7.5.2.1
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   LI80031
+   
+   
+ * REPORTED COMPONENT NAME
+   WCI LIVE ENTERP
+   
+   
+ * REPORTED COMPONENT ID
+   5725F7100
+   
+   
+ * REPORTED RELEASE
+   751
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2018-03-14
+   
+   
+ * CLOSED DATE
+   2018-03-29
+   
+   
+ * LAST MODIFIED DATE
+   2018-03-29
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WCI LIVE ENTERP
+   
+   
+ * FIXED COMPONENT ID
+   5725F7100
+   
+   
+
+APPLICABLE COMPONENT LEVELS

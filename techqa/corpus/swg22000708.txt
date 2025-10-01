@@ -1,0 +1,81 @@
+Title: IBM How to install an IOP patch for individual components and frequently asked questions. - United States
+
+Text:
+install patch; compoenents; faqs TECHNOTE (FAQ)
+
+QUESTION
+ How to install an IOP patch for individual components and and frequently asked questions. 
+
+ANSWER
+
+Ambari: 
+For applying a patch to update Ambari, please follow documentation here:
+https://www.ibm.com/support/knowledgecenter/SSPT3X_4.1.0/com.ibm.swg.im.infosphere.biginsights.install.doc/doc/inst_patch_upgrade.html [https://www.ibm.com/support/knowledgecenter/SSPT3X_4.1.0/com.ibm.swg.im.infosphere.biginsights.install.doc/doc/inst_patch_upgrade.html]
+
+IOP components:
+There are two ways of applying the patch update:
+
+1. Manual upgrade
+a. Stop the component to you are going to upgrade. 
+b. Download the IOP.repo file from the given patch location. Copy this file to the /etc/yum.repo.d/ directory for all nodes where the component (eg. hive) is installed.
+c. Run 'yum upgrade <component>' (eg. 'yum upgrade hive*') on all the nodes where the component is installed. Do not use -y, so that any repo errors are reported before upgrade proceeds.
+d. After all the nodes are upgraded, goto Ambari, stackversions and update the repo location to the one used for patching to avoid errors later in future upgrades
+e. Start the component
+
+2. Script upgrade
+Please follow the document below to apply a patch to any IOP component: https://developer.ibm.com/hadoop/2015/12/17/iop-patch-management/ [https://developer.ibm.com/hadoop/2015/12/17/iop-patch-management/]
+The document above lists KNOX as an example, but the same steps can be leveraged for other components as well.
+
+For local repositories 
+If your system cannot access external IBM site to apply the patch, you'll first need to download the patch, update your local repository with the patched files or create a local repository that can be accessed and referenced by all nodes. 
+
+You can follow the instructions relating to how to set up a local repository here: https://www.ibm.com/support/knowledgecenter/SSPT3X_4.3.0/com.ibm.swg.im.infosphere.biginsights.install.doc/doc/bi_install_create_mirror_repo.html [https://www.ibm.com/support/knowledgecenter/SSPT3X_4.3.0/com.ibm.swg.im.infosphere.biginsights.install.doc/doc/bi_install_create_mirror_repo.html]
+- You'll want to download the tarball indicated by the patch. 
+
+If you want to create your own repository for specific components
+Please note that this needs to be done on all nodes that is running the component you want to upgrade. 
+1. Download all the rpms under <component>/<architecture> files from the given patch location to a temp directory
+2. In the temp directory, run: 
+createrepo . 
+This should create a repodata directory in the temp directory. 
+3. Make a copy of the /etc/yum.repos.d/IOP.repo to IOP.repo.bak. 
+4. Edit and save IOP.repo to reference the new local repository via the baseurl field. Note that repo name is updated here as well. 
+[IOP-4.1_Local]
+name=IOP-4.1_Local
+baseurl="file:///tmp/my_component [file:///tmp/rpms/hive]"
+path=/
+enabled=1
+gpgcheck=0
+5. run: yum clean all # to clear cache
+6. run: yum repolist 
+-> you should be able to see something like:
+repo id repo name status
+IOP-4.1_Local IOP-4.1_Local ..
+
+This should allow 'yum upgrade <component>' to find the local rpm for the update to be installed. 
+
+FAQs:
+1. How does IBM deliver a patch/fix ? Is it by building an RPM for a specific service or by building the entire BigInsight installation which contains all of the Hadoop RPM services?
+A. Patches are typically for the entire service - Hadoop/Hive/etc. The service RPMs are tightly coupled and we do not attempt to build the individual RPM for an Operating System component.
+
+2. In case we receive the fix as an entire BigInsight installation, which contain all of the Hadoop RPM services, how are we suppose to implement it on a running production cluster? Will it support upgrade? 
+A. Patch RPM should not impact upgrade to later version unless it's some very special "patch" that deviate a lot from the existing/current version. IBM will advice is case we deliver such a patch. 
+
+3. Does the patch management upgrade script, support HA? Will the patch be automatically installed on both nodes that host the Standby and the Active services?
+A. The tools for patching IOP services upgrade the current rpms to the new version on all the nodes where Ambari is aware that the service is installed. So, if Standby and Active services where installed through Ambari and the UI show the nodes where the services are installed properly, the script will be able apply the patch on both nodes.
+
+4. If we use the management upgrade script approach, we need to provide a “Service name to patch”, what are the service names that we should provide ? In case there are multiple services to patch, do we need to execute the upgrade script separately for each one of the services or we can execute the upgrade script for all of the services at once?
+A. The new URL provided should point to an /IOP/ repo (not /Ambari*/). The procedure to upgrade Ambari rpms in a working cluster is different than patching IOP services.
+For services such as HIVE and SQOOP services, the URL should be something like: https://ibm-open-platform.ibm.com/repos/IOP/ [https://ibm-open-platform.ibm.com/repos/IOP/] .../Updates/...
+The case where more than one service need to be patched is also covered in the Hadoop Dev Blog explaining the patching tools: https://developer.ibm.com/hadoop/2015/12/17/iop-patch-management/ [https://developer.ibm.com/hadoop/2015/12/17/iop-patch-management/]
+There is a note before Step 5:
+NOTE: If several services require to be patched as part of the new repository repeat steps from 2 to 4 for each individual service before continuing with next step 5.
+
+5. If we are provided a URL link that is a parent IOP folder for all of the Hadoop service packages that exist under it, should we leave it as is? 
+A. The URL should point to the URL where your local repodata file for the new repo is hosted. IBM ,in its external repos, create repodata for each specific new repository and we consider this is the safest solution to avoid rpm conflicts and yum issues.
+
+RELATED INFORMATION
+ Applying a patch to upgrade Ambari [https://www.ibm.com/support/knowledgecenter/SSPT3X_4.1.0/com.ibm.swg.im.infosphere.biginsights.install.doc/doc/inst_patch_upgrade.html]
+Applying Ambari patches [https://www.ibm.com/support/knowledgecenter/en/SSPT3X_4.1.0/com.ibm.swg.im.infosphere.biginsights.install.doc/doc/inst_patches.html]
+Patch management process for BigInsights Big SQL 4.2 [http://www-01.ibm.com/support/docview.wss?uid=swg21989383]
+Apply service patches into IOP 4.1 and 4.2 clusters [https://developer.ibm.com/hadoop/2015/12/17/iop-patch-management/]

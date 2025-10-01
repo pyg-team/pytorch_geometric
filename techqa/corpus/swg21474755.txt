@@ -1,0 +1,50 @@
+Title: IBM Connector Access Service agent times out before operation completes - United States
+
+Text:
+conn81relnotes conn85relnotes setting CAS timeout TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ While working with connectors in InfoSphere DataStage, InfoSphere Information Analyzer, or InfoSphere Fast Track, an operation times out if it takes too long to complete. 
+
+SYMPTOM
+An error occurs indicating that the operation has timed out.
+
+CAUSE
+The default timeout for the Connector Access Service is 120 seconds, but the operation has taken longer than 120 seconds to complete. Operations that query large numbers of rows in a database might take longer than 120 seconds to complete. For example, you might encounter this error when you drill down into columns in InfoSphere Information Analyzer.
+
+RESOLVING THE PROBLEM
+Modify the timeout value for the Connector Access Service. To modify the timeout value, perform the following steps for the version of InfoSphere Information Server that you have installed. 
+
+Modifying the Connector Access Service timeout for InfoSphere Information Server, Version 8.1
+
+Perform the following steps to create a properties file that specifies the timeout interval:
+
+
+ 1. Change directory to the following directory:
+    <WebSphere-App-Server-Root-Directory>/profiles/<profile-name>/classes
+    Where <WebSphere-App-Server-Root-Directory> is the root directory where WebSphere Application Server is installed, and <profile-name> is the name of the WebSphere Application Server profile. The default for <profile-name> is default. 
+ 2. Create a file called cas-server.properties that contains the following text:
+    # Time in seconds to wait for response from agent
+    ConnectorAccessService.AgentTimeout=120
+    Set the timeout period to whatever value you prefer. If 120 seconds is insufficient to get responses from the connector, specify a larger value. 
+ 3. Restart the WebSphere Application Server to apply your changes. 
+
+
+
+Modifying the Connector Access Service timeout for InfoSphere Information Server, Version 8.5 
+
+On the services tier, issue the following command: 
+
+<InformationServer> /ASBServer/bin/PropertyAdmin -set -key cas.agent.timeout -value 120 
+
+Where <InformationServer> is the installation directory for InfoSphere Information Server. 
+
+Set the timeout period to whatever value you prefer. If 120 seconds is insufficient to get responses from the connector, specify a larger value. 
+
+The new timeout value will apply to any new connections that are established after the command has been issued. 
+
+
+
+
+
+Cross Reference information Segment Product Component Platform Version Edition Information Management InfoSphere Information Server Not Applicable

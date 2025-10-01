@@ -1,0 +1,22 @@
+Title: IBM Setting Up Distribution Entries in AJS and Sending Them to a Specific Output Queue - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How do I set up distribution entries in the Advanced Job Scheduler so that the spooled files are sent to a specific output queue? There is one specific spooled file that the customer would like to go to different output queues. The default is for the spooled files to be sent to the *CURRENT output queue. *CURRENT means that the output queue used by the job that is currently running is used for the submitted job.
+
+
+ANSWER
+To customize what output queue the spooled file is sent to, you should do the following: 
+
+1. On the operating system command line, type the following:
+
+GO JS
+
+Press the Enter key. 2. Select Option 10, Report Distribution, and press the Enter key. 3. Select Option 2, Report Controls, and press the Enter key. 4. Select Option 1, Work with Report Distribution IDs (one may need to be created), and press the Enter key. 5. Select Option 2, Work With Report Distribution Entries for the appropriate Report Distribution ID 6. Select Option 1 to add a report distribution entry, and press the Enter key. For the Spooled File name, specify the name of the spooled file for the entry that you want to add to the selected report distribution ID. In addition, specify Remove Spooled File as *YES if you do not want the report to go to the output queue of the job that is currently running.
+
+Note: If specific spooled files are not desired or if you are unsure, you should use *ANY as the Spooled File name, Program Name, and User Data. If you are wanting to distribute a joblog, you must add an entry specifically for Spooled File Name QPJOBLOG, Program Name *ALL, and User Data *ALL. 7. From the Work with Report Distribution Entries screen, select Option 2 to Work with Report Distribution Recipients, and press the Enter key. 8. Select Option 1 to add a Report Distribution Recipient, and press the Enter key. 9. Specify an existing Recipient (or one can be created using Option 2 from the Report Controls menu), and press the Enter key. 10. Specify the name of an output queue. You can type in a specific name. More than one recipient may be added to each Report Distribution Entry. 
+
+
+Cross reference information Segment Product Component Platform Version Edition Operating System IBM i 7.2 Operating System IBM i 7.1 Operating System IBM i 6.1 Operating System IBM i 7.3

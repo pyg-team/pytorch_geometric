@@ -1,0 +1,29 @@
+Title: IBM GLG license messages on QRadar Network Security sensors - United States
+
+Text:
+GLGLI0003E; GLGLI0007E; GLGLI0004E; GLGLI0006E; GLGPL9001I; GLG; XGS TECHNOTE (FAQ)
+
+QUESTION
+ Why do you see licensing messages such as "GLGLI0003E" on QRadar Network Security (XGS) sensors after making a policy change? 
+
+ANSWER
+The XGS is designed so that it only requests a license file if one is required for the current policy configuration. Because of this, each time you change a policy such as the SSL Inspection policy, the sensor removes its licenses and requests an updated set of licenses based on the new policy settings. This results in messages like the following in the system logs:
+
+Jun 8 13:47:05 mesa_control[3122]: Policy changes committed
+Jun 8 13:47:05 mesa_spad[5541]: GLGPL9001I:: GLG_events:: |policy_names= ,policy=ssl_inbound_decryption_policy,interface=SiteProtector,user=|
+Jun 8 13:47:05 mesa_spad[5541]: Detected change in license usage, forcing license download
+Jun 8 13:47:20 mesa_config[4372]: Removing licenses
+Jun 8 13:47:20 mesa_config[4372]: "Successfully removed license"
+
+This behavior is normal and is working as designed so you can safely ignore these messages.
+
+
+
+
+
+
+[/support/docview.wss?uid=swg21986091&aid=1] [https://ibm.biz/BdHdZx] [/support/docview.wss?uid=swg21986091&aid=2] [http://ibm.biz/InfraSecForumTechnote] [/support/docview.wss?uid=swg21986091&aid=3] [http://ibm.biz/SecSuptUTube] [/support/docview.wss?uid=swg21986091&aid=4] [http://ibm.biz/InfraSecFixes] [/support/docview.wss?uid=swg21986091&aid=5] [http://ibm.biz/FlexLicLogin] [/support/docview.wss?uid=swg21986091&aid=6] [http://ibm.biz/MyNotification] [/support/docview.wss?uid=swg21986091&aid=7] [http://ibm.biz/ContactSecSupport] 
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Security IBM Security Network Protection SSL Inspection Firmware 5.3.1, 5.3.2, 5.3.3

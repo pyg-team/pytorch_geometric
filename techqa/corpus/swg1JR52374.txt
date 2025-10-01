@@ -1,0 +1,168 @@
+Title: IBM JR52374: CANNOT SPECIFY DEFAULT PORTS FOR THE NODE AGENT BY USING PROFILE OPTIONS - United States
+
+Text:
+  DIRECT LINKS TO FIXES
+8.5.5.0-WS-BPM-IFJR52374 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Standard&fixids=8.5.5.0-WS-BPM-IFJR52374&source=SAR]
+Version 8.5 Refresh Pack 6 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24039185]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When you create a managed node profile by using the BPMConfig
+   command and you specify default ports by setting the
+   bpm.de.node.#.profileOptions=-defaultPorts property in the
+   configuration properties file, the -defaultPorts option is
+   ignored and the node agent is created by using the port
+   assignments computed by WebSphere Application Server.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  -Defaultports should set the proper port settings
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  IBM Business Process Manager (BPM)          *
+   *                  Advanced                                    *
+   *                  IBM BPM Standard                            *
+   *                  IBM BPM Express                             *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: When you create a managed node          *
+   *                      profile by using the BPMConfig          *
+   *                      command and you specify default ports   *
+   *                      by setting the                          *
+   *                      bpm.de.node.#.profileOptions=-          *
+   *                      defaultPo                               *
+   *                      rts property in the configuration       *
+   *                      properties file, the -defaultPorts      *
+   *                      option is ignored and the node agent    *
+   *                      is created by using the port            *
+   *                      assignments computed by WebSphere       *
+   *                      Application Server.                     *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   The BPMConfig command did not pass the - defaultPorts option
+   from the bpm.de.node.#.profileOptions configuration file
+   property when it created a managed node profile. As a result,
+   the -defaultPorts option does not work as expected.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A fix is available for IBM BPM V8.5.5.5 that ensures the
+   BPMConfig command passes the -defaultPorts option (if it is
+   specified) from the bpm.de.node.#.profileOptions configuration
+   file property when creating the node agent.
+   
+   On Fix Central (http://www.ibm.com/support/fixcentral), search
+   for JR52374:
+   
+   1. Select IBM Business Process Manager with your edition from
+   the product selector, the installed version to the fix pack
+   level, and your platform, and then click Continue.
+   2. Select APAR or SPR, enter JR52374, and click Continue.
+   
+   When you download fix packages, ensure that you also download
+   the readme file for each fix. Review each readme file for
+   additional installation instructions and information about the
+   fix.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR52374
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM STANDARD
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9500
+   
+   
+ * REPORTED RELEASE
+   855
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-01-21
+   
+   
+ * CLOSED DATE
+   2015-02-04
+   
+   
+ * LAST MODIFIED DATE
+   2015-02-04
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   BPM STANDARD
+   
+   
+ * FIXED COMPONENT ID
+   5725C9500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R800 PSY
+   UP

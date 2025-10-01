@@ -1,0 +1,169 @@
+Title: IBM Access for Web 5250 Interface Session URL - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This document is written as an example to configure a 5250 session object to obtain or create a URL to provide for client(s) usage. 
+
+RESOLVING THE PROBLEM
+The objective of this document is to assist you with creating an Access for Web 5250 session to allow a user or group to access a configured session using a specified URL. In this example, we will assume that the Web serving environment and System i Access for Web application has been installed and confirmed tested to work. 
+
+In the screen shots shown below, the following environment was used:
+
+System i Access for Web: v6r1m0 5761XH2
+
+Profiles:
+
+o Admin profile: JRTALAMA
+o Test profile: JTTEST (can be a user or group profile, as desired)
+
+Note: These exact steps can be performed using any of our currently supported releases of Access for Web (r6.1, r7.1 and r7.2). The approach also applies to IBM i Mobile Access, though the URLs may be slightly different.
+
+Creating/configure session and Edit Policies:
+
+
+ * Sign on to Access for Web homepage with administrative profile:
+   
+
+ *  - [http://www.ibm.com/i/c.gif] :port/webaccess/iWAHome 
+   
+   This is a screen shot of the Access for Web homepage. [/support/docview.wss?uid=nas8N1013204&aid=1] [/support/docview.wss?uid=nas8N1013204&aid=1]
+   
+   
+   
+
+
+ * Configure New 5250 session
+   
+
+ *  - [http://www.ibm.com/i/c.gif] Select 5250 Tab and Select Configure New Session 
+   
+   Screen shot of the Configure New Session dialog [/support/docview.wss?uid=nas8N1013204&aid=2] [/support/docview.wss?uid=nas8N1013204&aid=2]
+   
+   
+   
+
+
+ * Create Shortcut
+   
+
+ *  - [http://www.ibm.com/i/c.gif] Select Create Shortcut icon/option 
+   
+   
+    1. Select Create Shortcut icon/option. 
+    2. In Access field, locate or input User or Group profile and select Create Shortcut button.
+   
+   
+   Screen shot of Create Shortcut to the session we just created in previous step. [/support/docview.wss?uid=nas8N1013204&aid=3] [/support/docview.wss?uid=nas8N1013204&aid=3] 
+   
+
+
+ * Edit Configured Session
+   
+
+ *  - [http://www.ibm.com/i/c.gif] Edit and specify the session view, colors, and so on, and select to Save the session. 
+   
+   Screen shot of the Edit Configured Session parameters [/support/docview.wss?uid=nas8N1013204&aid=4] [/support/docview.wss?uid=nas8N1013204&aid=4]
+   
+   
+   
+
+
+ * Specify User or Group profile
+   
+
+ *  - [http://www.ibm.com/i/c.gif] Enter user or group to Edit Policies 
+   
+   Screen shot of the Edit Policies for test profile: JTTEST. [/support/docview.wss?uid=nas8N1013204&aid=5] [/support/docview.wss?uid=nas8N1013204&aid=5]
+   
+   
+   
+
+
+ * Select 5250 Category
+   
+
+ *  - [http://www.ibm.com/i/c.gif] Edit Policies - 5250 category 
+   
+   Screen shot of the Edit Policies for the 5250 category of profile: JTTEST. [/support/docview.wss?uid=nas8N1013204&aid=6] [/support/docview.wss?uid=nas8N1013204&aid=6]
+   
+   
+   
+
+
+ * Configured Session to use for Defaults
+   
+
+ *  - [http://www.ibm.com/i/c.gif] Under Action column, select option: Apply setting to profile 
+   
+   
+    1. Under Action column, select option: Apply setting to profile 
+    2. Under Setting column, Drop down, you should see the 'Shortcut to <shortcut name> for Profile' you assigned earlier. Select it, scroll to the bottom of this page, and select Save.
+   
+   
+   Screen shot of the Configured Session to use for defaults. This is specifying the Shortcut just created in previous steps. [/support/docview.wss?uid=nas8N1013204&aid=7] [/support/docview.wss?uid=nas8N1013204&aid=7] 
+   
+
+
+
+The last bulleted item above, Configured Session to use for Defaults, allows you to control the user or group profile if you only provide a standard URL such as: 
+o http:// <system name or ip adddress> :port/webaccess/iWA5250 (without any parameters) 
+o if you allow the user/group profile to configure sessions, this allows you to control their session defaults. 
+
+URL Information 
+
+A basic configured 5250 session URL is http:// <systemname or ip address> :port/webaccess/iWA5250. The purpose of this function is to e-mail the URL, link the URL to a custom homepage and/or distribute the URL to allow the user/group profile to access the System i with your configured/assigned 5250 session, configured in the previous section. 
+
+In order for you to direct your clients to the proper configured or assigned 5250 session, you would want to specify the following necessary parameters: o /webaccess/iWA5250 = basic URL o Then you would add session parameters, such as: 
+
+&sessname= (value is the name of the session or shortcut to session.)
+?access= (if a shortcut, value is the user profile or group profile that was specified when creating/assigning the shortcut.) o You will end up with something similar to the following URL:
+
+http:// <systemname> :43012/webaccess/iWA5250?access=jttest&sessname=Shortcut%20to%20Working 
+?access = in my example above, this is my test profile called: jttest
+&sessname = in my example above, this is my shortcut name called: Working
+
+These URLs can be hand typed as above or to prevent typographical errors or confusion with URI parameters. 
+Below is another option to obtain the URL and parameters: 
+ * Sign on with Access for Web with specified User profile:
+   
+
+ *  - [http://www.ibm.com/i/c.gif] http:// :port/webaccess/iWAHome 
+   
+   Screen shot of the Access for Web homepage signed on with the user/group profile working with. [/support/docview.wss?uid=nas8N1013204&aid=8] [/support/docview.wss?uid=nas8N1013204&aid=8]
+   
+   
+   
+
+
+ * Select 5250 tab
+   
+
+ *  - [http://www.ibm.com/i/c.gif] Select Configured Sessions 
+   
+   
+    1. Select Configured Sessions 
+    2. Under the Session column, you should see the 'Shortcut to <name>'. Select the icon/option to Start it.
+   
+   
+   Screen shot of the Configure Sessions, we're seeing the shortcut that was assigned by the admin profile in previous steps. [/support/docview.wss?uid=nas8N1013204&aid=9] [/support/docview.wss?uid=nas8N1013204&aid=9] 
+   
+
+
+ * Copy URL for specified session
+   
+
+ *  - [http://www.ibm.com/i/c.gif] Copy/paste URL to distribute, link, and so on 
+   
+   Screen shot of the session created and started. We're using this to get the full URL to use to deploy or send out to user/group profile. [/support/docview.wss?uid=nas8N1013204&aid=10] [/support/docview.wss?uid=nas8N1013204&aid=10]
+   
+   
+   
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Operating System IBM i 7.2 Operating System IBM i 7.1 Operating System IBM i 6.1 
+HISTORICAL NUMBER
+ 514346838

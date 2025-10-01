@@ -1,0 +1,250 @@
+Title: IBM JR52842: DURING BPM FULL SCYNCHRONIZATION, THE FOLLOWING ERROR IS SEEN CWLLG2229E: AN EXCEPTION OCCURRED IN AN EJB CALL... - United States
+
+Text:
+  A FIX IS AVAILABLE
+Version 8.5 Refresh Pack 7 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24041575]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  During UserFullSync or GroupFullSync, the following error might
+   prevent synchronization between LDAP and BPM tables
+   
+   org.springframework.dao.DataIntegrityViolationException:
+   PreparedStatementCallback; SQL &#65422;insert into LSW_USR_GRP_MEM_XREF
+   (USER_ID, GROUP_ID) values (?, ?)&#65434;; DB2 SQL Error:
+   SQLCODE=-530,
+   SQLSTATE=23503,
+   SQLERRMC=DB2INST1.LSW_USR_GRP_MEM_XREF.LSWC_UGXREF_FK2,
+   DRIVER=4.11.69;
+   
+   nested exception is
+   com.ibm.db2.jcc.am.SqlIntegrityConstraintViolationException:
+   DB2 SQL Error: SQLCODE=-530, SQLSTATE=23503,
+   SQLERRMC=DB2INST1.LSW_USR_GRP_MEM_XREF.LSWC_UGXREF_FK2,
+   DRIVER=4.11.69
+    at org.springframework.jdbc.support.
+     SQLExceptionSubclassTranslator.translate
+     (SQLExceptionSubclassTranslator.java:69)
+    at org.springframework.jdbc.support.
+     SQLErrorCodeSQLExceptionTranslator.translate
+     (SQLErrorCodeSQLExceptionTranslator.java:237)
+    at org.springframework.jdbc.core.JdbcTemplate.execute
+     (JdbcTemplate.java:607)
+    at org.springframework.jdbc.core.JdbcTemplate.execute
+     (JdbcTemplate.java:619)
+    at com.lombardisoftware.server.ejb.persistence.dao.
+     UserGroupMemberDAO.setUserGroupMembership
+     (UserGroupMemberDAO.java:179)
+    at com.lombardisoftware.server.core.GroupCore.
+     setUserGroupMembership(GroupCore.java:367)
+    at com.lombardisoftware.server.ejb.security.SecurityCore.
+     updateGroupMembership(SecurityCore.java:328)
+    at com.lombardisoftware.server.ejb.security.SecurityCore.
+     initializeNewLogin(SecurityCore.java:201)
+    at sun.reflect.GeneratedMethodAccessor492.
+     invoke(Unknown Source)
+    at sun.reflect.DelegatingMethodAccessorImpl.invoke
+     (DelegatingMethodAccessorImpl.java:37)
+    at java.lang.reflect.Method.invoke(Method.java:611)
+    at org.springframework.aop.support.AopUtils.
+     invokeJoinpointUsingReflection(AopUtils.java:310)
+    at org.springframework.aop.framework.
+     ReflectiveMethodInvocation.invokeJoinpoint
+     (ReflectiveMethodInvocation.java:182)
+    at org.springframework.aop.framework.
+     ReflectiveMethodInvocation.proceed
+     (ReflectiveMethodInvocation.java:149)
+    at com.lombardisoftware.utility.spring.
+     TransactionInterceptor$2.call(TransactionInterceptor.java:67)
+    at com.lombardisoftware.utility.spring.
+     ProgrammaticTransactionSupport$1.doInTransaction
+     (ProgrammaticTransactionSupport.java:436)
+    at org.springframework.transaction.jta.
+     WebSphereUowTransactionManager$UOWActionAdapter.run
+     (WebSphereUowTransactionManager.java:306)
+    at com.ibm.ws.uow.embeddable.EmbeddableUOWManagerImpl.
+     runUnderNewUOW(EmbeddableUOWManagerImpl.java:791)
+    at com.ibm.ws.uow.embeddable.EmbeddableUOWManagerImpl.
+     runUnderUOW(EmbeddableUOWManagerImpl.java:370)
+    at org.springframework.transaction.jta.
+     WebSphereUowTransactionManager.execute
+     (WebSphereUowTransactionManager.java:252)
+    at com.lombardisoftware.utility.spring.
+     ProgrammaticTransactionSupport.executeInNewTransaction
+     (ProgrammaticTransactionSupport.java:431)
+    at com.lombardisoftware.utility.spring.
+     ProgrammaticTransactionSupport.execute
+     (ProgrammaticTransactionSupport.java:294)
+    at com.lombardisoftware.utility.spring.
+     TransactionInterceptor.invoke(TransactionInterceptor.java:65)
+    at org.springframework.aop.framework.
+     ReflectiveMethodInvocation.proceed
+     (ReflectiveMethodInvocation.java:171)
+    at com.lombardisoftware.utility.spring.CoreEntryInterceptor.
+     invoke(CoreEntryInterceptor.java:44)
+    at com.lombardisoftware.utility.spring.PSCoreEntryInterceptor.
+     invoke(PSCoreEntryInterceptor.java:14)
+    at org.springframework.aop.framework.
+     ReflectiveMethodInvocation.proceed
+     (ReflectiveMethodInvocation.java:171)
+    at org.springframework.aop.framework.JdkDynamicAopProxy.
+     invoke(JdkDynamicAopProxy.java:204)
+    at com.sun.proxy.$Proxy131.initializeNewLogin(Unknown Source)
+   ...
+   
+   Caused by:
+   com.ibm.db2.jcc.am.SqlIntegrityConstraintViolationException:
+   DB2
+   SQL Error: SQLCODE=-530, SQLSTATE=23503,
+   SQLERRMC=DB2INST1.LSW_USR_GRP_MEM_XREF.LSWC_UG
+   XREF_FK2, DRIVER=4.11.69
+           at com.ibm.db2.jcc.am.gd.a(gd.java:672)
+           at com.ibm.db2.jcc.am.gd.a(gd.java:60)
+           at com.ibm.db2.jcc.am.gd.a(gd.java:127)
+           at com.ibm.db2.jcc.am.jn.b(jn.java:2230)
+           at com.ibm.db2.jcc.am.jn.c(jn.java:2213)
+           at com.ibm.db2.jcc.t4.cb.k(cb.java:369)
+           at com.ibm.db2.jcc.t4.cb.a(cb.java:61)
+           at com.ibm.db2.jcc.t4.q.a(q.java:50)
+           at com.ibm.db2.jcc.t4.sb.b(sb.java:220)
+           at com.ibm.db2.jcc.am.kn.oc(kn.java:2930)
+           at com.ibm.db2.jcc.am.kn.b(kn.java:3876)
+           at com.ibm.db2.jcc.am.kn.gc(kn.java:743)
+   
+   Server startup group replication code includes phase to add new
+   external groups. The replication code which performs detection
+   and removal of duplicate groups from the list of new groups
+   does not properly recognize group names with trailing spaces as
+   duplicates.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Find the duplicate rows by running the following query:
+   
+   SELECT
+    GROUP_ID,
+    '"' ]] GROUP_NAME ]] '"',
+    '"' ]] DISPLAY_NAME ]] '"',
+    PARENT_GROUP_ID,
+    GROUP_TYPE,
+    '"' ]] DESCRIPTION ]] '"',
+    GROUP_STATE
+   FROM BPMUSER.LSW_USR_GRP_XREF
+   WHERE
+    TRIM(LOWER(GROUP_NAME)) <> LOWER(GROUP_NAME);
+   
+   and delete the row by running the following SQL:
+   
+   DELETE FROM BPMADMIN.LSW_USR_GRP_XREF WHERE GROUP_ID IN (SELECT
+   GROUP_ID FROM BPMADMIN.LSW_USR_GRP_XREF WHERE GROUP_TYPE=0 AND
+   GROUP_NAME LIKE '% ');
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  A fix that properly handles trailing blanks in group names will
+   be incorporated into a later release.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+ *  Not applicable
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR52842
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM ADVANCED
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9400
+   
+   
+ * REPORTED RELEASE
+   850
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-03-16
+   
+   
+ * CLOSED DATE
+   2015-05-20
+   
+   
+ * LAST MODIFIED DATE
+   2015-05-20
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   BPM STANDARD
+   
+   
+ * FIXED COMPONENT ID
+   5725C9500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R850 PSN
+   UP

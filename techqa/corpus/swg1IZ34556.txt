@@ -1,0 +1,212 @@
+Title: IBM IZ34556: JEXTRACT REPORTS 'INVALID JIT RETURN ADDRESS' - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Error Message: For example, when running jextract on a core
+   file:
+   Loading dump file...
+   
+   Read memory image from ./core.20080408.061359.958684.dmp
+   
+   VM set to 300234B8
+   
+   Dumping JExtract file to ./core.20080408.061359.958684.dmp.xml
+   
+   <!-- extracting gpf state -->
+   
+   <!-- 17ms -->
+   
+   <!-- extracting classes -->
+   
+   .......................<!-- 25392ms -->
+   
+   <!-- extracting classloaders -->
+   
+   .................<!-- 25566ms -->
+   
+   <!-- extracting monitors -->
+   
+   ..<!-- 26099ms -->
+   
+   <!-- extracting threads -->
+   
+   .*** Invalid JIT return address: E7715598
+   
+   could not read cp header
+   
+   could not read cp header
+   
+   *** Invalid JIT return address: E76A0530
+   
+   *** Invalid JIT return address: E7683720
+   
+   could not read cp header
+   
+   *** Invalid JIT return address: E7702240
+   
+   .*** Invalid JIT return address: E765C000
+   
+   could not read ram class at 00000000
+   
+   could not read cp header
+   
+   could not read cp header
+   
+   *** Invalid JIT return address: E7691880
+   
+   *** Invalid JIT return address: E7727078
+   
+   *** Invalid JIT return address: E766FC18
+   
+   *** Invalid JIT return address: E76E6380
+   
+   *** Invalid JIT return address: E76CC328
+   
+   *** Invalid JIT return address: E76F5FB0
+   
+   *** Invalid JIT return address: E76B2940
+   
+   <!-- 36576ms -->
+   
+   <!-- extracting trace buffers -->
+   
+   <!-- 36584ms -->
+   
+   <!-- extracting objects -->
+   
+   ................................................................
+   .......
+   could not read J9Class at 00000000
+   
+   <!-- 120686ms -->
+   
+   Finished writing JExtract file in 120686ms
+   
+   19 error(s). JExtract file may be incomplete.
+   .
+   Stack Trace: N/A
+   .
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  As part of the normal operation of the Java runtime, some data
+   structures may temporarily be put into a state where they can't
+   be walked using the standard debugging routines.
+   If a system dump is taken during one of these windows, the
+   introspection routines in jextract will be unable to extract the
+   data it would normally be able to.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This defect will be fixed in:
+   5.0.0 SR9
+   .
+   Jextract has been modified to cope with unwalkable structures.
+   Inconsistencies in the dump will be recorded in the XML metadata
+   log but not printed to the screen. In this way we will get an
+   accurate picture of the dump but the screen will not be filled
+   with error messages that don't necessarily indicate an error
+   condition (just that certain structures in the dump are not in a
+   walkable state).
+   .
+   To obtain the fix:
+   Install build 20081016 or later
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ34556
+   
+   
+ * REPORTED COMPONENT NAME
+   JAVA 5 J9 COMMO
+   
+   
+ * REPORTED COMPONENT ID
+   620500127
+   
+   
+ * REPORTED RELEASE
+   500
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-10-15
+   
+   
+ * CLOSED DATE
+   2008-10-15
+   
+   
+ * LAST MODIFIED DATE
+   2008-10-15
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   JAVA 5 J9 COMMO
+   
+   
+ * FIXED COMPONENT ID
+   620500127
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R500 PSN
+   UP

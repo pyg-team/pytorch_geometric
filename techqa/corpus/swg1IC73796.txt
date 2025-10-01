@@ -1,0 +1,165 @@
+Title: IBM IC73796: INSUFFICIENT RESOURCES WHEN DEPLOYING PATTERNS. - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  While deploying a pattern on one of the virtual images a system
+   message results stating, insufficient resources.
+   When trying to delete one of the virtual images what can be
+   noticed is that the internal disk is 100% used. In addition,
+   when trying to delete the image, an error message can be seen in
+   the task queue statung that garbage collection failed due to
+   an internal error.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  No Work-Around
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Title
+   Unable to deploy new virtual systems.   Tasks are queued, and
+   virtual systems are queued during deployment.
+   
+   Error description
+   The appliance is unable to deploy new virtual systems, because
+   appliance local storage got filled up.  There is a bug in the
+   system that it can not longer clean up the internal cache
+   causing the disk to fill up.  This happens when an appliance has
+   a number of different virtual images that are deployed on to
+   un-cached hypervisors.  If the appliance deploys the same
+   virtual image over and over, it will not hit this problem.  This
+   problem is only visible on the 2.0.0.2 firmware level.
+   
+   Local fix
+   Revert the maintenance where possible, upgrade to latest
+   firmware and execute maintenance again.  If Revert is not
+   possible then you will need to move to the  latest firmware
+   will need to be created.
+   
+   
+   Problem summary
+   ****************************************************************
+   ***************************
+   * USERS AFFECTED:
+   New deployments with new virtual images that have not been
+   cached on any hypervisor.
+   ****************************************************************
+   ***************************
+   * PROBLEM DESCRIPTION:
+   Appliance is unable to deploy new Virtual system, becuase is low
+   on local storage.
+   ****************************************************************
+   ***************************
+   
+   Additional Search Keywords.
+   WebSphere CloudBurst Appliance, virtual system deployment
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Upgrading to the latest firmware of the appliance will prevent
+   this error.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC73796
+   
+   
+ * REPORTED COMPONENT NAME
+   CLOUDBURST APPL
+   
+   
+ * REPORTED COMPONENT ID
+   5765H1600
+   
+   
+ * REPORTED RELEASE
+   200
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-01-11
+   
+   
+ * CLOSED DATE
+   2011-02-01
+   
+   
+ * LAST MODIFIED DATE
+   2011-02-01
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CLOUDBURST APPL
+   
+   
+ * FIXED COMPONENT ID
+   5765H1600
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R200 PSY
+   UP

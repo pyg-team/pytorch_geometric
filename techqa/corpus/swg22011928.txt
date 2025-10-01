@@ -1,0 +1,39 @@
+Title: IBM Maximo Integration Data Sources JDBC Driver Usage in WebSphere - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ When setting up a database source for the message store in WebSphere, why is its JDBC driver used to connect Maximo to the database? 
+
+ANSWER
+As a result of following IBM's instructions for manually creating a data source for the persistent store [https://www.ibm.com/support/knowledgecenter/en/SSLKT6_7.6.0.5/com.ibm.mam.inswas.doc/install/t_ccmdb_manconfigdatasource.html], the driver designated in JDBC Providers will be loaded when starting up Maximo and the driver shipped with Maximo will be ignored. This happens because when Maximo (in particular, mboejb.jar) starts, the data source is defined and its JDBC driver loaded before Maximo connects to the database. Then, since the JDBC driver class is already loaded into the OSGi cache for the cell, Maximo will use it instead,
+This is because the default Classloader policy is parent class loader first.
+
+[/support/docview.wss?uid=swg22011928&amp;aid=1]
+In the case of Oracle, the parent class is oracle.jdbc.OracleDriver. After defining the WebSphere variable {ORACLE_JDBC_DRIVER_PATH} following the steps in the link above, and if the value is (for example) C:\Oracle Drivers\, the class path could be C:\Oracle Drivers\ojdbc6.jar.
+[/support/docview.wss?uid=swg22011928&amp;aid=2]
+Maximo ships with a jar file containing oracle.jdbc.OracleDriver called oraclethin.jar. When the Maximo ear is deployed, WebSphere expands MAXIMO.ear to (using Windows as an example) C:\Program Files (x86)\IBM\WebSphere\AppServer\profiles\ctgAppSrv01\installedApps\ctgCell01\MAXIMO.ear. Inside this directory, the oraclethin.jar is under \lib.
+
+If the JDBC Provider is undefined, Maximo will always use the Oracle JDBC driver in oraclethin.jar.
+
+However, if the JDBC Provider is defined as above, when Maximo starts up, because of classloader policy (which must not be changed), the classloader finds the class containing oracle.jdbc.OracleDriver is already in the OSGi cache.
+
+For information on WebSphere usage of OSGi, see OSGi Overview [https://www.ibm.com/support/knowledgecenter/en/SSEQTP_8.5.5/com.ibm.websphere.wdt.doc/topics/cosgi.htm].
+
+Generally, the Oracle JDBC driver version used by WebSphere to connect to the messaging datastore does not matter, as long as it is compatible with the database version. All of its transactions take place outside of Maximo.
+
+However, the Oracle JDBC driver version used by Maximo can matter very much. There will be times when Maximo support will request that the oraclethin.jar in (default Windows) C:\IBM\SMP\maximo\applications\maximo\lib be replaced by a different version of the Oracle jdbc driver.
+
+When called upon to make this change, the Maximo administrator must make sure that the JDBC driver used in Maximo is not being overridden by the version defined in WebSphere JDBC Providers. There are several different ways to make sure this is the case.
+
+1. Enable Isolate this resource provider in the JDBC Providers, then restart all WebSphere-related services.
+
+[/support/docview.wss?uid=swg22011928&amp;aid=3]
+
+OR
+
+2. When setting up the JDBC provider after installing Maximo, define the WebSphere JDBC PATH variable to point to the installedApps directory:
+[/support/docview.wss?uid=swg22011928&aid=4] [/support/docview.wss?uid=swg22011928&aid=4]
+
+Important: Do not change the JVM classloader policy. Maximo has not been tested with any other classloader policy settings.

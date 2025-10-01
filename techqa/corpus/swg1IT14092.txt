@@ -1,0 +1,140 @@
+Title: IBM IT14092: MEDICALDEVICEINPUT NODE MAY CRASH ON DEPLOYMENT ON 64-BIT WINDOWS SYSTEMS - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  A MedicalDeviceInput node may fail to deploy on 64-bit Windows
+   systems. If the problem occurs, it will most likely appear as a
+   crash and a restart of the integration server. The problem is
+   seen to happen more frequently on newer versions of Windows,
+   such as Windows Server 2012 R2 or Windows 10.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   All users of the MedicalDeviceInput node on Windows 64-bit
+   systems.
+   
+   
+   Platforms affected:
+   Windows on x86-64 platform
+   
+   ****************************************************************
+   PROBLEM DESCRIPTION:
+   The MedicalDeviceInput node on Windows 64-bit systems may abend
+   during startup or deployment. The problem is  seen more
+   frequently on Windows 2008 R2 and Windows 10 systems.
+   
+   <i>There are a number of resource name changes between WebSphere
+   Message Broker and IBM Integration Bus Version 9.0.  For details
+   visit
+   http://pic.dhe.ibm.com/infocenter/wmbhelp/v9r0m0/topic/com.ibm.e [http://pic.dhe.ibm.com/infocenter/wmbhelp/v9r0m0/topic/com.ibm.e]
+   tools.mft.doc/bb23814_.htm</i>
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The MedicalDeviceInput node no longer abends during startup or
+   deployment on Windows 64-bit systems.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT14092
+   
+   
+ * REPORTED COMPONENT NAME
+   IIB HEALTHCARE
+   
+   
+ * REPORTED COMPONENT ID
+   5725C1830
+   
+   
+ * REPORTED RELEASE
+   400
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-03-02
+   
+   
+ * CLOSED DATE
+   2016-03-30
+   
+   
+ * LAST MODIFIED DATE
+   2016-03-30
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   IIB HEALTHCARE
+   
+   
+ * FIXED COMPONENT ID
+   5725C1830
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R400 PSY
+   UP

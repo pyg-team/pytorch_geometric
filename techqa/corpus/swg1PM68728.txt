@@ -1,0 +1,174 @@
+Title: IBM PM68728: WMQ CSV002I REQUESTS FOR MODULE CSQQCON2 EXCEED MAXIMUM USE COUNT. - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  CSV002I REQUESTS FOR MODULE CSQQCON2 EXCEED MAXIMUM USE COUNT
+   in the IMS MPRS which then cause any new scheduled transactions
+   to fail with an MQRC of 2129.
+   Our observation after applying the maintenance is that the
+   issue is totally resolved if IMS/MQ programs have been relinked
+   using the new version of CSQQSTUB.
+   The use of the base V701 CSQQSTUB together with UK63858
+   (PM26058 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM26058]) will cause CSQQCON2 to be loaded repeatedly with
+   no deletes, even if explicit MQDISCs are issued by the
+   application.
+   .
+   
+   Coding an explicit MQDISC in the application does not make a
+   difference.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Relink IMS/WMQ programs using the new version of
+   CSQQSTUB.
+   Recycle the IMS MPRS frequently to avoid the problem.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All users of WebSphere MQ for z/OS Version 7 *
+   *                 Release 1 Modification 0.                    *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: IMS applications compiled with a        *
+   *                      version of CSQQSTUB at base V701 level  *
+   *                      may receive CSV002I indicating that     *
+   *                      requests for module CSQQCON2 exceed     *
+   *                      maximum use count.                      *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   Any IMS applications which were compiled with the base V701
+   level of CSQQSTUB will not delete their copy of CSQQCON2 when
+   the application does an MQDISC. If the application continues to
+   do MQCONN then CSQQCON2 will have been loaded more than the
+   allowed maximum and message CSV002I will be issued.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The code has been changed to check which version of the stub has
+   been used (base V701 level or otherwise) so that the correct
+   action can be taken on whether to delete CSQQCON2 when an MQDISC
+   is done.
+   100Y
+   CSQQCON2
+   CSQQDISC
+   CSQQNORM
+   CSQQTTHD
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM68728
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ Z/OS V7
+   
+   
+ * REPORTED COMPONENT ID
+   5655R3600
+   
+   
+ * REPORTED RELEASE
+   100
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-07-12
+   
+   
+ * CLOSED DATE
+   2012-07-31
+   
+   
+ * LAST MODIFIED DATE
+   2012-09-05
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    PM62137 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM62137]
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UK80704
+   
+   
+
+MODULES/MACROS
+ *  CSQQCON2 CSQQDISC CSQQNORM CSQQTTHD
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ Z/OS V7
+   
+   
+ * FIXED COMPONENT ID
+   5655R3600
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R100 PSY UK80704 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK80704]
+   UP12/08/16 P F208
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

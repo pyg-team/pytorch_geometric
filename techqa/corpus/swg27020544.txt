@@ -1,0 +1,26 @@
+Title: IBM Production Imaging Edition Version 5.0 Quick Start Guides - United States
+
+Text:
+ PRODUCT DOCUMENTATION
+
+ABSTRACT
+ This document provides the Quick Start Guides for IBM Production Imaging Edition Version 5.0 for use with Workplace XT 1.1.4 and Workplace XT 1.1.5. 
+
+CONTENT
+The attached PDF files provide the IBM Production Imaging Edition Version 5.0 Quick Start Guides. 
+
+For Workplace XT 1.1.4 customers using the IBM Production Imaging Edition Viewer with a stand-alone installer: 
+
+PIE500_qsg_en.pdf [/support/docview.wss?uid=swg27020544&aid=2] [/support/docview.wss?uid=swg27020544&aid=1] 
+
+
+For Workplace XT 1.1.5 customers who have purchased a license and installed IBM Production Imaging Edition Viewer Pro as part of the Workplace XT 1.1.5 installation: 
+
+PIE500_qsg_en_XT115.pdf [/support/docview.wss?uid=swg27020544&aid=4] [/support/docview.wss?uid=swg27020544&aid=3]
+
+
+
+RELATED INFORMATION
+ Product publications [http://www.ibm.com/support/docview.wss?uid=swg27020014]
+Production Imaging Edition support [http://www.ibm.com/support/entry/portal/Overview/Software/Information_Management/Production_Imaging_Edition]
+Release notes and known problems [http://www.ibm.com/support/docview.wss?uid=swg27020168]

@@ -1,0 +1,225 @@
+Title: IBM IZ27651: "BAD DATA PAGE" DURING DELETE PHASE WHEN ONLINE LOAD INTO EMPTY TABLE. - United States
+
+Text:
+AIX SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When doing an ONLINE LOAD (i.e. a LOAD using ALLOW READ ACCESS
+   option) into an empty table, the bufferpool may contain a stale
+   page (a page with cached content from a previous table that has
+   since been dropped) that corresponds to the first page that LOAD
+   allocated for the current table.
+   
+   
+   ----------------------------------------------
+   YYYY-mm-dd-HH.MM.SS.mmmmmm+zzz I5755573070A462    LEVEL: Warning
+   PID     : XXXXXXX              TID  : 1           PROC :
+   db2lload 1
+   INSTANCE: XXXX                 NODE : 001         DB   : XXXX
+   APPHDL  : XXXX                 APPID: XXXX
+   FUNCTION: DB2 UDB, database utilities, sqlulPrintPhaseMsg,
+   probe:0
+   DATA #1 : String, 107 bytes
+   LOADID: 3662198.YYYY-mm-dd-HH.MM.SS.mmmmmm.0 (9;380)
+   Starting DELETE phase at YYYY-mm-dd-HH.MM.SS.mmmmmm.
+   ...<snipped>...
+   
+   YYYY-mm-dd-HH.MM.SS.mmmmmm+zzz I5755598085A457    LEVEL: Severe
+   PID     : XXXXXXX              TID  : 1           PROC :
+   db2lload 1
+   INSTANCE: XXXX                 NODE : 001         DB   : XXXX
+   APPHDL  : XXXX                 APPID: XXXX
+   FUNCTION: DB2 UDB, data management, sqldFetchDirect, probe:3507
+   RETCODE : ZRC=0x87040001=-2029780991=SQLD_BADPAGE "Bad Data
+   Page"
+             DIA8500C A data file error has occurred, record id is
+   "".
+   ...<snipped>...
+   
+   2008-06-01-08.09.15.951160+480 I5755598917A373    LEVEL: Severe
+   PID     : XXXXXXX              TID  : 1           PROC :
+   db2lload 1
+   INSTANCE: XXXX                 NODE : 001         DB   : XXXX
+   APPHDL  : XXXX                 APPID: XXXX
+   MESSAGE : PAGE OBJECT IDENTIFIERS:
+   DATA #1 : String, 52 bytes
+   Tablespace ID = 9, Object ID = 380, Object Type = 0
+   
+   YYYY-mm-dd-HH.MM.SS.mmmmmm+zzz I5755599291A343    LEVEL: Severe
+   PID     : XXXXXXX              TID  : 1           PROC :
+   db2lload 1
+   INSTANCE: XXXX                 NODE : 001         DB   : XXXX
+   APPHDL  : XXXX                 APPID: XXXX
+   MESSAGE : PAGE NUMBERS:
+   DATA #1 : String, 33 bytes
+   Obj Page = 0, Pool Page = 214528
+   
+   YYYY-mm-dd-HH.MM.SS.mmmmmm+zzz I5755599635A320    LEVEL: Severe
+   PID     : XXXXXXX              TID  : 1           PROC :
+   db2lload 1
+   INSTANCE: XXXX                 NODE : 001         DB   : XXXX
+   APPHDL  : XXXX                 APPID: XXXX
+   MESSAGE : lifeLSN:
+   DATA #1 : String, 15 bytes
+   1855 6D2B 39AB
+   
+   YYYY-mm-dd-HH.MM.SS.mmmmmm+zzz I5755599956A320    LEVEL: Severe
+   PID     : XXXXXXX              TID  : 1           PROC :
+   db2lload 1
+   INSTANCE: XXXX                 NODE : 001         DB   : XXXX
+   APPHDL  : XXXX                 APPID: XXXX
+   MESSAGE : pageLSN:
+   DATA #1 : String, 15 bytes
+   16E5 99E9 FE24
+   ----------------------------------------------
+   The LSN "1855 6D2B 39AB" is expected, while an old LSN "16E5
+   99E9 FE24" encountered.
+   
+   Please note, "DELETE phase", "sqldFetchDirect", "probe at around
+   3507" and "Obj Page = 0" are the eye-catcher.
+   
+   This problem was first found in the delete phase of customer's
+   batch load job which has following steps:
+   
+   -- rename old table to new table
+   -- create new table
+   -- drop old table
+   -- load from /dev/null of del replace into new table
+   -- run their C program call db2load() with
+   SQLU_ALLOW_READ_ACCESS to load data into new table.
+   
+   This problem can not be easily reproduced.
+   
+   The cause of the problem is that load failed to purge the stale
+   page in the bufferpool.  Load should have retrieved the
+   new/correct page (corresponding to object page 0) from disk
+   during LOAD DELETE phase; instead, load got the old stale page
+   from the bufferpool which has incorrect data.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  There is two workarounds belove to avoid this "Bad Data Page"
+   error. But, this error is not a real data page corruption. So,
+   just rerun the load jobs can safely overcome the problem.
+   (1) doing offline load, or
+   (2) doing REPLACE INTO instead of INSERT INTO as possible
+   workarounds.
+   You won't hit this defect with either options.
+   The purpose of online load is so that other processes can access
+   existing data in the table while we are loading new data.  But
+   if we're loading into an empty table, then there isn't any data
+   to access, therefore there isn't really any benefit of doing
+   online load (compared to an offline load) into an empty table.
+   Alternatively, if the table is empty, then doing LOAD with
+   REPLACE INTO gives the same result as INSERT INTO.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  See APAR description.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This APAR is first fixed in db2 v82 fixpack 18.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ27651
+   
+   
+ * REPORTED COMPONENT NAME
+   DB2 UDB ESE AIX
+   
+   
+ * REPORTED COMPONENT ID
+   5765F4100
+   
+   
+ * REPORTED RELEASE
+   820
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-07-18
+   
+   
+ * CLOSED DATE
+   2009-08-27
+   
+   
+ * LAST MODIFIED DATE
+   2009-08-27
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    IZ27652 [http://www-01.ibm.com/support/docview.wss?uid=swg1IZ27652] IZ27654 [http://www-01.ibm.com/support/docview.wss?uid=swg1IZ27654]
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   DB2 UDB ESE AIX
+   
+   
+ * FIXED COMPONENT ID
+   5765F4100
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R810 PSY
+   UP
+   
+   
+ * R820 PSY
+   UP

@@ -1,0 +1,19 @@
+Title: IBM Configuration file name by version - United States
+
+Text:
+config configuration file TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This document provides a list of WebSphere Transformation Extender (WTX) configuration file names by version. 
+
+RESOLVING THE PROBLEM
+The WTX configuration file is located in the product installation directory as outlined below. 
+
+Operating System Location Windows® installation_directory UNIX® installation_directory/config 
+
+The following table lists the name of the configuration file by version. 
+
+Version Name 8.0.x dstx.ini 8.1 dtx.ini 8.2 dtx.ini 8.3 dtx.ini  
+
+PRODUCT ALIAS/SYNONYM
+ Ascential DataStage TX Mercator

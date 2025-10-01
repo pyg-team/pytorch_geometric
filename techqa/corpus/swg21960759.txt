@@ -1,0 +1,37 @@
+Title: IBM Guardium Datasource connection error to DB2 database - United States
+
+Text:
+DB2; Datasource; -4499 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ You are testing a DataSource connection to a DB2 database in InfoSphere Guardium and it fails with error:
+
+java.net.ConnectException: Error opening socket to server <db2 server> on port <port number> with message: connection refused. ERRORCODE=-4499, SQLSTATE=08001 
+
+SYMPTOM
+ 
+
+DataSource Test Connection fails with an error similar to the one below (presentation of the error may be different for different browsers): 
+
+
+[/support/docview.wss?uid=swg21960759&aid=1] [/support/docview.wss?uid=swg21960759&aid=1] 
+
+
+
+
+CAUSE
+DB2 remote database server is rejecting the connection.
+
+
+
+DIAGNOSING THE PROBLEM
+You are in presence of this problem if error reported is: 
+
+java.net.ConnectException: Error opening socket to server <db2 server> on port <port number> with message: connection refused. ERRORCODE=-4499, SQLSTATE=08001
+
+
+RESOLVING THE PROBLEM
+Contact your DB2 system administrator to resolve the problem from the DB2 perspective. Reference Technote "Connection refused to DB2 ERRORCODE=-4499" in the Related URL section below error -4499 causing the connection to be refused on the DB2 Server.
+
+RELATED INFORMATION
+ Connection refused to DB2 ERRORCODE=-4499 [http://www.ibm.com/support/docview.wss?uid=swg21403644]

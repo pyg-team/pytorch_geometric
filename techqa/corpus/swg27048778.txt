@@ -1,0 +1,207 @@
+Title: IBM Removal notices for WebSphere Application Server Liberty 16.0.0.3 - United States
+
+Text:
+ RELEASE NOTES
+
+ABSTRACT
+ Removal notices for the following items were issued in Fix Pack 16.0.0.3 of WebSphere Application Server Liberty. A removal notice signifies that support for the item can be removed in the future, starting with the indicated fix pack. 
+
+CONTENT
+Typically, items are removed no sooner than two years after the removal notice is issued. However, in some instances, an item is removed earlier, if end of support for the item is announced, for example. For more information about Liberty removal notices, see New and changed features for Liberty [http://www.ibm.com/support/knowledgecenter/SSEQTP_liberty/com.ibm.websphere.wlp.nd.multiplatform.doc/ae/rwlp_newchange.html].
+
+
+
+
+If you currently use an item that will be removed, plan to update to a supported product or version as listed in the WebSphere Application Server detailed system requirements [http://www-01.ibm.com/support/docview.wss?uid=swg27006921]. 
+
+Removal notices by category: 
+
+ * JDBC drivers 
+ * JMS providers 
+ * Operating systems  * AIX 
+    * HP-UX 
+    * IBM i 
+    * Inspur K-UX 
+    * Linux 
+    * Mac OS 
+    * Solaris 
+    * Windows
+   
+   
+ * Virtualization 
+ * Web servers
+
+
+
+
+ 
+
+JDBC drivers 
+
+Items Fix pack when support to be removed  * IBM Data Server Driver for JDBC and SQLJ 3.4 
+ * IBM Developer Kit for Java JDBC driver 5.4.x 
+ * IBM Developer Kit for Java JDBC driver 6.1.x 
+ * IBM Toolbox for Java/JTOpen JDBC Driver 6.0 
+ * Microsoft SQL Server JDBC Driver 2.0 
+ * Microsoft SQL Server JDBC Driver 3.0 
+ * Oracle JDBC Driver 11g 11.1
+
+17.0.0.1 Back to top
+
+
+
+
+
+ 
+
+JMS providers 
+
+Items Fix pack when support to be removed  * WebSphere MQ 6.0 
+ * WebSphere MQ 6.0.2 
+ * WebSphere MQ 7.0 
+ * WebSphere MQ 7.0.1 
+ * WebSphere MQ for z/OS 6.0 
+ * WebSphere MQ for z/OS 7.0 
+ * WebSphere MQ for z/OS 7.1
+
+17.0.0.1 Back to top
+
+
+
+
+
+ 
+
+Operating systems 
+
+Items Fix pack when support to be removed AIX  * AIX 6.1 TL5 POWER System - Big Endian 
+ * AIX 6.1 TL6 POWER System - Big Endian 
+ * AIX 6.1 TL7 POWER System - Big Endian 
+ * AIX 6.1 TL8 POWER System - Big Endian 
+ * AIX 7.1 TL1 POWER System - Big Endian 
+ * AIX 7.1 TL2 POWER System - Big Endian
+
+17.0.0.1 HP-UX  * HP-UX 11i v2 IA64 
+ * HP-UX 11i v3 IA64
+
+18.0.0.3 IBM i  * IBM i 6.1 POWER System - Big Endian
+
+17.0.0.1 Inspur K-UX  * Inspur K-UX 2.1 IA64
+
+17.0.0.1 Linux Asianux  * Asianux Linux 3.0 x86-32 
+ * Asianux Linux 3.0 x86-64
+
+17.0.0.1 Red Hat Enterprise Linux  * Red Hat Enterprise Linux (RHEL) 5 Update 6 Advanced Platform POWER System - Big Endian 
+ * Red Hat Enterprise Linux (RHEL) Server 6 POWER Systems - Big Endian 
+ * Red Hat Enterprise Linux (RHEL) Server 6 Update 4 POWER System - Big Endian 
+ * Red Hat Enterprise Linux (RHEL) Server 6 Update 5 POWER System - Big Endian 
+ * Red Hat Enterprise Linux (RHEL) Server 6 Update 6 POWER System - Big Endian 
+ * Red Hat Enterprise Linux (RHEL) Server 7 POWER System - Big Endian
+
+18.0.0.3 SUSE Linux Enterprise Server  * SUSE Linux Enterprise Server (SLES) 10 SP3 IBM z Systems 
+ * SUSE Linux Enterprise Server (SLES) 10 SP3 POWER System - Big Endian 
+ * SUSE Linux Enterprise Server (SLES) 10 SP3 x86-32 
+ * SUSE Linux Enterprise Server (SLES) 10 SP3 x86-64
+
+17.0.0.1 SUSE Linux Enterprise Server  * SUSE Linux Enterprise Server (SLES) 11 POWER System - Big Endian 
+ * SUSE Linux Enterprise Server (SLES) 11 SP1 POWER System - Big Endian 
+ * SUSE Linux Enterprise Server (SLES) 11 SP2 POWER System - Big Endian
+
+18.0.0.3 Ubuntu  * Ubuntu 12.04 LTS x86-32 
+ * Ubuntu 12.04 LTS x86-64
+
+17.0.0.1 Mac OS  * MacOS X Snow Leopard 10.6 x86-32 
+ * MacOS X Snow Leopard 10.6 x86-64 
+ * OS X Lion 10.7 x86-64 
+ * OS X Mountain Lion 10.8 x86-64
+
+17.0.0.1 Solaris  * Solaris 10 SPARC 
+ * Solaris 10 x86-64 
+ * Solaris 10 Update 9 x86-64 
+ * Solaris 11 Update 1 x86-64 
+ * Solaris 11 Update 1 SPARC
+
+18.0.0.3 Windows Windows Client  * Windows Vista Business x86-32 
+ * Windows Vista Business x86-64 
+ * Windows Vista Enterprise x86-32 
+ * Windows Vista Enterprise x86-64 
+ * Windows Vista Ultimate x86-32 
+ * Windows Vista Ultimate x86-64 
+ * Windows Vista SP2 Business x86-32 
+ * Windows Vista SP2 Business x86-64 
+ * Windows Vista SP2 Enterprise x86-32 
+ * Windows Vista SP2 Enterprise x86-64 
+ * Windows Vista SP2 Ultimate x86-32 
+ * Windows Vista SP2 Ultimate x86-64 
+ * Windows XP SP2 Professional x86-64 
+ * Windows XP SP3 Professional x86-32
+
+17.0.0.1 Windows Server  * Windows Server 2008 Datacenter Edition x86-32 
+ * Windows Server 2008 Datacenter Edition x86-64 
+ * Windows Server 2008 Enterprise Edition x86-32 
+ * Windows Server 2008 Enterprise Edition x86-64 
+ * Windows Server 2008 Standard Edition x86-32 
+ * Windows Server 2008 Standard Edition x86-64 
+ * Windows Server 2008 R2 Datacenter Edition x86-64 
+ * Windows Server 2008 R2 Enterprise Edition x86-64 
+ * Windows Server 2008 R2 Standard Edition x86-64 
+ * Windows Server 2008 R2 Service Pack 1 Datacenter Edition x86-64 
+ * Windows Server 2008 R2 Service Pack 1 Enterprise Edition x86-64 
+ * Windows Server 2008 R2 Service Pack 1 Standard Edition x86-64 
+ * Windows Server 2008 SP2 Datacenter Edition x86-32 
+ * Windows Server 2008 SP2 Datacenter Edition x86-64 
+ * Windows Server 2008 SP2 Enterprise Edition x86-32 
+ * Windows Server 2008 SP2 Enterprise Edition x86-64 
+ * Windows Server 2008 SP2 Standard Edition x86-32 
+ * Windows Server 2008 SP2 Standard Edition x86-64
+
+17.0.0.1 Back to top
+
+
+
+
+
+
+Virtualization 
+
+Items Fix pack when support to be removed  * IBM z/VM Hypervisor 6.1 
+ * Microsoft Hyper-V Server 2008 
+ * VMware ESX 4.0 
+ * VMware ESX 4.1 
+ * VMware ESXi 4.0 
+ * VMware ESXi 4.1 
+ * VMware ESXi 5.0 
+ * VMware ESXi 5.1 
+ * VMware vSphere 5.0 
+ * VMware vSphere 5.1
+
+17.0.0.1  * IBM z/VM Hypervisor 5.4
+
+18.0.0.3 Back to top
+
+
+
+
+
+
+Web servers 
+
+Items Fix pack when support to be removed  * Domino 8.0 
+ * Domino 8.5 
+ * Microsoft Internet Information Services 6.0 
+ * Microsoft Internet Information Services 7.0 
+ * Microsoft Internet Information Services 7.5 
+ * Sun Java System Web Server 6.1 SP12 
+ * Sun Java System Web Server 7.0 Update 1
+
+17.0.0.1 Back to top
+
+
+
+
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Application Servers WebSphere Application Server for z/OS Liberty

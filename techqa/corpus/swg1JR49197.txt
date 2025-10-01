@@ -1,0 +1,208 @@
+Title: IBM JR49197: "HIDE LEFT NAVIGATION PANE" SETTING NOT WORKING AS EXPECTED - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Preface:
+   1. For your user ID you have set "Hide left navigation pane"
+      in "Home" --> "My Settings".
+   
+   2. As expected you now only will see the right pane.
+   
+   
+   Current situation:
+   
+   1. The left frame around the right pane will show two arrow
+      symbols:
+      a) the upper arrow, pointing to the right, is enabled.
+      b) the lower arrow, pointing to the left, is disabled.
+   
+   2. When clicking on the right pointing arrow, the left
+      navigation pane is not being displayed as expected.
+   
+   3. For displaying the left navigation pane again you will have
+      to disable "Hide left navigation pane" in "Home" --> "My
+      Settings".
+   
+   
+   Desired situation:
+   
+      There are two options how this use case scenario should
+      look like:
+   
+      1. The frame around the right pane should not contain any
+         arrows.
+         In other words: if you select "Hide left navigation
+         pane" the only way to display the left navigation pane
+         again should be to disable this option again.
+   
+      2. If the frame around the right pane contains arrows, they
+         should allow users to display the left navigation pane.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  For displaying the left navigation pane again you will have
+   to disable "Hide left navigation pane" in "Home" --> "My
+   Settings".
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * All Master Data Management Collaboration Server              *
+   * implementations are affected by this issue                   *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * Preface:                                                     *
+   * 1. For your user ID you have set "Hide left navigation pane" *
+   *    in "Home" --> "My Settings".                              *
+   *                                                              *
+   * 2. As expected you now only will see the right pane.         *
+   *                                                              *
+   *                                                              *
+   * Current situation:                                           *
+   *                                                              *
+   * 1. The left frame around the right pane will show two arrow  *
+   *    symbols:                                                  *
+   *    a) the upper arrow, pointing to the right, is enabled.    *
+   *    b) the lower arrow, pointing to the left, is disabled.    *
+   *                                                              *
+   * 2. When clicking on the right pointing arrow, the left       *
+   *    navigation pane is not being displayed as expected.       *
+   *                                                              *
+   * 3. For displaying the left navigation pane again you will    *
+   * have                                                         *
+   *    to disable "Hide left navigation pane" in "Home" --> "My  *
+   *    Settings".                                                *
+   *                                                              *
+   *                                                              *
+   * Desired situation:                                           *
+   *                                                              *
+   *    There are two options how this use case scenario should   *
+   *    look like:                                                *
+   *                                                              *
+   *    1. The frame around the right pane should not contain any *
+   *       arrows.                                                *
+   *       In other words: if you select "Hide left navigation    *
+   *       pane" the only way to display the left navigation pane *
+   *       again should be to disable this option again.          *
+   *                                                              *
+   *    2. If the frame around the right pane contains arrows,    *
+   * they                                                         *
+   *       should allow users to display the left navigation      *
+   * pane.                                                        *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * IBM recommends that customers facing the issue reported by   *
+   * this APAR apply Master Data Management Collaboration Server  *
+   * version 10.1.0-FP009 to gain resolution to this problem.     *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A fix for this problem has been included in Master Data
+   Management Collaboration Server version 10.1.0-FP009.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR49197
+   
+   
+ * REPORTED COMPONENT NAME
+   MDM SERVER FOR
+   
+   
+ * REPORTED COMPONENT ID
+   5724V5100
+   
+   
+ * REPORTED RELEASE
+   A10
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-01-29
+   
+   
+ * CLOSED DATE
+   2014-06-04
+   
+   
+ * LAST MODIFIED DATE
+   2014-06-04
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   MDM SERVER FOR
+   
+   
+ * FIXED COMPONENT ID
+   5724V5100
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * RA10 PSY
+   UP

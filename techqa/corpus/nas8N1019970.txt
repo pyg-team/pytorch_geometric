@@ -1,0 +1,68 @@
+Title: IBM DDM/DRDA QIBM_DRDADDM_CNN_TIMEOUT Environment Variable - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ CPD3E34 DDM TCP/IP communications error occurred on poll() - Poll event received in the JOBLOG of a job that is attempting to establish a DDM or DRDA connection. 
+
+SYMPTOM
+CPD3E34 DDM TCP/IP communications error occurred on poll() - Poll event received in the JOBLOG of a job that is attempting to establish a DDM or DRDA connection.
+
+
+CAUSE
+The error is related to network problems, where intermittently, SYN packets are sent from the source, but never make it to the target.
+
+ENVIRONMENT
+Applications making DDM or DRDA connections.
+
+DIAGNOSING THE PROBLEM
+The following message can be returned in a DDM or DRDA connection.
+
+
+CPD3E34 40 02/07/13 09:43:40.555652 QRWXDLL QSYS *STMT QRWXDLL QSYS 
+From module . . . . . . . . : QRWXDLL 
+From procedure . . . . . . : SndCPD3E3x__FiT1 
+Statement . . . . . . . . . : 23 
+To module . . . . . . . . . : QRWXDLL 
+To procedure . . . . . . . : SndCPD3E3x__FiT1 
+Statement . . . . . . . . . : 23 
+Message . . . . : DDM TCP/IP communications error occurred on poll() - Poll event. Cause . . . . . : Error code (errno) 0 was received while processing the poll() - Poll event function for DRDA/DDM TCP/IP communications. 
+Recovery . . . : See any previously listed message(s) to determine 
+the cause of the error; if necessary, correct the error and issue the 
+request again. 
+
+The error is related to network problems, where intermittently, SYN packets are sent from the source, but never make it to the target. If this condition lasts longer than the DDM connect() time of 5 seconds, the connection can fail and the CPD3E34 error above is received.
+
+
+
+
+RESOLVING THE PROBLEM
+The following PTFS allow a new, undocumented, Environment Variable to be set that might alleviate the problem. 
+
+
+PTF SI50886 (7.1)
+PTF SI50887 (6.1) 
+
+Environment Variable QIBM_DRDADDM_CNN_TIMEOUT was added in order to allow service to modify the poll() timeout value. This environment variable specifies the amount of time in seconds to that poll() is to wait before returning. If the value of timeout is 0, poll() will return immediately. If the value of timeout is -1, poll() will block until a requested event occurs or until the call is interrupted. Any value less than -1 will return a CPE3021. 
+
+The default timeout value for poll() when the environment variable is not specified is 5 seconds. 
+
+Setting QIBM_DRDADDM_CNN_TIMEOUT to a higher number will allow TCP/IP do more retries at connect time.
+
+It is suggested to add QIBM_DRDADDM_CNN_TIMEOUT as a system (*SYS) environment variable, so that it will be set for all jobs using DDM/DRDA.
+
+Syntax:
+
+ADDENVVAR ENVVAR('QIBM_DRDADDM_CNN_TIMEOUT') VALUE(10) LEVEL(*SYS)
+
+It is recommended that the value initially be set to 10 (10 seconds). This can be increased up to 30 (30 seconds), but it is not recommended to go any higher than 30.
+
+In some (possibly most) cases, the job will have to be restarted in order to pick up the change made by the Environment Variable.
+
+With QIBM_DRDADDM_CNN_TIMEOUT in place, TCPIP will continue to poll for the specified time before CPD3E34 is posted to the JOBLOG.
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Operating System IBM i 7.1 Operating System IBM i 6.1

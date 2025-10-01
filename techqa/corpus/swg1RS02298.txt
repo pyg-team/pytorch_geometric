@@ -1,0 +1,155 @@
+Title: IBM RS02298: OUT OF MEMORY DISPLAYING TEST REPORT WITH EXECUTION DETAILS WHEN RUNNING DVS TEST WITH 1800 SCENARIOS - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Operational Decision Manager V8.8.1 Mod Pack [http://www-01.ibm.com/support/docview.wss?uid=swg24042247]
+Operational Decision Manager V8.7.1.2 Fix Pack [http://www-01.ibm.com/support/docview.wss?uid=swg24042348]
+Operational Decision Manager V8.8.1 Download Document [http://www-01.ibm.com/support/docview.wss?uid=swg24042245]
+Operational Decision Manager V8.8.0.1: Interim Fix 25 [http://www-01.ibm.com/support/docview.wss?uid=swg24042700]
+Operational Decision Manager V8.8.0.1: Interim Fix 27 [http://www-01.ibm.com/support/docview.wss?uid=swg24042786]
+Operational Decision Manager V8.8.0.1: Interim Fix 32 [http://www-01.ibm.com/support/docview.wss?uid=swg24042898]
+Operational Decision Manager V8.5.1.3: Interim Fix 65 [http://www-01.ibm.com/support/docview.wss?uid=swg24043040]
+Operational Decision Manager V8.8.0.1: Interim Fix 34 [http://www-01.ibm.com/support/docview.wss?uid=swg24043046]
+Operational Decision Manager V8.8.0.1: Interim Fix 41 [http://www-01.ibm.com/support/docview.wss?uid=swg24043308]
+Operational Decision Manager V8.8.0.1: Interim Fix 49 [http://www-01.ibm.com/support/docview.wss?uid=swg24043493]
+Operational Decision Manager V8.8.0.1: Interim Fix 51 [http://www-01.ibm.com/support/docview.wss?uid=swg24043635]
+Operational Decision Manager V8.8.0.1: Interim Fix 62 [http://www-01.ibm.com/support/docview.wss?uid=swg24043932]
+Operational Decision Manager V8.8.0.1: Interim Fix 65 [http://www-01.ibm.com/support/docview.wss?uid=swg24043961]
+Operational Decision Manager V8.8.0.1: Interim Fix 72 [http://www-01.ibm.com/support/docview.wss?uid=swg24043758]
+Operational Decision Manager V8.8.0.1: Interim Fix 79 [http://www-01.ibm.com/support/docview.wss?uid=swg24044443]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When running DVS test with 1800 scenarios, generating a test
+   report with execution details can consume a lot of memory.
+   
+   All the execution traces for all the scenarios are retrieved at
+   once by using the IlrSSPClient.getExecutionTraces method.
+   
+   It is the most efficient method to retrieve execution traces
+   when there is not a lot of execution traces because it does
+   only one transaction commit but it produces an out of memory
+   when you have too many execution traces.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  This can be set to a positive integer corresponding to the
+   number of execution traces we want to retrieve from the Rule
+   Execution Server and
+   have in memory in Decision Center at a time.
+   This preference setting can be set using a config param in
+   Decision Center Entreprise Console .
+   The value of this parameter needs to be adjusted depending on
+   the number of scenarios and on a the memory available on both
+   the Rule Execution Server and Decision Center.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The code is fixed
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   RS02298
+   
+   
+ * REPORTED COMPONENT NAME
+   WS DECISION SVR
+   
+   
+ * REPORTED COMPONENT ID
+   5725B6901
+   
+   
+ * REPORTED RELEASE
+   851
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-02-10
+   
+   
+ * CLOSED DATE
+   2016-03-18
+   
+   
+ * LAST MODIFIED DATE
+   2016-03-18
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  999
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WS DECISION SVR
+   
+   
+ * FIXED COMPONENT ID
+   5725B6901
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R860 PSY
+   UP

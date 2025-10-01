@@ -1,0 +1,73 @@
+Title: IBM MustGather: Read first for Rational Host On-Demand problems - United States
+
+Text:
+mustgather; Read first; readfirst; must gather; troubleshooting; trouble shooting; 1220328; HOD TECHNOTE (FAQ)
+
+QUESTION
+ What general information should be collected to aid in IBM Rational Host On-Demand problem determination in order to and save time resolving Problem Management Records (PMRs)? 
+
+ * Symptoms match known problems (rediscovery). 
+ * There is a non-defect problem that can be identified and resolved. 
+ * There is a defect that identifies a work around to reduce severity. 
+ * Locating root cause can speed development of a code fix.
+
+ANSWER
+This document is intended to provide a detailed description of the documentation required by the Rational Host On-Demand support team to diagnose your problem. It contains the following sections: 
+
+Gathering general information
+Gathering component specific information
+Submitting information to IBM Support
+General hints and tips
+
+
+
+
+
+
+
+Gathering general information 
+
+If you open a PMR or SR, every problem record should include the following:  * A complete description of the problem 
+ * The Host On-Demand version, release, and maintenance level 
+ * The Operating System version, release, and maintenance level of server and client 
+ * Related products version, and release levels, such as Web Server and Java 
+ * A valid contact, contact phone number and contact email address
+
+
+
+
+
+
+
+
+Gathering component specific information 
+
+Click on one of the documents in the following table that best describes your Host On-Demand problem. This will provide you with a listing of the documentation that the Host On-Demand support team requires to diagnose your problem. It will also include diagnostic hints and tips that will aid in diagnosing and solving problems. 
+
+Host On-Demand MustGather documents Debugging Problems found when using IBM HACL [http://www-1.ibm.com/support/docview.wss?uid=swg21219975] Host On-Demand Cached Client problems [http://www-1.ibm.com/support/docview.wss?uid=swg21220234] Host On-Demand Macro problems [http://www-1.ibm.com/support/docview.wss?uid=swg21219980] Host On-Demand Server Problems on AIX or Linux [http://www-1.ibm.com/support/docview.wss?rs=0&q1=1225440&uid=swg21225440&loc=en_US&cs=utf-8&cc=us&lang=en] Host On-Demand Service Manager on z/OS fails to start [http://www-01.ibm.com/support/docview.wss?uid=swg21220236] Host On-Demand telnet 3270, 5250 and VT emulator client problems [http://www-1.ibm.com/support/docview.wss?uid=swg21220233] Host On-Demand Host File Transfer Problems [http://www-1.ibm.com/support/docview.wss?uid=swg21220235] LOG0001 error when using Host On-Demand on IBM i5 [http://www-1.ibm.com/support/docview.wss?uid=swg21219976] Host On-Demand Redirector Problems when not using SSL [http://www-1.ibm.com/support/docview.wss?uid=swg21219977] Host On-Demand Redirector Problems when using SSL [http://www-1.ibm.com/support/docview.wss?uid=swg21220238] Host On-Demand LDAP problems [http://www-1.ibm.com/support/docview.wss?rs=0&q1=1230723&uid=swg21230723&loc=en_US&cs=utf-8&cc=us&lang=en] Host On-Demand Java WebStart Problems [http://www-01.ibm.com/support/docview.wss?uid=swg21229394]  Back to top 
+
+
+
+
+
+
+Submitting information to IBM Support 
+
+Submitting documentation to the Host On-Demand support team 
+ * You must open a Problem Management Record (PMR) or Service Request (SR) prior to sending doc to the Host On-Demand support teams. 
+ * You can use Service Request to attach files to your PMRs. Visit the Software Support help page to learn more about Service Request (SR) [https://www-946.ibm.com/sr/help/]
+
+
+
+
+
+
+
+General hints and tips 
+Search for known problems from the Host On-Demand support portal [http://www-947.ibm.com/support/entry/portal/Overview/Software/Rational/Rational_Host_On-Demand].
+
+Stay current on Host On-Demand fixes by downloading from Fix Central [http://www-933.ibm.com/support/fixcentral/]. 
+
+
+
+ Back to top

@@ -1,0 +1,67 @@
+Title: IBM add, remove mailbox permission error.java.sql.SQLException: ORA-01795: maximum number of expressions in a list is 1000 - United States
+
+Text:
+STERLINGNFX TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ add, remove mailbox permission error.java.sql.SQLException: ORA-01795: maximum number of expressions in a list is 1000 
+
+SYMPTOM
+
+
+while adding or removing maibox permission from a user,
+
+received 
+java.sql.SQLException: ORA-01795: maximum number of expressions in a list is 1000 
+in system.log.
+
+Error Message ERROR 000000000000 GLOBAL_SCOPE [security.User] removeMyPerms SQL Error Code: 1795 SQL State: 42000 java.sql.SQLException: ORA-01795: maximum number of expressions in a list is 1000 at oracle.jdbc.driver.DatabaseError.throwSqlException(DatabaseError.java:112) at oracle.jdbc.driver.T4CTTIoer.processError(T4CTTIoer.java:331) at oracle.jdbc.driver.T4CTTIoer.processError(T4CTTIoer.java:288) at oracle.jdbc.driver.T4C8Oall.receive(T4C8Oall.java:743) at oracle.jdbc.driver.T4CPreparedStatement.doOall8(T4CPreparedStatement.java:216) at oracle.jdbc.driver.T4CPreparedStatement.executeForRows(T4CPreparedStatement.java :955) at oracle.jdbc.driver.OracleStatement.doExecuteWithTimeout(OracleStatement.java:116 8) at oracle.jdbc.driver.OraclePreparedStatement.executeInternal(OraclePreparedStateme nt.java:3316) at oracle.jdbc.driver.OraclePreparedStatement.executeUpdate(OraclePreparedStatement .java:3400) at com.sterlingcommerce.woodstock.security.User.removeMyPerms(User.java:3019) at com.sterlingcommerce.woodstock.security.SecurityManager.removeAllUserPerms(Secur ityManager.java:1273) at com.sterlingcommerce.woodstock.ui.security.UserAuthoObject.updateGroupsAndPerms( UserAuthoObject.java:88) at com.sterlingcommerce.woodstock.ui.security.UserAuthoObject.save(UserAuthoObject. java:114) at com.sterlingcommerce.woodstock.adminui.servlet.SaveAccount.run(SaveAccount.java: 95)
+
+
+RESOLVING THE PROBLEM
+
+
+Please apply Gentran Integration Suite, Release 4.3 Build 4320 or later
+
+ 
+
+HISTORICAL NUMBER
+ NFX6642 
+
+PRODUCT ALIAS/SYNONYM
+ 
+
+Function Area
+
+
+Mailbox
+
+
+Escalation ID
+
+
+51600
+
+
+Fix ID
+
+
+188671
+
+
+Severity
+
+
+Normal
+
+
+Type
+
+
+NormalFix
+
+
+Build
+
+
+4320

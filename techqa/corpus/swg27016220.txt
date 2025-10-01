@@ -1,0 +1,52 @@
+Title: IBM Open Mic replay: CICS TS 4.1 event processing support - United States
+
+Text:
+CICS TS 4.1 Event Processing; CICS Transaction Server Events; wste_webcast; WSTE; Support Technical Exchange; education; presentation; webcast; STEwebcastDocument; 5655S9700 R660 660 R600 600 HCI6600 5655-S97 5655S97; kixinfo WEBCAST
+
+ABSTRACT
+ IBM held a Support Technical Exchange Open Mic session on the topic of CICS event processing on 30 July 2009. This included a short introduction to the topic followed by a question and answer period in which a group of subject matter experts answered questions from customers. 
+
+CONTENT
+Starting with CICS Transaction Server for z/OS (CICS TS) V4.1, CICS applications can act as a source of business events, without any changes or recompilation of the applications, using event specifications created using Eclipse-based tooling.
+
+
+Since this open mic was created specifically for CICS TS V4.1, many features that have been introduced in newer releases of CICS are not included. You might also want to listen to the Ask the Experts Replay: Demystifying Event Processing in CICS [http://www.ibm.com/support/docview.wss?uid=swg27041814] that was held on 5 June 2014 and includes information about releases of CICS TS up to V5.2. 
+
+Open Mic sessions are conducted in a question and answer format. The table below provides a time index (minutes:seconds) to the recording and describes the questions or topics discussed. You can fast forward to any question using the time index. A table containing the panel of experts is also included.
+
+To play or download the audio 22 minute recording of this Open Mic session, see the Audio Section of this document. 
+
+
+
+
+
+
+
+
+Open Mic session
+
+Time Questions asked 00:00 Silence 00:00 General introduction 02:16 Technical introduction 09:02 Will my applications be completely unchanged, or are there circumstances when I will have to change the applications? 10:57 Can I change the definition of an event while CICS is running? 11:22 What can I do if I do not receive an expected event because the filters have been specified incorrectly? 13:22 What impact will the use of CICS event processing have on the performance of my CICS systems? How will the performance of my event-enabled application be affected by the new capabilities? 15:11 What diagnostics and tools can I use if I have problems with my events? 17:05 Does CICS have a loop prevention mechanism if my event consumer program itself triggers an event? 19:31 Open lines for live question and answer period 19:55 If I am getting an event that a data filter is missing, what should I do? 21:36 Closing remarks 22:49 End of Call 
+Panel of Experts: Adam Coulthard CICS Tester Catherine Moxey CICS TS Senior Developer Gillian Curwen CICS Tester and Focus Team Leader Jackie Scott CICS Software Tester John Herrod CICS Software Engineer Michael Baylis CICS Software Test Specialist Peter Masters CICS Developer (now Message Broker Developer) Steve Bolton CICS Explorer Software Developer 
+
+
+PRESENTATION
+[http://www.ibm.com/i/v16/icons/weblecture.gif]WSTE-07302009-OpenMic-CICSEventProcessingSupport-Moxey.pdf [/support/docview.wss?uid=swg27016220&aid=2] [/support/docview.wss?uid=swg27016220&aid=1]
+
+[http://www.ibm.com/i/v14/icons/sout.gif] Get Adobe Reader [http://www.adobe.com/products/acrobat/readstep2.html] to view PDF
+
+
+
+AUDIO
+[http://www.ibm.com/i/v16/icons/aud.gif] Click on Download Audio [ftp://public.dhe.ibm.com/software/websphere/techexchange/Jul-30-2009-Moxey.mp3] (2.0MB) to play the recording of this 22 minutes conference call (MP3 format). Right-click and select Save As to store the file on your local computer for later playback. Remember that you can fast forward to any question using the timeindex.
+
+
+
+RELATED INFORMATION
+ Support Technical Exchange Webcasts [http://www.ibm.com/software/websphere/webcast]
+CICS and OMEGAMON Technical Exchanges [http://www.ibm.com/support/docview.wss?uid=swg27007244]
+
+
+
+
+PRODUCT ALIAS/SYNONYM
+ CICS/TS CICS TS CICS Transaction Server

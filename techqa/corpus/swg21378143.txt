@@ -1,0 +1,34 @@
+Title: IBM Is addToKit.exe available for download from Passport Advantage? - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+Is addToKit.exe available for download from IBM Passport Advantage Online [https://www.ibm.com/software/howtobuy/passportadvantage/paocustomer/LoginPage]? 
+
+ANSWER
+ 
+
+For Notes 8.5.1 and higher releases, addToKit.exe is available for download from Passport Advantage. 
+
+
+ * Download the Notes install webkit from Passport Advantage.
+
+ * Run the webkit and choose a temp directory to unpack the files to.
+
+ * Cancel the install after the files are unpacked
+
+ * Navigate to the temp directory under \Utility\NotesCustomizationKit_#_#.zip. You should see addToKit.exe in this directory. 
+
+
+Prior to Notes 8.5.1, addToKit.exe is available in the following locations: 
+
+
+ * The \Apps folder on the Notes install CD 
+
+ * Attached to technote #1366669 [http://www.ibm.com/support/docview.wss?uid=swg21366669] - Obtaining Notes 8.5 addToKit.exe and trimUpdateSite.exe tools
+
+
+
+ * 
+ *

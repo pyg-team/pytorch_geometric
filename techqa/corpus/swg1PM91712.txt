@@ -1,0 +1,161 @@
+Title: IBM PM91712: PAGE DELETION RESULTS IN SQL ERROR -551 - United States
+
+Text:
+  A FIX IS AVAILABLE
+Fixes integrated in WebSphere Portal 8.0.0.1 Combined Cumulative Fixes [http://www-01.ibm.com/support/docview.wss?uid=swg24034497]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  JCR does not honor Index Buffer Pool (BP) configuration for
+   indexes create on Declared Global Temporary Tables.
+   
+   Upon attempting to delete a page, the following is written to
+   SystemOut.log:
+   EJPAJ0010E: Unable to delete Sitemap.
+   com.ibm.portal.WpsException: EJPAJ0010E: Unable to delete
+   Sitemap.
+                   at
+   com.ibm.wps.portlets.managepages.utils.PageCommand.deletePage(Pa
+   geCommand.java:403)
+                   at
+   com.ibm.wps.portlets.managepages.utils.TableModelUtils.deletePag
+   e(TableModelUtils.java:493)
+   ...
+     Message: Could not save object in repository., Cause:
+   javax.jcr.RepositoryException: RT7049E: The configured database
+   access user does not have sufficient privileges to execute the
+   attempted statement. Please contact your system
+   administrator.
+   DB2 SQL Error:
+   SQLCODE=-551, SQLSTATE=42501, SQLERRMC=WBDBU1;CREATE INDEX;BP0,
+   DRIVER=4.12.72 (Message: Could not save object in repository.,
+   Cause:
+   javax.jcr.RepositoryException: RT7049E: The configured database
+   access user does not have sufficient privileges to execute the
+   attempted statement. Please contact your system
+   administrator.
+   DB2 SQL Error:
+   SQLCODE=-551, SQLSTATE=42501, SQLERRMC=WBDBU1;CREATE INDEX;BP0,
+   DRIVER=4.12.72)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  None available.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Refer to the link below.
+   .
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A code fix for this issue is integrated into the Combined
+   Cumulative Fix 007 (PM91269 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM91269]) for WebSphere Portal & WCM 8.0.0.1.
+   
+   http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent
+   =ibm/WebSphere&product=ibm/WebSphere/WebSphere+Portal&release=Al [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm/WebSphere&product=ibm/WebSphere/WebSphere+Portal&release=Al]
+   l&platform=All&function=aparId&apars=PM91269
+   
+   You might need to type or paste the complete address into your
+   Web browser.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM91712
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSPHERE PORTA
+   
+   
+ * REPORTED COMPONENT ID
+   5724E7600
+   
+   
+ * REPORTED RELEASE
+   800
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-06-24
+   
+   
+ * CLOSED DATE
+   2013-12-12
+   
+   
+ * LAST MODIFIED DATE
+   2013-12-12
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBSPHERE PORTA
+   
+   
+ * FIXED COMPONENT ID
+   5724E7600
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R800 PSY
+   UP

@@ -1,0 +1,198 @@
+Title: IBM IZ85969: Channels fail.  FDCs are written, possibly to include Probe Ids XC006001, ZS402066, XC130003, XC130031 - United States
+
+Text:
+  FIXES ARE AVAILABLE
+WebSphere MQ V7.0 Fix Pack 7.0.1.4 [http://www-01.ibm.com/support/docview.wss?uid=swg24028106]
+WebSphere MQ V7.0.1 for i5/OS Fix Pack 7.0.1.4 [http://www-01.ibm.com/support/docview.wss?uid=swg24028109]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Failures occur in a SVRCONN channel thread.  It is possible that
+   all other channel threads hosted in the same amqrmppa process
+   will fail as a result.
+   
+   The failures are due to an internal protocol error where the
+   SVRCONN channel mishandles data lengths.
+   
+   If RCVR type channels are affected, messages build up on the
+   transmission queue on the remote queue manager.  If SDR type
+   channels are affected, messages build up on the SDR's local
+   transmission queue.
+   
+   Any clients affected might get a variety of errors.
+   
+   FDC file(s) are written, with a possibly several probe ids.  For
+   example, XC006001, ZS402066, XC130003, XC130031.
+   
+   ---------------------------------
+   Probe Id          :- XC006001
+   Component         :- xcsFreeMem
+   Program Name      :- amqrmppa
+   Major Errorcode   :- xecS_I_PRIVATE_MEMORY_ERROR
+   Probe Type        :- MSGAMQ6091
+   
+   MQM Function Stack
+   zstAsyncConsumeThread
+   zstAsyncConsume
+   vpiConvertData
+   xcsFreeMem
+   xcsFFST
+   
+   ---------------------------------
+   Probe Id          :- ZS402066
+   Component         :- zstAsyncConsume
+   Program Name      :- amqrmppa
+   Major Errorcode   :- xecS_I_PRIVATE_MEMORY_ERROR
+   Probe Type        :- MSGAMQ6091
+   Comment1          :- Buffer invalid after user callback routine
+   
+   MQM Function Stack
+   zstAsyncConsumeThread
+   zstAsyncConsume
+   xcsCheckMem
+   xcsFFST
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   All users of WebSphere MQ clients.
+   
+   Platforms affected:
+   All Distributed (iSeries, all Unix and Windows)
+   ****************************************************************
+   PROBLEM SUMMARY:
+   The failures are due to an internal protocol error where the
+   SVRCONN channel mishandles data lengths.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A correction has been made to the product code, to avoid
+   mishandling of the data lengths.
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+                      v7.0
+   Platform           Fix Pack 7.0.1.2
+   --------           --------------------
+   Windows            U200316
+   AIX                U829807
+   HP-UX (PA-RISC)    U829678
+   HP-UX (Itanium)    U829681
+   Solaris (SPARC)    U829806
+   Solaris (x86-64)   U829680
+   iSeries            tbc_p700_0_1_2
+   Linux (x86)        U829677
+   Linux (x86-64)     U829676
+   Linux (zSeries)    U829682
+   Linux (Power)      U829679
+   
+   The latest available maintenance can be obtained from
+   'WebSphere MQ Recommended Fixes'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037]
+   
+   If the maintenance level is not yet available, information on
+   its planned availability can be found in 'WebSphere MQ
+   Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ85969
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ AIX V7
+   
+   
+ * REPORTED COMPONENT ID
+   5724H7221
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-09-29
+   
+   
+ * CLOSED DATE
+   2010-09-30
+   
+   
+ * LAST MODIFIED DATE
+   2010-10-21
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ AIX V7
+   
+   
+ * FIXED COMPONENT ID
+   5724H7221
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R700 PSY
+   UP

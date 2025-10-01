@@ -1,0 +1,54 @@
+Title: IBM "The driver could not establish a secure connection to SQL Server ... SSLv3 SSLContext not available" when using 'Database Conversion' (inside 'Controller Configuration') - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Administrator launches 'Controller Configuration' and selects a database connection. Administrator clicks the green 'play' button to launch Database Conversion.
+
+Administrator tries to connect to a database - an error appears. 
+
+SYMPTOM
+com.microsoft.sqlserver.jdbc.SQLServerException: The driver could not establish a secure connection to SQL Server by using Secure Sockets Layer (SSL) encryption. Error: "SSLv3 SSLContext not available"
+
+
+CAUSE
+Administrator has put an old/incorrect JDBC (JAR) file version (or not placed it in the correct folders) on the Controller application server.
+
+ENVIRONMENT
+Microsoft SQL server.
+
+RESOLVING THE PROBLEM
+Copy the correct (recent/modern/updated) JAR file version into the relevant folders on the Controller application server.
+
+
+
+
+ 
+
+Steps: 
+
+1. Download the latest version of the Microsoft SQL Server JDBC driver. 
+
+ 
+
+At the time of writing this article (July 2015): 
+
+ * the current latest version is 4.1 
+ * It can be downloaded from the link below
+
+
+2. Double-click on the relevant file (e.g. "sqljdbc_4.0.2206.100_enu.exe") to extract the sub-files. 
+3. Copy the file 'sqljdbc4.jar' into the 'Integration', ‘Lib’ and ‘ccr_64’ folders.
+
+
+TIP: By default, the folders are located here: 
+
+ * C:\Program Files\ibm\cognos\ccr_64\server\Integration 
+ * C:\Program Files\ibm\cognos\ccr_64\server\FAP\lib 
+ * C:\Program Files\ibm\cognos\ccr_64
+
+
+
+4. Test. RELATED INFORMATION
+ Third Party (Microsoft) - Microsoft JDBC Drivers 4.2 (P [http://www.microsoft.com/en-us/download/details.aspx?displaylang=en&id=11774]

@@ -1,0 +1,111 @@
+Title: IBM LO43868: ENHANCEMENT REQUEST:SUPPORT NOKIA 97(SERIES 60 5TH EDITION) ON T RAVELER - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS SUGGESTION FOR FUTURE RELEASE.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Traveler 8.0.1/8.5 support Nokia client only with Series 60 3rd
+   edtions,
+   however, customer request to support the S60 5th Edition
+   devices, for example,
+   Nokia 97, etc.
+   
+   when using Nokia 97 as an traveler client, customer found auto
+   sync do NOT
+   work, and he can neither type any characters in the
+   cc/bcc/subject field,
+   except the "to" field.
+   
+   customer request that we should support S60 5th Edition devices
+   for Nokia.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *  We have opened Traveler requirement CQUN-7PYT84 for this
+   request.  This has high priority and is being investigate for
+   next release.
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   LO43868
+   
+   
+ * REPORTED COMPONENT NAME
+   LOTUS NOTES TRA
+   
+   
+ * REPORTED COMPONENT ID
+   5724E6204
+   
+   
+ * REPORTED RELEASE
+   850
+   
+   
+ * STATUS
+   CLOSED SUG
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-08-31
+   
+   
+ * CLOSED DATE
+   2009-09-14
+   
+   
+ * LAST MODIFIED DATE
+   2009-09-14
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

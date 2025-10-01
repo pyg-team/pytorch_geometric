@@ -1,0 +1,44 @@
+Title: IBM Tivoli Enterprise Portal - cannot see any workspaces for certain agents - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Using the Tivoli Enterprise Portal (TEP), workspaces cannot be seen for certain agents but can be seen for others. 
+
+SYMPTOM
+In this case, the workspaces themselves do not show up in the TEP when an agent is selected, only the Navigator item shows up.
+
+
+CAUSE
+The tep.jnlp file and the applet.html files do not contain the resources files necessary to display the workspaces for the agents. A resources entry should exist for each agent where application support is installed at the Tivoli Enterprise Portal Server (TEPS). 
+
+For example, if the agent is AIX Premium (px) 
+There should be a line in the tep.jnlp file similar to this:
+<extension href="kpx_resources.jar.jnlp" name="kpx_resources.jar"
+
+And an entry in the applet.html file containing kpx_resources.jar as part of the optimizeArchiveOrder line similar to this:
+
+optimizeArchiveOrder( '<PARAM NAME = CACHE_ARCHIVE VALUE="cnp_vbjorball.jar, kjrall.jar, util.jar, chart.jar, ae.jar, cnp_jviewsall.jar, terminal.jar, browser.jar, browser-@P.jar, browser-core-@P.jar, icu4jm32.jar, deploy.jar, cnp_ps.jar, cnp.jar, kul_resources.jar, klz_resources.jar, kum_resources.jar, ka4_resources.jar, jhall.jar, jsafe.zip, jcf.jar, ibmjsse.jar, jrim.jar, paconf.jar, console.jar, uif.jar, kr4_resources.jar, nvnways.jar, kpx_resources.jar, log4j-1.1.1.jar, knt_resources.jar, kpa_resources.jar, ksy.jar, launch.jar,">' );
+
+If these resources lines do not exist, then the workspace will not be able to be displayed for the agent in question.
+
+
+DIAGNOSING THE PROBLEM
+The TEP client logs for the Java Web Start client do not show an entry for the resources file for that particular agent. Still using the case of the px agent, if you search the Java Web Start client logs you will not see any reference to this file: 
+
+kpx_resources.jar
+
+
+RESOLVING THE PROBLEM
+In IBM Tivoli Monitoring (ITM) Version 6.2.3 you can configure just the cw component which should rewrite both the applet.html and tep.jnlp files along with creating the application jnlp files. 
+
+
+on Linux/UNIX:
+Change to the ITM bin directory (ie: by default it would be: /opt/IBM/ITM/bin) and run the following command: 
+./itmcmd config -A cw
+
+on Windows:
+Right click the TEPS in the Manage Tivoli Monitoring Service (MTEMS) and select reconfigure. 
+
+Then restart the Tivoli Enterprise Portal Server (TEPS). When the configure script completes, just restart the Java Web Start client.

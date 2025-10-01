@@ -1,0 +1,11 @@
+Title: IBM How to Set DB2 DSNZPARM LOBVALA to Alleviate RC00C900D1 ABENDs? - United States
+
+Text:
+What is this document:
+This document has the abstract of a technical article that is available to authorized users after you have logged on. Please use the link to actual document below to access the full document. You will be asked to log on if you are not already logged in. After log in, if you do not have the right authorization for this document, there will be instructions on what to do next.
+
+abstract text
+One currently has a Stored Procedure with a 1 Meg Parameter XML data type defined which is coming across a DRDA connection. It is possible that there will be multiple calls of the same Stored Procedure before a COMMIT is sent. Does the DB2 DSNZPARM LOBVALA value need to be cumulative, i.e. if one has 15 calls to this Stored Procedure before a COMMIT, does one need 15 Megs defined for the LOBVALA parameter?
+
+link to actual document
+http://www.ibm.com/support/docview.wss?uid=isg3T1018799 [http://www.ibm.com/support/docview.wss?uid=isg3T1018799]

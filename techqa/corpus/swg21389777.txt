@@ -1,0 +1,46 @@
+Title: IBM The "implicit" AAA Policy in the DataPower Web Service Proxy "Proxy Settings" tab cannot generate an LTPA Token into a WS-Sec Header - United States
+
+Text:
+AAA action wsp web service proxy datapower ltpa token ws-sec header TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ If a Web Service Proxy is configured using the "AAA Policy" from the "Proxy Settings" tab to "Generate an LTPA Token" and "Wrap Token in a WS-Security Security Header" during "Post Processing", the token is not created. 
+
+SYMPTOM
+This issue occurs when the following has been configured:
+
+
+ 1. The AAA Policy in the Web Service Proxy "Proxy Settings" tab has been configured:
+    
+    [/support/docview.wss?uid=swg21389777&aid=1] [/support/docview.wss?uid=swg21389777&aid=1]
+    
+    
+ 2. Then "Generate an LTPA Token" and "Wrap Token in a WS-Security Security Header" is turned on during "Post Processing" with this AAA Policy:
+    
+    [/support/docview.wss?uid=swg21389777&amp;aid=2]
+    
+    
+ 3. Sending a message and inspecting the output will show that there is no token injected.
+
+
+CAUSE
+The implicit AAA Policy action in the Web Service Proxy "Proxy Settings" tab does not have an output context and therefore cannot modify the request message.
+
+RESOLVING THE PROBLEM
+In order to have an AAA action to modify an incoming request message, use an explicit AAA action in the Web Service Proxy "Policy" tab instead of using an implicit AAA action in the Web Service Proxy "Proxy Settings" tab during service configuration.
+
+
+ 1. First, click on the Policy tab, then click the request rule:
+    
+    [/support/docview.wss?uid=swg21389777&aid=3] [/support/docview.wss?uid=swg21389777&aid=3]
+    
+    
+ 2. Then add an explicit AAA action to the Policy:
+    
+    [/support/docview.wss?uid=swg21389777&aid=4] [/support/docview.wss?uid=swg21389777&aid=4]
+    
+ 3. In this AAA Action, you can now successfully configure to add the LTPA token.
+
+ 
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration WebSphere DataPower XML Security Gateway XS40 Not Applicable Firmware Edition Independent

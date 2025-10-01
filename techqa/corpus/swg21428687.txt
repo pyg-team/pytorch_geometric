@@ -1,0 +1,85 @@
+Title: IBM Receiving error SQL30082N reason code 42 when attaching to an instance. - United States
+
+Text:
+SQL30082N reason code 42; SQL30082n rc=42 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ After I created several new instances on DB2 as user root, I want to attach to one of the instances using an ID that is not an instance owner. However when I try to do this, I get the following error: 
+
+systest1@local1:~> db2 attach to inst1 user testuser1
+Enter current password for testuser1: 
+SQL30082N Security processing failed with reason "42" ("ROOT CAPABILITY REQUIRED"). SQLSTATE=08001 
+
+CAUSE
+
+This error is usually seen when we are dealing with a non-root DB2 installation. There are some 
+important limitations when you use non-root DB2 installations. Please check the links at the end of this tech document for details. 
+
+SQL30082N Security processing failed with reason reason-code (reason-string). 
+
+Explanation:
+An error occurred during security processing. The cause of the security error is described by the reason-code and corresponding reason-string value. 
+
+Here are some details regarding the reason code you are facing: 
+
+42 (INVALID SERVER SECURITY TOKEN) 
+Authentication using local client or server passwords is not currently enabled. 
+
+User response:
+Ensure that the proper userid and/or password is supplied. 
+
+The userid may be disabled, the userid may be restricted to accessing specific workstations, or the userid may be restricted to certain hours of operation. 
+
+42 
+To enable local client or server authentication for non-root installations, the system administrator must run the db2rfe script. Alternatively, authentication can be done using a security plugin. 
+
+In order to solve this problem it recommend that you run the db2rfe command, which enables the supported root features, in non-root installations of DB2. 
+
+
+RESOLVING THE PROBLEM
+ 
+
+1.) Stop the DB2 instance by issuing the "db2stop" command. 
+2.) Log in as root and locate your db2rfe.cfg found in DB2DIR/instance.
+3.) Check the file to make sure it has: 
+
+RESERVE_REMOTE_CONNECTION=YES 
+
+4.) If it doesn't, then update it to match the above. Then run:
+
+db2rfe -f <config_file> 
+
+If that doesn't help, then you need to check the permission's on db2ckpw and db2chpw. Do the following:
+
+1.) cd to sqllib/security
+2.) run: ls -l 
+3.) Check the permission's on the db2chpw and db2ckpw they should be:
+
+-r-s--x--x 1 root inst1 51195 Dec 1 15:33 db2chpw 
+-r-s--x--x 1 root inst1 3534773 Dec 1 15:33 db2ckpw 
+
+4.) Also check to see if they are owned by root. 
+5.) If not owned by root, log in as root and run:
+
+db2iupdt -k <instance> 
+
+and then check if db2ckpw is now owned by root. 
+
+6.) If you need to change the permission's of those files run the following commands (this needs to be done as root, since the files are owned by root): 
+
+chmod 4511 db2chpw 
+chmod 4511 db2ckpw 
+
+Stop and restart the instance. 
+
+7.) Also check with your System Administrator Team and make sure your file systems are not mounted with the NOSUID option. If they are, re-mount them without NOSUID.
+
+The below links have additional information about SQL30082N, Non-root install and db2rfe: 
+
+SQL30082N 
+http://publib.boulder.ibm.com/infocenter/db2luw/v9r5/index.jsp?topic=/com.ibm.db2.luw.messages.sql.doc/doc/msql30082n.html [http://publib.boulder.ibm.com/infocenter/db2luw/v9r5/index.jsp?topic=/com.ibm.db2.luw.messages.sql.doc/doc/msql30082n.html] 
+
+Limitations of non-root installations 
+http://publib.boulder.ibm.com/infocenter/db2luw/v9r5/index.jsp?topic=/com.ibm.db2.luw.qb.server.doc/doc/c0050568.html [http://publib.boulder.ibm.com/infocenter/db2luw/v9r5/index.jsp?topic=/com.ibm.db2.luw.qb.server.doc/doc/c0050568.html]
+
+db2rfe - Enable root features for non-root install command http://publib.boulder.ibm.com/infocenter/db2luw/v9r5/index.jsp?topic=/com.ibm.db2.luw.admin.cmd.doc/doc/r0050569.html [http://publib.boulder.ibm.com/infocenter/db2luw/v9r5/index.jsp?topic=/com.ibm.db2.luw.admin.cmd.doc/doc/r0050569.html]

@@ -1,0 +1,54 @@
+Title: IBM Comparison of commands to measure reclaimable space - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Which command should I use to determine reclaimable space? 
+
+ANSWER
+The reclaim command that you should run depends upon the results that you want.
+
+nzreclaim -scanBlocksdisplays the space available for block reclaim. A block reclaim will remove empty blocks from the 'start' of a table.
+
+nzreclaim -scanRecordsdisplays the bytes reclaimable by a record reclaim. A records reclaim is afull spacereclaim.
+
+Thenz_reclaimscript (located in the /nz/support/contrib/<version>/bin/ directory) displays anestimatebased on the average size of rows. It is not 100% accurate, but does have the advantage ofnot lockingthe tables it is working on, so it does not interfere with any other jobs.
+
+Below are examples of the reclaim commands and the different results:
+
+[nz@nps_system]$ nzreclaim -db my_database -t my_table -scanBlocks
+
+0 25 50 75 100
+Table: Start Time: |-+-|-+-|-+-|-+-|-+-|-+-|-+-|-+-|-+-|-+-|
+my_table 12:30:47 |***************************************|
+
+Reclaim session completed successfully.
+
+Table reclaim statistics:
+
+ID Name Reclaimable Space
+-------- ------------------ -----------------
+35695530 my_table 40894464 (39 MB)
+
+
+** nzreclaim scan record: [nz@nps_system]$ nzreclaim -db my_database -t my_table -scanRecords
+0 25 50 75 100 
+Table: Start Time: |-+-|-+-|-+-|-+-|-+-|-+-|-+-|-+-|-+-|-+-| 
+my_table 12:31:50 |***************************************| 
+
+Reclaim session completed successfully. 
+
+Table reclaim statistics: 
+
+ID Name Visible Rows Visible Size Reclaimable Rows Reclaimable Size (Est) 
+-------- ------------------ ------------ ------------- ---------------- ---------------------- 
+35695530 my_table 43217088767 4392890293620 614298391 62749852332 
+
+
+** nzreclaim report out of /nz/support/contrib/4.5/bin directory:
+[nz@nps_system]$ nz_reclaim my_database my_table
+Database: my_database
+Visible Rows | Visible Size | Reclaimable Rows | Reclaimable Size | Table Name
+------------------+------------------+------------------+------------------+-------------------------------
+12,705,542,580 | 666,573,588,172 | 31,125,844,578 |1,632,961,817,618 | my_table

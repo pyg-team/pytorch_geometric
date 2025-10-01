@@ -1,0 +1,139 @@
+Title: IBM Passport Advantage downloads for WebSphere ESB 7.0 - AIX - United States
+
+Text:
+PAODownloadDocument; Passport advantage; 7.0.0; AIX DOWNLOADABLE FILES
+
+ABSTRACT
+ This document explains how to download IBM WebSphere Enterprise Service Bus 7.0 files from the Passport Advantage web site. 
+
+DOWNLOAD DESCRIPTION
+WebSphere Enterprise Service Bus supports the integration of service-oriented, message-oriented and event-driven technologies to provide standards-based, messaging infrastructure to companies wanting a fast start to a service-oriented architecture (SOA). 
+
+This document explains how to download the full WebSphere Enterprise Service Bus Version 7.0 product from Passport Advantage. 
+
+The IBM WebSphere Process Server V7.0 and WebSphere Enterprise Service Bus V7.0 provides new Business Space widgets. 
+
+More information 
+
+To access a wide variety of technical resources for this product, see the Business Process Management information roadmaps [http://www14.software.ibm.com/webapp/wsbroker/redirect?version=pix&product=wps-dist&topic=bpmroadmaps]. 
+
+To see latest information and technotes, go to the WebSphere Enterprise Service Bus support page [http://www-947.ibm.com/support/entry/portal/overview/Software/WebSphere/WebSphere_Enterprise_Service_Bus/]. 
+
+Hardware and software requirements 
+
+For hardware and software requirements, refer to the Hardware and software requirements [http://www.ibm.com/support/docview.wss?uid=swg27016078] page for this platform. 
+
+Downloading and assembling the product 
+
+ 1. Locate the WebSphere Enterprise Service Bus eAssembly for the platform or platforms that you need to use. The eAssembly part numbers are provided in the tabbed sections of this document. 
+ 2. Download all of the parts that you need. The parts are listed by platform in the tabbed sections of this document. 
+ 3. Unpack each of the parts onto your system. 
+ 4. Follow the instructions in the Quick Start Guide to install the product. 
+
+TAB NAVIGATION
+ * AIX [http://www.ibm.com/support/docview.wss?uid=swg24024240]- selected tab,
+ * HP-UX [http://www.ibm.com/support/docview.wss?uid=swg24024241]
+ * Linux [http://www.ibm.com/support/docview.wss?uid=swg24024242]
+ * Solaris [http://www.ibm.com/support/docview.wss?uid=swg24024243]
+ * Windows [http://www.ibm.com/support/docview.wss?uid=swg24024244]
+
+
+
+Supported platforms 
+
+For supported platforms, including required version levels, refer to Hardware and software requirements for AIX [http://www.ibm.com/support/docview.wss?rs=2307&uid=swg27016078]. 
+
+Downloadable parts Refer to the tables below for AIX on 32-bit processors and for AIX on 64-bit processors for details about what each part contains. 
+
+At a minimum, you must download the IBM WebSphere Enterprise Service Bus 7.0 image. Parts recommended for installation and parts optional for installation are labeled in the tables. Your need for parts depends on your usage and configuration choices. You can find components that you might want to use in your topology but which run on another platform on the tabbed page that corresponds to that platform. 
+
+Downloadable parts for AIX 32-bit 
+
+The following table lists the 32-bit downloadable parts in IBM WebSphere Enterprise Service Bus Version 7.0 for AIX eAssembly (Part Number: CZ5EUML). 
+
+ 
+
+Part number Description Images recommended for installation CF25QML IBM WebSphere Enterprise Service Bus 7.0 Quick Start Guide CZ5EUML IBM WebSphere Enterprise Service Bus V7.0 for AIX 32-bit Systems Multilingual Contains the following core installation files: 
+
+ * IBM WebSphere Enterprise Service Bus 7.0 
+ * IBM WebSphere Application Server Network Deployment 
+ * IBM Installation Factory for WebSphere Application Server 
+ * IBM Update Installer for WebSphere Software 
+ * IBM User Interface Help System Built on Eclipse 
+ * Migration Tool 
+
+C1G2NML IBM WebSphere Application Server Network Deployment 7.0 Supplements for AIX on PowerPC 32-bit image 1 Contains the following files: 
+
+ * Application Client for WebSphere Application Server 
+ * IBM HTTP Server 
+ * IBM Support Assistant 
+ * Web Server Plug-ins 
+ * Migration tool
+
+C1G2PML IBM WebSphere Application Server Network Deployment 7.0 Supplements for AIX on PowerPC 32-bit image 2 Contains the following files: 
+
+ * Application Client for WebSphere Application Server 
+ * IBM HTTP Server 
+ * IBM Support Assistant 
+ * Web Server Plug-ins 
+ * Migration tool
+
+C95D1ML IBM WebSphere Application Server - Express Version 6.1 for 32-bit Windows (contains Application Server Toolkit 6.1.1) C95D2ML IBM WebSphere Application Server - Express Version 6.1 for 32-bit Linux on x86 (contains Application Server Toolkit 6.1.1) Optional installation images C88SQML IBM WebSphere Application Server Network Deployment 6.1 This part is for use with Installation Factory for creating WebSphere Application Server Network Deployment Custom Install Packages (CIPs).
+
+C87Y0ML IBM WebSphere Application Server Network Deployment Rational Agent Controller 6.1.5 for Windows CB0DGML IBM WebSphere Edge Components 7.0 ESD only C1G2DML IBM WebSphere Edge Components for IPv6 7.0 C1HP0ML IBM Tivoli Access Manager 6.1 C150RML IBM DB2 Restricted Enterprise Server Edition 9.5 - Authorized User Option - Activation C14SNML IBM DB2 Enterprise Server Edition 9.5 for AIX C14Q2ML IBM Data Server Runtime Client 9.5 for AIX C19A4ML IBM Data Server Drivers 9.5 for AIX, HP-UX, Solaris, Linux, and Windows C14PVML IBM Data Server Client 9.5 for AIX 
+Downloadable parts for AIX 64-bit 
+The following table lists the 64-bit downloadable parts in IBM WebSphere Enterprise Service Bus Version 7.0 for AIX eAssembly (Part Number: CZ7MJML). 
+
+ 
+
+Part number Description Images recommended for installation CF25QML IBM WebSphere Enterprise Service Bus 7.0 Quick Start Guide CZ7MJML IBM WebSphere Enterprise Service Bus V7.0 for AIX 64-bit Systems Multilingual Contains the following core installation files: 
+
+ * IBM WebSphere Enterprise Service Bus 7.0 
+ * IBM WebSphere Application Server Network Deployment 
+ * IBM Installation Factory for WebSphere Application Server 
+ * IBM Update Installer for WebSphere Software 
+ * IBM User Interface Help System Built on Eclipse 
+ * Migration Tool 
+
+C1G2RML IBM WebSphere Application Server Network Deployment V7.0 Supplements for AIX on PowerPC 64-bit image 1 Contains the following files: 
+
+ * IBM HTTP Server 
+ * IBM Support Assistant 
+ * Web Server Plug-ins 
+ * Migration tool
+
+C1G2SML IBM WebSphere Application Server Network Deployment V7.0 Supplements for AIX on PowerPC 64-bit image 2 Contains the following files: 
+
+ * IBM HTTP Server 
+ * IBM Support Assistant 
+ * Web Server Plug-ins 
+ * Migration tool
+
+Optional installation images C88TJML IBM WebSphere Application Server Network Deployment 6.1 for 64-bit AIX This part is for use with Installation Factory for creating WebSphere Application Server Network Deployment Custom Install Packages (CIPs).
+
+C1N5VML IBM Tivoli Directory Server 6.2 C150RML IBM DB2 Restricted Enterprise Server Edition 9.5 - Authorized User Option - Activation C14SNML IBM DB2 Enterprise Server Edition 9.5 for AIX C14Q2ML IBM Data Server Runtime Client 9.5 for AIX C19A4ML IBM Data Server Drivers 9.5 for AIX, HP-UX, Solaris, Linux, and Windows C14PVML IBM Data Server Client 9.5 for AIX 
+Change history  * 25 March 2009 
+ * 10 December 2009 
+
+
+PREREQUISITES
+See the following Web site for the prerequisites for WebSphere Enterprise Service Bus:
+
+URL LANGUAGE SIZE(Bytes) WebSphere Enterprise Service Bus system requirements [http://www.ibm.com/support/docview.wss?uid=swg27006912] Language Independent 1503433628 
+INSTALLATION INSTRUCTIONS
+The link in the following table is for the WebSphere Enterprise Service Bus Information Center:
+
+URL LANGUAGE SIZE(Bytes) WebSphere Enterprise Service Bus Information Center [http://publib.boulder.ibm.com/infocenter/dmndhelp/v7r0mx/index.jsp?topic=/com.ibm.websphere.wesb.doc/info/welcome.html] Language Independent 5000000 
+DOWNLOAD PACKAGE
+
+
+
+
+
+Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options IBM Passport Advantage online 12/12/2008 Language Independent 2204106752 HTTP [http://www.ibm.com/software/howtobuy/passportadvantage/pao_customers.htm] 
+TECHNICAL SUPPORT
+ Passport Advantage Online support at:
+http://www.ibm.com/software/howtobuy/passportadvantage/paocustomer/docs/en_US/ecare.html [http://www.ibm.com/software/howtobuy/passportadvantage/paocustomer/docs/en_US/ecare.html] 
+
+WebSphere Enterprise Service Bus support at:
+http://www.ibm.com/software/integration/wsesb/support/ [http://www.ibm.com/software/integration/wsesb/support/]

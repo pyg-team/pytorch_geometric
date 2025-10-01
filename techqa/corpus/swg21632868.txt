@@ -1,0 +1,73 @@
+Title: IBM Wscansw hangs and does not complete - United States
+
+Text:
+wscansw wscanfs automounter TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ TPM discoveries for software use the wscansw CIT tool, and under some conditions wscansw might hang due to a automounter issue. 
+
+SYMPTOM
+wscansw does not complete. You may see it persisting in the ps -ef output. The signature output file cit_Signature.xml is missing the final closing /MatchedSignatures delimiter.
+
+
+CAUSE
+One cause is the automounter is inoperative.
+
+DIAGNOSING THE PROBLEM
+1. First use service.sh to get the TCA logs.
+
+
+2. Check trace-log-0.xml for wscansw, and look for any exceptions (for the automounter hang, there will not be any exceptions, nor any traces indicating success. 
+
+3. Check ps -ef | grep -i wscan (are there any old ones hung?, if so kill them kill -9 pid) 
+
+4. /opt/tivoli/cit/bin/wscanfs -dl 
+
+This output should return all the drives, local and remote mounted. If this command hangs, you probably have an automounter issue. 
+
+5. if wscanfs hangs, do the following 
+
+ 5a. cat /etc/auto_master 
+
+ 
+
+ 5b. for each mounted entry, do ls -l <mounted on> 
+
+ 
+
+ 5c. if ls hangs, you know the cause of wscanfs hanging. 
+
+ 
+
+6. lssrc -a | grep -i autofs (AIX syntax) 
+
+ 
+
+ 6a. if you see the automounter is "inoperative" do 6b. 
+
+ 
+
+ 6b. startsrc -s automountd 
+
+ 
+
+if the status changes from inoperative to active, 
+
+then check wscanfs -dl ; if it works okay, wscansw will work too. 
+
+ 
+
+Note: sometimes you can ExcludeDirectory in the TPMconfig.xml file that will exclude directories from the scan, but for some automounter issues that will not be enough. 
+
+If you use automounted drives be sure that they are operative. 
+
+ 
+
+Note: additional exclusion of mounted drives can be done by adding this line to the TPMconfig.xml file on the target. 
+<Attribute name="assumeAutoFS" value="remote" />
+Add the line in the first FSScanner section.
+The assumeAutoFS parameter is case sensitive, and will not work if mis-capitalized.
+
+
+RESOLVING THE PROBLEM
+Start the automounter service if your symptoms match above.

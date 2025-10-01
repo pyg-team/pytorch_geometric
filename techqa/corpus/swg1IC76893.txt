@@ -1,0 +1,166 @@
+Title: IBM IC76893: UNABLE TO DELETE SUBDIRECTORIES IN LOCAL:/// BASED ON ROLE-BASED MANAGEMENT SETTINGS. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Permission is
+   denied when trying to delete a subdirectory that is defined
+   under the local:/// directory.
+   
+   The user group's access profile is defined with the following
+   settings:
+   
+     */*/*?Access=r
+     */TestDomain/device/create-dir?Name=.*&Directory=.*&Access=x
+     */TestDomain/device/remove-dir?Name=.*&Directory=.*&Access=x
+     */TestDomain/file/local?Access=r+w+a+d+x
+   
+   The above settings should allow the following:
+   
+     - Read privilege to all objects on the box.
+     - Privilege to create subdirectories under the local folder in
+       the TestDomain.
+     - Privilege to delete subdirectories under the local folder in
+       the TestDomain.
+     - Read, write, add, delete and execute privileges to all files
+       under the local directory in the TestDomain.
+   
+   However, attempts to delete a subdirectory defined under local
+   results in a permission denied message.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  A workaround for the delete folder issue is to change the
+   following access profile setting from:
+   
+     */*/*?Access=r
+   
+   to:
+   
+     */*/*?Access=r+x
+   
+   However, this grants execute privileges to all objects on the
+   appliance.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  User is unable to delete a subdirectory that is defined under
+   local:/// even though the user belongs to a user group with
+   access settings that permits delete of directories under the
+   local folder in the specified domain.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix is available in 3.8.0.14, 3.8.1.14, 3.8.2.5, 4.0.1.2
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC76893
+   
+   
+ * REPORTED COMPONENT NAME
+   DATAPOWER
+   
+   
+ * REPORTED COMPONENT ID
+   DP1234567
+   
+   
+ * REPORTED RELEASE
+   382
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-06-13
+   
+   
+ * CLOSED DATE
+   2011-07-25
+   
+   
+ * LAST MODIFIED DATE
+   2011-08-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   DATAPOWER
+   
+   
+ * FIXED COMPONENT ID
+   DP1234567
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R380 PSY
+   UP
+   
+   
+ * R381 PSY
+   UP
+   
+   
+ * R382 PSY
+   UP
+   
+   
+ * R401 PSY
+   UP

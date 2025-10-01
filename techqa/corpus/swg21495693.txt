@@ -1,0 +1,69 @@
+Title: IBM Utility jar files with a Main-Class in an .EAR using Java EE 5.0 specifications are imported into the workspace as application client modules - United States
+
+Text:
+PM35243; utility; main class; ear; java; lib; dir; In Lib Dir; EAR/lib TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Utility jar files that include a Main-Class in an Enterprise Application Resources (.EAR) based on J2EE 1.4 or lower specifications are imported into the IBM Rational Application Developer for WebSphere Software v8.0 workspace as application client modules upon migration to JEE 5.0+ specifications. 
+
+SYMPTOM
+You have an Enterprise Application Resource (.EAR) file migrated to Java EE 5.0 specifications from a lower version of J2EE specifications. Upon importing the .EAR application into Rational Application Developer for WebSphere Software v8.0.x, if the .EAR application contains any utility jar file(s) that include a Main-Class, the utility jar file(s) will get imported into the workspace as application client module(s).
+
+CAUSE
+This issue was identified as a product defect and logged under APAR PM35243. 
+
+This behavior is caused per the Java EE 5.0 specifications in that utility jar files including a Main class should be placed in a "lib" directory under .EAR unless they are treated as application client modules: 
+
+
+The deployment tool must first read the Java EE application deployment de­scriptor from the application .ear file (META-INF/application.xml). If the de­ployment descriptor is present, it fully specifies the modules included in the application. If no deployment descriptor is present, the deployment tool uses the following rules to determine the modules included in the application: 
+
+ 
+
+ * All files in the application package with a file name extension of .war are considered web modules. The context root of the web module is the name of the file relative to the root of the application package, but with the .war extension removed. 
+ * All files in the application package with a file name extension of .rar are considered resource adapters. 
+ * A directory named lib is considered to be the library directory, as described in Section EE.8.2.1, Bundled Libraries. 
+ * For all files in the application package with a file name extension of .jar, but not contained in the lib directory, do the following:  1. If the JAR file contains a META-INF/MANIFEST.MF file with a Main-Class attribute, or contains a META-INF/application-client.xml file, consider the JAR file to be an application client module. 
+    2. If the JAR file contains a META-INF/ejb-jar.xml file, or contains any class with an EJB component annotation (Stateless, etc.), consider the JAR file to be an EJB module. 
+    3. All other JAR files are ignored unless referenced by a JAR file discovered above using one of the JAR file reference mechanisms such as the Class-Path header in a manifest file.
+   
+   
+
+RESOLVING THE PROBLEM
+ 
+
+WORKAROUND: 
+
+Apply the following steps in Rational Application Developer for WebSphere Software v8.0.x workspace: 
+
+ 1. Open the Import EAR wizard ( File > Import > Java EE > EAR file)
+    
+    
+ 2. Select the Java EE 5.0 .EAR file and target runtime and click Next
+    
+    
+ 3. On Utility JARs and web libraries panel click Next
+    
+    
+ 4. In the EAR module and Utility JAR Projects panel, uncheck the jars that are being imported as application client projects and click Finish
+    
+    
+ 5. After the import wizard finishes, right click on the EAR project > Properties > Deployment Assembly
+    
+    
+ 6. Click Add > Archives from Workspace
+    
+    
+ 7. Then click Add > expand the EAR file and select the jars you need
+    
+    Note: The deploy path begins "/lib", the default folder in Java EE 5.0 in which utility jars are looked for. This is important for the workaround to be successful.
+    
+    
+ 8. Close and open the EAR project (right click on the project and select Close Project, and later select Open Project). 
+
+
+With these steps, the jars will be added to the EAR as binary utility projects. 
+
+
+RELATED INFORMATION
+#Java EE 5.0 specs [http://jcp.org/aboutJava/communityprocess/final/jsr244/index.html]
+v8.0 Information Center [http://publib.boulder.ibm.com/infocenter/radhelp/v8/index.jsp]

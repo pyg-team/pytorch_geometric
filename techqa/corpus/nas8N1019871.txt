@@ -1,0 +1,231 @@
+Title: IBM SQL Reserved Words (V5R4 -> V7R3) - United States
+
+Text:
+IBM_i IBM_i_TechNote DB_TechNote TECHNOTE (FAQ)
+
+QUESTION
+ What are the newly added SQL Reserved Words? 
+
+CAUSE
+Each IBM i release may have new words are added to the SQL Reserved Words list.
+It's also possible for new words to be added for a Technology Refresh as well.
+
+
+ANSWER
+Note that just because a word is added to the SQL Reserved Words list does not mean it is "reserved" everywhere within a SQL statement. 
+
+
+An example is V5R4 reserved word ACTIVATE. 
+ACTIVATE is only reserved in the row and column access control (RCAC) context.
+You can still name a table ACTIVATE, for example.
+
+You should ALWAYS refer to the DB2 for i SQL Reference for each release. 
+This TechNote can be used a quick reference for all recent IBM i releases.
+
+Words may be added at anytime Do not consider this TechNote as the definitive list.
+This list may not accurately reflect which keywords have been PTF'd back to a previous IBM i release
+
+
+
+V7R3 (7.3) 
+
+ATTACH 
+CUME_DIST
+DETACH
+ERROR
+FIRST_VALUE
+INLINE 
+LAG
+LAST_VALUE
+LEAD
+NTH_VALUE
+NTILE
+PERCENTILE_CONT
+PERCENTILE_DISC
+PERIOD
+RATIO_TO_REPORT
+REGEXP_LIKE 
+SYSTEM_TIME
+VERSIONING
+
+
+
+V7R2 (7.2) 
+
+AUTONOMOUS 
+CONSTANT 
+DELETING 
+INSERTING 
+KEEP 
+LIMIT (Some LIMIT support is available on IBM i 7.1)
+MASK 
+OFFSET 
+OVERLAY 
+PASSING 
+PERMISSION 
+PIPE 
+PRIOR 
+REGEXP_LIKE 
+SECURED 
+TRANSFER 
+TRUNCATE 
+UPDATING
+WRAPPED 
+XMLTABLE 
+
+
+
+V7R1 (7.1) 
+
+ACCORDING 
+ACCTNG 
+APPLNAME 
+ARRAYY 
+ARRAY_AGG 
+ASSOCIATE 
+ATOMICUP 
+BEFOREPACE 
+CLBLESPACES 
+CONCURRENT 
+CONNECT_BY_ROOT
+CONTENT 
+DOCUMENT 
+FIELDPROC 
+ID 
+IGNORE 
+LOCATION 
+LOCATOR 
+MATCHED 
+MERGE 
+NAMESPACE 
+ORDINALITY 
+PASSING 
+PRIOR 
+PROGRAMID 
+RESULT_SET_LOCATOR
+THREADSAFE 
+TRIM_ARRAY 
+UNIT 
+UNNEST 
+URI 
+USE 
+USERID 
+WAIT 
+WHENEVER 
+WRAPPED 
+WRKSTNNAME 
+XMLAGG 
+XMLATTRIBUTES
+XMLCAST 
+XMLCOMMENT 
+XMLCONCAT 
+XMLDOCUMENT 
+XMLELEMENT 
+XMLFOREST 
+XMLGROUP 
+XMLNAMESPACES
+XMLPARSE 
+XMLPI 
+XMLROW
+XMLSERIALIZE 
+XMLTABLE 
+XMLTEXT 
+XMLVALIDATE 
+XSLTRANSFORM 
+XSROBJECT 
+
+
+
+V6R1 
+
+ACTION
+APPEND
+BIND
+BIT
+BUFFERPOOL
+CLUSTER
+COLLECT
+COMPACT
+COMPRESS
+COPY
+CUBE
+DATA
+DEACTIVATE
+DEFER
+DEFINE
+ENFORCED
+FREEPAGE 
+GBPCACHE 
+IMPLICITLY
+INCLUDE 
+INDEXBP 
+INF 
+INFINITY 
+LEVEL2 
+LOCKSIZE 
+LOG 
+LOGGED 
+MINPCTUSED
+MIXED 
+NAN 
+NATIONAL 
+NCHARCHE 
+NCLOBCITLY 
+NONEUDE 
+NULLSBP 
+NVARCHAR 
+OBIDNITY 
+ORGANIZE 
+PADDEDZE 
+PAGE 
+PARTITIONED 
+PCTFREESED 
+PIECESIZE 
+PLAN 
+PRIQTY 
+RID 
+ROLLUP 
+SBCS 
+SECQTY 
+SKIP 
+SNAN 
+STOGROUP 
+TABLESPACE 
+TABLESPACES 
+VCAT 
+YES 
+
+
+
+V5R4 
+
+ACTIVATE 
+DEALLOCATE 
+DENSERANK 
+DENSE_RANK 
+DESCRIBE 
+FULL 
+INHERIT 
+LOCAL 
+OVER 
+PAGESIZE 
+RANK 
+RCDFMT 
+ROWNUMBER 
+ROW_NUMBER 
+SEARCH 
+SESSION 
+SESSION_USER 
+SYSTEM_USER
+VOLATILE 
+
+
+
+Words may be added at anytime Do not consider this TechNote as the definitive list.
+
+
+
+V6R1: http://publib.boulder.ibm.com/infocenter/iseries/v6r1m0/topic/db2/rbafz.pdf [http://publib.boulder.ibm.com/infocenter/iseries/v6r1m0/topic/db2/rbafz.pdf]
+V7R1: http://publib.boulder.ibm.com/infocenter/iseries/v7r1m0/topic/db2/rbafz.pdf [http://publib.boulder.ibm.com/infocenter/iseries/v7r1m0/topic/db2/rbafz.pdf]
+V7R2: http://www.ibm.com/support/knowledgecenter/ssw_ibm_i_72/db2/rbafzresword.htm [http://www.ibm.com/support/knowledgecenter/ssw_ibm_i_72/db2/rbafzresword.htm]
+V7R3: http://www.ibm.com/support/knowledgecenter/ssw_ibm_i_73/db2/rbafzresword.htm [http://www.ibm.com/support/knowledgecenter/ssw_ibm_i_73/db2/rbafzresword.htm]

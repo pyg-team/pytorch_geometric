@@ -1,0 +1,41 @@
+Title: IBM How to cite IBM SPSS Statistics or earlier versions of SPSS - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ I am writing a book or research paper and I need to include results of analyses run in IBM SPSS Statistics or earlier versions of SPSS. How do I make bibliographic citations for this information? 
+
+ANSWER
+The format of a reference or bibliographic citation of IBM SPSS Statistics is specific to a particular style manual, and guidance on the structure of such references or citations needs to come from your chosen manual. However, in many cases a formal reference or bibliographic citation is not necessary. For example, in popular APA style, SPSS is considered sufficiently known that only the version or release number is required. You can see the precise release number by selecting Help->About in the menus. 
+
+If you need to include a citation, versions that were produced by SPSS Inc. before the IBM acquisition (Versions 18 and earlier) would be given an origin or publisher of SPSS Inc. in Chicago. Versions that were released after the acquisition would be given an origin or publisher of IBM Corp. in Armonk, NY. For example: 
+
+SPSS Inc. Released 2007. SPSS for Windows, Version 16.0. Chicago, SPSS Inc. 
+
+SPSS Inc. Released 2008. SPSS Statistics for Windows, Version 17.0. Chicago: SPSS Inc. 
+
+SPSS Inc. Released 2009. PASW Statistics for Windows, Version 18.0. Chicago: SPSS Inc. 
+
+IBM Corp. Released 2010. IBM SPSS Statistics for Windows, Version 19.0. Armonk, NY: IBM Corp. 
+
+IBM Corp. Released 2011. IBM SPSS Statistics for Windows, Version 20.0. Armonk, NY: IBM Corp. 
+
+IBM Corp. Released 2012. IBM SPSS Statistics for Windows, Version 21.0. Armonk, NY: IBM Corp. 
+
+IBM Corp. Released 2013. IBM SPSS Statistics for Windows, Version 22.0. Armonk, NY: IBM Corp. 
+
+ 
+
+For platforms other than Windows, substitute the name of the operating system. For example: IBM SPSS Statistics for Macintosh, Version 22.0. 
+
+If you include any information from the software that might involve issues of copyright, contact IBM here [https://www.ibm.com/contact/submissions/extsub.nsf/Copyright] to obtain required permissions.
+
+RELATED INFORMATION
+ Need more help? Our Statistics forum is Live! [https://developer.ibm.com/answers/topics/statistics.html?smartspace=predictive-analytics]
+
+
+ 
+
+HISTORICAL NUMBER
+ 17918

@@ -1,0 +1,60 @@
+Title: IBM "error -1060" when importing from Staging Tables - United States
+
+Text:
+1060 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ User clicks "Transfer > External Data > Import from Staging Table".
+
+Inside the "Import External Data from Staging Tables" menu, one of the imports has failed with an error. 
+
+SYMPTOM
+Controller stored procedure usp_trigger_importbatchjobs fails on line 163 with error -1060.
+
+
+CAUSE
+The meanings for all the error codes are explained inside the Cognos Controller User Guide (webpage linked below). 
+
+ 
+In this specific example, the meaning of error code -1060 is:
+
+
+ * No rows were updated in the staging table. You may have entered an incorrect import ID. 
+ * 
+
+In one real-life example, the cause of that was that the Batch ID (in the xstagefact table) was already populated.  * In other words, the stored procedure (usp_trigger_importbatchjobs) was configured to run with a "st_id" parameter configured to be a value where there were already matching records (in the Xstagefact with this id).
+
+The existence of a Batch ID (this is column 2 of the xstagefact table) already populated with a number means that the Staging Table Import has already been run once before.
+
+
+DIAGNOSING THE PROBLEM
+Example: 
+
+In one real-life example: 
+
+ * st_id is 555 
+ * the Specification is called STAGE 
+ * the user is ADM.
+
+
+Therefore, to run the job you would create/run the following SQL query (against the Controller database): 
+ * exec dbo.usp_triggerimportbatchjobs '555', 'STAGE','D','','ADM',1,'' 
+
+In this real-life scenario, the result was: 
+ * Msg 50000, Level 16, State 1, Procedure usp_triggerimportbatchjobs, Line 163 -1060
+
+
+This proves that '-1060' is the correct cause/error-code. 
+RESOLVING THE PROBLEM
+Modify the system so that the 'batch_id' of the xstagefact table 
+
+ 
+
+Steps: 
+
+1. Clear out this batch_id column by setting all values in it to NULL. 
+
+2. Then re-run the query (or stored procedure) - this time the error should not happen.
+
+RELATED INFORMATION
+#Cognos Controller User Guide 8.5.0 - Importing Data fr [http://publib.boulder.ibm.com/infocenter/c8fpm/v8r4m0/index.jsp?topic=/com.ibm.swg.im.cognos.ctrl_ug.8.5.0.doc/ctrl_ug_id15713expimp_ImportingDatafromanExternalApplic.html]

@@ -1,0 +1,79 @@
+Title: IBM I am unable to execute any job, it fails with an exception - United States
+
+Text:
+error; failure; stops TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ In InfoSphere Master Data Management Collaboration Server (MDMCS) my export/import/report jobs fail with an exception. This is impacting our daily upstream and downstream process. 
+
+SYMPTOM
+Background:
+The application uses sequence ids that increment over time and are used for retaining docStore file attributes and audit logs. For an Oracle database, our docStore database table columns that are of sequence varchar(9,0) type with a cache of 200 sequence ids. The varchar(9,0) allows for a precision of 9 with a scale of 0. In other words, the maximumun sequence id to retain is 99999999. However, when a sequence id is larger than 999999801, then the application is unable to record more job docStore transactions and produces the mentioned exception. The sequence id counts are based on how many jobs have been performed and how often the application becomes restarted. When the application records the export/import/report, it will update job status to the docStore for audit. This process involves several write queries into the docStore database tables. The exception will be triggered from the $TOP/logs/scheduler/exception.log: 
+
+2017-05-30 14:50:25,813 [sch_worker_0] ERROR com.ibm.ccd.common.error.AustinException JOB_ID:3600- CWPCM0002E:Generic error / Exception: CWPDS0029E:Failed to create document, Exception:CWPDS0029E:Failed to create document
+CWPDS0029E:Failed to create document
+at com.ibm.ccd.docstore.common.Doc$1.run(Doc.java:282)
+at com.ibm.ccd.common.context.common.DBContext.runInNewDBContext(DBContext.java:1392)
+at com.ibm.ccd.docstore.common.Doc.create(Doc.java:242)
+at com.ibm.ccd.docstore.common.Doc.create(Doc.java:194)
+at com.ibm.ccd.docstore.common.Doc.create(Doc.java:157)
+at com.ibm.ccd.docstore.common.DocStoreMgr.create(DocStoreMgr.java:104)
+at com.ibm.ccd.common.interpreter.util.ScriptFileTools.saveFileToDocStore(ScriptFileTools.java:251)
+at com.ibm.ccd.common.interpreter.util.ScriptFileTools.saveFilesToDocStore(ScriptFileTools.java:351)
+at com.ibm.ccd.common.interpreter.util.ScriptFileTools.saveFilesToDocStore(ScriptFileTools.java:326)
+at com.ibm.ccd.report.common.Report.saveGeneratedFiles(Report.java:353)
+at com.ibm.ccd.report.common.Report.generate(Report.java:326)
+at com.ibm.ccd.report.common.ReportExe.execute(ReportExe.java:104)
+at com.ibm.ccd.scheduler.threads.SchedulerThread.fuzaoRun(SchedulerThread.java:262)
+at com.ibm.ccd.common.util.FuzaoRunnableAdapter.run(FuzaoRunnableAdapter.java:54)
+at com.ibm.ccd.common.util.FuzaoThread.run(FuzaoThread.java:123)
+Caused by: Update failed, the operation has been rolled back.CWPCM0168E:Failed to insert 'GenDocDhiDocHierarchy' object.
+at com.ibm.ccd.common.context.common.DBContext.executeUpdate(DBContext.java:435)
+at com.ibm.ccd.common.context.common.DBContext.executeUpdateCommon(DBContext.java:374)
+at com.ibm.ccd.common.context.common.DBContext.executeUpdate(DBContext.java:363)
+at com.ibm.ccd.common.gendb.GenDocDhiDocHierarchyTable.insert(GenDocDhiDocHierarchyTable.java:561)
+at com.ibm.ccd.docstore.common.Doc.insertAttributes(Doc.java:1397)
+at com.ibm.ccd.element.common.BaseObject.insertAll(BaseObject.java:1322)
+at com.ibm.ccd.element.common.BaseObject.persist(BaseObject.java:1287)
+at com.ibm.ccd.element.common.PersistenceManager.persistObject(PersistenceManager.java:72)
+at com.ibm.ccd.element.common.PersistenceManager.persistObjectBasedOnInBatch(PersistenceManager.java:109)
+at com.ibm.ccd.element.common.PersistenceManager.persistObject(PersistenceManager.java:134)
+at com.ibm.ccd.docstore.common.Doc$1.run(Doc.java:266)
+... 14 more
+Caused by: java.sql.SQLDataException: ORA-01438: value larger than specified precision allowed for this column
+
+
+
+CAUSE
+The column length in docStore database tables is required to be increased
+
+
+DIAGNOSING THE PROBLEM
+To diagnose the issue, first identify if your docStore tables have reached their database column precision limit. From the MDMCS DB Admin console, you can run the below queries: 
+
+
+SELECT max(dhi_doc_id) FROM dhi;
+SELECT Max(dbl_doc_id) FROM dbl;
+SELECT Max(doa_doc_id) FROM doa;
+
+Each of these docStore database tables will have the same same maximum sequence id. If any of the outputs are equal to and greater than 999999801, then the resolution of this IBM Technote will resolve the issue. 
+
+
+RESOLVING THE PROBLEM
+The database column length must be increased in order to accommodate the increase of sequence id precision of your docStore database tables. The following steps must be performed to resolve this issue described. 
+
+
+1). Backup the database
+2). Shutdown the MDMCS application with $TOP/bin/go/stop_local.sh
+3). Run the following three SQLs in the Oracle database:
+
+ALTER TABLE tdoc_dhi_doc_blob 
+MODIFY dhi_doc_id NUMBER (10,0) NOT NULL
+
+ALTER TABLE tdoc_dbl_doc_blob
+MODIFY dbl_doc_id NUMBER (10, 0) NOT NULL; 
+
+ALTER TABLE tdoc_doa_doc_attributes
+MODIFY doa_doc_id NUMBER (10, 0) NOT NULL;
+
+4). Restart MDMCS application with $TOP/bin/go/start_local.sh

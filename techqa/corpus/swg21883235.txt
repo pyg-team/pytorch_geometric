@@ -1,0 +1,39 @@
+Title: IBM WAS 8.5.5 JDK and Sterling OMS 9.4 JDK are different versions - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ WAS 8.5.5 may come with Java 1.6 enabled by default, depending on WAS version deployed. Sterling Order Management 9.4 is compiled against java 1.7. So when deploying the EAR a 'bad major version' or 'java major minor version mismatch' error may be thrown. 
+
+SYMPTOM
+At time of deployment a java.lang.UnsupportedClassVersionError error can be seen in installation logs.
+
+
+CAUSE
+Features of java 7 against which Sterling Order Management 9.4 is compiled against, may not be available on java 6.
+
+ENVIRONMENT
+Sterling Order management 9.4 deployment.
+
+DIAGNOSING THE PROBLEM
+Deployment fails with java.lang.UnsupportedClassVersionError.
+
+RESOLVING THE PROBLEM
+There is a command in Websphere 8.5.x that allows selection of SDK, see links below. Use this to force WAS to use java 7
+
+
+
+
+List available sdk's with:
+./IBM/WebSphere/AppServer/bin/managesdk.sh
+-listAvailable
+
+Change WAS SDK with, for example:
+./IBM/WebSphere/AppServer/bin/managesdk.sh -enableProfile -profileName
+AppSrv01 -sdkname 1.7_64 -enableServers
+
+
+
+RELATED INFORMATION
+ Manage WAS SDK [http://www-01.ibm.com/support/knowledgecenter/SSAW57_8.5.5/com.ibm.websphere.nd.iseries.doc/ae/rxml_managesdk.html]

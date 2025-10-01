@@ -1,0 +1,90 @@
+Title: IBM Java applets are blocked in IBM Enterprise Content Management products when launched in web browser with NPAPI disabled - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The ability to launch and display Java applets (also known as plug-ins) in a browser depends on the presence of the Netscape Plugin Application Programming Interface (NPAPI). As of Chrome 42, NPAPI is disabled by default. Therefore, web applications which use Java applets will have reduced functionality. Firefox will end NPAPI support by the end of 2016. 
+
+SYMPTOM
+When using browsers such as Google Chrome and Mozilla Firefox, any functionality which depends on launching a Java applet such as the ViewONE Professional or the Content Manager applet viewer in IBM Content Navigator is unavailable.
+
+
+CAUSE
+Support for NPAPI has ended or will come to an end. 
+
+Google Chrome does not support NPAPI:
+https://www.chromium.org/developers/npapi-deprecation [https://www.chromium.org/developers/npapi-deprecation]
+
+Mozilla Firefox support for NPAPI ends at the end of 2016:
+https://blog.mozilla.org/futurereleases/2015/10/08/npapi-plugins-in-firefox/ [https://blog.mozilla.org/futurereleases/2015/10/08/npapi-plugins-in-firefox/]
+
+Microsoft Internet Explorer has limited NPAPI support through Active X controls. Microsoft Edge does not support NPAPI. Please contact Microsoft for more details.
+
+
+ENVIRONMENT
+Not all IBM Enterprise Content Management products currently support all browsers. Consult product documentation for your product. In most cases software compatibility reports can be found here: http://www-969.ibm.com/software/reports/compatibility/clarity/index.jsp [http://www-969.ibm.com/software/reports/compatibility/clarity/index.jsp] 
+
+For example, P8 Application Engine and FileNet Workplace XT do not support Chrome. 
+
+The following table lists known affected functionality: 
+
+Product or Component Functionality Notes Daeja ViewONE Professional and Standard Entire Product cannot run. Daeja ViewONE Virtual is not affected. Content Navigator Features in IBM Content Navigator that are available as Java applets will not run. For example:  * Sending documents by email 
+ * File tracking 
+ * Opening documents in applet-based viewers, such as the applet viewer, the line data applet viewer, and the IBM Daeja ViewONE Professional viewer 
+ * Deleting teamspaces by using task manager 
+ * Using plug-ins that provide Java applet integrations, such as the plug-ins provided for workflow design and management
+
+See the IBM Content Navigator documentation in IBM Knowledge Center for information about configuring alternate viewers, such as the IBM Daeja ViewONE Virtual viewer (not available for all file types or repositories). Content Manager eClient Features in eClient that are available as Java applets will not run.
+For example:  * Printing 
+ * Exporting 
+ * Viewing with Applet Viewer
+
+eClient is a component of Content Manager 8.4 whose end of service date is April 30, 2016 [http://www-01.ibm.com/software/support/lifecycleapp/PLCDetail.wss?q45=J575553B16022Z67]. Content Manager Web Interface (WEBi) Features in WEBi that are available as Java applets will not run.
+For example:  * Printing 
+ * Viewing with Applet Viewers (Including OnDemand Applet) 
+ * Export / Import
+
+WEBi is a component of Content Manager 8.4 whose end of service date is April 30, 2016 [http://www-01.ibm.com/software/support/lifecycleapp/PLCDetail.wss?q45=J575553B16022Z67]. For more details specific to Microsoft Edge and ECM client products, visit this technote: http://www-01.ibm.com/support/docview.wss?uid=swg21976776 [http://www-01.ibm.com/support/docview.wss?uid=swg21976776] 
+DIAGNOSING THE PROBLEM
+When functionality is provided by a JAVA applet or plug-in, the plug-in will not start.
+
+
+
+RESOLVING THE PROBLEM
+ 
+
+Google Chrome
+
+Chrome Version 45 and later does not support NPAPI. There is no workaround.
+
+Chrome Version 42, an additional configuration step is required to continue using NPAPI plug-ins:
+
+1. In the browser URL bar, enter: chrome://flags/#enable-npapi 
+2. Click the Enable link for the Enable NPAPI configuration option. 
+3. Click the Relaunch button that now appears at the bottom of the configuration page.
+
+More detail can be found here: https://www.chromium.org/developers/npapi-deprecation [https://www.chromium.org/developers/npapi-deprecation]
+
+Additional information and steps from Oracle for enabling NPAPI and Java in Chrome are available here: http://www.java.com/en/download/faq/chrome.xml [http://www.java.com/en/download/faq/chrome.xml].
+
+Mozilla Firefox
+
+Firefox NPAPI support ends at the year end of 2016. More information about Firefox and NPAPI can be found here: https://blog.mozilla.org/futurereleases/2015/10/08/npapi-plugins-in-firefox/ [https://blog.mozilla.org/futurereleases/2015/10/08/npapi-plugins-in-firefox/]
+
+Microsoft Internet Explorer and Edge
+
+Microsoft Internet Explorer uses an Active X Control to launch Java. It is currently not impacted and should function as long as the client supports that version of Internet Explorer.
+
+Microsoft Edge does not support NPAPI. There is no workaround.
+
+IBM recommends customers move to a supported browser for your ECM Web Client. See your product documentation for supported versions.
+
+RELATED INFORMATION
+ Microsoft Edge Broswer and ECM Client products [http://www.ibm.com/support/docview.wss?uid=swg21976776]
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Enterprise Content Management Case Foundation Enterprise Content Management Case Manager Enterprise Content Management Case Manager for Investigations Enterprise Content Management Content Foundation Enterprise Content Management Content Manager Enterprise Content Management Content Manager OnDemand Enterprise Content Management Content Navigator Enterprise Content Management Daeja ViewONE Enterprise Content Management Datacap Enterprise Content Management Enterprise Records Enterprise Content Management FileNet Content Manager

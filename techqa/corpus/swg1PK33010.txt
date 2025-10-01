@@ -1,0 +1,135 @@
+Title: IBM PK33010: WCM SYNDICATION PLACES MOVED CONTENT IN THE WRONG LIBRARY - United States
+
+Text:
+ 
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  WCM Syndication v6.0 when an object is moved from one library to
+   another, the content is syndicated to the previous library
+   instead of being syndicated to the library that it had been
+   moved to.  The cause for this is below.
+   
+   
+   The Eventlog for the moved Content is recorded in the library it
+   was moved from causing the wrong syndication update.
+   
+   It should be recorded in the library the Content or item was
+   moved to.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Local Fix: None
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Moving items from one library to another does not get Syndicated
+   and Delete of Published Content fails.
+   If item is moved from one library to another Syndication Update
+   is n't sent to Subscribers.
+   Delete of Published Content fails after installing PK32712 [http://www-01.ibm.com/support/docview.wss?uid=swg1PK32712].
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Modified Event log for move of item from one library to another.
+   Changed Package Generator to generate update if either
+   destination or both source & destination libraries are
+   syndicated to Subscriber otherwise delete is sent to Subscriber.
+   Package Processor will update the item if library of the item
+   from Syndicator is different from the one on Subscriber.
+   Removed the code which throwed null pointer Exception for delete
+   of Published Content.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK33010
+   
+   
+ * REPORTED COMPONENT NAME
+   WRKPLC WEB CON
+   
+   
+ * REPORTED COMPONENT ID
+   5724I2900
+   
+   
+ * REPORTED RELEASE
+   600
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2006-10-16
+   
+   
+ * CLOSED DATE
+   2006-11-30
+   
+   
+ * LAST MODIFIED DATE
+   2006-11-30
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WRKPLC WEB CON
+   
+   
+ * FIXED COMPONENT ID
+   5724I2900
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R600 PSY
+   UP

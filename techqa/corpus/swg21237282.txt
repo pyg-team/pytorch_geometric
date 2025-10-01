@@ -1,0 +1,77 @@
+Title: IBM How to auto start and stop a listener in MQ 6.0 and later - United States
+
+Text:
+listener ; define listener TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ You want to minimize the administration of WebSphere MQ listeners. You want them to start and stop automatically when the associated Queue Manager starts and stops.
+.
+
+
+CAUSE
+In MQ 5.3 and prior versions, the MQ Listener was not an object directly controlled by the queue manager and additional steps needed to be taken to start/stop the listener.
+In MQ 6.0 a new object managed by the queue manager was introduced: Listener
+
+
+
+RESOLVING THE PROBLEM
+In MQ V6.0 and later you can use the following RUNMQSC command to define a listener that will be started and stopped automatically when the queue manager is started and stopped; this is accomplished by the attribute CONTROL(QMGR). 
+
+
+In this example, the name of the listener is AUTOLISTENER, using TCP/IP in port 1416.
+
+DEFINE LISTENER(AUTOLISTENER) TRPTYPE(TCP) PORT(1416) CONTROL(QMGR) DESCR('Auto start/stop listener')
+
+To start it right away, you can issue the following RUNMQSC command:
+
+START LISTENER(AUTOLISTENER)
+
+Note: the above command can be used to start the listener in case that it is stopped.
+
+To determine its status, you can issue the following RUNMQSC command:
+
+display lsstatus(AUTOLISTENER)
+1 : display lsstatus(AUTOLISTENER)
+AMQ8631: Display listener status details.
+LISTENER(AUTOLISTENER) STATUS(RUNNING)
+PID(21534) STARTDA(2006-04-20)
+STARTTI(10.26.40) DESCR(Auto start/stop listener)
+TRPTYPE(TCP) CONTROL(QMGR)
+IPADDR(*) PORT(1416)
+BACKLOG(100)
+
+To find the UNIX process, use the following command.
+In this example, the name of the queue manager is QM_VERACRUZ.
+
+$ ps -ef | grep runmqlsr
+mqm 21534 12271 0 10:26 ? 00:00:00 /opt/mqm/bin/runmqlsr -r -m QM_VERACRUZ -t TCP -p 1416
+
+For more information see:
+http://www.ibm.com/support/knowledgecenter/SSFKSJ_9.0.0/com.ibm.mq.ref.adm.doc/q085630_.htm [http://www.ibm.com/support/knowledgecenter/SSFKSJ_9.0.0/com.ibm.mq.ref.adm.doc/q085630_.htm]
+WebSphere MQ > WebSphere MQ 9.0.0 > IBM MQ > Reference > Administration reference > MQSC reference > The MQSC commands >
+DEFINE LISTENER 
+
+The details for the parameter CONTROL are:
+
+CONTROL(string)
+Specifies how the listener is to be started and stopped.:
+
+
+ * MANUAL
+ * 
+ * 
+ * 
+ * 
+ * QMGR
+ * 
+ * 
+ * 
+ * 
+ * STARTONLY
+ * 
+ * 
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ wmq mq

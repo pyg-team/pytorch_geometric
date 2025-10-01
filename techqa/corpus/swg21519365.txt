@@ -1,0 +1,32 @@
+Title: IBM How do I code a Tandem to OS/390 RUN TASK ? - United States
+
+Text:
+STERLINGFAQ TECHNOTE (FAQ)
+
+QUESTION
+ How do I code a Tandem to OS/390 RUN TASK ? 
+
+ANSWER
+
+
+runtask PROCESS SNODE=qa.os390.v4100 -
+snodeid=(userid,password)
+STEP1 RUN TASK (PGM= DMRTDYN, -
+PARM= (C'ALLOC DSN=FARON1.JUNK1, -
+DISP=(OLD,DELETE)' -
+F'-1' -
+C"UNALLOC DSN=FARON1.JUNK1" ) -
+SNODE
+
+STEP2 COPY FROM (DSN=$audit.TAN2MVS.RUNTASK1 -
+PNODE -
+DISP=SHR) -
+TO (DSN=FARON1.JUNK1 -
+SNODE -
+DISP=RPL)
+
+ 
+
+Cross reference information Segment Product Component Platform Version Edition Commerce Sterling Connect:Direct for z/OS Not Applicable 
+HISTORICAL NUMBER
+ FAQ1027

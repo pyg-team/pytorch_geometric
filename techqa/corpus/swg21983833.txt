@@ -1,0 +1,45 @@
+Title: IBM Information Server 11.3 and above installation fails installing xmeta views - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Cannot install multiple xmeta reposiotries into the same Oracle database becuase the schema names IGVIEWS, RLVIEWS, IAVIEWS and CMVIEWS are hard coded 
+
+SYMPTOM
+When running xmeta repository creation scripts 
+
+DBMS_SQL.PARSE(cursor_name, 'CREATE USER ' || user_name ||
+' IDENTIFIED BY "xmetapass" DEFAULT TABLESPACE TB_XMETA1131 TEMPORARY
+TABLESPACE TEMP QUOTA UNLIMITED ON TB_XMETA1131 PASSWORD EXPIRE
+ACCOUNT LOCK', DBMS_SQL.NATIVE);
+CMVIEWS already exists
+IGVIEWS already exists
+IAVIEWS already exists
+CEFVIEWS already exists
+REMVIEWS already exists
+
+If you rename the schemas in the creation script to get the script to run, the install will still fail because the schemas from a previous install will be seen.
+
+INFO: select (select count(*) from all_tables where owner in ('XMETA1131', 'IGVIEWS', 'RLVIEWS', 'IAVIEWS', 'CMVIEWS')) + (select count(*) from all_views where owner in ('XMETA1131', 'IGVIEWS', 'RLVIEWS', 'IAVIEWS', 'CMVIEWS')) isobjects from dual 
+2016-05-17T12:32:31.405, INFO: user tables count = 86 
+
+This quey counts the tables and views in these schemas a none zero value for the result will cause the installation to fail
+
+
+CAUSE
+The schema names IGVIEWS, RLVIEWS, IAVIEWS and CMVIEWS are hard coded
+
+
+ENVIRONMENT
+InformationServer 11.3.1 and above with an oracle xmeta repository
+
+
+
+DIAGNOSING THE PROBLEM
+The schema names IGVIEWS, RLVIEWS, IAVIEWS and CMVIEWS already exist in the Oracle database, these names are hard coded and it is not supported to rename them. If you rename them in the creation script the install will fail at the repository installation phase
+
+
+
+RESOLVING THE PROBLEM
+The xmeta repository must be installed in a separate Oracle database.

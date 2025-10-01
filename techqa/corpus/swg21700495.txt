@@ -1,0 +1,27 @@
+Title: IBM Rulerunner Aborts on PageID in Datacap Taskmaster Capture - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Rulerunner aborts on PageID and the batch log, pageid_rrs.log, contains "Error (385875969=hex:17000001). In CIMainAlgorithm::execute4DCO:
+Aborting: Action [SetFingerprintDir] requested abort [api source:]". 
+
+CAUSE
+One or more of the encryption keys, or date timestamp, are incorrect.
+
+RESOLVING THE PROBLEM
+ 
+
+If you have a working Rulerunner Server that processes the same workflow: 
+
+ *  From the non-working Rulerunner server, copy dc_KTF.xml from a working Rulerunner server to a non-working Rulerunner server Run CMD as the Rulerunner Service account user Change directory to dcskey.exe location (if this does not exist simply copy it from the Taskmaster Server)
+   For example:
+   cd c:\Datacap\Taskmaster Next type:
+   dcskey.exe -i Close CMD Restart Rulerunner 
+
+
+If you do not have a working Rulerunner server regenerate and import your keys:  *  Key creation on Taskmaster Server:
+   http://www-01.ibm.com/support/knowledgecenter/SSZRWV_8.1.0/com.ibm.dc.install.doc/dcain011-cs_only.htm [http://www-01.ibm.com/support/knowledgecenter/SSZRWV_8.1.0/com.ibm.dc.install.doc/dcain011-cs_only.htm] Key import on Rulerunner Server:
+   http://www-01.ibm.com/support/knowledgecenter/SSZRWV_8.1.0/com.ibm.dc.admin.doc/dcats001.htm [http://www-01.ibm.com/support/knowledgecenter/SSZRWV_8.1.0/com.ibm.dc.admin.doc/dcats001.htm] Restart Taskmaster and Rulerunner using the restart procedures:
+   http://www-01.ibm.com/support/knowledgecenter/SSZRWV_8.1.0/com.ibm.dc.admin.doc/dcaad047.htm [http://www-01.ibm.com/support/knowledgecenter/SSZRWV_8.1.0/com.ibm.dc.admin.doc/dcaad047.htm]

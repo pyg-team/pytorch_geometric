@@ -1,0 +1,27 @@
+Title: IBM Cúram SPM “configure” command line target does not configure the JDBC connection between Oracle and WebSphere correctly in WAS 9.0.0.7 and WAS 8.5.5.14 and later WebSphere fix packs - United States
+
+Text:
+spm deployment oracle configure FLASH (ALERT)
+
+ABSTRACT
+ Cúram SPM “configure” command line target does not configure the JDBC connection between Oracle and WebSphere correctly in WAS 9.0.0.7 and WAS 8.5.5.14 and later WebSphere fix packs 
+
+CONTENT
+In IBM WebSphere Application Server (WAS) 9.0.0.7 and IBM WebSphere Application Server 8.5.5.14 (an upcoming release) and later fix pack releases, a change has been made to the templates which may be used to configure JDBC connections. This change now specifies a later version of the Oracle driver (ojdbc8.jar) in the template context used for configuring Oracle JDBC connections.
+
+IBM Cúram Social Program Management (SPM) provides a “configure” target which can be used to configure the application server before the application is deployed. This target uses these templates when configuring the JDBC connection to be used between the application server and the database. 
+
+This target, when used against these versions of WAS, now configures the JDBC connection incorrectly as the version of the Oracle driver shipped with SPM is ojdbc6.jar (and not ojdbc8.jar). Although the “configure” target will run to completion, the targets to deploy the application will subsequently fail, as the JDBC connection configuration has not been set up correctly.
+
+If this target is still required to be run against these versions of WAS, it is recommended to address the issue by manually editing the JDBC connection configuration using the administration console of WebSphere. This is described on the Knowledge Center Configure an Oracle Data Source [https://www.ibm.com/support/knowledgecenter/en/SS8S5A_7.0.2/com.ibm.curam.content.doc/Deployment_WebsphereApplicationServer/c_WEBSPHAPS_Configuration3ConfigureOracleDataSource1.html] page. i.e. review the Classpath and ensure the ORACLE_JDBC_DRIVER_PATH environment variable is correct. For version ojdbc6.jar of the Oracle driver, this must be the following syntax:
+- ${ORACLE_JDBC_DRIVER_PATH}/ojdbc6.jar
+
+It should be noted that the issue only pertains to the following middleware combinations and versions:
+
+
+
+Application Server Database WAS 9.0.0.7 (and later fix packs) Oracle 12.1 WAS 9.0.0.7 (and later fix packs) Oracle 12.2 WAS 8.5.5.14 (and later fix packs) Oracle 12.1 WAS 8.5.5.14 (and later fix packs) Oracle 12.2 
+Note: At the time of publishing this tech note, WAS 8.5.5.14 is the next 8.5.5.x fixpack release. This release will contain the JDBC template change which causes this issue. 
+
+
+Cross reference information Segment Product Component Platform Version Edition Smarter Cities Cúram Social Program Management

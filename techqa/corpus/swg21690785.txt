@@ -1,0 +1,117 @@
+Title: IBM QRadar: Creating a Report that Uses a Custom Event Property - United States
+
+Text:
+Reports; Custom Event Properties; Reports that use custom event properties TECHNOTE (FAQ)
+
+QUESTION
+ How do I create a report on a value that is not a normalized field from a DSM? 
+
+ANSWER
+
+Quick links 
+
+ * About custom event properties 
+ * Step 1. Creating the custom event property to locate interface values 
+ * Step 2. Creating a search with your custom event property 
+ * Step 3. Creating a report that uses your search
+
+
+
+ABOUT CUSTOM EVENT PROPERTIES
+
+Custom event properties are used to extract values from event payloads for non-normalized fields in QRadar. By default, QRadar normalizes data from the event payload and populates the user interface with user names, source IP, destination IP, ports, and other standard event information that is parsed by the DSM. However, some event sources send unique information that is important to the administrator and they want this data to appear in the user interface, run reports, or run searches against these specific values. This is where custom event properties are leveraged, which enables the administrator to use regex to extract the data and populate the user interface with information they care about. Custom properties in QRadar can be identified as they are all labeled with the term (custom). These values must must be enabled and optimized to populate the user interface and be leveraged in searches. This technical note describes how to create a custom even property to identify the "Interface" value from a firewall payload, which can then be leveraged in searches or reports. 
+
+
+For this technical note, we are interested in the interface field from Cisco ASA firewall deny messages. It is useful to be able to determine and run reports against firewall denies that are Internal, External, or Loopback. 
+
+
+Sample events 
+<162>Sep 02 2014 11:49:41: %ASA-2-106001: Inbound TCP connection denied from 10.10.10.128/58826 to 10.11.11.11/9100 flags SYN on interface External 
+<162>Sep 02 2014 11:49:40: %ASA-2-106001: Inbound TCP connection denied from 10.10.10.128/58826 to 10.11.11.11/9100 flags SYN on interface Loopback 
+<162>Sep 02 2014 11:49:17: %ASA-2-106001: Inbound TCP connection denied from 10.10.10.128/58821 to 10.11.11.11/9100 flags SYN on interface Internal 
+
+
+
+
+
+STEP 1. CREATING THE CUSTOM EVENT PROPERTY TO LOCATE INTERFACE VALUES
+
+Before you can create a custom event property, you need an example event to understand how to write your regular expression. In this case, we see that the event payload from our sample events has the word 'interface' followed by the value we want to extract in our custom event property. 
+
+
+Before you begin 
+There are a number of existing custom event properties that are added to QRadar. The administrator should review the existing custom event property to verify that there is not already a property that exists. As a number of custom event properties exist in QRadar, but they are not enabled or optimized. 
+
+
+ * Procedure
+ *  Log in to the QRadar user interface with any web browser. Click Log Activity tab. Double-click on a Cisco ASA firewall deny event to view the event details page. From the navigation bar, click Extract Property. The Custom Event Properties window is displayed. Configure the custom event properties values in QRadar. For example: Click New Property. Select the Optimize parsing for rules, reports, and searches check box. From the Field Type drop-down, select Alphanumeric. Type a description for the custom event property. Ensure that the Enabled check box is selected. In the Extraction field, type your regular expression. The regex in this case is interface\s(.*)\b
+   [/support/docview.wss?uid=swg21690785&aid=1] [/support/docview.wss?uid=swg21690785&aid=1] Click Test to validate your regular expression. The expected value from the event payload should be highlighted. If the value from the event payload was properly highlighted, click Save.
+   
+   Results
+   The custom event property is now created and the user can create a search to leverage the custom property. 
+   
+   
+   
+ * 
+ * 
+ * 
+ * 
+   
+
+STEP 2. CREATING A SEARCH WITH YOUR CUSTOM EVENT PROPERTY
+
+The next step is to create a search that leverages your custom event property to ensure it is returning the data you expect. 
+
+ * 
+ * Procedure
+ *  Click the Log Activity tab. From the navigation bar, select Search > New Search.
+   
+   [/support/docview.wss?uid=swg21690785&amp;aid=2]
+   
+   In the Time Range field, select a time frame. In this example, we are going to select Recent > Last Hour. In the Group by field, add the new extracted property, which is Interface (custom). In the Search Parameters field, type Log Source and select the log source for your Cisco ASA device. Click Add to add the quick filter to the search. The filter ensures that only Cisco ASA events are returned by your search. Click Search. 
+   [/support/docview.wss?uid=swg21690785&aid=3] [/support/docview.wss?uid=swg21690785&aid=3]
+   
+   Verify the search results are correct and that the Interface column is displayed. From the navigation bar, click Save Criteria.
+   
+   [/support/docview.wss?uid=swg21690785&aid=4] [/support/docview.wss?uid=swg21690785&aid=4]
+   Type a Search Name and assign the search to a Group(s) to make your search easily to locate. 
+   [/support/docview.wss?uid=swg21690785&aid=5] [/support/docview.wss?uid=swg21690785&aid=5]
+   
+   Click OK.
+   
+   Results
+   The search is now created and can be leveraged in QRadar reports. 
+
+
+
+STEP 3. CREATING A REPORT THAT USES YOUR SEARCH CRITERIA
+ * Procedure
+ *  Click Reports tab. Click Actions > Create to start a new report.
+   
+   [/support/docview.wss?uid=swg21690785&amp;aid=6]
+   
+   Using the Report Wizard, set the schedule and layout for your report. To enter a title for your report, type a title in the Report Title field. From the Chart Type drop-down, select Events/Logs. Click Define to set the report parameters.
+   [/support/docview.wss?uid=swg21690785&aid=7] [/support/docview.wss?uid=swg21690785&aid=7]
+   
+   Define the parameters for the report container, such as the Chart Title, Graph Type, and Limit Events. Set Scheduling (if applicable).Select the saved search that was created in step 11.
+   
+   [/support/docview.wss?uid=swg21690785&aid=8] [/support/docview.wss?uid=swg21690785&aid=8]
+   [/support/docview.wss?uid=swg21690785&aid=9] [/support/docview.wss?uid=swg21690785&aid=9]
+   
+   Click Save Container Details. Select an output format. The options are PDF, HTML, RTF, XML or XLS. Click Next to assign which users have access to the report. Click Finish.
+   
+   
+   Results
+   The report template is created, if the report was not configured to run after saving, the user can highlight the report, then select Actions > Run Report to run the report immediately.Depending on schedule, there may be no data until the next day. After the report finishes, the user can view the report results by clicking on the report from the Formats column. 
+
+ 
+
+ 
+Where do you find more information? 
+
+
+
+
+[/support/docview.wss?uid=swg21690785&aid=10] [http://ibm.biz/QRadar-KC] [/support/docview.wss?uid=swg21690785&aid=11] [https://ibm.biz/qradarforums] [/support/docview.wss?uid=swg21690785&aid=12] [http://ibm.biz/qradarknowledge] [/support/docview.wss?uid=swg21690785&aid=13] [http://ibm.biz/SecSuptUTube] [/support/docview.wss?uid=swg21690785&aid=14] [http://ibm.biz/qradarsoftware] [/support/docview.wss?uid=swg21690785&aid=15] [http://ibm.biz/MyNotification] [/support/docview.wss?uid=swg21690785&aid=16] [http://ibm.biz/SuptRegQuikStart] 
+RELATED INFORMATION
+ A Japanese translation is available [http://www.ibm.com/support/docview.wss?uid=swg21999716]

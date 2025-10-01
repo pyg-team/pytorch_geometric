@@ -1,0 +1,13 @@
+Title: IBM Publish button does not appear in hold notice - United States
+
+Text:
+release ; atlas TECHNOTE (FAQ)
+
+QUESTION
+ Why does the Publish button does not appear on hold notice even after approving the notice by approver? 
+
+CAUSE
+If the notice is release type and if there is no recipients added to the notice, Publish button does not appear.
+
+ANSWER
+Add the recipients to the release notice will make the Publish button to appear.

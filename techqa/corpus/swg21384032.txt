@@ -1,0 +1,191 @@
+Title: IBM Welcome Screen fails to show (hangs) on startup of a new workspace - United States
+
+Text:
+RAD; RSA; v7.5; welcome screen; hangs; splash screen; RSS feed; dropped; drop; packets; blocked; hang; javacore TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ After installing IBM Rational Application Developer for WebSphere Software v7.5 or updating to v7.5.2 on Microsoft Windows XP, the startup of a "new" workspace hangs on the Rational Application Developer startup splash screen, showing the workbench loading progress bar. The welcome screen never shows and Rational Application Developer is hung. 
+
+SYMPTOM
+ 
+
+ * A "new" workspace fails to show the startup splash screen and hangs. 
+ * The associated javaw.exe process has to be killed. 
+ * The workspace folder exists in a partially created state with no .log file. 
+ * The workspace will start on an existing Rational Application Developer for WebSphere Software v6.0 workspace or an existing v7.5 workspace with the welcome screen closed.
+
+
+CAUSE
+It was discovered that the user's network was deliberately dropping/blocking RSS feed packets on their network switch. This caused the enhanced Rational Application Developer/Eclipse Welcome screen, which goes out to the internet using an RSS feed to get the latest useful developerWorks articles, to hang. 
+
+
+Defect APAR PK82278 has been submitted to address this issue. 
+
+
+
+
+
+
+Part of the rad_prob_dump.txt (core dump) showed below reveals the startup may be hanging when the application tries to access the internet as part of building the welcome screen: 
+
+There appeared to be some attempt at reading from a socket: 
+
+2XMFULLTHDDUMP Full thread dump J9 VM (J2RE 6.0 IBM J9 2.4 Windows XP x86-32 build jvmwi3260-20081105_2543320081105_025433_lHdSMr, native 
+
+threads): 
+
+3XMTHREADINFO "main" TID:0x00179200, j9thread_t:0x000154BC, 
+
+state:R, prio=6 
+
+3XMTHREADINFO1 (native thread ID:0x72C, native priority:0x6, 
+
+native policy:UNKNOWN) 
+
+4XESTACKTRACE at java/net/SocketInputStream.socketRead0(Native 
+
+Method) 
+
+4XESTACKTRACE at java/net/SocketInputStream.read(Bytecode 
+
+PC:84) 
+
+4XESTACKTRACE at java/io/BufferedInputStream.fill(Bytecode 
+
+PC:175(Compiled Code)) 
+
+4XESTACKTRACE at java/io/BufferedInputStream.read1(Bytecode 
+
+PC:44(Compiled Code)) 
+
+4XESTACKTRACE at java/io/BufferedInputStream.read(Bytecode 
+
+PC:49(Compiled Code)) 
+
+4XESTACKTRACE at 
+
+sun/net/www/http/HttpClient.parseHTTPHeader(Bytecode PC:51) 
+
+4XESTACKTRACE at sun/net/www/http/HttpClient.parseHTTP(Bytecode 
+
+PC:30) 
+
+4XESTACKTRACE at 
+
+sun/net/www/protocol/http/HttpURLConnection.getInputStream(Bytecode 
+
+PC:324) 
+
+4XESTACKTRACE at java/net/URL.openStream(Bytecode PC:4) 
+
+4XESTACKTRACE at 
+
+com/ibm/ccl/welcome/bits/rss/RSSViewer.createNewsItems(Bytecode PC:52) 
+
+4XESTACKTRACE at 
+
+com/ibm/ccl/welcome/bits/rss/RSSViewer.createContent(Bytecode PC:23) 
+
+4XESTACKTRACE at 
+
+org/eclipse/ui/internal/intro/impl/html/IntroHTMLGenerator.generateIntro 
+
+Content(Bytecode PC:75) 
+
+4XESTACKTRACE at 
+
+org/eclipse/ui/internal/intro/impl/html/IntroHTMLGenerator.generateIntro 
+
+Element(Bytecode PC:140) 
+
+
+More specifically, the following bit from above, corresponds to the RSS developerWorks articles that would normally be at the bottom of a completed welcome screen. 
+
+com/ibm/ccl/welcome/bits/rss/RSSViewer.createNewsItems(Bytecode PC:52) 
+
+4XESTACKTRACE at 
+
+com/ibm/ccl/welcome/bits/rss/RSSViewer.createContent(Bytecode PC:23)
+
+
+
+DIAGNOSING THE PROBLEM
+In a hang situation, obtain core dumps by starting Rational Application Developer in debug mode as follows, to get a java core dump: 
+
+ 1. Go to {Rational Application Developer v7.5 Install Dir}\{SDP7x or YourPackageGroup} 
+ 2. There will be a file : eclipse.ini , make a backup copy: eclipse.ini.bak 
+ 3. Edit eclipse.ini to add to the vm : 
+    - consolelog 
+    - debug
+    
+    , and change javaw.exe to java.exe as per this completed
+    Example: 
+    
+    //===eclipse.ini 
+    -vm E:\IBM\SDP75\jdk\jre\bin\java.exe
+    -consolelog
+    -debug
+    -startup plugins/org.eclipse.equinox.launcher_1.0.101.R34x_v20080819.jar 
+    -install E:\IBM\SDP75
+    --launcher.library plugins/org.eclipse.equinox.launcher.win32.win32.x86_1.0.101.R34x_v20080731
+    -vmargs
+    -Xquickstart
+    -Xms100m
+    -Xmx1024m
+    -Xmnx64m
+    -Xgcpolicy:gencon
+    -Xscmx96m
+    -Xshareclasses:name=IBMSDP_%u
+    -Xnolinenumbers
+    -XX:MaxPermSize=128M
+    -Xjit:exclude={com/ibm/team/coverage/internal/common/report/SourceElementInfo.write*}
+    -Dosgi.requiredJavaVersion=1.5
+    //==
+    
+ 4. Start Rational Application Developer as per normal:
+    {Rational Application Developer 75 Install Dir}\{SDP*}\eclipse.exe -product com.ibm.rational.rad.product.v75.ide
+    
+ 5. Then once it hangs, give focus to the console window and press CTRL-Break every 2 mins five times... .
+    This will generate a java core file, something like: 
+    javacore{timestamp}.txt 
+    They will be found in the same directory as eclipse.exe.
+    
+ 6. Besides analyzing the javacore(s) yourself, you can send them to IBM Support for Rational Application Developer.
+
+RESOLVING THE PROBLEM
+This issue will be fixed in a future Rational Application Developer v7.5.x. 
+
+
+WORKAROUNDS:
+
+
+ 1. Contact IBM Support for Rational Application Developer if an official fix is yet available or if a Test Fix Patch can be provided.
+    
+ 2. While waiting on an official fix or test fix patch, you can Disable the Welcome screen as follows:
+
+ *   1. Go to {Rational Application Developer v7.5 Install Dir}\{Shared Resources Dir}\plugins\\com.ibm.rational.rad.product.v75_<lastest version/update> 
+       For example in the case of Rational Application Developer v7.5.1: E:\IBM\SDP70Shared\plugins\com.ibm.rational.rad.product.v75_7.5.1.v20081 114_1150
+       
+    2. Backup "plugin_customization.ini".
+       
+    3. Edit "plugin_customization.ini" to add in the plugin customization property: org.eclipse.ui/showIntro=false 
+       
+       ,as per the location in this snippet: 
+       
+       ....
+       # For Welcome
+       org.eclipse.ui/showIntro=false
+       
+       # Welcome theme to use
+       org.eclipse.ui.intro/INTRO_THEME = org.eclipse.ui.intro.universal.circle
+       ... 
+       
+       Make sure to save the changes.
+       
+    4. Startup Rational Application Developer v7.5 against a new workspace and the welcome screen should not show up 
+       
+       Warning:
+       If a new workspace has been opened and you bring up the welcome screen using
+       Help > Welcome screen 
+       , close the welcome screen before exiting. 
+       Otherwise it will try to show it again and hang in this RSS feed dropped scenario, when you try to restart that workspace

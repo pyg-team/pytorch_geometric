@@ -1,0 +1,169 @@
+Title: IBM IY90609: ALERTS.STATUS FIELDS AFTER A DELETED FIELD FROM AN OBJECTSERVER DATA TYPE ARE NOT INCLUDED IN SQL INSERT - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Specific Binary: nci_server
+   Last Modified By:
+   Version: 3.1
+   Component:
+   Product Group: Impact
+   Product: Impact
+   Prority: Med
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All Netcool/Impact Users who are using       *
+   *                 AddDataIem() Action Function                 *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: FIELDS AFTER A DELETED FIELD FROM AN    *
+   *                      OBJECTSERVER DATA TYPE ARE NOT INCLUDED *
+   *                      IN SQL INSERT                           *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   *                                                              *
+   ****************************************************************
+   Steps to replicate:
+   
+   1) Install and Configure Impact 3.1. Set Policy Logger to Log
+   All SQL Statements 2) Create a Data Source  for (Oracle,
+   ObjectServer, etc..) 3) Create a Data Type using the Data
+   Source created in step 2 4) Remove 1 or more Fields from the
+   Data Type configuration page:  This step is to ensure that the
+   number of fields in the Data Type is less than the actual
+   number of fields in the Database Table. 5) Create a Policy
+   using AddDataItem Action Function to insert data into the
+   Database.  Please refer to Netcool/Impact Policy Admin Guide on
+   how to create policies 6) Configure the policy to use only 2 or
+   3 fields that are stored in the Data Types. 7) Trigger the
+   policy from the GUI Server or issue the command:
+   /bin/nci_trigger <ServerName> <user>/<password> <PolicyName> 8)
+   Check the policy logger Observe that the insert statement is
+   only formed until the field that was deleted from the Data
+   Type.
+   
+   Example: Database: MyDB Table Name: myTestTable Fields :
+   Field1, Field2, Field3, Field4,Field5,Field6 Data Type:
+   includes only Field1, Field5, Field6. Policy:  ObjectToCopy =
+   NewObject(); ObjectToCopy.Field1= 'test1'; ObjectToCopy.Field5=
+   test5; ObjectToCopy.Field6=test6; AddDataItem('autotest',
+   ObjectToCopy);
+   
+   
+   
+   In The policy logger : INSERT INTO  myDB.myTestTable (Field1)
+   VALUE ('test1');
+   
+   It Should be: INSERT INTO MyDB.myTestTable
+   (Field1,Field5,Field6) values ('test1','test5','test6');
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fixed in Impact 3.1 Fix Pack 5
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IY90609
+   
+   
+ * REPORTED COMPONENT NAME
+   NC/IMPACT OBJSE
+   
+   
+ * REPORTED COMPONENT ID
+   5724O59OS
+   
+   
+ * REPORTED RELEASE
+   300
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2006-10-12
+   
+   
+ * CLOSED DATE
+   2007-06-20
+   
+   
+ * LAST MODIFIED DATE
+   2007-06-20
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *     IMPACT
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   NC/IMPACT OBJSE
+   
+   
+ * FIXED COMPONENT ID
+   5724O59OS
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R310 PSY
+   UP

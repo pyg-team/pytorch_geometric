@@ -1,0 +1,29 @@
+Title: IBM Functionality of 'RaiseEventOnAllAvailabilityChanges' flag in monitorItemAvailability API - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Why does the REALTIME_AVAILABILITY_CHANGE event get triggered even
+when RaiseEventOnAllAvailabilityChanges is passed as 'N'? 
+
+CAUSE
+This is Working as Designed
+
+ANSWER
+It working as per product design because API will call the same transaction (real time availability change ) which agent will call. 
+
+For example if you call the scheduleOrder API from API tester, it will call the scheduleOrder transaction and if we configured any service on this then API also will call that service.
+
+In simulation if we are passing RaiseEventOnAllAvailabilityChanges = N, message is getting published by API without crossing the thresholds level.
+
+The behaviour of the API is Working as it was designed. The use case it is catering to is following:
+
+With WebSphere Commerce integration, WebSphere Commerce will call this API when they don't find availability info for a item in the cache. So this API will not only fetch the real time availability information from Sterling system but also update the WebSphere Commerce cache by publishing message to WebSphere Commerce.
+
+The Java Docs were updated to reflect this in version 9.3 onwards: "Whether set to Y or N, REALTIME_AVAILABILITY_CHANGE or REALTIME_AVAILABILITY_CHANGE_LIST event is raised on all availability changes regardless of whether availability exceeds or falls below specified thresholds. Valid values: Y or N. Default value: N"
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Commerce Sterling Commerce Commerce WebSphere Commerce

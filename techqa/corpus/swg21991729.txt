@@ -1,0 +1,74 @@
+Title: IBM I am getting SQL2066N when trying to do tablespace backup. - United States
+
+Text:
+Tablespace backup; SQL2066N TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Using DB2 For Linux, Unix and Windows, I am trying to back up a single tablespace, or a list of tablespaces, and am receiving an SQL2066N error:
+
+db2 "backup db mydb tablespace (MY_TS) online to /home/mybackups"
+
+Returns:
+
+SQL2066N The command failed because the specified table space either
+does not exist or is not supported with the specified command.
+Specified table space name: "MY_TS". 
+
+RESOLVING THE PROBLEM
+There are several reasons that this message can be returned:
+1. The tablespace does not exist.
+
+2. The tablespace is in a load pending, or some other state that means a backup is incompatible with it.
+
+3. On a DPF system, the tablespace only resides in certain nodes, and you are running the backup command from a node where it does not exist.
+
+If you have eliminated all of the above as the cause, then there is one other thing you can look at. The tablespace name might have trailing spaces after the name in the system catalog tables. Under most circumstances, this does not pose a problem, but there are some parts of DB2 code where it does. 
+
+You can check to see if you have any like this by executing:
+
+db2 "select tbspace, length(tbspace) from syscat.tablespaces where tbspace like '%<tbspacename>%' with ur"
+
+Or you can check all of them:
+
+db2 "select tbspace, length(tbspace) from syscat.tablespaces"
+
+What you are looking for is output where the reported length is larger than the number of non-whitespace characters in the actual name. For example, if you see:
+
+TBSPACE 2
+------------------------------------------------ -----------
+MY_TS 10
+
+In this example, we can see that "MY_TS" has 5 characters, but the length is reported as 10. So there are 5 extra spaces.
+
+In order to fix this, you will want to obtain a list of all of the tablespaces where this condition exists. You can do this by running the following query:
+
+db2 "select tbspace||',\"'||substr(tbspace,1,length(tbspace))||'\"' from syscat.tablespaces where length(tbspace)-length(trim(tbspace)) >= 1 with ur"
+
+You will then see output that looks like 
+
+1 
+--------------------------------------------
+MY_TS ,"MY_TS " 
+
+Note if you have more than one tablespace like this, they will all be listed.
+
+Then what you need to do is to use that information and create a script that contains rename tablespace statements terminated by a semi-colin ";".
+
+rename tablespace "MY_TS " to MY_TS;
+
+Use copy/paste to get the name in quotes with the spaces do you get them listed correctly. Create rename statements for each tablespace listed.
+
+Then you can execute it using:
+
+db2 -tvf <scriptname> 
+
+You should then see output like:
+
+rename tablespace "MY_TS " to MY_TS
+DB20000I The SQL command completed successfully.
+
+For each tablespace. Then you can rerun:
+
+db2 "select tbspace||',\"'||substr(tbspace,1,length(tbspace))||'\"' from syscat.tablespaces where length(tbspace)-length(trim(tbspace)) >= 1 with ur"
+
+To verify you got them all. Then retry the backup operation.

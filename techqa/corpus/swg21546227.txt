@@ -1,0 +1,24 @@
+Title: IBM How do I back up and restore my Connect:Direct configuration? - United States
+
+Text:
+STERLINGPRI TECHNOTE (FAQ)
+
+QUESTION
+ How do I back up and restore my Connect:Direct configuration? 
+
+ANSWER
+To backup user and netmap settings please do the following:
+
+1. Open the CONNECT:Direct Configuration Utility
+2. Click on file extract.
+3. Save the map.cfg and user.cfg
+4. When installing CONNECT:Direct again you will be asked if you wish to use these files. Say yes and browse to the correct path , follow the prompts to continue the installation.
+
+ 
+
+HISTORICAL NUMBER
+ PRI3204 
+
+PRODUCT ALIAS/SYNONYM
+ CONNECT:Direct for Windows
+All Releases

@@ -1,0 +1,73 @@
+Title: IBM ACUOSI0050E with return code 87 - TCP/IP entries are invalid. - United States
+
+Text:
+ACUOSI0050E 87 PREFIX plan file db2 monitoring reporting install TCP/IP invalid port TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ During installation of Reporting and Monitoring DB2 may fail to install due to an invalid response file referencing an invalid port number. 
+
+SYMPTOM
+Reporting and Monitoring may get errors after the installation because the install was not successful. 
+
+Note: With silent install, there is a known limitation where the installation processing may show as successful despite errors during the install.
+
+
+CAUSE
+The port number specified during the install is already in use by another application.
+
+
+ENVIRONMENT
+Windows
+
+
+
+DIAGNOSING THE PROBLEM
+The db2_9.1.log may show ACUOSI0050E with return code 87. Return code of 87 means “the parameter is incorrect”. 
+
+
+_uninst/plan/install/MachinePlan_localhost/00001_DB2_9.1\DB2_9.1.log
+ACUOSI0050E External command action failed with return code 87. Invocation string: [I:\Archives_from_Tivoli\TIVOLI_Reporting\COI\DeploymentSteps/DB2_9.1/FILES/setup.exe, /f, /l, C:\IBM\_uninst\plan\tmp/db2_91_inst.log, /u, C:\IBM\_uninst\plan\tmp/Prefix_ResponseFile.txt]
+
+_uninst\plan\tmp\db2_91_inst.log:
+1: ERROR:The TCP/IP entries are invalid. Specify a valid service name and port number.
+1: ERROR:The response file specified "C:\IBM\_uninst\plan\tmp/PREFIX~1.TXT" is not valid.
+1: Failed to initialize silent install.
+
+The response file, Prefix_ResponseFile.txt will show the following:
+DB2.PORT_NUMBER=50000
+DB2.SVCENAME=db2c_DB2
+DB2.DB2COMM=TCPIP
+
+
+
+RESOLVING THE PROBLEM
+Port 50000 must be free before installation. 
+
+
+To check used ports:
+
+1. Open a DOS prompt and issue: 
+netstat -p tcp -b –n > c:\netstat.txt
+
+2. Open the following file called services:
+C:\WINDOWS\system32\drivers\etc\services
+
+Check the file to see if port 50000 is used. If it is, free up this port, or change the port number during installation.
+
+Example:
+In the services file, if you have Tivoli Storage Manager server installed, you will see:
+db2j_DB2TSM 55000/tcp
+DB2_DB2TSM 60000/tcp
+DB2_DB2TSM_1 60001/tcp
+DB2_DB2TSM_2 60002/tcp
+DB2_DB2TSM_END 60003/tcp
+db2c_DB2TSM 50000/tcp
+
+The Tivoli Storage Manager server is already using port 50000 and this is the reason for DB2 to fail upon installing Reporting and Monitoring. 
+
+NOTE: The Reporting and Monitoring can NOT be installed on the same system as the Tivoli Storage Manager 6.1 Server even though the manual indicates this is possible.
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ TSM

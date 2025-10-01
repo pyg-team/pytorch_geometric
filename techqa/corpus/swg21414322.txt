@@ -1,0 +1,76 @@
+Title: IBM CWSCA9550E Limitations exist when migrating and developing SCA modules that contain a combination of JAX-RPC SOAP/HTTP and JAX-WS SOAP/HTTP export bindings for WebSphere Process Server (WPS) - United States
+
+Text:
+'v7rnotes'; 'esb7rnotes'; 'jax-rpc'; 'jax-ws':CWSCA9550E: TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Service Component Architecture (SCA) modules developed in WebSphere Integration Developer V7 do not support the combination of JAX-RPC SOAP/HTTP and JAX-WS SOAP/HTTP export bindings. SCA modules developed in WebSphere Integration Developer V6.2 that contain a combination of JAX-RPC SOAP/HTTP and JAX-WS SOAP/HTTP export bindings can be installed on a WebSphere ESB V7 server or WebSphere Process Server V7 server, but the endpoint addresses for the JAX-RPC export bindings are modified 
+
+SYMPTOM
+When you import an SCA module that contains an invalid combination of Web service export bindings into WebSphere Integration Developer V7, a validation failure occurs as indicated by the following message: 
+
+CWSCA9550E: A JAX-RPC SOAP/HTTP export and a JAX-WS SOAP/HTTP export are be in the same module, which is not supported.
+
+When you modify an SCA module that contains JAX-RPC export bindings in WebSphere Integration Developer V7, you cannot add a JAX-WS export binding. Similarly, when you modify an SCA module that contains a JAX-WS export binding, you cannot add a JAX-RPC export binding.
+
+When you install an SCA module that contains an invalid combination of web service export bindings on a WebSphere Enterprise Service Bus V7 server or WebSphere Process Server V7 server, the endpoint addresses for the JAX-RPC export bindings are modified. Therefore, clients that continue to use the original endpoint addresses receive an HTTP 500 Internal Server Error with the message "WAB0135E An unexpected error has occurred.". The following message is seen in the server log:
+
+SRVE0293E: [Servlet Error]- : javax.servlet.ServletException: WSWS3142E: Error: Could not find Web services engine. 
+
+
+CAUSE
+Because of the way that SCA modules are constructed and how the Java™ EE specification imposes validation, JAX-WS SOAP/HTTP and JAX-RPC SOAP/HTTP export bindings cannot co-exist in the same module in WebSphere Enterprise Service Bus V7 or WebSphere Process Server V7. WebSphere Enterprise Service Bus V6.2 and WebSphere Process Server V6.2 do not prevent this combination from being used in SCA modules. Version 6.2 SCA modules can continue to work on a V7 runtime; however, the JAX-RPC export binding endpoints are changed automatically during the installation process.
+
+
+RESOLVING THE PROBLEM
+When you import an SCA module into WebSphere Integration Developer V7, or when you generate a web service binding in an SCA module in WebSphere Integration Developer V7, ensure that the module does not include an invalid combination of bindings by performing one of the following actions: 
+
+ 
+
+ * Replace the JAX-RPC export bindings with JAX-WS export bindings. 
+   
+   JAX-WS is the current standard for web services in a Java EE environment. Therefore, this approach isrecommended. Although, there are some cases where replacement is not possible or requires additional effort:  * If the JAX-RPC export binding has an RPC-encoded WSDL binding, replacing the JAX-RPC export bindings with JAX-WS export bindings is not possible as RPC-encoded WSDL bindings are not supported by the JAX-WS binding.
+      
+      
+    * If the JAX-RPC export binding has associated JAX-RPC handlers, replace these handlers with JAX-WS handlers that perform the equivalent function. 
+      
+      
+    * If the JAX-RPC export binding has associated WS-Security configuration, replace this configuration with an appropriate web service policy set.
+      
+      
+   
+   
+ * If replacement is possible, then complete one of the following steps:  * Replace each JAX-RPC SOAP/HTTP export binding with a JAX-WS SOAP/HTTP export binding. Client applications can continue to use the same endpoint address to communicate with the export.
+      
+      
+    * Remove the JAX-RPC SOAP/HTTP export bindings and redirect clients to use one of the existing JAX-WS SOAP/HTTP export bindings. Then, modify the client applications so that they use the JAX-WS export binding endpoint address or addresses. 
+      
+      
+    * Move the JAX-RPC bindings to a separate module. 
+   
+   
+
+
+
+If the JAX-RPC export bindings cannot be replaced with JAX-WS export bindings, complete these steps:  1. Move the JAX-RPC SOAP/HTTP bound exports into another SCA module that does not contain JAX-RPC export bindings or a new SCA module. 
+    
+    
+ 2. Use the SCA binding to connect that SCA module to the original module.
+    
+    
+ 3. Modify the client applications to use the new JAX-RPC export binding endpoint address or addresses.
+
+
+
+When you install an SCA module that contains an invalid combination of web service export bindings on a WebSphere Enterprise Service Bus V7 server or WebSphere Process Server V7 server, you might want to change the module to avoid the modification of the endpoint addresses. If so, you must import the module into WebSphere Integration Developer V7 and replace each JAX-RPC SOAP/HTTP export binding with a JAX-WS SOAP/HTTP export binding, if possible, as described in the previous instructions. If you do not change the module, then you must change clients of the JAX-RPC exports to use the updated endpoint addresses. The context root within the endpoint URL needs to be changed from <SCAModuleName>Web to <SCAModuleName>RouterWeb. Each URL for a JAX-RPC export endpoint will be of the form:http://host:port/ Web/ 
+
+It must be changed to:
+http://host:port/ RouterWeb/ 
+
+ 
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration WebSphere Enterprise Service Bus WebServices AIX, HP-UX, i5/OS, Linux, Solaris, Windows, z/OS 7.0 Business Integration WebSphere Integration Developer Not applicable Linux, Windows 7.0 
+PRODUCT ALIAS/SYNONYM
+ WPS WESB WID

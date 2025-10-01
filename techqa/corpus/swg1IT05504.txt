@@ -1,0 +1,126 @@
+Title: IBM IT05504: PUREAPPLICATION SYSTEM V2.0 CALL HOME FEATURE SHOULD CREATE THE COLLECTION SET EVEN IF THE PROBLEM TICKET CAN NOT BE CREATED - United States
+
+Text:
+  A FIX IS AVAILABLE
+IBM PureApplication System Version 2.0.0.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24038445]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  A user was testing the Call Home function and noticed that when
+   a problem occurs creating the Problem Management Report (PMR)
+   ticket the collection set that would be created is missing.
+   
+   The system collection set should be created even if the PMR
+   ticket has an issue being created as it can be used later to
+   diagnose the problem.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  The collection set for the system issue was not being created if
+   the Call Home function failed to open a Problem management
+   Report (PMR) ticket.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A code fix is being provided in PureApplication System
+   version 2.0.0.1 to create the collection set for the problem
+   even if the Call Home function fails to create the PMR ticket.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT05504
+   
+   
+ * REPORTED COMPONENT NAME
+   PAPP SYS 8382 I
+   
+   
+ * REPORTED COMPONENT ID
+   5725G3200
+   
+   
+ * REPORTED RELEASE
+   200
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-11-11
+   
+   
+ * CLOSED DATE
+   2014-11-11
+   
+   
+ * LAST MODIFIED DATE
+   2014-11-11
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   PAPP SYS 8382 I
+   
+   
+ * FIXED COMPONENT ID
+   5725G3200
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R200 PSY
+   UP

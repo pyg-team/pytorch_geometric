@@ -1,0 +1,44 @@
+Title: IBM InfoSphere Information Server Pack for Salesforce.com - United States
+
+Text:
+ DETAILED SYSTEM REQUIREMENTS
+
+ABSTRACT
+ This page contains links to detailed system requirements for IBM InfoSphere Information Server Pack for Salesforce.com. 
+
+CONTENT
+IBM provides you with a Software Product Compatibility Reports (SPCR) tool where you can search and find complete details of supported operating systems, system requirements, prerequisites, and optional supported software for IBM products. The SPCR tool links to information about the minimum product levels that must be installed before opening a problem report with IBM Technical Support. The software versions and any maintenance levels listed in the tool have been explicitly verified as working. 
+
+System requirements: 
+
+Click the operating system links in the following table to open the system requirements pages in the SPCR tool for your version of the product.
+
+
+
+IBM InfoSphere Information Server Pack for Salesforce.com Version 1.0.2  * AIX [http://www-969.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1229974829887&osPlatform=AIX] 
+ * HP [http://www-969.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1229974829887&osPlatform=HP] 
+ * Linux [http://www-969.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1229974829887&osPlatform=Linux] 
+ * Solaris [http://www-969.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1229974829887&osPlatform=Solaris] 
+ * Windows [http://www-969.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1229974829887&osPlatform=Windows]
+
+Version 1.5  * AIX [http://www-969.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1254441473279&osPlatform=AIX] 
+ * HP [http://www-969.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1254441473279&osPlatform=HP] 
+ * Linux [http://www-969.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1254441473279&osPlatform=Linux] 
+ * Solaris [http://www-969.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1254441473279&osPlatform=Solaris] 
+ * Windows [http://www-969.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1254441473279&osPlatform=Windows]
+
+
+************************************************** 
+How to use the SPCR tool: 
+
+
+ 1. Click the following link to start using the SPCR tool:
+    
+    Detailed system requirements for a specific product in SPCR [http://www-969.ibm.com/software/reports/compatibility/clarity/softwareReqsForProduct.html]
+    
+    
+ 2. Search for a product by full or partial name. 
+ 3. Select a product. 
+ 4. Select a version. 
+ 5. Select an operating system. 
+ 6. Click Submit.

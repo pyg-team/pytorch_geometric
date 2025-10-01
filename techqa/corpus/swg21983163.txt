@@ -1,0 +1,13 @@
+Title: IBM Changing Custodian Status from  Release to On Hold in a preservation plan - United States
+
+Text:
+Atlas Preservation Matter TECHNOTE (FAQ)
+
+QUESTION
+ Can we change custodian status from Release to On Hold in a preservation plan? 
+
+CAUSE
+The plan owner set the custodian status to Release
+
+ANSWER
+No. This change cannot be performed through the Atlas Application. You can contact IBM Atlas support for assistance

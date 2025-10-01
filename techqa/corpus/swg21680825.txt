@@ -1,0 +1,19 @@
+Title: IBM Hiding the left navigation pan/tree in TIP - United States
+
+Text:
+TIPL2; TIPL2CONF; hide navigation pan tree TECHNOTE (FAQ)
+
+QUESTION
+ How can I hide left navigation panel in Tivoli Integrated Portal automatically on login? 
+
+ANSWER
+The left navigation panel can be hidden automatically on login without pressing the arrow button. It can be achieved as follows: 
+
+ 1. Login into the TIP console as a user with administrator privileges. 
+ 2. On the left side, click on: Settings-> Console Preference Profiles. 
+ 3. You can create a new preference profile by clicking on New button or edit an existing profile by clicking on the profile name. 
+ 4.  In the "Navigation tree options" select "Hide navigation tree". 
+ 5. In the "Roles using this Preference Profile" section add a role for which you want to hide Navigation pan. 
+    For example; If you want to hid the Navigation pan for all the users with "operator" role then add that role. Once the user having this role logs in to TIP the left navigation tree will be hidden. 
+    Note: Optionally you can create a custom role and assign it to this profile. This way only the users having this specific role will see above behavior. 
+ 6. Log out and log back in with a user Id that has the role assigned (eg; operator) to preference profile in step 5. The left navigation tree should auto hide.

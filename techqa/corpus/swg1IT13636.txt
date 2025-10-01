@@ -1,0 +1,168 @@
+Title: IBM IT13636: DB2 MIGHT TRAP DURING EXECUTION OF QUERY CONTAINING SUM() SCALARFUNCTION - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+DB2 Version 10.5 Fix Pack 9 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24044110]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  DB2 might trap during execution of query containing SUM() scalar
+   function.
+   
+   During processing of the SQL containing SUM() scalar function,
+   DB2 might choose vector sum method.
+   It is possible that during runtime processing of the query
+   containing SUM(), DB2 will trap with following stack:
+   
+   <StackTrace>
+   -------Frame------ ------Function + Offset------
+   0x09000000045338C0 sqlrivsum__FP8sqlrr_cb + 0x16C0
+   Stack traceback unavailable.
+   </StackTrace>
+   
+   Problem so far has been observed only on AIX platforms, where we
+   can get more detailed information from errpt_a.out:
+   
+   sqlrivsum 16C0
+   sqlsVecto 17C
+   ??
+   sqlsVecto 17C
+   sqlsopen_ 1B9C
+   ??
+   sqlrsopen 330
+   sqlrisrt_ 2D0
+   sqlriSect 410
+   sqlrr_sub C998
+   sqlrr_sub D84
+   @81@sqleS 430
+   RunEDU__8 2ED30
+   RunEDU__8 E0
+   EDUDriver 12C
+   sqloEDUEn 3A4
+   _pthread_ F4
+   ??
+   
+   This APAR fix is to enhance vector sum code to avoid memory
+   overwrite which causes the crash.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * ALL                                                          *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * See Error Description                                        *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Upgrade to DB2 10.5 Fix Pack 8                               *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  First fixed in DB2 10.5 Fix Pack 8
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT13636
+   
+   
+ * REPORTED COMPONENT NAME
+   DB2 FOR LUW
+   
+   
+ * REPORTED COMPONENT ID
+   DB2FORLUW
+   
+   
+ * REPORTED RELEASE
+   A50
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-02-05
+   
+   
+ * CLOSED DATE
+   2017-03-13
+   
+   
+ * LAST MODIFIED DATE
+   2017-03-13
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   DB2 FOR LUW
+   
+   
+ * FIXED COMPONENT ID
+   DB2FORLUW
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * RA50 PSN
+   UP

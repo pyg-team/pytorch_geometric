@@ -1,0 +1,200 @@
+Title: IBM PI91981: IMS DOES NOT INFORM SIGN ON USER THAT THE VERIFY KEYWORD PARM ISIGNORED IF PASSWORD VERIFICATION OPTION IS NOT ENABLED. - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  '/SIGN userid userpw NEWPW nuserpw VERIFY nuserpw'.
+   If password verification option is not enabled in IMS the VERIFY
+   keyword is ignored and the new user password is not verified,
+   although the user is not notified that the new password was not
+   verified. The nuserpw entry for NEWPW may differ from the entry
+   for VERIFY nuserpw. This may result in invalid password on next
+   attempt to sign on.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * All IMS 15 VTAM terminal users                               *
+   * that specify the VERIFY keyword                              *
+   * on the /SIGN command.                                        *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * With Password Verification                                   *
+   * disabled in DFSINTX0 (default),                              *
+   * the VERIFY keyword on the                                    *
+   * /SIGN command is ignored.                                    *
+   *                                                              *
+   * This is a forward fit of PI87404 [http://www-01.ibm.com/support/docview.wss?uid=swg1PI87404].                            *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * INSTALL CORRECTIVE SERVICE FOR APAR/PTF                      *
+   ****************************************************************
+   IMS was defined with the 'Password Verification' option
+   disabled, which is the default setting in the IMS
+   initialization user exit DFSINTX0.
+   
+   The VTAM terminal user issued a /SIGN command to signon
+   to IMS.  The user attempted to change the password on
+   the /SIGN command by specifying NEWPW and VERIFY keywords.
+   However, IMS did not verify that the passwords specified
+   for NEWPW and VERIFY matched - in fact, IMS ignored the
+   VERIFY keyword.
+   
+   IMS documentation indicates that the VERIFY keyword can be
+   used to validate the new password, but this was only being
+   done when the 'Password Verification' option in DFSINTX0
+   was enabled.
+   
+   The purpose of the 'Password Verification' option is to
+   prompt the user to reenter a new password when VERIFY is
+   not specified on the /SIGN command.
+   
+   However, if specified on the /SIGN command, the VERIFY
+   keyword should be processed in any environment.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The VERIFY keyword of the /SIGN command will be processed
+   in all environments.  If NEWPW and VERIFY are specified,
+   then the passwords will be validated.
+   
+   DFSNCS40 is modified to process the VERIFY keyword value
+   with or without 'Password Verification' enabled.
+   
+   The following documentation updates are required:
+   
+   Commands, Volume 2: IMS Commands N-V
+   SC27-6781-00
+   
+   /SIGN command:
+   
+   Add the following to the VERIFY keyword description:
+   
+   The VERIFY keyword can be used to verify new passwords
+   whether or not the 'Password Verification' option is
+   enabled in the Initialization exit routine DFSINTX0.
+   
+   When 'Password Verification' is enabled, the user must
+   verify new passwords either by specifying both NEWPW
+   and VERIFY on the /SIGN command, or by reentering the
+   password on the DFS3656 panel.
+   
+   When 'Password Verification' is disabled, the user
+   can verify new passwords by specifying both NEWPW
+   and VERIFY on the /SIGN command.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI91981
+   
+   
+ * REPORTED COMPONENT NAME
+   IMS V15
+   
+   
+ * REPORTED COMPONENT ID
+   5635A0600
+   
+   
+ * REPORTED RELEASE
+   502
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2018-01-02
+   
+   
+ * CLOSED DATE
+   2018-01-10
+   
+   
+ * LAST MODIFIED DATE
+   2018-02-01
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    PI87404 [http://www-01.ibm.com/support/docview.wss?uid=swg1PI87404]
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UI53120
+   
+   
+
+MODULES/MACROS
+ *  DFSNCS40
+   
+   
+    
+   
+   
+
+Publications Referenced SC27678100 FIX INFORMATION
+ * FIXED COMPONENT NAME
+   IMS V15
+   
+   
+ * FIXED COMPONENT ID
+   5635A0600
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R502 PSY UI53120 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI53120]
+   UP18/01/20 P F801
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

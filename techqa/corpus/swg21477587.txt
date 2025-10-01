@@ -1,0 +1,15 @@
+Title: IBM Will current versions of IBM SPSS Statistics or AMOS for Windows run on a Macintosh operating system? - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ I have a Macintosh computer with Intel processor. I am wondering if I can install an IBM SPSS Statistics for Windows or IBM SPSS AMOS for Windows releases on this Mac with emulation or dual-booting software such as Boot Camp, Parallels, Virtual PC, Rosetta? 
+
+ANSWER
+No, installing IBM SPSS Statistics and AMOS for Windows releases on a Macintosh operating system or hardware using any dual booting or emulation software is not supported and cannot run properly. 
+
+IBM SPSS Statistics is available for Macintosh operating system as a single release. IBM SPSS AMOS is available only for Microsoft Windows operating system.
+
+RELATED INFORMATION
+ Need more help? Our Statistics forum is Live! [https://developer.ibm.com/answers/topics/statistics.html?smartspace=predictive-analytics]

@@ -1,0 +1,165 @@
+Title: IBM IV21231: TITLE: PCPROX READERS NOT RESPONDING AFTER A COUPLE DAYS - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Title: PcProx readers not responding after a couple days
+   
+   
+   Description: As we have been proliferating TAM 8.1 we have
+   noticed an
+   increasing
+   number of readers dropping off line.  This issue appears to be
+   on
+   single, and dual, reader systems. It appears to appear after 2/4
+   days,
+   then an intervention is required every 2/4 days.
+   
+   The problem is elivated by rebooting the computer, stoping and
+   restarting TAM, unpluging and repluggint the reader.
+   
+   It does not appear that the refresh option (30 minutes) is
+   resetting
+   the units once they drop offline.
+   
+   I've attached what I beleive to be a log from a faulting system.
+   
+   SOCIService_20110923130731515:
+   at 09/22 11:47 does the last RFIDeas_Prox:RefreshDeviceStatus
+   with a
+   devices greater than 0, all subsequernt calls untill a reboot
+   was
+   RFIDeas_Prox:RefreshDeviceStatus, Successful with number of
+   devices =
+   0.  However the devices are plugged int.
+   
+   Also, on a two device system why is the Devices != 2?
+   
+   The reader toggled the LED red/green/red and beeped, but access
+   agent
+   did not respond.
+   
+   Steps to Duplicate: After a pcProx reader is installed and
+   working on a
+   system if the system is not rebooted the reader will stop
+   responding in
+   2 to 4 days
+   
+   Desired Behavior: The readre should remain responsive as long as
+   the
+   system is up.
+   
+   Environmnet: TAM ESSO 8.1
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  21660
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Some pcProx RFID readers become unresponsive after long time.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The problem has been addressed in an AccessAgent iFix (version
+   8.1.0.0180)
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV21231
+   
+   
+ * REPORTED COMPONENT NAME
+   TAM ESSO IM SVR
+   
+   
+ * REPORTED COMPONENT ID
+   5724V6700
+   
+   
+ * REPORTED RELEASE
+   365
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-05-15
+   
+   
+ * CLOSED DATE
+   2012-06-10
+   
+   
+ * LAST MODIFIED DATE
+   2012-06-10
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TAM ESSO IM SVR
+   
+   
+ * FIXED COMPONENT ID
+   5724V6700
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R810 PSY
+   UP

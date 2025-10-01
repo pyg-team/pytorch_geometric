@@ -1,0 +1,44 @@
+Title: IBM Unable to stop logging when enabling trace Logging - United States
+
+Text:
+trace logging TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Enabling logging for IBM FileNet Content Engine (CE) at the domain level in FileNet Enterprise Manager (FEM) is not logging to the default location and logs are not rolling over at the 100MB default size. 
+
+SYMPTOM
+Enable trace logging in FEM at the Domain Level. This will create trace files in a different location than the default which is: 
+
+ WebSphere: <install_root>/profiles/<profile-name>/FileNet/<server-name>/p8_server_trace.log
+WebLogic: <install_root>/user_projects/domains/<domain-name>/FileNet/<server-name>/p8_server_trace.log
+JBoss: <install_root>/bin/FileNet/<server-name>/p8_server_trace.log
+
+
+CAUSE
+The Trace Logging Configuration, Output location is set to a non-default location. This is found in FEM, top level domain > Properties > Subsystem Configurations > Trace Logging Configuration > Properties tab, "Appender Names" and "Output Location". Setting a drive letter or path in the Output Location property value causes trace logging to be written to the selected location.
+
+
+ENVIRONMENT
+ 
+CE 5.1 fp1 
+AE 4.02 fp13 
+PE 5.0 fp3 
+XT 1.1.5 fp1 
+Oracle 11g 
+Websphere ND 64 bit 7.x fp25 
+
+
+
+DIAGNOSING THE PROBLEM
+In diagnosing the issue one will find trace log files recreated and continuously growing in a the non-default location. 
+
+
+
+RESOLVING THE PROBLEM
+To resolve the issue, take the following steps in FileNet Enterprise Manager: 
+
+ 1. Select the Domain Level and right click to select Properties. 
+ 2. In the Domain properties, select the Properties tab 
+ 3. Under the property Subsystem Configuration, click the drop down and select Trace Logging Configuration. 
+ 4. From Trace Logging Configuration Properties, select the Properties tab. 
+ 5. From the Property Name Output Location, if you see a drive letter or a file path to the non-default location, click the ellipsis button and blank out the current property value. Note: A value of <Value Not Set> indicates logging is to the default location.

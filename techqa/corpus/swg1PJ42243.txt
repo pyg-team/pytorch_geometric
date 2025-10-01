@@ -1,0 +1,209 @@
+Title: IBM PJ42243: NON-ADMIN USERS RECEIVE "CASE TYPES CANNOT BE RETRIEVED" (CDEWG4 476E) ERROR ON WORK DETAILS PAGE WITH CUSTOM CASE LIST WIDGETS - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+ DIRECT LINKS TO FIXES
+IBM Case Manager V5.1.1 Fix Pack 3 for Linux for System z [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FCase+Manager&fixids=5.1.1.3-ICM-ZLINUX-FP003&source=SAR]
+IBM Case Manager V5.1.1 Fix Pack 3 for Windows [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FCase+Manager&fixids=5.1.1.3-ICM-WIN-FP003&source=SAR]
+IBM Case Manager V5.1.1 Fix Pack 3 for Solaris [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FCase+Manager&fixids=5.1.1.3-ICM-SOLARIS-FP003&source=SAR]
+IBM Case Manager V5.1.1 Fix Pack 3 for Linux [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FCase+Manager&fixids=5.1.1.3-ICM-LINUX-FP003&source=SAR]
+IBM Case Manager V5.1.1 Fix Pack 3 Client for Linux for System z [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FCase+Manager&fixids=5.1.1.3-ICM-CLIENT-ZLINUX-FP003&source=SAR]
+IBM Case Manager V5.1.1 Fix Pack 3 Client for Windows [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FCase+Manager&fixids=5.1.1.3-ICM-CLIENT-WIN-FP003&source=SAR]
+IBM Case Manager V5.1.1 Fix Pack 3 Client for Solaris [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FCase+Manager&fixids=5.1.1.3-ICM-CLIENT-SOLARIS-FP003&source=SAR]
+IBM Case Manager V5.1.1 Fix Pack 3 Client for Linux [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FCase+Manager&fixids=5.1.1.3-ICM-CLIENT-LINUX-FP003&source=SAR]
+IBM Case Manager V5.1.1 Fix Pack 3 Client for AIX [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FCase+Manager&fixids=5.1.1.3-ICM-CLIENT-AIX-FP003&source=SAR]
+IBM Case Manager V5.1.1 Fix Pack 3 for AIX [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FCase+Manager&fixids=5.1.1.3-ICM-AIX-FP003&source=SAR]
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Non-admin users received an error ("Either the case types cannot
+   be retrieved possibly because of a permission problem or the
+   case types were not found in the solution. (CDEWG4476E)") on a
+   Work Details page with added Script Adaptor widgets populated by
+   custom JavaScript designed to receive the SendCaseInformation
+   payload when the work item was opened and find related instances
+   of other case types to display in custom-added Case List widgets
+   on the same page.  The problem was caused by the fact that the
+   "/CaseManager/CASEREST/v1/solution/<SOLUTION_PREFIX>/casetypes?"
+   URL that the custom-added widgets were using to get the list of
+   currently available case types is also checking the current
+   user's permissions to the ReplicableClassDefinition objects in
+   Content Engine for any case types found - and throwing an
+   exception if the user has none.
+   
+   This is by design in contexts like the Add Case button widget,
+   which needs to be grayed out if the current user does not have
+   permissions on the ReplicableClassDefinitions for case types -
+   but the security information is not necessary when just
+   searching cases of various case types on a customized Work
+   Details page.  Nevertheless, the design was found to be flawed
+   in that other widgets, unlike the Add Case button, are not
+   designed to handle the exception thrown when the current user
+   does not have sufficient access to the
+   ReplicableClassDefinitions.  Normally this issue would never
+   arise because the
+   "/CaseManager/CASEREST/v1/solution/<SOLUTION_PREFIX>/casetypes?"
+   URL would be called from the AddCase button on the Toolbar
+   widget on the Work page (which is equipped to handle the
+   exception without displaying an error in the UI and yet
+   nevertheless cache the case types information even when the
+   current user does not have sufficient access to actually create
+   instances).  But in this case the OOTB AddCase button had been
+   removed from the Toolbar widget for the non-admin users involved
+   as part of the customer's solution configuration - thus allowing
+   the problem to occur on the Work Details page when a work item
+   was opened.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Closing the customized Work Details page, opening the OOTB Cases
+   tab with OOTB widgets configured, and then reopening the
+   customized Work Details page (just once per session) resolved
+   the issue.  This is because the Search widget on the Cases tab
+   is retrieving and caching case types information using a
+   different URL
+   ("/CaseManager/CASEREST/v1/solution/<SOLUTION_PREFIX>?") that
+   does not check for the current user's access rights to actually
+   create case type instances.  Once that information is cached in
+   the session, the problem
+   "/CaseManager/CASEREST/v1/solution/<SOLUTION_PREFIX>/casetypes?"
+   URL will no longer be called on the custom Work Details page and
+   the issue will not occur.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * Non-administrator Case Manager Client accessing a            *
+   * Work Details page with added Script Adaptor widgets          *
+   * populated by custom JavaScript designed to receive the       *
+   * SendCaseInformation payload when the work item was opened    *
+   * and find related instances of other case types to display in *
+   * custom-added Case List widgets                               *
+   * on the same page.                                            *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * See Error Description                                        *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * To fix this problem, apply 5.1.1.3-ICM-FP003 or later        *
+   * releases.                                                    *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fixed in 5.1.1.3-ICM-FP003 and higher.  The fix for this problem
+   is provided in and resolved by IBM Case Manager V5.1.1.3
+   (5.1.1.3-ICM-FP003) or later releases.
+   
+   With this fix, Non-administrator Case Manager Client accessing a
+   Work Details page with added Script Adaptor widgets populated by
+   custom JavaScript designed to receive the SendCaseInformation
+   payload when the work item was opened and find related instances
+   of other case types to display in custom-added Case List widgets
+   on the same page will no longer receive an unexpected and
+   illogical permissions errror (CDEWG4476E).
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PJ42243
+   
+   
+ * REPORTED COMPONENT NAME
+   CASE MGR CLIENT
+   
+   
+ * REPORTED COMPONENT ID
+   5725A1501
+   
+   
+ * REPORTED RELEASE
+   511
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-05-07
+   
+   
+ * CLOSED DATE
+   2015-04-10
+   
+   
+ * LAST MODIFIED DATE
+   2015-04-10
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CASE MGR CLIENT
+   
+   
+ * FIXED COMPONENT ID
+   5725A1501
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R511 PSY
+   UP

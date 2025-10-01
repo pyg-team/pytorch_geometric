@@ -1,0 +1,154 @@
+Title: IBM LO59069: INSTR CAN'T SEARCH CHR$(0) IN DBCS STRINGS WITH COMPMETHOD 5 - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Instr function can't search "Chr$(0)" in DBCS strings with
+   compMethod 5 (in only SBCS strings can search "Chr$(0)" with
+   compMethod 5).
+   
+   Instr function can search "Chr$(1)" and any characters. This
+   issue is only "Chr$(0)".
+   
+   This issue isn't reproduced on 6.5.6. On 6.5.6 Instr function
+   can search "Chr$(0)" in any strings with compMethod 5.
+   But this issue is reproduced since 7.x, therefore this issue is
+   regression.
+   
+   sample code:
+   -------------
+   Sub Click(Source As Button)
+     Dim st1 As String
+     Dim st2 As String
+     Dim n As Integer
+   
+     st1 = "DBCS" + Chr$(0)
+     n = Instr(1, st1, Chr$(0), 5)
+     st2 = Left$(st1, n-1)
+   
+     Msgbox st2
+   End Sub
+   -------------
+   Instr return "0", and error is occurred at Left function.
+   
+   Reproducible conditions:
+   - String includes DBCS
+   - search "Chr$(0)" with compMethod 5
+   - on 8.5.x (7.x)
+   
+   Instr function - Comparison method
+   0  case-sensitive, pitch-sensitive
+   1  case-insensitive, pitch-sensitive
+   4  case-sensitive, pitch-insensitive
+   5  case-insensitive, pitch-insensitive
+   
+   If changing compMetod to "0" or "1", instr function can search
+   "Chr$(0)" in DBCS strings on 8.x also.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  change compMethod to 0
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  This APAR is closed as FIN. We have deferred the fix to a
+    future release.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *  This APAR is associated with SPR# MNAA8ERCZD.
+   
+   This APAR is closed as FIN. We have deferred the fix to a
+    future release.
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   LO59069
+   
+   
+ * REPORTED COMPONENT NAME
+   DOMINO SERVER
+   
+   
+ * REPORTED COMPONENT ID
+   5724E6200
+   
+   
+ * REPORTED RELEASE
+   851
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-03-08
+   
+   
+ * CLOSED DATE
+   2011-03-18
+   
+   
+ * LAST MODIFIED DATE
+   2011-07-07
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R851 PSN
+   UP

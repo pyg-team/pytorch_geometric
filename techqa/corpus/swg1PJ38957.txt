@@ -1,0 +1,198 @@
+Title: IBM PJ38957: A search template cannot be added to object store if the Marking or Choice list property view is set to Hidden or Read Only. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Search template cannot be saved when it includes hidden or read
+   only Marking or Choice list property.
+   
+   Steps to reproduce:
+   
+      1. Create a Marking Set at the P8 domain level.
+      2. Create a new CE string property template using FileNet
+   Enterprise Manager and
+   assign the marking set created in step 1 when creating the
+   property template.
+      3. Assign the new marking property template to at least one
+   document class using FileNet Enterprise Manager.
+   
+      4. Log on to Workplace as a user that is able to run Search
+   Designer.
+      5. In Search Designer, select at least one object store to
+   search on the Object Stores tab, and then click the Search
+   Criteria tab.
+      6. Select "Hidden" or "Read only" from the View drop-down
+   menu on
+   the Search Criteria tab.
+      7. Select the Marking property created in step 2 from the
+   Property drop-down menu on the Search Criteria tab.
+   
+      8. Select "is not null" from the Operator drop-down menu on
+   the
+   Search Criteria tab.
+      9. If you attempt the "Add new" operation (either by
+   clicking the button on the Search Designer toolbar or from the
+   File menu), an empty dialog box is displayed with an "i" icon
+   in it.  See below.
+   
+   Expected to be able to save the search template.
+   
+   The impact to the customer/system:
+   Unable to create search templates with certain options when
+   searching on a marking property.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * Workplace users running Search designer to                   *
+   * create Search templates with Marking                         *
+   * property value                                               *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * Search template cannot be saved when it includes hidden or   *
+   * read only Marking or Choice list property.                   *
+   *                                                              *
+   * Steps to reproduce:                                          *
+   *                                                              *
+   * 1. Create a Marking Set at the P8 domain level.              *
+   *                                                              *
+   * 2. Create a new CE string property template using FileNet    *
+   * Enterprise Manager and assign the marking set created in     *
+   * step 1 when creating the property template.                  *
+   *                                                              *
+   * 3. Assign the new marking property template to at least      *
+   * one document class using FileNet Enterprise Manager.         *
+   *                                                              *
+   * 4. Log on to Workplace as a user that is able to run         *
+   * Search Designer.                                             *
+   *                                                              *
+   * 5. In Search Designer, select at least one object store to   *
+   * search on the Object Stores tab, and then click the Search   *
+   * Criteria tab.                                                *
+   *                                                              *
+   * 6. Select "Hidden" or "Read only" from the View drop-down    *
+   * menu on the Search Criteria tab.                             *
+   *                                                              *
+   * 7. Select the Marking property created in step 2 from the    *
+   * Property drop-down menu on the Search Criteria tab.          *
+   * 8. Select "is not null" from the Operator drop-down menu     *
+   * on the Search Criteria tab.                                  *
+   *                                                              *
+   * 9. If you attempt the "Add new" operation (either by         *
+   * clicking the button on the Search Designer toolbar or from   *
+   * the File menu), an empty dialog box is displayed with an "i" *
+   * icon in it.                                                  *
+   *                                                              *
+   *                                                              *
+   * The impact to the customer/system:                           *
+   *                                                              *
+   * Unable to create search templates with certain options when  *
+   * searching on a marking property.                             *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Upgrade to 4.0.2.12-P8AE-FP012                               *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fixed in 4.0.2.12-P8AE-FP012; the search designer shows correct
+   warning if the property is not specified correctly
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PJ38957
+   
+   
+ * REPORTED COMPONENT NAME
+   APPLICATION ENG
+   
+   
+ * REPORTED COMPONENT ID
+   5724R7610
+   
+   
+ * REPORTED RELEASE
+   402
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-05-09
+   
+   
+ * CLOSED DATE
+   2011-10-04
+   
+   
+ * LAST MODIFIED DATE
+   2011-10-04
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   APPLICATION ENG
+   
+   
+ * FIXED COMPONENT ID
+   5724R7610
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R402 PSY
+   UP

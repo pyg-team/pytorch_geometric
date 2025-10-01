@@ -1,0 +1,185 @@
+Title: IBM JR31600: P.E. SERIALIZATION AND DESERIALIZATION OF THE SMOS GIVES ERRATIC BEHAVIOUR WHEN YOU HAVE A BO CONTAINS A SUBSTITUTIONGROUP IN XSD - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  serialization and deserialization of the SMOs gives erratic
+   behaviour  when  you have a BO that contans a substitutionGroup.
+   The problem was encountered in WSEB 6.1.2.1. but the scenario
+   worked in WESB 6.1.0 both Windows and AIX.
+   
+   Exception :
+   [2008-12-02 11:01:10:000 CET] 00000039 ExceptionUtil E
+   CNTR0020E: EJB
+   threw an unexpected (non-declared) exception during invocation
+   of method
+   "transactionSupportsActivitySessionNotSupported" on bean
+   "BeanId(ToGBOTransformerApp#ToGBOTransformerEJB.jar#Module,
+   null)".
+   Exception data: java.lang.ClassCastException: The feature
+   'priceAndAvailability's type 'PriceAndAvailabilityType' does not
+   permit
+   a value of type 'PartyIDsType'
+   
+   
+   
+   Stack Trace:
+   Caused by: java.lang.ClassCastException: The feature
+   'manualEntry's type
+   'ManualEntryType' does not permit a value of type 'ItemType'
+    at
+   org.eclipse.emf.ecore.impl.EStructuralFeatureImpl$BasicFeatureMa
+   pEntry.validate(EStructuralFeatureImpl.java:2848)
+    at
+   org.eclipse.emf.ecore.util.FeatureMapUtil.createEntry(FeatureMap
+   Util.java:146)
+    at
+   org.eclipse.emf.ecore.util.BasicFeatureMap.createEntry(BasicFeat
+   ureMap.java:94)
+    at
+   org.eclipse.emf.ecore.util.BasicFeatureMap.add(BasicFeatureMap.j
+   ava:1131)
+    at
+   com.ibm.ws.sca.internal.ejb.util.ObjectCopier.copyReferences(Obj
+   ectCopier.java:581)
+    at
+   com.ibm.ws.sca.internal.ejb.util.ObjectCopier$2.run(ObjectCopier
+   .java:629)
+    at
+   java.security.AccessController.doPrivileged(AccessController.jav
+   a:197)
+   
+   This problem is a bug in ObjectCopier which doesn't copy BO
+   instance  properties correctly to the target BO.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: WebSphere Process Server V6.1.2.x users      *
+   *                 using a business object (BO) through an      *
+   *                 import using a service component             *
+   *                 architecture (SCA) binding with an XML       *
+   *                 schema containing an <xsd:any> element.      *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: If your business object (BO) XML        *
+   *                      schema contains an <xsd:any> element,   *
+   *                      you get a ClassCastException when you   *
+   *                      send the BO through an import with an   *
+   *                      service component architecture (SCA)    *
+   *                      binding.                                *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   If your business object (BO) XML schema contains an <xsd:any>
+   element, you get a ClassCastException when you send the BO
+   through an import with a service component architecture (SCA)
+   binding.
+   Here's an example:
+   <complexType name="Customer">
+     <sequence>
+       <any/>
+       <element name="customerID" type="string"/>
+     </sequence>
+   </complexType>
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Applying this interim fix will resolve this issue.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR31600
+   
+   
+ * REPORTED COMPONENT NAME
+   WEB PROC SERVER
+   
+   
+ * REPORTED COMPONENT ID
+   5724L0100
+   
+   
+ * REPORTED RELEASE
+   610
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-01-07
+   
+   
+ * CLOSED DATE
+   2009-02-23
+   
+   
+ * LAST MODIFIED DATE
+   2009-02-23
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEB PROC SERVER
+   
+   
+ * FIXED COMPONENT ID
+   5724L0100
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R612 PSY
+   UP

@@ -1,0 +1,25 @@
+Title: IBM In Netezza Platform Software, avoid using COMMENT ON for both tables and columns - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Comments on both Netezza tables and columns could cause the comments to conflict, resulting in incorrect comments appearing for an table or column. 
+
+SYMPTOM
+A comment for a column or table shows a comment for a different table or column. 
+
+
+CAUSE
+The system uses internal table and column IDs to associate a comment to its related object. In some rare situations, the IDs for tables and columns could match, and if those objects have comments, the system could display the wrong comment for the object. 
+
+ENVIRONMENT
+All supported IBM Netezza Platform Software releases
+
+DIAGNOSING THE PROBLEM
+After adding comments for some tables and columns, some comments are not correct and do not match what was entered for the object.
+
+RESOLVING THE PROBLEM
+If you make extensive use of comments for tables or columns, the chances of encountering the overlapping table and column IDs increases. It is recommended that you comment on only tables, or comment on only columns, and to avoid commenting on both table and columns to avoid the risk of intersecting IDs.
+
+If you have commented on both tables and columns and have detected a case where the wrong comment appears for a table or column, there is a possible workaround where you could recreate the table using a CREATE TABLE AS command, which will assign new IDs to the table and its columns. It is possible that with new IDs you could avoid the intersecting IDs for the comments, but it is also possible that you could encounter a new overlap of IDs.

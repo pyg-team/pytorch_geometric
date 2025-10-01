@@ -1,0 +1,52 @@
+Title: IBM Security Bulletin: Vulnerability in bzip2 and libbzip2 before affects IBM License Metric Tool and IBM BigFix Inventory (CVE-2010-0405) - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ Integer overflow in the BZ2_decompress function in decompress.c in bzip2 and libbzip2 before 1.0.6 allows context-dependent attackers to cause a denial of service (application crash) or possibly execute arbitrary code via a crafted compressed file. 
+
+VULNERABILITY DETAILS
+CVEID: CVE-2010-0405 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2010-0405]
+DESCRIPTION: bzip2 could allow a remote attacker to execute arbitrary code on the system, caused by an integer overflow in the BZ2_decompress() function. By persuading a victim to open a specially-crafted compressed file, a remote attacker could exploit this vulnerability to cause the application to crash and execute arbitrary code on the system..
+CVSS Base Score: 6.8
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/61935 [https://exchange.xforce.ibmcloud.com/vulnerabilities/61935] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:M/Au:N/C:P/I:P/A:P) 
+
+AFFECTED PRODUCTS AND VERSIONS
+IBM License Metric Tool v9
+IBM BigFix Inventory v9
+
+REMEDIATION/FIXES
+Upgrade to version 9.2.6 or later: 
+
+ * In IBM Endpoint Manager console, expand IBM License Reporting or IBM BigFix Inventory node under Sites node in the tree panel. 
+ * Click Fixlets and Tasks node. Fixlets and Tasks panel will be displayed on the right. 
+ * In the Fixlets and Tasks panel locate Upgrade to the newest version of License Metric Tool 9.x or Upgrade to the newest version of IBM BigFix Inventory 9.x fixlet and run it against the computer that hosts your IBM License Metric Tool or IBM Endpoint Manager for Software Use Analysis server.
+
+WORKAROUNDS AND MITIGATIONS
+None
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v2 Guide [http://www.first.org/cvss/v2/guide] 
+On-line Calculator v2 [http://nvd.nist.gov/CVSS-v2-Calculator] 
+
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] 
+
+CHANGE HISTORY
+ 28 December 2016 : Original version published 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.
+
+ 
+
+Cross reference information Segment Product Component Platform Version Edition Security IBM BigFix Inventory 9.2

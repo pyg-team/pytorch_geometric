@@ -1,0 +1,24 @@
+Title: IBM Power8 support for ITM DB2 agent - United States
+
+Text:
+power8 support kud db2 agent certification supported 6.3 7.1 itm TECHNOTE (FAQ)
+
+QUESTION
+ Is ITM DB2 agent V7.1 supported to run on AIX running on Power8 systems? 
+
+CAUSE
+When moving AIX LPAR on a new hardware, most often it is requested to maintain unchanged the applications running on the LPAR to avoid additional effort.
+But it in this case it is important to know if the application version running on current hardware is expected to work with no major issues on the new processors.
+
+
+ANSWER
+Development team completed certification activity for IBM DB2 agent running on AIX 7.1 and Power 8 on March 2015. 
+
+The certified agent version is 7.1 IF02 (7.1.0-TIV-ITM_DB2-IF0002). 
+
+Even if no issues are expected with the previous maintenance level (IF01), we anyway recommend to install Interim Fix 2 in order to be fully compliant with the test performed by the certifiers.
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ IBM Tivoli Monitoring DB2 Agent V7.1

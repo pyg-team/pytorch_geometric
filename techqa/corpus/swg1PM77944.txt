@@ -1,0 +1,136 @@
+Title: IBM PM77944: LOCALLY INSERTED IMAGES MISSING WITHIN VIRTUAL PORTALS AFTER SER VER RESTART - United States
+
+Text:
+  A FIX IS AVAILABLE
+Fixes integrated in WebSphere Portal 8.0.0.0 Cumulative Fixes [http://www-01.ibm.com/support/docview.wss?uid=swg24033155]
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Images that are inserting into a design field from the local
+   file system (and not from an image component) are missing on
+   the item after the server is restarted. The problem only
+   affects locally inserted images within a virtual portal (the
+   problem does not affect the default base portal).
+   
+   The following error will be seen in SystemOut.log when an
+   attempt is made to retrieve the inserted images:
+   ResourceServe W 8b099096-41c6-4cd6-86dd-32189768c6e6: Resource
+   not found, 404 response returned.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Images that are inserting into a design field from the local
+   file system (and not from an image component) are missing on the
+   item after the server is restarted. The problem only affects
+   locally inserted images within a virtual portal (the problem
+   does not affect the default base portal).
+   
+   The following error will be seen in SystemOut.log when an
+   attempt is made to retrieve the inserted images:
+   ResourceServe W 8b099096-41c6-4cd6-86dd-32189768c6e6: Resource
+   not found, 404 response returned.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Locally uploaded images within a virtual portal scope were not
+   saved and fetched correctly, causing the resources to be missing
+   after a server restart.
+   
+   Note: After the fix is applied, any missing images will have to
+   be manually repaired as the way in which the resources are being
+   saved and retrieved within a virtual portal was modified.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM77944
+   
+   
+ * REPORTED COMPONENT NAME
+   LOTUS WEB CONT
+   
+   
+ * REPORTED COMPONENT ID
+   5724I2900
+   
+   
+ * REPORTED RELEASE
+   800
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-11-28
+   
+   
+ * CLOSED DATE
+   2012-11-28
+   
+   
+ * LAST MODIFIED DATE
+   2012-11-28
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   LOTUS WEB CONT
+   
+   
+ * FIXED COMPONENT ID
+   5724I2900
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R800 PSY
+   UP

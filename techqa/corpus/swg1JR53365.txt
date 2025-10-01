@@ -1,0 +1,255 @@
+Title: IBM JR53365: Retrying a failed process instance in Process Inspector causes a CWLLG0326E error logged due to an SQL exception - United States
+
+Text:
+  DIRECT LINKS TO FIXES
+bpm.8560.cf1.delta.repository.2 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Standard&fixids=bpm.8560.cf1.delta.repository.2&source=SAR]
+bpm.8560.cf1.delta.repository.1 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Standard&fixids=bpm.8560.cf1.delta.repository.1&source=SAR]
+8.5.6.0-WS-BPM-IFJR53365 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Standard&fixids=8.5.6.0-WS-BPM-IFJR53365&source=SAR]
+Version 8.5 Refresh Pack 7 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24041575]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Whenever a process instance fails (status = failed) and you
+   retry it (by using Process Inspector), it fails again  and you
+   receive the exception as seen below using Oracle or Microsoft
+   SQL Server as the teamworks database.
+   A typical stack trace reads like this:
+   Oracle
+   --------
+   CWLLG0326E: The BPD encountered an error.
+   com.lombardisoftware.core.TeamWorksException: ORA-00933: SQL
+   command not properly ended
+    at com.lombardisoftware.core.TeamWorksException.
+     asTeamWorksException(TeamWorksException.java:136)
+    at com.lombardisoftware.bpd.runtime.engine.message.
+     BPDMessageEventHelper.recheckOnResume(BPDMessageEventHelper.
+     java:1051)
+    at com.lombardisoftware.bpd.component.flowcomponent.
+     activity.worker.BPDActivityWorker.executeImplementation
+     (BPDActivityWorker.java:538)
+    at com.lombardisoftware.bpd.component.flowcomponent.
+     activity.worker.BPDActivityWorker.doWork(BPDActivityWorker.
+     java:302)
+   ...
+   Caused by: java.sql.SQLSyntaxErrorException: ORA-00933: SQL
+   command not properly ended
+    at oracle.jdbc.driver.T4CTTIoer.processError(T4CTTIoer.
+     java:447)
+    at oracle.jdbc.driver.T4CTTIoer.processError(T4CTTIoer.
+     java:396)
+    at oracle.jdbc.driver.T4C8Oall.processError(T4C8Oall.
+     java:951)
+    at oracle.jdbc.driver.T4CTTIfun.receive(T4CTTIfun.
+     java:513)
+    at oracle.jdbc.driver.T4CTTIfun.doRPC(T4CTTIfun.
+     java:227)
+    at oracle.jdbc.driver.T4C8Oall.doOALL(T4C8Oall.
+     java:531)
+   --------
+   Microsoft Sql Sever
+   --------
+   CWLLG0326E: The BPD encountered an error.
+   
+   com.lombardisoftware.core.TeamWorksException: Incorrect syntax
+   near 'UR'. If this is intended to be a common table expression,
+   you need to explicitly terminate the previous statement with a
+   semi-colon.
+    at
+   com.lombardisoftware.core.TeamWorksException.asTeamWorksExceptio
+   n(TeamWorksException.java:136)
+    at
+   com.lombardisoftware.bpd.runtime.engine.message.BPDMessageEventH
+   elper.recheckOnResume(BPDMessageEventHelper.java:1051)
+    at
+   com.lombardisoftware.bpd.component.flowcomponent.activity.worker
+   .BPDActivityWorker.executeImplementation(BPDActivityWorker.java:
+   538)
+    at
+   com.lombardisoftware.bpd.component.flowcomponent.activity.worker
+   .BPDActivityWorker.doWork(BPDActivityWorker.java:302)
+    at
+   com.lombardisoftware.bpd.runtime.engine.FlowObjectExecutionTreeN
+   ode.doWork(FlowObjectExecutionTreeNode.java:386)
+    at
+   com.lombardisoftware.bpd.runtime.engine.BPDEngine.executeTreeNod
+   e(BPDEngine.java:413)
+   ...
+   Caused by: com.microsoft.sqlserver.jdbc.SQLServerException:
+   Incorrect syntax near 'UR'. If this is intended to be a common
+   table expression, you need to explicitly terminate the previous
+   statement with a semi-colon.
+    at
+   com.microsoft.sqlserver.jdbc.SQLServerException.makeFromDatabase
+   Error(SQLServerException.java:216)
+    at
+   com.microsoft.sqlserver.jdbc.SQLServerStatement.getNextResult(SQ
+   LServerStatement.java:1515)
+    at
+   com.microsoft.sqlserver.jdbc.SQLServerPreparedStatement.doExecut
+   ePreparedStatement(SQLServerPreparedStatement.java:404)
+    at
+   com.microsoft.sqlserver.jdbc.SQLServerPreparedStatement$PrepStmt
+   ExecCmd.doExecute(SQLServerPreparedStatement.java:350)
+    at
+   com.microsoft.sqlserver.jdbc.TDSCommand.execute(IOBuffer.java:56
+   96)
+    at
+   com.microsoft.sqlserver.jdbc.SQLServerConnection.executeCommand(
+   SQLServerConnection.java:1715)
+    at
+   com.microsoft.sqlserver.jdbc.SQLServerStatement.executeCommand(S
+   QLServerStatement.java:180)
+    at
+   com.microsoft.sqlserver.jdbc.SQLServerStatement.executeStatement
+   (SQLServerStatement.java:155)
+    at
+   com.microsoft.sqlserver.jdbc.SQLServerPreparedStatement.executeQ
+   uery(SQLServerPreparedStatement.java:285)
+    at
+   com.ibm.ws.rsadapter.jdbc.WSJdbcPreparedStatement.pmiExecuteQuer
+   y(WSJdbcPreparedStatement.java:1112)
+    at
+   com.ibm.ws.rsadapter.jdbc.WSJdbcPreparedStatement.executeQuery(W
+   SJdbcPreparedStatement.java:714)
+    at
+   com.lombardisoftware.bpd.runtime.engine.message.BPDMessageEventH
+   elper.recheckOnResume(BPDMessageEventHelper.java:1016)
+    ... 55 more
+   --------
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  "Modifying find-wait-ids-by-bpd-instance-query"
+   https://developer.ibm.com/answers/questions/190778/ora-00933-sql
+   -command-not-properly-ended-error-is/?smartspace=bpm [https://developer.ibm.com/answers/questions/190778/ora-00933-sql-command-not-properly-ended-error-is/?smartspace=bpm]
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  A SQL query for IBM DB2 is mistakenly being used for Oracle and
+   Microsoft SQL.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A fix is available for IBM BPM V8.5.6 that contains the correct
+   SQL query for Oracle and Microsoft SQL.
+   
+   On Fix Central (http://www.ibm.com/support/fixcentral), search
+   for JR53365:
+   
+   1. Select IBM Business Process Manager with your edition from
+     the product selector, the installed version to the fix pack
+     level, and your platform, and then click Continue.
+   
+   2. Select APAR or SPR, enter JR53365, and click Continue.
+   
+   When you download fix packages, ensure that you also download
+   the readme file for each fix. Review each readme file for
+   additional installation instructions and information about the
+   fix.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  Not applicable
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR53365
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM STANDARD
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9500
+   
+   
+ * REPORTED RELEASE
+   856
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2015-05-21
+   
+   
+ * CLOSED DATE
+   2015-06-26
+   
+   
+ * LAST MODIFIED DATE
+   2017-01-11
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   BPM STANDARD
+   
+   
+ * FIXED COMPONENT ID
+   5725C9500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R856 PSY
+   UP

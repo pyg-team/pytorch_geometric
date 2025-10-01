@@ -1,0 +1,177 @@
+Title: IBM IZ76675: NO DATA IN THE REPORTS DUE TO THE REQUESTS NOT CORRECTLY        CONFIGURED IN THE SAM PACK (4.3Y) - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  No data in the reports as the requests in the 4.3Y SAM pack were
+   not correctly configured.
+   
+   The following requests had the storage turned to "false" instead
+   of "always" which resulted in the CME discarding the data:
+   
+   300150541|_|13724|_|~AP~Specific~Alcatel~5620
+   SAM~Bulk~equipment~InterfaceStats~periodicTime|_|~Sub-Element
+   Collect~Alcatel-Lucent 5620
+   SAM~Router~LAG|_|alias_group|_|active|_|always|_|1800|_||_|on|_|
+   
+   300150563|_|13725|_|~AP~Specific~Alcatel~5620
+   SAM~Bulk~equipment~InterfaceAdditionalStats~periodicTime|_|~Sub-
+   Element Collect~Alcatel-Lucent 5620
+   SAM~Router~LAG|_|alias_group|_|active|_|always|_|1800|_||_|on|_|
+   
+   300150600|_|12715|_|~AP~Specific~Alcatel~5620
+   SAM~Bulk~equipment~InterfaceStats~receivedOctetsPeriodic|_|~Sub-
+   Element Collect~Alcatel-Lucent 5620
+   SAM~Router~LAG|_|alias_group|_|active|_|always|_|1800|_||_|on|_|
+   
+   300150658|_|12728|_|~AP~Specific~Alcatel~5620
+   SAM~Bulk~equipment~InterfaceAdditionalStats~transmittedTotalOcte
+   tsPeriodic|_|~Sub-Element Collect~Alcatel-Lucent 5620
+   SAM~Router~LAG|_|alias_group|_|active|_|always|_|1800|_||_|on|_|
+   
+   300150675|_|12719|_|~AP~Specific~Alcatel~5620
+   SAM~Bulk~equipment~InterfaceStats~transmittedOctetsPeriodic|_|~S
+   ub-Element Collect~Alcatel-Lucent 5620
+   SAM~Router~LAG|_|alias_group|_|active|_|always|_|1800|_||_|on|_|
+   
+   300150730|_|12725|_|~AP~Specific~Alcatel~5620
+   SAM~Bulk~equipment~InterfaceAdditionalStats~receivedUnicastPacke
+   tsPeriodic|_|~Sub-Element Collect~Alcatel-Lucent 5620
+   SAM~Router~LAG|_|alias_group|_|active|_|always|_|1800|_||_|on|_|
+   
+   300150731|_|12729|_|~AP~Specific~Alcatel~5620
+   SAM~Bulk~equipment~InterfaceAdditionalStats~transmittedUnicastPa
+   cketsPeriodic|_|~Sub-Element Collect~Alcatel-Lucent 5620
+   SAM~Router~LAG|_|alias_group|_|active|_|always|_|1800|_||_|on|_|
+   
+   300150619|_|25586|_|~AP~Specific~Alcatel~5620
+   SAM~CME~equipment~Interface~Input Errors|_|~Sub-Element
+   Collect~Alcatel-Lucent 5620
+   SAM~Router~LAG|_|alias_group|_|active|_|always|_|1800|_||_|on|_|
+   
+   300150633|_|13650|_|~AP~Specific~Alcatel~5620
+   SAM~CME~equipment~Interface~Inbound Total Packets|_|~Sub-Element
+   Collect~Alcatel-Lucent 5620
+   SAM~Router~LAG|_|alias_group|_|active|_|always|_|1800|_||_|on|_|
+   
+   300150667|_|13651|_|~AP~Specific~Alcatel~5620
+   SAM~CME~equipment~Interface~Outbound Total
+   Packets|_|~Sub-Element Collect~Alcatel-Lucent 5620
+   SAM~Router~LAG|_|alias_group|_|active|_|always|_|1800|_||_|on|_|
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Changed the storage manually to "always" and the data was
+   "retained" and we were able to see it in the reports
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  The requests for the following two metrics:
+   receivedTotalOctetsPeriodic, transmittedTotalOctetsPeriodic were
+   deployed with the storage retention setting set to off, for the
+   requests deployed agains the Sub-Element Collect~Alcatel-Lucent
+   5620 SAM~Router~LAG group.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  2.6.0.0-TIV-PROV-ALCATEL_5620_SAM_FP0002
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ76675
+   
+   
+ * REPORTED COMPONENT NAME
+   NC/PROV ALC 562
+   
+   
+ * REPORTED COMPONENT ID
+   5724P68SM
+   
+   
+ * REPORTED RELEASE
+   43V
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-05-28
+   
+   
+ * CLOSED DATE
+   2010-06-09
+   
+   
+ * LAST MODIFIED DATE
+   2010-06-09
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   NC/PROV ALC 562
+   
+   
+ * FIXED COMPONENT ID
+   5724P68SM
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R43Y PSY
+   UP

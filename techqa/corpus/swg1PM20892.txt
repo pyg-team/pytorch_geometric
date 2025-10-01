@@ -1,0 +1,175 @@
+Title: IBM PM20892: CMOD ISSUES  DSNT408I SQLCODE = -104, ERROR:  ILLEGAL SYMBOL    "ª--" - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  DB Error: &#65425;DB2 FOR OS/390&#65414;&#65425;ODBC DRIVER&#65414;&#65425;DSN09015&#65414;
+   DSNT408I SQLCODE = -104, ERROR:  ILLEGAL SYMBOL "&#65450;--". SOME
+   SYMBOLS THAT MIGHT
+             BE LEGAL ARE: ( . MICROSECONDS MICROSECOND SECONDS
+   SECOND MINUTES
+             MINUTE
+    DSNT418I SQLSTATE   = 42601 SQLSTATE RETURN CODE
+    DSNT415I SQLERRP    = DSNHPARS SQL PROCEDURE DETECTING ERROR
+    DSNT416I SQLERRD    = 3  0  0  -1  133  502 SQL DIAGNOSTIC
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All OnDemand for z/OS 8.4.1 Users.           *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: 1. DB Error: {DB2 FOR OS/390}{ODBC      *
+   *                       DRIVER} DSN09015 DSNT408I SQLCODE =    *
+   *                       -104, ERROR:  ILLEGAL SYMBOL " --".    *
+   *                       SOME SYMBOLS THAT MIGHT BE LEGAL ARE:  *
+   *                       ( . MICROSECONDS MICROSECOND SECONDS   *
+   *                      SECOND MINUTES MINUTE )                 *
+   *                       DSNT418I SQLSTATE   = 42601 SQLSTATE   *
+   *                       RETURN CODE DSNT415I SQLERRP    =      *
+   *                       DSNHPARS SQL PROCEDURE DETECTING ERROR *
+   *                       DSNT416I SQLERRD    = 3  0  0 -1  133  *
+   *                      502 SQL DIAGNOSTIC                      *
+   *                                                              *
+   *                      running arsslu and DB2 in a CCSID where *
+   *                      an exclamation point is not X'5A'.      *
+   *                                                              *
+   *                      2.  DSNT408I SQLCODE = -104, ERROR:     *
+   *                      ILLEGAL SYMBOL ",10000 . SOME SYMBOLS   *
+   *                      THAT MIGHT BE LEGAL ARE:  ( .           *
+   *                      MICROSECONDS MICROSECOND SECONDS SECOND *
+   *                      MINUTES MINUTE )                        *
+   *                       DSNT418I SQLSTATE   = 42601 SQLSTATE   *
+   *                       RETURN CODE DSNT415I SQLERRP    =      *
+   *                       DSNHPARS SQL PROCEDURE DETECTING       *
+   *                       ERROR DSNT416I SQLERRD    = 3  0  0    *
+   *                      -1  208  502 SQL DIAGNOSTIC             *
+   *                                                              *
+   *                      Running arssyscr and DB2 with DECIMAL   *
+   *                      POINT IS COMMA                          *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   1.arsslu was using != in a predicate, which is not valid in all
+   EBCDIC SBCS CCSIDS.
+   2.arssyscr did not have a blank after a comma used as a
+   separator.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  1. arsslu is change to use <> in the predicate.
+   2. arssyscr is changed to have a space after the comma.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM20892
+   
+   
+ * REPORTED COMPONENT NAME
+   CM OD Z/OS, OD/
+   
+   
+ * REPORTED COMPONENT ID
+   5655H3900
+   
+   
+ * REPORTED RELEASE
+   84A
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-08-19
+   
+   
+ * CLOSED DATE
+   2010-11-12
+   
+   
+ * LAST MODIFIED DATE
+   2010-12-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UK62147
+   
+   
+
+MODULES/MACROS
+ *  ARSFMT   ARSSLU   ARSSYSCR
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CM OD Z/OS, OD/
+   
+   
+ * FIXED COMPONENT ID
+   5655H3900
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R84A PSY UK62147 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK62147]
+   UP10/11/17 P F011
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

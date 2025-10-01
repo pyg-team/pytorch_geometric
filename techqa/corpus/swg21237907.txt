@@ -1,0 +1,71 @@
+Title: IBM How to delete GHOST queues, which appear after a power outage - United States
+
+Text:
+process remove delete ghost queue process remove delete ghost queue process remove delete ghost queue TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ After a power outage, your WebSphere MQ queue manager is showing some queues whose names begin with: !!GHOST! You want to know how to delete them. 
+
+CAUSE
+For each model queue there is a pool of re-usable ghost queues. When a dynamic queue is created it requires some significant infrastructure to be put in place, in terms of directories and files. Instead of throwing away all of this data when a dynamic queue is created, the data is kept and stored as a member of a "ghost" pool that is associated with the model queue.
+After a catastrophic failure (such as killing the power on the machine) some of the permanent dynamic queues no longer exist, even though they were never closed using MQCO_DELETE or MQCO_DELETE_PURGE.
+
+If you do not delete these "ghost" queues that are no longer used, then they will just occupy disk space. Thus, to recover that disk space, you could delete them.
+
+
+RESOLVING THE PROBLEM
+Note: Before proceeding to delete the Ghost queues, it is recommended that you open a PMR or Service Request with IBM MQ Support to better understand the situation with the Ghost queues. 
+
+
+Delete and redefine the model queues. This will delete the associated pool of "ghost" queues.
+
+1. Start the QMgr:
+strmqm QMgrName 
+
+2. Save the definitions of the user-defined model queues.
+runmqsc
+display qmodel(*)
+
+3. Identify the user-defined queues and save the definition either manually or by using "saveqmgr" from the SupportPac MS03 [http://www.ibm.com/support/docview.wss?rs=171&uid=swg24000673] if using MQ 7.0, or the new MQ utility dmpmqcfg if using MQ 7.1 or later.
+
+4. Delete all the model queues (both user-defined and system).
+delete qmodel(queueName1)
+delete qmodel(queueNameN)
+end
+
+5. End the queue manager:
+endmqm QMgrName
+
+6. Request to recreate any missing system objects (in this case, the system model queues).
+
+Note: the -c flag for strmqm will delete all system objects and recreate them. A side-effect is that if you have configured one of those system objects, such as giving a value to an MCA field for a channel, the customization will be lost and you will need to manually customize the system object again.
+
+The following command will only start the queue manager temporarily. The queue manager will end after it has recreated the SYSTEM objects:
+strmqm -c QMgrName
+
+
+ * Restart the queue manager (do not specify the -c flag):
+
+strmqm QMgrName 
+ * Redefine the user-defined model queues. Either by manually entering the define queue statements, or by running the following command, where "outputOfSaveqmgr" is the output file obtained from Step 3.
+
+runmqsc QMgrName < outputOfSaveqmgr 
+
++++ Note about dmpmqcfg (introduced in MQ 7.1) 
+
+The dmpmqcfg tool was added in MQ 7.1 and it is an alternative to the SupportPac MS03 (saveqmgr). 
+Here are the main references from the MQ 8.0 documentation 
+
+WebSphere MQ 8.0.0 > IBM MQ>Reference > Administration reference > IBM MQ Control commands > The control commands > dmpmqcfg [http://www.ibm.com/support/knowledgecenter/SSFKSJ_8.0.0/com.ibm.mq.ref.adm.doc/q083160_.htm] 
+
+
+WebSphere MQ 8.0.0 > IBM MQ>Configuring > Availability, recovery and restart > Backing up and restoring IBM MQ queue manager data > 
+Backing up queue manager configuration [http://www.ibm.com/support/knowledgecenter/SSFKSJ_8.0.0/com.ibm.mq.con.doc/q018650_.htm] 
+RELATED INFORMATION
+ SupportPac MS03 [http://www.ibm.com/support/docview.wss?rs=171&uid=swg24000673]
+
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ WMQ MQ

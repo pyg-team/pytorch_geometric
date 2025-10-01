@@ -1,0 +1,34 @@
+Title: IBM Mttrapd probe failed to start under PA but can be started manually - United States
+
+Text:
+mttrapd probe nco_pad.env nco_pad process agent PA snmp TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The mttrapd probe is able to start up manually on the command prompt but is not able to start up under the Process Agent. 
+
+SYMPTOM
+The debug log of the probe give error: 
+Error: E-UNK-000-000: Rules file '/opt/IBM/tivoli/netcool/rules/zzzzz.rules' line xxx: Failed to read lookup table file '$NC_RULES_HOME/include-snmptrap/CorrScore.snmptrap.lookup'
+
+
+CAUSE
+The $NC_RULES_HOME environment variable is not set in the shell which the Process Agent is runnng.
+
+RESOLVING THE PROBLEM
+Please create an environment file nco_pad.env for Process Agent which define the directory path of the $NC_RULES_HOME environment variable.
+For example
+Create this file if not already there
+$OMNIHOME/platform/<arch>/bin/nco_pad.env
+Put these 2 lines in that file:
+
+
+NC_RULES_HOME=<path to rules files>
+export NC_RULES_HOME
+
+e.g. 
+
+
+NC_RULES_HOME=/opt/IBM/tivoli/netcool/rules
+export NC_RULES_HOME
+
+When the Process Agent starts up, that environment file will load the $NC_RULES_HOME and allow the mttrapd probe to read the lookup files successfully.

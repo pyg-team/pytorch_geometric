@@ -1,0 +1,97 @@
+Title: IBM FileNet Content Engine version 4.5.1 introduces Microsoft Windows Communications Foundation (WCF) support for .NET API - United States
+
+Text:
+ FIX README
+
+ABSTRACT
+ As of Content Engine 4.5.1.2-P8CE-ALL-FP002, the Microsoft Web Services Extension (WSE) 3.0, on which the Content Engine .NET API depends, is superseded by Microsoft Windows Communications Foundation (WCF). 
+
+WCF is a built-in part of the .NET Framework 3.0 and higher. To provide compatibility with the WCF, while maintaining backward compatibility with WSE 3.0, a new version of the Content Engine .NET API is available. 
+
+CONTENT
+If your client application has been adapted in the manner described later in this technote, it usually does not require WSE 3.0. However, if WSE 3.0 is not installed and your application code uses reflection functionality, you might observe some reflection-related failures. For example, the following GetTypes() call for the FileNet.API.dll assembly object will fail:
+Assembly assembly = Assembly.LoadFrom("FileNet.Api.dll");
+Type[] types = assembly.GetTypes();
+
+Application developers must keep two WCF support limitations in mind:
+
+
+ * WCF supports only Secure Socket Layer (SSL) network communication, which means that you must use an HTTPS server URL. If you use an HTTP URL instead, the API makes the connection by using WSE if it is present or generate an error if not.
+   
+ * WCF does not support streaming content upload. The content must be completely loaded into the memory of the client application before transmission. As a result, large document uploads might result in out-of-memory errors.
+
+
+To use the new API, applications that run on a .NET framework with WCF must update authentication mechanisms. The existing mechanisms, the UserContext methods that depend on WSE SecurityToken subclasses, can operate only on systems where WSE is installed. Although the WSE-compatible mechanisms are currently retained to provide compatibility with earlier versions on systems where WSE is installed, the associated classes and methods will be deprecated and eventually removed from the API. 
+
+The API changes introduce a new authentication namespace, FileNet.Api.Authentication, and new credentials-carrying objects. Two new subclasses, UsernameCredentials and KerberosCredentials, are derived from the new Credentials abstract base class. They replace Microsoft.Web.Services3.Security .Tokens.UsernameToken and KerberosToken, which do not exist in a WCF-only installation. 
+
+For each Content Engine client application, it is sufficient to create one KerberosCredentials object instance for authentication to Content Engine. The client application can cache the object instance and reuse it throughout the session, assuming that the token expiration is set to not expire. 
+
+The new CustomCredentials abstract base class is also introduced, from which an application can derive custom security token classes (to be used in conjunction with WS-EAF on the server). Custom applications must implement the GetSecurityHeaderXml method, which is functionally equivalent to the WSE SecurityToken.GetXml method. These same applications must also override the standard Object.Equals() and Object.GetHashCode() methods. 
+
+For information about WS-EAF, see Web Service Extensible Authentication Framework [http://publib.boulder.ibm.com/infocenter/p8docs/v4r5m1/topic/com.ibm.p8.doc/developer_help/ws_eaf/guide/ws_eaf.htm]in the IBM Information Center. 
+
+A new ClientContext class is added to the FileNet.Api.Util namespace and contains methods equivalent to the existing UserContext.SetProcess and UserContext.ThreadSecurityToken, which do not work in a WCF system. The new methods allow the application to supply credentials-carrying objects to the operations it is about to perform, specifically setting credentials for the process and the calling thread. A third method, SetClientContextProvider, sets a custom token and locale provider for the process, throwing an error message if any of the ClientContext methods have been called previously. The IClientContextProvider interface has two methods, GetCredentials and GetLocale, that are used by the API internals to obtain credentials for each SOAP operation about to be performed. 
+
+At runtime, the API selects the appropriate subtransport (WSE or WCF). WSE is the default. A new configuration parameter, ConfigurationParameter.WSI_TRANSPORT_PREFER_WCF, is available for overriding the default when both WSE and WCF are present. This override is effective only when an HTTPS server URL is used, as noted earlier. 
+
+Details of application changes that are required 
+
+The following (largely lexical) changes must be made to an application to allow it to run on systems with either WSE or WCF present: 
+ * Replace all references to the Microsoft.Web.Services3.Security.Tokens namespace (for example, in using statements) with FileNet.Api.Authentication.
+
+ * Delete all other references to WSE classes and namespaces (anything prefixed by Microsoft.Web.Services3) and remove Visual Studio project references to any WSE DLL files. 
+
+ * Replace references to the WSE UsernameToken class with references to the FileNet API class UsernameCredentials. 
+
+ * 
+ *  
+   new UsernameToken (uname, pwd, PasswordOption.SendPlainText); 
+ * 
+ * 
+ *  
+   new UsernameCredentials (uname, pwd);
+   
+
+ * Replace references to the WSE KerberosToken class with identical references to the FileNet API class KerberosCredentials. 
+
+ * Replace or remove calls to FileNet.Api.Util.UserContext methods as shown in the table below. Ensure that no references to the UserContext class remain anywhere in the code. 
+
+
+SetProcessSecurityToken FileNet.Api.Util.ClientContext.
+SetProcessCredentials SetThreadSecurityToken FileNet.Api.Util.ClientContext.
+SetThreadCredentials GetToken, GetLocale Remove Get().SetLocale Use System.Threading.Thread.CurrentThread.
+CurrentCulture to set the locale for each calling thread. 
+ * If a custom security token class has been implemented, you must modify the implementation to derive from FileNet.Api.Authentication.CustomCredentials and rename the GetXml method to GetSecurityHeaderXml. You do not need to change the body of the method. However, you can remove any other methods that are overridden from the WSE base class. 
+
+
+Importing the SSL certificate from Content Engine to the client workstation 
+
+To use WCF in your Content Engine client applications, you must import the SSL certificate from Content Engine to the client workstation. To import the SSL certificate, complete the following steps: 
+ 1. Browse to the secure Content Engine URL at https://ce_server:https_port/wsi/FNCEWS40MTOM/. 
+    
+    ce_server is the name of the host or virtual server where Content Engine is deployed.
+    https_port is the port number that is used by Content Engine for SSL communication with client applications.
+    
+    
+ 2. Download the Content Engine server certificate to a local drive on the server.
+    
+    
+ 3. If you are running Windows applications on your client workstation, such as FileNet Enterprise Manager or a .NET application, import the Content Engine certificate into the Trusted People certificate store by using the Certificate MMC snap-in.
+    
+    
+ 4. If you are running Java applications on your client workstation, use the Java keytool program on the workstation to import the downloaded SSL certificate to the JVM keystore on the client workstation from the Content Engine keystore, which is located on the Content Engine server at JAVA_HOME/jre/lib/security/cacerts.
+    
+    For detailed steps on using the keytool program, see the "Download certificate" section of the IBM FileNet P8 4.5.1 Information Center topic Use Java applets [http://publib.boulder.ibm.com/infocenter/p8docs/v4r5m1/topic/com.ibm.p8.doc/ae_help/workplace/wp_basics_first_jre.htm].
+
+
+Sample code
+
+The sample code that is available for the version 4.5.1 release of the Content Engine .NET API works with both WSE and WCF, whichever is configured in the environment. (If both WSE and WCF are configured, the sample uses WSE by default.) These samples are documented in the following topics: 
+ * FileNet Content Engine .NET API Bulk Loader Sample Code [https://www.ibm.com/support/docview.wss?rs=3278&uid=swg24028790] 
+ * FileNet Content Engine .NET API Demo Sample Code [https://www.ibm.com/support/docview.wss?rs=3278&uid=swg24028791] 
+ * FileNet Content Engine .NET API Folder Browser Sample Code [https://www.ibm.com/support/docview.wss?rs=3278&uid=swg24028792] 
+ * FileNet P8 DITA Publishing Sample Code [https://www.ibm.com/support/docview.wss?rs=3278&uid=swg24028795] 
+
+
+For sample code that uses the Content Engine Web Service in a .NET environment and supports WCF, see FileNet Content Engine Web Service – C-sharp Sample Code. [https://www-304.ibm.com/support/docview.wss?rs=3278&uid=swg24028793]

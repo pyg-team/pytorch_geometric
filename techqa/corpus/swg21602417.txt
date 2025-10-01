@@ -1,0 +1,29 @@
+Title: IBM Does SWIFTNet 7 Adapter meet Swift SHA-256 compliance requirements? - United States
+
+Text:
+SHA-256; Swift TECHNOTE (FAQ)
+
+QUESTION
+ Does the SWIFTNet 7 Adapter meet Swift SHA-256 compliance requirements for FileAct? 
+
+CAUSE
+Swift modifications to FileAct service
+Extract from Swift Support doc 5017271 "Release 7 Compliance"
+1.5 FileAct
+1.5.1 Warnings
+
+As part of the release 7 upgrade, customers must also upgrade their Remote File Handlers (RFH) to release 7. Be aware that even if your SWIFTNet Link (SNL) is already on release 7, some applications connecting to your SNL using RFH may still be on a lower, incompatible version! Follow the instructions further below to ensure your RFH version is at the right level.
+
+Be also aware that SWIFT will change the default setting of the secure FileAct digest algorithm from SHA-1 to SHA-256 on the production network, in 2 steps as follows:
+
+In December 2012, SWIFT plans to change the default central setting for digest computation to SHA-256. At that time all FileAct applications must be capable of receiving file digests that are computed with SHA-256. As a result, any software that cannot handle SHA-256 digests will not be able to use the FileAct service anymore.
+During the second step, SWIFT will request applications that use their own application setting for the digest computation, to change their default setting to SHA-256 when sending FileAct requests.
+
+Customers must use qualified interfaces for SWIFTNet 7 FileAct real-time and FileAct store-and-forward. Unqualified software might not be able to handle the increased size of the Sw:DigestValue for SHA-256 computed value. The interface qualification ensures amongst other tests that SHA-256 digests are correctly handled.
+
+ANSWER
+Our software does not compute any digest.
+For signing/verifying it is all done by the Swift SNL. Same thing for file digest calculation is done by SNL.
+SWIFT 6.3 SNL can be switched to use SHA-256.
+But SWIFT 7 SNL is by default SHA-256.
+So if customer is using SWIFT 7 SNL - they have nothing to worry about.

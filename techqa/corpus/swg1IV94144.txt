@@ -1,0 +1,140 @@
+Title: IBM IV94144: ITNM 4.2 UNABLE TO PERSONALZE PAGE - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When creating custom pages, attempting to personalize the page
+   fails with no error to the screen.  Not able to save the
+   customization.
+   
+   Steps to recreate:
+   1) Using IE, load the page URL I provided in the
+   RecreateDetails.txt
+   file in ECURep
+   2) Click on the page options icon and chose "Pesonalize"
+   3) Click the Network Hop View wiget to make sure it has the
+   focus, and
+   then click the "Widget" button on the toolbar.
+   4) change any of the dropdown options.
+   5) click "Save" or "Cancel".  Neither will do anything.
+   
+   ENV ITNM 4.2 GA
+   FP1 and FP2
+   Only fails when using Internet Explorer browser.  Firefox
+   browser not affected.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Use Firefox browser.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * Potentially all ITNM 4.2 users using Internet Explorer 11 .  *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * Screens work in Firefox but not in Internet Explorer.        *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Switch off Compatibility Mode and/or Enterprise Mode in      *
+   * Internet Explorer 11.                                        *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  In previous versions (3.9 and 4.1.1) ITNM had a (TIP)
+   requirement to run IE in compatibility mode. iTNM 4.2 has a
+   (DASH) requirement to not run IE in this mode, but the
+   documentation was carried over from 3.9/4.1.1 and therefore
+   advised the user erroneously. This has been corrected.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV94144
+   
+   
+ * REPORTED COMPONENT NAME
+   TIV NETWK MGR I
+   
+   
+ * REPORTED COMPONENT ID
+   5724S4500
+   
+   
+ * REPORTED RELEASE
+   420
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-03-10
+   
+   
+ * CLOSED DATE
+   2017-05-30
+   
+   
+ * LAST MODIFIED DATE
+   2017-05-30
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

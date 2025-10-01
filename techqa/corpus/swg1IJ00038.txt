@@ -1,0 +1,167 @@
+Title: IBM IJ00038: UNABLE TO RUN SUBREPORT WITHIN REPORT IN LICENSE APPLICATION - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Unable to run subreport within report in License application
+   
+   ERROR DESCRIPTION:
+   
+   - cpuaudit.rptdesign "Processor Based Audit"
+   - cpucoreaudit.rptdesign "Processor Core Based Audit"
+   - rvuaudit.rptdesign "RVU Based Audit"
+   
+   1. Go To -> Assets -> Licenses application.
+   2. Filter the list of licenses.
+   3. More Actions -> Run Reports.
+   4. Select the report listed above.
+   5. Click Submit to generate the report immediately.
+   6. You will see a list of licenses in the report.
+   7. Click on any Total License Capacity - which will run
+   subreport.
+   8. Received error <--- The issue
+   There was an exception on the server. Check your report
+   parameter values, or contact your system administrator, who can
+   find
+   
+   additional details in the server log.
+   
+   In SystemOut.log, you can see e.g.
+   
+   [ERROR] [MAXIMO] [] ReportRequestFilter, Errorcode:500Error
+   Description:<?xml version="1.0"
+   encoding="UTF-8"?><soapenv:Envelope
+   xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
+   
+   xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-
+   
+   instance"><soapenv:Body><soapenv:Fault><faultcode>BirtRunReportA
+   ctionHandler.__execute()</faultcode><faultstring>Multiple
+   
+   exceptions occurred.</faultstring><detail><ns1:hostname
+   
+   xmlns:ns1="http://xml.apache.org/axis/">SCCDAPPUATTMP</ns1:hostn
+   ame><string>org.eclipse.birt.report.engine.api.EngineException:
+   There are errors evaluating script
+   ...
+   ...
+   ...
+   A BIRT exception occurred. See next exception for more
+   information.
+   Wrapped com.ibm.db2.jcc.am.SqlSyntaxErrorException:
+   [jcc][1091][10404][4.11.69] Invalid data conversion: Parameter
+   instance undefined is invalid for the requested conversion.
+   ERRORCODE=-4461, SQLSTATE=42815
+   (/report/data-sets/script-data-set[@id=&quot;602&quot;]/method[@
+   name=&quot;fetch&quot;]#1).
+   
+   Similar issue :-
+   APAR # IV99272 - pvusubaudit.rptdesign "PVU Sub Capacity Based
+   Audit"
+   APAR # IV99868 - installaudit.rptdesign "Install Based Audit"
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * report users                                                 *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * Cannot run subreport within Processor Core Based Audit       *
+   * report, etc.                                                 *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IJ00038
+   
+   
+ * REPORTED COMPONENT NAME
+   CONTROL DESK/SC
+   
+   
+ * REPORTED COMPONENT ID
+   5725E2400
+   
+   
+ * REPORTED RELEASE
+   760
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-09-14
+   
+   
+ * CLOSED DATE
+   2017-11-07
+   
+   
+ * LAST MODIFIED DATE
+   2017-11-07
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

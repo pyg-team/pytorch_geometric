@@ -1,0 +1,219 @@
+Title: IBM PK44914: WAS SERVER WILL NOT STARTUP WITH COMBINATION OF WEBSPHERE 602.19 AND IBM JDK 142_SR8 - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Error Message: There is a serious problem with the combination
+   of Websphere 602.19 and IBM JDK 142 SR8.  The server running
+   this combination will not start.
+   Stack Trace: The server fails with the following call stack:
+   com.ibm.rmi.corba.PluginRegistry loadPrereqPluginsGroupOne:153
+   Thread-1 ORBRas<OSB>default<CSB> org.omg.CORBA.BAD_PARAM:
+   Invalid property name: com.ibm.CORBA.EnableServerKeepAlive
+   already managed by
+   com.ibm.rmi.corba.BuiltinPropertyManager@259ab678  vmcid: IBM
+   minor code: 222  completed: No org.omg.CORBA.BAD_PARAM:
+   Invalid property name: com.ibm.CORBA.EnableServerKeepAlive
+   already managed by
+   com.ibm.rmi.corba.BuiltinPropertyManager@259ab678  vmcid: IBM
+   minor code: 222  completed: No
+   at com.ibm.rmi.corba.ORB.readProperties(ORB.java:1557)
+   at com.ibm.CORBA.iiop.ORB.readProperties(ORB.java:3303)
+   at com.ibm.CORBA.iiop.DefaultPropertyManager.init
+                              (DefaultPropertyManager.java:120)
+   at com.ibm.ws.orbimpl.WSORBPropertyManager.init
+                                (WSORBPropertyManager.java:102)
+   at com.ibm.rmi.corba.PluginRegistry.
+    loadPrereqPluginsGroupOne (PluginRegistry.java:124)
+   at com.ibm.rmi.corba.ORB.initializePrereqPlugins
+                                          (ORB.java:444)
+   at com.ibm.CORBA.iiop.ORB.initializePrereqPlugins
+                                           (ORB.java:993)
+   at com.ibm.rmi.corba.ORB.orbParameters(ORB.java:1370)
+   at com.ibm.CORBA.iiop.ORB.orbParameters(ORB.java:1284)
+   at com.ibm.rmi.corba.ORB.set_parameters(ORB.java:1299)
+   at com.ibm.CORBA.iiop.ORB.set_parameters(ORB.java:1872)
+   at org.omg.CORBA.ORB.init(ORB.java:368)
+   at com.ibm.ws.orb.GlobalORBFactory.init
+                                 (GlobalORBFactory.java:85)
+   at com.ibm.ejs.oa.EJSORBImpl.initializeORB
+                           (EJSORBImpl.java:174)
+   at com.ibm.ejs.oa.EJSServerORBImpl.<init>
+                      (EJSServerORBImpl.java:124)
+   at com.ibm.ejs.oa.EJSORB.init(EJSORB.java:339)
+   
+   at com.ibm.ws.runtime.component.ORBImpl.start
+                                 (ORBImpl.java:359)
+   at com.ibm.ws.runtime.component.ContainerImpl.
+                     startComponents(ContainerImpl.java:820)
+   at com.ibm.ws.runtime.component.ContainerImpl.start
+                              (ContainerImpl.java:649)
+   at com.ibm.ws.runtime.component.ServerImpl.start
+   
+   (ServerImpl.java:408)
+   at com.ibm.ws.runtime.WsServerImpl.bootServerContainer
+   
+                                  (WsServerImpl.java:187)
+   at com.ibm.ws.runtime.WsServerImpl.start
+                                     (WsServerImpl.java:133)
+   at com.ibm.ws.runtime.WsServerImpl.main
+                                     (WsServerImpl.java:387)
+   at com.ibm.ws.runtime.WsServer.main(WsServer.java:53)
+   
+   at sun.reflect.NativeMethodAccessorImpl.invoke0(
+    Native Method)
+   at sun.reflect.NativeMethodAccessorImpl.invoke
+   
+                           (NativeMethodAccessorImpl.java:85)
+   at sun.reflect.NativeMethodAccessorImpl.invoke
+   
+                            (NativeMethodAccessorImpl.java:58)
+   at sun.reflect.DelegatingMethodAccessorImpl.invoke
+   
+                        (DelegatingMethodAccessorImpl.java:60)
+   at java.lang.reflect.Method.invoke(Method.java:391)
+   
+   at com.ibm.ws.bootstrap.WSLauncher.run(WSLauncher.java:219)
+   
+   at java.lang.Thread.run(Thread.java:570)
+   .
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  There is no non-programatical workaround except to either back
+   out CF 19 or SR8.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  A fix went into the base ORB that added a new property.
+   This property controls the networking behaviour (specifically it
+   sets the socket keepalive value).
+   Another fix, similar in intent, went into the WAS ORB
+   extension.  This adds the same property, but handles it in
+   the WAS ORB extension.
+   The two fixes cannot co-exist, since the property management
+   code in the base ORB requires each property to be handled
+   by no more than one component.
+   On detecting that two components are vying for the same
+   property, the property management code throws a BAD_PARAM
+   exception (to allow this kind of clash to be detected early in
+   development).
+   This error is the one that is seen on server startup (during ORB
+   initialisation, to be precise).
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This defect will be fixed in:
+   1.4.2 SR8
+   1.4.2 SR8 (z/OS 64-bit)
+   1.4.2 SR8 (Linux AMD64)
+   1.4.2 SR8 (Windows AMD64)
+   .
+   The fix involves maintaining a list of "overridable" properties
+   - if there is a ORB extension/WAS property by the same name as
+   the Base ORB property and we are operating inside WAS,we allow
+   for ORB extension to take care of the property, allowing both
+   components to work as before.
+   .
+   To obtain the fix:
+   Install build 20070607 or later
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK44914
+   
+   
+ * REPORTED COMPONENT NAME
+   LIN AMD 64 JAVA
+   
+   
+ * REPORTED COMPONENT ID
+   620400103
+   
+   
+ * REPORTED RELEASE
+   142
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2007-05-11
+   
+   
+ * CLOSED DATE
+   2007-07-18
+   
+   
+ * LAST MODIFIED DATE
+   2007-07-18
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    PK44910
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   LIN AMD 64 JAVA
+   
+   
+ * FIXED COMPONENT ID
+   620400103
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R142 PSN
+   UP

@@ -1,0 +1,232 @@
+Title: IBM How to manually upgrade Apache, Tomcat and PHP layers shipped with IBM Rational Build Forge for Linux and UNIX systems - United States
+
+Text:
+How to upgrade; AIX; Linux; Solaris; UNIX; Apache; PHP; Tomcat TECHNOTE (FAQ)
+
+QUESTION
+ How do you manually upgrade Apache, Tomcat and PHP layers that are shipped with IBM Rational Build Forge for Linux and UNIX systems? 
+
+CAUSE
+ 
+
+For various reasons, it might become necessary to manually upgrade the Apache,Tomcat or PHP layers that are shipped with Rational Build Forge running on Linux or UNIX platform. Since this is not simply a drag-and-drop operation, this technote provides information on how to perform the task.
+
+
+ANSWER
+ 
+
+ Since Apache and PHP do not supply binary packages for their products, it will be necessary to have a C compiler as well as other pre-requisite support libraries installed on system to perform this work. 
+
+An exhaustive list of these packages is beyond the scope of this document. Please check the HELP files for each product for more information if you have any problems encountered during the compilation process. 
+
+ 
+
+The compiler options specified in this tech note assume the use of the 'gcc' compiler, if you use another compiler, you might have to specify alternate options to ensure that you are compiling 32 bit binaries on 64 bit hosts. 
+
+ 
+
+This work should all be done with the Rational Build Forge Console service stopped. 
+
+ 
+
+Upgrading Apache:
+
+
+ 1. Download the latest 2.2.x release of the Apache httpd server UNIX source code from the Apache Web site [http://httpd.apache.org/download.cgi#apache22].
+    
+    Extract the source from the downloaded archive:  * If download file is a *.gz file:
+       
+       $ gzip -dc httpd-2.2.<version>.tar.gz | tar -xvf - 
+       
+     * If download file is a *.bz file:
+       
+       $ bzip2 -dc httpd-2.2.<version>.tar.bz2 | tar -xvf - 
+       
+    
+    
+ 2. Change into the newly created directory and start the configuration process.
+    
+    The following command assumes that Rational Build Forge has been installed in the default location "/opt/IBM/BuildForge".
+    
+    The 'configure' part all needs to be on a single line:
+    
+    $ cd httpd-2.2.<version>
+    $ CFLAGS="-m32 -I/opt/ibm/buildforge/server/apache/include -L/opt/ibm/buildforge/server/apache/lib" ./configure --prefix=/opt/IBM/BuildForge/server/apache --enable-mods-shared=all --enable-ssl --with-ssl=/opt/ibm/buildforge/openssl
+    
+ 3. Check the output, look for errors or other warnings that might prevent the compile from proceeding.
+    
+    Look for notes about missing packages that might need to be installed to allow the build to continue.
+    
+    If all looks good, start the compile:
+    
+    $ make
+    
+ 4. If the compile completed cleanly, it is time to move the "old" install to the side and install the new one:
+    
+    $ mv /opt/IBM/BuildForge/server/apache /opt/IBM/BuildForge/server/apache-old
+    $ make install 
+    
+ 5. Now, move the provided pre-req libraries back into the new apache dir:
+    
+    $ mv /opt/IBM/BuildForge/server/apache-old/lib \
+    /opt/IBM/BuildForge/server/apache
+    $ mv /opt/IBM/BuildForge/server/apache-old/include \
+    opt/IBM/BuildForge/server/apache 
+    
+ 6. Copy the file "server/apache-old/conf/httpd.conf" and full subdirectory "server/apache-old/conf/ssl" into "server/apache/conf/"
+
+
+ Back to top 
+
+
+
+
+Upgrading PHP: 
+
+ 
+
+IMPORTANT: If you are upgrading PHP, you have to install Apache from source. The PHP compilation process requires bits from Apache that make assumptions about the build environment. The supplied Apache is full of hard-coded values for our build environment, which will not match your installed environment, and PHP will not even properly complete its ./configure run if the supplied Apache is used. 
+
+ 
+
+ 1. Download the latest 5.2.x (you can use the latest 5.3.x if you are upgrading a Rational Build Forge 7.1.3.x install, otherwise, this will all be the same) release of the Complete Source Code from the PHP Web site [http://www.php.net/downloads.php].
+    
+    Extract the source from the downloaded archive:
+     * If downloaded file is a *.gz file:
+       
+       $ gzip -dc php-5.2.<version>.tar.gz | tar -xvf -
+       
+     * If download file is a *.bz file:
+       
+       $ bzip2 -dc php-5.2.<version>.tar.bz2 | tar -xvf - 
+       
+       
+    
+    
+ 2. Change into the newly created directory and start the configuration process:
+    
+    As above, the following command assumes that Rational Build Forge has been installed in the default location /opt/IBM/BuildForge. 
+    
+    The "./configure" command needs to all be on a single line
+    
+    $ cd php-5.2.<version>
+    $ CFLAGS='-m32 -I/opt/IBM/BuildForge/server/apache/include' ./configure
+    --prefix=/opt/IBM/BuildForge/server/apache/lib/php
+    --with-apxs2=/opt/IBM/BuildForge/server/apache/bin/apxs
+    --with-libxml-dir=/opt/IBM/BuildForge/apache/lib
+    --with-openssl=shared,/opt/IBM/BuildForge/openssl
+    --with-zlib-dir=/opt/IBM/BuildForge/server/apache/lib
+    --with-mysql=shared,/usr/lib/mysql
+    --with-mysqli=shared,/usr/bin/mysql_config
+    --enable-sockets
+    --enable-shmop
+    --disable-cgi
+    --with-config-file-path=/opt/IBM/BuildForge/apache/conf
+    
+    
+ 3. Check the output, look for errors or other warnings that might prevent the compile from proceeding.
+    
+    Look for notes about missing packages that might need to be installed to allow the build to continue. 
+    
+    If all looks good, start the compile:
+    
+    $ make
+    
+    If the compile completed cleanly, run the install step:
+    
+    $ make install
+    
+    
+ 4. Next the database modules need to be compiled, which can be automated with the PHP "pecl" command.
+    
+    Note: On the test system that was used during the writing of this technote, the "pecl" script needed to be modified, for some reason the path to the 'php' binary was incorrect and needed to be adjusted. 
+    
+    The file can be found at "/opt/IBM/BuildForge/server/apache/php/bin/pecl" and needs to have line 10 modified to read:
+    
+    PHP="/opt/IBM/BuildForge/server/apache/php/bin/php"
+    
+    
+ 5. Change into the directory:
+    
+    [<code>]$ cd /opt/IBM/BuildForge/server/apache/php/bin
+    
+    
+ 6. The modules that will need to be installed differ depending on the database being used:  * IBM DB2: ibm_db2 
+     * MySQL: mysql and mysqli 
+     * Oracle: oci8
+       
+       To install the module(s):
+       
+       $ ./pecl install <modulename>
+       
+       The "pecl" process will download the module source codes and prompt for locations of the support libraries, etc...
+       
+       
+    
+    
+ 7. Copy the file "server/apache-old/conf/php.ini" to "server/apache/conf/php.ini"
+
+
+ Back to top 
+
+
+
+
+Upgrading Tomcat: 
+
+ 
+
+ 1. Download the latest 5.5.x version of Apache Tomcat from the Apache Web site [http://tomcat.apache.org/download-70.cgi].
+    
+    Note: I is easiest to work with the Binary Core distribution packaged in the compressed file
+    
+    
+ 2. Rename the existing Tomcat directory to "tomcat-old":
+    
+    $ mv /opt/IBM/BuildForge/server/tomcat /opt/IBM/BuildForge/server/tomcat-old
+    
+    
+ 3. Extract the zip file and rename the resulting top level directory to be simply "tomcat" 
+    
+    
+ 4. Move the new "tomcat" directory to /opt/IBM/BuildForge/server/tomcat
+    
+    
+ 5. Copy "rbf-servcies.war" and "BuildForegeHelp.war" files from the "tomcat-old/webapps" directory to the new"tomcat/webapps" directory
+    
+    
+ 6. Copy the "icu4j-3_6.jar" and JDBC driver for your database (seen below) from the"tomcat-old/common/lib" directory to the new "tomcat/common/lib" directory  * Oracle: ojdbc14.jar 
+     * MySQL: mysql-connector-java-5.<version>.jar, 
+     * IBM DB2: db2jcc.jar and db2jcc_license_cu.jar 
+       
+       
+    
+    
+ 7. Copy the "server.xml" file from the "tomcat-old/conf/server.xml" to the new "tomcat/conf" directory and overwrite the existing file.
+
+
+ Back to top 
+
+
+
+
+Final Steps: 
+
+ 
+
+ 1. Now that all of the individual components have been upgraded, it is time to start Build Forge
+    
+    Note: Allow the rbf-services.war file to be deployed by Tomcat, then Build Forge will need to be stopped,and the execute bits will need to be re-set on a few files:
+    
+    $ /opt/IBM/BuildForge/rc/buildforge start
+    
+    
+ 2. Wait approximately a minute, then:
+    
+    $ /opt/IBM/BuildForge/rc/buildforge stop
+    $ chmod 755 /opt/IBM/BuildForge/server/tomcat/webapps/rbf-services/bin/*
+    
+    
+ 3. Now Build Forge can be re-started and regular use resumed:
+    
+    $ /opt/IBM/BuildForge/rc/buildforge start

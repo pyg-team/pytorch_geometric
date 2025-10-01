@@ -1,0 +1,33 @@
+Title: IBM Restoring missing xml files from backup in DASH - United States
+
+Text:
+DASHL2; DASHL2FAQ; restore; backup; xml; WEB-INF TECHNOTE (FAQ)
+
+QUESTION
+ How can I restore missing or corrupted xml files in the WEB-INF directory, (such as the navigation.xml, portletEntities.xml, etc.) from backup in Dashboard Application Service Hub (DASH) ? 
+
+CAUSE
+Some of these files could have gotten corrupted. 
+
+ANSWER
+DASH makes a backup copy of the WEB-INF configuration/custom xml files in the backups directory. These files are very useful if any of these files get corrupted. 
+
+Please follow below steps to restore files from the backups directory: 
+
+1. Stop the DASH server 
+
+2. Make a backup copy of the current xml files in the following directory: 
+
+<JazzSM_Home>/profile/config/cells/JazzSMNode01Cell/applications/isc.ear/deployments/isc/isclite.war/WEB-INF 
+
+3. Go to <JazzSM_Home>/profile/backups and find a backup file from a previous day/time that contains the missing xml files 
+
+Example: isc_stores_backup_1427324004938.zip 
+
+4. Unpack the zip file to a temporary location. 
+
+5. Restore these files in the WEB-INF directory from the backup. 
+
+6. Start DASH 
+
+7. Test if you can access the DASH Portal.

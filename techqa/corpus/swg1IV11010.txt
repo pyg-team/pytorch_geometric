@@ -1,0 +1,171 @@
+Title: IBM IV11010: SSO INFORMATION SHOULD BE PUT IN APPLET.HTML/TEP.JNLP - United States
+
+Text:
+  A FIX IS AVAILABLE
+IBM Tivoli Monitoring 6.2.2 Fix Pack 9 (6.2.2-TIV-ITM-FP0009) [http://www-01.ibm.com/support/docview.wss?uid=swg24032067]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Abstract: Single Signon Option (SSO) information is not included
+   in tep.jnlp file so SSO does not work for WebStart. This may
+   also be true of the TEP Browser.
+   .
+   Environment:
+     Unix and Windows.
+     TEPS configured for Single Signon Option and using a Domain ID
+     to logon.
+   .
+   Problem Description:
+     If the following line is not part of tep.jnlp file a default
+     domain of ibm.com is returned. If the line is present the
+     value (domain) is returned.
+     <property name="cnp.cookie.domain" value="domain_name"/>
+     This line may also have to be added to applet.html for SSO to
+     work correctly for the TEP Browser.
+   
+   Recreate Instructions:
+     Configure TEPS to use single signon option and try to use a
+     domain ID to signon TEPS.
+     Try both WebStart, TEP Browser and TEP Desktop. All should
+     work.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Local Fix:
+     Add the above  <property name...> line (be sure to change
+     domain_name to the correct domain value) to the applet.html
+     file and the tep.jnlpt file so configuration of TEPS will
+     render the value in the tep.jnlp file.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  LDAP SSO information is missing from tep.jnlp.
+   
+   
+   When the portal server is configured to use Lightweight
+   Directory Access Protocol (LDAP) with Single Sign-On (SSO),
+   login to the portal client via Java Web Start is not successful.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The code was changed to include the property value required for
+   Java Web Start logins to work properly.
+   
+   The fix for this APAR is contained in the following maintenance
+   packages:
+     | fix pack | 6.2.2-TIV-ITM-FP0009
+     | fix pack | 6.2.3-TIV-ITM-FP0002
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  Edit CANDLEHOME/<platform>/cw/tep.jnlp and add the
+   following property value:
+   
+      <property name="cnp.cookie.domain" value="domain_name"/>
+   
+   For "domain_name", specify the LDAP SSO domain that was used
+   for the TEPS configuration.  The value should be the same as
+   that for KFW_LDAP_SSO_DOMAIN in CANDLEHOME/config/cq.config.
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV11010
+   
+   
+ * REPORTED COMPONENT NAME
+   OMEG DIST INSTA
+   
+   
+ * REPORTED COMPONENT ID
+   5608A41CI
+   
+   
+ * REPORTED RELEASE
+   622
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-11-18
+   
+   
+ * CLOSED DATE
+   2012-05-01
+   
+   
+ * LAST MODIFIED DATE
+   2012-06-28
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   OMEG DIST INSTA
+   
+   
+ * FIXED COMPONENT ID
+   5608A41CI
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R622 PSY
+   UP

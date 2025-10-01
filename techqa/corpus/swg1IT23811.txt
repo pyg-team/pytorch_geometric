@@ -1,0 +1,255 @@
+Title: IBM IT23811: MQRC '2058' using Oracle JVM with MQ classes for Java to connectto CCSID 37 QMgr - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  An MQ v8.0 classes for Java application running in an Oracle JVM
+   on Solaris (SPARC) attempts to establish a connection to a queue
+   manager running on z/OS, which is configured to use CCSID 37.
+   
+   When the application creates an instance of the class:
+   
+     com.ibm.mq.MQQueueManager
+   
+   which creates the connection to the queue manager, an exception
+   is thrown and the connection attempt fails.  The reason code
+   provide is MQRC 2058 'MQRC_Q_MGR_NAME_ERROR'.  The exception
+   stack generated is of the form:
+   
+   
+   com.ibm.mq.MQException: MQJE001: Completion Code '2', Reason
+   '2058'.
+     at com.ibm.mq.MQManagedConnectionJ11.<init>
+     at
+   com.ibm.mq.MQClientManagedConnectionFactoryJ11._createManagedCon
+   nection
+     at
+   com.ibm.mq.MQClientManagedConnectionFactoryJ11.createManagedConn
+   ection
+     at com.ibm.mq.StoredManagedConnection.<init>
+     at com.ibm.mq.MQSimpleConnectionManager.allocateConnection
+     at com.ibm.mq.MQQueueManagerFactory.obtainBaseMQQueueManager
+     at com.ibm.mq.MQQueueManagerFactory.procure
+     at com.ibm.mq.MQQueueManagerFactory.constructQueueManager
+     at com.ibm.mq.MQQueueManagerFactory.createQueueManager
+     at com.ibm.mq.MQQueueManager.<init>
+     at MyApplication.myMethod
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   Users of MQ classes for Java and MQ classes for JMS
+   applications, which are running within Java Runtime Environments
+   that do not offer native EBCDIC Charset support for character
+   encodings which map to the IBM Coded Character Set Identifier
+   (CCSID) values:
+   
+     CCSID 37    "COM EUROPE EBCDIC"
+     CCSID 500   "INTL EBCDIC"
+     CCSID 930   "JAPAN MIX EBCDIC"
+   
+   who are connecting to a z/OS queue manager that is configured to
+   be running in one of the above CCSIDs.
+   
+   
+   Platforms affected:
+   MultiPlatform
+   
+   ****************************************************************
+   PROBLEM DESCRIPTION:
+   At runtime when the MQ classes for Java/JMS are connecting to a
+   queue manager, they determine which CCSID the queue manager is
+   running in and attempt to use that CCSID for protocol
+   communication with the queue manager.
+   
+   In order to encode or decode data in the communication flows,
+   the MQ classes for Java/JMS need to correlate the CCSID with a
+   Java Charset, and then verify that the JVM which is being used
+   supports that Charset.
+   
+   For example, for CCSID 37, the MQ classes for Java have a list
+   of possible Charset names which the JVM's Charset class:
+   
+       java.nio.charset.Charset
+   
+   provides character encoding and decoding capability for.  With
+   the MQ v8.0.0.8 level of code, this is the Charset list:
+   
+     "37"
+     "IBM037"
+     "cp037"
+     "cpibm37"
+     "cs-ebcdic-cp-ca"
+     "cs-ebcdic-cp-nl"
+     "cs-ebcdic-cp-us"
+     "cs-ebcdic-cp-wt"
+     "csIBM037"
+     "csibm037"
+     "ebcdic-cp-ca"
+     "ebcdic-cp-nl"
+     "ebcdic-cp-us"
+     "ebcdic-cp-wt"
+     "ibm-037"
+     "ibm-37"
+     "ibm037"
+     "IBM-037"
+   
+   The MQ classes for Java/JMS queries the JVM if it offers support
+   for these Charset values, each in turn until an accepted name is
+   found.  If none are found, then the MQ classes for Java/JMS
+   checks to see if the CCSID is supported by a small number of
+   internal character conversion tables which are contained within
+   the classes.
+   
+   The EBCDIC tables which are supported are:
+   
+     CCSID 37    "COM EUROPE EBCDIC"
+     CCSID 500   "INTL EBCDIC"
+     CCSID 930   "JAPAN MIX EBCDIC"
+   
+   If the queue manager CCSID is one of these values, the MQ
+   classes for Java/JMS configures themselves to use this fallback
+   mechanism.
+   
+   However, a code defect meant that the space character (which is
+   used to pad out character strings in the protocol flows, for
+   example in padding out the queue manager name field) was set to
+   the ASCII space byte sequence, which is:
+   
+     0x20
+   
+   instead of the EBCDIC encoding for a space character of:
+   
+     0x40
+   
+   The consequence of this was that when the application attempts
+   to connect to the queue manager, the queue manager rejects the
+   request with the reason code:
+   
+     MQRC 2058  'MQRC_Q_MGR_NAME_ERROR'
+   
+   and the connection attempt fails.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The MQ classes for Java/JMS has been updated such that the
+   appropriate space character encoding is now used when using one
+   of the EBCDIC character encodings.
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+   Version    Maintenance Level
+   v8.0       8.0.0.9
+   v9.0 LTS   9.0.0.4
+   
+   The latest available maintenance can be obtained from
+   'WebSphere MQ Recommended Fixes'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037]
+   
+   If the maintenance level is not yet available information on
+   its planned availability can be found in 'WebSphere MQ
+   Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT23811
+   
+   
+ * REPORTED COMPONENT NAME
+   IBM MQ BASE MP
+   
+   
+ * REPORTED COMPONENT ID
+   5724H7251
+   
+   
+ * REPORTED RELEASE
+   800
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2018-01-23
+   
+   
+ * CLOSED DATE
+   2018-02-13
+   
+   
+ * LAST MODIFIED DATE
+   2018-02-13
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    IT23796
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   IBM MQ BASE MP
+   
+   
+ * FIXED COMPONENT ID
+   5724H7251
+   
+   
+
+APPLICABLE COMPONENT LEVELS

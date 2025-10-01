@@ -1,0 +1,105 @@
+Title: IBM A CWLLG0203E message is seen, instances for IBM Business Process Manager (BPM) are not created, and the Undercover Agent (UCA) fails - United States
+
+Text:
+UCA; CWLLG0203E:; CWLLG0181E:; java.lang.NullPointerException; com.lombardisoftware.core.TeamWorksException: java.lang.NullPointerException TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ After you execute the BPMDeleteSnapshot command, your instances are not received by your system environment and your UCA fails. You apply the interim fixes for APARs JR46969 and JR47249 and it does not resolve the issue. You also attempted to reinstall the deleted snapshot, but it did not resolve the issue. 
+
+SYMPTOM
+You see the following exceptions and messages in the log files: 
+
+wle_ucaexcept E CWLLG0203E: Undercover Agent job failed. Task XXXX job details are: class=com.lombardisoftware.server.scheduler.tasks.UcaExecutorTask parameters=[4.83c9393d-9d10-4cf6-8cf5-a7666b84f079;26;Update BPM Users Scheduler<reason type="ScheduledUCAMessage"> <shortName>UUS</shortName>
+</reason>] Error: java.lang.NullPointerException
+
+
+wle_security I CWLLG1088I: Initializing session is done for user <user name> 
+
+LTPAServerObj W SECJ0371W: Validation of the LTPA token failed because the token expired with the following info: Token expiration Date: Thu Jul 31 07:09:00 EDT 2014, current Date: Thu Jul 31 07:10:15 EDT 2014.
+
+wle I CWLLG0597I: Trying to acquire synchronous queue SYNC_QUEUE_3.
+
+
+wle_ucaexcept E CWLLG0181E: An exception occurred during execution of task 310,046. Error: java.lang.NullPointerException
+com.lombardisoftware.client.delegate.BusinessDelegateException: java.lang.NullPointerException
+at com.lombardisoftware.client.delegate.BusinessDelegateException.asBusinessDelegateException(BusinessDelegateException.java:41)
+at com.lombardisoftware.client.delegate.common.WebsphereDelegateHelper.doAsCurrentSubjectContextSensitive(WebsphereDelegateHelper.java:177)
+at com.lombardisoftware.client.delegate.EventMgrDelegateDefault.executeUCA(EventMgrDelegateDefault.java:142)
+at com.lombardisoftware.server.scheduler.tasks.UcaExecutorTask.execute(UcaExecutorTask.java:39)
+at com.lombardisoftware.server.scheduler.Engine.execute(Engine.java:787)
+at com.lombardisoftware.server.scheduler.Engine.access$300(Engine.java:78)
+at com.lombardisoftware.server.scheduler.Engine$1.run(Engine.java:500)
+at com.lombardisoftware.client.delegate.common.WebsphereDelegateHelper$2$1.run(WebsphereDelegateHelper.java:78)
+at java.security.AccessController.doPrivileged(AccessController.java:314)
+at javax.security.auth.Subject.doAs(Subject.java:573)
+at com.ibm.websphere.security.auth.WSSubject.doAs(WSSubject.java:195)
+at com.ibm.websphere.security.auth.WSSubject.doAs(WSSubject.java:152)
+at com.lombardisoftware.client.delegate.common.WebsphereDelegateHelper.doAs(WebsphereDelegateHelper.java:150)
+at com.lombardisoftware.client.delegate.common.WebsphereDelegateHelper$2.run(WebsphereDelegateHelper.java:74)
+at com.lombardisoftware.server.scheduler.Utils$EJBThreadRootRunnable.executeRunnable(Utils.java:113)
+at com.lombardisoftware.server.scheduler.ThreadPool$Worker.run(ThreadPool.java:194)
+at java.lang.Thread.run(Thread.java:772)
+Caused by: com.lombardisoftware.core.TeamWorksException: java.lang.NullPointerException
+at com.lombardisoftware.core.TeamWorksException.asTeamWorksException(TeamWorksException.java:136)
+at com.lombardisoftware.server.ejb.EjbServerUtils.handleEjbCall(EjbServerUtils.java:96)
+at com.lombardisoftware.server.ejb.eventmgr.EventMgrBean.handleEjbCall(EventMgrBean.java:50)
+at com.lombardisoftware.server.ejb.eventmgr.EventMgrBean.executeUCA(EventMgrBean.java:70)
+at com.lombardisoftware.server.ejb.eventmgr.EJSRemoteStatelessEventMgr_12e670a8.executeUCA(Unknown Source)
+at com.lombardisoftware.server.ejb.eventmgr._EventMgrInterface_Stub.executeUCA(_EventMgrInterface_Stub.java:326)
+at com.lombardisoftware.client.delegate.EventMgrDelegateDefault$2.run(EventMgrDelegateDefault.java:145)
+at java.security.AccessController.doPrivileged(AccessController.java:280)
+at com.lombardisoftware.client.delegate.common.WebsphereDelegateHelper.doAsCurrentSubjectContextSensitive(WebsphereDelegateHelper.java:175)
+... 15 more
+
+Caused by: java.lang.NullPointerException
+at com.lombardisoftware.client.persistence.SnapshotFactory.findVCInProject(SnapshotFactory.java:356)
+at com.lombardisoftware.bpd.runtime.engine.message.DefaultMessageRoutingCache.loadCacheData(DefaultMessageRoutingCache.java:316)
+at com.lombardisoftware.bpd.runtime.engine.message.DefaultMessageRoutingCache.loadCacheData(DefaultMessageRoutingCache.java:54)
+at com.lombardisoftware.core.cache.GenericCache.getCacheData(GenericCache.java:184)
+at com.lombardisoftware.bpd.runtime.engine.message.DefaultMessageRoutingCache.loadProcessAppInfo(DefaultMessageRoutingCache.java:143)
+at com.lombardisoftware.bpd.runtime.engine.message.DefaultMessageRoutingCache.getProcessAppInfo(DefaultMessageRoutingCache.java:113)
+at com.lombardisoftware.bpd.runtime.engine.message.DefaultMessageRoutingCache.visitScheduled(DefaultMessageRoutingCache.java:102)
+at com.lombardisoftware.server.ejb.eventmgr.EventMgrCore.executeUCA(EventMgrCore.java:148)
+at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:60)
+at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:37)
+at java.lang.reflect.Method.invoke(Method.java:611)
+at org.springframework.aop.support.AopUtils.invokeJoinpointUsingReflection(AopUtils.java:310)
+at org.springframework.aop.framework.ReflectiveMethodInvocation.invokeJoinpoint(ReflectiveMethodInvocation.java:182)
+at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:149)
+at com.lombardisoftware.utility.spring.TransactionInterceptor$1.call(TransactionInterceptor.java:52)
+at com.lombardisoftware.utility.spring.ProgrammaticTransactionSupport$1.doInTransaction(ProgrammaticTransactionSupport.java:400)
+at org.springframework.transaction.jta.WebSphereUowTransactionManager$UOWActionAdapter.run(WebSphereUowTransactionManager.java:306)
+at com.ibm.ws.uow.EmbeddableUOWManagerImpl.runUnderNewUOW(EmbeddableUOWManagerImpl.java:786)
+at com.ibm.ws.uow.EmbeddableUOWManagerImpl.runUnderUOW(EmbeddableUOWManagerImpl.java:365)
+at org.springframework.transaction.jta.WebSphereUowTransactionManager.execute(WebSphereUowTransactionManager.java:252)
+at com.lombardisoftware.utility.spring.ProgrammaticTransactionSupport.executeInNewTransaction(ProgrammaticTransactionSupport.java:395)
+at com.lombardisoftware.utility.spring.ProgrammaticTransactionSupport.execute(ProgrammaticTransactionSupport.java:264)
+at com.lombardisoftware.utility.spring.TransactionInterceptor.invoke(TransactionInterceptor.java:50)
+at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:171)
+at com.lombardisoftware.utility.spring.CoreEntryInterceptor.invoke(CoreEntryInterceptor.java:44)
+at com.lombardisoftware.utility.spring.PSCoreEntryInterceptor.invoke(PSCoreEntryInterceptor.java:14)
+at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:171)
+at org.springframework.aop.framework.JdkDynamicAopProxy.invoke(JdkDynamicAopProxy.java:204)
+at $Proxy48.executeUCA(Unknown Source)
+at com.lombardisoftware.server.ejb.eventmgr.EventMgrBean$2.execute(EventMgrBean.java:72)
+at com.lombardisoftware.server.ejb.eventmgr.EventMgrBean$2.execute(EventMgrBean.java:70)
+at com.lombardisoftware.server.ejb.EjbServerUtils.handleEjbCall(EjbServerUtils.java:90)
+
+
+CAUSE
+The issue occurs if you install the interim fixes, but do not run the profile upgrade scripts.
+
+
+RESOLVING THE PROBLEM
+To quickly recover, complete one of the following solutions: 
+
+ * Restore your latest database backup. 
+   
+   
+ * Rebuild the environment and re-deploy your applications in your test environment.
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ BPM

@@ -1,0 +1,187 @@
+Title: IBM PM93783: VIEW REFERENCES FAILS TO RETURN ANY RESULTS IF USER DOES NOT HAV E ACCESS TO ONE OR MORE OF THE REFERENCES - United States
+
+Text:
+  A FIX IS AVAILABLE
+Fixes integrated in WebSphere Portal 8.0.0.1 Combined Cumulative Fixes [http://www-01.ibm.com/support/docview.wss?uid=swg24034497]
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  If the WCM 'View References' command is used and the current
+   user does not have access to one or more of the references then
+   no references will be returned and the following exception will
+   be seen in the logs
+   
+   com.ibm.icm.jcr.access.AccessDeniedException: ACC3504E: The
+   requested operation violates one or more access constraints.
+   at com.ibm.icm.jcr.NodeImpl.checkPermissions(NodeImpl
+   .java:5297)
+   at com.ibm.icm.jcr.PropertyImpl.checkPermissions(PropertyImpl
+   .java:2162)
+   at com.ibm.icm.jcr.NodeImpl.getProperty(NodeImpl.java:1742)
+   at com.ibm.icm.jcr.NodeImpl.getChildProperties(NodeImpl
+   .java:1561)
+   at com.ibm.icm.jcr.NodeImpl.getChildProperties(NodeImpl
+   .java:1515)
+   at com.ibm.icm.jcr.NodeImpl.getChildProperties(NodeImpl
+   .java:1500)
+   at com.ibm.icm.jcr.NodeImpl.getProperties(NodeImpl.java:1492)
+   at com.ibm.icm.jcr.NodeImpl.getReferences(NodeImpl.java:5159)
+   at com.ibm.workplace.wcm.services.reference.References
+   .populateReferences(References.java:241)
+   at com.ibm.workplace.wcm.services.reference.References
+   .<init>(References.java:150)
+   at com.ibm.workplace.wcm.services.reference
+   .ReferentialIntegrityServiceImpl
+   .getReferences(ReferentialIntegrityServiceImpl.java:115)
+   at com.ibm.workplace.wcm.app.ui.portlet.model
+   .ReferencesFormModel.calculateLinksToThisItem(ReferencesFormMode
+   
+   l.java:282)
+   at com.ibm.workplace.wcm.app.ui.portlet.model
+   .ReferencesFormModel.initFormModel(ReferencesFormModel
+   .java:195)
+   at com.ibm.workplace.wcm.app.ui.portlet.model
+   .ReferencesFormModel.setup(ReferencesFormModel.java:153)
+   Opened for release 8001
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  If the WCM 'View References' command is used and the current
+   user does not have access to one or more of the references then
+   no references will be returned and the following exception will
+   be seen in the logs
+   
+   com.ibm.icm.jcr.access.AccessDeniedException: ACC3504E: The
+   requested operation violates one or more access constraints.
+   at com.ibm.icm.jcr.NodeImpl.checkPermissions(NodeImpl
+   .java:5297)
+   at com.ibm.icm.jcr.PropertyImpl.checkPermissions(PropertyImpl
+   .java:2162)
+   at com.ibm.icm.jcr.NodeImpl.getProperty(NodeImpl.java:1742)
+   at com.ibm.icm.jcr.NodeImpl.getChildProperties(NodeImpl
+   .java:1561)
+   at com.ibm.icm.jcr.NodeImpl.getChildProperties(NodeImpl
+   .java:1515)
+   at com.ibm.icm.jcr.NodeImpl.getChildProperties(NodeImpl
+   .java:1500)
+   at com.ibm.icm.jcr.NodeImpl.getProperties(NodeImpl.java:1492)
+   at com.ibm.icm.jcr.NodeImpl.getReferences(NodeImpl.java:5159)
+   at com.ibm.workplace.wcm.services.reference.References
+   .populateReferences(References.java:241)
+   at com.ibm.workplace.wcm.services.reference.References
+   .&lt;init&gt;(References.java:150)
+   at com.ibm.workplace.wcm.services.reference
+   .ReferentialIntegrityServiceImpl
+   .getReferences(ReferentialIntegrityServiceImpl.java:115)
+   at com.ibm.workplace.wcm.app.ui.portlet.model
+   .ReferencesFormModel.calculateLinksToThisItem(ReferencesFormMode
+   
+   l.java:282)
+   at com.ibm.workplace.wcm.app.ui.portlet.model
+   .ReferencesFormModel.initFormModel(ReferencesFormModel
+   .java:195)
+   at com.ibm.workplace.wcm.app.ui.portlet.model
+   .ReferencesFormModel.setup(ReferencesFormModel.java:153)
+   Opened for release 8001
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Analysis: The code to fetch the reference list from JCR was not
+   correctly running as the system user
+   
+   Solution: Modified code to execute as 'system'
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM93783
+   
+   
+ * REPORTED COMPONENT NAME
+   LOTUS WEB CONT
+   
+   
+ * REPORTED COMPONENT ID
+   5724I2901
+   
+   
+ * REPORTED RELEASE
+   800
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-07-24
+   
+   
+ * CLOSED DATE
+   2013-10-09
+   
+   
+ * LAST MODIFIED DATE
+   2013-10-09
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   LOTUS WEB CONT
+   
+   
+ * FIXED COMPONENT ID
+   5724I2901
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R800 PSY
+   UP

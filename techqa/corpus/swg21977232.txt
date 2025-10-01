@@ -1,0 +1,102 @@
+Title: IBM Establishing an SSL connection from ISBI 5.2.5 to WMQ fails with MQRC 2538 - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Attempts to connect from IBM Sterling B2B Integrator (ISBI) to WebSphere MQ (WMQ) are failing because WMQ uses SSL 3.0 protocol for CipherSpec TRIPLE_DES_SHA_US that is configured on the MQ connection channel.
+But SSL 3.0 is disabled for security reasons in ISBI 5.2.5. 
+
+SYMPTOM
+SSL connections with WMQ Adapter or WMQ Suite Services are failing and in the log files the following identifying errors are reported: 
+
+ * com.ibm.mq.MQException: MQJE001: Completion Code '2', Reason '2538' 
+ * com.ibm.mq.jmqi.JmqiException[CC=2;RC=2538;AMQ9204: Connection to host '' rejected...] 
+ * java.lang.IllegalArgumentException[Only SSLv3 was enabled while com.ibm.jsse2.disableSSLv3 is set to true]
+
+
+The full stack trace reported in system.log (for WMQ Adapter) or WebSphereMQSuite.log (for WMQ Suite Services) is: [] ERROR <WMQConxPool-WMQ-> Exception in MQCONN: reasonCode=2538
+[] ERROR [] MQJE001: Completion Code '2', Reason '2538'.
+[] ERRORDTL []com.ibm.mq.MQException: MQJE001: Completion Code '2', Reason '2538'.
+at com.ibm.mq.MQManagedConnectionJ11.<init>(MQManagedConnectionJ11.java:247)
+at com.ibm.mq.MQClientManagedConnectionFactoryJ11._createManagedConnection(MQClientManagedConnectionFactoryJ11.java:588)
+at com.ibm.mq.MQClientManagedConnectionFactoryJ11.createManagedConnection(MQClientManagedConnectionFactoryJ11.java:630)
+at com.ibm.mq.StoredManagedConnection.<init>(StoredManagedConnection.java:107)
+at com.ibm.mq.MQSimpleConnectionManager.allocateConnection(MQSimpleConnectionManager.java:205)
+at com.ibm.mq.MQQueueManagerFactory.obtainBaseMQQueueManager(MQQueueManagerFactory.java:911)
+at com.ibm.mq.MQQueueManagerFactory.procure(MQQueueManagerFactory.java:799)
+at com.ibm.mq.MQQueueManagerFactory.constructQueueManager(MQQueueManagerFactory.java:750)
+at com.ibm.mq.MQQueueManagerFactory.createQueueManager(MQQueueManagerFactory.java:157)
+at com.ibm.mq.MQQueueManager.<init>(MQQueueManager.java:681)
+at com.sterlingcommerce.woodstock.services.websphereMQ.WMQConxPool.openConnection(WMQConxPool.java:191)
+at com.sterlingcommerce.woodstock.services.websphereMQ.WMQConxPool.newConnection(WMQConxPool.java:155)
+at com.sterlingcommerce.woodstock.services.websphereMQ.WMQConxPool.getConnection(WMQConxPool.java:100)
+at com.sterlingcommerce.woodstock.services.websphereMQ.WMQConxPool.accessQueue(WMQConxPool.java:67)
+at com.sterlingcommerce.woodstock.services.websphereMQ.WebSphereMQServerImpl.doRcv(WebSphereMQServerImpl.java:315)
+at com.sterlingcommerce.woodstock.services.websphereMQ.WMQAsyncThread.run(WMQAsyncThread.java:49)
+Caused by: com.ibm.mq.jmqi.JmqiException: CC=2;RC=2538;AMQ9204: Connection to host '(1414)' rejected. [1=com.ibm.mq.jmqi.JmqiException[CC=2;RC=2538;AMQ9204: Connection to host '/:1414' rejected. [1=java.lang.IllegalArgumentException[Only SSLv3 was enabled while com.ibm.jsse2.disableSSLv3 is set to true],3=/:1414,4=TCP,5=Socket.connect]],3=(1414),5=RemoteTCPConnection.connnectUsingLocalAddress]
+at com.ibm.mq.jmqi.remote.api.RemoteFAP.jmqiConnect(RemoteFAP.java:2062)
+at com.ibm.mq.jmqi.remote.api.RemoteFAP.jmqiConnect(RemoteFAP.java:1226)
+at com.ibm.mq.ese.jmqi.InterceptedJmqiImpl.jmqiConnect(InterceptedJmqiImpl.java:311)
+at com.ibm.mq.ese.jmqi.ESEJMQI.jmqiConnect(ESEJMQI.java:337)
+at com.ibm.mq.MQSESSION.MQCONNX_j(MQSESSION.java:924)
+at com.ibm.mq.MQManagedConnectionJ11.<init>(MQManagedConnectionJ11.java:236)
+... 15 more
+Caused by: com.ibm.mq.jmqi.JmqiException: CC=2;RC=2538;AMQ9204: Connection to host '/:1414' rejected. [1=java.lang.IllegalArgumentException[Only SSLv3 was enabled while com.ibm.jsse2.disableSSLv3 is set to true],3=/:1414,4=TCP,5=Socket.connect]
+at com.ibm.mq.jmqi.remote.impl.RemoteTCPConnection.connnectUsingLocalAddress(RemoteTCPConnection.java:1024)
+at com.ibm.mq.jmqi.remote.impl.RemoteTCPConnection.protocolConnect(RemoteTCPConnection.java:1298)
+at com.ibm.mq.jmqi.remote.impl.RemoteConnection.connect(RemoteConnection.java:724)
+at com.ibm.mq.jmqi.remote.impl.RemoteConnectionSpecification.getSessionFromNewConnection(RemoteConnectionSpecification.java:400)
+at com.ibm.mq.jmqi.remote.impl.RemoteConnectionSpecification.getSession(RemoteConnectionSpecification.java:299)
+at com.ibm.mq.jmqi.remote.impl.RemoteConnectionPool.getSession(RemoteConnectionPool.java:164)
+at com.ibm.mq.jmqi.remote.api.RemoteFAP.jmqiConnect(RemoteFAP.java:1599)
+... 20 more
+Caused by: java.lang.IllegalArgumentException: Only SSLv3 was enabled while com.ibm.jsse2.disableSSLv3 is set to true
+at com.ibm.jsse2.pb.a(pb.java:17)
+at com.ibm.jsse2.pb.<init>(pb.java:7)
+at com.ibm.jsse2.qc.setEnabledProtocols(qc.java:689)
+at com.ibm.mq.jmqi.remote.impl.RemoteTCPConnection.makeSocketSecure(RemoteTCPConnection.java:2087)
+at com.ibm.mq.jmqi.remote.impl.RemoteTCPConnection.connnectUsingLocalAddress(RemoteTCPConnection.java:880)
+... 26 more
+
+
+CAUSE
+With ISBI 5.2.5 the Security Bulletin: Vulnerability in SSLv3 affects IBM Sterling B2B Integrator [http://www.ibm.com/support/docview.wss?uid=swg21688904] has been fixed.
+Thus with ISBI 5.2.5disableSSLv3=true is set per default in <isbi>/properties/security.properties.
+But for a connection to an MQ channel with CipherSpec TRIPLE_DES_SHA_US the old protocol TLS 1.0 is used.
+IBM Knowledge Center for WMQ in chapter SSL CipherSpecs and CipherSuites in WebSphere MQ classes for Java [http://www.ibm.com/support/knowledgecenter/SSFKSJ_7.5.0/com.ibm.mq.dev.doc/q031290_.htm] states: 
+
+ * the WMQ CipherSpec TRIPLE_DES_SHA_US has the equivalent JSSE CipherSuite SSL_RSA_WITH_3DES_EDE_CBC_SHA 
+ * and the MQ CipherSpec TLS_RSA_WITH_3DES_EDE_CBC_SHA has the same equivalent JSSE CipherSuite SSL_RSA_WITH_3DES_EDE_CBC_SHA
+
+And in chapter Specifying CipherSpecs [http://www.ibm.com/support/knowledgecenter/SSFKSJ_7.5.0/com.ibm.mq.sec.doc/q014260_copy.htm] it states  * for the CipherSpec TRIPLE_DES_SHA_US, MQ uses the protocol SSL 3.0 (which has a known security vulnerability and therefore is disabled in ISBI) 
+ * for CipherSpec TLS_RSA_WITH_3DES_EDE_CBC_SHA, MQ uses the protocol TLS 1.0 (which is more secure and can be used with ISBI 5.2.5)
+
+ENVIRONMENT
+- ISBI 5.2.5 with CipherSuite SSL_RSA_WITH_3DES_EDE_CBC_SHA for WMQ Adapter or WMQ Suite Service 
+
+- MQ Channel with MQ CipherSpec TRIPLE_DES_SHA_US
+
+
+DIAGNOSING THE PROBLEM
+SSL connection from ISBI to MQ is failing and system.log (for WMQ Adapter) or WebSphereMQSuite.log (for WMQ Suite Services) is reporting the error pattern outlined in the Symptom section above.
+
+
+
+RESOLVING THE PROBLEM
+The Security Bulletin: Vulnerability in SSLv3 affects IBM WebSphere MQ, IBM WebSphere MQ Internet Pass-Thru and IBM Mobile Messaging and M2M Client Pack (CVE-2014-3566) [http://www.ibm.com/support/docview.wss?uid=swg21687433] recommends: 
+
+ * SSLv3 users will want to disable SSLv3 on WebSphere MQ servers and clients and switch to using the TLS protocol.
+
+
+So please use at least MQ CipherSpec TLS_RSA_WITH_3DES_EDE_CBC_SHA for the MQ connection channel to connect to the Queue manager. 
+The Cipher Suite for the WMQ Adapter or the WMQ Suite Service can stay on SSL_RSA_WITH_3DES_EDE_CBC_SHA. Recommendations 
+
+ 1. Do not enable SSL 3.0 in ISBI 5.2.5. 
+ 2. Please use current protocol TLS 1.2:
+    For example 
+    - set MQ CipherSpec TLS_RSA_WITH_AES_256_CBC_SHA256 so that MQ uses protocol TLS 1.2 on MQ connection channel and 
+    - set equivalent JSSE CipherSuite SSL_RSA_WITH_AES_256_CBC_SHA256 for WMQ Adapter or Suite Services in ISBI.
+
+
+Overview MQ CipherSpec for MQ connection channel Equivalent JSSE CipherSuite for WMQ Adapter or Suite Services MQ uses protocol TRIPLE_DES_SHA_US SSL_RSA_WITH_3DES_EDE_CBC_SHA SSL 3.0 TLS_RSA_WITH_3DES_EDE_CBC_SHA SSL_RSA_WITH_3DES_EDE_CBC_SHA TLS 1.0 TLS_RSA_WITH_AES_256_CBC_SHA256 SSL_RSA_WITH_AES_256_CBC_SHA256 TLS 1.2

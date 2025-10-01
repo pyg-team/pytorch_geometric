@@ -1,0 +1,78 @@
+Title: IBM What does a PatternRunTargetException in Rational Integration Tester Agent indicate? - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ What are some possible causes and resolutions for issues in which a PatternRunTargetException occurs in IBM Rational Integration Tester (RIT) Agent? 
+
+ANSWER
+When is this issue known to occur?
+This issue may be seen in the Agent log files when: 
+
+ *  an attempt to publish and launch a stub is made on a Test Engine which is already running that stub, 
+ * and the version numbers of the stub being deployed and the stub currently running are identical.
+
+
+Does the software version matter? 
+
+Yes. 
+
+IBM Rational Integration Tester (RIT) 8.6 and IBM Rational Integration Tester Agent (RIT-Agent) 8.6 and IBM Rational Test Control Panel (RTCP) 8.6 always publish at a new version number and so this problem cannot occur for the above reason. 
+
+The preferred solution should ordinarily be to upgrade to version 8.6. 
+
+What are the typical steps which cause this problem? 
+
+This issue may typically occur when these actions are undertaken (in versions of the software prior to 8.6): 
+ * Create a project and within it Stub A. 
+ * Publish project at version 1 (i.e. publish Stub A) 
+ * Start Stub A on the Agent 
+ * Stop Stub A
+   (N.B. Stopping a stub does NOT unload the project from the test engine.) 
+ * Create Stub B in the same project. 
+ * Publish project at version 1 again (i.e. publish Stub A and Stub B) 
+ * Run Stub B on the Agent 
+
+RTCP doesn't send the new project to the test engine the second time the project is published. The then Agent gets told to run Stub B and fails because Stub B does not exist in the version of the project on the Agent. 
+
+What solutions exist without upgrading? 
+
+Here are the alternate solutions available 
+ * Always publish stubs at a new version number
+   or 
+ * Stop all stubs before republishing or if this problem occurs. (This forces the shutdown of all test engines which means RTCP has to send them new projects.)
+   or 
+ * Unload the project from the agent manually. (See instructions below.)
+
+
+How can a project be unloaded from the Agent manually? 
+
+To unload a project manually in RTCP:  * Go to the Agents and click the Magnifying Glass for the agent running the stub. 
+ * You will see a finer grained break down of how many instances are running per agents. (Each instance corresponds to an execution of the RunTests binary.) 
+ * Where an instance shown has the appropriate domain, environment and version deployed, there will be an 'X' symbol. 
+ * Clicking the 'X' will cause the running instance of the RunTests binary associated with the display to shutdown. (This will force RTCP to send the updated project to the Agent when the stub is next deployed.)
+
+
+What will the entry in the log file look like? 
+
+Here is the text which will be found in the log file if this issue occurs: 
+ * com.ghc.ghTester.commandline.PatternRunTargetException: 
+ * 
+ * no resources were found that matched the pattern:
+ * 
+ * ########:###########:-####
+ * 
+
+The number at the end of the message, hashed above is the UUID of the resource. 
+
+What else could cause this error? 
+
+The entry in the log file is indicating that there is a resource missing. In these terms each file within a Rational Integration Tester Project is considered to be a resource. Each resource is identified by a UUID. 
+
+The project files are XML files and the UUID of each can be found at XPath location:  * /*/@uuid
+
+
+If the Rational Integration Tester project is damaged then there may be a resource reference in the project which contains a UUID which is not fulfilled by any resource within the project. 
+
+This can occur, for example, where a project is shared using a version control system, and a new resource is added to a project locally and then a resource containing the reference to the new resource is checked into the version control system, but the resource itself is not added to the version control repository. The problem would then occur when the stub was deployed from a computer other than the one which created the new resource.

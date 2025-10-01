@@ -1,0 +1,214 @@
+Title: IBM JR53031: UPGRADING THE DATABASE FAILS IF CUSTOMIZED PERMISSION OF THE SYSTEM TOOLKIT CONFLICTS WITH THE CONFIGURATION OF THE NEW IBM - United States
+
+Text:
+  DIRECT LINKS TO FIXES
+bpm.8560.cf1.delta.repository.2 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Standard&fixids=bpm.8560.cf1.delta.repository.2&source=SAR]
+bpm.8560.cf1.delta.repository.1 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Standard&fixids=bpm.8560.cf1.delta.repository.1&source=SAR]
+8.5.5.0-WS-BPM-IFJR53031 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Standard&fixids=8.5.5.0-WS-BPM-IFJR53031&source=SAR]
+Version 8.5 Refresh Pack 7 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24041575]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Running the DBUpgrade command fails with the following
+   exception when the customized permission of the system toolkit
+   conflicts with the configuration of new IBM Business Process
+   Manager (BPM) version:
+   
+   SEVERE: Error executing SQL statement: DB2 SQL Error:
+   SQLCODE=-803, SQLSTATE=23505,
+   SQLERRMC=2;BPMADMIN.LSW_ACL_ENTRY, DRIVER=4.11.69
+   SEVERE: SQL statement that failed: BEGIN ATOMIC
+   INSERT INTO bpmadmin.LSW_ACL_ENTRY
+   (ACL_ENTRY_ID,GROUP_ID,PO_TYPE,PO_ID,MASK)
+    VALUES(23, 3, 2066, '56a4e5e8-4da1-429c-8d9b-b5be67e881d2',
+   127);
+    INSERT INTO bpmadmin.LSW_ACL_ENTRY
+   (ACL_ENTRY_ID,GROUP_ID,PO_TYPE,PO_ID,MASK)
+    VALUES(24, 4, 2066, '56a4e5e8-4da1-429c-8d9b-b5be67e881d2',
+   63);
+     END
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Problem has been fixed in BPM 8.5.6 release
+   
+   Find the changes made to the ACL entry and delete the existing
+   one .. Open ticket with IBM support to identify the row to be
+   deleted
+   
+   Remove the groups from bpmadmin.LSW_ACL_ENTRY --
+   
+   db2 delete from bpmadmin.LSW_ACL_ENTRY where ACL_ENTRY_ID=3705
+   db2 delete from bpmadmin.LSW_ACL_ENTRY where ACL_ENTRY_ID=3706
+   
+   Where the 2 entries are
+   
+   ACL_ENTRY_ID   USER_ID        GROUP_ID       PO_TYPE    PO_ID
+         MASK
+   -------------- -------------- -------------- ----------
+   ------------------------------------ ---------------------
+   3705.              -             4.      2066.
+   56a4e5e8-4da1-429c-8d9b-b5be67e881d2                   63.
+         3706.              -             3.      2066.
+   56a4e5e8-4da1-429c-8d9b-b5be67e881d2                   63.
+   
+   3. Rerun DBUpgrade
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  IBM BPM Advanced                            *
+   *                  IBM BPM Standard                            *
+   *                  IBM BPM Express                             *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Running the DBUpgrade command fails     *
+   *                      with the following exception when the   *
+   *                      customized permission of the system     *
+   *                      toolkit conflicts with the              *
+   *                      configuration of new IBM Business       *
+   *                      Process Manager (BPM) version:          *
+   *                      SEVERE: Error executing SQL             *
+   *                      statement: DB2 SQL Error:               *
+   *                      SQLCODE=-803, SQLSTATE=23505,           *
+   *                      SQLERRMC=2;BPMADMIN.LSW_ACL_ENTRY,      *
+   *                      DRIVER=4.11.69                          *
+   *                      SEVERE: SQL statement that failed:      *
+   *                      BEGIN ATOMIC                            *
+   *                      INSERT INTO bpmadmin.LSW_ACL_ENTRY      *
+   *                      (ACL_ENTRY_ID,GROUP_ID,PO_TYPE,PO_ID,MA *
+   *                      SK)                                     *
+   *                      VALUES(23, 3, 2066,                     *
+   *                      '56a4e5e8-4da1-429c-8d9b-               *
+   *                      b5be67e881d2',                          *
+   *                      127);                                   *
+   *                      INSERT INTO bpmadmin.LSW_ACL_ENTRY      *
+   *                      (ACL_ENTRY_ID,GROUP_ID,PO_TYPE,PO_ID,MA *
+   *                      SK)                                     *
+   *                      VALUES(24, 4, 2066,                     *
+   *                      '56a4e5e8-4da1-429c-8d9b-               *
+   *                      b5be67e881d2',                          *
+   *                      63);                                    *
+   *                      END                                     *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   No additional information is available
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A fix is available for IBM BPM V8.5.5.0 that s allows you to
+   not add a row to LSW_ACL_ENTRY if it already exists.
+   
+   On Fix Central (http://www.ibm.com/support/fixcentral), search
+   for JR53031:
+   
+   1. Select IBM Business Process Manager with your edition from
+   the product selector, the installed version to the fix pack
+   level, and your platform, and then click Continue
+   2. Select APAR or SPR, enter JR53031, and click Continue.
+   
+   When you download fix packages, ensure that you also download
+   the readme file for each fix. Review each readme file for
+   additional installation instructions and information about the
+   fix
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR53031
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM ADVANCED
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9400
+   
+   
+ * REPORTED RELEASE
+   855
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-04-06
+   
+   
+ * CLOSED DATE
+   2015-04-22
+   
+   
+ * LAST MODIFIED DATE
+   2015-04-22
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   BPM ADVANCED
+   
+   
+ * FIXED COMPONENT ID
+   5725C9400
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R800 PSY
+   UP

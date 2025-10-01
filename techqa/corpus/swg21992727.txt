@@ -1,0 +1,41 @@
+Title: IBM CSS Indexing of ICC emails fills up logs with many FNRCB0078E index warning messages - United States
+
+Text:
+ecmts_config_logging.properties; content-based retrieval; mimetype; IQQP0008W; IQQP0033W TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Many CBR_TS_INDEXING_WARNING messages appear in CPE logs when using IBM Content Collector (ICC) for archiving email. 
+
+SYMPTOM
+Typical warning seen in CPE logs: 
+
+CBR FNRCB0078W - WARN Object Id: {10F629C2-0E98-521E-27D1-5E30A796FFB5} ObjectStore Id: {94A9FFEE-676C-4432-85BB-C2FFA1C69829} is indexed with a warning into ... ncom.filenet.api.exception.EngineRuntimeException: FNRCB0078E: CBR_TS_INDEXING_WARNING: IBM Content Search Services generated a warning while accessing the ...
+index for an otherwise successful indexing operation. The following warning applies to a Content Engine object within the "829" batch: "IQQP0008W Unable to index document 3P3105488471-ASSYST-CN.zip/design/SVEN/3P3105488471 because the binary filter was not found or the MIME type [unknown] is unsupported.". at com.filenet.engine.cbrspi.cssimpl.CSECascadeIndexProcessing.listen(CSECascadeIndexProcessing.java:911)
+
+
+CAUSE
+These warning message are part of normal behaviour of CSS indexing and may be ignored. 
+
+See technote here [http://www-01.ibm.com/support/docview.wss?uid=swg21668934] for more details.
+
+
+ENVIRONMENT
+IBM Content Collector (ICC) 
+
+IBM Filenet Content Process Engine (CPE)
+IBM Filenet Content Search Services (CSS)
+
+
+RESOLVING THE PROBLEM
+While the system is working as designed, there is an option to at least separate out these messages into a different log file. 
+
+See APAR PJ42775 here [http://www-01.ibm.com/support/docview.wss?uid=swg1PJ42775] for more details. 
+
+As of CPE versions 5.2.0.2-P8CSS-IF002 or 5.2.1.2-P8CSS-FP002 or higher, there is an option to move these warning messages to a different log file. 
+
+The file ecmts_logging.properties can control properties including the filename of the new traces. 
+
+ie:
+java.util.logging.FileHandler.pattern = C:/Program Files/IBM/Content Search Services/CSS Server/log/trace%g.log
+
+It is not currently possible to completely remove the warning messages (e.g: to configure indexing based on mime type.) Indexing is configured by document class. See Knowledge Centre link here [http://www.ibm.com/support/knowledgecenter/en/SSNW2F_5.2.1/com.ibm.p8.install.doc/p8pin294.htm] for more details.

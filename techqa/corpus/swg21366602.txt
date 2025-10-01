@@ -1,0 +1,147 @@
+Title: IBM How to use the workspacePreferenceFile ANT Task for importing Eclipse preferences in headless mode - United States
+
+Text:
+RATLC01244696 TECHNOTE (FAQ)
+
+QUESTION
+ This technote describes how you can use ANT Task workspacePreferenceFile to import preferences files in Eclipse format. 
+
+CAUSE
+There is a Request For Enhancement to change this global property into an attribute of the ANT Task workspacePreferenceFile. 
+
+ANSWER
+Starting from version v7.0.0.7 of IBM® Rational® Application Developer and IBM Rational Software Architect, and including IBM Rational Application Developer v7.5 and v7.5.1 and Rational Software Architect for WebSphere software v7.5 and v7.5.1, the ANT Task workspacePreferenceFile can be used for importing Eclipse preference files, besides workspace preference files. 
+
+The different behavior can be obtained specifying a global preference, which is not listed in the product help of versions 7.0.0.7, 7.0.0.8, 7.5 and 7.5.1: 
+
+
+
+Global property name Preference values useEclipsePrefs true (Eclipse preference format is used) false (workspace preference format is used) 
+Starting from version 7.5.2, this new behavior can be invoked using an attribute instead of a global preference. 
+
+Attribute name Preference values useEclipsePrefs true (Eclipse preference format is used) false (workspace preference format is used) 
+
+Usage example: 
+
+1. Create the file build.xml 
+
+Microsoft® Windows: 
+
+Create the file C:\temp\build.xml containing: 
+
+for versions 7.0.0.7, 7.0.0.8, 7.5 and 7.5.1: 
+
+<project name="TestImportPreferences">
+<property name="useEclipsePrefs" value="true" />
+<workspacePreferenceFile preferencefilename="C:\temp\exportedPreferences.epf" />
+</project> 
+
+for version 7.5.2 and higher: 
+
+<project name="TestImportPreferences">
+<workspacePreferenceFile preferencefilename="C:\temp\exportedPreferences.epf" useEclipsePrefs="true" />
+</project> 
+
+Linux: 
+
+Create the file /usr/tmp/build.xml containing: 
+
+for versions 7.0.0.7, 7.0.0.8, 7.5 and 7.5.1: 
+
+<project name="TestImportPreferences">
+<property name="useEclipsePrefs" value="true" />
+<workspacePreferenceFile preferencefilename="/usr/tmp/exportedPreferences.epf" />
+</project> 
+
+for version 7.5.2 and higher: 
+
+<project name="TestImportPreferences">
+<workspacePreferenceFile preferencefilename="/usr/tmp/exportedPreferences.epf" useEclipsePrefs="true" />
+</project> 
+
+2. To create a non-default preference value, for example, do the following: 
+in Windows > Preferences > General , select: Show Heap Status 
+You could also change the default value of any other preference. 
+
+3. Using File > Export > Preference s create the file 
+
+Microsoft Windows: 
+
+C:\temp\exportedPreferences.epf 
+
+Linux: 
+
+/usr/tmp/exportedPreferences.epf 
+
+4. Use the runAnt script to run the ANT Task in Headless mode. 
+
+A prerequisite to running the script is that you must specify an environment variable called workspace. 
+The value of this variable must be the name of an existing directory (this directory could be empty or it could be an existing workspace containing the .metadata folder) 
+
+Microsoft Windows: 
+
+Assuming that: 
+
+the directory: C:\temp already exists 
+the build file is called: C:\temp\build.xml 
+the preferences file is called: C:\temp\exportedPreferences.epf 
+
+perform these steps: 
+
+
+mkdir C:\temp\workspace
+set workspace=C:\temp\workspace
+"C:\Program Files\IBM\SDP\bin\runAnt.bat" -buildfileC:\temp\build.xml
+
+(where C:\Program Files\IBM\SDP indicates the default installation directory and could have another value on your system) 
+
+you should see output similar to the following: 
+
+
+"C:\Program Files\IBM\SDP\jdk\jre\bin\java.exe" -Dwtp.autotest.noninteractive=true -cp "C:\Program Files\IBM\SDPShared\plugins\org.eclipse.equinox.launcher_1.0.101.R34x_v20080819.jar" org.eclipse.equinox.launcher.Main -install "C:\Program Files\IBM\SDP" -application
+com.ibm.etools.j2ee.ant.RunAnt -data "C:\temp\workspace" -buildfile C:\temp\build.xml
+HeadlessWorkspaceSettings: INITIAL autoBuild=true maxFile=1048576
+HeadlessWorkspaceSettings: TEMP autoBuild=false maxFile=-1
+Buildfile: C:\temp\build.xml
+BUILD SUCCESSFUL
+
+BUILD SUCCESSFUL
+Total time: 7 seconds
+HeadlessWorkspaceSettings: RESTORED autoBuild=true maxFile=1048576
+
+
+
+Linux: 
+
+Assuming that: 
+
+the directory: /usr/tmp already exists 
+the build file is called: /urs/tmp/build.xml 
+the preferences file is called: /usr/tmp/exportedPreferences.epf 
+
+perform these steps: 
+
+
+mkdir /usr/tmp/workspace
+export workspace=/usr/tmp/workspace
+/opt/IBM/SDP/bin/runAnt.sh -buildfile /usr/tmp/build.xml
+
+
+(where /opt/IBM/SDP indicates the default installation directory and could have another value on your system) 
+
+
+5. When you restart the product and choose the workspace specified as value of the data parameter, you will see that the preferences you have exported have been set. 
+
+If you are using other products that do not offer the workspacePreferenceFile ANT Task, or if you are using a product version prior to v7.0.0.7, see the Technote 1273017 for an alternative solution. 
+
+
+RELATED INFORMATION
+#Product Help version 7.5 [http://publib.boulder.ibm.com/infocenter/rsawshlp/v7r5m0/topic/com.ibm.etools.ant.tasks.doc/topics/tantworkspacepreferencefile.html]
+Technote: 1273017 [http://www.ibm.com/support/docview.wss?uid=swg21273017]
+
+
+
+
+
+
+Cross Reference information Segment Product Component Platform Version Edition Software Development Rational Software Architect for WebSphere Software Ant Linux, Windows 7.5, 7.5.1 Software Development Rational Software Architect Ant Linux, Windows 7.0.0.7, 7.0.0.8

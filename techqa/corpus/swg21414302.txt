@@ -1,0 +1,98 @@
+Title: IBM Collecting data: for InfoSphere Warehouse (aka Data Warehouse Edition) Admin Console problems. - United States
+
+Text:
+MustGatherDocument; MustGather; MustGather; MustGather TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ What information should I collect to help diagnose an Admin Console problem within InfoSphere Warehouse (aka Data Warehouse Edition)? 
+
+RESOLVING THE PROBLEM
+Information to collect: 
+
+Required Files to collect when an error has occurred:
+
+
+
+
+File Name Description SQWAdmin.log The SQW administration log file. This file will contain any errors that have occurred during the execution of the Admin Console or the command line interface. SystemErr.log This log file contains messages written to the System.err stream. SystemOut.log This log file contains logged messages and messages written to the System.out stream The above files can be found in the following locations : 
+
+ * Windows: C:\Program Files\IBM\dwe\appServer\profiles\default\logs\server1 
+ * AIX: /usr/opt/dwe/appServer/profiles/default/logs/server1 
+ * Linux: /opt/dwe/appServer/profiles/default/logs/server1
+
+
+In the event of a severe error, such as the Admin Console application causes the Websphere Server to stop or if the Admin Console doesn't want to start at all, then all of the files and directories under the <Install Location>\appServer\profiles\dwe\logs directory should be collected. 
+
+General DWE Admin Console Issues : 
+ 1. What is the exact error seen? 
+ 2. Are the database profiles created correctly? 
+ 3. Are the databases enabled for Cube Views and/or Intelligent Miner? 
+ 4. Were the necessary post installation steps performed and completed successfully as outlined in the Installation Guide? 
+ 5. Does the test connection in WebSphere Admin Console work under Resources > JDBC Providers > select_appropriate_JDBC_Provider > Data sources?
+    
+
+[/support/docview.wss?uid=swg21414302&aid=1] [/support/docview.wss?uid=swg21414302&aid=1] 
+
+SQW DWE Admin Console Issues : 
+ 1.  What is the DWE Design Studio platform and Operating System (OS) level? 
+ 2.  What platform and OS level is DWE Admin Console running on? 
+ 3.  Were any interim fixes installed? DWE Admin Console release level should match the Design Studio level. 
+ 4.  What version of WebSphere is installed? 
+ 5.  Was DWE Admin Console installed using the default server (ie. server1) 
+ 6.  Is WebSphere 32 bits or 64bits? 
+ 7.  What is the DB2 platform and version? 
+ 8.  Is DB2 32 bits or 64 bits? 
+ 9.  Get a screenshot capture of the Error messages displayed in DWE Admin Console 
+ 10. If the issue is reproducible, send the step by step procedure to technical support. If possible, capture a fresh WAS admin server log which contains the failure, i.e. shutdown WAS app server, rerun the failed scenario, and send in the WAS SystemOut.log and SystemErr.log. If problem occurs in SQW folder, send in SQWAdmin.log. 
+ 11. If the issue is intermittent, technical support will need more details on frequency/condition of error reoccurrence, and other concurrent activities in the same system or domain and if any recent configuration changes were done in the system and WebSphere. 
+ 12. If the issue is database related, a JDBC trace may be required. Ensure any WebSphere managed data source used in the SQW process instance has the proper authentication alias. Development will need to determine if JDBC trace would be required. 
+ 13. If the issue is WebSphere resources related and errors occur in DWE Common and DWE SQL Warehousing, ensure that the information in the resource configuration for Data Sources including JDBC provider, Scheduler, Work Manager, Mail provider, etc. are accurate. 
+ 14. If the issue is DWE Admin Console enterprise application setup related, check the WebSphere server Application Servers > server1 > Custom Services for ETLServiceMBeanStartup and ensure that the DWEAdminConsole has started properly by examining the WebSphere SystemOut.log. Check the application deployment descriptor to ensure that DWEAdminConsole is installed properly under Enterprise Applications > DWEAdminConsole > Deployment 
+ 15. If the issue is security related, check the WebSphere global security setup and ensure the logon user/group is authorized to access DWEAdminConsole by examining Enterprise Applications > DWEAdminConsole > Map security roles to users/groups 
+ 16. If the issue is system environment setup, check WebSphere variables especially the DB2 paths and DWE install directory. The following is an example for Windows.
+     
+
+[/support/docview.wss?uid=swg21414302&aid=2] [/support/docview.wss?uid=swg21414302&aid=2] 
+
+SQW Runtime Issues: For Runtime errors (i.e. after the process instance has started and in "running" or beyond state): 
+
+ 1. For a failed instance, check Troubleshooting > Manage Failed Instances
+    [/support/docview.wss?uid=swg21414302&amp;aid=3] 
+ 2. Check for process log for the failed process instance 
+ 3. Check *Logs and Traces > View Process Logs for failed process instance
+    [/support/docview.wss?uid=swg21414302&amp;aid=4]
+
+
+
+JDBC Errors In some cases there will be JDBC errors during the runtime environment. In order to deal with these problems, it's important to know the following information : 
+
+1. Universal JDBC Driver (JCC) version and level. Issue the following command to help determine the version:
+[http://publib.boulder.ibm.com/infocenter/db2luw/v9r5/index.jsp?topic=/com.ibm.db2.luw.apdv.java.doc/doc/rjvjcver.html]java com.ibm.db2.jcc.DB2Jcc -configuration
+
+2. JDBC trace of the failing process. The JDBC driver can be enabled from within WebSphere Admin Console menu via
+Resources > JDBC Providers > DB2 Universal JDBC Driver Provider > Data sources > <database> > Custom 
+Properties.
+Once you have navigated to the Custom Properties page update the following properties by clicking on the property name, adjusting
+the value based on the table below and choosing OK to apply the change. 
+
+
+
+
+Property Value Description traceLevel -1 This collects all of the diagnostics for the driver. Although you can sometimes reduce the amount of data being collected, generally speaking this is the best choice since we will have all the data that might be needed by the JCC team should they need to be involved. traceFile target file name for the trace This is the absolute path to a file that will be used for logging the trace information. For example : /home/db2inst1/jcc.trace traceAppend true Generally speaking it's difficult to always determine when the connection might be used and trace information can be lost if the trace is replaced. Changing this setting will collect information from multiple runs, but this is better than not having enough information 
+ * Once the changes have been made, save the configuration by choosing the Save link at the top of the page. 
+ * Restart WebSphere server in order to get these setting picked up. 
+ * Once the traces are collected, turn off tracing by setting traceLevel=0 and restart the WebSphere server
+
+
+JDBC Tracing in InfoSphere Warehouse v9.5 
+
+New attributes have been added to the JCC tracing in InfoSphere Warehouse v9.5 to assist with problem determination. 
+
+
+Property Value Description traceDirectory directory for trace files Rather than just writing to a particular file, the JCC trace will be written to a directory. This allows multiple files to be created in an environment where multiple applications are potentially logging trace information. tracePolling true This is a new attributes added in 9.5.1 that allows the JDBC driver to check the global configuration file for updates to the trace settings which can make it easier to dynamically enable and disable the JCC trace. In order to use the tracePolling option, WebSphere needs to be started pointing to a configuration properties file. 
+
+Submitting information to IBM Support 
+
+If you collected the above information for a problem reported to IBM support, you can use the steps in the following document to submit this data to IBM for your current problem number: 
+Submitting diagnostic information to IBM Technical Support for problem determination [http://www-1.ibm.com/support/docview.wss?rs=71&&uid=swg21243808] 
+[ftp://public.dhe.ibm.com/ps/products/db2/info/vr95/pdf/en_US/db2aje951.pdf]

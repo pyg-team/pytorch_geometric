@@ -1,0 +1,256 @@
+Title: IBM PI56609: HANGING THREADS EVEN AFTER APPLICATION TERMINATION WHEN RUN WITH MULTIPLE THREADS - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Hanging threads even after application termination when run
+   with multiple threads
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * All users of IMS v14 ODBM                                    *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * ODBM threads hang after application termination when running *
+   * with multiple threads.                                       *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * INSTALL CORRECTIVE SERVICE FOR APAR/PTF                      *
+   ****************************************************************
+   When an ODBM application runs with multiple threads, a deadlock
+   
+   condition may occur when more than one thread attempts to access
+   
+   the same database resource simultaneously.
+   
+   
+   
+   In the reported scenario, a large number of transactions
+   
+   accessing the same database resource are sent to ODBM.  Each
+   of these transactions results in an ODBM thread, so there are
+   
+   multiple units of work on multiple ODBM threads contending for
+   
+   the same resource.  Each thread performs a number of calls that
+   
+   query or update the database, followed by a syncpoint call to
+   
+   commit the changes to the database.
+   
+   
+   
+   If the external client application is running a large enough
+   
+   number of threads, it is possible for all available ODBM threads
+   
+   to be consumed by units of work that are waiting for the
+   
+   database lock.  If at this time, the unit of work that holds the
+   
+   database lock is waiting for a thread, we have a deadlock
+   
+   situation -- the UOW holding the lock cannot commit until a
+   
+   thread becomes available, but no thread will become available
+   
+   until one of the UOWs obtains the lock so it can complete its
+   
+   work.  This deadlock is not resolved, resulting in hung threads.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A new TCB queue is defined for ODBM to be used specifically for
+   syncpoint calls.  This prevents the deadlock situation by
+   ensuring that syncpoint and non-syncpoint calls are not
+   contending for the same ODBM threads.  The work that is
+   currently handled by the existing ODBR TCB queue will now be
+   split between the ODBR queue and a new TCB queue, ODBC.  ODBC
+   handles syncpoint requests and ODBR handles non-syncpoint
+   requests.
+   
+   Module changes
+   --------------
+   
+   Define a new TCB type, ODBC
+   ---------------------------
+   CSLDBTCI -- Define the new ODBC TCB.
+   
+   CSLDBAWI -- Define the AWE server that will service
+   the new TCB queue.
+   
+   CSLDAWXI -- Define function codes for the new TCB queue.
+   
+   CSLDCODE -- Add the new request codes for the ODBC TCB.
+   
+   CSLDTRC  -- Define a new function code and trace type for ODBC
+   TCB.
+   
+   CSLDST1  -- Define a new trace code for the ODBC TCB type.
+   
+   CSLDANCH -- Define new fields and constants to manage the
+   thread counts for the ODBC TCB queue.
+   
+   CSLDBAW0 -- Define the AWE server for the new ODBC queue.
+   
+   CSLDBTC0 -- Add a new type definition for the ODBC TCB.
+   
+   CSLDXIN0 -- Add the ODBC TCB type to the ODBM SCI Input Exit
+   function code table.
+   
+   
+   Process database calls using the new TCB type
+   ---------------------------------------------
+   CSLDBR00 -- Process AWEs coming from the new ODBC queue.
+   The processing performed by this module is nearly identical
+   for the ODBC and ODBR queues.  The differences are that for
+   ODBC AWEs, the ODBC queue count is decremented instead of ODBR,
+   and the new function code is reflected in the trace entry
+   written to the ODBM trace table.
+   
+   CSLDBR10 -- Process AWEs with the new function code.  Within
+   this module, ODBC and ODBR AWEs are processed identically.
+   
+   CSLDDM00 -- Route syncpoint-type requests to the ODBC TCB queue
+   instead of the ODBR TCB queue.  The following code points are
+   routed to the ODBC queue.  All others are routed to the
+   existing ODBR queue.
+   - Commit
+   - Rollback
+   - DPSB function
+   - Syncpoint request only for the following subcodes:
+     - Prepare
+     - Commit
+     - Begin new UOW request
+     - End association with UOW
+   
+   CSLDREG0 -- Route the DPSB calls that are generated internally
+   following a deregistration request to the ODBC queue.
+   
+   
+   Initialization, termination, recompiles
+   ---------------------------------------
+   CSLDIN00 -- Initialize the ODBM anchor block with the number of
+   ODBC TCBs attached to the new queue by BPE.
+   
+   CSLDSP00 -- Clean up terminating ODBC TCBs.
+   
+   CSLDIT00 -- Recompile for CSLDANCH changes.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI56609
+   
+   
+ * REPORTED COMPONENT NAME
+   IMS V14
+   
+   
+ * REPORTED COMPONENT ID
+   5635A0500
+   
+   
+ * REPORTED RELEASE
+   400
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-02-04
+   
+   
+ * CLOSED DATE
+   2016-03-24
+   
+   
+ * LAST MODIFIED DATE
+   2016-04-05
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    PI55996 [http://www-01.ibm.com/support/docview.wss?uid=isg1PI55996]
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UI36494
+   
+   
+
+MODULES/MACROS
+ *  CSLDBAW0 CSLDREG0 CSLDFM0F CSLDBTC0 CSLDST1  CSLDTXR0 CSLDIN00
+   CSLDDM00 CSLDIT00 CSLDCODE CSLDBR10 CSLDBR00 CSLDXIN0 CSLDTRC
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   IMS V14
+   
+   
+ * FIXED COMPONENT ID
+   5635A0500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R400 PSY UI36494 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI36494]
+   UP16/03/26 P F603
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

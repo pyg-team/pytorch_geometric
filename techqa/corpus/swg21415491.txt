@@ -1,0 +1,136 @@
+Title: IBM Intermittent session time out within FileNet Content Manager WorkplaceXT - United States
+
+Text:
+Session timeout; Workplace XT; time out; The session state is invalid due to a session timeout or server failure TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Log on to WorkplaceXT and then browse to a document and intermittently a session time out error occurs: The session state is invalid due to a session timeout or server failure. 
+
+SYMPTOM
+This error occurs intermittently while using WorkplaceXT: 
+
+The session state is invalid due to a session timeout or server failure
+
+
+RESOLVING THE PROBLEM
+WorkplaceXT does not have a session time out value. It rather relies on the Application Server. With WebSphere 6.1 this requires setting a time out value in 2 locations. Both changes are mandatory. 
+
+Please perform the following steps to adjust the session time out value: 
+
+Instructions for WebSphere 6.x
+
+On Websphere instance where has WorkplaceXT deployed:
+
+
+
+ 1. Login to the WebSphere Admin console
+    
+    
+ 2. Go to Enterprise Applications
+    
+    
+ 3. WorkplaceXT
+    
+    
+ 4. Manage Modules
+    
+    
+ 5. web_client.war
+    
+    
+ 6. Session management
+    
+    
+ 7. Check Override session management
+    
+    
+ 8. Select Set timeout and enter a value in minutes. For example 8 hours would be 480 minutes
+    
+    
+ 9. Click the Apply button
+    
+    
+
+
+On Websphere instance where has FileNet Content Engine deployed: 
+
+ 1. Login to the WebSphere Admin console
+    
+    
+ 2. Go to Secure administration, applications, and infrastructure Authentication mechanisms and expiration
+    
+    
+ 3. Set the Timeout value for forwarded credentials between server to a value greater than what was set in set timeout. For example 540 minutes
+    
+    
+ 4. You'll need to generate new LTPA keys and import them for the new settings to take affect if WPXT and CE are on different WAS server
+    
+
+
+After complete above steps, restart both WPXT and CE Application Servers
+
+
+ 
+
+Instructions for WebSphere 7.x
+
+
+On Websphere instance where has WorkplaceXT deployed:
+
+
+
+ 1. Login to the WebSphere Administrator console
+    
+    
+ 2. Go to Applications
+    
+    
+ 3. Application Types
+    
+    
+ 4. WebSphere enterprise applications
+    
+    
+ 5. WorkplaceXT
+    
+    
+ 6. Under Web Module Properties click Session Management
+    
+    
+ 7. Check Override session management
+    
+    
+ 8. Under Session timeout Select Set timeout and enter a value in minutes. For example 8 hours would be 480 minutes
+    
+    
+ 9. Click the Apply button
+    
+    
+
+On the Websphere instance where FileNet Content Engine is deployed: 
+
+ 1. Login to the WebSphere Administrator console
+    
+    
+ 2. Go to Security
+    
+    
+ 3. Global Security
+    
+    
+ 4. Under Authentication>Authentication mechanisms and expiration Click LTPA
+    
+    
+ 5. Under LTPA timeout set the LTPA timeout value for forwarded credentials between servers to a value greater than what was set in set timeout. For example 540 minutes
+    
+    
+ 6. You'll need to generate new LTPA keys and import them for the new settings to take affect if WPXT and CE are on different WAS server
+    
+
+
+
+After complete above steps, restart both WPXT and CE Application Servers 
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Enterprise Content Management FileNet P8 Platform

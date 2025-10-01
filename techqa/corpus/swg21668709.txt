@@ -1,0 +1,34 @@
+Title: IBM How to recreate the nzevent templates after a nzsystem -reinit - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ I can not create nzevents from templates, the command 'nzevent show -template' shows nothing 
+
+CAUSE
+After a nzsystem -reinit there are no event templates to copy from. 
+
+ANSWER
+A system reinit does not automatically recreate the event templates. You have to run a SQL script to do this. As the 'nz' user run the following: 
+
+[nz@h1 ~]$ nzevent show -template
+No event rules
+
+[nz@h1 ~]$ nzsql system -f /nz/kit/bin/adm/tools/create_event_templates.sql
+INSERT 7 
+
+[nz@h1 ~]$ nzevent show -template 
+
+Name On Event Type Event Args Expr Notify Type Destination CC Message Body Text Call Aggregate
+Home Count
+--------------------------- -- ------------------------ ------------------------ ----------- ------------------------ -- ------------------------ ------------------------ ---- ---------
+Disk80PercentFull no Hardware Disk Full $threshold == 80 || $thr Email <your email here> NPS system $HOST - $hwTy $notifyMsg\n\nSPA ID: $s yes 50
+Disk90PercentFull no Hardware Disk Full $threshold == 90 || $thr Email <your email here> NPS system $HOST - $hwTy $notifyMsg\n\nSPA ID: $s yes 50
+EccError no Memory ECC Error Run Command $NZ_SBIN_DIR/notifyECC NPS system $HOST -$hwTyp $notifyMsg\n\nSPA ID:$sp no 0
+HardwareFailed no Hardware Failed Email <your email here> NPS system $HOST - $hwTy $notifyMsg\n\nSPA ID: $s yes 50
+....
+....
+etc
+
+You should see a list of templates ready to use to create nzevents

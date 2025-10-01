@@ -1,0 +1,49 @@
+Title: IBM The LPFMS/PNMSS Does Not Recognize the UID of an Email Account as a Valid Email Address - United States
+
+Text:
+iss5355; 5355; LDAP; UID; mail attribute; smtp attribute; pnmss; address; LPMS; Proventia; PNMS TECHNOTE (FAQ)
+
+QUESTION
+Why does the LPFMS/PNMSS not recognize the UID of an email account as a valid email address?
+
+
+ANSWER
+Lotus Domino servers do not populate all email addresses that they are accepting mails for to their LDAP structure. For example the UID@DOMAIN-NAME (that is typically the primary email address of a Domino account) cannot be found as a smtp or mail attribute via LDAP. This factor has some impact on compatibility with LPFMS/PNMSS. 
+
+WORKAROUND: Change the Domino directory structure by creating UID@DOMAIN-NAMES as Internet Mail Addresses. This change in the Domino structure will ensure full compatibility with all directory related options of LPFMS/PNMSS. 
+
+Without doing any changes on the Domino server:
+1. The ldap_smtpextractor tool with it defaults configuration does just fetch all smtp addresses from a Lotus Domino directory that are configured at Internet Mail Addresses . But with some extra parameters in the configuration file it is possible to configure the ldap_smtpextractor to build the missing smtp addresses.
+
+Enable creation of artificial smtp addresses
+
+The value of each 'base=...' configuration line can be followed by ',,, ,,, '. 
+
+and are ','-separated lists of special attribute names and domains which are used to manually create additional smtp addresses (one address for each possible combination of a special attribute value and a domain). If one of the lists is empty no additional smtp addresses are generated. 
+
+Example: Using a configurationlinelike"base=cn=users,dc=domain,dc=com,,,uid,sn,,,dom1.com,dom2.co m" leads to the creation of artificial SMTP addresses as follows: 
+
+All values of the attributes uid and sn will be combined with the two domains dom1.com and dom2.com. For a user having uid values id1 and id2 and sn value surname the following SMTP addresses will be created: 
+
+id1@dom1.com id1@dom2.com [id1@dom1.comid1@dom2.com]
+id2@dom1.com [id2@dom1.com]
+id2@dom2.com [id2@dom2.com]
+surname@dom1.com [surname@dom1.com]
+surname@dom2.com [surname@dom2.com]
+2. The built-in directory service objects Mail Security > Policy Objects > Directories cannot be configured to recognize the smtp addresses that cannot be found as a mail attribute. This means the following for the LPFMS/PNMSS configuration: 
+1. User- and group-based rules will not work for those email addresses
+2. Blocked messages to those email addresses will not go into the consolidated Quarantine Reports for an user account but to an extra Quarantine Report
+3. To log in at the Enduser-Interface one of the 'Internet Mail Addresses' has to be used as username
+4. To access the Enduser-Interface to see blocked messages that went to the special addresses a new 'local' user/password combination has to be created
+5. A directory service object (configured for Domino-LDAP) cannot be used for the Recipient Verification, since it will not find UID@DOMAIN-NAMES as valid email addresses 
+
+NOTE:Beginning with firmware version 2.5 the directory service objects within the product have to be configured with the so called 'SMTP Match Mode' (Full Address Only / Local Part Only / Full Address then Local Part). This option helps to provide compatibility with a Lotus Domino LDAP directory.
+
+
+
+HISTORICAL NUMBER
+ 5355 
+
+PRODUCT ALIAS/SYNONYM
+ Proventia Network Mail Security
+Lotus Protector for Mail Security

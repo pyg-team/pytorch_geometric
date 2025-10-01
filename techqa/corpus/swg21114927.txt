@@ -1,0 +1,139 @@
+Title: IBM Enabling verbose garbage collection (verboseGC) in WebSphere Application Server - United States
+
+Text:
+wasjdk; heap; memory; outofmemory; outofmemoryerror; performance; wasrun; gc; verbose; verbosegc TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Enabling verboseGC output is often required when diagnosing issues with WebSphere Application Server. Because verboseGC data is critical to troubleshooting memory and performance problems and the overhead is generally very low, you may want to consider proactively enabling it in your environment. The following describes how to enable verboseGC output within WebSphere Application Server. 
+
+RESOLVING THE PROBLEM
+
+Select the appropriate version and server type:
+[/support/docview.wss?uid=swg21114927&amp;aid=1] Version 9, 8.5, 8.0 and 7.0 - Application Servers 
+[/support/docview.wss?uid=swg21114927&amp;aid=2] Version 9, 8.5, 8.0, 7.0- Deployment Managers
+[/support/docview.wss?uid=swg21114927&amp;aid=3] Version 9, 8.5, 8.0, 7.0- Node Agents
+[/support/docview.wss?uid=swg21114927&amp;aid=4] Version 9, 8.5, 8.0, 7.0- Enabling at Runtime
+
+
+Depending on the operating system in use, the verboseGC output will be written to the following file by default:
+AIX, Linux, or Windows: native_stderr.log
+Solaris or HP-UX native_stdout.log
+
+
+
+
+Enabling verboseGC on releases of Version 9, 8.5, 8.0 and 7.0 - Application Servers 
+
+
+
+ 1. In the Administrative Console, expand Servers, expand Server Types, and then click WebSphere application servers.
+    
+ 2. Click on the server that you would like to work with, for example, server1.
+    
+ 3. On the Configuration tab, under Server Infrastructure, expand Java and Process Management, and click Process Definition.
+    
+    
+ 4. Under the Additional Properties section, click Java Virtual Machine.
+    
+    
+ 5. Check the Verbose Garbage Collection check box.
+    
+    For Solaris or HP-UX, also complete these additional steps.
+    
+    
+ 6. Apply and Save the changes.
+    
+    
+ 7. Restart the Application Server for the changes to take effect.
+    
+    
+
+Back to top
+
+
+
+
+
+Enabling verboseGC on releases of Version 9, 8.5, 8.0, 7.0 - Deployment Managers  1. In the Administrative Console, expand System Administration and then click Deployment Manager.
+    
+    
+ 2. On the Configuration tab, under Server Infrastructure, expand Java and Process Management, and click Process Definition.
+    
+    
+ 3. Under the Additional Properties section, click Java Virtual Machine.
+    
+    
+ 4. Check the Verbose Garbage Collection check box.
+    
+    For Solaris or HP-UX, also complete these additional steps.
+    
+    
+ 5. Apply and Save the changes.
+    
+    
+ 6. Restart the Deployment Manager for the changes to take effect.
+
+Back to top
+
+
+
+Enabling verboseGC on releases of Version 9, 8.5, 8.0, 7.0 - Node Agents  1. In the Administrative Console, expand System Administration and then click Node Agents.
+    
+    
+ 2. Click on the node agent that you would like to work with.
+    
+    
+ 3. On the Configuration tab, under Server Infrastructure, expand Java and Process Management, and click Process Definition.
+    
+    
+ 4. Under the Additional Properties section, click Java Virtual Machine.
+    
+    
+ 5. Check the Verbose Garbage Collection check box.
+    
+    For Solaris or HP-UX, also complete these additional steps.
+    
+    
+ 6. Apply and Save the changes.
+    
+    
+ 7. Restart the Node Agent for the changes to take effect.
+
+Back to top
+
+
+
+Additional Steps for Solaris and HP-UX Add the following parameters to the Generic JVM arguments: 
+
+
+
+For WebSphere Application Server 7.0 (Java 6) and later: 
+
+-XX:+PrintGCDetails 
+-XX:+PrintGCDateStamps 
+-XX:+PrintHeapAtGC 
+
+
+Enabling verboseGC at Runtime - Version 9, 8.5, 8.0, 7.0 Before enabling verboseGC at runtime you should follow the appropriate instructions above to enable verboseGC within your configuration. This will ensure that when the JVM is restarted verboseGC will be enabled. 
+
+ 1. Using the appropriate instructions above, navigate to the Java Virtual Machine page.
+    
+    
+ 2. Click the Runtime tab. This tab will be present if the JVM is running.
+    
+    
+ 3. Check the Verbose Garbage Collection check box.
+    
+    
+ 4. Click OK.
+    
+
+
+Note: Verbosegc can be enabled at runtime in Version 9, 8.5, 8.0, 7.0 on all operating systems; however, it will only produce meaningful output on AIX, Linux, and Windows. This is due to the fact that both Solaris and HP-UX require additional Generic JVM arguments to produce meaningful output. These additional arguments cannot be added at runtime. 
+Back to top
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Application Servers Runtimes for Java Technology Java SDK Application Servers WebSphere Application Server - Express J2EE Development and deployment AIX, HP-UX, Linux, Solaris, Windows 7.0, 6.1, 6.0.2, 6.0.1, 6.0, 5.1.1, 5.1

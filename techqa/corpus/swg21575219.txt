@@ -1,0 +1,90 @@
+Title: IBM CritRsrcProtMethod and TSAMP - Critical Resource Protection - United States
+
+Text:
+CritRsrcProtMethod; reboot; restart; deadman; dms; deadman switch; kernel panic TECHNOTE (FAQ)
+
+QUESTION
+ Critical resource protection and Tivoli System Automation for Multiplatforms, how does the first interact with the second? 
+
+ANSWER
+There are a lot of very specific issues with these settings and the purpose of this document is not to cover all of them, but instead to introduce the reader to the principles of this capability so that they might read more should it directly affect their configuration/need. 
+
+CritRsrcProtMethod: 
+
+CritRsrcProtMethod is a RSCT (Reliable, Scalable Cluster Technology) variable that is used to determine how RSCT will react to certain circumstances to protect critical resources. The default value for this attribute is 1. We recommend that all TSAMP users instead use a value of 3. 
+
+ 
+
+Critical Resources: 
+
+Critical Resources are determined by the setting "ProtectionMode", a persistent attribute for a resource, to determine if a resource is listed as critical. Below is an example of the persistent and dynamic attributes of a resource :
+# lsrsrc -Ab -s 'Name == "samadapter"' IBM.Application
+Resource Persistent and Dynamic Attributes for IBM.Application
+resource 1:
+Name = "samadapter"
+ResourceType = 0
+AggregateResource = "0x2028 0xffff 0x8d68d409 0xd9d1e9e5 0x90a2105e"
+StartCommand = "/opt/IBM/tsamp/sam/bin/samadapter start fromauto"
+StopCommand = "/opt/IBM/tsamp/sam/bin/samadapter stop fromauto"
+MonitorCommand = "/opt/IBM/tsamp/sam/bin/samstatus"
+MonitorCommandPeriod = 6
+MonitorCommandTimeout = 4
+StartCommandTimeout = 40
+StopCommandTimeout = 40
+UserName = "root"
+RunCommandsSync = 3
+ProtectionMode = 1
+HealthCommand = ""
+HealthCommandPeriod = 10
+HealthCommandTimeout = 5
+InstanceName = ""
+InstanceLocation = ""
+ActivePeerDomain = "hadr_dom"
+NodeNameList = {"salx2"}
+OpState = 2
+ConfigChanged = 0
+ChangedAttributes = {}
+HealthState = 0
+HealthMessage = ""
+MoveState = [0,{}]
+
+Valid values for ProtectionMode are as follows:
+ProtectionMode=1 means that it is a critical resource.
+ProtectionMode=0 means that it is not a critical resource.
+
+To quickly determine what resources are defined to be critical, use the following command:
+# lsrsrc -Ap -s 'Name like "%" & ResourceType=1' IBM.Application Name ProtectionMode
+Resource Persistent Attributes for IBM.Application
+resource 1:
+Name = "samadapter"
+ProtectionMode = 1
+resource 2:
+Name = "db2hadr_event-rs"
+ProtectionMode = 1
+resource 3:
+Name = "db2_db2insts_salx2_0-rs"
+ProtectionMode = 1
+resource 4:
+Name = "db2_db2instp_salx1_0-rs"
+ProtectionMode = 1
+
+As you can see in the above example all the IBM.Application resources are listed as critical resources.
+
+What RSCT does to protect critical resources:
+The default action of the CritRsrcProtMethod is to reboot your node to ensure that any critical resources that are online on that node are taken down as quickly as possible and made available to another node to bring up without the possibility of data corruption.
+For example we have a 3 node cluster with Node1 having critical resources running on it while the other two do not have any. Node1 loses connectivity to the other two nodes. In this instance RSCT would invoke the CritRsrcProtMethod and reboot the node to ensure that those critical resources can be brought up on the other two nodes that are still online in the cluster. For more information on "Protecting your resources - quorum support" please read the "Administrators and Users Guide" which can be found at: http://publib.boulder.ibm.com/infocenter/tivihelp/v3r1/topic/com.ibm.samp.doc_3.2.2/HALBAU23.pdf [http://publib.boulder.ibm.com/infocenter/tivihelp/v3r1/topic/com.ibm.samp.doc_3.2.2/HALBAU23.pdf] 
+
+You change the CritRsrcProtMethod attribute for the IBM.PeerNode class to a value that would cause RSCT to take no action. (The IBM.PeerNode class is by default set to "1" which provides the most protection for critical resources by performing a hard reset and reboot of the server). To change the value of your CritRsrcProtMethod you should issue the following command:
+
+chrsrc -c IBM.PeerNode CritRsrcProtMethod=5
+
+The different settings for the CritRsrcProtMethod can be found in the following table: 
+
+ 
+
+CritRsrcProtMethod Attribute Values CritRsctProtMethod attribute value​ Description​ 1​ Hard reset and reboot.​ 2​ Halt system.​ 3​ Sync, hard reset and reboot.​ 4​ Sync, Halt system.​ 5​ None.​ 6​ Exit and restart RSCT subsystems.​ 
+For the IBM.PeerNode resource class, the default value of CritRsctProtMethod is 1 (hard reset and reboot). TSAMP, DB2 and RSCT Support all recommend that CritRsrcProtMethod instead be set to a value of 3 (sync, hard reset and reboot) for our environments. 
+
+RSCT and TSAMP in Manual Mode: 
+TSAMP will not issue a start or stop order against a resource while TSAMP is in manual mode. However, RSCT will still invoke the CritRsrcProtMethod to protect resources if its conditions are met. 
+For example, in our 3 node cluster you decide to take two nodes down for maintenance leaving just one node online, you put TSAMP in manual mode so it will take no action. As soon as the two nodes go down for maintenance then the node that is left will be rebooted. The reason for this is that with a 3 node cluster and only one node remaining, quorum will be lost due to having fewer then half the nodes online required to establish quorum. Since there are three nodes there is no reason to have a tiebreaker and even if you did in this case the tiebreaker would not be invoked because there are an odd number of nodes in the cluster. In this situation you can configure the CritRsrcProtMethod to do nothing so that while the maintenance is being performed the CritRsrcProtMethod will be invoked but will be configured to take no action.

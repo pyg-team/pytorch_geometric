@@ -1,0 +1,68 @@
+Title: IBM VOB Space fails with Too many open files error on Solaris - United States
+
+Text:
+Too many open files; rlim_fd_max; cleartool: Error; 1258086 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This technote explains why attempts to run the IBM® Rational® ClearCase® VOB Space command through the ClearCase Scheduler on Solaris® results in the error Too many open files and provides instructions to resolve the issue. 
+
+SYMPTOM
+ 
+
+The following errors are seen in the Job Scheduler [http://publib.boulder.ibm.com/infocenter/cchelp/v7r0m0/topic/com.ibm.rational.clearcase.cc_ref.doc/topics/ct_schedule.htm?resultof=%22%63%6c%65%61%72%63%61%73%65%22%20%22%63%6c%65%61%72%63%61%73%22%20%22%73%63%68%65%64%75%6c%65%72%22%20%22%73%63%68%65%64%75%6c%22%20] on Solaris:
+
+Job.LastCompletionInfo.Messages.Begin:
+cleartool: Error: /vobstorage2/test.vbs/s/sdft/b/f: Too many open files
+cleartool: Error: /vobstorage2/test.vbs/s/sdft/c/26: Too many open files
+cleartool: Error: /vobstorage2/test.vbs/s/sdft/37/2d: Too many open files
+cleartool: Error: /vobstorage/test2.vbs/db/logs: Too many open files
+cleartool: Error: /vobstorage/test2.vbs/admin/vob_space: Too many open files
+Job.LastCompletionInfo.Messages.End:
+Job.End
+
+
+
+CAUSE
+ 
+
+The rlim_fd_cur value in /etc/system may be set too low. 
+
+
+RESOLVING THE PROBLEM
+ 
+
+
+The problem can be resolved by either:
+
+
+ 1. Setting the ulimit for number of file descriptors in the startup script near to beginning:
+    
+    /opt/rational/clearcase/linux_x86/etc/clearcase
+    <CCHOME>/<system arch>/etc/clearcase
+    
+    ulimit -n <new_limit> 
+    
+    For Example:
+    ulimit -n 2048
+    
+    The default is 1024. Increasing to 2048 is a good value to try. This just increases the soft file descriptor limit for ClearCase processes. 
+    
+    Note: This file may need to be re-edited after reinstalling ClearCase or applying any ClearCase patch.
+    
+    Then stop and start ClearCase.
+    
+ 2. Or, increase the value for all processes on the system with the system environmental variable rlim_fd_cur:
+     1. Log in as root and add this line to the /etc/system file:
+        set rlim_fd_cur=2048 
+     2. Reboot the system.
+        
+    
+    
+
+
+
+
+
+
+
+Cross Reference information Segment Product Component Platform Version Edition Software Development Rational ClearCase Utilities and Tools

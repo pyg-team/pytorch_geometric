@@ -1,0 +1,51 @@
+Title: IBM PM88937; 8.5.5: startnode test fails with port conflict - United States
+
+Text:
+PM88937; PM88937; PM88937 DOWNLOADABLE FILES
+
+ABSTRACT
+ StartNode test fails with port conflict 
+
+DOWNLOAD DESCRIPTION
+PM88937 resolves the following problem:
+
+ERROR DESCRIPTION: 
+Restarting a cell after an internal test run has surfaced a problem with starting 2 nodes. A WSVR0009E: Error occurred during startup" exception is occurring due to a port conflict. 
+
+LOCAL FIX: 
+
+PROBLEM SUMMARY
+
+USERS AFFECTED:
+All administrators of IBM WebSphere Application Server Network Deployment edition.
+
+PROBLEM DESCRIPTION:
+StartNode test fails with port conflict
+
+RECOMMENDATION:
+None
+
+Restarting a cell after an internal test run has surfaced a problem with starting 2 nodes. A "WSVR0009E: Error occurred during startup" exception is occurring due to a port conflict.
+
+PROBLEM CONCLUSION: 
+Ports are now being properly validated. 
+
+The fix for this APAR is currently targeted for inclusion in fix packs 7.0.0.31, 8.0.0.8 and 8.5.5.1. Please refer to the Recommended Updates page for delivery information: 
+http://www.ibm.com/support/docview.wss?uid=swg27004980 [http://www.ibm.com/support/docview.wss?uid=swg27004980]
+
+PREREQUISITES
+None
+
+INSTALLATION INSTRUCTIONS
+Please review the readme.txt for detailed installation instructions.
+
+DOWNLOAD PACKAGE
+
+
+Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options 
+What is Fix Central(FC)? [https://www.ibm.com/support/fixcentral/help?page=swfaqs] 8.5.5.0-WS-WAS-IFPM88937 14 Jun 13 US English 272591 FC [http://www.ibm.com/support/fixcentral/quickorder?fixids=8.5.5.0-WS-WAS-IFPM88937&product=ibm%2FWebSphere%2FWebSphere+Application+Server&source=dbluesearch] [ ] 
+TECHNICAL SUPPORT
+ Contact IBM Support using SR (http://www.ibm.com/software/support/probsub.html [http://www.ibm.com/software/support/probsub.html]), visit the WebSphere Application Server support web site (http://www.ibm.com/software/webservers/appserv/was/support/ [http://www.ibm.com/software/webservers/appserv/was/support/]), or contact 1-800-IBM-SERV (U.S. only). 
+
+ [/support/docview.wss?uid=swg24035184&aid=1]Problems (APARS) fixed [/support/docview.wss?uid=swg24035184&aid=2]Problems (APARS) fixed
+PM88937

@@ -1,0 +1,44 @@
+Title: IBM Disable security for Tivoli Integrated Portal - United States
+
+Text:
+TIPL2; TIPL2MUSTG; Tivoli Integrated Portal; TIP; disable security; login; password; security.xml TECHNOTE (FAQ)
+
+QUESTION
+ What is the procedure to disable security in TIP if users are unable to log in? 
+
+CAUSE
+Login problems may occur after security changes such as adding a repository to the federated repository. It may be necessary to disable security in order to correct security configuration problems.
+
+ANSWER
+Use the following procedure to disable security in Tivoli Integrated Portal: 
+
+ 1. Stop the TIP server. 
+    Use the stopServer.[sh.bat] script in <TIP HOME>/bin or <TIP HOME>/profiles/TIPProfile/bin. For example:
+    $ stopServer.sh server1;
+    The stop command will prompt for the primary administrative user for TIP (usually "tipadmin") and the password. If the stop command will not accept the password for the primary administrative user, then kill the java process for TIP.
+    For example,
+    $ ps -ef | grep tip;
+    $ kill -9 <tip pid>; <--- replace "<tip pid>" with the pid from the "ps -ef" command.
+    
+ 2. Create a backup of the security.xml file located in the <TIP HOME>/profiles/TIPProfile/config/cells/TIPCell directory. For example, make a copy of the file called "security.xml.bak"
+    
+ 3. Edit the original security.xml file as follows: 
+    - find the first instance of the string "enabled". It should be for the tag "<security:Security"
+    - change enabled="true" attribute to enabled="false"
+    - save the security.xml file.
+    
+    Example before:
+    [/support/docview.wss?uid=swg21499504&aid=1] [/support/docview.wss?uid=swg21499504&aid=1]
+    Example after:
+    [/support/docview.wss?uid=swg21499504&aid=2] [/support/docview.wss?uid=swg21499504&aid=2]
+    
+    Save the file.
+    
+ 4. Restart the TIP server. Use the startServer.[sh.bat] script in <TIP HOME>/bin or <TIP HOME>/profiles/TIPProfile/bin. For example:
+    $ startServer.sh server1;
+    
+ 5. Log into TIP and correct any security configuration issues. 
+    
+ 6. Once the security configuration is corrected, re-enable security. Click Security > Secure administration, applications, and infrastructure. Ensure the "Enable administrative security " and "Enable application security " options are checked, and then click Apply, and then Save.
+    
+ 7. Restart the TIP server process again, and verify user logins are working.

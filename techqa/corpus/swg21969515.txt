@@ -1,0 +1,32 @@
+Title: IBM The Report Version is Not Supported - United States
+
+Text:
+report; update; refresh TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ User receives a report version is not supported error when opening a report in IBM Cognos Workspace Advanced or Report Studio:
+
+
+SYMPTOM
+The report version "http://developer.cognos.com/schemas/report/12.0/" is not supported. Expected report version "http://developer.cognos.com/schemas/report/11.0/"
+
+
+CAUSE
+Older version of the report may still be in the browser cache.
+
+DIAGNOSING THE PROBLEM
+The above error is an example from 10.2.2 however you may receive similar error messages in other versions of BIA/CWA or Report Studio.
+
+Clear the browser cache and test to see you can open the report.
+
+RESOLVING THE PROBLEM
+A more permanent solution is to set your browser's history settings to always load a new page.
+
+IE: 
+- Internet options - General tab 
+- Browsing history - settings. If it is to "Automatically" change it to "Everytime I visit the webpage" 
+- Restart the browser
+
+Firefox:
+- in the address bar type in "about:config"
+- find the setting "browser.cache.check_doc_frequency" and change it to 1. This will force Firefox to check for a newer version of the page you’re viewing, regardless of the servers instructions, or Firefox’s default settings.

@@ -1,0 +1,47 @@
+Title: IBM Policy (EJQAB0067E) and JCR Login (WSP0005E) exceptions in System*.logs - United States
+
+Text:
+EJQAB0067E; WSP0005E; LoginException; policy; theme; attribute; JCR TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+Policy (EJQAB0067E) and JCR Login (WSP0005E) exceptions occur in the System* logs when accessing Portal pages after user authentication.
+
+SYMPTOM
+SystemOut.log shows:
+
+[datestamp] 00000241 PolicyService E com.ibm.wps.policy.services.PolicyService getPolicy Exception calling storage api: com.ibm.portal.WpsException: EJQAB0067E: An error occurred while getting the policy root. 
+[datestamp] 00000241 PolicyManager E com.ibm.wps.policy.services.PolicyManagerServerSideImpl getPVSByPath throwing exception. PVS type not found for theme/SingleTopNav
+
+SystemErr.log shows:
+
+[datestamp] 00000241 SystemErr R javax.jcr.LoginException: WSP0005E: Error calling IConnectionManager.logon() for reason: User id can not be null.: WSP0005E: Error calling IConnectionManager.logon() for reason: User id can not be null.
+....
+[datestamp] 00000241 SystemErr R Caused by: com.ibm.icm.da.DBAccessException: User id can not be null
+[datestamp] 00000241 SystemErr R at com.ibm.icm.da.portable.connection.Logon.logon(Logon.java:177)
+
+
+CAUSE
+Authenticated user does not have the attribute defined in the backend user registry which matches the attribute defined in the store.puma_default.user.fbadefault.filter property in WP PumaStoreService Resource Environment Provider. Such attribute is used by JCR when querying for theme policy information.
+
+DIAGNOSING THE PROBLEM
+Collect the following: 
+
+ * LDIF export of a sample user that hits this problem (if the backend user registry is LDAP)  * If you cannot determine a specific user causing the error, you can use the following tracestring to confirm:
+   
+   *=info:com.ibm.wps.policy.services.*=finest:com.ibm.wps.policy.commands.*=finest
+   
+   Then look for the following line in trace.log: com.ibm.wps.policy.services.PolicyService PolicyService() ENTRY userid contructor: {DN of user} 
+   
+   
+ * Resources.xml - can be found under  * <wp_profile>/config/cells/<cellname>/clusters/<clustername>/ for cluster 
+    * <wp_profile>/config/cells/<cellname>/nodes/<nodename>/servers/<portalservername>/ for standalone
+   
+   
+
+Locate the WP PumaStoreService Resource Environment Provider in resources.xml and confirm if there is a defined property name for store.puma_default.user.fbadefault.filter. If not, then the default and active value for such property is "uid". If it does exist, then verify the attribute defined for the value. Then check the LDIF export for the user to confirm if such attribute is defined. 
+RESOLVING THE PROBLEM
+Create/update the store.puma_default.user.fbadefault.filter custom property for the WP PumaStoreService Resource Environment Provider via the Integrated Solutions Console to an attribute that exists for all Portal users in the backend user registry (for example, "cn").
+
+RELATED INFORMATION
+#Puma Store Service [http://www-10.lotus.com/ldd/portalwiki.nsf/dx/Puma_Store_Service_wp8]
+Setting service configuration properties [http://www-10.lotus.com/ldd/portalwiki.nsf/dx/Setting_service_configuration_properties_wp8?OpenDocument&sa=true]

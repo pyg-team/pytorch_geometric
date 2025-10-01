@@ -1,0 +1,76 @@
+Title: IBM Application of a security-related Tivoli System Automation for Multi-platform (TSAMP) efix for DB2 PureScale - United States
+
+Text:
+ PRODUCT DOCUMENTATION
+
+ABSTRACT
+ While the best practice for upgrading TSAMP software level is through the DB2 fixpack, update leveraging existing online or offline software update procedures, applying a TSAMP security efix, which may be released in between DB2 fixpacks, requires a manual installation procedure. The instructions outlined in this topic provides the steps to update a DB2 pureScale cluster with TSAMP security fixes on Linux. 
+
+CONTENT
+Before you begin:
+
+
+ * Your instance must be a DB2 pureScale instance 
+ * You must have root authority
+
+
+Restrictions: 
+
+ * The base level of target TSAMP security efix must be the same as the current committed TSAMP level in the pureScale cluster. For example, if the current TSAMP level in the pureScale cluster is at 4.1.0.3 efix 1, and TSAMP releases a new security efix 2 a month later, the efix to be applied must be from the same TSAMP base level 4.1.0.3. The procedures documented in this topic cannot be used to move up the TSAMP base level. 
+ * The procedure described below is restricted to be used for security fixes not included in any DB2 fixpacks but has been validated and supported by DB2 as documented in http://www-01.ibm.com/support/docview.wss?uid=swg22002573 [http://www-01.ibm.com/support/docview.wss?uid=swg22002573]. Regular TSAMP upgrade must follow existing online or offline DB2 upgrade methods.
+
+
+Procedure: 
+
+ 1. Download the target efix files locally on each host in the cluster. 
+ 2. Stop all workloads and terminate all clients on all databases.  1. Run the following command on any DB2 member in the cluster:
+        db2 force applications all 
+     2. Check if any applications are still connected by running the following command on any DB2 member:
+        db2 list applications global 
+        
+        The output should be:
+        db2 list applications global
+        SQL1611W No data was returned by Database System Monitor. 
+        If applications are still connected, repeat this step and wait till connections are terminated.
+    
+    
+ 3. Deactivate each database:
+    db2 deactivate db <database_name> 
+ 4. Stop db2 by running the following command on any host in the DB2 cluster:
+    db2stop 
+ 5. Stop the db2 instance on all hosts in the DB2 cluster (all members and all CFs) :
+    db2stop instance on <hostname> 
+ 6. Switch to the root user on any host in the DB2 cluster and run the following commands:  1. From the db2 installation directory, put the cluster into maintenance mode.
+        Use the following commands:
+        <DB2_INSTALL_PATH>/bin/db2cluster -cm -enter -maintenance -all
+        <DB2_INSTALL_PATH>/bin/db2cluster -cfs -enter -maintenance –all
+        where <DB2_INSTALL_PATH> is the DB2 installation path.
+        
+     2. Untar the file on every host:
+        tar –xvf <package>
+        
+        For example, if the package name is 4.1.0.3-TIV-ITSAMP-Linux-IFS001.tar, the command to untar is:
+        tar -xvf 4.1.0.3-TIV-ITSAMP-Linux-IFS001.tar 
+        
+        The untarred directory in this example will be called: 
+        4.1.0.3-TIV-ITSAMP-Linux-IFS001 
+     3. On every host in the cluster, go to the untarred directory in the previous step and run the install script as follows :
+        cd 4.1.0.3-TIV-ITSAMP-Linux-IFS001
+        ./install.sh 
+     4. Reboot all hosts in the cluster 
+     5. Once all of the hosts are up again, bring the cluster out of maintenance (on one host in the cluster).
+        If the installation is 10.5 or later, use:
+        <DB2_INSTALL_PATH>/bin/db2cluster -cm -exit -maintenance –all
+        <DB2_INSTALL_PATH>/bin/db2cluster -cfs -exit -maintenance –all
+        where <DB2_INSTALL_PATH> is the DB2 installation path.
+        
+        If the installation is 10.1, do not use the -all option with -cm:
+        <DB2_INSTALL_PATH>/bin/db2cluster -cm -exit -maintenance
+        <DB2_INSTALL_PATH>/bin/db2cluster -cfs -exit -maintenance –all
+        where <DB2_INSTALL_PATH> is the DB2 installation path.
+    
+    
+ 7. Switch back to the DB2 instance owner and start the DB2 instance on all hosts in the cluster:
+    db2start instance on <hostname> 
+ 8. Start DB2:
+    db2start

@@ -1,0 +1,133 @@
+Title: IBM HE12057: The IBM Content Collector Email Connector for Exchange cannot use SSL for Active Directory communications, only STARTTLS - United States
+
+Text:
+  DIRECT LINKS TO FIXES
+4.0.0.3-IBM-ICC-FP003 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FContent+Collector&fixids=4.0.0.3-IBM-ICC-FP003&source=SAR]
+IBM Content Collector V4.0 Fix Pack 3 [http://www-01.ibm.com/support/docview.wss?uid=swg24039003]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  If the Active Directory SSL port 636 is the only port that
+   allows IBM Content Collector to communicate with the domain
+   controller, communication fails. As a result, no email can be
+   processed.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  When using the IBM Content Collector Email Connector to process
+   Microsoft Exchange email, using the SSL port 636 is not
+   supported.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Starting with IBM Content Collector 4.0.0 Fix Pack 3, the Email
+   Connector can be forced to use the SSL port for Active Directory
+    communications when processing Exchange email. To enable this
+   setting, set the following variable for the Email Connector:
+   
+   ex.activeDirectory.ForceSSL=true
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   HE12057
+   
+   
+ * REPORTED COMPONENT NAME
+   ICC FOR EMAIL
+   
+   
+ * REPORTED COMPONENT ID
+   5724V5700
+   
+   
+ * REPORTED RELEASE
+   400
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-05-07
+   
+   
+ * CLOSED DATE
+   2014-12-29
+   
+   
+ * LAST MODIFIED DATE
+   2014-12-29
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ICC FOR EMAIL
+   
+   
+ * FIXED COMPONENT ID
+   5724V5700
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R400 PSY
+   UP

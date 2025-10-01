@@ -1,0 +1,53 @@
+Title: IBM Tivoli Monitoring Agent for Maximo instance shows blank workspaces - United States
+
+Text:
+ITM Agent for Maximo; workspace; blank; web.xml; invalidsecurityconfig; TPAEUI TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Tivoli Monitoring Agent for Maximo instance shows up in TEP but workspaces have no data 
+
+CAUSE
+Often this happens when a LDAP or another Active Directory is enabled
+
+ENVIRONMENT
+Maximo 7.1.x
+
+DIAGNOSING THE PROBLEM
+This often happens after a first-time installation of the Maximo agent. when Tivoli Monitoring TEMS and TEPS support has been applied. 
+
+Often the Agent instance shows up in TEP,however workspaces have no data.
+
+Check if you have LDAP or another Active Directory enabled.
+
+Often these blank workspaces are due to a configuration issue with the application server security setting in the web.xml deployment descriptor file.
+
+
+RESOLVING THE PROBLEM
+Check the moswos log file to see if you see any exceptions, for example "Status = Exception: system#invalidsecurityconfig" 
+
+
+Please make sure you take the right version of the web.xml file as there are many web.xml's throughout the codebase
+
+It should be taken from the following path : <MAXIMO_HOME>\applications\maximo\mboweb\webmodule\WEB-INF 
+
+Check the following section: 
+
+<web-resource-collection> 
+<web-resource-name>MAXIMO Monitoring Agent</web-resource-name> 
+<description>pages accessible by authorized users</description> 
+<url-pattern>/toolclient/*</url-pattern> 
+<http-method>GET</http-method> 
+<http-method>POST</http-method> 
+</web-resource-collection> 
+
+
+Make sure the <security-constraint> tags are in between and not outside it. 
+
+After modifying the web.xml, back up your old web.xml file, replace it with the modified web.xml and rebuild/redeploy the Maximo EAR file. 
+
+Please make sure the file is copied back to <MAXIMO_HOME>\applications\maximo\mboweb\webmodule\WEB-INF
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Systems and Asset Management Tivoli Asset Management for IT Not Applicable AIX, HP-UX, Solaris, Windows 7.1, 7.1.1, 7.1.2 All Editions Systems and Asset Management Tivoli Service Request Manager AIX, Solaris, Windows 2003 server 7.1, 7.1.2, 7.2, 7.2.1 All Editions Systems and Asset Management Tivoli Change and Configuration Management Database AIX, Windows, Solaris, HP-UX, Windows 2003 server 7.1, 7.1.1, 7.1.2 All Editions

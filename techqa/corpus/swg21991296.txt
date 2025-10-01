@@ -1,0 +1,21 @@
+Title: IBM Response to Hold Notice with Virtual Interview is coming up as Replied, No Confirmation - United States
+
+Text:
+Hold Interview quesionnaire TECHNOTE (FAQ)
+
+QUESTION
+ Why do we see response to Hold Notice with Virtual Interview as Replied, No Confirmation? 
+
+CAUSE
+The interview questionnaire was changed recently and Interviews created recently all have the issue
+
+ANSWER
+ 
+
+ 1. Login to Atlas 
+ 2. Click Admin > Interview Questionnaire 
+ 3. Click on the recently created questionnaire 
+ 4. Click Edit 
+ 5. Verify if there is more than one Confirmation question 
+ 6. Make changes as required 
+ 7. Save and Close

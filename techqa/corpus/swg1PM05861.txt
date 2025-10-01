@@ -1,0 +1,222 @@
+Title: IBM PM05861: CICS EXPLORER CNX0593E CREATE FAILED RESPONSE(INVALIDPARM)      REASON(SCOPE). CSD RESOURCE STILL DEFINED. - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  You're using the CICS Explorer to create a CICS resource (a
+   transaction definition, for example.)  You go through the
+   following path:
+   .
+   1. Click Administration
+      2. Transaction Definitions
+         3. right-click the white space
+            4. click NEW
+               5. click other
+                  6. Select Transaction Definition
+   .
+   You get a window entitled 'Create Transaction Definition'. You
+   fill out the form with all needed information, then click on
+   Region(CSD) and specify DFHCSD and click on 'Open editor'. After
+   that, when you click on finish you receive:
+   .
+   Create Failed: CNX0593E: RESPONSE(INVALIDPARM) REASON(SCOPE)
+   .
+   The editor window does not open, but the resource does indeed
+   get defined in the DFHCSD file.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All CICSPlex SM V4R1M0 Users                 *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:    You use the CICS Explorer to create  *
+   *                      a CICS resource (a transaction defi-    *
+   *                      nition, for example) in a stand alone   *
+   *                      CICS region (SMSS).  You go through the *
+   *                      following path:                         *
+   *                      .                                       *
+   *                      1. Click Administration                 *
+   *                         2. Transaction Definitions           *
+   *                            3. right-click the white space    *
+   *                               4. click NEW                   *
+   *                                  5. click other              *
+   *                                     6. Select Transaction    *
+   *                                        Definition            *
+   *                      .                                       *
+   *                         You get a window titled 'Create      *
+   *                      Transaction Definition'. You fill out   *
+   *                      the form with all needed information,   *
+   *                      then click on Region(CSD) and specify   *
+   *                      DFHCSD and select 'Open editor'. Then   *
+   *                      you click on finish and receive:        *
+   *                      .                                       *
+   *                      Create Failed: CNX0593E:                *
+   *                         RESPONSE(INVALIDPARM) REASON(SCOPE)  *
+   *                      .                                       *
+   *                      The editor window does not open, but    *
+   *                      the resource has indeed been defined    *
+   *                      in the DFHCSD file.                     *
+   ****************************************************************
+   * RECOMMENDATION: After applying the PTF that resolves this    *
+   *                 APAR, all SMSS regions, CMASes, and MASes    *
+   *                 which serve as CMCI servers, must be re-     *
+   *                 cycled to pick up the new code.  Note that   *
+   *                 the restarts do not need to be done at the   *
+   *                 same time.                                   *
+   ****************************************************************
+      When a request is made from CICS Explorer to a stand-alone
+   CICS region (SMSS), the APPLID of the region must be passed as
+   context and scope for all requests issued to the CICS Management
+   Client Interface (CMCI).  However, the CMCI CONNECT processor
+   does not use the passed CONTEXT and SCOPE, but rather extracts
+   the APPLID from CICS and uses that value as both CONTEXT and
+   SCOPE.  All API command processors except EYU0XDF1 (XDF1 - API
+   CONNECT) and EYU0XDP1 (XDP1 - API GET) ignore the CONTEXT and
+   SCOPE passed in the CMCI URI, assuming that it has been checked
+   as part of the API CONNECT process.  XDF1 and XDP1 both test
+   the passed context and scope in an SMSS, to see that they match
+   the APPLID of the region.  Since XDF1 is passed the APPLID for
+   both CONTEXT and SCOPE, the CONNECT succeeds.  EYU0XDH2 (XDH2 -
+   API CREATE) is passed the CONTEXT and SCOPE from the CMCI URI,
+   but assumes that they were validated during CONNECT, and does
+   no further checking.  If all other parameters are valid, the
+   requested resource is created.  GET is then called to refresh
+   the current display.  XDP1 is passed the CONTEXT and SCOPE from
+   the CMCI URI, validates them, and returns a response and reason
+   of INVALIDPARM / SCOPE if the passed SCOPE does not match the
+   region's APPLID.  These values are displayed in message CNX0593E
+   and because the response is not OK, the editor is not opened for
+   the newly created resource.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Module DFHWUEYU (WUEYU - CMCI API Driver) was modified to
+   pass the CONTEXT and SCOPE provided in the CMCI URI string to
+   the API CONNECT command, where it will be validated.  If the
+   API CONNECT fails, the response and reason will be returned to
+   the caller in a response message, and no further processing will
+   be done for the current request.  Because the provided CONTEXT
+   and SCOPE will always be validated by CONNECT, the validation
+   code was removed from module EYU0XDP1, and a comment was added
+   stating that the CONTEXT and SCOPE were validated by CONNECT.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  FIX AVAILABLE BY PTF ONLY
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM05861
+   
+   
+ * REPORTED COMPONENT NAME
+   CICS TS Z/OS V4
+   
+   
+ * REPORTED COMPONENT ID
+   5655S9700
+   
+   
+ * REPORTED RELEASE
+   60M
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-01-22
+   
+   
+ * CLOSED DATE
+   2010-02-22
+   
+   
+ * LAST MODIFIED DATE
+   2010-03-01
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UK54553
+   
+   
+
+MODULES/MACROS
+ *  DESWUEYU DFHWUEYU EYU0XDP1
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CICS TS Z/OS V4
+   
+   
+ * FIXED COMPONENT ID
+   5655S9700
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R60M PSY UK54553 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK54553]
+   UP10/02/24 P F002
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

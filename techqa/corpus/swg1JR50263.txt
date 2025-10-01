@@ -1,0 +1,212 @@
+Title: IBM JR50263: AFTER YOU APPLY APAR JR49514, YOU SEE A DUPLICATEKEYEXCEPTION WHEN USER OR USERS REST API IS CALLED - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Version 8.5 Refresh Pack 5 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24037683]
+Version 8.5.0 Fix Pack 2 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24040683]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  If you use the user or users REST API with the refreshUser=true
+   parameter causes a DuplicateKeyException exception after APAR
+   JR49514 [http://www-01.ibm.com/support/docview.wss?uid=swg1JR49514] is applied, for example
+   
+   GET
+   /rest/bpm/wle/v1/user/{userNameOrID}[?includeInternalMemberships
+   ={boolean}][&parts={string}][&refreshUser={boolean}]
+   
+   GET
+   /rest/bpm/wle/v1/users[?filter={string}][&maxresult={integer}][&
+   assignTaskidFilter={string}][&collabTaskidFilter={string}][&incl
+   udeTaskExperts={boolean}][&sort={boolean}][&includeInternalMembe
+   rships={boolean}][&namesonly={boolean}][&parts={string}][&refres
+   hUser={boolean}]
+   
+   The following error message ocurrs in the SystemOut.log file:
+    wle           E   CWLLG2229E: An exception occurred in an EJB
+   call.  Error: PreparedStatementCallback; SQL [INSERT INTO
+   LSW_LOCK (LOCK_ID, DESCRIPTION) VALUES (?,?)]; DB2 SQL Error:
+   SQLCODE=-803, SQLSTATE=23505, SQLERRMC=1;DB2ADMIN.LSW_LOCK,
+   DRIVER=4.11.69; nested exception is
+   com.ibm.websphere.ce.cm.DuplicateKeyException: DB2 SQL Error:
+   SQLCODE=-803, SQLSTATE=23505, SQLERRMC=1;DB2ADMIN.LSW_LOCK,
+   DRIVER=4.11.69
+   
+   org.springframework.dao.DataIntegrityViolationException:
+   PreparedStatementCallback; SQL [INSERT INTO LSW_LOCK (LOCK_ID,
+   DESCRIPTION) VALUES (?,?)]; DB2 SQL Error: SQLCODE=-803,
+   SQLSTATE=23505, SQLERRMC=1;DB2ADMIN.LSW_LOCK, DRIVER=4.11.69;
+   nested exception is
+   com.ibm.websphere.ce.cm.DuplicateKeyException: DB2 SQL Error:
+   SQLCODE=-803, SQLSTATE=23505, SQLERRMC=1;DB2ADMIN.LSW_LOCK,
+   DRIVER=4.11.69
+    at org.springframework.jdbc.support.
+      SQLErrorCodeSQLExceptionTranslator.translate
+      (SQLErrorCodeSQLExceptionTranslator.java:292)
+    at org.springframework.jdbc.core.JdbcTemplate.execute
+      (JdbcTemplate.java:607)
+    at
+      org.springframework.jdbc.core.JdbcTemplate.update
+      (JdbcTemplate.java:792)
+    at org.springframework.jdbc.core.JdbcTemplate.update
+      (JdbcTemplate.java:850)
+    at org.springframework.jdbc.core.JdbcTemplate.update
+      (JdbcTemplate.java:858)
+    at org.springframework.jdbc.core.simple.SimpleJdbcTemplate.
+      update(SimpleJdbcTemplate.java:237)
+    at com.lombardisoftware.server.core.DBLockHelper.createLock
+      (DBLockHelper.java:42)
+    at com.lombardisoftware.server.ejb.security.SecurityCore.
+      initializeNewLogin(SecurityCore.java:194)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  The error occurred because you tried to refresh your own data by
+   using the user or users REST API with the refreshUser parameter.
+   The refresh happens by internally logging in the users. If you
+   are already logged in and you try to refresh your own data, an
+   exception  occurs because a user can belogged in only once.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A fix is available for IBM BPM V8.5.0.1 that allows you to use
+   the user or users REST API with the refreshUser parameter to
+   search for yourself.
+   
+   On Fix Central (http://www.ibm.com/support/fixcentral), search
+   for JR50263:
+   
+   1. Select IBM Business Process Manager with your edition from
+     the product selector, the installed version to the fix pack
+     level, and your platform, and then click Continue.
+   
+   2. Select APAR or SPR, enter JR50263, and click Continue.
+   
+   When you download fix packages, ensure that you also download
+   the readme file for each fix. Review each readme file for
+   additional installation instructions and information about the
+   fix.
+   
+   For more information, see the following topics:
+   
+   ?REST Interface for BPD-related Resources - User Resource? at
+   http://pic.dhe.ibm.com/infocenter/dmndhelp/v8r5m0/index.jsp?topi
+   c=/com.ibm.wbpm.ref.doc/rest/bpmrest/rest_bpm_wle_v1_user_userna [http://pic.dhe.ibm.com/infocenter/dmndhelp/v8r5m0/index.jsp?topic=/com.ibm.wbpm.ref.doc/rest/bpmrest/rest_bpm_wle_v1_user_userna]
+   meorid.htm
+   "REST Interface for BPD-related Resources - Users Resource" at
+   http://pic.dhe.ibm.com/infocenter/dmndhelp/v8r5m0/index.jsp?topi
+   c=/com.ibm.wbpm.ref.doc/rest/bpmrest/rest_bpm_wle_v1_users.htm [http://pic.dhe.ibm.com/infocenter/dmndhelp/v8r5m0/index.jsp?topic=/com.ibm.wbpm.ref.doc/rest/bpmrest/rest_bpm_wle_v1_users.htm]
+   
+   The request parameter "refreshUser" can be specified for both
+   REST APIs. If the parameter is set to true, refreshing the user
+   fullname and group memberships from the WebSphere Application
+   Server user repository occurs before the results of the REST
+   request are returned. If the parameter is not specified in the
+   REST API call or the parameter is set to false, the REST API
+   retrieves the same data in the same way as it did before you
+   installed JR50263.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  Not applicable
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR50263
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM STANDARD
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9500
+   
+   
+ * REPORTED RELEASE
+   850
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-05-15
+   
+   
+ * CLOSED DATE
+   2014-10-17
+   
+   
+ * LAST MODIFIED DATE
+   2014-10-17
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   BPM STANDARD
+   
+   
+ * FIXED COMPONENT ID
+   5725C9500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R850 PSY
+   UP

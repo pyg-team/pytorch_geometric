@@ -1,0 +1,171 @@
+Title: IBM "An error occurred when retrieving user and group information from the repository. Not all records may have been retrieved..." - United States
+
+Text:
+An error occurred when retrieving user and group information from the repository. Not all records may have been retrieved. Check log for details; IBM Lotus Sametime Gateway; SIMPLE; SIP TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+In you IBM® Lotus® Sametime® Gateway system, you attempt to search for users or groups and receive the following error at the top of the WebSphere® ISC (Integrated Solutions Center): 
+
+
+An error occurred when retrieving user and group information from the repository. Not all records may have been retrieved. Check log for details.
+
+
+SYMPTOM
+Sametime Gateway administrators have the ability to control who (users and/or groups) can use the Gateway by defining the access control list. In order to define the access control list, administrators must assign users and/or groups to specific external communities. 
+
+
+This assignment is accomplished by searching for users/groups from within the Integrated Solutions Console (ISC), and selecting which entities should have access.
+
+For example, here is how an administrator would see this specific error message:
+
+
+ 1. Log into the ISC
+    
+ 2. Expand Sametime Gateway > Communities > [External Community] > Assign local users to this Community
+    [External Community] = {AOL, Yahoo, Google, or some other Sametime community}
+    
+ 3. Select Individual users and groups
+    
+ 4. Enter the search criteria in order to search for a user or a group
+    
+ 5. Click Search
+    
+ 6. In most cases, the administrator will see a list of names from which they can now select from. However in some situations, administrators may receive an error message at the top of the screen that looks like the following statement: 
+ 7. 
+
+[/support/docview.wss?uid=swg21313025&aid=1] [/support/docview.wss?uid=swg21313025&aid=1] 
+CAUSE
+This error is generated because the component of Websphere Application Server that the Sametime Gateway leverages to perform the search did not receive all of the requested attributes from the LDAP query. 
+
+For example, when the administrator searches on a group, an LDAP query is sent to the LDAP server with the expectation that a specific set of attributes will be returned in the response. When the LDAP server's response does not contain all of the requested attributes, then this error is displayed. There are a few reasons why the requested attributes are not provided, and that is explained in detail below.
+
+
+Example LDAP query:
+(&(objectclass=groupOfUniqueNames)(cn=groupName))|objectClass|cn|uniqueid 
+
+- the query above has two components (the search filter plus the list of requested attributes, which in this case are objectClass, cn, and uniqueid) 
+
+
+Example LDAP response:
+cn=groupName
+objectClass=groupOfUniqueNames 
+
+- the response above does not include the uniqueid attribute, therefore would cause the error above to be displayed.
+
+
+DIAGNOSING THE PROBLEM
+In order to diagnose the problem, the following must be done: 
+
+ * Implement WIM debug (WIM is the WAS component that the Sametime Gateway relies on to perform the searches):
+   
+ * Reproduce the issue, and collect the following files:  * wimconfig.xml 
+    * all files located in the [profile]\logs directory 
+    * LDIF of the user or group entity that is being searched
+      
+   
+   
+
+Here's an example of the detailed steps taken to diagnose this issue:  1. Set a diagnostics trace on the server:  1.  In the Integrated Solutions Console, click Troubleshooting --> Logs and Trace. 
+     2.  Click the RTCGWServer that you want to trace. 
+     3.  Under General Properties, click Change Log Detail Levels. 
+     4.  Select the Runtime tab. 
+     5.  Add com.ibm.ws.wim.*=all to the text box 
+     6.  From the context menu, select All Messages and Traces. You should now see the following text in the log detail level field: *=info: com.ibm.ws.wim.*=all 
+     7.  Select Save runtime changes to configuration as well. 
+     8.  Click OK, and then Save. 
+     9.  Restart the Sametime Gateway 
+     10. Monitor the log file in stgw_profile_root\logs directory
+         
+         
+    
+    
+ 2. Reproduce the issue by logging into the ISC and search for a user or group.
+    
+    
+ 3. Collect the following files:  * wimconfig.xml 
+     * all files located in the [profile]\logs directory 
+     * LDIF of the user or group entity that is being searched
+       
+       
+    
+    
+ 4. In the trace.log that covers the time period when the issue was reproduced in step #2, you should see the trace prints that look something like the following text. Look for items similar to those in bold.
+    ...
+    ou=groups,o=IBM|(&(objectclass=groupOfUniqueNames)(cn=TestGroupName))|2|0|600000|objectClass|cn|uniqueid
+    
+    JTAHelper E com.ibm.ws.wim.tx.JTAHelper handleException
+    ...
+    [7/1/08 18:09:46:076 CDT] 00000060 ContextManage < runAs(System) -> Exception occurred. Exit
+    com.ibm.websphere.wim.exception.WIMException
+    at com.ibm.ws.wim.tx.JTAHelper.handleException(JTAHelper.java:235)
+    ...
+    Caused by: java.lang.NullPointerException
+    at com.ibm.ws.wim.adapter.ldap.LdapConfigManager.getExtIdFromAttributes
+    LdapConfigManager.java:1977)
+    ...
+    [7/1/08 18:09:46:076 CDT] 00000060 CodedExceptio E An error occurred when retrieving user and group information from the repository. Not all records may have been retrieved. Check log for details.
+    com.ibm.websphere.wim.exception.WIMException
+    at com.ibm.ws.wim.tx.JTAHelper.handleException(JTAHelper.java:235)
+    
+    Bolded blue items = Attributes being requested in the LDAP search query
+    Bolded red items = Exceptions to look for.
+    
+    In this case, the LDAP search query is requested three attributes: objectClass, cn, and uniqueid.
+    There the JTAHelper handleException is caused by a NullPointerException in which the last method called was getExtIdFromAttributes
+    
+    Note: This method, getExtIdFromAttributes, is responsible for getting the external ID for the entity being searched.
+    
+    
+ 5. At this point, we should look at the wimconfig.xml to check to make sure what external ID has been specified for group entities. Open it up to the section that looks like:
+    <config:attributeConfiguration>
+    <config:externalIdAttributesname="uniqueid"/>
+    <config:attributes name="userPassword" propertyName="password"/>
+    <config:propertiesNotSupported name="homeAddress"/>
+    <config:propertiesNotSupported name="businessAddress"/>
+    </config:attributeConfiguration>
+    
+    This section tells us that the uniqueid attribute is the external ID used to uniquely identify the entity being searched on.
+    
+    
+ 6. Now, we should look at the LDIF of the entity we are trying to search:
+    
+
+ * dn: cn=TestGroupName,ou=groups,o=IBM
+   objectClass: groupOfUniqueNames
+   objectClass: top
+   cn: TestGroupName
+ * 
+ * 
+ * 
+
+ * 
+ * 
+ *  The bind credentials used to query the LDAP server does not have the appropriate read access rights 
+   The uniqueid attribute does not exist at all in the LDAP schema for this object 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * uniqueid
+ * 
+ * 
+ * 
+ * dn: cn=TestGroupName,ou=groups,o=IBM
+   objectClass: groupOfUniqueNames
+   objectClass: top
+   cn: TestGroupName
+ * 
+ * uniqueid:TestUser
+
+RESOLVING THE PROBLEM
+There can be several reasons why the requested attributes are not returned in the server-side response: 
+
+ * The bind credentials being used by WebSphere Application Server (WAS) to search the LDAP directory does not have the appropriate read access privileges to all of the attributes being requested.
+   
+   Resolution: Ensure that the LDAP account being used has read access privileges to all of the requested attributes
+   
+   
+ * The requested attributes may not exist in the LDAP schema
+   
+   Resolution: Ensure that the object or entity being searched contains the attributes being requested by our search query.

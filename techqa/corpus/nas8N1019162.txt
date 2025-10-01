@@ -1,0 +1,101 @@
+Title: IBM Options to Display User Profiles That Are Disabled for IBM i NetServer Use - United States
+
+Text:
+NetServer; MSGCPIB682 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This document describes the options that can be used, both on the PC and on the operating system command line, to display profiles that have been disabled for IBM i NetServer use. 
+
+RESOLVING THE PROBLEM
+There are several methods to determine if an operating system user profile has been disabled for IBM i NetServer use. 
+
+Note: DSPUSRPRF does not indicate whether a user profile is disabled for NetServer use. The STATUS setting on a user profile displays either *ENABLED or *DISABLED, but a profile can be disabled for NetServer use even though the STATUS of the profile is *ENABLED.
+
+
+
+ *  - [http://www.ibm.com/i/c.gif] Option 1: Using System i Navigator from the PC 
+   
+   System i Navigator can be used to display a list of user profiles that are disabled for NetServer use. Access the Disabled User IDs screen by taking the following steps in Navigator:
+   
+   Note: The Network option in Navigator is not installed by default. This method of displaying disabled user IDs is only available in Navigator if the Network function is installed on the PC. 
+   
+   1. Expand My Connections. 2. Expand the connection name for the system. 3. Expand Network. 4. Expand Servers. 5. Select TCP/IP. 6. A list of TCP/IP Servers will be displayed on the right side of the Navigator window. Right-click i5/OS NetServer and select the option for Disabled User IDs. Note: Profiles that have been disabled for NetServer use, do not appear in the Disabled User IDs list until the first attempt is made to connect with the profile after the profile is originally disabled. Once the profile is re-enabled using the [Enable User ID] button, the profile name disappears from the list immediately. 
+   
+
+
+ *  - [http://www.ibm.com/i/c.gif] Option 2: Examining the QSYSOPR Message Queue 
+   
+   A message CPIB682 - User profile &1 disabled for IBM i Support for Windows Network Neighborhood access is sent to the QSYSOPR message queue when a profile is initially disabled for NetServer use. The QSYSOPR message queue can be displayed by running the following command on an OS/400 or i5/OS command line:
+   
+   DSPMSG QSYSOPR 
+   
+   Press the Enter key.
+   
+   DSPMSG is of limited use for determining which profiles have been disabled for i5/OS NetServer use because the message is only issued when the profile is initially displayed. Because the QSYSOPR message queue receives a lot of messages, if more than a few minutes have gone by since the profile was disabled for NetServer, it may be difficult to find the message.
+   
+   Note: See IBM Technote N1010973 CPIB682 Message Recovery Text is Outdated [http://www-01.ibm.com/support/docview.wss?uid=nas8N1010973].
+   
+   
+   
+
+
+ *  - [http://www.ibm.com/i/c.gif] Option 3: Examining the QHST History Log 
+   
+   Examining the QHST History Log is a more reliable way of determining which profiles have been disabled for NetServer use. When the CPIB682 message is sent to the QSYSOPR message queue, it is also sent to the QHST History Log and will remain there until the current log is deleted. To view the messages in the QHST History Log, run the following command on an i5/OS command line:
+   
+   DSPLOG MSGID(CPIB682) 
+   
+   Press the Enter key.
+   
+   All instances of CPIB682 that have been generated since the current history log began are displayed by the DSPLOG command.
+   
+   Note: See IBM Technote N1010973 CPIB682 Message Recovery Text is Outdated [http://www-01.ibm.com/support/docview.wss?uid=nas8N1010973].
+   
+   
+   
+   
+
+
+ *  - [http://www.ibm.com/i/c.gif] Option 4: Using the GO NETS Tool 
+   
+   The IBM i NetServer home page contains information about the GO NETS tool, which is a command line interface to the NetServer APIs. The tool provides a menu that can be used to run the commands and is part of the Example Tools Library, which is Option 7 of the OS/400 product.
+   
+   At all currently supported OS/400 versions, GO NETS code is shipped with OS/400 and is located in the QUSRTOOL library. 
+   
+   However, the GO NETS menu must be created before it can be used. Follow directions in IBM Technote N1021773 'How to manage IBM i NetServer without Navigator'. Technote N1021773 can be found online at:
+   
+   http://www-01.ibm.com/support/docview.wss?uid=nas8N1021773 [http://www-01.ibm.com/support/docview.wss?uid=nas8N1021773]
+   
+   The NETS menu (on current versions of the tool) will include Option 12, Work with Netserver Users, which displays a list of profiles which have been disabled for NetServer use (similar to the list in System i Navigator). 
+   
+   
+   
+
+
+
+Enabling User Profiles 
+
+In the past, the CHGUSRPRF command could be used to re-enable profiles for NetServer use. 
+
+The following PTFs for NetServer remove the ability of the CHGUSRPRF command to reset, or re-enable, a user that is disabled for NetServer access - see APAR MA42015 [http://www-912.ibm.com/n_dir/nas4apar.nsf/c79815e083182fec862564c00079d117/2ff4bf8e6a3c0096862579e7003c6fe5?OpenDocument&Highlight=2,MA42015]. Individual users can be re-enabled by using the GO NETS menu, using IBM i Navigator, or writing a program that makes use of the QZLSCHSI API. 
+
+540: MF55657 (not included on any Cumulative PTF Package) 
+545: MF55658 (not included on any Cumulative PTF Package) 
+610: MF55659 (on Cumulative PTF Package 2305) 
+611: MF55660 (on Cumulative PTF Package 2305) 
+710: MF55661 (on Cumulative PTF Package 2279) 
+
+All of the above PTFs became available in May 2012. 
+
+The following Technotes provide sample as-is CL programs (no support provided for these programs) that use the QZLSCHSI API to re-enable NetServer users. 
+
+N1010992 CL Program and Command to Re-Enable NetServer Users [http://www-01.ibm.com/support/docview.wss?uid=nas8N1010992] 
+
+N1010645 Automatically Re-Enable a Disabled IBM i NetServer User Profile [http://www-01.ibm.com/support/docview.wss?uid=nas8N1010645] 
+
+Note: All profiles are re-enabled for i5/OS NetServer use when NetServer is restarted from the System i Navigator screen or by running the STRTCPSVR *NETSVR command. All profiles are also re-enabled for NetServer use when the IBM i system is IPLed.  
+
+
+Cross reference information Segment Product Component Platform Version Edition Operating System IBM i 6.1 Operating System IBM i 7.1 
+HISTORICAL NUMBER
+ 358959335

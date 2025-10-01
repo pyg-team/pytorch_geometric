@@ -1,0 +1,13 @@
+Title: IBM User of Enterprise Content Manager for z/OS seeing OAM image object being updated or replaced without user doing so. - United States
+
+Text:
+Replace; update; OAM TECHNOTE (FAQ)
+
+QUESTION
+ When no user has update authority in ECM for z/OS, why are we seeing objects being replaced in OAM. We also have replication turned on as well. We are also not seeing any data replicated for this replace or update in OAM. 
+
+CAUSE
+Rotation of a page in an image object.
+
+ANSWER
+When a user does something as simple as rotate a page of an image they are viewing and saves the modification, ECM for z/OS and the APIs will do a replace of the object in OAM. That is what caused this to happen. As it is not a new object stored to ECM, no replication is done either.

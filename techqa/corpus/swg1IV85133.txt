@@ -1,0 +1,330 @@
+Title: IBM IV85133: ETL IMPORT 9.2.2.0 fails on step SAM::FileFact with error 'RangeError:bignum too big to convert into ´long'' - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  ERROR DESCRIPTION:
+   ETL Import 9.2.2.0-20151209-1636  fails on step SAM::FileFact.
+   The error is caused by
+   incorrect itsitsearch scan file content. The conversion error
+   occurs on the 'size' attribute parsed from the scan file. The
+   'size' attribute is too big to fit into database column. The
+   detailed stack trace of this error is following:
+   ERROR: RangeError: bignum too big to convert into ´long'
+    D:/Program
+   Files/ibm/BFI/wlp/usr/servers/server1/apps/tema.war/WEB-INF/gems
+   /gems/se
+   quel-4.20.0.4a035dcf4c25ea393afb7b3d60387f11d32e70e4/lib/sequel/
+   adapters
+   /jdbc.rb:565:in ´set_ps_arg'
+    D:/Program
+   Files/ibm/BFI/wlp/usr/servers/server1/apps/tema.war/WEB-INF/lib/
+   sequel/e
+   xtensions/sequence_typecast.rb:6:in ´set_ps_arg'
+    D:/Program
+   Files/ibm/BFI/wlp/usr/servers/server1/apps/tema.war/WEB-INF/lib/
+   sequel/e
+   xtensions/batch_execution.rb:14:in ´call'
+    org/jruby/RubyArray.java:1613:in ´each'
+    org/jruby/RubyEnumerable.java:977:in ´each_with_index'
+    D:/Program
+   Files/ibm/BFI/wlp/usr/servers/server1/apps/tema.war/WEB-INF/lib/
+   sequel/e
+   xtensions/batch_execution.rb:14:in ´call'
+    D:/Program
+   Files/ibm/BFI/wlp/usr/servers/server1/apps/tema.war/WEB-INF/lib/
+   etl/stra
+   tegy.rb:109:in ´batch_execute'
+    org/jruby/RubyProc.java:271:in ´call'
+    org/jruby/RubyYielder.java:81:in ´yield'
+    D:/Program
+   Files/ibm/BFI/wlp/usr/servers/server1/apps/tema.war/WEB-INF/lib/
+   threaded
+   _mapper.rb:104:in ´process'
+    D:/Program
+   Files/ibm/BFI/wlp/usr/servers/server1/apps/tema.war/WEB-INF/doma
+   ins/sam/
+   app/models/sam/file_fact.rb:155:in ´etl_source'
+    org/jruby/RubyProc.java:271:in ´call'
+    org/jruby/RubyYielder.java:81:in ´yield'
+    D:/Program
+   Files/ibm/BFI/wlp/usr/servers/server1/apps/tema.war/WEB-INF/lib/
+   sequel/e
+   xtensions/enumerator.rb:50:in ´enumerator'
+    org/jruby/RubyArray.java:1613:in ´each'
+    D:/Program
+   Files/ibm/BFI/wlp/usr/servers/server1/apps/tema.war/WEB-INF/lib/
+   sequel/e
+   xtensions/enumerator.rb:50:in ´enumerator'
+    D:/Program
+   Files/ibm/BFI/wlp/usr/servers/server1/apps/tema.war/WEB-INF/gems
+   /gems/se
+   quel-4.20.0.4a035dcf4c25ea393afb7b3d60387f11d32e70e4/lib/sequel/
+   dataset/
+   actions.rb:137:in ´each'
+    D:/Program
+   Files/ibm/BFI/wlp/usr/servers/server1/apps/tema.war/WEB-INF/gems
+   /gems/se
+   quel-4.20.0.4a035dcf4c25ea393afb7b3d60387f11d32e70e4/lib/sequel/
+   adapters
+   /jdbc.rb:829:in ´process_result_set'
+    D:/Program
+   Files/ibm/BFI/wlp/usr/servers/server1/apps/tema.war/WEB-INF/gems
+   /gems/se
+   quel-4.20.0.4a035dcf4c25ea393afb7b3d60387f11d32e70e4/lib/sequel/
+   adapters
+   /jdbc.rb:758:in ´fetch_rows'
+    D:/Program
+   Files/ibm/BFI/wlp/usr/servers/server1/apps/tema.war/WEB-INF/gems
+   /gems/se
+   quel-4.20.0.4a035dcf4c25ea393afb7b3d60387f11d32e70e4/lib/sequel/
+   adapters
+   /jdbc.rb:258:in ´execute'
+    D:/Program
+   Files/ibm/BFI/wlp/usr/servers/server1/apps/tema.war/WEB-INF/gems
+   /gems/se
+   quel-4.20.0.4a035dcf4c25ea393afb7b3d60387f11d32e70e4/lib/sequel/
+   adapters
+   /jdbc.rb:660:in ´statement'
+    D:/Program
+   Files/ibm/BFI/wlp/usr/servers/server1/apps/tema.war/WEB-INF/gems
+   /gems/se
+   quel-4.20.0.4a035dcf4c25ea393afb7b3d60387f11d32e70e4/lib/sequel/
+   adapters
+   /jdbc.rb:250:in ´execute'
+    D:/Program
+   Files/ibm/BFI/wlp/usr/servers/server1/apps/tema.war/WEB-INF/gems
+   /gems/se
+   quel-4.20.0.4a035dcf4c25ea393afb7b3d60387f11d32e70e4/lib/sequel/
+   connecti
+   on_pool/threaded.rb:96:in ´hold'
+    D:/Program
+   Files/ibm/BFI/wlp/usr/servers/server1/apps/tema.war/WEB-INF/gems
+   /gems/se
+   quel-4.20.0.4a035dcf4c25ea393afb7b3d60387f11d32e70e4/lib/sequel/
+   database
+   /connecting.rb:255:in ´synchronize'
+    D:/Program
+   Files/ibm/BFI/wlp/usr/servers/server1/apps/tema.war/WEB-INF/gems
+   /gems/se
+   quel-4.20.0.4a035dcf4c25ea393afb7b3d60387f11d32e70e4/lib/sequel/
+   adapters
+   /jdbc.rb:249:in ´execute'
+    D:/Program
+   Files/ibm/BFI/wlp/usr/servers/server1/apps/tema.war/WEB-INF/gems
+   /gems/se
+   quel-4.20.0.4a035dcf4c25ea393afb7b3d60387f11d32e70e4/lib/sequel/
+   dataset/
+   actions.rb:911:in ´execute'
+    D:/Program
+   Files/ibm/BFI/wlp/usr/servers/server1/apps/tema.war/WEB-INF/gems
+   /gems/se
+   quel-4.20.0.4a035dcf4c25ea393afb7b3d60387f11d32e70e4/lib/sequel/
+   adapters
+   /jdbc.rb:758:in ´fetch_rows'
+    D:/Program
+   Files/ibm/BFI/wlp/usr/servers/server1/apps/tema.war/WEB-INF/gems
+   /gems/se
+   quel-4.20.0.4a035dcf4c25ea393afb7b3d60387f11d32e70e4/lib/sequel/
+   dataset/
+   actions.rb:137:in ´each'
+    org/jruby/RubyEnumerable.java:1033:in ´each_slice'
+    D:/Program
+   Files/ibm/BFI/wlp/usr/servers/server1/apps/tema.war/WEB-INF/lib/
+   sequel/e
+   xtensions/enumerator.rb:48:in ´enumerator'
+    org/jruby/RubyProc.java:271:in ´call'
+    classpath:/jruby/kernel/jruby/generator.rb:246:in ´each'
+    org/jruby/RubyEnumerator.java:274:in ´each'
+    D:/Program
+   Files/ibm/BFI/wlp/usr/servers/server1/apps/tema.war/WEB-INF/doma
+   ins/sam/
+   app/models/sam/file_fact.rb:162:in ´etl_source'
+    org/jruby/RubyProc.java:271:in ´call'
+    classpath:/jruby/kernel/jruby/generator.rb:246:in ´each'
+    org/jruby/RubyEnumerator.java:274:in ´each'
+    D:/Program
+   Files/ibm/BFI/wlp/usr/servers/server1/apps/tema.war/WEB-INF/lib/
+   etl/stra
+   tegy.rb:109:in ´batch_execute'
+    D:/Program
+   Files/ibm/BFI/wlp/usr/servers/server1/apps/tema.war/WEB-INF/lib/
+   sequel/e
+   xtensions/batch_execution.rb:47:in ´batch'
+    D:/Program
+   Files/ibm/BFI/wlp/usr/servers/server1/apps/tema.war/WEB-INF/gems
+   /gems/se
+   quel-4.20.0.4a035dcf4c25ea393afb7b3d60387f11d32e70e4/lib/sequel/
+   connecti
+   on_pool/threaded.rb:96:in ´hold'
+    D:/Program
+   Files/ibm/BFI/wlp/usr/servers/server1/apps/tema.war/WEB-INF/gems
+   /gems/se
+   quel-4.20.0.4a035dcf4c25ea393afb7b3d60387f11d32e70e4/lib/sequel/
+   database
+   /connecting.rb:255:in ´synchronize'
+    D:/Program
+   Files/ibm/BFI/wlp/usr/servers/server1/apps/tema.war/WEB-INF/lib/
+   sequel/e
+   xtensions/batch_execution.rb:42:in ´batch'
+    D:/Program
+   Files/ibm/BFI/wlp/usr/servers/server1/apps/tema.war/WEB-INF/lib/
+   sequel/e
+   xtensions/batch_execution.rb:61:in ´batch'
+    D:/Program
+   Files/ibm/BFI/wlp/usr/servers/server1/apps/tema.war/WEB-INF/lib/
+   etl/stra
+   tegy.rb:108:in ´batch_execute'
+    D:/Program
+   Files/ibm/BFI/wlp/usr/servers/server1/apps/tema.war/WEB-INF/lib/
+   etl/stra
+   tegy/simplified_work_table.rb:65:in ´execute'
+    D:/Program
+   Files/ibm/BFI/wlp/usr/servers/server1/apps/tema.war/WEB-INF/doma
+   ins/sam/
+   app/models/sam/file_fact.rb:103:in ´etl_core'
+    D:/Program
+   Files/ibm/BFI/wlp/usr/servers/server1/apps/tema.war/WEB-INF/lib/
+   sequel/p
+   lugins/etl.rb:189:in ´etl'
+    D:/Program
+   Files/ibm/BFI/wlp/usr/servers/server1/apps/tema.war/WEB-INF/lib/
+   etl/endp
+   oints.rb:62:in ´with_datasource_tasks'
+    org/jruby/RubyProc.java:271:in ´call'
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  LOCAL FIX:
+   Replace file_fact.rb file (provided by L3).
+   VERIFY that the original file on the server does not contain
+   any hotfixes!  To apply the fix, replace the file located in
+   folder:
+   <SUA_INSTALL_DIR>/wlp/usr/servers/server1/apps/tema.war/WEB-INF/
+   domains/ sam/app/models/sam/file_fact.rb
+   
+   and restart the server.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * ERROR DESCRIPTION:
+   * Import of data fails and the following error is written in
+   * the logs:
+   * ERROR: RangeError: bignum too big to convert into ´long'
+   * EXPECTED RESULTS:
+   * Import of data succeeds.
+   ****************************************************************
+   * RECOMMENDATION: Apply appropriate update when available.
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix for this APAR is contained in the following maintenance
+   packages:
+    | Update | BFI 9.2.4.0
+    | Update | ILMT 9.2.4.0
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV85133
+   
+   
+ * REPORTED COMPONENT NAME
+   LIC METRIC TOOL
+   
+   
+ * REPORTED COMPONENT ID
+   5724LMTEM
+   
+   
+ * REPORTED RELEASE
+   920
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-05-24
+   
+   
+ * CLOSED DATE
+   2016-06-27
+   
+   
+ * LAST MODIFIED DATE
+   2016-06-27
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   LIC METRIC TOOL
+   
+   
+ * FIXED COMPONENT ID
+   5724LMTEM
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R920 PSY
+   UP

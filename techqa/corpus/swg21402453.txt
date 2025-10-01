@@ -1,0 +1,44 @@
+Title: IBM Install Error: Error during post-install configure phase: Error executing ...\Apache.exe operation (status=1) - United States
+
+Text:
+reqpro; 1402453; Install Error: Error during "post-install configure" phase: Error executing "E:\Program Files\IBM\RationalSDLC\common\IHS\bin\Apache.exe" operation (status=1). See agent output log for more information: C:\Documents and Settings\All Users\Application Data\IBM\Installation Manager\logs\native\20090902_1716c.log Log: (OS 10048) Only one usage of each socket address (protocol/network address/port) is normally permitted. : make_sock: could not bind to address 0.0.0.0:80 no listening sockets available; shutting down.; Error during "post-install configure" phase: failed to create profile for Websphere Application server version 6.1.0.19; post-install configure; IHS; IBM HTTP Server; MOM; microsoft operations manager; operations; manager; apache.exe; apache; error; during; post-install phase; installation; 7.1; install error; <Install directory> TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ In IBM Rational RequisitePro, an error occurs when the install is trying to start the IBM HTTP Server (IHS) service for the first time. Install Error: Error during "post-install configure" phase: Error executing "<Install directory>\Apache.exe" operation (status=1) 
+
+SYMPTOM
+When the installation process is attempting to start the IBM HTTP Server (IHS) service for the first time, it fails with: 
+
+ * 
+   Install Error: Error during "post-install configure" phase:
+   Error executing "E:\Program Files\IBM\RationalSDLC\common\IHS\bin\Apache.exe" operation (status=1).
+   See agent output log for more information: C:\Documents and Settings\All Users\Application Data\IBM\Installation Manager\logs\native\20090902_1716c.log 
+   Log: (OS 10048) Only one usage of each socket address (protocol/network address/port) is normally permitted. : make_sock: could not bind to address 0.0.0.0:80 no listening sockets available, shutting down.
+
+
+
+This error indicates that the port for the service is already in use and that this server service cannot be started.
+
+
+
+CAUSE
+This issue can occur when the Service Monitoring option of the Microsoft Operations Manager (MOM) is enabled. Service Monitoring starts services that are set to automatic if they have not already been started or are not running. 
+
+
+During the installation, the IHS service is installed but not started until later in the installation process:
+
+In the time it takes to get to the point of starting the service during the installation, Microsoft Operations Manager recognizes the IHS service as an automatic service that is not running, and then starts the service causing the error above when the installation attempts to start the service.
+
+
+ENVIRONMENT
+This can be found in any system that is using Microsoft Operations Manager. One system that is commonly known to have this software enabled is Windows 2003 R2 SP2 Enterprise.
+
+
+
+RESOLVING THE PROBLEM
+Use these directions to stop this installation error: 
+
+ 1. Open the Agent Properties under Global Settings of the Microsoft Operations Manager 
+ 2. Select the Service Monitoring tab 
+ 3. Clear (Uncheck) the box for Enable service monitoring 
+ 4. Rerun the installation

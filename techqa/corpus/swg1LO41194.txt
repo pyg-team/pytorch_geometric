@@ -1,0 +1,205 @@
+Title: IBM LO41194: AGENT MANAGER WILL STOP WHEN MESSAGE QUEUE IS FULL - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DUPLICATE OF ANOTHER APAR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The logic surrounding the error condition "AMgr:  Unexpected
+   error from MQPut:  Message Queue is full", will cause Agent
+   Manager to stop processing all agents currently in the queue.
+   What should happen, is that agent manager should keep processing
+   agents currently in the queues, so that when it catches up, it
+   will recover and continue processing agents and new documents.
+   It was relatively easy for this condition to occur due to spr
+   TBOT3YRNYF.  With that spr, once the queue was full and this
+   condition was encountered, doing a Tell Amgr Sched, would show
+   all sorts of agents in pending queues.  The feeling is that
+   agents currently in the queues should have been processed when
+   in fact they didn't.  Now that spr TBOT3YRNYF, is resolved, the
+   condition is less likely to occur.  However, with machines
+   getting faster, and servers handling more db's, users, & agents,
+   it is not unfeasible where this error condition will occur for
+   real.  To be prepared, the code should be modified to continue
+   processing agents currently in queue, so that the message queue
+   will be reduced, and more doc updates/mail deliveries will get
+   added to the queue and continue processing.
+   
+   
+   99/07/23 08:37:08 AM  AMgr: Unexpected error from MQPut: Message
+   Queue is full.
+   
+   many many times........
+   
+   99/07/23 08:37:08 AM  AMgr: Unexpected error from MQPut: Message
+   Queue is full.
+   
+   
+   > sh stat
+     Agent.Daily.AccessDenials = 0
+     Agent.Daily.ScheduledRuns = 1418
+     Agent.Daily.TriggeredRuns = 211
+     Agent.Daily.UnsuccessfulRuns = 7
+     Agent.Daily.UsedRunTime = 2790 Seconds
+     Agent.Hourly.AccessDenials = 0
+     Agent.Hourly.ScheduledRuns = 105
+     Agent.Hourly.TriggeredRuns = 5
+     Agent.Hourly.UnsuccessfulRuns = 1
+     Agent.Hourly.UsedRunTime = 108 Seconds
+   
+   > tel amgr sched
+   E S 08:36 AM Today     Agent-A | mta30    mail2/xxxx.nsf
+   E S 08:36 AM Today     Agent-A | mta30    mail2/xxxx.nsf
+   E S 08:36 AM Today     Agent-A | mta30    mail2/xxxxx.nsf
+   E S 08:36 AM Today     Agent-A | mta30    mail2/HYAA7792.nsf
+   E S 08:36 AM Today     Agent-A | mta30    mail2/HYAA4525.nsf
+   E S 08:36 AM Today     Agent-A | mta30    mail2/hkaa7726.nsf
+   E S 08:36 AM Today     Agent-A | mta30    mail2/IYAB2885.nsf
+   E S 08:36 AM Today     Agent-A | mta30    mail2/IYAB2917.nsf
+   E S 08:36 AM Today     Agent-A | mta30    mail2/IHAB3146.nsf
+   E S 08:36 AM Today     Agent-A | mta30    mail1/KSAB2904.nsf
+   E S 08:36 AM Today     Agent-A | mta30    mail2/gyab1520.nsf
+   E S 08:36 AM Today     Agent-A | mta30    mail2/IKAB2955.nsf
+   E S 08:36 AM Today     Agent-A | mta30    mail2/ITAA5855.nsf
+   E S 08:36 AM Today     Agent-A | mta30    mail2/IYAB2928.nsf
+   E S 08:36 AM Today     Agent-A | mta30    mail2/IYAB3167.nsf
+   E S 08:36 AM Today     Agent-A | mta30    mail2/kmaa8273.nsf
+   E S 08:36 AM Today     Agent-A | mta30    mail1/KJAB3104.nsf
+   E S 08:36 AM Today     Agent-A | mta30    mail1/KTAB3071.nsf
+   E S 08:36 AM Today     Agent-A | mta30    mail2/KAAB3162.nsf
+   E S 08:36 AM Today     Agent-A | mta30    mail2/KSAB2904.nsf
+   E S 08:36 AM Today     Agent-A | mta30    mail2/fjtest23.nsf
+   E S 08:36 AM Today     Agent-A | mta30    mail2/KYAB2920.nsf
+   E S 08:36 AM Today     Agent-A | mta30    mail1/KHAB2887.nsf
+   E S 08:36 AM Today     Agent-A | mta30    mail2/KIAB2860.nsf
+   E S 08:36 AM Today     Agent-A | mta30    mail1/MTAB3039.nsf
+   
+   V M                    Agent-ZZZ | fmall mail2/tmab0062.nsf
+   V M                    Agent-ZZZ | fmall mail2/TSAB3171.nsf
+   V M                    Agent-ZZZ | fmall mail1/AKAA9356.nsf
+   V M                    Agent-ZZZ | fmall mail2/TOAB3142.nsf
+   V M                    Agent-ZZZ | fmall mail1/WKAB2964.nsf
+   V M                    Agent-ZZZ | fmall mail2/WKAB2964.nsf
+   V M                    Agent-ZZZ | fmall mail2/yraa7449.nsf
+   V M                    Agent-ZZZ | fmall mail1/YAAB2870.nsf
+   V M                    Agent-ZZZ | fmall mail2/YAAB2870.nsf
+   ents written:     3
+   
+   
+   
+   I have not reproduced, but in theory the following should
+   work:
+   - Have a mixture mail trigger, doc update, and scheduled agents
+   running on a
+   server
+   - Increase the values for AMgr_DocUpdateAgentMinInterval,
+   AMgr_DocUpdateEventDelay,  AMgr_NewMailAgentMinInterval,
+   AMgr_NewMailAgentEventDelay to a value large enough to allow
+   many doc updates.
+   Perhaps 120 minutes
+   - Create and send over 65k individual mail messages across 1 or
+   more db's on
+   the same server
+   - Update over 65k individual docs across 1 or more db's on the
+   same server
+   - You should see the error "AMgr: Unexpected error from MQPut:
+   Message Queue is
+   full"
+   - At this point do a "Tell Amgr Sched", and you will see agents
+   stuck in queue
+   without progressing
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Quit AMGR and restart or restart server
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *  This APAR is associated with SPR# SVRO4ATNLE.
+   This APAR is a duplicate of LO34269
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   LO41194
+   
+   
+ * REPORTED COMPONENT NAME
+   NOTES/DOMINO 7X
+   
+   
+ * REPORTED COMPONENT ID
+   5724E6200
+   
+   
+ * REPORTED RELEASE
+   802
+   
+   
+ * STATUS
+   CLOSED DUB
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-06-05
+   
+   
+ * CLOSED DATE
+   2010-12-21
+   
+   
+ * LAST MODIFIED DATE
+   2010-12-21
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

@@ -1,0 +1,87 @@
+Title: IBM Cleaning up high volume of SUA scans uploaded since last SUA import - United States
+
+Text:
+sua ilmt import hang space transaction log TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Software Usage Analysis (SUA) uploads fail because there are too many scan files results to upload to SUA database (tem_analytics). This may manifest itself with an error like:
+
+ERROR: Sequel::DatabaseError: NativeException: com.microsoft.sqlserver.jdbc.SQLServerException: The transaction log for database 'tem_analytics' is full. To find out why space in the log cannot be reused, see the log_reuse_wait_desc column in sys.databases
+
+or
+
+ERROR: Sequel::DatabaseError:
+NativeException: com.microsoft.sqlserver.jdbc.SQLServerException: Could not allocate space for object '<temporary system object:
+422238850187264>' in database 'tempdb' because the 'PRIMARY' filegroup is full. Create disk space by deleting unneeded files, dropping objects in the filegroup, adding additional files to the filegroup, or setting autogrowth on for existing files in the filegroup. 
+
+SYMPTOM
+Imports are failing
+
+
+RESOLVING THE PROBLEM
+1. Stop all fixlets that scan and/or upload data
+
+
+2. backup BFEnterprise, tem_analytics
+3. backup and remove all files from UploadManager sha1 directory on IEM server
+4. delete SUA scan files entries from BFEnterprise tables run SQL against BFEnterprise 
+
+use BFEnterprise
+delete from dbo.uploads where (FileName LIKE '%itsitsearch%' OR FileName LIKE '%citsearch%')
+delete from dbo.uploads_availability where (FileName LIKE '%itsitsearch%' OR FileName LIKE '%citsearch%')
+5. run SUA import. If this is successful go to the next optional steps 
+
+If the import shows this message in the debug logging you will need to take the following steps to stop import of deleted computers
+2015-02-18 17:21:13 (+0:00:00.016) DEBUG: (0.016000s) select u.FileName AS full_path,
+u.FileSize AS file_size,
+CASE WHEN u.SHA1Hash is null then cast(0 as binary(20)) else u.SHA1Hash END AS sha1,
+u.IsDeleted AS deleted,
+u.EncryptKey AS encrypt_key,
+u.EncryptIV AS encrypt_iv,
+u.ManyVersion AS version
+from UPLOADS u
+inner join UPLOADS_AVAILABILITY ua on
+u.FileName = ua.FileName and
+u.BaseDirectory = ua.BaseDirectory
+where
+u.BaseDirectory = 1
+and ua.ServerID = 0
+and ua.ManyVersion = u.ManyVersion
+and u.Sequence > 0x0000000000000000
+and u.Sequence <= 0x000000067d8b5413
+
+2015-02-18 17:25:41 (+0:04:27.994) DEBUG: (0.000000s) COMMIT TRANSACTION
+2015-02-18 17:25:41 (+0:00:00.031) INFO: ETL from Data Source - RawDatasourceFile (0x0000000000000000 - 0x000000067D8B5413): Success
+2015-02-18 17:25:41 (+0:00:00.000) INFO: ETL from Data Source - DatasourceFile (0x0000000000000000 - N/A): Start
+2015-02-18 17:25:41 (+0:00:00.000) DEBUG: Ignoring UPLOADS row because the path could not be parsed into a computer ID: \0
+2015-02-18 17:25:41 (+0:00:00.000) DEBUG: Ignoring UPLOADS row because the path could not be parsed into a computer ID: \0\10002700
+2015-02-18 17:25:41 (+0:00:00.000) DEBUG: Ignoring UPLOADS row because the path could not be parsed into a computer ID: \0\10002800
+2015-02-18 17:25:41 (+0:00:00.000) DEBUG: Ignoring UPLOADS row because the path could not be parsed into a computer ID: \0\10002900
+2015-02-18 17:25:41 (+0:00:00.000) DEBUG: Ignoring UPLOADS row because the path could not be parsed into a computer ID: \0\100053 
+
+Changed this file:
+
+TEMA/work/tema/webapp/WEB-INF/app/models/raw_datasource_file.rb
+
+and added the last line to this section:
+
+and u.Sequence > :sequence_range_begin
+and u.Sequence <= :sequence_range_end
+and u.IsDeleted != 1 
+
+Optional steps:
+1. restore SUA scans in sha1 dir in small chunks and do SUA imports (i.e. restore 10k scans, do SUA import, restore next 10k, do next SUA import etc, so SUA will incrementally import 10k scans) while restoring scans in sha1 dir, IEM FillDB process will monitor changes in UploadManager\sha1 dir and update dbo.uploads and dbo.uploads_availability tables
+
+2. rescan computers, upload new scan files and do SUA import (i.e. 10k computers rescanned, do SUA import, next 10k rescanned, do next SUA import, so SUA will incrementally import 10k scans) 
+
+Avoid importing more than 10-20k scans within 1 SUA import. 
+
+Such import takes 10-15h even on systems meeting SUA hardware requirements. 
+
+Regardless of which option you choose above 
+Restart any fixlets that were stopped in step one to restart the scans and imports.
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ sua ilmt software usage analysis

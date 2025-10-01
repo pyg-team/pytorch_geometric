@@ -1,0 +1,61 @@
+Title: IBM Can I Trigger a  C&DS job based on the success of another C&DS job? - United States
+
+Text:
+trigger job success failure jms message schedule completion second first TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Can I Trigger a C&DS job based on the success of another C&DS job? 
+
+SYMPTOM
+Can I Trigger a C&DS job based on the success of another C&DS job
+
+
+ENVIRONMENT
+C&DS 6
+Windows 2012 Server
+SQL Server
+JBOSS EAP 6.1
+
+RESOLVING THE PROBLEM
+Here are the steps necessary to get a job (job2) to trigger off the successful completion of another job (job1). The first step is to create the JMS message domain in Deployment Manager Client and then after that create job1 and job2 and set up a message based schedule on job2 to trigger it by the successful completion of job1:
+
+A. Create a new Message Domain as outlined in the Deployment Manager Users Guide in Chapter 6 under Resource Definitions and under the heading of Message Domains.
+
+We create the topic of CDSMessageBusTopic within the Application Server that has the JNDI name of 'topic/PASWMessageBus', which is what must be entered for the Destination Name. This syncs up the Message Domain with the topic that the C&DS deploy created within the Application Server The topic is PASWMessageBus. In Websphere, you can find it under Resources => JMS => Topics. The JNDI name for the topic is 'topic/PASWMessageBus'. This is used within Deployment Manager client when creating a Message Domain. In Deployment Manager client, expand on Resource Definitions and right click on Message Domains and sleect New => Message Domain Definition. For the name, call it anything, I chose PASWMessageBus. Click Next. In the Destination Name field, type in the JNDI name for the topic - in this example it will be 'topic/PASWMessageBus'. Next just click on Finish as you do not need to provide a credential. Now that the message domain has been created, we are able to create a Message Based Schedule.
+
+
+
+B. Steps for creating a scheduled job triggered by completion of another job
+
+1. Create 'job1' that will trigger another job upon completion.
+2. Add the scoring stream to the job and then add a notification job step to the job.
+3. Create a pass relationship between the stream and the notification - this will be
+part of the triggering mechanism for the scheduled job and the notification will
+only occur if the scoring stream is successful. On the first tab of the Notification job step,
+you can give it a name if you want or leave the default ('Event 1'). On the Notification tab click on
+Update and then to the right of the To: box, click on the Blue down arrow and select the
+JMS Subscriber. Another window pops up and in there you will see the Message Domain
+that you created earlier. With that selected click on OK and for the Message: box, just leave
+it as is and click on OK.
+4. Save the job.
+5. Create 'job2' with required streams and save the job.
+6. Right click on 'job2' and select New Schedule || Message Based.
+7. Choose the id that will own/run the job schedule. If one does not exist, it will allow you to create a new one. Once an id has been selected, click next. 
+8. For the Message Domain use the drop down and select the message domain created earlier.
+9. Go to the Message Selector and use the following syntax:
+JobName='job1' AND JobStepName='Event 1'
+Where 'job1' is the name of the job created in step 1 and
+Where 'Event 1' is the name of the Notification job step.
+10. Once that is done click on Finish.
+11. Right click on job1 within the Content Repository and select Run Job. When the job finishes successfully, it will complete the Notification step, which then in turn will trigger the Message Based schedule and cause job2 to execute.
+
+(NOTE: Screen shots of the process are in the Word doc attached.)
+
+
+NOTE: The ability to trigger a job based on the completion of two jobs running in parallel is an architecture which can not occur in this context. The only way to implement something similar is by running each dependent job in serial and once that last job completes then running the target job.
+
+RELATED INFORMATION
+ Need more help? Our C&DS forum is Live! [https://developer.ibm.com/answers/topics/collaboration.html?smartspace=predictive-analytics]
+
+
+Message Driven Trigger job setup.docx [/support/docview.wss?uid=swg21691047&aid=2]Message Driven Trigger job setup.docx [/support/docview.wss?uid=swg21691047&aid=1]

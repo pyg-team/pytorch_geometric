@@ -1,0 +1,278 @@
+Title: IBM IV53525: CREATE A PO FROM RFQ WITH A CONDITIONAL EXPRESSION GETTING ERROR BMXAA4190E. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  PROBLEM DESCRIPTION:
+   
+   When I try to create a PO from the RFQ Application, I m getting
+   error
+   BMXAA4190E   (my DVL Value) is not in the Value List.
+   I m using the old PSDI/MRO crossover fields PR2 > PO2 and PR2 >
+   RFQ2
+   for  my TAC# field, I have a Domain Value List assigned to
+   these fields
+   and I also have Conditional Domain between the PR.SHIPVIA,
+   PO.SHIPVIA
+   AND RFQ.SHIPVIA and PR2/PO2/RFQ2.
+   My intention is first pass the data from the PR2 field to
+   either the PO.
+   PO2 or RFQ.RFQ2  when creating a PO from either the PR
+   application or
+   the RFQ Application  and based on the shipvia  selected give
+   the user
+   the proper TAC# for that particular Ship Via.
+   The conditional Domain work fine  on all applications PR/PO/RFQ
+   and the
+   PO creation works fine from the PR application but when I try
+   to create
+   the PO from the RFQ application I get the error. (On the Domain
+   Condition for the TAC# if  do not use any object).If I use an
+   Object
+   like the PR Table then the conditional Domain works only on the
+   PR
+   application. The PO creation works fine on both applications PR
+   and
+   RFQ. (I don t get any errors).
+   I want to be able to use the Conditional domain on the PR and PO
+   Application and create the PO from the PR and RFQ Application.
+   Could
+   you please let me know what I m missing. Attached are some
+   screen shots.
+   
+   
+   
+   ACTION TAKEN:
+   
+   Replicated the issue.
+   
+   
+   STEPS TO REPLICATE:
+   
+   1. Go to Conditional Expression Manager
+   Create a new condition:
+   
+   :shipvia = 'Air'
+   
+   
+   2. Go to Domains application
+   
+   Create a new ALN Domain X_TAG (Length 10)
+   
+   Values:
+   - JVPP
+   - N/A
+   - T371 (Add the condition to this value)
+   
+   
+   3. Bring up the SHIPVIA Domain.
+   Add a new ALN value:
+   
+   - Air
+   
+   
+   4. Go to Database Configuration
+   
+   Add the X_TAG domain to the following attributes:
+   
+   - Object RFQ, Attribute RFQ2
+   - Object PR, Attribute PR2
+   - Object PO, Attribute PO2
+   
+   Apply the configuration Changes
+   
+   
+   5. Add the fields to the applications
+   
+   - Add the RFQ2 field to the RFQ application
+   - Add the PR2 field to the PR application
+   - Add the PO2 field to the PO application
+   
+   
+   TEST 1
+   
+   Go Request for Quotations app
+   Create a new record and fill the attributes as follow:
+   
+   Ship Via -> Air
+   RFQ2 -> T371
+   
+   Add the RFQ Line, Vendor and do the Quotation.
+   
+   In the Quotations tab, change the status to "SENT".
+   
+   In the 'Quotations for Vendor' section, clcik "Select RFQ
+   Lines"
+   Select the line and add a value to the Unit Cost field. Eg: 1.
+   Check the 'Awarded?' checkbox.
+   Save the record.
+   
+   In the Vendors section, click the 'Create PO' button.
+   
+   When you try to create the PO you get the following error
+   message:
+   
+   BMXAA4190E - Po2 T371 is not in the value list.
+   
+   
+   
+   TEST 2
+   
+   Go to Purchase Request app
+   Create a new record and fill the attributes as follow:
+   
+   Ship Via -> Air
+   RFQ2 -> T371
+   
+   Add a new PRLINE, approve the PR.
+   Click Select Action -> Create PO.
+   
+   The PO is created fine.
+   
+   If you go to the created PO record the Ship Via will be Air and
+   the Po2
+   will be T371 as expected.
+   
+   
+   
+   ENVIRONMENT:
+   
+   App Server:   IBM WebSphere Application Server 7.0
+   Version: IBM Maximo Asset Management 7.5.0.0 Build
+   20110720-0539 DB
+   Build V7500-00 Tivoli's process automation engine 7.5.0.0 Build
+   20110720-0539 DB Build V7500-723
+   Server OS   Windows Server 2008 R2 6.1 build 7601 Service Pack 1
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * All Maximo Users                                             *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * Create a po from rfq with a conditional expression getting   *
+   * error BMXAA4190E.                                            *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Apply fixpack Release 7.5.0.6 of Base Services.              *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix for this APAR is contained in the following maintenance
+   package:
+   		 | release\fix pack\interim fix for Release 7.5.0.6 of Base
+   Services
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV53525
+   
+   
+ * REPORTED COMPONENT NAME
+   ADMIN & SECURIT
+   
+   
+ * REPORTED COMPONENT ID
+   TIVOADMIN
+   
+   
+ * REPORTED RELEASE
+   750
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2013-12-20
+   
+   
+ * CLOSED DATE
+   2014-02-19
+   
+   
+ * LAST MODIFIED DATE
+   2014-02-19
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  Maximo
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ADMIN & SECURIT
+   
+   
+ * FIXED COMPONENT ID
+   TIVOADMIN
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R750 PSY
+   UP

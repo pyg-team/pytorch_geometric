@@ -1,0 +1,13 @@
+Title: IBM What is the order for terminating the active channels when a queue manager is ending? - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ You want to know the order in which the WebSphere MQ (WMQ) queue manager terminates the active channels when the queue manager is ending? 
+
+ANSWER
+The channels are stopped in the order in which they appear in the channel status table, which is an internal structure maintained by the queue manager.
+If the queue manager has not been running very long this is likely to be the order in which the channels were started. 
+
+However, since slots in the status table are reused when a channel stops and another starts, for a queue manager which has been running for an appreciable length of time, and has had channels starting and stopping, the channels are effectively in random order.

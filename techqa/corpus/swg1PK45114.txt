@@ -1,0 +1,163 @@
+Title: IBM PK45114: ABN= 0C4 - 00000011 ,U=SYSOPR ,C=F1000.531.ASMC-CSQVEUS3,M=CSQ VEUS3,LOC=CSQ3AMGP. CSQ3AAES + 0000 AFTER 07/05/14 PTF PECHANGE - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  After PK19070 [http://www-01.ibm.com/support/docview.wss?uid=swg1PK19070], CSQ3AMT3 does not ensure that the EOT service
+   tasks have ended before allowing shutdown to continue (this
+   occurs after a STOP QMGR MODE(QUIESCE) followed by a
+   MODE(FORCE). This occurs while one of the EOT service tasks is
+   in a STIMER, issued by CSQ3EOTS. The load-module containing
+   CSQ3EOTS is then DELETEd as shutdown processing continues.
+   The STIMER then pops, and the 0C4 occurs as the storage
+   containing CSQ3EOTS is no longer avialable.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All users of Websphere MQ for z/OS Version 6 *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: After a STOP QMGR MODE(QUIESCE)         *
+   *                      followed by a MODE(FORCE), the queue    *
+   *                      manager may abend 0C4 PIC11.            *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   CSQ3AMT3 does not ensure that the EOT service tasks have ended
+   before allowing shutdown to continue - this occurs after a STOP
+   QMGR MODE(QUIESCE) followed by a MODE(FORCE).  During the
+   quiesce, CSQ3AMT3 clears the AMGSDSQH (holding the deferred EOT
+   SQH for this task).  In the following stop mode(force), CSQ3AMT3
+   detects that AMGSDSQH is now zero and so does not wait for
+   CSQ3EOTS to end.
+   
+   If the corresponding EOT service task is in a STIMER it may
+   have missed the quiesce.  The load-module containing CSQ3EOTS is
+   then DELETEd as shutdown processing continues.  The STIMER then
+   pops, and the 0C4 occurs as the storage containing CSQ3EOTS is
+   no longer available.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The code has been changed so that CSQ3EOTS now clears AMGSDSQH
+   when it knows the queue manager is shutting down. This way the
+   EOT services are allowed to end before allowing a force shutdown
+   to continue.
+   000Y
+   CSQ3AMT3
+   CSQ3EOTS
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK45114
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ Z/OS V6
+   
+   
+ * REPORTED COMPONENT ID
+   5655L8200
+   
+   
+ * REPORTED RELEASE
+   000
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   YesPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2007-05-14
+   
+   
+ * CLOSED DATE
+   2007-05-17
+   
+   
+ * LAST MODIFIED DATE
+   2007-07-03
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    PK41708
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UK25190
+   
+   
+
+MODULES/MACROS
+ *     CSQ3AMT3 CSQ3EOTS
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ Z/OS V6
+   
+   
+ * FIXED COMPONENT ID
+   5655L8200
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R000 PSY UK25190 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK25190]
+   UP07/06/07 P F706
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

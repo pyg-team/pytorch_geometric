@@ -1,0 +1,273 @@
+Title: IBM PM83349: NullPointerException in SocketTimerThread due to improper initialization - United States
+
+Text:
+  FIXES ARE AVAILABLE
+7.0.0.29: WebSphere Application Server V7.0 Fix Pack 29 [http://www-01.ibm.com/support/docview.wss?uid=swg24034966]
+8.0.0.7: WebSphere Application Server V8.0 Fix Pack 7 [http://www-01.ibm.com/support/docview.wss?uid=swg24035457]
+6.1.0.47: WebSphere Application Server V6.1 Fix Pack 47 [http://www-01.ibm.com/support/docview.wss?uid=swg24035508]
+8.0.0.8: WebSphere Application Server V8.0 Fix Pack 8 [http://www-01.ibm.com/support/docview.wss?uid=swg24036729]
+7.0.0.31: WebSphere Application Server V7.0 Fix Pack 31 [http://www-01.ibm.com/support/docview.wss?uid=swg24036768]
+7.0.0.33: WebSphere Application Server V7.0 Fix Pack 33 [http://www-01.ibm.com/support/docview.wss?uid=swg24037573]
+8.0.0.9: WebSphere Application Server V8.0 Fix Pack 9 [http://www-01.ibm.com/support/docview.wss?uid=swg24037574]
+7.0.0.35: WebSphere Application Server V7.0 Fix Pack 35 [http://www-01.ibm.com/support/docview.wss?uid=swg24038310]
+8.0.0.10: WebSphere Application Server V8.0 Fix Pack 10 [http://www-01.ibm.com/support/docview.wss?uid=swg24039242]
+7.0.0.37: WebSphere Application Server V7.0 Fix Pack 37 [http://www-01.ibm.com/support/docview.wss?uid=swg24039338]
+8.0.0.11: WebSphere Application Server V8.0 Fix Pack 11 [http://www-01.ibm.com/support/docview.wss?uid=swg24040425]
+7.0.0.39: WebSphere Application Server V7.0 Fix Pack 39 [http://www-01.ibm.com/support/docview.wss?uid=swg24041013]
+8.0.0.12: WebSphere Application Server V8.0 Fix Pack 12 [http://www-01.ibm.com/support/docview.wss?uid=swg24041590]
+7.0.0.41: WebSphere Application Server V7.0 Fix Pack 41 [http://www-01.ibm.com/support/docview.wss?uid=swg24041931]
+8.0.0.13: WebSphere Application Server V8.0 Fix Pack 13 [http://www-01.ibm.com/support/docview.wss?uid=swg24042746]
+7.0.0.43: WebSphere Application Server V7.0 Fix Pack 43 [http://www-01.ibm.com/support/docview.wss?uid=swg24043400]
+8.0.0.14: WebSphere Application Server V8.0 Fix Pack 14 [http://www-01.ibm.com/support/docview.wss?uid=swg24044096]
+7.0.0.45: WebSphere Application Server V7.0 Fix Pack 45 [http://www-01.ibm.com/support/docview.wss?uid=swg24044551]
+8.0.0.15: WebSphere Application Server V8.0 Fix Pack 15 [http://www-01.ibm.com/support/docview.wss?uid=swg24044734]
+6.1.0.47: Java SDK 1.5 SR16 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24035649]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The Object Request Broker's (ORB) SocketTimerThread will report
+   a NullPointerException in the SystemErr.log as follows:
+   
+   Exception in thread "Thread-29" java.lang.NullPointerException
+   at
+   com.ibm.rmi.iiop.SocketTimerThread.run(SocketTimerThread.java:55
+   )
+   
+   This prevents cleanup of ORB threads hung in a socketWrite as
+   governed by the ORB property com.ibm.CORBA.SocketWriteTimeout
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  All users of IBM WebSphere Application      *
+   *                  Server                                      *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: The Object Request Broker               *
+   *                      SocketTimerThread fails to run due to   *
+   *                      a NullPointerException.                 *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   The Object Request Broker (ORB)'s SocketTimerThread fails to
+   run properly due to a NullPointerException (NPE).  This in
+   turn may result in threads hung in a socketWrite() not being
+   cleaned up by the SocketTimerThread.  The SocketTimerThread
+   creation and frequency with which it runs is governed by the
+   ORB property com.ibm.CORBA.SocketWriteTimeout (default 0).
+   The NPE occurs because the SocketTimerThread's reference to
+   the ORB ConnectionTable is null.
+   Conditions for which the NPE is of no consequence:
+   -- SocketWriteTimeout is set to 0.  The NPE will in fact never
+   happen since the SocketTimerThread will not be created.
+   -- If no ORB threads ever become hung in socketWrite().
+   -- Even if threads become seemingly hung or delayed in
+   socketWrite(), they may in fact eventually finish out on
+   their own.
+   Conditions where NPE will occur and consequences:
+   -- The NPE will only occur if the SocketWriteTimeout is set to
+   a value greater than 0, which causes the SocketTimerThread
+   to be created.
+   -- If threads become hung in socketWrite(), they will be
+   reported in the SystemOut.log.
+   Examples of hung ORB threads:
+   EXAMPLE #1 (hung in socketWrite and this thread blocks others
+   waiting in SequentialByteBuffer.flushTo() )
+   -------------------------------------------------------------
+   [2/13/13 18:21:07:536 EST] 000010d6 ThreadMonitor W
+   WSVR0605W:
+   Thread "ORB.thread.pool : 499" (00000f2d) has been active for
+   699633 milliseconds and may be hung.  There is/are 118
+   thread(s)
+   in total in the server that may be hung.
+   at java.net.SocketOutputStream.socketWrite0(Native Method)
+   at java.net.SocketOutputStream.socketWrite
+   (SocketOutputStream.java:103)
+   at java.net.SocketOutputStream.write
+   (SocketOutputStream.java:147)
+   at com.ibm.rmi.util.buffer.SequentialByteBuffer.flushTo
+   (SequentialByteBuffer.java:452)
+   at com.ibm.rmi.util.buffer.SequentialByteBuffer.flushTo
+   (SequentialByteBuffer.java:477)
+   at com.ibm.rmi.iiop.IIOPOutputStream.writeTo
+   (IIOPOutputStream.java:547)
+   at com.ibm.rmi.iiop.Connection.write(Connection.java:2214)
+   at com.ibm.rmi.iiop.Connection.send(Connection.java:2256)
+   ...
+   EXAMPLE #2 (waiting behind thread which is in socketWrite)
+   ----------------------------------------------------------
+   [2/13/13 18:21:07:535 EST] 000010d6 ThreadMonitor W
+   WSVR0605W:
+   Thread "ORB.thread.pool : 199" (00000ca6) has been active for
+   673804 milliseconds and may be hung.  There is/are 117
+   thread(s)
+   in total in the server that may be hung.
+   at com.ibm.rmi.util.buffer.SequentialByteBuffer.flushTo
+   (SequentialByteBuffer.java:466)
+   at com.ibm.rmi.iiop.IIOPOutputStream.writeTo
+   (IIOPOutputStream.java:547)
+   at com.ibm.rmi.iiop.Connection.write(Connection.java:2214)
+   at com.ibm.rmi.iiop.Connection.send(Connection.java:2256)
+   ...
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  ****************************************************************
+   * NOTE:  APAR IX90112 [http://www-01.ibm.com/support/docview.wss?uid=swg1IX90112] MUST be installed in addition to PM83349 *
+   *        in order for the NPE to be corrected.  Installing     *
+   *        PM83349 or IX90112 [http://www-01.ibm.com/support/docview.wss?uid=swg1IX90112] by themselves will not correct the *
+   *        problem.  Installing one of these APARs without the   *
+   *        other will not break current functionality or cause   *
+   *        the NPE.                                              *
+   ****************************************************************
+   
+   The Base ORB's SocketWriteTimerThread code has been provided a
+   method within the ORB Extension code whereby it can obtain a
+   valid reference to the ConnectionTable.
+   
+   The fix for this APAR is currently targeted for inclusion in
+   fix pack 6.1.0.47, 7.0.0.29, 8.0.0.7, and the fix pack
+   following 8.5.0.2. Please refer to the Recommended Updates
+   page for delivery information:
+   http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  If ORB threads are hung in socketWrite(), a recycle of the
+   Java Virtual Machine (JVM) may be necessary.
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM83349
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBS APP SERV N
+   
+   
+ * REPORTED COMPONENT ID
+   5724H8800
+   
+   
+ * REPORTED RELEASE
+   850
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-02-21
+   
+   
+ * CLOSED DATE
+   2013-03-14
+   
+   
+ * LAST MODIFIED DATE
+   2013-03-14
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBS APP SERV N
+   
+   
+ * FIXED COMPONENT ID
+   5724H8800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R61A PSY
+   UP
+   
+   
+ * R61H PSY
+   UP
+   
+   
+ * R61I PSY
+   UP
+   
+   
+ * R61P PSY
+   UP
+   
+   
+ * R61S PSY
+   UP
+   
+   
+ * R61W PSY
+   UP
+   
+   
+ * R61Z PSY
+   UP
+   
+   
+ * R700 PSY
+   UP
+   
+   
+ * R800 PSY
+   UP
+   
+   
+ * R850 PSY
+   UP

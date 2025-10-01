@@ -1,0 +1,153 @@
+Title: IBM IV24983: NEED DOCUMENTATION ADDED TO IMPACT 6.1 ON HOW TO ADD AN OMNIBUS USER REPOSITORY POST-INSTALL - United States
+
+Text:
+  DIRECT LINKS TO FIXES
+6.1.0-TIV-BSM-FP0004-zlinux [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Business+Service+Manager&fixids=6.1.0-TIV-BSM-FP0004-zlinux&source=SAR]
+6.1.0-TIV-BSM-FP0004-windows [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Business+Service+Manager&fixids=6.1.0-TIV-BSM-FP0004-windows&source=SAR]
+6.1.0-TIV-BSM-FP0004-solaris [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Business+Service+Manager&fixids=6.1.0-TIV-BSM-FP0004-solaris&source=SAR]
+6.1.0-TIV-BSM-FP0004-linux [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Business+Service+Manager&fixids=6.1.0-TIV-BSM-FP0004-linux&source=SAR]
+6.1.0-TIV-BSM-FP0004-aix [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Business+Service+Manager&fixids=6.1.0-TIV-BSM-FP0004-aix&source=SAR]
+6.1.0-TIV-NCI-FP0004-zlinux [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=6.1.0-TIV-NCI-FP0004-zlinux&source=SAR]
+6.1.0-TIV-NCI-FP0004-windows [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=6.1.0-TIV-NCI-FP0004-windows&source=SAR]
+6.1.0-TIV-NCI-FP0004-solaris [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=6.1.0-TIV-NCI-FP0004-solaris&source=SAR]
+6.1.0-TIV-NCI-FP0004-aix [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=6.1.0-TIV-NCI-FP0004-aix&source=SAR]
+6.1.0-TIV-NCI-FP0004-linux [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=6.1.0-TIV-NCI-FP0004-linux&source=SAR]
+6.1.0-TIV-NCI-FP0003-zlinux [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=6.1.0-TIV-NCI-FP0003-zlinux&source=SAR]
+6.1.0-TIV-NCI-FP0003-windows [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=6.1.0-TIV-NCI-FP0003-windows&source=SAR]
+6.1.0-TIV-NCI-FP0003-solaris [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=6.1.0-TIV-NCI-FP0003-solaris&source=SAR]
+6.1.0-TIV-NCI-FP0003-linux [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=6.1.0-TIV-NCI-FP0003-linux&source=SAR]
+6.1.0-TIV-NCI-FP0003-aix [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=6.1.0-TIV-NCI-FP0003-aix&source=SAR]
+6.1.0-TIV-BSM-FP0003-solaris [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Business+Service+Manager&fixids=6.1.0-TIV-BSM-FP0003-solaris&source=SAR]
+6.1.0-TIV-BSM-FP0003-aix [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Business+Service+Manager&fixids=6.1.0-TIV-BSM-FP0003-aix&source=SAR]
+6.1.0-TIV-BSM-FP0003-zlinux [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Business+Service+Manager&fixids=6.1.0-TIV-BSM-FP0003-zlinux&source=SAR]
+6.1.0-TIV-BSM-FP0003-windows [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Business+Service+Manager&fixids=6.1.0-TIV-BSM-FP0003-windows&source=SAR]
+6.1.0-TIV-BSM-FP0003-linux [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Business+Service+Manager&fixids=6.1.0-TIV-BSM-FP0003-linux&source=SAR]
+IBM Tivoli Business Service Manager V6.1.0 Fix Pack 2(6.1.0-TIV-BSM-FP0002) [http://www-01.ibm.com/support/docview.wss?uid=swg24032540]
+IBM Tivoli Netcool/Impact V6.1.0 Fix Pack 2(6.1.0-TIV-NCI-FP0002) [http://www-01.ibm.com/support/docview.wss?uid=swg24032739]
+IBM Tivoli Netcool/Impact V6.1.0 Fix Pack 4(6.1.0-TIV-NCI-FP0004) [http://www-01.ibm.com/support/docview.wss?uid=swg24042500]
+IBM Tivoli Business Service Manager V6.1.0 Fix Pack 4(6.1.0-TIV-BSM-FP0004) [http://www-01.ibm.com/support/docview.wss?uid=swg24042501]
+IBM Tivoli Netcool/Impact V6.1.0 Fix Pack 4(6.1.0-TIV-NCI-FP0004) [http://www-01.ibm.com/support/docview.wss?uid=swg24042516]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  In previous TBSM versions a utility call
+   confvmmncos_full.sh(.bat) was provided to allow users to
+   configure Omnibus as a User Repository.  This same utility is
+   provided with the Impact 6.1 install media, but its use is not
+   described in our documentaiton
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Use the TBSM 4.2.x documentation as reference
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * All Impact Users                                             *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * Need documentation to show how to configure Impact 6.1 to    *
+   * use Omnibus authentication after install.                    *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * NONE                                                         *
+   ****************************************************************
+   After installing Impact using File based authentication, there
+   is no documentation that covers how to change to Omnibus user
+   authentication
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  In the 6.1.1 Guide
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV24983
+   
+   
+ * REPORTED COMPONENT NAME
+   NETCOOL/IMPACT
+   
+   
+ * REPORTED COMPONENT ID
+   5724O59IS
+   
+   
+ * REPORTED RELEASE
+   610
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2012-07-20
+   
+   
+ * CLOSED DATE
+   2012-12-16
+   
+   
+ * LAST MODIFIED DATE
+   2012-12-16
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

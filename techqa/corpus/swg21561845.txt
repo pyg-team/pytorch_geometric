@@ -1,0 +1,29 @@
+Title: IBM Unable to perform SAP synchronous RFC to  BAPI_MATERIAL_SAVEDATA to update item master information. - United States
+
+Text:
+STERLINGTRB TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Unable to perform SAP synchronous RFC to BAPI_MATERIAL_SAVEDATA to update item master information. 
+
+SYMPTOM
+
+
+Able to perform SAP synchronous RFC to several BAPIs, but getting error with BAPI_MATERIAL_SAVEDATA.
+
+Error Message java.util.MissingResourceException: Can't find resource for bundle java.util.PropertyResourceBundle, key executeCall; nested exception is: 
+org.w3c.dom.DOMException: INVALID_CHARACTER_ERR: An invalid or illegal XML character is specified.
+
+
+RESOLVING THE PROBLEM
+Solution 
+
+ Verify that the sap.properties file in the <install>/properties file contains this lines. If they resolve the problem then add lines to sap.properties.in file as well. 
+
+ SAP.TESTSAPRFCREADTABLE.XMLSpecialCharHandling = Yes 
+SAP.TESTSAPRFCREADTABLE.XMLNodesSpecialHandling = Yes 
+
+ 
+
+HISTORICAL NUMBER
+ TRB1866

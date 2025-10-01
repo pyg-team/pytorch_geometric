@@ -1,0 +1,21 @@
+Title: IBM StoredIQ Exchange Permission Requirements - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The following describes how to set Exchange permissions for the StoredIQ service account 
+
+SYMPTOM
+If the service account being used in the StoredIQ volume details doesn't have the proper permissions, then an error similar to this will be seen in the /deepfs/config/trace_current.log of the DataServer. 
+
+Exception - SOAP Status (ErrorAccessDenied):(Access is denied. Check credentials and try again.)
+
+
+RESOLVING THE PROBLEM
+The Exchange Administrator will need to set full control on the mailbox object for the StoredIQ server account with the following command in the powershell of the exchange server. 
+
+
+Get-Mailbox -OrganizationlUnit "MyOU" | Add-MailboxPermssion -User "UserOrGroup" -AccessRights FullAccess
+
+This gives access by the OU. In the command above, "UserOrGroup" is the StoredIQ service account in the volume details

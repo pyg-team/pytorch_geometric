@@ -1,0 +1,47 @@
+Title: IBM How to enable https on Tomcat for Symphony WEBGUI with a third party certificate - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How do I enable https on Tomcat for Symphony WEBGUI with a third party certificate? 
+
+ANSWER
+The following example uses OpenSSL as the example Certificate Authority (CA), to sign the certificate.
+1. Create a local certificate at the WEBGUI host, maverick.platform.com.
+c:\EGO\jre\1.2.5\bin\keytool.exe -genkey -alias symgui -keyalg RSA -keysize 4096
+
+2. Create the Certificate Signing Request (CSR).
+c:\EGO\jre\1.2.5\bin\keytool.exe -certreq -keyalg RSA -alias symgui -file certreq.csr
+
+3. Use the OpenSSL CA root key (ca.key.pem) and CA root certificate (ca.cert.pem) to sign the CSR and issue a new certificate (maverick.platform.com.cert.pem).
+# openssl ca -keyfile private/ca.key.pem -cert certs/ca.cert.pem -extentions usr_cert -notext -md sha256 -in certreq.csr -out certs/maverick.platform.com.cert.pem
+
+4. Import the root certificate into the keystore.
+c:\EGO\jre\1.2.5\bin\keytool.exe -import -alias root -trustcacerts -file ca.cert.pem
+
+5. Import the new certificate.
+c:\EGO\jre\1.2.5\bin\keytool.exe -import -alias symgui -trustcacerts -file maverick.platform.com.cert.pem
+
+6. Uncomment the section below in the file, \\symshare\gui\conf\server.xml.
+<!-- Define a SSL HTTP/1.1 Connector on port 8443 -->
+
+<Connector port="8443" maxHttpHeaderSize="8192"
+maxThreads="150" minSpareThreads="25" maxSpareThreads="75"
+enableLookups="false" disableUploadTimeout="true"
+acceptCount="100" scheme="https" secure="true"
+clientAuth="false" sslProtocol="TLS" />
+
+7. Restart WEBGUI.
+egosh service stop/start WEBGUI
+
+8. Import the CA root certificate, using the Microsoft Internet Explorer web browser.
+From the Internet Explorer menu select, Tools > Internet Options > Content (tab) > Certificates (button) > Trusted Root Certification Authorities (tab) > Import (button), and import the root certificate ca.cert.pem.
+
+9. Browse to the Symphony WEBGUI using HTTPS.
+https ://hostname:8443/platform
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition IBM Spectrum Computing IBM Spectrum Symphony

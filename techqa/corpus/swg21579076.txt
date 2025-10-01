@@ -1,0 +1,132 @@
+Title: IBM Linux/Unix Examples of  Process Filter Attribute Usage - United States
+
+Text:
+Process Filter attribute ITM_UNIX_PERFORMANCE ITM_LINUX_PERFORMANCE TECHNOTE (FAQ)
+
+QUESTION
+ How do you use the Process Filter Attribute? 
+
+ANSWER
+Overview 
+
+At ITM 622 FP2, the Unix OS Agent and the Linux OS Agent added a new attribute called Process Filter. Most of the technote focusses on Unix OS Agent. A section at the end shows a Linux example which uses somewhat different attribute names. 
+
+Regular Expressions are a serious area of programming study - whole books have been written on the subject. Here is a URL to some ITM documentation.
+
+http://publib.boulder.ibm.com/infocenter/tivihelp/v15r1/index.jsp?topic=%2Fcom.ibm.itm.doc_6.2.2fp2%2Ficu-regular-expressions.htm [http://publib.boulder.ibm.com/infocenter/tivihelp/v15r1/index.jsp?topic=%2Fcom.ibm.itm.doc_6.2.2fp2%2Ficu-regular-expressions.htm]
+
+This document shows a practical way to using this for a missing type situation. There are two benefits:
+
+1) The Process Filter views the entire process command line, not just the first 768 characters.
+2) The regular expression process is much more efficient that wildcard characters. That
+
+
+Example 1
+
+The goal is to detect whether two specific processes are missing. The test is to scan the Process Commands for "abc" and "def" and to alert if either are missing.
+
+The formula looks like this
+
+[/support/docview.wss?uid=swg21579076&amp;aid=1]
+
+or 
+
+( Process Filter (Unicode) == '.*(abc|def).*' AND 
+MISSING(Process Command (Unicode)) == ('abc','def'))
+
+DisplayItem must be set to allow multiple results
+
+[/support/docview.wss?uid=swg21579076&amp;aid=2]
+
+The Process Filter (Unicode) value is a regular expression. Regular expressions are a mathematical construction originally defined in the 1940s and are compact ways to specifying ways to search strings of text. This particular regular expression means:
+
+
+. Match any character
+* Match any number including zero characters
+(abc|def) Match either abc or def
+. Match any character 
+* Match any number including zero characters
+
+Since there is a () pair, the matching string within the parentheses will be placed into the Process Command (Unicode) attribute. In this case, the results will be abc or def. The next test is for those values to be missing. 
+
+In fact this can be orders of magnitude less costly than using
+
+MISSING(Process Command (Unicode)) == ('*abc*','*def*')
+
+as well as being more robust since it looks at all characters, not just the first 768.
+
+Sometimes you might want to look at several captures
+
+Process Filter (Unicode) == '.*(ibmjava|sunjava).*(abc|def).*' 
+
+The captures are separated by a single blank and look like this:
+
+1) ibmjava abc
+2) ibmjava def
+3) sunjava abc
+4) sunjava def
+
+If you didn't need to capture the type of java
+
+Process Filter (Unicode) == '.*java.*(abc|def).*' 
+
+would again deliver abc or def, but with an assured knowledge that "java" proceeded it in a command string.
+
+
+
+Example 2
+
+The goal is to make sure that the test is only performed when the service has been up for more than 20 minutes or 1200 seconds.
+
+The formula looks like this
+
+[/support/docview.wss?uid=swg21579076&amp;aid=3]
+
+or
+
+( Up Time (Seconds) > 1,200 AND 
+Process Filter (Unicode) == .*(abc|def).* AND 
+MISSING(Process Command (Unicode)) == ('abc','def'))
+
+There is an initial test against the System Up Time is more than 1200 seconds and then the previous tests.
+
+There is a current Situation Editor quirk which prevents setting DisplayItem in this case. The way around that is to do a 
+
+tacmd viewsit -s sitname -e sitname.xml
+
+on a situation like the first one. Use that to determine the correct SITINFO column value. In my test environment it looks like this:
+
+<SITINFO>
+<![CDATA[ATOM=UNIXPS.UCOMMAND;TFWD=N;~;]]>
+</SITINFO> 
+
+After saving the new situation using Apply run this command
+
+./tacmd editsit -s sitname -p SitInfo="ATOM=UNIXPS.UCOMMAND;TFWD=N" 
+
+Then you can start the situation and it will work as expected. Internally the situation is decomposed into two situations, but that is largely invisible.
+
+
+Linux OS Agent Example
+
+Linux OS Agent has the same form but the attribute names are different.
+
+
+
+
+Unix OS Agent Linux OS Agent Process Filter (Unicode) Process Filter Process Command (Unicode) Command Line 
+
+Here is an example formula from the Situation Editor 
+
+[/support/docview.wss?uid=swg21579076&amp;aid=4] 
+
+The show formula is 
+
+( Process Filter == '.*(xxx|yyy|init).*' AND MISSING(Command Line) == ('xxx','yyy','init')) 
+
+As you can see, the usage is exactly parallel with different attribute names. 
+
+
+Summary 
+
+This document shows how to use the Unix OS Process Filter (Unicode) attribute in a situation formula to check for some missing processes.

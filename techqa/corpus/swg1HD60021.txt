@@ -1,0 +1,209 @@
+Title: IBM HD60021: BAD MANAGEMENT OF THE VPM_TS TABLE FOR A CATDRAWING POINTING TO MORE THAN 1000 INSTANCES. - United States
+
+Text:
+AIX SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Bad management of the VPM_TS table for a
+   CATDrawing pointing to more than 1000 instances.
+   .
+   Scenario :
+   1 - From VPMA / Part, create and save part ROOT,
+   SUBASSY and PART1.
+   2 - Paste PART1 on SUBASSY and SUBASSY on
+   ROOT.
+   3 - From CATIAV5, File + New / Part (create a
+   simple pad).
+   4 - From PSN of ROOT, associate this CATPart to
+   PART1
+   5 - Copy PART1 and use paste quantity to get 101
+   instances of it under SUBASSY
+   6 - Copy SUBASSY and paste quantity on ROOT to
+   have 10 instances of SUBASSY
+   At this time you get 1010 instances of PART1 in the
+   assembly.
+   7 - From PSN of ROOT, load all instances to
+   CATIAV5
+   8 - File + New / Drawing. Create a front view
+   9 - Associate this CATDrawing to ROOT in the PSN
+   10 - Connect to database with sql. Query VPM_TS
+   table to cout all raws related to COMPID of the
+   CATDrawing => 2020 (OK)
+   11 - Go back to the drawing in CATIA and add a
+   text field for example.
+   12 - File + Save
+   13 - Query again VPM_TS
+   .
+   Result : you have now 4040 raws
+   .
+   Comment : If your delete the drawing, you still
+   have 4040 raws in VPM_TS. VPM_TS always grows
+   and never decrease.
+   This problem is related to the size of the assembly.
+   Under 1000 instances, the problem does not exists.
+   
+   .
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Bad management of the VPM_TS table for a CATDrawing pointing to
+    more than 1000 instances.
+   Bad management of the VPM_TS table for a
+   CATDrawing pointing to more than 1000 instances.
+   .
+   Scenario :
+   1 - From VPMA / Part, create and save part ROOT,
+   SUBASSY and PART1.
+   2 - Paste PART1 on SUBASSY and SUBASSY on
+   ROOT.
+   3 - From CATIAV5, File + New / Part (create a
+   simple pad).
+   4 - From PSN of ROOT, associate this CATPart to
+   PART1
+   5 - Copy PART1 and use paste quantity to get 101
+   instances of it under SUBASSY
+   6 - Copy SUBASSY and paste quantity on ROOT to
+   have 10 instances of SUBASSY
+   At this time you get 1010 instances of PART1 in the
+   assembly.
+   7 - From PSN of ROOT, load all instances to
+   CATIAV5
+   8 - File + New / Drawing. Create a front view
+   9 - Associate this CATDrawing to ROOT in the PSN
+   10 - Connect to database with sql. Query VPM_TS
+   table to cout all raws related to COMPID of the
+   CATDrawing => 2020 (OK)
+   11 - Go back to the drawing in CATIA and add a
+   text field for example.
+   12 - File + Save
+   13 - Query again VPM_TS
+   .
+   Result : you have now 4040 raws
+   .
+   Comment : If your delete the drawing, you still
+   have 4040 raws in VPM_TS. VPM_TS always grows
+   and never decrease.
+   This problem is related to the size of the assembly.
+   Under 1000 instances, the problem does not exists.
+   
+   .
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  THIS PROBLEM WILL BE FIXED ON ENOVIA
+   VPM1.6PTF3 AND ON VPM1.5PTF38 (HD57267 [http://www-01.ibm.com/support/docview.wss?uid=swg1HD57267]).
+   .
+   Comment :
+   The bad management of the VPM_TS table is linked
+   to the size of the query done in database (too
+   long). The query fails and then the corresponding
+   lines in this table are not deleted when they should.
+   As a consequence, the VPM_TS grows in an
+   abnormal way. The size of this query is linked to
+   the configuration of the assembly, i.e. more than
+   1000 pointed instances for the CATDrawing.
+   .
+   Please note that this APAR fixes this management
+   problem, but an additional cleaning tool
+   (AT0ANLMM) will be delivered to clean the database
+   from the extra raws in table. PMR82399 is the
+   reference for this cleaning tool.
+   
+   .
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   HD60021
+   
+   
+ * REPORTED COMPONENT NAME
+   ENOVIA VPM HP-U
+   
+   
+ * REPORTED COMPONENT ID
+   569102900
+   
+   
+ * REPORTED RELEASE
+   150
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2006-12-12
+   
+   
+ * CLOSED DATE
+   2007-01-05
+   
+   
+ * LAST MODIFIED DATE
+   2007-02-22
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    HD60019 [http://www-01.ibm.com/support/docview.wss?uid=swg1HD60019]
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ENOVIA VPM HP-U
+   
+   
+ * FIXED COMPONENT ID
+   569102900
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R150 PSY
+   UP

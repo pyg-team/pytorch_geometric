@@ -1,0 +1,269 @@
+Title: IBM PQ95553: CMPL COBOL/SQL COPROCESSOR PROCEDURE DIVISION, IF STATEMENT WITH EXEC SQL INCLUDE ... END-IF ... GENERATES INCORRECT CODE. - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Using the Enterprise COBOL/SQL CoProcessor for an IF statement
+   with a SQL INCLUDE before a END-IF is not resolved to generate
+   the expected logic.
+   -
+   The source code of the program is:
+              IF  SQLCODE  =  +0
+                IF  FIELD1  = 'X'
+                     MOVE +1 TO FIELD2
+                     EXEC SQL INCLUDE MYCODE  END-EXEC
+                END-IF
+              END-IF
+                EVALUATE SQLCODE  ....
+    ---------------------------------------------------------------
+   The COBOL/SQL CoProcessor version of the COBOL compiler
+   resolves the copybook following an END-IF, which leads to
+   unexpected behavior on execution:
+              IF  SQLCODE  =  +0
+                IF  FIELD1  = 'X'
+                     MOVE +1 TO FIELD2
+                     EXEC SQL INCLUDE MYCODE  END-EXEC
+                END-IF
+             *  COPYBOOK code is here *******
+                EVALUATE SQLCODE  ....
+   Note that one END-IF statement is lost.  The EVALUATE
+   and following statements all become part of the first
+   IF statement and the logic is incorrect.
+    ---------------------------------------------------------------
+   The problem is only with the internal coprocessor version,
+   not if a separate DB2 PreProcessor step is used.  The external
+   translator with Cobol/OS390 or Enterprise Cobol correctly
+   resolves the copy book directly after the EXEC SQL INCLUDE:
+              IF  SQLCODE  =  +0
+                IF  FIELD1  = 'X'
+                     MOVE +1 TO FIELD2
+                     EXEC SQL INCLUDE MYCODE  END-EXEC
+             *  COPYBOOK code is here *******
+                END-IF
+              END-IF
+                EVALUATE SQLCODE  ....
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  If a period is placed after the END-EXEC, correct code
+   appears to be created:
+                     EXEC SQL INCLUDE MYCODE  END-EXEC.
+                END-IF
+              END-IF
+                EVALUATE SQLCODE  ....
+   Warning: This bypass may NOT work after the problem is corrected
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: Users of Enterprise COBOL with COBOL         *
+   *                 programs using an EXEC SQL INCLUDE statement *
+   *                 without a period following it.               *
+   *                                                              *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: An EXEC SQL INCLUDE statement,          *
+   *                      specified in the PROCEDURE DIVISION     *
+   *                      without a period following it, may      *
+   *                      cause the compiler to incorrectly alter *
+   *                      the intended logic of the program.      *
+   *                                                              *
+   *                                                              *
+   ****************************************************************
+   * RECOMMENDATION: Apply the provided PTF.                      *
+   *                                                              *
+   ****************************************************************
+   Given the following example:
+   IF  SQLCODE  =  +0
+     IF  FIELD1  = 'X'
+          MOVE +1 TO FIELD2
+          EXEC SQL INCLUDE MYCODE  END-EXEC
+     END-IF
+   END-IF
+     EVALUATE SQLCODE  ....
+   the include member is placed after the END-IF that
+   follows the EXEC SQL INCLUDE statement. This occurs because the
+   missing period causes the COPY phase to put out
+   the END-IF before it processes the include member.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The syntax of the EXEC SQL INCLUDE statement will be changed
+   to require an ending period as part of the statement, similar
+   to the COPY statement.  The new behavior will be documented
+   in the Programming Guide more explicitly and it will be added
+   to the Migration Guide in a new section documenting differences
+   between the DB2 precompiler and the DB2 coprocessor.
+   
+   IGYLCOPY will be modified to issue message IGYLI0088-S if the
+   period is missing.
+   
+   PUBS CLOSING CODE : DEVCHNG
+   
+   ****************************************************************
+   * FUNCTION AFFECTED: Enterprise COBOL Compiler       (PQ95553) *
+   *                      Coprocessor                             *
+   *                        SQL                                   *
+   ****************************************************************
+   * DESCRIPTION      : Documentation updates                     *
+   ****************************************************************
+   * TIMING           : Post-APPLY                                *
+   ****************************************************************
+   As a result of this change, some users may experience a
+   different behavior when recompiling their programs. If any EXEC
+   SQL INCLUDE statements are missing the ending period, those
+   statements will be flagged with message IGYLI0088-S.
+   
+   *** Changes to SC27-1412-02,
+   *** Enterprise COBOL for Z/OS Programming Guide
+   
+   In The Enterprise COBOL Programming Guide Page 371 under section
+   "Using SQL INCLUDE with the DB2 co-processor" following the
+   first sentence insert the following sentence "The period ending
+   the EXEC SQL INCLUDE statement is part of the statement and is
+   always required."
+   
+   *** Changes to GC27-1409-02,
+   *** Enterprise COBOL for Z/OS Migration Guide
+   
+   At the end of Appendix K add the following section:
+   
+   Behavior differences between the DB2 precompiler and the DB2
+   coprocessor
+   
+   This section consists of behavior differences between the
+   separate COBOL DB2 precompiler and the integrated COBOL DB2
+   coprocessor.
+   
+   Period ending EXEC SQL INCLUDE statement
+   
+   The DB2 precompiler does not require a period at the end of an
+   EXEC SQL INCLUDE statement. If a period is specified the
+   precompiler processes it as part of the statement, but if a
+   period is not specified, the precompiler accepts the statement
+   as if a period was specified.
+   
+   The DB2 coprocessor treats the EXEC SQL INCLUDE statement like a
+   COPY statement and requires the period ending the statement.
+   If the period is not specified, the compiler issues a syntax
+   error.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PQ95553
+   
+   
+ * REPORTED COMPONENT NAME
+   ENT COBOL FOR Z
+   
+   
+ * REPORTED COMPONENT ID
+   5655G5300
+   
+   
+ * REPORTED RELEASE
+   320
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2004-10-11
+   
+   
+ * CLOSED DATE
+   2005-01-18
+   
+   
+ * LAST MODIFIED DATE
+   2005-02-01
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UQ96954 UQ96955
+   
+   
+
+MODULES/MACROS
+ *     IGYLCOPY
+   
+   
+    
+   
+   
+
+Publications Referenced SC27141202 GC27140902 FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ENT COBOL FOR Z
+   
+   
+ * FIXED COMPONENT ID
+   5655G5300
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R320 PSY UQ96954 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UQ96954]
+   UP05/01/20 P F501
+   
+   
+ * R330 PSY UQ96955 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UQ96955]
+   UP05/01/20 P F501
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

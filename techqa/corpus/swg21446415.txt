@@ -1,0 +1,48 @@
+Title: IBM FileNet Content Engine - intermittent problems adding documents to storage area - United States
+
+Text:
+nodeagent; localsystem; CONTENT_CA_START_UPLOAD_FAILED TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ FileNet Content Engine - intermittent problems adding documents to storage area when using IBM Websphere Network Deployment Edition. 
+
+SYMPTOM
+Adding documents to the FileNet Content Engine with a document class configured to store content on a network based Storage Area may fail intermittently. The following error message may be logged in the p8_server_error log : 
+
+ 
+Caused by: com.filenet.api.exception.EngineRuntimeException: 
+CONTENT_CA_START_UPLOAD_FAILED: Start upload failed 
+\\server\dir1\storage_area\inbound\FN{062C8619-D4C0-47CE-8CCB- D24B1333AB24}{5AC28641-6686-43E1-9A64-B3F00DC365E2}. 
+.. 
+
+Caused by: java.io.IOException: The system cannot find the file 
+specified. 
+at java.io.File.createNewFile (File.java:880) 
+
+The errors may persist even if the Content Engine application or IBM Websphere instance are restarted. 
+
+
+CAUSE
+The problem may occur if the IBM Websphere Application Server is configured as a service to be running as Content Engine Operating System Account but the NodeAgent is configured to run as the LocalSystem account. 
+
+ 
+
+The Content Engine Operating System Account would normally have full access to the remote storage area location and the CE would function properly allowing users to add new content. 
+
+ 
+
+Therefore when the IBM Websphere Application Server is started as a service, it would take the identity of the Content Engine Operating System Account and users would be able to add new documents. 
+
+ 
+
+When otherwise the Application Server is started via the Deployment Manager Console, the request is actually serviced by the respective NodeAgent service and as a result the Websphere Instance uses the identify of the LocalSystem account which typically cannot write to network locations such as where the Storage Area may be located. 
+
+ 
+
+The intermittent nature of the symptom is introduced by the manner in which the IBM Websphere Application Server is started.
+
+
+RESOLVING THE PROBLEM
+ 
+
+For the IBM Websphere Application Server to consistently start using the desired Content Engine Operating System Account credentials, configure the NodeAgent service to also run as the Content Engine Operating System Account instead of the LocalSystem account.

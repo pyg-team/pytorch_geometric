@@ -1,0 +1,116 @@
+Title: IBM IV86497: INAPPROPRIATE VALUE FOR AGENT MSN ATTRIBUTE - United States
+
+Text:
+  DIRECT LINKS TO FIXES
+7.2.0.4-TIV-ITM_VMWVI-IF0001 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Monitoring+for+Virtual+Servers&fixids=7.2.0.4-TIV-ITM_VMWVI-IF0001&source=SAR]
+IBM Tivoli Monitoring for Virtual Servers: VMware VI 7.2.0.4-TIV-ITM_VMWVI-IF0001 [http://www-01.ibm.com/support/docview.wss?uid=swg24043024]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  ENVIRONMENT:
+   IBM Tivoli Monitoring for Virtual Environments: VMware VI
+   Agent, Version
+   7.2 FP3
+   
+   PROBLEM DESCRIPTION:
+   The agent MSN attribute in the Server Datastore attribute group
+   shows the partial MSN name and the instance name is blank.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  No
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  INAPPROPRIATE VALUE FOR AGENT MSN ATTRIBUTE
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV86497
+   
+   
+ * REPORTED COMPONENT NAME
+   ITMF VE VM WARE
+   
+   
+ * REPORTED COMPONENT ID
+   5724L92VI
+   
+   
+ * REPORTED RELEASE
+   720
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-07-01
+   
+   
+ * CLOSED DATE
+   2016-10-04
+   
+   
+ * LAST MODIFIED DATE
+   2016-10-04
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R720 PSN
+   UP

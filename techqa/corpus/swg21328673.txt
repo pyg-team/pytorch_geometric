@@ -1,0 +1,33 @@
+Title: IBM WebSphere DataPower SOA Appliance: Startup error similar to "'pubcert:///XYZ-Class-1-CA-.pem' is expired" during monitoring or upgrading - United States
+
+Text:
+Migrating; upgrading ; startup errors; 'pubcert:///' expired TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ After upgrading between major releases of the IBM WebSphere DataPower SOA appliance firmware, startup errors might be observed. 
+
+SYMPTOM
+Startup errors similar to below might be observed:
+
+Wed Oct 15 2008 22:27:01 [crypto][error] certificate(yourCACert-Root-2-pem): tid(495): certificate 
+'pubcert://XYZ-myTrust-Root-2.pem' is expired 
+Wed Oct 15 2008 22:27:01 [mgmt][error] certificate(yourCACert-Root-2-pem): tid(495): File is expired 
+Wed Oct 15 2008 22:27:01 [crypto][error] certificate(yourCACert-Root-3-pem): tid(495): certificate 
+'pubcert:///XYZ-CyberTrust-Root-3.pem' is expired 
+Wed Oct 15 2008 22:27:01 [mgmt][error] certificate(yourCACert-Root-3-pem): tid(495): File is expired 
+Wed Oct 15 2008 22:27:01 [crypto][error] certificate(otherCA-Class-1-CA-Individual-Subscriber-Persona-Not-Validated-pem): tid(495): certificate 
+'pubcert:///otherCA-Class-1-CA-Individual-Subscriber-Persona-Not-Validated.pem' is expired 
+Wed Oct 15 2008 22:27:01 [mgmt][error] certificate(otherCA-Class-1-CA-Individual-Subscriber-Persona-Not-Validated-pem): tid(495): File is expired 
+
+
+CAUSE
+The appliance was shipped with a standard list of public certificates when the firmware was loaded. As expected, those certificates will expire when the expiration date has been reached. 
+
+The standard list of certificates are provided to our customers to make it easier if public certificates are needed. However, since a number of vendors are involved in the list and the DataPower team does not control their certificates policy, the validity of the certificates cannot be guaranteed by the time customers receive the appliance.
+
+
+RESOLVING THE PROBLEM
+These errors indicate that public certificates have expired and unless in use, they can be deleted safely. If you are using these certificates, you can download the latest version from the vendor's public site. 
+
+
+The details of these certificates can be seen by using the WebGUI and navigating to Control Panel-> File Management -> Pubcert. Select the certificate and press Details.

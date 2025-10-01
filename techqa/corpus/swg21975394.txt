@@ -1,0 +1,10 @@
+Title: IBM Data Manager Compatibility  with Oracle 12c - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Does Data Manager support Oracle 12c as data source? 
+
+ANSWER
+Data Manager effectively gets its data source conformance from Cognos Business Intelligence running in Compatible Query Mode and Oracle 12c client is supported from 10.2.1 FP1 onwards.

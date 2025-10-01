@@ -1,0 +1,181 @@
+Title: IBM PI28764: WEBSPHERE CONTROL REGION HUNG AFTER JVM ERROR - United States
+
+Text:
+z/os  FIXES ARE AVAILABLE
+8.0.0.10: WebSphere Application Server V8.0 Fix Pack 10 [http://www-01.ibm.com/support/docview.wss?uid=swg24039242]
+8.5.5.5: WebSphere Application Server V8.5.5 Fix Pack 5 [http://www-01.ibm.com/support/docview.wss?uid=swg24039425]
+8.5.5.6: WebSphere Application Server V8.5.5 Fix Pack 6 [http://www-01.ibm.com/support/docview.wss?uid=swg24040035]
+8.0.0.11: WebSphere Application Server V8.0 Fix Pack 11 [http://www-01.ibm.com/support/docview.wss?uid=swg24040425]
+8.5.5.7: WebSphere Application Server V8.5.5 Fix Pack 7 [http://www-01.ibm.com/support/docview.wss?uid=swg24040533]
+8.5.5.8: WebSphere Application Server V8.5.5 Fix Pack 8 [http://www-01.ibm.com/support/docview.wss?uid=swg24041178]
+8.0.0.12: WebSphere Application Server V8.0 Fix Pack 12 [http://www-01.ibm.com/support/docview.wss?uid=swg24041590]
+8.5.5.9: WebSphere Application Server V8.5.5 Fix Pack 9 [http://www-01.ibm.com/support/docview.wss?uid=swg24041819]
+8.5.5.10: WebSphere Application Server V8.5.5 Fix Pack 10 [http://www-01.ibm.com/support/docview.wss?uid=swg24042150]
+8.5.5.11: WebSphere Application Server V8.5.5 Fix Pack 11 [http://www-01.ibm.com/support/docview.wss?uid=swg24043005]
+8.0.0.13: WebSphere Application Server V8.0 Fix Pack 13 [http://www-01.ibm.com/support/docview.wss?uid=swg24042746]
+8.5.5.12: WebSphere Application Server V8.5.5 Fix Pack 12 [http://www-01.ibm.com/support/docview.wss?uid=swg24043844]
+8.0.0.14: WebSphere Application Server V8.0 Fix Pack 14 [http://www-01.ibm.com/support/docview.wss?uid=swg24044096]
+8.5.5.13: WebSphere Application Server V8.5.5 Fix Pack 13 [http://www-01.ibm.com/support/docview.wss?uid=swg24044479]
+8.0.0.15: WebSphere Application Server V8.0 Fix Pack 15 [http://www-01.ibm.com/support/docview.wss?uid=swg24044734]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When JVM takes an gpf error during an storage allocation that
+   causes a 0C4 storage exception. 04C abend caused websphere to
+   hang and failed to take down the control region.  Review the
+   0C4 dump shows :
+       1        j9heap_allocate                       Except
+       2        allocate_memory32                Call
+       3        j9mem_allocate_memory32   Call
+       4        allocateJavaStack                   Call
+       5        internalGrowJavaStack           Call
+       6        growJavaStack                        Call
+       7        RUNJAVATHREAD                  Call
+       8        javaProtectedThreadProc       Call
+       9        j9sig_protect                           Call
+       10       javaThreadProc
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  All users of IBM WebSphere Application      *
+   *                  Server V8.0 and V8.5                        *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: WebSphere Application server for z/OS   *
+   *                      Controller is hung after a call to our  *
+   *                      JVM Abort routine.                      *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   Subsequent failures in the JVM caused the JVM to drive our
+   JVM Abort routine (resides in bbolsys.cpp).  The JVM Abort
+   routine drove our native ServerManagement::cancel() routine.
+   The cancel() routine set our m_cancel flag and drove our
+   BOA deactivate_impl routine.  Our deactivate_impl routine is
+   called for both "NORMAL" and "ABNORMAL" termination requests.
+   The deactivate_impl invoked a Java notification service to
+   inform components of a server stop event.  This upcall from
+   native to Java hung in the JVM and caused the termination
+   process to hang.   The target Java notification service should
+   only be invoked for "NORMAL" termination requests.
+   The JVM notification can be observed on the call stack along
+   with deactivate_impl at the time of the hang.  The notification
+   routine name is doNotifyServerStopping.  Also, message
+   BBOO0158E is issued on entry to the native JVM Abort routine
+   in bbolsys.cpp.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Code has been modified within the deactivate_impl routine to
+   not drive the JVM notification service on "ABNORMAL"
+   termination requests.
+   
+   APAR PI28764 is currently targeted for inclusion in Ficks
+   Packs 8.0.0.10 and 8.5.5.5 of WebSphere Application Server.
+   
+   Please refer to the Recommended Updates page for delivery
+   information:
+   http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+   
+   In addition, please refer to URL:
+   http://www.ibm.com/support/docview.wss?rs=404&uid=swg27006970 [http://www.ibm.com/support/docview.wss?rs=404&uid=swg27006970]
+   for Fix Pack PTF information.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI28764
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSPHERE FOR Z
+   
+   
+ * REPORTED COMPONENT ID
+   5655I3500
+   
+   
+ * REPORTED RELEASE
+   850
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-10-30
+   
+   
+ * CLOSED DATE
+   2014-11-05
+   
+   
+ * LAST MODIFIED DATE
+   2014-11-05
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBSPHERE FOR Z
+   
+   
+ * FIXED COMPONENT ID
+   5655I3500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R850 PSY
+   UP

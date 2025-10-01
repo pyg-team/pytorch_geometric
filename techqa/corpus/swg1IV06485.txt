@@ -1,0 +1,177 @@
+Title: IBM IV06485: KNTWICMA.VER CONTENTS INCORRECT FOR WIA64 - United States
+
+Text:
+  FIXES ARE AVAILABLE
+IBM Tivoli Monitoring 6.2.2 Fix Pack 8 (6.2.2-TIV-ITM-FP0008) [http://www-01.ibm.com/support/docview.wss?uid=swg24031354]
+IBM Tivoli Monitoring 6.2.2 Fix Pack 9 (6.2.2-TIV-ITM-FP0009) [http://www-01.ibm.com/support/docview.wss?uid=swg24032067]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The PackageArch= parameter specified in the KNTWICMA.ver file
+   for the Windows OS Agent (Itanium) incorrectly is specified
+   as WINNT. The parameter should be specified as WIA64.  This
+   requires a change to the .xml file that is used by BundleGen
+   to produce the WIA64 package.
+   
+   This problem exists since ITM 621 FP3.
+   
+   
+   RECREATE INSTRUCTIONS:
+   
+   1. Install ITM 622 FP2 Windows OS Agent (Itanium) on Windows
+      2003 Itanium endpoint.
+   2. Install ITM 622 FP2 TEMS on any Windows machine
+   3. Execute:
+       tacmd addbundles -i
+       Z:\itm\622\fp3\rtm\tmv622mdx-d0249a-201009131023\upgrade\
+       6.2.2-TIV-ITM_TMV-Agents-FP0003\WINDOWS\Deploy -t NT
+   
+       tacmd addbundles -i
+       Z:\itm\622\fp3\rtm\tmv622mdx-d0249a-201009131023\upgrade\
+       6.2.2-TIV-ITM_TMV-Agents-FP0003\WIA64\Deploy
+   4. Execute:
+        tacmd updateAgent -n <endpoint:NT> -t NT
+   5. Observe that the following message is retured and the
+      endpoint Agent is not updated.
+   
+      Error Message [An unexpected error occurred. The NT agent
+      was restarted but the agent version is not as expected.
+      Current agent version is 06220300 and the expected version
+      is 06220500 .
+   6. Also observe the failure message which appears in the
+      "Abort IBM Tivoli Monitoring YYYMMDD HHMM.log file:
+      8-11-2011 16:38:38 RC_INFO: Unsupported platform: WIA64
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  To immediately workaround this problem, if the file on the
+   endpoint machine:
+   
+   %Candle_Home%\InstallITM\ver\KNTWICMA.ver
+   
+   is edited with the following line changed from:
+   
+   PlatformArch=WINNT
+   
+   to
+   
+   PlatformArch=WIA64
+   
+   the updateAgent process will work as expected.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Platform type of ITM Windows OS Agent for Itanium is wrongly
+   reported in file KNTWICMA.ver
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Platform type in KNTWICMA.ver has been replaced with the
+   correct value (WIA64)
+   
+   The fix for this APAR is included in the following maintenance
+   vehicle:
+   
+      | fix pack | 6.2.2-TIV-ITM-FP0007 |
+      | fix pack | 6.2.3-TIV-ITM-FP0001
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV06485
+   
+   
+ * REPORTED COMPONENT NAME
+   ITM AGENT WINDO
+   
+   
+ * REPORTED COMPONENT ID
+   5724C040W
+   
+   
+ * REPORTED RELEASE
+   622
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-08-17
+   
+   
+ * CLOSED DATE
+   2011-09-30
+   
+   
+ * LAST MODIFIED DATE
+   2012-06-05
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ITM AGENT WINDO
+   
+   
+ * FIXED COMPONENT ID
+   5724C040W
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R622 PSY
+   UP

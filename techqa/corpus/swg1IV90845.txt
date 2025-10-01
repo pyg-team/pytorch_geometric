@@ -1,0 +1,150 @@
+Title: IBM IV90845: APM UI - APPLICATIONS WITH SYNTHETIC TRANSACTIONS AND NAMED USING SPACE OR PLUS SIGN DO NOT DISPLAY THE APP STATUS OVERVIEW - United States
+
+Text:
+  READMES ARE AVAILABLE
+8.1.3.0-IBM-IPM-SERVER-IF0006 [http://www-01.ibm.com/support/docview.wss?uid=isg400003022]
+8.1.3.0-IBM-IPM-SERVER-IF0007 [http://www-01.ibm.com/support/docview.wss?uid=isg400003073]
+8.1.3.0-IBM-IPM-SERVER-IF0008 [http://www-01.ibm.com/support/docview.wss?uid=isg400003156]
+8.1.3.0-IBM-IPM-SERVER-IF0009 [http://www-01.ibm.com/support/docview.wss?uid=isg400003265]
+8.1.3.0-IBM-IPM-SERVER-IF0010 [http://www-01.ibm.com/support/docview.wss?uid=isg400003329]
+8.1.3.0-IBM-IPM-SERVER-IF0011 [http://www-01.ibm.com/support/docview.wss?uid=isg400003678]
+8.1.3.0-IBM-IPM-SERVER-IF0012 [http://www-01.ibm.com/support/docview.wss?uid=isg400003854]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Environment:  APM
+   APM version:  8.1.3
+   Severity: 2
+   Problem Description: After applying v8.1.3 server patch IF05,
+   any applications that include synthetic transactions and using a
+    space or plus sign in the application name cannot display the
+   Application Status Overview in the APM UI. The frame looks
+   blank. Only applications that include Synthetic transactions are
+    affected.  Any other applications with space or plus in the
+   application name that do not include synthetic transactions will
+    display properly.  Some fixes to encoding and decoding of
+   messages between two internal UI components (ITportal and APMUI)
+    were not delivered with server patch IF05.
+   
+   Detailed Recreation Procedure: Create a synthetic application
+   with space or plus sign in the application name prior to
+   applying IF05.  After applying IF05, the applications will not
+   display any widgets or data in the Application's Status Overview
+   tab in the APM UI.
+   
+   Related Files and Output:
+   
+   Related log messages in the apmui messages.log:
+   [11/15/16 17:29:00:007 AEDT] 0000039a
+   com.ibm.tivoli.apm.datamanagement.connector.CURIRequest      E
+   Internal error at
+   http://localhost:8090/ibm/tivoli/rest/providers/itm.KD8/datasour
+   ces/TMSAgent.%25IBM.KSN/datasets/stxtime/items?param_APPLNAME= [http://localhost:8090/ibm/tivoli/rest/providers/itm.KD8/datasources/TMSAgent.%25IBM.KSN/datasets/stxtime/items?param_APPLNAME=]
+   (param details removed)
+   [11/15/16 17:29:00:019 AEDT] 00000403
+   com.ibm.ws.webcontainer.util.ApplicationErrorUtils           E
+   SRVE0777E: Exception thrown by application class
+   'com.ibm.apm.apmimpl.ApplicationsDomainMetrics.getSyntheticAvail
+   abilitySummary:1,399'
+   java.lang.NullPointerException
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Workaround: Rename the applications to remove any spaces and
+   plus signs from the names any applications that include
+   synthetic transactions.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Fixed in next release.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV90845
+   
+   
+ * REPORTED COMPONENT NAME
+   MONITORING UI V
+   
+   
+ * REPORTED COMPONENT ID
+   5725U05UI
+   
+   
+ * REPORTED RELEASE
+   813
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-11-18
+   
+   
+ * CLOSED DATE
+   2018-07-06
+   
+   
+ * LAST MODIFIED DATE
+   2018-07-06
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R814 PSY
+   UP

@@ -1,0 +1,30 @@
+Title: IBM QRadar: Does QRadar store data in an encrypted form? - United States
+
+Text:
+Encryption; Storage options TECHNOTE (FAQ)
+
+QUESTION
+ Does QRadar store data in an encrypted form?
+
+
+ANSWER
+However event data in QRadar is not encrypted when stored, there are a number of things that can be done to protect data that is stored on the system: 
+
+ * The /store or /store/ariel partitions can be placed on an external device, which uses transparent (to QRadar) cryptography. To see how to use Offboard storage, 
+   see the QRadar Offboard Storage Guide [http://public.dhe.ibm.com/software/security/products/qradar/documents/7.2.8/en/b_offboard_storage.pdf], for the version of QRadar you are using. 
+   
+ * Another alternative for sensitive data can be obfuscated. This process identifies certain data in events, by using regular expressions, and encrypts them to an obfuscated value. More information on data obfuscation is available in the QRadar Administration Guide [http://public.dhe.ibm.com/software/security/products/qradar/documents/7.2.8/en/b_qradar_admin_guide.pdf], for the version of QRadar you are using.
+   
+ * Finally, event data might be protected from tampering by the use of event hashing. Event hashing is discussed in the QRadar Administration Guide [http://public.dhe.ibm.com/software/security/products/qradar/documents/7.2.8/en/b_qradar_admin_guide.pdf] under the Configuring system settings 
+   section of the Set up QRadar SIEM chapter.
+   
+
+Note: To set up encryption on the storage, see the documentation for your storage solution. 
+
+
+Where do you find more information? 
+
+
+[/support/docview.wss?uid=swg21690488&aid=1] [http://ibm.biz/QRadar-KC] [/support/docview.wss?uid=swg21690488&aid=2] [https://ibm.biz/qradarforums] [/support/docview.wss?uid=swg21690488&aid=3] [http://ibm.biz/qradarknowledge] [/support/docview.wss?uid=swg21690488&aid=4] [http://ibm.biz/SecSuptUTube] [/support/docview.wss?uid=swg21690488&aid=5] [http://ibm.biz/qradarsoftware] [/support/docview.wss?uid=swg21690488&aid=6] [http://ibm.biz/MyNotification] [/support/docview.wss?uid=swg21690488&aid=7] [http://ibm.biz/SuptRegQuikStart] 
+RELATED INFORMATION
+ Accessing IBM Security QRadar documentation [http://www-01.ibm.com/support/docview.wss?uid=swg21614644]

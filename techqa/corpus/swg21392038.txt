@@ -1,0 +1,105 @@
+Title: IBM Using shell variables in the same command for dot commands - United States
+
+Text:
+1392038; dot command; step; part; shell; variables; environment; BF; ev; env; set; var; period; .set; .source; $bf_root TECHNOTE (FAQ)
+
+QUESTION
+ How can I get a shell variable into a dot command step part when using IBM Rational Build Forge? 
+
+CAUSE
+ 
+
+All dot commands are given separate shells from shell commands in a step. 
+
+For example, a step command with: 
+
+ * 
+ * set VAR=HELLO
+   echo "VAR is: %VAR%"
+   .set env "ENV_GROUP" "VAR=v%VAR%"
+
+
+Internally, this is broken into two step parts, as seen here:
+
+Step part 1: 
+
+ * 
+ * .set VAR=HELLO
+   echo "VAR is: %VAR%"
+ * 
+
+
+Step part 2:  * 
+ * .set env "ENV_GROUP" "VAR=v%VAR%"
+
+
+Each of these step parts inherit a fresh and clean environment that uses the Build Forge variables only. Any shell command environment sets are lost in the next step part. 
+
+The variable must exist when the dot command runs. In the step command above the scope of the variable VAR is only for step part 1 and it is not present for step part 2. 
+
+The tool is designed in such a manner as to allow for a mixing of dot commands and shell commands within the same step, however, they are ultimately treated as separate steps entirely. 
+
+It is recommended, if you wish to use environment variables within any dot commands, that they be BF environment variables instead of shell variables. This helps with abstraction and reproducibility outside of dependant platforms.
+
+
+ANSWER
+ 
+
+ 
+
+There are two primary ways you can get a shell variable into a dot command step part: 
+
+ 1. Option 1: Use the .source environment variable
+    
+ 2. Option 2: Type out a file containing the value and use that to set the Build Forge variable
+
+
+These options both have benefits and drawbacks, however:  * If you need to do a large number of variables within a build, then a good option to use is the .source environment variable. 
+ * If you are setting only a couple of variables, or if the variable will change value over the course of the build then typing out a file with the value is a better method to use. 
+
+
+REMINDER: Be sure to bear in mind that neither of these approaches are optimal, and there are certainly other ways to accomplish the end goal of setting the BF variable with a certain value from a shell variable set in a Build Forge step. 
+
+
+
+
+Use the .source environment variable 
+
+Make this variable for the environment group associated with the project: 
+
+ * 
+ * .source=$BF_ROOT/source.bat
+
+
+The example step command is changed to: 
+
+ * 
+ * echo set VAR=HELLO>$BF_ROOT/source.bat
+ * echo "VAR is: %VAR%" 
+ * .set env "ENV_GROUP" "VAR=v%%VAR%%"
+
+
+Here is what happens: 
+
+The .source environment variable runs a batch file or shell script directly before any command is executed. You can take advantage of that and have shell variables outside of BF be inside that batch file to be set for the dot command shell. The step echos the Microsoft Windows set command to set the variable VAR=HELLO into the .source file of $BF_ROOT/source.bat. This ultimately runs before the .set command runs and performs... 
+
+ * 
+ * set VAR=HELLO
+
+
+...inside the dot command shell. The final piece requires double percent signs '%%' (without the single tick) as you will initially try to substitute the variable for a BF variable which does not exist within the engine. Doubling up the % signs ensures you get to the command shell for Windows to perform the substitution.  
+
+Type out a file containing the value and use that to set the Build Forge variable 
+
+ * 
+ * echo =HELLO>$BF_ROOT/VAR.txt
+ * echo "VAR is: %VAR%" 
+ * .set env "ENV_GROUP" "VAR=`type VAR.txt`"
+
+
+This process uses the same basic premise as the previous option, however, it places the value of one variable into a text file. This grants slightly more flexibility as there is no dependance on a .source file, and a project can change the value fairly easily. 
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ BuildForge

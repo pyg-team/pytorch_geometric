@@ -1,0 +1,188 @@
+Title: IBM PJ38241: SQL ERROR WHEN USING SQL RESERVED WORD "ORDER" IN BPF INBASKET FILTER VALUE - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Description of Problem (full details) :
+   
+   This problem was originally reported when the Bp8Metastore was
+   on Oracle -
+   
+    Oracle error ORA-01756: quoted string not properly terminated
+   
+   - but the same problem occurs on DB2 -
+   
+    DB2 SQL error: SQLCODE: -10, SQLSTATE: 42603, SQLERRMC: THE
+   STRING CONSTANT BEGINNING IS NOT TERMINATED
+   
+   - as well and most likely MSSQL too.
+   
+   The problem happens when a user enters a value in an inbasket
+   filter (type STRING) that contains the string/substring "order",
+   which is a SQL keyword.
+   
+   How long has the problem been occurring (recent changes)? :
+   Always
+   
+   Does this occur on more than one station / server? :
+   Yes
+   
+   Is there a workaround? :
+   Only to avoid the problem by searching for a substring of the
+   string "order", such as "orde", which works correctly (although
+   it makes for a less granular search) and does not cause the
+   error.
+   
+   What is the impact to the customer/system? :
+   Unable to use the string/substring "order" in an inbasket filter
+   value in a situation where the substring "order" is a valid
+   value for the field being searched.
+   
+   Can the problem be replicated on an internal system?  Y or N
+   Y
+   
+   By Who (L3, Support, etc..)
+   L3
+   
+   Steps to Reproduce:
+   1. Create a case with value 'Money Order' for any field.
+   Example: Specify value 'Money Order' for CompanyName (in the
+   Case Management sample application).
+   2. Search for Company 'Money Order' in the Company Name Inbasket
+   Filter.
+   
+   Actual Results:
+   Depending on the RDBMS used for the Bp8Metastore, the user sees
+   an error, such as:
+   Oracle error ORA-01756: quoted string not properly terminated
+   DB2 SQL error: SQLCODE: -10, SQLSTATE: 42603, SQLERRMC: THE
+   STRING CONSTANT BEGINNING IS NOT TERMINATED
+   
+   Expected Results:
+   We should be able to search using item 'Money order'.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Only to avoid the problem by searching for a substring of the
+   string "order", such as "orde", which works correctly (although
+   it makes for a less granular search) and does not cause the
+   error.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * BPF Web Application users                                    *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * Oracle error ORA-01756: quoted string not properly           *
+   * terminated when using reserved word Order in the Inabsket    *
+   * Filter                                                       *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Apply the BPF-4.1.0-006 GA FixPack.                          *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This issue is fixed in BPF-4.1.0-006.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PJ38241
+   
+   
+ * REPORTED COMPONENT NAME
+   BUS PROC FRAMEW
+   
+   
+ * REPORTED COMPONENT ID
+   5724R7500
+   
+   
+ * REPORTED RELEASE
+   410
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-10-08
+   
+   
+ * CLOSED DATE
+   2011-04-06
+   
+   
+ * LAST MODIFIED DATE
+   2011-04-06
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   BUS PROC FRAMEW
+   
+   
+ * FIXED COMPONENT ID
+   5724R7500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R410 PSY
+   UP

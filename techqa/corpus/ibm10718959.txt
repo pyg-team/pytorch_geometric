@@ -1,0 +1,135 @@
+Title: IBM How to get detailed host information by host name? - United States
+
+Text:
+ HOW TO
+
+SUMMARY
+Gets detailed information for hosts with the specified host name, or for hosts that are members of the specified host group.
+
+To specify multiple hosts or host groups, separate with a comma(,). For example: hostA,hostB.
+
+Use the keyword all to get detailed information for all hosts in the cluster.
+
+Use the API /platform/ws/hosts to get a list of hosts.
+
+Use the API /platform/ws/hostgroups to get a list of host groups.
+
+STEPS
+1. Set the HTTP method to GET
+
+2. To retrieve the host pac102 detailed information, set the request URL,
+
+http://<PAC Server IP>:8080/platform/ws/hosts/pac102
+
+3.Set the Request Header, includes the token for authentication.
+
+Accept:application/xml,application/json
+
+platform_token:lsfadmin"2018-07-26T14:50:59Z"ESaPTMK1OkVnzo8h04KNQ5Y/rT0Bw3gzu0Hu2jiw9g4pnRW939ILG8AJ40st5ffy2bKJLyeWXZsbFAokEBC/mQY100GauDBnGFNZkuqsgTZ9ZWWdCuj6PyKY4AElqu+1"5ApkUWjgKwpPxjYcVbkfIg==
+
+4.If successful, returns detailed information about hosts.
+
+====
+
+<hosts total="1">
+<host>
+<hostName>pac102</hostName>
+<serverType>1</serverType>
+<staticResources builtin="true" type="string" value="X86_64" name="hostType" />
+<staticResources builtin="true" type="string" value="Intel_EM64T" name="hostModel" />
+<staticResources builtin="true" type="float" value="60.000000" name="cpuFactor" />
+<staticResources builtin="true" type="int" value="1" name="nCpus" />
+<staticResources builtin="true" type="int" value="1" name="nDisks" />
+<staticResources builtin="true" type="int" value="6143" name="maxMem" />
+<staticResources builtin="true" type="int" value="12287" name="maxSwap" />
+<staticResources builtin="true" type="int" value="52718" name="maxTmp" />
+<staticResources builtin="true" type="int" value="0" name="rexPriority" />
+<staticResources builtin="true" type="int" value="1" name="nprocs" />
+<staticResources builtin="true" type="int" value="1" name="ncores" />
+<staticResources builtin="true" type="int" value="1" name="nthreads" />
+<staticResources builtin="false" type="boolean" value="yes" name="mg" />
+<baseStatus>ok</baseStatus>
+<batchStatus>ok</batchStatus>
+<numSlots>4</numSlots>
+<jlPerUser>-1</jlPerUser>
+<numJobs>0</numJobs>
+<numRun>0</numRun>
+<numSsusp>0</numSsusp>
+<numUsusp>0</numUsusp>
+<numReserved>0</numReserved>
+<dispatchWindows>DISPATCH_WINDOW</dispatchWindows>
+<runWindows>always open</runWindows>
+<numindex>11</numindex>
+<realLoad>
+<load builtin="true" type="float" value="0.289939" name="r15s" />
+<load builtin="true" type="float" value="0.000000" name="r1m" />
+<load builtin="true" type="float" value="0.050000" name="r15m" />
+<load builtin="true" type="float" value="0.011678" name="ut" />
+<load builtin="true" type="float" value="0.000000" name="pg" />
+<load builtin="true" type="float" value="2.388586" name="io" />
+<load builtin="true" type="float" value="1.000000" name="ls" />
+<load builtin="true" type="float" value="56.500000" name="it" />
+<load builtin="true" type="float" value="44468.843750" name="tmp" />
+<load builtin="true" type="float" value="12287.996094" name="swp" />
+<load builtin="true" type="float" value="3386.000000" name="mem" />
+</realLoad>
+<currentLoadUsedForScheduling>
+<total>
+<load builtin="true" type="float" value="0.289939" name="r15s" />
+<load builtin="true" type="float" value="0.000000" name="r1m" />
+<load builtin="true" type="float" value="0.050000" name="r15m" />
+<load builtin="true" type="float" value="0.011678" name="ut" />
+<load builtin="true" type="float" value="0.000000" name="pg" />
+<load builtin="true" type="float" value="2.388586" name="io" />
+<load builtin="true" type="float" value="1.000000" name="ls" />
+<load builtin="true" type="float" value="56.500000" name="it" />
+<load builtin="true" type="float" value="44468.843750" name="tmp" />
+<load builtin="true" type="float" value="12287.996094" name="swp" />
+<load builtin="true" type="float" value="3386.000000" name="mem" />
+</total>
+<reserve>
+<load builtin="true" type="float" value="0.000000" name="r15s" />
+<load builtin="true" type="float" value="0.000000" name="r1m" />
+<load builtin="true" type="float" value="0.000000" name="r15m" />
+<load builtin="true" type="float" value="0.000000" name="ut" />
+<load builtin="true" type="float" value="0.000000" name="pg" />
+<load builtin="true" type="float" value="0.000000" name="io" />
+<load builtin="true" type="float" value="0.000000" name="ls" />
+<load builtin="true" type="float" value="0.000000" name="it" />
+<load builtin="true" type="float" value="0.000000" name="tmp" />
+<load builtin="true" type="float" value="0.000000" name="swp" />
+<load builtin="true" type="float" value="0.000000" name="mem" />
+</reserve>
+</currentLoadUsedForScheduling>
+<loadThreshHoldUsedForScheduling>
+<loadSched>
+<load builtin="true" type="float" value="2147483648.000000" name="r15s" />
+<load builtin="true" type="float" value="2147483648.000000" name="r1m" />
+<load builtin="true" type="float" value="2147483648.000000" name="r15m" />
+<load builtin="true" type="float" value="2147483648.000000" name="ut" />
+<load builtin="true" type="float" value="2147483648.000000" name="pg" />
+<load builtin="true" type="float" value="2147483648.000000" name="io" />
+<load builtin="true" type="float" value="2147483648.000000" name="ls" />
+<load builtin="true" type="float" value="2147483648.000000" name="it" />
+<load builtin="true" type="float" value="2147483648.000000" name="tmp" />
+<load builtin="true" type="float" value="2147483648.000000" name="swp" />
+<load builtin="true" type="float" value="2147483648.000000" name="mem" />
+</loadSched>
+<loadStop>
+<load builtin="true" type="float" value="2147483648.000000" name="r15s" />
+<load builtin="true" type="float" value="2147483648.000000" name="r1m" />
+<load builtin="true" type="float" value="2147483648.000000" name="r15m" />
+<load builtin="true" type="float" value="2147483648.000000" name="ut" />
+<load builtin="true" type="float" value="2147483648.000000" name="pg" />
+<load builtin="true" type="float" value="2147483648.000000" name="io" />
+<load builtin="true" type="float" value="2147483648.000000" name="ls" />
+<load builtin="true" type="float" value="2147483648.000000" name="it" />
+<load builtin="true" type="float" value="2147483648.000000" name="tmp" />
+<load builtin="true" type="float" value="2147483648.000000" name="swp" />
+<load builtin="true" type="float" value="2147483648.000000" name="mem" />
+</loadStop>
+</loadThreshHoldUsedForScheduling>
+</host>
+</hosts>
+
+====

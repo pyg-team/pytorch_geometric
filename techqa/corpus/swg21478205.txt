@@ -1,0 +1,30 @@
+Title: IBM Error # 9100.  Command name: SELECTPRED - UNABLE to load the executable library associated with the current command. - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ I am using SPSS for Windows and trying to work through the Case Studies under the Help menu. When I run the SELECTPRED command in the example found under the Base System->Select Predictors, I am getting the following error:
+
+>Error # 9100. Command name: SELECTPRED
+>Unable to load the executable library associated with the current command.
+>Either the relevant option has not been installed, the library is not in
+>the same directory as the SPSS executable, the library has been erased, or
+>there is insufficient disk space for swapping.
+>This command not executed.
+
+>The DLL which cannot be loaded is SPSSWPRS.DLL
+
+Why is this happening? 
+
+RESOLVING THE PROBLEM
+This is a feature only available to SPSS Server. The ability to have it for Statistics/SPSS client has been logged as an Enhancement Request
+
+RELATED INFORMATION
+ Need more help? Our Statistics forum is Live! [https://developer.ibm.com/answers/topics/statistics.html?smartspace=predictive-analytics]
+
+
+ 
+
+HISTORICAL NUMBER
+ 61146

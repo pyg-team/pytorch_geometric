@@ -1,0 +1,21 @@
+Title: IBM MonitorPolicies.xml file not updated - United States
+
+Text:
+critical; var; xml; monitorpolicies; poller TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The following error is seen in get_policies.updated.DOMAIN.trace:
+critical: Access to /opt/IBM/tivoli/netcool/etc/precision/DbLogins.DOMAIN required. 
+
+RESOLVING THE PROBLEM
+These updates happen automatically and a trace will exist to troubleshoot in 
+
+$NCHOME/log/precision/get_policies.updated.DOMAIN.trace 
+
+Look for a critical message in this trace file like
+critical: Access to /opt/IBM/tivoli/netcool/etc/precision/DbLogins.DOMAIN required.
+
+create the necessary DbLogins file, which might only be a copy of DbLogins.cfg, but make sure it is named DbLogins.DOMAIN.cfg.
+
+Make another GUI change so that it will try to write the file again to 
+$NCHOME/var/precision.

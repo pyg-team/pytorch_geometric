@@ -1,0 +1,30 @@
+Title: IBM You must accept the license agreements for package - United States
+
+Text:
+You must accept the license agreements for package; acceptLicense; 1308290 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This technote explains why attempts to perform a silent installation using IBM® Installation Manager results in the error You must accept the license agreements for package and provides instructions to resolve the problem. 
+
+SYMPTOM
+Attempts to perform a silent installation results in the following error: 
+
+You must accept the license agreements for package <the package name>.
+
+
+
+CAUSE
+The default value for the 'acceptLicense' attribute of 'agent-input' element in a response file for silent install is 'false', thus the package you are trying to install has a license agreement that you have to accept.
+
+
+
+RESOLVING THE PROBLEM
+In order to accept the license agreement silently as of IBM Installation Manager version 1.1.2, you must set the 'acceptLicense' attribute of 'agent-input' element to 'true' in the response file. 
+
+
+Example:
+
+
+<agent-input acceptLicense='true'>
+...
+</agent-input>

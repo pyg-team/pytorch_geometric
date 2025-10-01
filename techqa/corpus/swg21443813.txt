@@ -1,0 +1,35 @@
+Title: IBM APARs included in IBM Tivoli Monitoring Agents for System p V6.2.2 Interim Feature 1 - United States
+
+Text:
+ PREVENTIVE SERVICE PLANNING
+
+ABSTRACT
+ APARs included in IBM Tivoli Monitoring Agents for System p V6.2.2 Interim Feature 1 
+
+CONTENT
+These APARs are fixed in IBM Tivoli Monitoring Agents for System p V6.2.2 Interim Feature 1: 
+IBM Tivoli Monitoring: AIX Premium Agent and
+IBM Tivoli Monitoring: VIOS Premium Agent
+--------------------------------------------------
+
+IZ73573: MAX CPU CAPACITY USED PERCENTAGE IS WRONG IN DEDICATED PARTITION
+IZ74459: THE AIX PREMIUM AGENT SHOWS THE ENTITLEMENT FOR DEDICATED AS 0.
+IZ75243: SOME MPIO ENABLED FIBRE CHANNEL ADAPTERS ARE NOT DISPLAYED OR SHOW ZERO VALUES IN SPITE OF IO TRANSFERS TAKING PLACE.
+
+IBM Tivoli Monitoring: AIX Premium Agent only (AIX 5.3)
+------------------------------------------------------------
+
+IZ75998: CPU UTIL OFF BY 1/10TH FOR TOP PROCS IN PX AGENT
+
+IBM Tivoli Monitoring: VIOS Premium Agent only
+--------------------------------------------------
+
+IZ26114: VIOS 'MOUNT POINT' AND 'PROCESS NAME' DOES NOT ALLOW DISPLAY ITEM
+
+IBM Tivoli Monitoring: CEC Base Agent
+--------------------------------------------------
+
+IZ74479: ITM CEC AGENT SHOWS UNMONITORED ACTIVE LPAR WITH BLANK VALUES FOR SYSTEM NAME, ENVIRONMENT
+IZ74699: CECDATAPROVIDER CRASHES WITH A SIGSEGV
+IZ75544: TEPS DISPLAY DUPLICATE ENTRIES FOR SOME OF THE PARTITIONS THE CEC.
+IZ80232: CEC AGENT DOES NOT WORK IN IVM ENVIRONMENT

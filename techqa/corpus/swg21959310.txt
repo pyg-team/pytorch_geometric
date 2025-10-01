@@ -1,0 +1,38 @@
+Title: IBM Upgrade fails on systems running IBM® AIX®  with a message that the package group uses the "motif" window system instead the "gtk" window system - United States
+
+Text:
+jazzsm1120relnotes TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Upgrade fails on systems running AIX with a message that the package group uses the "motif" window system instead the "gtk" window system
+
+
+CAUSE
+Jazz™ for Service Management Version 1.1.0 bundles IBM® Installation Manager 1.6.1 which uses Motif as the window manager for systems running AIX.
+Motif is no longer support for systems that run on an AIX platform. Installation Manager has moved to GTK-based window management on AIX systems.
+When using Installation Manager to upgrade Jazz for Service Management from Version 1.1.0 to Version 1.1.2, an error is displayed because the window management technologies are incompatible. The following error is displayed:
+
+CRIMA1216E: The "Core services in Jazz for Service Management" package group cannot be updated with the "Administration Services" package as the package group uses the "motif" window system and the package requires the "gtk" window system.
+
+Explanation:
+The package group for the installed package uses a window system that is not supported by the update for the package. You cannot change the window system used by a package group when you update a package. 
+
+User Action: 
+To update the package: 
+1. Uninstall the package from the existing package group. 2. Install the update to a new package group. 
+For packages that support multiple installations, you can install the update to a new package group without uninstalling the package from the existing package group. The package installed in the existing package group is not updated. 
+
+
+
+
+RESOLVING THE PROBLEM
+As JazzTM for Service Management does not use any native window system features during runtime, 
+
+
+ 1. In /var/ibm/InstallationManager/installRegistry.xml 
+ 2. Under <profile id='Core services in Jazz for Service Management' kind='product'>, find <property name='cic.selector.ws' value='motif'/> 
+ 3. Set it to gtk <property name='cic.selector.ws' value='gtk'/> 
+ 4. Restart the installer
+
+Note: This applies only for Jazz TM for Service Management. For other products, consult the 
+respective support teams.

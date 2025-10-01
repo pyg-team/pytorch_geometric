@@ -1,0 +1,150 @@
+Title: IBM PI19687: CANNOT OPEN LINK MODULE IN READ-ONLY MODULE - United States
+
+Text:
+  A FIX IS AVAILABLE
+Rational DOORS and Rational DOORS Web Access 9.6.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24038346]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  It is not possible to open the link module in read-only mode via
+   GUI. This occurs when the link module is already opened in
+   background with display set to false.
+   
+   Steps to reproduce:
+   - Create 2 modules, A and B
+   - Create link from objects in B to A
+   - Choose to use the default link module, when prompted
+   - Save and close both modules
+   - Open module A in Exclusive edit mode
+   - Now, try to open DOORS Links link module in read-only mode
+   Nothing happens, link module cannot be opened in read-only mode.
+   If you go to "Tools -> Manage Open Modules", you'll observe that
+   the link module is already open, with Displayed column set to
+   No.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Select the link module on right pane of DOORS Explorer and run
+   the following DXL:
+   read(fullName(getSelectedItem), true)
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * This occurs when the link module is already opened in        *
+   * background with display set to false.                        *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * It is not possible to open the link module in read-only mode *
+   * via GUI.                                                     *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   This is a client side fix
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The code has been changed so that link modules can now be opened
+   in read mode
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI19687
+   
+   
+ * REPORTED COMPONENT NAME
+   TLOGIC DOORS
+   
+   
+ * REPORTED COMPONENT ID
+   5724V61DR
+   
+   
+ * REPORTED RELEASE
+   950
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-06-10
+   
+   
+ * CLOSED DATE
+   2014-12-05
+   
+   
+ * LAST MODIFIED DATE
+   2014-12-05
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TLOGIC DOORS
+   
+   
+ * FIXED COMPONENT ID
+   5724V61DR
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R960 PSY
+   UP

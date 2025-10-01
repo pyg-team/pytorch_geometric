@@ -1,0 +1,27 @@
+Title: IBM Microsoft® Access and SQL0180 Syntax of Date, Time, or Timestamp Not Valid - United States
+
+Text:
+ODBC; SQL; MSGSQL0180 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The precision of the Microsoft Access timestamp data type is less than the precision of the IBM DB2 UDB for IBM iSeries timestamp data type. This can lead to truncation of fractional digits causing several different errors. 
+
+RESOLVING THE PROBLEM
+When using a Timestamp data type (DDS data type of Z), the microseconds are truncated when the Microsoft Jet engine converts the SQL_TIMESTAMP to its data type called DATETIME. The IBM OS/400 or IBM i5/OS internal representation of a timestamp field is a string of 10 bytes. The first 4 bytes represent the date, the next 3 bytes the time, and the last 3 bytes the microseconds (the last 3 bytes contain 6 packed digits). The internal representation of a timestamp for Jet engine is 8 bytes long. The Jet engine uses its data type DATETIME for SQL_DATE, SQL_TIME, SQL_TIMESTAMP host types. Because the precision of the operating system timestamp data type is greater than that of the Microsoft DATETIME, data type truncation may occur. Microsoft Access (Jet engine) displays the Timestamp if the last 3 digits of the microseconds are zero. Access does not display the microseconds of the timestamp. In fact, they have no internal format for showing the timestamp with microseconds. 
+
+When the Date or Time portion is changed, the microseconds are set to all zeros when sent back to be stored on the IBM System i system. If the Timestamp field is used for update, insert or delete operations errors and/or data corruption may occur. For example: Timestamp on the operating system is 1998-04-28-10.01.01.123000. What you see in Microsoft Access may be similar to 4/28/98 10:01:01.
+
+If an update is attempted, the row is updated with a WHERE clause that specifies each of the fields and the field's previous value. Because the timestamp field has been truncated by Microsoft Access, the update statement fails (no record meeting the WHERE clause can be found). Access reports this error as:
+"Write conflict, this record has been changed since you started editing."
+"Another user has changed the record since current user started editing. "
+
+If existing data has a non-zero microsecond value and the timestamp is a unique key, then Microsoft Access linked tables will show #Deleted for the row. This is because linked tables use client side keyset cursors. When the keyset cursor attempts to fetch an existing row by key, the truncated key value is not found and zero rows are returned.
+
+Microsoft Query displays the full Timestamp, including microseconds, as a formatted string. However, if you try to edit the Microseconds, it fills them with zeros.
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Operating System IBM i 7.1 Operating System IBM i 6.1 
+HISTORICAL NUMBER
+ 12194235

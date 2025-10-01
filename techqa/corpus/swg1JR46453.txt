@@ -1,0 +1,208 @@
+Title: IBM JR46453: BPM SERVER IS SLOW TO START, TAKING MANY MINUTES TO AN HOUR, AND WSVR0605W MESSAGES IN CALL TO processDeletedUserGroups - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Version 8.0.1 Fix Pack 2 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24035701]
+Version 7.5.1 Fix Pack 2 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24036462]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When a business process instance is deleted, the associated
+   service tasks are also deleted including dynamic ad hoc groups.
+   The deletion of these ad hoc groups is a database intensive
+   task. The deletion procedure can be performance optimized by
+   avoiding repeated deletion of ad hoc groups.
+   
+   This can improve the performance of the LSW_BPD_INSTANCE_DELETE
+   stored procedure which is used to remove BPD instances.
+   .
+   There may be hung threads with this java stack
+   [1/27/15 13:47:52:752 CST] 0000001d ThreadMonitor W   WSVR0605W:
+    Thread
+   "server.startup : 0" (00000011) has been active for 702995
+   milliseconds
+   and may be hung.  There is/are 1 thread(s) in total in the
+   server that
+   may be hung.
+       at java.util.LinkedList.contains(LinkedList.java:485)
+       at java.util.AbstractSet.removeAll(AbstractSet.java:106)
+       at
+   com.lombardisoftware.server.core.GroupCore.processDeletedUserGro
+   ups(GroupCore.java:631)
+       at
+   com.lombardisoftware.server.core.GroupCore.getAllGroupsInternal(
+   GroupCore.java:593)
+       at
+   com.lombardisoftware.server.core.GroupCore.getAllGroups(GroupCor
+   e.java:572)
+       at
+   com.lombardisoftware.server.ejb.security.SecurityCore.listAllGro
+   ups(SecurityCore.java:722)
+   .--------------------------------------------
+   
+      Or from the javacore, you may see a thread in this stack
+   4XESTACKTRACE                at
+   com/lombardisoftware/server/core/GroupCore.processDeletedUserGro
+   ups(GroupCore.java:591(Compiled Code))
+   4XESTACKTRACE                at
+   com/lombardisoftware/server/core/GroupCore.getAllGroupsInternal(
+   GroupCore.java:553)
+   4XESTACKTRACE                at
+   com/lombardisoftware/server/core/GroupCore.getAllGroups(GroupCor
+   e.java:532(Compiled Code))
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  A performance issue exists when deleting BPD process instances.
+   PROBLEM DETAILED DESCRIPTION:
+   The performance issue is caused by the stored procedures in the
+   database that are used to delete BPD process instances.
+   When a BPD process instance is deleted, all task instances that
+   belong to this process have to be deleted as well. In order to
+   do so, it is first necessary to delete all dynamic ad-hoc groups
+   that are associated with these task instances. Determining the
+   groups and group memberships that have to be deleted is an
+   expensive database query, and this query should therefore only
+   be executed once. However, the query is repeated several times
+   in the course of deleting all tasks and the process instance
+   itself. This causes a severe performance impact on environments
+   where many groups exist.
+   VERIFY FIX IS INSTALLED
+   The following SQL block will not be in the LSW_ERASE_TASK
+   stored procedure. This is moved to a differt part of the
+   deletion process.
+   DELETE FROM LSW_USR_GRP_MEM_XREF WHERE GROUP_ID IN (
+   SELECT g.GROUP_ID FROM LSW_USR_GRP_XREF g WHERE NOT EXISTS
+   (SELECT 1 FROM LSW_TASK t WHERE g.GROUP_ID = ABS(t.GROUP_ID))
+   AND g.GROUP_TYPE = 2);
+   DELETE FROM LSW_USR_GRP_XREF WHERE GROUP_ID IN (
+   SELECT g.GROUP_ID FROM LSW_USR_GRP_XREF g WHERE NOT EXISTS
+   (SELECT 1 FROM LSW_TASK t WHERE g.GROUP_ID = ABS(t.GROUP_ID))
+   AND g.GROUP_TYPE = 2);
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The issue is resolved by replacing the relevant stored
+   procedures with a new version. These new stored procedures do
+   not repeatedly query the groups and group memberships to delete,
+   but instead only query them once for the overall delete process.
+   FIX AVAILABILITY:
+   iFix for 7.5.1.0 is available on Fix Central, search for APAR
+   JR46453 at http://www.ibm.com/support/fixcentral/ [http://www.ibm.com/support/fixcentral/]
+   iFix for 7.5.1.1 is available on Fix Central, search for APAR
+   JR46453 at http://www.ibm.com/support/fixcentral/ [http://www.ibm.com/support/fixcentral/]
+   iFix for 8.0.0.0 is available on Fix Central, search for APAR
+   JR46453 at http://www.ibm.com/support/fixcentral/ [http://www.ibm.com/support/fixcentral/]
+   iFix for 8.0.1.0 is available on Fix Central, search for APAR
+   JR46453 at http://www.ibm.com/support/fixcentral/ [http://www.ibm.com/support/fixcentral/]
+   iFix for 8.0.1.1 is available on Fix Central, search for APAR
+   JR46453 at http://www.ibm.com/support/fixcentral/ [http://www.ibm.com/support/fixcentral/]
+   Fix is also targetted for inclusion in next fixpack for BPM
+   V7.5.1, BPM 8.0.1
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR46453
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM STANDARD
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9500
+   
+   
+ * REPORTED RELEASE
+   751
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-04-24
+   
+   
+ * CLOSED DATE
+   2013-12-20
+   
+   
+ * LAST MODIFIED DATE
+   2015-03-07
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    JR46456 [http://www-01.ibm.com/support/docview.wss?uid=swg1JR46456]
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   BPM ADVANCED
+   
+   
+ * FIXED COMPONENT ID
+   5725C9400
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R751 PSY
+   UP
+   
+   
+ * R800 PSY
+   UP
+   
+   
+ * R801 PSY
+   UP

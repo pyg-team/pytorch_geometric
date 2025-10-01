@@ -1,0 +1,258 @@
+Title: IBM IV72658: AFTER UPGRADING TO TADDM 730 AND TADDM 7301, SOME CONFIGURED ITEMS ARE REMOVED AND NEED TO BE RE-ADDED. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  After upgrading to TADDM 730, the following sensor configuration
+   items are removed and must be replaced;
+   
+   1) The classes12.jar is removed by the 7300 upgrade which
+   causes the Oracle sensor to fail.
+   
+   The installer renames the dist/osgi directory to
+   dist/osgi_7.2.2.1. Sensor configurations in the database
+   are updated but changes made only in the file system are not.
+   
+   To correct this problem copy the classes12.jar from
+   dist/osgi_7.2.2.1/plugins/com.ibm.cdb.discover.sensor.app.db.ora
+   cle.oraclecommon_1.0.0/lib/oracle/ to
+   
+   /opt/IBM/cmdb/dist/osgi/plugins/com.ibm.cdb.discover.sensor.app.
+   db.oracle.oraclecommon_1.0.0/lib/oracle
+   
+   
+   2) The SAP JCo libraries have to be re-installed, otherwise the
+   CCMS sensor fails with the following error;
+   
+   CTJTD3021E The sensor fails in a remote server : CTJTD2120E An
+   error
+   has occurred in the discovery process.:JCO.classInitialize():
+   Could not
+   load middleware layer 'com.sap.mw.jco.rfc.MiddlewareRFC'
+   JCO.nativeInit(): Could not initialize dynamic link library
+   sapjcorfc
+   [sapjcorfc (Could not load module
+   /opt/IBM/taddm/dist/lib/JCo/AIX/libsapjcorfc.so.
+   
+   To correct this issue follow the instructions at;
+   
+   http://www-01.ibm.com/support/knowledgecenter/SSPLFC_7.3.0/com.i [http://www-01.ibm.com/support/knowledgecenter/SSPLFC_7.3.0/com.i]
+   bm.taddm.doc_7.3/SensorGuideRef/r_cmdb_sensor_sapccms_configure_
+   jcolibraries.html?lang=en
+   
+   If possible copy the files from a backup of TADDM prior to 7.3.
+   
+   
+   
+   
+   
+   3) After installing FP1 for 730, if using an Oracle back end
+   database for TADDM and using BIRT, the oracle jdbc drivers are
+   not copied from the Apache server to the new Liberty server.
+   This causes BIRT reports to not access the database to populate
+   results or drop downs.
+   
+   
+   The following error is shown in the log/wlp/ log files;
+   
+   [4/20/15 11:02:45:314 CDT] 000000d8
+   org.eclipse.birt.report.data.oda.jdbc.JDBCDriverManager      W
+   Failed to
+   load JDBC driver class: oracle.jdbc.driver.OracleDriver
+   [4/20/15 11:02:45:315 CDT] 000000d8
+   org.eclipse.birt.data.engine.odaconsumer                     E
+   Cannot
+   open connection.
+   org.eclipse.birt.report.data.oda.jdbc.JDBCException: Cannot load
+   JDBC
+   Driver class: oracle.jdbc.driver.OracleDriver
+   
+   
+   To correct this copy the ojdbc* jar files(typically ojdbc14.jar
+   and/or ojdbc5.jar) found within;
+   
+   dist/deploy-tomcat_7.3.0.0/birt-viewer
+   
+   to the corresponding directory within;
+   
+   dist/apps/birt-viewer/
+   
+   Typically they will reside in;
+   
+   dist/apps/birt-viewer/WEB-INF/platform/plugins/org.eclipse.birt.
+   report.data.oda.jdbc_2.2.1.r22x_v20070919/drivers
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  See above
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  After upgrading to TADDM 730, the following sensor configuration
+   items are removed and must be replaced;
+   
+   1) The classes12.jar is removed by the 7300 upgrade which
+   causes the Oracle sensor to fail.
+   
+   The installer renames the dist/osgi directory to
+   dist/osgi_7.2.2.1. Sensor configurations in the database
+   are updated but changes made only in the file system are not.
+   
+   To correct this problem copy the classes12.jar from
+   dist/osgi_7.2.2.1/plugins/com.ibm.cdb.discover.sensor.app.db.ora
+   cle.oraclecommon_1.0.0/lib/oracle/ to
+   
+   /opt/IBM/cmdb/dist/osgi/plugins/com.ibm.cdb.discover.sensor.app.
+   db.oracle.oraclecommon_1.0.0/lib/oracle
+   
+   
+   2) The SAP JCo libraries have to be re-installed, otherwise the
+   CCMS sensor fails with the following error;
+   
+   CTJTD3021E The sensor fails in a remote server : CTJTD2120E An
+   error
+   has occurred in the discovery process.:JCO.classInitialize():
+   Could not
+   load middleware layer 'com.sap.mw.jco.rfc.MiddlewareRFC'
+   JCO.nativeInit(): Could not initialize dynamic link library
+   sapjcorfc
+   ísapjcorfc (Could not load module
+   /opt/IBM/taddm/dist/lib/JCo/AIX/libsapjcorfc.so.
+   
+   To correct this issue follow the instructions at;
+   
+   http://www-01.ibm.com/support/knowledgecenter/SSPLFC_7.3.0/com.i [http://www-01.ibm.com/support/knowledgecenter/SSPLFC_7.3.0/com.i]
+   bm.taddm.doc_7.3/SensorGuideRef/r_cmdb_sensor_sapccms_configure_
+   jcolibraries.html?lang=en
+   
+   If possible copy the files from a backup of TADDM prior to 7.3.
+   
+   
+   
+   
+   
+   3) After installing FP1 for 730, if using an Oracle back end
+   database for TADDM and using BIRT, the oracle jdbc drivers are
+   not copied from the Apache server to the new Liberty server.
+   This causes BIRT reports to not access the database to populate
+   results or drop downs.
+   
+   
+   The following error is shown in the log/wlp/ log files;
+   
+   í4/20/15 11:02:45:314 CDTù 000000d8
+   org.eclipse.birt.report.data.oda.jdbc.JDBCDriverManager      W
+   Failed to
+   load JDBC driver class: oracle.jdbc.driver.OracleDriver
+   í4/20/15 11:02:45:315 CDTù 000000d8
+   org.eclipse.birt.data.engine.odaconsumer                     E
+   Cannot
+   open connection.
+   org.eclipse.birt.report.data.oda.jdbc.JDBCException: Cannot load
+   JDBC
+   Driver class: oracle.jdbc.driver.OracleDriver
+   
+   
+   To correct this copy the ojdbc* jar files(typically ojdbc14.jar
+   and/or ojdbc5.jar) found within;
+   
+   dist/deploy-tomcat_7.3.0.0/birt-viewer
+   
+   to the corresponding directory within;
+   
+   dist/apps/birt-viewer/
+   
+   Typically they will reside in;
+   
+   dist/apps/birt-viewer/WEB-INF/platform/plugins/org.eclipse.birt.
+   report.data.oda.jdbc_2.2.1.r22x_v20070919/drivers
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV72658
+   
+   
+ * REPORTED COMPONENT NAME
+   APP DEPENDENCY
+   
+   
+ * REPORTED COMPONENT ID
+   5724N5500
+   
+   
+ * REPORTED RELEASE
+   730
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-04-23
+   
+   
+ * CLOSED DATE
+   2015-11-03
+   
+   
+ * LAST MODIFIED DATE
+   2015-11-03
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R730 PSY
+   UP

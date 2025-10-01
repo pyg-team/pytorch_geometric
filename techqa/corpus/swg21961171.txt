@@ -1,0 +1,32 @@
+Title: IBM TKLM / SKLM and LEAP SECONDS / LEAP SECOND - United States
+
+Text:
+LEAP SECOND TECHNOTE (FAQ)
+
+QUESTION
+ Is LEAP SECONDS / LEAP SECOND have any negative effect on TKLM / SKLM? 
+
+ANSWER
+The "Leap Second" / "Leap Seconds" will not affect TKLM/SKLM. 
+No negative impact if the leap second is not added. 
+
+SKLM is not a time keeper. 
+TKLM / SKLM takes the 'time' from the host system - System level or NTP Server level. 
+
+LEAP SECONDS has been added on June 30. 
+Additional links that refer to LEAP SECONDS which cover IBM 
+Storage products environment: 
+" 
+IBM SONAS / Storwize V7000 Unified Machines might be affected by LEAP SECONDS 
+../support/docview.wss?uid=ssg1S1005265 
+
+LEAP SECONDS Information for SAN Volume Controller and Storwize Family Systems 
+../support/docview.wss?uid=ssg1S1005279 
+
+LEAP SECONDS Information for DS8000 
+../support/docview.wss?uid=ssg1S1005244 
+
+LEAP SECONDS and IBM ProtecTIER 
+../support/docview.wss?uid=ssg1S1005270 
+
+There were some security bulletins on the XIV, Flashsystems and IBM N series (Netapp ..kb.netapp.com/support/index?page=content&id=3011978&locale=en_US)

@@ -1,0 +1,21 @@
+Title: IBM Running P8 Client Applications with WebSphere Application Server 8.5.x - United States
+
+Text:
+Workplace XT; SSL; WAS; Websphere Application Server TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ In order to use IBM FileNet Workplace (WP) or IBM FileNet Workplace XT (WPXT) without SSL or in an SSO/Container Managed configuration, with IBM WebSphere Application Server (WAS) version 8.5.x or higher, security settings must be updated. These settings permit non-SSL connections to P8 Content Engine (CE) and allow Container Managed applications to pass HTTP session information to an applet. 
+
+CAUSE
+This is related to this technote: Running P8 Client Applications with WebSphere Application Server 8.0.0.x [http://www-304.ibm.com/support/docview.wss?uid=swg27023814]. There are additional configuration changes that need to be made in a WAS 8.5.x environment to enable IBM FileNet Content Platform Engine (CPE) applets to be opened.
+
+RESOLVING THE PROBLEM
+ 
+
+1. Log in to the WebSphere Application Server admin console.
+2. Navigate to Security > Global security > Custom properties and confirm that the value for com.ibm.ws.security.addHttpOnlyAttributeToCookies is set to false. Change it to false if it is not already set. 
+3. Then navigate to Servers > Server Types > WebSphere application servers > server_name > Web Container Settings > Web Container > Session management.
+4. Click the Enable cookies link under Session tracking mechanism.
+5. Under General properties, un-check the box Set session cookies to HTTP Only to help prevent cross-site scripting attacks and click Apply. 
+6. Save the settings to the master configuration. 
+7. Restart WAS.

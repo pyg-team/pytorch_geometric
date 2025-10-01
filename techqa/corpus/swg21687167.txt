@@ -1,0 +1,32 @@
+Title: IBM How is IBM Domino impacted by the POODLE attack? - United States
+
+Text:
+SSL V3.0 Poodle vulnerability broken; currently only supports; hot fix; hot fixes; patches; SSL security broken; How is IBM Domino impacted by the POODLE SSLv3 vulnerability? TECHNOTE (FAQ)
+
+QUESTION
+How is IBM Domino impacted by the POODLE attack and what is the solution? 
+
+ANSWER
+SSLv3 contains a vulnerability that has been referred to as the Padding Oracle On Downgraded Legacy Encryption (POODLE) attack, which is a man-in-the-middle attack affecting Web browsers. Browsers connecting via SSLv3 to Domino servers running HTTP are exposed to the POODLE attack. As browsers turn off SSLv3 and disable downgrading from TLS, they will be unable to connect to Domino over HTTP as Domino servers currently support only SSLv3.
+
+IBM has released Domino server Interim Fixes that implement TLS 1.0 with TLS_FALLBACK_SCSV for HTTP to protect against the POODLE attack. Implementing TLS 1.0 for Domino will protect against the POODLE attack and will allow browsers to still connect to Domino after they have been changed to address the POODLE attack.
+
+IBM has provided Interim Fixes for the following Domino releases: 
+
+ *  9.0.1 Fix Pack 2 - http://www.ibm.com/support/docview.wss?uid=swg21657963 [http://www.ibm.com/support/docview.wss?uid=swg21657963] 9.0 - http://www.ibm.com/support/docview.wss?uid=swg21653364 [http://www.ibm.com/support/docview.wss?uid=swg21653364] 8.5.3 Fix Pack 6 - http://www.ibm.com/support/docview.wss?uid=swg21663874 [http://www.ibm.com/support/docview.wss?uid=swg21663874] 8.5.2 Fix Pack 4 - http://www.ibm.com/support/docview.wss?uid=swg21589583 [http://www.ibm.com/support/docview.wss?uid=swg21589583] 8.5.1 Fix Pack 5 - http://www.ibm.com/support/docview.wss?uid=swg21595265 [http://www.ibm.com/support/docview.wss?uid=swg21595265] 
+
+
+Refer to the following wiki article for more information on protocols: IBM Domino Interim Fixes to support TLS 1.0 which can be used to prevent the POODLE attack: [http://www.lotus.com/ldd/dominowiki.nsf/dx/IBM_Domino_TLS_1.0] 
+
+In addition, IBM intends to provide hotfixes for other 8.5.x or 9.x releases on demand. Contact IBM to open a PMR via the IBM Support Portal [http://www-947.ibm.com/support/entry/portal/support] if you require a hotfix for these other releases. 
+
+Note: For any Domino release, a proxy server in front of Domino to handle TLS communication will also address this issue. Select a proxy server that disables SSLv3 or prevents downgrading a TLS communication down to SSLv3. Domino 9.0x for Windows has a proxy solution by including the IBM HTTP Server (IHS) that supports TLS. For more information on this topic, refer to technote 1612316 - "Is it possible to run IBM HTTP Server (IHS) on the same computer as a Domino server?" [http://www-01.ibm.com/support/docview.wss?uid=swg21612316] 
+
+
+
+
+IBM’s statements regarding its plans, directions, and intent are subject to change or withdrawal without notice at IBM’s sole discretion. Information regarding potential future products is intended to outline our general product direction and it should not be relied on in making a purchasing decision. The information mentioned regarding potential future products is not a commitment, promise, or legal obligation to deliver any material, code or functionality. Information about potential future products may not be incorporated into any contract. The development, release, and timing of any future features or functionality described for our products remains at our sole discretion. 
+
+
+RELATED INFORMATION
+ A simplified Chinese translation is available [http://www.ibm.com/support/docview.wss?uid=swg21687843]

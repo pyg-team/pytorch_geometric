@@ -1,0 +1,162 @@
+Title: IBM IY80584: UNIX AGENT "LOGIN_TIME" COLUMN IS NULL WHEN NO USERS LOGGED-ON, CAUSES SUMMARIZATION AND PRUNING AGENT TO FAIL - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Environment:
+   
+   ITM 6.1 Summarization and Pruning Agent (Version 06.10.00.00) on
+   a Windows 2003 SP1 system;
+   ITM 6.1 UNIX OS Agent generating data in table "User" in
+   Warehouse
+   
+   Problem:
+   
+   When the Summarization and Pruning Agent tries to manipulate the
+   data in the "User" table in the Warehouse (data is from the UNIX
+   OS Agent), it encounters an error mentioned in the
+   <hostname>_sy_java-<HexTimestamp>-01.log file; an example is
+   included here:
+   
+   ...
+   == 1034 t=work1 WORK0010 thread=work1 table=User
+   == 1035 t=work1 work1 - Examining table : (User)
+   == 1036 t=work1 work1 - Aggregating data for table: (User) and
+   node:
+   (GSPB2101:KUX)
+   == 1037 t=work1 java.lang.IllegalArgumentException: Timestamp
+   format
+   must be yyyy-mm-dd hh:mm:ss.fffffffff
+   at java.sql.Timestamp.valueOf(Timestamp.java(Compiled Code))
+   at
+   com.tivoli.twh.ksy.core.WHTool.getTimestampFromCandleTimestamp
+   (WHTool.java(Compiled Code))
+   ...
+   
+   Examining some of the data from the "User" table to see
+   what timestamp might be causing this problem shows that
+   the column "Login_Time" is causing the problem.
+   "Login_Time" is blank whenever the "Login_Name_U" value is equal
+   to "No one logged on" (i.e. when no users are logged on to that
+   system).
+   
+   If these rows are removed from the "User" table, then the
+   error does not occur and the Summarization and Pruning works
+   fine.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Manually remove rows from the "User" table where "Login_Time" is
+   empty, or where "Login_Name" is 'No one logged on'.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Unix Agent "LOGIN_TIME" column is NULL when no
+   users logged-on. This causes an error in the
+   Summarization and Pruning Agent when it tries to
+   manipulate the data in the "User" table in the
+   Warehouse (data is from the UNIX OS Agent).
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  FIXED IN ITM FIXPACK 02(FP02) RELEASE.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IY80584
+   
+   
+ * REPORTED COMPONENT NAME
+   ITM AGENT UNIX
+   
+   
+ * REPORTED COMPONENT ID
+   5724C040U
+   
+   
+ * REPORTED RELEASE
+   610
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2006-01-16
+   
+   
+ * CLOSED DATE
+   2006-07-03
+   
+   
+ * LAST MODIFIED DATE
+   2006-07-03
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ITM AGENT UNIX
+   
+   
+ * FIXED COMPONENT ID
+   5724C040U
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R610 PSN
+   UP

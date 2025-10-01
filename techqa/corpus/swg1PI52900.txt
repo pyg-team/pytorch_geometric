@@ -1,0 +1,188 @@
+Title: IBM PI52900: CICS TERMINAL NETNAME IS NOT PASSED TO RACF SMF80 AUDIT RECORD WHEN DFHSN1102 SIGNON FAILED, PW NOT RECOG 15/11/25 PTF PECHANGE - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When customer runs with CICS TS 5.2 during the logon process,
+   if the password is invalid , the info is collected
+   by SMF 80.
+   But the Terminal netname doesn't appear
+   in the SMF 80 record as it used to appear when they
+   run with CICS 4.2.
+   Messages issued are :
+   DFHSN1102 22/07/2015 12:05:28 ABCCICS Signon at netname nnnnnn
+   user uuuuu has failed. Password not recognized.
+   .
+   DFHXS1201 22/07/2015 12:06:22 ABCCICS The password supplied in
+   the verification request for userid uuuuuu
+   was invalid. This occurred in transaction CESN when userid uuuu
+   was signed on at netname nnnnnn.
+   .
+   These messages are the same but after APARs:
+   PI21866 [http://www-01.ibm.com/support/docview.wss?uid=swg1PI21866]
+   "This change supports the Enhanced Password Algorithm
+   implemented in the RACF APAR OA43999 [http://www-01.ibm.com/support/docview.wss?uid=isg1OA43999] which applies to z/OS 1.12,
+   1.13 and 2.1.
+   If these APARs are installed CICS will call a new
+   callable service IRRSPW00 to for password authentication.
+   This service will be used for basic authentication requests,
+   VERIFY PASSWORD, VERIFY PHRASE and SIGNON requests.
+   "
+   ...the terminal netname no longer is passed by CICS
+   to RACF for inclusion in SMF80.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All CICS Users with PI21865 [http://www-01.ibm.com/support/docview.wss?uid=swg1PI21865] applied.         *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: RACF SMF 80 record no longer contains   *
+   *                      the terminal netname.                   *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   Following CICS APAR PI21865 [http://www-01.ibm.com/support/docview.wss?uid=swg1PI21865] when a signon fails message
+   DFHSN1102 is issued which indicates that the signon failed at
+   netname for that userid. The problem is that when RACF is called
+   doing a RACROUTE VERIFYX to verify the password, only the userid
+   and password are included. Other information, such as netname,
+   is not sent and so the RACF SMF 80 record which is recording
+   that invalid password attempt, does not include the netname.
+   This is the port of entry and is required for auditing reasons.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  UI22614  UI25260 UI31713
+   
+   CICS modules DFHUSAD, DFHXSPW and DFHXSSB have been changed to
+   ensure that a port of entry is included on the RACROUTE VERIFYX
+   call, so that the CICS netname can be included in the SMF 80
+   record for a password failure.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  FIX AVAILABLE BY PTF ONLY
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI52900
+   
+   
+ * REPORTED COMPONENT NAME
+   CICS TS Z/OS V4
+   
+   
+ * REPORTED COMPONENT ID
+   5655S9700
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   YesPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-11-20
+   
+   
+ * CLOSED DATE
+   2015-12-09
+   
+   
+ * LAST MODIFIED DATE
+   2016-01-04
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    PI46508 [http://www-01.ibm.com/support/docview.wss?uid=swg1PI46508]
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UI33711 UI33712
+   
+   
+
+MODULES/MACROS
+ *  DFHESN   DFHIIRS  DFHISXS  DFHPITC  DFHSOSE  DFHSZREQ DFHUSAD
+   DFHWBSR  DFHWBXN  DFHXSAD  DFHXSDM  DFHXSFL  DFHXSIS  DFHXSLU
+   DFHXSPW  DFHXSPWT DFHXSRC  DFHXSSA  DFHXSSB  DFHXSSBT DFHXSTRI
+   EYU0VBPC
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CICS TS Z/OS V4
+   
+   
+ * FIXED COMPONENT ID
+   5655S9700
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R70M PSY UI33712 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI33712]
+   UP15/12/18 P F512 {
+   
+   
+ * R700 PSY UI33711 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI33711]
+   UP15/12/18 P F512 {
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

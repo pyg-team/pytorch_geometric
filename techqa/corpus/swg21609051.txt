@@ -1,0 +1,58 @@
+Title: IBM Contacting IBM PureApplication System, PureApplication Software, and PureApplication Service Technical Support - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Use this information to contact IBM PureApplication System, PureApplication Software, and PureApplication Service Technical Support 
+
+ANSWER
+
+How social are you? [/support/docview.wss?uid=swg21609051&aid=1] [https://www.ibm.com/support/docview.wss?uid=swg21410956] 
+
+Connect with our support team! 
+
+ 
+
+ * dW Answers: This forum is available if you need to ask a question about PureApplication (System, Software or Service). Use this link [https://developer.ibm.com/answers/topics/pureapp/] to access the forum where you can ask questions, offer answers and collaborate with others.
+   
+ * PureApplication System Blogs: Use this link [https://www.ibm.com/developerworks/community/blogs/aimsupport/search?lang=en_us&t=entry&f=all&q=pureapplication%20system]to review the latest blogs from PureApplication Support. 
+
+ * Twitter: Follow the Cloud Tech Support Twitter account @IBM_CTS [https://twitter.com/IBM_CTS] and use the #IBMCTS_PUREAPP [https://twitter.com/hashtag/IBMCTS_PUREAPP?src=hash] hash tag for news, updates, and other information. 
+
+
+MORE in our Webcast: Save time! Learn about the web support resources available for PureApplication (System, Service and Software) [http://www-01.ibm.com/support/docview.wss?uid=swg27045354]  
+
+PureApplication System, PureApplication Software, and PureApplication Service (on Softlayer) are supported by IBM software support. 
+
+IBM software support provides a single point of contact to help you with hardware or software problems. 
+
+
+ 1. Prepare a description of the problem and gather information from the PureApplication System:  * For PureApplication System, use this technote to help you organize your problem information. [http://www.ibm.com/support/docview.wss?uid=swg21654210] [http://www.ibm.com/support/docview.wss?uid=swg21654210]We have this technote on the documentation to gather for IBM support: MustGather for IBM PureApplication System [http://www.ibm.com/support/docview.wss?uid=swg21608835], and PureApplication Service [http://www.ibm.com/support/docview.wss?uid=swg21674092]. 
+     * Do not send any confidential or proprietary information from your company. 
+    
+    
+ 2. Contact IBM Support for PureApplication Systems, PureApplication Software, and PureApplication Service: 
+    You can report a problem using the web-based Service Request (SR) tool or the telephone.  1. Report a problem using the web-based Service Request (SR) tool:  1. Authorization to use the the SR tool: Registering on our software support site [http://www.ibm.com/support/entry/portal/overview/software/puresystems/pureapplication_system]. See the IBM Sign in button near the top right-hand corner of this site to access the registration form. If you have already registered, you do not need to register again. 
+         2. Submitting a self-nomination form to get associated with your organization's maintenance agreement. You will need the machine type and serial number details of your appliance. To access our self-nomination form, see Service Request (SR) problem submission tool [https://www-946.ibm.com/xsrAuth/authenticate?ok_url=https%3A%2F%2Fwww-946.ibm.com%2Fsupport%2Fservicerequest%2FHome.action]. Sign in with your IBM ID and password that you created when you registered. If you have already been approved, you will see the SR Welcome page. If you have not yet been approved, use the self-nomination form link to contact IBM: 
+         3. Choose the Request to be added as an authorized user radio button and press Continue. 
+         4. For PureApplication System Identify your organization by choosing the By machine type and serial number radio button. Enter the appropriate details in the required fields and press Submit. On the Verify platform and IBM profile information screen, select the Other checkbox, verify your profile details and press Continue. 
+         5. For PureApplication Service on Softlayer: Identify your organization by choosing the ICN, IBM Customer Number, which purchased the product via PassPort Advantage Enter the appropriate details in the required fields and press Submit. On the Verify platform and IBM profile information screen, select the Other checkbox, verify your profile details and press Continue. 
+         6. Once you have SR tool access, if you wish to be notified through email when your service requests are updated, make sure you indicate this preference in your SR profile. In My profile > Notification preferences, be sure the Send notifications by email also option is checked. 
+        
+        
+     2. Report a problem using the telephone  1. Refer to this Directory of worldwide contacts [http://www.ibm.com/planetwide/] for the appropriate phone number to call. 
+         2. Select the software support number and choices to open a software problem report. For example: in the US and Canada, call 1–800–IBM-SERV (1–800–426–7378) and select option 2 for software. 
+         3. Provide this information to the person helping you:  * You would like to open a "Software" problem record. 
+             * product name for example : "IBM PureApplication System", "IBM PureApplication Software", or "IBM PureApplication Service". 
+             * state "firmware" as the operating system / platform. 
+            
+            
+        
+        
+    
+    
+
+ 
+
+Cross reference information Segment Product Component Platform Version Edition Application Servers PureApplication Service Application Servers PureApplication Software Not Applicable AIX 2.1.0.0

@@ -1,0 +1,36 @@
+Title: IBM Is IBM SPSS Statistics 23 supported on Apple Macintosh OSX 10.11 El Capitan? - United States
+
+Text:
+spss 23 fp2 mac macintosh Mac osx 10.11 el Capitan compatibility commuter shortcut utility interim fix TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Is IBM SPSS Statistics 23 supported on Apple Macintosh OSX 10.11 El Capitan? 
+
+RESOLVING THE PROBLEM
+IBM SPSS Statistics 23 for Macintosh is supported on OSX 10.11 El Capitan with some pre-requisites: 
+
+You need to have IBM SPSS Statistics 23 Fix Pack 3 for Apple Macintosh installed. 
+
+Statistics 23 Fix Pack 3 is available here [http://www.ibm.com/support/docview.wss?uid=swg24041941]. 
+
+ * For a standard (interactive) installation, download 'IBM SPSS Statistics Client Mac'. This is the 
+ * For a silent (non-interactive) installation, download 'IBM SPSS Statistics Client Mac Silent'. 
+
+
+Install legacy Apple Java 6 to prevent problems with the Commuter Utility If you have installed IBM SPSS Statistics 23 with a concurrent (network) license and would like to use the Commuter utility to check out a license for release 23, then you must have legacy Java 6 for Apple installed. Otherwise, the commuter utility will not work. 
+
+Apple provides the legacy Java 6 (Java for OS X 2015-001) on the link for download:
+https://support.apple.com/kb/DL1572 [https://support.apple.com/kb/DL1572]
+
+OS X 10.11 (El Capitan) is the last major release of OS X that will support the previously deprecated Java 6 runtime and tools provided by Apple.
+
+For the Commuter Utility short-cut please to APAR PI49312 [https://www-304.ibm.com/support/entdocview.wss?uid=swg1PI49312]
+
+If you have installed Java 6, the Commuter Utility can be located on Finder. Select Applications - IBM - SPSS - Statistics - 23 folder. Right click on SPSSStatistics.app and select 'Show package Contents'. Open the bin subfolder below the contents folder. Locate the Commuter Utility among the files and run it. If you would like to have the commuter utility short-cut inserted below the Statistics 23 folder please refer to below APAR and public Interim fix: 23.0-IM-S23STAT-MAC-FP002-IF003.
+
+https://www-01.ibm.com/support/entdocview.wss?uid=swg1PI49312 [https://www-304.ibm.com/support/entdocview.wss?uid=swg1PI49312] 
+
+For more information you may also refer to the IBM Software Compatibility Reports: http://www-969.ibm.com/software/reports/compatibility/clarity/index.jsp [http://www-969.ibm.com/software/reports/compatibility/clarity/index.jsp] 
+
+RELATED INFORMATION
+ Need more help? Our Statistics forum is Live! [https://developer.ibm.com/answers/topics/statistics.html?smartspace=predictive-analytics]

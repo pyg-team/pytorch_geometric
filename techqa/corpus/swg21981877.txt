@@ -1,0 +1,16 @@
+Title: IBM Scroll bar in search results resets to the top position in Internet Explorer V9, V10, and V11 - United States
+
+Text:
+ICN; Content Navigator; preview; IE V11; Firefox; Chrome; Microsoft Edge; scroll bar TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ In IBM Content Navigator, the scroll bar in the search results resets to the top position when using Microsoft Internet Explorer V9, V10, and V11. This does not happen with Mozilla Firefox or Google Chrome. 
+
+CAUSE
+This is a Microsoft Internet Explorer issue which has been fixed in the Microsoft Edge browser. 
+
+RESOLVING THE PROBLEM
+Upgrade to Microsoft Edge browser to address the issue.
+
+RELATED INFORMATION
+ Microsoft Edge support [http://www.ibm.com/support/docview.wss?uid=swg21976776]

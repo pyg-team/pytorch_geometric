@@ -1,0 +1,19 @@
+Title: IBM Known issue: Preventing "unresponsive script" warnings and system errors that can occur when you view a large number of notes on the collection plan or preservation plan Notes tab - United States
+
+Text:
+ RELEASE NOTES
+
+ABSTRACT
+ If a collection plan or preservation plan has many custodian notes, you can get "unresponsive script" warnings and system errors when you view the custodian notes on the Notes tab. To alleviate this problem, view only plan notes in the collection or preservation plan Notes tab. You can still view the custodian notes in the Custodians tab. 
+
+CONTENT
+In the Atlas Policy Suite web client, for a matter and associated collection plan, navigate to Matters > matter-name > Collections > collection-plan-name. 
+
+
+Similarly, for a matter and associated preservation plan, navigate to Matters > matter-name > Holds > preservation-plan-name. For both collection and preservation plans, you see a set of tabs that includes the Notes tab and the Custodians tab.
+
+The Notes tab can show two types of notes: plan notes and custodian notes. The default setting is to show plan notes. To change the type of notes that are shown, you click a button whose label changes when you click the button. When the collection Notes tab shows plan notes, the button label is Show Custodian Notes. When the Notes tab shows custodian notes, the button label is Show Plan Notes.
+
+To show only plan notes in the Notes tab, click the button so its label changes to Show Custodian Notes. 
+
+You can still view the custodian notes in the Custodians tab. To view the custodian notes, click the Custodians tab and click the custodian whose notes you want to view. The custodian page is opened and shows all the notes that belong to the custodian.

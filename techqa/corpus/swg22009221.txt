@@ -1,0 +1,16 @@
+Title: IBM Issues occur when cleaning up local documents from IBM Business Process Manager (BPM) if you use the BPMProcessInstanceCleanup command - United States
+
+Text:
+BPMProcessInstanceCleanup; clean up; cleanup; delete; commands; IBM Business Process Manager; BPM; Business Process Manager; process instance; process FLASH (ALERT)
+
+ABSTRACT
+ When you use the BPMProcessInstanceCleanup command to delete process instances, the local documents are not automatically deleted. You must manually delete these documents. 
+
+CONTENT
+To delete the local documents, follow the instructions in IBM BPM Content Integration [https://www.ibm.com/developerworks/community/blogs/44906fab-d10e-49a2-a83a-3a19e421cbf5/entry/Purging_local_documents?lang=en].
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Business Process Manager Standard Process Center AIX, Linux, Solaris, Windows 8.5.6, 8.5.5, 8.5.0.1, 8.5, 8.0.1.3, 8.0.1.2, 8.0.1.1, 8.0.1, 8.0, 7.5.1.2 Business Integration IBM Business Process Manager Express Process Center Linux, Windows 8.5.6, 8.5.5, 8.5.0.1, 8.5, 8.0.1.3, 8.0.1.2, 8.0.1.1, 8.0.1, 8.0, 7.5.1.2 
+PRODUCT ALIAS/SYNONYM
+ BPM

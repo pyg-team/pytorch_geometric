@@ -1,0 +1,201 @@
+Title: IBM PI59128: SEARCHING THE REPOSITORY USING TOPICS AS A CRITERIA FAILS WHEN EXECUTING VIA WEB SERVICES - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The C&DS Search Web Service documentation states users should be
+   able to search on Topics tagged to objects within the C&DS
+   repository.  It has been observed that users are unable to bring
+   back any search results when constraining search queries that
+   include topics.  Here are details/example:
+   
+   The following code snippet brings back the following results
+   (these are correct results, note that it is NOT constraining on
+   topics):
+   
+   retFields.add("$$repository/title_field_name");
+   retFields.add("$$repository/author_field_name");
+   retFields.add("$$repository/version_created_date_field_name");
+   retFields.add("$$search/topics");
+   retFields.add("$$search/topicsPath");
+   Structured structCriteria = new Structured();
+   
+   ArrayList<QueryItem> items = new ArrayList<QueryItem>();
+   QueryItem qItem = new QueryItem();
+   qItem.setField("$$repository/keyword_field_name");
+   qItem.setValue("CASH-JOB");
+   items.add(qItem);
+   
+   structCriteria.setQueryItem(items);
+   InitialSearch initialSearch = new InitialSearch();
+   initialSearch.setStructured(structCriteria);
+   request.setInitialSearch(initialSearch);
+   PageResult results = search.search25(request);
+   
+   
+   Search results are the following:
+   qResult.getHitCount()1
+   FieldName:$$repository/title_field_name
+   FieldValue:CCC-Ingestion Job
+   FieldName:$$repository/author_field_name
+   FieldValue:admin
+   FieldName:$$search/topics
+   FieldValue:CCC
+   FieldName:$$search/topicsPath
+   FieldValue:/repository/Content Types/CCC
+   
+   
+   Note the topic value set for the 1 object found  above (CCC).
+   
+   Next step is to augment the search code above to include
+   '$$search/topics' as an additional queryItem. Attempts to use
+   $$search/topics fail to return the expected value.
+   
+   For example, adding this additional queryItem:
+   
+   qItem1.setField("$$search/topics");
+   qItem1.setValue("CCC");
+   items.add(qItem1);
+   
+   No objects are returned. Have also tried doing a single
+   free-form query, just returning objects tagged with the 'CCC'
+   topic (no other search criteria):
+   
+   FreeFormQueryItem qItem = new FreeFormQueryItem();
+   qItem.setValue("'$$search/topics' = 'CCC'");
+   structCriteria.setFreeFormQueryItem(qItem);
+   
+   Result is that no objects are returned.
+   
+   
+   It is known that users are not able to search for Topics within
+   the DM thick client, however, the Web Services documentation
+   (see attached) suggests that this is possible.
+   
+   See Chapter 3 Search Service concepts, page 11
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  This issue has been reported to the IBM SPSS C&DS development
+   team and investigation has found our documentation is incorrect.
+   The functionality to search via topics is not available via
+   Deployment Manager thick client or Deployment Manager web
+   portal.
+   
+   It is recommended that you use LABELS rather than TOPICS for
+   your C&DS repository objects as this is a searchable item.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * see APAR text                                                *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * This issue has been addressed in C&DS 8.0FP1 documentation   *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * This issue has been addressed in C&DS 8.0FP1 documentation   *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This issue has been addressed in C&DS 8.0FP1 documentation
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+ *  This documentation issue has been reported to the IBM SPSS
+   Collaboration and Deployment Services development team and will
+   be addressed in a future release of our product.
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI59128
+   
+   
+ * REPORTED COMPONENT NAME
+   SPSS CADS
+   
+   
+ * REPORTED COMPONENT ID
+   5725A72CD
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-03-15
+   
+   
+ * CLOSED DATE
+   2017-03-23
+   
+   
+ * LAST MODIFIED DATE
+   2017-03-23
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

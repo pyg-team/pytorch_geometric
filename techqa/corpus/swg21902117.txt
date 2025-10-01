@@ -1,0 +1,35 @@
+Title: IBM SQL Errors on Datasource triggering self-monitoring events. - United States
+
+Text:
+netcool impact SQL error SQLCODE=-243; SQLSTATE=36001 event self monitoring TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ SQL Errors on a DB2 datasource can cause self-monitoring events to be created whcih are immediately cleared.
+
+The errors contain DB2 codes: SQLCODE=-243, SQLSTATE=36001 
+
+SYMPTOM
+Message like, for example: 
+
+<date & Time> ERROR [JDBCVirtualStatement] Error executing query 'select max(Entrytime) as MAXTIME from TK_TDWH_T_EVENT_JRN where Serial = 5137850
+com.ibm.db2.jcc.am.SqlException: DB2 SQL Error: SQLCODE=-243, SQLSTATE=36001, SQLERRMC=SQL_CURLH202C383, DRIVER=3.68.61 
+
+
+
+
+CAUSE
+This relates to using a scrollable result set which Impact uses by default. 
+
+
+
+
+
+RESOLVING THE PROBLEM
+If you change the following in the datasource .ds files, it will use a FORWARD_ONLY result set :
+
+<your dsname>.DB2.RESULTSETTYPE=1003
+
+
+And the errors will no longer be produced.
+
+You'll have to restart your impact server in order for this property to take affect

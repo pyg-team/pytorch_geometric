@@ -1,0 +1,49 @@
+Title: IBM Security Bulletin: IBM Case Manager is affected by a vulnerability in Apache Commons FileUpload (CVE-2016-3092) - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ IBM Case Manager is affected by CVE-2016-3092 through a vulnerable dependency, Apache Commons FileUpload. 
+
+VULNERABILITY DETAILS
+CVEID: CVE-2016-3092 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2016-3092]
+
+DESCRIPTION: Apache Tomcat is vulnerable to a denial of service, caused by an error in the Apache Commons FileUpload component. By sending file upload requests, an attacker could exploit this vulnerability to cause the server to become unresponsive.
+
+CVSS Base Score: 5.3
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/114336 [https://exchange.xforce.ibmcloud.com/vulnerabilities/114336] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:L) 
+
+AFFECTED PRODUCTS AND VERSIONS
+ 
+
+IBM Case Manager 5.1.1.0 - IBM Case Manager 5.1.1.3 
+
+IBM Case Manager 5.2.0.0 - IBM Case Manager 5.2.0.4 
+
+IBM Case Manager 5.2.1.0 - IBM Case Manager 5.2.1.5
+
+REMEDIATION/FIXES
+ 
+
+[/support/docview.wss?uid=swg21990884&amp;aid=1] VRMF APAR Remediation/First Fix IBM Case Manager 5.1.1 PJ44598 Install IBM Case Manager 5.1.1.4 FP004 [https://www.ibm.com/support/fixcentral/swg/selectFixes?parent=Enterprise%20Content%20Management&product=ibm/Information+Management/Case+Manager&release=5.1.1.3&platform=All&function=all] or later versions IBM Case Manager 5.2.0 PJ44386 Install IBM Case Manager 5.2.0.4 IF001 [https://www-945.ibm.com/support/fixcentral/swg/selectFixes?parent=Enterprise%2BContent%2BManagement&product=ibm/Information+Management/Case+Manager&release=5.2.0.4&platform=All&function=all] or later versions IBM Case Manager 5.2.1 PJ44385 Install IBM Case Manager 5.2.1.5 IF001 [https://www-945.ibm.com/support/fixcentral/swg/selectFixes?parent=Enterprise%2BContent%2BManagement&product=ibm/Information+Management/Case+Manager&release=5.2.1.5&platform=All&function=all] or later versions The Interim Fix for each release contains the updated version of the vulnerable dependency. Applying the Interim Fix removes the vulnerability. GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v3 Guide [http://www.first.org/cvss/user-guide] 
+On-line Calculator v3 [http://www.first.org/cvss/calculator/3.0] 
+
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] 
+
+CHANGE HISTORY
+ 6 February 2017: Updated 5.1.1 release and APAR.
+10 October 2016: Original Version Published 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.

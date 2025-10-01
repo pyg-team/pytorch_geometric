@@ -1,0 +1,126 @@
+Title: IBM IZ26787: JAVA.IO.NOTSERIALIZABLEEXCEPTION - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  java.io.NotSerializableException
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  not applicable.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  The following exception is seen in the WebSphere SystemOut.log
+   java.io.NotSerializableException:
+   com.ibm.sr.ui.beans.PrincipalDetail
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The class java.io.NotSerializableException:
+   com.ibm.sr.ui.beans.PrincipalDetail did not implement the
+   Serializable Class.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ26787
+   
+   
+ * REPORTED COMPONENT NAME
+   SRV REG REPO V6
+   
+   
+ * REPORTED COMPONENT ID
+   5724N7200
+   
+   
+ * REPORTED RELEASE
+   610
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-07-11
+   
+   
+ * CLOSED DATE
+   2008-07-14
+   
+   
+ * LAST MODIFIED DATE
+   2008-07-14
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   SRV REG REPO V6
+   
+   
+ * FIXED COMPONENT ID
+   5724N7200
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R610 PSY
+   UP
+   
+   
+ * R620 PSY
+   UP

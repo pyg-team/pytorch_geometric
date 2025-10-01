@@ -1,0 +1,49 @@
+Title: IBM Datacap Taskmaster Capture 8.1 Fix Pack 2 installer may not install properly - United States
+
+Text:
+upgrade fix pack TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ IBM Datacap 8.1 Fix Pack 2 installer may not install properly if there are Datacap test fixes in the environment. 
+
+SYMPTOM
+Anomalous behavior may occur right after installing Fix Pack 2. A typical symptom would be the following error when try to launch Datacap Studio: 
+
+application error! Could not load file or assembly 'DotnetMagic2005, Version=5.4.0.0, culture=neutral, PublicKeyToken=6cf6edec59e036ec' or one of its dependencies. 
+
+The located assembly's manifest definition does not match the assembly reference. (Exception from HRESULT:0x80131040)
+[/support/docview.wss?uid=swg21671156&amp;aid=1]
+
+
+CAUSE
+Datacap uses Microsoft installer to perform the fix pack installation. By default, the fix pack uses emus for REINSTALLMODE. In some situations where there may be some Datacap post Fix Pack 2 test fixes from IBM in the current environment, the fix pack installer will not be able to overwrite those files during the installation. The result is that old files may still exist after Fix Pack 2 has been installed.
+
+
+This issue is tentatively scheduled to be fixed in 8.1 Fix Pack 3.
+
+
+DIAGNOSING THE PROBLEM
+The following optional check may be done: 
+
+ 1.  Run the following command from the DOS window: 
+    dir <drive>:\Datacap /s >AfterFP2.txt 
+ 2.  Download the directory listing from the attachment below. This directory listing is taken from a clean Fix Pack 2 environment. 
+ 3. Use any text comparison tool (e.g. Beyond Compare) to compare the two files. If there are discrepancies between the two files where there are the older versions of any files, then Fix Pack 2 may not be installed properly.
+
+RESOLVING THE PROBLEM
+The work-around for this issue is: 
+
+ 1. Make a backup of the entire Datacap folder where there may be a customization, or a snap shot may be taken of the image if using VMware. 
+ 2. Stop all Datacap related components. 
+ 3. Run the Fix Pack 2 installer from the command line as follows:
+    Update.exe /V"/log <drive>:\FP2Install.log REINSTALLMODE=amus REINSTALL=ALL" 
+ 4. Proceed through the installation as usual. 
+ 5. Run the following command after the installer has finished installing
+    dir <drive>:\Datacap /s >AfterFP2WithAmus.txt 
+ 6. Compare the directory listing above against the directory listing from the attachment to make sure all the files are matched. 
+ 7. Reinstall all post Fix Pack 2 test fixes and customization as needed. 
+ 8. Reapply any needed changes to settings or settings files, including but not limited to \tmweb.net\apps.ini, server.ini & web.config
+    Ex: \RV2\reports.xml & web.config, \FingerprintService\Web.config 
+ 9. If using any of the demo applications directly, application files may be changed to Fix Pack 2 equivalents, including databases.
+
+DatacapBaseFP2WithReinstall.txt [/support/docview.wss?uid=swg21671156&aid=3]DatacapBaseFP2WithReinstall.txt [/support/docview.wss?uid=swg21671156&aid=2]

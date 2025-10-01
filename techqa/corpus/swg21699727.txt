@@ -1,0 +1,67 @@
+Title: IBM Security Bulletin: Vulnerabilities in GSKit affect IBM Tivoli Network Manager IP Edition and may affect WebSphere Application Server shipped with IBM Tivoli Network Manager IP Edition (CVE-2015-0159, CVE-2015-0138, CVE-2014-6221). - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ GSKit is an IBM component that is used by IBM Tivoli Network Manager IP Edition. The GSKit that is shipped with IBM Tivoli Network Manager IP Edition contains multiple security vulnerabilities including the “FREAK: Factoring Attack on RSA-EXPORT keys " TLS/SSL client and server vulnerability. IBM Tivoli Network Manager IP Edition and WebSphere Application Server shipped with IBM Tivoli Network Manager have addressed the applicable CVEs. 
+
+VULNERABILITY DETAILS
+CVEID: CVE-2014-6221 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-6221]
+DESCRIPTION: Random Data Generation using GSKit MSCAPI/MSCNG Interface Code does not generate cryptographically random data. An attacker could use this weakness to gain complete confidentially and/or integrity compromise.
+CVSS Base Score: 8.8
+CVSS Temporal Score: See http://exchange.xforce.ibmcloud.com/#/vulnerabilities/98929 [http://exchange.xforce.ibmcloud.com/#/vulnerabilities/98929] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:M/Au:N/C:C/I:C/A:N) 
+
+CVEID: CVE-2015-0138 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-0138]
+DESCRIPTION: A vulnerability in various IBM SSL/TLS implementations could allow a remote attacker to downgrade the security of certain SSL/TLS connections. An IBM SSL/TLS client implementation could accept the use of an RSA temporary key in a non-export RSA key exchange ciphersuite. This could allow a remote attacker using man-in-the-middle techniques to facilitate brute-force decryption of TLS/SSL traffic between vulnerable clients and servers. 
+
+This vulnerability is also known as the FREAK attack. 
+
+CVSS Base Score: 4.3
+CVSS Temporal Score: See http://exchange.xforce.ibmcloud.com/#/vulnerabilities/100691 [http://exchange.xforce.ibmcloud.com/#/vulnerabilities/100691] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:M/Au:N/C:N/I:P/A:N) 
+
+CVEID: CVE-2015-0159 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-0159]
+DESCRIPTION: An unspecified error in GSKit usage of OpenSSL crypto function related to the production of incorrect results on some platforms by Bignum squaring (BN_sqr) has an unknown attack vector and impact in some ECC operations.
+CVSS Base Score: 2.6
+CVSS Temporal Score: See http://exchange.xforce.ibmcloud.com/#/vulnerabilities/100835 [http://exchange.xforce.ibmcloud.com/#/vulnerabilities/100835] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:H/Au:N/C:N/I:P/A:N)
+
+Please consult the security bulletin Vulnerability with RSA Export Keys may affect IBM WebSphere Application Server (CVE-2015-0138) [http://www-01.ibm.com/support/docview.wss?uid=swg21698613] [http://www-01.ibm.com/support/docview.wss?uid=swg21695362] [Vulnerability%20with%20RSA%20Export%20Keys%20may%20affect%20IBM%20WebSphere%20Application%20Server%20(CVE-2015-0138)] for vulnerability details and information about IBM WebSphere Application Server fixes.
+
+AFFECTED PRODUCTS AND VERSIONS
+
+Tivoli Network Manager IP Edition Interim Fixes for GSKit:
+Note:The SSL connection between Tivoli Network Manager IP Edition and Tivoli Netcool/OMNIbus is affected.
+Single server SSL users should upgrade to an appropriate OMNIbus fixpack to obtain the GSKit fix.
+Remote OMNIbus SSL connection users should install the Interim Fix below on Tivoli Network Manager IP Edition.
+
+Download IV71123_IV76121 gskit Interfim Fix or higher level of fix pack from Fix Central
+
+
+
+AffectedProduct VRMF APAR Remediation/First Fix Tivoli Network Manager IP Edition 3.8.0.7 IV71123 [http://www-01.ibm.com/support/docview.wss?uid=swg24039199]
+
+https://www.ibm.com/support/entry/myportal/product/tivoli/tivoli_network_manager_ip_edition?productContext=1740397766 [https://www.ibm.com/support/entry/myportal/product/tivoli/tivoli_network_manager_ip_edition?productContext=1740397766] Tivoli Network Manager IP Edition 3.9.0.4 IV71123 [http://www-01.ibm.com/support/docview.wss?uid=swg24036687] [http://www-01.ibm.com/support/docview.wss?uid=swg24039199]
+https://www.ibm.com/support/entry/myportal/product/tivoli/tivoli_network_manager_ip_edition?productContext=1740397766 [https://www.ibm.com/support/entry/myportal/product/tivoli/tivoli_network_manager_ip_edition?productContext=1740397766] Tivoli Network Manager IP Edition 4.1.1.1 IV71123 [http://www-01.ibm.com/support/docview.wss?uid=swg24039346] [http://www-01.ibm.com/support/docview.wss?uid=swg24039199]
+https://www.ibm.com/support/entry/myportal/product/tivoli/tivoli_network_manager_ip_edition?productContext=1740397766 [https://www.ibm.com/support/entry/myportal/product/tivoli/tivoli_network_manager_ip_edition?productContext=1740397766] Tivoli Network Manager IP Edition 4.1 IV71123 [http://www-01.ibm.com/support/docview.wss?uid=swg24036690] [http://www-01.ibm.com/support/docview.wss?uid=swg24039199]
+https://www.ibm.com/support/entry/myportal/product/tivoli/tivoli_network_manager_ip_edition?productContext=1740397766 [https://www.ibm.com/support/entry/myportal/product/tivoli/tivoli_network_manager_ip_edition?productContext=1740397766] 
+IBM WebSphere Application Server fixes: 
+
+Vulnerability with RSA Export Keys may affect IBM WebSphere Application Server (CVE-2015-0138) [http://www-01.ibm.com/support/docview.wss?uid=swg21698613] Affected Product and Version(s) Product and Version shipped as a component Tivoli Network Manager IP Edition 3.8 Bundled the TIP version 1.1.1.x, IBM WebSphere version 6.1.0.x and the JRE from IBM SDK Java 2 Technology Edition Version 5. Tivoli Network Manager IP Edition 3.9 Bundled the TIP version 2.1.0.x, IBM WebSphere version 7.0.0.x and the JRE from IBM SDK Java 2 Technology Edition Version 6. Tivoli Network Manager IP Edition 4.1 Bundled the TIP version 2.2.0.x, IBM WebSphere version 7.0.0.x and the JRE from IBM SDK Java 2 Technology Edition Version 6. Tivoli Network Manager IP Edition 4.1.1 Bundled the TIP version 2.2.0.x, IBM WebSphere version 7.0.0.x and the JRE from IBM SDK Java 2 Technology Edition Version 6. 
+Note: If TIP has been upgraded, please follow the TIP security bulletin to upgrade the appropriate IBM WebSphere version. GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v2 Guide [http://www.first.org/cvss/v2/guide] 
+On-line Calculator v2 [http://nvd.nist.gov/CVSS-v2-Calculator] 
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/PSIRT] *The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.

@@ -1,0 +1,74 @@
+Title: IBM Oracle - Maximum Open cursors exceeded - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Arbitrarily, jobs within IBM SPSS Collaboration and Deployment Services (C&DS) will begin to enter a queued state and/or fail to complete while running.
+
+
+
+
+SYMPTOM
+There will be several messages indicating an error with the failed request to the Oracle repository database as noted below. 
+
+
+WebSphere Systemout.log 
+
+[3/15/17 9:43:21:354 EDT] 0001f00e SibMessage E [:] CWSIC2009E: There was a failure to send a message: exception com.ibm.ws.sib.processor.exceptions.SIMPResourceException: com.ibm.websphere.sib.exception.SIResourceException: com.ibm.ws.sib.msgstore.PersistenceException: CWSIS1501E: The data source has produced an unexpected exception: java.sql.SQLException: [SPSSOEM][Oracle JDBC Driver][Oracle]ORA-01000: maximum open cursors exceeded 
+
+WebSphere SystemErr.log
+Line 2: com.ibm.ws.sib.processor.exceptions.SIMPResourceException: com.ibm.websphere.sib.exception.SIResourceException: com.ibm.ws.sib.msgstore.PersistenceException: CWSIS1501E: The data source has produced an unexpected exception: java.sql.SQLException: [SPSSOEM][Oracle JDBC Driver][Oracle]ORA-01000: maximum open cursors exceeded 
+
+
+WebSphere /FFDC entries
+00000216 SibMessage E 
+[CDS_BUS:CNDS.000-CDS_BUS] CWSIS1501E: The data source has produced an 
+unexpected exception: java.sql.SQLException: [SPSSOEM][Oracle JDBC 
+Driver][Oracle]ORA-01003: no statement parsed.
+
+0001cd33 SibMessage E [:] CWSIP0002E: An
+internal messaging error occurred in 
+com.ibm.ws.sib.processor.impl.ConsumerDispatcher, 1:777:1.280.7.1, 
+com.ibm.ws.sib.msgstore.RollbackException: CWSIS1002E: An unexpected 
+exception was caught during transaction completion. Exception: 
+com.ibm.ws.sib.msgstore.PersistenceException: CWSIS1577E: The persistent
+dispatcher cannot accept work. 
+
+cds.log
+com.spss.process.work.spi.ExecutionException: CWSIA0067E: An exception was received during the call to the method JmsMsgProducerImpl.sendMessage (#4): com.ibm.ws.sib.processor.exceptions.SIMPResourceException: com.ibm.websphere.sib.exception.SIResourceException: com.ibm.ws.sib.msgstore.PersistenceException: CWSIS1501E: The data source has produced an unexpected exception: java.sql.SQLException: [SPSSOEM][Oracle JDBC Driver][Oracle]ORA-01000: maximum open cursors exceeded
+
+
+
+
+CAUSE
+This cause appears to be a potential connection issue that occurs between the C&DS repository database (where the WebSphere SIB tables are stored for JMS) and WebSphere itself based on the JMS messages that occur. The root cause is unknown.
+
+
+ENVIRONMENT
+Collaboration and Deployment Services
+Oracle used as the C&DS Repository database 
+
+
+
+DIAGNOSING THE PROBLEM
+Reviewing the WebSphere systemout.log, /ffdc incident reports, and cds.log will convey the messages related to the Open Cursor issue as described above within "Symptoms".
+
+
+
+
+RESOLVING THE PROBLEM
+As an immediate resolution (given the state C&DS jobs are currently in), the application server to which C&DS is deployed (either stand alone or cluster) needs to be stop and started. 
+
+The Open Cursor sessions can be viewed on the Oracle database using Oracle's select statement to view current Open Cursors and the associated C&DS database user. As directed by an Oracle DBA, and while C&DS is down, the Oracle session accumulating most of cursors can be closed to free up any potential cursor sessions prior to a C&DS restart. 
+
+ 
+
+As a way to avoid this issue for the C&DS application using an Oracle database Repository deployed into WebSphere, the following WebSphere JDBC resource settings can be disabled within WebSphere's Administrator's console:
+Resources > JDBC > Data sources > WebSphere Application Server data source properties > 
+"Validate New Connections" and "Validate existing pooled connections"
+
+What "Validate New Connections" basically does, is every new connection opened by WebSphere will send a signal to database to make sure it is a valid connection before sending the actual query through a connection to the database. For example if you have 0 connections in the free pool, a new connection will be opened. Just before it is used, "Validate New Connections" will test it before letting go of the content. 
+
+
+"Validate existing pooled connections" basically means there will be a test on each connection in the FREE pool before sending a query to the database. So let's say you have 2 connections in the free pool, and one is picked up by a new query, "Validate existing pooled connections" will test it before sending it over to the database.

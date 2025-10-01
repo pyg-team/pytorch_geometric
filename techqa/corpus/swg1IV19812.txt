@@ -1,0 +1,149 @@
+Title: IBM IV19812: IN 3.9 FP1, SOME STITCHERS ARE CAUSING DISCO TO RUN OUT OF AVAILABLE MEMORY - United States
+
+Text:
+  FIXES ARE AVAILABLE
+IBM Tivoli Network Manager IP 3.9.0 Fix Pack 3, 3.9.0-TIV-ITNMIP-FP0003 [http://www-01.ibm.com/support/docview.wss?uid=swg24033501]
+IBM Tivoli Network Manager IP 3.9.0 Fix Pack 4, 3.9.0-TIV-ITNMIP-FP0004 [http://www-01.ibm.com/support/docview.wss?uid=swg24034724]
+IBM Tivoli Network Manager IP Edition 3.9.0 Fix Pack 5, 3.9.0-TIV-ITNMIP-FP0005 [http://www-01.ibm.com/support/docview.wss?uid=swg24037809]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  This APAR is created as AE/MDV APAR with "MDVPARTL" class
+   The memory leak fix made in 3.9 FP1 APAR  IV11558 [http://www-01.ibm.com/support/docview.wss?uid=swg1IV11558] was not
+   complete fix.
+   
+   .| MDVPARTL 3.9.0-TIV-ITNMIP-FP0001 |
+   
+   After installing FixPack 1 for ITNM 3.9, disco memory usage
+   increased to the point that the process cored. The number of
+   entities is below our suggested limitation of 250k. The greater
+   part of the memory usage is occurring in the stitching phase.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * ITNM 3.9 Release                                             *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * SOME STITCHERS ARE CAUSING DISCO TO RUN OUT OF               *
+   * AVAILABLE MEMORY                                             *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * fix pack | 3.9.0-ITNMIP-FP0002                               *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Added a switch to stitcher so that  you can select between
+   faster operation with more memory use or slower with minimal
+   memory use.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV19812
+   
+   
+ * REPORTED COMPONENT NAME
+   TIV NETWK MGR I
+   
+   
+ * REPORTED COMPONENT ID
+   5724S4500
+   
+   
+ * REPORTED RELEASE
+   390
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-04-17
+   
+   
+ * CLOSED DATE
+   2012-05-22
+   
+   
+ * LAST MODIFIED DATE
+   2012-05-22
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TIV NETWK MGR I
+   
+   
+ * FIXED COMPONENT ID
+   5724S4500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R390 PSN
+   UP
+   
+   
+ * R390 PSY
+   UP

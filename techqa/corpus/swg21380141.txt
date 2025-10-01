@@ -1,0 +1,72 @@
+Title: IBM How do I use WebSphere Adapter for JDBC with WebSphere Business Integration Adapter for JDBC event table for user-defined event query - United States
+
+Text:
+JDBC; Event Table; Custom event query; WBIA_JDBC_EventStore; object_function not there TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When using the XWORLDS_EVENTS event table from the WebSphere Business Integration Adapter for JDBC instead of the WBIA_JDBC_EventStore event table for WebSphere Adapter for JDBC for a user-defined event query, an error with the message "field object_function not there" and/or "Invalid column name" is received. 
+
+SYMPTOM
+The error message "Field 'object_function' not there" is received, or the following error is thrown when you use connector_id as the xid in the custom query: 
+
+ 
+[3/9/09 20:31:43:220 GMT] 0000004e JDBCRA001 2 com.ibm.j2ca. 
+dbadapter.core.runtime.inbound.DBEventStoreWithXid getCustomEvents Entering method. 
+[3/9/09 20:31:43:220 GMT] 0000004e JDBCRA001 3 com.ibm.j2ca.dbadapter.core.runtime.inbound.DBEventStoreWithXid getCustomEvents 
+Standard SQL Custom Query: select event_id, object_key, object_name,
+object_verb as object_function,connector_id as xid from im_owner. 
+xworlds_events where event_status = 0 
+[3/9/09 20:31:43:220 GMT] 0000004e JDBCRA001 < com.ibm.j2ca. 
+dbadapter.core.runtime.inbound.DBEventStoreWithXid getCustomEvents 
+Exiting method. 
+[3/9/09 20:31:43:220 GMT] 0000004e JDBCRA001 W com.ibm.j2ca. 
+dbadapter.core.runtime.inbound.DBEventStoreWithXid getEvents SQL 
+Exception threw: Invalid column name 
+[3/9/09 20:31:43:220 GMT] 0000004e JDBCRA001 W com.ibm.j2ca. 
+dbadapter.core.runtime.inbound.DBEventStoreWithXid getEvents User 
+Action: Check the connector_ID field exist in event table or not 
+
+
+
+CAUSE
+The field "object_function" does not exist in the WebSphere Business Integration Adapter's event table XWORLDS_EVENTS, and the field "connector_ID" does not exist in the JDBC JCA's event table WBIA_JDBC_EVENTSTORE.
+
+
+RESOLVING THE PROBLEM
+Here are the migration steps: 
+
+1. Create table "WBIA_JDBC_EVENTSTORE" with the connector_ID : 
+CREATE TABLE WBIA_JDBC_EventStore 
+( 
+event_id INTEGER NOT NULL PRIMARY KEY, 
+xid VARCHAR(200), 
+object_key VARCHAR(80) NOT NULL, 
+object_name VARCHAR(40) NOT NULL, 
+object_function VARCHAR(40) NOT NULL, 
+event_priority INTEGER NOT NULL, 
+event_time TIMESTAMP default CURRENT TIMESTAMP NOT NULL, 
+event_status INTEGER NOT NULL, 
+connector_ID VARCHAR(40), 
+event_comment VARCHAR(100) 
+); 
+
+
+The connector_ID field will be used to filter some events from the JDBC Adapter instance. 
+Here is the function of "connector_id": 
+The goal is to enable seamless migration for WebSphere Business Integration Adapters customers to JCA where customers are currently taking advantage of the connectorID filtering. This feature will benefit customers to be able to load balance when they have large number of events of the same type. 
+
+You can refer to the following document for more details: 
+ftp://public.dhe.ibm.com/software/websphere/integration/wsa/library/pdf620/english_wsa_20081212_jdbc.pdf [ftp://public.dhe.ibm.com/software/websphere/integration/wsa/library/pdf620/english_wsa_20081212_jdbc.pdf] 
+
+2. Enter the three SQL statements below: 
+user-defined query: 
+select event_id, object_key, object_name, object_verb as object_function , connector_id from xworlds_events where event_status = 0 
+
+user-defined update: 
+update xworlds_events set event_status= 1 where event_id = ? 
+
+user-defined delete: 
+delete from xworlds_events where event_id= ? 
+
+You can refer to page 121 and page 224 in the following document for the usage of the three SQL statements above:
+ftp://public.dhe.ibm.com/software/websphere/integration/wsa/library/pdf620/english_wsa_20081212_jdbc.pdf [ftp://public.dhe.ibm.com/software/websphere/integration/wsa/library/pdf620/english_wsa_20081212_jdbc.pdf]

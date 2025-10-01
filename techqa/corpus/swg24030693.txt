@@ -1,0 +1,65 @@
+Title: IBM Download IBM License Metric Tool 7.5 for IBM i platform - United States
+
+Text:
+ DOWNLOADABLE FILES
+
+ABSTRACT
+ This document explains how to download the IBM® License Metric Tool server and agent installation files, and documentation from Passport Advantage® 
+
+DOWNLOAD DESCRIPTION
+
+
+IBM License Metric Tool helps you maintain an up-to-date inventory of the IBM distributed software assets in your IT infrastructure, and measure the processor value units (PVU) available to and consumed by them. It also allows you to ensure compliance with IBM subcapacity licensing requirements and demonstrate good IT governance if you are using PVU-based licensed products.
+
+To access a wide variety of technical resources for this product, see the License Metric Tool Support Site [http://www-947.ibm.com/support/entry/portal/Overview/Software/Tivoli/IBM_License_Metric_Tool].
+
+To narrow down the list of installation packages, see Specifying installation packages for License Metric Tool 7.5 [http://publib.boulder.ibm.com/infocenter/tivihelp/v53r1/topic/com.ibm.lmt75.doc/com.ibm.license.mgmt.planinconf.doc/pa_lmt/active_table_lmt.html]. This tool allows you to specify the installation packages you need.
+
+Downloading and assembling the product
+
+
+[/support/docview.wss?uid=swg24030693&amp;aid=1]-  1. Log in to Passport Advantage web site [http://www-01.ibm.com/software/howtobuy/passportadvantage/pao_customers.htm].
+ 2. In the right navigation bar, click Place a new license order .
+ 3. Enter the search term, for example "License Metric Tool". 
+ 4. On the search results page, select the packages and click Add to cart. In the cart click Check out.
+ 5. Provide your billing and shipping information and agree to IBM license terms. Click Continue.
+ 6. Review and submit the order.
+ 7. Download all of the parts that you need, including documentation. The parts are described by platform in the tabbed sections of this document.
+
+TAB NAVIGATION
+ * AIX [http://www.ibm.com/support/docview.wss?rs=4101&uid=swg24030690]
+ * HP-UX [http://www.ibm.com/support/docview.wss?rs=4101&uid=swg24030691]
+ * IBM i [http://www.ibm.com/support/docview.wss?rs=4101&uid=swg24030693]
+ * Linux [http://www.ibm.com/support/docview.wss?rs=4101&uid=swg24030692]- selected tab,
+ * Solaris [http://www.ibm.com/support/docview.wss?rs=4101&uid=swg24030694]
+ * Windows [http://www.ibm.com/support/docview.wss?rs=4101&uid=swg24030695]
+
+Typically you will want to download the License Metric Tool server and DB2®, and the License Metric Tool agents for all of the platforms you need to monitor. Your need for parts depends on your usage and configuration choices. Components that you might want to use in your topology but which run on another platform can be found on the tabbed page corresponding to that platform.
+
+Supported platforms
+For information about the supported platforms, see the following information center pages:
+Supported operating systems for agents [http://publib.boulder.ibm.com/infocenter/tivihelp/v53r1/topic/com.ibm.lmt75.doc/com.ibm.license.mgmt.planinconf.doc/r_supported_platforms_agents.html] 
+
+Downloadable parts for IBM i 32, and 64-bit
+
+The following tables list the downloadable parts in the License Metric Tool eAssembly (Part Number: CRFN3ML).
+
+The following table lists the downloadable images of installers, and documentation.
+
+Part number Description File name Agent installation images
+
+CI27RML IBM License Metric Tool 7.5.0 Agent Native Installation Packages for all platforms CI27RML.tar.gz CI27SML IBM License Metric Tool 7.5.0 Agent Installation Package, collection of Software Package Blocks only for Tivoli Configuration Manager-based installation CI27SML.zip Documentation image
+
+CI27GML IBM License Metric Tool V7.5.0 Quick Start CI27GML.zip URL LANGUAGE SIZE(Bytes) Agent prerequisites [http://publib.boulder.ibm.com/infocenter/tivihelp/v53r1/topic/com.ibm.lmt75.doc/com.ibm.license.mgmt.planinconf.doc/t_planning_installation_agents.html] English 24 
+URL LANGUAGE SIZE(Bytes) Installation instructions [http://publib.boulder.ibm.com/infocenter/tivihelp/v53r1/topic/com.ibm.lmt75.doc/com.ibm.license.mgmt.planinconf.doc/r_plan_main.html] English 24 
+DOWNLOAD PACKAGE
+To download the software, log in on the following page: 
+
+http://www.ibm.com/software/howtobuy/passportadvantage/pao_customers.htm [http://www.ibm.com/software/howtobuy/passportadvantage/pao_customers.htm]
+
+
+
+
+TECHNICAL SUPPORT
+ Passport Advantage Online support is available at 
+http://www.ibm.com/software/howtobuy/passportadvantage/paocustomer/docs/en_US/ecare.html [http://www.ibm.com/software/howtobuy/passportadvantage/paocustomer/docs/en_US/ecare.html]

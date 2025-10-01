@@ -1,0 +1,148 @@
+Title: IBM IV78271: CREATING A NEW VULNERABILITY SCANNER AND THEN INITIATING AN INITIAL SCAN CAN FAIL ON FIRST ATTEMPT - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  QRadar User Interface, VA Scanners:
+   After configuring a new scanner and initiating the first run of
+   that scanner, the scan can fail and errors can be generated in
+   /var/log/qradar.log similar to the following.
+   
+   'com.q1labs.vis.exceptions.ScannerInitException: [Failed]
+   Initialization error: Can't initialize scanner, config is null'
+   
+   and/or
+   
+   [ERROR] [NOT:0000003000][127.0.0.1/- -] [-/- -]Abandoning scan
+   task 127.0.0.1/32:1-65535, exceptions were thrown while
+   initializing
+   [vis0.vis] [<scanner>] java.lang.NullPointerException
+   [vis0.vis] [<scanner>]    at
+   com.q1labs.vis.scanners.base.ScannerModule.getConfigProperty(Sca
+   nnerModule.java:503)
+   [vis0.vis] [<scanner>]    at
+   com.q1labs.vis.scanners.base.ScannerModule.getConfigProperty(Sca
+   nnerModule.java:496)
+   [vis0.vis] [<scanner>]    at
+   com.q1labs.vis.scanners.<scanner>.init(<scanner>Module.java:62)
+   [vis0.vis] [<scanner>]    at
+   com.q1labs.vis.scanners.base.ScannerModule.run(ScannerModule.jav
+   a:171)
+   [vis0.vis] [<scanner>]    at
+   java.lang.Thread.run(Thread.java:795)
+   
+   In these failed scanner instances. if the newly configured
+   scanner is run again after the primary run failure, it
+   completes as expected with no error.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  No workaround available.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  This issue was resolved with QRadar 7.2.6 Patch 3.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This issue was resolved with QRadar 7.2.6 Patch 3.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV78271
+   
+   
+ * REPORTED COMPONENT NAME
+   QRADAR SOFTWARE
+   
+   
+ * REPORTED COMPONENT ID
+   5725QRDSW
+   
+   
+ * REPORTED RELEASE
+   722
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2015-10-21
+   
+   
+ * CLOSED DATE
+   2016-03-30
+   
+   
+ * LAST MODIFIED DATE
+   2016-03-30
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   QRADAR SOFTWARE
+   
+   
+ * FIXED COMPONENT ID
+   5725QRDSW
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R726 PSY
+   UP

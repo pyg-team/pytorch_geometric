@@ -1,0 +1,214 @@
+Title: IBM PJ40731: WHEN CASE INFORMATION WIDGET CONTAINS TASKS TAB ONLY, THE CASE MANAGER CLIENT SHOWS SENDCASEINFO EVENT ERRORS. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When Case Information widget contains Tasks tab only, the Case
+   Manager Client shows following SendCaseInfo event errors:
+   
+   widget: MC0A840079F6B1E4CB9F9CB46D873E400004A, eventName:
+   com.ibm.ecmwidgets.acm.SendCaseInfo, HandleEventException:
+   TypeError: this.iScope.documentIScope is un...
+   Method: IWidgetWrapper._handleEventInternal - Message: widget:
+   MC0A840079F6B1E4CB9F9CB46D873E400004A, eventName:
+   com.ibm.ecmwidgets.acm.SendCaseInfo, HandleEventException:
+   TypeError: this.iScope.documentIScope is undefined
+   
+   widget:MC0A840079F6B1E4CB9F9CB46D873E400004AeventName:com.ibm.ec
+   mwidgets.acm.SendCaseInfo HandleEventException:TypeError:
+   this.iScope.documentIScope is undefi...
+   Method: _handleEvent - Message:
+   widget:MC0A840079F6B1E4CB9F9CB46D873E400004AeventName:com.ibm.ec
+   mwidgets.acm.SendCaseInfo HandleEventException:TypeError:
+   this.iScope.documentIScope is undefined
+   
+   Steps to Reproduce:
+   1. Open a browser and login to Case Manager Client
+   2. On the Cases tab search for a case.
+   3. Open the case in Case Details tab.
+   4. Edit Settings for Case Information widget
+   5. Uncheck on the Views options except for Tasks and click OK
+   6. Click Finish Editing.
+   7. Log out from Case Manager Client and close the browser.
+   8. Open a new browser and login to Case Manager Client.
+   9. On the Cases tab search for a case.
+   10.Open the case in Case Details tab.
+   
+   Now you will see the following errors:
+   Two widget errors appears on the top of the page for
+   SendCaseInfo events.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  The workaround is to avoid the issue by not displaying Tasks tab
+   in Case Information widget by itself. Need to add the Documents
+   tab as well.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * End Users and Business Analyst who try to use Case Manager   *
+   * Client to process cases.                                     *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * When Case Information widget contains Tasks tab only, the    *
+   * Case Manager Client shows following SendCaseInfo event       *
+   * errors:                                                      *
+   *                                                              *
+   * widget: MC0A840079F6B1E4CB9F9CB46D873E400004A, eventName:    *
+   * com.ibm.ecmwidgets.acm.SendCaseInfo, HandleEventException:   *
+   * TypeError: this.iScope.documentIScope is un...               *
+   * Method: IWidgetWrapper._handleEventInternal - Message:       *
+   * widget:                                                      *
+   * MC0A840079F6B1E4CB9F9CB46D873E400004A, eventName:            *
+   * com.ibm.ecmwidgets.acm.SendCaseInfo, HandleEventException:   *
+   * TypeError: this.iScope.documentIScope is undefined           *
+   *                                                              *
+   * widget:MC0A840079F6B1E4CB9F9CB46D873E400004AeventName:com.ib *
+   * m.ec                                                         *
+   * mwidgets.acm.SendCaseInfo HandleEventException:TypeError:    *
+   * this.iScope.documentIScope is undefi...                      *
+   * Method: _handleEvent - Message:                              *
+   * widget:MC0A840079F6B1E4CB9F9CB46D873E400004AeventName:com.ib *
+   * m.ec                                                         *
+   * mwidgets.acm.SendCaseInfo HandleEventException:TypeError:    *
+   * this.iScope.documentIScope is undefined                      *
+   *                                                              *
+   * Steps to Reproduce:                                          *
+   * 1. Open a browser and login to Case Manager Client           *
+   * 2. On the Cases tab search for a case.                       *
+   * 3. Open the case in Case Details tab.                        *
+   * 4. Edit Settings for Case Information widget                 *
+   * 5. Uncheck on the Views options except for Tasks and click   *
+   * OK                                                           *
+   * 6. Click Finish Editing.                                     *
+   * 7. Log out from Case Manager Client and close the browser.   *
+   * 8. Open a new browser and login to Case Manager Client.      *
+   * 9. On the Cases tab search for a case.                       *
+   * 10.Open the case in Case Details tab.                        *
+   *                                                              *
+   * Now you will see the following errors:                       *
+   * Two widget errors appears on the top of the page for         *
+   * SendCaseInfo events.                                         *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * To fix this problem, apply 5.1.1.1-ICM-FP001 or later        *
+   * releases.                                                    *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix for this problem is provided in IBM Case Manager
+   V5.1.1.1 or later releases.
+   
+   With this fix, the messages are not displayed when the Case
+   Information widget contains only the Tasks tab.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PJ40731
+   
+   
+ * REPORTED COMPONENT NAME
+   CASE MGR CLIENT
+   
+   
+ * REPORTED COMPONENT ID
+   5725A1501
+   
+   
+ * REPORTED RELEASE
+   511
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-11-02
+   
+   
+ * CLOSED DATE
+   2013-03-22
+   
+   
+ * LAST MODIFIED DATE
+   2013-03-22
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CASE MGR CLIENT
+   
+   
+ * FIXED COMPONENT ID
+   5725A1501
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R500 PSN
+   UP
+   
+   
+ * R510 PSN
+   UP
+   
+   
+ * R511 PSY
+   UP

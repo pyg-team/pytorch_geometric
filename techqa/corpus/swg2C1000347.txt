@@ -1,0 +1,17 @@
+Title: IBM Cloud Orchestrator has released a Direct Driver LA fix for version 2.5.0.4 - United States
+
+Text:
+ NEWS
+
+ABSTRACT
+ This ICO-2.5.0.4-DirectDriver-LA fix has packed the following IBM Cloud Orchestrator toolkits: 
+
+- ICO 2.5.0.4 DirectDriver_VMware 
+This toolkit run operations directly on VMware vCenter Server from IBM Cloud Orchestrator. However, it leverages the functionality of OpenStack keystone for authentication and authorization.
+
+- ICO 2.5.0.4 DirectDriver_PowerVC
+This toolkit can directly control PowerVC from IBM Cloud Orchestrator without using OpenStack. However, it leverages the functionality of OpenStack keystone for authentication and authorization. 
+
+CONTENT
+Contact IBM support for 2.5.0.4-CSI-ICO-LA0002. The compressed file includes the necessary script files, Jar files, XML files, Readme file, and individual PDFs for both Direct Driver PowerVC and Direct Driver VMware toolkits. The Readme provides the initial information that you must know before you start working with the LA fix. The ICO2.5.0.4_DirectDriver_PowerVC.pdf and ICO2.5.0.4_DirectDriver_VMware.pdf includes 
+prerequisites, installation instructions, and building blocks of the toolkits for your reference so that you can use or customize the toolkits to suit your needs.

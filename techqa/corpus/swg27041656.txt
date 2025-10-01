@@ -1,0 +1,53 @@
+Title: IBM Authorized User (AU) license Activation Kits (AKs) for desktop-based Rational products obtained via Passport Advantage - United States
+
+Text:
+licensing; activation kits; au; ak; authorized users RELEASE NOTES
+
+ABSTRACT
+ As of May 16, 2014 IBM changed how it delivers Authorized User (AU) license Activation Kits (AKs) for desktop-based Rational products obtained via Passport Advantage. 
+
+CONTENT
+As of May 16, 2014 IBM changed how it delivers Authorized User (AU) license Activation Kits (AKs) for desktop-based Rational products obtained via Passport Advantage. 
+
+For such products the Activation Kits will continue to be available from the Rational License Key Center but will also be packaged with the product installable images (Bills of Materials). (Note: such products when fulfilled through the AAS system have always carried the Activation Kits as part of their BOMs) 
+
+ 
+
+This provides two advantages: 
+
+1. It ensures availability of product-specific Activation Kits subsequent to events such as 
+
+ * product evolutions, or other packaging changes that result in establishment of new Product Identifiers (PIDs) 
+ * transfers of product entitlements between multiple client site IDs
+
+
+... and others, that previously could result in your experiencing temporary loss of access to Activation Kits, forcing you to seek a resolution through IBM Client Support 
+
+2. It simplifies product fulfillment and deployment for clients who only own desktop-based Authorized User offerings. Once the changes are complete, if you only own those kinds of products:  * you will no longer need to log into the Rational License Key Center; the only places you will need to log into are Passport Advantage to obtain full installable images, and FixCentral to obtain product fixes or releases that apply as Updates to existing installations 
+ * you will not have to determine which kits you need to download from the Key Center, when you own product bundles that are composed of multiple desktop-based AU products 
+
+
+This change was implemented gradually and retroactively. That is:  * as new Versions or Releases of these kinds of products were introduced, the Activation Kits were included as part of their Bills of Materials (installable images) 
+ * the Bills of Materials of older V.R levels (8.0, 8.1, 8.5, 9.0, etc.) that had not yet reached End of Service, were retrofitted, over time, with additional eAssemblies (zip files) that contained the corresponding Activation Kits. (Or in the case of physical media, the Activation Kit came on its own CD or DVD.) The older versions were updated over a period of time, starting with the most recent versions first and working backward to older versions, with the objective (but not guarantee) of completing all retrofits by the end of 2014.
+
+
+Note that the Rational License Key Center remains the sole source of access to license keys for these products and licensing types: 
+
+ * Server-based products (for example IBM Rational Team Concert or IBM Rational Quality Manager). For these products all license types, including Authorized User, are available only from the Rational License Key Center 
+ * Floating (all products) 
+ * Fixed Term (all products) 
+ * Token (all products) 
+ * Per Application Instance (e.g. IBM SmartCloud Continuous Delivery) 
+ * Flex-based Authorized User (e.g. IBM Rational ClearQuest)
+
+
+RELATED INFORMATION
+ A Japanese translation is available [http://www.ibm.com/support/docview.wss?uid=swg27043654]
+A simplified Chinese translation is available [http://www.ibm.com/support/docview.wss?uid=swg27043655]
+
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Software Development Rational Developer for AIX and Linux Licensing AIX, Linux, Windows 9.0, 9.1 Software Development Rational Application Developer for WebSphere Software Licensing AIX, HP-UX, Linux, OS X, Solaris, Windows 8.0, 8.5, 9.0, 9.1 Software Development Rational Developer for System z Licensing AIX, Linux, Windows, z/OS 8.0.1, 8.5, 9.0, 9.1 Software Development Rational Business Developer Licensing Linux, Windows 8.0.1, 8.5, 9.0, 9.1 Software Development Rational Professional Bundle Licensing Linux, Windows 7.0.1 Software Development Rational Developer for i for SOA Construction Licensing IBM i, Windows 8.5 Software Development Rational Developer for Power Systems Software Not Applicable Windows, AIX, Linux, IBM i 8.0, 8.5 Software Development Rational Functional Tester Licensing Linux, Windows 8.2, 8.3, 8.5, 8.6 Software Development Rational Performance Tester Licensing AIX, HP-UX, IRIX, Linux, Solaris, Windows 8.2, 8.3, 8.5, 8.6 Software Development Rational Software Architect Licensing Linux, OS X, Windows 8.0, 8.5, 9.0, 9.1 Software Development Rational Software Architect for WebSphere Software Licensing AIX, Linux, OS X, Windows 8.0, 8.5, 9.0, 9.1 Software Development Rational Developer for zEnterprise All Editions Software Development Rational Service Tester for SOA Quality Licensing Linux, Windows 8.2, 8.3, 8.5, 8.6 Software Development Rational Developer for System z for System z Programming Patterns for System z All Editions Software Development Rational Software Architect Extension for Communications Applications All Editions Software Development Rational Software Architect Extension for C++ All Editions Software Development Rational Software Architect Extension for Integrated Architecture Frameworks All Editions Software Development Rational Software Architect Extension for SOA and WebSphere All Editions Software Development Rational Software Architect Extension for Deployment Automation Planning All Editions Software Development Rational Software Architect Extension for Deployment Planning All Editions Software Development Rational Software Architect Simulation toolkit All Editions

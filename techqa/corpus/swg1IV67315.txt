@@ -1,0 +1,225 @@
+Title: IBM IV67315: ADDITIONAL MEMORY METRICS TO MONITOR SWAP SPACE ON SOLARIS - United States
+
+Text:
+  A FIX IS AVAILABLE
+IBM Tivoli Monitoring 6.3.0 Fix Pack 5 (6.3.0-TIV-ITM-FP0005) [http://www-01.ibm.com/support/docview.wss?uid=swg24039236]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  RFE13303 - Virtual Swap space calculation change for Solaris
+   
+   Attributes reporting the percentage of physical swap free space,
+   if system is paging, the scanned pages, and the ratio of
+   physical memory on swap are missing.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  The Monitoring Agent for Unix OS is missing some key virtual
+   memory metrics.
+   
+   The Monitoring Agent for UNIX OS is unable to monitor the
+   utilization of the swap spaces defined on disk. It is also
+   missing some Solaris specific metrics to report the number of
+   pages scanned by the page scanner and whether or not the system
+   is paging.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Ten new attributes added to the Unix Memory attribute group:
+   
+   1. Total Disk Swap Space (MB)
+      The total number of megabytes of swap spaces defined on disk.
+      Note: the value -1 indicates Not Available, -2 indicates
+        Not Collected, 2147483647 indicates Value_Exceeds_Maximum
+        and -2147483648 indicates Value_Exceeds_Minimum.
+   
+   2. Used Disk Swap Space (MB)
+      The number of megabytes currently used in the swap spaces
+      defined on disk.
+      Note: the value -1 indicates Not Available, -2 indicates
+        Not Collected, 2147483647 indicates Value_Exceeds_Maximum
+        and -2147483648 indicates Value_Exceeds_Minimum.
+   
+   3. Available Disk Swap Space (MB)
+      The number of megabytes currently available in the swap
+      spaces defined on disk.
+      Note: the value -1 indicates Not Available, -2 indicates
+        Not Collected, 2147483647 indicates Value_Exceeds_Maximum
+        and -2147483648 indicates Value_Exceeds_Minimum.
+   
+   4. Percent Disk Swap Space Used
+      Percent of swap space used on disk.
+      Note: the value -1 indicates Not Available and -2 indicates
+        Not Collected.
+   
+   5. Percent Disk Swap Space Available
+      Percent of swap space available on disk.
+      Note: the value -1 indicates Not Available and -2 indicates
+        Not Collected.
+   
+   6. Real Memory on Disk Swap Ratio
+      Ratio between total real memory and total swap space on disk.
+      [Calculated by the agent using the formula:
+      (Total_Real_Mem_MB / Total_Disk_Swap_Space_MB )].
+      Note: the value -1 indicates Not Available and -2 indicates
+        Not Collected.
+   
+   7. Unlocked Pageable Memory (Solaris)
+      The amount of unlocked pageable memory available for memory
+      allocation expressed in megabytes.
+      This information is only available on Solaris machines.
+      [Corresponding to 'availrmem' in kstat -c pages output].
+      Note: the value -1 indicates Not Available, -2 indicates
+        Not Collected, 2147483647 indicates Value_Exceeds_Maximum
+        and -2147483648 indicates Value_Exceeds_Minimum.
+   
+   8. Scanned Pages (Solaris)
+      Number of pages scanned by the page scanner at last wake-up.
+      This information is only available on Solaris machines.
+      [Corresponding to 'nscan' in kstat -c pages output].
+      Note: the value -1 indicates Not Available, -2 indicates
+        Not Collected, 2147483647 indicates Value_Exceeds_Maximum
+        and -2147483648 indicates Value_Exceeds_Minimum.
+   
+   9. System Paging (Solaris)
+      The system starts paging when the free memory falls below the
+      scanner threshold.
+      This information is only available on Solaris machines.
+      [Based on 'freemem' and 'lotsfree' in kstat -c pages output.
+      Set to Paging when freemem is less than lotsfree]
+      Note: the value 2 indicates Paging, 1 indicates Not Paging,
+        0 indicates Unknown, -1 indicates Not Available, -2
+        indicates Not Collected, 2147483647 indicates
+        Value_Exceeds_Maximum, and -2147483648 indicates
+        Value_Exceeds_Minimum.
+   
+   10.Page Size
+      Rated number of bytes per virtual memory page.
+      Note: the value -1 indicates Not Available, -2 indicates
+        Not Collected, 2147483647 indicates Value_Exceeds_Maximum
+        and -2147483648 indicates Value_Exceeds_Minimum.
+   
+   
+   The fix for this APAR will be contained in the following
+   maintenance packages:
+   
+   | FixPack    | 6.3.0-TIV-ITM-FP0005
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV67315
+   
+   
+ * REPORTED COMPONENT NAME
+   ITM AGENT UNIX
+   
+   
+ * REPORTED COMPONENT ID
+   5724C040U
+   
+   
+ * REPORTED RELEASE
+   630
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-11-28
+   
+   
+ * CLOSED DATE
+   2015-02-19
+   
+   
+ * LAST MODIFIED DATE
+   2015-06-29
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ITM AGENT UNIX
+   
+   
+ * FIXED COMPONENT ID
+   5724C040U
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R630 PSY
+   UP
+   
+   
+ * R610 PSN
+   UP
+   
+   
+ * R620 PSN
+   UP
+   
+   
+ * R621 PSN
+   UP
+   
+   
+ * R622 PSN
+   UP
+   
+   
+ * R623 PSN
+   UP

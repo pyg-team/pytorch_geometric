@@ -1,0 +1,19 @@
+Title: IBM Accepting an invitation to collaborate in Process Portal fails with a "This task was claimed by another user" error in IBM Business Process Manager (BPM) - United States
+
+Text:
+portal; collaborate; tw_admins TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ In IBM Business Process Manager (BPM), you receive an invitation to collaborate on a task from a user who is part of the group tw_admins. When you accept the invitation, you see a "This task was claimed by another user. Ensure you are logged in as the correct user" error. You are then returned to the Work page in Process Portal. 
+
+CAUSE
+Collaboration is not supported for tasks that are implemented as client-side human services or heritage coaches. However, users in the tw_admins group can see the option to collaborate on such tasks, even though it is not supported.
+
+RESOLVING THE PROBLEM
+The use of collaboration for tasks that are implemented as client-side human services or heritage coaches should be avoided. 
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Business Process Manager Standard Process Portal AIX, Linux, Linux zSeries, Solaris, Windows 8.5.6, 8.5.5 Business Integration IBM Business Process Manager Express Process Portal Linux, Windows 8.5.6, 8.5.5 
+PRODUCT ALIAS/SYNONYM
+ BPM

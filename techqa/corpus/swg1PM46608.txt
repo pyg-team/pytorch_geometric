@@ -1,0 +1,236 @@
+Title: IBM PM46608: NULLPOINTEREXCEPTION DURING PROFILE REGISTRATION OR/AND DEREGIST RATION. - United States
+
+Text:
+  FIXES ARE AVAILABLE
+8.0.0.2: WebSphere Application Server V8.0 Fix Pack 2 [http://www-01.ibm.com/support/docview.wss?uid=swg24031368]
+8.0.0.3: WebSphere Application Server V8.0 Fix Pack 3 [http://www-01.ibm.com/support/docview.wss?uid=swg24032315]
+8.0.0.4: WebSphere Application Server V8.0 Fix Pack 4 [http://www-01.ibm.com/support/docview.wss?uid=swg24033190]
+8.0.0.5: WebSphere Application Server V8.0 Fix Pack 5 [http://www-01.ibm.com/support/docview.wss?uid=swg24033754]
+8.0.0.6: WebSphere Application Server V8.0 Fix Pack 6 [http://www-01.ibm.com/support/docview.wss?uid=swg24034673]
+8.0.0.7: WebSphere Application Server V8.0 Fix Pack 7 [http://www-01.ibm.com/support/docview.wss?uid=swg24035457]
+8.0.0.8: WebSphere Application Server V8.0 Fix Pack 8 [http://www-01.ibm.com/support/docview.wss?uid=swg24036729]
+8.0.0.9: WebSphere Application Server V8.0 Fix Pack 9 [http://www-01.ibm.com/support/docview.wss?uid=swg24037574]
+8.0.0.10: WebSphere Application Server V8.0 Fix Pack 10 [http://www-01.ibm.com/support/docview.wss?uid=swg24039242]
+8.0.0.11: WebSphere Application Server V8.0 Fix Pack 11 [http://www-01.ibm.com/support/docview.wss?uid=swg24040425]
+8.0.0.12: WebSphere Application Server V8.0 Fix Pack 12 [http://www-01.ibm.com/support/docview.wss?uid=swg24041590]
+8.0.0.13: WebSphere Application Server V8.0 Fix Pack 13 [http://www-01.ibm.com/support/docview.wss?uid=swg24042746]
+8.0.0.14: WebSphere Application Server V8.0 Fix Pack 14 [http://www-01.ibm.com/support/docview.wss?uid=swg24044096]
+8.0.0.15: WebSphere Application Server V8.0 Fix Pack 15 [http://www-01.ibm.com/support/docview.wss?uid=swg24044734]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When there are any other files or directories under
+   <profileroot>/config/cells directories beside the cellName
+   registerNode or/and deregisterNode will fail with
+   NullPointerException.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  IBM WebSpehere Application Server version 8 *
+   *                  customers who use Administrative Agent      *
+   *                  profiles and create additional files or     *
+   *                  directories under the config/cells          *
+   *                  directory.                                  *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Registering or deregistering base       *
+   *                      profile to/from Administrative Agent    *
+   *                      environment fails with                  *
+   *                      NullPointerException.                   *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   Registering or deregistering base profile to/from
+   Administrative Agent environment fails with
+   NullPointerException as below:
+   [9/26/11 12:05:17:031 CDT] 00000000 ProfileRegist 3 Profile
+   cell name is <xxxxx>
+   [9/26/11 12:05:17:031 CDT] 00000000 AdminTool E ADMU0111E:
+   Program exiting with error:
+   com.ibm.websphere.management.exception.AdminException:
+   java.lang.NullPointerException
+   at
+   com.ibm.ws.management.util.Utils.makeAdminException(Utils.java:3
+   62)
+   at
+   com.ibm.ws.management.tools.ProfileRegistrationUtility.runTool(P
+   rofileRegistrationUtility.java:738)
+   at
+   com.ibm.ws.management.tools.AdminTool.executeUtility(AdminTool.j
+   ava:269)
+   at
+   com.ibm.ws.management.tools.ProfileRegistrationUtility.main(Prof
+   ileRegistrationUtility.java:150)
+   at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+   at
+   sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessor
+   Impl.java:60)
+   at
+   sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethod
+   AccessorImpl.java:37)
+   at java.lang.reflect.Method.invoke(Method.java:611)
+   at
+   com.ibm.wsspi.bootstrap.WSLauncher.launchMain(WSLauncher.java:23
+   2)
+   at com.ibm.wsspi.bootstrap.WSLauncher.main(WSLauncher.java:94)
+   at com.ibm.wsspi.bootstrap.WSLauncher.run(WSLauncher.java:75)
+   at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+   at
+   sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessor
+   Impl.java:60)
+   at
+   sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethod
+   AccessorImpl.java:37)
+   at java.lang.reflect.Method.invoke(Method.java:611)
+   at
+   org.eclipse.equinox.internal.app.EclipseAppContainer.callMethodW
+   ithException(EclipseAppContainer.java:587)
+   at
+   org.eclipse.equinox.internal.app.EclipseAppHandle.run(EclipseApp
+   Handle.java:198)
+   at
+   org.eclipse.core.runtime.internal.adaptor.EclipseAppLauncher.run
+   Application(EclipseAppLauncher.java:110)
+   at
+   org.eclipse.core.runtime.internal.adaptor.EclipseAppLauncher.sta
+   rt(EclipseAppLauncher.java:79)
+   at
+   org.eclipse.core.runtime.adaptor.EclipseStarter.run(EclipseStart
+   er.java:369)
+   at
+   org.eclipse.core.runtime.adaptor.EclipseStarter.run(EclipseStart
+   er.java:179)
+   at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+   at
+   sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessor
+   Impl.java:60)
+   at
+   sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethod
+   AccessorImpl.java:37)
+   at java.lang.reflect.Method.invoke(Method.java:611)
+   at
+   org.eclipse.core.launcher.Main.invokeFramework(Main.java:340)
+   at org.eclipse.core.launcher.Main.basicRun(Main.java:282)
+   at org.eclipse.core.launcher.Main.run(Main.java:981)
+   at
+   com.ibm.wsspi.bootstrap.WSPreLauncher.launchEclipse(WSPreLaunche
+   r.java:371)
+   at
+   com.ibm.wsspi.bootstrap.WSPreLauncher.main(WSPreLauncher.java:14
+   1)
+   Caused by: java.lang.NullPointerException
+   at
+   com.ibm.ws.management.tools.ProfileRegistrationUtility.getProfil
+   eCellAndNodeName(ProfileRegistrationUtility.java:1110)
+   at
+   com.ibm.ws.management.tools.ProfileRegistrationUtility.runTool(P
+   rofileRegistrationUtility.java:621)
+   ... 28 more
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The code was updated to correctly handle extraneous files or
+   directories under config/cells.
+   The fix for this APAR is currently targeted for inclusion in
+   fixpack 8.0.0.2. Please refer to the recommended updates page
+   for delivery information:
+   http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM46608
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSPHERE APP S
+   
+   
+ * REPORTED COMPONENT ID
+   5724J0800
+   
+   
+ * REPORTED RELEASE
+   800
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-08-29
+   
+   
+ * CLOSED DATE
+   2011-10-18
+   
+   
+ * LAST MODIFIED DATE
+   2011-10-18
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBSPHERE APP S
+   
+   
+ * FIXED COMPONENT ID
+   5724J0800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R800 PSY
+   UP

@@ -1,0 +1,174 @@
+Title: IBM PM09199: CHANGING THE DEFAULT SECURITY SETUP FOR WEBDAV FILE STORE - United States
+
+Text:
+  FIXES ARE AVAILABLE
+6.1.0.4 Download: WebSphere Portal and WCM V6.1.0 fix pack 4 & 6.1.5 fix pack 1 [http://www-01.ibm.com/support/docview.wss?uid=swg24026394]
+6.1.0.5 Download: WebSphere Portal and WCM V6.1.0 fix pack 5 [http://www-01.ibm.com/support/docview.wss?uid=swg24027475]
+6.1.0.6 Download: WebSphere Portal and WCM V6.1.0 fix pack 6 [http://www-01.ibm.com/support/docview.wss?uid=swg24030970]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Currently, by default, all authenticated users can perform write
+   operations on specific folders of the WebDAV file store (public
+   and user owned folders), as described here:
+                   http://publib.boulder.ibm [http://publib.boulder.ibm]
+   .com/infocenter/wpdoc/v6r1/topic/com.ibm.wp.ent
+   .doc_v615/admin/mash_webdav_store.html
+   This fix will change that default so that only admin users can
+   perform write operations to those folders.
+   In order to enable access for all authenticated users again,
+   please add the following custom property through WAS admin
+   console
+   resource environment provider 'WP ConfigService':
+     filestore.writeaccess.allowed= true
+   Please restart portal server after this change.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Currently, by default, all authenticated users can perform write
+   operations on specific folders of the WebDAV file store (public
+   and user owned folders), as described here:
+   
+   
+   http://publib.boulder.ibm.com/infocenter/wpdoc/v6r1/topic/com.ib
+   m.wp.ent.doc_v615/admin/mash_webdav_store.html [http://publib.boulder.ibm.com/infocenter/wpdoc/v6r1/topic/com.ibm.wp.ent.doc_v615/admin/mash_webdav_store.html]
+   
+   This fix will change that default so that only admin users
+   can perform write operations to those folders.
+   In order to enable access for all authenticated users again,
+   please add the following custom property through WAS admin
+   console resource environment provider 'WP ConfigService':
+   
+         filestore.writeaccess.allowed=true
+   
+   Please restart portal server after this change.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Block write access for none admin users unless configured.
+   
+   Failing Module(s):
+      Web Services
+   
+   Affected Users:
+      All users
+   
+   Version Information:
+      Portal Version(s): 6.1.5
+       Pre-Requisite(s): ---
+        Co-Requisite(s): ---
+   
+   Manuel Steps:
+      None
+   
+   Platform Specific:
+      This fix applies to all platforms.
+   
+   PM09199 is part of Cumulative Fix 03 for Portal 6150.
+   
+   The Cumulative Fix is available from Fix Central:
+   
+   http://www.ibm.com/eserver/support/fixes/fixcentral/swgquickorde
+   r?apar=PM09984&productid=WebSphere%20Portal&brandid=5 [http://www.ibm.com/eserver/support/fixes/fixcentral/swgquickorder?apar=PM09984&productid=WebSphere%20Portal&brandid=5]
+   
+   You may need to type or paste the complete address into your Web
+   browser.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM09199
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSPHERE PORTA
+   
+   
+ * REPORTED COMPONENT ID
+   5724E7600
+   
+   
+ * REPORTED RELEASE
+   61C
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-03-08
+   
+   
+ * CLOSED DATE
+   2010-04-08
+   
+   
+ * LAST MODIFIED DATE
+   2010-04-08
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBSPHERE PORTA
+   
+   
+ * FIXED COMPONENT ID
+   5724E7600
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R615 PSY
+   UP

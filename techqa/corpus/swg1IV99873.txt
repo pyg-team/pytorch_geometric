@@ -1,0 +1,159 @@
+Title: IBM IV99873: NEED TO DOCUMENT MAXMINUTESTOFORCECHECKPOINT - United States
+
+Text:
+  DIRECT LINKS TO FIXES
+7.1.0-TIV-NCI-ZLINUX-FP0012 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=7.1.0-TIV-NCI-ZLINUX-FP0012&source=SAR]
+7.1.0-TIV-NCI-WINDOWS-FP0012 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=7.1.0-TIV-NCI-WINDOWS-FP0012&source=SAR]
+7.1.0-TIV-NCI-SOLARIS-FP0012 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=7.1.0-TIV-NCI-SOLARIS-FP0012&source=SAR]
+7.1.0-TIV-NCI-LINUX-FP0012 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=7.1.0-TIV-NCI-LINUX-FP0012&source=SAR]
+7.1.0-TIV-NCI-AIX-FP0012 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=7.1.0-TIV-NCI-AIX-FP0012&source=SAR]
+IBM Tivoli Netcool/Impact V7.1.0 Fix Pack 12 (7.1.0-TIV-NCI-FP0012) [http://www-01.ibm.com/support/docview.wss?uid=swg24044312]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The new property:
+   
+   impact.omnibuseventreader.maxminutestoforcecheckpoint
+   
+   Is not documented.  Neither is the existing property:
+   
+   impact.omnibuseventreader.maxhourstoforcecheckpoint
+   
+   Also, details of the scenarios when these values may need to be
+   used needs to be described in the docs.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Set the value as advised by support, e.g.:
+   impact.omnibuseventreader.maxminutestoforcecheckpoint=15
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * Impact Event Reader to Object Server users.                  *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * Problem occurs when there is a network communication errors, *
+   * dropped pockets, etc; The block of events sent to secondary  *
+   * Impact server may not be acknowledged and checkpointed in    *
+   * which case all future event blocks are held in memory and an *
+   * Out of Memory occurs. This new property will force the       *
+   * checkpoint in specified time.                                *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix for this DOC APAR is contained in the following
+   maintenance packages: |Fix Pack | 7.1.0-TIV-NCI-FP0012
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV99873
+   
+   
+ * REPORTED COMPONENT NAME
+   NETCOOL/IMPACT
+   
+   
+ * REPORTED COMPONENT ID
+   5724O59IS
+   
+   
+ * REPORTED RELEASE
+   710
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-09-14
+   
+   
+ * CLOSED DATE
+   2017-10-11
+   
+   
+ * LAST MODIFIED DATE
+   2017-10-11
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  Impact   Event    Reader
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   NETCOOL/IMPACT
+   
+   
+ * FIXED COMPONENT ID
+   5724O59IS
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R710 PSY
+   UP

@@ -1,0 +1,87 @@
+Title: IBM Collect troubleshooting data for migration problems in IBM Business Process Manager (BPM) - United States
+
+Text:
+migration; mustgather TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ You have encountered a problem in a migration scenario where a version of IBM Business Process Manager is involved as the migration target. You would like to know what documentation you must collect (MustGather) so that the IBM Business Process Manager Support team can diagnose your problem. If you gather this documentation before contacting support it will expedite the troubleshooting process, and save you time. 
+
+DIAGNOSING THE PROBLEM
+
+
+GENERAL DIAGNOSTIC INFORMATION FOR ALL VERSIONS
+
+Note: Before collecting the troubleshooting data, take a look at the knowledge collection [http://www.ibm.com/support/docview.wss?uid=swg27038196] for already known migration problems in the IBM Business Process Manager product. If that page does not help, provide the following MustGather data: 
+
+If you have not done it already, specify the business impact that the issue is having on your company, including:​  * Any known deadlines or due dates​ 
+ * Any existing or potential effects on your customers​
+
+
+
+Environment description:  * IBM Business Process Manager product and version of your source and target environment:  * For all versions of WebSphere Lombardi Edition, all versions of WebSphere Process Server, and the IBM Business Process Manager Version 7.5.x products, run the versionInfo -maintenancePackages command from the bin directory of your product installation and redirect the output to a file. 
+    * For IBM Business Process Manager Version 8.x products, run the versionInfo -fixpacks -ifixes command from the bin directory of your product installation and redirect the output to a file.
+   
+   
+ * Operating system and version 
+ * Database details:  * Database vendor and version 
+    * Database design file, if used 
+    * Diagram of the database layout (source and target environment) 
+    * BPM_install​​_​​root/​​profiles/dmgr_profile​​_​​name​​/​​dbscripts
+   
+   
+ * Information about other involved software 
+ * Production / Test / QA environment 
+ * Describe the topology that you have in place, which includes the source and target environment. If a topology diagram exists, make it available to IBM Support along with a list of host names, port numbers, and other settings in use. 
+ * Is your IBM Business Process Manager installation on a virtual machine? If yes, provide details on the virtualization software that you are using and its corresponding version.
+
+
+
+Detailed problem description:  * What kind of migration did you attempt? 
+ * Which migration instructions did you follow? Provide the document or the link to the online resource and name the point at which you ran into problems. 
+ * Was any specific error message displayed or did you observe any special behavior?
+   Provide screen shots where appropriate. For example, provide them if the specific error is only visible in a graphical user interface but it is not found in any of the log files. 
+ * Can you name the exact time stamp when the problem occurred for the first time? 
+ * If the migration problem occurred during the execution of a certain command, provide the history of the commands that you issued for the migration, the complete command that failed including all parameters, and collect the command output. 
+ * Had you tried the same migration before (maybe in another environment) and had it worked previously? If yes, what was changed afterwards? 
+ * Provide the following complete log directories from the target environment for any profile that was already created during the failed migration attempt:  * BPM_install_​​root/​​​logs​​ 
+    * BPM_install​​_​​root/​​profiles/dmgr_profile​​_​​name​​/​​logs​ 
+    * BPM_install​​_​​root/​​profiles/profile​​_​​name​​/​​logs​ 
+    * snapshot_directory/logs
+   
+   
+ * For any version-to-version migration, did you verify that the installation of the target environment was successful? 
+ * Have you checked the results of your migration attempt? In some cases, migrations succeed despite minor problems during the process. See the applicable pages in the product documentation for your target environment.
+
+
+ADDITIONAL DETAILS NEEDED FOR IBM BUSINESS PROCESS MANAGER V8.5.X
+ * For any of the IBM Business Process Manager migration commands, you can enable tracing. See the Troubleshooting migration [http://pic.dhe.ibm.com/infocenter/dmndhelp/v8r5m0/topic/com.ibm.wbpm.admin.doc/topics/rmig_trouble.html] pages in the product documentation and follow the instructions there if you encounter problems during the execution of any command. 
+ * Provide the migration.properties file that you used during your migration. 
+ * Provide the sample BPMConfig properties file that is used to create the deployment environment, if applicable. 
+ * Provide the database output properties file that is created when running the BPMExtractDBConfiguration command, if applicable. 
+ * Provide thesnapshot_directory/cell_name/Configurations/100SourceCustomMerged.xml file.
+   
+   Important: In Version 8.5.0, database and security properties were moved from the 99Local.xml and 100Custom.xml configuration files to the WebSphere Application Server configuration files. These properties are no longer configurable using the 99Local.xml and 100Custom.xml configuration files. If you modified properties in the configuration files in the source environment, the customized properties are automatically moved to the WebSphere Application Server configuration files during the migration process. You can view your customizations in the 100SourceCustomMerged.xml file, which is located in snapshot_directory/cell_name/Configurations. When you run BPMMigrate, these properties are commented out in the 100SourceCustomMerged.xml file and moved to the WebSphere Application Server configuration files. For the details, see Security configuration properties [http://pic.dhe.ibm.com/infocenter/dmndhelp/v8r5m0/topic/com.ibm.wbpm.admin.doc/topics/csec_config_properties.html].
+
+
+WHAT TO DO NEXT
+ 1. Review the log files and traces at the time of the problem and try to determine the source of the problem.
+    
+    
+ 2. Use IBM Support Assistant [http://www.ibm.com/software/support/isa/] to search for known problems in the product documentation, forums, and technotes.
+    
+    
+ 3. If your investigation does not yield any helpful results and you cannot solve the problem on your own, send all the previously collected data to IBM Support by following the instructions in Exchanging Information with IBM Technical Support. [http://www.ibm.com/software/support/exchangeinfo.html]
+    
+    
+
+RELATED INFORMATION
+#Migrate from WPS v7.0.0.4 to BPM v8.0 [https://www.ibm.com/developerworks/community/blogs/WebSphere_Process_Server/entry/migrate_wps7004_bpm_adv80]
+
+
+ 
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Business Process Manager Express Migration Linux, Windows 8.5, 8.0.1, 8.0, 7.5.1, 7.5 Business Integration IBM Business Process Manager Standard Migration AIX, Linux, Solaris, Windows 8.5, 8.0.1, 8.0, 7.5.1, 7.5 
+PRODUCT ALIAS/SYNONYM
+ BPM

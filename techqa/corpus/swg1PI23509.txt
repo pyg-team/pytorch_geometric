@@ -1,0 +1,191 @@
+Title: IBM PI23509: REQUIRED ZMMT.SH FIELDS UNDOCUMENTED IN THE MIGRATING, COEXISTING, AND INTEROPERATING MANUAL GA32-1080-00 - United States
+
+Text:
+z/os SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The InfoCenter articles backing the Migrating,
+   coexisting, and interoperating manual (GA32-1080-00) had two
+   issues.  First, it failed to mention or explain three zmmt.sh
+   required fields:
+   zmbUse64BitOption, zmbInitialHeapSize, and zmbMaxHeapSize
+   
+   Second, the explanation of what constitutes a valid value for
+   the profilePath argument to the zmmt.sh tool is
+   conflicting/confusing.  The descriptions and examples on Page
+   37 of the profilePath parameter show '.metadata' as part of the
+   path specification, but it is not clear why '.metadata' is
+   required.  It also defined -workspace as:
+    This required parameter is used to specify the Eclipse
+   workspace directory.  This must match the path specified in the
+   response file before the .metadata directory for the
+   profilePath and templatePath variables.
+   
+   Then on the same page there's the example:
+    The following examples describe typical command lines with
+   attributes for the zmmt command.  In these examples, /xxx can
+   be any directory to which the user invoking the zmmt.sh script
+   has read and write access.
+     o   zmmt.sh -workspace /xxx -responseFile
+   /xxx/ZAppSrvcmd.responseFile
+   
+   So, the customer tried using:
+   profilePath=/u/yyyyyyyy/wasv855/
+   templatePath=zos-migStandalone
+   
+   with the following invocation of zmmt.sh:
+   SH /usr/lpp/zWebSphere/V8R5/bin/zmmt.sh -transfer -allocate
+   -workspace /u/yyyyyyyy/wasv855/ -responseFile
+   /u/yyyyyyyy/wasv855/CELLT-responseFile.txt
+   
+   He found that the .metadata directory, it's sub-directories,
+   and directory content were created, but the CNTL and DATA DSNs
+   were never created or populated with members.
+   
+   Finally after reading more on Page 56 and reviewing the sample
+   response file on Page 62, he changed his profilePath value by
+   adding
+   '/.metadata/.plugins/com.ibm.ws390.mmt.config/profiles/ZMigSASrv
+   01'  and zmmt.sh ran successfully.
+   
+   So, it would benefit from a more complete description of what
+   the profilePath parameter is expected to look like/contain so
+   our customers don't have to draw their own conclusions from
+   three different places and a sample to understand what is
+   required.  As well, it would be useful to note that the script
+   will automatically create the sub-directories along the
+   profilePath that the customer defines if they do not already
+   exist.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  NA
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  All users of IBM WebSphere Application      *
+   *                  Server V8.5                                 *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Required fields for the zmmt.sh         *
+   *                      script are undocumented.                *
+   ****************************************************************
+   * RECOMMENDATION:  Update the infoCenter file                  *
+   ****************************************************************
+   Required fields for the zmmt.sh script command were
+   undocumented. In addition, no mention was made that when using
+   the profilePath parameter, the script
+   automatically creates sub-directories along the
+   profilePath that the customer defines if they do not already
+   exist.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Updates have beem made to the file tmig_zmmt_cmd_using file to
+   define the zmbUse64BitOption, zmbInitialHeapSize, and
+   zmbMaxHeapSize fields as following:
+   
+   -zmbUse64BitOption: This required parameter enables migration
+   using the 64-bit JVM for heap size larger than 2048 MB.
+   
+   -zmbInitialHeapSize: This required parameter specifies the
+   initial memory allocated for the JVM heap.
+   
+   -zmbMaxHeapSize: This required parameter specifies the maximum
+   memory that can be allocated for the JVM heap.
+   
+   In addition, a note has been added to the -profilePath
+   parameter that states the following:
+   
+   Note: The zmmt.sh shell script automatically creates
+   sub-directories along the profilePath that you define if they do
+   not already exist.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI23509
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSPHERE FOR Z
+   
+   
+ * REPORTED COMPONENT ID
+   5655I3500
+   
+   
+ * REPORTED RELEASE
+   850
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-08-08
+   
+   
+ * CLOSED DATE
+   2014-11-04
+   
+   
+ * LAST MODIFIED DATE
+   2014-11-04
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

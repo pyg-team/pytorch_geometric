@@ -1,0 +1,140 @@
+Title: IBM "[DC10401]       "BAD_RECORD" messages in proviso.log - United States
+
+Text:
+BAD_RECORD; proviso.log; RID; MID; resmgr TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ 
+Data is missing from reports and every time there is a data 
+point missing, there is a corresponding 'BAD_RECORD' line in the proviso.log 
+indicating that a request has not been specified for this particular resource 
+/ metric pair. 
+
+SYMPTOM
+ 
+
+A line like the following appears in the 'proviso.log':
+
+YYYY.MM.DD-HH.MM.SS.27.28 UTC CME.x.y-<process_id> W [DC10401] BAD_RECORD Metric record PvMetricRecord0403 (mid=<metric_id>, rid=<resource_id>, date=YYYY.MM.DD-hh.mm.ss , value=<metric_value>, pollId=ZZZZ) not specified by Requests. 
+
+
+
+CAUSE
+ 
+
+ 1. Multiple requests for this metric / resource pair exist.
+2. No requests exist for this metric / resource pair.
+3. A single and appropriate request exists, but has not been enabled.
+
+
+DIAGNOSING THE PROBLEM
+ 
+
+1. If you are looking at a Group Summary Table or a Resource Summary Table 
+
+ * 
+ * drill down to the Detail Chart
+ *  (Resource Time Series) report
+ * 
+
+
+2. Get the dbIndex of the resource (RID) that is missing data in your report 
+ * 
+ * 
+ * resmgr -export se -colNames "dbIndex name label" -filter "name(machine_name*)" -noHead 
+
+ * 
+ * 
+
+3. Get the name of the formula that is missing data within your report and  * the formula group that contains it
+ * 
+ * 
+ * 
+ * 
+ *  Notice within your report page which Resource Time Series chart on your report page (first, second, third, fourth, etc.) contains the missing metric data. Open your reporter using DVNavigator. Within your reporter find the Resource Time Series mediator that corresponds to the chart on your report page that is missing metric data (the first, second, third, fourth, etc.). Find the 'metrics' section within that mediator and confirm that the metric name that is shown appears to be the formula for which data is missing in your report. Double-click the metric name and notice the hierarchy that appears on the right. Identify the formula group in which your formula is found. If what you are looking at shows this:  * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+   
+   What this says is that 'formula_name' is found within formula group '~A~B~C~D.' 
+
+
+4. Get the dbIndex of the formula (MID) for which resource data is missing  * 
+
+ * 
+ * 
+ * resmgr -export fgp -colNames "frm.dbIndex nName" -filter "frm.name(*formula_name*)" -noHead  * 
+   
+   
+
+5. Your Detail Chart shows data in local time based on the time zone offset  * 
+ * Identify a single point in time
+ * 
+ * and convert that time to UTC time
+ * 
+
+ * 
+ * 
+ *  If the Time Zone Offset shown at the bottom of the page is -05:00, the data shown is EST. A 16:00 EST time on one day converts to 21:00 UTC that same day. If the Time Zone Offset shown at the bottom of the page is 00:00, the data shown is already in UTC. No conversion is necessary. 
+
+
+6. Identify the 'proviso.log' to look at for BAD_RECORD data. Keep in mind  * 
+
+
+7. Run the following command, substituting in the appropriate 'proviso.log,'  * 
+ * determine whether or not any BAD_RECORD 
+ * 
+ * containing the RID and MID
+ * 
+ * at the UTC time you identified
+ * 
+
+ * grep -w BAD_RECORD <proviso_log> | grep <RID> | grep <MID> | grep -v grep 
+
+ * 
+ * 
+
+8. If you have determined that a BAD_RECORD for your resource / metric  * 
+ * determine whether requests exist for the correct resource / metric pair
+ *  and how many such requests exist
+ * 
+
+ * # Get list of specific metric ids if metric is a generic one 
+   resmgr -export fgp -colNames "frm.dbIndex name" -filter "frm.genericId(<MID>)" -noHead >> /tmp/MID_list.out 
+   
+   # If metric is a specific one, existing MID is fine when checking requests 
+   if [ ! -s /tmp/MID_list ] ; then  * 
+   
+   fi 
+   
+   # Check to see whether requests exist for the given resource / metric pair(s) 
+   for i in `awk -F'|' '{print $1}' /tmp/MID_list.out` ; do resmgr -export segpreq -colNames "se.dbIndex se.name segp.npath frm.dbIndex fgp.nName period state status" | grep <RID> | grep $i ; done 
+
+ * 
+
+
+RESOLVING THE PROBLEM
+ 
+
+ * If multiple request lines appeared when you ran the commands listed in step #8, the following is true:
+
+ * Most likely problem: multiple requests for your metric / resource pair exist. 
+
+ * Solution: Re-examine your grouping rules and requests and change how you have organized things. The goal for you is to make it so that your resource falls into only one collection group that has this metric deployed against it as a request. 
+   
+ * If no request lines appeared when you ran the commands listed in step #8, the following is true: 
+
+ * Most likely problem: No requests exist for your metric / resource pair. 
+ * Solution: Re-examine your grouping rules and requests and change how you have organized things. The goal for you is to make it so that your resource falls into a single collection group that has this metric deployed against it as a request. 
+
+ * If a single request line appeared when you ran the commands listed in step #8, the following is true:
+
+ * Most likely problem: A single and appropriate request exists, but has not been enabled. 
+ * Solution: Ensure your request has been enabled (the 'state' value shown in the next-to-last '|_|'-separated section needs to have a value of 'on').

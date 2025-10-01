@@ -1,0 +1,29 @@
+Title: IBM How to enable database trace with Cognos Impromptu - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Want to trace the SQL being sent to the database by Cognos Impromptu. 
+
+RESOLVING THE PROBLEM
+Trace can be enabled in the <install_path>/bin/cogdm*.ini files. Open these files and refer to the header information to information on what type of database they are used for. 
+
+The trace should only be enabled for troubleshooting a single query issue and not appropriate for use in a scenario with multiple reports or queries are being executed or for an extended period of time.
+
+Example of setting up a trace for a native Oracle connection.
+
+Steps:
+1. In the <install_path>/bin directory, create a backup of the cogdmor.ini file.
+2. In the <install_path>/bin directory, open the cogdmor.ini file in a text editor
+3. Add the following lines to the bottom of the file:
+
+[Trace]
+Output=c:\temp\oracle_trace.txt
+Flags=1111111111
+
+For performance issues you can also add the timer=yes option. 
+
+4. Save the file.
+5. Perform the test and review the file.
+6. Disable the trace by removing the entries or commenting the lines with a semi-colon, and saving the file.

@@ -1,0 +1,127 @@
+Title: IBM Troubleshooting intermittent network errors on DataPower - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Collecting the necessary diagnostic data for network errors can be difficult to do if you do not know when these errors will occur. However, making use of logging targets, logging triggers, and the continuous packet capture feature, you can effectively collect the needed data. 
+
+RESOLVING THE PROBLEM
+ 
+
+NOTE:
+Both logs and pcap will rotate at 15000kb for 3 rotations. Please check the filesystem to ensure that there is plenty of temporary free space (at least 140MB) for the increased logging/packet capture, for example: 
+
+CLI: show filesystem 
+
+Please note that there may be a slight nominal overhead from running debug loglevel/packet capture. 
+
+
+Steps for collecting the necessary data:
+
+1) Determine Event ID
+
+In order to setup a log trigger, we will need to determine what the event ID is for the error you are looking to troubleshoot. In version 6 or later this event ID is included by default in the logs. 
+
+Example log:
+20150119T211549Z [0x80e006ba][network][error] : tid(150016): An error occurred on socket (248). Error details (104: Connection reset by peer). Local(X.X.X.X:PORT) - Remote(Y.Y.Y.Y:PORT)
+
+In this case, the event ID is 0x80e006ba. 
+
+If you are troubleshooting an issue on DataPower prior to version 6, the event ID will not be included in the error logs by default. To determine the event ID you will need to set up a log target. In this log, you will need to set the format to "XML". When reading logs in the XML format, you will be able to identify the event ID.
+
+Example XML format log:
+<log-entry serial='5'>
+<date>Fri Jan 23 2015</date>
+<time utc='1422022831556'>09:20:31</time>
+<date-time>2015-01-23T09:20:31</date-time>
+<type>network</type>
+<class>xmlfirewall</class>
+<object>web-mgmt</object>
+<level num='7'>debug</level>
+<transaction-type>response</transaction-type>
+<transaction>13667</transaction>
+<client>X.X.X.X</client>
+<code>0x80e0039e</code>
+<file></file>
+<message>url-open: response code 200</message>
+</log-entry>
+
+In this case the event ID is 0x80e0039e. 
+
+Once you have the event ID you can proceed to setting up the log target. 
+
+
+2) Configure log target
+
+You can configure the log target from either the CLI or the WebGUI. Please note that the filename for the packet capture used in the trigger must match the filename used when the packet capture is started in step 3. This log target needs to be in the default domain in order to disable the packet capture. 
+
+a) CLI: 
+
+co 
+logging target "pmr-log" 
+type file 
+format text 
+size 15000 
+local-file "logtemp:///pmr-log" 
+trigger "*Your event id here*" "" on on "no packet-capture-advanced all temporary:///capture.pcap; logging target pmr-log; admin-state disabled; exit; save error-report"
+event all debug 
+exit 
+loglevel debug 
+exit 
+
+
+
+b) WEBGUI: 
+
+Default Domain -> Log Target -> Add 
+Name: pmr-log 
+Target Type: File 
+Log Format: Text 
+Log Size: 15000 
+File Name: logtemp:///pmr-log 
+Rotations: 3 
+Event Subscription Tab -> Add -> Event Category: all / Min Event Priority: debug -> Apply -> Apply 
+Event Trigger Tab -> Add -> Message ID: *your event ID*, Only Once: on, Only this trigger: on, CLI command: no packet-capture-advanced all temporary:///capture.pcap; logging target pmr-log; admin-state disabled; exit; save error-report -> Apply -> Apply 
+Main Control Panel -> Troubleshooting -> Change loglevel to debug 
+
+3) Start packet capture
+
+You can start the packet capture from either the CLI or the WebGUI. The name given here must match the name used in the event trigger from the previous step. 
+
+NOTE: Packet captures can only be taken from the default domain. 
+
+a) CLI:
+packet-capture-advanced all temporary:///capture.pcap -1 15000 9000 
+
+b) WebGUI: 
+Troubleshooting -> Packet Capture Section
+Interface Type: All Interfaces
+Mode: Continuous 
+Maximum size: 15000
+Maximum Packet Size: 9000
+Start Packet Capture 
+
+4) Monitor for intermittent error to occur
+
+Once the log target is setup and the continuous packet capture is started you simply wait for the intermittent error to occur. Once the error occurs, the trigger will fire. This trigger is set up to do the following:
+
+
+ 1.  Stop the packet capture: This prevents the continuous PCAP from continuing to capture which would overwrite the vital data. 
+ 2.  Disables the log target: This ensures that the debug logs we need will not be overwritten by new logs. 
+ 3.  Generates an error report: This error report will provide a snapshot of the appliance state at the time of the error. 
+
+
+5) Download data from the appliance 
+
+You can then download the packet capture files and the error report from the temporary directory. The log files will be in the logtemp directory. 
+
+There will be anywhere from 1 to 3 pcap files and 1 to 3 log files. Please make sure to download all the files. 
+
+You can either download the files from the "File Management" in the WebGUI or by using the COPY command from the CLI. 
+
+
+
+Deliverables for the support team to assist with troubleshooting/diagnosis:  * All the packet capture files 
+ * All the custom debug log files 
+ * The generated error report

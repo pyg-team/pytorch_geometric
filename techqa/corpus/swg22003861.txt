@@ -1,0 +1,119 @@
+Title: IBM FAQ JDBC ERRORCODE=-4499 connectivity - United States
+
+Text:
+-4499; connection; refused; reset; broken; pipe; jdbc; timed; connect; connection; drda TECHNOTE (FAQ)
+
+QUESTION
+ Interpret the generic -4499 connectivity error from Java driver. 
+
+CAUSE
+
+This technote provides symptoms of -4499 caused by external network issues outside of the JDBC driver and similar to technote SQL30081 (non-Java clients) [www.ibm.com/support/docview.wss?uid=swg21164785]
+
+This technote does not cover SSL errors. Check DB2 server's db2diag.log to confirm if there is SSL/GSKit error when -4499 was returned to JDBC driver.
+
+Generally the JDBC driver will return -4499 along with some text.
+
+A communication error occurred
+during operations on the connection's underlying socket, socket input
+stream, or socket output stream. Error location: Reply.fill() - insufficient
+data (-1). Message: xxxxxxxxxxx ERRORCODE=-4499, SQLSTATE=08001'
+
+
+
+ANSWER
+ 
+
+(A) Networking
+
+This includes the client software network stack (i.e. TCP/IP values), network devices (firewall, routers, etc...) and server software network stack. Under the covers, Java calls the operating system's socket Application Programming Interfaces and wraps any errors with the ERRORCODE=-4499.
+
+Check firewall or network device logs. Failing network devices may intermittently drop packets.
+Check operating system logs.
+
+Linux: /var/log/messages
+Windows: Windows Event Viewer logs
+UNIX: Consult operating system documentation to determine where the logs are.
+
+(A.1) Message: Connection timed out
+
+TCP/IP timeout. Root cause is outside of DB2's control. Engage network administrator to collect network traces from both client and server then to find root cause.
+
+Ensure JDBC driver property blockingReadConnectionTImeout has not been set.
+
+JDBC Driver Properties [https://www.ibm.com/support/knowledgecenter/SSEPGG_10.5.0/com.ibm.db2.luw.apdv.java.doc/src/tpc/imjcc_r0052038.html]
+
+(A.2) Message: Connection refused
+
+Run "netstat -an" command to verify there is program listening on DB2 Server.
+
+Ensure DB2 server's listener has been started.
+
+db2set db2comm=tcpip
+db2 "update dbm cfg using svcename 60000"
+db2stop
+db2start
+
+(A.3) Message: Broken pipe
+
+Network connectivity problem between JDBC driver and DB2 server. May occur when firewall closes a connection because an idle threshold has been exceeded.
+
+Root cause outside of DB2's control. Engage network administrator to collect network traces from both client and server then to find root cause.
+
+(A.4) Message: Connect reset
+
+Connection was closed by the other end. This can be any network device between JDBC driver and server. May include server itself.
+
+Root cause outside of DB2's control. Engage network administrator to collect network traces from both client and server then to find root cause.
+
+(A.5) Message: Read timed out
+
+This message is returned when client is waiting for reply from the server and the server did not reply in time. Could be caused by client timeout. Ensure no timeouts set in JDBC driver properties [https://www.ibm.com/support/knowledgecenter/en/SSEPGG_11.1.0/com.ibm.db2.luw.apdv.java.doc/src/tpc/imjcc_r0052038.html]
+
+blockingReadConnectionTimeout=0 (default) 
+commandTimeout=0 (default)
+loginTimeout = 0 (default) 
+
+Could also be caused by server or network issues.
+
+
+(B) Port conflict
+
+Use netstat command to determine if there is another program listening on the port used by DB2.
+
+Try changing DB2 port to a different port number
+
+db2 "update dbm cfg using svcename 60000"
+db2stop
+db2start
+
+(C) Microsoft Windows Message: No buffer space available (maximum connections reached?)
+
+"Exception java.net.SocketException: Error opening socket to server /xxx.xx.xx.xx on port 50,000 with message: No buffer space available (maximum connections reached?): connect"
+
+See technote DB2 JCC Exception -4499 : No buffer space available (maximum connections reached?) [http://www.ibm.com/support/docview.wss?uid=swg21690707]
+
+(D) DRDA syntax error
+
+"Execution failed due to a distribution protocol error that caused deallocation of the conversation. A DRDA Data Stream Syntax Error was detected"
+
+See technote FAQ: JDBC Driver Data Stream Syntax Error [http://www.ibm.com/support/docview.wss?uid=swg21691531]
+
+
+Useful Tools and Reference
+
+Windows:
+netstat -anb (requires Administrator privileges to display program associated with port)
+www.wireshark.org [www.wireshark.org] (display network trace from multiple operationg systems)
+
+Linux:
+netstat -anp (requires root to display PID associated with port)
+tcpdump (network trace)
+
+UNIX: Check operating system documentation
+
+Connectivity Problem Determination [ftp://public.dhe.ibm.com/ps/products/db2/info/vr8/tutorials/DB2PDTConn.pdf] This doc is old but provides valid troubleshooting guidelines. The pctt utility is still included with DB2 v10.5.
+
+
+RELATED INFORMATION
+ Numerous DIA3208E messages in db2diag.log [http://www.ibm.com/support/docview.wss?uid=swg21211306]

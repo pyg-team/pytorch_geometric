@@ -1,0 +1,19 @@
+Title: IBM What does the err message "lsb_launch(): Server is not connected" mean? - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The job which is started via blaunch fails with a error message "lsb_launch(): Server is not connected". What does this error message mean? 
+
+RESOLVING THE PROBLEM
+For the job which runs via blaunch, blaunch process will connect to RES service on the execution host when start up the real job. If blaunch fails to connect with RES, it will failed with this err message "lsb_launch(): Server is not connected". 
+
+To troubleshoot the issue, please check whether the RES service on the execution host is working properly. You can run "lsadmin resrestart" on the execution host to restart the RES service if need. 
+
+If RES service is running well in your environment but you still have issue, contact IBM technical Support for further investigation.
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition IBM Spectrum Computing IBM Spectrum LSF

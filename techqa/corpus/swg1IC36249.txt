@@ -1,0 +1,149 @@
+Title: IBM IC36249: DOCUMENTATION IS IN ERROR REGARDING RECLAMATION - RECLAMATION THRESHOLD. - United States
+
+Text:
+AIX SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  There apears to be a documentation error in AIX and Windows
+   5.1 Admin Guides (others unknown at this time) regarding
+   reclamation. Under 'Choosing a Reclamation Threshold' sub
+   category of: 'Lowering the Migration Threshold' should read
+   'Lowering the Reclamation Threshold' and all references to
+   'migration' in the first following paragraph should be
+   'reclamation'.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: Readers of IBM Tivoli Storage Manager        *
+   *                 Administrator's Guides for Version 5         *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: In the chapter "Managing Storage Pools  *
+   *                      and Volumes," the title of the          *
+   *                      section "Lowering the Migration         *
+   *                      Threshold" should be "Lowering the      *
+   *                      Reclamation Threshold."                 *
+   *                                                              *
+   *                      The first paragraph also has mistakenly *
+   *                      used "migration threshold" instead of   *
+   *                      "reclamation threshold."  These errors  *
+   *                      cause confusion for readers.            *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   In the chapter "Managing Storage Pools and Volumes," the title
+   of the section "Lowering the Migration Threshold" should be
+   "Lowering the Reclamation Threshold."
+   
+   The first paragraph also has mistakenly used "migration
+   threshold" instead of "reclamation threshold."  These errors
+   cause confusion for readers.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  In a future edition of the Administrator's Guides, in
+   the chapter "Managing Storage Pools and Volumes," the title
+   of the section labeled "Lowering the Migration Threshold" will
+   be changed to "Lowering the Reclamation Threshold." The first
+   paragraph in the section will also be corrected.  The modified
+   text is as follows:
+   
+   
+   Lowering the Reclamation Threshold
+   ----------------------------------
+   If you have been running with a high reclamation threshold
+   and decide you now need to reclaim volumes, you may want to
+   lower the threshold in several steps. Lowering the threshold
+   in steps ensures that volumes with the most reclaimable space
+   are reclaimed first. For example, if you had set the
+   reclamation threshold to 100%, first lower the threshold to
+   98%. Volumes that have reclaimable space of 98% or greater are
+   reclaimed by the server. Lower the threshold again to reclaim
+   more volumes.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC36249
+   
+   
+ * REPORTED COMPONENT NAME
+   TSM SERVER 510
+   
+   
+ * REPORTED COMPONENT ID
+   5698ISMSV
+   
+   
+ * REPORTED RELEASE
+   51A
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2003-05-01
+   
+   
+ * CLOSED DATE
+   2003-05-29
+   
+   
+ * LAST MODIFIED DATE
+   2003-05-29
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+Publications Referenced GC32076800 GC32077200 GC23469000 GC32077500 GC23469400 GC32077800 GC32078200 FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

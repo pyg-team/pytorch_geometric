@@ -1,0 +1,153 @@
+Title: IBM HD75720: COMPOSITES (COMPODSG) : XML EXPORT - POINT COORDINATES INCORREC T - United States
+
+Text:
+AIX SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Composites (CompoDSG) : XML Export - Point
+   Coordinates incorrect
+   .
+   Scenario:
+   1. Open CATPart
+   2. Activate Composite Design Workbench
+   3. Select XML Export
+   4. Navigate to a file location.
+   5. Select 3D contour option
+   6. Select OK
+   Problem: Point Coordinate data for the 3D contours
+   is not converted correctly or
+   is wrong units. Should be in inches but appears to
+   be off by a factor
+   of 10E-3 (that is the current results need to be
+   multiplied by 1000 to
+   be correct.)
+   .
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Composites (CompoDSG) : XML Export - Point Coordinates incorrec
+   t
+   Composites (CompoDSG) : XML Export - Point
+   Coordinates incorrect
+   .
+   Scenario:
+   1. Open CATPart
+   2. Activate Composite Design Workbench
+   3. Select XML Export
+   4. Navigate to a file location.
+   5. Select 3D contour option
+   6. Select OK
+   Problem: Point Coordinate data for the 3D contours
+   is not converted correctly or
+   is wrong units. Should be in inches but appears to
+   be off by a factor
+   of 10E-3 (that is the current results need to be
+   multiplied by 1000 to
+   be correct.)
+   .
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  THIS PROBLEM WILL BE FIXED ON CATIA VERSION
+   5 RELEASE 20 GA LEVEL.
+   NOTE THAT THIS PROBLEM WILL ALSO BE FIXED
+   ON V5R19SP01
+   .
+   .
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   HD75720
+   
+   
+ * REPORTED COMPONENT NAME
+   CATIA V5 NT>XP
+   
+   
+ * REPORTED COMPONENT ID
+   569151000
+   
+   
+ * REPORTED RELEASE
+   518
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-07-01
+   
+   
+ * CLOSED DATE
+   2008-07-23
+   
+   
+ * LAST MODIFIED DATE
+   2008-10-03
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CATIA V5 NT>XP
+   
+   
+ * FIXED COMPONENT ID
+   569151000
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R519 PSN SP51901
+   UP08/10/03 I 1000

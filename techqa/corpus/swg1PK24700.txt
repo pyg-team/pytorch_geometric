@@ -1,0 +1,224 @@
+Title: IBM PK24700: THE DEPLOYMENT CODE FOR BPEL APPLICATIONS DOES NOT GET CLEANED UPAFTER AN APPPLICATION "UPGRADE", OR APPLICATION "UNINSTALL". - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The customer understands that there is a work around. However,
+   they are  t,
+    telling us that the workaround is not acceptable for production
+   system.  nt team  all: it is necessary to re-boot all
+    And this customer is not the only one with the problem.  I also
+   think
+    that it is not acceptable to leave such a serious problem
+   unanswered     application MSF_NISS_BOM_ImportEAR:ORA-00972:
+   
+   Operating System: Linux
+    .
+    ESR: The deployment code for BPEL applications does not get
+   cleaned up
+    after an appplication "upgrade", or application "uninstall". As
+   a
+    consequence, all subsequent installs will fail.
+   However, the technote only partially describes the problem.
+   According to
+    the nature of the customer's application, the customer will see
+   many
+    different exceptions, dependinf on the features used.  We have
+   not met
+    yet the exception described in the tech note;
+   AppDeploymentException: [ ]
+    com.ibm.etools.j2ee.commonarchivecore.exception.SaveFailureExce
+   ption:
+    IWAE0017E Unable to replace original archive:
+   
+    Instead, we meet a "correlation ID" exception, which is
+   described in PMR
+    03677,999,834. Here is the link:
+   http://d25dbw26.mkm.can.ibm.com/wwqa/wwqades.nsf/WWQADispItem?Op [http://d25dbw26.mkm.can.ibm.com/wwqa/wwqades.nsf/WWQADispItem?Op]
+   enForm&u
+    =3C5499129D032F1D85256FFB00563AE1&h&d=03677999834
+   
+    This exception is much more confusing, it would not be clear at
+   all tha
+    the problem is related to the failure of removing old ear
+   files.
+   (engl.: name of the object is too long)
+   
+    But the cause is the same; old ear files were not removed after
+    uninstall/re-install: it is necessary to re-boot all
+   application
+    servers.
+   This may generate many different exceptions, depending on what
+   changes
+    were made in the new version of the EAR file.
+   Given that this customer is using the WBISF in a clustered
+   environment,
+    restarting all servers is not trivial. I talked to the
+   development team
+    and they have determined that the cause of all this is that
+   there are
+    components in WAS, probably in the Bus. Process Container,
+   which are
+    holding open file locks to the EAR files, and as result they do
+   not get
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: WebSphere Application Server version 6.0.2   *
+   *                 users of upgrade or uninstall applications.  *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: The deployment code for applications    *
+   *                      does not get cleared after an upgrade   *
+   *                      or uninstall of an application.         *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   After an application upgrade or uninstall, the server must be
+   restarted for the new deployment code to be used or cleared.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The deployment code for all application except for CMP's do
+   not require a server restart in most cases.
+   CMP applications require a server restart for the new
+   deployment code to be loaded.
+   
+   This is a partial back port of a fix that is in version 6.1.
+   The CMP's deployment cleanup function could not be back ported
+   to version 6.0.2.x.
+   
+   The fix for this APAR is currently targeted for inclusion
+   in fixpack 6.0.2.17. Please refer to the recommended updates
+   page for delivery information:
+   http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK24700
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSPHERE BASE
+   
+   
+ * REPORTED COMPONENT ID
+   5630A3600
+   
+   
+ * REPORTED RELEASE
+   60I
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2006-05-09
+   
+   
+ * CLOSED DATE
+   2006-08-31
+   
+   
+ * LAST MODIFIED DATE
+   2006-08-31
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    PK32362
+   
+   
+
+MODULES/MACROS
+ *  J2C
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBSPH APP SERV
+   
+   
+ * FIXED COMPONENT ID
+   5724J0800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R60A PSY
+   UP
+   
+   
+ * R60H PSY
+   UP
+   
+   
+ * R60I PSY
+   UP
+   
+   
+ * R60P PSY
+   UP
+   
+   
+ * R60S PSY
+   UP
+   
+   
+ * R60W PSY
+   UP
+   
+   
+ * R60Z PSY
+   UP

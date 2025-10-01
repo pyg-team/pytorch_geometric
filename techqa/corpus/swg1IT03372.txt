@@ -1,0 +1,166 @@
+Title: IBM IT03372: RUNSTATS ON TABLE ... TABLESAMPLE(x) on a range partitioned table may result in a 'BadPage' error - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+DB2 Version 10.1 Fix Pack 6 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24043366]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Runstats command with the 'tablesample' clause may fail
+   with error SQL2310N on a range partitioned table.
+   
+   The problem occurs if the partitions of the table are in
+   different tablespaces; specifically, if at least one partition
+   is in a reclaimable storage tablespace and at least one
+   is in a non-reclaimable storage tablespace.
+   
+   The runstats command will return the following error:
+   
+   SQL2310N  The utility could not generate statistics.  Error
+   "-1655" was returned.
+   
+   You may observe an error similar to the following in the
+   db2diag.log:
+   
+   014-07-12-13.00.14.536372-240 I14654250E5351         LEVEL:
+   Severe
+   PID     : 30761                TID : 47011709577536  PROC :
+   db2sysc 0
+   INSTANCE: instance             NODE : 000            DB   : DB1
+   APPHDL  : 0-5034               APPID:
+   11.111.111.111.11111.140712145209
+   AUTHID  : AUTHID               HOSTNAME: hostname
+   EDUID   : 148                  EDUNAME: db2agent (db1) 0
+   FUNCTION: DB2 UDB, buffer pool services, sqlb_verify_page,
+   probe:3
+   MESSAGE : ZRC=0x86020001=-2046689279=SQLB_BADP "page is bad"
+             DIA8400C A bad page was encountered.
+   DATA #1 : String, 64 bytes
+   Error encountered trying to read a page - information follows :
+   DATA #2 : String, 23 bytes
+   Page verification error
+   DATA #3 : Page ID, PD_TYPE_SQLB_PAGE_ID, 4 bytes
+   17
+   DATA #4 : Object descriptor, PD_TYPE_SQLB_OBJECT_DESC, 96 bytes
+       Obj: {pool:10;obj:206;type:0} Parent={10;206}
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Avoid using the 'tablesample' clause in the runstats command.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * DB2 V10.1                                                    *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * See Error Description                                        *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Avoid using the 'tablesample' clause in the runstats         *
+   * command.                                                     *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT03372
+   
+   
+ * REPORTED COMPONENT NAME
+   DB2 FOR LUW
+   
+   
+ * REPORTED COMPONENT ID
+   DB2FORLUW
+   
+   
+ * REPORTED RELEASE
+   A10
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-07-24
+   
+   
+ * CLOSED DATE
+   2015-07-15
+   
+   
+ * LAST MODIFIED DATE
+   2015-07-15
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    IT03627 [http://www-01.ibm.com/support/docview.wss?uid=swg1IT03627]
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * RA10 PSN
+   UP
+   
+   
+ * RA10 PSY
+   UP
+   
+   
+ * RA50 PSN
+   UP
+   
+   
+ * RA50 PSY
+   UP

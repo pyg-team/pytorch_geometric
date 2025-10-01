@@ -1,0 +1,61 @@
+Title: IBM Why does the FEB portlet reload the same form with the same data even after logging out of WebSphere Portal? - United States
+
+Text:
+FEB; portal; sessionStorage; session; logout TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+If you open a form in the Forms Experience Builder Portlet, fill in some data, then log out and log back in the same form is loaded instead of a new blank form.
+
+CAUSE
+When a form is loaded it is stored in the sessionStorage. The session storage does not get cleared on the logout operation. The form is being loaded from the session storage first rather then reloaded from the server.
+
+RESOLVING THE PROBLEM
+To resolve this behavior the sessionStorage must be explicitly cleared when the user logs out of WebSphere Portal, there are two ways to accomplish this task: 
+
+1. If you do not need to maintain the sessionStorage after a Portal logout for any of the portlets in use, then use sessionStorage.clear(). 
+
+ 
+
+For example in WebSpehre Portal 8 default theme, Edit the file
+/opt/IBM/WebSphere/PortalServer/theme/wp.theme.themes/default80/installedApps/DefaultTheme80.ear/DefaultTheme80.war/themes/html/dynamicSpots/commonActions.jsp
+
+Note: If you are using a different theme then you will need to apply these changes in that custom location.
+
+Change the line 
+
+<a id="logoutlink" href="<portal-navigation:url command='LogoutUser'/>"><portal-fmt:text key="link.logout" bundle="nls.engine"/></a>
+
+to
+
+<a id="logoutlink" href="javascript:sessionStorage.clear();window.location=' [javascript:sessionStorage.clear();window.location=']<portal-navigation:url command='LogoutUser'/>';"><portal-fmt:text key="link.logout" bundle="nls.engine"/></a>
+
+2. If there are other sessionStorages you want to keep and you only want to remove FEB content, you need run 
+
+var FEB_SESSION_PREFIX = "freedom.local";
+for(var i=sessionStorage.length-1; i>=0; i--){
+if(sessionStorage.key(i).substring(0, FEB_SESSION_PREFIX.length) === FEB_SESSION_PREFIX){
+sessionStorage.removeItem(sessionStorage.key(i));
+}
+}
+
+For example in WebSphere Portal 8 default theme, Edit file
+
+/opt/IBM/WebSphere/PortalServer/theme/wp.theme.themes/default80/installedApps/DefaultTheme80.ear/DefaultTheme80.war/themes/html/dynamicSpots/commonActions.jsp
+
+Change the line
+
+<a id="logoutlink" href="<portal-navigation:url command='LogoutUser'/>"><portal-fmt:text key="link.logout" bundle="nls.engine"/></a>
+
+to
+
+<script type="text/javascript">
+var cleanFEBSessionStorage = function(){
+var FEB_SESSION_PREFIX = "freedom.local";
+for(var i=sessionStorage.length-1; i>=0; i--){
+if(sessionStorage.key(i).substring(0, FEB_SESSION_PREFIX.length) === FEB_SESSION_PREFIX){
+sessionStorage.removeItem(sessionStorage.key(i));
+}
+}
+}
+</script>
+<a id="logoutlink" href="javascript:cleanFEBSessionStorage();window.location=' [javascript:cleanFEBSessionStorage();window.location=']<portal-navigation:url command='LogoutUser'/>';"><portal-fmt:text key="link.logout" bundle="nls.engine"/></a>

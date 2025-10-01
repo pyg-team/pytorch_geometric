@@ -1,0 +1,176 @@
+Title: IBM Server tools trace string for Rational Application Developer version 7.5.x - United States
+
+Text:
+server; tracing; server tools TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This document describes the strings to include in the .options file when tracing server tools or server runtime problems in Rational Application Developer, version 7.5.x . 
+
+SYMPTOM
+If you experience problems with the server tooling or server run-time in Rational Application Developer, version 7.5.x , then you can enable the product tracing framework for those plugins and provide the output to the IBM support team for diagnosis. 
+
+For instructions on enabling tracing in Rational Application Developer, see the following technote: 
+http://www-01.ibm.com/support/docview.wss?uid=swg21327307 [http://www-01.ibm.com/support/docview.wss?uid=swg21327307]
+
+To trace the server tooling or server run-time plugins, edit the .options file that you created according to the instructions in the technote (for example, C:\Program Files\IBM\SDP_7\.options) and add the strings listed in the tables that follow. 
+
+The trace string information is provided for the following versions of WebSphere Application Server: 
+
+ * WebSphere Application Server 7.0 
+ * WebSphere Application Server 6.1 
+ * WebSphere Application Server 6.0
+
+
+DIAGNOSING THE PROBLEM
+See http://www.ibm.com/support/docview.wss?uid=swg21327307 [http://www.ibm.com/support/docview.wss?uid=swg21327307] for information on how to enable tracing.
+
+
+
+RESOLVING THE PROBLEM
+Core Traces (for tracing non-UI functionality)
+
+
+# Tracing Eclipse WTP Server Tooling core functionality
+org.eclipse.wst.server.core/debug=true
+
+# Tracing WebSphere Application Server core functionality
+com.ibm.ws.ast.st.core/debug=true
+com.ibm.ws.ast.st.core/debug/error=true
+com.ibm.ws.ast.st.core/debug/warning=true
+com.ibm.ws.ast.st.core/debug/info=true
+com.ibm.ws.ast.st.core/debug/details=true
+
+# Tracing WebSphere Application Server common core functionality
+com.ibm.ws.ast.st.common.core/debug=true
+com.ibm.ws.ast.st.common.core/debug/error=true
+com.ibm.ws.ast.st.common.core/debug/warning=true
+com.ibm.ws.ast.st.common.core/debug/info=true
+com.ibm.ws.ast.st.common.core/debug/details=true
+# Note: com.ibm.ws.ast.st.common.core/debug/wasclient added in RAD 752 for tracing WAS client - DO NOT enable by default
+com.ibm.ws.ast.st.common.core/debug/wasclient=false
+# Note: com.ibm.ws.ast.st.common.core/debug/wasclient/trace added in RAD 754 to enable finer WAS tracing. Required if /wasclient is set to true. The generated WAS trace file will be <workspace>/.metadata/.wastrace
+com.ibm.ws.ast.st.common.core/debug/wasclient/trace=<WAS trace string>
+
+# Tracing WebSphere Application Server v6.0 core functionality
+com.ibm.ws.ast.st.v6.core/debug=true
+com.ibm.ws.ast.st.v6.core/debug/error=true
+com.ibm.ws.ast.st.v6.core/debug/warning=true
+com.ibm.ws.ast.st.v6.core/debug/info=true
+com.ibm.ws.ast.st.v6.core/debug/details=false
+
+# Tracing WebSphere Application Server v6.1 core functionality
+com.ibm.ws.ast.st.v61.core/debug=true
+com.ibm.ws.ast.st.v61.core/debug/error=true
+com.ibm.ws.ast.st.v61.core/debug/warning=true
+com.ibm.ws.ast.st.v61.core/debug/info=true
+com.ibm.ws.ast.st.v61.core/debug/details=false
+
+# Tracing WebSphere Application Server v7.0 core functionality
+com.ibm.ws.ast.st.v7.core/debug=true
+com.ibm.ws.ast.st.v7.core/debug/error=true
+com.ibm.ws.ast.st.v7.core/debug/warning=true
+com.ibm.ws.ast.st.v7.core/debug/info=true
+com.ibm.ws.ast.st.v7.core/debug/details=false
+
+# Tracing WebSphere Application Server v6.0 publishing functionality
+com.ibm.etools.wrd.websphere.v6/debug=true
+com.ibm.etools.wrd.websphere.v6/debug/error=true
+com.ibm.etools.wrd.websphere.v6/debug/warning=true
+com.ibm.etools.wrd.websphere.v6/debug/info=true
+com.ibm.etools.wrd.websphere.v6/debug/details=true
+
+# Tracing WebSphere Application Server v6.1 publishing functionality
+com.ibm.etools.wrd.websphere/debug=true
+com.ibm.etools.wrd.websphere/debug/error=true
+com.ibm.etools.wrd.websphere/debug/warning=true
+com.ibm.etools.wrd.websphere/debug/info=true
+com.ibm.etools.wrd.websphere/debug/details=true
+
+# Tracing WebSphere Application Server v7.0 publishing functionality
+com.ibm.etools.wrd.websphere.v7/debug=true 
+com.ibm.etools.wrd.websphere.v7/debug/error=true
+com.ibm.etools.wrd.websphere.v7/debug/warning=true
+com.ibm.etools.wrd.websphere.v7/debug/info=true
+com.ibm.etools.wrd.websphere.v7/debug/details=true
+
+# Tracing WebSphere Application Server common JMX functionality
+com.ibm.ws.ast.st.jmx.core/debug=true
+com.ibm.ws.ast.st.jmx.core/debug/error=true
+com.ibm.ws.ast.st.jmx.core/debug/warning=true
+com.ibm.ws.ast.st.jmx.core/debug/info=true
+com.ibm.ws.ast.st.jmx.core/debug/details=true
+
+# Tracing WebSphere Application Server v7.0 JMX functionality
+com.ibm.ws.ast.st.jmx.core.v7/debug=true
+com.ibm.ws.ast.st.jmx.core.v7/debug/error=true
+com.ibm.ws.ast.st.jmx.core.v7/debug/warning=true
+com.ibm.ws.ast.st.jmx.core.v7/debug/info=true
+com.ibm.ws.ast.st.jmx.core.v7/debug/details=true
+
+# Tracing WebSphere Application Server JEE Deployer launcher functionality
+com.ibm.etools.server.task.ejbdeploy/debug=true
+com.ibm.etools.server.task.ejbdeploy/debug/error=true
+com.ibm.etools.server.task.ejbdeploy/debug/warning=true
+com.ibm.etools.server.task.ejbdeploy/debug/info=true
+com.ibm.etools.server.task.ejbdeploy/debug/details=true
+
+# Tracing J2EE Publisher functionality
+com.ibm.etools.publishing.server/debug=true
+com.ibm.etools.publishing.server/debug/error=true
+com.ibm.etools.publishing.server/debug/warning=true
+com.ibm.etools.publishing.server/debug/info=true
+
+UI Traces (for tracing UI functionality):
+
+# Tracing Eclipse WTP Server Tooling core functionality
+org.eclipse.wst.server.ui/debug=true
+
+# Trace WebSphere Application Server UI functionality
+com.ibm.ws.ast.st.ui/debug=true
+com.ibm.ws.ast.st.ui/debug/error=true
+com.ibm.ws.ast.st.ui/debug/warning=true
+com.ibm.ws.ast.st.ui/debug/info=true
+com.ibm.ws.ast.st.ui/debug/details=true
+
+# Trace WebSphere Application Server common UI functionality
+com.ibm.ws.ast.st.common.ui/debug=true
+com.ibm.ws.ast.st.common.ui/debug/error=true
+com.ibm.ws.ast.st.common.ui/debug/warning=true
+com.ibm.ws.ast.st.common.ui/debug/info=true
+com.ibm.ws.ast.st.common.ui/debug/details=true
+
+# Trace WebSphere Application Server v6.0 UI functionality
+com.ibm.ws.ast.st.v6.ui/debug=true
+com.ibm.ws.ast.st.v6.ui/debug/error=true
+com.ibm.ws.ast.st.v6.ui/debug/warning=true
+com.ibm.ws.ast.st.v6.ui/debug/info=true
+com.ibm.ws.ast.st.v6.ui/debug/details=true
+
+# Trace WebSphere Application Server v6.1 UI functionality
+com.ibm.ws.ast.st.v61.ui/debug=true
+com.ibm.ws.ast.st.v61.ui/debug/error=true
+com.ibm.ws.ast.st.v61.ui/debug/warning=true
+com.ibm.ws.ast.st.v61.ui/debug/info=true
+com.ibm.ws.ast.st.v61.ui/debug/details=true
+
+# Trace WebSphere Application Server v7.0 UI functionality
+com.ibm.ws.ast.st.v7.ui/debug=true
+com.ibm.ws.ast.st.v7.ui/debug/error=true
+com.ibm.ws.ast.st.v7.ui/debug/warning=true
+com.ibm.ws.ast.st.v7.ui/debug/info=true
+com.ibm.ws.ast.st.v7.ui/debug/details=true
+
+# Trace WebSphere Application Server profile UI functionality (RAD 7.5 only)
+com.ibm.ws.ast.st.profile.ui/debug=true
+
+# Trace WebSphere Application Server server tools migration UI (RAD 7.5 only)
+com.ibm.ws.ast.st.migration.ui/debug=true
+com.ibm.ws.ast.st.migration.ui/debug/error=true
+com.ibm.ws.ast.st.migration.ui/debug/warning=true
+com.ibm.ws.ast.st.migration.ui/debug/info=true
+com.ibm.ws.ast.st.migration.ui/debug/details=true
+
+
+RELATED INFORMATION
+#How to trace RAD [http://www-01.ibm.com/support/docview.wss?uid=swg21327307]
+Server tools trace strings for RAD 8.x and RAD 8.5 [http://www-01.ibm.com/support/docview.wss?uid=swg21606310]

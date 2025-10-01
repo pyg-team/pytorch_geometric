@@ -1,0 +1,31 @@
+Title: IBM NEWCOPY and PHASEIN do not bring in a new version of CICS Java program - United States
+
+Text:
+java ; cemt set program newcopy ; cemt set program phasein ; ceci exec cics ; jvm jvmpool 5697E9300 R300 300 R630 630 HCI6300 5697-E93 5697E93 5655M1500 R640 640 R400 400 HCI6400 R650 650 R500 500 HCI6500 R670 670 R700 700 HCI6700 5655-S97 5655S97 KIXINFO TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ You make changes to your Java™ program and recompile it. Then you enter CEMT SET PROGRAM(java-program) with the NEWCOPY or PHASEIN options and receive a response of NORMAL. The next time you run your Java program you expect CICS to use the new version. However, CICS continues to use the version that does not contain your latest changes. 
+
+CAUSE
+NEWCOPY and PHASEIN are not valid for Java programs, and are ignored if specified. The command returns NORMAL because it completed without error. This is documented as follows in the CICS TS V4.2 information center under CEMT SET PROGRAM [http://publib.boulder.ibm.com/infocenter/cicsts/v4r2/topic/com.ibm.cics.ts.systemprogramming.doc/transactions/cemt/dfha7ai.html]: 
+
+You cannot specify NEWCOPY for a program specified with the HOLD option or for a Java program that runs in a JVM. Use the PERFORM JVMPOOL PHASEOUT command to refresh Java programs that run in a pooled JVM. Disable and enable the JVMSERVER resource to refresh a Java program that runs in a JVM server.
+
+You cannot specify PHASEIN for a program specified with the HOLD option or for a Java program that runs in a JVM. Use the PERFORM JVMPOOL PHASEOUT command to refresh Java programs that run in a pooled JVM. Disable and enable the JVMSERVER resource to refresh a Java program that runs in a JVM server
+
+RESOLVING THE PROBLEM
+If using CICS Transaction Server for z/OS (CICS TS) V3.1, use CEMT SET JVMPOOL PHASEOUT [http://publib.boulder.ibm.com/infocenter/cicsts/v3r2/topic/com.ibm.cics.ts.doc/dfha7/transactions/cemt/dfha7ng.html] to pull in the newest version of your Java program. This will also delete the Java Virtual Machines (JVM) when the task using each JVM is no longer dependent on it. The next time you enter your transaction, a new JVM will be built and it will use the new version of your program.
+
+If using CICS TS 3.2 and above with pooled JVMs, enter CEMT PERFORM JVMPOOL PHASEOUT [http://publib.boulder.ibm.com/infocenter/cicsts/v4r2/topic/com.ibm.cics.ts.systemprogramming.doc/transactions/cemt/dfha7_performjvmpool.html]. Afterwards, when new JVMs are started they will run the new version of the program. 
+
+If using CICS TS 4.2 with JVM servers, enter CEMT SET JVMSERVER(jvmserver) DISABLED [http://publib.boulder.ibm.com/infocenter/cicsts/v4r2/topic/com.ibm.cics.ts.systemprogramming.doc/commands/dfha8_setjvmserver.html] then ENABLED to disable and enable the JVMSERVER [http://publib.boulder.ibm.com/infocenter/cicsts/v4r2/topic/com.ibm.cics.ts.resourcedefinition.doc/resources/jvmserver/dfha4_overview.html] resource that the Java program uses. 
+
+
+CEMT SET JVMPOOL Phaseout, Purge, and Forcepurge functions are deprecated in CICS TS V3.2. That is why you should use the corresponding functions of the PERFORM JVMPOOL command when using CICS TS V3.2 and above. 
+
+Note that CICS TS V3.2 supports Java V5. If using the shared class cache [http://publib.boulder.ibm.com/infocenter/cicsts/v4r2/topic/com.ibm.cics.ts.java.doc/topics/dfhpjd3.html], a PHASEOUT is not needed with Java V5 onwards. Any changed classes are automatically phased in to the cache as they are used.
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ CICS/TS CICS TS CICS Transaction Server

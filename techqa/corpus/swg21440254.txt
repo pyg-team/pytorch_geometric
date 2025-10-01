@@ -1,0 +1,150 @@
+Title: IBM "It seems that no FAPService is running or FAPDb is started/restarted after FAPService" caused by missing JDBC driver - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Customer has recently installed/upgraded Controller to version 8.5.1 or later. User launches 'IBM Cognos 8 FAP' from the start menu, but receives an error message. 
+
+SYMPTOM
+Screen error: 
+
+Login Notification
+It seems that no FAPService is running or FAPDb is started/restarted after FAPService. Start/restart FAPServices to make FAP work correctly.
+[OK]
+
+Error inside ''FAPFatalError.log file:
+Wed Jul 07 13:05:28 BST 2010 - Fatal error when starting or running FAPService. <LoggedException> Could not load jdbc driver: com.jnetdirect.jsql.JSQLDriver
+
+
+CAUSE
+There are many different potential causes for the generic 'It seems that no FAPService is running ' error. 
+
+ * TIP: For more examples, see separate IBM Technote #1424705.
+
+
+This IBM Technote specifically deals with the scenario where the customer has not correctly installed the JDBC drivers on the Controller application server. 
+
+More Information 
+JDBC drivers were not included in the Controller 8.5.1 release, although some JDBC drivers may be provided in some future Controller releases. IBM® Cognos® 8 Controller uses JDBC connectivity to access the Controller database. You therefore need to obtain/download a suitable JDBC driver. 
+TIP:  * For SQL:  * for most Controller 8.5.x environments the required file is JSQLConnect.jar 
+    * for Controller 10.x environments (and some 8.5.x environments) the required file is sqljdbc4.jar
+   
+   
+ * For Oracle:  * There are several different possible file names/versions (for example ojdbc5.jar). 
+    * For full details, see separate IBM Technote #1988891.
+   
+   
+
+ * For DB2, the required file is db2jcc.jar
+
+
+WARNING: Do *not* have multiple JAR files per database platform (e.g. MS SQL)  * This is because the Controller JAVA engine will choose which JAR file it thinks is best to use (out of the range of JAR files that you copy into that location), and it may choose the 'wrong' one (an incompatible one)  * For example, do NOT copy both "JSQLConnect.jar" and "sqljdbc4.jar" into that folder 
+    * Also, do NOT copy other 'extra' JAR files (e.g. "sqljdbc.jar") into that folder 
+   
+   
+
+
+For more information, see official installation document 'ctrl_inst.pdf', especially page 80 for Controller 8.5.1. 
+RESOLVING THE PROBLEM
+To solve the problem, you must: 
+
+ 1. Obtain a suitable JDBC driver file. 
+ 2. Copy the driver onto the Controller application server. WARNING: Make sure you do not copy more than one JAR file per database platform (see above). 
+ 3. In some (very rare) environments, you also need to modify the 'ccr-dbTypes.properties' file 
+ 4. Start (or restart if it is already running) the Windows service 'IBM Cognos Controller Java Proxy' 
+ 5. Test.
+
+
+TIP: If the above does not solve the problem, then you *may* also need to get a short period of downtime and then reboot the entire application server for all the settings/changes to be recognised. 
+
+Steps 
+Part One - Obtain a suitable JDBC driver 
+
+JDBC Driver filenames:  *  For SQL:  * for most Controller 8.5.x environments the required file is JSQLConnect.jar 
+    * for Controller 10.x environments (and some 8.5.x environments) the required file is sqljdbc4.jar
+   
+   For Oracle:  * there are several different possible file names/versions (for example ojdbc5.jar). 
+    * for full details, see separate IBM Technote #1988891.
+   
+   For DB2, the required file is db2jcc.jar 
+
+
+How to obtain the JAR file:  * JSQLConnect.jar  * This can be found in the install directory of many older versions of Controller (for example 8.5 RTM) server.  * By default, it was located here: C:\Program Files\cognos\c8\server\integration
+      
+      
+   
+   
+ * sqljdbc4.jar  * at the time of writing this article) the latest SQL sqljdbc4.jar file is the SQL Server JDBC Driver 3.0 
+    * This can be downloaded from the Microsoft website here: http://msdn.microsoft.com/en-gb/data/aa937724.aspx [http://msdn.microsoft.com/en-gb/data/aa937724.aspx]
+   
+   
+ * The Oracle ojdbc jar file can also be easily copied from any Oracle client installation, which therefore should already a folder on the Controller application server  * For example, if using Oracle 10G then by default the file is located here: C:\oracle\product\10.2.0\client_1\jdbc\lib
+   
+   
+
+
+Part Two - Copy the driver onto the Controller application server  1. Open the 'Integration' folder. TIP: By default, this is located here: C:\Program Files\cognos\c8\Server\Integration 
+ 2. Copy the driver jar file you have downloaded (for example 'JSQLConnect.jar') into the 'Integration' folder 
+ 3. Open the 'FAP\lib' folder. TIP: By default, this is located here: C:\Program Files\cognos\c8\server\FAP\lib 
+ 4. Copy the driver jar file you have downloaded (for example 'JSQLConnect.jar') into the 'lib' folder.
+
+
+Part Three - Modify the 'ccr-dbTypes.properties' file (if necessary) 
+
+IMPORTANT: The following steps are typically NOT necessary. For example, for most customers using ' JSQLConnect.jar' do NOT perform the following steps! 
+ 1. Open the 'Integration' folder 
+ 2. Make a backup copy of the ccr-dbTypes.properties file (as a precaution) before making changes. 
+ 3. Edit the 'ccr-dbTypes.properties' file to match the copied driver jar file 
+ 4. Make a second backup copy of the ccr-dbTypes.properties file after these changes have been made (to avoid overwriting it and therefore losing customisation when the system is updated). 
+ 5. Open the 'lib' folder 
+ 6. Repeat the above steps, to backup and edit the 'ccr-dbTypes.properties' file (to match the copied driver jar file).
+
+
+TIP: You need the following information: 
+● The fully qualified name of the driver class 
+● The pattern of the connection url 
+
+Example #1 - DB2 (db2jcc.jar)  * 
+ * 
+ * 
+ * 
+ * 
+
+
+Example #2 - SQL (JSQLConnect.jar or sqljdbc4.jar) 
+As stated above, in most cases you should simply leave the file ' ccr-dbTypes.properties ' as the default settings. In other words, do not make any changes to the 'properties' file at all! 
+ * For some customer environments, this file should be edited, to use settings similar to:  * 
+    * 
+    * 
+    * 
+    * 
+    *  
+    * 
+   
+   
+
+ * In very rare cases, this file should contain values, similar to:  * 
+    * 
+    * 
+    * 
+    * 
+    * mysqlserver
+    * 
+    * mydatabasename
+    * 
+   
+   
+
+
+Finally, reboot and test. 
+
+TIP: More information is available in the ccr-dbTypes.properties file. If using the Microsoft driver sqljdbc4.jar then you can read the Microsoft documentation such as:  *  http://msdn.microsoft.com/en-us/library/ms378428.aspx [http://msdn.microsoft.com/en-us/library/ms378428.aspx] http://msdn.microsoft.com/en-us/library/ms378526.aspx [http://msdn.microsoft.com/en-us/library/ms378526.aspx] 
+
+RELATED INFORMATION
+ 1424705 - **Troubleshooting** error 'It seems that no F [http://www.ibm.com/support/docview.wss?uid=swg21424705]
+Microsoft SQL Server JDBC Driver Download Page [http://msdn.microsoft.com/data/jdbc]
+Microsoft SQL Server JDBC Driver [http://msdn.microsoft.com/en-gb/data/aa937724.aspx]
+Microsoft MSDN - Using the JDBC Driver [http://msdn.microsoft.com/en-us/library/ms378526.aspx]
+Microsoft MSDN - Building the Connection URL [http://msdn.microsoft.com/en-us/library/ms378428.aspx]
+1988891 - What is the correct / best OJDBC JAR file to [http://www.ibm.com/support/docview.wss?uid=swg21988891]

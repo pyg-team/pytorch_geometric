@@ -1,0 +1,38 @@
+Title: IBM Unable to delete item type ICM7352 - United States
+
+Text:
+IBM Case Manager Event ICM7352 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Unable to delete an existing Content Manager Multiplatform (CM) item type due to an unprocessed event ICM7352 
+
+SYMPTOM
+Using the CM system administration client, an attempt to delete an item type fails with ICM7352.
+
+
+CAUSE
+Records still exist in the CM library server database tables that are associated with IBM Case Manager to manage events. These records in turn have column values that link the events to a specific item type. Until these records are processed or deleted, the item type cannot be deleted.
+
+ENVIRONMENT
+IBM Case Manager
+
+DIAGNOSING THE PROBLEM
+The CM system administration client will report DGL3888A an error occurred while deleting an item type. LS return code=7352. 
+
+A CM library server trace will reflect that the deletion attempt failed, reporting the ICM7352, but not the specific table or tables which contain the records that are preventing the deletion.
+
+RESOLVING THE PROBLEM
+Capture a CM library server trace to determine the item type identifier.
+Manually identify and delete records from the event associated database tables where the item type identifier value (ITEMTYPEID) is equal to the value captured in the trace. The tables to be reviewed include the following:
+ICMSTEVENTQUEUE
+ICMSTEVENTSUBSCRIPTION
+ICMSTEVENTSUBSCRIPTIONATTRS
+ICMSTEVENTSUBSCRIPTONSVER
+ICMSTEVENTSUBSCRIPTIONATTRSVER
+ICMSTEVENTMONITORQUEUE
+
+
+
+
+
+If you need assistance validating the itemtypeid, open a problem record with the IBM software support center.

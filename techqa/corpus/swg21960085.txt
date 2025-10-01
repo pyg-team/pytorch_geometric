@@ -1,0 +1,73 @@
+Title: IBM Multiple 'CCRBatch' entries in 'Event Log' on the Controller application server - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ I.T. administrator opens Event Viewer (EventVwr) on the Controller application sever. Inside the application log, there are periodic messages/errors recorded. 
+
+SYMPTOM
+The error messages contain entries similar to: 
+
+ 
+at CCRBatch.BatchQueue.GetNextJob()
+at CCRBatch.Scheduler.FinAndStartNextJob()
+
+
+CAUSE
+The Controller application server has at least one database connection which is pointing to an invalid database.
+
+Potential Scenarios:
+
+Scenario #1 - Database Connection settings are incorrect 
+
+ * For example, perhaps there is a typo inside the database connection
+
+
+Scenario #2 - Database Connection settings have been corrected recently, but the batch service has not been restarted  * The batch service will continue to use the old (bad/invalid) settings, until the batch service is restarted.
+
+
+Scenario #3 - Problem with the database or database server  * For example the SQL server may have unexpectedly shut down or crashed.
+
+
+Scenario #4 - Network problem between the Controller application server, and the SQL server. 
+
+Scenario #5 - FAP Database or other Non-Controller database connection configured. 
+RESOLVING THE PROBLEM
+Fix: 
+
+Ensure that the Controller application server can successfully connect to all the databases specified inside 'Controller Configuration'. 
+
+ 
+
+Steps: 
+
+For most cases, the solution is: 
+
+1. Logon to the Controller application server 
+
+2. Launch 'Controller Configuration' 
+
+3. Open the section 'Database Connections': 
+
+[/support/docview.wss?uid=swg21960085&aid=1] [/support/docview.wss?uid=swg21960085&aid=1] 
+
+4. Correct any mistakes 
+
+5. Afterwards, open 'Batch Services' section 
+
+6. Click 'Restart': 
+
+[/support/docview.wss?uid=swg21960085&aid=2] [/support/docview.wss?uid=swg21960085&aid=2] 
+
+ 
+
+Workaround: 
+
+Re-configure the Controller batch mechanism to ignore the 'bad' database connections by using the Batchudl.ini mechanism. 
+
+ * TIP: For full details, see separate IBM Technote #1625808.
+
+RELATED INFORMATION
+ 1417833 - VBRUNTIME errors 'No Database found to proces [http://www.ibm.com/support/docview.wss?uid=swg21417833]
+1625808 - Delays running consolidations (in the batch q [http://www.ibm.com/support/docview.wss?uid=swg21625808]

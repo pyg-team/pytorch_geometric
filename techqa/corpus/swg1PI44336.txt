@@ -1,0 +1,190 @@
+Title: IBM PI44336: EXEC CICS SIGNON SPECIFYING OIDCARD AND NO PASSWORD GETS INVALID PASSWORD RESPONSE. 15/08/14 PTF PECHANGE - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  An EXEC SIGNON with OIDCARD and no password is being issued.
+   It fails with NOTAUTH and the following messages are issued:
+   
+   ICH408I USER(userid) GROUP(group-name) NAME(user-name)
+           LOGON/JOB INITIATION - INVALID PASSWORD
+   IRR013I VERIFICATION FAILED. INVALID PASSWORD GIVEN.
+   
+   DFHXS1201 DATE TIME APPLID The password supplied in the
+   verification request for userid USERID was invalid. This
+   occurred in transaction TRANID when userid USERID was signed on
+   at netname NETNAME.
+   
+   Following trace entries can be seen when reviewing a dump of
+   the region:
+   
+   QR    AP 00E1 EIP   ENTRY SIGNON
+   QR    AP 2040 SNUS  ENTRY SIGNON_TERMINAL_USER
+   QR    AP 2080 SNTU  ENTRY SIGNON_TERMINAL_USER
+   QR    US 0301 USAD  ENTRY ADD_USER_WITH_PASSWORD
+   QR    XS 0601 XSPW  ENTRY INQUIRE_PASSWORD_DATA
+   L8000 XS FE01 XSSB  ENTRY INQUIRE_PASSWORD_DATA
+   L8000 XS FE04 XSSB  *EXC* INQUIRE_PASSWORD_DATA/EXCEPTION
+                       INVALID_PASSWORD
+   Additional Symptom(s) Search Keyword(s): KIXREVxxx signon
+   OIDCARD password invalid ICH408I IRR013I DFHXS1201
+   INVALID_PASSWORD
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  No
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All CICS users with PI21866 [http://www-01.ibm.com/support/docview.wss?uid=swg1PI21866] applied.         *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: EXEC CICS SIGNON with OIDCARD and no    *
+   *                      PASSWORD gets invalid password          *
+   *                      response.                               *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   An EXEC CICS SIGNON with OIDCARD and no PASSWORD is being
+   issued. It is processed in DFHUSAD including validating the
+   password and adding the user to the user domain. DFHUSAD
+   doesn't check whether a password has actually been supplied
+   before trying to validate it. The password validation process
+   is failed as no password is provided. It correspondingly causes
+   the SIGNON request to fail with NOTAUTH response.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  UI24130  UI24127  UI25263  UI22616  UI25262  UI22618
+   DFHUSAD has been changed to make sure the SIGNON with OIDCARD
+   and no PASSWORD can be correctly processed.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  *********
+               * HIPER *
+               *********
+   FIX AVAILABLE BY PTF ONLY
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI44336
+   
+   
+ * REPORTED COMPONENT NAME
+   CICS TS Z/OS V5
+   
+   
+ * REPORTED COMPONENT ID
+   5655Y0400
+   
+   
+ * REPORTED RELEASE
+   900
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   YesPE
+   
+   
+ * HIPER
+   YesHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-07-06
+   
+   
+ * CLOSED DATE
+   2015-10-02
+   
+   
+ * LAST MODIFIED DATE
+   2015-11-03
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    PI44380 [http://www-01.ibm.com/support/docview.wss?uid=swg1PI44380] UI31716 UI31717
+   
+   
+
+MODULES/MACROS
+ *  DFHUSAD
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CICS TS Z/OS V5
+   
+   
+ * FIXED COMPONENT ID
+   5655Y0400
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R800 PSY UI31716 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI31716]
+   UP15/10/08 P F510 ð
+   
+   
+ * R900 PSY UI31717 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI31717]
+   UP15/10/08 P F510 ð
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

@@ -1,0 +1,29 @@
+Title: IBM WebSphere Cast Iron Cloud Integration fix pack 7.0.0.2 is now available - United States
+
+Text:
+Cast Iron; CI; Cloud Integration Cast Iron 7.0.0.2; Cast Iron 7002; Cast Iron fix pack NEWS
+
+ABSTRACT
+ WebSphere Cast Iron Cloud Integration fix pack 7.0.0.2 is now available for download. 
+
+CONTENT
+
+
+TAB NAVIGATION
+ * Overview [http://www.ibm.com/support/docview.wss?uid=swg21686987]- selected tab,
+ * Included Fixes [http://www.ibm.com/support/docview.wss?uid=swg27043839]
+ * Known Issues [http://www.ibm.com/support/docview.wss?uid=swg27043840]
+ * Download Links [http://www.ibm.com/support/docview.wss?uid=swg24038515]
+
+
+WebSphere Cast Iron Cloud integration fix pack 7.0.0.2 delivers important fixes to the following products: 
+ * WebSphere DataPower Cast Iron Appliance XH40 
+ * WebSphere Cast Iron Hypervisor Edition 
+ * WebSphere Cast Iron Studio
+
+
+
+Theme: 
+This fix pack delivers important APAR fixes to customers. 
+How critical is this fix pack? 
+Highly recommended.

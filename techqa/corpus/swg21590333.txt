@@ -1,0 +1,21 @@
+Title: IBM Improve Performance of JRules modules - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How do I improve the performance of WebSphere ILOG JRules modules? 
+
+ANSWER
+
+WebSphere ILOG JRules has various modules whose performance can be improved. The following documents specify how to improve the performance when working with each module:
+
+
+ * Improve Performance of Rule Studio [http://www.ibm.com/support/docview.wss?uid=swg21589514] 
+ * Improve Performance of Rule Team Server [http://www.ibm.com/support/docview.wss?uid=swg21584855] 
+ * Improve Performance of rule execution and Rule Execution Server [http://www.ibm.com/support/docview.wss?uid=swg21589513] 
+ * Improve Performance of Decision Validation Services and Decision Warehouse [http://www.ibm.com/support/docview.wss?uid=swg21588859]
+
+RELATED INFORMATION
+#Improve Performance of WODM [http://www.ibm.com/support/docview.wss?uid=swg21589902]
+Clustering JRules [http://www.ibm.com/support/docview.wss?uid=swg21587817]

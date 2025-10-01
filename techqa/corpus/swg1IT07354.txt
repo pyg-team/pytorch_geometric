@@ -1,0 +1,247 @@
+Title: IBM IT07354: PROCEDURE FOR USING AUTHENTICATED USERS TO SEND SMTP EMAIL NOTIFICATIONS FROM STOREDIQ APPSTACK DOES NOT EXIST - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The StoredIQ Appstack configuration requires that the username
+   and password be blank for the default configuration in order to
+   send email notifications from the Appstack.
+   
+   In order to use an authenticated user with the StoredIQ
+   Appstack configuration you must provide authority in Exchange
+   and Active Directory.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  The following procedure has been created, tested and documented
+   below:
+   
+   How do I configure the StoredIQ Appstack to use authenticated
+   users for sending SMTP email notifications?
+   
+   The StoredIQ Appstack configuration requires that the username
+   and password be blank for the default configuration in order to
+   send email notifications from the Appstack.
+   
+   In order to use an authenticated user with the StoredIQ
+   Appstack configuration you must provide authority in Exchange
+   and Active Directory.
+   
+   While it is possible to use the default SMTP Receive Connector
+   it is recommended that a custom SMTP Receive Connector be
+   created and configured to work with the StoredIQ Appstack. If a
+   custom SMTP Receive Connector is created and defined with the
+   specific IP address of the StoredIQ Appstack, network traffic
+   from the Appstack will utilize that connector.
+   
+   To create a custom SMTP Receive Connector follow these steps:
+   
+       In the Exchange Management Console navigate to the Server
+   Configuration, Hub Transport section
+       Select 'New Receive Connector...' from the menu on the
+   right side
+       Provide a name for the new SMTP Receive Connector and
+   select 'Next'
+       You may utilize the default port of 25. If you define
+   another port be sure it is open on the Firewall of the Exchange
+       Provide the Fully Qualified Domain Name (FQDN) of the
+   Exchange Server in the field and select 'Next'
+       On the Remote Network settings page select 'Add..' and
+   enter the IP address of the StoredIQ Appstack and select 'OK'
+       Select the IP address range of 0.0.0.0-255.255.255.255 and
+   select the Red 'X' to delete it and then select 'Next'
+       Review the configuration details and select 'New' to create
+   the new custom SMTP Receive Connector
+   
+   
+   Once this has been done there are two methods that can be
+   employed to authenticate users.
+   
+   Method one: If you wish to configure the StoredIQ Appstack to
+   authenticate on any existing domain user you should follow
+   these steps:
+   
+       Log into your Exchange server
+       Launch ADSI Edit
+       In ADSI Edit navigate to CN=Configuration<domain>,
+   CN=Services, CN=First Organization, CN=Administrative Groups,
+   CN=Exchange Administrative Group, CN=Servers, CN=<Exchange
+   Server>, CN=Protocols, CN=SMTP, CN=SMTP Receive Connectors
+       Right click the custom SMTP Receive Connector you have
+   created in the previous step. If you are using the default SMTP
+   Receive Connector select that.
+       Select the 'Security' tab
+       In the upper section highlight 'Authenticated Users'
+       In the Permissions section below select 'Allow' for the
+   'Accept any Sender' and the 'Accept Authoritative Domain
+   Sender' options
+       Select 'OK'
+   
+   
+   Method two: If you wish to configure the StoredIQ Appstack to
+   authenticate with a single specific domain user and no other
+   user, you should follow these steps:
+   
+       Log into your Exchange server
+       Launch ADSI Edit
+       In ADSI Edit navigate to CN=Configuration<domain>,
+   CN=Services, CN=First Organization, CN=Administrative Groups,
+   CN=Exchange Administrative Group, CN=Servers, CN=<Exchange
+   Server>, CN=Protocols, CN=SMTP, CN=SMTP Receive Connectors
+       Right click the custom SMTP Receive Connector you have
+   created in the previous step. If you are using the default SMTP
+   Receive Connector select that.
+       Select the 'Security' tab
+       In the upper section select the 'Add...' button
+       Identify the single specific user you wish to allow
+   authentication permissions for and select 'OK'
+       In the upper 'Group or user names:' section identify the
+   newly added user and highlight it
+       In the Permissions section below select 'Allow' for the
+   'Accept any Sender' and the 'Accept Authoritative Domain
+   Sender' options
+       Select 'OK'
+   
+   
+   To configure the StoredIQ Appstack:
+   
+       Log in as root and launch the Appstack Configuration
+   utility by executing the command /siq/bin/appstackcfg
+       Provide the fully qualified hostname or short hostname for
+   the Appstack in the Domain name field
+       Provide the IP address for the StoredIQ Gateway server
+       Provide the fully qualified hostname or IP address of the
+   Exchange server
+       Select the default Port of 25 or modify it to suit the port
+   of your custom SMTP Receive Connector
+       Provide the username of the user you wish to authenticate
+   into the Exchange server with.
+           If you used Method one above you may use any user name
+   and password as long as they are a member of the domain
+           If you used Method two, you must use only the user name
+   of the single user you have granted permissions for
+       Enter the password for the user selected in the previous
+   step
+       Select 'Enable TLS'
+       Select 'Restart appstack services' (an alternative to this
+   is to restart the Appstack services from the command line)
+       Select 'Save and exit'
+       Wait for all StoredIQ services to restart
+   
+   
+   You should now be able to send email notifications from the
+   StoredIQ Appstack when generating reports or when using the
+   eDiscovery Matter Dashboard.
+   
+   *********************************
+   
+   Technote 1697645 has been created and the procedure above is
+   available to preview at:
+   
+   http://g01zciwas018.ahe.pok.ibm.com/support/dcf/preview.wss?host
+   =g01zcidbs003.ahe.pok.ibm.com&db=support/swg/ecmtech.nsf&unid=0E [http://g01zciwas018.ahe.pok.ibm.com/support/dcf/preview.wss?host=g01zcidbs003.ahe.pok.ibm.com&db=support/swg/ecmtech.nsf&unid=0E]
+   1660F68C90128A85257DF5005C99D7&taxOC=SSCQQ8V&MD=2015/02/23%2013:
+   02:27&sid=
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Task 6316.  Fix released in 7.6.0.3.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT07354
+   
+   
+ * REPORTED COMPONENT NAME
+   APPLICATION
+   
+   
+ * REPORTED COMPONENT ID
+   5725M8402
+   
+   
+ * REPORTED RELEASE
+   760
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-02-25
+   
+   
+ * CLOSED DATE
+   2015-06-08
+   
+   
+ * LAST MODIFIED DATE
+   2015-06-08
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *     None
+   n/a
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R760 PSY
+   UP

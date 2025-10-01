@@ -1,0 +1,79 @@
+Title: IBM Security Bulletin: Multiple vulnerabilities affect Watson Explorer Content Analytics Studio (CVE-2016-5546 CVE-2016-5548 CVE-2016-5549 CVE-2016-5547 CVE-2016-2183) - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ Security vulnerabilities have been identified in IBM® Runtime Environment Java™ Technology Edition that is used by Watson Explorer Content Analytics Studio. 
+
+VULNERABILITY DETAILS
+CVEID: CVE-2016-5546 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2016-5546]
+DESCRIPTION: An unspecified vulnerability in Oracle Java SE Java SE Embedded and Jrockit related to the Libraries component has no confidentiality impact, high integrity impact, and no availability impact.
+CVSS Base Score: 7.5
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/120869 [https://exchange.xforce.ibmcloud.com/vulnerabilities/120869] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:H/A:N) 
+
+CVEID: CVE-2016-5548 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2016-5548]
+DESCRIPTION: An unspecified vulnerability in Oracle Java SE and Java SE Embedded related to the Libraries component could allow a remote attacker to obtain sensitive information resulting in a high confidentiality impact using unknown attack vectors.
+CVSS Base Score: 6.5
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/120864 [https://exchange.xforce.ibmcloud.com/vulnerabilities/120864] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:N/AC:L/PR:N/UI:R/S:U/C:H/I:N/A:N) 
+
+CVEID: CVE-2016-5549 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2016-5549]
+DESCRIPTION: An unspecified vulnerability in Oracle Java SE and Java SE Embedded related to the Libraries component could allow a remote attacker to obtain sensitive information resulting in a high confidentiality impact using unknown attack vectors.
+CVSS Base Score: 6.5
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/120863 [https://exchange.xforce.ibmcloud.com/vulnerabilities/120863] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:N/AC:L/PR:N/UI:R/S:U/C:H/I:N/A:N) 
+
+CVEID: CVE-2016-5547 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2016-5547]
+DESCRIPTION: An unspecified vulnerability in Oracle Java SE Java SE Embedded and Jrockit related to the Libraries component could allow a remote attacker to cause a denial of service resulting in a low availability impact using unknown attack vectors.
+CVSS Base Score: 5.3
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/120871 [https://exchange.xforce.ibmcloud.com/vulnerabilities/120871] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:L) 
+
+CVEID: CVE-2016-2183 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2016-2183]
+DESCRIPTION: OpenSSL could allow a remote attacker to obtain sensitive information, caused by an error in the DES/3DES cipher, used as part of the SSL/TLS protocol. By capturing large amounts of encrypted traffic between the SSL/TLS server and the client, a remote attacker able to conduct a man-in-the-middle attack could exploit this vulnerability to recover the plaintext data and obtain sensitive information. This vulnerability is known as the SWEET32 Birthday attack.
+CVSS Base Score: 3.7
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/116337 [https://exchange.xforce.ibmcloud.com/vulnerabilities/116337] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:N/AC:H/PR:N/UI:N/S:U/C:L/I:N/A:N)
+
+AFFECTED PRODUCTS AND VERSIONS
+These vulnerabilities apply to the following product and version: 
+
+ * Watson Explorer Content Analytics Studio version 11.0.0.3 and earlier, version 11.0.1, version 11.0.2.
+
+REMEDIATION/FIXES
+Follow these steps to upgrade to the required version of IBM Java Runtime. 
+The table reflects product names at the time the specified versions were released. To use the links to Fix Central in this table, you must first log in to the IBM Support Fix Central site at http://www.ibm.com/support/fixcentral/ [http://www.ibm.com/support/fixcentral/].
+
+
+
+Affected Product Affected Versions Required IBM Java Runtime How to acquire and apply the fix IBM Watson Explorer Content Analytics Studio 11.0 - 11.0.0.3,
+11.0.1 JVM 8 SR4 FP1 or later Upgrade to Version 11.0.2. For information about this version, and links to the software and release notes, see the download document [http://www.ibm.com/support/docview.wss?uid=swg24042893]. For information about upgrading, see the upgrade procedures [http://www.ibm.com/support/docview.wss?uid=swg27049072]. IBM Watson Explorer Content Analytics Studio 11.0.2 JVM 8 SR4 FP1 or later  1. Download the IBM Java Runtime, Version 8 package and operating system from Fix Central [https://www-945.ibm.com/support/fixcentral/swg/selectFixes?parent=Watson%2BGroup&product=ibm/Information+Management/InfoSphere+Data+Explorer&release=11.0.2.0&platform=All&function=all]: interim fix 
+    11.0.2.0-WS-WatsonExplorer-AEAnalytical-CAStudio-8SR4FP1 or later. 
+    For example, 11.0.2.0-WS-WatsonExplorer-AEAnalytical-CAStudio-8SR4FP5, which includes 64-bit version of IBM Java Runtime. 
+ 2. To apply the fix, follow the steps in Updating IBM Java Runtime [http://www.ibm.com/support/docview.wss?uid=swg22003954]. 
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v3 Guide [http://www.first.org/cvss/user-guide] 
+On-line Calculator v3 [http://www.first.org/cvss/calculator/3.0] 
+
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] 
+
+CHANGE HISTORY
+ 7 Jun 2017 : Original version published 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.

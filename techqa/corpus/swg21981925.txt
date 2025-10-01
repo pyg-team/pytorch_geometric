@@ -1,0 +1,73 @@
+Title: IBM Must Gathers when Engaging Support in PureData System for Analytics - United States
+
+Text:
+must gather log collection healthcheck logs nzhealthcheck nzlogcollector required TECHNOTE (FAQ)
+
+QUESTION
+ Before I raise a PMR, what logs should I capture to assist support in resolving my problem as quickly as possible? 
+
+ANSWER
+Must Gathers when engaging Support:
+For IDAA customers, please consult your documentation for tracing options that mimick below behavior:
+
+
+NZhealthcheck: 
+
+1. log into active node as nz, check nzhealthcheck version 
+
+$nz /nz/kit/bin/adm/nzhealthcheck -v 
+
+a. If version is below 2.3, download latest standalone version: 
+
+Download and install latest Software Support Tools from fix central 
+(they are backwards compatible within 7.X releases) 
+
+Run in standalone mode: 
+
+ $nz /nz/support/contrib/bin/adm/nzhealthcheck/nzhealthcheck -S 
+
+ Enter root password when prompted 
+
+b. If version is at or above 2.3:
+/nz/kit/bin/adm/nzhealthcheck
+
+
+In both cases, the result is a .txt file which should be attached to the PMR 
+
+
+NZlogcollector 
+
+1. Log into active node as root, check nzlogcollector version 
+
+$root /nz/support/bin/adm/nzlogcollector/nzlogcollector -v 
+
+If version is below 2.1.0.4: 
+
+Download and install latest Software Support Tools from fix central 
+(they are backwards compatible within 7.X releases) 
+
+If you are unsure what logs to capture, run nzlogcollector without any flags for a cursory exam:
+
+$root /nz/support/bin/adm/nzlogcollector/nzlogcollector -outputdir /nzscratch/ 
+
+The command will create a .zip file. Please attach this zip file to the PMR. 
+
+Under the direction of support, you may invoke a suite of target area component based collection:
+
+
+nzlogcollector flags (use outputdir flag for all commands and be mindful of space considerations) 
+
+Component Description nzlogcollector flags host Collects logs to narrow down host hardware issues -component host rack1.host1 
+
+-component host rack1.host2 cluster Collects logs that impact cluster failover and high availability -component cluster spa Collect logs across an entire H chasis -component spa spa1 
+
+-component spa spa2 spu Collects logs targeted to a particular SPU -component spu spa1.spu1 
+
+-component spu spa1.spu3 network Collects logs pertaining to both internal and client facing networking -component network sasphy Collects logs pertaining to disk access and sas fabric health issues -component sasphy spa1 
+
+-component sasphy spa2 disk Collects logs pertaining to specific disk -component disk spa1.diskEncl1.disk1 database Collects logs which impact all tables across a specific database -component database testDB <DBname> plan Collects logs for a specific query based on plan file ID -component plan 1234 <PLANID>  
+
+Similarly, the following are “symptom based” flags which may be issued: 
+
+Symptom When to run nzlogcollector flags crash When the database has crashed/restarted. 
+Note: cores may be collected, be conscious of space concerns -symptom crash Npshang queries are not progressing; many basic commands will hang or time-out -symptom npshang spuhang Queries are not progressing; query are waiting on a specific dataslice -symptom spuhang

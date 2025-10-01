@@ -1,0 +1,20 @@
+Title: IBM Cognos Disclosure Management 10.2.7 now available - United States
+
+Text:
+ NEWS
+
+ABSTRACT
+ Cognos Disclosure Management 10.2.7 is now available to customers. 
+
+CONTENT
+Information about New Features in Cognos Disclosure Management 10.2.7 can be found on the IBM Knowledge Center portal [http://www.ibm.com/support/knowledgecenter/SSQK59_10.2.7/com.ibm.ba.cognos.cdm_ag.10.2.7.doc/c_cdm_com_whatsnew_10_2_7.html]. 
+
+This release also includes the enhancements that were previously released On Cloud [http://www.ibm.com/support/knowledgecenter/SSQK59_10.2.7/com.ibm.ba.cognos.cdm_ag.10.2.7.doc/c_cdm_com_whatsnew_10_2_6_1.html]. 
+
+ 
+
+Information and download instructions are available on the Downloading IBM Cognos Disclosure Management 10.2.7 page [http://www.ibm.com/support/docview.wss?uid=swg24042952].
+
+RELATED INFORMATION
+ Cognos Disclosure Management 10.2.7 Fix List [http://www.ibm.com/support/docview.wss?uid=swg27049062]
+Cognos Disclosure Management 10.2.7 System Environments [http://www.ibm.com/support/docview.wss?uid=swg27049150]

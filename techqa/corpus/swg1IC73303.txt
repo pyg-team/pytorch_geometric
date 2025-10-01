@@ -1,0 +1,125 @@
+Title: IBM IC73303: MQ MESSAGES MAY BE OUT OF ORDER IN SERIAL PROCESSING MODE IF MQ FRONT SIDE HANDLER ADMIN STATE REPEATEDLY GOES UP AND DOWN - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The sequence of MQ messages may be out of order when using
+   serial processing mode if the MQ Front Side Handler Admin State
+   repeatedly goes up and down.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  NA
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Make sure to properly close all connections when QM is changing
+   state.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix will be in 3.8.0.10, 3.8.1.9, 3.8.2.1
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC73303
+   
+   
+ * REPORTED COMPONENT NAME
+   DATAPOWER
+   
+   
+ * REPORTED COMPONENT ID
+   DP1234567
+   
+   
+ * REPORTED RELEASE
+   380
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-12-15
+   
+   
+ * CLOSED DATE
+   2011-01-20
+   
+   
+ * LAST MODIFIED DATE
+   2011-01-21
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   DATAPOWER
+   
+   
+ * FIXED COMPONENT ID
+   DP1234567
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R380 PSY
+   UP
+   
+   
+ * R381 PSY
+   UP

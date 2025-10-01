@@ -1,0 +1,164 @@
+Title: IBM PK49208: S-Chinese attachment filename is displayed as garbaged character s on CQWJ. - United States
+
+Text:
+AIX SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS UNREPRODUCIBLE IN NEXT RELEASE.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  CQ Client  :CQ Web Java
+   CQ :                      :Simplified Chinese 7.0.0.1ifix01
+   Client OS  : Simplified Chinese Windows XP
+   Database  :MS SQL Server 2000,Access
+   Database codepage :Simplified Chinese(GBK)
+   Repository codepage :Simplified Chinese(936)
+   User DB schema :DefectTracking_zh
+   Summary:
+     Install CQ on Windows xp with S-Chinese locale and create Sche
+   ma Repo with Code Set 936 in SQL Server 2000. Create a new defec
+   t and add an attachment with S-Chinese filename. The filename is
+    displayed as garbaged characters in CQWJ.
+   Steps to Reproduce:
+   1. Install CQ on Windows XP
+   2. Open Maintenance Tool, then create Schema Repo with any schem
+   a and Code Set 936 on S-Chinese  SQL Server database.
+   3. Login CQ Web client, then create a new defect.
+   4. Add an attachment with S-Chinese filename and description.
+   5.Save this record and check the attachment file name in the Att
+   achments Tab.
+   Expected Result:
+   S-Chinese attachment filename should be displayed correctly on C
+   QWJ.
+   Fails:
+   S-Chinese attachment filename is displayed as garbaged character
+   s on CQWJ.
+   Other comments:
+   1.Although the attachment file name displayed garbled, I can ope
+   n attachment on CQWeb.
+   2. If the attachment file name is ASCII characters, there is no
+   such a problem.
+   It is duplicated with RATLC01090928, but it is not fixed , and c
+   ustomer reported the defect still there in V7.0.0.1ifix03. I tes
+   ted in 7.0.0.1ifix01with the same issue
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Attachments with Simplified Chinese filenames have invalid
+   filenames displayed when downloaded.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK49208
+   
+   
+ * REPORTED COMPONENT NAME
+   CLEARQUEST UNIX
+   
+   
+ * REPORTED COMPONENT ID
+   5724G3601
+   
+   
+ * REPORTED RELEASE
+   701
+   
+   
+ * STATUS
+   CLOSED UR1
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2007-07-18
+   
+   
+ * CLOSED DATE
+   2008-06-16
+   
+   
+ * LAST MODIFIED DATE
+   2008-06-16
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CLEARQUEST UNIX
+   
+   
+ * FIXED COMPONENT ID
+   5724G3601
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R60G PSY
+   UP
+   
+   
+ * R60H PSY
+   UP
+   
+   
+ * R60L PSY
+   UP
+   
+   
+ * R60S PSY
+   UP
+   
+   
+ * R700 PSY
+   UP
+   
+   
+ * R701 PSY
+   UP
+   
+   
+ * R60A PSN
+   UP

@@ -1,0 +1,194 @@
+Title: IBM IO05637: AUTOLOGIN AS 'ROOT' KDE DESKTOP CLIENT IMAGE - United States
+
+Text:
+ 
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Customer would like to autologin as 'root' when booting a client
+   desktop image.  AP IBM support has found a way to edit a
+   configuration file to enable login as 'root'.
+   
+   Opening NSR ticket to confirm whether this type of environment
+   is supported.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Customer would like to autologin as 'root' when booting a client
+   desktop image.  AP IBM support has found a way to edit a
+   configuration file to enable login as 'root'.
+   
+   Opening NSR ticket to confirm whether this type of environment
+   is supported.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  > I suspect from what you wrote below, is it same to say that
+   Novell
+   cannot
+   > assist this customer in their endeavors to find a solution
+   > for autologing in as root?
+   
+   No, if he wishes to do so, we can support him. Configuring the
+   autologin
+   is supported, and which user he chooses is his business.
+   
+   However, he _must_ be concious, that configuring autologin for
+   root is a
+   big, big security issue!
+   Any application started then, has full read, execute and write
+   permission
+   to every single bit on this machine. Any error or
+   misconfiguration in an
+   application can ruin his image, installation, it's even possible
+   to
+   damage the hardware or run DOS attacks on other machines in the
+   network.
+   
+   There are good reasons, why it is not recommended to login as
+   root.
+   An unattended autologin as root is even worse, as any person
+   working on
+   this machine has full access rights and e.g. could easily
+   install a
+   rootkit. If the customer is willing to take this risk, he can do
+   so, but
+   I strongly recommend (as you already did) to do the autologin as
+   non-root user.
+   
+   > Would you please provide an official statement in the event
+   the
+   customer
+   > interprets differently?
+   
+   I know, that you are aware of this David, the above is meant to
+   be the
+   statement.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  > I suspect from what you wrote below, is it same to say that
+   Novell
+   cannot
+   > assist this customer in their endeavors to find a solution
+   > for autologing in as root?
+   
+   No, if he wishes to do so, we can support him. Configuring the
+   autologin
+   is supported, and which user he chooses is his business.
+   
+   However, he _must_ be concious, that configuring autologin for
+   root is a
+   big, big security issue!
+   Any application started then, has full read, execute and write
+   permission
+   to every single bit on this machine. Any error or
+   misconfiguration in an
+   application can ruin his image, installation, it's even possible
+   to
+   damage the hardware or run DOS attacks on other machines in the
+   network.
+   
+   There are good reasons, why it is not recommended to login as
+   root.
+   An unattended autologin as root is even worse, as any person
+   working on
+   this machine has full access rights and e.g. could easily
+   install a
+   rootkit. If the customer is willing to take this risk, he can do
+   so, but
+   I strongly recommend (as you already did) to do the autologin as
+   non-root user.
+   
+   > Would you please provide an official statement in the event
+   the
+   customer
+   > interprets differently?
+   
+   I know, that you are aware of this David, the above is meant to
+   be the
+   statement.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IO05637
+   
+   
+ * REPORTED COMPONENT NAME
+   IRES V2
+   
+   
+ * REPORTED COMPONENT ID
+   5724H9900
+   
+   
+ * REPORTED RELEASE
+   101
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2006-11-20
+   
+   
+ * CLOSED DATE
+   2006-11-30
+   
+   
+ * LAST MODIFIED DATE
+   2006-11-30
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

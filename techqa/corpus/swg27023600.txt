@@ -1,0 +1,971 @@
+Title: IBM WebSphere Message Broker Version 8.0 Readme - United States
+
+Text:
+readme readme reademe readmes readmes; ReadmeDocument PRODUCT README
+
+ABSTRACT
+ This document contains the IBM WebSphere Message Broker Version 8.0.0.9 Readme 
+
+CONTENT
+IBM WebSphere Message Broker Version 8.0 Readme
+
+
+
+
+Readme documentation for IBM WebSphere Message Broker Version 8.0.0.9 including the Runtime, Toolkit and Explorer components. 
+
+Readme file for: IBM WebSphere Message Broker
+Product/Component Release: 8.0
+Update Name: 8.0.0.9
+
+Publication date: 09 December 2011
+Last modified date: 30 June 2017 
+
+Contents 
+
+ * Installation information:  * Prior to installation 
+    * Installing 
+    * Essential information if you are migrating 
+    * Documentation 
+    * Support 
+    * Feature updates
+   
+   
+ * Known problems and their workarounds (if any):  * Installation 
+    * Platforms 
+    * Migration 
+    * WebSphere Message Broker Explorer 
+    * WebSphere Message Broker Toolkit 
+    * Web Services 
+    * Web UI 
+    * Nodes 
+    * WebSphere Adapter nodes 
+    * Graphical Data Mapper 
+    * Commands 
+    * Databases 
+    * Samples
+   
+   
+ * Copyright and trademark information 
+ * Useful websites 
+ * Document change history
+
+Installation information: Always use the latest version of this readme file, which is available in English only at:
+http://www.ibm.com/support/docview.wss?uid=swg27006917 [http://www.ibm.com/support/docview.wss?uid=swg27006917] 
+
+Translated readme files are available at:
+ftp://public.dhe.ibm.com/software/integration/wbibrokers/docs/ [ftp://public.dhe.ibm.com/software/integration/wbibrokers/docs/] 
+
+Prior to installation 
+
+For information about the tasks you must complete before you install the product, refer to the WebSphere Message Broker V8.0 documentationat: 
+
+http://www.ibm.com/support/knowledgecenter/SSKM8N_8.0.0/mapfiles/help_home_msgbroker.html [http://www-01.ibm.com/support/knowledgecenter/SSKM8N_8.0.0/mapfiles/help_home_msgbroker.html]
+
+
+Check the WebSphere Message Broker system requirements to ensure that your installation platform is supported for the product edition that you are planning to install. The WebSphere Message Broker system requirements web page is available at:
+http://www.ibm.com/software/integration/wbimessagebroker/requirements/ [http://www.ibm.com/software/integration/wbimessagebroker/requirements/] 
+
+Two editions of WebSphere Message Broker V8.0 are available on Windows: 
+
+ *  WebSphere Message Broker V8.0 Windows x86 (32-bit Broker runtime component) WebSphere Message Broker V8.0 Windows x86-64 (64-bit Broker runtime component) 
+
+The 64-bit edition of WebSphere Message Broker is not supported on all 64-bit versions of the Windows Operating System. For more information, see the WebSphere Message Broker system requirements web page. Installing 
+
+Applying service to z/OS 
+
+If you are applying service to z/OS, the Program Temporary Fix (PTF) packages must be downloaded as binary files, and then transferred to z/OS:
+1. Download the PTF packages as binary files from the WebSphere Message Broker Support Site at http://www.ibm.com/support/entry/portal/Software/WebSphere/WebSphere_Message_Broker [http://www.ibm.com/support/entry/portal/Software/WebSphere/WebSphere_Message_Broker] and save the files to your workstation.
+2. Allocate sequential datasets with the following attributes: 
+
+ * 
+ * 
+ * Record format . . . : FB 
+ * Record length . . . : 1024 
+ * Block size . . . . : 6144 
+ * 1st extent tracks . : 500 
+ * Secondary tracks . : 50
+
+
+You can use the following sample Job Control Language (JCL) to allocate these datasets:  * 
+ * 
+ * INSERT A VALID JOBCARD HERE
+ * //* 
+ * //ALLOCATE EXEC PGM=IEFBR14 
+ * //SYSMOD1 DD DSN=YOUR HIGH LEVEL QUALIFIER (HLQ).PTF NUMBER.TRS, 
+ * // DISP=(NEW,CATLG,DELETE), 
+ * // UNIT=SYSDA, 
+ * // SPACE=(TRK,(500,50),RLSE), 
+ * // DSORG=PS, 
+ * // DCB=(RECFM=FB,LRECL=1024,BLKSIZE=6144) 
+ * //*
+
+3. Transfer the binary files from your local workstation to z/OS. File Transfer Protocol (FTP) can be used to transfer the files to the target z/OS as binary files by using the replace option, for example: put PTF NUMBER.TRS 'YOUR HLQ.PTF NUMBER.TRS' (replace
+4. Unpack the datasets using the TRSMAIN utility program. This utility is freely available at http://techsupport.services.ibm.com/390/trsmain.html [http://techsupport.services.ibm.com/390/trsmain.html]. 
+
+You can use the following sample JCL to unpack the datasets after the changes have been made, and a suitable job card added: 
+
+ * 
+ * 
+ * //* UNTERSE APAR 
+ * //***************************************************** 
+ * /UNPACK EXEC PGM=TRSMAIN,PARM='UNPACK' 
+ * //STEPLIB DD DISP=SHR,DSN=TERSE.LOADLIB 
+ * //SYSPRINT DD SYSOUT=* 
+ * //INFILE DD DSN=YOUR HLQ.PTF NUMBER.TRS, 
+ * // DISP=SHR 
+ * //OUTFILE DD DSN=YOUR HLQ.PTF NUMBER, 
+ * // DISP=(NEW,CATLG), 
+ * // SPACE=(TRK,(1000,100,)) 
+ * /*
+
+5. Apply the resulting files using System Modification Program/Extended(SMP/E) for z/OS RECEIVE and APPLY. 
+
+
+
+
+Essential information if you are migrating If you are migrating from WebSphere Message Broker version 6.1 or version 7.0, refer to the online information center at http://publib.boulder.ibm.com/infocenter/wmbhelp/v8r0m0/index.jsp [http://publib.boulder.ibm.com/infocenter/wmbhelp/v8r0m0/index.jsp], which provides detailed information about how to migrate. 
+
+
+
+
+
+
+
+Documentation The online product documentation for WebSphere Message Broker V8.0 is available at: 
+http://www.ibm.com/support/knowledgecenter/SSKM8N_8.0.0/mapfiles/help_home_msgbroker.html [http://www-01.ibm.com/support/knowledgecenter/SSKM8N_8.0.0/mapfiles/help_home_msgbroker.html] 
+
+Always refer to the online product documentation for the latest information. The online product documentation contains newer information than the information center shipped with the Message Broker Toolkit. 
+
+The WebSphere Message Broker product documentation for V8.0.0.0 contains documentation for recording and viewing data. However, it does not contain information about replaying data. A PDF has been provided with the most up-to-date and comprehensive documentation about recording, viewing, and replaying data in V8.0.0.0. To download the PDF, see the technote at:
+www.ibm.com/support/docview.wss?uid=swg21573603 [http://www.ibm.com/support/docview.wss?uid=swg21573603] 
+
+The WebSphere Message Broker product documentation for V8.0.0.1 contains up-to-date information about the web user interface. However, the following technotes contain additional information to supplement the topics in the product documentation: 
+
+ *  For information about accessing the web user interface, see www.ibm.com/support/docview.wss?uid=swg21606634 [http://www.ibm.com/support/docview.wss?uid=swg21606634] For information about accessing data and resources in the web user interface, see www.ibm.com/support/docview.wss?uid=swg21606640 [http://www.ibm.com/support/docview.wss?uid=swg21606640] 
+
+The stand-alone information center is available for download at: 
+ftp://public.dhe.ibm.com/software/integration/wbibrokers/docs/V8.0/wmb_help_linux.tgz [ftp://public.dhe.ibm.com/software/integration/wbibrokers/docs/V8.0/wmb_help_linux.tgz] (Linux version) 
+ftp://public.dhe.ibm.com/software/integration/wbibrokers/docs/V8.0/wmb_help_win.zip [ftp://public.dhe.ibm.com/software/integration/wbibrokers/docs/V8.0/wmb_help_win.zip] (Windows version) 
+
+Read the using_the_infocenter.html file that is included in the ibm_help folder in the wmb_help_linux.tgz and wmb_help_win.zip files. 
+
+
+
+
+
+
+Support Defects: This readme file might contain references to defect numbers. These numbers refer to internal IBM problem numbers; you might find these numbers useful when discussing problems with your IBM service representative. 
+
+Technotes: For current information about known problems and available fixes, see the WebSphere Message Broker support website at:
+http://www.ibm.com/support/entry/portal/Software/WebSphere/WebSphere_Message_Broker [http://www.ibm.com/support/entry/portal/Software/WebSphere/WebSphere_Message_Broker] 
+
+To find information, click Troubleshoot. WebSphere Message Broker Technotes are displayed and can be ordered and searched. 
+
+For information about downloading WebSphere Message Broker Version V8.0 installation images from the Passport Advantage website, see the Download WebSphere Message Broker V8.0 from the Passport Advantage website download document, which is available at:
+http://www.ibm.com/support/docview.wss?uid=swg24030968 [http://www.ibm.com/support/docview.wss?uid=swg24030968] 
+
+Versions: For the latest information about which particular versions of operating system and databases are supported by WebSphere Message Broker, consult the system requirements page at:
+http://www.ibm.com/software/integration/wbimessagebroker/requirements/index.html [http://www.ibm.com/software/integration/wbimessagebroker/requirements/index.html] 
+
+
+
+
+
+
+
+Feature updates Check periodically for updates to the WebSphere Message Broker Toolkit, including documentation updates in English and in other supported languages. Recommended fixes for WebSphere Message Broker can be found at: 
+http://www.ibm.com/support/docview.wss?uid=swg27006041 [http://www.ibm.com/support/docview.wss?uid=swg27006041] 
+
+Details of what's new in Version 8.0 can be found at: 
+
+http://www.ibm.com/support/knowledgecenter/SSKM8N_8.0.0/com.ibm.etools.mft.doc/bb23110_.htm [http://www-01.ibm.com/support/knowledgecenter/SSKM8N_8.0.0/com.ibm.etools.mft.doc/bb23110_.htm]
+
+
+
+
+
+TOP Known problems and their workarounds (if any): This section outlines the known problems and their workarounds (if any) of WebSphere Message Broker, by component. 
+
+
+
+
+
+
+TOP Installation 
+ * Windows: Uninstallation executable program is not signed Symptoms: 
+   
+   If you run the WebSphere Message Broker uninstallation program uninstaller.exe, and you are using Windows 7 or Windows Server 2008 R2, a dialogue might be displayed warning that the uninstallation file is unsigned. 
+   
+   Solution: 
+   
+   This warning can be safely ignored. Continue with the uninstallation process. 
+   
+   
+   
+ * Windows: Attachment Manager Symptoms: 
+   
+   If you are installing an IBM product by using an electronic image from IBM Passport Advantage, and you are using Windows XP Service Pack 2 or later, your Windows Security settings might cause Attachment Manager to block the content of the installer .zip file, causing your installation to fail. 
+   
+   Solution: 
+   
+   To work around this problem, complete the following steps: 
+   
+    * 
+    * 
+    * 
+    * Properties
+    * 
+    * 
+    * 
+    * General
+    * 
+    * Unblock
+    * 
+   
+   
+   For more information about Windows Attachment Manager, refer to the Microsoft Support site at: http://support.microsoft.com/kb/883260 [http://support.microsoft.com/kb/883260]
+   
+ * HP-UX: Runtime component supplied on a physical DVD The installation image for the WebSphere Message Broker V8.0 GA runtime component has exceeded the 700 MB limit recommended for a physical CD. For this reason, the installation image for the HP-UX platform is supplied on a physical DVD rather than a physical CD. The installation image for the WebSphere Message Broker V8.0 GA runtime component is also available from the Passport Advantage website. For information about downloading WebSphere Message Broker Version V8.0 installation images from the Passport Advantage website, see the Download WebSphere Message Broker V8.0 from the Passport Advantage website download document, which is available at:
+   http://www.ibm.com/support/docview.wss?uid=swg24030968 [http://www.ibm.com/support/docview.wss?uid=swg24030968]
+   
+   
+   
+ * Installing using the fix pack installer Symptoms: 
+   
+   The WebSphere Message Broker V8.0.0.0 GA runtime installer requires that you accept the license agreement.
+   The fix pack installer requires either that you install on a system that already has WebSphere Message Broker V8.0 GA installed, or that you provide the original WebSphere Message Broker V8.0 GA license files. The WebSphere message Broker V8.0 GA license files can be from either an existing V8.0 runtime installation, or from the original V8.0 installation media. The location of the license files is required only when you are installing a WebSphere Message Broker V8.0 fix pack on a system on which an installation of WebSphere Message Broker V8.0 GA has not been detected. 
+   
+   Solution: 
+   
+   GUI or Console installations
+   For a fix pack GUI or console installation where V8.0 does not already exist on the system, the installer will prompt you to provide the path to existing media licenses or an existing installation of V8.0.
+   Where V8.0 is already installed on the system, you should not be prompted for existing licences, and the installation will progress as normal. 
+   
+   Silent installations
+   For silent installations (full media or fixpack) you must always accept the license, so for example 
+   
+   
+   For a full GA silent media installation
+   Add the argument: -DLICENSE_ACCEPTED=TRUE to your silent command, or to the response file you have referenced
+   For example on windows command line
+   setup32.exe -i silent -DLICENSE_ACCEPTED=TRUE
+   
+   For a fix pack silent installation where V8.0 already exists on the system
+   Add the argument: -DLICENSE_ACCEPTED=TRUE to your silent command, or to the silent response file you have referenced
+   For example on windows command line
+   8.0.0-WS-MB-WINIA32-FP0001.exe -i silent -DLICENSE_ACCEPTED=TRUE
+   
+   For a fix pack silent installation where V8.0 does not already exist on the system
+   Also add the argument: -DExternal_License_Path=<path to licenses> to your silent command, or to the silent response file you have referenced
+   For example on windows command line pointing at the original media in the D: drive
+   8.0.0-WS-MB-WINIA32-FP0001.exe -i silent -DLICENSE_ACCEPTED=TRUE -DExternal_License_Path="D:\messagebroker_ia_runtime1\license
+   
+   Note if pointing at an existing installation of V8.0.0.0 the path is subtly different
+   For example on windows command line pointing at the original media in the D: drive
+   8.0.0-WS-MB-WINIA32-FP0001.exe -i silent -DLICENSE_ACCEPTED=TRUE -DExternal_License_Path="C:\Program Files\IBM\MQSI\8.0.0.0\license\8.0.0.0"
+   
+   
+
+
+
+ * Instructions for installing the WebSphere Message Broker runtime and ODBC Database Extender components with a non-root user ID Symptoms: 
+   
+   In the information center topic "Security on Linux and UNIX systems" (bh26031), steps 3d) and 3e) for installing the runtime and ODBC Database Extender (IE02) components with a non-root user ID are incorrect. If you follow the steps described in the topic, the product will not install correctly. 
+   
+   Solution: 
+   
+   Replace steps 3d) and 3e) in the topic with the following new steps 3d) to 3i):
+   
+   
+
+
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ *  /opt/ibm/mqsi and /opt/ibm/IE02 (for Linux) For example: SUDO mkdir /opt/ibm/mqsi
+   SUDO mkdir /opt/ibm/IE02
+   
+   
+   /opt/IBM/mqsi and /opt/IBM/IE02 (for UNIX and AIX). For example:
+   SUDO mkdir /opt/IBM/mqsi
+   SUDO mkdir /opt/IBM/IE02 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+
+
+
+
+
+TOP Platforms 
+
+Ubuntu WebSphere Message Broker is supported on Ubuntu, but only for development systems. Production systems should not be used to run WebSphere Message Broker on Ubuntu. 
+
+For more information, see the WebSphere Message Broker system requirements page. The WebSphere Message Broker system requirements web page is available at:
+http://www.ibm.com/software/integration/wbimessagebroker/requirements/ [http://www.ibm.com/software/integration/wbimessagebroker/requirements/] 
+
+
+ * Unable to connect a node that has multiple output terminals to other nodes (116214) Symptoms 
+   
+   When attempting to connect a node that has multiple output terminals to other nodes, a connection is not created. 
+   
+   Solution 
+   
+   To work around this problem, complete one of the following steps: 
+   
+    *  Set the following environment variable: GDK_NATIVE_WINDOWS=1 
+   
+   OR  *  Use a different window manager 
+   
+   
+
+Solaris and HP-UX 
+ * Increase in bipbroker and DataFlowEngine memory footprint on Solaris and HP-UX platforms Symptoms 
+   
+   When upgrading from 8.0.0.1 to 8.0.0.2, bipbroker and DataFlowEngine processes running on Solaris or HP platforms might consume an additional 204 MB of memory. This is caused by an increase in the default size of the ReservedCodeCacheSize parameter in the Java Virtual Machine (JVM) used by the broker processes. This area of memory is related to the just-in-time compilation of Java classes and was increased by the JVM supplier in response to an increase in bug reports from third party products failing due to exhaustion of space in the code cache. 
+   
+   Solution 
+   
+   Customers should use the default value for this parameter, but if this causes unnecessary resource contention, the default can be reverted to its former value by exporting the following environment variable in the broker's profile prior to starting the broker: 
+   
+    * 
+    * 
+   
+   
+
+AIX  * DataFlowEngine abend on AIX when resolving hostname  
+   
+   Symptoms
+   The DataFlowEngine process running on AIX may terminate on startup or during a deploy with the following call stack in the abend/core file: 
+   calloc [] 
+   getaddrinfo [] 
+   Java_java_net_Inet6AddressImpl_lookupAllHostAddr 
+   
+   Solution
+   Apply AIX equivalent APAR fix for IV95824.
+   Alternatively apply one of the following workarounds: 
+   1) Specify hosts resolution order in /etc/netsvc.conf so that IPv4 is resolved first. For example: 
+   hosts=local4,bind4 
+   2) Export the following environment variable setting: 
+   IBM_JAVA_OPTIONS=-Djava.net.preferIPv4Stack=true 
+   
+   
+
+
+
+
+
+TOP Migration 
+ * Brokers running fix pack 8.0.0.2 with new function capability enabled cannot participate in a multiple-broker global cache with brokers running 8.0.0.1. Symptom: 
+   
+   After upgrading to fix pack 8.0.0.2, cache catalog servers fail to start. All cache components report BIP7190 warnings. 
+   
+   Solution: 
+   
+   In 8.0.0.2, by default, each WebSphere eXtreme Scale server participating in the global cache starts with a domain name that is derived by the broker.
+   Previously in 8.0.0.1 the domain name for all servers in all embedded caches was an empty string. Servers in different domains cannot collaborate in the same grid.
+   Therefore, for a cache that spans more than one broker, you must enable the new capability for these brokers at the same time. 
+   
+   Enable the new capability by using the -f parameter on the mqsichangebroker command. 
+   
+   Brokers running fix pack 8.0.0.2 without new functionality enabled can still collaborate in the same grid as brokers running 8.0.0.1.
+   In this scenario, the servers running 8.0.0.2 will continue to use an empty string as the domain name, and will report a BIP7140 warning message to the system log with this information.
+   
+   
+
+
+
+
+
+TOP WebSphere Message Broker Explorer 
+ * Connecting to a queue manager requires a SHARECNV value that is greater than 0 To connect the WebSphere Message Broker Explorer to a queue manager to receive publications, the SHARECNV property on that queue manager's SVRCONN channel must have a value that is greater than 0. This value is required if you want to use the Broker Statistics or Broker Statistics Graph views in WebSphere Message Broker Explorer.
+   
+   
+
+
+
+
+
+TOP WebSphere Message Broker Toolkit 
+ * Reset the Broker Application Development perspective after migrating Symptom: 
+   
+   After migrating the WebSphere Message Broker Toolkit and its resources to V8.0, items might be displayed in the WebSphere Message Broker Toolkit that are removed in V8.0; for example, previous toolkit options in menus. 
+   
+   Solution: 
+   
+   To resolve this problem, complete the following step: 
+   
+    * 
+    * Window > Reset Perspective
+    * 
+   
+   
+   After the perspective is reset, menus and views are updated for Version 8.0.
+   
+ * Migrating or importing resources to a WebSphere Message Broker Toolkit V8.0.0.0 or V8.0.0.1 workspace, might result in erroneous errors. Symptom: 
+   
+   After migrating or importing WebSphere Message Broker Toolkit and its resources to V8.0.0.0 or V8.0.0.1, erroneous errors might be displayed in the Toolkit. 
+   
+   Solution: 
+   
+   With your V8.0.0.0 or V8.0.0.1 workspace open in the WebSphere Message Broker Toolkit, select Project > Clean... > Clean all projects. The erroneous error messages are removed.
+   
+   
+   
+ * Importing resources into a new workspace might require project clean Symptom: 
+   
+   When you import resources into a new workspace, error messages might display after autobuild is complete. 
+   
+   Solution: 
+   
+   In the Broker Development view, select your projects and right-click Project > Clean to rebuild the projects. After the projects are cleaned, the error messages relating to the import are removed.
+   
+   
+   
+ * Specifying a new workspace with mqsicreatebar might require project clean Symptom: 
+   
+   When you run the mqsicreatebar command and specify a new workspace, error messages might display. 
+   
+   Solution: 
+   
+   Use the -cleanBuild option when running the mqsicreatebar command to clean the projects.
+   
+   
+   
+ * DFDL topics in the WebSphere Message Broker Toolkit are displayed in US English only Symptom: 
+   
+   When using the information center that is included in the WebSphere Message Broker Toolkit V8.0.0.0 GA, Data Format Description Language (DFDL) topics are displayed in US English only.
+   These topics have the identifier "dfxxxxx_", where "xxxxx" is a five-digit number. 
+   
+   Solution: 
+   
+   This problem is fixed in WebSphere Message Broker version 8.0.0.1.
+   
+   Users of WebSphere Message Broker version 8.0.0.0 GA can view these topics, in a language other than US English, using the online product documentation. The online product documentation for WebSphere Message Broker V8.0 contains the latest translated documentation, and is available at: 
+   
+   http://www.ibm.com/support/knowledgecenter/SSKM8N_8.0.0/mapfiles/help_home_msgbroker.html [http://www-01.ibm.com/support/knowledgecenter/SSKM8N_8.0.0/mapfiles/help_home_msgbroker.html]
+   
+   
+   
+ * Java, PHP, and Message Set projects having the same name can only belong to one Application or Library Symptom: 
+   
+   If a customer has more than one application or library in their workspace which requires a Java, PHP, or Message Set projects having the same name, an error message similar to the following will appear:
+   The project < Project Name > can not be a member of multiple applications or libraries.... 
+   
+   Solution: 
+   
+   Where an identical project is required in more than one application or library, a copy of the project should be made, and given a different name.
+   
+   
+   
+ * Documentation contains incorrect instructions for installing the WebSphere Message Broker Toolkit as a non-admin user Symptom: 
+   
+   Non-admin user is not able to install Toolkit while following current installation documentation. 
+   
+   Solution: 
+   
+   This problem is fixed in WebSphere Message Broker version 8.0.0.1.
+   
+   Users of WebSphere Message Broker 8.0.0.0, who are installing Toolkit as a non-admin user, can refer to the online product documentation at [http://publib.boulder.ibm.com/infocenter/wmbhelp/v8r0m0/index.jsp]http://www.ibm.com/support/knowledgecenter/SSKM8N_8.0.0/mapfiles/help_home_msgbroker.html [http://www-01.ibm.com/support/knowledgecenter/SSKM8N_8.0.0/mapfiles/help_home_msgbroker.html], or 
+   
+   
+ * Step 5 of the WebSphere Message Broker Toolkit V8.0.0.0 installation documentation should be updated as follows:  * 
+    * 
+    *  On Windows run the following command: <disk1 image>\installToolkit.bat -nonAdmin On Linux run the following script: <disk1 image>/installToolkit.sh -nonAdmin 
+   
+   
+ * Step 14 should be added to the WebSphere Message Broker Toolkit V8.0.0.0 installation documentation and read as follows:  * 
+    * 
+    *  On Windows run command: <WMBT80_Home>\wmbt\postconfig\postInstall_admin.bat On Linux run script: <WMBT80_Home>/wmbt/postconfig/postInstall_admin.sh 
+    * 
+   
+   
+ * When using an application project and a subflow with a .msgflow extension it is possible to create a BAR file with a duplicate message flow if the sub-flows have been used incorrectly in the previous release. Symptom: 
+   
+   This is caused when an External InputNode is added to the sub-flow; the resultant BAR file will contain two compiled message flows. One of the message flows will be the intended flow with the sub-flow embedded, the other message flow will be the extraneous sub-flow containing the ExternalInputNode without an appropriate ExternalOutput Node. 
+   
+   When the BAR file is deployed both of the message flows will run. The sub-flow will incorrectly start a new thread and attempt to read data from the InputNode. 
+   
+   Solution: 
+   
+   Either : 
+   
+    * 
+    * 
+    * 
+   
+   
+   
+ * Launching the WebSphere Message Broker Toolkit from Installation Manager makes the toolkit use WebSphere MQ 7.0.1 Symptom: 
+   
+   When an installation has completed, the user is provided the option to start the WebSphere Message Broker V8.0 Toolkit. When the toolkit opens, any broker which is running with a queue manager on WebSphere MQ version 7.1 or 7.5 will be reported as stopped, irrespective of whether the broker is running or not. A dialogue might be displayed warning the brokers can not be connected to. 
+   
+   If a user tries to start one of the brokers which is stopped, an error message is displayed containing the following text: 
+   
+   The queue manager '<QueueManager>' is not running (MQ reason code 2059 while trying to connect) 
+   
+   Check that: 
+   
+    * 
+    * 
+    * 
+   
+   If a user tries to start one of the brokers which is already started, a dialogue is displayed indicating that the broker can not be started as it is already running. Solution: 
+   
+   Shut down the toolkit and re-open it using the toolkit installation and not by using Installation Manager.
+   
+   
+   
+ * A version of XULRunner which is not compatible with Eclipse 3.6 (upon which WebSphere Message Broker Toolkit is based) may cause the Linux toolkit to crash shortly after being launched. Symptom: 
+   
+   Within a minute or so of launching the Linux toolkit, it crashes with the following error:
+   JVM terminated - Exit code=160 
+   
+   Solution: 
+   
+   Install a version of XULRunner which is compatible with Eclipse 3.6. 
+   
+   Compatible versions of XULRunner are versions 1.8-3.6 and associated fix packs. 
+   
+   Testing at IBM has been done using the following version, and this has been confirmed to resolve the issue:
+   http://ftp.mozilla.org/pub/mozilla.org/xulrunner/releases/1.9.2.19/runtimes/xulrunner-1.9.2.19.en-US.linux-i686.tar.bz2 [http://ftp.mozilla.org/pub/mozilla.org/xulrunner/releases/1.9.2.19/runtimes/xulrunner-1.9.2.19.en-US.linux-i686.tar.bz2] 
+   
+   Expand the downloaded compressed file into a convenient directory ( e.g. /usr/lib/xulrunner_new) 
+   
+   Add the following line to the eclipse.ini file under the mb install directory:
+   -Dorg.eclipse.swt.browser.XULRunnerPath=<location of unzipped download> ( e.g. -Dorg.eclipse.swt.browser.XULRunnerPath=/usr/lib/xulrunner_new)
+   
+   
+
+
+
+
+
+TOP Web Services 
+ * No known issues.
+
+
+
+
+TOP Web UI 
+ * Upload of WSDL on zOS in the Web UI is not supported On WebSphere Message Broker version 8.0.0.1 on zOS, you can not currently upload WSDL files using the Web UI for use in the Web Based Static Endpoint pattern.
+   
+   
+
+
+
+
+
+TOP Nodes  * After applying fixpack containing APAR IT01950 error BIP2503 is received.
+
+ * 
+ * Symptoms:
+ * WebSphere Message Broker has been modified so that if ESQL containing a FOR statement which iterates over a SHARED ROW variable contains a PROPAGATE statement within the FOR block then any attempt to write to that shared variable will result in an exception BIP2503 "Propagate with a SHARED variable lock held by FOR statement" being thrown.
+   
+   The reason for this is that while iterating over a SHARED ROW variable a lock is held on the variable, this lock is also obtained when writing to the variable in downstream nodes and the exact timing of these operations could result in a deadlock occurring. It is not valid to modify the SHARED ROW variable being iterated over in downstream nodes as it may invalidate the loop therefore behavior has been changed to throw an exception instead of deadlocking.
+   
+   Solution: 
+ * This means that there may be some flows which were at risk of deadlocking which now throw an exception. The recommended action is to modify the flows so that they do not use the affected invalid pattern however if this is not possible the previous behavior can be restored by setting the environment variable MQSI_ALLOW_PROPAGATE_WITH_SHARED_LOCK_HELD=1 and restarting the Broker.
+
+
+
+
+TOP WebSphere Adapter nodes 
+ * Saving Enterprise Metadata Discovery (EMD) adapter connection information during iterative discovery Symptoms: 
+   
+   During WebSphere Adapter for SAP Software Enterprise Metadata Discovery (EMD) iterative discovery, the Adapter Connection wizard Service Generation and Deployment Configuration panel is displayed and can be edited; however, any adapter system connection information that you enter is not saved in the adapter component. 
+   
+   Solution: 
+   
+   Use the WebSphere Adapters editor to change the adapter system connection information to ensure that subsequent EMD iterative discoveries preserve the adapter system connection information: 
+   
+    * 
+    * 
+    * 
+    * Open With
+    * 
+    * WebSphere Adapters editor
+    * 
+    * 
+    * 
+    * 
+    * 
+   
+   
+   
+ * Assured delivery option for JDEdwards is not supported Symptoms: 
+   
+   The JDE inbound adapter fails to deploy if the assured delivery check box is selected in the adapter wizard. The following error is issued: 
+   
+   An attempt to set the property 'AssuredOnceDelivery' on adapter component 'AssuredDeliveryMSApp.IBM WebSphere Adapter for JD Edwards EnterpriseOne' failed because the property is not supported. 
+   
+   Solution: 
+   
+   This functionality is not currently supported, and should not be used in message flow development.
+   
+   
+
+
+
+
+
+TOP Graphical Data Mapper 
+ * Using a graphical data map to map input data that is retrieved from a database uses the default database schema name specified for the configured JDBC connection identity Symptoms: 
+   
+   Using a graphical data map to map input data that is retrieved from a database is dependent on the default schema name configuration of your database server. The broker does not currently provide a facility to override the database schema name to be used in the SQL statements issued against the database. Currently, the SQL statement issued by the map includes only the database and table name but not a schema name. As a result, your database server uses the default database schema name for the identity that the broker used to connect to it while running the map. The connection identity that the broker uses is configured in a broker JDBCProvider configurable service. The JDBCProvider configurable service used is selected by the data source name in the map. 
+   
+   If the required database table is not available in this schema, the map execution fails with a broker error containing specific error codes for your database server. For example:
+   BIP3947E: The map processing for QName '{maps}:RDB_Mapping' has failed, with the following details:
+   '{Your specific database schema table access error message and codes}' 
+   
+   Solution: 
+   
+   This restriction is addressed in WebSphere Message Broker version 8.0.0.1, and later, through provision of the capability to optionally override the name of the database schema. For more information, see JDBCProviders configurable service [http://www.ibm.com/support/knowledgecenter/SSKM8N_8.0.0/com.ibm.etools.mft.doc/an60170_.htm] property "databaseSchemaNames". 
+   
+   Users of WebSphere Message Broker version 8.0 GA should ensure that the table being selected from the graphical data map is available in the schema that is set by your database server for the database connection identity that is configured in the JDBCProvider configurable service. This is particularly restrictive on z/OS.
+   
+   
+   
+ * Errors occur during runtime execution of newly created graphical data maps, that were converted from message map (.msgmap) files, or utilise certain extended capabilities such as submaps with multiple inputs, or xs:<type> cast transforms Symptoms: 
+   
+   The execution of a graphical data map created using WebSphere Message Broker Toolkit version 8.0.0.2 that is deployed to a WebSphere Message Broker Runtime version 8.0 or 8.0.0.1 fails. 
+   
+   Example error messages: 
+   
+   BIP2230E: Error detected whilst processing a message in node '<node label>' ComIbmMSLMappingNode: <flow name>
+   BIP3946E: The map script generation for QName '<map routine name>' has failed, with the following details: java.lang.RuntimeException: IXJXE0609E: [ERR 0548][ERR XPST0017] The function '<function name>' with parity '<n>' is not in the in-scope function declarations. 
+   
+   Solution: 
+   
+   Update the WebSphere Message Broker runtime to version 8.0.0.2.
+   
+   
+   
+ * Errors are seen during runtime when using a complex Data Analysis generated GDM map. Symptoms: 
+   
+   A JVM Out of Memory exception is seen at runtime when using a Data Analysis generated GDM Map 
+   
+   When using complex XML structures more memory is required that the default JVM Heap size 
+   
+   Solution: 
+   
+   Use the mqsichangeproperties [http://www.ibm.com/support/knowledgecenter/SSKM8N_8.0.0/com.ibm.etools.mft.doc/an09143_.htm] command to increase the maximum heap size to greater than 256Mb. For example : mqsichangeproperties MB8BROKER -e default -o ComIbmJVMManager -n jvmMaxHeapSize -v 786432000
+   
+   
+
+
+
+
+
+TOP Commands 
+ * Calling mqsiprofile in a zsh shell exits the session (A63403) Symptoms: 
+   
+   On UNIX systems that use Z shell (zsh) as the shell environment, a call to 'source {install path}/mqsiprofile' causes the shell to exit. Due to the default behavior of zsh, the mqsiprofile command checks an incorrect argument number to determine whether it is being sourced, or run directly. The mqsiprofile script then prints a warning message and calls exit, but zsh interprets this call as an instruction to exit the current shell. 
+   
+   Solution: 
+   
+   To work around this problem, complete the following step: 
+   
+    * In the UNIX terminal, call 'unsetopt function_argzero', then call the mqsiprofile command again.
+   
+   
+   
+ * Documentation for mqsiapplybaroverride states support for -k and -y parameters Symptom: 
+   
+   Information center topic an19545_ mqsiapplybaroverride describes parameters -k and -y for use with applications and libraries. Using these parameters with the command results in the following error:
+   BIP1033E Invalid parameters 
+   
+   Solution: 
+   
+   These options are not supported with this command, and should not be used.
+   
+   
+   
+ * Error "AMQ7027: Argument [QM Name] supplied to command [path]\crtmqm.exe is invalid." is seen when running mqsicreatebroker to create a Domain aware HA Broker on the Windows platform Symptom: 
+   
+   An AMQ7027 error message might be returned from mqsicreatebroker when creating an HA Broker on the Windows platform when using the new -B or -Q flags if the Queue Manager does not already exist. 
+   
+   Solution: 
+   
+   If a Queue Manager does not exist when creating an HA Broker on Windows using the new -B or -Q flags an attempt is made to create a Queue Manager. The mqsicreatebroker command run tries to pass the '-ar' flag to the create Queue Manager (crtmqm) command. 
+   
+   However, this option is only available for V7.1.0.3 and V7.5.0.1 of MQ. MQ APAR IC85940 provided this function in the Fix Packs. 
+   
+   There are two possible workarounds in this situation: 
+   
+    * 
+    * 
+    * 
+    * 
+   
+   
+
+
+
+
+TOP Databases 
+ * Dates inserted into a Microsoft SQLServer database using JDBC are 2 days out 
+ * 
+   Symptoms :
+   After upgrading to WebSphere Message Broker 8.0.0.7 or above, or applying APAR IT03599 to an earlier Fix Pack installation, dates inserted into an SQLServer database using a JDBC connection either through a JavaCompute node or a mapping node are 2 days out.
+   WebSphere Message Broker 8.0.0.7 and APAR IT03599 upgrade the level of Java used by the Broker to Java 1.7. Some versions of the Microsoft SQL JDBC driver do not support Java 1.7 and produce unexpected behaviour when used.
+   
+   Solution:
+   Upgrade the version of the Microsoft SQL JDBC driver to a version which supports Java 1.7
+   
+ * User databases on z/OS Customers using user databases on z/OS require DB2 APAR PK99362.
+   
+   
+   
+ * Sybase globally coordinated ('XA') transactions Globally coordinated ('XA') transactions are not supported.
+   
+   
+   
+ * JDBC/XA globally coordinated ('XA') transactions JDBC/XA globally coordinated ('XA') transactions are supported on DB2 and Oracle (except Oracle RAC) on all broker platforms except HP-UX on Itanium and z/OS. 
+   
+   ODBC XA and JDBC/XA can not be mixed on the same broker.
+   
+   
+   
+ * Informix globally coordinated ('XA') transactions Informix globally coordinated ('XA') transactions are not supported.
+   
+   
+   
+ * DB2 and Microsoft SQL Server support on Windows Server 2008 R2 and Windows 7 64-bit Only DB2 and Microsoft SQL Server are supported on Windows Server 2008 R2 and Windows 7 64-bit. Use the DB2 and Microsoft SQL Server system requirements pages to determine the correct versions of each product to use with your system. 
+   The DB2 system requirements web page is available at:
+   http://www.ibm.com/software/data/db2/linux-unix-windows/sysreqs.html [http://www.ibm.com/software/data/db2/linux-unix-windows/sysreqs.html]
+   
+   
+   
+ * XA configuration using WebSphere MQ installation specific subdirectories of exits and exits64 directories is not supported When configuring a broker to use XA with a WebSphere MQ 7.1 or WebSphere MQ 7.5 queue manager as the transaction manager, users must include the appropriate switch file in the
+   <MQ_DATA_PATH>/exits and/or <MQ_DATA_PATH>/exits64 directories. Users must not use the installation specific subdirectory of the exits and exits64 for the switch files.
+   
+   
+   
+ * The WebSphere Message Broker Information Center instructions for "Connecting to a database from Linux and UNIX systems using the WebSphere Message Broker ODBC Database Extender" are incorrect Symptoms: 
+   
+   The Message Broker fails to connect correctly to a Database when attempting to use an ODBC Data Source on Linux and UNIX systems. 
+   
+   Example error message 
+   
+   BIP2393E: Database error: ODBC return code '-1' from data source ''ROUTING'' using ODBC driver manager ''/opt/ibm/IE02/2.0.0/lib/libodbcinterface.so''. 
+   
+   BIP2322E: Database error: SQL State ''IM002''; Native Error Code '0'; Error Text ''[unixODBC][Driver Manager]Data source name not found, and no default driver specified''. 
+   
+   BIP8040E: Unable to connect to the database. 
+   
+   Solution: 
+   
+   The following corrections to the identified sample help pages are needed to ensure the ODBC connection can be setup and run successfully. 
+   
+   The following page: 
+   
+   WebSphere Message Broker Version 8.0.0.1>Configuring brokers for test and production>Advanced configuration>Configuring for applications>Configuring databases>Enabling ODBC connections to the databases [http://www.ibm.com/support/knowledgecenter/SSKM8N_8.0.0/com.ibm.etools.mft.doc/bk58060_.htm] 
+   
+   "Connecting to a database from Linux and UNIX systems using the WebSphere Message Broker ODBC Database Extender" is incorrect. 
+   
+   Step 8 starts with "If you are using a DB2 ... on AIX" indicating that if you are not using AIX, you can skip this step. You must complete step 8 for all Linux and UNIX platforms.
+   
+   
+
+
+
+
+
+TOP Samples 
+ * The WebSphere Message Broker Information Center instructions for the DatabaseInput Node sample are incorrect. Symptoms: 
+   
+   When attempting to set up and run the WebSphere Message Broker Application sample the DatabaseInput Node does not run successfully, with either an error being displayed when loading or updating the database, or no message being retrieved from the broker flow when the database has been updated. 
+   
+   Solution: 
+   
+   The following corrections should be read in conjunction with the samples help pages. 
+   
+   WebSphere Message Broker Version 8.0.0.1>Product overview>Samples>Application samples>DatabaseInput Node>Setting up the database>Setting up DB2 [http://publib.boulder.ibm.com/infocenter/wmbhelp/v8r0m0/index.jsp?topic=%2Fcom.ibm.etools.mft.samples.dbinputnode.doc%2Fdoc%2Fcreate_db2.htm] 
+   
+   Section: Setting up DB2 
+   
+   Step 3 requires an update to read: 
+   
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+   
+   
+   WebSphere Message Broker Version 8.0.0.1>Product overview>Samples>Application samples>DatabaseInput Node>Running the DatabaseInput Node sample [http://www.ibm.com/support/knowledgecenter/SSKM8N_8.0.0/com.ibm.etools.mft.samples.dbinputnode.doc/doc/create_db2.htm] Section: To run the DatabaseInput message flow: 
+   
+   Steps 3, 4 and 7 require updating to read: 
+   
+    * 
+    * 
+    * 4. Click Finish to add a row to the table. The result is displayed in the "SQL Result" view, which can be opened using the "Show View" Eclipse menu. 
+    * ... 
+    * 7. Verify that the message retrieved contains a customer structure. If no message is received, open the open the "DatabaseInput Retrieve Failure.mbtest" Flow Test to dequeue a possible failure explanation message.
+   
+   
+
+
+
+
+TOP Copyright and trademark information 
+http://www.ibm.com/legal/copytrade.shtml [http://www.ibm.com/legal/copytrade.shtml] 
+
+This information was developed for products and services offered in the U.S.A. 
+
+IBM may not offer the products, services, or features discussed in this information in other countries. Consult your local IBM representative for information on the products and services currently available in your area. Any reference to an IBM product, program, or service is not intended to state or imply that only that IBM product, program, or service may be used. Any functionally equivalent product, program, or service that does not infringe any IBM intellectual property right may be used instead. However, it is the user's responsibility to evaluate and verify the operation of any non-IBM product, program, or service. 
+
+IBM may have patents or pending patent applications covering subject matter described in this information. The furnishing of this information does not give you any license to these patents. You can send license inquiries, in writing, to: 
+
+ *  IBM Director of Licensing IBM Corporation North Castle Drive Armonk, NY 10504-1785 U.S.A. 
+
+For license inquiries regarding double-byte character set (DBCS) information, contact the IBM Intellectual Property Department in your country or send inquiries, in writing, to:  *  IBM World Trade Asia Corporation Licensing 2-31 Roppongi 3-chome, Minato-ku Tokyo 106, Japan 
+
+The following paragraph does not apply to the United Kingdom or any other country where such provisions are inconsistent with local law: INTERNATIONAL BUSINESS MACHINES CORPORATION PROVIDES THIS PUBLICATION "AS IS" WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF NON-INFRINGEMENT, MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE. Some states do not allow disclaimer of express or implied warranties in certain transactions, therefore, this statement may not apply to you. 
+
+This information could include technical inaccuracies or typographical errors. Changes are periodically made to the information herein; these changes will be incorporated in new editions of the information. IBM may make improvements and/or changes in the product(s) and/or the program(s) described in this information at any time without notice. 
+
+Any references in this information to non-IBM websites are provided for convenience only and do not in any manner serve as an endorsement of those websites. The materials at those websites are not part of the materials for this IBM product and use of those websites is at your own risk. 
+
+IBM may use or distribute any of the information you supply in any way it believes appropriate without incurring any obligation to you. 
+
+Licensees of this program who wish to have information about it for the purpose of enabling: (i) the exchange of information between independently created programs and other programs (including this one) and (ii) the mutual use of the information which has been exchanged, should contact: 
+
+ *  IBM United Kingdom Laboratories, Mail Point 151, Hursley Park, Winchester, Hampshire, England SO21 2JN 
+
+Such information may be available, subject to appropriate terms and conditions, including in some cases, payment of a fee. The licensed program described in this information and all licensed material available for it are provided by IBM under terms of the IBM Customer Agreement, IBM International Programming License Agreement, or any equivalent agreement between us. 
+
+Information concerning non-IBM products was obtained from the suppliers of those products, their published announcements or other publicly available sources. IBM has not tested those products and can not confirm the accuracy of performance, compatibility or any other claims related to non-IBM products. Questions on the capabilities of non-IBM products should be addressed to the suppliers of those products. 
+
+This information includes examples of data and reports used in daily business operations. To illustrate them as completely as possible, the examples include the names of individuals, companies, brands, and products. All of these names are fictitious and any similarity to the names and addresses used by an actual business enterprise is entirely coincidental. 
+
+COPYRIGHT LICENSE: 
+
+This information contains sample application programs in source language, which illustrate programming techniques on various operating platforms. You may copy, modify, and distribute these sample programs in any form without payment to IBM, for the purposes of developing, using, marketing or distributing application programs conforming to the application programming interface for the operating platform for which the sample programs are written. These examples have not been thoroughly tested under all conditions. IBM, therefore, can not guarantee or imply reliability, serviceability, or function of these programs. You may copy, modify, and distribute these sample programs in any form without payment to IBM for the purposes of developing, using, marketing, or distributing application programs conforming to IBM's application programming interfaces. 
+
+The following terms are trademarks of International Business Machines Corporation in the United States, other countries, or both:
+
+DB2, developerWorks, IBM, Informix, Passport Advantage, WebSphere, z/OS.
+
+Java and all Java-based trademarks and logos are trademarks or registered trademarks of Oracle and/or its affiliates in the United States, other countries, or both
+
+Microsoft and Windows are trademarks of Microsoft Corporation in the United States, other countries, or both. 
+
+UNIX is a registered trademark of The Open Group in the United States and other countries.
+
+Linux is a trademark of Linus Torvalds in the United States, other countries, or both.
+
+Other company, product or service names might be trademarks or service marks of others. 
+
+
+
+
+
+
+TOP Useful websites WebSphere Message Broker product page
+http://www.ibm.com/software/integration/wbimessagebroker/ [http://www.ibm.com/software/integration/wbimessagebroker/] 
+
+DB2 Fix Packs
+If you have a current support contract, you can order DB2 fix packs on CD by calling DB2 support. Alternatively you can download DB2 fix packs from the web, however some fix pack files are large and therefore requesting CD versions can avoid lengthy downloads. 
+DB2 support contact details, and DB2 fix pack downloads are available at:
+http://www.ibm.com/software/data/db2/udb/support.html [http://www.ibm.com/software/data/db2/udb/support.html] 
+
+WebSphere MQ Fix Packs
+http://www.ibm.com/support/entry/portal/Software/WebSphere/WebSphere_MQ [http://www.ibm.com/support/entry/portal/Software/WebSphere/WebSphere_MQ] 
+
+WebSphere Message Broker Fix Packs
+http://www.ibm.com/support/docview.wss?uid=swg27006041 [http://www.ibm.com/support/docview.wss?uid=swg27006041] 
+
+WebSphere Message Broker Requirements
+http://www.ibm.com/software/integration/wbimessagebroker/requirements/ [http://www.ibm.com/software/integration/wbimessagebroker/requirements/] 
+
+WebSphere Message Broker readme file
+http://www.ibm.com/support/docview.wss?uid=swg27006917 [http://www.ibm.com/support/docview.wss?uid=swg27006917] 
+
+WebSphere Message Broker V8.0 Stand-alone information center
+For Linux:
+ftp://public.dhe.ibm.com/software/integration/wbibrokers/docs/V8.0/wmb_help_linux.tgz [ftp://public.dhe.ibm.com/software/integration/wbibrokers/docs/V8.0/wmb_help_linux.tgz]
+For Windows:
+ftp://public.dhe.ibm.com/software/integration/wbibrokers/docs/V8.0/wmb_help_win.zip [ftp://public.dhe.ibm.com/software/integration/wbibrokers/docs/V8.0/wmb_help_win.zip] 
+
+WebSphere Message Broker V8.0 online product documentation 
+
+http://www.ibm.com/support/knowledgecenter/SSKM8N_8.0.0/mapfiles/help_home_msgbroker.html [http://www-01.ibm.com/support/knowledgecenter/SSKM8N_8.0.0/mapfiles/help_home_msgbroker.html]
+IBM Centre for Java™ Technology Development Downloads
+http://www.ibm.com/developerworks/java/jdk/ [http://www.ibm.com/developerworks/java/jdk/] 
+
+Web Services Description Language (WSDL) Specification 
+http://www.w3.org/TR/wsdl [http://www.w3.org/TR/wsdl] 
+
+WebSphere Message Broker developerWorks Zone
+http://www.ibm.com/developerworks/websphere/zones/businessintegration/wmb.html [http://www.ibm.com/developerworks/websphere/zones/businessintegration/wmb.html] 
+
+
+
+
+
+
+
+TOP Document change history  * Product electronic availability: 9 December 2011 
+ * Version 8.0.0.1: 15 August 2012 
+ * Version 8.0.0.2: 27 March 2013 
+ * Version 8.0.0.3: 23 Oct 2013 
+ * Version 8.0.0.4: 31 March 2014 
+ * Version 8.0.0.5: 17 February 2015 
+ * Web update for this readme file: 15 August 2012 
+ * Web update for this readme file: 5 October 2012
+   - Added "Instructions for installing the WebSphere Message Broker runtime and ODBC Database Extender components with a non-root user ID" to Installation Section (English Readme only)
+
+
+(C) Copyright IBM Corporation 2013. All rights reserved. 
+
+
+COPYRIGHT DATE
+ 2012 
+
+PRODUCT ALIAS/SYNONYM
+ WMB MB WBIMB

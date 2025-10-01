@@ -1,0 +1,99 @@
+Title: IBM Portal upgrade fails with RT7508E: Unable to initialize RepositoryFactory due to exception of type: java.lang.NullPointerException with message: null - United States
+
+Text:
+websphere portal upgrade fails failed RT7508E DB2 NullPointerException JCR JavaContentRepository RepositoryFactory SQLCODE=-443 SQLSTATE=38553 INI8504E TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+Portal is configured with DB2 and the latest fix pack has been applied to DB2. An attempt is made to upgrade the Portal server, but this fails.
+
+SYMPTOM
+The following exception is seen in ConfigTrace.log:
+
+Target started: action-modify-customization-shelf
+
+[wsadmin] WASX7209I: Connected to process "dmgr" on node DmgrNode using SOAP connector; The type of process is: DeploymentManager
+[wsadmin] WASX7303I: The following options are passed to the scripting environment and are available as arguments that are stored in the argv variable: "[C:/IBM/WebSphere/wp_profile/ConfigEngine, __NO__VP__ID__, TargetURI=dav:fs-type1/themes/Portal8.0/system/addContent_wcm.json, regexpFile=C:/IBM/WebSphere/PortalServer/wcm/prereq.wcm/wcm/deploy/regExpForAddContent.txt, replaceWithFileContent=C:/IBM/WebSphere/PortalServer/wcm/prereq.wcm/wcm/deploy/addCategory.txt]"
+[wsadmin] [02/22/15 20:48:56.330 EST] FFDC1007I: FFDC Provider Installed: com.ibm.ffdc.util.provider.FfdcOnDirProvider@8b235681
+[wsadmin] logged in as "uid=wpsadmin,o=defaultWIMFileBasedRealm"
+[wsadmin] [02/22/15 20:48:56.424 EST] logged in as "uid=wpsadmin,o=defaultWIMFileBasedRealm"
+[wsadmin] com.ibm.portal.resolver.exceptions.LocalizedIOException: RT7508E: Unable to initialize RepositoryFactory due to exception of type: java.lang.NullPointerException with message: null., javax.jcr.RepositoryException: RT7508E: Unable to initialize RepositoryFactory due to exception of type: java.lang.NullPointerException with message: null., java.lang.NullPointerException: null
+--- Exception Thrown ---
+C:\IBM\WebSphere\PortalServer\wcm\prereq.wcm\config\includes\prereq.wcm_cfg.xml:5303: Java returned: 1
+at org.apache.tools.ant.taskdefs.Java.execute(Java.java:87)
+at com.ibm.websphere.ant.tasks.WsAdmin.execute(WsAdmin.java:409)
+
+
+In the SystemOut.log, the JCR application does not initialize properly and throws the following error:
+
+[2/23/15 0:22:36:311 EST] 00000017 ApplicationMg A WSVR0200I: Starting application: JavaContentRepository
+
+[2/23/15 0:22:37:279 EST] 00000017 InitServlet E INI8504E:One or more initialization step failed. Please check the server log for details.
+javax.jcr.RepositoryException: RT7508E: Unable to initialize RepositoryFactory due to exception of type: java.lang.NullPointerException with message: null.
+at com.ibm.icm.jcr.RepositoryFactory.init(RepositoryFactory.java:270)
+at com.ibm.icm.jcr.RepositoryFactory.getRepository(RepositoryFactory.java:479)
+at com.ibm.icm.jcr.servlet.InitServlet.init(InitServlet.java:56)
+
+Caused by: java.lang.NullPointerException
+at com.ibm.icm.ci.Ticket.<init>(Ticket.java:104)
+at com.ibm.icm.ci.Datastore.login(Datastore.java:141)
+at com.ibm.icm.jcr.TicketImpl.getTicket(TicketImpl.java:291)
+at com.ibm.icm.jcr.RepositoryImpl.login(RepositoryImpl.java:598)
+at com.ibm.icm.jcr.RepositoryImpl.getRepository(RepositoryImpl.java:466)
+at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:60)
+at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:37)
+at java.lang.reflect.Method.invoke(Method.java:611)
+at com.ibm.icm.jcr.RepositoryFactory.init(RepositoryFactory.java:164)
+... 31 more
+
+
+An ffdc log is opened at the same time and contains the following details.
+
+[2/23/15 0:22:37:264 EST] FFDC Exception:com.ibm.db2.jcc.am.SqlException SourceId:com.ibm.ws.rsadapter.jdbc.WSJdbcDatabaseMetaData.getColumns ProbeId:374 Reporter:com.ibm.ws.rsadapter.jdbc.WSJdbcDatabaseMetaData@5f910be2
+com.ibm.db2.jcc.am.SqlException: DB2 SQL Error: SQLCODE=-443, SQLSTATE=38553, SQLERRMC=SYSIBM.SQLCOLUMNS;COLUMNS;SYSIBM:CLI:-805, DRIVER=4.14.137
+at com.ibm.db2.jcc.am.ed.a(ed.java:682)
+at com.ibm.db2.jcc.am.ed.a(ed.java:60)
+at com.ibm.db2.jcc.am.ed.a(ed.java:127)
+at com.ibm.db2.jcc.am.oo.b(oo.java:2366)
+at com.ibm.db2.jcc.am.oo.c(oo.java:2349)
+at com.ibm.db2.jcc.t4.ab.l(ab.java:376)
+at com.ibm.db2.jcc.t4.ab.f(ab.java:98)
+at com.ibm.db2.jcc.t4.p.e(p.java:81)
+at com.ibm.db2.jcc.t4.qb.k(qb.java:160)
+at com.ibm.db2.jcc.am.oo.lb(oo.java:2315)
+at com.ibm.db2.jcc.am.po.b(po.java:4505)
+at com.ibm.db2.jcc.am.CallableStatement.hc(CallableStatement.java:156)
+at com.ibm.db2.jcc.am.DatabaseMetaData.executeCatalogQuery(DatabaseMetaData.java:7834)
+at com.ibm.db2.jcc.am.DatabaseMetaData.getColumnsX(DatabaseMetaData.java:6720)
+at com.ibm.db2.jcc.am.DatabaseMetaData.getColumns(DatabaseMetaData.java:6649)
+at com.ibm.ws.rsadapter.jdbc.WSJdbcDatabaseMetaData.getColumns(WSJdbcDatabaseMetaData.java:501)
+at com.ibm.icm.da.portable.connection.Logon.checkEditionSupport(Logon.java:110)
+at com.ibm.icm.da.portable.connection.Logon.logon(Logon.java:198)
+at com.ibm.icm.da.portable.connection.ConnectionManager.logon(ConnectionManager.java:56)
+at com.ibm.icm.ci.Ticket.<init>(Ticket.java:89)
+at com.ibm.icm.ci.Datastore.login(Datastore.java:141)
+at com.ibm.icm.jcr.TicketImpl.getTicket(TicketImpl.java:291)
+at com.ibm.icm.jcr.RepositoryImpl.login(RepositoryImpl.java:598)
+at com.ibm.icm.jcr.RepositoryImpl.getRepository(RepositoryImpl.java:466)
+
+
+CAUSE
+This can be caused by maintenance applied to the DB2 software that was not properly bound to the DB2 instance.
+
+
+RESOLVING THE PROBLEM
+Try these steps to resolve the startup failure. 
+
+
+1. Stop the Portal server(s).
+2. Open a DB2 command prompt and connect to the JCR database. For example,
+db2 connect to JCRDB
+
+3. Execute this command to correct the issue:
+db2 bind db2schema.bnd blocking all grant public sqlerror continue
+
+4. Restart the DB2 instance.
+5. Restart the Portal server(s).
+
+
+If the Portal server startup is clean, proceed with the documentation for applying the Portal upgrade.

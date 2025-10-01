@@ -1,0 +1,157 @@
+Title: IBM IV09148: EIF - REMOVE LIMITATION ON USING FIXED LOG NAMES PER IZ08862 - United States
+
+Text:
+  FIXES ARE AVAILABLE
+IBM Tivoli Monitoring 6.2.2 Fix Pack 8 (6.2.2-TIV-ITM-FP0008) [http://www-01.ibm.com/support/docview.wss?uid=swg24031354]
+IBM Tivoli Monitoring 6.2.2 Fix Pack 9 (6.2.2-TIV-ITM-FP0009) [http://www-01.ibm.com/support/docview.wss?uid=swg24032067]
+Tivoli Log File Agent, Version 6.2.3.1 Interim Fix 01 6.2.3.1-TIV-ITM_LFA-IF0001 [http://www-01.ibm.com/support/docview.wss?uid=swg24032828]
+Tivoli Log File Agent, Version 6.2.2.4 Interim Fix 08 6.2.2.4-TIV-ITM_LFA-IF0008 [http://www-01.ibm.com/support/docview.wss?uid=swg24034517]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Approver:        DK
+   
+   Environment:
+     Include components involved, platforms with versions/patches
+     for each.
+     Do you think the latest patch applied is involved?
+   
+   Problem Description:
+     Provide as much detail as possible.
+     Explain what activity was taken that caused the observed
+     action (ie: change in a variable, entry in log or trace
+     files, pop-up, etc.)
+   
+   Detailed Recreation Procedure:
+     Provide a detailed step-by-step recreation procedure.
+   
+   Related Files and Output:
+     Indicate log location, trace levels used, command output,
+     configuration files, coredumps, etc.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Remove limitation on using fixed log names in Event Integration
+   Facility (EIF) per IZ08862 [http://www-01.ibm.com/support/docview.wss?uid=swg1IZ08862].
+   
+   The PreFilter statements in the Tivoli Log File Agent .conf file
+   do not allow custom Windows Event log names. This limitation was
+   present in the EIFEvent library base code.   This APAR removes
+   the limitation per IZ08862 [http://www-01.ibm.com/support/docview.wss?uid=swg1IZ08862].
+   
+   For the Log File Agent to take advantage of this APAR fix the
+   following are needed:
+   - On Windows, this APAR fix is included as part of Log File
+     Interim Fix 6.2.2.4-TIV-ITM_LFA-IF0006.
+   - On UNIX/Linux this APAR fix included in the IBM Tivoli
+     Monitoring Shared Libraries (TEMA)
+     component of IBM Tivoli Monitoring 6.2.2 Fix Pack 8 as part of
+     the Shared Libraries (ax) component.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  DETAILS PENDING.
+   
+   The fix for this APAR is contained in the following maintenance
+   packages:
+   
+     | fix pack | 6.2.2-TIV-ITM-FP0008
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV09148
+   
+   
+ * REPORTED COMPONENT NAME
+   ITM LOG FILE AG
+   
+   
+ * REPORTED COMPONENT ID
+   5724C04LF
+   
+   
+ * REPORTED RELEASE
+   622
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-10-13
+   
+   
+ * CLOSED DATE
+   2011-11-29
+   
+   
+ * LAST MODIFIED DATE
+   2012-03-28
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    OA39111 [http://www-01.ibm.com/support/docview.wss?uid=swg1OA39111]
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TEC GUI INTEGRA
+   
+   
+ * FIXED COMPONENT ID
+   5724C04TG
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R622 PSY
+   UP

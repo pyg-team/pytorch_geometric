@@ -1,0 +1,158 @@
+Title: IBM PK02938: UNEXPECTED EXCEPTION ON JMS SESSION CLOSE AFTER TRANSACTION ROLL-BACK. - United States
+
+Text:
+  FIXES ARE AVAILABLE
+6.0.2: WebSphere Application Server V6.0 Refresh Pack 2 for AIX platforms [http://www-01.ibm.com/support/docview.wss?uid=swg24010066]
+6.0.2: WebSphere Application Server V6.0 Refresh Pack 2 for HP-UX platforms [http://www-01.ibm.com/support/docview.wss?uid=swg24010067]
+6.0.2: WebSphere Application Server V6.0 Refresh Pack 2 for Solaris platforms [http://www-01.ibm.com/support/docview.wss?uid=swg24010069]
+6.0.2: WebSphere Application Server V6.0 Refresh Pack 2 for Windows platforms [http://www-01.ibm.com/support/docview.wss?uid=swg24009813]
+6.0.2: WebSphere Application Server V6.0 Refresh Pack 2 for Linux platforms [http://www-01.ibm.com/support/docview.wss?uid=swg24010068]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The following code;
+   
+       try
+       {
+         queueSender.send(message);
+         queueSession.commit();
+         fail("Exception expected");
+       }
+       catch(JMSException e)
+       {
+         //e.printStackTrace();
+       }
+   
+       queueSender.close();
+       queueSession.close();
+   
+   sends a message which (correctly) throws an exception when
+   committed. The transaction is automatically rolled back but
+   when queueSession.close is called,
+   the following exception is (incorrectly) thrown...
+   
+   javax.jms.JMSException: CWSIA0053E: An exception was received
+   during the call to the method JmsSessionImpl.close:
+   com.ibm.websphere.sib.exception.SIIncorrectCallException:
+   CWSIC1022E: An attempt has been made to call a method on a
+   transaction object when the transaction has already been
+   committed or rolled back..
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All users using JMS queues and transactions  *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Exception thrown on session close       *
+   *                      after rollback.                         *
+   ****************************************************************
+   * RECOMMENDATION: Apply this fix                               *
+   ****************************************************************
+   User code which tries to close a session where the transaction
+   has already been rolled back will receive a JMSException
+   indicating that the transaction has been rolled back.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This fix changes the behaviour of the close method so
+   that the exception is no longer thrown if the transaction
+   has been rolled back.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK02938
+   
+   
+ * REPORTED COMPONENT NAME
+   PLAT MSG COM
+   
+   
+ * REPORTED COMPONENT ID
+   620400101
+   
+   
+ * REPORTED RELEASE
+   100
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2005-03-23
+   
+   
+ * CLOSED DATE
+   2005-04-25
+   
+   
+ * LAST MODIFIED DATE
+   2005-04-25
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   PLAT MSG COM
+   
+   
+ * FIXED COMPONENT ID
+   620400101
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R100 PSY
+   UP

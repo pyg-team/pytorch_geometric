@@ -1,0 +1,79 @@
+Title: IBM SQL statements / DB2 commands, running through a REXX program running on DB2 Connect on the Windows operating system may fail with SQL1024N. - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ SQL statements, running through CLP via REXX as a 'system command' or 'directly executed' by REXX program may get a SQL1024N with RC=-1.
+This happens due to a mismatch between the Parent process ID's in the 2 cases which thereby prevents the 2 CLP commands from sharing the same database connection, and heppens when both type of calls are mixed in a REXX application. 
+
+SYMPTOM
+SQL statements, which runs through CLP via REXX as a system command or directly executed by REXX program may get a SQL1024N with RC=-1, when both type of calls are mixed in a REXX application. 
+
+Following are 2 simple scenarios where the problem may occur: 
+
+"Variant 1" 
+1. connect via SQL-API 
+2. try to SELECT CURRENT TIMESTAMP via 'System-Execute' => fails with SQL1024N
+3. try INSERT INTO.. via SQL-API => successful 
+4. CONNECT RESET via SQL-API
+.
+"Variant 2" 
+1. connect via 'System-Execute' 
+2. SELECT CURRENT TIMESTAMP via 'System-Execute' => Success! 
+3. try to INSERT INTO via SQL-API => fails with SQL1024N 
+4. CONNECT RESET via 'System-Execute' 
+. 
+Thus whenever you use SQL-API and 'System-Execute' in combination, then REXX can only process SQL only via the same way that opened the connection.
+
+Exact error message as received by the REXX program may look like this : 
+--------------------------------------------------------------------------------------------
+
+: Error occurred (see next messages). DB2-rollback performed with SqlCode=-1024 
+2011-06-09 09:01:02 I Statement belonging to next error: SQL-DB2 
+<INSERT INTO TABLE statement> 
+2011-06-09 09:01:02 E Error belonging to above statement: -1024 
+SQL1024N The database connection was lost. SQLSTATE=08003 
+(Exit with rc -1) 
+-------------------------------------------------------------------------------------------- 
+
+
+
+CAUSE
+According to the CLP design, two CLP commands can share the same database connection if their parent process ID’s ( PPID) are the same. If REXX executes a SQL command via the 'System-Execute' , the PPID of such command is PID of the REXX process. However, if REXX executes a SQL command via SQL-API, the PPID of such command is PID of the parent of the REXX process 
+
+DB2 uses an internal function which returns the PPID and in such cases, they are different in the 2 operations, hence causing the error.
+
+
+ENVIRONMENT
+The environment is for DB2 Connect versions V9.1, V9.5 and V9.7 running on the Windows 32-bit and 64-bit operating systems. This issue is irrespective of the connected database or its release level as this is a client side defect. 
+
+
+Package: IBM Data Server Client & IBM Data Server Runtime Client
+
+Please make a note that there isn’t any issue when just CLP in involved. Issue can be observed only via REXX application on Windows operating system, having either of two scenarios explained above. 
+Also, support of REXX is deprecated as mentioned in this info center link:
+
+http://publib.boulder.ibm.com/infocenter/db2luw/v9r7/topic/com.ibm.db2.luw.apdv.embed.doc/doc/c0007014.html [http://publib.boulder.ibm.com/infocenter/db2luw/v9r7/topic/com.ibm.db2.luw.apdv.embed.doc/doc/c0007014.html]
+
+
+
+RESOLVING THE PROBLEM
+In such cases, the REXX program can make use of an environment variable (DB2CLP) to get this to work. You need to set PID of REXX to this environment variable, then all SQL command executed by DB2 or directly by REXX, will use the PID stored in DB2CLP environment variable as PPID. 
+
+
+/* One should get the PID of the current process and set it into the
+DB2CLP environment variable, as below in a REXX program.
+*/
+id = SysQueryProcess( "PID" )
+say 'PID = 'id
+env = "ENVIRONMENT"
+new = "**"id"**"
+say value("DB2CLP",new,env)
+
+
+
+
+
+
+Cross Reference information Segment Product Component Platform Version Edition Information Management DB2 for Linux- UNIX and Windows Windows 9.7, 9.5, 9.1

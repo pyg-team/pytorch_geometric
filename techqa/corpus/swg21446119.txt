@@ -1,0 +1,75 @@
+Title: IBM WebSphere Application Server Version 7.0 might not recognize AIX 7.1 as a supported operating system - United States
+
+Text:
+AIX 7.1; AIX71Cert TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When you install IBM WebSphere Application Server Version 7.0 on a machine that runs the AIX 7.1 operating system, you might encounter an operating system detection error message. This document explains how to address the issue without setting the disableOSPrereqChecking option value to true. 
+
+SYMPTOM
+The following error information might display: 
+
+Warning: A supported operating system was not detected.
+Support for your operating system might have been added 
+after the release of the product. You can continue with 
+the installation, but the installation or product operation 
+might not succeed without applying maintenance.
+
+If you install the product silently, you might encounter the following error message: 
+Process, com.ibm.ws.install.ni.ismp.actions.OSPrereqCheckAction,
+err, System Prerequisites Check
+Warning: A supported operating system was not detected.
+
+
+
+CAUSE
+AIX 7.1 is a newly supported operating system for WebSphere Application Server Version 7.0. The original maintenance.xml file might not list AIX 7.1 as a supported operating system.
+
+
+
+RESOLVING THE PROBLEM
+As a workaround for this problem, complete the steps in the following procedure. You can use these steps to update WebSphere Application Server, Application Client for WebSphere Application Server, IBM HTTP Server, the Web server plug-in, or the WebSphere DMZ Secure Proxy Server.
+
+
+
+
+Note: The WebSphere DMZ Secure Proxy Server applies to WebSphere Application Server Network Deployment only. 
+
+ 1. Remove the temporary log directories that might have been created by previous installations. 
+    
+    If you do not remove the log files, you might encounter messages from previous installations. Remove the following directories:  * user_home/waslogs 
+     * user_home/plglogs 
+     * user_home/cltlogs 
+     * user_home/ihslogs 
+     * user_home/nddmzlogs
+       
+       
+    
+    
+ 2. Copy the image to a temporary directory if you are installing WebSphere Application Server from a CD or DVD.
+    
+    
+ 3. Make a backup copy of the maintenance.xml file.
+    
+    The following table lists the locations of the existing maintenance.xml files on your system.
+    
+    Installation type Directory WebSphere Application Server temp_directory/WAS/was.primary.pak/ Application Client for WebSphere Application Server temp_directory/AppClient/client.primary.pak/ IBM HTTP Server temp_directory/IHS/ihs.primary.pak/ Web server plug-in temp_directory/Plugin/plg.primary.pak/ WebSphere DMZ Secure Proxy Server temp_directory/NDDMZ/nddmz.primary.pak/ 
+    [/support/docview.wss?uid=swg21446119&amp;aid=1] 
+ 4. Copy the appropriate maintenance.xml file from the following table and overwrite the original file in the temporary directory.
+    
+    
+    Note: The Product Edition column within the following table refers to the product edition for your WebSphere Application Server-related product and not the system processor type.
+    
+    
+    Product Product Edition File WebSphere Application Server PPC32 maintenance.xml [/support/docview.wss?uid=swg21446119&aid=3] [/support/docview.wss?uid=swg21446119&aid=2] PPC64 for 64-bit WebSphere Application Server maintenance.xml [/support/docview.wss?uid=swg21446119&aid=5] [/support/docview.wss?uid=swg21446119&aid=4] Application Client for WebSphere Application Server PPC32 maintenance.xml [/support/docview.wss?uid=swg21446119&aid=7] [/support/docview.wss?uid=swg21446119&aid=6] IBM HTTP Server PPC32 maintenance.xml [/support/docview.wss?uid=swg21446119&aid=9] [/support/docview.wss?uid=swg21446119&aid=8] PPC64 for 64-bit IBM HTTP Server maintenance.xml [/support/docview.wss?uid=swg21446119&aid=11] [/support/docview.wss?uid=swg21446119&aid=10] Web server plug-in PPC32 maintenance.xml [/support/docview.wss?uid=swg21446119&aid=13] [/support/docview.wss?uid=swg21446119&aid=12] PPC64 for 64-bit Web server plug-in maintenance.xml [/support/docview.wss?uid=swg21446119&aid=15] [/support/docview.wss?uid=swg21446119&aid=14] WebSphere DMZ Secure Proxy Server PPC32 maintenance.xml [/support/docview.wss?uid=swg21446119&aid=17] [/support/docview.wss?uid=swg21446119&aid=16] PPC64 for 64-bit WebSphere DMZ Secure Proxy Server maintenance.xml [/support/docview.wss?uid=swg21446119&aid=19] [/support/docview.wss?uid=swg21446119&aid=18] 
+    [/support/docview.wss?uid=swg21446119&amp;aid=1] 
+ 5. Start the installation interface or the silent installation process.
+    
+    
+
+
+
+Notes: 
+ * If you receive a system prerequisite warning when you install the Update Installer product, ignore the warning and proceed with the installation of the Update Installer. 
+   
+ * If you encounter a system prerequisites warning when you install a feature pack for WebSphere Application Server, ignore the warning and proceed with the installation process.

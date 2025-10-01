@@ -1,0 +1,179 @@
+Title: IBM What are the minimum hardware specifications IBM SPSS Statistics product releases including Legacy Products (Versions 13 to 19) - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ What are the minimum platform (hardware) requirements for the IBM SPSS Statistics product? 
+
+RESOLVING THE PROBLEM
+Statistics 20 and later
+See the Product Compatibility Report appropriate to the product and version. For instructions on how to generate a Product Compatibility Report for a product, see TechNote 198672. 
+
+Statistics 19 and earlier 
+
+Statistics 19 for Windows
+Operating System: See TechNote 1506855 [http://www-01.ibm.com/support/docview.wss?uid=swg21506855]
+Processor: Intel or AMD x86 processor running at 1GHz or higher (See also Tech Note 1480498 [http://www.ibm.com/support/docview.wss?uid=swg21480498])
+Memory: 1GB RAM or more recommended (See also Tech Note 1480498 [http://www.ibm.com/support/docview.wss?uid=swg21480498])
+Minimum free drive space: 800MB***
+DVD drive
+Super VGA (800x600) or higher-resolution monitor
+For connecting with IBM SPSS Statistics Server, a network adapter running the TCP/IP network protocol
+Web browser: Internet Explorer 7 or 8 
+
+ 
+
+PASW Statistics 18 for Windows
+Operating system: Microsoft Windows XP (32-bit) or Vista and 7 (32-bit/64-bit)
+Processor: Intel or AMD x86 processor running at 1GHz or higher
+Memory: 1GB RAM or more recommended
+Minimum free drive space: 800MB***
+DVD drive
+Super VGA (800x600) or higher-resolution monitor
+For connecting with PASW Statistics Server, a network adapter running the TCP/IP network protocol
+Web browser: Internet Explorer 6 or 7
+
+
+PASW Statistics 18 for Mac
+Operating system: Apple Mac 10.5.x. and 10.6.x.
+Processor: Intel processor
+Memory: 1GB RAM or more recommended
+Minimum free drive space: 800MB***
+DVD drive
+Super VGA (800x600) or higher-resolution monitor
+Web browser: SafariT
+JavaT Standard Edition 5.0 (J2SE 5.0)
+
+
+PASW Statistics 18 for Linux
+Operating system: Any Linux OS that meets the following requirements**:
+32 bit Only
+Kernel 2.6.26.25 or higher
+Glibc 2.8 or higher
+Libstdc++6
+XFree86-4.7
+Processor: Intel or AMD x86 processor running at 1GHz or higher
+Memory: 1GB RAM or more recommended
+Minimum free drive space: 800MB***
+DVD drive
+Super VGA (800x600) or a higher-resolution monitor
+Web browser: Mozilla Firefox
+
+** Note: PASW Statistics 18 was tested on and is supported only on Red Hat Enterprise Linux 5 Desktop and Debian 4.0
+*** Installing Help in all languages requires 1.1-2.3 GB free drive space 
+
+ 
+
+SPSS Statistics 17 for Windows
+Operating System: Windows XP (32-bit versions) or Vista (32-bit or 64-bit versions) 
+Hardware : Intel or AMD x86 processor running at 1GHz or higher 
+Memory: 512MB RAM; 1GB recommended 
+Minimum free drive space: 450MB 
+CD-ROM drive 
+Super VGA (800x600) or a higher-resolution monitor 
+For connecting with SPSS Statistics Base Server, a network adapter running the TCP/IP network protocol 
+Software: Internet Explorer 6 or above 
+
+
+SPSS Statistics 17 for Mac OS X 
+Operating system: Apple Mac OS X 10.4.x or 10.5x 
+Processor: Intel processor 
+Memory: 512MB RAM; 1GB recommended 
+Minimum free drive space: 800MB 
+CD-ROM drive 
+Super VGA (800x600) or a higher-resolution monitor 
+Software: Safari 1.3.1, Mozilla Firefox 1.5 or higher, or Netscape 7.2 or higher 
+Java Standard Edition 5.0 (J2SE 5.0) 
+
+
+SPSS Statistics 17.0 for Linux
+Operating system*: Any Linux OS that meets the following requirements: 
+Kernel 2.6.9.42 or higher 
+glibc 2.3.4 or higher 
+XFree86-4.0 or higher 
+libstdc++5 
+Hardware Processor: Intel or AMD x86 processor running at 1 GHz or higher 
+Memory: 512MB RAM; 1GB recommended 
+450 MB of available hard-disk space 
+CD-ROM drive 
+Super VGA (800x600) or a higher-resolution monitor 
+Software: Konqueror 3.4.1 or higher, or Firefox 1.0.6 or higher, or Netscape 7.2 or higher 
+*Note: SPSS Statistics 17.0 was tested on and is supported only on Red Hat Enterprise Linux 4 Desktop and Debian 4.0 
+
+ 
+
+SPSS Statistics 16 for Windows
+Operating System: Microsoft Windows XP (32-bit versions) or Vista (32-bit or 64-bit versions) 
+Processor: Intel or AMD x86 processor running at 1GHz or higher 
+Memory: 512MB RAM; 1GB recommended 
+450MB of available hard-disk space 
+CD-ROM drive 
+Super VGA (800x600) or a higher-resolution monitor 
+For connecting with an SPSS Server, a network adapter running the TCP/IP network protocol 
+Software: Internet Explorer 6 
+
+
+For SPSS 16.0 for Mac 
+Operating system: Apple Mac OS X 10.4.x (Tiger) 
+Processor: Intel processor 
+RAM: 512MB RAM; 1GB recommended 
+800 MB of available hard-disk space 
+CD-ROM drive 
+Super VGA (800x600) or a higher-resolution monitor 
+Software: Safari 1.3.1 or higher, Mozilla Firefox 1.5 or higher, or Netscape 7.2 or higher 
+Java Standard Edition 5.0 (J2SE 5.0) 
+
+
+SPSS 16.0 for Linux
+Operating system: Any Linux OS that meets the indicated requirements
+Kernel 2.4.33.3 or higher 
+glibc 2.3.2 or higher 
+XFree86-4.0 or higher 
+libstdc++5 
+Hardware 
+Processor: Intel or AMD x86 processor running at 1 GHz or higher 
+Memory: 512MB RAM; 1GB recommended 
+450 MB of available hard-disk space 
+CD-ROM drive 
+Super VGA (800x600) or a higher-resolution monitor 
+Software: Konqueror 3.4.1 or higher, or Firefox 1.0.6 or higher, or Netscape 7.2 or higher 
+*Note : SPSS 16.0 was tested on and is supported only on Red Hat Enterprise Linux 4 Desktop and Debian 3.1 
+
+ 
+
+SPSS for Windows Version 15
+Operating system: Microsoft Windows XP or 2000 
+Processor: Intel Pentium -compatible processor 
+Memory: 256MB RAM minimum 
+Minimum free drive space: 400MB 
+VGA Monitor 
+Web browser: Internet Explorer 6.0 
+
+
+SPSS for Windows Version 14
+Operating system: Microsoft Windows XP, 2000, and Me are the preferred platforms. Microsoft Windows 98 is also supported. 
+Processor: Intel Pentium-compatible processor 
+Memory: 256MB RAM minimum 
+Minimum free drive space: 300MB 
+SVGA monitor 
+Web browser: Internet Explorer 6.0
+
+
+SPSS for Windows Version 13
+Operating System: Microsoft Windows Me, Microsoft Windows 98, Microsoft Windows 2000, and Microsoft Windows XP.
+Processor: Pentium or Pentium-class processor.
+Memory: 128MB RAM or more.
+Minimum free drive space: 220MB hard drive space.
+A CD-ROM drive.
+A graphics adapter with 800 x 600 resolution (SVGA) or higher.
+For connecting with an SPSS Server, a network adapter running the TCP/IP network protocol.
+
+RELATED INFORMATION
+ Need more help? Our Statistics forum is Live! [https://developer.ibm.com/answers/topics/statistics.html?smartspace=predictive-analytics]
+
+
+
+
+HISTORICAL NUMBER
+ 52608

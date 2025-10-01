@@ -1,0 +1,18 @@
+Title: IBM Action required for IBM WebSphere MQ Hypervisor Edition for RedHat Enterprise Linux Server for the GNU C library (glibc) vulnerabilities (CVE-2015-1472 & CVE-2013-7423) - United States
+
+Text:
+ FLASH (ALERT)
+
+ABSTRACT
+ WebSphere MQ Hypervisor Edition requires customer action for the GNU C library (glibc) vulnerabilities (CVE-2015-1472 & CVE-2013-7423) 
+
+CONTENT
+WebSphere MQ Hypervisor Edition Versions 7.0.1 and 7.5 ship with Red Hat Enterprise Linux (RHEL) that is vulnerable to GNU C library (glibc) vulnerabilities (CVE-2015-1472 & CVE-2013-7423). 
+
+Remediation/Fixes 
+
+ IBM strongly recommends that you should contact Red Hat to obtain fixes and install fixes for Red Hat Enterprise Linux (RHEL). 
+
+RELATED INFORMATION
+ Red Hat vulnerabilities by CVE name [https://access.redhat.com/security/cve/]
+A Japanese translation is available [http://www.ibm.com/support/docview.wss?uid=swg21903158]

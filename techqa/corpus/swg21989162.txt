@@ -1,0 +1,31 @@
+Title: IBM WTX TEXTTOBASE64() documented behaviour is different from the actual behaviour - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ In the IBM WebSphere Transformation Extender (WTX / IBM Transformation Extender (ITX) ) documentation for the TEXTTOBASE64() function, an example is given using a literal, that no longer gives the documented answer when used. 
+
+SYMPTOM
+TEXTTOBASE64("Some Example Data")
+Expected Output: U29tZSBFeGFtcGxlIERhdGE=
+Actual Output : UwBvAG0AZQAgAEUAeABhAG0AcABsAGUAIABEAGEAdABhAA==
+
+
+CAUSE
+Since WTX 8.1, all literals are now stored in Unicode, the result will differ from the documented one.
+
+ENVIRONMENT
+IBM WebSphere Transformation Extender (WTX / IBM Transformation Extender (ITX) on any valid execution platform
+
+DIAGNOSING THE PROBLEM
+Reviewing the output, it can be seen that the BASE64 output is not as per expectations, however, it will successfully convert back to the original string.
+
+RESOLVING THE PROBLEM
+If the old behaviour is desired, you can store literals in a Typetree object (input or output) and reference that object in any functions doing binary conversions, such as TEXTTOBASE64().
+
+
+
+
+
+The documentation will be changed to reflect this.

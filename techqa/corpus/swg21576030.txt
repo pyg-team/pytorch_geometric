@@ -1,0 +1,74 @@
+Title: IBM "(0x80040E37): [DB2/NT64] SQL0204N "<username>.DUAL" is an undefined name. SQLSTATE=42704" when click "Help - System Information" - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ User click "Help - System Information". User receives error message. 
+
+SYMPTOM
+Screen: 
+
+Information
+Standard Error
+Source: FrangoDirect.ServerInfoD.GetServerParameters#ControllerProxyClient
+Description: System.Web.Services.Protocols.COMException (0x80040E37): [DB2/NT64] SQL0204N "DB2ADMIN.DUAL" is an undefined name. SQLSTATE=42704
+
+at FrServerB.ServerInfoClass.GetServerParameters(String sGuid, String sUser)
+at Cognos.Controller.Proxy.CCRWS.ServerInfo_GetServerParameters(....
+<....>
+[OK]
+
+Event Viewer (Application Log)
+Event Type: Warning
+Event Source: VBRuntime
+Event Category: None
+Event ID: 1
+Date: 21/12/2011
+Time: 13:29:14
+User: N/A
+Computer: SERVERNAME
+Description:
+The VB Application identified by the event source logged this Application FrSrvFunc: Thread ID: 2244 ,Logged: Error occured at 21/12/2011 13:29:14 in FrSrvFunc, Error No=-2147217865, Source=Server function:Dbp_GetSqlExtended(..) , Description=[DB2/NT] SQL0204N "FASTNET.DUAL" is an undefined name. SQLSTATE=42704
+, HelpFile= HelpContext=0
+
+Event Type: Warning
+Event Source: Cognos Controller
+Event Category: None
+Event ID: 0
+Date: 21/12/2011
+Time: 13:29:14
+User: N/A
+Computer: SERVERNAME
+Description:
+Error occured at 21/12/2011 13:29:14 in IBM Cognos 8 Controller, Error No=5, Source=FrangoDirect.ServerInfoD.GetServerParameters#ControllerProxyClient, Description=System.Web.Services.Protocols.SoapException: Server was unable to process request. ---> System.Runtime.InteropServices.COMException (0x80040E37): [DB2/NT] SQL0204N "FASTNET.DUAL" is an undefined name. SQLSTATE=42704
+at FrServerB.ServerInfoClass.GetServerParameters(String sGuid, String sUser)
+at Cognos.Controller.Proxy.CCRWS.ServerInfo_GetServerParameters(String sGuid, String sUser)
+--- End of inner exception stack trace ---, HelpFile= HelpContext=0
+
+CAUSE
+The DB2 database server has not been configured correctly. 
+
+ * Specifically the setting "DB2_COMPATIBILITY_VECTOR" has not been changed from the default (not set). 
+ * Controller requires this to be set to "ORA".
+
+ENVIRONMENT
+Controller application repository database hosted on DB2.
+
+
+
+RESOLVING THE PROBLEM
+Reconfigure your DB2 database server so that DB2_COMPATIBILITY_VECTOR=ORA. 
+
+ * TIP: This setting may have adverse consequences for other (non-Controller) software, so please check before making the change.
+
+
+For step-by-step instructions, see separate IBM Technote #1576185.  
+
+Workaround: 
+
+Click OK and ignore error.
+
+
+RELATED INFORMATION
+#1576185 - (0x80040E14): [DB2/NT] SQL0104N An unexpecte [http://www.ibm.com/support/docview.wss?uid=swg21576185]

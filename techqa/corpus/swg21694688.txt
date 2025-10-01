@@ -1,0 +1,13 @@
+Title: IBM STATS RELIMP extension command says variable is not found when it's in the file - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ I'm running the STATS RELIMP extension command in SPSS Statistics. I'm getting an error message indicating that there is an invalid variable name. I've checked and the variable I've specified exists in the file. Why am I getting this error? 
+
+RESOLVING THE PROBLEM
+Unlike SPSS Statistics, R variable names are case sensitive. Check to make sure that the variable name you've specified precisely matches the actual variable name in your file.
+
+RELATED INFORMATION
+ Need more help? Our Statistics forum is Live! [https://developer.ibm.com/answers/topics/statistics.html?smartspace=predictive-analytics]

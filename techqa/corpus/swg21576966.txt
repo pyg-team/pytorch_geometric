@@ -1,0 +1,91 @@
+Title: IBM Recommended configuration changes for a TSAMP automated HADR on Windows - United States
+
+Text:
+TSA; TSAMP; Windows; hadr; recommendation; best practice TECHNOTE (FAQ)
+
+QUESTION
+ The overall setup, including automation policy for a TSAMP automated HADR environment on the Windows platform requires some configuration tweaking to help improve stability and predictability. 
+
+ANSWER
+The basic setup is described by the document "Automating DB2 HADR Failover on Windows using Tivoli System Automation for Multiplatforms - September 2010". The following steps are additional:
+1. The userid "user1" must be the Windows build-in Administrator account if the cluster uses Windows non-domain joined systems. In other words it MUST be "Administrator" !
+
+Reason: If the DB2 instance user is used for "user1", then the first problem you will hit is that the policy cannot be defined.
+
+2. Add a dependsOn relationship to the automation policy, between the HADR database and the ServiceIP :
+mkrel -p dependson -S IBM.Application:db2_<DB2INST1>_<DB2INST1>_<HADRDB>-rs -G IBM.ServiceIP:db2ip HADRDB_depon_DB2IP
+
+Reason: Allows a controlled HADR takeover without force (moving the HADR Resource Group) to include disconnecting clients as the ServiceIP will be offlined first, thus client connections are dropped.
+
+3. Add a dependsOn relationship to the automation policy, between each of the DB2 instance resources and a Network Equivalency:
+mkrel -p dependson -S IBM.Application:db2_<DB2INST1>_<NODE1>_0-rs:<NODE1> -G IBM.Equivalency:virpubnic_<NODE1>_<NODE2> DB2-<NODE1>_depon_virpubnic
+mkrel -p dependson -S IBM.Application:db2_<DB2INST1>_<NODE2>_0-rs:<NODE2> -G IBM.Equivalency:virpubnic_<NODE1>_<NDOE2> DB2-<NODE2>_depon_virpubnic
+
+Reason: Triggers TSAMP to force down the DB2 Instance resource when the public network interface goes offline on the same node. Eventually a failover of the HADR DB resource should result.
+
+4. Ignore the TechNote 'Command "rgreq -o move" performs "takeover by force" vice normal takeover'
+This technote is only applicable to a UNIX or Linux environment.
+
+Reason: For a TSAMP automated HADR setup on Windows, the "move" request MUST be used to do a controlled takeover ... you cannot use the native 'db2 takeover ...' command.
+
+5. Do not use DB2's Automatic Client Re-route (ACR) with a Windows based HADR setup.
+
+Reason: ACR will cause problems when DB2 9.5 HADR takeover occurs since the primary DB2 instance does not automatically drop all connections when a takeover is in progress.
+
+6. Use upper-case hostnames in the command mkrpdomain and all policy definition files, if the /etc/hosts file contains upper-case hostnames.
+
+Reason: A known problem within RSCT leads to problems with the HADR takeover process. Also, the output from the 'lssam' command may be inaccurate.
+
+7. Ensure the Windows service for the DB2 application is configured with "startup type" = "Manual" and "computer response if service fails" = "Take No Action"
+
+Reason: Windows should never be allowed start or restart the DB2 instance.
+
+8. Configure and monitor syslog at /var/adm/log/messages while testing failover (see TSAMP guide)
+
+Reason: All DB2 policy scripts log messages into the syslog.
+
+9. Change Start and Stop Timeouts for the HADR database resource:
+Old: StartCommandTimeout=120 StopCommandTimeout=15
+New: StartCommandTimeout=300 StopCommandTimeout=300
+
+Reason: Old timeouts are hit to often, when DB2 has clients connected.
+
+10. Create the file /var/ct/cfg/netmon.cf on both cluster nodes and add the IP of the default gateway
+
+Reason: RSCT can avoid false positive network interface failures on first node if the second node goes offline (Windows independent)
+
+11. Set Windows "Startup and Recovery" Parameters:
+System startup - "Time to display list of operating systems" = 120
+System failure - "Automatically restart" = "Enabled"
+
+Reason: The first will give the new primary system time to go into the Primary disconnected state, before the second system comes back online. The second will allow Windows to restart from the BSOD.
+
+12. Configure RSCT heartbeating only for the subnet with the IBM.ServiceIP (Windows independent):
+RSCT IBM.NetworkInterface class attribute HeartbeatActive=0 for all other subnets
+
+Reason: Only with one heartbeat ring is it possible for the original primary system to reboot so the standby can takeover, where there is a public network problem on the node hosting the original primary.
+
+13. Set HADR resource ProtectionMode=1
+
+Reason: If only the IBM.ServiceIP has ProtectionMode=1, then a HADR failover does not occur if the old primary does drop the IP before the cluster detects the network split and restarts the primary.
+
+14. [Optional] It is recommended to configure the HADR replication on a private network
+
+Reason: Better load balance with the client connections on the public network (Windows independent).
+
+15. IMPORTANT: Unlike HADR setup on a UNIX or Linux setup, on Windows the old HADR primary has to be manually reintegrated after an automatic failover occurs. This may be resolved in more recent versions of DB2 (9.7 FP8 and 10.1 FP3) but still holds true for all earlier versions.
+
+Reason: There is no automatic re-integration for the old primary ... it will come back thinking it is still the primary (look like a split brain) but it won't allow client connects so this isn't actually a split brain. Until you manually re-integrate the pair, there is no potential for TSAMP to perform another automatic failover in the event of incident affecting the new primary.
+For AIX and Linux based setupts, the DB2 HADR automation policy and policy scripts DOES automatically start an old primary as the new standby and automatically reintegrate the pair after an automated failover.
+
+16. IMPORTANT: This is a common issue among Windows clusters that must be addressed for a stable cluster. Please read the following technote:
+http://www-01.ibm.com/support/docview.wss?uid=swg21696304 [http://www-01.ibm.com/support/docview.wss?uid=swg21696304]
+
+17. Set CritRsrcProtMethod to 3:
+Check your current setting:
+lsrsrc -Ab -c IBM.PeerNode
+
+To change the value:
+chrsrc -c IBM.PeerNode CritRsrcProtMethod=3
+
+Reason: Setting this value to 3 allows for a sync prior to the kernel panic that reboots the node in case of critical resources in jeopardy or quorum loss situations. This is critical in situations where communication between the nodes is lost to avoid DB2 split brain.

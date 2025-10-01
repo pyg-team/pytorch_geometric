@@ -1,0 +1,103 @@
+Title: IBM Getting "QueueTransportUnavailableException: javax.jms.JMSException: CC=2;    
+RC 2009" when using WebSphere Application Server V7 and after migrating to WebSphere MQ V7.5 - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ You have a J2EE application that is deployed in WebSphere Application Server (WAS). Upon connecting to the WebSphere MQ queue manager, this application gets the following exception:
+
+QueueTransportUnavailableException: javax.jms.JMSException: CC=2; RC 2009
+
+Output of "MQRC 2009"shows this message code: MQRC_CONNECTION_BROKEN 
+
+SYMPTOM
+FDC files are generated in the profile_root/mqm/errors directory: 
+
+Probe Id :- RM680037
+Component :- rriBadDataReceived
+Program Name :- amqrmppa
+Major Errorcode :- rrcE_PROTOCOL_ERROR 
+Probe Description :- AMQ9504: A protocol error was detected for channel
+'SYSTEM.DEF.SVRCONN'.
+Arith1 :- 24 (0x18) 
+Arith2 :- 28 (0x1c) 
+
+ 
+
+The exception QueueTransportUnavailableException is written to the WAS SystemOut log file. 
+
+Other generic errors may be seen in the MQ error logs. The following is one of them: 
+
+
+AMQ6183: An internal WebSphere MQ error has occurred.
+
+
+CAUSE
+Incompatible/outdated WebSphere MQ Resource Adapter. 
+
+For numerous reasons, IBM had to adjust where the WebSphere MQ resource adapter was installed after WebSphere Application Server V7 was shipped. This means that if you install WAS 7.0.0.0 and then create a profile, then the profile will hold a copy of the resource adapter which will not get updated by service updates. If you create a profile at WAS 7.0.0.1 or later then the profile will point to the copy of the resource adapter in the root install directory, which does get updated by service updates, and this issue will not occur. The script below redirects the pointer to the resource adapter from the one in the profile to the one in the root install directory.
+
+
+DIAGNOSING THE PROBLEM
+You can verify the diagnostic data from both, WAS and MQ, and see if it matches the entries listed in the Symptom section above. You can also check to see if the informational message code ' WMSG1703I' is written to the systemout.log file on the WAS side. Entry of such message code should look like this: 
+
+
+[4/30/13 14:21:54:339 EDT] 00000000 JMSRegistrati I WMSG1703I: RAR implementation version 7.0.0.0-k700-L080820
+[4/30/13 15:08:17:602 EDT] 00000000 JMSRegistrati I WMSG1703I: RAR implementation version 7.0.0.0-k700-L080820
+
+
+RESOLVING THE PROBLEM
+There are a few steps that comprise the resolution of this problem. These steps are actually outlined in the [http://pic.dhe.ibm.com/infocenter/wasinfo/v7r0/index.jsp?topic=/com.ibm.websphere.express.iseries.doc/info/iseriesexp/ae/tmj_wmqra_restoredefault.html] WebSphere Application Server V7 and V8 IBM Knowledge Center (IKC): 
+
+ * 
+ * 
+ * 
+ * 
+ * (WAS V7) Ensuring that servers use the latest available WebSphere MQ resource adapter maintenance level
+ * 
+ * 
+ * (WAS V8) Ensuring that servers use the latest available WebSphere MQ resource adapter maintenance level
+ * 
+ * 
+ * 
+ * 
+ * (WAS 8.5.5) Ensuring that servers use the latest available WebSphere MQ resource adapter maintenance level
+ * 
+
+
+You should follow all the steps outlined in the IKC, however, in step 4 in WAS V7 IKC (step 3 in WAS V8 and V8.5.5 IKC), which is the most important step, you might run into some syntax errors upon trying to run the Jython script convertWMQRA.py. If you do have problems, use the following script instead: 
+
+ras = AdminUtilities.convertToList(AdminConfig.list('J2CResourceAdapter'))
+
+for ra in ras :
+desc = AdminConfig.showAttribute(ra, "description")
+# if (desc == "WAS 7.0 Built In WebSphere MQ Resource Adapter") or
+# (desc == "WAS 7.0.0.1 Built In WebSphere MQ Resource Adapter") or
+# (desc == "WAS Built In WebSphere MQ Resource Adapter"):
+if desc.endswith( 'MQ Resource Adapter' ):
+
+print "Updating archivePath and classpath of " + ra
+AdminConfig.modify(ra, [['archivePath', "${WAS_INSTALL_ROOT}/installedConnectors/wmq.jmsra.rar"]])
+AdminConfig.unsetAttributes(ra, ['classpath'])
+AdminConfig.modify(ra, [['classpath', "${WAS_INSTALL_ROOT}/installedConnectors/wmq.jmsra.rar"]])
+AdminConfig.save()
+#end if
+#end for
+
+
+Just as instructed in the IKC section above, copy this new Jython script into a file called convertWMQRA.py and then save it in the profile_root/bin directory and run it using the wsadmin tool. Once this is done, go on to the next step, in the IKC section above. 
+
+NOTE: 
+- The IKC has been updated accordingly through DOC APAR PM89914 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM89914].
+- APAR IV36766 explains why the 7.0.0.0 level of client code causes a problem:
+http://www.ibm.com/support/docview.wss?uid=swg1IV36766 [http://www.ibm.com/support/docview.wss?uid=swg1IV36766]
+
+AVOID TROUBLE: After running the script, a full resynchronization might be necessary to clear all synchronization optimization settings and perform configuration synchronization. That way, there is no mismatch between node and cell configuration after the script is run.
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration WebSphere MQ Service Integration Technologies /SIB 
+PRODUCT ALIAS/SYNONYM
+ WebSphere Application Server WAS SIB SIBUS SI BUS WMQ WebSphere MQ MQSeries

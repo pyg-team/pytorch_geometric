@@ -1,0 +1,27 @@
+Title: IBM What is SSL session caching of DataPower? Will it affect SSL renegotiation? - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ What is SSL session caching of DataPower? What is the meaning of Server-side Session Caching, Server-side Session Timeout and Server-side Session Cache Size? Will it affect SSL renegotiation? 
+
+ANSWER
+There are three SSL session caching-related options in SSL proxy profile: 
+
+ * Server-side Session Caching 
+ * Server-side Session Timeout 
+ * Server-side Session Cache Size
+
+Every SSL handshake generates an "SSL session id". When Server-side Session Caching is enabled, the initial ssl session id will be cached. Then, the next time that same client connects, the server will check to see if  * There is an existing SSL Session ID for that client 
+ * That session ID is cached and still valid.
+
+If these are confirmed, an abridged or short SSL handshake will be used to improve performance. 
+
+The Server-side session timeout defines the timeout in seconds for each entry in the server-side session cache. The Server-side Session Cache Size defines the entry size of session cache. 
+To clarify the SSL Renegotiation behavior by version, see How do I enable insecure SSL Renegotiation in an IBM WebSphere DataPower SOA Appliance Service. [http://www.ibm.com/support/docview.wss?uid=swg21432579] 
+
+When the SSL negotiation happens, the client and server will renegotiate ciphers, encryption/decryption keys, etc. A new entry will be created in the SSL session cache and the cached session will become invalid even though the entry is not timedout.  
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration WebSphere DataPower SOA Appliances General Firmware 4.0.2, 4.0.1, 3.8.1, 3.8, 3.7.3, 3.7.2, 3.7.1

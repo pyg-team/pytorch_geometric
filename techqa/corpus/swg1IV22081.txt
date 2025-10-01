@@ -1,0 +1,170 @@
+Title: IBM IV22081: TSAM SSUI DOES NOT CONTROL PROPERLY DUPLICATE PROJECT NAMES IN SOME CASES - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  TSAM SSUI does not control properly duplicate project names
+   in some cases
+   .
+   Usually TSAM SSUI doesn't allow to send a Create Project
+   service request if the new project name already exists in
+   the system in status draft or operational.
+   .
+   However, following a specific sequence it is possible to
+   create the SR with a duplicated project name.
+   .
+   The sequence is the following:
+   - Pass over the whole wizard up to the summary pane filling
+     in the forms and using a good, non existing, project name.
+   - Click on back button until return to the project details
+     pane.
+   - Replace the name with the one of a already existing project.
+   - Click finish, the wizard go to the summary pane.
+   - Click finish.
+   .
+   After that the SSUI creates the SR though it shows a pop-up
+   with the error: CTJZH2334E: A server error occurred when
+   updating this new service request with the provided data.
+   .
+   When clicking "OK" on the pop-up it closes though the wizard
+   reamins open as if it is still creating the SR until the user
+   clicks "Cancel".
+   .
+   The SR isn't showed in the "My Requests" pod though it is
+   created in  maximo, it remains indefinitely in status "NEW".
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All users of Tivoli Service Automation Manager
+   7.2.2.2
+   ****************************************************************
+   * PROBLEM DESCRIPTION:
+   TSAM SSUI does not control properly duplicate project
+   The check for duplicate project names takes place only after the
+   focus leaves the "project name" textbox. If the user's action is
+   to click on "next" immediately and all other mandatory fields on
+   the
+   page are filled in, the check for valid project name comes too
+   late and the user can skip over the page and submit a
+   pre-existing project name.
+   ****************************************************************
+   * RECOMMENDATION:
+   Apply 7.2.2.2-TIV-TSAM-LA0002
+   
+   For permanent resolution apply Tivoli Service Automation Manager
+   7.2.3 when available.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The root cause for this problem is that the check for duplicate
+   projects happens only when leaving the textbox.
+   The check happens but if the user clicked on "next", by the time
+   the check has finished (it is a REST call to a remote system),
+   the user has already skipped to the next page.
+   
+   The fix makes sure that the project name is re-checked if the
+   user clicks on "next" or "finish" on the "project details" page.
+   Only if the double-check succeeds can the user move on to the
+   next page.
+   
+   The fix for this APAR is contained in the following  packages:
+   | 7.2.3-TIV-TSAM
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV22081
+   
+   
+ * REPORTED COMPONENT NAME
+   TSAM (& INSTALL
+   
+   
+ * REPORTED COMPONENT ID
+   5724W7800
+   
+   
+ * REPORTED RELEASE
+   722
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-06-04
+   
+   
+ * CLOSED DATE
+   2012-07-06
+   
+   
+ * LAST MODIFIED DATE
+   2012-07-06
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TSAM (& INSTALL
+   
+   
+ * FIXED COMPONENT ID
+   5724W7800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R723 PSY
+   UP

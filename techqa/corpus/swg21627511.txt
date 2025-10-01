@@ -1,0 +1,110 @@
+Title: IBM MustGather Core components - United States
+
+Text:
+diagnostic; data; capture TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Diagnostic data to supply with a Service Request for any ITNM Core component. 
+
+SYMPTOM
+If you have a problem or question relating to any ITNM Core components, please review this advice on what information to supply when you raise a Service Request.
+
+
+DIAGNOSING THE PROBLEM
+Here is a description of Core components for IBM Tivoli Network Manager (ITNM). They are located under $NCHOME and generally starting with ncp_ 
+
+ * Discovery: process names, ncp_disco, ncp_agent, ncp_d_helpserv, ncp_dh*, ncp_df*, stitcher files (*.stch), agent files (*.agnt) 
+ * Model: process names, ncp_model, ncp_store, ncp_class, Active Object Class files (*.aoc) 
+ * Root Cause Analysis: process names, ncp_poller, ncp_g_event (3.9) ncp_ncogate (3.8), nco_p_ncpmonitor, Gateway stitcher files (*.stch ITNM 3.9), ncp_f_amos (ITNM 3.8) 
+ * Miscellaneous: process names, ncp_ctrl, ncp_config, ncp_trapmux, ncp_crypt, ncp_mib, ncp_oql, ncp_perl, scripts (*.pl, *.sh), ncp_virtualdomain
+
+
+If your problem relates to none of the above, please click on the link for "Read First: MustGather for ITNM" in the Related Information section below to determine which ITNM components are relevant to your issue. 
+RESOLVING THE PROBLEM
+Information to Supply 
+
+When opening a Service Request or contacting Support for the first time, it is important that you provide a full and detailed explanation of the problem and the components affected. 
+
+IBM recommends you use the The IBM Support Assistant (ISA) for ITNM for collecting required information, see the related information section below for links to the ISA home page.
+
+Alternatively, run the First Fault Data Capture (FFDC) script to capture relevant information. See the Related Information section below for links to the use of the FFDC scripts.
+
+Advice on how to collect the information by hand follows the list in the section titled Manually collecting data
+
+Whether using the ISA, FFDC scripts or manually collecting data please always include the following general information. 
+
+1) Details of the environment 
+
+ * Production or test/development 
+ * New deployment or existing system, i.e. has the system just been deployed and not fully operational or has it been in place for some time? 
+ * New or long standing issue, has the problem just started happening or has it always been a problem since deployment. If it has just started happening were any changes made recently to the system? 
+ * Single server or distributed? Please describe the placement of the components of the product across devices and networks. Are there firewalls in between the servers?
+
+
+2) Version details  * Full version details of the operating system(s) involved. 
+ * Full details of the IBM software versions and any third party software involved. This aids us in looking for known issues.
+
+
+3) Full description of the problem/issue or questions including  * Any steps required to replicate the problem. 
+ * All diagnostic work carried out to date. 
+ * Any debug data collected such as trace or debug log files. 
+ * All configuration data. 
+
+
+
+Manually collecting data 
+NCHOME conventionally refers to the installation directory for IBM/Netcool. The default path on 
+UNIX is /opt/IBM/tivoli/netcool 
+and on 
+Windows is C:\IBM\tivoli\netcool. 
+
+
+Operating System version  * AIX: oslevel or lslpp -h bos.rte 
+ * Solaris: uname -a 
+ * Linux: cat /etc/release 
+ * Windows: winver
+
+
+ITNM version and build  * Change to the installation directory for ITNM and source the environment:
+
+cd NCHOME 
+source env.sh (Unix) 
+or in Windows cmd run env.bat 
+Retrieve the build version for ITNM: 
+ncp_ctrl -version 
+See Also: listIU.sh in the Related Information section below. 
+
+Log files 
+$NCHOME/log/precision 
+For advice on increase debug and trace logging see "Core component log file management" in the Related Information section below. 
+
+Configuration files 
+NCHOME/etc/precision 
+NCHOME/precision/disco 
+NCHOME/precision/eventGateway (version 3.9) 
+NCHOME/precision/amos (version 3.8) 
+NCHOME/precision/aoc 
+
+Binary cache files 
+NCHOME/var/precision 
+
+Core dump files; these are generated when a process exits unexpectedly. ITNM stores these in a central location unless system variable override that default behaviour. 
+
+NCHOME/precision/PD/core 
+
+If your issue is related to the unexpected exit of a process and core dump files, please search the Knowledge base for "Network Manager" MustGather core file. 
+
+Make a compressed zip or tar archive of the above. Click on the link in the Related Information section below for "Submitting Information to Support" for instructions on how to supply the archive to us. Ensure that your description of the versions and problem are also submitted. RELATED INFORMATION
+ listIU.sh [http://www.ibm.com/support/docview.wss?uid=swg21503824]
+IBM Support Assistant [http://publib.boulder.ibm.com/infocenter/tivihelp/v8r1/topic/com.ibm.networkmanagerip.doc_3.9/itnm/ip/wip/install/concept/nmip_ins_ibmsupportassistant.html]
+FFDC 3.9 [http://publib.boulder.ibm.com/infocenter/tivihelp/v8r1/topic/com.ibm.networkmanagerip.doc_3.9/itnm/ip/wip/admin/reference/nmee_adm_ffdcscript.html]
+FFDC 3.8 [http://publib.boulder.ibm.com/infocenter/tivihelp/v8r1/topic/com.ibm.networkmanagerip.doc_3.8/itnm/ip/wip/admin/reference/nmee_adm_ffdcscript.html]
+Core component log file management [http://publib.boulder.ibm.com/infocenter/tivihelp/v8r1/topic/com.ibm.networkmanagerip.doc_3.9/itnm/ip/wip/admin/task/nmip_trb_troubleshootingprocesses.html]
+Submitting Information to Support [http://www.ibm.com/support/docview.wss?uid=swg21153852]
+Read First MustGather for ITNM [http://www.ibm.com/support/docview.wss?uid=swg21627124]
+
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ ITNM

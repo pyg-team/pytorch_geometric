@@ -1,0 +1,144 @@
+Title: IBM IV81526: EXISTING BIGFIX SERVERS WITH MANY CUSTOM ANALYSIS MAY CAUSE BFI ETL IMPORT TO HIT DISK OUT OF SPACE ISSUE ON BIG FIX DATABASES - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  After defining new the BigFix datasource in BFI with some
+   existing data and some custom analysis whose content size is
+   closed to 2MB, during first
+   ETL import, the BigFix database may hit the Disk out of Space
+   issue. Once can see a similar error message in the BFI tema.log:
+   2015-12-15 00:11:46 (+0:06:10.692) INFO: ETL from IEM CATE -
+   RawDatasourceAnalysis              (0x000000000865BB55 -
+   0x0000000008E9C4EF): Failed
+   2015-12-15 00:11:46 (+0:00:00.068) ERROR: Sequel::DatabaseError:
+   Java::ComIbmDb2JccAm::SqlException: The file system is full..
+   SQLCODE=-968, SQLSTATE=57011, DRIVER=3.64.104
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * When you add a new data source to BigFix Inventory and the
+   * data source contains custom analyses whose content size is
+   * close to 2MB, the BigFix database might run out of space
+   * during the first import.
+   * EXPECTED RESULTS:
+   * The problem does not occur.
+   ****************************************************************
+   * RECOMMENDATION: Apply appropriate update when available.
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix for this APAR is contained in the following maintenance
+   packages:
+    | Update | BFI 9.2.3.0
+    | Update | ILMT 9.2.3.0
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV81526
+   
+   
+ * REPORTED COMPONENT NAME
+   LIC METRIC TOOL
+   
+   
+ * REPORTED COMPONENT ID
+   5724LMTEM
+   
+   
+ * REPORTED RELEASE
+   920
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-02-17
+   
+   
+ * CLOSED DATE
+   2016-04-05
+   
+   
+ * LAST MODIFIED DATE
+   2016-04-05
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   LIC METRIC TOOL
+   
+   
+ * FIXED COMPONENT ID
+   5724LMTEM
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R920 PSY
+   UP

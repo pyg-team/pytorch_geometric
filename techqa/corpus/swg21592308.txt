@@ -1,0 +1,25 @@
+Title: IBM Deviant Field checking in EventReaders - United States
+
+Text:
+netcool; impact; netcool/impact; nci; event; reader; eventreader; omnibus; omnibuseventreader; object; server; objectserver; deviant; field; fields; deviantfields; new; read; buffer; readbuffer TECHNOTE (FAQ)
+
+QUESTION
+ How are the Deviant Fields are used in EventReaders? 
+
+ANSWER
+The Impact EventReader retains details of captured events in a cache (ReadBuffer**).
+These details reside in the cache for only three polls of the EventReader.
+
+Each captured event is compared against the details stored in the cache.
+
+If the values of certain fields (Deviant Fields*) match the details stored in the cache, Impact assumes the event has previously been processed and discards the event.
+
+If the Deviant Field values differ or there is no prior record of the event in the cache, Impact classes the event as a "New Read"** and places the event context in the EventReader EventQueue for the EventProcessor to then action.
+
+* - see the TechNote "Default Deviant Fields in OMNIbusEventReader" [link below].
+** - see the TechNote "Interpreting the EventReader log file messages" [link below].
+
+
+RELATED INFORMATION
+ Default Deviant Fields in OMNIbusEventReader [http://www-01.ibm.com/support/docview.wss?uid=swg21592307]
+Interpreting the EventReader log file messages [http://www-01.ibm.com/support/docview.wss?uid=swg21596154]

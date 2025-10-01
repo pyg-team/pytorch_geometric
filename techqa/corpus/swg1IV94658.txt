@@ -1,0 +1,133 @@
+Title: IBM IV94658: "LOCAL" TYPE TOOLS FOR CONTEXT MENU IS NOT SUPPORTED BY ITNM 4.2 - United States
+
+Text:
+  DIRECT LINKS TO FIXES
+4.2.0-TIV-NOIHD-Linux-FP0003 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Network+Manager+IP+Edition&fixids=4.2.0-TIV-NOIHD-Linux-FP0003&source=SAR]
+4.2.0-TIV-NOIHD-AIX-FP0003 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Network+Manager+IP+Edition&fixids=4.2.0-TIV-NOIHD-AIX-FP0003&source=SAR]
+4.2.0-TIV-ITNMIP-Linux-FP0003 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Network+Manager+IP+Edition&fixids=4.2.0-TIV-ITNMIP-Linux-FP0003&source=SAR]
+4.2.0-TIV-ITNMIP-AIX-FP0003 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Network+Manager+IP+Edition&fixids=4.2.0-TIV-ITNMIP-AIX-FP0003&source=SAR]
+4.2.0_README_FP0003.txt [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Network+Manager+IP+Edition&fixids=4.2.0_README_FP0003&source=SAR]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The tools of local type have being removed in ITNM 4.2, however
+   the Document does not remove them correspondingly.
+   https://www.ibm.com/support/knowledgecenter/en/SSSHRK_4.2.0/itnm
+   /ip/wip/admin/task/nmip_adm_creatingtoolsforcontextmenus.html [https://www.ibm.com/support/knowledgecenter/en/SSSHRK_4.2.0/itnm/ip/wip/admin/task/nmip_adm_creatingtoolsforcontextmenus.html]
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  No Local Fix/Work Around
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * Documentation error.                                         *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * The Right Click tools of local type have being removed in    *
+   * ITNM 4.2 but the documentation still references tools of     *
+   * type local.                                                  *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Upgrade documentation                                        *
+   *                                                              *
+   * | fix pack | 4.2.0-ITNMIP-FP0003                             *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  All reference to Right Client tools of type local have being
+   removed.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV94658
+   
+   
+ * REPORTED COMPONENT NAME
+   TIV NETWK MGR I
+   
+   
+ * REPORTED COMPONENT ID
+   5724S4500
+   
+   
+ * REPORTED RELEASE
+   410
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-03-30
+   
+   
+ * CLOSED DATE
+   2017-04-14
+   
+   
+ * LAST MODIFIED DATE
+   2017-04-14
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

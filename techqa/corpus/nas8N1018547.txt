@@ -1,0 +1,144 @@
+Title: IBM MustGather:  Failed Backups - United States
+
+Text:
+BRMS; BRMS/400; MustGatherDocument TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The document describes what documents, at a minimum, should be gathered for a backup that did not complete. 
+
+RESOLVING THE PROBLEM
+Here is the list of documents that should be gathered when the customer has an issue with a backup that did not complete: 
+
+1. The joblog of the actual backup job that did not complete in the form of a spooled file that is created by DSPJOBLOG OUTPUT(*PRINT). 2. A listing of all PTFS on the system obtained by issuing the DSPPTF OUTPUT(*PRINT) command. 3 If using BRMS, the BRMS flight recorders which are found in the IFS directory /tmp/brms. Refer to Rochester Support Center Knowledgebase document N1015780, Copying the BRMS Flight Recorder to a Text File: Database 'DCF Technotes (IBM i)', View 'Products', Document 'Copying the BRMS Flight Recorder to a Text File' [http://www-01.ibm.com/support/icons/doclink.gif] [http://www-01.ibm.com/support/docview.wss?uid=nas8N1015780]. 4. Tape library or drive related failures require the tape flight recorders be collected following Rochester Support Center Knowledgbase document N1019661, QTADMPDV - XPF Tape and SLIC Tape Flight Recorders: Database 'DCF Technotes (IBM i)', View 'Products', Document 'QTADMPDV - XPF Tape and SLIC Tape Flight Recorders' [http://www-01.ibm.com/support/icons/doclink.gif] [http://www-01.ibm.com/support/docview.wss?uid=nas8N1019661] 
+ *  - [http://www.ibm.com/i/c.gif] Directions for collecting files located in the IFS 
+   
+   To retrieve the file(s), do the following: 
+   
+   1. Open the System i Navigator. 2. Expand your system where the files are located. Log in with your user ID (preferably QSECOFR or equivalent). 3. Expand File Systems, and drill down to the directory that contains the file(s) requested by this document. 4. Locate the following file(s): All files in the /TMP/BRMS directory 5. Finally, drag and drop the files from System i Navigator to your desktop. 
+
+
+ *  - [http://www.ibm.com/i/c.gif] Directions for collecting spooled files that you own 
+   
+   To retrieve the spooled file that you own, do the following: 
+   
+   1. Open the System i Navigator. 2. Expand your system where the files are located. Log in with your user ID (preferably QSECOFR or equivalent). 3. Expand Basic Operations, and left click on Printer Output to display the output files. 4. Locate the following spooled files: The job log of the backup job and the DSPPTF output. 5. Finally, right click the files from System i Navigator, select Export..., select the destination folder, and click Save. 
+
+
+ *  - [http://www.ibm.com/i/c.gif] For transferring files to IBM that are smaller than 2GB each (files may exceed 2GB in total) 
+   
+   If you have an existing PMR 
+   
+   1. Sign on to the SR tool at the following URL:
+   http://www.ibm.com/support/entry/portal/open_service_request [http://www.ibm.com/support/entry/portal/open_service_request]
+   
+   2. On the Welcome page, enter the PMR number in the Enter a report number field and click Go.
+   
+   3. Scroll down to the Attach Relevant File field.
+   
+   4. Click Browse to locate the log or trace file that you want to submit to IBM Support.
+   
+   5. Click Submit to transfer your file to IBM Technical Support through FTP (ECuRep) and associated with this PMR.
+   
+   
+   If you are opening a new PMR
+   
+   1. Sign on to the SR tool at the following URL:
+   http://www.ibm.com/support/entry/portal/open_service_request [http://www.ibm.com/support/entry/portal/open_service_request]
+   
+   2. Select Open a new service request.
+   
+   3. Follow the steps to create a Service Request until you have come to the final page prior to submitting your request.
+   
+   4. Scroll down to the Attach additional files section.
+   
+   5. Click Browse to start adding files to your PMR. Note that there is a 2GB limit per file.
+   
+   6. Click Submit when you are done adding files and are ready to submit your PMR to IBM Service.
+   
+   
+   
+   
+
+
+ *  - [http://www.ibm.com/i/c.gif] For transferring files to IBM that exceed 2GB each 
+   
+   
+   Important Note: You must have a PMR created to complete these steps. 
+   1. Prepare your files for transfer: 
+   
+   a. You should compress (if possible) each file, or multiple files, into one zip archive. This will speed up the transfer process and make the overall process easier. 
+   
+   b. Rename your file(s) prior to transfer. Use the following file naming convention to name your file: 
+   
+   Caution: The file must use this format to be associated with the PMR; this is the complete PMR record number. Using any other file name will cause the file to be deleted. 
+   Enter your PMR record information and file type as follows: 
+   xxxxx.bbb.ccc.yyy.zzz 
+   
+   where: 
+   xxxxx = PMR number 
+   bbb = Branch 
+   ccc = Country code 
+   yyy = Unique file name 
+   zzz = File type or file extension 
+   
+   Example 
+   
+   12345.055.000.collector01_29_Aug_06.zip 
+   
+   2. From a command prompt, terminal window, or FTP client, FTP to the following site: 
+   
+   ftp testcase.boulder.ibm.com 
+   
+   3. Log in as anonymous. 
+   
+   NOTE: At some point in time, IBM will remove anonymous login. Refer to this URL for information to obtain an IBM ID and password. 
+   
+   http://www-01.ibm.com/support/docview.wss?uid=nas8N1022576 [http://www-01.ibm.com/support/docview.wss?uid=nas8N1022576] 
+   
+   4. Enter your e-mail address as the password. 
+   
+   5. Using the cd command, change to the following directory: 
+   
+   cd /toibm/os400 
+   
+   6. Change session to binary mode: 
+   
+   bin 
+   
+   7. Enter the following command to place the file on the server: 
+   
+   put file_name 
+   
+   8. Enter the quit command to end your transfer session. 
+   
+
+
+
+
+Other Options for uploading data 
+
+Opt 1. Please use the following link to FTP to ECUREP and Link to your PMR 
+
+Enhanced Customer Data Repository (ECuRep) [http://www.ecurep.ibm.com/app/upload] 
+
+You will need to fill in the following required information 
+
+PMR number:* Your PMR Number 
+Upload is for:* OS/400 
+Email address: Your e-mail 
+
+Opt 2. Below is link for collection of SR flight recorders 
+
+N1012959 MustGather: QSRSRV - How to Collect Save/Restore Problem Data [http://www-01.ibm.com/support/docview.wss?uid=nas8N1012959] 
+
+Opt 3. Customers can use QMGTOOLS to pull data and send it in. 
+
+N1020143 Obtaining, Installing, and Running QMGTOOLS for the Save/Restore/BRMS Data Collections [http://www-01.ibm.com/support/docview.wss?uid=nas8N1020143] 
+
+N1010370 QMGTOOLS: FTP Data to IBM [http://www-01.ibm.com/support/docview.wss?uid=nas8N1010370] 
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Operating System IBM i 7.2 Operating System IBM i 7.1 Operating System IBM i 6.1 
+HISTORICAL NUMBER
+ 533997589

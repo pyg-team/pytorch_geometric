@@ -1,0 +1,36 @@
+Title: IBM How to apply encryption keys to a document programmatically - United States
+
+Text:
+encryption keys; encryption; keys; encrypting; lotusscript; script; code; document; programmatically; programming; EncryptionKeys property; property; encryptionkeys; multiple keys; single key; return; return value; array; string TECHNOTE (FAQ)
+
+QUESTION
+In Lotus Domino Designer, can you apply encryption keys to a document programmatically?
+
+ANSWER
+Yes. If a document is going to be encrypted programmatically, use the EncryptionKeys property in LotusScript to apply any encryption keys to the document.
+The EncryptionKeys property uses the document item, SecretEncryptionKeys, when reading or applying encryption keys. To apply multiple encryption keys, use an array of strings, or otherwise use a single value string. Remember that encryption key names are case-sensitive.
+
+When reading encryption keys, the return value is always an array. If the value, PUBLIC_KEY, is returned, this means that the user's public key was used to encrypt the document. 
+
+As an example, you can use the code below and attach it to a button: 
+
+NOTE: The code below is a sample script, provided to illustrate one way to approach this issue. It is to be used as is and at your own risk. In order for this example to perform as intended, the script must be laid out exactly as indicated below. Product Support cannot customize this script for specific environments or applications. 
+
+
+ * 
+ * Dim workspace As New NotesUIWorkspace 
+   Dim uidoc As NotesUIDocument 
+   Dim doc As NotesDocument 
+   Set uidoc = workspace.CurrentDocument 
+   Set doc = uidoc.Document 
+   doc.EncryptionKeys = "Managers Key" 
+   Call doc.Save(True,True) 
+ * 
+ * 
+ * 
+
+For more information on this facet of Lotus Domino security, read Public key security [http://publib.boulder.ibm.com/infocenter/domhelp/v8r0/index.jsp?topic=/com.ibm.help.domino.admin.doc/DOC/H_ABOUT_PUBLIC_KEYS.html] in the Domino information center. 
+
+
+ * 
+ *

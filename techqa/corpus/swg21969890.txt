@@ -1,0 +1,192 @@
+Title: IBM Known issues in IBM Security Key Lifecycle Manager, Version 2.6 - United States
+
+Text:
+ TROUBLESHOOTING
+
+PROBLEM
+This document addresses the known issues with IBM Security Key Lifecycle Manager, Version 2.6.
+
+RESOLVING THE PROBLEM
+Installation and Migration Issues: 
+
+Issue 1 :
+
+
+IBM Security Key Lifecycle Manager installation fails on Red Hat Enterprise Linux, Version 6.7. The installation halts during IBM WebSphere Application Server profile creation process and goes into irrecoverable state.
+
+Solution: 
+Please do not attempt installation on RHEL 6.7. For more details see this technote: http://www-01.ibm.com/support/docview.wss?uid=swg21975886 [http://www-01.ibm.com/support/docview.wss?uid=swg21975886].
+
+Issue 2: 
+
+
+On Windows operating system, when you are installing IBM Security Key Lifecycle Manager in silent mode, unexpected warning message might get displayed as shown.
+InstallRegistry.xml file not found at location :
+C:\ProgramData\IBM\Installation Manager\installRegistry.xml
+
+You can ignore the warning message and continue with the installation task.
+
+Issue 3: 
+
+
+In silent mode, installation and the uninstallation processes fail or exit without completion if the command that starts the process does not specify a response file.
+
+IBM Security Key Lifecycle Manager provides both installation response files and uninstall response files. For example, running this command causes the uninstallation process to fail or to exit without completion.
+./uninstall -i silent
+
+Solution: 
+
+
+You must specify a response file in an installation or uninstallation statement. For example, type:
+./imcl -input full_path_to_response_file -silent
+
+Issue 4: 
+
+
+During IBM Security Key Lifecycle Manager, Version 2.6 installation, when you migrate Encryption Key Manager, some of the keys that are not part of any key groups in Encryption Key Manager are added to a newly created key group DefaultMigrateGroup .
+
+This issue is a known limitation and has no impact on serving keys to the devices.
+
+Issue 5: 
+
+
+Unable to login to IBM Security Key Lifecycle Manager, Version 2.5 GUI after fix pack upgrade on LDAP configured IBM Security Key Lifecycle Manager server.
+
+Solution: 
+
+To resolve this issue, see this technote:
+
+
+http://www-01.ibm.com/support/docview.wss?uid=swg21975942 [http://www-01.ibm.com/support/docview.wss?uid=swg21975942]
+
+Server Issues: 
+
+Issue 1 :
+
+
+On some RHEL and SLES systems, WebSphere Application Server starts before DB2 Server after reboot. This wrong sequence of start-up leads to error in starting IBM Security Key Lifecycle Manager.
+
+Solution: 
+
+To resolve this issue, see this technote:
+
+
+http://www-01.ibm.com/support/docview.wss?uid=swg21969891 [http://www-01.ibm.com/support/docview.wss?uid=swg21969891]
+
+Issue 2: 
+
+
+Backup of earlier version of IBM Security Key Lifecycle Manager fails if the database has a destroyed certificate / key stored. 
+
+Solution: 
+This a known limitation to be resolved in the future fix pack release.
+
+Issue 3: 
+
+
+Setting the IBM Security Key Lifecycle Manager user interface session time-out interval to No timeout and restarting WebSphere Application Server will logs you out of IBM Security Key Lifecycle Manager GUI.
+
+Solution: 
+This a known limitation to be resolved in the future fix pack release.
+
+Issue 4: 
+
+
+Backup and restore operation fails when you use the cross-platform backup and restore utility to back up and restore data of earlier versions (10, 2.0, 2.0.1, and 2.5) of IBM Security Key Lifecycle Manager and Encryption Key Manager.
+
+Before you run the cross-platform backup and restore operations, you must configure the backup.properties and restore.properties files. On Windows system, if the values in these files contain leading or trailing spaces, the backup and restore operations might fail.
+
+Solution: 
+
+
+To resolve the problem, ensure that there are no leading or trailing spaces in the backup.properties and restore.properties files.
+
+Issue 5: 
+
+
+With the default setting of WebSphere Application Server transaction timeout of 600 seconds, if you run the backup operation on a system with large data objects, a Java exception occurs.
+
+Solution: 
+
+
+To resolve this problem, you must set the higher transaction timeout value, such as 7200 seconds (2 hours). To modify the settings, run the following steps:
+
+ 1. Using the WASAdmin user ID, log in to the WebSphere Integrated Solutions Console, for example, https://<localhost> :9083/ibm/console/logon.jsp
+ 2. Go to the Transaction service page by clicking Servers > Server Types > WebSphere application servers > [Application servers] server1 > [Container Settings] Container Services > Transaction Service .
+ 3. In the Total transaction lifetime timeout and Maximum transaction timeout fields, specify a higher value, for example 7200.
+ 4. Click Apply .
+ 5. Click OK .
+
+Issue 6: Problems with stopping WebSphere Application Server 
+
+
+On Linux operating systems, stopping of WebSphere Application Server fails if you use the SecurityKeyLifecycleManager_was.init (/etc/init.d/SecurityKeyLifecycleManager_was.init ) file. Password in the SecurityKeyLifecycleManager_was.init file is obfuscated by asterisks. When the system is rebooted, execution of SecurityKeyLifecycleManager_was.init file might fail with the following error:
+
+Stopping WebSphere Application Server - server1 ...
+ADMU9991E: Unknown option: boot
+Usage: stopServer <server> [options]
+
+Solution: 
+
+
+You must stop WebSphere Application Server by using the stopServer.sh command. For example,
+
+/opt/IBM/WebSphere/AppServer/bin/stopServer.sh server1 -username wasadmin -password WAS@admin123
+
+To resove the SecurityKeyLifecycleManager_was.init file execution failure, edit the file by replacing asterisks with WebSphere Application Server administrator password in clear text.
+
+
+Miscellaneous: 
+
+Issue 1: 
+
+
+Data is not populated on the Automated Clone Replication Configuration page. After configuring and saving the IBM Security Key Lifecycle Manager instance as Replication Master, if you immediately access the Automated Clone Replication Configuration page for any updates, data is not populated for the Replication backup encryption passphrase and Confirm replication backup encryption passphrase fields.
+
+Solution: 
+
+
+To resolve this problem, wait for a while and refresh the page before you save the data again.
+
+Issue 2: 
+
+
+In the WebSphere Integrated Solutions Console, an error message is displayed for selecting a role even after a role is assigned to the user. This message is displayed because of using an unsupported version of Internet Explorer.
+Solution: 
+To resolve this problem, in the browser, you must enable compatibility mode for the host name or domain on which IBM Security Key Lifecycle Manager is running.
+
+ 1. Open Internet Explorer.
+ 2. Click Tools > Compatibility View settings 
+ 3. Add the domain or host name listed in the window.
+ 4. Click Add .
+ 5. Refresh the page.
+
+Issue 3: 
+
+
+IBM Security Key Lifecycle Manager reference topics Secret Key Create REST Service and tklmSecretKeyCreate in Knowledge Center need update to include the usage to have new device families such as GPFS.
+
+Solution: 
+This a known issue to be resolved in the future release.
+
+Issue 4: 
+
+
+The Automatic Services enablement topic in IBM Knowledge Center has a wrong instance name.
+
+Solution: 
+This a known issue to be resolved in the future release.
+
+Issue 5: 
+
+Weak passwords are allowed while creating a backup under Backup and Restore and in "Replication Backup Encryption Passphrase" while configuring Replication.
+
+Solution: 
+
+Users are advised to specify strong passwords while creating backups and also use strong password in "Replication Backup Encryption PassPhrase" while configuring replication. Strong password can include atleast 2 upper case characters, 2 numbers and 1 special character.
+
+Issue 6: 
+
+Changing user password from IBM Security Key Lifecycle Manager GUI allows passwords used in past.
+
+When SKLMAdmin user tries to change the password by using the Change Password option, which is available in IBM Security Key Lifecycle Manager graphical user interface, it permits users to change their password to previously changed values. Users are advised to use LDAP which can enforce such password policies.

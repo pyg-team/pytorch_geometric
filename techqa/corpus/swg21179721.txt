@@ -1,0 +1,35 @@
+Title: IBM Mail Rules Do Not Include Options for Delivery Failures, Return Receipts, etc. - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+Notes user would like to be able to act on documents received in the mail file that are based on forms other than the memo form. Rules currently reply on various fields that exist in the memo form but do not take into consideration other forms such as "Return Receipt" and "Nondelivery Failure." 
+
+In the case of a return receipt, for example, if you attempt to create a rule to file received return receipts, the logical process would be to create a rule whereby when Subject contains "RECEIVED" (or whatever other action), file the document accordingly. However, if we look at the Document Properties of a document that is a return receipt, the Subject field does not actually contain the word "RECEIVED"; rather, it is just displayed in the "Subject" column of the folder/view as the result of the View Column formula. So there does not seem to be a way to file/delete/act in another way on this type of received document.
+
+
+ANSWER
+This was reported to Quality Engineering as an enhancement request; however, it will not be addressed in Release 6.x. 
+
+ 
+
+WORKAROUND: 
+
+This functionality can be simulated via an agent in the mail file(s). For example, the following steps could be performed to file Return Receipt messages to a particular folder: 
+
+1. In the Domino Designer, create a "Simple action(s)" agent that is triggered to run "After new mail has arrived".
+2. In the "Document Selection" object of the agent, you would search for documents with the condition "By field", where the field "Form" contains the value "Return Receipt".
+3. In the "Action" object, there would be two actions: Action "Move to Folder", selecting the desired folder, and then Action "Remove from Folder", selecting the "Inbox" folder. This will move any newly received documents that use the "Return Receipt" form from the "Inbox" folder to another designated folder.
+
+Note that it is necessary to have the "Remove from Folder" action; otherwise, the message will appear in both folders.
+
+Also note that the "Return Receipt" messages will appear momentarily in the "Inbox" folder while the Agent Manager task prepares to run the agent.
+
+"After new mail has arrived" agents do not run at the precise instant the message arrives in the Inbox; it takes a minute or two for the Agent Manager task to run the agent after receiving notification that there has been a "new mail" event.
+
+
+
+
+ * 
+ *

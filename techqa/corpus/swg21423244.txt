@@ -1,0 +1,122 @@
+Title: IBM Constants for WebSphere MQ JMS and WebSphere MQ Java Classes - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The WebSphere MQ classes for Java™ Message Service (JMS) at V6 contained an interface called com.ibm.mq.jms.JMSC which stored definitions of common constants. In WebSphere MQ V7, the interface was deprecated. 
+
+This technote explains what interfaces replace com.ibm.mq.jms.JMSC in V7.
+
+In the WebSphere MQ V6 classes for Java, constants were contained in an interface called com.ibm.mq.MQC. This entire interface was deprecated in error at V7. The technote clarifies what aspects of the interface is still deprecated. 
+
+RESOLVING THE PROBLEM
+WebSphere MQ Classes for JMS
+com.ibm.mq.jms.JMSC was a combined interface that attempted to do two things:
+
+
+ * It provided constants and values solely for use by the JMS layer of code, for example transport type and other properties on the JMS Administered Objects. 
+ * It also replicated some of the standard WebSphere MQ constants. These WebSphere MQ constants would normally appear in structures such as the GetMessageOptions (GMO) or PutMessageOptions (PMO), and would usually be defined within for example header files such as CMQC.h. 
+
+
+In WebSphere MQ V7, two architectural changes were made. Firstly the Java interface to WebSphere MQ (see diagrams at " What is new in WebSphere MQ Version 7.0 [http://www.ibm.com/support/knowledgecenter/SSFKSJ_7.0.1/com.ibm.mq.csqzaw.doc/jm35120_.htm?cp=SSFKSJ_7.0.1%2F0-25-3-3-1]" ) was able to present a better set of constants that exactly matched the WebSphere MQ constants. It was also able to match the interface names. So there is, for example, a CMQC Java interface. 
+
+The classes for JMS were also refactored, so a new WebSphere MQConstants interface was created to provide a more logical place to store constants relating to the WebSphere MQ JMS provision. 
+
+Providing a set of interfaces that mapped directly to the WebSphere MQ header files gives several advantages. The organization of the constants is more logical, and means that constants introduced into WebSphere MQ are directly reflected in the Java interfaces. From the process of engineering the WebSphere MQ classes for JMS, it means that changes to WebSphere MQ constants can be easily reflected in Java. 
+
+Constants that are purely for use by JMS are now in their own interface and are not confused with WebSphere MQ constants. 
+
+WebSphere MQ classes for Java 
+
+com.ibm.mq.MQC is another combined set of constants. This provides constants for the WebSphere MQ classes for Java and, like com.ibm.mq.jms.JMSC, replicated some of the standard WebSphere MQ Constants. 
+
+This entire class was deprecated in WebSphere MQ V7, with the standard WebSphere MQ Constants being accessible via new interfaces. However no provision was made for an undeprecated set of constants used purely for the WebSphere classes for Java. 
+
+com.ibm.mq.MQC as a class is now not deprecated - rather, the individual elements that duplicated in the com.ibm.mq.constants package are deprecated. 
+
+What are the new interfaces? 
+
+A new package was introduced to contain these WebSphere MQ constants - com.ibm.mq.constants. This contains the interfaces CMQBC, CMQC, CMQCFC, CQMPSC, CMQXC and CMQZC. 
+
+There is also a very useful class called com.ibm.mq.constants.MQConstants that contains functions to do a mapping between a WebSphere MQ constant value and its well know textual name. For more information about this class, please see the following section: Class MQConstants [http://www.ibm.com/support/knowledgecenter/SSFKSJ_8.0.0/com.ibm.mq.javadoc.doc/WMQJMSClasses/com/ibm/mq/constants/MQConstants.html] 
+
+This package can be used by both WebSphere MQ classes for JMS and WebSphere MQ classes for Java applications. 
+
+The constants that are specific to the classes for JMS are now contained within the interface com.ibm.msg.client.jms.JmsConstants: [http://www.ibm.com/support/knowledgecenter/SSFKSJ_8.0.0/com.ibm.mq.javadoc.doc/WMQJMSClasses/com/ibm/msg/client/jms/JmsConstants.html] 
+
+Note that for constants specific to the WebSphere MQ classes for Java continue to use com.ibm.mq.MQC. 
+
+How are the new interfaces used? 
+
+Previously, one interface was imported by a Java program to access constants. If the new constants have been re-organised, does this mean multiple interfaces and classes need to be pulled in? 
+
+The answer is 'No'. All you need to do is import com.ibm.msg.client.wmq.WMQConstants. 
+
+This com.ibm.msg.client.wmq.WMQConstants interface extends all the constant interfaces, so it can be used to access any constant that may be required. 
+
+Here is an example showing what needs to be changed when moving from the WebSphere MQ V6 classes for JMS to the V7 classes. 
+
+In V6, the following code would be used to set the Transport Type property on a Queue Connection Factory to CLIENT: 
+
+import com.ibm.mq.jms.JMSC; 
+import com.ibm.mq.jms.MQQueueConnectionFactory; 
+: : : : : : : : : : 
+factory = new MQQueueConnectionFactory(); 
+factory.setTransportType(JMSC. MQJMS_TP_CLIENT_MQ_TCPIP); 
+
+Here some code that shows how to achieve the same thing using the new interfaces provided with the WebSphere MQ V7 classes for JMS: 
+
+import com.ibm.mq.jms.MQQueueConnectionFactory; 
+import com.ibm.msg.client.wmq.WMQConstants; 
+: : : : : : : : : : 
+factory = new MQQueueConnectionFactory(); 
+factory.setTransportType(WMQConstants. WMQ_CM_CLIENT); 
+
+Note the use of the com.ibm.msg.client.wmq.WMQConstants interface . 
+
+Here is a similar example that sets the Transport Type to BINDINGS, firstly in V6: 
+
+import com.ibm.mq.jms.JMSC; 
+import com.ibm.mq.jms.MQQueueConnectionFactory; 
+: : : : : : : : : : 
+factory = new MQQueueConnectionFactory(); 
+factory.setTransportType(JMSC. MQJMS_TP_BINDINGS_MQ); 
+
+and then using the new WebSphere MQ V7 interfaces: 
+
+import com.ibm.mq.jms.MQQueueConnectionFactory; 
+import com.ibm.msg.client.wmq.WMQConstants; 
+: : : : : : : : : : 
+factory = new MQQueueConnectionFactory(); 
+factory.setTransportType(WMQConstants. WMQ_CM_BINDINGS); 
+
+The new interfaces also allow a very different way of setting properties. The first example below supports a name-value pair mechanism, while the second uses the sane name-value pair mechanism but allows you to pass in the strings that you would enter if using the JMSAdmin command line tool. 
+
+factory.setIntProperty(WMQConstants. WMQ_CONNECTION_MOD, WMQConstants. WMQ_CM_CLIENT); 
+factory.setStringProperty("TRANSPORT","CLIENT"); 
+
+
+The code below shows how the CMQC package can be used directly by applications using the WebSphere MQ V7 classes for JMS: 
+
+import com.ibm.mq.constants.CMQC; 
+: : : : : : : : : : 
+factory.setMQConnectionOptions(CMQC. MQCNO_FASTPATH_BINDING); 
+
+Applications wanting to do the same thing using the V6 classes would have had to do this: 
+
+import com.ibm.mq.jms.JMSC; 
+: : : : : : : : : : 
+factory.setMQConnectionOptions(JMSC. MQCNO_FASTPATH_BINDING); 
+
+Notice that the constant names are the same between versions. The only difference is the interface where the constants are defined. The step forward here is the CMQC interface is completely based on the original CMQC header file, which means that if the WebSphere MQ constants are enhanced, the Java constants follow on automatically. 
+
+
+References 
+
+JMS Constants: [http://publib.boulder.ibm.com/infocenter/wmqv7/v7r0/index.jsp?topic=/com.ibm.mq.javadoc.doc/WMQJMSClasses/com/ibm/msg/client/jms/JmsConstants.html] 
+
+WebSphere MQ Constants Package: [http://publib.boulder.ibm.com/infocenter/wmqv7/v7r0/index.jsp?topic=/com.ibm.mq.javadoc.doc/WMQJMSClasses/com/ibm/mq/constants/package-summary.html]  
+
+PRODUCT ALIAS/SYNONYM
+ WMQ MQ

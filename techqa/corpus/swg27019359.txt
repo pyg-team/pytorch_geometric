@@ -1,0 +1,194 @@
+Title: IBM WebSphere Portal V6.1.0.5 and V6.1.5.2 hardware and software requirements - AIX - United States
+
+Text:
+DSRdoc; SystemRequirementsDocument; prereq; coreq; installation prerequisites; 6105eGA 6152eGA V6105 V6.1.0.5 6.1.0.5 6105 6152 PRODUCT DOCUMENTATION
+
+ABSTRACT
+ IBM WebSphere Portal V6.1.0.5 and 6.1.5.2 hardware and software requirements on an AIX operating system. The hardware and software requirements reflect the versions of prerequisites and corequisites that were tested with WebSphere Portal V6.1.0.5 and 6.1.5.2. 
+
+CONTENT
+
+
+
+TAB NAVIGATION
+ * AIX [http://www.ibm.com/support/docview.wss?uid=swg27019359]
+ * i5/OS [http://www.ibm.com/support/docview.wss?uid=swg27019362]
+ * Windows [http://www.ibm.com/support/docview.wss?uid=swg27019366]
+
+IBM AIX
+
+
+
+
+WebSphere Portal Server Version 6.1.0.5 and 6.1.5.2 (AIX) 
+
+This page describes the minimum product levels that need to be installed before opening a problem report with IBM WebSphere Portal Technical Support. The software versions and any maintenance levels listed on this page have been explicitly verified as working. 
+
+EARLIER LEVEL OF A LISTED SOFTWARE: Software versions at a lower level than those noted on this page are unsupported. LDAP software at an earlier level is considered untested and best effort support only. For more details and exceptions, refer to the WebSphere Portal 6.1.x Support Statement [http://publib.boulder.ibm.com/infocenter/wpdoc/v6r1m0/topic/com.ibm.wp.ent.doc_v6101/overview/inst_req_supt.html]. Also see the listing of software explicitly not supported for use with WebSphere Portal 6.1.x in WebSphere Portal Support Statement Addendum - Unsupported Products [http://www.ibm.com/support/docview.wss?rs=688&uid=swg27012957] (#7012957 [http://www.ibm.com/support/docview.wss?rs=688&uid=swg27012957]). 
+
+LATER LEVEL OF A LISTED SOFTWARE: Because other products frequently ship fixes, updates, and new releases, testing every configuration is not possible. In general, you can install and run with updates to supported products if those updates are compatible with the tested versions. For more details and exceptions, refer to the WebSphere Portal 6.1.x Support Statement [http://publib.boulder.ibm.com/infocenter/wpdoc/v6r1m0/topic/com.ibm.wp.ent.doc_v6101/overview/inst_req_supt.html]. Also see the listing of software explicitly not supported for use with WebSphere Portal 6.1.x in WebSphere Portal Support Statement Addendum - Unsupported Products [http://www.ibm.com/support/docview.wss?rs=688&uid=swg27012957] (#7012957 [http://www.ibm.com/support/docview.wss?rs=688&uid=swg27012957]). 
+
+UNLISTED SOFTWARE: Software not listed on this page at any level is unsupported. LDAP software not listed is considered untested and best effort support only. For more details and exceptions, refer to the WebSphere Portal 6.1.x Support Statement [http://publib.boulder.ibm.com/infocenter/wpdoc/v6r1m0/topic/com.ibm.wp.ent.doc_v6101/overview/inst_req_supt.html]. Also see the listing of software explicitly not supported for use with WebSphere Portal 6.1.x in WebSphere Portal Support Statement Addendum - Unsupported Products [http://www.ibm.com/support/docview.wss?rs=688&uid=swg27012957] (#7012957 [http://www.ibm.com/support/docview.wss?rs=688&uid=swg27012957]).
+
+
+
+Operating systems
+supported with 32-bit WebSphere Application Server and WebSphere Portal [/support/docview.wss?uid=swg27019359&amp;aid=1]  * AIX Version 7 Release 1 (64-bit operating system) 
+ * AIX Version 6 Release 1 Technology level 0 Service release 4 (6100-00-04), or with higher Technology or Service release level (64-bit operating system) 
+ * AIX 5L Version 5 Release 3 Technology level 7 Service release 1 (5300-07-01), or with higher Technology or Service release level (32-bit or 64-bit operating system)
+
+[/support/docview.wss?uid=swg27019359&amp;aid=1] [/support/docview.wss?uid=swg27019359&amp;aid=1] [/support/docview.wss?uid=swg27019359&amp;aid=1] Operating systems
+supported with 64-bit WebSphere Application Server and WebSphere Portal [/support/docview.wss?uid=swg27019359&amp;aid=1]  * AIX Version 7 Release 1 (64-bit operating system) 
+ * AIX Version 6 Release 1 Technology level 0 Service release 4 (6100-00-04), or with higher Technology or Service release level (64-bit operating system) 
+ * AIX 5L Version 5 Release 3 Technology level 7 Service release 1 (5300-07-01), or with higher Technology or Service release level (64-bit operating system)
+
+[/support/docview.wss?uid=swg27019359&amp;aid=1] [/support/docview.wss?uid=swg27019359&amp;aid=1] [/support/docview.wss?uid=swg27019359&amp;aid=1] AIX hardware requirements [/support/docview.wss?uid=swg27019359&amp;aid=1]  * IBM POWER family of processors 
+ * Disk space requirements:  * Minimum 2.5 GB free disk space for installation for WebSphere Portal 
+    * Minimum 1.0 GB free disk space for installation for WebSphere Application Server 
+    * Minimum 4 GB total disk space recommended for installation 
+   
+   
+ * Physical memory: Under minimal load, WebSphere Portal can function with 2GB of RAM. However, 4GB is an optimal starting point for RAM in a production environment. 
+ * CD-ROM drive
+
+[/support/docview.wss?uid=swg27019359&amp;aid=1] [/support/docview.wss?uid=swg27019359&amp;aid=1] [/support/docview.wss?uid=swg27019359&amp;aid=1] Application Servers
+The WebSphere-supplied Java SDK is required for both the run time and any remote Java clients. [/support/docview.wss?uid=swg27019359&amp;aid=1]  * WebSphere Application Server V7.0.0.11 with IBM SDK 1.6 SR12 (WebSphere Application Server product site) [http://www.ibm.com/software/webservers/appserv/was/]#1a#1b#1b 
+ * WebSphere Application Server V6.1.0.31 with IBM SDK 1.5 SR7 (WebSphere Application Server product site) [http://www.ibm.com/software/webservers/appserv/was/]#1a#1b  * Note: IBM Java SDK V5 reached end of service in 2015. If you continue to use WebSphere Application Server 6.1.x after that date with extended support, Java SDK V5 is no longer included
+   
+   
+
+Refer to "Required WebSphere Interim Fixes for WebSphere Portal V6.1.0.5 and V6.1.5.2 [http://www.ibm.com/support/docview.wss?uid=swg24027476]" for the complete list of fixes required for WebSphere Application Server. [/support/docview.wss?uid=swg27019359&amp;aid=1] [/support/docview.wss?uid=swg27019359&amp;aid=1] [/support/docview.wss?uid=swg27019359&amp;aid=1] Optional WebSphere Servers [/support/docview.wss?uid=swg27019359&amp;aid=1]  * WebSphere Application Server SCA feature pack 1.0.1.5 
+ * WebSphere Application Server XML feature pack 1.0.0.5 
+ * WebSphere Process Server V6.2.0.2*, 6.1.2.3, and 6.1.0.4 (all via Client Install option only with WAS 6.1x releases) *Refer to technote #1398123 for Process Server V6.2 Client installation [http://www.ibm.com/support/docview.wss?uid=swg21398123] 
+ * WebSphere Virtual Enterprise (formerly "Extended Deployment") V6.1.1.1, 6.1.0.5 (WebSphere Extended Deployment product site [http://www.ibm.com/software/webservers/appserv/extend/])
+
+JavaScript Library [/support/docview.wss?uid=swg27019359&amp;aid=1]  * Dojo V1.3.2 or 1.1.1
+
+To take advantage of the support for Microsoft Internet Explorer V8.0 or to use the new features in 6.1.5.2 such as Mashups integration and the Page Builder Theme, you will need to use Dojo V1.3.2. Refer to the topic "Using a different Dojo version [http://publib.boulder.ibm.com/infocenter/wpdoc/v6r1/topic/com.ibm.wp.ent.doc_v615/admin/epc_use_prior_dojo.html]" for more information. [/support/docview.wss?uid=swg27019359&amp;aid=1] [/support/docview.wss?uid=swg27019359&amp;aid=1] [/support/docview.wss?uid=swg27019359&amp;aid=1] Databases
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+[/support/docview.wss?uid=swg27019359&amp;aid=1]  * Derby V10.1 and 10.3 
+
+ * IBM DB2 Universal Database (DB2 product site) [http://www.ibm.com/software/data/db2/9/] (also supports High Availability Disaster Recovery (HADR) Feature)  * V9.7 FP1 for Linux, Unix, Windows 
+    * V9.5 for Linux, Unix, Windows: Enterprise Server Edition 9.5 FP5, Express Edition 9.5 FP5, Workgroup Server Edition 9.5 FP5 (viper 2) (including HADR) 
+    * V9.1 for Linux, Unix, Windows: Enterprise Server Edition 9.1 FP9, Express Edition 9.1 FP9, Workgroup Server Edition 9.1 FP9 (including HADR) 
+    * V8.1 for Linux, Unix, Windows: Enterprise Server Edition 8.1 FP16, Express Edition 8.1 FP16, Workgroup Server Edition 8.1 FP16 (including HADR)
+   
+   
+ * IBM DB2 for z/OS V9.1 and V8.1, PUT level 0901 or later maintenance (DB2 for z/OS product site) [http://www.ibm.com/software/data/db2/zos/]#2 (also supports High Availability Disaster Recovery (HADR) Feature) 
+ * WebSphere Information Integrator V8.2 FP4
+
+ * Oracle (Oracle Database product site) [http://www.oracle.com/database/index.html] (Oracle Database clustering using RAC on all supported Oracle levels. Supports connect time failover#3a)  * Standard/Enterprise V9.2.0.8, 10.1.0.5 Patch 4, 10.2.0.4 and 10.2.0.5 (patchset 8202632) (including RAC) (Supports Automatic Storage Management (ASM) Feature) 
+    * Oracle 11gR2 V11.2.0.1 (including RAC) 
+    * Oracle 11gR1 V11.1.0.7 (including RAC)
+      
+   
+   
+ * Microsoft SQL Server (Microsoft product site) [http://www.microsoft.com]  * Enterprise Edition 2008 SP1 [http://www.microsoft.com] 
+    * Enterprise Edition 2005 SP3
+   
+   
+
+[/support/docview.wss?uid=swg27019359&amp;aid=1] [/support/docview.wss?uid=swg27019359&amp;aid=1] [/support/docview.wss?uid=swg27019359&amp;aid=1] Java Database Connectivity (JDBC) Drivers [/support/docview.wss?uid=swg27019359&amp;aid=1]  * DataDirect Connect JDBC 4.0 (type 4) (DataDirect Connect JDBC product site [http://www.datadirect.com/products/jdbc/index.ssp]) 
+ * DB2 Driver for JDBC and SQLJ 3.1 (type 2/4) 
+ * JCC JDBC driver level 3.58.90 or above to connect to DB2 for z/OS Note: Use the JDBC drivers provided with DB2 LUW V9.7 FP2 when the Portal is not also running on z/OS 
+ * Derby embedded JDBC Driver 
+ * Microsoft SQL Server JDBC Driver 1.2 or 2.0 (Microsoft SQL Server JDBC Driver site [http://msdn.microsoft.com/en-us/data/aa937724.aspx]) 
+ * Oracle 9i or 10g or 11g JDBC Driver Thin (type 4) (Oracle JDBC product site [http://www.oracle.com/technology/software/tech/java/sqlj_jdbc/index.html])
+
+[/support/docview.wss?uid=swg27019359&amp;aid=1] [/support/docview.wss?uid=swg27019359&amp;aid=1] [/support/docview.wss?uid=swg27019359&amp;aid=1] Web servers
+[/support/docview.wss?uid=swg27019359&amp;aid=1]  * Apache HTTP Server V2.0.5.9 (Apache Server product site) [http://httpd.apache.org/] (Apache Server 2.0.5.9 includes CERT Advisory CA-2002-17) 
+ * Apache HTTP Server V2.2 (Apache Server product site) [http://httpd.apache.org/] (Apache 2.2.x is supported with WebSphere Application Server 7.0.#4a)#4a 
+ * IBM HTTP Server for WAS V7.0 and 6.1 (IBM HTTP Server product site) (HTTP Server 7.0 is supported with WebSphere Application Server 7.0 only) [http://www.ibm.com/software/webservers/httpservers/] 
+ * IBM HTTP Server for iSeries V7R1, V6R1 and V5R4 (IBM HTTP Server product site) [http://www-03.ibm.com/systems/i/software/http/index.html](HTTP Server for i5/OS is provided natively on System i5 and is not bundled with or installed by WebSphere Portal. For V5R4, supported group PTF is SF99114 level 13; for V6R1, supported group PTF is SF99115 level 1. For V5R4, the license program number is 5722DG1; for V6R1, the license program number is 5761DG1. Issue the GO LICPGM to display all the installed licensed programs. For WebSphere Application 6.1.0.21 on V6R1M0, apply SI35071. For WebSphere Application 7.0.0.1 on V6R1M0, apply SI35078) 
+ * Microsoft Internet Information Services (IIS) V7.5 or 7.0 (only for WAS 7 environments) and 6.0 (Microsoft product site) [http://www.microsoft.com] 
+ * IBM Lotus Domino Enterprise Server V8.5.2, 8.5.1, 8.5, 8.0.2, 8.0.1, 8.0 and V7.0.3, 7.0.2, 7.0.1 (Lotus Domino product site) [http://www.lotus.com/products/product4.nsf/wdocs/dominohomepage]#4d(To use Lotus Domino Version 7.0 with WebSphere Application Server 6.1, you must install the Web Server plug-in for Lotus Domino Server Version 6 which is a part of the Web Server plug-in for WebSphere Application Server 6.1) 
+ * Sun Java System Web Server 7 Update 8 or 6.1 SP12 (Sun product site) [http://www.sun.com/products/] 
+
+[/support/docview.wss?uid=swg27019359&amp;aid=1] [/support/docview.wss?uid=swg27019359&amp;aid=1] [/support/docview.wss?uid=swg27019359&amp;aid=1] Web browsers
+(required for administration/configuration, sample program execution and launch pad. There is no restriction nor certification of Web browsers on clients that connect the server to display content) [/support/docview.wss?uid=swg27019359&amp;aid=1]  *  6.1.0.5:  * Microsoft Internet Explorer 8.0, 7.0, 6.0 (Microsoft product site) [http://www.microsoft.com] 
+    * Firefox V3.6, 3.5, 3.0, 2.0, 1.5.0.7 (Firefox product site) [http://www.mozilla.org/] 
+    * Apple Safari 3.2 and higher (Apple product site) [http://www.apple.com/safari/] 
+    * Apple Safari 4.0, 4.0.5 (Apple product site) [http://www.apple.com/safari/] 
+      Safari is not supported for use with the Common Mail portlet. For additional information, see Limitations on Safari Web browser. Mashup Integration not supported with Safari for Windows. [http://www.ibm.com/support/docview.wss?uid=swg21320077]
+    * Opera 9.52 and higher [http://www.ibm.com/support/docview.wss?uid=swg21320077](Opera product site) [http://www.opera.com/products/]
+      Drag and Drop functionality of administering portlets and pages is not supported with Opera. Opera is not supported for use with the Common Mail portlet or the Domino and Extended Products Portlets. For additional information, see Limitations on Opera Web browser. [http://www.ibm.com/support/docview.wss?uid=swg21318444]
+   
+   
+ * 
+ *  6.1.5.2:  * Microsoft Internet Explorer 8.0, 7.0, 6.0 (Microsoft product site) [http://www.microsoft.com] 
+      PageBuilder, Mashup Integration and Wiki/Blogs in V6.1.5.2 are not supported or functional when using Microsoft Internet Explorer V6.0.#6f 
+    * Firefox V3.6, 3.5, 3.0 (Firefox product site) [http://www.mozilla.org/] 
+    * Apple Safari 3.2 and higher (Apple product site) [http://www.apple.com/safari/] 
+    * Apple Safari 4.0, 4.0.5 (Apple product site) [http://www.apple.com/safari/]
+      Safari is not supported for use with the Common Mail portlet. For additional information, see Limitations on Safari Web browser. Mashup Integration not supported with Safari for Windows. [http://www.ibm.com/support/docview.wss?uid=swg21320077]#6a#6e 
+    * Opera 9.52 and higher (Opera product site) [http://www.opera.com/products/]
+      Drag and Drop functionality of administering portlets and pages is not supported with Opera. Opera is not supported for use with the Common Mail portlet or the Domino and Extended Products Portlets. For additional information, see Limitations on Opera Web browser. [http://www.ibm.com/support/docview.wss?uid=swg21318444]#6b
+   
+   
+
+[/support/docview.wss?uid=swg27019359&amp;aid=1] [/support/docview.wss?uid=swg27019359&amp;aid=1] [/support/docview.wss?uid=swg27019359&amp;aid=1] LDAP servers
+[/support/docview.wss?uid=swg27019359&amp;aid=1]  * IBM Lotus Domino Enterprise Server V8.5.2, 8.5.1, 8.5, 8.0.2, 8.0.1, 8.0 and V7.0.3, 7.0.2, 7.0.1 (Lotus Domino product site) [http://www.lotus.com/products/product4.nsf/wdocs/dominohomepage] For 7.0.2 and 7.0.1: Apply SPR KLIN6LRTHJ to be able to return Groups and Users by direct lookup. Turkish users should use version 7.0.3 or later.#7a 
+ * IBM Tivoli Directory Server 6.2, 6.1 and 6.0 (IBM Tivoli Directory Server product site) [http://www.ibm.com/software/tivoli/products/directory-server/] Add the fix for APAR IO02714 on applicable releases, available at IBM Support.#7b 
+ * IBM z/OS Security Server 1.7 and 1.6 (IBM z/OS Security Server product site) [http://www.ibm.com/systems/z/advantages/security/index.html] 
+ * IBM z/OS.e Security Server 1.7 and 1.6 (IBM z/OS Security Server product site) 
+ * Novell eDirectory 8.8 or 8.7.3 (Novell eDirectory product site) [http://www.novell.com/products/edirectory/] 
+ * Sun Java System Directory Server 7, 6.3, 6.1, and 6 (Sun product site) [http://www.sun.com/products/] 
+ * Microsoft Active Directory 2008, including Lightweight Directory Server (AD LDS, previously referred to as "Application Mode" or ADAM) 
+ * Windows Active Directory 2000 and 2003 including Application Mode
+
+[/support/docview.wss?uid=swg27019359&amp;aid=1] [/support/docview.wss?uid=swg27019359&amp;aid=1] [/support/docview.wss?uid=swg27019359&amp;aid=1] Software for collaboration - Domino and Extended Products (optional) [/support/docview.wss?uid=swg27019359&amp;aid=1]  * IBM Lotus Domino Enterprise Server V8.5.2, 8.5.1, 8.5, 8.0.2, 8.0.1, 8.0 and V7.0.3, 7.0.2, 7.0.1, 6.5.6 (IBM Lotus product site) [http://www.ibm.com/developerworks] Domino V8.5.2 also needs the fix applied for SPR DPOS895USS, contact Domino Technical Support for the fix. 
+ * IBM Lotus Domino Document Manager V7 and 6.5.1 
+ * IBM Lotus Sametime V8.5, 8.0.2, 8.0, 7.5.1 and 7.5 (IBM Lotus product site) [http://www.ibm.com/developerworks]
+
+[/support/docview.wss?uid=swg27019359&amp;aid=1] [/support/docview.wss?uid=swg27019359&amp;aid=1] [/support/docview.wss?uid=swg27019359&amp;aid=1] Software for content management (optional) [/support/docview.wss?uid=swg27019359&amp;aid=1]  * IBM Lotus Web Content Management V6.1.0.5 or 6.1.5.2 (IBM Lotus Web Content Management product site) [http://www.ibm.com/software/lotus/products/webcontentmanagement/] 
+ * Ephox EditLive IBM LWCM OEM version 3.4.1.41 (which includes EditLive version 7.0.1.46.) (Ephox EditLive product site [http://www.ephox.com]) 
+ * IBM Lotus Quickr V8.5, 8.1.1 (IBM Lotus product site) [http://www.ibm.com/developerworks] 
+ * 6.1.5.2: IBM Lotus FileNet P8 V4.5 (IBM Lotus product site) [http://www.ibm.com/developerworks] 
+ * 6.1.5.2: IBM Content Manager V8.4 (IBM Content Manager product site) [http://www.ibm.com/software/data/cm/cmgr/]
+
+[/support/docview.wss?uid=swg27019359&amp;aid=1] [/support/docview.wss?uid=swg27019359&amp;aid=1] [/support/docview.wss?uid=swg27019359&amp;aid=1] Supported Java Runtime Environments - Web Content Management authoring portlet [/support/docview.wss?uid=swg27019359&amp;aid=1]  * Java Runtime Environments (requires one) V1.6.x or 1.5.x (Sun product site) [http://www.sun.com/products/]
+
+[/support/docview.wss?uid=swg27019359&amp;aid=1] [/support/docview.wss?uid=swg27019359&amp;aid=1] [/support/docview.wss?uid=swg27019359&amp;aid=1] External Security software (optional) [/support/docview.wss?uid=swg27019359&amp;aid=1]  * IBM Tivoli Access Manager V6.1 and 6.0 for trust association interceptor and enhanced trust association interceptor (support for Subject creation) (Tivoli Access Manager product site) [http://www.ibm.com/software/tivoli/products/access-mgr-e-bus/] When using Tivoli Access Manager 6.0 for authorization or integrated user provisioning with WebSphere Portal, the Tivoli Access Manager AMJRTE component must be at the Version 5.1 fix pack 2 level or later. This version of AMJRTE component is automatically installed with WebSphere Application Server Version 5.1.1 or later, but must still be configured to work with WebSphere Portal. 
+ * IBM Tivoli Access Manager V6.0 for Java Authorization Contract for Containers (JACC) (Tivoli Access Manager product site) [http://www.ibm.com/software/tivoli/products/access-mgr-e-bus/] When using Tivoli Access Manager 6.0 for authorization or integrated user provisioning with WebSphere Portal, the Tivoli Access Manager AMJRTE component must be at the Version 5.1 fix pack 2 level or later. This version of AMJRTE component is automatically installed with WebSphere Application Server Version 5.1.1 or later, but must still be configured to work with WebSphere Portal 
+ * Computer Associates SiteMinder V6.0
+
+[/support/docview.wss?uid=swg27019359&amp;aid=1] [/support/docview.wss?uid=swg27019359&amp;aid=1] [/support/docview.wss?uid=swg27019359&amp;aid=1] Software for portlet development [/support/docview.wss?uid=swg27019359&amp;aid=1]  * IBM Rational Application Developer V7.5 and 7.0.6 (plugin for UTE) 
+ * IBM Portlet Factory V6.1.5, 6.1
+
+[/support/docview.wss?uid=swg27019359&amp;aid=1] [/support/docview.wss?uid=swg27019359&amp;aid=2] [/support/docview.wss?uid=swg27019359&aid=3] [/support/docview.wss?uid=swg27019359&aid=3] Software for license management [/support/docview.wss?uid=swg27019359&amp;aid=1]  * IBM Tivoli License Compliance Manager V2.3
+
+[/support/docview.wss?uid=swg27019359&amp;aid=1] [/support/docview.wss?uid=swg27019359&amp;aid=4] [/support/docview.wss?uid=swg27019359&aid=5] [/support/docview.wss?uid=swg27019359&aid=5] 
+
+Related information
+[http://d02was006.southbury.ibm.com/support/dcf/preview.wss?host=d02dbs88.southbury.ibm.com&db=support/swg/swgdocs.nsf&unid=2D60E6429AA6F54285256FB00046AC9D&taxOC=SSCVS22&MD=2005/02/25%2008:02:00&sid=]Detailed system requirements [http://www.ibm.com/support/docview.wss?rs=688&uid=swg27007791]
+WebSphere Portal Information Centers and more [http://www.ibm.com/developerworks/websphere/zones/portal/proddoc.html]
+Support Statement [http://publib.boulder.ibm.com/infocenter/wpdoc/v6r1m0/topic/com.ibm.wp.ent.doc/overview/inst_req_supt.html] 
+
+See disclaimer. 
+
+Top of page 
+
+Disclaimer
+IBM reserves the right to change specifications and other product information without prior notice. This publication could include technical inaccuracies or typographical errors. References herein to IBM products and services do not imply that IBM intends to make them available in other countries. IBM PROVIDES THIS PUBLICATION AS IS WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE. Some jurisdictions do not allow disclaimer of express or implied warranties in certain transactions, therefore, this statement may not apply to you. 
+
+Top of page 
+
+
+
+
+ORIGINAL PUBLICATION DATE
+ 2009/9/1

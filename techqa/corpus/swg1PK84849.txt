@@ -1,0 +1,162 @@
+Title: IBM PK84849: CANNOT ANIMATE EVENT DRIVEN ACTIVITY DIAGRAMS USING SYSML PROFILE - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  serializeStates(AOMSState*) const':
+   MyBlock.cpp:40: error: `rootState_serializeStates' undeclared
+   (first use this function)
+   
+   MyBlock.cpp:40: error: (Each undeclared identifier is reported
+   only once for each function it appears in.)
+   
+   make: *** [MyBlock.o] Error 1
+   
+   
+   If I remove the 'evGo' reception from the block and change the
+   trigger to 'tm(1000)' the code builds and executes correctly.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  No Known Workarounds
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  The customer can create a model with two classes, one class with
+   a statechart containing two states with a transition event. The
+   other class with an activity diagram containing two actions and
+   an activity flow with an event trigger. Both of these function
+   without error.
+   
+   Now, if the customer creates a SysML model with two blocks, one
+   block with a statechart containing two states with a transition
+   event. The other block with an activity diagram containing two
+   actions and an activity flow with an event trigger. The state
+   chart works correctly but the code for the activity diagram
+   produces the following error:
+   
+   Building ------------  DefaultComponent.exe   ------------
+   Executing: ""C:\Program Files\Telelogic\Rhapsody
+   7.4.1\Share"\etc\cygwinmake.bat DefaultComponent.mak rebuild "
+   Setting environment for Cygwin
+   "make.exe"
+   Cleanup
+   Compiling Class_1.cpp
+   Compiling MyBlock.cpp
+   MyBlock.cpp: In member function `virtual void
+   OMAnimatedMyBlock::serializeStates(AOMSState*) const':
+   MyBlock.cpp:40: error: `rootState_serializeStates' undeclared
+   (first use this function)
+   
+   MyBlock.cpp:40: error: (Each undeclared identifier is reported
+   only once for each function it appears in.)
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Upgrade to Rhapsody 7.5
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  De-select "analysis Mode' checkbox.
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK84849
+   
+   
+ * REPORTED COMPONENT NAME
+   TLOGIC RHAPSODY
+   
+   
+ * REPORTED COMPONENT ID
+   5724V74RP
+   
+   
+ * REPORTED RELEASE
+   740
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-04-16
+   
+   
+ * CLOSED DATE
+   2009-06-18
+   
+   
+ * LAST MODIFIED DATE
+   2009-10-08
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TLOGIC RHAPSODY
+   
+   
+ * FIXED COMPONENT ID
+   5724V74RP
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R750 PSY
+   UP

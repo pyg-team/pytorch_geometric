@@ -1,0 +1,64 @@
+Title: IBM ITM v6.3 32/64bit compatibility issues affecting remote deploy for ITCAM for Transactions - United States
+
+Text:
+71GEN-TS; 71GEN-ITM TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Remote deploy of ITCAM for Transactions agents in ITM 6.3 environments fail on certain Windows and Linux platforms 
+
+SYMPTOM
+When attempting to remote deploy ITCAM for Transactions Agents onto a Windows machine with a 64bit ITM OS Agent the following message is observed: 
+
+ * 
+ * 
+ * agentdepot
+ * 
+
+
+When attempting to remote deploy ITCAM for Transactions Agent from a 32bit ITM machine onto a 64bit Linux machine the following message is observed:  * 
+ * pc
+ * 
+ * jre
+ * 
+
+
+CAUSE
+ITM 32/ 64bit compatibility packages are provided to allow 32bit agents to work in a 64bit ITM environment. However certain remote deploy scenarios do not work due to certain compatibility issues are not accounted for. In the case of remote deploy, a compatible version of GSKit is missing in a 64bit environment. 
+
+To ensure the target system can do remote deploy perform a "cinfo -t" (unix) / "kincinfo.exe -t" (windows) on the target system, and confirm that the following libraries are listed: 
+
+ * 32bit "gs" GSKit library 
+ * 32bit "ax"(unix)/"ac"(Windows) Compatibility library. 
+
+Example: 
+> cd c:\IBM\ITM\InstallITM 
+> Kincinfo.exe -t 
+... 
+PC PRODUCT DESC PLAT VER BUILD INSTALL DATE 
+
+AC KAC(64-bit) CMA/32/64 Bit Agent Compatibility Package WIX64 06.30.06.00 201511302132 20151222 1312 
+GS KGS(64-bit) GSK/IBM GSKit Security Interface WIX64 08.00.50.36 d5313a 20151222 1312 
+GS KGS(32-bit) GSK/IBM GSKit Security Interface WINNT 08.00.50.36 d5313a 20151222 1312 
+ENVIRONMENT
+ITM 6.3 - 64bit frameworks being used 
+
+64bit Windows platform 
+
+64bit Linux platforms
+
+
+DIAGNOSING THE PROBLEM
+See Symptom section
+
+
+
+RESOLVING THE PROBLEM
+On Windows: 
+
+The issue can be resolved by ensuring that a 32bit OS Agent is installed on the remote deploy target. The OS agent will installed the required AX/AC and GS packages. 
+
+Important: That the OS agent needs to be at least at fix level Fix Pack 3 (i.e. 6.3.0.3). It resolves various known issues. 
+
+On Linux: 
+
+There is no 64bit remote deploy solution. A local installation must be done instead.

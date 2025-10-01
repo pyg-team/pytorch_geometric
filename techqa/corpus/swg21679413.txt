@@ -1,0 +1,88 @@
+Title: IBM Try&Buy, invalid or expired license - What to do? - United States
+
+Text:
+tsamp; tsa; samp; license; samlicm; sam32.lic; sam31.lic; passport advantage; sam41.lic TECHNOTE (FAQ)
+
+QUESTION
+ If either an expired or invalid TSAMP license or a Try&Buy TSAMP license is installed, use the steps below to get a full license installed. 
+
+CAUSE
+If TSAMP is installed (silently) for the first time via a DB2 fixpack, usually a Try&Buy license is installed. This license will work normally for 90 days, but when it expires, no change (ch*) resource commands will be allowed.
+
+ANSWER
+To obtain your TSAMP license, you must access Passport Advantage and download the license. What you find within Passport Advantage depends on how you obtained your entitlement for TSAMP. 
+
+Passport Advantage: http://www-01.ibm.com/software/howtobuy/passportadvantage/?re=1arf6 [http://www-01.ibm.com/software/howtobuy/passportadvantage/?re=1arf6] 
+
+ 
+
+The license file for TSAMP 3.2.2.x is called "sam32.lic" 
+
+The license file for TSAMP 4.1.0.x is called "sam41.lic" 
+
+ 
+
+1. If you have TSAMP bundled with DB2: 
+
+You must access Passport Advantage and download a DB2 activation package that is appropriate for the version of DB2 that you have purchased. 
+
+See this technote for more information on the package to download:
+http://www-01.ibm.com/support/docview.wss?uid=swg21305417 [http://www-01.ibm.com/support/docview.wss?uid=swg21305417] 
+
+ 
+
+2. If you purchased TSAMP directly: 
+
+You must access Passport Advantage and download the GA version of TSAMP that you want to license, that GA package will have the appropriate license file in it. You can then use that license file to directly install a fixpack of the appropriate version. 
+
+ 
+
+What to do with the license once you download it: 
+
+1. Use of license during installation: 
+
+Copy the license file to the installation license sub-directory, it is located in the root directory of the extracted installation media. Ensure there is no other license file (like a try and buy license, named sam32tb.lic) located in that directory, once the full license file is there it will be installed during installation. If another license file exists delete it to ensure there is no complications during installation. 
+
+ 
+
+For more information please see the following article: 
+
+Where do I put the license file when upgrading to a new version of TSAMP? [https://developer.ibm.com/answers/questions/195885/where-do-i-put-the-license-file-when-upgrading-to.html] 
+
+ 
+
+2. Applying the license to a running cluster: 
+
+Use the samlicm command as root to install the license. The license must be installed on all servers/nodes running TSAMP in the cluster. 
+
+samlicm -i /path/to/file/samXX.lic 
+
+The license file sam32.lic is the valid license for any TSAMP versions beginning with "3.2", for example, the same license file is appropriate for TSAMP 3.2.0.0 as well as 3.2.2.7. 
+
+The license file sam41.lic is the valid license for any TSAMP versions beginning with "4.1", for example the same license file is appropriate for TSAMP 4.1.0.0 as well as 4.1.0.3. 
+
+Once the license file is installed with the samlicm command you must restart the cluster/domain for the new license file to be recognized by TSAMP. 
+
+ 
+
+Verification of a valid license: 
+
+The samlicm command is used to test and return information on your TSAMP license. 
+
+Use the following command syntax to verify that the license is valid: 
+
+samlicm -s 
+
+This will report what type of license you have and the expiration of any valid or try and buy license. 
+
+ 
+
+samlicm -t; echo $? 
+
+This tests the license, this syntax only provides a return code so you must issue the command with the "; echo $?" after or after issuing the command then issue "echo $?" to see the return code. A value of 0 means you have a valid license, any other value means that your license is either expired or a try and buy license. 
+
+ 
+
+samlicm -p; echo $? 
+
+This will echo a RC of 0 for a valid license, any other return is an expired or try and buy license.

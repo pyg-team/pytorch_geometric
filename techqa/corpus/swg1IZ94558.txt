@@ -1,0 +1,171 @@
+Title: IBM IZ94558: KOYLOG CORE DUMPS - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  *************************** APAR Template
+   *****************************
+   Please open an apar with the following severity and information:
+   Severity:   3
+   
+   Approver:
+   
+   Compid:   5724B96SO
+   
+   Release:  6.2
+   
+   Abstract: koylog core dumps
+   
+   Environment: Sybase Agent 06.20,
+            OS: Solaris 10
+   
+   Problem Description:
+   The agent creats core files
+   $CANDLEHOME/tmp/<host>_oy_<sid>/core.koylog.<yyyymmddhhmmss>
+   every 30
+   seconds which leads to the filesystem filling.
+   
+   Detailed Recreation Procedure:
+   1) Create new user, do not execute koygrant.sql.
+   2) Configure the agent with the Sybase database user and start
+   the
+   agent.
+   3) The agent creats core files
+   $CANDLEHOME/tmp/<host>_oy_<sid>/core.koylog.<yyyymmddhhmmss>
+   every 30
+   seconds which leads to the filesystem filling.
+      <L3 cannot recreate the problem in local, but the customer
+   has
+   reproduced the verified the temp fix. >
+   
+   Related Files and Output:
+   Analyze the core file.
+   dbx: warning: Some symbolic information might be incorrect.
+   t@1 (l@1) program terminated by signal SEGV (no mapping at the
+   fault
+   address)
+   0xffffffff7c34a940: atoi+0x0008:        ldub     [%o0], %g4
+   (dbx) where
+   current thread: t@1
+   =>[1] atoi(0x0, 0x0, 0x100003e3c, 0x0, 0x136b44, 0xa), at
+   0xffffffff7c34a940
+     [2] GetPid(0xffffffff7fffe2ea, 0xffffffff7fffe7f8,
+   0xffffffff7fffe2ec,
+   0x10012d252, 0x101010101010101, 0x8080808080808080), at
+   0x100003e3c
+     [3] main(0x5, 0xffffffff7fffe7f8, 0xffffffff7fffe828,
+   0xffffffff7c34ae28, 0x2, 0x0), at 0x1000037fc
+   (dbx)
+   
+   *************************** APAR Template
+   *****************************
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Temp fix was sent to the customer. The formal fix
+   6.2.0-TIV-ITM_SYB-IF0009 is planed to be delivered at the end of
+   Mar. 2011.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Temp fix was sent to the customer. The formal fix
+   6.2.0-TIV-ITM_SYB-IF0009 is planed to be delivered at the end of
+   Mar. 2011.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ94558
+   
+   
+ * REPORTED COMPONENT NAME
+   TIV MON SYBASE
+   
+   
+ * REPORTED COMPONENT ID
+   5724B96SO
+   
+   
+ * REPORTED RELEASE
+   620
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-02-07
+   
+   
+ * CLOSED DATE
+   2011-03-13
+   
+   
+ * LAST MODIFIED DATE
+   2011-03-13
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TIV MON SYBASE
+   
+   
+ * FIXED COMPONENT ID
+   5724B96SO
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R620 PSY
+   UP

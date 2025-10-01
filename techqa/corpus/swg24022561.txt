@@ -1,0 +1,66 @@
+Title: IBM Telelogic Rhapsody 7.4.0.1 - United States
+
+Text:
+fixpack; patch DOWNLOADABLE FILES
+
+ABSTRACT
+ IBM Telelogic Rhapsody 7.4.0.1 fix pack release. 
+
+DOWNLOAD DESCRIPTION
+The Telelogic Rhapsody version 7.4.0.1 fix pack release is available for download on the IBM FixCentral site. 
+
+PREREQUISITES
+Telelogic Rhapsody 7.4.0.1 replaces existing versions of Telelogic Rhapsody 7.4. It is possible to install Telelogic Rhapsody 7.4.0.1 concurrently with releases prior to 7.4. 
+
+
+Licensing:
+The upgrade to Rhapsody 7.4.0.1 is included for all licenses with current maintenance contracts. 
+You can now use the License Key Center [https://www-01.ibm.com/software/rational/support/licensing/] [https://www-01.ibm.com/software/rational/support/licensing/l] to get and manage your keys for Telelogic products. This includes Telelogic software purchases made through IBM as well as for legacy orders through Telelogic AB. 
+
+The IBM license agreement entitles users to “borrow” licenses from a floating license server for use offline when disconnected from the server. If you wish to use this capability then you need to obtain a new license file with borrowing enabled.
+
+Users with Rhapsody 7.0 or earlier licenses will need to get a new license to use Rhapsody 7.4.0.1 from the License Key Center [https://www-01.ibm.com/software/rational/support/licensing/]
+
+System Requirements:
+
+Supported Host Platforms 
+
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+
+Hardware Requirements  * 
+ * 
+ * 
+ * 
+ * 
+
+INSTALLATION INSTRUCTIONS
+For specific installation instructions, please refer to the Rhapsody Read Me file, Rhapsody Installation Guide, and Rhapsody Upgrade guide located on the Fix Central site.
+
+URL LANGUAGE SIZE(Bytes) Install Guide for Windows and Linux [http://download2.boulder.ibm.com/sar/CMA/RAA/00g5u/1/install.pdf] English 788590 
+DOWNLOAD PACKAGE
+Please select the FixCentral packages directly below, or follow the steps outlined to obtain all associated documentation and install packages.a 
+
+1. Download Rhapsody 7.4.0.1 and view more detailed documentation such as the Read Me file and the Defects Fixed List at: Fix Central http://www-933.ibm.com/support/fixcentral/ [http://www-933.ibm.com/support/fixcentral/] 
+2. Select Rational as the product group.
+3. Select product “Telelogic Rational”
+4. Select Installed Version as 7.4. 
+NOTE: Do NOT select 7.4.0.1 at this point. You will be directed to the proper release by selecting 7.4
+5. Choose the platform desired
+6. Click continue
+7. On Identify Fixes page select Browse Fixes and All and click continue
+8. Select the Fix pack or click Select all and click Continue
+
+
+
+Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options 
+What is Fix Central(FC)? [https://www.ibm.com/support/fixcentral/help?page=swfaqs] Windows Installer 3/24/2009 English 603720000 FC [http://download2.boulder.ibm.com/sar/CMA/RAA/00g5u/1/Rhap741WinBuild1367309.zip] [ ] Linux Installer 3/24/2009 English 363920000 FC [http://download2.boulder.ibm.com/sar/CMA/RAA/00g68/2/Rhap741LinuxBuild1367309.tar.gz] [ ] 
+TECHNICAL SUPPORT
+ 
+Rational Telelogic software support 
+Links to specific product support pages plus general topics such as downloads and product documentation are available from the IBM Rational Telelogic software support main page [http://www.ibm.com/rational/support/telelogic].

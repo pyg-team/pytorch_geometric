@@ -1,0 +1,50 @@
+Title: IBM Intermittent errors in COM+ component when BMC patrol application is monitoring - United States
+
+Text:
+BMC PATROL COM+ IDMLOGONOPTSERVERNOUI INTERMITTENT TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Intermittent errors in COM+ component when BMC patrol application is monitoring 
+
+RESOLVING THE PROBLEM
+Intermittent errors in COM+ component when BMC patrol application is monitoring the package Here is a listing of error seen at the customer site:
+# Source Error Message Date Comments 
+1 COM+ The run-time environment has detected an inconsistency in its internal state.
+---------- 
+The serious nature of this error has caused the process to terminate. 
+Exception: E06D7363 7/26/2004 
+11:20:14 am 
+2 CLVOptServ Unable to copy file to destination directory (Share Name). Source: e:\Program Files\FileNET\IDM\Cache\2004072602100900001\75014438_1.FOB, Dest: \\scicplvfs1\filecache\00000000\00000001, Last Error = The system cannot find the path specified. 7/26/2004
+2:10:11 am 
+3 CLVOptServ Read failed. Err:COM error(0x80041a0f) in GetCachedFile. DocId:197978290 Page:1 pnerr:Cls:0xd,Code:0xf,Desc:File format error.,Native:0x37000066,Num:0x80041a0f,src:IDM exception 7/26/2004
+9:05:37 am 
+4 CLVOptServ Read failed. Err:COM error(0x80041a0f) in GetCachedFile. DocId:197978290 Page:1 pnerr:Cls:0xd,Code:0xf,Desc:File format error.,Native:0x37000066,Num:0x80041a0f,src:IDM exception;Cls:0x27,Code:0x7b,Desc:Category(DefaultIMS:OSCAR:FileNet) GetPreference(AlternateISPageCache) method failed. The Preference object doesn't exist.,Native:0x0,Num:0x80044e7b,src:IDM exception 7/26/2004
+9:06:49 am 
+5 CLVOptServ Invalid Optical Id: C:\TEMP\00000000 7/26/2004 
+11:34:40 am The system does not have folder C:\TEMP at all 
+6 CLVOptServ Read failed. Err:Page Not Found; DocId: 87363826 Page:1 7/26/2004 
+3:17:03 am The document does exist
+
+Here is information from BMC on how to resolve the issue
+
+The issue you are seeing with the PATROL Process Monitor was identified in Failure #306197. The Patrol Process Monitor service (patprocess.exe) uses the Microsoft CreateRemoteThread() function call. This Microsoft function has some problems such as handle leaks, and has occasionally led to 3rd party applications (threads and/or processes) being terminated.
+
+After consulting with Microsoft (who did not supply a fix at the time) it was decided to redesign the code so that Microsoft CreateRemoteThread() function is no longer used. The code now uses memory read code to get process command line information.
+BMC has a new version of patprocess.exe which resolves this issue, the procedure does not require a reboot. Please contact BMC to obtain a new version of this file. To apply the file:
+
+1. Stop all PATROL related services.
+2. In D:\Patrol3-4\bin rename/move the existing patprocess.exe
+3. Unzip the new patprocess.exe into D:\Patrol3-4\bin
+4. Restart all PATROL related services (Patrol Event Log Monitor, Patrol Process Monitor & PatrolAgent).
+
+This issue does not occur with the most current version of Patrol Agent 3.5 because this version no longer installs and uses the PATROL Process Monitor. All Windows OS KM services have been consolidated into the PATROL for Windows Operating System Monitor Service (pwkntmon). Upgrading to the latest version will also resolve this problem.
+
+
+
+
+
+HISTORICAL NUMBER
+ 10009983 
+
+PRODUCT ALIAS/SYNONYM
+ IDM TOOLKIT

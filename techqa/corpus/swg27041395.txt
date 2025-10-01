@@ -1,0 +1,79 @@
+Title: IBM System Requirements for WebSphere MQ V8.0 - United States
+
+Text:
+ PRODUCT DOCUMENTATION
+
+ABSTRACT
+ This document contains system requirements for WebSphere MQ V8.0 and a note about IBM WebSphere MQ Advanced entitlement. 
+
+CONTENT
+IBM has provided customers with a Software Product Compatibility Reports (SPCR) tool where you can locate and find complete lists of supported operating systems, system requirements, prerequisites, and optional supported software for WebSphere MQ 8.0. 
+
+RHEL Compatible OS. Defect support is available for Linux environments that are fully compatible - both source and binary - with Red Hat Enterprise Linux V6. Unless stated otherwise, WebSphere MQ has not been specifically tested in such compatible environments. WebSphere MQ Support is therefore unable to assist in issues related to configuration and setup, or issues that are directly related to the linux environment itself. If issues arise that are related to the compatible linux environment, the user may need to contact the linux environment vendor for support, or the issue may need to be recreated inside an environment tested by IBM in order to receive WebSphere MQ support. 
+
+Virtualization. Defect support is available for virtualization environments where they relate to releases of this platform already supported by WebSphere MQ. Unless stated elsewhere in the system requirements WebSphere MQ has not been specifically tested in virtualization environments. 
+
+WebSphere MQ support is therefore unable to assist in issues related to configuration and setup, or issues that are directly related to the virtualization environment itself. 
+
+Please also refer to:
+WebSphere MQ's support position on Virtualization, low-level hardware, file systems on networks and high availability. [http://www.ibm.com/support/docview.wss?uid=swg21392025]
+
+
+The SPCR tool links to information about the minimum product levels that must be installed before opening a problem report with IBM WebSphere MQ Technical Support. The software versions and any maintenance levels listed in the tool have been explicitly verified as working.
+
+
+Supported System Requirements: 
+The links below are located in the SPCR tool and go directly to the supported operating systems, prerequisites, system requirements, and optional supported software for the specific operating system. 
+
+
+WebSphere MQ 8.0
+
+By Operating System
+AIX [http://publib.boulder.ibm.com/infocenter/prodguid/v1r0/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1350550241693&osPlatform=AIX]
+HP [http://publib.boulder.ibm.com/infocenter/prodguid/v1r0/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1350550241693&osPlatform=HP]
+IBM i [http://publib.boulder.ibm.com/infocenter/prodguid/v1r0/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1350550241693&osPlatform=IBM%20i]
+Linux [http://publib.boulder.ibm.com/infocenter/prodguid/v1r0/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1350550241693&osPlatform=Linux]
+4690 (Managed File Transfer Agent Only) [http://publib.boulder.ibm.com/infocenter/prodguid/v1r0/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1350550241693&osPlatform=Other]
+Solaris [http://publib.boulder.ibm.com/infocenter/prodguid/v1r0/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1350550241693&osPlatform=Solaris]
+Windows [http://publib.boulder.ibm.com/infocenter/prodguid/v1r0/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1350550241693&osPlatform=Windows]
+z/OS [http://publib.boulder.ibm.com/infocenter/prodguid/v1r0/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1350550241693&osPlatform=z/OS]
+
+By Component
+MQ Advanced Message Security [http://publib.boulder.ibm.com/infocenter/prodguid/v1r0/clarity-reports/report/html/softwareReqsForProductByComponent?deliverableId=1350550241693&duComponent=Server_568DDB101AEF11E38F7D228059AF1569]
+MQ Client [http://publib.boulder.ibm.com/infocenter/prodguid/v1r0/clarity-reports/report/html/softwareReqsForProductByComponent?deliverableId=1350550241693&duComponent=Miscellaneous_569814401AEF11E38F7D228059AF1569]
+MQ Explorer [http://publib.boulder.ibm.com/infocenter/prodguid/v1r0/clarity-reports/report/html/softwareReqsForProductByComponent?deliverableId=1350550241693&duComponent=Desktop_56A6BA401AEF11E38F7D228059AF1569]
+MQ Managed File Transfer Agent [http://publib.boulder.ibm.com/infocenter/prodguid/v1r0/clarity-reports/report/html/softwareReqsForProductByComponent?deliverableId=1350550241693&duComponent=Miscellaneous_56910F601AEF11E38F7D228059AF1569]
+MQ Managed File Transfer Service [http://publib.boulder.ibm.com/infocenter/prodguid/v1r0/clarity-reports/report/html/softwareReqsForProductByComponent?deliverableId=1350550241693&duComponent=Server_568AA6C01AEF11E38F7D228059AF1569]
+MQ Queue Manager [http://publib.boulder.ibm.com/infocenter/prodguid/v1r0/clarity-reports/report/html/softwareReqsForProductByComponent?deliverableId=1350550241693&duComponent=Server_568C06501AEF11E38F7D228059AF1569]
+MQ Resource Adapter [http://publib.boulder.ibm.com/infocenter/prodguid/v1r0/clarity-reports/report/html/softwareReqsForProductByComponent?deliverableId=1350550241693&duComponent=Miscellaneous_5685EBD01AEF11E38F7D228059AF1569]
+MQ Telemetry Server [http://publib.boulder.ibm.com/infocenter/prodguid/v1r0/clarity-reports/report/html/softwareReqsForProductByComponent?deliverableId=1350550241693&duComponent=Server_568CF0B01AEF11E38F7D228059AF1569]
+
+SPCR tool available for all software products:
+The generic link to the IBM Software Product Compatibility Reports (SPCR) tool is below. You can access the tool for any product and obtain the supported operating systems, system requirements, and optional supported software for your product version. 
+
+Click the link below to reach the front page of SPCR:
+Detailed system requirements for a specific product in SPCR [http://publib.boulder.ibm.com/infocenter/prodguid/v1r0/clarity/softwareReqsForProduct.html]
+
+Then choose the following options to obtain the supported operating systems, system requirements, and optional supported software for your product version.
+
+1. Select the desired product.
+2. Select the desired version.
+3. Select your operating system.
+
+----------------------------------------------------------------------------------------------------------------
+IBM WebSphere MQ Advanced entitlement
+
+IBM WebSphere MQ Advanced and IBM WebSphere MQ Advanced Idle Standby grants entitlement to the following components: 
+
+ * IBM WebSphere MQ 
+ * IBM WebSphere Advanced Message Security 
+ * IBM WebSphere Managed File Transfer Service 
+ * IBM WebSphere MQ Telemetry 
+
+IBM WebSphere MQ Advanced for Developers grants entitlement to the following components:  * IBM WebSphere MQ 
+ * IBM WebSphere Advanced Message Security 
+ * IBM WebSphere Managed File Transfer Service 
+ * IBM WebSphere MQ Telemetry 
+ * IBM WebSphere Managed File Transfer Managed Endpoint
+
+----------------------------------------------------------------------------------------------------------------

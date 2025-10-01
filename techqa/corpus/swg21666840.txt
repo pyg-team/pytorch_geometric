@@ -1,0 +1,57 @@
+Title: IBM TXSeries Transaction hang detection and Diagnostic collection facility - United States
+
+Text:
+ NEWS
+
+ABSTRACT
+ It is always difficult to determine the reason, for any TXSeries transaction in hung or non-responsive state. Usually users will need to run the showProcInfo tool which captures the stack of a process (CICS Application server) to find the cause of the hang. A new feature introduced in TXSeries v7.1 Fix Pack 4 onwards, will help automatically collect the diagnostic information of any long running transactions suspected to be in a non-responsive state.
+
+This feature monitors all non-terminal based transactions in order to detect possible hung transactions. When a transaction is suspected to be hung, diagnostics are collected. A transaction is suspected to be hung, if it has run for over 300 seconds. TXSeries will automatically trigger the process stack of the Application Server. The section below explains how to effectively use this facility. 
+
+CONTENT
+
+How to enable the Transaction hang detection and Diagnostic collection facility.
+The facility will be automatically enabled on your TXSeries regions. You can check for showProcInfo output files that are generated if any non-terminal transactions execute for more than a default time of 300 seconds. You can change this value by setting the following environment variable in TXSeries region’s environment file. 
+
+ * 
+ * CICS_TRANMONITOR_INTERVAL=<timeout_duration_in_seconds>
+ * 
+ * 
+ * Minimum timeout duration = 30 seconds.
+
+
+
+How to disable the Transaction hang detection and Diagnostic collection facility. 
+To disable this facility, set the above mentioned environment variable to -1, in the region's environment file.  * 
+ * CICS_TRANMONITOR_INTERVAL=-1
+
+
+
+Excluding specific long running transactions from monitoring. 
+If some long running transactions need to be excluded from monitoring, they can specified in the region's environment file as follows. 
+.  * CICS_NOTRANMONITOR_TRANLIST=<transaction_list>
+ * 
+ * 
+ * 
+ * ;
+ * 
+ * 
+ * 
+ * 
+ * 
+ * CICS_NOTRANMONITOR_TRANLIST="
+ * 
+ * "
+ * 
+ * 
+
+This facility is available in the following TXSeries versions onwards,  * 
+ * 
+ * 
+ * 
+ * 
+ * 
+
+ 
+
+Cross reference information Segment Product Component Platform Version Edition Host Transaction Processing TXSeries for Multiplatforms Not Applicable AIX, HP-UX, HP Itanium, Solaris, Windows 7.1

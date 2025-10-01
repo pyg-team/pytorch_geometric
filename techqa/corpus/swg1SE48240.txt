@@ -1,0 +1,142 @@
+Title: IBM SE48240: RDP 8 AIX COBOL PROJECTS WITH SPACES IN THE REMOTE PATH HAVE PROBLEMS WITH EDITING AND ERROR FEEDBACK - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  If the project has a remote location with a path that contains
+   spaces problems will be seen after the first build is done.
+   
+   After editing a COBOL source file in the project an error like
+   "'Downloding copybooks for /direct ory/file.cbl' has encountered
+   a problem."will be seen.  This will happen every time the file
+   is parsed - when the file is opened and after every change in
+   the editor.  The directory and file names in the message will
+   point to the file in the project that encountered the problem.
+   The message details will contain:
+   
+   An internal error occurred during: "Downloading copybooks for
+   /direct ory/file.cbl"
+   java.lang.NullPointerException
+   
+   Because of this error the copybook will not be loaded causing
+   annotations marking COPY statements, and statements containing
+   any symbols defined in those copybooks, to be in error.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: RD Power users that use AIX COBOL projects.  *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Error occurs when editing source in     *
+   *                      AIX COBOL projects.                     *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   If the project has a remote location with a path that contains
+   spaces problems will be seen after the first build is done.
+   
+   An error dialog with a message starting with
+   'Downloading copybooks for' opens when editing source in
+   the AIX COBOL project after that.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This problem is fixed in the RD Power 8.0.3 Refresh Pack.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   SE48240
+   
+   
+ * REPORTED COMPONENT NAME
+   RDP:COBOL DEV T
+   
+   
+ * REPORTED COMPONENT ID
+   5724Y9903
+   
+   
+ * REPORTED RELEASE
+   800
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-06-17
+   
+   
+ * CLOSED DATE
+   2011-10-31
+   
+   
+ * LAST MODIFIED DATE
+   2011-10-31
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   RDP:COBOL DEV T
+   
+   
+ * FIXED COMPONENT ID
+   5724Y9903
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R800 PSY
+   UP

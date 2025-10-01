@@ -1,0 +1,30 @@
+Title: IBM Uninstall DE (Deployment Engine) - United States
+
+Text:
+Uninstall Deployment Engine TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Is there a procedure to uninstall/remove DE on Unix and Windows? 
+
+RESOLVING THE PROBLEM
+ 
+
+1) Uninstalling DE on Unix (Root install)
+Source the DE environment: ". /var/ibm/common/acsi/setenv.sh" or "source /var/ibm/common/acsi/setenv.csh" depending on your shell.
+Shutdown DE : acsisrv.sh -stop 
+To uninstall DE, run following command : "/usr/ibm/common/acsi/bin/si_inst.sh -r -f"
+Remove DE's database backup: "rm -rf /usr/ibm/common/acsi"
+
+2) Uninstalling DE on Unix (Non-root install)
+
+DE exists under ~/.acsi_$USER, so: "rm -rf ~/.acsi_$USER"
+Also: "rm -rf ~/tivoli/cit"
+Also: "rm -rf ~/.cit"
+
+3) Uninstalling DE on Windows
+
+Source the DE environment: "C:\Program Files\IBM\Common\acsi\setenv.cmd"
+Stop the DE: From the Services window, Select IBM ADE Service from the Services window and then select Stop from the Action menu.
+Remove DE: "C:\Program Files\IBM\Common\acsi\bin\si_inst.bat -r -f"
+Remove DE's database backup: "rmdir /s C:\Program Files\IBM\Common\acsi"
+(On 64 bit Windows, replace "Program Files" with "Program Files (x86)" in the above commands.)

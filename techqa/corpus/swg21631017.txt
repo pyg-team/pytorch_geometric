@@ -1,0 +1,77 @@
+Title: IBM Does the IO Sharepoint Connector Respect the ASPX Indexing Setting? - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Sharepoint sites have 'Search Visibility' settings.
+
+One of the settings is 'Allow this web (sic) to appear in search results?'
+
+That setting can be respected by the IO Sharepoint connector and is a seed option (see IO Sharepoint Connector Documentation).
+
+There is also a setting titled 'Indexing ASPX Page Content'.
+
+Options are:
+
+<ul>
+<li>Do not index ASPX pages if this site contains fine-grained permissions</li>
+<li>Always index all ASPX pages on this site</li>
+<li>Never index any ASPX pages on this site</li>
+</ul>
+
+Does the IO Sharepoint connector respect this setting? 
+
+ANSWER
+
+
+Generally in SharePoint we have two different types of pages:
+
+
+
+1) Application Pages - All settings pages fall into this category
+2) Content Pages - They provide the content to the site
+
+
+
+I believe you were referring to Content Pages in your question.
+
+
+
+The content pages can reside in document libraries or at the root of a site.
+
+
+
+What does the IO SharePoint Connector support?
+
+
+
+The IO SP Connector crawls the content pages that reside in the document libraries as any other list item.
+
+
+
+I don't think so we index the contents of an aspx page.
+
+
+
+There is not any special handling logic implemented in the connector to support aspx pages.
+
+
+
+For Eg: If you would like to search for some text that is displayed on a content page 'x', you might not be able to do that.
+
+I did some tests today to verify the behaviour of IO SharePoint Connector.
+It is correct that IO SharePoint Connector indexes the aspx pages on a site i.e., you can search for the Web part content on the aspx pages, similar to what default SharePoint search allows you to do when the option "Always index ASPX pages on this site" has been set. We use the Vivisimo crawl user account for this. This means that we index all the content on the aspx page that the crawl user has access to.
+
+
+
+If individual items (content) on the aspx pages on this site are secured by using permissions that are more restrictive than the aspx page itself, unauthorized users might see this restricted information in search results.
+
+
+
+But IO SharePoint connector doesn't obey the 'aspx indexing' setting i.e., you cann't stop the connector from processing the content on the aspx pages. It always defaults to 'Always index all ASPX pages on this site'
+
+ 
+
+HISTORICAL NUMBER
+ 2089

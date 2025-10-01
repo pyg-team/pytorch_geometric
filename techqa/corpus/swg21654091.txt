@@ -1,0 +1,13 @@
+Title: IBM Automate subscription promotion in InfoSphere Change Data Capture (CDC) version 6.5.x. - United States
+
+Text:
+automate subscription promotion; ISCDC; CDC; IIDR; scripting; CHCCLP TECHNOTE (FAQ)
+
+QUESTION
+ I'm using CDC 6.5 and I do not want to manually promote my subscriptions using CDC Management Console. Is there a way to automate subscription promotion in CDC version 6.5.x? 
+
+ANSWER
+Automate subscription promotion via command line script is not available in CDC version 6.5.x or older version.
+In later version of CDC 10.2, also known as IBM InfoSphere Data Replication (IIDR) 10.2, with the added feature of command line processor (CHCCLP), user can automate subscription promotion process by scripting the available subscription commands to automate the promotion process.
+
+More information on subscription command on IIDR 10.2 can be found here [http://pic.dhe.ibm.com/infocenter/iidr/v10r2m0/topic/com.ibm.cdcdoc.chcclp.doc/concepts/subscriptioncommands.html]

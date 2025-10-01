@@ -1,0 +1,124 @@
+Title: IBM HADR Primary crashes and does not failover. - United States
+
+Text:
+HADR; failover TECHNOTE (FAQ)
+
+QUESTION
+ Why does HADR not failover after Primary crashes ? 
+
+CAUSE
+Messages similar to the following are seen in the db2diag.log file:
+2016-04-12-15.58.50.806873-300 E44918A398 LEVEL: Error
+PID : 10420376 TID : 258 PROC : db2wdog 0
+INSTANCE: db2inst1 NODE : 000
+EDUID : 258 EDUNAME: db2wdog 0
+FUNCTION: DB2 UDB, base sys utilities, sqleChildCrashHandler, probe:5469
+DATA #1 : <preformatted>
+A non-EDU child crashed Process id: 18546858, OSS term code: 0x102, signal: 9
+
+2016-04-12-15.58.51.466480-300 E45317A546 LEVEL: Severe
+PID : 10420376 TID : 258 PROC : db2wdog 0
+INSTANCE: db2inst1 NODE : 000
+EDUID : 258 EDUNAME: db2wdog 0
+FUNCTION: DB2 UDB, base sys utilities, sqleWatchDog, probe:20
+MESSAGE : ADM0503C An unexpected internal processing error has occurred. All 
+DB2 processes associated with this instance have been shutdown. 
+Diagnostic information has been recorded. Contact IBM Support for 
+further assistance.
+
+2016-04-12-15.58.51.761531-300 E45864A423 LEVEL: Error
+PID : 10420376 TID : 258 PROC : db2wdog 0
+INSTANCE: db2inst1 NODE : 000
+EDUID : 258 EDUNAME: db2wdog 0
+FUNCTION: DB2 UDB, base sys utilities, sqleWatchDog, probe:21
+DATA #1 : Process ID, 4 bytes
+24051884
+DATA #2 : Hexdump, 8 bytes
+0x0A000000003FDF30 : 0000 0102 0000 0009 ........
+
+>><<
+
+2016-04-12-16.03.07.385522-300 I80698A1003 LEVEL: Error
+PID : 24838388 TID : 1 PROC : db2gcf
+INSTANCE: db2inst1 NODE : 000
+EDUID : 1
+FUNCTION: DB2 Common, Generic Control Facility, gcf_kill, probe:220
+MESSAGE : ECF=0x900002C1=-1879047487=ECF_GCF_DB2KILL_SERVICE_FAILED
+DB2 kill service failed
+DATA #1 : String, 38 bytes
+'db2inst1', 0 : could not be killed.
+CALLSTCK: (Static functions may not be resolved correctly, as they are resolved to the nearest symbol)
+[0] 0x090000002894BE50 pdOSSeLoggingCallback + 0x34
+[1] 0x0900000025654EC4 oss_log__FP9OSSLogFacUiN32UlN26iPPc + 0x1C4
+[2] 0x0900000025654CB0 ossLog + 0xD0
+[3] 0x0900000034FB9F1C gcf_kill + 0x5BC
+[4] 0x09000000038D6390 kill__9GcfCallerFP12GCF_PartInfoUlP11GCF_RetInfo + 0x1D0
+[5] 0x0000000100001664 main + 0xC44
+[6] 0x0000000100000290 __start + 0x98
+[7] 0x0000000000000000 ?unknown + 0x0
+[8] 0x0000000000000000 ?unknown + 0x0
+[9] 0x0000000000000000 ?unknown + 0x0
+
+>><<
+
+2016-04-12-16.03.10.988083-300 I90112A313 LEVEL: Event
+PID : 22151380 TID : 1 PROC : db2start
+INSTANCE: db2inst1 NODE : 000
+EDUID : 1
+FUNCTION: DB2 UDB, base sys utilities, sqleIssueStartStop, probe:21
+DATA #1 : <preformatted>
+Single node instance [0] is starting
+
+
+Also seen in errpt_a.out messages similar to:
+
+LABEL: TS_LOC_DOWN_ST
+IDENTIFIER: 173C787F
+
+Date/Time: Thu April 12 15:58:31 2016
+Sequence Number: 10808
+Machine Id: xyzmachine
+Node Id: nodeidxyz
+Class: S
+Type: INFO
+WPAR: Global
+Resource Name: cthats
+
+Description
+Possible malfunction on local adapter
+
+Probable Causes
+Local adapter mal-functioned
+Local adapter lost connection to network
+Local adapter mis-configured
+
+Failure Causes
+Local adapter mal-functioned
+Local adapter lost connection to network
+Local adapter mis-configured
+
+Recommended Actions
+Verify adapter configuration
+Verify network connectivity
+
+Detail Data
+DETECTING MODULE
+rsct,nim_control.C,1.11.1.11,2222 
+ERROR ID 
+6zV5DL.rtCBL/Wo1.xs023....................
+REFERENCE CODE
+
+Adapter interface name
+en2
+Adapter offset
+1
+Adapter IP address
+1.12.23.34
+
+
+ANSWER
+From the errpt_a.out messages we see that a network adapter issue caused the HADR Primary to crash. The TSA script brought down the instance and restarted it without needing to failover. After the crash TSA will try to bring up the Primary quickly. Only if its not able to bring back the Primary up, it will failover to Standby.
+
+RELATED INFORMATION
+ Detecting network adapter failure in an automated clust [http://www-01.ibm.com/support/docview.wss?uid=swg21381611]
+Using DB2 High Availability Disaster Recovery with Tivo [http://www.ibm.com/developerworks/data/tutorials/dm-1009db2hadr/]

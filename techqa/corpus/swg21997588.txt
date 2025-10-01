@@ -1,0 +1,35 @@
+Title: IBM Hints and tips for installing IBM Backup and Restore Manager for z/VM - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Are there any hints or tips for installing IBM Backup and Restore Manager for z/VM? 
+
+ANSWER
+Following are some hints and tips for installing IBM Backup and Restore Manager for z/VM for the first time on a z/VM system: 
+
+ 1.  If you are also installing Operations Manager for z/VM, IBM recommends you install that product first. It will make it easier to look at service machine consoles when you are ready to start and test Backup Manager. I.e.you can use XAUTOLOG and then view the console from MAINT or MAINT640. See these hints and tips for installing Operations Manager for z/VM [http://www.ibm.com/support/docview.wss?uid=swg1997589].
+     
+ 2.  If you are also installing Tape Manager for z/VM, IBM recommends you install that product after Operations Manager and before Backup Manager. This will allow you to configure Backup Manager right away to use tapes. See these hints and tips for installing Tape Manager for z/VM [https://www.ibm.com/support/docview.wss?uid=swg21997590].
+     
+ 3.  Before you install Backup Manager, you must install the REXX Library or Alternate Library if you haven't already done it. See these hints and tips for installing a REXX Library. [https://www.ibm.com/support/docview.wss?uid=swg21997587]
+     
+ 4.  Make sure you have Backup and Restore Manager for z/VM V1.3 plus all PTFs. The PSP for Backup Manager [http://www-01.ibm.com/support/docview.wss?uid=isg1_BACKUPZVM130_BACKUP130] lists the PTFs. You will install the PTFs as part of step 8 below.
+     
+ 5.  Installing Backup and Restore Manager can be a little tricky for those new to z/VM because you need to also define a Shared File System (SFS) server. To help you, there is a "Getting Started" presentation which takes you through all the steps required to complete the product installation and configuration. It also includes some basic testing. You can find this presentation on the Resources tab of the Backup Manager web site [http://www.ibm.com/software/products/en/backup-restore-manager-for-zvm].
+     
+ 6.  Start at the beginning of the presentation and continue through "Update the Configuration File BKRSYSTM CONFIG". The next page is the reference to integration with Tape Manager.
+     
+ 7.  If you are using Tape Manager, the Getting Started presentation summarizes the steps, but if you want more details, see "Configuring Backup and Restore Manager to work with Tape Manager for z/VM" in Chapter 2 of the Backup Manager Administration Guide. If you use the Backup Manager Administration Guide.  *  Step 1 should already be done. Step 2, Provision Tape Manager Resources:  * If you already created a tape pool and added some tapes to it as suggested in the installation verification steps for Tape Manager, then you have already defined tape pools and added tapes as described in paragraph 2. 
+         * Paragraph 3 must be done - you need to authorize Backup Manager to use the tapes in Tape Manager. See the steps in the Getting Started presentation.
+        
+        Step 3, Verify Support Routines - this should already be done if you put the Backup Manager code on the Y-disk (MAINT or MAINT6x0 19E disk) as suggested earlier in the Getting Started presentation. Step 4, Modify the BKRSYSTM CONFIG File - you will need to do this. See the comments in the file. Step 5, Update the BKRWRKxx PROFILE EXEC - you do not need to do this if you put the Backup Manager code on the Y-disk as suggested earlier in the Getting Started presentation. 
+        
+     
+     
+ 8.  Continue in the Getting Started presentation with the page titled "Make the Configuration File Available". 
+     
+ 9.  When you get to the pages in the presentation that discuss updating the INCLUDE and EXCLUDE statement, you can customize the instructions in the presentation to include or exclude any specific minidisks or DASD volumes. IBM suggests you start with just one minidisk to confirm the backup process is working.
+     
+ 10. Continue through the rest of the steps in the presentation to complete the configuration and initial testing of Backup and Restore Manager for z/VM.

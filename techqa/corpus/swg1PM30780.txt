@@ -1,0 +1,158 @@
+Title: IBM PM30780: NEW PROPERTY AVAILABLE THAT OFFERS POSSIBILTY TO RETRIEVE MESSAGES BY COPY WHEN USING WPS EJB API. - United States
+
+Text:
+z/os SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When WPS is configured to use work-manager based navigation, the
+   following use of the BPC EJB API may result in messages or
+   variables showing wrong or null data objects:
+   a) The local BPC EJB API is used
+   b) The input message of a human task or business process is
+   submitted using the local BPC EJB API
+   c) The input message is used in java code after it has been
+   submitted to BPC for further processing
+   
+   Reason:
+   The work-manager based navigation comes with an object cache for
+   efficient read access to data objects. In the scenarios
+   described, without the i-fix, a reference to the data object in
+   the inter transaction cache is passed to the client making the
+   local EJB calls.
+   Later use of the data object may occur by the client code and by
+   the BPC container, which leads to wrong or null data.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  There are two new custom properties that control the behavior of
+   the cache (if enabled):
+   
+   - interTransactionCache.passByReference={true|false}
+     If the value of this property is set to 'false' then the
+     returned data will be a copy of the cached object.
+     The default value for this property is 'true'. This is
+     equivalent the behavior before this fix is applied.
+   
+   - interTransactionCache.integrityCheck={false|true}
+     If the value of this property is set to 'true' (and if
+     interTransactionCache.passByReference is set
+     to 'true' as well) data objects are checked when they are
+     added or read from the inter transaction cache.
+     If the cached object has been modified by another client a
+     message like the following is
+     written to SystemOut.log:
+     WARNING: CWWBB0699W: The content of the internal database
+     cache for entity
+     'com.ibm.bpe.database.ScopedVariableInstanceB' with key '
+     SVIID = _SVI:9028012b.81aa9d26.d03267f6.f2f40003}' is not
+     valid anymore.
+   
+     The default value for this property is 'false' - only if the
+     server is running in 'development mode' the default value is
+     set to 'true'.
+   
+   
+   Note that the server must be restarted before the custom
+   property become effective.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  iFix available on top of V6203
+   Fix will be included in V6204
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM30780
+   
+   
+ * REPORTED COMPONENT NAME
+   WEB PROC SRVR F
+   
+   
+ * REPORTED COMPONENT ID
+   5655N5300
+   
+   
+ * REPORTED RELEASE
+   620
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-01-19
+   
+   
+ * CLOSED DATE
+   2011-02-15
+   
+   
+ * LAST MODIFIED DATE
+   2015-04-29
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    IZ82792 [http://www-01.ibm.com/support/docview.wss?uid=swg1IZ82792]
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEB PROC SRVR F
+   
+   
+ * FIXED COMPONENT ID
+   5655N5300
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R620 PSY
+   UP

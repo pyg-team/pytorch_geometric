@@ -1,0 +1,166 @@
+Title: IBM IC95032: NEW VALUE JCC_ENFORCE_SECMEC FOR DB2 REGISTRY VARIABLE DB2AUTH TO REJECT NON-ENCRYPTED USERNAMES AND PASSWORDS FROM JCC CLIENT - United States
+
+Text:
+z/os  FIXES ARE AVAILABLE
+DB2 Version 9.7 Fix Pack 9 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24036646]
+DB2 Version 9.7 Fix Pack 9a for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24037559]
+DB2 Version 9.7 Fix Pack 10 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24038641]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  With the DB2 server authentication type SERVER_ENCRYPT a DB2
+   server accepts connections from an IBM Data Server Driver for
+   JDBC and SQLJ client (also called JCC driver) even when the
+   client's security mechanism is CLEAR_TEXT_PASSWORD_SECURITY.
+   That means that the DB2 server accepts user names and passwords
+   that are not encrypted from such clients.
+   
+   The DB2 server authentication type is set by the database
+   manager configuration parameter AUTHENTICATION.
+   The security mechanism is set by the of the IBM Data Server
+   Driver for JDBC and SQLJ client property securityMechanism.
+   
+   To prevent the DB2 server from accepting such connections this
+   APAR introduces a value JCC_ENFORCE_SECMEC for the DB2 registry
+   variable DB2AUTH.
+   To have the DB2 server not accept connections from an IBM Data
+   Server Driver for JDBC and SQLJ client with security mechanism
+   CLEAR_TEXT_PASSWORD_SECURITY when the DB2 server authentication
+   type is SERVER_ENCRYPT, set the DB2 registry variable DB2AUTH to
+   JCC_ENFORCE_SECMEC at the DB2 server.
+   
+   No application modification is required, except that if you use
+   Oracle JVM and use the security mechanism
+   ENCRYPTED_USER_AND_PASSWORD_SECURITY you must also have the IBM
+   Data Server Driver for JDBC and SQLJ property
+   encryptionAlgorithm set to 2, which means using 256-bit AES
+   (strong) encryption. To use 256-BIT AES (strong) encryption with
+   Oracle JVM, install the "Java Cryptography Extension (JCE)
+   Unlimited Strength Jurisdiction Policy" files from Oracle.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * Users of the IBM Data Server Driver for JDBC and SQLJ to     *
+   * access a DB2 for Linux, UNIX and Windows database            *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * See Error Description                                        *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * .                                                            *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This feature was first added in DB2 Version 9.7 Fix Pack 9
+   At a minimum, the change for this APAR should be applied on the
+   server.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC95032
+   
+   
+ * REPORTED COMPONENT NAME
+   DB2 CONNECT
+   
+   
+ * REPORTED COMPONENT ID
+   DB2CONNCT
+   
+   
+ * REPORTED RELEASE
+   970
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-08-20
+   
+   
+ * CLOSED DATE
+   2013-12-17
+   
+   
+ * LAST MODIFIED DATE
+   2013-12-17
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    IC95073 [http://www-01.ibm.com/support/docview.wss?uid=swg1IC95073] IC95074 [http://www-01.ibm.com/support/docview.wss?uid=swg1IC95074] IC96368 [http://www-01.ibm.com/support/docview.wss?uid=swg1IC96368] IC96690 [http://www-01.ibm.com/support/docview.wss?uid=swg1IC96690]
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   DB2 CONNECT
+   
+   
+ * FIXED COMPONENT ID
+   DB2CONNCT
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R970 PSN
+   UP
+   
+   
+ * RA10 PSN
+   UP
+   
+   
+ * RA50 PSN
+   UP

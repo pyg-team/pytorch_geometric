@@ -1,0 +1,133 @@
+Title: IBM Migrate a table from PureData for Analytics to dashDB with latin9 conversion and column expansion into suitable tablespace. - United States
+
+Text:
+netezza pda dashdb latin9 migrate Column expansion table TECHNOTE (FAQ)
+
+QUESTION
+ How to migrate a table from PureData for Analytics to dashDB with latin9 conversion and column expansion into suitable tablespace? 
+
+ANSWER
+If you are going to create an empty table using db_migrate script there are two aspects which need to be considered.
+1. Column expansion
+2. Tablespace
+
+db_migrate with latin9 conversion fix installed will create a table in dashDB in the way that all the char or varchar type columns will be created with CODEUNITS32 keyword instead of OCTETS.
+
+CODEUNITS32 indicates that the units for the length attribute are Unicode UTF-32 code units which approximate counting in characters. 
+https://www.ibm.com/support/knowledgecenter/SSEPGG_11.1.0/com.ibm.db2.luw.sql.ref.doc/doc/r0008470.html?pos=2 [https://www.ibm.com/support/knowledgecenter/SSEPGG_11.1.0/com.ibm.db2.luw.sql.ref.doc/doc/r0008470.html?pos=2]
+
+For example: 
+
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 100 CODEUNITS32
+ * 
+ * 
+ * 
+ * 50 CODEUNITS32
+ * 
+ * 
+ * 
+ * 10 CODEUNITS32
+ * 
+ * 
+ * 
+ * 
+ * 
+
+
+The same table would be defined in the following way, without latin9 conversion fix.  * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 100 OCTETS
+ * 
+ * 
+ * 
+ * 50 OCTETS
+ * 
+ * 
+ * 
+ * 10 OCTETS
+ * 
+ * 
+ * 
+ * 
+ * 
+
+
+
+Another aspect is the tablespace within which a table is being created. db_migrate does not support destination tablespace selection option. 
+We workaround it in the following way: 
+
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * $ db2look -d BLUDB -a -e -x -o BLUDB_schema.sql
+ * 
+ * 
+ * 
+ * $ db2look -d BLUDB -t tablename -a -e -x -o tablename.sql
+
+
+
+- The script is manually edited - only ODS tables are left. All the tables are assigned to the appropriate tablespace. 
+In the example below USERSPACE1 is replaced by TABLESPACE_1. 
+
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * USERSPACE1
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * TABLESPACE_1
+ * 
+ * 
+ * 
+
+
+
+- Empty ODS table or tables are dropped from BLUDB. 
+- Edited schema script is executed and it creates tables within suitable tablespace. 
+
+The assumption is that tablespaces are already defined within BLUDB database. Below is the excerpt from the script which was used to create custom tablespaces. 
+
+CONNECT TO BLUDB; 
+CREATE LARGE TABLESPACE TableSpace_1 IN DATABASE PARTITION GROUP IBMDEFAULTGROUP PAGESIZE 32768 MANAGED BY AUTOMATIC STORAGE USING STOGROUP "IBMSTOGROUP" EXTENTSIZE 4 PREFETCHSIZE AUTOMATIC BUFFERPOOL "IBMDEFAULTBP" OVERHEAD INHERIT AUTORESIZE YES MAXSIZE NONE TRANSFERRATE INHERIT DATA TAG INHERIT; 
+CREATE LARGE TABLESPACE TableSpace_2 IN DATABASE PARTITION GROUP IBMDEFAULTGROUP PAGESIZE 32768 MANAGED BY AUTOMATIC STORAGE USING STOGROUP "IBMSTOGROUP" EXTENTSIZE 4 PREFETCHSIZE AUTOMATIC BUFFERPOOL "IBMDEFAULTBP" OVERHEAD INHERIT AUTORESIZE YES MAXSIZE NONE TRANSFERRATE INHERIT DATA TAG INHERIT;

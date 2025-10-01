@@ -1,0 +1,53 @@
+Title: IBM Error SQLCODE=-612, SQLSTATE=42711 during Fix Pack installation - United States
+
+Text:
+updatedb fix pack installation maintenance updi TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When installing a Fix pack, you notice the following error:
+
+com.ibm.db2.jcc.am.SqlSyntaxErrorException: DB2 SQL Error: SQLCODE=-612, SQLSTATE=42711, SQLERRMC=SEQUENCE, DRIVER=4.14.137 
+
+SYMPTOM
+The ALTER TABLE DMEMSPOTDEF ADD COLUMN SEQUENCE DOUBLE NOT NULL DEFAULT 0 sql statement fails: 
+
+RunSQLFile:
+[sqlexec] SET SCHEMA LWS
+[sqlexec] Executing file: /usr/WebSphere/CommerceServer70/schema/db2/fixpack8/wcs.fixpack8.schema.sql
+[sqlexec] 0 rows affected
+[sqlexec] Failed to execute: ALTER TABLE DMEMSPOTDEF ADD COLUMN SEQUENCE DOUBLE NOT NULL DEFAULT 0
+
+BUILD FAILED
+
+/usr/WebSphere/CommerceServer70/components/Fixpack/xml/configureDatabaseFixpack.xml:349: The following error occurred while
+
+executing this line:
+/usr/WebSphere/CommerceServer70/components/Fixpack/xml/configureDatabaseFixpack.xml:452: The following error occurred while
+
+executing this line:
+/usr/WebSphere/CommerceServer70/components/Fixpack/xml/Fixpack8.xml:100: The following error occurred while executing this
+
+line:
+/usr/WebSphere/CommerceServer70/components/Fixpack/xml/configureDatabaseFixpack.xml:506:
+
+com.ibm.db2.jcc.am.SqlSyntaxErrorException: DB2 SQL Error: SQLCODE=-612, SQLSTATE=42711, SQLERRMC=SEQUENCE, DRIVER=4.14.137
+
+
+CAUSE
+This is usually caused by previous failed Fix Pack database update (updatedb) attempts causing certain entries to already exist when re-running the database update (updatedb).
+
+
+DIAGNOSING THE PROBLEM
+Check the updatedb.log for the following error:
+com.ibm.db2.jcc.am.SqlSyntaxErrorException: DB2 SQL Error: SQLCODE=-612, SQLSTATE=42711
+
+
+
+RESOLVING THE PROBLEM
+com.ibm.db2.jcc.am.SqlSyntaxErrorException: DB2 SQL Error: SQLCODE=-612, SQLSTATE=42711, SQLERRMC=SEQUENCE, DRIVER=4.14.137
+
+If you look at the SQL error code, it is complaining about a column (in this case 'SEQUENCE' from the 'DMEMSPOTDEF' table) that already exists.
+
+This usually happens because of previous failed attempts to update the target database where a subset of the SQL statements have been committed to the database.
+
+You can either try to remove the problem entry and re-run updatedb, or you can restore your database to the state it was before the failed attempts (in case you keep running into the issue with subsequent SQL statements).

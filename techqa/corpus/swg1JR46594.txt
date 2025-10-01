@@ -1,0 +1,139 @@
+Title: IBM JR46594: REST CALL TO GET PROCESS INSTANCE DATA RETURNS ERROR CWTBG0019E - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Version 8.0.1 Fix Pack 2 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24035701]
+Version 7.5.1 Fix Pack 2 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24036462]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  A Rest Call to get the Process Instance Data results in an Error
+   if the Process Instance has Variables which where not
+   initialized yet. A UndeclaredVariableRuntimeException can be
+   found in the log files.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  When the REST API retrieves the data for the process instance
+   details call
+   also the content of all local variables will be retrieved. If a
+   variable
+   is not yet initialized this results in a
+   UndeclaredVariableRuntimeException
+   which cause that the REST API call fails with an error.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  With this interim fix the process instance details REST API call
+   can now deal
+   with variables which are not initialized. Variables that are not
+   initialized
+   will contain no data in the response of the process instance
+   details REST API.
+   
+   Problem will be fixed with V8012
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR46594
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM STANDARD
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9500
+   
+   
+ * REPORTED RELEASE
+   801
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-05-08
+   
+   
+ * CLOSED DATE
+   2013-08-15
+   
+   
+ * LAST MODIFIED DATE
+   2013-08-15
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    JR46592 [http://www-01.ibm.com/support/docview.wss?uid=swg1JR46592]
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   BPM STANDARD
+   
+   
+ * FIXED COMPONENT ID
+   5725C9500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R801 PSY
+   UP

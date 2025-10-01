@@ -1,0 +1,45 @@
+Title: IBM wp-change-portal-admin-user task has no effect in a cluster - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ In a cluster, after running the ConfigEngine.bat/sh wp-change-portal-admin-user task on all cluster nodes, the task appears to have no effect.
+
+The old portal administrator user still has Administrator access, but the new portal administrator user you ran the task for does not.
+
+
+
+SYMPTOM
+The wp-change-portal-admin-user task completes as required with BUILD SUCCESSFUL, and there are no log errors. 
+
+You will see the new portal administrator user listed in the cluster-scoped <WP_profile_root>/config/cells/<cellname>/clusters/<cluster_name>/resources.xml under the AccessControlDataManagementService section.
+
+However, you will still find the old portal administrator user listed in the server-scoped <WP_profile_root>/config/cells/<cellname>/nodes/<nodename>/servers/WebSphere_Portal/resources.xml under the AccessControlDataManagementService section.
+
+Also, <WP_profile_root>/ConfigEngine/log/ConfigTrace.log will not have a BUILD SUCCESSFUL for one of these required tasks: 
+
+1) For a vertical cluster node: 
+
+ConfigEngine.bat/sh cluster-node-config-vertical-cluster-setup
+
+2) For a static horizontal cluster node:
+ConfigEngine.bat/sh cluster-node-config-cluster-setup 
+
+3) For a dynamic horizontal cluster node:
+ConfigEngine.bat/sh cluster-node-config-dynamic-cluster-setup
+
+
+CAUSE
+The Portal servers in the cluster were still using server-scoped resources, caches, and resource providers, due to a failure to run one of the above cluster-node-config-* tasks when the nodes were added.
+
+So the wp-change-portal-admin-user task found and updated the cluster-scoped resource.xml on the nodes as it should. But the server-scoped resource.xml,was not modified, and still had the old portal administrator user.
+
+By design, Portal reads the server-scoped resources.xml first, and so it never saw the updated user in the cluster-scoped resources.xml.
+
+
+RESOLVING THE PROBLEM
+In a cluster, you must run one of the three cluster-node-config-* tasks above (as specified in the InfoCenter steps for adding nodes to a cluster) when adding a node to move all the server-scoped resources to the cluster scope where they belong. This will prevent issues not only with the wp-change-portal-admin-user task, but other ConfigEngine tasks in the cluster as well.
+
+RELATED INFORMATION
+ Setting up a clustered production environment [http://publib.boulder.ibm.com/infocenter/wpdoc/v6r1/index.jsp?topic=/com.ibm.wp.ent.doc_v6101/install/production.html]

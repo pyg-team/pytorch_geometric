@@ -1,0 +1,42 @@
+Title: IBM CICS Explorer fails to connect to host systems after adding HTTP or HTTPS proxy entries - United States
+
+Text:
+CICS Explorer connecting connects Internet ; not Intranet; CICS TS 4.2 4.1 3.2 3.1 ; 5655M1500 R640 640 R400 400 HCI6400 R650 650 R500 500 HCI6500 5655-M15 5655M15 ; 5655S9700 R660 660 R600 600 HCI6600 R670 670 R700 700 HCI6700 5655-S97 5655S97 ; CICS CM 2.1 ; 5697P0900 5697P0901 R210 5697-P09 5697P09 FMID HCCK210 JCCK21E JCCK21K CICS PA 3.2 5655U8700 R320 5655-U87 5655U87 FMID H24D320 J24D32E J24D32C J24D32K 5655U8701 5724B5601 5724B5604 CICS PA 3.1 ; 5655U8700 R310 5655-U87 5655U87 FMID H24D310 J24D31E J24D31C J24D31K 5655U8701 CICS IA 3.1 ; 5655U8600 5655U8601 R310 R31E R31K 5655-U86 5655U86 FMID H274310 J27431E J27431K CICS DA 1.1 5655W4800 R110 R11E R11C R11K FMID HGEM110 5655W4801 KIXINFO TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ You receive an HTTP Client (4xx) or Server (5xx) error when you attempt to connect to host systems for the CICS Explorer or associated plug-ins. Some of the more commonly seen HTTP error status codes are 400, 404, 500, 503, and 504. If the Automatic Updates feature is enabled within the CICS Explorer then this happens every time you attempt to connect. Otherwise, the error occurs after you check for an updates. 
+
+CAUSE
+Proxy entries are often setup by users of CICS Explorer to enable updating of the CICS Explorer or plug-ins over the internet. When the proxy is enabled all network connections made by CICS Explorer subsequently will attempt to use the proxy.
+
+The HTTP response might vary depending on the proxy setup and whether the address attempted is valid at the destination the proxy routes to. The proxy is started by the Eclipse Framework when the CICS Explorer update feature is started, either manually or by Automatic Updates. Therefore, with Automatic Updates enabled users are likely to experience this problem persistently.
+
+ENVIRONMENT
+CICS Explorer V1.0.0, V1.0.1 and V1.1.0 .
+
+RESOLVING THE PROBLEM
+In CICS Explorer, HTTP and HTTPS Proxy setup should have entries to allow necessary traffic to route through to the Internet. However, it should also have Proxy bypass setup to ensure that connections intended to stay within the local network are not directed through the Proxy. To do this within the CICS Explorer: 
+
+ 1. Click on Window > Preferences
+    
+    
+ 2. Click on Eclipse platform > Network Connections to display "Proxy entries" and "Proxy bypass"
+    
+    
+ 3. Add the addresses of servers on your local network
+
+
+As this is a feature inherited from the Eclipse framework, see the Network Connections page [http://help.eclipse.org/galileo/index.jsp?topic=/org.eclipse.platform.doc.user/reference/ref-net-preferences.htm] in the Eclipse manual for detailed instructions. 
+
+The proxy features in CICS Explorer might not be the only proxy settings in your environment. If a third party or operating system proxy is in use, the settings should allow traffic from CICS Explorer to the relevant host systems. 
+
+Alternatively, if your setup requires using a proxy server to gain access to your host systems: the Proxy setup should be configured to direct traffic through to the host servers. RELATED INFORMATION
+#Latest version of the CICS Explorer and Tools plug [http://www.ibm.com/support/docview.wss?uid=swg21404312]
+
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Host Transaction Processing CICS Interdependency Analyzer for z/OS z/OS 3.2, 3.1 Host Transaction Processing CICS Deployment Assistant for z/OS z/OS 1.1 Host Transaction Processing CICS Configuration Manager for z/OS CICS Explorer Plug-in z/OS 2.1 Host Transaction Processing CICS Performance Analyzer for z/OS CICS Explorer Plug-in z/OS 3.1, 3.2 Host Transaction Processing IBM Session Manager CICS Explorer Plug-in z/OS 3.1, 2.2, 2.1 
+PRODUCT ALIAS/SYNONYM
+ CICS/TS CICS TS CICS Transaction Server

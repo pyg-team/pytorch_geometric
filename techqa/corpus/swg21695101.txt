@@ -1,0 +1,67 @@
+Title: IBM Security Bulletin: Java Technology Edition Quarterly CPU - October 2014 for WebSphere Application Server Community Edition 3.0.0.4(CVE-2014-3065,CVE-2014-3566,CVE-2014-6457) - United States
+
+Text:
+ SECURITY BULLETIN
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ English 
+
+SUMMARY
+ Multiple security vulnerabilities exist in IBM SDK Java™ Technology Edition that is shipped with IBM WebSphere Application Server Community 3.0.0.4. 
+
+VULNERABILITY DETAILS
+CVE-ID: CVE-2014-3065 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-3065]
+DESCRIPTION: IBM Java SDK contains a vulnerability in which the default configuration for the shared classes feature potentially allows arbitrary code to be injected into the shared classes cache, which may subsequently be executed by other local users.
+CVSS Base Score: 6
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/93629 [https://exchange.xforce.ibmcloud.com/vulnerabilities/93629] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:L/AC:H/Au:S/C:C/I:C/A:C)
+
+CVE-ID: CVE-2014-3566 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-3566]
+DESCRIPTION: Product could allow a remote attacker to obtain sensitive information, caused by a design error when using the SSLv3 protocol. A remote user with the ability to conduct a man-in-the-middle attack could exploit this vulnerability via a POODLE (Padding Oracle On Downgraded Legacy Encryption) attack to decrypt SSL sessions and access the plaintext of encrypted connections.
+CVSS Base Score: 4.3
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/97013 [https://exchange.xforce.ibmcloud.com/vulnerabilities/97013] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:M/Au:N/C:P/I:N/A:N)
+
+CVEID: CVE-2014-6457 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-6457]
+DESCRIPTION: An unspecified vulnerability related to the JSSE component has partial confidentiality impact, partial integrity impact, and no availability impact.
+CVSS Base Score: 4
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/97148 [https://exchange.xforce.ibmcloud.com/vulnerabilities/97148] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:H/Au:N/C:P/I:P/A:N) 
+
+AFFECTED PRODUCTS AND VERSIONS
+WebSphere Application Server Community Edition 3.0.0.4
+
+WORKAROUNDS AND MITIGATIONS
+Upgrade your IBM SDK for Java to an interim fix level as determined below:
+IBM SDK 6.0:
+IBM SDK, Java Technology Edition, Version 6 Service Refresh 16 Fix Pack 2 and subsequent releases
+IBM SDK, Java Technology Edition, Version 6R1 Service Refresh 8 Fix Pack 2 and subsequent releases
+
+IBM SDK 7.0:
+IBM SDK, Java Technology Edition, Version 7 Service Refresh 8 and subsequent releases
+IBM SDK, Java Technology Edition, Version 7R1 Service Refresh 2 and subsequent releases
+
+Upgrade your Oracle SDK as determined below:
+Oracle SDK 1.6:
+Please upgrade your SDK to Oracle SDK 1.6.0_85.
+Oracle SDK 1.7:
+Please upgrade your SDK to Oracle SDK 1.7.0_71.
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v2 Guide [http://www.first.org/cvss/v2/guide] 
+On-line Calculator v2 [http://nvd.nist.gov/CVSS-v2-Calculator] 
+
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.

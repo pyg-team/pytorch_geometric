@@ -1,0 +1,151 @@
+Title: IBM OA25488: EAV SUPPORT IN OMEGAMON XE FOR STORAGE ON Z/OS - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS NEW FUNCTION.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  EAV Support in OMEGAMON XE for Storage on z/OS
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Apply PTF
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All users of OMEGAMON XE for STORAGE on      *
+   *                 z/OS and OMEGAMON XE on z/OS who are         *
+   *                 running on z/OS 1.10 or higher.              *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Support for Extended Address Volumes    *
+   ****************************************************************
+   * RECOMMENDATION: Apply the PTF.                               *
+   ****************************************************************
+   Support for Extended Address Volumes
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *  Support for Extended Address Volumes
+   &#158;**** PE09/01/19 PTF IN ERROR. SEE APAR OA27668 [http://www-01.ibm.com/support/docview.wss?uid=swg1OA27668]  FOR DESCRIPTION
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   OA25488
+   
+   
+ * REPORTED COMPONENT NAME
+   OMEG XE FOR STO
+   
+   
+ * REPORTED COMPONENT ID
+   5608A1000
+   
+   
+ * REPORTED RELEASE
+   410
+   
+   
+ * STATUS
+   CLOSED UR1
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-06-17
+   
+   
+ * CLOSED DATE
+   2008-09-17
+   
+   
+ * LAST MODIFIED DATE
+   2009-01-19
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UA43556 UA43557
+   
+   
+
+MODULES/MACROS
+ *  KS3AG1   KS3DACMD KS3DACTL KS3SACOL KS3SACO2
+   KS3SACO3 KS3SASUM KS3SAUTL KS3SAUT2 KS3SAVOL KS3SAVO2 KS3SAVO3
+   KS3SAXPD KS3SGCAT KS3SGCSI KS3SGPRF KS3SGSPC KS3SGSUM KS3SGVTC
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   OMEG XE FOR STO
+   
+   
+ * FIXED COMPONENT ID
+   5608A1000
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R310 PSY UA43556 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UA43556]
+   UP08/09/23 P F809
+   
+   
+ * R410 PSY UA43557 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UA43557]
+   UP08/09/23 P F809
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

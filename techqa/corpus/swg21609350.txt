@@ -1,0 +1,63 @@
+Title: IBM Packaging Utility does not work on Linux x86 64-bit - United States
+
+Text:
+RN1.5; RN1.5.1; RN1.5.2; RN1.5.3; RN1.6 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ You install IBM Packaging Utility on a Linux x86 64-bit computer. You cannot start Packaging Utility. The version of Packaging Utility that you are using requires 32-bit library support when you install with a 64-bit version of IBM Installation Manager. 
+
+SYMPTOM
+Different symptoms occur depending on the version of Linux and shells that you use. 
+
+ * No feedback when you start Packaging Utility. 
+
+You start Packaging Utility from a Terminal window running a shell, and change the directory to the installation location of the IBMPU executable. You execute IBMPU. The command returns without providing feedback: 
+$ cd /opt/IBM/PackgingUtility
+$ ./IBMPU
+$ 
+
+ * You receive the message: "no such file or directory"
+
+$ ./IBMPU
+bash ./IBMPU no such file or directory
+$ 
+
+ * You receive the message: "bad ELF interpreter"
+
+$./IBMPU
+./IBMPU bash: ./install: /lib/ld-linux.so.2: bad ELF interpreter: No such file or directory 
+
+ * Check if Packaging Utility is 32-bit
+
+Use the file command to identify a 32-bit executable: 
+
+$ file ./IBMPU
+./IBMPU: ELF 32-bit LSB executable, Intel 80386, version 1 (SYSV), dynamically linked (uses shared libs), for GNU/Linux 2.2.5, not stripped 
+
+ * Test the 32-bit Java Runtime Environment (JRE)
+
+The IBMPU executable invokes a program written in Java. Verify that the 32-bit JRE does not run by changing to the jre folder and executing the java command with the -version parameter. Similar results as executing the ./IBMPU are shown: 
+$ cd /opt/IBM/PackgingUtility/jre/bin
+$ ./java
+bash: ./java no such file or directory
+$ file ./java
+./java: ELF 32-bit LSB executable, Intel 80386, version 1 (SYSV), dynamically linked (uses shared libs), for GNU/Linux 2.2.5, not stripped 
+
+CAUSE
+The required 32-bit libraries are not installed on the computer.
+
+
+
+RESOLVING THE PROBLEM
+To work around this issue, take one of the following actions: 
+
+ 
+
+ * Install a new instance of Packaging Utility version 1.6 and select the 64-bit package group.
+
+ * Install the 32-bit libraries that are required to support a 32-bit program
+
+
+The same techniques for resolving the Installation Manager issues also apply to the Packaging Utility, see Technote #1438776 Issues starting or running Installation Manager [http://www.ibm.com/support/docview.wss?uid=swg21438776]. 
+RELATED INFORMATION
+#Issues starting or running Installation Manager [http://www-01.ibm.com/support/docview.wss?uid=swg21438776]

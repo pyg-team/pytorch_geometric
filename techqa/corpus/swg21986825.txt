@@ -1,0 +1,53 @@
+Title: IBM Connect to Oracle 9i and 11g using the ojdbc6.jar driver - United States
+
+Text:
+Oracle jdbc connection to Oracle 9i; ORacle 11g; timezone region not found; lwjdbc TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ There is a business need to connect Sterling B2B Integrator to several different Oracle instances, some in Oracle 11g and others running Oracle 9i. 
+
+SYMPTOM
+When testing the connection to the Oracle 9i database the following error is thrown in the logs.
+
+[2016-06-30 14:34:14.031] ERROR [JDBCService] Could not create the initial objects for the 'ORA9i_DATA' pool: The driver manager could not obtain a database connection.
+[2016-06-30 14:34:14.086] ERROR 000310100002 UTIL.FRAME_JDBC.ERR_ConnectionFactory_create [ConnectionFactory].create()
+[2016-06-30 14:34:14.086] ERROR [1467297254086] ORA-00604: error occurred at recursive SQL level 1
+ORA-01882: timezone region not found
+
+
+
+CAUSE
+The classes12.zip and ojdbc6.jar Oracle drivers have the same classpath: oracle.jdbc.driver.OracleDriver
+Therefore you cannot install both drivers in the same Java application.
+Oracle state that the ojdbc6.jar driver is backwards compatible and can be used to connect to Oracle 9i.
+
+
+
+DIAGNOSING THE PROBLEM
+The int is with the Oracle Error:
+ORA-01882: timezone region not found
+
+RESOLVING THE PROBLEM
+There are 2 main ways of resolving the issue. Either:
+
+
+ * Add a property to the ojdbc6.jar file.  1. Open the ojdbc6.jar file and locate the file: 
+       oracle/jdbc/defaultConnectionProperties.properties 
+    2. Add the property:
+       oracle.jdbc.timezoneAsRegion=false 
+    3. Save the changes to ojdbc6.jar 
+    4. Restart the application.
+       
+       
+   
+   
+ * Add a JVM parameter in the startup command line:  1. If you do not wish to make changes to the ojdbc6.jar file you can also add a JVM argument in the command line:
+       -Doracle.jdbc.timezoneAsRegion=false
+       
+       The "-D" arguments should be placed after the "-X" memory parameters. 
+    2. Restart the application.
+   
+   
+
+
+Once the parameter has been added, you can connect to Oracle 9i using an SID or a Service Name.

@@ -1,0 +1,223 @@
+Title: IBM PI89708: THE LOG4J-API-2.9.1.JAR CONTAINS CLASSES UNDER THE META-INF DIRECTORY CAUSE AN EXCEPTION DURING STARTUP. - United States
+
+Text:
+  A FIX IS AVAILABLE
+9.0.0.7: WebSphere Application Server traditional V9.0 Fix Pack 7 [http://www-01.ibm.com/support/docview.wss?uid=swg24044620]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The log4j-api-2.9.1.jar contains classes under the
+   META-INF directory. These classes cause an exception during
+   application start.
+   
+   
+   com.ibm.ws.ecs.internal.scan.context.impl.ScannerContextImpl
+   scanJAR unable to open input stream for resource
+   META-INF/versions/9/org/apache/logging/log4j/util/ProcessIdUtil.
+   class in archive WEB-INF/lib/log4j-api-2.9.1.jar
+   
+   java.lang.IllegalArgumentException
+   at org.objectweb.asm.ClassReader.<init>(Unknown Source)
+   at org.objectweb.asm.ClassReader.<init>(Unknown Source)
+   at org.objectweb.asm.ClassReader.<init>(Unknown Source)
+   at
+   com.ibm.ws.ecs.internal.scan.impl.ClassScanner.scanInputStream(C
+   lassScanner.java:147)
+   at
+   com.ibm.ws.ecs.internal.scan.impl.ClassScanner.scanInputStream(C
+   lassScanner.java:124)
+   at
+   com.ibm.ws.ecs.internal.scan.impl.ClassScanner.scanInputStream(C
+   lassScanner.java:120)
+   at
+   com.ibm.ws.ecs.internal.scan.context.impl.ScannerContextImpl.sca
+   nJAR(ScannerContextImpl.java:275)
+   at
+   com.ibm.ws.ecs.internal.scan.context.impl.ScannerContextImpl.sca
+   nJARs(ScannerContextImpl.java:315)
+   at
+   com.ibm.ws.ecs.internal.scan.context.impl.WARScannerContext.scan
+   Internal(WARScannerContext.java:76)
+   at
+   com.ibm.ws.ecs.internal.scan.context.impl.ScannerContextImpl.sca
+   n(ScannerContextImpl.java:87)
+   at
+   com.ibm.ws.ecs.internal.scan.impl.ClassScanner.doScan(ClassScann
+   er.java:90)
+   at
+   com.ibm.ws.ecs.internal.scan.impl.ClassScanner.ensureScan(ClassS
+   canner.java:111)
+   at
+   com.ibm.ws.ecs.internal.scan.impl.ClassScanner.getAnnotatedPacka
+   ges(ClassScanner.java:196)
+   at
+   com.ibm.ws.ecs.internal.scan.impl.AnnotationScannerImpl$Annotati
+   onBucket.getPackageAnnotationTargets(AnnotationScannerImpl.java:
+   359)
+   at
+   com.ibm.ws.ecs.internal.scan.impl.AnnotationScannerImpl.getPacka
+   geAnnotationTargets(AnnotationScannerImpl.java:264)
+   at
+   com.ibm.ws.sip.container.annotation.SipModuleAnnotationProcessor
+   .<init>(SipModuleAnnotationProcessor.java:171)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  All users of IBM WebSphere Application      *
+   *                  Server with an application containing       *
+   *                  log4j-api-2.9.1.jar.                        *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: An application containing a JAR file    *
+   *                      with class files under the META-INF     *
+   *                      directory causes                        *
+   *                      IllegalArgumentException.               *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   The JAR file log4j-api-2.9.1.jar (and later versions of the
+   JAR file)contains classes under the META-INF directory. For
+   example:
+   META-
+   INF\versions\9\org\apache\logging\log4j\util\ProcessIdUtil.
+   class
+   This is new to Java 9. Classes which use Java 9 features are
+   placed under META-INF\versions\9 as a way to provide
+   backward
+   compatibility.
+   Since traditional WebSphere Application Server (V7 thru V9)
+   does not support Java 9, the application server is not aware
+   of
+   this location for classes.  The application server assigns
+   the
+   wrong directory as the root of the Java package.  In this
+   example, the Java package directory of the class should be:
+   "org\apache\logging\log4j\util", but the
+   application server is using the package directory
+   "META-INF\versions\9\org\apache\logging\log4j\util".
+   When a class under the example directory is scanned for
+   annotations, the declared package name in the class
+   (org.apache.logging.log4j.util) does not match the
+   package directory.  This results in an
+   IllegalArgumentException shown in the SystemOut.log file:
+   com.ibm.ws.ecs.internal.scan.context.impl.ScannerContextImpl
+   scanJAR unable to open input stream for resource
+   META-
+   INF/versions/9/org/apache/logging/log4j/util/ProcessIdUtil.
+   class in archive WEB-INF/lib/log4j-api-2.9.1.jar
+   java.lang.IllegalArgumentException
+   at org.objectweb.asm.ClassReader.<init>(Unknown Source)
+   at org.objectweb.asm.ClassReader.<init>(Unknown Source)
+   at org.objectweb.asm.ClassReader.<init>(Unknown Source)
+   at
+   com.ibm.ws.ecs.internal.scan.impl.ClassScanner.scanInputStre
+   am(C
+   lassScanner.java:147)
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The code has been modified so that it ignores classes with
+   invalid package names.  See also related APARs PI93744 [http://www-01.ibm.com/support/docview.wss?uid=swg1PI93744] and
+   PI96826.
+   
+   The fix for this APAR is currently targeted for inclusion in
+   fix pack 8.5.5.14 and 9.0.0.7.  Please refer to the Recommended
+   Updates page for delivery information:
+   http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI89708
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSPHERE APP S
+   
+   
+ * REPORTED COMPONENT ID
+   5724J0800
+   
+   
+ * REPORTED RELEASE
+   900
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-11-01
+   
+   
+ * CLOSED DATE
+   2017-12-14
+   
+   
+ * LAST MODIFIED DATE
+   2018-05-30
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBSPHERE APP S
+   
+   
+ * FIXED COMPONENT ID
+   5724J0800
+   
+   
+
+APPLICABLE COMPONENT LEVELS

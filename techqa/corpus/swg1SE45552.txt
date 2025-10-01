@@ -1,0 +1,203 @@
+Title: IBM SE45552: MQM400 CUMULATIVE #70104 FIX PACK (WMQ V7.0.1 JAVA/JMS CLIENT) - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  MDV service delivery for WebSphere MQ v7.0.1
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Collective service MDV 7.0.1.4 for WebSphere MQ v7.0.1
+   
+   Details of problems fixed for JAVA/JMS are included in
+   APAR SE45552 - 5724L26 (option *BASE)
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Collective service MDV 7.0.1.4 for WebSphere MQ v7.0.1
+   - which contains fixes for all the problems listed below:
+   
+   .                                                              .
+   IZ84424 [http://www-01.ibm.com/support/docview.wss?uid=swg1IZ84424] - WMQ JMS CLIENT TRACE FILE PARAMETERS FOR FILE SIZES  .
+             AND NUMBERS DO NOT WORK USING JMQI 7.0.1.2           .
+   IZ83511 [http://www-01.ibm.com/support/docview.wss?uid=swg1IZ83511] - WEBSPHERE MQ V7. JMS APPLICATION CAUSES HEAP         .
+             EXHAUSTION UNDER HEAVY LOAD.                         .
+   IZ83254 [http://www-01.ibm.com/support/docview.wss?uid=swg1IZ83254] - PERFORMANCE ISSUES WHEN USING THE WEBSPHERE MQ HTTP  .
+             BRIDGE WITH X-MSG-CORRELID SELECTOR                  .
+   IZ80912 [http://www-01.ibm.com/support/docview.wss?uid=swg1IZ80912] - JAVAX.JMS.ILLEGALSTATEEXCEPTION WITH MQJMS3033:      .
+             QUEUERECEIVER IS CLOSED WHEN CLOSING ASYNCHRONOUS    .
+             MESSAGECONSUMER                                      .
+   IZ80772 [http://www-01.ibm.com/support/docview.wss?uid=swg1IZ80772] - WMQ V7 THE CLOSE() METHOD CALL ON A JMS CONSUMER     .
+             PREVIOUSLY CREATED IN A MESSAGELISTNER ONMESSAGE()   .
+             METHOD RETURNS JMSCC3033                             .
+   IZ80413 [http://www-01.ibm.com/support/docview.wss?uid=swg1IZ80413] - WEBSPHERE MQ V7 RECEIVES FDC WITH PROBE ID OF CO052000
+             WHEN USING A SHARECNV VALUE GREATER THAN ZERO FOR    .
+             SVRCONN CHANNEL                                      .
+   IZ80101 [http://www-01.ibm.com/support/docview.wss?uid=swg1IZ80101] - REPEATED XAER_RMERR ERRORS RECEIVED BY WEBSPHERE     .
+             APPLICATION SERVER V7.0.0.X WHEN CONNECTION TO       .
+             WEBSPHERE MQ IS BROKEN                               .
+   IZ79802 [http://www-01.ibm.com/support/docview.wss?uid=swg1IZ79802] - JMS APPLICATION RUNS OUT OF CONNECTIONS WHEN USING MQ.
+             JMS V7 CLIENT CONNECTING TO MQ V6 SERVER USING JMS   .
+             XASESSION.                                           .
+   IZ79187 [http://www-01.ibm.com/support/docview.wss?uid=swg1IZ79187] - WEBSPHERE MQ V7 CLASSES FOR JMS: PROPERTY            .
+             SETUSECONNECTIONPOOLING IS NO LONGER USED            .
+   IZ78515 [http://www-01.ibm.com/support/docview.wss?uid=swg1IZ78515] - WMQ V7 JMS CLIENT CONVERTS MESSAGES TO JMSBYTESMESSAGE
+             WHEN SENDING POISON MESSAGES TO THE DEAD-LETTER QUEUE.
+   IZ78464 [http://www-01.ibm.com/support/docview.wss?uid=swg1IZ78464] - ARRAYINDEXOUTOFBOUNDSEXCEPTION WHEN PERFORMING AN XA .
+             RECOVERY OPERATION USING THE WEBSPHERE CLASSES FOR   .
+             JAVA OR JMS CLIENT                                   .
+   IZ78154 [http://www-01.ibm.com/support/docview.wss?uid=swg1IZ78154] - MESSAGE RECEIVE FAILS WITH AN MQRC_OPTIONS_CHANGED   .
+             2457 ERROR                                           .
+   IZ78032 [http://www-01.ibm.com/support/docview.wss?uid=swg1IZ78032] - WMQ V7 MESSAGES ROLLED BACK WHEN USING BEAN MANAGED  .
+             TRANSACTIONS AND NON-PERSISTENT MESSAGES, WITHOUT    .
+             SYNCPOINT.                                           .
+   IZ77970 [http://www-01.ibm.com/support/docview.wss?uid=swg1IZ77970] - WMQ V6 JMS PUB/SUB (PRODUCER/CONSUMER) APPLICATIONS  .
+             STOP WORKING AND BECOME UNRESPONSIVE                 .
+   IZ77087 [http://www-01.ibm.com/support/docview.wss?uid=swg1IZ77087] - WMQ V7 JMS APPLICATION GETS NULLPOINTEREXCEPTION WHEN.
+             USING SPECIAL CHARACTERS IN CORRELATION ID           .
+   IZ76960 [http://www-01.ibm.com/support/docview.wss?uid=swg1IZ76960] - WHEN WMQ 7 JMS APPLICATION THROWS A RUNTIME EXCEPTION,
+             ONMESSAGE() METHOD IS CALLED FEWER TIMES THAN        .
+             EXPECTED.                                            .
+   IZ76739 [http://www-01.ibm.com/support/docview.wss?uid=swg1IZ76739] - WEBSPHERE MQ CLIENT APPLICATION ISSUING MQGET RECEIVES
+             2080 (MQRC_TRUNCATED_MSG_FAILED) WHEN USING TRUSTED  .
+             LISTENER                                             .
+   IZ76368 [http://www-01.ibm.com/support/docview.wss?uid=swg1IZ76368] - UNABLE TO RUN WEBSPHERE MQ V7 RESOURCE ADAPTER IVT ON.
+             WEBSPHERE APPLICATION SERVER CE V2.1                 .
+   IZ75511 [http://www-01.ibm.com/support/docview.wss?uid=swg1IZ75511] - SECURITY EXITS IN WEBSPHERE MQ V7.0.1 ARE NOT WORKING.
+             CORRECTLY ON LINUX 64 BIT.                           .
+   IZ72416 [http://www-01.ibm.com/support/docview.wss?uid=swg1IZ72416] - WMQ JMS V7: THE JMSREPLYTO DOES NOT INCLUDE THE NAME .
+             OF THE QUEUE MANAGER.                                .
+   IC72546 [http://www-01.ibm.com/support/docview.wss?uid=swg1IC72546] - DEFECTS FIXED IN WEBSPHERE MQ FIX PACK 7.0.1.3       .
+   IC70664 [http://www-01.ibm.com/support/docview.wss?uid=swg1IC70664] - WMQ V7 SUBSCRIBER FAILS WITH JMSWMQ0026 WHEN         .
+             UNSUBSCRIBING AND RE-SUBSCRIBING USING EMPTY SELECTOR.
+             STRING ("")                                          .
+   IC70136 [http://www-01.ibm.com/support/docview.wss?uid=swg1IC70136] - WMQ V7 SUBSCRIBER FAILS WITH JMSWMQ0026 WHEN TRYING TO
+             UNSUBSCRIBE AND SUBSCRIBE AGAIN                      .
+   IC69949 [http://www-01.ibm.com/support/docview.wss?uid=swg1IC69949] - JAVA APPLICATION FAILS ON MQGET WITH 2080            .
+             (MQRC_TRUNCATED_MSG_FAILED)                          .
+   IC69524 [http://www-01.ibm.com/support/docview.wss?uid=swg1IC69524] - NULLPOINTEREXCEPTION SEEN ON AN ATTEMPT TO GET       .
+             JMSTEXTMESSAGE PROPERTIES LIKE JMSXGROUPID, AFTER    .
+             DE-SERIALIZING THE MESSAGE                           .
+   IC69370 [http://www-01.ibm.com/support/docview.wss?uid=swg1IC69370] - MQJMS1006 (INVALID VALUE FOR CHAR SET) RETURNED FROM .
+             WAS WHEN SENT BY WMQ JMS APPLICATION USING V7 CLIENT .
+             TO V6 QUEUE MANAGER                                  .
+   IC69040 [http://www-01.ibm.com/support/docview.wss?uid=swg1IC69040] - WMQFTE AGENTS MAY REPORT A 2018 EXCEPTION WHEN THE   .
+             CONNECTED V7.0.1.0 QUEUE MANAGER IS SHUTDOWN.        .
+   IC68871 [http://www-01.ibm.com/support/docview.wss?uid=swg1IC68871] - MQJMS2005 AND MQJE001 RC=2059 WHEN USING WMQ V7.0.1.0.
+             OR V7.0.1.1 TO CONNECT WITH A CF USING A CONNECTION  .
+             NAME LIST                                            .
+   IC68793 [http://www-01.ibm.com/support/docview.wss?uid=swg1IC68793] - CLIENTRECONNECTOPTIONS FOR CONNECTION FACTORIES ONLY .
+             ACCEPTS 'ANY' AND 'QMGR'. ASYNCEXCEPTION VALUE NAMES .
+             NOT DISPLAYED                                        .
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+ *  COMMENTS:
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   SE45552
+   
+   
+ * REPORTED COMPONENT NAME
+   JAVA CLIENT ISE
+   
+   
+ * REPORTED COMPONENT ID
+   5724L2620
+   
+   
+ * REPORTED RELEASE
+   701
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2010-10-27
+   
+   
+ * CLOSED DATE
+   2010-10-27
+   
+   
+ * LAST MODIFIED DATE
+   2016-08-25
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    SI41699
+   
+   
+
+MODULES/MACROS
+ *  RCHMGR
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   JAVA CLIENT ISE
+   
+   
+ * FIXED COMPONENT ID
+   5724L2620
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R701 PSY SI59952
+   UP16/08/25 I 1000

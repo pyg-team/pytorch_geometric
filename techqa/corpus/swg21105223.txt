@@ -1,0 +1,26 @@
+Title: IBM Stopping CICS VR from scanning multiple log of logs when creating a recovery job - United States
+
+Text:
+Stop scan ; log of logs ; logoflogs ; multiple ; many ; recovering recovery ; scan options ; CICSVR ; CICS VSAM Recovery ; 5655P3000 5655-P30 5655P30 R420 R42E R42K FMID HCCV420 JCCV42E JCCV42K ; R430 R43E R43K FMID HCCV430 JCCV43E JCCV43K ; 5655Y2400 R510 R51E R51K 5655-Y24 ; 5655Y24 FMID HCCV510 JCCV51E JCCV51K TECHNOTE (FAQ)
+
+QUESTION
+ How do you use the CICS VSAM Recovery (CICS VR) panel interface to create and submit a recovery job for a VSAM sphere? You have multiple log of logs that contain information about the VSAM sphere registered to CICS VR. However, you do NOT want CICS VR to automatically scan all of them when creating the recovery job. 
+
+ANSWER
+Do the following to scan a specific log of logs: 
+
+ 1. Run a batch log of logs scan job [http://pic.dhe.ibm.com/infocenter/cicsts/v5r1/topic/com.ibm.cics.cvr.doc/dwwig/lgl.html] specifying the NAME(log of logs) keyword, where "log of logs" is the name that contains information about the VSAM sphere that needs to be recovered. 
+    
+    
+ 2. Invoke the CICS VR panel interface, and select option 6 for "Set scan option" from the Tools menu [http://pic.dhe.ibm.com/infocenter/cicsts/v5r1/topic/com.ibm.cics.cvr.doc/dwwug/dwwug00057.html] before selecting a recovery action from the VSAM sphere list. 
+    
+    
+ 3. On the CICS VR scan option panel [http://pic.dhe.ibm.com/infocenter/cicsts/v5r1/topic/com.ibm.cics.cvr.doc/dwwug/dwwug00061.html], enter 2 for "No scan is needed" in the scan option and press Enter. 
+    
+    
+ 4. Now when you select a recovery action, CICS VR will not automatically scan the registered log of logs.
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ CICSVR CICS VR CICS/VR

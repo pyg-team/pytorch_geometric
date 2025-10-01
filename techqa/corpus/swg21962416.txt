@@ -1,0 +1,81 @@
+Title: IBM Connect:Direct CSPA202E SSL handshake failure, reason=GSK_ERR_BAD_V3_CIPHER - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ IBM Sterling Connect:Direct for z/OS Secure Plus receiving error 'CSPA202E SSL handshake failure, reason=GSK_ERR_BAD_V3_CIPHER'. 
+
+SYMPTOM
+Connect:Direct Secure Plus connections fail with GSK_ERR_BAD_V3_CIPHER. This may be seen after applying z/OS maintenance.
+
+Any of these messages may be output:
+
+This message specifically indicates that invalid Ciphers have been selected:
+CSPA202E SSL handshake failure, reason=GSK_ERR_BAD_V3_CIPHER
+
+These messages may also been seen, but they do not indicate the specific cause:
+CSPA003E Security Violation - SNODE authentication error
+CSPA004E Security Violation - PNODE authentication error
+CSPA202E SSL handshake failure, reason=Socket closed by remote partner
+
+
+
+CAUSE
+Ciphers selected in the Secure Plus PARMFILE are not available on the z/OS SSL subsystem. 
+
+ENVIRONMENT
+Recent z/OS maintenance or upgrade was applied.
+
+Check to see if z/OS APAR OA47405 has been recently applied. This APAR removed 7 ciphers that were previously available. If you upgraded to z/OS 2.2 this may also occur.
+
+Cipher codes 00 – 06 (00000 – 0006) were removed by this APAR.
+
+System SSL: Modify code or System SSL application configurations to enable null encryption, RSA-Export, or RC4 ciphers [https://www.ibm.com/support/knowledgecenter/en/SSLTBW_2.2.0/com.ibm.zos.v2r2.e0zm100/SSL_V2R2_ModifyConfigs_before_IPL.htm] provides more details on this change.
+
+DIAGNOSING THE PROBLEM
+A Connect:Direct trace with DEBUG=8C00006E may show additional information as in this example. This was taken on the PNODE.
+
+P0012 17:21:29.33 BEGINNING TLS/SSL HANDSHAKE 
+P0012 17:21:29.33 Open Socket Environment. 
+P0012 17:21:29.33 Set Callback. 
+P0012 17:21:29.33 Handshake label (label). 
+P0012 17:21:29.33 TLS/SSL get cipher suite. 
+P0012 17:21:29.33 Using (35363738392F303132330A1613100D0915120F0C) ciphers. 
+P0012 17:21:29.33 Set SSLV3 on - successful. 
+P0012 17:21:29.33 Session type = GSK_CLIENT_SESSION. 
+P0012 17:21:29.33 remote_ciphers: (2F350A090605040302) 18 
+P0012 17:21:29.33 Cipher code 06 is invalid 
+P0012 17:21:29.33 Cipher code 05 is invalid 
+P0012 17:21:29.33 Cipher code 04 is invalid 
+P0012 17:21:29.33 Cipher code 03 is invalid 
+P0012 17:21:29.33 Cipher code 02 is invalid 
+P0012 17:21:29.33 ENDING TLS/SSL HANDSHAKE, RC=422 
+P0012 17:21:29.33 REQ=SSLSOINI RC=422 RS=GSK_ERR_BAD_V3_CIPHER 
+
+
+RESOLVING THE PROBLEM
+For Connect:Direct for z/OS, Release 5.0, apply fix T050193 (POST5002). This will ignore any invalid ciphers that may be selected.
+
+Workaround:
+If z/OS APAR OA47405 was recently applied, then Cipher suites 00 – 06 (00000 – 0006) should be removed from the Local and Remote nodes using the Secure+ SSL/TLS Parameters panel.
+
+Without the fix, any invalid cipher specified in the PARMFILE will cause this error. After the fix, invalid ciphers are ignored.
+
+On the selection screen, these are the Cipher names that you need to de-select: (Note that the names may start with either SSL or TLS.) The indicated Cipher suite numbers are hexadecimal representations. They are not the sequence numbers.
+
+x'01' - SSL_RSA_WITH_NULL_MD5
+x'02' - SSL_RSA_WITH_NULL_SHA
+x'03' - SSL_RSA_EXPORT_WITH_RC4_40_MD5
+x'04' - SSL_RSA_WITH_RC4_128_MD5
+x'05' - SSL_RSA_WITH_RC4_40_SHA
+x'06' - SSL_RSA_EXPORT_WITH_RC2_CBC_40_MD5
+
+If the problem persists, run the trace as indicated above to determine which other Cipher codes are invalid. Those should also be removed from the PARMFILE.
+
+If the trace indicates x'2F', x'35' or x'0A' are invalid, then you need to apply one of the following FMID's to install ciphers that are greater than 56-bit:
+
+For z/OS 2.1: Security Level 3 FMID JCPT411
+For z/OS 2.2: Security Level 3 FMID JCPT421
+
+Refer to z/OS Cryptographic Services [https://www.ibm.com/support/knowledgecenter/en/SSLTBW_2.2.0/com.ibm.zos.v2r2.gska100/sssl2int1001213.htm] documentation as needed.

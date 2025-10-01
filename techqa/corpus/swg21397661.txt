@@ -1,0 +1,35 @@
+Title: IBM Libaio.so.1 Warning Message in Online.log File when starting IDS - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ You start Informix Dynamic Server (IDS) but see this message in the online.log:
+
+"libaio.so.1: cannot open shared object file: No such file or directory.
+Please install libaio package. See machine notes. 
+Warning: Kernel Asynchronous I/O is disabled." 
+
+
+
+
+SYMPTOM
+ 
+
+"libaio.so.1: cannot open shared object file: No such file or directory.
+Please install libaio package. See machine notes. 
+Warning: Kernel Asynchronous I/O is disabled." 
+
+
+CAUSE
+You are seeing this warning message in the online.log file because you do not have libaio.so.1 library in your Operating System. 
+
+
+RESOLVING THE PROBLEM
+ 
+
+The library libaio.so.1 comes with your Operating System(OS). In Linux only, if you have a libaio.so.1 library, KAIO (Kernel Asynchronous I/O) will be enabled by default. This is documented in your IDS for Linux machine notes. KAIO is a method of I/O processing through the OS. If libaio.so.1 is not found, KAIO will be disabled. 
+
+The above warning message means that IDS can not find the libaio.so.1 library. If you are not using KAIO and want to avoid this message appearing in the online.log, you can set the following environment variable for the user that starts IDS ( the user that runs the oninit command): 
+
+KAIOOFF=1

@@ -1,0 +1,31 @@
+Title: IBM ConfigEngine task "list-all-virtual-portals" fails when administrator ID/password values are not provided - United States
+
+Text:
+WASX7017E; EJPXD0016W; EJPCA3004E; virtual portal; configengine; PortalAdminPwd TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ After configuring WebSphere Portal 6.1 security to federated or standalone LDAP repository, running "configengine.bat list-all-virtual-portals" may fail with the following error messages:
+
+[wsadmin] WASX7017E: Exception received while running file "/apps/IBM/WebSphere/PortalServer/base/wp.script/config/was/wp_VirtualPortalListAll.jacl"; exception information: com.ibm.bsf.BSFException: error while eval'ing Jacl expression:
+[wsadmin] EJPXD0016W: The login failed: EJPXC0005E: The authentication for user wp61admin failed due to an invalid user and password.
+[wsadmin] while executing
+[wsadmin] "$Portal login $PortalAdminId $PortalAdminPwd". 
+
+In some cases, you may also see
+
+[wsadmin] EJPCA3004E: ERROR: "PortalAdminPwd in wpconfig.properties" not there. 
+
+CAUSE
+"PortalAdminId" and/or "PortalAdminPwd" is missing or incorrect.
+
+RESOLVING THE PROBLEM
+ 
+
+When running configuration tasks related to virtual portals, WPScript is invoked and requires the WebSphere Portal admin user ID and password to log in correctly. If the user ID and password are not provided on the command line, the errors above can occur because "PortalAdminPwd" in wkplc.properties is not automatically set. In some cases, it is replaced with the string, "ReplaceYourOwnPassword", by some configuration tasks. 
+
+To resolve the error, include the values for both parameters using the command line or in wkplc.properties.
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Organizational Productivity- Portals & Collaboration WebSphere Portal End of Support Products AIX, HP-UX, IBM i, Linux, Solaris, Windows, z/OS 7.0, 6.1

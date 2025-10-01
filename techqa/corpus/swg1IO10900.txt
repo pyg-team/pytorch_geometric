@@ -1,0 +1,196 @@
+Title: IBM IO10900: NO DOCUMENETS MENTION ABOUT THE NEED FOR DB2 TRANSACTION LOG    SPACE DURING CM 841 UPGRADE - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  During the upgrade to CM 8.4.01.000, there is an insert
+   statement that runs to populate the RMMIGRATIONTASKS table.
+   The transaction logs were taking up to 30 GB of space in
+   order to complete the INSERT statement. The needed transaction
+   log file space should be documenetd in the CM 841 upgtrade
+   procedure to avoid the CM 841 failure due to out of space.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  DB2 Content Manager resource manager log space is not sufficient
+   to complete the
+   upgrade operation from V8.3 to V8.4.2
+   
+   Symptom:
+   
+   During the upgrade to DB2 Content Manager V8.4.01.000, there is
+   an insert statement that runs to populate the RMMIGRATIONTASKS
+   table.  During the query, the transaction logs would run out of
+   space, causing the upgrade to fail.  The transaction logs were
+   taking up to 30 GB of space to complete the INSERT statement.
+   The query needs to be evaluated to determine if commits could be
+   put
+   in to reduce the amount of temporary storage used and the
+   excessive
+   transaction log space needed.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  In the V8.4.2 documentation, information has been added
+   describing how to determine if log space is sufficient before
+   the upgrade.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  Preinstallation step for upgrades from V8.3 to V8.4.2 Only:
+    Ensure that log space if is sufficient to complete the upgrade
+   operation from V8.3 to V8.4.2.
+   The following commands and calculations are recommended before
+   you perform the upgrade installation.
+   1.) Determine the current log space size by using the GET
+   DATABASE CONFIGURATION command.
+   
+    db2 GET DB CFG FOR <database name>
+   ..
+    Log file size (4KB)                     (LOGFILSIZ)  = 1000
+    Number of primary log files             (LOGPRIMARY) = 25
+    Number of secondary log files           (LOGSECOND)  = 50
+   ..
+   
+    - Calculate Logfile capacity.
+    1000*4k = 4M  (4096000 bytes)
+   
+   2.) Calculate upgrade log space requirements:
+    -  Run a database query to determine the number of objects that
+   require replication at a future time.
+    SELECT COUNT(*) FROM RMOBJECTS objs, RMCOLLECTIONS colls,
+   RMMGTTRANSITION mgtt WHERE
+     objs.OBJ_ACTIONDATE<'12/31/9999' AND
+         objs.OBJ_MGTCLASSID=mgtt.MGP_MGTCLASSID AND
+         objs.OBJ_STGCLASSID=mgtt.MGP_STGCLASSID AND
+         objs.OBJ_COLLECTIONID=colls.COL_COLLID AND
+         colls.COL_MGTCLASSID=mgtt.MGP_MGTCLASSID AND
+         objs.OBJ_STATUS IN ('A','B') AND
+          mgtt.MGP_SEQUENCENUM < (SELECT COUNT(*) FROM
+   RMMGTTRANSITION
+                WHERE MGP_MGTCLASSID=objs.OBJ_MGTCLASSID)
+    -  Using the result from the query, calculate the additional
+   log space required for the upgrade operation.
+    count (from above query) x 107
+    ------------------------------ % 1 = estimated log pages
+        (logfile capacity)
+   
+   3.) Increase your secondary log space size by using the
+   following UPDATE DATABASE CONFIGURATION command.
+       db2 UPDATE DB CFG FOR <database name> using LOGSECOND
+   <estimated log pages>
+   If you already have a larger log space, you might not need to
+   increase it. Perhaps consider
+   just increasing the number of secondary log files as a safety
+   measure only if you have a
+   very large number of objects pending replication.
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IO10900
+   
+   
+ * REPORTED COMPONENT NAME
+   RESOURCE MANAGE
+   
+   
+ * REPORTED COMPONENT ID
+   5724B1904
+   
+   
+ * REPORTED RELEASE
+   841
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-06-29
+   
+   
+ * CLOSED DATE
+   2009-12-22
+   
+   
+ * LAST MODIFIED DATE
+   2009-12-22
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   RESOURCE MANAGE
+   
+   
+ * FIXED COMPONENT ID
+   5724B1904
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R842 PSY
+   UP

@@ -1,0 +1,139 @@
+Title: IBM IY95715: PROVIDE DOCUMENTATION FOR ITM TEC EVENT MAP FILES - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Severity: 4
+   Approver: dmh
+   
+   Environment:
+   
+   ITM 6.1
+   
+   Problem Description:
+   
+   ESR: I am trying to send ITM6.1 UA data across to TEC. I have
+   changed the om_tec.config file on my TEMS, created a mapping
+   file and cycled the TEMS.
+   
+   However there is not much information on this whole process.
+   
+   What I was really looking for is the syntax to the mapping files
+   which relate a situation to a TEC class. I understand that these
+   mapping files where used for migration from DM to ITM6.1 (I
+   think). I was just trying to find out if we could come with our
+   own mapping files to correlate our ITM6.1 situations directly
+   to a TEC class.
+   
+   Detailed Recreation Procedure:
+   
+   None needed.
+   
+   Related Files and Output:
+   
+   None needed.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  possible use of OPAL website is available.  See PMR for details.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Document how TEC mapping files correlate to ITM situations.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This is currently documented in appendix C of the ITM 6.2 User's
+   Guide. More detailed documentation has also been created and
+   will be documented in a technote searchable on the IBM support
+   site.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IY95715
+   
+   
+ * REPORTED COMPONENT NAME
+   TEMS
+   
+   
+ * REPORTED COMPONENT ID
+   5724C04MS
+   
+   
+ * REPORTED RELEASE
+   610
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2007-03-07
+   
+   
+ * CLOSED DATE
+   2008-02-16
+   
+   
+ * LAST MODIFIED DATE
+   2008-02-19
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

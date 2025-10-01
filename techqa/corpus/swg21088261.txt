@@ -1,0 +1,39 @@
+Title: IBM Request "Move to New OU" does not populate Administration Requests database - United States
+
+Text:
+adminp; administration process; domino administrator; admin requests; administration; move to new OU; OU; rename; Domino Server; Incident 1248118; Server; Administration Process; Re-certification TECHNOTE (FAQ)
+
+QUESTION
+You are attempting to move a user to a new organization unit but the process is not completing. Specifically, you have performed the following steps: 
+
+1. You created a new organization unit (OU) and are moving users to this new OU.
+2. You have the new OU certifier in the /data directory and its document in the Domino Directory.
+3. You open up the Domino Administrator, People & Groups tab.
+4. You highlight one user you intend to move to the new OU. Over on the right, you click Rename.
+5. In the Rename Selected Entries dialog box, you select Request Move to New Certifier.
+6. You choose the original OU certifier, then in the 'Request Move for Selected Entries' dialog box you put in the name of the new OU.
+7. When you click OK, nothing happens (no message in the status bar, no dialog box saying that the request was submitted to the admin requests database successfully or unsuccessfully). You check the Administration Requests database and Certification Log, there are no entries for the OU move.
+
+
+ANSWER
+In this case, a duplicate document for the new Organization Unit was found in the Certificates view of the Domino Directory (same name, same public key, etc.). Domino seemed confused as to which document to compare the cert ID with, so it did nothing when OK was clicked. When the duplicate Certificate document was removed, and the procedure to move a user was followed again, the request was submitted to the admin requests database.
+
+NOTE: This issue occurs when moving a user to a new organization (O), as well as to a new organization unit.
+
+Before removing the duplicate Certificate, it is recommended that you first determine that these are in fact duplicate certificates by comparing the Public key. This can found on the Basics tab of the certificate documents while in Edit mode. If they are found to be legitimate duplicates of one another, it is also recommended that you first rename one of them and only delete it once you have determined it is safe to do so.
+
+Supporting Information:
+
+This issue, as well as other related issues, can be prevented by the following: 
+
+1. Ensure that there are no duplicates of the new OU Cert ID in the /data directory, or in any subdirectory beneath it.
+2. Check the Access Control Lists (ACLs) of the Administration Requests database and the Domino Directory to make sure the correct administration server is specified.
+3. Replication should be working between the Domino Directory of the administration server and its replica on any user's home (mail) server.
+4. It would be prudent to register a few test users and try renaming and recertifying these users before actually changing any live users. This could help ensure the functionality of the administration process and cert ID's before affecting live users.
+
+See pages 941 - 944 of Administering the Domino System, Volume 2 for a complete roadmap of renaming a person with the administration process.
+
+
+
+HISTORICAL NUMBER
+ 180418

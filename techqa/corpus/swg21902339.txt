@@ -1,0 +1,29 @@
+Title: IBM QRadar: Passwords for LDAP and Active Directory local admin accounts - United States
+
+Text:
+AD; LDAP; qradar; password configuration for administrator; ldap password; local password account; password requirements ldap ad; active directory local admin password TECHNOTE (FAQ)
+
+QUESTION
+ When using Active Directory or LDAP, why does the Admin roles require two passwords in QRadar? 
+
+CAUSE
+When using external authentication methods, like AD or LDAP, there must be a fallback account in case the external authentication server encounters a network issue or experiences a failure. When configuring AD or LDAP with QRadar, we require that the admin role be configured with a local password first, then the system uses the LDAP or AD authentication as the primary source for verification. 
+
+ANSWER
+When QRadar authentication method is changed from local to external as Active Directory or LDAP, there are a number of requirements that must be followed: 
+
+
+ 1. When creating an user with Admin Role, a local password needs to be provided. The Admin roles have the local password and the external authentication method in case the external authentication method fails, Admin users can login using the local password. 
+ 2. When creating a user with a non-admin role the password should be left blank, as non-admin users do not require a fall back account, only administrator. 
+ 3. Only Administrative roles have the password stored locally on the QRadar Console. 
+ 4. When the external authentication method is configured this will turn the primary authentication method unless there is a failure in the plugin.
+    
+    Important: For administrators who want to fall back to local passwords with LDAP, should review the following technical note: QRadar: External Authentication Fails Due to Password Fallback Change for Administrators (Updated) [http://www.ibm.com/support/docview.wss?uid=swg22007092].
+
+
+
+----- 
+Where do you find more information? 
+
+
+[/support/docview.wss?uid=swg21902339&aid=1] [http://ibm.biz/QRadar-KC] [/support/docview.wss?uid=swg21902339&aid=2] [https://ibm.biz/qradarforums] [/support/docview.wss?uid=swg21902339&aid=3] [http://ibm.biz/qradarknowledge] [/support/docview.wss?uid=swg21902339&aid=4] [http://ibm.biz/SecSuptUTube] [/support/docview.wss?uid=swg21902339&aid=5] [http://ibm.biz/qradarsoftware] [/support/docview.wss?uid=swg21902339&aid=6] [http://ibm.biz/MyNotification] [/support/docview.wss?uid=swg21902339&aid=7] [http://ibm.biz/SuptRegQuikStart]

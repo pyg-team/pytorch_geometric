@@ -1,0 +1,145 @@
+Title: IBM LO57163: ROAMING: CONFIRMATION IS NEEDED BEFORE NOTES RESTART - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PERMANENT RESTRICTION.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The customer disabled "User should be prompted" option to force
+   users to upgrade to Roaming User.
+   In that case, Notes suddenly shutdown without any confirmation
+   message.
+   The customer is requesting to have another option for prompting
+   confirmation message before shutdown even though "User should be
+   prompted" is disabled.
+   
+   *** Steps to reproduce ***
+   1. Administrator registers one Notes User as non-roaming user
+   (UserA).
+   2. UserA setups Notes Client in PC-A.
+   3. Administrator upgraded UserA as roaming user without "User
+   should be prompted" option (deselect this option).
+   4. UserA setups Notes Client as roaming user in another PC-B.
+   PC-B doesn't shutdown after upgrading to the roaming user.
+   5. UserA login to Notes Client in PC-B.
+   6. Notes Client suddenly restart without any confirmation
+   message in PC-B.
+   
+   *** Analysis ***
+   If Administrator enabled the roaming user with "User should be
+   prompted" option, confirmation message is shown in step 6, and
+   then upgrading to a roaming user is proceed.
+   
+   ========================
+   You have been upgraded to a "roaming user." Your roaming
+   replicas are on your roaming server.
+   Would you like to upgrade this system with those files? If
+   "Convert to roaming now", Notes will shutdown and you will need
+   to restart Notes.
+   
+   - Convert to roaming now
+   - Ask me the next time I start Notes
+   - Never ask me again, I do not want this computer to roam
+   ========================
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  A programming error was found but will not be corrected. It
+    will be a permanent restriction.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A programming error was found but will not be corrected. It
+    will be a permanent restriction.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+ *  This APAR is associated with SPR# ANIA8C8HLZ.
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   LO57163
+   
+   
+ * REPORTED COMPONENT NAME
+   NOTES CLIENT
+   
+   
+ * REPORTED COMPONENT ID
+   5724E6255
+   
+   
+ * REPORTED RELEASE
+   851
+   
+   
+ * STATUS
+   CLOSED PRS
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-12-17
+   
+   
+ * CLOSED DATE
+   2010-12-24
+   
+   
+ * LAST MODIFIED DATE
+   2010-12-24
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

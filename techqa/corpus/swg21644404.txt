@@ -1,0 +1,47 @@
+Title: IBM Enable TEM Web Reputation Scan for HTTPS for Internet Exlporer - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ I want to enable Web Reputation Scan for HTTPS in IE broswer: how do it ? 
+
+ANSWER
+
+1. Run Task "ID 162 - Web Reputation - Enable HTTPS Web Reputation Scanning"
+
+2. Run Web Reputation Blocked - Approved List Wizard to specify https sites to be bocked.
+
+Note :
+
+- Is not possible for WebRep module to block any https sites as it is just used to specify which URL to block. However, there's an option of blocking the ports 443 and 4343 through the Firewall module.
+
+- HTTPS Web Reputation is only supported on Internet Explorer and Mozilla FireFox browsers.
+
+- Internet Explorer will require third-party browser extensions to be enabled:
+
+
+ * 
+ * TmIEPlugInBHO 
+ * 
+ * 
+
+- Internet Explorer Enhanced Security Configuration (IE SEC) has to be turned off or removed: 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ *

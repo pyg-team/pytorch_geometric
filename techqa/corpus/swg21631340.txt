@@ -1,0 +1,53 @@
+Title: IBM Cognos BI does not inform about expired password or allow users to update expired passwords when authenticating against Tivoli Directory Services - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ IBM Cognos BI is configured to authenticate to IBM Tivoli Directory Services through use of an LDAP provider. After the user's password expires in Tivoli the user is not prompted to update his password when logging in to IBM Cognos BI but get's "invalid credentials". 
+Further to this, there is no visual indication presented by Cognos that the password is actually expired nor are expiry warnings displayed in advance like they are for other products connecting to Tivoli LDAP.
+
+Only when an LDAP administrator resets the password on Tivoli Cognos may prompt to update the password. Even then, the update may fail although valid inputs are provided. 
+
+SYMPTOM
+Symptoms indicating issues due to lack of support for specific Tivoli Directory Services features are: 
+
+ * A user is not prompted by IBM Cognos BI although his password is expired and there are grace login attempts remaining. 
+ * A user is prompted to update his password but upon entering valid data and hitting OK the error "CAM-AAA-0045 The call to the LDAP function 'ldap_modify_s' returned with the error code: '53'.DSA is unwilling to perform" is returned. 
+ * A user's credentials get rejected and "Invalid Credentials" is returned after a password expired and no grace logins remain
+
+
+CAUSE
+The IBM Cognos BI LDAP authentication provider by design is generic and does not necessarily support specific features of particular LDAP servers. This applies to IBM Tivoli Directory Services as well, in particular when password policies are in use. 
+
+ENVIRONMENT
+IBM Cognos BI configured to authenticate to IBM Tivoli Directory Server
+
+
+
+DIAGNOSING THE PROBLEM
+ 
+
+ * collect the Tivoli LDAP password policy effective for the user experiencing the issue by having an LDAP administrator issue the following command:
+   idsldapexop -p <port> -D <adminuser_DN> -w <password> -op effectpwdpolicy -d <DN_of_affected_user> 
+ * collect a AAA trace for Cognos
+
+
+
+In the AAA trace one may find LDAP errors for bind and modify requests. 
+RESOLVING THE PROBLEM
+The current implementation of the IBM Cognos BI LDAP authentication provider does not allow to consume and handle extended response codes provided by IBM Tivoli Directory Services. Therefore Cognos is unable to provide warning messages about passwords which will soon expire, expired passwords and grace logins. 
+In particular password updates which are handled by proprietary LDAP controls won't work with the single exception of forced password updates. A forced password update is triggered by using the IBM Tivoli Directory Services password policy attribute "pwdMustChange". If set to true, this attribute triggers the LDAP server to allow authentication for a password reset by an LDAP admin once and instantly prompt the client to update the password. This is done through a different technical approach which is supported by the LDAP provider and therefore the prompting occurs. For updating the passwords the IBM Cognos BI LDAP authentication provider sends an ldap_modify request without additional credentials within the established connection. This implies that one must not use the IBM Tivoli Directory Services password policy attribute "pwdSafeUpdate". This attribute enforces that a client who wants to update a user's password must send the new password along with the old password. This again is not supported. 
+
+To have IBM Cognos BI prompt users to update their password the sole working setup is: 
+
+ * provide valid (not expired) Binding Credentials to the provider
+   Mind that if using "Use Bind Credentials for search" option, the Binding Credentials will require read access to all user accounts. If NOT using that option, the user himself must have proper read access to all mapped attributes and the operational attributes required for password updates of his account. 
+ * ensure that the password policy effective for the user in IBM Tivoli Directory Services does specify "pwdMustChange = true" 
+ * ensure that the password policy effective for the user in IBM Tivoli Directory Services does specify "pwdSafeUpdate = false" 
+ * Ensure Tivoli LDAP users are authorized to update their own password
+
+
+If a user gets rejected upon authentication, have an LDAP admin reset his password, the next time he authenticates, he will be prompted to update his password again. 
+
+Updating the password through forced updates is only supported for user passwords. The Binding Credentials must be valid all time, there is no support for updating them interactively. They can only be managed in the LDAP directly and the Cognos Administrator needs to maintain them in Cognos Configuration.

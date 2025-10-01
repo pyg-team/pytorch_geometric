@@ -1,0 +1,30 @@
+Title: IBM Importing large Excel files into i2 Analyst's Notebook results in OutOfMemory error message - United States
+
+Text:
+out of memory; System.OutOfMemoryException TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Importing a large (21MB) Excel spreadsheet into IBM i2 Analyst's Notebook causes an out of memory condition and the import fails. Smaller Excel files that use the same import specification work successfully. 
+
+CAUSE
+The process that is running the import has exceeded the 2GB limit for a 32 bit OS
+
+ENVIRONMENT
+Windows 7, 32 bit. Installed memory (RAM): 2.0MB
+
+RESOLVING THE PROBLEM
+Install enough memory so that any single process can use the maximum 2GB limit on a 32 bit OS. The OS itself will use at least 1GB and typically 2GB, so having at least 4GB would allow the import process to use the maximum assuming it was the only process running. So realistically, more memory above 4GB should be installed. 
+
+
+
+
+Additionally, you can set a 3GB limit switch on Windows to allow up to 3GB per one process. 
+
+
+WORKAROUND: 
+
+Use a comma-separated value text file (.csv) , or a tab-separated value text file (.tsv) for your import file rather than an Excel file.
+
+Excel 2007 can support around 1 million rows of data, and versions earlier than this could support up to 65,536 rows of data. The potential limitation with importing and exporting to and from Excel would be Microsoft OLE-DB and the memory (RAM) that it uses during the import or export task, which could exceed the maximum 2GB limit for a single process, at which point the task will fail.
+
+Testing has proven that upwards of 10 million rows can be imported from a text file, and would suggest this route for large files as the OLE-DB approach is significantly slower than the text alternative and could potentially hit the 2GB limit.

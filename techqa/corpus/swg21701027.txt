@@ -1,0 +1,37 @@
+Title: IBM After installing Statistics 23.0 on Mac OS X, the License Authorization Wizard (LAW) is no longer auto launched. - United States
+
+Text:
+Statistics 23.0; Mac OS X; Authorization Code; License Authorization Wizard; LAW TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ After installing Statistics 23.0 on Mac OS X you will need to manually launch and activate the software's Authorization Code using the License Authorization Wizard. 
+
+SYMPTOM
+You may see one or more of the following errors when launching Statistics 23.0 if the software's Authorization Code has not been activated. 
+
+7001/18
+7002/12 
+
+7002/26
+
+
+CAUSE
+By design per development after the successfully installation of Statistics 23.0 on Mac OS X, the License Authorization Wizard (LAW) no longer auto launches.
+
+
+ENVIRONMENT
+Mac OS X
+
+
+
+RESOLVING THE PROBLEM
+After installing Statistics 23.0 on Mac OS X you will need to manually launch and activate the software's Authorization code using the License Authorization Wizard. 
+
+The License Authorization Wizard is located in the same folder in Applications that the programs application is that you use to launch Statistics 23.0.
+
+You can manually activate your Authorization Code(s) by clicking the License Authorization Wizard icon in the IBM SPSS Statistics application folder.
+By default, this is /Applications/IBM/SPSS/Statistics/23
+
+RELATED INFORMATION
+ Need more help? Our Statistics forum is Live! [https://developer.ibm.com/answers/topics/statistics.html?smartspace=predictive-analytics]
+Need more help? Our Licensing forum is Live! [https://developer.ibm.com/answers/topics/spsslicensing.html]

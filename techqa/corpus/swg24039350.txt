@@ -1,0 +1,90 @@
+Title: IBM Tivoli Netcool/OMNIbus 7.3.1 Fix Pack 13, 7.3.1-TIV-NCOMNIbus-FP0013 - United States
+
+Text:
+OMNIbus 731; FP0013; OMNIbus 7.3.1; 7.3.1.13 DOWNLOADABLE FILES
+
+ABSTRACT
+ This fix pack is a cumulative fix release and addresses APARs and internally found issues since the release of OMNIbus 7.3.1 Fix Pack 12. 
+
+DOWNLOAD DESCRIPTION
+The following defect solutions are included in this fix pack: 
+
+IV72682
+When the 'KeepLastBrokenSAF' property is set to '1' and any
+corrupt records are found during the forwarding of
+store-and-forward cached alerts, the original SAF file should be
+retained and renamed to a file with the suffix '.broken'. Due to
+regression introduced in fixpacks 7.3.0.6 and 7.3.1.2, this was
+not happening. The regression is also present in fixpacks 7.4.0.5
+and 8.1.0.2 and earlier fixpacks of the 7.4 and 8.1 releases.
+This has now been fixed.
+
+
+IV73123
+The LDAP libraries used by Tivoli Netcool/OMNIbus were updated to
+TDS version 6.3.0.36 to address potential security issues. Note:
+Not available for platforms HPUX and HPUXIA.
+
+
+IV73107
+The JRE for Tivoli Netcool/OMNIbus V7.3.1 and V7.4.0 was updated
+to IBM JRE 6.0 SR16 FP4 to address possible security issues.
+
+
+IV73963
+There is an internal limit of 16K on a 'create procedure' SQL
+statement. Previously, the system issued an error message for
+statements that exceeded 32K but would core dump on statements
+that were between 16K and 32K in size. The code has been fixed
+to reject a 'create procedure' statement that exceeds 16K and log
+an error message.
+
+
+IV74026
+The GSKit component used by Tivoli Netcool/OMNIbus is upgraded to
+version 8.0.50.42. This is done to address a potential security
+problem that is fixed in this version of GSKit.
+
+PREREQUISITES
+This fix pack installs on any GA Release (including GA fix packs) of Tivoli Netcool/OMNIbus 7.3.1.
+
+INSTALLATION INSTRUCTIONS
+Installation
+============
+
+UNIX
+----
+
+IMPORTANT: Before installing this fix, ensure that all Tivoli Network
+Management applications on your computer have been shutdown.
+
+Extract the contents of 7.3.1.13-TIV-NCOMNIbus-<arch>-FP0013.tar
+in to a temporary directory, replacing the <arch> placeholder with the
+string identifying your platform.
+
+From within the directory enter the following command to install this fix
+interactively.
+
+./install.bin
+
+Windows
+-------
+
+IMPORTANT: Before installing this fix, ensure that all Tivoli Network
+Management applications on your computer have been shutdown.
+
+Extract the contents of 7.3.1.13-TIV-NCOMNIbus-win32-FP0013.zip
+in to a temporary directory.
+
+To install this fix interactively double click install.exe.
+
+DOWNLOAD PACKAGE
+
+
+
+
+
+
+Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options 7.3.1-TIV-NCOMNIbus-FP0013 24 Jul 2015 English 999999999 HTTP [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~Tivoli&product=ibm/Tivoli/Tivoli+Netcool+OMNIbus&release=7.3.1.13&platform=All&function=all] 
+ [/support/docview.wss?uid=swg24039350&aid=1]Problems (APARS) fixed [/support/docview.wss?uid=swg24039350&aid=2]Problems (APARS) fixed
+IV72682, IV73123, IV73107, IV73963, IV74026, IV02275, IV02376, IV02854, IV03306, IV03376, IV03548, IV05509, IV06469, IV06741, IV07754, IV07762, IV07752, IV07616, IV08432, IV08591, IV08759, IV08717, IV09109, IV09178, IV09804, IV09805, IV10361, IV10583, IV10787, IV15321, IV12599, IZ98684, IZ98933, IZ98934, IZ98940, IZ98943, IZ98797, IZ98950, IZ98948, IZ98951, IZ98930, IZ98947, IZ98949, IZ98928, IZ98931, IZ98935, IV00418, IZ98942, IZ98939, IV00422, IZ99389, IZ96909, IZ99882, IV00721, IV00720, IZ98252, IZ97904, IZ89500, IZ89941, IV01895, IV00927, IV03123, IZ98954, IZ98778, IV11738, IV03986, IV07175, IV08834, IV11074, IV11903, IV12215, IV12301, IV12312, IV12632, IV12946, IV13130, IV13303, IV14461, IV14474, IV14576, IV16502, IV16605, IV17354, IV18086, IV19140, IV20835, IV20199, IV21469, IV23496, IV24763, IV24608, IV20352, IV23354, IV22826, IV15415, IV23925, IV27611, IV28036, IV21763, IV25000, IV27193, IV28266, IV30064, IV32015, IV29746, IV32894, IV34244, IV34002, IV26844, IV32957, IV35478, IV33495, IV34550, IV37018, IV37451, IV37316, IV38671, IV38627, IV39542, IV37335, IV36686, IV35914, IV37676, IV41237, IV36066, IV33104, IV43001, IV43447, IV44077, IV44138, IV44162, IV36731, IV44511, IV40187, IV29952, IV47894, IV51638, IV38674, IV50266, IV51848, IV53291, IV54051, IV54356, IV55408, IV57465, IV59581, IV59959, IV56609, IV55784, IV56455, IV64030, IV63169, IV63973, IV64823, IV65579, IV62328, IV66640, IV67129, IV66765, IV68690, IV70540, IV71122, IV69143

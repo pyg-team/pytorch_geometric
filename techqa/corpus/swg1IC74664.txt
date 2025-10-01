@@ -1,0 +1,120 @@
+Title: IBM IC74664: FEA: THE MAXIMUM NUMBER OF DATABASES THAT CAN BE OPENED IN A SESSION SHOULD BE INCREASED, CURRENT LIMIT IS 8 - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Because customer uses few databases and have nested procedure
+   calls owned by different users, this limit should be increased
+   to be more than the current limit of 8.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * Problem is platform independent                              *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * The maximum number of concurrent open databases in a session *
+   * currently has a limit of 8 but due to nested procedures      *
+   * opening multiple database we were hitting this limit and     *
+   * getting error -26600.                                        *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Upgrade to 11.50.xC9.                                        *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *  http://publib.boulder.ibm.com/infocenter/idshelp/v115/index.jsp [http://publib.boulder.ibm.com/infocenter/idshelp/v115/index.jsp]
+   For download information, go to:
+   http://www.ibm.com/support/fixcentral [http://www.ibm.com/support/fixcentral]
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC74664
+   
+   
+ * REPORTED COMPONENT NAME
+   IBM IDS ENTRP E
+   
+   
+ * REPORTED COMPONENT ID
+   5724L2304
+   
+   
+ * REPORTED RELEASE
+   B15
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-02-23
+   
+   
+ * CLOSED DATE
+   2011-09-27
+   
+   
+ * LAST MODIFIED DATE
+   2011-09-27
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * RB15 PSN
+   UP

@@ -1,0 +1,138 @@
+Title: IBM HMC Classic View:  Collecting PEDBG from the HMC - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This document describes how to collect diagnostic data from the HMC that might be required for problem determination. The instructions refer to the enhanced UI used in Version 7 and Version 8.8.6 and earlier of the HMC. 
+
+RESOLVING THE PROBLEM
+This document describes how to collect HMC diagnostic data (pedbg data) for use with problem determination. For issues involving servers managed by two HMCs, the data should be collected on both HMCs. 
+
+Section 1. Preparing to Collect the Data
+
+Step 1: (Optional) Enable remote command execution 
+To collect pedbg remotely you must: 
+
+o Enable remote command execution 
+HMC Management > Remote Command Execution o Configure the HMC firewall to allow remote ssh connections 
+HMC Management > Configure Network Settings, Lan Adapters Tab, Select the interface used for remote access, click Details, then the Firewall tab. Secure Shell will be selected by default, click Allow Incoming button, then OK, OK to save. o Obtain a ssh client such as PuTTY For further information see IBM support document "Configuring the Version 7 HMC to Accept SSH Connections and Remote Commands" at http://www.ibm.com/support/docview.wss?uid=nas8N1012875 [http://www.ibm.com/support/docview.wss?uid=nas8N1012875] 
+
+Step 2: Ensure a user ID of hscpe with a task role of hmcpe exists on the HMC. 
+The hcpe id is not a built-in id like hscroot, it must be created. To administer HMC users you must be logged in as hscroot or a hmcsuperadmin user. 
+
+Locally (at the HMC): Open a restricted shell locally on the HMC by selecting HMC Management in the left frame. Select Open a Restricted Shell in the right frame. 
+
+Remotely: Open a ssh session (PuTTY) to the HMC. o Determining if the hscpe user ID exists and what roles are assigned to it. 
+
+lshmcusr --filter "names=hscpe"
+
+If the hscpe user ID exists, you will receive a reply similar to the following:
+
+name=hscpe,taskrole=hmcpe,description=Service,pwage=99999,resourcerole=
+
+If the hscpe user ID does not exist, you will receive the message No results were found. Continue with Step C. o Creating the hscpe user ID :
+
+mkhmcusr -u hscpe -a hmcpe -d IBM Service
+
+When this command is run, a prompt will appear to type the password for the new user. o Reseting a lost password
+
+chhmcusr -u hscpe -t passwd
+
+When this command is run, a prompt will appear to type the new password for the user. 
+Section 2. Collecting Data Using PEDBG 
+
+Step 1: Log in as user hscpe. 
+You must be logged in to a restricted shell terminal session as user hscpe with role hmcpe to collect pedbg. 
+
+Remotely: Log into a ssh (PuTTY) session with user hscpe. 
+
+Locally: Log into the local HMC as user hscpe then open a restricted shell by selecting HMC Management in the navigation area, then select Open a Restricted Shell in the work frame (right frame). 
+
+Optional: Switch to user hscpe when Logged on as Another User 
+The following uses ssh to switch to user ID hscpe when the user is already logged on with another user ID. HMC Management > Remote Command Execution must be enabled. In the restricted shell terminal run the command: 
+
+ssh hscpe@localhost 
+
+If prompted to verify authenticity of the host, reply yes and press enter. 
+The authenticity of host 'localhost (127.0.0.1)' can't be established. 
+RSA key fingerprint is 5c:c7:df:d0:a0:14:e2:5b:45:5d:09:a7:0f:7a:77:5c. 
+Are you sure you want to continue connecting (yes/no)? yes 
+Failed to add the host to the list of known hosts (/home/hscroot/.ssh/known_hosts). 
+Password: 
+Last login: Thu Jan 24 14:23:49 2013 from localhost.localdomain 
+hscpe@hmc770:~> 
+
+Step 2: Recreate the problem. 
+If possible, recreate the problem prior to collecting pedbg. Otherwise, note the HMC date and time. Notify your support representative of the date and time of the problem being investigated relative to the HMC clock and HMC time delta if it is incorrect. For example "The problem occurred approximately 2pm on 3/16. The HMC time is 30 minutes slow so that would be about 1:30pm HMC time.". 
+
+Step 3: Collect pedbg 
+Note: For problems involving managed servers managed by two HMCs, perform this on both HMCs. 
+Run PEDBG command 
+Run the pedbg command with the options specified by the support representative. 
+
+If the support representative did not specify the options (or for issues that may need more than a few hours of historic data) type the following: 
+pedbg -c -q 4 
+
+If the problem was recreated immediately prior to pedbg collection, the "-q 3" option can typically be used (this results in a much smaller file): 
+pedbg -c -q 3 
+
+
+Section 3. Getting the Data to IBM 
+There are many ways the data can be sent to IBM. The following is a list of preferred methods, starting with the quickest and easiest method. The method used varies depending on the type of network access available to the HMC and the availability of media. o FTP directly from HMC to IBM
+
+If the HMC has a network connection that allows FTP to the Internet, type the following command to send the file directly to IBM Support:
+
+sendfile -f /dump/HMClogsxxxxxxxx.zip -h testcase.software.ibm.com -d /toibm/os400/ -n nnnnn.bbb.ccc.HMClogs.zip -u anonymous --passwd noone@nowhere.com
+
+NOTE: At some point in time, IBM will remove anonymous login. Refer to this URL for information to obtain an IBM ID and password.
+
+http://www-01.ibm.com/support/docview.wss?uid=nas8N1022576 [http://www-01.ibm.com/support/docview.wss?uid=nas8N1022576]
+
+Where :
+
+Parameter Reference -f The pedbg zip file name created in Section 2, Step 3. The command ls /dump can be used to display the file name.
+Note: Type "/dump/HMClo" then hit the tab key to fill in the name using the shell's tab completion feature. -n pedbg zip file renamed to start with pmr number in the format nnnnn.bbb.ccc.HMClogsxxxxxxxxx.zip where:  * nnnnn
+
+Problem Number  * bbb
+
+Branch Number  * ccc
+
+Country Code (United States = 000)  * HMClogsxxxxxxxxx.zip
+
+The pedbg zip file name created in Section 2, Step 3. The command ls -ltr /dump can be used to display the file name. -d Directory to upload to: For ibm i /toibm/os400/ ; for AIX /toibm/aix/ o Use removable media (USB flash drive) to move the pedbg to another workstation with Internet access.
+To copy the pedbg file to media:
+
+a Insert the formatted USB flash drive. For USB, wait several seconds for the USB device to be detected.
+b Type the command: pedbg -c -q 9
+c Reply yes to the prompt "Would you like to move zip file to a DVD or other device?"
+d Enter the device name from the list when prompted. 
+The device name is the mount point for the target device. For example, for the first USB flash drive its typically "/media/sdb1".
+
+Once on USB flash, use another workstation to upload the data. See "Sending the pedbg to IBM from another workstation or server with internet access" below. o Use SCP or FTP to copy the pedbg file to another workstation with Internet access.
+
+If another server or workstation on the network has Internet access (e-mail or FTP) and network access to the HMC, then the data can be copied to the other server using FTP or secure copy. It can then uploaded to BM support.
+
+SCP (secure copy)
+SCP (secure copy) can be used to copy the file from the HMC. To use SCP from a Microsoft Windows PC requires the installation of a 3rd party Windows secure copy utility such as PuTTY pscp.
+Example of copying the file to a PC using pscp:  * "C:\Program Files\PuTTY\pscp" -scp hscpe@myhmc:/dump/HMClogs.cs6hmcb0312H04.zip c:\temp\
+
+
+For further information on this process, refer to IBM Support document Copying an HMC File to a Microsoft Windows PC Using PuTTY. at http://www.ibm.com/support/docview.wss?uid=nas8N1015827 [http://www.ibm.com/support/docview.wss?uid=nas8N1015827] 
+
+FTP/SFTP
+Use the sendfile command to FTP the data from the HMC to the other server. Refer to the first option above for an example of the syntax or use the --help option. o Sending the pedbg to IBM from another workstation or server with internet access
+
+a. Rename the pedbg file
+
+Rename the pedbg file, adding the pmr information to the beginning of the file name using the format:
+nnnnn.bbb.ccc.HMClogsxxxxxxxxx.zip
+
+Where :
+
+Parameter Reference HMClogsxxxxxxxxx.zip is the pedbg file name. nnnnn Problem Number bbb Branch Number ccc Country Code (United States = 000) 
+b. Send the file to IBM
+Select the preferred server for your geography to upload the pedbg file: Preferred servers depending on geography [/support/docview.wss?uid=nas8N1018878&amp;aid=1] Geography Server [/support/docview.wss?uid=nas8N1018878&amp;aid=1] North America Testcase https://testcase.boulder.ibm.com [https://testcase.boulder.ibm.com] Europe ECuRep http://www.ecurep.ibm.com/app/upload [http://www.ecurep.ibm.com/app/upload] Asia Pacific Testcase or EcuRep [/support/docview.wss?uid=nas8N1018878&amp;aid=1] For further information including command line FTP instructions see Instructions for Sending Data to IBM Support at http://www-01.ibm.com/support/docview.wss?uid=nas8N1019224 [http://www-01.ibm.com/support/docview.wss?uid=nas8N1019224] 
+
+HISTORICAL NUMBER
+ 451766819

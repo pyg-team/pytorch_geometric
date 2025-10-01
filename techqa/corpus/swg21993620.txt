@@ -1,0 +1,15 @@
+Title: IBM Framework Manager import fails with BMT-IMP-0002 - United States
+
+Text:
+Framework Manager Metadata JDBC TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When attempting to import metadata, user received the following error in Framework Manager:
+
+BMT-IMP-0002 Failed to execute metadata request. jdbcSQLExceptionCAF 
+
+CAUSE
+The user in question does not have permission to generate metadata on the database side
+
+RESOLVING THE PROBLEM
+Have DBA grant sufficient permissions to the user in question such that they can retrieve metadata

@@ -1,0 +1,52 @@
+Title: IBM Transition rolled back when trying to install object store addon - United States
+
+Text:
+Add-on; time out; roll back TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When trying to install an IBM FileNet P8 Content Engine (CE) object store addon, an E_TRANSACTION_FAILURE occurs, the transaction is rolled back and the object store addon fails to install. 
+
+SYMPTOM
+The addon installation wizard popup shows the transaction was rolled back and the addon was not installed. 
+
+The p8_server_error.log and WAS SystemOut.log both show:
+E_TRANSACTION_FAILURE: A transaction problem has occurred. The current
+transaction state is STATUS_MARKED_ROLLBACK and it was expected to be 
+active failedBatchItem=0 errorStack={ 
+Indications of long running DB transactions:
+p8_server_trace.log:
+2012-05-31T14:29:13.686Z 50E550E5 DB FNRCE0000D - DEBUG SQL executed
+in 174625 milliseconds: SQL: "CREATE INDEX UI_u4d_sourcedocument ON
+DocVersion (u4d_sourcedocument) "
+
+p8_server_trace.log:
+2012-05-31T14:32:16.574Z 50E550E5 DB FNRCE0000D - DEBUG SQL executed
+in 181935 milliseconds: SQL: "CREATE INDEX UI_u4e_ownerdocument ON
+DocVersion (u4e_ownerdocument) " 
+
+
+CAUSE
+When the Publishing addon is installed, indexes are created. The Total Transaction lifetime timeout and Maximum Timeout values in the WebSphere application server (WAS) must be set high enough to allow the create transaction to complete.
+
+
+ENVIRONMENT
+WAS/Windows/Oracle
+
+
+
+DIAGNOSING THE PROBLEM
+Turn on CE tracelogging for DB 
+
+Run the Install AddOn Wizard 
+
+Disable tracing once the addon fails to install
+
+
+RESOLVING THE PROBLEM
+In the WAS console, increase the Total Transaction lifetime timeout and Maximum Timeout to 600. This should be sufficient for most environments. However, an increase to 900 may be needed depending on the size of the DB and the length of the previous timeouts. See link under Related Information for steps to increase the timeout. 
+
+ 1. Restart WAS 
+ 2. Install the Publishing Addon
+
+RELATED INFORMATION
+ Set WebSphere environment variables [http://www-01.ibm.com/support/knowledgecenter/SSNW2F_5.1.0/com.ibm.p8.planprepare.doc/p8ppi147.htm]

@@ -1,0 +1,194 @@
+Title: IBM IV98230: DOC MS-SQL SERVER DATA SOURCE CONFIGURATION - NOT ALL CONFIGURATION ARE DOCUMENTED. - United States
+
+Text:
+  DIRECT LINKS TO FIXES
+7.1.0-TIV-NCI-ZLINUX-FP0012 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=7.1.0-TIV-NCI-ZLINUX-FP0012&source=SAR]
+7.1.0-TIV-NCI-WINDOWS-FP0012 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=7.1.0-TIV-NCI-WINDOWS-FP0012&source=SAR]
+7.1.0-TIV-NCI-SOLARIS-FP0012 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=7.1.0-TIV-NCI-SOLARIS-FP0012&source=SAR]
+7.1.0-TIV-NCI-LINUX-FP0012 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=7.1.0-TIV-NCI-LINUX-FP0012&source=SAR]
+7.1.0-TIV-NCI-AIX-FP0012 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=7.1.0-TIV-NCI-AIX-FP0012&source=SAR]
+IBM Tivoli Netcool/Impact V7.1.0 Fix Pack 12 (7.1.0-TIV-NCI-FP0012) [http://www-01.ibm.com/support/docview.wss?uid=swg24044312]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  product: Impact
+   release: 7.1.0
+   
+   problem:  attempt to configure new impact data model
+         test connection fails with
+   
+   some example errors:
+   
+    Error 503: JDBC Connection Pool could not connect to
+    datasource as:...
+   
+    ERROR
+    [JDBCVirtualConnectionWithFailOver] JDBC
+    Connection Pool received error trying to connect to data source
+    at:
+   
+    jdbc:sqlserver://IMCLTREMRPTP31\PROD:51433;databaseName=<table>
+    java.util.concurrent.ExecutionException:
+    java.net.UnknownHostException:<hostname>\<instance>
+   
+    .
+    Caused by:
+    java.net.UnknownHostException:<hostname>\<instance>
+    at java.net.AbstractPlainSocketImpl.connect
+   
+   
+   - already tried updating driver...
+     download the latest MS-SQL driver from Microsoft's
+     website  (sqljdbc_6.0.8112.100_enu.tar.gz).
+   
+   
+     https://www.microsoft.com/en-us/download/details.aspx?id=11774 [https://www.microsoft.com/en-us/download/details.aspx?id=11774]
+   
+   - and then because Impact 7.1 runs Java 7 extract the Java 7
+     compatible driver (enu/jre7/sqljdbc41.jar).
+   
+   - Moved sqljdbc_6.0/enu/jre7/sqljdbc41.jar to
+         /opt/IBM/tivoli/impact/dsalib
+   -  Stop/Started Impact
+   
+   - Examples of things to document:
+   
+   To use Windows authentication - add ;integratedSecurity=true to
+   the database name, via the GUI
+   
+   
+   i.e.  the ds file will look like this.
+   
+   <Data
+   source>.MS-SQLServer.BACKUPDATABASE=database;integeratedSecurity
+   \=true
+   
+   or use the GenericSQL DSA.
+   
+   JDBCDRIVER=com.microsoft.sqlserver.jdbc.SQLServerDriver
+   
+   and
+   
+   1) Integrated security is supported by the jdbc on windows
+      operating system only. That is using
+             integratedSecurity=true.
+       If thisoption is used, it looks for the sqljdb_auth.dll file
+       in the library path.
+       That was why I mentioned, it was dll and can't be seen by
+       non-windows operating systems.
+   
+   
+   2) If you want to use integrated security with any other
+      operating system that is supported by MSSQL JDBC (in our
+      case Linux), another  option has to be added which is
+          authenticationScheme=JavaKerberos
+      This options tells MSSQL JDBC that it's not windows and
+      should use kerberos instead.
+   
+   
+   
+   
+   
+   
+   - at time of doc apar creation,total update needed is not
+      known. L3 is still testing.   and complete documentation
+      should be published in Impact guides under section
+   
+      "MS-SQL Server data source configuration"
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The documentation for 710 FP12 will be updated.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV98230
+   
+   
+ * REPORTED COMPONENT NAME
+   NC/I DSA MS SQL
+   
+   
+ * REPORTED COMPONENT ID
+   5724O66SQ
+   
+   
+ * REPORTED RELEASE
+   710
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-07-20
+   
+   
+ * CLOSED DATE
+   2017-10-20
+   
+   
+ * LAST MODIFIED DATE
+   2017-10-20
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

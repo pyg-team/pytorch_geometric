@@ -1,0 +1,41 @@
+Title: IBM SEAS 2.2.00 - Not connecting to the correct URL for CRL checking. - United States
+
+Text:
+STERLINGNFX TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ SEAS 2.2.00 - Not connecting to the correct URL for CRL checking. 
+
+SYMPTOM
+
+
+We have recently upgraded to SEAS 2.2 & SSP v3.2. Now, after testing with each of our trading partners we have discovered one that does not work. We can receive from node frbcajcd02 but we can not send to it. This node uses a different ldap for CRL checking than the rest of our nodes. For some reason it attempts to use the wrong LDAP to CRL check and fails. 
+
+I noticed this somewhat strange behaivior in the previous version of SEAS. For some reason it would attempt to talk to localhost;389 first, then it would try 166.123.218.100;389 which is our local LDAP (DEVDPS), then it would finally try FRB_ECRL and it would work. I never understood why it tried localhost & DEVDPS first. It seems the new SEAS does similar things but fails rather than continuing to search. 
+
+
+
+c112140.SEAS Definition.docx [/support/docview.wss?uid=swg21554701&aid=2] - c112140.SEAS Definition.docx [/support/docview.wss?uid=swg21554701&aid=1] 
+
+HISTORICAL NUMBER
+ NFX7638 
+
+PRODUCT ALIAS/SYNONYM
+ 
+
+Escalation ID
+
+
+112140
+
+
+Severity
+
+
+Normal
+
+
+Type
+
+
+NormalFix

@@ -1,0 +1,72 @@
+Title: IBM Oracle SQL DELETE and SQL INSERT Statements do not auto commit (patch issue) - United States
+
+Text:
+STERLINGNFX TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Oracle SQL DELETE and SQL INSERT Statements do not auto commit (patch issue) 
+
+SYMPTOM
+
+
+Automatic commit on database transactions is disabled for custom pools with a type=remote and transaction=true, causing latency in commit of database transactions (waits on commit) in business processes. Issue introduced in patch 4316 and patch 4217.
+
+Possible symptoms:
+
+(1) Lightweight JDBC adapter LWJDBC when using an Oracle custom pool and pool.type is set to remote may have noticeably longer commit times for insert and delete after applying patch.
+
+(2) Unable to purge a table on Oracle 10GR2 SGBD, when using custom pool and pool.type is set to remote.
+
+When we execute the request on Oracle directly, no problem. When the request is done on GIS, the result is OK, but nothing is removed on Oracle (the data are not purged, but the DB is locked).
+After investigation, the request is executed, but not committed.
+
+Error Message No error messages given until the connection between GIS and Oracle is broken where you will then see the rollback begin in Oracle.
+
+
+RESOLVING THE PROBLEM
+
+
+Please apply Sterling Integrator, Release 5.0 Build 5001 or later. Please apply Gentran Integration Suite, Release 4.3 Build 4319 or later. Please apply Gentran Integration Suite, Release 4.2 Build 4220 or later. Workaround until patching is to change pool.type to local, or do not use mypool.transaction parameter in the pool. See usage of transaction parameter in Services and Adapters Guide for Lightweight JDBC Adapter.  
+
+HISTORICAL NUMBER
+ NFX5565 
+
+PRODUCT ALIAS/SYNONYM
+ 
+
+Function Area
+
+
+Workflow Engine
+
+
+Escalation ID
+
+
+1372845
+
+
+Fix ID
+
+
+180702
+
+
+Severity
+
+
+Normal
+
+
+Type
+
+
+NormalFix
+
+
+Build
+
+
+5001
+4220
+4319

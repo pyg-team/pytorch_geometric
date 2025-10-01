@@ -1,0 +1,67 @@
+Title: IBM Composite Platform Installation Tool (CPIT) throws - Error:  Missing packages: - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ After moving and renaming the install media for FileNet P8 Platform 5.0 Composite Platform Installation Tool to a directory for the installer to be able to find and install the applications. The Composite Platform Installation Tool throws an error message: Missing packages" 
+
+SYMPTOM
+Composite Platform Installation Tool install log shows the following: 
+
+Mon Mar 21 09:25:07:269 [INFO] Error: Missing packages: 
+
+Mon Mar 21 09:25:07:269 [INFO] C:\P8CompositeInstall\tds.zip, 
+C:\P8CompositeInstall\tdsdb2.zip, 
+C:\P8CompositeInstall\was.zip, 
+C:\P8CompositeInstall\wasupd.zip, 
+C:\P8CompositeInstall\ce.zip, 
+C:\P8CompositeInstall\cec.zip, 
+C:\P8CompositeInstall\pe.zip, 
+C:\P8CompositeInstall\pec.zip, 
+C:\P8CompositeInstall\wpxt.zip
+
+Mon Mar 21 09:25:07:269 [INFO] Specify another location or copy the required files to this location before you proceed.
+
+
+CAUSE
+On certain Microsoft Window versions, the default action is to hide the extension of known file types.
+
+
+ENVIRONMENT
+Microsoft Windows
+
+
+
+DIAGNOSING THE PROBLEM
+Review the CPIT_Install.log
+
+
+
+RESOLVING THE PROBLEM
+ There are two options to resolve this issue: 
+
+ * When renaming the media for CPIT to install, do not add the file type extension.
+   
+   eg: When renaming Content Engine media (CZS02ML.zip) to ce as per the IBM FileNet P8 documentation:
+   
+   CZS02ML to ce do not rename as ce.zip if the Microsoft Windows default of hiding known file extensions is enabled, as the file will now be called ce.zip.zip, while Microsoft Windows Explorer will only show the file as ce.zip while hiding the extra .zip as it is a known file extension.
+   
+   
+ * Change the Microsoft Windows behaviour.
+   
+   1. Windows control panel 
+   
+   2. Folder Options 
+   
+   3. Show hidden files and folders 
+   
+   4. Uncheck, Hide extensions for known file types. 
+   
+   5. Then take corrective action to give the file the correct name values.
+   
+   
+
+RELATED INFORMATION
+ CPIT - Preparing for the installation [http://publib.boulder.ibm.com/infocenter/p8docs/v5r0m0/index.jsp?topic=/com.ibm.p8.install.doc/p8pci003.htm]
+Microsoft - Show hidden files and folders [http://windows.microsoft.com/en-US/windows-vista/Show-hidden-files]

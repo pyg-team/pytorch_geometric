@@ -1,0 +1,100 @@
+Title: IBM Service Integration Bus Destination Handler, Version 1.1 - United States
+
+Text:
+SIB SIBus SIBDestHandler DOWNLOADABLE FILES
+
+ABSTRACT
+ A tool to view, move, copy, delete, save and restore messages in the default messaging provider for IBM WebSphere Application Server version 6.0 and later. 
+
+DOWNLOAD DESCRIPTION
+The IBM Service Integration Bus Destination Handler tool provides a flexible interface to perform a range of different actions on messages, which would otherwise require custom coding, or a number of separate and time consuming manual steps. 
+
+Actions can be run once to perform an individual task, or the tool can be deployed as a WebSphere Application Server scheduler task to regularly check the contents of an exception destination and provide appropriate handling of messages based on the set of rules configured.
+
+A graphical user interface (GUI) is provided to perform actions interactively and create configuration files. The GUI also provides facilities to send test messages to queues or topics. Screenshot below.
+IBM Service Integration Bus Destination Handler GUI screenshot [/support/docview.wss?uid=swg24021439&aid=1] [/support/docview.wss?uid=swg24021439&aid=1]
+
+The actions which can be performed upon a message by the tool include:
+- Printing out the properties and body of messages in a readable form
+- Moving messages to a different queue point
+- Copying messages to a another destination
+- Deleting messages from a queue point or subscription
+- Resubmitting messages from an exception destination back to the exception problem destination
+- Saving binary copies of messages to files
+- Restoring messages from files to destinations
+- Sending e-mails to administrators containing details of messages
+
+The actions can be performed on all messages on a particular destination, or on a subset of those messages. Messages can be selected based on JMS headers. Messages containing text can be selected based on their contents, including XPath selection for messages containing XML formatted data.
+
+Possible uses
+- Gathering a snapshot of the contents of a queue to send to an application developer, or IBM customer support for investigation
+- Searching the contents of a queue for an individual message or group of messages
+- Examining the contents of a message which cannot be processed by an application
+- Handling a case where a message has been sent to the wrong queue point
+- Moving messages from a queue point where no application is available to consume them
+- Moving messages to a different bus
+- Moving messages that can never be processed from an exception destination to a permanent failure destination
+- Resubmitting messages from an exception destination after restarting a database or other system required to process them
+- Copying messages from a production bus to a test bus for investigation
+- Creating a copy of a set of JMS messages sent by an application to use multiple times in testing
+- Loading a set of JMS messages from disk onto a destination as the input for a test
+- Configuring an exception destination handler to inform an administrator when certain conditions occur
+
+developerWorks forum
+
+The following forum topic on developerWorks exists as a place to discuss the tool:
+IBM Service Integration Bus Destination Handler - Q&A [https://www.ibm.com/developerworks/community/forums/html/topic?id=6a8691d9-d72f-4aaa-bf52-a670ee1fe8b2]
+
+Skill level required
+Experience of using the default messaging provider for WebSphere Application Server.
+
+This includes use for JMS messaging within applications, or as part of the runtime of another product such as IBM WebSphere Process Server or IBM WebSphere Business Monitor.
+
+New in this release
+Version 1.1.6:
+- Browsing messages larger than 1024b via a JMXConnection
+Version 1.1.5:
+- Viewing messages queued for delivery on Service Integration Bus links
+- Body-based selection of messages for administrative (JMX) connections
+- Setting of property types on send message dialog
+- Minor bug fixes
+Version 1.1.4:
+- Minor bug fixes
+Version 1.1.3:
+- Bug fix: RawDumpAction created empty files for bytes messages
+Version 1.1.2:
+- Graphical user interface
+- Matching of messages containing text data, including using XPath expressions
+- Viewing messages on remote queue and publication points
+- Masking passwords in configuration files
+- Limiting of the number messages a rule will match per run
+- A number of other minor improvements
+Version 1.0.2:
+- Initial release
+
+Details
+Released: 23Dec08
+Last updated: 25Apr13
+Current Version: 1.1.5
+
+Note: The version number shown in the right-hand pane is the version of WebSphere Application Server this tool applies to. The date is the last web page refresh.
+
+INSTALLATION INSTRUCTIONS
+Download and unzip the binary package. Follow the instructions contained in readme.html within the package.
+
+DOWNLOAD PACKAGE
+
+
+
+
+
+Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options 
+What is DD? [http://www6.software.ibm.com/dldirector/doc/DDfaq_en.html] sib.desthandler.1.1.6.zip 25 Apr 2013 English 2055517 FTP [ftp://public.dhe.ibm.com/software/websphere/appserv/support/tools/sibdesthandler/sib.desthandler.1.1.6.zip] DD 
+TECHNICAL SUPPORT
+ This tool is provided in good faith and AS-IS. There is no warranty or further service implied or committed and any supplied sample code is not supported from IBM product service channels.
+
+You can submit a question using the 'rate this page' below, or preferably by using the developerWorks forum listed in the description section above. A response is not guaranteed when using either route to submit your question.
+
+Read the license information contained within the zip file to determine if you want to use it. 
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration WebSphere Process Server SupportPac AIX, HP-UX, i5/OS, Linux, Solaris, Windows, z/OS 7.0, 6.1, 6.0.2 Business Integration WebSphere Business Monitor AIX, HP-UX, Linux, Linux zSeries, Solaris, Windows, z/OS 7.5.1, 7.5, 7.0, 6.2, 6.1, 6.0.2 Application Servers WebSphere Application Server for z/OS z/OS 8.5, 8.0, 7.0, 6.1, 6.0 Business Integration WebSphere Enterprise Service Bus AIX, HP-UX, Linux, Linux zSeries, Windows, z/OS 7.5.1, 7.5, 7.0, 6.2 Business Integration IBM Business Process Manager Advanced AIX, Linux, Linux zSeries, Solaris, Windows, z/OS 8.5, 8.0, 7.5.1, 7.5

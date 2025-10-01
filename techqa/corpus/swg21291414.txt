@@ -1,0 +1,37 @@
+Title: IBM Running the Mttrapd (SNMP) probe as a non-root user on Solaris - United States
+
+Text:
+nco_p_mttrapd; nco_p_mttrapd_ems; SNMP EMS; SNMP probe; MTTRAPD EMS probe; nonroot; non-root TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Mttrapd SNMP probe : non-root user on Solaris? 
+
+SYMPTOM
+When the probe is run as a non-root user, it logs the following error - 
+
+SNMP Message (priority=3): UDP snmp_open: Unknown host (Permission denied)
+
+
+RESOLVING THE PROBLEM
+The MTTrapd (SNMP) probe can be ran either with a port greater than 1024 or with SUID root. Root access is required for all ports below 1024. IBM Tivoli Netcool Support does not recommend running the probe as a non-root user with a port lower than 1024 as this breaks the operating systems security. 
+
+To run the MTTrapd probe as a non-root user, the recommended method is to use a port greater than 1024, defined using the probes property Port and to configure the snmp sources to send traps to the defined port. 
+
+The probe can only run as a non-root user using a system port below 1024 with root access. Omnibus must be installed on a local file system and in the default directory to run as SUID root. 
+
+
+Running the Probe as SUID Root
+The SNMP EMS Probe can be run as suid root without compromising system security. In this mode, the probe drops its root privileges once it has opened the SNMP session, and before the Netcool/OMNIbus probe library starts; this allows privileged port usage in this mode. 
+
+Use the following steps to ensure that the probe can be run safely as suid root without abusing root priveleges:
+
+As root, change the owner of the probe binary using chown root nco_p_mttrapd. (This must be done in the $OMNIHOME/probes/arch directory for Omnibus 7.3.1 and prior. For Omnibus 7.4 and later, this is done in the $OMNIHOME/probes64/arch directory.) 
+As root, enable the probe binary to run as setuid root, using chmod +s nco_p_mttrapd. (This must be done in the $OMNIHOME/probes/arch directory for Omnibus 7.3.1 and prior. For Omnibus 7.4 and later, this is done in the $OMNIHOME/probes64/arch directory.) 
+
+On Omnbus 7.3.1 and prior, run the following command to register the OMNIbus libraries as trusted directories: 
+crle -s /usr/lib/secure:$NCHOME/platform/arch/lib:$NCHOME/omnibus/arch/lib
+
+For Solaris platforms with Omnibus 7.4, run the following command to register the 64 bit Omnibus libraries. For example,
+crle -64 -s /usr/lib/secure:$NCHOME/platform/arch/lib64:$NCHOME/omnibus/platform/arch/lib64
+
+Run the probe as a normal user. (This must be done in the $OMNIHOME/probes directory.)

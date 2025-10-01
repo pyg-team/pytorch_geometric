@@ -1,0 +1,95 @@
+Title: IBM EJBDeploy failed to start with java.lang.NoClassDefFoundError - United States
+
+Text:
+JDK; classloader; WAS; java; java classloader; com.ibm.etools.ejbdeploy.batch.plugin.BatchExtension; org.eclipse.jst.j2ee.internal.plugin; org.eclipse.jst.j2ee.internal.plugin.CatalogJ2EEXmlDtDEntityResolver; update; fixpack; java class loader; RATLC00328907 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ EJBDeploy on WebSphere Application Server 6.1.0.29 with IBM Java SDK 1.5 SR2 failed to start with java.lang.NoClassDefFoundError. 
+
+SYMPTOM
+The following issue was observed in the admin console when selecting EAR install option:[x] deploy enterprise beans and on the command line using ejbdeploy.sh. 
+
+> pwd 
+
+/{WAS 6.1 stand-alone server home}/deploytool/itp/plugins 
+
+> cd ../../../bin 
+
+> pwd 
+
+/{WAS 6.1 stand-alone server home}/bin 
+
+> ./ejbdeploy.sh /home/{some folder1}/SomeApp.ear /home/{some folder2}/ /home/{some folder3}/SomeEar.ear -log 
+
+Starting workbench. 
+
+user.install.root was specified as: /{WAS 6.1 stand-alone server home}/profiles/{some profile} 
+
+ejbdeploy.user.install.root was specified as: /{WAS 6.1 stand-alone server home}/profiles/{some profile}/ejbdeploy 
+
+Using the directory specified via the 'ejbdeploy.user.install.root' system property. 
+
+EJB Deploy configuration directory: /{WAS 6.1 stand-alone server home}/{some profile}/ejbdeploy/configuration/ 
+
+framework search path: /{WAS 6.1 stand-alone server home}/deploytool/itp/plugins 
+
+Debug options: 
+
+file:/{WAS 6.1 stand-alone server home}/bin/.options not found
+Time to load bundles: 9
+Starting application: 1322080845757 
+
+[*Error] An unexpected exception was thrown. Halting execution. Shutting down workbench. 
+
+Error executing deployment: java.lang.NoClassDefFoundError. Error is org.eclipse.jst.j2ee.internal.plugin.CatalogJ2EEXmlDtDEntityResolver.
+java.lang.NoClassDefFoundError: org.eclipse.jst.j2ee.internal.plugin.CatalogJ2EEXmlDtDEntityResolver at com.ibm.etools.ejbdeploy.batch.plugin.BatchExtension.getModuleDDVersion(BatchExtension.java:3281) at com.ibm.etools.ejbdeploy.batch.plugin.BatchExtension.getModuleDDVersion(BatchExtension.java:3233) at com.ibm.etools.ejbdeploy.batch.plugin.BatchExtension.getEarWithDD(BatchExtension.java:3181) at com.ibm.etools.ejbdeploy.batch.plugin.BatchExtension.preprocessArchives(BatchExtension.java:3656) at com.ibm.etools.ejbdeploy.batch.plugin.BatchExtension.run(BatchExtension.java:340)
+at org.eclipse.core.internal.runtime.PlatformActivator$1.run(PlatformActivator.java:78)
+at org.eclipse.core.runtime.internal.adaptor.EclipseAppLauncher.runApplication(EclipseAppLauncher.java:92) 
+at org.eclipse.core.runtime.internal.adaptor.EclipseAppLauncher.start(EclipseAppLauncher.java:68) at org.eclipse.core.runtime.adaptor.EclipseStarter.run(EclipseStarter.java:400) 
+at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method) 
+at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:64)
+at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+at java.lang.reflect.Method.invoke(Method.java:615)
+at com.ibm.etools.ejbdeploy.batch.impl.BootLoaderLoader.run(BootLoaderLoader.java:476)
+at com.ibm.etools.ejbdeploy.batch.impl.BatchDeploy.execute(BatchDeploy.java:106)
+at com.ibm.etools.ejbdeploy.EJBDeploy.execute(EJBDeploy.java:105)
+at com.ibm.etools.ejbdeploy.EJBDeploy.main(EJBDeploy.java:335) 
+
+EJBDeploy level: o0924.04
+
+CAUSE
+A java class loader issue in the IBM Java SDK. 
+
+
+Note: This scenario should not be confused with similar looking ejbdeploy error java.lang.NoClassDefFoundError. The following 2 similar issues are detailed as follows: 
+
+ * Technote EJBDeploy command Exceptions on WebSphere Application Server and Eclipse OSGI cache purge issues [http://www.ibm.com/support/docview.wss?uid=swg21382867] has details on this scenario.
+   or 
+ * Originating in the error trace as coming from rmic in ejbdeploy. 
+   In this case getting latest server update/Fix Pack with latest ejbdeploy or in getting latest Java SDK can help.
+
+ENVIRONMENT
+Red Hat Linux v4_8 on a 64 bit HP Intel x86 based platform
+
+
+
+DIAGNOSING THE PROBLEM
+Verify IBM Java SDK 1.5 SR2 is in use as follows: 
+
+> cd /{WAS 6.1 stand-alone server home}/java/bin 
+
+> Java -fullversion 
+
+"J2RE 1.5.0 IBM Linux build pxa64dev-20060511 (SR2)" 
+
+
+RESOLVING THE PROBLEM
+Update to the latest Java SDK 1.n SR{nn} Cumulative Fix for your WebSphere Application Server version, as listed in Recommended fixes for WebSphere Application Server [http://www.ibm.com/support/docview.wss?uid=swg27004980] and discussed in Verify Java SDK version shipped with IBM WebSphere Application Server Fix Packs. [http://www.ibm.com/support/docview.wss?uid=swg27005002] 
+
+ 
+
+Note: Applying a server Fix Pack such as 6.1.0.29, does not typically update the server's IBM Java SDK. The IBM Java SDK update for any WebSphere Application Server version, is usually a separate Fix Pack. 
+
+ 
+
+If updating the server JDK does not help, then Technote: EJBDeploy command Exceptions on WebSphere Application Server and Eclipse OSGI cache purge issues [http://www.ibm.com/support/docview.wss?uid=swg21382867], may be applicable.

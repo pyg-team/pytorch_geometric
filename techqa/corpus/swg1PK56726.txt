@@ -1,0 +1,223 @@
+Title: IBM PK56726: ORACLE 9I THIN DRIVER CAN RESULT IN MESSAGES GREATER THAN 4K NOT BEING PERSISTED - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Messages greater than 4k not persisted with the Oracle 9i thin
+   driver.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: Users of the Oracle 9i thin JDBC driver as   *
+   *                 the datastore access mechanism for the       *
+   *                 default messaging provider in                *
+   *                 WebSphere Application Server v6.0 and v6.1   *
+   *                 using the Oracle 9i thin JDBC driver.        *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: The default messaging provider in       *
+   *                      WebSphere Application Server v6.0 and   *
+   *                      v6.1 requires a JDBC 2.0 compliant      *
+   *                      driver when using a database for its    *
+   *                      message store.                          *
+   *                                                              *
+   *                      Current versions of the Oracle 9i       *
+   *                      thin driver do not support JDBC's       *
+   *                      setBinaryStream method for storing      *
+   *                      BLOB data.  When using this driver      *
+   *                      with a messaging engine it may not be   *
+   *                      possible to recover message  data       *
+   *                      from the database.  This has the        *
+   *                      potential to cause a loss of data.      *
+   *                                                              *
+   *                      Users of the Oracle 10g thin driver,    *
+   *                      as well as users of other JDBC          *
+   *                      drivers that fully implement the        *
+   *                      JDBC 2.0 specification, are             *
+   *                      unaffected by this issue.               *
+   ****************************************************************
+   * RECOMMENDATION: All users of the Oracle 9i thin driver with  *
+   *                 the default messaging provider should change *
+   *                 to use the Oracle 10g thin driver, or other  *
+   *                 fully JDBC 2.0 compliant driver.             *
+   ****************************************************************
+   Messaging engines of the default messaging provider may use a
+   database as their datastore.
+   
+   The messaging engine stores message data as a BLOB in most
+   database configurations.  The JDBC driver's setBinaryStream
+   method is used to store the BLOB data.  The Oracle 9i thin
+   driver does not support this  method call, and using it may
+   cause data loss.
+   
+   Users of the Oracle 9i thin driver should migrate to the
+   Oracle 10g thin driver, or other JDBC 2.0 compliant driver.
+   
+   In WebSphere Application Server v6.1 the option of a
+   filestore is also available.  The filestore does not use a
+   database, and is therefore unaffected by this issue.
+   
+   Symptoms which may be experienced when utilizing the
+   Oracle 9i thin driver include the following:
+   
+   When a write to the database with the Oracle 9i thin driver
+   fails a J2CA0056I message may be seen in the SystemOut log.
+   
+   An example of the message is:
+   J2CA0056I: The Connection Manager received a fatal connection
+   error from the Resource Adaptor for resource jdbc/oracleOCI.
+   
+   The exception which was received is
+   com.ibm.websphere.ce.cm.StaleConnectionException: Io
+   exception: Connection reset
+   
+   At the same time as the J2CA0056I message an FFDC is
+   created with the a stack dump showing the error during
+   ItemTable.insert, similar to the following example:
+   Stack Dump = com.ibm.websphere.ce.cm.StaleConnectionException:
+   Io exception: Connection reset
+   at sun.reflect.NativeConstructorAccessorImpl.
+         newInstance0(Native Method)
+   at sun.reflect.NativeConstructorAccessorImpl.
+         newInstance(NativeConstructorAccessorImpl.java:80)
+   at sun.reflect.DelegatingConstructorAccessorImpl.
+   newInstance(DelegatingConstructorAccessorImpl.java(Compiled
+   Code))
+   at java.lang.reflect.Constructor.
+         newInstance(Constructor.java(Compiled Code))
+   at com.ibm.websphere.rsadapter.GenericDataStoreHelper.
+         mapExceptionHelper(GenericDataStoreHelper.java:502)
+   at com.ibm.websphere.rsadapter.GenericDataStoreHelper.
+         mapException(GenericDataStoreHelper.java:545)
+   at com.ibm.ws.rsadapter.jdbc.WSJdbcUtil.
+         mapException(WSJdbcUtil.java:902)
+   at com.ibm.ws.rsadapter.jdbc.WSJdbcPreparedStatement.
+         executeUpdate(WSJdbcPreparedStatement.java:555)
+   at com.ibm.ws.sib.msgstore.persistence.impl.ItemTable.
+         insert(ItemTable.java:442)
+   
+   When attempting to restore data from the database an error
+   indicating the "schemaId=null" may be issued.  For example:
+   com.ibm.ws.sib.mfp.MessageRestoreFailedException:
+   com.ibm.ws.sib.mfp.MessageDecodeFailedException:
+   com.ibm.ws.sib.mfp.jmf.JMFSchemaViolationException:
+         schemaId=null
+   at com.ibm.ws.sib.processor.impl.store.items.MessageItem.
+         restore(MessageItem.java:541)
+   
+   Regardless of whether the above symptoms are observed, it is
+   strongly recommended that all users of the Oracle 9i thin
+   driver with the default messaging provider change to use
+   the Oracle 10g thin driver, or other JDBC 2.0 compliant driver.
+   
+   It is recommended that all queues hosted by a messaging
+   engine are emptied before stopping the server to change
+   the JDBC driver.  This minimizes the possibility of a later
+   attempt to restore corrupt data from the database.
+   
+   This problem cannot be recreated using a JDBC driver that
+   fully implements the setBinaryStream method.
+   This includes the Oracle 10g thin driver.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The detailed system requirements for WebSphere Application
+   Server V6.0 and V6.1 will be updated to remove the
+   the Oracle 9i thin driver as a database access driver for a
+   default messaging provider datastore.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK56726
+   
+   
+ * REPORTED COMPONENT NAME
+   SIBWS
+   
+   
+ * REPORTED COMPONENT ID
+   620400100
+   
+   
+ * REPORTED RELEASE
+   100
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2007-11-16
+   
+   
+ * CLOSED DATE
+   2008-03-10
+   
+   
+ * LAST MODIFIED DATE
+   2008-03-10
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   PLAT MSG COM
+   
+   
+ * FIXED COMPONENT ID
+   620400101
+   
+   
+
+APPLICABLE COMPONENT LEVELS

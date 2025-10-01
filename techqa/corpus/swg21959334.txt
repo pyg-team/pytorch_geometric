@@ -1,0 +1,26 @@
+Title: IBM Tivoli Storage Manager and IBM FlashCopy Manager (IBM Spectrum Protect) family of products Leap Second Adjustment - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Are IBM Tivoli Storage Manager and IBM FlashCopy Manager (IBM Spectrum Protect) family of products Affected by the Leap Second Adjustment? 
+
+ANSWER
+No.
+
+A leap second is a one-second adjustment that is occasionally applied to Coordinated Universal Time (UTC) in order to keep its time of day close to the mean solar time. Without such a correction, time reckoned by Earth's rotation drifts away from atomic time because of irregularities in the Earth's rate of rotation. Since this system of correction was implemented in 1972, 25 such leap seconds have been inserted. The most recent one happened on June 30, 2015 at 23:59:60 UTC. A leap second will again be inserted at the end of December 31, 2016 at 23:59:60 UTC.
+
+IBM Tivoli Storage Manager and IBM FlashCopy Manager (IBM Spectrum Protect) family of products will not be affected by the Leap Second Adjustment and have had no reported issues directly attributed to previous Leap Second occurrences.
+The Tivoli Storage Manager Server includes IBM DB2. Please reference this tech doc for potential issues when running the TAI (International Atomic Time) on Linux operating systems with DB2:
+http://www-01.ibm.com/support/docview.wss?uid=swg21697119&myns=swgimgmt&mynp=OCSSEPGG&mync=E&cm_sp=swgimgmt-_-OCSSEPGG-_-E [http://www-01.ibm.com/support/docview.wss?uid=swg21697119&myns=swgimgmt&mynp=OCSSEPGG&mync=E&cm_sp=swgimgmt-_-OCSSEPGG-_-E]
+
+Red Hat has issued an knowledgebase article on leap second: https://access.redhat.com/articles/15145 [https://access.redhat.com/articles/15145]
+
+
+
+ 
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Storage Management Tivoli Storage Manager

@@ -1,0 +1,26 @@
+Title: IBM Oracle Extended Agent Inactive Status - United States
+
+Text:
+Oracle Extended Status inactive TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When viewing the Database Connection Workspace, the database status shows inactive. 
+
+CAUSE
+Wrong Port
+
+ENVIRONMENT
+After configuring the instance with port 25497 the problem was resolved. 
+
+DIAGNOSING THE PROBLEM
+The Port configured for the agent instance was the default port of 1521, the tnsnames.ora file contained port 25497.
+
+RESOLVING THE PROBLEM
+After configuring the instance with port 25497 the problem was resolved. 
+
+ 
+
+HISTORICAL NUMBER
+ 08151
+049
+649

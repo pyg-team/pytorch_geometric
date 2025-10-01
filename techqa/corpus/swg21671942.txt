@@ -1,0 +1,56 @@
+Title: IBM Installation of Sametime System Console fails - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+When installing the Sametime System Console you see the following error in the installation Manager: 
+
+Error during "install" phase 
+
+
+SYMPTOM
+If you get the detailed error message it says: 
+
+
+ERROR CRIMA1076E 03:42:33.30 Error executing the c:\<path>\configureWASprofiles.bat command: status=17. 
+For more information, see the agent log file: C:\ProgramData\IBM\Installation Manager\logs\native\<date>_<time>.log 
+The installation operation failed due to an error executing the exec command. An issue has occurred with the package that cannot be resolved by Installation Manager. Identify the package that has the issue. Contact IBM Support. 
+
+If you look at he <data>_<time>.log file towards the bottom (after SSCEnabled parameter) you see:
+
+*** Creating the deployment manager profile...
+The following validation errors were present with the command line arguments:
+serverType: The value for this parameter must be within this set of values [ADMIN_AGENT]
+*** Failed with exit status 1
+
+
+CAUSE
+The WebSphere server installed is WebSphere Base but Sametime System Console needs WebSphere Network Deployment server as it runs the Deployment manager
+
+
+
+DIAGNOSING THE PROBLEM
+In the installation logs you will see: 
+
+Preparing com.ibm.websphere.BASE.v85 8.5.0.20120501_1108.
+Notice after WebSphere it says "BASE" 
+
+
+
+RESOLVING THE PROBLEM
+In this case the administrator had to uninstall WebSphere Base and install WebSphere Network Deployment and then the Sametime System Console install completed successfully. 
+
+If you will be installing the Sametime System Console it is recommended that you get the WebSphere install package mentioned in the Sametime downloads page for the specified version of Sametime System Console. 
+
+ 
+
+For example: If you want to install "IBM Sametime 9.0 Complete" you will use the following download page: http://www-01.ibm.com/support/docview.wss?uid=swg24035249 [http://www-01.ibm.com/support/docview.wss?uid=swg24035249]
+
+Under the "IBM WebSphere components" section you will see the part numbers for the WAS ND install. Download these and install them before the Sametime System Console. 
+
+CIK2HML IBM WebSphere Application Server Network Deployment V8.5.5 (1 of 3) for Multiplatform Multilingual CIK2IML IBM WebSphere Application Server Network Deployment V8.5.5 (2 of 3) for Multiplatform Multilingual CIK2JML IBM WebSphere Application Server Network Deployment V8.5.5 (3 of 3) for Multiplatform Multilingual 
+You must follow the steps mentioned here in the wiki to install Sametime System Console: 
+
+Installing the Sametime System Console on AIX, Linux, or Windows 
+http://www-10.lotus.com/ldd/stwiki.nsf/xpDocViewer.xsp?lookupName=Administering+Sametime+9.0+documentation#action=openDocument&res_title=Installing_the_Sametime_System_Console_on_AIX_Linux_or_Windows_st9&content=pdcontent [http://www-10.lotus.com/ldd/stwiki.nsf/xpDocViewer.xsp?lookupName=Administering+Sametime+9.0+documentation#action=openDocument&res_title=Installing_the_Sametime_System_Console_on_AIX_Linux_or_Windows_st9&content=pdcontent]

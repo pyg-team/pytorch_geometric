@@ -1,0 +1,284 @@
+Title: IBM IZ82815: NON-ROOT USER ACCESS TO QUERY CLUSTER INFORMATION AS OF RSCT V2.5.5.2 (AIX 6.1 AND LINUX) AND RSCT V2.4.12.1 (AIX 5.3) - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Support Engineer:  GBH
+   Change Team Eng:   EJ
+   
+   ENVIRONMENT :
+   A domain which is migrated to RSCT v2.5.5.2 (AIX 6.1/Linux) or
+   RSCT v2.4.12.1 (AIX 5.3) from a previous RSCT level where
+   non-root users are attempting to query the cluster
+   configuration.
+   
+   
+   PROBLEM SYMPTOMS :
+   
+   After upgrading RSCT to 2.5.5.2 (Linux and AIX 6.1) or 2.4.12.1
+   (AIX 5.3), the following symptoms may be observed for non-root
+   users only :
+   1) The 'lssam' command returns Unknown status for resources on
+   one node and nothing at all on the other node. Running lssam as
+   root on both servers returns the expected output.
+   
+   2) 2610-440 permission denied errors are returned. Here is
+   example of such a situation and full error message :
+   [root@host2:/]
+   # su - db2as
+   [db2as@host2:/home/db2as]
+   >lsrg -m
+   (lsrsrc-api) 2610-440 Permission is denied to access a resource
+   specified in this command.\nNetwork Identity
+   db2as@0xa7e998c75c2e91bf/clusteruser requires 'q' permission for
+   the resource '0x2020 0xffff 0x88c76f93 0x5c2e91bf 0x91c2dc47
+   0x2ad0c72a' of class IBM.ManagedResource on node
+   host1.mynetwork.com.
+   lsrg: 2622-009 An unexpected RMC error occurred.The RMC return
+   code was 1.
+   (lsrsrc-api) 2610-440 Permission is denied to access a resource
+   specified in this command.\nNetwork Identity
+   db2as@0xa7e998c75c2e91bf/clusteruser requires 'q' permission for
+   the resource '0x2020 0xffff 0x88c76f93 0x5c2e91bf 0x91c2dc2f
+   0x1a8bfc20' of class IBM.ManagedResource on node
+   host1.mynetwork.com.
+   
+   
+   CAUSE :
+   
+   Earlier releases of RSCT (prior to 2.5.5.2 on Linux and AIX 6.1,
+   prior to 2.4.12.1 on AIX 5.3) contained a defect that allows
+   non-root users to accidently use RSCT commands/APIs to query the
+   dynamic attributes. This hole was closed but in doing so it also
+   prevented queries (eg, lssam) by non-root users.
+   
+   Note that the RSCT level can be automatically upgraded by
+   applying an AIX Technology Level or Service Pack, independent of
+   TSAMP. For example, upgrading AIX from 5.3 TL7 to TL9 SP2 will
+   bump the RSCT level to 2.4.12.1, hence introducing the symptoms
+   described above.
+   
+   
+   RESOLUTION :
+   
+   If a new cluster is created with RSCT 2.5.5.2 or later for AIX
+   6.1 and Linux, or RSCT 2.4.12.1 or later for AIX 5.3, the
+   non-root user should have permission to query resources in the
+   cluster. However, if an existing cluster of a previous version
+   is migrated to these newer RSCT levels, even if the required new
+   entry in ctsec_map.global exists, the new entry required in
+   /var/ct/cfg/ctrmc.acls will not have been automatically created,
+   hence a restriction for non-root users.
+   
+   To correct non-root user access to allow simple queries in a
+   migrated cluster, perform the following two steps :
+   
+   1) Under the DEFAULT stanza, add "none:clusteruser      *
+   r". This can be done by creating an acl stanza file, for example
+   "/tmp/addacl" that contains the following :
+   DEFAULT
+       none:clusteruser      *      r
+   
+   And then running the following command:
+   /usr/sbin/rsct/install/bin/chrmcacl -a < /tmp/addacl
+   
+   2)  Refresh RMC subsystem to pick up the new acl entry :
+   refresh -s ctrmc
+   0513-095 The request for subsystem refresh was completed
+   successfully.
+   
+   
+   Although non-root users will be able to query the cluster,
+   non-root users will continue to be restricted from changing the
+   cluster's configuration. In order to allow non-root user access
+   to TSAMP/RSCT mk* and ch* commands, you would need to create the
+   specific admin/operator roles (eg. SA_ADMIN/SA_OPERATOR) and
+   users in the following files:
+   - ctrmc.acls defines permissions of the roles
+   - ctsec_map.global defines the userid members of the defined
+   roles
+   
+   Setup access per the section titled "Setting up security for
+   System Automation for Multiplatforms clusters" on page 202 of
+   chapter 10 of the TSAMP Administrator's and User's Guide:
+   http://publib.boulder.ibm.com/tividd/td/ITSAFL/SC33-8415-02/en_U
+   S/PDF/HALBAU12.pdf [http://publib.boulder.ibm.com/tividd/td/ITSAFL/SC33-8415-02/en_US/PDF/HALBAU12.pdf]
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: System Automation for Multiplatforms 3.1 and
+   * 3.2 users using non-root users to list resources
+   ****************************************************************
+   * PROBLEM DESCRIPTION:
+   * RSCT levels prior 2.4.12.0 (AIX 5.3) and 2.4.5.0 (AIX 6/Linux/
+   * Solaris) contain a security issue that allows non-root users
+   * to query dynamic attributes. The issue has been solved within
+   * the mentioned RSCT levels and above, however with this fix
+   * non-root users are no longer able to run 'ls*' commands to
+   * list SA MP resources, like 'lssam' or 'lsrg -m'.
+   * To re-establish the previous permissions for SA MP non-root
+   * users, RSCT introduced a change with levels 2.4.13.2 (AIX 5.3)
+   * and 2.5.5.2 (AIX 6/Linux/Solaris) in case a domain is created.
+   * However if the domain was created with an earlier RSCT level
+   * and then migrated to the above described level, the change is
+   * not done automatically, but requires manual intervention -
+   * either define appropriate entries in the files containing the
+   * access control lists, or create a new domain in parallel (no
+   * need to start), which will result in the acl files are being
+   * adjusted.
+   * The SA MP documentation will be updated to describe the
+   * behavior and procedure to adjust it.
+   ****************************************************************
+   * RECOMMENDATION:
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The System Automation for Multiplatforms Administrator and Users
+   guide will be updated to describe the potential issue and the
+   procedure how to solve it. The following content will be added:
+   
+   SA MP Adminstrator and Users guide,
+    Chapter 12, Controlling and Administering
+      Section: Setting up security for System Automation for
+               Multiplatforms clusters
+   
+   After the second paragraph,
+    "On Linux, Solaris, and AIX systems, by default, only the user
+    root has the required authority to perform operational tasks in
+    System Automation for Multiplatforms and to make changes to the
+    automation policy of System Automation for Multiplatforms,
+    while all other users only have read access."
+   
+   a 'note' is added:
+   
+   Note that with RSCT level 2.4.12.0 (AIX 5.3) and 2.5.4.0 (AIX 6/
+   Linux/Solaris) a change was introduced that prevents non-root
+   users from using commands to list the resources. The appropriate
+   permissions are automatically configured if a new domain is
+   created, however this does not work when migrating an existing
+   domain to this RSCT level. If the permissions for non-root users
+   to run commands like 'lssam' or 'lsrg -m' are not configured
+   automatically, the following steps need to be done to adjust the
+   configuration:
+   If the RSCT level is equal or higher to 2.4.13.2 (AIX 5.3) or
+   2.5.5.2 (AIX 6/Linux/Solaris), then it is sufficient to create
+   another domain, which will implicitly adjust the configuration.
+   There is no need to start the domain, and the domain can be
+   removed again afterwards.
+   Alternatively, or if the RSCT level is lower, the following
+   commands can be used to adjust the configuration, this has to be
+   done on all nodes as user root:
+   
+   1. check/modify file /usr/sbin/rsct/cfg/ctsec_map.global
+   => add line, if not existent:     unix:*@*=clusteruser
+   
+   2. create a file /tmp/addacl with following content
+   
+   DEFAULT
+      none:clusteruser    *     r
+   
+   3. adjust acl file by executing the following command:
+   /usr/sbin/rsct/install/bin/chrmcacl -a < /tmp/addacl
+   
+   4. refresh the ctrmc sub system for the changes to become
+   effective:   refresh -s ctrmc
+   
+   After the procedure non-root users are able to use commands like
+   'lssam' or 'lsrg -m' again as with earlier RSCT levels.
+   
+   In addition to the change in the Administrator and Users guide
+   an entry is made to the SA MP 3.1/3.2 Release Notes, section
+   'Known problems'.
+   .
+   Additional Search Keywords
+   .
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ82815
+   
+   
+ * REPORTED COMPONENT NAME
+   SA MULTIPLATFOR
+   
+   
+ * REPORTED COMPONENT ID
+   5724M0000
+   
+   
+ * REPORTED RELEASE
+   320
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-08-12
+   
+   
+ * CLOSED DATE
+   2010-08-13
+   
+   
+ * LAST MODIFIED DATE
+   2010-08-13
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

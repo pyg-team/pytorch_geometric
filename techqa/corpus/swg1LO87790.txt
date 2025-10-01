@@ -1,0 +1,177 @@
+Title: IBM LO87790: HTML BUTTON NOT RENDERED PROPERLY - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The bug is seen in marketing emails that the customer sends
+   from a
+   MailChimp server.  These emails are not rendered properly in
+   Notes 9 on
+   Windows 7, Windows 8 or Windows 10.  Even if sent to the Notes
+   client
+   via POP3 from a non-Domino SMTP server they still are rendered
+   wrong.
+   They look even worse when selecting the "Disable embedded
+   browser for
+   MIME mail" in the Notes client preferences.
+   
+   However, the emails are rendered properly in gmail, yahoo,
+   earthlink
+   and even within Traveler on Android. This tells us that the
+   messages
+   are received at the Domino server just fine but the Notes
+   client and
+   iNotes both fail to render them properly.
+   
+   The problem can be seen when viewing the messages.  See attached
+   yahoo.png screenshot.  The big red "Give Feedback" button in
+   the middle
+   of the message is what is at issue.  Note that this is just one
+   example
+   of the problem; the customer has many marketing emails with
+   many more
+   red buttons.  The red button shows in every mail reader we've
+   found -
+   except Notes and iNotes.  See the attached notes.png screenshot
+   showing
+   that in Notes, while the hotlink is present, there is no big
+   red button
+   surrounding it.  That's the problem.
+   
+   I do notice that the page source in the Notes client is
+   different than
+   in other mail programs.  See attached text files showing the
+   difference.  In Notes, the content is shown in
+   "quoted-printable"
+   encoding.  I don't know whether that has anything to do with the
+   rendering bug or if that is just how the page source displays
+   it.
+   
+   To summarize out testing, the MailChimp marketing emails are
+   correct
+   in:
+   
+   Gmail account viewed in browser
+   Yahoo account viewed in browser
+   Yahoo account viewed via POP3 in Android mail app
+   Earthlink account viewed via POP3 in Android mail app
+   Domino account in Android Verse (Traveler) app
+   
+   The MailChimp marketing emails are NOT rendered correctly in:
+   Domino iNotes (browser) account
+   Domino account in Notes 9 Standard on Windows 8 or 10
+   Domino account from another organization in Notes 9 Standard on
+   Windows
+   7
+   Earthlink account via POP3 in Notes 9 client on Windows 7
+   
+   I am also attaching an eml file to provide complete page source
+   of two
+   examples of this type of MIME mail that both are not rendered
+   completely in Notes and iNotes but are rendered completely in
+   Traveler.
+   
+   We just want Notes and iNotes to work as well as Traveler with
+   respect
+   to rendering these MIME emails.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  This APAR is closed as FIN. We have deferred the fix to a
+    future release.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *  This APAR is associated with SPR# OIBEA6JU4A.
+   This APAR is closed as FIN. We have deferred the fix to a
+    future release.
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   LO87790
+   
+   
+ * REPORTED COMPONENT NAME
+   NOTES CLIENT
+   
+   
+ * REPORTED COMPONENT ID
+   5724E6255
+   
+   
+ * REPORTED RELEASE
+   901
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-01-26
+   
+   
+ * CLOSED DATE
+   2016-02-05
+   
+   
+ * LAST MODIFIED DATE
+   2016-02-05
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R901 PSN
+   UP

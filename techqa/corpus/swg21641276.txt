@@ -1,0 +1,47 @@
+Title: IBM NNSTAT with method 2 against Oracle nickname receives SQL1227N RC=3 error - United States
+
+Text:
+Oracle wrapper; ROWID; SQL1227N; -1227; Reason code 3 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ If the remote Oracle table contains ROWID column, when running NNSTAT with method 2 for the nickname which points to that Oracle table may receive SQL1227N RC=3 error. 
+
+SYMPTOM
+CALL SYSPROC.NNSTAT(NULL,'TEST','NICK1',NULL,NULL,2,'d:\tmp\nnstat.log::DIAG',?) ; 
+
+------------ 
+Start log... Nickname "NICK1" 
+varchar2_compat is N 
+
+An error was returned when opening a cursor on syscat.taboptions 
+
+SQL1227N The catalog statistic "AAALMjAAKAAAOO4AAO" for column "HIGH2KEY" is out of range for its target column , has an invalid format, or is inconsistent in relation to some other statistic.
+Reason code = "3" 
+------------- 
+
+
+CAUSE
+The collating sequence for ROWID data type is different from CHAR/VARCHAR.
+
+For ROWID, the collating sequence is (in ascending order):
+A->Z, a->z, 0->9, +, /
+
+For CHAR/VARCHAR, the collating sequence is:
++, /, 0->9, A->Z, a->z
+
+This difference caused the returned high2key (caculated by max(ROWID)) smaller than low2key (calculated by min(ROWID)) per the CHAR/VARCHAR rule. 
+
+ENVIRONMENT
+Product: Federation Server, Oracle wrapper
+Data source: Oracle
+
+DIAGNOSING THE PROBLEM
+Verify the remote Oracle table definition to confirm if there is ROWID column defined. If yes, please continue to Resolving the problem section.
+
+RESOLVING THE PROBLEM
+There are two ways to resolve this problem.
+
+1) Exclude ROWID column from the NNSTAT by listing all the columns for which you want to gather statistics, e.g.
+CALL SYSPROC.NNSTAT(NULL,'TEST','NICK1','C2,C3,C4',NULL,2,'d:\tmp\nnstat.log::DIAG',?)
+
+2) Create a view by using ROWIDTOCHAR() function to convert ROWID column to CHAR on Oracle server, then create the nickname for that view instead of the table

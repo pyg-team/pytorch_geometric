@@ -1,0 +1,150 @@
+Title: IBM PJ43968: A NEW USER IS UNABLE TO LOG INTO CONTENT MANAGER. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  It is possible that a new LDAP user, or an LDAP user that was
+   moved within the LDAP domain, may be authorized by the
+   application server, but then not found by a CPE server in an
+   LDAP search, which causes the user to be added to the CPE
+   negative cache.  This may happen if there are a large number of
+   LDAP servers, and the application server authorizes the user
+   against an LDAP server that is updated before the LDAP server
+   that CPE uses to search for the user.  In this case, the user is
+   added to a negative cache on the CPE server, and cannot log in
+   until the CPE JVM is restarted.
+   
+   The negative cache was added to CPE in 5.2.0.2-P8CPE-FP002, and
+   in the initial release of CPE 5.2.1.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Restart the CPE instances.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * Users with mismatched JAAS versus P8 directory               *
+   * configurations with 5.2.0.4-P8CPE-FP004 or                   *
+   * 5.2.1.3-P8CPE-FP003 and prior.                               *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * Under certain conditions, usually the results of incorrect   *
+   * JAAS or directory configuration a user who is apparently     *
+   * able to log on successfully will not be able to access the   *
+   * server and once this condition arises it persists until the  *
+   * server is restarted.                                         *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Upgrade to 5.2.0.5-P8CPE-FP005 or 5.2.1.4-P8CPE-FP004 or     *
+   * later.                                                       *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The problem is fixed in 5.2.0.5-P8CPE-FP005 and
+   5.2.1.4-P8CPE-FP004 and higher by restricting the circumstances
+   under which entries are added to the negative UAT cache, so that
+   ordinarily users will not see this condition any longer, and by
+   applying a TTL to entries that are added, so that should the
+   situation still arise, it will be relieved by the expiry of the
+   TTL and a server restart will therefore not be necessary.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PJ43968
+   
+   
+ * REPORTED COMPONENT NAME
+   CONTENT ENGINE
+   
+   
+ * REPORTED COMPONENT ID
+   5724R8101
+   
+   
+ * REPORTED RELEASE
+   521
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-02-17
+   
+   
+ * CLOSED DATE
+   2016-03-24
+   
+   
+ * LAST MODIFIED DATE
+   2016-03-24
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CONTENT ENGINE
+   
+   
+ * FIXED COMPONENT ID
+   5724R8101
+   
+   
+
+APPLICABLE COMPONENT LEVELS

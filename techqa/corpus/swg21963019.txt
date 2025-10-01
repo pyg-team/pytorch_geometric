@@ -1,0 +1,40 @@
+Title: IBM Flashing a Hardware Appliance - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How and when should I flash a hardware appliance?
+How can I get the files necessary to flash a hardware appliance? 
+
+CAUSE
+A flash may be required when the firmware on the hardware appliance has an issue or if the password needs to be reset to admin/admin.
+
+ANSWER
+*Note* Flashing a hardware appliance will reset all data and configuration* 
+
+The .img file of the firmware level required can be obtained from the IBM Support Fix Central site. Mount the .img file onto a USB device using a program such as Win32DiskImage. Some customers have reported other tools do not create the boot image correctly. The contents of the USB device will be similar to:
+
+boot.msg
+img1a.cfg
+img1a.sys
+img2a
+img3a
+isam_8.0.0.3_20140313-1718.pkg
+
+
+Connect to the hardware console via the serial port, plug the USB into the hardware appliance, and turn the hardware appliance on. The following page should appear from boot.
+
+Under Installer there are the restore and wipe options.
+[/support/docview.wss?uid=swg21963019&amp;aid=1]
+
+Select the wipe option and YES to confirm:
+[/support/docview.wss?uid=swg21963019&aid=2] [/support/docview.wss?uid=swg21963019&aid=2]
+
+Restore will then restore the firmware with the image that is mounted onto the USB.
+[/support/docview.wss?uid=swg21963019&aid=3] [/support/docview.wss?uid=swg21963019&aid=3]
+
+After the install has finished, remove the USB and reboot the appliance.
+[/support/docview.wss?uid=swg21963019&aid=4] [/support/docview.wss?uid=swg21963019&aid=4]
+
+When the appliance boots, it will be at the new version at factory default settings.

@@ -1,0 +1,34 @@
+Title: IBM PM32731 allows one JDBC connection per task instead of one per JVM when using a JVM server with CICS TS 4.1 - United States
+
+Text:
+5655S9700 R660 660 R600 600 HCI6600 5655-S97 5655S97 KIXINFO TECHNOTE (FAQ)
+
+QUESTION
+ How do you enable the IBM Data server driver for JDBC and SQLJ to run multithreaded in a JVMSERVER environment when using CICS Transaction Server for z/OS (CICS TS) V4.1? 
+
+ANSWER
+PM32731 together with DB2 maintenance enhances the CICS TS V4.1 Feature Pack for Dynamic Scripting V1.0 and Supportpac CN11: CICS TS support for WebSphere Compute Grid. This New Function (NF) APAR allows the IBM Data server driver for JDBC and SQLJ to run multithreaded in a JVMSERVER environment. 
+
+The CICS Transaction Server Feature Pack for Dynamic Scripting V1.0 [http://www.ibm.com/common/ssi/cgi-bin/ssialias?infotype=an&subtype=ca&supplier=897&letternum=ENUS210-144] embeds and integrates technology from Project Zero and WebSphere sMash into the CICS TS V4.1 run-time, enabling more than four million PHP and Groovy developers to create reports, dashboards, and widgets, and much more.
+
+Supportpac CN11: CICS TS support for WebSphere Compute Grid [http://www.ibm.com/support/docview.wss?uid=swg24027213] provides the infrastructure to enable IBM WebSphere XD Compute Grid to schedule and manage Java™ job steps in CICS. 
+
+PTFs for CICS APAR PM32731 [http://www.ibm.com/support/docview.wss?uid=swg1PM32731] are needed for JDBC and SQLJ access from an application running in a CICS JVMSERVER. To use this functionality, you will also have to apply the following DB2 [http://www.ibm.com/software/data/db2/zos/] maintenance: 
+
+Release APAR PTF DB2 for z/OS V10 PM32360 [http://www.ibm.com/support/entdocview.wss?uid=swg1PM32360] and PM32361 [http://www.ibm.com/support/entdocview.wss?uid=swg1PM32361] UK66662 and UK66665 DB2 for z/OS V9.1 [http://www.ibm.com/support/docview.wss?uid=swg1PM39015]PM32360 and PM32361 UK66664 and UK66666 DB2 for z/OS V8.1 [http://www.ibm.com/support/docview.wss?uid=swg1PM38347]PM32360 UK66663 
+These DB2 APARs provide support for non-OSGI JVMSERVER which is what CICS TS V4.1 requires. 
+
+Note: PM32360 has been superceded by PM36832 [http://www.ibm.com/support/entdocview.wss?uid=swg1PM36832] and PM32361 has been superceded by PM36838 [http://www.ibm.com/support/entdocview.wss?uid=swg1PM36838] which provide additional OSGi JVMSERVER support for the JCC driver. OSGi support is specific to CICS TS V4.2, but the APARs are downward compatible with CICS TS V4.1. For more information on OSGi, see [/support/docview.wss?uid=swg21507047&amp;aid=1] The OSGi Architecture [http://www.osgi.org/About/WhatIsOSGi]. 
+
+Dynamic scripting functionality for CICS TS V4.2 is available with V1.1 of the Feature Pack. See CICS Transaction Server Feature Pack for Dynamic Scripting 1.1 is available for CICS TS 4.2 [http://www.ibm.com/support/docview.wss?uid=swg21566483] for more information. PM32731 is not needed for CICS TS 4.2 since the function is in the base product. V1.0 of the Feature Pack is only for use with CICS TS V4.1. See Compatibility of Dynamic Scripting Feature Pack with CICS TS V4.2 [http://www.ibm.com/support/docview.wss?uid=swg21504332] for more information. 
+
+See New Function APARs for CICS Products [http://www.ibm.com/support/docview.wss?uid=swg21238275] to find all NF APARs for CICS TS or any CICS product. 
+RELATED INFORMATION
+#Ordering CICS products and maintenance [http://www.ibm.com/support/docview.wss?uid=swg21049360]
+CICS Dynamic Scripting Web page [http://www.ibm.com/software/htp/cics/scripting/]
+
+
+
+
+PRODUCT ALIAS/SYNONYM
+ CICS/TS CICS TS CICS Transaction Server

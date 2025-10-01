@@ -1,0 +1,29 @@
+Title: IBM DFHAP0001 0C4 at offset FFFFFFFF in DFHTDA at shutdown of CICS TS for VSE/ESA - United States
+
+Text:
+ABENDS0C4 S0C4 0C4 AP0001 DFHAP0001 MSGDFHAP0001 AKEA ABENDAKEA FFFFFFFF 716 close tdq dataset termination RB0P RA0P R111 R1.1 RB0P RA0P 564805400 KIXINFO TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ You receive message DFHAP0001 An abend (code 0C4/AKEA) occurred at offset X'FFFFFFFF' in module DHTDA. This occurs intermittently during shutdown of your CICS Transaction Server for VSE/ESA (CICS TS) partition. 
+
+SYMPTOM
+DFHTDA is the last known module in control but the abend 0C4 is in module DFHEVCL at offset +X'716'. The problem occurs after DFHSTP calls transient data to close the destinations.
+
+
+CAUSE
+ The close at the time of the error is for the DFHCXRF data set (CXRF destination). The program check is due to bad registers being returned on a call to $$BCLOSE.
+
+The DFHCXRF data set is being shared with another CICS region under another VSE guest on VM. And, the transient data destination CXRF is now used by all systems, not just the ones using XRF. 
+
+RESOLVING THE PROBLEM
+Define a separate DFHCXRF data set [http://publibz.boulder.ibm.com/cgi-bin/bookmgr_OS390/BOOKS/dfhwa204/2.3.3.4.3?SHELF=DFHWSH0E&DT=20020414150934] for each CICS partition.
+
+RELATED INFORMATION
+#DFHAP0001 [http://publibz.boulder.ibm.com/cgi-bin/bookmgr_OS390/BOOKS/DFHWG405/1.9.1?SHELF=DFHWSH0E&DT=20020120132000]
+Abend AKEA [http://publibz.boulder.ibm.com/cgi-bin/bookmgr_OS390/BOOKS/dfhwg405/2.3.458?SHELF=&DT=20020120132000&CASE=]
+
+
+
+
+PRODUCT ALIAS/SYNONYM
+ CICS/VSE CICS VSE CICS/TS CICS TS CICS Transaction Server

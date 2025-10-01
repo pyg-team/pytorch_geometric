@@ -1,0 +1,80 @@
+Title: IBM PI82111:Federated repositories fails to change password when JRE is Java 8 - United States
+
+Text:
+PI82111; PI82111; PI82111 DOWNLOADABLE FILES
+
+ABSTRACT
+ Federated repositories fails to change password when JRE is Java 8 
+
+DOWNLOAD DESCRIPTION
+PI82111 resolves the following problem:
+
+ERROR DESCRIPTION: 
+When running on Java 8, Federated Repositories will fail to update user password in Active Directory 
+
+PROBLEM SUMMARY
+
+USERS AFFECTED:
+IBM WebSphere Application Server users of federated repositories
+
+PROBLEM DESCRIPTION:
+When running on Java 8, Federated Repositories will fail to update user password in Active Directory.
+
+RECOMMENDATION:
+Install a fix pack or interim fix that includes this APAR.
+
+In the Java 8 release, the JRE was updated to use NIO converters instead of IO converters, which were removed. The IO converters handled the endian-ness based on the platform. When moving to NIO, the Java specification was corrected to give consistent behavior (big endian) for all platforms when using the "UNICODE" charset. 
+
+
+The specification for encoding for the "unicodepwd" attribute requires it to be little-endian. Therefore, it can be expected, that on all little-endian platforms attempting to change a password will result in a OperationNotSupported / WILL_NOT_PEFORM exception being returned from Active Directory Server. 
+
+[28/4/17 10:19:21:447 SGT] 00000164 LdapConnectio 1
+com.ibm.ws.wim.adapter.ldap.LdapConnection
+modifyAttributes(Name name, ModificationItem[] mods) Exception
+caught:
+javax.naming.OperationNotSupportedException: [LDAP: error code
+53 - 0000001F: SvcErr: DSID-031A1248, problem 5003
+(WILL_NOT_PERFORM), data 0
+\u0000]; remaining name 'CN=rand,OU=Stephani,dc=pimqa,dc=local'
+at com.sun.jndi.ldap.LdapCtx.mapErrorCode(LdapCtx.java:3220)
+at com.sun.jndi.ldap.LdapCtx.processReturnCode(LdapCtx.java:3093)
+at com.sun.jndi.ldap.LdapCtx.processReturnCode(LdapCtx.java:2900)
+at com.sun.jndi.ldap.LdapCtx.c_modifyAttributes(LdapCtx.java:1487)
+at com.sun.jndi.toolkit.ctx.ComponentDirContext.p_modifyAttributes(ComponentDirContext.java:289)
+at com.sun.jndi.toolkit.ctx.PartialCompositeDirContext.modifyAttributes(PartialCompositeDirContext.java:204)
+at org.apache.aries.jndi.DelegateContext.modifyAttributes(DelegateContext.java:287)
+at javax.naming.directory.InitialDirContext.modifyAttributes(InitialDirContext.java:183)
+at com.ibm.ws.wim.adapter.ldap.LdapConnection.modifyAttributes(LdapConnection.java:2426)
+at com.ibm.ws.wim.adapter.ldap.LdapAdapter.updateByDataGraph(LdapAdapter.java:1328)
+at com.ibm.ws.wim.adapter.ldap.LdapAdapter.update(LdapAdapter.java:1476)
+at com.ibm.ws.wim.ProfileManager.updateImpl(ProfileManager.java:3434)
+at com.ibm.ws.wim.ProfileManager.genericProfileManagerMethod(ProfileManager.java:354)
+at com.ibm.ws.wim.ProfileManager.update(ProfileManager.java:439)
+at com.ibm.websphere.wim.ServiceProvider.update(ServiceProvider.java:498)
+.....
+
+PROBLEM CONCLUSION: 
+Updated the encoding for the "unicodepwd" attribute value to always use the "UTF-16LE" charset to ensure it is always little-endian. 
+
+The fix for this APAR is currently targeted for inclusion in fix packs 8.0.0.14, 8.5.5.13 and 9.0.0.5. Please refer to the Recommended Updates page for delivery information: 
+http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+
+PREREQUISITES
+PI75684
+
+INSTALLATION INSTRUCTIONS
+Please review the readme.txt for detailed installation instructions.
+
+URL LANGUAGE SIZE(Bytes) V85 Readme [ftp://public.dhe.ibm.com/software/websphere/appserv/support/fixes/PI82111/8.5.5.11/readme.txt] US English 5393 
+DOWNLOAD PACKAGE
+
+
+
+
+Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options 
+What is Fix Central(FC)? [https://www.ibm.com/support/fixcentral/help?page=swfaqs] 8.5.5.11-WS-WAS-IFPI82111 06-05-2017 US English 261530 HTTP [http://www.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm%2FWebSphere&product=ibm/WebSphere/WebSphere+Application+Server&release=All&platform=All&function=fixId&fixids=8.5.5.11-WS-WAS-IFPI82111&includeSupersedes=0] 
+TECHNICAL SUPPORT
+ Contact IBM Support using SR (http://www.ibm.com/software/support/probsub.html [http://www.ibm.com/software/support/probsub.html]), visit the WebSphere Application Server support web site (http://www.ibm.com/software/webservers/appserv/was/support/ [http://www.ibm.com/software/webservers/appserv/was/support/]), or contact 1-800-IBM-SERV (U.S. only). 
+
+ [/support/docview.wss?uid=swg24043738&aid=1]Problems (APARS) fixed [/support/docview.wss?uid=swg24043738&aid=2]Problems (APARS) fixed
+PI82111

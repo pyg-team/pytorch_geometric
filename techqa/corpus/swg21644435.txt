@@ -1,0 +1,63 @@
+Title: IBM Understanding UTLS0002E error messages emitted during application installation - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The installation log contains one or more UTLS0002E error messages and FFDC events indicating a shared library JAR supporting Installed Optional Packages could not be resolved when installing an application on a multiple node network deployment, where the Deployment Manager and the target Application Server(s) are hosted by different nodes. 
+
+SYMPTOM
+When installing an application into a multiple node network deployment, where the Deployment Manager and the target Application Server(s) are hosted by different nodes, the installation log will contain messages similar to the one below whenever the target Application Server configuration contains shared libraries, and the paths to the JARs configured in the shared library class path do not exist on the Deployment Manager. 
+
+UTLS0002E: The shared library IBM_BPM_Process_Server_Shared_Library contains a classpath entry which does not resolve to a valid jar file, the library jar file is expected to be found at /home/svtuser/IBM/WebSphere/AppServer/BPM/Lombardi/process-server/lib/procsrv_resources.jar.
+
+The error message is emitted along with the following FFDC call stack indicating the application install task is processing an Installed Optional Packages configured for the application. 
+
+[2/26/13 6:11:25:624 CST] 0000005e ModuleManifes 3 Exception:
+java.util.zip.ZipException: error in opening zip file
+at java.util.zip.ZipFile.open(Native Method)
+at java.util.zip.ZipFile.<init>(ZipFile.java:150)
+at java.util.jar.JarFile.<init>(JarFile.java:149)
+at java.util.jar.JarFile.<init>(JarFile.java:86)
+at com.ibm.ws.runtime.ModuleManifestParser.addInstalledOptionalPackages(ModuleManifestParser.java:218)
+at com.ibm.ws.management.application.task.InstalledOptionalPackageTask.buildMap(InstalledOptionalPackageTask.java:321)
+at com.ibm.ws.management.application.task.InstalledOptionalPackageTask.install(InstalledOptionalPackageTask.java:187)
+at com.ibm.ws.management.application.task.InstalledOptionalPackageTask.performTask(InstalledOptionalPackageTask.java:115)
+at com.ibm.ws.management.application.SchedulerImpl.run(SchedulerImpl.java:315)
+at com.ibm.ws.management.application.AppManagementImpl.runScheduler(AppManagementImpl.java:2820)
+at com.ibm.ws.management.application.AppManagementImpl._installApplicationAsSystem(AppManagementImpl.java:395)
+at com.ibm.ws.management.application.AppManagementImpl.access$100(AppManagementImpl.java:131)
+at com.ibm.ws.management.application.AppManagementImpl$2.run(AppManagementImpl.java:340)
+at com.ibm.ws.security.auth.ContextManagerImpl.runAs(ContextManagerImpl.java:5453)
+at com.ibm.ws.security.auth.ContextManagerImpl.runAsSpecified(ContextManagerImpl.java:5544)
+at com.ibm.ws.management.application.AppManagementImpl._installApplication(AppManagementImpl.java:338)
+at com.ibm.ws.management.application.AppManagementImpl.installApplicationLocal(AppManagementImpl.java:303)
+at com.ibm.ws.management.bla.util.J2EEManagementOp.installJ2EEApp(J2EEManagementOp.java:89)
+at com.ibm.ws.management.bla.content.steps.SaveCompUnit._performJ2EEOp(SaveCompUnit.java:473)
+at com.ibm.ws.management.bla.content.steps.SaveCompUnit.execute(SaveCompUnit.java:134)
+at com.ibm.wsspi.management.bla.op.compound.Phase.execute(Phase.java:151)
+at com.ibm.wsspi.management.bla.op.compound.CompoundOperation._doPhaseExecute(CompoundOperation.java:102)
+at com.ibm.wsspi.management.bla.op.compound.CompoundOperation.doExecute(CompoundOperation.java:85)
+at com.ibm.wsspi.management.bla.op.Operation.execute(Operation.java:158)
+at com.ibm.wsspi.management.bla.op.compound.CompoundOperation.execute(CompoundOperation.java:68)
+at com.ibm.ws.management.bla.commands.ADTCommand$OperationScheduler.run(ADTCommand.java:616)
+at java.lang.Thread.run(Thread.java:772)
+
+The error messages appearing in the above stack context should be ignored whenever the application does not use Installed Optional Packages. In the event the application does use Installed Optional Packages, the error messages are valid and the resulting application deployment will lack the shared library references required to make the packages within the library JARs visible to the application at runtime. This is a current limitation that will be resolved in future releases.
+
+
+CAUSE
+The symptom occurs whenever the paths declared in the class path of a shared library configured on a target Application Server do not exist on the Deployment Manager.
+
+
+RESOLVING THE PROBLEM
+The problem can be resolved by deploying the shared library JARs into the same absolute path on both the Deployment Manager and the target Application Server(s) nodes.
+
+RELATED INFORMATION
+#WebSphere Application Server Network Deployment [http://pic.dhe.ibm.com/infocenter/wasinfo/v8r5/index.jsp?topic=%2Fcom.ibm.websphere.nd.multiplatform.doc%2Fae%2Fccws_installoptpkg.html]
+
+
+ 
+
+HISTORICAL NUMBER
+ 745241

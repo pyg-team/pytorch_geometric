@@ -1,0 +1,70 @@
+Title: IBM Open Mic session for Portal Performance Tuning - United States
+
+Text:
+ WEBCAST
+
+ABSTRACT
+ IBM Product Support will host a Tech Exchange Webcast and call on "Portal and WCM Performance Tuning" on Thursday, May 26th, 2011 at 11:00 AM Indian Standard Time (5:30 AM GMT) 
+
+CONTENT
+ 
+
+In this open mic session, the presenter walked through a 45 min presentation on "Portal Performance Tuning", followed by the Question & Answer session.
+
+
+
+
+Questions and Answers from the Open Mic call: 
+Q) What cache monitoring tools are available to monitor major caches for application 
+A) http://www.ibm.com/developerworks/websphere/downloads/cache_monitor.html [http://www.ibm.com/developerworks/websphere/downloads/cache_monitor.html] 
+There is also a CacheViewerPortlet, which can be obtained by contacting support. 
+**************************************************************** 
+Q) In a 64 bit OS system can we assume there will not be any native memory issues. 
+A) In a 64 bit OS, with 64 bit compatible JVM, there is no process size limit and you should not run into native memory issues. 
+**************************************************************** 
+Q) If getting OOM, with "GC overhead limit exceeded", what should be done? 
+A) This message means that the garbage collector is taking an excessive amount of time and recovers very little memory in each run. Most the time is only spent in GC, while the application threads are stopped. This is JVMs way of informing that you can monitor your heap to check the heap usage or check if the code is creating excessive short lived objects, which are keeping the GC busy with very less application time. 
+**************************************************************** 
+Q) When the server is experiencing Out of Memory, can we bring server back to normal without restart. 
+A) No, a server restart is required. 
+**************************************************************** 
+Q) How can we check session variables in an application? 
+A) You cannot check the session variables, but you can use PMI to collect the session object size metric which can be viewed from the TPV. See the Portal Performance Troubleshooting link in the references section. 
+**************************************************************** 
+Q) What is the recommended max heap size in 32 bit OS? 
+A) Try to limit the maxheap size for the JVM to around 1.5G on 32 bit OS, to avoid running into native memory issues. Some operating systems have higher limits, and can go upto 1.7G. 
+**************************************************************** 
+Q) We are running Portal 615 on WAS 7, and we noticed file descriptor increasing gradually, should this be a concern? 
+A) File Descriptors are used by the process to connect to open files etc.. The recommended value for Portal server is around 8000 plus. 
+**************************************************************** 
+Q) How can we stop creation of jcr index files under location :- 
+A) If you do not require Authoring inline search in 6.1.x, you can turn off the JCR indexing by setting following property to false in the icm.properties file: 
+jcr.textsearch.enabled=false 
+This file is located in wp_profile/PortalServer/jcr/lib/com/ibm/icm/ 
+**************************************************************** 
+Q) We are noticing server running Out of memory recently. Heapdumps show DRS taking up the heap. Nothing changed in the recent past, why is OOM occuring now? 
+A) DRS is replicating caches, if workload is increased, amount of cache is also increased, then DRS cache activity increases. I recommend opening a PMR to check the leak suspect to further analyze this problem. 
+**************************************************************** 
+Q) Is there any max no of users session allowed in WAS. 
+A) This is purely what your server can handle. There is no such limit. you can tune it based on the heap memory you have on the server. 
+**************************************************************** 
+Q) How much load does PMI itself adds on to system when enabled with ALL as level? 
+A) Please refer to this technote on the overhead caused by PMI: 
+http://www-01.ibm.com/support/docview.wss?uid=swg21206317 [http://www-01.ibm.com/support/docview.wss?uid=swg21206317] 
+**************************************************************** 
+Q) Can we do clustering with WebSphere Portal Express version? 
+A) IBM WebSphere Portal Express is licensed for use in a single server configuration and may not be used in either a cloned configuration or a clustered configuration except when implementing idle standby for the purpose of failover. 
+**************************************************************** 
+Q) In solaris VerboseGC logs by default doesn't contain time stamp. How can we have a GC log with time stamp ? 
+A) You can get the timestamps in solaris verbosegc by adding this property: -XX:+PrintGCTimeStamps 
+**************************************************************** 
+Q) Is it mandatory that we need to reorg and runstats manually or the automatic reorg setting enough? in db2, even after setting automatic reorg, some of the tables still seems to require a reorg. is that expected? 
+A) Regular automatic schedule of reorg and runstats are required for JCR DB performance. Please consult your DBA on why the automatic reorg is not picking up the reorg of the tables you find needing manual reorg. 
+**************************************************************** 
+Q) How do you disable anonymous sessions ? 
+A) You can disable public sessions by setting the parameter public.session to false in the portal Navigator Service. 
+**************************************************************** 
+PRESENTATION
+[http://www.ibm.com/i/v16/icons/weblecture.gif]Portal_Performance_Tuning.pdf [/support/docview.wss?uid=swg27021725&aid=2]Portal_Performance_Tuning.pdf [/support/docview.wss?uid=swg27021725&aid=1] 
+
+Portal Performance Tuning

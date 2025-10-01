@@ -1,0 +1,60 @@
+Title: IBM Installing License key and agreement for Rational Software Architect V8.0 C++ Product 1.0.0 is not allowed in this package group - United States
+
+Text:
+IBMRSA_Extension_C++_v8_Activation_Kit; activation kit; cpp; RSACPPv8.0 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ After installing a temporary license for IBM Rational Software Architect Extension for C++, the permanent license file can no longer be installed and returns the error "Installing License key and agreement for Rational Software Architect V8.0 C++ Product 1.0.0 is not allowed in this package group". 
+
+SYMPTOM
+The following error occurs during the installation of the Permanent license for Rational Software Architect V8.0 C++ Extension: 
+
+The full error message is as follows:
+
+Error installing.
+Installing License key and agreement for Rational Software Architect V8.0 C++ Product 1.0.0 is not allowed in this package group; it is not compatible with com.ibm.rsa80.cpp.pek.offering 8.0.1.20110519_1306. It may be installed in a different package group.
+Software being installed: License key and agreement for Rational Software Architect V8.0 C++ Product 1.0.0 (OFFERING.com.ibm.rsa80.cpp.pek 1.0.0)
+Software being installed: OFFERING.com.ibm.rsa80.cpp.pek.offering 8.0.1.20110519_1306
+Only one of the following can be installed at once: 
+SE.0.com.ibm.rsa80.cpp.pek.assembly 1.0.0
+SE.0.com.ibm.rsa80.cpp.pek.assembly 8.0.1.20110519_1306
+Cannot satisfy dependency:
+From: License key and agreement for Rational Software Architect V8.0 C++ Product 1.0.0 (OFFERING.com.ibm.rsa80.cpp.pek 1.0.0)
+To: SE.0.com.ibm.rsa80.cpp.pek.assembly [1.0.0,2.0.0)
+Cannot satisfy dependency:
+From: OFFERING.com.ibm.rsa80.cpp.pek.offering 8.0.1.20110519_1306
+To: SE.0.com.ibm.rsa80.cpp.pek.assembly [8.0.1,9.0.0)
+
+
+image
+[/support/docview.wss?uid=swg21516347&aid=1] [/support/docview.wss?uid=swg21516347&aid=1]
+
+CAUSE
+The temporary license installed previously to extend the evaluation period collides with the permanent license installation.
+
+
+
+RESOLVING THE PROBLEM
+Apply the following steps to resolve the issue: 
+
+ 
+
+ 1. Create a xml response file (for example named uninstallTempCppLicense.xml ) with the following information.
+    
+    
+    <agent-input clean='true' temporary='true'>
+    <uninstall>
+    <offering profile='SDP Licenses' id='com.ibm.rsa80.cpp.pek.offering'></offering>
+    </uninstall>
+    </agent-input>
+    
+    
+    
+    
+ 2. Run the following command from a command prompt.
+    
+    <IM_INSTALL_DIR>/eclipse/tools/imcl.exe -input <ReponseFile_DIR>/uninstallTempCppLicense.xml
+    
+    
+    
+ 3. Run the installation of the permanent license file from the IBM Installation Manager installation wizard.

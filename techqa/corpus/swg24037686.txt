@@ -1,0 +1,52 @@
+Title: IBM Download IBM Integration Bus Manufacturing Pack V1.0 - United States
+
+Text:
+ DOWNLOADABLE FILES
+
+ABSTRACT
+ This document describes how to download IBM Integration Bus Manufacturing Pack V1.0 eImages from the Passport Advantage website. 
+
+DOWNLOAD DESCRIPTION
+Terminology 
+
+IBM Integration Bus Manufacturing Pack V1.0 is supplied in an eImage. The eImage contains the Quick Start Guide and the product code. A separate eImage is also available that contains only the Quick Start Guide.
+
+Related product documentation
+
+For information about tasks you must complete before you install the product, and about the installation process itself, see the IBM Integration Bus Manufacturing Pack V1.0 product documentation, in the IBM Integration Bus V9.0 product documentation [http://www.ibm.com/support/knowledgecenter/SSMKHH_9.0.0/mapfiles/help_home_msgbroker.html].
+
+The most up-to-date information can be found in the IBM Integration Bus Manufacturing Pack V1.0 release notes at http://www.ibm.com/support/docview.wss?&uid=swg27006913 [http://www.ibm.com/support/docview.wss?rs=171&uid=swg27006913].
+
+Downloading the relevant eImages from the Passport Advantage website
+
+
+ 1. Find the required IBM Integration Bus Manufacturing Pack V1.0 images in the following eImages table. 
+ 2. Go to the "Download package" section of this document, and follow the link to the Passport Advantage website. 
+ 3. Sign in and download the images that you need. 
+ 4. Unpack each of the parts onto your computer by following the installation instructions in the product documentation.
+
+
+eImages table 
+
+eImage Description eImage Part Number IBM Integration Bus Manufacturing Pack V1.0 Quick Start eImage CN099IE IBM Integration Bus Manufacturing Pack for Enterprise V1.0 Multiplatform eImage CN09AIE IBM Integration Bus Manufacturing Pack for Factory V1.0 Multiplatform eImage CN09BIE PREREQUISITES
+Use the link in the following table to see information about system requirements:
+
+URL LANGUAGE SIZE(Bytes) System requirements [http://www.ibm.com/software/integration/wbimessagebroker/requirements/] English 1 
+INSTALLATION INSTRUCTIONS
+Use the link in the following table to open the IBM Integration Bus V9.0 product document, then navigate to the installation section in the IBM Integration Bus Manufacturing Pack V1.0 product documentation:
+
+URL LANGUAGE SIZE(Bytes) IBM Integration Bus V9.0 product documentation [http://www.ibm.com/support/knowledgecenter/SSMKHH_9.0.0/mapfiles/help_home_msgbroker.html] English 1 
+DOWNLOAD PACKAGE
+Use the link in the following table to access the download package:
+
+
+
+
+Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options 
+What is Fix Central(FC)? [http://www.ibm.com/systems/support/fixes/en/fixcentral/help/faq_sw.html] IBM Passport Advantage Online 26 Jun 2014 English 1 FC [http://www.ibm.com/software/howtobuy/passportadvantage/pao_customers.htm] [ ] 
+TECHNICAL SUPPORT
+ For Passport Advantage Online support, see:
+http://www.ibm.com/software/howtobuy/passportadvantage/paocustomer/docs/en_US/ecare.html [http://www.ibm.com/software/howtobuy/passportadvantage/paocustomer/docs/en_US/ecare.html]
+
+To see latest information and technotes, go to the IBM Integration Bus support website:
+http://www.ibm.com/software/integration/wbimessagebroker/support/ [http://www.ibm.com/software/integration/wbimessagebroker/support/]

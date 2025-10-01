@@ -1,0 +1,66 @@
+Title: IBM Users are unable to access Workplace XT - United States
+
+Text:
+LTPA; WPXT; WorkplaceXT TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Certain users are unable to login to Workplace XT with error message displayed "A system error has occurred" 
+
+SYMPTOM
+Users are unable to login
+
+
+Errors seen in WorkplaceXT's SystemOut.log: 
+
+
+[8/28/15 18:54:22:282 GMT] 00000092 LTPAServerObj W SECJ0371W: 
+Validation of the LTPA token failed because the token expired with the 
+following info: Token expiration Date: Fri Aug 28 17:46:00 GMT 2015, 
+current Date: Fri Aug 28 18:54:22 GMT 2015 Token attributes: 
+port=8880, 
+username=user:ldap:389/cn=xxx,ou=yyy,ou=zzz,o=xyz, hostname=hostname_server. This warning might 
+indicate expected behavior. Please refer to technote at 
+http://www-01.ibm.com/support/docview.wss?uid=swg21594981 [http://www-01.ibm.com/support/docview.wss?uid=swg21594981]. 
+
+Errors seen in Content Engine's p8_server_trace.log: 
+
+
+2015-08-28T00:13:31.696 18E66E0F ENG FNRCE0001E - ERROR method name: 
+checkPropertyAccess principal name: p8admin Global Transaction: true 
+User Transaction: true Exception Info: The requester has insufficient 
+access rights to perform the requested operation. Not granted required 
+access.\ncom.filenet.api.exception.EngineRuntimeException: FNRCE0001E: 
+E_ACCESS_DENIED: The requester has insufficient access rights to 
+perform the requested operation. Not granted required access. 
+failedBatchItem=0\n at 
+.. 
+2015-08-27T15:26:52.703 D51A5B11 SEC FNRCE0051W - WARN Exception 
+getting principal by id: 
+S-1-97-361986116-3843142466-669130368-3279123109\ncom.filenet.api.except
+ion.EngineRuntimeException: FNRCE0051E: E_OBJECT_NOT_FOUND: The 
+requested item was not found. Principal 
+S-1-97-361986116-3843142466-669130368-3279123109 not found.\n at 
+com.filenet.engine.security.DirectoryServiceDriver.getRealmByPrincipalSi
+d(DirectoryServiceDriver.java:972)\n at 
+.. 
+java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.ja
+va:918)\n at java.lang.Thread.run(Thread.java:784)\nCaused by: 
+\njavax.naming.ServiceUnavailableException: ldap:389; socket closed; 
+
+
+
+CAUSE
+LTPA token is expired and user security is out of sync
+
+
+ENVIRONMENT
+CPE 5.2.0.3, WPXT 1.1.5.2
+
+
+
+RESOLVING THE PROBLEM
+Redeploy WorkplaceXT 
+
+ * Regenerate LTPA Key 
+ * Remove and add users back in boot strap object store 
+ * Reset security at Object Store/Class/Folder level

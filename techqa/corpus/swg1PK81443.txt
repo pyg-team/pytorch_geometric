@@ -1,0 +1,279 @@
+Title: IBM PK81443: UPDATE WEBSPHERE MQ RESOURCE ADAPTER SHIPPED WITH WEBSPHERE     APPLICATION SERVER V7.0 - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  This APAR updates the WebSphere MQ Resource Adapter shipped
+   with WebSphere Application Server V7.0
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  Users of WebSphere Application Server V7.0  *
+   *                  using WebSphere MQ as a messaging provider. *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: This APAR updates the WebSphere MQ      *
+   *                      Resource Adapter shipped with           *
+   *                      WebSphere Application Server V7.0       *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   Update the WebSphere MQ resource adapter which ships in
+   WebSphere Application Server. The new version of the WebSphere
+   MQ resource adapter fixes a number of issues that affect users
+   of WebSphere MQ as a messaging provider for WebSphere
+   Application Server. The main ones are:
+   
+   - Applications calling receiveWithWait on a WebSphere MQ
+   messaging provider message consumer might not receive a
+   message even if one is available and the receive might return
+   early.
+   
+   - Possible ConcurrentModificationException when repeatedly
+   stopping and starting an MDB which makes use of a WebSphere MQ
+   messaging provider activation specification. The exceptions
+   will look like this:
+   
+   J2CA0139E: J2CA0139E: The Message Endpoint deactivation failed
+   for ActivationSpec {0} and MDB application {1} due to the
+   following exception: java.util.ConcurrentModificationException
+    at java.util.AbstractList$SimpleListIterator.next(Unknown
+   Source)
+    at
+   com.ibm.mq.connector.ResourceAdapterConnectionPool.releaseConnec
+   tion(ResourceAdapterConnectionPool.java:414)
+    at
+   com.ibm.mq.connector.ResourceAdapterImpl.endpointDeactivation(Re
+   sourceAdapterImpl.java:493)
+    at
+   com.ibm.ejs.j2c.ActivationSpecWrapperImpl.deactivateEndPoint(Act
+   ivationSpecWrapperImpl.java:397)
+    at
+   com.ibm.ejs.j2c.RAWrapperImpl.deactivateEndpoint(RAWrapperImpl.j
+   ava:1449)
+    at
+   com.ibm.ejs.j2c.RALifeCycleManagerImpl.deactivateEndPoint(RALife
+   CycleManagerImpl.java:1761)
+   
+   - Problem whereby it wasn't possible to alter the topic name
+   of an existing subscription when connecting to a version 7
+   queue manager with the Provider version on a WebSphere MQ
+   Activation Specification set to 6.0.0.0down the V6 leg i.e.
+   PVER-6 was set. Customers would get exceptions with a root
+   cause of
+   
+   javax.jms.JMSException: MQRCCF_TOPIC_ERROR
+   at
+   com.ibm.msg.client.wmq.v6.jms.internal.MQBrokerSubscriptionEngin
+   e.updateDurableSubscription(MQBrokerSubscriptionEngine.java:2748
+   )
+   at
+   com.ibm.msg.client.wmq.v6.jms.internal.MQBrokerSubscriptionEngin
+   e.openDurableSubscription(MQBrokerSubscriptionEngine.java:1621)
+   at
+   com.ibm.msg.client.wmq.v6.jms.internal.MQMigrateSubscriptionEngi
+   ne.openDurableSubscription(MQMigrateSubscriptionEngine.java:691)
+   at
+   com.ibm.msg.client.wmq.v6.jms.internal.MQConnectionBrowser.pubSu
+   bSetup(MQConnectionBrowser.java:848)
+   at
+   com.ibm.msg.client.wmq.v6.jms.internal.MQConnectionBrowser.MQCon
+   nectionBrowserInit(MQConnectionBrowser.java:710)
+   at
+   com.ibm.msg.client.wmq.v6.jms.internal.MQConnectionBrowser.<init
+   >(MQConnectionBrowser.java:173)
+   at
+   com.ibm.msg.client.wmq.v6.jms.internal.MQConnection.createDurabl
+   eConnectionBrowser(MQConnection.java:1251)
+   
+   If they hit this.
+   
+   - Applications that make use of a WebSphere MQ messaging
+   provider activation specification with a transport mode of
+   bindings then client on z/OS that make a bindings mode
+   connection to the queue manager will get the following
+   exception and won't be able to consume any messages:
+   
+   FFDC Exception:javax.jms.JMSException
+   SourceId:com.ibm.ws.wmqra.zdispatcher.WASServantConnectionConsum
+   er.endDelivery ProbeId:01
+   javax.jms.JMSException: MQJMS1068: failed to obtain XAResource.
+    at
+   com.ibm.msg.client.wmq.v6.jms.internal.ConfigEnvironment.newExce
+   ption(ConfigEnvironment.java:374)
+    at
+   com.ibm.msg.client.wmq.v6.jms.internal.MQXAConnection.createXASe
+   ssion(MQXAConnection.java:146)
+    at
+   com.ibm.msg.client.jms.internal.JmsXAConnectionImpl.createXASess
+   ion(JmsXAConnectionImpl.java:103)
+    at
+   com.ibm.mq.jms.MQXAConnection.createXASession(MQXAConnection.jav
+   a:82)
+    at
+   com.ibm.mq.connector.inbound.ServerSessionPoolImpl.createJMSSess
+   ion(ServerSessionPoolImpl.java:435)
+    at
+   com.ibm.mq.connector.inbound.ServerSessionPoolImpl.getServerSess
+   ion(ServerSessionPoolImpl.java:301)
+    at
+   com.ibm.ws.wmqra.zdispatcher.WASServantConnectionConsumer.endDel
+   iver(WASServantConnectionConsumer.java:159)
+    at
+   com.ibm.ws.wmqra.zdispatcher.WASServantConnectionConsumer.delive
+   rMessagesFromReference(WASServantConnectionConsumer.java:136)
+    at
+   com.ibm.ws.wmqra.zdispatcher.WASServantConnectionConsumerReposit
+   ory.dispatch(WASServantConnectionConsumerRepository.java:199)
+    at
+   com.ibm.ws.wmqra.zdispatcher.WASServantDispatchTarget.dispatch(W
+   ASServantDispatchTarget.java:51)
+    at
+   com.ibm.ws.sib.z.dispatcher.WorkObjectImpl.fireWork(WorkObjectIm
+   pl.java:89)
+    at
+   com.ibm.ws390.sib.dispatcher.WorkObjectProxyImpl.dispatchWorkObj
+   ectImpl(WorkObjectProxyImpl.java:259)
+    at
+   com.ibm.ws390.orb.CommonBridge.nativeRunApplicationThread(Native
+    Method)
+    at
+   com.ibm.ws390.orb.CommonBridge.runApplicationThread(CommonBridge
+   .java:460)
+    at
+   com.ibm.ws.util.ThreadPool$ZOSWorker.run(ThreadPool.java:1724)
+   
+   
+   - In-doubt messages left on a WebSphere MQ queue when stopping
+   and starting an MDB that uses a WebSphere MQ messaging
+   provider activation specification. These messages have to be
+   manually resolved.
+   
+   
+   The following exception may be seen if an MDB uses the
+   WebSphere MQ Resource Adapter to listen to an MQ queue:
+   CWSJY0003W: A message driven bean threw a runtime exception '
+   
+   Message : java.lang.IllegalStateException: JCA requires
+   resource adapter to ensure 1 message delivery per pair of
+   before/after delivery calls.
+   Class : class java.lang.IllegalStateException
+   Stack : java.lang.Throwable.<init>(Throwable.java:196)
+         : java.lang.Exception.<init>(Exception.java:41)
+         :
+   java.lang.RuntimeException.<init>(RuntimeException.java:43)
+         :
+   java.lang.IllegalStateException.<init>(IllegalStateException.jav
+   a:38)
+         :
+   com.ibm.ejs.container.MessageEndpointHandler.
+   throwIllegalStateException(MessageEndpointHandler.java:629)
+         :
+   com.ibm.ejs.container.MessageEndpointHandler.checkState(MessageE
+   ndpointHandler.java:459)
+         :
+   com.ibm.ejs.container.MessageEndpointHandler.invokeMdbMethod(Mes
+   sageEndpointHandler.java:920)
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This APAR updates the WebSphere MQ Resource Adapter shipped
+   with WebSphere Application Server V7.0
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK81443
+   
+   
+ * REPORTED COMPONENT NAME
+   PLAT MSG COM
+   
+   
+ * REPORTED COMPONENT ID
+   620800101
+   
+   
+ * REPORTED RELEASE
+   300
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-02-26
+   
+   
+ * CLOSED DATE
+   2009-02-27
+   
+   
+ * LAST MODIFIED DATE
+   2009-03-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   PLAT MSG COM
+   
+   
+ * FIXED COMPONENT ID
+   620800101
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R300 PSY
+   UP

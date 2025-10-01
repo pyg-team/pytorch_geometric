@@ -1,0 +1,60 @@
+Title: IBM Enabling the HATS runtime for more than two connections - United States
+
+Text:
+1316632; 38236; runtimeenablement; license; install; enablement; passport advantage; passport; HATS; Run-Time Web Enablement TECHNOTE (FAQ)
+
+QUESTION
+ Where can you find the IBM Rational Host Access Transformation Services (HATS) runtime enablement file to download? 
+
+CAUSE
+If you purchased Host Access Transformation Services or are using the trial version, the information in this document will assist you in getting the software enabled for more than two licenses.
+
+ANSWER
+To enable the software for more than two licenses, you must have the runtime enablement jar file. 
+
+This file is provided to you on a CD (or image, if you downloaded HATS electronically) separate from the HATS Toolkit. 
+
+ * The runtime enablement jar file for HATS 9.0 is runtimeenablement9-webrcp.jar 
+ * The runtime enablement jar file for HATS 9.5 is runtimeenablement95-webrcp.jar 
+ * The runtime enablement jar file for HATS 9.6 is runtimeenablement96-webrcp.jar 
+
+
+
+If you downloaded HATS from the Passport Advantage Web site, the runtime enablement files are located in the runtime enablement CD image. The CD number differs between the entitlement purchased and the releases of HATS. 
+
+HATS V9.0 
+ * CIPP3ML IBM Rational HATS V9.0 Runtime Enablement Multiplatform Multilingual, in the Assemblies 
+
+HATS V9.5 
+ * CRY6YML IBM Rational HATS V9.5 Runtime Enablement Multiplatform Multilingual, in the Assemblies 
+
+HATS V9.6 
+ * CNK53ML IBM Rational HATS V9.6 Runtime Enablement Multiplatform Multilingual, in the Assemblies
+
+
+Access the Passport Advantage Web site [http://www.ibm.com/software/howtobuy/passportadvantage/] and login with your IBM Web ID and password. 
+
+
+Consider the following: 
+
+The HATS technical service representatives cannot provide the runtime enablement jar file to clients. 
+
+If you downloaded HATS from Passport Advantage and you cannot find the runtime enablement jar file as part of the electronic assembly:  * 
+ * 
+ * 
+ * 
+
+If you bought HATS from a business partner and you cannot find the runtime enablement jar file, contact your business partner. 
+
+If you received a bundle of CDs and the bundle contains a HATS (Host Access Transformation Services) CD, and you cannot find the runtime enablement jar file:  * 
+
+
+If you had the runtime enablement jar file at one time but you can no longer find it: 
+Contact your business partner or IBM sales representative or download it from Passport Advantage. 
+
+If you have any questions about enabling Host Access Transformation Services or HATS licenses, you can visit the HATS web pages: 
+ * HATS Marketing page [http://www.ibm.com/software/awdtools/hats/] 
+ * HATS Support page [http://www.ibm.com/software/awdtools/hats/support] 
+
+
+You can also review the information regarding Installing HATS in the InfoCenter [http://publib.boulder.ibm.com/infocenter/hatshelp/v75/topic/com.ibm.hats.doc/doc/gsinstal.htm#enable_hats].

@@ -1,0 +1,40 @@
+Title: IBM How to find the WebSphere Portal process id? - United States
+
+Text:
+find; finding; finds; WebSphere Portal process id; process id; pid TECHNOTE (FAQ)
+
+QUESTION
+ How can you find the WebSphere Portal process id? 
+
+ANSWER
+You can use one of the options below to find the process id for WebSphere Portal. 
+
+SystemOut.log 
+
+In the SystemOut.log file, search for the last occurrence of "Start Display Current Environment". The process id is displayed in the next line message.
+
+This example (operating system Solaris 10) shows a process id 612:
+
+************ Start Display Current Environment ************
+WebSphere Platform 6.1 [ND 6.1.0.15 cf150808.12] running with process name ibm_cell\ibm_node\WebSphere_Portal and process id 612
+Host Operating System is SunOS, version 5.10
+Java version = 1.5.0_15, Java Compiler = null, Java VM name = Java HotSpot(TM) 64-Bit Server VM
+was.install.root = /opt/IBM/WebSphere/AppServer
+user.install.root = /opt/IBM/WebSphere/wp_profile
+Java Home = /opt/IBM/WebSphere/AppServer/java/jre
+ws.ext.dirs = ...
+Classpath = ...
+Java Library path = ...
+************* End Display Current Environment *************
+
+startServer.log
+
+In the startServer.log file, search for the last occurrence of "ADMU3000I". The process id is displayed in the same message.
+
+This example shows a process id 612:
+
+[9/4/08 17:24:30:520 EDT] 0000000a AdminTool A ADMU3000I: Server WebSphere_Portal open for e-business; process id is 612
+
+WebSphere_Portal.pid
+
+In the same directory as startServer.log, the file WebSphere_Portal.pid also contains the current process id.

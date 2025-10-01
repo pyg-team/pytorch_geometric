@@ -1,0 +1,51 @@
+Title: IBM Report Studio Stuck at initializing / Browser specific issues - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This is a IE8 browser specific issue and is happenning on only a single computer. If the user uses a different computer to access Report Studio, it works fine.
+
+If we try to launch Report Studio by clicking on the icon under actions for a report OR via Launch > Report Studio, the Report Studio browser opens. However, it stays stuck at Initializing forever and doesn't finish loading. 
+
+SYMPTOM
+1. Start IE 8 without add-ons : 
+
+ 
+Click the Start button on the Taskbar, click All Programs, click Accessories, click System Tools, and then click Internet Explorer (No Add-ons). 
+
+Now test launching Report Studio. 
+
+On using IE without add ons: 
+
+HAL ERROR: 
+_XP9._LD7() must be called in the HTML body. 
+
+2. Try deleting browser history: Delete the Browser History and cache and then launch IE 8: 
+Keyboard shorcuts: Ctrl + Shift + Delete > Enable all the checkboxes here and DISABLE only the first "Preserve Favorites website data". > Delete. 
+
+NOTE: Make sure to disable the favorite checkbox if you have Cognos link added to your favorites. 
+Close IE and relaunch IE without add ons as in step 1 and do the testing. 
+Deleting history didn't help. 
+
+3. Download supported version of Firefox and test? 
+Make sure to use a version Firefox as listed on the supported environment page. (see link)
+
+Report Studio initializes correctly and seems to be working. 
+
+
+RESOLVING THE PROBLEM
+Solution to Fix IE 8: 
+
+ 
+Close all Internet Explorers. Open a single IE. Or go to internet options via Control Panel. 
+
+In IE, go to Tools > Internet Options > Advanced Tab > Hit the Reset button at the bottom > Enable the checkbox for "Delete personal settings" > Reset. Close IE and reopen it to do the test. 
+
+Works fine now. 
+
+If the above doesn't work, make sure the version of IE you are using is supported. Reinstalling IE might be required if the reset doesn't work.
+
+
+RELATED INFORMATION
+ Cognos Supported Environments [http://www-01.ibm.com/support/docview.wss?uid=swg27042164]

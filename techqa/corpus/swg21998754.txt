@@ -1,0 +1,47 @@
+Title: IBM After Upgrading PGP Version, Cannot Encrypt or Decrypt Files in IBM Sterling B2B Integrator - United States
+
+Text:
+PGP 9.7 10.3 Profile Path file name encryption decryption TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ After upgrading Symantec PGP (Pretty Good Privacy) from Version 9.7 to 10.3, it is no longer possible to encrypt or decrypt files in IBM Sterling B2B Integrator 
+
+SYMPTOM
+File encryption and decryption works without issue when executed from a PGP command prompt, but fails when run in IBM Sterling B2B Integrator. The encryption/decryption fails and the cla2client.log has the following error: 
+
+ Exception occurred.java.io.IOException: Expected file to collect does not exist: /path/filename.txt
+at com.sterlingcommerce.woodstock.services.cmdline2.CmdLine2Thread.runCommand(CmdLine2Thread.java:686)
+at com.sterlingcommerce.woodstock.services.cmdline2.CmdLine2Thread.run(CmdLine2Thread.java:141)
+
+
+CAUSE
+Incorrect configuration 
+
+
+ENVIRONMENT
+All
+
+
+
+DIAGNOSING THE PROBLEM
+Check the PGP Server Profile to see how it is configured.
+
+
+
+RESOLVING THE PROBLEM
+The documentation states:
+"PGP Path Required. Directory where PGP Configuration file (pgp.cfg or PGPprefs.xml) is located." 
+
+This implies that only the path to the file need be specified, especially since the other parameters explicitly mention that the path and file name must be present. For example, regarding the PGP Public Key Ring, the documentation states: 
+
+"Required. Path and name of the PGP public key ring." 
+
+Specifying only the path to the PGP Configuration file works with PGP 9.7, but the same profile configuration fails with PGP 10.3. Specify both the path and the file name in the PGP Path parameter. 
+
+For example:
+
+/opt/apps/pgp-10.3.2/pgp.cfg
+
+Providing only the path without the file name will cause this error.
+
+At this time, it is not clear if using the full path and file name are required for all vendors of Pretty Good Privacy or only for Symantec PGP 10.x. If you encounter issues with encryption/decryption after upgrading a PGP version, please try adding the file name to the PGP Path.

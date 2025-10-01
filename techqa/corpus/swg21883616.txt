@@ -1,0 +1,41 @@
+Title: IBM AWSJCO005E and AWSZAP006E Event rule errors with SSL certificates - United States
+
+Text:
+TDWC; DWC; authentication SSL TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ While creating an event rule to add a jobstream to a z/OS master from TDWC the following error is shown: 
+
+"AWSJCO005E WebSphere Application Server has given the following error: Error getting WsnNameService properties." 
+
+SYMPTOM
+The following error is displayed when attempting to create an event rule using the AddJobStream event from Dynamic Workload Console (DWC) for a z/OS Master: 
+
+ 
+AWSZAP006E Triggered action "AddJobStream" was not completed successfully.
+Reason: "AWSJCS011E An internal error has occurred. The error is the following: "Authentication Failed"."
+
+
+CAUSE
+One possible cause is that there is not a Trusted Certificate between the IBM Workload Scheduler (IWS) Master Domain Manager (MDM) and the DWC.
+
+
+DIAGNOSING THE PROBLEM
+On both the Integrated Solutions Consoles (ISC) for the DWC and for IWS, check if you are using custom certificates by reviewing: 
+
+SSL certificate and key management > Key stores and certificates > NodeDefaultTrustStore > Personal certificates
+
+If there are custom certificates used on either side you must import the missing certificate. 
+
+
+RESOLVING THE PROBLEM
+To import the certificate, log into the ISC of the environment with the missing certificate. Navigate to: 
+
+ 
+SSL certificate and key management > Key stores and certificates > NodeDefaultTrustStore > Signer certificates > Retrieve from port
+
+Input the host name of the system with the certificate, the port; this is the secure admin port and alias of the missing certificate as listed in the original environment. 
+
+Select "Retrieve Signer"
+
+Apply and save and exit. You must restart the WebSphere instance where you imported the certificate.

@@ -1,0 +1,210 @@
+Title: IBM PI33540: ATTEMPTS TO GENERATE A TEST SCRIPT FROM THE TEST CASE DESIGN SECTION, RESULTS IN A SCRIPT WITH MULTIPLE SEPARATE STEPS. - United States
+
+Text:
+  A FIX IS AVAILABLE
+Rational Quality Manager 6.0 [http://www-01.ibm.com/support/docview.wss?uid=swg24040221]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Error Description:
+   
+   IBM Rational Quality Manager (RQM) version 5.0.1 has a
+   regression where any CR newline in the Test Case Design section
+   editor will translate into a new step in the generated test
+   script.
+   
+   In the earlier version RQM 3.x, a piece of text pasted into the
+   test case design section generates into a test script with one
+   step containing that text.
+   
+   In RQM version 3.x using the combination of "Shift+Enter"  on
+   the keyboard for a new line in the Test Case Design section will
+   generate into an additional test script step.
+   Just a CR newline would not trigger the generation of a new
+   step.
+   
+   
+   Expected results:
+   
+   In version 5.0.1 the expected outcome is described in the
+   Knowledge Center help topic &#65411;  Creating manual test scripts from
+   the test case design&#65411;   at
+   http://www-01.ibm.com/support/knowledgecenter/SSYMRC_5.0.1/com.i
+   bm.rational.test.qm.doc/topics/t_create_testscript_auto.html [http://www-01.ibm.com/support/knowledgecenter/SSYMRC_5.0.1/com.ibm.rational.test.qm.doc/topics/t_create_testscript_auto.html] and
+   states:
+   
+   " 1.    Open the test case to add a test script to.
+     2.    Click the Test Case Design section.
+     3.    To begin typing statements, click Add Content.
+     4.    Enter each step on a new line, which is separated by a
+   line break.
+     Groups of steps that are not separated by line breaks are
+   included in the same step."
+   
+   Actual result:
+   
+   In version 5.0.1 we see a new test script step for every line in
+   the Test Case Design.
+   
+   This problem is being addressed in defect work item:
+   https://jazz.net/jazz02/web/projects/Rational%20Quality%20Manage
+   r#action=com.ibm.team.workitem.viewWorkItem&id=131888 [https://jazz.net/jazz02/web/projects/Rational%20Quality%20Manager#action=com.ibm.team.workitem.viewWorkItem&id=131888]
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Once the test script is generated a user can manually change the
+   information by cutting and pasting it to the first step.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * Creating Manual Tests Scripts from the Test Case Design      *
+   * discrepancies between 3.x and 5.x                            *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * Steps to Reproduce                                           *
+   * Create a new Test case                                       *
+   * In the Test Case design section type the follow:             *
+   *                                                              *
+   * One <Enter>                                                  *
+   * Two <Shift-Enter>                                            *
+   * Three <Enter>                                                *
+   * Four <Shift-Enter>                                           *
+   * Five                                                         *
+   *                                                              *
+   *                                                              *
+   * Create a Manual Test Based on this data (Use the &#131;  Create   *
+   * manual test scripts from the test case design&#131;   button)     *
+   *                                                              *
+   *                                                              *
+   * Result in 3.0.1.3                                            *
+   * Three steps are created (See attached screen shot 3013MT)    *
+   * Step one contains &#131;  One&#131;   and &#131;  Two&#131;                      *
+   * Step two contains &#131;  Three&#131;   and &#131;  Four&#131;                   *
+   * Step three contains &#131;  Five&#131;                                 *
+   *                                                              *
+   *                                                              *
+   *                                                              *
+   * Result in 5.0.1 and 5.0.2                                    *
+   * Five steps are created, one for every entry in the Test Case *
+   * Design section                                               *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This issue has been resolved in version 6.0
+   See Jazz Workitem for additional details
+   https://jazz.net/jazz02/web/projects/Rational%20Quality%20Manage
+   r#action=com.ibm.team.workitem.viewWorkItem&id=131888 [https://jazz.net/jazz02/web/projects/Rational%20Quality%20Manager#action=com.ibm.team.workitem.viewWorkItem&id=131888]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI33540
+   
+   
+ * REPORTED COMPONENT NAME
+   RATL QUALITY MG
+   
+   
+ * REPORTED COMPONENT ID
+   5724V1000
+   
+   
+ * REPORTED RELEASE
+   301
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-01-27
+   
+   
+ * CLOSED DATE
+   2015-06-25
+   
+   
+ * LAST MODIFIED DATE
+   2015-06-25
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   RATL QUALITY MG
+   
+   
+ * FIXED COMPONENT ID
+   5724V1000
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R500 PSY
+   UP
+   
+   
+ * R501 PSY
+   UP
+   
+   
+ * R502 PSY
+   UP

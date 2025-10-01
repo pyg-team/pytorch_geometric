@@ -1,0 +1,155 @@
+Title: IBM PI68829: SPSS 24 FP1 NOT UPDATING WB9ENT64.OCX - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  You have installed IBM SPSS Statistics 24.0 GA (64-bit) and then
+   immediately applied Statistics 24.0 FP1 (64-bit).  You find that
+   the fix for this security bulletin has not been included:
+   http://www-01.ibm.com/support/docview.wss?uid=swg21982035 [http://www-01.ibm.com/support/docview.wss?uid=swg21982035]
+   
+   The Statistics 24.0 FP1 (32-bit) does in fact incorporate this
+   fix.
+   
+   Workaround:
+   The Statistics 24.0 FP1 (64-bit) installer will not overwrite an
+   already updated WB9ENT64.OCX (version 9.30.0.94).  It should be
+   possible to:
+   Install Statistics 24.0 GA
+   Install the Statistics 24.0 IF003
+   (http://www-01.ibm.com/support/docview.wss?uid=swg21982035)
+   Install Statistics 24.0 FP1 (64-bit)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  This issue will be addressed in the next Fix Pack. Please
+   refer to the Fix Pack schedule at
+   https://www-01.ibm.com/software/analytics/support/fixes/pbi_sche
+   dule.html [https://www-01.ibm.com/software/analytics/support/fixes/pbi_schedule.html]  for
+   information on upcoming Fix Packs.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * Users of IBM SPSS Statistics 24.0 IF003                      *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * Fixpack 1 does not include the fix for Statistics 24.0 GA    *
+   * IF003                                                        *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Please upgrade to IBM SPSS Statisitics 24.0 FP2              *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This issue has been resolved for IBM SPSS Statistics 24.0 FP2
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI68829
+   
+   
+ * REPORTED COMPONENT NAME
+   SPSS STATISTICS
+   
+   
+ * REPORTED COMPONENT ID
+   5725A54ST
+   
+   
+ * REPORTED RELEASE
+   O00
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-09-07
+   
+   
+ * CLOSED DATE
+   2017-05-17
+   
+   
+ * LAST MODIFIED DATE
+   2017-05-17
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   SPSS STATISTICS
+   
+   
+ * FIXED COMPONENT ID
+   5725A54ST
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * RO00 PSN
+   UP
+   
+   
+ * RO00 PSY
+   UP

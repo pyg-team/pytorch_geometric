@@ -1,0 +1,50 @@
+Title: IBM Hot Fix 10100171 is available for WebSphere Lombardi Edition V7.1 - United States
+
+Text:
+WLE HotFix MSSQL FLASH (ALERT)
+
+ABSTRACT
+ A critical issue affecting WebSphere Lombardi Edition V7.1 has been discovered and a fix is available to download from the FTP server. 
+
+CONTENT
+IMPORTANT NOTE: 
+
+A critical issue has been discovered on WebSphere Lombardi Edition V7.1 when using Microsoft SQL Server as the database. If you are running WebSphere Lombardi Edition V7.1 with Microsoft SQL Server you should apply this patch immediately.
+
+Prerequisites:
+
+This Hot Fix requires WebSphere Lombardi Edition V7.1
+This Hot Fix is for use only with Microsoft SQL Server (2005, 2008)
+
+Resolved Issue:
+
+Different types of data corruption occur in WebSphere Lombardi Edition 7.1 when the WebSphere Lombardi Edition 7.1 database is Microsoft SQ Server.
+
+The Microsoft SQL Server driver that ships with WebSphere Lombardi Edition V7.1 has been found to intermittently truncate some BLOB data to 8000 characters when they are inserted into the database. This situation is most often seen during an import, but can occur at other times as well When you experience data corruption, you typically see errors when you open the corrupted process application for editing in the Process Center. If the corruption is due to an import, you can archive the corrupted snapshot and then import a new snapshot of the same process application after you apply this fix. 
+
+To check for corruption in your database, you can run the following queries. If any of the results return non-zero counts, then it is likely that you have corrupted data. 
+
+select count(*) from LSW_PO_REFERENCE 
+where DATALENGTH(TARGET_SUMMARY_DATA)=8000
+
+select count(*) from LSW_PO_VERSIONS 
+where DATALENGTH(PO_DATA)=8000
+
+select count(*) from LSW_TASK_EXECUTION_CONTEXT 
+where DATALENGTH(EXECUTION_CONTEXT)=8000
+
+The problem is resolved with the JNET driver v5.94 or 5.9.7. The version of the driver is printed in the SystemOut.log file
+
+Example output from SystemOut.log:
+DSRA8206I: JDBC driver version : 5.94
+
+Download & Installation:
+
+WebSphere Lombardi Edition V7.1. HotFix 10100171 is available to download from the following link from Fix Central: WebSphere Lombardi Edition V7.1 Hot Fix 10100171 [http://www-933.ibm.com/eserver/support/fixes/fixcentral/swg/quickorder?brandid=5&productid=WebSphere+Lombardi+Edition&vrmf=7.1&fixes=WLE-7.1.0-HotFix-10100171]
+
+Instructions on how to install this Hot Fix in your WebSphere Lombardi Edition V7.1 environment are inside the Hot Fix package.
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ WLE

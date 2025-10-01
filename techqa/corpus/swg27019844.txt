@@ -1,0 +1,50 @@
+Title: IBM Configuring single sign-on for Workplace XT by using Kerberos/SPNEGO - United States
+
+Text:
+ RELEASE NOTES
+
+ABSTRACT
+ This document contains the high-level instructions to configure single sign-on for Workplace XT by using Kerberos/SPNEGO. 
+
+CONTENT
+ 
+
+To configure single sign-on integration between Kerberos/SPNEGO for e-business and IBM FileNet Workplace XT.
+
+
+ 1. Complete the predeployment tasks. 
+ 2. Configure and deploy Workplace XT. 
+ 3. Verify the deployment of Workplace XT with Kerberos/SPNEGO.
+
+
+Completing the pre-deployment tasks
+
+
+Before you configure single sign-on for SPNEGO in the IBM FileNet P8 environment, you must complete the basic configuration steps:
+
+
+ 1. Configure LDAP (example: Active Directory domain) and all client application servers as members of the LDAP domain.
+    
+ 2. Install and configure IBM FileNet P8 Content Engine and IBM FileNet P8 Workplace XT. See Product Documentation for FileNet P8 [http://www-01.ibm.com/support/docview.wss?rs=3247&uid=swg27010422] for more information.
+    
+ 3. Configure LTPA single sign-on on the WebSphere Application Server where the FileNet P8 Workplace XT and FileNet P8 Content Engine applications run. To synchronize the keys, export the key from WebSphere Application Server that runs on FileNet P8 Content Engine and import it into WebSphere Application Server that runs on Workplace XT. At a minimum, you need two machines to deploy SPNEGO-based single sign-on scenario.
+    
+ 4. Configure FileNet P8 Workplace XT with SPNEGO integration by following the steps in Chapter 5, "Single sign-on using SPNEGO" of the Single Sign-On Solutions for IBM FileNet P8 [http://www.redbooks.ibm.com/redbooks/pdfs/sg247675.pdf] redbook. The documentation is for Workplace, but is also applicable for Workplace XT.
+
+
+
+Configuring and deploying IBM FileNet Workplace XT with Kerberos/SPNEGO 
+The following items contain information that will help configure and deploy Workplace XT with Kerberos/SPNEGO: 
+
+1. Configure and deploy Workplace XT first and then verify the deployment as a stand-alone application before configuring Workplace XT with Kerberos/SPNEGO.
+
+2. Configure the browser on the machine where Workplace XT [http://publib.boulder.ibm.com/infocenter/p8docs/v4r5m1/topic/com.ibm.p8.installingxt.doc/wxtip002.htm] will be used with the SPNEGO configuration. 
+
+Important: Ensure that you have a browser installed that supports SPNEGO authentication. 
+
+Verifying Workplace XT deployment with Kerberos/SPNEGO
+
+The authentication of your browser requests are processed by the SPNEGO trust association interceptor (TAI) in the WebSphere Application Server. 
+
+To verify if SPNEGO is successfully configured on Workplace XT, enter the following URL and make sure you are not prompted for any additional authentication pop-ups in the browser:
+http:// <Workplace XT Server name>/WorkplaceXT

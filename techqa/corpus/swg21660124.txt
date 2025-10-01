@@ -1,0 +1,26 @@
+Title: IBM Capturing a SOAP request message as a string in Message Broker - United States
+
+Text:
+mqiinfo; SOAP debug trace; SOAP request TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ How to capture a SOAP request message as a string in IBM Integration Bus (IIB) or WebSphere Message Broker (WMB)?
+
+
+RESOLVING THE PROBLEM
+You can enable a SOAP debug trace to capture the SOAP request as a string:
+
+1. Find the mqsiprofile file in the MQSI install path (MQSI_InstallPath/bin/mqsiprofile) 
+2. Edit and save the mqsiprofile file, adding the following two lines:
+MQSI_SOAP_DEBUG=1
+export MQSI_SOAP_DEBUG
+3. Restart the broker by using the updated mqsiprofile
+4. You can check that the SOAP request and response is a string in the stdout file, which is located in the directory $MQSI_WORKPATH/components/<my_broker_name>/<EG_UUID>/stdout
+
+ 
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Integration Bus AIX, HP-UX, Linux, Solaris, Windows 9.0 All Editions 
+PRODUCT ALIAS/SYNONYM
+ WMB MB

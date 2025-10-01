@@ -1,0 +1,26 @@
+Title: IBM Storing the WebSphere Message Broker name in the Output Message - United States
+
+Text:
+CredentialsEnabled output message MQIINFO TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ In old versions of WebSphere Message Broker (WMB) such as MQSI V1.1, you had the ability (using the MPF file parameters) to tell the rules engine to either put the output message using the id of the incoming message (mqmd-useridentifier), or to put the message using the id used in starting the rules engine itself (like mqm). 
+
+This was done with with the CredentialsEnabled flag. By default in V6.x, V7, and V8 the output messages are put with the same id as the incoming message but, how do you tell the message flow to put the message with a different id (like the id used to start the broker) and how can you tell the message flow that the output message should be put with the user identifier of the started broker, or some other user identifier? 
+
+RESOLVING THE PROBLEM
+ 
+
+ 1. If the broker name is required to be set in the Output message, then 'Message Context' field on the MQOutput node should be set to 'default'. This will mean the queue manager will generate the context (identity and origin) fields in the MQMD on the MQPUT call. The queue manager will set them to the putting application details, which in this case will be the Execution Group/Broker details. 
+ 2. If the user wishes to set the identity/origin context information in the MQMD, then the 'Message Context' field on the MQOutput node will need to be set to either 'Set Identity' or 'Set All' depending on whether identity fields, or all context fields need to be set. This means on the MQPUT call, the values in the users MQMD will be used, and these can be set in a Compute node with the following ESQL: 
+
+
+SET OutputRoot.MQMD.UserIdentifier = 'Fred'; 
+
+and similar for other MQMD Context fields.  
+
+HISTORICAL NUMBER
+ 16131 082 000 
+
+PRODUCT ALIAS/SYNONYM
+ WMB MB WebSphere Message Broker MQ Integrator WBIMB WBI-MB MQSI WMQI

@@ -1,0 +1,59 @@
+Title: IBM "Standard Error 76 ... Could not find a part of the path" when preview report if launch Excel first - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ User launches Excel. User clicks "Add-ins" - "Controller" - "Log on". User chooses database connection, and logs onto Controller. Afterwards, user launches the 'main' Controller program (ccr.exe). Inside the main program, user clicks "Reports - Run". User selects a report, and clicks "Preview". An error message appears. 
+
+SYMPTOM
+Screen: 
+
+ Information
+Standard Error
+Number: 76
+Source: FrangoDirect.ExcelLinkD.GetLayoutFile#mscorlib
+Description: Could not find a part of the path 'C:\Users\Richard\AppData\Roaming\Cognos\CCR\ADMSERVERNAMEdatabasename'.
+at Microsoft.VisualBasic.ErrObject.Raise(Int32 Number, Object Source, Object Description, Object HelpFile, Object HelpContext)
+at Cognos.Controller.Common.RaiseErrCli.RaiseError(Int32 lErrNo, String sErrSource, String sErrDesc, String sErrHelpFile, Int32 lErrHelpContext)
+at Cognos.Controller.Direct.ExcelLinkD.GetLayoutFile(String sRapp)
+at Cognos.Controller.Reports.ExcelLink.GetLayoutFile(String sRep)
+
+
+Event Viewer (Application Log):
+Log Name: Application
+Source: Cognos Controller
+Date: 04/07/2011 13:22:51
+Event ID: 0
+Task Category: None
+Level: Warning
+Keywords: Classic
+User: N/A
+Computer: SERVERNAME
+Description:
+Standard Error
+Number: 76
+Source: FrangoDirect.ExcelLinkD.GetLayoutFile#mscorlib
+Description: Could not find a part of the path 'C:\Users\Richard\AppData\Roaming\Cognos\CCR\ADMSERVERNAMEdatabasename'.
+at Microsoft.VisualBasic.ErrObject.Raise(Int32 Number, Object Source, Object Description, Object HelpFile, Object HelpContext)
+at Cognos.Controller.Common.RaiseErrCli.RaiseError(Int32 lErrNo, String sErrSource, String sErrDesc, String sErrHelpFile, Int32 lErrHelpContext)
+at Cognos.Controller.Direct.ExcelLinkD.GetLayoutFile(String sRapp)
+at Cognos.Controller.Reports.ExcelLink.GetLayoutFile(String sRep)
+
+CAUSE
+Code production problem in Controller 10.1.384 and earlier.
+
+
+
+RESOLVING THE PROBLEM
+Fix: 
+
+Upgrade to Controller 10.1.387 or later.
+
+Workaround:
+Do not launch Excel before launching the 'main' Controller program (CCR.EXE). 
+
+ * Instead, allow Excel to be launched via the action of clicking "Reports - Run" inside Controller.
+
+RELATED INFORMATION
+#1586399 - Opening report in Excel returns Error "This f [http://www.ibm.com/support/docview.wss?uid=swg21586399]

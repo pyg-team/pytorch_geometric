@@ -1,0 +1,124 @@
+Title: IBM IO25286: AMC AND AM SUPPORT FOR TLS COMMUNICATIONS - United States
+
+Text:
+z/os  DIRECT LINKS TO FIXES
+7.1.1-TIV-TDI-FP0008 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Directory+Integrator&fixids=7.1.1-TIV-TDI-FP0008&source=SAR]
+7.1.1-TIV-TDI-LA0038 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Directory+Integrator&fixids=7.1.1-TIV-TDI-LA0038&source=SAR]
+7.1.1-TIV-TDI-FP0007 [http://www-01.ibm.com/support/docview.wss?uid=swg24044377]
+7.1.1-TIV-TDI-LA0038 [http://www-01.ibm.com/support/docview.wss?uid=swg24044765]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Implement AMC and AM using TLS v1.2 protocol
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  L3 Fix provided in Workitem DI02289
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  AMC and AM fail when using TLS v1.2 protocol.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This is a bug in the TDI code and has been fixed. The official
+   fix will be made available in 7.1.1-TIV-TDI-FP0008
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IO25286
+   
+   
+ * REPORTED COMPONENT NAME
+   ITDI MULTIPLATF
+   
+   
+ * REPORTED COMPONENT ID
+   5724D9960
+   
+   
+ * REPORTED RELEASE
+   711
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-04-10
+   
+   
+ * CLOSED DATE
+   2018-05-29
+   
+   
+ * LAST MODIFIED DATE
+   2018-05-29
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    IO25913 [http://www-01.ibm.com/support/docview.wss?uid=swg1IO25913]
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ITDI MULTIPLATF
+   
+   
+ * FIXED COMPONENT ID
+   5724D9960
+   
+   
+
+APPLICABLE COMPONENT LEVELS

@@ -1,0 +1,181 @@
+Title: IBM IZ69882: CEC AGENT DOES NOT SHOW CORRECT DATA AFTER HMC REBOOT - RSiErrno= 290 - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The CEC agent over time does not retrieve data related to
+   certain or all LPARS. This condition also happens if the HMC is
+   recycled. A temporary work around is to recycle the cec agent.
+   This happens due to certain conditions that cause problems with
+   Rsi data thereby resulting in information related to some LPARS
+   not being retrieved by the CEC agent.
+   
+   In order to identify if this is the underlying problem, it is
+   necessary to enable detailed data collector traces. The data
+   collector log (itmProvider.trc file), shows messages similar to:
+   
+   ----------------------------------------------------------------
+   TIMEL Error:  Fri Jan 29 11:10:33 2010 Unable to Open Lpar-first
+   attempt <lpar.hostname.com>
+   DEBUG: RSiErrno = 290
+   TIMEL Error:  Fri Jan 29 11:10:33 2010 Unable to Open
+   Lpar-second attempt <lpar.hostname.com>
+   DEBUG: RSiErrno = 290
+   ----------------------------------------------------------------
+   
+   Detailed Recreation Procedure:
+      Restart HMC when CEC agent is running.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Work around: Recycle the cec agent.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   ***
+   * USERS AFFECTED: All users.
+   ****************************************************************
+   ***
+   * PROBLEM DESCRIPTION:  Over time, the agent might not retrieve
+   * data related to some or all LPARS.  This might occur due to
+   the
+   * HMC being recycled or due to conditions that cause problems
+   * with Rsi data.  It results in information related to
+   * some LPARS not being retrieved by the agent.
+   * In order to identify if this is the underlying problem,
+   * it is necessary to enable detailed data collector traces.
+   * The data collector log (itmProvider.trc), shows
+   * messages similar to:
+   *
+   ----------------------------------------------------------------
+   * TIMEL Error:  Fri Jan 29 11:10:33 2010 Unable to Open
+   Lpar-first
+   * attempt <lpar.hostname.com>
+   * DEBUG: RSiErrno = 290
+   * TIMEL Error:  Fri Jan 29 11:10:33 2010 Unable to Open
+   * Lpar-second attempt <lpar.hostname.com>
+   * DEBUG: RSiErrno = 290
+   *
+   ----------------------------------------------------------------
+   ****************************************************************
+   ***
+   * RECOMMENDATION: Install Interim Fix
+   6.2.1-TIV-ITM_CEC_BASE-IF0004.
+   ****************************************************************
+   ***
+   The problem is resolved in 6.2.1-TIV-ITM_CEC_BASE-IF0004.  The
+   problem is also resolved in IBM Tivoli Monitoring: CEC Base
+   Agent,
+   Version 6.2.2.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix for this APAR is contained in the following maintenance
+   package:
+   
+     | interim fix | 6.2.1-TIV-ITM_CEC_BASE-IF0004
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ69882
+   
+   
+ * REPORTED COMPONENT NAME
+   ITM SE SYSP CEC
+   
+   
+ * REPORTED COMPONENT ID
+   5724C04CB
+   
+   
+ * REPORTED RELEASE
+   621
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-02-09
+   
+   
+ * CLOSED DATE
+   2010-04-13
+   
+   
+ * LAST MODIFIED DATE
+   2010-04-13
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ITM SE SYSP CEC
+   
+   
+ * FIXED COMPONENT ID
+   5724C04CB
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R621 PSY
+   UP
+   
+   
+ * R622 PSY
+   UP

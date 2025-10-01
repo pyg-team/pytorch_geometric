@@ -1,0 +1,25 @@
+Title: IBM Some favourites in IBM Content Navigator 3.0.1 are not persistent and will disappear after new added - United States
+
+Text:
+IO26092; Favourite TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When use the "Favourites" function in IBM Content Navigator (ICN) to add CM OnDemand (CMOD) documents to favourites, we found that some documents are disappeared from "Favorites" list after either 
+1) clicking "Refresh" button in ICN or 
+2) logout and re-login ICN.
+
+After further check we found that for documents which "do not disappear", after clicking "Add to Favorites" button, a record is added to ICN database table "configuration". Therefore no matter clicking "Refresh" or Login/Logout, the record is still found in Favorites list. For documents that will disappear, the record is never added to ICN database table "configuration".
+
+In WAS SystemOut.log and SystemErr.log, it shows error SQL -302, but there is no error on ICN desktop.
+
+[12/19/17 15:46:32:731 HKT] 000002b7 SystemErr R CIWEB Error: [ ] com.ibm.ecm.configuration.DatabaseConfiguration.getProperty() key = favorite.navigator.user.admin.COMS2SIT.Y2z0xcRpoPjiBA9HypSGU+cDvLtSWYvasP7+Y62o8MnUCl8L1KseGRnf5bZO1UvED0/n0D8b+VGex8e4WjXfz9ev7zj/1FHMLpr2ePrfje5g4lzgg8f2XE+Sh94qrjDVySzLDT0StDrzqG4PQtvPOmAWyl0Hc59+Y8CvUUc9YiA1JA3E7thz1rLMZ8rAYjnFrBDmp0EvYom9ZvfQoC6I2VIA==
+com.ibm.db2.jcc.am.SqlDataException: DB2 SQL Error: SQLCODE=-302, SQLSTATE=22001, SQLERRMC=null, DRIVER=4.23.42
+
+The related APAR number is IO26092.
+
+
+CAUSE
+CMOD V9.5+ changed the encryption for their docid to much longer than ICN default sizes. It needs a code fix in ICN.
+
+RESOLVING THE PROBLEM
+The fix included in ICN 3.0.1 IFix 6, 3.0.2 IFix 4, 3.0.3 IFix 2 and the future releases.

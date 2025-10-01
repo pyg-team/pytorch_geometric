@@ -1,0 +1,124 @@
+Title: IBM [Db2 LUW] Mssql_Statement::block_fetch and ODBC error messages with Db2 MSSQL Federation - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Why Mssql_Statement::block_fetch and ODBC error messages with Db2 MSSQL Federation? 
+
+CAUSE
+It is an known limitation
+
+ANSWER
+Here is sample db2diag.log messages. 
+
+-----
+2017-04-19-18.05.37.083000+540 I15769444561F673 LEVEL: Error
+PID : 1048 TID : 728 PROC : db2syscs.exe
+INSTANCE: DB2 NODE : 000 DB : DB1
+APPHDL : 0-52395 APPID: 192.168.::0.5020.D26919C8B6D6
+AUTHID : DB2INST1 HOSTNAME: HIDEHY
+EDUID : 728 EDUNAME: db2agent (DB1) 0
+FUNCTION: DB2 UDB, mssql wrapper, Mssql_Server::get_error_info, probe:2
+MESSAGE : Function name:
+DATA #1 : Hexdump, 28 bytes
+0x000007FEF580EDD4 : 4D73 7371 6C5F 5374 6174 656D 656E 743A Mssql_Statement:
+0x000007FEF580EDE4 : 3A62 6C6F 636B 5F66 6574 6368 :block_fetch
+
+... snip ...
+
+2017-04-19-18.05.37.083000+540 I15769446405F1250 LEVEL: Error
+PID : 1048 TID : 728 PROC : db2syscs.exe
+INSTANCE: DB2 NODE : 000 DB : DB1
+APPHDL : 0-52395 APPID: 192.168.::0.5020.D26919C8B6D6
+AUTHID : DB2INST1 HOSTNAME: HIDEHY
+EDUID : 728 EDUNAME: db2agent (DB1) 0
+FUNCTION: DB2 UDB, mssql wrapper, Mssql_Server::get_error_info, probe:7
+MESSAGE : ODBC error txt:
+DATA #1 : Hexdump, 142 bytes
+0x0000000046E1EE80 : 5B4D 6963 726F 736F 6674 5D5B 4F44 4243 [Microsoft][ODBC
+0x0000000046E1EE90 : 2053 514C 2053 6572 7665 7220 4472 6976 SQL Server Driv
+0x0000000046E1EEA0 : 6572 5D5B 5351 4C20 5365 7276 6572 5D53 er][SQL Server]S
+0x0000000046E1EEB0 : 4855 5444 4F57 4E20 82AA 9069 8D73 9286 HUTDOWN ...i.s..
+0x0000000046E1EEC0 : 82C5 82B7 8142 0000 0000 0000 0000 0000 .....B..........
+0x0000000046E1EED0 : 0000 0000 0000 0000 0000 0000 0000 0000 ................
+0x0000000046E1EEE0 : 0000 0000 0000 0000 0000 0000 0000 0000 ................
+0x0000000046E1EEF0 : 0000 0000 0000 0000 0000 0000 0000 0000 ................
+0x0000000046E1EF00 : 0000 0000 0000 0000 0000 0000 0000 ..............
+
+... snip ...
+-----
+
+And here is a sample of the associated trap file stack trace backs.
+-----
+... offset: 000000000001B418 in <sqlnlsschr> <NotFound:-1>
+... offset: 0000000000005CC6 in <sqlnlscpcv> <NotFound:-1>
+... offset: 000000000000545D in <sqlnlscpcv> <NotFound:-1>
+... offset: 0000000000000285 in <sqlnlscpcv> <NotFound:-1>
+... offset: 0000000000000113 in <sqlocpcv> <...>
+... offset: 0000000000026581 in <FencedWrapper_Hook> <NotFound:-1>
+-----
+
+The symptoms and diagnostics information of this error can be reproduced by 
+following steps:
+
+1. On remote SQL Server database, create table TEST_TABLE.
+
+CREATE TABLE TEST_TABLE]( col1 [CHAR](254) );
+
+2. On Federated database, create Federated objects (Wrapper, Server, 
+User Mapping) then, create nickname for exiting remote table.
+
+CREATE WRAPPER <wrapper name> LIBRARY '<MSSQL Wrapper Library>' 
+OPTIONS (DB2_FENCED 'Y');
+CREATE SERVER <server name> TYPE teradata VERSION <version number> 
+WRAPPER <wrapper name> OPTIONS(NODE '<node name>');
+CREATE USER MAPPING FOR <userid> SERVER <server name> OPTIONS 
+(REMOTE_AUTHID '<authid>', REMOTE_PASSWORD '<password>');
+CREATE NICKNAME <nick name> for <server name>.<schema name>.<table name>;
+
+3. Create a embedded SQL program including an WITH HOLD CURSOR against 
+remote nickname.
+
+EXEC SQL DECLARE <cursor name> CURSOR WITH HOLD FOR 
+SELECT * FROM <user id>.<nickname>;
+EXEC SQL OPEN <cursor name>;
+EXEC SQL FETCH <cursor name> INTO :<local host variable>;
+EXEC SQL COMMIT;
+WHILE (sqlca.sqlcode == SQL_RC_OK)
+{
+EXEC SQL FETCH <cursor name> INTO :<local host variable>;
+}
+EXEC SQL CLOSE <cursor name>;
+
+The FETCH operation in WHILE loop will terminates with the error messages.
+
+But as documented below, "WITH HOLD cursors" is not supported with ODBC. So ODBC 
+using Db2 MSSQL Federatoin feature receives the error messages as a limitation.
+
+V10.5, Configuring access to ODBC data sources
+https://www.ibm.com/support/knowledgecenter/en/SSEPGG_10.5.0/com.ibm.swg.im.iis.found.conn.fw.odb.doc/topics/tlsodb01.html [https://www.ibm.com/support/knowledgecenter/en/SSEPGG_10.5.0/com.ibm.swg.im.iis.found.conn.fw.odb.doc/topics/tlsodb01.html]
+-----
+Restrictions
+
+o The ODBC wrapper cannot be used to access any DB2 family data sources. Use the DRDA 
+wrapper to access DB2 family data sources.
+o The ODBC wrapper does not support the following functions and statements:
+- Two-phase commit transactions
+- LOCK TABLE statements on nicknames
+- Features deprecated in ODBC 3.x
+- X/Open or SQL/CLI drivers
+- Stored procedure nicknames
+- Statement-level atomicity enforcement using remote savepoint statements
+- WITH HOLD cursors
+-----
+
+We would recommend not use WITH HOLD cursor with Db2 Federation feature.
+
+Note:
+This behavior might be changed without notice in the future. Please contact your Sales 
+Rep to submit a potential design change towards a future release. Or please open a 
+ticket, Request For Enhancement at https://www.ibm.com/developerworks/rfe/ [https://www.ibm.com/developerworks/rfe/]
+For opening a ticket, here may help.
+How can I submit a suggestion, Document Change Request (DCR) or Request For Enhancement (RFE) for DB2 LUW?
+http://www-01.ibm.com/support/docview.wss?uid=swg21987419 [http://www-01.ibm.com/support/docview.wss?uid=swg21987419]

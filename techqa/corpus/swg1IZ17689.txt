@@ -1,0 +1,128 @@
+Title: IBM IZ17689: SLOW LOGON - 6.3 MEG JAR DOWNLOADED EACH TIME - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Environment:
+   Occurs only when using the browser  to access TEPS.
+   
+   Problem Description:
+     Each time you logon to TEPS jar file is downloaded though you
+   have
+     caching enabled.
+   
+   This is not an issue with 6.2
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  An additional 6m of byte code was being dowmloaded to the tep
+   client even though all of the necessary jar files were already
+   in the local java plugin cache.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix for this APAR is included in the following maintenance
+   vehicle:
+   
+      | interim fix | 6.1.0.7-TIV-ITM-IF0001
+   
+   Note: Search the IBM technical support web site for maintenance
+   package availability.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ17689
+   
+   
+ * REPORTED COMPONENT NAME
+   TEP
+   
+   
+ * REPORTED COMPONENT ID
+   5724C04EP
+   
+   
+ * REPORTED RELEASE
+   610
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-03-13
+   
+   
+ * CLOSED DATE
+   2008-06-27
+   
+   
+ * LAST MODIFIED DATE
+   2008-06-27
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TEP
+   
+   
+ * FIXED COMPONENT ID
+   5724C04EP
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R610 PSY
+   UP

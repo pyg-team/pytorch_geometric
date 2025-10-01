@@ -1,0 +1,278 @@
+Title: IBM PI88408: TYPE=RECORD OBD FOR SYSIBM.SYSCOPY HAS OBDRDBCS = SBCS FOR CHAR COLUMNS AFTER DSNTIJEN IS RUN - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  OBDRDBCS field in SYSIBM.SYSCOPY was erroneously set to
+   SBCS by DSNTIJEN. It was set to SBCS regardless of DECPGRAF
+   setting and incurred unnessary character conversion by other
+   components such as converting from ccsid 290 to ccsid 930.
+   keywords: DB2MIGV11/K
+   
+   ADDITIONAL SYMPTOMS:
+   This unnecessary conversion can cause the z/OS UCS mechanism
+   (DSNXS390) to be cached for MCCSID -> SCCSID conversion, then
+   leads an application, which depends on the SYSIBM.SYSSTRINGS row
+   mechanism, to get character garbling.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  After DB2 restart, start the application prior to COPY utils.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * All Db2 11 and 12 for z/OS users                             *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * SYSIBM.SYSCOPY OBD field OBDRDBCS(*)                         *
+   * values might be incorrectly set to SBCS                      *
+   * regardless of the value of the MIXED DECP.                   *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Apply corrective PTF when available                          *
+   ****************************************************************
+   When migrating from V11 CM (Compat Mode), Db2 incorrectly
+   sets SYSIBM.SYSCOPY OBD field OBDREC.OBDRDBCS(*) to SBCS,
+   regardless of the value of the MIXED DECP field setting.
+   As a result, if MIXED DATA YES, the incorrect OBDRDBCS(*)
+   incurred unnecessary character conversion for the user data
+   which leads to various symptoms.
+   
+   For example, in V11 NFM or after,  with MXIED DATA YES,
+   an attempt to perform a SELECT from a user table using
+   DSNTIAUL might return garbled character data with the
+   following warning message:
+   
+   DSNT404I SQLCODE = 100, WARNING:  ROW NOT FOUND FOR FETCH,
+   UPDATE, OR DELETE, OR THE RESULT OF A QUERY IS AN EMPTY TABLE
+   DSNT418I SQLSTATE   = 02000 SQLSTATE RETURN CODE
+   DSNT415I SQLERRP    = DSNXEBR  SQL PROCEDURE DETECTING ERROR
+   DSNT416I SQLERRD    = -115  0  20  -1  0  0 SQL DIAGNOSTIC
+   INFORMATION
+   DSNT416I SQLERRD    = X'FFFFFF8D'  X'00000000'  X'00000014'
+   X'FFFFFFFF'  X'00000000'  X'00000000'  SQL DIAGNOSTIC INFORMA
+   DSNT417I SQLWARN0-5 = W,,,,, SQL WARNINGS
+   DSNT417I SQLWARN6-A = ,,,W,   SQL WARNINGS
+   
+   DSNT404I SQLCODE = 000, SUCCESSFUL EXECUTION
+   DSNT418I SQLSTATE   = 01517 SQLSTATE RETURN CODE
+   DSNT415I SQLERRP    = SQL PROCEDURE DETECTING ERROR
+   DSNT416I SQLERRD    = -115  0  20  -1  0  0 SQL DIAGNOSTIC
+   INFORMATION
+   DSNT416I SQLERRD    = X'FFFFFF8D'  X'00000000'  X'00000014'
+   X'FFFFFFFF'  X'00000000'  X'00000000'  SQL DIAGNOSTIC
+   INFORMATION.
+   DSNT417I SQLWARN0-5 = W,,,,, SQL WARNINGS
+   DSNT417I SQLWARN6-A = ,,,W,   SQL WARNINGS
+   DSNT404I SQLCODE = 000, SUCCESSFUL EXECUTION
+   
+   Note: SQLWARN8 contains a 'W' if a character that could not be
+   converted was replaced with a subsititute character.
+   
+   There might be other unexpected symptoms when
+   the incorrect SYSCOPY OBD field OBDRDBCS(*) value is being
+   used.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Db2 code has been fixed. In V11,  the OBDREC.OBDRDBCS(*) value
+   of SYSCOPY will be set correctly according to the value of
+   the MIXED DECP field setting when running DSNTIJEN.  In V12,
+   OBDREC.OBDRDBCS(*) value of SYSCOPY will be corrected
+   according to the value of the MIXED DATA field.
+   
+   
+   For most cases applying this APAR will correct existing
+   SYSIBM.SYSCOPY OBDRDBCS(*) issues and prevent future issues
+   from occuring.
+   
+   ++HOLD COMMENT FOR RELEASE B10/C10, TYPE ACT:
+   
+   After applying this PTF, when rows are inserted, updated or
+   deleted from SYSIBM.SYSCOPY with DECP setting MIXED DATA YES,
+   customer might run into some additional possible symptoms as
+   below. They should contact IBM service for further assistance.
+   
+   Symptom 1:
+   On a COPY utility, Db2 might issue the following error message
+   or possible ABEND in DSNUBAUS:
+   (Note: ABEND offset, CCSID or COLUMN number could be different)
+   
+   DSNU1450I DSNUBAUS - CHARACTER CONVERSION FROM
+                        CCSID 933 TO 0 FAILED ERROR CODE 24 FOR
+                        TABLE 0006.002E COLUMN 4
+   
+   DSNU1450I DSNUGBAC - UTILITY DATA BASE SERVICES MEMORY
+                        EXECUTION ABENDED,
+                        REASON=X'00E40191' CAUSE=X'00C9060A'
+   
+   ABND=04E-00E40191,U=ADMF001 ,M=N ,
+   C=111.UTIL-UTILINIT,M=DSNTFRCV, LOC=DSNUTILA.DSNUBAUS+03586
+   
+   Symptom 2:
+   On a CREATE TABLESPACE statement, Db2 might issue the following
+   error message and possible ABEND IN DSNUBAUS:
+   (Note: ABEND offset might be different)
+   
+   DSNT408I SQLCODE = -904, ERROR: UNSUCCESSFUL EXECUTION
+                      CAUSED BY AN UNAVAILABLE RESOURCE.
+                      REASON RESOURCE UNAVAILABLE,
+                      TYPE OF RESOURCE , AND RESOURCE NAME
+   DSNT418I SQLSTATE= 57011 SQLSTATE RETURN CODE
+   DSNT415I SQLERRP = DSNXICTS SQL PROCEDURE DETECTING ERROR
+   DSNT416I SQLERRD = 105 0 0 -1 0 0
+            SQL DIAGNOSTIC INFORMATION
+   DSNT416I SQLERRD = X'00000069' X'00000000' X'00000000'
+            X'FFFFFFFF' X'00000000' X'00000000'
+            SQL DIAGNOSTIC INFORMATION TEP3I55
+   RETCODE= 8
+   
+   ABND=04E-00E40191,U=ADMF001 ,M=N ,
+   C=121.UTIL-UTILINIT,M=DSNTFRCV, LOC=DSNUTILA.DSNUBAUS+03586
+   LOC=DSNUTILA.DSNUBAUS+03586
+   
+   
+   ADDITIONAL KEYWORDS:
+   
+   INCORROUT
+   DB2INCORR/K
+   DB2MIGV11/K
+   SQLCODE100
+   SQLSTATE01517
+   SQLSTATE57011
+   SQLCREATE
+   ABEND04E
+   SQLCODE904
+   RC00E40191
+   ZSA2
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  *********
+   * HIPER *
+   *********
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI88408
+   
+   
+ * REPORTED COMPONENT NAME
+   DB2 OS/390 & Z/
+   
+   
+ * REPORTED COMPONENT ID
+   5740XYR00
+   
+   
+ * REPORTED RELEASE
+   B10
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   YesHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-10-04
+   
+   
+ * CLOSED DATE
+   2018-03-21
+   
+   
+ * LAST MODIFIED DATE
+   2018-05-01
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UI54640 UI54641
+   
+   
+
+MODULES/MACROS
+ *  DSNGEPUF DSNGDALS
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   DB2 OS/390 & Z/
+   
+   
+ * FIXED COMPONENT ID
+   5740XYR00
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * RC10 PSY UI54640 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI54640]
+   UP18/04/05 P F804 ¢
+   
+   
+ * RB10 PSY UI54641 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI54641]
+   UP18/04/05 P F804 ¢
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

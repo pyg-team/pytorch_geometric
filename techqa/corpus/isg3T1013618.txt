@@ -1,0 +1,23 @@
+Title: IBM How do I preserve all the queued jobs? - United States
+
+Text:
+preserve queued jobs upgrade TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ How do I preserve all the queued jobs? 
+
+RESOLVING THE PROBLEM
+We are currently planning on upgrading from 6.0 to 6.2. I am reading allthe literature and pdf manuals but am not able to find a way to preserveall the queued jobs (non running jobs). How do I do this?To preserve jobs while upgrading, inactivate all queues and wait while running jobs are finished. Back up lsb.events and configuration files
+
+To upgrade to LSF 6.2 and preserve all the queued jobs you need to take the following steps:
+
+1. First inactivate all the queues so that no more jobs can be dispatched. To do this run 'badmin qinact all' .
+2. Wait until the running jobs are finished
+3. Back up lsb.events located under the 'work directory' and configuration files located under the 'conf' directory (This is done in case any of the files are lost after the upgrade)
+4. Once you have made the upgrade activate all the queues again by running 'badmin qact all'
+
+You can suspend the running jobs, but once you move these jobs to your new cluster and resume them, they will start from scratch unless those jobs were checkpointable.
+
+ 
+
+Cross reference information Segment Product Component Platform Version Edition IBM Spectrum Computing IBM Spectrum LSF

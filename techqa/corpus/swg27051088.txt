@@ -1,0 +1,134 @@
+Title: IBM Db2 Analytics Accelerator for z/OS Version V7.1.2 Release Notes - United States
+
+Text:
+ RELEASE NOTES
+
+ABSTRACT
+ This document describes enhancements and fixes in IBM Db2 Analytics Accelerator for z/OS Version 7.1.2. 
+
+CONTENT
+ 
+
+ * What's new
+ * Known issues and restrictions
+
+
+
+
+ 
+
+WHAT'S NEW
+ * Incremental update function now available
+ * SSH connections to Db2 Analytics Accelerator Console 
+ * Db211: Query support for BINARY, ROWID and DECFLOAT, plus associated (scalar) functions and expressions
+ * Querying of data at isolation level 'uncommitted read (UR)' when table is not replicated and not an accelerator-only table
+ * New AQT20014I messages as part of SYSPROC.ACCEL_LOAD_TABLES
+ * Enhanced interface for third-party tool integration for loading of data
+ * Accelerator on IBM Integrated Analytics System (IIAS)  * M4002 certification 
+    * M4002 Capacity on Demand function for 1/3 rack systems
+   
+   
+ *  Accelerator on IBM Z  * User management support for multiple admininstrators 
+    * Enhanced support for on-the-fly configuration changes (such as IP address, network devices, VLAN, and so on) 
+   
+   
+
+
+
+ 
+
+KNOWN ISSUES AND RESTRICTIONS
+Known issues and restrictions in earlier releases are resolved if they are not listed here.  
+
+GENERAL RECOMMENDATIONS
+ *  Under a very high system load, the accelerator might appear slow or run into timeouts.  Recommendation
+   Our quality assurance team successfully ran 30 load threads in parallel. 
+   
+   
+
+CREATING ACCELERATOR-ONLY TABLES
+ *  Creating an accelerator-only table fails with a message indicating that the accelerator-only table is not available.  Recommendation
+   Retry the operation. 
+   
+   
+
+QUERIES
+ *  A query runs for hours while the reload of a referenced table is in progress.  Recommendation
+   Cancel the query and wait until table statistics have been generated for new or reloaded tables. 
+   
+   
+ *  Queries might not be routed to a newly paired accelerator shortly after the pairing.
+   THE STATEMENT CANNOT BE EXECUTED BY DB2 OR IN THE ACCELERATOR (REASON 13). SQLCODE=-4742, SQLSTATE=560D5, DRIVER ...  Recommendation
+   Wait 30 seconds after pairing a new Db2 subsystem with an accelerator before you route queries to it. 
+   
+   
+ *  Queries do not return correct results after the following sequence of events:
+    * The reload of a table with the setting forceFullReload=true
+    * The termination of the load process through task cancellation
+    * A reload of the same table with the settingforceFullReload=false
+   
+    Recommendation
+   Remove the affected table from the accelerator and add it again. 
+   
+   
+
+LOADING TABLES
+ *  The error message " ... a deadlock or timeout occurred ... " is returned.  Recommendation
+   Wait a couple of minutes and retry the operation. 
+   
+   
+ *  If a 'Load Tables' or 'Alter Keys' operation is cancelled or fails with an error, the disk space that contains intermediate results is not freed.  Recommendation
+   Fully reload the affected table, or restart the 'Alter Keys' operation. 
+   
+   
+ *  Data loaded into the accelerator might be uncompressed or the compression rate might be less than the rate used by Db2 for z/OS.  This will be fixed in an upcoming release. 
+   
+   
+
+INCREMENTAL UPDATES
+ *  A reload of the table re-enables incremental updates. 
+ *  Pause after each reload to allow the system to come back to normal throughput and latency levels. 
+
+MONITORING
+ *  Negative value for 'Total memory available for processing SQL' (Q8STTMPS).  This will be fixed in an upcoming release. 
+   
+   
+
+MISCELLANEOUS
+ *  Stored procedure threads are not cancelled after closing IBM Db2 Analytics Accelerator Studio.  The -DISPLAY THREAD command on the z/OS console shows active threads although IBM Db2 Analytics Accelerator Studio has been closed. 
+   
+   
+ *  The accelerator server might crash if it is shut down while asynchronous load operations are running. Symptoms: the server is restarted and a core dump is created.  Recommendation
+   Do not shut down the server from the Db2 Analytics Accelerator Console as long as asynchronous load operations are running. (Check this with the List tasks function in IBM Db2 Analytics Accelerator Studio before.) 
+   
+   
+ *  Under a very high system load caused by the parallel execution of various operations, such as 'Add Tables', 'Remove Tables', and 'Alter Keys', the accelerator might restart unexpectedly, leading to the abortion of running tasks.  Recommendation
+   Do not run 'Alter Keys' operations at the same time as 'Add Tables' or 'Remove Tables' operations if you process big table sets that affect more than 10000 tables. 
+   
+   
+ *  If the stored procedure SYSPROC.GET_TABLES_DETAILS is called, the value of 'lastLoadTimestamp' contains '1970-01-01T00:00:00.000000Z' for all partitions. This might also lead to an incorrect load recommendation. 
+
+ISSUES SPECIFIC TO IBM DB2 ANALYTICS ACCELERATOR ON IBM Z
+QUERY
+ *  The accelerator terminates connections and ultimately reboots if the query workload is too high.  Recommendation
+   If the accelerator does not recover within several minutes, restart the accelerator from IBM Db2 Analytics Accelerator Studio. 
+   
+   
+ *  The accelerator goes offline when many queries are running in parallel and are producing a high workload.
+   The system log shows: "Accelerator is not online", "System went from state 'ONLINE' to 'UNKNOWN'  Recommendation
+   After some time, the accelerator restarts its services and comes online again. Then rerun the affected queries. 
+   
+   
+
+RESTRICTIONS
+ *  A gateway can only be specified for one of the defined network interfaces, which then becomes the default route for the system. An interface without a gateway set is accessible only from systems that belong to the the same subnet as the interface.  Recommendation
+   Use a single gateway definition for a router and connect Db2 subsystems in different subnets to this router. 
+   
+   
+ *  The accelerator does not support a combination of FICON DASD and FCP storage devices within the same storage pool.  Recommendation
+   Use only FICON DASD or only FCP storage devices for a specific storage pool definition. 
+   
+   
+
+ISSUES SPECIFIC TO IBM DB2 ANALYTICS ACCELERATOR STUDIO
+ *  A refresh of the 'Accelerator' view takes very long after adding a multitude of tables in a short time.

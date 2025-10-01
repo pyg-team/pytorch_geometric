@@ -1,0 +1,134 @@
+Title: IBM RS02581: EXECUTION ORDER IS NOT RESPECTED IN "LIST OF RULES FIRES" - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Operational Decision Manager V8.8.1.1: Interim Fix 52 [http://www-01.ibm.com/support/docview.wss?uid=swg24043634]
+Operational Decison Manager z/OS 8.8.1.2 Fix Pack [http://www-01.ibm.com/support/docview.wss?uid=swg24043654]
+Operational Decision Manager V8.8.1.2 Fix Pack [http://www-01.ibm.com/support/docview.wss?uid=swg24043530]
+Operational Decision Manager V8.8.1.1: Interim Fix 54 [http://www-01.ibm.com/support/docview.wss?uid=swg24043708]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When running a Test Suite in Decision Center business Console,
+   we can choose to display the "List of Rules Fired".
+   The list is display in the report for each scenario.
+   However, the order for all the rules in this list looks random.
+   With early version (JRules) similar ordering was the same as
+   the execution order, which was helpful when checking why a
+   specific scenario was not executed the way we expected.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  The random listing is caused by a communication and
+   deserialization issues between the DC back end and front end.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The code is fixed.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   RS02581
+   
+   
+ * REPORTED COMPONENT NAME
+   WDS FOR RULES
+   
+   
+ * REPORTED COMPONENT ID
+   5725B6903
+   
+   
+ * REPORTED RELEASE
+   880
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-12-05
+   
+   
+ * CLOSED DATE
+   2016-12-20
+   
+   
+ * LAST MODIFIED DATE
+   2017-04-06
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  999
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WDS FOR RULES
+   
+   
+ * FIXED COMPONENT ID
+   5725B6903
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R880 PSY
+   UP

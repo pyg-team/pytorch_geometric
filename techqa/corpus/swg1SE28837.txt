@@ -1,0 +1,159 @@
+Title: IBM SE28837: MQM400 CUMULATIVE MDV 60203 (WMQ V6.0 JAVA/JMS CLIENT) - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Collective service delivery for WebSphere MQ v6.0
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Collective service MDV 6.0.2.3 for WebSphere MQ v6.0
+   
+   Details of problems fixed for the WMQ server product (5724H72)
+   are included in APAR SE28589 [http://www-01.ibm.com/support/docview.wss?uid=swg1SE28589].
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Collective service MDV 6.0.2.3 for WebSphere MQ v6.0
+   - which contains fixes for all the problems listed below:
+   
+   
+   .                                                              .
+   PK39031J - MESSAGE DELAY ON THE QUEUE BEFORE BEING CONSUMED BY .
+             THE JMS LISTENER.                                    .
+   PK38270J - WHEN MDB TRIES TO GET MESSAGE MQPUT BY NON-JMS      .
+             APPLICATION WITH "FUTURE TIME",                      .
+             ARRAYINDEXOUTOFBOUNDSEXCEPTION IS ISSUED.            .
+   PK34557J - MQGET FAILURE 2206 (MQRC_MSG_ID_ERROR) OR 2207      .
+             (MQRC_CORREL_ID_ERROR) WHEN USING PUB/SUB QUEUES     .
+             SHARED IN A QSG.                                     .
+   PK32885J - A MESSAGE IS PUT TO THE DEAD LETTER QUEUE WITH A    .
+             REASON OF 2030 IN THE DLH, BUT THE MESSAGE FITS ON THE
+             QUEUE NAMED AS THE TARGET.                           .
+   IZ05857 [http://www-01.ibm.com/support/docview.wss?uid=swg1IZ05857] - WEBSPHERE MQ RESPONDS WITH INCORRECT XA ERROR CODE IN.
+             A GLOBAL XA TRANSACTION.                             .
+   IZ05792 [http://www-01.ibm.com/support/docview.wss?uid=swg1IZ05792] - MQRC_NO_CONTEXT_AVAILABLE RETURNED FROM ATTEMPTED    .
+             MQPUT TO DEAD LETTER QUEUE AFTER QUEUE BACKOUT       .
+             THRESHOLD REACHED.                                   .
+   IZ02497 - RECEIVE() WITH UNIFIED FACTORIES FAILS TO FIND       .
+             MESSAGES                                             .
+   IY99683 - CORRUPTED MESSAGE HEADER IN DEAD LETTER MESSAGES     .
+             PRODUCED BY JMS CLIENT                               .
+   IY98585 - LOWER CASE USERID BEING PASSED TO Z/OS V1.6 WITH     .
+             WEBSPHERE MQ 6                                       .
+   IY98550 - CUSTOM USER EXIT GIVES SECURITY EXCEPTION WHEN JAVA 2.
+             SECURITY IS ENABLED.                                 .
+   IY98258 - NOT SETTING USER NAME IN MQENVIRONMENT GIVES 2035    .
+             ERROR FOR WMQ V6.                                    .
+   IC53764 - NULLPOINTEREXCEPTION ERROR RECEIVED WHEN TRACING LEVEL
+             SET TO 5 AND MESSAGEID IS NULL                       .
+   IC53286 - UNABLE TO COMPUTE PUTDATE AND PUTTIME WHEN ANY ONE OF.
+             THE FIELDS IS SET TO BLANK                           .
+   IC52821 - CLIENT SIDE EXITS CANNOT BE LOADED THROUGH MQEXPLORER.
+             USING A CCDT                                         .
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   SE28837
+   
+   
+ * REPORTED COMPONENT NAME
+   JAVA CLIENT ISE
+   
+   
+ * REPORTED COMPONENT ID
+   5724L2600
+   
+   
+ * REPORTED RELEASE
+   600
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2007-05-09
+   
+   
+ * CLOSED DATE
+   2007-05-09
+   
+   
+ * LAST MODIFIED DATE
+   2012-12-10
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    SI27496
+   
+   
+
+MODULES/MACROS
+ *  RCHMGR
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   JAVA CLIENT ISE
+   
+   
+ * FIXED COMPONENT ID
+   5724L2600
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R600 PSY SI47908
+   UP12/12/10 I 1000

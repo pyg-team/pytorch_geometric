@@ -1,0 +1,177 @@
+Title: IBM IC78863: SERVER MAINTENANCE INSTALLATION DOCUMENTATION - United States
+
+Text:
+AIX SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When a user is installing the TSM server for the first time
+   and they want to be at the latest fixpack or interim fix, they
+   can start by installing the server at that fixpack or interim
+   fix level.  There is no need to first install the base release
+   server for that level.  Installing the base release first may
+   expose the user to issues that have been fixed in later
+   levels.  Once that fixpack or interim fix server has been
+   installed the customer just needs to install the license from
+   the base release level.
+   
+   Platforms Affected:  AIX, HP-UX, Linux, Solaris, Windows
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  A user should install the TSM server at the level they want to
+   run.  There is no need to start the server installation at the
+   base release level.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All Tivoli Storage Manager users.            *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: See Error description.                  *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   *
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The Tivoli Storage Manager installation guides for AIX,
+   HP-UX, Linux, Solaris, and Windows were updated.
+   
+   /**************************************/
+   Proposed Closing Text
+   
+   Users Affected:
+   All Tivoli Storage Manager server users.
+   
+   Problem Description:
+   See error description.
+   
+   Problem Summary:
+   *
+   
+   Problem Conclusion:
+   In the Tivoli Storage Manager installation guides, in the
+   section titled "Installing a fix pack," the following text was
+   added:
+   
+   "To install a fix pack or interim fix to the server, install
+   the server at the level on which you want to run it. You do
+   not have to start the server installation at the base release
+   level. For example, if you currently have V6.1.2.1 installed,
+   you can go directly to the latest fix pack for V6.3. You do
+   not have to start with the V6.3.0 installation if a
+   maintenance update is available.
+   
+   You must have the Tivoli Storage Manager license package
+   installed. The license package is provided with the purchase
+   of a base release. After the fix pack or interim fix is
+   installed, install the license for the server."
+   
+   A similar text was added to sections "Applying a fix pack to
+   Tivoli Storage Manager V6 in a clustered environment for AIX"
+   and to "Applying a fix pack to Tivoli Storage Manager V6 in a
+   clustered environment for Windows." The following text was
+   added:
+   
+   "To install a fix pack or interim fix to the server, install
+   the server at the level on which you want to run it. You do
+   not have to start the server installation at the base release
+   level. For example, if you currently have V6.1.2.1 installed,
+   you can go directly to the latest fix pack for V6.3. You do
+   not have to start with the V6.3.0 installation if a
+   maintenance update is available. "
+   
+   Affected platforms:  AIX, HP-UX, Solaris, Linux, and Windows.
+   
+   End Proposed Closing Text
+   /**************************************/
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC78863
+   
+   
+ * REPORTED COMPONENT NAME
+   TSM SERVER
+   
+   
+ * REPORTED COMPONENT ID
+   5698ISMSV
+   
+   
+ * REPORTED RELEASE
+   61A
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-09-23
+   
+   
+ * CLOSED DATE
+   2011-10-18
+   
+   
+ * LAST MODIFIED DATE
+   2011-10-18
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+Publications Referenced GC23978101 GC23978201 GC23978301 GC23978401 GC23978501 GC23978202 GC23978302 GC23978402 GC23978502 SC23955402 FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

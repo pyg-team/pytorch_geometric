@@ -1,0 +1,159 @@
+Title: IBM JR47758: BPMCONFIG COMMAND DOES NOT ACCEPT HOSTNAMES THAT START WITH A NUMBER. - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Version 8.5.0 Fix Pack 1 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24035702]
+Version 8.5 Refresh Pack 5 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24037683]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  BPMConfig command does not accept hostnames that start with a
+   number.
+   When such hostnames are used, the following validation error is
+   displayed:
+   com.ibm.bpm.config.model.ConfigModelFactory.loadFromPropertiesDe
+   legate() : CWMCB0250E: The property bpm.dmgr.hostname has an
+   invalid value [123Foo.domain.com].
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Use manageprofiles command to create profiles on hosts that
+   have a hostname starting with a number.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  IBM BPM V8.5 users who are running the      *
+   *                  BPMConfig command to create a profile or    *
+   *                  deployment environment                      *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Users see the CWMCB0250E message when   *
+   *                      they run the BPMConfig command to       *
+   *                      create a profile or deployment          *
+   *                      environment:                            *
+   *                      CWMCB0250E: The property                *
+   *                      bpm.dmgr.hostname has an invalid        *
+   *                      value [yourhostname]                    *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   The BPMConfig command does not accept
+   host names that start with a number.
+   IS A WORKAROUND AVAILABLE? (Y/N) IF
+   Y: EXPLAIN IT.
+   ==>N
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A fix for IBM BPM V8.5 is available that fixes the validation
+   of the host name for the BPMConfig command so that the command
+   accepts host names that start with a number.
+   On Fix Central (http://www.ibm.com/support/fixcentral), search
+   for JR47758. After you select the product group, product,
+   installed version, and platform, click Continue and then
+   select APAR or SPR, enter JR47758, and click Continue. When
+   downloading fix packages, ensure that you also download the
+   readme file for each fix. Review each readme file for
+   additional installation instructions and information about the
+   fix.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR47758
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM ADVANCED
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9400
+   
+   
+ * REPORTED RELEASE
+   850
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-09-11
+   
+   
+ * CLOSED DATE
+   2013-11-14
+   
+   
+ * LAST MODIFIED DATE
+   2013-11-14
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   BPM ADVANCED
+   
+   
+ * FIXED COMPONENT ID
+   5725C9400
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R800 PSY
+   UP

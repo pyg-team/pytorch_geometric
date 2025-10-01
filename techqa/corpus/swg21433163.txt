@@ -1,0 +1,43 @@
+Title: IBM FileNet eProcess (EP) 5.2, IBM FileNet Image Services (IS) 4.1.x, and IBM FileNet Process Engine (PE) 4.x fail to update their Microsoft SQLServer (MSSQL)  2005 database when custom triggers are employed. - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ There has been a change introduced in MSSQL 2005 on how it handles database triggers and the row values returned. This change can cause EP, IS and PE record updates to fail.. 
+
+SYMPTOM
+The following type of ODBC driver cursor error is reported in the elog: 
+
+2010/03/03 12:14:37.297 121,12,65534 <fnsw> VW/eProcess (4832.4712.220x12e0.1268) ... [SERIOUS] 
+Error in gdby_StmtPrepare: SQLPrepare STMT, 'UPDATE VWQueue1_171 SET F_WorkObjectBlob = ?, F_WobNum = ?, F_WorkSpaceId = ?, F_Locked = ?, F_LockMachine = ?, F_LockUser = ?, F_LockTime = ?, F_LastUser = ?, F_BitFlags = ?, F_BindPending = ?, F_BoundUser = ?, F_BoundMachine = ?,F_NextQueue = ?, F_Tag = ?, F_UniqueId = ?, F_OperationId = ?, F_WorkClassId = ?, F_QueueWPClassId = ?, F_EnqueueTime = ?, F_CreateTime = ?, F_InstrSheetId = ?, F_WorkOrderId = ?, F_SortOrder = ?, F_StepProcId = ?, F_Subject = ?, F_Overdue = ? WHERE F_WobNum = ?',hstmt = 33048112 (&01e070e0) (..\src\GDBY.c, VERSION 4.1.1.1, @1046). SQLSTATE = 24000, NativeError = 0,ErrorMsg = '[Microsoft][ODBC SQL Server Driver]Invalid cursor state' 
+CAUSE
+ Change in the manner of how MSSQL 2005 returns row counts MSSQL 2005 Trigger handling as per Microsoft - Kamil Sykora :
+
+Due to the nature of update counts and other considerations for result-set processing, the application should either be aware of the triggers and handle them by processing all update counts/results with calls to SQLMoreResults/SQLRowCount 
+
+Based on the documentation, SQLExecute can return SQL_NO_DATA_FOUND for DELETE and UPDATE statements that produce no row counts. From our investigation so far it appears that the documentation is not accurate since it can produce SQL_NO_DATA_FOUND for an equivalent INSERT operation. Since INSERTS are not generally expected to produce 0 row counts, it was probably omitted from the documentation.
+
+
+ENVIRONMENT
+Windows environments employing MSSQL 2005 as their Index database provider
+
+
+
+DIAGNOSING THE PROBLEM
+ 
+
+ 1. Investigate whether or not custom triggers reside within the index database 
+ 2. If, so check for the following elog error - ErrorMsg = '[Microsoft][ODBC SQL Server Driver]Invalid cursor state'
+
+RESOLVING THE PROBLEM
+ 
+
+ 1. Do not allow triggers and disable them 
+ 2. Modify triggers to not send update counts.- SET NOCOUNT ON (at the trigger level) 
+ 3. Recode the application to expect/handle update counts from triggers.
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Enterprise Content Management FileNet eProcess Windows 2003 server, Windows 2008, Windows 64bit 5.2 Enterprise Content Management FileNet Image Services Windows 4.1.2, 4.1.1

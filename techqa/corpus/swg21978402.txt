@@ -1,0 +1,15 @@
+Title: IBM How to modify the length of property in FileNet Content Engine - FileNet Enterprise Manager (FEM)? - United States
+
+Text:
+update length of property template; FEM TECHNOTE (FAQ)
+
+QUESTION
+ Can we use FEM to modify the length of the property from string (12) to string (16) that has a database of large object store more than 500,000,000 entries? 
+
+CAUSE
+To modify the length of the property that has a large object store, it is recommended to use FEM. You do not have to increase the transaction time out on the application server for the database. It is very rare that there would exist such a deep and wide class hierarchy so as to cause a transaction to time out during propagation. If the property that is going to be altered is single indexed or even a generated column index should have no impact of the time required to increase the column length. Increasing a column length in the database is just a database metadata change for the column, not dependent on number of rows. The column length increase (in the database) would be performed as part of the overall work required by the Content Engine to update a property's maximum length on a Property Definition (via FEM). That overall work also includes propagation of the change down the class's hierarchy, updating CE metadata tables, and related queries.
+
+
+
+ANSWER
+Updating a property's maximum length (which is how the column was sized in the first place) does not modify each entry. It just increases the width of the column. The modification should be made on the Property Definition. Updating the Property Template will not affect the column. Although if this maximum length increase is something you want for other class families (tables), then updating the Property Template's maximum length is justified as well. If you find that updating the Property Definition's maximum length causes a timeout, that timeout is due to propagation of the change down the class's hierarchy , which can usually be addressed by increasing the transaction timeout of the application server.

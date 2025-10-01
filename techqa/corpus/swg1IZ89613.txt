@@ -1,0 +1,163 @@
+Title: IBM IZ89613: AD REVERSE PASSWORD SYNC PLUG-IN DOES NOT FUNCTION IF INS IN PATH THAT CONTAINS A SPACE - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  AD reverse password sync plug-in does not function
+   if ins in path that contains a space
+   
+   Description:
+   If the AD reverse password sync plug-in is installed in
+   path that contains a space, such as "c:\program files", then it
+   does not
+   work.  No pwdsync.log file generated and password sync does not
+   intercept password changes on the domain controller. Also latest
+   versions of AD reverse password sync fail trying to import CA
+   cert when
+   there is the space in the install path.
+   
+   Steps to Duplicate: Install the AD reverse password sync plug-in
+   in a
+   path that contains a space, for example under "c:\program files"
+   location.
+   
+   Desired Behavior: For the AD reverse password sync to function
+   correctly
+   if installed in a path that contains a space in the path.
+   
+   Environment: AD reverse password sync plug-in, all versions
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Workaround: The AD reverse password sync plug-in currently needs
+   to be
+   installed in a path that contains no spaces to function
+   correctly.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Password Sync module fails when instlled in a d
+   irectory which has a space in the name.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fix shipped in WinAD adapter 5.0.12 and 5.1.
+   7 (pw sync 5.0.1009)
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  Install in a directory with no space in the name.
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ89613
+   
+   
+ * REPORTED COMPONENT NAME
+   ITIM AGENTS
+   
+   
+ * REPORTED COMPONENT ID
+   5724C34AG
+   
+   
+ * REPORTED RELEASE
+   510
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-11-23
+   
+   
+ * CLOSED DATE
+   2010-12-31
+   
+   
+ * LAST MODIFIED DATE
+   2010-12-31
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  AGENT
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ITIM AGENTS
+   
+   
+ * FIXED COMPONENT ID
+   5724C34AG
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R500 PSY
+   UP
+   
+   
+ * R510 PSY
+   UP

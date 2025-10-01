@@ -1,0 +1,173 @@
+Title: IBM PJ44871: CASE ANALYZER PROCESSING STOPS WITH EXCEPTION - JAVA.SQL.SQLEXCEPTION: ORA-12899: VALUE TOO LARGE FOR COLUMN. - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Case Analyzer processing stops with exception -
+   "java.sql.SQLException: ORA-12899: value too large for column"
+   when there are multi-byte characters in the user defined field
+   values.
+   
+   Exception reported in PE logs is as follows:
+   [Error] Unexpected exception occurred while processing task
+   CAPublisher for store CA_STORE.; Exception:
+   java.sql.SQLException: ORA-12899: value too large for column
+   "P8CA"."D_DMDATAFIELD_COMMEN200"."COMMENTS" (actual: 66,
+   maximum: 64)
+           at
+   oracle.jdbc.driver.T4CTTIoer.processError(T4CTTIoer.java:447)
+           at
+   oracle.jdbc.driver.T4CTTIoer.processError(T4CTTIoer.java:396)
+           at
+   oracle.jdbc.driver.T4C8Oall.processError(T4C8Oall.java:951)
+           at
+   oracle.jdbc.driver.T4CTTIfun.receive(T4CTTIfun.java:513)
+           at
+   oracle.jdbc.driver.T4CTTIfun.doRPC(T4CTTIfun.java:227)
+           at oracle.jdbc.driver.T4C8Oall.doOALL(T4C8Oall.java:531)
+           at
+   oracle.jdbc.driver.T4CPreparedStatement.doOall8(T4CPreparedState
+   ment.java:208)
+           at
+   oracle.jdbc.driver.T4CPreparedStatement.executeForRows(T4CPrepar
+   edStatement.java:1046)
+           at
+   oracle.jdbc.driver.OracleStatement.doExecuteWithTimeout(OracleSt
+   atement.java:1336)
+           at
+   oracle.jdbc.driver.OraclePreparedStatement.executeInternal(Oracl
+   ePreparedStatement.java:3613)
+           at
+   oracle.jdbc.driver.OraclePreparedStatement.executeUpdate(OracleP
+   reparedStatement.java:3694)
+           at
+   oracle.jdbc.driver.OraclePreparedStatementWrapper.executeUpdate(
+   OraclePreparedStatementWrapper.java:1354)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * Users using Case Analyzer with 5.2.1.7-P8CPE-FP007 or prior. *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * With Case Analyzer store created on Oracle database, event   *
+   * processing stops with the  exception -                       *
+   * "java.sql.SQLException: ORA-12899: value too large for       *
+   * column", when there are multi-byte characters in the string  *
+   * user defined field values.                                   *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Upgrade to 5.5.0.0-P8CPE or above. New user defined fields   *
+   * created after 5.5.0.0-P8CPE will not cause the mentioned     *
+   * issue. For existing user defined fields created prior to     *
+   * 5.5.0.0-P8CPE, follow the instructions in the below          *
+   * technote:                                                    *
+   * http://www-01.ibm.com/support/docview.wss?uid=swg22009650    *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  For new string user defined fields, the issue is fixed in
+   5.5.0.0-P8CPE and above. Case Analyzer schema is altered to
+   accommodate multi-byte characters.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PJ44871
+   
+   
+ * REPORTED COMPONENT NAME
+   PROC CASE ANALY
+   
+   
+ * REPORTED COMPONENT ID
+   5724R7603
+   
+   
+ * REPORTED RELEASE
+   521
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-06-23
+   
+   
+ * CLOSED DATE
+   2018-01-17
+   
+   
+ * LAST MODIFIED DATE
+   2018-01-17
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   PROC CASE ANALY
+   
+   
+ * FIXED COMPONENT ID
+   5724R7603
+   
+   
+
+APPLICABLE COMPONENT LEVELS

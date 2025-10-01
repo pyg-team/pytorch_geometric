@@ -1,0 +1,86 @@
+Title: IBM Software maintenance strategy for CICS TS and its embedded components - United States
+
+Text:
+Libery Java ; 5655S9700 R660 660 R600 600 HCI6600 R670 670 R700 700 HCI6700 5655-S97 5655S97 ; 5655Y0400 R680 680 R800 800 HCI6800 R690 690 R900 900 HCI6900 R700 700 R000 000 HCI7000 R710 710 R100 100 HCI7100 5655Y0401 5655-Y04 5655Y04 KIXINFO PRODUCT DOCUMENTATION
+
+ABSTRACT
+ CICS TS support is delivering the information in this document to help customers plan for updates to CICS Transaction Server for z/OS (CICS TS) and related software components such as WebSphere Liberty and CICS Explorer. Installing APAR fixes (PTFs) using Recommended Service Upgrades (RSUs) as early as possible can help avoid problems that could result in a service call, and as long as you test appropriately, help reduce risks to your business. 
+
+CONTENT
+
+
+
+[/support/docview.wss?uid=swg27048530&amp;aid=1]Embedded components in CICS TS [http://www-01.ibm.com/support/docview.wss?uid=swg27012749#delivering]
+[/support/docview.wss?uid=swg27048530&amp;aid=2]Update recommendations
+[/support/docview.wss?uid=swg27048530&amp;aid=3]Related information 
+
+
+
+
+
+
+
+
+
+Components in CICS TS
+
+CICS TS provides the following embedded runtime components: 
+
+ * Equinox
+   Equinox is an implementation of the OSGi core framework specification and is provided for both OSGi JVM servers and for Liberty JVM servers. Service for these components is provided when and if required.
+   
+   
+ * Apache Axis2™ 
+   Axis2 is an open source web services engine from the Apache Software Foundation and is used within CICS to provide the web service Java™ engine for the Axis2 JVM server environment. Service for this component is provided when and if required.
+   
+   
+ * WebSphere Application Server Liberty Profile
+   Liberty fix packs are provided on a regular basis through the CICS TS APAR delivery process and provide an update mechanism to keep the embedded CICS Liberty runtime synchronized with the fix packs provided by WebSphere Application Server. Keeping current helps you resolve problems faster for 2 reasons:  * Liberty APAR fixes (known as ifixes) can only be delivered on the latest Liberty fix pack that has been supplied by the CICS APAR process. 
+    * CICS APAR fixes can require other fixes such as WebSphere Liberty fix packs.
+   
+   
+   
+
+CICS Explorer and z/OS Explorer
+The CICS Software Development Kit (SDK) for Java includes components from CICS for developing CICS Java applications. The CICS SDK for Servlet and JSP support includes Java Enterprise Edition (Java EE) and Liberty API libraries, and automatically installs required components such as WebSphere Developer Toolkit (WDT)." Service for these components is provided through the CICS Explorer fix pack process when and if required. 
+[/support/docview.wss?uid=swg27048530&amp;aid=4] Back to Top 
+
+
+Update recommendations
+
+Recommended Service Upgrade (RSU) 
+IBM recommends that you install all RSU [http://www-03.ibm.com/systems/z/os/zos/support/servicetest/] PTFs as preventive software maintenance for CICS TS. An RSU is a predefined collection of PTFs identified with a SOURCEID of RSUyymm, where yy indicates the last 2 digits of the year and mm indicates the month. [http://www-03.ibm.com/servers/eserver/zseries/zos/servicetst/]You can order an RSU [http://www-1.ibm.com/servers/eserver/zseries/zos/servicetst/]from ShopzSeries [https://www14.software.ibm.com/webapp/ShopzSeries/ShopzSeries.jsp].
+
+
+Equinox and Apache Axis2
+There is unlikely to be much maintenance for Equinox and Axis2. Service for these components is provided when and if required, meaning it will be on a case by case basis and in most cases this will be to resolve service requests.
+
+
+WebSphere Application Server Liberty Profile
+Refer to Updating Liberty profile for CICS TS and z/OS Connect EE to latest version [http://www.ibm.com/support/docview.wss?uid=swg21993579] for a list of APARs you will need to update CICS TS and z/OS Connect Enterprise Edition (EE) to the latest version of WebSphere Application Server Liberty profile. 
+
+
+CICS Explorer
+IBM recommends that you upgrade to the latest release of CICS Explorer to obtain the most recent functionality and service. Old releases of CICS Explorer are not generally updated with new function, but new CICS Explorer releases are compatible with all earlier versions of CICS TS. Therefore, CICS Explorer V5.4 is compatible with CICS TS V4.1 through V5.4. For further details see Latest version of CICS Explorer and CICS Tools plug-ins for CICS Explorer [http://www.ibm.com/support/docview.wss?uid=swg21404312]. 
+
+
+
+[/support/docview.wss?uid=swg27048530&amp;aid=5] Back to Top 
+
+
+
+Related information: 
+ * Update Strategy for WebSphere Application Server [http://www.ibm.com/support/docview.wss?uid=swg27036014] 
+   
+ * Fix list for IBM WebSphere Application Server Liberty [http://www.ibm.com/support/docview.wss?uid=swg27043863]
+   
+ * CICS TS embedded components [http://www.ibm.com/support/knowledgecenter/SSGMCP_5.3.0/com.ibm.cics.ts.standards.doc/topics/supportedComponents.html]
+   
+ * Fixes by version for CICS products [http://www.ibm.com/support/docview.wss?uid=swg27008833]
+
+
+[/support/docview.wss?uid=swg27048530&amp;aid=6] Back to Top 
+
+
+PRODUCT ALIAS/SYNONYM
+ CICS/TS CICS TS CICS Transaction Server

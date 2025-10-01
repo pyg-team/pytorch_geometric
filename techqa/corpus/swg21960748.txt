@@ -1,0 +1,60 @@
+Title: IBM "Manage users" shows First and Last Name instead of First Name in DASH - United States
+
+Text:
+DASHL2; DASHL2CONF; manage users; first name; last name TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ In DASH (Dashboard Application Service Hub)/JazzSM user names are displayed incorrectly when viewed from Manage Users. The First Name column displays First and Last name instead of First Name only. 
+
+SYMPTOM
+In Websphere Administrator console if you view the users from "Users and Groups" --> "Manage Users", the First name column may show both first name and last name. See below screen shot for an example.
+
+[/support/docview.wss?uid=swg21960748&aid=1] [/support/docview.wss?uid=swg21960748&aid=1]
+
+
+
+CAUSE
+Websphere uses "cn" and "sn" attributes to display user's first and last name. If these attributes are assigned different values in LDAP then this can cause the issue shown above. 
+
+DIAGNOSING THE PROBLEM
+By using an LDAP browser tool or ldapsearch, check the attributes below for a user. Following shows results from ldapsearch for an LDAP repository. Websphere console use attributes (cn and sn) in the Manage Users panel to display user name. In above screen shot "cn" attributes is displayed in "First name" column and "sn" is displayed in Last name column. Since "cn" contains both first and last name that is why First name columns shows incorrect contents. In this case we actually want to display givenName (which contains the first name only) instead of cn.
+
+cn: FirstName LastName
+sn: LastName
+givenName: FirstName
+distinguishedName: CN=FirstName LastName,CN=Users,DC=sflab,DC=local
+displayName: FirstName LastName
+name: FirstName LastName 
+
+RESOLVING THE PROBLEM
+If you are using IBM Tivoli Directory server or Microsoft Active directory as federated repositories then follow below steps to resolve this issue. But if you are using open LDAP then make sure that you are on Websphere 8.5.0.2 or later version otherwise the steps described below will not execute successfully. This is because of a known issue which is fixed in Websphere 8.5.0.2. See below APAR for details:
+
+
+http://www-01.ibm.com/support/docview.wss?uid=swg1PM75085 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM75085] 
+
+
+To fix this issue use below steps to map cn to giveName. After this change giveName will be displayed in the First name column instead of cn. 
+1. Make a backup copy of wimconfig.xml in below directory: 
+
+ * 
+ * 
+
+2. Run below command: 
+<<JazzSMHOME>>/profile/bin/wsadmin.sh 
+On prompt enter user Id and password (typically smadmin) 
+
+3. Run below command ($ sign is part of the command). 
+
+$AdminTask addIdMgrLDAPAttr {-id "MyLDAP" -name givenName -propertyName cn -entityTypes PersonAccount} 
+
+In above command MyLDAP is the LDAP repository identifier, which you specified while configuring LDAP in DASH/Websphere. You can get it from the "Websphere Administrator Console" (under Global Security-> Configure). Alternatively check the wimconfig.xml and look for below tag. Here Id is the repository Identifier. 
+
+xsi:type="config:LdapRepositoryType" 
+adapterClassName="com.ibm.ws.wim.adapter.ldap.LdapAdapter" id=" MyLDAP " 
+
+5. Run below command to save the changes. 
+$AdminConfig save 
+
+6. Restart TIP 
+
+7. Check if the issue is resolved.

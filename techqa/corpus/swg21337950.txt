@@ -1,0 +1,71 @@
+Title: IBM Designing a report with a multipage form letter in the report body - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Impromptu Series 7 Version 2
+
+Description:
+
+How can a report be designed as a form letter that could require multiple pages?
+
+When using a Form Frame as the object to display the body of the form letter, the text does not span pages.
+
+
+Solution:
+
+The functionality to span pages with large text fields is new to Impromptu Series 7 Version 2 (Impromptu 7.1). This functionality works only when a List Frame is used as the object to display the large text object. Some additional formatting, to include Contact Name, Address, etc.., will produce the appropriate layout for the Form Letter Report.
+
+The following sample procedure adds a Form Frame that contains another Form Frame to hold a List Frame, then adds the body of the letter to the List Frame.
+
+1. Open a new blank report in Page Layout mode in Impromptu 7.1.
+
+2. Add a Form Frame to the report and set its Properties for size to Snap to Parent, to fit the page.
+
+3. Add another Form Frame inside the First 
+Form Frame, and set the size to that required for the letter body.
+
+4. Add a List Frame to the second Form Frame, and set its Properties for size to Snap to Parent, to fit the Form Frame.
+
+5. Add the letter body to the List Frame. 
+
+NOTE: If the letter body is not in a datasource retrievable by Impromptu, add a Calculation, Value, String, and make the expression be the text of your letter. In this case, you need to add data fields from the Catalog to have the calculation data appear in the report.
+
+6. Place your other data (headings, salutations, etc..) on the report in the correct locations.
+
+7. Select the column with your letter text, right-click the column and click Properties. Set the Height to Dynamic, and Layout to Multi-Line Word Wrap.
+
+8. Right-click the List Frame. Click Properties, Layout tab. 
+
+9. Remove the Column Title Header. 
+
+RESOLVING THE PROBLEM
+The functionality to span pages with large text fields is new to Impromptu Series 7 Version 2 (Impromptu 7.1). This functionality works only when a List Frame is used as the object to display the large text object. Some additional formatting, to include Contact Name, Address, etc.., will produce the appropriate layout for the Form Letter Report.
+
+The following sample procedure adds a Form Frame that contains another Form Frame to hold a List Frame, then adds the body of the letter to the List Frame.
+
+1. Open a new blank report in Page Layout mode in Impromptu 7.1.
+
+2. Add a Form Frame to the report and set its Properties for size to Snap to Parent, to fit the page.
+
+3. Add another Form Frame inside the First Form Frame, and set the size to that required for the letter body.
+
+4. Add a List Frame to the second Form Frame, and set its Properties for size to Snap to Parent, to fit the Form Frame.
+
+5. Add the letter body to the List Frame. 
+
+NOTE: If the letter body is not in a datasource retrievable by Impromptu, add a Calculation, Value, String, and make the expression be the text of your letter. In this case, you need to add data fields from the Catalog to have the calculation data appear in the report.
+
+6. Place your other data (headings, salutations, etc..) on the report in the correct locations.
+
+7. Select the column with your letter text, right-click the column and click Properties. Set the Height to Dynamic, and Layout to Multi-Line Word Wrap.
+
+8. Right-click the List Frame. Click Properties, Layout tab. 
+
+9. Remove the Column Title Header.
+
+ 
+
+HISTORICAL NUMBER
+ 123731

@@ -1,0 +1,82 @@
+Title: IBM java.lang.NullPointerException Occurs When Starting an IBM WebSphere Application Server Running IBM Technology for Java VM on IBM i OS - United States
+
+Text:
+WAS; JVM; Start; java.lang.NullPointerException; java.security.SecureRandom.nextBytes TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ An IBM WebSphere Application Server instance fails to start on the IBM i OS after configuring the JVM to the IBM Technology for Java (J9) VM. The native_stderr.log file shows a java.lang.NullPointerException at java.security.SecureRandom.nextBytes(). 
+
+SYMPTOM
+An error message similar to the following is logged in the IBM WAS's native_stderr.log file. 
+
+java.lang.NullPointerException
+at java.security.SecureRandom.nextBytes(SecureRandom.java:292)
+at java.security.SecureRandom.next(SecureRandom.java:311)
+at java.util.Random.nextLong(Random.java:252)
+at java.io.File.generateFile(File.java:1693)
+at java.io.File.createTempFile0(File.java:1724)
+at java.io.File.createTempFile(File.java:1813)
+at org.eclipse.core.runtime.adaptor.LocationManager.canWrite(LocationManager.java:260)
+at org.eclipse.core.runtime.adaptor.LocationManager.computeDefaultConfigurationLocation(LocationManager.java:244)
+at org.eclipse.core.runtime.adaptor.LocationManager.initializeLocations(LocationManager.java:147)
+at org.eclipse.core.runtime.adaptor.EclipseStarter.startup(EclipseStarter.java:273)
+at org.eclipse.core.runtime.adaptor.EclipseStarter.run(EclipseStarter.java:173)
+at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:60)
+at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:37)
+at java.lang.reflect.Method.invoke(Method.java:611)
+at org.eclipse.core.launcher.Main.invokeFramework(Main.java:340)
+at org.eclipse.core.launcher.Main.basicRun(Main.java:282)
+at org.eclipse.core.launcher.Main.run(Main.java:981)
+at com.ibm.wsspi.bootstrap.WSPreLauncher.launchEclipse(WSPreLauncher.java:341)
+at com.ibm.wsspi.bootstrap.WSPreLauncher.main(WSPreLauncher.java:111)
+
+
+CAUSE
+Java security service classes specific to the IBM Technology for Java VM are not included by default in the java.ext.dirs JVM property definition for the IBM WAS.
+
+
+ENVIRONMENT
+IBM i OS, IBM WebSphere Application Server v6.1 and later
+
+
+
+DIAGNOSING THE PROBLEM
+Review the native_stderr.log file for the IBM WAS in the was_appsvr_root/logs/<server>/ directory. Identify the java.lang.NullPointer exception in the log file and see if it matches or is very similar to the exception listed above.
+
+
+
+RESOLVING THE PROBLEM
+The following IFS path needs to be appended to the current value of java.ext.dirs for the current JVM version being used by WAS. 
+
+
+/QOpenSys/QIBM/ProdData/JavaVM/jdk<version>/<bitLevel>bit/jre/lib/ext
+
+where...
+<version>=50,60,626,60,71,80
+<bitLevel>=32,64
+
+i.e. JDK 8.0 64bit = /QOpenSys/QIBM/ProdData/JavaVM/jdk80/64bit/jre/lib/ext
+
+WAS v7.0 running JDK 6.0 32bit
+Old value for "java.ext.dirs" - /QIBM/ProdData/WebSphere/AppServer/V7/ND/java/extj9:/QIBM/ProdData/WebSphere/AppServer/V9/ND/java/jre/lib/ext:/QIBM/UserData/Java400/ext
+
+New value for "java.ext.dirs" -
+/QIBM/ProdData/WebSphere/AppServer/V7/ND/java/extj9:/QIBM/ProdData/WebSphere/AppServer/V9/ND/java/jre/lib/ext:/QOpenSys/QIBM/ProdData/JavaVM/jdk80/64bit/jre/lib/ext:/QIBM/UserData/Java400/ext
+
+NOTE: These instructions are for WAS v9.0 ND running JDK 8.0 64bit. These instructions might be slightly different, based on your version of WebSphere and the JVM version currently configured. You will need to change the WAS version and edition as well as the JVM version information in the JVM argument value based on the WAS version and edition you are implementing this to.
+
+Option 1 
+
+1. Log into the IBM WebSphere Administrative console. 2. Click on Servers -> Application Servers. 3. Click on your application server name. 4. Under Server Infrastructure, expand Java and Process Management. 5. Click on Process Definition. 6. Under Additional Properties, click on Java Virtual Machine. 7. Edit the Generic JVM args field and append the following:
+-Djava.ext.dirs=/QIBM/ProdData/WebSphere/AppServer/V9/ND/java/extj9:/QIBM/ProdData/WebSphere/AppServer/V9/ND/java/jre/lib/ext:/QOpenSys/QIBM/ProdData/JavaVM/jdk80/64bit/jre/lib/ext:/QIBM/UserData/Java400/ext 8. Click OK and save to the master configuration. 9. Restart the WebSphere Application Server for the change to take affect. 
+Option 2 
+
+Start the Qshell environment. On the i5/OS CL command line, run the STRQSH command and then execute the following commands: 1. cd <app_server_root>/bin 
+where app_server_root is the install root of the WebSphere Application Server (/QIBM/ProdData/WebSphere/AppServer<version>/<edition>).
+
+i.e. cd /QIBM/ProdData/WebSphere/AppServer/V9/ND/bin 2. wsadmin -profileName <was-profile>, where was-profile is the WAS profile of the Application server. 3. set jvm [$AdminConfig getid /Server:<server-name>/JavaProcessDef:/JavaVirtualMachine:/] 
+where server-name, is the WAS Application Server name. 4. set curargs [$AdminConfig showAttribute $jvm genericJvmArguments] 5. set newargs [concat $curargs "-Djava.ext.dirs=/QIBM/ProdData/WebSphere/AppServer/V9/ND/java/extj9:/QIBM/ProdData/WebSphere/AppServer/V9/ND/java/jre/lib/ext:/QOpenSys/QIBM/ProdData/JavaVM/jdk60/32bit/jre/lib/ext:/QIBM/UserData/Java400/ext"] 6. set attrs [subst {{genericJvmArguments $newargs}}] 7. $AdminConfig modify $jvm $attrs 8. $AdminConfig save  
+
+
+Cross reference information Segment Product Component Platform Version Edition Operating System IBM i 7.2 Operating System IBM i 7.1 Operating System IBM i 6.1 Operating System IBM i 7.3

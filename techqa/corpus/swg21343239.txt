@@ -1,0 +1,25 @@
+Title: IBM Scheduled reports fail: CNC-SDS-0413 There was a problem in executing the task - United States
+
+Text:
+UAEVALDONE TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Scheduled reports fail with the error below. If the report is rescheduled it will execute successfully. Running an SDS trace will help to provide further information on the error. 
+
+SYMPTOM
+CNC-SDS-0413 There was a problem in executing the task. The user authentication failed. It may not be possible to rerun the task.
+
+
+CAUSE
+Credentials are invalid, e.g. an expired or altered user password, or a user account which is no longer valid, which has caused the current credentials of the User to not match those stored in the ContentStore database. SDS trace will help to trap the errors related to scheduled reports.
+
+ENVIRONMENT
+IBM Cognos 10.2.x 
+
+RESOLVING THE PROBLEM
+Renew the credentials Steps: 1. Log into Cognos Connection 2. Click on My Area - My Preferences 3. Click on the Personal tab - under Credentials click on Renew the credentials 4. A dialog box should confirm that credentials have been renewed successfully - click ok 5. Trigger or have the schedule run and test for the error. In the case of a schedule that is set against a User account that is no longer valid, simply login as a valid user, set a schedule against the report with that account and click "Save". This will save the schedule against the new valid user.
+
+ 
+
+HISTORICAL NUMBER
+ 1040964

@@ -1,0 +1,68 @@
+Title: IBM PM24992; 6.1.1: Health policy URL sensor does not handle secure ports - United States
+
+Text:
+PM24992; PM24992; PM24992 DOWNLOADABLE FILES
+
+ABSTRACT
+ Errors occur when the custom health policy is defined for the URL return code and HTTPS is used as the protocol. 
+
+DOWNLOAD DESCRIPTION
+PM24992 resolves the following problem:
+
+ERROR DESCRIPTION: 
+When using a secure port with the Health Policy URL return code, the following exception is displayed: 
+
+SSLHandshakeE E SSLC0008E: Unable to initialize SSL connection. Unauthorized access was denied or security settings have expired. 
+
+Exception is javax.net.ssl.SSLException: Unrecognized SSL message, plaintext connection 
+
+at java.lang.Throwable.<init>(Throwable.java:67) 
+at com.ibm.jsse2.b.a(b.java:18) 
+at com.ibm.jsse2.pc.a(pc.java:155) 
+at com.ibm.jsse2.pc.unwrap(pc.java:104) 
+at javax.net.ssl.SSLEngine.unwrap(SSLEngine.java:17) 
+at com.ibm.ws.ssl.channel.impl.SSLConnectionLink.readyInbound 
+(SSLConnectionLink.java:531) 
+
+LOCAL FIX: 
+N/A 
+
+PROBLEM SUMMARY:
+
+USERS AFFECTED:
+All users of WebSphere Virtual Enterprise Version 6.1.1.x.
+
+PROBLEM DESCRIPTION:
+Errors occur when the custom health policy is defined for the URL return code and HTTPS is used as the protocol.
+
+RECOMMENDATION:
+None
+
+If a custom health policy is defined using the URL return code with the protocol HTTPS, an exception is displayed in the deployment manager or the node agent in which the health management controller is running.
+
+PROBLEM CONCLUSION: 
+The protocol that is being used can be specified. 
+
+This fix will be included in the next available fix pack for WebSphere Virtual Enterprise.
+
+PREREQUISITES
+Download the latest version of the IBM Update Installer for WebSphere Software to install this fix.
+
+URL LANGUAGE SIZE(Bytes) Update Installer [http://www.ibm.com/support/docview.wss?uid=swg24020212] US English 7250000 
+INSTALLATION INSTRUCTIONS
+Review the readme.txt file for detailed installation instructions.
+
+URL LANGUAGE SIZE(Bytes) Readme [ftp://public.dhe.ibm.com/software/websphere/extended/support/fixes/PM24992/readme.txt] US English 5349 
+DOWNLOAD PACKAGE
+
+
+Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options 
+What is Fix Central(FC)? [https://www.ibm.com/support/fixcentral/help?page=swfaqs] 
+What is DD? [http://www6.software.ibm.com/dldirector/doc/DDfaq_en.html] 6.1.1.0-WS-WXDOP-IFPM24992 1/4/2011 US English 15721 FC [http://www.ibm.com/support/fixcentral/quickorder?source=dbluesearch&product=ibm%2FWebSphere%2FWebSphere+Extended+Deployment&release=6.1.1.0&fixids=6.1.1.0-WS-WXDOP-IFPM24992] FTP [ftp://public.dhe.ibm.com/software/websphere/extended/support/fixes/PM24992/6.1.1.0-WS-WXDOP-IFPM24992.pak] DD 
+TECHNICAL SUPPORT
+ Contact IBM Support using SR (http://www.ibm.com/software/support/probsub.html [http://www.ibm.com/software/support/probsub.html]), visit the WebSphere Extended Deployment Support web site (http://www.ibm.com/support/entry/portal/Overview/Software/WebSphere/WebSphere_Extended_Deployment [http://www.ibm.com/support/entry/portal/Overview/Software/WebSphere/WebSphere_Extended_Deployment]), or contact 1-800-IBM-SERV (U.S. only). 
+
+Cross reference information Segment Product Component Platform Version Edition Application Servers WebSphere Extended Deployment Health management AIX, HP-UX, Linux, Solaris, Windows 6.1.1 
+
+ [/support/docview.wss?uid=swg24028868&aid=1]Problems (APARS) fixed [/support/docview.wss?uid=swg24028868&aid=2]Problems (APARS) fixed
+PM24992

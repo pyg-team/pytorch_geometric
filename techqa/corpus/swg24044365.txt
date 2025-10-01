@@ -1,0 +1,30 @@
+Title: IBM Resolving random hangs on startup for IBM Tivoli Monitoring components on AIX and Linux on Z14. (6.3.x-TIV-ITM-GSK-8.0.50.84-IJ00337) - United States
+
+Text:
+ DOWNLOADABLE FILES
+
+ABSTRACT
+ This patch uplifts the version of GSKit to resolve the random hangs on startup. 
+
+DOWNLOAD DESCRIPTION
+This patch uplifts the version of GSKit to 8.0.50.84 to resolve the random hangs on startup for various IBM Tivoli Monitoring components when running on AIX or when running Linux on Z on z14 servers. 
+
+PREREQUISITES
+6.3.0-TIV-ITM_TMV-FP0007 for the z/Linux platform.
+
+
+6.3.0-TIV-ITM_TMV-FP0002 or higher for the AIX platform.
+
+URL LANGUAGE SIZE(Bytes) IBM Tivoli Monitoring Version 6.3.0 Fix Packs [https://www.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~Tivoli&product=ibm/Tivoli/IBM+Tivoli+Monitoring&release=6.3.0&platform=All&function=fixId&fixids=6.3.0-TIV-ITM-FP000*&includeSupersedes=0] English 1 
+INSTALLATION INSTRUCTIONS
+Refer to the 6.3.x-TIV-ITM-GSK-8.0.50.84-IJ00337.README file located in Fix Central for additional information.
+
+DOWNLOAD PACKAGE
+
+
+
+
+Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options 
+What is Fix Central(FC)? [https://www.ibm.com/support/fixcentral/help?page=swfaqs] 6.3.x-TIV-ITM-GSK-8.0.50.84-IJ00337 7 Dec 2017 English 1 FC [http://www.ibm.com/support/fixcentral/swg/quickorder?parent=ibm%7ETivoli&product=ibm/Tivoli/IBM+Tivoli+Monitoring&release=All&platform=All&function=fixId&fixids=6.3.x-TIV-ITM-GSK-8.0.50.84-IJ00337&includeSupersedes=0&source=fc] [ ] 
+ [/support/docview.wss?uid=swg24044365&aid=1]Problems (APARS) fixed [/support/docview.wss?uid=swg24044365&aid=2]Problems (APARS) fixed
+IJ00337, IJ04823

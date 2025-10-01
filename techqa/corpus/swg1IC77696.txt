@@ -1,0 +1,110 @@
+Title: IBM IC77696: UNABLE TO ADD A WSDL FROM AN NFS SERVER. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The issue is when trying to add a WSDL from an NFS server, i.e.
+   dpnfs://. DataPower does not support adding a WSDL from an NFS
+   server, the user will need to choose another source. The
+   dpnfs:// must be removed from the Add WSDL drop-down on the
+   WebGUI.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  No Work-Around
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  The webGUI dropdown for selecting a WSDL location will be
+   corrected to remove invalid options. The fix will be in the next
+   major release.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC77696
+   
+   
+ * REPORTED COMPONENT NAME
+   DATAPWER LL APL
+   
+   
+ * REPORTED COMPONENT ID
+   DP1234LMM
+   
+   
+ * REPORTED RELEASE
+   373
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-07-25
+   
+   
+ * CLOSED DATE
+   2011-07-27
+   
+   
+ * LAST MODIFIED DATE
+   2011-07-27
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R373 PSY
+   UP

@@ -1,0 +1,31 @@
+Title: IBM JobTracker local job configuration files do not get deleted consistently - United States
+
+Text:
+JobTracker Config files; JT Configuration Files TECHNOTE (FAQ)
+
+QUESTION
+ How do I delete the job configuration files ( job_*_conf.xml ) generated in the JobTracker local directory? 
+
+CAUSE
+
+Typically, JobTracker is designed as a long running process (> several months) but if hadoop is restarted, it does not delete the configuration files that were created by an older run of hadoop job tracker. So a simple shell script or a cron job is recommended to remove any leftover configuration files after a restart of JobTracker.
+
+For example:
+
+find $BIGINSIGHTS_HOME/hadoop/logs -type f -mtime +3 -name "job_*_conf.xml" -delete
+
+
+ANSWER
+ 
+
+There are two configuration parameters which control the deletion of the job configuration XML files:
+
+1. mapred.jobtracker.retirejob.interval: Default value is 24 * 60 * 60 * 1000 (1 Day). 
+
+That means the files are deleted one day after the jobs are completed by default.
+
+2. mapred.jobtracker.completeuserjobs.maximum: Number of completed jobs to keep on per user basis. Default value is 100.
+
+You can change either one of them (or both) with less values.
+
+For example, set mapred.jobtracker.retirejob.interval to 360000 (one hour) in mapred-site.xml.

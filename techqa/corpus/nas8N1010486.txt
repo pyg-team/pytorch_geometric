@@ -1,0 +1,50 @@
+Title: IBM Portable Application Solutions Environment (PASE) - Envrionment Setup Using /QOpenSys/etc/profile and $HOME/.profile - United States
+
+Text:
+PASE; profile TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This document provides information on how to set up the Portable Application Solutions Environment (PASE) product using the /QOpenSys/etc/profile and $HOME/.profile files. 
+
+RESOLVING THE PROBLEM
+This document provides information on how to set up the Portable Application Solutions Environment (PASE) product using the /QOpenSys/etc/profile and $HOME/.profile files. 
+
+With the IBM Portable Application Solutions Environment for i (PASE for i), you can port IBM AIX® applications to the IBM i platform with minimal effort. 
+
+The Portable Application Solutions Environment (PASE) for i provides an integrated runtime environment that allows you to run selected applications without the complexity of managing operating systems, such as AIX or Linux. PASE for i also provides industry-standard and defacto-standard shells and utilities that provide you with a powerful scripting environment.
+
+To start the PASE for i interactive environment, execute the CL command CALL QP2TERM from a 5250 emulation session command line.
+
+The PASE for i environment allows the user to control system-wide and user-specific variables set during the startup of the environment or shell. The system-wide variables are controlled through the /QOpenSys/etc/profile file, which is read first during startup. These variables will apply to all instances of the PASE for i environment. The user-specific variables are controlled though the $HOME/.profile file located in the user's home directory and let you customize your individual working environment on a user-by-user basis. For the IBM i OS, the user's home directory is defined within the *USRPRF profile object. The user's home directory can be found by executing the "DSPUSRPRF <profile>" CL command or the "print $HOME" command in the PASE for i environment.
+
+Note: The PASE environment uses the /QOpenSys/etc/profile file. The /etc/profile file is only used by the Qshell environment.
+
+These files do not exist by default. When created, they must be created using with a Coded Character Set Identifier (CCSID) of 819 or 1252 in order to be read properly by the PASE for iproduct. Here is an example of how to create these two files:
+
+1. STRQSH
+2. touch -C 819 /QOpenSys/etc/profile
+3. touch -C 819 /home/<user>/.profile
+
+During the startup of the PASE shell, the files are read in the order specified below if they are present/exist. The .profile file contains your individual profile variables which will override the variables set in the /QOpenSys/etc/profile file. To clarify further, if the variable PATH exists in both the /QOpenSys/etc/profile and $HOME/.profile files, the PATH variable value from the $HOME/.profile file will be used.
+
+o /QOpenSys/etc/profile
+o $HOME/.profile
+o The PASE shell is then created
+
+Here is an example of the contents of a typical /QOpenSys/etc/profile or $HOME/.profile file:
+
+#Set file creation mask
+unmask 022
+#Add my directories to the shell search sequence
+PATH=/usr/bin:/QOpenSys/usr/bin:/etc:/home/user:.
+#Set up the Java environment
+JAVA_HOME=/QOpenSys/QIBM/ProdData/JavaVM/jdk626/32bit
+#Make some environment variables global
+export PATH JAVA_HOME
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Operating System IBM i 6.1 Operating System IBM i 7.1 
+HISTORICAL NUMBER
+ 662669367

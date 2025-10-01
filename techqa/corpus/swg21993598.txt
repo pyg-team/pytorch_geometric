@@ -1,0 +1,17 @@
+Title: IBM How to collect debug information for CORBA errors? - United States
+
+Text:
+Unable to connect to remote service; CORBA; TRANSIENT_ConnectFailed TECHNOTE (FAQ)
+
+QUESTION
+ How do I collect trace data when experiencing timeouts and receiveing CORBA errors like... Exception is: IDL:omg.org/CORBA/TRANSIENT:1.0? 
+
+ANSWER
+1. Please set the following Streams version 3.x property.
+streamtool -i instance_name setproperty DNA.backDoorEvs="ORBtraceLevel=45,ORBtraceThreadId=1,ORBtraceInvocations=1"
+
+2. If the issue resurfaces please run the following command to collect logs which will contain the additional logging.
+
+streamtool -i instance_name getlog
+
+3. Please contact IBM to create a IBM service request and include the information using Collecting data for an IBM InfoSphere Streams problem (version 3.2.1 and earlier) [http://www-01.ibm.com/support/docview.wss?uid=swg21903687].

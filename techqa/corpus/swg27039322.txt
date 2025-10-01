@@ -1,0 +1,24 @@
+Title: IBM Fixed: Topics on securing communication with IBM Content Search Services on JBoss are incomplete - United States
+
+Text:
+ RELEASE NOTES
+
+ABSTRACT
+ Procedures are missing from the FileNet P8 Information Center topics on configuring secure Content Platform Engine communication with IBM Content Search Services on JBoss. 
+
+CONTENT
+Procedures for deploying self-signed and third-party certificates are missing from the following topics in the FileNet P8 Information Center.
+
+
+In the "Installing and configuring IBM Content Search Services" section of the Information Center: 
+
+ * Deploying a self-signed certificate on Content Platform Engine (JBoss Application Server) [http://pic.dhe.ibm.com/infocenter/p8docs/v5r2m0/topic/com.ibm.p8.install.doc/p8pin347.htm] 
+ * Deploying a third-party certificate on Content Platform Engine (JBoss Application Server) [http://pic.dhe.ibm.com/infocenter/p8docs/v5r2m0/topic/com.ibm.p8.install.doc/p8pin348.htm]
+
+
+In the "Upgrading IBM Content Search Services" section of the Information Center:  * Deploying a self-signed certificate on Content Platform Engine (JBoss Application Server) [http://pic.dhe.ibm.com/infocenter/p8docs/v5r2m0/topic/com.ibm.p8.install.doc/p8pup716.htm] 
+ * Deploying a third-party certificate on Content Platform Engine (JBoss Application Server) [http://pic.dhe.ibm.com/infocenter/p8docs/v5r2m0/topic/com.ibm.p8.install.doc/p8pup717.htm]
+
+
+The procedures for deploying self-signed and third-party certificates on JBoss are currently unavailable. This release note will be updated with the procedures when they become available. 
+A fix for this issue was applied to the IBM FileNet P8 Platform documentation (http://www.ibm.com/support/knowledgecenter/ [http://www.ibm.com/support/knowledgecenter/]).

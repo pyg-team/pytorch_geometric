@@ -1,0 +1,20 @@
+Title: IBM Security Network Active Bypass support for Leap Second - United States
+
+Text:
+nab; leap; second; 1g; 10g TECHNOTE (FAQ)
+
+QUESTION
+ Are the 1G and 10G Network Active Bypass (NAB) models affected by a Leap Second? 
+
+ANSWER
+A Leap Second does not affect the performance of the NAB unit.
+
+The bypass timer code has explicit handling for time jumps and the latest versions use a monotonic clock. The only concern is whether or not heartbeats could be lost in case of a forward time jump with a low heartbeat time-out threshold. In-depth lab testing shows that no heartbeats are lost and the segments remain in-line.
+
+
+
+
+
+[/support/docview.wss?uid=swg21903782&aid=1] [http://ibm.biz/KC-SNIPS] [/support/docview.wss?uid=swg21903782&aid=2] [http://ibm.biz/InfraSecForumTechnote] [/support/docview.wss?uid=swg21903782&aid=3] [http://ibm.biz/SecSuptUTube] [/support/docview.wss?uid=swg21903782&aid=4] [http://ibm.biz/InfraSecFixes] [/support/docview.wss?uid=swg21903782&aid=5] [http://ibm.biz/FlexLicLogin] [/support/docview.wss?uid=swg21903782&aid=6] [http://ibm.biz/MyNotification] [/support/docview.wss?uid=swg21903782&aid=7] [http://ibm.biz/ContactSecSupport] 
+RELATED INFORMATION
+ Wikipedia: Leap Second [http://en.wikipedia.org/wiki/Leap_second]

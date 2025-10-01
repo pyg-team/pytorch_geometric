@@ -1,0 +1,70 @@
+Title: IBM Security Bulletin: IBM Operational Decision Manager, WebSphere ILOG JRules and WebSphere Business Events: CVE-2014-0050 - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ This Security Bulletin address the security vulnerability CVE-2014-0050 in IBM Operational Decision Manager formerly known as WebSphere ILOG JRules and WebSphere Business Events. 
+
+VULNERABILITY DETAILS
+
+
+CVE ID: CVE-2014-0050 [HTTP://CVE.MITRE.ORG/CGI-BIN/CVENAME.CGI?NAME=CVE-2014-0050]
+
+DESCRIPTION: 
+IBM Operational Decision Management uses the library commons-fileupload.jar in the Web Application to transfer files. This library allows remote attackers to cause a denial of service (infinite loop and CPU consumption) via a crafted Content-Type header that bypasses a loop's intended exit conditions. 
+
+CVSS: 
+CVSS Base Score: 5.0 
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/90987 [https://exchange.xforce.ibmcloud.com/vulnerabilities/90987] for the current score 
+CVSS Environmental Score*: Undefined 
+CVSS Vector: (AV:N/AC:L/Au:N/C:N/I:N/A:P) AFFECTED PRODUCTS AND VERSIONS
+ 
+
+ * IBM WebSphere Business Events 7.0 
+ * IBM WebSphere ILOG JRules v7.0 
+ * IBM WebSphere ILOG JRules v7.1 
+ * IBM WebSphere Operational Decision Management v7.5 
+ * IBM Operational Decision Manager v8.0 
+ * IBM Operational Decision Manager v8.5 
+
+REMEDIATION/FIXES
+ IBM WebSphere ILOG JRules V7.0: 
+Interim fix 2 for APAR RS01613 is available from IBM Fix Central [https://www-933.ibm.com/support/fixcentral/options?selectionBean.selectedTab=select&productGroup0=ibm/WebSphere]: 7.0.3.0-WS-BRMS-IF002
+
+IBM WebSphere ILOG JRules V7.1: 
+Interim fix 38 for APAR RS01613 is available from IBM Fix Central [https://www-933.ibm.com/support/fixcentral/options?selectionBean.selectedTab=select&productGroup0=ibm/WebSphere]: 7.1.1.5-WS-BRMS-IF038 
+
+
+IBM WebSphere Business Event 7.0: 
+Interim fix 18 for APAR RS01613 is available from IBM Fix Central [https://www-933.ibm.com/support/fixcentral/options?selectionBean.selectedTab=select&productGroup0=ibm/WebSphere]: 7.0.1.1-WS-BE-NON_ZOS-TP18 
+
+IBM WebSphere Operational Decision Management v7.5: 
+Interim fix 38 for APAR RS01613 is available from IBM Fix Central [https://www-933.ibm.com/support/fixcentral/options?selectionBean.selectedTab=select&productGroup0=ibm/WebSphere]: 7.5.0.3-WS-BRMS-IF038 
+IBM Operational Decision Manager v8.0 
+Interim fix 30 for APAR RS01613 is available from IBM Fix Central [https://www-933.ibm.com/support/fixcentral/options?selectionBean.selectedTab=select&productGroup0=ibm/WebSphere]: 8.0.1.2-WS-BRMS-IF030
+
+
+IBM Operational Decision Manager v8.5
+Interim fix 27 for APAR RS01613 is available from IBM Fix Central [https://www-933.ibm.com/support/fixcentral/options?selectionBean.selectedTab=select&productGroup0=ibm/WebSphere]: 8.5.1.0-WS-BRMS-IF027
+
+WORKAROUNDS AND MITIGATIONS
+none known. Apply fix
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v2 Guide [http://www.first.org/cvss/v2/guide] 
+On-line Calculator v2 [http://nvd.nist.gov/CVSS-v2-Calculator] 
+Complete CVSS v3 Guide [http://www.first.org/cvss/user-guide] 
+On-line Calculator v3 [http://www.first.org/cvss/calculator/3.0] 
+
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.

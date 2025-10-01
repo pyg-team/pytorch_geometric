@@ -1,0 +1,49 @@
+Title: IBM NullPointerException received during group membership retrieval from Lotus Domino LDAP - United States
+
+Text:
+vmm; domino; nullpointerexception; rdn; dn; cn; EJPSB0057E; wimexception; EJPEG0111E; membership; group; member TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+Certain users are unable to log into the Portal successfully and view their protected home page. The SystemOut.log shows the following:
+
+[7/09/09 09:43:25:390 EST] 00000050 ContentModelI E com.ibm.wps.model.content.impl.ContentModelImpl ContentModelImpl() EJPEG0111E: An unexpected exception has been caught.
+com.ibm.wps.ac.AuthorizationDataException: EJPSB0057E: Authorization Data Exception occurred.
+. . . .
+Caused by: com.ibm.websphere.wim.exception.WIMException
+at com.ibm.ws.wim.tx.JTAHelper.handleException(JTAHelper.java:235)
+. . . .
+Caused by: java.lang.NullPointerException
+at com.ibm.ws.wim.adapter.ldap.LdapConnection.cloneSearchResults(LdapConnection.java:2972)
+. . . .
+at com.ibm.ws.wim.adapter.ldap.LdapAdapter.getGroupsByMember(LdapAdapter.java:1635)
+
+
+CAUSE
+Invalid character in group name in Domino LDAP
+
+ENVIRONMENT
+WebSphere Portal 6.1.0.x configured to use Lotus Domino LDAP 8.0.2
+
+DIAGNOSING THE PROBLEM
+ 
+
+Based on the tracing and configuration provided by the Login MustGather details, IBM Support requested that an ldapsearch be performed which mirrored the query by Virtual Member Manager (VMM). In this case, the ldapsearch looked similar to the following: 
+
+ldapsearch -h <LDAPhostname> -p 389 -D "<bindDN>" -w <bindPassword> -b "<baseDN>" "(&(objectClass=groupofnames)(member=CN=Test User,O=IBM))" dominounid objectClass cn > searchResults.txt
+
+When reviewing the search results, the following discrepancy was observed in one of the group entries which for the user "Test User" was a member of:
+
+CN=TEST U,SERS,O=IBM
+cn=TEST U
+dominounid=<alphanumeric string>
+objectclass=dominoGroup
+objectclass=groupOfNames
+objectclass=top
+
+Note that the "cn" value does not match the RDN component of the distinguished name (DN) value. After further review of the Domino LDAP contents by the Domino Administrator, it was determined that the group name had a "/" in the name (which does not show up via ldapsearch results, only shows up in Domino View) which led to the inconsistency.
+
+
+RESOLVING THE PROBLEM
+ 
+
+Remove the "/" from the group name in Domino LDAP. This should result in consistent ldapsearch results for the DN and cn values and avoid the NullPointerException during the group membership lookup by VMM.

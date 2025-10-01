@@ -1,0 +1,16 @@
+Title: IBM Tivoli Netcool/Impact: Configuring Single Sign on and viewing Operator Views on another Tivoli Integrated Portal server - United States
+
+Text:
+Single Sign-on; Operator View; remote Tivoli Integrated Portal; TIP; LTPA; exchange keys; SSO TECHNOTE (FAQ)
+
+QUESTION
+ How do I view an operator view on another Tivoli Integrated Portal server? 
+
+ANSWER
+You must configure the Tivoli Integrated Portal installations to use Single Sign-on (SSO). 
+
+Complete the steps in the document attached to configure Lightweight Directory Access Protocol (LTPA) and exchange keys to enable single sign-on between two remote Tivoli Integrated Portal installations. 
+
+When the configuration is complete you can log in to the first Tivoli Integrated Portal installation. From there you can view an operator view located in the second Tivoli Integrated Portal installation. 
+
+Configuring_Single_Sign_on.pdf [/support/docview.wss?uid=swg21610060&aid=2]Configuring_Single_Sign_on.pdf [/support/docview.wss?uid=swg21610060&aid=1]

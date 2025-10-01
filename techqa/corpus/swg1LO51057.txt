@@ -1,0 +1,132 @@
+Title: IBM LO51057: UNDERSCORE MISSING FROM EMAIL ADDRESS ON NOKIA DEVICES. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS UNREPRODUCIBLE IN NEXT RELEASE.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  If an email address in the From, To, CC, or Bcc fields contain
+   an underscore AND also contain a non-ASCII character, such as a
+   german umlaut, then the underscore will not appear on the email
+   editor and viewer on the Nokia device once Traveler syncs the
+   email to the device.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  The problem is caused by a bug in a Nokia decoding API.  The bug
+   is being worked around.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Customer stated that the e-mail address for Nokia devices was
+   not correct so they could not send mail from the device.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The problem was not seen on the latest maintenance level.  Asked
+   customer to upgrade.  Customer stated they decided to use
+   Blackberry and wanted the problem closed.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  NA
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   LO51057
+   
+   
+ * REPORTED COMPONENT NAME
+   LOTUS NOTES TRA
+   
+   
+ * REPORTED COMPONENT ID
+   5724E6204
+   
+   
+ * REPORTED RELEASE
+   851
+   
+   
+ * STATUS
+   CLOSED UR1
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-04-22
+   
+   
+ * CLOSED DATE
+   2010-09-30
+   
+   
+ * LAST MODIFIED DATE
+   2010-09-30
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   LOTUS NOTES TRA
+   
+   
+ * FIXED COMPONENT ID
+   5724E6204
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R852 PSY
+   UP

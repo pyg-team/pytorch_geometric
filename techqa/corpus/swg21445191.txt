@@ -1,0 +1,40 @@
+Title: IBM WebSphere Process Server and WebSphere Enterprise Service Bus - Support statement for the business object lazy parsing mode and mediation flow components - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Are WebSphere Process Server and WebSphere Enterprise Service Bus mediation components supported in the business object lazy parsing mode? 
+
+ANSWER
+Business object lazy parsing mode in 7.0.0.3
+WebSphere Process Server and WebSphere Enterprise Service Bus have enabled a new lazy parsing mode for business objects in version 7.0.0.3. Although the lazy parsing mode is available for all components of 7.0.0.3, usage of the business object lazy parsing mode is not supported for mediation flow components. 
+
+For modules containing mediation flow components, use of the business object lazy parsing mode is offered as a technology preview, and should only be used by early adopters. IBM provides the business object lazy parsing mode technology preview for mediation flow components "as is" and does not include IBM support as specified in the version 7 WebSphere Process Server and WebSphere Enterprise Service Bus license agreement under the terms for technology preview code.
+
+The business object eager parsing mode (which corresponds with the business object parsing mode in all previous version 6.x releases) continues to be the default in version 7.0.0.3, and remains the business object parsing mode for production use for any module that contains mediation flow components. WebSphere Integration Developer 7.0.0.3 allows the business object lazy parsing mode to be selected for a module that contains one or more mediation flow components, but displays a warning dialog to indicate that this mode is not fully supported for the selected module.
+
+Business object lazy parsing mode in 7.0.0.3 plus interim fix XC70031 or later fix packs 
+
+Full support for business object lazy parsing mode is provided with 7.0.0.3 plus interim fix XC70031. See this page for installation instructions and more information: 
+
+http://www.ibm.com/support/docview.wss?uid=swg24028048 [http://www.ibm.com/support/docview.wss?uid=swg24028048]
+
+Known issues with Interim fix XC70031: 
+
+ * Executing XML maps (XSLT primitives) with RPC-encoded WSDL messages
+
+
+Running mediation modules in business object lazy parsing mode can produce incorrect results in some cases where an XSLT mediation primitive is used to transform message content that is described by an RPC-encoded style WSDL message. The problem arises when the target namespace of elements in the message body is incorrectly determined in the runtime, and differs from the references to those elements in the stylesheet used by the XSLT primitive. The exact symptoms of this problem vary according to the WSDL message definition, stylesheet contents and instance data. Mediations that apply XSLT transformations to RPC-encoded style WSDL messages may be run using business object eager parsing mode to avoid this issue.  
+
+ * Communicating between modules with business object lazy and eager modes connected by SCA bindings
+
+
+When two modules are connected using SCA bindings, problems can arise if the source and target modules use different settings for the business object parsing mode (e.g. if the source module uses lazy parsing mode and the target module uses eager mode, or the reverse). The symtom associated with this issue is an exception message of the form java.lang.ClassCastException: org.eclipse.emf.ecore.sdo.impl.ETypeImpl incompatible with com.ibm.xml.sdo.type.SDOXType
+
+To avoid this issue, use the same business object parsing mode setting for the source and target modules. 
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration WebSphere Enterprise Service Bus 7.0.0.3

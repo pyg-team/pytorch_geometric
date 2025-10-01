@@ -1,0 +1,176 @@
+Title: IBM IC67868: WEBSPHERE MQ V7 .NET CLIENT APPLICATION THROWS                  NULLREFERENCEEXCEPTION WHEN USING CCSID 1051 - United States
+
+Text:
+  FIXES ARE AVAILABLE
+WebSphere MQ V7.0 Fix Pack 7.0.1.4 [http://www-01.ibm.com/support/docview.wss?uid=swg24028106]
+WebSphere MQ V7.0.1 for i5/OS Fix Pack 7.0.1.4 [http://www-01.ibm.com/support/docview.wss?uid=swg24028109]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When the CCSID is set to 1051 and you run a WebSphere MQ v7
+   .NET client application, you get a NullReferenceException.
+   The exception thrown shows:
+   System.NullReferenceException: Object reference is not
+   defined at object instance.
+   IBM.WMQ.Nmqi.NmqiTools.GetQueueManagerInfo
+   (NmqiEnvironment env, NmqiMQ mq, Hconn hconn)
+   IBM.WMQ.Nmqi.UnmanagedHconn.UpdateHconn(NmqiMQ
+   mqInstance, Phconn phconn)
+   IBM.WMQ.Nmqi.UnmanagedNmqiMQ.MQCONNX(String pQMgrName,
+   MQCNO& pConnectOpts, Hconn parentHconn, Phconn phconn,
+   Int32& pCompCode, Int32& pReason)
+   IBM.WMQ.Nmqi.UnmanagedNmqiMQ.MQCONNX(String pQMgrName,
+   MQConnectOptions pConnectOpts, Phconn phconn, Int32&
+   pCompCode, Int32& pReason)
+   IBM.WMQ.MQQueueManager.Connect(String queueManagerName)
+   IBM.WMQ.MQQueueManager..ctor(String queueManagerName,
+   String Channel, String ConnName)
+   WindowsApplication6.xmqsget.ButtonGet_Click(Object
+   sender, EventArgse)
+   
+   ADDITIONAL KEYWORDS
+   .NET .net VB character set codepage code page
+   null reference exception
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   Users of .NET application that uses CCSID which does not have a
+   direct mapping to a .NET encoding (for example CCSID 1051).
+   
+   Platforms affected:
+   Windows
+   
+   ****************************************************************
+   PROBLEM SUMMARY:
+   An unmanaged .NET application throws a NullReferenceException
+   when MQAPI calls such as GET/PUT are performed when unsupported
+   CCSIDs such as 1051 are set using the MQCCSID environment
+   variable. The call that is issued to retrieve the .Net encoding
+   returns NULL if an unsupported CCSID such as 1051 is used.  The
+   NullReferenceException occurs when trying to reference the
+   null object returned from the GetEncoding call.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The code has been modified so that if there is an attempt to use
+   an unsupported encoding, then the default ASCII encoding is used
+   instead.
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+                      v7.0
+   Platform           Fix Pack 7.0.1.4
+   --------           --------------------
+   Windows            U200323
+   
+   The latest available maintenance can be obtained from
+   'WebSphere MQ Recommended Fixes'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037]
+   
+   If the maintenance level is not yet available, information on
+   its planned availability can be found in 'WebSphere MQ
+   Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC67868
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ WINDOWS V7
+   
+   
+ * REPORTED COMPONENT ID
+   5724H7220
+   
+   
+ * REPORTED RELEASE
+   701
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-04-14
+   
+   
+ * CLOSED DATE
+   2010-06-29
+   
+   
+ * LAST MODIFIED DATE
+   2010-06-29
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ WINDOWS V7
+   
+   
+ * FIXED COMPONENT ID
+   5724H7220
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R701 PSY
+   UP

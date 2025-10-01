@@ -1,0 +1,41 @@
+Title: IBM Webcast:  FileNET P8 Content Engine - Centera Fixed Content Devices and Staging Areas (Storage Management) - United States
+
+Text:
+ECMSTE_webcast; ECMSTE; STEwebcastDocument; Support Technical Exchange; education; presentation; webcast WEBCAST
+
+ABSTRACT
+ Join members of the FileNet Content Manager team for a live presentation as they share information on 
+FileNET P8 Content Engine Centera and Storage Areas. After the presentation, attendees will be given an opportunity to ask our panel of experts questions. Throughout the event, attendees will also be encouraged to comment or ask questions in the IBM SmartCloud Meeting Web chat. Join us for this interactive and educational session. 
+
+CONTENT
+Event Details: 
+
+ * Topic: Storage - FileNET P8 Content Engine - Centera Fixed Content Devices and Staging Areas (Storage Management) 
+ * Date: Wednesday, September 30, 2015 
+ * Time: 10:00am PST (West Coast US), 1:00pm EST (East Coast US) 
+ * Duration: 1 hour
+
+Hosted by Patricia Gatewood, IBM Software Engineer, Team Lead for FileNet Content Manager, supporting ECM platform. Working with IBM since 2008. 
+
+Presented by: 
+Ruben Salazar, IBM Software Support Engineer for P8 Content Manager, Content Engine, and Content Federation Services 
+
+
+Overview  * Introduction to Centera 
+ * Common Centera Storage Area issues 
+ * Centera Troubleshooting 
+ * Tools to Diagnose 
+ * Tuning 
+ * Resource links
+
+Presentation Attached are the slides for this presentation: 
+ECM_Presentation_Centera_Storage_Area_config_troubleshooting_tunning_09282015.pdf [/support/docview.wss?uid=swg27045596&aid=2]ECM_Presentation_Centera_Storage_Area_config_troubleshooting_tunning_09282015.pdf [/support/docview.wss?uid=swg27045596&aid=1] 
+
+
+
+Session Recording 
+A link to the recording is available here [ftp://public.dhe.ibm.com/software/is/ecm/techexch/ECM_Centera_9_30_2015.wmv]. 
+
+We apologize for any delay in posting the recording. 
+
+About Support Technical Exchanges IBM Enterprise Content Management (ECM) wants to help you take full advantage of your products. Join us for our Support Technical Exchanges (STE) series as technical experts share their knowledge and answer your questions. These webcasts are designed to address specific topics and provide an in-depth and focused technical exchange in a convenient online webcast format. For more information about our Support Technical Exchanges, visit the Knowledge Collection: ECM Support Technical Exchanges [http://www.ibm.com/support/docview.wss?uid=swg21690159] page.

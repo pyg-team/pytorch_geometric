@@ -1,0 +1,38 @@
+Title: IBM About the license key types in Build Forge - United States
+
+Text:
+logoff; logon; login; purged; seat; authorized; floating; user; permanent; temporary; license seats; license type; license key; 1298058 TECHNOTE (FAQ)
+
+QUESTION
+ What are the types of licenses in IBM® Rational® Build Forge® and are the seats always purged when a user logs off? 
+
+CAUSE
+In some Build Forge configurations, the license seat is not always purged when the user logs off, but in others the license seat is always released for use by another user.
+
+ANSWER
+ 
+
+There are two types of licenses in Build Forge: Floating and Authorized. 
+
+You can only have one type of license available in your environment since, during startup, the engine picks up a single increment of user licenses, which is either Floating or Authorized. 
+
+A Floating license seat is purged automatically during user log off, but an Authorized is not. You can manually purge an Authorized license seat by using Purge Seat within the Administration > Users menu.
+
+Note: Using Purge Seat on a Floating license seat has the same effect as logging off the user since either action will simply release the license seat.
+
+A brief summary of each license type: 
+
+ * Floating: These license seats are best thought of as a first come, first served pool of seats that anyone can use. This allows an oversubscribed model of users to access the server on the assumption that not everyone will be working at the same time.
+   
+   
+ * Authorized: These license seats represent a fixed number of specific users that can access the system. This model explicitly does not allow the oversubscription model and, as a result, cost less on a per-seat basis. This is similar to an assigned seat logon scheme.
+
+For more information on Managing Licenses, refer to IBM Rational Build Forge Online Help [http://www.ibm.com/support/docview.wss?&rs=3099&uid=swg21251262].
+
+
+
+
+
+RELATED INFORMATION
+#Build Forge license key file [http://www.ibm.com/support/docview.wss?uid=swg21249594]
+How to get your Rational license keys [http://www.ibm.com/support/docview.wss?uid=swg21250433]

@@ -1,0 +1,47 @@
+Title: IBM Service Bulletin 154: IBM Tivoli Monitoring Agent for z/TPF - United States
+
+Text:
+IBM Tivoli Monitoring Agent for z/TPF; Tivoli; Monitoring Agent; z/TPF; TPF 4.1; TPF; CDC FLASH (ALERT)
+
+ABSTRACT
+ The IBM® Tivoli® Monitoring Agent for z/TPF is a component of continuous data collection (CDC), which is a performance tool that collects and displays TPF system information. 
+
+CONTENT
+The Monitoring Agent for z/TPF is a free download for TPF licensed users from the TPF Tools web page and supports real-time and historical CDC data on both TPF 4.1 and z/TPF systems. The monitoring agent requires IBM Tivoli Monitoring version 6.2.1 or later. The monitoring agent is a Windows application that runs in the IBM Tivoli Monitoring environment, communicates with TPF through WebSphere® MQ, and uses the Tivoli Enterprise Portal interface for display of data.
+The Monitoring Agent for z/TPF and IBM Tivoli Monitoring environment provides:
+
+Enterprise Monitoring:
+TPF systems can be monitored in the same environment as other systems such as z/OS.
+
+Situations/Alerts: 
+Support for alerts based on user defined situations. Alerts can be configured to run an application; for example, an application to send an email notification or a text message to a mobile phone. A history of situation alerts is provided to assist in system analysis. Users can acknowledge alerts, keeping a history of how the alert was resolved.
+
+Customizable Displays:
+Default displays are provided by the agent but the IBM Tivoli Monitoring environment also allows display customization, such as: 
+
+ * Ability to monitor any combination of CDC metrics in a single view. 
+ * Ability to monitor multiple TPF processors in a single view. 
+ * A selection of customizable charting, graphing and table options. 
+ * Display filtering of data for selective data display.
+
+
+Centralized Management: 
+The monitoring agent is installed in an IBM Tivoli Monitoring environment and users create an instance of the agent for each TPF processor to monitor. Instances of the agent can be managed on a single machine. Multiple users share remote connectivity to agent instances with a Web Browser or the Tivoli Desktop Portal component of IBM Tivoli Monitoring If the Web Browser option is used, the IBM Tivoli Monitoring and monitoring agent software do not have to be installed on individual user machines. 
+
+Improved User Data (z/TPF only): 
+A predefined format user data exit has been added that allows users to easily display their own system data. No updates are required to the agent to display the user data. IBM Tivoli Monitoring display filtering allows separation of user data structures into customized views. This predefined user data is saved to all CDC historical data repositories. 
+
+Historical Data: 
+The agent supports access to CDC historical data in DB2 ®, MySQL (z/TPF only) and TPFDF databases. The agent also supports Tivoli Data Warehousing. 
+
+Requirements and Related Information: 
+TPF Tools Web page: http://www.ibm.com/software/tpf/maint/toolsztpf.html [http://www.ibm.com/software/tpf/maint/toolsztpf.html] Provides access to the monitoring agent software, information about the requirements, and PDF files of the Quick Start Guide and the User's Guide. 
+
+TPF Family Libraries page: http://www.ibm.com/software/tpf/pubs/tpfpubs.htm [http://www.ibm.com/software/tpf/pubs/tpfpubs.htm] Provides access to the IBM TPF Product Information Center, which includes information about CDC and the IBM Tivoli Monitoring Agent for z/TPF in HTML and PDF format. 
+
+IBM Tivoli Monitoring product documentation: http://www.ibm.com/support/knowledgecenter/SSTFXA [http://www.ibm.com/support/knowledgecenter/SSTFXA] 
+
+For questions or concerns about the information in this service bulletin, send an e-mail to TPFQA@US.IBM.COM [TPFQA@US.IBM.COM] RELATED INFORMATION
+ TPF Tools Web page [http://www.ibm.com/software/tpf/maint/toolsztpf.html]
+TPF Family Libraries page [http://www.ibm.com/software/tpf/pubs/tpfpubs.htm ]
+IBM Tivoli Monitoring product documentation [http://www.ibm.com/support/knowledgecenter/SSTFXA]

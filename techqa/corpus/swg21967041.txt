@@ -1,0 +1,36 @@
+Title: IBM Apply modified xmls to DASH 3.1.2 (or newer) server in an HA or load balancing cluster - United States
+
+Text:
+DASHL2; HA; load balancing; 3.1.2; JazzSM; 1.1.2; modified xmls TECHNOTE (FAQ)
+
+QUESTION
+ What is the procedure to apply modified xml files (provided by IBM Support) to DASH 3.1.2 (or newer) servers (JazzSM 1.1.2) in an HA cluster? 
+
+CAUSE
+In the course of resolving an issue with the Dashboard Application Services Hub (DASH) service of Jazz for Service Management, it may be required to apply modified xml files provided by IBM Support to DASH servers in an HA cluster. This note describes the steps required to accomplish that in a DASH 3.1.2 (JazzSM 1.1.2) installation. 
+
+ANSWER
+Stop all DASH servers.
+
+
+ 1. Login into DB2 and connect to the DASH HA database as the same OS user you specified when you created the DB security alias in the DASH WAS admin console. 
+    
+ 2. Execute: 
+    list tables
+    
+    NODES
+    MODULES
+    GLOBAL_CONFIG
+    NODES_STORES
+    STORES
+    
+ 3. Drop all 5 tables. 
+    
+ 4. Apply the modified xml files to one of the DASH servers as directed by IBM support.
+    
+ 5. Start the DASH server where the modified xml files were applied. When it starts it will automatically recreate the tables that were dropped in step 3. It will also upload the local copy of its configuration to the database, including the newly applied modifed xml files. 
+ 6. Start the other DASH servers. They will join the cluster and will take the copy of the configuration that was uploaded to the DB by the first DASH server. 
+    
+
+
+All servers should be in sync.

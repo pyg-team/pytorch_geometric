@@ -1,0 +1,190 @@
+Title: IBM PI74012: BPM SYNCUSERS COMMAND FAILS IF ANY OPENPAGES USER IS LOCKED - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  If there are Locked user accounts in OpenPages, syncUsers fails
+   when performing the standard integration steps on an Upgraded
+   7.3 environment (Linux/Oracle 11.2.0.4)
+   http://www.ibm.com/support/knowledgecenter/SSFUEU_7.3.0/com.ibm.
+   swg.ba.cognos.op_ibmbpm_ig.7.3.0.doc/t_op_ibmbpm_synch_email.htm [http://www.ibm.com/support/knowledgecenter/SSFUEU_7.3.0/com.ibm.swg.ba.cognos.op_ibmbpm_ig.7.3.0.doc/t_op_ibmbpm_synch_email.htm]
+   l
+   
+   Error was a 404 Response from the BPM REST API used by the
+   op-bpm-tool.jar to retrieve the user data.
+   
+   Prerequisite:
+   IBM BPM installation completed
+   BPM to OpenPages integration steps completed:
+   http://www.ibm.com/support/knowledgecenter/SSFUEU_7.3.0/com.ibm.
+   swg.ba.cognos.op_ibmbpm_ig.7.3.0.doc/c_ibmbpm_ig_overview.html [http://www.ibm.com/support/knowledgecenter/SSFUEU_7.3.0/com.ibm.swg.ba.cognos.op_ibmbpm_ig.7.3.0.doc/c_ibmbpm_ig_overview.html]
+   
+   Steps to Reproduce:
+   1. Log in to OpenPages UI as OpenPagesAdministrator
+   2. Go to Administration > Users, Groups ... > Security Domains
+   3. Under Users, click Add New...
+   4. Enter new User details, for username use 'UserABC' (without
+   quotes)
+   5. Enter in any other required values. Save the user
+   6. Click on the UserABC to show the user details.
+   7. Lock the UserABC
+   8. On the BPM Application Server, navigate to the directory
+   where you extracted the op-bpm-install.zip, then the synctool
+   directory containing op-bpm-tool.jar.
+   9. Run the command to syncUsers in that directory (Example):
+   java -jar op-bpm-tool.jar syncUsers -insecure
+   http://opserver.com:10108 OpenPagesAdministrator passw0rd
+   https://bpmserver.ibm.com:9443 admin openpages
+   
+   
+   Expected Result:
+   syncUser completes successfully with at least one user account
+   created/updated in BPM:
+   Output:
+   Synchronizing user attributes from OpenPages system to BPM
+   system.
+   Found 84 account(s) on the group : OpenPages
+   The account synchronization completed successfully. 83
+   account(s) has been processed and 1 account(s) has been updated.
+   
+   
+   Actual Result:
+   Fails to sync the user who is locked, preventing the tool from
+   completing syncing all users.
+   Output:
+   Synchronizing user attributes from OpenPages system to BPM
+   system.
+   Found 84 account(s) on the group : OpenPages
+   Failed to synchronize users.
+   
+   HTTP Status code: 404, Message: Not Found
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Unlock all locked users before running the tool
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * OpenPages users.                                             *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * Client had locked OpenPages users.                           *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Customers should download OpenPages 7.3 FP1 from Fix         *
+   * Central. See the following document for details on obtaining *
+   * OpenPages 7.3 FP1:                                           *
+   * http://www.ibm.com/support/docview.wss?uid=swg24043595       *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Have the custom registry retrieve locked users also - this is
+   done by removing the filter for locked users on calls to the
+   OpenPages DB.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI74012
+   
+   
+ * REPORTED COMPONENT NAME
+   OPENPAGES GRC
+   
+   
+ * REPORTED COMPONENT ID
+   5725D5100
+   
+   
+ * REPORTED RELEASE
+   730
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-12-19
+   
+   
+ * CLOSED DATE
+   2017-05-15
+   
+   
+ * LAST MODIFIED DATE
+   2017-05-15
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   OPENPAGES GRC
+   
+   
+ * FIXED COMPONENT ID
+   5725D5100
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R730 PSY
+   UP

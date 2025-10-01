@@ -1,0 +1,160 @@
+Title: IBM JR50141: INCORRECT ROOT VERSIONING CONTEXT USED WHEN STARTING BPD FROM TOOLKIT - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Version 8.5 Refresh Pack 5 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24037683]
+Download Version 8.0.1 Fix Pack 3 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24037734]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When starting a BPD (with snapshot id or without) the process
+   is started with the incorrect versioning context. This causes
+   instance migration to not be possible if the BPD of interest is
+   located inside a toolkit.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  n/a
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ABSTRACT ? INCORRECT ROOT VERSIONING CONTEXT USED WHEN STARTING
+   BPD FROM TOOLKIT
+   ERROR DESCRIPTION -  If an exposed BPD from a toolkit is started
+   using Portal or REST API, the active instances are not counted
+   in the Process Admin Console ? Installed Apps  section.
+   
+   PRODUCTS AFFECTED
+   IBM Business Process Manager (BPM) Advanced
+   IBM BPM Standard
+   IBM BPM Express
+   
+   LOCAL FIX - N/A
+   
+   
+   PROBLEM SUMMARY ? When starting an exposed BPD from Process
+   Portal or REST API (ie.
+   https://localhost:9443/rest/bpm/wle/v1/process?action=start&bpdI
+   d=<bpd_id>&snapshotId=<snapshot_id>), [https://localhost:9443/rest/bpm/wle/v1/process?action=start&bpdId=<bpd_id>&snapshotId=<snapshot_id>),] if the BPD resides in a
+   toolkit, Process Admin Console's ?Installed Apps? page will not
+   show these active instances as part of the instance counter
+   displayed under the snapshot name.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  PROBLEM CONCLUSION ?
+   A fix is available for IBM BPM v8.0.1.2 to properly start the
+   BPD in the correct versioning context, allowing the instance to
+   be visible in the Process Admin Console.
+   
+   On Fix Central (http://www.ibm.com/support/fixcentral), search
+   for JR50141:
+   1.Select IBM Business Process Manager with your edition from the
+   product selector, the installed version to the fix pack level,
+   and your platform, and then click Continue.
+   2.Select APAR or SPR, enter JR50141, and click Continue.
+   When you download fix packages, ensure that you also download
+   the readme file for each fix. Review each readme file for
+   additional installation instructions and information about the
+   fix.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR50141
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM STANDARD
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9500
+   
+   
+ * REPORTED RELEASE
+   801
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-05-02
+   
+   
+ * CLOSED DATE
+   2014-07-18
+   
+   
+ * LAST MODIFIED DATE
+   2014-07-18
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   BPM STANDARD
+   
+   
+ * FIXED COMPONENT ID
+   5725C9500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R801 PSY
+   UP

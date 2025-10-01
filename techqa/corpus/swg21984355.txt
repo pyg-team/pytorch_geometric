@@ -1,0 +1,95 @@
+Title: IBM Data Studio can not save "Offline Automatic Maintenance" on a specific environment - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ We upgraded from DB2 Workgroup Server Edition (WSE) V10.1 GA to DB2 WSE V10.1 FP5. 
+Then installed Data Studio 4.1.1.0 (DS411) on Windows 2012 R2 64bit. Now, even if 
+there is not error and get a successful message, we can not save desired 
+"Offline Maintenance Window" values. Why not? 
+
+CAUSE
+It is an known limitation of current Data Studio and DB2 server.
+
+ANSWER
+Here is an example scenario. 
+
+1. Install Windows 2012 R2 64bit
+
+2. Install DB2 WSE V10.1 GA by Administrator -> 
+Right click "setup.exe" and run as admin ->
+Create DB2 instance -> No DB creation at this point -> no reboot
+
+3. Unpgrade DB2 WSE V10.1 GA and DB2 instance to DB2 WSE V10.1 FP5 -> 
+Right click "setup.exe" and run as admin -> reboot 
+
+4. Install DS411 by Administrator ->
+Right click "launchpad.exe" and run as admin -> 
+Install Installation Manager first then install DS411
+
+5. Open admin CLP -> db2sampl
+
+6. Run Data Studio ->
+Click OK for C:\Users\Administrator\IBM\rationalsdp\workspace ->
+Right click on SAMPLE db at localhost under all databases ->
+select "connect" -> Enter user name ADMINISTRATOR,
+password and check save pw -> get connected.
+Right click SAMPLE db -> select Set Up and Configure ->
+Click Configure Automatic Maintenance ->
+At "Configure Automatic Maintenance SAMPLE tab ->
+Click "Offline Maintenance Window" -> 
+All parameters are grayed out with below value (default) :
+-----------
+during the specified time
+start time : 12:00 AM
+duration : 3 hours
+days: checked 7 days, Mon to Sun
+range: All
+-----------
+Click "Create or update the maintenance window" ->
+all parameters can be changeable ->
+Change parameters as below value (desired):
+-----------
+not during the specified time
+start time : 2:30 PM
+duration : 3 hours
+days: checked Wed and Sat only
+range: All
+-----------
+Click "Command" and check the call statement
+Click "Run" and then see messages, Succeeded.
+
+7. Right click the SAMPLE db -> disconnect -> Exit DS by clicking 'X'
+
+8. Run Data Studio ->
+Right click on SAMPLE at localhost under all databases ->
+Select "connect" -> get connected
+Right click SAMPLE db -> select Set Up and Configure ->
+Click Configure Automatic Maintenance ->
+At "Configure Automatic Maintenance SAMPLE tab ->
+Click "Offline Maintenance Window" -> see it is default or desired
+==> It is default even if "Succeeded" at the end of step #6 above.
+==> can not save "Automatic Maintenance"
+
+The above DS411's behavior is an known limitation of current Data Studio and DB2 server.
+DS411 does not handle Automatic Maintenance appropriately and returns Succeeded even if it
+did not run completely under a specific environment, such as the server is migrated from 
+DB2 WSE V10.1 GA to DB2 WSE V10.1 FP5.
+
+This behavior may not be happened if it is following condition.
+- If the instance type is ESE
+- If install V10.1 FP5 WSE only on a fresh box (not upgrade from V10.1 GA)
+
+Here are known work around:
+- Upgrade from the problematic DB2 V10.1 FP5 WSE to V10.5 FP7
+- Uninstall the upgraded DB2 V10.1 FP5 WSE once then install V10.1 FP5 WSE again
+* please backup configuration variables and database before this.
+
+Note:
+This behavior might be changed without notice in the future. We can confirm whether 
+this technote is valid or not by following the above steps.
+
+RELATED INFORMATION
+ IBM Data Studio [http://www.ibm.com/software/data/studio]
+Recommended Fix Packs for DB2 for Linux UNIX and Windo [http://www-01.ibm.com/support/docview.wss?uid=swg21321001]

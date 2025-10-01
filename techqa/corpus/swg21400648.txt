@@ -1,0 +1,32 @@
+Title: IBM Get ruleset information in Rule Execution Server - United States
+
+Text:
+BRES; IlrContext; IlrRuleset; JMX; MBean; getRuleset; ruleset TECHNOTE (FAQ)
+
+QUESTION
+ How do you get ruleset information in a Rule Execution Server environment? 
+
+ANSWER
+The Rule Execution Server architecture hides the engine object and therefore the ruleset object from the user: because the ruleset is deployed and managed through the Rule Execution Server console and the engine is handled through a rule session object, the application cannot access the IlrContext object that would in turn allow access to the IlrRuleset object used by the current rule execution.
+Rule Execution Server is designed to auto-manage rule execution, hiding these operations from the user and thus making applications much easier to deploy and maintain. 
+
+It is nevertheless still possible to get information on deployed rulesets from the application; this can be achieved using the JMX API which uses the MBean to retrieve the information: IlrJMXRepositoryMBean , IlrJMXRuleAppMBean and IlrJMXRulesetMBean available under ilog.rules.res.model.mbean.
+
+The product JMX remote sample located at WebSphere ILOG JRules BRMS V7.1 > Samples > Rule Execution Server samples > Automated ruleset management sample [http://www-01.ibm.com/support/knowledgecenter/SS6MTS_7.1.1/com.ibm.websphere.ilog.jrules.doc%2FContent%2FBusiness_Rules%2FDocumentation%2F_pubskel%2FJRules%2Fps_JRules_Global1756.html] illustrates the use of the Rule Execution Server JMX API. 
+
+You can refer to the API documentation [http://publib.boulder.ibm.com/infocenter/brjrules/v7r1/topic/com.ibm.websphere.ilog.jrules.doc/html/api/html/ilog/rules/res/model/mbean/package-summary.html] and the below link for more information. 
+
+RELATED INFORMATION
+ JRules 7.1 doc on the Rule Execution Server MBeans [http://publib.boulder.ibm.com/infocenter/brjrules/v7r1/topic/com.ibm.websphere.ilog.jrules.doc/Content/Business_Rules/Documentation/_pubskel/JRules/ps_JRules_Global1028.html]
+JRules 7.1 doc on Managing RuleApps with the MBeans API [http://publib.boulder.ibm.com/infocenter/brjrules/v7r1/topic/com.ibm.websphere.ilog.jrules.doc/Content/Business_Rules/Documentation/_pubskel/JRules/ps_JRules_Global993.html]
+Deletion of a Ruleset from RES with the MBeans API [http://www.ibm.com/support/docview.wss?rs=0&uid=swg21423602]
+WODM V7.5 MBeans Accessor API [http://pic.dhe.ibm.com/infocenter/dmanager/v7r5/topic/com.ibm.dserver.reference.res/Content/Business_Rules/_pubskel/Infocenter_Primary/ps_DS_Reference_RES2045.html]
+WODM V8.0 MBeans Accessor API [http://pic.dhe.ibm.com/infocenter/dmanager/v8r0/topic/com.ibm.wodm.dserver.rules.ref.res/topics/tpc_resref_jmxmbean_api.html]
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Operational Decision Manager Platform Independent 8.5, 8.0, 7.5 
+HISTORICAL NUMBER
+ jrules/FAQ/200

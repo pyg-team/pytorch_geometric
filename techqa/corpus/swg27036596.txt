@@ -1,0 +1,30 @@
+Title: IBM Datacap Taskmaster 8.1 Client Support for Microsoft Windows® XP SP3 - United States
+
+Text:
+Taskmaster Client Windows XP PRODUCT DOCUMENTATION
+
+ABSTRACT
+ The client components of Datacap Taskmaster 8.1 are supported under Microsoft Windows® XP SP3. This note describes Taskmaster client installation, configuration and usage specific to Microsoft Windows® XP. 
+
+CONTENT
+IBM only certifies the Microsoft Windows® XP SP3 platforms for the Datacap Taskmaster 8.1 client component. 
+
+IBM does not support the Microsoft Windows® XP SP3 platform to run the Datacap Server component. 
+
+Datacap Taskmaster Datacap 8.1 thick client installation
+The standard method of double-clicking the Setup icon produces an error message, stating that the operating system is not supported. 
+
+To install Taskmaster Client v8.1 on Windows XP® SP3, you must run the installer from a DOS command prompt, as follows: 
+
+ 1. Choose Start ->Programs->Accessories->Command Prompt 
+ 2. At the command prompt, type the command to run the Taskmaster installer. For example if the installer is on a DVD or flash drive mounted on F: type 
+    F:\setup.exe /V"OS_OVERRIDE=1"
+    including the quotation marks. 
+ 3. You can install the full Taskmaster 8.1 product or select the client component. However, only the clients are supported on Windows XP.
+
+
+Accessing Taskmaster Web 
+To access Taskmaster Web from a Windows XP client, use Microsoft Internet Explorer (IE) version 8 or above. Browser security settings need to be configured according to the documentation, either manually or by using the Web Client Configuration tool. Use the Taskmaster Web Test tab on each web client to confirm correct configuration. Taskmaster Client installation is not required to use Taskmaster Web. 
+
+Log files and configuration information 
+Log files and stored configurations for thick clients including Datacap Studio, DotEdit, DotScan, and DCOrchard are generated in C:\Documents and Settings\<USER>\Local Settings\Application Data\IBM, where <USER> is the Windows user that ran the component.

@@ -1,0 +1,224 @@
+Title: IBM MQSeries for AIX V5.2 README - United States
+
+Text:
+MQSeries AIX V5.2 README PRODUCT README
+
+ABSTRACT
+ This document contains the MQSeries for AIX V5.2 README. 
+
+CONTENT
+MQSeries for AIX, V5.2 README 
+
+Welcome to MQSeries for AIX, Version 5.2. 
+
+This README file contains information that was not available in time for our publications. 
+
+In addition to this file, README.TXT, there is also more information on the MQSeries website, located here: 
+
+http://www.ibm.com/software/integration/wmq/ [http://www-306.ibm.com/software/integration/wmq/] 
+
+The SupportPac™ page is here:
+
+http://www.ibm.com/support/docview.wss?rs=977&uid=swg27007205 [http://www-1.ibm.com/support/docview.wss?rs=977&uid=swg27007205] 
+
+
+
+
+Installing on AIX
+
+Before installing on AIX you are recommended to install AIX PTF U472177. This PTF updates the bos.rte.install fileset on AIX to version 4.3.3.17. Without the PTF it is possible for the product to appear to install properly but product files may missing.
+
+
+Problem during Update Install of MQSeries on AIX
+
+For users who wish to perform an update install to MQSeries version 5.2 from an earlier release, then they may encounter a problem which will result in not all of the required files being correctly installed on the system. This problem only occurs on AIX.
+
+During the update install of MQSeries for AIX version 5.2 the following warnings will be displayed.
+
+sysck: 3001-036 WARNING: File
+/usr/lib/libimqb23ia_r.a
+is also owned by fileset mqm.base.sdk.
+sysck: 3001-036 WARNING: File
+/usr/mqm/lib/libimqb23ia_r.a
+is also owned by fileset mqm.base.sdk.
+sysck: 3001-036 WARNING: File
+/usr/mqm/lib/libimqb23ia.a
+is also owned by fileset mqm.base.sdk.
+sysck: 3001-036 WARNING: File
+/usr/lib/libimqb23ia.a
+is also owned by fileset mqm.base.sdk.
+
+and the following files will not be correctly installed on the system.
+/usr/mqm/lib/libimqb23ia.a
+/usr/mqm/lib/libimqb23ia_r.a
+
+Users have two options on how to prevent / rectify this problem.
+
+
+ 1. Prior to performing the migrate install of MQSeries version 5.2, the user can execute the following commands (as root), on the system about to be updated.
+    
+    export ODMDIR=/usr/lib/objrepos
+    odmdelete -q "loc0='/usr/mqm/lib/libimqb23ia.a'" -o inventory
+    odmdelete -q "loc0='/usr/mqm/lib/libimqb23ia_r.a'" -o inventory
+    odmdelete -q "loc2='/usr/mqm/lib/libimqb23ia.a'" -o inventory
+    odmdelete -q "loc2='/usr/mqm/lib/libimqb23ia_r.a'" -o inventory
+    
+    cat /usr/lpp/mqm.base/deinstl/mqm.base.sdk.al | grep -v 
+    libimqb23ia > /tmp/mqsdk.al
+    mv /tmp/mqsdk.al /usr/lpp/mqm.base/deinstl/mqm.base.sdk.al
+    chmod 644 /usr/lpp/mqm.base/deinstl/mqm.base.sdk.al
+    
+    After each execution of the odmdelete command, it should respond with the text "0518-307 odmdelete: 1 objects deleted." Once these commands have been completed the user may continue and perform the update-install normally.
+    
+    
+ 2. The second option, is once the updated install is complete, (note you will see the warning messages shown above during the install), you should reinstall the mqm.base.runtime v5.2 component ontop of the upgraded system. To allow this to complete you must set the 'OVERWRITE same or newer versions?' option to yes, and the 'AUTOMATICALLY install requisite software?" option to no. This will reinstall the affected component and resolve the problem.
+    
+    
+
+ 1. A new MQRC value has been added:
+    MQRC_NEXT_RECORD_ERROR (2361, X'0939')
+    NextRecord parameter not valid.
+    
+    Explanation: An MQXCLWLN call was issued from a cluster workload exit to obtain the address of the next record in the chain, but the address specified for the "NextRecord" parameter is either null, not valid, or the address of read-only storage.
+    
+    Completion Code: MQCC_FAILED
+    
+    Programmer Response: Specify a valid address for the "NextRecord" parameter.
+    
+    
+ 2. A new MQRCCF code has been added:
+    MQRCCF_CHANNEL_CLOSED: value 4090.
+    Channel closed.
+    
+    Explanation: The channel was closed prematurely. This can occur because a user stopped the channel while it was running, or a channel exit decided to close the channel.
+    
+    Corrective action: Determine the reason why the channel was closed prematurely. Restart the channel if required.
+    
+    
+ 3. The HTML versions of some of the MQSeries books on the CD-ROM mention the product "MQSeries for OS/390 Version 2.2". All mentions of this product should read "MQSeries for OS/390 Version 5.2".
+    
+    
+ 4. MQSeries version 5.2 has performance enhancements which are designed to significantly increase message throughput. To gain full benefit from these changes it is recommended that you review the tuning of the AIX write-behind facility, after reading the Redbook entitled "RS/6000 Performance Tools in Focus" (SG24-4989-00) together with the AIX Versions 3.2 and 4 Performance Tuning Guide. Delaying the write-behind algorithm by increasing the value of numclust via the vmtune command has been shown to improve performance of MQSeries laboratory benchmark measurements.
+    
+    
+ 5. When writing a "Cluster Workload Exit", you will need to resolve the MQXCLWLN function by linking with the "mqutl" library on Windows NT, or the "libmqutl" library on UNIX platforms. 
+    
+    
+ 6. Sybase 12 support
+    
+    Ensure that the latest patch levels are installed. During testing, we used EBF9091.
+    
+    In the shell from which you start a queue manager, you should ensure that the environment variables SYBASE and SYBASE_OCS are set to their appropriate values. This also applies to the shell from which you start your programs.
+    
+    
+
+MQSeries for AIX V5.2 Quick Beginnings GC33-1867-03 
+Chapter 2 
+In the section "Migrating from an earlier version of MQSeries for AIX" 
+
+Before installing the new version of MQSeries for AIX, the following filesets must be uninstalled: 
+mqm.java.bindings 
+mqm.java.client 
+mqm.java.share 
+mqm.html.base.java 
+Chapter 7 
+In the section "Using Control Commands".
+
+A new command is now available:
+dspmq (Display MQSeries Queue Managers)
+
+Purpose:
+Use the dspmq command to show the names of all the Queue 
+Managers on a machine. 
+
+Optional Parameters:
+-m QMgrName
+Specifies the name of the Queue Manager whose details
+are to be displayed. If no name is specified, then all 
+Queue Manager names are displayed
+-s 
+Request the operational status of the Queue Managers 
+
+Return Codes:
+0 Successful operation 
+36 Invalid arguments supplied
+71 Unexpected error
+72 Queue manager name error
+
+
+MQSeries V5.2 Release Guide GC34-5761-00 
+Chapter 1 
+The current version of "MQWXP - Cluster workload exit parameter structure" is described in the section "Navigating cluster workload records".
+
+The description of the CacheType field in the MQWXP structure should read:
+
+CacheType (MQLONG) Type of cluster cache.
+
+The type of the cluster cache can be one of the following:
+
+MQCLCT_STATIC Static cluster cache.
+
+If the cluster cache has this type, the size of the cache is fixed, and cannot grow as the queue manager operates. The MQXCLWLN call need not be used to navigate the records in this type of cache.
+
+MQCLCT_DYNAMIC Dynamic cluster cache.
+
+If the cluster cache has this type, the size of the cache is not fixed, and can grow as the queue manager operates. The MQXCLWLN call must be used to navigate the records in this type of cache.
+
+
+
+Chapter 3 
+Enhanced support for Communications Server for AIX V5
+
+When migrating from an earlier version of MQSeries, any existing Communications Server definitions of transaction programs invokable by MQSeries should be deleted using the following commands :
+
+snaadmin delete_tp_load_info,tp_name=XXXXXX
+
+followed by 
+
+snaadmin delete_tp,tp_name=XXXXXX
+
+where XXXXXX is the name of the invokable transaction program.
+
+The transaction program definition should then be re-created using the graphical interface as described below.
+
+An attempt by MQSeries V5.2 to invoke a previously defined transaction program will result in an SNA sense code of 084B6031 - Transaction Program not available, and an entry in the queue manager error log of 
+
+AMQ9213: A communications error for CPI-C occurred.
+
+EXPLANATION:
+An unexpected error occurred in communications.
+ACTION:
+The return code from the CPI-C (cmaccp) call was 25 (X'19'). Record these values and tell the systems administrator.
+
+
+MQSeries Systems Administration Manual SC33-1873-01 
+Chapter 11 
+Section mqs.ini stanzas
+
+In the LogDefaults stanza the maximum value of the LogBufferPages attribute is increased from 32 to 512.
+
+For guidance on the use of this parameter see the SupportPacs™ [http://www-1.ibm.com/support/docview.wss?rs=977&uid=swg27007205]
+
+MQSeries for AIX Version 5.2 Performance Highlights expected to be available early in 2001 and MQSeries for AIX Version 5.2 Capacity Planning Guidance expected availablity 1st Quarter 2001
+
+
+
+Change History
+Last Updated: 17 October 2005 
+
+ * 17 October 2005: Moved information from a static page 
+ * 31 January 2003:Problem during Update Install of MQSeries on AIX 
+ * 5 January 2003: 
+   Ammendment to Systems Administration manual added. (LogBufferPages attribute)
+   Important information regarding installation problems added.
+   Information regarding support for database products added.
+   Additional information added to the "Enhanced support for Communications Server for AIX V5" section of the Release Guide.
+
+
+
+
+ORIGINAL PUBLICATION DATE
+ 2005/8/12 
+
+PRODUCT ALIAS/SYNONYM
+ MQ MQS MQSeries

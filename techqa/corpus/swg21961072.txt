@@ -1,0 +1,49 @@
+Title: IBM Security Bulletin: A security vulnerability has been identified in muiltiple products shipped with Predictive Customer Intelligence (CVE-2015-4000) - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ WebSphere Application Server, Cognos Business Intelligence, Integration Bus, and WebSphere MQ are shipped as components of Predictive Customer Intelligence. Information about a security vulnerability affecting WebSphere Application Server, Cognos Business Intelligence, Integration Bus, and WebSphere MQ has been published in a security bulletin. 
+
+VULNERABILITY DETAILS
+Please consult the security bulletins: 
+Vulnerability in Diffie-Hellman ciphers affects IBM Cognos Business Intelligence (CVE-2015-4000) [http://www-01.ibm.com/support/docview.wss?uid=swg21959671] 
+
+Vulnerability with Diffie-Hellman ciphers may affect IBM WebSphere Application Server (CVE-2015-4000) [http://www-01.ibm.com/support/docview.wss?uid=swg21957980] 
+
+Vulnerability in Diffie-Hellman ciphers known as Logjam affects IBM WebSphere Message Broker and IBM Integration Bus (CVE-2015-4000) [http://www.ibm.com/support/docview.wss?uid=swg21958955] 
+
+Vulnerability in Diffie-Hellman ciphers affects IBM WebSphere MQ Telemetry (CVE-2015-4000) [http://www-01.ibm.com/support/docview.wss?uid=swg21958984] 
+
+for vulnerability details and information about fixes.
+
+AFFECTED PRODUCTS AND VERSIONS
+ 
+
+Principal Product and Version(s) Affected Supporting Product and Version IBM Predictive Customer Intelligence 1.0 IBM Cognos Business Intelligence Server 10.2.1.1
+WebSphere Application Server 8.5.5 ND
+Integration Bus 9.0.0.1
+WebSphere MQ 7.5.0.2 IBM Predictive Customer Intelligence 1.0.1 IBM Cognos Business Intelligence Server 10.2.1.1 
+WebSphere Application Server 8.5.5 ND
+Integration Bus 9.0.0.1
+WebSphere MQ 7.5.0.2 GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v2 Guide [http://www.first.org/cvss/v2/guide] 
+On-line Calculator v2 [http://nvd.nist.gov/CVSS-v2-Calculator] 
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] ACKNOWLEDGEMENT
+
+Reported to IBM by The WeakDH team at https://weakdh.org [https://weakdh.org] 
+
+
+CHANGE HISTORY
+ 30 June 2015: Original Version Published 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.

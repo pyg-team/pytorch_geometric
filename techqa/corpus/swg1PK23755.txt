@@ -1,0 +1,232 @@
+Title: IBM PK23755: EXPLICIT SOAP HEADERS ARE NOT THREAD SAFE. - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Java SDK 1.5 SR8 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24020073]
+Java SDK 1.5 SR8 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24021203]
+Java SDK 1.5 SR10 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24024201]
+6.1.0.31: Java SDK 1.5 SR11 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24026453]
+6.1.0.33: Java SDK 1.5 SR12 FP1 Cumulative Fix for WebSphere [http://www-01.ibm.com/support/docview.wss?uid=swg24027786]
+6.1.0.29: Java SDK 1.5 SR11 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24025191]
+6.1.0.35: Java SDK 1.5 SR12 FP2 Cumulative Fix for WebSphere [http://www-01.ibm.com/support/docview.wss?uid=swg24028574]
+6.1.0.37: Java SDK 1.5 SR12 FP3 Cumulative Fix for WebSphere [http://www-01.ibm.com/support/docview.wss?uid=swg24029525]
+6.1.0.39: Java SDK 1.5 SR12 FP4 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24030426]
+6.1.0.41: Java SDK 1.5 SR12 FP5 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24031035]
+6.1.0.43: Java SDK 1.5 SR13 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24031963]
+6.1.0.45: Java SDK 1.5 SR14 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24033270]
+6.1.0.47: WebSphere Application Server V6.1 Fix Pack 47 [http://www-01.ibm.com/support/docview.wss?uid=swg24035508]
+6.1.0.47: Java SDK 1.5 SR16 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24035649]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Explicit SOAP headers are not thread safe.  Implicit SOAP
+   headers are already thread-safe.
+   
+   When doing a load test, customers using explicit SOAP headers
+   may find that their SOAP headers get mixed up between messages.
+   Example:  There are three separate threads running concurrently.
+   Each thread is making a Web service request.
+   
+   For one SOAP message, the resulting element and value should
+   look like:
+   
+   <HEADER>@7a25f3f4</HEADER>
+   
+   Per the WSDL, there should only be one HEADER element and each
+   unique hexidecimal value should correspond with only one unique
+   Thread ID that represents client request. But resulting header
+   looks like
+   
+   <soapenv:Header
+   xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
+   xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/"
+   xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+     <HEADER>@7a25f3f4</HEADER>
+     <HEADER>@7962b3f4</HEADER>
+     <HEADER>@7331f3f4</HEADER>
+   </soapenv:Header>
+   
+   This APAR fixes this issue.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: WebSphere Application Server version 6.0.2   *
+   *                 users of web services.                       *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Explicit SOAP headers are not thread    *
+   *                      safe.                                   *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   Explicit SOAP headers are not thread safe.  Implicit SOAP
+   headers are already thread-safe.
+   
+   When doing a load test, customers using explicit SOAP headers
+   may find that their SOAP headers get mixed up between messages.
+   Example:  There are three separate threads running concurrently.
+   
+   Each thread is making a Web service request.
+   
+   For one SOAP message, the resulting element and value should
+   look like:
+   
+   <HEADER>@7a25f3f4</HEADER>
+   
+   Per the WSDL, there should only be one HEADER element and each
+   unique hexidecimal value should correspond with only one unique
+   Thread ID that represents client request. But resulting header
+   looks like
+   
+   <soapenv:Header
+   xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
+   xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/"
+   xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+   <HEADER>@7a25f3f4</HEADER>
+   <HEADER>@7962b3f4</HEADER>
+   <HEADER>@7331f3f4</HEADER>
+   </soapenv:Header>
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fixed the client Connection class so that the Vector
+   representing the SOAPHeader is not invocation-specific.
+   
+   The fix for this APAR is currently targeted for inclusion
+   in cumulative fix 6.0.2.11.
+   Please refer to the recommended updates page for delivery
+   information:
+   http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK23755
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBS APP SERV N
+   
+   
+ * REPORTED COMPONENT ID
+   5724H8800
+   
+   
+ * REPORTED RELEASE
+   60I
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2006-04-21
+   
+   
+ * CLOSED DATE
+   2006-05-24
+   
+   
+ * LAST MODIFIED DATE
+   2006-05-24
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  WEBSRVC
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBS APP SERV N
+   
+   
+ * FIXED COMPONENT ID
+   5724H8800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R60A PSY
+   UP
+   
+   
+ * R60H PSY
+   UP
+   
+   
+ * R60I PSY
+   UP
+   
+   
+ * R60P PSY
+   UP
+   
+   
+ * R60S PSY
+   UP
+   
+   
+ * R60W PSY
+   UP
+   
+   
+ * R60Z PSY
+   UP

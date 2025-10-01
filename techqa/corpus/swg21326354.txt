@@ -1,0 +1,134 @@
+Title: IBM Collecting Data: Web Content Manager V6.1 Remote Rendering Portlet - United States
+
+Text:
+must gather; wcm; remote rendering; portlet; MustGatherDocument; RRP; mustgather; collecting data; render TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+Collecting data for problems with the IBM Web Content Manager (WCM) V6.1 Remote Rendering Portlet. Gathering this information before calling IBM Support will help you understand the problem and save time analyzing the data. 
+
+RESOLVING THE PROBLEM
+If you already contacted WCM Support, collect remote rendering portlet data. Otherwise, refer to Collecting Data: Read first for IBM WebSphere Portal [http://www.ibm.com/support/docview.wss?rs=688&uid=swg21312740].
+WCM allows you to create and manage web content for Internet, intranet, extranet and Portal sites. You can also use WCM to present web content to users in a portlet or web site.
+
+A remote rendering portlet can be used to display content within a portlet located on a different portal server than the instance of WebSphere Portal on which WCM is installed. A remote rendering portlet can be installed on WebSphere Portal versions 5.1, 6.0, or 6.1.
+
+Collecting Version 6.1 Remote Rendering Portlet related information. 
+
+1) Environment: 
+
+ *  Clustered environment? Web server product and version installed, if any (local or remote and on what platform?) LDAP server product and version installed, if any (on what platform?) Database product and version installed, if any other than Derby (local or remote and on what platform?): If an external security manager is in use, specify here (include platform)  * 
+    * 
+    * 
+    * 
+    * 
+   
+   
+
+
+2) Detailed problem description:  * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+
+
+3) Use the following steps to set up traces before you recreate the issue: 
+
+On the remote rendering server:  * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ *   * com.ibm.workplace.wcm.app.ui.remote.*=all:
+    * 
+    * com.ibm.workplace.wcm.app.ui.portlet.*=all
+   
+   
+ * 
+ * 
+ * 
+ *   *  Stop the portal server Archive and delete the contents of the <WP_profile_root>/logs directory Start portal 
+   
+   
+ * 
+ * 
+ * 
+
+
+If the credential vault is in use, add the following the remote rendering server traces:  * com.ibm.wps.services.credentialvault.*=finest:
+   com.ibm.wps.sso.credentialvault.*=finest:
+   com.ibm.wps.command.credentialvault.*=finest:
+   com.ibm.wps.engine.Servlet.*=finest
+
+
+On the rendering server:  * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ *  com.aptrix.*=all: 
+   com.presence.connect.wmmcomms.*=all: 
+   com.ibm.wps.engine.*=all: 
+   com.ibm.wps.services.puma.*=all: 
+   com.ibm.wps.puma.*=all: 
+   com.ibm.wps.sso.*=all: 
+   com.ibm.wps.services.authentication.*=all: 
+   com.ibm.ws.security.*=all: 
+   com.ibm.ws.wim.*=all:com.ibm.websphere.wim.*=all: 
+   com.ibm.wsspi.wim.*=all 
+ * 
+ * 
+ * 
+ *   1. Stop the portal server 
+    2. Archive and delete the contents of the <WP_profile_root>/logs directory 
+    3. Start portal
+   
+   
+ * 
+ * 
+ * 
+
+
+4) Portlet: Configuration, Shared Settings, and personalize settings:  * 
+
+
+5) Perform an xmlaccess export (optional depending on problem and request):  * 
+ * <PortalServer_root>
+ * 
+
+
+For information on using xmlaccess, refer to the Portal Information Center topic, "Working with the XML configuration interface [http://publib.boulder.ibm.com/infocenter/wpdoc/v6r1m0/index.jsp?topic=/com.ibm.wp.ent.doc/admin/adxmltsk.html]." 
+
+6) Provide access control settings (optional depending on problem and request):  * 
+ * Exporting and importing a Web content library
+ * 
+
+ * 
+
+
+7) Collect the required files from both systems:  *  <WP_profile_root>/logs/WebSphere_Portal/SystemOut.log <WP_profile_root>/logs/WebSphere_Portal/SystemErr.log <WP_profile_root>/logs/WebSphere_Portal/trace.log <WP_profile_root>/wcm/shared/app/config/wcmservices/WCMConfigServices.properties Provide the detailed recreation steps and the resources involved. Provide xmlaccess export if required Provide the Web library export directory if required 
+
+
+8) Send the diagnostic information to IBM support: [/support/docview.wss?uid=swg21326354&amp;aid=1] Follow instructions to send diagnostic information to IBM Support [http://www.ibm.com/support/docview.wss?rs=688&uid=swg21201571] and be sure to provide all diagnostic information captured above. This requires that a PMR be opened if not already.
+
+Refer to the detailed instructions in "Exchanging information with IBM Technical Support for problem determination [http://www.ibm.com/support/docview.wss?rs=688&uid=swg21201571]" to make the information available and to update your problem record. 
+Troubleshooting suggestions:  * Are the rendering server and the remote rendering servers at the same level with the same fixes installed? If not, try copying the remote rendering portlet from the rendering server to the remote rendering server, update the portlet using the portal administrative portlets, and retry the configuration. 
+ * Test to see if the content can be accessed using the local rendering portlet using the user you logged in with or the user specified in the remote rendering portlet. 
+ * If images and links appear broken in the remote rendering portlet, try selecting/deselecting the "Fully qualify URLs generated by Web Content Management Server" configuration option and testing the behavior. 
+ * If the remote rendering portlet is used on a Portal server where the WCM servlet is also installed, be sure both are at the same code level. If they are not at the same code level, the remote rendering portlet may not function correctly.
+
+
+
+
+ * 
+ *

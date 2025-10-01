@@ -1,0 +1,201 @@
+Title: IBM PI57169: PORTAL 8X TARGET JAX-WS CLIENT GENERATE ERROR:WSIMPORT NOT FOUND - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Rational Application Developer for WebSphere Software 9.6 [http://www-01.ibm.com/support/docview.wss?uid=swg24043200]
+Rational Agent Controller Service Release 9.6 [http://www-01.ibm.com/support/docview.wss?uid=swg24043464]
+Rational Application Developer for WebSphere Software Fix Pack 3 (9.5.0.3) for 9.5.0 [http://www-01.ibm.com/support/docview.wss?uid=swg24043859]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Portal v8.x server runtime target in JAX-WS client wizard
+   generate error: Wsimport not found
+   
+   Using Rational Application developer (RAD) 9.5 to generate a
+   JAX-WS web services client (into a portlet project) targeting
+   WebSphere Portal 8.5(on WAS 8.5) ,  results in this pop-up error
+   from the web services wizard:
+   
+   &#226; &#156;The Wsimport Web service tool was not found in the server
+   installation. For WebSphere Application Server classic V8.5 and
+   V8.0, verify the installation directory and its content. For
+   WebSphere Application Server classic V7.0, ensure that the
+   appropriate feature packs are installed for JAX-WS Web Services
+   support. Once installed, the tool is available in:
+   C:\IBM\WebSphere\AppServer\bin\jaxws&#226; &#157;
+   
+   
+   Recreate:
+   
+   Recreate this error in RAD 9.5 by attempting to generate a
+   JAX-WS Web Services client from any WSDL, against any WebSphere
+   Portal 8.x server into any web project. It does not have to be a
+   portlet project.
+   Gives Error"
+   
+   "..
+   The Wsimport Web service tool was not found in the server
+   installation.
+   For WebSphere Application Server (WAS) v8.5 and v8.0, verify the
+   installation directory and its content.
+   For WAS v7.0, ensure that the appropriate feature packs are
+   installed for JAX-WS Web Services support.
+   Once installed, the tool is available in: {WebSphere Portal
+   Home}\AppServer\bin\jaxws
+   .."
+   
+   Note: AppServer is the WAS 8.0 or WAS 8.5 used by Portal
+   
+   The key was that a  WPortal 8.x server runtime was specified.
+   It seems to expect the wsimport to be in
+   {WAS 8x server used by WPortal 8.x}\bin\jaxws folder
+   , instead of
+   {WAS 8x server used by WPortal 8.x}\bin\
+   
+   wsimport is always in .../AppServer/bin
+   There is no .../AppServer/bin/jax-ws folder
+   If the server runtime target is some WAS 8.x server there is no
+   problem
+   
+   
+   You can recreate this also by creating a web project targeting
+   say the Portal80 on WAS85 stub
+   in RAD (if Portal 8x stubs and WAS 8x stubs are installed as
+   part of RAD server tools), and
+   then generating a web service client from a wsdl into that
+   project.
+   
+   Note:
+   {RAD Install Dir}/runtimes/portal_v85_stub
+   uses
+   {RAD Install Dir}/runtimes/was85_stub
+   ,for build or generate puposes.
+   
+   The error will be:
+   "..
+   The Wsimport Web service tool was not found in the server
+   installation.
+   For WebSphere Application Server (WAS) v8.5 and v8.0, verify the
+   installation directory and its content.
+   For WAS v7.0, ensure that the appropriate feature packs are
+   installed for JAX-WS Web Services support.
+   Once installed, the tool is available in: {RAD Install
+   Dir}/runtimes/was85_stub\bin\jaxws
+   .."
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * All users of the Portal tools                                *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * Portal v8.x server runtime target in JAX-WS client wizard    *
+   * generate error: Wsimport not found                           *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix for this APAR is included in Rational Application
+   Developer version 9.5.0.3
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI57169
+   
+   
+ * REPORTED COMPONENT NAME
+   RATL APP DEV WI
+   
+   
+ * REPORTED COMPONENT ID
+   5724J1901
+   
+   
+ * REPORTED RELEASE
+   950
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-02-12
+   
+   
+ * CLOSED DATE
+   2017-08-11
+   
+   
+ * LAST MODIFIED DATE
+   2017-08-11
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   RATL APP DEV WI
+   
+   
+ * FIXED COMPONENT ID
+   5724J1901
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R950 PSY
+   UP

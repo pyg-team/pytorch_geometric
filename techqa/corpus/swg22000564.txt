@@ -1,0 +1,13 @@
+Title: IBM FileNet WorkplaceXT is not affected by the Apache Struts 2.x Vulnerability (CVE-2017-5638) - United States
+
+Text:
+ FLASH (ALERT)
+
+ABSTRACT
+ IBM FileNet WorkplaceXT is not vulnerable to the Apache Struts 2.x Vulnerability. 
+
+CONTENT
+IBM FileNet WorkplaceXT in all editions and all platforms is NOT vulnerable to Apache Struts 2.x Vulnerability (CVE-2017-5638). 
+IBM recommends that you review your entire environment and take appropriate mitigation and remediation action.
+
+Change History: March 17, 2017: original version published

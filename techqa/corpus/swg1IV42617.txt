@@ -1,0 +1,185 @@
+Title: IBM IV42617: DOMAIN-SPECIFIC DBLOGINS.CFG MANDATORY FOR POLLER WITH MULTIPLE DOMAINS - United States
+
+Text:
+  FIXES ARE AVAILABLE
+IBM Tivoli Network Manager IP 3.9.0 Fix Pack 4, 3.9.0-TIV-ITNMIP-FP0004 [http://www-01.ibm.com/support/docview.wss?uid=swg24034724]
+IBM Tivoli Network Manager IP Edition 3.9.0 Fix Pack 5, 3.9.0-TIV-ITNMIP-FP0005 [http://www-01.ibm.com/support/docview.wss?uid=swg24037809]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Product: Tivoli Network Manager for IP Networks
+   Version: 3.9
+   Components: ncp_ctrl get_policies.pl
+   Environment: Multiple domains on a single installaion of ITNM
+   on all Operating Systems.
+   
+   Symptoms:
+   The get_policies.pl script is used to write changes in Poll
+   Policies to the domain's version of MonitorPolicies.xml.  The
+   get_policies.pl script is called via an insert into the
+   services.unManaged table in Ctrl like this:
+   
+   insert into services.unManaged ( serviceName, servicePath,
+   logFile, argList )  values  ( 'ncp_perl',
+   '$PRECISION_HOME/platform/linux2x86/bin',
+   '/opt/IBM/tivoli/netcool/log/precision/
+   get_policies.updated.DOMA IN.trace',
+   ['/opt/IBM/tivoli/netcool/precision/scripts/perl/scripts/
+   get_pol icies.pl', '-from', 'domain=DOMAIN', '-from_dbfile',
+   '/opt/IBM/tivoli/netcool/etc/precision/DbLogins.DOMAIN.cfg',
+   '-to', 'file=/opt/IBM/tivoli/netcool/var/precision/
+   MonitorPolicies.DOMA IN.xml']);
+   
+   The insert is exposed in the debug Ctrl log file.
+   
+   The insert includes the command line flag -to_dbfile which
+   stipulates a domain specific version of DbLogins.cfg.
+   
+   But a domain-specific version of this file is *not* a
+   documented prerequisite for multiple domains.  If no such file
+   exists, the call to get_policies.pl fails and the Primary
+   domain version of MonitorPolicies.xml is not written to.
+   
+   A  message is written to the get_policies.pl script log file:
+   "critical: Access to
+   /opt/IBM/tivoli/netcool/etc/precision/DbLogins.DOMAIN.cfg
+   required at
+   /opt/IBM/tivoli/netcool/precision/perl/lib/site_perl/5.8.8/NCP/
+   Domain.pm line 273"
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Copy the default DbLogins.cfg file to DbLogins.DOMAIN.cfg
+   replacing "DOMAIN" with your ITNM discovery domain name.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * All ITNM users prior to 3.9FP4                               *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * Polling failover failed if domain specific version of        *
+   * DbLogins.cfg didn't exist                                    *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * | fix pack | 3.9.0-ITNMIP-FP0004                             *
+   ****************************************************************
+   in get_policies.updated.DOMAIN.trace, it says
+   Level: critical Msg: Access to
+   $NCHOME/etc/precision/DbLogins.DOMAIN.cfg required
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Code has been fixed to resolve the issue.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  create a domain-specific DbLogins.cfg file
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV42617
+   
+   
+ * REPORTED COMPONENT NAME
+   TIV NETWK MGR I
+   
+   
+ * REPORTED COMPONENT ID
+   5724S4500
+   
+   
+ * REPORTED RELEASE
+   390
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-05-13
+   
+   
+ * CLOSED DATE
+   2013-05-29
+   
+   
+ * LAST MODIFIED DATE
+   2013-05-29
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TIV NETWK MGR I
+   
+   
+ * FIXED COMPONENT ID
+   5724S4500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R390 PSN
+   UP
+   
+   
+ * R390 PSY
+   UP

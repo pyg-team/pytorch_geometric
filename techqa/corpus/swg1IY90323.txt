@@ -1,0 +1,151 @@
+Title: IBM IY90323: AE IYnnnnn FIX COMPLETION - MAKING CHANGES TO QUERIES DO NOT KEEP THEIR SETTINGS. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Queries are not working correctly with fp3
+   I can copy/create like existing queries but changes I make to
+   the
+   queries are not taking.
+   
+   e.g., I tried to modify one of the attributes in the Query to
+   only
+   report for given value/substring. When I leave and come back it
+   loses my
+   change.
+   
+   Doesn't matter if I'm in Author mode or Admin mode.
+   
+   It's only when I try using the 'Return a Subset of String'
+   Option on the
+   attribute. Doesn't work on SE or Test. Does work in Production.
+   
+   If I use the == Options to specify a fully qualified
+   string/value then
+   it works on all three systems
+   
+   Env: 6.1.0-ITM-FP03
+   
+   L3 approval:  EKemak/EAtkins
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  LA fix for FP03 is being created.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Query parse error disallows some (Query) expressions from being
+   displayed.  This error was introduced in FP3.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The test for the number of function parameters was off by 1 --
+   the 0-based nature of the count was overlooked.
+   
+   The fix for this APAR is included in the following maintenance
+   vehicle(s):
+   
+   | LA interim fix | 6.1.0.3-TIV-ITM_TEPS-LA0003
+   | LA interim fix | 6.1.0.3-TIV-ITM_TEP-LA0003
+   | fix pack | 6.1.0-TIV-ITM_TEPS-FP0004
+   | fix pack | 6.1.0-TIV-ITM_TEP-FP004
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IY90323
+   
+   
+ * REPORTED COMPONENT NAME
+   TEP
+   
+   
+ * REPORTED COMPONENT ID
+   5724C04EP
+   
+   
+ * REPORTED RELEASE
+   610
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2006-10-05
+   
+   
+ * CLOSED DATE
+   2006-10-17
+   
+   
+ * LAST MODIFIED DATE
+   2006-10-17
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TEP
+   
+   
+ * FIXED COMPONENT ID
+   5724C04EP
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R610 PSY
+   UP

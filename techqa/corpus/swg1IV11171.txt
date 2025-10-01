@@ -1,0 +1,206 @@
+Title: IBM IV11171: PERMISSIONS REQUIRED TO CREATE A MAILOX IN POWERSHELL DO NOT WOR USING THE AD ADAPTER. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Permissions required to create a mailox in Powershell do not
+   work when
+   using the AD Adapter.
+   
+   
+   Description:
+   
+   The customer has configured an account in AD that they are
+   planning to
+   use to manage AD and Exchange.  The user is able to successfully
+   provision an account in AD including a mailbox, but the same
+   user fails
+   to create a mailbox when used to run the AD Adapter.
+   
+   BSE:11/11/08 07:37:11 Thread:002648 016.     <attr
+   name="erademailboxstore" errorMessage="Error creating mailbox.
+   No
+   provisioning handler is installed.">
+   
+   User is a member of:
+   Account Operators
+   DNRGen
+   Domain Users
+   mpnfg
+   Recipient Management
+   View Only Organization Management
+   
+   If domain Administrator and Exchange Administrator access is
+   granted,
+   the provisioning is successful
+   
+   
+   Steps to Duplicate:
+   Attempt to provision an AD Account and mailbox to a new user, or
+   try to
+   add a mailbox to an existing user.
+   
+   Desired Behavior:
+   the user should be able to successfully create an AD Account and
+   mailbox
+   with the adapter.
+   
+   Environment:
+   
+   AD64bit adapter 5.1.7
+   ITIM 5.1 FP6
+   
+   Windows Server 2008 R2 64
+   
+   Exchange Server 2010 SP1
+   
+   Can you please provide me as much detail as possible about your
+   AD
+   environment and network hierarchy?
+   
+   
+   
+   Single forrest, single domain ? utmb.edu
+   
+   
+   
+   What are the non-default groups you have for this user?  e.g.
+   DNRGen,
+   mpnfg ? groups serve no access role. Just used to identify
+   certain
+   special users.
+   Where are the Exchange servers? utmb.edu
+   What domain is the adapter machine in? utmb.edu
+   
+   As far as exchange goes..
+   
+   Exchange sits on a separate active directory site other than the
+   campus
+   AD Site (where all the users reside). We have the main campus AD
+   site. A
+   guhn site where the primary exchange nodes reside, and then a
+   3rd site
+   in Arlington where other exchange nodes sit for site resiliency.
+   We have
+   1 DAG that contains 8 mailbox databases. The DAG is stretched
+   from the
+   Guhn site to the Arlington site.. The Guhn site contains 4
+   mailbox
+   nodes, 2 UM nodes, 4 CAS/HUB nodes, 2 public folder servers. The
+   Arlington site contains 2 mailbox nodes, 4 CAS/HUB nodes, and a
+   public
+   folder server.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  n/a
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Reengineering of adapter to use remote powershe
+   ll commands. Solution will ship in ISIM 6.0. Work around is to p
+   ut the adapter's account into the domain admins group.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+ *  Place adapter account in the domain admin group.
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV11171
+   
+   
+ * REPORTED COMPONENT NAME
+   ITIM AGENTS
+   
+   
+ * REPORTED COMPONENT ID
+   5724C34AG
+   
+   
+ * REPORTED RELEASE
+   510
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-11-23
+   
+   
+ * CLOSED DATE
+   2012-06-28
+   
+   
+ * LAST MODIFIED DATE
+   2012-06-28
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  AGENT
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R510 PSY
+   UP

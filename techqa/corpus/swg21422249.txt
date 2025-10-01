@@ -1,0 +1,78 @@
+Title: IBM Using WebSphere Portal ConfigEngine when custom password encryption is enabled - United States
+
+Text:
+customer; encryption; module; configengine TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+ConfigEngine tasks are not aware of the custom encryption module and cannot decrypt any custom-encrypted password in wp_profile_root/config/cells/cell_name/wim/config/wimconfig.xml.
+
+SYMPTOM
+If WebSphere Application Server (WAS) is configured to use a custom encryption module for passwords in configuration files (refer to WAS InfoCenter link below), when you configure the user registry using one of the following ConfigEngine tasks: 
+
+ * wp-update-standalone-ldap-attribute-config 
+ * wp-update-federated-ldap-attribute-config 
+ * wp-modify-realm-defaultparents 
+ * wp-modify-realm-enable-dn-login 
+ * wp-modify-realm-disable-dn-login 
+ * wp-validate-federated-ldap-attribute-config 
+ * wp-validate-standalone-ldap-attribute-config 
+ * wp-query-attribute-config 
+ * wp-modify-cur-security 
+ * wp-create-cur 
+ * wp-update-federated-cur 
+ * wp-update-standalone-cur
+
+
+the following error occurs: 
+
+CWWIM0005W Could not register as WebSphere Application Server adminService notification listener.
+java.lang.NullPointerException
+at java.util.Hashtable.put(Hashtable.java:770)
+at com.ibm.ws.wim.adapter.ldap.LdapConnection.initializeEnvironmentProperties(LdapConnection.java:1763)
+at com.ibm.ws.wim.adapter.ldap.LdapConnection.initializeServers(LdapConnection.java:1714)
+at com.ibm.ws.wim.adapter.ldap.LdapConnection.initialize(LdapConnection.java:1651)
+at com.ibm.ws.wim.adapter.ldap.LdapAdapter.initialize(LdapAdapter.java:173)
+at com.ibm.ws.wim.RepositoryManager.initialize(RepositoryManager.java:519)
+at com.ibm.ws.wim.RepositoryManager.<init>(RepositoryManager.java:117)
+at com.ibm.ws.wim.RepositoryManager.singleton(RepositoryManager.java:123)
+at com.ibm.ws.wim.ProfileManager.initialize(ProfileManager.java:3078)
+at com.ibm.ws.wim.ProfileManager.<init>(ProfileManager.java:202)
+at com.ibm.ws.wim.ProfileManager.singleton(ProfileManager.java:208)
+at com.ibm.websphere.wim.ServiceProvider.initialize(ServiceProvider.java:115)
+at com.ibm.websphere.wim.ServiceProvider.<init>(ServiceProvider.java:124)
+at com.ibm.websphere.wim.ServiceProvider.singleton(ServiceProvider.java:103)
+at com.ibm.websphere.wim.client.LocalServiceProvider.locateService(LocalServiceProvider.java:295)
+at com.ibm.websphere.wim.client.LocalServiceProvider.<init>(LocalServiceProvider.java:146)
+at com.ibm.wplc.deploy.tasks.impl.ModifyWIMConfigImpl.getConfig(ModifyWIMConfigImpl.java:153)
+at com.ibm.wplc.deploy.tasks.impl.ModifyWIMConfigImpl.execute(ModifyWIMConfigImpl.java:90)
+
+
+CAUSE
+The ConfigEngine tasks are not aware of the custom encryption module and cannot decrypt any custom-encrypted passwords in <profile>/config/cells/<cell name>/wim/config/wimconfig.xml. This limitation is documented in APAR PM06595.
+
+
+RESOLVING THE PROBLEM
+Inform ConfigEngine of the custom encryption module with this procedure:
+
+
+1. Backup the file ConfigEngine.bat (for Windows) / ConfigEngine.sh (for Unix, i5OS), then open it for editing. 
+
+2. Search for all lines that invoke a Java JVM using a classpath (search for “-classpath”). 
+
+3. In each of the lines, add the following JVM arguments directly before the -classpath argument: 
+
+
+-Dcom.ibm.wsspi.security.crypto.customPasswordEncryptionClass=
+com.yourcompany.myPasswordEncryptionClass 
+-Dcom.ibm.wsspi.security.crypto.customPasswordEncryptionEnabled=true 
+
+where com.yourcompany.myPasswordEncryptionClass is your custom encryption class 
+
+4. Save the file. 
+
+Now, when running ConfigEngine tasks, your custom encryption module can be used to decrypt passwords and the tasks can complete without the above exception. 
+
+Note: When Portal fixes are applied, the ConfigEngine.bat might be replaced by a newer version. In that case, you will have to make the changes again.
+
+RELATED INFORMATION
+ WAS InfoCenter: custom encryption modules [http://publib.boulder.ibm.com/infocenter/wasinfo/v7r0/topic/com.ibm.websphere.base.doc/info/aes/ae/tsec_enable_custpass_encrypt.html]

@@ -1,0 +1,55 @@
+Title: IBM Integrated Web Application Server for IBM i - United States
+
+Text:
+ 
+ 
+
+The integrated Web application server for i is a lightweight Java application server integrated into the operating system. The integrated Web application server contains an Open Services Gateway initiative (OSGi)-based Web servlet container that is readily accessible and provides a flexible foundation for developing jsp and servlet-based Java applications. The integrated Web application server delivers a clear path to the advanced capabilities of the WebSphere middleware portfolio.
+
+LATEST ANNOUNCEMENT
+The end of Java SE 6: How it affects integrated web application server (April 15, 2017)
+
+Perhaps you’ve seen some of the recent Java SE 6 end of support messages from IBM and wondered about the effect on integrated web application server (IAS) for IBM i. In short, public updates for Java SE 6 are no longer available, and the end of support in Liberty (which IAS is based on) is set for September 2017. But what does that mean for your current IAS installations?
+
+End of support for Java SE 6 means you can’t get updates or fixes for Java problems such as security vulnerabilities. Staying on the Java SE 6 level could leave your applications exposed to future issues. To ensure your applications are running in a supported environment for years to come, we recommend moving to the latest Java — Java SE 8. Java SE 7 is also an option, but its support only runs until 2019. You can update the Java version for a server by using the IBM Web Administration GUI for i. Select the server, then click on the Server->Properties link and you will be able to select a Java version from a selection list. If you do not see a suitable version, you will need to install the licensed product that contains the Java version you desire.
+
+FEATURES AND BENEFITS
+The integrated web application server for IBM i is a composable, dynamic, application server for hosting Java applications during development, test, and production.
+
+FEATURES
+ * Simple to configure -- The integrated web application server provides an easy to use web administrative GUI front-end that allows you to manage and monitor the server and any deployed applications.
+ * Small footprint -- The integrated web application server run time loads only what your application needs by using OSGi technology and concepts.
+ * Support for many Java technologies.
+
+BENEFITS
+ * No up-front costs -- The application server is part of the operating system, so you can get services up and running and show tangible results fast.
+ * Advanced capabilities -- A comprehensive and proven portfolio of middleware products from the IBM WebSphere family.
+ * Focus on core capabilities -- Solution providers do not require new skills or tools for the deployment of Java applications to the application server.
+
+RESOURCES
+
+SUPPORT
+ * Knowledge Center [https://www.ibm.com/support/knowledgecenter/ssw_ibm_i_73/rzaie/rzaiewebintappserver.htm]
+ * Group PTFs [http://www.ibm.com/support/docview.wss?uid=nas8N1021657]
+ * Frequently asked questions [http://www.ibm.com/support/docview.wss?uid=isg3T1026864]
+
+
+RELATED WEB SITES
+ * HTTP Server for i [http://www.ibm.com/support/docview.wss?uid=isg3T1026866]
+ * Integrated Web services for IBM i [http://www.ibm.com/support/docview.wss?uid=isg3T1026868]
+
+GET INSIGHTS AND SUPPORT
+TECHNOLOGY UPDATES
+Information and details of new features and enhancements relating to the integrated web application server
+
+ Read the latest [https://www.ibm.com/developerworks/community/wikis/home?lang=en#!/wiki/dW%20Integrated%20Web%20Application%20Server%20for%20IBM%20i] 
+
+GROUP PTFS
+IBM HTTP Server Group PTF contains the PTFs necessary to use the integrated web application server for IBM i support. In addition, it is important that you ensure you have the latest Java group PTF
+
+ Get the required PTFs [http://www-912.ibm.com/s_dir/sline003.NSF/GroupPTFs?OpenView&view=GroupPTFs] 
+
+PREREQUISITES
+Prerequisites that are required to be installed on the system in order to use the integrated web application server for IBM i support
+
+ Frequently asked questions [http://www.ibm.com/support/docview.wss?uid=isg3T1026864]

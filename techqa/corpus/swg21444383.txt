@@ -1,0 +1,135 @@
+Title: IBM WebSphere Partner Gateway Installation, using DB2 setup in client-server mode. - United States
+
+Text:
+WPG partner gateway DB2 installation client server TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This technote explains the steps that are needed to setup WPG databases, in DB2 Client - Server environment. Once the setup of WPG databases is performed, the setup for WPG hub can be carried out.
+
+The DB2 client server environment requires having two machines. When using Simple Distributed or Fully Distributed mode of WebSphere Partner Gateway installation, the steps for installation of both WebSphere Partner Gateway application database and WebSphere Partner Gateway MAS database need to be performed. 
+
+When using Simple mode of WebSphere Partner Gateway installation, only the steps for installation of WebSphere Partner Gateway application database need to be performed.
+
+Once the DB2 Client - Server environment is setup and WebSphere Partner Gateway databases (application and mas) are installed then while performing the WebSphere Partner Gateway Hub installation, on the database credentials panel, provides the details corresponding to the DB2 Server machine.
+
+Note: the steps and examples provided below are specific to Non-Windows platforms. 
+
+RESOLVING THE PROBLEM
+The below steps detail out considerations that are required to be followed so as to achieve the setup of: 
+
+ * DB2 Client server environment. 
+ * WebSphere Partner Gateway Database. 
+ * Considerations during WebSphere Partner Gateway Hub installation.
+
+
+
+Steps to setup DB2 client server environment: 
+
+Steps which need to be performed on DB2 server (machine A) 
+
+Perform installation of the DB2 server on machine A. 
+E.g. The DB2 server is installed on machine A using instance name as "db2inst1" and db2 group name as "db2iadm1". 
+
+Ensure that both machines A and B are able to ping each other using the machine's hostname. 
+This can be done after adding the hostname of Machine A and B into the /etc/hosts files of Machine B and A respectively. 
+
+Create the WPG database directories on server machine (Machine A) 
+
+For WPG application database(Default bcgapps): 
+Create wpg application database install directory manually on server machine like <PATH>/bcgappsdb/tables and make db2 instance owner as owner of "tables" folder. 
+E.g. /opt/IBM/bcgappsdb/tables, to change the owner use the command "chown -R db2inst1:db2iadm1 tables". 
+
+For WPG mas database(Default bcgmas): 
+Create wpg mas database install directory manually on server machine like <PATH>/bcgmasdb/tables and make db2 instance owner as owner of "tables" folder. 
+E.g. /opt/IBM/bcgmasdb/tables, to change the owner use the command "chown -R db2inst1:db2iadm1 tables". 
+
+
+Steps which need to be perform on DB2 client (machine B) 
+
+Perform installation of DB2 Client on machine B with same instance name and group name as that provided for the server's(Machine A). 
+E.g. In above case instance name is "db2inst1" and group name is "db2iadm1". 
+
+Catalog a tcpip node on machine B (DB2 client machine) which will be used while installing WPG databases, use the command as given below 
+db2 catalog tcpip node <node name> remote <Server machine ip(Machine A)> server < Server machine (Machine A) server port> 
+E.g. db2 catalog tcpip node nodeA remote 9.124.107.165 server 50000 
+
+To check the server port on machine A, search for text db2c_<instance name> <port number>/tcp in /etc/services. 
+E.g. /etc/services file will have a text like "db2c_db2inst1 50000/tcp" 
+
+
+Steps to setup DB2 WebSphere Partner Gateway Database: 
+
+Steps to install WPG application database (Default: bcgapps) on DB2 client (machine B): 
+
+Execute the WPG DB Loader installation, in order to extract the WPG Application DB scripts. 
+a) Start DBLoader installer. 
+
+b) Select to install WebSphere Partner Gateway application database. 
+
+c) When it prompts for the database credentials provide node name (in above case nodeA) as instance name and remaining as applicable and Press next. 
+
+d) It will show "You should not proceed. The installer has detected that either the user credentials provided by you are not correct or the database was not started." Please ignore this message and press next. 
+
+e) On the installer panel with the check box for "Run the SQL files" do not check the check box (default uncheck), press next, press next. 
+
+f) Once installer finishes, the WPG application database files will be available under folder "<path>/bcgappsdb/scripts/DB2" 
+
+Execute the Application DB installation scripts manually. 
+a) Open a terminal and switch to db2 instance owner, su - <db2 instance owner> 
+E.g. su - db2inst1 
+
+b) Attach to db2 node using the below mentioned command. Once the client is attached to the node, the other commands can be executed. 
+db2 attach to <node name> user <db2 instance owner> using <db2 instance password> 
+E.g. db2 attach to nodeA user db2inst1 using db2inst1 
+
+c) Install the database manually by referring to the Instructions.txt file. "<path>/bcgappsdb/scripts/DB2/Instructions.txt" 
+E.g. /opt/IBM/bcgappsdb/scripts/DB2/Instructions.txt. 
+
+Note: To connect to the database use the command as given below 
+db2 connect to <database name> user <instance owner> using <instance owner password> 
+E.g. db2 connect to bcgapps user db2inst1 using db2inst1 
+
+Steps to install WPG mas database (Default: bcgmas) on DB2 client (machine B): 
+
+In a setup wherein the WPG MAS database is hosted on the same set of DB2 Server and Client machines as that of the WPG application database, please continue with the below steps. 
+
+In a setup wherein the WPG MAS database is hosted on a different set of DB2 Server and Client machines, than that of the WPG application database, it is required to repeat the Step “Steps which need to be perform on DB2 server (machine A)” and “Steps which need to be perform on DB2 client (machine B)” 
+then proceed with the below steps. 
+
+Execute the WPG DB Loader installation, in order to extract the WPG Mas DB scripts. 
+a) Start DBLoader installer. 
+
+b) Select to install WebSphere Partner Gateway mas database. 
+
+c) When it prompts for the database credentials provide node name (in above case nodeA) as instance name and remaining as applicable and Press next. 
+
+d) It will show "You should not proceed. The installer has detected that either the user credentials provided by you are not correct or the database was not started." Please ignore this message and press next. 
+
+e) On the installer panel with the check box for "Run the SQL files" do not check the check box (default uncheck), press next, press next. 
+
+f) Once installer finishes, the wpg mas database files will be available under folder "<path>/bcgmasdb/scripts/DB2" 
+
+Execute the Application DB installation scripts manually. 
+a) Open a terminal and switch to db2 instance owner, su - <db2 instance owner> 
+E.g. su - db2inst1 
+
+b) Attach to db2 node using the below mentioned command. Once the client is attached to the node, the other commands can be executed. 
+db2 attach to <node name> user <db2 instance owner> using <db2 instance password> 
+E.g. db2 attach to nodeA user db2inst1 using db2inst1 
+
+c) Install the database manually by referring to the Instructions.txt file. "<path>/bcgmasdb/scripts/DB2/Instructions.txt" 
+E.g. /opt/IBM/bcgmasdb/scripts/DB2/Instructions.txt. 
+
+Note: To connect to the database use the below command 
+db2 connect to <database name> user <instance owner> using <instance owner password> 
+E.g. db2 connect to bcgmas user db2inst1 using db2inst1 
+
+
+Considerations during WebSphere Partner Gateway Hub installation. 
+During installation of WebSphere Partner Gateway Hub, on the database credentials panel, provides the details corresponding to the DB2 Server machine.
+
+ 
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration WebSphere Partner Gateway Advanced Edition AIX, Linux, Solaris, AIX 6.1, Linux iSeries, Linux pSeries 6.2.0.3, 6.2.0.2, 6.2.0.1, 6.2 Enterprise

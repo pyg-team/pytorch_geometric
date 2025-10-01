@@ -1,0 +1,49 @@
+Title: IBM Apache IHS Web Server fails to start after TEMA configuration. - United States
+
+Text:
+CAMHTUSE CAMHTALL CAMHTPERF KhtShmemPerm 660 ht Apache IHS web Server fails to start kht_shmem_attach kht_shmem_destroy kht_shmem_create semctl SETVAL: Invalid argument TECHNOTE (TROUBLESHOOTING)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ US English 
+
+PROBLEM(ABSTRACT)
+ Apache IHS Web Server fails to start after TEMA configuration. Get shared memory initialization error. 
+
+SYMPTOM
+You will see permission denied messages in the logs like this: 
+
+[Thu Jun 30 10:19:36 2011] [notice] attaching to shmem using path [/usr/IBM/HTTPServer/conf/httpd.conf]... 
+[Thu Jun 30 10:19:36 2011] [error] [kht_shmem_attach] shmat: Permission denied
+[Thu Jun 30 10:19:36 2011] [error] [kht_shmem_destroy] invoked on empty segment: Permission denied [Thu Jun 30 10:19:36 2011] [error] [kht_shmem_create] semctl SETVAL: Invalid argument 
+Configuration Failed 
+
+
+CAUSE
+This happens because the shared memory segments can't be initialized.
+
+
+RESOLVING THE PROBLEM
+ 
+
+
+To resolve the problem, do either of these steps:
+
+Look for this stanza in the kht-httpd.conf file:
+
+LoadModule kht_module /opt/IBM/ITM/aix533/ht/lib/32/khtapache22dc.so 
+
+<IfModule mod_kht.c> 
+KhtShmemPerm 660 
+KhtShmemPath "/usr/IBM/HTTPServer/conf/httpd.conf" 
+</IfModule> 
+
+Change the permissions on the KhtShmemPerm line from 660 to 777, save file and restart the agent.
+
+If this does not work for you, simply reboot the server and this will clear all the segments and your IHS will start back up.
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Systems and Asset Management Tivoli Composite Application Manager for WebSphere ITCAM for WebSphere (WebServer TEMA) AIX, HP-UX, Linux, Solaris, Windows 6.1 
+PRODUCT ALIAS/SYNONYM
+ ITCAM for Web Resources ITCAM for Application Diagnostics ITCAM4AD

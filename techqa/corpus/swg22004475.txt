@@ -1,0 +1,23 @@
+Title: IBM The image is blurred when you scroll down a page in the viewer - United States
+
+Text:
+blurry blurred low resolution TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When you view a document in full page view with fit-to-width set, the image appears blurred when scrolled. This occurs when switching from thumbs only view to full page view. 
+
+SYMPTOM
+Scrolling down a page in the viewer results in the bottom of the document showing as blurred content. 
+
+
+CAUSE
+The ViewONE viewer does not update the page display after the view mode switch. 
+
+ENVIRONMENT
+Windows, Linux, Mac
+
+DIAGNOSING THE PROBLEM
+The blurred image content occurs when the document is displayed in fit-to-width and can occur when a user switches from thumbs only view to full page view. The image does not display clearly when the page is scrolled to view the bottom of the page. 
+
+RESOLVING THE PROBLEM
+The page display can be corrected by resizing the viewer, or by displaying the thumbnail view alongside the main view. It is then possible to switch to full page view and see the document displayed clearly.

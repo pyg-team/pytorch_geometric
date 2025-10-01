@@ -1,0 +1,119 @@
+Title: IBM Researching Known Vulnerabilities Resulting from a Scan for IBM HTTP Server - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Concerns over security vulnerabilities for web servers. The concern may be the result of a recent security scan or PCI scan. 
+
+SYMPTOM
+Announcement of new vulnerability or result of a network vulnerability scan.
+
+
+CAUSE
+Common causes: 
+
+- New Vulnerability found
+- Web Server not at most recent maintenance level 
+- Scan report points to vulnerability.
+
+
+DIAGNOSING THE PROBLEM
+Known vulnerabilities are assigned an industry standard number known as a CVE number. Once you know the CVE number run the IBM HTTP Server, IHS, version command as follows: 
+
+ 
+Windows - <IHS_HOME>\bin\apache -V
+Other Platforms - <IHS_HOME>/bin/apachectl -V 
+
+Note: The "V" in the command line is a capital V. 
+
+The end of this version output will list the CVEs covered in your version of IHS. This applies to all releases above 6.0.2.9. Earlier 2.0 and 1.3 versions do not have this option. If your CVE is listed then it is covered. 
+
+If the CVE of interest is not listed, and any of the bullets below are true, then the defect representing the CVE is not present in IBM HTTP Server and no further investigation is required.
+
+
+
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+   
+
+If none of the above are true, then run command to capture the version info for IBM support: 
+
+
+Windows - <IHS_HOME>\bin\apache -V >ihsver.txt 
+Other Platforms - <IHS_HOME>/bin/apachectl -V >ihsver.txt 
+
+Most versions of IHS, like 8.5, have a script in the bin directory for this purpose: 
+ihs/bin/genversionreport. 
+
+Windows - <IHS_HOME>\bin\genVersionReport.bat 
+Other Platforms - <IHS_HOME>/bin/genVersionReport.sh 
+
+This creates an HTML file in the BIN directory to review or send to IBM support. 
+
+Send IBM Support the version information for IHS and the CVE number and support will research and provide the needed response. 
+
+If your version of IHS does not list its supported CVEs send IBM Support the version information for IHS and the CVE number and support will research and provide the needed response. 
+
+To check if the version of IHS has fixes as applied to a level of Apache you can check the fixes list page for IHS fixes and for each fixpack, under the listings of included APARs, is a Note stating the Apache level. For example if we check the fix list page for IHS: [http://www-01.ibm.com/support/docview.wss?uid=swg27006973] 
+http://www-01.ibm.com/support/docview.wss?uid=swg27006973 [http://www-01.ibm.com/support/docview.wss?uid=swg27006973] 
+
+and select to see fixpacks for 9.0 
+Under 9.0.0.1 APARS: 
+Note: IBM HTTP Server 9.0.0.1 contains all applicable security fixes in Apache HTTP Server versions up through 2.4.23. 
+
+Similar for V8.5: 
+Under 8.5.5.10 APARS: 
+Note: IBM HTTP Server 8.5.5.10 contains all applicable security fixes in Apache HTTP Server versions up through 2.2.31. 
+
+You have a similar resource in your IHS install. 
+
+For V6 thru V9 versions: 
+Under path: <IHS_HOME>/readme Review the CHANGES_HTTPD file. Look in install_root/readme/CHANGES_HTTPD for the Apache CHANGES text. Apache CHANGES entries are copied there when a fix from a later level of Apache is integrated. If the Apache CHANGES entry is in CHANGES_HTTPD, then your level of IBM HTTP Server has the fix. 
+RESOLVING THE PROBLEM
+Keeping IHS at the current fixpack level is the best practice to protect against vulnerabilites. The lastest IHS fixpack can be obtained via the IHS Recommended Fixes link: 
+
+http://www-01.ibm.com/support/docview.wss?uid=swg27005198 [http://www-01.ibm.com/support/docview.wss?uid=swg27005198]
+
+If you would like to pick up IHS fixpacks and WebSphere Application server fixpacks from the same place try our Maintenance Download Wizard pages:
+http://www-01.ibm.com/support/docview.wss?uid=swg21257855 [http://www-01.ibm.com/support/docview.wss?uid=swg21257855]
+
+You can research general info on a CVE on the national site: 
+http://nvd.nist.gov/ [http://nvd.nist.gov/] 
+
+False Scan of IHS 6.x as Apache 2.0.47:
+
+IBM HTTP Server is based off of Apache version 2.0.47 base code but, has evolved far beyond the vulnerabilities inherent to Apache 2.0.47. Previouly IHS version numbers coincided with the version of Apache it was based on. Since IHS 2.0.47 the IHS version numbers have changed to coincide with the version of WebSphere it is used and bundled with. The basic progression is IHS 2.0.47>6.0>6.1. 
+
+Because it is based off of Apache we must reflect that in the version info but, we only list it as Apache 2.0.47. Fixes for Apache that affect IHS are applied into IHS. Any critical fixes from later Apache releases have been applied. Thus, the Apache version seen in the IHS version output is not very useful for determining if recent vulnerabilities have been addressed in this level of IBM HTTP Server. Instead, it is of use primarily in understanding the level of the Apache module API which is supported and the set of Apache features which is included.
+
+Some vulnerability scanners are not up to date and aware of IBM HTTP Server and only look at the server version string when assessing vulnerabilities. Because the scanner detects in the apache -v version string "Apache 2.0.47" it falsely identifies IHS as Apache 2.0.47 base code with no fixpacks and assumes all the vulnerabilities associated to that version level of Apache. 
+
+Many of these Apache HTTP Server vulnerabilities do not apply to IBM HTTP Server (IHS), for several different reasons based on the vulnerability: 
+
+- IBM HTTP Server provides an alternate implementation of the Apache feature which contained the vulnerability 
+- IBM HTTP Server does not provide the Apache feature which contained the vulnerability 
+- IBM HTTP Server is based on a level of Apache which did not have the vulnerability 
+- IBM HTTP Server fix packs or e-fixes contain the fix for the vulnerability 
+
+
+For example IBM does not use Apache module mod_ssl. We use an IBM module, mod_ibm_ssl, which uses GSkit and does not have the vulnerabilities associated to Apache mod_ssl. There are a number of modules where we use an IBM implementation and not the Apache. These are some of the things that make IHS different from pure Apache web server. 
+
+Vulnerability scan reports against IHS V6 listing CVEs (especially old ones) that would only apply to Apache are clues that the scanner may be falsely detecting IHS. The scanner vendor should be contacted to address the issue and see if they have an update for the scanning system that properly detects the version of IHS. Scan should not try to determine the equivilent verison of Apache for any IHS detection as direct comparison cannot be derived from a version scan standpoint. The scanning vendor may contact IBM development support via the support process of opening a PMR for support with IBM HTTP Server.
+
+V7/V8.x/V9 IHS should not have this same false scan problem due to changes in the version output for V7/V8.x/V9 IHS.

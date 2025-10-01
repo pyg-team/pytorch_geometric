@@ -1,0 +1,23 @@
+Title: IBM How to set up a second Verify user in IBM Datacap Taskmaster Capture - United States
+
+Text:
+Verify; Index; Invoice; DotEdit TECHNOTE (FAQ)
+
+QUESTION
+ Is there a way to set up a two-step (have a second user verify the first user's work) index/verify process in DotEdit? 
+
+For example:
+
+1. User_A indexes all invoices by clicking on Next Problem (the invoice index values are saved) and completes all indexing. Then, the batch is placed back in the queue for the next user.
+2. User_B checks the same batch, going through each invoice and verifying all indexes previously entered. Then User_B Submits the batch (User_B validates User_A). 
+
+ANSWER
+Two Verify Tasks are required for this job to work. 
+
+ 1. Create and put a Task after the first Verify task that sets all of the page statuses to 1, with SetDCOStatus(1). 
+ 2. Create a second Verify task. 
+
+
+Workflow: 
+
+... ---> Verify 1 --> Task (SetDCOStatus (1) ) --> Verify 2 ---> ...

@@ -1,0 +1,175 @@
+Title: IBM IV33099: ISAM ESSO 8.2 - ACCESSAGENT WILL NOT AUTO-LOGIN - United States
+
+Text:
+  A FIX IS AVAILABLE
+8.2.0-ISS-SAMESSO-AA-IF0023 [http://www-01.ibm.com/support/docview.wss?uid=swg24034860]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Basically what I am seeing is that if I try to login to a
+   Windows 7 or Server 2008 R2 system joined to either of our 2 AD
+   forests, and login using the opposite domain FQDN\username, the
+   ESSO agent will not auto login.
+   I say opposite, because using either single label or FQDN domain
+   name for the user login that matches machine domain membership
+   works.  If I use the single-label name/netbios name of the
+   domain, it works fine.  No errors on box nor DC's when this
+   happens either (was originally thinking  problem, but don't see
+   any evidence of that).
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   Normally, I wouldn't care about this, since users hate typing in
+   FQDN's
+   anyway, but the place where it's causing a problem is in my VDI
+   environments where I am using pass-thru authentication from
+   users PC's..
+   when pass-thru is used, it logs the user in using the domain
+   FQDN.. on
+   Windows 7 boxes anyway.  On my WinXP VDI environments, it logs
+   them in
+   as
+   
+   
+   
+   I have attached logs (level 3) from a login attempt that SSO
+   worked, and
+   one where it failed, so hopefully you can see what's going on.
+   I am
+   using
+   the 8.2 agent and recently patched to FP11, but the issue still
+   persists.
+   
+   If you need me to do any more testing or log collection, let me
+   know.
+   
+   Steps to Duplicate:  see description
+   Desired Behavior:   see description
+   Environment:    IMS 8.2 AA 8.2 FP11
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  35457
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ISAM ESOS 8.2 - ACCESSAGENT WILL NOT AUTO-LOGIN
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This fix was supplied with ISAM ESSO AccessAgent iFix 23
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV33099
+   
+   
+ * REPORTED COMPONENT NAME
+   SSO ACCESS AGEN
+   
+   
+ * REPORTED COMPONENT ID
+   5724V67AG
+   
+   
+ * REPORTED RELEASE
+   820
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-12-06
+   
+   
+ * CLOSED DATE
+   2013-04-23
+   
+   
+ * LAST MODIFIED DATE
+   2013-04-23
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   SSO ACCESS AGEN
+   
+   
+ * FIXED COMPONENT ID
+   5724V67AG
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R820 PSY
+   UP

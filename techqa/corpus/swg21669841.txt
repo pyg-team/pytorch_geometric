@@ -1,0 +1,16 @@
+Title: IBM Mobile Connect is not vulnerable to the OpenSSL "Heartbleed" bug (CVE-2014-0160) - United States
+
+Text:
+CVE-2014-0160; Heartbleed; OpenSSL; Heartbleed Vulnerability; heart bleed; IMC TECHNOTE (FAQ)
+
+QUESTION
+Is IBM Mobile Connect vulnerable to the OpenSSL "Heartbleed" bug (CVE-2014-0160)?
+
+ANSWER
+No, the Heartbleed vulnerability does not affect IBM Mobile Connect. IBM Mobile Connect uses the IBM Global Security Kit (GSKit) for SSL functions and features; it does not use OpenSSL. Therefore, there is no remediation or other action required to protect IBM Mobile Connect from this vulnerability. 
+
+For more information on the Heartbleed bug, including a Q&A, go to http://www.heartbleed.com [http://www.heartbleed.com/]. 
+
+RELATED INFORMATION
+ CVE-2014-0160 [http://web.nvd.nist.gov/view/vuln/detail?vulnId=CVE-2014-0160]
+IBM Notes & Domino are not vulnerable to OpenSSL "Heart [http://www-01.ibm.com/support/docview.wss?uid=swg21669782]

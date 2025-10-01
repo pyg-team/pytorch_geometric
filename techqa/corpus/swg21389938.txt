@@ -1,0 +1,24 @@
+Title: IBM CNX0106E NOTAVAILABLE CPSMAPI when using the CMCI API in a stand-alone CICS - United States
+
+Text:
+CNX0106E ; NOTAVAILABLE 1034 CPSMAPI 1334 ; SMSS ; IBM CICS Explorer ; CMCI API ; standalone CICS ; System Managed Single Server ; CICS Management Client Interface ; MSGCNX0106E ; 5655S9700 R660 660 R600 600 HCI6600 5655-S97 5655S97; kixinfo TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ You receive message CNX0106E Connect failed with error 'NOTAVAILABLE, CPSMAPI'. You are using IBM CICS Explorer and have configured a CICS Management Client Interface (CMCI) connection to a CICS region that is not managed by CICSPlex SM. This means, you are using the System Managed Single Server (SMSS) capabilities of the CMCI. 
+
+CAUSE
+In order to use the SMSS capabilities of the CMCI [http://pic.dhe.ibm.com/infocenter/cicsts/v4r2/topic/com.ibm.cics.ts.clientapi.doc/topics/clientapi_setup.html], the CICS DFHRPL must contain the CICSTS41.CPSM410.SEYULOAD (or the equivalent for your release) dataset and the CICS STEPLIB must contain the APF authorized dataset CICSTS41.CPSM410.SEYUAUTH.
+
+ENVIRONMENT
+CICS Explorer and CMCI users that are sending requests to a CICS that is not managed by CICSPlex SM. 
+
+RESOLVING THE PROBLEM
+Update the CICS DFHRPL concatenation to include the CICSTS41.CPSM410.SEYULOAD (or the equivalent for your release) dataset.
+
+Also, ensure that the CICS STEPLIB concatenation includes the APF authorized dataset CICSTS41.CPSM410.SEYUAUTH.
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Host Transaction Processing CICS Transaction Server Explorer z/OS 4.2, 4.1 Host Transaction Processing CICS Transaction Server Initialization z/OS 4.2, 4.1 
+PRODUCT ALIAS/SYNONYM
+ CICS/TS CICS TS CICS Transaction Server

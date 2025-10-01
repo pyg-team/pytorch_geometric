@@ -1,0 +1,56 @@
+Title: IBM Null Handling in a transformer for Information Server DataStage Version 8.5 or higher - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How does the DataStage parallel transformer stage handle Null column values in Information Server Versions 8.5 and later? 
+
+ANSWER
+Prior to Information Server release 8.5.1 the job designer had to check all columns for Null values using special functions and prevent Null values from being used in assignment or conditional statements. If a Null value was encountered in a statement, the entire row containing the Null would be rejected. This restriction led to very complicated transformer derivations. 
+
+The requirement for explicit Null checking was dropped in Information Server 8.5. Here is a summary of changes: 
+
+Expressions 
+
+ * Null values can now be included in any expression 
+ * Null values no longer need to be explicitly handled 
+ * A Null value in an expression will return a Null value result. Examples:
+   1 + Null = Null
+   "abc":Null = Null
+   trim(Null) = Null
+   Exception: IsNull(Null) and IsNotNull(Null) will return true or false as expected
+   
+ * Any comparison involving Null is unknown (i.e. is not true). Example:
+   1 < Null is not true
+   1 >= Null is not true
+   Null == Null is not true
+   Null != Null is not true 
+
+
+Conditionals  * 
+ * 
+ * 
+ * 
+ * · The derivation "if (col1 OR @FALSE [https://servrtc.canlab.ibm.com:10100/ccm/users/FALSE]) then 1 else 0" is evaluated to 0
+   The derivation "if (col1 AND col2) then 1 else 0" is evaluated to 0
+   The derivation "if (col1 OR col2) then 1 else 0" is evaluated to 0
+   The derivation "if (@TRUE [https://servrtc.canlab.ibm.com:10100/ccm/users/TRUE] AND col1) then 1 else 0" is evaluated to 0
+   The derivation "if (@TRUE [https://servrtc.canlab.ibm.com:10100/ccm/users/TRUE] OR col1) then 1 else 0" is evaluated to 1
+   The derivation "if (@FALSE [https://servrtc.canlab.ibm.com:10100/ccm/users/FALSE] AND col1) then 1 else 0" is evaluated to 0
+   The derivation "if (@FALSE [https://servrtc.canlab.ibm.com:10100/ccm/users/FALSE] OR col1) then 1 else 0" is evaluated to 0
+   The derivation "if (col2 AND col1) then 1 else 0" is evaluated to 0
+   The derivation "if (col2 OR col1) then 1 else 0" is evaluated to 0 
+ * Note the behavior of the Logical operators: 
+   True AND Null is FALSE
+   True OR Null is TRUE
+   False OR Null is FALSE 
+ * Other changes 
+ * As long as the target column in a derivation is nullable records will not be dropped 
+ * Stage Variables are now always nullable 
+ * Stage Variable derivations can now include any input fields
+
+
+Pre IS 8.5 Compatibility 
+For backward compatibility, you can set APT_TRANSFORM_COMPILE_OLD_NULL_HANDLING=1 at the job or project level which will enforce the use of the previous null handling mechanism. 
+You can also use the “Legacy Null Handling” check box in General Transformer Stage properties to use previous null handling for a single transformer. .

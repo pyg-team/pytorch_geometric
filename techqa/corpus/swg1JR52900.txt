@@ -1,0 +1,125 @@
+Title: IBM JR52900: INSTALL MANAGER SHOULD NOT OFFER THE 32 BIT IBM INTEGRATION DESIGNER INSTALLAION CHOICE - United States
+
+Text:
+  FIXES ARE AVAILABLE
+8.5.7.0: IBM Integration Designer V8.5 Refresh Pack 7 for Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24041577]
+8.5.7.0: IBM Integration Designer V8.5 Refresh Pack 7 for Linux [http://www-01.ibm.com/support/docview.wss?uid=swg24041578]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  IID 8.5.5 does not support the 32-bit architecture. IM should
+   not be offered the 32bit choice of architecture selection
+   during IID and BPM installation via IM.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Even you can installed the 32 successfully, but because we
+   didn't do any certification test, which means you will met some
+   potential issue.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  IBM BPM Advanced                            *
+   *                  IBM BPM Standard                            *
+   *                  IBM BPM Express                             *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Install Manager should                  *
+   *                      not offer the 32 bit choice of          *
+   *                      architecture selection during IID and   *
+   *                      BPM installation via Install Manager.   *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   No additional information is available
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR52900
+   
+   
+ * REPORTED COMPONENT NAME
+   INTEGRATION DES
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9702
+   
+   
+ * REPORTED RELEASE
+   855
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-03-23
+   
+   
+ * CLOSED DATE
+   2015-07-13
+   
+   
+ * LAST MODIFIED DATE
+   2015-08-12
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R750 PSY
+   UP

@@ -1,0 +1,61 @@
+Title: IBM Getting exception EJPEI0158E when viewing Inline Edit page - United States
+
+Text:
+WCM; web content management; edit; inline editor; base installation; VP; hidden page; EJPEI0158E; UnknownUniqueNameException; ibm.portal.HiddenPages; ibm.portal.Directory.Search.Control; missing; initialization; script TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+Exception EJPEI0158E is displayed when user tries to open an item for editing with the Inline Editor for Content Authoring in a virtual portal. This issue does not occur in the base Portal.
+
+SYMPTOM
+ The following exception is recorded in the log when user tries to open an item for editing with the Inline Editor for Content Authoring in a virtual portal. This issue does not occur in the base Portal. 
+
+ 
+APIUtils W EJPEI0158E: The unique name [ibm.portal.Directory.Search.Control] is unknown and cannot be mapped to an ObjectID.exceptions.UnknownUniqueNameException: com.ibm.portal.state.accessors.exceptions.UnknownUniqueNameException: EJPEI0158E: The unique name [ibm.portal.Directory.Search.Control] is unknown and cannot be mapped to an ObjectID.
+
+
+CAUSE
+ This is due to the Directory Search hidden pages are missing in the virtual portal. 
+
+ The underlying root cause of this is the content of the virtual portal initialization script in a "Base" Portal 7.0 installation. Unlike in a "Full" installation of Portal, the virtual portal initialization script of a "Base" installation is missing the hidden pages, which will cause issues, not restricting to the Inline Editor but likely also with other components such as "Edit Shared Setting" of the Web Content Viewer portlet in the virtual portal.
+
+Customers with a "Base" portal installation can workaround this by customizing the virtual portal initialization script to include the relevant hidden pages.
+
+Please refer to the document links in the "Related Information" section of this document for additional information.
+
+
+DIAGNOSING THE PROBLEM
+ Taking the Portal configuration exports of the base Portal and the virtual portal and compare them. It's found that the hidden page with the unique name "ibm.portal.Directory.Search.Control" is missing in the virtual portal, while it exists in the base Portal.
+
+
+
+RESOLVING THE PROBLEM
+Exporting the missing pages from the base Portal and importing them into the virtual portal resolved the issue. 
+
+ 1) Login to the base portal as an administrator 
+
+ 2) Navigate to the administration section > Manage Pages 
+
+ 3) Search by unique name contains "ibm.portal.Directory.Search" 
+
+ 4) On the right hand side, click "Export". Save the XML file to a location that can be retrieved later. 
+
+ 5) Login to the virtual portal employee as an administrator 
+
+ 6) Navigate to the administration section >Portal Settings > Import XML 
+
+ 7) Import the XML file exported in step #4 
+
+ 8) Logout of the virtual portal 
+
+ 
+
+Note: If you receive an error message while importing the Directory Search hidden page into a virtual portal, such as: 
+
+ "EJPXA0025E">com.ibm.wps.command.xml.XmlCommandException: EJPXA0025E: The resource was not found in the portal, either because it does not exist or because you have not specified an identifying attribute in the XML input. [content-node Z6_CGAH47L008LG50IAHUR9Q330Q4 uniquename=ibm.portal.HiddenPages] 
+
+ This means the page with the unique name "ibm.portal.HiddenPages" is also missing in the virtual portal. In this case, you would need to follow similar steps to export the page with the unique name "ibm.portal.HiddenPages" from the base Portal and import it into the virtual portal before importing the Directory Search hidden page.
+
+RELATED INFORMATION
+ Unable to use Authoring portlet in a Virtual Portal [https://www.ibm.com/support/docview.wss?uid=swg21427455]
+WebSphere Portal 6.1 Admin Installation Virtual Portal [http://www-10.lotus.com/ldd/portalwiki.nsf/page.xsp?documentId=B6591E8318DB2AB2852576AF005F69F5&action=openDocument]
+Problem with "Edit Shared Setting" of Web Content Viewe [https://www.ibm.com/support/docview.wss?uid=swg21495688]

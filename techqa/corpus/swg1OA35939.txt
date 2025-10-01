@@ -1,0 +1,212 @@
+Title: IBM OA35939: AT START-UP ABEND=S0C4 U0000 REASON=00000011 - United States
+
+Text:
+AIX SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  TBSM 3.1 running on z/OS 1.11 gets sudden S0C4s on startup.
+   
+   When the task abended,
+   it put out the following message in the syslog.
+   
+   GTM5101I  TBSM DATASPACE CREATED, SIZE=  42467328,
+   ORIGIN=00000000
+    IEA995I SYMPTOM DUMP OUTPUT 953
+    SYSTEM COMPLETION CODE=0C4  REASON CODE=00000011
+     TIME=04.14.36  SEQ=00037  CPU=0000  ASID=007A
+     PSW AT TIME OF ERROR  078D2000   981010E2  ILC 4  INTC 11
+       ACTIVE LOAD MODULE           ADDRESS=18100EA8
+   OFFSET=0000023A
+       NAME=GTMACC48
+       DATA AT PSW  181010DC - 1A518950  00025885  90005875
+       AR/GR 0: 00000000/000007D8   1: 00000000/00000001
+             2: 01FF001E/1810B3DA   3: 00000000/00000200
+             4: 00000000/1810B3DE   5: 00000000/000000CC
+             6: 00000000/0000000F   7: 00000000/00006D60
+             8: 00000000/00008C83   9: 00000000/000A0000
+             A: 00000000/00006B20   B: 00000000/00008188
+             C: 00000000/98100EA8   D: 00000000/18118828
+             E: 00000000/9810B426   F: 01000002/00000000
+     END OF SYMPTOM DUMP
+    IEF450I GTMDSPCG GTMDSPCG - ABEND=S0C4 U0000 REASON=00000011
+   954
+            TIME=04.14.36
+   
+   
+   Previously, the task would come up with the following messages:
+   GTM5000I TBSM DATASPACE INITIALIZATION STARTING
+   GTM4111I TIVOLI BUSINESS SYSTEMS MANAGER VERSION 3.1.0 STARTUP
+   IN
+   PROGRESS
+   GTM4600I EXTENDED RECOVERY ENVIRONMENT ESTABLISHED
+   GTM4110I GTMDSPCG, USING ID 01
+   GTM5002I PROCESSING PARMLIB MEMBER: PARMDSPC
+   GTM5101I TBSM DATASPACE CREATED, SIZE= 42467328, ORIGIN=00000000
+   GTM5030I MODIFY INTERFACE ESTABLISHED, CONSOLE COMMUNICATION
+   AVAILABLE
+   GTM5010I TBSM DATASPACE INITIALIZATION COMPLETE
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All Tivoli Business Systems Manager users.   *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: TBSM 3.1 might get sudden S0C4s on      *
+   *                      startup as follow:                      *
+   *                                                              *
+   *                      GTM5101I  TBSM DATASPACE CREATED, SIZE= *
+   *                      42467328, ORIGIN=00000000               *
+   *                       IEA995I SYMPTOM DUMP OUTPUT 953        *
+   *                       SYSTEM COMPLETION CODE=0C4 REASON      *
+   *                        CODE=00000011                         *
+   *                       TIME=04.14.36 SEQ=00037  CPU=0000      *
+   *                        ASID=007A                             *
+   *                       PSW AT TIME OF ERROR 078D2000 981010E2 *
+   *                        ILC 4  INTC 11                        *
+   *                       ACTIVE LOAD MODULE ADDRESS=18100EA8    *
+   *                        OFFSET=0000023A NAME=GTMACC48         *
+   *                       DATA AT PSW  181010DC - 1A518950       *
+   *                        00025885  90005875                    *
+   *                       AR/GR 0: 00000000/000007D8             *
+   *                        1: 00000000/00000001                  *
+   *                             2: 01FF001E/1810B3DA             *
+   *                        3: 00000000/00000200                  *
+   *                             4: 00000000/1810B3DE             *
+   *                        5: 00000000/000000CC                  *
+   *                             6: 00000000/0000000F             *
+   *                        7: 00000000/00006D60                  *
+   *                             8: 00000000/00008C83             *
+   *                        9: 00000000/000A0000                  *
+   *                             A: 00000000/00006B20             *
+   *                        B: 00000000/00008188                  *
+   *                             C: 00000000/98100EA8             *
+   *                        D: 00000000/18118828                  *
+   *                             E: 00000000/9810B426             *
+   *                        F: 01000002/00000000                  *
+   *                       END OF SYMPTOM DUMP                    *
+   *                      IEF450I GTMDSPCG GTMDSPCG - ABEND=S0C4  *
+   *                       U0000 REASON=00000011 954              *
+   ****************************************************************
+   * RECOMMENDATION: Apply the PTF.                               *
+   ****************************************************************
+   A base registers do not have its corresponding access-registers
+   zeroed out prior to entering AR-Mode execution.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The problem has been fixed.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  ++APAR fix is available upon request.
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   OA35939
+   
+   
+ * REPORTED COMPONENT NAME
+   TIVOLI BSM OS/
+   
+   
+ * REPORTED COMPONENT ID
+   5698BSM00
+   
+   
+ * REPORTED RELEASE
+   310
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2011-03-16
+   
+   
+ * CLOSED DATE
+   2011-04-25
+   
+   
+ * LAST MODIFIED DATE
+   2011-07-05
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UA60094
+   
+   
+
+MODULES/MACROS
+ *  ACC1BMAP GTMACC01 GTMACC03 GTMACC05 GTMACC09
+   GTMACC10 GTMACC11 GTMACC13 GTMACC15 GTMACC16 GTMACC20 GTMACC22
+   GTMACC24 GTMACC26 GTMACC27 GTMACC30 GTMACC32 GTMACC33 GTMACC34
+   GTMACC39 GTMACC41 GTMACC43 GTMACC44 GTMACC49 GTMACC51 GTMAOP11
+   GTMAOP13 GTMDSPCI GTMIPSND GTMLOG   GTMSEND  GTMSTSK
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TIVOLI BSM OS/
+   
+   
+ * FIXED COMPONENT ID
+   5698BSM00
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R310 PSY UA60094
+   UP11/06/29 P F106

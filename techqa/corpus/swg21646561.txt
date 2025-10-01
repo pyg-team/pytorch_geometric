@@ -1,0 +1,120 @@
+Title: IBM Hive status shows up as unavailable from the InfoSphere BigInsights web console - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How do I resolve the issue of Hive status showing up as unavailable from the BigInsights web console? 
+
+CAUSE
+The following reasons might cause the Hive status to display as unavailable from the BigInsights Web console: 
+
+ * The Hive service did not start automatically after the installation.
+   
+ * The port number used for the Hive service is in conflict.
+   
+   There are two Hive services started after the installation, one is hwi (hive-web-interface) and the other is hiveserver. Both services are using default port number 9999 (for hwi) and 10000 (for hiveserver) when Hive starts.
+   
+   For any reason if other processes used these two port numbers, it can cause the Hive service to fail to start.
+   
+ * A user permission issue for "cat /etc/issue".
+   
+   BigInsights uses the "cat /etc/issue" command to retrieve the operating system information in order to get the Hive service pid information. So the user who starts the Hive service needs to have the right permission to run the "cat /etc/issue" command. 
+
+
+ANSWER
+Follow these steps to resolve this issue: 
+
+ 
+
+Hive service did not automatically start: 
+
+ 
+
+ 1. Check the status of the Hive services using the command: 
+    status.sh hive
+    
+ 2. If any one service did not start, you can manually start it using the following command:  * To start hwi: $BIGINSIGHTS_HOME/hive/bin/bihive.sh start hwi 9999 
+     * To start hiveserver: $BIGINSIGHTS_HOME/hive/bin/bihive.sh start server 10000
+    
+    
+
+Default port numbers for Hive service are being used: 
+
+ 
+
+ 1. Check the status of the Hive services using the following command:
+    status.sh hive
+    
+    Write down the pids for hwi and hiveserver.
+    
+ 2. If the Hive services started, check the real status of the Hive services using the following command: 
+    netstat -nltp | grep <port>
+     * For hwi, run: "netstat -nltp | grep 9999"
+       
+       Read the process number and compare it to the one filed in $BIGINSIGHTS_VAR/hive/pids/bihive_hwi.pid and the pid you got from step 1. They should be the same. 
+       
+     * For hiveserver, run: "netstat -nltp | grep 10000" 
+       
+       Read the process number and compare it to the one filed in $BIGINSIGHTS_VAR/hive/pids/bihive_server.pid and the pid you got from step 1. They should be the same. 
+       
+       Also, $BIGINSIGHTS_VAR/hive/bihive_hwi.out and $BIGINSIGHTS_VAR/hive/bihive_server.out will record the information of services started, so check them to see if there are some exceptions.
+       
+    
+    
+ 3. To find which PID are used default port number, run the following commands: 
+    lsof -i :9999 | grep "(LISTEN)" | awk '{ print $2 }' 
+    lsof -i :10000 | grep "(LISTEN)" | awk '{ print $2 }' 
+    
+ 4. To find out which processes are running that take up these ports:
+    
+    ps -ef | grep <result from step 3>
+
+
+After you confirm that the process is safe to stop, manually kill the process using "kill -9 <process id>". 
+
+ 
+
+User permission issue for "cat /etc/issue": 
+
+ 
+
+ 1. Run the "cat /etc/issue" command.
+    
+    If you received a message stating that access and use of this system is restricted to authorized users only, you do not have the right permission.
+    
+ 2. Issue the command "which lsof".
+    
+    In Hive, if the content of /etc/issue contains "SUSE", it will execute "/usr/bin/lsof". If it contains "Red Hat", it will execute "/usr/sbin/lsof". 
+
+
+
+This user permission issue for "cat/etc/issue" can be resolved using the following workaround : 
+ 1. Make a backup of the following file:
+    $BIGINSIGHTS_HOME/hive/bin/bihive.sh
+    
+ 2. Edit $BIGINSIGHTS_HOME/hive/bin/bihive.sh to replace the following line (around line 63 to 66): 
+    
+    (In this example, you are using RHEL. You would need to make similar changes for SUSE). 
+    
+    FROM:
+    
+    resultSUSE=`cat /etc/issue | grep "SUSE"`
+    resultRHEL=`cat /etc/issue | grep "Red Hat"`
+    [ "$resultSUSE" != "" ] && cmd="/usr/bin/lsof"
+    [ "$resultRHEL" != "" ] && cmd="/usr/sbin/lsof"
+    
+    TO:
+    resultSUSE=""
+    resultRHEL="Red Hat"
+    
+    OR
+    # resultSUSE=`cat /etc/issue | grep "SUSE"`
+    # resultRHEL=`cat /etc/issue | grep "Red Hat"`
+    # [ "$resultSUSE" != "" ] && cmd="/usr/bin/lsof"
+    # [ "$resultRHEL" != "" ] && cmd="/usr/sbin/lsof"
+    cmd="/usr/sbin/lsof"
+    
+ 3. Restart Hive: 
+    stop.sh hive
+    start.sh hive

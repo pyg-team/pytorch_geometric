@@ -1,0 +1,20 @@
+Title: IBM InfoSphere Information Server is not affected by a possible remode code execution vulnerability in Apache Struts - United States
+
+Text:
+ FLASH (ALERT)
+
+ABSTRACT
+ InfoSphere Information Server is not affected by a possible remode code execution vulnerability in Apache Struts.
+This vulnerability could allow a remote attacker to execute arbitrary code on the system, caused by the deserialization of untrusted data using the Struts REST plugin with XStream handler. An attacker could exploit this vulnerability to execute arbitrary code on the system. 
+
+CONTENT
+InfoSphere Information Server in all editions and all platforms is NOT vulnerable to a possible remode code execution vulnerability in Apache Struts (CVE-2017-9805).
+IBM recommends that you review your entire environment and take appropriate mitigation and remediation action.
+
+Change History:
+October 2, 2017: original version published
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Information Management InfoSphere Information Server AIX, HP-UX, Linux, Solaris, Windows 9.1, 11.5, 11.3

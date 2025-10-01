@@ -1,0 +1,41 @@
+Title: IBM Audit notification fails to start automatically - ProcAuditLog_tb or DataAuditLog_tb have a large number of entries (5980) - Sterling Gentran:Server for Microsoft Windows - United States
+
+Text:
+STERLINGPRI TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Audit notification fails to start automatically - ProcAuditLog_tb or DataAuditLog_tb have a large number of entries (5980) 
+
+SYMPTOM
+
+
+Audit notification highest event ID error. 
+Audit notification fails to start automatically. Will start manually via the Services control panel. 
+Windows NT Event log error "Could not find highest event ID"
+
+
+CAUSE
+
+
+Audit Notification service times out due to a large number of entries in the ProcAuditLog_tb or DataAuditLog_tb tables.
+
+RESOLVING THE PROBLEM
+
+
+Perform a count query on the ProcAuditLog_tb and DataAuditLog_tb to obtain the number of rows in each table. If the number is quite high, >10,000 in ProcAuditLog_tb or >15,000 in DataAuditLog_tb, this could cause an error due to a timeout prior to completing the query. Attempt to purge the Audit Log by opening Gentran Cofiguration, selecting Audit Notification, and clicking the Purge button.
+If Gentran:Server is using Microsoft SQL Server 7.0 or higher, make sure the Audit Notification service is setup to depend on the MSSQLServer and RPC Locator Services.
+
+ 
+
+HISTORICAL NUMBER
+ PRI1479 
+
+PRODUCT ALIAS/SYNONYM
+ 
+
+Fact
+
+
+
+
+GENTRAN:Server for Windows, All Releases

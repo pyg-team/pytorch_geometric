@@ -1,0 +1,46 @@
+Title: IBM Using launchpad.sh or silent_MS_linux.bin results in end-of-file message. - United States
+
+Text:
+ITCAM compat-libstdc++ libstdc++ libraries silent_MS_linux.bin launchpad.sh errors TECHNOTE (TROUBLESHOOTING)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ US English 
+
+PROBLEM(ABSTRACT)
+ Using the DC or MS 'launchpad.sh' script results in the following error message:
+./setup_MS_lin.bin: line 1926: warning: here-document at line 1926 
+delimited by end-of-file (wanted `/dev/null') 
+
+SYMPTOM
+The following error is seen running when doing either 'launchpad.sh' or 'silent_MS_linux.bin': 
+
+ Initializing InstallShield Wizard........ 
+Launching InstallShield Wizard........ 
+
+./setup_MS_lin.bin: line 1926: warning: here-document at line 1926 
+delimited by end-of-file (wanted `/dev/null') 
+
+The installer is unable to run in graphical mode. Try running the 
+installer with the -console for -silent flag.
+
+
+CAUSE
+Missing Linux system libraries.
+
+
+ENVIRONMENT
+Linux - RHEL6.x and RHEL7.x 64-bit versions.
+
+
+
+RESOLVING THE PROBLEM
+This error messag is seen because of some missing Linux libraries. Usually what's missing are the compat-libstdc++ or libstdc++ libraries. Usually the 32-bit version is missing. Use the commands shown below to verify you have them installed, otherwise contact your Linux system administrator and installt these required libraries. 
+
+
+[/support/docview.wss?uid=swg21985630&aid=1] [/support/docview.wss?uid=swg21985630&aid=1]
+[/support/docview.wss?uid=swg21985630&aid=2] [/support/docview.wss?uid=swg21985630&aid=2]
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ ITCAM4AD ITCAMfAD ITCAM for App Diagnostics

@@ -1,0 +1,41 @@
+Title: IBM Differences between Linger time and Idle time in Rational Change - United States
+
+Text:
+homepage reports; license usage; telelogic change; release license TECHNOTE (FAQ)
+
+QUESTION
+ What effect does Linger time and Idle time have in IBM Rational Change? 
+
+CAUSE
+When your Rational Synergy becomes busy and you are nearing your license limit you need to know when licenses are released and when user sessions are timed out and the difference between these.
+
+ANSWER
+Below is a short explanation of linger time and idle time: 
+
+ * Linger time is a licensing parameter. 
+ * Idle time is a Change back end session management parameter
+
+
+ * Linger time
+
+
+Linger time is the minimum time a floating license is held and is hard-coded in IBM Rational Change to be 30 minutes. It exists to prevent gaming the license server by sharing a pool of licenses among a much larger pool of users by quickly logging users in and out so that it appears only a few licences are used concurrently. After a user logs in, a license is held for a minimum of 30 minutes. When you explicitly log out, the license is released immediately after the 30 minutes minimum linger time. If you do not log out, the license is automatically released 30 minutes after your last action.  
+
+ * Idle time ("Users become idle if inactive for <n> minutes." setting in the Server tab)
+
+
+Idle time is not related to licensing, only to session pool balancing. The pool size is based on the number of active users. In typical usage, access to the Rational Change server is sporadic. You run a report, show a CR, and then do something outside of Rational Change. The idle time simply says that if you have not accessed Rational Change in a certain period of time, then you are probably doing something else and not contributing to the server load anymore. As a result, the transaction server does not need to count such you in the current system load, and so it can shrink the back-end session pool.  
+
+Your last access time does impact both linger time and idle time, but the former is related to licensing while the latter is related to session pool size. 
+
+ 
+
+Note: Rational Change auto-refreshes home page reports every 20 minutes by default, This means if you leave the homepage open then both the linger time and the idle time will be impacted. See TechNote: 1504399: IBM Rational Change: Idle User sessions don't time out / licenses are not freed [http://www.ibm.com/support/docview.wss?uid=swg21504399] for details of how to mediate this problem.
+
+
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Software Development Telelogic Change General Information AIX, HP-UX, Linux, Solaris, Windows 5.1, 5.0, 4.7, 4.6.1, 4.6 Software Development Telelogic License Server General Information AIX, HP-UX, Linux, Solaris, Windows 1.5, 1.4, 1.3, 1.2

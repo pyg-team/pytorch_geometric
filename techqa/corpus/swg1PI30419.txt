@@ -1,0 +1,168 @@
+Title: IBM PI30419: CICS STATISTICS ARE MISSING FOR URIMAP USAGE WHEN CICS IS THE CLIENT - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  CICS Statistics provide complete statistics for URIMAP usage
+   when CICS is acting as a server. Those statistics are missing
+   when CICS is functioning as a client, for example when EXEC
+   CICS INVOKE WEBSERVICE is used. PM24666 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM24666] was originally opened
+   to document this issue but no code changes were made at that
+   time. This APAR is now being opened to correct the deficiency.
+   .
+   Additional Keywords: URIMAP HTTP HTTPS OUTBOUND OUTGOING DFHSTUP
+                        STATISTICS DFHWEBB WBURIMNM TMRURIMN
+                        UME_REFERENCE_COUNT
+                        WBR_URIMAP_REFERENCE_COUNT EXTRACT
+                        KIXREVRHC
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All CICS Users.                              *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: EXEC CICS WEB OPEN URIMAP() requests    *
+   *                      do not increment URIMAP statistics.     *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   URIMAP statistics are only updated when DFHWBUR is called
+   for LOCATE_URIMAP. This call is typically made in the case
+   where CICS is acting as a server and has to search for a
+   URIMAP using the URI information in the HTTP request.
+   In the case of EXEC CICS WEB OPEN, the URIMAP name is
+   specified on the call and there is no LOCATE_URIMAP call
+   so no statistics are recorded.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  WEB OPEN processing has been updated so that URIMAP statistics
+   are collected if a URIMAP is being used.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  FIX AVAILABLE BY PTF ONLY
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI30419
+   
+   
+ * REPORTED COMPONENT NAME
+   CICS TS Z/OS V5
+   
+   
+ * REPORTED COMPONENT ID
+   5655Y0400
+   
+   
+ * REPORTED RELEASE
+   800
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-11-26
+   
+   
+ * CLOSED DATE
+   2015-02-04
+   
+   
+ * LAST MODIFIED DATE
+   2015-03-03
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    PI26392 [http://www-01.ibm.com/support/docview.wss?uid=swg1PI26392]
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UI24972 UI24973
+   
+   
+
+MODULES/MACROS
+ *  DFHAMWB  DFHEIQWB DFHPICA  DFHPIDM  DFHPIDSQ DFHPIIW  DFHPILSQ
+   DFHPISC  DFHPITH  DFHPITL  DFHPITS  DFHPIWR  DFHRLRO  DFHSJJS
+   DFHW2AT  DFHWBCL  DFHWBDM  DFHWBRL  DFHWBRP  DFHWBSC  DFHWBSR
+   DFHWBURT DFHWBUR
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CICS TS Z/OS V5
+   
+   
+ * FIXED COMPONENT ID
+   5655Y0400
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R800 PSY UI24972 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI24972]
+   UP15/02/14 P F502
+   
+   
+ * R900 PSY UI24973 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI24973]
+   UP15/02/14 P F502
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

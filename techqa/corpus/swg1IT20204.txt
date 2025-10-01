@@ -1,0 +1,197 @@
+Title: IBM IT20204: MONITORING SVC 7.8.1 CAUSES SPECTRUM CONTROL TO HANG WITH NO CONNECTIONS - United States
+
+Text:
+AIX  FIXES ARE AVAILABLE
+IBM Spectrum Control V5.2.14 (May 2017) [http://www-01.ibm.com/support/docview.wss?uid=swg24043414]
+IBM Spectrum Control V5.2.15 (August 2017) [http://www-01.ibm.com/support/docview.wss?uid=swg24043749]
+IBM Spectrum Control V5.2.15.2 (November 2017) [http://www-01.ibm.com/support/docview.wss?uid=swg24044286]
+IBM Spectrum Control V5.2.16 (March 2018) [http://www-01.ibm.com/support/docview.wss?uid=swg24044454]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  After upgrading SVC firmware to 7.8.1, the device server becomes
+   inaccessible and appears to hang.  Cannot access the Spectrum
+   Control user interface until the connection between Spectrum
+   Control and the SVC is shut down.
+   
+   The follow messages are observed repeatedly for different port
+   numbers in dmSvcTrace.log and traceTPCDeviceServer.log:
+   
+     SSH Port forwarding failed for local  port <#>
+   com.ibm.tpc.monitor.SVCEventListener
+   
+     establishSshTunnelPortForwarding
+   SVC-Notification-xxxx-xxxx-xxxx
+   
+     Connection failed. <SVC_IP_Address>
+       com.ibm.tpc.common.api.napi.NAPIConnectionException: rc = 0,
+   msg = No connection established.
+   
+   You would also see a large number of network connections owned
+   by the device server pid. (ps -ef | grep deviceServer)
+   > netstat -lanp | grep LISTEN | grep <device server pid>
+   
+   As a result, errors like the following are also logged:
+     Failed to create input file
+   /opt/IBM/TPC/device/log/epm/xxxx.txt
+       java.io.FileNotFoundException:
+   /opt/IBM/TPC/device/log/epm/xxxx.txt (Too many open files)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * IBM Spectrum Control 5.2.x users monitoring                  *
+   * SVC/Storwize/Flash devices at firmware level 7.8.1           *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * IBM Spectrum Control 5.2.x device server becomes             *
+   * inaccessible and appears to hang after adding or upgrading a *
+   * SVC/Storwize/Flash device to firmware to 7.8.1.  The device  *
+   * server becomes inaccessible and appears to hang.  Users      *
+   * cannot access the Spectrum Control user interface until the  *
+   * connection between Spectrum Control and the SVC is shut      *
+   * down.                                                        *
+   *                                                              *
+   * See IBM Support Flash (Alert) for additional details:        *
+   * http://www-01.ibm.com/support/docview.wss?uid=swg22002420    *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Apply IBM Spectrum Control fix maintenance when available.   *
+   *                                                              *
+   * Upgrade SVC/Storwize/Flash devices to firmware to 7.8.1.1 or *
+   * higher.  Or contact IBM Support to request an ifix for 7.8.1 *
+   * -- reference SVC APAR HU01531                                *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The solution to this problem includes fixes for both IBM
+   Spectrum Control and the storage system.  Apply the fix for
+   Spectrum Control to stabilize the system and prevent it from
+   hanging.  Reboot the Spectrum Control server to free up
+   connections prior to applying a fix.  Also apply a minimum
+   firmware level of 7.8.1.1, or the ifix for APAR HU01531 to
+   resolve connection issues with the storage system for event
+   notification.
+   
+   
+   The Spectrum Control fix for APAR IT20204 is targeted for the
+   following maintenance package:
+   
+   | refresh pack | 5.2-TIV-TPC-RP0014 - target May 2017
+   
+   Fixed in IBM Spectrum Control 5.2.14
+   
+   http://www.ibm.com/support/docview.wss?&uid=swg21320822 [http://www.ibm.com/support/docview.wss?&uid=swg21320822]
+   
+   The target dates for future refresh packs do not represent a
+   formal commitment by IBM. The dates are subject to change
+   without notice.
+   
+   Recommended to upgrade SVC/Storwize/Flash devices to firmware to
+   7.8.1.1 or higher.  Or contact IBM Support to request an ifix
+   for 7.8.1 -- reference SVC APAR HU01531.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT20204
+   
+   
+ * REPORTED COMPONENT NAME
+   TPC
+   
+   
+ * REPORTED COMPONENT ID
+   5608TPC00
+   
+   
+ * REPORTED RELEASE
+   52C
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   YesHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-04-13
+   
+   
+ * CLOSED DATE
+   2017-05-17
+   
+   
+ * LAST MODIFIED DATE
+   2017-08-28
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TPC
+   
+   
+ * FIXED COMPONENT ID
+   5608TPC00
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R52C PSY
+   UP
+   
+   
+ * R52D PSY
+   UP

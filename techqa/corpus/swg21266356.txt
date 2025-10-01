@@ -1,0 +1,60 @@
+Title: IBM Changing the WebSEAL Server bind-pwd while connecting to LDAP Server. - United States
+
+Text:
+bind-pwd; obfuscate; userPassword TECHNOTE (FAQ)
+
+QUESTION
+ When password is not encrypted, how does one change WebSEAL Server's bind-pwd for connecting to LDAP? 
+
+ANSWER
+Important Note:
+The bind-pwd is always stored in an encrypted format, in the WebSEAL configuration obfuscated file. But this file cannot be modified directly. To modify this file, we need to modify the relevant WebSEAL configuration file.
+
+1) Retrieve the current password from the Obfuscated file as follows:
+# pdadmin -l config show /opt/pdweb/etc/webseald-default.conf ldap bind-pwd 
+Z7nXxAPpYz4t5TGGrPz
+
+2) Check the current password in LDAP Server:
+# ldapsearch -D cn=root -w root -s base -b "cn=default-webseald/denmarktivl2.in.ibm.com,cn=SecurityDaemons,secAuthority=Default" objectclass=*
+cn=default-webseald/denmarktivl2.in.ibm.com,cn=SecurityDaemons,secAuthority=Default
+objectClass=inetOrgPerson
+objectClass=ePerson
+objectClass=organizationalPerson
+objectClass=person
+objectClass=top
+cn=default-webseald/denmarktivl2.in.ibm.com
+sn=default-webseald/denmarktivl2.in.ibm.com
+userPassword=Z7nXxAPpYz4t5TGGrPz
+uid=default-webseald/denmarktivl2.in.ibm.com
+description=Tivoli Access Manager WebSEAL-default Server
+
+3) Change the password on the LDAP Server.
+# ldapmodify -D cn=root -w root
+dn: cn=default-webseald/denmarktivl2.in.ibm.com,cn=SecurityDaemons,secAuthority=Default
+changetype: modify
+replace: userPassword
+userPassword: passw0rd
+
+modifying entry cn=default-webseald/denmarktivl2.in.ibm.com,cn=SecurityDaemons,secAuthority=Default
+
+4) Now change the password in the Obfuscated file, as follows:
+
+# pdadmin -l config modify keyvalue set -obfuscate /opt/pdweb/etc/webseald-default.conf ldap bind-pwd passw0rd
+
+5) Ensure that the new password is updated on the LDAP Server:
+# ldapsearch -D cn=root -w root -s base -b "cn=default-webseald/denmarktivl2.in.ibm.com,cn=SecurityDaemons,secAuthority=Default" objectclass=*
+cn=default-webseald/denmarktivl2.in.ibm.com,cn=SecurityDaemons,secAuthority=Default
+objectClass=inetOrgPerson
+objectClass=ePerson
+objectClass=organizationalPerson
+objectClass=person
+objectClass=top
+cn=default-webseald/denmarktivl2.in.ibm.com
+sn=default-webseald/denmarktivl2.in.ibm.com
+uid=default-webseald/denmarktivl2.in.ibm.com
+description=Tivoli Access Manager WebSEAL-default Server
+userpassword=passw0rd
+
+6)Ensure that the new password is updated in the WebSEAL Obfuscated file:
+# pdadmin -l config show /opt/pdweb/etc/webseald-default.conf ldap bind-pwd 
+passw0rd

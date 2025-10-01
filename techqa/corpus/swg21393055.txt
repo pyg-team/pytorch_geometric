@@ -1,0 +1,22 @@
+Title: IBM Flood of Warning: W-STO-103-001: Truncating column Detail Msgs. in the log - United States
+
+Text:
+ALTER TABLE; ALTER COLUMN; SET WIDTH; alerts.details; Detail column; W-STO-103-001 TECHNOTE (FAQ)
+
+QUESTION
+ Seeing "Warning: W-STO-103-001: Truncating column Detail Msg" in the log? 
+
+CAUSE
+Thousands of "mm/dd/yy hh:mm:ss: Warning: W-STO-103-001: Truncating column Detail" in the log file, unable to see real problems in the log file due to details data is too large to fit in the details table column.
+
+ANSWER
+The problem is related to the details columns being inserted by the probe. For example, the details ($*) in the probe rules file may be returning the value larger than the column size. 
+
+ 
+One way to resolve it is to modify the data before it is sent to the object server. Check the rules file for detail. e.g. grep -i detail mttrapd.rules. You can use substr to truncate individual (offending) tokens to prevent the message, substr (expression, n). For example, $my_token = substr($some_token, 0, 254).
+
+Refer to "Details function" section for complete description in IBM Tivoli Netcool/OMNIbus: Probe and Gateway Guide.
+
+Note that details ($*) should be used only when you are debugging or writing/testing rules files. If used the $* for long periods of time, the Object Server tables can become very large and the performance of the Object Server suffer or degrade.
+
+You can also alter (increase) alerts.details table Detail column size from varchar(255) to a larger number using the nco_config GUI, or ALTER TABLE ... ALTER COLUMN ... SET WIDTH nnnn command. But it may result in performance degradation. See Netcool/OMNIbus: Administration Guide for more information.

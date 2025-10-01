@@ -1,0 +1,118 @@
+Title: IBM IY99643: INSTALLATION DEFECT ON ZLINUX SUSE8 - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PERMANENT RESTRICTION.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  installation hangs:
+   
+   Start up GUI (VNCSERVER) and run the setuplinux4zos.bin, and
+   InstallShield Wizard hangs at this point:
+   
+   Finalizing the Vital Product Data Registry. Please wait...
+   Progress bar shows 100%, but never appears to complete.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  use command line install w/ the -console flag as workaround if
+   GUI hangs.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  OM XE for Messaging 6.0 Installer hangs on Red Hat Enterprise
+   Linux AS release 4 (Nahant Update 3) Kernel 2.6.9-34.EL on S390
+   in GUI mode
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This is an Installshield defect. Please use console mode by
+   using the -console parm w/ the install script.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IY99643
+   
+   
+ * REPORTED COMPONENT NAME
+   OMG XE MSG DIST
+   
+   
+ * REPORTED COMPONENT ID
+   5724N1300
+   
+   
+ * REPORTED RELEASE
+   600
+   
+   
+ * STATUS
+   CLOSED PRS
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2007-06-05
+   
+   
+ * CLOSED DATE
+   2007-06-26
+   
+   
+ * LAST MODIFIED DATE
+   2007-06-26
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

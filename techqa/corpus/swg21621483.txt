@@ -1,0 +1,33 @@
+Title: IBM How to edit the dsx file to change the target folder of a job? - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ We have a set of jobs in a dsx file that we want to move to a different location. Is there any way to edit the dsx file to change the target folder of the jobs? 
+
+CAUSE
+The dsx file is a sequential file that is used to export and import objects from datastage. The location where the job will be created is the value next to the attribute Category. You can modify the location by editing this value. 
+
+Example:
+
+BEGIN HEADER
+...
+END HEADER
+BEGIN DSJOB
+Identifier "MyJob"
+...
+BEGIN DSRECORD
+...
+Category "\\Jobs\\Folder1"
+...
+
+END DSRECORD
+...
+END DSJOB
+
+In this example the job "MyJob" will be imported into the folder "Folder1" under "Jobs". If you want to move this job, for example, to "Folder2" then edit the line Category so it looks like this:
+
+Category "\\Jobs\\Folder2"
+
+Leave all the other lines intact and save the file. If the new value does not exist then DataStage will create it during import.

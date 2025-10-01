@@ -1,0 +1,15 @@
+Title: IBM Can multiple CICS regions access the same Gentran VSAM files? - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ When preparing for a possible failover of Gentran CICS region within the same datacenter to another LPAR within the same physical mainframe. Can multiple instances of Sterling Gentran CICS region on the same physical mainframe, each being used by a separate LPAR, access the same set of VSAM files while in the update mode?
+
+
+ANSWER
+There can only be one CICS region that Actively has the files Open. 
+A second region can have the files defined, however, imperative the files remain in Closed Disabled state. Should the production instance be forced to shut down, the backup instance could start and have the files in Open Enabled status. Only on resource can have exclusive access to these files.
+Exclusive access would be VSAM attributes (Write, Delete, Update). 
+
+Gentran VSAM files are built with Share Options of 2,3

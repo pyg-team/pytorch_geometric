@@ -1,0 +1,22 @@
+Title: IBM Temperature Thresholds in Alcatel-Lucent 5620 SAM Temperature Reporter Set - United States
+
+Text:
+threshold; 5620 SAM; Alcatel 5620 SAM; Alcatel-Lucent 5620 SAM; temperature thresholds: samTemperatureThreshold; samTemperatureThresholdInFahrenheit TECHNOTE (FAQ)
+
+QUESTION
+ What is the meaning of the term 'thresholds' in the Alcatel-Lucent 5620 SAM Technology Pack Temperature Reporter Set? 
+
+CAUSE
+This note clarifies the term 'thresholds' as used in the Alcatel-Lucent 5620 SAM Reporter Set.
+
+ANSWER
+The term ‘thresholds’ refers to threshold properties that are taken from an Alcatel-Lucent router and stored in IBM® Tivoli® Netcool\Proviso® or IBM® Tivoli® Netcool Performance Manager® properties. The Temperature Reporter Set contains samTemperatureThreshold and samTemperatureThresholdInFahrenheit properties. 
+
+Up to and including Alcatel-Lucent 5620 SAM 2.10.0.0 Technology Pack, the Alcatel-Lucent 5620 SAM Technology Pack does not provide any temperature-related thresholds that are configured by using IBM® Tivoli® Netcool\Proviso® or IBM® Tivoli® Netcool Performance Manager® .
+
+
+
+
+
+
+Cross Reference information Segment Product Component Platform Version Edition Systems and Asset Management Netcool/Proviso Solaris, AIX 4.3

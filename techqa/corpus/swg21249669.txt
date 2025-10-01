@@ -1,0 +1,49 @@
+Title: IBM URGENT: Daylight Saving Time changes will affect IBM DB2 Query Monitor - United States
+
+Text:
+DST2007; db2qm; qm TECHNOTE (FAQ)
+
+QUESTION
+ Information about how changes to Daylight Saving Time (DST) in 2007 could affect DB2® Query Monitor worldwide. 
+
+ANSWER
+
+
+ A provision of the US Energy Policy Act of 2005 extends DST by four weeks, beginning in 2007. Several countries (Canada, Bermuda) are also implementing the same DST change; other countries might decide to make similar changes to DST rules.
+
+ DST in 2007 begins the second Sunday in March (March 11) and ends the first Sunday in November (November 4). Systems or applications that process dates and times could be affected by this change. If not addressed, time and date calculations could be incorrect. 
+
+How do I know if my systems could be affected?  Your systems are likely to be affected by this change, even if you are operating outside of the US. 
+
+Date and time processing functions in systems and applications in countries implementing the new DST rules (U.S., Canada, Bermuda) are affected. Systems and applications in countries not implementing the DST changes could be impacted if they support users, transactions or applications originating in countries which are implementing the new DST rules. 
+
+For example, scheduling or synchronizing problems might arise where systems make or check date or time stamps relating to transactions in other countries, or there may be difficulty in scheduling meetings.
+
+
+
+
+What will happen if I fail to update my systems?  Systems or applications that rely on date or time processing functions could make incorrect calculations. Calendar, scheduling, or synchronizing problems could arise where systems use date or time stamps, or if dates or times are processed or manipulated in any way. 
+
+In short, if your system makes date or time calculations, you might experience calculation errors.
+
+
+
+
+DST fixes for DB2 Query Monitor Version 2.2 and Version 2.2.1 Symptom: When working with DB2 Query Monitor, you find that the new start and end dates for daylight savings dates are not applied; rather, the old dates are used.
+
+Explanation: The daylight savings time dates are controlled by the Java Virtual Machine (JVM) that you have installed.
+
+Solution: Apply PTF for PK34337 [ http://www-1.ibm.com/support/entdocview.wss?rs=434&context=SSC2QSY&dc=DB550&uid=swg1PK34337&loc=en_US&cs=utf-8&lang=en&NotUpdateReferer=] when it is available in the near future. **This fix only applies to GUI users. 
+
+
+
+DST fixes for DB2 Query Monitor Version 2.1 Symptom: When working with DB2 Query Monitor, you find that the new start and end dates for daylight savings dates are not applied; rather, the old dates are used.
+
+Explanation: The daylight savings time dates are controlled by the Java Virtual Machine (JVM) that you have installed.
+
+Solution: Apply PTFs for PK34749 [ http://www-1.ibm.com/support/entdocview.wss?rs=434&context=SSC2QSY&dc=DB550&uid=swg1PK34749&loc=en_US&cs=utf-8&lang=en&NotUpdateReferer=] and PK37616 [ http://www-1.ibm.com/support/entdocview.wss?rs=434&context=SSC2QSY&dc=DB550&uid=swg1PK37616&loc=en_US&cs=utf-8&lang=en&NotUpdateReferer=] when it is available in the near future. 
+
+**This fix only applies to GUI users.
+
+
+Change History 10 Nov 2006 Initial draft created 29 Nov 2006 APAR # correction 21 Dec 2006 Revision to add fix is applicable to GUI users only 17 Jan 2007 Add APAR information for V2.1

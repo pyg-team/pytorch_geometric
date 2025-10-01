@@ -1,0 +1,50 @@
+Title: IBM How to configure import source to use Cognos Access Manager (CAM) - United States
+
+Text:
+CAM; Cognos Access Manager; Unable to import users; Unable; import; users; Internal Gateway URL; External Gateway URL; CDM TECHNOTE (FAQ)
+
+QUESTION
+ How do I configure import source to use CAM? 
+
+CAUSE
+Unable to import users for CAM
+
+ANSWER
+ 
+
+You can import users from IBM® Cognos® Access Manager to IBM® Cognos® Disclosure Management. Ensure that you also import the users that exist in the user groups in Cognos Access Manager. 
+
+Procedure 
+
+1. Click the Home tab and, in the Navigation pane, click Administration. 
+
+2. Under Security, double-click Import Source. 
+
+3. Click Add > Import Source. 
+
+4. To define the source type, complete the following steps: 
+
+ * a. Click Add > Import Source. b. Specify the provider name. 
+   
+   c. In the Provider Type field, select Cognos Access Manager. 
+   
+    
+   
+   [/support/docview.wss?uid=swg21683765&aid=1] [/support/docview.wss?uid=swg21683765&aid=1]
+   
+   d. Specify the internal gateway URL and the external gateway URL. To obtain this information, launch the IBM Cognos Configuration window on your Cognos BI Server. Click Environment in the Explorer pane. The information should appear in your right pane. 
+   
+    
+   
+    *  [/support/docview.wss?uid=swg21683765&amp;aid=2] 
+   
+    *   * Copy the Internal dispatcher URI information under Dispatcher Settings and paste into the Internal Gateway URL field in CDM. 
+       * Copy the Gateway URI information under Gateway Settings and paste into the External Gateway URL field in CDM.
+      
+      
+   
+   e. If you want to automatically log in to Cognos Access Manager when importing user groups to Cognos Disclosure Management, select the Allow Single Sign-On check box. 
+   
+    * If you want to select the namespace when you log in to Cognos Access Manager, do not select the Allow Single Sign-On check box. 
+   
+   f. Optional: Specify a description for the source type. g. Click OK.

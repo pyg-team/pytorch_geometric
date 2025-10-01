@@ -1,0 +1,43 @@
+Title: IBM What can I do if I get error code 2121 - United States
+
+Text:
+MQSeries Workflow; error code 2121; installation TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ What can I do if I get error code 2121? 
+
+CAUSE
+Error code 2121 belongs to WebSphere MQ. WebSphere MQ Workflow is only displaying it. This error code is an indication, that MQ was not installed correctly.The MQ error description shows, for example, "the queue manager's configuration file might be in error."
+
+RESOLVING THE PROBLEM
+Check the following: 
+
+
+1. /var/mqm shows the mqs.ini file. You can use the settings listed below as a reference to check your installation:
+
+QueueManager:
+Name=FMCQM
+Prefix=/var/mqm
+Directory=FMCQM
+DefaultQueueManager:
+Name=FMCQM
+
+2. /var/mqm/qmgrs/FMCQM contains the qm.ini file. 
+
+For example, for a 3-tier installation with the database on a remote machine called remlupo, where the name of the database is FMCDB, and the database user is fmc with the password fmc:
+
+XAResourceManager:
+Name=remlupo FMCDB
+SwitchFile=/usr/lpp/fmc/db2swit/db2swit
+XAOpenString=DB=FMCDB, toc=t, UID=fmc, PWD=fmc
+ThreadOfControl=THREAD
+
+
+3. Also check the contents of the MQ error log AMQERR01.LOG. The log files have the same name. You need to check them in the following locations (for a default configuration):
+a) /var/mqm/qmgrs/FMCQM/errors
+b) /var/mqm/qmgrs/@SYSTEM/errors
+c) /var/mqm/errors 
+
+It is also recommended to check the db2diag.log file, which can be found in /home/db2inst1/sqllib/db2dump.
+
+Also check the information provided by WebSphere MQ Workflow in /var/fmc/cfgs/FMC/log: There are the files fmcerr.log and fmcsys.log.

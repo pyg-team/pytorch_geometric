@@ -1,0 +1,14 @@
+Title: IBM User receiving Reminder Notice Sender Execution Failed Alert after upgrading to Atlas 6.0.3.3 - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Why does the user receive Reminder Notice Sender Execution Failed Alert after upgrading to Atlas 6.0.3.3? 
+
+CAUSE
+The error message is "The timer task failed due to error : java.sql.SQLException: ORA-01652: unable to extend temp segment by 128 in tablespace TEMP1"
+
+
+ANSWER
+This is caused due to insufficient space in the temp tablespace. The DBA needs to allocate sufficient space for the temp tablespace

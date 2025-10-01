@@ -1,0 +1,46 @@
+Title: IBM Security Bulletin: WebSphere MQ is vulnerable to disclosing side channel information via discrepencies between valid and invalid PKCS#1 padding. ROBOT. (CVE-2018-1388) - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ WebSphere MQ is affected by the ROBOT vulnerability where it may disclose side channel information via discrepencies between valid and invalid PKCS#1 padding. 
+
+VULNERABILITY DETAILS
+CVEID: CVE-2018-1388 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2018-1388]
+DESCRIPTION: IBM MQ is vulnerable to TLS implementations may disclose side channel information via discrepencies between valid and invalid PKCS#1 padding.
+CVSS Base Score: 9.1
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/138212 [https://exchange.xforce.ibmcloud.com/vulnerabilities/138212] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:N) 
+
+AFFECTED PRODUCTS AND VERSIONS
+WebSphere MQ v7.0.1 
+
+ * Maintenance levels 7.0.1.0 - 7.0.1.14
+
+REMEDIATION/FIXES
+WebSphere MQ v7.0.1 
+
+Contact WebSphere MQ support requesting a fix for APAR IJ03658 WORKAROUNDS AND MITIGATIONS
+WebSphere MQ v7.0.1 
+Use the Alternative GSKit value to configure your Queue Manager to use GSKit version 8. [https://www.ibm.com/support/knowledgecenter/en/SSFKSJ_7.0.1/com.ibm.mq.csqzas.doc/sy13880_.htm]
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v3 Guide [http://www.first.org/cvss/user-guide] 
+On-line Calculator v3 [http://www.first.org/cvss/calculator/3.0] 
+
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] 
+
+CHANGE HISTORY
+ 01 Feb 2018: Original version published 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.

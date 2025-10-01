@@ -1,0 +1,47 @@
+Title: IBM Maximo Anywhere Must Gather - United States
+
+Text:
+TPAEANYWHERE TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Collecting data for IBM Maximo Anywhere. Gathering this information before calling IBM support will help you with the troubleshooting process and save time analyzing the data. 
+
+DIAGNOSING THE PROBLEM
+Enabling App Debug Logging in the Maximo Anywhere App 
+
+Before reproducing the problem, enable debug logging. To enable debug logging, log in to the Anywhere app and follow these steps:
+From the Overflow Menu, select Settings.
+Click Advanced Settings, then Logging.
+On the Logging Data screen from the overflow menu, select Enable Debug Logging.
+Reproduce the problem, retrieve the debug logs, and send the logs to support. 
+
+Retrieving the App Debug log from the Chrome Simulator
+If you can reproduce the problem in the Chrome Simulator Preview of the Anywhere application, this is the easiest way to retrieve, log, and debug the issue. Follow these instructions to enable the Javascript Console in Chrome.
+https://developer.chrome.com/devtools/docs/console [https://developer.chrome.com/devtools/docs/console]
+Reproduce the issue. Copy and Paste the Javascript Console from Chrome into a local text file, and send the file to our support organization.
+
+
+Collecting the App Debug Logs from the Device
+The most recent log entries are shown under the Logging Data screen. You can email the logs from the device by selecting Email Log from the Logging Data screen. However, you might need the full device logs from the app to debug certain kinds of issues (like log in issues because you can't get to the Logging Data screen).
+For Android, uselogcat [https://developer.android.com/studio/command-line/logcat.html]. https://developer.android.com/studio/command-line/logcat.html [https://developer.android.com/studio/command-line/logcat.html]
+For iOS, useLemonjar's iOS Console [http://lemonjar.com/iosconsole/]. http://lemonjar.com/iosconsole/ [http://lemonjar.com/iosconsole/]
+For Windows, you can only retrieve the log from the Logging Data screen. 
+
+Debugging Network issues with Wireshark
+InstallWireshark [https://www.wireshark.org/download.html]on your MobileFirst Server box, and watch the traffic coming from your apps on your device. https://www.wireshark.org/download.html [https://www.wireshark.org/download.html]
+
+
+Turning up the trace on the MobileFirst Server and collect the MobileFirst Server logs
+Follow the instructions in the document below, but set the Tracing Specification to *=info:com.ibm.tivoli*=all:com.ibm.csi.mobile*=all
+http://www-01.ibm.com/support/docview.wss?uid=swg21596714 [http://www-01.ibm.com/support/docview.wss?uid=swg21596714]
+For instance, on WebSphere, the setting would be:
+*=info: com.ibm.tivoli*=all: com.ibm.csi.mobile*=all
+in the trace panel.
+This setting writes out a trace.log file that contains additional debugging information from our Maximo Anywhere Login Module, Maximo Anywhere Attachment Servlet, and Maximo Anywhere OSLC Adapter. These are tthe pieces of our architecture that live within the MobileFirst Server.
+Send the trace.log, console.log, and messages.log files from WebSphere Liberty to our support organization. Or, on Websphere Application Server, send the trace.log, SystemOut.log, and SystemErr.log files. 
+
+Collecting the Maximo Server log
+Reproduce the issue and send the Maximo Server log from WebSphere (SystemOut.log and SystemErr.log) to the support organization. You might want to turn up the integration logger to DEBUG in the Logging application before reproducing the problem. Be sure to turn it back down to ERROR after you're finished, as DEBUG can cause timeout issues.
+
+Include any changes made to the app.xml of javascript
+Send in the app.xml for the application you are having issues with. The app.xml is located in the {maximoanywhereHome}\MaximoAnywhere\apps\WorkExecution or \WorkApproval folder(s) depending on which application is being used.

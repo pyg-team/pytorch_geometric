@@ -1,0 +1,146 @@
+Title: IBM PK81907: NOT PADDED ON Z/OS CREATE INDEX ONLY NEEDS TO BE SPECIFIED FOR  CERTAIN DB2 VERSIONS - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+WebSphere Message Broker V6.1 - Fix Pack 6.1.0.7 [http://www-01.ibm.com/support/docview.wss?uid=swg24026355]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  NOT PADDED ON Z/OS CREATE INDEX ONLY NEEDS TO BE SPECIFIED FOR
+   CERTAIN DB2 VERSIONS.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All users of WebSphere Message Broker v6.1   *
+   *                 creating or migrating a z/OS broker using    *
+   *                 DB2 v8(compatibility mode).                  *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Database error: SQL State '56038' if    *
+   *                      using a v6.1 z/OS broker with DB2 v8    *
+   *                      (compatibility mode).                   *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   If migrating a z/OS broker to V6.1 or creating a new z/OS V6.1
+   broker with a level of DB2 that is less than DB2 v8, or is
+   DB2 v8(compatibility mode), a BIP2322E message detailing the
+   SQL State 56038 database error will be logged. This is because
+   of an attempt to use new function introduced at DB2 v9.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  WebSphere Message Broker has been modified so that the new
+   functionality will only be effective if using DB2 v9.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK81907
+   
+   
+ * REPORTED COMPONENT NAME
+   WMB Z/OS V6
+   
+   
+ * REPORTED COMPONENT ID
+   5655M7400
+   
+   
+ * REPORTED RELEASE
+   100
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-03-05
+   
+   
+ * CLOSED DATE
+   2009-03-19
+   
+   
+ * LAST MODIFIED DATE
+   2009-03-19
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  BIP611B8 BIP611BN BIP611C1 BIP611WR BIPI000R BIPI000X BIPI0013
+   BIPI0014 BIPI0018 BIPI001C BIPI001J BIPI001L BIPI001O BIPI001P
+   BIPI001S BIPI001T BIPI001X BIPI001Y BIPI0023 BIPI0024 BIPI0025
+   BIPI0026 BIPI0029 BIPI002O BIPI002P BIPI002Q BIPI002S BIPI006F
+   BIPI00U9 BIPI00UH BIPI00UI BIPI01KE BIPI01KF BIPI01KI BIPI01TG
+   BIPI01TQ
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMB Z/OS V6
+   
+   
+ * FIXED COMPONENT ID
+   5655M7400
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R100 PSY
+   UP

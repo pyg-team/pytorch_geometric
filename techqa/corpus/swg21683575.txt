@@ -1,0 +1,48 @@
+Title: IBM Java applet functionality may cause errors when using OpenPages OPX - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ An error may occur when you attempt tasks, such as copying and moving files or folders, or adding a new page, using OpenPages OPX that require Java applet functionality. 
+
+SYMPTOM
+If part of the application fails to load and an error message is shown: “Error. Click for details”. 
+
+When a user clicks the error message, the following SecurityException error is shown:
+
+Missing required Permissions manifest attribute in main jar: 
+https://<hostname>/opx/applets/pagespecui.jar
+
+
+CAUSE
+The Next-generation Java Plug-in is enabled.
+
+
+ENVIRONMENT
+Using Internet Explorer and accessing applet functionality.
+
+
+
+DIAGNOSING THE PROBLEM
+You encounter this issue when if you see the errors described in the Symptom section.
+
+
+
+RESOLVING THE PROBLEM
+The Next-Generation Java Plug-in needs to be disabled for every Java entry that exists in the Control Panel.
+
+Follow these steps to disable the Next-Generation Java Plug-in: 
+
+ 
+
+ 1. Click Start -> Control Panel and open Java. 
+ 2. Open the Advanced tab. 
+ 3. Expand the Java Plug-in node. 
+ 4. Clear the check box for Enable the next-generation Java Plug-in (requires browser restart). Note: If the button appears disabled, select it with a pointer device and press the Space bar to uncheck it. 
+ 5. Click Apply. 
+ 6. Click OK. 
+ 7. Close all web browsers.
+
+
+You can now continue with the task.

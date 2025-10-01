@@ -1,0 +1,37 @@
+Title: IBM Navigation icons missing from Dashboard after DASH upgrade - United States
+
+Text:
+DASHL2; SocketFactory; navigation; DASH; NoClassDefFoundError TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ After attempting to apply a Dashboard Application Services Hub (DASH) fix pack or upgrade, navigation options in DASH are missing. When users log into DASH the following exception is written to the SystemOut.log:
+
+java.lang.NoClassDefFoundError:org.apache.http.conn.scheme.SocketFactory 
+
+CAUSE
+Defect introduced by the WAS 8.5.5.8 iFix for PI50993 and a corrupt OSGI and/or class cache
+
+DIAGNOSING THE PROBLEM
+The following error stack is present in the SystemOut log when a user logs into DASH:
+###
+[3/16/16 11:52:32:991 CDT] 000000d7 webapp E com.ibm.ws.webcontainer.webapp.WebApp logServletError SRVE0293E: [Servlet Error]-[RestServlet]: java.lang.NoClassDefFoundError: org.apache.http.conn.scheme.SocketFactory
+...
+at com.ibm.tivoli.rest.passthrough.DefaultPassThroughFactory.getPassThrough(DefaultPassThroughFactory.java:24)
+at com.ibm.tivoli.rest.RestRequestProcessor.<init>(RestRequestProcessor.java:123)
+at com.ibm.tivoli.rest.RestServlet.createRequestProcessor(RestServlet.java:65)
+at org.apache.wink.server.internal.servlet.RestServlet.init(RestServlet.java:94)
+at com.ibm.tivoli.rest.RestServlet.init(RestServlet.java:38)
+...
+Caused by: java.lang.ClassNotFoundException: org.apache.http.conn.scheme.SocketFactory
+...
+###
+
+
+Check to see if the WAS iFix PI50993 is installed. Run the following command:
+
+<WAS Home>/bin/versionInfo.sh -maintenancePackages
+
+
+RESOLVING THE PROBLEM
+Use Installation Manager to "uninstall" the WAS 8.5.5.8 iFix for PI50993. After uninstalling the iFix, follow the instructions in the following Websphere technical note to clear the OSGI and class cache:
+http://www-01.ibm.com/support/docview.wss?uid=swg21607887 [http://www-01.ibm.com/support/docview.wss?uid=swg21607887]

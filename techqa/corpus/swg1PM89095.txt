@@ -1,0 +1,174 @@
+Title: IBM PM89095: INCORRECT ASSUMPTIONS MADE BY AUTOMAPPER FOR PL/1 DECIMAL AND BIN FIELDS - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  For PLI decimal and binary fields that do not include the
+   attribute FIXED or FLOAT, the compiler decides based on the
+   existence or otherwise of a specified precision.
+   The CICS VT automapper does not handle these cases correctly.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All users of CICS VSAM Transparency          *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: The automated mapper facility makes     *
+   *                      incorrect assumptions when processing   *
+   *                      PLI copybooks.                          *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   There are discrepancies between the output produced by the
+   automated mapper facility when processing PLI copybooks
+   and the output for the same structures coded in COBOL.
+   These occur when processing decimal and binary fields in
+   PLI copybooks that do not specify FIXED or FLOAT.
+   There is also no support for the PLI equivalents of COBOL
+   REDFINES and OCCURS DEPENDING ON.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The code is changed to bring several aspects of PLI copybook
+   processing into line with COBOL copybook processing.
+   There are also changes to the way the automapper handles
+   overlaid key and AIX fields.
+   For further details about the changes, see
+   Technote 1644044 which is to be published at:
+   http://www.ibm.com/support/docview.wss?uid=swg21644044 [http://www.ibm.com/support/docview.wss?uid=swg21644044]
+   200Y
+   201Y
+   202Y
+   VIDMCAIK
+   VIDMCASM
+   VIDMCKEY
+   VIDMCOPY
+   VIDMCPLI
+   VIDMCPYB
+   VIDMCPYE
+   VIDMCRDF
+   VID01
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM89095
+   
+   
+ * REPORTED COMPONENT NAME
+   CICS VSAM TRANS
+   
+   
+ * REPORTED COMPONENT ID
+   5655Y0100
+   
+   
+ * REPORTED RELEASE
+   200
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-05-15
+   
+   
+ * CLOSED DATE
+   2013-08-07
+   
+   
+ * LAST MODIFIED DATE
+   2013-09-03
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UK96538 UK96539 UK96540
+   
+   
+
+MODULES/MACROS
+ *     VIDMCAIK VIDMCASM VIDMCKEY VIDMCOPY VIDMCPLI
+   VIDMCPYB VIDMCPYE VIDMCRDF VID01
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CICS VSAM TRANS
+   
+   
+ * FIXED COMPONENT ID
+   5655Y0100
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R200 PSY UK96538 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK96538]
+   UP13/08/12 P F308
+   
+   
+ * R201 PSY UK96539 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK96539]
+   UP13/08/12 P F308
+   
+   
+ * R202 PSY UK96540 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK96540]
+   UP13/08/12 P F308
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

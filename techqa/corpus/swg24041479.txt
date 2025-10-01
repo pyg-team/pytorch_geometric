@@ -1,0 +1,35 @@
+Title: IBM Operational Decision Manager V8.5.0.0: Interim Fix 54 - United States
+
+Text:
+ DOWNLOADABLE FILES
+
+ABSTRACT
+ This interim fix provides a solution for APAR RS02224. 
+
+DOWNLOAD DESCRIPTION
+The following list shows the components in Operational Decision Manager that are directly affected by this interim fix:
+
+
+ * Rule Designer 
+ * Decision Center 
+ * Rule Execution Server 
+ * Events runtime
+
+
+You can find more information on the problems in the following APAR description:  *  [http://www.ibm.com/support/docview.wss?uid=swg1RS02157]RS02224 [http://www-01.ibm.com/support/docview.wss?uid=swg21971750] 
+
+
+See also Operational Decision Manager Interim Fixes [http://www.ibm.com/support/docview.wss?uid=swg21640630]. INSTALLATION INSTRUCTIONS
+Follow the instructions in the readme.
+
+URL LANGUAGE SIZE(Bytes) Readme [http://download4.boulder.ibm.com/sar/CMA/WSA/05tqc/0/Readme.html] English 1919 
+DOWNLOAD PACKAGE
+
+
+
+
+Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options 
+What is Fix Central(FC)? [https://www.ibm.com/support/fixcentral/help?page=swfaqs] 
+What is DD? [http://www6.software.ibm.com/dldirector/doc/DDfaq_en.html] 8.5.0.0-WS-ODM-IF054 07 Dec 2015 Language Independent 1023350 FC [http://www-933.ibm.com/support/fixcentral/swg/downloadFixes?parent=ibm%2FWebSphere&product=ibm/WebSphere/WebSphere+Operational+Decision+Management&release=All&platform=All&function=fixId&fixids=8.5.0.0-WS-ODM-IF054&includeRequisites=1&includeSupersedes=0] [ ] DD 
+ [/support/docview.wss?uid=swg24041479&aid=1]Problems (APARS) fixed [/support/docview.wss?uid=swg24041479&aid=2]Problems (APARS) fixed
+RS02224

@@ -1,0 +1,61 @@
+Title: IBM Users unable to create a document in Community Library using IBM Docs. - United States
+
+Text:
+CCM; Docs; create; file; library; libraries; add-on; install; configure TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+Users unable to create a document in Community Library using IBM Docs.
+
+SYMPTOM
+Following error message observed in web browser:
+CQL5937: The P8 Content Engine server cannot be accessed. Please provide the following information to your administrator. Incident ID: 1466608744974. Error code: DB_ERROR. 
+
+[/support/docview.wss?uid=swg21985883&aid=1] [/support/docview.wss?uid=swg21985883&aid=1]
+
+Errors observed in logs: 
+- WSRdbXaResour E DSRA0304E: XAException occurred. XAException contents and details are: 
+- WSRdbXaResour E DSRA0302E: XAException occurred. Error code is: XAER_RMFAIL (-7). Exception is: [jcc][t4][10401][12066][4.19.26] XA exception: XAER_RMFAIL : [jcc][t4][10335][11391][4.19.26] Invalid operation: Connection is closed. ERRORCODE=-4470, SQLSTATE=08003 ERRORCODE=-4228, SQLSTATE=null
+- P8ErrorHandle E com.ibm.ecm.qkr.services.p8.P8ErrorHandler handleError 500 GeneralInformation CQL5937: The P8 Content Engine server cannot be accessed. Please provide the following information to your administrator. Incident ID: 1466608744974. Error code: DB_ERROR.
+- AtomUtil E com.ibm.ecm.qkr.app.AtomUtil writeError CQL5937: The P8 Content Engine server cannot be accessed. Please provide the following information to your administrator. Incident ID: 1466608744974. Error code: DB_ERROR.
+
+
+CAUSE
+In the following mandatory steps for Configuring CCM for use with Docs: 
+
+Installing the IBM Content Navigator add-onshttps://www.ibm.com/support/knowledgecenter/en/SSFHJY_2.0.0/deploy/ccm_installing_filenet_addons.html?view=embed [https://www.ibm.com/support/knowledgecenter/en/SSFHJY_2.0.0/deploy/ccm_installing_filenet_addons.html?view=embed] 
+
+It is possible Part 2 action item was overlooked or add-on not installed:
+1. After you restart the server, and the server is running including IBM Connections, open a browser and go to servername/dm/jsp/addons.jsp and login as wasadmin.
+2. Click the Install button.
+3. You will see the message that the IBM Content Navigator add-ons have been successfully registered
+
+**PLEASE NOTE: You may only see one message returned verses two as indicated in documentation:
+
+[/support/docview.wss?uid=swg21985883&aid=2] [/support/docview.wss?uid=swg21985883&aid=2]
+
+
+ENVIRONMENT
+IBM Connections, Windows, Linux, AIX 
+
+
+
+RESOLVING THE PROBLEM
+Confirm add-on has been registered (/servername/dm/jsp/addons.jsp). As long as you see the following message, proceed in actually installing the CCM add-on: 
+
+[INFO] All IBM FileNet Services for Lotus Quickr 1.1 Addons have previously been registered in the P8 domain ICDomain. No changes were made.
+
+
+Installing the IBM Content Navigator add-onshttps://www.ibm.com/support/knowledgecenter/en/SSFHJY_2.0.0/deploy/ccm_installing_filenet_addons.html?view=embed [https://www.ibm.com/support/knowledgecenter/en/SSFHJY_2.0.0/deploy/ccm_installing_filenet_addons.html?view=embed] 
+
+
+Note, when attempting to install the IBM Content Navigator 2.0.3 IBM Docs Extensions, if a failure is observed after several installation attempts please contact IBM Connections support.
+
+RELATED INFORMATION
+ Installing the IBM Content Navigator add-ons [https://www.ibm.com/support/knowledgecenter/en/SSFHJY_2.0.0/deploy/ccm_installing_filenet_addons.html?view=embed]
+Configuring CCM for use with Docs [http://www.ibm.com/support/knowledgecenter/SSFHJY_2.0.0/deploy/configuring_with_ccm.html]
+
+
+
+
+PRODUCT ALIAS/SYNONYM
+ IBM Connections 5.5

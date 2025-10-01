@@ -1,0 +1,10 @@
+Title: IBM Verifying the content of a Web Page or URL via a Monitor in IBM Enterprise Content Management System Monitor (ECM SM). - United States
+
+Text:
+URL webpage link TECHNOTE (FAQ)
+
+QUESTION
+ Can a Monitor in IBM Enterprise Content Management System Monitor verify the content of a Web Page or URL? 
+
+ANSWER
+Currently, the ECM SM only verifies the Web Page's availability. Reading the content of a Web Page may be a future enhancement.

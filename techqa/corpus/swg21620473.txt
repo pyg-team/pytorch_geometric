@@ -1,0 +1,59 @@
+Title: IBM Deployment Engine: Location and file name of IA logs - United States
+
+Text:
+TIPL2INST; location name IA log files TECHNOTE (FAQ)
+
+QUESTION
+ Where I can find Install Anywhere (IA) logs for various products created by Deployment Engine? 
+
+ANSWER
+Deployment Engine creates IA and other logs during the installation and upgrades.
+The IA log is the main log which should looked into first. The location of IA log file vary by each products. The following table shows the location of log files for each product. 
+
+Note: This table may not be up to date and if the product you are installing is missing in the table then please check with the product support for location of log files.
+
+Take a look into below technote to find the location of other log files created by DE and files related to Deployment engine:
+
+http://www-01.ibm.com/support/docview.wss?uid=swg21439183 [http://www-01.ibm.com/support/docview.wss?uid=swg21439183]
+
+For investigation of installation issues use IA log along with DE logs and the logs files under _uninst directory. The _uninst directory contains subdirectories for the base product installation and fix packs. Follow the subdirectories under _uninst directory for each fix pack and look for MachinePlan_localhost.log.
+
+
+
+
+Product Name Operating System Root User Non-Root User IA Log name IA log location IA log location IBM Tivoli Storage Manager Data Protection for VMware Redhat 5.x,6.xSUSE 10,SUSE 11 IA-TDPVMware-00.log /root [/support/docview.wss?uid=swg21620473&amp;aid=1] TCR Windows IA-TIPInstall-00.log 
+TCR<XX>InstallTrace<NN>.log 
+
+** XX = version of TCR like 12,13,21,211 
+NN = file number, like 00,10,20,... C:\Documents and Settings\Administrator NA TCR Linux/Unix TIPInstaller-00.log 
+TCR<XX>InstallTrace<NN>.log 
+
+** XX = version of TCR like 12,13,21,211 
+NN = file number, like 00,10,20,... /root /home/<username> Maximo, CCMDB, SRM etc Windows CTGInstallTrace00.log If you encounter an error during a validation task, install trace logs can also be located within the C:\Documents and Settings\Administrator directory. They are moved to the PRODUCT_HOME\logs directory during execution of the configuration step of the deployment. Default value for PRODUCT_HOME is C:\IBM\SMP\logs directory If you encounter an error during a validation task, install trace logs can also be located within the C:\Documents and Settings\<USER HOME> directory. They are moved to the PRODUCT_HOME\logs directory during execution of the configuration step of the deployment. Default value for PRODUCT_HOME is C:\IBM\SMP\logs directory TPAE based products like Maximo, CCMDB, SRM etc Unix CTGInstallTrace00.log If you encounter an error during a validation task, install trace logs can also be located within the <USER_HOME> directory. They are moved to the PRODUCT_HOME\logs directory during execution of the configuration step of the deployment. Default value for PRODUCT_HOME is /opt/IBM/SMP/logs directory. Example for USER_HOME is /root for user root If you encounter an error during a validation task, install trace logs can also be located within the /home/<USER_HOME> directory. They are moved to the PRODUCT_HOME\logs directory during execution of the configuration step of the deployment. Default value for PRODUCT_HOME is /home/<USER_HOME>/SMP/logs directory IBM Tivoli Netcool/OMNIbus Unix IA-Netcool-OMNIbus-hostnameyyyymmddThhmmss-
+0.log Location where the log file is stored when the product is installed by a
+root user. This is the home directory of the root user.
+
+In the file name,
+yyyymmddThhmmss is the date and time the log file was first generated.
+Additional log files can be generated on subsequent modifications to the
+installation. "/home/username" 
+Location where the log file is stored when the product is installed by a
+non-root user, where username is the name of the user.
+In the file name,
+yyyymmddThhmmss is the date and time the log file was first generated.
+Additional log files can be generated on subsequent modifications to the
+installation.
+Installation log file
+$NCHOME/OMNIbus_InstallLog.log
+Deployment Engine IBM Tivoli Netcool/OMNIbus Windows IA-Netcool-
+OMNIbus-hostname-yyyymmddThhmmss-0.log C:\Documents and Settings\username\IA-Netcool-
+OMNIbus-hostname-yyyymmddThhmmss-0.log
+Where username is the name of the logged-in user and
+yyyymmddThhmmss is the date and time the log file was first
+generated. Additional log files can be generated on subsequent
+modifications to the installation. C:\Documents and Settings\username\IA-Netcool-
+OMNIbus-hostname-yyyymmddThhmmss-0.log
+Where username is the name of the logged-in user and
+yyyymmddThhmmss is the date and time the log file was first
+generated. Additional log files can be generated on subsequent
+modifications to the installation.

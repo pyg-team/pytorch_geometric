@@ -1,0 +1,94 @@
+Title: IBM How big should DB2 log space be? - United States
+
+Text:
+logging; logging space; types of logging; log parameters; database recovery; log full condition; log disk full; circular logging TECHNOTE (FAQ)
+
+QUESTION
+ Why log files are remaining in active log directory? 
+
+ANSWER
+Principle of database recovery is to ensure that you can restore all committed transactions.
+
+DB2 uses transactions logs when performing crash recovery and roll forward recovery. Transaction logs keep track of changes made to database tables and their data. During recovery process, DB2 uses transaction logs to restore previously committed changes and to undo changes which were not committed.
+
+Transaction logs can be stored as files or on raw devices. Usage of raw devices for logging is deprecated functionality, we will consider only transaction logs stored as files.
+
+Transaction logs are stored in active log directory. The Database configuration file contains the path to the log files - path to the active log directory:
+
+Path to log files = D:\DB2_01\NODE0000\SQL00001\SQLOGDIR\
+
+
+All transaction logs in active log directory are referred to as log space. The size of the log space is controlled by the following database configuration parameters:
+
+Log file size (4KB) (LOGFILSIZ) = 1000
+Number of primary log files (LOGPRIMARY) = 3
+Number of secondary log files (LOGSECOND) = 2
+
+where:
+
+LOGFILSIZ - specifies the size of individual log file in 4096 bytes (4K) pages;
+LOGPRIMARY - specifies number of primary log files allocated in the active log directory.
+LOGSECOND - specifies the maximum number of secondary log files allowed to be allocated in the active log directory.
+
+
+In this example log space size is (LOGPRIMARY+LOGSECOND)*LOGFILSIZ 4K pages - (3+2) * 1000 4KB pages or 20,000 KB (roughly 20 MB).
+
+In circular logging scenario, the calculation of the log space size is straightforward; active log directory should be located on file system which allows (LOGPRIMARY + LOGSECOND) * LOGFILSIZ allocations of 4KB pages (plus disk overhead caused by rounding up size of each individual file to multiple of allocation unit used by given file system).
+
+
+With archival logging, in the active log directory you will find two types of log files:
+
+ACTIVE LOGS - logs which contain non-committed or non-externalized transactions;
+INACTIVE LOGS - logs which contain committed and externalized transactions;
+
+
+If no archival method is invoked - size of active log directory will grow indefinitely - inactive logs are never overwritten by DB2. 
+
+When archival method is invoked - either via deprecated functionality of calling user written userexit or via database configuration parameter LOGARCHMETH1 - DB2 will request archival of the active log, which after successful archival will become an archived inactive log . 
+
+DB2 may rename an archived inactive log from the active log directory to the next in sequence active log upon receiving Status OK reply from the archival method, but this is not automatic nor immediate. Instead, DB2 will rename an online archive log to next active log when a new active log is needed.
+
+Archiving a log file simply means making a copy of the log to the location that you requested; the log itself stays in the active log directory. When DB2 needs to create a new log, it checks first whether there are any archived inactive logs.
+If there are any archived inactive logs, DB2 will rename the next log in sequence in the active log directory. If there are not any archived inactive logs, DB2 will create a new active log.
+
+This assumes the archival method is working and the process of creating new logs is slower than the process of archiving them.
+
+If archival method temporary stops working, for example when archival method must wait for new media to become available and new logs are needed, DB2 will start to create new active logs and the number of inactive logs may grow indefinitely.
+
+Another scenario is the process of writing to logs is faster than the processing of archival logs. This could be due to high volume and arrival rate of transactions to be logged or it could be due to slowdown/congestion at the archive location/media. In this case, the number of logs in the active log directory may also grow indefinitely.
+
+When the archival method starts working again (after a request for new media was fulfilled) or archival method "catches up" with incoming transactions, there may be more than LOGPRIMARY+LOGSECOND logs in the active log directory. 
+
+DB2 will keep track of the number of logs in the active log directory which need to be cleaned and during deactivation or stopping the database manager, the logs contained in this list (in current design there may be up to 32 entries in the list of logs pending cleanup) will be removed.
+
+In this scenario, when archival method is used, it is difficult to predict size of the active log directory. If you can make an assumption that archival method will never wait for media to become available or the archival process will be always faster than the rate of arrival of new transactions to be logged in the peak hour, it will be relatively safe to estimate active log directory size as (LOGPRIMARY+LOGSECOND+32) * LOGFILESIZ 4KB pages rounded up to integral number of file allocation units for file system hosting active log directory.
+
+In real life, such assumptions cannot be safely made. Instead, another set of database configuration parameters will help control growth of active log directory.
+
+Important thing is to avoid a log full condition which is undesirable. Work performed until this condition has occurred within current transactions will be lost and additional time will be spent on processing rollback request(s). Proper estimation of LOGPRIMARY and LOGSECOND number of logs will help you alleviate this condition. In general, LOGPRIMARY number of logs should be sufficient for normal workloads and LOGSECOND number of logs should cover all expected spikes in all busy times of the workload.
+
+Another very undesirable condition is a log disk full condition. This occurs when the active log directory was underestimated. When a log disk full condition is encountered, current transactions will be lost and the rollback will take additional time. In some situations, the database will come down if a transaction causes a log disk full error. 
+You can resolve a disk full situation by moving old log files to another file system or by enlarging the file system hosting log space. Such enlarging of file system hosting log space may require migrating it to another large file system when appropriate.
+
+You can control the log disk full condition behavior by setting database configuration parameter BLK_LOG_DSK_FUL.
+Default value is:
+
+Block log on disk full (BLK_LOG_DSK_FUL) = NO
+
+By changing value of this parameter to YES, it will cause all applications to wait instead of rolling back when the active log directory becomes full. 
+While applications are waiting, DB2 will attempt to create a log file every 5 minutes until it succeeds. After each attempt, DB2 will write a notification message to the administrative notification log file. Until the log file can be successfully created, applications which cause transaction logging will be blocked. 
+Read-only transaction(s) not requiring logging may proceed if they don't need to wait on DB2 objects being locked by blocked transactions.
+
+By monitoring the notification log, you can determine whether DB2 is waiting because the active log directory is full so you can take appropriate actions to remedy this state. 
+
+Another way to avoid active log directory becoming full is to use failover log archive path. This failover mechanism is controlled by the following set of database configuration parameters:
+
+Failover log archive path (FAILARCHPATH) =
+Number of log archive retries on error (NUMARCHRETRY) = 5
+Log archive retry Delay (secs) (ARCHRETRYDELAY) = 20
+
+Target of failover log archive path must be specified as disk medium. DB2 will retry up to NUMARCHRETRY times writing a log to the primary log archive path and waiting ARCHRETRYDELAY seconds between each attempt before moving the log file to FAILARCHPATH. 
+
+By using FAILARCHPATH, active log directory full condition might be avoided. You need to have sufficient space available in FAILARCHPATH to sustain logs before primary path becomes available again.
+
+So for example, if archive method being used may wait for media up to 64 hours (for example from Friday evening until Monday morning when request for new media will be noticed by operations) FAILARCHPATH must be big enough to sustain logging (at whatever workload rate is expected) for 64 hours.

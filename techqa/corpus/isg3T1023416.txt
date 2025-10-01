@@ -1,0 +1,49 @@
+Title: IBM Use esub to add RUNLIMIT value to job automatically - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ LSB_SUB_RLIMIT_RUN stand for -W in the esub. How to use it to add RUNLIMIT automatically? 
+
+ANSWER
+Below is an Unix example of using esub to add RUNLIMIT value for the job automatically 
+Please note that in the esub, the RUNLIMIT unit is seconds. 
+
+cat $LSF_SERVERDIR/esub
+#!/bin/sh
+. $LSB_SUB_PARM_FILE 
+
+# Redirect stderr to stdout so echo can be used for error messages
+exec 1>&2 
+
+echo "LSB_SUB_RLIMIT_RUN=60" >> $LSB_SUB_MODIFY_FILE 
+
+
+bsub sleep 10000
+Job <16516> is submitted to default queue <long>. 
+
+bhist -l 16516 
+
+Job <16516>, User <userA>, Project <default>, Command <sleep 10000>
+Wed Mar 2 21:51:55: Submitted from host <hostA>, to Queue <long>, CWD </home/userA>, Re-runnable; 
+
+RUNLIMIT
+1.0 min of hostA
+Wed Mar 2 21:51:57: Dispatched to <hostA>, Effective RES_REQ <select[type ==local] order[r15s:pg] >;
+Wed Mar 2 21:51:57: Starting (Pid 27336);
+Wed Mar 2 21:51:57: Running with execution home </home/userA>, Execution CWD </home/UserA>, Execution Pid <27336>, Execution user name <.\userA>;
+Wed Mar 2 21:52:59: Exited with exit code 140. The CPU time used is 0.4 seconds;
+Wed Mar 2 21:52:59: Completed <exit>; TERM_RUNLIMIT: job killed after reaching LSF run time limit; 
+
+MEMORY USAGE:
+MAX MEM: 3 Mbytes; AVG MEM: 3 Mbytes 
+
+Summary of time in seconds spent in various states by Wed Mar 2 21:52:59
+PEND PSUSP RUN USUSP SSUSP UNKWN TOTAL
+2 0 62 0 0 0 64
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition IBM Spectrum Computing IBM Spectrum LSF IBM Spectrum Computing IBM Spectrum LSF

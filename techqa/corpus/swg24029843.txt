@@ -1,0 +1,147 @@
+Title: IBM Tivoli System Automation Integrated Operations Managmt., 2.1.1-TIV-SAIOM-FP0001 - United States
+
+Text:
+ DOWNLOADABLE FILES
+
+ABSTRACT
+ This fix pack includes all fixes completed since the release of version 2.1.1 
+
+DOWNLOAD DESCRIPTION
+This fix pack includes all fixes includes the following fixes:
+
+
+- IZ93964: Want on-the-fly text-to-wave function for missing TTS support on newer voice cards in SA IOM
+- IZ98730: 'ping' command from SA IOM script does not work 
+- IV00809: SA IOM server crashes - application failure rpserver.exe 2.1.0.328 in msvcr90.dll 9.0.30411.0 at offset 00052FC5
+- IV01574: After upgrading from SA IOM V2.1.0 to V2.1.1 all my user ids, peers, and other user modified files are lost (over-written)
+- IV03199: SA IOM service 'not found' after installation and reboot.
+- IV08059: RP3270 service failed to start because it was blocked from loading
+- IV08371: SA IOM server does not start after install
+
+PREREQUISITES
+Tivoli System Automation for Integrated Operations Management V2.1.1
+
+INSTALLATION INSTRUCTIONS
+Installation of the fix pack 1 of Tivoli System Automation for Integrated Operations 
+
+Management 2.1.1
+-------------------------------------------------------------------------------------
+
+1. Unzip the file 2.1.1-TIV-SAIOM-FP0001.zip into a local directory.
+This will result in the creation of two subdirectories:
+1) The directory '2.1.1-TIV-SAIOM-FP0001\SA IOM V211 FP1' containing 
+the SAIOM Fixpack, which updates a previous SA IOM installation.
+2) The directory '2.1.1-TIV-SAIOM-FP0001\SA IOM V211 FP1 Client Installer',
+which contains the additional client-only installer.
+
+2. Navigate into the 'SA IOM V211 FP1' subdirectory and then navigate
+to the directory where you find the file 'setup.exe'.
+The directory structure is as follows:
+SA IOM V211 FP1\
+-> Doc\
+-> Installer\
+--> Disk1\
+---> Instdata\
+----> VM\
+-----> setup.exe
+
+To install the fixpack, launch 'setup.exe' and follow the instructions
+given in the user interface of the installer.
+
+After update of the product please follow the reboot advice.
+
+This installer will also install the files for the environment VS2008 which
+is used by the new SA IOM version. Do not remove these files.
+
+
+Documentation update:
+-------------------
+User's Guide, chapter 2: The tables for software requirements for the server and the
+client should both include Windows 2008 R1 and R2.
+
+
+Installation Notes:
+-------------------
+On Windows 2003 and Windows Vista the install process may end with a message
+saying "some errors occurred" instead of "successfully installed".
+Please ignore the error, all components were installed correctly.
+
+If you have only selected product features installed on your system and choose 
+'Selective install', installer will pre-select components which are NOT installed 
+on the system for installation. If you do not plan to install and use missing 
+product features, please select installed components you want to update and 
+deselect components you do not need to install.
+
+
+IMPORTANT:
+----------
+After updating the SA IOM with this Fixpack 1 followed by an uninstallation
+of the old AF/Remote product, it is necessary to run the provided
+RP3270.bat file from the following directory of the fix pack:
+2.1.1-TIV-SAIOM-FP0001\SA IOM V211 FP1\RP3270 FIX\ .
+The batch file restores several registry keys, which are mandatory for
+operation of SA IOM, but which were removed by the de-installation of
+AF/REMOTE.
+
+THIS DOES NOT APPLY TO 64 BIT SYSTEMS.
+
+
+COAX Support Removal
+--------------------
+The drivers that support the legacy protocol for COAX adapters could be removed
+from the installation now.
+As COAX support is deprecated and not used anymore by most of the customers
+the support for those drivers are not the default anymore.
+A new panel appears that the COAX driver support can be omitted now.
+The checkmark for COAX is NOT set and if one wants to keep the drivers have to
+checkmark this support. 
+IF THE CHECKMARK IS NOT SET THE DRIVERS WILL BE REMOVED FROM THE INSTALLATION.
+
+
+Error 193: 0xc1 possible issue:
+-------------------------------
+If for some reason the SA IOM server service is not startable and gets an
+error 193 0xc1 on startup please have a look at the root directory of the
+installation drive . If you find a file entry just called "program" delete
+it.
+Try to start the service again. If it fails again, please report the error.
+
+
+Relocated data files:
+--------------------
+To follow the Windows standard and to enable non administrators to run RpClient
+on Windows Vista, Windows 7, etc. it is now possible to have the SA IOM data
+files in a Windows designated data directory. A new utility "RpDatLoc.exe"
+is included to help with the configuration (see the on-line help on this 
+stand alone program for further information).
+The most common usage of RpDatLoc is to enable the SA IOM client to run
+for a 'standard' Windows user. To do this follow the steps below:
+1) Log on to Windows as an administrator.
+2) Install the SA IOM Client using the SA IOM installer.
+3) Log off the administrator user.
+4) Log on with the 'standard' Windows users ID.
+5) Start RpDatLoc.exe.
+6) Go to the 'Copy Files' page and copy from 'Install directory' to the 'User Application directory'.
+7) Close RpDatLog and start RpClient.
+
+
+AF/Remote Migration
+-------------------
+If you migrate from existing AF/Remote installation you can choose to click
+the migration checkmark. In this case, the following files are copied from
+the old AF/Remote config directory to the new SA IOM config directory
+o RPSERVER.DAT
+o RPCLIENT.DAT
+o RPUSER.DAT
+This saves all preferences made in AF/Remote which are already configured.
+
+DOWNLOAD PACKAGE
+
+
+
+
+
+Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options 
+What is Fix Central(FC)? [https://www.ibm.com/support/fixcentral/help?page=swfaqs] 2.1.1-TIV-SAIOM-FP0001 25.10.2011 English 452510694 FC [http://www.ibm.com/support/fixcentral/quickorder?fixids=2.1.1-TIV-SAIOM-Windows-FP0001&product=ibm%2FTivoli%2FTivoli%20System%20Automation%20for%20Integrated%20Operations%20Management&source=dbluesearch] [ ] 
+ [/support/docview.wss?uid=swg24029843&aid=1]Problems (APARS) fixed [/support/docview.wss?uid=swg24029843&aid=2]Problems (APARS) fixed
+IZ93964, IZ98730, IV00809, IV01574, IV03199, IV08059, IV08371

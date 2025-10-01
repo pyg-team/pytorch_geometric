@@ -1,0 +1,36 @@
+Title: IBM Guardium LDAP configuration test fails - SSLHandshakeException: Remote host closed connection during handshake - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ I have configured my Guardium appliance to get users from an LDAP server.
+I am using SSL connection to the LDAP server. 
+When testing the connection to the server from the GUI Portal page it produces a popup error containing:
+An error occurred during this operation. 
+simple bind failed.
+Remote host closed connection during handshake. 
+
+CAUSE
+The LDAP server closed the connection due to a problem with the connection handshake. One possible cause of this error is that the LDAP server is unable to accept the specific SSL/TLS protocol that the Guardium appliance is connecting with. 
+
+Guardium v10 is starting to deprecate TLS v1.0 due to security issues. See: TLS Version 1.0 Protocol Detection (PCI DSS) vulnerability detected for appliance [http://www-01.ibm.com/support/docview.wss?uid=swg22004467] 
+
+Since v10 p200, Guardium LDAP connections use TLS v1.2. If the LDAP server can not accept TLS v1.2 connections, this error will result.
+
+
+DIAGNOSING THE PROBLEM
+1. Set the LDAP Configuration as per the instructions here [https://www.ibm.com/support/knowledgecenter/SSMPHH_10.1.0/com.ibm.guardium.doc.admin/accessmgt/importing_users_from_ldap.html]. 
+
+2. In the v10 GUI -> Setup -> Tools and Views -> Portal. v9 GUI -> Administration Console -> Portal. Select LDAP, enter the details and press "test". 
+
+A pop up error appears containing the host:port configured. e.g.
+[/support/docview.wss?uid=swg22004311&amp;aid=1]
+
+3. The TLS version that the LDAP server can accept can be tested from any linux server using openssl commands e.g
+openssl s_client -connect server:port -tls1 # Test TLS v1
+openssl s_client -connect server:port -tls1_2 # Test TLS v1.2
+
+
+RESOLVING THE PROBLEM
+Guardium v10 p200 uses TLS v1.2 to connect to LDAP. This is due to security issues with older TLS versions. If the LDAP server can only use an older TLS version, it is recommended to upgrade the LDAP server to accept up to date TLS protocols.

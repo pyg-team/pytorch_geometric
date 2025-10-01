@@ -1,0 +1,239 @@
+Title: IBM PI66611: ERROR CRJAZ0447E WHEN EXECUTING A TEST SUITE WITH THE RQM COMMAND LINE ADAPTER - United States
+
+Text:
+  A FIX IS AVAILABLE
+Rational Quality Manager 6.0.3 [http://www-01.ibm.com/support/docview.wss?uid=swg24043023]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When creating execution variables for a test script in IBM
+   Rational Quality Manager (RQM) the UI fails to validate for
+   existing variables when entering whitespaces at the end or
+   beginning of the name, resulting in unique constraint violation
+   while running the test suite with a Command Line Adapter.
+   
+   
+   Steps to reproduce:
+   1. Create Command Line test script
+   2. Add Execution Variable to the test script
+   3. Add another execution variable with same name, this time
+   insert whitespace at the end of the name
+   4. Create a test case and associate the test script and add the
+   execution variable to the same
+   5. Create a test suite and add the test case
+   6. Run the test suite
+   
+   Expected results:
+   Suite should run with 100% completion and no errors
+   
+   Actual Result:
+   The Execution is stuck at 99% and log output shows:
+   
+   Caused by:
+   com.ibm.team.repository.common.InternalRepositoryException:
+   CRJAZ0447E The SQL statement did not run successfully.Integrity
+   constraint violation
+   SQL: INSERT INTO EXECUTION.VARIABLE_NAME (STATE_ID, ITEM_ID,
+   CONTEXT_ID, MODIFIED, MODIFIED_BY_ITEM_ID, NAME) VALUES (?, ?,
+   ?, ?, ?, ?)
+   SQL Exception #1
+   SQL Message: The statement was aborted because it would have
+   caused a duplicate key value in a unique or primary key
+   constraint or unique index identified by 'VARIABLE_NAM_NM_DX'
+   defined on 'VARIABLE_NAME'.
+   SQL State: 23505
+   Error Code: 20000
+   Class:
+   com.ibm.team.repository.service.internal.dataaccess.write2.Row
+   Item Handle:
+   com.ibm.rqm.execution.common.model.impl.VariableNameImpl@b2838b6
+   5 (stateId: [UUID _WVW2MVQ4EeabD5z3222Vjw], itemId: [UUID
+   _WVW2MFQ4EeabD5z3222Vjw], origin: &lt;unset&gt;, immutable:
+   true) (contextId: [UUID _8lNyYNwSEd2pIJ5QVwgQGg], modified:
+   2016-07-27 15:26:07.514, workingCopy: false) (predecessor:
+   &lt;unset&gt;) (name: var_3)
+   
+   This issue as been identified as a product defect:
+   https://jazz.net/jazz02/web/projects/Rational%20Quality%20Manage
+   r#action=com.ibm.team.workitem.viewWorkItem&id=154287 [https://jazz.net/jazz02/web/projects/Rational%20Quality%20Manager#action=com.ibm.team.workitem.viewWorkItem&id=154287]
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  There is no known workaround.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * ERROR CRJAZ0447E WHEN EXECUTING A TEST SUITE WITH THE RQM    *
+   * COMMAND LINE ADAPTER                                         *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * Steps to reproduce:                                          *
+   * 1. Create Command Line test script                           *
+   * 2. Add Execution Variable to the test script                 *
+   * 3. Add another execution variable with same name, this time  *
+   * insert whitespace at the end of the name                     *
+   * 4. Create a test case and associate the test script and add  *
+   * the                                                          *
+   * execution variable to the same                               *
+   * 5. Create a test suite and add the test case                 *
+   * 6. Run the test suite                                        *
+   *                                                              *
+   * Expected results:                                            *
+   * Suite should run with 100% completion and no errors          *
+   *                                                              *
+   * Actual Result:                                               *
+   * The Execution is stuck at 99% and log output shows:          *
+   *                                                              *
+   * Caused by:                                                   *
+   * com.ibm.team.repository.common.InternalRepositoryException:  *
+   * CRJAZ0447E The SQL statement did not run                     *
+   * successfully.Integrity                                       *
+   * constraint violation                                         *
+   * SQL: INSERT INTO EXECUTION.VARIABLE_NAME (STATE_ID, ITEM_ID, *
+   * CONTEXT_ID, MODIFIED, MODIFIED_BY_ITEM_ID, NAME) VALUES (?,  *
+   * ?,                                                           *
+   * ?, ?, ?, ?)                                                  *
+   * SQL Exception #1                                             *
+   * SQL Message: The statement was aborted because it would have *
+   * caused a duplicate key value in a unique or primary key      *
+   * constraint or unique index identified by                     *
+   * 'VARIABLE_NAM_NM_DX'                                         *
+   * defined on 'VARIABLE_NAME'.                                  *
+   * SQL State: 23505                                             *
+   * Error Code: 20000                                            *
+   * Class:                                                       *
+   * com.ibm.team.repository.service.internal.dataaccess.write2.R *
+   * ow                                                           *
+   * Item Handle:                                                 *
+   * com.ibm.rqm.execution.common.model.impl.VariableNameImpl@b28 *
+   * 38b6                                                         *
+   * 5 (stateId: [UUID _WVW2MVQ4EeabD5z3222Vjw], itemId: [UUID    *
+   * _WVW2MFQ4EeabD5z3222Vjw], origin: &lt;unset&gt;, immutable:  *
+   * true) (contextId: [UUID _8lNyYNwSEd2pIJ5QVwgQGg], modified:  *
+   * 2016-07-27 15:26:07.514, workingCopy: false) (predecessor:   *
+   * &lt;unset&gt;) (name: var_3)                                 *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This issue as been identified as a product defect: Fixed in
+   version 6.0.3
+   https://jazz.net/jazz02/web/projects/Rational%20Quality%20Manage
+   r#action=com.ibm.team.workitem.viewWorkItem&id=154287 [https://jazz.net/jazz02/web/projects/Rational%20Quality%20Manager#action=com.ibm.team.workitem.viewWorkItem&id=154287]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI66611
+   
+   
+ * REPORTED COMPONENT NAME
+   RATL QUALITY MG
+   
+   
+ * REPORTED COMPONENT ID
+   5724V1000
+   
+   
+ * REPORTED RELEASE
+   502
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-07-28
+   
+   
+ * CLOSED DATE
+   2016-12-04
+   
+   
+ * LAST MODIFIED DATE
+   2016-12-04
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   RATL QUALITY MG
+   
+   
+ * FIXED COMPONENT ID
+   5724V1000
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R502 PSY
+   UP
+   
+   
+ * R600 PSY
+   UP
+   
+   
+ * R601 PSY
+   UP
+   
+   
+ * R602 PSY
+   UP

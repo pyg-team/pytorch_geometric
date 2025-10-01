@@ -1,0 +1,42 @@
+Title: IBM Distributing ITCAM for MQ Tracking load to multiple Transaction Collectors - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ In a system running multiple WebSphere Queue Managers, a single ITCAM for MQ Tracking agent may not be enough to handle the load. This tech note describes how to implement multiple agents on the same server to distribute the load. 
+
+CAUSE
+The ITCAM for MQ Tracking agent can only send TTAPI events to one Transaction Collector. If a WebSphere MQ server is running multiple Queue Managers, then the only way to distribute the load to multiple Transaction Collectors is to run multiple instances of the ITCAM for MQ Tracking agent.
+
+ANSWER
+The ITCAM for MQ Tracking agent currently does not support multi-instance agent. However, this can be achieved on Unix platforms by installing the agent in to separate ITM directories. 
+
+For example, /opt/IBM/ITM1, /opt/IBM/ITM2, etc 
+
+Procedure: 
+
+ 1. Install each instance of ITCAM for MQ Tracking agent into a different directory. 
+ 2. Configure each instance and change the Transaction Collector Location setting in the MQ Data Collector TT Settings section to the address of the Transaction Collector agent. 
+ 3. Configure API exits for each queue manager as according to the installation and configuration documentation. Ensure that the Data parameter in the ApiExitLocal stanza in the qm.ini file is pointing to the correct install directory.
+    
+    For example,
+    
+    /var/mqm/qmgrs/QM1/qm.ini:
+    
+    ApiExitLocal:
+    Name=MQTrackingApiExit
+    Sequence=next available number divisible by 100
+    Module=libTTDCMqExitsServer_version
+    Function=TTDCMqInitExit
+    Data=INSTALL_DIR1/arch/th/config
+    
+    /var/mqm/qmgrs/QM2/qm.ini:
+    
+    ApiExitLocal:
+    Name=MQTrackingApiExit
+    Sequence=next available number divisible by 100
+    Module=libTTDCMqExitsServer_version
+    Function=TTDCMqInitExit
+    Data=INSTALL_DIR2/arch/th/config 
+ 4. Restart each queue manager for the API exits to take effect.

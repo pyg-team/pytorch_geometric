@@ -1,0 +1,165 @@
+Title: IBM JR36348: MULTIPLE ISSUES WITH DTS STAGE - United States
+
+Text:
+  A FIX IS AVAILABLE
+Download Fix Pack 2 for InfoSphere Information Server Version 8.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24028376]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  This APAR is opened for the following issues:
+   - DTS does not put link identifier for log messages
+   - DTS does not abort on startup if log queue or reject queue is
+   invalid
+   - Writing to log queue from DTS is intermittent
+   - Connector stage reports wrong stage name in log when multiple
+   Connectors
+     are used in a job
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   Users who use DTS with MQ Messaging
+   ****************************************************************
+   PROBLEM DESCRIPTION:
+   - DTS does not put link identifier for log messages
+   When DTS has multiple input links and an error occurs during
+   processing a link, the error message does not have link
+   identifier.
+   
+   - DTS does not abort on startup if log queue or reject queue is
+   invalid
+   When invalid queue name is specified as log queue or reject
+   queue, DTS continues the job and write warning message to
+   inform that DTS failed to close the log queue or the reject
+   queue at the end of the job.
+   
+   - Writing to log queue from DTS is intermittent
+   When using log queue, DTS does not write to log queue
+   intermittently.
+   
+   - Connector stage reports wrong stage name in log when multiple
+   Connectors are used in a job
+   When multiple Connectors are used in a job, DTS/Connector
+   stages logs messages from a Connector stage as if it is reported
+   from another Connector stage.
+   ****************************************************************
+   RECOMMENDATION:
+   Install the patch.
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  - DTS does not put link identifier for log messages
+   Write link number as a prefix of the message
+   
+   - DTS does not abort on startup if log queue or reject queue is
+   invalid
+   Abort on startup if invalid log queue or reject queue is
+   specified.
+   
+   - Writing to log queue from DTS is intermittent
+   Fix the problem.
+   
+   - Connector stage reports wrong stage name in log when multiple
+   Connectors are used in a job
+   Fix the problem.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR36348
+   
+   
+ * REPORTED COMPONENT NAME
+   WIS DATASTAGE
+   
+   
+ * REPORTED COMPONENT ID
+   5724Q36DS
+   
+   
+ * REPORTED RELEASE
+   810
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-04-21
+   
+   
+ * CLOSED DATE
+   2010-05-11
+   
+   
+ * LAST MODIFIED DATE
+   2010-05-11
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WIS DATASTAGE
+   
+   
+ * FIXED COMPONENT ID
+   5724Q36DS
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R810 PSN
+   UP

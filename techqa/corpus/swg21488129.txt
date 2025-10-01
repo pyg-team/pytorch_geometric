@@ -1,0 +1,44 @@
+Title: IBM Teradata ODBC driver issue:  Specified drivers could not be loaded due to system error 126 - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Error Message: Specified drivers could not be loaded due to system error 126
+
+Installed 14.0.2 Modeler
+Downloaded and installed Data Access Pack for 64 bit windows operating system SDAPWin64_6.0.3.exe.
+Created an ODBC Teradata driver and tried the test connection.
+Get above message when 'Test Connection' button is clicked
+
+Also tried to add C:\Program Files\SPSSIncOEM\odbc64v60\Drivers to the Path Environment Variable. Still get the same issue. 
+
+RESOLVING THE PROBLEM
+This problem has been reported to SPSS Development - Workaround Available
+
+Windows based SPSS OEM SDAP6 have a dependency on CLIv2 library files. This dependency is related specifically to the Teradata driver shipped with SPSS OEM SDAP6.
+The version of CLIv2 library files is 13.00.00.07 or 13.00.00.05 and can be access from the TeraData.com website. 
+
+Download the appropriate files from here: 
+
+http://downloads.teradata.com/download/connectivity/teradata-odbc-driver-13-0-for-windows-64-bit [http://downloads.teradata.com/download/connectivity/teradata-odbc-driver-13-0-for-windows-64-bit]
+
+Example: For windows these are the files:
+cliv2_WINDOWS_x8664[1].13.00.00.07.ZIP (64 bit)
+cliv2_WINDOWS_i386[1].13.00.00.07.ZIP (32 bit) 
+
+You may need to use the 13.00.00.05.zip versions in the absence of 13.00.00.07,zip versions
+
+Inside that are three programs that must be installed in this order:
+1) TDICU 
+2) TeraGSS
+3) CLIv2
+
+RELATED INFORMATION
+ Need more help? Our Modeler forum is Live! [https://developer.ibm.com/answers/topics/modeler/?smartspace=predictive-analytics]
+
+
+ 
+
+HISTORICAL NUMBER
+ 91941

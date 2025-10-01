@@ -1,0 +1,33 @@
+Title: IBM WebSphere DataPower firmware release 6.0 now available - United States
+
+Text:
+ NEWS
+
+ABSTRACT
+ WebSphere DataPower SOA Appliances firmware version 6.0 is now available for download on the following appliances: 
+
+WebSphere DataPower B2B Appliance XB60
+WebSphere DataPower B2B Appliance XB62
+WebSphere DataPower Integration Appliance XI50
+WebSphere DataPower Integration Appliance XI52
+WebSphere DataPower Integration Appliance XI52 Virtual Edition
+WebSphere DataPower Integration Blade XI50B
+WebSphere DataPower Low Latency Appliance XM70
+WebSphere DataPower Service Gateway XG45
+WebSphere DataPower Service Gateway XG45 Virtual Edition
+WebSphere DataPower XML Security Gateway XS40 
+
+CONTENT
+Refer to the following documents for details about firmware version 6.0 now available: 
+
+ * WebSphere DataPower firmware V6.0 announcement [http://www-01.ibm.com/common/ssi/cgi-bin/ssialias?infotype=AN&subtype=CA&htmlfid=897/ENUS213-172&appname=USN] 
+
+Refer to the Release Notes [http://www.ibm.com/support/docview.wss?uid=swg27038952] for details on the Authorized Program Analysis Reports (APARs) included in this version. See also:  *  [http://www.ibm.com/support/docview.wss?rs=2362&uid=swg24014405]Link to the Fix Central site [http://www.ibm.com/support/fixcentral/]to begin the download process. 
+ * New to Fix Central? If so, see Fix download method for WebSphere DataPower SOA Appliances. [http://www.ibm.com/support/docview.wss?uid=swg21376557] 
+ * IBM WebSphere DataPower Appliance Support Lifecycle [http://www.ibm.com/support/docview.wss?uid=swg21246298] for reference
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration WebSphere DataPower Integration Appliance XI52 Not Applicable Firmware 6.0.0 Edition Independent Business Integration WebSphere DataPower B2B Appliance XB62 Not Applicable Firmware 6.0.0 Edition Independent Business Integration WebSphere DataPower XML Security Gateway XS40 Not Applicable Firmware 6.0.0 Edition Independent Business Integration WebSphere DataPower Service Gateway XG45 Not Applicable Firmware 6.0.0 Edition Independent Business Integration WebSphere DataPower Integration Appliance XI50 Not Applicable Firmware 6.0.0 Edition Independent Business Integration WebSphere DataPower Integration Blade XI50B Not Applicable Firmware 6.0.0 Edition Independent Business Integration WebSphere DataPower B2B Appliance XB60 Not Applicable Firmware 6.0.0 Edition Independent Business Integration WebSphere DataPower Low Latency Appliance XM70 Not Applicable Firmware 6.0.0 Edition Independent

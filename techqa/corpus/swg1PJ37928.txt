@@ -1,0 +1,142 @@
+Title: IBM PJ37928: APPLICATION ENGINE SERVER MAY HANG IF ULIMIT IS SET TOO LOW DUE TO P8 JAVA API NOT CLOSING UTCRYPTOKEYFILE.PROPERTIES FILES - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The P8 AE server may stop unexpectedly with an 'too many open
+   files' error on UNIX if ulimit is set too low.  This is caused
+   by the P8 Java API not closing UTCryptoKeyFile.properties files.
+    Most instances of this file get closed during Java garbage
+   collection, but at high volumes and lots of memory, it is
+   possible for many hundreds or even thousands of open files may
+   stack up on the server between GCs.
+   
+   When 'too many open files' occurs, the application server stops
+   servicing requests and kicks users out of their sessions.  Using
+   lsof to view open files descriptors shows many open
+   UTCryptoKeyFile.properties files on the AE server.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  To work around this problem, increase the ulimit for the UNIX
+   user until the load is handled within the normal GC period.
+   This may require boosting the ulimit to 4096 or higher.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * All CE Users                                                 *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * The P8 AE server may stop unexpectedly with an 'too many     *
+   * open                                                         *
+   * files' error on UNIX if ulimit is set too low.               *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Upgrade CE server and clients to 4.5.1.5-P8CE-FP005          *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This issue is fixed in 4.5.1.5-P8CE-FP005
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PJ37928
+   
+   
+ * REPORTED COMPONENT NAME
+   CONTENT ENGINE
+   
+   
+ * REPORTED COMPONENT ID
+   5724R8101
+   
+   
+ * REPORTED RELEASE
+   451
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-07-08
+   
+   
+ * CLOSED DATE
+   2010-12-13
+   
+   
+ * LAST MODIFIED DATE
+   2010-12-13
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    PJ37925 [http://www-01.ibm.com/support/docview.wss?uid=swg1PJ37925]
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CONTENT ENGINE
+   
+   
+ * FIXED COMPONENT ID
+   5724R8101
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R451 PSY
+   UP

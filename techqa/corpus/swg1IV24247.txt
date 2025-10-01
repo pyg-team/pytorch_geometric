@@ -1,0 +1,146 @@
+Title: IBM IV24247: OUT OF MEMORY FATAL ERROR WHEN RUNNING DISCO - United States
+
+Text:
+  FIXES ARE AVAILABLE
+IBM Tivoli Network Manager IP 3.9.0 Fix Pack 3, 3.9.0-TIV-ITNMIP-FP0003 [http://www-01.ibm.com/support/docview.wss?uid=swg24033501]
+IBM Tivoli Network Manager IP 3.9.0 Fix Pack 4, 3.9.0-TIV-ITNMIP-FP0004 [http://www-01.ibm.com/support/docview.wss?uid=swg24034724]
+IBM Tivoli Network Manager IP Edition 3.9.0 Fix Pack 5, 3.9.0-TIV-ITNMIP-FP0005 [http://www-01.ibm.com/support/docview.wss?uid=swg24037809]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Seeing out of memory Fatal error below. Discovery has never
+   completed before on this server.
+   
+   Out-of-memory - This process has run out of
+   memory or exceeded the operating system memory limit for a 32
+   bit application - You must take action to reduce the amount of
+   data this application is having to process new handler called
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * All ITNM 3.9 Users.                                          *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * The issue was that due to a discovery configuration error (  *
+   * invalid NAT gateway ) the discovery was doing a full         *
+   * discovery every 90 seconds. This resulted in a lot of        *
+   * disco.profilingData entries which summarize each of those    *
+   * discoveries. The table used to store the profilingData (     *
+   * disco.profilingData ) was leaking memory every time data was *
+   * retrieved from it. Unfortunately when the discovery status   *
+   * GUI is activated it requests all the data from this table    *
+   * every 20 seconds.The problem can be easily seen by starting  *
+   * up a discovery process with multiple profilingData entries   *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * | fix pack | 3.9.0-ITNMIP-FP0002                             *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fix the memory leak  in the stitcher and GUI.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV24247
+   
+   
+ * REPORTED COMPONENT NAME
+   NC/PREC DISCOVY
+   
+   
+ * REPORTED COMPONENT ID
+   5724O52DS
+   
+   
+ * REPORTED RELEASE
+   390
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-07-03
+   
+   
+ * CLOSED DATE
+   2012-07-18
+   
+   
+ * LAST MODIFIED DATE
+   2012-07-18
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   NC/PREC DISCOVY
+   
+   
+ * FIXED COMPONENT ID
+   5724O52DS
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R390 PSN
+   UP
+   
+   
+ * R390 PSY
+   UP

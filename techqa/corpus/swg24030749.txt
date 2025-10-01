@@ -1,0 +1,50 @@
+Title: IBM Download WebSphere MQ Hypervisor for AIX V7.0.1 - United States
+
+Text:
+ DOWNLOADABLE FILES
+
+ABSTRACT
+ This document describes how to download IBM WebSphere MQ Hypervisor for AIX V7.0.1 eAssembly images from the Passport Advantage website. 
+
+DOWNLOAD DESCRIPTION
+This document was created during March 2012 for V7.0.1
+
+Terminology
+
+WebSphere MQ Hypervisor for AIX V7.0.1 is supplied in three eAssemblies. These consist of an archive file containing the Quick Start Guide, an archive file containing the User Guide PDF, and an Open Virtualization Format virtual machine image for use with an IBM Workload Deployer. 
+Related product documentation
+
+WebSphere MQ Hypervisor for AIX contains a guest operating system and WebSphere MQ. The most up to date information about WebSphere MQ can be found in the US English WebSphere MQ V7.0.1 readme file at: http://www.ibm.com/support/docview.wss?rs=171&uid=swg27006097 [http://www.ibm.com/support/docview.wss?rs=171&uid=swg27006097]
+
+Downloading the relevant eAssembly images from the Passport Advantage Xtreme Leverage website  1. From the eAssemblies table below, decide which of the eAssemblies you want to download.
+ 2. Go to the Download package table below and follow the link to the Passport Advantage Xtreme Leverage website.
+ 3. Sign in to download all of the images that you need.
+ 4. Unpack each of the images onto your system.
+
+eAssemblies table 
+
+eAssembly or eImage 
+Part Number eAssembly or eImage Description CI6QAML This is the Quick Start Guide for WebSphere MQ Hypervisor for AIX V7.0.1 CI6QBML This is the WebSphere MQ Hypervisor for AIX V7.0.1 User Guide PDF CI6QCML This is the WebSphere MQ Hypervisor for AIX V7.0.1 for IBM Workload Deployer image PREREQUISITES
+Details of system requirements can be found at the following link.
+
+URL LANGUAGE SIZE(Bytes) Detailed system requirements [http://www.ibm.com/software/integration/wmq/requirements/] US English 1 
+URL LANGUAGE SIZE(Bytes) WebSphere MQ v7.0.1. product documentation [http://www.ibm.com/support/knowledgecenter/SSFKSJ_7.0.1/com.ibm.mq.doc/help_home_wmq.htm?cp=SSFKSJ_7.0.1%2F0] US English 1 
+DOWNLOAD PACKAGE
+
+
+
+
+Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options 
+What is Fix Central(FC)? [https://www.ibm.com/support/fixcentral/help?page=swfaqs] IBM Passport Advantage 1 Jun 2012 US English 1 FC [http://www.ibm.com/software/howtobuy/passportadvantage/pao_customers.htm] [ ] 
+TECHNICAL SUPPORT
+ For Passport Advantage Online support, see:
+http://www.ibm.com/software/howtobuy/passportadvantage/paocustomer/docs/en_US/ecare.html [http://www.ibm.com/software/howtobuy/passportadvantage/paocustomer/docs/en_US/ecare.html]
+
+To access a wide variety of technical resources for this product, see the WebSphere MQ product home pages:
+http://www.ibm.com/software/integration/wmq/ [http://www.ibm.com/software/integration/wmq/]
+
+To see latest information and technotes, go to the WebSphere MQ support website:
+http://www-947.ibm.com/support/entry/portal/Overview/Software/WebSphere/WebSphere_MQ [http://www-947.ibm.com/support/entry/portal/Overview/Software/WebSphere/WebSphere_MQ] 
+
+PRODUCT ALIAS/SYNONYM
+ WMQ MQ

@@ -1,0 +1,32 @@
+Title: IBM Troubleshooting SSH connection to DataPower appliance - United States
+
+Text:
+datapower; ssh; ssh service; enable; enabled; acl; access control list; access allowed; access; ip address restrictions; ip address; restrictions; 7993; 7993; 7993; machine type 7993 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ How to troubleshoot SSH connection to WebSphere® DataPower® appliance 
+
+CAUSE
+Ensure that the SSH service is enabled and, if an Access Control List (ACL) is being used, that the IP address of the client is allowed access in the ACL.
+
+ENVIRONMENT
+The DataPower appliance requires an interactive process to protect credentials during the SSL handshake. The DataPower appliance initiates a secure channel and provides for an encrypted login process.
+
+RESOLVING THE PROBLEM
+First, ensure SSH is enabled:
+
+
+
+ 1. Login to the WebGUI as an administrator 
+ 2. Click Network 
+ 3. Expand Management 
+ 4. Click SSH Service 
+ 5. Click Admin State enabled
+    
+
+Next, while still on the Configure SSH Service page, check the ACL. The Access Control List field will either be "(none)" indicating no IP address restrictions are set, or the field will display the name of a previously configured ACL. If one is configured, click the "..." button to edit the ACL and ensure that the IP address of your client is allowed access. As a quick test, you can change the value of the ACL to "(none)", which will remove any IP address restrictions on the SSH interface. Save any changes made to the SSH service configuration. 
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration WebSphere DataPower Integration Appliance XI50 Business Integration WebSphere DataPower XML Security Gateway XS40 Business Integration WebSphere DataPower XML Accelerator XA35

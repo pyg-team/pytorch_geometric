@@ -1,0 +1,49 @@
+Title: IBM Unable to retrieve Dynamic Agent (DA) history joblog and get error AWSBIN079E from DWC - United States
+
+Text:
+tws;iws TROUBLESHOOTING
+
+PROBLEM
+We retrieve joblog for DA job, but found that if we retrieve the DA joblog from the current plan, we can view the joblog.
+
+However if we check history plan and retrieve joblog from DA job inside, we will get error.
+
+SYMPTOM
+Browsing current plan DA joblog has no issue, but when trying to retrieve the DA's history joblog, it gets following error
+from DWC:
+
+[2/14/18 9:09:34:764 CST] 00051f3d SymphonyModul E AWSJSY405E The Symphony plan operation "loadJob" could not be completed because an error has occurred while accessing the requested file. The error message is: "AWSBIN079E An error occurred obtaining the stdlist file status information for job: 0AAAAAAAAAAAFAXR.DA_JOB: No such file or directory".
+
+This can be reproduced from conman, listing job is successful. But when trying to obtain its joblog, get AWSBHU072E error:
+
+conman
+
+setsym ---> to set the history plan
+
+(3)%sj DA#@#DA_JOB
+
+(Est) (Est)
+Workstation Job Stream SchedTime Job State Pr Start Elapse ReturnCode Dependencies
+
+DA #STREAM 1802 02/23 **************************************** SUCC 10 02/23 00:01 DA_JOB
+SUCC 10 02/23 00:01 0 #J910835427
+
+(3)%sj DA#STREAM.DA_JOB;stdlist
+==================================================
+AWSBHU072E There are no objects that match the selection you have entered.
+
+This problem applies to all DA jobs which Stream is under DA too. But if the Stream is under FTA, though job under DA, it does not have such problem.
+
+The DA joblog can be seen under DA's TWSHOME/stdlist/JM/yyyy.mm.dd has 600 or 755 permission:
+
+-rw------- 1 twsuserx tws 8199 Feb 23 17:51 DA#STREAM.DA_JOB.JNUM-910835426.zip
+
+Once issue happens, this zip dir is not unziped to the upper dir as it should.
+
+CAUSE
+TWA/TDWB/config/JobDispatcherConfig.properties have configured both the SuccessfulJobsMaxAge and UnsuccessfulJobsMaxAge values to zero or value that does not cover the DA joblog history length.
+
+RESOLVING THE PROBLEM
+The suggested value are 240 (ten days) for the SuccessfulJobsMaxAge and 720 (30 days) for UnsuccessfulJobsMaxAge in TWA/TDWB/config/JobDispatcherConfig.properties file.
+
+Make the change and restart WAS to make sure it taken effect.

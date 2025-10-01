@@ -1,0 +1,196 @@
+Title: IBM PI96646: CPSM: WUI SERVER REGION RECEIVES DFHSJ0002 SEVERE ERROR 0B21 ON WARM START RUNNING EYUCMCIJ JVM SERVER - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When the WUI server region is started WARM (START=AUTO) the
+   following messages occur:
+   .
+     DFHSJ0002 applid A severe error (code X'0B21') has occurred
+     in module DFHSJJS.
+   .
+   This 0B21 error is associated with exception trace entry:
+   .
+     SJ 0B21 SJJS  *EXC* CJSR_STILL_ACTIVE
+       SET_JVMSERVER,DISABLED,EYUCMCIJ,PHASEOUT,NO
+   .
+   which is issued if the CJSR transaction is still active when
+   trying to bring down the JVM server.  Typically during a WARM
+   start the JVMSERVER resources which are cataloged and therefore
+   recovered.  But for the CMCI JVM server, EYUCMCIJ, this
+   JVMSERVER is being DISABLED/DISCARDed and then replaced by a
+   newly installed one.  This is failing because when we try to
+   phase it out, we find the CJSR task is still active and issue
+   the error.
+   .
+   If the region is started INITIAL or COLD, the problem does not
+   occur.
+   .
+   .
+   .
+   Additional Symptom(s) Search Keyword(s): KIXREVxxx
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Start the region with START=INITIAL or START=COLD
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All CICSPlex SM V5R4M0 users,                *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: A CICSPlex SM WUI region issues         *
+   *                      message DFHSJ0212 or DFHSJ0002 during   *
+   *                      a CICS WARM or EMERGENCY restart.       *
+   ****************************************************************
+   A CICSPlex SM WUI region is configured to provide the
+   CICS management client interface (CMCI), using a JVM server.
+   The WUI region is stopped, and restarted using START=AUTO to
+   perform a CICS WARM or EMERGENCY restart.
+   During the restart, the WUI attempts to discard and recreate
+   its internal resources, including the CMCI JVM server.
+   A timing issue while doing this leads to the JVM failing to
+   restart. CICS issues message
+   +DFHSJ0002 applid A severe error (code X'0B21') has occurred
+              in module DFHSJJS.
+   In another presentation of the problem the JVM may fail to
+   terminate, and CICS will issue message DFHSJ0212:
+   DFHSJ0212 date time applid An error occurred while terminating
+             the JVM belonging to the JVMSERVER resource EYUCMCIJ.
+              Reason code: TERMINATION_TIMED_OUT
+   .
+   Additional Keywords: SJ0212 SJ0002 msgDFHSJ0212 msgDFHSJ0002
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The CPSM WUI server has been updated so that if JVM server
+   EYUCMCIJ is recovered from the catalog during a WARM or
+   EMERGENCY restart then the JVM server will not be deleted and
+   reinstalled. CICS will attempt to set EYUCMCIJ to the ENABLED
+   state if necessary.
+   .
+   Message EYUVS0217I is no longer issued and will be removed.
+   Message EYUVS0219I is updated as follows:
+   EYUVS0219I applid CICS Management Client Interface JVM server
+              EYUCMCIJ enabled. Establishing server using
+              port number portnumber.
+   The CICSPlex SM Knowledge Center will be updated with these
+   changes.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI96646
+   
+   
+ * REPORTED COMPONENT NAME
+   CICS TS Z/OS V5
+   
+   
+ * REPORTED COMPONENT ID
+   5655Y0400
+   
+   
+ * REPORTED RELEASE
+   10M
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2018-04-12
+   
+   
+ * CLOSED DATE
+   2018-06-07
+   
+   
+ * LAST MODIFIED DATE
+   2018-06-09
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UI56335
+   
+   
+
+MODULES/MACROS
+ *  EYU0VWXI EYU0VWXP EYU0VWXT EYUEVWXL EYUKVWXL EYUSVWXL EYUTVTHE
+   EYUTVTHK EYUTVTHS
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CICS TS Z/OS V5
+   
+   
+ * FIXED COMPONENT ID
+   5655Y0400
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R10M PSY UI56335 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI56335]
+   UP18/06/09 I 1000
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

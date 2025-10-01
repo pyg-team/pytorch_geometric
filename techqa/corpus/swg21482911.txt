@@ -1,0 +1,49 @@
+Title: IBM What is a commuter license? - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ I would like more information on what a commuter license is and how it works. 
+
+RESOLVING THE PROBLEM
+What is Commuter Licensing?
+
+Commuter licensing allows you to temporarily use a network license for the product on a portable computer that is not connected to the network. The most common use of commuter licensing is when a user of your network needs to travel on business and wants to take along a copy of your product. If the license manager has been configured by your system administrator to allow commuter licensing, the network user can check out a commuter license to use for your product for the duration of the trip, and then check the commuter license back in on returning.
+
+
+Obtaining Commuter Licenses
+
+To check out a commuter license, the portable computer (for example, a laptop) on which the version of the product will be used must be attached to the network and have access to a license server containing licenses for that product and version of the installed product. The product must also be installed as a network install on that laptop. After checking out a commuter license, the user may disconnect the laptop from the network. 
+
+
+Before your network users check out commuter licenses, they should make sure of the following:
+- The portable computer must have a network install copy of the product installed and ready to use. Remember, the application must be able to run off the network. The best way to test whether or not the application is ready to use, is to attempt to launch the product while connected to the network prior to checking out a license. If the product launches without error, the product is ready.
+- The system is connected to the network.
+- Has network access to the appropriate license server. (You do not need to set the lshost file or LSHOST or LSFORCEHOST environment variables to contact a specific license server because your user will be able to request a specific license server when using the commuter licensing utility). 
+- Has access to the spsscommute utility.
+
+Launching the spsscommute /licensecommute utility.
+
+The spsscommute (more recent versions of the utility is called licensecommute) utility shortcut should be found under the start menu short cut for the product. Please note the start menu short cut is available only for Windows installs. If you have a Mac or Linux install of Statistics, you will find the spsscommute/licensecommute utility in the Statistics installation directory (note Clementine client is a window only install.)
+
+Once the spsscommute/licensecommute utility has been launched you will see a listing of the possible licenses you can check out. Each license will show the number of available licenses for check out. If you see a red check mark next to a commuters license that means that an authorization has already been checked out to your portable computer. You may not check out an authorization if it is already checked out. If you wish to check out a modueled license from your product the commute utility will automatically check out a base license for you. It is required to check out a base license, if you wish to check out a modueled license.
+
+Checking out a Commuters License
+
+To check out a license, select the license under a license server. The Enter number of days until the commuter authorization expires text box becomes active. By default you can enter a maximum of five days to check our a commuter license. To chance the maximum number of days please see the Configuration of Commuter licenses section. By checking out a commuter license to use with your product, you decrease the number of available uses of the application for other network users, so specify the minimum number of days that you need. Next click Check Out. Remember the name of the license server from which you obtained the authorization. You will need to check the authorization back into the same license server later.
+
+Checking in a Commuter License
+
+To check in a commuter license, look for the license under the license server from which you checked it out. Click once on it in the display to select it. (There should be a red check mark next to it, indicating that you have it checked out.) Click Check In. If you allow the commuter license to expire, the client product will no longer work while the computer is off of the network. The license manager will release the expired license back to the licensing pool. This license can now be used by another user. 
+
+Note: You must check the authorization back into the same license server from which you checked it out.
+
+RELATED INFORMATION
+ Need more help? Our Modeler forum is Live! [https://developer.ibm.com/answers/topics/modeler/?smartspace=predictive-analytics]
+
+
+ 
+
+HISTORICAL NUMBER
+ 81358

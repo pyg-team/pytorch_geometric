@@ -1,0 +1,41 @@
+Title: IBM CRIMC1017E 'Failed to locate jar' error when installing WebSphere Portal v8 - United States
+
+Text:
+CRIMC1017E; CRIMA1154E; CRIMC1020E; com.ibm.ws.exec.chmod_8.0.0.201106071228; com.ibm.ws.patchinstaller_8.0.0.201112132330; zip file not found TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+When installing WebSphere Portal v8, the installation may fail immediately with error code CRIMC1017E and the message "Failed to locate jar' for various jar files. 
+
+SYMPTOM
+In the IBM Installation Manager logs or in the console output, you may see errors similar to the following:
+
+=======================
+Unable to read consumer identity
+CRIMA1154E ERROR: Error installing.
+
+CRIMC1020E ERROR: jar file com.ibm.ws.exec.chmod_8.0.0.201106071228 not found
+
+CRIMC1017E ERROR: Failed to locate jar file com.ibm.ws.exec.chmod_8.0.0.201106071228.
+
+Cannot find the table of contents file for an artifact in the repository. Table of contents files are located under the atoc directory in the repository. 
+
+ERROR: 'jar file com.ibm.ws.exec.chmod_8.0.0.201106071228' not found. 
+=======================
+
+These errors may repeat for a number of different jar files. 
+
+
+CAUSE
+The primary cause for this error is a problem with the Portal media repositories. In this case, the user had extracted repositories for other interim fixes into the Portal Setup directory, which overwrote files that the Portal installer needed. 
+
+RESOLVING THE PROBLEM
+To resolve the problem, start with a fresh set of Portal repositories by re-downloading them from passport advantage and re-extracting them. When you extract the zip files, ensure you extract them into the same parent directory. For example you might create a directory called /opt/Portal8. You would extract each zip file into the "Portal8" directory and end up with the following file structure:
+
+/opt/Portal8/Setup
+/opt/Portal8/WAS
+/opt/Portal8/Portal
+/opt/Portal8/<Offering>
+
+Where <Offering> is Enable, Extend, WCM, or WSE if you have those offerings. If you just have Portal Server, then you will not have an <Offering> directory.
+
+Once the media is extracted, launch the installation again.

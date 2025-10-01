@@ -1,0 +1,132 @@
+Title: IBM PI35115: APPLICATION TAGS ARE NOT CONTAINED IN IMPORT OR EXPORT - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  You will have issues when using application tags during import
+   and export. The tag will not be exported when you export an
+   application and the tags are ignored when you import an
+   application.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * All                                                          *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * You will have issues when using application tags during      *
+   * import                                                       *
+   * and export. The tag will not be exported when you export an  *
+   * application and the tags are ignored when you import an      *
+   * application.                                                 *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Upgrade to UCD version 6.1.1.4                               *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fixed in UCD version 6.1.1.4
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI35115
+   
+   
+ * REPORTED COMPONENT NAME
+   UDEPLOY
+   
+   
+ * REPORTED COMPONENT ID
+   5725M7700
+   
+   
+ * REPORTED RELEASE
+   500
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-02-16
+   
+   
+ * CLOSED DATE
+   2015-06-25
+   
+   
+ * LAST MODIFIED DATE
+   2015-06-25
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   UDEPLOY
+   
+   
+ * FIXED COMPONENT ID
+   5725M7700
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R500 PSY
+   UP

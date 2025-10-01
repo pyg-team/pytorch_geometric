@@ -1,0 +1,158 @@
+Title: IBM OA48851: TEBS: SDA AGENT INITIALIZATION FAILS ON Z/OS 2.2 - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS UNREPRODUCIBLE IN NEXT RELEASE.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Environment:
+   This defect is specific to z/OS platforms.
+   
+   Problem Description:
+     The Omegamon e3270ui Self-Describing Agent (SDA) fails
+     to initialize in a z/OS 2.2 environment.
+   
+   Detailed Recreation Procedure:
+     This can be recreated by configuring a Tivoli Monitoring
+     server on z/OS 2.2 .
+   
+   Related Files and Output:
+     The signature of this failure can be seen in the TEMS RAS1 log
+     message "BPX1STA returned rc=-2".
+   
+   Approver:   NC
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All ITMS/ENGINE users.                       *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: The Tivoli Monitoring SDA agent fails   *
+   *                      to start on z/OS 2.2.                   *
+   ****************************************************************
+   * RECOMMENDATION: Apply the PTF.                               *
+   ****************************************************************
+   The Omegamon e3270ui Self-Describing Agent fails in a z/OS 2.2
+   environment when USS is configured with KERNELSTACKS(ABOVE).
+   This failure does not occur when USS is configured with
+   KERNELSTACKS(BELOW).  The RAS1 log shows "TEMS_MANIFEST_PATH
+   directory <dir> does not exist!", and the Self-Describing Agent
+   is disabled.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *  The code has been changed to accomodate USS calls when USS is
+   configured with KERNELSTACKS(ABOVE).
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   OA48851
+   
+   
+ * REPORTED COMPONENT NAME
+   CT/ENGINE
+   
+   
+ * REPORTED COMPONENT ID
+   5608A41CE
+   
+   
+ * REPORTED RELEASE
+   630
+   
+   
+ * STATUS
+   CLOSED UR1
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   YesSpecatt / New Function
+   
+   
+ * SUBMITTED DATE
+   2015-09-09
+   
+   
+ * CLOSED DATE
+   2015-10-19
+   
+   
+ * LAST MODIFIED DATE
+   2015-11-04
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *     KLXLIB
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CT/ENGINE
+   
+   
+ * FIXED COMPONENT ID
+   5608A41CE
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R630 PSY UA79465 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UA79465]
+   UP15/10/23 P F510
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

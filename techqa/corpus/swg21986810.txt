@@ -1,0 +1,27 @@
+Title: IBM Configuring viewers for an  IBM Content Navigator desktop - United States
+
+Text:
+viewer; viewer map; row; matching; mime type; mime TECHNOTE (FAQ)
+
+QUESTION
+ How do I configure IBM Content Navigator desktop to open documents of a specified mime type using a specific viewer? 
+
+ANSWER
+Every Navigator desktop has a viewer map associated with it. By
+default, it is the Default Viewer Map. The viewer map controls what
+viewers are used to open documents. 
+
+
+ 1. Login to the Navigator admin desktop, click Viewer Maps on the left to open the Viewer Maps panel. 
+ 2. Create a new viewer map for your desktop, by making a copy of the Default Viewer Map or select the existing Viewer Map already assigned to your desktop to modify it. 
+    Note that the Default Viewer Map cannot be modified. 
+ 3. Select the row in the viewer map that has the matching mime type and repository. 
+ 4. Click Edit to modify this row and assign a new viewer to the target mime type. 
+ 5. Save the changes to go back to the Viewer Map screen. 
+ 6. Move up the modified row so that it is the first row in the viewer map, scanning from top down, that matches the target mime type and repository. This is a key step. Navigator will use the viewer
+    associated with the first row with matching repository and mime type, scanning from top to bottom. For example if there are two rows in the Viewer Map like this:
+    - FileNet Content Manager - Adobe Reader - application/pdf
+    - FileNet Content Manager - Daeja ViewONE Professional - application/pdf
+    then PDF documents will be attempted to be opened using the Adobe Reader instead of the Daeja viewer. 
+ 7. Save the changes. Ensure that the modified or new viewer map is assigned to the target desktop 
+ 8. Logout and log back in to the desktop and the new viewer map will be used.

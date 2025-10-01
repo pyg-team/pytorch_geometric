@@ -1,0 +1,35 @@
+Title: IBM Navigator panel shows Tivoli Storage Manager selection grayed out - United States
+
+Text:
+reporting monitoring agent grayed tsm itm tivoli storage manager tep tems TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ In Tivoli Enterprise Portal (TEP), the Tivoli Storage Manager is grayed out in the Navigator panel. 
+
+SYMPTOM
+Tivoli Storage Manager is grayed out and cannot get data in workspaces in Tivoli Enterprise Portal.
+
+
+CAUSE
+No monitoring agents are installed or recognized by ITM on the Reporting and Monitoring system.
+
+RESOLVING THE PROBLEM
+To resolve this problem, the following instructions should be performed on the system where the Monitoring Agent is installed.
+
+
+Open the Tivoli Enterprise Monitoring Services window. 
+
+ * If the Monitoring Agent does not exist for the Tivoli Storage Manager server, double click on the Template for the Monitoring Agent for Tivoli Storage Manager and create a monitoring agent. 
+ * If the monitoring agent already exists, do the following:  1. Right click the agent and go to Advanced->Remove Instance 
+    2. Double click on the Template for the Monitoring Agent for Tivoli Storage Manager and create a monitoring agent
+   
+   
+
+Note: The above instructions would be used regardless of whether the Monitoring Agent is installed on the same or a different system than the ITM/Reporting and Monitoring.  
+
+Also note that when configuring the instance, be sure the hostname/IP address is pointing to the system that has ITM/Reporting and Monitoring installed.
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ TSM TEP ITM

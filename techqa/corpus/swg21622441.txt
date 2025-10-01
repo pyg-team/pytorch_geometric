@@ -1,0 +1,17 @@
+Title: IBM Reports show Client IP as 0.0.0.0 in IBM InfoSphere Guardium - United States
+
+Text:
+guardium client ip 0.0.0.0 encrypt TECHNOTE (FAQ)
+
+QUESTION
+ We get reports where the Client IP appears as 0.0.0.0 in IBM InfoSphere Guardium. How do we resolve this to the correct IP address of the client? 
+
+ANSWER
+This situation can arise when the database traffic is encrypted. Since the sniffer does not as yet know what the actual Client IP is, the client IP is recorded as 0.0.0.0. Once the decryption is completed, The client IP is recorded in a separate column called Analyzed Client IP. 
+
+To view the client IP for encrypted traffic, please add the field "Analyzed Client IP" from the client/server domain to the report as shown in the example below. 
+
+Please note that it is possible that for some rows, the Analyzed Client IP is blank. This indicates that the decryption for that piece of traffic has not yet been completed. 
+
+
+[/support/docview.wss?uid=swg21622441&aid=1] [/support/docview.wss?uid=swg21622441&aid=1]

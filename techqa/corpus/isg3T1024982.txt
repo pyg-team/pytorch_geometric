@@ -1,0 +1,63 @@
+Title: IBM Backing up Partition Data of Systems Managed by HMC - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ 
+Do you include profile backups as part of your backup routines when dealing with Power system? 
+
+CAUSE
+
+The partition data that defines logical partitions (LPARs) is stored in NVRAM on the Power server, but sometimes this data is lost when events that cause replacement of the flexible service processor (FSP) occur. This can include a system board replacement on smaller systems where the components are integrated or on larger systems where the FSP fails and needs to be replaced. Having profile backups available to restore in case of a major hardware repair action can save you much time in your recovery process.
+
+
+ANSWER
+ 
+
+The HMC maintains a current backup of partition data for each system which gets updated when the HMC connects to the server or when changes are made to the server. This automated backup is overwritten when the system connects to the HMC so its not really the best idea to rely on it alone following a recovery event. If you performed a firmware update on the managed system there is an additional automated backup made of the partition data which can be useful for recovery purposes if the data it contains is current. To really ensure you have current backups of profile data to work with its best to take the extra steps to save them on a routine basis. 
+
+There are several ways to create backups of your partition data. If you are already backing up the HMC on a regular basis, the profiles are part of the data that is backed up. The graphical user interface (GUI) also provides a method to same partition data. The navigation path through the Classic view of the HMC is as follows.
+
+Systems Management --> Servers --> Configuration --> Manage Partition Data --> Backup
+
+Figure 1. Backup of Profile Data using HMC Classic View 
+
+[/support/docview.wss?uid=isg3T1024982&aid=1] [/support/docview.wss?uid=isg3T1024982&aid=1]Backup of Profile Data using HMC Enhanced+ View (1) -
+
+When working in the Enhanced+ view the options to perform the backup of partition data is reached once you navigate to All Systems, select the system of interest, then select All Actions. Under the Legacy sub-menu is the options to Manage Partition Data. Select the desired system from All Systems view.
+
+Figure 2. Backup of Profile Data using HMC Enhanced+ View (1) - Select target system.
+[/support/docview.wss?uid=isg3T1024982&amp;aid=2]
+
+Once you select the server then you need to expand the Systems Actions menu to see the Legacy sub-menu which will show the Manage Partition Data tasks to include Backup.
+
+Figure 3. Backup of Profile Data using HMC Enhanced+ View (2) - Manage Partition Data options located under Legacy option.
+[/support/docview.wss?uid=isg3T1024982&amp;aid=3] 
+Along with the methods available in the HMC GUI for backup of profile data there is also command line option to do the backup as well. The command, bkprofdata, is used to perform the backup of profile data using the HMC command line interface (CLI). Like typical HMC CLI commands you can view the man page to get details of usage along with examples (man bkprofdata). The basic syntax looks like the following. 
+
+bkprofdata -m <system name> -f <filename> 
+
+The system name can be displayed by running 
+
+lssyscfg -r sys -F name 
+
+The default directory where the backup is stored will be /var/hsc/profiles/<serial number of system> 
+
+If you want to store the backup in a different location then you would need to specify the fully qualified path as well as the filename to use. If your backup is scripted and you want to reuse the same filename then add the "--force" option to overwrite an older backup. 
+
+Saving the profile backup to an remote location is an additional step that makes sense as part of a good backup strategy plan. If you are already backing up HMC data to a remote site or removable media then backups of profile data are already taken care in that process. If you want to just save the profile data files by themselves then using the secure copy (scp) command will work. 
+
+You will need to copy both the backup file as well as its directory file. 
+
+To copy the backup file to remote server the syntax used for scp could look like following. 
+
+scp /var/hsc/profiles/<serial>/<backup file> user@<remote host>:/<target directory> 
+
+To copy the backup's directory file the syntax used for scp could look like the following. 
+
+scp /var/hsc/profiles/<serial>/directory/<backup file>.dir user@<remote host>:/<target directory> 
+
+The directory file is stored in the a subdirectory of the system's profile backup as reflected in the example scp command string above. The directory file will have the same name as the backup file along with a ".dir" file extension. 
+
+If you need to restore your profile data after a system repair action then you can use the tool in the GUI to restore partition data or the HMC CLI command rstprofdata. Again, the man page for the CLI (man rstprofdata) is good resource to refer to when looking for the syntax and use of the restore command. So if you do have to restore from a backup then having maintained a good backup strategy which included the profiles of your systems will make recovery operations much easier.

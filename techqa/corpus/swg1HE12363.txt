@@ -1,0 +1,146 @@
+Title: IBM HE12363: Documentation for Interview Plan status is not accurate - United States
+
+Text:
+  DIRECT LINKS TO FIXES
+6.0.3.3-ATLAS-IF001-README.pdf [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FGlobal+Retention+Policy+and+Schedule+Management&fixids=6.0.3.3-ATLAS-IF001-README&source=SAR]
+6.0.3.3-ATLAS-IF001 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FGlobal+Retention+Policy+and+Schedule+Management&fixids=6.0.3.3-ATLAS-IF001&source=SAR]
+Download IBM Atlas Policy Suite V6.0.3.3 Interim Fix 1 [http://www-01.ibm.com/support/docview.wss?uid=swg24042026]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Current documentation says the following for "Interview Plan
+   States":
+   Not Stated -- This covers all states from plan creation until
+   one of the interviewees submits a response.
+   In Progress -- At least one interview has submitted a response.
+   Completed -- The Plan has been explicitly marked as completed.
+   
+   This needs to be corrected as follows:
+   
+   Not Started -- When the plan is created, until at least one
+   person submits the response.
+   In Progress -- When there is at least one response, but not
+   everyone has replied to the last issuance. The last issuance is
+   the original notice, if the repeated interviews were not turned
+   on, or the last repeated interview as determined by the End By
+   date.
+   Completed -- When either all of the targets have complete status
+   for the last issuance or the plan was manually completed at
+   which point all of the targets statuses are set to complete as
+   well.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  NO
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Documentation for Interview Plan States is not accurate
+   and needs to be updated
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Documentation has been updated in
+   http://www.ibm.com/support/docview.wss?uid=swg27044359 [http://www.ibm.com/support/docview.wss?uid=swg27044359]
+   Section: Interviews > Interview states > Interview plan states.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   HE12363
+   
+   
+ * REPORTED COMPONENT NAME
+   ATLAS EDISCOVER
+   
+   
+ * REPORTED COMPONENT ID
+   5725D7500
+   
+   
+ * REPORTED RELEASE
+   603
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2015-08-05
+   
+   
+ * CLOSED DATE
+   2016-04-18
+   
+   
+ * LAST MODIFIED DATE
+   2016-04-18
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ATLAS EDISCOVER
+   
+   
+ * FIXED COMPONENT ID
+   5725D7500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R603 PSY
+   UP

@@ -1,0 +1,161 @@
+Title: IBM PI62418: THERE ARE NO LSWHERE, LSMON AND LSLIC EXECUTABLE FILES AFTER IBMSPSS STATISTICS CLIENT 24 WAS INSTALLED - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  You have installed IBM SPSS Statistics 24. In prior releases
+   (for example release Statistics 23) you were used to see some
+   executable files on program installation directory, for example
+   on a Windows Computer these files were:
+   
+   lswhere.exe, lsmon.exe and lslic.exe
+   
+   However, for release 24 you do no longer see these executable
+   files on the client installation path.
+   To use lswhere.exe for example was useful for troubleshooting in
+   the past when the client was installed with concurrent (network)
+   license.
+   When you run lswhere.exe on Client for example, you could see if
+   the connection to license server was established or not, so you
+   wonder why these files were removed from Client installation.
+   This was reported to IBM SPSS Development.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  The files were removed from Client installations by intention as
+   they are normally only used on the Computer where the Concurrent
+   license Manager is installed.
+   However, for troubleshooting purposes it is considered to maybe
+   put these files back to Client installations in a future
+   release.
+   Furthermore, these utilities have been discontinued by Sentinel
+   and old utilities do not work properly with new versions.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * see APAR text                                                *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * This issue has been addressed in IBM SPSS Statistics 24      *
+   * FixPack 2 for Windows OS.                                    *
+   * Please download from http://www.ibm.com/support/fixcentral   *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Please download from http://www.ibm.com/support/fixcentral   *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This issue has been addressed in IBM SPSS Statistics 24 FixPack
+   2 for Windows OS.
+   Please download from http://www.ibm.com/support/fixcentral [http://www.ibm.com/support/fixcentral]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI62418
+   
+   
+ * REPORTED COMPONENT NAME
+   SPSS STATISTICS
+   
+   
+ * REPORTED COMPONENT ID
+   5725A54ST
+   
+   
+ * REPORTED RELEASE
+   O00
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-05-13
+   
+   
+ * CLOSED DATE
+   2017-05-10
+   
+   
+ * LAST MODIFIED DATE
+   2017-05-10
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   SPSS STATISTICS
+   
+   
+ * FIXED COMPONENT ID
+   5725A54ST
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * RO00 PSN
+   UP
+   
+   
+ * RO00 PSY
+   UP

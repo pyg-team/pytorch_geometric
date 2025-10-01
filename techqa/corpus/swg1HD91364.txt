@@ -1,0 +1,167 @@
+Title: IBM HD91364: SEARCH RESULTS ARE DIFFERENT WITH CONFIRMATION WINDOW AND EXPORT RESULT - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PERMANENT RESTRICTION.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  ENV: ENOVIA LCA / CATIA V5R19SP3
+   Server AIX5.3 TL6 SP11
+   Client WinXP SP3
+   Prob: Search results are different with Confirmation window
+   and Export result Operation:
+   1. Create 200 Documents by Content Management
+   ex. "Date"_"Number"_"DocTest"
+   2. Create 201th Document
+   ex. "Date"_"Number""DocTest"
+   (note that there is no underbar between "Number" and
+   "DocTest".
+   3. Open Search panel from Content Management/Open icon
+   Search for: *_DocTest as Document ID
+   Click Search button
+   4. Confirmation window:
+   The search returned more results - 201 - than the maximum
+   acceptable - 200 -.
+   Do you wish to continue anyway?
+   5. Click Yes
+   Click Export icon
+   --> Search result is displayed as 200.
+   Expected Result
+   Search results are different with Confirmation window and
+   Export result.
+   Both results should be same.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  empty
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ENV: ENOVIA LCA / CATIA V5R19SP3
+   Server AIX5.3 TL6 SP11
+   Client WinXP SP3
+   Prob: Search results are different with Confirmation window
+   and Export result Operation:
+   1. Create 200 Documents by Content Management
+   ex. "Date"_"Number"_"DocTest"
+   2. Create 201th Document
+   ex. "Date"_"Number""DocTest"
+   (note that there is no underbar between "Number" and
+   "DocTest".
+   3. Open Search panel from Content Management/Open icon
+   Search for: *_DocTest as Document ID
+   Click Search button
+   4. Confirmation window:
+   The search returned more results - 201 - than the maximum
+   acceptable - 200 -.
+   Do you wish to continue anyway?
+   5. Click Yes
+   Click Export icon
+   --> Search result is displayed as 200.
+   Expected Result
+   Search results are different with Confirmation window and
+   Export result.
+   Both results should be same.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  THIS PROBLEM IS PERMANENT RESTRICTION IN I-PLM Collaborative
+   Innovation
+   Additional Closure Information:
+   Incident Diagnosis:
+   Search results are different compared to the no. of results
+   mentioned in the message.
+   Reason:
+   Although the predicate "where attribute like 'abc%_'" is
+   syntactically correct, it doesn't mean much.
+   It means : 'abc' followed by any string, followed by a
+   character. 'followed by any string' already includes
+   'followed by a character'.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   HD91364
+   
+   
+ * REPORTED COMPONENT NAME
+   ENOVIA LCA AIX
+   
+   
+ * REPORTED COMPONENT ID
+   569101700
+   
+   
+ * REPORTED RELEASE
+   519
+   
+   
+ * STATUS
+   CLOSED PRS
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-12-02
+   
+   
+ * CLOSED DATE
+   2010-04-21
+   
+   
+ * LAST MODIFIED DATE
+   2010-04-21
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

@@ -1,0 +1,98 @@
+Title: IBM Creating start and stop scripts for non-root Watson Content Analytics 3.5 installation on Linux - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ After installing WCA 3.5 on Linux as a non-root user, the "esadmin system startall" and "esadmin system stopall" display errors and do not start and stop all services. 
+
+SYMPTOM
+WebSphere Application Server, the IBM HTTP Server and some webapp services such as the nodeagent or ESAdminServer may not be started or stopped.
+
+
+CAUSE
+In running the installation program as a non-root user, there are documented limitations for the start and stop scripts. In particular, when using WebSphere Application Server, the IBM HTTP Server and WebSphere Application Server are not started. Certain services such as the nodeagent or ESAdminServer may also have issues with start up and stoppage. 
+
+Please note that IBM does not currently support switching context to "root" when a non-root installation was performed.
+
+
+ENVIRONMENT
+Non-root installation of WCA 3.5 on Linux. Use of WebSphere Application Server.
+
+
+
+DIAGNOSING THE PROBLEM
+The file "startstatus.log" (possibly with an additional numeric suffix in filename) contains the line:
+INFO: OUTPUT> Could not switch context to root. 
+
+This line may also be seen in the command line echo output of the start / stop script invocation.
+
+
+RESOLVING THE PROBLEM
+A workaround for this issue is to create your own start and stop scripts, which you can use to start and stop all required services. The file "default_config/AutoRunComponents.properties" controls what components are started / stopped by the WCA script. Because there are many possible install configurations, the exact sequence of the set of components being started / stopped can vary.
+
+Therefore, a good approach is to examine the command-line echo output of "esadmin system startall" and base your scripts from observations of the startup sequence.
+
+Create a new script "allstart.sh" and re-create the sequence therein with the equivalent direct command. To derive the direct command, look at the echo output for the command being attempted. Then, run that command yourself and observe the command-line echo output.
+
+For example, suppose the output has an error for [esclientexec.sh controller invokeHTTPWASCommands.sh stopESAdminServer].
+
+Running "esclientexec.sh controller invokeHTTPWASCommands.sh stopESAdminServer" directly from the command line might produce additional details:
+
+FFQC5201W Session ESExec.executeProgram cannot communicate [invokeHTTPWASCommands.sh stopESAdminServer] with CCL...
+
+Running "invokeHTTPWASCommands.sh stopESAdminServer" directly from the command line might produce the following:
+
+*** Stoping WebSphere Application instance [esRunCommand, /opt/WebSphere/AppServer/bin/stopServer.sh, ESAdminServer, -profileName...
+
+Running "esRunCmmand /opt/WebSphere/AppServer/bin/stopServer.sh ESAdminServer -profileName..." directly from the command line produces additional errors culiminating in the message "Could not switch context to root".
+
+To run the command directly, insert the following lines into "allstart.sh":
+
+echo Starting ESAdminServer
+/opt/WebSphere/AppServer/profiles/AppSrv01/bin/stopServer.sh ESAdminServer
+
+The path and profile may be different on your system.
+
+Continuing forward in this way produces two scripts that resemble the following examples:
+
+Example 1, "allstart.sh"
+
+echo Starting CCL
+/opt/IBM/es/bin/startccl.sh
+echo Starting IHS Web Server
+/opt/HTTPServer/bin/apachectl -k start
+echo Starting DMGR
+/opt/WebSphere/AppServer/profiles/Dmgr01/bin/startManager.sh
+echo Starting NodeAgent
+/opt/WebSphere/AppServer/profiles/AppSrv01/bin/startNode.sh
+echo Starting ESAdminServer
+/opt/WebSphere/AppServer/profiles/AppSrv01/bin/startServer.sh ESAdminServer
+echo Starting my_serverid
+/opt/WebSphere/AppServer/profiles/AppSrv01/bin/startServer.sh my_serverid
+echo Starting System
+esadmin system start
+echo Checking System
+esadmin check
+
+Example 2, "allstop.sh"
+
+echo Stopping System
+esadmin system stop
+echo Stopping my_serverid
+/opt/WebSphere/AppServer/profiles/AppSrv01/bin/stopServer.sh my_serverid
+echo Stopping ESAdminServer
+/opt/WebSphere/AppServer/profiles/AppSrv01/bin/stopServer.sh ESAdminServer
+echo Stopping NodeAgent
+/opt/WebSphere/AppServer/profiles/AppSrv01/bin/stopNode.sh
+echo Stopping DMGR
+/opt/WebSphere/AppServer/profiles/Dmgr01/bin/stopManager.sh
+echo Stopping IHS HTTP Server
+/opt/HTTPServer/bin/apachectl -k stop
+echo Stopping CCL
+/opt/IBM/es/bin/stopccl.sh
+echo Checking Status
+esadmin check
+
+RELATED INFORMATION
+ Administrator ID and password [http://www.ibm.com/support/knowledgecenter/SS5RWK_3.5.0/com.ibm.discovery.es.in.doc/iiysiuserid.htm]

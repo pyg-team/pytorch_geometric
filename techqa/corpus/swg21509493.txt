@@ -1,0 +1,104 @@
+Title: IBM How to increase memory to staging copy when an out of memory exception is received - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When running staging copy you receive an out of memory exception and are not able to copy data from your production database into your staging database. 
+
+SYMPTOM
+You see a stack trace similar to the following, but it might differ depending on what process was running when the out of memory exception occurred: 
+
+The Stage Copy utility is copying the merchant table data. 
+
+The Stage Copy utility copied table "member" successfully. 
+
+The Stage Copy utility copied table "orgentity" successfully. 
+
+The Stage Copy utility copied table "addrbook" successfully. 
+
+The Stage Copy utility copied table "address" successfully. 
+
+The Stage Copy utility copied table "mbrgrp" successfully. 
+
+The Stage Copy utility copied table "mbrgrpdesc" successfully. 
+
+The Stage Copy utility copied table "mbrgrpcond" successfully. 
+
+The Stage Copy utility copied table "mbrgrpmbr" successfully. 
+
+The Stage Copy utility copied table "trading" successfully. 
+
+The Stage Copy utility copied table "trddesc" successfully. 
+
+The Stage Copy utility copied table "mbrgrpusg" successfully. 
+
+JVMDUMP006I Processing dump event "systhrow", detail "java/lang/OutOfMemoryError" - please wait. 
+
+JVMDUMP032I JVM requested Snap dump using '/opt/IBM/WebSphere/CommerceServer70/bin/Snap.20110817.1xx409.20024.0xx.trc' in response to an event 
+
+JVMDUMP010I Snap dump written to /opt/IBM/WebSphere/CommerceServer70/bin/Snap.20110817.xx4409.20xx4.0001.trc 
+
+JVMDUMP032I JVM requested Heap dump using '/opt/IBM/WebSphere/CommerceServer70/bin/heapdump.20110xx7.14xx09.20024.0002.phd' in response to an event 
+
+JVMDUMP010I Heap dump written to /opt/IBM/WebSphere/CommerceServer70/bin/heapdump.20xx0817.xx4409.20024.0xx2.phd 
+
+JVMDUMP032I JVM requested Java™ dump using '/opt/IBM/WebSphere/CommerceServer70/bin/javacore.20110817.144409.20xx4.0003.txt' in response to an event 
+
+JVMDUMP010I Java dump written to /opt/IBM/WebSphere/CommerceServer70/bin/javacore.20110817.144xx9.20024.0003.txt 
+
+JVMDUMP013I Processed dump event "systhrow", detail "java/lang/OutOfMemoryError". 
+
+Exception in thread "main" java.lang.OutOfMemoryError 
+
+at sun.util.calendar.Gregorian.newCalendarDate(Gregorian.java:79) 
+
+at sun.util.calendar.Gregorian.newCalendarDate(Gregorian.java:31) 
+
+at sun.util.calendar.ZoneInfo.getOffset(ZoneInfo.java:377) 
+
+at oracle.jdbc.driver.DateCommonBinder.zoneOffset(OraclePreparedStatement.java:17561) 
+
+at oracle.jdbc.driver.DateCommonBinder.setOracleCYMD(OraclePreparedStatement.java:17603) 
+
+at oracle.jdbc.driver.TimestampBinder.bind(OraclePreparedStatement.java:18008) 
+
+at oracle.jdbc.driver.OraclePreparedStatement.setupBindBuffers(OraclePreparedStatement.java:2948) 
+
+at oracle.jdbc.driver.OraclePreparedStatement.executeBatch(OraclePreparedStatement.java:9314) 
+
+at oracle.jdbc.driver.OracleStatementWrapper.executeBatch(OracleStatementWrapper.java:211) 
+
+at com.ibm.commerce.staging.Copy.runBatch(Copy.java:577) 
+
+at com.ibm.commerce.staging.Copy.copyOneTable(Copy.java:502) 
+
+at com.ibm.commerce.staging.MerchantCopy.copyMerchantTables(MerchantCopy.java:770) 
+
+at com.ibm.commerce.staging.StagingCopy.stageCopy(StagingCopy.java:1457) 
+
+at com.ibm.commerce.staging.StagingCopy.main(StagingCopy.java:784) 
+
+./stagingcopy.sh: line 91: 20024 Segmentation fault ${JAVA_EXE?} -Duser.install.root="$WAS_HOME" -classpath $CLASSPATH $JVMPROPERTIES -Xmnx2048m -Dos=unix -Dwcshome=$WCS_HOME -Dwclogdir=$WCLOGDIR com.ibm.commerce.staging.StagingCopy $* $DEFAULTLOG $DBTYPE 
+
+
+CAUSE
+The tables being copied contain too much data for the staging copy script to be able to process. There are too many rows involved or the table data itself is large.
+
+
+RESOLVING THE PROBLEM
+To resolve this issue, increase the maximum available memory to the staging copy Java process: 
+
+Open the stagingcopy.sh/bat file in a text editor. 
+
+Find the line with the Java call: (Might appear slightly different for your WebSphere Commerce version) 
+
+${JAVA_EXE?} -Duser.install.root="$WAS_HOME" -classpath $CLASSPATH $JVMPROPERTIES -Dos=unix -Dwcshome=$WCS_HOME -Dwclogdir=$WCLOGDIR com.ibm.commerce.staging.StagingCopy $* $DEFAULTLOG $DBTYPE 
+
+and add an -Xmx4096M 
+
+It should look similar to the following update: 
+
+${JAVA_EXE?} -Duser.install.root="$WAS_HOME" -classpath $CLASSPATH $JVMPROPERTIES -Xmx=4096 -Dos=unix -Dwcshome=$WCS_HOME -Dwclogdir=$WCLOGDIR com.ibm.commerce.staging.StagingCopy $* $DEFAULTLOG $DBTYPE 
+
+In this example, 4096M is used. You can adjust the memory size accordingly depending on the available resources of your machine.

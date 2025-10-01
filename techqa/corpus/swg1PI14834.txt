@@ -1,0 +1,177 @@
+Title: IBM PI14834: RATIONAL DEVELOPER FOR SYSTEM Z (RDZ) V8.5.1.X DISPLAY CLIENT RETURNS FALSE RESULTS FOR V7.6.X CLIENTS - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+8.5.1.6: UI24911 PTF for Rational Developer for System z Host Options [http://www-01.ibm.com/support/docview.wss?uid=swg24039252]
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Rational Developer for System z - RDz - 8.5.1.4
+   A RDz client running RDz v7.6 connects to a RDz host that is
+   running v8.5.1.4.  A disconnect from this client appears to
+   never end on the host when using the RDz display clients
+   command.
+   
+   F RSED,APPL=D c
+   MODIFY RSED,APPL=DISPLAY CLIENT
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Cancel the userid on the host using the RDz command
+   
+   F RSED,APPL=C U=userid
+   MODIFY RSED,APPL=CANCEL USER=userid
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: 01.All RDz users                             *
+   *                 02.All RDz users                             *
+   *                 03.All RDz users                             *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: 01.The F RSED,APPL=D C still shows it   *
+   *                         as connected after a user has        *
+   *                         disconnect from RSE Server.          *
+   *                      02.RSE always creates a null-sized      *
+   *                         fekfivpd.log file in the daemon.log  *
+   *                         directory on startup, even if the    *
+   *                         daemon IVP is not executed.          *
+   *                      03.audit.log.mode=RW.R.R caused a       *
+   *                         wrong message, ERROR LogHandler:     *
+   *                         audit.log.mode has an invalid mode   *
+   *                         specified: input=RW.R.R.             *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   01.Daemon utilizes ZosSystemMiner finish() method to know the
+      client's disconnect. But RDz 7.6.x client does not issue
+      activate-miner command for ZosSystemMiner.
+   02.RSE always creates a null-sized fekfivpd.log file in the
+      daemon.log directory on startup, even if the daemon IVP is
+      not executed.
+   03.audit.log.mode=RW.R.R caused a wrong message, ERROR
+      LogHandler: audit.log.mode has an invalid mode specified:
+      input=RW.R.R.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  01.Now, the connect information will be cleared even when the
+      user connects via RDz 7.6.x.
+   02.Now, fekfivpd.log file is created only when a IVP is
+      invoked.
+   03.Now, audit.log.mode=RW.R.R is accepted.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI14834
+   
+   
+ * REPORTED COMPONENT NAME
+   RD/Z HOST
+   
+   
+ * REPORTED COMPONENT ID
+   5724T0723
+   
+   
+ * REPORTED RELEASE
+   850
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-03-31
+   
+   
+ * CLOSED DATE
+   2014-06-17
+   
+   
+ * LAST MODIFIED DATE
+   2014-07-03
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  FEKFCORE FEKFCOR6 FEKFDIVP FEKFZOS
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   RD/Z HOST
+   
+   
+ * FIXED COMPONENT ID
+   5724T0723
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R850 PSY UI18898 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI18898]
+   UP14/07/03 I 1000
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

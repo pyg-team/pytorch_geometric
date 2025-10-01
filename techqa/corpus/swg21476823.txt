@@ -1,0 +1,29 @@
+Title: IBM PROXSCAL fails with warning "invalid source name was used as value label of SOURCEID" - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ I am trying to run the PROXSCAL procedure for multidimensional scaling (MDS) in SPSS/PASW Statistics. I have multiple sources for the proximity matrices and wish to run an Individual Differences model. The variable which identifies the source of each matrix is named Country, for example. Each source has a numeric value and a value label with the name of the country. When I run PROXSCAL with COUNTRY identified as the Source variable, PROXSCAL fails to execute and the following warning is issued. 
+
+'Warnings
+An invalid source name was used as value label of SOURCEID. Source names should be valid variable names.
+This command is not executed.'
+
+If i use the same source variable in the ALSCAL procedure, the analysis runs and produces separate MDS output for each source. Why is PROXSCAL rejecting the SOURCEID variable? Does it reflect a bug in PROXSCAL? 
+
+RESOLVING THE PROBLEM
+PROXSCAL has some rules for the characteristics of the SOURCEID variable which do not apply to the source variable in ALSCAL. Therefore, PROXSCAL might reject a source variable that ALSCAL accepts. These rules are stated in the TABLE subcommand section of the PROXSCAL chapter in the Command Syntax Reference (which is available in Statistics from Help>Command Syntax Reference:
+
+"Source identifying variable. The values specify the source number and must be integers between 1 and the number of sources, inclusive. The value labels of this variable are used to identify sources on other subcommands. These value labels must comply with variable name conventions. Omitting a value label causes PROXSCAL to use the default label SRC_n, where n is the number of the source."
+
+So, PROXSCAL requires the value labels for the SOURCEID variable (COUNTRY in this example) to conform to the rules of variable names in Statistics, This requirement of value labels is not in force for value labels generally or for most procedures in Statistics. You can also find the rules for variable names in the Universals chapter of the Command Syntax Reference or by entering "Variable Names, Rules" in the Index tab under Help>Topics.
+
+A common error in this situation involves value labels that include a space, which would normally present no problems for value labels. For example, "United Kingdom" would be a valid value label for most purposes in Statistics but would trigger the error in question if used as a value label for the SOURCEID variable in PROXSCAL. This error could be easily fixed by replacing the space in the label with an underscore, as in "United_Kingdom". See the variable naming rules in the Help menu, as described above, to resolve more complex violations of the variable naming rules. 
+
+See Resolution 89148 for another PROXSCAL SourceID rule which may trigger an error with SourceID variables that are accepted by ALSCAL.
+
+
+
+HISTORICAL NUMBER
+ 89135

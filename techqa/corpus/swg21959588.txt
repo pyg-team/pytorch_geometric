@@ -1,0 +1,39 @@
+Title: IBM Importing a Certificate for the ITCAM Agent for Data Power (BN Agent) - United States
+
+Text:
+CAMDPALL CAMDPSEC Certification Import Importing TECHNOTE (FAQ)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ US English 
+
+QUESTION
+ How to import a Certificate for the TCAM Agent for Data Power (BN Agent) ? 
+
+CAUSE
+Certification is missing. 
+Trouble shooting Hint - The trace log will show an error that looks like this:
+[2015-05-28T05:58:45.248-0430] - ERROR - BODAPPS57 - pool-1-thread-2 - 
+com.ibm.management.soa.dp.monitor.agent.server.KBNSomaCPUUsage.getCPUUsa 
+ge - [subnode=DPPROD02; hostname=10.0.49.25;] occured exception 
+javax.net.ssl.SSLHandshakeException: Received fatal alert: 
+handshake_failure 
+
+
+ANSWER
+ 
+
+Import the certification file into the agent by doing the following command:
+
+Note : You can use either .cer or .pem. 
+Make sure the file is in ASCII not binary. 
+Where the /usr/ITM/JRE is your Java location and <fileName> is your file name.
+
+ex: 
+/usr/ITM/JRE/aix526/jre/bin/keytool -import -trustcacerts -alias 
+ligitalsso -keystore /usr/ITM/JRE/aix526/jre/bin/lib/security/cacerts 
+-storepass <fileName> -file /NEWSSL-sscert.cer 
+
+
+
+PRODUCT ALIAS/SYNONYM
+ ITCAM Agent for Data Power

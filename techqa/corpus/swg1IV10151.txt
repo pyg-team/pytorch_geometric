@@ -1,0 +1,263 @@
+Title: IBM IV10151: BIRT LONG DESCRIPTION IN 7.5 IS RENDERED INCORRECTLY AFTER UPGRADE - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The issue is that the BIRT reports have to be Dynamic Text in
+   HTML
+   format to display the rich text correctly, but this forces plain
+   text
+   to be rendered incorrectly. Changing this setting to Auto
+   doesn't work
+   because BIRT will always choose plain text unless the text
+   starts with
+   <html> and the long description in rich text format just starts
+   with a
+   <p> tag. In order to fix it, we had to duplicate the long
+   description
+   field on the report and modify visibility to hide the plain text
+   form
+   of the long description if it started with a <p> tag and hide
+   the the
+   visibility of the rich text form of the long description if it
+   didn't
+   start with a <p> tag. This works, but obviously is extremely
+   time
+   consuming given the sheer amount of reports.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: BIRT Reporting users using rich text         *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: The issue is that the BIRT reports have *
+   *                      to be Dynamic Text in                   *
+   *                                                              *
+   *                      HTML                                    *
+   *                                                              *
+   *                      format to display the rich text         *
+   *                      correctly, but this forces plain        *
+   *                                                              *
+   *                      text                                    *
+   *                                                              *
+   *                      to be rendered incorrectly. Changing    *
+   *                      this setting to Auto                    *
+   *                                                              *
+   *                      doesn't work                            *
+   *                                                              *
+   *                      because BIRT will always choose plain   *
+   *                      text unless the text                    *
+   *                                                              *
+   *                      starts with                             *
+   *                                                              *
+   *                      <html> and the long description in rich *
+   *                      text format just starts                 *
+   *                                                              *
+   *                      with a                                  *
+   *                                                              *
+   *                      <p> tag. In order to fix it, we had to  *
+   *                      duplicate the long                      *
+   *                                                              *
+   *                      description                             *
+   *                                                              *
+   *                      field on the report and modify          *
+   *                      visibility to hide the plain text       *
+   *                                                              *
+   *                      form                                    *
+   *                                                              *
+   *                      of the long description if it started   *
+   *                      with a <p> tag and hide                 *
+   *                                                              *
+   *                      the the                                 *
+   *                                                              *
+   *                      visibility of the rich text form of the *
+   *                      long description if it                  *
+   *                                                              *
+   *                      didn't                                  *
+   *                                                              *
+   *                      start with a <p> tag. This works, but   *
+   *                      obviously is extremely                  *
+   *                                                              *
+   *                      time                                    *
+   *                                                              *
+   *                      consuming given the sheer amount of     *
+   *                      reports.                                *
+   *                                                              *
+   *                      LOCAL FIX:                              *
+   *                                                              *
+   *                      N/A                                     *
+   *                                                              *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   *                                                              *
+   *                                                              *
+   *                                                              *
+   ****************************************************************
+   The issue is that the BIRT reports have to be Dynamic Text in
+   
+   HTML
+   
+   format to display the rich text correctly, but this forces
+   plain
+   
+   text
+   
+   to be rendered incorrectly. Changing this setting to Auto
+   
+   doesn't work
+   
+   because BIRT will always choose plain text unless the text
+   
+   starts with
+   
+   <html> and the long description in rich text format just starts
+   
+   with a
+   
+   <p> tag. In order to fix it, we had to duplicate the long
+   
+   description
+   
+   field on the report and modify visibility to hide the plain
+   text
+   
+   form
+   
+   of the long description if it started with a <p> tag and hide
+   
+   the the
+   
+   visibility of the rich text form of the long description if it
+   
+   didn't
+   
+   start with a <p> tag. This works, but obviously is extremely
+   
+   time
+   
+   consuming given the sheer amount of reports.
+   
+   LOCAL FIX:
+   
+   N/A
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This fix already exists in 7.5.0.2 and 7.5.0.3.
+   
+   The fix for this APAR is contained in the following maintenance
+   package:
+   
+     | release\fix pack | REL 7.5.0.2 - BS
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV10151
+   
+   
+ * REPORTED COMPONENT NAME
+   REPORTING
+   
+   
+ * REPORTED COMPONENT ID
+   5724R46RP
+   
+   
+ * REPORTED RELEASE
+   711
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-11-03
+   
+   
+ * CLOSED DATE
+   2012-01-03
+   
+   
+ * LAST MODIFIED DATE
+   2012-01-03
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  MAXIMO
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   REPORTING
+   
+   
+ * FIXED COMPONENT ID
+   5724R46RP
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R711 PSY
+   UP

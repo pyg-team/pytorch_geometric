@@ -1,0 +1,167 @@
+Title: IBM PI43643: SILENT INSTALLER FAILS TRYING TO RUN SETUPLINUX.BIN. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS UNREPRODUCIBLE.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Trying to run silent installer on Linux results in failure
+   during the running of setupLinux.bin.
+   
+   Prerequisites:
+   
+   Silent installation on Linux
+   
+   Steps to Reproduce:
+   
+   1. Run silent installer on Linux.
+   
+   Expected Results:
+   
+   Installation should complete successfully.
+   
+   Actual Results:
+   
+   Installation errors out in running setupLinux.bin.
+   
+   Error Message:
+   
+   setupLinux.bin: line 1738: warning: here-document at line 1738
+   delimited by end-of-file (wanted `/dev/null')
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Edited the setupLinux.bin file and made the following change to
+   line 1738 as follows to add a backquote character ( ` ) just
+   before "/dev/null":
+   
+   From:
+   
+   JC="\""$JVM_HOME/$JVM_EXE"\" $CLASSPATH_SWITCH
+   .:$PREPEND_CLASSPATH:$CP1:"$JVM_CLASSPATH":$CP:\"`awk 'END{
+   s=sprintf("%s/%s",a,b); print s}' a="$launcherParentDir"
+   b="setup.jar"
+   <</dev/null`\":$INSTALLER_ARCHIVE:$EMBEDDED_JARS:$CP2:$CLASSPATH
+   :$APPEND_CLASSPATH: -Dtemp.dir=\"$IS_TEMP_DIR\"
+   -Dis.jvm.home=\"$IS_JVM_HOME\" -Dis.jvm.temp=\"$IS_JVM_TEMP\"
+   -Dis.media.home=\"$APPLICATION_ARCHIVE\"
+   -Dis.launcher.file=\"$IS_LAUNCHER_FILE\"
+   -Dis.jvm.file=\"$IS_JVM_FILE\" -Dis.external.home=\"$MEDIA_DIR\"
+   "$RUNTIME_SYSTEMPROP" $JAVA_ARGS run "$app_args" 1>$APP_STDOUT
+   2>$APP_STDERR"
+   
+   To:
+   
+   JC="\""$JVM_HOME/$JVM_EXE"\" $CLASSPATH_SWITCH
+   .:$PREPEND_CLASSPATH:$CP1:"$JVM_CLASSPATH":$CP:\"`awk 'END{
+   s=sprintf("%s/%s",a,b); print s}' a="$launcherParentDir"
+   b="setup.jar"
+   <<`/dev/null`\":$INSTALLER_ARCHIVE:$EMBEDDED_JARS:$CP2:$CLASSPAT
+   H:$APPEND_CLASSPATH: -Dtemp.dir=\"$IS_TEMP_DIR\"
+   -Dis.jvm.home=\"$IS_JVM_HOME\" -Dis.jvm.temp=\"$IS_JVM_TEMP\"
+   -Dis.media.home=\"$APPLICATION_ARCHIVE\"
+   -Dis.launcher.file=\"$IS_LAUNCHER_FILE\"
+   -Dis.jvm.file=\"$IS_JVM_FILE\" -Dis.external.home=\"$MEDIA_DIR\"
+   "$RUNTIME_SYSTEMPROP" $JAVA_ARGS run "$app_args" 1>$APP_STDOUT
+   2>$APP_STDERR"
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ***************************************************************
+   * USERS AFFECTED: OpenPages Users
+   ***************************************************************
+   * PROBLEM DESCRIPTION: Silent installer fails trying to run
+   * setuplinux.bin
+   ***************************************************************
+   * Explanation: This has not been replicated in testing. We
+   * suspect there may have been an error introduced into the file
+   * when it was copied to the server.
+   ***************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI43643
+   
+   
+ * REPORTED COMPONENT NAME
+   OPENPAGES GRC
+   
+   
+ * REPORTED COMPONENT ID
+   5725D5100
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED UR5
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2015-06-23
+   
+   
+ * CLOSED DATE
+   2015-11-17
+   
+   
+ * LAST MODIFIED DATE
+   2016-03-28
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R700 PSY
+   UP

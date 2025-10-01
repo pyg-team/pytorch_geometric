@@ -1,0 +1,143 @@
+Title: IBM JR46939: Cancel button is not handled properly under the Select or Add People Directory dialog (BPEL Human Task). - United States
+
+Text:
+  FIXES ARE AVAILABLE
+8.0.1.2: IBM Integration Designer V8.0.1 Fix Pack 2 for Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24035813]
+8.0.1.2: IBM Integration Designer V8.0.1 Fix Pack 2 for Linux [http://www-01.ibm.com/support/docview.wss?uid=swg24035815]
+8.5.0.1: IBM Integration Designer V8.5.0 Fix Pack 1 for Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24035812]
+8.5.0.1: IBM Integration Designer V8.5.0 Fix Pack 1 for Linux [http://www-01.ibm.com/support/docview.wss?uid=swg24035814]
+7.5.1.2: IBM Integration Designer V7.5.1 Fix Pack 2 for Linux [http://www-01.ibm.com/support/docview.wss?uid=swg24037018]
+7.5.1.2: IBM Integration Designer V7.5.1 Fix Pack 2 for Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24037036]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Cancel button is not handled properly under the Select or Add
+   People Directory dialog.
+            Instead of exiting code execution, a default value
+   provided  inside the Add People Directory dialog is being
+   validated (bpe/stuff/expressworkflow), and an error dialog
+   created.
+            Once user selects OK button, the error message dialog
+   is closed and a human task editor tab is opened.
+            This tab does not contain anything but an error message
+   indicating that default value of JNDI name, which was provided
+   in the  Select or Add People Directory, was not found.
+   
+   If human task editor tab stays open, and IID is closed, the next
+    time user starts IID, the Add People Directory dialog will show
+    up while workspace is being loaded, and user will be asked
+            for correct input. If it happens that the license
+   validation occurs at the same time, the license validation
+   dialog will show up and users will not be able to perform any
+   other operations inside
+            the IID UI but to close IID.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Workaround is available. Users may re-import projects into a
+   clean workspace, and make sure they close a Human Task Editor
+   tab before they exit IID workspace.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Cancel button is not handled properly under the Select or Add
+   People Directory dialog (BPEL Human Task).
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR46939
+   
+   
+ * REPORTED COMPONENT NAME
+   INTEGRATION DES
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9702
+   
+   
+ * REPORTED RELEASE
+   751
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-06-12
+   
+   
+ * CLOSED DATE
+   2013-06-26
+   
+   
+ * LAST MODIFIED DATE
+   2013-06-26
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R751 PSY
+   UP
+   
+   
+ * R801 PSY
+   UP
+   
+   
+ * R850 PSY
+   UP

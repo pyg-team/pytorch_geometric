@@ -1,0 +1,72 @@
+Title: IBM Warning noted in the TM1 server log: MEMORY_TEMP_POOL_EXCEEDED - United States
+
+Text:
+error; errors; tm1smsg.log; tm1server.log; outOfMemory Exception; exception; al_alloc; Controller FAP TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ An Administrator may notice a WARN level message in the tm1server.log and wonder what it means and how to avoid it occurring.
+
+A user may have received a message when using a TM1 client application when trying to open a large view, but the attempt fails and user can continue working in TM1. User may or may not report this issue to Administrator, as user can continue working in TM1 as this is just a warning and does not actually affect the TM1 server. 
+
+SYMPTOM
+A warning similar to the following will appear in the tm1server.log for an outOfMemory Exception (note that it is a WARNing and not an ERROR): 
+
+1648 WARN 2008-06-23 13:56:07,352 TM1.Server.Memory al_Alloc() outOfMemory Exception <<<MEMORY_TEMP_POOL_EXCEEDED >>> - threadID "1648" - apifunc# "131" - pool# "0" - poolsize "104300976.000000"
+
+Message that the user would see in the user interface:
+(SystemOutOfMemory) Budget : Maximum memory for action exceeded.
+View may be too large.
+Operation aborted.
+
+CAUSE
+The warning MEMORY_TEMP_POOL_EXCEEDED only applies to views. 
+
+There are 2 possible causes of this problem.
+
+Scenario 1:
+A user tries to open a cube view, and it exceeds the MaximumViewSize parameter (memory allocated to render the view) set with this tm1s.cfg parameter,
+OR 
+
+Scenario 2:
+A user attempts to open a view that would exceed the physical memory limitation of the server.
+
+If a 32-bit version of TM1 Server is being used, it can only ever use up to 3GB of RAM (if the 3GB switch is engaged, otherwise only 2GB) on a 32-bit OS, or 4GB of RAM on a 64-bit OS.
+
+If a 64-bit edition of TM1 Server is being used, then the RAM limitations are basically limited to what is installed in the server hardware and what the 64-bit OS supports.
+
+
+RESOLVING THE PROBLEM
+To resolve the problem, either: 
+
+(a) increase the memory allotted in MaximumViewSize in the tm1s.cfg file. (See details on defaults below)
+OR
+(b) conversely, another solution is to redesign the model, cube, or reduce the size of the Cube View so it is smaller than the MaximumViewSize.
+
+KEEP IN MIND:
+There comes a point where if a view is too large it is wise to consider streamlining it, as the larger the view, the more of a performance hit there will be. The purpose of the MaximumViewSize parameter is to limit view sizes so that the system does perform better. Where increasing the value will get rid of the warning, it isn't necessarily always the best choice for the model as a whole.
+
+TIP on adjusting this parameter value:
+If this parameter is currently set to the default, do not boost it to an unreasonable number. Instead, start out by only doubling the default value and test to see if that is sufficient to successfully open the view. If it is still not high enough, then it is recommended to increase the value in increments equal to the original default value and test after each adjustment in order to avoid having this value set too high.
+
+For example, when your model may not even be 3 GB - setting MaximumViewSize to 3000 (in MB as noted in the documentation, which is 3 GB in this case) may be too high and a waste of resources. The largest view in the model (and hence the MaximumViewSize setting) should be considerably less than the total TM1 model size.
+
+
+From TM1 Help:
+
+MaximumViewSize
+Optional
+Sets the maximum amount of memory (in MB) to be allocated when a user accesses a view. If you do not set the MaximumViewSize parameter, the default maximum view size is 100MB on a 32-bit system, and 500 MB on a 64-bit system.
+
+To specify a maximum amount of memory allocation for views, add the following line to Tm1s.cfg:
+MaximumViewSize=n
+where n represents the amount of memory in MB to be allocated. 
+
+NOTE: This (MaximumViewSize) is a Dynamic Parameter. This means that adding this parameter or changing its value does not require a TM1 Server restart, and the change will take effect within 60 seconds of saving the updated tm1s.cfg.
+The only exception is if you are using the TM1 "local" Server, in which case you DO need to restart the "local" server for this change to take effect..
+
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Analytics Cognos Controller Controller Windows 8.5.1, 8.5, 10.1

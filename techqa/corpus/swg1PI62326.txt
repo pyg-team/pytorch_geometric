@@ -1,0 +1,149 @@
+Title: IBM PI62326: A TEST SUITE EXECUTING MULTIPLE TEST CASES (RUN IN PARALLEL) WITH COMMAND LINE ADAPTER SCRIPTS NEVER COMPLETES - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  1. Create a test suite
+   2. Start 2 command line adapters
+   3. Create a command line adapter script
+   4. Add multiple (example 8) test cases to the tests suite
+   5. Associate all the test cases for the test suite to the same
+   command line adapter script
+   6. Run the test suite in parallel (check "Run this suite in
+   parallel")
+   7. In the "run test suite" dialog box, use the "Machine" column
+   to divide the test cases between the 2 command line adapters
+   
+   Expected:  All test cases in the test suite complete, the "close
+   and show results" button in the test suite execution console is
+   active and the test suite execution result shows the last result
+   Actual: All test cases complete but the  "close and show
+   results" button is never active and the last result for the test
+   suite execution record shows "in progress"
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Do not run the test suite in parallel
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * 388510: Inconsistency between BLOB data and table data, also *
+   * StaleDataException not thrown                                *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * 388510: Inconsistency between BLOB data and table data, also *
+   * StaleDataException not thrown                                *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  388510: Inconsistency between BLOB data and table data, also
+   StaleDataException not thrown
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI62326
+   
+   
+ * REPORTED COMPONENT NAME
+   RATL TEAM CONCE
+   
+   
+ * REPORTED COMPONENT ID
+   5724V0400
+   
+   
+ * REPORTED RELEASE
+   601
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-05-11
+   
+   
+ * CLOSED DATE
+   2016-12-22
+   
+   
+ * LAST MODIFIED DATE
+   2016-12-22
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   RATL TEAM CONCE
+   
+   
+ * FIXED COMPONENT ID
+   5724V0400
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R603 PSY
+   UP

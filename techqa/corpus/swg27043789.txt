@@ -1,0 +1,46 @@
+Title: IBM Webcast:  IBM Case Manager 5.2 Administration Overview and Best Practices (2 sessions) - United States
+
+Text:
+ECMSTE_webcast; ECMSTE; STEwebcastDocument; Support Technical Exchange; education; presentation; webcast; Best Practices; Case Manager WEBCAST
+
+ABSTRACT
+ IBM Case Manager Support hosted a two-part webcast with customers on the topic of IBM Case Manager 5.2 Administration Overview and Best Practices on Wednesday, December 3rd and 10th, 2014. The recordings from the webcast sessions are available within this document.
+
+
+CONTENT
+Title: IBM Case Manager 5.2 Administration Overview and Best Practices 
+
+Hosted by: William Kilpatrick, L2 BPM Support Engineer for FileNet & Case Manager 
+
+Presenter: 
+
+Tom Garda is an IBM Software Engineer. He supports the ECM platform with a focus on IBM Case Manager and Case Analyzer. He started at IBM in 2006.
+
+William Kilpatrick is an IBM Software Engineer. He supports the ECM BPM product line with a focus on IBM Case Manager and Content Platform Engine. He started at IBM in 2007.
+
+Brian Roots is an IBM Software Engineer. He supports Case Manager. He started at IBM in 2007.
+
+Overview: 
+
+This webcast session consists of two presentations held one week apart. These sessions are presented by speakers who can deliver technical educational materials on Case Manager V5.2 to enable you to better use and understand the product. If time allows, live questions will be taken. 
+
+IBM Case Manager is a highly integrated product, which consists of several internal and external components The effective administration of an IBM Case Manager system requires knowledge of its architecture and tools. 
+
+This presentation discusses the fundamental concepts of the IBM Case Manager product and best practices used to maintain healthy systems and resolve problems. The purpose of the presentation is twofold. It provides IBM Case Manager system administrators with information that helps them formulate strategies and procedures to maintain functional systems. It also explains how to work with IBM Case Manager software support efficiently when software issues arise.
+
+
+
+PRESENTATION
+[http://www.ibm.com/i/v16/icons/weblecture.gif]IBM Case Manager Administration and Best Practices Part 1_final_version.pdf [/support/docview.wss?uid=swg27043789&aid=2]IBM Case Manager Administration and Best Practices Part 1_final_version.pdf [/support/docview.wss?uid=swg27043789&aid=1] 
+
+IBM Case Manager Administration and Best Practices Part 2.pdf [/support/docview.wss?uid=swg27043789&aid=4]IBM Case Manager Administration and Best Practices Part 2.pdf [/support/docview.wss?uid=swg27043789&aid=3]
+
+
+AUDIO
+[http://www.ibm.com/i/v16/icons/aud.gif]The recorded session will be posted here 2-3 days after the event: 
+
+ * Case Manager Part 1 [ftp://public.dhe.ibm.com/software/is/ecm/techexch/2014_12_03_CaseMgr_Part1.mp4] 
+ * Case Manager Part 2 [ftp://public.dhe.ibm.com/software/is/ecm/techexch/2014_12_10_CaseMgr_Part2.mov]
+
+MULTIMEDIA
+[http://www.ibm.com/i/v16/icons/video.gif]To replay the presentation with recorded audio, click on Download Full Presentation. Right-click and select Save As to store the file on your local computer for later playback.

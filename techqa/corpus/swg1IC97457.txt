@@ -1,0 +1,165 @@
+Title: IBM IC97457: WMQ 7.5 APPLICATION USING OSGI CLASSES FOR JAVA RECEIVES CLASSNOTFOUND EXCEPTION WHEN CONNECTING TO QUEUE MANAGER - United States
+
+Text:
+  A FIX IS AVAILABLE
+WebSphere MQ V7.5 Fix Pack 7.5.0.4 [http://www-01.ibm.com/support/docview.wss?uid=swg24038252]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  After deploying the bundle com.ibm.mq.osgi.java_7.5.0.2.jar in
+   the OSGi environment, the application gets a ClassNotFound
+   exception when connecting to a WebSphere MQ queue manager.
+   
+   Caused by: java.lang.NoClassDefFoundError:
+   javax/net/ssl/HandshakeCompletedListener
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Use IBM JRE. (from L3)
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   This issue affects users of the com.ibm.mq.osgi.java_7.5.0.2 (or
+   earlier fixpack version) WebSphere MQ Classes for Java OSGi
+   bundle with an Oracle Java Runtime Environment (JRE) who are
+   attempting to create a connection to a queue manager.
+   
+   
+   Platforms affected:
+   MultiPlatform
+   
+   ****************************************************************
+   PROBLEM SUMMARY:
+   Applications using the com.ibm.mq.osgi.java_7.5.0.2 bundle (or a
+   different version of the same bundle) could not connect to a
+   queue manager when running with an Oracle JRE. The Oracle did
+   not by default load a number of required packages, this resulted
+   in the packages not being available to the application at
+   runtime which resulted in the ClassNotFoundException being
+   thrown.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The packages not loaded by default by the Oracle JRE have been
+   added to the WebSphere MQ Classes for Java OSGI bundle
+   imports, to request that these dependencies are loaded using
+   this bundle with the Oracle JRE.
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+   Version    Maintenance Level
+   v7.5       7.5.0.4
+   
+   The latest available maintenance can be obtained from
+   'WebSphere MQ Recommended Fixes'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037]
+   
+   If the maintenance level is not yet available information on
+   its planned availability can be found in 'WebSphere MQ
+   Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC97457
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ BASE MULTIP
+   
+   
+ * REPORTED COMPONENT ID
+   5724H7241
+   
+   
+ * REPORTED RELEASE
+   750
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-11-06
+   
+   
+ * CLOSED DATE
+   2013-12-13
+   
+   
+ * LAST MODIFIED DATE
+   2013-12-13
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ BASE MULTIP
+   
+   
+ * FIXED COMPONENT ID
+   5724H7241
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R750 PSY
+   UP

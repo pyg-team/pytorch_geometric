@@ -1,0 +1,260 @@
+Title: IBM PJ45108: With APAR PJ34208 applied, HTTP client connection failures can occur after a DNS change. - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  See Problem Summary.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  APAR NUMBER:  PJ45108
+   PRODUCT:  z/TPF
+   FUNCTIONAL AREA:  HTTP CLIENT
+   SHIPPED IN PUT:  15
+   
+   ABSTRACT:
+   With APAR PJ34208 [http://www-01.ibm.com/support/docview.wss?uid=swg1PJ34208] applied, HTTP client connection failures can
+   occur after a DNS change.
+   
+   PACKAGE CONTENTS:
+   Source Segments:
+   (C) base/filesys/tpf/cache.c
+   (C) base/rt/cgthbn.c
+   (C) base/rt/httpc_curl_handle.c
+   
+   Object Only Binaries:
+   None.
+   
+   Configuration Independent Binaries:
+   (C) base/filesys/obj/cache.o
+   (C) base/obj/cgthbn.o
+   (C) base/stdlib/libCFVS.so
+   (C) base/stdlib/libCOMX.so
+   (C) base/stdload/CFVS.so
+   (C) base/stdload/COMX.so
+   
+   Support Files:
+   base/filesys/lst/cache.lst
+   base/filesys/lst/CFVS.map
+   base/lst/cgthbn.lst
+   base/lst/COMX.map
+   
+   OTHER BINARIES TO BUILD: YES
+   (C) <sys>/lib/libCHTF.so
+   (C) <sys>/load/CHTF.so
+   (C) <sys>/obj/httpc_curl_handle.o
+   
+   COMMENTS:
+   After a DNS change to a remote HTTP server, HTTP client failed
+   to connect with the HTTP server. The HTTP client was supposed
+   to connect to the server with a new IP address after the DNS
+   change, but it attempted to connect to the server with the old
+   IP address for hours. The issue appears to be with either the
+   DNS cache used by the cURL open source library or the z/TPF
+   cache that is used by the gethostbyname() function. Host name
+   information is saved in both the cURL DNS cache used by HTTP
+   client and by the z/TPF DNS cache but is supposed to be flushed
+   from the cURL cache once a minute and by the z/TPF cache no
+   later than once an hour. Also, when the gethostbyname()
+   function returns multiple IP addresses from a remote DNS, the
+   information remains in the z/TPF DNS cache longer than it
+   should. The gethostbyname() function calls the
+   updateCacheEntry() function to rotate the order of the IP
+   addresses in the cache but, at the same time, causes the cache
+   entry's time-to-live (TTL) timer, which was counting down to 0,
+   to start counting down from its initial value.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  SOLUTION:
+   Function HTTP client program httpc_curl_handle.c was changed to
+   disable the cURL DNS cache when a cURL handle is created to
+   ensure that only the z/TPF DNS cache is used to save host name
+   information. The updateCacheEntry() and the
+   tpf_updateCacheEntry_ext() functions have been changed to
+   accept -1 for the timeout parameter, so that this parameter can
+   be ignored when a program is updating a cache entry. The
+   gethostbyname() function has been changed to pass -1 for the
+   timeout parameter for the updateCacheEntry() function, so that
+   the TTL timer is not impacted when the gethostbyname() function
+   is updating a cache entry to change the order of the IP
+   addresses in the cache.
+   
+   COREQS: NO
+   None.
+   
+   MIGRATION CONSIDERATIONS: YES
+   Application programming interface (API) changes:
+   Changes to updateCacheEntry():
+   Current documentation:
+   timeout
+   An integer indicating the number of seconds that a cache entry
+   can reside in cache before it is flushed. Once this value is
+   reached, the cache entry is marked as not valid and results in
+   a not found condition. This forces a cache update for the cache
+   entry. If a nonzero value is specified, this value overrides
+   the value specified for castout_time for the newCache function.
+   Suggested documentation changes:
+   timeout
+   An integer indicating the number of seconds that a cache entry
+   can reside in cache before it is flushed. Once this value is
+   reached, the cache entry is marked as not valid and results in
+   a not found condition. This forces a cache update for the cache
+   entry. If NULL or 0 is specified, the value specified for
+   castout_time for the newCache function is used. If a positive
+   value is specified, this value overrides the value specified
+   for castout_time for the newCache function. If -1 is specified,
+   the flush time for this entry is not reset for this update.
+   Changes to tpf_updateCacheEntry_ext():
+   Current documentation:
+   timeout
+   An integer indicating the number of seconds that a cache entry
+   can reside in cache before it is flushed. Once this value is
+   reached, the cache entry is marked as not valid and results in
+   a not found condition. This forces a cache update for the cache
+   entry. If a nonzero value is specified, this value overrides
+   the value specified for flushTime for the tpf_newCache_ext
+   function.
+   Suggested documentation changes:
+   timeout
+   An integer indicating the number of seconds that a cache entry
+   can reside in cache before it is flushed. Once this value is
+   reached, the cache entry is marked as not valid and results in
+   a not found condition. This forces a cache update for the cache
+   entry.  If NULL or 0 is specified, the value specified for
+   flushTime for the tpf_newCache_ext function is used. If a
+   positive value is specified, this value overrides the value
+   specified for flushTime for the tpf_newCache_ext function. If
+   -1 is specified, the flush time for this entry is not reset for
+   this update.
+   Coexistence, migration, and fallback considerations:
+   After applying this APAR, the SSL daemons and the HTTP client
+   daemons need to be restarted.
+   
+   BUILD COMMANDS AND INSTRUCTIONS: YES
+   #maketpf commands for linux
+   maketpf -f CFVS cache.o
+   maketpf -f COMX cgthbn.o
+   maketpf -f CHTF httpc_curl_handle.o
+   maketpf CFVS link TPF_VERIFY_LINK_REFS=NO
+   maketpf COMX link TPF_VERIFY_LINK_REFS=NO
+   maketpf CHTF link
+   maketpf CFVS link
+   maketpf COMX link
+   
+   UPDATED INFORMATION UNITS: YES
+   z/TPF C/C++ Language Support User's Guide
+   
+   See your IBM representative if you need additional information.
+   
+   DOWNLOAD INSTRUCTIONS:
+   http://www.ibm.com/software/htp/tpf/pages/maint.htm [http://www.ibm.com/software/htp/tpf/pages/maint.htm]
+   
+   APAR URL:
+   http://www.ibm.com/software/htp/tpf/ztpfmaint/put15/PJ45108.htm [http://www.ibm.com/software/htp/tpf/ztpfmaint/put15/PJ45108.htm]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PJ45108
+   
+   
+ * REPORTED COMPONENT NAME
+   Z/TPF
+   
+   
+ * REPORTED COMPONENT ID
+   5748T1501
+   
+   
+ * REPORTED RELEASE
+   110
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-12-05
+   
+   
+ * CLOSED DATE
+   2018-03-07
+   
+   
+ * LAST MODIFIED DATE
+   2018-03-07
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+Publications Referenced SK2T8062 FIX INFORMATION
+ * FIXED COMPONENT NAME
+   Z/TPF
+   
+   
+ * FIXED COMPONENT ID
+   5748T1501
+   
+   
+
+APPLICABLE COMPONENT LEVELS

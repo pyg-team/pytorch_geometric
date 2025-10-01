@@ -1,0 +1,86 @@
+Title: IBM IZE0106E CICS IA Collector Connect failed because resource needed to provide response is not found - United States
+
+Text:
+atom; atomconnect; atomservice; urimap; ciuatm01; href; link; feed; HTTP 200 Document not found; IZE0106E; MSGIZE0106E ; connect; ia cicsia; cics ia; DFHWB0120; DFHW2FD; W2 0507 W2FD EVENT - URL_PATH_MATCH; 5655Y2200; 5655Y2201; 5655-Y22; 5655Y22; R510; R520; FMID H274510 H274520 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ You receive message IZE0106E and cannot connect to the CICS Interdepency Analyzer for z/OS (CICS IA) Collector. This occurs after updating and deploying the TCPIPSERVICE, URIMAP, and ATOMSERVICE members from the CIUDEFW sample for CICS IA. 
+
+SYMPTOM
+!ENTRY com.ibm.cics.ia.runtime 4 0 2014-07-08 14:08:22.852
+!MESSAGE A resource that is needed to provide the response is not found. nnn.nnn.nnn.nnn:portnumber
+!STACK 0
+java.io.FileNotFoundException: http://ipaddress:portnumber/CICSIA/IBM/atom/ciuatm01/feed
+at 
+sun.net.www.protocol.http.HttpURLConnection.getInputStream(HttpURLConnection.java:1636)
+at
+com.ibm.cics.ia.sm.comm.AtomConnection.connect(AtomConnection.java:88)
+at
+com.ibm.cics.core.connections.internal.ConnectionService.doConnect(ConnectionService.java:597)
+at
+com.ibm.cics.core.connections.internal.ConnectionService.connect(ConnectionService.java:518)
+at
+com.ibm.cics.core.connections.internal.ConnectionService$7.runSub(ConnectionService.java:833)
+at
+com.ibm.cics.eclipse.common.ui.JobWithCancelingSupport$1.run(JobWithCancelingSupport.java:56)
+at org.eclipse.core.internal.jobs.Worker.run(Worker.java:53)
+
+
+!ENTRY com.ibm.cics.core.connections 2 2 2014-07-08 14:08:22.852
+!MESSAGE IZE0106E [http://www.ibm.com/support/knowledgecenter/SSGMCP_5.2.0/com.ibm.cics.zos.help/topics/reference/ize0106e.html?lang=en] Connect failed with error "A resource that is needed to provide the response is not found." (cicsregion)
+
+!STACK 0
+com.ibm.cics.core.comm.EnhancedConnectionException: IZE0106E Connect failed with error "A resource that is needed to provide the response is not found." (cicsregion)
+at
+com.ibm.cics.core.connections.internal.ConnectionService.enhanceExceptionMessage(ConnectionService.java:644)
+at
+com.ibm.cics.core.connections.internal.ConnectionService.doConnect(ConnectionService.java:613)
+at
+com.ibm.cics.core.connections.internal.ConnectionService.connect(ConnectionService.java:518)
+at
+com.ibm.cics.core.connections.internal.ConnectionService$7.runSub(ConnectionService.java:833)
+at
+com.ibm.cics.eclipse.common.ui.JobWithCancelingSupport$1.run(JobWithCancelingSupport.java:56)
+at 
+org.eclipse.core.internal.jobs.Worker.run(Worker.java:53)
+
+Caused by: com.ibm.cics.core.comm.ConnectionException: A resource that is needed to provide the response is not found.
+at
+com.ibm.cics.ia.sm.comm.AtomConnection.analyzeResponseCode(AtomConnection.java:143)
+at
+com.ibm.cics.ia.sm.comm.AtomConnection.connect(AtomConnection.java:107)
+at
+com.ibm.cics.core.connections.internal.ConnectionService.doConnect(ConnectionService.java:597)
+... 4 more
+
+
+CAUSE
+Incorrect CIUATM01 xml document in the ConfigFile directory specified on the ATOMSERVICE definition. In this instance, the URIMAP PATH attribute specified a value of "/CICSIA/IBM/atom/ciuatm01/*"
+
+ENVIRONMENT
+CICS IA V5.x;
+
+DIAGNOSING THE PROBLEM
+CICS TS W2 level 1-2 tracing showed a trace entry:
+
+
+W2 0507 W2FD EVENT - URL_PATH_MATCH
+
+where the Data 1 source field from the client URI field was: "/CICSIA/IBM/atom/ciuatm01/feed"
+and the Data 2 target field in the CIUATM01 xml member in the atom feed href link tag resulting in CICS module DFHW2FD sending an HTTP 200 Document not found response to the client..
+
+The CICS TS MSGUSR log contained a DFHW20120 message with a date and time from a previous version of the CIUTAM01 member.
+
+
+RESOLVING THE PROBLEM
+Ensure the CIUATM01 member specified in the ATOMSERVICE ConfigFile attribute directory path contains a matching href link value that matches the PATH value in the URIMAP for the atom feed.
+
+RELATED INFORMATION
+#CICS Web 2.0 domain trace points [http://www.ibm.com/support/knowledgecenter/SSGMCP_5.1.0/com.ibm.cics.ts.doc/dfhs6/topics/dfhs6_w2.html]
+Operating CICS IA Collection from IA Explorer plug-in [http://www.ibm.com/support/knowledgecenter/SSPPUS_5.2.0/doc/ciuug12a.html?lang=en]
+
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ cicsia cics ia

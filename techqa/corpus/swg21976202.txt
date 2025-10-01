@@ -1,0 +1,56 @@
+Title: IBM Collaboration and Deployment Services running on Websphere showing all jobs queued (none running) with server logs indicating Derby database problems. - United States
+
+Text:
+EJBTimer DSRA0010E Derby TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Jobs that should be running are showing as queued with no jobs running and server logs show following Java errors:
+
+SystemErr R Caused by: com.ibm.websphere.csi.EJBContainerException: EJB Timer Service not started
+...
+Caused by: com.ibm.ws.scheduler.exception.SchedulerDataStoreException: com.ibm.ws.extensionhelper.exception.UnableToInitializeException: com.ibm.websphere.ce.cm.StaleConnectionException: Failed to start database 'D:\IBM\WebSphere\AppServer\profiles\AppSrv01/databases/EJBTimers/server1/EJBTimerDB', see the next exception for details.DSRA0010E: SQL State = XJ040, Error Code = 40,000
+...
+Caused by: com.ibm.ws.extensionhelper.exception.UnableToInitializeException: com.ibm.websphere.ce.cm.StaleConnectionException: Failed to start database 'D:\IBM\WebSphere\AppServer\profiles\AppSrv01/databases/EJBTimers/server1/EJBTimerDB', see the next exception for details.DSRA0010E: SQL State = XJ040, Error Code = 40,000 
+
+SYMPTOM
+No jobs running. Users can still access repository and other services.
+
+
+CAUSE
+Error messages indicate that the Derby database bundled with Websphere has encountered some problem and is not able to be connected to.
+
+ENVIRONMENT
+Websphere Application Server
+
+DIAGNOSING THE PROBLEM
+Verify that no jobs are running and that all jobs that should be running are showing queued. 
+
+
+
+
+Search SystemErr.log for errors similar to: 
+
+ 
+
+SystemErr R Caused by: com.ibm.websphere.csi.EJBContainerException: EJB Timer Service not started
+...
+Caused by: com.ibm.ws.scheduler.exception.SchedulerDataStoreException: com.ibm.ws.extensionhelper.exception.UnableToInitializeException: com.ibm.websphere.ce.cm.StaleConnectionException: Failed to start database 'D:\IBM\WebSphere\AppServer\profiles\AppSrv01/databases/EJBTimers/server1/EJBTimerDB', see the next exception for details.DSRA0010E: SQL State = XJ040, Error Code = 40,000
+...
+Caused by: com.ibm.ws.extensionhelper.exception.UnableToInitializeException: com.ibm.websphere.ce.cm.StaleConnectionException: Failed to start database 'D:\IBM\WebSphere\AppServer\profiles\AppSrv01/databases/EJBTimers/server1/EJBTimerDB', see the next exception for details.DSRA0010E: SQL State = XJ040, Error Code = 40,000
+
+
+RESOLVING THE PROBLEM
+This is a purely Websphere related error and engaging Websphere support is something to consider. It has been found that renaming the Derby database while the server is shutdown allows Websphere to recreate the database on startup and will clear these errors. 
+
+The database file is located in a path similar to this (on Windows) : 
+
+
+D:\IBM\WebSphere\AppServer\profiles\AppSrv01/databases/EJBTimers/server1/EJBTimerDB 
+On other platforms the location should be similar (D:\IBM\WebSphere\AppServer\ is the install location for Websphere, after that the path should be consistent on other platforms).
+
+Assuming the application server is being used only for Collaboration and Deployment Services there is not anticipated to be any negative to this database being recreated. If you are using the server for other purposes then please consult the appropriate documentation or support for Websphere or your other application server programs to ensure the Derby database can be cleared without consequence.
+
+Assuming that renaming the file clears the errors seen and returns your system to expected functionality you can delete the database file to reclaim used disk space.
+
+RELATED INFORMATION
+ Need more help? Our C&DS forum is Live! [https://developer.ibm.com/answers/topics/collaboration.html?smartspace=predictive-analytics]

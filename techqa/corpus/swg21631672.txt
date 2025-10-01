@@ -1,0 +1,98 @@
+Title: IBM Workflow email fails in IBM Web Content Manager - United States
+
+Text:
+wcm; workflow; workflow email; email address; ldap; ldapsearch; IWKPW1015X TECHNOTE (FAQ)
+
+QUESTION
+ How to verify and, if necessary, add an attribute mapping in WebSphere Portal for the email address. 
+
+ANSWER
+Overview
+To send email from a WCM Workflow the user's email address must be returned from the user repository, usually an LDAP. The most common cause for this failure is that the email address exists but WebSphere Portal is not configured to recognize the email address.
+
+This document describes how to ensure the WebSphere Portal configuration is set to properly return the email value from the LDAP. We assume a federated repository configuration [http://www-01.ibm.com/support/docview.wss?uid=swg21386736].
+
+When email cannot be sent the following error may be logged:
+
+IWKPW1015X E-mail action was unable to add recipients
+
+
+
+Identifying the email attribute in LDAP
+If you do not know what the email address attribute in the LDAP is, use ldapsearch or another tool to review a sample user's list of attributes. Look for the email attribute and ensure a value is set. 
+
+The example command below shows a simple anonymous search with partial results. If the LDAP does not allow an anonymous connection, specify an id and password on the command line using the -D and -w options respectively.
+
+ldapsearch -h <LDAP hostname> -p <LDAP port> uid=msmith
+
+uid=msmith
+givenname=mary
+sn=smith
+mail=msmith@yourco.com
+
+In this example, the email attribute is "mail."
+
+If no email attribute is listed in the ldapsearch output or the attribute is listed but there is no value, correct the user entries in the LDAP before proceeding.
+
+
+
+Updating Portal to recognize LDAP email attribute
+After the email attribute has been determined, verify that the Portal is configured to search for the email address.
+
+1. Run the ConfigEngine task wp-validate-federated-ldap-attribute-config.
+
+2. Review <Portal_profile_root>\ConfigEngine\log\ConfigTrace.log and look for an entry like the one shown here (which does not include all possible attributes that may be returned):
+
+... The following attribues are defined in Portal but not in LDAP - You should either flag them as unsupported or define an attribute mapping:
+... [groups, identifier, ibm-jobTitle, entitlementInfo, realm, viewIdentifiers, certificate, stateOrProvinceName, createTimestamp, modifyTimestamp, ibm-primaryEmail, parent, partyRoles, principalName, countryName, localityName]
+
+3. If ibm-primaryEmail is shown then complete the following steps:
+
+a. Edit <Portal_root>\ConfigEngine\properties\wkplc.properties and set values for the following properties:
+
+federated.ldap.attributes.mapping.portalName=ibm-primaryEmail
+federated.ldap.attributes.mapping.ldapName=mail
+federated.ldap.attributes.mapping.entityTypes=PersonAccount
+
+b. Run the ConfigEngine task to update the configuration:
+
+ConfigEngine wp-update-federated-ldap-attribute-config -DWasPassword=<password>
+
+c. Restart the Portal server. This "maps" the name known to Portal, ibm-primaryEmail, to the name of the attribute in the LDAP, mail.
+
+Optional:
+
+Steps 3a - 3c can be replaced by adding the email address mapping manually:
+
+1. Stop the Portal server.
+
+2. Backup the file <Portal_profile>\config\cells\<Cell>\wim\config\wimconfig.xml (backup the copy on the Dmgr if clustered).
+
+3. Edit wimconfig.xml. In the attributConfiguration section add the following lines:
+
+<config:attributes name="mail" propertyName="ibm-primaryEmail">
+<config:entityTypes>PersonAccount</config:entityTypes>
+</config:attributes>
+
+4. Save the change and, if clustered, synchronize the change to the Portal nodes. Restart the Portal server(s).
+
+If ibm-primaryEmail is not shown in ConfigTrace.log then no mapping should be required to fetch the email address. To verify, review the file <profile_root>\config\cells\<CellName>\wim\model\wimdomain.xsd. The email address attribute in the LDAP should be shown in the file. Do not modify the file.
+
+
+
+Troubleshooting
+If a ConfigEngine task fails or the email attribute is not listed in wimdomain.xsd, collect files for review by IBM Support.
+
+Portal 6.1: Collect the files shown under "II. Collecting and submitting logs and configuration data" in 
+Collecting Data: Portal User Management Architecture (PUMA) for WebSphere Portal 6.1 [http://www-01.ibm.com/support/docview.wss?rs=688&uid=swg21312815]
+
+Portal 7.0 and 8.0: Run the wpcollector script from <wp_profile_root>\PortalServer\bin and upload the zip file created in <wp_profile_root>\filesForAutoPD\. If wpcollector cannot be used then collect and send the same list of files as shown in the Portal 6.1 document.
+
+RELATED INFORMATION
+ Using ldapsearch to debug LDAP configuration problems [http://www-01.ibm.com/support/docview.wss?uid=swg21113384]
+
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Organizational Productivity- Portals & Collaboration WebSphere Portal End of Support Products AIX, HP-UX, IBM i, Linux, Solaris, Windows, z/OS 7.0, 6.1

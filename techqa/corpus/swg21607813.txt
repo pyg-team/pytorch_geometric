@@ -1,0 +1,30 @@
+Title: IBM Understanding IBM CL/SUPERSESSION 1.4.7 End of Support announcement - United States
+
+Text:
+IBM CL/SUPERSESSION 1.4.7 eos ; end of support; withdrawal from support; withdrawn from support ; out of support; product lifecyle; end of lifecycle; withdrawal announcement letter ; Software service discontinuance ; 5608A2400 R147 R470 R471 R472 R473 R474 R475 5608-A24 5608A24 FMID MLS1470 MLS1471 MLS1472 MLS1473 MLS1474 MLS1475 TECHNOTE (FAQ)
+
+QUESTION
+ Why did IBM include IBM CL/SUPERSESSION for z/OS V1.4.7 (compid 5608-A24) in an End of Service (EOS) announcement letter and state that it will be withdrawn from support 30 September 2013? 
+
+ANSWER
+The EOS announcement is only indicating that if ordering CL/SUPERSESSION V1.4.7, you can no longer use the product number 5608-A24. Instead you must use the new product number 5655-P05 which has new pricing associated with it.
+There are no changes to the product function or release number, and IBM still fully supports the original compid 5608A2400 (5608-A24). So, if you are currently using this product, you are not required to reorder the product or make any SMP/E changes. You should also continue to use compid 5608A2400 when opening a service request (PMR). 
+
+The Software service discontinuance announcement letter (EOS letter) indicating that CL/SUPERSESSION V1.4.7 (5608-A24) will be withdrawn from support 30 September 2013 is 912-144 [http://www.ibm.com/common/ssi/cgi-bin/ssialias?subtype=ca&infotype=an&appname=iSource&supplier=897&letternum=ENUS912-144]. As you can see from the following product replacement information included in this announcement, the product version is still 1.4.7: 
+
+5608-A24, IBM CL/Supersession for z/OS , V1.4.7 is replaced by 5655-P05, IBM CL/Supersession for z/OS , V1.4.7, announced in Software Announcement 205-066 [http://www.ibm.com/common/ssi/cgi-bin/ssialias?infotype=an&subtype=ca&appname=gpateam&supplier=897&letternum=ENUS205-066], dated March 15, 2005.
+
+The only change is to the product number (from 5608-A24 to 5655-P05) and this is only for marketing purposes.
+
+RELATED INFORMATION
+#IBM CL/SUPERSESSION [http://www.ibm.com/software/htp/cics/clss/]
+End of Support dates for CICS products [http://www.ibm.com/support/docview.wss?uid=swg21154953]
+Announcement Letters for CICS Products [http://www.ibm.com/support/docview.wss?uid=swg21227090]
+
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Host Transaction Processing CICS Transaction Server Availability z/OS 
+PRODUCT ALIAS/SYNONYM
+ LS147 CL/SS CLSS

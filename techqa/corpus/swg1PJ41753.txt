@@ -1,0 +1,154 @@
+Title: IBM PJ41753: NEW JRE 1.7.0_51 JAR SIGNING CERTIFICATES FOR SHA-2 SUPPORT - United States
+
+Text:
+  DIRECT LINKS TO FIXES
+4.5.1.4-P8PE-IF010-ZLINUX [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FFileNet+Process+Engine&fixids=4.5.1.4-P8PE-IF010-ZLINUX&source=SAR]
+4.5.1.4-P8PE-IF010-WIN [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FFileNet+Process+Engine&fixids=4.5.1.4-P8PE-IF010-WIN&source=SAR]
+4.5.1.4-P8PE-IF010-SOL [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FFileNet+Process+Engine&fixids=4.5.1.4-P8PE-IF010-SOL&source=SAR]
+4.5.1.4-P8PE-IF010-LINUX [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FFileNet+Process+Engine&fixids=4.5.1.4-P8PE-IF010-LINUX&source=SAR]
+4.5.1.4-P8PE-IF010-HPXI [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FFileNet+Process+Engine&fixids=4.5.1.4-P8PE-IF010-HPXI&source=SAR]
+4.5.1.4-P8PE-IF010-HPUX [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FFileNet+Process+Engine&fixids=4.5.1.4-P8PE-IF010-HPUX&source=SAR]
+4.5.1.4-P8PE-IF010-AIX [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FFileNet+Process+Engine&fixids=4.5.1.4-P8PE-IF010-AIX&source=SAR]
+4.5.1.4-P8PE-IF008-WIN [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FFileNet+Process+Engine&fixids=4.5.1.4-P8PE-IF008-WIN&source=SAR]
+4.5.1.4-P8PE-IF008-SOL [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FFileNet+Process+Engine&fixids=4.5.1.4-P8PE-IF008-SOL&source=SAR]
+4.5.1.4-P8PE-IF008-LINUX [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FFileNet+Process+Engine&fixids=4.5.1.4-P8PE-IF008-LINUX&source=SAR]
+4.5.1.4-P8PE-IF008-HPXI [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FFileNet+Process+Engine&fixids=4.5.1.4-P8PE-IF008-HPXI&source=SAR]
+4.5.1.4-P8PE-IF008-HPUX [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FFileNet+Process+Engine&fixids=4.5.1.4-P8PE-IF008-HPUX&source=SAR]
+4.5.1.4-P8PE-IF008-AIX [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FFileNet+Process+Engine&fixids=4.5.1.4-P8PE-IF008-AIX&source=SAR]
+4.5.1.4-P8PE-IF002-ZLINUX [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FFileNet+Process+Engine&fixids=4.5.1.4-P8PE-IF002-ZLINUX&source=SAR]
+4.5.1.4-P8PE-IF007-WIN [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FFileNet+Process+Engine&fixids=4.5.1.4-P8PE-IF007-WIN&source=SAR]
+4.5.1.4-P8PE-IF007-SOL [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FFileNet+Process+Engine&fixids=4.5.1.4-P8PE-IF007-SOL&source=SAR]
+4.5.1.4-P8PE-IF007-HPXI [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FFileNet+Process+Engine&fixids=4.5.1.4-P8PE-IF007-HPXI&source=SAR]
+4.5.1.4-P8PE-IF007-HPUX [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FFileNet+Process+Engine&fixids=4.5.1.4-P8PE-IF007-HPUX&source=SAR]
+4.5.1.4-P8PE-IF007-AIX [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FFileNet+Process+Engine&fixids=4.5.1.4-P8PE-IF007-AIX&source=SAR]
+4.5.1.4-P8PE-IF006-ZLINUX [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FFileNet+Process+Engine&fixids=4.5.1.4-P8PE-IF006-ZLINUX&source=SAR]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  In January 2014 (or shortly thereafter), Oracle and IBM will be
+   releasing new JREs.
+   The warnings concerning manifest attributes that currently
+   appear in the java console will turn into hard errors and
+   applets will cease to run.
+   
+   In addition, the applet signing should now be done with a newer
+   JRE that uses SHA-2 digests rather than the older SHA-1 digests.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * 4.5.1.7-P8CE-FP007 and earlier systems                       *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * RE 1.7.0_051 requires new certificates.  Without these new   *
+   * certificates, any clients will get a security failure error. *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Upgrade to 4.5.1.7-P8CE-IF002 or 4.5.1.8-P8CE-FP008 and      *
+   * higher.                                                      *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  JRE 1.7.0_051 requires new certificates so upgrade to
+   4.5.1.7-P8CE-IF002 or 4.5.1.8-P8CE-FP008 and higher.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PJ41753
+   
+   
+ * REPORTED COMPONENT NAME
+   CONTENT ENGINE
+   
+   
+ * REPORTED COMPONENT ID
+   5724R8101
+   
+   
+ * REPORTED RELEASE
+   451
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2013-11-26
+   
+   
+ * CLOSED DATE
+   2014-05-01
+   
+   
+ * LAST MODIFIED DATE
+   2014-05-01
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    PJ41730 [http://www-01.ibm.com/support/docview.wss?uid=swg1PJ41730]
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CONTENT ENGINE
+   
+   
+ * FIXED COMPONENT ID
+   5724R8101
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R451 PSY
+   UP

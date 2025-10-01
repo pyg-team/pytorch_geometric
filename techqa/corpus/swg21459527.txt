@@ -1,0 +1,62 @@
+Title: IBM Unexpected LOGREC records running NetView TRACE - United States
+
+Text:
+IFB100E IFB098E aon pktrace ctrace systcpip systcpda logrec ittts buffers TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Running the NetView PKTRACE caused thousands of LOGREC records. 
+
+SYMPTOM
+The following messages were in the syslog after starting the NetView AON PKTRACE: 
+
+IFB100E LOGREC LOG STREAM ERROR ON SYSTEM MVS13 - RC=0008-085C
+UNABLE TO WRITE TO LOG STREAM - LOG STREAM DIRECTORY IS FULL 
+LOG STREAM NAME: SYSP.LOGREC.ALLRECS 
+IFB098E LOGREC OVERFLOW CONDITION. RECORDS LOST ON SYSTEM MVS13 
+LOG STREAM NAME: SYSP.LOGREC.ALLRECS 
+
+
+ENVIRONMENT
+The trace is started using the following steps: 
+
+1. Log on to the NetView for the system you want to trace 
+2. Type 'aon' 
+3. Select item 3 (TCP/IP Automation) 
+4. Select item 2 (MVS TCP/IP Menu) 
+5. Select item 10 (TCP/IP Trace Control Center) 
+6. Place a slash next to PKTRACE 
+7. Enter the IP Address if known in all columns 
+8. Only trace on loopback, vlink1, osaxlin1, and osaxlin2. Blank out next line to ignore everything below. 9. Press Enter 
+10. Select F4 to start trace and wait a few seconds.
+
+
+RESOLVING THE PROBLEM
+In this case the logrec records were being cut by module ITTTS because it was unable to get enough internal CTRACE buffers. 
+
+
+Issue commands 'D TRACE,COMP=SYSTCPIP' and 'D TRACE,COMP=SYSTCPDA' to see the buffers defined for the trace. To increase these buffers, use the following commands :
+
+'TRACE CT,xxxxM,COMP=SYSTCPIP' 
+'TRACE CT,xxxxM,COMP=SYSTCPDA'
+
+The size of the CTRACE buffer area used by the TCPIP stack is controlled by the CTIPRMxx PARMLIB member (the default at startup) and can be dynamically changed by the TRACE command, specifying the new size in place of the ON keyword. But note that the SYSTCPDA CTRACE does not have its own specification, it uses double the size specified for SYSTCPIP.
+
+Having 512M for SYSTCPDA (256M for SYSTCPIP) is already the maximum allowed, so there is no more increasing of that size. This is more likely an issue where the CTRACE Writer is not able to keep up with the volume of data being recorded. The simple solution is normally to increase the size of the buffers used by the component creating the trace records; but that only helps for temporary spikes in the volume of data, not when the rate is constantly greater than can be handled.
+
+Actions that can be taken to avoid this problem fall into two areas: 
+
+- Improve the performance of the CTRACE writer. This in turn can take several forms:
+
+- Ensure that the writer is being assigned an appropriate WLM class. Typically you would want a class that will cause the writer to have a higher priority than the process creating the records, but for this case the best you can do is make it equal (get assigned to the SYSSTC WLM class).
+
+- Change the proc to have multiple TRCOUTxx DDs. This will allow the writer to have multiple simultaneous I/Os active, preferably across different device paths.
+
+- Ensure that the DASD used for the associated data sets has sufficient performance.
+
+- Consider using a Linear data set and/or DSNTYPE=LARGE. A striped data set (rather than the multiple data set above) would be even better.
+
+See the MVS Diagnosis Tools and Service Aids manual [http://publibz.boulder.ibm.com/cgi-bin/bookmgr_OS390/FRAMESET/IEA2V191/11.2.2?SHELF=IEA2BK91&DT=20090220211519] for more information on writing component trace data to data sets.
+
+Also make sure that this CTRACE writer is only being used for a single component at a time. Directing multiple CTRACEs to a single writer just compounds the problem.
+
+- Reduce the volume of data being recorded. This is best accomplished by specifying a set of filters (IPADDR, PORTNUM, ...) that will cause only the records of interest to be collected. And if it is only the pattern of packet activity that is needed (not the complete data content of the packets), add the ABBREV keyword to just record the first few bytes of the packet (default is 200 bytes, but I typically use 100).

@@ -1,0 +1,61 @@
+Title: IBM Security Bulletin: Vulnerability in SSLv3 affects IBM Content Navigator (CVE-2014-3566) - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ SSLv3 contains a vulnerability that has been referred to as the Padding Oracle On Downgraded Legacy Encryption (POODLE) attack. SSLv3 is enabled in the Knowledge Center for IBM Content Navigator V2.0.3. 
+
+VULNERABILITY DETAILS
+CVE-ID: CVE-2014-3566 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-3566]
+
+DESCRIPTION: Product could allow a remote attacker to obtain sensitive information, caused by a design error when using the SSLv3 protocol. A remote user with the ability to conduct a man-in-the-middle attack could exploit this vulnerability via a POODLE (Padding Oracle On Downgraded Legacy Encryption) attack to decrypt SSL sessions and access the plaintext of encrypted connections.
+
+CVSS Base Score: 4.3
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/97013 [https://exchange.xforce.ibmcloud.com/vulnerabilities/97013] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:M/Au:N/C:P/I:N/A:N)
+
+
+AFFECTED PRODUCTS AND VERSIONS
+IBM Content Navigator 2.0.0, 2.0.1, 2.0.2, and 2.0.3
+
+IBM Content Navigator is a component that is available to customers in these products (and the products that contain them):
+
+· IBM Content Manager 
+· IBM FileNet Content Manager
+· IBM Content Foundation
+· IBM Content Manager OnDemand
+
+REMEDIATION/FIXES
+For all versions of Content Navigator, we recommend that customers not enable SSLv3 in their environments. This technote describes how to ensure it is disabled in WebSphere Application Server: Security Bulletin: Vulnerability in SSLv3 affects IBM WebSphere Application Server (CVE-2014-3566) [http://www-01.ibm.com/support/docview.wss?uid=swg21687173].
+
+
+
+For ICN 2.0.3, if you have enabled SSL on your IBM Content Navigator end user help system as per the Planning, installing and configuring IBM Content Navigator > Completing post configuration tasks documentation, http://www.ibm.com/support/knowledgecenter/SSEUEX_2.0.3/com.ibm.installingeuc.doc/eucde090.htm [http://www.ibm.com/support/knowledgecenter/SSEUEX_2.0.3/com.ibm.installingeuc.doc/eucde090.htm], you will need to disable SSLv3. 
+
+The end user help system will be using SSL_TLS by default if SSL is enabled, which is both TLS and SSLv3 enabled.
+http://www.ibm.com/support/knowledgecenter/was_beta_liberty/com.ibm.websphere.wlp.nd.multiplatform.doc/ae/rwlp_ssl.html [http://www.ibm.com/support/knowledgecenter/was_beta_liberty/com.ibm.websphere.wlp.nd.multiplatform.doc/ae/rwlp_ssl.html] 
+
+Disable SSLv3 by specifying sslProtocol="TLS"
+
+<ssl id="defaultSSLConfig" keyStoreRef="defaultKeyStore" sslProtocol="TLS" />
+
+See http://www.ibm.com/support/docview.wss?uid=swg21687173 [http://www.ibm.com/support/docview.wss?uid=swg21687173] for more information. WORKAROUNDS AND MITIGATIONS
+IBM recommends that you review your entire environment to identify areas that enable the SSLv3 protocol and take appropriate mitigation and remediation actions. The most immediate mitigation action that can be taken is disabling SSLv3. You should verify disabling SSLv3 does not cause any compatibility issues.
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v2 Guide [http://www.first.org/cvss/v2/guide] 
+On-line Calculator v2 [http://nvd.nist.gov/CVSS-v2-Calculator] 
+
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.

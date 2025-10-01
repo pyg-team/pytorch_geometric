@@ -1,0 +1,37 @@
+Title: IBM Error Installing SPSS Data Access Pack - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Error Installing SPSS Data Access Pack
+
+1: The InstallScript engine is missing from this machine. If Available, please run ISScript.msi, or contact your support personnel for further assistance.
+
+Attempting to install the data access pack to allow Modeller 14 to connect to Oracle database.
+
+1. Downloaded the data access pack (SDAPWin32_6.0.3.exe) from the SPSS site
+2. Attempted to install.
+3. Package extracts but install fails
+
+The SPSS drivers are compiled using InstallSheild v8 which comes included the package. There is some issue with my machine which keeps using installsheild v11.5.
+
+We can't stop installsheild v11.5 from running. We have followed all advice from http://consumer.installshield.com/ [http://consumer.installshield.com/]. 
+
+Is there any alternative way to install the DataAccess Pack - we need the Oracle 5.3 Drivers. Is there a way to get a version of the Access Pack complied using Installsheild version 11.5? 
+
+RESOLVING THE PROBLEM
+Check your Active Directory Policy to verify if it automatically applies a different version of InstallSheild. 
+
+Attempting to uninstall installsheild and apply Version 8 from the Data Access package was prevented by a registry key pointing to a different version of installsheild that would re-apply version 11.5 from the network.
+
+The workaround to the issue is to have the Network Administrator export the registry key and then delete it. This should allow an install of version 8 and then the SPSS data access pack.
+
+RELATED INFORMATION
+ Need more help? Our Modeler forum is Live! [https://developer.ibm.com/answers/topics/modeler/?smartspace=predictive-analytics]
+
+
+ 
+
+HISTORICAL NUMBER
+ 92614

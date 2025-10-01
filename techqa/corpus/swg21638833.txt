@@ -1,0 +1,23 @@
+Title: IBM Error received when running the IBM SPSS License Authorization Wizard - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Customer received the error below when running the License Authorization Wizard to enter the IBM SPSS Statistics Authorization code:
+
+"Thank you for the license code request to your IBM SPSS software; unfortunately, the IBM SPSS License Key Centre was unable to process your request at this time. Please create a Service Request with IBM Support in order to determine the cause."
+
+
+CAUSE
+The most common cause of this message is by accidentally typing an invalid authorization code. For example, an "f" was entered as '1', a "6" was entered as '5' and so on. Please ensure that the authorization code entered is correct.
+Also note that Authorization Codes only contain letters between "A" to "F".
+
+
+
+ANSWER
+After checking your code, if you still require further assistance, please proceed in raising a Service Request with IBM SPSS Technical Support. When raising a Service Request, please provide a photo of your authorization code. This will allow our Support Analysts to double check the code and ensure its validity.
+
+RELATED INFORMATION
+ Need more help? Our Statistics forum is Live! [https://developer.ibm.com/answers/topics/statistics.html?smartspace=predictive-analytics]
+Need more help? Our Licensing forum is Live! [https://developer.ibm.com/answers/topics/spsslicensing.html]

@@ -1,0 +1,65 @@
+Title: IBM Executing more than 5 users during virtual testing from Rational Performance Tester  8.2.1.4 results in “No License keys available for this 10 user run” error - United States
+
+Text:
+RPT; RTW; Rational Performance Test Agents; PVU licenses; PVU Support; Processor Value Unit Licensing. Cannot run tests; no license keys available for this 10 user run; VU; Virtual Tester TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Attempts to execute more than 5 users during virtual testing from IBM Rational Performance Tester 8.2.1.4 results in the error “No License keys available for this 10 user run” 
+
+SYMPTOM
+Error Message: 
+
+No license keys available for this 10 user run 
+
+
+image
+[/support/docview.wss?uid=swg21611951&amp;aid=1]
+
+CAUSE
+IBM Rational Performance Tester 8.2.1.4 supports the Processor Value Unit (PVU) licensing capability available with the following newly introduced offerings: 
+
+ 
+
+ * IBM Rational Performance Test Server 
+ * IBM Rational Test Virtualization Server 
+ * IBM Rational Test Workbench
+
+
+All of these offerings include either IBM Rational Performance Tester or the IBM Rational Performance Tester Agent. When you use any of these new offerings, IBM Rational Performance Tester 8.2.1.4 utilizes PVU licensed agents to generate virtual user load without the need for Virtual Tester Pack licenses. 
+
+This virtual user load is limited only by the capacity of the PVU licensed agents. 
+
+Further this functionality must be enabled during the install phase of IBM Rational Performance Tester 8.2.1.4 by selecting the IBM Rational Test Workbench Processor Value Unit (PVU) support check-box. 
+DIAGNOSING THE PROBLEM
+Verify if IBM Rational Test Workbench Processor Value Unit (PVU) support checkbox is selected during the installation phase of IBM Rational Performance Tester 8.2.1.4 by launching the IBM Installation Manager.
+
+
+
+RESOLVING THE PROBLEM
+When installing IBM Rational Performance Tester 8.2.1.4, select the IBM Rational Test Workbench Processor Value Unit (PVU) support checkbox so that after the installation completes, you can use the Manage License function of Installation Manager to import the Rational Performance Tester PVU license activation kit. 
+
+This enables you to leverage all the capabilities of Rational Performance Tester agents. 
+
+ 
+
+If you have not selected this feature during the installation, you can use the Modify Packages function of IBM Installation Manager to select it after the installation completes by following the steps mentioned below: 
+
+ 
+
+ 1. Launch the IBM Installation manager > Manage Licenses
+    
+    
+ 2. Highlight the IBM Rational Performance Tester 8.2.1.x and then click on Next
+    
+    
+ 3. Choose the option IBM Rational Test Workbench Processor Value Unit ( PVU ) Support
+    
+    
+ 4. Complete the option modify and close the Installation manager.
+
+
+If you do not select this option, you will need Virtual Tester pack licenses to run more than 5 users, even though Rational Performance Tester agents installed with Rational Performance Test Server and Rational Test Virtual Server are licensed by Processor Virtual Unit (PVU) licensing. 
+
+ 
+
+Note: When you are installing Rational Performance Tester, the “Configuration for IBM Rational Performance Tester Agent” window displays. Select the IBM Rational Performance Tester checkbox so that you can import the Rational Performance Tester PVU license activation kit, which enables you to leverage all the capabilities of Rational Performance Tester agents. If you do not select this option, you will need Virtual Tester pack licenses to run more than 5 users, even though Rational Performance Tester agents installed with Rational Performance Test Server and Rational Test Virtual Server are licensed by Processor Virtual Unit (PVU) licensing.

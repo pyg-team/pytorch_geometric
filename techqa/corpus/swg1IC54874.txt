@@ -1,0 +1,187 @@
+Title: IBM IC54874: FanIn primitive's output terminal triggers prematurely - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Under certain circumstances, a FanIn primitive's output
+   terminal can fire before all the ServiceInvoke primitives have
+   returned a response.  This can lead to unexpected results (and
+   various error messages) at runtime when using a Mediation Flow
+   Component with a FanIn primitive, which invokes one or more
+   ServiceInvoke primitives.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: Users of WebSphere Enterprise Service Bus    *
+   *                 and WebSphere Process Server v6.1.0, who     *
+   *                 are using a Mediation Flow Component which   *
+   *                 contains a FanOut->ServiceInvoke->FanIn      *
+   *                 primitive set, where more than one message   *
+   *                 is sent through the ServiceInvoke primitive. *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: When a ServiceInvoke primitive is       *
+   *                      wired up between a FanIn and a          *
+   *                      FanOut, where the FanOut primitive      *
+   *                      causes the ServiceInvoke primitive to   *
+   *                      make more than one callout, the FanIn   *
+   *                      primitive might not wait until all      *
+   *                      ServiceInvoke responses have been       *
+   *                      received.  This results in the output   *
+   *                      terminal on the FanIn primitive being   *
+   *                      fired prematurely.                      *
+   ****************************************************************
+   * RECOMMENDATION: If your Mediation Flow Component is          *
+   *                 configured such that multiple callouts are   *
+   *                 made by a ServiceInvoke primitive which is   *
+   *                 positioned with a FanOut->FanIn primitive    *
+   *                 pair, then you must install the fix which    *
+   *                 is associated with this APAR.  There are     *
+   *                 no known workarounds for this problem.       *
+   ****************************************************************
+   When you deploy a module which contains a Mediation Flow
+   Component which contains a request or response flow with a
+   primitive configuration of the following form:
+   
+          ----------   ------------------   ---------
+       ---| FanOut |-->| Service Invoke |-->| FanIn |---
+          ----------   ------------------   ---------
+   
+   where the action of the FanOut primitive is to cause more than
+   one message to be processed by the ServiceInvoke primitive for
+   a particular message flow, the design of the product is that
+   the FanIn primitive waits for responses from all the callouts
+   which were invoked by the Service Invoke primitive.
+   
+   In order to ensure that consistent message processing occurs
+   in this configuration, the Service Invoke primitive makes all
+   callouts synchronously, regardless of the callout type setting
+   on the Service Invoke primitive.
+   
+   However, there was a program defect such that if the flow was
+   invoked asynchronously, the callout was also asynchronous,
+   which resulted in the FanIn primitive triggering its output
+   terminal before all the responses had been received.
+   
+   This in itself might not result in a flow problem (provided
+   information from the other callouts was not required for
+   successful processing), however the FanIn primitive fired a
+   second (and subsequent) time, each time another asynchronous
+   callback was received.  This results in a variety of observed
+   exception messages from the runtime server.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This APAR resulted in a code fix to prevent the problem from
+   occurring, which was targeted to be included within the
+   following fix pack:
+   
+     V6.0.1 Fix Pack 1 (6.0.1.1)
+   
+   There are no known side effects associated with this code fix.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC54874
+   
+   
+ * REPORTED COMPONENT NAME
+   WEB ESB FOR WIN
+   
+   
+ * REPORTED COMPONENT ID
+   5724I8200
+   
+   
+ * REPORTED RELEASE
+   300
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-01-10
+   
+   
+ * CLOSED DATE
+   2008-03-31
+   
+   
+ * LAST MODIFIED DATE
+   2008-03-31
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEB ESB FOR WIN
+   
+   
+ * FIXED COMPONENT ID
+   5724I8200
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R100 PSN
+   UP
+   
+   
+ * R200 PSN
+   UP
+   
+   
+ * R300 PSY
+   UP

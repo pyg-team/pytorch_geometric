@@ -1,0 +1,40 @@
+Title: IBM Run process as different ID than api user. - United States
+
+Text:
+File Agent; permissions; API user; watch folder. TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ What permissions are needed
+
+by the API user? 
+
+SYMPTOM
+File Agent API user has read, write, modify access
+and that works just fine and others where it needs full control.
+
+
+CAUSE
+API user and system account user were different in customer environment.
+
+ENVIRONMENT
+Windows 2012
+
+DIAGNOSING THE PROBLEM
+The API user "A" and service account "B" are separate things with 
+different requirements. Of course, is it possible - and often the case -
+to use one account for both. Though the different requirements may 
+provide a reason for some not to do so.
+
+RESOLVING THE PROBLEM
+The ID's however do not have to be the same but have to have the correct
+permissions in place to work. 
+
+You need to set the CDFA service to run under a custom CDFA service 
+account. This is required as the the default local system account cannot
+access remote servers or network shares. 
+The minimum requirements for this CDFA service account are: 
+- Log on as a service 
+- Full access to the CDFA installation folder. 
+- Read & List Folder Contents permission on the network share and all 
+folders along the path. In addition, Modify permission is required when 
+you optionally enable the rename logic (-Duserenamelogic=true).

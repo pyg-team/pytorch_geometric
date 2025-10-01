@@ -1,0 +1,156 @@
+Title: IBM IZ47658: NETACT V6 PROBE HANGS - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Using the latest probe,  the probe disconnects  and
+   it is not able to make a further connection and there seems to
+   be no timeout.   Timeout property make no difference
+   
+   
+    Error: Unable to get events:
+   IDL:3gppsa5.org/NotificationIRPSystem/Attach:1.0\par
+   Tue Mar 10 18:33:14 2009 Information: Disconnect Error:
+   exception ManagedGenericIRPSystem.InvalidParameter \{\par
+   java.lang.String parameter="manager_reference"\par
+   \cf1\b\f1\fs24 Tue Mar 10 18:33:14 2009 Debug:
+   NetcoolIRPManager: Requesting NamingService.IOR using: GET
+   /cgi-bin/get_nbif_ior\par
+   
+   
+   HERE THE PROBE IS CURRENTLY HANGING FOR 24 HOURS
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  FIN
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   All users of the probe nco_p_nokia_netact_3gpp_v6
+   ****************************************************************
+   PROBLEM DESCRIPTION:
+   NETACT V6 PROBE HANGS WHEN DID GET ANY EVENT
+   ****************************************************************
+   RECOMMENDATION:
+   Date of GA Release : 30- APR -2010
+   Final Test Fix for this APAR :
+   /export/build/nco/Releases/integrations/concessions/probes/nco-p
+   -nokia-netact-3gpp-v6/0.0.6349
+   Fix Pack Name: probe-nco-p-nokia-netact-3gpp-v6-0_3
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  PROBE SHOULD RUN PROPERLY
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  Source Control Project:
+   Patch details:
+   /export/build/nco/Releases/integrations/concessions/probes/nco-p
+   -nokia-netact-3gpp-v6/0.0.6349
+   
+   
+   Date patch delivered to Support on 30/03/2008
+   
+   
+    
+   
+   
+
+COMMENTS
+ *  APAR closed on : 26-Mar-2009
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ47658
+   
+   
+ * REPORTED COMPONENT NAME
+   NOKIA NETACT BR
+   
+   
+ * REPORTED COMPONENT ID
+   5724P17NK
+   
+   
+ * REPORTED RELEASE
+   100
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-03-26
+   
+   
+ * CLOSED DATE
+   2009-04-20
+   
+   
+ * LAST MODIFIED DATE
+   2009-04-20
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R100 PSN
+   UP

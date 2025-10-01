@@ -1,0 +1,215 @@
+Title: IBM Late breaking updates to DataPower 7.5 documentation - United States
+
+Text:
+ NEWS
+
+ABSTRACT
+ 
+
+The version 7.5 documentation for IBM DataPower Gateway is not the latest available information. This document covers late breaking updates that are not in IBM Knowledge Center.
+
+Last updated, October 2017.
+
+
+
+CONTENT
+The late breaking updates in this document apply to DataPower Gateway version 7.5 documentation. 
+
+
+
+
+
+
+
+To access specific updates, click the appropriate link:  * Upgrade
+ * 
+ * Installation
+ * 
+ * GatewayScript
+ * 
+ * File management
+ * 
+ * Monitors
+
+To view the change history of this document, see Change history
+
+
+The corrections in the following sections apply to DataPower Gateway version 7.5 in IBM Knowledge Center.
+
+
+
+
+
+
+
+
+
+
+Upgrade  * 
+ *  Disabled diffie-hellman-group-exchange-sha1 and diffie-hellman-group1-sha1 algorithms by default. Disabled MD5-based MAC algorithms. Limited DH-GEX to 4096 bits for Cisco devices. 
+ * 
+ * 
+ * enable-legacy-kex yes
+ * 
+ *  The enable-legacy-kex command for the SSH server profile in available in 7.5.2.0. The enable-legacy-kex command for the SSH client profile is available in 7.5.2.7. 
+ * 
+ * 
+ *  Default cipher suites  * chacha20-poly1305@openssh.com (CHACHA20-POLY1305_AT_OPENSSH.COM)
+    * 
+    * aes128-ctr (AES128-CTR)
+    * 
+    * aes192-ctr (AES192-CTR)
+    * 
+    * aes256-ctr (AES256-CTR)
+    * 
+    * aes128-gcm@openssh.com (AES128-GCM_AT_OPENSSH.COM)
+    * 
+    * aes256-gcm@openssh.com (AES256-GCM_AT_OPENSSH.COM)
+    * 
+    * arcfour256 (ARCFOUR256)
+    * 
+    * arcfour128 (ARCFOUR128)
+    * 
+    * aes128-cbc (AES128-CBC)
+    * 
+    * 3des-cbc (3DES-CBC)
+    * 
+    * blowfish-cbc (BLOWFISH-CBC)
+    * 
+    * cast128-cbc (CAST128-CBC)
+    * 
+    * aes192-cbc (AES192-CBC)
+    * 
+    * aes256-cbc (AES256-CBC)
+    * 
+    * arcfour (ARCFOUR)
+    * 
+    * rijndael-cbc@lysator.liu.se (RIJNDAEL-CBC_AT_LYSATOR.LIU.SE)
+   
+   Default KEX algorithms  * curve25519-sha256@libssh.org
+    * 
+    * ecdh-sha2-nistp256
+    * 
+    * ecdh-sha2-nistp384
+    * 
+    * ecdh-sha2-nistp521
+    * 
+    * diffie-hellman-group-exchange-sha256
+    * 
+    * diffie-hellman-group14-sha1
+   
+   Default MAC algorithms  * umac-64-etm@openssh.com
+    * 
+    * umac-128-etm@openssh.com
+    * 
+    * hmac-sha2-256-etm@openssh.com
+    * 
+    * hmac-sha2-512-etm@openssh.com
+    * 
+    * hmac-sha1-etm@openssh.com
+    * 
+    * umac-64@openssh.com
+    * 
+    * umac-128@openssh.com
+    * 
+    * hmac-sha2-256
+    * 
+    * hmac-sha2-512
+    * 
+    * hmac-sha1
+   
+   
+ * 
+ * 
+ *  The SSH client always initiates the banner exchange. During the SSH2 banner exchange, use CR+LF termination for the banner. The SSH client ignores any message from the SSH server until the banner exchange. 
+
+
+Back to top
+
+
+
+
+
+
+
+
+
+
+Installation  * 
+ * show other-sensors
+ * 
+ * show sensors-other
+ * 
+
+
+Back to top
+
+
+
+
+
+
+
+
+
+
+GatewayScript  * 
+ * clear gatewayscript-cache path
+ * 
+
+
+Back to top
+
+
+
+
+
+
+
+
+
+
+File management  * 
+ *  isamwebroot local policyframework 
+
+
+Back to top
+
+
+
+
+
+
+
+
+
+
+Monitors  * 
+ * type
+ * 
+ * block
+ * 
+ * shape
+ * 
+ * type command
+ * 
+
+
+Back to top
+
+
+
+
+
+
+
+
+
+Change history 
+Last modified: 30 October 2017.  * 30 October 2017: Added information about nonexisting block keyword for Message Filter Action type command. 
+ * 19 October 2017: Added information about which directories you can create and remove subdirectories. 
+ * 19 July 2016: Added data about the wrong command troubleshooting command in the installation documentation. 
+ * 17 June 2016: Added data about the undocumented Global command. 
+ * 22 March 2016: Created for 7.5.
+
+Back to top

@@ -1,0 +1,150 @@
+Title: IBM JR29224: SQLCODE FIELD (INTEGER) IS NOT POPULATED WITH ORACLE CONSTRAINT VILOATION - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  While testing the job with actual data rejection, I'm seeing the
+   "sqlcode" value as "0" in the rejection file. Whereas, in the
+   director
+   log we are seeing the below error/warning message for the
+   rejected
+   records.
+   
+   APT_CombinedOperatorController,0: [DataDirect][ODBC Oracle Wire
+   Protocol
+   driver][Oracle]ORA-00001: unique constraint
+   (STAGE.CDM_FED_AGG_DEPTXREFF_PK) violated
+   
+   Can you help us why we are not getting the actual SQLCODE number
+   on the
+   reject file?
+   
+   Platform info:
+   OS: AIX 5.3
+   DS: 8.0.1 FP1
+   Oracle: 10g Enterprise Edition 10.2.0.3.0
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   ALL
+   ****************************************************************
+   PROBLEM DESCRIPTION:
+   sqlcode column does not reflect the correct value for ODBCupsret
+   jobs with reject link
+   ****************************************************************
+   RECOMMENDATION:
+   Install patch for JR29224
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Added functionality to correctly populate the NativeError in the
+   sqlcode field.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR29224
+   
+   
+ * REPORTED COMPONENT NAME
+   WIS DATASTAGE
+   
+   
+ * REPORTED COMPONENT ID
+   5724Q36DS
+   
+   
+ * REPORTED RELEASE
+   801
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-05-07
+   
+   
+ * CLOSED DATE
+   2008-08-07
+   
+   
+ * LAST MODIFIED DATE
+   2008-08-07
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  SERVER
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WIS DATASTAGE
+   
+   
+ * FIXED COMPONENT ID
+   5724Q36DS
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R801 PSN
+   UP

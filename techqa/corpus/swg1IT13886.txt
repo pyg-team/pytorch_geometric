@@ -1,0 +1,241 @@
+Title: IBM IT13886: ClassNotFoundException when using IBM MQ classes for JMS applications inside of CICS OSGI JVM server. - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  A CICS OSGi JVM Server has been configured to load the MQ
+   V8.0.0.4 OSGi bundles:
+   
+   com.ibm.mq.osgi.allclient_8.0.0.4.jar
+   com.ibm.mq.osgi.allclientprereqs_8.0.0.4.jar
+   
+   as described in the "Setting up the JVM server environment"
+   topic in the IBM MQ V8 section of IBM Knowledge Center. When a
+   JMS application is deployed into the OSGi JVM Server that has
+   the Java system property:
+   
+   -Dosgi.compatibility.bootdelegation=false
+   
+   set, the application fails to start with an error similar to the
+   one below:
+   
+   [ENABLE_OSGIBUNDLE_Thread-10][com.ibm.cics.osgi.impl] @Error:
+   Controller.enableBundle() - ID = 28
+   org.osgi.framework.BundleException: Exception in
+   my.application.Activator.start() of bundle my.bundle.
+       at
+   org.eclipse.osgi.internal.framework.BundleContextImpl.startActiv
+   ator(BundleContextImpl.java:792)
+       :    :    :    :    :    :    :    :    :    :    :    :
+   Caused by: java.lang.NoClassDefFoundError:
+   javax.naming.spi.InitialContextFactory
+       :    :    :    :    :    :    :    :    :    :    :    :
+   Caused by: java.lang.ClassNotFoundException:
+   javax.naming.spi.InitialContextFactory cannot be found by
+   com.ibm.mq.osgi.allclientprereqs_8.0.0.4
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   This issue affects users of:
+   
+   - The WebSphere MQ V7.1 classes for JMS OSGi bundles
+   - The WebSphere MQ V7.5 classes for JMS OSGi bundles.
+   - The IBM MQ V8.0 IBM MQ V8.0 OSGi bundles called:
+   
+        com.ibm.mq.osgi.allclient_<version number>.jar
+        com.ibm.mq.osgi.allclientprereqs_<version number>.jar
+   
+   who are running JMS applications inside an OSGi environment.
+   
+   
+   Platforms affected:
+   MultiPlatform
+   
+   ****************************************************************
+   PROBLEM DESCRIPTION:
+   The OSGi bundle:
+   
+     com.ibm.msg.client.osgi.wmq.prereq_<version number>.jar
+   
+   provided with WebSphere MQ V7.1 and V7.5, and the OSGi bundle:
+   
+     com.ibm.mq.osgi.allclientprereqs_<version number>.jar
+   
+   shipped with MQ V8.0, contains the prerequisite JAR files that
+   are needed by the other MQ OSGi bundles to be able to run JMS
+   applications.
+   
+   The JAR files contained within these bundles required access to
+   the following packages
+   
+   - javax.naming
+   - javax.naming.directory
+   - javax.naming.event
+   - javax.naming.ldap
+   - javax.naming.spi
+   
+   If the OSGi environment was configured in such a way that these
+   packages were not explicitly available via OSGi boot delegation,
+   then an error similar to the one below would be reported when a
+   JMS application started up:
+   
+   WebSphere MQ V7.1 and V7.5
+   -----------------------------------
+   java.lang.NoClassDefFoundError:
+   javax.naming.spi.InitialContextFactory
+       :    :    :    :    :    :    :    :    :    :    :    :
+   Caused by: java.lang.ClassNotFoundException:
+   javax.naming.spi.InitialContextFactory cannot be found by cannot
+   be found by com.ibm.msg.client.osgi.wmq.prereq_<version_number>
+   
+   MQ V8.0
+   ----------
+   java.lang.NoClassDefFoundError:
+   javax.naming.spi.InitialContextFactory
+       :    :    :    :    :    :    :    :    :    :    :    :
+   Caused by: java.lang.ClassNotFoundException:
+   javax.naming.spi.InitialContextFactory cannot be found by
+   com.ibm.mq.osgi.allclientprereqs_<version_number>
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The OSGi bundle:
+   
+     com.ibm.msg.client.osgi.wmq.prereq_<version number>.jar
+   
+   provided with WebSphere MQ V7.1 and V7.5, and the OSGi bundle:
+   
+     com.ibm.mq.osgi.allclientprereqs_<version number>.jar
+   
+   shipped with MQ V8.0,  have been updated to import the packages:
+   
+   - javax.naming
+   - javax.naming.spi
+   
+   This allows the prerequsite JAR files contained within the
+   bundles to load classes within these packages that are needed to
+   run JMS applications.
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+   Version    Maintenance Level
+   v7.1       7.1.0.8
+   v7.5       7.5.0.7
+   v8.0       8.0.0.6
+   v9.0 CD    9.0.1
+   v9.0 LTS   9.0.0.1
+   
+   The latest available maintenance can be obtained from
+   'WebSphere MQ Recommended Fixes'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037]
+   
+   If the maintenance level is not yet available information on
+   its planned availability can be found in 'WebSphere MQ
+   Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT13886
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ WINDOWS V7
+   
+   
+ * REPORTED COMPONENT ID
+   5724H7220
+   
+   
+ * REPORTED RELEASE
+   710
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-02-22
+   
+   
+ * CLOSED DATE
+   2016-07-25
+   
+   
+ * LAST MODIFIED DATE
+   2017-06-01
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ WINDOWS V7
+   
+   
+ * FIXED COMPONENT ID
+   5724H7220
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R710 PSY
+   UP

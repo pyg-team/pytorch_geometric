@@ -1,0 +1,171 @@
+Title: IBM Collecting troubleshooting data for z/OS Connect Enterprise Edition - United States
+
+Text:
+zos Connect EE ; MustGather; MustGathers; Must Gather; Collect Troubleshooting Data; MustGatherDocument; Collecting; Trouble; Shooting; 5655CEE00 200 2.0 5655CE300 300 3.0 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ You are having a problem with z/OS Connect Enterprise Edition. You would like to know what documentation you must collect (MustGather) so that the support team can diagnose your problem. If you gather this documentation before contacting support it will expedite the troubleshooting process, and save you time. 
+
+CAUSE
+Collecting MustGather data early, even before opening a Service Request (SR) or PMR, helps IBM Support quickly determine if: 
+
+ * Symptoms match known problems (rediscovery). 
+ * There is a non-defect problem that can be identified and resolved. 
+ * There is a defect that identifies a work around to reduce severity. 
+ * Locating root cause can speed development of a code fix.
+
+RESOLVING THE PROBLEM
+If you have already contacted IBM Support, you can continue on to the component-specific MustGather information. Otherwise, see below to determine the general information IBM will need for every type of problem. 
+
+ 
+
+ 1. A complete description of the problem, including the following:  * When did the problem first occur? 
+     * Is the problem a one time failure or reoccurring? 
+     * as software or hardware maintenance applied? 
+     * Did the failure occur while doing a specific task? 
+     * Is the failure occurring in more than one address space?
+    
+    
+ 2. z/OS Connect EEproduct version, release, and maintenance level 
+ 3. Operating system version, release, and maintenance level 
+ 4. Related products version, and release levels (i.e. CICS, IMS, Db2) 
+ 5. A valid contact phone number and email address
+
+
+
+Component specific information 
+
+ * Collecting (MustGather) data for z/OS Connect Enterprise Edition server runtime problems
+ * Collecting (MustGather) data for z/OS Connect Enterprise Edition API toolkit problems
+ * Collecting (MustGather) data for z/OS Connect Enterprise Edition build toolkit problems
+ * 
+ * 
+ * 
+ * Related information
+ * 
+ * 
+ * Troubleshooting hints and tips
+ * Exchanging data with IBM Support
+ * 
+ * Collect troubleshooting data for CICS products [http://www.ibm.com/support/docview.wss?uid=swg21208053]
+ * 
+ * Collect troubleshootng data for IMS [https://www.ibm.com/support/knowledgecenter/SSEPH2_15.1.0/com.ibm.ims15.doc.dgr/ims_collect_data_general.htm]
+ * 
+ * Collect troubleshooting data for Db2 [https://www.ibm.com/support/knowledgecenter/en/SSEPEK_12.0.0/intro/src/tpc/db2z_introtroubleshooting.html]
+
+
+
+
+
+
+
+
+
+Collecting (MustGather) data for z/OS Connect EE server runtime problems: Important Notes: 
+
+ * Liberty trace may need to be turned on with the appropriate specification based on the problem being reported, see Enabling z/OS Connect EE server trace [https://www.ibm.com/support/knowledgecenter/SS4SVW_3.0.0/com.ibm.zosconnect.doc/troubleshooting/trace.html] for more information 
+ * The following Liberty files and directories are in the server output directory, which is relative to the WLP_USER_DIR used by the server instance, default location of WLP_USER_DIR is "/var/zosconnect". So by default the server output directory is: "/var/zosconnect/servers/<serverName>"
+   
+   Provide a z/OS Connect EE server dump:  * Enter modify command /F <jobname>, dump [http://www.ibm.com/support/knowledgecenter/SSLTBW_2.2.0/com.ibm.zos.v2r2.istopr0/fdu.htm] to get a server dump. or 
+    *  [http://www.ibm.com/support/docview.wss?uid=swg21596714]Follow instructions to set up trace and get a full dump for WebSphere Liberty [http://www.ibm.com/support/docview.wss?uid=swg21596714] 
+   
+   
+   Or, provide a zip file containing the following:  * server.xml located in server output directory 
+    * bootstrap.properties in server output directory 
+    * messages.log in server output directory 
+    * Liberty trace file in server output logs directory 
+    * All files in the first failure data capture (FFDC) directory, located in server output directory 
+    * JCL which contains the environment variables 
+    * z/OS Connect EE server JES message log (SDSF started task log)
+   
+   
+
+
+Additional documents that might be required:  * z/OS Connect EE server output resources directory 
+ * z/OS Connect EE API (AAR), Service (SAR), API Requester (ARA) archive file associated with Service Request (SR) or PMR 
+ * Any source files used to create artifacts contained within z/OS Connect EE archive associated with service request (copybooks, source file, etc…)
+
+
+Back to top
+
+
+
+
+
+Collecting (MustGather) data for z/OS Connect EE API toolkit problems:
+Provide a zip file containing: 
+
+ * z/OS Connect EE API or Service projects associated with Service Request (SR) or PMR 
+ * Any source files used to create any potential service interfaces required by those projects (like copybooks and source files)
+
+
+Additional documents that maybe required: 
+ * Workspace java trace: From z/OS Connect EE workspace select -> Windows -> Preferences -> Select z/OS Connect EE from the list -> Select “Verbose logging”. (default log file location: <workspace_dir>/.metadata/.log ) 
+ * Zip file of Service Data if “z/OS” eclipse perspective available: From “z/OS” perspective select -> File -> Trace -> Collect Service Data
+
+
+Back to top
+
+
+
+
+
+
+Collecting (MustGather) data for z/OS Connect EE build toolkit problems:
+
+
+ * Provide a zip file containing an output file of the zconbt command with the verbose (-v) option and the target properties file.
+   
+   For example: "zconbt -p=health.properties -f=./health.sar -v >> bttrace.log", provide a zip file containing health.properties and bttrace.log
+
+
+
+Additional documents that maybe required:  * Service Archive file generated by the zconbt command
+   
+   For example: "zconbt -p=health.properties -f=./health.sar -v >> bttrace.log", provide health.sar file
+
+Back to top
+
+
+
+
+
+
+Troubleshooting hints and tips 
+Diagnostic tips: 
+
+ * Review the logs and dumps generated at the point of failure. 
+ * Gather the documentation and work with the z/OS Connect EE support team to resolve your problem.
+   
+
+Learn more:  * Troubleshooting z/OS Connect EE problems [http://www.ibm.com/support/knowledgecenter/SS4SVW_2.0.0/com.ibm.zosconnect.base.doc/topics/troubleshooting.html]
+
+
+Back to top
+
+
+
+
+
+Exchanging data with IBM Support
+
+
+
+ 1. See Exchanging information with IBM Technical Support [http://www.ibm.com/support/docview.wss?uid=swg21204910] for FTP and email instructions using the IBM Enhanced Customer Data Repository (ECuRep).
+    
+ 2. Go to the Service Request page [http://www.ibm.com/support/servicerequest/] to open or update a problem. If you have a SoftwareXcel enterprise edition for zSeries [https://www.ibm.com/software/support/offerings.html] contract, you can also ask a non-defect installation and usage questions.
+    
+    Note: Always update your Service Request (problem record) to indicate that data has been sent. 
+
+
+If you need to speak to an IBM technical support representative call your country representative [http://www.ibm.com/planetwide/]. If you need to speak to an IBM technical support representative in the US, call 1-800-IBM-SERV. 
+
+Back to top
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Host Transaction Processing CICS Transaction Server Not Applicable z/OS 
+PRODUCT ALIAS/SYNONYM
+ zCEE

@@ -1,0 +1,174 @@
+Title: IBM IZ33574: WINDOWS WEB REPORTING FAILS WHEN ADDING WEB REPORTING TO IIS ON INSTALL - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When installing TUAM on a Windows Operating System, the setup of
+   Windows Web Reporting fails when attempting to add the Web
+   Reporting to Internet Information Services (IIS) when the IIS
+   default website has been changed.
+   
+   The installation will return a message of "Error Accessing
+   Default Web Site", but will still complete installing all the
+   other portions of the TUAM application.
+   
+   This is caused because the "default" website for Internet
+   Information Services (IIS) on the machine has been changed prior
+   to the TUAM installation.   This is a valid setup, but the TUAM
+   installation has no way to detect that the default website has
+   been changed.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  The installation for everything but Windows Web Reporting will
+   have completed successfully.
+   
+   Some changes will need to be made to the VBscript that does the
+   IIS configuration for TUAM Windows Web Reporting.  It will then
+   need to be run manually after those changes.
+   
+   Follow these steps to correct this issue:
+   1) On the Windows machine having the issue, edit the
+   %systemroot%\system32\inetserv\metabase.xml file.  More
+   information on this metabase file can be found here:
+   http://www.microsoft.com/technet/prodtechnol/WindowsServer2003/L
+   ibrary/IIS/1d1e5de4-fd63-40cd-bc5d-c20521548eed.mspx?mfr=true [http://www.microsoft.com/technet/prodtechnol/WindowsServer2003/Library/IIS/1d1e5de4-fd63-40cd-bc5d-c20521548eed.mspx?mfr=true]
+   
+   2) In that file, search for <IIsWebServer tag
+   Note the Location = entry.  The final number for that location
+   is needed.  Make a note of it.  For example, if the line in the
+   file looked like this:
+   <IIsWebServer Location ="/LM/W3SVC/12345678"
+   
+   Retain 12345678 for the next step
+   
+   3) Backup and then edit %TUAM_HOME%\setup\console\iisconfig.vbs
+   
+   Change the following three lines so that the numeric value
+   between W3SVC and ROOT (currently 1) matches the value in the
+   IIsWebServer tag:
+   Const DEFAULT_PATH = "IIS://localhost/W3SVC/1/ROOT"
+   Const VIRTUAL_PATH = "IIS://localhost/W3SVC/1/ROOT/TUAM"
+   Const FIN_MOD_PATH =
+   "IIS://localhost/W3SVC/1/ROOT/FinancialModeler"
+   
+   For the example above, the values would become
+   Const DEFAULT_PATH = "IIS://localhost/W3SVC/12345678/ROOT"
+   Const VIRTUAL_PATH = "IIS://localhost/W3SVC/12345678/ROOT/TUAM"
+   Const FIN_MOD_PATH =
+   "IIS://localhost/W3SVC/12345678/ROOT/FinancialModeler"
+   
+   Save the iisconfig.vbs file
+   
+   4) Run the following commands from the Command Line on the
+   Windows machine:
+   cscript "%TUAM_HOME%\setup\console\iisconfig.vbs" //Nologo
+   financialmodeler install
+   cscript "%TUAM_HOME%\setup\console\iisconfig.vbs" //Nologo web2
+   install
+   
+   This will correctly configure IIS with TUAM
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  When installing TUAM on a Windows Operating System, the setup of
+   Windows Web Reporting fails when attempting to add the Web
+   Reporting to Internet Information Services (IIS) when the IIS
+   default website has been changed.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+ *  A Workaround has been provided ahead of a permanent fix in the
+   next TUAM Release.
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ33574
+   
+   
+ * REPORTED COMPONENT NAME
+   TIV USAGE & ACT
+   
+   
+ * REPORTED COMPONENT ID
+   5724O3300
+   
+   
+ * REPORTED RELEASE
+   711
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-09-30
+   
+   
+ * CLOSED DATE
+   2008-10-23
+   
+   
+ * LAST MODIFIED DATE
+   2008-10-23
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R711 PSN
+   UP

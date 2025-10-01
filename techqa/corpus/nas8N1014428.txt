@@ -1,0 +1,30 @@
+Title: IBM Obtaining BRMS GUI Plug-In Debug Information - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This document describes how to get a BRMS GUI trace when problems occur only when using the BRMS GUI plug-in. 
+
+RESOLVING THE PROBLEM
+Obtaining BRMS GUI Plug-In Debug Information 
+
+ 
+To obtain BRMS GUI plug-in debug information, do the following: 
+
+1. Close the IBM iSeries Navigator window. 2. Download the following JETraceOn.reg file to a drive that is accessible from the client PC (for example, C:\).
+
+JETraceOn.reg [/support/docview.wss?uid=nas8N1014428&aid=2] [/support/docview.wss?uid=nas8N1014428&aid=1] 3. Run the JETraceOn.reg file by double-clicking on it from Microsoft Windows Explorer or by typing its file name directly in a command prompt window.
+
+Note: This .reg file creates a registry entry that causes iSeries Navigator to start the Java Console [http://w3.rchland.ibm.com/%7Elpp/brmsGui/customerTips/brmsGuiCustomerSetupAndDebugNotes.htm#JavaConsole]. 4. Start iSeries Navigator. 5. Set the following Java Trace Options: 
+
+o Error
+o Information
+o Warning 6. Reproduce the problem if possible. 7. Save the Java trace information to a file by clicking the Save button on the Java Console [http://w3.rchland.ibm.com/%7Elpp/brmsGui/customerTips/brmsGuiCustomerSetupAndDebugNotes.htm#JavaConsole], and then send the file to IBM. 8. Download and run the following JETraceOff.reg file to disable the Java Console.
+
+JETraceOff.reg [/support/docview.wss?uid=nas8N1014428&aid=4] [/support/docview.wss?uid=nas8N1014428&aid=3]  
+
+
+Cross reference information Segment Product Component Platform Version Edition Operating System IBM i 7.2 Operating System IBM i 7.1 Operating System IBM i 6.1 Operating System IBM i 7.3 
+HISTORICAL NUMBER
+ 447256764

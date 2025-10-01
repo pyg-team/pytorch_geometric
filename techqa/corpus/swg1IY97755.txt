@@ -1,0 +1,171 @@
+Title: IBM IY97755: SIGSEGV IN FUNCTION RFXADDCLQMGR DURING QUEUE MANAGER STARTUP - United States
+
+Text:
+  FIXES ARE AVAILABLE
+WebSphere MQ V6.0 Fix Pack 6.0.2.2 [http://www-01.ibm.com/support/docview.wss?uid=swg24015717]
+WebSphere MQ V6.0 for iSeries Fix Pack 6.0.2.2 [http://www-01.ibm.com/support/docview.wss?uid=swg24015718]
+WebSphere MQ 6.0 for HP OpenVMS Alpha and Itanium - Fix Pack 6.0.2.7 [http://www-01.ibm.com/support/docview.wss?uid=swg24027266]
+WebSphere MQ 6.0 for HP OpenVMS Alpha and Itanium - Fix Pack 6.0.2.10 (FP03) [http://www-01.ibm.com/support/docview.wss?uid=swg24029987]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The function rfxAddCLQMGR receives a SIGSEGV when building the
+   contents of the repository cache using SSL peer name. This is
+   due to incorrect calculation of lengths for the cluster list
+   pointer and cluster list length.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  SIGSEGV in function rfxAddCLQMGR during the queue manager
+   startup
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   Users migrating clustered queue managers with SSL peer name to
+   WMQ V6.0
+   
+   Platforms affected:
+    All Distributed (iSeries, all Unix and Windows)
+   ****************************************************************
+   PROBLEM SUMMARY:
+   The migration code for handling clustered queue managers with
+   SSL peer name allocated extra memory for the lengths of
+   cluster list pointer and cluster list length.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  WebSphere MQ has been modified such that SSL peer name is not
+   accounted for twice during the calculation of length for
+   cluslistPtr and cluslistLen.
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+                      v6.0
+   Platform           Fix Pack 6.0.2.2
+   --------           --------------------
+   Windows            U200270
+   AIX                U809895
+   HP-UX (PA-RISC)    U809898
+   HP-UX (Itanium)    U810084
+   Solaris (SPARC)    U809913
+   Solaris (x86-64)   U810362
+   iSeries            SI27286
+   Linux (x86)        U809950
+   Linux (x86-64)     U810178
+   Linux (zSeries)    U810081
+   Linux (Power)      U810083
+   Linux (s390x)      U810110
+   
+   The latest available maintenance can be obtained from
+   'WebSphere MQ Recommended Fixes'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037]
+   
+   If the maintenance level is not yet available, information on
+   its planned availability can be found in 'WebSphere MQ
+   Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IY97755
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ SOL SPARC
+   
+   
+ * REPORTED COMPONENT ID
+   5724H7203
+   
+   
+ * REPORTED RELEASE
+   600
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2007-04-23
+   
+   
+ * CLOSED DATE
+   2007-05-31
+   
+   
+ * LAST MODIFIED DATE
+   2007-08-22
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ SOL SPARC
+   
+   
+ * FIXED COMPONENT ID
+   5724H7203
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R600 PSY
+   UP

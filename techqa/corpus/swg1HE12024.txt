@@ -1,0 +1,142 @@
+Title: IBM HE12024: For hold notice, add people in scope from another request than the hold notice's request does not work. - United States
+
+Text:
+  A FIX IS AVAILABLE
+Download IBM Atlas Policy Suite Version 6.0.3 Fix Pack 2 [http://www-01.ibm.com/support/docview.wss?uid=swg24038397]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  You are unable to add recipients to a hold notice that belongs
+   to a request other than the one the notice was for, using the
+   Add > People in Scope page.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Use Add Employees and search for employees to add.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  For hold notice, add people in scope from another request than
+   the hold notice's request does not work.  Selections from other
+   requests are ignored.  For example, in hold notice > rules tab
+   > recipients button > Add People In Scope, clear the filter,
+   select user from another request, and save.  Nothing happens.
+   This issue was introduced in V6.0.3.0.
+   If you add users to a hold notice using Add People In Scope,
+   you do not use the default filter, and selections are not
+   added, then this is most likely your issue.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix is available now from Fix Central as a part of 6.0.3,
+   iFix001.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   HE12024
+   
+   
+ * REPORTED COMPONENT NAME
+   ATLAS EDISCOVER
+   
+   
+ * REPORTED COMPONENT ID
+   5725D7500
+   
+   
+ * REPORTED RELEASE
+   603
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-03-12
+   
+   
+ * CLOSED DATE
+   2014-05-22
+   
+   
+ * LAST MODIFIED DATE
+   2014-05-22
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  None
+   holds
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ATLAS EDISCOVER
+   
+   
+ * FIXED COMPONENT ID
+   5725D7500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R603 PSY
+   UP

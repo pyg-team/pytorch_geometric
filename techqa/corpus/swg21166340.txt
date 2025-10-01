@@ -1,0 +1,20 @@
+Title: IBM What is the maximum number of hours for the soft delete expiration time? - United States
+
+Text:
+limit; max; maximum; deletion; soft; hard; softdelete; harddelete; APAR LO00486; soft delete; hard delete; remove TECHNOTE (FAQ)
+
+QUESTION
+What is the maximum number of hours that can be used for the soft delete expiration time in Lotus Notes?
+
+ANSWER
+The maximum value the functionality can handle is not documented. While the variable can be set to a maximum of 2,147,483,647 (see below), the effective limit for this value is 65,535.
+NOTE: The Update task is responsible for removing soft deletions.
+
+[http://www.ibm.com/support/docview.wss?rs=899&uid=swg21166327]Background:
+Starting with the 8.x mail template, the Preferences dialog includes a Input Validation formula which limits the value to 2,147,483,647, but the underlying .nsf functions that handle soft deletion expiration will limit this value to 65.535. The database properties also allow for values higher than 65,535 but the underlying .nsf structures will still limit the effective value.
+
+In Notes 6.0, LotusScript introduced the UndeleteExpireTime property (of the NotesDatabase class) which is based on Integer type but the type was corrected to a Long value in later releases as a result of SPR# JREN5TATQ8.
+
+RELATED INFORMATION
+ What Task Is Responsible for Deleting Soft Deletions? [http://www.ibm.com/support/docview.wss?uid=swg21114406]
+Opening the Preferences of a Notes Mail Database Result [http://www.ibm.com/support/docview.wss?uid=swg21166325]

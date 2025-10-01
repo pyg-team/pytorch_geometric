@@ -1,0 +1,79 @@
+Title: IBM WRT installation prerequisites for 64-bit Windows platforms - United States
+
+Text:
+WRT; installation prerequisites; 64-bit platforms; kfcmserver failed to initialize; 0xc0150002; 71WRT-PLAN; 71WRT-INS; 71WRT-CONF; 71WRT-WV; 71WRT-TS TECHNOTE (FAQ)
+
+QUESTION
+ What are the prerequisites for installing the Web Response Time (WRT) agent on supported 64-bit Windows platforms? 
+
+ANSWER
+The following are the prerequisites you must observe before installing the WRT agent on supported 64-bit Windows platforms under ITCAM for Transactions. 
+1) Make sure that your 64-bit Windows platform is supported.
+
+See Prerequisites for ITCAM for Transactions in Related URLs
+
+2) (Windows Server 2003 x64 only) Update the server to R2 SP2. Open a DOS command prompt and enter the systeminfo command to verify the platform architecture and whether the server has been updated to R2 SP2.
+
+See No Web Response Time data in workspaces - Windows x64 [http://www.ibm.com/support/knowledgecenter/SS5MD2_7.4.0.1/com.ibm.itcamt.doc/rt/TSG/itcam_rt_wrt_208240_fix.html] in Related URLs
+
+Note: The Windows 2003 platform is no longer supported by Microsoft.
+
+3) Install WinPcap V4.1.1 [http://www.winpcap.org/install/default.htm]or higher.
+
+4) Install Microsoft Visual C++ 2008 SP1 Redistributable Package (x64) [http://www.microsoft.com/en-us/download/details.aspx?id=2092]
+
+
+Installation Workaround (V7.3 and V7.3.0.1)
+
+After installing and configuring the Web Response Time agent on a supported Windows 64-bit platform, and rebooting the system, no data is displayed in the Web response Time workspaces. Task Manager on the WRT server shows that the kt5agent process is running but the kfcmserver process is not running. When you attempt to launch the kfcmserver.exe process from the ITM_HOME\TMAITM6\wrm\Analyzer directory, the following message pops up:
+
+
+
+[/support/docview.wss?uid=swg21497745&amp;aid=1] kfcmserver.exe - Application Error [/support/docview.wss?uid=swg21497745&amp;aid=1] The application failed to initialize properly (0xc0150002). Click on OK to terminate the application. 
+Here is how you recover: 
+
+1) Upgrade the Windows server to the following level: 
+
+_ On Windows Server 2003, make sure you have upgraded the server to Windows Server 2003 R2 SP2. 
+_ Install WinPCap 4.1.1 or later 
+_ Install Microsoft Visual C++ 2008 SP1 Redistributable Package (x64) 
+
+2) Reboot the WRT host. 
+
+3) Stop the T5 agent. 
+
+4) Uninstall the WRT kfcmserver process. 
+
+See Uninstalling the Web Response Monitor [https://www.ibm.com/support/knowledgecenter/SS5MD2_7.3.0/com.ibm.itcamt.doc_7.3/rt/Install_Guide/uninst.html] before uninstalling the Web Response Time agent 
+
+5) Uninstall the T5 agent using the Control Panel > Add/Remove Programs dialog. 
+
+6) Reboot the WRT host. 
+
+7) If WRT is the only agent installed, manually delete the ITM home directory. 
+
+8) Reinstall the WRT agent. 
+
+9) Reboot the WRT host. 
+
+Using Task Manager to Display WRT Processes 
+
+When you use Task Manager to check the status of the kt5agent and kfcmserver processes, enable (tic) the 'Show processes from all users' checkbox in the lower left corner of the Processes tab. Example: 
+
+[/support/docview.wss?uid=swg21497745&amp;aid=2] RELATED INFORMATION
+ Supported Platforms [https://www.ibm.com/developerworks/community/wikis/home?lang=en#/wiki/Tivoli%20Composite%20Application%20Manager/page/Prerequisites%20for%20ITCAM%20for%20Transactions]
+No Web Response Time data in workspaces - Windows x64 [http://www.ibm.com/support/knowledgecenter/SS5MD2_7.4.0.1/com.ibm.itcamt.doc/rt/TSG/itcam_rt_wrt_208240_fix.html]
+WinPcap [http://www.winpcap.org/install/default.htm]
+Microsoft Visual C++ 2008 SP1 Redistributable Package ( [http://www.microsoft.com/en-us/download/details.aspx?id=2092]
+Uninstalling a monitoring agent [http://www.ibm.com/support/knowledgecenter/SS5MD2_7.3.0/com.ibm.itcamt.doc_7.3/rt/Install_Guide/uninst.html]
+
+
+
+
+HISTORICAL NUMBER
+ 74898.000.655 
+
+PRODUCT ALIAS/SYNONYM
+ ITCAMfTransactions
+T7.4
+ITCAM for Transactions 7.4

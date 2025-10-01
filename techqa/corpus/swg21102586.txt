@@ -1,0 +1,51 @@
+Title: IBM What are the reserved Keywords used by Domino's Full Text search engine - United States
+
+Text:
+syntax; verity; Domino Server; Notes; Incident 1451588; Server; Full Text Search TECHNOTE (FAQ)
+
+QUESTION
+Certain words are reserved for use by the Full Text search engine. What are these words, and how can you search for them in a document?
+
+ANSWER
+The following words are reserved keywords for the full text search engine: 
+
+ * 
+ * 
+ *   *   *   *   * 
+            
+            
+         
+         
+      
+      
+   
+   
+
+You can search on these words only by placing them inside double quotes, either individually or in a phrase (e.g., "Field properties").  *   *   *   *   * 
+            
+            
+         
+         
+      
+      
+   
+   
+
+Non-alphanumeric characters used by the search engine are also reserved. Most, but not all, of these characters can be searched for in a document by placing them in double quotes. Due to the number of non-alphanumeric characters available, these are not listed here.  *   *   *   *   * 
+            
+            
+         
+         
+      
+      
+   
+   
+
+Note that searching on these keywords will produce errors such as "Query is not understandable", "Full text error, see log for more information", or "Empty Search String or Search String contained only reserved words". 
+
+Cross reference information Segment Product Component Platform Version Edition Messaging Applications Lotus End of Support Products Lotus Notes 
+HISTORICAL NUMBER
+ 191606 
+
+PRODUCT ALIAS/SYNONYM
+ Lotus Notes Client

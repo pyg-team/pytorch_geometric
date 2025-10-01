@@ -1,0 +1,146 @@
+Title: IBM PI27310: TOMCAT APPLICATION STATUS IS SHOWING UNKNOWN IN TEP - United States
+
+Text:
+  A FIX IS AVAILABLE
+ITCAM for J2EE V7.1.1 Fixes [http://www-01.ibm.com/support/docview.wss?uid=swg24040521]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Users affected
+   ----------------
+   J2EE DC 7.1.1 and Tomcat 5.5.27 (5.5.x)
+   More details
+   --------------
+   The DC trace is filled in with exceptions whose stack trace is
+   similar to this:
+   javax.management.AttributeNotFoundException :
+   Cannot find attribute stateName at
+   org.apache.commons.modeler.BaseModelMBean.getAttribute(BaseModel
+   MBean.java:260) at
+   com.sun.jmx.interceptor.DefaultMBeanServerInterceptor.getAttribu
+   te(DefaultMBeanServerInterceptor.java:666) at
+   com.sun.jmx.mbeanserver.JmxMBeanServer.getAttribute(JmxMBeanServ
+   er.java:638) at
+   com.ibm.tivoli.itcam.toolkit.appmon.serverinfo.appstatus.TomcatS
+   P .getStatus(TomcatSP.java:47) at
+   com.ibm.tivoli.itcam.toolkit.appmon.config.AppCfgMgr.getAppStatu
+   s(AppCfgMgr.java:430) ...........
+   Also, looking at the JMX Proxy full listing:
+   http://<ip-address>:8080/manager/jmxproxy/?qry=
+   and [http://<ip-address>:8080/manager/jmxproxy/?qry=and] searching for tomcat 5.5.x mbean object name, you see that
+   "*:j2eeType=WebModule,name=" has the value "state" and not the
+   value "stateName".
+   A fix in "reqaggr.jar" is needed to support this, as agreed
+   with Keyuri.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  There were many exceptions in the tomcat log related to mbean
+   attributenotfoundexception. The particular meban attribute did
+   not exist in tomcat 5.0.
+   
+   This fix will be available in the J2 7.1.1.0 Ifix 2
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This fix will be available in the next J2EE ifix which will be
+   7.1.1.0 Ifix 2
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI27310
+   
+   
+ * REPORTED COMPONENT NAME
+   ITCAM J2EE TOMC
+   
+   
+ * REPORTED COMPONENT ID
+   5724N95TC
+   
+   
+ * REPORTED RELEASE
+   710
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-10-09
+   
+   
+ * CLOSED DATE
+   2014-10-28
+   
+   
+ * LAST MODIFIED DATE
+   2015-04-13
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TCAM AD WAS DC
+   
+   
+ * FIXED COMPONENT ID
+   5724Y92DC
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R710 PSY
+   UP

@@ -1,0 +1,52 @@
+Title: IBM Workplace (Application Engine) will encounter Process Engine applet exceptions with 5.2.0.3-P8CPE-FP003 - United States
+
+Text:
+PE applets; Process Engine; WP; launching; Workplace; Application Engine TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ After upgrading Content Platform Engine (CPE) to 5.2.0.3-P8CPE-FP003, customers using Workplace (Application Engine) will not be able to launch Process Engine applets such as Process Administrator and Process Configuration Console. 
+
+SYMPTOM
+1. Unable to launch Process Engine applets from Workplace. 
+
+2. Splash screen for the applet appears to hang.
+3. Errors like java.lang.ClassNotFoundException: com.filenet.api.core.EngineObject are seen in the Java plug-in console on the client (browser) workstation.
+
+Call Stack:
+Exception in thread "VWSplashWindow" java.lang.NoClassDefFoundError: com/filenet/api/core/EngineObject
+at filenet.vw.idm.trident.VWTridentFactory.getSavedVWSession(VWTridentFactory.java:665)
+at filenet.vw.toolkit.utils.dialog.VWLogonDialog.isLogonOK(VWLogonDialog.java:226)
+at filenet.vw.toolkit.utils.VWSessionInfo.logon(VWSessionInfo.java:1972)
+at filenet.vw.toolkit.utils.VWSessionInfo.verifyLogon(VWSessionInfo.java:1350)
+at filenet.vw.toolkit.utils.VWSessionInfo.verifyLogon(VWSessionInfo.java:1324)
+at filenet.vw.apps.config.VWConfigApplet.startProcessing(VWConfigApplet.java:113)
+at filenet.vw.toolkit.utils.VWSplashWindow.run(VWSplashWindow.java:175)
+at java.lang.Thread.run(Unknown Source)
+Caused by: java.lang.ClassNotFoundException: com.filenet.api.core.EngineObject
+at sun.plugin2.applet.Applet2ClassLoader.findClass(Unknown Source)
+at sun.plugin2.applet.Plugin2ClassLoader.loadClass0(Unknown Source)
+at sun.plugin2.applet.Plugin2ClassLoader.loadClass(Unknown Source)
+at sun.plugin2.applet.Plugin2ClassLoader.loadClass(Unknown Source)
+at java.lang.ClassLoader.loadClass(Unknown Source)
+... 8 more
+preloader: Stop progressCheck thread
+
+
+CAUSE
+The Jace.jar file is not loaded into the Java Cache, so the com/filenet/api/core/EngineObject class cannot be found.
+
+
+RESOLVING THE PROBLEM
+Replace the appletParameters.properties file (normally located in the <installpath>\IBM\FileNet\AE\Workplace\WEB-INF directory) with this appletParameters.properties file: 
+
+[/support/docview.wss?uid=swg21671521&aid=2]appletParameters.properties [/support/docview.wss?uid=swg21671521&aid=1]
+
+Once appletParameters.properties file has been replaced, rebuild the EAR and/or WAR file using the tools in the <installpath>\IBM\FileNet\AE\deploy directory.
+
+After rebuilding the EAR file, redeploy the application to the application server. 
+
+After successfully redeploying the EAR file, the Process Engine Java applets should now open correctly.
+
+RELATED INFORMATION
+ 5.2.0.3-P8CPE-FP003 [http://www.ibm.com/support/fixcentral/swg/selectFixes?parent=FileNet+Product+Family&product=ibm/Information+Management/FileNet+Content+Engine&release=5.2.0.0&platform=All&function=all]
+JRE Security Flash #1640073 [http://www.ibm.com/support/docview.wss?uid=swg21640073]

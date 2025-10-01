@@ -1,0 +1,153 @@
+Title: IBM IV88883: NO SOFTWARE COMPONENTS MATCHED IF UPLOADED NATIVE AND CANONICAL CATALOG VERSIONS ARE THE SAME - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The problem occurs when user uploads a canonical catalog of
+   the same version as a native catalog. New scanner catalogs are
+   not downloaded to endpoints. In result scanner catalogs on
+   endpoints do not match the catalog on ILMT/BFI server and
+   software components found on endpoints are not recognized by
+   the server.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  This issue will be fixed in ILMT/BFI 9.2.5 (and later)
+   and will not occur if ILMT/BFI is installed as a new instance.
+   This problem may occur in earlier versions of ILMT/BFI or if
+   ILMT/BFI has been upgraded from a release earlier than 9.2.5.
+   In such a case it is required to upload a newer version of
+   catalog and run data import.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * ERROR DESCRIPTION:
+   * When you upload the same version of the software catalog that
+   * is already uploaded, some software components are not properly
+   * recognized. The problem occurs on Windows
+   * EXPECTED RESULTS:
+   * The problem does not occur.
+   * GUIDs of signatures that are used in the catalog-based scan
+   * are not regenerated during first update of the catalog after
+   * product installation. If you have the BigFix Inventory server
+   * installed on Windows and did not update the catalog yet,
+   * upgrade BigFix Inventory to version 9.2.5 to avoid the
+   problem.
+   ****************************************************************
+   * RECOMMENDATION: Apply appropriate update when available.
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  PROBLEM CONCLUSION:
+   
+   
+   The fix for this APAR is contained in the following maintenance
+   packages:
+    | Update | BFI 9.2.5.0
+    | Update | ILMT 9.2.5.0
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV88883
+   
+   
+ * REPORTED COMPONENT NAME
+   LIC METRIC TOOL
+   
+   
+ * REPORTED COMPONENT ID
+   5724LMTEM
+   
+   
+ * REPORTED RELEASE
+   920
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-08-31
+   
+   
+ * CLOSED DATE
+   2016-10-04
+   
+   
+ * LAST MODIFIED DATE
+   2016-10-04
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   LIC METRIC TOOL
+   
+   
+ * FIXED COMPONENT ID
+   5724LMTEM
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R920 PSY
+   UP

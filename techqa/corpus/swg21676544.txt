@@ -1,0 +1,62 @@
+Title: IBM Corrupted text when importing non-English CSV snippets from IBM Social Media Analytics into Excel - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ 
+In the IBM Social Media Analytics Reporting UI, you can export snippets for use in other software applications. You can save the exported snippets in comma-separated values (CSV) format or JavaScript Object Notation (JSON) format. CSV files are written in UTF-8 format, which is not currently supported in CSV format in Excel. 
+
+SYMPTOM
+Snippets that are exported to Comma Separated Values (CSV) file format can be imported to spreadsheet applications, such as Microsoft Excel. When trying to import non-English CSV snippets into Excel , the text might become garbled.
+
+
+CAUSE
+CSV files are written in UTF-8 format (abbreviation for Universal Transformation Format). UTF-8 converts 16-bit unicode characters into 8-bit ASCII characters. Microsoft Excel does not currently support UTF-8 in CSV format.
+
+RESOLVING THE PROBLEM
+CSV files are written in UTF-8 format to support multiple language scripts in a single report. CSV files can be imported into spreadsheet applications, but can also be imported into the database using custom applications. The following procedures are solutions that have been tested for various languages. In addition to these solutions, there are operating system and Excel requirements that must be met in order for the characters to be displayed properly.
+
+
+
+
+User response: 
+
+Solution 1:
+1. Open the <exportSnippets>.csv file in Notepad, and then save it as Unicode. Rename the file to <exportSnippets>_unicode.csv.
+2. Open the <exportSnippets>_unicode.csv file in Excel. The Text Import Wizard is displayed:
+a. In the first step, select Delimited and ensure that all other options are clear.
+b. In the second step, clear Tab and select Comma.
+c. Click Finish.
+After performing the steps described previously, the CSV file can be opened in Excel with all characters displayed properly.
+
+Solution 2:
+1. Open the <exportSnippets>.csv file in Notepad, and then save it as ANSI, renaming it to <exportSnippets>_ansi.csv.
+2. Open the<exportSnippets>_ansi.csv file in Excel. The characters are properly displayed.
+
+Solution 3:You can convert the CSV file from UTF-8 to native encoding using a code conversion tool. You can use the native2ascii command line utility that is provided with the Java JDK toolkit. The tool can be found in the %WAS_HOME%/AppServer/java/bin directory.
+1. Open a command prompt window, and change directories until you reach the location of the native2ascii tool. Alternatively, you can set the value of Path, the system variable for the operating system, to include the location of the Java JDK toolkit.
+2. Enter the following command:
+native2ascii -encoding UTF-8 <exportSnippets>.csv | native2ascii -reverse -encoding
+<Language_code>> <exportSnippets>_output.csv
+where<Language_code> is the locale code for the language that you are interested in. For example, GB2312 is the code for simplified Chinese.
+3. Open the <exportSnippets>_output.csv file in Excel. 
+
+All characters are properly displayed. 
+
+Instead of running the previous command more than once for converting more CSV files, you might want to create a script file that uses the command in step 2 and specifies the names of all the CSV files that require conversion. You can run the script to convert all the required files at once. 
+
+In addition to the solutions described previously, the following operating system and Excel requirements must be met before the characters are displayed properly:
+Operating system requirements
+Try matching the language of the imported CSV report with the operating system language. For example, for Japanese, try importing the file on a computer that is running a Japanese operating system. If you cannot meet this requirement, set the user locale of your system to the language of your choice, so that you can use the standard settings for that language. To do this, perform the following steps:
+1. Click Start > Settings > Control Panel, and then open Regional Options.
+2. On the General tab, change the user locale to the language you are interested in.
+3. Click OK.
+Excel requirements
+You can set the Microsoft Office language settings to the language of your choice by performing the following steps:
+1. Click Start > Programs > Microsoft Office Tools > Microsoft Office XP Language Settings
+2. On the Enabled Languages tab, set the Default version of Microsoft Office to the language of your choice.
+3. Ensure that the language that interests you is on the Enabled languages list:
+a. In the Available languages list, click the language that interests you.
+b. Click Add to add the selected language to the Enabled languages list.
+c. Click OK.

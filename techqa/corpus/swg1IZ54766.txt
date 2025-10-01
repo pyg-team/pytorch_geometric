@@ -1,0 +1,147 @@
+Title: IBM IZ54766: COMPARISONS OF OBJECT SERVER FIELDS IN EVENT READER FILTERS - United States
+
+Text:
+  FIXES ARE AVAILABLE
+IBM Tivoli Netcool/Impact V5.1.1 Fix Pack 1 (5.1.1-TIV-NCI-FP0001) [http://www-01.ibm.com/support/docview.wss?uid=swg24026299]
+IBM Tivoli Netcool/Impact V5.1.1 Fix Pack 2 (5.1.1-TIV-NCI-FP0002) [http://www-01.ibm.com/support/docview.wss?uid=swg24031659]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PERMANENT RESTRICTION.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Event reader filter analysis comparing object server fields
+   (e.g.
+   LastOccurrence > FirstOccurrence) results in the error: "rule
+   includes an unsupported expression"
+   
+   Note that this appears to be an analyzer issue only.  The filter
+   itself seems to work successfully.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Perform the comparison in OMNIbus and use another field to
+   filter on.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Filter analyzer: When attempting to compare two object server
+   fields within an event reader filter or when comparing a field
+   with getdate an error occurs: "rule includes an unsupported
+   expression".
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This is actually a limitation in the available functionality of
+   the filter analyzer in Impact 5.1.
+   In order to get a clearer idea of how your filters are set up
+   without relying on the filter analyzer, you can set these
+   properties. Add:
+   
+   
+   impact.<readername>.consolidatefilters=false
+   
+   to $NCHOME/impact/etc/ServerName_<readername>.props
+   
+   You should be able to see the filters in the GUI and the event
+   reader log file as well as in netcool.log, excepting when the
+   'like' condition is used. In order to display filters using
+   'like', a further property needs to be added to the same file:
+   
+   impact.<readername>.uselikeoperator=true
+   
+   Note: all of the above relates purely to the filter analyzer and
+   should not effect the ability of the event reader to parse the
+   filter.
+   
+   Tech note released to state this
+   http://www-01.ibm.com/support/docview.wss?rs=3124&context=SSSHYH
+   &q1=getdate&uid=swg21398970&loc=en_US&cs=utf-8&lang=en [http://www-01.ibm.com/support/docview.wss?rs=3124&context=SSSHYH&q1=getdate&uid=swg21398970&loc=en_US&cs=utf-8&lang=en]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ54766
+   
+   
+ * REPORTED COMPONENT NAME
+   NC/IMPACT EVENT
+   
+   
+ * REPORTED COMPONENT ID
+   5724O59ER
+   
+   
+ * REPORTED RELEASE
+   510
+   
+   
+ * STATUS
+   CLOSED PRS
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-07-08
+   
+   
+ * CLOSED DATE
+   2009-09-30
+   
+   
+ * LAST MODIFIED DATE
+   2009-09-30
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

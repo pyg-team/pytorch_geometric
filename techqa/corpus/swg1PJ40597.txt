@@ -1,0 +1,130 @@
+Title: IBM PJ40597: CSS INDEXING IS CONCATENATING THE MIME TYPE INTO THE DOCUMENT TEXT IN CASE OF A DOCUMENT PROCESSED BY THE CONSTRUCTOR - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Content Search Services (CSS) Indexing is Concatenating
+   the mime type into the document text in case of a
+   document processed by the constructor.
+   When calling extractText from the constructor, the output
+   contains the document type as part of the output.
+   It should return only the original extracted document text, not
+   normalized.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * Content Search Services (CSS) 5.1.0.0-P8CSS-IF002 and lower  *
+   * using IBM Content Collector (ICC) and indexing documents.    *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * ICC using CSS indexing of documents has problems with the    *
+   * text extraction text being correctly extracted.              *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Upgrade to 5.1.0.0-P8CSS-IF003 or higher.                    *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  5.1.0.0-P8CSS-IF003 and higher resolve this problem with the new
+   Oracle OIT text extraction.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PJ40597
+   
+   
+ * REPORTED COMPONENT NAME
+   CONTENT SEARCH
+   
+   
+ * REPORTED COMPONENT ID
+   5724R8109
+   
+   
+ * REPORTED RELEASE
+   510
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-09-13
+   
+   
+ * CLOSED DATE
+   2013-01-08
+   
+   
+ * LAST MODIFIED DATE
+   2013-01-08
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CONTENT SEARCH
+   
+   
+ * FIXED COMPONENT ID
+   5724R8109
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R510 PSY
+   UP

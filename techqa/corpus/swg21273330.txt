@@ -1,0 +1,107 @@
+Title: IBM Cannot Launch a Java program in debug mode if the specified installed JRE is .../SDP70/jdk - United States
+
+Text:
+RATLC00306191; RN7.0.0.4; RAD; v7; RSA; Run; launch; debug; launcher; cannot connect to vm; socket closed; eclipse; bugzilla; 176471; apar; Installed JRE; PK53586; JVMJ9VM009E; JVMJ9VM015W; Could not create the Java virtual machine; jre; jdk; 1273330; Installed JREs; launcer. mismatch; NPT ERROR; cannot open library; NPT TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Some users have not been able to launch a Java program in debug mode using IBM Rational Application Developer for WebSphere Software v7.0.0.x (which uses Eclipse 3.2.x), when the installed JRE preference is specified as: <v7 Install Dir>\SDP70\jdk (the default in v7.0) . The Java application launcher never starts the run/debug of the Java program. 
+
+SYMPTOM
+Attempts to Launch a Java program in debug mode in a Java project (see Related information item) the following message appears:
+
+
+
+Could not rerun test
+Cannot connect to VM
+Reason:
+Cannot connect to VM
+OK / << Details
+socket closed
+
+
+[/support/docview.wss?uid=swg21273330&amp;aid=1]
+and you get this console output: 
+
+
+JVMJ9TI002E Agent_OnLoad not found in library jdwp 
+JVMJ9VM015W Initialization error for library j9jvmti23(-3): JVMJ9VM009E J9VMDllMain failed 
+Could not create the Java virtual machine.
+
+
+Here is the corresponding <workspace_dir>/.metadata/ .log file excerpt:
+
+
+//==== start excerpt
+...
+eclipse.buildId=unknown
+java.fullversion=J2RE 1.5.0 IBM J9 2.3 Windows XP x86-32 
+j9vmwi3223ifx-20070323 (JIT enabled) 
+J9VM - 20070322_12058_lHdSMR 
+JIT - 20070109_1805ifx3_r8
+GC - WASIFIX_2007
+BootLoader constants: OS=win32, ARCH=x86, WS=win32, NL=en_US 
+Framework arguments: -product com.ibm.rational.rsa.product.ide
+Command-line arguments: -os win32 -ws win32 -arch x86 -product
+com.ibm.rational.rsa.product.ide 
+
+!ENTRY org.eclipse.debug.ui 4 100 2007-09-19 15:10:20.977
+!MESSAGE Launch configuration tab group extension null refers to 
+non-existent launch configuration type 
+com.ibm.etools.websphere.tools.v5.launchConfigurationType
+
+!ENTRY org.eclipse.jdt.launching 4 120 2007-09-19 15:10:56.677 
+!MESSAGE Cannot connect to VM
+!STACK 0 
+java.net.SocketException: socket closed
+at java.net.PlainSocketImpl.socketAccept(Native Method) 
+at java.net.PlainSocketImpl.accept(Unknown Source)
+...
+//=== end excerpt
+
+
+
+CAUSE
+This is a known Eclipse 3.2.x JDT Debug defect Bugzilla 176471 [https://bugs.eclipse.org/bugs/show_bug.cgi?id=176471]. 
+
+
+Note: The fix is available in Eclipse 3.3 M7 build (Rational Application Developer v7.0.0.x uses Eclipse 3.2.1+). There are workarounds if this is a mission-critical bug (see bug comments for details).
+
+Defect APAR PK53586 [http://ibm.com/support/docview.wss?uid=swg1PK53586] has been submitted to investigate if it is possible to have the Bugzilla 176471 fix in Eclipse 3.3 brought into Eclipse 3.2.x for a future Rational Application Developer v7.x update.
+
+
+RESOLVING THE PROBLEM
+This defect is fixed in Rational Application Developer v7.5 which is based on Eclipse 3.4. However, also see the NOTE below.
+
+Defect WORKAROUND: 
+
+Change:
+Window > Preferences > Java > Installed JREs from (the default for v7.0)
+<RAD_Install_Dir>\SDP70\jdk
+to
+<RAD_7Install_Dir>\SDP70\jdk\jre 
+
+Also, in v7.0 when using various WebSphere v5.x/v6.x server JREs as Installed JREs, specifying them as: <RAD_7Install_Dir>\SDP70runtimes\base_v{5x|6x}\java\jre [https://sca-can3ratljw1.torolab.ibm.com/cqweb/%5Cjdk%5Cjre]
+, will work. 
+
+Note: The above series of JVMJ9* or JVMJ9* errors for the Run Debug scenario shown in the Symptoms section can also occur if here is a mismatch between Installed JRE specified against a Java project and what is specified in the Run Launcher configuration. 
+For example, if a Java client project is running against WebSphere Application Server v6.1 make sure to be consistent and specify everywhere the JRE as: <RAD_7Install_Dir>\SDP70\runtimes\base_v61}\java\jre, for Rational Application Developer v7.0. 
+In the case of Rational Application Developer v7.5+: <RAD_7Install_Dir>\SDP70\runtimes\base_v61}\java , should suffice.
+
+Other possibly related problems:
+The above solution may also resolve Rational Application Developer v7.0.0.x programs running in Debug mode encountering: "NPT ERROR: cannot open library". Depending on the error scenario the NPT ERROR has also been known to be resolved by upgrading the JRE or switching to a WebSphere Application Server JRE at the same J2SE version as the Rational Application Developer JRE. 
+For example, Rational Application Developer v7.0 use IBM J2SE 5.0.x, likewise WebSphere Application Server v6.1 use some version of J2SE 5.0.x. 
+
+If there any further questions or concerns, contact IBM Support.
+
+
+
+
+RELATED INFORMATION
+# Launching a Java program in debug mode [http://publib.boulder.ibm.com/infocenter/radhelp/v7r0m0/index.jsp?topic=/org.eclipse.jdt.doc.user/tasks/tasks-debug-launch.htm]
+
+
+
+
+
+
+Cross Reference information Segment Product Component Platform Version Edition Software Development Rational Software Architect Eclipse Linux, Windows 7.0, 7.0.0.1, 7.0.0.2, 7.0.0.3, 7.0.0.4, 7.0.0.5, 7.0.0.6, 7.0.0.7 Software Development Rational Software Architect for WebSphere Linux, Windows 7.5

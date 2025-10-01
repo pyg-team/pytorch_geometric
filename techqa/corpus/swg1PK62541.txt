@@ -1,0 +1,259 @@
+Title: IBM PK62541: ADMA8019E MESSAGE SEEN WHILE TRYING TO MAP RESOURCES DURING     APPLICATION DEPLOYMENT - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Java SDK 1.5 SR10 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24024201]
+6.1.0.31: Java SDK 1.5 SR11 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24026453]
+6.1.0.33: Java SDK 1.5 SR12 FP1 Cumulative Fix for WebSphere [http://www-01.ibm.com/support/docview.wss?uid=swg24027786]
+6.1.0.29: Java SDK 1.5 SR11 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24025191]
+6.1.0.35: Java SDK 1.5 SR12 FP2 Cumulative Fix for WebSphere [http://www-01.ibm.com/support/docview.wss?uid=swg24028574]
+6.1.0.37: Java SDK 1.5 SR12 FP3 Cumulative Fix for WebSphere [http://www-01.ibm.com/support/docview.wss?uid=swg24029525]
+6.1.0.39: Java SDK 1.5 SR12 FP4 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24030426]
+6.1.0.41: Java SDK 1.5 SR12 FP5 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24031035]
+6.1.0.43: Java SDK 1.5 SR13 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24031963]
+6.1.0.45: Java SDK 1.5 SR14 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24033270]
+6.1.0.47: WebSphere Application Server V6.1 Fix Pack 47 [http://www-01.ibm.com/support/docview.wss?uid=swg24035508]
+6.1.0.47: Java SDK 1.5 SR16 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24035649]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Configured  ObjectPoolManager resources at the cell level and
+   when they trying to map resource references to resources during
+   deployement process got the following message on the
+   adminconsole.
+   
+   ADMA8019E: The resources that are assigned to the application
+   are beyond the deployment target scope.  Resources are within
+   the deployment target scope if they are defined at the
+   cell,node, server, or application level when the deployment
+   target is a server, or at the cell, cluster, or application
+   level when the deployment target is a cluster. Assign resources
+   that are within the deployment target scope of the application
+   or confirm that these resources assignments are correct as
+   specified.
+   
+   From the traces noticed the following error.
+   --------------------------------
+   [3/10/08 12:44:55:329 CST] 000003cf ResourceValid <
+   appResourceValidation Exit
+                                    [ADMA0115W: Resource Assignment
+   of name opm/contextpoolglobal and type
+   com.ibm.websphere.asynchbeans.pool.ObjectPoolManager, with JNDI
+   name pool/contextpoolglobal is not found within scope of module
+   sample with URI
+   sample.war,WEB-INF/web.xml deployed to
+   target WebSphere:cell=Cell01,node=Node01,server=server1.,
+   ADMA0115W: Resource Assignment of name
+   services/cache/webappcache and type
+   com.ibm.websphere.cache.DistributedMap, with JNDI name
+   services/cache/webappcache is not found within scope of module
+   sample with URI
+   sample.war,WEB-INF/web.xml deployed to target
+   WebSphere:cell=Cell01,node=Node01,server=server1.]
+   [3/10/08 12:44:55:329 CST] 000003cf ValidateResou 3   error
+   ADMA0115W: Resource Assignment of name opm/contextpoolglobal and
+   type com.ibm.websphere.asynchbeans.pool.ObjectPoolManager, with
+   JNDI name pool/contextpoolglobal is not found within scope of
+   module sample with URI
+   sample.war,WEB-INF/web.xml deployed to target
+   WebSphere:cell=Cell01,node=Node01,server=server1.
+   --------------------------------
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  n/a
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  All users of IBM WebSphere Application      *
+   *                  Server V6.0.2 and V6.1.                     *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Customers trying to map resources of    *
+   *                      the types ObjectPoolManagerInfo and     *
+   *                      ObjectCacheInstance to the  resources   *
+   *                      declared inside their applications      *
+   *                      get the following message even          *
+   *                      thought the resources have been         *
+   *                      declared at an appropriate scope.       *
+   *                      "ADMA8019E: The resources that are      *
+   *                      assigned to the application are         *
+   *                      beyond the deployment target scope."    *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   Customers trying to map the resources of the types
+   ObjectPoolManagerInfo and ObjectCacheInstance to the resources
+   declared inside their applications get the following message
+   even thought the resources have been declared at an
+   appropriate scope.
+   "ADMA8019E: The resources that are assigned to the application
+   are beyond the deployment target scope."
+   
+   This validation error prevents the customers from
+   installing their applications successfully.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Code changes have been made to ensure we pick up the resources
+   of the types ObjectPoolManagerInfo and ObjectCacheInstance at
+   the appropriate scope and display it during the deployment.
+   
+   The fix for this APAR is currently targeted for inclusion in
+   fix packs 6.1.0.19. and 6.0.2.31.
+   Please refer to the Recommended Updates page for delivery
+   information:
+   http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK62541
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBS APP SERV N
+   
+   
+ * REPORTED COMPONENT ID
+   5724H8800
+   
+   
+ * REPORTED RELEASE
+   60I
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-03-11
+   
+   
+ * CLOSED DATE
+   2008-05-15
+   
+   
+ * LAST MODIFIED DATE
+   2008-05-15
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBS APP SERV N
+   
+   
+ * FIXED COMPONENT ID
+   5724H8800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R60A PSY
+   UP
+   
+   
+ * R60H PSY
+   UP
+   
+   
+ * R60I PSY
+   UP
+   
+   
+ * R60P PSY
+   UP
+   
+   
+ * R60S PSY
+   UP
+   
+   
+ * R60W PSY
+   UP
+   
+   
+ * R60Z PSY
+   UP
+   
+   
+ * R61A PSY
+   UP
+   
+   
+ * R61H PSY
+   UP
+   
+   
+ * R61I PSY
+   UP
+   
+   
+ * R61P PSY
+   UP
+   
+   
+ * R61S PSY
+   UP
+   
+   
+ * R61W PSY
+   UP
+   
+   
+ * R61Z PSY
+   UP

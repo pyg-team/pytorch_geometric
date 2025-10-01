@@ -1,0 +1,83 @@
+Title: IBM Portal server startup fails after successful fixpack upgrade - United States
+
+Text:
+ActionProtectionService; NameNotFoundException; EJPFD0016E; PocService; resolver; SRVE0100E; 7001eGA TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+After upgrading WebSphere Portal v7.0.x, the WebSphere_Portal server on that node fails to start correctly and is inaccessible in a web browser.
+
+SYMPTOM
+In the SystemOut.log of the server, the following exceptions can be seen:
+========================
+[5/19/11 13:20:19:080 EDT] 00000017 DefaultStateM E com.ibm.wps.state.services.DefaultStateManagerService defaultActionProtectionServiceHome() JNDI lookup failed!
+javax.naming.NameNotFoundException: The object or context engine does not exist.; Remaining name: 'engine/ActionProtectionService'
+at com.ibm.wps.jndi.portal.GenericPortalJNDIContext.lookup(GenericPortalJNDIContext.java:333)
+at com.ibm.wps.jndi.portal.GenericPortalJNDIContext.lookup(GenericPortalJNDIContext.java:346)
+at com.ibm.wps.jndi.portal.RootPortalJNDIContext.lookupObject(RootPortalJNDIContext.java:155)
+.
+.
+.
+[5/19/11 13:20:25:675 EDT] 00000017 Servlet E com.ibm.wps.engine.Servlet init EJPFD0016E: Initialization of service failed.
+javax.naming.NameNotFoundException: The object or context engine does not exist.; Remaining name: 'engine/ActionProtectionService'
+at com.ibm.wps.jndi.portal.GenericPortalJNDIContext.lookup(GenericPortalJNDIContext.java:333)
+at com.ibm.wps.jndi.portal.GenericPortalJNDIContext.lookup(GenericPortalJNDIContext.java:346)
+at com.ibm.wps.jndi.portal.RootPortalJNDIContext.lookupObject(RootPortalJNDIContext.java:155)
+.
+.
+.
+[5/19/11 13:20:47:136 EDT] 00000025 servlet E com.ibm.ws.webcontainer.servlet.ServletWrapper init SRVE0100E: Uncaught init() exception created by servlet UserProfileRESTServlet in application UserProfileRESTServlet: javax.servlet.ServletException: javax.naming.NameNotFoundException: The object or context resolver does not exist.; Remaining name: 'resolver/PocService'
+at com.ibm.portal.rest.userprofile.UserProfileRESTServlet.initIOHandlerImpl(UserProfileRESTServlet.java:211)
+at com.ibm.portal.rest.userprofile.UserProfileRESTServlet.init(UserProfileRESTServlet.java:174)
+at javax.servlet.GenericServlet.init(GenericServlet.java:241)
+at com.ibm.portal.rest.userprofile.UserProfileRESTServlet.init(UserProfileRESTServlet.java:167)
+========================
+
+CAUSE
+The root cause of this exception is that the Portal binaries have been upgraded, but the Portal profile has not. There are two known scenarios where this can occur. 
+
+
+The most common scenario is a failure to update the wps.properties file on a binary installation (Portal was installed with the flag "-W defaults.isBinary=true".) This flag tells the Portal installer to not create a Portal profile, and instead it is up to the user to create a profile later.
+
+When this flag is used, the PortalServer/wps.properties file is not updated with the ProfileName and ProfileDirectory properties. 
+
+The Portal Update Installer depends on these properties. Therefore, if you create a profile on this Portal Server, you are required to update the wps.properties file with the ProfileName and ProfileDirectory properties.
+
+If the wps.properties file does not reference your ProfileName and ProfileDirectory, and you upgrade the WebSphere_Portal environment, then you will see the problem described in this technote.
+
+
+The second scenario is on Windows environments. The upgrade will appear to be successful but a review of the upgrade logs shows this problem in the wp.ptf.config component installation log file:
+
+===================
+2012-06-18T14:50:55-04:00 Result: StdErr: 'findstr' is not recognized as an internal or external command,
+2012-06-18T14:50:55-04:00 Result: StdErr: operable program or batch file. 
+===================
+
+This can happen if the Windows PATH environment variable does not reference the C:/Windows/system32 directory and prevents the upgrade process from upgrading the profile.
+
+
+RESOLVING THE PROBLEM
+To resolve the problem, you must do the following: 
+
+
+1. Uninstall the fixpack on this node.
+2. Edit the PortalServer/wps.properties file and add these two properties:
+
+ProfileName=<your profile name>
+ProfileDirectory=<your profile path>
+
+For example:
+
+ProfileName=wp_profile
+ProfileDirectory=/opt/IBM/WebSphere/wp_profile
+
+NOTE: Do not add these values before you uninstall the fixpack. If you add the properties first, then attempt to uninstall the fixpack, the fixpack uninstall will fail.
+
+3. Windows only. Ensure that the C:/Windows/system32 directory is part of the PATH environment variable. A computer restart will be required after making this change.
+
+4. Reinstall the fixpack. This should properly update your Portal profile.
+
+
+
+
+ * 
+ *

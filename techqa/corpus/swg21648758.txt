@@ -1,0 +1,34 @@
+Title: IBM DE installation failed with "Too many levels of symbolic links" error on zLinux - United States
+
+Text:
+DE; KnownIssuesDE; symbol; link TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Attempt installing a package using IBM Deployment Engine (DE) as a non-root user throws an exception indicating that file has 'Too many levels of symbolic links' 
+
+SYMPTOM
+At de_trace.log , you will see an error similar to below : 
+
+Caused by: java.io.FileNotFoundException: /p01/app/ibm/netcool/bin/nco_run (Too many levels of symbolic links)
+at java.io.FileOutputStream.open(Native Method)
+at java.io.FileOutputStream.<init>(FileOutputStream.java:205)
+at java.io.FileOutputStream.<init>(FileOutputStream.java:157)
+at com.ibm.ac.si.ap.action.file.AbstractArchiveEnumeration.copyEntryToTargetFile(AbstractArchiveEnumeration.java:219)
+... 15 more 
+
+
+
+CAUSE
+This error may be a result of an existing file (nco_run) as a link to itself at above location on zLinux platform .
+
+RESOLVING THE PROBLEM
+1. Delete the existing file which is a link to itself.
+2. Take DE backup using #/home/<username>/.acsi_<username>/bin/de_backupdb.sh command or back up the 'repos' directory - copy the directory itself somewhere
+3 . Rename DE directory from /home/<username>/.acsi_<username> to .acsi_<username>_backup
+4. Now invoke your installer which installs DE and also installs package successfully.
+
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ DE

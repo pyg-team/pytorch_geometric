@@ -1,0 +1,38 @@
+Title: IBM Error message; 'You are not allowed to generate any more new licenses' when attempting to license IBM SPSS software, including IBM SPSS Statistics or Modeler - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ When running the SPSS License Authorization Wizard on any IBM SPSS software product, I encounter one of the following errors:
+
+Error Code: 106
+You are not allowed to generate any more new licenses.
+Express2LS
+
+Lock Code:
+Authorization Code:
+
+OR
+
+Authorization in progress ... (you authorization code will display here)
+Authorization failed.: You are not allowed to generate any more new licenses.
+
+
+What is the problem? 
+
+CAUSE
+The authorization code you are using has no more available installations.
+
+ANSWER
+Each IBM SPSS authorization code has only a certain number of uses or installations. When the number is used up, the error is returned. This error indicates that all available licenses allowed for your authorization code have been used. To correct the problem, please contact IBM SPSS Support to discuss an increase to the number of allowable installations on your authorization code. All Support options can be viewed on the IBM Help and Support page: https://www.ibm.com/analytics/us/en/spss/spss-support/index.html [https://developer.ibm.com/predictiveanalytics/get-help/].
+
+RELATED INFORMATION
+ Need more help? Our Statistics forum is Live! [https://developer.ibm.com/answers/topics/statistics.html?smartspace=predictive-analytics]
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Analytics SPSS Amos Business Analytics SPSS Modeler Modeler Business Analytics SPSS Text Analytics for Surveys 
+HISTORICAL NUMBER
+ 49338

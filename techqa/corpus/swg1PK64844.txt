@@ -1,0 +1,255 @@
+Title: IBM PK64844: LIBRARYDELETEMODULE FAILS DUE TO INTERNAL LOCK ERROR CODE 7591 - United States
+
+Text:
+ 
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When LibraryDeleteModule is executed it does not completely
+   remove all information/workspaces for the Library.  The
+   SystemOut.log shows many of  the following errors
+   ProcessLinks  E com.ibm.icm.da.portable.data.ProcessLinks
+   processLinks() com.ibm.icm.da.DBAccessException:
+   [ErrorCode:7591]
+   
+   com.ibm.icm.da.DBAccessException: [ErrorCode:7591]
+    at
+   com.ibm.icm.da.portable.common.WSLocks.checkLock(WSLocks.java:60
+   3)
+    at
+   com.ibm.icm.da.portable.common.WSLocks.lockSWS(WSLocks.java:1374
+   )
+    at
+   com.ibm.icm.da.portable.common.WSLocks.lock(WSLocks.java:1152)
+    at
+   com.ibm.icm.da.portable.common.WSLocks.lock(WSLocks.java:1135)
+    at
+   com.ibm.icm.da.portable.common.WSLocks.lockForDelete(WSLocks.jav
+   a:1193)
+    at
+   com.ibm.icm.da.portable.data.ProcessLinks.collectAllLinksInTreeF
+   orDelete(ProcessLinks.java:1623)
+    at
+   com.ibm.icm.da.portable.data.ProcessLinks.collectAllLinksInTreeF
+   orDelete(ProcessLinks.java:1641)
+    at
+   com.ibm.icm.da.portable.data.ProcessLinks.collectAllLinksInTreeF
+   orDelete(ProcessLinks.java:1641)
+    at
+   com.ibm.icm.da.portable.data.ProcessLinks.collectAllLinksInTreeF
+   orDelete(ProcessLinks.java:1641)
+    at
+   com.ibm.icm.da.portable.data.ProcessLinks.removeLink(ProcessLink
+   s.java:1478)
+    at
+   com.ibm.icm.da.portable.data.ProcessLinks.removeLink(ProcessLink
+   s.java:1556)
+    at
+   com.ibm.icm.da.portable.data.ProcessLinks.processLinks(ProcessLi
+   nks.java:326)
+    at
+   com.ibm.icm.da.portable.data.DataManager.processLinks(DataManage
+   r.java:690)
+    at
+   com.ibm.icm.ci.data.impl.PathService._executeProcessLinkAction(P
+   athService.java:375)
+    at
+   com.ibm.icm.ci.data.impl.PathService._processPathList(PathServic
+   e.java:354)
+    at
+   com.ibm.icm.ci.data.impl.PathService.removeByParentChildPair(Pat
+   hService.java:306)
+    at com.ibm.icm.jcr.NodeImpl.save(NodeImpl.java:2964)
+    at com.ibm.icm.jcr.NodeImpl.save(NodeImpl.java:2885)
+    at
+   com.aptrix.pluto.util.LibraryDeleteModule.deleteNode(LibraryDele
+   teModule.java:511)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Use jcrexplorer portlet to removed locked content manually
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Problem Summary: LIBRARYDELETEMODULE FAILS DUE TO INTERNAL LOCK
+   ERROR CODE 7591
+   
+   Detailed Problem Description:
+   
+   The LibraryDeleteModule fails to delete the library and throws
+   the following Exception stack -
+   3/5/08 14:19:49:586 EST] 00000043 DeleteAdminOb E Cannot delete
+   Library
+   eNet_2
+   com.ibm.workplace.wcm.app.ui.admin.core.model.AdminModelExceptio
+   n:
+   javax.jcr.RepositoryException:
+   [ErrorCode:7591]
+   at
+   com.ibm.workplace.wcm.app.ui.admin.library.MainLibraryModel.dele
+   teItem(M
+   ainLibraryModel.java:305)
+   at
+   com.ibm.workplace.wcm.app.ui.admin.core.command.DeleteAdminObjec
+   tCommand
+   .doCommand(DeleteAdminObjectCommand.java:127)
+   at
+   com.ibm.workplace.wcm.app.ui.portlet.command.AbstractCommand.com
+   mandPerf
+   ormed(AbstractCommand.java:176)
+   at
+   com.ibm.psw.wcl.core.CommandHandler.handleCommand(CommandHandler
+   .java:74
+   )
+   at
+   com.ibm.psw.wcl.core.markup.WHyperlink$EHyperlinkCallbackWrapper
+   .handleT
+   rigger(WHyperlink.java:475)
+   at
+   com.ibm.psw.wcl.core.trigger.Trigger.process(Trigger.java:299)
+   at
+   com.ibm.psw.wcl.core.trigger.TriggerManager.processTrigger(Trigg
+   erManage
+   r.java:781)
+   at
+   com.ibm.psw.wcl.portlet.WclPortletTriggerManager.handleRequest(W
+   clPortle
+   tTriggerManager.java:260)
+   at
+   com.ibm.psw.wcl.portlet.WclPortletFacade.handleRequest(WclPortle
+   tFacade.
+   java:497)
+   at
+   com.ibm.psw.wcl.portlet.WclPortletFacade.handleRequest(WclPortle
+   tFacade.
+   java:478)
+   . Caused by: javax.jcr.RepositoryException: [ErrorCode:7591]
+   at
+   com.ibm.workplace.wcm.services.library.LibraryServiceImpl.remove
+   Library(
+   LibraryServiceImpl.java:1385)
+   at
+   com.ibm.workplace.wcm.app.ui.admin.library.MainLibraryModel.dele
+   teItem(M
+   ainLibraryModel.java:275)
+   ... 65 more
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Problem Analysis:
+   
+   The library delete module was not deleting the dynamic
+   workspaces associated with the published content items.
+   
+   Failing Module: WCM - Web Content Management (General)
+   
+   Problem Solution:
+   
+   The module will now unlock the dynamic workspaces and remove
+   them so that the library can be deleted successfully.
+   
+   
+   An interim Fix is available for this APAR from Fix Central at:
+   
+   For release 6.0.1.3:
+   
+   http://www.ibm.com/eserver/support/fixes/fixcentral/swgquickorde
+   r?brandid=2&productid=Workplace%20Web%20Content%20Management&fix [http://www.ibm.com/eserver/support/fixes/fixcentral/swgquickorder?brandid=2&productid=Workplace%20Web%20Content%20Management&fix]
+   es=6.0.1.3-WCM-PK64844
+   
+   You will need to cut/paste the entire URL into a browser to
+   resolve the address.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK64844
+   
+   
+ * REPORTED COMPONENT NAME
+   WRKPLC WEB CON
+   
+   
+ * REPORTED COMPONENT ID
+   5724I2900
+   
+   
+ * REPORTED RELEASE
+   60G
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-04-22
+   
+   
+ * CLOSED DATE
+   2008-05-19
+   
+   
+ * LAST MODIFIED DATE
+   2008-07-25
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WRKPLC WEB CON
+   
+   
+ * FIXED COMPONENT ID
+   5724I2900
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R60G PSY
+   UP

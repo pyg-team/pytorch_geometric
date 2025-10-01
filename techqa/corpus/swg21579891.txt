@@ -1,0 +1,81 @@
+Title: IBM MustGather: Collecting data for Guardium STAP - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ If there is a problem with the Guardium STAP, what information must be gathered before contacting IBM Software Support? 
+
+ANSWER
+ 
+
+TAB NAVIGATION
+ * STAP diag from GUI [http://www-01.ibm.com/support/docview.wss?uid=swg21606592]
+ * UNIX diag [http://www-01.ibm.com/support/docview.wss?uid=swg21579891]- selected tab,
+ * Windows diag [http://www-01.ibm.com/support/docview.wss?uid=swg21579969]
+ * Windows Manual diag [http://www-01.ibm.com/support/docview.wss?uid=swg21607492]
+
+ 
+
+
+
+
+YouTube Video Collecting a guard_diag for a Guardium S-TAP installed on UNIX (3.12) This video demonstrates two methods of collecting a Guardium guard_diag file on a Unix system Watch the video on YouTube [https://www.youtube.com/watch?v=Rd6G_qY1mD0&index=2&list=PLFip581NcL2WzC2LpTMT28rml3br5WO9V] (3.12) 
+
+ The most comprehensive diagnostic data can be obtained using the UNIX diag from the DB Server machine and running guard_diag as follows 
+
+
+Versions 8.2 and later 
+If your Guardium S-TAP is v8.2 and later then the guard_diag script can be run on the DB Server as user root. The script is found in the 
+guardium installation directory/guard_stap 
+
+Versions Prior to v8.2
+
+
+Earlier versions of Guardium can still make use of the guard_diag script to collect the diagnostic information.
+
+Attached below are  * guard_diag script - to be run as user root 
+   [/support/docview.wss?uid=swg21579891&aid=2] [/support/docview.wss?uid=swg21579891&aid=1] 
+ * guard_diag_information - information about what is gathered 
+   [/support/docview.wss?uid=swg21579891&aid=4] [/support/docview.wss?uid=swg21579891&aid=3] 
+
+
+Below is an example of using the guard_diag script to run and collect diagnostics made on an internal test system. It can generally take up to 3 minutes or less to run. 
+
+If not already done so - create a temporary directory to hold the diagnostics file(s)
+
+# mkdir /tmp/guard_diag_out
+
+The first parameter is the output directory . The script also requests the path to the Guardium installation directory.
+
+# ./guard_diag /tmp/guard_diag_out
+
+Args /tmp/guard_diag_out
+Directory where Infosphere Guardium is installed [/usr/local/guardium]: 
+
+/home/products/grd_test/guardium/guardium
+
+This diagnostics script runs for approximately two minutes.
+During the course of its execution, it will gather data about various aspects of your system to aid in analysing performance issues and other problems. To do so, a couple of processes will be started and terminated after a predetermined time-out. On some systems, this may cause some messages about processes being killed to be printed below - this is normal and should not be cause for concern.
+
+8233 Killed
+8231 Killed
+Diagnostics completed! The results are in 
+
+/tmp/guard_diag_out. . .com.12-01-06_133745.tar.gz 
+
+#pwd 
+/tmp/guard_diag_out 
+$ ls -ltr 
+total 216 
+-rw-r--r-- 1 root root 217803 Jan 6 13:39 diag. . .com.12-01-06_133745.tar.gz 
+
+The resultant file generated should be sent to IBM Technical Support via email or the ECUREP [http://www-05.ibm.com/de/support/ecurep/index.html] using - for example - the standard data upload specifying the PMR number and file to upload. 
+
+
+
+NOTE - A verbose log specifically for the ktap logging can be obtained by running the script as follows
+./guard_diag -ktap_verbose_logging 
+
+RELATED INFORMATION
+ IBM MustGather: Collecting data for Guardium Appliance [http://www.ibm.com/support/docview.wss?uid=swg21579853 ]

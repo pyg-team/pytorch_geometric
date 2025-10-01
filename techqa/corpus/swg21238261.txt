@@ -1,0 +1,19 @@
+Title: IBM ClearQuest installation is halted with no error message when using VNC - United States
+
+Text:
+INSTALL; RATLC00761711; RATLC00980114; 7.0 BALTIC; 1238261 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Installing IBM® Rational® ClearQuest® when using VNC (Virtual Network Computing), might cause the installation to fail. 
+
+RESOLVING THE PROBLEM
+The VNC tool from RealVNC does not function reliably when using setup.exe to install Rational products. As a workaround, use a Windows Remote Desktop connection, or do not install ClearQuest remotely. 
+
+This issue is a reported defect in ClearQuest. It is tracked by defect number RATLC00761711. 
+
+
+
+
+
+RELATED INFORMATION
+#Installing Rational products using symbolic links to in [http://www.ibm.com/support/docview.wss?uid=swg21238262]

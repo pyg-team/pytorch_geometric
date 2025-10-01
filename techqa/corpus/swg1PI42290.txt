@@ -1,0 +1,142 @@
+Title: IBM PI42290: MSI INSTALL OF RELEASE 22 FIXPACK2 64 BIT – ONLY FILE, VIEW AND CUSTOM MENU VISIBLE, NO TOOLBAR DISPLAYED - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DUPLICATE OF ANOTHER APAR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  You would like to install IBM SPSS Statistics 22 release
+   directly followed by installation of FixPack 2 for this release
+   on a Windows 64 bit computer.
+   The pushed installation via MSI is done for authorized user
+   license using AUTHCODE parameter.
+   
+   For example you run the two commands below from command prompt
+   as administrator after you obtained the MSI file fore release 22
+   and FixPack 2
+   
+   The installer files for both are:
+   SPSS_Statistics_22_win64_.exe    (22 GA 64 bit Client for
+   Windows release)
+   22.0-IM-S22STATS-WIN64-FP002.exe (22 Fixpack 2, 64 bit Client
+   for Windows release)
+   
+   The MSI files for push installation are:
+   IBM SPSS Statistics 22.ms and
+   SPSS_Statistics_22002_win64_Patch.ms
+   
+   You run below commands (example)
+   
+   MsiExec.exe /i "IBM SPSS Statistics 22.msi" /qn /norestart /L*V
+   "logfile.txt" AUTHCODE="TO BE REPLACED with a valid authcode for
+   release 22"
+   
+   MsiExec.exe /i "SPSS_Statistics_22002_win64_Patch.msi" /qn
+   /norestart /L*V "SPSSStatistics22002PatchLog.txt"
+   PYTHON_EXISTS="1"
+   
+   The installation went fine but after you launch the program (22
+   FP2) you see only the menus file, custom and view and no
+   toolbar.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  This was reported to IBM SPSS development. As a workaround
+   please locate a file spssprod.inf on the program installation
+   path and open it in a text editor as administrator
+   change the line
+   daemonhost =
+   to daemonhost = no-net while the program is closed
+   After that save the file spssprod.inf with the same name and
+   launch the program
+   It will launch with all menus and will function normally
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *  This APAR is a duplicate of PI42291 [http://www-01.ibm.com/support/docview.wss?uid=swg1PI42291]
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI42290
+   
+   
+ * REPORTED COMPONENT NAME
+   SPSS STATISTICS
+   
+   
+ * REPORTED COMPONENT ID
+   5725A54ST
+   
+   
+ * REPORTED RELEASE
+   M00
+   
+   
+ * STATUS
+   CLOSED DUB
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2015-06-03
+   
+   
+ * CLOSED DATE
+   2017-05-03
+   
+   
+ * LAST MODIFIED DATE
+   2017-05-03
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

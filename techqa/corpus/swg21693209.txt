@@ -1,0 +1,22 @@
+Title: IBM SCAPM for Mobile Applications 7.7.0.1 - United States
+
+Text:
+5724G7000IN; 5724G70UIIN FIX README
+
+ABSTRACT
+ Update recommended for Mobile Applications only. 
+
+CONTENT
+"SCAPM V7.7.0.1 is a composite offering containing the following products:
+- SCAPM 7.7
+- SCM AI 1.2 (including APM UI running on MIN, the Lightweight Infrastructure)
+- SCAPM for Mobile Applications 7.7.0.1 (running on MIN, the Lightweight Infrastructure)
+
+
+Install SmartCloud Application Performance Management for Mobile Applications V7.7.0.1 with the Application Performance Management UI running on the MIN lightweight infrastructure. You cannot install SmartCloud Application Performance Management for Mobile Applications V7.7.0.1 or its upgrade, SmartCloud Application Performance Management for Mobile Applications V7.7.0.2 onto a IBM Tivoli Manager (with TEMS and TEPS) deployment. 
+
+You can find links to the SCAPM UI documentation here: https://www.ibm.com/developerworks/community/wikis/home?lang=en#!/wiki/IBM%20SmartCloud%20Application%20Performance%20Management/page/SC%20APM%20UI [https://www.ibm.com/developerworks/community/wikis/home?lang=en#!/wiki/IBM%20SmartCloud%20Application%20Performance%20Management/page/SC%20APM%20UI]
+
+
+Data for the Mobile dashboards is provided by the Response Time Monitoring Agent. SCAPM for Mobile Applications is covered in the SCM AI documentation. You can find links to the SCM AI documentation here: https://www.ibm.com/developerworks/community/wikis/home?lang=en#!/wiki/Cloud%20Consumer%20Monitoring/page/SCM-AI%20Documentation [https://www.ibm.com/developerworks/community/wikis/home?lang=en#!/wiki/Cloud%20Consumer%20Monitoring/page/SCM-AI%20Documentation]& https://www.ibm.com/developerworks/community/wikis/form/anonymous/api/wiki/8ddb04cc-1617-4250-a97d-1ba9c8bff687/page/207a1a69-a9c5-4476-9002-88177c5ff86a/attachment/f4b74509-620c-4824-acb5-e05ec5d7f38d/media/scmai12_uihelp.pdf [https://www.ibm.com/developerworks/community/wikis/form/anonymous/api/wiki/8ddb04cc-1617-4250-a97d-1ba9c8bff687/page/207a1a69-a9c5-4476-9002-88177c5ff86a/attachment/f4b74509-620c-4824-acb5-e05ec5d7f38d/media/scmai12_uihelp.pdf]
+To access the documentation from the product, select ? (in the lower left corner) > Documentation."

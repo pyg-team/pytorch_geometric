@@ -1,0 +1,53 @@
+Title: IBM Security Bulletin: A security vulnerability has been identified in WebSphere Application Server Administrative Console shipped with IBM Tivoli Network Manager IP Edition (CVE-2017-1137). - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ WebSphere Application Server Administrative Console is shipped with IBM Tivoli Network Manager IP Edition. Information about a security vulnerability affecting WebSphere Application Server Administrative Console has been published in a security bulletin.
+
+
+VULNERABILITY DETAILS
+Please consult the security bulletin Potential security vulnerability in WebSphere Application Server Administrative Console (CVE-2017-1137) [http://www-01.ibm.com/support/docview.wss?uid=swg21998469] for vulnerability details and information about fixes
+
+AFFECTED PRODUCTS AND VERSIONS
+IBM Tivoli Network Manager 3.9, 4.1, 4.1.1 and 4.2
+
+REMEDIATION/FIXES
+Refer to the security bulletins for vulnerability details and information about fixes addressed by WebSphere Application Server which is shipped with Network Manager IP Edition. 
+
+[/support/docview.wss?uid=swg22003286&amp;aid=1]
+Affected Product and Version(s) [/support/docview.wss?uid=swg22003286&amp;aid=1]
+Product and Version shipped as a component [/support/docview.wss?uid=swg22003286&amp;aid=1]
+IBM Tivoli Network Manager 3.9 [/support/docview.wss?uid=swg22003286&amp;aid=1]
+Bundled the TIP version 2.1.0.x, IBM WebSphere version 7.0.0.x and the JRE from IBM SDK Java 2 Technology Edition Version 6. Apply latest IBM WebSphere fixpack. [/support/docview.wss?uid=swg22003286&amp;aid=1]
+IBM Tivoli Network Manager 4.1 [/support/docview.wss?uid=swg22003286&amp;aid=1]
+Bundled the TIP version 2.2.0.x, IBM WebSphere version 7.0.0.x and the JRE from IBM SDK Java 2 Technology Edition Version 6. Apply latest IBM WebSphere fixpack. [/support/docview.wss?uid=swg22003286&amp;aid=1]
+IBM Tivoli Network Manager 4.1.1 [/support/docview.wss?uid=swg22003286&amp;aid=1]
+Bundled the TIP version 2.2.0.x, IBM WebSphere version 7.0.0.x and the JRE from IBM SDK Java 2 Technology Edition Version 6. Apply latest IBM WebSphere fixpack. [/support/docview.wss?uid=swg22003286&amp;aid=1]
+IBM Tivoli Network Manager 4.2 [/support/docview.wss?uid=swg22003286&amp;aid=1]
+IBM WebSphere version 8.5.5.7 is not shipped as a component but Tivoli Network Manager 4.2 required IBM WebSphere version 8.5.5.7 to run.
+Apply latest IBM WebSphere fixpack. WORKAROUNDS AND MITIGATIONS
+None
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v3 Guide [http://www.first.org/cvss/user-guide] 
+On-line Calculator v3 [http://www.first.org/cvss/calculator/3.0] 
+
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] 
+
+ACKNOWLEDGEMENT
+None 
+
+CHANGE HISTORY
+ 12 May 2017: original document published 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.

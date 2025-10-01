@@ -1,0 +1,21 @@
+Title: IBM Scan takes a very long time to scan - United States
+
+Text:
+Configuration; Explore; Redundancy; BASE.FPT TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ IBM Rational AppScan Standard Edition scan takes a very long time to scan. 
+
+SYMPTOM
+Looking in the traffic log, AppScan continually asks the server for the same specific file, for example "products.aspx". 
+
+One of the AppScan database files (BASE.FPT) grew up to 3 GB size.
+
+
+
+RESOLVING THE PROBLEM
+The following two settings resolved the problem: 
+
+ 1. Go to "Scan Configuration -> Parameters and Cookies -> Redundancy Tuning Defaults (at the bottom)" and unselect "Explore the URL again whenever the value of this parameter/cookies is added or removed" 
+    
+ 2. Set "Scan Configuration -> Advanced Configuration -> Test: Automatic links to ignore" to "products.aspx".

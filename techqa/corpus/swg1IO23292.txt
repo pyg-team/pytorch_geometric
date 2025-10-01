@@ -1,0 +1,154 @@
+Title: IBM IO23292: IBMCM_UPLOADDCO_DOC () UPLOADS INDIVIDUAL PAGES INSTEAD OF MERGED TIFF. - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+ DIRECT LINK TO FIX
+IBM Datacap 9.0 Fix Pack 2 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FDatacap+Taskmaster+Capture&fixids=9.0.0.2-Datacap-WIN-FP002&source=SAR]
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  IBMCM_UploadDCO_DOC () uploads individual pages instead of
+   merged tiff.
+   
+   1. Run batch through to export and notice that
+   MergedTiffFileName variable is present in xml:
+       <D id=" 20150513.000008.01">
+           <V n="TYPE">Hotel</V>
+           <V n="STATUS">1</V>
+           <V n="MergedTiffFileName">c:\Datacap\TravelDocs\batches\
+   20150513.000008\ 20150513.000008.01.tif</V>
+           <V n="Name">Jeff</V>
+           <P id="TM000001">
+   
+   2. But, export log shows that three individual pages are
+   uploaded instead of merged tiff:
+   
+   13:07:14.158 (0)    Initiate IBMCM_UploadDCO_DOC
+   13:07:14.158 (0)    IBMCM_UploadDCO_DOC - add page
+   c:\datacap\traveldocs\batches\ 20150513.000008\tm000001.tif
+   13:07:14.158 (0)    IBMCM_UploadDCO_DOC - add page
+   c:\datacap\traveldocs\batches\ 20150513.000008\tm000002.tif
+   13:07:14.158 (0)    IBMCM_UploadDCO_DOC - add page
+   c:\datacap\traveldocs\batches\ 20150513.000008\tm000003.tif
+   13:07:40.502 (26343)    IBMCM_UploadDCO_DOC document id =
+   [A1001001A15E13B30714E19404]
+   13:07:40.502 (0)    IBMCM_UploadDCO_DOC result =  [True]
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * windows users                                                *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * See Error Description                                        *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * apply updated Datacap.Libraries.IBMCM.dll                    *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  fixed merged tiff file flag in uploaddoc
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IO23292
+   
+   
+ * REPORTED COMPONENT NAME
+   DATACAP TASKMST
+   
+   
+ * REPORTED COMPONENT ID
+   5725C1500
+   
+   
+ * REPORTED RELEASE
+   900
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-05-20
+   
+   
+ * CLOSED DATE
+   2015-06-09
+   
+   
+ * LAST MODIFIED DATE
+   2015-06-09
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   DATACAP TASKMST
+   
+   
+ * FIXED COMPONENT ID
+   5725C1500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R900 PSY
+   UP

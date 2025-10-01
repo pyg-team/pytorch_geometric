@@ -1,0 +1,52 @@
+Title: IBM Installation failed when the check for temporary diskspace failed - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ During the installation of IBM Control Center, the installation program will check and see if there is enough temporary space to perform some of its operations during the installation. When there is insufficient space, the installation program will abort and stop. 
+
+SYMPTOM
+CCInstall64.bin -i console
+Preparing to install...
+WARNING: /tmp does not have enough disk space!
+Attempting to use /root for install base and tmp dir.
+
+WARNING: The amount of /root disk space required to perform
+this installation is greater than what is available. Please
+free up at least 2570666 kilobytes in /root and attempt this
+installation again. You may also set the IATEMPDIR environment
+variable to a directory on a disk partition with enough free
+disk space. To set the variable enter one of the following
+commands at the UNIX command line prompt before running this
+installer again:
+
+- for Boure shell (sh), ksh, bash and zsh:
+
+$ IATEMPDIR=/your/free/space/directory
+$ export IATEMPDIR
+
+- for C shell (csh) and tcsh:
+
+$ setenv IATEMPDIR /your/free/space/directory
+
+
+
+CAUSE
+The installation detected that there was not enough temporary disk space for some of the operations needed to install Control Center.
+
+ENVIRONMENT
+UNIX
+
+DIAGNOSING THE PROBLEM
+df -k | grep "/your/free/space/directory"
+25675196 5730204 18637768 24% /your/free/space/directory
+
+RESOLVING THE PROBLEM
+ • InstallAnywhere requires temporary space for some of its operations during installation. If there is insufficient space in the system temp, it attempts to extract the installer into the user's home directory. Ensure that the system temp has sufficient space for the installation. 
+Tip: You can force InstallAnywhere to use a different location for temp space by specifying the <var>IATEMPDIR</var> variable as shown in the following example: 
+export IATEMPDIR=$HOME
+• In some UNIX environments, the installer reports that there is not enough disk space to install IBM Control Center even if there is sufficient disk space. To bypass this situation: 
+1. Type the following commands: 
+export IATEMPDIR=$HOME export CHECK_DISK_SPACE=OFF 
+2. Run the IBM Control Center installer

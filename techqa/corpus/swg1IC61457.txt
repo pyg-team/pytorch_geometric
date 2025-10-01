@@ -1,0 +1,219 @@
+Title: IBM IC61457: CISCO CIMOM DISCOVERY FAILING; GENERATING ERROR HWN021503E - United States
+
+Text:
+AIX SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  CISCO CIMOM discovery failing;  generating error HWN021503E.
+   
+   2/19/09 9:03:48 AM BTADS0000I Starting Discover Process
+   collectDevicesFromCIMOM , with Device Server RUN ID 5017 , and
+   Job ID 6220 .
+   2/19/09 9:03:48 AM HWN021727I TPC discovery starting on CIMOM
+   http://xx.xx.xx.xx:YYYY. [http://xx.xx.xx.xx:YYYY.]
+   2/19/09 9:03:59 AM HWN021725I TPC discovered/rediscovered a
+   device with name 2000000DEC04EC00/ on CIMOM
+   http://xx.xx.xx.xx:YYYY. [http://xx.xx.xx.xx:YYYY.]
+   2/19/09 9:03:59 AM HWN021725I TPC discovered/rediscovered a
+   device with name 2000000DEC720200/ on CIMOM
+   http://xx.xx.xx.xx:YYYY. [http://xx.xx.xx.xx:YYYY.]
+   2/19/09 9:04:00 AM HWN021503E An internal error occurred, please
+   try again. If the problem persists, please contact IBM service.
+   2/19/09 9:04:00 AM HWN021503E An internal error occurred, please
+   try again. If the problem persists, please contact IBM service.
+   2/19/09 9:04:00 AM HWN021728I TPC discovery on CIMOM
+   http://xx.xx.xx.xx:YYYY is complete.
+   2/19/09 9:04:00 AM BTADS0035E The execution of the job failed
+   with: HWN021503E An internal error occurred, please try again.
+   If the problem persists, please contact IBM service. .
+   2/19/09 9:04:00 AM BTADS0001I Discover Process with Device
+   Server RUN ID 5017 and Job ID 6220 is complete with Status= 4 ,
+   Return Code= 1 .
+   
+   SQL exceptions seen in the logs:
+   
+   2009-02-19 08:55:12.340-05:00 HWN099992W SQL Exception while
+   persisting properties: {Version=1.2.0,
+   ref_fabric_wwn=3000000DEC04EC00,
+   ref_toplevelsystem_cimom2namespaceid=94310,
+   capabilitydataid=94322, ref_serviceurl=http://xx.xx.xx.xx:YYYY,
+   ref_switch_wwn=2000000DEC720200,
+   SMISSubProfiles=BLAD,S,ZA,ZC,FDMI,ZA,ZC,FDMI,ZA,ZC,FDMI,ZA,ZC,FD
+   MI,ZA,ZC,FDMI,ZA,ZC,FDMI,ZA,ZC,FDMI,ZA,ZC,FDMI,ZA,ZC,FDMI,ZA,ZC,
+   FDMI,ZA,ZC,FDMI,ZA,ZC,FDMI,ZA,ZC,FDMI,
+   ref_classname=FABSWCAPABILITYDATA, ref_namespace=,
+   ref_toplevelsystem_id=3928, Zone Control=1,
+   originalcimclassname=FABSWCAPABILITYDATA,
+   SMISProfiles=Switch,Fabric,Fabric,Fabric,Fabric,Fabric,Fabric,Fa
+   bric,Fabric,Fabric,Fabric,Fabric,Fabric,Fabric, Enhanced Zoning
+   and Enhanced Zoning Control=1,
+   ref_fabric_id=94307}@(-9223372036854685875;[-9223372036854774141
+   ,0,13];-9223372036854669984;Processes (Thread-95))
+   com.ibm.tpc.disk.collection.DiskCIMProcessor handleEntity
+   2009-02-19 08:55:12.343-05:00 HWN099993E DB2 SQL error: SQLCODE:
+   -302, SQLSTATE: 22001, SQLERRMC: null
+   @(-9223372036854685875;[-9223372036854774141,0,13];-922337203685
+   4669984;Processes (Thread-95))
+     com.ibm.db2.jcc.b.SqlException: DB2 SQL error: SQLCODE: -302,
+   SQLSTATE: 22001, SQLERRMC: null
+    at com.ibm.db2.jcc.b.ig.d(ig.java:1338)
+   
+   Problem appears to be that the SMISSubProfiles value is
+   repeatedly concatenated, making it too large to fit into the
+   expected database field resulting in DB2 SQL error: SQLCODE:
+   -302, SQLSTATE: 22001.
+   
+   RECREATE STEPS:
+   Unable to re-create.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: TPC 3.3.2 and 4.1 users with Cisco switches  *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: See ERROR DESCRIPTION                   *
+   ****************************************************************
+   * RECOMMENDATION: Apply fixing level when available. This      *
+   *                 problem is currently projected to be fixed   *
+   *                 in 3.3.2, 4.1 and later versions.  Note      *
+   *                 that this is subject to change at the        *
+   *                 discretion of IBM.                           *
+   ****************************************************************
+   -
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix for this APAR is targeted for the following maintenance
+   packages:
+   
+       | fix pack | 3.3.2.x - target September 2009
+       | fix pack | 4.1.0.x - fix pack 2 - August 2009
+   
+   http://www-01.ibm.com/support/docview.wss?&uid=swg24023904 [http://www-01.ibm.com/support/docview.wss?&uid=swg24023904]
+   
+   http://www-01.ibm.com/support/docview.wss?&uid=swg21320822 [http://www-01.ibm.com/support/docview.wss?&uid=swg21320822]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC61457
+   
+   
+ * REPORTED COMPONENT NAME
+   TPC FOR FABRIC
+   
+   
+ * REPORTED COMPONENT ID
+   5608TC100
+   
+   
+ * REPORTED RELEASE
+   33W
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-06-10
+   
+   
+ * CLOSED DATE
+   2009-08-27
+   
+   
+ * LAST MODIFIED DATE
+   2009-08-27
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  CISCO
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TPC FOR FABRIC
+   
+   
+ * FIXED COMPONENT ID
+   5608TC100
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R33A PSY
+   UP
+   
+   
+ * R33L PSY
+   UP
+   
+   
+ * R33W PSY
+   UP
+   
+   
+ * R41A PSY
+   UP
+   
+   
+ * R41L PSY
+   UP
+   
+   
+ * R41W PSY
+   UP

@@ -1,0 +1,73 @@
+Title: IBM Receive Load Library error when running InfoSphere DataStage Job with stage from Pack for SAP R/3 - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When running DataStage job with stage from Pack for SAP R/3 receive one of the following errors:
+
+ds_loadlibrary: Win32 error in LoadLibrary of dsidoc.dll - The specified module could not be found
+
+main_program: Fatal Error: Fatal: Shared library (dsr3bapi.so) failed to load: errno = (2), system message = (Could not load module /opt/IBM/InformationServer/Server/DSComponents/bin/dsr3bapi.so. 
+Dependent module /opt/IBM/InformationServer/Server/DSEngine/lib/librfccm.o could not be loaded.
+A file or directory in the path name does not exist. 
+
+main_program: Fatal Error: Fatal: Shared library (dsidocld.so) failed to load: errno = (8), system message = ( 0509-022 Cannot load module /opt/IBM/InformationServer/Server/DSComponents/bin/dsidocld.so.
+0509-150 Dependent module /opt/IBM/InformationServer/Server/DSEngine/lib/librfccm.o could not be
+loaded. 
+0509-103 The module has an invalid magic number.
+
+
+RESOLVING THE PROBLEM
+Verify the correct SAP RFC Libraries are installed for your platform using the tables below: 
+
+Platform RFC Library version 32 bit RFCSDK Libraries Unicode 32 bit RFCSDK Libraries WINDOWS on IA32 7.00 librfc32.dll icudt30.dll 
+icuin30.dll 
+icuuc30.dll 
+librfc32.dll 
+librfc32u.dll 
+libsapu16vc71.dll 
+libsapucum.dll Linux on IA32 7.00 librfccm.so libicudata.so.30 
+libicui18n.so.30 
+libicuuc.so.30 
+librfcum.so 
+libsapu16.so 
+libsapu16_mt.so 
+libsapucum.so Solaris on SPARC (1) 6.40 (2) librfccm.so NA AIX (1) 6.40 (2) librfccm.o NA  
+
+Unicode 64 bit 
+RFCSDK Libraries IBM WebSphere 
+DatStage 
+Client side 
+RFC Library Installation location IBM WebSphere 
+DataStage Server side RFC Library 
+Installation location Download location on SAP Service marketplace None (3 ) (3) (5) None NA (4) (6) libicudata.so.26 
+libicui18n.so.26 
+libicuuc.so.26 
+librfcum.so 
+libsapu16_mt.so 
+libsapucum.so NA (4) (6) libicudata26.so 
+libicui18n26.so 
+libicuuc26.so 
+librfcum.o 
+libsapu16_mt.so 
+libsapucum.so NA (4) (6) 
+(1)The hardware architecture is 64-bit. The operating system that is installed on this architecture is able to run 64-bit and 32-bit code. (2)IBM WebSphere DataStage Pack for SAP R/3 6.0.0 requires SAP RFC library version 6.40 for this platform. According to SAP Note 413708, RFC libraries are downward and upward compatible. This means that RFC library version 6.40 can communicate with SAP NETWEAVER 2004s systems. 
+
+(3)Copy the listed RFC SDK libraries (including the International Component for Unicode ICU libraries) from this row into your WINDOWS\system32 directory. The WINDOWS\system32 directory must be included in the SYSTEM PATH environment variable. 
+
+(4)Copy the listed RFC SDK libraries (including the International Component for Unicode ICU libraries) from this row into your IBM WebSphere DataStage installation directory where all other IBM WebSphere DataStage shared libraries are located. For example, if your IBM WebSphere DataStage Installation directory is /IBM/InformationServer, then copy all RFC SDK libraries into /IBM/InformationServer/Server/DSComponents/lib. 
+
+(5)To download the current RFC libraries, log into Service Marketplace and follow the instructions from SAP Note 413708 about the download location for RFC Library version 6.40. 
+
+(6)To download the current RFC libraries, log into Service Marketplace and follow instructions from SAP Note 413708 about the download location for RFC Library version 7.00. 
+
+If the RFC SDK libraries are missing, the WebSphere DataStage Pack for SAP R/3 installer detects this only partially and displays an appropriate warning message. The server installer proceeds after issuing a warning, however, the installed server components will not be functional. 
+
+To locate the libraries, search for "RFC SDK" on the SAP Service Marketplace. Copy these libraries to the dshome/lib directory: 
+
+From the non-Unicode RFC SDK, copy librfc32.dll 
+
+From the Unicode RFC SDK's lib directory, copy all libraries including The International Component for Unicode (ICU libraries) 
+
+These libraries are required regardless of whether you plan to use the WebSphere DataStage Pack for SAP R/3 against a Unicode or non-Unicode SAP system.

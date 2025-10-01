@@ -1,0 +1,71 @@
+Title: IBM Applet warning dialogues using Oracle JRE 7 update 45 or equivalent IBM JRE. - United States
+
+Text:
+Java; Applet; update; warnings; security FLASH (ALERT)
+
+ABSTRACT
+ Oracle JRE 7 update 45 has added new features to enhance the security of Applets in the browser. These features have also been added to the IBM Java 6 SR7. The appearance of the dialogs may differ slightly between Oracle and IBM JREs. This tech note describes the Oracle JRE dialogs.
+
+Part of these enhancements include new and reworked dialogues when loading Network Manager pages that contain Java Applets. 
+
+This note will describe why each dialogue is displayed and the impact to users.
+
+
+CONTENT
+When loading the Network Manager pages, such as the Network Views, Network Hop View, or Network Health View, a user may encounter a sequence of dialogues regarding different security aspects of Network Manager Applets.
+An example of the messages is provided below. This is based on the results of testing in an IBM lab. 
+
+
+Dialogue 1 : Do you want to Continue? “The connection to this website is untrusted”
+
+[/support/docview.wss?uid=swg21654628&aid=1] [/support/docview.wss?uid=swg21654628&aid=1]
+
+Context : Users will see this the first time an Applet loads for a user session
+
+Suggested Action: Select 'Continue'
+
+Further info: When communicating over HTTPS the certificate that is generated on the WebSphere server is "Self-Signed". The contents of this certificate can be seen by choosing “More Information” and inspecting the contents of the certificate.
+
+NOTE : The warning (displayed in a yellow box in the dialogue above) is displayed in error and it has been signalled that it is targeted for removal in a subsequent release of the Oracle JRE, and IBM equivalent.
+
+
+
+Dialogue 2 : Do you want to run this application?
+
+[/support/docview.wss?uid=swg21654628&aid=2] [/support/docview.wss?uid=swg21654628&aid=2]
+
+Context : Users will see this the first time an Applet loads for a user session. The user can choose to disable the warning using the checkbox.
+
+Suggested Action: Select the 'Run' button
+
+Further info: Network Manager Applets run with unrestricted access to client machines. This is to enable printing functionality and saving of network views images.
+
+In a future release of Java (Oracle JRE 7 update 51), and IBM equivalent, there will be new security enhancements introduced to prevent the re-purposing of Java Applets. The dialogue above is a warning related to that upcoming change.
+
+For more information, please see: https://blogs.oracle.com/java-platform-group/entry/new_security_requirements_for_rias [https://blogs.oracle.com/java-platform-group/entry/new_security_requirements_for_rias]
+
+As detailed in the Oracle blog, the enhancement necessitates an application change (setting the 'Permissions attribute'). It is targeted to include this change in future releases of IBM Tivoli Network Manager.
+
+ITNM 3.9 Fix Pack 3 Interim Fix 1, which includes this fix, is now available: http://www-01.ibm.com/support/docview.wss?uid=swg24036419 [http://www-01.ibm.com/support/docview.wss?uid=swg24036419] 
+
+
+Dialogue 3 : Allow access to the following application from this web site?
+
+[/support/docview.wss?uid=swg21654628&aid=3] [/support/docview.wss?uid=swg21654628&aid=3]
+
+
+Context : Users will see this security dialogue prompt once per Applet class Loader instance 
+
+Suggested Action: Select the 'Allow' button to use the Network Manager screens.
+
+Further Info: New functionality was introduced in Oracle JRE 7 update 45, and IBM equivalent, to add protection against unauthorised redistribution of Java applications. This is achieved by adding new attributes to Network Manager Java libraries.
+
+See Oracle release notes : http://www.oracle.com/technetwork/java/javase/7u45-relnotes-2016950.html [http://www.oracle.com/technetwork/java/javase/7u45-relnotes-2016950.html]
+
+It is targeted to include this change in future releases of IBM Tivoli Network Manager.
+
+ITNM 3.9 Fix Pack 3 Interim Fix 1, which includes this fix, is now available: http://www-01.ibm.com/support/docview.wss?uid=swg24036419 [http://www-01.ibm.com/support/docview.wss?uid=swg24036419] 
+
+RELATED INFORMATION
+ Oracle JRE 7u45 release notes [http://www.oracle.com/technetwork/java/javase/7u45-relnotes-2016950.html]
+7u51 security requirement [https://blogs.oracle.com/java-platform-group/entry/new_security_requirements_for_rias]

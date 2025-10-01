@@ -1,0 +1,38 @@
+Title: IBM Using CCDT in a Connection Factory for a Queue Manager Group of separate queue managers in WAS V7 and V8.x - United States
+
+Text:
+ WHITE PAPER
+
+ABSTRACT
+ This technical document describes the steps for configuring a Connection Factory in WebSphere Application Server V7 and V8.x that uses a Client Channel Definition Table (CCDT) file for a Queue Manager Group in WebSphere MQ V7 that uses separate queue managers. 
+
+CONTENT
+The last section has Information about customizable properties for Listener Ports. 
+
+If you want to use an Activation Specification, consult the following related techdoc:
+Using CCDT in an Activation Specification for a Queue Manager Group of separate queue managers in WAS V7 and V8.x [http://www.ibm.com/support/docview.wss?rs=171&uid=swg27035714]
+
+This document explains the usage of the sample MDB (SampleMDBEJBEAR) which is available from the following techdoc, which also has the steps on how to create the JMS administrative objects and how to deploy the MDB.
+Using WebSphere MQ V7 as JMS Provider for WebSphere Application Server V7 and V8.x [http://www.ibm.com/support/docview.wss?rs=171&uid=swg27016505]
+
+
+For the case of a Queue Manager Group that is composed of a multi-instance queue manager, see the techdoc:
+Using a CCDT file to connect to WebSphere MQ multi-instance queue managers from WebSphere Application Server V7 [http://www.ibm.com/support/docview.wss?rs=171&uid=swg27020701]
+
+Attached file:
+Using CCDT in Connection Factory for a Queue Manager Group in WAS V7 and V8x.pdf
+
++++ Update on 26-Sep-2013
+Added Note and explanation: XA is NOT supported for separate queue managers using CCDT.
+
+
+
+
+File: Using CCDT in Connection Factory for a Queue Manager Group in WAS V7 and V8.x.pdf 
+
+Using CCDT in Connection Factory for a Queue Manager Group in WAS V7 and V8.x.pdf [/support/docview.wss?uid=swg27035452&aid=2]Using CCDT in Connection Factory for a Queue Manager Group in WAS V7 and V8.x.pdf [/support/docview.wss?uid=swg27035452&aid=1]
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Application Servers WebSphere Application Server Java Message Service (JMS) AIX, HP-UX, Linux, Solaris, Windows 8.5, 8.0, 7.0 Business Integration WebSphere MQ Clients AIX, HP-UX, Linux, Solaris, Windows 7.5, 7.1, 7.0.1 Business Integration IBM MQ PRODUCT ALIAS/SYNONYM
+ WebSphere MQ WMQ

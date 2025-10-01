@@ -1,0 +1,144 @@
+Title: IBM IC49002: EXPORT ATTRIBUTE MATRIX VIEW TO MS WORD DOC WITH ASIAN LANGUAGES ENABLED. - United States
+
+Text:
+  A FIX IS AVAILABLE
+Rational RequisitePro, version 7.1.0.2, Interim Fix 1 [http://www-01.ibm.com/support/docview.wss?uid=swg24023666]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Hello,
+   I am creating an APAR following the defect RATLC00058861.
+   I have an Ericsson Requisitepro user who was using the
+   workaround of disabling asian language till lately as he
+   receives Word doc from Japan...
+   Now the problem is that when he wants to export to a Word
+   document an attribute matrix view with Asian Languages
+   (Chineese, Japanese and Korean)
+   the export document looks a mess compare to the WOrd document
+   while the same Asian languages are disable.
+   It is easily reproducable with a Sample project.
+   -MS Word 2003 or Word 2002
+   -Reqpro SR5.
+   -From one machine go to the Microsoft Office tool/ Microsoft
+   Office language Settings/Add Japanese, Chineese and Korean to
+   the enabled languages.
+   -From another machine do not set those languages.
+   -Create an attribute matrix view and export to Word and both
+   machine.
+   The difference is big and messi.
+   Export to CSV works fine with both settings.
+   The customer needs to have those languages enables, is there
+   another workaround or could a fix be delivered for such issue?
+   Thank you for your help.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  This issue happens when Microsoft office has enable Asian
+   Languages in an English machine and then you try to export a
+   attribute matrix into a Word document, as result the word
+   document is not showed correctly.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  To fix this issue I modified the Word Macros to be smart
+   enough to determinate when Asian Languages are enabled and
+   make some changes to show correctly the exported file.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC49002
+   
+   
+ * REPORTED COMPONENT NAME
+   RATL REQ PRO VX
+   
+   
+ * REPORTED COMPONENT ID
+   5724F3800
+   
+   
+ * REPORTED RELEASE
+   ALL
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2006-03-28
+   
+   
+ * CLOSED DATE
+   2009-10-15
+   
+   
+ * LAST MODIFIED DATE
+   2009-10-15
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   RATL REQ PRO VX
+   
+   
+ * FIXED COMPONENT ID
+   5724F3800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * RALL PSN
+   UP

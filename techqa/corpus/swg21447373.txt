@@ -1,0 +1,75 @@
+Title: IBM WebSphere Commerce startup error - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ An Oracle JDBC Diagnosability MBean error is logged during WebSphere Commerce application and server startup. This problem occurs in WebSphere Commerce Version V7.0, when your system has a remote Oracle database, and an Oracle client on the WebSphere Commerce tier.
+
+
+SYMPTOM
+The following error message is logged during the WebSphere Commerce application and server startup: 
+
+[9/8/10 15:48:55:998 CEST] 00000014 jdbc E Error while registering Oracle JDBC Diagnosability MBean. 
+
+ javax.management.MalformedObjectNameException: Invalid character '
+' in value part of property
+at javax.management.ObjectName.construct(ObjectName.java:614)
+at javax.management.ObjectName.<init>(ObjectName.java:1415)
+at oracle.jdbc.driver.OracleDriver.registerMBeans(OracleDriver.java:303)
+at oracle.jdbc.driver.OracleDriver$1.run(OracleDriver.java:213)
+at java.security.AccessController.doPrivileged(AccessController.java:202)
+at oracle.jdbc.driver.OracleDriver.<clinit>(OracleDriver.java:209)
+... 
+
+ at com.ibm.commerce.base.objects.ConfiguratorAccessBean. 
+
+ejbHome(ConfiguratorAccessBean.java:72)
+at com.ibm.commerce.base.objects.ConfiguratorAccessBean. 
+
+instantiateEJB(ConfiguratorAccessBean.java:100)
+at com.ibm.commerce.base.objects.ConfiguratorAccessBean. 
+
+initDataSourceInfo(ConfiguratorAccessBean.java:209)
+at com.ibm.commerce.base.helpers.BaseJDBCHelper. 
+
+initDataSource(BaseJDBCHelper.java:841)
+at com.ibm.commerce.base.helpers.BaseJDBCHelper. 
+
+getDataSource(BaseJDBCHelper.java:463)
+at com.ibm.commerce.wc.version. 
+
+ECDatabaseVersionInfo.readSiteTable(ECDatabaseVersionInfo.java:103)
+at com.ibm.commerce.wc.version.ECDatabaseVersionInfo.<init>(ECDatabaseVersionInfo.java:81)
+at com.ibm.commerce.server.ProductInfo.getECDatabaseVersionInfo(ProductInfo.java:58)
+at com.ibm.commerce.server.ProductInfo.getECDBVersionInfo(ProductInfo.java:96)
+at com.ibm.commerce.server.ProductInfo.getProductVersion(ProductInfo.java:75)
+at com.ibm.commerce.server.WcsApp.configInit(WcsApp.java:700)
+at com.ibm.commerce.server.WcsApp.initialize(WcsApp.java:436)
+at com.ibm.commerce.server.WebApp.init(WebApp.java:386)
+at com.ibm.commerce.struts.InitActionServlet.init(InitActionServlet.java:64)
+
+
+CAUSE
+This error is caused by "BUG-6362104: JDBC driver throws MalformedObjectException or InstanceAlreadyExistsException when loading." This is a known problem, and it is solved in Oracle JDBC Drivers release 11.1.0.7.0 - Production level. 
+
+The prerequisite level for the Oracle driver is not met. As per the SystemOut.log at startup, the Oracle Database and Oracle JDBC driver level are at 11.1.0.0.0 and 11.1.0.6.0 respectively:
+
+[9/8/10 15:48:57:655 CEST] 00000014 InternalGener I DSRA8204I: Database product version : Oracle Database 11g Release 11.1.0.0.0 - Production
+[9/8/10 15:48:57:656 CEST] 00000014 InternalGener I DSRA8205I: JDBC driver name : Oracle JDBC driver
+[9/8/10 15:48:57:656 CEST] 00000014 InternalGener I DSRA8206I: JDBC driver version : 11.1.0.6.0-Production
+
+
+RESOLVING THE PROBLEM
+To resolve this problem: 
+
+1. Download the latest ojdbc6.jar version from the Oracle website: http://www.oracle.com/technetwork/database/enterprise-edition/jdbc-111060-084321.html [http://www.oracle.com/technetwork/database/enterprise-edition/jdbc-111060-084321.html] 
+
+
+2. Upgrade the Oracle client to the prerequisite level. 
+After the upgrade, the Oracle database and Oracle JDBC driver levels should state 11.1.0.7.0 (minimum) in the SystemOut.log: 
+
+
+[9/8/10 17:44:30:549 CEST] 00000012 InternalGener I DSRA8204I: Database product version : Oracle Database 11g Enterprise Edition Release 11.1.0.7.0 - 64bit Production With the Partitioning, OLAP, Data Mining and Real Application Testing options 
+[9/8/10 17:44:30:550 CEST] 00000012 InternalGener I DSRA8205I: JDBC driver name : Oracle JDBC driver 
+[9/8/10 17:44:30:550 CEST] 00000012 InternalGener I DSRA8206I: JDBC driver version : 11.1.0.7.0-Production

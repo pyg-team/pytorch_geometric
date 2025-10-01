@@ -1,0 +1,87 @@
+Title: IBM Collecting Data for IBM FileNet Application Engine (AE)
+Installation or Upgrade Issues - United States
+
+Text:
+Installation; Migration; Data Gathering TECHNOTE (FAQ)
+
+QUESTION
+ What information should be collected when you experience a problem during an IBM FileNet Application Engine (AE ) installation or upgrade? 
+Collecting this information before calling IBM support will help you understand the problem and save time analyzing the data. 
+
+ANSWER
+The installation/upgrade of FileNet P8 Application Engine (AE) is comprised of multiple steps within several specific phases. Depending on the step or phase of the installation/upgrade being completed, various logs will be of use in troubleshooting any issues encountered. An AE installation/upgrade can be broken down into at least the following 4 phases:
+1. Installing Application Engine (AE)
+2. Installing the latest Content Engine (CE) Client files and Process Engine (PE) client files on AE servers
+3. Deploying AE on the application server
+4. Logging into Workplace
+
+The sections below outline the logs that should be reviewed and attached to a PMR if an issue is encountered at a given phase.
+
+Note: The default paths given below are in Unix format; they are essentially the same paths in Windows, just replace "/" with "\". Only where the Windows path is different will both the Unix and Windows paths be specified.
+
+
+
+Installing Application Engine: Laying down the binaries  * <AE_install_path>/AE/Logs/app_engine_install_log_4_0_2.txt
+
+
+InstallShield directory files: These are useful when an install/uninstall has been attempted multiple times. Below are the InstallShield default locations for various platforms: 
+
+ * AIX (Premier Only) 
+
+/usr/lib/objrepos/InstallShield/Universal  * Generic Unix 
+
+/usr/lib/InstallShield/Universal  * HP-UX 
+
+(user.home)/InstallShield/Universal  * Linux 
+
+(user.home)/InstallShield/Universal  * Solaris
+
+(user.home)/InstallShield/Universal  * Windows 
+
+….\InstallShield\Universal
+
+Installing the Latest Client Files on AE Servers 
+Unix  * /opt/IBM/FileNet/CEClient/ceclient_install_log_4_5_1.txt 
+ * /opt/IBM/FileNet/BPMClient/PEClient_install_log-4.5.1.txt
+
+
+Windows  * <drive>:\ProgramFiles\IBM\FileNet\CEClient\ceclient_install_log_4_5_1.txt 
+ * <drive>:\ProgramFiles\IBM\FileNet\BPMClient\PEClient_install_log-4.5.1.txt
+
+
+Deploying AE on the Application Server 
+WebSphere Application Server (WAS)  * The WAS Admin console can be used to verify whether the following tasks completed successfully:  * Workplace application is listed under Enterprise applications and deployed to the expected application server.
+   
+   
+ * SystemOut.log if failing at the deploy step:  * <WAS_install_path>/profiles/<profile_name>/logs/<server_name>/SystemOut.log
+   
+   
+
+
+Oracle WebLogic Application Server  * The Weblogic Administration console can be used to verify whether the following tasks completed successfully:  * Workplace application is listed under Enterprise applications and deployed to the expected application server.
+   
+   
+ * <AE_server_name>.log if failing the deploy step:  * <WLS_install_path>/user_projects/domains/<domain_name>/servers/<AE_server_name>/logs/<AE_server_name>.log
+   
+   
+
+
+JBoss Application Server  * <JBOSS_home>/<AE_server>/default/conf/log/server.log, if failing at the deploy step.
+   
+
+
+
+Logging into Workplace 
+WebSphere Application Server (WAS)  * <WAS_install_path>/profiles/<profile_name>/FileNet/<CE_server_name>/ p8_server_trace.log 
+ * <WAS_install_path>/profiles/<profile_name>/FileNet/<CE_server_name>/ p8_server_error.log 
+ * <WAS_install_path>/profiles/<profile_name>/logs/<AE_server_name>/SystemOut.log
+
+
+Oracle WebLogic Application Server  * <WLS_install_path>/user_projects/domains/<domain_name>/FileNet/<CE_server_name>/p8_server_trace.log 
+ * <WLS_install_path>/user_projects/domains/<domain_name>/FileNet/<CE_server_name>/p8_server_error.log 
+ * <WLS_install_path>/user_projects/domains/<domain_name>/servers/<AE_server_name>/logs/<server_name>.log
+
+
+JBoss Application Server  * <JBOSS_home>/bin/FileNet/<CE_server_name>/p8_server_trace.log 
+ * <JBOSS_home>/bin/FileNet/<CE_server_name>/p8_server_error.log 
+ * <JBOSS_home>/<AE_server>/default/conf/log/server.log

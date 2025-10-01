@@ -1,0 +1,297 @@
+Title: IBM IJ06034: IN WORK ORDER TRACKING APPLICATION, "BMXAA4146E - NOT A VALID GL ACCOUNT." WHEN TRYING TO APPROVE A WORK ORDER. - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  STEPS TO REPLICATE:
+   ========================================
+   Steps to create the dataset:
+   ========================================
+   1) Go to Item Master application
+   
+   2) From More Actions menu, select Add/Modify Commodity Codes and
+   create a new Commodity Group CGROUPX
+   
+   3) Go to Chart of Accounts application
+   
+   4) Select EAGLENA Organization
+   
+   5) From More Actions menu, select Financial Periods and create a
+   new Financial Period, as for example:
+   Period: FP2018
+   From: 1/1/18
+   To: 1/1/19
+   
+   6) From More Actions menu, select Organization Default Accounts
+   and make sure that you have a Global Rotating Suspense Account
+   defined. In this example, it is the GL Account 6600-869-800.
+   
+   7) From More Actions menu, select GL Component Maintenance and
+   create the following new Components:
+   COST CENTER: 1234, Description: For tests
+   ACTIVITY: 123, Description: For tests
+   RESOURCE: 123, Description: For tests
+   
+   8) Then create the new GL Account 1234-123-123 for EAGLENA
+   Organization.
+   
+   9) From More Actions menu, select Resource Codes and associate
+   the Commodity Group CGROUPX to the GL Account ????-123-123
+   
+   10) Go back to Item Master application
+   
+   11) Create a new Item as the following and save:
+   Item: ITEMX
+   Commodity Group: CGROUPX
+   Order Unit: EACH
+   Issue Unit: EACH
+   
+   12) Change Item Status to ACTIVE, selecting the option "Roll New
+   Status to Organizations and Inventory?".
+   
+   13) Select Action > Add Items to Storeroom
+   
+   14) From Add Items to Storeroom dialog, enter:
+   BEDFORD Site
+   CENTRAL Storeroom
+   Current Balance: 1.00
+   
+   15) Create another Item as the following and save:
+   Item: ROTX
+   Rotating: Yes
+   Order Unit: EACH
+   Issue Unit: EACH
+   
+   16) Change Item Status to ACTIVE, selecting the option "Roll New
+   Status to Organizations and Inventory?".
+   
+   17) Select Action > Add Items to Storeroom
+   
+   18) From Add Items to Storeroom dialog, enter:
+   BEDFORD Site
+   CENTRAL Storeroom
+   
+   19) Go to Purchase Orders application
+   
+   20) Create a new PO against any valid Vendor with just 01 PO
+   Line as the following:
+   Line Type = ITEM
+   Item = ROTX
+   Storeroom = CENTRAL
+   Quantity = 1.00
+   Unit Cost = 1.00
+   
+   21) Save, approve PO and take note of its number
+   
+   22) Go to Receiving application
+   
+   23) Bring up the PO above
+   
+   24) Click on Select Ordered Items button
+   
+   25) From Select Ordered Items dialog, select the line and click
+   OK
+   
+   26) Save
+   
+   27) From More Actions menu, select Receive Rotating Items
+   
+   28) From Receive Rotating Items dialog, click on Autonumber,
+   take note of the Asset number and click OK
+   
+   29) Go to Locations application
+   
+   30) Create a new Location LOCX of REPAIR Type and save it
+   
+   31) Go to Inventory application
+   
+   32) Bring up the ROTX Item
+   
+   33) From More Actions menu, select Issue Current Item
+   
+   34) In the Issue Current Item dialog, enter the following and
+   click OK:
+   Rotating Asset = the Rotating Asset received above. In this
+   example, Rotating Asset 2135.
+   Location = LOCX
+   
+   ========================================
+   Steps to replicate the issue:
+   ========================================
+   1) Go to Chart of Accounts application
+   
+   2) Select EAGLENA Organization
+   
+   3) From More Action menu, select Validation Options and set the
+   following:
+   . Deactivate GL Validations?: Unchecked
+   . Validate GL Component Combinations?: Checked
+   . Validate Financial Periods?: Checked
+   . Use current date as a transaction date if Financial Period is
+   Closed?: Checked
+   . Require Valid GL Account for All Transactions?: Checked
+   
+   4) Go to Work Order Tracking application
+   
+   5) Create a new WO against the Rotating Asset in question. In
+   this example, Rotating Asset 2135.
+   
+   Note that that Rotating Asset is in the Repair Location. System
+   automatically fills in the GL Account field with the Global
+   Rotating Suspense Account defined the Chart of Accounts
+   application for EAGLENA Organization. In this example, GL
+   Account 6600-869-800.
+   
+   6) Go to Plans tab, Materials sub-tab, click on New Row button,
+   enter the following info and save:
+   Item: ITEMX
+   Storeroom: CENTRAL
+   Quantity: 1.00
+   Unit Cost: 1.00
+   
+   7) Try to approve the WO
+   
+   RESULTS:
+   At this point, system throws the error below:
+   "BMXAA4590E - Could not change Work Order XXXX status to APPR.
+   BMXAA4146E - Not a valid GL account. Either the required
+   components are not filled or the component values are not valid.
+   Make sure the GL account value is entered in the appropriate
+   format as defined in the GL Account application."
+   This is the issue.
+   
+   EXPECTED RESULTS:
+   The WO should be approved with no error message.
+   
+   PRODUCT VERSION:
+   Maximo 7.6.0.9
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * maximo users who use work order tracking app                 *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * User could not approve a work order with planned material in *
+   * 7609.  The same planned item worked in 7605.  This is caused *
+   * by  apar IV89594 [http://www-01.ibm.com/support/docview.wss?uid=swg1IV89594]                                             *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This is fixed in code.
+   
+   The fix for this APAR is contained in the following maintenance
+   package:
+   	 | release\fix pack | Interim Fix for Release 7.6.1.0 Product
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IJ06034
+   
+   
+ * REPORTED COMPONENT NAME
+   WORK ORDERS
+   
+   
+ * REPORTED COMPONENT ID
+   5724R46WO
+   
+   
+ * REPORTED RELEASE
+   760
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2018-04-30
+   
+   
+ * CLOSED DATE
+   2018-05-13
+   
+   
+ * LAST MODIFIED DATE
+   2018-05-13
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  maximo
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WORK ORDERS
+   
+   
+ * FIXED COMPONENT ID
+   5724R46WO
+   
+   
+
+APPLICABLE COMPONENT LEVELS

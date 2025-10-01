@@ -1,0 +1,39 @@
+Title: IBM New Reporting Option, V7RI for Maximo 6.2.8 - United States
+
+Text:
+v7ri; report; maximo 6; birt; ibmeam; TPAEREP TECHNOTE (FAQ)
+
+QUESTION
+ What is the V7RI Reporting Option, and how is it installed and configured? 
+
+ANSWER
+In Maximo® Asset Management 6.2.8 Release, a new report integration option is available. This integration enables a new reporting option targeted at streamlining future report upgrades, and enabling you to use the embedded reporting tool of the Maximo 7 releases. 
+This guide will present you with the details to understand and implement this integration including - 
+
+Understanding the V7RI Report Option
+Configuring the Version 6 and Version 7 Systems
+Creating V7 Custom Reports for your V6 Instance
+Supported Platforms and Functionality
+Reference Materials
+
+In the ‘Understanding the V7RI Report Option’ section, an overview of the integration will be given. This includes top level architecture diagrams and screen shots.
+
+In the second section of ‘Configuring the Version 6 and 7 Systems’ the specific steps required to configure your 6 and 7 instances for this will be included. These steps will include the modification of property system files, registering the new reports in your Version 6 instance and creating new report users. It also includes steps for testing and troubleshooting the integration.
+
+The third section will highlight steps to get your started creating V7 BIRT reports, and key features to consider for your custom report needs. 
+
+In the next section on ‘Supported Platforms and Functionality’ a review of the system and report specific functionality enabled in this integration will be detailed. And then in the final section on ‘Reference Materials’, key support documents will be highlighted to assist you in your custom report development. 
+
+For more details on the V7RI integration, reference this url [https://www.ibm.com/developerworks/community/wikis/home?lang=en#!/wiki/IBM%20Maximo%20Asset%20Management/page/Maximo%206%20Reporting]. Additionally, you can find more details on other reporting features by accessing the Maximo Report Wiki Pages available here [https://www.ibm.com/developerworks/community/wikis/home?lang=en#/wiki/IBM%20Maximo%20Asset%20Management/page/Reporting] [http://www.ibm.com/developerworks/wikis/display/maximo/Reports]or the Maximo Report Reference Materials located here [https://www.ibm.com/developerworks/community/wikis/home?lang=en#!/wiki/IBM%20Maximo%20Asset%20Management/page/Report%20Resources]
+
+Revision History:
+Revision 3 - December 2014
+Updates for Maximo 76 release
+
+Revision 2 – July 2012
+(1) Removed prior database constraint for SQL Server. Version 6.2.8 integration now supports Sql Server via Hot Fix of November 2011
+
+Revision 1 – September 2011
+(1) Added note on page 6 highlighting application server configuration options (2) Under Integration Troubleshooting Notes, Authentication Section, added note C on page 28. 
+
+UtilizingVersion7ReportingInVersion6_ V7RI_ Integration_ Instruction_rev3.pdf [/support/docview.wss?uid=swg21499797&aid=2]UtilizingVersion7ReportingInVersion6_ V7RI_ Integration_ Instruction_rev3.pdf [/support/docview.wss?uid=swg21499797&aid=1]

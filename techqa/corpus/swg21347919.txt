@@ -1,0 +1,130 @@
+Title: IBM Error 'The Cognos Gateway is unable to connect to the Cognos BI server' at logon (or system reports) - United States
+
+Text:
+calling content store database sqloledb TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ User launches Controller. User receives error message. 
+
+SYMPTOM
+The error message varies depending on which version of Controller you are using. 
+
+ 
+Example - Controller 10.2.1:
+[/support/docview.wss?uid=swg21347919&aid=1] [/support/docview.wss?uid=swg21347919&aid=1] 
+
+ * 
+ * 
+ * The IBM Cognos gateway is unable to connect to the IBM Cognos BI server. The server may be unavailable or the gateway may not be correctly configured.
+ * 
+ * 
+
+
+Example - older version:  * 
+ * 
+ * The IBM Cognos gateway is unable to connect to the IBM BI server. The server may be unavailable or the gateway may not be correctly configured.
+ * 
+ * 
+
+
+CAUSE
+There is a problem with the 'IBM Cognos' Windows service (Cognos BI engine / report server engine). [/support/docview.wss?uid=swg21347919&aid=2] [/support/docview.wss?uid=swg21347919&aid=2]
+
+Examples:
+There are several potential causes for the IBM Cognos service not starting correctly:
+
+
+ * Example #1 - 'Cognos Configuration' has been incorrectly configured.  * In this scenario, the system has never worked OK before
+   
+   
+
+ * Example #2 - System used to work OK, but stopped working properly after server reboot  * Problem with the ContentStore database. In other words, the report server tried to start its service whilst the Content Store (database) was not available. The contentstore database contains most of the settings/configuration/content for the Cognos BI Report service. Without this database, the Cognos BI report service cannot function. 
+    * For example, the SQL server could have been off-line during the period of time that the report server (application server) was starting up. This caused the 'IBM Cognos' service to be unable to use the configured 'content store' database.
+      =================================
+      TIP: When rebooting Controller servers, reboot the database (for example SQL) server first, and then reboot the Controller application server afterwards. This is to ensure that the content store database is available when the application server starts the Cognos BI report service.
+      =================================
+   
+   
+
+ * Example #3 - Cognos BI Report Server's database repository ("the contentstore") has a problem  * In other words, the report server cannot successfully connect to the Content Store database where much of its configuration information is stored 
+    * For example, the SQL server may have a problem (such as the hard drive is full)
+   
+   
+
+ * Example #4 - System used to work OK, but suddenly stopped working with no apparent explanation  * There are many possible causes for this, for example a memory leak on the server.
+   
+   
+
+
+More information: 
+The 'IBM Cognos' reporting service, is configured inside the application 'Cognos Configuration'.  * By default, the service will register itself as a Windows service, and will start automatically when the server reboots. 
+ * However, it can be manually started/restarted from inside 'Cognos Configuration' (launched from the Start Menu).
+
+
+If you have multiple Controller application servers, there will typically be one 'Report Server' - this is the one application server which runs this Windows service.  * By design, the other application servers will typically not have this service running
+
+DIAGNOSING THE PROBLEM
+Example #2 (and also #3) 
+
+ 1. Open the log file 'cogserver.log' ( <install location>\logs\cogserver.log) 
+ 2. Look for an error message similar to:
+
+ * 
+ * 
+ * CM-SYS-5003 Content Manager is unable to access the content store
+ * 
+ * 
+ * 
+
+
+RESOLVING THE PROBLEM
+Example #1 
+
+Configure 'Cognos Configuration' correctly (in particular, the 'Report Server' and 'Dispatcher URI' setting), then restart service. 
+
+
+Example #2 - System recently stopped working (for example, after server reboot) 
+ * Workaround:
+ * 
+ * 
+ *  For more details, see separate IBM Technote #1347377 . 
+ *  
+ * 
+ * Long term fix:
+ * 
+ * 
+ * reboot the database (for example SQL) server first, 
+ * 
+
+
+Example #3 - Cognos BI Report Server's database repository ("the contentstore") has a problem 
+ * 
+ *  Logon to the 'report server' as an administrator Launch 'IBM Cognos Configuration' (known as 'Cognos Configuration' in earlier releases) Expand 'Local Configuration - Data Access - Content Manager' Right-click on 'Content Store' Click 'test' Make a note of any error message and diagnose using IBM Technotes. 
+
+
+TIP: For example:  *  Open 'Content Store' section Make a note of 'Database Server', 'Database name' and 'User ID and password' sections Ask your database administrator (for example SQL DBA) to check that these are correct, and there are no problems with the server/database. 
+
+
+Example #4 - System used to work OK, but suddenly stopped working with no apparent explanation 
+ * Fix
+ * 
+ * 
+ * 
+ * 
+ * 
+ * Workaround:
+ * 
+ * 
+ *  For more details, see separate IBM Technote #1347144. 
+
+RELATED INFORMATION
+ 1340234 - The Cognos Gateway is unable to connect to th [http://www.ibm.com/support/docview.wss?uid=swg21340234]
+1347377 - Cognos 8 Windows service does not start autom [http://www.ibm.com/support/docview.wss?uid=swg21347377]
+1347527 - Cannot start Cognos 8 Service after upgrading [http://www.ibm.com/support/docview.wss?uid=swg21347527]
+1347144 - Cannot run a standard report [http://www.ibm.com/support/docview.wss?uid=swg21347144]
+
+
+ 
+
+HISTORICAL NUMBER
+ 1040002

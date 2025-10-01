@@ -1,0 +1,158 @@
+Title: IBM Configure TDWC v8.6 FP3 or v9.x for reporting using an Oracle database - United States
+
+Text:
+TDWC; reports; oracle; jdbc; libraries; AWSUI0346E; No suitable driver found for jdbc:oracle; maestro TECHNOTE (FAQ)
+
+QUESTION
+ Is there a concise set of steps available to allow Tivoli Dynamic Workload Console (TDWC) v8.6 FP3 or v9.x to successfully create reports when the Tivoli Workload Scheduler (TWS) master is using Oracle as the database vendor? 
+
+CAUSE
+TDWC v8.6 FP3 and v9.x do not include the JDBC libraries that allow a Type 4 connection to an Oracle database. Here is a typical message returned when attempting to connect to an engine in DWC when the "Enable reporting" box is checked, but the configuration work has not been done:
+Manage Engines
+AWSUI0803W Test connection to "ENGINENAME" : engine successful, database failed.
+AWSUI0346E Database failure. Check the database is available and the connection parameters are correct and retry:
+database user: TWS_user, database JDBC URL:jdbc:oracle:thin:@//1.2.3.4:1521/DBNAME
+If the problem persists contact the Tivoli Workload Scheduler administrator.
+The database internal message is: No suitable driver found for jdbc:oracle:thin@//1.2.3.4:1621/DBNAME
+
+
+ANSWER
+The TWS online documentation includes the procedure to accomplish the needed configuration. There are, however, a couple of external links that must be used to make the modifications within WebSphere Application Server (WAS). The full details are described below: 
+
+
+Actions taken on Tivoli Workload Scheduler engine: 
+
+For Oracle, the IT administrator, or the Tivoli Workload Scheduler IT administrator, or both working together, perform the following steps: 
+
+
+1. Use the TWS Oracle user specified during the master domain manager installation or perform the following steps to create a new user:
+
+a. Create a database user authorized to access the database and specify a password.
+
+b. Launch the following script: 
+<TWA_home>/TWS/dbtools/Oracle/scripts/dbgrant.bat/.sh 
+<ID_of_user_to_be_granted> 
+<database_name> 
+<database_admin_user> <password>
+
+where the variables are as follows: 
+
+<TWA_home>
+The Tivoli Workload Automation instance directory
+
+<ID_of_user_to_be_granted>
+The ID of the user created in step 1.a [http://www-01.ibm.com/support/knowledgecenter/SSGSPN_9.2.0/com.ibm.tivoli.itws.doc_9.2/distr/src_ad/awsadconfreporacle.htm%23confreporacle__stepcreateusero?lang=en-us], who is going to be granted the access to the reports
+
+<database_name>
+The name of the database, as created when the master domain manager was installed
+
+<database_schema_owner> <password>
+The user ID and password of the database schema owner. 
+
+2. Define a valid connection string to the database: 
+
+a. Ensure that the following property is set in the TWSConfig.properties file to point to the Oracle JDBC URL: com.ibm.tws.webui.oracleJdbcURL
+
+8.6 FP3: <TWA_home>/eWAS/profiles/TIPProfile/properties/TWSConfig.properties 
+9.x: <TWA_home>/WAS/TWSProfile/properties/TWSConfig.properties
+
+For example: 
+
+com.ibm.tws.webui.oracleJdbcURL=
+jdbc:oracle:thin:@//9.132.235.7:1521/orcl 
+
+b. Restart the WebSphere Application Server.
+
+Actions taken on the Dynamic Workload Console:
+
+1. Download the JDBC drivers required by your Oracle server version.
+
+2. Copy the JDBC drivers into a directory that is accessible by the WebSphere Application Server used by your Dynamic Workload Console.
+
+3. Create a shared library on WebSphere Application Server specifying the path and filename of the JDBC drivers you have copied, as documented below:
+
+a. Login to the WebSphere Admin Console for TDWC as the WebSphere Administrative user. 
+
+v8.6 FP3: The default https admin port is 31124. 
+
+v9.x: The default https admin port is 16316. 
+
+The URL will be similar to this: 
+https://(hostname):16316/ibm/console 
+
+b. Select Environment > Shared libraries in the console navigation tree. 
+
+c. Select the following scope from the dropdown list: 
+
+v8.6 FP3: Node=TIPNode01, Server=server1
+
+v9.x: Node=JazzSMNode01, Server=server1
+
+...and select [New]
+
+d. Specify a new name such as oraclelibs
+
+e. Specify the path to the directory that holds the Oracle JDBC drivers in the Classpath field.
+
+*Field Detail: If a path in the list is a file, the product searches the contents of that Java archive (JAR) or compressed .zip file. If a path in the list is a directory, then the product searches the contents of JAR and compressed files in that directory. Press Enter to separate class path entries. 
+
+f. Select [Apply] 
+
+*NOTE: The file that is updated by the above step is: libraries.xml
+
+v8.6 FP3: <TWA_Home>/eWAS/profiles/TIPProfile/config/cells/TIPCell/nodes/TIPNode/servers/server1/libraries.xml
+
+v9.x: cells/JazzSMNode01Cell/nodes/JazzSMNode01/servers/server1/libraries.xml
+
+[/support/docview.wss?uid=swg21692914&aid=1] [/support/docview.wss?uid=swg21692914&aid=1]
+
+4. Associate the isc Enterprise Application to this shared library:
+
+a. Still in the WebSphere Admin Console, in the console navigation tree to access the Shared library references page: Select Applications > Application Types > WebSphere enterprise applications > isc > Shared library references
+
+b. Check the box for the application named isc. This should be the first box and the only box under the section in the table with the second column named "Application".
+
+c. Select the [Reference shared libraries] button.
+
+d. In the "Available" box select the name of the new shared library that you created in step 3. For example: oraclelibs. Then select the Add arrow button to move the shared library name from the Available to Selected box. 
+
+e. Select [Ok]
+
+f. Select [Ok] on the "Shared library references" page.
+
+g. Select the blue word Save at the top of the page in the Messages box.
+
+*NOTE: The files that are noted as being updated in this scenario are:
+
+v8.6 FP3: 
+cells/TIPCell/nodes/TIPNode/serverindex.xml
+cells/TIPCell/applications/isc.ear/deltas/isc/delta-<#>
+cells/TIPCell/applications/isc.ear/deployments/isc/deployment.xml
+
+
+v9.x:
+cells/JazzSMNode01Cell/nodes/JazzSMNode01/serverindex.xml 
+cells/JazzSMNode01Cell/applications/isc.ear/deltas/isc/delta-<#> 
+cells/JazzSMNode01Cell/applications/isc.ear/deployments/isc/deployment.xml 
+
+**NOTE: It is the file deployment.xml that has reference to the actual shared library name that was created in step 3.
+
+***NOTE: Sample entry:
+<libraries xmi:id="LibraryRef_1421875235133" libraryName="oraclelibs" sharedClassloader="true"/>
+
+h. Restart the WebSphere Application Server.
+
+5. Log on to the Dynamic Workload Console.
+
+6. In Dashboard Application Services Hub navigation bar, select System Configuration > Manage Engines. The Manage Engines panels opens.
+
+7. Select the engine you defined or create another engine. The Engine Connection properties panel is displayed.
+
+8. In Database Configuration for Reporting, perform the following: 
+
+a. Check Enable Reporting to enable the engine connection you selected to run reports.
+
+b. In Database User ID and Password, specify the database user and password that you authorized to access reports. 
+
+RELATED INFORMATION
+ Configuring Dynamic Workload Console to view reports - [http://www-01.ibm.com/support/knowledgecenter/SSGSPN_9.2.0/com.ibm.tivoli.itws.doc_9.2/distr/src_ad/awsadconfreporacle.htm?lang=en]

@@ -1,0 +1,115 @@
+Title: IBM Setup the ClearCase Job Scheduler to process the importing, exporting and shipping of ClearQuest MultiSite packets - United States
+
+Text:
+1225507; shipping; MultiSite; Job; Scheduler; task_registry; clearcase; CQMS; export; tranpsort; import TECHNOTE (FAQ)
+
+QUESTION
+ What are the general procedures for setting up the IBM Rational ClearCase Job Scheduler to process the importing, exporting and shipping of ClearQuest MultiSite packets? 
+
+ANSWER
+Using task schedulers for automated synchronization 
+
+When you use a scheduling utility, such as the Rational ClearCase scheduler, to execute Rational ClearQuest MultiSite commands, the scheduler process must have access to the Rational ClearQuest environment. In Windows, the user who runs the Rational ClearCase scheduler (often the clearcase_albd service account) must also create the connection to the Rational ClearQuest schema and user database for performing the scheduled operations. The scheduler user must also have administrative shell privileges in newer OSes such as Windows 2008 Server where User Account Control (UAC) may be enabled. 
+
+On computers running Linux or the UNIX system, the scheduled task must set up the Rational ClearQuest environment by running the /opt/rational/clearquest/cq_setup script prior to running any clearquest multiutil subcommands.
+
+Note: This document assumes that the reader has ClearCase installed and has referenced the ClearCase Scheduler documentation provided in the ClearCase Information Center. There are numerous sections on the topic, one being the cleartool schedule command [http://publib.boulder.ibm.com/infocenter/cchelp/v8r0m0/topic/com.ibm.rational.clearcase.cc_ref.doc/topics/ct_schedule.htm]. [http://publib.boulder.ibm.com/infocenter/cchelp/v8r0m0/topic/com.ibm.rational.clearcase.cc_ref.doc/topics/ct_schedule.htm]
+
+In addition to the ClearCase scheduler, alternatively you may use the Windows scheduler, cron jobs, or your own scheduler. This is provided as a suggestion, though it may or may not suit your enterprise needs, business requirements and synchronization pattern.
+
+1. Create a new storage class, directories, and define routing information.
+
+Windows: 
+
+ 1. Select Start > Control Panel > MultiSite
+    In the MultiSite Configuration Information dialogue box: 
+ 2. Under "Storage Classes", create a storage class calledcq_default and point the Storage and Return bay paths to your designated clearquest specific directories. 
+ 3. Under "Routing Information", define the Next Routing Hop and Destination Hostnames if packets will be shipped through an intermediate host for forwarding to the target host (for example if you use "store-and-forward" servers through firewalls).
+    
+
+
+UNIX :  1. Edit the following lines in the shipping.conf file:
+    /var/adm/rational/clearcase/config/ configuration file "shipping.conf", adding the cq_default storage bay and identifying any routing requirements if needed. Select a distinct path you wish to use, below is an example:
+    
+    STORAGE-BAY -cq_default /opt/rational/clearquest/shipping/cq_default/ms_ship
+    RETURN-BAY -cq_default /opt/rational/clearquest/shipping/cq_default/ms_rtn
+    ROUTE <next-hop> <host> <host> ...
+    
+
+ * 
+ * Note:
+ * 
+ * already exist
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * /opt/rational/clearquest/shipping/ms_ship/outgoing
+   /opt/rational/clearquest/shipping/ms_ship/incoming
+ * 
+
+
+2. Create new script files for the import and export operations.
+
+In this example the password is in plain text. It is recommended to put these command line calls into a batch/shell script so that at minimum the command line output doesn't appear in the logs. You may wish to further augment this with encoding or encrypting of the passwords through 3rd party means, or by carefully writing your own script. Define scripts and jobs as needed for your various clans and families. 
+
+Sample export script CQExport.bat/CQExport.sh :  * 
+ * 
+   multiutil syncreplica -export -clan <Clan_Name> -site <source-replica> -family <family_name> -user <userid> -password <password> -workdir <temp-directory> -fship -sclass cq_default <destination-replica>
+   
+   
+   
+ * Note:
+ * 
+ * 
+
+
+Sample import script CQImport.bat /CQImport.sh :  * 
+ * 
+   multiutil syncreplica -import -clan <Clan_Name> -site <destination-replica> -family <family_name> -user <userid> -password <password> -sclass cq_default -receive
+   
+ * 
+ * Note:
+ * 
+
+
+
+3. Define new tasks in the Task Registry
+
+Edit the task_registry file in the following directory, adding new entries to the bottom of the file for the import and export jobs (this example uses Task.Id: 102 and 103 which may need to be changed if those task ids are already in use). 
+ 1. Windows: <clearcase-install-directory>\var\scheduler\tasks\task_registry 
+ 2. UNIX: /var/adm/rational/clearcase/scheduler/tasks/task_registry
+
+
+Note: In the sample below:  * The "Task.Name" is the name you will see in the Scheduler when you create your new job. 
+ * The "Task.Pathname" is the path to the script file that will run your MultiSite commands. 
+ * Please use equivalent UNIX style paths when appropriate /opt/rational/clearcase/var/scheduler/tasks/.
+   
+   Sample task registry entries:
+   
+   Task.Begin
+   Task.Id: 102
+   Task.Name: "CQ Import"
+   Task.Pathname: "c:\Program Files\Rational\ClearCase\var\scheduler\tasks\CQImport.bat"
+   Task.End
+   
+   Task.Begin
+   Task.Id: 103
+   Task.Name: "CQ Export"
+   Task.Pathname: "c:\Program Files\Rational\ClearCase\var\scheduler\tasks\CQExport.bat"
+   Task.End
+   
+   
+
+4. Use of existing Daily MultiSite Shipping Poll job
+
+The Daily MultiSite Shipping Poll (job 12) is predefined and will query/process all pending shipping orders, sending packets to their next host for both ClearQuest MultiSite and ClearCase MultiSite for any existing shipping orders created with -ship or -fship that failed to transport on the first attempt. 
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Software Development Rational ClearCase Synchronization AIX, HP-UX, Linux, Solaris, Windows 7.0.1, 7.1, 7.1.1, 7.1.2, 8.0

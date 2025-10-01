@@ -1,0 +1,46 @@
+Title: IBM Unexpected Conditional Wait thread states in IBM Javacore - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ IBM Javacores since IBM Java Virtual Machine (JVM) version 5 might show unexpected thread states in a javacore. Threads that are Runnable are actually shown as in Conditional Wait. 
+
+CAUSE
+By Design
+
+RESOLVING THE PROBLEM
+Since IBM JVM version 5, when a javacore is taken, some threads in a Runnable (R) state will enter Conditional Wait (CW) state for the duration of the javacore. This is by design and it is meant to maximize internal consistency during the process of creating the javacore. This increases the quality of the javacore and lessens the potential for a crash or data corruption. 
+
+The way this generally works is that the javacore code requests and gets "exclusive access" to the JVM, meaning that the JVM will internally block, to the best of its ability, other threads from doing any work (as is done, for example, in a stop-the-world garbage collection event) -- similar to the concept of a critical section. The JVM politely asks the other runnable threads to also ask for exclusive access. Since the javacore code already has exclusive access (for the duration of the javacore), this has the effect of blocking those other threads until the javacore finishes -- those threads will then get the access, one by one, do nothing, and continue back in the Runnable state doing their previous work. While they are waiting for the javacore to complete, these threads will show as waiting to be notified from an unowned internal JVM monitor with the name "Thread public flags mutex lock." 
+
+For example:
+
+2LKREGMON Thread public flags mutex lock (0x00002B974C468DD0): <unowned>
+3LKNOTIFYQ Waiting to be notified:
+3LKWAITNOTIFY "Thread-4" (0x00002B974C4F3100)
+...
+3XMTHREADINFO "Thread-4" J9VMThread:0x00002B974C4F3100, j9thread_t:0x00002B974C41B460, java/lang/Thread:0x00002B97564A5DF8, state:CW, prio=5
+3XMTHREADINFO1 (native thread ID:0x5C06, native priority:0x5, native policy:UNKNOWN)
+3XMTHREADINFO2 (native stack address range from:0x00002B97B0041000, to:0x00002B97B0082000, size:0x41000)
+3XMTHREADINFO3 Java callstack:
+4XESTACKTRACE at HelloWorld$1.run(HelloWorld.java:3)
+
+Some threads, particularly threads running in native code, might not be in a state that can be interrupted, so they will continue to be Runnable (R) during javacore creation (however, this does not mean that all natively running threads avoid this behavior -- some within native JVM code might still participate and request exclusive access).
+
+This behavior is different from IBM version 1.4 and earlier. To illustrate the difference, the following are snippets from a javacore from both an IBM 1.4 JVM and an IBM 5 JVM. The javacores were taken on Java code that infinitely loops. You will notice that in 1.4, the thread's state is R, whereas in 5, the thread's state is CW, even though both are Runnable at the moment before the javacore was taken. After the javacore completes, the thread will go back to Runnable.
+
+Java 1.4:
+...
+3XMTHREADINFO "main" (TID:0x101EE1B8, sys_thread_t:0x2B2BD0, state:R, native ID:0x700) prio=5
+4XESTACKTRACE at loop.main(loop.java(Compiled Code))
+...
+
+Java 5:
+...
+3XMTHREADINFO "main" (TID:0x41421300, sys_thread_t:0x00036530, state:CW, native ID:0x000011C8) prio=5
+4XESTACKTRACE at loop.main(loop.java:4(Compiled Code))
+
+2LKREGMON Thread public flags mutex lock (0x00035D68): <unowned>
+3LKNOTIFYQ Waiting to be notified:
+3LKWAITNOTIFY "main" (0x41421300)...

@@ -1,0 +1,294 @@
+Title: IBM Guardium v10.0/10.1/10.1.2/10.1.3/10.1.4 and v9.0/9.1/9.5 Open Ports - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ What ports need to be opened for Guardium v10.0/10.1/10.1.2/10.1.3/10.1.4 and Guardium v9.0/9.1/9.5? Also what ports must be opened bi-directionally? 
+
+ANSWER
+v10.0/10.1/10.1.2/ 10.1.3/10.1.4 Open Ports
+Ports used in/by the Guardium version v10.0/10.1/10.1.2/10.1.3/10.1.4 system.
+
+
+
+
+DB Server – Collector
+TCP 8443 - open from DB server to collector 
+
+TCP 16016 – Unix STAP, both directions, registration, heartbeat, and data (including IBM i S-TAP running in PASE) 
+
+TCP 16017 – Windows/Unix CAS, both directions, templates and data 
+
+TCP 16018 – Unix STAP (TLS), both directions, registration, heartbeat, and data (including IBM i S-TAP running in PASE) 
+
+TCP 16019 – Windows/Unix CAS (TLS), both directions, templates and data 
+
+TCP 16020 - From STAP agent Clear UNIX STAP connection pooling 
+
+TLS 16021 - From STAP agent Encrypted UNIX STAP connection pooling
+
+TCP 8081 – Guardium Installation Manager, both directions, database server to collector/Central Manager 
+
+TCP 9500 – Windows STAP, both directions, DB Server to Collector, STAP registration and data 
+
+TCP 9501 – Windows STAP (TLS), both directions, DB Server to Collector, STAP registration and data 
+
+For STAP verification, database connection port (as defined in inspection engine) must be open from collector to database server.
+
+
+
+
+Collector – Aggregator (Secure Shell – SSL)
+TCP 22 – collector to aggregator, SCP data exports, both directions
+
+
+
+
+Central Manager – Managed Devices
+TCP 22 – SSH/SCP data transfers, both directions 
+
+TCP 8443 – SSL, both directions 
+
+TCP 8444 – SSL, STAP to GIM file upload. Note: For v10.1.3 and above, port 8444 (TLS, not-authenticated), will not be used by GIM clients anymore. This port is dedicated for must gather logger uploads, custom kernel uploads and V9 inspection engine discovery uploads. 
+
+TCP 3306 – MySQL, opened to specific sources (for instance, the Central Manager is open to all managed units; a managed unit is open to the Central Manager) 
+
+TLS 8447 - Used for remote messaging service infrastructure (and profile distribution infrastructure) for communication between Guardium systems in the federated environment / centrally-managed environment. Configuration profiles allow the definition of configuration and scheduling settings from a Central Manager and conveniently distribute those settings to managed unit groups without altering the configuration of the Central Manager itself.
+
+
+
+
+File Activity Monitoring (FAM)
+TCP/TLS 16022/16023 - Universal Feed. 16022 (FAM monitoring, unencrypted) and 16023 (FAM monitoring, encrypted) both need to be open bidirectionally. The sniffer needs the block from 16016 to 16023 open bidirectionally. 
+
+18087 - Listener port for FAM on IBM Content Classification (ICM) server located on the same machine where FAM is installed.(serverSettings.icmURL=http://localhost:18087) Open bidirectionally.
+
+
+
+
+Guardium Installation Manager (GIM)
+Note: v10.1.3 appliance supports GIM client communication , either: (1) Port 8446 (TLS, authenticated). This is to support V10 GIM clients working with GIM_USE_SSL=1, or (2) Port 8081 (non TLS (but with message signing verification), not authenticated). This is to support V8/V9 GIM clients or V10 GIM clients working with GIM_USE_SSL=0.
+
+
+8445 - GIM client listener, both directions, TCP. The GIM client is doing the listening. Any GIM server on either the Central Manager or the collector can reach out to it (the GIM client). 
+
+8446 - GIM authenticated TLS, both directions. Use between the GIM client and the GIM server (on the Central Manager or collector). If GIM_USE_SSL is NOT disabled, then the gim_client will attempt to communicate its certificate via port 8446. IF port 8446 is NOT open, then it defaults to 8444, BUT no certificate is passed (for example, TLS without verification). 
+
+8081 - To use 8081 for the GIM client to connect to the GIM server, there is a need to disable the GIM_USE_SSL parameter - it is ON by default. This parameter is part of the GIM common parameters in the GUI. If GIM_USE_SSL is NOT disabled, then the gim_client will attempt to communicate its certificate via port 8446. IF port 8446 is NOT open, then it defaults to 8444, BUT no certificate is passed (for example, TLS without verification).
+
+
+
+
+Enterprise load balancer
+TLS 8443 - S-TAP load balancer - This is needed for UNIX/Linux S-TAPs to communicate instances to the collector. However this port is also used for the Central Manager load balancer. The S-TAP initiates a request to Central Manager (load balancer) on 8443 sending HTTPS message, if installation indicates to use Enterprise load balancer. Between the database server and Central Manager, there will be the capability to use a proxy server, if customer doesn't want an open port directly from database to Central Manager.
+
+
+
+
+Quick Search for Enterprise
+TCP 8983 - SOLR - Incoming, SSL 
+
+TCP 9983 - SOLR - Incoming, SSL
+
+
+
+
+User Interface – Guardium System (standalone, aggregator, Central Manager)
+TCP 22 – user to system, CLI connectivity, both directions 
+
+TCP 8443 – user to system, GUI connectivity (configurable), both directions
+
+
+
+
+System – SMTP server
+TCP 25 – system to SMTP server, email alerts
+
+
+
+
+System – SNMP server
+UDP 161 - SNMP client to system – SNMP Polling 
+
+UDP 162 - system to SNMP server, SNMP traps
+
+
+
+
+System – SYSLOG server
+UDP/TCP 514 – remote syslog message from/to other systems, typically SIEM
+Note: The local port is 514, but the remote port must be entered into the configuration. If encryption is used, the protocol must be TCP, not UDP.
+
+
+
+
+System – NTP server
+TCP/UDP 123 – system to Network Time Protocol Server
+
+
+
+
+System – DNS server
+TCP/UDP 53 – system to Domain Name Server
+
+
+
+
+System – EMC Centera (backups)
+TCP 3218 – system to EMC Centera
+
+
+
+
+System – Active Directory/LDAP
+389 – TCP from appliances Clear LDAP, for example, Active Directory 
+
+636 - TCP from appliances Encrypted LDAP, for example, Active Directory via SSL (optional)
+
+
+
+
+System – Mainframe
+TCP 16022 – connects S-TAP DB2 z/OS, S-TAP IMS, S-TAP VSAM (S-TAP Data Set) 
+
+TCP 16023 - TLS connections, specifically IBM‘s Application Transparent Transport Layer Security (AT-TLS)
+
+
+
+
+Fileserver
+TLS 8445 - by default, fileserver uses an encrypted TLS connection 
+
+
+
+
+= = = = = = = = = = = 
+
+ 
+
+ 
+
+ 
+
+v9.0/9.1/9.5 Open Ports 
+
+Ports used in/by the Guardium Appliance (Guardium v9.0/9.1/9.5) 
+
+ 
+
+DB Server – Collector 
+
+TCP 16016 – Unix STAP, both directions, registration, heartbeat, and data (including IBM i 
+S-TAP running in PASE) 
+
+TCP 16017 – Windows/Unix CAS, both directions, templates and data 
+
+TCP 16018 – Unix STAP (TLS), both directions, registration, heartbeat, and data (including IBM i S-TAP running in PASE) 
+
+TCP 16019 – Windows/Unix CAS (TLS), both directions, templates and data 
+
+TCP 16020 – Unix STAP, both directions (for firewall purposes, traffic must be bi-directional if only to push data, so the TCP acknowledgements make it to the database server), S-GATE firewall communications 
+
+TCP 16021 – Unix STAP (TLS), both directions (for firewall purposes, traffic must be bi-directional if only to push data, so the TCP acknowledgements make it to the database server), S-GATE firewall communications 
+
+UDP 8075 – Windows STAP, in one direction, Sniffer to STAP 
+
+TCP 8081 – GIM, both directions, database server to collector/Central Manager 
+
+TCP 9500 – Windows STAP, both directions, DB Server to Collector, STAP registration and data 
+
+TCP 9501 – Windows STAP (TLS), both directions, DB Server to Collector, STAP registration and data
+Custom ports for the DB server (as defined in the inspection engine), STAP verification
+
+
+
+
+Collector – Aggregator (Secure Shell – SSL) 
+
+TCP 22 – collector to aggregator, SCP data exports, both directions 
+
+ 
+
+Central Manager – Managed Devices 
+
+TCP 22 – SSH/SCP data transfers, both directions 
+
+TCP 8443 – SSL, both directions 
+
+TCP 8444 – SSL, STAP to GIM file upload 
+
+TCP 3306 – MySQL, opened to specific sources (for instance, the Central Manager is open to all managed units; a managed unit is open to the Central Manager) 
+
+ 
+
+User Interface – Guardium Appliance (standalone, aggregator, Central Manager) 
+
+TCP 22 – user to appliance, CLI connectivity, both directions 
+
+TCP 8443 – user to appliance, GUI connectivity (configurable), both directions 
+
+ 
+
+Appliance – SMTP server 
+
+TCP 25 – appliance to SMTP server, email alerts 
+
+ 
+
+Appliance – SNMP server 
+
+UDP 161 - SNMP client to appliance – SNMP Polling 
+
+UDP 162 - appliance to SNMP server, SNMP traps 
+
+ 
+
+Appliance – SYSLOG server 
+
+UDP 514 – remote syslog message from/to other appliances, typically SIEM 
+
+ 
+
+Appliance – NTP server 
+
+TCP/UDP 123 – appliance to Network Time Protocol Server 
+
+ 
+
+Appliance – DNS server 
+
+TCP/UDP 53 – appliance to Domain Name Server 
+
+ 
+
+Appliance – EMC Centera (backups) 
+
+TCP 3218 – appliance to EMC Centera 
+
+ 
+
+System – Active Directory/LDAP
+389 – TCP from appliances Clear LDAP, for example, Active Directory 
+
+636 - TCP from appliances Encrypted LDAP, for example, Active Directory via SSL (optional)
+
+
+
+
+Appliance – Mainframe 
+
+TCP 16022 – connects S-TAP DB2 z/OS, S-TAP IMS, S-TAP VSAM (S-TAP Data Set) 
+
+ 
+
+Fileserver
+TLS 8445 - by default, fileserver uses an encrypted TLS connection 
+
+
+ 
+
+= = = = = = = = = =
+
+RELATED INFORMATION
+ A simplified Chinese translation is available [http://www.ibm.com/support/docview.wss?uid=swg22001844]

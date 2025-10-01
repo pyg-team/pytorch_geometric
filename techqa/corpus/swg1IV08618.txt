@@ -1,0 +1,162 @@
+Title: IBM IV08618: AGENT OCCUPY ORACLE SESSION MORE AND MORE - United States
+
+Text:
+  A FIX IS AVAILABLE
+ITCAM Extended Agent for Oracle Database: 6.3.1-TIV-ITM_EXT-FP0002 [http://www-01.ibm.com/support/docview.wss?uid=swg24035571]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  ITCAM Extended Agent will occupy the oracle sessions more and
+   more if the agent oracle user do not have all authority in the
+   krzgrant.sql.
+   
+   
+   This is due to the agent do not disconnect from oracle database
+   for the error message of "ORA-00942 Table or View does not
+   exist" and try to reconnect to oracle database with a new
+   session in each interval.
+   
+   Detailed Recreation Procedure:
+   1. Create an Oracle user and only grant with connect/create
+   session privileges, such as 'tivoli'.
+   
+   2. Do not run the krzgrant.sql for this new Oracle user.
+   
+   3. Create a new agent instance with this Oracle user and startup
+   agent instance.
+   
+   4. Check the session number owned by this new Oracle user as
+   below after agent running for few minutes.
+   
+   
+   SQL> select count(*) from v$session where username='TIVOLI';
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  *************************************************************
+   * USERS AFFECTED:
+   ITCAM Extended Agent for Oracle Database 6.3.1
+   *************************************************************
+   * PROBLEM DESCRIPTION:
+   ITCAM Extended Agent will occupy the oracle sessions more and
+   more if the agent oracle user do not have all authority in the
+   krzgrant.sql.
+   
+   
+   *************************************************************
+   * RECOMMENDATION:
+   apply next ifix when available
+   *************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix for this APAR is contained in the following packages:
+   
+   IBM Tivoli Composite Application Manager for Applications:
+      Extended Oracle Agent 6.3.1-TIV-ITM_KRZ-IF0002
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  The temporary fix is to run product provided 'krzgrant.sql' to
+   ensure the agent oracle user has all authorities.
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV08618
+   
+   
+ * REPORTED COMPONENT NAME
+   ITCAM EXT AGNT
+   
+   
+ * REPORTED COMPONENT ID
+   5724V09OR
+   
+   
+ * REPORTED RELEASE
+   630
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-10-03
+   
+   
+ * CLOSED DATE
+   2011-10-10
+   
+   
+ * LAST MODIFIED DATE
+   2011-10-10
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ITCAM EXT AGNT
+   
+   
+ * FIXED COMPONENT ID
+   5724V09OR
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R631 PSY
+   UP

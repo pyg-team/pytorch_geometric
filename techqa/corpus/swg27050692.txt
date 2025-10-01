@@ -1,0 +1,43 @@
+Title: IBM Keyboard shortcuts for Datacap Navigator 9.0.1 - United States
+
+Text:
+ PRODUCT DOCUMENTATION
+
+ABSTRACT
+ You can use keyboard shortcuts to navigate and select user-interface controls in Datacap Navigator for the scan, upload, classify, and verify tasks. 
+
+CONTENT
+Table 1: Keyboard shortcuts for viewer in Datacap Navigator 
+
+Keyboard shortcut Function Ctrl + Alt + P Click N Key to capture data from the image.
+Use this key combination to enable text selection and capture in the image. Click in the image, then click and drag the mouse on the image to draw a new zone. The zone can be empty or it can contain text. 
+
+Note: This shortcut works when the focus is not on the viewer.
+
+Ctrl + Alt + D Move Image Use this key combination to enable image to move or scroll. You can use the right mouse button to move the image.
+
+To use the following shortcuts, the focus must be on the viewer: Shift +T Displays a list of the HTML parameters. F9 Fit to window width. F10 Fit to window height. F11 Fit to window. + or Shift + = Zoom in - or Shift + - Zoom out Z Zoom to 100%. A Zoom area. R Rotate clockwise. L Rotate counterclockwise. I Invert Page Down Next page Page Up Previous page Home First page End Last page G Go to page P Print page Shift + P Print document Right Arrow Scroll right Left Arrow Scroll left Up Arrow Scroll up Down Arrow Scroll down F2 View page F3 View thumbnails F5 View thumbnails: Left F6 View thumbnails: Bottom F7 View thumbnails: Right F8 View thumbnails: Top P Print page Shift + P Print document Alt + T Open in a new window Alt + R Rotate clockwise Alt + L Rotate counterclockwise Alt + D Rotate 180 Degrees 
+Table 2: Keyboard shortcuts for the Datacap Navigator scan task Keyboard shortcut Function Ctrl + 1 Submit Ctrl + 2 Hold Ctrl + 4 Cancel Ctrl + U Move up a page in the batch structure Ctrl + D Move down a page in the batch structure Ctrl + F10 Delete a page in the batch structure Ctrl + F11 Delete all pages in the batch structure 
+Table 3: Keyboard shortcuts for the Datacap Navigator upload task Keyboard shortcut Function Ctrl + 1 Submit Ctrl + 2 Hold Ctrl + 3 Abort 
+Table 4: Keyboard shortcuts for the Datacap Navigator classify task Keyboard shortcut Function Ctrl + , Move the page up in the batch structure Ctrl + . Move the page down in the batch structure Ctrl + 1 Submit Ctrl + 2 Hold Ctrl + 5 Go to the previous page in the batch structure Ctrl + 6 Go to the next page in the batch structure Ctrl + 7 Go to the previous error page in the batch structure Ctrl + 8 Go to the next error page in the batch structure Ctrl + 9 Show and switch the super variable in the image viewer title Ctrl + F1 Expand or collapse the node to show or hide the child node in a batch structure Ctrl + F2 Copy a page into the current document Ctrl + F3 Split the document in the batch structure Ctrl + F8 Join all documents with the first document Ctrl + F9 Check the integrity of the batch structure Ctrl + I Mark the page for rescan Ctrl + Q Mark the page or document status to Deleted or Problem Ctrl + V Mark the page or document for review Ctrl + Y Join the current document to the previous document 
+Table 5: Keyboard shortcuts for the Datacap Navigator verify task Keyboard shortcut Function Ctrl + 1 Submit Ctrl + 2 Hold Ctrl + 5 Go to the previous page in the batch structure. Ctrl + 6 Go to the next page in the batch structure. Ctrl + 7 Go to the previous error page in the batch structure. Ctrl + 8 Go to the next error page in the batch structure. Ctrl + 9 Run the rule to validate the current page. Alt + L Go to the next low confidence field. 
+Table 6: Access keys, tabbing, and tables Keyboard shortcut Function Tab  * Navigate to the fields on the application page. 
+ * Press the Tab key to move the cursor into a table. 
+ * Press the Tab key again to move the cursor to the next cell in a table. To move out of the table to the next field, hold down the Ctrl key and press Tab. When the cursor is in a table, pressing Enter is not equivalent to clicking OK to close the window; you must move out of the table first.
+
+F2, Down and Up arrows, and Enter keys If you want to edit a cell in a table that contains a combo box, press F2, use the Down or Up arrow key to move to an item, and press Enter to select the item. 
+Table 7: Tabs and paging Keyboard shortcut Function Left and Right Arrows Switch between tabs on the application page. Home Navigate to the first tab on the application page. End Navigate to the last tab. Ctrl + Page Down or Ctrl+Tab Go to the next page. Ctrl + Page Up or 
+Ctrl +Shift + Tab Go to the previous page. 
+Table 8: Combination boxes Keyboard shortcut Function Up and Down Arrow keys Use the Up and Down Arrow keys to move to an item. Then, press Enter to select it. 
+Table 9: Menus Keyboard shortcut Function Shift + F10 On the Windows operating system, open a menu for an item that has focus. Up Arrow and Down Arrow Navigate menu items by using the Up Arrow and Down Arrow keys. Then, press Enter or the space bar to activate a menu item or to open a submenu. Esc or the Left Arrow key Close a menu or submenu. 
+Table 10: Tree view navigation 
+Typing characters or pressing Backspace while in the tree does not select an item. 
+If you have Java™ 2 Software Development Kit 1.4 on your system, you can press a letter key and the next item in the tree that begins with that character is selected. Keyboard shortcut Function Tab Navigate into tree Up Arrow Navigate to the next sibling Right Arrow Open a subtree Left Arrow Close a subtree Right Arrow Navigate to an open subtree Left Arrow Navigate to parent node Enter Activate a tree item Home Navigate to first tree node End Navigate to last visible tree node 
+Table 11: List boxes, check boxes, and radio buttons Keyboard shortcut Function Down Arrow and Up Arrow In a list box, press the Down Arrow and Up Arrow keys to browse an item, and press the Enter key to select an item. To select multiple sequential items, hold down the Shift key while pressing the Down or Up Arrow key. Tab In list boxes, select individual radio buttons by pressing the Tab key and then the space bar or by using the access keys. Arrow keys do not select radio buttons within a group. 
+Table 12: Calendar date picker Keyboard shortcut Function Left, Right, Up, and Down Arrows Navigate through the date cells. Page Down Switch to the same day in the next month. Page Up Switch to the same day in the previous month. Ctrl + Page Down Switch to the same day in the next year. Ctrl + Page Up Switch to the same day in the previous year. Home Navigate to the first day in the month. End Navigate to the last day in the month. Enter Select a date. 
+Table 13: Hover help Keyboard shortcut Function Use the key combination explained in Function column.
+(Tab and Ctrl + F1 ) Use the Tab key to move to a field or item that has hover help. Then, press Ctrl + F1 to invoke the hover help. 
+Table 14: Navigating windows Keyboard shortcut Function Window type Esc Close window. Information Tab To close, navigate and press Tab on the available buttons in the window. Alert Use the key combination explained in Function column.
+(Tab, Enter, and Esc) To view the full error message, tab to Error output, and press Enter. Use the Tab key to navigate to the error message. To close, press Esc.
+Tip: In Virtual PC Cursor mode, the focus resets to the top of the current page after a window is closed. Error Use the key combination explained in Function column.
+(Tab and Enter) Type the requested information. To close, use the Tab key navigate to OK or Cancel, and press Enter. Input

@@ -1,0 +1,16 @@
+Title: IBM InfoSphere CDC/DB2: no data is replicated for partitioned tables - United States
+
+Text:
+remote log reading; partitioned table TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The source side is remote log reading using DB2 catalog. Source ranged partitioned tables are replicated to two DB2 V9.5 targets. The target tables are ranged partitioned tables two. 
+
+No data is replicated for mirroring. But the stastics in Management Console shows that the target apply count is increasing. 
+
+RESOLVING THE PROBLEM
+Two possible causes may lead to the problem: 
+
+1. Primary key column is CHAR type. This will slow down the performance of update operations on large tables. Set the CDC parameter global_use_string=true at target side to solve the problem.
+
+2. Idle table mapping keeps old bookmarks so that single scrape always tries to scrape logs for all the tables that are set to mirror. Set the idle table mappings to "parked" and "refresh".

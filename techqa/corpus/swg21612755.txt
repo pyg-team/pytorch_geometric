@@ -1,0 +1,100 @@
+Title: IBM How to clean up the Performance Data Warehouse database and the LSW_PERF_DATA_TRANSFER table for IBM Business Process Manager (BPM) - United States
+
+Text:
+PDW DB cleanup database clean up TECHNOTE (FAQ)
+
+QUESTION
+ How do you clean up the tracking data that is stored in the Performance Data Warehouse database or the tracking data that is built up in the LSW_PERF_DATA_TRANSFER table of the Process Server or Process Center database? 
+
+CAUSE
+The IBM Business Process Manager products do not provide any clean up methods for the tracking data that is stored in the Performance Data Warehouse.
+
+ANSWER
+Note: An updated version of this information has been moved to dW Answers at this location [https://developer.ibm.com/answers/questions/177379/clean-up-the-tracking-data-that-is-stored-in-the-p.html]. The new format will allow you to ask questions of the community to better understand the information. This technote will be archived in 60 days. Please bookmark the new location. 
+
+ 
+
+You can use the following steps to clean up all of the data in the Performance Data Warehouse. Follow this process only if you do not want any of the tracking data that has been generated and stored in the Performance Data Warehouse database. These steps document how you can safely drop the Performance Data Warehouse database content and recreate a fresh copy of the Performance Data Warehouse database artifacts.
+
+Note: If you are gathering too much Performance Data Warehouse data, you might want to review the tracking groups and auto-tracking settings that are enabled for business process definitions (BPD) in your deployed snapshots. You can complete this review before completing the following steps.
+
+
+
+ 1.  Stop the servers.
+     
+     
+ 2.  Make a backup of the databases. 
+     
+     
+ 3.  Truncate the LSW_PERF_DATA_TRANSFER table in the Process Server database. 
+     Note: Each environment has one Process Server or Process Center database and one Performance Data Warehouse database that are related to the environment. This action removes the generated data that has not yet been picked up by the Performance Data Warehouse database.
+     
+     
+ 4.  View the directory that holds the SQL scripts for creating the database tables. 
+     The default SQL scripts are located in the installation root but do not have the Profile database information substituted. See the following directory: 
+     install_root/dbscripts/PerformanceDW/<DB_type>/
+     
+     
+     Note: In IBM Business Process Manager V8.5, the script name and location has changed. You can find this information in the database configuration section of the product documentation. For example, you can find the DB2 information in the Running the generated DB2 database scripts [http://pic.dhe.ibm.com/infocenter/dmndhelp/v8r5m0/topic/com.ibm.wbpm.imuc.sbpm.doc/topics/bpmcfg_db_run_win_db2_man.html] document.
+     
+     
+ 5.  Connect to your database.
+     
+     
+ 6.  Drop the Performance Data Warehouse schema or remove all of the tables, views, and indexes from the Performance Data Warehouse user schema. These items are created by tracking definitions and the createTable_PerformanceDW.sql script.
+     
+     
+     Note: In IBM Business Process Manager V8.5, the script name changed to createSchema_Standard.sql and is under the PDWDB script directory. 
+     
+     
+     Alternatively, if this environment is a test or development environment where you are using the default settings for IBM DB2 or Microsoft SQL Server, then you might want to drop and recreate the Performance Data Warehouse database if it only contains the Performance Data Warehouse and Performance Data Warehouse Messaging Engine (ME) schemas. The createDatabase script is located the same place as the createTable script. However, the createDatabase script needs the correct database name substituted for @DB_NAME@. For IBM DB2 or Microsoft SQL Server, these scripts are the two SQL scripts that run to create the initial database for the typical scenario. If the Messaging Engine create tables flag is set, then the tables are recreated when the server first starts. This Performance Data Warehouse database recreate process is a simplified version of steps 5 to 10.
+     
+     
+ 7.  Recreate the tables for the Performance Data Warehouse. You can use the script at the following URL: install_root\dbscripts\PerformanceDW\<DB_type>\createTable_PerformanceDW.sql
+     Run this script on the database where the Performance Data Warehouse is configured. Make sure that all SQL statements succeed without any errors.
+     
+     
+     Note: In IBM Business Process Manager V8.5, the script name and location changed as previously mentioned.
+     
+     
+     Note: This process must be run by the user that you configured in the data source for the Performance Data Warehouse database so it is created with the same schema name. 
+     
+     
+ 8.  Start the messaging cluster. 
+     You want to delete any messages in the queues that are contained by the Performance Data Warehouse bus. You want to complete this process prior to repopulating the tracking definitions.
+     
+     
+ 9.  View the associated queue points for the Performance Data Warehouse bus by clicking Service Integration > Service Integration Bus Browser in the administrative console. 
+     
+     
+     If the Performance Data Warehouse bus is expanded, then you can see the queue points that have messages on them. If you have messages to delete, click Buses > (BusName) > Destinations > (destination name) > Queue points > (queue name) in the administrative console. This action enables you to get to the page that allows you to delete the messages.
+     
+     
+ 10. Click the runtime tab and select messages. The bus needs to be running to complete this step.
+     This page enables you to delete specific messages or all messages.
+     
+     
+ 11. Start the rest of the environment and confirm there are not any database-related errors in the start up log files.
+     
+     
+ 12. Send the tracking definitions for your snapshots to re-populate the Performance Data Warehouse database with the tracking group information. If this process is not done or it does not complete successfully, you can have data transfer build up or errors in the Performance Data Warehouse error table. For details on how to send the tracking definitions for installed snapshots, see the Sending tracking definitions to Performance Data Warehouse [http://pic.dhe.ibm.com/infocenter/dmndhelp/v8r0mx/topic/com.ibm.wbpm.wle.editor.doc/topics/pd_gen_sendtracking.html] topic in the product documentation.
+     
+     
+     Note: You should send the tracking definitions one snapshot at a time and ensure that they are successfully completed. 
+     
+     
+ 13. Use the Performance Admin console to determine whether the tracking definition deployment process has finished and if any data transfer errors are occurring (View Errors).
+
+After you complete these steps, the Performance Data Warehouse database is back to a fresh state without tracking data from previously run instances.
+
+RELATED INFORMATION
+ Disabling tracking data generation for a BPM server [https://developer.ibm.com/answers/questions/167196/disabling-tracking-data-generation-for-a-process-s.html]
+Lock timeouts when sending tracking definitions [http://www.ibm.com/support/docview.wss?uid=swg21613755]
+
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Business Process Manager Standard Performance Data Warehouse AIX, Linux, Linux zSeries, Solaris, Windows 8.5, 8.0.1, 8.0, 7.5.1, 7.5 Business Integration IBM Business Process Manager Express Linux, Linux zSeries, Windows 8.5, 8.0.1, 8.0, 7.5.1, 7.5 
+PRODUCT ALIAS/SYNONYM
+ BPM

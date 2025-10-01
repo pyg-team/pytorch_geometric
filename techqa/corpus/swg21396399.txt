@@ -1,0 +1,30 @@
+Title: IBM Unable to login to Information Server DataStage Client - Failed to authenticate User against selected Domain - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+Users are unable to login to DataStage Client. It fails with the error: Failed to authenticate User against selected Domain. This problem is intermittent. Restarting Information Server may solve the problem temporarily. 
+
+CAUSE
+The settings for the number of open files in ulimit is too low. 
+
+DIAGNOSING THE PROBLEM
+The following message appears in WAS SystemOut.log file: 
+
+00000058 SharedLogWrit E TRAS0005E: Unable to write to the service log. The following exception was encountered com.ibm.ejs.ras.SharedLogLockException: Unable to obtain Shared Log Lock file /opt/IBM/WebSphere/AppServer/profiles/default/logs/activity.log.lck
+
+RESOLVING THE PROBLEM
+Set ulimit manually and then restart WebSphere Application Server (WAS): 
+
+ 1. Stop WAS as root 
+ 2. Issue the command: ulimit -n 10240 
+ 3. Verify nofiles in ulimit is set to 10240 by running ulimit -a 
+ 4. Start WAS as root 
+
+
+Alternatively, you can add this line: 
+
+ulimit -n 10240 
+
+to the file <IS_HOME>/ASBServer/bin/MetadataServer_env.sh, if this file doesn't exist you need to create it. This file is sourced by the MetadataServer.sh script before starting WAS. This change will take affect the next time that you reboot the system.

@@ -1,0 +1,156 @@
+Title: IBM PM84701: RACE CONDITION IN ORB INITIALIZATION CAUSES SOCKET EXCEPTIONS, - United States
+
+Text:
+AIX SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Error Message: Error Message: The following exceptions were
+   logged in standard
+   out - java.net.BindException: Address already in use
+   org.omg.CORBA.INTERNAL: CREATE_LISTENER_FAILED_1 vmcid:
+   0x49421000 minor code: 53 completed: No
+   .
+   Stack Trace: org.omg.CORBA.INTERNAL: CREATE_LISTENER_FAILED_1
+   vmcid:
+   0x49421000  minor code: 53  completed: No
+   at
+   com.ibm.ws.orbimpl.transport.WSTransport.createServerSocket(WSTr
+   ansport.java:1537)
+   at
+   com.ibm.ws.orbimpl.transport.WSTransport.startListening(WSTransp
+   ort.java:883)
+   at
+   com.ibm.ws.orbimpl.transport.WSTransport.createListener(WSTransp
+   ort.java:830)
+   at
+   com.ibm.ws.orbimpl.transport.WSTransport.initTransports(WSTransp
+   ort.java:597)
+   at
+   com.ibm.rmi.iiop.TransportManager.initTransports(TransportManage
+   r.java:151)
+   at
+   com.ibm.rmi.iiop.TransportManager.getServerIIOPProfile(Transport
+   Manager.java:158)
+   at com.ibm.rmi.corba.ORB.connect(ORB.java:3809)
+   at com.ibm.rmi.corba.ORB.internalConnect(ORB.java:3832)
+   at com.ibm.CORBA.iiop.ORB.internalConnect(ORB.java:1904)
+   at com.ibm.rmi.corba.ORB.createCodeBaseServant(ORB.java:4471)
+   at com.ibm.rmi.corba.ORB.getCodeBaseServant(ORB.java:4446)
+   at com.ibm.rmi.iiop.ORB.getCodeBaseServant(ORB.java:828)
+   at
+   com.ibm.rmi.iiop.Connection.getServiceContextReplyList(Connectio
+   n.java:1077)
+   at
+   com.ibm.rmi.iiop.ServerRequestImpl.getServiceContextReplyList(Se
+   rverRequestImpl.java:664)
+   at
+   com.ibm.rmi.iiop.ServerRequestImpl.createSystemExceptionResponse
+   (ServerRequestImpl.java:334)
+   .
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  There was a race condition in the ORB transport initialization
+   which causes the socket exceptions.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The ORB initialization code has been fixed to address the race
+   condition.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM84701
+   
+   
+ * REPORTED COMPONENT NAME
+   JAVA(1.3/1.4 CO
+   
+   
+ * REPORTED COMPONENT ID
+   5648C9800
+   
+   
+ * REPORTED RELEASE
+   42A
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2013-03-13
+   
+   
+ * CLOSED DATE
+   2013-12-04
+   
+   
+ * LAST MODIFIED DATE
+   2013-12-04
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   JAVA(1.3/1.4 CO
+   
+   
+ * FIXED COMPONENT ID
+   5648C9800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R14W PSY
+   UP

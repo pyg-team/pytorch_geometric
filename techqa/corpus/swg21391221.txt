@@ -1,0 +1,69 @@
+Title: IBM Unable to launch the Rational Team Concert Eclipse client on Linux - United States
+
+Text:
+1391221; RTC; RN2.0; too; many; open; files; crash; client; linux TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This technote explains how to resolve a "Too many open files" exception that can occur when launching the IBM Rational Team Concert client on Linux. 
+
+SYMPTOM
+"Too many open files" exception encountered when launching the Rational Team Concert Client on Linux. 
+
+ 1. Launch the Rational Team Concert client on Linux. 
+ 2. The Splash screen opens and closes. 
+ 3. A pop-up message opens: 
+    
+    An error has occurred . Check log for details /root/workspace/.metadata/.log
+
+
+The following exception is found in the Rational Team Concert Client .log file (<workspace_dir>/.metadata/.log): 
+
+java.util.zip.ZipException: Too many open files [...] 
+
+ 
+
+For more information, see jazz.net work item 83733 [https://jazz.net/jazz/resource/itemName/com.ibm.team.workitem.WorkItem/83733]
+
+
+DIAGNOSING THE PROBLEM
+Operating system: Linux 
+
+ * Unable to launch the Rational Team Concert client
+
+
+RESOLVING THE PROBLEM
+Increasing the number of file handles on the operating system solves the issue. 
+
+The modification applies to the user running the Rational Team Concert client by making changes to the following files:
+
+
+ 1. sysctl.conf file  1. Edit file /etc/sysctl.conf 
+     2. Add the following line: fs.file-max=400000 
+     3. Save the file
+        
+        
+    
+    
+ 2. imits.conf file  1. Edit the file /etc/security/limits.conf 
+     2. Add the following lines:
+        
+        sdpbld1 hard nofile 5000
+        
+        sdpbld1 soft nofile 5000
+        
+     3. Save the file.
+        
+    
+    
+ 3. Restart your system.
+
+
+
+
+Leverage the Jazz Community Jazz and Rational Team Concert have an active community that can provide you with additional resources. Browse and contribute to the User forums, contribute to the Team Blog and review the Team wiki.
+Refer to technote 1319600 [http://www-01.ibm.com/support/docview.wss?uid=swg21319600] for details and links.
+
+
+RELATED INFORMATION
+ jazz.net work item 83733 [https://jazz.net/jazz/resource/itemName/com.ibm.team.workitem.WorkItem/83733]
+Rational Team Concert Knowledge Center [http://www.ibm.com/support/knowledgecenter/SSCP65/welcome]

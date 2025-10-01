@@ -1,0 +1,156 @@
+Title: IBM MQ: You want to put a message into a queue and you want to generate duplicate messages into other queues - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Scenarios that are addressed in this technote:
+
+1) You are using point-to-point (queues) with your putting and getting applications. You want to use WebSphere MQ (WMQ) Pub/Sub under the covers and you do not want your putting and getting applications to be aware of Pub/Sub. That is, the application that puts messages into a queue continues to put messages into a queue, and the getting applications keep getting messages from a queue.
+
+2) You are using point-to-point and you want to create "duplicate" messages that will be stored in queues Q1 and Q2, when the message is put into the queue "DESTINATION" 
+
+ANSWER
+This example uses the new concepts of "topic objects" and "topic alias" introduced in MQ V7.
+Use MQ Explorer or amqsput sample to put a message to the DESTINATION queue, which in turn publishes the message into the topic T1 and the subscribers SUB1 and SUB2 receive the messages, which are stored in queues Q1 and Q2 respectively.
+You could also publish directly into topic T1.
+A copy of the message will be placed on Q1 and Q2.
+
+Use runmqsc to define the following objects:
+
+define ql(Q1)
+define ql(Q2)
+define qalias(DESTINATION) target(T1) targtype(topic)
+define topic(T1) topicstr('TOPIC1')
+define sub(SUB1) topicstr('TOPIC1') dest(Q1)
+define sub(SUB2) topicstr('TOPIC1') dest(Q2) 
+
+Example of running amqsput and amqsget:
+
+a) Open 3 windows:
+window 1: get messages from queue Q1
+amqsget Q1 QMGR
+
+window 2: get messages from queue Q2
+amqsget Q2 QMGR
+
+window 3: put a message into the queue DESTINATION
+amqsput DESTINATION QMGR
+Sample AMQSPUT0 start
+target queue is DESTINATION
+TEST
+Sample AMQSPUT0 end
+
+b) Observe that Q1 and Q2 receive the same message:
+
+amqsget Q1 QMGR
+Sample AMQSGET0 start
+message <TEST>
+no more messages
+Sample AMQSGET0 end
+
+amqsget Q2 QMGR
+Sample AMQSGET0 start
+message <TEST>
+no more messages
+Sample AMQSGET0 end
+
+c) NOTE: Strictly speaking, the messages received by Q1 and Q2 are NOT truly identical. Even though they will have the same payload (text string 'TEST') and same characteristics, each message will have its own unique message-id.
+
+The following is a browse (using: amqsbcg Queue QMGR) of the messages.
+
+Notice that the only differences in this particular example are the last 2 characters from "MsgId" and CorrelId". In your case, more characters in this field could be different.
+
+Message received by Q1:
+MsgId : X'414D5120514D5F3730312020202020207064DF4E20003603'
+**
+CorrelId : X'414D5120514D5F3730312020202020207064DF4E20001E08'
+**
+
+Message received by Q2:
+MsgId : X'414D5120514D5F3730312020202020207064DF4E20003602'
+**
+CorrelId : X'414D5120514D5F3730312020202020207064DF4E20001E0E'
+**
+
+c.1) Message received by Q1
+
+****Message descriptor****
+
+StrucId : 'MD ' Version : 2
+Report : 0 MsgType : 8
+Expiry : -1 Feedback : 0
+Encoding : 546 CodedCharSetId : 437
+Format : 'MQSTR '
+Priority : 0 Persistence : 0
+MsgId : X'414D5120514D5F3730312020202020207064DF4E20003603'
+CorrelId : X'414D5120514D5F3730312020202020207064DF4E20001E08'
+BackoutCount : 0
+ReplyToQ : ' '
+ReplyToQMgr : 'QMGR '
+** Identity Context
+UserIdentifier : 'rivera '
+AccountingToken :
+X'16010515000000BA1E06D2603C3514885EDBC2EF03000000000000000000000B'
+ApplIdentityData : ' '
+** Origin Context
+PutApplType : '26'
+PutApplName : 'QMGR '
+PutDate : '20111207' PutTime : '20215396'
+ApplOriginData : ' '
+
+GroupId : X'000000000000000000000000000000000000000000000000'
+MsgSeqNumber : '1'
+Offset : '0'
+MsgFlags : '0'
+OriginalLength : '-1'
+
+**** Message ****
+
+length - 4 bytes
+
+00000000: 5445 5354 'TEST '
+
+c.2) Message received by Q2
+
+****Message descriptor****
+
+StrucId : 'MD ' Version : 2
+Report : 0 MsgType : 8
+Expiry : -1 Feedback : 0
+Encoding : 546 CodedCharSetId : 437
+Format : 'MQSTR '
+Priority : 0 Persistence : 0
+MsgId : X'414D5120514D5F3730312020202020207064DF4E20003602'
+CorrelId : X'414D5120514D5F3730312020202020207064DF4E20001E0E'
+BackoutCount : 0
+ReplyToQ : ' '
+ReplyToQMgr : 'QMGR '
+** Identity Context
+UserIdentifier : 'rivera '
+AccountingToken :
+X'16010515000000BA1E06D2603C3514885EDBC2EF03000000000000000000000B'
+ApplIdentityData : ' '
+** Origin Context
+PutApplType : '26'
+PutApplName : 'QMGR '
+PutDate : '20111207' PutTime : '20215396'
+ApplOriginData : ' '
+
+GroupId : X'000000000000000000000000000000000000000000000000'
+MsgSeqNumber : '1'
+Offset : '0'
+MsgFlags : '0'
+OriginalLength : '-1'
+
+**** Message ****
+
+length - 4 bytes
+
+00000000: 5445 5354 'TEST '
+
+
+
+
+PRODUCT ALIAS/SYNONYM
+ WMQ MQ MQSeries

@@ -1,0 +1,162 @@
+Title: IBM IT24637: Update JRE shipped within BM MQ v9.0.0 to Java 8.0.5.11 (SR5 FP11) and Java 8.0.5.10 (SR5 FP10) - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  IBM MQ ships a Java Runtime Environment (JRE) embedded into its
+   installation, the level of JRE shipped is backlevel.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   The components of MQ which utilise the embedded JRE include:
+   
+   - the IBM MQ classes for Java and the IBM MQ classes for JMS who
+   use the JRE shipped by IBM MQ to run their applications
+   
+   - IBM MQ Managed File Transfer Edition
+   
+   - IBM MQ Advanced Message Protocol (AMQP)
+   
+   - IBM MQ Telemetry Transport (MQTT)
+   
+   - IBM MQ Explorer
+   
+   
+   Platforms affected:
+   AIX, HP-UX Itanium, Linux on Power, Linux on S390, Linux on
+   x86-64, Linux on zSeries, Windows
+   
+   ****************************************************************
+   PROBLEM DESCRIPTION:
+   The IBM MQ installation includes an embedded Java Runtime
+   Environment (JRE).  The level of JRE shipped by IBM MQ was
+   backlevel.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The level of JRE shipped with MQ has been updated as follows:
+   
+     8.0.5.11 -  Linux (x86-64, ppcLE, zLinux), Windows, AIX
+   
+     8.0.5.10 - HP-IX (Itanium)
+   
+   Solaris (SPARC, x86-64) has not been updated under this APAR,
+   and remains at the Java version 8.0.5.10.
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+   Version    Maintenance Level
+   v9.0 LTS   9.0.0.4
+   
+   The latest available maintenance can be obtained from
+   'WebSphere MQ Recommended Fixes'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037]
+   
+   If the maintenance level is not yet available information on
+   its planned availability can be found in 'WebSphere MQ
+   Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT24637
+   
+   
+ * REPORTED COMPONENT NAME
+   IBM MQ BASE M/P
+   
+   
+ * REPORTED COMPONENT ID
+   5724H7261
+   
+   
+ * REPORTED RELEASE
+   900
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2018-04-06
+   
+   
+ * CLOSED DATE
+   2018-04-09
+   
+   
+ * LAST MODIFIED DATE
+   2018-04-09
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   IBM MQ BASE M/P
+   
+   
+ * FIXED COMPONENT ID
+   5724H7261
+   
+   
+
+APPLICABLE COMPONENT LEVELS

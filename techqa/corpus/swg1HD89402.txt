@@ -1,0 +1,161 @@
+Title: IBM HD89402: INCORRECT FILTER IN XML CLASH REPORTS . - United States
+
+Text:
+AIX SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  ABSTRACT:
+   Incorrect filter in XML Clash reports
+   SCENARIO:
+   1)
+   Set Options to create non-federated XML output.
+   2) Open
+   DMUNav workbench
+   3) Open attached product
+   4) Open
+   interference Results.1
+   5) Choose "Export As" and export to
+   xml. Browser will be started
+   6) In the browser, make sure to
+   allow active Content (JavaScript)
+   7) Open filter option in
+   browser window and uncheck all but "Relevant" for "Filter by
+   Status"
+   8) Apply the filter
+   RESULT:
+   Incorrect filter in XML
+   Clash Reports. Detail Information for irrelevant results is
+   still visible
+   EXPECTED RESULT:
+   Filter should give correct &
+   relevant results only.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ABSTRACT:
+   Incorrect filter in XML Clash reports
+   SCENARIO:
+   1) Set Options to create non-federated XML output.
+   2) Open DMUNav workbench
+   3) Open attached product
+   4) Open interference Results.1
+   5) Choose "Export As" and export to xml. Browser will be
+   started
+   6) In the browser, make sure to allow active Content
+   (JavaScript)
+   7) Open filter option in browser window and uncheck all but
+   "Relevant" for "Filter by Status"
+   8) Apply the filter
+   RESULT:
+   Incorrect filter in XML Clash Reports. Detail Information for
+   irrelevant results is still visible
+   EXPECTED RESULT:
+   Filter should give correct & relevant results only.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  THIS PROBLEM WILL BE FIXED ON  VERSION V5R20 SP1 level.
+   Additional Closure Information:
+   Incident Diagnosis:
+   Incorrect filter in XML Clash reports
+   Correction Explanation:
+   A Filtering Script was causing the incorrect filter in XML
+   Clash Reports. Hence, the Filtering Script has been
+   corrected.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   HD89402
+   
+   
+ * REPORTED COMPONENT NAME
+   ENOVIA DMU NT>X
+   
+   
+ * REPORTED COMPONENT ID
+   569151800
+   
+   
+ * REPORTED RELEASE
+   519
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-10-05
+   
+   
+ * CLOSED DATE
+   2011-07-18
+   
+   
+ * LAST MODIFIED DATE
+   2011-07-18
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ENOVIA DMU NT>X
+   
+   
+ * FIXED COMPONENT ID
+   569151800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R520 PSN
+   UP

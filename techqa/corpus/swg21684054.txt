@@ -1,0 +1,15 @@
+Title: IBM L3 Compendium of FAQs and Troubleshooting Technotes for the MTTrapd Probe - United States
+
+Text:
+nco_p_mttrapd; SNMP; MTTrapd; mttrapd probe; L3; troubleshoot; faq; faqs; netcool; omnibus; integration; snmp; troubleshoot; mttrapd; nco_p_mttrapd; tivoli; probe NEWS
+
+ABSTRACT
+ 
+As part of ongoing effort to help nco_p_mttrapd probe users to troubleshoot issues and provide self-assistance, an L3-authored developerworks blog is provided to consolidate all the FAQs & Troubleshooting TechNotes related to the MTTrapd [SNMP] Probe. 
+
+CONTENT
+The blog on developerworks provides all the contents required to troubleshoot known issues with the MTTrapd Probe:
+IBM FAQ and Troubleshooting Technotes for SNMP (nco_p_mttrapd) Probe 
+
+RELATED INFORMATION
+ IBM FAQ and Troubleshooting Technotes for SNMP Probe [https://www.ibm.com/developerworks/community/blogs/cdd16df5-7bb8-4ef1-bcb9-cefb1dd40581/entry/faq_and_troubleshooting_technotes_for_nco_p_mttrapd_probe1?lang=en]

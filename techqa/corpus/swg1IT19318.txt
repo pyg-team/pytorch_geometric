@@ -1,0 +1,171 @@
+Title: IBM IT19318: MQ 8.0.0.6: DEPRECATED 3DES TLS CIPHERSPECS REMAIN ENABLED BY DEFAULT WHEN IN FIPS MODE - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Users applying MQ fix pack 8.0.0.6, which contains APAR IV90867 [http://www-01.ibm.com/support/docview.wss?uid=swg1IV90867]:
+   Deprecation of 3DES CipherSpecs, remain able to use these
+   deprecated CipherSpecs for inbound TLS connections by default if
+   the queue manager is configured with SSLFIPS(YES).
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   This issue affects users of MQ 8.0.0.6, who have a queue manager
+   configured to run in FIPS-compliant mode [SSLFIPS(YES)], and
+   wish for the following CipherSpecs to be disabled for inbound
+   TLS connections by default:
+   
+   TLS_RSA_WITH_3DES_EDE_CBC_SHA
+   ECDHE_ECDSA_3DES_EDE_CBC_SHA256
+   ECDHE_RSA_3DES_EDE_CBC_SHA256
+   
+   
+   Platforms affected:
+   MultiPlatform
+   
+   ****************************************************************
+   PROBLEM DESCRIPTION:
+   An omission in the logic of the CipherSpec deprecation added in
+   MQ 8.0.0.6 IV90867 [http://www-01.ibm.com/support/docview.wss?uid=swg1IV90867] caused the deprecation of the CipherSpecs
+   listed above to be ignored for inbound TLS connections when FIPS
+   mode was enabled for the queue manager.
+   
+   If FIPS mode was not enabled, the CipherSpecs were disabled for
+   inbound TLS connections by default as expected.
+   
+   The queue manager correctly rejected these CipherSpecs for
+   outbound TLS connections by default, regardless of the SSLFIPS
+   setting.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The queue manager inbound channel logic has been corrected to
+   reject inbound TLS connections using these deprecated
+   CipherSpecs by default.
+   
+   
+   Deprecated CipherSpecs may be re-enabled using the steps
+   documented in the MQ Knowledge Center:
+   
+   https://www.ibm.com/support/knowledgecenter/SSFKSJ_8.0.0/com.ibm
+   .mq.sec.doc/q120565_.htm [https://www.ibm.com/support/knowledgecenter/SSFKSJ_8.0.0/com.ibm.mq.sec.doc/q120565_.htm]
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+   Version    Maintenance Level
+   v8.0       8.0.0.7
+   
+   The latest available maintenance can be obtained from
+   'WebSphere MQ Recommended Fixes'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037]
+   
+   If the maintenance level is not yet available information on
+   its planned availability can be found in 'WebSphere MQ
+   Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT19318
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSPHERE MQ 7.
+   
+   
+ * REPORTED COMPONENT ID
+   5724H7240
+   
+   
+ * REPORTED RELEASE
+   750
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-02-17
+   
+   
+ * CLOSED DATE
+   2017-02-28
+   
+   
+ * LAST MODIFIED DATE
+   2017-02-28
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBSPHERE MQ 7.
+   
+   
+ * FIXED COMPONENT ID
+   5724H7240
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R750 PSY
+   UP

@@ -1,0 +1,52 @@
+Title: IBM Database wizard failed to create tables in DB2 databases - United States
+
+Text:
+SQL0968C; "The file system is full" ; 57011 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+Customer run Database Wizard for creating databases with partial success, following databases failed to get created: 
+
+ * Homepage 
+ * Library 
+ * Metrics 
+ * Mobile 
+ * Profiles 
+ * Wiki
+   
+
+CAUSE
+The disk where DB2 databases reside in has become full. 
+
+Per System requirement for IBM Connections 4.5 on Linux [http://publib.boulder.ibm.com/infocenter/prodguid/v1r0/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1316596301949&osPlatform=Linux]:
+Database server:
+Four processor cores per server, 2.0 GHz CPU speed, or higher
+Minimum 8 GB of memory
+- For enterprise-scale deployment, at least 20 GB of memory is recommended
+50 GB of available disk space after installation and configuration of the base operating system
+
+
+ENVIRONMENT
+Redhat Enterprise Linux 6.4, DB2 9.7
+
+
+
+DIAGNOSING THE PROBLEM
+Checked the Dbwizard log files in db2inst1/lcWizard/log/dbWizard directory and found following error:
+
+dbWizard/dbConfig_20140306_170734_homepage_createDb.log:
+SQL0968C The file system is full. SQLSTATE=57011 
+
+
+On Unix-based systems, this disk full condition may be due to exceeding the maximum file size allowed for the current userid. 
+
+
+RESOLVING THE PROBLEM
+Administrator dropped the databases, increased disk space for db2 instance, 
+
+ran the chuser command to update fsize to unlimited for current userid "lcuser", 
+
+then rerun the database wizard and it completed successfully.
+
+RELATED INFORMATION
+#SQL0968C [http://pic.dhe.ibm.com/infocenter/db2luw/v9r7/topic/com.ibm.db2.luw.messages.sql.doc/doc/msql00968c.html]
+Using the database wizard [http://www-10.lotus.com/ldd/lcwiki.nsf/xpDocViewer.xsp?lookupName=IBM+Connections+4.5+Documentation#action=openDocument&res_title=Using_the_database_wizard_ic45&content=pdcontent]

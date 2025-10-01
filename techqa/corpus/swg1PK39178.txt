@@ -1,0 +1,152 @@
+Title: IBM PK39178: APP_SERVER COLUMN IN THE TABLE SERVERS IS TOO SMALL, CAUSING FAILURES APPSERVER NAMES - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The APP_SERVER column in the table SERVERS in database OCTIGATE
+   is too small (at least for databases that were created by the
+   scripts from remote-db*.tar). This results in the following
+   error (msg is from ITCAM 6.1).
+   
+   
+   <Trace Level="WARN">
+   
+   <Time Millis="1165917601888"> 2006-12-12
+   11:00:01.888+01:00</Time>
+   
+   <Server Format="IP">de-sun078</Server>
+   
+   <ProductId>CYN</ProductId>
+   
+   <Component>CYN.msg.kernel</Component>
+   
+   <ProductInstance>6</ProductInstance>
+   
+   <LogText><![CDATA[CYNK0069E Database exception java.sql.
+   SQLException:
+   ORA-12899: value too large for column "ADMINVEUSER".
+   "SERVERS"."APP_SERVER"
+   (actual: 49, maximum: 40)
+    occurred while
+   querying or updating records in tables.]]></LogText>
+   
+   <Source FileName="com.cyanea.kernel.core.KernelRMIDelegate"
+   Method="updateServerInfo"/>
+   
+   <Thread>KernelRMIThreadPool-1165917521230.ExecutorThread</Thread
+   >
+   
+   <Principal>de-sun078/10.49.156.61</Principal>
+   </Trace>
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  n/a
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  column APP_SERVER in table SERVERS is too small
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  fixed with IFIX2 by expanding the column size
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK39178
+   
+   
+ * REPORTED COMPONENT NAME
+   ITCAM WAS MGING
+   
+   
+ * REPORTED COMPONENT ID
+   5724L62MS
+   
+   
+ * REPORTED RELEASE
+   610
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2007-02-12
+   
+   
+ * CLOSED DATE
+   2007-04-09
+   
+   
+ * LAST MODIFIED DATE
+   2007-04-09
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ITCAM WAS MGING
+   
+   
+ * FIXED COMPONENT ID
+   5724L62MS
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R610 PSY
+   UP

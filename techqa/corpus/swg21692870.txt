@@ -1,0 +1,26 @@
+Title: IBM Invalid URL context during XMLAccess import to virtual portal may corrupt base virtual portal - United States
+
+Text:
+ FLASH (ALERT)
+
+ABSTRACT
+ The usage of an invalid URL context value for the '-url' parameter during an XMLAccess import to a virtual portal may corrupt the base virtual portal. 
+
+CONTENT
+The usage of an invalid URL context value (which can occur simply via a typographical error) for the '-url' parameter during an XMLAccess import may corrupt the base virtual portal. 
+
+When such a scenario occurs, WebSphere Portal will fall back to importing the XML content into the base virtual portal. The subsequent behavior may include pages and portlets failing to render as expected in the base virtual portal. 
+
+Affected Release: WebSphere Portal 8.5 with any cumulative fix between 1-4 applied to the system; WebSphere Portal 8.5 without a cumulative fix applied is not affected. 
+
+Recommended Solution: 
+
+- To avoid the problem scenario, download and apply the interim fix for APAR PI31398 [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm/WebSphere&product=ibm/WebSphere/WebSphere+Portal&release=All&platform=All&function=aparId&apars=PI31398] until a cumulative fix that contains such APAR fix is available. The fix will prevent the import from succeeding and will instead produce an error. 
+
+- If you have already experienced the problem scenario, the fix will not resolve the issue. The recovery will depend upon the nature of the XML being imported. In the case of a full virtual portal import, it may be necessary to restore the system from backup or empty the portal and repopulate from an identical system. 
+
+Note: Regardless of whether or not the fix is applied for PI31398, the scenario can still occur in the case where a hostname is passed in the -url value that is resolvable via IP address but has yet to be associated with a hostname-based virtual portal. In other words, the hostname-based virtual portal needs to be first created before attempting an xmlaccess command which includes the virtual portal's hostname to avoid unintentionally importing into the base virtual portal.
+
+RELATED INFORMATION
+#WebSphere Portal 8.5 Knowledge Center [http://www-01.ibm.com/support/knowledgecenter/SSHRKX_8.5.0/mp/admin-system/ad_vp.dita?lang=en]
+Recommended Updates for WebSphere Portal 8.5 [http://www-01.ibm.com/support/docview.wss?uid=swg24037802]

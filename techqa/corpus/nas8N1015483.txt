@@ -1,0 +1,25 @@
+Title: IBM Locating the Position of the Nth Search String in a Source String - United States
+
+Text:
+DB; DB2/400; SQL TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This document explains how to locate the nth occurrence of a search string in a source string. 
+
+RESOLVING THE PROBLEM
+When in IBM SQL/400, the POSITION function (or similar POSSTR function) can be used to locate the position of a start of a string (called the search string) inside another string (called the source string). For example, SELECT POSITION(‘D’ IN ‘ABCDEF’) FROM SYSIBM/SYSDUMMY1 returns 4. In addition, SELECT POSITION(‘DE’ IN ‘ABCDEF’) FROM SYSIBM/SYSDUMMY1 also returns 4 because it returns the starting position of the search string. 
+
+However, the POSITION function finds only the first occurrence of the search string. There is an additional parameter on the LOCATE function that can give a starting position in the source string to start searching for the search string. By nesting these functions together, the second to nth occurrence of the search string can be found in the source string.
+
+For example, to find the second occurrence of ‘B’ in the source string ‘ABCABC’, we could use SELECT LOCATE(‘B’, ‘ABCABC’, LOCATE(‘B’, ’ABCABC’) + 1) + LOCATE(‘B’, ‘ABCABC’) FROM SYSIBM/SYSDUMMY1 that will return 5. In this case, we used the “second” locate in the list to find the first “B” in the string, which was 2. We want to start searching in the next position, so we add 1 to move over to position 3. Then we are effectively searching for ‘B’ in ‘CABC’. This returns the value of 3 because it was the third letter in our new string. However, we lost the first two characters so we add the LOCATE back on, to give us the answer of 5.
+
+Keep in mind that if you are searching for more than one character, the values might need to be adjusted. Also, if you are using mixed-byte or double-byte data, the results can vary depending on what functions are used. That is the major difference between POSITION and POSSTR.
+
+For more information, refer to the SQL Reference for LOCATE, POSITION, and POSSTR for details on the syntax and operations of each function.
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Operating System IBM i 7.2 Operating System IBM i 7.1 Operating System IBM i 6.1 
+HISTORICAL NUMBER
+ 382076944

@@ -1,0 +1,47 @@
+Title: IBM Customer wants to be able to have CSV and TXT to format to ANSI instead of UNICODE. - United States
+
+Text:
+ANSI UNICODE CSV TXT C&DS job results ER Server enterprise output utf8 query deployment portal scheduled showcase.cfg file [ ScheduleManager ] stanza TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Customer wants to be able to have CSV and TXT format the output as ANSI instead of UNICODE. 
+Would like the option in the job when selecting it to run on the ER Server PC to output it to ANSI format, just like it does on the ShowCase Query client. 
+
+RESOLVING THE PROBLEM
+Fixed in the 8.00.432 Critsit and 8.00.440 patches (Server and client and CADS/PES Plugins).
+
+
+Report Services is only able to generate Unicode CSV files, to generated ANSI CSV files you must send the report to an Enterprise Server PC(ER PC). 
+
+See details below:
+
+1. You must edit your showcase.cfg file for your CADS server at a location like below:
+NOTE: Replace CADSserver with your CADS server name.
+\CADSserver\components\reporting-engines\ShowCase\proddata\config\showcase.cfg
+
+2. In the [ScheduleManager] stanza, add the following entries.
+dbq.text_format=TEXTA
+dbq.csv_format=CSVA
+
+** NOTE 1 ** 
+The settings will not work if they are not exactly like you see above, even trailing spaces in the settings will cause them not to work.
+
+** NOTE 2 **
+Deploying the plugins replaces this showcase.cfg file so you need to update that file AFTER you deploy the showcase packages. Making a copy of the updated showcase.cfg is recommended. 
+Remember that the next time you patch and deploy the plugins you will need to update this file again.
+
+** NOTE 3 **
+You will also need to put the 2 lines in the showcase.cfg file on the Enterprise Server PC(ER PC). You will find it in 'C:\Program Files\IBM\ShowCase\9\proddata\config'. Place these lines within the Global Properties section of this file. Once entered and saved, restart the Enterprise Server PC (ER PC).
+
+You can choose to set TXT or CSV or both in the file.
+
+If there are no settings defined, the default of unicode will be used.
+
+RELATED INFORMATION
+ Need more help? Our C&DS forum is Live! [https://developer.ibm.com/answers/topics/collaboration.html?smartspace=predictive-analytics]
+
+
+ 
+
+HISTORICAL NUMBER
+ 88988

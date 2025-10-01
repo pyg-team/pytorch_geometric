@@ -1,0 +1,49 @@
+Title: IBM Move lsb.events.n from local directory to shared directory. - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ English 
+
+QUESTION
+ How to switch LSF events directory from LSB_LOCALDIR to LSB_SHAREDIR without any impact to LSF jobs? 
+
+ANSWER
+If specify LSB_LOCALDIR in lsf.conf, duplicate event logging is enabled. 
+LSF puts the primary copies of the event and accounting log files in this directory. LSF puts the duplicates in LSB_SHAREDIR.
+
+When LSF runs, it needs to record all the jobs operations to the lsb.events file so when failover happens, the new mbatchd can get all jobs back by replaying the events file. However, in the earlier days, the network bandwidth is limited, therefore, the network directory is much more slower than the local directory. This will become the bottleneck of the mbatchd's performance. So, the LSB_LOCALDIR feature was introduced to help mbatchd reduce the network dependency. When mbatchd runs, it records all the events file in LSB_LOCALDIR which has high performance. And then, mbatchd will periodically copy the lsb.events file to LSB_SHAREDIR to ensure the fail over mbatchd can access the events file even the previous master machine crash. 
+
+Now, the network technology is much more advance than before. The new network connection can provide very high bandwidth and throughput than the old network. So, generally, we don't need to enable this feature any more. 
+
+Follow these steps to switch to LSB_SHAREDIR. 
+(Pre-condition: NO lsb.events.n file under LSB_SHAREDIR)
+
+1. LSF master failover. Shutdown all LSF daemons on the first master host.
+badmin hshutdown
+lsadmin resshutdown
+lsadmin limshutdown
+2. Wait the second master host take over. After several minutes, run "bhosts" and "lsid" to confirm that LSF master has been changed to the second master candidate host. 
+bhosts shows all server hosts.
+lsid shows current LSF master host.
+3. Copy lsb.events.* from $LSB_LOCALDIR to $LSB_SHAREDIR.
+4. Remove parameter LSB_LOCALDIR in lsf.conf
+5. Rename the directory name of $LSB_LOCALDIR. (Optional. Just make sure LSF cannot visit /tmp/localdir.)
+For example, LSB_LOCALDIR is /tmp/localdir. Rename it to /tmp/localdir.bak
+6. Start all LSF daemons on the first master host. 
+lsadmin limstartup
+lsadmin resstartup
+badmin hstartup
+7. Check job status when the first master is available. 
+bhosts
+lsid
+bjobs <jobid>
+bhist <jobid>
+8. Restart LSF daemons on the second master host. If you defined more than 2 master candidates, please restart LSF daemons on all master candidate hosts.
+badmin hrestart
+lsadmin resrestart
+lsadmin limrestart
+
+
+These steps do not impact job information.

@@ -1,0 +1,158 @@
+Title: IBM IV90104: On Linux, BigFix Server 9.2.5 stops gathering external sites if they contain relevance strings longer than 1 MB - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  On Linux, BigFix Server 9.2.5 stops gathering external sites if
+   they contain relevance strings longer than 1 MB.
+   
+   In GatherDB.log you will see errors similar to the following
+   one:
+   
+   Mon, 05 Oct 2015 11:29:49 +0200 -- Importing Fixlet #273623325
+   Mon, 05 Oct 2015 11:30:41 +0200 -- [IBM][CLI Driver] CLI0109E
+   String data right truncation. SQLSTATE=22001 (22001:
+   18446744073709451617)
+   Mon, 05 Oct 2015 11:30:43 +0200 -- ERROR: Import aborted:
+   Database Error: [IBM][CLI Driver] CLI0109E  String data right
+   truncation. SQLSTATE=22001 (22001:18446744073709451617)
+   
+   There are two main scenarios when the error can occur:
+   
+   1. Linux/DB2 installed at a version < 9.2.5 and an external site
+   containing fixlets with relevance strings longer than 1 MB is
+   subscribed.
+   In this case, when the migration to 9.2.5 is attempted, the
+   server upgrade process will fail with the database error 22001
+   merging those fixlets into EXTERNAL_FIXLET_RELEVANCE.
+   
+   2. Linux/DB2 installed at 9.2.5 version and an external site
+   releasing a new version X containing fixlets with relevance
+   strings longer than 1 MB is subscribed.
+   In this case, the gathering of the external site (version
+   >= X) will fail while importing the fixlets with relevance
+   strings greater than 1 MB.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Fixed in 9.2.6 and 9.5.0
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Fixed in IBM BigFix 9.5
+   and
+   Fixed in IBM BigFix 9.2 (fixpack 6)
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This is resolved in:
+   IBM BigFix 9.5
+   IBM BigFix 9.2 (fixpack 6)
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV90104
+   
+   
+ * REPORTED COMPONENT NAME
+   TIV EP MGR SERV
+   
+   
+ * REPORTED COMPONENT ID
+   5725C43SV
+   
+   
+ * REPORTED RELEASE
+   92W
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-10-18
+   
+   
+ * CLOSED DATE
+   2016-10-26
+   
+   
+ * LAST MODIFIED DATE
+   2016-10-26
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TIV EP MGR SERV
+   
+   
+ * FIXED COMPONENT ID
+   5725C43SV
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R92W PSY
+   UP
+   
+   
+ * R95W PSY
+   UP

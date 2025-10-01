@@ -1,0 +1,139 @@
+Title: IBM RS01769: IloTaskController.getTaskState() returns incorrect values when running with another user. - United States
+
+Text:
+  DIRECT LINKS TO FIXES
+Fix Pack 2 for IBM Decision Optimization Center v3.8 servers edition on Windows 64-bit [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+ILOG+Optimization+Decision+Manager&fixids=3.8.0-WS-DOC-servers-win64-fp002&source=SAR]
+Fix Pack 2 for IBM Decision Optimization Center v3.8 server edition on Linux 64-bit [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+ILOG+Optimization+Decision+Manager&fixids=3.8.0-WS-DOC-servers-linux64-fp002&source=SAR]
+Fix Pack 2 for IBM Decision Optimization Center v3.8 server edition on AIX 64-bit [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+ILOG+Optimization+Decision+Manager&fixids=3.8.0-WS-DOC-servers-aix64-fp002&source=SAR]
+Fix Pack 2 for IBM Decision Optimization Center v3.8 developer edition on Windows 64-bit [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+ILOG+Optimization+Decision+Manager&fixids=3.8.0-WS-DOC-developer-win64-fp002&source=SAR]
+Fix Pack 2 for IBM Decision Optimization Center v3.8 developer edition on Windows 32-bit [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+ILOG+Optimization+Decision+Manager&fixids=3.8.0-WS-DOC-developer-win32-fp002&source=SAR]
+Fix Pack 2 for IBM Decision Optimization Center v3.8 client edition on Windows 64-bit [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+ILOG+Optimization+Decision+Manager&fixids=3.8.0-WS-DOC-clients-win64-fp002&source=SAR]
+Fix Pack 2 for IBM Decision Optimization Center v3.8 client edition on Windows 32-bit [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+ILOG+Optimization+Decision+Manager&fixids=3.8.0-WS-DOC-clients-win32-fp002&source=SAR]
+IBM Decision Optimization Center Fix Pack v3.8.0.2 [http://www-01.ibm.com/support/docview.wss?uid=swg24039875]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When running IloTaskController.getTaskState() from Processing
+   Service on another users' instance than the one which created
+   the solve task, returned status is always NOT_STARTED, whereas
+   getState() correctly returns READY,RUNNING,COMPLETED.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  For ODM Entreprise 3.7 the solution is to use:
+   ilog.odm.processingsvc.IloJobController.getState()
+   instead of:
+   ilog.odm.processingsvc.IloTaskController.getTaskState().
+   
+   We have updated the java classes in your example:
+   
+   TaskControllerTest\Nurses_java\src\customAction\
+   RemoveNurseActionHandler.java
+   and
+   TaskControllerTest\TestTaskController\src\
+   TestTaskController.java
+   to use both the getState() and getTaskState() functions and show
+   a comparison of the function behaviour.
+   
+   Please check how the task status line is displayed:
+   "taskState= " + taskCtrl.getTaskState() + "
+   state="+taskCtrl.getState()
+   +" phase="+taskCtrl.getCompletionPhase()
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  When running IloTaskController.getTaskState() from Processing
+   Service on another users' instance than the one which created
+   the solve task, returned status is always NOT_STARTED, whereas
+   getState() correctly returns READY,RUNNING,COMPLETED.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   RS01769
+   
+   
+ * REPORTED COMPONENT NAME
+   ILOG ODM ENT
+   
+   
+ * REPORTED COMPONENT ID
+   5724Y0400
+   
+   
+ * REPORTED RELEASE
+   370
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2014-11-14
+   
+   
+ * CLOSED DATE
+   2016-03-15
+   
+   
+ * LAST MODIFIED DATE
+   2016-03-15
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R370 PSN
+   UP

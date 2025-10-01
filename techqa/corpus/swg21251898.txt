@@ -1,0 +1,69 @@
+Title: IBM Debugging 3174 Program Error Codes in TSO/VTAM Screens - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ TSO Commands use line mode TSO TPUT / PUTLINE services to send messages to the terminal user. In addition, IBM and vendor-written system routines may use a variety of interfaces to send line mode messages to the terminal user. If those messages contain certain EBCDIC characters, the TSO terminal may fail to display, and generate a program error code. 
+
+CAUSE
+The Virtual Terminal Input / Output Controller (VTIOC) component of TSO/VTAM in z/OS Communications Server accumulates line mode messages from various sources. When appropriate, those line mode messages are combined into a full screen 3174-style display image, which is presented to the z/OS Communications Server for delivery to the user's terminal. 
+
+As the full screen image is constructed, VTIOC does not check the content of those original line mode messages for conditions which might be considered as "invalid" by the user's specific hardware. z/OS Communications Server and the standard response of the 3174 hardware to the invalid full screen image can be summarized as follows: 
+
+ 1. The hardware rejects the image with a diagnostically important program error code (often referred to as a ProgCheck). The user's terminal generally displays the specific ProgCheck number in the bottom left corner of the screen. The value for this ProgCheck number must be noted by the terminal user, as it is highly useful in diagnosing the ultimate cause of the invalid screen image. 
+ 2. The hardware presumes that the image was damaged by z/OS Communications Server, and requests that the software retransmit the screen by sending back a x'6E' or "RESHOW" Attention Identifier (AID). 
+ 3. The VTIOC response to the "RESHOW" AID is to issue message IKT00405I SCREEN ERASURE CAUSED BY ERROR RECOVERY PROCEDURE. 
+ 4. VTIOC then resends the damaged 3174 full screen image to the hardware, as requested.
+
+
+The above sequence is often repeated until the user's terminal session is cancelled, or the user successfully interrupts the process using the attention key.
+
+
+RESOLVING THE PROBLEM
+Collect documentation to capture a copy of the full screen image as presented to the 3174 hardware. A person with knowledge of 3270 data streams can use the data to isolate and identify the original line mode TSO message, so that the error can be referred to, and corrected by the offending application program's support group. 
+
+1. Ensure that the TSO system address space (the Terminal Control Address Space, often referred to as TCAS) is running in nonconfidential mode by explicitly specifying CONFTXT=NO in the TCAS startup parameters - Member TSOKEYxx in MVS Library SYS1.PARMLIB. Note that CONFTXT=YES is the default setting. 
+
+2. Ensure that the Generalized Trace Facility (GTF) is running and collecting data for VTIOC SVC calls and z/OS Communications Server trace records: 
+
+ 
+
+ * TRACE=USRP,SVCP 
+   USR=(FE1,FE2,FEF,FF1) 
+   SVC=(93,94) 
+   BLOK=5M 
+
+
+3. Logon to the affected TSO session, but do NOT yet cause the error to occur. 
+
+4. Use the following command to start the z/OS Communication Server VTAM Internal Trace (VIT): 
+ * 
+
+
+5. Use the following command to start a z/OS Communication Server VTAM Buffer Trace: 
+ * 
+ * x
+
+ * 
+ * x
+ *  
+ * 
+
+
+6. Use the following command to start a z/OS Communication Server VTIOC trace: 
+ * 
+ * y
+
+ * 
+ * y
+ * 
+
+
+7. Cause the error screen to appear. Allow several IKT00405I messages to appear. Note the specific value displayed on the screen as the program error code. 
+
+8. As quickly as possible, terminate GTF's tracing of the event. 
+
+9. Dump the TSO user address space (and not TCAS) while an IKT00405I message appears on the terminal. 
+
+10. Forward the dump, GTF trace data, and the program error code value to the z/OS Communications Server technical support group.

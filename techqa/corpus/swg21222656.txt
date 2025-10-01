@@ -1,0 +1,74 @@
+Title: IBM Mustgather: Gathering data for hang or performance problems on Windows - United States
+
+Text:
+gather hang performance windows; MustGatherDocument TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ If your Java application experiences perceived hang or performance problems on Windows operating system, there are a number of diagnostic data files that are useful for diagnosing the problem. This mustgather document describes about the diagnostic data files to be collected and the procedure to collect the same. 
+
+RESOLVING THE PROBLEM
+The following set of diagnostic data files need to be collected manually during the time of hang or performance problems perceive in your java application:
+1. Javacores
+2. Core dumps
+3. Verbose GC logs (native_stderr.log)
+4. Process logs
+5. Paging usage logs
+6. Processor monitor logs
+7. CPU Profiling logs (TProf logs in case of performance problems)
+8. Netstat logs
+9. Health Center logs (In case of performance problems)
+
+
+For these diagnostic data files to be created, check that the system is configured correctly as per setup [http://www.ibm.com/support/docview.wss?rs=727&uid=swg21222470] document. 
+
+Please collect the diagnostic data files manually during the time of hang or performance problems perceive in your java application as per the below steps: 
+
+1. Generate at least three javacores and core dumps by using one of the following methods: 
+
+ a)Use the key sequence Ctrl-Break in a console window.
+b)Use the WSAdmin command if you are running IBM® WebSphere® Application Server.
+c)If you have the MKS Toolkit [http://www.mkssoftware.com/] installed, use the command: 
+kill -3 [PID_of_problem_JVM]
+d) Use Windows Task Manager [http://support.microsoft.com/kb/931673] to manually generate the dumps 
+
+There needs to be 2 or 3 minutes time interval in between each set of dumps(javacore and core dump) generated. Otherwise spread the time interval across the issue time and generate the above set of diagnostic data files.
+
+Please note that all the javacores and the core dumps generated can be found in the current path and the names of them will follow the below format:
+Javacore : javacore.<time stamp>.<id>.txt
+Core dump : core.<time stamp>.<id>.dmp
+
+For Java 6 and 5 SDK releases,
+
+Run the JExtract tool against the generated core dump using the following command:
+<installpath>/jre/bin/jextract [coredump]
+
+For 64bit JVM enabled with -Xcompressedrefs option, please use
+<installpath>/jre/bin/jextract -J-Xcompressedrefs [coredump] 
+
+Save the resulting archive file, which has a name in the format of
+core.<time stamp>.<id>.dmp.zip
+
+From Java™ 7 SDKs on Windows platforms, you do not need to run the jextract utility. 
+
+In case, if the core dump is not generated as expected using -Xdump option as in setup [http://www.ibm.com/support/docview.wss?rs=727&uid=swg21222470], please refer and use the Microsoft ADPlus [http://msdn.microsoft.com/en-in/library/windows/hardware/ff537953%28v=vs.85%29.aspx] tool to generate the core dump at the time of hang as appropriate and send us for diagnosing the problem.
+
+2. Collect Verbose Garbage Collector data. This data is in the location specified during setup [http://www.ibm.com/support/docview.wss?rs=727&uid=swg21222470]. Alternatively, the data is sent to the stderr output.
+
+3. Collect process size monitoring data. The data is in the location specified during setup [http://www.ibm.com/support/docview.wss?rs=727&uid=swg21222470].
+
+4. Collect paging size usage data. The data is in the location specified during setup [http://www.ibm.com/support/docview.wss?rs=727&uid=swg21222470].
+
+5. Collect CPU monitoring (perfmon) data. The data is in the location specified during setup [http://www.ibm.com/support/docview.wss?rs=727&uid=swg21222470].
+
+
+6. Run the tprof [http://www-304.ibm.com/support/docview.wss?uid=swg21403450] tool and profile the java application during the time of performance problems. The tprof profile data is written to the location specified in tprof [http://www-304.ibm.com/support/docview.wss?uid=swg21403450] support document. 
+
+ 
+7. Collect the netstat log containing the snapshot of network activities, by using the following command:
+netstat -an > netstat1.out 
+
+Please collect multiple netstat logs during the time of hang or performance problems in your Java application. 
+
+8. In case of performance problems, run the Health Center [http://www.ibm.com/developerworks/java/jdk/tools/healthcenter/] tool and profile the application as specified in setup [http://www.ibm.com/support/docview.wss?rs=727&uid=swg21222470]. Please refer the IBM Health Center Information center [http://publib.boulder.ibm.com/infocenter/hctool/v1r0/index.jsp] document for more information. 
+
+After collecting all the above diagnostic data files, you can submit them for help with diagnosing the problem.

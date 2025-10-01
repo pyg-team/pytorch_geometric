@@ -1,0 +1,103 @@
+Title: IBM PM for System i5 FAQ - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This document contains PM iSeries FAQs. 
+
+RESOLVING THE PROBLEM
+PM iSeries FAQ. 
+
+Information regard to PM for Power Systems could be found at:
+https://www-03.ibm.com/systems/power/support/perfmgmt/index.html [https://www-03.ibm.com/systems/power/support/perfmgmt/index.html]
+
+General Information
+- How is PM for System i5 data transmitted?
+PM data is transmitted utilizing Electronic Service Agent (ESA).
+
+- What can I check if a system is no longer sending PM data for IBM i?
+Check ESA is working and the reconfigure PM agent: SMP. MustGather : Electronic Customer Support (ECS), Electronic Service Agent (ESA) and Performance Management (PM Agent) 
+
+- How do I tell if a system is sending PM for System i data? 
+DCF, Checking for the Last PM iSeries Transmission (V5R1M0 and V5R2M0): Database 'DCF Technotes (IBM i)', View 'Products', Document 'Checking for the Last PM iSeries Transmission (V5R1M0 and Above)' [http://www-01.ibm.com/support/icons/doclink.gif] [</font></b>http://www-01.ibm.com/support/docview.wss?uid=nas8N1019436]
+
+- Why are my PM for System i5 reports not being generated?
+From the Redbooks: A Systems Management Guide to Performance Management for System i and System p servers (SG-247122-3) [http://www.redbooks.ibm.com/redbooks/SG247122/wwhelp/wwhimpl/js/html/wwhelp.htm]
+
+4.1.5 Accessing the reports through the Web
+All customer accounts who transmit their PM for System i performance data to IBM can obtain access to their Management Summary Graph through the World Wide Web. In addition, those who have the Full Service PM for System i offering or other Services contracts can view and print their entire set of PM for System i reports using the same method. In either case, the process is the same.
+
+To ensure that you gain access, verify that the following requirements are met:
+
+1. The status option under the PM for System i menu (GO PM400 in V6R1, GO PMAGT in V7R1 and above) indicates that the data collection process of PM for System i is running.
+2. The data is transmitted regularly to IBM, at least weekly. We recommend to transmit daily to reduce the load of data.
+3. There are 15 days worth of data transmitted for the previous month and at least one day’s data for the current month. The minimum number of days is 15.
+4. You have a user ID and password. After your first successful transmission, you receive an e-mail and letter in the mail from IBM, containing your password and your system serial number.
+
+- To access the reports, go to the Performance Management for Power Systems web site:
+https://pmeserver.rochester.ibm.com/PMServerInfo/loginPage.jsp [https://pmeserver.rochester.ibm.com/PMServerInfo/loginPage.jsp]
+
+You must be able to log on. See 3.1, “Background” on page 22, for guidance.
+
+Note: The trend reports need at least three months of consecutive data for them to be meaningful.
+
+Many of the FAQs could be found at: 
+https://public.dhe.ibm.com/common/ssi/ecm/po/en/poq12367usen/POQ12367USEN.PDF [https://public.dhe.ibm.com/common/ssi/ecm/po/en/poq12367usen/POQ12367USEN.PDF]
+
+- How much space does the PM Agent take on my machine?
+
+- What about system security with PM for Power Systems?
+
+- Is Performance Tools a prerequisite for PM for Power Systems?
+
+- I have forgotten my registration key/password. How do I get it resent?
+o Rochester Support Center knowledgebase document N1012046, : Access Performance Management Reports for your IBM i System 
+o http://www-03.ibm.com/systems/power/support/perfmgmt/faq_generali.html#q5 [http://www-03.ibm.com/systems/power/support/perfmgmt/faq_generali.html#q5]
+
+- What are the PM Agent jobs? And what do they do?
+Rochester Support Center knowledgebase document N1013510, PM Agent jobs: Database 'DCF Technotes (IBM i)', View 'Products', Document 'PM Agent Jobs' [http://www-01.ibm.com/support/icons/doclink.gif] [</font></b>http://www-01.ibm.com/support/docview.wss?uid=nas8N1013510]
+
+
+Setup
+How do I install and activate PM Agent for System i5? 
+o DCF 1010756, Configuration Instructions for Electronic Customer Support (ECS), Electronic Service Agent (ESA) and PM Agent for V5R4 and Higher releases [http://www-01.ibm.com/support/docview.wss?uid=nas8N1010756]
+
+
+Data collection
+- How can I tell if data is being collected?
+
+- What if there are problems with old performance data at any release?
+
+- What are the instructions for saving the raw performance data library with Collection Services running?
+
+- How do Collection Services and the PM Agent work together?
+
+- How can I reduce the amount of data saved by PM for System i5?
+Rochester Support Center knowledgebase document New, Reducing size of PM Data on a system: 
+
+Transmission
+Are you transmitting PM for System i5 performance data using Electronic Service Agent but not seeing the current data in the PM for System i5 reports?
+DCF document PMAGENT not sending???
+
+Reports
+What is the Management Summary Graph?
+http://www-03.ibm.com/systems/power/support/perfmgmt/faq_reportsi.html#q1 [http://www-03.ibm.com/systems/power/support/perfmgmt/faq_reportsi.html#q1]
+
+I do not remember my password to view my reports, how can I request the password? 
+DCF N1012047, Requesting a PM Agent Registration Key/Password [http://www-01.ibm.com/support/docview.wss?uid=nas8N1012047]
+
+How do I interpret PM for System i5 reports in an LPAR environment?
+
+What are some common report problems?
+
+I have just activated PM for System i5. When will I receive my User ID and password?
+The registration key will come from email address PMforPower/Rochester/IBM. Ensure that the PMforPower email address is not blocked on your email server 
+http://www-01.ibm.com/support/docview.wss?uid=nas8N1012047 [http://www-01.ibm.com/support/docview.wss?uid=nas8N1012047]
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Operating System IBM i 6.1 Operating System IBM i 7.1 Operating System IBM i 7.2 
+HISTORICAL NUMBER
+ 493505898

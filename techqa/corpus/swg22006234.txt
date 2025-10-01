@@ -1,0 +1,49 @@
+Title: IBM Users from recently added domain in Content Platform Engine are unable to login - United States
+
+Text:
+ldap 49 error new domain TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Why are users from new AD domain unable to login but existing domain users in P8 can? 
+
+SYMPTOM
+The systemout logs shows the message: 
+
+SystemOut O CIWEB Debug:[unknown(unknown) @ unknown] [REQUEST 10734]
+com.ibm.ecm.struts.actions.authentication.ContainerLogonAction.doContainerLogin() Logging in as user: username 
+
+LdapConnectio I com.ibm.ws.wim.adapter.ldap.LdapConnection DirContextreCreateDirContext(String errorMessage) CWWIM4564I The user registry is now connected to 'ldap://ldap.servername.com:3268' LDAP Server. Or,the user registry is able to ping the LDAP server successfully. 
+
+LTPAServerObj E SECJ0369E:Authentication failed when using LTPA. The exception is com.ibm.websphere.wim.exception.PasswordCheckFailedException:
+CWWIM4529E The password verification for the 'username' principal name failed. Root cause: 'javax.naming.AuthenticationException: [LDAP: error code 49 - 80090308: LdapErr: DSID-0C0903A8, comment:AcceptSecurityContext error, data 52e, v1db1 ]; resolved object
+com.sun.jndi.ldap.LdapCtx@82d08ae9'.
+
+
+RESOLVING THE PROBLEM
+1. Verify that that CE bind user can bind to the domain and issue searches for user/groups using using third party toos such as LDP (MS tool), LDAP browser, etc. 
+
+2. Compare the WAS AD repositories with the working domain and that of of the non-working domain To easily compare the differences is to request copies of the wimconfig.xml in both ICN JVM and CPE JVM
+and and ensure that uid to UPN mapping is correct. Refer to: 
+
+https://www.ibm.com/support/knowledgecenter/en/SSNW2F_5.2.1/com.ibm.p8.security.doc/p8psh016.htm [https://www.ibm.com/support/knowledgecenter/en/SSNW2F_5.2.1/com.ibm.p8.security.doc/p8psh016.htm] 
+
+WebSphere Federated Repositories only) Search the WebSphere application server profile for wimconfig.xml. Edit wimconfig.xml in the following way: 
+
+Search for the propertyName="uid" entry (If the search does not find this entry, you might have to create the following): 
+
+<config:attributes name="samAccountName" propertyName="uid">
+<config:entityTypes>PersonAccount</config:entityTypes>
+</config:attributes> 
+
+Modify the propertyName="uid" entry for userPrincipalName attribute:
+<config:attributes name="userPrincipalName"propertyName="uid">
+<config:entityTypes>PersonAccount </config:entityTypes>
+</config:attributes>iii. Save wimconfig.xml.
+
+3. Ensure that the user/group from the new domain is added the proper way using OSScript Wizard. 
+
+Refer to: https://www.ibm.com/support/knowledgecenter/SSNW2F_5.2.1/com.ibm.p8.security.doc/p8psh025.htm [https://www.ibm.com/support/knowledgecenter/SSNW2F_5.2.1/com.ibm.p8.security.doc/p8psh025.htm] 
+
+4. If the Authenticated_User group was removed in the P8 domain, ensure to add the group the group the user belongs in with the proper security p permissions. When the P8 domain is initially created , the the Authenticated_Users group is added by default but there instances where it may be removed or replaced. 
+
+Refer to: https://www.ibm.com/support/knowledgecenter/SSNW2F_5.2.1/com.ibm.p8.security.doc/p8psu039.htm [https://www.ibm.com/support/knowledgecenter/SSNW2F_5.2.1/com.ibm.p8.security.doc/p8psu039.htm]

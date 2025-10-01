@@ -1,0 +1,23 @@
+Title: IBM How to delete copypool volumes from a library that is disconnected. - United States
+
+Text:
+delete copypool volume TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ After upgrading and migrating data to a new tape library, the old tape library is disconnected before deleting the old copy pool volumes and library. When attempting to delete copypool volumes Tivoli Storage Manager tries to access them and the delete fails. 
+
+CAUSE
+Tivoli Storage Manager does not know the library and copypool volumes are not available, and tries to access the volumes as part of the delete process.
+
+RESOLVING THE PROBLEM
+Volumes belonging to a copy storage pool can not be marked destroyed like primary storage pool volumes, but copy pool volumes can be marked unavailable. Once a volume has been marked unavailable Tivoli Storage Manager will not try to access the volume during a delete volume process. 
+
+Note, this issue has been seen on a disconnected 3494 Library, and was
+resolve by executing the following commands:
+1. UPDATE VOLUME volume_name ACCESS=UNAVAILABLE
+2. DELETE VOLUME volume_name DISCARD=YES
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ TSM tivoli storage manager IBM spectrum protect

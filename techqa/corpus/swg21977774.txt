@@ -1,0 +1,30 @@
+Title: IBM 'Audit As' property missing in Property Definition object in Administration Console for Content Platform Engine (ACCE). - United States
+
+Text:
+ACCE TECHNOTE (FAQ)
+
+QUESTION
+ In Administration Console for Content Platform Engine (ACCE) when trying to configure "property auditing" as per the documentation in IBM knowledge center you can't configure step 4 as the property requested is located under 'More' tab which was included in Fix Pack 3 and above.
+
+Step 4 in the documentation:
+4. On the PropertyDefinition object, set its AuditAs property to the PropertyTemplate object that you used to create the custom PropertyDefinition object on the event class.
+
+Steps to reproduce the issue:
+1) Create a document class named TestDoc.
+2) Create a custom property template named genericPropAuditTemplate.
+3) Assign genericPropAuditTemplate to Creation, Deletion, Update event class under Property Definitions Tab.
+4) Create a custom property template named TestProp.
+5) Under Property Definitions for TestDoc class Add TestProp template.
+6) Click on the template added and select More.
+7) Set the value of "Audit As" to genericPropAuditTemplate.
+
+In the 'PropertyDefinition' object, 'More' tab is missing preventing a user from accessing an 'AuditAs' property when using ACCE. 
+
+CAUSE
+'AuditAs' property was introduced in CE 5.2.1 FixPack 3.
+
+ANSWER
+Update Content Engine to 5.2.1 FixPack 3.
+
+RELATED INFORMATION
+ Property Auditing [http://www.ibm.com/support/knowledgecenter/SSNW2F_5.2.0/com.ibm.p8.ce.dev.ce.doc/audit_concepts.htm?lang=en]

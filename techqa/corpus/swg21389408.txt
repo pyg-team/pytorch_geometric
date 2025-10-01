@@ -1,0 +1,15 @@
+Title: IBM z/OS export to partitioned database fails with SQL1325N - United States
+
+Text:
+ASN7530E TECHNOTE (FAQ)
+
+QUESTION
+ Why is the Q Apply program failing with the following error when I specify that it use the EXPORT utility to load data from a z/OS source to a partitioned database on Linux, UNIX, or Windows?
+
+ASN7530E "Q Apply" : "QASN" : "BR00000SP069" : The load utility "EXPORT" for table "OWEGTCU2.EGAPARM" failed for Q subscription "EGAPARM0001" (receive queue "DBTEST_ASN_01_FROM_U2", replication queue map "U2_TO_DBTEST_PROVA"). Detailed message from the load utility is "RC: 0, SQLCODE: -1325". 
+
+CAUSE
+If you are replicating from a z/OS source to a partitioned database on Linux, UNIX, or Windows, the EXPORT/LOAD and EXPORT/IMPORT utilities are not supported because EXPORT from z/OS only supports the IXF file format while IMPORT or LOAD into partitioned databases only support the DEL (comma-delimited) file format.
+
+ANSWER
+ For automatic load you must use LOAD from CURSOR in this situation. For more details, see "Automatic load option for Q replication" in the Information Management Software for z/OS Solutions Information Center or DB2 Information Center.

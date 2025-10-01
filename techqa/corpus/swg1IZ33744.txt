@@ -1,0 +1,150 @@
+Title: IBM IZ33744: PREVENT BAD_OPERATION EXCEPTION WHEN RECEIVING EVENTS. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Customer wants to know what this Java error message mean and how
+   to reslove it.
+   
+   Customer is using JRE 1.5.0, probe-visibroker-support_1. Probe
+   readme file says this version of probe requries
+   omnibus-3.x-solaris2-probe-visibroker-support_52117. I suggested
+   the customer to install patch 52117 (I suppose 52117 is latest
+   visibroker patch) , however when he installed 52117, an error
+   occured:
+   
+   ERROR : Cannot install patch probe-visibroker-support as it has
+   a lower revision than the currently installed patch of the same
+   name.
+   
+   Please L3 let me know What does Java error message in log file
+   mean? What's possible cause of it? Does this version of probe
+   require specific visibroker patch - 52117? Which one is the
+   latest one - probe-visibroker-support_1 or 52117 ?
+   
+   Debug log file in ECuRep in entry 2008-Sep-15 08:42:40.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Install latest concession patch
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All users of probe nco_p_alcatel_5620_corba  *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Probe giving CORBA.BAD_OPERATION        *
+   *                      exception                               *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   *                                                              *
+   ****************************************************************
+   Probe was giving CORBA.BAD_OPERATION exception. It has been
+   fixed with this release of the probe.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *  Date of fix confirmed by L2 : 23/Sep/2008
+   
+   Date of Release: 12/31/09 Fix Pack Name:
+   nco-p-alcatel-5620-corba 5.0
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ33744
+   
+   
+ * REPORTED COMPONENT NAME
+   ALCATEL 5620 CO
+   
+   
+ * REPORTED COMPONENT ID
+   5724P18AL
+   
+   
+ * REPORTED RELEASE
+   100
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-10-06
+   
+   
+ * CLOSED DATE
+   2008-10-10
+   
+   
+ * LAST MODIFIED DATE
+   2008-10-10
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  NETCOOL
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R100 PSY
+   UP

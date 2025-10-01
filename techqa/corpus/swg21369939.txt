@@ -1,0 +1,74 @@
+Title: IBM Certificate chaining errors in an HTTPRequest node - United States
+
+Text:
+http webservice request httprequest TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ You are unable to connect to a backend webservice using an HTTPRequest node in IBM Integration Bus (IIB) or WebSphere Message Broker (WMB). 
+
+SYMPTOM
+This set of errors will occur together: 
+
+javax.net.ssl.SSLHandshakeException: com.ibm.jsse2.util.h: PKIX path building failed:
+
+java.security.cert.CertPathBuilderException: PKIXCertPathBuilderImpl could not build a valid CertPath.;
+
+internal cause is: java.security.cert.CertPathValidatorException:
+The certificate issued by OU=Class 3 Public Primary Certification Authority, O="VeriSign, Inc.", C=US is not trusted;
+
+internal cause is: java.security.cert.CertPathValidatorException: 
+Certificate chaining error
+
+
+
+CAUSE
+A 'certificate chaining error' occurs when the provided chain of certificates cannot be validated.
+
+The cause for the chaining error is provided in the previous message.
+Here, one of the certificates is "not trusted".
+
+A received certificate is "not trusted" when the Integration Server's truststore lacks a 'signer certificate' for the issuer of the received certificate. 
+
+
+
+DIAGNOSING THE PROBLEM
+'SSLHandshakeException' is a generic error to indicate a problem with an SSL handshake.
+View the 'internal cause' messages to confirm whether you are receiving a CertPathValidatorException.
+Then, confirm that the cause text is the same.
+
+
+
+
+
+RESOLVING THE PROBLEM
+Verify that your truststore contains the proper 'signer certificate' for the certificate chain provided by the backend webservice. 
+
+
+If the proper signer certificate(s) exist in the truststore, then the handshake should complete. If not, you should confirm that all required certificates are present in the keystore of the webservice that WMB/IIB is communicating with. You may need to recreate the keystore with 'keytool' using the "genkey" option and re-import your application certificates if you are missing any components of the certificate chain.
+
+
+Additional information regarding chains of trust and the WMB/IIB truststore:
+In order to verify the digital signature on a particular certificate "A", the public key of certificate A's issuing Certification Authority (CA) must be present.
+
+This public key will be issued on a signed certificate "B", which must be verified with the public key of certificate B's CA.
+
+This public key will be issued on a signed certificate "C", and so on...
+
+This "chain" of certificates will continue until one of the CA's has a certificate with a digital signature that is signed by itself. This is considered a "root" CA.
+
+The default truststore in WMB/IIB is a file called 'cacerts'. It contains several root CA signer certificates.
+
+
+RELATED INFORMATION
+ JSSE tracing for SSL issues on the HTTPRequest node [http://www-01.ibm.com/support/docview.wss?&uid=swg21300238]
+Setting up a public key infrastructure [https://www.ibm.com/support/knowledgecenter/en/SSMKHH_10.0.0/com.ibm.etools.mft.doc/ap34020_.htm]
+Configuring HTTP nodes to use SSL (HTTPS) [https://www.ibm.com/support/knowledgecenter/en/SSMKHH_10.0.0/com.ibm.etools.mft.doc/ap12234_.htm]
+Configuring SOAP nodes to use SSL (HTTPS) [https://www.ibm.com/support/knowledgecenter/en/SSMKHH_10.0.0/com.ibm.etools.mft.doc/ap34021_.htm]
+
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration WebSphere Message Broker Security AIX, HP-UX, Linux, Solaris, Windows 8.0 All Editions 
+PRODUCT ALIAS/SYNONYM
+ WMB MB WebSphere Message Broker IBM Integration Bus IIB IBMIB MQ Integrator WBIMB WBI-MB MQSI WMQI

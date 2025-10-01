@@ -1,0 +1,56 @@
+Title: IBM Tivoli Integrated Portal hangs because of Argus java.lang.OutOfMemory. - United States
+
+Text:
+cacheTime; config.xml; Argus; TIP cache; TIPL2CONF; TIPL2PERF TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Argus stores it's role authorizations in memory cache, and is not cleaned out unless the TIP is restarted. The "cacheTime" variable controls this, which is set to -1 by default. If the number of TIP roles is high, it can cause Java OOM errors. 
+
+SYMPTOM
+TIP hangs. SystemOut.log file shows Java.lang.OutOfMemoryError: 
+
+[10/2/13 9:27:54:838 CDT] 0000002a webapp E com.ibm.ws.webcontainer.webapp.WebApp logServletError SRVE0293E: 
+[Servlet Error]-[/secure/isclite/tiles/nop.jsp]: java.lang.OutOfMemoryError: Java heap space at java.lang.Object.clone(Native Method)
+
+
+CAUSE
+By default, the ARGUS cache will not get cleaned up unless the TIP server is restarted. This normally will give the system good runtime performance. However, in cases where a large number of user/role mappings are defined, the system may run into Java memory issues causing Java OutOfMemory outages.
+
+The cacheTime we are talking about here is Argus cache. The is used for the way the role authorizations are stored in memory by Argus and nothing related to LDAP or SSO. The Argus cache time by default we ship with in TIP is -1 which means the cache will not get cleaned up till we re-start the server. 
+
+Error from the <TIP_HOME>/profiles/TIPProfile/logs/server1/SystemOut.log
+
+[10/2/13 9:27:54:838 CDT] 0000002a webapp E com.ibm.ws.webcontainer.webapp.WebApp logServletError SRVE0293E: 
+[Servlet Error]-[/secure/isclite/tiles/nop.jsp]: java.lang.OutOfMemoryError: Java heap space at java.lang.Object.clone(Native Method)
+
+
+ENVIRONMENT
+all environments
+
+
+
+DIAGNOSING THE PROBLEM
+Java heapdump files will be created in the <TIP_HOME>/profiles/TIPProfile directory. 
+
+heapdump.20131022.144244.20034001.phd 
+
+The Systemout.log will have have errors similar to this: 
+
+
+[10/2/13 9:27:54:838 CDT] 0000002a webapp E com.ibm.ws.webcontainer.webapp.WebApp logServletError SRVE0293E: 
+[Servlet Error]-[/secure/isclite/tiles/nop.jsp]: java.lang.OutOfMemoryError: Java heap space at java.lang.Object.clone(Native Method) 
+
+
+Using the memory heap dump analysis shows that Argus is the problem, specifically the instance shown inside the red line in the output of the Java memory analyzer below: 
+
+ 
+
+[/support/docview.wss?uid=swg21657452&aid=1] [/support/docview.wss?uid=swg21657452&aid=1]
+
+You can also check the cacheTime variable in the <TIP_HOME>/profiles/TIPProfile/config/cells/TIPCell/commonauthz/config.xml file to confirm if it's set to "-1", which means the Argus cache will not get cleaned up unless the TIP server is restarted.
+
+
+RESOLVING THE PROBLEM
+The cacheTime value in config.xml is in milliseconds. TIP is shipped with the initial value of -1, which means the Argus cache will not be cleared out unless TIP restart. To resolve this issue you need to configure 'cacheTime' to non -1 value. Initially we suggest setting the value to 1200000, which is 20 minutes. After the change you will have to restart the TIP server, normally server1. 
+
+NOTE: The cacheTime variable was added in TIP version 2.2.0.0.

@@ -1,0 +1,28 @@
+Title: IBM SiteMinder error message about enabling cookies in browser - United States
+
+Text:
+qp; siteminder; netegrity; computer associates; url; cookie TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+You click a URL included in a Microsoft® Excel spreadsheet that redirects you to a Lotus® QuickPlace® site. When you do this, you receive an error message from your SiteMinder Policy Server indicating that there is a problem with setting cookies in your browser. as follows: 
+
+ * 
+ * 
+ *  your Web browser is configured to accept cookies. you are using a fully qualified domain name in your URL. http://server.example.com/index.html is CORRECT http://server/index.html is INCORRECT http://127.0.0.1/index.html is INCORRECT." 
+ * 
+ * 
+ * 
+
+However, if you copy the URL specified in the Microsoft Excel spreadsheet and paste that URL into the Web browser directly, you can access the QuickPlace site without any error. 
+RESOLVING THE PROBLEM
+This error occurs due to how URLs are handled by Microsoft Excel and is not a Lotus software problem. When you click a URL in Excel, the Excel program establishes a new session without creating a cookie that the SiteMinder server can use. So, when you link from the Excel page, SiteMinder sees this connection as coming from a source that does not accept or create cookies and returns an error message. You can review the following Microsoft Support article for more information and workarounds: 
+
+ * 
+ * 
+ * 
+ * 
+ * 
+ * http://support.microsoft.com/kb/899927
+
+
+One way to avoid the error is to establish a cookie first, such as by linking to a Web page where a cookie can be established, instead of trying to link directly to a QuickPlace page. For example, you could link to a server home page, or set up a redirect to a login page.

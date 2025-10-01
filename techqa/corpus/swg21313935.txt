@@ -1,0 +1,31 @@
+Title: IBM Failed to copy offering metadata - United States
+
+Text:
+1313935 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This technote explains why attempts to copy an iFix to an existing repository using the IBM® Packaging Utility results in the error, "Failed to copy offering metadata" and provides instructions to resolve the issue. 
+
+SYMPTOM
+Failed to copy offering metadata error appears when copying a Rational Method Composer iFix into an existing repository using IBM Packaging Utility.
+
+CAUSE
+This may be caused by the attempt to copy the iFix into a repository already containing a previous iFix version.
+
+RESOLVING THE PROBLEM
+
+
+
+The previous iFix, originally contained in the repository, should be moved into a new repository using IBM Packaging Utility. 
+
+The the new iFix can then be copied to the existing repository without errors. 
+
+
+
+
+
+
+
+
+
+Cross Reference information Segment Product Component Platform Version Edition Software Development Rational Method Composer Install / Migration

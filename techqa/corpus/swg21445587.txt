@@ -1,0 +1,55 @@
+Title: IBM How to clean deleted objects in the Rational Synergy Database - United States
+
+Text:
+RATLC01656392; deleted objects; Manage Synergy Database Space; ccm query; deleted; ccm clean_up; ccm soad TECHNOTE (FAQ)
+
+QUESTION
+ How do you clean deleted objects in the IBM Rational Synergy Database? 
+
+CAUSE
+The backup for the Synergy database takes hours even after it is packed and unpacked as maintenance. 
+
+You are concerned about the deleted objects (such as files/baselines/projects/etc) occupying the synergy database.
+
+For example: 
+
+ * How to check number of deleted objects? 
+ * How to check number of size of deleted objects? 
+ * How to delete the unnecessary deleted objects?
+
+What is the best practice to delete these objects?
+
+
+ANSWER
+The following commands can be used to identify, remove and free up database space. 
+
+ 
+
+ * ccm query -s deleted
+   
+   If you want to know about object versions in the 'deleted' state, this query will identify the total number of objects:
+   
+   > ccm query -s deleted
+   
+   There are no available methods to tell the size of an individual object version. A rule-of-thumb would be an average of about 14k for a task or problem, but the size of an object version with a source attribute depends on the size of that source. There is no 'ccm' command to do this, although it is possible to redirect "ccm cat" to a file and check the total size of the file. That could be a long process, and it may increase the size of the database since "ccm cat" will re-create cache files which might have been deleted using "ccm clean_cache".
+   
+   
+ * ccm clean_up
+   
+   One method of removing obsolete object versions is to run "ccm clean_up".
+   This will delete tasks and process rules for obsolete releases. See the online-help for details.
+   
+   Running "ccm clean_cache" will probably have a much bigger effect on reducing the size of the backup than any other maintenance work. Normally the most space is taken up by object version's sources - and "clean_cache" will remove any cache files for checked-in object versions if they are not in use in a project. If this command has not been run regularly for years, it could reduce the total size of the database by up to half its size.
+   
+   
+ * ccm soad
+   
+   The best method to free up space on a database is to use SOAD (Save Offline And Delete) as described in the Administration Guide. 
+   
+   Create a query for the obsolete object versions (for example all projects and baselines for an old release - perhaps 2 releases older than the last currently supported release, so that you are certain there is no need to use the old baselines for a patch release) and use SOAD to save that data to a location on your backup server. Then delete it from the database. The advantage of SOAD is that you can restore the data to the database if you discover that you really need it at some point in the future - for example as an emergency patch.
+   
+   Refer to the Administration Guide Chapter "Manage Synergy Database Space" for additional tips. The administration guide is available in the Rational Synergy Information Center [http://www-01.ibm.com/support/docview.wss?uid=swg27016565].
+
+
+RELATED INFORMATION
+#Rational Synergy Information Center [http://www.ibm.com/support/docview.wss?uid=swg27016565]

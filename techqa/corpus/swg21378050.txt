@@ -1,0 +1,44 @@
+Title: IBM ERROR: Input Invalid FieldDef specified, when configuring case-insensitive querying - United States
+
+Text:
+1378050; CQ; ClearQuest; oracle; 10g; case-insensitive; search; query; querying; setup_cq_clob_index.sql; ERROR; Fielddef; description not found; Procedure Terminated; DECLARE; at line 1; ORA-20210; Input Invalid FieldDef specified; ORA-06512; at line 23 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+This technote explains how to resolve an error, "Input Invalid FieldDef specified", that can occur when configuring case-insensitive querying for IBM Rational ClearQuest on Oracle 10g.
+
+SYMPTOM
+This error occurs when running the setup_cq_clob_index.sql script: 
+
+
+**** ERROR: Fielddef: description not found.
+**** Procedure Terminated.
+****
+DECLARE
+*
+ERROR at line 1:
+ORA-20210: Input Invalid FieldDef specified
+ORA-06512: at line 23
+
+
+
+CAUSE
+This issue is caused by a difference between the name of a record type and its database table name. For example, if you have a record type named Defect that is renamed to ChangeRequest, the table for the records in the database remains "Defect".
+
+
+
+RESOLVING THE PROBLEM
+You need to rename the record type back to its original name in ClearQuest Designer. With the previous example, the ChangeRequest record type would be renamed back to 'Defect' (the name is case-sensitive). The user database also needs to be upgraded to reflect these changes. 
+
+
+After making these changes, run the script again. After the configuration is successful, you can rename your record type back as desired.
+
+
+
+BACKING UP FILES  Always make new database back-ups of your schema repository and user databases prior to making schema changes and performing database upgrades. Failure to create back-up copies can limit your ability to recover from a an upgrade failure, design change issues or other unforeseen failures.
+
+
+
+
+
+
+Cross Reference information Segment Product Component Platform Version Edition Software Development Rational ClearQuest Query

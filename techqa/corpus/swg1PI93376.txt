@@ -1,0 +1,146 @@
+Title: IBM PI93376: ODR server cannot be started after being created on plinux due on incorrect version of HeapDetect setting - United States
+
+Text:
+  A FIX IS AVAILABLE
+9.0.0.7: WebSphere Application Server traditional V9.0 Fix Pack 7 [http://www-01.ibm.com/support/docview.wss?uid=swg24044620]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Cannot start ODR server after being created on plinux due on
+   incorrect version of HeapDetect setting.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  All users of IBM WebSphere Application      *
+   *                  Server WAS ND edition- Virtual              *
+   *                  Enterprise/IM Component                     *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: ODR server cannot be started after      *
+   *                      being created on plinux due on          *
+   *                      incorrect version of HeapDetect         *
+   *                      setting                                 *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   Cannot start ODR server after being created on plinux due on
+   incorrect version of HeapDetect setting.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  There is an error in detecting the 64 bit plinux operating
+   system and results into this incorrect HeapDetect setting.  With
+   the fix of this APAR the setting on plinux will be set correctly
+   and an ODR server should be able to be started after creation.
+   
+   The fix for this APAR is currently targeted for inclusion in fix
+   pack 9.0.0.7.  Please refer to the Recommended Updates page for
+   delivery information:
+   http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  In the server.xml of the ODR server, search for
+   agentlib=HeapDetect text.  Update HeapDetect to HeapDetect64,
+   then start the ODR server.
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI93376
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBS APP SERV N
+   
+   
+ * REPORTED COMPONENT ID
+   5724H8800
+   
+   
+ * REPORTED RELEASE
+   900
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2018-02-05
+   
+   
+ * CLOSED DATE
+   2018-02-13
+   
+   
+ * LAST MODIFIED DATE
+   2018-03-20
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBS APP SERV N
+   
+   
+ * FIXED COMPONENT ID
+   5724H8800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R900 PSY
+   UP

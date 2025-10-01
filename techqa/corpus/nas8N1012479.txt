@@ -1,0 +1,57 @@
+Title: IBM Using the "Watch for Message" (WCHMSG) Parameter with Traces - United States
+
+Text:
+MESSAGES; MSG; trace; TRCCNN TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This document pertains to information regarding the use of the WCHMSG parameter with various traces. 
+
+RESOLVING THE PROBLEM
+The ability to trace system functions is a critical role in debugging client issues. Some of the more common trace tools include: 
+
+ * TRCCNN (Trace Connection - used to trace communications level events) 
+ * STRCMNTRC (Start Communications Trace - similar to TRCCNN and also used to trace communication events) 
+ * STRTRC (Start Trace - used to trace jobs on the system) 
+ * STRWCH (Start Watch - tool used to trace various system activity and trap data based on an event trigger)
+
+
+NOTE: There are many other traces; the above are just some common examples 
+
+An additional parameter which allows for even more granular debug within our traces is the WCHMSG (Watch for message) parameter. This parameter allows a trace to run, and literally watch for a message. When that message is encountered the trace is triggered to end and spool the trace data. The syntax of the TRCCNN would look something like this: 
+
+TRCCNN SET(*ON) TRCTYPE(*IP) TRCTBL(FTP) SIZE(128 *MB) WCHMSG((TCP2617)) WCHMSGQ((*SYSOPR)) 
+
+In the above example, the Trace Connection will run until msgTCP2617 is posted in QSYSOPR. At that point the trace will stop, and a message indicating it ended will be posted in QSYSOPR which reads similar to this: 
+
+Watch session QSCCMN0001 issued by 123456/USER/JOBNAME at MM/DD/YY HH:MM:SS has been ended. Reason code: X'02' 
+
+There are times a message may be overly common (the msgTCP2617 is a perfect example), and posted for multiple issues. The WCHMSG parm allows the trace to customize even further by specifying additional text to trigger the ending of the trace. Again using TCP2617 as an example, the message reads: 
+
+Message ID . . . . . . . . . : TCP2617 
+Message file . . . . . . . . : QTCPMSG 
+Library . . . . . . . . . : QSYS 
+
+Message . . . . : TCP/IP connection to remote system &2 closed, reason code 
+&5. 
+Cause . . . . . : The TCP/IP connection to remote system &2 has been closed 
+The connection was closed for reason code &5. Full connection details for 
+the closed connection include: 
+- local IP address is &1 
+- local port is &3 
+- remote IP address is &2 
+- remote port is &4 
+Reason codes and their meanings follow: 
+1 = TCP connection closed due to expiration of 10 minute FINWAIT2 timer. 
+2 = TCP connection closed due to R2 retry threshold being run. 
+3 = TCP connection closed due to keepalive timeout. 
+
+A user could customize the WCHMSG parameter to trigger from any of the local or remote information above. The key to using the additional text is that the values are HEX, not decimal. If a connection to a remote system on remote port 21 (FTP) is being pursued, the WCHMSG cannot contain '21' as the additional text. It would require the hexadecimal value of x'15', and the syntax of the trace would look like this: 
+
+TRCCNN SET(*ON) TRCTYPE(*IP) TRCTBL(FTP) SIZE(128 *MB) WCHMSG((TCP2617 X'0015')) 
+
+The same WCHMSG value could be used in any of the previously mentioned traces (TRCCNN, STRCMNTRC, STRTRC, STRWCH, etc.) 
+
+When the triggering message is encountered, the trace will end and the information in QSYSOPR which was previously outlined would need to be reviewed.  
+
+HISTORICAL NUMBER
+ 552113756

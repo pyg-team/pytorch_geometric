@@ -1,0 +1,232 @@
+Title: IBM PI61915: MORE DIAGNOSTICS REQUIRED WHEN THE SAML WEB SSO REDIRECT URL IS NULL - United States
+
+Text:
+  FIXES ARE AVAILABLE
+9.0.0.5: WebSphere Application Server traditional V9.0 Fix Pack 5 [http://www-01.ibm.com/support/docview.wss?uid=swg24044067]
+8.0.0.14: WebSphere Application Server V8.0 Fix Pack 14 [http://www-01.ibm.com/support/docview.wss?uid=swg24044096]
+9.0.0.6: WebSphere Application Server traditional V9.0 Fix Pack 6 [http://www-01.ibm.com/support/docview.wss?uid=swg24044242]
+8.5.5.13: WebSphere Application Server V8.5.5 Fix Pack 13 [http://www-01.ibm.com/support/docview.wss?uid=swg24044479]
+9.0.0.7: WebSphere Application Server traditional V9.0 Fix Pack 7 [http://www-01.ibm.com/support/docview.wss?uid=swg24044620]
+7.0.0.45: WebSphere Application Server V7.0 Fix Pack 45 [http://www-01.ibm.com/support/docview.wss?uid=swg24044551]
+8.0.0.15: WebSphere Application Server V8.0 Fix Pack 15 [http://www-01.ibm.com/support/docview.wss?uid=swg24044734]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  In SAML Web SSO, when the redirect target is null,
+   "INTERNAL ERROR: Please contact your support." is displayed
+   in the browser.  There is no information in the FFDC or
+   SystemOut.log for problem diagnosis.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  IBM WebSphere Application Server users of   *
+   *                  SAML Web SSO                                *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Additional diagnostics are required     *
+   *                      when the SAML Web SSO redirect URL is   *
+   *                      null                                    *
+   ****************************************************************
+   * RECOMMENDATION:  Install a fix pack that contains this       *
+   *                  APAR.                                       *
+   ****************************************************************
+   In SAML Web SSO, when the redirect target is null, the runtime
+   sets the redirect target to NO_TARGET.  This results in
+   "INTERNAL ERROR: Please contact your support." being displayed
+   in the browser.
+   .
+   There should be some indication in the SystemOut.log that this
+   condition has happened so that the administrator can attempt
+   to address the issue.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The SAML Web SSO TAI is updated to redirect to the configured
+   error page when the redirect target is null.
+   .
+   When the redirect target is null, the following error message
+   will appear in the SystemOut.log file:
+   .
+   CWSML7035E: The SAML Web Single Sign-on (SSO) Trust
+   Association Interceptor (TAI) is unable to determine a
+   redirect target URL. The redirect URL can come from the
+   sso_<id>.sp.targetUrl SAML TAI custom property, the RelayState
+   parameter in the SAMLResponse or the WasSamlSpReqUrl cookie.
+   If you do not intend to have a value for the
+   sso_<id>.sp.targetUrl SAML TAI custom property or have your
+   IdP send a RelayState parameter in the SAMLResponse, then
+   check earlier in the log to see if you have a CWSML7036W
+   warning that indicates that the request URL host name is not
+   the same as the ACS URL host name. If you see that warning,
+   then that condition must be corrected to fix this error. The
+   value for the relayState parameter on the SAMLResponse is [{0}].
+   .
+   EXPLANATION: The SAML Web SSO TAI cannot find a redirect URL
+   for the current request.  The redirect URL can come from three
+   places: 1) the sso_<id>.sp.targetUrl SAML TAI custom property,
+   2) the RelayState parameter in the SAMLResponse and 3) the
+   WasSamlSpReqUrl cookie. At least one of these three things
+   must be present in order for the SAML TAI to be able to
+   determine the redirect URL. In this case, none of these three
+   things are present, therefore, the SAML TAI can not determine
+   the redirect URL. Note that the SAML TAI may have set a
+   WasSamlSpReqUrl cookie earlier in the process, but the browser
+   did not make the cookie available to the SAML TAI. Also, the
+   RelayState parameter must be a URL that uses the http or https
+   protocol.
+   .
+   USER ACTION: Ensure at least one of the following is true: 1)
+   the sso_<id>.sp.targetUrl SAML TAI custom property is
+   configured for the current SP, 2) the IdP sets the RelayState
+   parameter on the SAMLResponse with a valid URL that uses the
+   http or https protocol or 3) the WasSamlSpReqUrl cookie is
+   made available to the SAML TAI. In order for the
+   WasSamlSpReqUrl to be available to the SAML TAI, the original
+   request URL must have the same host name as the ACS URL that
+   is configured on the sso_<id>.sp.acsUrl TAI custom property.
+   .
+   .
+   The SAML TAI is also updated to check for duplicate acsUrl
+   entries at load time.  If any are found, the following warning
+   will be emitted:
+   .
+   CWSML7038W: The SAML Web Single Single Sign-on (SSO) Trust
+   Association Interceptor (TAI) has two assertion consumer
+   service URL custom properties configured that have the same
+   URL path: [{0}] and [{1}].  This condition can cause
+   unexpected behavior at run time.  To prevent further issues,
+   all text after <hostname>:<port> must be unique for each
+   [sso_<id>.sp.acsUrl] custom property value.
+   .
+   EXPLANATION: The value for each SAML [sso_<id>.sp.acsUrl]
+   custom property must have a unique URL path.  A URL path does
+   not include the protocol and <hostname>:<port> parts of a URL
+   string.  For example, although the URL strings for
+   https://somewhere.ibm.com/samlsps/hello/app and
+   https://elsewhere.ibm.com/samlsps/hello/app are different, the
+   URL paths are the same.  If two acsUrl entries have the same
+   URL path, when a SAMLResponse is sent to one of the URLs that
+   has a duplicate path, the service provider that is chosen to
+   handle the request will be indeterminate.
+   .
+   USER ACTION: Ensure that the URL configured for each of the
+   [so_<id>.sp.acsUrl] custom properties have unique URL paths,
+   meaning that they have unique text after the <hostname>:<port>
+   part of the URL string.
+   
+   
+   The fix for this APAR is currently targeted for inclusion in
+   fix pack 7.0.0.45, 8.0.0.14, 8.5.5.13 and 9.0.0.5.  Please
+   refer to the Recommended Updates page for delivery information:
+   http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI61915
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBS APP SERV N
+   
+   
+ * REPORTED COMPONENT ID
+   5724H8800
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-05-05
+   
+   
+ * CLOSED DATE
+   2017-08-16
+   
+   
+ * LAST MODIFIED DATE
+   2017-08-16
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBS APP SERV N
+   
+   
+ * FIXED COMPONENT ID
+   5724H8800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R700 PSY
+   UP
+   
+   
+ * R800 PSY
+   UP
+   
+   
+ * R850 PSY
+   UP
+   
+   
+ * R900 PSY
+   UP

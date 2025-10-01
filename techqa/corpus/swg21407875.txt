@@ -1,0 +1,48 @@
+Title: IBM Difference between disktag.inf and repository.config files - United States
+
+Text:
+1407875; CC; disktag.inf; respository.config; install. 7.1.x. Clearcase; Clearquest; Rational; installation; install TECHNOTE (FAQ)
+
+QUESTION
+ What is the difference between the disktag.inf and the respository.config files used when installing IBM Rational ClearCase or IBM Rational ClearQuest? 
+
+CAUSE
+ 
+
+When you, from IBM Installation Manager, add a repository to install ClearCase, a ClearCase fix pack or other IBM Rational Applications, you will sometimes see a 'diskTag.inf' file and sometimes a 'repository.config' file.
+
+
+
+ANSWER
+ 
+
+
+Difference between repository.config and diskTag.inf
+
+Repository.config is a file that can be created when using the IBM Packaging Utility or obtained from the installation files. For fix packs, this file is usually in the install_files\RationalProduct directory. 
+
+diskTag.inf indicates to Installation Manager that the files are from a disk image. 
+diskTag.inf can be across multiple disks. You can not create a diskTag.inf with Packaging Utility but you can select a diskTag.inf in Packaging Utility. diskTag.inf cannot be used from a http server. Fix packs do not contain a diskTag.inf. 
+
+You will only have a 'Disktag.inf' for a 'major release' package. A 'major release' would be ClearCase 7.1, 7.1.1 or 7.1.2. 
+
+ 
+
+Additional Notes 
+
+In a 'major release' for Microsoft Windows you will also have a folder called InstallerImage_win32 (which is the Installation Manager) and within that folder you have a 'Repository.config'. That 'Repository.config' is for installing Installation Manager. You can look into the 'Repository.config' and see what it is for. This is not a file that can be selected through the Installation Manager for any upgrade. 
+
+Additionally, in a ClearCase Fix pack you will not have 'Disktag.inf' and you will not have an Installation Manager included (so no InstallerImage_win32 folder). Here you will have a 'Repository.config' to install the ClearCase Fix pack from Installation Manager. 
+
+
+It should also be noted that if you install initially with launchpad.exe that is only shipped with disk images, it uses the disktag.inf file and not respository.config. 
+
+Of special consideration, when you create a repository using the IBM Packaging Utility, you will have no 'Disktag.inf' to select as part of a final installable version. In this case here you will have a 'Repository.config'.
+
+
+
+
+
+
+
+Cross Reference information Segment Product Component Platform Version Edition Software Development Rational ClearQuest Installation AIX, HP-UX, Linux, Solaris, Windows 7.1, 7.1.1, 7.1.2

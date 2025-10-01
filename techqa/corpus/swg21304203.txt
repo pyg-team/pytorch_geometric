@@ -1,0 +1,38 @@
+Title: IBM J2EE Server passes authenticated user to Maximo - United States
+
+Text:
+LDAP Login Browser J2EE Authentication Security Troubleshooting Diagnose username Multipart Users MAXUSER LOGINID app server appserversecurity tpaeldap TECHNOTE (FAQ)
+
+QUESTION
+ LDAP Troubleshooting Multipart Document - Part 8 of 11 
+
+CAUSE
+Enhanced documentation
+
+ANSWER
+After:
+
+* The user enters a URL to Maximo
+* The JEE server is configured for JEE server security
+* The requested resource is protected
+* The JEE server requests security authentication
+*The browser displays the authentication dialog
+*The LDAP server authenticates the user
+* The JEE Server checks user for membership in authorized group
+
+What is the next step in the LDAP troubleshooting flow chart? 
+
+ 
+Once the JEE server has confirmed user membership in an authorized group to access the application, the username is passed to Maximo. There is no code associated with this step. Once the JEE server is properly configured to use JEE server security, the server will automatically pass the username to Maximo once all of the prerequisite tests have been passed. Note, the username is passed case sensitive. If the user logs in with a different case or mixed case that is different than the LOGINID stored in the MAXUSER table, the login will fail with a Maximo error screen. 
+
+ 
+
+Username is passed to Maximo:- WebLogic.wilson -----------> Maximo.wilson 
+
+
+
+
+[/support/docview.wss?uid=swg21304203&amp;aid=1] [/support/docview.wss?uid=swg21304203&amp;aid=2] [/support/docview.wss?uid=swg21304203&amp;aid=3] LDAP Troubleshooting Multipart Document 7 of 11 – JEE Server checks user role mapping for member of authorized group [http://www-1.ibm.com/support/docview.wss?rs=3214&context=SSLKT6&uid=swg21304205&loc=en_US&cs=utf-8&lang=en] [/support/docview.wss?uid=swg21304203&amp;aid=4] LDAP Troubleshooting Multipart Document 9 of 11 – Maximo checks MAXUSER.LOGINID column for matching username [http://www-1.ibm.com/support/docview.wss?rs=3214&context=SSLKT6&uid=swg21304201&loc=en_US&cs=utf-8&lang=en]  
+
+
+Cross reference information Segment Product Component Platform Version Edition Systems and Asset Management Tivoli Asset Management for IT Systems and Asset Management Maximo Asset Management Essentials Systems and Asset Management Tivoli Change and Configuration Management Database Systems and Asset Management Tivoli Service Request Manager Systems and Asset Management Control Desk

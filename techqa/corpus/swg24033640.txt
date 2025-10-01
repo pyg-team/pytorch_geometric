@@ -1,0 +1,50 @@
+Title: IBM Download IBM Mobile Foundation Enterprise Edition V5.0.5 - United States
+
+Text:
+ DOWNLOADABLE FILES
+
+ABSTRACT
+ This document describes how to download IBM Mobile Foundation Enterprise Edition V5.0.5 eAssembly images from the IBM Passport Advantage Online web site. 
+
+DOWNLOAD DESCRIPTION
+IBM Mobile Foundation V5.0.5 is a family of products that includes IBM Worklight V5.0.5 and delivers an open, comprehensive, and advanced mobile application platform for smartphones and tablets. It is designed to enable organizations of all sizes to efficiently develop, run, and manage HTML5, hybrid, and native applications while helping to reduce time-to-market, development costs, and ongoing maintenance efforts. As part of the IBM mobile platform, Worklight can be integrated with application lifecycle, security, management, and analytics capabilities to help you address the unique mobile needs of your business. 
+
+This document provides a list of the images that are available in the eAssembly and describes how to download them from the IBM Passport Advantage Online web site.
+
+For a complete list of supported operating systems, see the IBM Worklight and IBM Mobile Foundation detailed system requirements [http://www.ibm.com/support/docview.wss?uid=swg27024838].
+
+For further information about this product, see the IBM Mobile Foundation product home page [http://www.ibm.com/software/mobile-solutions/].
+
+INSTALLATION INSTRUCTIONS
+For information about the installation process, refer to the installation information that is supplied in the Readme, which is available with the Quick Start Guide for IBM Mobile Foundation Enterprise Edition.
+
+DOWNLOAD PACKAGE
+Complete the following steps: 
+
+ 1. Navigate your browser to the Find Downloads and Media [http://www.ibm.com/software/howtobuy/passportadvantage/paocustomer/sdma/SDMA?PO=DOWNLOAD_FIND_BY_PART_NUMBER] page on the IBM Passport Advantage Online Web site.
+    
+    
+ 2. Sign in using your IBM ID.
+    
+    
+ 3. Select the Find by part number search option under Download finder options.
+    
+    
+ 4. Search for each downloadable image by part number (parts are listed below).
+    
+    
+ 5. Download all of the parts you require.
+    
+    
+ 6. Unpack each of the parts into a separate directory on your system.
+    
+    
+ 7. Follow the instructions in the Quick Start Guide to install the product.
+
+
+
+Assembly Part Number Assembly Description Images Image Description CRK8YEN IBM Mobile Foundation Enterprise Edition V5.0.5 Multiplatform, English eAssembly CIF5DEN Quick Start Guide for IBM Mobile Foundation Enterprise Edition V5.0.5 for Multiplatform English Only CICY2EN IBM Mobile Foundation Enterprise Edition V5.0.5 zip of Installation Manager Repository for IBM Worklight Studio Multiplatform English Only CICY3EN IBM Mobile Foundation Enterprise Edition V5.0.5 zip of Installation Manager Repository for IBM Worklight Server Multiplatform English Only CICY4EN IBM Mobile Foundation Enterprise Edition V5.0.5 zip of Eclipse update Site for IBM Worklight Studio for Multiplatform English Only CI21NML Quick Start Guide for IBM WebSphere Cast Iron Hypervisor V6.1.0 Multilingual CI3N6ML Tivoli End Point Manager V8.2.0 Quick Start Multiplatform Multilingual CI21LML IBM WebSphere Cast Iron Hypervisor Enterprise V6.1.0 Multilingual CI6GIML IBM Tivoli End Point Manager Platform Install V8.2.0 for Multiplatform Multilingual CIA7BML IBM Rational Enterprise Deployment V1.6 Windows Multilingual CIA7CML IBM Rational Enterprise Deployment V1.6 Linux x86 Multilingual CIAF0ML IBM Rational Enterprise Deployment V1.6 Linux x86-64 Multilingual CIA7DML IBM Rational Enterprise Deployment V1.6 Linux PPC Multilingual CIA7EML IBM Rational Enterprise Deployment V1.6 Linux s390 Multilingual CIA7FML IBM Rational Enterprise Deployment V1.6 AIX Multilingual CIA7GML IBM Rational Enterprise Deployment V1.6 HP-UX Multilingual CIA7HML IBM Rational Enterprise Deployment V1.6 Solaris SPARC Multilingual CIA7IML IBM Rational Enterprise Deployment V1.6 Solaris x86 Multilingual 
+
+
+TECHNICAL SUPPORT
+ Passport Advantage Online support: http://www.ibm.com/software/howtobuy/passportadvantage/paocustomer/docs/en_US/ecare.html [http://www.ibm.com/software/howtobuy/passportadvantage/paocustomer/docs/en_US/ecare.html]

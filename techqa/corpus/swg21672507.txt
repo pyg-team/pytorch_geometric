@@ -1,0 +1,118 @@
+Title: IBM Security Bulletin: IBM Tivoli Composite Application Manager for Transactions is affected by vulnerabilities in OpenSSL (CVE-2014-0160 and CVE-2014-0076) - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ Security vulnerabilities have been discovered in OpenSSL. 
+
+VULNERABILITY DETAILS
+CVE-ID: CVE-2014-0160 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-0160] [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2013-4353] 
+
+DESCRIPTION: OpenSSL could allow a remote attacker to obtain sensitive information, caused by an error in the TLS/DTLS heartbeat functionality. An attacker could exploit this vulnerability to expose 64k of private memory and retrieve secret keys. An attacker can repeatedly expose additional 64k chunks of memory. This vulnerability can be remotely exploited, authentication is not required and the exploit is not complex. It can be exploited on any system (ie. server, client, agent) receiving connections using the vulnerable OpenSSL library. 
+
+CVSS Base Score: 5
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/92322 [https://exchange.xforce.ibmcloud.com/vulnerabilities/92322]
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:L/Au:N/C:P/I:N/A:N)
+
+
+Warning: We strongly encourage you to take action as soon as possible as potential implications to your environment may be more serious than indicated by the CVSS score. 
+
+
+CVE-ID: CVE-2014-0076 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-0076] 
+
+DESCRIPTION: OpenSSL could allow a local attacker to obtain sensitive information, caused by an implementation error in ECDSA (Elliptic Curve Digital Signature Algorithm). An attacker could exploit this vulnerability using the FLUSH+RELOAD cache side-channel attack to recover ECDSA nonces. This vulnerability can only be exploited locally, authentication is not required and the exploit is not complex. An exploit can only partially affect confidentially, but not integrity or availability. 
+
+CVSS Base Score: 2.1
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/91990 [https://exchange.xforce.ibmcloud.com/vulnerabilities/91990]
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:L/AC:L/Au:N/C:P/I:N/A:N)
+
+AFFECTED PRODUCTS AND VERSIONS
+IBM Tivoli Composite Application Manager (ITCAM) for Transactions is affected. ITCAM for Transactions contains multiple sub components (Agents). Only the Internet Service Monitor (ISM – Agent code ‘IS’) is affected.
+
+Versions:
+· 7.4 – Affected by both CVE-2014-0160 and CVE-2014-0076
+· 7.3 – Affected by both CVE-2014-0160 and CVE-2014-0076
+· 7.2 – Affected by both CVE-2014-0160 and CVE-2014-0076
+· 7.1 – Is only affected by CVE-2014-0076 (ECDSA)
+
+REMEDIATION/FIXES
+ 
+
+Product VRMF APAR Remediation/First Fix 7.2.0.3-TIV-CAMIS-IF0026 7.2.0.3 IV38085 (and others) http://www-01.ibm.com/support/docview.wss?rs=0&uid=isg400001816 [http://www-01.ibm.com/support/docview.wss?rs=0&uid=isg400001816] 7.3.0.1-TIV-CAMIS-IF0028 7.3.0.1 IV38085
+(and others) http://www-01.ibm.com/support/docview.wss?rs=0&uid=isg400001771 [http://www-01.ibm.com/support/docview.wss?rs=0&uid=isg400001771] 7.4.0.0-TIV-CAMIS-IF0011 7.4.0.0 IV38085
+(and others) http://www-01.ibm.com/support/docview.wss?rs=0&uid=isg400001775 [http://www-01.ibm.com/support/docview.wss?rs=0&uid=isg400001775] Customers on the older 7.1 release are strongly encouraged to upgrade to 7.4. Please see Workaround/Mitigation section on additional suggestions on to mitigate this issue. After applying the fix, additional instructions are needed for CVE-2014-0160 
+
+1) Replace your SSL Certificates. 
+
+You need to revoke existing SSL certificates and reissue new certificates. You need to be sure not to generate the new certificates using the old private key and create a new private key (ie using "openssl genrsa") and use that new private key to create the new certificate signing request (CSR). 
+
+2) Reset User Credentials 
+
+Users of network facing applications protected by a vulnerable version of OpenSSL should be forced to reset their passwords and should revoke any authentication or session related cookies set prior to the time OpenSSL was upgraded and force the user to re-authenticate.
+
+Warning: Your environment may require additional fixes for other products, including non-IBM products. Please replace the SSL certificates and reset the user credentials after applying the necessary fixes to your environment.
+
+WORKAROUNDS AND MITIGATIONS
+The Internet Service Monitor (ISM) agent consists of the following parts: 
+
+· Bridge – the communications hub between kisagent and the monitors
+· kisagent – the IBM Tivoli Monitoring Agent that talks with the TEMS
+· Multiple monitors for different protocols – eg HTTP monitor, POP monitor.
+
+OpenSSL vulnerabilities impact ISM as follows: 
+1. The bridge acts as an OpenSSL server, accepting connections from kisagent and monitors.
+2. The kisagent and the individual monitors are OpenSSL clients, connecting to the bridge
+3. Some protocol monitors also uses OpenSSL as part of their protocol monitoring; eg HTTPS monitor uses OpenSSL to form the Secure connection to HTTP servers. 
+
+Mitigation strategies:
+1) Securing the Bridge as an OpenSSL server. 
+Communication to and from the bridge between monitors and the bridge and the kisagent are secured via OpenSSL. This can be disabled via the properties file. You set:
+BridgeSSLEncryption : 0 
+
+Additionally, only monitors and ISM kisagent should be communicating with the bridge. Firewalls can be used to ensure only ISM kisagent/monitors are connecting to the bridge.
+
+2) Securing the kisagent and monitors as OpenSSL clients to the bridge.
+Disable SSL at the bridge (see previous point).
+
+Ensure that kisagent/monitors ONLY connect to known bridges; this can be achieved by strict firewall rules and/or configuration management. The relevant configuration files controlling bridge configuration are located at:
+<ITMHOME>\TMAITM6\ism\etc\props\<monitor>.prop
+
+The BridgePort property of the “Bridge Properties” stanza should be explicitly configured. 
+
+The property file for the kisagent (kisagent.props) should set BridgeIPAddress in additional to BridgePort.
+
+3) Securing the individual monitors.
+Individual monitors that connect to monitoring targets via OpenSSL are vulnerable. This is known as reverse Heartbleed, where a malicious server can attack the client.
+
+Vulnerable monitors and mitigation are as follows:
+· The HTTPS Monitor is vulnerable but you can specify the disableTLS option which will disable TLS. 
+· The POP3 Monitor is exploitable but only if the element specifies STARTTLS. Those profiles could be disabled
+· The IMAP Monitor is exploitable with any profile which is using a STARTLS set. Those profiles can be disabled
+· The LDAP Monitor Is exploitable if SIMPLE-SSL is set in the element. Those profiles can be disabled
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v2 Guide [http://www.first.org/cvss/v2/guide] 
+On-line Calculator v2 [http://nvd.nist.gov/CVSS-v2-Calculator] 
+[https://www-304.ibm.com/support/docview.wss?uid=swg21496117&wv=1] OpenSSL Project vulnerability website [http://www.openssl.org/news/vulnerabilities.html] 
+Heartbleed [http://heartbleed.com/] 
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] 
+
+ACKNOWLEDGEMENT
+None 
+
+CHANGE HISTORY
+ 4 Aug 2015: Updated URL links in References
+5 May 2014: Original Copy Published 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.

@@ -1,0 +1,26 @@
+Title: IBM What is the purpose of the minimum recovery time for a table space? - United States
+
+Text:
+Minimum Recovery Time MRT Table Space TECHNOTE (FAQ)
+
+QUESTION
+ What is the purpose of the minimum recovery time attribute for a table space? 
+
+ANSWER
+When the "LIST TABLESPACES SHOW DETAIL" command or "GET SNAPSHOT FOR TABLESPACES" command is executed, one of the attributes that may be displayed is the "Minimum recovery time". 
+
+The minimum recovery time is the earliest point in time for which point in time recovery can be done for a table space. It is used to ensure consistency between the table space and the system catalogs. In other words, a table space must be rolled forward to at least the point in time such that it matches what is in the system catalogs (you wouldn't want a table to be in the table space but not referenced in the catalogs). 
+
+The minimum recovery time is only a factor when the database is defined as being recoverable and will not be displayed for a table space if circular logging is used.
+
+Some things that cause the minimum recovery time for a table space to be updated include:
+
+
+ * When the system catalogs are changed as a result of altering a table in the table space 
+ * When the SET INTEGRITY statement is run on a table in the table space. 
+ * When adding or altering a column of a table in the table space 
+ * When creating/dropping a table/index in a table space 
+ * When altering table space attributes such as bufferpool and prefetch size.
+
+
+Inserting/deleting/updating rows in a table will not affect the minimum recovery time.

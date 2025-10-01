@@ -1,0 +1,159 @@
+Title: IBM IC96509: IBM PUREAPPLICATION SYSTEM DOES NOT RELEASE SECOND IP ADDRESS AFTER FAILED DEPLOY WHERE TWO IP ADDRESSES ARE CONFIGURED - United States
+
+Text:
+  A FIX IS AVAILABLE
+IBM PureApplication System Version 1.1.0.2 [http://www-01.ibm.com/support/docview.wss?uid=swg24036620]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  A PureApplication System pattern will have multiple network
+   interface controllers (NICs)  when the NIC Add-on has been
+   included in the pattern.   If a virtual system deployment for a
+   pattern with two IP addresses fails, the second IP address may
+   not be properly released for use in another deployment.
+   A subsequent deployment that tries to use the second IP address
+   may fail with error
+   CWZIP1978E The operation failed because there are the following
+   duplicates <ip>
+   Note that message CWZIP1978E may also result from a deploy
+   where both of the following are true:
+   - The deployment specifies an environment profile with
+      option:   IP addresses provided by
+      set to:     Pattern deployer
+   - The IP address provided at deploy time by the person
+      deploying the pattern is already defined in an IP group
+   That is, IP addresses included in a pool of addresses in an IP
+   group cannot also be used for a deployment where the IP address
+   is provided by the pattern deployer.    An IP address provided
+   at deploy time should not be defined in any IP group.
+   Refer also to the Information Center pages on Creating
+   Environment Profiles:
+   http://pic.dhe.ibm.com/infocenter/psappsys/v1r1m0/topic/com.ibm.
+   puresystems.appsys.1500.doc/iwd/ept_creaprof.html [http://pic.dhe.ibm.com/infocenter/psappsys/v1r1m0/topic/com.ibm.puresystems.appsys.1500.doc/iwd/ept_creaprof.html]
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Contact IBM support and provide this REST API output for review
+   and feedback on next steps:
+   
+   https://<ip>/deployments/resources/subnets [https://<ip>/deployments/resources/subnets]
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Virtual system patterns with multiple IP addresses associated
+   that failed to deploy correctly were not releasing the IP
+   addresses correctly.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Code has been added to handle correctly the multiple IP address
+   releases after a deployment failure.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC96509
+   
+   
+ * REPORTED COMPONENT NAME
+   PUREAPP SYS W15
+   
+   
+ * REPORTED COMPONENT ID
+   5725G3200
+   
+   
+ * REPORTED RELEASE
+   110
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-09-30
+   
+   
+ * CLOSED DATE
+   2013-12-07
+   
+   
+ * LAST MODIFIED DATE
+   2013-12-07
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   PUREAPP SYS W15
+   
+   
+ * FIXED COMPONENT ID
+   5725G3200
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R110 PSY
+   UP
+   
+   
+ * R100 PSN
+   UP
+   
+   
+ * RESP PSN
+   UP

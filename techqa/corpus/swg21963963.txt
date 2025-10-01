@@ -1,0 +1,95 @@
+Title: IBM QRadar: About EPS & FPM Limits - United States
+
+Text:
+event buffer; flow buffer; event limit; flow limit; over license; EPS; license limit; FPM; burst event; burst flow TECHNOTE (FAQ)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ English 
+
+QUESTION
+ Is the EPS/FPM license limit peak EPS/FPM, or average EPS/FPM?
+
+
+CAUSE
+ 
+Quick links
+
+
+ * Is the EPS/FPM license limit peak EPS/FPM, or average EPS/FPM? 
+ * What are tuning profiles and how do they work in WinCollect? 
+ * How do I tune my log source in the QRadar user interface? 
+ * Where can I find more information?
+
+
+
+ANSWER
+
+
+
+
+IS THE EPS/FPM LICENSE LIMIT PEAK EPS/FPM, OR AVERAGE EPS/FPM?
+
+
+
+ * Event Per Second (EPS) Licensing
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * QRadar Event & Flow Burst Handling
+ * 
+ * http://www-01.ibm.com/support/docview.wss?uid=swg21687020
+ * 
+ * 
+ * 
+ * 
+ * Flow Per Minute (FPM) Licensing
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+
+
+
+
+HOW CAN CAN YOU TELL HOW MUCH EPS/FPM IS LEFT BEFORE REACHING OUR LICENSE LIMIT?
+
+To determine how close you are to your limit, monitor the "Event Rate (Events Per Second Raw)" graph on the System Monitoring Dashboard in QRadar. This will show you the current data rate, and then compare that to the per-appliance license configuration in your deployment. 
+
+[/support/docview.wss?uid=swg21963963&aid=1] [/support/docview.wss?uid=swg21963963&aid=1] 
+
+
+
+
+HOW CAN CAN YOU TELL HOW MUCH EPS/FPM IS LEFT BEFORE REACHING OUR LICENSE LIMIT?
+
+When you hit your Event or Flow license limits, data is buffered in memory, and then out to disk, depending on the size and duration of the bursts over your license. After the event rate drops below your license limit, QRadar will continue to run at the maximum licensed rate, which allows QRadar to reduce the events and flows in the burst (buffer) queues. 
+
+For example, if your license was 5000 EPS, and your normal rate was 4000 EPS, a burst to 10,000 EPS for 5 seconds would leave 5 x (10000 - 5000 eps), or 25000 events in the buffer. With a normal rate of 4000 EPS, giving you 1000 EPS "overhead" capacity, it would take around 25 seconds to catch up again, assuming no subsequent bursts. 
+
+Note: events are always processed in the order they are received in, that does not change. This is described in more detail here: QRadar Event & Flow Burst Handling. [http://www.ibm.com/support/docview.wss?uid=swg21687020] 
+Return to top of page 
+----- 
+
+
+WHERE DO I FIND MORE INFORMATION?
+If you have additional questions or some of this content is not clear, you can see the QRadar forum or contact customer support:  * Online QRadar Customer Forums [https://ibm.biz/BdR2kC] 
+ * Submit and manage your support tickets online 24x7 using IBM Service Request [http://www.ibm.com/software/support/servicerequest/quick_start.html] 
+ * QRadar Downloads - IBM Fix Central [http://www.ibm.com/support/fixcentral/options?selection=Security+Systems;ibm/Other+software/IBM+Security+QRadar+SIEM]
+
+RELATED INFORMATION
+ QRadar Event & Flow Burst Handling [http://www-01.ibm.com/support/docview.wss?uid=swg21687020]
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Security IBM Security QRadar Collectors Security IBM Security QRadar Log Manager Security IBM Security QRadar QFlow Collector Security IBM Security QRadar SIEM Security IBM Security QRadar VFlow Collector

@@ -1,0 +1,159 @@
+Title: IBM IT04947: READING OF CHUNKED ENCODING WITH HTTP BODY COMPRESSION MIGHT UNEXPECTEDLY CAUSE THE NEXT REQUEST OR RESPONSE NOT BE PROCESSED - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Fix packs for DataPower XML Security Gateway version 6.0 [http://www-01.ibm.com/support/docview.wss?uid=swg24034955]
+Fix packs for DataPower B2B Appliance version 6.0 [http://www-01.ibm.com/support/docview.wss?uid=swg24034956]
+Fix packs for DataPower Integration Appliance version 6.0 [http://www-01.ibm.com/support/docview.wss?uid=swg24034957]
+Fix packs for DataPower Low Latency Appliance version 6.0 [http://www-01.ibm.com/support/docview.wss?uid=swg24034958]
+Fix packs for DataPower Service Gateway version 6.0 [http://www-01.ibm.com/support/docview.wss?uid=swg24034959]
+Fix packs for DataPower Service Gateway version 6.0.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24036407]
+Fix packs for DataPower B2B Appliance version 6.0.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24036409]
+Fix packs for DataPower Integration Appliance version 6.0.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24036410]
+Fix packs for DataPower Service Gateway version 7.0 [http://www-01.ibm.com/support/docview.wss?uid=swg24037486]
+Fix packs for DataPower B2B Appliance version 7.0 [http://www-01.ibm.com/support/docview.wss?uid=swg24037487]
+Fix packs for DataPower Integration Appliance version 7.0 [http://www-01.ibm.com/support/docview.wss?uid=swg24037488]
+Fix packs for DataPower Gateway version 7.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24038524]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When using chunked encoding with HTTP compression, DataPower
+   might incorrectly read the end of the transaction and be unable
+   to process a following transaction, either reading in a request
+   or reading in a response to the device.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  For requests to DataPower, disable HTTP compression in the HTTP
+   Front Side Handler.
+   
+   For responses to DataPower, disable HTTP compression in the
+   Main tab in the Multi-Protocol Gateway or Proxy Settings tab
+   in the Web Service Proxy.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Incoming messages (from either front or backend) having
+   "Content-Encoding: gzip" and "Transfer-Encoding: chunked" might
+   corrupt subsequent request or response on the same persistent
+   connection. All services that handle HTTP traffic are affected.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fix is available in 6.0.0.12, 6.0.1.8, 7.0.0.5 and 7.1.0.3.
+   
+   For a list of the latest fix packs available, please see:
+   http://www-01.ibm.com/support/docview.wss?uid=swg21237631 [http://www-01.ibm.com/support/docview.wss?uid=swg21237631]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT04947
+   
+   
+ * REPORTED COMPONENT NAME
+   DATAPOWER
+   
+   
+ * REPORTED COMPONENT ID
+   DP1234567
+   
+   
+ * REPORTED RELEASE
+   601
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-10-15
+   
+   
+ * CLOSED DATE
+   2015-01-08
+   
+   
+ * LAST MODIFIED DATE
+   2015-02-09
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   DATAPOWER
+   
+   
+ * FIXED COMPONENT ID
+   DP1234567
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R600 PSN
+   UP
+   
+   
+ * R601 PSN
+   UP
+   
+   
+ * R700 PSN
+   UP
+   
+   
+ * R710 PSN
+   UP

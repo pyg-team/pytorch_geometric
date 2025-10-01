@@ -1,0 +1,34 @@
+Title: IBM We are seeing very high memory usage 96% of 32GB - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ We are seeing very high memory usage 96% of 32GB in our UAT env and 95%
+of 64GB in our prod environment. 
+
+SYMPTOM
+We are seeing very high memory usage 96% of 32GB in our UAT env and 95%
+of 64GB in our prod environment.
+
+
+CAUSE
+The resolution to the problem is external to IBM Control Center. 
+
+The root cause was found to be the use of the curl command to determine the availability of Control Center's web ui.
+
+
+
+ENVIRONMENT
+6.1.0.1_iFix05 - build July 05 2017 16:01 running on Linux
+
+
+
+DIAGNOSING THE PROBLEM
+Use of memory usage tools
+
+
+
+RESOLVING THE PROBLEM
+Refer to Red Hat article:
+https://bugzilla.redhat.com/show_bug.cgi?format=multiple&id=1044666 [https://bugzilla.redhat.com/show_bug.cgi?format=multiple&id=1044666]

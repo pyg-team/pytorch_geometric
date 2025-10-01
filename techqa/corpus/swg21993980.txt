@@ -1,0 +1,14 @@
+Title: IBM Why I am not able to connect two column oriented tables by foreign key? - United States
+
+Text:
+foreign key; constraint; dashDB; NOT ENFORCED; not enforced TECHNOTE (FAQ)
+
+QUESTION
+ Why I am not able to connect two column oriented tables by foreign key? 
+
+ANSWER
+ 
+
+Constraints are not enforced in dashDB, so it does not support foreign keys that require enforcement. For informational purposes a "not enforced" foreign key constraint can be added. The key word "NOT ENFORCED" at the end of the Alter statement will transform the constraint to an informational constraint. 
+Constraints are not enforced in dashDB, so since standard foreign keys require enforcement creating them is not supported. Informational constraints are supported and a "not enforced" informational foreign key constraint can be added. RELATED INFORMATION
+ Adding Constraints to dashDB tables [http://www-01.ibm.com/support/docview.wss?uid=swg21993997]

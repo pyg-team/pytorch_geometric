@@ -1,0 +1,143 @@
+Title: IBM IV82131: DOCUMENTATION IN ITNM 4.2 REFERENCING INCORRECTLY TELNET RIGHT CLICK TOOL - United States
+
+Text:
+  DIRECT LINKS TO FIXES
+4.2.0-TIV-NOIHD-Linux-FP0001 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Network+Manager+IP+Edition&fixids=4.2.0-TIV-NOIHD-Linux-FP0001&source=SAR]
+4.2.0-TIV-ITNMIP-Linux-FP0001 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Network+Manager+IP+Edition&fixids=4.2.0-TIV-ITNMIP-Linux-FP0001&source=SAR]
+4.2.0_README_FP0001 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Network+Manager+IP+Edition&fixids=4.2.0_README_FP0001&source=SAR]
+4.2.0-TIV-NOIHD-AIX-FP0001 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Network+Manager+IP+Edition&fixids=4.2.0-TIV-NOIHD-AIX-FP0001&source=SAR]
+4.2.0-TIV-ITNMIP-AIX-FP0001 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Network+Manager+IP+Edition&fixids=4.2.0-TIV-ITNMIP-AIX-FP0001&source=SAR]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Prior to ITNM 4.2 , right click menus contained the Telnet tool
+   to be able to telnet into the device. The tool was removed from
+   4.2 for security reasons but the ITNM 4.2 documentation still
+   contains references to the Telnet tool.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  n/a
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * ITNm 4.2 only                                                *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * DOCUMENTATION IN ITNM 4.2 REFERENCING INCORRECTLY TELNET     *
+   * RIGHT CLICK TOOL.                                            *
+   * Prior to ITNM 4.2 , right click menus contained the Telnet   *
+   * tool to be able to telnet into the device. The tool was      *
+   * removed from                                                 *
+   * 4.2 for security reasons but the ITNM 4.2 documentation      *
+   * still contains references to the Telnet tool.                *
+   * http://www.ibm.com/support/knowledgecenter/SSSHRK_4.2.0/itnm *
+   * /ip/wip/resolve/task/nmip_ops_logintodevice.html?lang=en     *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Upgrade to ITNM-IP | fix pack | 4.2.0-ITNMIP-FP0001          *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Documentation will be updated in fix pack | 4.2.0-ITNMIP-FP0001.
+   We removed applets from the product. Applets allowed us to open
+   the CMD prompt on the host machine.
+   We do not have a a technical solution that would allow the
+   telnet tool to be readded to the right click framework, it's not
+   possible to call O/S level commands directly from Javascript.
+   The customer can open the CMD prompt themselves, thats a valid
+   work around.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV82131
+   
+   
+ * REPORTED COMPONENT NAME
+   TIV NETWK MGR I
+   
+   
+ * REPORTED COMPONENT ID
+   5724S4500
+   
+   
+ * REPORTED RELEASE
+   420
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-03-04
+   
+   
+ * CLOSED DATE
+   2016-03-11
+   
+   
+ * LAST MODIFIED DATE
+   2016-03-11
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

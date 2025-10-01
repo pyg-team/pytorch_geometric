@@ -1,0 +1,29 @@
+Title: IBM Unable to drop/rename the bigsql tables due to table dropped in hive - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How to resolve the Bigsql user unable to drop bigsql tables issue due to table dropped in hive by accident? 
+
+CAUSE
+The reason can't drop/rename bigsql table was due to this error:
+2016-11-02 18:20:16,585 ERROR com.ibm.biginsights.catalog.translator.db2.DB2StatementHandler [Thread-22] : Failed to execute [DROP TABLE BASE_TABLE]: The current transaction has been rolled back because of a deadlock or timeout. Reason code "68".. SQLCODE=-911, SQLSTATE=40001, DRIVER=4.21.31 com.ibm.db2.jcc.am.SqlTransactionRollbackException: The current transaction has been rolled back because of a deadlock or timeout. Reason code "68".. SQLCODE=-911, SQLSTATE=40001, DRIVER=4.21.31 at com.ibm.db2.jcc.am.kd.a(kd.java:797) at com.ibm.db2.jcc.am.kd.a(kd.java:66) at com.ibm.db2.jcc.am.kd.a(kd.java:140) at com.ibm.db2.jcc.am.rp.c(rp.java:2796) at com.ibm.db2.jcc.t4.bb.s(bb.java:980) at com.ibm.db2.jcc.t4.bb.j(bb.java:241) at com.ibm.db2.jcc.t4.bb.c(bb.java:48) at com.ibm.db2.jcc.t4.p.b(p.java:38) at com.ibm.db2.jcc.t4.vb.h(vb.java:124) at com.ibm.db2.jcc.am.rp.jb(rp.java:2141) at com.ibm.db2.jcc.am.rp.a(rp.java:3336) at com.ibm.db2.jcc.am.rp.e(rp.java:1111) at com.ibm.db2.jcc.am.rp.execute(rp.java:1090) at com.ibm.biginsights.catalog.translator.db2.DB2StatementHandler.execute(DB2StatementHandler.java:309)
+
+code 68 means your catalog table on bigsql head node has been locked.
+
+
+ANSWER
+To release the lock, try this steps from bigsql head node: 
+
+1) switch to bigsql user 
+2) db2 connect to bigsql 
+3) db2 list applications for db bigsql show detail 
+4) db2pd -db bigsql -wlocks 
+5) db2 "force application ( )" where will be found from db2pd -db bigsql -wlocks as the lock holder
+If this does not work, restart your bigsql service to release the deadlock..
+
+Once deadlock released, follow this instruction to drop your tables:
+1) db2 "set syshadoop.catalog_sync_mode='N'" 
+2) db2 drop table tablename 
+3) db2 "set syshadoop.catalog_sync_mode='Y'"

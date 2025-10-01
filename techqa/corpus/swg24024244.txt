@@ -1,0 +1,168 @@
+Title: IBM Passport Advantage downloads for WebSphere ESB 7.0 - Windows - United States
+
+Text:
+PAODownloadDocument; Passport advantage; 7.0.0; windows DOWNLOADABLE FILES
+
+ABSTRACT
+ This document explains how to download IBM WebSphere Enterprise Service Bus 7.0 files from the Passport Advantage Web site. 
+
+DOWNLOAD DESCRIPTION
+WebSphere Enterprise Service Bus supports the integration of service-oriented, message-oriented and event-driven technologies to provide standards-based, messaging infrastructure to companies wanting a fast start to a service-oriented architecture (SOA). 
+
+This document explains how to download the full WebSphere Enterprise Service Bus version 7.0 product from Passport Advantage. 
+
+The IBM WebSphere Process Server V7.0 and WebSphere Enterprise Service Bus V7.0 provides new Business Space widgets. 
+
+
+More information
+
+To access a wide variety of technical resources for this product, see the Business Process Management information roadmaps [http://www14.software.ibm.com/webapp/wsbroker/redirect?version=pix&product=wps-dist&topic=bpmroadmaps]. To see latest information and technotes, go to the WebSphere Enterprise Service Bus support page [http://www.ibm.com/support/entry/portal/Overview/WebSphere/WebSphere_Enterprise_Service_Bus/].
+
+
+Hardware and software requirements 
+
+Refer to one of the following pages for your hardware and software requirements, depending on your platform: 
+
+ * Hardware and software requirements for Windows on x86 [http://www.ibm.com/support/docview.wss?uid=swg27016128]
+   
+   
+ * Hardware and software requirements for Windows on x86 64-bit [http://www.ibm.com/support/docview.wss?uid=swg27016267]
+
+
+
+Downloading and assembling the product 
+ 1. Locate the WebSphere Enterprise Service Bus eAssembly for the platform or platforms you need to use. The eAssembly part numbers are provided in the tabbed sections of this document. 
+    
+    
+ 2. Download all of the parts that you need. The parts are listed by platform in the tabbed sections of this document. 
+    
+    
+ 3. Unpack each of the parts onto your system. 
+    
+    
+ 4. Follow the instructions in the Quick Start Guide to install the product. 
+
+
+
+TAB NAVIGATION
+ * AIX [http://www.ibm.com/support/docview.wss?uid=swg24024240]
+ * HP-UX [http://www.ibm.com/support/docview.wss?uid=swg24024241]
+ * Linux [http://www.ibm.com/support/docview.wss?uid=swg24024242]
+ * Solaris [http://www.ibm.com/support/docview.wss?uid=swg24024243]
+ * Windows [http://www.ibm.com/support/docview.wss?uid=swg24024244]- selected tab,
+
+
+
+
+Supported platforms 
+
+For supported platforms, including required version levels, see Hardware and software requirements for Windows on x86 [http://www.ibm.com/support/docview.wss?uid=swg27016128] and Hardware and software requirements for Windows on x86 64-bit [http://www.ibm.com/support/docview.wss?uid=swg27016267]. 
+
+ 
+
+Downloadable parts 
+
+Refer to the tables below for Windows on 32-bit processors and Windows on 64-bit processors for details about the parts included in each Windows platform. 
+
+At a minimum, you must download the IBM WebSphere Enterprise Service Bus 7.0 image. Parts recommended for installation and parts optional for installation are labeled in the tables. Your need for parts depends on your usage and configuration choices. Components that you might want to use in your topology but which run on another platform can be found on the tabbed page corresponding to that platform. 
+
+ 
+
+Downloadable parts for Windows 32-bit 
+
+The following tables lists the 32-bit downloadable parts in IBM WebSphere Enterprise Service Bus 7.0 for Windows eAssembly (Part Number: CZ5ETML). 
+
+ 
+
+Part number Description Images recommended for installation CF25QML IBM WebSphere Enterprise Service Bus 7.0 Quick Start Guide CZ5ETML IBM WebSphere Enterprise Service Bus V7.0 for Windows 32-bit Systems Multilingual Contains the following core installation files: 
+
+ * IBM WebSphere Enterprise Service Bus 7.0 
+ * IBM Websphere Application Server Network Deployment 
+ * IBM Installation Factory for WebSphere Application Server 
+ * IBM Update Installer for WebSphere Software 
+ * IBM User Interface Help System Built on Eclipse 
+ * Migration Tool 
+
+C1G2HML IBM WebSphere Application Server Network Deployment Supplement for Windows on Intel 32b image 1 Contains the following files: 
+
+ * Application Client for WebSphere Application Server 
+ * IBM HTTP Server 
+ * IBM Support Assistant 
+ * Web Server Plug-ins 
+ * Migration tool
+
+C1G2IML IBM WebSphere Application Server Network Deployment Supplement for Windows on Intel 32b image 2 Contains the following files: 
+
+ * Application Client for WebSphere Application Server 
+ * IBM HTTP Server 
+ * IBM Support Assistant 
+ * Web Server Plug-ins 
+ * Migration tool
+
+C95D1ML IBM WebSphere Application Server - Express Version 6.1 for 32-bit Windows (contains Application Server Toolkit 6.1.1) C95D2ML IBM WebSphere Application Server - Express Version 6.1 for 32-bit Linux on x86 (contains Application Server Toolkit 6.1.1) Optional installation images C88SPML IBM WebSphere Application Server Network Deployment 6.1 This part is for use with Installation Factory for creating WebSphere Application Server Network Deployment Custom Install Packages (CIPs).
+
+C87Y0ML IBM WebSphere Application Server Network Deployment Rational Agent Controller 6.1.5 C1I4YML IBM WebSphere Application Server Network Deployment V7 Edge Component for Windows 32b C1I4ZML IBM WebSphere Application Server Network Deployment V7 Edge Component for IPv6 for V7.0 for Windows on x86 32-bit C1HN9ML IBM Tivoli Access Manager for e-business 6.1 C1N9VML IBM Tivoli Directory Server 6.2 C150RML IBM DB2 Restricted Enterprise Server Edition 9.5 - Authorized User Option - Activation C14SLML IBM DB2 Enterprise Server Edition 9.5 for Windows on 32-bit AMD and Intel systems (x86) C14Q0ML IBM Data Server Runtime Client 9.5 for Windows on 32-bit AMD and Intel systems (x86) C14NIML IBM Data Server Drivers 9.5 for Windows on 32-bit AMD and Intel systems (x86) C14PYML IBM Data Server Client 9.5 for Windows on 32-bit AMD and Intel systems (x86) 
+
+Downloadable parts for Windows 64-bit 
+
+The following tables lists the 64-bit downloadable parts in IBM WebSphere Enterprise Service Bus 7.0 for Windows eAssembly (Part Number: CZ7MIML). 
+
+ 
+
+Part number Description Images recommended for installation CF25QML IBM WebSphere Enterprise Service Bus 7.0 Quick Start Guide CZ7MIML IBM WebSphere Enterprise Service Bus V7.0 for Windows 64-bit Systems Multilingual Contains the following core installation files: 
+
+ * IBM WebSphere Enterprise Service Bus 7.0 
+ * IBM Websphere Application Server Network Deployment 
+ * IBM Installation Factory for WebSphere Application Server 
+ * IBM Update Installer for WebSphere Software 
+ * IBM User Interface Help System Built on Eclipse 
+ * Migration Tool 
+
+C88TPML WebSphere Application Server Network Deployment 6.1 Windows 2k3 AMD 64-bit Supplements Contains the following files: 
+
+ * IBM HTTP Server 
+ * IBM Support Assistant 
+ * Web Server Plug-ins 
+
+Optional installation images C1G2KML IBM WebSphere Application Server Network Deployment V7 Supplement for Windows on AMD 64b image 1 Contains the following files: 
+
+ * IBM HTTP Server 
+ * IBM Support Assistant 
+ * Web Server Plug-ins 
+ * Migration tool
+
+C1G2LML IBM WebSphere Application Server Network Deployment V7 Supplement for Windows on AMD 64b image 2 Contains the following files: 
+
+ * IBM HTTP Server 
+ * IBM Support Assistant 
+ * Web Server Plug-ins 
+ * Migration tool
+
+C88XQML IBM WebSphere Edge Components 6.1 Windows AMD Opteron 64-bit C88XRML IBM WebSphere Edge Components 6.1 Windows AMD Opteron 64-bit for IPV6 C1P1JML IBM Tivoli Directory Server 6.2 (Windows x86 64-bit) C150RML IBM DB2 Restricted Enterprise Server Edition 9.5 - Authorized User Option - Activation C14SMML IBM DB2 Enterprise Server Edition 9.5 for Windows on AMD64 and Intel EM64T systems (x64) C14Q1ML IBM Data Server Runtime Client 9.5 for Windows on AMD64 and Intel EM64T systems (x64) C14NJML IBM Data Server Drivers 9.5 for Windows on AMD64 and Intel EM64T systems (x64) C14PZML IBM Data Server Client 9.5 for Windows on AMD64 and Intel EM64T systems (x64) 
+Change history 
+
+ * 25 March 2009 
+ * 10 December 2009 
+
+
+PREREQUISITES
+See the following Web site for the prerequisites for WebSphere Enterprise Service Bus:
+
+URL LANGUAGE SIZE(Bytes) WebSphere Enterprise Service Bus system requirements [http://www.ibm.com/support/docview.wss?uid=swg27006912] English 1598313968 
+INSTALLATION INSTRUCTIONS
+The link in the table below is to the WebSphere Enterprise Service Bus Information Center.
+
+URL LANGUAGE SIZE(Bytes) WebSphere Enterprise Service Bus Information Center [http://publib.boulder.ibm.com/infocenter/dmndhelp/v7r0mx/index.jsp?topic=/com.ibm.websphere.wesb.doc/info/welcome.html] Language Independent 5000000 
+DOWNLOAD PACKAGE
+IBM Passport Advantage Online:
+http://www.ibm.com/software/howtobuy/passportadvantage/pao_customers.htm [http://www.ibm.com/software/howtobuy/passportadvantage/pao_customers.htm]
+
+
+
+
+TECHNICAL SUPPORT
+ Passport Advantage Online support at:
+http://www.ibm.com/software/howtobuy/passportadvantage/paocustomer/docs/en_US/ecare.html [http://www.ibm.com/software/howtobuy/passportadvantage/paocustomer/docs/en_US/ecare.html] 
+
+WebSphere Enterprise Service Bus support at::
+http://www.ibm.com/support/entry/portal/Overview/WebSphere/WebSphere_Enterprise_Service_Bus [http://www.ibm.com/support/entry/portal/Overview/WebSphere/WebSphere_Enterprise_Service_Bus]

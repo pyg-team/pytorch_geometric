@@ -1,0 +1,117 @@
+Title: IBM Download IBM Content Navigator Version 3.0 - United States
+
+Text:
+ DOWNLOADABLE FILES
+
+ABSTRACT
+ This document describes how to download and install the IBM Content Navigator Version 3.0 components by using Passport Advantage Online or Fix Central 
+
+DOWNLOAD DESCRIPTION
+ 
+
+IBM Content Navigator is a web client that provides users with a web interface for working with content from multiple content servers. It helps companies provide managed access to large volumes of electronic data. IBM Content Navigator enables users to search for and work with documents that are stored in content servers that are located around the world from a web browser. IBM Content Navigator works with the following desktop clients:
+
+
+ * IBM Content Navigator for Microsoft Office - an optional component of IBM Content Navigator that enables users to access content from within Microsoft Office applications. 
+ * IBM Content Navigator Sync Client - an optional component of IBM Content Navigator that enables users to sync content between their workstation and the web client. (Available only on FileNet P8 systems.)
+
+
+In addition, IBM Content Navigator Version 3.0 also distributes Microsoft SharePoint Web Parts for the Browse, Search, and Work features. The Web Parts enable users to access documents stored in an IBM FileNet P8 repository from Microsoft SharePoint. 
+
+The IBM Content Navigator software package also includes the following applications: 
+ * IBM CMIS for Content Manager 
+ * IBM CMIS for Content Manager OnDemand 
+ * IBM CMIS for FileNet Content Manager 
+ * IBM FileNet Collaboration Services
+
+
+SPACE REQUIREMENTS
+On the application server, IBM Content Navigator will require a minimum of:
+
+
+ * Disk space:  * For a standalone configuration: 4 GB on the drive on which you plan to install IBM Content Navigator. 
+    * For a cluster configuration: 6 GB on the drive on which you plan to install IBM Content Navigator.
+   
+   
+ * Temp space: The self-extractor checks for free disk space that is three times the size of the installer where the temp directory is located. For instance if the installer is 1.3GB, and the temp directory is set to C:\temp, the installers will look for 4GB of free space on the C: drive.  * On Windows, If enough free space is not available, the installer will prompt the user for an alternate location for extraction. 
+    * On Unix, the installer does not prompt to pick another location; however the IATEMPDIR environment variable may be manually set to a location with sufficient temp space. To set the variable enter one of the following commands at the UNIX command line prompt before running this installer again:
+      - for Bourne shell (sh), ksh, bash and zsh:
+      $ IATEMPDIR=/your/free/space/directory
+      $ export IATEMPDIR
+      - for C shell (csh) and tcsh:
+      $ setenv IATEMPDIR /your/free/space/directory
+   
+   
+ * JVM Memory: 1 GB
+
+
+DOWNLOADING THE PRODUCT FROM PASSPORT ADVANTAGE
+To download IBM Content Navigator or its components from Passport Advantage: 
+
+ 1. From a browser, navigate to the Find Downloads and Media [http://www.ibm.com/software/howtobuy/passportadvantage/paocustomer/sdma/SDMA?PO=DOWNLOAD_FIND_BY_PART_NUMBER] page on the IBM Passport Advantage Online Web site. You must log on to continue. For more information about downloading software from the Passport Advantage Online Web site, see http://www.ibm.com/support/docview.wss?uid=swg21622147 [http://www.ibm.com/support/docview.wss?uid=swg21622147]. 
+ 2. Select the Find by part number search option under Download finder options. 
+ 3. Search for the part number of the image that you want to download. See the list of part numbers for more information. 
+ 4. Unpack the part into a single, temporary directory on your system. 
+ 5. Follow the instructions in Planning, Installing, and Configuring IBM Content Navigator [http://www.ibm.com/support/knowledgecenter/SSEUEX_3.0.0/com.ibm.installingeuc.doc/eucao000.htm] to install the product. 
+    
+
+
+Download the appropriate driver for your environment. 
+
+IBM Content Navigator (including IBM CMIS and IBM FileNet Collaboration Services):  * AIX: CNGF7ML 
+ * Linux: CNGF8ML 
+ * Linux for System z: CNGF9ML 
+ * Windows: CNGG0ML
+
+
+Optional components:  * IBM Content Navigator for Microsoft Office (Windows only): CNGG1ML 
+ * IBM Content Navigator for Microsoft SharePoint (Windows only): CNGG2ML 
+ * IBM Content Navigator Sync (Windows): CNGG3ML 
+ * IBM Content Navigator Sync (Mac OS X): CNGG4ML
+
+
+IBM Content Navigator includes a limited license for IBM Connections Docs:  * Windows and Linux Multilingual: CN7ZLML
+
+
+DOWNLOADING THE PRODUCT FROM FIX CENTRAL
+To download IBM Content Navigator or its components from Fix Central:
+1. From a browser, log in to Fix Central [https://www-945.ibm.com/support/fixcentral/].
+2. In the Product Group list, select Enterprise Content Management.
+3. In the Select from Enterprise Content Management list, select Content Navigator. 
+4. In the Installed Version list, select 2.0.3 or 2.0.3.x. 
+5. Select your product platform.
+6. Click Continue.
+
+Before downloading, Fix Central will prompt you to accept IBM Content Navigator 3.0 license.
+
+
+
+PREREQUISITES
+To install IBM Content Navigator 3.0, you must install the required software on the server where you plan to install IBM Content Navigator. For complete details about hardware and software requirements, create a software compatibility report for IBM Content Navigator 3.0. For information about creating a report, see Software product compatibility reports [http://www.ibm.com/support/knowledgecenter/SSEUEX_3.0.0/com.ibm.installingeuc.doc/sw_comp_reports.htm].
+
+
+INSTALLATION INSTRUCTIONS
+You can find instructions for installing IBM Content Navigator in IBM Knowledge Center: 
+
+
+URL LANGUAGE SIZE(Bytes) Installing IBM Content Navigator [http://www.ibm.com/support/knowledgecenter/SSEUEX_3.0.0/com.ibm.installingeuc.doc/eucao000.htm] English 10000 
+DOWNLOAD PACKAGE
+ 
+
+Download Release Date Language Size Format IBM Passport Advantage Online [http://www-01.ibm.com/software/howtobuy/passportadvantage/pao_customers.htm] December 2016 English 10000 HTTP IBM Fix Central [https://www-945.ibm.com/support/fixcentral] December 2016 English 10000 HTTPS 
+PROBLEMS SOLVED
+For a list of the APARs that were fixed in IBM Content Navigator, Version 3.0, see Fix list for IBM Content Navigator, Version 3.0 [http://www.ibm.com/support/docview.wss?uid=swg27049061]
+
+
+
+KNOWN SIDE EFFECTS
+For a list of the known problems that are associated with IBM Content Navigator, Version 3.0 see IBM Content Navigator, Version 3.0 known problems, issues, and limitations [http://www.ibm.com/support/docview.wss?uid=swg27049060]
+
+
+
+CHANGE HISTORY
+ 
+
+History Date Change Release December 2016 Created for IBM Content Navigator 3.0 
+ [/support/docview.wss?uid=swg24043050&aid=1]Problems (APARS) fixed [/support/docview.wss?uid=swg24043050&aid=2]Problems (APARS) fixed
+IO24544, IO24653, PJ44290, IO24745, IO24752, IO24759, IO24757, IO24490, IO24765, IO24539, IO24710, IO24777, IO24711, IO24514, IO24808, IO24779, IO24784, IO24779, IO24789, IO24804, IO24803, IO24807, IO24790, IO24909, IO24822, IO24826, IO24791, IO24825, IO24821, IO24831, IO24830, IO24813, PJ44420, IO24846, IO24847, IO24861, IO24836, IO24871, IO24865, IO24869, IO24886, IO24883, IO24884, IO24944, IO24949, PJ44413, IO24985, IO24952, IO24880, IO24953, IO24973, IO24492, IO24965, IO24972

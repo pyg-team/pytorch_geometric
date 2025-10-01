@@ -1,0 +1,35 @@
+Title: IBM WebSphere Banking Content Pack Passport Advantage download document - United States
+
+Text:
+v70rnotes; PAODownloadDocument; Passport advantage DOWNLOADABLE FILES
+
+ABSTRACT
+ IBM WebSphere Banking Content Pack version 7.0 is a prebuilt accelerator for the WebSphere Business Process Management (BPM) offering. 
+
+DOWNLOAD DESCRIPTION
+This document provides the eAssembly part number "CR9K6ML" required for download of the IBM WebSphere Banking Content Pack 7.0 product from the Passport Advantage Web site [http://www.ibm.com/software/howtobuy/passportadvantage/pao_customers.htm]. 
+
+The assets provided in the WebSphere Banking Content Pack and their description is provided here.
+
+Banking Capability Models: The Banking Capability Models are based on the American Productivity & Quality Center (APQC)-Process Classification Framework (PCF), International Organization for Standardization (ISO)20022, and banking industry and IBM best practices. They are used to provide a view of business capabilities and business processes used in the banking industry.
+
+Banking Process Models: The Banking Process Models are based on IBM best practices. They are the foundation for implementation of a Banking-specific BPM solution, enabling it to be reused across multiple solutions.
+
+Banking Service Models: The Banking Service Models are based on industry standards such as IBM Information FrameWork (IFW)-IDM and IBM best practices. They are prebuilt service interfaces and schemas that facilitate interoperability across diverse platforms for the banking industry. These industry standards provide the messaging schemas that can be used to define the Industry Service Interfaces.
+
+Banking Common Components: The Banking Common Components are based on ISO 20022 Single Euro Payments Area (SEPA), National Automated Clearing House Association (NACHA), and IBM best practices. They include common services that can be used as-is or can be extended to enable transactional functions.
+
+Banking Business Vocabulary: The Banking Business Vocabulary is based on ISO 20022, IFW, Single Euro Payments Area (SEPA), and NACHA. The Banking Business Vocabulary is used to provide more information about the relationships between industry-specific terms.It is a taxonomy of the business terms for the banking industry, and is used to provide more information about the relationships between industry-specific terms.
+
+Banking Business Object Models: The Banking Business Object Model is based on ISO 20022 and IBM best practices. They are is a logical representation of business entities and attributes that set up a business domain or a subvertical within a domain.
+
+Banking Solution Scenarios: The Banking Solution Scenarios are packaged BPM implementation as a reference to understand end-to-end delivery of a BPM solution for the banking industry. They use most of the assets from the WebSphere Banking Content Pack , which have either been used or extended as per the use case requirement.
+
+PREREQUISITES
+See the Hardware and Software requirements at the following link :
+
+URL LANGUAGE SIZE(Bytes) Hardware / Software requirements [http://publib.boulder.ibm.com/infocenter/dmndhelp/v7r0mx/index.jsp?topic=/com.ibm.ws.icp.bkkpay.doc/shared/ins_gd/concept/c_bk_swhw_reqs.html] English 1588 
+INSTALLATION INSTRUCTIONS
+See the installation instructions at the following link :
+
+URL LANGUAGE SIZE(Bytes) Installation Instructions [http://publib.boulder.ibm.com/infocenter/dmndhelp/v7r0mx/index.jsp?topic=/com.ibm.ws.icp.bkkpay.doc/shared/ins_gd/concept/c_bk_swhw_reqs.html] English 1670

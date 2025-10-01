@@ -1,0 +1,63 @@
+Title: IBM Is Domino Web Access supported on Citrix? - United States
+
+Text:
+ND801ET update; citrix os; citrix metaframe; support for; supported with; supported on; citrix machine; citrix platform; citrix operating system; can citrix be used with DWA; iNotes Web Access 6.x; DWA 6.5x; IWA; Domino Web Access 7.x; DWA 7.x; Citrix PS; Citrix server; Citrix Presentation server TECHNOTE (FAQ)
+
+QUESTION
+Does Lotus® Domino® Web Access (iNotes™ Web Access) support the Citrix platform?
+
+ANSWER
+
+Citrix Support Policy starting in DWA 8.0.1:
+
+DWA 8.0.1 is officially supported on Microsoft® Windows® 2003 with Citrix Presentation Server 4.5. Both Internet Explorer (IE) versions 6.0 and 7.0 are supported on this platform.
+
+System Requirements:
+
+Domino 8.0.1 server
+mail8.ntf
+Internet Explorer versions 6.0 or 7.0
+Windows 2003
+Citrix Presentation Server 4.5
+
+
+Internet Explorer 6.0 and 7.0 Configuration Details:
+
+By default, on a Windows 2003 server, the “Internet Explorer Enhanced Security Configuration” feature is enabled. With this feature enabled, Internet Explorer has a "High" security setting for Internet sites, and this can and will prohibit full functionality in DWA. It is recommended to disable the "Internet Explorer Enhanced Security Configuration" feature in order to guarantee full functionality (such as Active X control, etc.) in DWA. How to disable the feature:
+
+
+ 1. Go to the Control Panel > Add/Remove Programs 
+ 2. Click on "Add/Remove Windows components" 
+ 3. De-select the "Internet Explorer Enhanced Security Configuration" option, and click "Next".
+
+
+If DWA 8.0.1 customers choose to keep the "Internet Explorer Enhanced Security" feature enabled, they will lose functionality and not exploit the full feature set of DWA. 
+
+If disabling this feature is not an option, the URL to the DWA server can be added to "Trusted Sites" in IE. 
+
+
+DWA Archiving and DOLS Support : 
+
+Currently, Domino Off-Line Services (DOLS) and DWA Archiving are not supported because of the installation architecture of DOLS. An Enhancement Request to support DOLS (and DWA Archiving) on Citrix has been submitted to Quality Engineering as SPR# TMDS7ARNHZ; the request is to either provide a Multi-user installation package for DOLS, or hide the option when a user logs into DWA from a Citrix server (or Windows 2003 server). There are no current plans to implement this request. 
+
+Workaround: To prevent the offline option from appearing in DWA, disable the "Allow user to go offline" option in the Server Configuration document (go to the Domino Web Access tab) and then restart HTTP. 
+
+NOTE: This is a global setting and will impact all users on DWA server. 
+
+
+
+
+In DWA versions prior to DWA 8.0.1: 
+
+Citrix is not currently supported with any releases of Domino Web Access (DWA) prior to 8.0.1. 
+
+
+Citrix emulates the web browser so there is no real benefit in using DWA on Citrix, as DWA is a thin client. 
+
+
+DWA is not supported over any type of thin client, including the BOSâNOVA Linux Thin Client distributed by BosWeb.
+
+Many customers have reported they can run DWA on Critix successfully; however, if a customer encounters a problem with DWA on Citrix, the problem must also be reproducible in a non Citrix environment (Windows platform) in order for IBM/Lotus Support to be able to report the problem to Quality Engineering.
+
+RELATED INFORMATION
+#

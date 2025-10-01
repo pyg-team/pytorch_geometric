@@ -1,0 +1,300 @@
+Title: IBM Modified procedures for configuring Fibre Channel
+with high availability and redirecting the /store or /store/ariel file systems to an offboard device - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The IBM Security QRadar Offboard Storage Guide is modified.
+
+The procedure for migrating the /store file system to an offboard device by using Fibre Channel is modified. Additional notes in steps 2 and 9 indicate that the /store/ariel/persistent_data file system is applicable only when the /store file system is an xfs file system. 
+
+The procedure for migrating the /store/ariel file system to an offboard device by using Fibre Channel is modified. Step 8 includes new file system settings for the /etc/fstab file.
+
+The procedure for configuring the mount point for the secondary HA host is modified. Steps 4,5, and 6 include new settings for the /etc/fstab file depending on whether the /store file system is an ext4 or xfs file system. 
+
+RESOLVING THE PROBLEM
+Migrating /store to Fibre Channel 
+
+You can migrate the QRadar data that is maintained in the /store file system and mount the /store file system to a Fibre Channel device.
+
+Before you begin
+
+Perform the steps in the procedure, Verifying the Fibre Channel connections.
+
+Procedure
+
+Step 1 Stop the QRadar services by typing the following commands in order:
+
+service systemStabMon stop
+service hostcontext stop
+service tomcat stop
+service hostservices stop
+service crond stop
+
+Step 2 Unmount the file systems by typing the following commands:
+
+umount /store/tmp
+umount /store/ariel/persistent_data
+umount /store
+
+Attention: The /store/ariel/persistent_data file system is mounted only when the /store file system uses xfs. In this case /store/ariel/persistent_data must be umounted.
+
+Step 3 Create a /store_old directory by typing the following command:
+
+mkdir /store_old
+
+Step 4 Determine the Universally Unique Identifier (UUID) of the device partition by typing the following command:
+
+blkid /dev/<partition>
+
+Where: <partition> is the name of the device partition. For example: sdb1
+
+Note: If there is no partition on your Fibre Channel device volume, you must create a partition. For more information, see Creating a disk partition.
+
+Step 5 Modify the fstab file:
+
+a Edit the fstab file by typing the following command:
+
+vi /etc/fstab
+
+b Locate the existing mount line for the /store file system.
+c Modify the existing /store file system entry to /store_old.
+d Add a new mount point for the /store file system by typing one of the following lines:
+
+- If the /store file system is ext4 then type:
+
+UUID=<uuid> /store ext4 noatime,noauto,nobarrier 0 0
+
+- If the /store file system is xfs then type:
+
+UUID=<uuid> /store xfs inode64,logbsize=256k,noatime,noauto,nobarrier 0 0
+
+Where <uuid> is the UUID of the fibre channel device partition.
+
+e Modify the /store/tmp mount line to use the following file system options:
+
+noatime,noauto,nobarrier 0 0
+
+f If /store/ariel/persistent_data is listed in the fstab file, then type the following file system options:
+
+xfs inode64,logbsize=256k,noatime,noauto,nobarrier 0 0
+
+g Save and close the file.
+
+Step 6 Mount the new Fibre Channel /store file system by typing the following command:
+
+mount /store
+
+Step 7 Mount the /store_old file system by typing the following command:
+
+mount /store_old
+
+Step 8 Copy the data to the Fibre Channel partition by typing the following command:
+
+cp -af /store_old/* /store
+
+Step 9 Mount the /store/tmp file system by typing the following command:
+
+mount /store/tmp
+mount /store/ariel/persistent_data
+
+Attention: The /store/ariel/persistent_data file system is mounted only when the /store file system uses xfs.
+
+Step 10 Unmount the /store_old file system by typing the following command:
+
+umount /store_old
+
+Step 11 Remove the /store_old mount point from the /etc/fstab file:
+
+a Open the /etc/fstab file for editing by typing the following command:
+
+vi /etc/fstab
+
+b Remove the line for the /store_old mount point.
+c Save and close the file.
+
+Step 12 Start the QRadar services by typing the following commands in order:
+
+service crond start
+service hostservices start
+service tomcat start
+service hostcontext start
+service systemStabMon start
+
+What to do next
+
+Perform the steps in the procedure, Verifying the Fibre Channel mount point. Configuring the mount point for the secondary HA host
+
+Migrating /store/ariel to Fibre Channel
+
+You can migrate the QRadar data that is stored in the /store/ariel file system and then mount /store/ariel to a Fibre Channel device.
+
+Before you begin
+
+Perform the steps in the procedure, Verifying the Fibre Channel connections.
+
+Procedure
+
+Step 1 Stop the QRadar services by typing the following commands in the order specified:
+
+service systemStabMon stop
+service hostcontext stop
+service tomcat stop
+service hostservices stop
+service crond stop
+
+Step 2 Create a temporary directory by typing the following command:
+
+mkdir /tmp/fcdata
+
+Step 3 Mount the Fibre Channel storage partition to the temporary directory by typing the following command:
+
+mount /dev/<partition> /tmp/fcdata
+
+Where: <partition> is the name of the device partition. For example: sdb1
+
+Step 4 Copy the data to the Fibre Channel device by typing the following command:
+
+cp -af /store/ariel/* /tmp/fcdata
+
+Step 5 Unmount the Fibre Channel partition by typing the following command:
+
+umount /tmp/fcdata
+
+Step 6 Determine the UUID of the Fibre Channel device partition by typing the following command:
+
+blkid /dev/<partition>
+
+Where <partition> is the name of the Fibre Channel device partition. For example: sdb1.
+
+Step 7 Edit the fstab file by typing the following command:
+
+vi /etc/fstab
+
+Step 8 Add a new mount point for the /store/ariel file system by choosing one of the following options:
+
+• If the /store file system is ext4, then type the following command:
+
+UUID=<uuid> /store/ariel ext4 defaults,noatime,nobarrier 1 2
+
+• If the /store file system is an xfs file system, then type the following command:
+
+UUID=<uuid> /store/ariel xfs inode64,logbsize=256k,noatime,nobarrier 0 0
+
+Where: <uuid> is the value that you derived in step Step 6.
+
+Step 9 Save and close the file.
+
+Step 10 Mount the /store/ariel file system to the Fibre Channel device partition by typing the following command:
+
+mount /store/ariel
+
+Step 11 Start the QRadar services by typing the following commands in sequence:
+
+service crond start
+service hostservices start
+service tomcat start
+service hostcontext start
+service systemStabMon start
+
+What to do next
+
+Perform the steps in the procedure, Verifying the Fibre Channel mount point.
+
+Configuring the mount point for the secondary HA host
+
+You must configure the mount point on the secondary HA host for the file system that is offboarded. For example: /store or /store/ariel.
+
+Before you begin
+
+Perform the steps in the procedure, Verifying the HA Fibre Channel connections.
+
+Procedure
+
+Step 1 Derive the UUID for the Fibre Channel device partition by using the primary HA
+host.
+
+a Using SSH, log in to your QRadar primary HA host as the root user:
+
+Username: root
+Password: <password>
+
+b Derive the UUID by typing the following command:
+
+blkid /dev/<partition>
+
+Where: <partition> is the name of the device partition. For example: sdb1
+
+Step 2 Ensure that the secondary HA host can access the device partition:
+
+a Update the kernel with the Fibre Channel partition data by typing the following
+command:
+
+partprobe
+
+If the following error message is displayed, go to b.
+
+Warning: the kernel failed to re-read the partition table on /dev/sda (Device or resource busy). As a result, it may not reflect all of your changes until after reboot.
+
+b Identify the Fibre Channel device partition by typing the following command:
+
+ls -l /dev/disk/by-uuid/<partition>
+
+Where: <partition> is the value that you derived in step 1.
+
+If no output is displayed, then reboot the secondary HA host, type reboot.
+
+Step 3 Unmount the file systems by typing the following commands:
+
+umount /store/tmp
+umount /store/ariel/persistent_data
+umount /store
+
+Attention: The /store/ariel/persistent_data file system is mounted only when the /store file system uses xfs. In this case /store/ariel/[ersistent_data must be umounted.
+
+Step 4 Edit the /etc/fstab file by typing the following command:
+
+vi /etc/fstab
+
+Step 5 If you redirected the /store file system to an offboard device, then choose one of the following options:
+
+• If the /store file system is an xfs file system, then update the following lines in the /etc/fstab file:
+
+UUID=<uuid> /store xfs inode64,logbsize=256k,noatime,noauto,nobarrier 0 0
+
+Where: <uuid> is the value that you derived in Step 1.
+
+UUID=<uuid> /store/ariel/persistent_data xfs inode64,logbsize=256k,noatime,noauto,nobarrier 0 0
+
+UUID=<uuid> /store/tmp ext4 noatime,noauto,nobarrier 0 0
+
+• If the /store file system is ext4, update the following line in the /etc/fstab file:
+
+UUI=<uuid> /store ext4 defaults,noatime,noauto,nobarrier 1 2
+
+Where: <uuid> is the value that you derived in Step 1.
+
+Step 6 If you redirected the /store/ariel file system to an offboard device, then choose one
+of the following options:
+
+• If the /store file system is an xfs file system, then update the following lines in the /etc/fstab file:
+
+UUID=<uuid> /store/ariel xfs inode64,logbsize=256k,noatime,noauto,nobarrier 0 0
+
+Where: <uuid> is the value that you derived in Step 1.
+
+UUID=<uuid> /store/ariel/persistent_data xfs inode64,logbsize=256k,noatime,noauto,nobarrier 0 0
+
+• If the /store file system is an ext4 file system, update the following line in the
+/etc/fstab file:
+
+UUID=<uuid> /store/ariel ext4 defaults,noatime,noauto,nobarrier 1 2
+
+Where: <uuid> is the value that you derived in Step 1.
+
+Step 7 Save and close the file.
+
+What to do next
+Create an HA cluster. For more information, see the IBM Security QRadar High
+Availability Guide.

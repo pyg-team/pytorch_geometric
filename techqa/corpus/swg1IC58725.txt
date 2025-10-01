@@ -1,0 +1,232 @@
+Title: IBM IC58725: 'java.io.IOException: Error reading XML' exception observed when using asynchronous BOMapper primitives in a runtime server - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When multiple applications which contain mediation flow
+   components are deployed to a runtime server, an intermittent
+   exception may be thrown by one of the applications:
+   
+   
+   [6/16/08 11:20:47:656 CEST] 0000006f ExceptionUtil E
+   CNTR0020E: EJB
+   threw an unexpected (non-declared) exception during invocation
+   of method "transactionRequiredActivitySessionSupports" on bean
+   "BeanId(MQAdapterMEDApp#MQAdapterMEDEJB.jar#Module, null)".
+   Exception data:
+   com.ibm.wsspi.sibx.mediation.flow.action.FlowActionException:
+   com.ibm.wsspi.sibx.context.StoreException: java.io.IOException:
+   Error reading XML at
+   com.ibm.ws.sibx.mediation.flowaction.impl.sca.FlowActionFactoryI
+   mpl.locate(FlowActionFactoryImpl.java:664)
+    at
+   com.ibm.ws.sibx.scax.runtime.handler.MFCImplementationHandler.pr
+   ocessMes sage(MFCImplementationHandler.java:234)
+    at
+   com.ibm.ws.sca.internal.message.impl.MessageDispatcherImpl.proce
+   ssMessag e(MessageDispatcherImpl.java:1286)
+    at
+   com.ibm.ws.sca.internal.message.impl.ManagedMessageImpl.process(
+   ManagedM essageImpl.java:815)
+   
+   The message processing fails when this exception is thrown.  For
+   this specific problem to occur, one of the mediation flow
+   components must contain a BOMapper primitive.  Note that this
+   flow is not necessarily the one for which the error is thrown.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: Users of WebSphere Enterprise Service Bus    *
+   *                 and WebSphere Process Server v6.1.0 and      *
+   *                 v6.1.2, who have deployed multiple           *
+   *                 applications to a runtime server, at least   *
+   *                 one of which contains a BOMapper primitive.  *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Message processing may fail if a        *
+   *                      thread processes a mediation flow       *
+   *                      component's message flow which contains *
+   *                      a BOMapper primitive, and then goes     *
+   *                      on to process a second unrelated        *
+   *                      mediation flow component which makes    *
+   *                      use of an asynchronous callout, and     *
+   *                      does not have access to the same        *
+   *                      business object schema definitions as   *
+   *                      the flow with the BOMapper primitive.   *
+   ****************************************************************
+   * RECOMMENDATION: If you encounter this problem, you are       *
+   *                 advised to install the code fix which is     *
+   *                 associated with this APAR.                   *
+   *                                                              *
+   *                 Alternatively, as a workaround you can add   *
+   *                 the missing schema definition (eg. WSDL      *
+   *                 file) to the failing flow, which will also   *
+   *                 resolve the problem.                         *
+   ****************************************************************
+   When a mediation flow component which contains a BOMapper
+   primitive processes a message, the Business Objects (BOs) used
+   may be left in thead local storage.
+   
+   If the same thread then goes on to process a second mediation
+   flow component, which happens to make use of an asynchronous
+   callout, an attempt is made to serialise these leftover BOs
+   in order to store them on the mediation component's context
+   store.
+   
+   If this second flow does not have visibility of the schema
+   definition of these BOs, the serialisation fails, an exception
+   is thrown and processing of this message flow ends in failure.
+   
+   The form of the exception message is:
+   
+   CNTR0020E: EJB threw an unexpected (non-declared) exception
+   during invocation of method "transactionNotSupportedActivitySess
+   ionSupports" on bean "BeanId(myAppModuleApp#myappMediationModule
+   EJB.jar#Module, null)". Exception data:
+   
+   com.ibm.wsspi.sibx.mediation.flow.action.FlowActionException:
+    com.ibm.wsspi.sibx.context.StoreException: java.io.IOException:
+    Error reading XML
+          at com.ibm.ws.sibx.mediation.flowaction.impl.sca.FlowActi
+   onFactoryImpl.locate(FlowActionFactoryImpl.java:664)
+          at com.ibm.ws.sibx.scax.runtime.handler.MFCImplementation
+   Handler.processMessage(MFCImplementationHandler.java:234)
+          at com.ibm.ws.sca.internal.message.impl.MessageDispatcher
+   Impl.processMessage(MessageDispatcherImpl.java:1286)
+          at com.ibm.ws.sca.internal.message.impl.ManagedMessageImp
+   l.process(ManagedMessageImpl.java:815)
+          at com.ibm.wsspi.sca.ejb.module.impl.ModuleSessionBean.pr
+   ocessUOWMessage(ModuleSessionBean.java:338)
+          at com.ibm.wsspi.sca.ejb.module.impl.ModuleSessionBean.tr
+   ansactionNotSupportedActivitySessionSupports(ModuleSessionBean.j
+   ava:279)
+          at com.ibm.wsspi.sca.ejb.module.EJSLocalStatelessModule_4
+   3132892.transactionNotSupportedActivitySessionSupports(EJSLocalS
+   tatelessModule_43132892.java:199)
+   
+   
+   Note that there are several reasons why serialisation of the
+   business objects can fail in a flow, which would result in a
+   similar stack track as that seen here.  This APAR is only
+   concerned with the one which occurs as a result of aged
+   thread local storage business objects.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The product code was modified to correct this issue.  There are
+   no known side effects associated with this code change.
+   
+   The fix was targeted to be included in the following fix packs:
+   
+     v6.1.0 Fix Pack 3 (6.1.0.3)
+     v6.1.2 Fix Pack 2 (6.1.2.0)
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC58725
+   
+   
+ * REPORTED COMPONENT NAME
+   WEB ESB FOR WIN
+   
+   
+ * REPORTED COMPONENT ID
+   5724I8200
+   
+   
+ * REPORTED RELEASE
+   300
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-11-01
+   
+   
+ * CLOSED DATE
+   2008-11-21
+   
+   
+ * LAST MODIFIED DATE
+   2008-11-21
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEB ESB FOR WIN
+   
+   
+ * FIXED COMPONENT ID
+   5724I8200
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R100 PSN
+   UP
+   
+   
+ * R200 PSN
+   UP
+   
+   
+ * R300 PSY
+   UP
+   
+   
+ * R612 PSY
+   UP

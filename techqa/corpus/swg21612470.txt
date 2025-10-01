@@ -1,0 +1,59 @@
+Title: IBM Announcement letter for CICS Transaction Server for z/OS 5.1 - United States
+
+Text:
+CICS TS 5.1 announcement Letter ; CICS Transaction Server for z/OS 5.1 ; announcements ; letters ; general availability ; 5655Y0400 R680 680 R800 800 HCI6800 5655-Y04 5655Y04 CICS Explorer 5655Y0401 R510 510 CICS Developer Trial kixinfo retention51 PRODUCT LIFECYCLE
+
+ABSTRACT
+ CICS Transaction Server for z/OS (CICS TS) V5.1 and CICS Explorer V5.1 general availability (GA) date was 14 December 2012 and CICS TS Developer Trial V5.1 GA date was 11 January 2013. CICS TS V5.1 delivers operational efficiency and service agility with cloud enablement. This document contains a list of the key enhancements, a link to the announcement letter, and additional ways that you can become familiar with the capabilities of CICS TS V5.1. 
+
+CONTENT
+CICS TS V5.1 satisfies over one hundred user requirements that help drive operational efficiencies while increasing service agility, moving you towards a service delivery platform for cloud computing.
+
+Driving operational efficiencies: 
+
+ * Greater capacity is delivered through significant vertical and horizontal scalability enhancements. 
+ * Managed operations are provided through the introduction of policies, that deliver automated control over critical system resources. 
+ * Increased availability enhancements reduce the need for planned outages. 
+ * Deeper insight into performance and compliance information can help to tune and audit system usage.
+
+
+Increasing service agility:  * First-class applications enable the creation of agile services from existing assets by using a new declarative application resource. 
+ * First-class platforms enable the creation of agile service delivery runtimes by using a new declarative platform resource. 
+ * Modern interfaces enable you to build rich web experiences for critical applications. A new production-ready web container in CICS provides CICS qualities of service, and is built on the WebSphere Application Server Liberty profile for compatibility. 
+ * Foundational enhancements extend the core CICS capabilities.
+   
+   
+
+CICS TS V5.1 introduces a wide range of other technical and operational capabilities. For more details about CICS TS V5.1 see the US Announcement letter for CICS TS 5.1 [http://www.ibm.com/common/ssi/cgi-bin/ssialias?subtype=ca&infotype=an&appname=iSource&supplier=897&letternum=ENUS212-325] (212-325). Information for other country announcements is available on the IBM Offering Information page [http://www.ibm.com/common/ssi/index.wss]. 
+
+CICS Explorer [http://www.ibm.com/cics/explorer] has been upgraded to CICS Explorer V5.1. This is a major update to support the latest CICS TS and CICS tools capabilities. Some CICS TS V5.1 capabilities, such as applications, platforms and policies, require the CICS Explorer for creation and deployment. CICS Explorer V5.1 will also work with other supported versions of CICS TS. 
+
+CICS TS Developer Trial V5.1 is a try-before-you-buy edition of CICS TS V5.1. It has a zero-cost license charge and does not initiate any single version charging (SVC) period. CICS TS Developer Trial contains the complete set of CICS TS features and functions. However, there are a number of imposed restrictions, in performance and capacity, licensing terms, and a fixed expiry date, that make CICS TS Developer Trial suitable only for use in non-production environments. CICS TS Developer Trial V5.1 is available through ShopzSeries as a standard offering. In countries where ShopzSeries is not yet available, contact your IBM representative (or IBM Business Partner) to handle your order using the traditional IBM ordering process. For more information see the CICS TS Developer Trial web page [http://www.ibm.com/software/htp/cics/cicsdt/]. 
+
+IBM has also updated five core foundational CICS tools to use and augment the latest operational efficiency and service agility enhancements made in CICS TS V5.1:  * CICS Configuration Manager for z/OS V5.1 
+ * CICS Deployment Assistant for z/OS V5.1 
+ * CICS Interdependency Analyzer for z/OS V5.1 
+ * CICS Performance Analyzer for z/OS V5.1 
+ * CICS VSAM Recovery for z/OS V5.1
+   
+   
+
+For more information on these CICS tools, see the document entitled Announcement letter for CICS Tools for z/OS 5.1 [http://www.ibm.com/support/docview.wss?uid=swg21612474]. 
+
+
+For more details about CICS TS V5.1 see:  * CICS TS V5.1 web page [http://www.ibm.com/software/cics/tserver/v51/] 
+ * CICS TS V5.1 detailed system requirements [http://www.ibm.com/support/docview.wss?uid=swg27035673] 
+ * CICS TS V5.1 information center [http://pic.dhe.ibm.com/infocenter/cicsts/v5r1/index.jsp]
+   
+   
+
+See the IBM Software Support Lifecycle Page for CICS TS [http://www.ibm.com/software/support/lifecycleapp/PLCDetail.wss?synkey=Q548238Z96346J37&synkey=S880685E91024P63&synkey=N941055S17716V30&synkey=M943891M29396W06&synkey=H952094E33942B25&synkey=C526462X33936Y05&synkey=C802925A97850P19&from=spf] to determine if the release of CICS TS you are running is still supported or if there is a newer release of CICS TS. 
+RELATED INFORMATION
+#Announcement letters for CICS products [http://www.ibm.com/support/docview.wss?uid=swg21227090]
+End of Support dates for CICS products [http://www.ibm.com/support/docview.wss?uid=swg21154953]
+
+
+
+
+PRODUCT ALIAS/SYNONYM
+ CICS/TS CICS TS CICS Transaction Server

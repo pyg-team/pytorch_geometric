@@ -1,0 +1,103 @@
+Title: IBM Managing Log Level Settings in TeamWorks - United States
+
+Text:
+Teamworks Lombardi Managing Log Level Settings TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Details on TeamWorks log4j settings including instructions on how to set log levels and other aspects of the TeamWorks logging. 
+
+RESOLVING THE PROBLEM
+Logging in TeamWorks is managed by log4j; further information on log4j background is available at the Apache site [http://logging.apache.org/log4j/1.2/manual.html]. 
+
+ * 
+ * 
+ * log4j.xml 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ *  debug info warn error fatal 
+ * 
+ * Appenders do the actual writing.
+ * You should not need to modify the values in the appender tags. These do not control what is written to the logs, rather at what threshold that particular appender listens. You typically want to leave these at their default values. We are not aware of any runtime performance gain by tuning or altering these. Instead you should alter the values within the category tags to error (or fatal). 
+ * Categories determine what is logged.
+ * The names of the category are either class names or package names (note that the names are actually arbitrary, but we have named them based on the class or package that they log for as defined in the corresponding appender). If they fall within the package, they get picked up by that category. The logging "starts" at the category, then is passed to the appender. In practice this means you can leave the appenders always at their default and just change the log level(s) of the categories.Be careful that you don't have a category at DEBUG and an appender at ERROR. This would have almost the same performance penalty as having the Category and Appender both at DEBUG as it still "passes" the logging to the appender.In a Production environment we would recommend changing the log levels to error unless you really don't want to see anything in the logs, in which case you would set it to fatal. 
+ * Example
+ * 
+ * Let's suppose you are having problems with a failing import into TeamWorks and need to generate more verbose logs to help determine the root cause. In the log4j.xml above, the Appender is already set DEBUG, but looking at the category entry we can see this:  * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+   
+   You can do this in any text editor, then save the changes back. No restart of the server should be required for the change to be implemented. 
+ * Verifying current log level settings
+ *  
+   
+ * Further tips and tricks - email log appender
+ * Log4j includes a built in smtp appender. With almost no effort, you can have log4j send you emails. 
+   First create an appender like the example below:  * 
+    * <param name="BufferSize" value="512" /> 
+      <param name="SMTPHost" value="smtp.MyDomain.com" /> 
+      <param name="From" value="log4j@MyDomain.com" /> 
+      <param name="To" value="MyAdmin@MyDomain.com" /> 
+      <param name="Subject" value="I fell over and can't get up..." /> 
+      <layout class="org.apache.log4j.PatternLayout">  * 
+      
+      </layout> 
+      <filter class="org.apache.log4j.varia.LevelRangeFilter">  * 
+       * 
+       * 
+      
+      </filter> 
+    * 
+   
+   Next, you need to add to the category:  * 
+    * <priority value="error"/> 
+      <appender-ref ref="TWDynamicAppender"/> 
+      <appender-ref ref="TWDebugAppender"/> 
+      <appender-ref ref="TWInfoAppender"/> 
+      <appender-ref ref="TWWarnAppender"/> 
+      <appender-ref ref="TWErrorAppender"/> 
+      <appender-ref ref="SupportEmailer"/> 
+    * 
+   
+   
+ * Examining log entries via the TeamWorks Console
+ * If you wish to add to or modify the log files available to view in the drop down list of the TeamWorks Console, you need to locate and modify the 50AppServer.xml property file which in the case of the Process Server can be found in /teamworks/process-server/resources/config/system 
+   
+   Find the section like this:  * 
+    * 
+    * 
+    * <log name="TW Access Log" file-name="./logs/tw-access.log"/> 
+      <log name="TW Console Log" file-name="./logs/tw.log"/> 
+      <log name="TW Debug Log" file-name="./logs/tw-debug.log"/> 
+      <log name="TW Error Log" file-name="./logs/tw-error.log"/> 
+      <log name="TW Exp/Imp Log" file-name="./logs/tw-expimp.log"/> 
+      <log name="TW Limit" file-name="./logs/tw-limit.log"/> 
+      <log name="TW Javascript" file-name="./logs/tw-javascript.log"/> 
+      <log name="Process Timing Log" file-name="./logs/tw-process-timing.log"/> 
+      <log name="TW Trace Log" file-name="./logs/tw-trace.log"/> 
+      <log name="WS Inbound Log" file-name="./logs/tw-inbound_webservices.log"/> 
+      <log name="WS Outbound Log" file-name="./logs/tw-outbound_webservices.log"/> 
+    * 
+   
+   
+ * 
+
+Changing log levels for the Authoring Environment  * 
+ * technote
+ * 
+ * 
+
+ 
+
+HISTORICAL NUMBER
+ 187 
+
+PRODUCT ALIAS/SYNONYM
+ TW Teamworks

@@ -1,0 +1,21 @@
+Title: IBM FIPS 140-2 Level 3 - United States
+
+Text:
+fips tklm sklm version TECHNOTE (FAQ)
+
+QUESTION
+ Does SKLM 2.5 provide FIPS 140-2 Level 3?
+
+
+ANSWER
+IBM Security Key Lifecycle Manager itself does not provide cryptographic capabilities and therefore does not require or obtain, FIPS 140-2 certification. However, IBM Security Key Lifecycle Manager takes advantage of the cryptographic capabilities of the IBM JVM in the IBM Java Cryptographic Extension component.The capabilities allow the selection and use of the IBMJCEFIPS cryptographic provider, which has a FIPS 140-2 level 1 certification.
+
+Ref :
+
+http//www-01.ibm.com/support/knowledgecenter/SSWPVP_2.5.0/com.ibm.sklm.doc_2.5/cpt/cpt_ic_release_oview_fips.html
+
+For more info on IBMJCEFIPS visit
+http//www-01.ibm.com/support/knowledgecenter/SSYKE2_6.0.0/com.ibm.java.security.component.60.doc/security-component/fipshowto_intro.html
+
+RELATED INFORMATION
+#

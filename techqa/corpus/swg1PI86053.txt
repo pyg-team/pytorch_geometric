@@ -1,0 +1,150 @@
+Title: IBM PI86053: ECLIPSELINK ADDS DEFAULT SCHEMA TWICE FOR SEQS ON DB2 - United States
+
+Text:
+z/os  FIXES ARE AVAILABLE
+9.0.0.6: WebSphere Application Server traditional V9.0 Fix Pack 6 [http://www-01.ibm.com/support/docview.wss?uid=swg24044242]
+9.0.0.7: WebSphere Application Server traditional V9.0 Fix Pack 7 [http://www-01.ibm.com/support/docview.wss?uid=swg24044620]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When the sequenceGenerator in EclipseLink persists a new entity
+   launching a SQL query to DB2, a SQL -104 is thrown because the
+   default schema name is doubled, e.g.
+   CISYS.TEST_SEQ is expected but
+   CISYS.CISYS.TEST_SEQis created.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  All users of IBM WebSphere Application      *
+   *                  Server V9 - Java Persistence API (JPA       *
+   *                  2.1)                                        *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: EclipseLink adds double schema          *
+   *                      references to sequence queries on DB2   *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   When the default schema is set (orm.xml or
+   persistence property) on DB2, then the generated SQL used to
+   get NEXT VALUE has two schemas on it.
+   Exception:
+   Internal Exception: com.ibm.db2.jcc.am.vo: DB2 SQL Error:
+   SQLCODE=-104, SQLSTATE=42601, SQLERRMC=.;AT MICROSECONDS
+   MICROSECOND SECONDS SECOND MINUTES MINUTE HOURS, DRIVER=4.8.87
+   Error Code: -104
+   Call: VALUES(NEXT VALUE FOR CISYS.CISYS.TEST_SEQ)
+   Query: ValueReadQuery(sql="VALUES(NEXT VALUE FOR
+   CISYS.CISYS.TEST_SEQ)")
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix for this APAR changes the EclipseLink implementation
+   and involves an update to the thirdparty source. See
+   https://bugs.eclipse.org/bugs/show_bug.cgi?id=521037 [https://bugs.eclipse.org/bugs/show_bug.cgi?id=521037]
+   
+   The fix for this APAR is currently targeted for inclusion in
+   Service Level (Fix Pack) 9.0.0.6 of WebSphere Application
+   Server version 9.0 and in fix pack 17.0.0.4 for WebSphere
+   Application Server Liberty.  Please refer to the Recommended
+   Updates page for delivery information:
+   http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI86053
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSPHERE FOR Z
+   
+   
+ * REPORTED COMPONENT ID
+   5655I3500
+   
+   
+ * REPORTED RELEASE
+   900
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-08-17
+   
+   
+ * CLOSED DATE
+   2017-10-10
+   
+   
+ * LAST MODIFIED DATE
+   2017-10-10
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBSPHERE FOR Z
+   
+   
+ * FIXED COMPONENT ID
+   5655I3500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R900 PSY
+   UP

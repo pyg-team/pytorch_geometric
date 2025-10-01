@@ -1,0 +1,29 @@
+Title: IBM WebSphere DataPower SOA Appliance: How to send log messages to syslog or syslog-ng server using a Log Action - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When configuring a Log Action, the WebGUI drop-down for the Destination field contains three options which are not supported: 
+
+syslog://, syslog-tcp://, and syslog-tcpssl://. 
+
+SYMPTOM
+When using a Log Action to send a log message to a syslog-ng server, an unparseable log message occurs on the syslog-ng server. 
+
+
+RESOLVING THE PROBLEM
+ 
+
+User can't directly use syslog, syslog-tcp and syslog-tcpssl in Destination of Log Action. Although they show in WebGUI but they are not supported for Log Action. 
+APAR IC71967 has been created to address this issue in future releases of the firmware. You can find more detail in following APAR link.
+
+http://www-01.ibm.com/support/docview.wss?uid=swg1IC71967 [http://www-01.ibm.com/support/docview.wss?uid=swg1IC71967]
+
+Following is an approach workaround which may be used to send a log message to syslog or syslog-ng using a Log Action that does not rely on these unsupported options.
+
+
+ 1. Create a specific Log Category. See Configuring log categories [http://publib.boulder.ibm.com/infocenter/wsdatap/v3r8m1/index.jsp?topic=%2Fxi50%2Flog-target_configuringlogcategories_task.htm&path=1_0_1_4_8_1] 
+ 2. Create a specific Log Target of type syslog-ng or syslog. See Configuring log targets [http://publib.boulder.ibm.com/infocenter/wsdatap/v3r8m1/index.jsp?topic=%2Fxi50%2Flog-target_configuringlogtargets_task.htm&path=1_0_1_4_8_2] 
+ 3. Set one or more event subscriptions. See Setting event subscriptions [http://publib.boulder.ibm.com/infocenter/wsdatap/v3r8m1/index.jsp?topic=%2Fxi50%2Flog-target_settingeventsubscriptions_task.htm&path=1_0_1_4_8_7] 
+ 4. When configuring the Log Action, do not select a Destination. For Log Type list, select the logging category created in Step 1 above. See Adding a log action [http://publib.boulder.ibm.com/infocenter/wsdatap/v3r8m1/index.jsp?topic=%2Fxi50%2Faction_addinglogaction_task.htm&path=1_1_0_7_6_14] for more details.

@@ -1,0 +1,57 @@
+Title: IBM "Cannot retrieve execution traces on server X" message in DVS test suite execution results page - United States
+
+Text:
+DVS; RES; trace TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Explains the possible reasons and solutions when getting the message "Cannot retrieve execution traces on server <your server>" in the results page of a Decision Validation Services (DVS) test suite execution. 
+
+SYMPTOM
+The test suite is successful and returns the test results specified in the Excel scenario file, but the message "Cannot retrieve execution traces on server <your server>" shows in the results page, and the additional trace information requested in the run page is not available.
+
+
+CAUSE
+In addition to testing the results of your executions (defined in your Excel scenario file), DVS offers the possibility of retrieving additional trace information on the tests being run.
+
+This is done by checking any of the following options in the run page for your test suite/simulation: 
+
+ * Create an Excel file separate from the report to store the output values 
+ * The list of rules fired 
+ * The list of executed ruleflow tasks 
+ * The duration (in ms) of execution
+
+
+These options require Decision Warehouse (DW) to be set up and functional in your environment. The information you request is generated and stored in DW and retrieved from there.
+
+The message "Cannot retrieve execution traces on server <your server>" indicates that Decision Center is unable to retrieve that trace information from DW.
+
+
+DIAGNOSING THE PROBLEM
+Look for Decision Warehouse trace entries in the Rule Execution Server console for your test scenarios.
+
+You will need to search by date/time in the Decision Warehouse tab of the Rule Execution Server console since the Decision ID and ruleset version are automatically generated with UUIDs. This means that you will also need to match the date and time to identify the traces corresponding to your DVS tests. See the documentation at Decision Server V8.0 > Decision Server Rules > Rule Execution Server Console online help > Monitoring and managing Decision Warehouse > Viewing trace information [http://pic.dhe.ibm.com/infocenter/dmanager/v8r0/topic/com.ibm.wodm.dserver.rules.res.console/topics/tsk_rescons_dw_trace_view.html].
+
+Review the logs for the target server for your DVS tests. The name of the target server is mentioned in the error message. This is the server that hosts the Rule Execution Server executing the DVS tests.
+
+If no trace for your DVS tests is saved in DW and nothing relevant shows in the server logs to explain why the trace is not logged, refer to technote Obtaining debug information during Decision Warehouse trace capture [http://www.ibm.com/support/docview.wss?uid=swg21433278] to activate some trace for DW.
+
+
+
+RESOLVING THE PROBLEM
+If the trace is not logged and you need that additional trace when running your tests, you will need to ensure that Decision Warehouse is properly setup to log the trace for your DVS tests. 
+
+You can refer to technote Decision Warehouse query does not return any data for ruleset executions [http://www.ibm.com/support/docview.wss?uid=swg21424948] for troubleshooting DW issues that prevent the trace from being saved.
+
+If the trace is properly logged, you will need to ensure that the target server hosting Rule Execution Server has sufficient memory to retrieve that trace.
+
+Alternatively, you can also reduce the size of the trace, depending on what you need to retrieve when running your tests, as explained in technote Reducing the size of Decision Warehouse trace when running scenario suites [http://www.ibm.com/support/docview.wss?uid=swg21438208].
+
+RELATED INFORMATION
+#ODM V8.0.1 doc for Decision Validation Services [http://pic.dhe.ibm.com/infocenter/dmanager/v8r0m1/topic/com.ibm.wodm.dserver.rules.overview/topics/tpc_testing_dvs.html]
+ODM V8.0.1 doc for Decision Warehouse [http://pic.dhe.ibm.com/infocenter/dmanager/v8r0/topic/com.ibm.wodm.dserver.rules.res.managing/topics/tpc_decision_warehouse.html]
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration WebSphere ILOG JRules Modules:Execution Server (BRES / RES) Platform Independent 7.1, 7.0

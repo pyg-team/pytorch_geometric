@@ -1,0 +1,21 @@
+Title: IBM Setting the keystore for the stand-alone Java client is required in WebSphere 6.x HTTPS Web services - United States
+
+Text:
+RAD: Rational application developer; SSL; Web service; Web services; HTTPS Web service; manager; trust; com.ibm.wsspi.channel.framework.exception.ChannelException; ChannelException; No key store specified; HTTPS; 1287285 TECHNOTE (FAQ)
+
+QUESTION
+ Why, when developing a stand-alone Java™ client for WebSphere® 6.x HTTPS Web services, if the system property "javax.net.ssl.keyStore" is not set, does the following exception appear?
+com.ibm.wsspi.channel.framework.exception.ChannelException: com.ibm.wsspi.channel.framework.exception.ChannelException: No key store specified and no hardware crypto defined 
+
+ANSWER
+The keystore is required in WebSphere 6.x Web services if SSL is enabled. This applies to one-way authentication and mutual authentication. 
+
+In WebSphere Application Server version 6.x, HTTPS is made over SSL Channel Framework. When SSL channel is initialized, both trust manager and key manager are created automatically, which is why a keystore is required.
+
+
+
+
+
+RELATED INFORMATION
+#HTTPS Web services Part 1 [http://www.ibm.com/developerworks/edu/ws-dw-ws-httpsrad1.html]
+HTTPS Web services Part 2 [http://www.ibm.com/developerworks/edu/ws-dw-ws-httpsrad2.html]

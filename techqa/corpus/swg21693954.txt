@@ -1,0 +1,43 @@
+Title: IBM InfoSphere Change Data Capture is failing on the target with error: The transaction log for database 'DATABASE_NAME' is full. To find out why space in the log cannot be reused, see the log_reuse_wait_desc column in sys.databases - United States
+
+Text:
+ISCDC; transaction log full; 9002 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When replicating to CDC for Microsoft SQL Server as Target, CDC can fail with following error: 
+
+Database operation failed. 
+
+A SQL exception has occurred. The SQL error code is '9002'. The SQL state is: HY000. The error message is: 
+
+[CDC][SQLServer JDBC Driver][SQLServer]The transaction log for database 'DATABASE_NAME' is full. To find out why space in the log cannot be reused, see the log_reuse_wait_desc column in sys.databases 
+
+SYMPTOM
+This error will cause your subscription to stop
+
+
+CAUSE
+This is caused when the MS SQL Server transaction log is full for the Target Database
+
+ENVIRONMENT
+MS SQL Server
+
+DIAGNOSING THE PROBLEM
+Verify the target event export for the error message above
+
+RESOLVING THE PROBLEM
+There are few alternatives to fix this error:
+
+1 - Backup the Transaction log backup with more frequency. This will decrease the transaction log size and fix this error.
+
+2 - Set Autogrowth to "Unrestricted". This will bypass the issue, but you need to verify with MS SQL Server DBA to check the quotas, disk spaces, etc.
+
+3- Change the recovery mode to simple.
+If you are using CDC as target only and you are not using this CDC for SQL Server as source for any subscription you can set the recovery model to simple. it will not generate the transaction logs and it will not fail. A full backup is required after changing the recovery model.
+
+
+
+
+
+
+After following one of the steps above you can start your subscription.

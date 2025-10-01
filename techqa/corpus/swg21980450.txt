@@ -1,0 +1,32 @@
+Title: IBM Things to check when configuring Case Foundation Case Analyzer - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ There are several layers to Case Analyzer so when problems happen, this guide provides a couple places to check. 
+
+SYMPTOM
+PAAMO connection errors:
+CAPublisher 9d099aa0 [Trace] CA_OLAP, [ca_store] PAAMO::PAAMO-Connecting to :rmi://<ssas_hostname>:32771/FileNet.PA 
+
+OLAP cube processing errors:
+CAPublisher 87446338 [Error] FNRPE0911843017E [ca_store] filenet.eventexporter.ca.main.DTSRunner::processWIP - [FNRPE0911843017E]Error while processing WIP cubes
+
+
+CAUSE
+Case Analyzer not processing events or OLAP cubes are unable to process.
+
+
+RESOLVING THE PROBLEM
+1. Verify the host name along with other CA and OLAP configuration parameters in CA datastore configuration in Administrative Console for the Content Platform Engine (ACCE). 
+
+2. Ensure that the Case Analyzer service is running on the Case Analyzer SSAS (typically OLAP) server and that you can connect (telnet) to the Case Analyzer SSAS server on port 32771. 
+
+3. Verify that the Case Analyzer database user exists and has all roles except the DENY roles selected. 
+
+4. Verify that the Case Analyzer OLAP user is a domain account, has administrative rights on the MSSQL Analysis server, and has a matching domain account on Case Analyzer DB with all except DENY roles. 
+
+5. If the OLAP database does not exist, create a new one. Check the OLAP database for the out-of-the-box cubes (e.g. Work In Progress). If they do not exist, run the setupolap batch script and specify the CA datasource name. After entering the command it will appear to hang (no output), however this is actually a prompt for credentials so please enter the CA username+password. 
+
+6. Once the OLAP database exists and has the cubes, check the VMAE datasource credentials and if needed, change them to use the correct account. Manually process the cubes to verify things are working.

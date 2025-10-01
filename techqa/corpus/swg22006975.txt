@@ -1,0 +1,23 @@
+Title: IBM BMT-IMP-0002 Failed to execute metadata request. invalidDriverLocation - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Cognos Analytics 11 Framework Manager fails to import database metadata with error when using Dynamic Query Mode.
+
+BMT-IMP-0002 Failed to execute metadata request. invalidDriverLocation.
+
+Data Source tests succesfully and Packages are working in Cognos Connection. Existing Framework Manager models can succesfully test Query Subjects. 
+
+CAUSE
+Database JDBC driver is copied to unsupported locations in Cognos Analytics 11 server.
+
+RESOLVING THE PROBLEM
+Ensure Database JDBC drivers are copied only to install_location\drivers on the Cognos Analytics server.
+
+
+Remove unneeded copies from install_location\v5dataserver and install_location\webapps\p2pd\WEB-INF\lib
+
+RELATED INFORMATION
+ Installation Guide: Configuration actions to take first [https://www.ibm.com/support/knowledgecenter/SSEP7J_11.0.0/com.ibm.swg.ba.cognos.bi_install_faq.doc/c_inst_crit_config.html]

@@ -1,0 +1,130 @@
+Title: IBM JR58672: PROCESS SERVER TIME ZONE SETTINGS TAKE PRECEDENCE OVER THE TIME ZONE SETTINGS DEFINED IN USER PREFERNCES - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+ DIRECT LINK TO FIX
+bpm.8600.cf2017.12.delta.repository [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Standard&fixids=bpm.8600.cf2017.12.delta.repository&source=SAR]
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The formatDate(), formatTime and formatDateTime() Java Script
+   functions always return the time zone settings from an IBM
+   Process Server even though the time zone settings might be
+   defined in the user preferences.
+   
+   PRODUCTS AFFECTED
+   IBM BPM Advanced V8.5.7 and earlier versions
+   IBM BPM Standard V8.5.7 and earlier versions
+   IBM BPM Express V8.5.7, V8.6, and earlier versions
+   IBM BPM V8.6
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  No additional information is available.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A fix will be included in a future release of IBM BPM that
+   ensures the time zone settings defined in the user preferences
+   take precedence over the time zone settings on a process server.
+    An interim fix is also available for IBM BPM V8.5.6.0 CF02.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR58672
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM STANDARD
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9500
+   
+   
+ * REPORTED RELEASE
+   857
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-11-13
+   
+   
+ * CLOSED DATE
+   2017-11-23
+   
+   
+ * LAST MODIFIED DATE
+   2018-03-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   BPM EXPRESS
+   
+   
+ * FIXED COMPONENT ID
+   5725C9600
+   
+   
+
+APPLICABLE COMPONENT LEVELS

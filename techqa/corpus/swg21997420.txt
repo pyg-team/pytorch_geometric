@@ -1,0 +1,37 @@
+Title: IBM Why am I getting "pdDiagReadFromFileIntoBufferBS" "MESSAGE : Initial status when binary serach" in the db2diag.log? - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Why am I getting "pdDiagReadFromFileIntoBufferBS" "MESSAGE : Initial status when binary serach" in the db2diag.log? 
+
+CAUSE
+2016-09-02-11.00.02.000000-300 I76598737B345 LEVEL: Info 
+PID : 15434254 TID : 1 PROC : db2diag 
+INSTANCE: db2inst1 NODE : 000 
+HOSTNAME: ibmtest1
+EDUID : 1 
+FUNCTION: DB2 UDB, RAS/PD component, pdDiagReadFromFileIntoBufferBS, probe:25 
+MESSAGE : Initial status when binary serach : 
+DATA #1 : unsigned integer, 8 bytes 
+16542553 
+DATA #2 : String, 26 bytes 
+2016-09-02-11.00.02.000000 
+DATA #3 : String, 0 bytes 
+Object not dumped: Address: 0x0000000000000000 Size: 0 Reason: Address 
+is NULL 
+DATA #4 : String, 0 bytes 
+Object not dumped: Address: 0x00000001103D9334 Size: 0 Reason: Zero- 
+length data 
+DATA #5 : String, 26 bytes 
+2016-09-02-11.00.02.000000 
+
+
+ANSWER
+This is a LEVEL: Info defect opened at this time and scheduled to be fixed in v10.5 FP9, estimated release date later 2017. Reference link before for additional details. 
+
+This Level: Info message can be ignored too.
+
+RELATED INFORMATION
+ IT16686: SHOULD NOT DUMP "PDDIAGREADFROMFILEINTOBUFFERB [https://www-01.ibm.com/support/entdocview.wss?uid=swg1IT16686]

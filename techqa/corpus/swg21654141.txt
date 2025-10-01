@@ -1,0 +1,56 @@
+Title: IBM How do I uninstall Interim Fix 1 for IBM Datacap Taskmaster Capture 8.0.1 Fix Pack 4? - United States
+
+Text:
+IF1 FP4 rulerunner uninstall TECHNOTE (FAQ)
+
+QUESTION
+ With Datacap Taskmaster 8.0.1, how do I uninstall Interim Fix 1 to rollback to Fix Pack 4 without totally uninstalling and reinstalling Datacap Taskmaster itself? 
+
+CAUSE
+In general, Datacap Taskmaster Fix Packs do not come with an uninstaller and require that the product be completely uninstalled, then reinstalled back up to the desired Fix Pack level. However, because Interim Fix 1 introduces only a limited amount of changes, it is possible to manually uninstall it if certain steps are taken prior to installing it.
+
+ANSWER
+Prior to installing Interim Fix 1 
+
+Backup these files, using copy & paste only. Do not move or rename the original files. 
+
+ * \Datacap\dcshared\DCApple.dll 
+ * \Datacap\dcshared\dclogX.dll 
+ * \Datacap\dcshared\dcrro.dll 
+ * \Datacap\tmclient\DCSit.dll 
+ * \Datacap\tmclient\dqcs.exe 
+ * \Datacap\tmclient\Quattro.exe 
+ * \Datacap\tmclient\QuattroConfig.exe 
+ * \Datacap\tmclient\Quattro.xml
+
+
+Export the following registry keys.  * x64: HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node\Datacap\Quattro 
+ * x86: HKEY_LOCAL_MACHINE\SOFTWARE\Datacap\Quattro
+
+
+To uninstall Interim Fix 1 
+
+Copy and replace from backup, overwriting files if necessary. 
+
+ * \Datacap\dcshared\DCApple.dll 
+ * \Datacap\dcshared\dclogX.dll 
+ * \Datacap\dcshared\dcrro.dll 
+ * \Datacap\tmclient\DCSit.dll 
+ * \Datacap\tmclient\dqcs.exe 
+ * \Datacap\tmclient\Quattro.exe 
+ * \Datacap\tmclient\QuattroConfig.exe
+
+
+Register these services.  * C:\Datacap\tmclient\dqcs.exe /RegServer 
+ * C:\Datacap\tmclient\Quattro.exe /RegServer
+
+
+Clean up unneeded Interim Fix 1 components.  1. Unregister the old service: C:\Datacap\Taskmaster\Rulerunner.exe /UnRegServer 
+ 2. Unregister RRProcessor: C:\Datacap\Taskmaster\RRProcessor.exe /UnRegServer 
+ 3. Delete the Taskmaster folder: C:\Datacap\Taskmaster 
+ 4. Delete the Start menu shortcut: Programs | Datacap | Taskmaster Client | Taskmaster Rulerunner Manager 
+ 5. Create a Start menu shortcut: Programs | Datacap | Taskmaster Client | Rulerunner Quattro Manager
+
+
+
+Note: Use the above instructions at your own risk. Back up your registry before making any changes. IBM does not guarantee that this will work for all customer configurations, and you should test to confirm that this solution will work for you. Completely uninstalling and reinstalling Datacap may be required for some systems.

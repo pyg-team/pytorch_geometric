@@ -1,0 +1,138 @@
+Title: IBM PK04566: UPGRADED FROM 6.0.0.1 TO REFRESH PACK (SERVICE PACK) 6.0.1, ADMINCONSOLE SHOWS ONLY ONE APPLICATION IN ENTERPRISE LIST. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DUPLICATE OF ANOTHER APAR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When client is running at stand alone server and configured the
+   webserver1, webserver1 added tag in deployment.xml as follow
+   this is fine since we have implemented the web server
+   integration in V6. But problem was encounter that it shows only
+   one application in enterprise application list from console.
+   
+   
+   <deploymentTargets xmi:type="appdeployment:ServerTarget"
+   xmi:id="ServerTarget_1108528239012" name="server1"
+   nodeName="starbase2Node01" />
+     <deploymentTargets xmi:type="appdeployment:ServerTarget"
+   xmi:id="ServerTarget_1108579773685" name="webserver1"
+   nodeName="webserver1_node" />
+   
+   
+   Created a new profile and still see the same problem.  We have a
+   ZE defect in 6.0.1 with the new adminconsole scope narrowing
+   design.  The new design uses a single variable to note the
+   ServerTarget.  When the application is mapped to multiple
+   servers (used by multiple servers or using the new web server
+   design in v6, map module to webserver and app server) this
+   single variable only notes the last server listed for the
+   console viewing.  So when they map the module to the web server,
+   all ear files that are still valid to server1 don't show on the
+   adminconsole ear list because the variable noted that they are
+   only installed to a different server.  This is a defect in the
+   product and needs to be corrected.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Workaround is to set default server (server1) at last will
+   display all application in enterprise list.
+   
+   deployment.xml
+   --------------
+   <deploymentTargets xmi:type="appdeployment:ServerTarget"
+   xmi:id="ServerTarget_1108579773685" name="webserver1"
+   nodeName="webserver1_node" />
+   <deploymentTargets xmi:type="appdeployment:ServerTarget"
+   xmi:id="ServerTarget_1108528239012" name="server1"
+   nodeName="starbase2Node01" />
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *   This is a duplicate of PK02728.
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK04566
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSPH APP SERV
+   
+   
+ * REPORTED COMPONENT ID
+   5724J0800
+   
+   
+ * REPORTED RELEASE
+   60A
+   
+   
+ * STATUS
+   CLOSED DUB
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2005-04-20
+   
+   
+ * CLOSED DATE
+   2005-05-12
+   
+   
+ * LAST MODIFIED DATE
+   2005-05-12
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

@@ -1,0 +1,80 @@
+Title: IBM Security Network Protection Firmware Version 5.3.1.1 Release Notes - United States
+
+Text:
+firmware version 5.3.1.1 FIX README
+
+ABSTRACT
+ IBM Security Network Protection Firmware Version 5.3.1.1 is a firmware update for the XGS NGIPS network protection platform. This release provides updates to IBM Security Network Protection Firmware Version 5.3.1 
+
+CONTENT
+Description
+This release provides the following updates to Network Protection Firmware Version 5.3.1: 
+
+
+Serviceability and support enhancements
+ * To manage the IBM Security Network Protection appliance in a NAT environment, a new tuning parameter is provided to override the sensor IP address with NAT public IP address in event details reported to the SiteProtector System. For more information, see technote 1884020 [http://www.ibm.com/support/docview.wss?uid=swg21884020]. 
+   
+
+Fixes for the following Outbound SSL inspection issues 
+ * Defect 70652: Update bundled trusted CA for outbound SSL inspection to verify server certification with modern and well-known trusted CAs. 
+ * Defect 71270:Server certificate validation can cause Windows Update to fail when Outbound SSL inspection is enabled. 
+ * Defect 69409: Firefox 37.01 does not open HTTPS pages when Outbound SSL inspection is enabled. 
+ * Defect 68202:Outbound SSL traffic to Yahoo is not inspected due to unsupported TLS handshake behaviors and unsupported TLS extensions ALPN and NPN. 
+ * Defect 71418: The management DCA update traffic that is sent from the protection interface IP can cause the appliance to crash.
+   
+   Notes:
+   
+ * It is recommended that you install the May 2015 X-Press Update, because some Outbound SSL fixes are included in that XPU. 
+ * The Outbound SSL inspection feature does not support the SPDY protocol. See technote 1903522 [http://www.ibm.com/support/docview.wss?uid=swg21903522] for more detail. 
+
+Fixes not related to Outbound SSL inspection
+ * Defect 70769: Syslog_sshd crashes with sig6. 
+ * Defect 70897: Static routing rule is not active after reboot. 
+ * Defect 71099: Event emails not sending correctly if email object is modified or includes more than three recipients. 
+ * Defect 70953: Additional management access policy rule in 5.3.0.6 causes migration failure and loads factory default policies. 
+ * Defect 69760: [Translation] The link to machine code terms is not translated on the Software License Agreement page. 
+ * Defect 71435: The admin account lockout policy does not work after the appliance is rebooted.
+
+
+
+Compatibility 
+
+The following web browsers are currently supported by the IBM Security Network Protection 5.3.1.1 local management interface:  * Internet Explorer 10 or 11 
+ * Firefox 28 or later 
+ * Google Chrome 34 or later
+
+
+To manage IBM Security Network Protection 5.3.1.1 appliances by using the SiteProtector System, you must apply the following database service packs :  * SiteProtector System 3.0 - Install all DBSPs up to and including SP3.0 DBSP 3.0.0.35 
+ * SiteProtector System 3.1.1 - Install all DBSPs up to and including SP3.1.1 DBSP 3.1.1.17
+
+
+
+Installation and Configuration 
+
+For step-by-step installation instructions, see the Installing Updates topic in the IBM Knowledge Center:  * http://www.ibm.com/support/knowledgecenter/SSHLHV_5.3.1/com.ibm.alps.doc/tasks/alps_installing_updates.htm [http://www.ibm.com/support/knowledgecenter/SSHLHV_5.3.1/com.ibm.alps.doc/tasks/alps_installing_updates.htm]
+
+For other configuration instructions, see the following topics in the IBM Knowledge Center:  * http://www.ibm.com/support/knowledgecenter/SSHLHV_5.3.1/com.ibm.alps.doc/concepts/alps_intro_page.htm [http://www.ibm.com/support/knowledgecenter/SSHLHV_5.3.1/com.ibm.alps.doc/concepts/alps_intro_page.htm] 
+ * http://www.ibm.com/support/knowledgecenter/SSHLHV_5.3.1/com.ibm.alps.doc/concepts/alps_getting_started_container.htm [http://www.ibm.com/support/knowledgecenter/SSHLHV_5.3.1/com.ibm.alps.doc/concepts/alps_getting_started_container.htm]www.ibm.com/support/docview.wss?uid=swg21957837 [www.ibm.com/support/docview.wss?uid=swg21957837] 
+ * http://www.ibm.com/support/knowledgecenter/SSHLHV_5.3.1/com.ibm.alps.doc/tasks/alps_configuring_settings_lmi.htm [http://www.ibm.com/support/knowledgecenter/SSHLHV_5.3.1/com.ibm.alps.doc/tasks/alps_configuring_settings_lmi.htm]
+
+
+
+Known issues 
+
+Firmware update 5.3.1.1 contains the following known issues:  * Captive portal redirect fails after authentication for some HTTPS websites when using Outbound SSL Inspection. 
+ * Large file downloads might stall and eventually fail when downloading over HTTPS and using Outbound SSL Inspection. 
+ * HTTPS pages might stall and fail to load for clients when using Outbound SSL Inspection. 
+ * Sites that limit MSS or use MSS clamping will cause connections to fail over HTTPS when using Outbound SSL Inspection. 
+ * Websites by using the SPDY protocol [http://en.wikipedia.org/wiki/SPDY]fail to load over HTTPS when using Outbound SSL Inspection. See technote 1903522 [http://www.ibm.com/support/docview.wss?uid=swg21903522] for more details.
+
+
+You can find a list of known issues for IBM Security Network Protection 5.3.1.1 in Technote # 1957837: Known issues for IBM Security Network Protection firmware update 5.3.1.1 [www.ibm.com/support/docview.wss?uid=swg21957837]. 
+
+
+
+
+[/support/docview.wss?uid=swg21959774&aid=1] [https://ibm.biz/BdHdZx] [/support/docview.wss?uid=swg21959774&aid=2] [http://ibm.biz/InfraSecForumTechnote] [/support/docview.wss?uid=swg21959774&aid=3] [http://ibm.biz/SecSuptUTube] [/support/docview.wss?uid=swg21959774&aid=4] [http://ibm.biz/InfraSecFixes] [/support/docview.wss?uid=swg21959774&aid=5] [http://ibm.biz/FlexLicLogin] [/support/docview.wss?uid=swg21959774&aid=6] [http://ibm.biz/MyNotification] [/support/docview.wss?uid=swg21959774&aid=7] [http://ibm.biz/ContactSecSupport] 
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Security IBM Security Network Protection Firmware 5.3.1

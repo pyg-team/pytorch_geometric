@@ -1,0 +1,85 @@
+Title: IBM Operational Decision Manager V8.8.1.1: Interim Fix 54 - United States
+
+Text:
+ DOWNLOADABLE FILES
+
+ABSTRACT
+ This interim fix provides a solution for several APARs. 
+
+DOWNLOAD DESCRIPTION
+The following list shows the component in Operational Decision Manager that is directly affected by this interim fix:
+
+
+ * Decision Center
+
+
+You can find more information on the problems in the following APAR descriptions:  * RS02414 [http://www.ibm.com/support/docview.wss?uid=swg1RS02414]: CONFLICT SYNCING B2XA FILES WITH CHANGE ACTIVITY AFTER SYNC ENTRIES WERE DELETED 
+ * RS02433 [http://www.ibm.com/support/docview.wss?uid=swg1RS02433]: PERFORMANCE ISSUE WITH RULEAPP GENERATION IF THE REPOSITORY CONTAINS A LARGE SET OF BASELINES 
+ * RS02453 [http://www.ibm.com/support/docview.wss?uid=swg1RS02453]: FAIL TO ADD A RULE PROJECT DEPENDENT ON A BOM PROJECT TO A DECISION SERVICE 
+ * RS02454 [http://www.ibm.com/support/docview.wss?uid=swg1RS02454]: ADDING A DEPENDENCY TO A RELEASE IN RD THEN CREATING A NEW CHANGE ACTIVITY IN BC LEADS TO AN ERROR 
+ * RS02459 [http://www.ibm.com/support/docview.wss?uid=swg1RS02459]: PERFORMANCE ISSUE WITH RULEAPP GENERATION IF THE REPOSITORY CONTAINS A LARGE SET OF BASELINES 
+ * RS02472 [http://www.ibm.com/support/docview.wss?uid=swg1RS02472]: UNABLE TO DOWNLOAD THE SCENARIO FOR TEST SCENARIO WITH JAPANESE NAMES (ERROR_CODE=0X38B9A4B2) 
+ * RS02495 [http://www.ibm.com/support/docview.wss?uid=swg1RS02495]: BRANCH MERGE MAY RAISE SQL ERROR: INITIALVALUE"."PROJECT" -- INVALID IDENTIFIER 
+ * RS02496 [http://www.ibm.com/support/docview.wss?uid=swg1RS02496]: PROBLEM DEPLOYING DECISION SERVICE WITH BRANCH SECURITY ENABLED 
+ * RS02500 [http://www.ibm.com/support/docview.wss?uid=swg1RS02500]: ERROR WHEN IMPORTING A DECISION SERVICE INTO RULE DESIGNER 
+ * RS02506 [http://www.ibm.com/support/docview.wss?uid=swg1RS02506]: RULEFLOW NOT UPDATED WITH NEW RULE 
+ * RS02510 [http://www.ibm.com/support/docview.wss?uid=swg1RS02510]: RESTORING A SNAPSHOT IN A BRANCH DOES NOT WORK WHEN HAVING DEPENDANT PROJECT 
+ * RS02512 [http://www.ibm.com/support/docview.wss?uid=swg1RS02512]: PERFORMANCE ISSUE RUNNING MERGE BETWEEN TWO BRANCHES 
+ * RS02514 [http://www.ibm.com/support/docview.wss?uid=swg1RS02514]: IMPORT/EXPORT TOOL DOES NOT HANDLE DATE TIMEZONE 
+ * RS02523 [http://www.ibm.com/support/docview.wss?uid=swg1RS02523]: BC DT EXCEL DOWNLOAD/EDIT/COPY/PASTE ROUNDTRIP IMPOSSIBLE FOR MERGED CELLS 
+ * RS02524 [http://www.ibm.com/support/docview.wss?uid=swg1RS02524]: BC DT EXCEL DOWNLOAD/EDIT/COPY/PASTE ROUNDTRIP IMPOSSIBLE FOR NEGATIVE VALUES WITH OPERATOR 
+ * RS02532 [http://www.ibm.com/support/docview.wss?uid=swg1RS02532]: CANNOT EDIT A QUERY CONTAINED IN A PROJECT'S DEPENDENCY PROJECT 
+ * RS02533 [http://www.ibm.com/support/docview.wss?uid=swg1RS02533]: RESTORING A SNAPSHOT IN A BRANCH DOES NOT WORK WHEN HAVING DEPENDENT PROJECTS - ENTERPRISE CONSOLE 
+ * RS02537 [http://www.ibm.com/support/docview.wss?uid=swg1RS02537]: PERFORMANCE ISSUE RUNNING ILRELEMENTDETAILS.GETRAWVALUE() METHOD WITH 8.7 COMPARED TO 8.5 
+ * RS02538 [http://www.ibm.com/support/docview.wss?uid=swg1RS02538]: GBRDR0001E WHEN SYNC A MODIFIED PROJECT FROM RD TO DC 
+ * RS02548 [http://www.ibm.com/support/docview.wss?uid=swg1RS02548]: BUSINESS CONSOLE: ERROR MESSAGE WHEN EDITING RULEFLOW OF A CLASSIC PROJECT 
+ * RS02549 [http://www.ibm.com/support/docview.wss?uid=swg1RS02549]: WARNING MESSAGE DISPLAYS HTML MARKUP FOR JAPANESE INSTEAD OF JAPANESE CHARACTERS... 
+ * RS02550 [http://www.ibm.com/support/docview.wss?uid=swg1RS02550]: "UNEXPECTED ERROR" WHEN COMPARING SNAPSHOTS WITH A PROJECT HAVING NEW DEPENDENCIES 
+ * RS02552 [http://www.ibm.com/support/docview.wss?uid=swg1RS02552]: BC DT EXCEL DOWNLOAD/EDIT/COPY/PASTE ROUND TRIP DOESN'T WORK FOR STATIC BOM METHOD 
+ * RS02553 [http://www.ibm.com/support/docview.wss?uid=swg1RS02553]: PERFORMANCE ISSUE WITH ORACLE 12 WHILE MERGING BRANCHES 
+ * RS02554 [http://www.ibm.com/support/docview.wss?uid=swg1RS02554]: MIGRATION FROM DC 8.0 TO 8.8 OR 8.8.1 DOES NOT CLEANUP MIGRATION FLAG ADDED IN USERSETTING TABLE 
+ * RS02556 [http://www.ibm.com/support/docview.wss?uid=swg1RS02556]: MIGRATION SCRIPTS TO ODM 8.8 MIGRATE LOCK TABLE INCORRECTLY 
+ * RS02557 [http://www.ibm.com/support/docview.wss?uid=swg1RS02557]: GBRDR0001E WHEN SYNC A MODIFIED PROJECT FROM RD TO DC WITH NEW DEPENDENCY 
+ * RS02565 [http://www.ibm.com/support/docview.wss?uid=swg1RS02565]: NPE DURING DEPLOYMENT WHEN RETRIEVING RULESET VERSIONS 
+ * RS02566 [http://www.ibm.com/support/docview.wss?uid=swg1RS02566]: EXCEPTION WHEN TRYING TO SAVE A DEPLOYMENT CONFIGURATION 
+ * RS02567 [http://www.ibm.com/support/docview.wss?uid=swg1RS02567]: LEFT ARROWS IN DECISION ARTIFACT TAB NOT VISIBLE IN IE 
+ * RS02569 [http://www.ibm.com/support/docview.wss?uid=swg1RS02569]: SMART FOLDER QUERY LEADS TO EVALUATIONEXCEPTION 
+ * RS02576 [http://www.ibm.com/support/docview.wss?uid=swg1RS02576]: BUSINESS CONSOLE CROSS SITE SCRIPTING VULNERABILITY 
+ * RS02580 [http://www.ibm.com/support/docview.wss?uid=swg1RS02580]: WHEN ADDING A PROJECT TO A SUB-BRANCH, THE PROJECT IS ONLY ADDED TO A "MAIN" BRANCH, NOT TO THE SUB-BRANCH 
+ * RS02581 [http://www.ibm.com/support/docview.wss?uid=swg1RS02581]: EXECUTION ORDER IS NOT RESPECTED IN "LIST OF RULES FIRES" 
+ * RS02582 [http://www.ibm.com/support/docview.wss?uid=swg1RS02582]: LIST OF "RULES FIRED" IN TEST REPORTS IS ALL COMPACT, DESIGN WAS MUCH BETTER IN JRULES 
+ * RS02596 [http://www.ibm.com/support/docview.wss?uid=swg1RS02596]: RUNNING A TESTSUITE OR GENERATING A RULESET ARCHIVE FROM THE BUSINESS CONSOLE MAY FAIL WITH ATTACHED NPE STACK TRACE. 
+ * RS02600 [http://www.ibm.com/support/docview.wss?uid=swg1RS02600]: TEAMSERVER DEPLOY ANT TASL IS MISSING THE OPTION TO ASK CONFIGURATION 
+ * RS02601 [http://www.ibm.com/support/docview.wss?uid=swg1RS02601]: TEAMSERVER ANT DEPLOY ASK CONFIGURATION MISSING OPTION 
+ * RS02605 [http://www.ibm.com/support/docview.wss?uid=swg1RS02605]: RULE LOCK STATUS NOT CORRECT ACROSS HIERARCHICAL PROJECTS 
+ * RS02610 [http://www.ibm.com/support/docview.wss?uid=swg1RS02610]: TIMEOUT IN APPROVING CHANGE ACTIVITY 
+ * RS02611 [http://www.ibm.com/support/docview.wss?uid=swg1RS02611]: UNEXPECTED ERROR OCCURS IN BC WHEN NAVIGATING TO ANOTHER VIEW WHILE THE CURRENT VIEW IS LOADING 
+ * RS02617 [http://www.ibm.com/support/docview.wss?uid=swg1RS02617]: TWO DECISION SERVICES SHARING THE SAME BOM PROJECT: WRONG PROJECT LIST FOR OTHER SUB-PROJECTS 
+ * RS02630 [http://www.ibm.com/support/docview.wss?uid=swg1RS02630]: DEADLOCK MAY OCCUR IF A USER SAVES A RULE ARTIFACT WHILE A RULESET GENERATION IS RUNNING 
+ * RS02638 [http://www.ibm.com/support/docview.wss?uid=swg1RS02638]: QUERY IS SLOW WHEN THE RESULT CONTAINS DECISION TABLES 
+ * RS02639 [http://www.ibm.com/support/docview.wss?uid=swg1RS02639]: TEAMSERVER : REMOTE API TO EXECUTE A QUERY GENERATES TOO MANY SQL QUERIES FOR DEPENDENT PROJECTS 
+ * RS02651 [http://www.ibm.com/support/docview.wss?uid=swg1RS02651]: DECISION CENTER MAY HANG WHEN SCROLL LOTS OF TEST REPORTS 
+ * RS02659 [http://www.ibm.com/support/docview.wss?uid=swg1RS02659]: SLOW / TIMEOUTS COPYING RULES IN DECISION CENTER 
+ * RS02669 [http://www.ibm.com/support/docview.wss?uid=swg1RS02669]: CANNOT RESTORE SNAPSHOT IF A RULE HAS BEEN RENAMED WITH THE SAME NAME AS A PREVIOUS RULE 
+ * RS02675 [http://www.ibm.com/support/docview.wss?uid=swg1RS02675]: TIMEOUT IN APPROVING CHANGE ACTIVITY 
+ * RS02746 [http://www.ibm.com/support/docview.wss?uid=swg1RS02746]: PROJECT SECURITY DIALOG CAN SHOW INCORRECT INHERITED STATUS FOR NON-MAIN PROJECTS 
+ * RS02752 [http://www.ibm.com/support/docview.wss?uid=swg1RS02752]: PERFORMANCE ISSUE BUILDING RULE IRL IN COBOL PROJECTS. 
+
+
+SEE ALSO
+Operational Decision Manager Interim Fixes [http://www.ibm.com/support/docview.wss?uid=swg21640630] 
+
+INSTALLATION INSTRUCTIONS
+Follow the instructions in the readme.
+
+URL LANGUAGE SIZE(Bytes) Readme [http://download4.boulder.ibm.com/sar/CMA/WSA/06x3d/0/Readme.html] English 2380 
+DOWNLOAD PACKAGE
+
+
+
+
+Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options 
+What is Fix Central(FC)? [https://www.ibm.com/support/fixcentral/help?page=swfaqs] 
+What is DD? [http://www6.software.ibm.com/dldirector/doc/DDfaq_en.html] 8.8.1.1-WS-ODM_DC-IF054 10-May-17 Language Independent 31720000 FC [https://www-945.ibm.com/support/fixcentral/swg/downloadFixes?parent=ibm%2FWebSphere&product=ibm/WebSphere/WebSphere+Operational+Decision+Management&release=All&platform=All&function=fixId&fixids=8.8.1.1-WS-ODM_DC-IF054&includeRequisites=1&includeSupersed] [ ] DD 
+ [/support/docview.wss?uid=swg24043708&aid=1]Problems (APARS) fixed [/support/docview.wss?uid=swg24043708&aid=2]Problems (APARS) fixed
+RS02414 RS02433 RS02453 RS02454 RS02459 RS02472 RS02495 RS02496 RS02500 RS02506 RS02510 RS02512 RS02514 RS02523 RS02524 RS02532 RS02533 RS02537 RS02538 RS02548 RS02549 RS02550 RS02552 RS02553 RS02554 RS02556 RS02557 RS02565 RS02566 RS02567 RS02569 RS02576 RS02580 RS02581 RS02582 RS02596 RS02600 RS02601 RS02605 RS02610 RS02611 RS02617 RS02630 RS02638 RS02639 RS02651 RS02659 RS02669 RS02675 RS02746 RS02752

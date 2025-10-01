@@ -1,0 +1,236 @@
+Title: IBM IV13181: REVISING JOB PLAN FOR CALIBRATION, MSG REQUIRED JOBPLAN IS BLANK - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  PROBLEM DESCRIPTION:
+   
+    Cust says that  when trying to revive a job plan for
+   calibration .
+   Getting message required job plan is blank .  This message comes
+   when
+   trying to save the record .
+   
+   ACTION TAKEN:
+   I tested an environment with 7117 and Cal 7120 but could not
+   reproduce
+   the error.
+   I also tested an environment with 7118 and Oil & Gas 7120 and
+   discovered
+   that Oil & Gas does not have the Revise Job Plan action
+   available from
+   the Select Action dropdown menu so I cannot reproduce since
+   unable to
+   complete the steps.  The APAR you found , IZ53570 [http://www-01.ibm.com/support/docview.wss?uid=swg1IZ53570], and its
+   corresponding
+   Issue 09-15249 says that it is specific to Oil & Gas.  Your Oil
+   & Gas
+   version 7120 already has this fix included as it was fixed in
+   7.1.0.
+   
+   Before I escalate this to Level 3 for assistance I need you to
+   set some
+   loggers to DEBUG (save and apply settings) then reproduce the
+   problem
+   and send me the log file.  Go to the Logging app:
+   
+   root logger = application ,   log level = INFO
+         loggers table (lower) click New Row
+         logger = PLUSCJP ,    log level = DEBUG
+   root logger = sql,     log level = INFO
+         loggers table (lower) click New Row
+         logger = JOBPLAN ,    log level = DEBUG
+         logger = JOBPLAN.JOBTASK ,    log level = DEBUG
+         logger = JOBPLAN.PLUSCJPREVINPUT,    log level = DEBUG
+   
+   I had a LotusLive web session with the customer to view the
+   problem on
+   his system as I am not able to reproduce on a 7117 + Cal 7120
+   environment.  We queried the jptask table and noticed that
+   jptask.
+   pluscjprevnum is not updated after revising the job plan and
+   clicking
+   save -- again I do not get the same result.  I asked Jai to send
+   the
+   SystemOut and SystemErr logs from his Websphere .
+   
+   I had another conf call/lotus live session with Jai.  Even
+   though he
+   gets the
+   error BMXAA4195E - Required field Job Plan is blank, there is no
+   exception or stack trace in the log files.  With the logging
+   settings
+   the same as before but with application logger set to DEBUG and
+   activated : logger = JOBPLAN.  The log files appear to show the
+   similar
+   output when adding a record in the core Job Plan app versus
+   adding and
+   revising a recored in the Job Plan (Cal) app.  The displayed
+   error
+   message occurs after revising the job plan (for example ,
+   modifying the
+   description) and then clicking Save.  The error is a generic
+   system
+   message where the field name is a parameter; in this case the
+   field is
+   'Job Plan'
+   
+   Steps to replicate:
+   1. Go to Job plan (cal) application.
+   2. Create a job plan WITHOUT task and save it and change status
+   to
+   active.
+   3. Revise the job plan from select action, change some details
+   like
+   description and save.
+   4. On Save, there is no issue.
+   5. Now create another job plan WITH task and save and make
+   active.
+   6. Then, revise the job plan from select action, change some
+   details
+   like description and save.
+   7. On save, a system message - Required field job plan is blank.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  n/a
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All user with Oil and Gas 7.1.2.0 installed  *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: The job plan key is not propagated to   *
+   *                      its tasks.                              *
+   *                                                              *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   *                                                              *
+   *                                                              *
+   *                                                              *
+   ****************************************************************
+   In the Job Plan application, when you try to duplicate a job
+   plan you cannot save the new job plan and the following error
+   occurs: 'BMXAA4195E - REQUIRED FIELD JOB PLAN IS BLANK'.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  After the fix, key propagation will happen as it was supposed
+   to.
+   
+   
+   
+   
+   
+   The fix for this APAR is contained in the following maintenance
+   package:
+   
+     | release\fix pack | REL 7.1.2.0 OG
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV13181
+   
+   
+ * REPORTED COMPONENT NAME
+   MAXIMO PLANNING
+   
+   
+ * REPORTED COMPONENT ID
+   5724R46PL
+   
+   
+ * REPORTED RELEASE
+   711
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-01-13
+   
+   
+ * CLOSED DATE
+   2012-02-24
+   
+   
+ * LAST MODIFIED DATE
+   2012-02-24
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  MAXIMO
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   MAXIMO PLANNING
+   
+   
+ * FIXED COMPONENT ID
+   5724R46PL
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R711 PSY
+   UP

@@ -1,0 +1,172 @@
+Title: IBM PK69797: RATIONAL DEVELOPER FOR SYSTEM Z USER UNABLE CHECK-OUT OR CHECK-IN MEMBERS TO SCLM - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Under certain conditions SCLM/DT-user are not longer able to
+   check-out or check-in members to SCLM after an unsuccessful
+   check-in operation. This situation can be resolved only by an
+   administrator or an experienced UNIX user.
+   
+   The title 'How to create a file(!) called EDIT in
+   your /var/SCLMDT/WORKAREA/?userid? folder' might be a bit
+   misleading because it tells about the result of the user's
+   actions and not the intend of the user's actions. No one is
+   really trying to create a file called EDIT but in the end he
+   created such a file. This file is located in the SCLM/DT
+   workarea in the USS part on the mainframe and is normally a
+   directory under which SCLM/DT seems to store temporary data for
+   transfer between the mainframe and an RDz client. If this
+   directory becomes a regular file accidentally, no more transfers
+   are possible. Users are not able to check-in or check-out files
+   from SCLM. They all have a regular file. After directory named
+   EDIT which has become a deleting the file in USS directly the
+   problem is corrected.
+   
+   
+   Recreate Scenario:
+   1. Switch to the SCLM perspective
+   2. Choose the SCLM Developer Mode, if you?re not already in that
+       mode.
+   3. Clear the view.
+   4. In the SCLM Preferences create a language extension mapping
+      for language ARCHDEF
+   5. Add a new project filter
+   6. Add a new member named EDITTEST to SCLM (no matter what
+      content)
+   7. Close the Editor and save the file, but DO NOT check that new
+       member in to SCLM.
+   8. Switch view mode and confirm the warning (this will clear
+      your view)
+   9.  Recreate the SCLM location (project filter)
+   10. Open up the tree and double click your EDITTEST member
+   11. The editor comes up with dummy member containing a warning
+   12. Delete the contents of the member and type a new line
+         (content does not matter)
+   13. Close the editor and click YES when you?re asked to save
+       your changes.
+   14. Check in the member to SCLM, choose language ARCHDEF
+   15. Refresh the project filtered view and notice that your
+       member is still checked out.
+   16. Try to check in your member again. An error occurs.
+       From now on you?re totally stuck because the last action
+       created a file(!) named EDIT in the USS in
+       folder /var/SCLMDT/WORKAREA/?userid?/ . Until you delete
+       that file
+       manually, you won?t be able to checkout or checkin any file
+       from or to SCLM any longer..
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  n/a
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  See error description.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The problem listed in this APAR has been resolved with
+   IBM Rational Developer for System z V7.1.1.3 Fix Pack which
+   is available from the Recommended Fixes support download page:
+   http://www-1.ibm.com/support/docview.wss?rs=2294&uid=swg27006335 [http://www-1.ibm.com/support/docview.wss?rs=2294&uid=swg27006335]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK69797
+   
+   
+ * REPORTED COMPONENT NAME
+   RATL DEV FOR SY
+   
+   
+ * REPORTED COMPONENT ID
+   5724T0700
+   
+   
+ * REPORTED RELEASE
+   710
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-07-30
+   
+   
+ * CLOSED DATE
+   2008-12-17
+   
+   
+ * LAST MODIFIED DATE
+   2009-01-26
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   RATL DEV FOR SY
+   
+   
+ * FIXED COMPONENT ID
+   5724T0700
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R710 PSY
+   UP

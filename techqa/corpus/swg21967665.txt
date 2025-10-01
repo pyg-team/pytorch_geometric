@@ -1,0 +1,38 @@
+Title: IBM Can not open the Tivoli Enterprise Portal (TEP) after an upgrade. - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ After upgrading from 6.3.x to 6.3.5 of IBM Tivoli Monitoring for Tivoli Storage Manager (Reporting and Monitoring), the user cannot open up the Tivoli Enterprise Portal (TEP). 
+
+SYMPTOM
+ 
+
+The customer is able to open a web browser and navigates to "http://<hostname>:1920"
+However, when the customer attempts to access IBM Tivoli Enterprise Portal Web Client,
+the screen loads (the title bar with the logout button), but the TEPS login window does not appear. 
+CAUSE
+After exploring the HTML structure of cnp.html, the page that loads when the IBM Tivoli Enterprise Portal Web Client is selected, its been determined that the applet.html file located in install_dir/itm/aix536/cw is empty (which was not the case before the upgrade).
+After replacing the applet.html file with applet.html.bak, the Web Client worked successfully.
+
+By default install_dir is /opt/tivoli/tsm/reporting
+
+
+ENVIRONMENT
+AIX 6.1 and 7.1
+
+
+
+DIAGNOSING THE PROBLEM
+On the system which contains the IBM Tivoli Monitoring Server check the following file: 
+
+install_dir/itm/aix536/cw/applet.html , does the file exist and or empty. 
+
+install_dir by default is /opt/tivoli/tsm/reporting
+
+
+RESOLVING THE PROBLEM
+If the file install_dir/itm/aix536/cw/applet.html empty or missing, then replace it with the applet.html.bak file 
+
+cp applet.html.bat applet.html.

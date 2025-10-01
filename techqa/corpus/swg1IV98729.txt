@@ -1,0 +1,157 @@
+Title: IBM IV98729: DATASOURCE FILE REPLICATION ERROR AFTER FAILED IMPORT ON DATASOURCE FILES STEP - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  In case of  failed imports during processing datasoure files,
+   the files are marked as not imported. In specific
+   situations, the following imports are
+   unable to download such files, until the files are refreshed.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Force upload of the files on affected endpoints.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   
+   * ERROR DESCRIPTION:
+   *
+   * In case of huge environments and often scan schedules it happe
+   *
+   * that
+   *
+   * some files are changed between import start and file download
+   *
+   * process.
+   *
+   *
+   *
+   * This cause Replication failure and the data will be processed
+   *
+   * the
+   *
+   * next import time or the next scan time. This is a big problem
+   *
+   * especially for VM manager data.
+   *
+   * **************************************************************
+   *
+   * EXPECTED RESULTS:
+   * The issue does not occure.
+   ****************************************************************
+   * RECOMMENDATION: Apply appropriate update when available.
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix for this APAR is contained in the following maintenance
+   packages:
+    | Update | BFI 9.2.9.0
+    | Update | ILMT 9.2.9.0
+   ****************************************************************
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV98729
+   
+   
+ * REPORTED COMPONENT NAME
+   IEM SW USE ANL
+   
+   
+ * REPORTED COMPONENT ID
+   5725F57MT
+   
+   
+ * REPORTED RELEASE
+   926
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-08-03
+   
+   
+ * CLOSED DATE
+   2017-09-05
+   
+   
+ * LAST MODIFIED DATE
+   2017-09-05
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   IEM SW USE ANL
+   
+   
+ * FIXED COMPONENT ID
+   5725F57MT
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R926 PSY
+   UP

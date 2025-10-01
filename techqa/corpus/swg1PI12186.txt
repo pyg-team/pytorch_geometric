@@ -1,0 +1,149 @@
+Title: IBM PI12186: POTENTIAL FOR V2V CHANGES TO BE APPLIED OUT OF SEQUENCE. - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  There's a small window where changes could be processed out of
+   order when replicating with a mix of CICS online and batch
+   changes.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: Data Replication for VSAM.                   *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: When replicating a mixture of CICS      *
+   *                      online and batch changes to             *
+   *                      non-recoverable files, a window exists  *
+   *                      where changes from one are incorrectly  *
+   *                      included with changes to the other with *
+   *                      the potential for causing changes to be *
+   *                      applied out of sequence at the target   *
+   *                      resulting in apply errors.              *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   Classic VSAM to VSAM has the potential to mix non-recoverable
+   changes from CICS TS and CICS VR which could result in changes
+   lost or out of order.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The code has been corrected to correctly separate the processing
+   of non-recoverable changes occurring in CICS online and batch
+   processing.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI12186
+   
+   
+ * REPORTED COMPONENT NAME
+   CLASSIC FED & E
+   
+   
+ * REPORTED COMPONENT ID
+   5697I8200
+   
+   
+ * REPORTED RELEASE
+   B10
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-02-20
+   
+   
+ * CLOSED DATE
+   2014-04-02
+   
+   
+ * LAST MODIFIED DATE
+   2014-05-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UI16650
+   
+   
+
+MODULES/MACROS
+ *  CECCVSAM
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CLASSIC FED & E
+   
+   
+ * FIXED COMPONENT ID
+   5697I8200
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * RB10 PSY UI16650 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI16650]
+   UP14/04/03 P F404
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

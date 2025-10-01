@@ -1,0 +1,161 @@
+Title: IBM Open Mic Q&A: Notes 8.5.1 Upgrade & Deployment Best Practices - July 15th, 2010 - United States
+
+Text:
+wplcopenmic2010; open mic 2010; faq; webcast; web cast; Tech Exchange; STEwebcast; Document; ND8.5.1; notes/Domino 8.5.1; 851; openmic call; questions and answers; q&a; replay; recording; webcast; FAQ; best practice; deployment; implementing; implement; Q&A transcript NEWS
+
+ABSTRACT
+ IBM hosted an Open Mic conference call with Lotus Development and Support Engineers to discuss Notes 8.5.1 Upgrade & Deployment Best Practices on Thursday, July 15, 2010. This document contains Q&A from that call. 
+
+CONTENT
+ 
+
+Installs & Smart Upgrade 
+Q. Can Fix Packs be installed via Smart Upgrade? 
+A. YES. Most definitely. 
+
+Q. Is there a Wiki article covering the upgrade process? 
+A. Upgrade Cookbook: Upgrading to Lotus Notes and Domino 8.5.1 [http://www-10.lotus.com/ldd/dominowiki.nsf/dx/UC1_TableofContents.htm] 
+
+
+Q. Is it possible for Smart Upgrade to work if user data directories are stored on a network drive? 
+A. That configuration is not part of our test plan. However, remember that Smart Upgrade is totally transparent and it just launches the installer. As long as the installer will work with the network drive, then it should be fine. 
+
+*** FYI / REMINDER *** 
+Smart Upgrade does not affect the running of the installer in any way. Once executed by Smart Upgrade, the installer works the same as it would if you had copied it manually to your desktop and launched it. There's nothing magical about what Smart Upgrade is doing once the installer starts to run; it's exactly the same. 
+
+
+Q. Do users still have to have admin rights to their machines to install upgrades via Smart Upgrade? 
+A. If you have installed to the Program Files directory, then you always need admin rights to install. 
+
+
+Q. Our users are not power users on their PC's. When running Smart Upgrade using SuRunAs, it fails with a "notes.dll access denied" error. The only way around it is to give users full control to the Lotus folder in program files. 
+A. This is a known issue with Smart Upgrade prior to 8.5.2. 
+
+
+Q. Does SURunAs work with Windows 7? 
+A. No. 
+
+-- Is SURunAs supported with Windows 7? (#1427103) [http://www.ibm.com/support/docview.wss?uid=swg21427103] 
+-- Smart Upgrade RunAs (SURunAs) fails on Windows Vista or Windows 7 with error "Failed to launch process as specified user" (#1381191) [http://www.ibm.com/support/docview.wss?uid=swg21381191] 
+
+
+Q. What's the time frame for getting SURunAs working with Windows 7? 
+A. We don't have an ETA but do know it won't be in 8.5.2. Addressing this issue will require a significant design change, one that is larger than we typically put into a Maintenance Release. We're evaluating what's the best vehicle to deliver that change within a reasonable time frame. 
+
+
+
+Q. For the Mac Smart Upgrade, the version information comes with no space whereas the Windows version comes with a space. For example, it's 8.5.1 space Fix Pack 3 for Windows but for Mac it's 8.5.1 nospaceFP3. Can those be standardized? 
+
+A. The standard started with a space on Windows and we ran into a technical issue on UNIX-based machines and since Mac is actually a UNIX-based machine underneath, the space had to be removed. 
+
+There was a concern with removing the space on Windows to make it consistent because there were a greater number of 3rd-party applications and products that were specifically looking for the space. At some point we would like to make them consistent again. 
+
+In the meantime, try entering an *(asterisk) in place of the space. That should allow you to use the same Smart Upgrade Kit for both Mac and Windows. 
+
+
+Q. Chaining isn't working even though the Smart Upgrade Kit documents are properly configured. Smart Upgrade for the first kit runs properly; however, users have to launch Notes again before the second kit will run. 
+A. This is a known issue reported in SPR FMEG7T45DA. See the workarounds below. 
+
+Workaround 1: Leave the Deploy Version field in the Desktop Settings document blank (or, just don't use a Desktop Settings document with a policy). 
+
+Workaround 2: Manually kick off the upgrade action in Notes by selecting Tools > Notes Smart Upgrade. 
+
+
+Q. How can I merge two install packs? I want to deploy a single install pack that will upgrade Notes 7.0.x to Notes Basic 8.5.1 Fix Pack 2? 
+A. Combining multiple install kits into a single one is not supported, and it's also not necessary. Chaining multiple Smart Upgrade kits together will get the job done. 
+
+-- Chaining Notes Smart Upgrade Kits (#1438849) [http://www.ibm.com/support/docview.wss?uid=swg21438849] 
+-- Using Smart Upgrade to run a series of client upgrades [http://publib.boulder.ibm.com/infocenter/domhelp/v8r0/topic/com.ibm.help.domino.admin85.doc/H_USING_SMART_UPGRADE_TO_RUN_A_SERIES_OF_CLIENT_UPGRADES_OVER.html?resultof=%22%63%68%61%69%6e%69%6e%67%22%20%22%63%68%61%69%6e%22%20] 
+
+Q. Will use of a language pack affect the Smart Upgrade language? 
+A. You may receive a warning that the language is not available but then Smart Upgrade should continue. In theory, the client should just be upgraded to the English version; you may have to reinstall the language pack. This will have to be verified. 
+
+
+Q. Is it possible to select single sign-on during Smart Upgrade? 
+A. Yes. Add it as a command line option. 
+
+Q. Do Fix Packs require a "All Client" or "Notes Only" installation? 
+A. Fix Packs can install to either "All Client" or "Notes Only". 
+
+
+Q. Is it recommended that install kits not reside on IBM i-based host servers? 
+A. If the networking layer on IBM i supports sharing to your client PCs, it should work. 
+
+Q. How can we enable auto approval for mail file deletion in admin4. 
+A. Not recommended. 
+
+
+Q. Since installing the 8.5.1 Lotus Notes client, the embedded Sametime client is not showing the Business Card information. Is there a solution for this? 
+A. Yes. Fixed in 8.5.1 Fix Pack 3. 
+
+
+ID Vault & Notes Shared Logon 
+Q. How does Notes Single Logon and Notes Shared Logon interoperate with ID Vault? 
+A. You want to move away from the older Notes Single Logon and move more towards the newer Notes Shared Logon. While they accomplish similar things they are completely different. Plus ID Vault can work in conjunction with Notes Shared Logon. See the ID Vault content linked below. 
+
+"Notes ID Vault" topic set [http://publib.boulder.ibm.com/infocenter/domhelp/v8r0/topic/com.ibm.help.domino.admin85.doc/H_DOMINO_ID_VAULT_STEPS.html]in Notes/Domino InfoCenter: 
+
+ID Vault articles [http://www-10.lotus.com/ldd/dominowiki.nsf/xpViewRecent.xsp?searchValue=id%20vault] on the Notes/Domino Wiki  * ID vault and Notes shared login FAQ [http://www-10.lotus.com/ldd/dominowiki.nsf/dx/id-vault-and-notes-shared-login-faq] 
+ * ID vault interoperability FAQ [http://www-10.lotus.com/ldd/dominowiki.nsf/dx/id-vault-interoperability] 
+ * ID vault security FAQ [http://www-10.lotus.com/ldd/dominowiki.nsf/dx/id-vault-security-faq] 
+ * ID vault password management FAQ [http://www-10.lotus.com/ldd/dominowiki.nsf/dx/id-vault-password-management-faq] 
+ * Troubleshooting ID vault test deployments [http://www-10.lotus.com/ldd/dominowiki.nsf/dx/Troubleshooting_ID_vault_test_deployments]
+
+
+
+
+Q. In Notes 8.5.1, when I go to Preferences and select "Use Operating System Login", does that pertain to the older Notes Single Logon or the newer Notes Shared Logon? 
+A. If Notes Single Logon is installed, then that preference pertains to Notes Single Logon. If it is NOT installed then the user may use it to manually enable Notes Shared Login. If it is grayed out, then the admin controls it via policy for Shared Login. 
+
+
+Q. Is Notes Shared Logon working with Windows 7 64bit? 
+A. Yes. 
+
+
+Q. Does Shared Logon need anything installed on the PC, or is it just the policy? 
+A. Just the policy 
+
+
+Q. Does Notes Shared Logon also keep Internet passwords in synch with Notes passwords? 
+A. No 
+
+
+Q. We have security policies (e.g., password policies) on our address books in our current 6.5.5 environment. Will that work as well in 8.5.1? 
+A. Yes. But you definitely want to start using ID Vault once you get comfortable with your 8.5.1 deployment; ID Vault is really awesome! 
+
+
+Additional Links 
+Open Mic Intro presentation -- Notes 8.5.1 Upgrade Deployments & Best Practices [ftp://public.dhe.ibm.com/software/lotus/demos/technotes/1425000/Notes851Upgrade_OpenMic.pdf] 
+
+Puttin' on the Bits Blog [http://www.lotus.com/ldd/installblog.nsf/] (by Jeff Mitchell & the Notes Install/Setup Team) 
+
+Quick Reference: Major Phases of Notes 8.5.1 Upgrade & Deployment (Technote 1428532) [http://www.ibm.com/support/docview.wss?uid=swg21428532] 
+
+
+
+Upcoming Releases 
+Q. When will 8.5.2 be released? 
+A. Q3 2010. 
+
+
+Q. Is 8.5.2 an update for both Notes clients and Domino servers? 
+A. Yes. 
+
+
+Q. What is the timeline on 8.5.1 Fix Pack 4? 
+A. By August 4th. Preliminary Release Notice [http://www-10.lotus.com/ldd/r5fixlist.nsf/8d1c0550e6242b69852570c900549a74/61f6dc55689d10b18525774d0055319a?OpenDocument]. 
+
+
+Q. What's the best way to monitor status of any upcoming release? 
+A. Here are a couple options: 
+
+
+Option 1: On the Upcoming Releases [http://www-10.lotus.com/ldd/r5fixlist.nsf/(Progress)/$First?OpenDocument] page of the Fix List database, click the link for the version you want to check on. 
+
+[/support/docview.wss?uid=swg21433038&aid=1] [/support/docview.wss?uid=swg21433038&aid=1] 
+
+
+
+Option 2: From any page of the Fix List database [http://www-10.lotus.com/ldd/r5fixlist.nsf], click the version links in the Fix list status box that appears on the far right.. 
+
+[/support/docview.wss?uid=swg21433038&aid=2] [/support/docview.wss?uid=swg21433038&aid=2]

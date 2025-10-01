@@ -1,0 +1,130 @@
+Title: IBM Installation Manager and IBM Packaging Utility GUI crashes while advancing through wizard screens on recent updates of RHEL 6 - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The IBM Installation Manager and IBM Packaging Utility GUI crashes on RHEL 6 updates 5 and 6 during the installation of a product and while advancing through the wizard screens. 
+
+SYMPTOM
+The GUI crashes and a JVM termination window pops up with the following text: 
+
+
+JVM terminated. Exit code=1 
+
+/opt/IBM/InstallationManager/eclipse/jre_7.0.0.sr6_20131213_1238/ 
+
+jre/bin/java 
+
+-Xms40m 
+
+-Xmx512m
+
+
+
+
+
+CAUSE
+An Eclipse defect, tracked here https://bugs.eclipse.org/bugs/show_bug.cgi?id=441705 [https://bugs.eclipse.org/bugs/show_bug.cgi?id=441705], causes the crash. 
+According to the Eclipse bug description, the crash occurs only on Linux systems where the GTK version is "2.24" or higher and the "cairo" library's version is lower then "1.9.4".
+
+
+To verify that this is indeed the cause for the crash, execute: 
+
+ 
+
+
+$ rpm -q gtk2
+
+
+Example output: 
+
+
+gtk2-2.24.23-6.el6.s390x 
+
+gtk2-2.24.23-6.el6.s390
+
+
+
+
+ 
+
+
+$ rpm -q cairo
+
+
+Example output: 
+
+
+cairo-1.8.8-3.1.el6.s390x 
+
+cairo-1.8.8-3.1.el6.s390
+
+
+
+
+ 
+
+Other things to looks for: 
+
+1.) Run the Installation Manager from command line and after it crashes look for this line in the output: 
+
+ java: cairo-misc.c:380: _cairo_operator_bounded_by_source: Assertion `NOT_REACHED' failed. 
+
+2.) After the crash, the JVM produces a "javacore.<xxxxxxx,xxxx,xxxx,xxxx.txt" dump file. Searching this file for "cairo", you should see a stack trace looking like this: 
+
+1XMTHDINFO Thread Details 
+
+NULL 
+3XMTHREADINFO "main" J9VMThread:0x0000000040DAE100, j9thread_t:0x00007F39E402DCE0, java/lang/Thread:0x0000000000E2B6B0, state:R, prio=6
+3XMJAVALTHREAD (java/lang/Thread getId:0x1, isDaemon:false)
+3XMTHREADINFO1 (native thread ID:0x2F24, native priority:0x6, native policy:UNKNOWN)
+3XMTHREADINFO2 (native stack address range from:0x00007F39E9733000, to:0x00007F39EA134000, size:0xA01000)
+3XMCPUTIME CPU usage total: 3.763300160 secs
+3XMHEAPALLOC Heap bytes allocated since last GC cycle=492088 (0x78238)
+3XMTHREADINFO3 Java callstack:
+4XESTACKTRACE at org/eclipse/swt/internal/cairo/Cairo._cairo_fill(Native Method)
+4XESTACKTRACE at org/eclipse/swt/internal/cairo/Cairo.cairo_fill(Cairo.java:248)
+4XESTACKTRACE at org/eclipse/swt/widgets/Caret.drawCaret(Caret.java:129)
+4XESTACKTRACE at org/eclipse/swt/widgets/Caret.showCaret(Caret.java:544)
+4XESTACKTRACE at org/eclipse/swt/widgets/Caret.setFocus(Caret.java:390)
+4XESTACKTRACE at org/eclipse/swt/widgets/Canvas.gtk_focus_in_event(Canvas.java:174 
+...
+
+
+
+
+
+RESOLVING THE PROBLEM
+This issue is fixed in IBM Installation Manager 1.8.2. 
+
+If, for some reason, using IBM Installation Manager 1.8.2 is not option, it is possible to workaround the issue by upgrading the "cairo" library. 
+
+Download a version of the cairo library that is at least "1.9.4" 
+
+x86 64-bit example: ftp://fr2.rpmfind.net/linux/sourceforge/f/fu/fuduntu-el/el6/current/TESTING/RPMS/cairo-1.10.2-3.el6.x86_64.rpm and execute: 
+
+ * 
+ * 
+   rpm -U cairo-1.10.2-3.el6.x86_64.rpm
+   
+
+
+x86 32-bit example: ftp://fr2.rpmfind.net/linux/sourceforge/f/fu/fuduntu-el/el6/current/TESTING/RPMS/cairo-1.10.2-3.el6.i686.rpm and execute: 
+
+ * 
+ * 
+   rpm -U cairo-1.10.2-3.el6.i686.rpm
+   
+
+
+Another option is to not run the Installation Manager in GUI mode but in Command-line, Console or Web UI mode.
+
+RELATED INFORMATION
+ Related Installation Manager Technote [http://www-01.ibm.com/support/docview.wss?uid=swg21691808]
+
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Software Development Rational Publishing Engine Installation Linux 2.0.0 All Editions

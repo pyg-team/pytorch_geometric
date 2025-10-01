@@ -1,0 +1,33 @@
+Title: IBM Exporting output file to Excel worksheet doesn't display graphs - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ I am using Statistics 18 and I have encountered problems when exporting my output to an Excel file. On the first instance that I run my Export, the graphs are displayed in the specified Excel worksheet. On any subsequent Export, Excel displays the following message where the graph is supposed to be displayed:
+
+"The image cannot be displayed. Your computer may not have enough memory to open the image, or the image may have been corrupted. Restart your computer, and then open the file again. If the red x still appears, you may have to delete the image and then insert it again"
+
+I have confirmed that I have sufficient memory available when running Statistics on my Windows XP machine.
+I could use OMS to export this, however I would like control on being able to add my export to an existing workbook and into a new worksheet. 
+
+RESOLVING THE PROBLEM
+This problem is a limitation on the POI Apache tool that Statistics 18 uses. The following is a quote from the User's Guide of this tool for developers:
+" Images are part of the drawing support. To add an image just call createPicture() on the drawing patriarch. At the time of writing the following types are supported:
+* PNG * JPG * DIB
+It should be noted that any existing drawings may be erased once you add a image to a sheet."
+
+This reference can be found at:
+http://poi.apache.org/spreadsheet/quick-guide.html#Images [http://poi.apache.org/spreadsheet/quick-guide.html#Images]
+
+Workaround is to create a new workbook and manually copy the newly created worksheet into your existing Excel flie.
+IBM SPSS would like to apologise for any inconvenience caused
+
+RELATED INFORMATION
+ Need more help? Our Statistics forum is Live! [https://developer.ibm.com/answers/topics/statistics.html?smartspace=predictive-analytics]
+
+
+ 
+
+HISTORICAL NUMBER
+ 87048

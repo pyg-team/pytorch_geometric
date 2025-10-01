@@ -1,0 +1,83 @@
+Title: IBM Identifying idle threads in thread dumps taken against WebSphere Application Server - United States
+
+Text:
+javacore; javacores; threaddump; native_stdout.log; idle; wait; hanging TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When reviewing thread dumps taken against the WebSphere Application Server, there are several thread states that appear to be hanging, but are actually in an idle state. This document will explain what threads would usually be misidentified as a problem thread when actually it's idle. 
+
+DIAGNOSING THE PROBLEM
+During high CPU, threads are likely performing operations rapidly, and as a result thread dumps taken that are correlated with the CPU utilization data will map the highest CPU usage thread to a thread that is actually in a wait/idle state. The thread dump is only capturing a single instance of all the running threads and rapidly executing operations may have completed their workload just before the javacore was taken, and new workload likely was being handled by a different thread. 
+Sometimes a hung thread is misinterpreted in the same manner as the thread in the wait state never changes when multiple thread dumps are captured and compared.
+
+
+
+RESOLVING THE PROBLEM
+Since these threads are already idle, they are not the cause of any high CPU or hangs that may have been detected. 
+
+If diagnosing high CPU, you will need to look at trends in all thread dumps captured to determine what is consuming the CPU usage, or capture profiling data (for example from HealthCenter). 
+
+ 
+
+Example Idle Thread Stacks 
+
+
+
+Idle Thread (Waiting for Work) 
+
+Usually seen in WebContainer threads, but can be seen elsewhere which indicates a thread waiting for new work to arrive:
+at sun/misc/Unsafe.park(Native Method)
+at java/util/concurrent/locks/LockSupport.parkNanos(LockSupport.java:222)
+at java/util/concurrent/locks/AbstractQueuedSynchronizer$ConditionObject.await
+(AbstractQueuedSynchronizer.java:2127)
+at com/ibm/ws/util/BoundedBuffer$GetQueueLock.await(BoundedBuffer.java:285)
+at com/ibm/ws/util/BoundedBuffer.waitGet_(BoundedBuffer.java:424)
+at com/ibm/ws/util/BoundedBuffer.take(BoundedBuffer.java:817)
+at com/ibm/ws/util/ThreadPool.getTask(ThreadPool.java:934)
+at com/ibm/ws/util/ThreadPool$Worker.run(ThreadPool.java:1704()
+
+
+
+
+Idle Thread (Waiting for Work) 
+
+Similar thread stacks without the concurrent locks were seen in earlier versions of WebSphere Application Server, which are also waiting for work (or may be seen on some non-WebContainer threads that have a thread pool):
+at java/lang/Object.wait(Native Method)
+at java/lang/Object.wait(Object.java:231)
+at com/ibm/ws/util/BoundedBuffer.waitGet_(BoundedBuffer.java:192)
+at com/ibm/ws/util/BoundedBuffer.take(BoundedBuffer.java:543)
+at com/ibm/ws/util/ThreadPool.getTask(ThreadPool.java:819)
+at com/ibm/ws/util/ThreadPool$Worker.run(ThreadPool.java:1544)
+
+
+
+
+Keep-Alive Thread
+A Thread in keepalive will usually be performing some sort of SocketRead operation. 
+
+at java/net/SocketInputStream.socketRead(Native Method)
+at java/net/SocketInputStream.read(SocketInputStream.java:85)
+at com/ibm/ws/io/Stream.read(Stream.java:17)
+at com/ibm/ws/io/ReadStream.readBuffer(ReadStream.java:411)
+at com/ibm/ws/io/ReadStream.read(ReadStream.java:110)
+at com/ibm/ws/http/HttpConnection.run(HttpConnection.java:448)
+at com/ibm/ws/util/ThreadPool$Worker.run(ThreadPool.java:672) 
+
+ 
+
+
+Asynchronous Activity Waiting for New Work (Idle Thread)
+at com/ibm/io/async/AsyncLibrary.aio_getioev2(Native Method)
+at com/ibm/io/async/AsyncLibrary.getCompletionData2(AsyncLibrary.java:486)
+at com/ibm/io/async/ResultHandler.runEventProcessingLoop(ResultHandler.java:506)
+at com/ibm/io/async/ResultHandler$2.run(ResultHandler.java:847)
+at com/ibm/ws/util/ThreadPool$Worker.run(ThreadPool.java:1498)
+
+
+
+Asynchronous Activity (May also be idle)
+at com/ibm/io/async/AsyncLibrary.aio_getioev3(Native Method)
+at com/ibm/io/async/AsyncLibrary.getCompletionData3(AsyncLibrary.java:625)
+at com/ibm/io/async/ResultHandler.runEventProcessingLoop(ResultHandler.java:530)
+at com/ibm/io/async/ResultHandler$2.run(ResultHandler.java:905)
+at com/ibm/ws/util/ThreadPool$Worker.run(ThreadPool.java:1690)

@@ -1,0 +1,126 @@
+Title: IBM Configuring an SSL connection between the eDiscovery Analyzer server and the IBM FileNet® P8 server - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ You must configure the SSL connection before registering the IBM FileNet® P8 content management server in the eDiscovery Analyzer archive registration page. 
+
+SYMPTOM
+If you try to register a FileNet P8 server that uses an HTTPS web address before configuring the SSL connection, you will receive an error stating that a valid certificate required to communicate with the content management server by using HTTPS cannot be found.
+
+
+DIAGNOSING THE PROBLEM
+You must configure SSL support before you can register the FileNet® P8 content management server in eDiscovery Analyzer using an HTTPS URL.
+
+RESOLVING THE PROBLEM
+When eDiscovery Analyzer connects to the FileNet P8 server using SSL and a valid certificate is not found, eDiscovery Analyzer fails to connect the FileNet P8 server. 
+
+To prevent this from occurring, you must first use the keytool command to import the certificate into the JRE truststore that is bundled with eDiscovery Analyzer.
+
+To configure the SSL connection:
+
+
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * View Certificate. 
+ * 
+ * Copy to File...
+ * 
+ * . 
+ * 
+ * DER encoded binary X.509
+ * 
+
+
+To install the certificate into eDiscovery Analyzer:  * 
+ * 
+ * 2. Log into the eDiscovery Analyzer machine, then copy the JRE truststore file to a temporary directory: 
+ *   * 
+    * > copy EDA_INSTALL_DIR\_jvm22\jre\lib\security\cacerts \tmp\workdir\ 
+    * 
+   
+   
+ * 
+ *   * 
+    * 
+    * 
+    * 
+    * 
+    * mysite.cer
+    * 
+    * .\cacerts
+    * 
+   
+   
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ *   * 
+    * 
+    * 
+    * 
+    * 
+   
+   
+ * 
+ * 
+ * 
+ * 
+ *   * 
+    * 
+    * 
+    * 
+    * 
+   
+   
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * IMPORTANT:
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * Note:
+ * 
+
+
+
+HISTORICAL NUMBER
+ APAR IC75627

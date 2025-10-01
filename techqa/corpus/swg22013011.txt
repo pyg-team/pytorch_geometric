@@ -1,0 +1,30 @@
+Title: IBM Invalid operation: result set is closed. ERRORCODE=-4470 - United States
+
+Text:
+-4470; queryCloseImplicit; allowNextOnExhaustedResultSet; resultSetHoldability TECHNOTE (FAQ)
+
+QUESTION
+ What could be the reason of ERRORCODE=-4470 while calling next() or getXXX() in JCC program? 
+
+ANSWER
+ERRORCODE=-4470 indicates the ResultSet object is closed explicitly or implicitly. As long as the ResultSet object is closed, you will receive this error when calling next() or getXXX() against it:
+Invalid operation: result set is closed. ERRORCODE=-4470, SQLSTATE=null
+
+
+A ResultSet can be explicitly closed by calling its close() API. 
+
+A ResultSet can be implicitly closed in different ways, these ways can be but not limited to: 
+
+
+1. All rows in it are fetched when queryCloseImplicit is set YES;
+Note: By default queryCloseImplicit is YES for a Db2 LUW database, YES means "Close cursors immediately after all rows are fetched"; Usually setting allowNextOnExhaustedResultSet to YES should can avoid this error if it is this case.
+
+2. Transaction is closed when resultSetHoldability is 2. 
+Note: By default resultSetHoldability is 1 - cursors remain open after a commit operation for a Db2 LUW database if it is not XA transaction, if the application is running XA transactions, the default setting is 2 - cursors are closed after a commit operation.
+
+3. The corresponding statement is closed.
+
+You can collect a JCC trace to determinate why the ResultSet object is closed before calling next() / getXXX().
+
+RELATED INFORMATION
+#

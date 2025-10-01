@@ -1,0 +1,25 @@
+Title: IBM Supported Operating Systems (OS) for Connect:Direct for i5/OS - United States
+
+Text:
+V7R2 V7R3 C:D i5/OS TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Supported Operating Systems (OS) V7R1, V7R2, V7R3, for Connect:Direct for i5/OS 
+
+ENVIRONMENT
+IBM i OS 7.1, 7.2, 7.3
+
+RESOLVING THE PROBLEM
+Connect:Direct i5/OS 3.8 is supported on IBM i OS 7.1, 7.2 and 7.3 
+
+Connect:Direct i5/OS 3.5, 3.6 and 3.7 versions no longer supported, you may upgrade to a supported version of Connect:Direct for support. 
+
+IBM i 7.2 release was in May 2014 after the most recent release of Connect:Direct for i5/OS. 
+Connect:Direct for i5/OS was not run through a full QA cycle with IBM i 7.2.
+
+IBM i 7.3 release was in April 2016 after the most recent release of Connect:Direct for i5/OS. 
+Connect:Direct for i5/OS was not run through a full QA cycle with IBM i 7.2. 
+
+There are no reported issues in Connect:Direct for i5/OS with IBM i 7.2 or 7.3 running on the current maintenance for Connect:Direct for i5/OS. 
+
+IBM support continues to support Connect:Direct for i5/OS on 7.2 and 7.3 as a field certified OS level.

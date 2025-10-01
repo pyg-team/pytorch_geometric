@@ -1,0 +1,112 @@
+Title: IBM Error: 'Database has grown too large; Use File New Replica..' when opening a database - United States
+
+Text:
+skip fix; skipfix; skip_fix; skip fixup; skip fix up; skipfixup; 1 gig; 1 gigabyte; one gig; one gigabyte; greater than; larger than; Notes; Workstation/Desktop; General Functionality; File Corruption; 4 gig; 4 gb; 168728; 188825; 178583; 189441; Database is too large; use file new replica to recreate your file with larger capacity TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+You attempt to open a database using a Lotus Notes Client or Domino Administrator client, but this error appears: 
+
+ * 
+ * "Database (.nsf) has grown too large; use File New Replica to recreate your file with larger capacity."
+
+SYMPTOM
+This error may occur on the Domino server console or in the logs (local or server), sometimes also accompanied by a btree or file corruption error. The same error may occur if you attempt to create a new copy or a new replica of the database, as the error instructs you to do. Attempting to run fixup, compact, or Updall -r on the database may also fail with the same error, immediately after the system attempts to perform a consistency check on that database.
+
+
+CAUSE
+This error can occur if a database has reached its max size limit. The maximum database size limit for R4 was 1 gigabyte (GB). For R5 and above, the Domino certified maximum database size limit for all platforms is 64 gigabyte (GB).
+
+
+
+DIAGNOSING THE PROBLEM
+Use the Domino Administrator client Files tab to review database sizes. Sort the "Physical size" column to review current databases sizes and to verify if other databases are approaching or have exceeded the max database size limit of 64 Gigs. 
+
+
+Attempt to run a fixup on the affected database. Then, attempt to run a compact -c. If this does not resolve the error, please continue to the next section.
+
+
+RESOLVING THE PROBLEM
+An enhancement to the fixup task, to repair 64 Gig databases, is included in Notes and Domino 8.5.1. 
+
+Fix details: SPR# ADSA6RCEXE [http://www.lotus.com/ldd/r5fixlist.nsf/SPR/ADSA6RCEXE]
+
+
+--------------------------------------------------
+For databases that are 64 Gigs or greater, here are steps you can take, to possibly remediate the error:
+
+1. The database CAN be opened via a Notes or Domino Administrator Client. 
+This is the ideal situation. If so: 
+
+ * Manually or programmatically reduce the size of the database by eliminating or archiving documents, until it is under 64 gigs, preferably less than 60 gigs. 
+ * Run a compact -B on the database to reduce file size. See Compact options [http://www-01.ibm.com/support/knowledgecenter/SSKTMJ_8.5.3/com.ibm.help.domino.admin85.doc/H_COMPACT_OPTIONS_1761_STEPS.html] for details. 
+ * When convenient, run a compact -c on the database
+
+
+*NOTE: The Logical size of a DAOS-enabled database can be larger than 64 Gigs, as long as its Physical is less than 64 gigs. Run these same steps on a DAOS-enabled database if the Physical size has reached or exceeded 64 Gigs. However, do not attempt to disable DAOS on any database until the Logical size is under 64 gigs (the logical and physical size of a non-DAOS database should be the same), as this would cause a database to exceed the certified max limit and create the same error above. 
+
+
+2. The affected database is an old local or server database (i.e. a mail archive database from a previous version of Notes/Domino) and has an older ODS (e.g. 20, 41): 
+
+For example, you may see this error if attempting to open a R4 database approaching 1 Gigabyte. In an older case, the database was a local R4 archive database of 978 MB, residing on a Notes 6.5x client. 
+
+If the database is local, from a Notes 8.5.2 or greater client, first try to increase the database ODS up to the current version. For additional information on Domino ODS, please see the IBM Knowledge Center document on the Domino On-Disk Structure and the Technote #1102152 entitled How to handle ODS database versions in mixed Notes environments [http://www-01.ibm.com/support/docview.wss?uid=swg21102152]. 
+
+Notes/Domino 
+version: ODS 
+Version: 4.x 20 5.x 41 6.x and 7.x 43 8.x 48 8.5x 51 9.x 52 
+Steps to increase the ODS of a local database:  * Open the local notes.ini file. Depending on the Notes client version you are using, add one of the following parameters, then save/close:
+
+To create ODS 52 databases, use: Create_R9_Databases=1 
+To create ODS 51 databases, use: Create_R85_Databases=1 
+To create ODS 48 databases, use: Create_R8_Databases=1  * Shut down the Notes client 
+ * Open a command prompt. Navigate to the lotus notes program directory. 
+ * Run a copy-style compact against this database.
+
+Example: 
+[/support/docview.wss?uid=swg21102305&aid=1] [/support/docview.wss?uid=swg21102305&aid=1]  * Does this step complete successfully and/or allow you to open the database?  * If YES: Complete all parts of step #1. 
+    * IF NO: Proceed to step #3.
+   
+   
+
+
+Note: Compacting may not update the ODS in cases where an ODS-specific file extension was used for the database. For more information refer to the document, "Databases Created with an ODS-specific extension are not upgraded by Compact task" (# 1086780 [http://www.ibm.com/support/docview.wss?uid=swg21086780]). 
+
+
+3. The database cannot currently be opened via a Notes or Domino Administrator client: 
+If you have issues trying to open a database over 64GB, try the following:  * OS copy the database to a Domino 8.5.2 or higher server 
+ * Run fixup and compact -c. To determine which fixup options are appropriate for your server, please refer to the list of fixup options [https://www-01.ibm.com/support/knowledgecenter/SSKTMJ_9.0.1/admin/admn_fixupoptions_r.dita] and the IBM Knowledge Center topic Running the fixup task [https://www-01.ibm.com/support/knowledgecenter/SSKTMJ_9.0.1/admin/admn_runningthefixuptask_t.dita]. 
+ * Next, try to open the database in a 8.5.2 or greater client. 
+ * Assuming the db can now be opened, reduce the size of the database by deleting or archiving documents, until the database is below 64 gigs, preferably around 60 gigs. 
+
+
+
+4. The database physical size appears to be well under the max size limit of 64 gigs: 
+*Note: This issue is not just limited to databases whose size exceeds the 64GB limit. It has reportedly occurred in databases as small as 250MB. 
+a.) First, try to run maintenance on the database. Here is one example: 
+load fixup -f db.nsf (*for transaction logged databases, use fixup -j) 
+load updall -R db.nsf 
+load compact -i -c -d -K db.nsf 
+
+Note: For additional options and combinations, please refer to the Database Corruption Troubleshooting Guide [https://www-10.lotus.com/ldd/dominowiki.nsf/dx/Database_Corruption_Troubleshooting_Guide]. You may also try offline maintenance 
+
+b.) Now, try to create a new replica. If the new replica works, replace the database with the new replica. 
+
+
+5. You can programmatically try to retrieve data from the database using a custom LotusScript or C API agent. However, if a database cannot be opened manually via a client, it may not be accessible via an agent or back-end code either. 
+
+Title: Retrieving data from a corrupt database using LotusScript 
+Doc #: 1102481 
+URL: http://www.ibm.com/support/docview.wss?rs=899&uid=swg21102481 [http://www.ibm.com/support/docview.wss?rs=899&uid=swg21102481] 
+
+
+6. Restore the database from a backup version. 
+If all of above does not work, you may need to restore the database from a backup taken when this error was not occurring. Please refer to your backup software manual or system instructions for steps on how to restore a database from backup. RELATED INFORMATION
+ Retrieving Data from Corrupted Databases via LotusScrip [http://www.ibm.com/support/docview.wss?uid=swg21102481]
+Databases Created with an ODS-specific Extension Are no [http://www.ibm.com/support/docview.wss?uid=swg21086780]
+Database Corruption Troubleshooting Guide [http://www-10.lotus.com/ldd/dominowiki.nsf/dx/Database_Corruption_Troubleshooting_Guide]
+
+
+
+
+PRODUCT ALIAS/SYNONYM
+ Lotus Notes Client

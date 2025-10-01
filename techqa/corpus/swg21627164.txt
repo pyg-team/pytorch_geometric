@@ -1,0 +1,22 @@
+Title: IBM DataPower appliance Log Target upload file fails with the message "Operation Timed Out" when mismatch protocol or port - United States
+
+Text:
+log target upload file operation timed out TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When testing a newly configured SFTP upload Log Target, the DataPower appliance hangs on Log Target Upload with the message "Operation Timed Out." 
+
+SYMPTOM
+Here is an example of the error messages: 
+
+
+[MyDomain][system][error] logging target(My-log-target): tid(88888): Operation timed out.
+[MyDomain][system][error] logging target(My-log-target): tid(88888): Log upload of target My-log-target failed.
+
+
+CAUSE
+The DataPower appliance displays "Operation Timed Out" when a configured Log Target tries to upload a log but fails to receive a response from the SCP or SFTP server.
+
+
+RESOLVING THE PROBLEM
+The message "Operation Timed Out" typically displays when there is a mismatch in protocol and port on the Log Target. For example, an attempt to upload an SFTP Log Target to an FTP only server is a scenario that can cause this issue. This error can be resolved by confirming that the Protocol and Port configured on the Log Target match the Protocol and Port designated on the desired upload server.

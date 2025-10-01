@@ -1,0 +1,45 @@
+Title: IBM Collecting Data: Websphere Portlet Factory / Web Experience Factory database connectivity issues - United States
+
+Text:
+MustGather; must gather; Portlet Factory; 6.1.x; database connectivity; issues; collecting data TECHNOTE (FAQ)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ English 
+
+QUESTION
+ This technote covers collecting data for database connectivity issues in IBM WebSphere Portlet Factory. 
+
+ANSWER
+Collecting information for troubleshooting database connectivity issue:
+
+1. Provide the version / bit information for the following: 
+
+ * Operating System 
+ * WebSphere Application Server 
+ * WebSphere Portal Server 
+ * Database type and version 
+ * WebSphere Portlet Factory/Web Experience Factory
+
+
+2. Take the following actions to narrow down the issue: 
+ * Confirm whether or not you can run simple non-database models from your project (one of the samples, tutorials, or a new "Main and Page" model). Can you run a model that contains at least one method builder call? Run the model from the designer. 
+
+ * Confirm that your database server is running and if it’s on a remote machine that you have network access to that machine and can successfully connect to the database using the database’s native tools (using command line prompt, database GUI).
+
+ * Confirm that the datasourcetest.jsp can connect to the database and return data. From a browser, go to the URL, localhost:PORT#/(your WPF Project Name)/factory/util/datasourcetest.jsp. In the page that displays, enter the JNDI name of your DataSource and an appropriate SQL query for the database (do not enter a user ID or password), then click the "Lookup" button. At this point, if the SQL query is properly constructed and appropriate data exists in the database, a result set should be displayed, unless the exception reflects an ID and password is required for access to the database. If this is the case, it indicates that a user name and password were not configured for the datasource. Supply the appropriate values and repeat Lookup (and ensure the ID and password is configured for the datasource or is provided in your model for your WebApp/portlet). 
+
+
+3. Provide the following datasource specific information: 
+ * If the above test is successful, it proves a DataSource connection can be created and that a SELECT can be executed against the database’s content. Note that this is a generic test of data access and is not WebSphere Portlet Factory-specific. If there is an error accessing the database, a Java stack trace will be displayed at the bottom of the result page. Send a screen shot of the results. If the JNDI DataSource name and SELECT statement are correct but you cannot successfully retrieve data through this page, then your DataSource is not working properly. If you can retrieve data through this JSP but not through a WebSphere Portlet Factory portlet, then your project might have been misconfigured during creation or a subsequent "Modify" operation.
+
+ * Screen shot of the following: From Application Server, go to Resources->JDBC Provider->Additional Properties->Datasource
+
+
+4. Provide information for your project. 
+ * Go to Run > Run to open the Run dialog (Create, Manage and run configurations). Expand the section for the WebSphere Portlet Factory Model. Click the Server tab and take a screen shot.
+
+
+5. Provide information for your server ports. 
+ * Start the Portal console. Go to Servers > Application Servers > WebSphere_Portal > Ports.
+
+ * Take a screen shot of the port information.

@@ -1,0 +1,77 @@
+Title: IBM How to replace the JCE policy zip file (in an existing SI 5.0 installation) - United States
+
+Text:
+Re-install; Restore;Update; Patch; STERLINGHTG TECHNOTE (FAQ)
+
+QUESTION
+ How to replace the JCE policy zip file (in an existing SI 5.0 installation) 
+
+ANSWER
+
+
+PREREQUISITES:
+The instructions below assume all of the following prerequisites have been met:
+-SterlingIntegrator has viable database & file system backups
+-The OS user account that the SterlingIntegrator application runs with is the account performing the below instructions
+
+NOTE: It is recommended that these instructions are tested prior to performing them on an environment that processes production data.
+
+
+INSTRUCTIONS:
+
+NOTE: In the directions that follow, "POLICYZIP" indicates the JCE policy file required by your installation
+which will be either of the following (The platform & JCE vendor compatibility chart is detailed in the official
+Sterling Documentation at the Sterling Integrator 5.0 System Requirements page):
+
+jce_policy-1_5_0.zip(SUN Microsystems)
+unrestrict142.zip(IBM)
+
+
+1) Download the POLICYZIP from the JCE vendor
+
+2) Stop Sterling Integrator; verify Sterling Integrator is NOT running before proceeding
+
+3) Perform a copy/backup of the following directory:
+<your_SI_install_dir>/jdk/jre/lib/security (for UNIX/Linux)
+<your_SI_install_dir>\jdk\jre\lib\security (for Windows)
+
+
+4a) To edit the sandbox.cfg file, navigate to the following directory:
+<your_SI_install_dir>/properties(for UNIX/Linux)
+<your_SI_install_dir>\properties(for Windows)
+
+4b) Create a BACKUP COPY of your existing sandbox.cfg file named sandbox.cfg.DYYYYMMDD.THHMMSS
+(replacing YYYYMMDD & HHMMSS with corresponding date & time stamp values)
+
+4c) Edit sandbox.cfg and update the JCE_DIST_FILE parameter values to the correct location of the JCE policy zip file.
+(NOTE: maintain existing "//" or "\\" in the directory naming structure for proper pathing)
+
+
+5) Unzip the POLICYZIP file. Place the contents contained WITHIN the JCE folder (but not the folder itself)
+in the /security directory from step#3, overwriting the files already there.
+
+6a) Via the commandline, navigate to the following directory:
+<your_SI_install_dir>/install/bin
+
+6b) From /bin, run the following Sterling Integrator script:
+./updateJavaSecurity.sh <your_SI_install_dir>/install/jdk(for UNIX/Linux)
+updateJavaSecurity.cmd <your_SI_install_dir>\install\jdk(for Windows)
+
+
+7) Once the SI script completes, start Sterling Integrator
+
+
+
+
+
+FACT:
+Sterling Integrator, Release 5.0
+JCE_DIST_FILE(sandbox.cfg), local_policy.jar, SUN JCE 1.5.0, IBM unrestrict142.zip, 
+NFX5308, NFX5757(build5002), TRB2831
+"Error Retrieving Portal Page: Profile not found"
+"java.security.InvalidKeyException: Invalid key"
+
+ 
+
+HISTORICAL NUMBER
+ HTG2779

@@ -1,0 +1,137 @@
+Title: IBM RS00101: DOCUMENTATION ON INSTALLING RES WITH FILES PERSISTENCE IS UNCLEAR AND AMBIGUOUS - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  1) The section "WebSphere ILOG JRules V7.0.2 > Rule Studio >
+   Executing rules > Concepts > Rule Execution Server > Rule
+   Execution Server persistence layer" states the following in the
+   first sentence:
+   
+   "The persistence layer provides a JDBC solution for a file
+   system (file persistence) or database (database persistence)."
+   
+   This phrasing is ambiguous and can lead customers to believe
+   that JDBC is required when using file persistence.
+   
+   This should be rephrased to something like "The persistence
+   layer provides a solution for a file system (file persistence)
+   and a JDBC solution for a database (database persistence)."
+   
+   2) For each application server-specific installation
+   instructions, the table in the section "WebSphere ILOG JRules
+   V7.0 Installing on Sun Application Server Enterprise Edition 8.2
+   > Installing Rule Execution Server > Introduction" for SunAS
+   8.2, "WebSphere ILOG JRules V7.0 Installing on [ Application
+   Server ] > Installing Rule Execution Server > Installing Rule
+   Execution Server on [ Application Server ] > Before you start"
+   for all other application servers, is incorrect.
+   
+   All the rows and subrows for "Creating a data source and
+   connection pool [on Application Server]" are checked in the
+   "File" column, whereas they should be marked as non applicable
+   
+   Reference (RETAIN): PMR 01701,004,000
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  perform corrections suggested in the description
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Documentation on installing RES with files persistence is
+   unclear and ambiguous
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Documentation has been enhanced
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   RS00101
+   
+   
+ * REPORTED COMPONENT NAME
+   WS ILOG JRULES
+   
+   
+ * REPORTED COMPONENT ID
+   5724X9800
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-02-01
+   
+   
+ * CLOSED DATE
+   2010-05-20
+   
+   
+ * LAST MODIFIED DATE
+   2010-05-20
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

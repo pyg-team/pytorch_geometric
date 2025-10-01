@@ -1,0 +1,31 @@
+Title: IBM CNX0104E "HR" must be terminated by matching end tag when connecting to CICS TS 3.2 WUI server - United States
+
+Text:
+CNX0104E MSGCNX0104E HR </HR> ; connect; wui 5655S9701 5655M1500 R650 650 R500 500 HCI6500 5655-M15 5655M15 KIXINFO retention32 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ You receive message CNX0104E Connection failed with exception The element type "HR" must be
+terminated by the matching end-tag "</HR>". This occurs when you attempt to connect CICS Explorer to your CICS Transaction Server for z/OS (CICS) V3.2 WUI server. 
+
+CAUSE
+Configuring a "CICS Management Interface" connection instead of a "CICSPlex SM Data Interface" connection to your CICS TS V3.2 WUI server.
+
+ENVIRONMENT
+CICS TS V3.2 WUI Server; CICS Explorer;
+
+DIAGNOSING THE PROBLEM
+Collect the CICS Explorer Service Data.
+
+View the attachments for details on the CICS Explorer Error log and exception details.
+
+RESOLVING THE PROBLEM
+Configure a "CICSPlex SM Data Interface" connection in the CICS Explorer for your CICS TS V3.2 WUI server.
+
+RELATED INFORMATION
+#Configuring a CICS system connection [http://publib.boulder.ibm.com/infocenter/cicsts/v4r2/topic/com.ibm.cics.ts.installation.doc/topics/explorer_configure_connection.html]
+
+
+CNX0104E Details.pdf [/support/docview.wss?uid=swg21502825&aid=2] [/support/docview.wss?uid=swg21502825&aid=1]CNX0104E cicsexplorer.trace.log.pdf [/support/docview.wss?uid=swg21502825&aid=4] [/support/docview.wss?uid=swg21502825&aid=3]
+
+PRODUCT ALIAS/SYNONYM
+ CICS/TS CICS TS CICS Transaction Server

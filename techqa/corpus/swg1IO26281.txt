@@ -1,0 +1,11 @@
+Title: IBM IO26281: USERS UNABLE TO SEE BATCHES PLACED ON HOLD BY OTHER USERS IN DATACAP DESKTOP APPLICATION - United States
+
+Text:
+What is this document:
+This document has the abstract of a technical article that is available to authorized users after you have logged on. Please use the link to actual document below to access the full document. You will be asked to log on if you are not already logged in. After log in, if you do not have the right authorization for this document, there will be instructions on what to do next.
+
+abstract text
+Users unable to see batches placed on hold by other users in Datacap Desktop Application
+
+link to actual document
+http://www.ibm.com/support/docview.wss?uid=swg1IO26281 [http://www.ibm.com/support/docview.wss?uid=swg1IO26281]

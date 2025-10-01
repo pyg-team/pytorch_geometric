@@ -1,0 +1,44 @@
+Title: IBM Sentinel LM: Error[19]: Failed to add license code to the license server on host "". License code is invalid. - United States
+
+Text:
+product key authorization license TECHNOTE (FAQ)
+
+QUESTION
+ I am attempting to license the SPSS Sentinel License Manager for my SPSS products. Entering the authorization code/license code produces an error:
+
+Sentinel LM: Error[19]: Failed to add license code to the license server on host "". License code is invalid.
+
+followed by...
+
+Error Code: 30019
+
+The License Code that you entered is not valid. Please enter a License Code from SPSS. Possibly you entered the Authorization Code that came with your product. If you did, click Back and use your Authorization Code to get a license from SPSS via the Internet, Telephone, or E-mail.
+
+Lock Code:
+Authorization Code:
+License Code:
+
+What is the problem? 
+
+ANSWER
+1. The Lock Code encrypted into the entered license does not match that of the hardware you are attempting to license. If you are unable to determine which server for which this license was generated, please contact IBM SPSS Customer Support [http://www.ibm.com/planetwide/region.html]. 
+
+2. You are attempting to license your installation via a Terminal Services/Citrix session with a single or site authorization/license. If you intend to run the software via Terminal Services/Citrix, you will need to obtain a Network license. Please contact your local IBM Sales office [http://www.ibm.com/planetwide/region.html]. If you intend to run the application on a server-class machine without Terminal Services/Citrix or you are licensing a server based product, e.g. SPSS Server, please go to that machine directly and run the License Authorization Wizard to request/submit a license.
+
+3. You are entering a network authorization code into the License Authorization Wizard installed with SPSS for Windows, SPSS Text Analysis for Surveys, or AMOS. The network authorization code is required to license the SPSS Sentinel License Manager, not the aforementioned applications. At this point, you must contact IBM SPSS Customer Support [http://www.ibm.com/planetwide/region.html] and request a new authorization as the network authorization code is only valid for one machine. Once you receive the new authorization code, please launch the License Authorization Wizard installed with the SPSS Sentinel License Manager (Start->Programs->SPSS Sentinel License Manager->SPSS License Authorization Wizard) and enter your authorization code when prompted.
+
+4. Ensure the SPSS Sentinel License Manager service is started. Go to Start->Control Panel->Administrative Tools->Services and locate "Sentinel LM". The status should report the service is started. If it is not started, i.e. blank, right-click/double-click on the "Sentinel LM" service name and select "Start". If the service will not start, one possible cause could be the Sentinel License Manager was previously installed elsewhere, but has since been removed and installed into a different directory. If that is the case, go to Start->Programs->SPSS Sentinel License Manager->Service Loader. Next, ensure the "Executable Path" is correct and click "Add". Finally, start the "Sentinel LM" service following the aforementioned steps.
+
+5. You have an lshost or lsforcehost environment variable defined on the machine where the SPSS Sentinel License Manager is installed. Please remove the environment variable and run the License Authorization Wizard again on this machine to request a license.
+
+6. You are not logged in as 'root' while attempting to license the SPSS Sentinel License Manager on a non-Windows platform. Please log in as 'root' prior to licensing your installation
+
+RELATED INFORMATION
+ Need more help? Our Statistics forum is Live! [https://developer.ibm.com/answers/topics/statistics.html?smartspace=predictive-analytics]
+Need more help? Our Licensing forum is Live! [https://developer.ibm.com/answers/topics/spsslicensing.html]
+
+
+ 
+
+HISTORICAL NUMBER
+ 49341

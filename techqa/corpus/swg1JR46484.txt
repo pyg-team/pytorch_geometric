@@ -1,0 +1,179 @@
+Title: IBM JR46484: INCORRECT INITIALIZATION OF TASK PROCESSING THREADPOOL CAUSES "Can not find user name. User name is NULL" - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Version 8.0.1 Fix Pack 2 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24035701]
+Version 7.5.1 Fix Pack 2 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24036462]
+Version 8.5 Refresh Pack 5 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24037683]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Threads from the task processing threadpool are initialized
+   using the server identity instead of a configured run-as user
+   role. This can lead to various issues when task processing
+   accesses the current user's name or id as the server identity
+   is virtual and therefore cannot be retrieved from the user
+   registry.
+       One of the possible symptoms of this is
+   After you upgrade your IBM Business Process Manager environment
+   to V8.0.1 Fix Pack 1 you might see a "Can not find user name.
+   User name is NULL" error message in the log files.
+   .-------------------------------------------------
+       This also led to the following error
+   [22-04-13 13:11:19:184 CEST] 00000218 wle           E
+   CWLLG0326E: A deliverException has occurred.
+   
+   com.lombardisoftware.client.delegate.BusinessDelegateException:
+   org.springframework.dao.DataIntegrityViolationException:
+   PreparedStatementCallback; SQL [insert into
+   BPM_SHARED_OBJECT_INSTANCE
+   (INSTANCE_VERSION_ID,INSTANCE_VERSION,JDATA,CREATED_ON,DEFINITIO
+   N_VERSIO
+   N_ID,CREATED_BY_USER_ID) values (?,?,?,?,?,?)]; Error for batch
+   element
+   #1: DB2 SQL Error: SQLCODE=-407, SQLSTATE=23502,
+   SQLERRMC=TBSPACEID=2,
+   TABLEID=201, COLNO=4, DRIVER=4.11.69; nested exception is
+   com.ibm.db2.jcc.am.SqlIntegrityConstraintViolationException:
+   Error for batch element #1: DB2 SQL Error: SQLCODE=-407,
+   SQLSTATE=23502,
+   SQLERRMC=TBSPACEID=2, TABLEID=201, COLNO=4, DRIVER=4.11.69
+   ...
+   Caused by:
+   com.ibm.db2.jcc.am.:SqlIntegrityConstraintViolationException
+   Error for batch element #1: DB2 SQL Error: SQLCODE=-407,
+   SQLSTATE=23502,
+    SQLERRMC=TBSPACEID=2, TABLEID=201, COLNO=4, DRIVER=4.11.69
+   .------------------------------------------
+      This is another exception caused by this
+   [10/22/13 18:06:51:906 CEST] 000000a9 wle_ucaexcept E
+   CWLLG0179E:
+   Event manager administrator cannot be notified of a job
+   execution  error.  Error:
+   
+   com.lombardisoftware.client.delegate.BusinessDelegateException:
+                   at
+   com.lombardisoftware.client.delegate.BusinessDelegateException.a
+   sBusines
+   sDelegateException(BusinessDelegateException.java:41)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  n/a
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Due to a programming error, threads from the task processing
+   threadpool are initialized using the server identity instead of
+   a configured run-as user role. This - in theory - can lead to
+   various issues when task processing accessed the current user's
+   name or id as the server identity is virtual and therefore
+   cannot be retrieved from the user registry.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix makes sure to initialize the threadpool with a valid
+   subject.
+   
+   iFix available on top of V801 FP1
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR46484
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM STANDARD
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9500
+   
+   
+ * REPORTED RELEASE
+   801
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-04-30
+   
+   
+ * CLOSED DATE
+   2013-05-22
+   
+   
+ * LAST MODIFIED DATE
+   2014-10-21
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   BPM STANDARD
+   
+   
+ * FIXED COMPONENT ID
+   5725C9500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R801 PSY
+   UP

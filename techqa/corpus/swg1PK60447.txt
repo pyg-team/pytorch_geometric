@@ -1,0 +1,249 @@
+Title: IBM PK60447: THE MESSAGELEVELCALLCOUNT ENTERPRISE BEAN COUNTER IS NOT DOCUMENTED IN THE V6.1 AND 6.0.X INFORMATION CENTERS - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The Information Center for WebSphere Application Server
+   Versions 6.1 and 6.0.x does not explain how the
+   MethodLevelCallCount enterprise bean counter can become
+   inconsistent with the MessageCount enterprise bean counter.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  This APAR affects users who are reading     *
+   *                  the WebSphere Application Server Version    *
+   *                  6.1 and 6.0.x documentation about using     *
+   *                  message-driven beans (MDBs) in a clustered  *
+   *                  environment.                                *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: In the Information Centers for          *
+   *                      WebSphere Application Server Versions   *
+   *                      6.1 and 6.0.x, an explanation does      *
+   *                      not exist concerning how the            *
+   *                      MethodLevelCallCount enterprise bean    *
+   *                      counter can become inconsistent with    *
+   *                      the MessageCount enterprise bean        *
+   *                      counter.                                *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   The "Enterprise Bean Counters" topic does not have an entry
+   for the MethodLevelCallCount enterprise bean counter. Also, an
+   explanation does not exist concerning how the performance
+   statistics for the PMI MethodLevelCallCount and MessageCount
+   enterprise bean counters can become inconsistent.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The "Troubleshooting performance monitoring statistics" topic
+   has been added, which describes how differences between
+   MethodLevelCallCount and MessageCount enterprise bean counters
+   can arise for message-driven beans in a clustered environment.
+   
+   This new topic has been added to the Version 6.1 and 6.0.x
+   Information Centers in the following section:
+   Troubleshooting and support > Troubleshooting WebSphere
+   applications > Messaging resources > Troubleshooting
+   performance monitoring statistics
+   
+   The text of the new "Troubleshooting performance monitoring
+   statistics" topic follows:
+   Use this task to resolve inconsistencies between performance
+   monitoring statistics for the enterprise bean counters
+   MethodLevelCallCount and MessageCount when deploying
+   message-driven beans in a cluster environment.
+   
+   About this task
+   This task addresses inconsistencies in performance monitoring
+   statistics for message-driven beans in a cluster environment.
+   Sometimes the number of messages in a trace correspond with
+   the Performance Monitoring Infrastructure (PMI)/Tivoli
+   Performance Viewer (TPV) output statistics but not with the
+   log message from the message-driven bean. This arises because
+   the MethodLevelCallCount enterprise bean counter has a
+   different meaning for message-driven beans than for other
+   beans.
+   
+   In general, in terms of PMI statistics collection, and with
+   reference to the Enterprise JavaBeans (EJB) container, message
+   delivery comprises the following steps:
+   1. EJB container pre-invoke processing. This prepares the
+   execution environment for message delivery.
+   2. Removing the message from the queue and invoking the
+   message-driven bean method to process that message.
+   3. EJB container post-invoke processing. This cleans up the
+   execution environment for example, committing or rolling back
+   the transaction started during pre-invoke processing.
+   
+   If there are multiple servers or threads attempting to remove
+   a message from the queue and deliver it to a message-driven
+   bean, at Step 2 a messaging service may discover that the
+   queue is empty and there is nothing to deliver because another
+   server or thread has already processed the message. If this
+   happens, the message-driven bean method is not called at Step
+   2 and therefore the MethodLevelCallCount does not correspond
+   to the number of times a message is delivered to the
+   message-driven bean for processing. Instead, the
+   MethodLevelCallCount indicates the number of times message
+   delivery is attempted: the enterprise bean counter
+   MessageCount indicates the number of successful deliveries to
+   a message-driven bean.
+   
+   In a single server environment MethodLevelCallCount and
+   MessageCount should be the same. However, in a multi-server
+   environment (or an environment with multiple consumers), these
+   counts can be different. If the difference is large, consider
+   retuning your messaging system.
+   
+   To identify and resolve problems that you think are related to
+   WebSphere Messaging, you can use the standard WebSphere
+   Application Server troubleshooting facilities. If you
+   encounter a problem that you think might be related to
+   WebSphere Messaging or to other message-driven beans issues,
+   see the related links.
+   
+   ----------------------------
+   
+   A related tasks link has been added from "PMI data
+   organization" topic to the "Troubleshooting performance
+   monitoring statistics" topic. The "PMI data organization"
+   topic exists in the Version 6.1 and 6.0.x Information Centers
+   in the following section:
+   Monitoring > Monitoring overall system health > Performance
+   Monitoring Infrastructure (PMI) > PMI data organization
+   ----------------------------
+   The "Enterprise bean counters" topic has been updated by
+   adding an extra row to the Counter definitions table for
+   MethodLevelCallCount enterprise bean counter. The following
+   information has been added to the topic:
+   
+   Name: MethodLevelCallCount
+   Key: beanModule.methodLevelCallCount
+   Description: The number of method invocations made by
+   WebSphere Application Server on the enterprise bean. For
+   message-driven beans, this is the number of attempts to
+   deliver messages to the bean onMessage method.
+   Granularity: Per type
+   Type: CountStatistic
+   Level: Basic
+   Overhead: Low
+   
+   Date that the information will be available externally to
+   customers:
+   Periodically, we update the documentation in our information
+   centers. Thus, the changes might have been made before you
+   read this text. To access the latest on-line documentation,
+   complete the following steps:
+   1. Go to the product library page at the following Web site:
+   http://www.ibm.com/software/webservers/appserv/library [http://www.ibm.com/software/webservers/appserv/library]
+   2. Locate the appropriate version and product.
+   3. Under "Documentation - Information center format", click
+   the appropriate link. In most cases, the WebSphere Application
+   Server documentation is available in both an online version
+   and in an IBM Eclipse Help System version. For more
+   information on the IBM Eclipse Help system, see the following
+   Web site: http://www.alphaworks.ibm.com/tech/iehs [http://www.alphaworks.ibm.com/tech/iehs]
+   
+   If you install the IBM Eclipse Help System, you must also
+   install the appropriate help system plug-in for the WebSphere
+   Application Server documentation in its eclipse/plugins
+   directory. The plug-in is available from our product library
+   page.
+   
+   The modified documentation will be available in the March 2008
+   update to the information centers.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK60447
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBS APP SERV N
+   
+   
+ * REPORTED COMPONENT ID
+   5724H8800
+   
+   
+ * REPORTED RELEASE
+   61W
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-02-04
+   
+   
+ * CLOSED DATE
+   2008-02-25
+   
+   
+ * LAST MODIFIED DATE
+   2008-04-01
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

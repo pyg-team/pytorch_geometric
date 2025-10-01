@@ -1,0 +1,78 @@
+Title: IBM How to run multiple Rational Integration Tester HTTP Proxy Agents - United States
+
+Text:
+Proxy; Agent; HTTP; Recording Studio TECHNOTE (FAQ)
+
+QUESTION
+ How can you run more than one instance of the HTTP/TCP Proxy Agent from IBM Rational Integration Tester Platform Pack on the same computer? 
+
+CAUSE
+In some circumstances, for example with high traffic rates and multi-CPU architectures, you might want to run more than one Proxy Agent on the same machine. You can use each Proxy Agent to capture specific types of messages.
+
+ANSWER
+Refer to the HTTP/TCP Proxy section of Rational Integration Tester Knowledge Center [http://www-01.ibm.com/support/knowledgecenter/SSBLQQ_8.6.0/com.ibm.rational.rit.accessibility.doc/helpindex_rit.html].
+
+
+You can run more than one instance of the RIT HTTP Proxy agent.
+Duplicate the configuration folder as follows.
+
+
+
+ 1. Locate the httptcp folder.
+    
+    On Windows systems this is typically: C:\Program Files\IBM\RIT-Platform
+    On non-Windows systems typically: /opt/IBM/RIT-Platform
+    
+    
+ 2. Copy the httptcp folder and rename it suitably, for example to
+    httptcp2.
+    
+    
+    
+ 3. Edit the new registration.xml file to use unique TCP port numbers; these must be different from those of the original instance.
+    
+    Replace the following entries:
+    
+    <http-proxy port="3128" 
+    
+    <https-proxy port="3129"
+    
+    plainCommsPort="3131"
+    
+    Remove or replace any of the following entries:
+    
+    <forward bind="localhost:2000" 
+    
+    
+ 4. Edit the new registration.xml file to configure the second Proxy to register with the domain and environment as required:
+     
+    
+    <domains>
+     
+    
+    <domain name="newDomain">
+    <environment name="newEnvironment" />
+    </domain>
+    </domains>
+    
+    
+ 5. Run startup.bat on Windows or startup.sh on non-Windows systems to start each instance. Then you will see the instances as separate entries in the IBM Rational Test Control Panel.
+    
+    
+ 6. Configure your applications to use whichever Proxy Agent that you want.
+    
+    
+    
+
+
+Notes On Windows by default, the first instance runs as a service. You cannot configure additional instances to run as a service. Therefore use either option 1 or option 2 below:
+
+
+
+ *  Run one as a service and the other from the command-line.
+   
+   Run both from the command-line.
+   
+   
+
+If you see the error "Address already in use" when starting the second instance, change the configuration to use a different port number.

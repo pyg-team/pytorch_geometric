@@ -1,0 +1,122 @@
+Title: IBM JR48424: FLAT FILE ADAPTER DOES NOT PROCESS ZERO LENGTH FILE - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  WebSphere Adapter for Flat Files 7.5.0.3 with WESB 7.5.1.1 on
+   AIX 6.1.  For the inbound scenario, the Flat File adapter EIS
+   binding export failed to process zero length file.  The zero
+   length file remains in the event directory and blocks other
+   files.  Have to move this zero length file out of the event
+   directory to allow other files to be processed.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  The FlatFile Adapter does not process the other files if there
+   is any zero file length files present in the event directory.The
+   files remains in the event directory.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The issue is occuring because the BO content of the file is
+   empty and it does not properly handled.So when splitting enabled
+   the adapter throws an exception and stops polling.We have added
+   a check and process for null empty files.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR48424
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBS ADPT FLAT
+   
+   
+ * REPORTED COMPONENT ID
+   5724L7800
+   
+   
+ * REPORTED RELEASE
+   750
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-11-07
+   
+   
+ * CLOSED DATE
+   2013-11-21
+   
+   
+ * LAST MODIFIED DATE
+   2013-11-21
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBS ADPT FLAT
+   
+   
+ * FIXED COMPONENT ID
+   5724L7800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R750 PSY
+   UP

@@ -1,0 +1,35 @@
+Title: IBM You cannot set 'runAsOwner' to true because you do not have permission... - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ User unable to check the runAsOwner checkbox to run a report using another user's credentials. 
+
+CAUSE
+The user(User1) who owns the report(s) that another user (User2) would like to run with the runAsOwner checkbox enabled, did not give permission to User2 to use their credentials to run report(s).
+
+RESOLVING THE PROBLEM
+User1: person who has reports that other users want to run with the runAsOwner option 
+
+
+ 
+1) Log into the IBM Cognos portal as User1. Within the IBM Cognos Portal, expand the "My Area" menu at the top of the screen (icon showing a person) and select the "My Preferences" option.
+
+2) Click the Personal tab. 
+
+3) Under the Credential section do the following: 
+If you see a link, "First you must create the credentials", you must click this. This will store User1's credentials into the content store in an encrypted format. When other users want to run reports owned by User1, with the runAsOwner checkbox selected, the stored credentials of User1 will be used. 
+
+If you see a link, "Renew the credentials", this indicates that this users credentials are already stored in the content store. 
+
+Now, click the "Add" link button to add the specific users that you want to give permission to use User1's credentials to run reports. You can also choose to add the "Everyone" group to the list. This means that you are giving everyone the right to run any report owned by User1 using the "runAsOwner" option. 
+
+4) Click the OK button 
+
+5) Have the user that was trying to enable the runAsOwner checkbox for a report owned by User1 try this action again. 
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Analytics Cognos Business Intelligence Cognos Connection Windows 8.4

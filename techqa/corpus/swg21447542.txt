@@ -1,0 +1,41 @@
+Title: IBM Timestamp metadata for Lotus Domino is wrong when IBM InfoSphere Content Collector is running in certain time zones - United States
+
+Text:
+ FLASH (ALERT)
+
+ABSTRACT
+ When running in a time zone that has an offset towards GMT/UTC time that is not on the full hour, IBM InfoSphere Content Collector converts and subsequently stores all timestamp (date and time) metadata extracted from Lotus Domino incorrectly. This affects search results, stub links, and document expiration. 
+
+CONTENT
+Problem:
+When running in a time zone that has an offset towards GMT/UTC time that is not on the full hour (for example, Indian Standard Time = UTC+05:30 or Australian Standard Time = UTC+9:30), IBM InfoSphere Content Collector converts all timestamp metadata attributes extracted from Lotus Domino (for example, the Received Date, Posted Date, or Delivered Date of an e-mail document) to an incorrect timestamp value. The conversion from local time to GMT/UTC time results in a timestamp value that is inaccurate by up to several months and several hours.
+
+This problem occurs only for customers who are running their IBM InfoSphere Content Collector server in an affected time zone and are processing documents from Lotus Domino. Customers in other time zones, customers who have their IBM InfoSphere Content Collector configured to run in a time zone with a full-hour offset to GMT/UTC, or customers who process documents from other source systems than Lotus Domino are not affected.
+
+This wrong value has an impact in the following places: 
+
+ * Search result list timestamp columns
+   If the timestamp metadata value was mapped to an attribute in the repository (by default, the ReceivedDate metadata value is mapped to the ICCEmailDate archive attribute), this attribute would be displayed with the incorrectly converted value. This in turn might also impact the evaluation of search results in all products working with an IBM InfoSphere Content Collector archive (IBM InfoSphere Content Collector itself, but also IBM InfoSphere eDiscovery Manager and IBM InfoSphere eDiscovery Analyzer). 
+ * Text index for IBM FileNet P8 repositories
+   Because the XIT document (which is built to enable text indexing on IBM FileNet P8) is based on the metadata values extracted from the e-mail document, the wrong timestamp value will be stored and hence used in subsequent search requests that include date criteria. 
+ * Text index for IBM DB2 Content Manager repositories
+   As the text index for DB2 Content Manager archives is built using the document content rather than the extracted metadata values, it is not affected by inaccurately converted timestamp values. Hence, searches including date criteria will return the correct set of documents. However, the search result list will still display the incorrect timestamp values, which might be confusing for the user. 
+ * General stub text that is inserted by IBM InfoSphere Content Collector during stubbing operations
+   When IBM InfoSphere Content Collector stubs a document, it will insert a general text which by default will display an incorrectly converted archive date and time. 
+ * Item type splitting in IBM DB2 Content Manager archives
+   When a customer is using a DB2 Content Manager archive and is spreading data across multiple item types, item types will usually be split based on some age criteria. By default, the ReceivedDate metadata value will be used to determine the target item type for a document. Because this metadata date value is stored with the incorrectly converted value, documents might be stored in the wrong item type. This in turn will have impact on date range searches in all products searching an IBM InfoSphere Content Collector archive (IBM InfoSphere Content Collector itself, but also IBM InfoSphere eDiscovery Manager and IBM InfoSphere eDiscovery Analyzer). 
+ * Document expiration
+   If task routes included a Set Base Retention task, the retention date would by default be determined relative to the ReceivedDate metadata value. Since this value will be wrong, the retention date that is subsequently set for the archived document will also be wrong.
+
+
+Solution: 
+The appropriate actions to correct this problem depend on whether or not documents have already been archived with the incorrectly converted metadata values and whether those documents need to be retained. 
+
+If a customer is still in a test phase and either has not yet archived any documents or has archived only test data that can be discarded, the problem can be fixed by the following steps: 
+ 1. Delete all documents that have been archived so far. 
+ 2. Install IBM InfoSphere Content Collector 2.1.1.3 Interim Fix 1, which fixes the code that extracts timestamp metadata values and converts them to GMT/UTC, so that it will extract and convert the correct values, no matter in which time zone the IBM InfoSphere Content Collector server is running. Note that this Interim Fix requires IBM InfoSphere Content Collector 2.1.1 Fix Pack 3 to be installed first. 
+ 3. Restart tests with a new set of documents.
+
+
+Customers in affected time zones who are already in production should contact IBM Support right away for next steps. RELATED INFORMATION
+ IBM InfoSphere Content Collector V2.1.1.3 Interim Fix 1 [http://www.ibm.com/eserver/support/fixes/fixcentral/swgquickorder?fixes=2.1.1.3-IBM-ICC-Server-IF001&productid=InfoSphere+Content+Collector&brandid=1]

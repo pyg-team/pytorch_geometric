@@ -1,0 +1,91 @@
+Title: IBM Transaction timeouts and hung threads occur in the recovery subsystem while processing events with large business objects for WebSphere Process Server (WPS) - United States
+
+Text:
+fem; failed events; failed event manager; transaction timeouts; hang; process server; wps; OutOfMemory; Recovery; hign CPU; v601rnotes; v602rnotes; v61rnotes; v612rnotes; WSVR0606W TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Transactions timeouts and hung threads are reported when the Recovery subsystem tries to process failed events that include large business objects. 
+
+SYMPTOM
+The following warning might be logged to indicate the hung Recovery thread: 
+
+RecoveryEJB I com.ibm.wbiserver.manualrecovery.ejb.RecoveryMessageDrivenBean onMessage() CWRCV0001I: A message was received on exception queue WBI.FailedEvent.mynode.INBOUND01.
+
+
+ThreadMonitor W WSVR0605W: Thread "Default : 6" (00000050) has been active for 726354 milliseconds and may be hung. There is/are 1 thread(s) in total in the server that may be hung. "Default : 6" (TID:0x80611798, sys_thread_t:0x38ECC928, state:MW, native ID:0x6E97) prio=5
+at org.eclipse.emf.ecore.util.BasicExtendedMetaData.getAllElements(BasicExtendedMetaData.java(Compiled Code))
+at org.eclipse.emf.ecore.util.BasicExtendedMetaData.getLocalElement(BasicExtendedMetaData.java(Compiled Code))
+at org.eclipse.emf.ecore.util.BasicExtendedMetaData.getAffiliation(BasicExtendedMetaData.java(Compiled Code))
+at org.eclipse.emf.ecore.util.FeatureMapUtil$BasicValidator.isValid(FeatureMapUtil.java(Compiled Code))
+at org.eclipse.emf.ecore.util.BasicFeatureMap.contains(BasicFeatureMap.java(Compiled Code))
+at org.eclipse.emf.ecore.util.BasicFeatureMap.add(BasicFeatureMap.java(Compiled Code))
+at org.eclipse.emf.ecore.util.FeatureMapUtil$FeatureFeatureMap.add(FeatureMapUtil.java(Compiled Code))
+at org.eclipse.emf.ecore.xmi.impl.XMLHelperImpl.setValue(XMLHelperImpl.java(Compiled Code))
+at org.eclipse.emf.ecore.xmi.impl.XMLHandler.setFeatureValue(XMLHandler.java(Compiled Code))
+at org.eclipse.emf.ecore.xmi.impl.XMLHandler.setFeatureValue(XMLHandler.java(Compiled Code))
+at org.eclipse.emf.ecore.xmi.impl.XMLHandler.createObjectFromFeatureType(XMLHandler.java(Compiled Code))
+at org.eclipse.emf.ecore.xmi.impl.XMLHandler.createObject(XMLHandler.java(Compiled Code))
+at org.eclipse.emf.ecore.xmi.impl.XMLHandler.handleFeature(XMLHandler.java(Compiled Code))
+at org.eclipse.emf.ecore.xmi.impl.XMLHandler.processElement(XMLHandler.java(Compiled Code))
+at org.eclipse.emf.ecore.xmi.impl.XMLHandler.startElement(XMLHandler.java(Compiled Code))
+at org.eclipse.emf.ecore.xmi.impl.SAXWrapper.startElement(SAXWrapper.java(Compiled Code))
+at org.apache.xerces.parsers.AbstractSAXParser.startElement(Unknown Source)
+at org.apache.xerces.impl.XMLDocumentFragmentScannerImpl.scanStartElement(Unknown Source)
+at org.apache.xerces.impl.XMLDocumentFragmentScannerImpl$FragmentContentDispatcher.dispatch(Unknown Source)
+at org.apache.xerces.impl.XMLDocumentFragmentScannerImpl.scanDocument(Unknown Source)
+at org.apache.xerces.parsers.XML11Configuration.parse(Unknown Source)
+at org.apache.xerces.parsers.XML11Configuration.parse(Unknown Source)
+at org.apache.xerces.parsers.XMLParser.parse(Unknown Source)
+at org.apache.xerces.parsers.AbstractSAXParser.parse(Unknown Source)
+at javax.xml.parsers.SAXParser.parse(Unknown Source)
+at org.eclipse.emf.ecore.xmi.impl.XMLLoadImpl.load(XMLLoadImpl.java:129)
+at org.eclipse.emf.ecore.xmi.impl.XMLResourceImpl.doLoad(XMLResourceImpl.java:155)
+at org.eclipse.emf.ecore.resource.impl.ResourceImpl.load(ResourceImpl.java(Compiled Code))
+at com.ibm.ws.sca.internal.sdo.impl.XMLFileServiceImpl.load(XMLFileServiceImpl.java:192)
+at com.ibm.ws.sca.internal.sdo.impl.XMLFileServiceImpl.access$000(XMLFileServiceImpl.java:60)
+at com.ibm.ws.sca.internal.sdo.impl.XMLFileServiceImpl$1.run(XMLFileServiceImpl.java:438)
+at java.security.AccessController.doPrivileged1(Native Method)
+at java.security.AccessController.doPrivileged(AccessController.java(Compiled Code))
+at com.ibm.ws.sca.internal.sdo.impl.XMLFileServiceImpl.load(XMLFileServiceImpl.java:435)
+at com.ibm.ws.sca.internal.sdo.impl.XMLFileServiceImpl.load(XMLFileServiceImpl.java:247)
+at com.ibm.wsspi.sca.sdo.XMLFileService$1.load(XMLFileService.java:99)
+at com.ibm.wbiserver.manualrecovery.util.FailedEventMessageUtil.getSCAMessage(FailedEventMessageUtil.java:390
+
+
+TranManagerIm I WTRN0041I: Transaction 0000011D4F2986EE00000002000000153EE32E10441AFAFACFA0E097672603ACEC7F F1DE0000011D4F2986EE00000002000000153EE32E10441AFAFACFA0E097672603ACEC7FF1DE00000001 has been rolled back. 
+ExceptionUtil E CNTR0019E: EJB threw an unexpected (non-declared) exception during invocation of method "createFailedEvent". Exception data: com.ibm.websphere.csi.CSITransactionRolledbackException: Transaction rolled back; nested exception is: 
+javax.transaction.TransactionRolledbackException: Transaction is ended due to timeout
+at com.ibm.ejs.csi.TransactionControlImpl.completeTxTimeout(TransactionControlImpl.java:1391)
+at com.ibm.ejs.csi.TransactionControlImpl.preInvoke(TransactionControlImpl.java:293)
+at com.ibm.ejs.csi.UOWControlImpl.preInvoke(UOWControlImpl.java:248)
+at com.ibm.ejs.container.EJSContainer.preInvokeActivate(EJSContainer.java:3373)
+at com.ibm.ejs.container.EJSContainer.preInvoke(EJSContainer.java:2836)
+at com.ibm.wbiserver.manualrecovery.ejb. EJSLocalStatelessFailedEventManagerEJB_1411c110.createFailedEvent(Unknown Source)
+
+
+CAUSE
+Recovery-related message-driven bean (MDB) threads attempt to read the events from the service integration bus (SIBus) queues to persist the event to the failed event manager. 
+
+
+
+When the events contain large business objects, the MDB seems to stop while performing tasks. The associated transaction times out. OutOfMemory exceptions can also occur due to Java™ heap exhaustion or fragmentation. Processing OutOfMemory situations can trigger garbage collection (GC) spinning and cause high CPU use.
+
+
+Business objects that are 5 MB or larger can be considered “large” and might require attention (refer to the documents listed in the "Answer" section).
+
+Note: OutOfMemory exceptions and high CPU use do not necessarily occur when large Java heaps are used. 
+
+The Recovery MDB eventually completes its cycle, but it takes a long time. The following message is logged when the thread completes execution; it indicates the approximate time for thread completion:
+
+ThreadMonitor W WSVR0606W: Thread "Default : 6" (00000050) was previously reported to be hung but has completed. It was active for approximately 7759888 milliseconds. There is/are 0 thread(s) in total in the server that still may be hung.
+
+
+RESOLVING THE PROBLEM
+Multiple approaches are available to resolve this problem. Refer to the Memory problems can occur when using large business objects [http://www.ibm.com/support/docview.wss?&uid=swg21256688]document for more information
+
+
+Additionally, the following IBM Redpaper publications on performance tuning discuss effective ways of working with large business objects: 
+
+
+ * IBM WebSphere Business Process Management V6.1 Performance Tuning [http://www.redbooks.ibm.com/abstracts/redp4431.html] 
+ * WebSphere Business Integration V6.0.2 Performance Tuning [http://www.redbooks.ibm.com/abstracts/redp4304.html]

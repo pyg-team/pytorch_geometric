@@ -1,0 +1,174 @@
+Title: IBM IT13510: PUREAPPLICATION SYSTEM: ERROR EVENT "CWZIP8821W THE LOGICAL UNITNUMBER (LUN) SNAPSYS CHANGED TO THE OFFLINE STATE." - United States
+
+Text:
+  A FIX IS AVAILABLE
+IBM PureApplication System Version 2.2.2.0 [http://www-01.ibm.com/support/docview.wss?uid=swg24042631]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Customer reporting the following error messages:
+   
+   CWZIP8821W The logical unit number (LUN) SNAPSYS on storage node
+   ######## has changed to the offline state.
+   Message key
+   CWZIP8821W("SNAPSYS","########")
+   Event text
+   CWZIP8821W The logical unit number (LUN) SNAPSYS on storage node
+   ######## has changed to the offline state.
+   Source
+   storage_controllers
+   Type
+   Storage Subsystem
+   Type detail
+   PureApplication General Event Storage Subsystem
+   Managed component detail
+   #######-#####-####-####-######
+   Trap ID
+   ###.#.#
+   Parent type
+   storage_controllers
+   Severity
+   Warning
+   System state
+   Normal
+   Category
+   Alert
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Customer can run the following health check as noted in the
+   following URL and let us know if the issue is still
+   being reported.
+   https://ibm.biz/BdHCQY [https://ibm.biz/BdHCQY]
+   
+   Customer may also "utilize Step #5 of the Introduction to
+   Troubleshooting Section of the Health Check Technote to verify
+   the Total and Available numbers match.
+   https://ibm.biz/BdHCQ2 [https://ibm.biz/BdHCQ2]
+   
+   Check the storage nodes: System Console > Hardware > Storage
+   Devices. Look at all the Storage Nodes and Storage Node
+   Expansions to make sure the Disk Drives, LUNs, and Storage
+   Controller Ports are all available for each node.
+   
+   Check the "Total" and "Available" counts for Disk Drives, LUNS,
+   and Ports. The values should be equal.
+   
+   If there is a problem, click on the "Generate" button on the
+   "Request System Logs" line on the web page.
+   
+   The latter technote describes how to save and send the logs in
+   the MustGather by opening a PMR with IBM Support in the
+   "Contacting IBM Support and sending in your information"
+   section.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  The query storage code that is checking for offline storage
+   needs to ignore offline snapshots.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A code fix is being provided in PureApplication System
+   version 2.2.2.0.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT13510
+   
+   
+ * REPORTED COMPONENT NAME
+   PAPP SYS 8278 P
+   
+   
+ * REPORTED COMPONENT ID
+   5725F4600
+   
+   
+ * REPORTED RELEASE
+   210
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-01-29
+   
+   
+ * CLOSED DATE
+   2016-07-25
+   
+   
+ * LAST MODIFIED DATE
+   2016-07-25
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   PAPP SYS 8278 P
+   
+   
+ * FIXED COMPONENT ID
+   5725F4600
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R222 PSY
+   UP

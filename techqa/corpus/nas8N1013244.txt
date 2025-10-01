@@ -1,0 +1,74 @@
+Title: IBM DNS Name Resolution Takes Longer after Upgrade to V6R1 or Later - United States
+
+Text:
+Lookup TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This document discusses the cause for longer name resolution after upgrading to V6R1 or later. 
+
+RESOLVING THE PROBLEM
+ 
+
+This document discusses the cause for longer name resolution after upgrading to V6R1 or later.
+
+Starting with V6R1 (V6R1M0 ), all name resolution using system Sockets APIs network functions 
+(not NSLOOKUP)) could take longer to return results. In some cases, the application may even time out with
+a message that indicates the name cannot be resolved. This is due to changes that were made with regards
+to TCP/IP and Sockets starting with V6R1. V6R1 is the first release where IPv6 is fully supported on the 
+System i. As a result, the first DNS query sent is for an 'AAAA' (IPv6) query versus an 'A' query (IPv4). Due 
+to this change, some DNS servers are not able to handle the IPv6 query and, as a result, the System i must 
+wait for the IPv6 queries to fail before then going to IPv4. If there happen to be multiple DNS servers, the 
+system will try IPv6 to all, before going to IPv4. 
+
+Also, there may be delays when CHGTCPDMN is set to "Host name search priority *LOCAL", and the name 
+for an IPv4 address is in the local host table. Here is the process to search for it: 
+
+When CHGTCPDMN is set to "Host name search priority *LOCAL", the following occurs:
+
+The local host table is searched first; however, it is searched only for an IPv6 address. 
+
+ *  If an IPv6 address is not found, the DNS resolver cache is searched, looking for an IPv6 address. 
+ *  If an IPv6 address is not found, a DNS query is done, looking for an IPv6 address. 
+ *  If the DNS servers do not support IPv6 or are not available, there will be a delay because of timeouts and retries. 
+
+
+After the timeouts and retries, the local host table will be searched for an IPv4 address.  * If an IPv4 address is not found, the DNS resolver cache is searched, looking for an IPv4 address. 
+ * If an IPv4 address is not found, a DNS query is done, looking for an IPv4 address.
+
+
+(All DNS servers should support IPv6 queries.) 
+
+
+Here is the help text from the getaddrinfo API. 
+
+If the AI_ADDRCONFIG flag is specified, then a family of addresses will only be returned if at least one 
+source address is configured for that family. That is, a query for AAAA records and an IPv6 local host table 
+lookup will occur only if the node has at least one IPv6 source address configured. Similarly, a query for A 
+records and an IPv4 local host table lookup will occur only if the node has at least one IPv4 source address 
+configured. If the AI_V4MAPPED flag is also specified, then IPv4-mapped IPv6 addresses are returned only 
+if at least one IPv4 source address is configured. 
+
+The loopback address is not considered as a valid configured source address. 
+
+J9 (Java) and thus Websphere are a different story. It does not use the AI_ADDRCONFIG flag. For Java, it is 
+necessary to change the Java properties file for the Java application with the following: 
+
+j ava.net.preferIPv4Stack=true 
+java.net.preferIPv6Addresses=false 
+
+If the customer is using ILE applications that do not make use of the AI_ADDRCONFIG flag on the 
+getaddrinfo API, the applications may have delays. 
+
+IBM i recommends the use of the AI_ADDRCONFIG flag on the getaddrinfo API. 
+
+
+If a customer is experimenting with IPv6 and adds an IPv6 interface, the IPv6 AAAA query will be done. 
+You should remove the test IPv6 interface 
+
+or 
+
+Get with your DNS provider to get it up to date and handle AAAA requests properly. Most commonly, this 
+would just be a negative response because there isn't typically an IPv6 address as of yet.  
+
+HISTORICAL NUMBER
+ 512863798

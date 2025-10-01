@@ -1,0 +1,153 @@
+Title: IBM IV52155: CANNOT CREATE FILESYSTEM GREATER THAN 1024 GB - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  TSAM 7.2.3 + NetApp Storage Extension - cannot create
+   filesystem greater than 1024 GB
+   .
+   RECREATION
+   ===========
+   Logon to TSAM SSUI
+   Storage Management > Create Storage Project
+   ProjectName = Test001
+   Team = <default>
+   Duration = <default>
+   Click Next
+   Click Add Storage
+   Export = export001
+   Storage Type = NETAPP
+   Storage Pool = <default>
+   Number = 1
+   Size = 1025 GB
+   ERROR - CTJZE1003E
+   .
+   The size of a file system must be a number greater
+   than 1 GB and lower than the storage pool maximum.
+   In any case, you cannot decrease the size of
+   provisioned file systems.
+   .
+   Why is there a 1024 GB / 1 TB limit on the create
+   storage file system option? This limits the size
+   of the storage project which cannot exploit the
+   volume size that has been configured.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  * PROBLEM SUMMARY:
+   
+   ****************************************************************
+   * USERS AFFECTED: All users of Tivoli Service Automation
+   Manager 7.2.3 onwards and Network Attached Storage Extension
+   v2.0
+   
+   ****************************************************************
+   * PROBLEM DESCRIPTION:
+   Cannot create file system with more than 1024 GB.
+   
+   ****************************************************************
+   * RECOMMENDATION:
+   
+       Install Network Attached Storage Extension 2.0.0.2
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This has been fixed by changing maximum limit present in UI.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV52155
+   
+   
+ * REPORTED COMPONENT NAME
+   TSAM EXT NET AT
+   
+   
+ * REPORTED COMPONENT ID
+   5724W78NS
+   
+   
+ * REPORTED RELEASE
+   723
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-11-18
+   
+   
+ * CLOSED DATE
+   2013-12-17
+   
+   
+ * LAST MODIFIED DATE
+   2013-12-17
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TSAM EXT NET AT
+   
+   
+ * FIXED COMPONENT ID
+   5724W78NS
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R723 PSY
+   UP

@@ -1,0 +1,22 @@
+Title: IBM ITIM: Java applets do not load correctly when using jre v1.4.x - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Java applets do not load correctly when using jre v1.4.x 
+For example, when accessing the Workflow creation applet, you can only view a small box in the upper right hand of the applet window. 
+
+CAUSE
+Java applets require 1.3.1_04 jre version.
+
+RESOLVING THE PROBLEM
+1. Download jre 1.3.1_04 and install it so it will coexist with 1.4.2_02 version. 
+
+2. Close browser, reopen it and check the IE > Tools > Internet Options > Advanced. Check to see which version of java is being used. Mine shows 1.4.2. 
+3. Try to access the workflow applet page and you will be able to get it to load. 
+
+ 
+
+HISTORICAL NUMBER
+ 00198b661c661

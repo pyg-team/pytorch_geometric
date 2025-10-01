@@ -1,0 +1,47 @@
+Title: IBM Completion Code EC3 Reason Code 04130001 - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM (ABSTRACT)
+ While deploying ear, the following error message is generated:
+
+IEA794I SVC DUMP HAS CAPTURED: 
+DUMPID=126 REQUESTED BY JOB (BBOSMSS ) 
+DUMP TITLE=COMPON=WEBSPHERE Z/OS, COMPID=5655A9801,ISSUER=
+BBORLEXT,ABEND IN *PATHNAM/jni_ReleasePrimitiveArray 
+BPXP009I THREAD 1CFFA00000000010, IN PROCESS 17104925, ENDED 
+ABNORMALLY WITH COMPLETION CODE 4FEC3000, REASON CODE 04130001. 
+
+
+RESOLVING THE PROBLEM
+Abend Reason Code Description:
+EC3 04130001 Control region issued a ABTERM for this server region
+because WLM queue or OTS timeout ocurred. Code under dispatch could have been in a tight loop. 
+
+It is normal processing for WebSphere when an OTS timeout with abend reason code 04130001 occurs, the server region is terminated because WebSphere cannot determine the cause of the timeout. 
+
+ 
+
+Possible Solutions:
+
+-If the transaction timed out, increase the timeout value and try the transaction again. If the timeout continues, you will need to determine the root cause of why the transaction for the application is timing out and correct it.
+
+-Method being dispatched was in a loop, correct the method and try again.
+
+-For the specific problem with an abend in *PATHNAM/jni_ReleasePrimitiveArray, look for error message or Java stack traces that might indicate an OUT_OF_MEMORY condition. To correct an OUT_OF_MEMORY problem try increasing JVM_HEAPSIZE and JVM_MINHEAPSIZE settings from the default of 256 to a larger value such as 512. 
+
+Directions for adding the environment variables to your Systems Management Server. 
+
+
+-Create a new conversation in the SM EUI 
+-From the list, Servers, edit the Systems Management server Default name CBSYSMGT. Click on the server, so it is highlighted and select Selected--Modify from the action bar. 
+-Scroll down the list of properties on the right pane until you see 
+"Environment variable list" and double click on the empty entry that will pop up a dialog box. 
+-Enter the following environment variable: JVM_HEAPSIZE as the "Name" and 512 as the "Variable Value". 
+-Click on Add 
+-Enter the following enviromnent variable: JVM_MINHEAPSIZE as the "Name" and 512 as the "Variable Value" 
+-Click on Add and then OK. 
+-Save your changes by selecting Selected--Save from the action bar. 
+-Commit and Activate your conversation in the SM EUI. 
+-Recycle the necessary servers from MVS Console to pick up the changes.

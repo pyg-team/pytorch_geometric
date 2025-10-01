@@ -1,0 +1,217 @@
+Title: IBM IV36439: ADDBUNDLES UE WIA64 OVERWRITES WINNT UE - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Executing the addbundles command to install the Windows Itanium
+   (WIA64) OS Agent package into the TEMS Depot will overwrite
+   existing the Windows 32-Bit(WINNT) UE package contents.  After
+   this overwrite has occurred, distributing the UE package to a
+   Windows 32-Bit (WINNT) endpoint will result in an installation
+   failure of the UE Component. The failure message that appears
+   in the installation states that "the platform is not WIA64".
+   
+   RECREATE INSTRUCTIONS:
+   1. Install ITM 622 FP9 Windows TEMS
+   2. Install ITM 622 FP9 OS Agent on Windows 2008 R2
+   3. Execute addbundles -i <cd-image>/WINDOWS/Depot -t NT
+   4. Execute addbundles -i <cd-image>/WIA64/Depot -t UE
+   5. Execute addsystem -n endpoint:NT -t UE
+   
+   Observe timeout waiting for installation of UE to occur and
+   failure message appearing in last line of installation log file
+   on endpoint.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Two files are available from IBM Support for download:
+   
+   
+   06.22.04.00_WIA64_UE.zip
+   
+   06.22.04.00_WIA64_UE.tar
+   
+   
+   These are the step to follow.
+   
+   1. Since the current TEMS Depot has a WIA64 UE  Package which
+      has overwritten the WINNT UE package, you will need to run
+      the addbundles command again with the WINNT package to
+      restore the WINNT UE package in the depot.
+   
+   tacmd addbundles -i /06.22.04.00_media/WINDOWS/Deploy -t UE
+   
+   2. Once the WINNT UE package is restored from your CD-Image into
+      the TEMS Depot by (1) above, you will need to add the
+      06.22.04.00_WIA64_UE package to the TEMS Depot.  This package
+      will add the 06.22.04.00 WIA64 UE package to the TEMS Depot
+      in the WIA64, not WINNT, directory.
+   
+     a. Uncompress the file downloaded from EcuRep into a temporary
+        directory
+   
+       (Unix/Linux TEMS)
+   
+        tar -xvf  06.22.04.00_WIA64_UE.tar
+   
+       (Windows TEMS)
+   
+        unzip 06.22.04.00_WIA64_UE.zip
+   
+     b. Add the uncompressed package to the TEMS Depot.
+   
+        tacmd addbundles -i <temporary>/WIA64/Deploy
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  No Tivoli Enterprise Services User Interface Extensions (UE)
+   Descriptor file (KNTWIA64.dsc) was generated specifically for
+   the Windows Itanium (WIA64) architecture. Rather the Windows
+   OS Agent 32-Bit package (KNTWINNT.dsc) Descriptor file  was
+   shipped for the
+   WIA64 architecture. So when the user attempts to install
+   the Windows OS Agent package on a Windows Itanium plaform,
+   the installation fails.
+   
+   In the 06.23.00.00 Release of IBM Tivoli Monitoring, a separate
+   Descriptor file
+   was created for the WIA64 architecture. In doing so, the WINNT
+   architecture binaries no longer overwrite the WIA64 binaries in
+   in the Tivoli Enterprise Monitoring Server Depot.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+ *  Two files are available from IBM Support for download:
+   
+   
+   06.22.04.00_WIA64_UE.zip
+   
+   06.22.04.00_WIA64_UE.tar
+   
+   
+   These are the step to follow.
+   
+   1. Since the current Tivoli Enterprise Monitoring Server
+   Depot has the WIA64 UE Package installed, it has already
+   overwritten the WINNT UE package in the Depot. You will need
+   to run the addbundles command again with the WINNT package to
+   restore the WINNT UE package in the depot.
+   
+   tacmd addbundles -i /06.22.04.00_media/WINDOWS/Deploy -t UE
+   
+   2. Once the WINNT UE package is restored from your CD-Image into
+   the TEMS Depot by (1) above, you will need to add the
+   06.22.04.00_WIA64_UE package to the TEMS Depot.  This package
+   will add the 06.22.04.00 WIA64 UE package to the TEMS Depot
+   in the WIA64, not WINNT, directory.
+   
+   a. Uncompress the file downloaded from EcuRep into a temporary
+   directory
+   
+   (Unix/Linux TEMS)
+   
+   tar -xvf  06.22.04.00_WIA64_UE.tar
+   
+   (Windows TEMS)
+   
+   unzip 06.22.04.00_WIA64_UE.zip
+   
+   b. Add the uncompressed package to the TEMS Depot.
+   
+   tacmd addbundles -i <temporary>/WIA64/Deploy
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV36439
+   
+   
+ * REPORTED COMPONENT NAME
+   TEMS
+   
+   
+ * REPORTED COMPONENT ID
+   5724C04MS
+   
+   
+ * REPORTED RELEASE
+   622
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   YesSpecatt / Installability / UE
+   
+   
+ * SUBMITTED DATE
+   2013-02-06
+   
+   
+ * CLOSED DATE
+   2013-03-19
+   
+   
+ * LAST MODIFIED DATE
+   2013-03-19
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R623 PSY
+   UP
+   
+   
+ * R630 PSY
+   UP

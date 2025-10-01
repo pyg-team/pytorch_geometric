@@ -1,0 +1,267 @@
+Title: IBM MustGather: Object Request Broker (ORB) problems with WebSphere Application Server - United States
+
+Text:
+MustGather; MustGather; MustGather; ORB; Object Request Broker; ISA; collector; autopd; auto pd; MustGatherDocument TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Collecting data for problems with the IBM WebSphere Application Server Object Request Broker component. Gathering this MustGather information before calling IBM support will help you understand the problem and save time analyzing the data. 
+
+RESOLVING THE PROBLEM
+ 
+
+TAB NAVIGATION
+ * Learning more [http://www.ibm.com/support/docview.wss?uid=swg21245077]
+ * Troubleshooting [http://www.ibm.com/support/docview.wss?uid=swg21237101]
+ * Collecting data- selected tab,
+
+Collecting data for problems with the IBM WebSphere Application Server Object Request Broker component. Gathering this MustGather information before calling IBM support will help you understand the problem and save time analyzing the data..
+
+COLLECTING DATA MANUALLY
+
+Object Request Broker specific MustGather information  1.  Where does the problem occur? Between what components?
+     
+     
+ 2.  What is your topology?
+     
+     
+ 3.  What are the symptoms noticed?
+     
+     
+ 4.  How do you recover from this problem?
+     
+     
+ 5.  What are the hostnames of the Client and the Application Servers?
+     
+     
+ 6.  How often does this problem occur?
+     
+     
+ 7.  Is there a firewall installed between the failing components?
+     
+     
+ 8.  Can you successfully ping the server from the remote client? Can you ping the client from the remote server?
+     
+     
+ 9.  Has this problem always occurred or has it just started to occur? If it just started, what changes were made?
+     
+     
+ 10. Clear out the logs in the install_root/logs directory, then recreate the problem.
+     
+     
+ 11. Collect the following files:  * The newly created logs.
+        
+        
+      * Answers to the preceding questions.
+        
+        
+      * For releases of WebSphere Application Server versions 5.0 and 6.0  * collector.[sh/bat] output
+           
+           
+        
+        
+      * Any additional information you think might relate (topology, symptoms, and so on) to IBM.
+        
+        Note: Additional ORB, Security, or WLM traces might be required.
+     
+     
+
+ 
+
+Additional MustGather information for ORB interoperability problems 
+
+ 1.  What third-party ORB are you trying to use?
+     
+     
+ 2.  What version is the third-party ORB using?
+     
+     
+ 3.  What language is the third-party ORB using? (C++ or Java)
+     
+     
+ 4.  What platform is the third-party ORB running on?
+     
+     
+ 5.  What platform is WebSphere Application Server running on?
+     
+     
+ 6.  Does the problem or error occur consistently or randomly?
+     
+     
+ 7.  Is the problem reproducible? If so, what are the steps?
+     
+     
+ 8.  Is WebSphere Application Server being used as the server or client to the third-party ORB?
+     
+     
+ 9.  Has this worked before, or is this a new configuration?
+     
+     
+ 10. Have you tried using the approach recommended in the CORBA Interop samples?
+     
+     
+ 11. Where was the Interface Definition Language (IDL) compiled (what tool was used)?
+     
+     Note: See the WebSphere Application Server detailed system requirements [http://www.ibm.com/support/docview.wss?uid=swg27006921] for the information related to the third party ORB Supported/Tested, then select WebSphere Version > Server Type > Search on third-party ORB in Software Requirements List.
+
+ 
+
+A collector output is required for the WebSphere Application Server support team to troubleshoot an ORB issue. By providing the collector output, your configuration can be reviewed to help get a better understanding of your topology and settings. 
+
+
+ * Detailed instructions on how to run the collector program can be found at the following link:
+
+
+https://www.ibm.com/support/knowledgecenter/SSEQTP_8.5.5/com.ibm.websphere.nd.doc/ae/ttrb_runct.html [https://www.ibm.com/support/knowledgecenter/SSEQTP_8.5.5/com.ibm.websphere.nd.doc/ae/ttrb_runct.html] 
+
+Make sure you do not run the collector program from within the WebSphere Application Server product installation root directory. This will lead to an error. Make a working directory where you can start the collector program. 
+
+Once you have run the collector program from the dmgr, upload the collector.jar file that is created.  
+
+If specific ORB traces have been requested by the Application Server support team, use the following instructions:
+
+NOTE: In most cases, support is going to need a matching client and server side trace to troubleshoot the issue. In some cases, they may even need traces from the nodeagent.
+
+
+
+ * WebSphere Application Server V6.1, V7.0, V8.0, and V8.5 ORB trace instructions 
+   You can review the following video that walks you through setting up the ORB trace in the Administrative Console. It goes through each step listed below to make sure the ORB trace is enabled correctly. 
+   
+   
+    1.  From the Administrative Console, select Servers > Application Servers > server_name > Change Log Details Levels.
+        
+        
+    2.  Remove any previous entries in the text field type the following:
+        
+        *=info:ORBRas=all
+        
+        
+    3.  Apply and save changes.
+        
+        
+    4.  Select Servers > Application Servers > server_name > Diagnostic Trace Service.
+        
+        
+    5.  Change the Maximum Number of Historical Files to 10 and maximum file size to 50mb
+        
+        
+    6.  Apply and save changes.
+        
+        
+    7.  Enabling Comm Trace:
+        
+        Application Server
+        From the Administrative Console, Select Servers > Application Servers > server_name > Container Services > ORB Service. Select the Orb Tracing check box to enable Comm Tracing.
+        
+        Node Agent
+        From the Administrative Console, select System Administration >Node Agent > nodeagent > ORB Service. Select the Orb Tracing check box to enable Comm Tracing.
+        
+        Deployment Manager
+        From the Administrative Console, Select System Administration > Deployment Manager > ORB Service. Select the Orb Tracing check box to enable Comm Tracing.
+        
+        NOTE: You will need to do a server restart for the Comm Tracing to be captured in the trace.log file. You can also leave the Orb Tracing check box checked permanently in case you run into another ORB issue in the future. That way, you don't have to do another server restart for the trace to be captured. Leaving the Orb Tracing check box checked won't log any data to a trace log unless you have the ORBRas=all trace string enabled (Step 2 above). This means it won't cause any performance issues or affect anything else in the server. 
+    8.  Apply and save changes.
+        
+        
+    9.  Restart the sever and recreate the problem
+        
+        
+    10. Collect the following data:
+        
+        profile_root/logs/server_name/trace.log
+   
+    * 
+    * profile_root
+    * /logs/ffdc folder
+   
+    * 
+      
+    * NOTE: 
+    * 
+    * date
+    * 
+    * time
+    * 
+    * 
+   
+   
+ * Stand Alone Java Client ORB Trace Instructions  1. Start the client program with the "-D" arguments to specify the trace settings
+       
+       -Dcom.ibm.CORBA.Debug=true -Dcom.ibm.CORBA.CommTrace=true -Dcom.ibm.CORBA.Debug.Output=client.log
+       
+       
+    2. The ORB trace output is captured in the path pointed by com.ibm.CORBA.Debug.Output.
+       
+       If the com.ibm.CORBA.Debug.Output parameter is not specified, the ORB trace output is captured in a unique trace file named orbtrc.<timestamp>.txt in the current directory of execution.
+       
+       
+    3. Collect the following file:
+       
+       orbtrc.<timestamp>.txt 
+       
+       
+       
+   
+   
+ * J2EE Client Trace Instructions  1. Start the launchClient script with the following arguments to enable the trace:
+       
+       install_root/bin/launchClient.sh <ear_file> -JVMOptions="-Dcom.ibm.CORBA.Debug=true -Dcom.ibm.CORBA.CommTrace=true" -CCtrace=ORBRas=all -CCtracefile=orbtrace.txt -CCtraceMode=basic
+       
+       
+       Note: For Windows installations, use launchClient.bat instead of launchClient.sh
+       
+    2. The ORB trace output is captured in a unique trace file named orbtrace.txt in the current directory of execution.
+       
+       
+    3. Collect the following file:
+       
+       orbtrace.txt
+       
+   
+   
+ * How to check IBM® Java™ ORB build version in WebSphere® Application Server.
+
+ *  <washome>/java/bin/java -Xbootclasspath/p:<washome>/java/jre/lib/ext/ibmorb.jar com.ibm.rmi.util.Version
+   
+ * Follow instructions to send diagnostic information to IBM support [http://www.ibm.com/support/docview.wss?uid=swg21153852] [http://www.ibm.com/support/docview.wss?rs=180&uid=swg21153852]
+   
+
+
+
+For a listing of all technotes, downloads, and educational materials specific to the ORB component, search the WebSphere Application Server support site [http://www.ibm.com/support/entry/portal/Overview/Software/WebSphere/WebSphere_Application_Server]. 
+
+Related information [http://www.ibm.com/support/docview.wss?uid=swg21153852] 
+Submitting information to IBM support [http://www.ibm.com/support/docview.wss?uid=swg21153852] 
+Steps to getting support for WebSphere Application Server [http://www.ibm.com/developerworks/websphere/support/appserver_support.html] 
+MustGather: Read first for WebSphere Application Server [http://www.ibm.com/support/docview.wss?uid=swg21145599] 
+Troubleshooting guide for WebSphere Application Server [http://www.ibm.com/support/docview.wss?uid=swg27005324] 
+
+
+EXCHANGING DATA WITH IBM SUPPORT
+To diagnose or identify a problem, it is sometimes necessary to provide Technical Support with data and information from your system. In addition, Technical Support might also need to provide you with tools or utilities to be used in problem determination. You can submit files using one of following methods to help speed problem diagnosis: 
+
+ * Service Request (SR)
+ * E-mail 
+ * FTP to the Enhanced Customer Data Repository (ECuRep)
+
+
+
+
+Instructions for exchanging information with IBM Support [http://www.ibm.com/support/docview.wss?uid=swg21153852]
+
+READ FIRST AND RELATED MUSTGATHERS
+MustGather: Read first for WebSphere Application Server [http://www.ibm.com/support/docview.wss?uid=swg21145599]
+
+
+
+
+ Classloader problem [http://www.ibm.com/support/docview.wss?uid=swg21196187] Security Problem [http://www-01.ibm.com/support/docview.wss?uid=swg21470063] JNDI Problem [http://www.ibm.com/support/docview.wss?uid=swg21143296] JTS Problem [http://www.ibm.com/support/docview.wss?uid=swg21153216] Session Management Problem [http://www.ibm.com/support/docview.wss?uid=swg21192604] Workload Management Problem [http://www.ibm.com/support/docview.wss?uid=swg21052165] 
+
+RELATED INFORMATION
+ Recording your screen to share with IBM Support [https://www.ibm.com/developerworks/community/blogs/IBMElectronicSupport/entry/recording_your_screen_to_share_with_support?lang=en]
+
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Application Servers Runtimes for Java Technology Java SDK AIX, HP-UX, Linux, Solaris, Windows 8.0, 7.1, 7.0, 6.1, 6.0.2, 6.0 Application Servers WebSphere Application Server Object Request Broker (ORB) AIX, HP-UX, Linux, Solaris, Windows 9.0, 8.5.5, 8.5, 8.0, 7.0, 6.1 Base, Network Deployment

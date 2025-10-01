@@ -1,0 +1,37 @@
+Title: IBM Data collected by ITCAM for WAS TEMA - United States
+
+Text:
+ITCAM for WAS; Tivoli Enterprise Portal; Data Collector; monitored applications; CAMADALL; CAMADAGENT TECHNOTE (FAQ)
+
+QUESTION
+ What types of data are collected by ITCAM for WAS TEMA (YN agent) and displayed on TEP and how are they obtained? What monitoring data available on ITCAM for Websphere Web UI are unavailable on TEP? 
+
+ANSWER
+There are four types of data collected by YN TEMA:
+Resource Data: obtained from Performance Monitoring Infrastructure (PMI) modules provided by WAS. They consist of aggregated data of how different resources in the system are being used.
+They populate following TEP workspaces: Pool Analysis, Web Applications, EJB Containers, DB Connection Pools, J2C connection Pool, Thread Pools, Cache Analysis, Workload Management, Scheduler, Web Services, Platform Messaging.
+
+Request Data: obtained from the Byte Code Injection (BCI) of WebSphere and application classes by the ITCAM Data Collector. They mainly track individual user transactions and the elapsed time to perform various operations.
+They populate following TEP workspaces: Application Health, Request Analysis, Datasources and JMS Summary.
+
+Garbage Collection Data: obtained from parsing verbose GC file (on WAS/DC server). They are displayed in Garbage Collection Analysis workspace.
+
+WebSphere Log Entries: obtained from parsing WAS Logs (on TEMA server). They are displayed in Log Analysis workspace.
+
+
+Data is always “pulled” by TEMA from Data Collector and can be obtained either at Fixed Interval or On-demand, depending on TEMA configuration.
+Either Resource Data Monitoring, or Request Data Monitoring, or Garbage Collection Data Monitoring can be enabled or disabled.
+
+There are monitored data from ITCAM for WAS Managing Server (MS) Web UI that are not available on TEMA (can't be displayed on TEP). Those mainly are Deep-dive diagnostics like:
+
+- Level 3 monitoring data.
+- Application profiling (Method/Component tracing, Memory leaks, Lock analysis).
+- In-flight requests, misbehaving transactions. 
+- Thread dumps, Thread cancellation.
+- Memory management .
+- Heap dumps, memory leaks.
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Systems and Asset Management Tivoli Composite Application Manager for Application Diagnostics

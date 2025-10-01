@@ -1,0 +1,50 @@
+Title: IBM Download WebSphere Message Broker Hypervisor Edition V8.0 - United States
+
+Text:
+ DOWNLOADABLE FILES
+
+ABSTRACT
+ This document describes how to download IBM WebSphere Message Broker Hypervisor Edition V8.0 eAssembly images from the Passport Advantage website. 
+
+DOWNLOAD DESCRIPTION
+This document was created during November 2011 for V8.0 and updated during September 2012.
+
+Terminology
+
+WebSphere Message Broker Hypervisor Edition V8.0 is supplied in two eAssemblies: refer to the table below to identify the appropriate eAssembly image for your environment. 
+
+Related product documentation
+
+WebSphere Message Broker Hypervisor Edition contains WebSphere Message Broker and WebSphere MQ. The most up-to-date information about WebSphere Message Broker can be found in the US English WebSphere Message Broker V8.0 readme file at http://www.ibm.com/support/docview.wss?&uid=swg27006913 [http://www.ibm.com/support/docview.wss?&uid=swg27006913] [http://www-01.ibm.com/support/docview.wss?&uid=swg27006913]. Translated versions of the WebSphere Message Broker V8.0 readme file are available at: ftp://public.dhe.ibm.com/software/integration/wbibrokers/docs/V8.0/ [ftp://public.dhe.ibm.com/software/integration/wbibrokers/docs/V8.0/]. For specific documentation about Websphere Message Broker Hypervisor Edition V8.0, refer to the User's Guide and Reference (which is available for download in several languages). It can be accessed via the IBM Publications Center as follows:  1. Go to the IBM Publications Center [http://www.ibm.com/e-business/linkweb/publications/servlet/pbi.wss] home page. 
+ 2. Select "country/region/language to begin" and click Go.
+ 3. Click on "Search for publications" on the Navigation panel.
+ 4. Type "message broker hypervisor" into the Search on field and click Go.
+ 5. Click on the required language publication number or Online button to display the Download screen.
+
+
+
+Downloading the relevant eAssembly images from the Passport Advantage website
+
+ 1. From the eAssemblies table below, decide which of the eAssemblies you want to download.
+ 2. Go to the Download package table below and follow the link to the Passport Advantage website.
+ 3. Sign in to download all of the images that you need.
+ 4. Unpack each of the images onto your system. Documentation is included in every image except for the Quick Start Guide.
+
+eAssemblies table 
+
+eAssembly or eImage part number eAssembly or eImage Description CI9F5ML WebSphere Message Broker Hypervisor Edition V8.0.0.1 Quickstart Guide CRGY4ML WebSphere Message Broker Hypervisor Edition V8.0 Red Hat Enterprise Linux Server for x86 Multilingual eAssembly
+
+This Assembly contains the following eImages:​​ CI7TXML WebSphere Message Broker Hypervisor Edition V8.0.0.1 Red Hat Enterprise Linux Server for x86 VMWare Multilingual CI7TYML WebSphere Message Broker Hypervisor Edition V8.0.0.1 Red Hat Enterprise Linux Server for x86 IBM Workload Deployer and IBM Pure Application System Multilingual [/support/docview.wss?uid=swg24031059&amp;aid=1] [/support/docview.wss?uid=swg24031059&amp;aid=1] CRGY5ML WebSphere Message Broker Hypervisor Edition V8.0 for AIX Multilingual eAssembly
+
+This Assembly contains the following eImages:​​ CI7TKML WebSphere Message Broker Hypervisor Edition V8.0.0.1 for AIX IBM Workload Deployer Multilingual - AIX License Required CI7TMML WebSphere Message Broker Hypervisor Edition V8.0.0.1 for AIX mksysb Multilingual - AIX License required 
+
+DOWNLOAD PACKAGE
+
+
+
+
+
+Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options 
+What is Fix Central (FC)? [http://www-304.ibm.com/systems/support/fixes/en/fixcentral/help/faq_sw.html] IBM Passport Advantage Online 09 Dec 2011 English 1 FC [http://www.ibm.com/software/howtobuy/passportadvantage/pao_customers.htm] [ ] 
+PRODUCT ALIAS/SYNONYM
+ WMB MB Message Broker MQ Integrator WBIMB WBI-MB MQSI WMQI

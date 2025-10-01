@@ -1,0 +1,200 @@
+Title: IBM IC81525: WEBSPHERE MQ PING CHANNEL COMMAND FAILS WITH ERROR AMQ9640 IF SSLPEER IS SPECIFIED ON CHANNEL - United States
+
+Text:
+  FIXES ARE AVAILABLE
+WebSphere MQ V7.0 Fix Pack 7.0.1.9 [http://www-01.ibm.com/support/docview.wss?uid=swg24033008]
+WebSphere MQ V7.0.1 for i5/OS Fix Pack 7.0.1.9 [http://www-01.ibm.com/support/docview.wss?uid=swg24033034]
+Fix Pack 7.1.0.2 for WebSphere MQ V7.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24033287]
+WebSphere MQ V6.0 Fix Pack 6.0.2.12 [http://www-01.ibm.com/support/docview.wss?uid=swg24033317]
+WebSphere MQ V6.0 for iSeries Fix Pack 6.0.2.12 [http://www-01.ibm.com/support/docview.wss?uid=swg24033319]
+WebSphere MQ 6.0 for HP OpenVMS Alpha and Itanium - Fix Pack 6.0.2.12 [http://www-01.ibm.com/support/docview.wss?uid=swg24035627]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  A cluster sender channel (CLUSSDR) is configured to use SSL and
+   the SSLPEER property in the channel definition is set to a non-
+   blank value.
+   When executing the WebSphere MQ PING CHANNEL command, the
+   following error is received:
+   "AMQ9640: SSL invalid peer name"
+   This only occurs for cluster sender channels (manually defined
+   or auto-defined) where the SSLPEER channel property is set to a
+   non-null value.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   Users who set up SSL on cluster channels and need the ability to
+   ping those channels.
+   
+   Platforms affected:
+   All Distributed (iSeries, all Unix and Windows)
+   ****************************************************************
+   PROBLEM SUMMARY:
+   The SSL Peer Name was not being extracted correctly from the
+   channel definition and so garbage bytes were being stored.  As a
+   result of this, a validation check failed which lead to the PING
+   CHANNEL command failing.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The code was modified so that the SSL Peer Name was correctly
+   read from the channel definition.
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+                      v6.0
+   Platform           Fix Pack 6.0.2.12
+   --------           --------------------
+   Windows            U200331
+   AIX                U842074
+   HP-UX (PA-RISC)    U842208
+   HP-UX (Itanium)    U842213
+   Solaris (SPARC)    U842209
+   Solaris (x86-64)   U842216
+   iSeries            tbc_p600_0_2_12
+   Linux (x86)        U842210
+   Linux (x86-64)     U842215
+   Linux (zSeries)    U842211
+   Linux (Power)      U842212
+   Linux (s390x)      U842214
+   
+                      v7.0
+   Platform           Fix Pack 7.0.1.9
+   --------           --------------------
+   Windows            U200337
+   AIX                U849391
+   HP-UX (PA-RISC)    U849723
+   HP-UX (Itanium)    U849728
+   Solaris (SPARC)    U849724
+   Solaris (x86-64)   U849730
+   iSeries            7.0.1.9
+   Linux (x86)        U849725
+   Linux (x86-64)     U849729
+   Linux (zSeries)    U849726
+   Linux (Power)      U849727
+   
+                      v7.1
+   Platform           Fix Pack 7.1.0.2
+   --------           --------------------
+   Windows            7.1.0.2
+   AIX                7.1.0.2
+   HP-UX (Itanium)    7.1.0.2
+   Solaris (SPARC)    7.1.0.2
+   Solaris (x86-64)   7.1.0.2
+   iSeries            7.1.0.2
+   Linux (x86)        7.1.0.2
+   Linux (x86-64)     7.1.0.2
+   Linux (zSeries)    7.1.0.2
+   Linux (Power)      7.1.0.2
+   
+   The latest available maintenance can be obtained from
+   'WebSphere MQ Recommended Fixes'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037]
+   
+   If the maintenance level is not yet available information on
+   its planned availability can be found in 'WebSphere MQ
+   Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC81525
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ WINDOWS V6
+   
+   
+ * REPORTED COMPONENT ID
+   5724H7200
+   
+   
+ * REPORTED RELEASE
+   600
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-02-20
+   
+   
+ * CLOSED DATE
+   2012-03-26
+   
+   
+ * LAST MODIFIED DATE
+   2012-04-25
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ WINDOWS V6
+   
+   
+ * FIXED COMPONENT ID
+   5724H7200
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R600 PSY
+   UP

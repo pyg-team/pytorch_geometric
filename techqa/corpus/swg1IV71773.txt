@@ -1,0 +1,139 @@
+Title: IBM IV71773: REPORTS SCHEDULED TO BE EMAILED AS PDFS FAIL TO SEND AFTER TLS IS ENABLED IN SUA 2.2 - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  After TLS is enabled in SUA 2.2, scheduled reports silently fail
+   to send to their intended recipients.  On the same machine with
+   the same settings, but without TLS enabled, the same scheduled
+   reports will successfully send.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Enable SSL in jetty.xml by changing the "protocol" flag value
+   from "TLS" to "SSL_TLS"
+   
+   See http://bugs.sfolab.ibm.com/bugzilla/show_bug.cgi?id=67014 [http://bugs.sfolab.ibm.com/bugzilla/show_bug.cgi?id=67014]
+   for notes on the fix for the same issue implemented in SCA
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   A scheduled PDF report is not sent when TLS is enabled in
+   Software Use Analysis.
+   Behavior after you install the update:
+   The scheduled PDF report is properly sent.
+   ****************************************************************
+   * RECOMMENDATION: Apply appropriate update when available or
+   * refer to the documentation update
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix for this APAR is contained in the following maintenance
+   packages:
+    | Update | SUA 2.2.185 site 62
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV71773
+   
+   
+ * REPORTED COMPONENT NAME
+   IEM SW USE ANL
+   
+   
+ * REPORTED COMPONENT ID
+   5725F5700
+   
+   
+ * REPORTED RELEASE
+   910
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-04-02
+   
+   
+ * CLOSED DATE
+   2015-06-30
+   
+   
+ * LAST MODIFIED DATE
+   2015-06-30
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   IEM SW USE ANL
+   
+   
+ * FIXED COMPONENT ID
+   5725F5700
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R910 PSY
+   UP

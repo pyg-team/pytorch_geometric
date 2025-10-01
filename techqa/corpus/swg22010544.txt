@@ -1,0 +1,74 @@
+Title: IBM Error: "anyAddress: required field is null" when saving a Host Address object for QRadar Network Security sensors - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ You might find that you receive an error referencing the "anyAddress" field when you attempt to save a Host Address object for QRadar Network Security (XGS) sensors. 
+
+SYMPTOM
+The system fails to save the Host Address object changes and the following error is displayed: 
+
+anyAddress: required field is null
+
+The error will look like the following when it is displayed:
+
+[/support/docview.wss?uid=swg22010544&amp;aid=1]
+
+
+CAUSE
+This error occurs when the policy editor is missing the ANY address object in the Address Host shared object policy.
+
+
+RESOLVING THE PROBLEM
+You can resolve this issue by manually adding the missing ANY address object back to the policy. This object and its associated UUID are default values and are the same in any deployment.
+
+
+ 1.  Log in to the SiteProtector Console and go to the Agent view.
+     
+ 2.  Right-click the XGS sensor and select Manage Policy.
+     
+ 3.  Locate the policy repository that is in use for the XGS in the left pane. For many users, this will be the Default Repository.
+     
+     [/support/docview.wss?uid=swg22010544&amp;aid=2]
+     
+ 4.  Expand the entry for the repository and select Shared Objects.
+     
+     [/support/docview.wss?uid=swg22010544&amp;aid=3]
+     
+ 5.  Right-click the Address Host object in the upper right pane and select Export.
+     
+     [/support/docview.wss?uid=swg22010544&amp;aid=4]
+     
+ 6.  Select a location in the Export window and save the file.
+     
+ 7.  Locate the file that you exported and open it with a text editor.
+     
+ 8.  Go to the end of the file and add the following entry directly before the </policy> entry:
+     
+     <AnyAddress UUID="a4a32410-394a-012e-4714-0017f2db32a6" ObjType="any-address" Comment="" Name="Any Address" />
+     
+     The contents of the file may be formatted slightly differently, depending on your version. You can see the different examples of the results from the edit below:
+     
+     [/support/docview.wss?uid=swg22010544&aid=5] [/support/docview.wss?uid=swg22010544&aid=5]
+     
+     [/support/docview.wss?uid=swg22010544&aid=6] [/support/docview.wss?uid=swg22010544&aid=6]
+     
+     Save your changes when you are finished editing to the file.
+     
+ 9.  Return to the SiteProtector Console, right-click the Address Host object again and select Import.
+     
+     [/support/docview.wss?uid=swg22010544&amp;aid=7]
+     
+ 10. In the Import window, select the file that you edited and click Open.
+
+The policy editor will import the file and automatically deploy it as the most recent version of the Address Host object. You can now continue working with host addresses in your policies. 
+
+
+
+
+[/support/docview.wss?uid=swg22010544&aid=8] [https://ibm.biz/BdHdZx] [/support/docview.wss?uid=swg22010544&aid=9] [http://ibm.biz/InfraSecForumTechnote] [/support/docview.wss?uid=swg22010544&aid=10] [http://ibm.biz/SecSuptUTube] [/support/docview.wss?uid=swg22010544&aid=11] [http://ibm.biz/InfraSecFixes] [/support/docview.wss?uid=swg22010544&aid=12] [http://ibm.biz/FlexLicLogin] [/support/docview.wss?uid=swg22010544&aid=13] [http://ibm.biz/MyNotification] [/support/docview.wss?uid=swg22010544&aid=14] [http://ibm.biz/ContactSecSupport] 
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Security IBM Security Network Protection General Information Firmware 5.3.1, 5.3.3

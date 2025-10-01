@@ -1,0 +1,45 @@
+Title: IBM Disabling the MD5 algorithm for IBM Java used by SiteProtector - United States
+
+Text:
+vulnerability; CVE; MD5 TECHNOTE (FAQ)
+
+QUESTION
+ How do you disable the MD5 algorithm for IBM Java used by SiteProtector? 
+
+CAUSE
+MD5 is considered a less secure algorithm and is associated with a Java vulnerability on compatible-mode installs (CVE-2015-7575). Therefore, the MD5 algorithm should be disabled.
+
+ANSWER
+Follow the steps below to disable the MD5 algorithm within IBM Java on SiteProtector 3.1.1 and SiteProtector 3.0.0. The steps should be performed on each server with SiteProtector components (including SiteProtector Consoles). 
+
+ 1. Close the SiteProtector Console.
+    
+ 2. Stop the following services if they are present on the service:
+    SiteProtector Event Viewer Service (SiteProtector 3.0.0 only)
+    SiteProtector Application Server Service
+    SiteProtector Sensor Controller Service
+    
+ 3. Edit the java.security file under the SiteProtector JRE directories, such as:
+    \Program Files\ISS\SiteProtector\JRE1.7.0_SRX_FPXX\lib\security\java.security
+    
+ 4. Add MD5 to the end of the line that starts with:
+    jdk.certpath.disabledAlgorithms=
+    For example, replace:
+    jdk.certpath.disabledAlgorithms=MD2, RSA keySize < 1024 with: [jdk.certpath.disabledAlgorithms=MD2, RSA keySize < 1024, MD5
+    
+ 5. Add MD5withRSA to the end of the line that starts with:
+    jdk.tls.disabledAlgorithms=
+    For example, replace:
+    jdk.tls.disabledAlgorithms=SSLv3, RC4, DH keySize < 768
+    with:
+    jdk.tls.disabledAlgorithms=SSLv3, RC4, DH keySize < 768, MD5withRSA
+    
+ 6. After saving the changes, restart the following services if they are present on the server:
+    SiteProtector Event Viewer Service (SiteProtector 3.0.0 only)
+    SiteProtector Application Server Service
+    SiteProtector Sensor Controller Service
+
+
+
+
+[/support/docview.wss?uid=swg21976152&aid=1] [https://ibm.biz/BdHdjw] [/support/docview.wss?uid=swg21976152&aid=2] [http://ibm.biz/InfraSecForumTechnote] [/support/docview.wss?uid=swg21976152&aid=3] [http://ibm.biz/SecSuptUTube] [/support/docview.wss?uid=swg21976152&aid=4] [http://ibm.biz/InfraSecFixes] [/support/docview.wss?uid=swg21976152&aid=5] [http://ibm.biz/FlexLicLogin] [/support/docview.wss?uid=swg21976152&aid=6] [http://ibm.biz/MyNotification] [/support/docview.wss?uid=swg21976152&aid=7] [http://ibm.biz/ContactSecSupport]

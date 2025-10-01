@@ -1,0 +1,32 @@
+Title: IBM What are the different types of licenses available for Modeler\Clementine, SPSS, AMOS & SPSS Text Analysis for Surveys?  What is the difference between single user, site and network license? - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ What are the different types of licenses available for Modeler\Clementine and SPSS? What is the difference between single user, site and network license? What type of license should I choose? Also, which work with stand alone computers and which for terminal services? 
+
+ANSWER
+LICENSE TYPES:
+
+- Concurrent User (network) Installation (also called Network Licenses)
+This is applicable to Modeler\Clementine Client and SPSS Client installations only. 
+
+Concurrent user licenses, (also known as network licenses), allow you to install Modeler\Clementine or SPSS on any number of machines but control the number of users that can start the application at the same time. This offers you more flexibility than named-user licenses (also known as single-user licenses, see below) in multiple-user environments. Only a concurrent user license can be used with terminal services.
+
+
+- Single user/Site license Installation
+This is applicable to Modeler\Clementine & SPSS Client, Modeler 14.0 Server & SPSS 18 Server and below or Modeler\Clementine & SPSS Batch, AMOS and SPSS Text Analysis for Surveys.
+
+Named-user licenses (also known as single-user licenses) allow you to install Modeler\Clementine or SPSS on a fixed number of machines to be used by given user(s). You will most likely have a different license code for each user (machine). A single-user code can be applied to two separate machines for use by the same user (i.e. one work machine, one home machine). 
+
+A site license is used predominantly by universities. If you have a site license you will have one license/authorization code that can be applied to multiple Modeler\Clementine Client installations (the number of installations that you can apply a site license authorization code to is determined by the number of users you have purchased. Once you have installed it on this many machines the code will not be accepted by subsequent installs).
+
+RELATED INFORMATION
+ Need more help? Our Licensing forum is Live! [https://developer.ibm.com/answers/topics/spsslicensing.html]
+
+
+ 
+
+HISTORICAL NUMBER
+ 62148

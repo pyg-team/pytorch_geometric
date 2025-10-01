@@ -1,0 +1,30 @@
+Title: IBM "A fatal error has occurred" when starting Statistics 18 on a 32-bit Vista machine - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ I have recently purchased the PASW Statistics 18 Graduate Pack. After installing and licencing this program, when I start this application I receive the following:
+"Fatal Error has occured"
+I have no choice but to click on 'OK', but then Statistics 18 shuts down and I am not able to use this application. 
+
+RESOLVING THE PROBLEM
+Initial installation was not run as an Administrator as it was executed when the DVD was inserted into the Vista machine.
+To resolve this problem, please follow the steps below:
+1) Remove Statistics 18 through the Control Panel > Programs > Uninstall a program
+2) Restart your machine
+3) Insert the PASW Statistics 18 DVD. Instead of running the autoplay, open Computer and navigate to: \Windows\PASWStatistics\win32
+4) Right-click the 'setup.exe' file and choose 'Run as Administrator'
+5) Complete the rest of the wizard and when the License Authorisation Wizard appears, click on 'Cancel'.
+6) Click on Start (Windows Logo) > Programs > SPSS inc > PASW Statistics 18
+7) Right-click on 'License Authorisation Wizard' and select 'Run as Administrator'.
+8) Complete the rest of the licencing process and restart Statistics 18
+
+RELATED INFORMATION
+ Need more help? Our Statistics forum is Live! [https://developer.ibm.com/answers/topics/statistics.html?smartspace=predictive-analytics]
+
+
+ 
+
+HISTORICAL NUMBER
+ 86601

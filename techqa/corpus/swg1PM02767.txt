@@ -1,0 +1,204 @@
+Title: IBM PM02767: EMAIL RULE WITH A FILTER QUERY DON'T SEND IN ENGLISH OS WHILE TH E EMAIL RULE SENDS PROPERLY IN JAPANESE OS - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PERMANENT RESTRICTION.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Email Rule with a filter query does not send without errors in
+   English OS while the Email Rule sends properly in Japanese OS.
+   
+   Issue A:
+   When you create a Email Rule in Japanese OS, then select a
+   filter query from the public queries folder [e.g. Public queries
+   (in Japanese)/Defect ],  the value in the filter query is
+   [Public queries (in Japanese)/Defect ].
+   The Email Rule sends out an Email Notification properly in
+   Japanse OS enviornent of course, but the Email Rule does NOT
+   send out an Email Notification in English OS with Japanese
+   Language Locale/Region.
+   
+   Issue B:
+   When you create a Email Rule in English OS, then select a filter
+   query from the public queries folder [e.g. Public queries/Defect
+   ],  the value in the filter query is [Public queries/Defect ].
+   The Email Rule sends out an Email Notification properly in
+   English OS enviornent of course, but the Email Rule does NOT
+   send out an Email Notification in Japanse OS  with Japanese
+   Language Locale/Region.
+   
+   ClearQuest Core Trace log:
+   There are no errors for users so that users are not aware, we
+   can only see the following errors in the ClearQuest Core Trace
+   log.
+   
+   [CQ 61.000 secs, +0.000 secs, 20091109, 15:40:11, TID 492, PID
+   2816, 4792 msgs] API: rslt OAdResultSet(253A178)::GetColumnValue
+   '??????/Defect'
+   [CQ 61.000 secs, +0.000 secs, 20091109, 15:40:11, TID 492, PID
+   2816, 4793 msgs] API: call CWkspcMgr(E391D0)::GetQueryDef
+   ('??????/Defect')
+   [CQ 61.000 secs, +0.000 secs, 20091109, 15:40:11, TID 492, PID
+   2816, 4794 msgs] API Throw: GetQueryDef Couldn't find Query
+   '??????/Defect'
+   ........
+   [CQ 61.234 secs, +0.000 secs, 20091109, 15:40:11, TID 492, PID
+   2816, 5378 msgs] Email Rules (painetlib.dll): Delivering a SMTP
+   message
+   [CQ 61.234 secs, +0.000 secs, 20091109, 15:40:11, TID 492, PID
+   2816, 5379 msgs] Email Rules (painetlib.dll): To:
+   [CQ 61.234 secs, +0.000 secs, 20091109, 15:40:11, TID 492, PID
+   2816, 5380 msgs] Email Rules (painetlib.dll): Cc:
+   [CQ 61.234 secs, +0.000 secs, 20091109, 15:40:11, TID 492, PID
+   2816, 5381 msgs] Email Rules (painetlib.dll): Bcc:
+   [CQ 61.250 secs, +0.016 secs, 20091109, 15:40:11, TID 492, PID
+   2816, 5382 msgs] socketbuf (cqinetlib.dll): connect succeeded
+   [CQ 61.265 secs, +0.015 secs, 20091109, 15:40:11, TID 492, PID
+   2816, 5383 msgs] smtpclient (cqinetlib.dll): SMTP<-220 <mail
+   server> ESMTP Server (Microsoft Exchange Internet Mail Service
+   5.5.2653.13) ready
+   [CQ 61.265 secs, +0.000 secs, 20091109, 15:40:11, TID 492, PID
+   2816, 5384 msgs] smtpclient (cqinetlib.dll): SMTP->EHLO
+   localhost
+   [CQ 61.265 secs, +0.000 secs, 20091109, 15:40:11, TID 492, PID
+   2816, 5385 msgs] smtpclient (cqinetlib.dll): SMTP<-250-<mail
+   server> Hello [367244ENWXPSP2B]
+   [CQ 61.265 secs, +0.000 secs, 20091109, 15:40:11, TID 492, PID
+   2816, 5386 msgs] smtpclient (cqinetlib.dll): SMTP<-250-XEXCH50
+   [CQ 61.265 secs, +0.000 secs, 20091109, 15:40:11, TID 492, PID
+   2816, 5387 msgs] smtpclient (cqinetlib.dll): SMTP<-250-HELP
+   [CQ 61.265 secs, +0.000 secs, 20091109, 15:40:11, TID 492, PID
+   2816, 5388 msgs] smtpclient (cqinetlib.dll): SMTP<-250-ETRN
+   [CQ 61.265 secs, +0.000 secs, 20091109, 15:40:11, TID 492, PID
+   2816, 5389 msgs] smtpclient (cqinetlib.dll): SMTP<-250-DSN
+   [CQ 61.265 secs, +0.000 secs, 20091109, 15:40:11, TID 492, PID
+   2816, 5390 msgs] smtpclient (cqinetlib.dll): SMTP<-250-SIZE
+   10240000
+   [CQ 61.265 secs, +0.000 secs, 20091109, 15:40:11, TID 492, PID
+   2816, 5391 msgs] smtpclient (cqinetlib.dll): SMTP<-250-AUTH
+   LOGIN
+   [CQ 61.265 secs, +0.000 secs, 20091109, 15:40:11, TID 492, PID
+   2816, 5392 msgs] smtpclient (cqinetlib.dll): SMTP<-250
+   AUTH=LOGIN
+   [CQ 61.265 secs, +0.000 secs, 20091109, 15:40:11, TID 492, PID
+   2816, 5393 msgs] smtpclient (cqinetlib.dll): SMTP->MAIL
+   FROM:<cqadmin@tssyd.rational.com>
+   [CQ 61.265 secs, +0.000 secs, 20091109, 15:40:11, TID 492, PID
+   2816, 5394 msgs] smtpclient (cqinetlib.dll): SMTP<-250 OK - mail
+   from <cqadmin@tssyd.rational.com>
+   [CQ 61.265 secs, +0.000 secs, 20091109, 15:40:11, TID 492, PID
+   2816, 5395 msgs] smtpclient (cqinetlib.dll): SMTP->DATA
+   [CQ 61.265 secs, +0.000 secs, 20091109, 15:40:11, TID 492, PID
+   2816, 5396 msgs] smtpclient (cqinetlib.dll): SMTP<-503 No
+   recipient(s).
+   
+   System Environment:
+      OS: Windows OS English (Regional and Language Options is set
+   as Japanese) and Windows OS Japanese.
+      ClearQuest Version: 7.0.x and 7.1.x
+      ClearQuest Schema Repository Language : Japanese.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ClearQuest users which create an email rule on a Japanese OS
+   and select a filter query from the public queries folder
+   [e.g. Public queries (in Japanese)/Defect ] will notice that
+   e-mail Notification works properly on a Japanese OS but does
+   NOT work on an English OS with Japanese Language
+   Locale/Region.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  After analysis of this APAR we have determined we won't fix
+   this issue due to: low priority/severity, the risk of a fix
+   and a straightforward workaround (change the Windows
+   Regional and Language Options).  A priority decision has
+   been made that this defect cannot be addressed in the next
+   18 months without neglecting issues of higher importance and
+   less risk.  Thank you for your understanding.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM02767
+   
+   
+ * REPORTED COMPONENT NAME
+   CLEARQUEST WIN
+   
+   
+ * REPORTED COMPONENT ID
+   5724G3600
+   
+   
+ * REPORTED RELEASE
+   710
+   
+   
+ * STATUS
+   CLOSED PRS
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-12-03
+   
+   
+ * CLOSED DATE
+   2010-06-29
+   
+   
+ * LAST MODIFIED DATE
+   2010-06-29
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

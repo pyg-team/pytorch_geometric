@@ -1,0 +1,144 @@
+Title: IBM LO57216: DELETE FOLDER IS NOT POSSIBLE IN NOTES 802 if no ACL settings, Create privat folders/views - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS RETURNED (APAR CANNOT BE RESOLVED WITHOUT ADDITIONAL INFO FROM IBM OR CUSTOMER.)
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  DESC: users not more able to delete Folders in own mail database
+   error message :
+        "You are not authorized to perform that operation."
+   
+   users have editor access with access level
+   
+   x delete documents
+   x Replicate Documents
+   x create shared folders/views
+   
+   
+   if additional
+   
+   x create privat folders/views
+   is enabled in ACL -> users also able to delete folders
+   
+   but this permission should not enabled
+   
+   Environment:
+   Notes/Domino 802
+   Windows 32 bit
+   
+   Steps to reproduce the issue:
+   1. Install Notes/Domino 802
+   2. Ensure you register an user with Editor access to his mail
+   file and the ACL:
+   x delete documents
+   x Replicate Documents
+   x create shared folders/views
+   3. Create a shared Folder, from Create => Folder actions
+   4. Delete the Folder from: Actions => Folder Options => Remove
+   Folder
+   You get the error message:
+    "You are not authorized to perform that operation."
+   
+   If you add the ACL settings, Create privat folders/views, you
+   are then able to delete the folder.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  You can delete the folder by right-click on the Folder and then
+   Remove Folder.
+   
+   Also, you can upgrade to Notes 851 or 852 as the issue is not
+   occuring on these versions.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *  This APAR is associated with SPR# RGAU8CBMT7.
+   The record was returned to the person who created it for more
+    information.
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   LO57216
+   
+   
+ * REPORTED COMPONENT NAME
+   NOTES CLIENT
+   
+   
+ * REPORTED COMPONENT ID
+   5724E6255
+   
+   
+ * REPORTED RELEASE
+   802
+   
+   
+ * STATUS
+   CLOSED RET
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-12-20
+   
+   
+ * CLOSED DATE
+   2011-02-24
+   
+   
+ * LAST MODIFIED DATE
+   2011-02-24
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

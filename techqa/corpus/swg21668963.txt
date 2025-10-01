@@ -1,0 +1,57 @@
+Title: IBM Clearing System error LED (amber) on Disk Enclosure - United States
+
+Text:
+Netezza; LED; disk enclosure TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When this amber LED is lit, it indicates that the unit has a fault, such as in a power supply, ESM, or hard disk drive. However, in some occasions, this is not cleared up and stays on lit even if the faulty component has been replaced 
+
+SYMPTOM
+ In some occasions, System error LED (amber) is not cleared up and stays on lit even if the faulty component has been replaced
+
+
+DIAGNOSING THE PROBLEM
+The following (and not limited to) commands may show if there are existing issues in the appliance 
+
+ 1) 'nzhw -issues' to show current HW issues 
+
+ 2) 'nzpush -s */1 encl show -all' to check for PSU, ESM or Hard Disk slot errors 
+
+
+* - number of SPA affected
+
+
+RESOLVING THE PROBLEM
+ 
+
+If all steps have been exhausted to diagnose if there is a disk enclosure related HW issue, follow the below steps to clear the system error LED (amber)
+
+STEPS:
+
+1) Stop NPS (it is a best practice to generate a nzhostbackup before stopping NPS)
+$nzstop
+2) Power cycle; power-off/power-on the S-blades and the storage groups
+
+2.1) power OFF S-blade Chassis 
+$/nzlocal/scripts/rpc/spapwr.sh -off all
+2.2) power OFF storage groups 
+$/nzlocal/scripts/rpc/spapwr.sh -off all -j all
+- wait for 5 minutes; to allow enough time to clear system error LED
+
+2.3) power ON storage groups first 
+$/nzlocal/scripts/rpc/spapwr.sh -on all -j all
+- wait for 5 minutes before power ON S-blade Chassis
+
+2.4) power ON S-blade Chassis
+$/nzlocal/scripts/rpc/spapwr.sh -on all
+
+3) Start NPS
+$ nzstart
+
+4) Check system for HW issues
+$ nzhw -issues
+$ nzpush -s */1 encl show -all
+
+5) Validate with SSR onsite if the disk enclosure system error amber LEDs has gone.
+
+* - number of SPA affected

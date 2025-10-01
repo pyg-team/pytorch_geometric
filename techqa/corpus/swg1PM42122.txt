@@ -1,0 +1,154 @@
+Title: IBM PM42122: SUBSCRIPTIONS WITH AN EMBEDDED SQL QUERY FAIL TO UPDATE HIERARCHY MEMBERS - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Business Viewpoint - Relational Adapter - Unable to Rerun
+   Nominations (Data Imports).?
+                                        ?We have a Dimension built
+   with a Static Hierarchy. We have used the BV Client Relational
+   Adapter to "Nominate Data" from an Oracle connection in order to
+   add entries to our Hierarchy.               ?
+            ?In building the "Nominate Data" task, we add an SQL
+   Query to filter down the data, test this Query's syntax, and
+   select to "Add to an existing dimension" AND to "Update the data
+   at a later time" in order to specify a Subscription Name". We
+   then followed the wizard to map the data being imported to the
+   Hierarchy structure.?
+                                 ?Once the "Nominate Data"
+   Subscription was built, we selected it and performed an "Update
+   Data" by selecting to "Update Business Viewpoint Studio". After
+   running for a while, the additional entries were successfully
+   added to the hierarchy.?
+                                    ?When we run the saved
+   subscription to"Nominate Data" a second time, it has no effect
+   on the Hierarchy, even when new entries are added to the source.
+   When the "Nominate data" ?subscription is rebuilt, it runs
+   successfully but we need to go through the remapping every time
+   - this is unacceptable as we are attempting to automate the
+   "Nominate Data" for NEW entries and there is huge scope for
+   human error in remapping the table columns to the
+   hierarchy.??Note: If no SQL query is NOT added then the
+   hierarchy can be successfully updated as seen in BV Studio.
+   However, this is not acceptable as we would then need to create
+   bespoke tables for each Cost Centre - very inefficient.??In
+   summary: With a side-by-side test, where 2 identical
+   Subscriptions are created with one difference only: Subscription
+   1 has an SQL Query associated (tested on the database and it
+   does select the correct data). Subscription 2 has no SQL Query.
+   Subscription 1 fails to update, Subscription 2 works.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * All Users                                                    *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * See error description.                                       *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Upgrade to IBM Cognos Business Viewpoint 10.1.1              *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Code Fix
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM42122
+   
+   
+ * REPORTED COMPONENT NAME
+   COG8 BUS VIEWPT
+   
+   
+ * REPORTED COMPONENT ID
+   5724W82BV
+   
+   
+ * REPORTED RELEASE
+   840
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-06-21
+   
+   
+ * CLOSED DATE
+   2011-08-23
+   
+   
+ * LAST MODIFIED DATE
+   2011-08-23
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   COG8 BUS VIEWPT
+   
+   
+ * FIXED COMPONENT ID
+   5724W82BV
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * RA11 PSN
+   UP

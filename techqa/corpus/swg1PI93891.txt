@@ -1,0 +1,130 @@
+Title: IBM PI93891: IBM DEVELOPER FOR Z SYSTEMS : IDZ 14.1 CAN'T DOWNLOAD COPYBOOKS WHEN BIBI SETTING IS ENABLE - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  IBM Developer for z systems 14.1.1 can't download copybooks when
+   Bidi setting is enable and the Property Group have a COBOL
+   SYSLIB defined with more than 1 PDSE.
+   
+   Steps to recreate:
+   1) Windows->Preferences->Bidirectional Development->Enable
+   Bidirectional development capabilities
+   2) Define a Property Group and a COBOL Syslib with 2 PDSE
+   3) Associate the Property group to a Cobol member defined
+   with copybooks
+   4) Open the cobol member
+   The copybooks are not downloading.
+   From the bottom task bar , Downloading copybook for program:
+   (0%) is shown and never progress.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  COBOL copybooks fail to download when BIDI options are enabled
+   and the IDz Property Group contains a COBOL Syslib with 2 or
+   more PDSEs.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  BIDI option processing for copybooks has been updated in the
+   client.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI93891
+   
+   
+ * REPORTED COMPONENT NAME
+   DEV FOR Z SYS
+   
+   
+ * REPORTED COMPONENT ID
+   5724T0700
+   
+   
+ * REPORTED RELEASE
+   E10
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2018-02-16
+   
+   
+ * CLOSED DATE
+   2018-06-14
+   
+   
+ * LAST MODIFIED DATE
+   2018-06-14
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   DEV FOR Z SYS
+   
+   
+ * FIXED COMPONENT ID
+   5724T0700
+   
+   
+
+APPLICABLE COMPONENT LEVELS

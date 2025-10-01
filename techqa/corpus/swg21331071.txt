@@ -1,0 +1,27 @@
+Title: IBM Additional information for RequisitePro on 64 bit processors - United States
+
+Text:
+ReqWeb; PPA; ReqPro; Operating System; 64 OS; sixty-four; EM64T; 32 bit; 32bit; 64bit; intel; x86 TECHNOTE (FAQ)
+
+QUESTION
+ What more information exists about IBM Rational RequisitePro supported Microsoft Windows RequisiteWeb Servers 64-bit platform? 
+
+ANSWER
+In addition to the information in the RequisitePro Detailed System Requirements documentation 
+
+ * Detailed System Requirements for RequisitePro RequisiteWeb 7.1 browsers and Web servers:
+   Techdoc 7013775 [http://www.ibm.com/support/docview.wss?uid=swg27013775]
+   
+ * Detailed System Requirements for RequisitePro RequisiteWeb 7.0 browsers and Web servers:
+   Technote 1250554 [http://www.ibm.com/support/docview.wss?uid=swg21250554]
+
+
+- [EM64T] means [Intel x86 EM64T]. 
+
+- RequisitePro is a 32-bit application and the installation files are available from IBM Passport Advantage [http://www.ibm.com/software/howtobuy/passportadvantage/index.html]. 
+
+- The operating system will automatically detect 32-bit applications and automatically install under C:\Program Files(x86)\ as 32-bit application. 
+
+- The RequisitePro application will run in 32-bit emulation mode on 64-bit OS because it is a 32-bit application. 
+
+- Users do not need to configure applications to run in 32-bit/64-bit mode on 64 bit OS.

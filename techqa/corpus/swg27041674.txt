@@ -1,0 +1,74 @@
+Title: IBM Information Integration and Governance Quarterly Support Newsletter (Q2 2016) - InfoSphere Information Server - United States
+
+Text:
+ NEWSLETTER
+
+ABSTRACT
+ The Information Integration and Governance Quarterly Support Newsletter is your trusted source of support news, including useful tools, important product updates and fixes, upcoming key support dates, top technotes, and more. 
+
+CONTENT
+
+
+Thank you for choosing InfoSphere Information Server. Our worldwide team of support experts is committed to helping you get the most value from your investment in IBM software, hardware, and services. 
+
+This newsletter provides a snapshot of relevant support information for your product, including news, recent technotes, and education resources. You are receiving this newsletter because you have previously contacted technical support or have subscribed to My Notifications. We hope you find the content in this newsletter useful in the proactive support and maintenance of your IBM product. 
+For more information about our online resources, see IBM Online Resources and Subscriptions [http://www.ibm.com/support/docview.wss?uid=swg27036152]. 
+
+
+
+
+ *  In the Spotlight 
+ *  Plan 
+ *  Education 
+
+
+
+
+
+In the Spotlight 
+
+ 1.  New features and changes in InfoSphere Information Server, Version 11.5, fix packs and roll-up patches [http://www.ibm.com/support/docview.wss?uid=swg21977675&acss=danl_3249_web] 
+    What new functionality has been added with rollup patches or fixpacks since the release of InfoSphere Information Server, Version 11.5? 
+ 2.  Information Server Client upgrade from 11.5.0.0 to 11.5.0.1 - FP1 [http://www-01.ibm.com/support/docview.wss?uid=swg24041893&acss=danl_3249_web] 
+    BM has identified JR55954 which affects View Data/Test Connection functionality for Connector stages on all Windows client installations. The issue is only seen when applying the Fix Pack 1 .ispkg file to the client tier. The issue is not seen when using the suite image 11.5.0.1 downloadable from Passport Advantage. A respin for Fix Pack 1 is being built and this download document will be updated once it is available. The respin will avoid the need for the additional patch, JR55954, to be installed on all client tiers. 
+ 3.  Want a glimpse into the future? Check out the new support experience beta [https://ibm.biz/support-pilot] 
+    Check out the new Support portal which is in beta at the moment, provide feedback of your experience 
+
+ Back to top 
+
+
+
+Plan 
+
+ 1.  Governance Rollup 2 for Information Server Version 11.5.0.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24042164&acss=danl_3249_web] 
+    This rollup updates Information Analyzer, Information Governance Catalog, DQEC, CEF, Common Metadata Service, ISMODELS, IMAM, XMETA, and CommonConnectors components. 
+ 2.  Enabling TLS 1.1 / TLS 1.2 support in Information Server - DataStage Clients [http://www.ibm.com/support/docview.wss?uid=swg21699845&acss=danl_3249_web] 
+    By default, Information Server 11.3 uses the SSL (v3.0) protocol for secure communications, but this can be re-configured on the Services Tier to use newer TLS (Transport Layer Secuity) protocols. This article describes the additional requirements and configurations necessary to enable TLS 1.1 or TLS 1.2 protocol with the DataStage Clients (Designer/Director/Administrator). There is wider support for TLS 1.0 in the underlying client operating systems, and some requirements equaly apply to this version of the protocol. 
+ 3.  Security Bulletin: Vulnerabilities in OpenSSL affect IBM InfoSphere Information Server (CVE-2016-0799, CVE-2016-0705, CVE-2016-0797, CVE-2016-0702, CVE-2016-2842) [http://www-01.ibm.com/support/docview.wss?uid=swg21981545&acss=danl_3249_web] 
+    OpenSSL vulnerabilities were disclosed on December 3, 2015 and January 28, 2016 by the OpenSSL Project. OpenSSL is used by IBM InfoSphere Information Server. IBM InfoSphere Information Server has addressed the applicable CVEs. 
+ 4.  Information Server issues after fixing WebSphere Security Bulletin (CVE-2012-6153, CVE-2014-3577) [http://www-01.ibm.com/support/docview.wss?uid=swg21983607&acss=danl_3249_web] 
+    Applying either WAS FixPack 9 or Hotfix PI50993 will results in broken Information Server installation. Engine Tier installation against per-installed WAS 8.5.5.9 will fail. 
+
+ Back to top 
+
+
+
+Education 
+
+ 1.  Managing InfoSphere Information Server events with Apache Kafka [http://www.ibm.com/support/docview.wss?uid=swg21977431&acss=danl_3249_web] 
+    How can I use Kafka to manage events that are created by InfoSphere Information Server? 
+ 2.  Infosphere Information Analyzer thin client error: "Asset metadata search failed!!" [http://www.ibm.com/support/docview.wss?uid=swg21977845&acss=danl_3249_web] 
+    When logging into or working with InfoSphere Information Analyzer thin client, you receive an error message: “Asset metadata search failed!!" 
+
+ Back to top 
+
+
+
+
+To subscribe to this newsletter (for example, if it was forwarded to you, or you are viewing it online), send an e-mail to imsuptsn@us.ibm.com [imsuptsn@us.ibm.com?subject=subscribe%20InfoSphere%20Information%20Server] 
+
+To unsubscribe, send an e-mail to imsuptsn@us.ibm.com [imsuptsn@us.ibm.com?subject=unsubscribe%20InfoSphere%20Information%20Server] 
+
+To provide feedback, enter your comments in the "Rate this page" section of the newsletter. 
+
+Cross reference information Segment Product Component Platform Version Edition Information Management InfoSphere Blueprint Director Information Management InfoSphere Business Glossary Not Applicable Information Management InfoSphere DataStage Not Applicable

@@ -1,0 +1,123 @@
+Title: IBM Steps to replace the default certificate in TIP/WAS via the admin console - United States
+
+Text:
+TIPL2; TIPL2SSL; default certificate; ssl; CA; replace TECHNOTE (FAQ)
+
+QUESTION
+ What is the procedure to replace the default certificate in Tivoli Integrated Portal via the admin console. 
+
+ANSWER
+
+High level Steps: 
+
+ 1. Backup the default keystore and truststore files 
+ 2. Create the certificate request 
+ 3. Receive the certificate from the CA 
+ 4. Replace the default certificate 
+ 5. Extract the signer for the new certificate from the keystore 
+ 6. Adding the signer certificate to the trust store 
+ 7. Update the active certificate alias
+
+
+Detailed Steps: 
+Backup the default keystore (key.p12) and truststore (trust.p12) files located at: 
+
+<TIP HOME>/profiles/TIPProfile/config/cells/TIPCell/nodes/TIPNode/ 
+
+
+
+Create the certificate request  1. Click Settings > Websphere Administration Console, Launch Websphere Administration Console. 
+ 2. Click Security > SSL certificate and key management > Key stores and certificates > NodeDefaultKeyStore. 
+ 3. Click Personal certificate requests > New. 
+ 4. Type the full path of the certificate request file. The certificate request is created in this location. 
+ 5. Type an alias name in the Key label field. The alias identifies the certificate request in the keystore. 
+ 6. Type a common name (CN) value. This value is the CN value in the certificate distinguished name (DN). 
+ 7. Type an organization value. This value is the O value in the certificate DN. 
+ 8. You can configure one or more of the following optional values:  1. Optional: Select a key size value. The default key size value is 1024 bits. 
+     2. Optional: Type an organizational unit value. This organizational unit value is the OU value in the certificate DN. 
+     3. Optional: Type a locality value. This locality value is the L value in the certificate DN. 
+     4. Optional: Type a state or providence value. This value is the ST value in the certificate DN. 
+     5. Optional: Type a zip code value. The zip code value is the POSTALCODE value in the certificate DN. 
+     6. Optional: Select a country value from the list. This country value is the C= value in the certificate request DN.
+    
+    
+ 9. Click Apply.
+
+
+Results 
+The certificate request is created in the specified file location in the keystore. The request functions as a temporary placeholder for the signed certificate until you manually receive the certificate in the keystore. 
+
+
+Receive the certificate from the CA  1. Click Security > SSL certificate and key management > Manage endpoint security configurations > Inbound > TIPNode(NodeDefaultSSLSettings) > Key stores and certificates > NodeDefaultKeyStore 
+ 2. Under Additional Properties, click Personal certificates. 
+ 3. Select a personal certificate. 
+ 4. Click Receive a certificate from a certificate authority. 
+ 5. Type the full path and name of the certificate file. 
+ 6. Select a data type from the list. 
+ 7. Click Apply and Save.
+
+
+Results 
+The keystore contains a new personal certificate that is issued by a CA. The original certificate request is changed to a personal certificate 
+
+
+Replace the default certificate  1. Click Security > SSL certificate and key management > Manage endpoint security configurations > Inbound > TIPNode(NodeDefaultSSLSettings) > Key stores and certificates > NodeDefaultKeyStore 
+ 2. Under Additional Properties, click Personal certificates. 
+ 3. Select the certificate to be replaced. The alias list must include the certificate to be replaced and the certificate to replace it with. 
+ 4. Click Replace. 
+ 5. Select a replacement certificate alias from the list. 
+ 6. You can delete one of the following types of certificates:
+    * Select Delete old certificate to delete the existing or expired certificate.
+    * Select Delete old signers to delete the existing signer certificates. 
+ 7. Click Apply.
+
+
+Results 
+Your results depend on what you selected:  * 
+ * 
+ * 
+ * 
+ * 
+ * o All of the SSL Configurations objects reference the certificate 
+   o The Dynamic SSL Configuration Selections objects and the SSL Configuration group objects reference the certificate. 
+ * 
+ * 
+ * 
+
+
+
+Extracting the signer from the key store  1. Click Security > SSL certificate and key management > Manage endpoint security configurations > Inbound > TIPNode(NodeDefaultSSLSettings) > Key stores and certificates > NodeDefaultKeyStore 
+ 2. Click Extract certificate 
+ 3. Type the full path for the certificate file name. The signer certificate is written to this certificate file. For example, in Windows:
+    
+    c:\certificates\local_cert.arm
+    
+ 4. Select the default data type from the list. 
+ 5. Click Apply and Save. The signer portion of the personal certificate is stored in the arm file that is provided.
+
+
+
+Adding the signer certificate to the trust store 
+
+If you created a server certificate, you must add it to the WebSphere application server (eWAS) trust store.  1. Copy your signed certificate to the directory that holds your application server trust store:
+    
+    <TIP HOME>/tipv2/profiles/TIPProfile/etc 
+ 2. Log on to the Websphere Administration Console. 
+ 3. In the navigation panel, select Security > SSL certificate and key management. The SSL certificate and key management page is displayed. 
+ 4. Under Related Items, click Key stores and certificates, and then select NodeDefaultTrustStore. The General Properties page for NodeDefaultTrustStore is displayed. 
+ 5. Under Additional Properties, click Signer certificates. A table that includes a list of signer certificates is displayed. 
+ 6. In the table, click the Add button to add your signed certificate. Provide the following information:  1. In the Alias field, type "trusted". 
+     2. In the File name field, type the name of your certificate that you copied in step 1 of this section, for example, mycertificate.arm. 
+     3. From the Data type list, select "Base64–encoded ASCII data". 
+     4. Click OK to add the new certificate to the list.
+    
+    
+ 7. Log out of the administration console, and restart the server, to which you added the certificate. 
+ 8. 
+
+Update the active certificate alias 
+ 1. On the "Signer certificates" page, click Manage endpoint security configurations in the series of links at the top of the page. 
+ 2. On the "Manage endpoint security configurations" page expand the Inbound node, if necessary, then click on TIPNode(NodeDefaultSSLSettings) under that node. 
+ 3. On the "TIPNode" page choose the alias name of the certificate from the drop-down list in Certificate alias in key store and click Apply. 
+ 4. On the "TIPNode" page, click Save. 
+ 5. Restart the TIP server.

@@ -1,0 +1,36 @@
+Title: IBM Operational Decision Manager z/OS 8.8.1.2 Fix Pack - United States
+
+Text:
+ DOWNLOADABLE FILES
+
+ABSTRACT
+ This page contains APAR and PTF information for installing IBM Operational Decision Manager z/OS 8.8.1.2. 
+
+DOWNLOAD DESCRIPTION
+This page provides APAR and PTF information for IBM Operational Decision Manager z/OS 8.8.1.2. Use the information to download and install PTFs from IBM Shopz [https://www-304.ibm.com/software/shopzseries/ShopzSeries_public.wss].
+
+
+Installation instructions
+Use SMP/E RECEIVE and APPLY to install the PTFs in your target SMP/E repository. When you are satisfied with the installation, use SMP/E ACCEPT.
+
+Notes 
+
+ * The PTFs are entitled. Only customers who have purchased Operational Decision Manager z/OS V8.8 can use the PTFs. 
+ * This page is for reference only. 
+ * The APAR numbers in the table are linked to description pages that include the PTF numbers. You can click the PTF numbers in the descriptions to find the PTFs in IBM Shopz [https://www-304.ibm.com/software/shopzseries/ShopzSeries_public.wss].
+
+
+APAR/PTF table Release Date FMID Product APAR PTF 15 May 2017 HDM8810 ODM Base for z/OS PI77946 [http://www.ibm.com/support/docview.wss?uid=swg1PI77946] UI46442 15 May 2017 HDM8811 ODM & Business Rules Common for z/OS PI77952 [http://www.ibm.com/support/docview.wss?uid=swg1PI77952] UI46443 15 May 2017 JDM8812 Events Components for z/OS PI77975 [http://www.ibm.com/support/docview.wss?uid=swg1PI77975] UI47050 15 May 2017 HDM8813 Rules Components for z/OS PI77977 [http://www.ibm.com/support/docview.wss?uid=swg1PI77977] UI47054 15 May 2017 HDM8813 Rules Components for z/OS PI77979 [http://www.ibm.com/support/docview.wss?uid=swg1PI77979] UI47055 15 May 2017 HDM8813 Rules Components for z/OS PI77984 [http://www.ibm.com/support/docview.wss?uid=swg1PI77984] UI47056 15 May 2017 JDM8814 Decision Center for z/OS PI77987 [http://www.ibm.com/support/docview.wss?uid=swg1PI77987] UI47058 15 May 2017 JDM8814 Decision Center for z/OS PI78015 [http://www.ibm.com/support/docview.wss?uid=swg1PI78015] UI47059 15 May 2017 JDM8815 Insights Components for z/OS PI78031 [http://www.ibm.com/support/docview.wss?uid=swg1PI78031] UI47060 15 May 2017 JDM8815 Insights Components for z/OS PI78032 [http://www.ibm.com/support/docview.wss?uid=swg1PI78032] UI47061 DOWNLOAD PACKAGE
+
+
+
+PROBLEMS SOLVED
+Fix List for IBM Operational Decision Manager [http://www.ibm.com/support/docview.wss?uid=swg27023767]
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Decision Center for z/OS Business Integration IBM Decision Server for z/OS 
+
+ [/support/docview.wss?uid=swg24043654&aid=1]Problems (APARS) fixed [/support/docview.wss?uid=swg24043654&aid=2]Problems (APARS) fixed
+PI77946 PI77952 PI77975 PI77977 PI77979 PI77984 PI77987 PI78015 PI78031 PI78032, Decision Center: RS02414 RS02453 RS02454 RS02469 RS02472 RS02476 RS02481 RS02489 RS02491 RS02629 RS02492 RS02495 RS02496 RS02499 RS02500 RS02506 RS02510 RS02512 RS02514 RS02515 RS02523 RS02524 RS02525 RS02532 RS02533 RS02535 RS02537 RS02538 RS02540 RS02545 RS02548 RS02549 RS02550 RS02552 RS02553 RS02554 RS02556 RS02557 RS02558 RS02562 RS02565 RS02566 RS02567 RS02569 RS02573 RS02576 RS02580 RS02581 RS02582 RS02587 RS02588 RS02596 RS02600 RS02601 RS02605 RS02610 RS02675 RS02611 RS02613 RS02615 RS02617 RS02619 RS02626 RS02627 RS02630 RS02631 RS02638 RS02639 RS02642 RS02644 RS02651 RS02659 RS02661 RS02668 RS02669 RS02672 RS02674 RS02699 RS02702 RS02708 RS02709 RS02715 RS02719 RS02733 RS02748 RS02743 RS02762, Decision Server Rules: RS02531 RS02589 RS02612 RS02614 RS02616 RS02655 RS02677 RS02455 RS02487 RS02546 RS02551 RS02560 RS02577 RS02594 RS02602 RS02607 RS02618 RS02625 RS02647 RS02705 PI76233 PI80098 RS02498, Decision Server Events: RS02051 RS02501 RS02671 RS02697 , Decision Server Insights: RS02231 RS02480 RS02497 RS02505 RS02559 RS02564 RS02586 RS02591 RS02645 RS02657

@@ -1,0 +1,34 @@
+Title: IBM "Server chose SSLv3, but that protocol version is not enabled or not supported by the client" when testing UDL file - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Administrator launches Controller Configuration, and opens a database connection. Administrator launches the Database Conversion Utility, and presses 'Connect'.
+
+There is a pause (the utility appears to hang) for a few seconds.
+
+Afterwards, an error appears. 
+
+SYMPTOM
+[/support/docview.wss?uid=swg21994463&aid=1] [/support/docview.wss?uid=swg21994463&aid=1] 
+
+** ERROR: com.microsoft.sqlserver.jdbc.SQLServerException: The driver could not establish a secure connection to SQL Server by using Secure Sockets Layer (SSL) encryption. Error: "Server chose SSLv3, but that protocol version is not enabled or not supported by the client.".
+ClientConnectionId:3f73e7210-xxxxx
+
+
+CAUSE
+Customer had disabled TLS 1.0 (on either the Controller application server or the database server):
+[/support/docview.wss?uid=swg21994463&amp;aid=2]
+
+Example:
+It is possible to disable TLS 1.0 by using a third-party (non-IBM) tool ("IIS Crypto"), or by adding the following registry key:
+
+
+ * 
+
+RESOLVING THE PROBLEM
+Enable TLS 1.0 on both the Controller application server and the database server.
+
+RELATED INFORMATION
+ 1981505 - "Server chose SSLv3 but that protocol versio [http://www.ibm.com/support/docview.wss?uid=swg21981505]

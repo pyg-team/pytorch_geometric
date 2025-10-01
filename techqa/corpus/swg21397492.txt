@@ -1,0 +1,52 @@
+Title: IBM DXL error while opening an IBM Rational DOORS module configured for the DOORS-Change integration - United States
+
+Text:
+DWA; interop; module; dxl; addins TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ How can I correct DXL errors while trying to open the IBM Rational DOORS module which is configured for DOORS-Change integration in Rational DOORS Web Access webpage. 
+
+SYMPTOM
+The following DXL error messages are seen in the Interop Console: 
+
+
+
+-E- DXL: <Line:1> could not open include file 
+
+(addins/synergy/utils/ecpsconfigutils.inc) (No such file or directory) 
+
+-I- DXL: all done with 1 error and 0 warnings
+
+
+
+
+CAUSE
+If the Rational DOORS-Change integration add-ins are not installed/available on the interop server's $DOORSHOME, you will see these DXL error messages
+
+
+
+RESOLVING THE PROBLEM
+To resolve this, you will need to copy any DXL that you have from a standard client on to the interop server machine. 
+
+For example, the files for the Synergy integration are installed in the clients 'addins' directory. You can zip up the addins directory from a client machine which has the Rational DOORS-Change integration installed and then ftp them to the machine which has interop server running and recreate the same structure there (set permission appropriate to the owner of the DOORS directory and files). 
+
+ 
+
+As UNIX is very case sensitive and the error says that the path being looked for is: 
+
+
+addins/synergy/utils/ecpsconfigutils.inc
+
+
+
+Hence, make sure that the directory name is correct.
+
+In case you do not have these files on your client machine, you can copy these files from other client's machine where you have this integration installed.
+
+
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Rational DOORS

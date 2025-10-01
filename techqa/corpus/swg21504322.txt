@@ -1,0 +1,42 @@
+Title: IBM DFHSJ1002 class com/ibm/cics/router/Router cannot be found when running Java application in a CICS TS 4.2 JVM server - United States
+
+Text:
+DFHSJ1002 DFHDU0203I AJ04 DFHSJ1006 DFHAC2236 JHE8 ; abend AJ04 ; DDFJ$JHE8 MSGDFHSJ1002 MSGDFHDU0203I ABENDAJ04 MSGDFHSJ1006 MSGDFHAC2236 5655S9700 R670 670 R700 700 HCI6700 5655-S97 5655S97 KIXINFO TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ You receive message DFHSJ1002 The class com/ibm/cics/router/Router that was specified to be run in JVMSERVER jvmserver cannot be found. You also receive a transaction dump for abend AJ0J (abendAJ04). You are when running a 'normal' Java™ application program and using a classpath in a JVM server on CICS Transaction Server for z/OS (CICS TS) V4.2. 
+
+SYMPTOM
+These are the error messages that you receive:
+DFHSJ1002 applid userid The class com/ibm/cics/router/Router that was specified to be run in JVMSERVER jvmserver cannot be found.
+DFHDU0203I applid A transaction dump was taken for dumpcode: AJ04, Dumpid: 1/0003. 
+
+DFHSJ1006 E applid userid An attempt to attach to JVMSERVER jvmserver has failed because the transaction abended.
+DFHAC2236 applid Transaction JHE8 abend AJ04 in program DDFJ$JHE8 term CP79. Updates to local recoverable resources will be backed out.
+
+
+
+CAUSE
+Attempting to run a transaction using a Java program definition against a non-OSGi JVMServer. In other words, you have some type of 'classpath' entry in your JVMProfile that makes the JVMServer run in 'classpath mode'. However, you are trying to run the Java program using a CICS Program definition that requires OSGi.
+
+
+
+DIAGNOSING THE PROBLEM
+If you are unable to resolve this error, it would be useful to take a look at a [http://www-1.ibm.com/support/docview.wss?rs=166&uid=swg21213746#GTFtrace]CICS auxiliary trace [http://www.ibm.com/support/docview.wss?uid=swg21213746#Auxtrace] of the failure and a copy of your jvmtrc file (which can be found on z/FS in the 'work_dir' specified in your JVMProfile). You can use the CETR transaction to specify trace components SJ, AP, and EI. Level=1 and Level=2 tracing (for example, SJ=1-2) should be on for all three of these components.
+
+
+
+RESOLVING THE PROBLEM
+In CICS TS V4.2, user Java applications that run in a JVM server should only be run as OSGi bundles and should not be run using the classpath mechanisms. The JVM profile DFHOSGI provides a sample profile for an OSGi based JVM server. Do the following: 
+
+ * Make sure your Java application is packaged as an OSGi Bundle [http://publib.boulder.ibm.com/infocenter/cicsts/v4r2/topic/com.ibm.cics.ts.java.doc/JVMserver/create_osgibundle.html]
+   
+   
+ * Make sure your JVM server is using the OSGi model (for example, based on sample profile DFHOSGI [http://publib.boulder.ibm.com/infocenter/cicsts/v4r2/topic/com.ibm.cics.ts.java.doc/topics/dfhosgi_sample.html], and not DFHJVMPR, DFHJVMCD or DFHJVMAX), and does not contain any classpath entries
+
+
+See Setting up a JVM server [https://publib.boulder.ibm.com/infocenter/cicsts/v4r2/topic/com.ibm.cics.ts.java.doc/JVMserver/config_jvmserver.html] in the CICS TS V4.2 information center for more information. 
+
+
+PRODUCT ALIAS/SYNONYM
+ CICS/TS CICS TS CICS Transaction Server

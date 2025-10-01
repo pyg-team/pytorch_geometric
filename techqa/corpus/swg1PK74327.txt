@@ -1,0 +1,161 @@
+Title: IBM PK74327: PROBLEM: CROSS REPOSITORY AND VMM - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Opening APAR for problem: cross repository group member
+   can't be shown properly.
+   I added a local user to the LDAP group, but still I am unable to
+   get this to recreate.  The getMembersOfGroup command only
+   returns the group members that are on the LDAP server.
+   The traces are located on Ecurep:
+   /ecurep/pmr/6/8/68761,499,000/mail20080925-221830-1097960_Matthe
+   w_G_Kelm
+   /wps101-wps101Cell01-wps101CellManager01-Dmgr01-WASenv.jar_unjar
+   /wps101/
+   Drive_C/WebSphere/ProcServer/profiles/Dmgr01/logs
+   
+   The problem is that when this wsadmin command is run it lists
+   out    "Entity,null" instead of the local user that is listed as
+   a member of the LDAP group:
+   ----------------------------------------------------------------
+   -----
+   wsadmin>$AdminTask getMembersOfGroup {-uniqueName
+   cn=ProcessOwnerGroup,
+   o=groups}
+   "PersonAccount, uid=DBUser,o=groups"
+   "Entity, null"
+   ----------------------------------------------------------------
+   -----
+   
+   1.  Is this a support configuration, listing users from one
+   repository in a group that exists on another repsoitory.
+   2.  If this is a supported configuration, why do we return
+   "Entity,null"  instead of the user?
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  All users of WebSphere Application Server   *
+   *                  v6.1 and v7.0 who use federated             *
+   *                  repositories (virtual member manager).      *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Cross repository group member can't     *
+   *                      be listed properly.                     *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   If you configured a cross repository group membership with
+   database repository support, when retrieving members of the
+   group entity stored in database repository, this group's
+   members stored in LDAP repository can not be returned
+   successfully.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This problem has been fixed, the cross repository members
+   stored in LDAP repository can be listed successfully when
+   getting all the members of one database group.
+   
+   The fix for this APAR is currently targeted for inclusion in
+   fixpack 6.1.0.23 and 7.0.0.3.  Please refer to the Recommended
+   Updates page for delivery information:
+   http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK74327
+   
+   
+ * REPORTED COMPONENT NAME
+   VIRTUAL MEMBER
+   
+   
+ * REPORTED COMPONENT ID
+   TIVOVMM00
+   
+   
+ * REPORTED RELEASE
+   610
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-10-23
+   
+   
+ * CLOSED DATE
+   2009-01-07
+   
+   
+ * LAST MODIFIED DATE
+   2009-01-07
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   VIRTUAL MEMBER
+   
+   
+ * FIXED COMPONENT ID
+   TIVOVMM00
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R710 PSY
+   UP

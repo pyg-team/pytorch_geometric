@@ -1,0 +1,76 @@
+Title: IBM Handshake Failure when testing AS2 communication in SB2Bi 5.2.6.x - United States
+
+Text:
+AS2; ssl handshake error TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ While implementing a new AS2 setup, in Sterling B2B Integrator (SB2Bi) 5.2.6.2 using SSL_MUST, the customer was getting a SSL Handshake error while doing the test connection under the AS2 Profiles. 
+
+SYMPTOM
+SSL Handshake error displayed in the test screen. 
+Error in Perimeter.log
+[2016-07-05 00:04:29.845] ERROR [1467695069845] General SSLEngine problem
+[2016-07-05 00:04:29.845] ERRORDTL [1467695069845]javax.net.ssl.SSLHandshakeException: General SSLEngine problem
+at com.ibm.jsse2.ab.B(ab.java:421)
+at com.ibm.jsse2.nc.b(nc.java:423)
+at com.ibm.jsse2.nc.c(nc.java:42)
+at com.ibm.jsse2.nc.wrap(nc.java:457)
+at javax.net.ssl.SSLEngine.wrap(SSLEngine.java:39)
+at com.sterlingcommerce.perimeter.ssl.TLSAgent.processOutbound(TLSAgent.java:286)
+at com.sterlingcommerce.perimeter.ssl.TLSAgent.runProcessOutbound(TLSAgent.java:148)
+at com.sterlingcommerce.perimeter.ssl.TLSAgent.access$200(TLSAgent.java:52)
+at com.sterlingcommerce.perimeter.ssl.TLSAgent$1.body(TLSAgent.java:707)
+at com.sterlingcommerce.perimeter.api.ContextRunnable.run(ContextRunnable.java:41)
+at com.sterlingcommerce.perimeter.api.scheduler.TaskNode.run(TaskNode.java:62)
+at com.sterlingcommerce.perimeter.dispatcher.AbstractDispatcher.runTasks(AbstractDispatcher.java:465)
+at com.sterlingcommerce.perimeter.dispatcher.AbstractDispatcher.doRun(AbstractDispatcher.java:428)
+at com.sterlingcommerce.perimeter.dispatcher.AbstractDispatcher$2.run(AbstractDispatcher.java:175)
+at java.lang.Thread.run(Thread.java:798)
+Caused by: javax.net.ssl.SSLHandshakeException: General SSLEngine problem
+at com.ibm.jsse2.j.a(j.java:9)
+at com.ibm.jsse2.nc.a(nc.java:68)
+at com.ibm.jsse2.ab.a(ab.java:133)
+at com.ibm.jsse2.ab.a(ab.java:349)
+at com.ibm.jsse2.bb.a(bb.java:423)
+at com.ibm.jsse2.bb.a(bb.java:228)
+at com.ibm.jsse2.ab.t(ab.java:74)
+at com.ibm.jsse2.ab$1.a(ab$1.java:2)
+at com.ibm.jsse2.ab$1.run(ab$1.java:3)
+at java.security.AccessController.doPrivileged(AccessController.java:456)
+at com.ibm.jsse2.ab$c_.run(ab$c_.java:4)
+at com.sterlingcommerce.perimeter.ssl.TLSAgent.runHsTasks(TLSAgent.java:655)
+at com.sterlingcommerce.perimeter.ssl.TLSAgent.processInbound(TLSAgent.java:585)
+at com.sterlingcommerce.perimeter.ssl.TLSAgent$NetworkConduitAgent.canReceive(TLSAgent.java:794)
+at com.sterlingcommerce.perimeter.api.conduit.DataConduitApiImpl$4.body(DataConduitApiImpl.java:305)
+... 6 more
+Caused by: java.security.cert.CertificateException: Certificates does not conform to algorithm constraints
+at com.ibm.jsse2.wc.a(wc.java:54)
+at com.ibm.jsse2.wc.checkServerTrusted(wc.java:66)
+at com.ibm.jsse2.bb.a(bb.java:129)
+... 16 more
+
+[2016-07-05 00:04:29.845] WARN DataConduit[2039098638]: Releasing 1 objects from queue
+[2016-07-05 00:04:29.845] INFO DataClientHelper: CloseCode.HANDSHAKE_FAILURE, BIQ:0
+[2016-07-05 00:04:29.845] COMMTRACE data[/XX.XXX.XX.XXX:53998=>/XX.XXX.XX.XXX:8443]: close: CloseCode.HANDSHAKE_FAILURE
+[2016-07-05 00:04:29.845] ERROR Connection data[/XX.XXX.XX.XXX:53998=>/XX.XXX.XX.XXX:8443] closed due to CloseCode.HANDSHAKE_FAILURE
+
+
+
+CAUSE
+The certificate used on the server side(where SB2Bi was connecting to) was 512 bit key length.
+The client side (SBI 5.2.6.2) is using the corresponding public key as CA certificate under SSL section of AS2 partner profile configuration. 
+
+The below setting was present from the JDK perspective, which prevents any connection if the key size is less than 1024:
+SB2Bi_INSTALL/jdk/jre/lib/security/java.security
+Contained :
+jdk.certpath.disabledAlgorithms=MD2, RSA keySize < 1024
+
+
+DIAGNOSING THE PROBLEM
+Obtain the certificate used on the AS2 connection and ensure the key length size of the certificate is compliant with the parameter in the java.security file. 
+
+
+
+RESOLVING THE PROBLEM
+The server side created a new certificate with key length of 1024 or higher and that certificate was configured on the AS2 configuration on the client side (SB2Bi). 
+Once that was done, the connection was successful.

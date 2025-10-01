@@ -1,0 +1,145 @@
+Title: IBM HD92601: SEARCH RESULTS DO NOT SORT CORRECTLY - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS UNREPRODUCIBLE IN NEXT RELEASE.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  In the Search Results window, clicking on the Search Results
+   only sorts the objects currently visible in the Search
+   Results window.
+   Please see the attached screenshot.  In this example, there
+   are values in the ECO Type column in the returned results,
+   just not visible in the current Search Results window.
+   Clicking on the ECO Type column produces no change and leads
+   the user to the conclusion that this field is empty for all
+   the returned objects.
+   Clicking on field that does display data results in a screen
+   change with an incorrect result as the sort does not reflect
+   all objects returned by the search.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  empty
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  In the Search Results window, clicking on the Search Results
+   only sorts the objects currently visible in the Search
+   Results window.
+   Please see the attached screenshot.  In this example, there
+   are values in the ECO Type column in the returned results,
+   just not visible in the current Search Results window.
+   Clicking on the ECO Type column produces no change and leads
+   the user to the conclusion that this field is empty for all
+   the returned objects.
+   Clicking on field that does display data results in a screen
+   change with an incorrect result as the sort does not reflect
+   all objects returned by the search.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  THE PROBLEM WAS SUBMITTED ON :
+       I-PLM Collaborative Innovation VERSION V5R18.
+   THIS PROBLEM IS NOT REPRODUCIBLE ON :
+   I-PLM Collaborative Innovation VERSION V5R19 SP7.
+   Additional Closure Information:
+   .
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   HD92601
+   
+   
+ * REPORTED COMPONENT NAME
+   SMARTEAM NT>XP
+   
+   
+ * REPORTED COMPONENT ID
+   569199970
+   
+   
+ * REPORTED RELEASE
+   518
+   
+   
+ * STATUS
+   CLOSED UR1
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-01-14
+   
+   
+ * CLOSED DATE
+   2010-02-26
+   
+   
+ * LAST MODIFIED DATE
+   2010-02-26
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   SMARTEAM NT>XP
+   
+   
+ * FIXED COMPONENT ID
+   569199970
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R519 PSN
+   UP

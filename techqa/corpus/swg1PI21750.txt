@@ -1,0 +1,198 @@
+Title: IBM PI21750: DNQD1022E ERROR WHEN USER TRIES TO OPEN A MESSAGE FROM A MER QUEUE: DNQD1022E SQL code='-104', SQL state='42601' - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Problem Description:
+   ********************
+   
+   WBIFN MER customers who has the setting DECIMAL=COMMA,
+   may encounter the following possible severe error
+   when a user tries to open a message from a MER queue:
+   
+   ----------------------------------------------------------------
+   DNQD1022E: Error during attempt to access the MER runtime
+   database; SQL code='-104', SQL state='42601', SQL error
+   text='[jcc]
+   [50053][12311][3.65.102] T2zOS exception: [jcc][T2zos]
+   T2zosPreparedStatement.readPrepareDescribeOutput_:nativePrepareI
+   nto:
+   1582: DB2 engine SQL error, SQLCODE = -104, SQLSTATE = 42601,
+   error
+   tokens = ,1;( . AT MICROSECONDS MICROSECOND SECONDS SECOND
+   MINUTES
+   MINUTE ERRORCODE=-104, SQLSTATE=42601'.
+   ----------------------------------------------------------------
+   
+   
+   Explanation:
+   ***********
+   
+   When the parameter DECIMAL=COMMA is set in customers DB2
+   environment, this error may occur in a MER query during
+   the opening of a message from an MER queue.
+   
+   In  this case the generated SQL query statement is not conform
+   with SQL specifications.
+   
+   The reason is following:
+   If the comma is the decimal point, these rules apply:
+   
+   - In any context, a comma intended as a separator must be
+     followed by a space. Such commas could appear, for example, in
+     a VALUES clause, an IN predicate, or an ORDER BY clause in
+     which numbers are used to identify columns.
+   - In any context, a comma intended as a decimal point must not
+     be followed by a space.
+   - If the DECIMAL POINT IS field (and not the SQL processing
+     option) determines the comma as the decimal point, DB2 will
+     recognize either a comma or a period as the decimal point in
+     numbers in dynamic SQL.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  - The efix will be prepared and will be provided to the customer
+     Please contact the IBM support in case the efix will be needed
+   
+   
+   - The official solution will be delivered with the PTF shipment
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All users                                    *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: DNQD1022E ERROR WHEN USER TRIES TO      *
+   *                      OPEN A MESSAGE FROM A MER QUEUE:        *
+   *                      DNQD1022E SQL code='-104',              *
+   *                      SQL state='42601'                       *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   Formerly, when the decimal point representation of DB2 was set
+   to a comma (DECIMAL=COMMA), a database error occurred when a
+   user attempted to open a message from an MER queue.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Now, this has been fixed.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI21750
+   
+   
+ * REPORTED COMPONENT NAME
+   MESSAGE MANAGEM
+   
+   
+ * REPORTED COMPONENT ID
+   5655FIN03
+   
+   
+ * REPORTED RELEASE
+   11M
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-07-10
+   
+   
+ * CLOSED DATE
+   2014-12-10
+   
+   
+ * LAST MODIFIED DATE
+   2015-01-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    PI21901 [http://www-01.ibm.com/support/docview.wss?uid=swg1PI21901] UI23753
+   
+   
+
+MODULES/MACROS
+ *  DNQ00000 DNQ00004 DNQ00019 DNQ00041 DNQ00044 DNQ00087 DNQ00091
+   DNQ00092 DNQ00095 DNQ00096 DNQ00097 DNQ00098 DNQ00107 DNQ00110
+   DNQ00117 DNQ00118 DNQ00119 DNQ00120 DNQ00121 DNQ00122 DNQ00123
+   DNQ00131 DNQ00132 DNQ00141 DNQ00142 DNQ00224 DNQ00225
+   
+   
+    
+   
+   
+
+Publications Referenced SH12693522 SH12693923 SH12693724 SH12694021 FIX INFORMATION
+ * FIXED COMPONENT NAME
+   MESSAGE MANAGEM
+   
+   
+ * FIXED COMPONENT ID
+   5655FIN03
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R11M PSY UI23753 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI23753]
+   UP14/12/16 P F412
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

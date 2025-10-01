@@ -1,0 +1,15 @@
+Title: IBM What encryption algorithm is used to secure passwords in the process files in TCQ? - United States
+
+Text:
+sterling connect:direct; C:D; windows; unix; strong password encryption; SPE; passwords; password TECHNOTE (FAQ)
+
+QUESTION
+ The temporary files used to store process details in the TCQ contain encrypted password field. What encryption algorithm is used to secure these passwords in the process files in TCQ? 
+
+ANSWER
+IBM Sterling Connect:Direct uses Strong Password Encryption (SPE), which is enabled by default, to secure all passwords at rest. SPE uses AES256 to do this.
+
+See related URL.
+
+RELATED INFORMATION
+ Strong Password Encryption Parameters File [https://www.ibm.com/support/knowledgecenter/SS4PJT_5.2.0/com.ibm.help.cd52.unix.doc/com.ibm.help.cdunix_secplus.doc/CDU_StrongPW_Encrypt_Parms.htm]

@@ -1,0 +1,64 @@
+Title: IBM Configuring Jazz Reporting Service on z/OS fails with EDC5124I Too many open files - United States
+
+Text:
+EDC5124I; Too many open files; MMAPAREAMAX TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Attempts to configure IBM Jazz Reporting Service (JRS) (Report Builder) on z/OS fails with the message "java.io.IOException: EDC5124I Too many open files" in the SYSOUT log 
+
+SYMPTOM
+The JRS server fails to install and you find errors similar to the following the SYSOUT and SYSPRT log files.
+
+
+SYSOUT:
+SRVE0068E: An exception was thrown by one of the service metho
+ds of the servlet ÝJtsRegistrationServlet¨ in application
+Ýrs_war¨. Exception created :
+Ýcom.hp.hpl.jena.tdb.base.file.FileException
+: BlockMgrMapped.segmentAllocate: Segment = 0
+Caused by: java.io.IOException: EDC5124I Too many open files.
+(errno2=0x07360344)
+
+
+
+SYSPRT
+Trace: 2016/09/30 14:36:04.390 02 t=7B2E88 c=UNK key=P8 tag= (13007004)
+SourceId: com.ibm.ws.webcontainer.servlet.ServletWrapper.service
+ExtendedMessage: BBOO0220E: SRVE0068E: An exception was thrown by
+one of the service methods of the servlet ÝJtsRegistrationServle
+t¨ in application Ýrs_war¨. Exception created :
+Ýcom.hp.hpl.jena.tdb.base.file.FileException:
+BlockMgrMapped.segmentAllocate: Segmen
+t = 0
+.......
+Caused by: java.io.IOException: EDC5124I Too many open files.
+(errno2=0x07360344)
+
+
+
+
+
+CAUSE
+The MMAPAREAMAX parameter needs to be configured to allow more open files. 
+
+Even if the parameter is already configured to be 40960 you need to configure it for the appropriate user.
+
+
+ENVIRONMENT
+This affects servers on z/OS only.
+
+
+
+DIAGNOSING THE PROBLEM
+Review the relevant log files.
+
+
+
+RESOLVING THE PROBLEM
+This indicates that the MMAPAREAMAX parameter needs to be configured.
+
+This is discussed in the z/OS Tuning guide [https://jazz.net/library/article/817].
+
+Previously we have seen that changing the user's parameter BTASRU value MMAPAREAMAX to 40960 resolved the problem.
+
+You need to discuss this with your z/OS system administrator to see about changing this.

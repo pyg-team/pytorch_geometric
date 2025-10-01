@@ -1,0 +1,153 @@
+Title: IBM PI53031: CROSSTABS WITH EXACT TESTS CRASHES ON MAC - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  You are running multiple CROSSTABS commands on Mac OS X.  You
+   specify Exact tests and the program crashes.
+   If you specify the default Asymptotic method or Monte Carlo, the
+   job completes.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  This issue will be addressed in the next Fix Pack. Please
+   refer to the Fix Pack schedule at
+   http://www.ibm.com/support/docview.wss?uid=swg21599157 for
+   information on upcoming Fix Packs.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * Users of IBM SPSS Statistics 23.0 for Mac                    *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * CROSSTABS WITH EXACT TESTS CRASHES ON MAC                    *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * This issue has been addressed for IBM SPSS Statistics 23.0   *
+   * FP3 and 24.0.  Please upgrade to IBM SPSS Statistics 23.0    *
+   * FP3 or 24.0.                                                 *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This issue has been addressed for IBM SPSS Statistics 23.0 FP3
+   and 24.0.  Please upgrade to IBM SPSS Statistics 23.0 FP3 or
+   24.0.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI53031
+   
+   
+ * REPORTED COMPONENT NAME
+   SPSS STATISTICS
+   
+   
+ * REPORTED COMPONENT ID
+   5725A54ST
+   
+   
+ * REPORTED RELEASE
+   N00
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2015-11-23
+   
+   
+ * CLOSED DATE
+   2016-05-10
+   
+   
+ * LAST MODIFIED DATE
+   2016-05-10
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   SPSS STATISTICS
+   
+   
+ * FIXED COMPONENT ID
+   5725A54ST
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * RN00 PSN
+   UP
+   
+   
+ * RN00 PSY
+   UP
+   
+   
+ * RO00 PSN
+   UP
+   
+   
+ * RO00 PSY
+   UP

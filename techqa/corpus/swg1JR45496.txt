@@ -1,0 +1,138 @@
+Title: IBM JR45496: RUN NNSTAT FAILED WITH THE ERROR SQL1227N - United States
+
+Text:
+  FIXES ARE AVAILABLE
+DB2 Version 9.7 Fix Pack 9 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24036646]
+DB2 Version 9.7 Fix Pack 9a for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24037559]
+DB2 Version 9.7 Fix Pack 10 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24038641]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  User run NNSTAT failed with the following error
+   
+   db2 call
+   sysproc.nnstat('server','schema','nickname','NULL','NULL',2,'nns
+   tat.log::DIAG',?)
+   
+   Error messages:
+   SQL1227N The catalog statistic "NULL" for column "LOW2KEY" is
+   out of
+   range for its target column, has an invalid format, or is
+   inconsistent
+   in relation to some other statistic. Reason Code = "3".
+   
+   or
+   
+   SQL1227N The catalog statistic "NULL" for column "HIGH2KEY" is
+   out of
+   range for its target column, has an invalid format, or is
+   inconsistent
+   in relation to some other statistic. Reason Code = "3".
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * Users whose federation server turned on Oracle compatibility *
+   * will see this problem.                                       *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * See Error Description                                        *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Upgrade to Federation Server v9.7 fixpack 9 which first fix  *
+   * this problem.                                                *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR45496
+   
+   
+ * REPORTED COMPONENT NAME
+   ORACLE WRAPPER
+   
+   
+ * REPORTED COMPONENT ID
+   5724N9708
+   
+   
+ * REPORTED RELEASE
+   970
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-01-22
+   
+   
+ * CLOSED DATE
+   2013-12-17
+   
+   
+ * LAST MODIFIED DATE
+   2013-12-17
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    IC95214 JR48044 [http://www-01.ibm.com/support/docview.wss?uid=swg1JR48044] JR48045 [http://www-01.ibm.com/support/docview.wss?uid=swg1JR48045]
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R970 PSN
+   UP
+   
+   
+ * R970 PSY
+   UP

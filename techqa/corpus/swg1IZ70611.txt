@@ -1,0 +1,217 @@
+Title: IBM IZ70611: MQRC_UNKNOWN_OBJECT_NAME returned from MQOPEN/MQPUT1 - United States
+
+Text:
+  FIXES ARE AVAILABLE
+WebSphere MQ V7.0.1 for i5/OS Fix Pack 7.0.1.3 [http://www-01.ibm.com/support/docview.wss?uid=swg24026933]
+WebSphere MQ V7.0 Fix Pack 7.0.1.3 [http://www-01.ibm.com/support/docview.wss?uid=swg24026932]
+WebSphere MQ V6.0 Fix Pack 6.0.2.11 [http://www-01.ibm.com/support/docview.wss?uid=swg24029382]
+WebSphere MQ V6.0 for iSeries Fix Pack 6.0.2.11 [http://www-01.ibm.com/support/docview.wss?uid=swg24029383]
+WebSphere MQ 6.0 for HP OpenVMS Alpha and Itanium - Fix Pack 6.0.2.11 (FP 04) [http://www-01.ibm.com/support/docview.wss?uid=swg24032452]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  An application receives a MQRC_UNKNOWN_OBJECT_NAME (2085)
+   reason code from an MQOPEN/MQPUT1 call to a clustered queue
+   object which exists in one of the clusters to which the queue
+   manager belongs. The queue manager to which the application is
+   connecting to is shared in more than one cluster.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  na
+   keywords: cluster
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   Any users of WebSphere MQ connecting to a queue manager shared
+   in more than one cluster and putting messages to a clustered
+   queue present in a subset of those clusters.
+   
+   Platforms affected:
+   All Distributed (iSeries, all Unix and Windows)
+   ****************************************************************
+   PROBLEM SUMMARY:
+   When an application issues an MQOPEN/MQPUT1 against a clustered
+   queue which the local queue manager does not yet know about,
+   subscriptions are created and sent to the full repositories of
+   which the local queue manager is a member of.
+   
+   A 10 second wait period is then entered where one of the
+   following should occur.
+   
+   1. If any objects are returned within 10 seconds, the API call
+   should continue processing without needing to wait any further.
+   
+   2. If no objects are returned within 10 seconds, and not all
+   full repositories have acknowledged the subscription request,
+   then a MQRC_CLUSTER_RESOLUTION_ERROR should be returned to the
+   application. This is to indicate a possible communications
+   problem with some of the full repositories.
+   
+   3. If all full repositories have acknowledged the subscription
+   and none of them are aware of any matching object definitions,
+   the API call should immediately return with
+   MQRC_UNKNOWN_OBJECT_NAME.
+   
+   Where a queue manager shared in many clusters is putting
+   messages to a queue hosted in a only subset of these, it is
+   likely that the first full repository to reply does not know
+   about the object in question. In this scenario, the problem was
+   caused because the local queue manager did not wait to see if
+   other full repositories did know about the object subscribed
+   for, but instead returned MQRC_UNKNOWN_OBJECT_NAME before 10
+   seconds had elapsed.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The MQOPEN/MQPUT1 logic against a remote clustered queue was
+   modified to ensure that it does not return as soon as the first
+   reply is received from a full repository for a subscription to
+   the clustered queue.
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+                      v6.0
+   Platform           Fix Pack 6.0.2.11
+   --------           --------------------
+   Windows            tbc_p600_0_2_11
+   AIX                tbc_p600_0_2_11
+   HP-UX (PA-RISC)    tbc_p600_0_2_11
+   HP-UX (Itanium)    tbc_p600_0_2_11
+   Solaris (SPARC)    tbc_p600_0_2_11
+   Solaris (x86-64)   tbc_p600_0_2_11
+   iSeries            tbc_p600_0_2_11
+   Linux (x86)        tbc_p600_0_2_11
+   Linux (x86-64)     tbc_p600_0_2_11
+   Linux (zSeries)    tbc_p600_0_2_11
+   Linux (Power)      tbc_p600_0_2_11
+   Linux (s390x)      tbc_p600_0_2_11
+   
+                      v7.0
+   Platform           Fix Pack 7.0.1.3
+   --------           --------------------
+   Windows            U200320
+   AIX                U834987
+   HP-UX (PA-RISC)    U834414
+   HP-UX (Itanium)    U834413
+   Solaris (SPARC)    U834986
+   Solaris (x86-64)   U834210
+   iSeries            tbc_p700_0_1_3
+   Linux (x86)        U834415
+   Linux (x86-64)     U834985
+   Linux (zSeries)    U834412
+   Linux (Power)      U835662
+   
+   The latest available maintenance can be obtained from
+   'WebSphere MQ Recommended Fixes'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037]
+   
+   If the maintenance level is not yet available, information on
+   its planned availability can be found in 'WebSphere MQ
+   Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ70611
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ HP V6
+   
+   
+ * REPORTED COMPONENT ID
+   5724H7202
+   
+   
+ * REPORTED RELEASE
+   600
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-02-18
+   
+   
+ * CLOSED DATE
+   2010-05-28
+   
+   
+ * LAST MODIFIED DATE
+   2011-01-03
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    PM15497
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ HP V6
+   
+   
+ * FIXED COMPONENT ID
+   5724H7202
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R600 PSY
+   UP

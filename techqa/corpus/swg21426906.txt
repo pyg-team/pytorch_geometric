@@ -1,0 +1,34 @@
+Title: IBM How to configure multiple login properties for federated LDAP security - United States
+
+Text:
+federated; login; multiple; loginProperties TECHNOTE (FAQ)
+
+QUESTION
+ How do you configure WebSphere Portal to allow users to log in with any of several login properties when security is enabled for federated LDAP? 
+
+ANSWER
+
+When configured for federated LDAP, WebSphere Portal relies on Virtual Member Manager (VMM) for authentication. Configure VMM to support multiple login properties by referencing the following procedure. 
+
+Note: Login properties' values should be unique across all repositories participating in a realm. Work with your LDAP administrator to ensure this requirement is met. 
+
+1. Back up <profile>/config/cells/<cell name>/wim/config/wimconfig.xml
+
+2. Edit wimconfig.xml (on dmgr in cluster) so that each login property is defined: 
+
+<config:repositories xsi:type="config:LdapRepositoryType" ...
+id="repositoryid" ...>
+<config:loginProperties>uid</config:loginProperties>
+<config:loginProperties>ibm-primaryEmail</config:loginProperties>
+
+Notes:
+a. Login properties are defined per-repository.
+b. Login properties are VMM properties. If VMM properties map to a different name in LDAP, use the wp-query-attribute-config task to determine these mappings.
+
+3. If clustered, synchronize the changes to all nodes.
+
+4. Restart WebSphere Portal. If clustered, also restart the node agent and the deployment manager.
+
+RELATED INFORMATION
+ Querying attributes [http://publib.boulder.ibm.com/infocenter/wpdoc/v6r1/index.jsp?topic=/com.ibm.wp.ent.doc_v615/install/aix_man_attributes.html]
+Login property uniqueness in a realm [http://publib.boulder.ibm.com/infocenter/wpdoc/v6r1/index.jsp?topic=/com.ibm.wp.ent.doc_v615/plan/plan_realm.html]

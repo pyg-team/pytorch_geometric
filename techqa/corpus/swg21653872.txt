@@ -1,0 +1,28 @@
+Title: IBM Random or ephemeral local ports that the probes to use - United States
+
+Text:
+probe; random; ephemeral; local; port; client; tcp; socket TECHNOTE (FAQ)
+
+QUESTION
+ What ephemeral ports do probes open when they create TCP connections with the target? 
+
+ANSWER
+In this article, we use the Lucent NFM probe as an example, connecting to the Lucent NBA server as the target, but the principles discussed remain true for all TCP connections where the probe is the client and the target is the server. 
+The probe resides on host 'probehost' and the NBA server resides on host 'nfmserver'. The NBA server uses TCP port 1675 for communication. When you use 'netstat -a' to display the connections between the probe and the Lucent NBA server, you see the following:
+
+$netstat -a | grep 1675
+probehost.46200 nfmserver.1675 49640 0 49640 0 ESTABLISHED 
+
+Why is port 46200 used on the probehost? This port will change if the probe is restarted.
+
+When the probe establishes TCP connection with its target, the connection is established to the TCP ports by means of sockets. A socket is identified by the operating system as a unique combination of the following:
+
+Protocol (TCP, UDP ) 
+Local IP address 
+Local port number 
+Remote IP address (Only for established TCP sockets) 
+Remote port number (Only for established TCP sockets) 
+
+So port 46200 is a local port number that is automatically allocated from a predefined range (normally > 1023) by the TCP/IP stack software, typically to provide the port for the client end of a client-server communication. This allocation is temporary and is only valid for the duration of the connection opened by the application using the protocols. That's why this port changes after the probe is restarted.
+
+These local ports are not configurable for the probe. There are ways to limit the range of ephemeral ports, these are platform specific and you should discuss this with your system and firewall administrator. As a result, it is necessary to make sure that firewall rules allow TCP communication back to these local ports for the connection to be established.

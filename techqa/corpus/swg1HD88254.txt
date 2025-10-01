@@ -1,0 +1,160 @@
+Title: IBM HD88254: PRINT : PRINT BATCH DELIVERS INCORRECT PRINTS OUTPUT . - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Please feel free to contact in case you need any info. Thanks
+   in advance - CYK
+   Scenario:
+   1. Start 32 bit CATIA.
+   2. Select menu bar / Tools / Utility.>> The Batch Monitor
+   appears.
+   3. Double click the PrintBatch
+   >> The PrintBatch panel appears.
+   4. Click Add a document button and select the attached
+   CATDrawing
+   5. Click on the OK button.
+   Problem: The printing is filled in black unexpectedly.
+   .
+   Expected Result:
+   An unnecessarily filled area should not appear when using
+   Print Batch. Print result should be the same as in case of
+   interactive Printing.
+   .
+   .
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Scenario:
+   1. Start 32 bit CATIA.
+   2. Select menu bar / Tools /
+   Utility.>> The Batch Monitor appears.
+   3. Double click the
+   PrintBatch
+   >> The PrintBatch panel appears.
+   4. Click Add a
+   document button and select the attached CATDrawing
+   5. Click on
+   the OK button.
+   Problem: The printing is filled in black
+   unexpectedly.
+   .
+   Expected Result:
+   An unnecessarily filled area
+   should not appear when using Print Batch. Print result should
+   be the same as in case of interactive Printing.
+   .
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  THIS PROBLEM WILL BE FIXED ON   VERSION V5R20 GA level.
+   NOTE
+   THAT THIS PROBLEM WILL ALSO BE FIXED ON V5R19 SP6.
+   Additional
+   Closure Information:
+   Incident Diagnosis:
+   PRINT : Print Batch
+   delivers incorrect prints output
+   .
+   Correction
+   explanation:
+   Correction provided to get expected behavior.
+   .
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   HD88254
+   
+   
+ * REPORTED COMPONENT NAME
+   CATIA V5 WIN 64
+   
+   
+ * REPORTED COMPONENT ID
+   569165000
+   
+   
+ * REPORTED RELEASE
+   518
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-08-27
+   
+   
+ * CLOSED DATE
+   2009-10-07
+   
+   
+ * LAST MODIFIED DATE
+   2009-10-07
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CATIA V5 WIN 64
+   
+   
+ * FIXED COMPONENT ID
+   569165000
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R519 PSN
+   UP

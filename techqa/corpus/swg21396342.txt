@@ -1,0 +1,46 @@
+Title: IBM Copying the audit-log from DataPower - United States
+
+Text:
+audit-log; audit; audit log; copy audit-log; copy; log; cli TECHNOTE (FAQ)
+
+QUESTION
+ How can I get the audit-log from my WebSphere DataPower appliance? 
+
+CAUSE
+You want to copy the audit-log file from your DataPower appliance to an external location.
+
+ANSWER
+The two ways to get/copy the Audit-Log from DataPower are through 
+
+ * SOMA request 
+ * CLI
+
+
+Example for SOMA request: 
+<?xml version="1.0" encoding="UTF-8"?> 
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"> 
+<soapenv:Body> 
+<dp:request domain="default" xmlns:dp="http://www.datapower.com/schemas/management"> 
+<dp:get-file name="audit:///audit-log"/> 
+</dp:request> 
+</soapenv:Body> 
+</soapenv:Envelope> 
+
+The reply for this SOMA request is base64 encoded data. You will have to decode it in order to read it. 
+Under cURL the option "-o <file>" could be used to write the reply to a specified <file> instead of stdout. 
+
+Example for CLI request: 
+a) Copy to a folder on DataPower (e.g. temporary folder) from which you can save to your web client 
+xi50# configure terminal 
+Global configuration mode 
+xi50(config)# copy audit:///audit-log temporary:///audit-log 
+
+b) Also, you can use an HTTP File Server instead of "temporary:///audit-log" as destination: 
+xi50# configure terminal 
+Global configuration mode 
+xi50(config)# copy audit:///audit-log < HTTP File Server -URL> 
+
+c) The Audit-Log can also be mailed from the CLI by using the following command: 
+xi50# configure terminal 
+Global configuration mode 
+xi50(config)# send file audit:///audit-log <outgoing-mail-server> <email-address>

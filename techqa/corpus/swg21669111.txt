@@ -1,0 +1,88 @@
+Title: IBM Collect troubleshooting data for Service Component Architecture (SCA), Service Integration Bus (SIB) or Failed Event Manager-related problems in IBM Business Process Manager (BPM) Advanced - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ You are having a problem related to SCA, SIB or the Failed Event Manager in IBM Business Process Manager. You would like to know what documentation you must collect (MustGather) so that the IBM Business Process Manager Support team can diagnose your problem. If you gather this documentation before contacting support it will expedite the troubleshooting process, and save you time. 
+
+RESOLVING THE PROBLEM
+
+
+SETTING THE TRACE SETTING
+
+Set the following trace string and then reproduce the problem. 
+ * For SCA and SIB-related problems:
+   *=info:SCA.*=all:SIBMessageTrace*=all:SIBCommunications=all
+
+ * For Failed Event-related problems:
+   *=info:Recovery=all
+
+
+Note: Enabling the trace might slow down your system. This delay can lead to transaction timeouts and errors. 
+
+To set the tracing and generate a new set of logs and traces, complete the following steps:  1. Under ​Troubleshooting​ ​>​ ​Log and Trace​, select the server where you want to change the settings. ​
+    
+    
+ 2. Click Change Log Detail Levels​.
+    
+    
+ 3. Select the ​configuration tab to set the tracing. This change takes effect after the next server restart and a completely new set of log files can be collected. Optionally, select the runtime​ tab to dynamically set the tracing.
+    
+    
+ 4. Enter the trace string and click OK.
+    
+    
+ 5. If you selected the configuration tab, stop the server.
+    
+    
+ 6. Archive and delete the current log files, traces, and ffdc from the following directories:  * install​​_​​root​​/​​profiles/profile​​_​​name​​/​​logs​​/​​server​​_​​name 
+     * install​​_​​root​​/​​profiles/profile​​_​​name​​/​​logs​​/ffdc
+       
+       
+       Note: The install​​_​​root,profile​​_​​name,and​​server​​_​​namevalues are specific to your environment.
+       
+       
+    
+    
+ 7. Start the server and check the trace.log file to make sure that the correct tracing is set.
+    
+    
+ 8. Reproduce the problem and gather the complete server log files and ffdc directory.
+    
+    
+ 9. Delete the trace string from the Log Detail Level for your server.
+    
+    
+
+
+Note: Ensure that you have set the Maximum trace file size (recommendation: 20MB) as well as the number of historical trace files (recommendation: 10) to an appropriate value. You can find those values at Servers > Application Servers > server_name > Diagnostic Trace Service. 
+
+General diagnostic information 
+
+Collect general information from the Collect troubleshooting data for installation or upgrade problems with IBM Business Process Manager (BPM) products [http://www.ibm.com/support/docview.wss?uid=swg21506937] [http://www.ibm.com/support/docview.wss?uid=swg21506937] page including the following information:  * Problem description 
+ * Environment description 
+ * Server log files: Collect all of the files from the following directories:  * profile_root/profile_name/logs/server_name 
+    * profile_root/profile_name/logs/ffdc 
+   
+   
+ * Project interchange (PI), *.twx export from IBM Process Designer or enterprise archive (EAR) file from the relevant applications
+
+WHAT TO DO NEXT
+ 
+
+ 1. Review the logs and traces at the time of the problem to try to determine the source of the problem.
+    
+    
+ 2. Use IBM Support Assistant [http://www.ibm.com/software/support/isa/] to search for known problems in the product documentation, forums, and support content.
+    
+    
+ 3. If you cannot find related problems or cannot solve the problem, send the information you collected to IBM by following the instructions in Exchanging Information with IBM Technical Support. [http://www.ibm.com/software/support/exchangeinfo.html]
+    
+    
+
+
+For a listing of all support content, downloads, and educational materials that are specific to IBM Business Process Manager Advanced , search the IBM Business Process Manager Advanced [https://support.podc.sl.edst.ibm.com/support/home/product/R313154Z95228H31/IBM_Business_Process_Manager_Advanced] support page 
+
+PRODUCT ALIAS/SYNONYM
+ BPM

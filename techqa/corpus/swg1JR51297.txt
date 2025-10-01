@@ -1,0 +1,169 @@
+Title: IBM JR51297: ADD ORACLE 12C SUPPORT TO ORACLE CONNECTOR AND DRS CONNECTOR IN INFORMATION SERVER v11.5 - United States
+
+Text:
+  FIXES ARE AVAILABLE
+InfoSphere Information Server, Version 11.5 for Linux [http://www-01.ibm.com/support/docview.wss?uid=swg24040702]
+InfoSphere Information Server, Version 11.5 for Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24040703]
+InfoSphere Information Server, Version 11.5.0.2 for Linux [http://www-01.ibm.com/support/docview.wss?uid=swg24043652]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS SUGGESTION FOR FUTURE RELEASE.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Oracle Connector allows only for values "10g" and "11g" to be
+   specified in the "Oracle client version" property. Similarly,
+   DRS Connector allows only for values "10" and "11" to be
+   specified for the "Oracle" property under "Variant" property
+   when "Database type" property is set to value "Oracle". The two
+   supported values in the two connectors suggest that
+   theconnectors assume the Oracle Client installation on the
+   Information Server engine tier to be one of 10gR2 or 11g(R1/R2).
+    The two connectors should allow for values "12c" and "12",
+   respectively, and should in that case assume Oracle Client
+   installation 12c.
+   
+   Limitations in Oracle Connector and DRS Connector exist in
+   respect to processing VARCHAR2, NVARCHAR2 and RAW values with
+   extended sizes up to 32767 bytes when connecting to Oracle
+   Database 12c with extended maximum size enabled for these column
+   types. For example, when unbounded VarChar columns is present on
+   the input link to the Oracle Connector stage or DRS Connector
+   stage, and a value larger than 4000 bytes is provided for that
+   column, the connector will fail to insert it to the database.
+   Similarly in this scenario, if the connector is configured to
+   automatically create target table, it will create a table with
+   the length of 4000 instead of 32767.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  To connect to Oracle Database 12c with Oracle Connector and DRS
+   Connector, the value "11g" and "11" can be specified,
+   respectively. The installed Oracle Client version in this case
+   should be 11gR1 or 11gR2. It is also possible to use Oracle
+   Client version 12c in this case, but since the two connectors
+   will explicitly try to dynamically link to the Oracle Client
+   library from version 11gR1 or 11gR2, then depending on the
+   platform and the Oracle Client distribution type in place (Full,
+    Instant Basic, Instant Basic Lite), it may be necessary to
+   manually create a symbolic link for the Oracle Client 11g client
+    library to point to the Oracle Client 12c library, for example:
+   ln -s libclntsh.so.12.1 libclntsh.so.11.1
+   When such a symbolic link is present, the Oracle Connector and
+   DRS Connector will dynamically link to Oracle Client 12c client
+   library by the means of the provided symbolic link.
+   
+   To work around the limitations in respect to processing
+   VARCHAR2, NVARCHAR2 and RAW values with extended sizes up to
+   32767 bytes when connecting to Oracle Database 12c with extended
+   maximum size enabled for these column types, the environment
+   variables CC_ORA_UNBOUNDED_STRING_LENGTH and
+   CC_ORA_UNBOUNDED_BINARY_LENGTH cab be set. By setting these
+   environment variables to value 32767, the connector will assume
+   the maximum size in bytes of 32767 for VarChar/NVarChar and
+   VarBinary link column value, respectively, instead of assuming
+   the maximum size of 4000. When automatically creating tables
+   based on unbounded VarChar, NVarChar and VarBinary input link
+   columns, the connector will create tables with the VARCHAR2,
+   NVARCHAR2 and RAW table columns of size 32767, instead of the
+   size 4000, 4000 and 2000, respectively. For this workaround to
+   apply it is necessary to use Oracle Client 12c installation,
+   because Oracle Client 11gR2 installations and earlier will not
+   allow for processing atomic VARCHAR2, NVARCHAR2 and RAW values
+   larger than 4000 bytes even if the
+   CC_ORA_UNBOUNDED_STRING_LENGTH and
+   CC_ORA_UNBOUNDED_BINARY_LENGTH variables are set to accomodate
+   such larger values. The Oracle error codes that will be returned
+   in this case include ORA-01461 or ORA-24920.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *  The Oracle 12c support for Oracle Connector is now available in
+   Information Server version 11.5.  The DRS Connector support will
+   be added later.
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR51297
+   
+   
+ * REPORTED COMPONENT NAME
+   WIS DATASTAGE
+   
+   
+ * REPORTED COMPONENT ID
+   5724Q36DS
+   
+   
+ * REPORTED RELEASE
+   912
+   
+   
+ * STATUS
+   CLOSED SUG
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-09-19
+   
+   
+ * CLOSED DATE
+   2015-09-27
+   
+   
+ * LAST MODIFIED DATE
+   2015-09-27
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

@@ -1,0 +1,137 @@
+Title: IBM RS00184: DECISION TABLE IS BADLY GENERATED ON RSO IF A CONDITION       CONTAINS ONE PLACEHOLDER FILLED WITH A RANGE OF VALUES. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  If the action column of a DT has 2 subcolumns (ie the action
+   takes 2 arguments), and the DT is published to RSO, the Excel
+   table contains 2 rows for the action column title instead of
+   one.
+   
+   In addition, the second row of the condition column title is
+   half blue (it should be grey). Only action columns should be
+   blue.
+   
+   Also, when opening the Excel file, you see the error dialog
+   saying "Excel found unreadable content in Destineo
+   Prospection.xlsx. Do you want to recover the contents of this
+   workbook? If you trust the source of this workbook, click Yes."
+   Once you click yes, another error dialog is displayed :
+   "Excel was able to open the file by repairing or removing the
+   unreadable content.
+   Removed Records: Merge cells from /xl/worksheets/....xml.part"
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Note that the error does not occur if
+   - the action column has less than 2 arguments or subcolumns
+   - the condition column does not have subcolumns
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Badly generated Decision table on RSO if an action contains more
+   than 1 argument
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Decistion Table is now properly generated.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   RS00184
+   
+   
+ * REPORTED COMPONENT NAME
+   WS ILOG RSO
+   
+   
+ * REPORTED COMPONENT ID
+   5724Y0300
+   
+   
+ * REPORTED RELEASE
+   702
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-04-13
+   
+   
+ * CLOSED DATE
+   2010-07-30
+   
+   
+ * LAST MODIFIED DATE
+   2010-09-03
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WS ILOG RSO
+   
+   
+ * FIXED COMPONENT ID
+   5724Y0300
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R710 PSY
+   UP

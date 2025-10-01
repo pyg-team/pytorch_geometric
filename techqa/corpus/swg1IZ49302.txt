@@ -1,0 +1,261 @@
+Title: IBM IZ49302: THE WEBSPHERE MQ JAVA MESSAGE SERVICE CLIENT MUST TREAT "" FOR A USERID THE SAME AS NULL WHEN CREATING CONNECTIONS - United States
+
+Text:
+  FIXES ARE AVAILABLE
+WebSphere MQ V7.0 Fix Pack 7.0.1.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24024528]
+WebSphere MQ V7.0 Fix Pack 7.0.1.2 [http://www-01.ibm.com/support/docview.wss?uid=swg24026518]
+WebSphere MQ V6.0 Fix Pack 6.0.2.8 [http://www-01.ibm.com/support/docview.wss?uid=swg24023910]
+WebSphere MQ V6.0 for iSeries Fix Pack 6.0.2.8 [http://www-01.ibm.com/support/docview.wss?uid=swg24023911]
+WebSphere MQ 6.0 for HP OpenVMS Alpha and Itanium - Fix Pack 6.0.2.10 (FP03) [http://www-01.ibm.com/support/docview.wss?uid=swg24029987]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  This APAR address 2 issues:
+   
+   1) If a WebSphere MQ classes for Java Message Service (JMS)
+   application specifies the value "" (empty string) as the User
+   ID when creating a connection, the empty string is flowed down
+   to the queue manager for authentication.
+   
+   If the queue manager is not configured to accept the empty
+   string as a valid user identifier when determining WebSphere MQ
+   Object Authorities, the application may receive reason code
+   2035 (MQRC_NOT_AUTHORIZED) when attempting to access the queue
+   manager or queue.
+   
+   
+   2) In a WebSphere Application Server environment, JMS
+   applications using the WebSphere MQ messaging provider which
+   look up a connection factory that has no component-managed or
+   container-managed authentication aliases specified will send
+   the User ID that the application server process is running
+   under to WebSphere MQ for authentication. This is incorrect
+   behaviour, as no authentication details have been specified in
+   the connection factory.
+   
+   If the queue manager is not configured to accept the user ID of
+   the application server process as a valid user identifier when
+   determining WebSphere MQ Object Authorities, the application
+   may receive reason code 2035 (MQRC_NOT_AUTHORIZED) when
+   attempting to access the queue manager or queue.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Instead of using "", leave blank the userId in order to use
+   null.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   This issue either WebSphere MQ applications using the classes
+   for JMS which specify an empty string as the User ID when
+   creating a connection, and WebSphere Application Server
+   applications using the WebSphere MQ messaging provider that use
+   connection factories with no authentication aliases specified.
+   
+   Platforms affected:
+   All Distributed (iSeries, all Unix and Windows) +Java
+   ****************************************************************
+   PROBLEM SUMMARY:
+   When an application using the WebSphere MQ classes for JMS does
+   not specify a User ID when creating a connection, the User ID
+   that started the JVM process is picked up and sent to the queue
+   manager for authentication.
+   
+   If an empty string ("") was passed in, then there is no User ID
+   information to send to the queue manager. However, the empty
+   string was incorrectly sent for authentication, which gave an
+   inconsistency in the way a null User ID and the empty string
+   were handled.
+   
+   Similarly, in a WebSphere Application Server environment, when
+   no authentication alias was specified on a WebSphere MQ
+   messaging provider connection factory, the User ID that started
+   the application server was being sent to the queue manager for
+   authentication. This behaviour was incorrect.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  As a result of this APAR, specifying either a null value or an
+   empty string ("") for the User ID when creating a connection
+   will result in the empty string being sent to the queue manager
+   for authentication.
+   
+   A new Java system property allows this behaviour to be changed
+   to send the User ID that started either the JVM or the
+   application server to the queue manager if required.
+   
+   The new property is called:
+   
+   com.ibm.mq.jms.ForceUserID
+   
+   and takes one of two values:
+   
+   com.ibm.mq.jms.ForceUserID=false
+   --------------------------------
+   If an application passes an empty string or a null value for
+   the User ID when creating a connection, the empty string is
+   sent to the queue manager for authentication.
+   
+   com.ibm.mq.jms.ForceUserID=true
+   -------------------------------
+   If the application passes an empty string or a null value for
+   the User ID when creating a connection, then the User ID that
+   started either the JVM or the application server will be sent
+   to the queue manager for authentication.
+   
+   
+   To set the property, applications using the WebSphere MQ
+   classes for JMS need to be started with the following command:
+   
+   java -Dcom.ibm.mq.jms.ForceUserID=<value> <application class>
+   
+   WebSphere Application Server users need to specify the property
+   as a Generic JVM argument for the application server they wish
+   to enable this behaviour on.
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+                      v6.0
+   Platform           Fix Pack 6.0.2.8
+   --------           --------------------
+   Windows            U200309
+   AIX                U825517
+   HP-UX (PA-RISC)    U824678
+   HP-UX (Itanium)    U825875
+   Solaris (SPARC)    U825511
+   Solaris (x86-64)   U825872
+   iSeries            tbc_p600_0_2_8
+   Linux (x86)        U825181
+   Linux (x86-64)     U825874
+   Linux (zSeries)    U825516
+   Linux (Power)      U825182
+   Linux (s390x)      U825873
+   
+                      v7.0
+   Platform           Fix Pack 7.0.1.0
+   --------           --------------------
+   Windows            U200306
+   AIX                U823774
+   HP-UX (PA-RISC)    U823665
+   HP-UX (Itanium)    U823667
+   Solaris (SPARC)    U823772
+   Solaris (x86-64)   U824344
+   iSeries            tbc_p700_0_1_0
+   Linux (x86)        U823664
+   Linux (x86-64)     U823773
+   Linux (zSeries)    U823668
+   Linux (Power)      U823666
+   
+   The latest available maintenance can be obtained from
+   'WebSphere MQ Recommended Fixes'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037]
+   
+   If the maintenance level is not yet available, information on
+   its planned availability can be found in 'WebSphere MQ
+   Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ49302
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ LIN X86 V6
+   
+   
+ * REPORTED COMPONENT ID
+   5724H7204
+   
+   
+ * REPORTED RELEASE
+   602
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-04-14
+   
+   
+ * CLOSED DATE
+   2009-05-29
+   
+   
+ * LAST MODIFIED DATE
+   2013-12-12
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ LIN X86 V6
+   
+   
+ * FIXED COMPONENT ID
+   5724H7204
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R600 PSY
+   UP

@@ -1,0 +1,196 @@
+Title: IBM IT07871: MQ 7.0.1.12: RUNMQRAS FAILS WITH CRTMQRAS: ERROR: XML PARSER HAS FAILED: UNEXPECTED INTERNAL ERROR NEAR INDEX 1 - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  After upgrading to WebSphere MQ v7.0.1.12, the runmqras command
+   fails with
+   the following error:
+   .
+   crtmqras: error: XML parser has failed: Unexpected internal
+   error near
+   index 1
+   \
+    ?java.util.regex.PatternSyntaxException: Unexpected internal
+   error
+   near index 1
+   \
+   at java.util.regex.Pattern.error(Pattern.java:1686)
+   at java.util.regex.Pattern.compile(Pattern.java:1439)
+   at java.util.regex.Pattern.(Pattern.java:1160)
+   at java.util.regex.Pattern.compile(Pattern.java:844)
+   at java.lang.String.split(String.java:1615)
+   at crtmqras.myHandler.commandNameToUse(myHandler.java:187)
+   at crtmqras.myHandler.startCommand(myHandler.java:818)
+   at crtmqras.myHandler.startElement(myHandler.java:325)
+   at
+   org.apache.xerces.parsers.AbstractSAXParser.startElement(Unknown
+    Source)
+   at
+   org.apache.xerces.parsers.AbstractXMLDocumentParser.emptyElement
+   (Unknown Source)
+   at
+   org.apache.xerces.impl.XMLDocumentFragmentScannerImpl.scanStartE
+   lement(Unknown Source)
+   at
+   org.apache.xerces.impl.XMLDocumentFragmentScannerImpl$FragmentCo
+   ntentDispatcher.dispatch(Unknown Source)
+   at
+   org.apache.xerces.impl.XMLDocumentFragmentScannerImpl.scanDocume
+   nt(Unknown Source)
+   at org.apache.xerces.parsers.XML11Configuration.parse(Unknown
+   Source)
+   at org.apache.xerces.parsers.XML11Configuration.parse(Unknown
+   Source)
+   at org.apache.xerces.parsers.XMLParser.parse(Unknown Source)
+   at org.apache.xerces.parsers.AbstractSAXParser.parse(Unknown
+   Source)
+   at org.apache.xerces.jaxp.SAXParserImpl.parse(Unknown Source)
+   at javax.xml.parsers.SAXParser.parse(Unknown Source)
+   at crtmqras.Zipper.main(Zipper.java:277)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   This issue affects all users of the runmqras command who use
+   WebSphere MQ v7.0.1.12 on Windows platforms.
+   
+   
+   Platforms affected:
+   Windows
+   
+   ****************************************************************
+   PROBLEM DESCRIPTION:
+   In WebSphere MQ v7.0.1.12, a change was made to the runmqras
+   facility (a tool that automates the task of collecting
+   diagnostic information) to print progress information to the
+   console while the command was running. However, this change
+   included some incorrect command parsing logic while determining
+   the progress information to display that resulted in an uncaught
+   java.util.regex.PatternSyntaxException that caused the command
+   to terminate and not to generate the expected output.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The runmqras facility has been updated to correct the command
+   parsing error which caused the
+   java.util.regex.PatternSyntaxException to be thrown.
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+   Version    Maintenance Level
+   v7.0       7.0.1.14
+   
+   The latest available maintenance can be obtained from
+   'WebSphere MQ Recommended Fixes'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037]
+   
+   If the maintenance level is not yet available information on
+   its planned availability can be found in 'WebSphere MQ
+   Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT07871
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ WINDOWS V7
+   
+   
+ * REPORTED COMPONENT ID
+   5724H7220
+   
+   
+ * REPORTED RELEASE
+   701
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-03-23
+   
+   
+ * CLOSED DATE
+   2015-03-30
+   
+   
+ * LAST MODIFIED DATE
+   2015-03-30
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ WINDOWS V7
+   
+   
+ * FIXED COMPONENT ID
+   5724H7220
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R701 PSY
+   UP

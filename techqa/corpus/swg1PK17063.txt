@@ -1,0 +1,229 @@
+Title: IBM PK17063: CAN'T INSTALL XD 5.1.0.1 OR XD 5.1.0.2 USING UPDATEINSTALLER VERSION 6.0.2.2 OR HIGHER - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Cannot install XD 5.1.0.1 or 5.1.0.2 using the updateInstaller
+   6.0.2.2 or higher. The fixpack installs and appears successful,
+    but versionInfo shows that the XD version is still 5.1.0.
+   
+    Also cannot uninstall the fixpack.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *   Please follow these exact steps:
+   1. Ensure any prior attempts of installing fixpacks have been
+   removed.
+    a) Try running uninstall.  It should report success.
+    b) If not clean up the following files by deleting sections
+    referring to the fixpacks that cannot be uninstalled.
+   
+   <was_home>\properties\version\update\backup\maintenanceHistory.x
+   ml
+   
+   <was_home>\properties\version\update\backup\maintenanceStack.xml
+     Delete
+   <was_home>\properties\version\update\backup\update.status.xml
+     Delete
+   <was_home>\properties\version\update\backup\<failed>.pak
+   2. Remove _cellNameProp and adminconsole.war if they exist in
+    <was_home>/properties/version/install/5.1.0.0/config/delta/inst
+   all.
+   3. Rename <was_home>/logs directory.
+   4. Download the latest updateinstaller from
+    http://www-1.ibm.com/support/docview.wss?rs=180&uid=swg24008401 [http://www-1.ibm.com/support/docview.wss?rs=180&uid=swg24008401]
+   and unzip to the <was_home> directory.
+   5. Modify
+   <was_home>\updateinstaller\framework\productproviders.xml
+   in the following manner.
+    a) Comment out the section below using <!--   --> tags:
+    <product-plugin id="wasxd_V6"
+   
+    impl="com.ibm.ws.install.ni.updi.product.xd.XDV6ProductPlugin">
+                <param name="offering" value="XD"/>
+                <param name="offeringname" value="IBM WebSphere
+   Extended
+    Deployment"/>
+                <param name="version" value="&gt;=6.0.0.0"/>
+                <param name="installroot"
+    value="$ITB:P{updiProductBean.installLocation}"/>
+                <param name="productgaversion" value="6.0.0.0"/>
+                <param name="xdpluginsjarfileuri"
+    value="$NIFURI{$ITB:J{user.dir}/lib/xdplugins.jar}"/>
+           </product-plugin>
+    b) Save the file.
+   6. Download xd51_fp1_<platform>_<arch>.pak and/or
+   xd51_fp2_<platform>_<arch>.pak to
+   <was_home>\updateinstaller\maintenance
+    directory.
+   7.  Launch the updateinstaller and navigate through the panels
+   to
+   install the desired fixpack.
+   8.  Confirm the fixpack was installed properly by verifying the
+    following:
+    a) no errors in the
+    /logs/update/xd51_<fp>_<platform>_<arch>.install/updatelog.txt
+    b)the properties/version/XD.product file now has the updated
+   version
+    c) the xxx.component files in properties/version directory have
+   a
+   similar timestamp to the fixpack install time.
+    c) there are 99xxxx.ant files in
+   properties/version/install/5.1.0.0/config/delta/install that
+   were
+    executed.
+    d) delete the file _cellNameProp in
+    properties/version/install/5.1.0.0/config/delta/install
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: Users who wish to install WebSphere          *
+   *                 Extended Deployment V5.1 fixpack 1           *
+   *                 (5.1.0.1) or fixpack 2 (5.1.0.2).            *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Cannot install WebSphere Extended       *
+   *                      Deployment version 5.1.0.1 or 5.1.0.2   *
+   *                      fixpacks using Updateinstaller          *
+   *                      version 6.0.2.2 or later.               *
+   *                                                              *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   When installing WebSphere Extended Deployment version 5.1.0.1
+   or 5.1.0.2 fixpacks using Updateinstaller version 6.0.2.2 or
+   later, the installation completes quickly without any errors
+   in the log. However, it is a false success. All fixes included
+   in the fixpack are not applied.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The update installer has been corrected.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK17063
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBS EXTENDED D
+   
+   
+ * REPORTED COMPONENT ID
+   5724J3400
+   
+   
+ * REPORTED RELEASE
+   10I
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2005-12-20
+   
+   
+ * CLOSED DATE
+   2006-01-10
+   
+   
+ * LAST MODIFIED DATE
+   2006-01-10
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  UPDI
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBS EXTENDED D
+   
+   
+ * FIXED COMPONENT ID
+   5724J3400
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R60A PSY
+   UP
+   
+   
+ * R60H PSY
+   UP
+   
+   
+ * R60I PSY
+   UP
+   
+   
+ * R60P PSY
+   UP
+   
+   
+ * R60S PSY
+   UP
+   
+   
+ * R60W PSY
+   UP

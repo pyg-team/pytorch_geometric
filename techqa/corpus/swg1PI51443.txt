@@ -1,0 +1,184 @@
+Title: IBM PI51443: OPENING RATIONAL DEVELOPER Z WITH CONNECTION TO RATIONAL TEAM CONCERT CHECKS OUT A RATIONAL SOFTWARE ARCHITECT LICENSE - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Rational Developer for System z Fix Pack 1 (9.1.1.3) for 9.1.1. [http://www-01.ibm.com/support/docview.wss?uid=swg24041789]
+Rational Developer for System z Interim Fix 1 for 9.1.1.3 [http://www-01.ibm.com/support/docview.wss?uid=swg24042181]
+Rational Developer for System z Fix Pack 1 (9.1.1.4) for 9.1.1. [http://www-01.ibm.com/support/docview.wss?uid=swg24042820]
+Rational Developer for System z Fix Pack 1 (9.1.1.5) for 9.1.1. [http://www-01.ibm.com/support/docview.wss?uid=swg24043244]
+Rational Developer for System z Fix Pack 1 (9.1.1.6) for 9.1.1. [http://www-01.ibm.com/support/docview.wss?uid=swg24044103]
+Rational Developer for System z Fix Pack 1 (9.1.1.7) for 9.1.1. [http://www-01.ibm.com/support/docview.wss?uid=swg24044796]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  If you have IBM Rational Developer z (RDz) V9.1, IBM Rational
+   Team Concert (RTC) V5.0.1 and IBM Rational Software Architect
+   (RSA) V9.1 installed in a shell-shared environment using
+   floating licensing and you open RDz while there is a repository
+   connection to RTC, a RSA license will be checked-out from the
+   license server, even though RSA itself is not opened.
+   
+   Steps to reproduce:
+   
+   1. Install RSA, RDz, RTC into a shell shared environment
+   
+   2. Apply floating licenses
+   
+   3. Open RDz
+   
+   4. Establish a connection to RTC
+   
+   5. Close & reopen RDz
+   
+   6. Examine the "lmgrd.log" file to review the license check outs
+   
+   Expected Result: No license for RSA is checked out, as RSA was
+   not opened.
+   
+   Actual Result: A license for RSA is checked out, despite not
+   having opened RSA.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  There is no known workaround at this time.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  If you have IBM Rational Developer z (RDz) V9.1, IBM Rational
+   Team Concert (RTC) V5.0.1 and IBM Rational Software Architect
+   (RSA) V9.1 installed in a shell-shared environment using
+   floating licensing and you open RDz while there is a repository
+   connection to RTC, a RSA license will be checked-out from the
+   license server, even though RSA itself is not opened.
+   
+   Steps to reproduce:
+   
+   1. Install RSA, RDz, RTC into a shell shared environment
+   
+   2. Apply floating licenses
+   
+   3. Open RDz
+   
+   4. Establish a connection to RTC
+   
+   5. Close & reopen RDz
+   
+   6. Examine the "lmgrd.log" file to review the license check outs
+   
+   Expected Result: No license for RSA is checked out, as RSA was
+   not opened.
+   
+   Actual Result: A license for RSA is checked out, despite not
+   having opened RSA.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The license check has been changed to only be activated when the
+   component itself is being used and not when the workbench is
+   started.
+   
+   The problem listed in this APAR has been resolved with
+   IBM Rational Developer for System z V9.1.1.3 Fix Pack which
+   is available from the Recommended Fixes support download page:
+   http://www-1.ibm.com/support/docview.wss?rs=2294&uid=swg27006335 [http://www-1.ibm.com/support/docview.wss?rs=2294&uid=swg27006335]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI51443
+   
+   
+ * REPORTED COMPONENT NAME
+   RATL DEV FOR SY
+   
+   
+ * REPORTED COMPONENT ID
+   5724T0700
+   
+   
+ * REPORTED RELEASE
+   910
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2015-10-28
+   
+   
+ * CLOSED DATE
+   2016-02-25
+   
+   
+ * LAST MODIFIED DATE
+   2016-02-25
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   RATL DEV FOR SY
+   
+   
+ * FIXED COMPONENT ID
+   5724T0700
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R911 PSY
+   UP

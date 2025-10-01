@@ -1,0 +1,19 @@
+Title: IBM MATRIX error messages "Source operand non-symmetric for EIGEN" and "Source operand non-symmetric for EVAL" - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ I'm using the MATRIX programming language in IBM SPSS Statistics. I've computed a square matrix that should be symmetric. However, when I try to call the EIGEN routine or use the EVAL function in COMPUTE, I get an error message that reads "Source operand non-symmetric . . ." What's happening here? 
+
+RESOLVING THE PROBLEM
+It's possible that a matrix that has been created via computations contains sufficient finite-precision error that it fails the symmetry check used in MATRIX. If you're certain that the matrix really should be symmetric, an easy way to work around this is to recompute the matrix as the average of itself and its transpose, which can be done in two equivalent ways: 
+
+COMPUTE X=(T(X)*X)/2. 
+
+or 
+
+COMPUTE X=SSCP(X)/2.
+
+RELATED INFORMATION
+ Need more help? Our Statistics forum is Live! [https://developer.ibm.com/answers/topics/statistics.html?smartspace=predictive-analytics]

@@ -1,0 +1,19 @@
+Title: IBM Cannot copy lookup database using database copy utility in Datacap Taskmaster Capture - United States
+
+Text:
+dbcopy; dbcopy.exe; lookupdb TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Attempting to move all databases for an application from Access to SQL, but there is no option to copy the lookup database using Datacap Taskmaster Capture 
+
+CAUSE
+Database copy utility is only designed to copy engine, admin and fingerprint databases
+
+RESOLVING THE PROBLEM
+The Database copy utility provided with Datacap is designed to only assist with moving of the Engine, Admin and Fingerprint databases. It is not designed to move any other type of database such as a lookup database. 
+
+The reason is that the structure of the engine, admin and fingerprint databases are well defined and known to Datacap. The names, types and sizes of all the tables and columns in those tables are well known, so we are able to copy that information. 
+
+However, a lookup database does not have a standard format. The structure of the lookup database is entirely dependent upon what the customer is looking up. Depending upon whether you are looking up vendor names or product names or zip codes, the structure of the database will be entirely different and unknown to Datacap. The lookup database is considered a customer defined database and, as such, our standard tools cannot be used to copy it, since there can be a large degree of variability between different lookup databases. 
+
+There are however tools within both Access and SQL Server that allow you to transfer data between the two types of databases. For instance, in Access, if you go to Database Tools - Move Data, you will see there is an option to move to SQL Server. Or, if you installed it, then with SQL Server there is an "Import and Export Data" program that can be used to import the contents of an Access database to SQL.

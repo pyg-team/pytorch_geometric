@@ -1,0 +1,138 @@
+Title: IBM IV90150: NON-ADMIN USERS ABLE TO NETWORK VIEWS - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  ITNM v4.2 - GA & FP1.
+   Even though 'itnmuser' does not have any ncp* roles (e.g.
+   ncp_networkview), the user can still create NetworkViews. As a
+   result, the ITNM Admin can not restrict users from creating
+   Network Views.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * Any customer wishing to create network view users who have   *
+   * read only access                                             *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * The removal of the Web GUI permissions netcool_ro and        *
+   * netcool_rw from the ITNM 4.2 code mean there is no way to    *
+   * set a user as read-only for network views.                   *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Upgrade to ITNM 4.2.004 (FP4)                                *
+   ****************************************************************
+   Regression in 4.2 when compared with 3.9 and 4.1.1
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  If a user is given ncp_networkview_readonly role they cannot
+   create or edit views, but may merely open and view them.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV90150
+   
+   
+ * REPORTED COMPONENT NAME
+   TIV NETWK MGR I
+   
+   
+ * REPORTED COMPONENT ID
+   5724S4500
+   
+   
+ * REPORTED RELEASE
+   420
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-10-19
+   
+   
+ * CLOSED DATE
+   2017-07-20
+   
+   
+ * LAST MODIFIED DATE
+   2017-07-20
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TIV NETWK MGR I
+   
+   
+ * FIXED COMPONENT ID
+   5724S4500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R420 PSN
+   UP
+   
+   
+ * R420 PSY
+   UP

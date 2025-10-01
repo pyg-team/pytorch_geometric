@@ -1,0 +1,125 @@
+Title: IBM Chapter 4 Placing in the Rack, Initial configuration of your  IBM WebSphere DataPower SOA Appliance Machine Type 9235,  4195, 7199 and 7998. - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Chapter 4 of Setting up your IBM WebSphere DataPower Appliance. 
+
+ANSWER
+This technote is one of a series of technotes arranged in chapter format to provide information on setting up your IBM WebSphere DataPower SOA Appliance Machine Type 9235.
+Here are the links to the chapters: 
+
+ 1. Introduction to your WebSphere DataPower SOA Appliance Machine Type 9235, 7199 and 7198 [http://www.ibm.com/support/docview.wss?uid=swg21468463] 
+ 2. Planning for installation of your IBM WebSphere DataPower SOA Appliance MT/9235, 7199 and 7198 [http://www.ibm.com/support/docview.wss?uid=swg21468883] 
+ 3. Planning worksheet for Setting up your IBM WebSphere DataPower Appliance MT/9235, 7199 and 7198 [http://www.ibm.com/support/docview.wss?uid=swg21468885] 
+ 4. Placing in the Rack, Initial configuration (with example) of your IBM WebSphere DataPower SOA Appliance M/T 9235, 7199 and 7198 
+ 5. More on the Initial Configuration (Startup command, Manual configuration, and upgrading firmware (first time upgrade)) for your IBM WebSphere DataPower SOA Appliance. [http://www.ibm.com/support/docview.wss?uid=swg21469023] 
+ 6. Reviewing resources available from IBM to help you use your IBM WebSphere DataPower SOA Appliance. [http://www.ibm.com/support/docview.wss?uid=swg21469157] 
+ 7. Operations Planning [http://www.ibm.com/support/docview.wss?uid=swg21469163]. 
+ 8. Working with IBM Support to solve a problem when using your IBM WebSphere DataPower SOA Appliance. [http://www.ibm.com/support/docview.wss?uid=swg21469164] 
+
+
+Chapter 4: Placing in the Rack, Initial configuration (with example) of your IBM WebSphere DataPower SOA Appliance Machine Type 9235, 4195, 7 199 and 7198.
+
+Place in the rack or cabinet Read the "WebSphere DataPower SOA Appliances: Installation Guide" provided on paper in the shipping carton. This document provides installation steps to install the appliance in the cabinet. Next follow the information in the Safety topic, Preface, and Chapters. 
+
+Make sure you keep track of the serial connection cables a you will need this serial cable for setup and debugging activities for as long as you use the appliances. Other serial cables might only allow you to set up a connection to the appliance, but not allow you to completely install or debug problems. 
+
+ 
+
+
+Initial configuration / Initializing the appliance 
+
+Follow all safety instructions as referenced in the previous sections to power on the appliance. 
+
+The first time that you boot the DataPower Appliance is different from any subsequent boot. You will be prompted to change the password, accept the licensing agreement, and to perform initial configuration steps. 
+
+If you exit the initial configuration before completing the appliance initial configuration, use the 'write mem' command to save your work. Then use the options in Defining the base configuration manually section of this document. 
+
+On subsequent boots from a serial connection, you will only be prompted to log in with a user id. If that user id has an expired password, you will be prompted to change the password. 
+
+To initialize the appliance, use the following procedure: 
+
+
+ 1.  What you will need to complete this task:  * A personal computer (PC) with either a:  * For a M/T 9235:  * serial port connection 
+            * docking station with a serial port connection 
+            * USB to serial port connection adapter
+           
+           
+         * For a M/T 4195  * Either a concurrent-KVM (cKVM) or a Serial over LAN (SOL) console connection
+           
+           
+         * For a M/T 7199 or 7198  * Use the USB serial console cable (USB to RJ45) and a DE-9 serial console cable (RJ45 to DB9) supplied with the appliance. 
+            * An emulator program such as Hyperterminal or Putty
+              
+           
+           
+        
+        
+     
+     
+ 2.  Connect the PC the to the appliance serial port and configure the emulator program.  1. Connect the PC:  * For the M/T 9235: Use the null-modem cable or a USB-to-serial converter cable or docking station to connect the PC with the terminal emulator program to the SERIAL connector on the appliance. 
+          * For the M/T 7199 or M/T 7198: Use the USB serial console cable (USB to RJ45) or a DE-9 serial console cable (RJ45 to DB9) supplied with the appliance. 
+            
+            The USB serial console cable will connect to USB port on your PC and then to the serial connection on the DE-9 serial console cable. The DE-9 serial console cable's 8-position modular plug at one end connects to the appliance. You may use your own USB-Serial converter cable if one is not available. 
+            
+            The drivers for the USB serial console cable provided with the appliance are on the IBM® WebSphere® DataPower SOA Appliances: Resource Kit CD in an archive file.
+            
+            The driver for Windows systems is in the driver/win/ directory. 
+            The drivers for Mac OS systems are in the driver/mac/ directory.
+            For driver installation instructions, see the readme file or Installation Guide in the archive file. 
+            
+            You can download the resource kit cd from Fix Central. Use this Fix download method for WebSphere DataPower SOA Appliances [http://www-01.ibm.com/support/docview.wss?uid=swg21376557] technote. On the Identify fixes pages, click on the "Text" radio button and enter "resource kit" in the field below the radio button 
+            
+            Notes:  * Do not use an Ethernet cable to plug the serial console port into an Ethernet network. 
+             * Do not use a telephone cable to plug the serial console port into a Telephone network (digital or analog). 
+            
+            
+         
+         
+      2. Configure the emulator program.  * Confirm the COM porting being used by the USB device driver. 
+            For example: To confirm the COM port for your USB to serial converter in Microsoft Windows OS. Open the "Device Manager" and expand the "Ports" section the converter should be listed with the assigned COM port. 
+          * The emulator program will need to be configured for standard 9600 8N1 and no flow control operation. 8N1 is a notation for a serial configuration in asynchronous mode, where there are eight (8) data bits, no (N) parity bit, and one (1) stop bit. 
+         
+         
+     
+     
+ 3.  If the appliance is not turned on, toggle the power switch to the ON position. The power switch is on the rear of the appliance. You should see the green power LED light illuminate on front of the appliance and hear the fans start up. - You should hear the fans change speed as the screen displays the following information. DPOS... Wait for a few seconds for the appliance to boot. If the appliance has the HSM module, model types 9235 44X, 45X, 4DX,or 4FX, then booting can take 10 minutes. 
+ 4.  Enter admin, at the Login: prompt. "admin" is the name of a local user account. The owner of this account can perform all tasks on the appliance. 
+ 5.  Enter admin, at the Password: prompt. "admin" is the default password for the admin account. You will be prompted to change this password. 
+ 6.  Read and accept the license agreement. 
+ 7.  Enter a new password at the "Please enter new password:" prompt. Remember do not copy and paste the password from a file and remember to keep track of the password as noted in the other sections of this document. 
+ 8.  Enter the new password again at the "Please re-enter new password to confirm:" prompt. 
+ 9.  Enter y at the "Do you want to run the Installation Wizard?" prompt to start the installation wizard. 
+ 10. After defining the base firmware configuration, the screen displays the Welcome to DataPower messages. Follow the prompts to complete the base configuration. 
+     
+ 11.  To resolve a critical action and to prevent you from being locked out of the appliance as noted in the previous sections, define another privileged id. You should use a name other than "adminTWO". 
+     
+     xi50(config)# user adminTWO 
+     New User configuration 
+     xi50(config user adminTWO)# reset 
+     xi50(config user adminTWO)# password 
+     Enter new password: ********* 
+     Re-enter new password: ********* 
+     xi50(config user adminTWO)# access-level privileged 
+     xi50(config user adminTWO)# exit 
+     
+ 12. Enter write mem to save your configuration, xi50(config)write mem 
+
+
+Verifying the configuration with the WebGUI The following procedure makes the following assumptions: 
+
+ * The IP address for the Ethernet interface is 10.10.10.35 
+ * The specialized HTTP server to support WebGUI access listens on port 9090 
+
+
+Confirm you have a supported browser using Supported web browsers for WebSphere DataPower SOA Appliances [http://www.ibm.com/support/docview.wss?uid=swg21300069], then access the WebGUI using the following procedure:  1. Open the Web browser. 
+ 2. Type //10.10.10.35:9090 in the URL Address field after https://
+    If the Web page displays successfully, the base firmware configuration is successful. 
+ 3. Log in to the appliance with the local admin account and password. 
+    Note: Once logged into the WebGUI accept the license agreement if presented.
+
+
+If the DataPower Control Panel displays, authentication of the local admin account is successful. 
+Proceed to Chapter 5: More on the Initial Configuration (Startup command, Manual configuration, and upgrading firmware (first time upgrade)) for your IBM WebSphere DataPower SOA Appliance M/T 9235. [http://www.ibm.com/support/docview.wss?uid=swg21469023]

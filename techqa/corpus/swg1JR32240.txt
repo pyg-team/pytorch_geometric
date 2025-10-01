@@ -1,0 +1,140 @@
+Title: IBM JR32240: Mapping an average size model takes 6 hours - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Customer is using 7.0 and I got the same results in IDA 7.5.1.
+   Scott says it is as designed. However, the techrep would like an
+    RFE submitted.
+   He stated:
+   I understand the concept of 'Work as designed'. I'm just wonderi
+   ng why
+   it was designed this way. What if somebody just wanted to map th
+   e  model
+   manually? Why would the tool start matching the attributes befor
+   e  asked
+   Wouldn't that be a waste of time if the user didn't care about t
+   he
+   mapping the tool found? And why would the tool do the matching e
+   very
+   time it opens up the mapping file that has been created?
+   
+   I assume we are not the only ones encountering this problem. And
+    in the
+   database world, I bet there are bigger models than ours. The map
+   ping
+   feature is supposed to be a big selling point for RDA/IDA. When
+   it  take
+   6+ hours to use the feature, it looks more like a defect to me.
+   But I
+   don't want to be hung up on the terminology. I think we should f
+   ix this
+   problem.
+   
+   It'd be great if you could submit an RFE for this. ??
+   
+   Attached is a project that you may use to reproduce.
+   The steps are:
+   Import project to IDA, select ldm or dbm file, right click and s
+   elect map as target (or source).
+   Select the other ldm or dbm file as a source (or target). And fi
+   nish.
+   IDA sits with an hour glass for a while.
+   The techrep said it did come back but after 6 hours.
+   
+   I tried to go to go to Window?Preferences?Model Validation? unch
+   eck the Object Name  under
+   the logical model settings.  Thinking that analyzing before mapp
+   ing may be the tim econsumig factor. But it didn't help.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Fixed in next release
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR32240
+   
+   
+ * REPORTED COMPONENT NAME
+   RATIONAL DATA A
+   
+   
+ * REPORTED COMPONENT ID
+   5724L6600
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-03-04
+   
+   
+ * CLOSED DATE
+   2011-06-21
+   
+   
+ * LAST MODIFIED DATE
+   2011-06-21
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R750 PSY
+   UP

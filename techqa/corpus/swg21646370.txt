@@ -1,0 +1,103 @@
+Title: IBM enabling topoviz tracing - United States
+
+Text:
+topoviz tracing logging TECHNOTE (FAQ)
+
+QUESTION
+ How do I enable additional logging/tracing on the topoviz component? 
+
+ANSWER
+There are several ways this can be accomplished. Only the second method requires a restart. The preferred method is the last one listed. 
+
+First, you can enable this via the GUI. Login to your TIP server and from the left side panel, choose: 
+
+ 
+
+Settings > WebSphere Administrative Console 
+
+ 
+
+then click on "Launch WebSphere administrative console". You will be presented with a Integrated Solutions Console(ISC) login screen. Log in using your tipadmin credentials. 
+
+ 
+
+In the ISC left hand panel, choose: 
+
+ 
+
+Troubleshooting > Logs and Trace 
+
+ 
+
+Then on the right hand panel choose the appropriate server(server1 by default): 
+
+ 
+
+server1 > Change Log Detail Levels 
+
+ 
+
+You are then presented with a panel with two tabs, "Configuration" and "Runtime". Click on the "Runtime" tab. There you want it to read the following: 
+
+
+*=info: topoviz.log.level=finest: topoviz.trace.level=finest
+
+Once the change is made, click "Apply", then "OK". At this point, you can log out of the console. To remove the setting, you will need to set the value back to it's original value("*=info" by default), or restart the TIP Server.
+
+This is the suggested way to increase the log and trace level as it does not persist a restart of the server, and can be as easily backed out as it was to enable. The following methods are more useful if the problem is with startup of one of the components.
+
+Second, you can use the wsadmin facility to increase the setting. 
+
+Login via telnet/ssh to you TIP server.
+
+cd $TIPHOME/bin
+
+./wsadmin.sh(bat) -user tipadmin -password <your tipadmin password> 
+
+You should seem something similar to this:
+
+[root@thebe bin]# ./wsadmin.sh -user tipadmin -password netcool
+WASX7209I: Connected to process "server1" on node TIPNode using SOAP connector; The type of process is: UnManagedProcess
+WASX7029I: For help, enter: "$Help help"
+wsadmin>
+
+At the wsadmin> prompt, enter the following:
+
+1) set server [$AdminConfig getid /Server:server1/]
+2) set ts [$AdminConfig list TraceService $server]
+3) $AdminConfig modify $ts {{startupTraceSpecification topoviz.trace.level=FINEST=enabled}}
+4) $AdminConfig modify $ts {{startupTraceSpecification topoviz.log.level=FINEST=enabled}}
+5) $AdminConfig save
+6) exit
+7) restart the TIP server
+
+To back-out these changes, rerun the commands changing FINEST to INFO.
+
+Last, you can use the topoviz.properties file in:
+
+$NCHOME/precision/profiles/TIPProfile/etc/tnm/topoviz.properties
+
+Look for this section:
+
+# Logging properties
+## Log file will contain messages CONFIG, INFO, WARNING, SEVERE, by default only INFO - SEVERE messages are logged
+## Use "OFF" to disable all logging and "ALL" to enable all logging levels
+topoviz.log.filename=ncp_topoviz.%g.log
+topoviz.log.level=INFO
+topoviz.log.maxsize=10
+topoviz.log.count=1
+
+and make it read:
+
+# Logging properties
+## Log file will contain messages CONFIG, INFO, WARNING, SEVERE, by default only INFO - SEVERE messages are logged
+## Use "OFF" to disable all logging and "ALL" to enable all logging levels
+topoviz.log.filename=ncp_topoviz.%g.log
+topoviz.log.level=FINEST
+topoviz.trace.level=FINEST
+topoviz.log.maxsize=10
+topoviz.log.count=1 
+
+ 
+
+The file is polled for changes and they should be active within one minute. To be sure, it's best to wait about 5 minutes before reproducing the problem. To back-out these changes, revert the file back to it's original state.

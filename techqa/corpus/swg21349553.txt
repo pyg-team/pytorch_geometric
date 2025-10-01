@@ -1,0 +1,41 @@
+Title: IBM Troubleshooting PowerPlay XML Objects (PPXO) - logging - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ It may be useful to generate a PowerPlay DataServer querylogfile when encountering errors such as no data being put into the cmm_location\data\cube\ppxo.cmv file during an attempted data load from a powercube datasource, or when you are unable to create a powercube datasource, or when you are having difficulties mapping powercube datasource cells to a metric. 
+
+RESOLVING THE PROBLEM
+The dynamic-link libraries (DLLs) loaded for the PPXO extraction process depend on the path and the task initiating the PPXO function.
+
+For example, when defining a powercube datasource, or when mapping powercube datasource cells to a metric, Cognos Web Services (CWS) initiates PPXO, and the logging can be controlled by the cws_location\bin\cwsN.ini file.
+
+When using Option 1 from the IBM Cognos Metrics Manager (CMM) Administration UI, the path is determined by the system path in force when the CMM Tomcat service was registered.
+
+When using option1.bat from the command line, the path in force for that command process determines where the DLLs will be found. For example, if cer3_location\bin is the first folder containing the PPXO DLLs in the system path when the Tomcat Service was registered, you have to modify the cer3_location\bin\cer3.ini file. As another example, if you also have cer2_location\bin or cws1.1_location\bin, and they contain appropriate PPXO DLLs, you can make the option1.bat file use the older versions provided in these folders by adjusting your path variable to have the desired folder appear first, before running the option1.bat file. The appropriate *.ini files for each folder would need to be modified as described below for logging to occur.
+
+Steps:In the appropriate *.ini file, you can add the following 3 lines in the PowerPlay DataServer section: [PowerPlay DataServer]
+
+querylogfile=<logfilename>.log
+
+LogDisplayCodes=3
+
+LogFunctionNames=1
+
+where <logfilename> can be any name of your choice.
+
+The output location can be controlled by specifying a drive and folder name in the querylogfile parameter. If not specified, the log file will be placed in the folder from which the process was initiated. For example, while defining a powercube datasource, CWS is being used to start the PPXO extraction, and the querylogfile specified in the cws_location\bin\cwsN.ini file will be created in the cws_location\bin folder. When using option1 from the UI or from the command line, the querylogfile name in the cer3_location\bin\cer3.ini file is created in the cmm_location\bin folder.
+
+Look for <logfilename> *.log files. The string _<N> is appended to the <logfilename> as additional PPXO queries are made. For example: ppxo.log, ppxo_1.log, etc?
+
+When making modifications to the path or to the *.ini files that affect the registered Tomcat services, you should stop and then restart the CMM and CWS services.
+
+This technique should be used while debugging only. Make sure to comment or remove these *.ini file entries afterwards. Logging degrades performance and the log files can grow large quickly.
+
+ 
+
+ 
+
+HISTORICAL NUMBER
+ 1001957

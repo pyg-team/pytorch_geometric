@@ -1,0 +1,122 @@
+Title: IBM db2haicu may fail at the end of HADR Primary setup - United States
+
+Text:
+db2haicu HADR; Error during vendor call invocation; ECF_SQLHA_CLUSTER_ERROR TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The db2haicu tool may fail at the end of cluster setup on HADR Primary host with generic error message: "There was an error with one of the issued cluster manager commands." The HADR pair is in peer state, but the cluster domain cannot be created successfully. 
+
+SYMPTOM
+In HADR setup, the db2haicu tool needs to be run on the Standby host first, then on the Primary host. The Standby host setup is successful, however it may fail on the Primary host with a generic error message: 
+
+Retrieving high availability configuration parameter for instance db2inst3 ...
+The cluster manager name configuration parameter (high availability configuration parameter) is not set. For more information, see the topic "cluster_mgr - Cluster manager name configuration parameter" in the DB2 Information Center. Do you want to set the high availability configuration parameter?
+The following are valid settings for the high availability configuration parameter:
+1.TSA
+2.Vendor
+Enter a value for the high availability configuration parameter: [1]
+1
+Setting a high availability configuration parameter for instance db2inst3 to TSA.
+Adding DB2 database partition 0 to the cluster ...
+There was an error with one of the issued cluster manager commands. Refer to db2diag.log and the DB2 Information Center for details.
+
+The db2diag.log further shows this error message:
+
+2010-08-04-13.45.17.792165+720 E258375A757 LEVEL: Error
+PID : 23901 TID : 2199089142032PROC : db2haicu
+INSTANCE: db2inst1 NODE : 000
+FUNCTION: DB2 Common, SQLHA APIs for DB2 HA Infrastructure, sqlhaAddResourceGroup, probe:300
+MESSAGE : ECF=0x90000557=-1879046825=ECF_SQLHA_CLUSTER_ERROR
+Error reported from Cluster
+DATA #1 : String, 35 bytes
+Error during vendor call invocation
+DATA #2 : unsigned integer, 4 bytes
+46
+DATA #3 : String, 32 bytes
+db2_db2inst1_host1.ibm.com_0-rg
+DATA #4 : unsigned integer, 4 bytes
+1
+DATA #5 : unsigned integer, 8 bytes
+1
+DATA #6 : signed integer, 4 bytes
+0
+DATA #7 : String, 0 bytes
+Object not dumped: Address: 0x00000000800D59FC Size: 0 Reason: Zero-length data 
+
+
+
+
+CAUSE
+The integrated HA solution relies on various sources for hostname. As a result, it requires the formatting of all user inputs and system settings to be consistent with one another. If there is a mismatch in hostnames from these sources, the db2haicu setup will fail at the end of the setup on Primary host. 
+
+
+
+ENVIRONMENT
+Integrated HA solution with HADR
+
+
+
+DIAGNOSING THE PROBLEM
+In the db2diag.log, look for this error message: 
+
+
+2010-08-04-13.45.17.792165+720 E258375A757 LEVEL: Error
+PID : 23901 TID : 2199089142032PROC : db2haicu
+INSTANCE: db2inst1 NODE : 000
+FUNCTION: DB2 Common, SQLHA APIs for DB2 HA Infrastructure, sqlhaAddResourceGroup, probe:300
+MESSAGE : ECF=0x90000557=-1879046825=ECF_SQLHA_CLUSTER_ERROR
+Error reported from Cluster
+DATA #1 : String, 35 bytes
+Error during vendor call invocation
+DATA #2 : unsigned integer, 4 bytes
+46
+DATA #3 : String, 32 bytes
+db2_db2inst1_host1.ibm.com_0-rg
+DATA #4 : unsigned integer, 4 bytes
+1
+DATA #5 : unsigned integer, 8 bytes
+1
+DATA #6 : signed integer, 4 bytes
+0
+DATA #7 : String, 0 bytes
+Object not dumped: Address: 0x00000000800D59FC Size: 0 Reason: Zero-length data 
+
+
+Data #3 field indicates that a fully qualified hostname is used to create the instance partition resource. 
+Verify that fully qualified hostname format is used throughout your inputs and all hostname sources. If the intention is to use the shortname format, then all hostname sources must be modified to match this format. 
+
+You may also see this error message:
+
+2010-08-04-15.58.58.826938-300 E239553A659 LEVEL: Error
+PID : 18284702 TID : 1 PROC : db2haicu
+INSTANCE: db2inst1 NODE : 000
+EDUID : 1
+FUNCTION: DB2 Common, SQLHA APIs for DB2 HA Infrastructure, sqlhaUICreateHADR, p
+robe:895
+RETCODE : ECF=0x9000056F=-1879046801=ECF_SQLHA_HADR_VALIDATION_FAILED
+The HADR DB failed validation before being added to the cluster
+MESSAGE : Please verify that HADR_REMOTE_INST and HADR_REMOTE_HOST are correct
+and in the exact format and case as the Standby instance name and
+hostname.
+DATA #1 : String, 6 bytes
+db2inst1
+DATA #2 : String, 6 bytes
+HOST1
+
+
+Here are the hostname sources to check:
+
+
+ * system hostname - issue "hostname" 
+ * system uname - issue "uname -a" 
+ * TSA node names - issue "lsrpnode" (this may use the user inputs obtained at the start of the db2haicu interactive prompt) 
+ * DB2 database parameters: HADR_LOCAL_HOST, HADR_REMOTE_HOST (note: if IP addresses are used, the db2haicu interactive mode will prompt user to enter the hostname string. In this case, you will not need to modify these parameters)
+
+
+
+
+RESOLVING THE PROBLEM
+If a mismatch in formatting is found among the hostname sources, modify the mismatched hostname source to the correct format. If the database parameters HADR_LOCAL_HOST and HADR_REMOTE_HOST are modified, you must deactivate and activate the database for the change to take effect. 
+
+
+Note: This hostname format matching is a requirement for the db2haicu tool to work correctly with TSA when setting up a clustered environment. It is not a requirement by TSA, so TSA resources created by other means (e.g. sampolicy) would not encounter this issue. It is also not a requirement by DB2 HADR; the HADR pair can work correctly with any hostname that can be resolved to the host.

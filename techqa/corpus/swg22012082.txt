@@ -1,0 +1,20 @@
+Title: IBM Is it possible to fallback to basic authentication after SPNEGO SSO authentication fails? - United States
+
+Text:
+Failover; basic auth TECHNOTE (FAQ)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ English 
+
+QUESTION
+ We have successfully implemented SSO for Content Navigator using SPNEGO on WebSphere v7. We have users that span across different domains so in the event of SSO failures, is it possible to fallback to basic authentication? 
+
+ANSWER
+Here are the steps to address the issue: 
+
+1) Logon Content Navigator WebSphere administrative console, and go to Application servers > server1 > Process definition 
+
+2) Click Java Virtual Machine, add the following parameter
+com.ibm.wsspi.security.web.failOverToBasicAuth = true 
+
+3) Restart Server and clear IE cache, try to recreate the issue to check if it is working as expected.

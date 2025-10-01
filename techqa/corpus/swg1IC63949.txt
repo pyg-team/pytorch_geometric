@@ -1,0 +1,226 @@
+Title: IBM IC63949: .NET THREAD-SAFE PROBLEM WHEN FETCHING DATA - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When selecting a blob column from a multi thread application you
+   may get the following exceptions:
+   
+   Exception: Invalid Handle
+      at IBM.Data.Informix.IfxConnection.HandleError(IntPtr
+   hHandle, SQL_HANDLE hType, RETCODE retcode)
+      at IBM.Data.Informix.IfxSmartLOB.get_internalPosition()
+      at IBM.Data.Informix.IfxSmartLOB.internalRead(Object buff)
+      at IBM.Data.Informix.IfxDataReader.internalGetBlobData(Int32
+   i)
+      at IBM.Data.Informix.IfxDataReader.internalGetBytes(Int32 i,
+   IfxType iType)
+      at IBM.Data.Informix.IfxDataReader.GetValue(Int32 column,
+   TypeMap typeMap)
+      at IBM.Data.Informix.IfxDataReader.GetValue(Int32 i)
+      at IBM.Data.Informix.IfxDataReader.get_Item(Int32 i)
+      at InformixTest2.Program.MyThread.ThreadProc()
+   Exception: Invalid Handle
+      at IBM.Data.Informix.IfxConnection.HandleError(IntPtr
+   hHandle, SQL_HANDLE hType, RETCODE retcode)
+      at IBM.Data.Informix.IfxSmartLOB.get_internalPosition()
+      at IBM.Data.Informix.IfxSmartLOB.internalRead(Object buff)
+      at IBM.Data.Informix.IfxDataReader.internalGetBlobData(Int32
+   i)
+      at IBM.Data.Informix.IfxDataReader.internalGetBytes(Int32 i,
+   IfxType iType)
+      at IBM.Data.Informix.IfxDataReader.GetValue(Int32 column,
+   TypeMap typeMap)
+      at IBM.Data.Informix.IfxDataReader.GetValue(Int32 i)
+      at IBM.Data.Informix.IfxDataReader.get_Item(Int32 i)
+      at InformixTest2.Program.MyThread.ThreadProc()
+   
+   ...
+   Exception: Invalid Handle
+      at IBM.Data.Informix.IfxConnection.HandleError(IntPtr
+   hHandle, SQL_HANDLE hType, RETCODE retcode)
+      at IBM.Data.Informix.IfxDataReader.get_FieldCount()
+      at IBM.Data.Informix.IfxDataReader.BuildMetaDataInfo()
+      at
+   IBM.Data.Informix.IfxDataReader.IfxRowSet.InitiateRowWiseBinding
+   ()
+      at
+   IBM.Data.Informix.IfxDataReader.IfxRowSet..ctor(IfxDataReader
+   dataReader)
+      at IBM.Data.Informix.IfxDataReader.FirstResult()
+      at
+   IBM.Data.Informix.IfxCommand.ExecuteReaderObject(CommandBehavior
+   behavior, String method)
+      at IBM.Data.Informix.IfxCommand.ExecuteReader(CommandBehavior
+   behavior)
+      at IBM.Data.Informix.IfxCommand.ExecuteReader()
+      at InformixTest2.Program.MyThread.ThreadProc()
+   Exception: Invalid Handle
+      at IBM.Data.Informix.IfxConnection.HandleError(IntPtr
+   hHandle, SQL_HANDLE hType, RETCODE retcode)
+      at IBM.Data.Informix.IfxSmartLOB.GetLoStatusInfo()
+      at IBM.Data.Informix.IfxSmartLOB.get_internalSize()
+      at IBM.Data.Informix.IfxDataReader.internalGetBlobData(Int32
+   i)
+      at IBM.Data.Informix.IfxDataReader.internalGetBytes(Int32 i,
+   IfxType iType)
+      at IBM.Data.Informix.IfxDataReader.GetValue(Int32 column,
+   TypeMap typeMap)
+      at IBM.Data.Informix.IfxDataReader.GetValue(Int32 i)
+      at IBM.Data.Informix.IfxDataReader.get_Item(Int32 i)
+      at InformixTest2.Program.MyThread.ThreadProc()
+   
+   Exception: SQL_INFX_ATTR_ROW_STATUS_PTR - no error information
+   available
+      at
+   IBM.Data.Informix.IfxDataReader.IfxRowSet.InitiateRowWiseBinding
+   ()
+      at
+   IBM.Data.Informix.IfxDataReader.IfxRowSet..ctor(IfxDataReader
+   dataReader)
+      at IBM.Data.Informix.IfxDataReader.FirstResult()
+      at
+   IBM.Data.Informix.IfxCommand.ExecuteReaderObject(CommandBehavior
+   behavior, String method)
+      at IBM.Data.Informix.IfxCommand.ExecuteReader(CommandBehavior
+   behavior)
+      at IBM.Data.Informix.IfxCommand.ExecuteReader()
+      at InformixTest2.Program.MyThread.ThreadProc()
+   
+   Exception: Invalid Handle
+      at IBM.Data.Informix.IfxConnection.HandleError(IntPtr
+   hHandle, SQL_HANDLE hType, RETCODE retcode)
+      at IBM.Data.Informix.IfxSmartLOB.get_internalSize()
+      at IBM.Data.Informix.IfxDataReader.internalGetBlobData(Int32
+   i)
+      at IBM.Data.Informix.IfxDataReader.internalGetBytes(Int32 i,
+   IfxType iType)
+      at IBM.Data.Informix.IfxDataReader.GetValue(Int32 column,
+   TypeMap typeMap)
+      at IBM.Data.Informix.IfxDataReader.GetValue(Int32 i)
+      at IBM.Data.Informix.IfxDataReader.get_Item(Int32 i)
+      at InformixTest2.Program.MyThread.ThreadProc()
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Having Connection Pooling on reduces the number of exceptions.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * Users using the CSDK 3.50 .NET provider and fetching         *
+   * blob/clob data in multiple threads                           *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * While fetching blob/clob data in multiple threads it is      *
+   * observed that the .NET provider sometimes throws an          *
+   * exception                                                    *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Upgrade to CSDK 3.50 xC6 and above.                          *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Problem first fixed in CSDK 3.50.xC6
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC63949
+   
+   
+ * REPORTED COMPONENT NAME
+   IBM CSDK
+   
+   
+ * REPORTED COMPONENT ID
+   5724C2381
+   
+   
+ * REPORTED RELEASE
+   350
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-10-22
+   
+   
+ * CLOSED DATE
+   2010-01-29
+   
+   
+ * LAST MODIFIED DATE
+   2010-01-29
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   IBM CSDK
+   
+   
+ * FIXED COMPONENT ID
+   5724C2381
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R350 PSY
+   UP

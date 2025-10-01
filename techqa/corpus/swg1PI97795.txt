@@ -1,0 +1,329 @@
+Title: IBM PI97795: MSGDSNU920I OBDRULN OBDRUDCO OBDRUNUM OBDRXCRE_OFFSET OBDRXTBN_OFFSET FOR HISTORY TABLE CREATE LIKE BASE TABLE - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  MSGDSNU920I OBDRULN OBDRUDCO OBDRUNUM OBDRXCRE_OFFSET
+   OBDRXTBN_OFFSET for history table create like base with
+   non-constant WITH DEFAULT column value (eg. SQLID, SESSION_USER,
+   etc)
+   
+   Scenario leading to problem:
+   1. CREATE base table
+   2. Add a column defined WITH DEFAULT SESSION_USER
+   3. CREATE history table using CREATE LIKE base table
+   4. DBD DIAGNOSE reports errors for OBDRULN OBDRUDCO OBDRUNUM
+   OBDRXCRE_OFFSET OBDRXTBN_OFFSET for history table.
+   
+   The inconsistency is resulted from CREATE TABLE LIKE processing,
+   when the base table contains a DEFAULTVALUE which is a
+   non-constant ( for example, SQLID, SESSION_USER). The LIKE table
+   column default value does not need to be inherited, however
+   SYSCOLUMNS.DEFAULTVALUE of Like table is populated hence
+   introducing the inconsistency.
+   
+   **PLEASE NOTE**
+   
+   REPAIR DBD REBUILD *SHALL NOT BE RUN* for these database since
+   the OBDREC is correct, but not the CATALOG entry.
+   
+   Below is an example of a query to get the list of tables and
+   columns where the columns? default value are incorrect. The
+   query is provided as a guideline only and may not be
+   comprehensive of all types of customer environments.
+   
+   SELECT    TAB.DBNAME
+           , COL.TBCREATOR     AS TBCREATOR
+           , COL.TBNAME        AS TBNAME
+           , TAB.DBID
+           , TAB.OBID
+           , TAB.CREATEDTS     AS TBCREATEDTS
+           , COL.CREATEDTS     AS COLCREATEDTS
+           , COL.NAME          AS COLNAME
+           , COL.COLTYPE
+           , COL.DEFAULT
+           , SUBSTR(COL.DEFAULTVALUE, 1, 20) AS DEFAULTVALUE
+   FROM      SYSIBM.SYSCOLUMNS  COL
+           , SYSIBM.SYSTABLES   TAB
+   WHERE     TAB.CREATOR   = COL.TBCREATOR
+     AND     TAB.NAME      = COL.TBNAME
+     AND     TAB.CREATEDTS = COL.CREATEDTS
+     AND     COL.DEFAULT IN ('S', 'U')
+     AND     LENGTH(COL.DEFAULTVALUE) <> 0
+   ORDER BY  COL.TBCREATOR, COL.TBNAME, COL.NAME
+   
+   Users use the statement
+     o ALTER TABLE ALTER COLUMN DROP DEFAULT
+   
+   then
+     o ALTER TABLE ALTER COLUMN SET DEFAULT SESSION_USER or
+     o ALTER TABLE ALTER COLUMN SET DEFAULT CURRENT SQLID
+   
+   to correct the value in SYSCOLUMNS.DEFAULTVALUE.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  n/a
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: Db2 11 and 12 for z/OS users of table        *
+   *                 created with CREATE TABLE LIKE statement.    *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: REPAIR DBD DIAGNOSE reports user-       *
+   *                      defined default value errors on tables  *
+   *                      created with the CREATE TABLE LIKE      *
+   *                      statement if the source table contains  *
+   *                      an added column whose user-defined      *
+   *                      default is SESSION_USER or SQLID.       *
+   ****************************************************************
+   * RECOMMENDATION: Apply corrective PTF when available          *
+   ****************************************************************
+   If a table is created with CREATE TABLE LIKE statement and the
+   source table has a column added with an ALTER TABLE ADD COLUMN
+   statement where the user-defined default value of that column
+   was specified as SESSION_USER or SQLID, the user-defined
+   default value of SESSION_USER or SQLID is incorrectly populated
+   into SYSCOLUMNS.DEFAULTVALUE for the new table.
+   
+   
+   REPAIR DBD DIAGNOSE reports inconsistencies at column's default
+   value in OBD, here are possible errors:
+   
+   DSNU920I DSNUEDRT - OBDS DIFFER AT OFFSET X'00000004' OBDRELTH
+   
+   DSNU920I DSNUEDRT - OBDS DIFFER AT OFFSET X'00000045' OBDREUDC
+   
+   DSNU920I DSNUEDRT - OBDS DIFFER AT OFFSET X'000000FC' OBDRXUDO
+   
+   DSNU920I DSNUEDRT - OBDS DIFFER AT OFFSET X'0000020A' OBDRULN
+   
+   DSNU920I DSNUEDRT - OBDS DIFFER AT OFFSET X'00000210' OBDRUDCO
+   
+   DSNU920I DSNUEDRT - OBDS DIFFER AT OFFSET X'00000212' OBDRUDTL
+   
+   DSNU920I DSNUEDRT - OBDS DIFFER AT OFFSET X'00000214' OBDRUNUM
+   
+   DSNU920I DSNUEDRT - OBDS DIFFER AT OFFSET X'000000E0'
+                       OBDRXCRE_OFFSET
+   
+   DSNU920I DSNUEDRT - OBDS DIFFER AT OFFSET X'000000E8'
+                       OBDRXTBN_OFFSET
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Db2 has been modified to properly handle the user-defined
+   default value of SESSION_USER or SQLID for the table created
+   with CREATE TABLE LIKE statement.
+   
+   Applying this APAR does not fix any existing incorrect values
+   in SYSCOLUMNS.DEFAULTVALUE for the table created via CREATE
+   TABLE LIKE.
+   
+   Below is an example of a query to get the list of tables and
+   columns where the columns' default value are incorrect. The
+   query is provided as a guideline only and may not be
+   comprehensive of all types of customer environments.
+   
+   SELECT    TAB.DBNAME
+           , COL.TBCREATOR     AS TBCREATOR
+           , COL.TBNAME        AS TBNAME
+           , TAB.DBID
+           , TAB.OBID
+           , TAB.CREATEDTS     AS TBCREATEDTS
+           , COL.CREATEDTS     AS COLCREATEDTS
+           , COL.NAME          AS COLNAME
+           , COL.COLTYPE
+           , COL.DEFAULT
+           , SUBSTR(COL.DEFAULTVALUE, 1, 20) AS DEFAULTVALUE
+   FROM      SYSIBM.SYSCOLUMNS  COL
+           , SYSIBM.SYSTABLES   TAB
+   WHERE     TAB.CREATOR   = COL.TBCREATOR
+     AND     TAB.NAME      = COL.TBNAME
+     AND     TAB.CREATEDTS = COL.CREATEDTS
+     AND     COL.DEFAULT IN ('S', 'U')
+     AND     LENGTH(COL.DEFAULTVALUE) <> 0
+   ORDER BY  COL.TBCREATOR, COL.TBNAME, COL.NAME
+   
+   Users use the statement
+     o ALTER TABLE ALTER COLUMN DROP DEFAULT
+   
+   then
+     o ALTER TABLE ALTER COLUMN SET DEFAULT SESSION_USER or
+     o ALTER TABLE ALTER COLUMN SET DEFAULT CURRENT SQLID
+   
+   to correct the value in SYSCOLUMNS.DEFAULTVALUE.
+   
+   Additional keywords:
+   SQLCREATE
+   SQLIKE
+   MSGDSNU920I
+   MSGDSNU914I
+   
+   ++HOLD COMMENT FOR RELEASE B10, TYPE ACT:
+   ***ACTION for PI97795 to fix incorrect SYSCOLUMN.DEFAULTVALUE
+   
+   A table created with CREATE TABLE LIKE statement may have
+   incorrect SYSCOLUMNS.DEFAULTVALUE if the source table
+   has an added column whose user-defined default value is
+   SESSION_USER or SQLID.
+   
+   Applying this APAR does not fix any existing incorrect values
+   in SYSCOLUMNS.DEFAULTVALUE for the table created via CREATE
+   TABLE LIKE.
+   
+   Below is an example of a query to get the list of tables and
+   columns where the columns' default value are incorrect. The
+   query is provided as a guideline only and may not be
+   comprehensive of all types of customer environments.
+   
+   SELECT    TAB.DBNAME
+           , COL.TBCREATOR     AS TBCREATOR
+           , COL.TBNAME        AS TBNAME
+           , TAB.DBID
+           , TAB.OBID
+           , TAB.CREATEDTS     AS TBCREATEDTS
+           , COL.CREATEDTS     AS COLCREATEDTS
+           , COL.NAME          AS COLNAME
+           , COL.COLTYPE
+           , COL.DEFAULT
+           , SUBSTR(COL.DEFAULTVALUE, 1, 20) AS DEFAULTVALUE
+   FROM      SYSIBM.SYSCOLUMNS  COL
+           , SYSIBM.SYSTABLES   TAB
+   WHERE     TAB.CREATOR   = COL.TBCREATOR
+     AND     TAB.NAME      = COL.TBNAME
+     AND     TAB.CREATEDTS = COL.CREATEDTS
+     AND     COL.DEFAULT IN ('S', 'U')
+     AND     LENGTH(COL.DEFAULTVALUE) <> 0
+   ORDER BY  COL.TBCREATOR, COL.TBNAME, COL.NAME
+   
+   Users use the statement
+     o ALTER TABLE ALTER COLUMN DROP DEFAULT
+   
+   then
+     o ALTER TABLE ALTER COLUMN SET DEFAULT SESSION_USER or
+     o ALTER TABLE ALTER COLUMN SET DEFAULT CURRENT SQLID
+   
+   to correct the value in SYSCOLUMNS.DEFAULTVALUE.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI97795
+   
+   
+ * REPORTED COMPONENT NAME
+   DB2 OS/390 & Z/
+   
+   
+ * REPORTED COMPONENT ID
+   5740XYR00
+   
+   
+ * REPORTED RELEASE
+   B10
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2018-05-10
+   
+   
+ * CLOSED DATE
+   2018-07-03
+   
+   
+ * LAST MODIFIED DATE
+   2018-08-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UI57011 UI57012
+   
+   
+
+MODULES/MACROS
+ *  DSNXICB1
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   DB2 OS/390 & Z/
+   
+   
+ * FIXED COMPONENT ID
+   5740XYR00
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * RB10 PSY UI57012 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI57012]
+   UP18/07/18 P F807
+   
+   
+ * RC10 PSY UI57011 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI57011]
+   UP18/07/18 P F807
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

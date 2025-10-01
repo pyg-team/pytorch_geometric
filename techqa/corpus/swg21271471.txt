@@ -1,0 +1,35 @@
+Title: IBM Items "stuck" in an automated workflow steps - United States
+
+Text:
+workflow stuck TECHNOTE (FAQ)
+
+QUESTION
+ Why do some items remain in an automated workflow step when they should have moved on to the next step? When you restart the entire WPC application or the WPC workflow engine, you observe that when WPC is restarted that items are "stuck" in the automated workflow step. An item is considered "stuck" when you see that the item is present in the automated workflow step when the item should have moved on to the next step and continue to process through the workflow. 
+
+CAUSE
+This situation occurs, when the workflow items are still processing in one of the workflow steps when you stop the WPC application. 
+
+ 
+It is possible for items to get in the automated steps and stay there for some time. If during that time the workflow engine or the entire WPC application is manually restarted or when WPC crashes; the workflow events for these items are set to "Processing". This results the items being "stuck" in those steps.
+
+
+ANSWER
+To move forward a stuck workflow step, the following options are available: 
+
+ 
+
+ * Move the items manually to the next step (provide instructions) 
+ * Run the ghost or bad item detect and clean up script (is this what it's really called? please use the exact name), Note: This is considered a less desirable option because the "ghost/bad item detect and clean up" script will undo the checkout and the previous work done in the collaboration area. (This is not good. Provide reasons to add them back. Please explain the reasons.). To get and run this script, contact the WPC support team and let them know which version of WPC you are using.
+
+
+To prevent this problem, perform the following steps: 
+Restart the workflow engine. When you restart the workflow engine be sure that all items have completed processing OR use stop_workflowengine.sh instead of the abort_workflowengine.sh script. 
+
+Note - abort_local.sh or abort_workflowengine.sh scripts abort the workflow without letting items complete their processing. 
+Note - stop_local.sh or stop_workflowengine.sh waits for in-progress workflow events to finish before stopping the workflow engine. You can use ghost item detect and clean-up script when the workflow engine stops because of power failure. 
+
+
+
+PRODUCT ALIAS/SYNONYM
+ WPC 
+WebSphere Product Center

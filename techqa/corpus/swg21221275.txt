@@ -1,0 +1,63 @@
+Title: IBM MustGather: WebSphere Intelligent Management creation and configuration of the on demand router (ODR) - United States
+
+Text:
+MustGatherDocument; v6xdrnotes TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ MustGather information for problems with the creation and configuration of the IBM® WebSphere® Intelligent Mangement on demand router (ODR). Gathering this information before calling IBM support helps familiarize you with the troubleshooting process and saves you time. 
+
+RESOLVING THE PROBLEM
+If you have already contacted support, continue to the component-specific MustGather information. Otherwise, click: MustGather: Read first for WebSphere Intelligent Management [http://www-01.ibm.com/support/docview.wss?rs=3023&uid=swg21625958] [http://www.ibm.com/support/docview.wss?rs=3023&uid=swg21224033].
+
+
+ODR specific MustGather information
+If a SRVE (for example: SeRVlet Engine) error is displayed in the browser, then it did not originate from the IBM WebSphere Application Server; that is, it is not from the ODR. If there is a blank screen or another non-SRVE error code/message, and the request works when going directly to an Application Server, enable the following trace in the ODR. Then send the minimum number of requests from your browser so that the error occurs again.
+
+Collect the following information: 
+
+ * Description of the problem 
+ * Steps to recreate 
+ * What is the expected behavior 
+ * What occurs that indicates that there is a problem 
+ * Enable the following trace on the deployment manager process 
+   
+   com.ibm.ws.odc.*=all: com.ibm.ws.wsgroup.*=all 
+   
+   
+ * Enable the following trace on the ODR process(es) 
+   
+   com.ibm.ws.odc.*=all:com.ibm.ws.wsgroup.*=all
+   :com.ibm.ws.proxy.*=all:com.ibm.ws.dwlm.*=all
+   :com.ibm.ws.xd.dwlm.client.*=all:com.ibm.ws.xd.comm.*=all
+   :com.ibm.ws.xd.work.*=all:com.ibm.ws.classify.*=all
+   :com.ibm.wsmm.*=all:com.ibm.ws.genericbnf.*=all
+   :com.ibm.ws.http.channel.*=all:com.ibm.ws.tcp.channel.*=all
+   :com.ibm.ws.dwlm.client.TargetDescriptorImpl=off. 
+   
+   
+ * Increase the log size to 100MB and historical logs to 10. This will prevent the logs from wrapping. 
+ * Stop the Deployment Manager and ODR process(es) 
+ * Clear out the Deployment Manager and ODR logs and ffdc directories 
+ * Start the deployment manager and ODR process(es) 
+ * If the problem is related to an invalid HTTP response, run the odrDebug.py script 
+   
+   The odrDebug.py script is added to help diagnose errors
+   returned by the ODR, particularly 404s and 503s.
+   For WebSphere Intelligent Management levels prior to V6.0.2.2,
+   apply PK60421.
+   
+   Usage: From the WebSphere_Install_Root\bin directory, execute:
+   
+   wsadmin.sh -lang jython -f odrDebug.py setHttpDebug my_node my_ODR Http_error true 2 
+   where my_node is the node name that needs to be debugged my_odr is the name of the ODR that needs to be debugged Http_error is the Http response that needs to be debugged (ie. 503) 
+
+
+ * Re-create the problem with the ODR. 
+ * Run the collector tool [http://www.ibm.com/support/knowledgecenter/SSEQTP_7.0.0/com.ibm.websphere.base.doc/info/aes/ae/ttrb_runct.html] on each install. When you run the collector tool, it creates a jar file with the information about that profile that it was run against, please send us the jar file that the collector tool created. If there is a message about the collector tool being deprecated you can ignore it, do not run ISADC tool, the collector tool should continue after a pause in the script. 
+ * Include the target.xml file from all the nodes where tracing has been enabled. The file is located in $WAS_HOME/AppServer/profiles/<profileName>/installedFilters/wlm/
+   <servername>/target.xml where WAS_HOME is the WebSphere install directory. 
+ * Send the collector tool output files. 
+ * Follow these instructions to send diagnostic information to IBM support [http://www.ibm.com/support/docview.wss?rs=180&uid=swg21153852].
+
+RELATED INFORMATION
+ Recording your screen to share with IBM Support [https://www.ibm.com/developerworks/community/blogs/IBMElectronicSupport/entry/recording_your_screen_to_share_with_support?lang=en]

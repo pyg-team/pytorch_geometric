@@ -1,0 +1,149 @@
+Title: IBM LI80039: WHILE CONFIGURING APIM LDAP REGISTRY (API SECURITY ONLY) THE ADMIN PASSWORD NOT BEING DECRYPTED IF GROUP AUTH SELECTED - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+ DIRECT LINKS TO FIXES
+microgateway-1.6.7 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+API+Connect&fixids=microgateway-1.6.7&source=SAR]
+apiconnect-collective-member-1.5.7 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+API+Connect&fixids=apiconnect-collective-member-1.5.7&source=SAR]
+apiconnect-collective-controller-linux-x86_64-2.9.2 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+API+Connect&fixids=apiconnect-collective-controller-linux-x86_64-2.9.2&source=SAR]
+apiconnect-collective-controller-linux-s390x-2.9.2 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+API+Connect&fixids=apiconnect-collective-controller-linux-s390x-2.9.2&source=SAR]
+apiconnect-collective-controller-linux-ppc64le-2.9.2 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+API+Connect&fixids=apiconnect-collective-controller-linux-ppc64le-2.9.2&source=SAR]
+apiconnect-collective-controller-darwin-2.9.2 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+API+Connect&fixids=apiconnect-collective-controller-darwin-2.9.2&source=SAR]
+apiconnect-2.7.209 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+API+Connect&fixids=apiconnect-2.7.209&source=SAR]
+APIConnect_Management_5.0.8.3_20180424-2045_a46370d60d8f_81f476a.vcrypt2 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+API+Connect&fixids=APIConnect_Management_5.0.8.3_20180424-2045_a46370d60d8f_81f476a.vcrypt2&source=SAR]
+APIConnect_Management_5.0.8.3_20180424-2045_a46370d60d8f_81f476a.ova [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+API+Connect&fixids=APIConnect_Management_5.0.8.3_20180424-2045_a46370d60d8f_81f476a.ova&source=SAR]
+5.0.8.3-APIConnect-Portal-Ubuntu16-20180426-2319.ova [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+API+Connect&fixids=5.0.8.3-APIConnect-Portal-Ubuntu16-20180426-2319.ova&source=SAR]
+5.0.8.3-APIConnect-Portal-Ubuntu16-20180426-2319 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+API+Connect&fixids=5.0.8.3-APIConnect-Portal-Ubuntu16-20180426-2319&source=SAR]
+5.0.8.3-APIConnect-Portal-Debian7-20180426-2319 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+API+Connect&fixids=5.0.8.3-APIConnect-Portal-Debian7-20180426-2319&source=SAR]
+APIConnect_Management_Essentials_5.0.8.3_20180424-2045_a46370d60d8f_81f476a.vcrypt2 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+API+Connect&fixids=APIConnect_Management_Essentials_5.0.8.3_20180424-2045_a46370d60d8f_81f476a.vcrypt2&source=SAR]
+APIConnect_Management_Essentials_5.0.8.3_20180424-2045_a46370d60d8f_81f476a.ova [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+API+Connect&fixids=APIConnect_Management_Essentials_5.0.8.3_20180424-2045_a46370d60d8f_81f476a.ova&source=SAR]
+5.0.8.3-APIConnect-Portal-Essentials-Ubuntu16-20180426-2319.ova [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+API+Connect&fixids=5.0.8.3-APIConnect-Portal-Essentials-Ubuntu16-20180426-2319.ova&source=SAR]
+5.0.8.3-APIConnect-Portal-Essentials-Ubuntu16-20180426-2319 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+API+Connect&fixids=5.0.8.3-APIConnect-Portal-Essentials-Ubuntu16-20180426-2319&source=SAR]
+5.0.8.3-APIConnect-Portal-Essentials-Debian7-20180426-2319 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+API+Connect&fixids=5.0.8.3-APIConnect-Portal-Essentials-Debian7-20180426-2319&source=SAR]
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  the admin-password not being decrypted when sent to external
+   endpoint. During searchDN, password is correctly decrypted
+   before hitting the LDAP server. However, during auth-group, the
+   password is selected without decrypting it.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  If user disable the "Use Authorization Group" it works fine.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  LDAP Authorization group was previously not fully functional.
+   Configured password would not be correctly processed and passed
+   onto ldap endpoint. In addition, user in multiple authorization
+   group would be erroneously marked as invalid.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fix for LDAP Authorization group was the proper processing of
+   the username and password during authorization group step along
+   with fixing the erroneously marked user in multiple groups. Fix
+   will be available all 508x branches going starting from 5083.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   LI80039
+   
+   
+ * REPORTED COMPONENT NAME
+   API CONNECT ENT
+   
+   
+ * REPORTED COMPONENT ID
+   5725Z2201
+   
+   
+ * REPORTED RELEASE
+   50X
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2018-03-19
+   
+   
+ * CLOSED DATE
+   2018-04-27
+   
+   
+ * LAST MODIFIED DATE
+   2018-04-27
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   API CONNECT ENT
+   
+   
+ * FIXED COMPONENT ID
+   5725Z2201
+   
+   
+
+APPLICABLE COMPONENT LEVELS

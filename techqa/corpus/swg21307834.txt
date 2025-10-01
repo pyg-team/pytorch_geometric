@@ -1,0 +1,26 @@
+Title: IBM Filtering an out of the box lookup in Maximo - United States
+
+Text:
+filter; lookup; TPAECUSTOMIZATION; TPAEDOMAIN; TPAEDBCONFIG TECHNOTE (FAQ)
+
+QUESTION
+ The purpose of this document is to provide information to filter an out of the box lookup in Maximo 
+
+ANSWER
+In Maximo there are some lookups that work out of the box.
+When associating a lookup to a field that did not have a lookup out of the box you need to create a Table Domain.
+You then need to associate that domain to the attribute for that field in Database Configuration. See the linked DCF for details on this process.
+These same steps can be used to filter an out of the box lookup.
+Part of the Table Domain is a List Where Clause. The List Where Clause allows you to set a where clause to filter the values a lookup will display and return.
+You can create a Table Domain and use the list where clause to filter the values of an out of the box lookup.
+Once your Table Domain is created you would need to associate the domain to the attribute having the out of the box lookup in Database Configuration.
+Once the Table Domain you created with a List Where Clause is associated the attribute with the out of the box lookup, the lookup values will be filtered by the Table Domain.
+
+RELATED INFORMATION
+ Setting Up Lookup Functionality in Maximo [http://www.ibm.com/support/docview.wss?uid=swg21261925]
+
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Systems and Asset Management Tivoli Asset Management for IT All Systems and Asset Management Maximo Asset Management Essentials All

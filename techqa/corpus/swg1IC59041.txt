@@ -1,0 +1,242 @@
+Title: IBM IC59041: How to perform a silent install or uninstall of the IBM WebSphere Eclipse platform as supplied with WebSphere MQ. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The MQ V6 information center does not provide sufficient
+   information on performing a silent install of the IBM WebSphere
+   Eclipse platform supplied with WebSphere MQ.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   All users who attempt a silent install/uninstall of IBM
+   WebSphere Eclipse platform supplied with WebSphere MQ using
+   msiexec.
+   
+   Platforms affected:
+   Windows
+   
+   ****************************************************************
+   PROBLEM SUMMARY:
+   Additional information needs to be added to the information
+   center to better document unattended (silent) install and
+   uninstall of IBM WebSphere Eclipse Platform with command line
+   options.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A new section titled "Unattended (silent) install and uninstall
+   of IBM WebSphere Eclipse Platform supplied with WebSphere MQ"
+   needs to be added to the WMQ V6 information center under "Quick
+   beginnings for windows-->Installing the WebSphere MQ
+   server-->Preparing for server installation-->Prerequisite server
+   software" with the following text:
+   
+   About this task
+   The WebSphere Eclipse Platform can be installed either from the
+   WebSphere MQ installation launchpad or unattended (silently). To
+   install from the WebSphere MQ installation launchpad,
+   see: Installing and uninstalling IBM WebSphere Eclipse Platform.
+   
+   WebSphere Eclipse Platform is installed using the Microsoft
+   Installer (MSI). You can invoke MSI directly, without using the
+   WebSphere MQ Installation Launchpad. This means that you can
+   install WebSphere Eclipse Platform on a machine without
+   interaction. This process is called unattended (or silent)
+   installation, and is particularly useful for installing
+   WebSphere Eclipse Platform over a network on a remote machine,
+   because you can install from a shared drive on a LAN server.
+   
+   The machine on which you want to install must be able to share
+   the WebSphere MQ Server CD, or a copy of the files on it, and
+   you must be able to execute a command on that machine.
+   
+   If you are running WebSphere MQ on Windows Vista or Windows
+   Server 2008 with User Account Control (UAC) enabled, you must
+   invoke the silent installation from an elevated command prompt.
+   Elevate a command prompt by using a right-click to start the
+   command prompt and choose Run as administrator. If you try to
+   silently install from a non-elevated command prompt, the install
+   fails with an error of AMQ4353 in the install log.
+   
+   To perform a silent install of IBM WebSphere Eclipse Platform
+   supplied with WebSphere MQ without using the launchpad, you need
+   to run msiexec with command line parameters. see: Using command
+   line parameters with msiexec
+   
+   An example of a possible msiexec command for the silent
+   installation of the WebSphere Eclipse Platform is:
+   msiexec.exe /qn /i "D:\Prereqs\IES\MSI\IBM WebSphere Eclipse
+   Platform V3.0.msi" ADDLOCAL="Base" AGREETOLICENSE="yes" /l*v
+   c:\log.out
+   
+   To install the WebSphere Eclipse Platform to a non-default
+   directory, use the following parameter:
+   TARGETDIR="<dir>"
+   where <dir> is the name of the non-default directory where you
+   need to install the WebSphere Eclipse Platform.
+   
+   For further information on using the msiexec command for
+   unattended installation, please see: Installing using msiexec
+   
+   WebSphere Eclipse Platform can be uninstalled using Add/Remove
+   Programs or Programs and Features.
+   
+   An example of a possible msiexec command for the silent
+   uninstallation of the WebSphere Eclipse Platform Version 3.0 is:
+   
+   msiexec /x "D:\Prereqs\IES\MSI\IBM WebSphere Eclipse Platform
+   V3.0.msi" /qn /l*v c:\Uninstall_log.out
+   
+   where D:\Prereqs\IES\MSI\IBM WebSphere Eclipse Platform V3.0.msi
+   is the name of the .msi file originally used to install the
+   WebSphere Eclipse Platform Version 3.0.
+   
+   The msiexec command line install options that can be used with
+   eclipse install are as follows:
+   
+   /i "path\MSI\IBM WebSphere Eclipse Platform V3.0.msi"
+   Install the product using the .msi specified.
+   
+   /l*v c:\install.log
+   Produce a log file called install.log, containing all
+   information in verbose format.
+   
+   /m mif_file
+   Generate a Microsoft System Management Server (SMS) status
+   .mif file called mif_file.
+   
+   TRANSFORMS="1033.mst"
+   Specifies that the installation is in U.S. English. For
+   further information about installing in different national
+   languages, see Using transforms with Msiexec.
+   
+   /q determines the level of user interface displayed (for a more
+   detailed list of user interface levels, refer Using command line
+   parameters with Msiexec)
+   
+   /qn Performs a silent install/uninstall
+   
+   /x "path\MSI\IBM WebSphere Eclipse Platform V3.0.msi"
+       Uninstall the product using the .msi specified.
+   
+   Additional paramters that can be used are as follows:
+   ADDLOCAL="Base" (To Install the specified feature. "Base" is the
+   only option that is allowed with the installaton of WebSphere
+   Eclipse Platform)
+   
+   AGREETOLICENSE="yes" (To accept the terms of the license)
+   
+   TARGETDIR="<directory>" (To install the WebSphere Eclipse
+   Platform to a non-default directory). Please be aware that at
+   v6 the TARGETDIR does not function - refer to APAR IC47296 [http://www-01.ibm.com/support/docview.wss?uid=swg1IC47296].
+   
+   For a detailed description of the above mentioned parameters,
+   refer Using command line parameters with Msiexec.
+   
+   Please note, The SAVEINI, USEINI and ONLYINI options have no
+   effect on the eclipse install and they are valid only for MQ
+   server or client installs.
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+   The latest available maintenance can be obtained from
+   'WebSphere MQ Recommended Fixes'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037]
+   
+   If the maintenance level is not yet available, information on
+   its planned availability can be found in 'WebSphere MQ
+   Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC59041
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ WINDOWS V6
+   
+   
+ * REPORTED COMPONENT ID
+   5724H7200
+   
+   
+ * REPORTED RELEASE
+   600
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-11-27
+   
+   
+ * CLOSED DATE
+   2009-01-12
+   
+   
+ * LAST MODIFIED DATE
+   2009-06-23
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

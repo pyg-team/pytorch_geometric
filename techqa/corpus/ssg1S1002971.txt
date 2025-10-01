@@ -1,0 +1,83 @@
+Title: IBM Offline or Degraded Disks May Result in Loss of I/O Access During Code Upgrade - United States
+
+Text:
+ FLASH (ALERT)
+
+ABSTRACT
+ The following conditions may result in a loss of I/O access during an SVC code upgrade:
+
+Offline or degraded vdisks may prevent cache failover/failback during a code upgrade. Note: stopping an incomplete FlashCopy mapping will cause the target vdisk to be taken offline. 
+
+Degraded mdisks may not be accessible by all nodes, so may be taken offline while an SVC node restarts as part of the code upgrade procedure.
+
+The 'svcupgradetest' utility can be used to check for these conditions before performing a software upgrade. 
+
+CONTENT
+ 
+
+ 
+
+Offline VDisks or MDisks 
+
+Offline vdisks may result in write data being held in the SVC cache because it cannot be destaged to the backend storage. This is referred to as pinned data. 
+
+Note that offline mdisks may result in offline vdisks. It is recommended to check the mdisk states before checking vdisk states. 
+
+ 
+
+If there is any pinned data in the SVC cache when a code upgrade is started, the following will occur: 
+
+ * The first node in the IO group will restart, causing IO to failover to the second node in the IO group 
+ * The pinned data held on the second node will prevent IO from resuming on the first node 
+ * When the second node in the IO group restarts, the first node in the IO group will not be able to service IO. This will result in a temporary loss of access until the second node has rejoined the cluster.
+
+
+An offline vdisk can be checked for pinned data by looking at the detailed output of svcinfo lsvdisk <vdisk name/id>. If the 'fast_write_state' field shows "not_empty" then this offline vdisk has pinned data in the SVC cache. This condition is also logged in the cluster error log with an informational event 
+
+ * 
+ * 
+
+
+FlashCopy 
+
+Prior to SVC V4.2.0 when an in-progress FlashCopy mapping is manually stopped before it is complete, the data on the target virtual disk will not be useable. Whilst the FlashCopy mapping is in this state the target vdisk is held offline. Any data which had been written to the target vdisk and not destaged before the FlashCopy was stopped will be pinned in the cache. 
+
+ 
+
+In order to unpin the data from cache, the FlashCopy mapping must be prepared. Alternatively, the FlashCopy mapping could be deleted. 
+
+ 
+
+SVC V4.2.0 and later introduces a change to this behaviour such that all cache data is discarded when an in-progress FlashCopy mapping is stopped. 
+
+ 
+
+Space-Efficient Vdisks 
+
+SVC V4.3.0 introduced the capability for space-efficient vdisks. If a space-efficient vdisk goes offline due to insufficient real capacity then data may be pinned in the SVC cache. This data can be unpinned by deleting or expanding the real capacity of the space-efficient vdisk. 
+
+Note: It is important to check that space-efficient vdisks have sufficient free capacity prior to starting a software upgrade as the above actions cannot be performed while an upgrade is in progress. 
+
+ 
+
+ 
+
+Degraded Vdisks or MDisks 
+
+A degraded vdisk or mdisk can be caused by a loss of redundancy in the SVC cluster or it's connections to the underlying storage. 
+
+The node restarts which occur as part of the SVC code upgrade may temporarily remove the only node capable of servicing IO for the degraded component. This will cause a loss of access to any affected vdisks whilst the node restarts. 
+
+ 
+
+Summary 
+
+It is important to check for and resolve any of the above conditions prior to starting an upgrade of an SVC cluster. 
+
+
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Storage Virtualization SAN Volume Controller Not Applicable Platform Independent 4.3, 5.1, 6.1, 6.2, 6.3, 6.4, 7.1, 7.2, 7.3, 7.4, 7.5, 7.6, 7.7, 7.8 Disk Storage Systems IBM Storwize V7000 (2076) Platform Independent 6.1, 6.2, 6.3, 6.4, 7.1, 7.2, 7.3, 7.4, 7.5, 7.6, 7.7, 7.8 Disk Storage Systems IBM Storwize V5000 Platform Independent 7.1, 7.2, 7.3, 7.4, 7.5, 7.6, 7.7, 7.8 Disk Storage Systems IBM Storwize V3700 (2072) Platform Independent 6.4, 7.1, 7.2, 7.3, 7.4, 7.5, 7.6, 7.7, 7.8 Disk Storage Systems IBM Storwize V3500 (2071) Platform Independent 6.4, 7.1, 7.2, 7.3, 7.4, 7.5, 7.6, 7.7, 7.8

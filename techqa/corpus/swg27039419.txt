@@ -1,0 +1,42 @@
+Title: IBM Known issue: Additional steps are required to enable case management capabilities if you set up your FileNet P8 environment by using IBM Content Foundation - United States
+
+Text:
+ RELEASE NOTES
+
+ABSTRACT
+ If you installed your IBM FileNet P8 environment by using IBM Content Foundation, and you now want to use IBM Case Manager, you must follow this procedure to add case management capabilities to your FileNet P8 environment. 
+
+CONTENT
+ 
+
+If you installed your IBM FileNet P8 environment by using IBM Content Foundation, you do not need to reinstall the Content Platform Engine (CPE) server software. The CPE server software that is provided with IBM Content Foundation is identical to the CPE server software that is provided with FileNet P8 Content Manager.
+
+However, IBM Content Navigator V2.0.1, which is provided with IBM Case Foundation, is not supported by IBM Case Manager V5.2. IBM Case Manager V5.2 requires IBM Content Navigator V2.0.2. The information in this technote assumes a development environment with IBM Workplace XT configured in the same application server as IBM Content Navigator and IBM Case Manager.
+
+Assuming that you have the requisite software licenses, you can follow this procedure to add IBM Case Manager capabilities to your FileNet P8 environment. For the minimum supported release levels of components, see the IBM Case Manager V5.2.0 detailed system requirements [http://www.ibm.com/support/docview.wss?uid=swg27038470].
+
+
+ 1.  
+ 2.  Download the following software:  1. From Fix Central, download the Workplace XT fix pack (all Workplace XT fix packs are full installation programs). Note that Workplace XT is not required for the IBM Case Manager production environment.
+      2. From Fix Central, download the FileNet P8 Content Manager fix pack version that is recommended for IBM Case Manager 5.2 and apply it to the currently installed CPE software.
+      3. From Passport Advantage, download IBM Content Navigator 2.0.2. For instructions, see Download IBM Content Navigator Version 2.0.2 [http://www.ibm.com/support/docview.wss?uid=swg24034327].
+     
+     
+     
+ 3.  From Passport Advantage, download any of the IBM Case Foundation components that you want to use for case management, such as eForms or Cognos RTM, and the IBM Case Manager components.
+ 4.  
+ 5.  Install Workplace XT by using the package that you downloaded in step 1a.
+ 6.  
+ 7.  Install IBM Content Navigator 2.0.2 by using the package that you downloaded in step 1c. Be sure to complete all the applicable tasks in the configuration tool, including "Update the FileNet P8 Client Connector Files".
+ 8.  
+ 9.  Validate that IBM Content Navigator works correctly against the Content Platform Engine server that was installed by the IBM Content Foundation installation program.
+ 10. 
+ 11. Continue with the standard IBM Case Manager installation steps. Be sure to complete the IBM Case Manager tasks "Update the Content Platform Engine Client Connector files" and rest of the tasks in order, including "Create Case Manager Application" and "Deploy Workplace XT". These tasks will synchronize the Client connector files with Content Platform Engine.
+     
+     
+ 12. Validate that Workplace XT and IBM Case Manager work correctly against the Content Platform Engine server that was installed by the IBM Content Foundation installation program.
+ 13. 
+
+RELATED INFORMATION
+ Fix Central [http://www.ibm.com/support/fixcentral/]
+Download IBM Case Manager V5.2 [http://www.ibm.com/support/docview.wss?uid=swg24035075]

@@ -1,0 +1,51 @@
+Title: IBM Unable to log on or no logon page after performing new install of FileNet Workplace XT. - United States
+
+Text:
+Workplace XT no logon page TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The behavior may be different depending on the browser being used. Users will see a blank page, a logon page or a generic error box that says, A system error has occurred, when accessing the Workplace XT URL. 
+
+When using Firefox, users may see the XT logon page. When attempting to log on, users will see a dialog box that says, A system error has occurred.
+
+When using Internet Explorer, users will see a blank browser page or a dialog box that says, A system error has occurred.
+
+In both cases, users are not able to log on to Workplace XT. 
+
+SYMPTOM
+Error message: 
+
+[YY/3/14 11:39:22:924 EDT] 00000090 ServletWrappe E com.ibm.ws.webcontainer.servlet.ServletWrapper service SRVE0014E: Uncaught service() exception root cause /WcmDefault.jsp: com.ibm.websphere.servlet.error.ServletErrorReport: Credentials Exception at org.apache.jasper.runtime.PageContextImpl.handlePageException(PageContextImpl.java:695)
+at com.ibm._jsp._WcmDefault._jspService(_WcmDefault.java:118)
+at com.ibm.ws.jsp.runtime.HttpJspBase.service(HttpJspBase.java:99)
+at javax.servlet.http.HttpServlet.service(HttpServlet.java:668) at com.ibm.ws.webcontainer.servlet.ServletWrapper.service(ServletWrapper.java:1230) at com.ibm.ws.webcontainer.servlet.ServletWrapper.handleRequest(ServletWrapper.java:779) at com.ibm.ws.webcontainer.servlet.ServletWrapper.handleRequest(ServletWrapper.java:478) at com.ibm.ws.webcontainer.servlet.ServletWrapperImpl.handleRequest(ServletWrapperImpl.java:178) at com.ibm.wsspi.webcontainer.servlet.GenericServletWrapper.handleRequest(GenericServletWrapper.java:122) at com.ibm.ws.jsp.webcontainerext.AbstractJSPExtensionServletWrapper.handleRequest(AbstractJSPExtensionServletWrapper.java:219) at com.ibm.ws.webcontainer.filter.WebAppFilterChain.invokeTarget(WebAppFilterChain.java:136)
+.
+.
+Caused by: Credentials Exception at com.filenet.wcm.toolkit.server.base.WcmController.checkLogin(WcmController.java:2896) at com.filenet.wcm.toolkit.server.base.WcmController.performLoginTests(WcmController.java:3380) at com.filenet.wcm.toolkit.server.base.WcmController.initializeModules(WcmController.java:3612) at com.filenet.wcm.toolkit.server.base.WcmController.initializeModules(WcmController.java:3507) at com.filenet.wcm.toolkit.server.base.WcmController.handleEvent(WcmController.java:3218) at com.filenet.wcm.apps.server.controller.WcmWorkplaceController.handleEvent(WcmWorkplaceController.java:569) at com.filenet.wcm.toolkit.server.base.WcmController.handleEvent(WcmController.java:3150) at com.ibm._jsp._WcmDefault._jspService(_WcmDefault.java:101)
+... 54 more
+
+
+CAUSE
+Application security not enabled in WebSphere.
+
+
+RESOLVING THE PROBLEM
+Look in the WebSphere systemout.log for the application server instance where Workplace XT is deployed. After seeing the "A system error has occurred" dialog, look for activity similar to the exception above in the systemout.log. 
+
+ 
+
+If exceptions like the one above are being logged in the Workplace XT systemout.log, perform the following steps:
+
+
+ 
+
+ 1. In the WebSphere console hosting the Workplace XT application, navigate to Security
+    
+    
+ 2. Global security and confirm the "Enable application security" check box is checked.
+    
+    
+ 3. If it is not checked, check the box, apply the change and then save the change to the WebSphere master configuration. 
+    
+    
+ 4. Since this is a global security setting, the WebSphere application server should be restarted.

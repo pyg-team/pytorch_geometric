@@ -1,0 +1,77 @@
+Title: IBM Debugging tips for out of memory errors while using WebSphere Adapter for Flat File - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This technote outlines the settings to avoid out of memory errors (OutOfMemoryError) while processing large files using WebSphere Adapter for Flat File. 
+
+SYMPTOM
+OutOfMemoryErrors can be observed in the trace.log file. 
+
+
+CAUSE
+OutOfMemoryErrors can occur due to some settings during adapter configuration and lack of available environmental resources.
+
+DIAGNOSING THE PROBLEM
+OutOfMemoryErrors are displayed in the trace.log file: 
+
+ Caused by: java.lang.OutOfMemoryError: ZIP004:OutOfMemoryError, MEM_ERROR in inflateInit2
+at java.util.zip.Inflater.init(Native Method)
+at java.util.zip.Inflater.<init>(Inflater.java:105)
+at java.util.zip.ZipFile.getInflater(ZipFile.java:416)
+at java.util.zip.ZipFile.getInputStream(ZipFile.java:359)
+at java.util.zip.ZipFile.getInputStream(ZipFile.java:324)
+at org.eclipse.osgi.baseadaptor.bundlefile.ZipBundleEntry.
+getInputStream
+(ZipBundleEntry.java:51)
+at org.eclipse.osgi.framework.internal.core.BundleURLConnection.connect
+(BundleURLConnection.java:53)
+at org.eclipse.osgi.framework.internal.core.BundleURLConnection.
+getInputStream
+(BundleURLConnection.java:99)
+at java.net.URL.openStream(URL.java:1042)
+at java.lang.ClassLoader.getResourceAsStream
+(ClassLoader.java:482)
+at com.ibm.ws.classloader.CompoundClassLoader.
+getResourceAsStream
+(CompoundClassLoader.java:913)
+at com.ibm.ws.classloader.CompoundClassLoader.
+getResourceAsStream
+(CompoundClassLoader.java:913)
+at java.util.ResourceBundle$1.run(ResourceBundle.java:1101)
+
+
+RESOLVING THE PROBLEM
+If similar errors are encountered as shown in the above trace.log, the issue is most 
+
+ likely caused by the lack of resources in the system. 
+
+Change system's configuration to include the following:
+
+a.)Configure poll period and poll quantity accordingly: 
+Configure these settings to be processed at a level that matches the 
+peak throughput of your overall solution 
+
+Example: 
+
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * Enterprise Applications > CR100800App > Manage Modules > CWYFF_FlatFile.rar > CR100800App.IBM WebSphere Adapter for Flat Files > J2C activationspecifications > CR100800.FlatFileExport_AS > Custom properties
+
+
+b.) For larger objects 
+A good rule of thumb is to use a lower poll quantity and longer poll period 
+
+c.) J ava™ heap size 
+Java heap size should be three times that of the object's size. However, if the heap size is too large, it could result in paging issues, thus reducing performance. 
+
+If the problem still persists, even after using the settings described above, collect the Java dumps and send them to the support team for further analysis. 
+
+Java heap size can be modified from the administrative console on the WebSphere Process Server from the path as below: 
+Application servers > server1 > Process definition > Java Virtual Machine

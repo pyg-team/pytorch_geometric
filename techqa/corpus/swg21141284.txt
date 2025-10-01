@@ -1,0 +1,116 @@
+Title: IBM MustGather: Migration problems - United States
+
+Text:
+MustGatherDocument; mustgather; mustgather; mustgather; migrate; migration; migrating; must gather; mustgather; wasemp TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ MustGather for problems with the IBM® WebSphere® Application Server Migration component. Gathering this information before calling IBM support helps familiarize you with the troubleshooting process and saves you time. 
+
+RESOLVING THE PROBLEM
+ 
+
+TAB NAVIGATION
+ * Learn more [http://www.ibm.com/support/docview.wss?uid=swg22006221]
+ * Troubleshoot [http://www.ibm.com/support/docview.wss?uid=swg22006216]
+ * Collect data
+
+
+If you already contacted support, continue to the component-specific MustGather information. Otherwise, click MustGather: Read first for all WebSphere Application Server products [http://www.ibm.com/support/docview.wss?uid=swg21145599]. 
+
+
+
+Migration specific MustGather information 
+The WebSphere Application Server migration process spans components of WebSphere and includes several unique tools. When performing problem determination on migration tools, gather the following information. 
+ * Background:  * How-to questions represent the majority of migration problems. The Knowledge Collection for Migration Planning [http://www-01.ibm.com/support/docview.wss?uid=swg27008724] has many articles and links to relevant Redbooks. 
+    * In some cases, enterprise applications must be modified in order to support or exploit new levels of industry standard specifications delivered with new versions of WebSphere Application Server. The WASPreUpgrade, WASPostUpgrade, and Migration wizard utilities deploy existing applications as-is, and do not make changes to application code. If you do need assistance with making changes to your enterprise applications in order to exploit the new version of WebSphere Application Server, please review the separate Application Migration Tool [http://www.ibm.com/developerworks/websphere/downloads/migtoolkit/vtov.html].
+      
+    * The WebSphere Application Server Information Center has details about about the Specification Levels [http://www14.software.ibm.com/webapp/wsbroker/redirect?version=phil&product=was-nd-dist&topic=rovr_specs] available in each version of the product.
+      
+   
+   
+
+ * When your migration utility experiences a failure, follow these steps:
+    1. For AIX, HP-UX, Linux, and Solaris systems:
+       
+       Verify your ulimit setting. From a command shell, run the command "ulimit -n". Provide us with the output of this command.
+       Note: A "ulimit -n" or "nofiles" setting of 1024 is too low. We recommend a value of at least 8192 or higher for migration. Complex topology migrations may require a higher value.
+       
+    2. Please describe the migration scenario, as well as information about the failure. For example, this kind of information is helpful:  * What version is the product being migrated from, and what version is it being migrated to? 
+        * What migration tool was being used at the time of the failure? (i.e., WASPreupgrade, WASPostUpgrade, or the migration wizard) 
+        * Are you migrating a deployment manager and federated nodes, or a standalone application server? 
+        * Is the migration taking place on a single host, or is the configuration being migrated to a new host? If it is a new host, what is the operating system of the old and new host? 
+        * Is WebSphere security enabled on the deployment manager or any nodes? 
+        * Are there any other "stack" products involved which are installed on top of WebSphere Application Server, such as Portal or Maximo? 
+        * Is this a production system?
+          
+       
+       
+    3. Enable migration tracing:  * When using the WASPreUpgrade and WASPostUpgrade commands, add the -traceString parameter to the command line syntax as shown in the following Windows example:
+          
+          WASPostUpgrade.bat "C:\WAS_Backup" -traceString "*=all=enabled" -traceFile logfileName
+          
+          v6.0 and v6.1 - If a directory path for the trace file output is not specified the trace file will be placed in the profile_root
+          v7.0, 8.x, 9.0 - all migration log files are placed in the backup_home/logs directory
+          
+       
+       
+    4. Provide complete contents of backup directories used for migration. 
+    5. Provide complete logs directory from new versions Profile_rootor Backup_home/logs
+       
+    6. Provide the following directories:  * From the system being migrated:
+          
+          Profile_root/config
+          Profile_root/properties 
+          [/support/docview.wss?uid=swg21141284&amp;aid=1] 
+        * From the migrated system:
+          
+          Profile_root/config
+          Profile_root/properties 
+          [/support/docview.wss?uid=swg21141284&amp;aid=2] 
+        * If migrating a Network Deployment environment, provide the following directories from both the Deployment Manager and the Application Server from each WebSphere version:
+          
+          Profile_root/config
+          Profile_root/properties 
+          [/support/docview.wss?uid=swg21141284&amp;aid=3]
+          PROFILE_ROOT is root directory for profile. 
+       
+       
+    7. Provide a complete explanation of migration environment, such as:  * What migration step was being performed (WASPreupgrade or WASPostUpgrade)? 
+        * Does the source environment use models and clones? 
+        * Was a coexistence installation performed?
+          If so, were unique ports used for the target installation? 
+        * Is the migration being performed on a single system or multiple systems? 
+        * Is security enabled? 
+        * Is this a production system? 
+        * Are you using the same CellName and NodeName in both systems? (required for a successful migration) 
+        * Are you migrating to a different OS? If so, which OS are you migrating from and which OS are you migrating to? 
+        * Is this migration to remote machine or same machine ?
+          
+          
+       
+       
+    8. Follow instructions to send diagnostic information to IBM support [http://www.ibm.com/support/docview.wss?uid=swg21153852].
+   
+   
+   
+ * Migration Utilities:  * WASPostUpgrade.sh/WASPostUpgrade.bat 
+    * WASPreUpgrade.sh/WASPreUpgrade.bat
+   
+   
+
+ * Important Notes:.
+    * If problems occur in any other WebSphere component, such as install, follow the appropriate Install MustGather [http://www.ibm.com/support/search.wss?tc=SSEQTP&tc1=SSCVS24&q=MustGatherDocument] procedures.
+   
+   
+
+
+For a listing of all technotes, downloads, and educational materials specific to the Migration component, search the WebSphere Application Server support site [http://www.ibm.com/support/entry/portal/Overview/Software/WebSphere/WebSphere_Application_Server].
+
+RELATED INFORMATION
+ Recording your screen to share with IBM Support [https://www.ibm.com/developerworks/community/blogs/IBMElectronicSupport/entry/recording_your_screen_to_share_with_support?lang=en]
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Application Servers Runtimes for Java Technology Java SDK

@@ -1,0 +1,91 @@
+Title: IBM Security certificate warning persists on IE browser - United States
+
+Text:
+certificate invalid; certificate error; mismatched address; FQDN; TIP URL TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The security certificate warning persists despite following the steps to import the certificate into Internet Explorer (IE) browser's trusted root certificate authorities store when accessing TIP URL. 
+
+SYMPTOM
+ 
+
+The following warning persists on the IE browser session when accessing the TIP URL:
+
+There is a problem with this website's security certificate. 
+
+The security certificate presented by this website was not issued by a trusted certificate authority. 
+
+The security certificate presented by this website was issued for a different website's address. 
+
+Security certificate problems may indicate an attempt to fool you or intercept any data you send to the server. 
+
+We recommend that you close this webpage and do not continue to this website. 
+
+- Click here to close this webpage. 
+
+- Continue to this website (not recommended). 
+
+
+a. Choosing the option to close, the web page will terminate the browser session. 
+
+b. Choosing to continue will bring the user to the TIP login page but with the "Certificate Error" warning still indicated on IE's URL address pane.
+
+
+ENVIRONMENT
+WebGUI clients accessing TIP URL via Internet Explorer browser
+
+
+RESOLVING THE PROBLEM
+There are two known possibilities to why the security certificate warning persists. 
+
+ 
+
+Determine beforehand if previous attempt's certificate was imported. 
+
+a. Click on the browser's Tools > Internet Options > Content tab > Certificates > Trusted Root Certification Authorities tab, 
+
+b. Browse for the security certificate bearing the WebGUI server's fully qualified domain name (FQDN) i.e myhost.domain.com to confirm previous attempt's certificate was imported. 
+
+As reference, the FQDN of a WebGUI server with a hostname myhost and a domain name domain.com is myhost.domain.com 
+
+ 
+
+If there is no entry bearing the WebGUI server's FQDN in the list of Trusted Root Certification Authorities tab: 
+
+ * 
+ * 
+ * In this case, re-attempt install certificate steps and make sure on the certificate window that pops up when clicking the browser URL address pane's "Certificate Error" > View certificates : 
+ *  
+   i. Click on the "Certification Path" tab ii. Click on the certificate that has a red crossed icon instead of that which has none. 
+   
+   iii Click "View Certificate" and another certificate window will pop up. 
+   
+   iv. Click "Install Certificate" 
+   
+   v. Proceed with the rest of the certificate import wizard steps to import it into the Trusted Root Certification Authorities store.
+   
+   
+
+ 
+
+If there is an entry bearing the WebGUI server's FQDN in the list of Trusted Root Certification Authorities tab: 
+
+ * 
+ * 
+ *  
+ * For example, the TIP URL links accessed should be: 
+ *   * https://<myhost.domain.com>:<port_num>/ibm/console
+   
+   
+ * instead of: 
+ *   * https://<myhost:>:<port_num>/ibm/console 
+    * https://<IP_address>:<port_num>/ibm/console
+   
+   
+ * In this case, the security certificate issued to the WebGUI server and imported to the IE browser's Trusted Root Certification Authorities store bears identification of the server's FQDN instead of its hostname or IP address. 
+ * The TIP URL address accessed and entered on the IE browser's address pane must include the WebGUI server's FQDN to rid the persisting security certificate warning. 
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ webgui

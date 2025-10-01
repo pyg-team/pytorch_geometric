@@ -1,0 +1,42 @@
+Title: IBM MustGather: How to enable Verbose GC Logging - United States
+
+Text:
+Verbose GC MustGather Garbage Collection; MustGatherDocument TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ 
+Verbose GC logging gives an insight into the actions that the Garbage Collector is taking. This allows an application to be monitored and better tuned for performance, in addition to being vital for diagnosing memory problems. 
+
+However, Verbose GC logging is not enabled by default. 
+
+RESOLVING THE PROBLEM
+Enabling the generation of Verbose GC logging is done using the following command line option:
+-verbose:gc 
+
+This causes the Verbose GC logging to be written to stderr. 
+
+It is also possible to direct the Verbose GC logging output to a single file using the following command line option:
+
+-Xverbosegclog:[DIR_PATH][FILE_NAME] 
+
+where: 
+
+[DIR_PATH] is the directory where the file should be written
+[FILE_NAME] is the name of the file to write the logging to
+eg. java -Xverbosegclog:C:\temp\verbose_output.xml
+or java -Xverbosegclog:/u/myuser/verbose_output.xml 
+
+The logging can also be done in a circular fashion to a series of files, this is carried out using the following command line option:
+
+-Xverbosegclog:[DIR_PATH][FILE_NAME],X,Y 
+
+where: 
+
+[DIR_PATH] is the directory where the file should be written
+[FILE_NAME] is the name of the file to write the logging to
+X is the number of files to write to
+Y is the number of GC cycles a file 
+should contain
+
+eg. java -Xverbosegclog:C:\temp\verbose_output.xml,10,1000
+This would create 10 files, each containing 1000 GC cycles.

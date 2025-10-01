@@ -1,0 +1,156 @@
+Title: IBM IC78326: NOSETUID INFORMATION IN THE SOLARIS INSTALLATION GUIDE IS INCORRECT - United States
+
+Text:
+AIX SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Information regarding the NOSETUID option is incorrect in the
+   V6.1 and V6.2(Installation Guide for Solaris). The following
+   sections need to be corrected:
+   1: On page 32 of the TSM for Solaris Installation Guide, it
+   indicates that the NOSUID mount option should be disabled. This
+   should be corrected to specify NOSETUID.
+   .
+   2: The paragraph that pertains to the NOSUID/NOSETUID option
+   could be written more clearly.
+   
+   Customer/L2 Diagnostics (if applicable)
+   
+   Platforms affected:
+   6.1, 6.2 Unix
+   
+   Initial Impact: Low
+   
+   Additional Keywords: simultaneous ZZ61 ZZ62
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All Tivoli Storage Manager server users.     *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: See error description.                  *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   *
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  In the Tivoli Storage Manager installation guides, in the
+   section "Formatting the database and log," the text was
+   changed as follows:
+   
+   "<AIX, HP-UX, Linux> Tip: If DB2 does not start after you
+   issue the DSMSERV FORMAT command, you might need to disable
+   the  file system mount option NOSUID. If this option is set on
+   the file system that contains the DB2 instance owner
+   directory, or  on any file system that contains the DB2
+   database, active logs, archive logs, failover logs, or
+   mirrored logs, the option  must be disabled to start the
+   system.
+   
+   After you disable the NOSUID option, remount the file system
+   and then start DB2 by issuing the following command:
+   db2start
+   
+   <Solaris> Tip: If DB2 does not start after you issue the
+   DSMSERV FORMAT command, you might need to disable the file
+   system mount option NOSETUID. If this option is set on the
+   file system that contains the DB2 instance owner directory, or
+   on any  file system that contains the DB2 database, active
+   logs, archive logs, failover logs, or mirrored logs, the
+   option must be  disabled to start the system.
+   
+   After you disable the NOSETUID option, remount the file system
+   and then start DB2 by issuing the following command:
+   db2start"
+   
+   
+   Affected platforms:  AIX, HP-UX, Solaris, and Linux.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC78326
+   
+   
+ * REPORTED COMPONENT NAME
+   TSM SERVER
+   
+   
+ * REPORTED COMPONENT ID
+   5698ISMSV
+   
+   
+ * REPORTED RELEASE
+   62S
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-08-29
+   
+   
+ * CLOSED DATE
+   2011-11-15
+   
+   
+ * LAST MODIFIED DATE
+   2011-11-15
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+Publications Referenced GC23978101 GC23978201 GC23978301 GC23978401 GC23978202 GC23978302 GC23978402 GC23978502 FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

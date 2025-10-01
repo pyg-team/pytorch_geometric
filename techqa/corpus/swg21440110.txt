@@ -1,0 +1,69 @@
+Title: IBM Java.lang.ClassCastException when using Isolated Resource Providers for WebSphere Adapters 7.0 - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When using Websphere Adapters version 7.0 together with WebSphere Process Server the usage of the 'Isolate this resource provider' option in Resource Adapter settings can cause a ClassCastException. 
+
+SYMPTOM
+Starting with version 7.0 WebSphere Application Server the properties page for resources contains an option Isolate this resource provider. 
+
+When using this option for node level installed WebSphere Adapters running on WebSphere Process Server a ClassCastException can occur. 
+
+
+[/support/docview.wss?uid=swg21440110&amp;aid=1] 
+
+Here as an example the upcoming error from a scenario containing the WebSphere Adapter for SAP: 
+
+ 
+
+ * java.lang.ClassCastException: com.ibm.xmlns.prod.websphere.j2ca.sap.
+ * 
+ * sapstfcconnection.SapStfcConnectionDataBinding incompatible with commonj.connector.runtime.DataBinding
+ * 
+ *  at com.ibm.ws.sca.binding.j2c.handler.
+ * 
+ * J2CImportHandler.getDataBinding
+ * 
+ * (J2CImportHandler.java:2334)
+ * 
+ *  at com.ibm.ws.sca.binding.j2c.handler.J2CImportHandler.
+ * 
+ * invokeDynamicImport
+ * 
+ * (J2CImportHandler.java:1242)
+ * 
+ *  at com.ibm.ws.sca.binding.j2c.handler.J2CImportHandler.
+ * 
+ * processBase
+ * 
+ * (J2CImportHandler.java:402)
+ * 
+ *  at com.ibm.ws.sca.binding.j2c.handler.J2CNativeImportHandler.
+ * 
+ * processMessage
+ * 
+ * (J2CNativeImportHandler.java:118)
+ * 
+ *  at com.ibm.ws.sca.internal.message.impl.MessageDispatcherImpl.
+ * 
+ * processMessageWithPCI
+ * 
+ * (MessageDispatcherImpl.java:764)
+   .....
+
+
+CAUSE
+Setting this option to true does tell the Application Server to use isolated class loaders for the according resources. When isolation is switched on, the isolated class loader does load some commonj.connector classes delivered from the Adapter instead of classes which are available on the Process Server scope. 
+
+
+When interacting with the Process Server this can cause a mismatch between classes loaded from the isolated class loader and such classes which are loaded and used within Process Server scope.
+
+Due to technical limitations, the 'isolate resource provider' feature is not supported with version 7.0.
+
+
+RESOLVING THE PROBLEM
+Do not use the 'Isolate this resource provider ' option when running WebSphere Adapters on WebSphere Process Server. 
+
+It is not planned to support this option within version 7.0 of Adapters and Process Server.

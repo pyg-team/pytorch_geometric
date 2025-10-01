@@ -1,0 +1,159 @@
+Title: IBM JR41552: DUPLICATED VARIABLES AFTER CLONING A TOOLKIT - United States
+
+Text:
+  A FIX IS AVAILABLE
+Version 7.5.1 Fix Pack 1 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24033036]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The root issue is the usage of the wrap list.  If you go top
+   down or bottom up, we come to the same situation.  Details the
+   steps performed during analysis,
+   
+   1.  Top down.  Create BO "BO" with a parameter "foo" that points
+   to a BO "BOChild".  Define the "foo" parameter as a list with a
+   wrap list = true.
+   2.  Bring into IID.  What gets generated is BO.xsd and
+   BOChild.xsd with 3 types:  BO, BOChild, ArrayOfBOChild.  Note in
+   PD, there are only two types:  BO and BOChild.  The array is
+   artifically created and hence not represented.
+   3.  Create an AIS to reference the BO and publish back to the
+   repository.  This will cause the ArrayOfBOChild to be mirrored
+   and show up as a type in PD.  (I believe you can do any other
+   step as long as the BO is "processed")
+   4.  Modify the BO or ArrayOfBOChild will cause the splitting
+   logic to occur which is the correct behaviour (since both BO and
+   ArrayOfBOChild types point to the same BO.xsd).  The consequence
+   is that you will have two ArrayOfBOChild created.  One for the
+   ArrayOfBOChild.xsd and the other due to BO.xsd having a list
+   that is a wrapped list.
+   
+   Note:
+   Deleting the ArrayOfBOChild from PD and then modified the BO
+   followed by a refresh from IID, the issue is not seen.
+   (Essentially doing step 4 with the condition of deleting the
+   type that was created from the wrap list)
+   
+   Recommendations:
+   1.  Recommend to not use wrap list when doing top down.
+   2.  Have logic in the importer to not mirror the type if it is a
+   wrap list consumed in another type.  This should address bottom
+   up scenarios and also step 3 above.  Note that the existing
+   WebServices import used in PD also expose the wrapped type.
+   3.  In the mean time, if the user does see ArrayOf BOs that get
+   created tell them that they are artificial and should be deleted
+   to not cause confusion.
+   4.  Fix the synchronization error due to non unique IDs that
+   occur as a result of the creation of the wrapped list.
+   Workaround by replace from tipFix sychronization issue with non
+   unique IDs
+   
+   
+   This APAR can also resolve this error:
+   
+   Caused by: java.lang.NoSuchMethodError:
+   com/ibm/scaservice/generator/CMTGeneratorContext.addXSDSchemaEnt
+   ries(Ljava/lang/String;Ljava/util/Map;Ljava/util/Map;)V
+    at
+   com.ibm.ws.bpm.scaservice.utils.WLETransformer.createSchemaCmtPr
+   operties (WLETransformer.java:448)
+    at
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  See Problem Description > Recommendations
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Fix targetting delivery in next release, scheduled for 2Q2012.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR41552
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM ADVANCED
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9400
+   
+   
+ * REPORTED RELEASE
+   750
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-12-22
+   
+   
+ * CLOSED DATE
+   2012-02-16
+   
+   
+ * LAST MODIFIED DATE
+   2012-06-21
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R751 PSY
+   UP

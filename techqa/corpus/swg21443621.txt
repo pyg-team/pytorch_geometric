@@ -1,0 +1,82 @@
+Title: IBM Collecting Data: Agent for WebSphere Applications  (Distributed, z/OS, iSeries) - United States
+
+Text:
+CAMADCD MUSTGATHER; MS; Managing Server; Data Collector; DC; TEMA ; MustGatherDocument TECHNOTE (TROUBLESHOOTING)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ US English 
+
+PROBLEM(ABSTRACT)
+ This technote describes the documentation required for problem determination ITCAM for Application Diagnostics (ITCAMfAD) Agent for WebSphere Applications (Distributed, z/OS, or iSeries) . 
+
+RESOLVING THE PROBLEM
+Use the following table to determine what documentation should be collected based on the problem that is occurring.
+
+Abbreviations and Definitions:
+
+
+
+DC WebSphere Application Server Data Collector JVM Java Virtual Machine - WebSphere Application Server where Data Collector is running TEMA Tivoli Enterprise Monitoring Agent TEP Tivoli Enterprise Portal WAS WebSphere Application Server 
+[/support/docview.wss?uid=swg21443621&amp;aid=1] Problem Occurring : Collect Doc for : [/support/docview.wss?uid=swg21443621&amp;aid=2] WAS JVM won't Start DC [/support/docview.wss?uid=swg21443621&amp;aid=2] WAS JVM Performance DC [/support/docview.wss?uid=swg21443621&amp;aid=2] WAS Data Missing or Erroneous on MS Console #MSDC [/support/docview.wss?uid=swg21443621&amp;aid=2] WAS TEMA won't Start TEMA [/support/docview.wss?uid=swg21443621&amp;aid=2] WAS TEMA Performance DC, TEMA [/support/docview.wss?uid=swg21443621&amp;aid=2] WAS Data Missing or Erroneous on TEP DC, TEMA [/support/docview.wss?uid=swg21443621&amp;aid=2] Unsure of where Problem is Occurring DC, TEMA 
+
+Collecting WAS Data Collector (DC) Data 
+The following scripts collect system info, ITCAM doc, and WebSphere documentation for the WAS DC. 
+Note 1: The ID under which the script is run must have read access to the ITCAM and WebSphere files and directories. 
+Note 2: The Output directories are default directory. If user set for Output in different (customized) directory, the Output files will be placed in the customized directory. 
+
+Windows 
+
+Location 7.1: <ITM_HOME>\TMAITM6\wasdc\7.1\itcamdc\bin\cyn_collector.cmd 
+7.2: <dchome>\cyn_collector.cmd (default dchome is <ITM_HOME>\dchome) Usage cd <location directory>
+WAS doc collected for one JVM: cyn_collector.cmd -s <AppSvrName> 
+WAS doc collected for all JVMs: cyn_collector.cmd -a 
+You must specify either -a or -s <AppSvrName> Output <DC_HOME>\logs\<Hostname.AppSvrName>\<hostname>-CYNenv.jar 
+UNIX and Linux 
+
+Location 7.1: <ITM_HOME>/<platform>/yn/bin/cyn_collector.sh 
+7.2: <dchome>/bin/cyn_collector.sh (default dchome is <ITM_HOME>/dchome) Usage cd <location directory>
+WAS doc collected for one JVM: ./cyn_collector.sh -s <AppSvrName> 
+WAS doc collected for all JVMs: ./cyn_collector.sh -a 
+You must specify either -a or -s <AppSvrName> Output <DC_HOME>/logs/<Hostname.AppSvrName>/<hostname>-CYNenv.jar 
+IBM iSeries 
+
+Location 7.1: <DC_HOME>/itcamdc/bin/cyn_os400_collector.sh
+7.2: <dchome>/bin/cyn_os400_collector.sh (default dchome is <ITM_HOME>\dchome) Usage cd <DC_HOME>/itcamdc/bin
+WAS doc collected for one JVM: ./cyn_os400_collector.sh -s <AppSvrName> 
+WAS doc collected for all JVMs: ./cyn_os400_collector.sh -a 
+You must specify either -a or -s <AppSvrName> Output <DC_HOME>/logs/<Hostname.AppSvrName>/<hostname>-CYNenv.jar 
+z/OS 
+
+Location <CONFIG_HOME>/bin/cyn_collector.sh Usage cd <location directory> 
+WAS doc not collected for JVMs: ./cyn_collector.sh Output <CONFIG_HOME>/runtime/<WASVer.NodeName.AppSvrName>/logs/CYN/logs/<hostname>-CYNenv.tar.Z 
+For z/OS, WebSphere Application Server (WAS) doc has to be collected manually: 
+
+If AppServer is WAS 6.x or WAS 7.x, collect:  * <WAS_HOME>/profiles/<profile>/config/cells/<cell>/nodes/<node>/servers/<AppSvrName>/*.xml 
+ * Servant and Region JOBLOGs
+
+
+Collecting Tivoli Enterprise Monitoring Agent (TEMA) Data 
+The following commands and scripts collect the TEMA version/release info and doc. 
+Windows 
+
+1. Collect yn version from TEMS, TEPS, TEMA Command <ITM_HOME>\InstallITM\kincinfo -i 
+2. Collect TEMA doc Location <ITM_HOME>\TMAITM6\kyncollect.cmd Usage cd <ITM_HOME>\TMAITM6
+kyncollect.cmd Output %TEMP%\KYN\kyncollect-<hostname>.jar 
+UNIX and Linux 
+
+1. Collect yn version from TEMS, TEPS, TEMA Command <ITM_HOME>/bin/cinfo -i 
+2. Collect TEMA doc Location <ITM_HOME>/<platform>/yn/bin/kyncollect.sh Usage cd <ITM_HOME>/<platform>/yn/bin/
+./kyncollect.sh Output <ITM_HOME>/tmp/kyn/kyncollect-<hostname>.tar.gz 
+z/OS 
+
+1. Collect yn version from TEMS, TEPS, TEMA Location TEMA JOBLOGs for both TEMA address spaces (agent and subagent) which will include RKLVLOG 
+2. Collect TEMA doc Location /usr/lpp/itcam/TEMA/yn/bin/kyncollect.sh Usage cd /usr/lpp/itcam/TEMA/yn/bin
+./kyncollect.sh Output <ITM_HOME>/tmp/kyn/kyncollect-<hostname>.tar.gz  
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Systems and Asset Management Tivoli Composite Application Manager for Application Diagnostics on z/OS IBM Tivoli Composite Application Manager for Application Diagnostics z/OS 7.1 Systems and Asset Management IBM SmartCloud Application Performance Management ITCAM Agent for WebSphere Applications AIX, Linux/x86, Solaris, Windows 7.6.0 Systems and Asset Management Tivoli Composite Application Manager for Applications ITCAM Agent for WebSphere Applications AIX, HP-UX, i5/OS, Linux, Solaris, Windows 7.2 
+PRODUCT ALIAS/SYNONYM
+ ITCAM for AD
+ITCAMfAD
+ITCAM4AD

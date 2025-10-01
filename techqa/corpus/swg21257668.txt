@@ -1,0 +1,32 @@
+Title: IBM Web service emitters used by Rational Application Developer 7.x with a remote WebSphere Application Server 6.x - United States
+
+Text:
+websphere; v6; server; remote; web service; webservice; emitters; wsdl2java; java2wsdl; RAD; v7; RSA; webservices.jar; web services; runtime definition; remote WAS servers; running web services remotely; WAS; 1257668 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This technote provides explanation regarding whether the web services tools and wizards in IBM® Rational® Application Developer (RAD) version 7 use the emitters of a remote WebSphere Application Server (WAS) version 6, in the case when the local WAS 6.x servers available with RAD 7.x were not installed, but a remote WAS 6.x server is being used instead, to deploy and run the web service. 
+
+RESOLVING THE PROBLEM
+Even if the server you are using is "remote", you are always working with a local definition of that server runtime. When you create a remote server, you have to have the runtime defined in the preferences, and this runtime will [always] be a local definition (for example, either the stub or a local WAS install). So when you target a project to a runtime, you are using the local definition of that runtime, which means that for web services deploy, it will use the java2wsdl/wsdl2java from that runtime definition. The fact that a server is remote makes no real difference for java2wsdl/wsdl2java. 
+
+The web services tools reference what is on the server target. For a remote server, you would typically point to a WAS stub directory (such as<RAD v7 Install Dir>SDP70/runtimes/base_v6[x]_stubs), if a local WebSphere Test Environment/WAS version 6.1 server was not installed as part of RAD 6.x or 7.x.
+
+For specifics on which jars contain the emitters in RAD 7.x, consult this tech note under the Related Information section: How Rational Application Developer version 7 uses the WebSphere web services emitters.
+
+Note: RAD 6.x users should consult the other linked technote:
+How to replace webservices.jar (== java2wsdl, wsdl2java, wsdeploy, endptenabler) in the WAS version 6.x web services deploy plug-in.
+
+
+
+
+
+RELATED INFORMATION
+#How RAD v7 uses the WebSphere web services emitters [http://www.ibm.com/support/docview.wss?uid=swg21253668]
+How to replace webservices.jar (..) in the WAS v6.x web [http://www.ibm.com/support/docview.wss?uid=swg21237958]
+
+
+
+
+
+
+Cross Reference information Segment Product Component Platform Version Edition Software Development Rational Software Architect Web Services Development Linux, Windows 7.0, 7.0.0.1

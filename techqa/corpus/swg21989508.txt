@@ -1,0 +1,117 @@
+Title: IBM How do I add a new license to the SPSS (Sentinel RMS) License Manager? - United States
+
+Text:
+lm lms slm license install add authcode authorization code key TECHNOTE (FAQ)
+
+QUESTION
+ I have a SPSS (Sentinel RMS) License Manager installed and would like to add a new product or product feature or update a currently licensed product. How do I do that? 
+
+ANSWER
+The method for updating License Manager licensing varies by operating system. 
+
+Windows Operating Systems 
+
+ 1. Open an Administrator Command Prompt.
+    
+    Note: The Command Prompt title bar must read 'Administrator: Command Prompt' or the procedure will not execute properly. 
+ 2. Change directory to the License Manager installation directory. If you do not know the location of the License Manager installation directory, please see TechNote 1989514 [http://www.ibm.com/support/docview.wss?uid=swg21989514]. 
+ 3. Execute the following command replacing '<authcode>' with the authorization code of the product or product feature you wish to add or update. Do not include either < or > in the command.
+    
+    licenseactivator <authcode>
+    
+    OR
+    
+    Execute the following command replacing '<liccode>' with the license code of the product or feature you wish to add or update. Do not include either < or > in the command.
+    
+    licenseactivator <liccode>
+    
+ 4. To apply multiple authorization codes at the same time, include a colon (:) between the authorization codes you wish to add, where '<authcode1>', '<authcode2>' represent different authorization codes. Do not include either < or > in the command. 
+    
+    licenseactivator <authcode1>:<authcode2>
+    
+ 5.  Open Windows Services on the License Manager host. 
+ 6. Stop 'Sentinel RMS License Manager' Windows Service. 
+ 7. Start 'Sentinel RMS License Manager' Windows Service. Note: Do not use 'Restart'. 
+ 8. Confirm License Manager licensing using Sentinel RMS License Server Administrator tool and/or a desktop product installation configured to license from the License Manager.
+
+Mac Operating Systems 
+
+ 1. Open Terminal. 
+ 2. Change directory to the License Manager installation directory. If you do not know the location of the License Manager installation directory, please see Technote 1989520 [http://www.ibm.com/support/docview.wss?uid=swg21989520]. 
+ 3. Execute the following command replacing '<authcode>' with the authorization code of the product or product feature you wish to add or update. Do not include either < or > in the command.
+    
+    sudo ./licenseactivator <authcode>
+    
+    OR
+    
+    Execute the following command replacing '<liccode>' with the license code of the product or feature you wish to add or update. Do not include either < or > in the command.
+    
+    sudo ./licenseactivator <liccode>
+    
+ 4. To apply multiple authorization codes at the same time, include a colon (:) between the authorization codes you wish to add, where '<authcode1>', '<authcode2>' represent different authorization codes. Do not include either < or > in the command. 
+    
+    sudo ./licenseactivator <authcode1>:<authcode2>
+    
+ 5. Execute the following command replacing '<hostname>' with the actual host name of the License Manager host machine. Do not include either < or > in the command. 
+    
+    sudo ./lsrvdown <hostname>
+    
+ 6. Execute the following command:
+    
+    sudo ./lserv
+    
+ 7. Confirm License Manager licensing using a desktop product installation configured to license from the License Manager (or the Sentinel RMS License Server Administrator tool installed on a Windows host computer).
+    
+
+
+Linux/Unix Operating Systems  1. Open Terminal. 
+ 2. Change directory to the License Manager installation directory. If you do not know the location of the License Manager installation directory, please see Technote 1989520 [http://www.ibm.com/support/docview.wss?uid=swg21989520]. 
+ 3. Execute the following command replacing '<authcode>' with the authorization code of the product or product feature you wish to add or update. Do not include either < or > in the command. 
+    
+    sudo./licenseactivator <authcode>
+    
+ 4. To apply multiple authorization codes at the same time, include a colon (:) between the authorization codes you wish to add, where '<authcode1>', '<authcode2>' represent different authorization codes. Do not include either < or > in the command. 
+    
+    sudo ./licenseactivator <authcode1>:<authcode2>
+    
+ 5. Execute the following command replacing '<hostname>' with the actual host name of the License Manager host machine. Do not include either < or > in the command. 
+    
+    sudo ./lsrvdown <hostname>
+    
+ 6. Execute the following command:
+    
+    sudo ./lserv -s lservrc
+    
+ 7. Confirm License Manager licensing using a desktop product installation configured to license from the License Manager (or the Sentinel RMS License Server Administrator tool installed on a Windows host computer).
+    
+
+
+AIX/Solaris Linux Operating Systems 
+ 1. Log in as 'root'. 
+ 2. Change directory to the License Manager installation directory. If you do not know the location of the License Manager installation directory, please see Technote 1989520 [http://www.ibm.com/support/docview.wss?uid=swg21989520]. 
+ 3. Execute the following command replacing '<authcode>' with the authorization code of the product or product feature you wish to add or update. Do not include either < or > in the command. 
+    
+    ./licenseactivator <authcode>
+    
+ 4. To apply multiple authorization codes at the same time, include a colon (:) between the authorization codes you wish to add, where '<authcode1>', '<authcode2>' represent different authorization codes. Do not include either < or > in the command. 
+    
+    ./licenseactivator <authcode1>:<authcode2>
+    
+ 5. Execute the following command replacing '<hostname>' with the actual host name of the License Manager host machine. Do not include either < or > in the command. 
+    
+    ./lsrvdown <hostname>
+    
+ 6. Execute the following command:
+    
+    ./lserv
+    
+ 7. Confirm License Manager licensing using a desktop product installation configured to license from the License Manager (or the Sentinel RMS License Server Administrator tool installed on a Windows host computer).
+
+RELATED INFORMATION
+ Need more help? Our Statistics forum is Live! [https://developer.ibm.com/answers/topics/statistics.html?smartspace=predictive-analytics]
+Need more help? Our Licensing forum is Live! [https://developer.ibm.com/answers/topics/spsslicensing.html]
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Analytics SPSS Amos Business Analytics SPSS Modeler Business Analytics SPSS Text Analytics for Surveys

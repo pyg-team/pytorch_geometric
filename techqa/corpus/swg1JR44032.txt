@@ -1,0 +1,195 @@
+Title: IBM JR44032: MY TEAM PERFORMANCE IS SLOW; THIS MAY CAUSE WSVR0605W WITH THREAD IN PortalIntegrations.executeQuery() - United States
+
+Text:
+  A FIX IS AVAILABLE
+Version 7.5.1 Fix Pack 2 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24036462]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  After applying the interim fix for APAR JR42220 [http://www-01.ibm.com/support/docview.wss?uid=swg1JR42220], which improves
+   performance of the database queries executed in rendering of the
+   My Team Performance scoreboard, the scoreboard can still take a
+   long time to render.
+   .
+   The select statements that consume the most time referring to
+   tables lsw_task and lsw_usr_grp_mem_xref.
+   
+   There is no exception / stack trace for this problem.
+   .
+   .-------------------------------------------
+      There may be threads hung in this java stack
+   "WebContainer : 12" (00000253) has been active for 700065
+   milliseconds
+   and may be hung.  There is/are 2 thread(s) in total in the
+   server that
+   may be hung.
+    at java.net.SocketInputStream.socketRead0(Native Method)
+    at java.net.SocketInputStream.read(SocketInputStream.java:140)
+    at oracle.net.ns.Packet.receive(Packet.java:283)
+    ...
+    at
+   com.ibm.ws.rsadapter.jdbc.WSJdbcStatement.execute(WSJdbcStatemen
+   t.java:632)
+    at teamworks.Queries.executeSQL(Queries.java:277)
+    at teamworks.Queries.executeSQL(Queries.java:308)
+    at
+   teamworks.PortalIntegrations.executeQuery(PortalIntegrations.jav
+   a:853)
+    at
+   teamworks.PortalIntegrations.userTeamSize(PortalIntegrations.jav
+   a:757)
+    at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+    at
+   sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessor
+   Impl.java:60)
+    at
+   sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethod
+   AccessorImpl.java:37)
+    at java.lang.reflect.Method.invoke(Method.java:611)
+    at
+   teamworks.connector.ReflectionConnector$1.execute(ReflectionConn
+   ector.java:269)
+    at
+   com.lombardisoftware.server.core.ManagedAssetClassLoaderUtil.exe
+   cuteWithManagedAssetClassLoader
+   (ManagedAssetClassLoaderUtil.java:53)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  Users of BPM Express, BPM Standard and BPM  *
+   *                  Advanced.                                   *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: After applying the interim fix for      *
+   *                      APAR JR42220 [http://www-01.ibm.com/support/docview.wss?uid=swg1JR42220], which improves            *
+   *                      performance of the database queries     *
+   *                      executed in rendering of the            *
+   *                      My Team Performance scoreboard, the     *
+   *                      scoreboard can still take a             *
+   *                      long time to render.                    *
+   *                      There is no exception / stack trace     *
+   *                      for this problem.                       *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   Changes to database queries for APAR JR42220 [http://www-01.ibm.com/support/docview.wss?uid=swg1JR42220] were not
+   specifically targeted at performance of My Team Performance,
+   but rather a functional issue.  Additionally, the changes made
+   were not ideal for all use cases of My Team Performance, so
+   some customers may have noticed functional changes that
+   were not desirable.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Interim fixes for Business Process Manager Version 7.5.1.0 and
+   Version 8.0.0.0 have been been published to Fix Central.
+   Please refer to the separate file that is automatically
+   downloaded with each interim fix for prerequisite information
+   and installation/uninstallation instructions.
+   
+   In the interim fixes, many database query optimizations have
+   been applied that improve the performance of My Team
+   Performance, including the enhancements made for JR42220 [http://www-01.ibm.com/support/docview.wss?uid=swg1JR42220].
+   (The enhancements for JR42220 [http://www-01.ibm.com/support/docview.wss?uid=swg1JR42220] are now configurable, depending
+   on the usage of My Team Performance; these options are
+   described in detail in the readme files.)  Some of the
+   enhancements are also applicable to My Performance.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR44032
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM ADVANCED
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9400
+   
+   
+ * REPORTED RELEASE
+   751
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-09-10
+   
+   
+ * CLOSED DATE
+   2012-12-21
+   
+   
+ * LAST MODIFIED DATE
+   2015-01-21
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   BPM ADVANCED
+   
+   
+ * FIXED COMPONENT ID
+   5725C9400
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R750 PSY
+   UP

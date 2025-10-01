@@ -1,0 +1,28 @@
+Title: IBM Recovering when the default certificate is inadvertently deleted in TIP - United States
+
+Text:
+TIPL2; TIPL2SSL; certificate; CWPKI0024E; default; Tivoli Integrated Portal TECHNOTE (FAQ)
+
+QUESTION
+ The default certificate in Tivoli Integrated Portal was mistakenly deleted. The systemOut log shows the following error:
+CWPKI0024E: The certificate alias "default" ... is not found in KeyStore...
+What is the process to recover the certificate?
+
+
+ANSWER
+Disable security using the instructions in the following technical note:
+https://www-304.ibm.com/support/docview.wss?uid=swg21499504 [https://www-304.ibm.com/support/docview.wss?uid=swg21499504]
+
+
+ 1. Access the Websphere Admin console directly using the instructions found in the following technical note:
+    http://www-01.ibm.com/support/docview.wss?uid=swg21618872 [http://www-01.ibm.com/support/docview.wss?uid=swg21618872]
+    
+ 2. Security > SSL certificates and key management > keystores and certificates > NodeDefaultKeyStore > Personal Certificates
+    Click: Create > New Self-Signed Certificate.
+    When creating the self-signed certificate make sure the "alias" specified matches the alias in the error in the systemOut log.
+    
+ 3. Save the configuration.
+    
+ 4. Enable security as directed in the technical note in step 1.
+    
+ 5. Restart TIP, and verify the TIP login page loads.

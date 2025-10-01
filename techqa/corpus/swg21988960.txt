@@ -1,0 +1,89 @@
+Title: IBM User cannot login to Connections homepage using either LDAP account or wasadmin account - United States
+
+Text:
+Websphere; Connections; Homepage; Unable to login; Integrated Solutions Console; Users and groups; AD; sync; CLFRQ0221E; serviceException; "Manage Users"; DSOutOfServiceException; CLFRK0003E; unexpected status; '403' TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+Connections Administrator recently made a series of changes to host name, LDAP and admin credentials. 
+
+However user cannot login to Connections homepage using either Active Directory account or wasadmin account. The error read as follows: 
+
+“We are unable to process your request"
+
+
+CAUSE
+Either J2C authentication role had been modified or password
+for connectionsAdmin had been changed recently.
+
+
+
+ENVIRONMENT
+Connections Version: 4.5 CR3 (Release v4.5.0.0 build SND4.5_CR_20140307-0149)
+Websphere Application Server version: 8.0.0.8
+OS Version: Windows 2008 R2 SP1 64bit 16GB RAM
+
+
+
+
+DIAGNOSING THE PROBLEM
+In Websphere Application Server Integrated Solutions Console, Admin configured federated repository and provided correct credentials for binding. 
+
+[/support/docview.wss?uid=swg21988960&aid=1] [/support/docview.wss?uid=swg21988960&aid=1]
+
+
+ * Make sure in Websphere Integrated Solutions Console -> Users and groups -> 
+
+"Manage Users" view, admin is able to search and successfully find users 
+that exist in LDAP. 
+
+Admin also followed Technote # 1635025 Unable to login to any applications except Profiles after installing IBM Connections 4.5. Directory Service Extension (DSX) errors appear in the logs [http://www-01.ibm.com/support/docview.wss?uid=swg21635025]  * Make sure the interoperability mode has been enabled. 
+ * Cookie name for V1 and V2 set as LtpaToken and LtpaToken2 respectively.
+
+Synchronized nodes and restarted Dmgr, the issue persists.  
+
+Following error still appears in SystemOut.log: 
+
+[8/15/16 10:26:45:465 EST] 000000fb WaltzSyncServ E com.ibm.lconn.homepage.services.impl.WaltzSyncServiceImpl getUserByLoginName CLFRQ0221E: Reference to directory services could not be retrieved.
+com.ibm.lconn.homepage.services.ServiceException: CLFRQ0221E: Reference to directory services could not be retrieved.
+at com.ibm.lconn.homepage.services.impl.WaltzSyncServiceImpl.getUserByLoginName(WaltzSyncServiceImpl.java:367)
+at com.ibm.lconn.homepage.services.impl.UserServicesImpl.getUserLoginName(UserServicesImpl.java:559)
+...at com.sun.proxy.$Proxy56.getUserLoginName(Unknown Source)
+at com.ibm.lconn.homepage.services.helper.GettingStartedPreferenceHelper.isGettingStartedDisplayEnabled(GettingStartedPreferenceHelper.java:78)
+at com.ibm.lconn.web.taglib.jsp.HomepagePageState.isGettingStartedDisplayEnabled(HomepagePageState.java:136)
+at com.ibm.lconn.web.taglib.jsp.HomepagePageState.doStartTag(HomepagePageState.java:65)
+... at com.ibm.lconn.core.web.util.lang.I18NFilter.doFilter(I18NFilter.java:267)
+at com.ibm.io.async.ResultHandler$2.run(ResultHandler.java:905)
+at com.ibm.ws.util.ThreadPool$Worker.run(ThreadPool.java:1702)
+Caused by: com.ibm.connections.directory.services.exception.DSException: com.ibm.connections.directory.services.exception.DSOutOfServiceException: com.ibm.connections.directory.services.exception.DSOutOfServiceException: CLFRK0003E: Directory Service Extension(DSX) received a HTTP response from URL 'https://<connections_server>/profiles/dsx/instance.do?login=<loginname>' with unexpected status '403'! 
+at com.ibm.connections.directory.services.engine.WPISearchEngine.searchProfiles(WPISearchEngine.java:74)
+...
+Caused by: com.ibm.connections.directory.services.exception.DSOutOfServiceException: com.ibm.connections.directory.services.exception.DSOutOfServiceException: CLFRK0003E: Directory Service Extension(DSX) received a HTTP response from URL 'https://<connections_server>/profiles/dsx/instance.do?login=<loginname>' with unexpected status '403'! 
+at com.ibm.connections.directory.services.engine.DSXSearchEngine.search(DSXSearchEngine.java:185)
+at com.ibm.connections.directory.services.engine.WPISearchEngine.searchProfiles(WPISearchEngine.java:65)
+... 91 more
+
+
+RESOLVING THE PROBLEM
+To check the connectionsAdmin user and the dsx-admin role do the following:
+
+connectionsAdmin:
+
+1. In the WebSphere® Application Server administration console,
+2. Select Security > Secure Administration, applications and infrastructure.
+3. In the Authentication area, expand Java Authentication and Authorization Service
+4. Click J2C authentication data.
+5. Click the connectionsAdmin alias to edit it.
+
+dsx-admin:
+
+1. From the WebSphere Application Server Integrated Solutions Console, select Applications > Enterprise Applications, and then Click on Profiles
+2. Click Security role to user/group mapping. Find the dsx-admin role.
+3. Make sure the connectionsAdmin is listed here, if not, click Look up users or groups.
+4. In the Search String box, type the name of the person or group you would like to assign to this role, and then click Search. If the user or group exists in the directory, it is found and displayed in the Available list.
+5. Select the user or group name from the Available box, and then move it into the Selected column by clicking the right arrow button.
+6. Click OK.
+7. From the Enterprise Applications > Profiles > Security role to user/group mapping page, click OK, and then click Save to save the changes.
+
+
+Once admin have resetted the credential for connectionAdmin and DSX-Admin. 
+Also synched and restarted both nodes, user is able to login to homepage along with other applications.

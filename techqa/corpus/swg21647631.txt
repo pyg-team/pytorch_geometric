@@ -1,0 +1,24 @@
+Title: IBM Is it possible to automate running of the configtemplate.sh script? - United States
+
+Text:
+CAMADALL CAMADINST configtemplate.sh silent response TECHNOTE (TROUBLESHOOTING)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ US English 
+
+PROBLEM(ABSTRACT)
+ Can the configtemplate.sh script be run in silent mode? 
+
+ENVIRONMENT
+IBM Tivoli Composite Application Agent for WebSphere Applications, Version 7.2
+
+DIAGNOSING THE PROBLEM
+ ITCAM Agent for WebSphere® Applications provides a configtemplate script to create an ITCAM server template and to add it to the WebSphere template repository. Running configtemplate script presents prompts that requires responses that must be entered manually from the command line. 
+
+RESOLVING THE PROBLEM
+This script cannot be run in "silent mode" because a response file is not provided for configtemplate.sh script. Currently, command-line is the only option available. For additional information on running this script note information found at the following doc-link. http://publib.boulder.ibm.com/infocenter/tivihelp/v24r1/index.jsp?topic=%2Fcom.ibm.itcamfapps_ad.doc_72%2Fwas_agent_install_guide_dist%2Fchapter_template_ve%2Fadd_server_template_with_dc_to_WAS.html [http://publib.boulder.ibm.com/infocenter/tivihelp/v24r1/index.jsp?topic=%2Fcom.ibm.itcamfapps_ad.doc_72%2Fwas_agent_install_guide_dist%2Fchapter_template_ve%2Fadd_server_template_with_dc_to_WAS.html]
+
+
+
+PRODUCT ALIAS/SYNONYM
+ ITCAM ITCAM4AD ITCAMfAD ITCAM for App Diagnostics

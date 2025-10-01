@@ -1,0 +1,45 @@
+Title: IBM FP11:  WebSphere MQ File Transfer Edition Performance Report - System Z V7.0.1 - United States
+
+Text:
+fp11; websphere mq file transfer edition performance report DOWNLOADABLE FILES
+
+ABSTRACT
+ Performance Report for WebSphere MQ File Transfer Edition V7.0.1 for System Z 
+
+DOWNLOAD DESCRIPTION
+Performance Report PDF for WebSphere MQ File Transfer Edition V7.0.1 for System Z. 
+
+This SupportPac includes performance measurements, with figures and tables to present the data. Analysis of the results and recommendations for WebSphere MQ File Transfer Edition are also included.
+
+Possible Uses
+This SupportPac is intended for people who will be designing and implementing solutions using WebSphere MQ File Transfer Edition V7.0.1 on System Z. The SupportPac demonstrates how a user can make the most of their hardware when used with WebSphere MQ File Transfer Edition on System Z.
+
+Skill Level Required
+Users of this SupportPac will require knowledge of WebSphere MQ for z/OS and of performance in a sysplex environment.
+
+Details
+Author: Tony Sharkey, WebSphere MQ for z/OS Development and Performance, Hursley
+Category: 2
+Released: 15Dec09
+Current SupportPac Version: 1.0
+»Please note that the version number shown in the right-hand pane is the version of the WebSphere MQ or WebSphere MB product that this SupportPac applies to. The date is the last web page refresh. 
+
+To view the complete portfolio of WebSphere MQ SupportPacs please visit the WebSphere MQ SupportPacs homepage. [http://www-01.ibm.com/support/docview.wss?rs=171&uid=swg27007205]
+
+PREREQUISITES
+None.
+
+INSTALLATION INSTRUCTIONS
+None.
+
+DOWNLOAD PACKAGE
+
+
+
+
+
+Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options fp11.pdf 15/12/2009 US English 378794 FTP [ftp://public.dhe.ibm.com/software/integration/support/supportpacs/individual/fp11.pdf] 
+TECHNICAL SUPPORT
+ Category 2 SupportPacs are provided in good faith and AS-IS. There is no warranty or further service implied or committed and any supplied sample code is not supported via IBM product service channels. 
+
+You may submit a question and return email address using the 'rate this page' below, but a response is not guaranteed.

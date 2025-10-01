@@ -1,0 +1,113 @@
+Title: IBM PM04620: Table and Matrix views list actions as states - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS SUGGESTION FOR FUTURE RELEASE.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  These problems are based upon some usage scenarios from an Emily
+   Wang at ITT who is using our UPDM profile, The problems she has
+    encountered are not down to the UPDM profile per se but deficie
+   ncies in the functionality of the table and matrix views.
+   
+   2/ In the matrix layout matrixlayout_2 i tried do create a matri
+   x
+   looking at the relationships between the activities, callbehavio
+   urs and
+   actions.
+   
+   
+   
+   2.1 / Action is not on the Form Element Types and To Element Typ
+   es list,
+   only State ( i know this maps to an action because of how our ac
+   tivity
+   diagrams work) See the Matrix view, Matrixview_3.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *  Closed APAR due to issue is considered an RFE.
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM04620
+   
+   
+ * REPORTED COMPONENT NAME
+   TLOGIC RHAPSODY
+   
+   
+ * REPORTED COMPONENT ID
+   5724V74RP
+   
+   
+ * REPORTED RELEASE
+   750
+   
+   
+ * STATUS
+   CLOSED SUG
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-01-07
+   
+   
+ * CLOSED DATE
+   2012-07-10
+   
+   
+ * LAST MODIFIED DATE
+   2012-07-10
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

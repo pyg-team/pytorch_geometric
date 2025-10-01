@@ -1,0 +1,147 @@
+Title: IBM IV25982: APPLICATION WON'T DEAL WITH AN EXPIRED LTPA TOKEN - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The LTPA token is being generated upon login with a timestamp of
+   current time + 2 hrs, if there is no other LTPA token with the
+   same subject, in which case that existing token will be used,
+   which makes your effective token expiration what was left on the
+   existing token, not 2 hrs. If there is no activity within the
+   cushion timeout (the timeout set for auto regeneration of the
+   token prior to its expiration) for the LTPA token, the token
+   will not be auto regenerated thus expiring. At that point it is
+   up to the application to deal with the expiration, either by
+   sending the request to login again or by auto generating the
+   token if the maximo session is still valid.. In this case
+   neither is being done.. The application does not seem to deal
+   with an expired LPTA token at all.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * N/A                                                          *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * APPLICATION WON'T DEAL WITH AN EXPIRED LTPA TOKEN            *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Fixed in 7.5.0.4                                             *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fixed in 7.5.0.4
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV25982
+   
+   
+ * REPORTED COMPONENT NAME
+   SYSTEM PERFORMA
+   
+   
+ * REPORTED COMPONENT ID
+   5724R46PF
+   
+   
+ * REPORTED RELEASE
+   750
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-08-10
+   
+   
+ * CLOSED DATE
+   2013-08-08
+   
+   
+ * LAST MODIFIED DATE
+   2013-08-08
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  MAXIMO
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   SYSTEM PERFORMA
+   
+   
+ * FIXED COMPONENT ID
+   5724R46PF
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R750 PSY
+   UP

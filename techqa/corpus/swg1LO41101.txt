@@ -1,0 +1,168 @@
+Title: IBM LO41101: ENHANCEMENT REQUEST - ALLOW MEETINGS GREATER THAN 24 HOURS DURAT ION - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DUPLICATE OF ANOTHER APAR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  We understand that currently Lotus Notes/Domino does not support
+   
+   meetings/appointment entries that lasts longer than 24 hours and
+   that
+   current functionality is provided by "All Day Events" type of
+   entries.
+   We have users requesting for this functionality as All Day
+   Events do
+   not allow for calendars to be blocked out with specific start &
+   end
+   times while meetings cannot be longer than 24 hours.
+   
+   The current workaround we are using is to create multiple
+   calendar
+   entries for the different days we want to block out. For
+   example:
+   Creating an entry called "Annual Academic Conference" starting
+   at 12pm
+   (1 June 2009, Mon) to 4pm (3 June 2009, Wed) the user will have
+   to
+   create 3 different calendar entries:
+   
+   1. Meeting from 12pm (1 June 2009) to 12am (2 June 2009)
+   
+   2. Meeting from 12am (2 June 2009) to 12am (3 June 2009)
+   
+   3. Meeting from 12am (3 June 2009) to 4pm (3 June 2009)
+   
+   This will create the effect of creating a single meeting entry
+   that
+   spans multiple days giving the user control over start and
+   finish times
+   as well. We also observed that Microsoft Outlook 2007 allows for
+   such
+   functionality without the need of creating 3 multiple entries as
+   it
+   does not have a 24 hour duration limitation for meetings.
+   
+   Please view the attached screenshots for better understanding of
+   the
+   situation:
+   
+   notes_24_meeting_error.jpg: Error seen when creating a meeting
+   longer
+   than 24 hours
+   
+   notes_24hr_meeting_parts.jpg: Screenshot showing workaround to
+   create
+   meetings longer than 24 hours in parts (3 independent entries)
+   
+   outlook_24hrs_meeting.jpg: Screenshot showing entry created in
+   Outlook
+   2007 spanning more than 24 hours without needing to create in
+   parts.
+   The feature to create meetings longer than 24 hours allow staff
+   to
+   block out times (e.g. during conferences, equipment booking) on
+   their
+   calendar generally without the need to create finer grained
+   entries of
+   sub-events.
+   
+   We appreciate your consideration to implement this enhancement
+   in
+   upcoming revisions of Lotus Notes/Domino.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Create repeating entries - customer does not want to use the
+   workaround.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *  This APAR is associated with SPR# DLUI7PNAVY.
+   This APAR is a duplicate of LO31760
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   LO41101
+   
+   
+ * REPORTED COMPONENT NAME
+   NOTES/DOMINO 7X
+   
+   
+ * REPORTED COMPONENT ID
+   5724E6200
+   
+   
+ * REPORTED RELEASE
+   702
+   
+   
+ * STATUS
+   CLOSED DUA
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-06-03
+   
+   
+ * CLOSED DATE
+   2009-06-12
+   
+   
+ * LAST MODIFIED DATE
+   2009-06-12
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

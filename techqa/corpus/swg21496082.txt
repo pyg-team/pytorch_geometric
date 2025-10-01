@@ -1,0 +1,53 @@
+Title: IBM Explain average response time for Response Time agent - United States
+
+Text:
+Average Response Time; 71AMCON-WV; 71RRT-ROBWV; 71RRT-RPTWV; 71RRT-RFTWV; 71RRT-CONF; 71RRT-DCOLL; 71RRT-RPTG; 71RRT-WV TECHNOTE (FAQ)
+
+QUESTION
+ What is Average Response Time in the Response Time agent? 
+
+ANSWER
+ITCAM reports the average response time, in seconds, for a single transaction instance during the data interval. Each collection interval records minimum (MINRTT Minimum Response Time attribute), maximum (MAXRTT Maximum Response Time attribute), and average response times for aggregate records. 
+
+To understand average response time values, consider the constitution of 1) Applications and 2) average response time. Here are examples of how average response time can be affected by Application and agent changes.
+
+
+ * In the Robotic Response Time view, Average Response Time is shown in relation to an Application. The Application may contain more than one script. The data used in these calculations may also consist of more than one request (see Total Requests column). In this simple case, the Classic application consists of one script and one total request. The average response time for Classic is one script, running one time, in one data interval.[/support/docview.wss?uid=swg21496082&aid=1] [/support/docview.wss?uid=swg21496082&aid=1]
+   
+   How is average response time calculated then? You see the Last Run Duration is much larger than the average response time! 
+   Last Run Duration is the time from robotic playback engine start until robotic playback engine stops. Last Run Duration is the time for one run, and it is only the last run. The robotic playback engine is running on the T6 agent that you have designated in the profile. The playback engine can experience delays and conflicts with resources on the agent. It cannot be compared to average response time. 
+   
+ * For a better understanding of Average Response Time, make these changes to the Robotic Response Time view: add minimum and maximum response time to the view.[/support/docview.wss?uid=swg21496082&aid=2] [/support/docview.wss?uid=swg21496082&aid=2]
+   
+   
+   Make these changes in AMC Editor settings: the Baby_Bermuda application is now running two scripts, Script1 and Script2.
+   [/support/docview.wss?uid=swg21496082&amp;aid=3]
+   
+   This makes it easier to see that Total Requests, Minimum Response Time and Maximum Response Time are key ingredients for Average Response Time. The Application now has two Total Request because two scripts ran in the time interval. 
+   [/support/docview.wss?uid=swg21496082&aid=4] [/support/docview.wss?uid=swg21496082&aid=4]
+   
+   
+ * With two scripts we can also aggregate more data into an interval by increasing the number of runs per interval. Now there are 3 Total Requests.[/support/docview.wss?uid=swg21496082&aid=5] [/support/docview.wss?uid=swg21496082&aid=5]
+   
+   With more detail we see Script1 ran twice and Script2 ran one time.
+   [/support/docview.wss?uid=swg21496082&aid=6] [/support/docview.wss?uid=swg21496082&aid=6]
+   
+   
+   How did that happen? The run frequency of the script and the aggregation period of the agent affects the average response time. Changing these important variables causes more or less data to be factored into the average response time value. Here, the frequency of the script interval has changed from 15 minutes to 3 minutes for Script1 and 5 minutes Script2. [/support/docview.wss?uid=swg21496082&aid=7] [/support/docview.wss?uid=swg21496082&aid=7]
+   
+   The Robotic Response Time -> Configuration shows the Aggregation Period to be 5 minutes. This allows Script1 and Script2 to run more than one time in an aggregation period. [/support/docview.wss?uid=swg21496082&aid=8] [/support/docview.wss?uid=swg21496082&aid=8]
+   
+   If you change the Aggregate Period to 10 minutes you see 6 total requests [/support/docview.wss?uid=swg21496082&aid=9] [/support/docview.wss?uid=swg21496082&aid=9]
+   
+ * Some other cases to factor in: 
+   Average Response Time shows the average for a completed data interval: the "last run" may well be part of a "not completed" data interval. 
+   In relation to number of retries, only the last 'try' is counted as part of the response time. 
+   If a number of scripts are contained in an RPT (Rational Performance Tester) schedule the total requests are based on the entire schedule. Look at individual transactions for more script specific information.
+
+
+
+HISTORICAL NUMBER
+ 31049.180.000 
+
+PRODUCT ALIAS/SYNONYM
+ itcamft

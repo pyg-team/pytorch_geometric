@@ -1,0 +1,141 @@
+Title: IBM HE12468: PERFORMANCE SLOW ADDING DOCUMNENTS TO P8 WHEN FIELD VALUES ARE EMPTY. - United States
+
+Text:
+  A FIX IS AVAILABLE
+IBM Content Collector V4.0.1 Fix Pack 2 [http://www-01.ibm.com/support/docview.wss?uid=swg24041245]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Customer gets on average 3 docs added to P8 per second.
+   Performance directly related to the number of P8 Properties
+   with no value.
+   When all properties have values, performance increases to 10
+   docs per second.
+   
+   Assistance requested to determine how to increase P8 injestion
+   rates when many values are empty.
+   
+   ICC 3.0
+   FileNet P8 5.1
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  No workaround available wthout a fix pack.
+   
+   However, some code changesmade in debug module
+   (P84.x_Connector.exe) does appear to have addressed issue.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Fixed in 4.0.1.2-IBM-ICC-FP002
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  QA has verified, can be closed
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  Fixed in 4.0.1.2-IBM-ICC-FP002
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   HE12468
+   
+   
+ * REPORTED COMPONENT NAME
+   ICC FOR FILES
+   
+   
+ * REPORTED COMPONENT ID
+   5724V5701
+   
+   
+ * REPORTED RELEASE
+   401
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-12-17
+   
+   
+ * CLOSED DATE
+   2015-12-18
+   
+   
+ * LAST MODIFIED DATE
+   2015-12-18
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    HE12332
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ICC FOR FILES
+   
+   
+ * FIXED COMPONENT ID
+   5724V5701
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R401 PSY
+   UP

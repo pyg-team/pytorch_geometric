@@ -1,0 +1,55 @@
+Title: IBM Operational Decision Manager V8.0.1.1 Fix Pack - United States
+
+Text:
+ DOWNLOADABLE FILES
+
+ABSTRACT
+ This cumulative fix pack updates WebSphere Operational Decision Management V8.0.1 to V8.0.1.1.
+
+
+
+DOWNLOAD DESCRIPTION
+This cumulative fix pack updates WebSphere Operational Decision Management V8.0.1 to V8.0.1.1. 
+
+This fix pack is entitled. Only customers who have purchased WebSphere Operational Decision Management V8.0.1 can download this fix pack.
+
+How to install the fix pack
+If you are not installing both components, skip the instructions regarding Decision Center or Decision Server.
+
+
+ 1.  Download 8.0.1-WS-ODM_DC-<OS>-FP001.zip, and extract its files. (Change <OS> to match your platform: WIN32, AIX, HPUX, LINUX, OS400, SOLARIS, or ZOS.) 
+ 2.  Extract the archive to a new folder, named WDC. 
+ 3.  Download 8.0.1-WS-ODM_DS-<OS>-FP001.zip, and extract its files. (Change <OS> to match your platform: WIN32, AIX, HPUX, LINUX, OS400, SOLARIS, or ZOS.) 
+ 4.  Extract the archive to a new folder, named WDS. 
+ 5.  Launch IBM Installation Manager. 
+ 6.  In the toolbar menu, open File > Preferences and do the following: 
+ 7.  Select repositories. 
+ 8.  Click Add Repository. 
+ 9.  Browse to the extracted folder WDC\updates. 
+ 10. Select the file repository.config. 
+ 11. Click Add Repository. 
+ 12. Browse to the extracted folder WDS\updates. 
+ 13. Select the file repository.config. 
+ 14. Make sure both repositories are checked in the repository list Apply, and click OK to close. 
+ 15. Click Update to update your installation. 
+ 16. Follow the instructions in the installation manager to complete the installation.
+
+
+Warning: 
+If you have installed interim fixes for Operational Decision Manager V8.0.1, you must uninstall the fixes before you can install this fix pack. You must also stop the Operational Decision Manager sample server for this installation. If you do not uninstall the fixes and stop the server, the installation of the fix pack will fail. If you attempt to install the fix pack without uninstalling the interim fixes, the installer will uninstall the interim fixes before it fails. In this case, stop the sample server and restart the installation. PREREQUISITES
+You must have Operational Decision Manager V8.0.1 installed to use this update.
+
+URL LANGUAGE SIZE(Bytes) ODM Decision Center 8.0.1.1 Windows [http://www-933.ibm.com/support/fixcentral/swg/downloadFixes?parent=ibm~WebSphere&product=ibm/WebSphere/WebSphere+Operational+Decision+Management&release=8.0.1.0&platform=Windows&function=fixId&fixids=8.0.1-WS-ODM_DC-WIN32-FP001&includeRequisites=1&includ] Language Independent 4000000000 ODM Decision Center 8.0.1.1 Linux [http://www-933.ibm.com/support/fixcentral/swg/downloadFixes?parent=ibm~WebSphere&product=ibm/WebSphere/WebSphere+Operational+Decision+Management&release=8.0.1.0&platform=Linux&function=fixId&fixids=8.0.1-WS-ODM_DC-LINUX-FP001&includeRequisites=1&includeS] Language Independent 4000000000 ODM Decision Center 8.0.1.1 AIX [http://www-933.ibm.com/support/fixcentral/swg/downloadFixes?parent=ibm~WebSphere&product=ibm/WebSphere/WebSphere+Operational+Decision+Management&release=8.0.1.0&platform=AIX&function=fixId&fixids=8.0.1-WS-ODM_DC-AIX-FP001&includeRequisites=1&includeSuper] Language Independent 4000000000 ODM Decision Center 8.0.1.1 HPUX [http://www-933.ibm.com/support/fixcentral/swg/downloadFixes?parent=ibm~WebSphere&product=ibm/WebSphere/WebSphere+Operational+Decision+Management&release=8.0.1.0&platform=HPUX&function=fixId&fixids=8.0.1-WS-ODM_DC-HPUX-FP001&includeRequisites=1&includeSup] Language Independent 4000000000 ODM Decision Center 8.0.1.1 OS/400 [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~WebSphere&product=ibm/WebSphere/WebSphere+Operational+Decision+Management&release=8.0.1.0&platform=OS/400&function=fixId&fixids=8.0.1-WS-ODM_DC-OS400-FP001&includeRequisites=1&include] Language Independent 4000000000 ODM Decision Center 8.0.1.1 Solaris [http://www-933.ibm.com/support/fixcentral/swg/downloadFixes?parent=ibm~WebSphere&product=ibm/WebSphere/WebSphere+Operational+Decision+Management&release=8.0.1.0&platform=Solaris&function=fixId&fixids=8.0.1-WS-ODM_DC-SOLARIS-FP001&includeRequisites=1&incl] Language Independent 4000000000 ODM Decision Center 8.0.1.1 Linux zSeries [http://www-933.ibm.com/support/fixcentral/swg/downloadFixes?parent=ibm~WebSphere&product=ibm/WebSphere/WebSphere+Operational+Decision+Management&release=8.0.1.0&platform=Linux+zSeries&function=fixId&fixids=8.0.1-WS-ODM_DC-ZOS-FP001&includeRequisites=1∈] Language Independent 4000000000 ODM Decision Server 8.0.1.1 Windows [http://www-933.ibm.com/support/fixcentral/swg/downloadFixes?parent=ibm~WebSphere&product=ibm/WebSphere/WebSphere+Operational+Decision+Management&release=8.0.1.0&platform=Windows&function=fixId&fixids=8.0.1-WS-ODM_DS-WIN32-FP001&includeRequisites=1&includ] Language Independent 4000000000 ODM Decision Server 8.0.1.1 Linux [http://www-933.ibm.com/support/fixcentral/swg/downloadFixes?parent=ibm~WebSphere&product=ibm/WebSphere/WebSphere+Operational+Decision+Management&release=8.0.1.0&platform=Linux&function=fixId&fixids=8.0.1-WS-ODM_DS-LINUX-FP001&includeRequisites=1&includeS] Language Independent 4000000000 ODM Decision Server 8.0.1.1 AIX [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~WebSphere&product=ibm/WebSphere/WebSphere+Operational+Decision+Management&release=8.0.1.0&platform=AIX&function=fixId&fixids=8.0.1-WS-ODM_DS-AIX-FP001&includeRequisites=1&includeSuper] Language Independent 4000000000 ODM Decision Server 8.0.1.1 HPUX [http://www-933.ibm.com/support/fixcentral/swg/downloadFixes?parent=ibm~WebSphere&product=ibm/WebSphere/WebSphere+Operational+Decision+Management&release=8.0.1.0&platform=HPUX&function=fixId&fixids=8.0.1-WS-ODM_DS-HPUX-FP001&includeRequisites=1&includeSup] Language Independent 4000000000 ODM Decision Server 8.0.1.1 OS/400 [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~WebSphere&product=ibm/WebSphere/WebSphere+Operational+Decision+Management&release=8.0.1.0&platform=OS/400&function=fixId&fixids=8.0.1-WS-ODM_DS-OS400-FP001&includeRequisites=1&include] Language Independent 4000000000 ODM Decision Server 8.0.1.1 Solaris [http://www-933.ibm.com/support/fixcentral/swg/downloadFixes?parent=ibm~WebSphere&product=ibm/WebSphere/WebSphere+Operational+Decision+Management&release=8.0.1.0&platform=Solaris&function=fixId&fixids=8.0.1-WS-ODM_DS-SOLARIS-FP001&includeRequisites=1&incl] Language Independent 4000000000 ODM Decision Server 8.0.1.1 Linux zSeries [http://www-933.ibm.com/support/fixcentral/swg/downloadFixes?parent=ibm~WebSphere&product=ibm/WebSphere/WebSphere+Operational+Decision+Management&release=8.0.1.0&platform=Linux+zSeries&function=fixId&fixids=8.0.1-WS-ODM_DS-ZOS-FP001&includeRequisites=1∈] Language Independent 4000000000 
+DOWNLOAD PACKAGE
+
+
+
+PROBLEMS SOLVED
+Fix List for IBM Operational Decision Manager [http://www-01.ibm.com/support/docview.wss?uid=swg27023767]
+
+
+
+
+
+ [/support/docview.wss?uid=swg24034803&aid=1]Problems (APARS) fixed [/support/docview.wss?uid=swg24034803&aid=2]Problems (APARS) fixed
+Decision Center: PM76847, RS01098, RS01146, RS01157, RS01158, RS01161, RS01166, RS01172, RS01184, RS01190, RS01193, RS01198, RS01205, RS01218, RS01227, RS01230, RS01231, RS01232, RS01235, RS01238, RS01247, RS01262, RS01263, RS01264, RS01265, RS01268, RS01274, RS01278, RS01279, RS01297, RS01300, Decision Server: PM82378, PM86081, RS01155, RS01170, RS01181, RS01201, RS01206, RS01241, RS01250, RS01251, RS01252, RS01254, RS01258, RS01259, RS01260, RS01281, RS01285, RS01286, RS01292, RS01298, RS01301, RS01302, RS01304, RS01305, RS01306, RS01307, RS01308, RS01309, RS01313, RS01314, RS01315, RS01325, RS01326, RS01327, Operational Decision Manager: PM76847, PM82378, PM86081, RS01098, RS01146, RS01155, RS01157, RS01158, RS01161, RS01166, RS01170, RS01172, RS01181, RS01184, RS01190, RS01193, RS01198, RS01201, RS01205, RS01206, RS01218, RS01227, RS01230, RS01231, RS01232, RS01235, RS01238, RS01241, RS01247, RS01250, RS01251, RS01252, RS01254, RS01258, RS01259, RS01260, RS01262, RS01263, RS01264, RS01265, RS01268, RS01274, RS01278, RS01279, RS01281, RS01285, RS01286, RS01292, RS01297, RS01298, RS01300, RS01301, RS01302, RS01304, RS01305, RS01306, RS01307, RS01308, RS01309, RS01313, RS01314, RS01315, RS01325, RS01326, RS01327

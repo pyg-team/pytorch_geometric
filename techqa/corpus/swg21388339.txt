@@ -1,0 +1,58 @@
+Title: IBM Which UPDATE STATISTICS mode (LOW, MEDIUM, or HIGH) runs fastest ? - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Most people assume that UPDATE STATISTICS HIGH takes longer to run than UPDATE STATISTICS MEDIUM, and UPDATE STATISTICS LOW is faster again. This is often not 
+the case for many typical database tables. 
+
+CAUSE
+The key here is understanding what information the three levels of UPDATE STATISTICS 
+need to do to produce their distribution data. Sorting and building hash tables takes time 
+(and CPU cycles), but it is trivial compared to the disk I/O. Furthermore, the amount of disk 
+writes is insignificant compared to the disk reads. I will concentrate on comparing what the 
+different UPDATE STATISTICS commands need to read.
+
+
+ANSWER
+ 
+
+UPDATE STATISTICS LOW collects table information and index information. 
+
+The table information is the number of rows and pages used. This is copied from the 
+table's TBLSPACE TBLSPACE page to columns in systables, and is very fast.
+
+The index information is the number of leaf pages and levels, plus how unique and 
+clustered the index is. For the lead column, it also records the second highest and 
+second lowest data values. To do this it has to scan every page of the index.
+
+Note that UPDATE STATISTICS LOW will only collect index information if all of the 
+columns of the index are in the scope of the command. Running UPDATE STATISTICS 
+LOW for a table without specifying any columns is equivalent to listing them all. That 
+means every column of every index is in scope, so it will scan every page of every index. 
+For a heavily indexed table, this can equate to more reads than a sequential scan of the 
+underlying table.
+
+To avoid this and only collect table information, run UPDATE STATISTICS LOW for a 
+non-indexed column. You don't need the UPDATE STATISTICS LOW index information 
+if you plan to run UPDATE STATISTICS HIGH or MEDIUM for the indexed columns.
+
+
+
+UPDATE STATISTICS MEDIUM reads a sample of data pages to generate its distribution data.
+Run with the default Confidence of 95%, this sample is 10% of the table. Confidence can be set
+between 80% and 99% - lower means fewer reads, higher means more. 10% of the table is 
+often smaller than 100% of all the indexes, so UPDATE STATISTICS MEDIUM DISTRIBUTIONS 
+ONLY for all columns of a table can be faster than UPDATE STATISTICS LOW for the same table.
+
+
+
+UPDATE STATISTICS HIGH is in effect running UPDATE STATISTICS MEDIUM with a statistical Confidence Level of 100% - it needs the column value for every row. UPDATE STATISTICS HIGH scans an index rather than data pages if the column is the lead column of an index. If the index is smaller than 10% of the table data pages, then UPDATE STATISTICS HIGH for a single column can run faster than UPDATE STATISTICS MEDIUM for the same column.
+
+
+Finally, UPDATE STATISTICS MEDIUM and HIGH should always be run with the keywords DISTRIBUTIONS ONLY. If these are omitted, the MEDIUM and HIGH commands will in 
+effect also run UPDATE STATISTICS LOW for the same columns. 
+
+
+Please note that these are guidelines only. There are other factors that affect performance, such as disk layout and the percentage of unused space and pages, and so on. But generally, that which has to read more pages takes longer to run.

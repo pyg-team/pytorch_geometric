@@ -1,0 +1,53 @@
+Title: IBM Announcement letter for CICS Transaction Server for z/OS 4.2 - United States
+
+Text:
+CICS TS 4.2 announcement Letter ; CICS Transaction Server for z/OS 4.2 ; announcements ; letters ; general availability ; 5655S9700 R670 670 R700 700 HCI6700 5655-S97 5655S97 kixinfo retention42 PRODUCT LIFECYCLE
+
+ABSTRACT
+ CICS Transaction Server for z/OS (CICS TS) V4.2 general availability (GA) date was 24 June 2011. CICS TS V4.2 delivers additional support for event processing, Java, the CICS Explorer, and more. This document contains a list of the key enhancements, a link to the announcement letter, and additional ways that you can become familiar with the capabilities of CICS TS 4.2. 
+
+CONTENT
+CICS TS V4.2 builds upon the new and enhanced capabilities developed and delivered in V4.1, to enable you to compete in the marketplace, comply with standards and regulations, and control your IT processes. CICS TS V4.2 delivers technical innovation and significant business value in five main focus areas, satisfying in excess of fifty customer and user group enhancement requests. The five key technology areas for new and enhanced capability are:
+
+
+ * Events: including new system health events to warn of potential problems, and enhanced CICS bundle support
+   
+   
+ * Java: including new 64-bit multithreaded JVM (optimized for zEnterprise), support for deployment of OSGi bundles, and provision of new Java-based Axis2 web services engine 
+   
+   
+ * Connectivity: including new option to offload web services parsing to zAAPs, support for function shipping file control, transient data, and temporary storage requests over a TCP/IP network using IP interconnectivity (IPIC)
+   
+   
+ * Management: including new cross system transaction tracking capabilities, support for password phrases to enhance log-on security, and enhancements to the CICS Explorer
+   
+   
+ * Scalability: including more threadsafe and 64-bit exploitation 
+   
+   
+
+
+CICS TS V4.2 introduces a wide range of other technical and operational capabilities, including many requirements raised by individual customers and user communities. For more details about CICS TS V4.2 see the following:  * US Announcement letter for CICS TS 4.2 [http://www.ibm.com/common/ssi/cgi-bin/ssialias?infotype=an&subtype=ca&supplier=897&appname=IBMLinkRedirect&letternum=ENUS211-080] (211-080). Information for other country announcements is available on the IBM Offering Information page [http://www.ibm.com/common/ssi/index.wss].
+   
+   
+ * CICS TS V4.2 web page [http://www.ibm.com/software/cics/tserver/v42/]
+   
+   
+ * CICS TS V4.2 detailed system requirements [http://www.ibm.com/support/docview.wss?uid=swg27020857]
+   
+   
+ * CICS TS V4.2 information center [http://publib.boulder.ibm.com/infocenter/cicsts/v4r2/index.jsp]
+   
+   
+
+
+See the IBM Software Support Lifecycle Page for CICS TS [http://www.ibm.com/software/support/lifecycleapp/PLCDetail.wss?synkey=Q548238Z96346J37&synkey=S880685E91024P63&synkey=M064419E33193B28&synkey=N941055S17716V30&synkey=M943891M29396W06&synkey=H952094E33942B25&synkey=C526462X33936Y05&synkey=C802925A97850P19&from=spf] to determine if the release of CICS TS you are running is still supported or if there is a newer release of CICS TS. 
+RELATED INFORMATION
+#Announcement letters for CICS products [http://www.ibm.com/support/docview.wss?uid=swg21227090]
+End of Support dates for CICS products [http://www.ibm.com/support/docview.wss?uid=swg21154953]
+
+
+
+
+PRODUCT ALIAS/SYNONYM
+ CICS/TS CICS TS CICS Transaction Server

@@ -1,0 +1,13 @@
+Title: IBM DB2® Content Manager eClient login fails with the error: "eClient caught the following error on line 81, Access Denied" - United States
+
+Text:
+access denied caught eClient TECHNOTE (FAQ)
+
+QUESTION
+ DB2® Content Manager eClient login fails with the error: "eClient caught the following error on line 81, Access Denied" 
+
+CAUSE
+Errors similar to the above usually arise from execution of JSP code of the eClient.
+
+ANSWER
+To resolve the above error, try closing the current browser window and re-attempting the login from a new browser window. Alternately, the browser cache may be cleared and the login re-attempted from the same browser window, to try resolve the error.

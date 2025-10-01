@@ -1,0 +1,99 @@
+Title: IBM The APM applications do not show on the APM GUI/Dashboard. - United States
+
+Text:
+Applications not displaying on APM dashboard CTJMP1000E CWWKT00161I CWWK00219I TECHNOTE (TROUBLESHOOTING)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ US English 
+
+PROBLEM(ABSTRACT)
+ The APM applications do not show on the APM GUI/Dashboard. The GUI does not show any data. 
+
+SYMPTOM
+You will likely see this CTJMP1000E error message in the blank APM Dashboard: 
+
+[/support/docview.wss?uid=swg21980970&aid=1] [/support/docview.wss?uid=swg21980970&aid=1]
+
+
+ENVIRONMENT
+Distributed RHEL6.x environment.
+
+
+
+DIAGNOSING THE PROBLEM
+Look at the APM server logs and verify that there is communication to min process using the port 80 on the server. Look for a response in the logs like this: 
+
+
+[4/1/16 21:03:19:400 EST] 000045be 
+com.ibm.tivoli.monitoring.provider.utility.RESTConsumer E ERROR: 
+HTTP Response: 404 for URI: localhost:80/ccm/status 
+[4/1/16 21:03:19:401 EST] 0000038f 
+com.ibm.tivoli.monitoring.provider.utility.RESTConsumer I JSON is 
+null for URI: localhost:80/ccm/status 
+[4/1/16 21:03:19:401 EST] 0000038f 
+com.ibm.tivoli.monitoring.provider.utility.ITMUtil I Waiting 
+for MIN to be ready... 
+[4/1/16 21:03:19:405 EST] 000045bf 
+com.ibm.tivoli.monitoring.provider.utility.RESTConsumer E ERROR: 
+HTTP Response: 404 for URI: localhost:80/ccm/status
+[4/1/16 21:03:19:405 EST] 0000038f 
+com.ibm.tivoli.monitoring.provider.utility.RESTConsumer I JSON is 
+null for URI: localhost:80/ccm/status 
+[4/1/16 21:03:19:405 EST] 0000038f candle.fw.model.SCMMonitor 
+I MIN is not ready. Unable to retrieve information from MIN server. 
+
+Looking at the above log snippet, you'll see that the MIN process could not obtain port 80 each the the MIN process was started after April 3rd, see the log snippet below:
+
+18 229:[4/5/16 17:24:54:971 EST] 00000028 
+com.ibm.ws.tcpchannel.internal.TCPPort E 
+CWWKO0221E: TCP Channel defaultHttpEndpoint initialization did not 
+succeed. The socket bind did not succeed for host * and port 80. The 
+port might already be in use. 
+
+The APMUI logs will also show these messages over and over:
+4/5/16 17:31:07:905 EST] 000002d7 
+com.ibm.apm.apmimpl.ApplicationsDomainManager E Error 
+while getting data from cDP: 
+/ibm/tivoli/apm/rest/widgets/ibm_application_summary/data 
+org.apache.wink.client.ClientRuntimeException: 
+java.lang.RuntimeException: java.net.SocketTimeoutException: Read timed 
+out 
+at 
+org.apache.wink.client.internal.ResourceImpl.invoke(ResourceImpl.java:24 
+0)
+
+So because port 80 is not still available, that starts a chain reaction where CURI DP running in server1 cannot retrieve data from the min process on port 80 and that in turns impacts the UI which relies on the CURI DP.
+
+Note: In this case, the agents are not having any problems connecting to the APM 
+server since they are configured to use https for the connection per the value of the httpProtocol config property in the configuration file: $APM_HOME/logs/configuration.json.
+
+
+RESOLVING THE PROBLEM
+To resolve the problem and make sure the port 80 is available, follow these steps: 
+
+
+1) On the APM server, issue this command: 
+apm stop_all 
+
+2) Issue the following command to see which process is listening on port 80:
+netstat -nap | grep ":80 "
+
+3) Use the "ps -aef | grep -i <pid>" from the previous netstat command to determine the name of the running process.
+
+4) Kill the process from step 3 or reconfigure it so that it is not using the port 80.
+
+5) Restart the APM server back again with this command: apm start_all
+
+6) Verify all the APM services have started with: apm status
+
+7) Confirm that you see these messages in the $APM_HOME/wlp/usr/servers/min/logs/messages.log file which verify that the MIN process can use port 80 back again:
+
+CWWKO0219I: TCP Channel defaultHttpEndpoint has been started and is now 
+listening for requests on host * (IPv6) port 80. 
+... 
+CWWKT0016I: Web application available (default_host):
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ SCAPM SC Application Performance Monitoring

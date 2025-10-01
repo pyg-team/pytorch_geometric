@@ -1,0 +1,223 @@
+Title: IBM PM63850: UNABLE TO SAVE REPORT ORA-01002 FETCH OUT OF SEQUENCE OCCURS - United States
+
+Text:
+  FIXES ARE AVAILABLE
+7.1.0.3-TIV-ITCAMAD-IF0001: ITCAM for Application Diagnostics V7.1 FP3 IF1 [http://www-01.ibm.com/support/docview.wss?uid=swg24032985]
+7.1.0.3-TIV-ITCAMAD-IF0004: ITCAM for Application Diagnostics V7.1 FP3 IF4 [http://www-01.ibm.com/support/docview.wss?uid=swg24033735]
+7.1.0.3-TIV-ITCAMAD-IF0005: ITCAM for Application Diagnostics V7.1 FP3 IF5 [http://www-01.ibm.com/support/docview.wss?uid=swg24033938]
+7.1.0.3-TIV-ITCAMAD-IF0004: ITCAM for Application Diagnostics V7.1 FP3 IF6 [http://www-01.ibm.com/support/docview.wss?uid=swg24034668]
+7.1.0.3-TIV-ITCAMAD-IF0008: ITCAM for Application Diagnostics V7.1 FP3 IF8 [http://www-01.ibm.com/support/docview.wss?uid=swg24037994]
+7.1.0-TIV-ITCAMAD-FP0004: ITCAM for Application Diagnostics V7.1 Fix Pack 4 [http://www-01.ibm.com/support/docview.wss?uid=swg24041705]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Users Affected:
+   
+   ITCAM for WebSphere V6.1, Managing Server
+   Customers using ITCAM database on Oracle, configured with Type 2
+   Database driver on WebSphere Application Server.
+   
+   Problem Description:
+   
+   When saving a report through ITCAM VE console, when customer
+   select 'Save' button on 'Save Report' panel, following error is
+   displayed, and the report does
+   
+   not get saved:
+    "CYNVE0583E: An error occurred while saving the report"
+   
+   SystemErr.log shows following exception when the trend report is
+   being
+   saved:
+   
+   [11/22/11 15:16:35:127 CST] 000005f5 SystemErr     R
+   java.sql.SQLException: ORA-01002: fetch out of sequence
+   
+   [11/22/11 15:16:35:128 CST] 000005f5 SystemErr     R  at
+   oracle.jdbc.driver.DatabaseError.throwSqlException(DatabaseError
+   .java:112)
+   [11/22/11 15:16:35:128 CST] 000005f5 SystemErr     R  at
+   oracle.jdbc.driver.T2CConnection.checkError(T2CConnection.java:6
+   76)
+   [11/22/11 15:16:35:128 CST] 000005f5 SystemErr     R  at
+   oracle.jdbc.driver.T2CConnection.checkError(T2CConnection.java:6
+   02)
+   [11/22/11 15:16:35:128 CST] 000005f5 SystemErr     R  at
+   oracle.jdbc.driver.T2CPreparedStatement.doDefineFetch(T2CPrepare
+   dStateme
+   nt.java:849)
+   [11/22/11 15:16:35:128 CST] 000005f5 SystemErr     R  at
+   oracle.jdbc.driver.T2CPreparedStatement.executeForRows(T2CPrepar
+   edStatem
+   ent.java:768)
+   [11/22/11 15:16:35:128 CST] 000005f5 SystemErr     R  at
+   oracle.jdbc.driver.OracleStatement.executeMaybeDescribe(OracleSt
+   atement.
+   java:1072)
+   [11/22/11 15:16:35:128 CST] 000005f5 SystemErr     R  at
+   oracle.jdbc.driver.OracleStatement.doExecuteWithTimeout(OracleSt
+   atement.
+   java:1154)
+   [11/22/11 15:16:35:128 CST] 000005f5 SystemErr     R  at
+   oracle.jdbc.driver.OraclePreparedStatement.executeInternal(Oracl
+   ePrepare
+   dStatement.java:3370)
+   [11/22/11 15:16:35:128 CST] 000005f5 SystemErr     R  at
+   oracle.jdbc.driver.OraclePreparedStatement.executeQuery(OraclePr
+   eparedSt
+   atement.java:3415)
+   [11/22/11 15:16:35:128 CST] 000005f5 SystemErr     R  at
+   com.ibm.ws.rsadapter.jdbc.WSJdbcPreparedStatement.pmiExecuteQuer
+   y(WSJdbc
+   PreparedStatement.java:1033)
+   [11/22/11 15:16:35:128 CST] 000005f5 SystemErr     R  at
+   com.ibm.ws.rsadapter.jdbc.WSJdbcPreparedStatement.executeQuery(W
+   SJdbcPre
+   paredStatement.java:683)
+   [11/22/11 15:16:35:128 CST] 000005f5 SystemErr     R  at
+   com.cyanea.common.database.DbPreparedStatement.executeQuery(DbPr
+   eparedSt
+   atement.java:330)
+   [11/22/11 15:16:35:128 CST] 000005f5 SystemErr     R  at
+   com.cyanea.common.database.SequenceGen.fetchNextSequenceBlock(Se
+   quenceGe
+   n.java:189)
+   [11/22/11 15:16:35:128 CST] 000005f5 SystemErr     R  at
+   com.cyanea.common.database.SequenceGen.getNextKey(SequenceGen.ja
+   va:142)
+   [11/22/11 15:16:35:128 CST] 000005f5 SystemErr     R  at
+   com.cyanea.ve.report.ReportHelper.saveNew(ReportHelper.java:426)
+   [11/22/11 15:16:35:128 CST] 000005f5 SystemErr     R  at
+   com.cyanea.ve.report.ReportTrendServlet.doPost(ReportTrendServle
+   t.java:2
+   78)
+   [11/22/11 15:16:35:128 CST] 000005f5 SystemErr     R  at
+   com.cyanea.ve.report.ReportTrendServlet.doGet(ReportTrendServlet
+   .java:73
+   )
+   [11/22/11 15:16:35:128 CST] 000005f5 SystemErr     R  at
+   ...
+   ...
+   [11/22/11 15:16:35:128 CST] 000005f5 SystemErr     R  at
+   com.ibm.io.async.ResultHandler.complete(ResultHandler.java:196)
+   [11/22/11 15:16:35:128 CST] 000005f5 SystemErr     R  at
+   com.ibm.io.async.ResultHandler.runEventProcessingLoop(ResultHand
+   ler.java
+   :751)
+   [11/22/11 15:16:35:128 CST] 000005f5 SystemErr     R  at
+   com.ibm.io.async.ResultHandler$2.run(ResultHandler.java:881)
+   [11/22/11 15:16:35:128 CST] 000005f5 SystemErr     R  at
+   com.ibm.ws.util.ThreadPool$Worker.run(ThreadPool.java:1497)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   ***********************
+   * USERS AFFECTED: ITCAM for Application Diagnostics Managing
+   Server UI (MSVE) Saved Report feature.
+   
+   A user may not be able to save a report if an Oracle database is
+   used.
+   
+   
+   ****************************************************************
+   ***********************
+   * PROBLEM DESCRIPTION: A user may not be able to save a report
+   if an Oracle database is used.
+   
+   ****************************************************************
+   ***********************
+   * RECOMMENDATION: The fix is in ITCAM for Application
+   Diagnostics 7.1 FP3 IF1 (7.1.0.3.1). Apply ITCAM for AD
+   7.1.0.3.1 when it is available.
+   ****************************************************************
+   ***********************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM63850
+   
+   
+ * REPORTED COMPONENT NAME
+   ITCAM WAS MGING
+   
+   
+ * REPORTED COMPONENT ID
+   5724L62MS
+   
+   
+ * REPORTED RELEASE
+   610
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-05-03
+   
+   
+ * CLOSED DATE
+   2012-06-29
+   
+   
+ * LAST MODIFIED DATE
+   2012-06-29
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R610 PSY
+   UP

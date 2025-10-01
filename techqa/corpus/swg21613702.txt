@@ -1,0 +1,76 @@
+Title: IBM Installation/upgrade takes very long time to complete - United States
+
+Text:
+TIPL2; TIPL2INST; installation slow takes time TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Installation using Deployment Engine takes very long to complete on servers with mounted drives. 
+
+CAUSE
+This is a known CIT issue that is affecting DE. The DE uses CIT to scan the hardware and the mounted drives, which results in slow performance. 
+
+RESOLVING THE PROBLEM
+Please use below work around to resolve this issue. 
+
+The idea is to Invoke the installer in GUI or console mode. Once the DE installation is complete then cancel/abort the installation. Modify one of the configuration file to bypass hardware scan and then restart the installation again. This work around is not applicable if installations in done in silent mode. 
+
+Installation using GUI mode:
+
+Follow below step:
+
+1. Invoke the installer in GUI mode. Once the Deployment Engine is installed, you will reach a window with Pre-Installation Summary Panel. Click on Cancel button to quit the installation. 
+
+2. Go to DE Install directory 
+
+ *  If installation was initiated by administrator (root) user, then go to below directory: /usr/ibm/common/acsi 
+ *  If installation was initiated by non administrator (non-root) user, then go to below directory: /home/<username>/.acsi_<username> 
+
+
+3. Go to "dat/config" directory 
+
+4. Edit scanconfig.xml file and set skipRemote="true". Make a back copy of this file before changing it. 
+
+With this change in place installer will skip the Deployment Engine installation step when installation is started again (ie; DE will not be re-installed). The updated "scanconfig.xml" will remain intact and will not get overwritten. 
+
+5. Now invoke the installation again and follow the on screen steps to let it complete to end. 
+
+
+Installation using console mode: 
+
+Invoke the installer in console mode and enter "quit" after Deployment Engine is installed but before the actual product installation begins. See below steps to find out exactly where to quit. 
+
+1. Invoke the installer in console mode. 
+
+2. You will be presented with several screens to choose the installation options. Once all the options are selected the DE installation will begin and you will see below on the screen: 
+
+Deployment Engine Initialization 
+-------------------------------- 
+
+Please Wait 
+. 
+Step 1 of 15......... 
+Step 2 of 15......... 
+............................... 
+................................ 
+
+3. Finally you will see below pre-installation summary. Instead if hitting the enter key, type quit and hit enter key to quit installation. 
+
+Review the Following Summary Before You Continue: 
+Product Name: 
+Tivoli Storage Manager 
+Install Folder: 
+/opt/tivoli/tsm 
+Components: 
+Global Secure Toolkit,Global Secure Toolkit 32 Bit,TSM Storage Agent 
+Disk Space Information (for Installation Target): 
+Required: 102,712,979 bytes 
+Available: 156,630,727,680 bytes 
+PRESS <ENTER> TO CONTINUE: quit 
+
+
+4. Edit the scanconfig.xml file as described in above section "Installation using GUI mode", and set skipRemote="true" 
+
+5. Now invoke the installation again and follow the steps to complete the installation to end. 
+
+Upgrades using GUI or Console mode: 
+If you are doing an upgrade the DE files are already laid out. In this case you can update the scanconfig.xml file before starting the upgrade. There is no need to interrupt the installation.

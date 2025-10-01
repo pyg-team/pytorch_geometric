@@ -1,0 +1,261 @@
+Title: IBM PQ34915: LDGW CLOSES SOCKET VIA PERSISTTIMEOUT VALUE WHILE A REQUEST IS BEING PROCESSED CAUSING A CONTENT LENGTH OF ZERO TO BE PASSED. - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  In this customers case the first packet contains 482 decimal
+   bytes which are processed by LGDW, the next packet contains
+   Content-Length and more headers. While the worker thread is DGW
+   was reading and processing the headers from the first packet,
+   the timer thread timed out the request due to the PersistTimeout
+   value.. What the timer thread does on timeout is to immediately
+   perform a shutdown on the socket so no more I/O is possible so
+   when the worker thread tries to read more data on the socket
+   there are zero bytes returned which is interpreted as an EOF
+   condition. It assumes that it has read all the data there is to
+   read on the socket. The worker thread does have enough to work
+   with so the service directive is matched and control passes to
+   the GWAPI who discovers that there is no data for the post so
+   an error is logged in the logfile.. The client will probably
+   see a "connection reset by peer" error message on the browser.
+   (Also occurs on NT-platform)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Raise the PersistTimeout value and InputTimeout values in
+   HTTPD.Conf file so the socket remains open longer..
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All.                                         *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: When persist or input timeout occurs,   *
+   *                      the webserver timer thread shuts down   *
+   *                      the socket. If the timeout occurs in    *
+   *                      the middle of reading request, it is    *
+   *                      possible that only partial data is read *
+   *                      in and got processed. This may cause    *
+   *                      unexpected result.                      *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   In the server code, the worker thread does not check for timeout
+   while processing a request. When a timeout occurs, the timer
+   thread shuts down the socket immediately so no more i/o is
+   possible but the worker thread continues processing the request.
+   When the worker thread tries to read more data on the socket
+   there are 0 bytes returned. This is interpreted as an EOF and
+   the worker thread assumes that it has read in all the data there
+   is to read. But it is possible that the worker thread actually
+   only reads in partial request data with some important parts e.g
+   CONTENT_LENGTH missing. Processing it may cause unexpected
+   results.
+   In a persistent connection, the webserver uses the value of
+   inputtimeout for the first request whereas it uses the
+   persisttimeout value for subsequent requests. This time period
+   includes reading all data on the socket and parsing all data
+   into a request data structure. For non-first requests on a
+   persistent connection, this timeout period also includes waiting
+   for the client to send a new request.
+   Since usually the value of persisttimeout is much smaller than
+   that of inputtimeout ( in our original default setting,
+   inputtimeout is 2 mins and persisttimeout is 10 secs ), the
+   problem described in this APAR more likely happens because of a
+   persist timeout. The purpose of persisttimeout is to wait for
+   the client to send a new request, so it should not include the
+   amount of time to read the whole request.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The code has been changed that before further processing a
+   request, the server code always checks to see if the request
+   timeout occurs. If it has a timeout, discard the whole request,
+   log a timeout message and stop handling the request. With the
+   new code, the server still waits up to the inputtimeout value
+   for the first request in a persistent connection. For subsequent
+   requests, it waits up to the persisttimeout value to receive the
+   first part of the request and waits up to the inputtimeout value
+   to read and parse any remaining data.
+   The default settings of the timeout value are changed in
+   PQ31524 [http://www-01.ibm.com/support/docview.wss?uid=isg1PQ31524], the values are as following:
+   InputTimeout    30 seconds
+   OutputTimeout   2  minutes
+   ScriptTimeout   2  minutes
+   PersistTimeout  5  seconds
+   For users who apply this APAR fix, we recommend you use these
+   settings for better performance. But fix also works with the
+   old settings. Refer to PQ31524 [http://www-01.ibm.com/support/docview.wss?uid=isg1PQ31524] for more information on the
+   changing consideration.
+   The code also has been changed that persistent connection can
+   be disabled by setting directive PersistTimeout to 0.
+   
+   The following COMPID's are affected by these changes:
+   
+   5697C5800 LDGW for OS/390  Version 4.6
+   5697A37L0 LDGW for OS/2    Version 4.6
+   5697A43L0 LDGW for Win/NT  Version 4.6
+   5697A45L0 LDGW for Solaris Version 4.6
+   5697A47L0 LDGW for HP-UX   Version 4.6
+   5697A74L0 LDGW for AIX     Version 4.6
+   5697A74L0 LDGW for AIX     Version 4.6
+   5639D54L0 LDGW for Win/95  Version 4.6
+   5697D4300 LDGW for OS/390  Version 5
+   
+   The code changes are stored in CMVC under defect PQ30316.
+   
+   In Webmaster's Guide (461 and 5.0) and Planning, Installing, and
+   Using for OS/390 (5.1 and 5.2), the following note will be
+   included under the PersistTimeout description in the "Using the
+   configuration file" (461) or "Configuration directives" section:
+   Note: Persistent connection can be disabled by setting
+         PersistTimeout to zero. When persistent connection is
+         disabled, each request is made over a new connection.
+   
+   In OS/390 book Webmaster's Guide (461 for OS/390), Messages
+   (5.0) and Planning, Installing and Using (5.1 and 5.2), the
+   explanation of message "IMW0096E Request parsing failed" states
+   "This is an internal error". It should be changed as ( note the
+   message id (IMW0096E) is for OS/390 only ):
+   Explanation: The server can not finish parsing a request. This
+                may be because the data read in is not complete
+                enough to process, such as client cancels the
+                request in the middle or TCP/IP problem, or the
+                server wants to force a reconnection.
+   
+    For the most current documentation, go to the Web site Library
+    page for related release of the Web server:
+   
+    V5.2 URL: http://www.ibm.com/software/websphere/httpservers/ [http://www.ibm.com/software/websphere/httpservers/]
+    doc52.html
+    V5.1 URL: http://www.ibm.com/software/websphere/httpservers/ [http://www.ibm.com/software/websphere/httpservers/]
+    doc51.html
+    V5.0 URL: http://www.ibm.com/software/websphere/dgw/doc50.htm [http://www.ibm.com/software/websphere/dgw/doc50.htm]
+   
+   
+   * Cross Reference between External and Internal Names
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PQ34915
+   
+   
+ * REPORTED COMPONENT NAME
+   DGW/WAS OS/390
+   
+   
+ * REPORTED COMPONENT ID
+   5697D4300
+   
+   
+ * REPORTED RELEASE
+   500
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2000-01-21
+   
+   
+ * CLOSED DATE
+   2000-03-31
+   
+   
+ * LAST MODIFIED DATE
+   2000-05-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  IMWHTTPD IMWSERVR
+   
+   
+    
+   
+   
+
+Publications Referenced SC31869100 SC31869001 SC31869002 FIX INFORMATION
+ * FIXED COMPONENT NAME
+   DGW/WAS OS/390
+   
+   
+ * FIXED COMPONENT ID
+   5697D4300
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R500 PSY UQ42292 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UQ42292]
+   UP00/04/26 P F004
+   
+   
+ * R510 PSY UQ42298 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UQ42298]
+   UP00/04/26 P F004
+   
+   
+ * R520 PSY UQ42303 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UQ42303]
+   UP00/04/24 P F004
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

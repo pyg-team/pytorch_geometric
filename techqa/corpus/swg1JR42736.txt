@@ -1,0 +1,151 @@
+Title: IBM JR42736: SCA AND CEI MESSAGING ENGINES START WITH EXCEPTIONS DURING STANDALONE PROFILE CREATION WITH SQL SERVER DATABASE - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  SCA and CEI messaging engines start with exceptions during
+   Standalone profile creation with SQL Server database when SQL
+   Server authentication is used.
+   If a Standalone profile creation was created using SQL Server
+   database and if the SQL Server authentication was used the
+   messaging engine settings for SCA System Bus, SCA Application
+   Bus and CEI Bus would result in exceptions during the server
+   start. This iFix resolves the issue by fixing the settings. If a
+   profile is already created with the wrong settings, the existing
+   profile needs to be deleted and database needs to be cleaned
+   before applying the iFix and regenerating the profile.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  BPM v8.0 concurrent iFix.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  users creating profiles with Microsoft SQL  *
+   *                  Server Databases using Microsoft SQL Server *
+   *                  authentication.                             *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: With SQL Server db using SQL Server     *
+   *                      authentication SCA, CEI messaging       *
+   *                      engines                                 *
+   *                      start with exceptions.                  *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   SCA and CEI messaging engines start with exceptions during
+   Standalone profile creation with SQL Server database when SQL
+   Server authentication is used.
+   If a Standalone profile creation was created using SQL Server
+   database and if the SQL Server authentication was used the
+   messaging engine settings for SCA System Bus, SCA Application
+   Bus and CEI Bus would result in exceptions during the server
+   start. This iFix resolves the issue by fixing the settings.
+   If a profile is already created with the wrong settings, the
+   existing profile needs to be deleted and database needs to be
+   cleaned before applying the iFix and regenerating the profile.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  updated configSCA.ant scripts to include appropriate MS SQL Serv
+   authentication information.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR42736
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM ADVANCED
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9400
+   
+   
+ * REPORTED RELEASE
+   800
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-05-08
+   
+   
+ * CLOSED DATE
+   2012-05-17
+   
+   
+ * LAST MODIFIED DATE
+   2012-05-17
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   BPM ADVANCED
+   
+   
+ * FIXED COMPONENT ID
+   5725C9400
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R750 PSY
+   UP

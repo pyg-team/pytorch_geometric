@@ -1,0 +1,34 @@
+Title: IBM Performing prerequisite checks before installing IBM Control Desk 7.6 - United States
+
+Text:
+icd76defect; icd760defect; IBM Control Desk; prerequisite check; SCCDINSTALL TECHNOTE (FAQ)
+
+QUESTION
+ How can I ensure that I meet environment prerequisites before I install IBM Control Desk V7.6? 
+
+ANSWER
+Before you begin the installation of IBM Control Desk 7.6, you can run prerequisite check scripts to determine whether your environment is set up correctly. These scripts are available in the Process Automation community: icd_76_pre​-req check scripts.zi​p [https://www.ibm.com/developerworks/community/groups/service/html/communityview?communityUuid=e25892f0-20f7-46ff-bbe9-c7c03fb3036f#fullpageWidgetId=Wb33da0c91d92_4cec_a8a7_57df877f617b&file=3509fdd4-d0d1-456f-a0d6-2699f06048b1]. 
+
+Note: When IBM Control Desk V7.6 is installed, the prerequisite check tooling is included. The installation program uses this tooling to determine whether prerequisites are met. After you run the installation program, the scripts are in the directory where InstallationManager files are located. For example, on a Linux server: 
+
+/var/ibm/InstallationManager/bundles/plugins/com.ibm.tivoli.pae.prereq_7.5.1.20141126-0950/com/ibm/tivoli/pae/prereq/SystemRequirements/ 
+
+Documentation 
+
+For information about running the scripts, see Verifying prerequisites from the command line [http://www-01.ibm.com/support/knowledgecenter/SSWT9A_7.6.0/com.ibm.sccd-adv.doc/cmninst/install/t_programmaticallyverifyingprereqs.html] in the IBM Control Desk installation documentation. 
+
+Note that the rxa parameter specified in the documentation is valid for Windows only. It is not a valid parameter when using tpae_req_check.sh on a Linux or Unix system. 
+
+Correction for Documentation 
+
+In the initial publication of Verifying prerequisites from the command line [http://www-01.ibm.com/support/knowledgecenter/SSWT9A_7.6.0/com.ibm.sccd-adv.doc/cmninst/install/t_programmaticallyverifyingprereqs.html], one parameter for the -component option is omitted. You can specify the was parameter to have the prerequisite verification utility check for prerequisites that are required for WebSphere Application Server. For example, 
+
+ 
+
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ *

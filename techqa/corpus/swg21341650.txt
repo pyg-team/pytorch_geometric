@@ -1,0 +1,29 @@
+Title: IBM MO-ERR-0008 The data provider returned an error message: - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Intermittent error when running MSAS reports 
+
+SYMPTOM
+MO-ERR-0008 The data provider returned an error message: "The operation requested failed due to timeout".
+
+RESOLVING THE PROBLEM
+Change the connection timeout setting to increase the default connection timeout to more than 15 seconds.
+
+Change the setting in the Cognos 8 installation directory under configuration/qfs_config.xml
+
+
+From
+<!-- MSAS Connect Timeout. Must be between 30 and 180 seconds, inclusive. -->
+<!--parameter name="MSTimeoutConnect" value="30"/-->
+
+To
+<!-- MSAS Connect Timeout. Must be between 30 and 180 seconds, inclusive. -->
+parameter name="MSTimeoutConnect" value="30"
+
+
+
+HISTORICAL NUMBER
+ 1030507

@@ -1,0 +1,48 @@
+Title: IBM COBPATH and COBDIR environment variables - United States
+
+Text:
+COBPATH; COBDIR; TXSeries; COBOL; CALL; DYNAMIC LOADING; MF COBOL; IBM COBOL FLASH (ALERT)
+
+ABSTRACT
+ COBPATH and COBDIR environment variable settings 
+
+CONTENT
+CICS® enables your COBOL programs to use the CALL statement to call other programs. With the CALL statement you can invoke a separate COBOL program. 
+On CICS for Windows®:
+
+
+Dynamically called COBOL subprograms should be built as dlls and have the file suffix “.dll”. A dynamically called COBOL program must reside in a directory that is included in the following environment variables:
+
+For IBM® COBOL programs:
+COBPATH
+
+For Micro Focus Server Express COBOL and Net Express programs:
+COBDIR
+
+Ensure that the environment variable is in the System environment for use in CICS.
+
+COBPATH and COBDIR are defined by the compilers at installation time.
+
+
+For Micro Focus Net Express COBOL programs, all COBOL calls check for the program in the PD database the first time the program is called. If no PD entry exists, the run time looks for the program in the COBDIR directory. After the first call to this program, disabling the program has no effect.
+
+On CICS on Open Systems:
+
+A COBOL program must reside on one of the following directories:
+
+The CICS bin directory: $CICS/bin
+
+Note: $CICS indicates the full path name of the location in which the CICS product is installed; for example, /usr/lpp/cics on AIX. If the CICS environment variable is set to the product path name, you can use the examples exactly as shown in the topic; otherwise, you must replace all instances of $CICS with the CICS product path name.
+
+If it is specified as a file name or a base name in a CALL statement, it can reside in a directory that is included in the following environment variables:
+
+For IBM® COBOL programs(Only on AIX) :
+COBPATH
+
+For Micro Focus Server Express COBOL:
+COBDIR
+
+If it is specified as a file name or a base name in a CALL statement, it can also reside in: 
+/var/cics_regions/region/bin
+
+If it is specified as a full path name in the CALL statement, it can reside anywhere in the file system.

@@ -1,0 +1,42 @@
+Title: IBM InfoSphere Optim Performance Manager (OPM) installation showing error: "The user
+name or password is incorrect. Enter a valid user name and password." - United States
+
+Text:
+invalid userid password OPM installation install valid user name TECHNOTE (FAQ)
+
+QUESTION
+ InfoSphere Optim Performance Manager installation showing error: "The user
+name or password is incorrect. Enter a valid user name and password." 
+
+CAUSE
+During the installation process, OPM checks the OPM administrator userid/password to verify if the userid/password is correct and if the userid has the correct rights.
+According to the InfoSphere Optim Performance Manager manual:
+
+"2. Create or select an administrative user for first log in. 
+When you install InfoSphere Optim Performance Manager, you will specify an existing administrative user for the repository database. This must be an existing local user or an LDAP user. The user, or the group the user belongs to, must have SYSADM authority on the DB2 instance. This user will be granted DBADM rights on the repository database. "
+
+
+
+ANSWER
+In some environments sometimes, it is a requirement to skip that process during the installation process. 
+
+To skip these two processes during the installation, there are two additional parameters that can be used for the installation command:
+-Dno_user_pw_checks=true --> To skip the userid/password validation
+-Dno_user_right_checks=true --> To skip the user rights validation, if they are not sufficient for the OPM administrator
+
+For example:
+IOPM.server.v5.x.x.x.install-on-<platform>.sh -Dno_user_pw_checks=true -Dno_user_right_checks=true
+
+Once the installation is done, the OPM administrator userid/password needs to be reset:
+1. Edit the dswebserver.properties file and change the parameter auth=metadb to auth=disabled 
+2. Stop, check if there is any OPM processes running on your system. If you do, kill them all.
+3. Start OPM
+4. Open the OPM page in the browser, the login page should not be not displayed. If the login page is still showing, it means that either the auth parameter is not set correctly (make sure that you have disabled as the parameter) or you did not restart OPM correctly.
+5. Once you are in the OPM Web UI, select Setup -> Configuration repository -> Select the Repository Database -> Edit and change the password, and test connection
+6. Once that the test connection is validated, save the profile by clicking "OK" button. Then the new password will be saved into OPM files.
+7. You can go to other Inflight dashboards now to verify if OPM is OK.
+8. Now to set up authentication back to metadb, so you can get the login again, select Setup -> Console Security -> Repository database authentication.
+9. Restart OPM and then OPM will show the login page back again.
+
+RELATED INFORMATION
+ InfoSphere Optim Performance Manager manual [http://pic.dhe.ibm.com/infocenter/perfmgmt/v5r2/index.jsp?topic=%2Fcom.ibm.datatools.perfmgmt.installconfig.doc%2Fprep_db2.html]

@@ -1,0 +1,143 @@
+Title: IBM IV27600: ORA-01795: MAXIMUM NUMBER OF EXPRESSIONS IN A LIST IS 1000 - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  ORA-01795: maximum number of expressions in a list is 1000
+   appears in logfile on cron servers.  The issue seems to occur
+   because this client has more than 1000 scheduled reports.  The
+   developers have confirmed that the error is thrown because the
+   sql that is used in the code is utilizing a sql function (IN
+   clause) that has a built in limit of 1000.  This is causing that
+   particular sql to fail hence the messages in the log.  The code
+   will need to be rewrittne to avoid this error.
+   
+   There is no functionality loss therefore this is only being
+   submitted as a severity 2 apar. The sql error will only cause
+   the
+   servertimestamp update to fail, which causes the server to be
+   "equal" in terms of who to run the crontask instead of giving
+   the weight to the server who has previous run the crontask.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * All                                                          *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * ORA-01795: MAXIMUM NUMBER OF EXPRESSIONS IN A LIST IS 1000   *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Fixed in code.                                               *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Part of 7.1.1.12 Fix Pack.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV27600
+   
+   
+ * REPORTED COMPONENT NAME
+   REPORTING
+   
+   
+ * REPORTED COMPONENT ID
+   5724R46RP
+   
+   
+ * REPORTED RELEASE
+   711
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-09-06
+   
+   
+ * CLOSED DATE
+   2013-01-14
+   
+   
+ * LAST MODIFIED DATE
+   2013-01-14
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  MAXIMO
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   REPORTING
+   
+   
+ * FIXED COMPONENT ID
+   5724R46RP
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R711 PSY
+   UP

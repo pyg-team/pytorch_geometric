@@ -1,0 +1,29 @@
+Title: IBM Changes to Daylight Saving Time (DST) for 2007 - United States
+
+Text:
+DST TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Starting in 2007, Daylight Saving Time (DST) in the United States will start three weeks earlier and will end one week later. Although other countries change DST rules often, this is new for the United States. The change will take effect in March 2007 as part of the “Energy Policy Act of 2005.” 
+
+RESOLVING THE PROBLEM
+Starting in 2007, Daylight Saving Time (DST) in the United States will start three weeks earlier and will end one week later. Although other countries change DST rules often, this is new for the United States. The change will take effect in March 2007 as part of the Energy Policy Act of 2005. 
+
+Below is a list of the most recent time zone values for the US time zones:
+
+QN0400AST2.
+QN0500EST3.
+QN0600CST2.
+QN0700MST3.
+QN0800PST2.
+QN0900AST2.
+QN1000HAS2.
+
+There are other shipped time zones (such as QN0600S, QN0700T, and QN0800U) that have the same offset and values as a US time zone; however, the text description is defined for use in another country. 
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Operating System IBM i 7.1 Operating System IBM i 6.1 
+HISTORICAL NUMBER
+ 426030442

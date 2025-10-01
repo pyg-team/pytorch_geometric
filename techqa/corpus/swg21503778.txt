@@ -1,0 +1,43 @@
+Title: IBM CWPZT0901I zero:zero.cli.tasks and CWPZT0506E unresolved dependency zero#zero.cli.tasks not found - United States
+
+Text:
+CWPZT0901I zero:zero.cli.tasks MSGCWPZT0901I ; CWPZT0506E zero#zero.cli.tasks MSGCWPZT0506E ; 5655S9700 R660 660 R600 600 HCI6600 R670 670 R700 700 HCI6700 5655-S97 5655S97 KIXINFO TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ You are trying to install the CICS Transaction Server for z/OS (CICS TS) V4.1 Feature Pack for Dynamic Scripting. When you enter the command " zero create CICS_Dynamic_Scripting " in OMVS, you receive the sMash message CWPZT0901I for zero:zero.cli.tasks. You also receive CWPZT0506E unresolved dependency zero#zero.cli.tasks not found. 
+
+SYMPTOM
+You are following the steps in the IBM Redbooks publication, Introduction to CICS Dynamic Scripting, for using local repositories. 
+
+Here are more detailed messages that you are seeing:
+
+CWPZT0901I: The following module(s) are not currently in the local repository: zero:zero.cli.tasks:[1.0.0.0, 2.0.0.0[ 
+
+CWPZT0902I: Trying to locate the module(s) using one of the configured remote repositories 
+
+CWPZT0506E: Error : unresolved dependency: zero#zero.cli.tasks;[1.0.0.0, 2.0.0.0[: not found 
+
+CWPZI8503I: CICS unit of work rolled back after a CLI task returned a non-zero return code. Initializing the cli failed 
+
+
+CAUSE
+The Dynamic Scripting Feature Pack downloads and installs resources as and when they are required. This means that at initial installation time, the LPAR on which it is installed must have access to a correctly configured repository. 
+
+The Feature Pack contains zero.cics.cli.task under ZERO_HOME/zero-repository/stable/modules/zero. 
+
+The reason why the Feature Pack is looking for zero.cics.task is because zero.cics.cli.task depends on zero.cics.task. But, zero.cics.task is not contained in the CICS Feature Pack installation package. So, zero.cics.task needs to be retrieved from a remote zero repository or from a local copy of the remote zero repository.
+
+
+RESOLVING THE PROBLEM
+To make zero.cics.task available when it is required by CICS Dynamic Scripting: 
+
+ 1. Download a new copy of Local_Repository directories (base and samples). The sMash base and samples are not included in the CICS repository. In order to use them you need to enter the following commands:
+    zero modulegroup addurl http://download.boulder.ibm.com/ibmdl/pub/software/htp/cics/updates/ds/1.1/repo/base
+    zero modulegroup addurl http://download.boulder.ibm.com/ibmdl/pub/software/htp/cics/updates/ds/1.1/repo/samples/
+    
+ 2. Change the protocol http:// to file:/// in the bootstrap file. The new directory path must include the initial forward slash to use an absolute path.
+
+
+
+PRODUCT ALIAS/SYNONYM
+ CICS/TS CICS TS CICS Transaction Server

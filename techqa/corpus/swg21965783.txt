@@ -1,0 +1,30 @@
+Title: IBM QRadar: Enabling On Event and Flow Hashing integrity checks with HMAC - United States
+
+Text:
+Hashing; QRadar; HMAC; integrity; hashed message authentication code; authentication TECHNOTE (FAQ)
+
+QUESTION
+ What is the performance impact of using HMAC, and how does QRadar handle key management?
+
+
+
+ANSWER
+The overhead of writing these files is negligible, regardless of the hashing method selected. HMAC is no more expensive than the default options supported by QRadar previously. Once enabled the 
+HMAC keys are added to new Events and Flows as they are written. When attempting to run the integrity check, it will take some time depending on the amount of data being validated. It will not cause performance issues, assuming the system is not at maximum load for disk input. 
+
+From more information on HMAC please refer to the section Checking the Integrity of Event and Flow Logs in the QRadar Administration Guide.
+
+QRadar 7.3.0 Administration Guide [http://public.dhe.ibm.com/software/security/products/qradar/documents/7.3.0/en/b_qradar_admin_guide.pdf] 
+
+QRadar 7.2.8 Administration Guide [http://public.dhe.ibm.com/software/security/products/qradar/documents/7.2.8/en/b_qradar_admin_guide.pdf] 
+
+ 
+
+ 
+
+Where do you find more information? 
+
+
+
+
+[/support/docview.wss?uid=swg21965783&aid=1] [http://ibm.biz/QRadar-KC] [/support/docview.wss?uid=swg21965783&aid=2] [https://ibm.biz/qradarforums] [/support/docview.wss?uid=swg21965783&aid=3] [http://ibm.biz/qradarknowledge] [/support/docview.wss?uid=swg21965783&aid=4] [http://ibm.biz/SecSuptUTube] [/support/docview.wss?uid=swg21965783&aid=5] [http://ibm.biz/qradarsoftware] [/support/docview.wss?uid=swg21965783&aid=6] [http://ibm.biz/MyNotification] [/support/docview.wss?uid=swg21965783&aid=7] [http://ibm.biz/SuptRegQuikStart]

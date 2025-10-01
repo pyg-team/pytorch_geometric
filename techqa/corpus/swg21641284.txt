@@ -1,0 +1,74 @@
+Title: IBM The install process of ITCAM Agent for WebSphere MQ File Transfer Edition  is suspended due to a pop-up message 'press any key to exit'. - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ English 
+
+PROBLEM(ABSTRACT)
+ On Windows 2012, the install process of ITCAM Agent for WebSphere MQ File Transfer Edition 7.0.1 is suspended due to a pop-up window which prompts 'press any key to exit'. For local installation, users have to press any key to exit the pop-up window to proceed. For remote deploy, it will fail due to time out. 
+
+SYMPTOM
+When you install ITCAM Agent for WebSphere MQ File Transfer Edition 7.0.1 with GUI installer on Windows 2012, the install process will be suspended due to a pop-up window which prompts 'press any key to exit'. You have to press any key to exit the pop-up window to proceed. 
+
+[/support/docview.wss?uid=swg21641284&aid=1] [/support/docview.wss?uid=swg21641284&aid=1] 
+
+ 
+
+If you remote deploy ITCAM Agent for WebSphere MQ File Transfer Edition 7.0.1 to Windows 2012, it will fail due to time out. 
+
+ 
+
+Both local install and remote deploy issue only occur on Windows 2012.
+
+CAUSE
+A component of installer is incompatible with Windows 2012. The console window is suspended unexpectedly during installation and it stops installation process. 
+
+
+
+ENVIRONMENT
+Windows 2012, ITCAM Agent for WebSphere MQ File Transfer Edition 7.0.1
+
+
+
+RESOLVING THE PROBLEM
+There are two options to resolve this problem. 
+
+Option 1. Just press any key to proceed during GUI installation. But this option can't work for remote deploy. 
+
+ 
+
+Option 2. Install IBM Tivoli Monitoring interim fix 6.2.2-TIV-ITM_IN-WIN2012 and Monitoring Agent for Windows OS (version 6.3.0 or 6.2.3 fix pack 3) to resolve this problem for both local install and remote deploy. Required steps are shown as below: 
+
+Step 1. Download the interim fix from following link.
+http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FIBM+Tivoli+Monitoring&fixids=6.2.2-TIV-ITM_IN-WIN2012&source=dbluesearch [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FIBM+Tivoli+Monitoring&fixids=6.2.2-TIV-ITM_IN-WIN2012&source=dbluesearch]
+
+Step 1.1 Sign in with IBM ID.
+[/support/docview.wss?uid=swg21641284&aid=2] [/support/docview.wss?uid=swg21641284&aid=2]
+
+Step 1.2 Select either download director or HTTP. Please note download director requires Java Applet enabled for your web browser. [/support/docview.wss?uid=swg21641284&amp;aid=3]
+
+Step 1.3 Click 6.2.2-TIV-ITM_IN-WIN2012.zip or 6.2.2-TIV-ITM_IN-WIN2012.zip to download it.
+[/support/docview.wss?uid=swg21641284&amp;aid=4]
+
+
+Step 2. Apply the interim fix to install image.
+Step 2.1 Transfer the zip or tar file to a temp directory on the system which contains the install image of ITCAM Agent for WebSphere MQ File Transfer Edition 7.0.1.
+Step 2.2 Extract the zip or tar file. And run following command to apply the interim fix.
+<temp dir>/install-win2012 -h <media_dir>
+Where <temp dir> is the location of the unpacked zip/tar file, and <media_dir> is the root dir of the ITCAM Agent for WebSphere MQ File Transfer Edition 7.0.1 install image. 
+For example,
+C:\temp\install-win2012 -h D:\images\ITCAMfFTE701\
+
+Step 3. Run local install or remote deploy with the updated ITCAM Agent for WebSphere MQ File Transfer Edition 7.0.1 image. The install process should not suspend anymore. 
+
+Step 4. Install Monitoring Agent for Windows OS (version 6.3.0 or version 6.2.3 fix pack 3) on the same system which ITCAM Agent for WebSphere MQ File Transfer Edition is just installed.
+You can run following command to verify Monitoring Agent for Windows OS is already installed.
+<Candle_Home>\bin\kincinfo -t nt
+Where <Candle_Home> is the install directory of IBM Tivoli Monitoring. Please confirm that 'Monitoring Agent for Windows OS' is under 'PRODUCT DESC' rather than 'APPLICATION SUPPORT DESC'. And the version should be 06.30.xx.xx or 06.23.03.00
+[/support/docview.wss?uid=swg21641284&aid=5] [/support/docview.wss?uid=swg21641284&aid=5]
+
+
+RELATED INFORMATION
+#IBM Tivoli Monitoring Version 6.2.2 Interim Fix [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FIBM+Tivoli+Monitoring&fixids=6.2.2-TIV-ITM_IN-WIN2012&source=dbluesearch]

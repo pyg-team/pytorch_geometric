@@ -1,0 +1,44 @@
+Title: IBM Cannot install ClearCase Remote Client into existing 64-bit package group - United States
+
+Text:
+Bit; 64; 64-bit; Mode; CCRC; RN8.0.3; SRX; 74394; RAD64bit TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ If you attempt to install Rational ClearCase Remote Client or or Rational ClearCase Remote Client extension into the same package group as 64-bit Rational Application Developer package, then the installation fails with the following error message: 
+"The 32-bit IBM Rational ClearCase Remote Client package cannot be installed in the 64-bit IBM Software Delivery Platform package group." 
+
+SYMPTOM
+Rational ClearCase Remote Client or Rational ClearCase Remote Client extension cannot be installed into the existing package due to an error message on Install Packages page in Installation Manager.
+
+
+CAUSE
+ The following product versions cannot be installed into a 64-bit package group; 
+
+ * Rational ClearCase Remote Client (all versions) 
+ * Rational ClearCase Remote Client extension (v7.1.1.5, v7.1.2.2 and earlier)
+
+ENVIRONMENT
+Rational Application Developer installed in 64-bit mode on a 64-bit architecture operating system (by selecting 64-bit as the bit mode on the Install Packages page in Installation Manager), 
+
+
+
+RESOLVING THE PROBLEM
+To install into a 64-bit package group, install the one of the following versions of Rational ClearCase Remote Client extension: 
+
+ *  v7.1.1.6 
+ * v7.1.2.3 (or later)
+
+
+Ensure that you install the extension offering - Rational ClearCase Remote Client Extension - not the full offering. 
+Note: In general the CM server version needs to be the same as (or newer) than the CCRC client version. Therefore you (or your system administrator) might need to upgrade the ClearCase CM Server before upgrading your CCRC client. For more details and installation instructions, see technote 21406797 [https://www-304.ibm.com/support/docview.wss?uid=swg21406797&wv=1] regarding ClearCase Remote Client Extension v7.1.x .
+
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Software Development Rational Software Architect Linux, Windows 8.0.3 
+PRODUCT ALIAS/SYNONYM
+ RAD
+RADSE
+RSA

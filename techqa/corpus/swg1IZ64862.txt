@@ -1,0 +1,199 @@
+Title: IBM IZ64862: OPTIONALLY DISABLE JOB OBJECT AND JOB OBJECT DETAILS PERFORMANCE COUNTERS DATA COLLECTION - United States
+
+Text:
+  A FIX IS AVAILABLE
+IBM Tivoli Monitoring: Windows(R) OS Agent 6.2.2.1-TIV-ITM_WIN-IF0002 [http://www-01.ibm.com/support/docview.wss?uid=swg24026485]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Environment : Windows 2003 Server
+   Problem Description : Data retrieval from Windows Performance
+   Counters Job Objects and Job Objects Details can result in
+   an unexpected high cpu usage from kntcma process.
+   This behavior is caused by MS Windows libraries that uses such
+   cpu to enumerate the JobObjects elements.
+   Problem occurs in systems where a meaningful number of kernel
+   objects have been created.
+   Under this condition, any perfmon API client, like ITM Windows
+   OS Agent, may experience high cpu.
+   Problem cannot be avoided because it is with non-ITM code,
+   but we can give an additional configuration option to disable
+   data collection for Job Object and Job Object Details in
+   case this problem occurs.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Data retrieval from the Windows Performance Counters
+   Job Objects" and "Job Objects Details" can result in
+   an unexpected high CPU usage for the IBM Tivoli Monitoring Agent
+   for Windows OS kntcma.exe process.
+   The problem occurs when other applications running on the system
+   create several objects under the \BaseNamedObjects namespace,
+   because these will be queried by the Microsoft Performance
+   Libraries. Under this condition, any perfmon API client, like
+   the Windows OS Agent, may experience high CPU.
+   To avoid affecting Microsoft Performance Libraries, these
+   applications would need to create the objects under their own
+   private namespace. Additional information can be found at
+   the following links.
+   
+   http://msdn.microsoft.com/en-us/library/ms684161(VS.85).aspx [http://msdn.microsoft.com/en-us/library/ms684161(VS.85).aspx]
+   http://msdn.microsoft.com/en-us/library/ms682419(VS.85).aspx [http://msdn.microsoft.com/en-us/library/ms682419(VS.85).aspx]
+   http://msdn.microsoft.com/en-us/library/ms684295(VS.85).aspx [http://msdn.microsoft.com/en-us/library/ms684295(VS.85).aspx]
+   
+   Since this problem cannot be avoided, because it is with non-ITM
+   code, the purpose of this APAR is to provide an additional
+   option to disable data collection for Job Object and Job Object
+   Details in case this problem occurs. The APAR has been extended
+   to exclude any counter the agent relies on.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The environment variable NT_EXCLUDE_PERF_OBJS needs to be
+   defined to exclude Performance Counters data collection. The
+   list of Performance Counters that can be excluded is the
+   following:
+   Paging File, Processor, LogicalDisk, Memory, Objects,
+   PhysicalDisk, Process, System, RAS Port, RAS Total,
+   Network Interface, Network Segment, UDP, TCP, IP, ICMP, HTTP,
+   HTTP Content Index, Active Server Pages, Gopher Service,
+   FTP Server, Internet Information Services Global, MSMQ IS,
+   MSMQ Service, MSMQ Queue, UDPv4, Cache, MSMQ Sessions,
+   MSMQ Session, Job Object, Job Object Details, FTP Service,
+   Web Service, Content Index, Content Index Filter,
+   NNTP Commands, NNTP Server, SMTP Server, DHCP Server, DNS,
+   Indexing Service, Print Queue, Http Indexing Service,
+   Web Service, Indexing Service Filter, Thread,
+   Server Work Queues, IPv4, TCPv4, Redirector.
+   
+   The list of counters should use a comma as a separator.
+   For instance,
+   NT_EXCLUDE_PERF_OBJS=Job Object,Job Object Details,Processor
+   Note that the following counters must be specified together in
+   order for the exclusion to function :
+   - Job Object,Job Object Details
+   - Network interface,TCPv4,TCP,UDPv4,UDP,IPv4,IP,ICMP
+   
+   Furthermore, when the agent start, it verifies whether there are
+   counters that might lead to high CPU, considering a very long
+   execution time to get the counter value as an indication of high
+   CPU. The agent log file will report traces similar the
+   following:
+   
+   "Counter:'xxx' is taking long (>yy sec). This is a possible
+   source
+   of high CPU usage
+   Consider to disable it by means of the NT_EXCLUDE_PERF_OBJS
+   variable"
+   
+   
+   The fix for this APAR is contained in the following maintenance
+   packages:
+   | interim fix | 6.2.1.0-TIV-ITM_WIN-IF0005
+   
+   and is going to be contained also in:
+   | interim fix | 6.2.2.1-TIV-ITM_WIN-IF0001
+   | FixPack | 6.2.2-TIV-ITM-FP0002
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ64862
+   
+   
+ * REPORTED COMPONENT NAME
+   ITM AGENT WINDO
+   
+   
+ * REPORTED COMPONENT ID
+   5724C040W
+   
+   
+ * REPORTED RELEASE
+   621
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-11-10
+   
+   
+ * CLOSED DATE
+   2010-01-28
+   
+   
+ * LAST MODIFIED DATE
+   2010-01-28
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ITM AGENT WINDO
+   
+   
+ * FIXED COMPONENT ID
+   5724C040W
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R621 PSY
+   UP
+   
+   
+ * R622 PSY
+   UP

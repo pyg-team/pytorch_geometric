@@ -1,0 +1,29 @@
+Title: IBM Download for IBM Worklight V5.0.6 Fix Pack 2 and IBM Mobile Foundation V5.0.6 Fix Pack 2 - United States
+
+Text:
+IMF506; 5.0.6.2; fix pack DOWNLOADABLE FILES
+
+ABSTRACT
+ This update provides fixes and new features for the V5.0.6 release. 
+
+INSTALLATION INSTRUCTIONS
+See Installing Fix Packs for IBM Worklight and IBM Mobile Foundation [http://www.ibm.com/support/docview.wss?uid=swg27028172] for detailed installation instructions.
+
+DOWNLOAD PACKAGE
+You can download this fix pack from IBM Fix Central [http://www-933.ibm.com/support/fixcentral/]. 
+
+Edition Fix Pack IBM Worklight Consumer Edition Download [http://www.ibm.com/support/fixcentral/swg/downloadFixes?product=ibm/Other%20software/IBM%20Worklight%20Consumer%20Edition&release=5.0.6.0&platform=All&function=fixId&fixids=5.0.6-WL-WCE-FP002&includeRequisites=1&includeSupersedes=0&downloadMethod=http] IBM Worklight Enterprise Edition Download [http://www.ibm.com/support/fixcentral/swg/downloadFixes?product=ibm/Other%20software/IBM%20Worklight%20Enterprise%20Edition&release=5.0.6.0&platform=All&function=fixId&fixids=5.0.6-WL-WEE-FP002&includeRequisites=1&includeSupersedes=0&downloadMethod=http] IBM Mobile Foundation Consumer Edition Download [http://www.ibm.com/support/fixcentral/swg/downloadFixes?product=ibm/Other%20software/IBM%20Mobile%20Foundation%20Consumer%20Edition&release=5.0.6.0&platform=All&function=fixId&fixids=5.0.6-WL-MFCE-FP002&includeRequisites=1&includeSupersedes=0&downloadMethod=http] IBM Mobile Foundation Enterprise Edition Download [http://www.ibm.com/support/fixcentral/swg/downloadFixes?product=ibm/Other%20software/IBM%20Mobile%20Foundation%20Enterprise%20Edition&release=5.0.6.0&platform=All&function=fixId&fixids=5.0.6-WL-MFEE-FP002&includeRequisites=1&includeSupersedes=0&downloadMethod=http] 
+Documentation  * IBM Worklight 5.0.6 Information Center [http://pic.dhe.ibm.com/infocenter/wrklight/v5r0m6/topic/com.ibm.help.doc/wl_home.html] 
+ * Getting Started with IBM Worklight 5.0.6 [http://www.ibm.com/developerworks/mobile/worklight/getting-started.html] [http://www.ibm.com/support/docview.wss?uid=swg27039574]
+
+KNOWN SIDE EFFECTS
+If you use push notifications on Apple iOS, you need to delete your existing application and redeploy it into the Worklight Console. For more information, see APAR PI09770 [http://www.ibm.com/support/docview.wss?uid=swg1PI09770] 
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Mobile- Speech and Enterprise Access IBM Mobile Foundation Not Applicable AIX, Apple iOS, BlackBerry OS, Google Android, HP-UX, Linux, Linux Red Hat - xSeries, Linux Red Hat - zSeries, Linux SUSE - xSeries, Linux SUSE - zSeries, Mac OS X, Solaris, Windows, Windows 2008 server, Windows 7, Windows Mobile, Windows Vista, Windows XP, Windows 8 5.0.6.2, 5.0.6 Consumer, Enterprise 
+
+ [/support/docview.wss?uid=swg24036825&aid=1]Problems (APARS) fixed [/support/docview.wss?uid=swg24036825&aid=2]Problems (APARS) fixed
+PI08971 PI08819 PI08583 PI07983 PI07217 PI07150 PI06943 PI06709 PI06652 PI06586 PI06568 PI06567 PI06519 PI06288 PI06287 PI06251 PI05887 PI05241 PI05121 PM99361 PM98941 PM98783 PM98294 PM98177 PM98129 PM98051 PM98050 PM97950 PM97924 PM97582 PM97578 PM97529 PM97283 PM97251 PM97136 PM93742 PM89781

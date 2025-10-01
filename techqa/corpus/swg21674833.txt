@@ -1,0 +1,21 @@
+Title: IBM Error message received after upgrade CE to 5.2 - United States
+
+Text:
+9E9021FB TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ We got the following message in the AutomaticUpgradeStatus page for two of our Object stores after upgrade IBM FileNet Content Engine(CE) to 5.2, how can we deal with it?
+
+
+
+9E9021FB DBA should manually drop indices I_Event48 and I_Event83,
+
+convert date column to timestamp and recreate them on Event table. 
+
+ENVIRONMENT
+Oracle database
+
+RESOLVING THE PROBLEM
+You should follow the warning message. Part of the CE upgrade is that Oracle DATE columns are converted to TIMESTAMP, but this sometimes fails to work automatically. While CE will still function, it is the best practice if you get the right data types in place.
+
+Please ask your DBA to extract the DDL from the existing indexes named in the message. Then drop the indexes, convert all DATE columns on the Event table to TIMESTAMP, and recreate the indexes afterwards using the same DDL.

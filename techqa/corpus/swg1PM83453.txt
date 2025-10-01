@@ -1,0 +1,183 @@
+Title: IBM PM83453: During the WebSphere Portal v8 JCR Migration, the following error can occur due to extraneous JCR NodeTypes that may havebee - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Fixes integrated in WebSphere Portal 8.0.0.0 Cumulative Fixes [http://www-01.ibm.com/support/docview.wss?uid=swg24033155]
+Fixes integrated in WebSphere Portal 8.0.0.1 Combined Cumulative Fixes [http://www-01.ibm.com/support/docview.wss?uid=swg24034497]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  In this senario one is migrating from clustered portal 6106 to
+   8 CF03 on zLinux using db2/zos.
+   While running upgrade-profile task and it fails with the
+   following :
+   import-nodetypes:
+        [echo] importing nodeTypes using
+   /usr/local/web/ptl/WPS/80x/PortalServer/bin/../wcm/prereq.wcm/co
+   nfig/nod
+   etypes/ibmcontentwcm_v4tov5a.nodetypes file
+   [importNodeTypes] Feb 6, 2013 6:06:48 PM
+   com.ibm.icm.jcr.RepositoryFactory init
+   [importNodeTypes] INFO: RT7512I: Initializing
+   RepositoryFactory.
+   [importNodeTypes] Feb 6, 2013 6:06:48 PM
+   com.ibm.icm.jcr.RepositoryImpl
+   getRepository
+   [importNodeTypes] INFO: RT7511I: Loading Repository: Default.
+   ..........
+   ..........
+   [importNodeTypes] Feb 6, 2013 6:06:49 PM
+   com.ibm.icm.jcr.RepositoryFactory init
+   [importNodeTypes] INFO: RT7513I: Initialized RepositoryFactory.
+   [importNodeTypes] Feb 6, 2013 6:07:09 PM
+   com.ibm.icm.jcr.serialization.handler.NodeTypeContentHandlerImpl
+   endElement
+   [importNodeTypes] SEVERE: SER3034E: Exception in end element.
+   [importNodeTypes] Throwable occurred:
+   javax.jcr.RepositoryException:
+   SCH0003E: Error saving content type:
+   ibmcontentwcm:draftSummary.
+   [importNodeTypes] DB2 SQL Error: SQLCODE=-670, SQLSTATE=54010,
+   SQLERRMC=null, DRIVER=4.3.85Thread 3584580 : lException: DB2
+   SQL Error:
+   SQLCODE=-670, SQLSTATE=54010, SQLERRMC=null, DRIVER=4.3.85
+   [importNodeTypes]  at com.ibm.db2.jcc.a.dd.a(dd.java:679)
+   ..........
+   ..........
+   [importNodeTypes] Caused by: com.ibm.icm.da.DBAccessException:
+   DB2 SQL
+   Error: SQLCODE=-670, SQLSTATE=54010, SQLERRMC=null,
+   DRIVER=4.3.85Thread
+   3584580 : lException: DB2 SQL Error: SQLCODE=-670,
+   SQLSTATE=54010,
+   SQLERRMC=null, DRIVER=4.3.85
+   [importNodeTypes]  at com.ibm.db2.jcc.a.dd.a(dd.java:679)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  n/a
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Fix has been provided.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A code fix for this issue is integrated into the 8.0.0.0
+   Combined Cumulative Fix 005 (PM84209 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM84209]) available from Fix
+   Central:
+   
+   http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent
+   =ibm~WebSphere&product=ibm/WebSphere/WebSphere+Portal&release=8 [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~WebSphere&product=ibm/WebSphere/WebSphere+Portal&release=8]
+   .0.0.0&platform=All&function=aparId&apars=PM84209
+   
+   as well as into the 8.0.0.1 Combined Cumulative Fix 005
+   (PM84211 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM84211]) available from Fix Central:
+   
+   http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent
+   =ibm~WebSphere&product=ibm/WebSphere/WebSphere+Portal&release=8 [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~WebSphere&product=ibm/WebSphere/WebSphere+Portal&release=8]
+   .0.0.0&platform=All&function=aparId&apars=PM84211
+   
+   You might need to type or paste the complete address into your
+   Web browser.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM83453
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSPHERE PORTA
+   
+   
+ * REPORTED COMPONENT ID
+   5724E7600
+   
+   
+ * REPORTED RELEASE
+   800
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-02-22
+   
+   
+ * CLOSED DATE
+   2013-05-28
+   
+   
+ * LAST MODIFIED DATE
+   2013-05-28
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBSPHERE PORTA
+   
+   
+ * FIXED COMPONENT ID
+   5724E7600
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R800 PSY
+   UP

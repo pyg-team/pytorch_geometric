@@ -1,0 +1,190 @@
+Title: IBM IT23570: PERFORMANCE MONITOR GRAPH SPIKE DUE TO TIME ZONE DISCREPANCY BETWEEN SPECTRUM CONTROL SERVER AND MONITORED STORAGE DEVICE. - United States
+
+Text:
+AIX SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Due to un-anticipated time zone discrepancies as a result of
+   daylight saving time ending on different dates at various
+   locations around the world, Spectrum Control was unable to
+   correctly interpret performance metrics and displayed an
+   inexplicable spike in performance graphs.
+   
+   In an observed case, the Spectrum Control server was located in
+   the US Eastern Daylight time zone, while a monitored SVC was
+   located in the Atlantic/Azores time zone.  The Atlantic/Azores
+   time zone ended Daylight Saving time on October 29, 2017; while
+   the US Eastern time zone ended DST on November 5.
+   
+   The performance monitor trace logs in this case displayed
+   duplicate sets of samples starting from 10/29/17 12:00:47 AM GMT
+   which I believe it is 2017-10-28 20:00:47 local time (SC server
+   time) as shown here:
+   
+   2017-10-28 20:57:18.679 HWNPM2123I Performance data for resource
+   timestamp 10/29/17 12:50:47 AM GMT+00:00 was collected and
+   processed successfully. 5890 performance data records were
+   inserted into the database repository.
+   2017-10-28 21:02:05.864 HWNPM2124W Performance data continuity
+   has been broken. The device might have been reset or rebooted.
+   87376 performance data records were discarded.
+   2017-10-28 21:07:10.258 HWNPM2123I Performance data for resource
+   timestamp 10/29/17 12:00:47 AM GMT-01:00 was collected and
+   processed successfully. 5882 performance data records were
+   inserted into the database repository.
+   
+   Better handling of this scenario is needed to avoid displaying
+   spikes for this reason.
+   
+   
+   
+   RECREATE STEPS:
+   Observe spikes displayed in performance graphs when DST ends at
+   a different time for the monitored storage device as it does for
+   the Spectrum Control server
+   ________________________________________________________________
+   DB2 Version used for Server:  N/A
+   The defect is against component:  5608TPC00
+   Server/Manager build/release (TPC):  5.2.13
+   
+   ________________________________________________________________
+   Problem as described by customer:  	unexplained performance data
+   spikes
+   Initial customer impact (low/med/high): low
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Apply fix when available
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * IBM Spectrum Control 5.2.x users in different daylight       *
+   * saving date change zones                                     *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * Due to un-anticipated time zone discrepancies as a result of *
+   * daylight saving time ending on different dates at various    *
+   * locations around the world, Spectrum Control was unable to   *
+   * correctly interpret performance metrics and displayed an     *
+   * inexplicable spike in performance graphs.                    *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Apply fix maintenance when available                         *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix for this APAR is contained in the following maintenance
+   package:
+   
+   IBM Spectrum Control 5.2.17  |  refresh pack  |
+   5.2-TIV-TPC-RP0017  |  May 2018
+   
+   http://www.ibm.com/support/docview.wss?&uid=swg21320822 [http://www.ibm.com/support/docview.wss?&uid=swg21320822]
+   
+   The target dates for future releases do not represent a formal
+   commitment by IBM. The dates are subject to change without
+   notice.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT23570
+   
+   
+ * REPORTED COMPONENT NAME
+   TPC ADVANCED
+   
+   
+ * REPORTED COMPONENT ID
+   5608TPCA0
+   
+   
+ * REPORTED RELEASE
+   52D
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-12-22
+   
+   
+ * CLOSED DATE
+   2018-04-17
+   
+   
+ * LAST MODIFIED DATE
+   2018-04-17
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TPC ADVANCED
+   
+   
+ * FIXED COMPONENT ID
+   5608TPCA0
+   
+   
+
+APPLICABLE COMPONENT LEVELS

@@ -1,0 +1,59 @@
+Title: IBM Security Bulletin: Multiple Vulnerabilities in OpenSSL affect IBM Worklight and IBM MobileFirst Platform Foundation - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ OpenSSL vulnerabilities were disclosed on Dec 16, 2016 by the OpenSSL Project. OpenSSL is used by IBM Worklight and IBM MobileFirst Platform Foundation. IBM Worklight and IBM MobileFirst Platform Foundation have addressed the applicable CVEs. 
+
+VULNERABILITY DETAILS
+CVEID: CVE-2017-3730 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2017-3730]DESCRIPTION: OpenSSL is vulnerable to a denial of service, caused by a NULL pointer dereference. By sending specially crafted parameters for a DHE or ECDHE key exchange, a remote attacker could exploit this vulnerability to cause the application to crash.CVSS Base Score: 5.3CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/121311 [https://exchange.xforce.ibmcloud.com/vulnerabilities/121311] for the current scoreCVSS Environmental Score*: UndefinedCVSS Vector: (CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:L) 
+
+CVEID: CVE-2017-3731 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2017-3731]DESCRIPTION: OpenSSL is vulnerable to a denial of service, caused by an out-of-bounds read when using a specific cipher. By sending specially crafted truncated packets, a remote attacker could exploit this vulnerability using CHACHA20/POLY1305 to cause the application to crash.CVSS Base Score: 5.3CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/121312 [https://exchange.xforce.ibmcloud.com/vulnerabilities/121312] for the current scoreCVSS Environmental Score*: UndefinedCVSS Vector: (CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:L) 
+
+CVEID: CVE-2017-3732 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2017-3732]DESCRIPTION: OpenSSL could allow a remote attacker to obtain sensitive information, caused by a propagation error in the BN_mod_exp() function. An attacker could exploit this vulnerability to obtain information about the private key.CVSS Base Score: 5.3CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/121313 [https://exchange.xforce.ibmcloud.com/vulnerabilities/121313] for the current scoreCVSS Environmental Score*: UndefinedCVSS Vector: (CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:N/A:N) 
+
+CVEID: CVE-2016-7055 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2016-7055]DESCRIPTION: OpenSSL is vulnerable to a denial of service, caused by an error in a Broadwell-specific Montgomery multiplication procedure. By sending specially crafted data, a remote attacker could exploit this vulnerability to trigger errors in public-key operations in configurations where multiple remote clients select an affected EC algorithm and cause a denial of service.CVSS Base Score: 5.3CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/118748 [https://exchange.xforce.ibmcloud.com/vulnerabilities/118748] for the current scoreCVSS Environmental Score*: UndefinedCVSS Vector: (CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:L)
+
+AFFECTED PRODUCTS AND VERSIONS
+IBM MobileFirst Platform Foundation 8.0.0.0
+IBM MobileFirst Platform Foundation 7.1.0.0
+IBM MobileFirst Platform Foundation 7.0.0.0
+IBM MobileFirst Platform Foundation 6.3.0.0
+IBM Worklight Enterprise Edition 6.2.0.1
+IBM Worklight Enterprise Edition 6.1.0.2
+
+REMEDIATION/FIXES
+ 
+
+Product VRMF APAR Remediation/First Fix IBM Worklight 6.x PI86907 Download the latest iFix for IBM Worklight Enterprise Edition on FixCentral [http://www.ibm.com/support/fixcentral/swg/quickorder?parent=ibm%7EOther%2Bsoftware&product=ibm/Other+software/IBM+Worklight+Enterprise+Edition&release=All&platform=All&function=all&source=fc] 
+Download the latest iFix for IBM Worklight Consumer Edition on FixCentral [http://www.ibm.com/support/fixcentral/swg/quickorder?parent=ibm%7EOther%2Bsoftware&product=ibm/Other+software/IBM+Worklight+Consumer+Edition&release=All&platform=All&function=all&source=fc] IBM Mobile Foundation 6.x Download the latest iFix for IBM Mobile Foundation Enterprise Edition on FixCentral [http://www.ibm.com/support/fixcentral/swg/quickorder?parent=ibm%7EOther%2Bsoftware&product=ibm/Other+software/IBM+Mobile+Foundation+Enterprise+Edition&release=All&platform=All&function=all&source=fc]
+Download the latest iFix for IBM Mobile Foundation Consumer Edition on FixCentral [http://www.ibm.com/support/fixcentral/swg/quickorder?parent=ibm%7EOther%2Bsoftware&product=ibm/Other+software/IBM+Mobile+Foundation+Enterprise+Edition&release=All&platform=All&function=all&source=fc] IBM MobileFirst Platform Foundation 6.x and 7.x Download the latest iFix for IBM MobileFirst Platform Foundation on FixCentral [http://www.ibm.com/support/fixcentral/swg/quickorder?parent=ibm%7EOther%2Bsoftware&product=ibm/Other+software/IBM+MobileFirst+Platform+Foundation&release=All&platform=All&function=all&source=fc] IBM MobileFirst Platform Foundation 8.0 PI86907 Download the latest iFix for IBM MobileFirst Platform Foundation on FixCentral [https://www-945.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm%7EOther%2Bsoftware&product=ibm/Other+software/IBM+MobileFirst+Platform+Foundation&release=8.0.0.0&platform=All&function=all&source=fc] 
+Note: CVE-2017-3730 does not affect OpenSSL version 1.0.2. Please refer link below for further details – 
+https://www.openssl.org/news/secadv/20170126.txt [https://www.openssl.org/news/secadv/20170126.txt] WORKAROUNDS AND MITIGATIONS
+None
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v3 Guide [http://www.first.org/cvss/user-guide] 
+On-line Calculator v3 [http://www.first.org/cvss/calculator/3.0] 
+Complete CVSS v3 Guide [http://www.first.org/cvss/user-guide] [http://www.first.org/cvss/calculator/3.0] On-line Calculator v3 [http://www.first.org/cvss/calculator/3.0] 
+
+
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] 
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] 
+ACKNOWLEDGEMENT
+None 
+
+CHANGE HISTORY
+ 22/09/2017 - Publish 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.

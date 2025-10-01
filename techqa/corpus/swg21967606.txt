@@ -1,0 +1,29 @@
+Title: IBM How host linux users other than "nz" can run nzsqa - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Through "Query->Execute with SPU utilization monitor" menu from Aginity, clients can run SQL statement while checking SPU utilization. At this time Aginity requires host credential to run /nz/kit/bin/adm/nzsqa command on Netezza host.
+Client users should logon one designated host user other than "nz" user at this time to protect "nz" user credential from many clients.
+How can we make other user than "nz" run /nz/kit/bin/adm/nzsqa? 
+
+CAUSE
+nzsqa command has a permission 700, so only "nz" user can run this command successfully. To run nzsqa successfully from other user than "nz" and other group than "nz", nzsqa file's permission needs to be changed to 4705 to set effective user id for nzsqa file.
+
+ANSWER
+We can create a host user with any group name other than "nz" group and then change nzsqa binary's file permission as below: 
+
+[nz] $ chmod 4705 /nz/kit/bin/adm/nzsqa 
+
+The steps for this are below: 
+
+[root] # useradd -G nobody monuser 
+
+[root] # passwd monuser
+Changing password for user dummyuser.
+New password:
+Retype new password:
+passwd: all authentication tokens updated successfully. 
+
+[monuser] $ /nz/kit/bin/adm/nzsqa

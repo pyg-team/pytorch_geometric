@@ -1,0 +1,172 @@
+Title: IBM PM90385: SHIP FMID JIWO700 COMPID 5655I3511 - WEBSPHERE PLUG-IN FOR THE IBM HTTP SERVER V7.0 (POWERED BY APACHE) FIX PACK 7.0.0.29. - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  WebSphere Application Server V7.0 for z/OS Plug-in for the
+   IBM HTTP Server V7.0 (powered by Apache) Fix Pack 7.0.0.29.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  All users of the WebSphere Application      *
+   *                  Server V7.0 for z/OS Plug-in for the IBM    *
+   *                  HTTP Server V7.0 (powered by Apache)        *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: APAR PM90385 addresses various          *
+   *                      defects for the WebSphere Application   *
+   *                      Server V7.0 for z/OS Plug-in for the    *
+   *                      IBM HTTP Server V7.0(powered by         *
+   *                      Apache)                                 *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   APAR PM90385 fixes the following defects for the WebSphere
+   Application server V7.0 for z/OS Plug-in for the IBM HTTP
+   Server V7.0 (powered by Apache)
+   
+   APAR    Description
+   ----    -----------
+   PM74660 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM74660] PLUGIN RANDOM GENERATOR NOT CHECKING ALL AVAILABLE
+           SERVER MEMBER
+   PM75801 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM75801] PLUG-IN DEADLOCK BETWEEN TRYING TO READ/LOAD A NEW
+           PLUGIN
+   PM76057 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM76057] IHS ERRORDOCUMENT SHOULD HANDLE "400" ERROR FROM PLUG-IN
+   PM76420 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM76420] FEATURE TO INTRODUCE CONNECTIONTTL PROPERTY
+   PM74721 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM74721] Plugin trace does not log Ephemeral port numbers
+   PM80348 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM80348] V8.0 WEBSPHERE HTTP PLUG-IN HAS WRONG VERSION NUMBER
+           IN MESSAGE
+   
+   ------------------------------------
+   
+   *** NOTE ***
+   
+   Additional information about the APARs listed above can be
+   found in RETAIN or by using the APAR search facility located
+   at URL:
+   
+   HTTP://www.ibm.com/software/webservers/appserv/was/support/ [HTTP://www.ibm.com/software/webservers/appserv/was/support/]
+   
+   to search on the APAR number.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  APAR PM90385 fixes various defects in the WebSphere
+   Application server V7.0 for z/OS Plug-in for the IBM HTTP
+   Server V7.0 (powered by Apache).
+   
+   APAR PM90385 is currently targeted for inclusion in
+   Service Level (FixPack) 7.0.0.29 of the WebSphere Application
+   server V7.0 for z/OS Plug-in for the IBM HTTP Server V7.0
+   (powered by Apache).
+   
+   Please refer to URL:
+   //www.ibm.com/support/docview.wss?rs=404&uid=swg27006970
+   for Fix Pack availability.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM90385
+   
+   
+ * REPORTED COMPONENT NAME
+   WAS IHS 64BIT P
+   
+   
+ * REPORTED COMPONENT ID
+   5655I3511
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-06-04
+   
+   
+ * CLOSED DATE
+   2013-06-05
+   
+   
+ * LAST MODIFIED DATE
+   2013-07-03
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UK94914
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WAS IHS 64BIT P
+   
+   
+ * FIXED COMPONENT ID
+   5655I3511
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R700 PSY UK94914 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK94914]
+   UP13/06/21 P F306
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

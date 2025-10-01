@@ -1,0 +1,71 @@
+Title: IBM HTTPS Get Fails after upgrading from GIS 4.2 to SI50 5006; this same connecting still works fine at GIS4.2 - United States
+
+Text:
+STERLINGNFX TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ HTTPS Get Fails after upgrading from GIS 4.2 to SI50 5006; this same connecting still works fine at GIS4.2 
+
+SYMPTOM
+
+
+After upgrading from GIS 4.2 to SI 5006, the HTTPS Get process to their IIS 6 server now fails. Wireshark log displays same SSL Renegotiation Handshake issue while communicating to a remote IIS 6 Server as documented in defect 231499/article NFX9138 and resolved with newer version 4_3_7_5_7 of the Certicom jars. 
+SI50 5006 comes with Certicom SSL jar file version 4_3_7_5_5 and the SSL renegotiation handshake initiated by the IIS server is blocked by SI when it response by sending an Encrypted Alert. So this causes the SI BP HTTPS Post service to fail at the time of renegotiation during the TLS handshake. This failure is seen in the Wireshark and Certicom logs. The customer has already verified that their remote TP has MS IIS server fix KB980436 applied which is required so that the server complies with RFC5746 (TLS) Renegotiation Indication Extension. So far this type of problem has only been seen when GIS/SI sends HTTPS to a remote MS IIS 6 server, see article NFX9138. 
+
+
+
+
+Error Message HTTPS Get fails with
+
+HTTP Status Code: -1
+HTTP Reason Phrase: Internal Error: Response not received before specified timeout reached. Closing connection.
+
+
+
+
+RESOLVING THE PROBLEM
+
+
+This issue came up because Version 4_3_7_5_5 of the Certicom jars (provided with standard SI50) will deny ALL renegotiation. Version 4_3_7_5_5 disables all re-negotiation (insecure and secure) due to security vulnerability, VU #12045. It was released before IETF finalized the resolution for VU#12045, and disabling renegotiation was recommended by the industry as a temporary resolution. Due to timing of our patch releases, v 4_3_7_5_5 was included in SI50 rather than a more recent version of the Certicom jar files which does allow renegotiation where the renegotiation request complies with RFC 5746. Be aware the both the server and client must comply to RFC5746. For the IIS server, it must have MS security fix KB980436 applied to comply.
+
+In order to see the issue in detail, we advise doing a Wireshark trace, preferably on both the client and server side. 
+
+Version 4_3_7_5_7 of the Certicom jars will resolve the SSL Handshake issue, there was no code change. It is available from Level 3. As a short-term workaround, they could swap back to the old version of the jars from their prior SI release. A newer version of the Certicom jars will be released in a future patch.
+
+To resolve this issue, the SI customer replaced their Version 4_3_7_5_5 Certicom jar files with Version 4_3_7_5_7, the below instructions were provided to the customer: 
+
+ 
+
+1. hardstop the server 
+2. go to install/jar/sbgsesslj/4_3_7_5_5 
+3. move all the jars from this location to another as a backup of old jars 
+4. copy the new jars from version 4_3_7_5_7 to the current location (install/jar/sbgsesslj/4_3_7_5_5). 
+5. now go to install/jdk/jre/lib/ext/ and do the Steps 2 to 4 for replacing the ssl jars in this location as well for the three jar files - sslplus.jar, sslplus_jdk15.jar, sslplus_nio.jar 
+6. start the SI server
+
+ 
+
+ 
+
+HISTORICAL NUMBER
+ NFX11004 
+
+PRODUCT ALIAS/SYNONYM
+ 
+
+Function Area
+
+
+Adapters - HTTPS
+
+
+Escalation ID
+
+
+272432
+
+
+Fix ID
+
+
+241039

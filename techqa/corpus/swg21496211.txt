@@ -1,0 +1,65 @@
+Title: IBM KMQMQ116E  KMQAMQDC Timeout Waiting for Response from QMgr=xxxx - United States
+
+Text:
+KMQMQ116E KMQAMQDC Timeout TECHNOTE (FAQ)
+
+QUESTION
+ Why am I getting the above message in my RKLVLOG? 
+
+ANSWER
+The KMQMQ116E message is occurring because the DISPLAY QUEUE request does not complete in 60 seconds, an internal value that cannot be changed. This problem is introduced when you attempt to monitor too many queues. You need to decide if it is necessary to collect sample information for all of these queues. 
+
+Depending on the queue type, and what you would like to monitor, the following suggestions can prevent the timeout from occurring and, depending on which options selected, may also improve CPU utilization of our agent. 
+
+OPTION 1: 
+
+If you want to monitor all queues, you can try the following statements instead of SET QUEUE NAME(*). 
+This will only help with timeout issue (and subsequent CSQN212E and CSQN203I messages due to queue full), however, it will not affect CPU usage since our monitor will still need to collect and process information for all queues every sample. This results in separate requests for Queue information by name, so each request will return fewer queues and take less time, assuming that all of the queues do not start with the same letter. 
+
+SET QUEUE NAME(A*) GROUP(DEFAULT) QDEFTYPE(? PREDEFINED or 
+PREDEFINED,PERMDYN recommended) 
+SET QUEUE NAME(B*) GROUP(DEFAULT) QDEFTYPE(? PREDEFINED or 
+PREDEFINED,PERMDYN recommended) 
+SET QUEUE NAME(C*) GROUP(DEFAULT) QDEFTYPE(? PREDEFINED or 
+PREDEFINED,PERMDYN recommended) 
+SET QUEUE NAME(D*) GROUP(DEFAULT) QDEFTYPE(? PREDEFINED or 
+PREDEFINED,PERMDYN recommended) 
+...through NAME(Z*) 
+
+Using GROUP DEFAULT will make these statements apply to all queue managers that do not have separate SET QUEUE statements, i.e. SET QUEUE...MGRNAME(xxxx). If you want these statements to only apply to a specific queue manager, then instead of GROUP, you would specify MGRNAME(xxxx). 
+OPTION 2: 
+
+If you only want to monitor certain queues, then instead of specifying NAME(*) in the SET QUEUE statement, you can specific set queue statements for the queues that you want to monitor. This will eliminate the timeout errors and reduce CPU since the monitor will be requesting less data each sample. 
+For example, to only collect information on queues on system queues and queues for HR (that all start with "HR") then specify: 
+
+SET QUEUE NAME(SYSTEM*) GROUP(DEFAULT) 
+SET QUEUE NAME(HR*) GROUP(DEFAULT) 
+
+OPTION 3: 
+
+The following new parameters have been added recently (PTF UA58542 for Version 701) that can reduce the amount of queue data that is processed during a sample, if you do not need or want to monitor certain types of queues. Depending upon the types of queues, this may or may not prevent the timeout from occurring. Note that this applies to sampled data only and not on-demand data (such as Real-time Queue Definitions and Real-time Queue Data). 
+
+New parameters added in SET QUEUE statement: 
+
+QTYPE (ALL, QLOCAL, QALIAS, QCLUSTER, QREMOTE, QMODEL) 
+
+The QTYPE option indicates which types of queues to monitor. Specify any or all of these definition types: 
+
+ALL - Monitor all types of queues. This is the default value. 
+QLOCAL - Monitor local queues. 
+QALIAS - Monitor alias queues. 
+QCLUSTER - Monitor cluster queues. 
+QREMOTE - Monitor remote queues. 
+QMODEL - Monitor model queues. 
+
+Note: 
+
+This option does not affect workspaces that contain on-demand data. For example, the Real-time Queue Definitions and Real-time Queue Data workspaces display information related to all queues regardless of this attribute. You can specify multiple types, such as: 
+
+QTYPE(QLOCAL,QREMOTE) 
+
+DEFSAMPCYCLE(number indicating how often definitional data collected) . 
+
+The DEFSAMPCYCLE option indicates how often queue. definition data is to be sampled. The number specified, N, indicates that agent collect definitional data every Nth sample. The default is 1, which indicates that agent collect data every sample interval. 0 indicates that agent only collect the definitional data the very first sample. After that, agent will only refresh definition data if it finds a new local queue. 
+
+Details for all options are documented in WebSphere MQ Monitoring Agent User's Guide.

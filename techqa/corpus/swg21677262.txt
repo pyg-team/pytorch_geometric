@@ -1,0 +1,79 @@
+Title: IBM Document does not appear after adding it to FileNet Workplace XT Favorites - United States
+
+Text:
+XT; Favorites TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Document does not appear after adding it to Workplace XT Favorites. Adding folder to Favorites works fine. 
+
+SYMPTOM
+ 
+
+ * A new version of the user preferences gets checked in when adding document to Favorites but the user preferences file doesn't reflect the shortcut for the document. 
+ * Accessing Favorites in the Workplace XT - Site Preferences gives a Null error. 
+ * XT application server systemout.log logs these errors:
+   
+   [6/13/14 11:10:25:217 CDT] 0000002a SystemOut O WARN [WebContainer : 4] (FavoritesUtil.java:193) - Error retrieving favorite
+   java.lang.NullPointerException at com.filenet.ae.bean.config.FavoritesConfiguration.getDocumentSelectProperties(FavoritesConfiguration.java:33) at com.filenet.ae.bean.datasource.favorites.FavoritesUtil.loadItem(FavoritesUtil.java:175) at com.filenet.ae.bean.datasource.favorites.FavoritesUtil.convertToItems(FavoritesUtil.java:144) at com.filenet.ae.bean.worker.browse.FavoritesNavigation.getListViewContent(FavoritesNavigation.java:140)
+   at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method) at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:60) at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:37) at java.lang.reflect.Method.invoke(Method.java:611) at com.sun.faces.el.PropertyResolverImpl.getValue(PropertyResolverImpl.java:99)
+   at com.sun.faces.el.impl.ArraySuffix.evaluate(ArraySuffix.java:187)
+   at com.sun.faces.el.impl.ComplexValue.evaluate(ComplexValue.java:171)at com.sun.faces.el.impl.ExpressionEvaluatorImpl.evaluate(ExpressionEvaluatorImpl.java:263)
+   at com.sun.faces.el.ValueBindingImpl.getValue(ValueBindingImpl.java:160)
+   ............
+   [6/13/14 11:32:41:556 CDT] 00000026 SystemOut O ERROR [WebContainer : 0] (WcmConfiguration.java:184) - Cannot load preferences document.
+   com.filenet.wcm.api.BadReferenceException: com.filenet.api.exception.EngineRuntimeException;The requested item was not found. Object identity: /Preferences/User Preferences for S-1-5-21-4404083-1712365708-964561783-23375 on WorkplaceXT. Class name: Versionable. [Code=null] ... Object Reference [DOCUMENT:1] ID "/Preferences/User Preferences for S-1-5-21-4404083-1712365708-964561783-23375 on WorkplaceXT" in ObjectStore "P8Admin"; OMFC/Document/GetProperties//E_OBJECT_NOT_FOUND
+   at sun.reflect.NativeConstructorAccessorImpl.newInstance0(Native Method)
+   at sun.reflect.NativeConstructorAccessorImpl.newInstance(NativeConstructorAccessorImpl.java:56) at sun.reflect.DelegatingConstructorAccessorImpl.newInstance(DelegatingConstructorAccessorImpl.java:39)
+   at java.lang.reflect.Constructor.newInstance(Constructor.java:527)at com.filenet.wcm.api.impl.bd.FaultHelper.convertDStack(FaultHelper.java:79)at com.filenet.wcm.api.impl.bd.RcBd.maybeSpecificExceptionFor3xURI(RcBd.java:229) at com.filenet.wcm.api.impl.bd.RcBd.doRpc(RcBd.java:177)
+   .......................
+
+
+CAUSE
+Part of the "favoritesPrefs" section of the Site Preferences was missing.
+
+<object key="favoritesPrefs" class="com.filenet.wcm.apps.server.util.prefs.FavoritesPrefs">
+<array key="defaultFavoritesDetailedViewCols">
+<value>ContentSize</value>
+<value>LastModifier</value>
+<value>DateLastModified</value>
+<value>MajorVersionNumber</value>
+</array>
+<array key="favoritesDetailedViewCols">
+<value>ContentSize</value>
+<value>LastModifier</value>
+<value>DateLastModified</value>
+<value>MajorVersionNumber</value>
+</array>
+
+RESOLVING THE PROBLEM
+Follow the below steps to add back the missing section of the favoritesPrefs back into the current Site Preference file:
+
+
+
+ 1. Check out the Workplace XT Site Preferences from the FileNet Enterprise Manager or FileNet ACCE (Administration Console for Content Platform Engine) - Root Folder - Preferences folder.
+    
+    
+ 2. Copy the section starting with <object key="favoritesPrefs" from the default SitePreferences.xml file located in the folder <XTInstallDirectory>\WebClient\WorkplaceXT\WEB-INF\xml and add it into the checked out Site Preference file on step 1. It should be added to above the <object key="compoundDocumentPrefs"> section. Below is the sample section to add.
+    
+    <object key="favoritesPrefs" class="com.filenet.wcm.apps.server.util.prefs.FavoritesPrefs">
+    <array key="defaultFavoritesDetailedViewCols">
+    <value>ContentSize</value>
+    <value>LastModifier</value>
+    <value>DateLastModified</value>
+    <value>MajorVersionNumber</value>
+    </array>
+    <array key="favoritesDetailedViewCols">
+    <value>ContentSize</value>
+    <value>LastModifier</value>
+    <value>DateLastModified</value>
+    <value>MajorVersionNumber</value>
+    </array>
+    
+    
+ 3. Check in the updated Preferences.xml file.
+    
+    
+ 4. Stop the Workplace XT application from the application server then clear the application server cache.
+    
+    
+ 5. Restart the Workplace XT application.

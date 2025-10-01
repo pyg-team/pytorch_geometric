@@ -1,0 +1,314 @@
+Title: IBM IV34552: CANNOT INCREASE WONUM FIELD LENGTH DUE TO MISSING SAMEAS COLUMNS - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Problem Title: 7.5.0.3  Oil & Gas Can't increase wonum field
+   length
+   editing the length of the workorder.wonum field via dbconfig
+   
+   IBM Maximo Asset Management 7.5.0.3 Build 20120713-1120 DB Build
+   V7503-01
+   
+   Tivoli's process automation engine 7.5.0.3 Build 20120713-1120
+   DB Build
+   V7503-157
+   
+   IBM Maximo Asset Management Scheduler 7.5.1.0 Build
+   20120713-1120 DB
+   Build V7510-123
+   
+   IBM Maximo for Oil And Gas 7.5.0.0 Build 20110418-1031 DB Build
+   V7500-22
+   
+   Server DB Microsoft SQL Server 10.50 (10.50.2500)
+   
+   Operating System:
+   Windows Server 2008 R2 6.1 build 7601 Service Pack 1
+   App Server IBM WebSphere Application Server 7.0.0.25
+   
+   Problem Details:
+   
+   Whilst customer was on 7.5.0.2  with Oil & Gas already installed
+   
+   We need to extend the length of the workorder.wonum field.
+   Having done
+   this in dbconfig, and run the changes through the system, we
+   then went
+   to use maximo again and had errors appearing advising that the
+   wonum
+   field was too short. On further investigation, we discovered
+   that the
+   following fields had not been included in the dbconfig cascade
+   of
+   updates presumably because they don't have a 'same as' set:
+   
+   plusgmocrequest.wonum
+   plusgmoc.wonum
+   plusgact.wonum
+   plusgdrl.wonum
+   plusgrelatedrec.relatedrecwonum
+   
+   As a result, we had to roll back our changes as every time we
+   tried to
+   modify these in dbconfig, they reverted back to the original
+   field
+   length.
+   
+   
+   Customer and then upgraded their system to 7.5.0.3 last week,
+   and
+   looking at the wonum length change issue, it has not been fixed.
+   
+   See screenshot below - I changed workorder.wonum from 12 to 14
+   and
+   saved. Prior to switching to admin mode and running the
+   dbconfig, I went
+   to look at the list of changes as a result of updating the wonum
+   length,
+   and specifically looked for the problematic attributes as listed
+   in the
+   original issue sent to yourselves.
+   
+   For example, you can see below that the dbconfig for PLUSGACT
+   changes
+   the displaywonum attribute but it does not change the wonum
+   attribute.
+   The 7.5.0.3 fix does not resolve this issue
+   
+   when you actually go into the object to see which attributes are
+   flagged
+   to change, you'll find that there are a few which aren't set.
+   
+   plusgmocrequest.wonum
+   plusgmoc.wonum
+   plusgact.wonum
+   plusgdrl.wonum
+   plusgrelatedrec.relatedrecwonum
+   
+   For example, PLUSGMOC shows the attributes to change listed
+   below...
+   
+   But if you then go filter within PLUSGMOC object for `wonum' you
+   will see that DISPLAYWONUM has been marked for change, but WONUM
+   hasn't
+   
+   The DISPLAYWONUM attribute has a `same as' set.
+   
+   The `WONUM' attribute has not. With this being a view, I cannot
+   edit the same as attributes.
+   
+   Then to test the dbconfig once it has been applied, go to Work
+   Order
+   Tracking (Oil) and create a new Work Order, and manually enter a
+   large
+   number (if you've not updated the autonum seed just need to add
+   a few
+   digits to the end of the wonum)
+   
+   And hence, we go back to the list above, which has `wonum'
+   fields
+   which have not been updated during dbconfig to the new longer
+   length.
+   Running the integrity checker in report mode did not reveal any
+   and the
+   refresh of index had been performed but made no difference.
+   
+   Steps to replicate:
+   
+   Login as maxadmin
+   
+   Access Database Configuration Application
+   
+   Open object, WORKORDER
+   
+   Go to Attribute tab
+   
+   Enter WONUM in the filter and press enter
+   
+   Change the default Length from 10 to 14
+   
+   Save change
+   
+   Go to List tab
+   
+   Filter for Objects "plusg" and Service "workorder"
+   
+   You will see that all use of workorder have the status of "To Be
+   Changed"
+   
+   Plusgmoc
+   Plusgmocrequest
+   Plusgact
+   Plusgdrl
+   
+   Open the PLUSGMOC Object and go to Attribute (filter for wonum)
+   
+   I have found that my own 7503 (direct install not an upgrade)
+   
+   PLUSGMOC, wonum field has more details listed.
+   
+   however the customer has the following information missing, i.e.
+   fields
+   are blank for wonum field in Object,  PLUSGMOC:
+   
+   Same as Object: WORKORDER
+   Same as Attribute: is WONUM
+   
+   The out-of-the-box 7502 Maximo environment also has this
+   information
+   missing . The problem appears to be only occurring in TPAE 7502
+   with
+   Oil & Gas installed and upgrading to TPAE 7503 makes no
+   difference the
+   problem is still there.
+   
+   So, a clean install of 7.5.0.3 does not exhibit this problem.
+   
+   Editing wonum from the workorder object updates all workorder
+   views
+   (PLusgmoc etc) with the field length change..
+   
+   So far, our install path has been (with a SQL Server 2008 R2
+   database):
+   
+   1. Install 7.5.0.0 ? attributes didn?t exist (as expected).
+   
+   2. Add on 7.5.0.3 ? attributes didn?t exist
+   
+   3. Add on O&G 7.5.0.0 ? attributes appeared ? ?same as? values
+   were
+   null.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  developer to provide fix
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * SQL servers users only                                       *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * For some WO views the sameas object and attribute columns    *
+   * are not being filled on meta information. When chaning the   *
+   * size of a column in WORKORDER table, the value is not        *
+   * replicated to all views.                                     *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * None                                                         *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The missing values for sameas will be provided for Oil and Gas'
+   WO objects where they are missing.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV34552
+   
+   
+ * REPORTED COMPONENT NAME
+   MAXIMO OIL & GA
+   
+   
+ * REPORTED COMPONENT ID
+   5724R5400
+   
+   
+ * REPORTED RELEASE
+   750
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-01-14
+   
+   
+ * CLOSED DATE
+   2013-02-18
+   
+   
+ * LAST MODIFIED DATE
+   2013-02-18
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  UNKNOWN
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   MAXIMO OIL & GA
+   
+   
+ * FIXED COMPONENT ID
+   5724R5400
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R750 PSY
+   UP

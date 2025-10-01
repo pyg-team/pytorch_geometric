@@ -1,0 +1,24 @@
+Title: IBM Disable ITCAM for J2EE 6.1 Data Collector on JBOSS JVM on UNIX - United States
+
+Text:
+J2EE JBOSS CAMJ2JBDC CAMJ2ALL TECHNOTE (FAQ)
+
+QUESTION
+ How is the ITCAM J2EE DC disabled from starting up when the JBOSS JVM starts? 
+
+ANSWER
+Comment out the following lines that begin with JAVA_OPTS in the run.sh script, which is used during the start up of the JBOSS JVM:
+
+
+JAVA_OPTS="-agentlib:am_ibm_15 -Xbootclasspath/p:${TOOLKIT_HOME}/lib/bcm-bootstrap.jar:${AM_HOME}/lib/ppe.probe-bootstrap.jar:${AM_HOME}/lib/ext/jboss/jbossbcm.jar"
+
+JAVA_OPTS="$JAVA_OPTS -Dam.appserver=$APPSERVER -Dam.nodename=$NODENAME -Dappserver.platform=$PLATFORM -Dsun.rmi.client.logCalls=false -Djava.rmi.server.logCalls=false"
+
+JAVA_OPTS="$JAVA_OPTS -Dtoolkit.home=$PRODUCT_HOME/toolkit -Dam.home=$PRODUCT_HOME/itcamdc -Ditcam61.home=$PRODUCT_HOME -Dcom.ibm.tivoli.transperf.instr.probes.impl.was.Globals.traceLevel=0 -Dorg.omg.PortableInterceptor.ORBInitializerClass.com.ibm.tivoli.itcam.dc.orbinterpretor.Initializer"
+
+JAVA_OPTS="$JAVA_OPTS -Djava.rmi.server.RMIClassLoaderSpi=com.ibm.tivoli.itcam.jboss.sdc.ItcamJBossRMIClassLoader -verbose:gc -Xverbosegclog:/opt/apps/IBM/itcam/DC/jboss4-gc-log.log.SEServer025_01"
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ itcam jboss

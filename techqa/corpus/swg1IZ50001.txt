@@ -1,0 +1,163 @@
+Title: IBM IZ50001: ITM VIOS AGENT MANUAL NEEDS CLARIFICATION ON INSTALLATION AND UPGRADE INSTRUCTIONS - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  ITM VIOS agent manual needs clarification on installation
+   and upgrade instructions
+   
+   IBM Tivoli Monitoring: VIOS Premium Agent
+   User's Guide
+   Version 6.2.0
+   SA23-2238-01
+   ***
+   Requirements and agent-specific installation and configuration
+    information for the monitoring agent
+   This chapter contains information about the requirements for
+    the IBM Tivoli Monitoring: VIOS Premium Agent, and agent-
+    specific information related to installation and configuration
+    of the agent.
+   
+   To install and configure the IBM Tivoli Monitoring:
+    VIOS Premium Agent, use the procedures for installing
+    monitoring agents in the IBM&#65449; Tivoli&#65449; Monitoring Installation
+    and Setup Guide along with the information in this chapter.
+   
+   If you are performing a silent installation using a response
+    file, see the information about performing a silent
+   installation
+    in the IBM Tivoli Monitoring Installation and Setup Guide.
+   ***
+   The VIOS agent comes pre-installed on VIOS LPAR.  Referencing
+    customers to the generic procedures for installing agents in
+    the Installation and Setup Guide is misleading, and should be
+    removed from the VIOS agent manual.
+   
+   Suggested text:
+   >>>
+   Requirements and agent-specific installation and configuration
+    information for the monitoring agent
+   This chapter contains information about the requirements for
+    the IBM Tivoli Monitoring: VIOS Premium Agent, and agent-
+    specific information related to installation and configuration
+    of the agent.
+   
+   To install and configure the IBM Tivoli Monitoring:
+   
+   The VIOS Premium Agent is preinstalled on a VIOS system and no
+    installation is required.
+   
+   The ITM Unix OS and HMC agents are not supported in a VIOS
+    environment.
+   Remote deployment to install or update an ITM agent relies on
+   the
+    target system supporting the OS agent, and for the OS agent to
+   be
+    installed and running.  Since VIOS does not support the Unix OS
+    agent, updating a VIOS agent must be done manually by logging
+    into the VIOS lpar locally.
+   
+   Updating the ITM VIOS agent can be done without updating VIOS
+    itself.
+   >>>
+   The above will clarify that customers can not use
+    "tacmd updateAgent" to try and remotely upgrade a VIOS agent.
+   This will also clarify that the Unix OS agent and HMC agents are
+    not supported on the VIOS system.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  The documentation was incomplete.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The documenation will be corrected in the 6.2.0.1 version of the
+   product.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ50001
+   
+   
+ * REPORTED COMPONENT NAME
+   ITM SE SYSP VIO
+   
+   
+ * REPORTED COMPONENT ID
+   5724C04VP
+   
+   
+ * REPORTED RELEASE
+   620
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-04-23
+   
+   
+ * CLOSED DATE
+   2009-04-30
+   
+   
+ * LAST MODIFIED DATE
+   2012-07-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

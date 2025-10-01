@@ -1,0 +1,170 @@
+Title: IBM "javax.naming.NotContextException: jdbc/resdatasource" calling Rule Execution Server with Java rule session on WAS CE - United States
+
+Text:
+java POJO RES rule session TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Explains how to work around the following error when calling Rule Execution Server with the POJO (non-EJB) rule sessions on IBM WebSphere Application Server Community Edition (WAS CE): "javax.naming.NotContextException: jdbc/resdatasource" 
+
+SYMPTOM
+The interaction ruleEngine.loadUptodateRulesethas failed ilog.rules.res.xu.ruleset.impl.archive.IlrRulesetArchiveInformationException: Cannot create ruleset information provider for the persistence type datasource 
+
+at ilog.rules.res.xu.util.IlrResourceExceptionHelper.createRulesetInformationException(IlrResourceExceptionHelper.java:260) 
+
+at ilog.rules.res.xu.persistence.impl.IlrDatasourcePersistenceImpl.createDataProvider(IlrDatasourcePersistenceImpl.java:45) 
+
+at ilog.rules.res.xu.ruleset.impl.archive.IlrDefaultRulesetArchiveInformationProvider.getDataProvider(IlrDefaultRulesetArchiveInformationProvider.java:55) 
+
+at ilog.rules.res.xu.ruleset.impl.archive.IlrDefaultRulesetArchiveInformationProvider.solveCanonicalRulesetPath(IlrDefaultRulesetArchiveInformationProvider.java:76) 
+
+at ilog.rules.res.xu.ruleset.impl.archive.IlrAbstractRulesetArchiveInformationProvider.getCanonicalRulesetPath(IlrAbstractRulesetArchiveInformationProvider.java:88) 
+
+at ilog.rules.res.xu.ruleset.impl.archive.IlrAbstractRulesetArchiveInformationProvider.getRulesetArchiveInformation(IlrAbstractRulesetArchiveInformationProvider.java:151) 
+
+at ilog.rules.res.xu.spi.IlrManagedXUConnection.createEngineManager(IlrManagedXUConnection.java:1646) 
+
+at ilog.rules.res.xu.spi.IlrManagedXUConnection.getEngineManager(IlrManagedXUConnection.java:1591) 
+
+at ilog.rules.res.xu.spi.IlrManagedXUConnection.loadUptodateRuleset(IlrManagedXUConnection.java:914) 
+
+at ilog.rules.res.xu.cci.IlrXUConnection.loadUptodateRuleset(IlrXUConnection.java:361) 
+
+at ilog.rules.res.xu.cci.IlrXUInteraction.loadUptodateRuleset(IlrXUInteraction.java:1021) 
+
+at ilog.rules.res.xu.cci.IlrXUInteraction.dispatchExecution(IlrXUInteraction.java:221) 
+
+at ilog.rules.res.xu.cci.IlrXUInteraction.execute(IlrXUInteraction.java:343) 
+
+at ilog.rules.res.xu.cci.IlrXUInteraction.execute(IlrXUInteraction.java:459) 
+
+at ilog.rules.res.xu.cci.IlrCCIClient.executeInteraction(IlrCCIClient.java:189) 
+
+at ilog.rules.res.xu.cci.IlrCCIRuleEngineClient.loadUptodateRuleset(IlrCCIRuleEngineClient.java:61) 
+
+at ilog.rules.res.session.impl.IlrStatelessSessionBase.execute(IlrStatelessSessionBase.java:94) 
+
+at controller.RuleExecutionController2.executeRulesOnPojoRuleSession(RuleExecutionController2.java:106) 
+
+at org.apache.jsp.execution_005fejb3_jsp._jspService(execution_005fejb3_jsp.java:171) 
+
+at org.apache.jasper.runtime.HttpJspBase.service(HttpJspBase.java:70) 
+
+at javax.servlet.http.HttpServlet.service(HttpServlet.java:806) 
+
+at org.apache.jasper.servlet.JspServletWrapper.service(JspServletWrapper.java:369) 
+
+at org.apache.jasper.servlet.JspServlet.serviceJspFile(JspServlet.java:342) 
+
+at org.apache.jasper.servlet.JspServlet.service(JspServlet.java:267) 
+
+at javax.servlet.http.HttpServlet.service(HttpServlet.java:806) 
+
+at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:290) 
+
+at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:206) 
+
+at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:233) 
+
+at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:191) 
+
+at org.apache.geronimo.tomcat.valve.DefaultSubjectValve.invoke(DefaultSubjectValve.java:51) 
+
+at org.apache.catalina.authenticator.AuthenticatorBase.invoke(AuthenticatorBase.java:433) 
+
+at org.apache.geronimo.tomcat.GeronimoStandardContext$SystemMethodValve.invoke(GeronimoStandardContext.java:406) 
+
+at org.apache.geronimo.tomcat.valve.GeronimoBeforeAfterValve.invoke(GeronimoBeforeAfterValve.java:47) 
+
+at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:128) 
+
+at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:102) 
+
+at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:109) 
+
+at org.apache.catalina.valves.AccessLogValve.invoke(AccessLogValve.java:567) 
+
+at org.apache.geronimo.tomcat.valve.ThreadCleanerValve.invoke(ThreadCleanerValve.java:40) 
+
+at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:293) 
+
+at org.apache.coyote.http11.Http11Processor.process(Http11Processor.java:849) 
+
+at org.apache.coyote.http11.Http11Protocol$Http11ConnectionHandler.process(Http11Protocol.java:583) 
+
+at org.apache.tomcat.util.net.JIoEndpoint$Worker.run(JIoEndpoint.java:454) 
+
+at java.lang.Thread.run(Thread.java:736) 
+
+Caused by: ilog.rules.res.persistence.IlrDAOException: DAO.ERROR.1001 - JNDI Lookup on the datasource "java:comp/env/jdbc/resdatasource" failed. 
+
+at ilog.rules.res.persistence.impl.jdbc.IlrDataSourceDAOFactory.createJDBCConnectionProvider(IlrDataSourceDAOFactory.java:54) 
+
+at ilog.rules.res.persistence.impl.jdbc.IlrDataSourceDAOFactory.getDAO(IlrDataSourceDAOFactory.java:26) 
+
+at ilog.rules.res.persistence.impl.IlrRepositoryDAOFactoryImpl.getDataSourceRepositoryDAO(IlrRepositoryDAOFactoryImpl.java:26) 
+
+at ilog.rules.res.xu.persistence.impl.IlrDatasourcePersistenceImpl.createDataProvider(IlrDatasourcePersistenceImpl.java:43) 
+
+... 41 more 
+
+Caused by: javax.naming.NotContextException: jdbc/resdatasource 
+
+at org.apache.xbean.naming.context.AbstractContext.lookup(AbstractContext.java:171) 
+
+at org.apache.xbean.naming.context.AbstractContext.lookup(AbstractContext.java:611) 
+
+at javax.naming.InitialContext.lookup(InitialContext.java:455) 
+
+at ilog.rules.res.persistence.impl.jdbc.IlrDataSourceDAOFactory.getDataSource(IlrDataSourceDAOFactory.java:66) 
+
+at ilog.rules.res.persistence.impl.jdbc.IlrDataSourceDAOFactory.createJDBCConnectionProvider(IlrDataSourceDAOFactory.java:52) 
+
+... 44 more 
+
+
+CAUSE
+WAS CE requires a specific reference to the data source. This reference is probably missing in your application.
+
+
+RESOLVING THE PROBLEM
+WAS CE requires that you add a reference to the data source on the client side, in addition to what is listed in section "Packaging Java rule sessions" of the JRules 7.1 documentation (see WebSphere ILOG JRules BRMS V7.1 > Rule Execution Server > Introducing Rule Execution Server > Assembling and packaging a Rule Execution Server application > Packaging Java rule sessions) [http://publib.boulder.ibm.com/infocenter/brjrules/v7r1/index.jsp?topic=/com.ibm.websphere.ilog.jrules.doc/Content/Business_Rules/Documentation/_pubskel/JRules/ps_JRules_Global966.html]. 
+
+For example, if you use the Java rule session to call Rule Execution Server from the web application, add the following code lines to the web.xml file: 
+
+1. Add the following references:
+<resource-ref> 
+
+ * <res-ref-name>jdbc/resdatasource</res-ref-name>
+ * 
+ * <res-type>javax.sql.DataSource</res-type>
+ * 
+ * <res-auth>Container</res-auth>
+ * 
+ * <res-sharing-scope>Unshareable</res-sharing-scope>
+
+</resource-ref> 
+
+2. Add the following code in the environment dependencies of the corresponding geronimo-web.xml file: 
+
+<dependency>  * <groupId>console.dbpool</groupId>
+ * 
+ * <artifactId>jdbc_resdatasource</artifactId>
+
+</dependency> 
+
+
+3. Add the following resource-ref in the same geronimo-web.xml file: 
+
+<resource-ref>  * <ref-name>jdbc/resdatasource</ref-name>
+ * 
+ * <resource-link>jdbc/resdatasource</resource-link> 
+
+</resource-ref> 
+
+
+
+The JRules EJB session JAR for WAS CE provided in the distribution ( jrules-res-session-ejb3-WASCE21.jar) already has those references. 
+
+Another solution, which does not require to modify the client descriptors, consists in changing the JNDI name of the Execution Unit (XU) set in the ra.xml file of its RAR archive ( jrules-res-xu-WASCE21.rar) from the short name (' jdbc/resdatasource', by default) to the full name in the global context that you can find in the WAS CE console under " Debug Views > JNDI Viewer > Global Context": 
+
+jca:/console.dbpool/jdbc_resdatasource/JCAManagedConnectionFactory/jdbc/resdatasource

@@ -1,0 +1,199 @@
+Title: IBM TCP/IP Communications Trace Instructions - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This document contains instructions for taking a communications trace for IBM i OS V3R1 and later for a TCP/IP Token-Ring or Ethernet LAN connection. 
+
+RESOLVING THE PROBLEM
+IBM i OS system administrators or technical support personnel may require a communications trace to aid in problem diagnosis. This document contains instructions for taking a communications trace for IBM i OS V3R1 and later, assuming a TCP/IP Token-Ring or Ethernet LAN connection. The instructions have been tailored specifically for Access for Windows. The IBM i OS trace tool can be managed using a menu driven interface in SST or using the communications trace commands. This document covers both methods. 
+
+Taking the Trace
+
+
+
+ * 
+
+To determine the name of the token-ring or Ethernet line description, on the IBM i command line type the following:  *  
+   
+
+CFGTCP  *  
+   
+
+Press the Enter key, and select Option 1 for Interfaces.  *  
+   
+
+Under Internet Address, find the TCP/IP address that the client is connecting to and make note of the Line Description associated with this address.  * 
+
+On the IBM i command line, type the following:  *  
+   
+
+STRSST  *  
+   
+
+Press the Enter key. Your user profile should have all object authority.
+(For V5R1M0 and above, you will need a valid user ID and password for SST)  * 
+
+Select Option 1, Start a Service Tool, and press the Enter key.  * 
+
+Select Option 3, Work with Communications Trace, and press the Enter key.  * 
+
+If the name of the line description from Step 1 is specified under the Configuration Object field, type 8 in the Opt field, and press the Enter key to get to the Start Trace screen. If the name is not there, press F6 to get to the Start Trace field.  * 
+
+Type the following:  *  
+   
+
+Configuration object --------- (token-ring or Ethernet line description name from Step 1) 
+Trace description ------ (Optional, PMR #)
+Buffer size --------------- (for V4R5M0 and below, 8 or 9 - take the maximum size available)
+(for V5R1M0 enter 16000 or a valid number)
+ *  
+   
+
+If this is an V4R4M0 or newer IBM i OS system, change the Number of bytes to trace Beginning bytes parameter from *CALC to *MAX. The *MAX option traces all date while the *CALC option captures only the first 100 bytes.  *  
+   
+
+
+Number of bytes to trace: 
+Beginning bytes . . . . . . . . *MAX Value, *CALC, *MAX 
+Ending bytes . . . . . . . . . *CALC Value, *CALC  *  
+   
+
+Leave the other fields with the default values. Press the Enter key.  *  
+   
+
+For IBM i OS V4R1M0 and later systems, prompt for Trace Options:
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ *  
+   
+
+Press the Enter key to return to the Work with Communications Traces screen.  *  
+   
+
+Note: The trace is now active.  * 
+
+Re-create the problem to be traced.  * 
+
+Select Option 2, Stop trace, and press the Enter key.  * 
+
+Select Option 6, Format and print trace, and press the Enter key.  * 
+
+Format the trace as requested by your technical service representative. Many new host servers format the data in the unicode CCSID and, therefore, require ASCII formatting (rather than EBCDIC). Format two times; one time for EBCDIC and one time for ASCII if in doubt.  *   * 
+   
+   
+
+TCP/IP connections are usually formatted as follows. You need to know the TCP/IP address of the PC.  *  
+   
+
+Note: Set Format Broadcast data to No unless requested to do otherwise.  *  
+   
+
+Data representation . . . . . 3 1=ASCII, 2=EBCDIC, 3=*CALC 
+Format Broadcast data . . . . N Y=Yes, N=No 
+Format TCP/IP data only . . . Y Y=Yes, N=No 
+Type choices, press Enter. 
+IP address . . . . . . . . . . (The IP address for the PC)  *   * 
+   
+   
+
+Leave the other fields with the default values. Press the Enter key, and wait for the Format of trace data complete message. This produces a spool file named QPCSMPRT owned by the job for the emulation session.  * 
+
+Press F3 three times to get the Exit System Service Tools screen.  * 
+
+Press the Enter key to end the STRSST command.  * 
+
+Download the trace spool file to a PC text file. The easiest way to do this is to use drag and drop in Operations Navigator.  *  
+   
+
+If Access for Windows System i Navigator is installed:  *  
+   
+
+In System i Navigator, go to My Connections, select the system name, and Printer Output. On the right, locate the QPCSMPRT spool file and drag and drop it to the desktop. Select the QPCSMPRT icon on the desktop, right-click, and select Send To. From there you can e-mail the trace to your IBM Support Rep.  *  
+   
+
+If you are not able to use System i Navigator, proceed with the following steps:  *  
+   
+
+On the IBM i command line, type the following:  *  
+   
+
+WRKSPLF  *  
+   
+
+Press the Enter key, and press the F18 key (F18 = Bottom) to locate the formatted trace(s). The spooled files should have file name QPCSMPRT with User set to the user profile that ran the trace. Send the trace as requested by IBM Service.  * 
+
+Optional: If needed, follow these steps to convert the spool file to an ASCII text file.  *  
+   
+
+If you are still running the same interactive job that ran the communications trace, record only the Spool File Number. Press F10=View 3 to display the File nbr parameter. Otherwise, you must also record the fully qualified job name as displayed on the WRKSPLF screen.  *  
+   
+
+To create a temporary flat file, on the IBM i command line type the following:  *  
+   
+
+CRTPF FILE(libname/filename) RCDLEN(132)  *  
+   
+
+Press the Enter key. To copy the spooled file to the flat file, on the IBM i command line type the following:  *  
+   
+
+CPYSPLF FILE(QPCSMPRT) TOFILE(libname/filename) SPLNBR(x)  *  
+   
+
+Press the Enter key. You must specify additional job parameters if you are not running the same interactive job as that used when taking the trace.  *  
+   
+
+Now create the ASCII text file. The following methods can be used to do this:  *  
+   
+
+a Use the Copy to Stream File command to create an ASCII text file in a directory off of the root file system. The directory must exist before running this command. If required, use the MKDIR ('/dirname') command to create the directory. On the operating system command line, type the following:  *  
+   
+
+CPYTOSTMF FROMMBR('QSYS.LIB/libname.LIB/filename.FILE/filename.MBR') + TOSTMF('dirname/trace.txt') STMFOPT(*ADD) DBFCCSID(037) STMFCODPAG(437)  *  
+   
+
+Press the Enter key. This file can now be accessed by a PC FTP or e-mail program by assigning a Access for Windows network drive.  *  
+   
+
+b Use the Access for Windows data transfer/file transfer program to download the file as ASCII text format. Select the file created above in the IBM i file name box, and use a PC output device of file. The default format is ASCII text. 
+Communications Trace Commands 
+
+Experienced IBM i OS users may prefer to use the commands instead of the SST menu interface described above. All parameters are the same as described above; however, instead of using the menu, use the following commands: 
+
+STRCMNTRC - Start the communications trace 
+ENDCMNTRC - End the communications trace 
+PRTCMNTRC - Print a formatted trace 
+DLTCMNTRC - Delete the raw trace data object 
+
+Like all IBM i commands, use F4 to prompt and F1 for help. 
+
+Note: A valid SST user ID is required to perform the trace from Service Tools. QSECOFR (SST/DST uppercase) covers both requirements for the SST user ID.  
+
+
+Cross reference information Segment Product Component Platform Version Edition Operating System IBM i 7.2 Operating System IBM i 7.1 Operating System IBM i 6.1 
+HISTORICAL NUMBER
+ 23825849

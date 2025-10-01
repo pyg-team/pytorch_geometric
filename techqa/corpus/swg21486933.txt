@@ -1,0 +1,25 @@
+Title: IBM Unable to see Statistics 18.0 licence on a Sentinel License Manager installation. - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Installed Sentinel License Manager (LM) on the new server (running Windows Server 2008) and logged on as an Admin user. Has run 'licenseactivator <auth code>' and the message: 'Successfully added license <license code>' appeared on command prompt window. Restarted the LM service and when opening the WLM Admin tool, cannot see the Statistics 18 licenses (1200 180) under Subnet Servers. 
+
+RESOLVING THE PROBLEM
+Even though user was logged in with Admin rights, the Command Prompt session (that was opened to use 'licenseactivator') was not started as an Admin user. Communication between customer's server and the SPSS License Server was able to be processed without issue, however problem encountered was writing the licence code to the 'lservrc' file.
+
+There are a few possible workaround to this issue:
+1) Start the Command Prompt session by right-clicking the Command Prompt short-cut and choosing Run as Administrator. This will provide the user with the appropriate permissions to write to the /WinNT subdirectory. Proceed to the normal steps of licencing the Sentinel LM.
+
+2) If the licence code is with the customer, manually creating the licence file (lservrc) and adding this code will also resolve this problem. To do this you can create a new Text file in the /WinNT subdirectory of the LM. Name the file as 'lservrc' (ensuring that NO file extensions are present) and edit it in Notepad. Paste the licence code into this file and save the changes. Restart the Sentinel RMS License manager service and the Statistics licence should now be available for use
+
+RELATED INFORMATION
+ Need more help? Our AMOS forum is Live! [https://developer.ibm.com/answers/search.html?f=&type=question&redirect=search%2Fsearch&sort=relevance&q=%2B[amos]]
+Need more help? Our Licensing forum is Live! [https://developer.ibm.com/answers/topics/spsslicensing.html]
+
+
+ 
+
+HISTORICAL NUMBER
+ 88777

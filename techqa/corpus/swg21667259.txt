@@ -1,0 +1,20 @@
+Title: IBM Creating an HTTP Endpoint with HTTPS Connection for Cast Iron Studio - United States
+
+Text:
+Cast Iron; HTTP; HTTPS TECHNOTE (FAQ)
+
+QUESTION
+ Where can I find more information about creating or editing an HTTP endpoint to create an HTTPS connection? 
+
+ANSWER
+Before starting HTTP endpoint creation, determine if the HTTP endpoint will be a server or a client. This is configured at Location field as indicated below:
+
+
+ * Integration Appliance Receives Request: Creating this endpoint as server. 
+ * Remote Server: Creating this endpoint as client.
+
+
+Configuring HTTP endpoint as Details Server End-entity certificates and private key are required to be imported in keystore. The Server
+Certificate Alias Name which is imported keystore need to be selected as the Server Certificate Alias Name at HTTPS option. Client Connects to remote server
+with HTTPS connection. Confirm that root certificates of CA certificates or intermediate certificates which guarantees remote server
+are contained in truststore. If it is included, there is no required action in here. If not, you have to import the target root certificates of CA certificates or intermediate certificates. More information on creating or editing an HTTP endpoint can be found in the IBM Cast Iron Studio Information Center here. [http://pic.dhe.ibm.com/infocenter/wci/v6r3m0/index.jsp?topic=%2Fcom.ibm.websphere.cast_iron.doc%2Fhttp_create_edit_endpoint.html]

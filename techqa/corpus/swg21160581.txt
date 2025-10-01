@@ -1,0 +1,92 @@
+Title: IBM Web Server Plug-in policy for WebSphere Application Server - United States
+
+Text:
+plug-in; plugin; GSKIT; GSKIT5; GSKIT6; GSKIT7; recommendations was app server TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Which version of Plug-in can be used with which version of WAS? 
+
+RESOLVING THE PROBLEM
+
+Supported combinations of IBM HTTP Server, WebSphere Application Server, and the WebSphere WebServer Plug-in
+There are a variety of issues surrounding support of mixed releases of IBM HTTP Server (IHS), WebSphere Application Server (WAS), and the WebSphere Web Server Plug-in (WAS Plugin). This document only refers to the IBM HTTP Server (powered by Apache) on AIX, HP-UX, Linux, Solaris, Windows, and z/OS (not "IBM i"). 
+
+In general, the recommended configuration is to use all three components from the same release. However, there are a variety of situations where using other combinations is required. 
+
+Note: Customer and product support is only provided when all components in use have a support entitlement. 
+
+Terminology 
+
+ * 
+ * Versioning
+ *  
+   WebSphere Application Server uses the following naming scheme: V.R.M.F 
+    * V = version 
+    * R = release 
+    * M = modification 
+    * F = fix pack
+   
+   
+ * Supported, UnSupported, and other configurations
+ *  
+   For reference, we categorize support into three categories: supported, unsupported, and other: WebSphere Application Server Support Statement [http://www-01.ibm.com/support/docview.wss?uid=swg27004311] 
+   
+   
+
+Supported combinations of the Application Server and WebServer Plug-in A release (such as 9.0, 8.5, 8.0, or 7.0) of the WebServer Plug-in can be used with the corresponding release and any previous releases of the application server, as long as the application server version (in terms of V.R.M.F) is not more
+than two versions older than the WebServer Plug-in.
+
+Any release of WebSphere Application Server Liberty ("Liberty Profile") is supported with any release of the WAS Plug-in from 8.5.5 or later. This include Liberty Profile continuous delivery releases (such as 16.0.0.x or 17.0.0.x) as well as Beta releases. 
+
+ * For example, an 8.0 Plugin can front-end servers from 8.0, 7.0, 6.1, and 6.0 whether they're all from a single release or in a mixed cell. Application servers from 8.5 or 8.5.5 would not be a supported configuration, because they are later releases. Similarly, application servers from 5.1/5.0 would not be supported because they are more than two versions (in terms of V.R.M.F) older.
+   
+   Examples of N-2 Version support:  *  WAS Plugin 9.0: WAS 7.0, WAS 8.0, WAS 8.5, WAS 8.5.5, WAS 9.0 WAS Plugin 8.5.5: WAS 6.0, WAS 6.1, WAS 7.0, WAS 8.0, WAS 8.5, WAS 8.5.5 WAS Plugin 8.0: WAS 6.0, WAS 6.1, WAS 7.0, WAS 8.0 WAS Plugin 7.0: WAS 5.0, WAS 5.1, WAS 6.0, WAS 6.1, WAS 7.0 
+   
+   
+
+Exceptions: 
+ * IHS 7.0 + Plugin 7.0 is supported with WAS 8.0, 8.5, and 8.5.5 as a transitional measure for users of third-party IHS modules that did not support IHS 8.0 or later in a timely manner. It is important to note that IHS 7.0 was released in 2008 and lacks support for important security protocols like TLS1.2, ECDHE, and AES-GCM. (IHS 8.0 was released in 2011) 
+
+Notes: 
+ * Refer to the following URL for considerations and frequently asked questions related to using the version 8 WAS Plug-in with a version 7 application server:
+   
+   http://publib.boulder.ibm.com/httpserv/ihsdiag/ihs8was7.html [http://publib.boulder.ibm.com/httpserv/ihsdiag/ihs8was7.html]
+   
+
+
+Supported configurations of Web Servers and the WAS Plugin Given a compatible Plugin has been selected based on WAS release requirements, The release (V.R.M.F) of IBM HTTP Server used must match the Plugin release exactly. 
+
+Third-party webservers are only a supported configuration if they are explicitly listed in the supporting software documentation for the WAS release. 
+
+Exceptions: 
+
+ * IBM HTTP Server 8.5 used as part of z/OS Ported Tools is additionally supported with the 8.0 Plug-in. While this combination is supported, using the corresponding release is strongly recommended. 
+ * IBM HTTP Server 9.0 included with z/OS V2R2 (and later) is additionally supported with the 8.0 and 8.5 Plugins. While this combination is supported, using the corresponding release is strongly recommended (when available). 
+
+
+Unsupported combinations These are combinations with known technical problems. 
+
+ * IHS 8.0 or later cannot be used with Plugin 7.0 or earlier (distributed platforms, incompatible GSKit major release) 
+ * IHS 7.0 or earlier cannot be used with Plugin 8.0 or later (distributed platforms, incompatible GSKit major release) 
+
+
+Other configurations 
+Any combination not explicitly addressed above is an "other configuration". These configurations are not tested or recommended. 
+ * If WAS is a higher releases than the Plugin, the generated XML might trigger warnings at startup. 
+
+
+Other recommendations 
+There is no required relationship between IHS, Plugin, and WAS fixpack (V.R.M. F) levels, but staying current is strongly recommended. Furthermore, using levels contemporary (but not necessarily identical) with one another is also strongly recommended. 
+
+
+History 
+ * 20150812: Clarify V7 transitional support and "VRMF" terminology 
+ * 20150511: Previous versions of this document were ambiguous with respect to mixed cells vs cells from a previous release. 
+ * 20150511: Previous versions of this document permitted future releases of IHS + Plugin only under specific enumerated circumstances. 
+ * 20150511: Permit IHS on z/OS to use previous releases of the WAS Plug-in. 
+ * 20160316: Emphasize Version as the differentiator, provide examples of N-2 versions. 
+ * 20160624: Mention relationship to Liberty.
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Application Servers WebSphere Application Server Plug-in (remote) Install AIX, Linux, Solaris, Windows 7.0 Application Servers Runtimes for Java Technology Java SDK

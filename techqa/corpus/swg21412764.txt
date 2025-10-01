@@ -1,0 +1,44 @@
+Title: IBM StackOverflow exception when launching WebSphere Business Space - United States
+
+Text:
+v70rnotes; WID TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ You may receive a StackOverflow exception when launching WebSphere Business Space in the Eclipse internal browser. 
+
+SYMPTOM
+The following example shows the exception received when opening WebSphere Business Space in the Eclipse internal browser: 
+
+
+!ENTRY org.eclipse.ui 4 0 2009-11-19 08:53:02.619
+!MESSAGE Unhandled event loop exception
+!STACK 0
+java.lang.StackOverflowError: operating system stack overflow
+at org.eclipse.swt.internal.win32.OS.DispatchMessageW(Native Method)
+at org.eclipse.swt.internal.win32.OS.DispatchMessage(OS.java:2371)
+at org.eclipse.swt.widgets.Display.readAndDispatch(Display.java:3420)
+at org.eclipse.ui.internal.Workbench.runEventLoop(Workbench.java:2384)
+at org.eclipse.ui.internal.Workbench.runUI(Workbench.java:2348)
+at org.eclipse.ui.internal.Workbench.access$4(Workbench.java:2200)
+at org.eclipse.ui.internal.Workbench$5.run(Workbench.java:495)
+at org.eclipse.core.databinding.observable.Realm.runWithDefault(Realm.java:288)
+at org.eclipse.ui.internal.Workbench.createAndRunWorkbench(Workbench.java:490)
+at org.eclipse.ui.PlatformUI.createAndRunWorkbench(PlatformUI.java:149)
+at org.eclipse.ui.internal.ide.application.IDEApplication.start(IDEApplication.java:113)
+at org.eclipse.equinox.internal.app.EclipseAppHandle.run(EclipseAppHandle.java:193)
+at org.eclipse.core.runtime.internal.adaptor.EclipseAppLauncher.runApplication(EclipseAppLauncher.java:110)
+at org.eclipse.core.runtime.internal.adaptor.EclipseAppLauncher.start(EclipseAppLauncher.java:79)
+at org.eclipse.core.runtime.adaptor.EclipseStarter.run(EclipseStarter.java:386)
+at org.eclipse.core.runtime.adaptor.EclipseStarter.run(EclipseStarter.java:179)
+at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:37)
+at java.lang.reflect.Method.invoke(Method.java:599)
+at org.eclipse.equinox.launcher.Main.invokeFramework(Main.java:549)
+at org.eclipse.equinox.launcher.Main.basicRun(Main.java:504)
+at org.eclipse.equinox.launcher.Main.run(Main.java:1236)
+at org.eclipse.equinox.launcher.Main.main(Main.java:1212)
+
+
+RESOLVING THE PROBLEM
+As a result of this problem, the Launch menu in the Servers view will launch the WebSphere Business Space in an external browser.

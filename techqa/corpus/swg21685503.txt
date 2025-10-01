@@ -1,0 +1,27 @@
+Title: IBM Data collection of System attribute group - United States
+
+Text:
+system attribute group cpu metrics windows wmic wmi perfmon performance counters processor processorinformation TECHNOTE (FAQ)
+
+QUESTION
+ How is data for the System attribute group (Windows) being collected? 
+
+ANSWER
+Before version 6.3 the CPU metrics of the Windows OS agent were collected through the perfmon interface using a fixed sampling time of 2.5 seconds. This design has changed in 6.3, and it is now based on the WMI performance interface. In the new WMI implementation the sampling time is no longer fixed but always aligned to the interval of the situation under which the data collection is taking place, and it's configurable for the queries (default 30 seconds).
+
+There are two performance counters that are queried to determine what WMI class to use: Processor and ProcessorInformation. 
+
+If the number of cpu's detected is different from the number of cpu's of the first counter, it uses the second.
+
+So, if Processor gives the correct data, the wmi class used is Win32_PerfRawData_PerfOS_Processor, otherwise it uses Win32_PerfRawData_Counters_ProcessorInformation.
+
+The attribute %_Processor_Time (PROCTIME) is derived by the property PercentProcessorTime of the above WMI class.
+You can check this using these commands:
+wmic PATH Win32_PerfRawData_Counters_ProcessorInformation GET /VALUE
+wmic PATH Win32_PerfRawData_PerfOS_Processor GET /VALUE
+wmic PATH Win32_PerfRawData_PerfProc_Process GET /VALUE
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ itm tivoli monitoring windows OS agent

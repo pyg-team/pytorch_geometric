@@ -1,0 +1,203 @@
+Title: IBM IZ50697: STARTING AGENTS SIMULTANEOUSLY CAN LOSE RUNINFO UPDATES. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Starting agents in an asynchronous manner causes ITM to attempt
+   to update RunInfo simultaneously which can cause some updates to
+   be overwritten and lost. This problem can be seen during cluster
+   failover or if multiple ITM agents are started "at the same
+   time" in background mode (&).
+   
+   Detailed Recreation Procedure:
+   
+    Scenario 1. Background environment
+   1) Install the Websphere MQ application, not the monitoring
+      agent.
+   
+   2) Create and start multiple MQ queues. (10 at least)
+   
+   3) Install and configure the OMXEfMQ monitoring agent.
+   
+   4) Start an MQ monitoring instance for each running MQ queue.
+   
+   5) Write a simple script which starts all of the monitoring
+      agents in background mode with lines like:
+      $CANDLEHOME/bin/itmcmd agent -o queue1 start MQ &
+   
+   6) Run the script.  This should cause all of the Monitoring
+      agents to try to start "at the same time".
+   
+   7) Wait 10 minutes.
+   
+   8) Verify that each agent is actually running using the
+      command: ps -ef | grep kmqagent
+   
+   9) Check to see if each running agent is in RunInfo using:
+      $CANDLEHOME/bin/cinfo -r
+   
+   Scenario 2. Cluster environment
+   
+   1) Establish a 2 machine cluster environment.
+   
+   2) Install the Websphere MQ application, not the monitoring
+      agent, to run on either system in the cluster.
+   
+   3) Create and start multiple MQ queues on one system. (10 at
+      least)
+   
+   4) Install and configure the OMXEfMQ monitoring agent to run
+      on either system in the cluster.
+   
+   5) Start an MQ monitoring instance for each running MQ queue
+      on the same system where the MQ queue is running.
+   
+   6) Configure the cluster failover to start each monitoring
+      agent with the clustered application that it monitors.
+   
+   7) Fail all of the MQ queues to the other system.  This should
+      cause all of the Monitoring agents to try to start "at the
+      same time".
+   
+   8) Wait 10 minutes.
+   
+   9) Verify that each agent is actually running using the
+      command: ps -ef | grep kmqagent
+   
+   10) Check to see if each running agent is in RunInfo using:
+       $CANDLEHOME/bin/cinfo -r
+   
+   Related Files and Output:
+     These scenarios are intermittent and do not produce any
+   searchable log results.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  n/a
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Starting agents in an asynchronous manner causes IBM Tivoli
+   Monitoring to attempt to update RunInfo simultaneously which can
+   cause some updates to be overwritten and lost. This problem can
+   be seen during cluster failover. This can cause cinfo -r to
+   incorrectly report running agents and agent instances as well as
+   causing itmcmd agent stop to fail for some agents which are
+   running. In addition agents may fail to start in indeterminate
+   ways when they are started asynchronously.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The itmcmd agent, server and execute commands have been modified
+   to attempt to acquire a system file lock on a target file before
+   reading or writing the RunInfo and RunInfo_Description files.
+   Other programs will be unable to acquire a lock on the target
+   file until the existing lock is released. This will cause
+   updates to RunInfo and RunInfo_Description to be serialized and
+   the information loss  to be abated.
+   
+   The fix for this APAR is included in the following maintenance
+   vehicle:
+       | interim fix | 6.2.1-TIV-ITM-IF0004
+   
+   | MDVREGR  6.2.1-TIV-ITM-IF0004 |
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ50697
+   
+   
+ * REPORTED COMPONENT NAME
+   OMEG DIST INSTA
+   
+   
+ * REPORTED COMPONENT ID
+   5608A41CI
+   
+   
+ * REPORTED RELEASE
+   621
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-05-05
+   
+   
+ * CLOSED DATE
+   2009-08-03
+   
+   
+ * LAST MODIFIED DATE
+   2010-07-28
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   OMEG DIST INSTA
+   
+   
+ * FIXED COMPONENT ID
+   5608A41CI
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R621 PSY
+   UP

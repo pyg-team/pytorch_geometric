@@ -1,0 +1,59 @@
+Title: IBM Changes not saved when editing the ClearQuest and RequisitePro URLs in Rational Administrator - United States
+
+Text:
+1264617; clearquest; cq; req pro; reqpro; rp; requisite pro; integration; wizard; Reqweb; cqweb; url; urls; rational; administrator; ra; Integrations; ClearQuest and RequisitePro; Windows; 7.0; 7.0.0.1 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This technote explains why the RequisiteWeb and ClearQuest Web URLs entered into the IBM® Rational® ClearQuest® and IBM Rational RequisitePro® Integration Wizard are not saved when you enter then and exit the wizard. 
+
+CAUSE
+If there are no other changes made to the Integration mapping at this time, then the Web URLs will not get saved.
+
+RESOLVING THE PROBLEM
+ 
+
+You can use this procedure to manually add the Requisite Web and ClearQuest web URLs:
+
+
+ 1. Open up the RequisitePro .RQS in notepad.
+    
+    
+ 2. Add the following line in the [Project]section:
+    CQWebURL=http://servername/cqweb/ 
+    
+    For example:
+    
+    [Project]
+    Owner=adminstrator
+    Name=GCSS
+    GUID={51F2E024-83BD-11D6-879B-00065BDD8C28}
+    CQWebURL=http://servername/cqweb/
+    isTrackChangesAllowed=1
+    Description=
+    Owner Key=105
+    Revision number=1.0147
+    Prefix=GCSS
+    NbrRequirements=3218
+    Directory=\\sharenae\RAProjects\ReqPro\RequisitePro.rqs
+    Key=1
+    
+    [Application]
+    Data file version=1.0040
+    Program Version=9.100.0.1
+    
+    
+ 3. In ClearQuest create a new Query based on record RAProject. Display the Name field with no filters.
+    
+    
+ 4. Find your RAProject name. Modify the record.
+    
+    
+ 5. On the RequisitePro tab add the following to the ReqWeb URL:
+    
+    http://servername/ReqWeb/
+
+
+
+
+
+Cross Reference information Segment Product Component Platform Version Edition Software Development Rational RequisitePro Integration: ClearQuest Web Software Development Rational ClearQuest Integrations: IBM

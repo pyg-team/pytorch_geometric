@@ -1,0 +1,150 @@
+Title: IBM PM04743: Bug in installer for XMI Toolkit - United States
+
+Text:
+  A FIX IS AVAILABLE
+Rational Rhapsody 7.6 [http://www-01.ibm.com/support/docview.wss?uid=swg24030256]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  I don't have XMI import and XMI export available in my tools men
+   u. I know that my license file shows FEATURE RPXMI.
+   
+   During installation I did not select the XMI-option, but I added
+    that later (Control Panel ? Add or Remove programs, then change
+    the Rhapsody installations and add XMI support).
+   
+   I investigated the problem and found out that it is a Java issue
+   . Adding XMI Toolkit later (using the Change option from the Con
+   trol Panel?Add or Remove Programs, or by rerunning the installer
+   ) does not work. The only way to get this to work is by complete
+   ly de-install Rhapsody, removing the remaining files in the Rhap
+   sody installation folder (including rhapsody.ini) and re-install
+    Rhapsody Developer again. And you have to install Rhapsody Deve
+   loper for Java and not only C and/or C++. This way the installer
+    knows where to find Java and installs the XMI Toolkit correctly
+   . If you don't select Rhapsody for Java the XMI toolkit will not
+    be installed correctly.
+   
+   Removing the XMI Toolkit and add it again will not work, because
+    installing a second time fails.
+   
+   Another issue is that if you don't have a Java JRE installed no
+   error message is given during installation of the XMI Toolkit. I
+   t just fails (even the first time).
+   
+   I added an investigation report describing the things I did to f
+   ind the problem.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   Bug in installer for XMI Toolkit
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fixed in version 7.6.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM04743
+   
+   
+ * REPORTED COMPONENT NAME
+   TLOGIC RHAPSODY
+   
+   
+ * REPORTED COMPONENT ID
+   5724V74RP
+   
+   
+ * REPORTED RELEASE
+   750
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-01-08
+   
+   
+ * CLOSED DATE
+   2011-06-23
+   
+   
+ * LAST MODIFIED DATE
+   2011-06-23
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TLOGIC RHAPSODY
+   
+   
+ * FIXED COMPONENT ID
+   5724V74RP
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R750 PSN
+   UP

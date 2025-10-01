@@ -1,0 +1,164 @@
+Title: IBM PJ43142: REFRESHING THE IN-BASKET PAGE MAY CAUSE CUSTOM SCRIPT ACTION BUTTONS TO DISAPPEAR WITH FIREFOX - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+ DIRECT LINKS TO FIXES
+5.2.1.2-ICM-WIN-IF001 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FCase+Manager&fixids=5.2.1.2-ICM-WIN-IF001&source=SAR]
+5.2.1.2-ICM-LINUX-IF001 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FCase+Manager&fixids=5.2.1.2-ICM-LINUX-IF001&source=SAR]
+5.2.1.2-ICM-AIX-IF001 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FCase+Manager&fixids=5.2.1.2-ICM-AIX-IF001&source=SAR]
+5.2.1.2-ICM-ZLINUX-IF001 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FCase+Manager&fixids=5.2.1.2-ICM-ZLINUX-IF001&source=SAR]
+IBM Case Manager V5.2.1 Fix Pack 2 for Linux for System z [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FCase+Manager&fixids=5.2.1.2-ICM-ZLINUX-FP002&source=SAR]
+IBM Case Manager V5.2.1 Fix Pack 2 for Windows [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FCase+Manager&fixids=5.2.1.2-ICM-WIN-FP002&source=SAR]
+IBM Case Manager V5.2.1 Fix Pack 2 for Linux [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FCase+Manager&fixids=5.2.1.2-ICM-LINUX-FP002&source=SAR]
+IBM Case Manager V5.2.1 Fix Pack 2 for AIX [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FCase+Manager&fixids=5.2.1.2-ICM-AIX-FP002&source=SAR]
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The Script Action button on the work page menu can disappear
+   after a page refresh.  Subsequent page refresh can sometimes
+   bring back the button.  The button will appear and disappear at
+   random with subsequent refresh on the same page.  You have to
+   reload the "role" to get the button back.  Clicking another tab
+   and returning to the original tab does not restore the button.
+   
+   The new Script Action button can be empty or have code in it,
+   the result is the same.
+   
+   On ICM 5.2.1.1 this has been reproduced on the following FireFox
+   versions:
+   17.0.11
+   24.8.1
+   31.5.0
+   36.0
+   37.0
+   
+   This issue was not reproducible with IE or Chrome.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  There are a couple of ways to mitigate this issue
+   1. This issue was not reproduced with IE or Chrome
+   2. Change the page, via Page Designer, to a two row
+   configuration with the Toolbar on top, and the In-baskets on the
+   bottom.  Remove any/all OOTB buttoms from the Toolbar.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * Case Manager Client users                                    *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * See Error Description                                        *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * It is recommended to apply the 5.2.1.2-ICM-FP002 GA patch.   *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This issue is resolved in the 5.2.1.2-ICM-FP002 GA patch.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PJ43142
+   
+   
+ * REPORTED COMPONENT NAME
+   CASE MGR BUILDE
+   
+   
+ * REPORTED COMPONENT ID
+   5725A1500
+   
+   
+ * REPORTED RELEASE
+   521
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-04-07
+   
+   
+ * CLOSED DATE
+   2015-07-06
+   
+   
+ * LAST MODIFIED DATE
+   2015-07-06
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CASE MGR BUILDE
+   
+   
+ * FIXED COMPONENT ID
+   5725A1500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R521 PSY
+   UP

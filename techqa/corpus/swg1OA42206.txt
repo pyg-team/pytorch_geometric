@@ -1,0 +1,220 @@
+Title: IBM OA42206: RESHIP MONITORING AGENT APPLICATION SUPPORT JAR FILES WITH NEW CERTIFICATES. - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS NEW FUNCTION.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Reship monitoring agent application support jar files with new
+   certificates.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All IBM Automation Control for z/OS V1R1     *
+   *                 customers using the SA z/OS monitoring agent *
+   *                 for the Tivoli Enterprise Portal (TEP)       *
+   *                 support.                                     *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: TEP application support needs to be     *
+   *                      reshipped signed by the new             *
+   *                      certificate.                            *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   TEP application support needs to be reshipped with new
+   certificate.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *  New part KAH42206 has been created.
+   KAH42206 comes with a readme file.
+   
+   This readme file describes how to install the APAR OA42206 for
+   IBM Tivoli System Automation for z/OS (SA z/OS) monitoring agent
+   for the Tivoli Enterprise Portal Server TEP(S).
+   
+   You must have installed an ITM environment V6.1 or higher and
+   the related SA Application support.
+   The following packed files for the SA z/OS TEP exploitation are
+   available after your SMP/E installation:
+   
+       ING.SINGPWS1(KAH42206)
+       KAH42206 is the packed file for Windows or Linux.
+   
+   To install the fix, follow the instructions below.
+   1. Download the member (KAH42206) from the data set on the host
+      system to your workstation in binary mode using, for example,
+      FTP.
+   2. Rename KAH42206 to KAH42206.zip on the workstation.
+   
+   Windows:
+   --------
+   3. unpack with an appropriate tool (WINZIP or PKZIP)
+      The unpacked zip file KAH42206 contains the parts for APAR
+      OA42206.
+         kah_resources.jar        (English version)
+         kah_resources_ja.jar     (Japanese version)
+         kah_topology.jar
+         readme_OA42206.txt
+   4. Stop the Tivoli Enterprise Portal Server (TEPS)
+   5. save or rename the related old .jar files and copy the new
+      .jar files into
+      C:\IBM\ITM\CNB\classes              (kah_resources.jar,
+      kah_resources_ja.jar)
+      C:\IBM\ITM\CNP\                     (kah_resources.jar,
+      kah_resources_ja.jar)
+      C:\IBM\ITM\CNPS\classes\candle\kah  (kah_resources.jar,
+      kah_topology.jar)
+   6. Restart the Tivoli Enterprise Portal Server (TEPS)
+   7. Reconfigure the Tivoli Enterprise Portal Server (TEPS)
+   8. Execute the C:\IBM\ITM\CNPS\BuildPresentation.bat file
+   9. If you use the Tivoli Enterprise Portal in browser mode,
+      clear the Java Plug-in cache to load the new jar files when
+      restarting the browser client.
+   
+   Linux:
+   ------
+   3. unpack to the current directory with the command:
+      unzip KAH42206.zip
+      The unpacked file KAH42206 contains the parts for APAR
+      OA42206.
+         kah_resources.jar        (English version)
+         kah_resources_ja.jar     (Japanese version)
+         kah_topology.jar
+         readme_OA42206.txt
+   4. Stop the Tivoli Enterprise Portal Server (TEPS)
+   5. save or rename the related old .jar files and copy the new
+      .jar files in
+      .../opt/IBM/ITM/ls3266/cw/classes
+      (kah_resources.jar, kah_resources_ja.jar)
+      .../opt/IBM/ITM/ls3266/cq/classes/classes/candle/kah
+      (kah_resources.jar, kah_topology.jar)
+   6. Restart the Tivoli Enterprise Portal Server (TEPS)
+   7. Reconfigure the Tivoli Enterprise Portal Server (TEPS)
+   8. Execute the command: /opt/IBM/ITM/bin/itmcmd execute cq
+      InstallPresentation.sh
+   9. If you use the Tivoli Enterprise Portal in browser mode,
+      clear the Java Plug-in cache to load the new jar files when
+      restarting the browser client.
+   
+   NOTE:
+   -----
+   If you did not have previously installed the language pack
+   then you do not have to copy the japanese resource bundle
+   kah_resource_ja.jar.
+   Just copy the English version kah_resource.jar and
+   kah_topology.jar.
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   OA42206
+   
+   
+ * REPORTED COMPONENT NAME
+   AUTO CONTROL FO
+   
+   
+ * REPORTED COMPONENT ID
+   5698LSA00
+   
+   
+ * REPORTED RELEASE
+   110
+   
+   
+ * STATUS
+   CLOSED UR1
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-05-06
+   
+   
+ * CLOSED DATE
+   2013-05-28
+   
+   
+ * LAST MODIFIED DATE
+   2013-06-03
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    OA42205 [http://www-01.ibm.com/support/docview.wss?uid=swg1OA42205]
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UA69268
+   
+   
+
+MODULES/MACROS
+ *  KAH42206
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   AUTO CONTROL FO
+   
+   
+ * FIXED COMPONENT ID
+   5698LSA00
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R110 PSY UA69268 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UA69268]
+   UP13/05/30 P F305
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

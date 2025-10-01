@@ -1,0 +1,182 @@
+Title: IBM PK66803: SHUTDOWN OF THE QUEUE MANAGER HANGS IN THE EXSERV00 EXIT SERVICES THREAD - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  In a dump taken during a shutdown hang, the only thread EB is
+   for CCB 002.EXSERV00. This is the Exit Services Server.  It is
+   waiting in module CSQVXSVR.  This is because there was a timing
+   window at startup of the servers where the same exit server
+   control block was used by two tasks, and another exit server
+   block did not finish starting.
+   .
+   Level2 validation:
+   There are 8 EXIT_SERVER Exit_Server VXSV control blocks if
+   EXITTCB=8.  The exit_server.fStarting bit is still on for one of
+   them.
+   *
+   Additional keywords:
+   stop qmgr shut down termination PQ79596 CSQVXSVR CSQAXSVR
+   bit_block2
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Set EXITTCB=0 in CSQ6SYSP if you are not using exits in the
+   queue manager (i.e. there is no exit library (CSQXLIB) in the
+   MSTR startup JCL).
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All users of WebShpere MQ for z/OS Version 6 *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Occasional hang at QMGR shutdown when   *
+   *                      EXITTCB is specified non-zero, waiting  *
+   *                      for an Exit Server thread to terminate. *
+   *                      Abend0C4s may be possible IF cluster    *
+   *                      workload exits are used.                *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   During QMGR startup if EXITTCB is non zero the specified number
+   of Exit Server Tasks (module CSQVXSVR) are started concurrently
+   and attempt to select an Exit_Server (VXSV) from a chain by
+   compare and swapping Exit_Server.Control_Flags turning the flag
+   fStarting OFF. If the CS is successful THAT VXSV is then used
+   by the successful task.
+   There is a timing window in which one Exit Server task could
+   lose control and second Exit Server task to succeed on THAT VXSV
+   and when the original task regains control it loads the values
+   placed in Control_Flags by the second task and does its CS which
+   is ALSO successful - resulting in two Exit Server threads using
+   the SAME VXSV, and one VXSV remains unused.
+   This potentially can cause problems when the exit service is
+   used (for cluster workload exits) although the possible symptoms
+   remain unclear.
+   At shutdown only one of the threads is posted and the other
+   remains active - causing the shutdown process to hang.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The compare and swap logic in module CSQVXSVR has been changed
+   so that only one Exit Server can succeed in selecting an
+   individual Exit_Server block.
+   000Y
+   CSQVXSVR
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK66803
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ Z/OS V6
+   
+   
+ * REPORTED COMPONENT ID
+   5655L8200
+   
+   
+ * REPORTED RELEASE
+   000
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-05-28
+   
+   
+ * CLOSED DATE
+   2008-09-23
+   
+   
+ * LAST MODIFIED DATE
+   2008-11-04
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UK40106 PK72612 [http://www-01.ibm.com/support/docview.wss?uid=swg1PK72612]
+   
+   
+
+MODULES/MACROS
+ *     CSQVXSVR
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ Z/OS V6
+   
+   
+ * FIXED COMPONENT ID
+   5655L8200
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R000 PSY UK40106 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK40106]
+   UP08/10/16 P F810
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

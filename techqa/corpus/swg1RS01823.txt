@@ -1,0 +1,193 @@
+Title: IBM RS01823: DE: CLASSCASTEXCEPTION: BIGDECIMAL INCOMPATIBLE WITH INTEGER WHEN EVALUATING "IS ONE OF" OPERATOR - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Operational Decision Manager V8.6.0.2 Fix Pack [http://www-01.ibm.com/support/docview.wss?uid=swg24039275]
+Operational Decision Manager V8.7.0.1 Fix Pack [http://www-01.ibm.com/support/docview.wss?uid=swg24039387]
+Operational Decision Manager V8.7.1 Download Document [http://www-01.ibm.com/support/docview.wss?uid=swg24039330]
+Operational Decision Manager V8.7.1 Fix Pack [http://www-01.ibm.com/support/docview.wss?uid=swg24040019]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  In DE mode, evaluating condition like "if myInteger is one of {
+   
+   0 , myBigDecimal }" generates the stack trace below
+   (Here myInteger is a variable of Integer type while
+   myBigDecimal is of BigDecimal type)
+   //==============================================================
+   
+   =============
+   Error while executing ruleset: java.lang.ClassCastException:
+   java.math.BigDecimal incompatible with java.lang.Integer
+   com.ibm.rules.engine.util.EngineExecutionException: java.lang.
+   ClassCastException: java.math.BigDecimal incompatible with java.
+   
+   lang.Integer
+   Caused by: java.lang.ClassCastException: java.math.BigDecimal
+   incompatible with java.lang.Integer
+   at com.ibm.rules.generated.ruleflow.mainflow$003emyrule.
+   CondExecEnv.evaluateBooleanMethod0(Unknown Source)
+   at com.ibm.rules.generated.ruleflow.mainflow$003emyrule.
+   CondExecEnv.evaluateBooleanMethodHook(Unknown Source)
+   at com.ibm.rules.engine.rete.runtime.state.
+   AbstractConditionExecEnv.evaluateBooleanMethod(
+   AbstractConditionExecEnv.java:72)
+   at com.ibm.rules.engine.rete.runtime.network.impl.
+   IlrEvaluateAlphaNode.initMemory(IlrEvaluateAlphaNode.java:66)
+   at com.ibm.rules.engine.rete.runtime.network.impl.
+   IlrAbstractLogicObjectAlphaNode.activate(
+   IlrAbstractLogicObjectAlphaNode.java:119)
+   at com.ibm.rules.engine.rete.runtime.network.impl.
+   IlrDynamicRuleActionNode.activate(IlrDynamicRuleActionNode.java:
+   
+   249)
+   at com.ibm.rules.engine.rete.runtime.network.impl.
+   IlrStandardNetwork.activateRulesSingletonGroup(
+   IlrStandardNetwork.java:229)
+   at com.ibm.rules.engine.rete.runtime.network.impl.
+   IlrStandardNetwork.activateRules(IlrStandardNetwork.java:149)
+   at com.ibm.rules.engine.rete.runtime.AbstractReteEngine.
+   transiteHardToOngoingState(AbstractReteEngine.java:490)
+   at com.ibm.rules.engine.rete.runtime.AbstractReteEngine.execute(
+   
+   AbstractReteEngine.java:436)
+   at com.ibm.rules.engine.rete.runtime.AbstractReteEngine.execute(
+   
+   AbstractReteEngine.java:418)
+   at com.ibm.rules.generated.ruleflow.mainflow$003emyrule.Task.
+   run(Unknown Source)
+   at com.ibm.rules.generated.ruleflow.mainflow.Task.body(Unknown
+   Source)
+   at com.ibm.rules.generated.ruleflow.mainflow.Task.run(Unknown
+   Source)
+   at com.ibm.rules.generated.ruleflow.
+   AbstractGeneratedRuleflowEngine.execute(Unknown Source)
+   at com.ibm.rules.generated.ruleflow.
+   AbstractGeneratedRuleflowEngine.execute(Unknown Source)
+   at com.ibm.rules.studio.rve.launch.main.RveRulesetMain.main(
+   RveRulesetMain.java:67)
+   //==============================================================
+   
+   ===============------------------------------------------------
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  replace "is one of" by multiple "is" operators
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  incorrect code generation when the operator is one of is
+   involved.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  the code is fixed
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   RS01823
+   
+   
+ * REPORTED COMPONENT NAME
+   WS DECISION SVR
+   
+   
+ * REPORTED COMPONENT ID
+   5725B6901
+   
+   
+ * REPORTED RELEASE
+   860
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-11-30
+   
+   
+ * CLOSED DATE
+   2014-12-04
+   
+   
+ * LAST MODIFIED DATE
+   2014-12-04
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  999
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WS DECISION SVR
+   
+   
+ * FIXED COMPONENT ID
+   5725B6901
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R860 PSY
+   UP

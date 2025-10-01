@@ -1,0 +1,129 @@
+Title: IBM PJ41664: IMAGE SERVICES (IS) 4.2.0 NEEDS TO SUPPORT FIPS SHA-256 - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Image Services (IS) 4.2.0 Needs to support FIPS SHA-256
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * Using releases prior to 5.2.0.2-P8CPE-FP002 and running      *
+   * CFS-IS with IS 4.2.0 FP8+ but desires to use SHA256 hashing  *
+   * algorithm.                                                   *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * Releases prior to 5.2.0.2-P8CPE-FP002 do not support SHA256  *
+   * so they are not able communicate with IS 4.2.0 FP8+ from     *
+   * where the SHA256 is configured.                              *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Upgrade to 5.2.0.3-P8CPE-FP003.                              *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  5.2.0.3-P8CPE-FP003 and later resolve this enhancement.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PJ41664
+   
+   
+ * REPORTED COMPONENT NAME
+   CONTENT ENGINE
+   
+   
+ * REPORTED COMPONENT ID
+   5724R8101
+   
+   
+ * REPORTED RELEASE
+   520
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-10-28
+   
+   
+ * CLOSED DATE
+   2014-03-07
+   
+   
+ * LAST MODIFIED DATE
+   2014-03-07
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    PJ41598 [http://www-01.ibm.com/support/docview.wss?uid=swg1PJ41598]
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CONTENT ENGINE
+   
+   
+ * FIXED COMPONENT ID
+   5724R8101
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R520 PSY
+   UP

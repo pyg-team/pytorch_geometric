@@ -1,0 +1,97 @@
+Title: IBM Web Query 2.x Options and Features - United States
+
+Text:
+WebQuery IBM_i DB_TechNote TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This document provides the various Web Query 2.x features and/options and how these features line up with the features available in Web Query 1.x 
+
+RESOLVING THE PROBLEM
+This document provides the various Web Query 2.x features and/options and how these features line up with the features available in Web Query 1.x 
+
+With Web Query 2.x, IBM changed how to order the various Web Query features. 
+
+Some options have been merged into a base version of the product, 
+some have been merged into one option,
+and some have remained the same.
+
+Web Query 2.x refers to Web Query 2.1.0, Web Query 2.1.1, Web Query 2.2.0
+
+Web Query 2.1.1 is a resave of Web Query 2.1.0 + Web Query Group PTF Level 11
+- All subsequent Web Query Group PTFs "match" 
+That is, 
+Web Query 2.1.0 + Web Query Group PTF Level 12 is the same as 
+Web Query 2.1.1 + Web Query Group PTF Level 1
+etc.
+
+Web Query 2.2.0 the latest Web Query version, released in April 2016
+
+This document will explain how your existing Web Query 1.x options line up with Web Query 2.x.
+
+1. The WebQuery 1.x and WebQuery 2.x options are as follows:
+
+Web Query 1.x
+
+5733QU2 *BASE DB2 Web Query
+5733QU2 1 Active Reports
+5733QU2 2 OLAP
+5733QU2 3 Developer Workbench
+5733QU2 4 Run Time User Enablement
+5733QU2 5 Spreadsheet Client
+5733QU2 6 Microsoft SQL Server Adapter
+5733QU2 7 JD Edwards Adapter
+
+5733QU3 *BASE Report Broker
+5733QU4 *BASE Software Developer Kit (SDK) 
+
+
+Web Query 2.x
+
+5733WQX *BASE IBM DB2 Web Query for i 
+5733WQX 1 Web Query Express Edition 
+5733WQX 2 Web Query Standard Edition
+5733WQX 3 Web Query Option 3 (not used)
+5733WQX 4 Web Query Developer Users 
+5733WQX 5 Web Query Developer Workbench Users
+5733WQX 6 Web Query Runtime Enablement Groups
+5733WQX 7 Web Query JD Edwards Adapter
+5733WQX 8 DataMigrator
+
+
+
+2. How can one compare Web Query 1.x and Web Query 2.x? 
+
+With Web Query 2.x, there are two paths to choose:
+
+1. Express Edition 
+Designed as an entry level edition
+
+2. Standard Edition 
+Full Web Query functionality
+
+There is no 1-for-1 mapping between Web Query 1.x and Web Query 2.x, so how does one know what to order? 
+You will need to choose how to convert additionally purchased QU2 users (either as Licensed Users or Runtime groups). (see Note 1)
+
+
+
+Web Query 1.x Web Query 2.x, Express Edition Web Query 2.x, Standard Edition [/support/docview.wss?uid=nas8N1010595&amp;aid=1] [/support/docview.wss?uid=nas8N1010595&amp;aid=1] [/support/docview.wss?uid=nas8N1010595&amp;aid=1] 5733QU2 Option 1 - Active Reports Yes Yes 5733QU2 Option 2 - OLAP Yes Yes 5733QU2 Option 3 - Developer WorkBench Yes (see Note 2) 5733WQX Option 5 Yes (see Note 2) 5733WQX, Option 5 5733QU2 Option 5 - Spreadsheet Client Yes Yes [/support/docview.wss?uid=nas8N1010595&amp;aid=1] [/support/docview.wss?uid=nas8N1010595&amp;aid=1] [/support/docview.wss?uid=nas8N1010595&amp;aid=1] 5733QU2 Option 4 - Run Time User Enablement No Yes (see Note 1)
+5733WQX Option 6 (5106) 5733QU2 Option 6 - Microsoft SQL Server Adapter No Yes 5733QU3 - Report Broker No Yes 5733QU4 - Software Developer Kit No Yes 
+JD Edwards Adapter (Option 7) is still an optional feature. For Web Query 2.x, it is only available with Standard Edition. 
+
+
+Notes: 
+1. Customer will need to chose how to convert additionally purchased QU2 users 
+a. Either as Licensed Users (5733WQX, Option 4) or RunTime Enablement Groups (5733WQX, Option 6). 
+b. This must be decided at upgrade time. Please work with your Business Partner. 
+- Licensed Users develop and maintain the Web Query reports and RunTime Enablement Groups run the Web Query reports. 
+
+2. Express Edition does not come with any Developer WorkBench licenses; however, the licenses can purchased. 
+Standard Edition comes with one Developer WorkBench license and more can be purchased. 
+
+As before with Web Query 1.x, a separate Software Maintenance Agreement (SWMA) is required for Web Query support. 
+
+Finally, officially there is no need to remove Web Query 1.x (5733QU2, 5733QU3, 5733QU4) while upgrading to Web Query 2.x (5733WQX) but you cannot run both at the same time. 
+
+
+HISTORICAL NUMBER
+ 657309087

@@ -1,0 +1,135 @@
+Title: IBM PJ41722: IBM CONTENT COLLECTOR SEARCHES AND IBM EDISCOVERY MANAGER COMPLIANCE SEARCHES MIGHT NOT RETURN CORRECT RESULTS - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  After indexing the attached document, certain searches do not
+   return results.
+   Initially the issue was reported when searching on the
+   <icc_subject>
+   
+   However, after re-indexing the document all searches on the
+   <icc_subject>
+   worked, but searches on the <icc_sender> did not.
+   
+   Sample query that didn't return results:
+   @xmlxp:'//icc_from[.contains("icccen.ecm.com")]'
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * Content Search Services (CSS) with IBM Content Collector     *
+   * (ICC) and IBM eDiscovery Manager (eDM) searches with         *
+   * 5.2.0.0-P8CSS-IF003 or elarlier                              *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * Content Search Services (CSS) with IBM Content Collector     *
+   * (ICC) and IBM eDiscovery Manager (eDM) searches may not      *
+   * return all the correct results.                              *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Upgrade to 5.2.0.1-P8CSS-FP001 or higher.                    *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fixed in 5.2.0.1-P8CSS-FP001 and higher
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PJ41722
+   
+   
+ * REPORTED COMPONENT NAME
+   CONTENT SEARCH
+   
+   
+ * REPORTED COMPONENT ID
+   5724R8109
+   
+   
+ * REPORTED RELEASE
+   520
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-11-12
+   
+   
+ * CLOSED DATE
+   2014-03-10
+   
+   
+ * LAST MODIFIED DATE
+   2014-03-10
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CONTENT SEARCH
+   
+   
+ * FIXED COMPONENT ID
+   5724R8109
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R520 PSY
+   UP

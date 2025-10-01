@@ -1,0 +1,55 @@
+Title: IBM PI39793;8.5.5: Update WAS 8.5.5.5 License to exclude RAD - United States
+
+Text:
+PI39793; PI39793; PI39793 DOWNLOADABLE FILES
+
+ABSTRACT
+ Fix license information in WebSphere Application Server V8.5.5.5 to exclude IBM Rational Application Developer for WebSphere Software v9.0 as a supporting program. 
+
+DOWNLOAD DESCRIPTION
+PI39793 resolves the following problem:
+
+ERROR DESCRIPTION: 
+Update WAS 8.5.5.5 License to exclude RAD 
+
+Remove IBM Rational Application Developer for WebSphere Software v9.0 from the list of Supporting Programs licensed with WebSphere Application Server V8.5.5.5 Program 
+
+LOCAL FIX: 
+
+PROBLEM SUMMARY
+
+USERS AFFECTED:
+All users of IBM WebSphere Application Server Base, Express, Developers, Network Deployment and z/OS editions
+
+PROBLEM DESCRIPTION:
+Fix license information in WebSphere Application Server V8.5.5.5 to exclude IBM Rational Application Developer for WebSphere Software v9.0 as a supporting program.
+
+RECOMMENDATION:
+None
+
+The license in IBM WebSphere Application Server v8.5.5.5 for Base, Network Deployment, Express, z/OS and Developers editions incorrectly included a supporting program for IBM Rational
+Application Developer for WebSphere Software v9.0 which should not have been included.
+
+PROBLEM CONCLUSION: 
+IBM Rational Application Developer for WebSphere Software v9.0 has been excluded from the license file 
+
+The fix for this APAR is currently targeted for inclusion in fix pack 8.5.5.6. Please refer to the Recommended Updates page for delivery information: 
+http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+
+PREREQUISITES
+None
+
+INSTALLATION INSTRUCTIONS
+Please review the readme.txt for detailed installation instructions.
+
+URL LANGUAGE SIZE(Bytes) Readme [ftp://public.dhe.ibm.com/software/websphere/appserv/support/fixes/PI39793/8.5.5.5/readme.txt] US English 4425 
+DOWNLOAD PACKAGE
+
+
+Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options 
+What is Fix Central(FC)? [https://www.ibm.com/support/fixcentral/help?page=swfaqs] 8.5.5.5-WS-WAS-IFPI39793 05-12-2015 US English 6855628 HTTP [http://www-933.ibm.com/eserver/support/fixes/fixcentral/swgquickorder?fixes=8.5.5.5-WS-WAS-IFPI39793&productid=WebSphere%20Application%20Server&brandid=5] 8.5.5.5-WS-WLP-IFPI39793 05-12-2015 US English 3860775 HTTP [http://www-933.ibm.com/eserver/support/fixes/fixcentral/swgquickorder?fixes=8.5.5.5-WS-WLP-IFPI39793&productid=WebSphere%20Application%20Server&brandid=5] 
+TECHNICAL SUPPORT
+ Contact IBM Support using SR (http://www.ibm.com/software/support/probsub.html [http://www.ibm.com/software/support/probsub.html]), visit the WebSphere Application Server support web site (http://www.ibm.com/software/webservers/appserv/was/support/ [http://www.ibm.com/software/webservers/appserv/was/support/]), or contact 1-800-IBM-SERV (U.S. only). 
+
+ [/support/docview.wss?uid=swg24039989&aid=1]Problems (APARS) fixed [/support/docview.wss?uid=swg24039989&aid=2]Problems (APARS) fixed
+PI39793

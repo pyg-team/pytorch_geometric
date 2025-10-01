@@ -1,0 +1,49 @@
+Title: IBM How to troubleshoot Call Home Daemon issue? - United States
+
+Text:
+sanjitc; sanjit; sanjitc2017; callhome; CallHome; callHome; call Home; SW_NEEDS_ATTENTION; sailfish; IIAS; 409: Unable to start Call Home Daemon TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The 'ap issue' is reporting "409: Unable to start Call Home Daemon". 
+
+
+SYMPTOM
+[ Output formatted for readability ] 
+
+$ ap issues
+
+Open alerts (issues)
+
+ID : 1015
+Date : 2017-11-06 17:22:11
+Type : SW_NEEDS_ATTENTION
+Reason Code and Title : 409: Unable to start Call Home Daemon
+Target : sw://docker.callhome/rack1.node1
+Severity : MAJOR
+
+
+
+CAUSE
+There are many different reasons that can cause Call Home daemon to stop. You should check following to troubleshoot the problem: 
+
+ 
+
+Displays the details for the issue with the given ID ap issues <ID> Determine the location of Magneto Hub ap node -d View the callhome software status ap sw -d | egrep -i 'Status|callHome' Check hardware status of each component ap hw -d Status of callHome container (need root access) docker ps Review Call Home Log - /opt/ibm/appliance/storage/platform/ras/callhome/log/callHome/callHome.0.log Review syslog - /var/log/appliance/platform/management/sysmgr.log - /var/log/appliance/platform/management/sysmgr.debug
+
+
+RESOLVING THE PROBLEM
+Above command outputs and logs should give you an idea about the problem, if not try to restart components in following sequence and check callhome status after each step: 
+
+1. Restart callHome service and container from head node as root: 
+
+- docker exec -it callhome stop 
+
+- docker stop callhome 
+
+- docker start callhome 
+
+- docker exec -it callhome start 
+
+2. Restarts the appliance management platform only: apstart -p 
+
+3. Restarts the appliance applications only: apstart -a

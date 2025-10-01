@@ -1,0 +1,182 @@
+Title: IBM PI44420: RATIONAL DEVELOPER FOR SYSTEM Z INTEGRATED DEBUGGER IS NOT ABLE FIND CICS TRANSACTION SIDE FILES WHEN MOVED FROM ORIGINAL PLACE - United States
+
+Text:
+z/os  FIXES ARE AVAILABLE
+Rational Developer for System z Fix Pack 1 (9.1.1.3) for 9.1.1. [http://www-01.ibm.com/support/docview.wss?uid=swg24041789]
+9.1.1.3: PTF UI35670 for Rational Developer for System z Host Options [http://www-01.ibm.com/support/docview.wss?uid=swg24041790]
+9.1.1.3: PTF UI37230 for Rational Developer for System z Host Options [http://www-01.ibm.com/support/docview.wss?uid=swg24042124]
+Rational Developer for System z Interim Fix 1 for 9.1.1.3 [http://www-01.ibm.com/support/docview.wss?uid=swg24042181]
+9.1.1.3: PTF UI37833 for Rational Developer for System z Host Options [http://www-01.ibm.com/support/docview.wss?uid=swg24042197]
+Rational Developer for System z Fix Pack 1 (9.1.1.4) for 9.1.1. [http://www-01.ibm.com/support/docview.wss?uid=swg24042820]
+9.1.1.4: PTF UI41212 for Rational Developer for System z [http://www-01.ibm.com/support/docview.wss?uid=swg24042818]
+Rational Developer for System z Fix Pack 1 (9.1.1.5) for 9.1.1. [http://www-01.ibm.com/support/docview.wss?uid=swg24043244]
+9.1.1.5: PTF UI44156 for Rational Developer for System z [http://www-01.ibm.com/support/docview.wss?uid=swg24043245]
+Rational Developer for System z Fix Pack 1 (9.1.1.6) for 9.1.1. [http://www-01.ibm.com/support/docview.wss?uid=swg24044103]
+9.1.1.6: PTF UI50717 for Rational Developer for System z [http://www-01.ibm.com/support/docview.wss?uid=swg24044109]
+Rational Developer for System z Fix Pack 1 (9.1.1.7) for 9.1.1. [http://www-01.ibm.com/support/docview.wss?uid=swg24044796]
+9.1.1.7: PTF UI55786 for Rational Developer for System z [http://www-01.ibm.com/support/docview.wss?uid=swg24044797]
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Rational Developer for System z - RDz
+   When you use the integrated debugger to debug a CICS
+   transaction with side files that have been moved from the
+   original location then the integrated debugger is not able
+   to find them even though the AQEDEBUG is pointing to the
+   correct location.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  None available
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: 01.Integrated Debugger users who debug CICS  *
+   *                    PLI or C/C++ applications                 *
+   *                 02.Integrated Debugger users                 *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: 01.The Integrated Debugger engine does  *
+   *                         not show program source when the     *
+   *                         CICS transaction side file has moved *
+   *                         from its original location           *
+   *                      02.In RDz v9.1.1, when the Integrated   *
+   *                         Debugger start up SVC 252. He        *
+   *                         receives a message: "AQECM116E -     *
+   *                         Current SVC 252 is AQESVC03"         *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   01.The Integrated Debugger engine did not provide a way to
+      override the compiler default location for a side file.
+   02.The Integrated Debugger message AQECM116E should not be error
+      level.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  01.AQE_DBG_SYSDEBUG can now be used for specifying side file
+      locations (also EQA_DBG_SYSDEBUG for 9.5.1).  Multiple data
+      sets can be specified by separating with colons (:).
+      Note that this new environment variable works exactly the
+      same way as AQE_DBG_V4LIST does for specifying the location
+      of COBOL listing files.
+   02.Message AQECM116E has been changed to an informational
+      message AQECM116I, and users will now see
+      "AQECM116I - Current SVC 252 is AQESVC03" at start up.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI44420
+   
+   
+ * REPORTED COMPONENT NAME
+   RATL DEV FOR SY
+   
+   
+ * REPORTED COMPONENT ID
+   5724T0700
+   
+   
+ * REPORTED RELEASE
+   910
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2015-07-06
+   
+   
+ * CLOSED DATE
+   2016-02-25
+   
+   
+ * LAST MODIFIED DATE
+   2016-02-27
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UI35670
+   
+   
+
+MODULES/MACROS
+ *  AQECIC32 AQECIC41 AQECIC51 AQECTL   AQEEVDBG
+   AQELDR31 AQELDR64 AQEL3Z3  AQEL3Z6  AQEL6Z3  AQEL6Z6  AQEMVS31
+   AQEMVS64 AQESVC03 AQEW3Z3  AQEW3Z6  AQEXPL31 AQEZPCM
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   RD/Z HOST
+   
+   
+ * FIXED COMPONENT ID
+   5724T0723
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R910 PSY UI35670 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI35670]
+   UP16/02/27 I 1000
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

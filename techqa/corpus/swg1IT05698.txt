@@ -1,0 +1,200 @@
+Title: IBM IT05698: UNABLE TO LOAD LARGE REFERENCE DATA THROUGH RDM UI - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  ERROR DESCRIPTION:Ø
+   Unable to load large reference data through InfoSphere
+   Reference Data Management UI.
+   
+   Steps to reproduce:
+   1. Create a new reference data set with custom properties
+   Either String or  Text data type
+   2. Attempt to import large values (ie. 2-3K characters) through
+   CSV file or attempt to add via UI.
+   
+   The error below is displayed:
+   Information - Error
+    Insert of the following failed: RDValueProperty.
+   
+   SystemOut.log will show error:
+   [20/11/14 9:07:46:984 EST] 000000ee DWLExceptionU E
+   com.ibm.pdq.runtime.exception.DataRuntimeException:
+   [pdq][10103][3.200.75] An error prevented the update operation
+   from completing successfully.;  Caused by:
+   com.ibm.db2.jcc.am.SqlDataException: DB2 SQL Error:
+   SQLCODE=-302, SQLSTATE=22001, SQLERRMC=null, DRIVER=3.67.27
+    at
+   com.ibm.pdq.runtime.internal.db.JdbcData.update_(JdbcData.java:4
+   06)
+   ..
+   Caused by: com.ibm.db2.jcc.am.SqlDataException: DB2 SQL Error:
+   SQLCODE=-302, SQLSTATE=22001, SQLERRMC=null, DRIVER=3.67.27
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Reference Data Set properties have the default maximum length.
+   Name: 500
+   Description: 2000
+   Text Custom Property: 500
+   
+   Changing the column data type in database will allow users to
+   insert longer strings to set properties.
+   
+   Enable Custom Property for longer content:
+   DB2:
+   alter table rdvalueproperty alter column RD_PROPERTY_VAL set
+   data type varchar(3000);
+   alter table h_rdvalueproperty alter column RD_PROPERTY_VAL set
+   data type varchar(3000);
+   
+   Oracle:
+   alter table rdvalueproperty modify RD_PROPERTY_VAL
+   VARCHAR2(3000);
+   alter table h_rdvalueproperty modify RD_PROPERTY_VAL
+   VARCHAR2(3000);
+   
+   Enable Set Description for longer content:
+   DB2:
+   alter table rdvalue alter column RD_VALUE_DESCRIPTION  set data
+   type varchar(3000)
+   alter table h_rdvalue alter column RD_VALUE_DESCRIPTION  set
+   data type varchar(3000)
+   alter table rdvalue alter column TEXT_SEARCH_CONTENT set data
+   type varchar(3500)
+   alter table h_rdvalue alter column TEXT_SEARCH_CONTENT set data
+   type varchar(3500)
+   
+   Oracle:
+   alter table rdvalue modify RD_VALUE_DESCRIPTION  VARCHAR2(3000);
+   alter table h_rdvalue modify RD_VALUE_DESCRIPTION 
+   VARCHAR2(3000);
+   alter table rdvalue modify TEXT_SEARCH_CONTENT VARCHAR2(3500);
+   alter table h_rdvalue modify TEXT_SEARCH_CONTENT VARCHAR2(3500);
+   
+   Enable Set Name for longer content:
+   DB2:
+   alter table rdvalue alter column RD_VALUE_NAME set data type
+   varchar(3000);
+   alter table h_rdvalue alter column RD_VALUE_NAME set data type
+   varchar(3000);
+   alter table rdvalue alter column U_RDVALUE_NAME set data type
+   varchar(3000);
+   alter table h_rdvalue alter column U_RDVALUE_NAME set data type
+   varchar(3000);
+   alter table rdvalue alter column TEXT_SEARCH_CONTENT set data
+   type varchar(5000);
+   alter table h_rdvalue alter column TEXT_SEARCH_CONTENT set data
+   type varchar(5000);
+   
+   Oracle:
+   alter table rdvalue modify RD_VALUE_NAME VARCHAR2(3000);
+   alter table h_rdvalue modify RD_VALUE_NAME VARCHAR2(3000);
+   alter table rdvalue modify U_RDVALUE_NAME VARCHAR2(3000);
+   alter table h_rdvalue modify U_RDVALUE_NAME VARCHAR2(3000);
+   alter table rdvalue modify TEXT_SEARCH_CONTENT VARCHAR2(5000);
+   alter table h_rdvalue modify TEXT_SEARCH_CONTENT VARCHAR2(5000);
+   
+   Important:
+   1. TEXT_SEARCH_CONTENT should be longer than
+   name+description+code.
+   2. We suggest do not create long names. Using set description or
+   a custom property to save long content would be a better idea.
+   3. If you get sqlcode?-670 sqlstate?54010 from DB2, it means you
+   will need to move the table to a table space with larger
+   pagesize.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  To be fixed in a next release. No formal fix is planned for the
+   current release.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT05698
+   
+   
+ * REPORTED COMPONENT NAME
+   RDM HUB
+   
+   
+ * REPORTED COMPONENT ID
+   5724S7803
+   
+   
+ * REPORTED RELEASE
+   B30
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2014-11-20
+   
+   
+ * CLOSED DATE
+   2016-07-13
+   
+   
+ * LAST MODIFIED DATE
+   2016-07-13
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * RB30 PSN
+   UP

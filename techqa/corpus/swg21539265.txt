@@ -1,0 +1,30 @@
+Title: IBM How can I use C:D to create a directory on Windows NT? (7.0.5484942.2333862) - United States
+
+Text:
+STERLINGPRI TECHNOTE (FAQ)
+
+QUESTION
+ How can I use C:D to create a directory on Windows NT? (7.0.5484942.2333862) 
+
+ANSWER
+Use the RUN TASK with Sysopts='CMD(MKDIR) ARGS(DIRECTORY PATH)'
+
+ 
+
+HISTORICAL NUMBER
+ PRI14983 
+
+PRODUCT ALIAS/SYNONYM
+ 
+
+Fact
+
+
+CONNECT:Direct Windows NT 
+7.0.5484942.2333862
+
+
+Goal
+
+
+FAQ: How can I use C:D to create a directory on Windows NT?

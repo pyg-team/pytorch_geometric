@@ -1,0 +1,34 @@
+Title: IBM Known Issue: Saving annotation action fails in IBM Content Navigator V3.0 with error 'Reference is not allowed in prolog' - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When you use the viewer in IBM Content Navigator V3.0, you can encounter an error when you attempt to save an annotation even though you have permission to add annotations. 
+
+SYMPTOM
+When you attempt to save an annotation in the viewer, the following error occurs: “Reference is not allowed in prolog”
+
+
+CAUSE
+This error can result if the htmlencoding parameter is enabled in the Daeja ViewONE configuration.
+
+ENVIRONMENT
+IBM Content Navigator V3.0
+
+DIAGNOSING THE PROBLEM
+To determine if the htmlencoding parameter is enabled, launch the viewer and then press Shift+Ctrl+T.
+
+RESOLVING THE PROBLEM
+
+
+To resolve this problem, disable the htmlencoding parameter as follows: 
+
+ 1. Log in to IBM Content Navigator with admin privileges. Click Settings > Daeja ViewONE.
+ 2. On the Virtual tab under Additional settings, remove the following entry: htmlencoding : true 
+ 3. On the Professional tab under Additional settings, remove the following entry: htmlencoding : true
+ 4. Save the configuration and refresh the navigator application to see save annotation is working.
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Enterprise Content Management Content Navigator Enterprise Content Management Daeja ViewONE

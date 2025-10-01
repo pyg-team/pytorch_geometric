@@ -1,0 +1,141 @@
+Title: IBM IC74710: UCA NOT LAUNCHING BPD INSTANCE CORRECTLY WHEN BOTH ARE SOLELY ENCOMPASSED IN A TOOLKIT - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PERMANENT RESTRICTION.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  JIRA# THU-10620
+   
+       * Problem: A sample UCA is not launching a BPD instance
+   correctly when both are solely encompassed in a toolkit.
+   Although both are written correctly, the start message event in
+   the BPD does not seem to receive the message from the UCA and no
+   BPD instance is visible in the Inspector view of the Toolkit
+   environment. The customer noticed this when they were trying to
+   encapsulate everything within a toolkit and run all their tests
+   within the toolkit environment.
+   
+   This issue was reproduced on my local install of WLE 7.2 on
+   Windows 7 64-bit with DB2.
+   
+   The temporary "workaround" for this issue is to create a Process
+   App and add the toolkit as a dependency. Kicking off the UCA
+   will then start an instance of the BPD in the Process App's
+   Inspector view. (it will never be seen in the Toolkit env's
+   Inspector view)
+   
+   If this can't be easily fixed in the near future, at very least
+   it should be documented in the Info Center or technote.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  The temporary "workaround" for this issue is to create a Process
+   App and add the toolkit as a dependency. Kicking off the UCA
+   will then start an instance of the BPD in the Process App's
+   Inspector view. (it will never be seen in the Toolkit env's
+   Inspector view)
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  A sample UCA is not launching a BPD instance correctly
+   when both are solely encompassed in a toolkit. Although both are
+   written correctly, the start message event in the BPD does not
+   seem to receive the message from the UCA and no BPD instance is
+   visible in the Inspector view of the Toolkit environment.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Apply the workaround for this issue, which is to create a
+   Process App and add
+   the toolkit as a dependency. Kicking off the UCA will then start
+   an instance of the BPD in the Process App's Inspector view (it
+   will never be seen in the Toolkit env's Inspector view)
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC74710
+   
+   
+ * REPORTED COMPONENT NAME
+   WS LOMBARDI EDI
+   
+   
+ * REPORTED COMPONENT ID
+   5725A0900
+   
+   
+ * REPORTED RELEASE
+   710
+   
+   
+ * STATUS
+   CLOSED PRS
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-02-28
+   
+   
+ * CLOSED DATE
+   2011-05-09
+   
+   
+ * LAST MODIFIED DATE
+   2011-05-09
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

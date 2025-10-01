@@ -1,0 +1,39 @@
+Title: IBM Unable to acquire a license token due to error 3  Specific symptom 37 - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ You have installed and licensed an evaluation copy Statistics Server 18. You ran the showlic utility on the server to view your license and you get the error "Unable to acquire a license token due to error 3. There is a license, but it has expired. Even the grace period has expired. Specific symptom: 37".
+
+Why are you getting this error?
+
+Running showlic in Statistics Server 18 will return something like this:
+
+Feature 1000 - PASW Statistics Server: 
+Unable to acquire a license token due to error 3... 
+There is a license, but it has expired. Even the grace period has expired. 
+Specific symptom: 37 
+Local license for version 18.0 
+Tethered to: Disk ID 
+Usable with Terminal server 
+Expires on: 04-May-2010 
+
+RESOLVING THE PROBLEM
+If the "Expires on" date is in the future, but you still get "License key has expired and the grace period has expired" when you run the showlic utility, you have an interval code applied to your Statistics Server installation. 
+
+If you see this error please contact SPSS Sales Representative and request a non-interval authorization code with the same expiry date to apply to your Statistics Server installation. 
+
+You will need to license Statistics Server with the new non-interval authorization code.
+
+We apologize for any inconvenience caused.
+
+RELATED INFORMATION
+ Need more help? Our Statistics forum is Live! [https://developer.ibm.com/answers/topics/statistics.html?smartspace=predictive-analytics]
+Need more help? Our Licensing forum is Live! [https://developer.ibm.com/answers/topics/spsslicensing.html]
+
+
+ 
+
+HISTORICAL NUMBER
+ 88733

@@ -1,0 +1,29 @@
+Title: IBM How to trim the db2diag diagnostics log file to a 24-hour cycle. - United States
+
+Text:
+db2diag trim logfile CAMADALL TECHNOTE (TROUBLESHOOTING)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ US English 
+
+PROBLEM(ABSTRACT)
+ How to trim the db2diag log file when it gets very large. 
+
+RESOLVING THE PROBLEM
+ 
+
+If you have a lot of defined databases and applications, there can be a lot of database activity and this may lead to a large DB2 diagnostics log file. This in turn causes performance issues with the 'octigate' database. 
+
+If you want to trim the large DB2 Diagnostics log and reset it to start afresh, do this command: 
+
+
+[/support/docview.wss?uid=swg21404017&aid=1] [/support/docview.wss?uid=swg21404017&aid=1] 
+
+This will reset the DB2 Diagnostics log and start afresh again. You can put this in a regular crontab with a 24-hour reset cycle or choose your own custom reset time period to trim the DB2 diagnostics log size.
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Systems and Asset Management Tivoli Composite Application Manager for Application Diagnostics ITCAM for APPLICATION DIAGNOSTICS Agent for WebSphere AIX, AIX 64bit, AIX 6.1, HP-UX, Linux, Solaris, Windows 7.1 
+PRODUCT ALIAS/SYNONYM
+ ITCAM4AD ITCAM for App Diagnostics

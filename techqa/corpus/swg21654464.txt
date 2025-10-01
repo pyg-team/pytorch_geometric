@@ -1,0 +1,24 @@
+Title: IBM Project tab appears blank when you create a new project in WebSphere Cast Iron Studio - United States
+
+Text:
+CI 7.0; Cast Iron; Cast Iron 7.0; Cast Iron Cloud Integration TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When you create multiple new projects in Cast Iron Studio, the Project tab appears blank occassionally. 
+
+CAUSE
+This behavior is observed when you perform the following steps : 
+
+1.Create a new project in WebSphere Cast Iron Studio and do not save.
+2.Create another new project, provide a project name and click OK.
+
+
+
+RESOLVING THE PROBLEM
+Close and reopen the project. The Project tab is displayed.
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ CI
+Cast Iron Cloud Integration

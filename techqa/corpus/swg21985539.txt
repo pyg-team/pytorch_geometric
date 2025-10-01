@@ -1,0 +1,26 @@
+Title: IBM What Transport Layer Security (TLS)  version is used for Identity Insight 8.1? - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ What Transport Layer Security (TLS) version is used for Identity Insight 8.1? 
+
+CAUSE
+Transport Layer Security is a cryptographic protocol that provides communications security and data integrity between two communicating computer applications.
+
+
+ANSWER
+For almost all implementations of Identity Insight, we use the WebSphere default security choice.
+
+In the <install>/ewas/pro/config/cells/DefaultCell/security.xml, you will find a section with the alias of NodeDefaultSSLSettings. 
+
+By default the security protocol is set as:
+
+sslProtocol="SSL_TLS"
+
+Check the WebSphere documentation to see what the defined protocol is: "SSL_TLS - which is SSLv3 and TLSv1". 
+
+https://www.ibm.com/support/knowledgecenter/was_beta/com.ibm.websphere.base.doc/ae/csec_sslcnfigs.html [https://www.ibm.com/support/knowledgecenter/was_beta/com.ibm.websphere.base.doc/ae/csec_sslcnfigs.html]
+
+The default TLS version can be changed, however, please consult IBM Technical Support for assistance.

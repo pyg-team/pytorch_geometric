@@ -1,0 +1,65 @@
+Title: IBM Hide Annotation button in  Daeja ViewONE Professional (Pro) hides data entered into PDF form - United States
+
+Text:
+Daeja; pdf; form data. TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When viewing a PDF having form fields with data entered, clicking Hide Annotations causes text to disappear from the form fields. 
+
+SYMPTOM
+There is no error message. Form fields in the PDF being viewed, now no longer show the data in the fields after you click the Hide Annotations button.
+
+
+CAUSE
+This is working as designed with the older and original PDF module and is not seen with the Java PDF module when used with the Pro version of the viewer.
+
+ENVIRONMENT
+All Daeja Pro viewers only.
+
+RESOLVING THE PROBLEM
+Add the parameter alwaysShowPDFAnnotations=true.
+
+For the standalone Daeja Pro viewer:
+<param name="alwaysShowPDFAnnotations" value="true">
+
+For Workplace XT with PIE Pro viewer:
+
+
+
+
+ 1. Locate the wcmjavaviewer.jsp file used by the Daeja pro (PIE Pro viewer).
+    eg: <Workplace XT install directory>\WebClient\WorkplaceXT\UI-INF\jsp\ui\iviewpro\WcmJavaViewer.jsp
+    
+ 2. Add the parameter to the jsp file.
+    writeParam('alwaysShowPDFAnnotations', 'true');
+    
+    eg:
+    writeParam('fileMenus', 'false');
+    writeParam('fileKeys', 'false');
+    writeParam('invertButtons', 'true');
+    writeParam('routeDocs', 'true');
+    writeParam('alwaysShowPDFAnnotations', 'true');
+    
+    
+    writeParam('filenet', 'true'); // P8 Required to enable custom FileNet features
+    writeParam('fileNetSystem', '4'); // pass in flag indicating orion
+    writeParam('annotationTrace', 'false'); // Set to true for debugging
+    writeParam('annotationUnits', 'inches'); //
+    
+ 3. Save your change and follow the IBM FileNet P8 documentation to rebuild the Workplace XT application and re-deploy with the new parameters.  * 
+     * Deploying Workplace XT on the Web application server
+     * 
+     * http://www-01.ibm.com/support/knowledgecenter/SSNW2F_5.2.1/com.ibm.p8.installingxt.doc/wxtip042.htm?lang=en
+    
+    
+
+
+
+For IBM Content Navigator v2.0.3:  1. Log into the ICN Admin desktop. 
+ 2. Select the 'Daeja ViewONE' node. 
+ 3. Under the 'Professional' tab go to 'Additional settings'. 
+ 4. Click on the button 'New' to add a the parameter. 
+ 5.  Name = alwaysShowPDFAnnotations
+    Value = true 
+ 6. Hit save. 
+ 7. Back on the main admin desktop, hit 'Save and Close'.

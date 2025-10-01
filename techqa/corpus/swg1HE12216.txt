@@ -1,0 +1,137 @@
+Title: IBM HE12216: In Atlas the add employees option window closes after selecting one entry, preventing addition of multiple users at same time. - United States
+
+Text:
+  DIRECT LINKS TO FIXES
+6.0.3.2-ATLAS-IF004 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FGlobal+Retention+Policy+and+Schedule+Management&fixids=6.0.3.2-ATLAS-IF004&source=SAR]
+6.0.3.2-ATLAS-IF004-README.pdf [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FGlobal+Retention+Policy+and+Schedule+Management&fixids=6.0.3.2-ATLAS-IF004-README&source=SAR]
+6.0.3.2-ATLAS-IF003-README.pdf [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FGlobal+Retention+Policy+and+Schedule+Management&fixids=6.0.3.2-ATLAS-IF003-README&source=SAR]
+6.0.3.2-ATLAS-IF003 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FGlobal+Retention+Policy+and+Schedule+Management&fixids=6.0.3.2-ATLAS-IF003&source=SAR]
+6.0.3.2-ATLAS-CONNECTORS-IF003-README.pdf [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FGlobal+Retention+Policy+and+Schedule+Management&fixids=6.0.3.2-ATLAS-CONNECTORS-IF003-README&source=SAR]
+6.0.3.2-ATLAS-IF002-README [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FGlobal+Retention+Policy+and+Schedule+Management&fixids=6.0.3.2-ATLAS-IF002-README&source=SAR]
+6.0.3.2-ATLAS-IF002 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FGlobal+Retention+Policy+and+Schedule+Management&fixids=6.0.3.2-ATLAS-IF002&source=SAR]
+Download IBM Atlas Policy Suite V6.0.3.2 Interim Fix 4 [http://www-01.ibm.com/support/docview.wss?uid=swg24040248]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  After clicking Add button in the Add Employees and other add
+   related dialog boxes in People in Scope page or Hold Notice
+   Recipients page, the dialog box is closed as soon as one entry
+   is selected and user is not able to continue adding
+   multiple recipients.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  After clicking Add button in the Add Employees and other add
+   related dialog boxes in People in Scope page or Hold Notice
+   Recipients page, the dialog box is closed and user is not able
+   to continue adding recipients.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  It is rare that only one recepient is added at a time through
+   the Add Employees and other add dialog boxes. So this issue was
+   fixed by changing the functionality of the Add dialog to remain
+   open after adding currently selected recepients. A separate Add
+   and Close button was added to close the dialog after adding the
+   selected recepients.
+   
+   This fix is available from Fix Central in Atlas 6.0.3 iFix 2
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   HE12216
+   
+   
+ * REPORTED COMPONENT NAME
+   ATLAS EDISCOVER
+   
+   
+ * REPORTED COMPONENT ID
+   5725D7500
+   
+   
+ * REPORTED RELEASE
+   603
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-10-15
+   
+   
+ * CLOSED DATE
+   2015-04-02
+   
+   
+ * LAST MODIFIED DATE
+   2015-04-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ATLAS EDISCOVER
+   
+   
+ * FIXED COMPONENT ID
+   5725D7500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R603 PSY
+   UP

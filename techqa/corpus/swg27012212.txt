@@ -1,0 +1,29 @@
+Title: IBM The Truth about coprocessors, precompilers and translators for CICS and DB2 with COBOL compilers - United States
+
+Text:
+COBOL; DB2; coprocessor; precompiler; translator WHITE PAPER
+
+ABSTRACT
+ SHARE presentation material for session 1553. 
+
+CONTENT
+This session explains what will and won't work in DB2 Version 8 (and DB2 9), CICS TS V2 and V3, how to migrate to coprocessor from a DB2 precompiler or CICS translator, and how to manage CCSID issues with COBOL and DB2. 
+
+Document includes Hot topics: 
+
+ * Can you precompile old COBOL with DB2 Version 8? 
+ * Is the coprocessor different from the DB2 precompiler? 
+ * How do you deal with Unicode, COBOL and DB2? 
+ * Should you use CICS translator option COBOL2 or COBOL3? When?
+
+RELATED INFORMATION
+ What's new in Enterprise COBOL for z/OS V4.1 [http://www.ibm.com/support/docview.wss?&uid=swg27012063]
+Migrating and exploiting Assembler with LE [http://www.ibm.com/support/docview.wss?&uid=swg27009581]
+XML and COBOL and application modernization [http://www.ibm.com/support/docview.wss?&uid=swg27004198]
+Migrating to COBOL compilers under LE [http://www.ibm.com/support/docview.wss?&uid=swg27001512]
+Got COBOL? Bet you didn't know you could do THIS [http://www.ibm.com/support/docview.wss?&uid=swg27009580]
+Enterprise COBOL library [http://www.ibm.com/software/awdtools/cobol/zos/library/]
+What's new in Enterprise COBOL Version 4.2 [http://www.ibm.com/support/docview.wss?&uid=swg27016952]
+
+
+S1553TR.pdf [/support/docview.wss?uid=swg27012212&aid=2] [/support/docview.wss?uid=swg27012212&aid=1]

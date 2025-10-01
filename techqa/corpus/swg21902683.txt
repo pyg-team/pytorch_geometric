@@ -1,0 +1,232 @@
+Title: IBM How to configure IBM Rational Performance Tester to use PVU licensing - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How do I configure IBM Rational Performance Tester (RPT) to support PVU licensing? 
+
+ANSWER
+
+PVU licensing is an alternative to using the IBM Rational Performance Tester (RPT) floating license with Virtual User licenses. 
+
+Specific installation options and additional configuration steps required for RPT to use PVU licensing. All screen shots are from RPT 8.7 on Windows but the steps will also apply to previous versions of RPT. 
+
+Installation options 
+
+1. Install RPT with the PVU option 
+
+Note: if RPT is already install use Installation Manager to modify RPT 
+
+[/support/docview.wss?uid=swg21902683&aid=1] [/support/docview.wss?uid=swg21902683&aid=1] 
+
+2. Install the agent with the IBM Rational Performance Test Server (PVU mode) - for use with IBM Rational Test Workbench option 
+
+[/support/docview.wss?uid=swg21902683&aid=2] [/support/docview.wss?uid=swg21902683&aid=2] 
+
+Note: if agent is already installed or if the mode used at installation time is not known then uninstall the agent and reinstall it. This is the only guaranteed way to know if the agent has been installed with the PVU option. 
+
+Apply the license via activation kit 
+
+If using authorized user license keys then follow these steps to apply the activation kits. 
+
+Applying the license for RPT to use PVU is an extra step. In addition to applying the license to the RPT Workbench itself, there's the additional step of applying the license of the PVU feature. 
+
+Each will require it's own activation kit. 
+
+To apply the activation kits: 
+
+1. Download the following activation kits from the Rational License Key Center 
+
+ *  IBM Rational Test Workbench Performance Test v8.7 Activation Kit 
+ *  IBM Rational Test Workbench Performance PVU v8.7 Activation Kit
+
+
+You should now have these two files: 
+
+ * 
+ * 
+ * 05/07/2015 05:08 PM 28,929 RTW_Performance_PVU_8.7_ActivationKit.zip
+
+
+2. Unzip the activation kit files 
+
+ * 
+ * 
+ *  
+ * 05/07/2015 05:17 PM <DIR> . 
+ * 05/07/2015 05:17 PM <DIR> .. 
+ * 05/07/2015 05:17 PM 1,255 PLEASE_README_FIRST.txt 
+ * 05/07/2015 05:17 PM 234,246 RPT-LUM-PEK.jar 
+ *  
+ *  Directory of ...\RTW_Performance_PVU_8.7_ActivationKit\RTW_RPT_PVU_PEK 
+ *  
+ * 05/07/2015 05:13 PM <DIR> . 
+ * 05/07/2015 05:13 PM <DIR> .. 
+ * 05/07/2015 05:13 PM 1,255 PLEASE_README_FIRST.txt 
+ * 05/07/2015 05:13 PM 29,424 RTW_RPT_PVU-LUM-PEK.jar
+
+
+3. In Installation Manager choose Manage Licenses 
+
+4. Highlight IBM Rational Performance Tester 8.7 and choose Import product Activation Kit 
+
+[/support/docview.wss?uid=swg21902683&aid=3] [/support/docview.wss?uid=swg21902683&aid=3] 
+
+5. Import the file RPT-LUM-PEK.jar 
+
+6. Repeat the steps but this time highlight IBM Rational Test Workbench Processor Value Unit (PVU) support 
+
+7. Import the file RTW_RPT_PVU-LUM-PEK.jar 
+
+8. Both the RPT workbench and PVU support option should now have a Licence Type of Permanent applied 
+
+[/support/docview.wss?uid=swg21902683&aid=4] [/support/docview.wss?uid=swg21902683&aid=4] 
+
+ 
+
+Apply the license via floating licensing 
+
+If using floating licensing for PVU then 
+
+1. Make sure the Rational License Key Server (RLKS) has the IBM Rational Test Workbench Floating License key and not the IBM Rational Performance Tester Floating License key. 
+
+The reason is that the feature ibmrpt_pvu is required and it's not available in the IBM Rational Performance Tester Floating Licensekey. An example of a correct license key file is 
+
+ * 
+ * 
+ * # IBM Rational software 
+ * # License keys for host: 01234567 
+ * #-# FLEXlm Version 
+ * #-# Last Issued: 2015-05-08 05:29:40 
+ * # ################################################ 
+ * SERVER technote DISK_SERIAL_NUM=01234567 27000 
+ * VENDOR ibmratl 
+ *  
+ * PACKAGE ibmrtw ibmratl COMPONENTS="ibmrit ibmrft ibmrpt ibmrpt_pvu \ 
+ *  ibmrtw_ec" OPTIONS=SUITE ISSUED=08-may-2015 SIGN="00FB 592D \ 
+ *  7F92 750F 3DDF 16E1 25AD 4800 596B 1C25 D885 D39D FBA5 FB62 \ 
+ *  6CAB" 
+ *  
+ * INCREMENT ibmrtw ibmratl 8.00000 15-jan-2016 1 sort=100 DUP_GROUP=UH \ 
+ *  vendor_info="0|IBM Rational Test Workbench Floating License \ 
+ *  Key|0" ISSUED=08-may-2015 NOTICE="Sales Order Number: IBM \ 
+ *  Internal Use 2015 AG for IBM Internal Use 2015 AG" ck=201 \ 
+ *  SN=7198610 SIGN="009E 358D FE47 F96D C8B4 DE63 A5A9 FF00 19B6 \ 
+ *  DA3C E70A 4E24 B36C 520D 630E"
+
+
+When starting, the lmgrd.log file whose default location on Windows is C:\Program Files (x86)\IBM\RationalRLKS\commonshould show the ibmrpt_pvufeature being served 
+
+ * 
+ * 
+ * 12:25:50 (lmgrd) Please Note: 
+ * 12:25:50 (lmgrd) 
+ * 12:25:50 (lmgrd) This log is intended for debug purposes only. 
+ * 12:25:50 (lmgrd) In order to capture accurate license 
+ * 12:25:50 (lmgrd) usage data into an organized repository, 
+ * 12:25:50 (lmgrd) please enable report logging. Use Flexera Software, Inc.'s 
+ * 12:25:50 (lmgrd) software license administration solution, 
+ * 12:25:50 (lmgrd) FLEXnet Manager, to readily gain visibility 
+ * 12:25:50 (lmgrd) into license usage data and to create 
+ * 12:25:50 (lmgrd) insightful reports on critical information like 
+ * 12:25:50 (lmgrd) license availability and usage. FLEXnet Manager 
+ * 12:25:50 (lmgrd) can be fully automated to run these reports on 
+ * 12:25:50 (lmgrd) schedule and can be used to track license 
+ * 12:25:50 (lmgrd) servers and usage across a heterogeneous 
+ * 12:25:50 (lmgrd) network of servers including Windows NT, Linux 
+ * 12:25:50 (lmgrd) and UNIX. Contact Flexera Software, Inc. at 
+ * 12:25:50 (lmgrd) www.flexerasoftware.com [www.flexerasoftware.com] for more details on how to 
+ * 12:25:50 (lmgrd) obtain an evaluation copy of FLEXnet Manager 
+ * 12:25:50 (lmgrd) for your enterprise. 
+ * 12:25:50 (lmgrd) 
+ * 12:25:50 (lmgrd) ----------------------------------------------- 
+ * 12:25:50 (lmgrd) 
+ * 12:25:50 (lmgrd) 
+ * 12:25:50 (lmgrd) pid 1428 
+ * 12:25:50 (lmgrd) Done rereading 
+ * 12:25:50 (lmgrd) FLEXnet Licensing (v11.10.0.3 build 96515 i86_n3) started on citmx561 (IBM PC) (4/27/2015) 
+ * 12:25:50 (lmgrd) Copyright (c) 1988-2011 Flexera Software, Inc. All Rights Reserved. 
+ * 12:25:50 (lmgrd) US Patents 5,390,297 and 5,671,412. 
+ * 12:25:50 (lmgrd) World Wide Web: http://www.flexerasoftware.com [http://www.flexerasoftware.com/] 
+ * 12:25:50 (lmgrd) License file(s): C:\Program Files (x86)\IBM\RationalRLKS\common\rational_server_perm.dat C:\Program Files (x86)\IBM\RationalRLKS\common\rational_server_temp.dat 
+ * 12:25:50 (lmgrd) lmgrd tcp-port 27000 
+ * 12:25:50 (lmgrd) Starting vendor daemons ... 
+ * 12:25:50 (lmgrd) Started ibmratl (pid 1452) 
+ * 12:25:50 (ibmratl) FLEXnet Licensing version v11.10.0.3 build 96515 i86_n3 
+ * 12:25:50 (ibmratl) Server started on citmx561 for: 
+ * 12:25:50 (ibmratl) ibmrtw (consisting of: ibmrit 
+ * 12:25:50 (ibmratl) ibmrft ibmrpt ibmrpt_pvu 
+ * 12:25:50 (ibmratl) ibmrtw_ec) ibmrtwm RPT_Ext_Siebel 
+ * 12:25:50 (ibmratl) RPT_Ext_WebServices RPT_Ext_Citrix LTvu 
+
+
+2. In Installation Manager choose Manage Licenses 
+
+3. Highlight IBM Rational Performance Tester 8.7 and and IBM Rational Test Workbench Processor Value Unit (PVU) Support click on Configure Floating License Support 
+
+[/support/docview.wss?uid=swg21902683&aid=5] [/support/docview.wss?uid=swg21902683&aid=5] 
+
+ 
+
+4. Follow the dialogs to point to the RLKS that has the IBM Rational Test Workbench Floating License key and click Test Connection 
+
+[/support/docview.wss?uid=swg21902683&aid=6] [/support/docview.wss?uid=swg21902683&aid=6] 
+
+ 
+
+5. Both the RPT workbench and PVU support option should now have a License Type of Floating applied 
+
+ 
+
+[/support/docview.wss?uid=swg21902683&aid=7] [/support/docview.wss?uid=swg21902683&aid=7] 
+
+ 
+
+6. Install and use the LKAD on the RPT workbench to get the licenses from the RLKS 
+
+[/support/docview.wss?uid=swg21902683&aid=8] [/support/docview.wss?uid=swg21902683&aid=8] 
+
+ 
+
+Validate 
+
+1. Create a schedule with 6 users 
+
+2. Record a simple test that just accesses a web page then exits, example www.ibm.com [www.ibm.com] 
+
+3. Add the test to the schedule 
+
+4. For the user group click Run this group on the following locations (0 defined) 
+
+Note: once RPT is configured to use PVU licensing, the option Run this group on the local computer is not supported. 
+
+5. Choose Add New... 
+
+[/support/docview.wss?uid=swg21902683&aid=9] [/support/docview.wss?uid=swg21902683&aid=9] 
+
+6. Configure the location of the agent 
+
+7. The operating system type must have PVU in it, for example: "Windows (PVU)" 
+
+[/support/docview.wss?uid=swg21902683&amp;aid=10] 
+
+8. Click agent status icon to make sure the agent is connected 
+
+[/support/docview.wss?uid=swg21902683&amp;aid=11] 
+
+9. Run the schedule 
+
+[/support/docview.wss?uid=swg21902683&amp;aid=12] 
+
+ 
+
+10. If floating licensing was used then the lmgrd.log file will show the ibmrpt_pvu feature was checked out and checked in. 
+
+ * 
+ * 
+ * 12:36:43 (ibmratl) OUT: "ibmrpt_pvu" Administrator@citmx124 [#u#Administrator#u#] 
+ * 12:41:49 (ibmratl) IN: "ibmrpt" Administrator@citmx124 [#u#Administrator#u#] 
+ * 12:41:49 (ibmratl) IN: "ibmrtw" Administrator@citmx124 [#u#Administrator#u#] 
+ * 12:41:49 (ibmratl) IN: "ibmrpt_pvu" Administrator@citmx124 [#u#Administrator#u#] 
+ * 12:41:49 (ibmratl) IN: "ibmrtw" Administrator@citmx124 [#u#Administrator#u#]

@@ -1,0 +1,146 @@
+Title: IBM PJ35770: SUBFOLDER OPENS IN POPUP WHEN THE TREE VIEW IS COLLAPSED AND THE FOLDER IS SELECTED FROM THE LIST VIEW. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Description of Problem (full details)
+   When parent folder is collapsed in the left pane navigation,
+   double-clicking on subfolders (starting from the second one in
+   the list), will open a new window.
+   What is the impact to the customer/system? : Inconsistent
+   application navigation behavior
+   Steps to Reproduce:
+   Having parent folder in left-hand pane is collapsed
+   
+   1. go to xt so you have a view with folders and sub folders
+   
+   2. view the contents of a parent folder and collapse it so its
+   contents are showing in the right-hand pane, but it is not
+   expanded in the left hand pane.
+   
+   3. open the first sub folder listed in the right hand pane at
+   the top (this will open in the right hand pane like normal)
+   
+   4. now collapse the parent folder again and verify that it has
+   its folders displayed in the right hand pane again.
+   
+   5. now open any folder that is NOT listed 1st at the top  (this
+   will open in a new window)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   List view users with the tree view collapsed
+   ****************************************************************
+   PROBLEM DESCRIPTION:
+   When parent folder is collapsed in the left pane navigation,
+   double-clicking a subfolder, collapsing the tree again and then
+   double-clicking on a different subfolder will cause the folder
+   to open a new window.  It should open in the list view.
+   ****************************************************************
+   RECOMMENDATION:
+   Upgrade to 1.1.3.3-WPXT-FP003 or higher.
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  fixed in 1.1.3.3
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PJ35770
+   
+   
+ * REPORTED COMPONENT NAME
+   WORKPLACE XT
+   
+   
+ * REPORTED COMPONENT ID
+   5724R7611
+   
+   
+ * REPORTED RELEASE
+   113
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-02-17
+   
+   
+ * CLOSED DATE
+   2009-03-26
+   
+   
+ * LAST MODIFIED DATE
+   2009-03-26
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WORKPLACE XT
+   
+   
+ * FIXED COMPONENT ID
+   5724R7611
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R113 PSY
+   UP

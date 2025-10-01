@@ -1,0 +1,30 @@
+Title: IBM CWSIA0241E and PersistenceException- Known Problems with Database username in WebSphere Lombardi Edition - United States
+
+Text:
+CWSIA0241E; CWSIS1501E; CWSIT0088E; CWSIT0008E; CWSIS1501E; CWSIT0103E; PersistenceException TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ If your database username has a dash (-) in it, SIB tables cannot be created and you will receive various errors, for example: CWSIA0241E and PersistenceException. Notably, you will not be able to log in to the Authoring Environment successfully. 
+
+SYMPTOM
+Note: There are likely other faulty characters that might cause the same problem, but they are not all known. Search your FFDC log files for any suspected problem characters to see if you find the following FFDC exception. 
+
+During login to the Authoring Environment, you might see: 
+
+
+javax.jms.JMSException: CWSIA0241E: An exception was received during the call to the method JmsManagedConnectionFactoryImpl.createConnection: com.ibm.websphere.sib.exception.SIResourceException: CWSIT0008E: A successful connection was made to the bootstrap server at Config1068VM0:7277:BootstrapBasicMessaging but the server returned an error condition: CWSIT0088E: There are currently no messaging engines in bus twprocsvr_bus running. Additional failure information: CWSIT0103E: No messaging engine was found that matched the following parameters: bus=twprocsvr_bus, targetGroup=null, targetType=BusMember, targetSignificance=Preferred, transportChain=InboundBasicMessaging, proximity=Bus..
+
+Additionally, if you search through your FFDC log files (\IBM\Lombardi7\AppServer\profiles\Lombardi\logs\ffdc\), you see the following exception in one of the twprocsvr_*.txt logs:
+
+FFDC Exception:com.ibm.ws.sib.msgstore.PersistenceException SourceId:com.ibm.ws.sib.msgstore.impl.MessageStoreImpl.start ProbeId:755 Reporter:com.ibm.ws.sib.msgstore.impl.MessageStoreImpl@4b374b37
+com.ibm.ws.sib.msgstore.PersistenceException: CWSIS1501E: The data source has produced an unexpected exception: com.jnetdirect.jsql.JSQLException: Incorrect syntax near '-'.
+
+
+CAUSE
+The cause of this issue is a dash or some other bad character in the database name.
+
+
+RESOLVING THE PROBLEM
+If you perform an Automated Install, delete your installation directory (keep the installer bits that were laid down to create the Automated Installer), fix your database user, edit the install.properties file to reflect the change in database user, then re-run install.bat or install.sh file. 
+
+If you did not perform an Automated Install, you should start from scratch. An exhaustive list of what files need to change is not available.

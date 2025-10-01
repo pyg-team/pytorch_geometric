@@ -1,0 +1,10 @@
+Title: IBM Remote Control node missing from Systems Lifecycle domain Platform - United States
+
+Text:
+trc; content; site; system life cycle FLASH (ALERT)
+
+ABSTRACT
+ Following the update of "IBM Endpoint Manager of Remote Control" to "IBM Bigfix Remote Control 9.1.2", the "Remote Control" folder no longer appears in the "Systems Lifecycle" section. 
+
+CONTENT
+Development team is working to fix the problem. In the meanwhile the applicable Tasks do appear in "All Content/Fixlets and Tasks/Task Only". You can use this as workaround.

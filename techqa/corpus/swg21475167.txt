@@ -1,0 +1,37 @@
+Title: IBM Where do I download my ODBC drivers for IBM SPSS Statistics 19 or Modeler 14.1? - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The 6.0 Data Driver Access pack is available for download and was released with IBM SPSS Statistics 19.0 and Modeler 14.1. 
+
+RESOLVING THE PROBLEM
+1) Click on "SPSS Licensing and Downloads" or the following link: http://www-01.ibm.com/software/analytics/spss/support/spss_license.html [http://www-01.ibm.com/software/analytics/spss/support/spss_license.html] 
+
+2) In the middle of the web page next to "Downloads after your purchase" Click on "IBM Software and Services" or the following link: https://www-112.ibm.com/software/howtobuy/softwareandservices/ [https://www-112.ibm.com/software/howtobuy/softwareandservices/]
+3) Click on "Customer sign in" or the following link: https://www-304.ibm.com/software/howtobuy/softwareandservices/authenticate/Registration?caller=PAC [https://www-304.ibm.com/software/howtobuy/softwareandservices/authenticate/Registration?caller=PAC]
+4) Either Sign in under "Returning customers" or register as a "New customers" you will either be presented with the "Software Downloads" web site or you will need to nominate yourself for access to the download portal. 
+NOTE: If you are not the primary contact you will need to nominate yourself. After you have successfully nominated yourself you will need to wait until your nomination is approved before you can continue with the download process.
+5) Click on "Software download & media access"
+6) Click on "Download finder"
+7) Click on "View all my downloads"
+8) Click on "Information Management"
+9) Click on to expand the eAssembly if present
+10) Go down the software list until you find "SPSS Access Pack Package Multiplatform English (CZN5VEN)" 
+11) Click on the checkbox to select the SPSS Access Pack Package
+12) [Optional] Click on "Download method:" & "Download location:" to verify and/or change if needed
+13) [I agree] or [I do not agree] You will need to read and "agree" to the terms in order to download the software
+14) Click on "Download now" & follow the prompts if any
+NOTE: Pay attention to where the software is download onto your Hard Drive. After the download is complete, you will need to navigate to your downloaded software folder (i.e. DownloadDirector), unzip the download package and install the software
+
+RELATED INFORMATION
+ Need more help? Our Statistics forum is Live! [https://developer.ibm.com/answers/topics/statistics.html?smartspace=predictive-analytics]
+
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Analytics SPSS Modeler Not Applicable Platform Independent 14.1 Edition Independent 
+HISTORICAL NUMBER
+ 82459

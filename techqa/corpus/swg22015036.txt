@@ -1,0 +1,40 @@
+Title: IBM LMT application update 9.2.11 is now available - United States
+
+Text:
+ NEWS
+
+ABSTRACT
+ IBM License Metric Tool application update 9.2.11 is now available. 
+
+CONTENT
+This update contains features that extend software discovery and enhance license reporting. The key features include: 
+
+ * Improved license planning and prevention of security risk by setting up and monitoring end of support dates for selected software products
+   License Metric Tool provides the possibility of manually adding end of support dates for products and components that are not available out of the box.
+   
+   Benefits: You can use information about end of support to easily define license demand for the future. You can also use it for security purposes. For example, to determine whether software installed on a computer that is under investigation is still supported or could be exposed to security vulnerabilities.
+
+
+ * Extended reporting capabilities for Virtual Processor Core (VPC) license metric
+   License Metric Tool measures utilization of the Virtual Processor Core (VPC) metric. The metric is based on the number of virtual cores (vCPUs) that are available to the product. VPC consumption is reported on the physical server level as well as across servers similarly to what is available for other license metrics such as PVU. 
+   
+   Benefits: You can measure virtualization capacity that is used within a physical server as well as across servers for VPC licenses to properly monitor usage of resources as well as perform adequate license management control.
+
+
+ * Updates of the software catalog will be delivered in the form of content packs 
+   Until now, the software catalog was versioned, published and updated separately. From the following release, the software catalog will be delivered in the form of a content pack that is versioned along with the version of the application. 
+   
+   Additionally, the process of updating the software catalog is simplified. You simply need to run the Software Catalog Update task that downloads the software catalog, and automatically uploads it to the License Metric Tool server during the next import of data. 
+   
+   Benefits: Manual upload of the software catalog through the License Metric Tool user interface is no longer needed.
+
+
+Action to take 
+
+To learn how to get the application update and deploy it as well as to view the full list of new features and APARs that were fixed in this application update, see the following link: http://ibm.biz/lmt_update_9211 [http://ibm.biz/lmt_update_9211] 
+
+ 
+
+Questions 
+
+If you have any product-related questions, please post them on the following forum:http://ibm.biz/ILMT_Forum [http://ibm.biz/ILMT_Forum]

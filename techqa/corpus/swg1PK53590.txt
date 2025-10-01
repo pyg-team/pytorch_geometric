@@ -1,0 +1,162 @@
+Title: IBM PK53590: THE DYNAMIC RELOAD LOGIC DOES NOT ADD THAT DESTINATION TO THE INTERNAL STATE OF THE MESSAGING ENGINE. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When a destination is created while an server is active, but the
+   messaging engine for that application server is stopped, the
+   dynamic reload logic does not add that destination to the
+   internal state of the messaging engine.
+   When the messaging engine is later started (due to a failover in
+   this case), a CWSIP0062E message is outputted, and the
+   destination cannot be accessed.
+   When the whole application server is restarted, the knowledge
+   of all destinations for the messaging engine is reloaded, and
+   the destination becomes available again.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Restart the application server where the CWSIP0062E message
+   is logged.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: Users of the default messaging provider for  *
+   *                 WebSphere Application Server V6.0            *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: If a destination is created while a     *
+   *                      messaging engine is stopped, but the    *
+   *                      application server that hosts it is     *
+   *                      running, then a CWSIP0062E error is     *
+   *                      seen in the logs on startup of the      *
+   *                      messaging engine, and the destination   *
+   *                      cannot be accessed.                     *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   In a failover environment, it is common for a messaging engine
+   for a bus not to be running within a particular application
+   server, even though the application server itself is active.
+   
+   If a new destination is created in the bus, and dynamic
+   configuration reload is enabled for that bus, the SIBus service
+   of all application servers which can host messaging engines are
+   informed of the change.
+   
+   However, in the case where a messaging engine is inactive
+   within an application server, this process was working
+   incorrectly. Knowledge of bus destinations was not fully
+   reloaded for the inactive messaging engine, causing the
+   following error during messaging engine startup (for example
+   after a failover):
+   
+   CWSIP0062E: The destination {0} with UUID {1} could not be
+   recovered due to a possible WCCM configuration error
+   
+   After the messaging engine started, the destination could not
+   be accessed by applications.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This APAR fixes the issue.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK53590
+   
+   
+ * REPORTED COMPONENT NAME
+   PLAT MSG COM
+   
+   
+ * REPORTED COMPONENT ID
+   620400101
+   
+   
+ * REPORTED RELEASE
+   100
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2007-09-26
+   
+   
+ * CLOSED DATE
+   2007-10-17
+   
+   
+ * LAST MODIFIED DATE
+   2007-10-25
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   PLAT MSG COM
+   
+   
+ * FIXED COMPONENT ID
+   620400101
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R100 PSY
+   UP

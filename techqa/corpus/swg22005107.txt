@@ -1,0 +1,20 @@
+Title: IBM Modify Preview viewer - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Modify Preview viewer 
+
+SYMPTOM
+Some documents not previewed correctly
+
+
+RESOLVING THE PROBLEM
+Content Navigator included a number of different viewers. It can be configured which viewer is used for the preview of documents, by following these steps:
+
+Go into the the ICN Administration desktop, choose the "Viewer Map" entry.
+Copy the viewer map you currently use (Right click -> Copy) . Give it a good name.
+Select "New Mapping" , select HTML Conversion (or another viewer of choice), tick the "All file types" and the "Preview only" checkbuttons. Save the new viewer map.
+Finally, in the "Desktops" menu, select the Desktop you are working with
+Find the "Desktop Configuration" section and choose the new Viewer Map. Save and Close to make this change persistent.

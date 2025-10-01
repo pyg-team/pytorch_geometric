@@ -1,0 +1,49 @@
+Title: IBM DCS : Yantra WMS Screen forms application / platform general information. - United States
+
+Text:
+STERLINGPRI TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ DCS : Yantra WMS Screen forms application / platform general information. 
+
+SYMPTOM
+
+
+DCS : Yantra WMS Screen forms application / platform general information.
+
+PART: DCS 6.1 SP1 DCS
+PRODUCT: <None>
+COMPONENT: <None>
+OS: <None> - <None>
+DATABASE: <None> - <None>
+WEB SERVER: <None> - <None>
+WEB BROWSER: Internet Explorer - 5.5 sp2
+
+
+RESOLVING THE PROBLEM
+
+
+Q : The forms in yantra WMS is built using what? Is it some versions of oracle forms? 
+A : Yantra WMS UI forms were built using JAM, a Front-end tool similar to Oracle Forms.
+
+Q : If not, do you have a document which identifies how to create a new form if any?
+A : A form / function can be developed using a couple of mechanisms based on the functionality desired.
+1) UI Shell Script : Called using "Function Profile Setup ( 09753 )"
+This shell script should do all of the user requested handling and processing.
+2) Using Yantra Print Architecture which use Screen files to take input data at once and then invoke a shell script and perform intended processing.
+
+Option 1 above will be quite simple and straightforward to develop, test, and deploy in-house by Customer.
+
+Option 2, Refer to WMS Report and Labels Config guide for research and reference. 
+
+Based on functionality and complexity, you may need some help from YES ( Yantra Enhancement Service ) for any such task.
+
+
+
+HISTORICAL NUMBER
+ PRI49179 
+
+PRODUCT ALIAS/SYNONYM
+ 
+
+Fact

@@ -1,0 +1,68 @@
+Title: IBM Sensors report problems with the M/T 7199 or 7198 batteries. - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How do I check the status of the batteries in the Machine Type, M/T 7199 or 7198? 
+
+ANSWER
+The battery in the M/T 7199 and 7198 has been redesigned and is no longer a "consumable customer replaceable part". That is you do not change the batteries in the M/T 7198 and 7199 every 2 years as with the M/T 9235. 
+
+The batteries are internal to the appliance. IBM support will investigate problems with the battery and if needed schedule a service call if the appliance has an active service contact, or determine if the problem is otherwise. Report problems to IBM Software Support [http://www-01.ibm.com/support/docview.wss?uid=swg21236322] for the DataPower appliances when the battery status does not show normal. 
+
+Issue the CLI "show verison" and CLI "show system" to see the machine type of the appliance. 
+
+One should always monitor the hardware on the M/T 7198 and 7199 appliance. See the Operations technote [http://www-01.ibm.com/support/docview.wss?uid=swg21469163] under Management and Monitoring. 
+
+There are 2 batteries in the M/T 7199 and 7198: "Raid battery backup" and "CMOS coin cell battery". 
+
+You can also check the Raid battery backup status via. 
+
+ * 
+ * 
+ * 
+
+
+For the CMOS coin cell battery check the status via  * 
+ * 
+ * 
+ * 
+ * 
+ * CLI: show sensors-volt if the appliance is reporting the voltage as "lower-critical" 
+   WebGui: Status > System > Voltage Sensors 
+ * 
+
+
+Confirm the battery status field shows a status of "Normal", otherwise report problems to IBM Software Support [http://www-01.ibm.com/support/docview.wss?uid=swg21236322] 
+
+For questions on the battery, IBM Software Support would want you to provide: 
+ *  The output of these CLI commands:  * show raid-battery-backup 
+    * show sensors-other 
+    * co 
+    * test hardware 
+    * exit
+   
+   An error report 
+
+
+
+Affect of "no charge" on the RAID Battery Back-up: 
+
+The battery for the write cache in the RAID controller is recharged within the appliance. The "show raid-battery-back-up" status provider gives a health rating of the battery, and reports how many hours the battery could maintain the data in the write cache until power comes back and it can write that data to the disks. Monitor to predict the time to replace that battery. If this battery is not working:  *  Non-critical data: If business solution is designed to use the RAID for non-critical data, this battery loss does not have much affect on the appliance operation. Critical data: If business solution is designed to use the RAID for critical data, there could be an affect on the appliance operation. If the RAID controller discovers that the battery is "not working", it will disable the write cache. This will leave the RAID fully functional, but write performance will be considerably slower. 
+
+
+
+
+Affect of "no charge" on the coin cell battery: 
+
+While the appliance remains connected to AC power, there is no affect to the appliance operation when the coin cell battery state is "no charge". If the coin cell battery has "no charge" and there is an AC power loss:  *  The system will not know the date and time until manually set, or set by NTP in the DataPower firmware. The system cannot detect intrusion while the AC power is off. 
+
+
+See these related documents: 
+
+WebSphere DataPower Type 7199 and Type 7198 appliances might incorrectly report hardware failures [http://www.ibm.com/support/docview.wss?uid=swg21599718] 
+
+Apply fixpack for: IC79389: TYPE 7198 AND 7199: RAID CARD BATTERY BOARD IS CHANGED AND THE RAID STATUS PROVIDER NEEDS TO BE MODIFIED. [http://www.ibm.com/support/docview.wss?uid=swg1IC79389] 
+
+Reporting problems to IBM Software Support [http://www-01.ibm.com/support/docview.wss?uid=swg21236322].

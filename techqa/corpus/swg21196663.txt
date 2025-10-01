@@ -1,0 +1,76 @@
+Title: IBM Exception occurs during recovery of Oracle database transactions - United States
+
+Text:
+v6Rnotes; v601rnotes TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When WebSphere Application Server attempts to recover Oracle database transactions, the following exception is issued:
+
+WTRN0037W: The transaction service encountered an error on an xa_recover operation. The resource was com.ibm.ws.rsadapter.spi.WSRdbXaResourceImpl@1114a62. The error code was XAER_RMERR. The exception stack trace follows: javax.transaction.xa.XAException
+at oracle.jdbc.xa.OracleXAResource.recover(OracleXAResource.java:726)
+at com.ibm.ws.rsadapter.spi.WSRdbXaResourceImpl.recover(WSRdbXaResourceImpl.java:954)
+at com.ibm.ws.Transaction.JTA.XARminst.recover(XARminst.java:137)
+at com.ibm.ws.Transaction.JTA.XARecoveryData.recover(XARecoveryData.java:609)
+at com.ibm.ws.Transaction.JTA.PartnerLogTable.recover(PartnerLogTable.java:511)
+at com.ibm.ws.Transaction.JTA.RecoveryManager.resync(RecoveryManager.java:1784)
+at com.ibm.ws.Transaction.JTA.RecoveryManager.run(RecoveryManager.java:2241) 
+
+CAUSE
+Oracle requires that you have special permissions to attempt to perform the recovery.
+If there is a system crash during a distributed transaction, the WebSphere Application Server transaction manager will attempt to clean up any failed transactions which it finds in the transaction logs. 
+When the recovery involves an Oracle XAResource, the Oracle JDBC driver 
+oracle.jdbc.xa.OracleXAResource.recover function will make a call to DIST_TXN_SYNC. 
+
+The above error occurs when the user trying to execute the .recover method does not have sufficient privileges to make a call to DIST_TXN_SYNC. 
+
+
+ENVIRONMENT
+This problem can occur with all versions of Oracle: 10g, 11g, and 12g.
+
+
+
+RESOLVING THE PROBLEM
+Run the following commands as user SYS: 
+
+
+grant select on pending_trans$ to <user>; 
+grant select on dba_2pc_pending to <user>;
+grant select on dba_pending_transactions to <user>;
+grant execute on dbms_system to <user>; (If using Oracle 10.2.0.3 or lower JDBC driver)
+grant execute on dbms_xa to <user>; (If using Oracle 10.2.0.4 or higher JDBC driver)
+
+Where <user> is the username configured in the Oracle datasource's authentication alias. 
+
+This problem is mentioned under Oracle bug: 3979190. Running the preceding commands solve the problem.
+
+Update: Since the SYS.DBMS_SYSTEM package contains many procedures, granting execute privileges to that package gives access to all of them. In Oracle patch 5892995 (JDBC driver) and 5945463 (server), Oracle has moved the DIST_TXN_SYNC procedure to a new package called DBMS_XA. These patches are available in 10.2.0.4 and higher. By using the new DBMS_XA package, it will reduce the security risk which DBMS_SYSTEM might cause. 
+
+
+If the recovery of the inflight transactions is not important, then one possible workaround to this problem is to remove the transaction logs. (Does NOT apply to WebSphere Process Server and IBM Business Process Manager, please see note below for details)
+
+The transaction logs are stored in the following folder:
+<WebSphere Application Server_install_root>\profiles\<PROFILE_NAME>\tranlog\<CELL_NAME>\<NODE_NAME>\<SERVER_NAME>\transaction
+
+To remove the transaction logs, do the following:
+(1) Stop the server.
+(2) Delete the '\transaction' folder and all subdirectories.
+(3) Restart the server. 
+The above exceptions will no longer occur.
+
+
+NOTE: Transaction logs should NOT be deleted if running in a WebSphere Process Server or IBM Business Process Manager environment. 
+The WebSphere Process Server and IBM Business Process Manager systems can get into an inconsistent state because the logs are tightly coupled with information in other places like BPEDB, WPSDB, SIB messages and MQ, if it is configured. 
+
+If WebSphere Process Server or IBM Business Process Manager is being used, follow the information in this document:
+
+How to resolve Transaction- and Partnerlog recovery issues in WebSphere Process Server (WPS) and IBM Business Process Manager (BPM)
+https://developer.ibm.com/answers/questions/168157/how-to-resolve-transaction-and-partnerlog-recovery.html [https://developer.ibm.com/answers/questions/168157/how-to-resolve-transaction-and-partnerlog-recovery.html]
+
+RELATED INFORMATION
+ A simplified Chinese translation is available [http://www.ibm.com/support/docview.wss?uid=swg21621220]
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Application Servers WebSphere Application Server for z/OS DB Connections/Connection Pooling Application Servers Runtimes for Java Technology Java SDK z/OS Application Servers Runtimes for Java Technology Java SDK

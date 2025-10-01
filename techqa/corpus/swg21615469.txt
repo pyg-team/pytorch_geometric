@@ -1,0 +1,51 @@
+Title: IBM The database driver path variables are incorrectly set in the deployment environment in IBM Business Process Manager (BPM) Advanced - United States
+
+Text:
+ibpma801relnotes; DB2UNIVERSAL_JDBC_DRIVER_PATH; DB2UNIVERSAL_JDBC_DRIVER_NATIVEPATH; database driver class path; database driver path; connection errors; databse connection errors TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When you create a deployment environment, the database driver path values in the database design file might not be propagated to the WebSphere variables that are set at the node level for DB2UNIVERSAL_JDBC_DRIVER_PATH and DB2UNIVERSAL_JDBC_DRIVER_NATIVEPATH. 
+
+SYMPTOM
+After you create a deployment environment by using the database design file and then start the servers, you might obtain connection errors of the following form: 
+
+FunctionName: com.ibm.wbiservers.customization.repository.impl.RepositoryDB.getConnection
+SourceId: com.ibm.wbiservers.customization.repository.impl.RepositoryDB
+Category: SEVERE 
+ExtendedMessage: CWSTM0004E: The connection to the data source with a JNDI name of jdbc/WPSDB
+that is used to hold business rules and selectors failed as it may not have been created or 
+it is unreachable.java.
+sql.SQLException: Failure in loading native library db2jcct2zos_64,
+java.lang.UnsatisfiedLinkError: db2
+jcct2zos_64 (Not found in java.library.path): ERRORCODE=-4472, SQLSTATE=null 
+DSRA0010E: SQL State = null, Error Code = -4,472
+at com.ibm.db2.jcc.am.ed.a(ed.java:660) 
+at com.ibm.db2.jcc.am.ed.a(ed.java:60)
+at com.ibm.db2.jcc.am.ed.a(ed.java:94)
+at com.ibm.db2.jcc.t2.a.a(a.java:37)
+at com.ibm.db2.jcc.t2zos.T2zosConfiguration.e(T2zosConfiguration.java:917)
+at com.ibm.db2.jcc.t2.T2Configuration.<clinit>(T2Configuration.java:84) 
+at java.lang.J9VMInternals.initializeImpl(Native Method)
+at java.lang.J9VMInternals.initialize(J9VMInternals.java:228) 
+at com.ibm.db2.jcc.DB2BaseDataSource.instantiateLogWriter(DB2BaseDataSource.ja
+
+
+CAUSE
+When you create a database design file with the database design tool, you can enter specific paths for the location of the database driver. For example, for a Type 2 driver for DB2 for z/OS, you can specify the DB2 Universal JDBC driver path and DB2 Universal JDBC driver native path. These values are saved to the database design file. 
+
+
+When you use the database design file to create a deployment environment in the administrative console, the database driver path values might not be propagated to the WebSphere Variables page. At the node level, the database driver paths might instead point to the default WAS_INSTALL_ROOT/jdbdcdrivers/db_type location of the drivers.
+
+
+DIAGNOSING THE PROBLEM
+Typically, this issue is noticed only when an attempt is made to access the database from the server at run time. The wrong driver is used resulting in an SQLException error.
+
+
+
+RESOLVING THE PROBLEM
+After you create the deployment environment, go to the WebSphere Variables page, and then for each node, check the values related to your configured database to ensure that the correct values are specified: 
+
+ * ORACLE_JDBC_DRIVER_PATH, MICROSOFT_JDBC_DRIVER_PATH 
+ * DB2UNIVERSAL_JDBC_DRIVER_PATH, DB2UNIVERSAL_JDBC_DRIVER_NATIVEPATH 
+ * MICROSOFT_JDBC_DRIVER_NATIVEPATH, DB2_JCC_DRIVER_PATH 
+ * DB2_JCC_DRIVER_NATIVEPATH.

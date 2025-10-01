@@ -1,0 +1,42 @@
+Title: IBM Adding new storage to database may throw Warning SQL2094W during rebalance - United States
+
+Text:
+SQL2094W; ALTER DATABASE; REDUCE TECHNOTE (FAQ)
+
+QUESTION
+ What should be the minimum storage size to be considered which are being added for auto storage tablespace ?
+
+
+If the existing storage of database is X GB size. And, if you are trying to add new storage which is smaller than the size of exisiting storage say each 0.25X GB in size, you may encounter warning and new continers may not be created.
+
+db2 "alter database add storage on '/db1','/db2','/db3'" 
+
+DB20000I The SQL command completed successfully. 
+
+
+After rebalancing few tablespaces successfully, you may experience following warning:
+
+db2 "alter tablespace TBSP1 rebalance" 
+
+SQL2094W The rebalance of table space "TBSP1" either did not add or 
+drop containers, or there was insufficient disk space to create all of 
+the containers. Reason code: "3". SQLSTATE=01690 
+
+
+
+CAUSE
+If new storages being added have much lower size than the existing storage size and tablespaces in the database are rebalanced one after another continuously then few of the initial tablesapce rebalances will fill-up the newly added storages and at certain point a new tablespace rebalance might return SQL2094W.
+
+ANSWER
+This does not really cause any issue. But you could reduce some of this warnings by using the following option :
+
+After every tablespace rebalance use the "ALTER TABLESPACE REDUCE" to lower the High Water Mark of the storage usage in each path.
+
+If running REDUCE after each tablespace rebalance become too much time consuming then make a plan for adding storage path which have at least same size of the existing largest storage path.
+Then, the multiple tablespace rebalance one after other should not return warning.
+At the end shrink the High Water Mark with REDUCE and then return back any excess storage space to the storage sub-system.
+
+
+RELATED INFORMATION
+#Reclaimable storage [http://pic.dhe.ibm.com/infocenter/db2luw/v9r7/topic/com.ibm.db2.luw.admin.dbobj.doc/doc/c0055392.html]
+Reclaiming unused storage in DMS table spaces [http://pic.dhe.ibm.com/infocenter/db2luw/v9r7/topic/com.ibm.db2.luw.admin.dbobj.doc/doc/t0055397.html]

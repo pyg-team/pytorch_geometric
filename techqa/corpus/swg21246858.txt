@@ -1,0 +1,58 @@
+Title: IBM Compatible software for IBM WebSphere Application Server Toolkit Version 6.1.1 - United States
+
+Text:
+V61RNotes; V611RNotes TECHNOTE (FAQ)
+
+QUESTION
+ Which software is compatible with IBM WebSphere Application Server Toolkit Version 6.1.1? 
+
+ANSWER
+The following list identifies the software that is compatible with IBM WebSphere Application Server Toolkit Version 6.1.1
+Application Servers
+The only compatible application server for Application Server Toolkit is WebSphere Application Server. Application Server Toolkit supports a WebSphere Application Server with a matching version and release value, whereas, the modification number does not need to match. For example, Application Server Toolkit V6.0.2, the version value is 6, the release value is 0, and the modification value is 2. In this case, Application Server Toolkit V6.0.2 supports a WebSphere Application Server at V6.0._, such as V6.0.0, V6.0.0.1, V6.0.1, or V6.0.2; however it does not support WebSphere Application Server V5.1.0. 
+
+IBM WebSphere Application Server Version 6.1 is compatible with IBM WebSphere Application Server Toolkit Version 6.1.1.
+
+WebSphere Application Server is tightly integrated with Application Server Toolkit, which offers tooling to test, run, and debug applications from the workbench to the server, such as using the Run On Server functionality. You can specify server-specific configurations such as extensions and bindings to a WebSphere Application Server from the workbench. You can launch tooling from WebSphere Application Server within the workbench, such as the Administrative Console for WebSphere Application Server and the Profile Management Tool. In addition, you can develop, run, and debug administrative scripts against a WebSphere Application Server from within the workbench. This information is only a short description of the WebSphere Application Server functionality and tooling that is integrated with IBM Rational Application Developer. See the product help to discover more information. 
+
+
+Databases
+You can create connections between the workbench and a database. However, if you have an application running on a server that connects to a database, such as through the use of data sources, refer to the documentation of the application server to determine the database back-end support for that particular application server.
+
+The following information lists the databases that are compatible with the workbench when you make a direct connection to the database: 
+
+ * IBM Cloudscape Versions 5.1, 10.0 or 10.1  * Cloudscape is a commercial release of Derby. Derby is the open source relational database project from the Apache Software Foundation (ASF). Cloudscape support for complex SQL transactions and Java™ database connectivity (JDBC) allows your applications to migrate to other SQL databases, such as IBM DB2 Universal Database (UDB), when they need to grow. 
+   
+   
+ * IBM DB2 Universal Database for Linux®, UNIX® and Microsoft® Windows® Versions 7.2, 8.1, 8.2, or 9.1 
+ * IBM DB2 Universal Database for iSeries Versions 5R2, 5R3, or 5R4 
+ * IBM DB2 Universal Database for z/OS Versions 7, 8 (compatibility mode), or 8 (new function mode)  * In addition to the compatibility mode, the new function mode includes the generated data model that has all the new catalog features of DB2 Universal Database for z/OS V8. Use the new function mode if you plan to work with the generated data models that are available in the WebSphere Application Server Toolkit or IBM Rational Software Development Platform products. 
+   
+   
+ * IBM Informix Dynamic Server Versions 9.2, 9.3, 9.4, or 10.0 
+ * Microsoft SQL Server Enterprise 2000 or 2005 
+ * Oracle Versions 8i, 9i, 10g 
+ * Sybase Adaptive Server Enterprise Versions 12.0, 12.5, 12. (any release), or 15.0 
+ * MySQL Versions 4.0 or 4.1 
+ * Generic JDBC Version 1.0  * If you run a database that is not listed previously, you can select the Generic JDBC 1.0 option to specify a valid JDBC driver. There are minimal tools available when running the Generic JDBC 1.0 option.
+      
+   
+   
+
+
+Source Configuration Management The following source configuration management (SCM) systems are commonly used with this product: 
+
+ * Concurrent Versions System (CVS)  * The SCM adapter for CVS is included in this product from Eclipse V3.2.1. To get the CVS server software, go to the Ximbiot CVS Support [http://www.cvshome.org/eng/] Web site.
+   
+   
+ * IBM Rational ClearCase  * To get the SCM team adapter, see the IBM Rational ClearCase plug-ins [http://www.ibm.com/developerworks/rational/library/content/03July/2500/2834/ClearCase/clearcase_plugins.html] Web site.
+      
+   
+   
+
+You can integrate other source configuration management repositories with the workbench through software configuration management (SCM) team adapters. If you want to work with another SCM provider, SCM team adapters for commercial SCM products are provided by the vendors of those products. 
+
+To find a list of SCM products and team adapters that are provided by the Eclipse open source community, see the Eclipse Community Page [http://www.eclipse.org/community/] website. From this list, you can access the websites for the SCM product vendors to download the SCM team adapter of your choice. IBM does not endorse or warrant these team adapters. For support, or further information, please contact the SCM product vendor directly.  
+
+
+Cross reference information Segment Product Component Platform Version Edition Application Servers Runtimes for Java Technology Java SDK

@@ -1,0 +1,27 @@
+Title: IBM Error 1722. There is a problem with this Windows Installer package. A program run as part of the setup did not finish as expected. Contact your support personnel or package vendor. - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ I am attempting to upgrade my standalone installation of SPSS for Windows. During the installation wizard, when I select the existing SPSS installation directory and click Next, I receive an alert indicating that version will be uninstalled. The uninstallation commences but rolls back after a few seconds and reports the following error:
+
+Error 1722. There is a problem with this Windows Installer package. A program run as part of the setup did not finish as expected. Contact your support personnel or package vendor.
+
+When I click OK, the SPSS installation aborts. 
+
+What is the problem? 
+
+RESOLVING THE PROBLEM
+Please uninstall the previous SPSS version via Add/Remove Programs prior to installing the new one.
+
+While attempting to uninstall SPSS, you may receive a message to this effect: "Another application has exclusive access to the file c:\Program Files\SPSS\spssm.log." If that happens, you may have installed SPSS with a site license that mistakenly added the SPSS License Manager to your machine. Look for an SpssLM icon in your Control Panel. Double-click on it to open it and click the Stop button. Click OK. You should now be able to uninstall without any trouble
+
+RELATED INFORMATION
+ Need more help? Our Statistics forum is Live! [https://developer.ibm.com/answers/topics/statistics.html?smartspace=predictive-analytics]
+
+
+ 
+
+HISTORICAL NUMBER
+ 51438

@@ -1,0 +1,69 @@
+Title: IBM Troubleshooting coring applications - United States
+
+Text:
+core; cored; coring; dump; dumped; gdb; pstack; seg; segfault; coredumped TECHNOTE (FAQ)
+
+QUESTION
+ 
+Coredump Troubleshooting Techniques: What details are required? 
+
+CAUSE
+Providing core files is not useful when discovering the cause of a core file as the environment of the core is required to troubleshoot coring issues.
+
+ANSWER
+ 
+
+The most useful tool for troubleshooting coring application is a debugging tool, such as GDB:
+
+Download GDB from the internet and install on the server where the program cored (or a copy of the server).
+
+See below for the links.
+
+Place gdb in your user path (/usr/local/bin)
+
+Then run
+gdb fullpath_to_binary_that_cored fullpath_to_core_file
+(gdb) bt
+(gdb) info threads
+
+For example:
+gdb /opt/IBM/tivoli/netcool/omnibus/bin/solaris2/nco_pad /tmp/core
+(gdb) bt
+(gdb) info threads
+
+The results of back trace provides details of where the program exited and possibly why.
+
+Alongside the raw information from GDB the full debug log from the cored process, and the long listing of the core file (to provide the core file creation timestamp).
+
+Linux : Example using 'gdb'
+'gdb' is available as an installable package on linux and other UNIX platforms.
+e.g.
+file /tmp/core
+ls -l /tmp/core
+
+gdb /opt/IBM/tivoli/netcool/omnibus/bin/solaris2/nco_pad /tmp/core
+(gdb) bt
+(gdb) info threads
+
+Solaris : Example using 'pstack'
+'pstack' and 'pflags' are included with the operating system.
+e.g.
+cd /tmp
+file core
+ls -l core
+
+pstack core
+pflags core
+
+AIX: Example using 'dbx'
+dbx is available as a installable package for AIX.
+e.g.
+dbx /opt/IBM/tivoli/netcool/omnibus/bin/aix5/nco_pad /tmp/core
+where
+threads
+func
+malloc 
+
+RELATED INFORMATION
+ GNU GDB [http://www.gnu.org/software/gdb/gdb.html]
+Solaris Freeware [http://sunfreeware.com]

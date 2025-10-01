@@ -1,0 +1,44 @@
+Title: IBM Troubleshooting documents stuck in processing Queue - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How do documents get in the stuck in processing Queue? 
+
+CAUSE
+There are multiple reasons which could cause documents to become stuck in the processing queue. The most common reasons: 
+
+ * Data restore was done, or 
+ * PC was rebooted during a process, or 
+ * Tried to use a retired communication session.
+
+ANSWER
+To get more detail about the reason for the problem, view the Audit Log for error messages. 
+
+Click View > Audit Log
+
+To resolve the problem: 
+
+ 1. Try to reset the document and reprocess the data:  1. Click on View > Processing 
+     2. Highlight all documents 
+     3. Click RESET button 
+     4. Try sending data again. 
+    
+    
+ 2. Verify that routine cleanup has been done on temp and audit log files, and that the document count maintained in Gentran:Director's browser drawers meets the required system limits. 
+
+
+For more information about maintenance, see the White Paper entitled "Maintenance Summary" in Sterling Gentran:Director Documentation [http://www.ibm.com/support/docview.wss?uid=swg27023726#wp] Note: Gentran:Director system limitations: 
+
+ * No more than 1000 documents per interchange. 
+ * No more than 7500 InDrawer documents and 7500 OutDrawer documents in the system at any time. 
+ * No interchange should exceed 10 megabytes in size. 
+ * No document (EDI or Application Import) should exceed 2 megabytes in size. 
+ * If too many messages are being scanned, use Commerce Mail and pickup old Network Reports that are waiting.
+
+ 
+
+HISTORICAL NUMBER
+ PRI102
+SCI3744

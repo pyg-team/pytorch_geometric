@@ -1,0 +1,12 @@
+Title: IBM InfoSphere CDC: Which IIDR   (or CDC )  version is supported with Oracle 12c database - United States
+
+Text:
+Oracle 12c support TECHNOTE (FAQ)
+
+QUESTION
+ Does IIDR 10.2.1 supported with Oracle 12c database ? 
+
+ANSWER
+
+IIDR 10.2.1 Interim Fix 2 and higher for Oracle Redo + RAC will contain support for both 
+Oracle 12c and Oracle 12c pluggable databases

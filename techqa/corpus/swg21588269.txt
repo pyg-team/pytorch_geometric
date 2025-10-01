@@ -1,0 +1,73 @@
+Title: IBM Tivoli Integrated Portal 2.2 fix pack 3 installation failure - United States
+
+Text:
+TIPL2; TIPL2INST; Tivoli Integrated Portal; SOAP; 2.2.0.3 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ TIP 2.2.0.3 fails to install, but the installer does not report any specific errors 
+
+CAUSE
+Do to load on the server, an installation step exceeded the default 60 second timeout while trying to establish a SOAP connection to the TIP server process
+
+DIAGNOSING THE PROBLEM
+Review the following installation log:
+
+
+<TIP HOME>/_uninst/TIPInstall2203/plan/install/MachinePlan_localhost/logs/[INSTALL_<install date>]/MachinePlan_localhost.log 
+
+The failing step should be step_00005_TIPCorePostConfig step, specifically executing the propagateTIPRoles.py script. The following error should be logged: 
+
+ 
+
+############# 
+
+propagateTIPRoles: 
+
+ [echo] Propagate TIP Roles 
+
+ [echo] C:\IBM\WebSphere\AppServer/bin/wsadmin.bat -lang jython 
+
+-profileName TIPProfile -username xxxx -password xxxx -f 
+
+C:\IBM\WebSphere\AppServer/profiles/TIPProfile/bin/propagateTIPRoles.py 
+
+com.ibm.ac.coi.api.exception.WrappedException: An exception was 
+
+received during the processing of MachinePlan: localhost. See the 
+
+Exception Stack Trace for more information. 
+
+############# 
+
+If so, check the wsadmin.traceout log located in: 
+
+<TIP HOME>/profiles/TIPProfile/logs 
+
+There should be an error similar to the following at the time of the patch install: 
+
+############ 
+
+[3/9/12 12:44:41:183 CST] 00000000 AbstractShell E WASX7120E: 
+
+Diagnostic information from exception with text 
+
+"com.ibm.websphere.management.exception.ConnectorException 
+
+org.apache.soap.SOAPException: [SOAPException: 
+
+faultCode=SOAP-ENV:Client; msg=Read timed out; 
+
+targetException=java.net.SocketTimeoutException: Read timed out] 
+
+" follows: 
+
+############ 
+
+Review the stopServer and startServer log files in <TIP HOME>/profiles/TIPProfile/logs/server1 to ensure the TIP server process was running when the wsadmin.traceout errors were logged. If so, that supports the likelihood that the propagateTIPRoles.py script timed out due to possible system resource issues on the target server.
+
+
+RESOLVING THE PROBLEM
+Locate the soap.client.props file under <TIP HOME>/profiles/TIPProfile. 
+
+ 1. Increase the timeout value for the "com.ibm.SOAP.requestTimeout" property from 600 to 3600. 
+ 2. Save the file, and retry the TIP 2.2.0.3 install

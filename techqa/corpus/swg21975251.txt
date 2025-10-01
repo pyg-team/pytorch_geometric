@@ -1,0 +1,26 @@
+Title: IBM Hiding the side navigation menu in applications in Maximo 7.6. - United States
+
+Text:
+TPAEUI TECHNOTE (FAQ)
+
+QUESTION
+ Sometimes its hard to view the whole screen when the side navigation menu is present, is there a way to hide it? 
+
+ANSWER
+Some applications can require more screen space. You can remove the side navigation menu pane in a specific application to create more space for application content on the screen.
+Before you begin -
+
+*Ensure that your browser does not block pop-up windows*
+
+1. In the Application Designer, open the presentation file for the application that you want to hide the navigation menu for and click Export Application Definition. To hide the navigation menu in the Start Center, select the Select Action Export System XML and select STARTCNTR. 
+
+2. Save the XML locally, and open it with an XML editor. 
+
+3. In the <presentation> control, add the property attribute systemnav="false", and save the file. For example, the following XML removes the side navigation menu from the Designer.xml file: 
+
+<presentation id="designer" mboname="MAXAPPS" resultsstableid="results_showlist"
+beanclass="psdi.webclient.beans.designer.DesignerAppBean" version="7.1.0.0"
+apphelp="com.ibm.mbs.doc,designer/c_application_designer.html"
+synchronous="true" systemnav="false">
+
+4. In the Application Designer, click Import Application Definition, specify the updated XML file, and click OK.

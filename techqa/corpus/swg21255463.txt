@@ -1,0 +1,112 @@
+Title: IBM Install of RWP fails with fatal: libXt.so.4: open failed: No such file or directory - United States
+
+Text:
+rwp; ihs; fatal: libXt.so.4: open failed: No such file or directory; INSTCONFFAILED; libXt.so.4; open failed; No such file or directory; x libs; x libraries; 1255463 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This technote explains why attempts to install IBM® Rational® Web Platform (RWP) during a Rational ClearCase® installation on UNIX® or Linux® results in the error fatal: libXt.so.4: open failed: No such file or directory found in the ihsv6_install.log. 
+
+CAUSE
+ 
+
+The Rational ClearCase installation progresses as expected until the install of IHS (IBM HTTP Server). 
+
+The Configuring IHS prompt appears, but then after a few minutes, an error occurs and the ClearCase install will stop with errors. 
+
+The errors might vary, including one that says the install directory is out of space. 
+Even though this is the error thrown by the install, this is not the true error. 
+
+This will occur if there is a missing X library.
+
+
+Example: 
+
+ 1. After the install stops, change directory to the install folder:
+    
+    /opt/rational/common/rwp/IHS/IHS_tmp/
+    
+    
+ 2. Check the ihsv6_install.log for output similar to the following:
+    
+    > more ihsv6_install.log 
+    
+    (Nov 30, 2006 3:45:57 PM), install, com.installshield.wizard.console.ConsoleWizardUI, err, java.lang.UnsatisfiedLinkError: /opt/rational/common/rwp/IHS_tmp/IHS/repository/prereq.jdk/
+    java/jre/lib/sparc/motif21/libmawt.so: ld.so.1: /opt/rational/common/rwp/IHS_tmp/IHS/repository/prereq.jdk/java/bin/java: fatal: libXt.so.4: open failed: No such file or directory
+    
+    STACK_TRACE: 26
+    java.lang.UnsatisfiedLinkError: /opt/rational/common/rwp/IHS_tmp/IHS/repository/prereq.jdk/
+    java/jre/lib/sparc/motif21/libmawt.so: ld.so.1: /opt/rational/common/rwp/IHS_tmp/IHS/repository/prereq.jdk/java/bin/java: fatal: libXt.so.4: open failed: No such file or directory
+    at java.lang.ClassLoader$NativeLibrary.load(Native Method)
+    at java.lang.ClassLoader.loadLibrary0(ClassLoader.java:1586)
+    at java.lang.ClassLoader.loadLibrary(ClassLoader.java:1482)
+    at java.lang.Runtime.load0(Runtime.java:737)
+    at java.lang.System.load(System.java:811)
+    at java.lang.ClassLoader$NativeLibrary.load(Native Method)
+    at java.lang.ClassLoader.loadLibrary0(ClassLoader.java:1586)
+    at java.lang.ClassLoader.loadLibrary(ClassLoader.java:1503)
+    at java.lang.Runtime.loadLibrary0(Runtime.java:788)
+    at java.lang.System.loadLibrary(System.java:834)
+    .... (some output removed)
+    
+    STACK_TRACE: 31
+    java.lang.UnsatisfiedLinkError: /opt/rational/common/rwp/IHS_tmp/IHS/repository/prereq.jdk/
+    java/jre/lib/sparc/motif21/libmawt.so: ld.so.1: /opt/rational/common/rwp/IHS_tmp/IHS/repository/prereq.jdk/java/bin/java: fatal: libXt.so.4: open failed: No such file or directory
+    at java.lang.ClassLoader$NativeLibrary.load(Native Method)
+    at java.lang.ClassLoader.loadLibrary0(ClassLoader.java:1586)
+    at java.lang.ClassLoader.loadLibrary(ClassLoader.java:1482)
+    at java.lang.Runtime.load0(Runtime.java:737)
+    at java.lang.System.load(System.java:811)
+    at java.lang.ClassLoader$NativeLibrary.load(Native Method)
+    at java.lang.ClassLoader.loadLibrary0(ClassLoader.java:1586)
+    ...(some output remove)
+    
+    com.installshield.wizardx.conditions.PlatformWizardBeanCondition, dbg.platform, condition platform: name="HP-UX" version="." arch="."
+    (Dec 7, 2006 12:55:12 PM), install, ExecWizardActionFromDirectory, msg1, Working directory /opt/rational/common/rwp/IHS/bin does not exist
+    (Dec 7, 2006 12:55:12 PM), install, ExecWizardActionFromDirectory, err, java.io.IOException: /opt/rational/common/rwp/IHS/bin/apachectl: not found
+    
+    STACK_TRACE: 11
+    java.io.IOException: /opt/rational/common/rwp/IHS/bin/apachectl: not found
+    at java.lang.UNIXProcess.forkAndExec(Native Method)
+    at java.lang.UNIXProcess.<init>(UNIXProcess.java:52)
+    at java.lang.Runtime.execInternal(Native Method)
+    at java.lang.Runtime.exec(Runtime.java:566)
+    at ExecWizardActionFromDirectory.executeProcess
+    (ExecWizardActionFromDirectory.java:200)
+    at ExecWizardActionFromDirectory.execute
+    (ExecWizardActionFromDirectory.java:305)
+    at com.installshield.wizard.StandardWizardListener.execute
+    (StandardWizardListener.java:123)
+    at com.installshield.wizard.StandardWizardListener.currentBeanChanged
+    (StandardWizardListener.java:106)
+    at com.installshield.wizard.Wizard$RunThread.run
+    (Wizard.java:1569)
+    (Dec 7, 2006 12:55:12 PM), install, VerifyInstall, msg1, Verifying Installation
+    (Dec 7, 2006 12:55:12 PM), install, VerifyInstall, err, /opt/rational/common/rwp/IHS/bin/apachectl was not installed.
+    (Dec 7, 2006 12:55:12 PM), install, VerifyInstall, err, INSTCONFFAILED
+
+RESOLVING THE PROBLEM
+ 
+
+ 
+
+In this case, libXt.so.4 is missing, as seen in the ihsv6_install.log. 
+
+ 1. Make sure that the X libs are installed and configured properly, 
+    
+    or 
+    
+    
+ 2. For Sun® Solaris® make sure that openwin [http://docs.sun.com/app/docs/doc/802-1931/6i5ua3g7n?a=view] is installed fully.
+    
+
+
+
+RELATED INFORMATION
+#INSTCONFFAILED: Cannot create profile [http://www.ibm.com/support/docview.wss?uid=swg21255296]
+
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Software Development Rational ClearCase Rational Web Platform (RWP)

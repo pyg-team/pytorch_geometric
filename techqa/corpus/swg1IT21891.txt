@@ -1,0 +1,169 @@
+Title: IBM IT21891: Update JRE shipped by IBM MQ to the July 2017 CPU - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  IBM MQ ships a Java Runtime Environment (JRE), the level of JRE
+   shipped is backlevel.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   This issue affects users of :
+   
+    - the IBM MQ classes for Java and the IBM MQ classes for JMS
+   who use the JRE shipped by IBM MQ to run their applications
+   
+    - IBM MQ Managed File Transfer Edition
+   
+   - IBM MQ Advanced Message Protocol (AMQP)
+   
+   - IBM MQ Telemetry Transport (MQTT)
+   
+   - IBM MQ Explorer
+   
+   
+   Platforms affected:
+   MultiPlatform
+   
+   ****************************************************************
+   PROBLEM DESCRIPTION:
+   The IBM MQ installation includes a Java Runtime Environment
+   (JRE).  The level of JRE shipped by IBM MQ was backlevel.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The level of JRE shipped with MQ has been updated as follows:
+   
+   IBM MQ v9:
+      - 8.0.4.10  (all distributed platforms)
+   
+   IBM MQ v8:
+      - 7.1.4.10 (Windows, all Linux variants, AIX)
+      - 7.0.10.10 (HP and Solaris)
+   
+   WebSphere MQ v7.1 and WebSphere MQ v7.5:
+      - 6.0.16.50 (all distributed platforms)
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+   Version    Maintenance Level
+   v7.1       7.1.0.9
+   v7.5       7.5.0.9
+   v8.0       8.0.0.8
+   v9.0 CD    9.0.4
+   v9.0 LTS   9.0.0.2
+   
+   The latest available maintenance can be obtained from
+   'WebSphere MQ Recommended Fixes'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037]
+   
+   If the maintenance level is not yet available information on
+   its planned availability can be found in 'WebSphere MQ
+   Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT21891
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ WINDOWS V7
+   
+   
+ * REPORTED COMPONENT ID
+   5724H7220
+   
+   
+ * REPORTED RELEASE
+   710
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-08-08
+   
+   
+ * CLOSED DATE
+   2017-10-02
+   
+   
+ * LAST MODIFIED DATE
+   2017-12-04
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ WINDOWS V7
+   
+   
+ * FIXED COMPONENT ID
+   5724H7220
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R710 PSY
+   UP

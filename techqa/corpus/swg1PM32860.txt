@@ -1,0 +1,138 @@
+Title: IBM PM32860: DATE SUPPORT OF JAPANESE EMPEROR YEARS IS INCORRECT FOR MEIJI AND HEISEI ERAS - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Japanese Emperor Years for Meiji and Heisei eras produce
+   incorrect output date values.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  WTXCQ - WTX00036741
+   EM / EM
+   Circumvention: None
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Users Affected:
+   WebSphere Transformation Extender customers using Japanese
+   Emperor years
+   
+   
+   Problem Description:
+   WTX support of Japanese Emperor Years was incorrect in some
+   cases.
+   
+   Platforms Affected:
+   ALL
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The dates have been corrected for the Meiji and Heisei eras.
+   
+   Delivered in:
+   8.2.0.6, 8.3.0.4
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM32860
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSPHERE DESIG
+   
+   
+ * REPORTED COMPONENT ID
+   5724M4008
+   
+   
+ * REPORTED RELEASE
+   830
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2011-02-16
+   
+   
+ * CLOSED DATE
+   2011-04-22
+   
+   
+ * LAST MODIFIED DATE
+   2011-07-26
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBSPHERE DESIG
+   
+   
+ * FIXED COMPONENT ID
+   5724M4008
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R820 PSY
+   UP
+   
+   
+ * R830 PSY
+   UP

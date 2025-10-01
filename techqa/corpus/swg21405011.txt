@@ -1,0 +1,43 @@
+Title: IBM Install IBM Tivoli Monitoring Agent for Linux OS  on Linux distributions with SELinux - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ English 
+
+PROBLEM(ABSTRACT)
+ How can the IBM Tivoli Monitoring Agent for Linux OS be installed/configured on Linux distributions with SELinux enabled in Enforcing Mode? 
+
+SYMPTOM
+
+
+On Linux machines with SELinux enabled the installation/configuration/running fails due to some permission problems. 
+RESOLVING THE PROBLEM
+
+
+If you cannot disable SELinux it is necessary to set it to Permissive Mode during the installation/configuration and turn it back on to Enforcing Mode after the installation/configuration. 
+
+1) Change the SELinux to Permissive Mode
+# setenforce 0
+
+2) Install and configure ITM agents
+
+3) Confirm the architecture code of JRE
+# ls /opt/IBM/ITM/JRE
+
+4) Change the security context
+# semanage fcontext -a -t textrel_shlib_t "/opt/IBM/ITM/JRE/li6263/bin(/.*)?"
+# semanage fcontext -a -t textrel_shlib_t "/opt/IBM/ITM/tmaitm6/li6263/lib(/.*)?"
+# restorecon -R /opt/IBM/ITM/JRE/li6263/bin 
+# restorecon -R /opt/IBM/ITM/tmaitm6/li6263/lib
+
+(li6263 should be changed to the proper architecture code)
+
+5) Change the SELinux to Enforcing Mode
+# setenforce 1
+
+Notes:
+1. The Technote explains the most basic configuration. You may have to change the security context to the proper if you use agents which monitor external files such as Universal Agent or Unix Logs Agent.
+2. This Technote applies to Linux OS Agent / Unix Logs Agent / Universal Agent.
+3. This Technote does not apply to versions of IBM Tivoli Monitoring earlier than 6.2.1

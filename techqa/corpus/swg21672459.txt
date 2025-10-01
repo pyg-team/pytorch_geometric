@@ -1,0 +1,134 @@
+Title: IBM Master list of ITM TEP/Java issues - United States
+
+Text:
+bsydebug 5724C04EP JWS webstart u45 u51 u55 u65 u75 6u65 6u75 7u45 7u51 7u55 7u65 7u71 7u72 7u79 7u80 7u101 8u31 8u40 8u45 8u60 8u65 8u66 8u72 8u101 8u131 8u141 FLASH (ALERT)
+
+ABSTRACT
+ Recent Java updates have caused various problems related to the TEP Client <--> TEPS connection. 
+
+CONTENT
+Recent Java updates, first identified in Oracle Java 7 update 45 / Java 6 update 65 and IBM Java 7 SR 6 / Java 6 SR 15 have caused connection problems when logging into the TEPS via the TEP Browser / Java Web Start clients. This document will be a living document for current information specific to the Java version installed for the TEP Client. 
+
+IBM Java 6 SR15 http://www.ibm.com/support/docview.wss?uid=swg21659560 [http://www.ibm.com/support/docview.wss?uid=swg21659560] IBM Java 6 SR16 http://www.ibm.com/support/docview.wss?uid=swg21671147 [http://www.ibm.com/support/docview.wss?uid=swg21671147] IBM Java 7 SR6 http://www.ibm.com/support/docview.wss?uid=swg21659560 [http://www.ibm.com/support/docview.wss?uid=swg21659560] IBM Java 7 SR7 http://www.ibm.com/support/docview.wss?uid=swg21671147 [http://www.ibm.com/support/docview.wss?uid=swg21671147] IBM Java 7 SR8 No problems found when running TEP Java Web Start and browser clients Oracle Java 6 update 65 http://www.ibm.com/support/docview.wss?uid=swg21659560 [http://www.ibm.com/support/docview.wss?uid=swg21659560] Oracle Java 6 update 75 http://www.ibm.com/support/docview.wss?uid=swg21671147 [http://www.ibm.com/support/docview.wss?uid=swg21671147] Oracle Java 7 update 51 http://www.ibm.com/support/docview.wss?uid=swg21659560 [http://www.ibm.com/support/docview.wss?uid=swg21659560] Oracle Java 7 update 55 http://www.ibm.com/support/docview.wss?uid=swg21671147 [http://www.ibm.com/support/docview.wss?uid=swg21671147] Oracle Java 7 update 60 http://www.ibm.com/support/docview.wss?uid=swg21671147 [http://www.ibm.com/support/docview.wss?uid=swg21671147] Oracle Java 7 update 65 No problems found when running TEP Java Web Start and browser clients Oracle Java 7 update 67 No problems found when running TEP Java Web Start and browser clients Oracle Java 7 update 71 No problems found when running TEP Java Web Start and browser clients Oracle Java 7 update 72 No problems found when running TEP Java Web Start and browser clients Oracle Java 7 update 75 No problems found when running TEP Java Web Start and browser clients Oracle Java 7 update 79, 80 Intermittent hang when java plugin is loading jar files, for the browser client only. The client may stop loading prior to the Tivoli Portal logon screen appearing. 
+Problem observed with Internet Explorer 9, 10 and 11. 
+Work around is to restart the Tivoli portal browser client. 
+Java Web Start client is not affected. Oracle Java 7 update 101 Workspaces containing Graphics Views fail to render properly. The following exception appears in the TEP Client trace:
+
+Exception in thread "AWT-EventQueue-2" 
+java.lang.ExceptionInInitializerError 
+at ilog.views.swing.IlvJScrollManagerView.adjustScrollBars(Unknown Source) 
+at ilog.views.swing.IlvJScrollManagerView.addNotify(Unknown Source) 
+
+Caused by: java.lang.IllegalArgumentException: Minor revision must be 0 <= 101 < 100
+
+The problem occurs with both TEP Java Web Start Client and TEP Browser Client.
+
+The exception only happens with the 64-bit Oracle Java 7 u101, The 32-bit JRE is not affected.
+
+Workaround: Add the following line to the tep.jnlpt file (between the "Custom parameters" opening and closing lines): 
+<property name="jnlp.java.version" value="1.7.0_99"/>
+
+And reconfigure the browser (cw) component:
+Unix: 
+/opt/IBM/ITM/bin/itmcmd config -A cw 
+Windows:
+bring up MTEMS
+right click "Tivoli Enterprise Portal Browser "
+select reconfigure (Java 8 officially supported in ITM630FP5 and above)
+
+Oracle Java 8 update 31 Issue 1: Using Java 8 64-bit with Internet Explorer version 11 fails with the message:
+
+"This content cannot be displayed in a frame
+To help protect the security of information you enter into this website, the publisher of this content does not allow it to be displayed in a frame."
+
+Cause: IE 11 does not support 64-bit plugin processes. 
+
+Workaround: install the Java 8 32-bit runtime or use the Java Web Start client. 
+
+Issue 2: Java 8 fails with Firefox. The client does not fully initialize, giving a blank screen. 
+
+Cause: This is a bug in the java plugin. Oracle has stated the fix will be included in their upcoming release of Java 8 update 60, current target date August 2015. 
+
+Workaround: Use Internet Explorer, or use the Web Start client. (Java 8 officially supported in ITM630FP5 and above)
+
+Oracle Java 8 update 40, 45, 51 Issue 1: Intermittent hang when java plugin is loading jar files, for the browser client only. The client may stop loading prior to the Tivoli Portal logon screen appearing. Problem observed with Internet Explorer 9, 10 and 11. 
+
+Workaround: restart the Tivoli portal browser client, or use the Java Web Start client.
+
+Issue 2: Using Java 8 64-bit with Internet Explorer version 11 fails with the message:
+
+"This content cannot be displayed in a frame.
+To help protect the security of information you enter into this website, the publisher of this content does not allow it to be displayed in a frame."
+
+Cause: IE 11 does not support 64-bit plugin processes. 
+
+Workaround: install the Java 8 32-bit runtime or use the Java Web Start client. 
+
+Issue 3: Java 8 fails with Firefox. The client does not fully initialize, giving a blank screen. 
+
+Cause: This is a bug in the java plugin. Oracle has stated the fix will be included in their upcoming release of Java 8 update 60, current target date August 2015. 
+
+Workaround: Use Internet Explorer, or use the Web Start client. (Java 8 officially supported in ITM630FP5 and above)
+
+Oracle Java 8 update 60, 65, 66, 72 Issue 1: Intermittent hang when java plugin is loading jar files, for the browser client only. The client may stop loading prior to the Tivoli Portal logon screen appearing. Problem observed with Internet Explorer 9, 10 and 11. 
+
+Workaround: restart the Tivoli portal browser client, or use the Java Web Start client.
+
+Issue 2: Using Java 8 64-bit with Internet Explorer version 11 fails with the message:
+
+"This content cannot be displayed in a frame.
+To help protect the security of information you enter into this website, the publisher of this content does not allow it to be displayed in a frame."
+
+Cause: IE 11 does not support 64-bit plugin processes. 
+
+Workaround: install the Java 8 32-bit runtime or use the Java Web Start client. (Java 8 officially supported in ITM630FP5 and above)
+
+Oracle Java 8 update 101 Workspaces containing Graphics Views fail to render properly. The following exception appears in the TEP Client trace:
+
+Exception in thread "AWT-EventQueue-2" 
+java.lang.ExceptionInInitializerError 
+at ilog.views.swing.IlvJScrollManagerView.adjustScrollBars(Unknown Source) 
+at ilog.views.swing.IlvJScrollManagerView.addNotify(Unknown Source) 
+
+Caused by: java.lang.IllegalArgumentException: Minor revision must be 0 <= 101 < 100
+
+The problem occurs with both TEP Java Web Start Client and TEP Browser Client.
+
+The exception only happens with the 64-bit Oracle Java 8 u101, The 32-bit JRE is not affected.
+
+Workaround: Add the following line to the tep.jnlpt file (between the "Custom parameters" opening and closing lines): 
+<property name="jnlp.java.version" value="1.8.0_99"/>
+
+And reconfigure the browser (cw) component:
+Unix: 
+/opt/IBM/ITM/bin/itmcmd config -A cw 
+Windows:
+bring up MTEMS
+right click "Tivoli Enterprise Portal Browser "
+select reconfigure Oracle Java 8 update 131 When starting the TEP client with this version (or newer) of Java, the following error may be seen:
+
+Error: Unsigned application requesting unrestricted access to the system
+The following resource is signed with a weak signature algorithm MD5withRSA and is treated as unsigned: http://TEPS_server:15200/classes/jar-file.jar [http://server:15200/classes/jar-file.jar] 
+
+The name of the jar file (jar-file.jar above) will vary. 
+
+Oracle JRE will no longer trust MD5-signed code by default as of Java 8 update 131. 
+
+We have updated our jar signer program to use SHA-1.
+
+Workaround: Please send in your jar files so that they can be re-signed with the new signer program. Use this tech note for guidance: 
+http://www-01.ibm.com/support/docview.wss?uid=swg21972841 [http://www-01.ibm.com/support/docview.wss?uid=swg21972841] Oracle Java 8 update 141 When starting the TEP client with this version of Java you may see this error or a similar error: 
+
+Wrapped Exception:
+java.lang.SecurityException: digest missing for com/ibm/ps/uil
+at sun.security.util.ManifestEntryVerifier.verify(Unknown Source)
+
+Exception:
+com.sun.deploy.net.JARSigningException: Could not verify signing in resource: http://FTOHubA:15200/classes/cnp_ps.jar [http://ftohuba:15200/classes/cnp_ps.jar]
+at com.sun.deploy.security.JarVerifier.authenticateJarEntry(Unknown Source)
+
+See the Blog at the following location for further details: 
+https://www.ibm.com/developerworks/community/blogs/0587adbc-8477-431f-8c68-9226adea11ed/entry/ITM_6_x_JavaWebstart_issue_after_Oracle_Sun_JRE_1_8_0_141_update?lang=en [https://www.ibm.com/developerworks/community/blogs/0587adbc-8477-431f-8c68-9226adea11ed/entry/ITM_6_x_JavaWebstart_issue_after_Oracle_Sun_JRE_1_8_0_141_update?lang=en]
+
+
+Workaround: This issue is due to a known bug in Oracle Java 8 JRE version 141 and not with a certain ITM jar file. Oracle has provided a fix in Oracle JRE 1.8.0_144. The workaround for this issue is to download and install Oracle Java 8 update 144. [/support/docview.wss?uid=swg21672459&amp;aid=1] [/support/docview.wss?uid=swg21672459&amp;aid=1]

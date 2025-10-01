@@ -1,0 +1,36 @@
+Title: IBM 2621-008 Failed to update resource .. configuration data replication errors - United States
+
+Text:
+tsa; tsamp; rsct; replication /var TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Certain TSAMP and RSCT commands result in the error :
+(chrsrc-api) 2621-008 Failed to update resource because of configuration data replication errors.
+samctrl: An unexpected RMC error occurred.The RMC return code was 1. 
+
+SYMPTOM
+Commands like 'samctrl -u a <node_name>' and 'rgreq -o move <RG>' don't do anything
+
+
+CAUSE
+Most likely /var file system is full on one of the clustered nodes.
+
+DIAGNOSING THE PROBLEM
+For TSAMP commands like 'samctrl -u a <node_name>' and 'rgreq -o move <RG>', the following messages can be see in the IBM.RecoveryRM trace_summary: 
+
+
+_RCD CHARM::processMsg: failed to update the cluster registry on node cuzea00a5009
+_RCD CHARM::processMsg: failed to update the cluster registry on node cuzea00a5009
+
+RSCT's IBM.ConfigRM daemon attempts to replicate registry changes across the nodes. It is likely the IBM.ConfigRM trace will show the root cause. 
+
+
+RESOLVING THE PROBLEM
+In the majority of cases the root cause is simply a full file system condition for /var. It is the /var filesystem on each server where the cluster registry (group of directories and files) is stored. 
+
+
+Use the 'df -k' command to check the "Use%" and "Available" space for /var on each server in the cluster :
+
+-----> Filesystem space (df -k) <-----
+Filesystem 1K-blocks Used Available Use% Mounted on
+/dev/mapper/system-var--lv 3096336 3096336 0 100% /var

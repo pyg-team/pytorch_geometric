@@ -1,0 +1,69 @@
+Title: IBM Unable to connect to the Operations Center after an upgrade to Version 7.1.8.000 - United States
+
+Text:
+tsm oc opcenter sreadme718 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ An IBM Spectrum Protect server and the Operations Center are upgraded to Version 7.1.8.000. After the upgrade, the web browser no longer shows the login page of the Operations Center. 
+
+SYMPTOM
+When the user attempts to access the Operations Center, the web browser logs the following error: 
+
+[/support/docview.wss?uid=swg22012798&amp;aid=1]
+
+
+CAUSE
+The cause is a corrupted Operations Center installation.
+
+
+
+DIAGNOSING THE PROBLEM
+Examine the /opt/tivoli/tsm/ui/Liberty/usr/servers/guiServer/logs/console.log file. In this case, the following errors were logged: 
+
+
+[ERROR ] CWPKI0033E: The keystore located at /opt/tivoli/tsm/ui/Liberty/usr/servers/guiServer/gui-truststore.jks did not load because of the following error: Keystore was tampered with, or password was incorrect
+[WARNING ] CWPKI0809W: There is a failure loading the defaultKeyStore keystore. If an SSL configuration references the defaultKeyStore keystore, then the SSL configuration will fail to initialize. 
+
+
+After the administrator removes the /opt/tivoli/tsm/ui/Liberty/usr/servers/guiServer/gui-truststore.jks file and restarts the Operations Center, the following errors are logged:
+
+[ERROR ] CWPKI0804E: SSL certificate creation error. Unable to create SSL key file: /opt/tivoli/tsm/ui/Liberty/usr/servers/guiServer/gui-truststore.jks
+[ERROR ] CWPKI0033E: The keystore located at /opt/tivoli/tsm/ui/Liberty/usr/servers/guiServer/gui-truststore.jks did not load because of the following error: [WARNING ] CWPKI0809W: There is a failure loading the defaultKeyStore keystore. If an SSL configuration references the defaultKeyStore keystore, then the SSL configuration will fail to initialize. 
+
+
+
+RESOLVING THE PROBLEM
+To resolve the issue, complete the following steps: 
+
+ 
+
+ 1. Make a copy of the serverConnection.properties file and save the file in a temporary directory. For example:
+    
+    cd /opt/tivoli/tsm/ui/Liberty/usr/servers/guiServer
+    cp serverConnection.properties /tmp
+    
+    
+ 2. Stop the Operations Center.
+    
+ 3. Uninstall the Operations Center. For instructions, see Uninstalling the Operations Center [https://www.ibm.com/support/knowledgecenter/SSGSG7_7.1.8/srv.install/t_oc_inst_uninstalling.html].
+    
+ 4. Delete the /opt/tivoli/tsm/ui/Liberty/usr/servers/guiServer directory.
+    
+ 5. Install the Operations Center. For instructions, see Installing the Operations Center [https://www.ibm.com/support/knowledgecenter/SSGSG7_7.1.8/srv.install/t_oc_inst_installing.html].
+    
+ 6. Copy the serverConnections.properties file back into the guiServer directory. For example:
+    
+    cd /opt/tivoli/tsm/ui/Liberty/usr/servers/guiServer
+    cp /tmp/serverConnection.properties .
+    
+    
+ 7. Add the server certificate to the Operations Center truststore file by using a command that is similar to this example:
+    
+    /opt/tivoli/tsm/ui/jre/bin/ikeycmd -cert -add -db /opt/tivoli/tsm/ui/Liberty/usr/servers/guiServer/gui-truststore.jks -file /path/to/cert256.arm -label 'xxx' -pw 'yyy' -type jks -format ascii -trust enable
+    
+    
+    - For the /path/to/cert256.arm parameter, specify the actual path of the cert256.arm file of the server instance that the Operations Center connects to.
+    - For the -label 'xxx' parameter, replace xxx with a label of your choice.
+    - For the -pw 'yyy' parameter, replace yyy with the password of the Operations Center truststore file. 
+    
+ 8. Start the Operations Center.

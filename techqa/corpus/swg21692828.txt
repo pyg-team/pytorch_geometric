@@ -1,0 +1,40 @@
+Title: IBM Security Bulletin: Security Vulnerabilities have been identified in multiple products that ship with IBM Predictive Maintenance (CVE-2014-3566, CVE-2014-6145, CVE-2014-1568, CVE-2014-4263, CVE-2012-5784, CVE-2014-3513, CVE-2014-3567, CVE-2014-3568) - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ IBM WebSphere Message Broker, IBM Cognos Business Intelligence Server, IBM InfoSphere Master Data Management and IBM Installation Manager are shipped as components of IBM Predictive Maintenance and Quality. Information about security vulnerabilities affecting IBM WebSphere Message Broker, IBM Cognos Business Intelligence, IBM InfoSphere Master Data Management, and IBM Installation Manager has been published in the following security bulletins. 
+
+VULNERABILITY DETAILS
+Please consult the security bulletin IBM Websphere Message Broker and IBM Integration Bus are affected by SSLv3 Vulnerability (CVE-2014-3566 and CVE-ID: CVE-2014-3568) [http://www-01.ibm.com/support/docview.wss?uid=swg21687678] for vulnerability details and information about fixes. 
+
+Please consult the security bulletin Vulnerabilities in OpenSSL affect IBM InfoSphere Master Data Management (CVE-2014-3513, CVE-2014-3567) [https://www-304.ibm.com/support/docview.wss?uid=swg21690523] for vulnerability details and information about fixes. 
+
+Please consult the security bulletin Vulnerability in SSLv3 affects IBM Installation Manager (CVE-2014-3566) [http://www-01.ibm.com/support/docview.wss?uid=swg21688724] for vulnerability details and information about fixes.
+
+Please consult the security bulletin IBM Cognos Business Intelligence Server is affected by multiple vulnerabilities (CVE-2014-3566, CVE-2014-6145, CVE-2014-1568, CVE-2014-4263, CVE-2012-5784, CVE-2014-3513, CVE-2014-3567 and CVE-2014-3568). [http://www-01.ibm.com/support/docview.wss?uid=swg21692267] for vulnerability details and information about fixes.
+
+AFFECTED PRODUCTS AND VERSIONS
+ 
+
+Principal Product and Version(s) Affected Supporting Product and Version IBM Predictive Maintenance and Quality 1.0 WebSphere Message Broker 8.0.0.1 IBM Infosphere Master Data Management Collaboration Server V10.1.0 IBM Installation Manager 1.6.0 IBM Cognos Business Intelligence Server 10.2 [/support/docview.wss?uid=swg21692828&amp;aid=1] [/support/docview.wss?uid=swg21692828&amp;aid=1] IBM Predictive Maintenance and Quality 2.0 IBM Integration Bus 9.0.0.1 IBM InfoSphere Master Data Management Collaboration Server V11.0 IBM Installation Manager 1.6.2 IBM Cognos Business Intelligence Server 10.2.1.1 REMEDIATION/FIXES
+Users of the affected principal product should apply the fixes for the affected supporting products and versions described in the security bulletins referenced above. 
+
+WORKAROUNDS AND MITIGATIONS
+None
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v2 Guide [http://www.first.org/cvss/v2/guide] 
+On-line Calculator v2 [http://nvd.nist.gov/CVSS-v2-Calculator] RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/PSIRT] CHANGE HISTORY
+ February 3, 2015: Original Version Published 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.

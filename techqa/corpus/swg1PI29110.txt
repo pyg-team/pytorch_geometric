@@ -1,0 +1,162 @@
+Title: IBM PI29110: IBM INSTALLATION MANAGER GUI ISSUES ON RHEL 6 - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Installation Manager 1.8.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24038357]
+Installation Manager 1.8.2 [http://www-01.ibm.com/support/docview.wss?uid=swg24039012]
+Installation Manager Fix Pack 1 (1.8.2.1) for 1.8.2 [http://www-01.ibm.com/support/docview.wss?uid=swg24039708]
+Installation Manager 1.8.3 [http://www-01.ibm.com/support/docview.wss?uid=swg24039631]
+Installation Manager 1.8.4 [http://www-01.ibm.com/support/docview.wss?uid=swg24040291]
+Installation Manager Fix Pack 1 (1.8.4.1) for 1.8.4 [http://www-01.ibm.com/support/docview.wss?uid=swg24041665]
+Installation Manager 1.8.5 [http://www-01.ibm.com/support/docview.wss?uid=swg24041188]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Many customers reporting problems with installing and using IM
+   in GUI (Graphical User Interface) mode on Red Hat Enterprise
+   Linux (RHEL) 6.5 and later. Symptoms include Oracle Java
+   exceptions and dump errors, as well as sudden hanging of the GUI
+   panels.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Current workaround is to install IM using the silent mode, and
+   then to run IM in GUI mode, to use the following method:
+   Add the following lines to the bottom of IBMIM.ini:
+   -Dorg.eclipse.swt.internal.gtk.useCairo=false
+   -Dorg.eclipse.swt.internal.gtk.cairoGraphics=false
+   
+   or to upgrade libcairo to >1.9.4
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * Users running IBM Installation Manager on Red Hat versions   *
+   * 6.5 or higher                                                *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * Users installing and using IBM Installation Manager in GUI   *
+   * (Graphical User Interface) mode on Red Hat Enterprise Linux  *
+   * (RHEL) 6.5 and later. Symptoms include Oracle Java           *
+   * exceptions and dump errors, as well as sudden hanging of the *
+   * GUI panels.                                                  *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Upgrading to version 1.8.2 or later will resolve this issue. *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI29110
+   
+   
+ * REPORTED COMPONENT NAME
+   IBM INSTALL MGR
+   
+   
+ * REPORTED COMPONENT ID
+   RATLIMG00
+   
+   
+ * REPORTED RELEASE
+   180
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2014-11-05
+   
+   
+ * CLOSED DATE
+   2015-03-19
+   
+   
+ * LAST MODIFIED DATE
+   2016-08-29
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R170 PSY
+   UP
+   
+   
+ * R171 PSY
+   UP
+   
+   
+ * R172 PSY
+   UP
+   
+   
+ * R173 PSY
+   UP
+   
+   
+ * R174 PSY
+   UP
+   
+   
+ * R180 PSY
+   UP
+   
+   
+ * R181 PSY
+   UP

@@ -1,0 +1,26 @@
+Title: IBM Invalid magic number. - United States
+
+Text:
+magic and install and 32 bit and 64 bit TECHNOTE (FAQ)
+
+QUESTION
+When install 802FP2 on top of 802, get the following: 
+
+exec(): 0509-036 Cannot load program 
+/opt/lotus/notes/latest/ibmpow/server because of the following errors: 
+0509-022 Cannot load module /opt/lotus/notes/latest/ibmpow/libnotes_r.a. 
+0509-150 Dependent module /opt/lotus/notes/latest/ibmpow/libxmlproc_r.a 
+could not be loaded. 
+0509-103 The module has an invalid magic number. 
+0509-022 Cannot load module server. 
+0509-150 Dependent module /opt/lotus/notes/latest/ibmpow/libnotes_r.a 
+could not be loaded. 
+0509-022 Cannot load module . 
+
+Install cannot continue. 
+
+
+ANSWER
+It turned out that the 802FP1 incremental installer was 64 bit, but the 802 installation was 32 bit. 
+
+When install 32 bit 802FP1 on top of 32 bit 802, this error message disappeared

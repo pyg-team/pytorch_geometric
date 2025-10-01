@@ -1,0 +1,163 @@
+Title: IBM JR53918: THREADS HANG IN GROUPCORE.PROCESSDELETEUSERGROUPS WHILE THE SERVER STARTS - United States
+
+Text:
+  DIRECT LINKS TO FIXES
+7.5.1.2-WS-BPM-IFJR53918 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Standard&fixids=7.5.1.2-WS-BPM-IFJR53918&source=SAR]
+Version 8.5 Refresh Pack 7 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24041575]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  You might experience threads hanging while the server starts as
+   the server tries to synchronize a large number of user group
+   definitions (more than 50 thousand entries) and the number of
+   retrieved groups is greater than the number of groups already
+   available in the database.
+   
+   You might see hanging threads with the following stack trace:
+   
+   Thread "server.startup : 0" (00000011) has been active for
+   702995 milliseconds and may be hung. There is/are 1 thread(s)
+   in total in the server that may be hung.
+    at java.util.LinkedList.contains(LinkedList.java:485)
+    at java.util.AbstractSet.removeAll(AbstractSet.java:106)
+    at com.lombardisoftware.server.core.GroupCore.
+     processDeletedUserGroups(GroupCore.java:631)
+    at com.lombardisoftware.server.core.GroupCore.
+     getAllGroupsInternal(GroupCore.java:593)
+    at com.lombardisoftware.server.core.GroupCore.
+     getAllGroups(GroupCore.java:572)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  While the server starts, IBM BPM synchronizes all group
+   definitions between the applied user registry and the IBM BPM
+   database. Before these updates take effect in the database, IBM
+   BPM updates the set of groups already available in the database
+   by removing entries from the set of groups retrieved from the
+   applied user registry. Because a Java core function is used that
+   performs very slowly, Java threads might hang if the number of
+   retrieved groups is greater than the number of groups already
+   available in the database and both the number of already
+   available groups and the retrieved groups is very large, such as
+   more than 50 thousand entries.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A fix is available for IBM BPM V7.5.1.2 that ensures even large
+   existing group definitions are processed efficiently by using a
+   different group-removal procedure. This procedure ensures the
+   processing time is linear depending on the number of group
+   entities.
+   
+   On Fix Central (http://www.ibm.com/support/fixcentral), search
+   for JR53918:
+   
+   1. Select IBM Business Process Manager with your edition from
+     the product selector, the installed version to the fix pack
+     level, and your platform, and then click Continue.
+   
+   2. Select APAR or SPR, enter JR53918, and click Continue.
+   
+   When you download fix packages, ensure that you also download
+   the readme file for each fix. Review each readme file for
+   additional installation instructions and information about the
+   fix.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR53918
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM STANDARD
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9500
+   
+   
+ * REPORTED RELEASE
+   751
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-07-23
+   
+   
+ * CLOSED DATE
+   2015-09-17
+   
+   
+ * LAST MODIFIED DATE
+   2015-09-17
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   BPM STANDARD
+   
+   
+ * FIXED COMPONENT ID
+   5725C9500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R751 PSY
+   UP

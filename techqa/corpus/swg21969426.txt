@@ -1,0 +1,36 @@
+Title: IBM Case Manager Client user is logged out after a short period of inactivity. - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Leaving the case manager client window dormant causes the user to be logged out of the application after a "Your request cannot be processed" error box. 
+
+SYMPTOM
+The following error is displayed when an attempt is made to update the case after the Case Manager Client screens has been idle for a short time. 
+
+[/support/docview.wss?uid=swg21969426&aid=1] [/support/docview.wss?uid=swg21969426&aid=1]
+Closing the window returns the user to the login screen.
+
+
+CAUSE
+This is the result of a change introduced in IBM Content Navigator 2.0.3.4. It was addressed in APAR IO23754 and corrected in ICN 2.0.3.4 IF01. The Case Manager Client is a plugin running inside of Content Navigator. All authentication and session management relating to the client-side browser sessions is handled by the Navigator container and the application server, not the Case Manager Client application. There were changes to how ICN handles session management in ICN 2.0.3.4 and one of those changes causes this behavior.
+
+
+ENVIRONMENT
+Case Manager 5.2.1 with Content Navigator 2.0.3.4.
+
+
+
+DIAGNOSING THE PROBLEM
+You can confirm the issue by capturing it in a debug level Content Navigator SystemOut.log and opening a PMR with IBM Content Navigator support for analysis.
+
+
+
+RESOLVING THE PROBLEM
+Install an Content Navigator fixpack that contains APAR IO23754. It was first addressed in ICN 2.0.3.4 IF01 and will be in every subsequent fixpack.
+
+This could also be the result of the session or token timeout settings. make sure that any LTPA token timeout and SSO timeouts are configured to be longer than the session inactivity timeout in WebSphere. You can read more about the WAS settings at the link below.
+
+RELATED INFORMATION
+ HTTP Session time-out settings and overwrite precedence [http://www-01.ibm.com/support/docview.wss?rs=180&uid=swg21163875]

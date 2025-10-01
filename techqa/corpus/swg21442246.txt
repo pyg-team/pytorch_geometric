@@ -1,0 +1,55 @@
+Title: IBM CNX0104E Connection failed with exception The markup in the document preceding the root element must be well-formed - United States
+
+Text:
+AIMSYSXPL; R210; 5655Y0400 R680 680 R800 800 HCI6800 5655-Y04 5655Y04 5655Y0401 R800 R80M 5655-Y04 5655Y04 FMID JCI680M 5655S9701 5655S9700 R660 660 R600 600 HCI6600 5655-S97 5655S97 kixinfo TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ You installed the supplied sample URIMAP DFH$WUUR and are using your own existing TCPIPSERVICE definition and you connect your CICS Explorer to a CICS TS V4.1 stand-alone CICS region (SMSS) and the connection fails with message CNX0104E. 
+
+SYMPTOM
+CNX0104E Connection failed with exception The markup in the document preceding the root element must be well-formed.
+
+CICS TS 4.1 SMSS contains the following trace entry:
+
+WB 0901 WBUR EXIT - FUNCTION(LOCATE_URIMAP) RESPONSE(EXCEPTION) REASON(NOT_FOUND) 
+
+Later in the trace there will be a trace entry:
+
+AP 4574 WBBLI DATA - HTTP_RESPONSE with a HTTP/1.1 404 Not Found which causes the CICS Explorer to issue the CNX0104E. 
+
+Note: Later versions of CICS Explorer issue message:
+IZE0105E Connection failed with exception The markup in the document preceding the root element must be well-formed.
+
+CAUSE
+The existing TCPIPSERVICE definition name did not match the IBM supplied default in the DFH$WUUR URIMAP. 
+
+
+
+ENVIRONMENT
+CICS Explorer V1.0.0.7; CICS TS V4.1 SMSS
+
+
+
+DIAGNOSING THE PROBLEM
+The WB 0901 Exit trace entry is issued by DFHWBUR. The Locate_Urimap iproc calls the Locate_Host function to match the URIMAP to a TCPIPSERVICE. In this case the TCPIPSERVICE attribute in the URIMAP was the default value DFH$WUTC and it did not match the users TCPIPSERVICE definition so a response EXCEPTION and reason NOT_FOUND were returned. The CICS Explorer issues the CNX0104E.
+
+A dump of the SMSS region in the WB domain will contain a UVH nnnnnnnn URIMAP Virtual Host entry that has the TCPIPSERVICE attribute of DFH$WUTC and this will not match the TCPIPSERVICE definition resulting in the NOT_FOUND.
+
+
+
+RESOLVING THE PROBLEM
+The IBM supplied URIMAP contains a TCPIPSERVICE attribute value of DFH$WUTC. If you plan on using your own TCPIPSERVICE definition and the IBM supplied sample URIMAP DFH$WUUR [http://pic.dhe.ibm.com/infocenter/cicsts/v5r1/topic/com.ibm.cics.ts.clientapi.doc/topics/clientapi_setupcics.html], you must update the DFH$WUUR URIMAP to either ensure the TCPIPSERVICE attribute matches your TCPIPSERVICE definition name, or remove the value.
+
+A reader's comment form has been submitted to add a note to the CICS Information Center for those users that use their own TCPIPSERVICE that they will need to update the TCPIPSERVICE attribute in the DFH$WUUR URIMAP to match their definition or to remove the TCPIPSERVICE attribute.
+
+
+
+RELATED INFORMATION
+#Setting up CMCI in a stand-alone CICS region [http://pic.dhe.ibm.com/infocenter/cicsts/v5r1/topic/com.ibm.cics.ts.clientapi.doc/topics/clientapi_setupcics.html]
+Finding the CICS Explorer messages [http://www.ibm.com/support/docview.wss?uid=swg21410541]
+
+
+
+
+PRODUCT ALIAS/SYNONYM
+ CICS/TS CICS TS CICS Transaction Server

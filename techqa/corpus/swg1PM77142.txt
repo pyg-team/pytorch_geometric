@@ -1,0 +1,129 @@
+Title: IBM PM77142: URL VALIDATION WITH PORTALRESTSERVICEREQUEST - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Fixes integrated in WebSphere Portal 8.0.0.0 Cumulative Fixes [http://www-01.ibm.com/support/docview.wss?uid=swg24033155]
+Fixes integrated in WebSphere Portal 7.0.0.1 & 7.0.0.2 Combined Cumulative Fixes [http://www-01.ibm.com/support/docview.wss?uid=swg24029452]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  URL Validation enhanced on Portal REST Service Requests
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  none available
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  This fix is available in CF20 and higher for 700x from the
+   following link:
+   
+   http://www-01.ibm.com/support/docview.wss?uid=swg24027857#7001 [http://www-01.ibm.com/support/docview.wss?uid=swg24027857#7001]
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This fix is available in CF20 and higher for 700x from the
+   following link:
+   
+   http://www-01.ibm.com/support/docview.wss?uid=swg24027857#7001 [http://www-01.ibm.com/support/docview.wss?uid=swg24027857#7001]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM77142
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSPHERE PORTA
+   
+   
+ * REPORTED COMPONENT ID
+   5724E7600
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-11-14
+   
+   
+ * CLOSED DATE
+   2013-03-11
+   
+   
+ * LAST MODIFIED DATE
+   2013-03-12
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBSPHERE PORTA
+   
+   
+ * FIXED COMPONENT ID
+   5724E7600
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R700 PSY
+   UP

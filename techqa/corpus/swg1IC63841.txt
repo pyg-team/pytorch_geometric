@@ -1,0 +1,173 @@
+Title: IBM IC63841: MOVE DATA/NODEDATA COMMAND WITH RECONSTRUCT=NO CAN CAUSE DATA INTEGRITY ISSUES IN DEDUPLICATED STORAGEPOOLS. - United States
+
+Text:
+AIX  FIXES ARE AVAILABLE
+IBM Tivoli Storage Manager (TSM) server V6.1.2.x interim fix downloads [http://www-01.ibm.com/support/docview.wss?uid=swg24024934]
+IBM Tivoli Storage Manager V6.1 Fix Pack 3 (6.1.3) Server Downloads [http://www-01.ibm.com/support/docview.wss?uid=swg24025591]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Moving data out of a deduplicated storage pool with either MOVE
+   DATA or MOVE NODEDATA commands can cause data integrity issues
+   if the RECONSTRUCT parameter is set to NO. Any data that had
+   been linked in the deduplicated storage pool at the time of the
+   move operation will be corrupted in the
+   target pool. The following ANR9999D message is one symptom of
+   this issue:
+   ANR9999D_XXXXXXXX BfGetBitfileExtents(bfaggrut.c:4298)
+   Thread<598>: BFBE Entry not found for object BITFILE_ID
+   (SESSION: SESSID)
+   ANR9999D_XXXXXXXX bfRtrv(bfrtrv.c:982) Thread<598>:
+   Total size of extents (EXTENT_ID) doesn't match original
+   size (SIZE) for object (BITFILE_ID2) in super bitfile
+   (SUPERBITFILE_ID) (SESSION: SESSID)
+   ANR0546W Retrieve or restore failed for session SESSID for
+   node NODENAME - internal server error detected.
+   (SESSION: SESSID)
+   Another symptom of this problem is that occupancy numbers for
+   the node(s) that were moved will be invalid which will be
+   evident from Q OCCupancy output or messages issued to the
+   activity log. The symptoms may vary depending upon the operation
+   that attempts to access these files and the extent of the
+   corruption. The overall theme is that there will be some missing
+   parts to the bitfile which in most cases will be a missing
+   extent.
+   Tivoli Storage Manager Versions Affected: 6.1
+   Initial Impact: HIGH
+   Additional Keywords: TSM, dedup, deduplicate, deduplication,
+   referential integrity, data loss, restore failure, occupancy,
+   chunk, extent, link, linked
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All Tivoli Storage Manager server users.     *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: See ERROR DESCRIPTION.                  *
+   ****************************************************************
+   * RECOMMENDATION: Apply fixing level when available. This      *
+   *                 problem is currently projected to be fixed   *
+   *                 in level 6.1.2.1 and 6.1.3.                  *
+   *                 Note that this is subject to change at the   *
+   *                 discretion of IBM.                           *
+   ****************************************************************
+   See ERROR DESCRIPTION.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The described problem has been resolved.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC63841
+   
+   
+ * REPORTED COMPONENT NAME
+   TSM SERVER
+   
+   
+ * REPORTED COMPONENT ID
+   5698ISMSV
+   
+   
+ * REPORTED RELEASE
+   61W
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-10-19
+   
+   
+ * CLOSED DATE
+   2009-11-04
+   
+   
+ * LAST MODIFIED DATE
+   2009-11-04
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TSM SERVER
+   
+   
+ * FIXED COMPONENT ID
+   5698ISMSV
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R61A PSY
+   UP
+   
+   
+ * R61H PSY
+   UP
+   
+   
+ * R61L PSY
+   UP
+   
+   
+ * R61S PSY
+   UP
+   
+   
+ * R61W PSY
+   UP

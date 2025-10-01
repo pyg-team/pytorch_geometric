@@ -1,0 +1,26 @@
+Title: IBM Not able to generate postmortem logs with error "ERROR: ftpFile is not valid at /usr/ironhide/libexec/cli/postmortem_export.pl" - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Not able to generate postmortem logs with error "ERROR: ftpFile is not valid at /usr/ironhide/libexec/cli/postmortem_export.pl" with Cast Iron 
+
+RESOLVING THE PROBLEM
+Attempts to export the generated postmortem file to an ftp server is failing with ERROR: ftpFile is not valid at /usr/ironhide/libexec/cli/postmortem_export.pl
+
+This error message appears if you are using any special character (example '&') in password. For example, the following command will fail:
+debug postmortem export ftp 10.10.0.30 user castironftp passwd 3&r0v3r file Test_Postmortem.tgz
+
+The special characters get interpreted differently by the script.
+You should use an ftp account without any special character in passwords.
+
+ 
+
+HISTORICAL NUMBER
+ 00000137 
+
+PRODUCT ALIAS/SYNONYM
+ Cast Iron Solution
+Cast Iron Operating System
+Cast Iron Studio

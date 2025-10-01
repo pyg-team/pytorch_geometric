@@ -1,0 +1,35 @@
+Title: IBM The managesdk.sh command might not update the was.env file when it updates the SDK configuration of a node - United States
+
+Text:
+WASV85RNotes TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When using the managesdk.sh command to upgrade an IBM WebSphere Application Server for z/OS Version 8.5 profile from Java 1.6 to Java 1.7, the output might indicate that the task completes successfully but the log for a subsequent application server start might indicate that the node still starts using SDK 6.0. 
+
+CAUSE
+This problem occurs because the managesdk.sh command does not update the z/OS was.env file when it updates the SDK configuration settings of the node using the AdminTask.setNodeDefaultSDK() call.
+
+RESOLVING THE PROBLEM
+To resolve this problem, perform the following task after running the managesdk.sh command:
+
+
+./wsadmin.sh -lang jython -user user_name-password password 
+
+wsadmin>AdminTask.setNodeDefaultSDK('-nodeName node_name -sdkName sdk_name') 
+
+wsadmin>AdminConfig.save() 
+
+Note: Both the managesdk.sh command and the setNodeDefaultSDK() task must use the same value for the -sdkName parameter. 
+
+Note: You can optionally install Version 8.5.0.1 to resolve this issue.
+
+
+RELATED INFORMATION
+#WebSphere Application Server Version 8.5 release notes [http://www14.software.ibm.com/webapp/wsbroker/redirect?version=phil&product=was-nd-mp&topic=relnotes]
+
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Application Servers WebSphere Application Server for z/OS Install z/OS 8.5

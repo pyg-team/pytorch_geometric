@@ -1,0 +1,41 @@
+Title: IBM How to reverse engineer ANSI C++ code into Rational Rose - United States
+
+Text:
+rose; reverse engineer; ansi; c++; code; reverse; engineer; example; 1120442 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This technote provides instructions on how to bring your ANSI® C++ code into Rational Rose® 
+
+RESOLVING THE PROBLEM
+Below are the steps that walk you through a reverse engineer of ANSI C++
+
+1. Make sure your language is set to ANSI
+a. Go to Tools / Options
+b. Select the Notation Tab
+c. Set the default language to ANSI C++ and click OK 
+2. Create an ANSI component
+a. Right click on the Component View
+b. Select New / Component
+c. Name the component 
+3. Assign the ANSI C++ files to the ANSI C++ component
+a. Right click on the component
+b. Select ANSI C++ / Open ANSI C++ Specification
+c. On the files tab click on the … to browse to the directory that your code is 
+in
+d. Click OK on the Select Directory screen once your directory appears there
+e. Click on the Add Files button
+f. Browse to the location of the files that you want to reverse engineer.
+g. Now you can click on the OK button and reverse engineer the files.
+4. Reverse engineer your ANSI C++ code
+a. Right click on the component
+b. Select ANSI / Reverse engineer
+c. The Reverse engineer screen will come up with the file name in Blue letting 
+you know that it is going to add it to the model. 
+d. Click the OK button and this will reverse engineer the code
+5. Now If you look under the Logical View / C++ Reverse engineer package you 
+will see your class or classes appear.
+
+ 
+
+HISTORICAL NUMBER
+ 117818807

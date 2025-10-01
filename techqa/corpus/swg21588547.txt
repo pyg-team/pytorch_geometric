@@ -1,0 +1,26 @@
+Title: IBM Mustgather: Setup for high processor usage on z/OS® - United States
+
+Text:
+z/OS cpu usage setup; MustGatherDocument TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ If your Java application experiences high processor usage on a z/OS® operating system, there are a number of diagnostic data files that are useful for diagnosing the problem. This mustgather document describes about the required settings to be in place in order to generate those diagnostic data files. 
+
+RESOLVING THE PROBLEM
+In order to collect the diagnostic data files required for diagnosing the high processor usage problems, check that the following specific settings are configured before running your application:
+1. Enable javacore [http://www.ibm.com/support/docview.wss?rs=727&uid=swg21222439] generation
+2. Enable Transaction dump(TDump) generation
+3. Enable CEEDump generation
+4. Enable verbose GC [http://www.ibm.com/support/docview.wss?uid=swg21222436] collection
+Use -verbose:gc option for the same.
+
+Note that all the javacore, transaction dump and CEEDump generation can be enabled using the following single -Xdump option:
+-Xdump:java+system+ceedump:events=user
+
+Note that the z/OS system dumps can also be taken using the z/OS system administration tools. Ensure that there is enough disk space available for the TDump file to be written and ensure that the RACF® permissions are configured so that the Java process can write to the HLQ. 
+
+For more details about enabling these settings, see the related information links.
+
+RELATED INFORMATION
+ Javacore [http://www.ibm.com/support/docview.wss?uid=swg21222439]
+Verbose GC [http://www.ibm.com/support/docview.wss?uid=swg21222436]

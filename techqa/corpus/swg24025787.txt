@@ -1,0 +1,37 @@
+Title: IBM PM00610; 7.0.0.7 SSO LTPATOKEN IS PROCESSED INCORRECTLY WHEN REQUIRES SSL IS SET - United States
+
+Text:
+PM00610; PM00610; PM00610 DOWNLOADABLE FILES
+
+ABSTRACT
+ SSO LTPATOKEN IS PROCESSED INCORRECTLY WHEN "REQUIRES SSL" IS ENABLED 
+
+DOWNLOAD DESCRIPTION
+PM00610 resolves the following problem:
+
+ERROR DESCRIPTION: 
+User specifies that the single sign-on function is enabled only when requests are made over HTTPS Secure Sockets Layer (SSL) connections. Once this function is enabled in the console, WebSphere Application Server is not setting the secure flag as true. 
+
+LOCAL FIX: 
+NONE
+
+PREREQUISITES
+None
+
+INSTALLATION INSTRUCTIONS
+Review the readme.txt for detailed installation instructions.
+
+URL LANGUAGE SIZE(Bytes) Readme [ftp://public.dhe.ibm.com/software/websphere/appserv/support/fixes/PM00610/readme.txt] US English 5041 
+DOWNLOAD PACKAGE
+
+
+Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options 
+What is Fix Central(FC)? [https://www.ibm.com/support/fixcentral/help?page=swfaqs] 
+What is DD? [http://www6.software.ibm.com/dldirector/doc/DDfaq_en.html] 7.0.0.1-WS-WAS-IFPM00610 1/27/2010 US English 20142 FC [http://www.ibm.com/support/fixcentral/quickorder?fixids=7.0.0.1-WS-WAS-IFPM00610&product=ibm%2FWebSphere%2FWebSphere%20Application%20Server&source=dbluesearch] FTP [ftp://public.dhe.ibm.com/software/websphere/appserv/support/fixes/PM00610/7.0.0.1-WS-WAS-IFPM00610.pak] DD 
+TECHNICAL SUPPORT
+ Contact IBM Support using SR (http://www.ibm.com/software/support/probsub.html [http://www.ibm.com/software/support/probsub.html]), visit the WebSphere Application Server support web site (http://www.ibm.com/support/entry/portal/Overview/Software/WebSphere/WebSphere_Application_Server [http://www.ibm.com/support/entry/portal/Overview/Software/WebSphere/WebSphere_Application_Server]), or contact 1-800-IBM-SERV (U.S. only). 
+
+Cross reference information Segment Product Component Platform Version Edition Application Servers WebSphere Application Server - Express Security AIX, HP-UX, i5/OS, IBM i, Linux, Solaris, Windows 7.0.0.7, 7.0.0.5, 7.0.0.3, 7.0.0.1 
+
+ [/support/docview.wss?uid=swg24025787&aid=1]Problems (APARS) fixed [/support/docview.wss?uid=swg24025787&aid=2]Problems (APARS) fixed
+PM00610

@@ -1,0 +1,134 @@
+Title: IBM Newseventservlet exception after install of CR 1 - United States
+
+Text:
+ibm docs CR1 NewsEventServlet TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+Newseventservlet exception after install of CR 1 - SRVE0068E java.lang.NullPointerException on java.util.regex.Matcher.getTextLength
+
+SYMPTOM
+The following exceptions are generated in the Viewer Docs logs only after installation of CR 1 for docs 2.0
+Issue occurs upon file uploads of MS files such as .doc or .docx.
+The files are viewable in preview mode.
+Thumbnails also successfully render.
+
+[8/9/16 10:14:50:206 EDT] 0000011a ServletWrappe E
+com.ibm.ws.webcontainer.servlet.ServletWrapper service SRVE0068E: An
+exception was thrown by one of the service methods of the servlet
+[NewsEventServlet] in application [ViewerApp]. Exception created :
+[java.lang.NullPointerException
+at java.util.regex.Matcher.getTextLength(Matcher.java:1151)
+at java.util.regex.Matcher.reset(Matcher.java:302)
+at java.util.regex.Matcher.<init>(Matcher.java:222) Page 69 of 90
+at java.util.regex.Pattern.matcher(Pattern.java:899)
+at
+com.ibm.concord.viewer.services.servlet.NewsEventServlet.doPost(NewsEven
+tServlet.java:63)
+at javax.servlet.http.HttpServlet.service(HttpServlet.java:595)
+at javax.servlet.http.HttpServlet.service(HttpServlet.java:668)
+at
+com.ibm.ws.webcontainer.servlet.ServletWrapper.service(ServletWrapper.ja
+va:1232)
+at
+com.ibm.ws.webcontainer.servlet.ServletWrapper.handleRequest(ServletWrap
+per.java:781)
+at
+com.ibm.ws.webcontainer.servlet.ServletWrapper.handleRequest(ServletWrap
+per.java:480)
+at Page 70 of 90
+com.ibm.ws.webcontainer.servlet.ServletWrapperImpl.handleRequest(Servlet
+WrapperImpl.java:178)
+at
+com.ibm.ws.webcontainer.filter.WebAppFilterChain.invokeTarget(WebAppFilt
+erChain.java:136)
+at
+com.ibm.ws.webcontainer.filter.WebAppFilterChain.doFilter(WebAppFilterCh
+ain.java:97)
+at
+com.ibm.concord.viewer.filters.CacheControlFilter.doFilter(CacheControlF
+ilter.java:78)
+at
+com.ibm.ws.webcontainer.filter.FilterInstanceWrapper.doFilter(FilterInst
+anceWrapper.java:195)
+at
+com.ibm.ws.webcontainer.filter.WebAppFilterChain.doFilter(WebAppFilterCh
+ain.java:91)
+at
+com.ibm.concord.viewer.lc3.auth.LotusConnectionsAuth.doFilter(LotusConne
+ctionsAuth.java:290)
+at
+com.ibm.concord.viewer.lc3.auth.LotusConnectionsAuth.doFilter(LotusConne
+ctionsAuth.java:178)
+at
+com.ibm.concord.viewer.platform.auth.AuthenticationComponentImpl.doFilte
+r(AuthenticationComponentImpl.java:231)
+
+
+
+CAUSE
+The deployment of the jar file, com.ibm.concord.viewer.lcfiles.daemon.jar, was not automated for CR1, and so the system administrator needs to replace it manually. The procedures for the manual replacement of the file was inadvertantly excluded in the CR1 install guide.
+The issue is resovled in CR1 iFix1, which is now available:
+http://www-01.ibm.com/support/docview.wss?uid=swg21989469&myns=swglotus&mynp=OCSSFHJY&mync=E&cm_sp=swglotus-_-OCSSFHJY-_-E [http://www-01.ibm.com/support/docview.wss?uid=swg21989469&myns=swglotus&mynp=OCSSFHJY&mync=E&cm_sp=swglotus-_-OCSSFHJY-_-E] 
+
+
+ENVIRONMENT
+IBM Docs 2.0 cr 1
+conversion version:
+"version":"2.0.0.1"
+
+viewer version:
+{"version":"2.0.0.1"
+IC 55 CR 1
+
+
+
+DIAGNOSING THE PROBLEM
+A review the systemout and trace log from the viewer JVM and the following exceptions listed below will appear when a .doc or .docx file is uploaded (through either the Connections UI My files or the Files widget within a community) though all IBM Docs functionality for the upload as well as thumbnail creation complete successfully:
+0000011a ServletWrappe E
+com.ibm.ws.webcontainer.servlet.ServletWrapper service SRVE0068E: An
+exception was thrown by one of the service methods of the servlet
+[NewsEventServlet] in application [ViewerApp]. Exception created :
+[java.lang.NullPointerException
+at java.util.regex.Matcher.getTextLength(Matcher.java:1151)
+at java.util.regex.Matcher.reset(Matcher.java:302)
+at java.util.regex.Matcher.<init>(Matcher.java:222) Page 69 of 90
+at java.util.regex.Pattern.matcher(Pattern.java:899)
+at
+com.ibm.concord.viewer.services.servlet.NewsEventServlet.doPost(NewsEven
+tServlet.java:63)
+at javax.servlet.http.HttpServlet.service(HttpServlet.java:595)
+at javax.servlet.http.HttpServlet.service(HttpServlet.java:668)
+at
+com.ibm.ws.webcontainer.servlet.ServletWrapper.service(ServletWrapper.ja
+va:1232)
+at
+com.ibm.ws.webcontainer.servlet.ServletWrapper.handleRequest(ServletWrap
+per.java:781)
+at
+com.ibm.ws.webcontainer.servlet.ServletWrapper.handleRequest(ServletWrap
+
+
+
+
+RESOLVING THE PROBLEM
+The issue is resovled in CR1 iFix1, which is now available: 
+
+http://www-01.ibm.com/support/docview.wss?uid=swg21989469&myns=swglotus&mynp=OCSSFHJY&mync=E&cm_sp=swglotus-_-OCSSFHJY-_-E [http://www-01.ibm.com/support/docview.wss?uid=swg21989469&myns=swglotus&mynp=OCSSFHJY&mync=E&cm_sp=swglotus-_-OCSSFHJY-_-E] 
+
+
+ 
+
+The following procedures were used to update the com.ibm.concord.viewer.lcfiles.daemon.jar prior to the release of iFix1:
+- Login Websphere console with WAS admin account.
+- Select Environment -> Shared Libraries -> ViewerDaemonLib
+- Get the [Classpath], for example,
+/home/LCData/shared/library/com.ibm.concord.viewer.lcfiles.daemon.jar.
+Back up com.ibm.concord.viewer.lcfiles.daemon.jar and then remove it.
+In other words
+ensure you have a good backup of this original file located in the
+directory pointed to by Classpath if you should need to revert back to
+the original copy.
+- Find the com.ibm.concord.viewer.lcfiles.daemon.jar in <Docs2.0 CR1
+package>\ViewerLCCustomizeApp\ and then copy it to [Classpath]
+- Go to Applications > Application Types > WebSphere enterprise
+applications, and restart the News app.

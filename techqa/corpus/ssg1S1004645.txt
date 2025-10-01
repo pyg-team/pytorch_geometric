@@ -1,0 +1,65 @@
+Title: IBM Firmware Upgrade Planning Best Practice - Use of the Software Upgrade Test Utility - United States
+
+Text:
+ PREVENTIVE SERVICE PLANNING
+
+ABSTRACT
+ When upgrading the firmware on a FlashSystem 840 or FlashSystem V840, it is highly recommended to run the Software Upgrade Test Utility prior to any upgrade in order to ensure that your system configuration is supported and to avoid potential errors. 
+
+CONTENT
+Download Description 
+
+The FlashSystem Software Upgrade Utility is a small utility that is downloadable from IBM Fix Central. The utility is run on the FlashSystem 840, 900, or V840 just prior to a firmware upgrade. The purpose of the utility is to check for known issues and system configurations that may present a problem for the upgrade and warn the user of conditions that may need to be corrected prior to running the upgrade. It can be run as many times as needed. The utility can be run automatically as part of the upgrade process, or stand-alone, to assess the readiness of a system for upgrade as part of the upgrade planning process. While it does not provide an exhaustive check of the system, it does perform a general health check. The firmware upgrade code itself provide the final and most exhaustive readiness check for an upgrade. 
+
+In firmware release 1.1.2.0 and higher of the 840, 900, and V840 storage enclosure, the Software Upgrade Utility is run automatically prior to upgrading. It is a required step. But in earlier firmware releases, it is optional, but highly recommended. The installation and usage of this utility is non-disruptive and does not require any node to be restarted, so there is no interruption to host I/O. The utility will only be installed on the current configuration node. 
+
+When an upgrade is initiated using the FlashSystem web management GUI, the user is prompted to download the utility from Fix Central and to run it before beginning the upgrade. This is required. However, upgrades can also be run using the applysoftware command using the Command Line Interface (CLI). When using the CLI, the use of the upgrade utility is not required, but strongly recommended. Instructions for doing this via the CLI are included below. 
+
+IBM strongly recommends that firmware upgrades be initiated using the GUI so that the upgrade test utility is uploaded and run. The output of the utility should be examined before proceeding. If the utility provides any warnings, these should be corrected before proceeding with the upgrade. 
+
+Examples of these include checking to make sure both power supplies are online. The utility can be updated at any time, so it is important to check for the latest version just prior to an upgrade. This will help ensure the upgrade will proceed without errors. 
+
+To download the upgrade test utility, navigate to Fix Central, choose your specific product and download from the "Select fixes" page for your product. 
+
+Note: A FlashSystem V840 comprises two AC0 or AC1 Control Enclosures and one AE1 Storage Enclosure. For the FlashSystem V840, this support document applies to the AE1 Storage Enclosure of a V840. The AC0/AC1 Control Enclosures also utilize a software upgrade test utility before upgrading. When upgrading the AC0/AC1 Control Enclosure nodes, refer to support document S4000585: http://www-01.ibm.com/support/docview.wss?uid=ssg1S4000585 [http://www-01.ibm.com/support/docview.wss?uid=ssg1S4000585]
+
+Running the Software Upgrade Test Utility Using the Command Line 
+
+
+(Firmware release 1.1.2.0 and higher)
+
+
+To run the upgrade test utility using the CLI: 
+
+ 
+
+ 1. Copy the utility to the /upgrade directory on the 840/900 using a secure copy utility such as SCP or pscp.exe.
+    
+    pcsp <test_utility_filename>superuser@<cluster_ip_address>:/upgrade
+    
+ 2. Install the utility
+    
+    applysoftware -file <test_utility_filename>
+    
+    
+ 3. Execute the test utility:
+    
+    svcupgradetest -v 1.1.3.2
+    
+ 4. The output is displayed. An example is shown below
+    
+    Results of running svcupgradetest:
+    ==================================
+    
+    The tool has found 0 errors and 0 warnings
+    
+    The tool has not found any problems with the cluster.
+    
+ 5. The utility can be rerun (step 3 above) again once it is installed. You do not have to install it again. If you install a new version, that will overwrite the old version.
+
+
+ 
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Flash Storage IBM FlashSystem V840 Not Applicable Multi-Platform, Platform Independent All Versions, Version Independent Flash Storage IBM FlashSystem 900 Not Applicable Multi-Platform, Platform Independent All Versions, Version Independent

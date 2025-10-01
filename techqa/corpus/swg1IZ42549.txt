@@ -1,0 +1,130 @@
+Title: IBM IZ42549: USER SHOULD NOT RUN WASCE/NCI_SERVER AS A ROOT USER - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The user sould not be allowed to run wasce/nci_server as root.
+   This can cause issues with cvs.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   All Netcool/Impact users
+   ****************************************************************
+   PROBLEM DESCRIPTION:
+   When user runs impact as a root user, Impact's internal cvs
+   does not function properly. User may not be able to update or
+   create new component in the GUI such as Policy, Data Type,
+   etc.. User will receive an exception
+   ****************************************************************
+   RECOMMENDATION:
+   The fix is included in Impact 4.0.2 Fix Pack 0001
+   4.0.2.1-TIV-NCI-FP0001
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  As Impact 4.0.2 Fix Pack 0001, $NCHOME/bin/wasce and
+   $NCHOME/impact/bin/nci_server display a message to warn the user
+   that a root user is not recommended and should not run impact.
+   User has the ability to either continue or exit and run impact
+   as a different user.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ42549
+   
+   
+ * REPORTED COMPONENT NAME
+   NETCOOL/IMPACT
+   
+   
+ * REPORTED COMPONENT ID
+   5724O59IS
+   
+   
+ * REPORTED RELEASE
+   402
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-01-26
+   
+   
+ * CLOSED DATE
+   2009-02-27
+   
+   
+ * LAST MODIFIED DATE
+   2009-02-27
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   NETCOOL/IMPACT
+   
+   
+ * FIXED COMPONENT ID
+   5724O59IS
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R402 PSY
+   UP

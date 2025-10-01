@@ -1,0 +1,152 @@
+Title: IBM LO77915: IC V4.0 CALENDAR'S EVENTS WIDGET IN COMMUNITIES - PROBLEM ADDING EVENTS WIDGET TO A COMMUNITY - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  IC V4.0 Calendar's Events widget in Communities - problem adding
+   Events widget to a community.
+   
+   Error Description:-
+   [XXXXXXXXXXXXXXXXX] 00000082 ServerToServe E
+   com.ibm.connections.httpClient.ServerToServerHttpClient
+   checkResultsForRetry SONATA: Internal Server Error
+   @'https://<hostname>/communities/calendar/handleEvent'
+   
+   [XXXXXXXXXXXXXXXXX] 00000082 EventPropagat E
+   com.ibm.lconn.widgets.service.EventPropagater postRemoteEvent
+   CLFWZ0004E: Event 'remote.app.added' sent to remote lifecycle
+   handler
+   at https://myadpdev.adpcorp.com/communities/calendar/handleEvent [https://myadpdev.adpcorp.com/communities/calendar/handleEvent]
+   
+   returned bad response: 500 - Internal Server Error
+   [XXXXXXXXXXXXXXXXX] 00000082 AddWidgetActi E
+   com.ibm.lconn.widgets.actions.AddWidgetAction execute
+   CLFWZ0026E: An
+   unexpected error has occurred. Please contact your system
+   administrator.
+   
+   com.ibm.lconn.widgets.model.RemoteCommunicationException:
+   CLFWZ0026E:
+   An unexpected error has occurred. Please contact your system
+   administrator.
+   at
+   com.ibm.lconn.widgets.service.EventPropagater.postRemoteEvent(Ev
+   entPropa
+   gater.java:565)
+   
+   Symption:-
+   /handleEvent for adding calendar widget to Communities  is
+   protected by role "everyone".
+   
+   Resolution:-
+   Apply this iFix which updates the role to "widget-admin".
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Fixed in 4.5 CR3
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *   Fixed in 4.5 CR3
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   LO77915
+   
+   
+ * REPORTED COMPONENT NAME
+   CONNECT COMMUNI
+   
+   
+ * REPORTED COMPONENT ID
+   5724S6802
+   
+   
+ * REPORTED RELEASE
+   400
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-11-14
+   
+   
+ * CLOSED DATE
+   2015-08-07
+   
+   
+ * LAST MODIFIED DATE
+   2015-08-07
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CONNECT COMMUNI
+   
+   
+ * FIXED COMPONENT ID
+   5724S6802
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R450 PSY
+   UP

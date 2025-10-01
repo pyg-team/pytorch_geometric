@@ -1,0 +1,364 @@
+Title: IBM Java for AIX MustGather: Data collection procedure for automatically generated process core (binary) dumps - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ IBM Java for AIX MustGather: Data collection procedure for automatically generated process core (binary) dumps 
+
+ANSWER
+ 
+
+This document provides step-by-step instructions for collecing data for the IBM Java for AIX for automatically generated AIX (process) core dumps, collecting other required diagnostic files, and instructions for uploading the data to an IBM upload server. Collecting and uploading this information at the time the IBM support call is opened will help expedite the resolution of the issue being reported. Jump to section: ( Prepare Environment) ( Collect Data) ( Confirm Data) ( Package Data) ( Upload Data) The instructions in this document make references to generic terms in Italics that will need to be replaced with information specific to the support call and the environment. It is very important that consistent and accurate values be used in place of the Italicized generic terms when collecting the data to ensure the prompt and correct delivery of the data when uploaded. Generic Term Replace with USERID The AIX userid running the Java process (e.g. wasadmin or root). TMP_PATH A temporary directory with a minimum of 10 (actual size my vary based on the maximum Java heap size) GB of free space (e.g. /large_fs). MM-DD-HH The current month (MM), day (DD), and hour (HH) (e.g. ,01-31-10). PMR The full IBM PMR number (e.g. , PMR12345.b678.c000). JAVA_PATH The parent Java installation directory (e.g. /usr/java6 or /usr/java7_64). CORE_PATH The full path (including the file name) for the AIX (process) core dump file from the Java process (e.g., /opt/IBM/WebSphere/AppServer/bin/core.20150101.010101.1234567.002.dmp) JAVA_COMMAND The full path (including the file name) for the Java command used for the application (e.g., /usr/java7/bin/java). NEW_PATH An alternate path or directory where diagnostic files will be created. Overview Step-by-Step Instructions Examples / Tips / Hints / Comments / Descriptions 
+
+
+
+Step 1: 
+
+Prepare To prepare for these data collection procedures, the process environment needs to be configured to enable the creation of complete AIX (process) core dumps.
+
+
+
+A. Enable the system and the user environment for full core dumps
+
+From a command prompt, and while logged in as the root user, execute the following commands to enable full core dumps for the system and process environment.
+
+# chdev -l sys0 -a fullcore=true 
+
+# chuser fsize=-1 data=-1 core=-1 USERID
+
+
+
+B. Relogin, then restart your application
+
+Perform the following actions inorder for the changes to take effect:
+
+- Stop the application (and node agent/manager, if applicable)
+
+- Relogin as the USERID used in Step 1.A
+
+- Confirm that full core is enabled and the new ulimits are in effect by executing the commands:
+
+# ulimit -a
+
+# lsattr -El sys0 | grep -i fullcore
+
+- Restart the application (e.g., node agent/manager) from the new login session
+
+A. When the full core dump options are not enabled and the core dumps are uploaded, in most cases, the core dumps will be incomplete or truncated. Not setting these options will prevent the support specialist from analyzing the data and will also delay the resolution of the reported issue.
+
+When using J2E (or J2EE) application servers such as IBM WebSphere or Oracle WebLogic, for the changes to take effect, both the node agent (manager) and the application (manager) servers have to be stopped and restarted (and relogin before restarting).
+
+Examples of commands to be executed:
+
+# chdev -l sys0 -a fullcore=true
+
+# chuser fsize=-1 data=-1 core=-1 wasadmin
+
+The AIX core file is generated into the current working directory of the process. Use the AIX environment variable:
+
+IBM_COREDIR= NEW_PATH
+
+ to specify an alternate location for the AIX (process) core dump. Likewise, use the AIX environment variable: 
+
+ IBM_JAVACOREDIR= NEW_PATH 
+
+ to specify an alternate location for the javacore.*.txt files. 
+
+Both the IBM_COREDIR and IBM_JAVACOREDIR variables have to be configured for the process prior to the it being started (i.e., as part of its startup procedure and the process has to be restarted).
+
+
+
+
+
+Step 2: 
+
+Collect Once the application has failed and a core dump is produced, from a command prompt, and while logged in as the root user, execute the following commands to collect the required diagnostic data:
+
+# mkdir -p /TMP_PATH/PMR/MM-DD-HH/data1
+# cd /TMP_PATH/PMR/MM-DD-HH/data1
+
+
+# prtconf > prtconf.out 2>&1
+# lslpp -hac > lslpp-hac.out 2>&1
+# instfix -i > instfix-i.out 2>&1
+# emgr -lv3 > emgr-lv3.out 2>&1
+# svmon -O segment=category -P > svmon-p.out 2>&1
+# ipcs -saPrX > ipcs.out 2>&1
+# errpt -a > errpt-a.out 2>&1
+# JAVA_COMMAND -version > java-version.out 2>&1
+
+{Copy the javacore.*.txt files to the data1 directory.}
+{Copy any Snap.*.trc files to the data1 directory.}
+{Copy any heapdump.*.phd files to the data1 directory.}
+{Copy application log files to the data1 directory.}
+
+# JAVA_PATH/jre/bin/jextract -J-Xms1024M -J-Xmx1024M \
+CORE_PATH core.java.dmp.zip
+
+Note: In situations when the jextract command fails, execute the snapcore command instead of the jextract command:
+
+# snapcore -d ${PWD} CORE_PATH JAVA_COMMAND
+
+Examples of commands to be executed:
+
+** Do not copy and paste AS-IS, these are only examples **
+
+# mkdir -p /large_fs/12345.123.000/01-31-10/data1
+# cd /large_fs/12345.123.000/01-31-10/data1
+
+# prtconf > prtconf.out 2>&1
+# lslpp -hac > lslpp-hac.out 2>&1
+# instfix -i > instfix-i.out 2>&1
+# emgr -lv3 > emgr-lv3.out 2>&1
+# svmon -O segment=category -P > svmon-p.out 2>&1
+# ipcs -saPrX > ipcs.out 2>&1
+# errpt -a > errpt-a.out 2>&1
+# /usr/java7/bin/java -version > java-version.out
+
+# cp /opt/myapp/javacore*txt ./
+# cp /opt/myapp/Snap*trc ./
+# cp /opt/myapp/heapdump*hpd ./
+# cp /opt/myapp/myapp*logs ./
+
+# /usr/java7/jre/bin/jextract -J-Xms1024M -J-Xmx1024M \
+/opt/myapp/core.20150131.010101.1234512.001.dmp \
+core.java.dmp.zip
+
+or
+
+# snapcore \
+/opt/myapp/core.20150131.010101.1234512.001.dmp \
+/usr/java7/bin/java
+
+The jextract utility differs from snapcore by collecting platform-specific details about the application such as word size, endianness, data structure layouts, and symbolic information. This information is captured in an XML file which is packaged with the core dump file.
+
+
+
+
+
+Step 3: 
+
+Confirm ** Mandatory **
+
+Prior to packaging and uploading, confirm that the following files have been saved in the temporary directory:
+
+1. core.java.dmp.zip or snapcore file
+
+2. javacore.*.txt files
+
+3. Application log files
+
+4. All of the *.out files generated in Step 2
+
+5. heapdump.*.phd files (if available)
+
+6. Snap.*.trc files (if available)
+
+Sending incomplete data or data other than the requested data may delay the resolution of the reported issue.
+
+Examples of commands to execute:
+
+** Do not copy and paste AS-IS, these are only examples **
+
+# cd /large_fs/12345.123.000/01-31-10/data1
+
+# ls core*zip snapcore* javacore* *.out 
+
+# ls heapdump* Snap*
+
+# ls *.logs
+
+
+
+
+
+Step 4: 
+
+Package Packaging the files may simplify the upload of the diagnostic data collected. From the command line, and while logged in as the root user, execute the commands:
+
+# cd /TMP_PATH/PMR/MM-DD-HH
+
+# tar -cf - data1 | gzip -c > PMR.MM-DD-HH.tgz
+
+Examples of commands to execute:
+
+** Do not copy and paste AS-IS, these are only examples **
+
+# cd /large_fs/12345.123.000/01-31-10
+
+# tar -cf - data1 | gzip -c > 12345.123.000.01-31-10.tgz
+
+
+
+
+
+Step 5: 
+
+Upload Upload the packaged data or individual files to an IBM secured server using one of upload options provided on the "MustGather: How to upload diagnostic data and testcases to IBM" web page:
+
+http://www-01.ibm.com/support/docview.wss?uid=isg3T1022619 [http://www-01.ibm.com/support/docview.wss?uid=isg3T1022619]
+
+
+
+
+
+
+
+Step 6: 
+
+Upload 
+
+
+
+
+
+
+
+Step 7: 
+
+ACTION 
+
+
+
+
+
+
+
+Step 8: 
+
+ACTION 
+
+
+
+
+
+
+
+Step 9: 
+
+ACTION 
+
+
+
+
+
+
+
+Step 10: 
+
+ACTION 
+
+
+
+
+
+
+
+Step 11: 
+
+ACTION 
+
+
+
+
+
+
+
+Step 12: 
+
+ACTION 
+
+
+
+
+
+
+
+Step 13: 
+
+ACTION 
+
+
+
+
+
+
+
+Step 14: 
+
+ACTION 
+
+
+
+
+
+
+
+Step 15: 
+
+ACTION 
+
+
+
+
+
+
+
+Step 16: 
+
+ACTION 
+
+
+
+
+
+
+
+Step 17: 
+
+ACTION 
+
+
+
+
+
+
+
+Step 18: 
+
+ACTION 
+
+
+
+
+
+
+
+Step 19: 
+
+ACTION 
+
+
+
+
+
+
+
+Step 20: 
+
+ACTION 
+
+
+
+
+
+
+
+Step 21: 
+
+ACTION 
+
+
+
+Document Type: Instruction Content Type: Mustgather Hardware: all Power Operating System: all AIX Versions IBM Java: all Java Versions Author(s): John Carver Reviewers: Roger Leuckie Click here [javaix_feedback@wwpdl.vnet.ibm.com?Subject=Feedback: IBM Java for AIX MustGather: Data collection procedure for automatically generated process core dumps] to submit feedback for this document.

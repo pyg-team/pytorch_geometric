@@ -1,0 +1,46 @@
+Title: IBM Requirements for running IBM Traveler on Domino 9.0.1 FP8 and later releases - United States
+
+Text:
+ RECOMMENDED RESOURCES
+
+ABSTRACT
+ The IBM Domino 9.0.1 FP8 release will include an upgrade to Java 8. This article details requirements for IBM Traveler servers to run Java 8. 
+
+CONTENT
+ 
+
+Overview 
+
+The steps outlined below are required to run IBM Traveler on a Domino 9.0.1 FP8 or later server. It is not required to run Domino 9.0.1 FP8 or later to use the latest available IBM Traveler release. 
+
+ 
+
+Note: This technote does not apply to IBM Traveler installations on IBMi platform. For instructions for configuring Traveler for DB2 on IBMi please see the product documentation here: https://www.ibm.com/support/knowledgecenter/SSYRPW_9.0.1/ConfiguringHAOnIBMI.html [https://www.ibm.com/support/knowledgecenter/SSYRPW_9.0.1/ConfiguringHAOnIBMI.html] 
+
+ 
+
+Traveler Requirements 
+
+Java 8 support is included in IBM Traveler 9.0.1.16 and later releases. It is required to run this level or later on a Domino server running 9.0.1 FP8 or later. 
+
+Download IBM Traveler from: 
+
+ * Fix Central [http://www.ibm.com/support/fixcentral/swg/quickorder?parent=Collaboration%2BSolutions&product=ibm/Lotus/Lotus+Notes+Traveler&release=9.0.1&platform=All&function=all&source=fc] 
+ * Passport Advantage [http://www.ibm.com/support/docview.wss?uid=swg21700800]
+
+
+JDBC Requirements 
+
+If running IBM Traveler with either DB2 or MS SQL enterprise database server, then follow these steps to ensure compatibility with Java 8. 
+
+ 
+
+ * If using DB2 server: In order to support Java 8 you must use DB2 JDBC Driver V10.5 FP7 (4.19.49) or higher, see technote 1983724 [http://www.ibm.com/support/docview.wss?uid=swg21983724] for details. The DB2 JDBC Driver can be downloaded directly from Fix Central, see technote 1363866 [http://www.ibm.com/support/docview.wss?uid=swg21363866] for download information. Copy the db2jcc4.jar file to the <domino>\Traveler\lib directory and restart the Domino server. Be sure to remove any old copies of the DB2 JDBC driver from the system.
+
+ * If using MS SQL server: In order to support Java 8 you must use sqljdbc42.jar file from MS JDBC 4.1 or later release. Download the latest Microsoft SQL Server JDBC Driver from this site [http://www.microsoft.com/en-us/download/details.aspx?id=11774]. For detailed system requirements for the SQL Server JDBC driver see this Microsoft article [https://msdn.microsoft.com/en-us/library/ms378422(v=sql.110).aspx]. Copy the sqljdbc42.jar file to the <domino>\Traveler\lib directory and restart the Domino server. Be sure to remove any old copies of the MS SQL JDBC driver from the system.
+
+
+For more information, see the documentation for Configuring IBM Traveler for enterprise database [https://www.ibm.com/support/knowledgecenter/SSYRPW_9.0.1/configurelotusnotestravelerfordb2.html]. 
+RELATED INFORMATION
+ Detailed System Requirements [http://www.ibm.com/support/docview.wss?uid=swg27045363]
+IBM Traveler Recommended Maintenance [http://www.ibm.com/support/docview.wss?uid=swg24019529]

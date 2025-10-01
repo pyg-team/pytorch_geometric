@@ -1,0 +1,125 @@
+Title: IBM JR48989: CLAIM DIALOG BOX HAS INCONSISTENT STYLING IN PROCESS PORTAL - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  In Process Portal, inconsistent styles are applied to the
+   standard task list (accessible via Work > My Tasks) and the
+   standard Team Performance and Team Task dashboards.
+   
+   On the task list, the popup that appears after claiming a task
+   is in a "blue" theme.  In Team Performance and in Team Task,
+   however, the popup that appears has a different theme instead.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A Currently working as Designed
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  Users of BPM Express, BPM Standard, and     *
+   *                  BPM Advanced.                               *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Different styling is applied to the     *
+   *                      claim dialog box in Work > My Tasks     *
+   *                      versus the claim dialog box in the      *
+   *                      dashboards (Team Performance and Team   *
+   *                      Task).                                  *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   The CSS files used by the claim dialog boxes differ between
+   Work > My Tasks and the dashboards.
+   This problem will be resolved in a future maintenance release
+   on the Business Process Manager Version 8.5 stream.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR48989
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM ADVANCED
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9400
+   
+   
+ * REPORTED RELEASE
+   850
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-01-07
+   
+   
+ * CLOSED DATE
+   2014-01-27
+   
+   
+ * LAST MODIFIED DATE
+   2014-01-27
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R800 PSY
+   UP

@@ -1,0 +1,149 @@
+Title: IBM JR44729: P.E. UNABLE TO ASSIGN TEAM MANAGER GROUP FOR LDAP GROUPS. - United States
+
+Text:
+  A FIX IS AVAILABLE
+Version 7.5.1 Fix Pack 2 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24036462]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Unable to add team manger group to ldap groups in process admin
+   console.
+   Logs show the following error PreparedStatementCallback; SQL
+   [insert into LSW_USR_GRP_XREF
+   (GROUP_ID,GROUP_NAME,DISPLAY_NAME,GROUP_TYPE,DESCRIPTION,GROUP_S
+   TATE,PARENT_GROUP_ID) values (?,?,?,?,?,?,?)]; Error for batch
+   element #1: DB2 SQL Error: SQLCODE=-803, SQLSTATE=23505,
+   SQLERRMC=2;BPMADMIN.LSW_USR_GRP_XREF, DRIVER=4.12.55; nested
+   exception is
+   com.ibm.db2.jcc.am.SqlIntegrityConstraintViolationException
+   This same problem might arise when you upgrade from TeamWorks
+   6.x to Business Process Manager 7.5.1.1.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  ifix
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  Business Process Manager Version 7.5.1 and  *
+   *                  later                                       *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Unable to assign team manager group     *
+   *                      for LDAP groups                         *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   Can't change an LDAP group as a team manger group
+   in process admin console.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The ifix is used to support BPM users to assign team manager
+   group.
+   
+   Install/Dependency information is available in the readme.txt
+   on FixCentral. When the user goes to the download files page
+   in FixCentral, the readme will be available with the fix
+   package as a separate download.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR44729
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM ADVANCED
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9400
+   
+   
+ * REPORTED RELEASE
+   751
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-11-12
+   
+   
+ * CLOSED DATE
+   2013-01-15
+   
+   
+ * LAST MODIFIED DATE
+   2013-01-15
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   BPM ADVANCED
+   
+   
+ * FIXED COMPONENT ID
+   5725C9400
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R750 PSY
+   UP

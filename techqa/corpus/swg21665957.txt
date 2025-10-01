@@ -1,0 +1,42 @@
+Title: IBM DSMICFGX/DSMUPGDX: "CTGRI0000E Could not establish a connection ..." - United States
+
+Text:
+tsm upgrade format rxa protocol TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The upgrade and instance creation wizards might fail with authentication failure after entering the instance userid and password while SSH protocol is setup and user connection works fine with SSH. 
+
+SYMPTOM
+The dsmicfgx.trc or dsmupgdx.trc shows error like below: 
+
+ at java.awt.EventDispatchThread.run(EventDispatchThread.java:133)
+Caused by: com.ibm.tivoli.remoteaccess.RemoteAccessAuthException: CTGRI0000E Could not establish a connection to the target machine with the authorization credentials that were provided.
+at com.ibm.tivoli.remoteaccess.SSHProtocol.beginSessionImpl(SSHProtocol.java:757)
+at com.ibm.tivoli.remoteaccess.BaseProtocol$BeginSession.invoke(BaseProtocol.java:1755)
+at com.ibm.tivoli.remoteaccess.util.ThreadedOperation$OperationThread.run(ThreadedOperation.java:154)
+Caused by: java.net.ConnectException: AUTHENTICATION_FAILED
+
+
+CAUSE
+SSH is setup using ssh keys. SSH password authentication must be active.
+
+
+ENVIRONMENT
+AIX, HP-UX, Linux and Solaris
+
+
+
+DIAGNOSING THE PROBLEM
+Look in dsmicfgx.trc or dsmupgdx.trc if these messages appear: 
+
+CTGRI0000E Could not establish a connection to the target machine with the authorization credentials that were provided.
+[....]
+Caused by: java.net.ConnectException: AUTHENTICATION_FAILED 
+
+Then try to connect to the instance user, using SSH. If it does not prompt for password , that is a problem. 
+
+Also look in file /etc/ssh/sshd_config if the entry "PasswordAuthentication" is set to "no".
+
+
+RESOLVING THE PROBLEM
+Look at the system SSH documentation how to enable SSH password authentication at least for the time the wizard needs to be used.

@@ -1,0 +1,56 @@
+Title: IBM Additional steps required to be followed when using Oracle versions of 11.2.0.1, 11.2.0.2,  11.2.0.3 or 11.2.0.4 to host WebSphere Partner Gateway(WPG) application database. - United States
+
+Text:
+WPG Oracle 11.2 ORA-22996: PRODUCT DOCUMENTATION
+
+ABSTRACT
+ Oracle versions of 11.2.0.1, 11.2.0.2 , 11.2.0.3 or 11.2.0.4 are supported along with WPG v6.2.1.2 or above
+
+There is a possible chance of seeing the below error in WPG logs, when trying to insert data into WPG application specific tables. ORA-22996: NEXT extent size is smaller than LOB chunksize
+
+So as to avoid these errors, it is required to mandatorily follow the steps provided in this document. 
+
+CONTENT
+To use WPG on Oracle 11.2.0.1, 11.2.0.2, 11.2.0.3 or 11.2.0.4 please follow the below steps:
+
+
+1. Upgrade Oracle from earlier version to Oracle 11.2.0.x 
+
+2. Upgrade WPG level to WPG v 6.2.1.2 or above 
+
+3. Download the attached script on the system where Oracle is installed as <path>/JR42689.sql. 
+
+4. Perform below platform specific steps to apply the database changes.
+
+Steps specific to Non-Windows platform:
+
+1. Open a terminal and switch to oracle user, su - <oracle user> e.g. su - oracle 
+2. Connect to wpg application database 
+sqlplus <wpg application db user>/<wpg application db user password>@<SID> 
+e.g. sqlplus bcgapps/bcgapps@orcl 
+3. @"<path>/JR42689.sql" 
+e.g. @"/home/oracle/JR42689.sql"
+
+Note: Make sure oracle owner has execute permission on script JR42689.sql
+
+Steps specific to Windows platform:
+
+1. Open a command prompt 
+2. Connect to wpg application database 
+sqlplus <wpg application db user>/<wpg application db user password>@<SID> 
+e.g. sqlplus bcgapps/bcgapps@orcl
+3. @"<path>\JR42689.sql"
+e.g. @"c:\JR42689.sql" 
+
+ 
+
+Script file to be downloaded and applied: 
+
+JR42689.sql [/support/docview.wss?uid=swg27028554&aid=2]JR42689.sql [/support/docview.wss?uid=swg27028554&aid=1]
+
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration WebSphere Partner Gateway Advanced Edition AIX, Linux, Solaris, Windows, Linux pSeries 6.2.1.2 Advanced, Enterprise

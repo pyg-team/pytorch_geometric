@@ -1,0 +1,219 @@
+Title: IBM IZ85718: ALLOW CLIENT APPS THAT DON'T GRANT USER WITH ANY AUTH ON TARGETQ TO RECEIVE MSG FROM ALIASQ & OPT NOT TO HAVE 2035 ERRORS LOGGED. - United States
+
+Text:
+  FIXES ARE AVAILABLE
+WebSphere MQ V7.0 Fix Pack 7.0.1.5 [http://www-01.ibm.com/support/docview.wss?uid=swg24029055]
+WebSphere MQ V7.0.1 for i5/OS Fix Pack 7.0.1.5 [http://www-01.ibm.com/support/docview.wss?uid=swg24029788]
+WebSphere MQ V6.0 Fix Pack 6.0.2.11 [http://www-01.ibm.com/support/docview.wss?uid=swg24029382]
+WebSphere MQ V6.0 for iSeries Fix Pack 6.0.2.11 [http://www-01.ibm.com/support/docview.wss?uid=swg24029383]
+WebSphere MQ 6.0 for HP OpenVMS Alpha and Itanium - Fix Pack 6.0.2.11 (FP 04) [http://www-01.ibm.com/support/docview.wss?uid=swg24032452]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  For a WMQ Java/JMS application that wants to receive a message
+   from an alias queue, if the user is not granted any
+   authorizations on the target queue, the WMQ V6/V7 Client allows
+   the application to receive the message without throwing a 2035
+   error to the application (it just logs the 2035 errors in the
+   WMQ JMS trace). But since the RACF checks on Z/OS report the
+   occurrences of all the errors encountered during the
+   application's lifetime, the 2035 errors are seen in the channel
+   exit output at the customer's end.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   This issue affects the users of the WebSphere MQ (WMQ) V6 and V7
+   classes for Java Message Service (JMS) that do not grant the
+   user with the necessary authorizations on the target queue
+   [inquire (and browse in case the target queue is a cluster
+   queue)] and attempt to receive messages from an alias queue;
+   when the WMQ queue manager (server) is on a Z OS Platform.
+   
+   Platforms affected:
+    All Distributed (iSeries, all Unix and Windows) +Java
+   ****************************************************************
+   PROBLEM SUMMARY:
+   For an application that wants to receive a message from an alias
+   queue, the WMQ V6 JMS Client does not mandate the application to
+   grant the user with inquire (and browse, in case it is a cluster
+   queue) authority on the target queue. The WMQ V6 JMS Client
+   allows the application to receive the message, without throwing
+   a 2035 error to the application (it just logs the 2035 errors in
+   the WMQ JMS trace). But since the RACF checks on Z/OS report the
+   occurrences of all the errors encountered during the
+   application's lifetime, the 2035 errors were being seen in the
+   channel exit output.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This fix introduces a new system property called
+   "com.ibm.mq.jms.useDefaultBOValues". This property can be set
+   by passing it as a JVM argument:
+   
+   For example:
+   java -Dcom.ibm.mq.jms.useDefaultBOValues=true MyApplication
+   
+   The default value of useDefaultBOValues is false.
+   
+   When com.ibm.mq.jms.useDefaultBOValues=true, the 2035 errors
+   (resulting from the user not being granted the necessary
+   authorization on the target queue) are no longer reported by
+   the RACF checks and the WMQ JMS Client uses the following
+   default values when handling poison messages:
+   
+   BOTHRESH : 0
+   BOQNAME  : null
+   
+   As a result of this, any poison messages found by the WMQ JMS
+   Client will remain on the target queue and will need to be
+   processed by a system administrator.
+   
+   When com.ibm.mq.jms.useDefaultBOValues=false, the WMQ JMS
+   Client behaves as before - the 2035 errors (resulting from the
+   user not being granted the necessary authorities on the target
+   queue) are reported by the RACF checks.
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following:
+   
+                      v7.0
+   Platform           Fix Pack 7.0.1.5
+   --------           --------------------
+   Windows            U200324
+   AIX                U839183
+   HP-UX (PA-RISC)    U839621
+   HP-UX (Itanium)    U839626
+   Solaris (SPARC)    U839622
+   Solaris (x86-64)   U839628
+   iSeries            tbc_p700_0_1_5
+   Linux (x86)        U839623
+   Linux (x86-64)     U839627
+   Linux (zSeries)    U839624
+   Linux (Power)      U839625
+   
+                      v6.0
+   Platform           Fix Pack 6.0.2.11
+   --------           --------------------
+   Windows            U200326
+   AIX                U839822
+   HP-UX (PA-RISC)    U840685
+   HP-UX (Itanium)    U840690
+   Solaris (SPARC)    U840686
+   Solaris (x86-64)   U840693
+   iSeries            tbc_p600_0_2_11
+   Linux (x86)        U840687
+   Linux (x86-64)     U840692
+   Linux (zSeries)    U840688
+   Linux (Power)      U840689
+   Linux (s390x)      U840691
+   
+   The latest available maintenance can be obtained from
+   'WebSphere MQ Recommended Fixes'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037]
+   
+   If the maintenance level is not yet available information on
+   its planned availability can be found in 'WebSphere MQ
+   Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ85718
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ AIX V7
+   
+   
+ * REPORTED COMPONENT ID
+   5724H7221
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-09-27
+   
+   
+ * CLOSED DATE
+   2010-10-26
+   
+   
+ * LAST MODIFIED DATE
+   2013-06-17
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    PM22903
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ AIX V7
+   
+   
+ * FIXED COMPONENT ID
+   5724H7221
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R700 PSY
+   UP

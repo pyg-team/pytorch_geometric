@@ -1,0 +1,25 @@
+Title: IBM Difficulty connecting to particular Oracle database on cluster using LDAP - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ I'm using SPSS for Windows to perform an ODBC importation from an Oracle database that is on a clustered server. The cluster uses LDAP instead of TNS. I'm using the Oracle Wire Protocol driver in my DNS, and I'm fairly sure I have everything configured correctly because I can connect properly to a database on a regular server that uses TNS.
+
+When I try to connect to the clustered server, however, I get the following error message:
+
+SQLDriverConnect failed :[DataDirect][ODBC Oracle Wire Protocol driver][Oracle](Description=(TMP=)(VSSNUM=153093120)(ERR=12505)(ERROR_STACK=(ERROR=(CODE=12505)(EMFI=4))))
+
+Any ideas? 
+
+RESOLVING THE PROBLEM
+It appears that the load-balancing features of Oracle databases must be accessed through an actual Oracle client. Because the Oracle Wire Protocol drivers are designed to interact directly with the Oracle database instead of working through an Oracle client, they thus do not support accessing a load-balanced database. You must configure your ODBC Data Source using a plain non-Wire Protocol ODBC driver
+
+RELATED INFORMATION
+ Need more help? Our Statistics forum is Live! [https://developer.ibm.com/answers/topics/statistics.html?smartspace=predictive-analytics]
+
+
+ 
+
+HISTORICAL NUMBER
+ 54007

@@ -1,0 +1,18 @@
+Title: IBM How many interactions are being done in day/hour on my IBM MDM Standard Edition system? - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ I want to know if there is a query I can run to find out how many of each type of interaction are being done in a day or hour on my IBM MDM Standard Edition system. 
+
+ANSWER
+The mpi_audhead table tracks when interactions are performed and the mpi_ixnhead table stores what are the types of interactions.
+
+So if you wanted to get a count of the number of times each interaction is performed on August 3rd, 2016 you could use the following query:
+select ah.ixnrecno, ih.ixncode, COUNT(*) from mpi_audhead ah, mpi_ixnhead ih 
+where ih.ixnrecno = ah.ixnrecno
+and ah.audctime >= '2016-08-03 00:00:00:000' and ah.audctime < '2016-08-04 00:00:00:000'
+GROUP by ah.ixnrecno, ih.ixncode;
+
+Note that the audctime values and format may be different depending on the format of dates and times for your specific database.

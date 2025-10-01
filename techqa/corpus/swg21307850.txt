@@ -1,0 +1,23 @@
+Title: IBM RSV-XCEL was replaced by AOS for remote screen viewing by IBM support - United States
+
+Text:
+RSV-XCEL RSVXCEL ; RSV Excell ; RSVSF ; end of service ; end of support ; 5655M1500 R640 640 R400 400 HCI6400 R650 650 R500 500 HCI6500 5655-M15 5655M15 ; 5655S9700 R660 660 R600 600 HCI6600 R670 670 R700 700 HCI6700 5655-S97 5655S97; 5655Y0400 R680 680 R800 800 HCI6800 5655-Y04 5655Y04 ; 568602601 R14X R14V R14W R230 5686-026 5686026 KIXINFO TECHNOTE (FAQ)
+
+QUESTION
+ In an effort to provide you with the most current service technology, IBM Assist On-site (AOS) replaced RSV-XCEL as the tool used by support for live remote screen viewing. AOS is a secure web based application that provides you with the same functions as RSV-XCEL. You would like to know, how does AOS work and can you use AOS? 
+
+ANSWER
+Refer to IBM Assist On-site [http://www.ibm.com/support/assistonsite/] for an overview, general information, and FAQs about AOS. 
+
+Note that RSV-XCEL required a leased line for access. AOS does not have this requirement, so you might be able to remove the leased line if only used for this service.
+
+Feel free to contact Mark Fyffe [fyffe@us.ibm.com?subject=RSV-XCEL%20replacement], US Program Manager - SoftwareXcel, if you have any questions.
+
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Host Transaction Processing CICS Batch Application Control for z/OS Maintenance z/OS 1.1, 1.1.1 Host Transaction Processing CICS Configuration Manager for z/OS Maintenance z/OS 5.1, 2.1, 1.2 Host Transaction Processing CICS Interdependency Analyzer for z/OS Maintenance z/OS 5.1, 3.2, 3.1 Host Transaction Processing CICS Online Transmission Time Optimizer Maintenance z/OS 1.2 Host Transaction Processing CICS Performance Analyzer for z/OS Maintenance z/OS 5.1, 3.2, 3.1 Host Transaction Processing CICS VSAM Recovery for z/OS Maintenance z/OS 5.1, 4.3, 4.2 Host Transaction Processing CICS VSAM Transparency for z/OS Maintenance z/OS 1.2, 2.1 Host Transaction Processing IBM Session Manager Maintenance z/OS 3.2, 3.1, 2.2 
+PRODUCT ALIAS/SYNONYM
+ CICS/TS CICS TS CICS Transaction Server

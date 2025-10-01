@@ -1,0 +1,138 @@
+Title: IBM SE53486: In RDp 8.5 debugger, hover does not work if other source members opened in the editor are in focus before debug session starts. - United States
+
+Text:
+  A FIX IS AVAILABLE
+Rational Developer for Power Systems Software Fix Pack 1 (8.5.1) for 8.5 [http://www-01.ibm.com/support/docview.wss?uid=swg24033611]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  In RDp 8.5 debugger, if other source members than the ones to be
+   debugged are opened and in focus, before the debug session is
+   started, the hover action will not work.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Close all the opened source members the editor and restart the
+   debug session.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: RD Power users who use the Integrated IBM i  *
+   *                 Debugger.                                    *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Hover over may not work in the          *
+   *                      Integrated IBM i Debugger if other      *
+   *                      files or members are opened in the      *
+   *                      editor.                                 *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   Sometimes hover over does not work in the Integrated IBM i
+   Debugger if files or members other than the debug source
+   member are open in the editor.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This problem is fixed in the RD Power 8.5.1 Fix Pack.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   SE53486
+   
+   
+ * REPORTED COMPONENT NAME
+   RPG/COBOL DEV T
+   
+   
+ * REPORTED COMPONENT ID
+   5724Y9901
+   
+   
+ * REPORTED RELEASE
+   850
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-10-03
+   
+   
+ * CLOSED DATE
+   2012-11-28
+   
+   
+ * LAST MODIFIED DATE
+   2012-11-28
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   RPG/COBOL DEV T
+   
+   
+ * FIXED COMPONENT ID
+   5724Y9901
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R850 PSY
+   UP

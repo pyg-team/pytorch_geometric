@@ -1,0 +1,77 @@
+Title: IBM Security Bulletin: Vulnerability in RC4 stream cipher affects TXSeries for Multiplatforms. (CVE-2015-2808) - United States
+
+Text:
+TXSeries; CVE-2015-2808 SECURITY BULLETIN
+
+SUMMARY
+ The RC4 “Bar Mitzvah” Attack for SSL/TLS affects TXSeries for Multiplatforms. 
+
+VULNERABILITY DETAILS
+CVEID: CVE-2015-2808 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-2808]
+DESCRIPTION: The RC4 algorithm, as used in the TLS protocol and SSL protocol, could allow a remote attacker to obtain sensitive information. An attacker could exploit this vulnerability to remotely expose account credentials without requiring an active man-in-the-middle session. Successful exploitation could allow an attacker to retrieve credit card data or other sensitive information. This vulnerability is commonly referred to as "Bar Mitzvah Attack".
+CVSS Base Score: 5
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/101851 [https://exchange.xforce.ibmcloud.com/vulnerabilities/101851] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:L/Au:N/C:P/I:N/A:N)
+
+AFFECTED PRODUCTS AND VERSIONS
+TXSeries for Multiplatforms V7.1, V8.1 and V 8.2
+
+REMEDIATION/FIXES
+
+Download the respective APAR from IBM Fix Central based on the TXSeries for Multiplatforms version that you have installed.
+
+
+
+TXSeries for Multiplatforms Version APAR 7.1 IV73492 8.1 IV73594 8.2 IV73500 WORKAROUNDS AND MITIGATIONS
+TXSeries for Multiplatforms provides an optional configurable capability to enable SSL for its IPIC communication protocol. RC4 stream cipher is enabled in the default configuration. 
+
+TXSeries V7.1.0.4 or higher will support disabling RC4 when it is configured with GSKit version 8.x. The instructions below provide guidance to disable RC4 stream cipher.
+
+
+TXSeries for Multiplatforms V7.1 
+
+If you are on TXSeries for Multiplatforms V7.1, you need to upgrade to Fixpack 4 or higher. Lower fix pack levels do not support disabling RC4. 
+
+Steps to disable RC4 (TXSeries V7.1.0.4 or higher) 
+
+1. Stop the TXSeries region. 
+
+2. If you have not configured your region to use GSKit version 8.x, set the below variable in the region’s environment file. CICS_GSKIT_VERSION=8 
+
+If your region is already configured with GSKit version 8.x then go to step 3. 
+
+ (By Default TXSeries 7.1 support GSKit version 7.x. Refer to the TXSeries infocenter for further configuration details.) 
+
+3. Set the below environment variable in the region’s environment file. CICS_SP800_131MODE=”SP800_131MODE”. This will enable SSL FIPS processing mode which will in turn disable RC4 stream cipher. 
+
+4. Restart the TXSeries region. 
+
+TXSeries for Multiplatforms V8.1 and V8.2 
+
+Steps to disable RC4 (TXSeries V8.1.0.0 or higher) 
+
+1. Stop the TXSeries region. 
+
+2. Set the below environment variable in the regions environment file 
+
+CICS_SP800_131MODE=”SP800_131MODE”. This will enable FIPS processing mode which will in turn disable RC4 stream cipher. 
+
+3. Restart the TXSeries region. 
+
+You should verify applying this configuration change does not cause any compatibility issues. Not disabling the RC4 stream cipher will expose yourself to the attack described above. IBM recommends that you review your entire environment to identify other areas where you have enabled the RC4 stream cipher and take appropriate mitigation and remediation actions. 
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v3 Guide [http://www.first.org/cvss/user-guide] 
+On-line Calculator v3 [http://www.first.org/cvss/calculator/3.0] RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/PSIRT] *The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.
+
+RELATED INFORMATION
+ A Japanese translation is available [http://www.ibm.com/support/docview.wss?uid=swg21883183]

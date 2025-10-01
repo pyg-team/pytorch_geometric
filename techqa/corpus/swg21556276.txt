@@ -1,0 +1,49 @@
+Title: IBM OutOfMemory memory thrown in generated java core file - GIS 4.3 patch 4306 - United States
+
+Text:
+STERLINGNFX TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ OutOfMemory memory thrown in generated java core file - GIS 4.3 patch 4306 
+
+SYMPTOM
+
+
+System non responsive and had to restart for recovery. System generated a Javacore fiel and threw an Out Of Memory error.
+
+Error Message 
+
+ 
+
+ 
+
+From java core file:
+
+Dump Event "systhrow" (00040000) Detail "java/lang/OutOfMemoryError" received
+
+
+RESOLVING THE PROBLEM
+
+
+Customer had not run the Tuning Wizard in the production environment. After running the Tuning Wizard the customer had not experienced this issue. 
+
+It is important to run the Tuning Wizard at least once after installing GIS. 
+
+ 
+
+HISTORICAL NUMBER
+ NFX5605 
+
+PRODUCT ALIAS/SYNONYM
+ 
+
+Severity
+
+
+Critical
+
+
+Type
+
+
+NormalFix

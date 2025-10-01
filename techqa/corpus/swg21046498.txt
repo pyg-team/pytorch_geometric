@@ -1,0 +1,132 @@
+Title: IBM Things to consider when upgrading CICS Transaction Server for z/OS - United States
+
+Text:
+Migrating migrate migration Upgrading upgrade 5655S9700 R660 660 R600 600 HCI6600 R670 670 R700 700 HCI6700 5655-S97 5655S97 ; 5655Y0400 R680 680 R800 800 HCI6800 R690 690 R900 900 HCI6900 R700 700 R000 000 HCI7000 R701 701 R100 100 HCI7100 5655Y0401 5655-Y04 5655Y04 KIXINFO upgrade2cics54 TECHNOTE (FAQ)
+
+QUESTION
+ While your situation and upgrade proposal might be unique, what are the general advantages and costs when upgrading CICS Transaction Server for z/OS? And, what is required when upgrading to the latest releases of CICS TS from earlier releases? 
+
+ANSWER
+
+
+ * Advantages to upgrading
+ * Costs and things to consider when upgrading
+ * Requirements when upgrading
+
+
+
+
+
+
+Advantages to upgrading
+
+
+Typical CICS Transaction Server for z/OS (CICS TS) features being improved and made available with each release:
+
+
+ * Improved capacity, performance, constraint relief, hardware exploitation, and better documentation
+   
+ * Consumability and productivity improvements, such as an easier installation process, new off-line tools, and runtime improvements
+   
+ * Removal of dependencies, such as those capabilities that were previously delivered in CICS TS SupportPacs and CICS TS Feature Packs being moved into CICS TS base code.
+   
+ * Better support for open standards, in particular relating to TCP/IP and web services
+   
+ * Being ready when projects need new features, rather than waiting for projects to need new features and risk delaying those features while implementing an upgrade
+
+
+In particular, for release CICS TS V5.4: 
+
+CICS TS V5.4 delivers unparalleled mixed language application serving. It adds support for a number of programming concepts that are critical to a mixed language application hosting environment, and includes: 
+ * Support for applications written to the Java EE 7 Full platform specification.
+   
+ * A powerful and new asynchronous API to extend programming language capabilities.
+   
+ * Dynamic policy-based management of applications that span multiple languages.
+   
+ * Enhanced security and resiliency of applications across all languages.
+   
+ * API extensions that enable improved interoperability with batch applications.
+   
+ * Enhanced management capabilities for applications that utilize IBM MQ for z/OS.
+   
+ * Numerous enhancements to simplify or automate common workflows.
+
+
+
+Comprehensive IBM product integration testing: 
+ * Latest maintenance is included; this includes post-general availability enhancements that are all tested together for compatibility
+   
+ * CICS TS is tested with all minimum-releases of co-requisite products, such as the z/OS operating system and other IBM co-requisite products
+   
+ * Support for Enterprise compilers, such as IBM MQ, IBM DB2, and IBM IMS
+
+
+
+See Announcement Letters for CICS Products [http://www.ibm.com/support/docview.wss?uid=swg21227090] to learn more about a specific release of CICS TS. 
+
+Back to top
+
+
+
+
+
+
+
+Costs and things to consider when upgrading
+
+
+ * The cost of upgrading the level of operating system, to support the new release of CICS TS.
+   
+ * The cost and risk of implementing prerequisite upgrade and maintenance of other tools and packages.
+   
+ * The cost and risk associated with upgrading CICS TS, especially in the planning and execution of that update.
+   
+ * The removal or announcement of stabilization of CICS TS features that may necessitate an upgrade or changes to newer solutions.
+   
+ * Some new features require new configurations, or changes to existing configurations, applications, and even development processes within your organization.
+   
+ * Avoiding any disruption to systems and applications while executing an upgrade. This can necessitate a planned phasing or rolling upgrade to be implemented.
+   
+ * Did you know? The cost of monthly license charge (MLC) between CICS TS releases is the same. This means that it costs the same for a later release of CICS TS as it does for an earlier release of CICS TS, making cost an incentive to move up to the latest releases of CICS TS.
+   
+ * The cost of staff education and re-education.
+
+See Looking up prices for CICS TS and CICS Tools [http://www.ibm.com/support/docview.wss?uid=swg21220237] if you would like to use IBMLink to check for the price of a CICS product.
+
+
+
+
+Back to top
+
+
+
+
+
+
+
+
+
+Requirements when upgrading 
+IBM provides guidance on Upgrading [https://www.ibm.com/support/knowledgecenter/SSGMCP_5.4.0/upgrading/intro.html] from previous releases of CICS TS in the product documentation, in the IBM Knowledge Center [https://www.ibm.com/support/knowledgecenter/]. In topic Changes between releases [https://www.ibm.com/support/knowledgecenter/SSGMCP_5.4.0/upgrading/changes/version_intro.html], details are provided on the impact of changes to CICS TS between versions or releases of the product. 
+
+
+The upgrading information for unsupported releases of CICS TS, such as CICS TS V2.3 and CICS TS V3, can be found under CICS Transaction Server 4.1.0 > Upgrading [http://www.ibm.com/support/knowledgecenter/SSGMCP_4.1.0/com.ibm.cics.ts.migration.doc/migrating.html?lang=en] in the IBM Knowledge Center. Note that discontinuance of service for CICS TS V4.1 and CICS TS V4.2 [https://www.ibm.com/common/ssi/cgi-bin/ssialias?infotype=an&subtype=ca&supplier=897&letternum=ENUS915-025] [https://www-01.ibm.com/common/ssi/cgi-bin/ssialias?infotype=an&subtype=ca&supplier=897&letternum=ENUS915-025]has been announced becoming effective towards the end of 2017 and 2018 respectively. Details for upgrading from CICS TS V4 to a later release of CICS TS are available under CICS Transaction Server 5.1.0 > Upgrading [https://www.ibm.com/support/knowledgecenter/en/SSGMCP_5.1.0/com.ibm.cics.ts.migration.doc/topics/migrating.html] in the IBM Knowledge Center. 
+
+When upgrading CICS TS you should always review cross product dependencies in the CICS Preventative Service Planning (PSP) Buckets [http://www.ibm.com/support/docview.wss?uid=swg21231874] and the Detailed system requirements [http://www.ibm.com/support/docview.wss?uid=swg27006382] for the release of CICS TS that you are installing. 
+
+IBM also recommends that you review Upgrading information for CICS when changing releases of CICS [http://www.ibm.com/support/docview.wss?uid=swg21207399], which provides information on problems you might encounter when upgrading CICS and also what to do to prevent the problems from occurring during upgrading. 
+
+
+Back to top
+
+RELATED INFORMATION
+ Ordering CICS products and maintenance [http://www.ibm.com/support/docview.wss?uid=swg21049360]
+CICS Transaction Server family page [http://www.ibm.com/software/htp/cics/tserver/]
+Finding CICS product documentation in Knowledge Center [https://developer.ibm.com/answers/questions/170485/finding-cics-product-documentation-in-ibm-knowledg.html]
+
+
+
+
+PRODUCT ALIAS/SYNONYM
+ CICS/TS CICS TS CICS Transaction Server

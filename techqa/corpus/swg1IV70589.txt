@@ -1,0 +1,251 @@
+Title: IBM IV70589: CATALOG CONTAINING A REGKEYVALUEEQUAL SIGNATURE WITH AN EMPTY STRING IN ENTRY (VALUE NAME) CAUSES ERROR IN CANONICAL_PARSER - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Custom catalog being imported contains the following signature:
+   ======================
+   <OtherSignature guid="32aa4812b5a54eda9b167a53197ed1ad"
+   dataInput="0" deleted="false" modified="2014-03-26T17:42:52.917"
+    created="2014-03-26T17:42:52.917" definitionSource="1407200202"
+    confidenceLevel="2"
+   discoveredItem="a5e82182d5e54450bbfa5b4980faa8ca" platform="0"
+   type="2.4">
+   <body><![CDATA[<Variable name="IS_INSTALLED"><RegKeyValueEqual
+   key="HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersio
+   n\Installer\Folders" entry=""
+   value="C:\\WINDOWS\\winsxs\\x86_Microsoft.MSXML2_6bd6b9abf345378
+   f_4.20.9876.0_x-ww_a621d1d5\\"/></Variable>]]></body>
+   </OtherSignature>
+   ======================
+   Notice the empty string where the registry key value name should
+   be:  entry=""
+   
+   Attempting to import this catalog into SUA, will result in the
+   following:
+   ---------------------------------------
+   WARN: Catalog update could not be applied  Using
+   old catalog. Error
+   was interning empty string: org/jruby/RubyString.java:7029:in
+   &#65461;to_sym'./domains/sam/lib/sam/canonical_parser.rb:1899:in
+   &#65461;make_other_signature'./domains/sam/lib/sam/canonical_parser.rb:
+   1526:in
+   &#65461;end_element'C:/Program Files (x86)/BigFix
+   Enterprise/TEMA/work/tema/webapp/WEB-INF/gems/gems/nokogiri-1.5.
+   7.1967db
+   5f1d8dc76ac4fa405ee00bde146495226a-java/lib/nokogiri/xml/sax/doc
+   ument.rb
+   :127:in
+   &#65461;end_element_namespace'nokogiri/XmlSaxParserContext.java:241:in
+   &#65461;parse_with'C:/Program Files (x86)/BigFix
+   Enterprise/TEMA/work/tema/webapp/WEB-INF/gems/gems/nokogiri-1.5.
+   7.1967db
+   5f1d8dc76ac4fa405ee00bde146495226a-java/lib/nokogiri/xml/sax/par
+   ser.rb:9
+   5:in &#65461;parse_io'C:/Program Files (x86)/BigFix
+   Enterprise/TEMA/work/tema/webapp/WEB-INF/gems/gems/nokogiri-1.5.
+   7.1967db
+   5f1d8dc76ac4fa405ee00bde146495226a-java/lib/nokogiri/xml/sax/par
+   ser.rb:8
+   2:in &#65461;parse'C:/Program Files (x86)/BigFix
+   Enterprise/TEMA/work/tema/webapp/WEB-INF/domains/sam/app/models/
+   sam/cata
+   log.rb:238:in &#65461;load'org/jruby/RubyIO.java:1139:in
+   &#65461;open'C:/Program
+   Files (x86)/BigFix
+   Enterprise/TEMA/work/tema/webapp/WEB-INF/domains/sam/app/models/
+   sam/cata
+   log.rb:238:in &#65461;load'C:/Program Files (x86)/BigFix
+   Enterprise/TEMA/work/tema/webapp/WEB-INF/domains/sam/app/models/
+   sam/cata
+   log.rb:307:in &#65461;stage'C:/Program Files (x86)/BigFix
+   Enterprise/TEMA/work/tema/webapp/WEB-INF/domains/sam/domain.rb:1
+   50:in
+   &#65461;Domain'org/jruby/RubyProc.java:270:in
+   &#65461;call'org/jruby/RubyProc.java:220:in &#65461;call'C:/Program Files
+   (x86)/BigFix
+   Enterprise/TEMA/work/tema/webapp/WEB-INF/lib/etl/task.rb:11:in
+   &#65461;run'C:/Program Files (x86)/BigFix
+   Enterprise/TEMA/work/tema/webapp/WEB-INF/lib/etl/tasks.rb:20:in
+   &#65461;run'org/jruby/RubyArray.java:1615:in &#65461;each'C:/Program Files
+   (x86)/BigFix
+   Enterprise/TEMA/work/tema/webapp/WEB-INF/lib/etl/tasks.rb:18:in
+   &#65461;run'C:/Program Files (x86)/BigFix
+   Enterprise/TEMA/work/tema/webapp/WEB-INF/lib/etl/runner.rb:53:in
+   &#65461;run'C:/Program Files (x86)/BigFix
+   Enterprise/TEMA/work/tema/webapp/WEB-INF/lib/sequel/extensions/d
+   ate_util
+   s.rb:18:in &#65461;freeze_date'C:/Program Files (x86)/BigFix
+   Enterprise/TEMA/work/tema/webapp/WEB-INF/gems/gems/sequel-3.48.0
+   .ccb673f
+   0396980c7b6b6314f08ef9c16332a7cf7/lib/sequel/connection_pool/thr
+   eaded.rb
+   :115:in &#65461;hold'C:/Program Files (x86)/BigFix
+   Enterprise/TEMA/work/tema/webapp/WEB-INF/gems/gems/sequel-3.48.0
+   .ccb673f
+   0396980c7b6b6314f08ef9c16332a7cf7/lib/sequel/database/connecting
+   .rb:240:
+   in &#65461;synchronize'C:/Program Files (x86)/BigFix
+   Enterprise/TEMA/work/tema/webapp/WEB-INF/lib/sequel/extensions/d
+   ate_util
+   s.rb:9:in &#65461;freeze_date'C:/Program Files (x86)/BigFix
+   Enterprise/TEMA/work/tema/webapp/WEB-INF/lib/etl/runner.rb:52:in
+   &#65461;run'C:/Program Files (x86)/BigFix
+   Enterprise/TEMA/work/tema/webapp/WEB-INF/lib/etl/runner.rb:124:i
+   n
+   &#65461;within_import'C:/Program Files (x86)/BigFix
+   Enterprise/TEMA/work/tema/webapp/WEB-INF/lib/dss/logger.rb:12:in
+   &#65461;log_to'C:/Program Files (x86)/BigFix
+   Enterprise/TEMA/work/tema/webapp/WEB-INF/lib/etl/runner.rb:121:i
+   n
+   &#65461;within_import'org/jruby/RubyKernel.java:1787:in
+   &#65461;tap'C:/Program Files
+   (x86)/BigFix
+   Enterprise/TEMA/work/tema/webapp/WEB-INF/lib/etl/runner.rb:112:i
+   n
+   &#65461;within_import'C:/Program Files (x86)/BigFix
+   Enterprise/TEMA/work/tema/webapp/WEB-INF/lib/etl/runner.rb:28:in
+   &#65461;run'C:/Program Files (x86)/BigFix
+   Enterprise/TEMA/work/tema/webapp/WEB-INF/lib/etl/vm.rb:31:in
+   &#65461;run'C:/Program Files (x86)/BigFix
+   Enterprise/TEMA/work/tema/webapp/WEB-INF/lib/etl.rb:72:in
+   &#65461;run'C:/Program Files (x86)/BigFix
+   Enterprise/TEMA/work/tema/webapp/WEB-INF/lib/etl.rb:59:in
+   &#65461;run'org/jruby/RubyProc.java:270:in
+   &#65461;call'org/jruby/RubyProc.java:224:in &#65461;call'
+   ---------------------------------------
+   
+   The entry="" is unexpected as the Key Value Name is a required
+   value.  This APAR is to report that the resulting error message
+   should identify which signature is in error and what that error
+   is.  Additionally, the incorrect signature should just be
+   skipped (allowing other signatures to be imported).
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Remove the invalid signature from the catalog or correct the
+   signature so that it specifies a key value name:
+   entry="Something"
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   Import of a custom software catalog that contains signatures
+   with empty registry key values fails
+   Behavior after you install the update:
+   Signatures with empty registry key values are not supported.
+   They are skipped and the import finishes successfully.
+   ****************************************************************
+   * RECOMMENDATION: Apply appropriate update when available or
+   * refer to the documentation update
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix for this APAR is contained in the following maintenance
+   packages:
+    | Update | SUA 2.2.185 site 62
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV70589
+   
+   
+ * REPORTED COMPONENT NAME
+   IEM SW USE ANL
+   
+   
+ * REPORTED COMPONENT ID
+   5725F5700
+   
+   
+ * REPORTED RELEASE
+   900
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-03-05
+   
+   
+ * CLOSED DATE
+   2015-06-30
+   
+   
+ * LAST MODIFIED DATE
+   2015-06-30
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   IEM SW USE ANL
+   
+   
+ * FIXED COMPONENT ID
+   5725F5700
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R910 PSY
+   UP

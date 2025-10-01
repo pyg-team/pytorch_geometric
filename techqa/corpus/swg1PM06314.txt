@@ -1,0 +1,199 @@
+Title: IBM PM06314: TELNET S0C4 IN GSK_SECURE_SOCKET_INIT AFTER TELNET SSL TASK RESTARTED - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  An abend in Telnet's SSL task occurred, causing Telnet to
+   reattach the SSL task.  When Telnet tried to start new
+   secure connections on the task, each connection abended in
+   gsk_secure_socket_init +29C trying to use an invalid pointer to
+   the getpeername function.
+   The following messages were seen showing the original error
+   and the errors after the SSL task was reattached:
+   EZZ6005I TELNET SSL TASK TERMINATED, RSN =    0.
+   EZZ6005I TELNET SSL TASK RESTART ATTEMPTED, RSN =    0.
+   EZZ4215I TELNET ABEND - DUMPING
+   EZZ6034I TELNET CONN 00001607 LU **N/A** CONN DROP 6002
+     IP..PORT: xxx.xx.xxx.xxx..3349               EZBTTSMT
+   .
+   There may also be a CEEDUMP for a U4094 produced with message
+   CEE3204S The system detected a protection exception (System
+   Completion
+   Code=0C4)
+   From entry point gsk_secure_socket_init at compile unit offset
+   +0000029C
+   at entry offset +0000029C at address 0EC59F34.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All users of Communications Server for       *
+   *                 z/OS Version 1 Release 9,                    *
+   *                 z/OS Version 1 Release 10, and               *
+   *                 z/OS Version 1 Release 11 IP Telnet          *
+   *                 facilities using SSL.                        *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: CEEDUMP reports an abend0c4 in          *
+   *                      routine gsk_secure_socket_init at       *
+   *                      offset x'29C' following reattach        *
+   *                      of the Telnet SSL task.                 *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   The problem is summarized as follows:
+   
+   1. A Telnet server was started using a configuration which
+      specified a SECUREPORT.
+   
+   2. At some point in time, a U4088 abend occurred during SSL
+      processing.  Documentation was not available to determine
+      the reason for this abend.  Telnet recovery processing
+      reattached the SSL task (EZBTTSSL).  Subsequent
+      connections to the secure port, however, resulted in
+      an abend0c4 in routine gsk_secure_socket_init.  This
+      abend was diagnosed from a CEEDUMP.
+   
+   4. The abend in gsk_secure_socket_init occurred because of
+      a residual pointer.  When the Telnet SSL task was
+      reattached, pointers associated with the GSKSSL load
+      module were not reset and still referred to the old
+      instance of the load module.
+   +-------------------------------------------------------------+
+   + Please check our Communications Server for OS/390 homepages +
+   + for common networking tips and fixes.  The URL for these    +
+   + homepages can be found in Informational APAR II11334 [http://www-01.ibm.com/support/docview.wss?uid=isg1II11334].       +
+   +-------------------------------------------------------------+
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  To resolve this problem, Telnet will be modified to
+   associate the GSKSSL load module with the EZBTZMST task.
+   The GSKSSL load module is loaded by EZBTZMST during
+   Telnet initialization, and will now be unloaded when
+   the EZBTZMST task terminates (Telnet is ended).  The
+   Telnet SSL task,  EZBTTSSL, will no longer load GSKSSL.
+   
+   * Cross Reference between External and Internal Names
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM06314
+   
+   
+ * REPORTED COMPONENT NAME
+   TCP/IP V3 MVS
+   
+   
+ * REPORTED COMPONENT ID
+   5655HAL00
+   
+   
+ * REPORTED RELEASE
+   190
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2010-01-29
+   
+   
+ * CLOSED DATE
+   2010-03-02
+   
+   
+ * LAST MODIFIED DATE
+   2010-04-03
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UK54819 UK54820 UK54821
+   
+   
+
+MODULES/MACROS
+ *  EZBTZMST
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TCP/IP V3 MVS
+   
+   
+ * FIXED COMPONENT ID
+   5655HAL00
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R1A0 PSY UK54819 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK54819]
+   UP10/03/31 P F003
+   
+   
+ * R1B0 PSY UK54820 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK54820]
+   UP10/03/31 P F003
+   
+   
+ * R190 PSY UK54821 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK54821]
+   UP10/03/31 P F003
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

@@ -1,0 +1,37 @@
+Title: IBM Session Manager 2.1 End of Support announcement - United States
+
+Text:
+ISM 2.1 eos ; end of support; withdrawal from support; withdrawn from support ; out of support; product lifecyle; end of lifecycle; withdrawal announcement letter ; Software service discontinuance ; 5697N6100 R100 R10E R10K PRODUCT LIFECYCLE
+
+ABSTRACT
+ IBM Session Manager for z/OS (ISM) V2.1 was withdrawn from support 30 September 2013. This document contains a link to the End of Service (EOS) announcement letter and product replacement information. 
+
+CONTENT
+The Software service discontinuance announcement letter (EOS letter) indicating that ISM V2.1 was withdrawn from support 30 September 2013 is 912-144 [http://www.ibm.com/common/ssi/cgi-bin/ssialias?subtype=ca&infotype=an&appname=iSource&supplier=897&letternum=ENUS912-144]. The following product replacement information is included in this announcement: 
+
+5697-N61, IBM Session Manager for z/OS , V2.1 is replaced by 5655-U98, IBM Session Manager for z/OS , V3.1, announced in Software Announcement 211-024 [http://www.ibm.com/common/ssi/cgi-bin/ssialias?infotype=an&subtype=ca&appname=gpateam&supplier=897&letternum=ENUS211-024], dated February 22, 2011.
+
+See the Announcement letters for CICS products [http://www.ibm.com/support/docview.wss?uid=swg21227090] if you are interested in upgrading to the latest release of ISM, like V3.2 with a general availability (GA) date of 2 November 2012, or any other CICS products.
+
+IBM can offer a fee based service extension for ISM V2.1 if you need more time to upgrade. A service extension entitles you to continue to receive the level of support that you receive today using the same channels into IBM, including raising PMRs and APARs. If you would like to find out more about CICS service extensions, contact your local IBM Sales Representative: 
+
+ * US Customers, contact Customer Support Operations at 877-426-6006 option #2. If you give the support representative your customer number they can find your sales representative. 
+   
+   
+ * Customers in other geographies should refer to the IBM directory of worldwide support contacts to find sales contact numbers in your region.
+   IBM directory of worldwide support contacts [http://www.ibm.com/planetwide/]
+   
+   
+
+RELATED INFORMATION
+#IBM Session Manager [http://www.ibm.com/software/htp/cics/smanag/]
+End of Support dates for CICS products [http://www.ibm.com/support/docview.wss?uid=swg21154953]
+
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Host Transaction Processing CICS Transaction Server Availability z/OS 
+PRODUCT ALIAS/SYNONYM
+ ISM

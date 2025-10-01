@@ -1,0 +1,168 @@
+Title: IBM IZ75028: EMAIL PROBE 3_2  STOPS RESPONDING / RE CONNECTING               INTERMITTENTLY WITH THE CONNECTING MONITORED POP3 MAIL SERVER. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Email Probe version 3_2 has stopped communicating with the mail
+   server.
+   
+   
+   Message Level was in Debug mode, the last message is 'Connecting
+   to mail server and no response, no timeout
+   
+   Snoop says no TCP/IP traffic with the mail server.
+   The destination is reachable with ping.
+   
+   
+   Versions are: 7.2.1
+   
+   - probe-nco-p-email-3_2
+   - probe-nonnative-base-7_0
+   
+   Debug settings:
+   NCO_P_NONNATIVE_TRANSCRIPT=/opt/netcool/omnibus/log/nonnative.lo
+   g
+   NDE_FORCE_LOG_MODULE=/opt/netcool/omnibus/log/nonnative_forced.l
+   og
+   NDE_DEFAULT_LOG_LEVEL=debug
+   
+   
+   + Snoop and Messagelevel debug needed to isolate issue.
+   
+   Verfied POP3 Server available at time of problem : Y
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  NA/
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   All users that face the problem below may upgrade to this patch.
+   ****************************************************************
+   PROBLEM DESCRIPTION:
+   Email Probe version 3_2 has stopped communicating with the mail
+   server.
+   
+   
+   Message Level was in Debug mode, the last message is
+   'Connecting
+   to mail server and no response, no timeout
+   
+   
+   Snoop says no TCP/IP traffic with the mail server.
+   The destination is reachable with ping.
+   
+   
+   Versions are: 7.2.1
+   
+   - probe-nco-p-email-3_2
+   - probe-nonnative-base-7_0
+   
+   Debug settings:
+   NCO_P_NONNATIVE_TRANSCRIPT=/opt/netcool/omnibus/log/nonnative.lo
+   g
+   NDE_FORCE_LOG_MODULE=/opt/netcool/omnibus/log/nonnative_forced.l
+   og
+   NDE_DEFAULT_LOG_LEVEL=debug
+   
+   
+   + Snoop and Messagelevel debug needed to isolate issue.
+   
+   Verfied POP3 Server available at time of problem : Y
+   
+   ****************************************************************
+   RECOMMENDATION:
+   Upgrade to probe patch 4_1
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ75028
+   
+   
+ * REPORTED COMPONENT NAME
+   EMAIL PROBE
+   
+   
+ * REPORTED COMPONENT ID
+   5724P09EM
+   
+   
+ * REPORTED RELEASE
+   100
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-04-23
+   
+   
+ * CLOSED DATE
+   2010-06-25
+   
+   
+ * LAST MODIFIED DATE
+   2010-06-25
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R100 PSN
+   UP

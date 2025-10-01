@@ -1,0 +1,181 @@
+Title: IBM IZ70610: ATTRIBUTES DO NOT COME ACROSS AFTER ATTEMPTING TO DELETE THE USE WITH ITEM IN THE CLASSIFICATIONS - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Tested in Maximo 7.1.1.4 Out of the Box and also on 7.1.1.6
+   
+   Went into the classification application and brought up
+   classification 7
+   
+   Made sure it had Attributes and that the USE with ITEM was
+   entered as a row
+   
+   Tried to Delete the USE WITH ITEM option received the following
+   Error
+   
+   BMXAA0201E - This classification must have its Items flag
+   selected because it is currently being used to classify one or
+   more Items. <--- so far this is correct
+   
+   Clicked on OK and Saved my changes
+   
+   Went to create a ITEM DENISETEST
+   Went to classify and selected 7 as my classification in the
+   specification Tab
+   
+   Notice that none of my Attributes came over to my newly created
+   ITEM, i cannot add the USE with ITEM in the classification cause
+   it is still there
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: maximo                                       *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: ATTRIBUTES DO NOT COME ACROSS AFTER     *
+   *                      ATTEMPTING TO DELETE THE USE  WITH ITEM *
+   *                      IN THE CLASSIFICATIONS                  *
+   *                                                              *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   *                                                              *
+   *                                                              *
+   *                                                              *
+   ****************************************************************
+   ATTRIBUTES DO NOT COME ACROSS AFTER ATTEMPTING TO DELETE THE
+   USE  WITH ITEM IN THE CLASSIFICATIONS
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  <The problem is fixed. In classifications app, although it did
+   not let delete of the Use With Item because the classification
+   is used by items, it incorrectly deleted the ClassSpecUseWith
+   records for the ITEM object.  User can verify that in clicking
+   on the icon Use With Object Detail in the Attributes table
+   window.  This is why the user could still see the
+   classification but attributes did not come over, because the
+   Use With Object details records were gone. Fixed by not
+   deleting the classspecusewith records when there is a problem
+   in deleting the Use With object.>
+   
+   
+   
+   
+   
+   The fix for this APAR is contained in the following maintenance
+   package:
+   
+     | release\fix pack | REL 7.1.1.7 - BS
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ70610
+   
+   
+ * REPORTED COMPONENT NAME
+   ASSETS
+   
+   
+ * REPORTED COMPONENT ID
+   5724R46AS
+   
+   
+ * REPORTED RELEASE
+   711
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-02-17
+   
+   
+ * CLOSED DATE
+   2010-02-20
+   
+   
+ * LAST MODIFIED DATE
+   2010-02-20
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  MAXIMO
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ASSETS
+   
+   
+ * FIXED COMPONENT ID
+   5724R46AS
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R711 PSY
+   UP

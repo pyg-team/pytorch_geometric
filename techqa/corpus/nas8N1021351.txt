@@ -1,0 +1,23 @@
+Title: IBM PowerVC: ICO or CMO deployed VMs will fold name to lower case - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Why does HMC report deployed LPAR names with all lower case letters if the requested name of the deployed LPAR from IBM Cloud Orchestrator or IBM Cloud Manager with OpenStack included uppercase letters? 
+
+CAUSE
+IBM Cloud Manager with Openstack 4.3 sends the request to PowerVC via the ego scheduler task.
+This case folds all Power VM names to lower case.
+
+
+ANSWER
+To explain this issue let's assume IBM Cloud Orchestrator 2.4 or 2.5 (any fixpack), deploys a Power based LPAR (KVM or PowerVM), containing an upper case value in the name. For example, "TestLpar". The ICO User interface will report the VM name as "TestLpar", however on the HMC the actual LPAR name will be "testlpar". 
+
+ 
+
+This is a current limitation of IBM Cloud Manager with Openstack 4.3. 
+
+There is currently no option to provide uppercase support in Power LPAR naming if the VM is created from CMO or ICO. 
+
+Creating LPARs directly in PowerVC does support uppercase lpar names.

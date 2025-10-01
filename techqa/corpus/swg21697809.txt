@@ -1,0 +1,77 @@
+Title: IBM Disable WebSphere security for Dashboard Application Service Hub (DASH) - United States
+
+Text:
+DASHL2ADMIN; DISABLE; SECURITY; SERVER.XML; WebSphere; wsadmin TECHNOTE (FAQ)
+
+QUESTION
+ What is the procedure to disable WebSphere security if users are unable to log in to DASH? 
+
+CAUSE
+Login problems may occur for various reasons, changing configurations, password issue etc.. It may be necessary to disable security in order to login directly to WebSphere to correct security configuration problems. 
+
+ANSWER
+Use the following instructions to disable security in WebSphere 
+
+Important Note: After WebSphere security is successfully disabled, you will not be able to login to DASH. You have to login to the WebSphere Administration Console directly to fix any security issues. 
+
+1) Stop the DASH server. 
+
+ <JazzSM_HOME>/profile/bin/stopServe.[sh || bat] server1
+The stopServer command will prompt for the primary administrative user for DASH (usually "smadmin") and the the password. If the stop command will not accept the password for the primary administrative user, you will have to kill the Java process.
+Linux or AIX
+JazzSM example:
+[root@nc9053115058 JazzSM]# ps -ef | grep -v grep | grep JazzSM
+root 13266 1 0 Feb13 ? 00:08:23 /opt/IBM/WebSphere/AppServer/java/bin/java
+$ kill -9 13266; ( yours will most likely have a different java pid )
+Windows:
+Cntrl Alt Delete -> "start Task Manager" -> Proccesses
+You will see a java.exe running associated with ther userid running DASH. End that process.
+
+2) There are two ways to disable the WebSphere security:
+
+Command Line: 
+1. At the command prompt, type the following command:
+<JazzSM_HOME>/profile/bin/wsadmin.[sh || bat] -conntype NONE
+2. When the system command prompt redisplays, type the following command:
+securityoff
+3. Type quit to exit wsadmin
+
+Edit the security.xml file:
+1. Create a backup of the security.xml file located in the <JazzSM HOME/profile/config/cells/
+JazzSMNode01Cell directory. 
+
+2. Edit the original security.xml file as follows: 
+- find the first instance of the string "enabled". It should be for the tag "<security:Security"
+- change enabled="true" attribute to enabled="false"
+- save the security.xml file.
+
+Example before:
+
+[/support/docview.wss?uid=swg21697809&aid=1] [/support/docview.wss?uid=swg21697809&aid=1]
+[http://www-01.ibm.com/support/docview.wss?uid=swg21499504&aid=1]
+Example after:
+
+[/support/docview.wss?uid=swg21697809&aid=2] [/support/docview.wss?uid=swg21697809&aid=2]
+
+3) Start the DASH server:
+<JazzSM HOME>/profile/bin/startServer.[sh || bat] server1
+
+4) Login directly to WebSphere Administration Console using default port 16316 and correct any security configuration issues by accessing the WebSphere Console. 
+
+You can also check the serverindex.xml file for the value of "WC_adminhost_secure" 
+<JazzSM_HOME>/profile/config/cells/JazzSMNode01Cell/nodes/JazzSMNode01/serverindex.xml
+
+<specialEndpoints xmi:id="NamedEndPoint_1183122129649" endPointName="WC_adminhost_secure">
+<endPoint xmi:id="EndPoint_1183122129649" host="*" port="16316"/>
+
+https:// :16316/ibm/console/logon.jsp [https://9.53.115.58:17316/ibm/console/logon.jsp]
+
+5) Once the security configuration is corrected, re-enable security. Click Security > Global security. Ensure the "
+Enable administrative security " and "Enable application security " options are checked, and then click Apply
+(bottom of page), and then Save.
+
+[/support/docview.wss?uid=swg21697809&aid=3] [/support/docview.wss?uid=swg21697809&aid=3]
+
+6) Restart the DASH server process again, and verify user logins are working.
+$ <JazzSM HOME>/profile/bin/stopServer.[sh || .bat]
+$ <JazzSM HOME>/profile/bin/startServer.[sh || .bat]

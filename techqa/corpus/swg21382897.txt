@@ -1,0 +1,91 @@
+Title: IBM Table target with commit interval fails with DB2 XA JDBC Driver provider in DWE Administration Console V9.1.x release. - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When a DB2 JDBC Driver Provider (XA) connection is used from WebSphere, setting the commit interval in a Table Target data flow operator can result in a failed execution. Control flows that run successfully in the Design Studio might fail when executed from the DWE Administration Console with the error "JDBCLoad: SQL Exception. SQL state = null; error code = -99999; error
+Message = [ibm][db2][jcc][t4][2028][11149] Actual code point, 0x2213
+does not match expected code point, 0x2408." 
+
+SYMPTOM
+The following errors will be received in the application process log: 
+
+JDBCLoad: SQL Exception. SQL state = null; error code = -99999; error
+Message = [ibm][db2][jcc][t4][2028][11149] Actual code point, 0x2213
+does not match expected code point, 0x2408.
+
+Errors in SystemErr.log:
+
+com.ibm.websphere.ce.cm.ObjectClosedException: DSRA9110E: Connection is closed.
+
+Errors in SystemOut.log:
+
+LocalTranCoor E WLTC0016E: Resource 
+jdbc/ais failed to complete. Exception stack trace follows: 
+javax.transaction.xa.XAException
+
+
+
+CAUSE
+In the DWE Administration Console, when the Table Target operator is running in a batch mode with the commit interval set, the SQW application will execute a COMMIT statement if the batch interval is different from the commit interval. The COMMIT statement is not valid in an XA transaction, which results in the described failure.
+
+
+
+RESOLVING THE PROBLEM
+There are two workarounds to resolve this issue: 
+
+1) In the Design Studio when building the data flows, do not set a commit interval.
+This is generally not an option because there is usually a reason for setting the commit interval during the development of the data flow.
+
+2) In the Admin Console, use a WebSphere-managed connection for the target warehouse database (not the metadata database), but create the connection using the connection pooling JDBC driver provider, not the DB2 XA JDBC driver provider. The COMMIT statement is acceptable when using a connection pooling JDBC driver provider and there is no benefit to using the DB2 XA JDBC driver provider because the application code does not use XA transactions.
+
+In the 9.1.x release, you might need to create a new JDBC provider from within WebSphere to avoid using the DB2 XA JDBC driver provider. 
+
+
+Here are the steps to do this: 
+
+1) Login to the WebSphere Administration Console (not the DWE Admin Console).
+
+2) Expand the Resources menu and choose "JDBC Providers". There is likely only one provider (the XA version), named "DB2 Universal JDBC Driver Provider (XA)". 
+
+If a connection pooling JDBC provider exists, skip ahead to step 6.
+
+3) Click on the "New" button to create a new provider.
+
+4) In the Configuration panel that is displayed, select the following settings: 
+Database type: DB2
+Provider type: DB2 Universal JDBC Driver Provider 
+Implementation Type: Connection pool data source 
+
+5) On the next page select OK to accept the changes.
+
+6) Click on the "DB2 Universal JDBC Driver Provider" link to open the provider.
+
+7) Click on the "Data Sources" option under "Additional Properties".
+
+8) Click on the "New" button to create the connection to your database.
+
+9) Alter the JNDI name to something useful (like jdbc/DWESAMP). 
+Note: if you are already using a WebSphere-managed data source, you need to delete the existing DB2 XA JDBC driver connection before creating a new one. This allows you to reuse the same JDBC connection name. Unfortunately, there is no way to change the driver type of an existing JDBC connection; you must delete the DB2 XA JDBC driver version and create a connection pooled version.
+
+10) Choose a "Component Managed Authentication Alias". 
+If you don't have one, you can use the link on the right side of the page to create one.
+
+11) Fill in the database name, server, and port number.
+
+12) Click on the "Save" link to save the configuration and test the connection.
+
+If you were previously using a WAS Data Source and you reused the same name, you are finished.
+
+If you were using a DWE-managed data source, you need to alter the data source settings from the DWE Administration Console to use the WAS connection.
+
+Steps to do this:
+
+
+ 1. From the DWE Administration Console -> DWE SQL Warehousing -> Resources -> Manage Data sources page, choose the data source that you want to change. 
+    You must have an existing WAS data source already defined from the above steps in WebSphere Admin console with the exact same name. 
+    
+ 2. Change the "Attach to WAS Data Source" value to "Yes" and update the user ID and password. 
+    
+ 3. Choose "Apply" and test the connection to confirm that you have a connection to the WebSphere data source.

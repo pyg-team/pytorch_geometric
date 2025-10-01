@@ -1,0 +1,84 @@
+Title: IBM Security Bulletin: CVE-2017-3167, CVE-2017-3169, CVE-2017-7659, CVE-2017-7668 and CVE-2017-7679 in IBM i HTTP Server - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ HTTP Server is supported by IBM i. IBM i has addressed the applicable CVEs. 
+
+VULNERABILITY DETAILS
+CVEID: CVE-2017-7679 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2017-7679]
+DESCRIPTION: Apache HTTPD could allow a remote attacker to obtain sensitive information, caused by a buffer overread in mod_mime. By sending a specially crafted Content-Type response header, a remote attacker could exploit this vulnerability to read one byte past the end of a buffer.
+CVSS Base Score: 5.3
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/127420 [https://exchange.xforce.ibmcloud.com/vulnerabilities/127420] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:N/A:N) 
+
+CVEID: CVE-2017-7668 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2017-7668]
+DESCRIPTION: Apache HTTPD is vulnerable to a denial of service, caused by a buffer overread in the ap_find_token() function. By sending a specially crafted sequence of request headers, a remote attacker could exploit this vulnerability to cause a segmentation fault.
+CVSS Base Score: 5.3
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/127419 [https://exchange.xforce.ibmcloud.com/vulnerabilities/127419] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:L) 
+
+CVEID: CVE-2017-7659 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2017-7659]
+DESCRIPTION: Apache HTTPD is vulnerable to a denial of service, caused by a NULL pointer dereference in the mod_http2 component. By sending a specially crafted HTTP/2 request, a remote attacker could exploit this vulnerability to cause the server process to crash.
+CVSS Base Score: 5.3
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/127418 [https://exchange.xforce.ibmcloud.com/vulnerabilities/127418] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:L) 
+
+CVEID: CVE-2017-3169 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2017-3169]
+DESCRIPTION: Apache HTTPD is vulnerable to a denial of service, caused by a NULL pointer dereference in mod_ssl. By sending a specially crafted HTTP request to an HTTPS port, a remote attacker could exploit this vulnerability to cause a denial of service.
+CVSS Base Score: 5.3
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/127417 [https://exchange.xforce.ibmcloud.com/vulnerabilities/127417] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:L) 
+
+CVEID: CVE-2017-3167 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2017-3167]
+DESCRIPTION: Apache HTTPD could allow a remote attacker to bypass security restrictions, caused by the use of the ap_get_basic_auth_pw() function by third-party modules outside of the authentication phase. A remote attacker could exploit this vulnerability to bypass authentication requirements.
+CVSS Base Score: 5.3
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/127416 [https://exchange.xforce.ibmcloud.com/vulnerabilities/127416] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:L/A:N)
+
+AFFECTED PRODUCTS AND VERSIONS
+Releases 7.1, 7.2 and 7.3 of IBM i are affected. 
+
+REMEDIATION/FIXES
+The issue can be fixed by applying a PTF to IBM i.
+
+Releases 7.1, 7.2 and 7.3 of IBM i are supported and will be fixed. 
+
+http://www-933.ibm.com/support/fixcentral/ [http://www-933.ibm.com/support/fixcentral/]
+The IBM i PTF numbers are:
+
+Release 7.1 – SI65281 and SI65282
+Release 7.2 – SI65279 and SI65280
+Release 7.3 – SI65194 and SI65201
+
+Important note: IBM recommends that all users running unsupported versions of affected products upgrade to supported and fixed version of affected products.
+
+WORKAROUNDS AND MITIGATIONS
+None
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v3 Guide [http://www.first.org/cvss/user-guide] 
+On-line Calculator v3 [http://www.first.org/cvss/calculator/3.0] 
+
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY. 
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Operating System IBM i 7.3 Operating System IBM i 7.2 Operating System IBM i 7.1

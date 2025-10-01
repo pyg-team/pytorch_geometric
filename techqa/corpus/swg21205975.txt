@@ -1,0 +1,26 @@
+Title: IBM Using WebSphere Application Server shared libraries at build time - United States
+
+Text:
+RAD; WSAD; WAS; shared libraries; shared library; admin console; console; PMR 34613 999 000; 1205975 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ After creating a shared library using the administration console in the WebSphere® Test Environment (WTE) version 6 server it is not obvious how to use it when building a J2EE project in Rational® Application Developer (RAD) v6. This technote provides that information. 
+
+RESOLVING THE PROBLEM
+Any shared library would have to be explicitly added to the Java Build Path of any J2EE project using the library. To do so, right click on a project and go to Properties >Java Build Path and add any required jars as appropriate. 
+
+This can be made easier by creating a classpath variable for a commonly used library. Go to the menu item: Window > Preferences > Java > Classpath Variables and select New, to add a new variable. 
+
+Note: Although it might work, use of the WebSphere version 5.x server administrative console is not supported with WTE 5.x server configurations.
+
+
+
+
+
+
+
+
+
+
+
+Cross Reference information Segment Product Component Platform Version Edition Software Development WebSphere Studio Application Developer J2EE Development and deployment Linux, Windows 5.1.2 Software Development Rational Software Architect EJB / J2EE Development

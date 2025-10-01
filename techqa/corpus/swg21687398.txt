@@ -1,0 +1,69 @@
+Title: IBM "Unexpected Error ... Failed to execute runnable (java.lang.StackOverflowError) ...  Caused by StackOverflowError: null" when launching System Audit log - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ User clicks "Maintain - System Audit Log - Browse". User receives error. 
+
+SYMPTOM
+Screen: 
+
+[/support/docview.wss?uid=swg21687398&aid=1] [/support/docview.wss?uid=swg21687398&aid=1]
+Unexpected Error
+Unexpected Error: Something unexpected happened. You may have to restart the application to continue.
+Reason:
+[SWTException] Failed to execute runnable (java.lang.StackOverflowError)
+
+[SWTException] Failed to execute runnable (java.lang.StackOverflowError)
+Failed to execute runnable (java.lang.StackOverflowError)
+Caused by StackOverflowError: null
+
+--- stack trace ---
+org.eclipse.swt.SWTException: Failed to execute runnable (java.lang.StackOverflowError)
+at org.eclipse.swt.SWT.error(SWT.java:4282)
+at org.eclipse.swt.SWT.error(SWT.java:4197)
+
+<...>
+
+at com.ibm.cognos.ccr.integration.IntegrationServiceAdapter$MyEclipseStarter.run(IntegrationServiceAdapter.java:144)
+at java.lang.Thread.run(Thread.java:736)
+Caused by: java.lang.StackOverflowError: null
+at java.util.HashMap$1.iterator(HashMap.java:588)
+at java.util.HashSet.iterator(HashSet.java:162)
+at java.util.AbstractCollection.toArray(AbstractCollection.java:352)
+at java.util.ArrayList.<init>(ArrayList.java:87)
+at com.ibm.cognos.ccr.extdim.internal.DefaultExtendedDimensionMember.getMembers(DefaultExtendedDimensionMember.java:191)
+at com.ibm.cognos.ccr.extdim.internal.DefaultExtendedDimensionMember.initLevel(DefaultExtendedDimensionMember.java:215)
+at com.ibm.cognos.ccr.extdim.internal.DefaultExtendedDimensionMember.initLevel(DefaultExtendedDimensionMember.java:217)
+at 
+
+<...>
+
+at com.ibm.cognos.ccr.extdim.internal.DefaultExtendedDimensionMember.addMember(DefaultExtendedDimensionMember.java:164)
+at com.ibm.cognos.ccr.extdim.internal.DefaultExtendedDimensionsModel.buildMembers(DefaultExtendedDimensionsModel.java:237)
+
+<...>
+
+CCR.LOG (C:\Program Files\IBM\cognos\c10\log):
+15:29:32,189 INFO [cognos.ccr.integration.ServerIntegrationFacade] Executing inAccountModelDAO.load
+15:29:32,189 INFO [cognos.ccr.integration.ServerIntegrationFacade] model context execution time: 0 ms.
+15:29:32,189 INFO [cognos.ccr.integration.ServerIntegrationFacade] shared models execution time: 0 ms.
+15:29:33,734 ERROR [ccr.account.internal.AccountModelBTOSQLDAO] Account with code: xxxxxxxx11CLO cannot be found reconcile relation for account: xxxxxxxx11OB is not created.
+15:29:33,734 ERROR [ccr.account.internal.AccountModelBTOSQLDAO] Account with code: xxxxxxxx10CLO cannot be found reconcile relation for account: xxxxxxxx10OB is not created.
+15:29:33,734 ERROR [ccr.account.internal.AccountModelBTOSQLDAO] Account with code: xxxxxxxx19CLO cannot be found reconcile relation for account: xxxxxxxx19OB is not created.
+15:29:33,734 ERROR [ccr.account.internal.AccountModelBTOSQLDAO] Account with code: xxxxxxxx18CLO cannot be found reconcile relation for account: xxxxxxxx18OB is not created.
+
+<...>
+
+15:29:33,905 INFO [cognos.ccr.integration.ServerIntegrationFacade] operation execution time: 1716 ms.
+15:29:33,921 INFO [cognos.ccr.integration.ServerIntegrationFacade] Finished inAccountModelDAO.load
+15:29:33,921 INFO [cognos.ccr.integration.ServerIntegrationFacade] 1716 milliseconds
+
+
+CAUSE
+Problem in accounting structure, relating to the accounts referred to in the error message inside 'ccr.log' (see above).
+
+
+RESOLVING THE PROBLEM
+Correct the problem in the accounting structure.

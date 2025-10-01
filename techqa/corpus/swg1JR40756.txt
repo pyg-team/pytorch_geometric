@@ -1,0 +1,157 @@
+Title: IBM JR40756: NOT ALL CALLS REPRESENTED IN SERVICE MONITOR WIDGET - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Version 7.5 Refresh Pack 1 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24031230]
+WebSphere Enterprise Service Bus V7.5 Refresh Pack 1 (7.5.1.0) [http://www-01.ibm.com/support/docview.wss?uid=swg24031270]
+WebSphere Process Server V7.0.0 Fix Pack 5 (V7.0.0.5) [http://www-01.ibm.com/support/docview.wss?uid=swg24032709]
+WebSphere Enterprise Service Bus V7.0.0 Fix Pack 5 (7.0.0.5) [http://www-01.ibm.com/support/docview.wss?uid=swg24032713]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  SCA calls that go from Aysnc to Sync components are not
+   properly tracked by Service Monitor. The Cross Component Trace
+   call chains are also not properly handled.  The SCA Observer
+   Framework needs to properly handle this Async to Sync
+   transition.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  ALL                                         *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: SCA Calls are missing from Service      *
+   *                      Monitor or Server Logs View.            *
+   ****************************************************************
+   * RECOMMENDATION:  Asynchrononus SCA calls that switch to      *
+   *                  synchronous calls do not always show up     *
+   *                  correctly in the Service Monitor or Cross   *
+   *                  Component Trace.  Apply this fix to solve   *
+   *                  the problem.                                *
+   ****************************************************************
+   There is a switch from Async to Sync that can happen when
+   multiple modules are involved. For example: Module A has a
+   BPEL component and makes an async call to module B. Module B
+   is a Mediation Flow Component and calls Module C. Module C is
+   a pojo and supports Sync calls.
+   SCA will call from BPEL to MFC using Async, then switch to
+   Sync when calling from MFC to the POJO.
+   This Async to Sync switch will be lost to SCA Observer
+   Framework and will thus impact any function that relies on the
+   SCA Observer Framework: Service Monitor, Server Logs View,
+   Tivoli integration.
+   Another way to verify that this is the customer's problem is by
+   changing the perferred interaction to Async for all imports.
+   This will cause the SCA Observer Framework to work correctly.
+   This defects only affects SCA Observer Framework and function
+   that uses the SCA Observer Framework.  The SCA calls work
+   properly, they are just not reported properly by the SCA
+   Observer Framework.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The async to sync transition is now checked for in the code
+   and handled by the SCA Observer Framework.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR40756
+   
+   
+ * REPORTED COMPONENT NAME
+   WEB PROC SERVER
+   
+   
+ * REPORTED COMPONENT ID
+   5724L0100
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-09-28
+   
+   
+ * CLOSED DATE
+   2011-11-01
+   
+   
+ * LAST MODIFIED DATE
+   2011-11-01
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEB PROC SERVER
+   
+   
+ * FIXED COMPONENT ID
+   5724L0100
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R620 PSY
+   UP
+   
+   
+ * R700 PSY
+   UP

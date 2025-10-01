@@ -1,0 +1,40 @@
+Title: IBM Downloading WebSphere MQ Version 7.5 from the Passport Advantage website - United States
+
+Text:
+7.5 WebSphere MQ download DOWNLOADABLE FILES
+
+ABSTRACT
+ This document describes how to download IBM WebSphere MQ Version 7.5 eAssembly images from the Passport Advantage website. 
+
+DOWNLOAD DESCRIPTION
+
+
+
+TAB NAVIGATION
+ * Overview [http://www.ibm.com/support/docview.wss?uid=swg24036405]- selected tab,
+ * MQ V7.5.0.7 [http://www.ibm.com/support/docview.wss?uid=swg24042588]
+ * MQ V7.5 IFR2 (V7.5.0.5) [http://www.ibm.com/support/docview.wss?uid=swg24040060]
+ * MQ V7.5.0.2 [http://www.ibm.com/support/docview.wss?uid=swg24040032]
+ * MQ V7.5.0.1 [http://www.ibm.com/support/docview.wss?uid=swg24035107]
+ * MQ V7.5.0.0 [http://www.ibm.com/support/docview.wss?uid=swg24032734]
+
+Contents On a regular basis, IBM provides Fix Packs. You get these from Fix Central [https://www-933.ibm.com/support/fixcentral/options?selectionBean.selectedTab=find&selection=ibm%2fWebSphere%3bibm%2fWebSphere%2fWebSphere+MQ], and you apply them on top of your installed code.
+
+ At IBM's discretion, a full refresh of the product at a given Fix Pack level is sometimes also made available. For each full refresh, there is a tabbed section within this document. Each tabbed section provides the following information:
+
+ 1. The part number and description of each eAssembly, followed by a list of the installation images available in the eAssembly.
+ 2. Instructions to download the relevant eAssembly images from the Passport Advantage website.
+
+URL LANGUAGE SIZE(Bytes) WebSphere MQ system requirements [http://www.ibm.com/support/docview.wss?&uid=swg27006467] English 1 
+URL LANGUAGE SIZE(Bytes) WebSphere MQ Version 7.5 installation instructions [http://www.ibm.com/support/knowledgecenter/SSFKSJ_7.5.0/com.ibm.mq.ins.doc/q008250_.htm] English 1 
+
+
+TECHNICAL SUPPORT
+ For Passport Advantage Online support, see:
+http://www.ibm.com/software/howtobuy/passportadvantage/paocustomer/docs/en_US/ecare.html [http://www.ibm.com/software/howtobuy/passportadvantage/paocustomer/docs/en_US/ecare.html]
+
+To access a wide variety of technical resources for this product, see the WebSphere MQ product home page:
+https://www.ibm.com/software/products/ibm-mq [https://www.ibm.com/software/products/ibm-mq]
+
+To see latest information and technotes, go to the WebSphere MQ support portal:
+https://www.ibm.com/support/home/product/P439881V74305Y86/IBM_MQ [https://www.ibm.com/support/home/product/P439881V74305Y86/IBM_MQ]

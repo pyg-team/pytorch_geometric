@@ -1,0 +1,30 @@
+Title: IBM E-OBJ-102-020: Failed to start the storage system. - United States
+
+Text:
+E-OBJ-102-020; omnibus; error; object server TECHNOTE (FAQ)
+
+QUESTION
+ Error code E-OBJ-102-020: Failed to start the storage system. What is this error telling us? 
+
+CAUSE
+The ObjectServer is unable to run due to a problem with the ObjectServer db files under $OMNIHOME/db. The files may be corrupted, or too large, or may not exist at all.
+
+ANSWER
+Examples: 
+
+"E-OBJ-102-020: Failed to start the storage system. (-490:Extent statistics mismatch)"
+
+The ObjectServer was started with corrupted files under $OMNIHOME/db/<osname> due to an abnormal shutdown. Remove all files from this location other than the .tab files 
+
+"E-OBJ-102-020: Failed to start the storage system. (-401:Failed to reserve swap space for region)" 
+
+Hard limit exceeded for an ObjectServer db file. increase the hard limit using the nco_store_resize command 
+
+"E-OBJ-102-020: Failed to start the storage system. (2:No such file or directory)"
+
+$NCHOME/omnibus/bin/nco_dbinit has not been run. This is the utility responsible for creating the ObjectServer .tab files and populating them with a default clean set of data. 
+
+Please refer to the online documentation for the above ObjectServer commands. See the link below.
+
+RELATED INFORMATION
+ Setting up the ObjectServer [https://www.ibm.com/support/knowledgecenter/SSSHTQ_7.4.0/com.ibm.netcool_OMNIbus.doc_7.4.0/omnibus/wip/install/concept/omn_con_settingup.html]

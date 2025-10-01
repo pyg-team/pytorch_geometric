@@ -1,0 +1,106 @@
+Title: IBM PK60955: Clearmake picks an older DO to winkin as opposed to a newer when the CRs are similar - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS USER ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Clearmake will winkin an older Derived Object when you have 2 DO
+   s with the same CRs
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *  Please refer to Technote   1120587  :
+   http://www-1.ibm.com/support/docview.wss?uid=swg21120587 [http://www-1.ibm.com/support/docview.wss?uid=swg21120587]
+   
+   If there are two shareable DOs, DO1 and DO2, here are the
+   possible scenarios and resulting winkin order:
+   
+    o DO1 is shared and DO2 unshared: DO1 would be winked-in,
+   regardless of whether DO2 is newer or older than DO1.
+   Above technote explains that a shared DO is preferred for
+   winkin over  an unshared one.
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK60955
+   
+   
+ * REPORTED COMPONENT NAME
+   CLEARCASE UNIX
+   
+   
+ * REPORTED COMPONENT ID
+   5724G2901
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED USE
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-02-12
+   
+   
+ * CLOSED DATE
+   2008-04-11
+   
+   
+ * LAST MODIFIED DATE
+   2008-04-11
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

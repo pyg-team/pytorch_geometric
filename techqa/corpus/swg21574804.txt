@@ -1,0 +1,41 @@
+Title: IBM Known issues of using console mode to install Rational ClearCase - United States
+
+Text:
+RNCC8.0.0.1; RNCC8.0.0.2; SRX; console mode; RNCC8.0.0.3; RNCC8.0.0.4; RNCC8.0.0.5; RNCC8.0.0.6; RNCC8.0.0.7; RNCC8.0.0.8; RNCC8.0.0.9; RNCC8.0.0.10; RNCC8.0.1; RNCC8.0.1.1; RNCC8.0.1.2; RNCC8.0.1.3 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When installing IBM Rational ClearCase using Installation Manager console mode functionality, users need to be aware of certain limitations. The resolution section below has more information about the known issues of installing Rational ClearCase using console mode functionality. 
+
+RESOLVING THE PROBLEM
+The following known issues affect customers that use or plan to use Installation Manager console mode to manage Rational ClearCase install, upgrade, or rollback operations. 
+
+ *  Feature tree for Rational ClearCase in console mode looks different than GUI mode. Common Temp directory needs enough space for ClearCase installation. In the WAS security panel, the password is not hidden. WAS security panel is not displayed during uninstall. 
+
+Feature tree for Rational ClearCase in console mode looks different than the feature tree in GUI mode.
+
+In console mode, the ClearCase feature tree lists ClearCase MultiSite Full Function Installation and ClearCase Multisite Global Monitor as two separate features. Users need to select these features as required: 
+
+
+ * Because ClearCase Multisite Global Monitor feature depends on Multisite Full Functional Installation feature, you must select both features if you want to install ClearCase Multisite Global Monitor.
+
+ * If you only want to install the Multisite Full function feature, you do not have to select the Global Monitor feature.
+
+ * If you want to install both features, select them both.
+
+
+Common Temp directory needs enough space for ClearCase installation. 
+
+When installing Rational ClearCase in console mode, the installation program does not warn users if the common temp directory specified does not have enough space. If users select a directory that has less than 500 MB of space, the installation will fail. To prevent this problem, select a temp directory that has at least 1.5GB of free space at the time of installation. 
+
+
+In the WAS security panel, the password is not hidden 
+
+When a user types a password in WebSphere Application Server security panel, the password is not hidden. However, you do not need to be concerned about security because the password is encrypted when submitted. 
+
+WAS security panel is not displayed during uninstall 
+
+When Rational ClearCase is uninstalled in console mode the WAS security panel is not displayed. This issue has been fixed in Installation Manager version 1.5.2. 
+
+Note: Features are listed in the product Feature tree based on the supportability of those features in a given OS. 
+
+Note: These issues have been resolved on versions 8.0.0.11 and 8.0.1.4

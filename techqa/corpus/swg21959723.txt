@@ -1,0 +1,30 @@
+Title: IBM UDX compilation error - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ English 
+
+PROBLEM(ABSTRACT)
+ Following error can be met during UDX compilation.
+Can't exec "/nz/kit/bin/adm/nzudxcompile": Argument list too long 
+
+SYMPTOM
+nzudxcompile command returns an "Argument list too long" error and aborts.
+
+
+CAUSE
+ARG_MAX configuration parameter limits the number of argument list in command line. In this case the client used more than 131072 argument with many program *.c files.
+
+DIAGNOSING THE PROBLEM
+Check ARG_MAX value in the command line: 
+
+$ getconf ARG_MAX
+131072
+
+
+RESOLVING THE PROBLEM
+This ARG_MAX kernel parameter adjusted to much larger from kernel release version 2.6.23, that is 2621440 (http://www.in-ulm.de/~mascheck/various/argmax [http://www.in-ulm.de/~mascheck/various/argmax]). 
+
+But we support upto Redhat 5.11 in Twinfin which is less than kernel release 2.6.23. So we have no way to allow ARG_MAX larger than 131072 at this time.

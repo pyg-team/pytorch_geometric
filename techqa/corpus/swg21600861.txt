@@ -1,0 +1,36 @@
+Title: IBM Tivoli Storage Manager server upgrade fails with ACUOSI0050E - United States
+
+Text:
+TSM restart ERROR_SUCCESS_REBOOT_ REQUIRED TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ A Tivoli Storage Manager server is upgraded to version 6.3.0.0 but the upgrade fails with the ACUOSI0050E error message and return code 3010. 
+
+CAUSE
+Windows system reboot is required
+
+DIAGNOSING THE PROBLEM
+The installation logs from the failed upgrade are available at : 
+
+C:\Program Files\Tivoli\TSM\logs.zip.
+
+In the logs.zip file, review the ia\log.txt file. It shows the following error :
+
+Fri Jul 06 19:38:25.463 CEST 2012 : STDOUT : There were problems installing the IBM Tivoli Storage Manager Server. See C:\Program Files\Tivoli\TSM\_uninst\plan\logs\tsm_server.log for details.
+Fri Jul 06 19:38:25.478 CEST 2012 : FINE : PlanStepEventOccurred(Failed target 'step_00001_TSM_Server_1_1') (from com.ibm.ac.coi.ext.ia.COIWrapperPluginImpl$SimpleListener.eventOccurred)
+
+The error indicates that the upgrade failed on the Tivoli Storage Manager step.
+From the same logs.zip file, review the "coi\plan\install\MachinePlan_localhost\00001_TSM_Server_1_1\logs\[INSTALL_date_time]\TSM_Server_1_1.log" file. It shows the following error :
+
+ACUOSI0050E External command action failed with return code 3010. Invocation string: [cmd.exe, /c, install.bat], com.ibm.ac.common.hosts.UpdateFailedException: : ]
+
+From the above error message. The return code 3010 is a return code returned by Windows which means a "restart is required to complete the install".
+Still from the same logs.zip file, review the coi\plan\tmp\installFixPack.log file. It shows the following messages :
+
+MSI (s) (38:BC) [14:49:40:210]: Windows Installer requires a system restart. Product Name: DB2 Enterprise Server Edition - DB2TSM1. Product Version: 9.7.400.501. Product Language: 1044. Manufacturer: IBM. Type of System Restart: 2. Reason for Restart: 1.
+MSI (s) (38:BC) [14:49:40:210]: Product: DB2 Enterprise Server Edition - DB2TSM1. Restart required. The installation or update for the product required a restart for all changes to take effect. The restart was deferred to a later time.
+
+
+
+RESOLVING THE PROBLEM
+Reboot the Windows system and rerun the upgrade after the reboot.

@@ -1,0 +1,136 @@
+Title: IBM PK98130: ABENDAEXZ OCCURS WHEN THE WEB CONVERSE COMMAND DOES NOT COMPLETE AND DTIMOUT TAKES EFFECT - United States
+
+Text:
+z/os SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  You are running CICS Transaction Server 3.2 and your application
+   issues an EXEC CICS WEB CONVERSE command.  The WRITE or SEND
+   part of this command does not get a response in the 30 second
+   DTIMOUT value, and th task ends up abending AEXZ.  This is a
+   severe abend code for a timeout condition.
+   Additional symptoms:  abendaexz aexz dtimeout
+   KIXREVSXY
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All CICS users.                              *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: An AEXZ abend has occured in module     *
+   *                      DFHEIWB when issuing EXEC CICS WEB      *
+   *                      CONVERSE.                               *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   An application in CICS does an EXEC CICS WEB CONVERSE.
+   The transaction has DTIMOUT set to 30 and RTIMOUT set to 0.
+   
+   The connection to the remote server uses SSL.  At the end of
+   the SSL handshake the remote server fails to respond.
+   The CICS request times out after 30 seconds as defined in
+   DTIMOUT.  The timeout is percolated back up the stack and
+   eventually DFHWBCL returns WBCL_EXCEPTION/WBCL_TIMED_OUT to
+   DFHEIWB.
+   
+   DFHEIWB does not handle this exception response on the
+   SEND part of a CONVERSE command.  The task abends in AEXZ.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *  This APAR is being closed FIN (Fixed If Next). This closing code
+   indicates that this problem will be resolved in any subsequent
+   release of CICS after CICS Transaction Server for z/OS Version
+   4 Release 1.  This closing code has been agreed with the APAR
+   submittor.
+   
+   PEG defect 7339
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK98130
+   
+   
+ * REPORTED COMPONENT NAME
+   CICSTS V3 Z/OS
+   
+   
+ * REPORTED COMPONENT ID
+   5655M1500
+   
+   
+ * REPORTED RELEASE
+   500
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-10-07
+   
+   
+ * CLOSED DATE
+   2009-10-23
+   
+   
+ * LAST MODIFIED DATE
+   2009-10-23
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R500 PSN
+   UP

@@ -1,0 +1,50 @@
+Title: IBM Security Cache, LTPA Token, and Session Time Outs - United States
+
+Text:
+session; cache; logout; login; timeout; time out; LTPA TECHNOTE (FAQ)
+
+QUESTION
+ What happens when the Security Cache, LTPA Token timeout, and session time out? 
+
+ANSWER
+Question 1 
+What happens when the Security Cache times out? Will the user be asked to re-login?
+
+Answer 1 
+No. When using single sign-on (SSO), the Security Cache will refresh from the LTPA Token. If your LTPA Token is also expired, then the user will be asked to re-login. Also, the cache timeout period is reset every time that entry is hit. So, if the entry is hit 9 minutes into the 10 minute timeout period, the clock is reset at that time. So, instead of timing out in another minute, it is now reset for another 10 minutes, then if it's hit again in that time, it will get extended again. 
+
+When using Local operating system for authentication, the user will be asked to login when the session times out, not the security cache. 
+
+In V6.1, the Federated Repository has it's own cache settings. See the link under Related Information. 
+
+Question 2 
+
+ 1. Using a browser, we accessed a secured application, we provided the UserID (UserA) and a valid PW (Password1). A token was created. So far everything is working fine. 
+    
+ 2. You manually changed the password for UserA in the LTPA (LDAP or custom registry) from Password1 to Password2. 
+ 3. Using a new browser we accessed the application providing UserA and the new password (Password2) a token was created and again everything is working as expected. 
+    
+ 4. Using a another new browser we accessed the application providing UserA and the old password (Password1). You were surprised to notice that a token was created and UserA was able to access the application. 
+
+
+Answer 2 
+The old password takes up to 1.5 times the security cache to disappear. It will also expire at the end of the LTPA token timeout. 
+
+In IBM WebSphere Application Server V5.0.2 and later, you can purge a user from the security cache using an MBean interface. See the Related Information at the end of this article. 
+
+
+Question 3 
+I want to force my users to re-login after a set "inactivity timeout" period. How is WebSphere Application Server supposed to work with regard to session timeouts and LTPA timeout. Answer 3 
+See the answer to this question in item 9 of the following developerWorks article:
+http://www.ibm.com/developerworks/websphere/techjournal/1003_botzum/1003_botzum.html [http://www.ibm.com/developerworks/websphere/techjournal/1003_botzum/1003_botzum.html]
+
+
+Question 4 
+If this is the case, can we expire or delete the LTPAToken cookie when the session expires? If so, what mechanism should we use? 
+
+Answer 4
+You can manually perform a form-based logout (as described in the Information Center) to request that the LTPAToken cookie be destroyed in the web browser, but within WebSphere Application Server, there is no functionality to automatically perform the form-based logout when the session times out. This would have to be performed programmatically.
+
+RELATED INFORMATION
+ Federated Repository cache settings [https://www.ibm.com/support/knowledgecenter/en/SSAW57_8.5.5/com.ibm.websphere.nd.doc/ae/uwim_ldapperfsettings.html]
+Authentication cache settings [https://www.ibm.com/support/knowledgecenter/en/SSAW57_8.5.5/com.ibm.websphere.nd.doc/ae/usec_sec_domains_cache.html]

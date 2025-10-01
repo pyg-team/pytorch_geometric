@@ -1,0 +1,33 @@
+Title: IBM BMXAA6421E Could not establish a secure connection to SQL Server by using SSL - United States
+
+Text:
+TPAEWEBSPHERE; TPAESS2008; BMXAA6421E; SSLv3 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ After updating a WebSphere fixpack, starting up Maximo, you get an error 500 of on the login screen and the following error in systemOut.log:
+
+BMXAA6421E - The system could not connect to the JDBC source. 
+
+SYMPTOM
+[ERROR] [] [] BMXAA6421E - The system could not connect to the JDBC source: jdbc:sqlserver://;serverName=localhostexample; databaseName=MaxDB;portNumber=1433;integratedSecurity=false;The driver could not establish a secure connection to SQL Server by using Secure Sockets Layer (SSL) encryption. Error: "Only SSLv3 was enabled while com.ibm.jsse2.disableSSLv3 is set to true".
+
+
+RESOLVING THE PROBLEM
+Shut down Websphere. 
+
+Install the WebSphere hotfix to disable SSLv3 as per this link https://www.ibm.com/support/docview.wss?uid=swg21687173 [https://www.ibm.com/support/docview.wss?uid=swg21687173] 
+
+Download the Microsoft SQLJDBC driver hotfix from https://support.microsoft.com/en-us/help/982512/ [https://support.microsoft.com/en-us/help/982512/]. 
+
+Since the filename sqljdbc.jar may be hard-coded in other code, rename the old sqljdbc.jar to sqljdbc.jar.old. 
+
+Copy the sqljdbc4.jar into Maximo admin workstation (folder: .\maximo\applications\maximo\lib) 
+
+Rename sqljdbc4.jar, then rename that to sqljdbc.jar. 
+
+Rebuild Maximo EAR, deploy and restart the Maximo application server.
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Systems and Asset Management Maximo Asset Management Systems and Asset Management Maximo Asset Management Essentials Systems and Asset Management Tivoli Asset Management for IT Systems and Asset Management Tivoli Service Request Manager Systems and Asset Management Control Desk

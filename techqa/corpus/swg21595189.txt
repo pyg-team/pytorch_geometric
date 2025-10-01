@@ -1,0 +1,91 @@
+Title: IBM Electronic Support . . . Easy, Fast, Smart - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Where can I find more information to help me use and learn about my IBM software? 
+
+CAUSE
+IBM Electronic Support offers a portfolio of online tools and resources to help you use IBM products successfully, while saving time and simplifying support processes. All IBM technical support is available through the IBM Support Portal. Note: Not all offerings in the list below have content available for every IBM product.
+
+ANSWER
+IBM Support Portal: ibm.com/support [http://ibm.com/support] 
+
+ * Consolidated portal view of technical support information and tools 
+ * Sign in with your IBM ID and password 
+ * Customize the view to include only the information you want to see 
+ * The following tools are easily accessible through the IBM Support Portal 
+
+
+My Notifications: ibm.com/support/mynotifications [http://ibm.com/support/mynotifications]  * Subscribe to stay informed on new or updated support content for your products 
+ * Choose frequency – daily or weekly 
+ * Choose types of notification – downloads, tech notes, Flashes and much more 
+ * Choose delivery method – email or RSS 
+
+
+Fix Central: ibm.com/support/fixcentral [http://ibm.com/support/fixcentral] 
+Choose the Product Group "Smarter Cities" from the Fix Central interface and then choose "i2" offerings to see the products currently delivering updates.  * Acquire fixes and updates for IBM hardware and software products 
+ * Upload an inventory file to automatically display applicable fixes 
+ * Search for fixes, fix packs or APARs 
+ * Search by version and platform 
+ * Check for requisite fixes automatically
+
+
+Service Request tool: ibm.com/support/servicerequest [http://ibm.com/support/servicerequest]  * Create, update, and manage service requests 
+ * Attach troubleshooting files 
+ * Receive update email notifications 
+ * Manage authorized callers and partners 
+ * Valid support contract required 
+ * Use this Quick Start guide [http://www.ibm.com/software/support/servicerequest/quick_start.html] to become a Basic user and request ‘Full’ access through the tool
+
+
+IBM Software Support Handbook: ibm.com/support/handbook [http://ibm.com/support/handbook]  * Find answers about IBM support 
+ * Find support information for recently acquired companies 
+ * Use the information and references to improve your support experience
+
+
+IBM Software Support Lifecycle: ibm.com/software/support/lifecycle [http://ibm.com/software/support/lifecycle]  * Find General Availability and announced support withdrawal dates 
+ * View the support policy for each product 
+ * Track support availability by version
+
+
+IBM developerWorks: ibm.com/developerworks [http://ibm.com/developerworks]  * Review in-depth technical information 
+ * Stay current with new technology introductions 
+ * Take advantage of technical tutorials and training 
+ * Download new tools and demos for new products 
+ * Join forums for community information for IBM software
+
+
+IBM Software Education: ibm.com/software/education [http://ibm.com/software/education]  * Request formal training and certification for IBM Software 
+ * Build skills with hundreds of software courses 
+ * Choose from classroom, online and private courses 
+ * Benefit with instruction from award-winning educators who have first-hand product knowledge
+
+
+IBM Electronic Support: ibm.com/support/electronicsupport [http://ibm.com/support/electronicsupport]  * Learn more about all the online support options to help you save time 
+ * Review descriptions of IBM’s entire electronic support portfolio 
+ * Explore electronic support resources and video training
+
+
+Support Technical Exchange webcasts: ibm.com/support/entry/myportal/Scheduled_tech_exchanges [http://ibm.com/support/entry/myportal/Scheduled_tech_exchanges] 
+Coming soon! Not available for i2 products at this time.  * Attend a webcast or open mic for technical information on many products and topics 
+ * Join complimentary webcasts, scheduled weekly for some products, or listen to replays 
+ * Ask questions of the subject matter experts following each presentation
+
+
+IBM Support Assistant: ibm.com/software/support/isa [http://ibm.com/software/support/isa] 
+Coming soon! Not available for i2 products at this time.  * Download troubleshooting workbench 
+ * Troubleshoot applications using robust diagnostic tools 
+ * Automate data collection with ISA Lite 
+ * Try the new IBM Support Assistant V5 Beta!
+
+
+IBM Education Assistant: ibm.com/software/info/education/assistant [http://ibm.com/software/info/education/assistant] 
+Coming soon! Not available for i2 products at this time.  * Access task-based self-study modules for many IBM software products 
+ * Get up the learning curve quickly for new software 
+ * Use as a refresher for those familiar with software
+
+ 
+
+Cross reference information Segment Product Component Platform Version Edition Smarter Cities i2 Analyst's Notebook Connector for Esri Smarter Cities i2 Analyst's Notebook Premium Smarter Cities i2 COPLINK Smarter Cities i2 Enterprise Intelligence Analysis Smarter Cities i2 iBase Smarter Cities i2 Information Exchange for Analysis Search for Analyst's Notebook Smarter Cities i2 Information Exchange for Analysis Search Services SDK Smarter Cities i2 Analyze Smarter Cities i2 Intelligence Analysis Portfolio

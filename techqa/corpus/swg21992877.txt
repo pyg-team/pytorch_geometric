@@ -1,0 +1,32 @@
+Title: IBM DataStage client login fails with WinInet Error code 0, when SSL authentication is enabled. - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ IBM DataStage client login to InfoSphere Information Server fails:
+
+Failed to authenticate the current user against the selected Services Tier
+
+Unable to send HTTP request to Server [servername] on port [9080]. The WinInet ErrorCode is: [0] 
+
+SYMPTOM
+If SSL revocation cannot be checked then authentication fails for IBM DataStage clients. Fails with WinInet error code 12057.
+
+
+CAUSE
+WinInet 12057 indicates that revocation cannot be checked because the revocation server was offline (equivalent to CRYPT_E_REVOCATION_OFFLINE).
+
+ENVIRONMENT
+Windows
+
+DIAGNOSING THE PROBLEM
+Check if certificate is enabled for revocation in Internet Explorer. Follow the steps
+1) Open Internet Explorer
+2) Click on Tools in File menu->Internet Options->Advanced Tab.
+3) Under security section check if these options are enabled: 
+i) Check for publishers certificate revocation
+ii) Check for server certificate revocation
+
+RESOLVING THE PROBLEM
+Uncheck these two options and click OK to save the settings. Once this is done we can login through IBM DataStage clients.

@@ -1,0 +1,148 @@
+Title: IBM PM13765: MQCMIT FAILS: LINKED EXCEPTION:COM.IBM.MQ.MQEXCEPTION:JMSCMQ0001 WEBSPHERE MQ CALL FAILED WITH COMPCODE '2' REASON '2012' - United States
+
+Text:
+z/os SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DUPLICATE OF ANOTHER APAR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  MQCMIT fails with: linked exception:com.ibm.mq.MQException:
+   JMSCMQ0001: WebSphere MQ call failed with compcode '2'
+   ('MQCC_FAILED') reason: '2012' ('MQRC_ENVIRONMENT_ERROR').
+   .
+   The JmsSessionImpl.notifyMessagePostConsume() method is
+   attempting to acknowledge a consumed message by committing
+   the MQ transaction.  However, this is a bindings mode connection
+   on z/OS, so the MQ transaction is managed by RRS coordination.
+   In these circumstances, it  is not valid to commit the MQ
+   transaction via an MQCMIT call.
+   
+   We need to alter the processing so that it does not commit for
+   RRS coordinated bindings mode sessions.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *  Problem summary:
+   In WebSphere Application Server Version 6, an MDB listener is
+   configured to monitor a queue or a topic.  When a message is
+   identified for processing by the MDB, a destructive get is
+   performed to obtain the message prior to invoking the onMessage
+   method of the MDB.
+   
+   If the MDB listener is using a bindings mode connection to the
+   queue manager, WebSphere manages the transaction in which the
+   message has been got, and the application server is
+   responsible for committing or backing out the message.
+   However, the MQ V7 JMS client incorrectly determines that it is
+   responsible for committing the MQ work.
+   
+   This causes the commit request to fail with compcode 2 and
+   rsncode 2012 (MQRC_ENVIRONMENT_ERROR).
+   
+   Exceptions similar to the following are seen in the servant
+   region:
+   
+   com.ibm.mq.MQException: JMSCMQ0001: WebSphere MQ call
+      failed with compcode '2' ('MQCC_FAILED') reason '2012'
+      ('MQRC_ENVIRONMENT_ERROR').
+   .at com.ibm.msg.client.wmq.common.internal.Reason.
+         createException(Reason.java:223)
+   .at com.ibm.msg.client.wmq.common.internal.Reason.
+         createException(Reason.java:275)
+   .at com.ibm.msg.client.wmq.internal.WMQSession.
+         syncpoint(WMQSession.java:1544)
+   .at com.ibm.msg.client.wmq.internal.WMQSession.
+         commit(WMQSession.java:774)
+   .at com.ibm.msg.client.jms.internal.JmsSessionImpl.
+         notifyMessagePostConsume(JmsSessionImpl.java:2203)
+   
+   Problem resolution:
+   The MQ JMS code has been updated so that MDB listeners do
+   not issue a commit when consuming a message in bindings
+   mode on z/OS.
+   
+   This fix changes the Java component of MQ, and will be
+   included in FixPack 7.0.1.3 (PM09662 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM09662]).
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM13765
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ Z/OS V7
+   
+   
+ * REPORTED COMPONENT ID
+   5655R3600
+   
+   
+ * REPORTED RELEASE
+   018
+   
+   
+ * STATUS
+   CLOSED DUB
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-05-04
+   
+   
+ * CLOSED DATE
+   2010-06-09
+   
+   
+ * LAST MODIFIED DATE
+   2010-08-24
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

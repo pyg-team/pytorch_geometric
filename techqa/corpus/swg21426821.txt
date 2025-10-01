@@ -1,0 +1,36 @@
+Title: IBM DFHAP0701 0C4 in TX1FCSRC followed by DFHSR0601 at startup after upgrading CICS - United States
+
+Text:
+DFHAP0701 abend0C4 abendAKEA AKEA S0C4 TX1FCSRC XFCSREQC DFHSR0601 III MSGDFHAP0701 MSGDFHSR0601 5655M1500 R650 650 R500 500 HCI6500 TS v3.2 KIXINFO retention32 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ After upgrading to CICS Transaction Server for z/OS (CICS TS), CICS initialization fails with DFHAP0701 abend 0C4/AKEA in exit program TX1FCSRC and DFHSR0601 Program interrupt with system task III in control . You are running ASG-TMON for CICS TS exit program TM1N680. 
+
+SYMPTOM
+ The console (IPCS MTrace) contains the following messages:
+
+DFHSI8424I Control returned from PLT [http://www.ibm.com/support/knowledgecenter/SSGMGV_3.2.0/com.ibm.cics.ts.doc/dfht2/topics/dfht2c00150.html]programs during the second stage of initialization.
+DFHAP0701 [http://www.ibm.com/support/knowledgecenter/SSGMGV_3.2.0/com.ibm.cics.ts.messages.doc/cics_mc/dfhap/AP0701.html] An abend (code 0C4/AKEA [http://www.ibm.com/support/knowledgecenter/SSGMGV_3.2.0/com.ibm.cics.ts.messages.doc/cics_mc/AKxx_abend_codes/AKEA.html]) has occurred in exit program TX1FCSRC at exit point XFCSREQC.
+DFHSR0601 Program interrupt occurred with system task III in control. 
+
+Note: This was originally seen in CICS TS V3.2.
+
+
+CAUSE
+You have re-assembled the DFHPLTPI without making necessary changes to the ASG-TMON for CICS TS entries. 
+
+
+DIAGNOSING THE PROBLEM
+The Program list table (DFHPLTPI) shows program TM1N680 being run in the second stage, and this module enabled the exit program TX1FCSRC for exit XFCSREQC.
+
+The program check (abend0C4) occurs in TM1N965 (ASM 04/20/09 10.12 VERSION 032 MOD LEVEL 0000-020), offset x'1EC'. Failing instruction is 58F01000 with Reg1=7FFFF000 .
+
+
+
+RESOLVING THE PROBLEM
+Remove user exit program TM1N680 from your startup PLTPI table, and restart CICS. If you need this exit enabled, contact ASG [http://www.asg.com] for further assistance with ASG-TMON for CICS TS.
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ CICS/TS CICS TS CICS Transaction Server

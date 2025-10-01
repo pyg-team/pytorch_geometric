@@ -1,0 +1,30 @@
+Title: IBM WCSession cookie in WebSphere Commerce does not have HTTPOnly flag set - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Why does the WCSession cookie in IBM WebSphere Commerce not have the HTTPOnly flag set? 
+
+CAUSE
+Java™ EE does not provide a mechanism to support the HttpOnly flag until servlet V3. The current servlet version WebSphere Commerce supports is V2.4. There are no current plans to support servlet V3.
+
+ANSWER
+ 
+
+If a site has an XSS vulnerability, setting the HTTPOnly flag on a cookie will prevent the possibility of the cookie being stolen by a client side script. If the site does not have an XSS vulnerability, the cookie cannot be stolen by client a side script.The HttpOnly flag provides additional protection in case an XSS vulnerability exists. 
+
+WebSphere Commerce already contains XSS filtering to help reduce this risk.
+
+XSS filtering does not overcome the exact limitation of the lack of the HTTPOnly flag (which prevents most common XSS attacks), For example; however it tries to filter out any threats that an HTTPOnly flag would have protected against.
+
+For more information on how this XSS filtering works, see article:
+V7.0: Enabling cross-site scripting protection [http://pic.dhe.ibm.com/infocenter/wchelp/v7r0m0/topic/com.ibm.commerce.admin.doc/tasks/tsecsssp.htm]
+V6.0: Enabling cross-site scripting protection [http://publib.boulder.ibm.com/infocenter/wchelp/v6r0m0/topic/com.ibm.commerce.admin.doc/tasks/tsecsssp.htm]
+
+
+A possible workaround is to use a servlet filter to add the header in the HTTP response. You can use this OWASP [http://www.owasp.org/index.php/HTTPOnly] example.
+
+In addition to XSS filtering, a good practice is to use the <c:out> tag when using parameters on JSPs.
+
+Note: WebSphere Application Server v7.0.0.37 and above support the setting of the HTTPOnly flag for session cookies. Please refer to Enabling httpOnly for session cookies [http://www-01.ibm.com/support/knowledgecenter/SSZLC2_7.0.0/com.ibm.commerce.admin.doc/tasks/tshardsitesec_enbcook.htm?lang=en] in the Knowledge Center for more information.

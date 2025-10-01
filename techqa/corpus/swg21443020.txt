@@ -1,0 +1,24 @@
+Title: IBM Why is the Content Manager for iSeries Client application Version 5 Release 1 not started and the document not displayed when I attempt to use the QVISNDRCV API to display a documet? - United States
+
+Text:
+QIVSNDWS TECHNOTE (FAQ)
+
+QUESTION
+ I am attempting to use the QVISNDRCV API to display a document from Content Manager for iSeries (5722-VI1). When the QVISNDRCV API is called from within our line-of-business application, it just sits there and the IBM Content Manager Client for Windows is never invoked. Why might this be? 
+
+ANSWER
+First, you need to be sure the communications program is started on the workstation side before you call the QVISNDRCV API. For TCP/IP communications, program EKDVICLT must be started on the workstation. For APPC communications, program EKDVICA must be started. Both of these programs are found in the directory where the Content Manager for iSeries Client for Windows product was installed on the workstation (e.g., %FRNROOT%). 
+
+Secondly, if VPN is involved, then make sure that the outbound port (e.g., 31015 or whatever is defined in your FRNOLINT.TBL) is open on your firewall. It could be that users' outbound requests from the iSeries are getting blocked at the firewall. You might be able to detect this with a network sniffer. 
+
+ 
+
+
+If this information does not address your question, please contact IBM software support for further assistance. 
+
+
+Stay Informed by Receiving Product and Lifecycle Notifications:
+Click here [http://www.ibm.com/support/docview.wss?uid=swg21674106]
+
+RELATED INFORMATION
+ Using QVISNDWS [http://www.ibm.com/support/docview.wss?uid=swg21181572]

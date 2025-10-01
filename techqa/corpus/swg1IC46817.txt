@@ -1,0 +1,280 @@
+Title: IBM IC46817: LIMITATIONS OF THE MEMORYEFFICIENTBACKUP OPTION - United States
+
+Text:
+AIX SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  TSM 5.3 Windows Backup-Archive Clients Installation and User?s
+   Guide, in Chapter 4 in the "Pre-Backup Considerations" section,
+   the sub-section about MEMORYEFFICIENTBACKUP states the
+   following:
+   ***
+   Configure memory-constrained workstations to run incremental
+   backups Incremental backup performance suffers if the
+   workstation has a low amount of memory available before starting
+   the backup. If your workstation is memory constrained, specify
+   the MEMORYEFFICIENTBACKUP Yes option in your client options file
+   (dsm.opt). Specifying Yes reduces memory consumption but
+   increases backup time. When you specify Yes, Tivoli Storage
+   Manager analyzes only one directory at a time for backup
+   consideration. If performance remains poor, check your
+   communication buffer settings and the communication link between
+   your workstation and the server. If your workstation is not
+   memory constrained, setting the MEMORYEFFICIENTBACKUP option to
+   Yes will degrade your backup performance.
+   ***
+   
+   The problem in the description of the option is that the
+   information does not clarify the restrictions for which this
+   option can help alleviate memory constrained systems.
+   Specifically:
+   
+   When MEMORYEFFICIENTBACKUP is set to NO, TSM performs a backup
+   the system filesystem by filesystem.  It enumerates all the
+   files and directories on a given filesystem and stores the list
+   in memory.  TSM will then process the list to perform the
+   backup.  Once the backup is completed, the memory is released.
+   On Windows there is maximum of 2 GB of memory that can be
+   addressed to a process, this means that the list cannot be
+   larger than 2 GB.  It takes an average of 300 bytes per object
+   (an object can be a file or a directory) which means
+   approximately 7 million objects can be backed up before running
+   out of memory.  On a 32-bit AIX System, the maximum amount of
+   memory a process can address is equal to 6 segments of 256 MB or
+   1.5 GB, which means that approximately 5 million objects can be
+   backed up before running out of memory.
+   
+   When MEMORYEFFICIENTBACKUP is set to YES, TSM performs the
+   backup of the data directory by directory.  It first enumerates
+   all the directories on a filesystem and stores that list in
+   memory.  Then will use the list of directories to perform the
+   backup directory by directory.  Given the memory constraints of
+   various operating systems, if the number of directories and
+   subdirectories on a filesystem is larger than the memory
+   available, a backup can still fail with out of memory errors
+   even if MEMORYEFFICIENTBACKUP is used.  On Windows there is
+   maximum of 2 GB of memory that can be addressed to a process,
+   this means that the list cannot be larger than 2 GB.  It takes
+   an average of 300 bytes per directory which means approximately
+   7 million directories can be backed up before running out of
+   memory.  On a 32-bit AIX System, the maximum amount of memory a
+   process can address is equal to 6 segments of 256 MB or 1.5 GB,
+   which means that approximately 5 million directories can be
+   backed up before running out of memory.
+   
+   The above details should be added to the manual to clarify when
+   this option can be used to help alleviate memory constrained
+   systems.
+   
+   TSM Versions Affected:  TSM Client 5.1, 5.2 and 5.3 on all
+   Platforms.
+   
+   Other search criteria:
+   ANS1030E
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  If the number of directories is too high for the memory
+   available to TSM even when using MEMORYEFFICIENTBACKUP,
+   Incremental by date backups can be used to perform a backup as
+   this uses considerably less memory than other types of backup.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All "IBM Tivoli Storage Manager for <OS>     *
+   *                 Backup-Archive Clients Installation and      *
+   *                 User's Guide" manuals.                       *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: The information in the client book does *
+   *                      not clarify the restrictions for which  *
+   *                      the MEMORYEFFIENTBACKUP option can help *
+   *                      alleviate memory constrained systems.   *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   *
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The following text will be added to the specified manual in
+   Chapter 4. Backing up your data, section "Configure
+   memory-constrained workstations to run incremental backups".
+   
+   CONFIGURE MEMORY-CONSTRAINED SYSTEMS TO RUN INCREMENTAL BACKUPS
+   
+   Incremental backup performance suffers if the system has a low
+   amount of memory available before starting the backup. If your
+   system is memory constrained, specify the memoryefficientbackup
+   yes option in your client options file (dsm.opt). This option
+   causes TSM to process only one directory at a time, which
+   reduces memory consumption but increases backup time. If
+   performance remains poor, check your communication buffer
+   settings and the communication link between your system and
+   the TSM server. If your system is not memory constrained,
+   setting the memoryefficientbackup option to yes will degrade
+   your backup performance.
+   
+   CONFIGURE SYSTEMS WITH LARGE NUMBERS OF FILES TO RUN
+   INCREMENTAL BACKUPS
+   
+   The client can use very large amounts of memory to perform
+   incremental backup operations, especially on file systems that
+   contain large numbers of files.
+   
+   On average, the client uses approximately 300 bytes of memory
+   per object (file or directory). Thus for a file system with
+   one million files and directories, the TSM client will require,
+   on average, approximately 300 MB of virtual memory. The exact
+   amount of memory used per object will vary, depending on the
+   length of the object path and name length, or the nesting
+   depth of directories. The number of bytes of data is not an
+   important factor in determining the TSM backup client virtual
+   memory requirement.
+   
+   The maximum number of files can be determined by dividing the
+   maximum amount of virtual memory available to a process by the
+   average amount of memory needed per object. For example,
+   32-bit Windows operating systems allow an application to
+   address up to 2 GB (2147483648 bytes). If the average object
+   requires 300 bytes of memory, then the maximum number of
+   objects that can be backed up by a single TSM client process
+   is approximately 7158278 (2 GB / 300).
+   
+   The virtual memory requirement can be reduced by any of the
+   following methods:
+   
+   - Use the client option memoryefficientbackup yes. The average
+   virtual memory used by the client then becomes 300 bytes times
+   the number of directories plus 300 bytes per file in the
+   directory being processed. Note that for file systems with
+   large numbers (millions) of directories, the client still
+   might not be able to allocate enough memory to perform
+   incremental backup with memoryefficientbackup yes.
+   
+   - UNIX clients can use the virtualmountpoint client option to
+   define multiple virtual mount points within a single file
+   system, each of which can be backed up independently by the
+   TSM client.
+   
+   - If the client option resourceutilization is set to a value
+   greater than 4, and there are multiple file systems being
+   backed up, then reducing resourceutilization to 4 or lower
+   will limit the process to incremental backup of a single file
+   system at a time. This will reduce the  virtual memory
+   requirement. If backup of multiple file systems in parallel is
+   required for performance reasons, and the combined virtual
+   memory requirements exceed the process limits, then multiple
+   instances of the backup client can be used to back up multiple
+   file systems in parallel. For example, you want to back up
+   two file systems at the same time but their virtual memory
+   requirements exceed the limits of a single process, then
+   start one instance of the client to back up one of the file
+   systems, and start a second instance of the client to back up
+   the other file system.
+   
+   - Use the -incrbydate client option to perform an
+   "incremental-by-date" backup.
+   
+   - Use the TSM client exclude.dir option to prevent the client
+   from traversing and backing up directories that do not need
+   to be backed up.
+   
+   - Windows clients can use the journal-based backup function.
+   
+   - Use the client image backup function to back up the entire
+   volume. This might actually use less system resources and run
+   faster than incremental backup of some file systems with a
+   large number of small files.
+   
+   - Reduce the number of files per file system by spreading the
+   data across multiple file systems.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC46817
+   
+   
+ * REPORTED COMPONENT NAME
+   TSM CLIENT 5.1
+   
+   
+ * REPORTED COMPONENT ID
+   5698ISMCL
+   
+   
+ * REPORTED RELEASE
+   52W
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2005-07-14
+   
+   
+ * CLOSED DATE
+   2005-09-30
+   
+   
+ * LAST MODIFIED DATE
+   2005-09-30
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+Publications Referenced GC32078806 FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

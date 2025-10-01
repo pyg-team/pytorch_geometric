@@ -1,0 +1,147 @@
+Title: IBM Collect IBM MQ MustGather data to solve Microsoft Cluster Server (MSCS) problems on Windows - United States
+
+Text:
+MustGather; MustGathers Must Gather; MustGatherDocument; Collect Troubleshooting Data; Collect; Trouble; Shooting; Microsoft Cluster Server; MSCS; Failover; Fail Over TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ An IBM MQ queue manager is not failing over properly under Microsoft Cluster Server (MSCS), and you need to collect MustGather data to find a solution. 
+
+ENVIRONMENT
+These instructions apply only to IBM MQ V9.0 and V8.0, and WebSphere MQ V7.5, V7.1, V7.0 and V6.0 on Windows:
+
+
+
+ * IBM MQ Read First [http://www.ibm.com/support/docview.wss?uid=swg21229861]
+
+
+
+RESOLVING THE PROBLEM
+ 
+
+Please answer these questions about the problem and then follow the steps below:
+
+
+
+ * What MSCS problem did you observe on the cluster?
+ * What time did the MSCS problem start and when did it stop?
+ * What are the names and addresses of the cluster members?
+ * Is this a new cluster, or were there any changes made to either cluster member before the problem started?
+
+
+
+STEP 1: GENERATE DATA
+
+It is essential to generate data at the time of the cluster failure to provide more information about the problem:
+
+
+
+ 1. 
+ 2. Generate an MSCS cluster log by making sure the CLUSTERLOG environment variable on both members of the cluster, if it has not already been set. The cluster log is cleared when a system reboots, so be sure to safe the log to another directory before rebooting.
+ 3.  
+    GENERATING AN MSCS CLUSTER LOG ON BOTH CLUSTER MEMBERS
+    
+    C:\> CLUSTERLOG="%SYSTEMROOT%\CLUSTER\CLUSTER.LOG 
+    
+ 4. 
+ 5. 
+ 6. Generate a high detail MQ trace on both members of the cluster [http://www.ibm.com/support/docview.wss?uid=swg21666876] during the problem. For example:
+ 7.  
+    GENERATING A HIGH DETAIL MQ TRACE ON BOTH CLUSTER MEMBERS
+    
+    C:\> strmqtrc -e -t all -t detail 
+    ... 
+    C:\> endmqtrc -a 
+    
+ 8. 
+
+
+
+STEP 2: COLLECT DATA
+ 1.  
+ 2.  Run the MQ amqmsysn utility to display information about all MQ executables and libraries on both members of the cluster. Use the "To File..." button to save this information to a file, for example %TEMP%\MQ.exeinfo.txt:
+ 3.   
+     COLLECTING MQ EXECUTABLE INFORMATION FROM BOTH CLUSTER MEMBERS
+     
+     [/support/docview.wss?uid=swg21255992&amp;aid=1]
+     
+     
+     
+ 4.  
+ 5.  
+ 6.  Show the registry checkpoints on both members of the cluster:
+ 7.   
+     CHECKING REGISTRY CHECKPOINTS ON BOTH CLUSTER MEMBERS
+     
+     C:\> CLUSTER RESOURCE /CHECKPOINTS > %TEMP%\Cluster.checkpoints.txt 
+     
+ 8.  
+ 9.  
+ 10. Save all three Event Viewer logs (System, Application and Security) on both members of the cluster.
+ 11. 
+ 12. 
+ 13. Place the cluster logs, error logs and command outputs from Steps 1 and 2 directly in the top-level MQ errors directory on each member of the cluster. Both the runmqras automation tool and the manual collection steps below collect files found there.
+ 14. 
+ 15. 
+ 16. Collect data automatically with the runmqras command [http://www.ibm.com/support/docview.wss?uid=swg21624944] on both cluster members if you are running IBM MQ V9.0 or V8.0, or WebSphere MQ V7.5, V7.1.0.1 or later, or V7.0.1.8 or later. Be sure to collect the runmqras trace section, and to specify your PMR number:
+ 17.  
+     COLLECTING RUNMQRAS OUTPUT FROM QUEUE MANAGER QMA
+     
+     runmqras -section trace -qmlist QMA -pmrno 12345,67R,890 
+     
+ 18. 
+ 19. 
+ 20. Alternatively, collect the MQ data manually on both cluster members.
+     
+     COLLECTING MQ DATA MANUALLY
+      1.  
+      2.  If your system has more than one MQ installation, use the setmqenv command to choose the one with the problem before proceeding:
+          
+          WINDOWS
+          
+          C:\> "C:\ProgramFiles\IBM\MQ\bin\setmqenv" -n InstallationX
+          
+      3.  
+      4.  
+      5.  Record the MQ version and maintenance level [http://www.ibm.com/support/docview.wss?uid=swg21621707].
+      6.  
+      7.  
+      8.  Record the operating system version and maintenance level [http://www.ibm.com/support/docview.wss?uid=swg21634678].
+      9.  
+      10. 
+      11. Save the MQ configuration information [http://www.ibm.com/support/docview.wss?uid=swg21621003], for example registry keys and ini files.
+      12. 
+      13. 
+      14. If your system has more than one MQ installation, record your MQ installation details:
+          
+          WINDOWS
+          
+          C:\> dspmqinst > %TEMP%/dspmqinst.txt
+          
+      15. 
+      16. 
+      17. Manually package your files for IBM [http://www.ibm.com/support/docview.wss?uid=swg21671892], including files containing the output from the commands listed in Step 1 and 2.
+      18. 
+     
+     
+
+
+STEP 3: SEND DATA TO IBM
+ 1.  
+ 2.  Send your data to the IBM ECuRep repository [http://www.ibm.com/de/support/ecurep/send.html] by email to websphere_support@ecurep.ibm.com, by standard or secure HTTP or FTP. or by using the IBM Secure Diagnostic Data Upload Utility (SDDUU) Java application.
+ 3.  
+ 4.  
+ 5.  While the data is transferring, send an email or use the IBM Service Request tool [http://www.ibm.com/support/servicerequest/] to update your PMR with your description of the problem and of the data you are sending.
+ 6.  
+ 7.  
+ 8.  A good description of the problem and the data is the most important information you can provide to IBM. Please do not send data without providing a description!
+ 9.  
+ 10. Contact your country representative [http://www.ibm.com/planetwide/] if you need to speak to an IBM technical support representative, or in the US call 1-800-IBM-SERV. Refer to the IBM Software Support Handbook [http://www14.software.ibm.com/webapp/set2/sas/f/handbook/home.html] for more information on working with IBM.
+ 11. 
+ 12. 
+ 13. 
+ 14. Back to top
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ IBMMQ WebSphere MQ WMQ

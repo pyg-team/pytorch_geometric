@@ -1,0 +1,80 @@
+Title: IBM WebSphere Portal 7.0.0.2 Known Runtime issues - United States
+
+Text:
+7002eGA V7002 V7.0.0.2 RELEASE NOTES
+
+ABSTRACT
+ This document contains a list of known Runtime issues for WebSphere Portal 7.0.0.2. 
+
+CONTENT
+
+
+
+
+
+
+
+Known issues for Runtime of WebSphere Portal 7.0.0.2 
+
+
+
+Problem: After upgrading to 7.0.0.2 and applying the "Portal 7.0.0.2" theme as the default portal theme, a user is unable to post to a blog or update a wiki using Microsoft Windows Internet Explorer. 
+Solution: Perform the following steps to resolve the issue: 
+
+ 1. Navigate to Administration -> Manage Pages -> Contenet_Root -> Hidden pages. 
+ 2. Select "Edit Page Properties" for the hidden page named 'Web Content Management' and select the Theme: -----Inherit Parent Theme-----
+
+
+
+Problem: WCM Authoring Search not working after an upgrade to 7.0.0.2 from 7.0.0.0 
+Solution: Perform the following steps to resolve the issue:  1. Edit the <wp_profile>/PortalServer/jcr/lib/com/ibm/icm/icm.properties file in a text editor 
+ 2. Set jcr.textsearch.enabled=true 
+ 3. Change jcr.textsearch.indexdirectory to a different location in the filesystem 
+ 4. Restart your Portal Server. 
+ 5. Create a new library or make changes in existing libraries
+
+
+
+Problem: When configuring Portal for use with a remote DB2 on z/OS database, the sample job provided for the database creation does not contain the statements required to create the storage groups. These take the form: 
+
+CREATE STOGROUP group 
+VOLUMES(' volume') 
+VCAT category; 
+COMMIT; 
+
+where,  * group
+ * 
+ * 
+ * volume
+ * 
+ * 
+ * category
+ * 
+
+
+Solution: When using the EJPSCRDB sample job add the above statements for each storage group to the final version. These should be added at the beginning of "Step 2" of the sample job, just before the CREATE statements for the actual databases. 
+
+
+
+Problem: Newly added WCM libraries might not be listed in the "Web Content Libraries" portlet on all nodes of the cluster due to an issue in cache replication. 
+Solution: The workaround would be to restart nodes which have the stale library list. A fix for this issue is scheduled to be included in a future Combined CF. 
+
+
+Problem: Theme Policies are not supported by the Portal 7.0.0.2 theme. 
+Solution: This is a known limitation. 
+
+
+Problem: Client-side aggregation is not supported by the Portal 7.0.0.2 theme. 
+Solution: This is a known limitation. 
+
+
+Problem: Loading a page with with the out of box default profile (Deferred) causes "dojo is not defined" error. 
+Solution: Dojo is not available in view mode using the Deferred profile, which is the default out of box. Switch the page or theme to use the Full profile to access Dojo in view mode. 
+
+
+Problem: The Portal 7.0.0.2 drag-and-drop framework does not support multi-selection and copying resources. 
+Solution: This is a known limitation. This can be enabled by creating a custom drag and drop source and enabling these features. 
+
+
+Problem: The deploy-7002-theme task fails 
+Solution: The Portal 7.0.0.2 theme requires several artifacts from the "Page Builder" theme to exist on the server. If you have removed the theme or if you are coming from a migrated environment where the theme never existed, you will need to add the Page Builder theme back to the system before running the deploy-7002-theme task. Please see the "Additional instructions for a migrated environment" at the following URL for more info: http://www.lotus.com/ldd/portalwiki.nsf/dx/Installing_a_new_theme_sdoc [http://www.lotus.com/ldd/portalwiki.nsf/dx/Installing_a_new_theme_sdoc]

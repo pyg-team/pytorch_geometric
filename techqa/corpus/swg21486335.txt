@@ -1,0 +1,32 @@
+Title: IBM Machine Locking code appears as: 10-*1TR JYAF UQEJ VUHK - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ I am trying to install BIM SPSS Statistics Client and more importantly, the latest version of the SafeNet Sentinel License Manager tool on my machine. I have installed everything in the \Windows\Administration\Licensing\NetworkLicenseManager and \Tools folder of my Statistics media.
+
+Because of Firewall and Security issues, I cannot obtain a licence automatically and I have been asked by the Business Analytics Client Care team for my lock code so they can manually generate a licence code to be applied onto my machine. When I run the 'echoid.exe' application (to obtain the lock code), I receive the following: 10-*1TR JYAF UQEJ VUHK
+
+Licencing states that this is an incorrect format and that it should appear similar to the following example:
+E.g. 10-ABC12 
+
+ANSWER
+There are two examples on where this type of lock code will appear.
+
+1) The 'echoid.exe' application was run from an incorrect location. You'll need to execute this tool from the \WinNT subdirectory of the Safenet Sentinel License Manager.
+
+2) The version of the Safenet Sentinel License Manager was installed on a Unix/Linux system. This is an example of the updated Sentinel License Manager's lock code application. You'll see that the above lock code is listed as a 'NEW' machine lock code format. Unfortunately, IBM SPSS cannot generate valid licences from the new lock code format.
+
+Please uninstall the current Safenet Sentinel License Manager and download and install the version available from the IBM SPSS Technical Support website.
+
+Once a proper lock code has been obtained, please see resolution 73187 for instructions on how to successfully licence your Sentinel License Manager
+
+RELATED INFORMATION
+ Need more help? Our Statistics forum is Live! [https://developer.ibm.com/answers/topics/statistics.html?smartspace=predictive-analytics]
+
+
+ 
+
+HISTORICAL NUMBER
+ 88353

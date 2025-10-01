@@ -1,0 +1,30 @@
+Title: IBM Excel import to spss - The column contained no recognized type - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ I'm trying to import an Excel worksheet into SPSS for Windows and I'm getting an error. It appears that any columns in an Excel worksheet containing blank cells or a formula giving an alphanumeric outcome can't be imported into SPSS. I get the following error:
+
+Warning. Command name: GET DATA
+(2101) The column contained no recognized type; defaulting to
+"Numeric[8,2]"
+* Column 2
+
+And since the field in SPSS defaulted to numeric all alphanumeric data has been lost - shows up as sysmis. I can perform the importation cleanly using ODBC, but is there anything else I can do? 
+
+RESOLVING THE PROBLEM
+This appears to be a defect and has been reported to SPSS Development for remediation in a future release. If the problem is caused by embedded formulae, the workaround is to either to import using ODBC or to create a new worksheet in Excel and copy the entire contents of the original worksheet into it using Paste Special instead of plain Paste and choosing to paste Values. In the new worksheet cells containing formulae will be replaced with the results of those formulae. This worksheet should be openable via File->Open->Data with no issues.
+
+If the warnings are caused by simple empty or blank columns, there is no loss of data, but you may have to change the default format of the variable in SPSS to your intended Type and Size.
+
+We apologize for any inconvenience
+
+RELATED INFORMATION
+ Need more help? Our Statistics forum is Live! [https://developer.ibm.com/answers/topics/statistics.html?smartspace=predictive-analytics]
+
+
+ 
+
+HISTORICAL NUMBER
+ 55739

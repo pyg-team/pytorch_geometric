@@ -1,0 +1,63 @@
+Title: IBM IAM9:  Message Broker – WebSphere Decision Service Node - United States
+
+Text:
+iam9; JRules; Decision Management; Rule Engine; ILog DOWNLOADABLE FILES
+
+ABSTRACT
+ This SupportPac provides a node to execute the J2SE rule execution server (RES) of WebSphere Operational Decision Management inside the WebSphere Message Broker JVM. 
+
+DOWNLOAD DESCRIPTION
+This SupportPac provides a WebSphere Decision Service Node in WebSphere Message Broker to run a J2SE runtime business rules engine that can process rules based on the business content from messages within message broker flows. The runtime rules engine can come from the WebSphere Operational Decision Management (WODM). The node receives a input message, extracts the rule set parameter and then runs the rule engine. The result is sent to the output terminal and can be used for complex routing and decision making. 
+
+The SupportPac makes existing custom integrations between WebSphere Message Broker and WebSphere Operational Decision Management simpler to implement.
+
+The SupportPac is delivered as a User Defined Node added to the Message Broker Toolkit palette. 
+• WebSphere Message Broker v7, v8, v9 with IAM9 node v1 SupportPac with ODM v7, v7.5 and v8.
+• WebSphere Message Broker v7, v8, v9 with IAM9 node v2 SupportPac with ODM V8.0.1 and 8.5.
+
+Possible Uses
+Decision Service node can be used for:
+• Complex flow decisions by rule.
+• Content based routing by rule.
+
+New in this Release
+• Provide a node implementation for all ODM releases currently available.
+• Change the user interface and input to look similar to the decision service node of IBM Integration Bus (formerly known as WebSphere Message Broker) v9.
+• Enable Decision Warehouse.
+• Provide Local Environment Structure to set rule set path and rule set parameters.
+
+Details
+Author: Jochen Benke, IT Specialist, Software Services for WebSphere (ISSW)
+Category: 2
+Released: 27Mar12 
+Last updated: 28Aug13
+Current SupportPac Version: 2.0
+»Please note that the version number shown in the right-hand pane is the version of the WebSphere MQ or WebSphere MB product that this SupportPac applies to. The date is the last web page refresh. 
+
+To view the complete portfolio of WebSphere MQ SupportPacs please visit the WebSphere MQ SupportPacs homepage. [http://www-01.ibm.com/support/docview.wss?rs=171&uid=swg27007205]
+
+PREREQUISITES
+WebSphere Message Broker V7.0 or later
+WebSphere ILOG BRMS V7.1 or later
+WebSphere Operational Decision Management V7.5 or later
+
+INSTALLATION INSTRUCTIONS
+See Node documentation below.
+
+URL LANGUAGE SIZE(Bytes) iam9.pdf [ftp://public.dhe.ibm.com/software/integration/support/supportpacs/individual/iam9.pdf] US English 789266 
+DOWNLOAD PACKAGE
+
+
+
+
+
+Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options iam9.zip 28 Aug 2013 US English 546661 HTTPS [https://www14.software.ibm.com/webapp/iwm/web/preLogin.do?source=swg-mbwdsn] 
+TECHNICAL SUPPORT
+ Category 2 SupportPacs are provided in good faith and AS-IS. There is no warranty or further service implied or committed and any supplied sample code is not supported via IBM product service channels. 
+
+You may submit a question using the 'rate this page' below but a response is not guaranteed.
+
+Please read the license information contained within the zip file of this SupportPac to determine if you want to use it. 
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Operational Decision Manager Not Applicable 8.5, 8.0.1, 8.0, 7.5 Business Integration WebSphere ILOG JRules Not Applicable 7.1

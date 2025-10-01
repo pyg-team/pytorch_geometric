@@ -1,0 +1,38 @@
+Title: IBM TEP AMC - "Internet services" all  greyed out or inactive - United States
+
+Text:
+gray grayed blank Tivoli Enterprise Portal inactive unavailable internet services TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ All the "Internet services" applications monitored by ISM agent profiles appear as 'offline'/ greyed out/ inactive under TEP Navigator pane. 
+
+SYMPTOM
+All the ISM "Profiles" under AMC dashboard workspaces are showing as offline (greyed out), as seen in TEP GUI console , in the Navigator, under Application Management Console -> Internet Services -> here the list of applications monitored by ISM agent profiles are all grayed out, inactive, no monitoring data is available.
+
+
+CAUSE
+After review of all "cinfo -t" (for Unix/Linux)/ "kincinfo -t" (for Windows) results from ITM environment systems : 
+
+- The ISM "IS" agent is currently at version for example : 07.30, 
+- But the AMC dashboard "T3" agent is back level, at version for example : 07.20
+
+
+ENVIRONMENT
+Application Management Console -> Internet Services -> + (expanded list) of applications monitored by ISM agent(s), and consolidated by the dashboard ITCAM for Transactions agent
+
+
+
+DIAGNOSING THE PROBLEM
+Check if the AMC dashboard / T3 agent is at latest level.
+
+
+
+RESOLVING THE PROBLEM
+Upgrade the AMC agent to V7.3 for example, if it's not yet at that level, especially if other ITCAM for transactions agents are already at V7.3. 
+
+General recommendation is to have the AMC dashboard T3 agent at latest or same level, compared to the ITCAM4Tx agents. If you upgrade the ITCAM for Tx agents, upgrade AMC agent first, then other ITCAM for Tx agents.
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ ITCAM for Transactions ITCAM Internet Services Monitoring itcam4tx

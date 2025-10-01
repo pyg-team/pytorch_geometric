@@ -1,0 +1,215 @@
+Title: IBM IZ41026: TIMING WINDOW IN CHECKPOINT LEADS TO MQ V5.3 QUEUE MANAGER CRASH RECOVERY RESTART FAILURE - United States
+
+Text:
+  FIXES ARE AVAILABLE
+WebSphere MQ V6.0 Fix Pack 6.0.2.7 [http://www-01.ibm.com/support/docview.wss?uid=swg24022718]
+WebSphere MQ V7.0 for i5/OS Fix Pack 7.0.0.2 [http://www-01.ibm.com/support/docview.wss?uid=swg24022812]
+WebSphere MQ V7.0 Fix Pack 7.0.0.2 [http://www-01.ibm.com/support/docview.wss?uid=swg24022810]
+WebSphere MQ V7.0 Fix Pack 7.0.1.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24024528]
+WebSphere MQ V7.0.1 for i5/OS Fix Pack 7.0.1.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24025627]
+WebSphere MQ V7.0 Fix Pack 7.0.1.2 [http://www-01.ibm.com/support/docview.wss?uid=swg24026518]
+WebSphere MQ V7.0.1 for i5/OS Fix Pack 7.0.1.2 [http://www-01.ibm.com/support/docview.wss?uid=swg24026566]
+WebSphere MQ 6.0 for HP OpenVMS Alpha and Itanium - Fix Pack 6.0.2.7 [http://www-01.ibm.com/support/docview.wss?uid=swg24027266]
+WebSphere MQ 6.0 for HP OpenVMS Alpha and Itanium - Fix Pack 6.0.2.10 (FP03) [http://www-01.ibm.com/support/docview.wss?uid=swg24029987]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Probe AL004009 will be generated during queue manager restart.
+   The function stack will look as follows:
+   kpiStartup
+   apiStartup
+   atmRecoveryUndoPass
+   atxPerformRollback
+   almLogIt
+   xcsFFST
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  NA
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   This is a narrow timing window that applies to MQ V5.3
+   customers only.
+   While this issue does not exist in MQ V6 and MQ V7, some minor
+   serviceability improvements were made in this APAR and these
+   serviceability improvements have been ported to MQ V6 and MQ V7.
+   
+   Platforms affected:
+    All Distributed (iSeries, all Unix and Windows)
+   ****************************************************************
+   PROBLEM SUMMARY:
+   There is a timing window where a transaction manages to write a
+   log record between the checkpoint tasks start checkpoint log
+   record and transaction table log record. This can cause the
+   transaction to be recovered to the wrong point in the
+   transaction list in the replay phase of queue manager
+   restart.
+   
+   The in-doubt phase of queue manager restart then moves the
+   transaction to the correct point in the transaction list, but
+   in doing so the order of the list changes and the in-doubt
+   phase misses some transactions (as it is currently
+   traversing the same list). When the undo phase then comes
+   across transactions which have not been processed by the
+   in-doubt phase it finds them to be in an inconsistent state
+   and fails the queue manager restart.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The transactions recovered during the redo phase are positioned
+   at the correct place in the transaction list before entering
+   the in-doubt phase of queue manager restart.
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+                      v6.0
+   Platform           Fix Pack 6.0.2.7
+   --------           --------------------
+   Windows            U200312
+   AIX                U821719
+   HP-UX (PA-RISC)    U821511
+   HP-UX (Itanium)    U822328
+   Solaris (SPARC)    U821514
+   Solaris (x86-64)   U822359
+   iSeries            tbc_p600_0_2_7
+   Linux (x86)        U822325
+   Linux (x86-64)     U822358
+   Linux (zSeries)    U822329
+   Linux (Power)      U822327
+   Linux (s390x)      U822357
+   
+                      v7.0
+   Platform           Fix Pack 7.0.0.2
+   --------           --------------------
+   Windows            U200302
+   AIX                U822354
+   HP-UX (PA-RISC)    U822349
+   HP-UX (Itanium)    U822351
+   Solaris (SPARC)    U822353
+   Solaris (x86-64)   U822394
+   iSeries            tbc_p700_0_0_2
+   Linux (x86)        U822348
+   Linux (x86-64)     U822393
+   Linux (zSeries)    U822352
+   Linux (Power)      U822350
+   
+                      v5.3
+   There is no planned maintenance for this release since
+   WebSphere MQ v5.3 went out of support with effect
+   from 28th September 2007.
+   
+   
+   The latest available maintenance can be obtained from
+   'Websphere MQ Recommended Fixes'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037]
+   
+   If the maintenance level is not yet available, information on
+   its planned availability can be found in 'Websphere MQ
+   Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ41026
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBS MQ FOR SUN
+   
+   
+ * REPORTED COMPONENT ID
+   5724B4103
+   
+   
+ * REPORTED RELEASE
+   530
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-01-08
+   
+   
+ * CLOSED DATE
+   2009-01-22
+   
+   
+ * LAST MODIFIED DATE
+   2009-02-19
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBS MQ FOR SUN
+   
+   
+ * FIXED COMPONENT ID
+   5724B4103
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R530 PSY
+   UP

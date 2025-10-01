@@ -1,0 +1,38 @@
+Title: IBM Custodian appeared on Who Is On Hold Report but not on My Holds list. - United States
+
+Text:
+atlas recipients other person who is on hold WIOH TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Attempts to reconcile the Atlas Who Is On Hold Report against the custodian's My Holds list show inconsistencies. 
+
+SYMPTOM
+People who show up on the Who Is On Hold Report do not show up the matching custodian's My Holds list.
+
+
+CAUSE
+Custodians that are added to a hold using the Other Person tab instead of the Employee tab are created as records outside of the Person system. As such, even if the name or email address matches a Person record, it is not associated with that login and will not appear on the My Holds list for that Person.
+
+ENVIRONMENT
+This happens in any Atlas environment.
+
+DIAGNOSING THE PROBLEM
+Steps to Reproduce:
+
+
+
+
+ 1. Open a Hold Notice and select the Recipients for the notice. 
+ 2. Click on the Other Person tab. 
+ 3. Enter the name and email address for the custodian and add them to the recipient list. 
+ 4. Once the notice has been sent, verify that they appear on the Who Is On Hold Report, but not on the Person's My Holds list.
+    
+    
+
+
+Diagnosing the problem: 
+Identify the problematic custodian record and the corresponding Request ID and Notice ID. Review this custodian's record in the SCOPETARGET table. If the SCOPETARGET.OTHERPERSONID record has a value, then the record has been added via the Other Person tab, and is not associated with the Person record.
+
+
+RESOLVING THE PROBLEM
+The problematic custodian needs to be removed from the hold notice recipient list, and replaced with the correct record using the Employee tab.

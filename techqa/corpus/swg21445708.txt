@@ -1,0 +1,18 @@
+Title: IBM Domino server fails to restart if ITCAM for Applications domino agent is restarted manually during the procedure of restarting domino server - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When domino server is restarting and ITCAM for Applications domino agent is restarted manually at the same time, domino server can not be restarted successfully. 
+The following error messages can be found in the domino server console and log file:
+
+Lotus Notes: error 0x1767
+2010-07-08 14:15:15: server shutdown complete
+Server exiting:
+Server is already running(in another process)
+
+
+
+RESOLVING THE PROBLEM
+When domino server is restarting, do not try to restart ITCAM for Applications domino agent manually. ITCAM for Applications domino agent will be restarted automatically.

@@ -1,0 +1,22 @@
+Title: IBM Webcast replay:  IBM Content Collector P8 Content Search Services Support - United States
+
+Text:
+ECMSTE_webcast; isste_webcast; ISSTE; STEwebcastDocument; Support Technical Exchange; education; presentation; webcast; P8 CSSS WEBCAST
+
+ABSTRACT
+ IBM Content Collector Support hosted a webcast with customers on the topic of P8 Content Search Services Support (P8 CSSS) on May 8, 2013. A recording of the webcast session is now available. 
+
+PRESENTATION
+[http://www.ibm.com/i/v16/icons/weblecture.gif]FSC Metadata Definition and Expression Editor.pdf [/support/docview.wss?uid=swg27038511&aid=2]FSC Metadata Definition and Expression Editor.pdf [/support/docview.wss?uid=swg27038511&aid=1] 
+
+Click the PDF file above to play the slide presentation for this Webcast. 
+
+Right-click and select Save Target As or Save Link As to store the file on your local computer for later review.
+
+Get Adobe Reader [http://www.adobe.com/products/acrobat/readstep2.html] to view PDF
+
+
+MULTIMEDIA
+[http://www.ibm.com/i/v16/icons/video.gif]P8 Content Search Services Support (P8 CSSS) Webcast [ftp://public.dhe.ibm.com/software/is/p8_csss_20130508.wmv] 
+
+To replay the presentation with recorded audio, click on Download Full Presentation [ftp://public.dhe.ibm.com/software/is/p8_csss_20130508.wmv]. Right-click and select Save As to store the file on your local computer for later playback.

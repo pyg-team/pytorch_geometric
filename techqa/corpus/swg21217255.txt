@@ -1,0 +1,25 @@
+Title: IBM What should I put in the parameters when I run EKDPOST? - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ I am running the EKDPOST command in IBM® DB2® Content Manager for iSeries™ and do not know what parameters to enter. 
+
+ANSWER
+To run the EKDPOST command, do the following steps: 
+
+ 1. You should be signed on as QSECFR. Type EKDPOST and press F4 on your keyboard. Make sure there are no CM or WAF libraries in your library list and no CM or WAF jobs running. 
+ 2. Enter the following parameters. Note the BOLD text is what you will see on the screen.
+
+
+Type of install 1=NEW, 2=Existing - enter 2 if you are migrating an existing environment. If you are creating a new environment, enter 1. Environment 1=Single, 2 = Multiple - enter 1 if you have only one CM/400 environment on your iSeries, 2 for multiple. This parameter does not really matter. 
+
+CM/400 file library QUSRVI, Name - enter the name of your file library or a different name if you want to change the library name. NOTE: If you change the file library name you will need to change all the job descriptions that specify it. This parameter is used to CHANGE the file library name. 
+
+File Library QUSRVI, EKDLIBFIL, Name - enter the name of the file library. You should enter the name of your file library in BOTH of the last 2 fields. Your file library is the library that has the EKD0310 file populated with with data. 
+
+If you are creating a new environment (other than the first environment), press the F10 key and specify a different three letter prefix other than QVI. You do not need to press F10 unless it is a new environment and you have already used the QVI prefix. 
+
+RELATED INFORMATION
+ URL for DB2 CM for iSeries online publications [http://www-306.ibm.com/software/data/cm/cmgr/400/support.html]

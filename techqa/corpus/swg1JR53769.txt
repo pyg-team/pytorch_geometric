@@ -1,0 +1,183 @@
+Title: IBM JR53769: IBM_BPM_PROCESS_PORTAL_NOTIFICATION APPLICATION IS NOT DEPLOYED ON THE APPLICATION CLUSTER - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+ DIRECT LINK TO FIX
+8.0.1.3-WS-BPM-IFJR53769 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Standard&fixids=8.0.1.3-WS-BPM-IFJR53769&source=SAR]
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When an IBM Business Process Manager (BPM) coach is loaded in a
+   newly created IBM BPM V8.0.13 cluster or four-cluster topology,
+    the following errors are logged in the web cluster members'
+   SystemOut.log file because the
+   IBM_BPM_Process_Portal_Notification application is not deployed
+   on the application cluster:
+   
+   [17/07/13 13:41:48:988 CEST] 0000002f SessionManage I
+   org.cometd.server.AbstractService exception Exception while
+   invoking session#public void
+   com.ibm.bpm.socialbus.session.SessionManager.handleMessage(org.c
+   ometd.bayeux.server.ServerSession,org.cometd.bayeux.Message)
+   from 25sb6pek8kb9objho7l3iocj5 - last connect 13 ms ago with
+   {ext={com.ibm.bpm.notification.origin=ps-dev-cell01\ps-dev-cell0
+   1-node1\PS501_DE.WebApp.ps-dev-cell01-node1.0},
+   channel=/bpm/notifications/collaboration/t2754/3028.4c38cd62-701
+   a-4580-b8e7-70527eaf12cc/USER_JOIN_SESSION, timestamp=Wed, 17
+   Jul 2013 11:41:47GMT, data={userName=admin, editorID=admin,
+   taskOwnerID=admin,fullName=Administrator}, id=328}
+   
+   PRODUCTS AFFECTED
+   IBM BPM Advanced
+   IBM BPM Standard
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  manually change the app association back to app target.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  In IBM BPM V8.0.1.x, the IBM_BPM_Process_Portal_Notification
+   application was deployed on the support cluster in a
+   three-cluster deployment environment and on the web cluster in a
+    four-cluster deployment environment. Interim fix JR46347 [http://www-01.ibm.com/support/docview.wss?uid=swg1JR46347] for
+   IBM BPM V8.0.1.1, which is included in IBM BPM V8.0.1.2 and
+   later releases, introduces a dependency from the
+   IBM_BPM_Process_Portal_Notification application on IBM BPM
+   configuration files that are available only on the application
+   cluster. This dependency causes an exception when
+   IBM_BPM_Process_Portal_Notification application tries to read
+   these configuration files on the support cluster or on the web
+   cluster where the application is deployed.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A fix is available for IBM BPM V8.0.1.3 that deploys the
+   IBM_BPM_Process_Portal_Notification application on the
+   deployment environment's application cluster where the necessary
+    configuration files are accessible.
+   
+   For existing deployment environments, follow the instructions in
+   ?Profile upgrade instructions for IBM Business Process Manager
+   Version 8.0.1 Fix Pack 3 (V8.0.1.3)?, specifically step 9 of
+   the Upgrading clusters section at
+   http://www.ibm.com/support/docview.wss?uid=swg27042246#upgradecl [http://www.ibm.com/support/docview.wss?uid=swg27042246#upgradecl]
+   usters to move the IBM_BPM_Process_Portal_Notification
+   application to the application cluster.
+   
+   On Fix Central (http://www.ibm.com/support/fixcentral), search
+   for JR237858:
+   
+   1. Select IBM Business Process Manager with your edition from
+   the product selector, the installed version to the fix pack
+   level, and your platform, and then click Continue.
+   2. Select APAR or SPR, enter JR237858, and click Continue.
+   
+   When you download fix packages, ensure that you also download
+   the readme file for each fix. Review each readme file for
+   additional installation instructions and information about the
+   fix.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR53769
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM ADVANCED
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9400
+   
+   
+ * REPORTED RELEASE
+   801
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-07-03
+   
+   
+ * CLOSED DATE
+   2015-09-01
+   
+   
+ * LAST MODIFIED DATE
+   2015-09-01
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   BPM ADVANCED
+   
+   
+ * FIXED COMPONENT ID
+   5725C9400
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R801 PSY
+   UP

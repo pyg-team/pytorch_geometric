@@ -1,0 +1,50 @@
+Title: IBM How to generate a continuous Packet Capture on the WebSphere DataPower device using CLI - United States
+
+Text:
+packet capture; Continuous pcap; CLI TECHNOTE (FAQ)
+
+QUESTION
+ How to collect packet capture on the WebSphere DataPower device in the continuous mode 
+
+ANSWER
+Login to the WebSphere DataPower device through SSH to get to the Command Line Interface (CLI): 
+
+ * Type co at the prompt to enter Global configuration mode. 
+ * Typeint <ethernet interface > where <ethernet interface> is one of the interfaces that is configured on the DataPower device 
+ * Type "packet-capture temporary:///eth1trace.pcap -1 10000" 
+   where 10000 is the file size in kilobytes (the file size can be in the range of 10 through 50000 kilobytes) and eth1trace.pcap is the name of the file to store the generated packet data. 
+ * Perform the test for which you would like to collect the packet capture 
+ * As soon as you see the problem, on the command line type: 
+   no packet-capture temporary:///eth1trace.pcap 
+ * Download the file through the CLI using the copy command
+   xi50(config)# copy temporary:///eth1trace.pcap 
+   scp://test@x.xx.xx.xxx/trace1.pcap
+   Password: ******
+   File copy success 
+
+For more details on the copy command, refer to the IBM WebSphere DataPower CLI Reference Guide. 
+Alternatively, you can also download the file from the WebGUI. From the WebGUI, navigate to the File Management temporary directory > download the file. 
+
+For example: 
+
+xi50# co 
+Global configuration mode 
+xi50(config)# int eth1 
+Interface configuration mode (eth1 ) 
+xi50(config-if[eth1])# packet-capture temporary:///eth1trace.pcap -1 10000 9000 
+Trace begun. 
+xi50(config-if[eth1])# no packet-capture temporary:///eth1trace.pcap 
+Packet capture to temporary:///eth1trace.pcap on eth1 Stopped. 
+
+Example of capturing packet traces for all interfaces: 
+
+xi50# co 
+Global configuration mode 
+xi50(config)# packet-capture-advanced all temporary:///all-capture.pcap -1 10000 9000 
+Trace begun. 
+
+xi50(config)# no packet-capture-advanced all temporary:///all-capture.pcap 
+Packet capture to temporary:///all-capture.pcap on all stopped. 
+
+This will start a rotating packet capture of 3 files, each with a size of 10MB 
+The number 3 is fixed and cannot be configured.

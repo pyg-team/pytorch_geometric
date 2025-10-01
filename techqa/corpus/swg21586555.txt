@@ -1,0 +1,86 @@
+Title: IBM Create new VOB from ClearCase 8.x that will replicate with ClearCase 7.x VOB server - United States
+
+Text:
+multisite; flevel; mkreplica; older version; -flevel; mkvob; VOB; synchronize TECHNOTE (FAQ)
+
+QUESTION
+ How can you replicate a VOB created on an IBM Rational ClearCase 8 host with a site that is running version 7.x of IBM Rational ClearCase MultiSite? 
+
+CAUSE
+
+This is the default behavior of ClearCase MultiSite.
+
+The following restriction is documented in the IBM Rational ClearCase Information Center under the topic of mkreplica [http://publib.boulder.ibm.com/infocenter/cchelp/v8r0m0/index.jsp?topic=%2Fcom.ibm.rational.clearcase.cc_ms_ref.doc%2Ftopics%2Fmt_mkreplica.htm].
+
+You can replicate a VOB replica to a host running an earlier major version of Rational® ClearCase only if the feature level of the exporting replica's VOB family is the same as the feature level of the Rational ClearCase release on the target host. (You can always replicate a VOB to a host running a later major version of Rational ClearCase.) 
+
+
+However, new VOBs created on a ClearCase 8.0 VOB server are automatically created as Feature Level 8 (and VOB schema 80) by default; which is higher than the older servers.
+
+
+ANSWER
+ 
+
+********THIS PROCEDURE DOES NOT APPLY TO UCM PVOBS AND CVOBS (ONLY solution #3)******* 
+
+**********Schema 80 changes are mostly on UCM. This procedure may work with empty and just created VOBs. 
+
+ 
+
+You can do either of the following: 
+
+ 
+
+ * Create the VOB on a ClearCase 7.1.x host and replicate with the ClearCase 8 host as its family Feature Level will be 5. 
+   or
+   
+   
+   
+   
+ * If the VOB has not yet been created, you can create it on the ClearCase MultiSite 8.0 VOB server at a Feature Level that is lower than the default (and compatible with the older VOB servers) by using the mkvob command option -flevel. Note that the value specified with the -flevel option has to be 5 or greater. 
+   
+   cleartool mkvob -tag <vob tag> -flevel 5
+   
+
+
+ * EXAMPLE:
+ * 
+ *  On the ClearCase 8.0 VOB server:
+    1. Create a VOB Schema 80, Feature Level 5 VOB:
+       
+       # cleartool mkvob -nc -flevel 5 -tag /vobs/foo /vobs/foo.vbs 
+    2. Create a MultiSite replica creation packet that the ClearCase 7.x servers can read.
+       
+       # multitool mkreplica -export -workdir /tmp/wdir-exp -nc -fship server7x:rep-x@/vobs/foo
+       
+       
+   
+   On the ClearCase 7.x VOB server:
+    1. Import the replica creation packet creating a new Schema 54, Feature Level 5 MultiSited VOB:
+       
+       # multitool mkreplica -import -workdir /tmp/wdir-imp -tag /vobs/foo_rep /vobs/foo_rep.vbs 
+       
+    2. Make a change in the new VOB and synchronize the changes back to the 8.0 VOB replica.
+       
+       multitool syncreplica –export –fship server8x@/vobs/foo_rep 
+       
+       
+   
+   To be 100% sure it will work, create the VOB with schema 54 
+ *  cleartool mkvob -schema 54 ......  
+   
+   Refer to the IBM Rational ClearCase 8.0 Information Center [http://www.ibm.com/support/docview.wss?&uid=swg27010158]under the topics of mkvob, mkreplica, syncreplica for further details.
+   
+   For information about what feature levels were introduced with each ClearCase version, refer to technote 1119269 [http://www.ibm.com/support/docview.wss?uid=swg21119269] About Feature Levels and ClearCase.
+   
+   
+
+ 
+
+Refer to the IBM Rational ClearCase Information Center under the topic of Planning for Rational ClearCase MultiSite installation [http://publib.boulder.ibm.com/infocenter/cchelp/v8r0m0/index.jsp?topic=%2Fcom.ibm.rational.clearcase.cc_ms_install.doc%2Ftopics%2Fc_inst_planning_ms.htm] for further information.
+
+ 
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Software Development Rational ClearCase VOB AIX, HP-UX, Linux, Solaris 8.0, 8.0.0.1, 8.0.0.2, 8.0.0.3, 8.0.0.4

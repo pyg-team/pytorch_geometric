@@ -1,0 +1,58 @@
+Title: IBM The database transfer to DB2 on a Portal 8.5 environment fails during the ConfigWizard on Step 4, the Setup database step. - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+The ConfigTrace.log shows the following: 
+
+Target started: action-grant-users 
+
+... 
+
+[sqlproc] GRANT
+[sqlproc] USE OF TABLESPACE USERSPACE1
+[sqlproc] TO
+[sqlproc] GROUP WP_BASE_CONFIG_USERS
+
+[sqlproc] Error during statement execution!
+[sqlproc] com.ibm.db2.jcc.am.SqlSyntaxErrorException: DB2 SQL Error:
+SQLCODE=-204, SQLSTATE=42704, SQLERRMC=USERSPACE1, DRIVER=4.14.113
+
+
+This means that DB2 threw the following error:.
+
+DB2 SQL Error: SQLCODE=-204, SQLSTATE=42704, SQLERRMC=USERSPACE1,
+DRIVER=4.14.113
+
+during the execution of this SQL command...
+
+GRANT USE OF TABLESPACE USERSPACE1 TO GROUP WP_BASE_CONFIG_USERS
+
+
+SYMPTOM
+The ConfigWizard fails on Step 4, the Setup database step
+
+
+CAUSE
+This DB2 error can be interpreted this way: 
+
+SQLCODE=-204 means the execution was not successful 
+
+SQLSTATE=42704 means unidentified object name 
+
+SQLERRMC=USERSPACE1 means this specific object was not found 
+
+ 
+
+Based on the original SQL statement this means that the tablespace USERSPACE1 does not exist in the DB2 database 
+
+
+ENVIRONMENT
+Portal 8.5 
+
+AIX
+
+
+RESOLVING THE PROBLEM
+These tablespaces and other database objects are created during Step 3 of the ConfigWizard. Please have the DBA ensure these objects were indeed created properly.

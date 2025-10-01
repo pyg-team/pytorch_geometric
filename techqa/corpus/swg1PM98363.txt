@@ -1,0 +1,203 @@
+Title: IBM PM98363: Cannot delete more than 1000 items from parent_child_links in Clearquest using Oracle as backend due to Oracle limitation - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Description:
+   ========
+   Cannot delete more than 1000 items from parent_child_links
+   in ClearQuest when using Oracle as back-end because of Oracle
+   limitation 'ORA-01795: maximum number of expressions in a list
+   is 1000'
+   
+   Issue was reproduced using RQM/ClearQuest Bridge, but should be
+   reproducible in ClearQuest itself when deleting 1000
+   parent-child links
+   if back-end is Oracle.
+   
+   Steps to reproduce:
+   =============
+   1. Setup ClearQuest/RQM bridge using RQM 4.0.2 and CQ 8.0.0.7
+   using
+   a Oracle 11 database based off ALM schema ( schema shouldn't
+   matter)
+   and OSLC 1.2 package.
+   2. Create a ALMRequest record in CQ.
+   3. Create 600 test cases in RQM and generate 600 Test Case
+   Execution
+   Records ( TCERs)
+   4. In RQM, go to Execution-? Test case execution records.
+   In the listed items, select all and then right click to go to
+   'Manage
+   Blocking Defects'.
+   5. Click on 'Link to Existing defect'. Login to CQ when prompted
+   and
+   select the CQ record created in step 2.
+   6. Let it finish linking, may take 7-8 minutes.
+   7. After it finishes on RQM side, go to CQ record, make sure
+   oslc links
+   are created ( there will be 1200 links created, 1000 for test
+   cases and
+   1000 for TCERs)
+   8. Go back to RQM -?Execution-? Test case execution records.
+   Choose the same 600 TCERs and right click to go to 'Manage
+   Blocking
+   Defects'.
+   9. Select the defect and click on red 'x' on top to remove the
+   link.
+   Click on Ok.
+   You will see get a dialog after some time' The Defect is linked
+   to
+   other Test Results that could be for the same Test Plan and Test
+   Case.
+   Would you also like to remove the links from the Defect to this
+   Test
+   Result's Test Plan and Test Case? If you do not remove the links
+   now
+   then you can manually remove them later.'. Say 'Yes'.
+   10. Unblocking will finish in RQM after some time, but you will
+   say an
+   error in Firebug if you have it running 'ORA-01795: ....'.
+   The CQ defect will be removed from RQM TCER, but links will not
+   be
+   removed on the defect in CQ.
+   
+   In the CQ core trace on the web server, you will see the
+   following
+   error:
+   ============================================
+   [CQ 4568.327, 20131002, 12:30:18, 4624, 4880, 458759] Throw:
+   CRMDB0001E
+   SQLExecute: RETCODE=-1, State=S1000, Native Error=1795
+   [CQ 4568.327, 20131002, 12:30:18, 4624, 4880, 458759] [IBM
+   Rational
+   DataDirect][ODBC Oracle Wire Protocol driver][Oracle]ORA-01795:
+   maximum
+   number of expressions in a list is 1000
+   [CQ 4568.327, 20131002, 12:30:18, 4624, 4880, 458759] SQL
+   statement='delete from parent_child_links where parent_dbid =
+   33554480
+   and parent_fielddef_id = 16782786 and child_dbid in ( 33614443,
+   rest of
+   the dbids)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   When using ClearQuest with an Oracle database, attempting to
+   delete more than 1000 child records in a parent child
+   reference list will result in the error "ORA-01795: maximum
+   number of expressions in a list is 1000 ".
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A fix is available in ClearQuest 8.0.0.9 and 8.0.1.2.
+   
+   The sql that deletes parent_child_links from the ClearQuest
+   database has been modified so that there are never more than
+   1000 expressions in a list, thus avoiding the error
+   condition.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM98363
+   
+   
+ * REPORTED COMPONENT NAME
+   CLEARQUEST WIN
+   
+   
+ * REPORTED COMPONENT ID
+   5724G3600
+   
+   
+ * REPORTED RELEASE
+   800
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-10-03
+   
+   
+ * CLOSED DATE
+   2013-12-13
+   
+   
+ * LAST MODIFIED DATE
+   2013-12-13
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CLEARQUEST WIN
+   
+   
+ * FIXED COMPONENT ID
+   5724G3600
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R800 PSN
+   UP

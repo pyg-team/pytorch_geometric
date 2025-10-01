@@ -1,0 +1,87 @@
+Title: IBM Where is the dialog Analyze - Custom Tables – Convert Multiple Category Set (STATS MCSET CONVERT) in IBM SPSS Statistics 24? - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ I have a dataset with 3 variables (Food1, Food2, Food3) that represent a multiple category set.
+Each variable is coded with values between 1 to 5 with below lables
+
+1 = Milk
+2 = Bread
+3 = Fish
+4 = Vegetables
+5 = Meat
+
+I would like to convert these 3 variables into a multiple dichotomy set so that I get 5 variables with codes 0 and 1 if an answer was given.
+Within release IBM SPSS Statistics 23 FP3 I had the menu Analyze - Custom Tables – Convert Multiple Category Set where I could perform this action easily but in Release IBM SPSS Statistics 24 I do not find this dialog, it is not there. Why this? I know this dialog is a Custom dialog for an Extension bundle called STATS MCSET CONVERT but how to find this Extension bundle and how can I install it after the SPSS release was installed? 
+
+CAUSE
+Release 23 FP3:
+[/support/docview.wss?uid=swg21986535&amp;aid=1] 
+
+Release 24:
+[/support/docview.wss?uid=swg21986535&aid=2] [/support/docview.wss?uid=swg21986535&aid=2]
+
+
+
+ANSWER
+To install an extension bundle in IBM SPSS Statistics 24 that is not installed already please go to 
+
+the Github: IBM SPSS Predictive Analytics Gallery [http://ibmpredictiveanalytics.github.io/?cm_mc_uid=34644301118714659825683&cm_mc_sid_50200000=1466163184] on IBM DeveloperWorks. 
+
+Search for STATS MCSET CONVERT: 
+
+[/support/docview.wss?uid=swg21986535&aid=3] [/support/docview.wss?uid=swg21986535&aid=3] 
+
+Select 'Go to Repository'
+[/support/docview.wss?uid=swg21986535&amp;aid=4] 
+
+The direct link to the download page is here [https://github.com/IBMPredictiveAnalytics/STATS_MCSET_CONVERT]
+
+You can either download the files and documentation for this bundle separately, or click on the green button Clone or download and select to download a ZIP file:
+
+[/support/docview.wss?uid=swg21986535&aid=5] [/support/docview.wss?uid=swg21986535&aid=5] 
+
+Download the zip file STATS_MCSET_CONVERT-master.zip and extract it to a folder on the computer where also SPSS 24 is installed.
+After extracting the zip file you will get a folder with label STATS_MCSET_CONVERT-master and the below content:
+Folders: documentation, src and tests
+Files: default.png, info.json, LICENSE, README.md and the actual extension bundle dialog file STATS_MCSET_CONVERT.spe
+
+Next launch IBM SPSS Statistics 24 and click on Extensions – Install Local Extension Bundle. Please note that an alternative method to download and install this bundle is to click on Extensions - Extension Hub and search for uninstalled Extension bundle.
+However this article would like to describe the method via IBM SPSS Predictive Analytics Gallery on IBM DeveloperWorks
+
+In SPSS 24 when you click on Extensions – Install Local Extension Bundle browse to folder STATS_MCSET_CONVERT-master and select STATS_MCSET_CONVERT.spe. Click on Open button.
+
+[/support/docview.wss?uid=swg21986535&aid=6] [/support/docview.wss?uid=swg21986535&aid=6] 
+
+If you are prompted to overwrite existing components click Yes
+
+[/support/docview.wss?uid=swg21986535&amp;aid=7]
+
+You are then informed that the bundle is successfully installed to Analyze – Tables – Convert Multiple Category Set:
+
+[/support/docview.wss?uid=swg21986535&amp;aid=8]
+
+You can access this dialog directly after installation:
+
+[/support/docview.wss?uid=swg21986535&aid=9] [/support/docview.wss?uid=swg21986535&aid=9]
+
+You can then first create your multiple category set for Custom Tables, for example:
+MRSETS
+/MCGROUP NAME=$Food VARIABLES=Food1 Food2 Food3
+/DISPLAY NAME=[$Food].
+
+And then create the new dichotomy set on the Convert Multiple Category Set dialog:
+
+[/support/docview.wss?uid=swg21986535&aid=10] [/support/docview.wss?uid=swg21986535&aid=10]
+
+Pasted syntax:
+STATS MCSET CONVERT MCSET=$Food SETNAME=FoodDT VARPREFIX=Food.
+
+After that you see 5 new 0/1 coded dichotomy variables in your file:
+
+[/support/docview.wss?uid=swg21986535&aid=11] [/support/docview.wss?uid=swg21986535&aid=11]
+
+RELATED INFORMATION
+ Need more help? Our Statistics forum is Live! [https://developer.ibm.com/answers/topics/statistics.html?smartspace=predictive-analytics]

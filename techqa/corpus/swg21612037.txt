@@ -1,0 +1,85 @@
+Title: IBM License acceptance required for TDS 6.3.0.17 (or later). - United States
+
+Text:
+idsinstall; idsLicense; license; FP17; 6.3.0.17; IO17189 TECHNOTE (FAQ)
+
+QUESTION
+ When installing Tivoli Directory Server 6.3.0.17 (or later), a license agreement may be shown on the console that requires user acceptance. 
+
+CAUSE
+With Tivoli Directory Server V6.3 (TDS V6.3), the initial General Availability (GA) release was done during the August 2010 time frame. The same Tivoli Directory Server V6.3 release was made available again as refresh GA image in order to include a licensing package, during the July 2012 time frame.
+If TDS V6.3 was downloaded from passport advantage prior to July 2012, the license agreement is not seen during the command line installation, and the license package is not available as part of the installables.
+
+If TDS V6.3 is downloaded from passport advantage on or after July 2012, the license agreement gets shown as part of the installation and the license package gets installed as part of the installation upon acceptance.
+Please see: Accepting the Software license agreement provided with IBM Tivoli Directory Server Version 6.3 general availability (GA) [http://www.ibm.com/support/docview.wss?uid=swg21599590]
+
+
+ANSWER
+The following instructions are provided ONLY for AIX, Linux and Solaris platforms. For Windows the ISMP installer for TDS 6.3 will automatically take care of license acceptance. 
+
+TDS 6.3.0.17 (or later) - License acceptance: 
+
+TDS 6.3.0.17 (or later) is downloadable from fix central with a valid entitled user login only. 
+
+TDS 6.3.0.17 (or later) provided installer "idsinstall" verifies if the license is already accepted and installed. idsinstall internally uses idsLicense tool to accomplish this task. 
+
+ * If license was not installed on the system already, the license agreement and terms will be shown in the console where the idsinstall gets invoked. 
+ * The license agreement may also be seen if there are any changes in the currently installed license terms. 
+ * Acceptance to the license agreement and terms is required for successful fix pack installation.
+   
+
+
+A. License Acceptance: The following is seen during the idsinstall execution: 
+
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+
+
+To accept the license agreement, Enter 1 and then press the Enter key. After this idsinstall proceeds to install updates to applicable existing idsldap packages (rpms/filesets etc) on the system.
+
+
+B. License Acceptance prior to fix pack installation: 
+
+In order to perform silent installation of the fix pack / interim fix, run the idsLicense tool prior to the fix pack installation using the silent install option (-q). 
+
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+
+
+C. Verifying the installed license: C.i. Normal mode: 
+
+The following command sequence can be used to verify the installed copy of the license: 
+
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+
+
+C.ii. Silent mode: The following command sequence can be used to verify the installed copy of the license in silent mode: 
+
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+
+RELATED INFORMATION
+ APAR IO17189 [http://www.ibm.com/support/docview.wss?uid=swg1IO17189]

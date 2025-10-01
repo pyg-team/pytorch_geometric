@@ -1,0 +1,39 @@
+Title: IBM Dropdown arrow for Mailbox Path field on Upload Files tab of My File Gateway displays too many mailboxes - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ A user account that was originally created in the IBM Sterling B2B Integrator (SBI) user interface was assigned an IBM Sterling File Gateway (SFG) partner's Identity in the user account. When that user account logs in to My File Gateway and clicks on the dropdown arrow for the Mailbox Path field on the Upload Files tab, there are a number of mailboxes showing instead of just the main mailbox of the SFG partner. 
+
+SYMPTOM
+Multiple, unrelated mailboxes appear as options in the dropdown list for the Mailbox Path field of the Upload Files tab in My File Gateway
+
+
+CAUSE
+There are two parts to the cause. The first part is that at least one of the groups of which the User Account is a member has permissions to specific mailboxes. Those are the extra mailboxes showing in the dropdown list. The other part is that, as the user account was not created automatically by creating a partner in the SFG user interface, no virtual root was automatically assigned to it, so it shows every mailbox that the user account has permissions to either directly or through its group memberships. 
+
+RESOLVING THE PROBLEM
+There are two choices to resolve the problem. Choose the one that best fits your needs. 
+
+
+Option 1: Create a virtual root for the user account. The advantage to this method is it is specific to the user account. The potential disadvantage is that the user account will only have access to its virtual root mailbox and its sub-mailboxes, even if it needs access to some of the other mailboxes. Create the virtual root by doing the following: 
+
+ 1. Edit the user account and write down the value in the Identity field. For this example, assume it is Partner537. 
+ 2. Go to Deployment > Mailboxes > Virtual Roots in the SBI menu. 
+ 3. Create a virtual root using /Partner537 as the mailbox. 
+
+
+Option 2: Remove the specific mailbox permissions in all groups that the user account is a member of. The advantage to this is it will likely allow you to take care of multiple user accounts in one process. The potential disadvantage is that if any of the members of that group really do need access to all of the mailboxes that the group specifically has permissions to, they will lose them. Change the groups' permissions by doing the following: 
+
+ 1. Edit the User account and write down all the items showing in the Assigned box of the Groups screen, then click Cancel. 
+ 2. Go to Accounts > Groups in the SBI menu. 
+ 3. Type the name of one of the groups written down above in the Group Name field and click Go! 
+ 4. Click "edit" 
+ 5. Click the Next button until you are at the Assign Permissions screen. 
+ 6. Remove all mailbox entries from the Assigned box, then click Save. 
+ 7. Click Finish. 
+ 8. Repeat steps 3-7 for all the other groups that the user account is a member of. 
+
+
+NOTE: No method exists for leaving the specific permissions in the groups, but also giving the user account access through My File Gateway to two or more mailboxes that have only the root mailbox as a common ancestor.

@@ -1,0 +1,104 @@
+Title: IBM Fix Pack 7.0.0.2 fails at 'action-determine-profiles' task - United States
+
+Text:
+manage profiles TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+The 7.0.0.2 fixpack executes a ConfigEngine script called 'action-determine-profiles'. This script runs the WAS command "manageprofiles.sh -listProfiles" and writes the output to files that are later used to determine the profiles.
+
+If the user running the upgrade does not have sufficient permissions to /opt/IBM/WebSphere/AppServer/logs directory, then the upgrade may fail at this point.
+
+SYMPTOM
+In the ConfigTrace.log, this message is shown: 
+
+=========================================
+action-determine-profiles:
+Thu Feb 09 13:25:02 EST 2012
+Target started: iseries-switch-back
+
+iseries-switch-back:
+Target finished: iseries-switch-back
+[delete] Deleting: /opt/IBM/WebSphere/PortalServer/version/mpt.profileList.properties
+[echo] WasUserHome: ./IBM/WebSphere/wp_profile.
+[delete] Deleting: /opt/IBM/WebSphere/PortalServer/version/mpt.profileCurrent.properties
+[copy] Copying 1 file to /opt/IBM/WebSphere/PortalServer/version
+[delete] Deleting: /opt/IBM/WebSphere/PortalServer/version/mpt.profileNames.properties
+[echo] mpt.AllProfileList: [!SESSION 2012-02-09 13:25:03.519 -----------------------------------------------]
+[echo] mpt.TargetProfileList: [!SESSION 2012-02-09 13:25:03.519 -----------------------------------------------]
+[echo] mpt.DefaultProfile: [wp_profile]
+[echo] mpt.CurrentProfile: [!SESSION 2012-02-09 13:25:22.397 -----------------------------------------------]
+Target finished: action-determine-profiles
+Thu Feb 09 13:25:33 EST 2012
+Target started: action-mpt-precheck-all-profiles-version-7002
+
+action-mpt-precheck-all-profiles-version-7002:
+[echo] A profile is: [!SESSION 2012-02-09 13:25:03.519 -----------------------------------------------]
+Thu Feb 09 13:25:37 EST 2012
+...
+
+BUILD FAILED
+/opt/IBM/WebSphere/PortalServer/installer/wp.config/config/includes/preconfig_wp_ptf_7002.xml:86: The following error occurred while executing this line:
+/opt/IBM/WebSphere/PortalServer/installer/wp.config/config/includes/fixpack_functional_task.xml:1005: exec returned: 1 
+
+========================================= 
+
+ 
+
+If the same user navigates to /opt/IBM/WebSphere/AppServer/bin and executes this task: 
+
+./manageprofiles.sh -listProfiles 
+
+ 
+
+they may see messages like this: 
+
+ 
+
+========================================= 
+
+
+-bash: Feb: command not found
+Feb 14, 2012 1:47:06 PM com.ibm.ws.install.configmanager.utils.ClassPathModifier addURLToClassPath
+INFO: Adding this URL to the system JVM classpath: file:/zippy/portal/WebSphere/AppServer/profileTemplates/default/lib/defaultResource.jar
+Feb 14, 2012 1:47:06 PM com.ibm.wsspi.profile.WSProfileTemplate addJarToClasspath
+INFO: updating jard classpath cache with key = com.ibm.ws.bootstrap.ExtClassLoader@4dfa4dfa:/zippy/portal/WebSphere/AppServer/profileTemplates/default/lib/defaultResource.jar
+[zippy@P7002 bin]$ INFO: Profile registry being used is: /zippy/portal/WebSphere/AppServer/properties/profileRegistry.xml
+INFO: Starting Execution of: SetZosGroupPermsTask
+Feb 14, 2012 1:47:06 PM com.ibm.ws.profile.processing.postprocessing.SetZosGroupPermsTask doIRun
+INFO: returning: false
+-bash: INFO:: command not found
+[zippy@P7002 bin]$ Feb 14, 2012 1:47:06 PM com.ibm.wsspi.profile.WSProfile listProfileNames
+-bash: Feb: command not found
+[zippy@P7002 bin]$ INFO: Profiles found: [wp_profile]
+-bash: Feb: command not found
+[zippy@P7002 bin]$ INFO: doIRun = false :[com.ibm.ws.profile.processing.postprocessing.SetZosGroupPermsTask] execution skipped
+-bash: Feb: command not found
+[zippy@P7002 bin]$ INFO: Returning with return code: INSTCONFSUCCESS
+
+
+========================================= 
+
+ 
+
+There may be many more lines similar to this, where the result is returning bad profile names.
+
+CAUSE
+This can be caused by the following: 
+
+-Not enough disk space free in the WAS file system. 
+
+-User does not have write permissions to <AppServer root>/logs folder.
+
+
+RESOLVING THE PROBLEM
+Give the user sufficient permissions to the <AppServer root>/logs folder or increase disk space as needed. 
+
+ 
+
+Once running the './manageprofiles.sh -listProfiles' command manually returns the expected result (a list of profiles), then you can re-execute the fixpack.
+
+
+
+
+ * 
+ *

@@ -1,0 +1,28 @@
+Title: IBM Batch aborts with error message: Object required: 'Dcmap1' in IBM Datacap Taskmaster Capture - United States
+
+Text:
+Dcmap1; startbatch TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Batch aborts with error message: Object required: 'Dcmap1' in IBM Datacap Taskmaster Capture 
+
+CAUSE
+The IBM Datacap Taskmaster Capture string to variant map control or "DCMap" is commonly used in start batch panels to facilitate additional functionality during scanning. This error may be seen if the control is not present on the machine running the task, or if the object is not registered
+
+RESOLVING THE PROBLEM
+Ensure that \Datacap\dcshared\dcmap.ocx exists in the install directory. If it already exists, then:
+
+
+1. Stop and close all IBM Datacap Taskmaster Capture clients on the local machine 
+
+2. Open Command Prompt 
+
+ * 
+ * 
+
+
+3. Register the file using regsv32  * 
+ * 
+
+
+Please note: If the file does not exist then you may need to repair your IBM Datacap Taskmaster Capture installation file

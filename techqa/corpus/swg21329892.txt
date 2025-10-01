@@ -1,0 +1,39 @@
+Title: IBM Problems while installing WebSphere Partner Gateway in distributed mode - United States
+
+Text:
+Fully distributed mode installation; server do not federate to cell; re-installation of WebSphere Partner Gateway TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ While re-installing WebSphere Partner Gateway in distributed mode using the same deployment manager, a few problems arise, which are detailed in the following sections.
+
+
+SYMPTOM
+The WebSphere Partner Gateway servers do not federate to the cell, resulting in the following addNode.log errors: 
+
+ADMU0507I: No servers found in configuration under: /opt/IBM/bcghub-distrib/wasND/Profiles/bcgprofile/config/cells/bcgCell/nodes/bcgnode_<host name>/servers
+ADMU2010I: Stopping all server processes for node bcgnode_<host name>
+ADMU0024I: Deleting the old backup directory.
+ADMU0015I: Backing up the original cell repository.
+ADMU0012I: Creating Node Agent configuration for node: bcgnode_<host name>
+ADMU0014I: Adding node bcgnode_<host name> configuration to cell:
+dmgrCell
+ADMU0027E: An error occurred during federation Invalid keystore format; rolling
+back to original configuration.
+ADMU0211I: Error details may be seen in the file
+
+
+RESOLVING THE PROBLEM
+The work around for this problem is as follows: 
+
+ 1. Stop the Deployment manager 
+ 2. Rename trust.p12 and key.p12, which is present in:
+    <dmgr_install_dir>\wasND\Profiles\bcgdmgr\config\cells\wpgCell 
+ 3. Start the Deployment manager and proceed with the installation.
+
+
+OR 
+
+Re-install the deployment manager.  
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration WebSphere Partner Gateway Enterprise Edition AIX, HP-UX, Linux, Solaris, Windows

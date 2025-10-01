@@ -1,0 +1,155 @@
+Title: IBM IV89003: NOI SEASONAL EVENTS RESULTS ARE NOT SHOWING UP IN THE VIEW SEASONAL EVENTS AFTER YOU EDIT AND SAVE CONFIGURATION - United States
+
+Text:
+  DIRECT LINKS TO FIXES
+7.1.0-TIV-NCI-ZLINUX-FP0007 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=7.1.0-TIV-NCI-ZLINUX-FP0007&source=SAR]
+7.1.0-TIV-NCI-WINDOWS-FP0007 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=7.1.0-TIV-NCI-WINDOWS-FP0007&source=SAR]
+7.1.0-TIV-NCI-SOLARIS-FP0007 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=7.1.0-TIV-NCI-SOLARIS-FP0007&source=SAR]
+7.1.0-TIV-NCI-AIX-FP0007 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=7.1.0-TIV-NCI-AIX-FP0007&source=SAR]
+7.1.0-TIV-NCI-LINUX-FP0007 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=7.1.0-TIV-NCI-LINUX-FP0007&source=SAR]
+IBM Tivoli Netcool/Impact V7.1.0 Fix Pack 7(7.1.0-TIV-NCI-FP0007) [http://www-01.ibm.com/support/docview.wss?uid=swg24042688]
+IBM Tivoli Netcool/Impact V7.1.0 Fix Pack 8(7.1.0-TIV-NCI-FP0008) [http://www-01.ibm.com/support/docview.wss?uid=swg24042885]
+IBM Tivoli Netcool/Impact V7.1.0 Fix Pack 9(7.1.0-TIV-NCI-FP0009) [http://www-01.ibm.com/support/docview.wss?uid=swg24043378]
+IBM Tivoli Netcool/Impact V7.1.0 Fix Pack 10(7.1.0-TIV-NCI-FP0010) [http://www-01.ibm.com/support/docview.wss?uid=swg24043588]
+IBM Tivoli Netcool/Impact V7.1.0 Fix Pack 11(7.1.0-TIV-NCI-FP0011) [http://www-01.ibm.com/support/docview.wss?uid=swg24043858]
+IBM Tivoli Netcool/Impact V7.1.0 Fix Pack 12 (7.1.0-TIV-NCI-FP0012) [http://www-01.ibm.com/support/docview.wss?uid=swg24044312]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  NOI Seasonal Events results are not showing up in the View
+   Seasonal Events after you Edit and Save configuration
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Issue to be addressed by Impact Dev/L3 team.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * All Impact NOI Users                                         *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * When you have an existing and working Seasonality Analytics  *
+   * Configuration and able to View Seasonal Events, then you     *
+   * just Edit the configuration and SAVE it, you are no longer   *
+   * able to view Seasonal Events because internally all data has *
+   * been removed.                                                *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix for this APAR is contained in the following maintenance
+   packages:
+   |Fix Pack | 7.1.0-TIV-NCI-FP0007
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV89003
+   
+   
+ * REPORTED COMPONENT NAME
+   NETCOOL/IMPACT
+   
+   
+ * REPORTED COMPONENT ID
+   5724O59IS
+   
+   
+ * REPORTED RELEASE
+   710
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-09-07
+   
+   
+ * CLOSED DATE
+   2016-10-10
+   
+   
+ * LAST MODIFIED DATE
+   2016-10-10
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  UNKNOWN
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   NETCOOL/IMPACT
+   
+   
+ * FIXED COMPONENT ID
+   5724O59IS
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R710 PSY
+   UP

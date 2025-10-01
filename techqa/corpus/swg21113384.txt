@@ -1,0 +1,92 @@
+Title: IBM Using ldapsearch to debug LDAP configuration problems - United States
+
+Text:
+ldapsearch TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ How to use ldapsearch to debug LDAP configuration problems with IBM® WebSphere® Application Server? 
+
+RESOLVING THE PROBLEM
+There are many things which may prevent your LDAP configuration from working properly. 
+DN = Distinguished Name
+ACL = Access Control List
+
+· DN not in ACL and therefore cannot perform certain ldap queries
+· DN was locked out of ldap due to too may failed login attempts
+· DN password may have been changed
+· LDAP server may not allow anonymous queries
+· Default filter defined in Application Server may not fit customers' settings.(i.e. no objectclass=someObjectClass defined)
+· Firewall not allowing communication on port
+· LDAP set to use nonstandard port of 389
+· LDAP administrator ID used for Server ID but the administrator's ID is not defined as a regular user
+
+For these and numerous other possible configuration problems the best way to quickly debug the problem is to do an ldapsearch. Ldapsearch is a utility similar to what Application Server uses to query the ldap server but is used on the command line. This removes Application Server from the picture and allows you to see what is being returned from the query, normally hidden by Application Server.
+
+The idea is use the same configuration settings, on the command line, as you have defined in Application Server’s Administrative console > Security > user Registries > LDAP settings.
+
+
+
+Security Server ID Short name of the ID which is queried from LDAP. Security Server Password ID’s password in LDAP Directory Type Predefined list of supported LDAP servers. Selecting the proper Directory updates the filters defined under the Advanced properties. These can be changed. Host Hostname of LDAP server. Can be short name, long name, or IP address. Port 389 is the default LDAP port Base Distinguished Name
+(BaseDN) Query starting location in your LDAP tree Bind Distinguished Name
+(BindDN) Fully qualified DN which has the authority to “bind” to your LDAP server and preform the requested queries. Some LDAP servers allow for anonymous queries so no bind DN and bind password may be required Bind Password Bind DN’s password. 
+LDAP advanced properties User Filter The string used to query the LDAP server. User ID Map Defines what gets displayed in WebSphere from resulting query. 
+ldapsearch –h <Host> -p <Port> -b “<BaseDN>” –D <BindDN> -w <Bind Password> “<User Filter>” 
+
+Note: The “%v” in the <User Filter> gets replaced by the <Security Server ID> 
+For example, instead of "(&(cn= %v)(objectclass=ePerson))" use "(&(cn= bob)(objectclass=ePerson))" 
+
+Example ldapsearch queries 
+C:\> ldapsearch -h petunia -p 389 -b "o=ibm,c=us" uid=test 
+cn=test,o=ibm,c=us 
+sn=test 
+objectclass=top 
+objectclass=organizationalPerson 
+objectclass=ePerson 
+objectclass=person 
+objectclass=inetOrgPerson 
+uid=test 
+cn=test 
+
+C:\> ldapsearch -h petunia -p 389 -b "o=ibm,c=us" "(&(uid=test)(objectclass=ePerson))" 
+cn=test,o=ibm,c=us 
+sn=test 
+objectclass=top 
+objectclass=organizationalPerson 
+objectclass=ePerson 
+objectclass=person 
+objectclass=inetOrgPerson 
+uid=test 
+cn=test 
+
+Ldapsearch queries which would cause an exception for Application Server: 
+
+The following would fail in Application Server because the search filter is looking for an objectclass of “XYZ” but there is no “XYZ” objectclass defined LDAP. This results in an empty return string. 
+
+C:\> ldapsearch -h petunia -p 389 -b "o=ibm,c=us" "(&(uid=test)(objectclass=XYZ))" 
+
+The following search would fail in Application Server because 2 DN’s are returned instead of 1. Application Server will only authenticate using a single DN. If the query was uid=test instead of cn=test, then only one DN would have been returned. 
+
+C:\> ldapsearch -h petunia -p 389 -b "o=ibm,c=us" "(&(cn=test)(objectclass=ePerson))" 
+cn=test,o=ibm,c=us 
+sn=test 
+objectclass=top 
+objectclass=organizationalPerson 
+objectclass=ePerson 
+objectclass=person 
+objectclass=inetOrgPerson 
+uid=test 
+cn=test 
+
+cn=test,ou=Larry's Group,ou=Austin,o=ibm,c=us 
+sn=User 
+objectclass=top 
+objectclass=organizationalPerson 
+objectclass=ePerson 
+objectclass=person 
+objectclass=inetOrgPerson 
+cn=Test 
+
+Also: See LDAPQuery [http://www.ibm.com/support/docview.wss?uid=swg21648889] web application tool ldapsearch.zip [/support/docview.wss?uid=swg21113384&aid=2] [/support/docview.wss?uid=swg21113384&aid=1]
+
+
+Cross reference information Segment Product Component Platform Version Edition Application Servers Runtimes for Java Technology Java SDK

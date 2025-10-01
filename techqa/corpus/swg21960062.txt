@@ -1,0 +1,518 @@
+Title: IBM OS Agents Version 6.3.0 FixPack 5 Scripting Feature - United States
+
+Text:
+ FIX README
+
+ABSTRACT
+ This feature allows users to define scripts to run at Tivoli Monitoring OS agents sites at a defined frequency. 
+
+CONTENT
+(C) Copyright International Business Machines Corporation 2015. All rights reserved.
+Component: IBM(R) Tivoli(R) Monitoring OS Agents, Version 6.3.0 FixPack 5
+
+Date: 30 June 2015
+
+Contents:
+
+1.0 Introduction
+1.1 Quick Start
+2.0 New Attribute groups
+3.0 Parameters in OS agent environment files
+4.0 Parameters in property file
+5.0 Examples of property file
+6.0 Examples of private situations 
+7.0 Custom Scripts and Custom Scripts Runtime workspaces
+8.0 Known problems and limitations
+9.0 Troubleshooting
+10.0 Quick Start Scenario
+
+
+1. Introduction
+===============
+
+This feature allows users to define scripts to run at Tivoli Monitoring OS agents sites at a defined frequency.
+
+The feature is enabled by default. The administrator can enable/disable it by setting a new environment variable 
+KXX_FCP_SCRIPT=true/false (default true)in the agent configuration file, where XX can be:
+
+- LZ for Linux OS agent 
+- UX for Unix OS agent
+- NT for Windows OS agent
+
+This is an overview of the scripting feature; details will be provided in the following sections.
+
+The OS agent loops, at a configurable interval, looking for script definition property files (*.properties) in a configurable directory path.
+The property files are parsed and OS Monitoring Agent spawns a new process named “fcp_daemon” if at least one valid script definition is found. This new daemon is responsible for scheduling the script executions and gathering all information regarding running scripts.
+
+According to another configurable interval, the OS agent loops getting the execution script results from the fcp_daemon.
+The OS Agent is able to parse the script standard output, splitting each row in up to 16 attributes.
+An event is sent for each standard output row of the script and these events can be caught by pure event situations.
+
+1.1 Quick Start
+================
+The feature is enabled with default values as soon as the OS agent is started. The only action to start using the feature is the following:
+- create a property file under default directory (on Linux/UNIX is $CANDLEHOME/localconfig/<product code>/scripts_definitions, on Windows is %CANDLE_HOME%\localconfig\nt\scripts_definitions) using as an example the provided template script_property.txt.
+
+Only two properties are required:
+ATTRIBUTE_NAME=Any name used to uniquely identify the script definition inside the property file.
+SCRIPT_PATH_WITH_PARMS=The fully qualified path of the script with arguments. 
+
+Not only shell scripts but also perl and other types of scripts can be used. You just need to specify the full command to execute in the SCRIPT_PATH_WITH_PARMS property. 
+For example, "perl C:\IBM\scripts\ITM_Custom_Scripts\date.pl". In this example you need to make sure that the location of "perl" can be resolved by the agent through the PATH variable in its environment. Specify the full path where "perl" is installed otherwise.
+
+Further properties and details can be found in this document and in the template script_property.txt under $CANDLEHOME/localconfig/lz/scripts_definitions. 
+
+
+2. New Attribute groups
+=======================
+
+Two new attribute groups have been added for this feature as detailed below. Statistic and execution data of all the scripts are stored in these two tables. The name of the property file (Property_File) and the attribute name defined in the property file (Attribute_Name) are the 2 key fields of these two tables. These two keys must be used in situation conditions to filter rows related to a specific script.
+
+Attribute group: KXX_Custom_Scripts (multiple rows), table: KXXSCRPTS (sampled).
+Description: Configuration and statistic data gathered using custom scripts. It contains a row for each defined script, information on the fcp_daemon and on property files:
+
+Attribute Size Description
+=========================== ===== =========================
+System_Name 32 This is the managed system name of the agent.
+Timestamp 16 This is the local time when the data was collected.
+Property_File 256 The name of the property file.
+Attribute_Name 96 The attribute name that is defined in the properties file. The attribute is used for metric identification.
+Script_Name 512 The name of the script.
+Script_Path 512 The fully qualified path name of the script with arguments.
+Custom_Name 96 The custom name that is defined in the properties file. It is used for custom reporting.
+Standard_Output_Type 4 Standard output type of the script.
+Status_Code 4 The status of the script. It includes general errors, configuration errors, the status or the execution code returned by the 
+Script Provider.
+Execution_Start 16 The time when the last execution of this script started.
+Execution_Duration 4 The duration of the last execution of this script, in seconds. When timing out, the value of the configured timeout is returnd.
+Average_Execution_Duration 4 The average duration, in seconds, of all the execution of the script.
+Refresh_Interval 4 The interval, in seconds, that the agent attempts to start this script.
+Number_of_Collections 4 The count of execution attempts of this script since agent started.
+Intervals_Skipped 4 The count of occurrences where an execution of this script is skipped because the previous execution is still running.
+Property_Group 64 The name of the property group.
+Return_Code 4 Integer value returned by the Script.
+Cust_Label_Str1 16 Label for custom string attribute #1
+Cust_Label_Str2 16 Label for custom string attribute #2
+Cust_Label_Str3 16 Label for custom string attribute #3
+Cust_Label_Str4 16 Label for custom string attribute #4
+Cust_Label_Str5 16 Label for custom string attribute #5
+Cust_Label_Int1 16 Label for custom integer attribute #1
+Cust_Label_Int2 16 Label for custom integer attribute #2
+Cust_Label_Int3 16 Label for custom integer attribute #3
+Cust_Label_Int4 16 Label for custom integer attribute #4
+Cust_Label_Int5 16 Label for custom integer attribute #5
+Cust_Label_Float1 16 Label for custom floating point attribute #1
+Cust_Label_Float2 16 Label for custom floating point attribute #2
+Cust_Label_Float3 16 Label for custom floating point attribute #3
+Cust_Label_Float4 16 Label for custom floating point attribute #4
+Cust_Label_Float5 16 Label for custom floating point attribute #5
+Standard_Error 2048 Script Standard Error in a unique row
+
+In addition to script definitions, the table may report rows to return errors found on property files and they are identified by @ANY@ as Attribute_Name. Moreover, a row is always used to report the status of fcp_daemon and it is identified by @ANY@ as Property_File and @ANY@ as Attribute_Name.
+
+Attribute group: KXX_Custom_Scripts_Runtime (multiple rows), table: KXXSCRRTM (pure).
+Description: Data gathered using custom scripts. It contains the output rows of the scripts currently running:
+
+Attribute Size Description
+======================= ==== =========================
+System_Name 32 This is the managed system name of the agent.
+Timestamp 16 This is the local time when the data was collected.
+Property_File 256 The name of the property file.
+Attribute_Name 96 The attribute name that is defined in the properties file. The attribute is used for metric identification.
+Script_Path 512 The fully qualified path of the script.
+Custom_Name 96 The custom name that is defined in the properties file. It is used for custom reporting. 
+Return_Code 4 Integer value returned by the Script.
+Row_Number 4 Output row number.
+Standard_Output_Type 4 Standard output type of the script.
+Standard_Output_String 2048 Script Standard Output in String Format.
+Standard_Output_Integer 8 Script Output in Integer Format
+Standard_Output_Float 8 Script Output in Floating Point Format (2 decimals).
+Cust_Attr_Str1 64 Custom string attribute #1
+Cust_Attr_Str2 64 Custom string attribute #2
+Cust_Attr_Str3 64 Custom string attribute #3
+Cust_Attr_Str4 64 Custom string attribute #4
+Cust_Attr_Str5 64 Custom string attribute #5
+Cust_Attr_Int1 8 Custom integer attribute #1
+Cust_Attr_Int2 8 Custom integer attribute #2
+Cust_Attr_Int3 8 Custom integer attribute #3
+Cust_Attr_Int4 8 Custom integer attribute #4
+Cust_Attr_Int5 8 Custom integer attribute #5
+Cust_Attr_Float1 8 Custom floating point (2 decimals) attribute #1
+Cust_Attr_Float2 8 Custom floating point (2 decimals) attribute #2
+Cust_Attr_Float3 8 Custom floating point (2 decimals) attribute #3
+Cust_Attr_Float4 8 Custom floating point (2 decimals) attribute #4
+Cust_Attr_Float5 8 Custom floating point (2 decimals) attribute #5
+
+Note: different status conditions can be monitored using the Status_Code field in the statistic table KXX_Custom_Scripts. 
+The following detailed list provides different values for the Status_Code field: 
+
+Initial general statuses
+UNKNOWN_ERROR (status code=0) --> Error
+NO_ERROR (status code=1) --> Informational
+
+General daemon statuses
+FEATURE_NOT_ENABLED (status code=40) --> Informational
+DAEMON_STARTING (status code=2) --> Informational
+DAEMON_STARTED (status code=3) --> Informational
+DAEMON_STOPPING (status code=4) --> Informational
+DAEMON_STOPPED (status code=5) --> Informational
+DAEMON_STOPPING_AT_AGENT_STOP (status code=6) --> Informational
+DAEMON_STOPPED_AT_AGENT_STOP (status code=7) --> Informational
+DAEMON_ERROR (status code=8) --> Error
+DAEMON_ERROR_NO_RESTART (status code=9)-> Fatal Error
+
+General directory statuses
+ERROR_OPENING_PROP_DIRECTORY (status code=10) --> Error
+PROP_DIRECTORY_NOT_FOUND (status code=11) --> Error
+NO_SCRIPT_DEFINED (status code=12)--> Warning
+
+Property file statuses
+PROP_FILE_NOT_FOUND (status code=13) --> Error
+ERROR_OPENING_PROP_FILE (status code=14) --> Error
+
+Script definition statuses
+SCRIPT_ADDED (status code=15) --> Informational
+SCRIPT_CHANGED (status code=16) --> Informational
+SCRIPT_REMOVED (status code=17) --> Informational
+SCRIPT_INACTIVE (status code=18) --> Informational
+NO_SCRIPT_PATH (status code=21)--> Error
+SCRIPT_PATH_INVALID (status code=22)--> Error
+
+Execution statuses from the fcp_daemon
+FACTORY_UNKNOWN_ERROR (status code=23) --> Error
+FACTORY_NO_ERROR (status code=24)--> Informational
+GENERAL_ERROR (status code=25)--> Error
+OBJECT_NOT_FOUND (status code=26)--> Error
+OBJECT_CURRENTLY_UNAVAILABLE (status code=27)--> Error
+NO_INSTANCES_RETURNED (status code=28)--> Error
+NO_RESPONSE_RECEIVED (status code=29)--> Error
+AUTHENTICATION_FAILED (status code=30)--> Error
+ACCESS_DENIED (status code=31)--> Error
+TIMEOUT (status code=32)--> Error
+NOT_IMPLEMENTED (status code=33)--> Error
+RESPONSE_TOO_BIG (status code=34) --> Error
+GENERAL_RESPONSE_ERROR (status code=35)--> Error
+SCRIPT_NONZERO_RETURN (status code=36)--> Error
+SCRIPT_NOT_FOUND (status code=37)--> Error
+SCRIPT_LAUNCH_ERROR (status code=38)--> Error
+INVALID_TOKEN_TYPES(status code=39) --> Error
+
+3. Parameters in OS agent environment files
+===========================================
+
+It is possible to customize the feature setting parameters in the OS agent environment files:
+- $CANDLEHOME/config/lz.ini file for the Linux OS agent
+- $CANDLEHOME/config/ux.ini for the UNIX OS agent
+- %CANDLE_HOME%\TMAITM6_x64\KNTENV for Windows 64bit OS agent
+- %CANDLE_HOME%\TMAITM6\KNTENV for Windows 32bit OS agent
+
+The scripting feature is enabled by default. To disable it set:
+- KXX_FCP_SCRIPT=false
+
+Other parameters can be defined inside the agent environment files based on specific needs:
+
+- KXX_FCP_SCRIPT_DEFINITIONS (default location on Linux/UNIX is $CANDLEHOME/localconfig/<product code>/scripts_definitions, on Windows it is %CANDLE_HOME%\localconfig\nt\scripts_definitions)
+The location where property files are stored.
+
+- KXX_FCP_SCRIPT_INTERVAL (default 60 sec)
+OS agent uses the value of this variable as loop interval in seconds to check execution of running scripts and it sends events if the filter condition is satisfied. The minimum value is 30 seconds, the maximum value is 300 seconds. Invalid values will be reset to the default.
+Note: this parameter is ignored if KXX_FCP_SCRIPT_SYNC_INTERVALS is set to USE_SCRIPT (see definition below).
+
+- KXX_FCP_SCRIPT_SYNC_INTERVALS (USE_AGENT|USE_SCRIPT|NO - default USE_AGENT)
+If the agent looping interval defined by KXX_FCP_SCRIPT_INTERVAL is bigger than the script execution frequency, it can happen that data produced by some of the script execution loops is lost.
+To avoid this behaviour the script execution frequency can be synchronized with the agent looping interval setting the KXX_FCP_SCRIPT_SYNC_INTERVALS to:
+- USE_AGENT; the value of each script execution frequency is forced to be the maximum between KXX_FCP_SCRIPT_INTERVAL and EXECUTION_FREQUENCY defined in its property file. 
+- USE_SCRIPT; the agent looping interval is dynamically set to the minimum frequency value (EXECUTION_FREQUENCY in property file) between all of the defined scripts . The value set by KXX_FCP_SCRIPT_INTERVAL is ignored. The frequency of the scripts remain the ones defined in the property files. When using USE_SCRIPT, the agent looping interval may change every time a script definition is added, changed or removed. In any case, it cannot be lower than the value set by KXX_FCP_OVERRIDE_MIN_FREQUENCY_LIMIT or bigger than 300 seconds.
+- NO; no synchronization is performed and some execution results could be lost.
+
+- KXX_FCP_SCRIPT_DEFINITIONS_CHECK_INTERVAL (default 300 sec) 
+At startup and at every interval defined by this variable, the OS agent checks for any changes in scripts or property files.
+Note that if KXX_FCP_SCRIPT_DEFINITIONS_CHECK_INTERVAL is less than the agent looping interval it will be reset to the agent looping interval. The maximum allowed value is the default, 300 seconds.
+
+- KXX_FCP_USER (default OS agent user)
+This parameter is valid only on linux and unix platforms. It defines the user used to spawn fcp_deamon process if different from OS agent process user; all the scripts are executed by this user. Note that the user owner of the OS agent must have correct permission to spawn the fcp_daemon process. On windows a different user must be defined as login of the service "Monitoring Agent for Windows OS - FCProvider". The user must have "Full Control" permission to CANDLE_HOME and scripts repository directories. For more information please refer to official IBM Monitoring documentation: 
+http://www-01.ibm.com/support/knowledgecenter/SSTFXA_6.3.0.2/com.ibm.itm.doc_6.3fp2/oswin/running_as_a_non-admin_user.htm [http://www-01.ibm.com/support/knowledgecenter/SSTFXA_6.3.0.2/com.ibm.itm.doc_6.3fp2/oswin/running_as_a_non-admin_user.htm]
+
+- KXX_FCP_MAX_CDP_DP_THREAD_POOL_SIZE (default 10)
+It defines the maximum concurrent number of scripts to be executed. Maximum value is 32.
+
+- KXX_FCP_MAX_DAEMON_RESTARTS (default 4)
+The OS agent watches the fcp_daemon: if an abnormal exit of process occurs, the OS agent restarts it. This is done for the KXX_FCP_MAX_DAEMON_RESTARTS (times at a day). 
+The value 0 must be used to avoid the restart; if -1 is set, the OS agent retries to restart fcp_daemon forever. The restart counter is reset at OS agent restart.
+
+- KXX_FCP_SEND_SCRIPT_RUNTIME_EVENTS (default: true)
+If set to false, the OS agent stops sending events for each row of script standard output. In this case script outputs are visible on TEP console workspaces but no situations will be displayed and no historical collection data will be collected. 
+
+- KXX_FCP_OVERRIDE_MIN_FREQUENCY_LIMIT (default: 5 seconds) 
+It is used when KXX_FCP_SCRIPT_SYNC_INTERVALS is set to USE_SCRIPT. In this condition, it sets the minimum value of the OS agent looping interval.
+Using low values for the the OS agent looping interval (less than 5 seconds) is highly invasive and can impact OS agent performances. If a frequent data collection is needed (e.g. every second), it is strongly suggested to customize a script that caches data at the needed frequency and returns the collected data to the OS agent at an higher interval (e.g. every 60 seconds).
+
+
+The following Agent Builder (CDP) variables can also be used to control the behavior of the fcp_daemon:
+
+- CDP_DP_REFRESH_INTERVAL (default 60 sec) Global script scheduled start time. Used if the frequency is not passed in the script property file.
+
+- CDP_DP_SCRIPT_TIMEOUT (default 30 sec) Global script execution maximum time. When the execution time of a script exceeds this limit, its Status_Code is set to TIMEOUT
+
+- CDP_DP_KILL_ORPHAN_SCRIPTS (Y|N - default N) Global behaviour used by fcp_daemon process for timing out scripts. When set to 'Y', the scripts are killed, otherwise they are abandoned. This value is ignored for a specific script if the KILL_AFTER_TIMEOUT key is set in the script property file
+
+- CDP_MAXIMUM_ROW_COUNT_FOR_CPCI_DATA_RESPONSES (default 1000) Global value added for performance reasons to limit the maximum number of output rows returned by the scripts. Additional rows after this limit are ignored. Allowed values are positive integer. Invalid values means no limit.
+
+The fcp_daemon also supports the other environment variables used to control Agent Builder agents. For a complete list see the official Agent Builder documentation here:
+http://publib.boulder.ibm.com/infocenter/tivihelp/v61r1/topic/com.ibm.itm.doc_6.3/agentbuilder63_user.pdf [http://publib.boulder.ibm.com/infocenter/tivihelp/v61r1/topic/com.ibm.itm.doc_6.3/agentbuilder63_user.pdf]
+
+4. Parameters in property files 
+===============================
+
+The KXX_FCP_SCRIPT_DEFINITIONS directory contains a list of *.properties files. Each property file contains a list of 
+scripts to run with respective properties in the form of key=value. The properties that can be defined (case in-sensitive) are: 
+
+- ATTRIBUTE_NAME (Required - string max 256 characters).
+It is a name of your choice that defines a specific script and its attributes. The characters that can be used for the 
+ATTRIBUTE NAME name can be alphabetical, numeric and only the underscore can be used as a special character. If other special characters (even a blank is considered this way) are used they get converted into underscore (_).
+When multiple scripts are listed inside the same property file, more different ATTRIBUTE_NAME must be defined (one for each script). It must be the first value specified for each defined script and delimits the start of the properties set for the specific script until the next ATTRIBUTE_NAME.
+
+- SCRIPT_PATH_WITH_PARMS (Required - string max 512 characters).
+It defines the full path to the script with parameters, separated by a blank. No special characters can be used in the script path name. 
+Values containing blanks must be enclosed in single (') or double quotes (").
+Environment variables can be passed, but only enclosed in ${...} for all the platforms. Environment variables must be available in the OS agent process context.
+
+- EXECUTION_FREQUENCY (Optional - default 60 sec).
+It indicates the script execution frequency.
+
+- CUSTOM_NAME (Optional - string max 256 characters)
+The user can fill it with a description of the script.
+
+- IS_ACTIVE (true|false - Optional - default true). 
+It activates the script. If false, the script is not executed.
+
+- DISABLE_USE_AGENT_SYNC (true|false - Optional - default false). If true, the EXECUTION_FREQUENCY of the script is respected also if the global variable KXX_FCP_SCRIPT_SYNC_INTERVALS is set to USE_AGENT.
+
+- KILL_AFTER_TIMEOUT (true|false - Optional - default value defined by the CDP_DP_KILL_ORPHAN_SCRIPTS variable). 
+When true the script is killed after timeout (a timeout occurs when script execution is greater than the value specified by CDP_DP_SCRIPT_TIMEOUT parameter in OS agent configuration file) otherwise it is ignored. In both cases no data is collected. Note that when KILL_AFTER_TIMEOUT is set, only the script defined in property file is killed and not child processes (if any) spawned by the script. This feature is not supported by Solaris and Windows 32 bit OS agents and any timing out scripts are abandoned. 
+
+
+Output rows returned by a script are parsed. The script returns a standard output (called hereafter as first token). When the script returns more values in the output row they are added as additional tokens for a maximum of 5 strings, 5 integers and 5 floats following a predefined syntax as described below:
+
+- OUTPUT_TYPE (STRING|INTEGER|FLOAT - Optional - default string). It defines the type of the first token returned by each row of the script;
+OUTPUT_TYPE can be:
+1. STRING (default): strings up to 2048 characters. When used, the "Standard_Output_String" attribute of KXX_Custom_Scripts_Runtime is filled in by the first token.
+2. INTEGER: allows getting numeric values between -9223372036854775806 and 9223372036854775806. When used, the "Standard_Output_Integer" attribute of KXX_Custom_Scripts_Runtime is filled in by the first token.
+3. FLOAT: allows getting numeric values between -92233720368547758.06 and 92233720368547758.06,(with 2 decimal
+precision). When used, the "Standard_Output_Float" attribute of KXX_Custom_Scripts_Runtime is filled in by the first token.
+
+- TOKEN_TYPES (STRING|INTEGER|FLOAT - Optional).
+It defines the output type of additional tokens after the first one. The user can define a maximum of 5 strings, 5 integers and 5 floats. It is a list of types separated by commas:
+<token_type>,<token_type>,…
+token_type can be empty or one from (case insensitive):
+- STRING or S
+- INTEGER or I
+- FLOAT or F
+If <token_type> is empty, the corresponding token is skipped.
+Examples of the same valid layouts:
+- TOKEN_TYPES=S,I,S,,,F,,F,F
+- TOKEN_TYPES=String,integer,S,,,Float,,f,FLOAT
+
+- TOKEN_LABELS (STRING - maximum 16 characters each label - Optional). 
+It defines the labels of the tokens defined in TOKEN_TYPES. This value is a list of token labels separated
+by commas, and must correspond to the tokens defined by TOKEN_TYPES. 
+e.g.:
+- TOKEN_TYPES=S,I,S,,,F,,F,F
+- TOKEN_LABELS=Cpu Name,Cpu number,Description,,,value 1,,value 2,value 3 
+It is ignored if TOKEN_TYPES is not set.
+
+- TOKEN_SEPARATOR (Optional - default semicolon ";"). 
+It sets the string to be used as separator to split the output row in tokens. It is ignored if TOKEN_TYPES is not set. Empty value (blank) is accepted as separator and multiple consecutive blanks in output rows are considered as a single one.
+
+
+The following two parameters allow you to filter the rows output of a script; they are applied by the OS agent only to the first token and they must be used together:
+
+- FILTER_VALUE (Optional).
+The value used for comparison. It is required if FILTER_OPERATOR is defined.
+If the OUTPUT_TYPE is a string, the filter value must reflect exactly the string value returned by the script that is intended to be filtered, without any additional quotes (no wildcards allowed).
+- FILTER_OPERATOR (Optional).
+The operator used for the comparison. It is required if FILTER_VALUE is defined. Accepted FILTER_OPERATOR values include:
+= (equal to)
+!= (different from)
+> (bigger than) only for numeric type
+>= (not lower than) only for numeric type
+< (lower than) only for numeric type
+<= (not bigger than) only for numeric type
+
+
+
+5. Examples of property file
+============================
+
+#First script definition: script ex_script1.sh is launched every 150 seconds, it returns float values and only the output rows equal to 0.5 will be considered by the agent.
+
+ATTRIBUTE_NAME=sample1 
+SCRIPT_PATH_WITH_PARMS=/opt/ibm/itmd4255a/localconfig/lz/scripts_definitions/ex_script1.sh
+EXECUTION_FREQUENCY=150
+OUTPUT_TYPE=FLOAT
+FILTER_VALUE=0.5
+FILTER_OPERATOR==
+
+#Second script definition: script ex_script2 is launched every 60 seconds, it returns integer values and only the rows different from 0 will be considered by the agent.
+
+ATTRIBUTE_NAME=ex_script2
+SCRIPT_PATH_WITH_PARMS=${CANDLE_HOME}/tmp/check_out.sh
+EXECUTION_FREQUENCY=60
+OUTPUT_TYPE=INTEGER
+FILTER_VALUE=0
+FILTER_OPERATOR=!=
+
+#Third script definition: script ex_script3.sh is launched every 120 seconds with 3 input parameters (the first input parameter is an integer, the second and third are string). It's killed if it hangs or if the execution time is greater than the timeout value.
+
+ATTRIBUTE_NAME=ex_script3 
+SCRIPT_PATH_WITH_PARMS=/opt/scripts/ex_script3.sh 1 "second input parameter" "third input parameter" 
+EXECUTION_FREQUENCY=120
+OUTPUT_TYPE=STRING
+KILL_AFTER_TIMEOUT=TRUE
+
+#Fourth script definition: script cpu_mem_percentage.sh is launched every 50 seconds and returns the cpuid as standard output string and 2 float for Idle and Used CPU percentage and 2 integers for Memory and Virtual Memory usage. The pipe is used as separator to parse the output. An example of row that must be returned by the script is: 
+cpu2|35,5|65,5|3443|123800
+
+ATTRIBUTE_NAME=cpu and mem Usage
+SCRIPT_PATH_WITH_PARMS=${SCRIPT_HOME}/cpu_mem_percentage.sh
+OUTPUT_TYPE=STRING
+TOKEN_TYPES=F,F,I,I
+TOKEN_LABELS= Idle CPU %, Used CPU %, Virt MEM used MB, MEM used MB
+TOKEN_SEPARATOR=|
+EXECUTION_FREQUENCY=50
+
+6. Examples of private situations 
+==================================
+
+The private situations definitions can be inserted into the xx_situations.xml under $CANDLEHOME/localconfig/lz for linux or $CANDLEHOME/localconfig/ux for unix or %CANDLE_HOME%\localconfig\nt for Windows to monitor scripts execution.
+Examples below are for the Linux OS agent:
+
+<PRIVATESIT>
+<!-- Sends an alert if the script defined by attribute name "demo" in property file "demo.properties" returns a row equal to "demo.log" -->
+<SITUATION>FCP_CheckLOGFileExists_pr</SITUATION>
+<criteria>
+<![CDATA[*VALUE KLZ_Custom_Scripts_Runtime.Property_File *EQ 'demo.properties' *AND *VALUE KLZ_Custom_Scripts_Runtime.Attribute_Name *EQ 'demo' *AND *VALUE KLZ_Custom_Scripts_Runtime.Standard_Output_String *EQ 'demo.log']]>
+</CRITERIA>
+</PRIVATESIT>
+
+<PRIVATESIT>
+<!-- Sends an alert if a script exits with a return code different from zero -->
+<SITUATION>FCP_ScriptRetCode_pr</SITUATION>
+<CRITERIA>
+<![CDATA[*IF *VALUE KLZ_Custom_Scripts.Return_Code *NE 0]]>
+</CRITERIA>
+</PRIVATESIT>
+
+<privatesit>
+<!-- Sends an alert when script path is not defined in a property file -->
+<SITUATION NAME="FCP_NOPTAH" INTERVAL="000030" ></SITUATION>
+<criteria>
+<![CDATA[*VALUE KLZ_Custom_Scripts.Status_Code *EQ NO_SCRIPT_PATH]]>
+</criteria>
+</privatesit>
+
+<privatesit>
+<!-- Sends an alert when a script cannot be launched -->
+<SITUATION NAME="FCP_ScriptLaunchErr" INTERVAL="000060" ></SITUATION>
+<criteria>
+<![CDATA[*VALUE KLZ_Custom_Scripts.Status_Code *EQ SCRIPT_LAUNCH_ERROR]]>
+</criteria>
+</privatesit>
+
+
+7. Custom Scripts and Custom Scripts Runtime Workspaces
+=======================================================
+
+A new OS agent navigation item has been added in the TEP console. It contains two workspaces: "Custom Scripts" and "Custom Scripts Runtime". 
+
+"Custom Scripts" workspace contains the following views:
+- "Factory Daemon Status" table view showing informational/warning/error events related to the fcp_daemon process.
+- "Properties Files error" table view showing problems related to property files.
+- "Number of execution per script" bar chart view summarizing the executions of defined scripts
+- "Defined Scripts" table view showing detailed information of defined scripts.
+
+"Custom Scripts Runtime" workspace is called clicking on the anchor of a specific script and provides information on script execution. The views provided by default on the TEP console are to be intended as example workspaces with all available custom attributes. Users can duplicate and customize workspaces to filter out fields that are not needed according to the output returned by their scripts.
+
+
+8. Known problems and limitations
+===================================
+
+- The Scripting Feature is not supported on Windows 2003 64-bit systems.
+- Kill after timeout does not work on Solaris and Windows 32 bit OS agents.
+- The fcp_daemon may stop executing scripts in Windows 32 bit If some scripts do not complete within the time out period and the user has turned on intensive tracing. If this happens the data reported on the TEP will reflect the last time the script was actually run. It is also possible that the OS agent will stop returning data. Terminating the fcp_daemon process will allow the agent to resume proper operation.
+- SCRIPT_NONZERO_RETURN is returned instead of SCRIPT_NOT_FOUND or SCRIPT_LAUNCH_ERROR on Solaris.
+- The scripting feature does not provide full Native Language Support; some issues may be found using Nationalized characters in property files or script outputs.
+- On windows OS agent there is no possibility of executing scripts residing on a mapped network drive.
+
+9. Troubleshooting
+===================
+
+Standard KBB_RAS1 variable will apply to the OS agent and to the fcp_daemon processes.
+To apply a specific trace setting to fcp_daemon only, use the KXX_FCP_KBB_RAS1 variable; when KXX_FCP_KBB_RAS1 is set, the value specified by KBB_RAS1 is ignored by fcp_daemon.
+
+To trace the operations logged by the OS agent core threads of the feature:
+KBB_RAS1=ERROR (UNIT:factory ALL)
+
+To trace scripting queries from the ITM server and events sent to the server, add the entries:
+(UNIT:klz34 ALL) (UNIT:klz35 ALL) on Linux OS agent
+(UNIT:kux48 ALL) (UNIT:kux49 ALL) on Unix OS agent
+(UNIT:knt84 ALL) (UNIT:knt85 ALL) on Windows OS agent
+
+To view tema traces to verify private situation execution, add the entries:
+(UNIT:kraavp all) (UNIT:kraapv all)
+
+To see the execution of the scripts and how the data from the scripts is being parsed set:
+KXX_FCP_KBB_RAS1=Error (UNIT:command ALL)
+
+To troubleshoot problems in the communication between the os agent and fcp_daemon add this trace level to both KBB_RAS1 and KXX_FCP_KBB_RAS1:
+(UNIT:cps_socket FLOW) (UNIT:cpci FLOW)
+
+To see the interaction between the OS agent process and the fcp_daemon in detail add to both KBB_RAS1 and KXX_FCP_KBB_RAS1:
+(UNIT:cps_socket ALL) (UNIT:cpci ALL)
+
+
+10. Quick Start Scenario
+=========================
+
+The following section describes the minimum steps needed to configure a linux OS agent to run 2 custom scripts.
+
+Custom Scripts descriptions
+===========================
+Let's suppose the user has 2 scripts under a directory /scripts_repo:
+
+- checkDIRsize.sh that checks the size of a specified directory passed as input parameter. Its output is an integer like the following: 
+
+4594740
+
+- cpu_mem_usage.sh that checks the used CPU percentages and used Swap Memory megabytes. Its output is returned in the following form:
+
+cpu1|96,5|23800
+
+where the first token is the CPU id, the second token is the used CPU percentage, the third token is the used swap memory in megabyte.
+
+Customization needed to have the linux OS agent run above scripts
+==============================================================
+The feature is enabled with default values as soon as the OS agent is started:
+
+- you could create one or two property files (<Any Name>.properties)under the default directory $CANDLEHOME/localconfig/lz/scripts_definitions. In this example let's create 2 property files one for each script called checkDIRsize.properties and cpu_mem_usage.properties:
+
+#CheckDIRsize.properties
+ATTRIBUTE_NAME=OPT_DIR_SIZE
+SCRIPT_PATH_WITH_PARMS=/scripts_repo/checkDIRsize.sh /opt
+EXECUTION_FREQUENCY=20
+OUTPUT_TYPE=INTEGER
+
+#cpu_mem_usage.properties 
+ATTRIBUTE_NAME=cpu_mem_usage
+SCRIPT_PATH_WITH_PARMS=/scripts_repo/cpu_mem_percentage.sh
+OUTPUT_TYPE=string
+TOKEN_TYPES=F,I
+TOKEN_LABELS= Used CPU %, Swap MEM used MB
+TOKEN_SEPARATOR=|
+EXECUTION_FREQUENCY=10
+
+- There is no need to restart the OS agent after adding (or changing) the 2 property files above: the OS agent checks script definition directory with a specified time interval (default value 300 seconds). Open the TEP console and under the "Custom Scripts" workspace the scripts details and results are shown.
+
+Change History:
+----------------------
+2017-01-09: Added new item under "8. Known problems and limitations" that the Scripting Feature is not supported on Windows 2003 64-bit systems.

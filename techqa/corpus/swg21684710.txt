@@ -1,0 +1,98 @@
+Title: IBM PureData Systems for Analytics Upgrade Download details to latest releases of HPF, FDT, NPS, Software and Hardware Tools - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Where can I download the latest PureData Systems for Analytics releases from? 
+
+CAUSE
+Need to upgrade current PureData Systems for Analytics environment
+
+ANSWER
+
+Hide details for Latest HPF 5.3.4 [/support/docview.wss?uid=swg21684710&amp;aid=1]Latest HPF 5.3.4
+Current HPF version needs to be at least version 4.13
+
+HPF 5.3 [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~Information%2BManagement&product=ibm/Information+Management/Netezza+Platform&release=HPF_5.3&platform=Linux&function=all]
+Select product group > Information Management
+Select from Information Management > IBM Netezza Platform
+Install version > HPF_5.3
+Platform > Linux
+
+5.3.4.0-IM-Netezza-HPF-fp86887 
+nz-hpf-v5.3.4.tar.gz
+
+Place software directly in the system to be upgraded using:
+wget delivery04.dhe.ibm.com/sdfdl/v2/sar/CM/IM/04p28/0/Xa.2/Xb.jusyLTSp44S03Q-gR0ZFSEh9p_lmYVmv1VSo-xu8FuSNP0B7pdmR1pMIoU4/Xc.CM/IM/04p28/0/nz-hpf-v5.3.4.tar.gz/Xd./Xf.Lpr./Xg.7726564/Xi.habanero/XY.habanero/XZ.WMcrUaVNIXKh-OuE8gEzidkt_xI/nz-hpf-v5.3.4.tar.gz [http://delivery04.dhe.ibm.com/sdfdl/v2/sar/CM/IM/04p28/0/Xa.2/Xb.jusyLTSp44S03Q-gR0ZFSEh9p_lmYVmv1VSo-xu8FuSNP0B7pdmR1pMIoU4/Xc.CM/IM/04p28/0/nz-hpf-v5.3.4.tar.gz/Xd./Xf.Lpr./Xg.7726564/Xi.habanero/XY.habanero/XZ.WMcrUaVNIXKh-OuE8gEzidkt_xI/nz-hpf-v5.3.4.tar.gz]
+
+Hide details for Latest FDT 4.1.1.1 + IF 2.0.0.6 [/support/docview.wss?uid=swg21684710&amp;aid=1]Latest FDT 4.1.1.1 + IF 2.0.0.6
+Current RHEL version needs to be at least version 5.7 & current FDT needs to be at least version 2.4
+
+[http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~Information%2BManagement&product=ibm/Information+Management/Netezza+Platform&release=FDT_4.1&platform=Linux&function=all]FDT 4.1 [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~Information%2BManagement&product=ibm/Information+Management/Netezza+Platform&release=FDT_4.1&platform=Linux&function=all]
+Select product group > Information Management 
+Select from Information Management > IBM Netezza Platform 
+Install version > FDT_4.1 
+Platform > Linux 
+
+2.0.0.6-IM-Netezza-FDT-IF86257
+2.0.0.6-IM-Netezza-FDT-IF86257.zip
+
+4.1.1.1-IM-Netezza-FDT-fp89425 
+nz-fdt-v4.1.1.1.tar.gz
+
+Place software directly in the system to be upgraded using:
+wget delivery04.dhe.ibm.com/sdfdl/v2/sar/CM/IM/04pru/0/Xa.2/Xb.jusyLTSp44S03Q-gR0ZKEqp5yQ-G8ClyeRb_9BQyLF9cj8k6Kjdxp8_uO1o/Xc.CM/IM/04pru/0/2.0.0.6-IM-Netezza-FDT-IF86257.zip/Xd./Xf.Lpr./Xg.7726569/Xi.habanero/XY.habanero/XZ.qoJoNDHrybdjXZ2wWmhA7mef5tg/2.0.0.6-IM-Netezza-FDT-IF86257.zip [http://delivery04.dhe.ibm.com/sdfdl/v2/sar/CM/IM/04pru/0/Xa.2/Xb.jusyLTSp44S03Q-gR0ZKEqp5yQ-G8ClyeRb_9BQyLF9cj8k6Kjdxp8_uO1o/Xc.CM/IM/04pru/0/2.0.0.6-IM-Netezza-FDT-IF86257.zip/Xd./Xf.Lpr./Xg.7726569/Xi.habanero/XY.habanero/XZ.qoJoNDHrybdjXZ2wWmhA7mef5tg/2.0.0.6-IM-Netezza-FDT-IF86257.zip]
+
+wgetdelivery04.dhe.ibm.com/sdfdl/v2/sar/CM/IM/04tjl/0/Xa.2/Xb.jusyLTSp44S03g-glq07RHbY7X9WVXEGPooILUV9jqsa4UcEMHu4k63ZUnE/Xc.CM/IM/04tjl/0/nz-fdt-v4.1.1.1.tar.gz/Xd./Xf.Lpr./Xg.7829128/Xi.habanero/XY.habanero/XZ.-Pq_MT-I0_ralISQ0EX85fAZjI8/nz-fdt-v4.1.1.1.tar.gz [http://delivery04.dhe.ibm.com/sdfdl/v2/sar/CM/IM/04tjl/0/Xa.2/Xb.jusyLTSp44S03g-glq07RHbY7X9WVXEGPooILUV9jqsa4UcEMHu4k63ZUnE/Xc.CM/IM/04tjl/0/nz-fdt-v4.1.1.1.tar.gz/Xd./Xf.Lpr./Xg.7829128/Xi.habanero/XY.habanero/XZ.-Pq_MT-I0_ralISQ0EX85fAZjI8/nz-fdt-v4.1.1.1.tar.gz]
+
+Hide details for FDT 2.6.1 + IF 1.0.0.6 [/support/docview.wss?uid=swg21684710&amp;aid=1]FDT 2.6.1 + IF 1.0.0.6
+If RHEL is at least version 5.7 & current FDT is at NOT least version 2.4
+
+FDT 2.6 [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~Information%2BManagement&product=ibm/Information+Management/Netezza+Platform&release=FDT_2.6&platform=Linux&function=all]
+Select product group > Information Management 
+Select from Information Management > IBM Netezza Platform 
+Install version > FDT_2.6 
+Platform > Linux 
+
+1.0.0.6-IM-Netezza-FDT-IF84889
+1.0.0.6-IM-Netezza-FDT-IF84889.zip
+
+2.6.1.0-IM-Netezza-FDT-fp68798 
+nz-fdt-v2.6.1.tar.gz 
+
+Place software directly in the system to be upgraded using:
+wget delivery04.dhe.ibm.com/sdfdl/v2/sar/CM/IM/04prd/0/Xa.2/Xb.jusyLTSp44S03Q-gRwQ1JRWF3ys2JXR5MVlrpRas0AKasCh0o3nfvewpIyI/Xc.CM/IM/04prd/0/1.0.0.6-IM-Netezza-FDT-IF84889.zip/Xd./Xf.Lpr./Xg.7726581/Xi.habanero/XY.habanero/XZ.EbPb8dwskHxVEVbgEkpbLFgNN8k/1.0.0.6-IM-Netezza-FDT-IF84889.zip [http://delivery04.dhe.ibm.com/sdfdl/v2/sar/CM/IM/04prd/0/Xa.2/Xb.jusyLTSp44S03Q-gRwQ1JRWF3ys2JXR5MVlrpRas0AKasCh0o3nfvewpIyI/Xc.CM/IM/04prd/0/1.0.0.6-IM-Netezza-FDT-IF84889.zip/Xd./Xf.Lpr./Xg.7726581/Xi.habanero/XY.habanero/XZ.EbPb8dwskHxVEVbgEkpbLFgNN8k/1.0.0.6-IM-Netezza-FDT-IF84889.zip]
+
+wget delivery04.dhe.ibm.com/sdfdl/v2/sar/CM/IM/040me/0/Xa.2/Xb.jusyLTSp44S0QkWx1QDC7BDhPVVqdfEDPiSQwZO_6YSI1wIzSlsfe46rxfg/Xc.CM/IM/040me/0/nz-fdt-v2.6.1.tar.gz/Xd./Xf.Lpr./Xg.7545252/Xi.habanero/XY.habanero/XZ.c7hJmgr1uidwnzUaj2J8OJdkPUw/nz-fdt-v2.6.1.tar.gz [http://delivery04.dhe.ibm.com/sdfdl/v2/sar/CM/IM/040me/0/Xa.2/Xb.jusyLTSp44S0QkWx1QDC7BDhPVVqdfEDPiSQwZO_6YSI1wIzSlsfe46rxfg/Xc.CM/IM/040me/0/nz-fdt-v2.6.1.tar.gz/Xd./Xf.Lpr./Xg.7545252/Xi.habanero/XY.habanero/XZ.c7hJmgr1uidwnzUaj2J8OJdkPUw/nz-fdt-v2.6.1.tar.gz]
+
+Hide details for Latest NPS 7.2.0.0.P1 & Software Tools [/support/docview.wss?uid=swg21684710&amp;aid=1]Latest NPS 7.2.0.0.P1 & Software Tools
+
+NPS 7.2.0 [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~Information%2BManagement&product=ibm/Information+Management/Netezza+NPS+Software+and+Clients&release=NPS_7.2.0&platform=All&function=all]
+Select product group > Information Management 
+Select from Information Management > IBM Netezza NPS Software 
+Install version > 7.1.0 
+Platform > Linux 
+
+7.2.0.0-P1-IM-Netezza-NPS-fp88915 
+nz-nps-v7.2.0.0-P1.tar.gz
+nz-sw-support-tools-v7.2.0.0-P1.tar.gz
+
+Place software directly in the system to be upgrade using:
+wget delivery04.dhe.ibm.com/sdfdl/v2/sar/CM/IM/04u4s/0/Xa.2/Xb.jusyLTSp44S03g-glrDZk7DeKc5SfZWTOIwuU3eI9524Qs7-GSJEYXXSUlU/Xc.CM/IM/04u4s/0/nz-nps-v7.2.0.0-P1.tar.gz/Xd./Xf.Lpr./Xg.7829136/Xi.habanero/XY.habanero/XZ.JoTx_xbjw0z4H965cAK4-7nt6cE/nz-nps-v7.2.0.0-P1.tar.gz [http://delivery04.dhe.ibm.com/sdfdl/v2/sar/CM/IM/04u4s/0/Xa.2/Xb.jusyLTSp44S03g-glrDZk7DeKc5SfZWTOIwuU3eI9524Qs7-GSJEYXXSUlU/Xc.CM/IM/04u4s/0/nz-nps-v7.2.0.0-P1.tar.gz/Xd./Xf.Lpr./Xg.7829136/Xi.habanero/XY.habanero/XZ.JoTx_xbjw0z4H965cAK4-7nt6cE/nz-nps-v7.2.0.0-P1.tar.gz]
+
+wget delivery04.dhe.ibm.com/sdfdl/v2/sar/CM/IM/04u4s/0/Xa.2/Xb.jusyLTSp44S03g-glrDZk7DeKc5SfZWTOIwuU3eI9524Qs7-GSJEYWFhbYI/Xc.CM/IM/04u4s/0/nz-sw-support-tools-v7.2.0.0-P1.tar.gz/Xd./Xf.Lpr./Xg.7829136/Xi.habanero/XY.habanero/XZ.Skm97xRwRwZddg-doS_NEa6ZeO0/nz-sw-support-tools-v7.2.0.0-P1.tar.gz [http://delivery04.dhe.ibm.com/sdfdl/v2/sar/CM/IM/04u4s/0/Xa.2/Xb.jusyLTSp44S03g-glrDZk7DeKc5SfZWTOIwuU3eI9524Qs7-GSJEYWFhbYI/Xc.CM/IM/04u4s/0/nz-sw-support-tools-v7.2.0.0-P1.tar.gz/Xd./Xf.Lpr./Xg.7829136/Xi.habanero/XY.habanero/XZ.Skm97xRwRwZddg-doS_NEa6ZeO0/nz-sw-support-tools-v7.2.0.0-P1.tar.gz]
+
+Hide details for Latest Hardware Support Tools 8.3.0.1 [/support/docview.wss?uid=swg21684710&amp;aid=1]Latest Hardware Support Tools 8.3.0.1
+
+HWSUPPORT 8.3 [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~Information%2BManagement&product=ibm/Information+Management/Netezza+Tools&release=HWSUPPORT_8.3&platform=Linux&function=all]
+Select product group > Information Management 
+Select from Information Management > BM Netezza Tools 
+Install version > HWSUPPORT_8.3 
+Platform > All 
+
+8.3.0.1-IM-Netezza-HWSUPPTOOLS-fp87959 
+nz-hwsupport-V8.3.0.1-20141018.tar.gz
+
+Place software directly in the system to be upgraded using:
+wget delivery04.dhe.ibm.com/sdfdl/v2/sar/CM/IM/04uii/0/Xa.2/Xb.jusyLTSp44S03g-glt-DOnsmOX33PXvpCkOpPFNlbYILIP4RvPjhMy8jIdo/Xc.CM/IM/04uii/0/nz-hwsupport-V8.3.0.1-20141018.tar.gz/Xd./Xf.Lpr./Xg.7829142/Xi.habanero/XY.habanero/XZ.E-wepOBY8ERXax_AnBT-Xxeeap4/nz-hwsupport-V8.3.0.1-20141018.tar.gz [http://delivery04.dhe.ibm.com/sdfdl/v2/sar/CM/IM/04uii/0/Xa.2/Xb.jusyLTSp44S03g-glt-DOnsmOX33PXvpCkOpPFNlbYILIP4RvPjhMy8jIdo/Xc.CM/IM/04uii/0/nz-hwsupport-V8.3.0.1-20141018.tar.gz/Xd./Xf.Lpr./Xg.7829142/Xi.habanero/XY.habanero/XZ.E-wepOBY8ERXax_AnBT-Xxeeap4/nz-hwsupport-V8.3.0.1-20141018.tar.gz]

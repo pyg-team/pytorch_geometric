@@ -1,0 +1,113 @@
+Title: IBM IT00769: EXPIRED LTPA TOKENS MAY BE ALLOWED THROUGH DATAPOWER IF AUTHENTICATION CACHE ENABLED - United States
+
+Text:
+  A FIX IS AVAILABLE
+Fix packs for DataPower Gateway version 7.2 [http://www-01.ibm.com/support/docview.wss?uid=swg24039783]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  With authentication cache enabled, an expired LTPA token
+   may be allowed through DataPower to the backend server.
+   
+   This can occur if the LTPA token has already been cached and it
+   expired before the Authentication cache timeout.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  If there is not a high volume of AAA traffic, disable
+   authentication cache.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  This will be fixed in the next major release.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT00769
+   
+   
+ * REPORTED COMPONENT NAME
+   DATAPOWER
+   
+   
+ * REPORTED COMPONENT ID
+   DP1234567
+   
+   
+ * REPORTED RELEASE
+   600
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-04-03
+   
+   
+ * CLOSED DATE
+   2014-04-11
+   
+   
+ * LAST MODIFIED DATE
+   2014-04-11
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R601 PSY
+   UP

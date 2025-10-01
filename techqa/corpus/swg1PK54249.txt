@@ -1,0 +1,171 @@
+Title: IBM PK54249: WHEN TRANSFERRING TO SQL SERVER, DATABASE-TRANSFER IS SUCCESSFUL IF WMM.DBUSER IS NOT IN THE CORRECT CASE. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PERMANENT RESTRICTION.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  If the wmm.DbUser is not in the correct case, the
+   database-transfer task will be successful.  Portal startup will
+   fail though because it cannot find any WMM data.
+   
+   For example, if the user in SQLServer was set as wmmdbusr, but
+   the value in wpconfig.properties was set as WMMDBUSR, the task
+   is successful but Portal fails to start.  During the
+   database-transfer, we even see an exception similar to this:
+   
+   ===================================
+   action-validate-database:
+        [java] [05/22/07 16:02:34.557 EDT] Attempting to make
+   connection using:
+   jdbc:microsoft:sqlserver://host.domain:1157;Database
+   Name=wmmdb_CM02 :: WMMDBUSR02 :: PASSWORD_REMOVED
+        [java] [05/22/07 16:02:34.667 EDT] Connection successfully
+   made
+        [java] [05/22/07 16:02:34.682 EDT] Product:
+   Microsoft SQL Server
+        [java] [05/22/07 16:02:34.682 EDT] Product Version:
+   Microsoft SQL Server  2000 - 8.00.760 (Intel X86)
+        [java]  Dec 17 2002 14:22:05
+        [java]  Copyright (c) 1988-2003 Microsoft Corporation
+        [java]  Enterprise Edition on Windows NT 5.0 (Build 2195:
+   Service Pack 4)
+   
+        [java] [05/22/07 16:02:34.682 EDT] Driver Name:
+   SQLServer
+        [java] [05/22/07 16:02:34.682 EDT] Driver Version:
+   2.2.0040
+        [java] [05/22/07 16:02:34.682 EDT] Validating Database
+   Collation....
+        [java] [05/22/07 16:02:34.823 EDT] Collation for wmmdb_CM02
+   is SQL_Latin1_General_CP1_CS_AS
+        [java] [05/22/07 16:02:34.823 EDT] Database collation is
+   valid for this environment. Validating the collation for case
+   sensitivity...
+        [java] [05/22/07 16:02:34.823 EDT] This database is case
+   sensitive
+        [java] [05/22/07 16:02:34.823 EDT] Validation of database
+   collation successful
+        [java] [05/22/07 16:02:34.823 EDT] Checking default
+   database settings...
+        [java] [05/22/07 16:02:34.932 EDT] Error executing
+   validation
+        [java] java.sql.SQLException: [Microsoft][SQLServer 2000
+   Driver for JDBC][SQLServer]The name supplied (WMMDBUSR) is not
+   a user, role, or aliased login.
+        [java]  at
+   com.microsoft.jdbc.base.BaseExceptions.createException(Unknown
+   Source)
+        [java]  at
+   com.microsoft.jdbc.base.BaseExceptions.getException(Unknown
+   Source)
+   ===================================
+   
+   The transfer does not error out here and continues running, and
+   pending no other issues it is successful.  However Portal will
+   not start correctly afterwards.
+   
+   The database-transfer task should error out if this exception is
+   encountered.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Redo the database-transfer with the wmm.DbUser as the correct
+   case.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Working as designed.  transfer task cannot check for all the
+   possible database error return codes.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Closed as working as designed.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK54249
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSPHERE PORTA
+   
+   
+ * REPORTED COMPONENT ID
+   5724E7600
+   
+   
+ * REPORTED RELEASE
+   600
+   
+   
+ * STATUS
+   CLOSED PRS
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2007-10-08
+   
+   
+ * CLOSED DATE
+   2007-10-17
+   
+   
+ * LAST MODIFIED DATE
+   2010-06-22
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

@@ -1,0 +1,17 @@
+Title: IBM Column Analysis in IBM InfoSphere Information Analyzer fails intermittently with error message ORA-01652 - United States
+
+Text:
+Oracle TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Column Analysis in IBM InfoSphere Information Analyzer fails intermittently with the following error:
+
+ODBC Info: SQLSTATE = HY000: Native Error Code = 1,652: Msg = [IBM(DataDirect OEM)][ODBC Oracle Wire Protocol driver][Oracle]ORA-01652: unable to extend temp segment by 16 in tablespace IAUSER_DATA 
+
+RESOLVING THE PROBLEM
+ This error indicates a lack of table space allocated to your Analysis Database. The Analysis Database is defined in your Analysis Settings tab in Information Analyzer:
+Home > Configuration > Analysis Settings > Analysis Database 
+
+In this example, the error 'ORA-01652' is coming from an Analysis Database that is on Oracle, hence the Oracle error message. This error message may only be seen intermittently, depending on the amount of data being processed by Column Analysis.
+
+Examine the database logs around the time of occurrence of the failure. The logs will indicate where you will need to increase your temp segment size in the appropriate tablespace (e.g., the error message herein is for the IAUSER_DATA tablespace). For instructions specific to tuning your database settings, we recommend consulting with your database administrator.

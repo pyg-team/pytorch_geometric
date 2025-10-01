@@ -1,0 +1,55 @@
+Title: IBM Best practices when using ClearQuest Bridge with RTC in a ClearQuest MultiSite environment - United States
+
+Text:
+ClearQuest Bridge; ClearQuest MultiSite; Best practices; configuration; integration; bridge; rtc TECHNOTE (FAQ)
+
+QUESTION
+ What is the best practice when using an IBM Rational ClearQuest Bridge with IBM Rational Team Concert (RTC) in a ClearQuest MultiSite environment? 
+
+ANSWER
+There are two approaches to using a ClearQuest Bridge with RTC in a MultiSite environment. 
+
+The configuration is still a manual process using one of the approaches in the description.
+The biggest limitation with either of these approaches is that you can only link to a 
+record that is locally mastered.
+
+
+Approach 1
+
+Integrations point to a single ClearQuest site, but the each ClearQuest site must 'friend' the 3rd party server. 
+
+
+ 1. Set up RTC as a friend to one 'primary' ClearQuest site.
+    
+    
+ 2. Set up one project area link from RTC to the primary ClearQuest site.
+    
+    
+ 3. Set up RTC as an external friend on all ClearQuest sites (so that rich hover and backlink deletion works everywhere).
+    
+    
+ 4. (Optional) Make sure the mastership of records does note change if they have links to avoid problems with backlink deletion.
+
+
+Drawbacks: You can not create links to ClearQuest records not mastered at the primary site. 
+
+
+Approach 2 
+
+Integrations point to multiple ClearQuest sites. 
+ 1. Set up friends between RTC and all ClearQuest sites.
+    
+    
+ 2. Set up project area links between the RTC project area and ClearQuest user databases on all sites.
+    
+    
+ 3. (Optional) Make sure the mastership of records does not change if they have links to avoid problems with backlink deletion.
+
+
+
+Drawbacks: There will be menu items in RTC for every ClearQuest side, and you have to know where the record is mastered before you bring up the selection dialog. 
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Software Development Rational Team Concert Integrations: IBM Windows 4.0, 4.0.1, 4.0.2, 4.0.3

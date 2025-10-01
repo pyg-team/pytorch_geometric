@@ -1,0 +1,74 @@
+Title: IBM Security Bulletin:	IBM Tivoli Monitoring CPU utilization (CVE-2014-0963) - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ IBM Tivoli Monitoring is affected by a problem related to the SSL implementation which, under very specific conditions, can cause CPU utilization to rapidly increase. 
+
+VULNERABILITY DETAILS
+CVE ID: CVE-2014-0963 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-0963]
+DESCRIPTION: 
+IBM Tivoli Monitoring is affected by a problem with the handling of certain SSL messages. The TLS implementation can, under very specific conditions, cause CPU utilization to rapidly increase. The situation occurs only in a certain error case that causes a single thread to begin looping. If this happens multiple times, more threads will begin to loop and an increase in CPU utilization will be seen. This increase could ultimately result in CPU exhaustion and unresponsiveness of the IBM Tivoli Monitoring and other software running on the affected system.
+
+This issue can affect the availability of the system, but does not impact system confidentiality or integrity. This vulnerability can be remotely exploited, authentication is not required and the exploit is moderately complex. 
+
+To determine if your systems are being affected by this issue, you can monitor the CPU utilization for IBM Tivoli Monitoring components.
+
+CVSS Base Score: 7.1
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/92844 [https://exchange.xforce.ibmcloud.com/vulnerabilities/92844] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:M/Au:N/C:N/I:N/A:C)
+
+
+CVE-ID: CVE-2014-0076 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-0076]
+DESCRIPTION: An attacker running a program on the same machine as where the victim is running a program could use CPU timing information to discover key information about certain kinds of binary type Elliptic Curves used in Digital signatures during signing operations. Although GSKit only generates Prime type Elliptic Curves, externally generated keys may be imported in GSKit.
+
+CVSS Base Score: 2.1
+CVSS Temporal Score: Seehttps://exchange.xforce.ibmcloud.com/vulnerabilities/91990 [https://exchange.xforce.ibmcloud.com/vulnerabilities/91990]
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:L/AC:L/Au:N/C:P/I:N/A:N)
+
+
+AFFECTED PRODUCTS AND VERSIONS
+CVE-2014-0963 affects all IBM Tivoli Monitoring components, including agents for the following versions: 
+
+ * IBM Tivoli Monitoring version 6.22 through 6.22 FP9 
+ * IBM Tivoli Monitoring version 6.23 through 6.23 FP5 
+ * IBM Tivoli Monitoring version 6.30 through 6.30 FP2 
+
+CVE-2014-0076 affects all IBM Tivoli Monitoring components, including agents for the following version:  * IBM Tivoli Monitoring version 6.30 through 6.30 FP2 
+
+REMEDIATION/FIXES
+IBM has provided patches for all affected versions to uplift the IBM Global Security Kit (GSKit) to the remediated version.. Follow the installation instructions in the README files included with each patch. 
+
+The following link contains information about downloading the patches:
+http://www.ibm.com/support/docview.wss?uid=swg24037451. [http://www-01.ibm.com/support/docview.wss?uid=swg24037451]
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v2 Guide [http://www.first.org/cvss/v2/guide] 
+On-line Calculator v2 [http://nvd.nist.gov/CVSS-v2-Calculator] 
+
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] 
+IBM Secure Engineering Web Portal [https://www-304.ibm.com/jct03001c/security/secure-engineering/] 
+IBM Product Security Incident Response Blog [https://www.ibm.com/blogs/psirt] 
+CHANGE HISTORY
+ 2014-05-30 : Original Copy Published
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Flash. 
+
+
+Disclaimer
+
+Note: According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.
+
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.

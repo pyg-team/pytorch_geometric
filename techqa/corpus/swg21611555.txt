@@ -1,0 +1,55 @@
+Title: IBM How do I upgrade LCSE from P8 4.5.1 to P8 5.0 and migrate to another Windows platform? - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ I would like to know what is required to move IBM ECM FileNet P8 Legacy Content Search Engine (LCSE) content from one Windows platform to another, while also upgrading it from IBM ECM FileNet P8 4.5.1 to IBM ECM FileNet P8 5.0. 
+
+ANSWER
+Carry out the steps below;
+
+1) Determine if the current 4.5.1 LCSE (Verity) collections are on a shared volume that the new LCSE 5.0 host can access. If not, copy the collections from the 4.5.1 host to the 5.0 host (or a location that the LCSE 5.0 host can access). 
+
+2) Install LCSE 5.0 on the new host. 
+
+3) Review the following LCSE log files for upgrade errors: 
+
+ <verity_install_path>\cse_install_log_5.0.0.log 
+<verity_install_path>\vconfig.log 
+
+4) Open the LCSE installation package and copy the files from the FileNet_FileSystem_PushAPI.zip file. Navigate to <verity_install_path>\data\stylesets\FileNet_FileSystem_PushAPI.
+Replace the installed FileNet_FileSystem_PushAPI files with the files copied from the installation package. 
+
+5) Make the necessary changes in style.ufl (refer to 5.1 InfoCenter for details). 
+
+6) If there are specific changes made to the FileNet_FileSystem_PushAPI stylesets from 4.5.1, apply those changes on the 5.0 host (e.g., stopword, spanword, etc.). These changes are in style.uni, style.xml, style.stp, style.plc, style.prm, etc. 
+
+7) On the 5.0 host, edit the verity.cfg file and modify the following entries:
+alias6=path1
+mapping6=<location of the Verity collections>
+dirmode6=rw 
+
+<location of the Verity collections> - Location referred to in step 1. 
+
+7) Start the Verity K2 Administration Web Server service and the Verity K2 Administration Server service on the LCSE 5.0 host. 
+
+8) Go through the normal configuration process. Create and configure brokers, index, search, and ticket servers on the LCSE 5.0 host (see 5.1 InfoCenter for detailed steps). If there were configuration changes made on the 4.5.1 host, then these can be applied to the LCSE 5.0 host, if required. 
+
+9) In the Verity Dashboard on the LCSE 5.0 host, go to the "Collections" (left pane) and click on "Add a Collection". Add all the collections that were copied from 4.5.1 host. The "Index Alias" should use the same alias as in 4.5.1, the "Override Default Path" should be enabled, and "Path" should be the exact path to the collection, e.g. 
+
+F:\LCSECollections\Data_Document_20120709074916_EA5AE3A5503A485A977CDABD92D00D69 
+
+10) Once the collections are added, carry out a full restart of all the services: Verity K2 Administration Web Server service and the Verity K2 Administration Server service. 
+
+11) Log into IBM ECM FileNet P8 Content Engine Enterprise Manager (FEM) and make changes to the Content Engine(CE) GCD so that the CE can see the new LCSE 5.0 host. 
+
+12) In FEM, go to the domain properties, Verity Domain Configuration tab, and edit the current Verity domain. 
+
+13) Change the host name, display name, etc., to the new LCSE 5.0 host. 
+
+14) Once the CE is connected to the new LCSE 5.0 host, the new Index servers and Search servers configured on the LCSE 5.0 host should be visible. 
+
+15) Update the LCSE index areas in FEM to reflect the new configuration, e.g. temp dir path, index server, search server, etc. 
+
+16) Run a search test and ensure that CE is able to communicate to the LCSE 5.0 host and return search results.

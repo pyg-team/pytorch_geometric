@@ -1,0 +1,81 @@
+Title: IBM Box Troubleshooting Guide - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ I can't seem to mount and harvest our Box Volume successfully, what do I need to check? 
+
+SYMPTOM
+Unable to mount or harvest a Box volume with StoredIQ
+
+
+CAUSE
+Causes can range from permissions, network configuration, Box account configuration, and StoredIQ configuration issues.
+
+ENVIRONMENT
+Appstack and Dataserver
+
+DIAGNOSING THE PROBLEM
+BOX TROUBLESHOOTING
+
+
+The first thing we want to do before troubleshooting is to grab our client_id and client_secret from our box account:
+1) Login to your Box Developers Account at developer.box.com
+2) Click on 'Edit' on your Box Application which you should have created already
+3) In the subsequent window you will notice the following parameters: client_id, client_secret
+4) Take note of the above parameters as we will be using them
+
+1. First thing to check while we are here in the edit page, we want to make sure we have inputted the correct redirect_uri manually.
+
+It should follow this format - just place the <APPSTACK IP ADDRESS> with your actual Appstack IP:
+redirect_uri=https://<APPSTACK IP ADDRESS>/proxy/enamel/1.0/oauthtokengenerator/box
+
+example:
+redirect_uri=https://10.90.128.121/proxy/enamel/1.0/oauthtokengenerator/box
+
+2. In this edit page, we need to also verify the 'Scopes' section
+
+Enable the box application all the SCOPES here.
+
+3. Then taking note of the client_id, and client_secret from step 1, logon to your Appstack via an SSH session (putty)
+
+Run the command below which will show you where your Appstack is currently pointing for Box:
+cat /etc/siq/oauth.conf
+
+Make sure the output here MATCHES the client_id and client_secret we jotted down in the beginning.
+Make sure the redirect_uri MATCHES the redirect_uri we used in Step 1
+Make sure the auth_url and token_url match the example below.
+
+Example output:
+[box]
+client_id=9mkldyvcvciad1yjyid55087klq5skub 
+client_secret=6IVUBSUCZMCP6f0tkt0xhPIXMNTvpWin
+redirect_uri=https://10.90.128.121/proxy/enamel/1.0/oauthtokengenerator/box
+auth_url=https://app.box.com/api/oauth2/authorize
+token_url=https://app.box.com/api/oauth2/token
+Developer Token=7giuhI0lUJOqXNzmGO2b89BlV4TPTq5C
+
+4. Make sure you are able to ping box.api.com from both your Appstack and Dataserver command line interfaces. Try running the command below and make sure it succeeds, if it does not, there are network related issues:
+
+ping api.box.com
+
+5. Make sure SSL is enabled on the appstack. If SSL is enabled, you would use HTTPS in the URL to access your Appstack. If this is not enabled, contact Support.
+
+6. Box must enable the Account used for authentication with 'As-User' credentials in order to mount and harvest. This is something you contact Box support for:
+
+Please go to the following link to contact Box support and in your request provide:
+Client_id
+BOX Account name 
+Purpose and description - Something like "I wish to use StoredIQ to mount and harvest a Box volume and require As-User credentials"
+
+https://community.box.com/t5/custom/page/page-id/BoxSearchLithiumTKB [https://community.box.com/t5/custom/page/page-id/BoxSearchLithiumTKB]
+
+Example success message:
+Your case has been escalated to the Box Platform Support Team. We have enabled "As-User" privileges for the application with Client ID = gv6294v0r1tpdr3deyjkan59cqvgmqiy. Let us know if you require anything else.
+
+7. Verify Box Account Credentials
+
+After clicking 'Mount' within StoredIQ you should be prompted to login with a Box Account. This account at this point NEEDS TO BE A PRIMARY ADMIN ACCOUNT, not a co-admin account. This is because co-admins cannot access and harvest other co-admin content, leading to the inability to properly harvest box content.
+
+END: If after the above you are still unable to mount or harvest your Box volume correctly, please contact IBM StoredIQ Support noting your StoredIQ version and all the results of each step above.

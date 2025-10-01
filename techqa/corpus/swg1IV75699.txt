@@ -1,0 +1,152 @@
+Title: IBM IV75699: T6 TX/AGENTS LIST INCOMPLETE IN APMUI WIDGET - United States
+
+Text:
+  A FIX IS AVAILABLE
+IBM SmartCloud Application Performance Management UI V7.7 Interim Fix 3 [http://www-01.ibm.com/support/docview.wss?uid=swg24042494]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  To proceed transaction request (for T5/T6 agents), APMUI has
+   special logic to handle transaction groupwidget, and convert
+   them to CURI request to ITM data provider; If there is "SCOPE"
+   defined with "count" or "sort" filters, it converts "SCOPE"
+   as parameter in CURI request, and proceed "count"/"sort"
+   filters in APMUI server side; But in Itm 630, "SCOPE" parameter
+   usage is removed, and instead there must be a condition clause
+   to process this agent filter.
+   
+   APMUI server must adjust the logic to pick up this change for
+   ITM 630.
+   
+   
+   Detailed Recreation Procedure:
+   1) prepare for ITM 630 environment with transaction (T5/T6),
+   and generate enough transaction records;
+   2) From APMUI, create dashboard with application from AMC
+   3) check transaction from APMUI dashboard to see if all records
+   are accurately present.
+   
+   
+   
+   Actually there are two problems in this APAR"
+   
+   1) described as above that APMUI need to change logic to handle
+   REST API change in ITM 630. APMUI has done the change, and temp
+   fix has been forwarded to customer.
+   
+   2) T6 agent/TEMA need to handle problem of param_Limit
+   condition from agent side.
+   
+   For 2), suggest L2 to forward this APAR to TEAM team, or open an
+   new APAR for them.
+   
+   L2 will reroute this APAR to the correct 770 version
+   and create new APAR for TEMA team if required
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Some agent data does not display in the APM UI.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix is delivered in IBM SmartCloud Application Performance
+   Management UI V7.7 Interim Fix 3.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV75699
+   
+   
+ * REPORTED COMPONENT NAME
+   SMARTCLOUD APM
+   
+   
+ * REPORTED COMPONENT ID
+   5724G70UI
+   
+   
+ * REPORTED RELEASE
+   770
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2015-08-03
+   
+   
+ * CLOSED DATE
+   2017-07-20
+   
+   
+ * LAST MODIFIED DATE
+   2017-07-20
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   SMARTCLOUD APM
+   
+   
+ * FIXED COMPONENT ID
+   5724G70UI
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R770 PSY
+   UP

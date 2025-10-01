@@ -1,0 +1,195 @@
+Title: IBM JR54794: BPD INSTANCE FAILS WITH TRANSACTION FAILURE - United States
+
+Text:
+  A FIX IS AVAILABLE
+Version 8.5 Refresh Pack 7 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24041575]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When you start or run a business process definition (BPD) or
+   case instance, the instance fails. In the SystemOut.log file,
+   you find a transaction error similar to this error:
+   
+   [10/8/15 10:49:15:408 EDT] 00009156 Engine        E
+   CWLLG0181E: The
+   following error occurred in the 53,302 task: [<355message:Error
+   authorizing team. Details: CWTDS0000E: An unexpected failure
+   occurred.
+    Details: 'FNRCE0075: E_TRANSACTION_FAILURE: A transaction
+   failure has occurred due to an invalid state or timeout. The
+   current transaction state is STATUS_MARKED_ROLLBACK and it was
+   expected to be active'
+    Explanation: An exception was thrown.
+   
+   
+   [8/13/15 21:34:21:345 GMT] 0000010b EmbeddedECMIn 1
+   java.lang.RuntimeException
+   (com.filenet.api.exception.EngineRuntimeException: FNRCE0075E:
+   E_TRANSACTION_FAILURE: A transaction problem has occurred. This
+   error is
+   logged. The current transaction is not active. errorStack={
+    at
+   com.filenet.engine.ejb.EngineBean.methodInit(EngineBean.java:136
+   )
+   
+   Going back in the log, the transaction was marked rollback-only
+   previously because of this IllegalStateException where VMM tries
+   to mark a transaction rollback only:
+   
+   [8/13/15 21:34:21:006 GMT] 0000010b TransactionCo 3
+   handleException
+   
+   java.lang.IllegalStateException:
+   setRollbackOnly can not be called from a TX SUPPORTS method
+    at com.ibm.ejs.container.BeanO.setRollbackOnly(BeanO.java:1214)
+    at
+   com.ibm.ejs.container.StatelessBeanO.setRollbackOnly(StatelessBe
+   anO.java:1081)
+    at
+   com.ibm.ws.extensionhelper.tran.impl.TransactionControlImpl.hand
+   leException(TransactionControlImpl.java:536)
+    at
+   com.ibm.ws.wim.tx.JTAHelper.closeTransaction(JTAHelper.java:213)
+    at
+   com.ibm.websphere.wim.ServiceProvider.get(ServiceProvider.java:4
+   17)
+    at
+   com.ibm.websphere.wim.client.LocalServiceProvider.get(LocalServi
+   ceProvider.java:364)
+    at
+   com.filenet.engine.security.VMMProviderVMMImpl$VMMProviderPrivil
+   egedExceptionAction.run(VMMProviderVMMImpl.java:65)
+    at
+   com.ibm.ws.security.auth.ContextManagerImpl.runAs(ContextManager
+   Impl.java:5474)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  When the navigation of a BPD or case instance reaches a user
+   task, the members of the team the task is assigned to are
+   authorized to work with the document attachments of the process
+   instance and the case folder of the case instance. The IBM BPM
+   document store calls the Federated Repositories API. A failure
+   in such an API call causes the global transaction running the
+   BPD or case instance to be marked to be rolled back. However,
+   the IBM BPM document store expects an exception in certain
+   situations and recovers from it.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A fix will be included in an IBM BPM V8.5.6 cumulative fix that
+   changes the Federated Repository API invocations to run in a
+   local transaction so that the BPD navigation transaction is no
+   longer marked to be rolled back when the lookup fails and throws
+   an exception the IBM BPM document store expects. The global
+   transaction of the BPD or case instance navigation is kept
+   active.
+   
+   To determine whether the cumulative fix is available and
+   download it if it is, complete the following steps on Fix
+   Central:
+   
+   1. Select IBM Business Process Manager with your edition from
+     the product selector, the installed version to the fix pack
+     level, and your platform, and then click Continue.
+   
+   2. Select Text, enter ?cumulative fix?, and click Continue.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR54794
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM ADVANCED
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9400
+   
+   
+ * REPORTED RELEASE
+   856
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2015-11-24
+   
+   
+ * CLOSED DATE
+   2016-01-27
+   
+   
+ * LAST MODIFIED DATE
+   2016-09-05
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   BPM STANDARD
+   
+   
+ * FIXED COMPONENT ID
+   5725C9500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R856 PSY
+   UP

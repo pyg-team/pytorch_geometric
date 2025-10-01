@@ -1,0 +1,65 @@
+Title: IBM Remote EJB 2.1 interface fails on WebSphere Application Server v6.1 and v7.0 UTC using the Websphere adapter 6.1.0.x (for example, PSFT6.1.0.3_IF01w). - United States
+
+Text:
+RN7.5.4; SRX TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ A RemoteException error occurs on WebSphere Application Server v6.1 and v7.0 UTC when you deploy a J2C Java bean to a remote EJB 2.1 interface using Websphere adapter v6.1.0.x. 
+
+SYMPTOM
+Using Websphere adapter v6.1.0.x to run an outbound scenario and deploy to a remote EJB 2.1 interface, testing from the UTC, you will get a remote exception; for example, if using PSFT6.1.0.3_IF01w, you will see this error from UTC:
+ava.rmi.ServerException: RemoteException occurred in server thread; nested exception is: 
+java.rmi.MarshalException: CORBA BAD_PARAM 0x4f4d0006 Maybe; nested exception is: 
+java.io.NotSerializableException: PeopleSoft.Generated.CompIntfc.WbiCustomerCi is not serializable
+at com.ibm.CORBA.iiop.UtilDelegateImpl.wrapException(UtilDelegateImpl.java:748)
+at javax.rmi.CORBA.Util.wrapException(Util.java:296)
+at sam._Caa_Stub.retrieveWbiCustomerCi(_Caa_Stub.java:280)
+at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:37)
+at java.lang.reflect.Method.invoke(Method.java:599)
+at com.ibm.etools.utc.model.ReflectionMethodModel.invoke(ReflectionMethodModel.java:65)
+at com.ibm.etools.utc.servlet.InvokeServlet.invoke(InvokeServlet.java:113)
+at com.ibm.etools.utc.servlet.InvokeServlet.doPost(InvokeServlet.java:374)
+at javax.servlet.http.HttpServlet.service(HttpServlet.java:738)
+at javax.servlet.http.HttpServlet.service(HttpServlet.java:831)
+at com.ibm.ws.webcontainer.servlet.ServletWrapper.service(ServletWrapper.java:1461)
+at com.ibm.ws.webcontainer.servlet.ServletWrapper.handleRequest(ServletWrapper.java:793)
+at com.ibm.ws.webcontainer.servlet.ServletWrapper.handleRequest(ServletWrapper.java:444)
+at com.ibm.ws.webcontainer.servlet.ServletWrapperImpl.handleRequest(ServletWrapperImpl.java:175)
+at com.ibm.ws.webcontainer.servlet.CacheServletWrapper.handleRequest(CacheServletWrapper.java:91)
+at com.ibm.ws.webcontainer.WebContainer.handleRequest(WebContainer.java:860)
+at com.ibm.ws.webcontainer.WSWebContainer.handleRequest(WSWebContainer.java:1566)
+at com.ibm.ws.webcontainer.channel.WCChannelLink.ready(WCChannelLink.java:175)
+at com.ibm.ws.http.channel.inbound.impl.HttpInboundLink.handleDiscrimination(HttpInboundLink.java:455)
+at com.ibm.ws.http.channel.inbound.impl.HttpInboundLink.handleNewInformation(HttpInboundLink.java:384)
+at com.ibm.ws.http.channel.inbound.impl.HttpICLReadCallback.complete(HttpICLReadCallback.java:83)
+at com.ibm.ws.tcp.channel.impl.AioReadCompletionListener.futureCompleted(AioReadCompletionListener.java:165)
+at com.ibm.io.async.AbstractAsyncFuture.invokeCallback(AbstractAsyncFuture.java:217)
+at com.ibm.io.async.AsyncChannelFuture.fireCompletionActions(AsyncChannelFuture.java:161)
+at com.ibm.io.async.AsyncFuture.completed(AsyncFuture.java:138)
+at com.ibm.io.async.ResultHandler.complete(ResultHandler.java:204)
+at com.ibm.io.async.ResultHandler.runEventProcessingLoop(ResultHandler.java:775)
+at com.ibm.io.async.ResultHandler$2.run(ResultHandler.java:905)
+at com.ibm.ws.util.ThreadPool$Worker.run(ThreadPool.java:1527)
+Caused by: java.rmi.MarshalException: CORBA BAD_PARAM 0x4f4d0006 Maybe; nested exception is: 
+java.io.NotSerializableException: PeopleSoft.Generated.CompIntfc.WbiCustomerCi is not serializable
+at com.ibm.CORBA.iiop.UtilDelegateImpl.mapSystemException(UtilDelegateImpl.java:295)
+at javax.rmi.CORBA.Util.mapSystemException(Util.java:84)
+at com.ibm.rmi.util.ProxyUtil.copyObject(ProxyUtil.java:463)
+at com.ibm.rmi.util.ProxyUtil.invokeWithClassLoaders(ProxyUtil.java:720)
+at com.ibm.CORBA.iiop.ClientDelegate.invoke(ClientDelegate.java:1158)
+at $Proxy28.retrieveWbiCustomerCi(Unknown Source)
+at sam._Caa_Stub.retrieveWbiCustomerCi(_Caa_Stub.java:273)
+... 28 more
+Caused by: java.io.NotSerializableException: PeopleSoft.Generated.CompIntfc.WbiCustomerCi is not serializable
+at com.ibm.CORBA.iiop.UtilDelegateImpl.mapSystemException(UtilDelegateImpl.java:293)
+... 34 more
+
+RESOLVING THE PROBLEM
+To resolve this problem, make the following code modifications to the generated Java beans: 
+
+Step 1: Search for "private Record record;" "private Record rtnRecord;" in all generated Java beans;
+Step 2: Change those two lines to "private transient Record record;", "private transient Record rtnRecord;"
+Step 3: Rebuild the project 
+Step 4: Re-publish the project to the server, making sure that the UTC picks up the changed artifacts, and then run it on UTC.

@@ -1,0 +1,149 @@
+Title: IBM PK91336: CODE COVERAGE REPORT INCORRECTLY REPORTS THAT A TRANSITION IS NOT COVERED - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Summary:
+   ---------
+   Code coverage report incorrectly reports that a transition is
+   not covered
+   
+   
+   Description:
+   ------------
+   Email Ref from Christian:
+   1. There are some bugs regarding coverage of transitions.
+   Currently the
+   animation notification for a behavioral step
+   (notifyBehaviorStep) does
+   not contain information about the instance doing the step and TC
+   has to
+   estimate which instance is doing the step to compute the
+   coverage. If
+   there are SendActions in the statechart or if events are sent
+   from the
+   entry or exit action of states (which is the case in this model)
+   then
+   sometimes TC doesn't get the correct instance.
+   To fix this the notifyBehaviorStep has to include the instance
+   doing the
+   step (this was just implemented by IBM in the latest 7.5.1
+   prototype)
+   and we have to do some changes in TC to use this information. I
+   expect
+   this bug is fixed with the 7.5.1 beta.
+   
+   PMR: 71696,019,866
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  na
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Code coverage report incorrectly reports that a transition
+   is not covered
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fixed in 7.5.1
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK91336
+   
+   
+ * REPORTED COMPONENT NAME
+   TLOGIC RHAPSODY
+   
+   
+ * REPORTED COMPONENT ID
+   5724V74RP
+   
+   
+ * REPORTED RELEASE
+   750
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-07-14
+   
+   
+ * CLOSED DATE
+   2009-12-03
+   
+   
+ * LAST MODIFIED DATE
+   2009-12-03
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TLOGIC RHAPSODY
+   
+   
+ * FIXED COMPONENT ID
+   5724V74RP
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R750 PSN
+   UP

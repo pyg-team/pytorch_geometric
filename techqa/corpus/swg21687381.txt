@@ -1,0 +1,31 @@
+Title: IBM Check JazzSM and DASH versions from the command line - United States
+
+Text:
+DASHL2; DASHL2FAQ; JazzSM; DASH; version TECHNOTE (FAQ)
+
+QUESTION
+ How can I check JazzSM, DASH versions and other components installed on the server? 
+
+ANSWER
+1. To check JazzSM version run below command:
+<JazzSM-HOME>/ui/bin/consolecli.[sh|bat] Version 
+
+2. To check which components are installed, check contents of below dir:
+cd <JazzSM_HOME>/properties/version 
+
+[root@nc9053115058 version]# ls -lrt
+-rw-r--r-- 1 root root 175 May 2 2014 Jazz_for_Service_Management-1.1.0.swtag
+-rw-r--r-- 1 root root 223 May 2 2014 Jazz_for_Service_Management-1.1.0.2.fxtag
+-rw-r--r-- 1 root root 223 May 2 2014 Jazz_for_Service_Management-1.1.0.1.fxtag
+-rw-r--r-- 1 root root 224 Dec 18 11:51 Jazz_for_Service_Management_Dashboard_Application_Services_Hub-3.1.0.cmptag
+-rw-r--r-- 1 root root 258 Dec 18 11:51 Jazz_for_Service_Management_Dashboard_Application_Services_Hub-3.1.0.2.fxtag 
+
+3. Go to the directory where InstallManager is installed and send output from below command:
+<IM>InstallationManager/eclipse/tools
+
+./imcl listInstalledPackages -features -long
+
+4. Detailed System information:
+<JazzSM_HOME>/ui/bin/consolecli.[sh|bat] SystemInfo --outputFile <output file>
+Example; 
+./consolecli.sh SystemInfo --outputFile /tmp/Jazz_sysinfo.out

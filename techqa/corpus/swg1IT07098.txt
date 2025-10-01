@@ -1,0 +1,155 @@
+Title: IBM IT07098: WEBSPHERE MQ 8.0 WHEN ISSUED WITH SET CHLAUTH MAY RECEIVE ERROR AMQ9774: ERROR ACCESSING THE CHANNEL AUTHENTICATION TABLE - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  WebSphere MQ channel profile structure is shorter than the
+   minimum expected length.
+   
+   You may see one or more of the following errors AMQ9774,
+   AMQ6125, AMQ6184 and FFST with Probe ID: RN075015
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   This issue affects all MQ v8 queue managers which have been
+   migrated from earlier versions and are using the channel
+   authentication feature.
+   
+   
+   Platforms affected:
+   MultiPlatform
+   
+   ****************************************************************
+   PROBLEM DESCRIPTION:
+   A CHLAUTH definition has been created at MQ V710 which has a
+   small object length (70 bytes). The queue manager started at MQ
+   V8 and records are read from the data set
+   SYSTEM.CHLAUTH.DATA.QUEUE.
+   
+   Validation of the channel authentication record uses minimum
+   object length of 72 bytes which is the size of a CHLAUTH Profile
+   structure at V710. This minimum object length includes some
+   padding to the nearest double word boundary. Because of this
+   minimum length being larger than actual length of the record
+   AMQ9774 errors are generated.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The product has been updated so that the correct minimum length
+   is passed when validating the CHLAUTH record.
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+   Version    Maintenance Level
+   v8.0       8.0.0.3
+   
+   The latest available maintenance can be obtained from
+   'WebSphere MQ Recommended Fixes'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037]
+   
+   If the maintenance level is not yet available information on
+   its planned availability can be found in 'WebSphere MQ
+   Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT07098
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ BASE MULTIP
+   
+   
+ * REPORTED COMPONENT ID
+   5724H7251
+   
+   
+ * REPORTED RELEASE
+   800
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-02-11
+   
+   
+ * CLOSED DATE
+   2015-04-28
+   
+   
+ * LAST MODIFIED DATE
+   2015-04-28
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ BASE MULTIP
+   
+   
+ * FIXED COMPONENT ID
+   5724H7251
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R800 PSY
+   UP

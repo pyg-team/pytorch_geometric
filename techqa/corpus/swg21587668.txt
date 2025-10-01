@@ -1,0 +1,115 @@
+Title: IBM The Process Portal for the IBM Business Process Manager (BPM) products does not render properly when using Load Balancer - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When you enable Load Balancer or specify "localhost" as the host name during IBM Business Process Manager server installation, the Process Portal user interface does not have any Cascading Style Sheet (CSS) styling. 
+
+SYMPTOM
+Symptom #1 : 
+
+You see a screen that is similar to the following screen when you log into IBM Business Process Manager Process Portal:
+
+
+[/support/docview.wss?uid=swg21587668&amp;aid=1]
+
+
+Symptom #2 : 
+
+If you monitor HTTP traffic in your browser, you notice that the portal application tries to load a CSS file from a host other than where you have Process Server or Process Center installed : 
+
+For example: http://localhost:9081/portal/skins/Leapfrog/application.css
+
+
+CAUSE
+There are a couple of known causes for this issue: 
+
+ * You did not customize any IBM Business Process Manager configuration files after enabling the load balancer. 
+ * You installed IBM Business Process Manager with "localhost" as the host name.
+
+ENVIRONMENT
+This issue can occur with an IBM Business Process Manager product in a stand-alone or a clustered environment.
+
+
+
+RESOLVING THE PROBLEM
+To resolve the problem, complete the following steps:
+
+
+
+ 1. Shut down all the Java™ virtual machines (JVMs) that are associated with the problematic environment.
+    
+    
+ 2. Locate the 100Custom.xml file under your config directory. 
+    
+    Sample paths:  * Stand-alone environment:
+       C:\Dev\IBM\WebSphere\BPMStd\profiles\PCStd\config\cells\PCCell\nodes\PCNode\servers\server1\process-center\config\100Custom.xml
+       
+       
+     * Clustered environment:
+       C:\IBM\WebSphere\AppServer\profiles\PCDmgr\config\cells\DMGR03Cell01\nodes\NODE1Node01\servers\AIM.AppTarget.NODE1Node01.0\process-center\config\100Custom.xml
+       
+       
+    
+    
+ 3. Edit the 100Custom.xml file.
+    
+    
+    Note: For Process Center environments, omit the <teamworks-webapp-prefix> code as it causes problems in the authoring environment.
+    
+    
+    Add following lines to the existing file between the <properties> and </properties> tags. Replace the host name and port values with your environment specific values before adding the code to the XML file. For example: http://NODE1:9081/portal 
+    <common merge="mergeChildren">
+    <portal-prefix merge="replace">http://hostname:port/portal</portal-prefix>
+    <process-admin-prefix merge="replace">https://hostname:port/ProcessAdmin
+    </process-admin-prefix>
+    <teamworks-webapp-prefix merge="replace">https://hostname:port/teamworks
+    </teamworks-webapp-prefix>
+    </common>
+    <server merge="mergeChildren"> 
+    <email merge="mergeChildren">
+    <mail-template merge="mergeChildren">
+    <client-link merge="replace">https://hostname:port/teamworks
+    </client-link>
+    </mail-template>
+    </email>
+    </server>
+    
+    
+    Note: You need to modify the 100Custom.xml file on every Process Center Process Server cluster member configuration in a clustered environment. Editing XML files in a deployment manager profile configuration is sufficient. You do not need edit this file on node machines. Changes are pushed to the node machine when you complete the synchronization process.
+    
+    
+    Caution: Make sure that there are no extra characters appended to previous lines of code when you copy it from this document. 
+
+
+Post editing tasks: 
+ * Stand alone environment:
+   Bring up your server and check portal page. 
+   
+   
+ * Clustered environment:  1. Start your Deployment manager and node agents.
+       
+       
+    2. Synchronize the nodes.
+       
+       
+    3. Start your clustered environment.
+       
+       
+    4. Log into the Process Portal and verifythe CSS styling 
+   
+   
+
+
+After completing the previous steps, the Process Portal displays with CSS styling as shown in the following screen shot:: 
+
+
+[/support/docview.wss?uid=swg21587668&aid=2] [/support/docview.wss?uid=swg21587668&aid=2] 
+
+[/support/docview.wss?uid=swg21587668&amp;aid=3]  
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Business Process Manager Express Installation / Configuration Linux, Linux zSeries, Windows 8.0.1, 8.0, 7.5.1, 7.5 Business Integration IBM Business Process Manager Advanced Installation / Configuration AIX, Linux, Linux zSeries, Solaris, Windows 8.0.1, 8.0, 7.5.1, 7.5 
+PRODUCT ALIAS/SYNONYM
+ BPM

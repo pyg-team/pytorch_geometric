@@ -1,0 +1,207 @@
+Title: IBM PJ39691: INACCURATE CONTENT ENGINE CLIENT INSTALLER LOGGING - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  A Content Engine Client installer warning of a missing file
+   resulted in the WorkplaceXT
+   .war and .ear file updates being skipped but no log messages
+   appeared indicating that fact.
+   
+   The problem cannot be reproduced on demand but was discovered
+   after various
+   other difficulties occurred during the install which required
+   repeated runs of the client
+   installer program. At one point, the installer reported a
+   missing file:
+   
+   Tue Aug 23 12:43:54:180 Update Workplace XT
+   Status: WARNING Additional Notes: WARNING - Tue Aug 23
+   12:43:54:343 [ERROR]
+   ServiceException: (error code = 200;
+   message = "Do Not Install/download/isannotvalidator.jar
+    (A file or directory in the path name does not exist.)";
+   severity = 0;
+   exception = [java.io.FileNotFoundException:
+   Do Not Install/download/isannotvalidator.jar
+   (A file or directory in the path name does not exist.)])
+   
+   Since this message was only a warning it was not obvious that it
+   was a problem
+   that had to be fixed before continuing with the rest of the
+   install, upgrade or
+   Fix Pack update.  If that step had been successful, the next
+   actions would have
+   been for the installer to update the WorkplaceXT .war and .ear
+   files, as shown
+   below in a successful update:
+   
+   Thu Aug 25 10:07:45:723 Update Workplace XT
+   Thu Aug 25 10:07:46:653 [INFO] Run -
+   
+   /opt/IBM/FileNet/WebClient/deploy/create_web_client_war.sh
+   Thu Aug 25 10:08:38:963 [INFO] Run -
+   
+   /opt/IBM/FileNet/WebClient/deploy/create_web_client_ear.sh
+   
+   Because of the warning, the .war/.ear updates were skipped but
+   the log
+   showed no evidence that this step had not occurred and
+   subsequent
+   attempts to log in via WorkplaceXT failed.
+   
+   Expected result: if the .war/.ear update is not performed, the
+   log should
+   indicate an unsuccessful installation or at the least point out
+   that the
+   .war/.ear update did not complete.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * All Users                                                    *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * The Content Engine Client installer reports a missing file   *
+   * while updating WorkplaceXT. The following message gets       *
+   * logged in the log file                                       *
+   *                                                              *
+   * Tue Aug 23 12:43:54:180 Update Workplace XT                  *
+   *                           Status: WARNING                    *
+   *                           Additional Notes: WARNING - Tue    *
+   * Aug 23 12:43:54:343 [ERROR] ServiceException: (error code =  *
+   * 200; message = "Do Not Install/download/isannotvalidator.jar *
+   * (A file or directory in the path name does not exist.)";     *
+   * severity = 0; exception = [java.io.FileNotFoundException: Do *
+   * Not Install/download/isannotvalidator.jar (A file or         *
+   * directory in the path name does not exist.)])                *
+   *                                                              *
+   * Because the customer hits the warning, the update to the     *
+   * Workplace XT ear file gets skipped and the log has no        *
+   * mention of th                                                *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * The recommendation is to update to a recent fixpack version  *
+   * of Content Engine Server 5.1.0.1-P8CE-FP001 or higher, and   *
+   * run the recent fixpack version of Content Engine Client      *
+   * Installer                                                    *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The 5.1.0.1-P8CE-FP001 fixpack installer has been modified to
+   add the following log information, in the case of such a
+   failure.
+   
+   The log file would indicate a FATAL ERROR instead of a Warning,
+   and would have the following content
+   
+   Fri Mar 30 03:49:48:575 Unable to locate a Content Engine Client
+   File: WorkPlace XT is not updated completely. Upgrade Content
+   Engine Server and retry the Content Engine Client Install. If
+   the problem persists, Please contact IBM Support
+                             Status: FATAL ERROR
+                             Additional Notes: FATAL ERROR - Fri
+   Mar 30 03:49:48:575 [ERROR] Unable to locate a Content Engine
+   Client File ServiceException: (error code = -30017; message =
+   "The system cannot find the file specified.
+   (2)"; severity = 0)
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PJ39691
+   
+   
+ * REPORTED COMPONENT NAME
+   CONTENT ENGINE
+   
+   
+ * REPORTED COMPONENT ID
+   5724R8101
+   
+   
+ * REPORTED RELEASE
+   510
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-11-15
+   
+   
+ * CLOSED DATE
+   2012-10-01
+   
+   
+ * LAST MODIFIED DATE
+   2012-10-01
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CONTENT ENGINE
+   
+   
+ * FIXED COMPONENT ID
+   5724R8101
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R510 PSY
+   UP

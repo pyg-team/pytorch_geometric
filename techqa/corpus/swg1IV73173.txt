@@ -1,0 +1,225 @@
+Title: IBM IV73173: SCHEDULER STOP WORKING AFTER DB CONNECTION PROBLEM - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  ISIM Scheduler look-up for the scheduled messages from database
+   that needs to be delivered. The Scheduler runs after every 30
+   sec (Default value of "enrole.scheduling.heartbeat" property
+   specified in the enRole.properties file). If database is down or
+   not accessible during this time period then Scheduler will not
+   able to execute the database operation and following exception
+   is logged in trace.log file.
+   <snip>
+   <Source FileName="com.ibm.itim.util.DBConnectionManager"
+   Method="SQLException setting transaction isolation level -  SQL
+   State - 08001 Error Code --4499 Error Message -
+   [jcc][t4][2043][11550][3.64.82] Exception
+   java.net.ConnectException: Error opening socket to server
+   localhost/127.0.0.1 on port 50,000 with message: Connection
+   refused: connect. ERRORCODE=-4499, SQLSTATE=08001 DSRA0010E: SQL
+   State = 08001, Error Code = -4,499"/>
+    <Thread>Thread-100</Thread>
+    <Exception><![CDATA[com.ibm.websphere.ce.cm.StaleConnectionExce
+   ption: [jcc][t4][2043][11550][3.64.82] Exception
+   java.net.ConnectException: Error opening socket to server
+   localhost/127.0.0.1 on port 50,000 with message: Connection
+   refused: connect. ERRORCODE=-4499, SQLSTATE=08001 DSRA0010E: SQL
+   State = 08001, Error Code = -4,499
+    at
+   sun.reflect.NativeConstructorAccessorImpl.newInstance0(Native
+   Method)
+    at
+   sun.reflect.NativeConstructorAccessorImpl.newInstance(NativeCons
+   tructorAccessorImpl.java:56)
+    at
+   sun.reflect.DelegatingConstructorAccessorImpl.newInstance(Delega
+   tingConstructorAccessorImpl.java:39)
+    at
+   java.lang.reflect.Constructor.newInstance(Constructor.java:527)
+    at
+   com.ibm.websphere.rsadapter.GenericDataStoreHelper.mapExceptionH
+   elper(GenericDataStoreHelper.java:617)
+    at
+   com.ibm.websphere.rsadapter.GenericDataStoreHelper.mapException(
+   GenericDataStoreHelper.java:676)
+    at
+   com.ibm.ws.rsadapter.AdapterUtil.mapException(AdapterUtil.java:2
+   265)
+    at
+   com.ibm.ws.rsadapter.spi.WSRdbDataSource.getPooledConnection(WSR
+   dbDataSource.java:2000)
+    at
+   com.ibm.ws.rsadapter.spi.WSManagedConnectionFactoryImpl.getConne
+   ction(WSManagedConnectionFactoryImpl.java:1760)
+    at
+   com.ibm.ws.rsadapter.spi.WSManagedConnectionFactoryImpl.createMa
+   nagedConnection(WSManagedConnectionFactoryImpl.java:1506)
+    at
+   com.ibm.ws.rsadapter.spi.WSManagedConnectionFactoryImpl.createMa
+   nagedConnection(WSManagedConnectionFactoryImpl.java:1096)
+    at
+   com.ibm.ejs.j2c.FreePool.createManagedConnectionWithMCWrapper(Fr
+   eePool.java:2086)
+    at
+   com.ibm.ejs.j2c.FreePool.createOrWaitForConnection(FreePool.java
+   :1766)
+    at com.ibm.ejs.j2c.PoolManager.reserve(PoolManager.java:3264)
+    at com.ibm.ejs.j2c.PoolManager.reserve(PoolManager.java:2567)
+    at
+   com.ibm.ejs.j2c.ConnectionManager.allocateMCWrapper(ConnectionMa
+   nager.java:1544)
+    at
+   com.ibm.ejs.j2c.ConnectionManager.allocateConnection(ConnectionM
+   anager.java:1027)
+    at
+   com.ibm.ws.rsadapter.jdbc.WSJdbcDataSource.getConnection(WSJdbcD
+   ataSource.java:642)
+    at
+   com.ibm.ws.rsadapter.jdbc.WSJdbcDataSource.getConnection(WSJdbcD
+   ataSource.java:609)
+    at
+   com.ibm.itim.util.DBConnectionManager.getConnection(DBConnection
+   Manager.java:297)
+    at
+   com.ibm.itim.util.DBConnectionManager.getConnection(DBConnection
+   Manager.java:346)
+    at
+   com.ibm.itim.scheduling.ScheduleManager$SchedulerThread.getConne
+   ction(ScheduleManager.java:928)
+    at
+   com.ibm.itim.scheduling.ScheduleManager$SchedulerThread.markedMe
+   ssagesExist(ScheduleManager.java:552)
+    at
+   com.ibm.itim.scheduling.ScheduleManager$SchedulerThread.run(Sche
+   duleManager.java:383)
+   ]]></Exception>
+   </snip>
+   Also the Scheduler stops working even if the database is up and
+   accessible.
+   
+   Steps to Duplicate:
+   1. Set the "enrole.scheduling.heartbeat" property value to 30
+   sec. This property is specified in the enRole.properties file.
+   2. Stop the database service for 40 sec and observed that
+   Scheduler throws the above specified exception.
+   3. Start the database service and observed that scheduler stop
+   even the database is up and accessible.
+   
+   Desired Behavior:
+   Scheduler should be working after DB connection problem.
+   
+   Environment: ISIM 6.0 FP5
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *   See main problem description.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *   The fix for this APAR is expected to be
+   contained in the following maintenance
+   delivery vehicle:
+   | Fix Pack | 6.0.0-ISS-SIM-FP0007
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV73173
+   
+   
+ * REPORTED COMPONENT NAME
+   SEC IDENTITY MG
+   
+   
+ * REPORTED COMPONENT ID
+   5724C3406
+   
+   
+ * REPORTED RELEASE
+   600
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-05-12
+   
+   
+ * CLOSED DATE
+   2015-06-30
+   
+   
+ * LAST MODIFIED DATE
+   2015-06-30
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    IV76435
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   SEC IDENTITY MG
+   
+   
+ * FIXED COMPONENT ID
+   5724C3406
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R600 PSN
+   UP

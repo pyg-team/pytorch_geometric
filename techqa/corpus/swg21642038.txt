@@ -1,0 +1,65 @@
+Title: IBM A CRIMC1020E error occurs when upgrading from IBM Business Process Manager (BPM) V7.5.1 to V7.5.1 Fix Pack 1 - United States
+
+Text:
+upgrade; com.ibm.bpm.panel.invoke_7.5.0.110316; bpm TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When you attempt to upgrade from IBM Business Process Manager Version 7.5.1 to V7.5.1 Fix Pack 1, Installation manager cannot find the com.ibm.bpm.panel.invoke_7.5.0.110316 Java archive (JAR) file. 
+
+SYMPTOM
+The Installation Manager log file contains the following error: 
+
+[/support/docview.wss?uid=swg21642038&aid=1] [/support/docview.wss?uid=swg21642038&aid=1] 
+
+ 
+
+The following error information is seen in the previous screen shot:
+<?xml version="1.0" encoding="UTF-8" ?>
+- <result>
+<warning>The packages currently installed at /opt/IBM/WebSphere have
+installed translations that are not supported by IBM® Business Process
+Manager Advanced V7.5 - Process Server package. English text displays
+for unsupported translations.</warning>
+<error uid="CRIMA1160E">Error updating.</error>
+<error uid="CRIMC1020E">jar file
+com.ibm.bpm.panel.invoke_7.5.0.110316 not found</error>
+<error>'jar file com.ibm.bpm.panel.invoke_7.5.0.110316' not found in
+/arc/backup/fixpack/ps/.</error>
+<error>'jar file com.ibm.bpm.panel.invoke_7.5.0.110316' not
+found.</error>
+
+
+
+ENVIRONMENT
+The history indicates that the environment was created using BPM 7.5.0 installer. Here is the installation history: 
+
+ 1. Installed IBM Business Process Manager Advanced - Process Server 7.5.0. 
+ 2. Upgraded to IBM Business Process Manager Advanced - Process Server 7.5.1. 
+ 3. Upgraded WebSphere Application Server 7.0.0.23 and also installed the non-English language packages 
+ 4. Failure occurred while upgrading the IBM Business Process Manager Advanced - Process Server 7.5.1.1
+
+
+RESOLVING THE PROBLEM
+The missing Java archive (JAR) file is included in the original IBM Business Process Manager V7.5 installation repository.
+
+To resolve this issue, complete the following steps: 
+
+ 1. Download the appropriate IBM Business Process Manger 7.5. installation repository from passport advantage for your current environment.  * IBM Business Process Manager Advanced - Process Server [http://www.ibm.com/support/docview.wss?uid=swg24029617] 
+     * IBM Business Process Manager Advanced [http://www.ibm.com/support/docview.wss?uid=swg24029280] 
+       
+       
+    
+    
+ 2. Add the IBM Business Process Manager 7.5 repository to the Installation Manager. Complete the following steps:  1. Start the Installation Manager. 
+     2. Click File > Preference > Repository. 
+     3. Add the 7.5 repository.
+        
+        
+    
+    
+ 3. Complete the 7.5.1.1 installation.
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ BPM

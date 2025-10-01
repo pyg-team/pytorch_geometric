@@ -1,0 +1,134 @@
+Title: IBM WebSphere Adapter for JD Edwards EnterpriseOne, V7.0: software requirements - United States
+
+Text:
+ PRODUCT DOCUMENTATION
+
+ABSTRACT
+ This techdoc lists the software requirements for IBM WebSphere Adapter for JD Edwards EnterpriseOne, version 7.0. 
+
+CONTENT
+The information provided here describes the minimum product levels you need installed before opening a problem report with the WebSphere Adapters support team. Because other products frequently ship fixes, updates, and new releases, it is not possible to test every configuration. In general, you can install and run updates to supported products if those updates are compatible with later versions. This statement does not apply to enterprise information system (EIS) product versions and their dependencies. Specific cases where this statement is not applicable are indicated where relevant.
+
+
+
+
+
+Supported JD Edwards versions [/support/docview.wss?uid=swg27016754&amp;aid=1]  * EnterpriseOne Tools 8.97,8.98
+
+
+Note: The adapter is compatible with any version of JD Edwards EnterpriseOne that works with the supported versions of EnterpriseOne Tools.
+EnterpriseOne Tools 8.9 SP1, 8.9 SP2, 8.93, 8.94, 8.95, 8.96 are supported only for application design, development, and testing; there is no support for production use.Those versions are deprecated because Oracle does not support them. Supported operating systems [/support/docview.wss?uid=swg27016754&amp;aid=1] AIX on POWER  * IBM AIX 5L 5.2 (ML 5200-07) 
+ * IBM AIX 5.3 TL7 
+ * IBM AIX 6.1 TL1 AIX product site [http://www-03.ibm.com/systems/p/os/aix/index.html]
+   
+   
+
+
+HP-UX on PA-RISC  * HP-UX 11i v2 
+ * HP-UX 11i v3* HP-UX 11i product site [http://welcome.hp.com/country/us/en/prodserv/software_os.html]
+   
+   
+
+
+HP-UX on Itanium  * HP-UX 11i v2* 
+ * HP-UX 11i v3* HP-UX 11i product site [http://welcome.hp.com/country/us/en/prodserv/software_os.html]
+   
+   
+
+
+* This operating system is supported for this adapter using EnterpriseOne Tools 8.96.3 or later. IBM i (formerly i5/OS) 
+
+ * IBM i 5.3 (V5R3) 
+ * IBM i 5.4 System i 
+ * IBM i 6.1 System i IBM i product site [http://www.ibm.com/systems/i/]
+   
+   
+
+
+Linux on x86  * Red Hat Enterprise Linux 3.0 AS, ES, WS Update5, Update6 
+ * Red Hat Enterprise Linux 4.0 AS,ES Update4,Update6 Red Hat Enterprise Linux product site [http://www.redhat.com/software/rhel/]
+   
+   
+
+
+* This operating system is supported for this adapter using EnterpriseOne Tools 8.96 or later. Linux on x86-64 
+
+ * Red Hat Enterprise Linux (RHEL) 5.0 Advanced Platform* Update1
+   Red Hat Enterprise Linux product site [http://www.redhat.com/software/rhel/]
+
+
+* This operating system is supported for this adapter using EnterpriseOne Tools 8.97.2 and later
+Solaris on SPARC  * Sun Solaris 9 with latest recommended patch cluster 
+ * Sun Solaris 10 with latest recommended patch cluster Sun product site [http://www.sun.com/products/]
+   
+   
+
+
+Windows on x86  * Microsoft Windows 2003 Datacenter Edition x86-32 SP1,SP2 
+ * Microsoft Windows 2003 Enterprise Edition x86-32 SP1,SP2 
+ * Microsoft Windows 2003 Standard Edition x86-32 SP1,SP2 
+ * Microsoft Windows 2003 R2 Datacenter Edition x86-32 SP1,SP2 
+ * Microsoft Windows 2003 R2 Enterprise Edition x86-32 SP1,SP2 
+ * Microsoft Windows 2003 R2 Standard Edition x86-32 SP1,SP2 Windows Server 2003 product site [http://www.microsoft.com/windowsserver2003]
+   
+   
+
+
+Windows on x86-64  * Microsoft Windows 2008 Datacenter Edition x86-64* SP1,SP2 
+ * Microsoft Windows 2008 Enterprise Edition x86-64* SP1,SP2 
+ * Microsoft Windows 2008 Standard Edition x86-64* SP1,SP2
+
+
+* This operating system is supported for this adapter using EnterpriseOne Tools 8.98.1 or later.  
+
+Notes: 
+
+1. The support of Operating Systems by WebSphere Adapters may vary among complementary products. Please also refer to the websites of specific complementary product for detailed information.
+
+Prerequisites [/support/docview.wss?uid=swg27016754&amp;aid=1] This adapter is supported with the following complementary products:
+ * IBM WebSphere Integration Developer, version 7.0 [http://www-01.ibm.com/support/docview.wss?rs=2308&uid=swg27006409]
+
+
+and one of the following  * IBM WebSphere Process Server, version 7.0 [http://www-01.ibm.com/support/docview.wss?rs=2307&&uid=swg27006205] 
+ * IBM WebSphere Enterprise Service Bus, version 7.0 [http://www-1.ibm.com/support/docview.wss?rs=2346&uid=swg27006912] 
+
+This adapter is also supported with the following complementary products: 
+ * IBM Rational Application Developer for WebSphere V7.5.5 [http://www-01.ibm.com/support/docview.wss?rs=180&uid=swg27017217]
+
+
+and one of the following  * IBM WebSphere Application Server, version 6.1.0.27 [http://www-01.ibm.com/support/docview.wss?rs=180&uid=swg27006921] (Note: EJB3 Feature Pack is the prerequisite of running Adapter on WebSphere Application Server V6.1.0.*) 
+ * IBM WebSphere Application Server Network Deployment, version 6.1.0.27 [http://www-01.ibm.com/support/docview.wss?rs=180&uid=swg27006921] (Note: EJB3 Feature Pack is the prerequisite of running Adapter on WebSphere Application Server V6.1.0.*) 
+ * IBM WebSphere Application Server, version 7.0.0.7 [http://www-01.ibm.com/support/docview.wss?rs=180&uid=swg27006921] 
+ * IBM WebSphere Application Server Network Deployment, version 7.0.0.7 [http://www-01.ibm.com/support/docview.wss?rs=180&uid=swg27006921]
+
+
+For tooling purposes, the adapter code can be obtained from the Rational Application Developer product.
+For runtime purposes, a stand-alone adapter PID must be purchased for use on WebSphere Application Server. To obtain a stand-alone adapter PID, go to Passport Advantage [http://www.ibm.com/software/passportadvantage] and use Product ID (PID) Code 5724-T75.
+
+This adapter is supported only for development and unit testing on the operating systems supported by the tooling products. This adapter is supported only for deployment and production on the operating systems supported by the runtime server products. To ensure compatibility, always consult the system requirements supported by these complementary products.
+
+Note:
+1. Java™ 1.5 is supported by WebSphere Adapters only with WebSphere Application Server 6.1 as complementary product Supported databases [/support/docview.wss?uid=swg27016754&amp;aid=1] All databases supported by the products listed in the Prerequisites section. [/support/docview.wss?uid=swg27016754&amp;aid=1] [/support/docview.wss?uid=swg27016754&amp;aid=1] [/support/docview.wss?uid=swg27016754&amp;aid=1] [/support/docview.wss?uid=swg27016754&amp;aid=1] [/support/docview.wss?uid=swg27016754&amp;aid=1] [/support/docview.wss?uid=swg27016754&amp;aid=1] [/support/docview.wss?uid=swg27016754&amp;aid=1] [/support/docview.wss?uid=swg27016754&amp;aid=1] [/support/docview.wss?uid=swg27016754&amp;aid=1] Other supported software
+
+[/support/docview.wss?uid=swg27016754&amp;aid=1]  * IBM Support Assistant 4.1
+   A free stand-alone Web application that provides self-help on your desktop (IBM Support Assistant sign in page [https://www14.software.ibm.com/webapp/iwm/web/preLogin.do?source=isa]) 
+ * IBM Tivoli License Manager 2.3
+
+Virtualization [/support/docview.wss?uid=swg27016754&amp;aid=1]  * IBM PowerVM Hypervisor (LPAR, DPAR, Micro-Partition) any supported version 
+ * IBM PR/SM any version 
+ * IBM z/VM 6.1 
+ * VMware ESX and ESXi 4.0 
+
+
+
+Related information 
+IBM WebSphere Adapters Information Center [http://www.ibm.com/software/integration/wbiadapters/library/infocenter/] 
+IBM WebSphere Adapters: hardware requirements [http://www-01.ibm.com/support/docview.wss?uid=swg27013389] 
+
+
+Disclaimer 
+IBM reserves the right to change specifications and other product information without prior notice. This publication could include technical inaccuracies or typographical errors. References herein to IBM products and services do not imply that IBM intends to make them available in other countries. IBM PROVIDES THIS PUBLICATION AS IS WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE. Some jurisdictions do not allow disclaimer of express or implied warranties in certain transactions, therefore, this statement may not apply to you. 
+
+
+ORIGINAL PUBLICATION DATE
+ 2010/1/5

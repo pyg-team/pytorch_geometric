@@ -1,0 +1,23 @@
+Title: IBM Known Issue: The Case Manager Platform Installer for a single server installation might fail at step 9, which is the step that runs ConfigP8DB2.bat - United States
+
+Text:
+ RELEASE NOTES
+
+ABSTRACT
+ When running the Case Manager Platform Installation Tool on Windows, the installer might fail at step 9/38 , which is the step that runs ConfigP8DB.bat.
+
+The log entries from the installer will show this error: 
+
+Install-InvokeDescription: (9/38) configP8DB2.bat
+...
+...
+OUTPUT>C:\Program Files\IBM\tdsV6.3db2\BIN>db2 CONNECT TO GCD_DB
+OUTPUT>SQL1031N The database directory cannot be found on the indicated file system.
+
+In checking the Windows event logs, you will notice that the database, DB2TDS63, could not be started due to an 'unknown system error'.
+
+Workaround:
+1. Manually start DB2 database instance for DB2TDS63 after the failed install, which will be successful.
+2. Remove the cmpit.properties file from IBM Case Manager Platform Installation Tool folder where you ran the 5.2.1-CMPIT-WIN.exe.
+3. Replace the existing file it with the cmpit.properties from C:\Program Files (x86)\IBM\cpit\install-scripts directly.
+4. Restart the cmpit install, and it will continue at step 9 completing the install.

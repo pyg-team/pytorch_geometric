@@ -1,0 +1,90 @@
+Title: IBM KSA0301  ABAP exception: Unable to interpret * as a number. - United States
+
+Text:
+KSA0301 ; unable to interpret; RS_TESTFRAME_CALL; /IBMMON/ITM_INSA; abap dump; rollkeyformat; ITM; SAP Agent TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ SAP agent 7.1 FixPack 1 generating ABAP dumps and also writing error message KSA0301 in the agent RAS1 log. 
+
+SYMPTOM
+The agent RAS1 log shows message: 
+
+(552A6F63.0000-7:ksalogmsg.cpp,184,"logmsg") KSA0301 ABAP exception: 
+Unable to interpret * as a number. in function module /IBMMON/ITM_HOSTS
+
+In the monitored SAP system, an ABAP dump is generated at the same time.
+Running manually the function module /IBMMON/ITM_HOSTS on SAP, also ends up in creating the same ABAP dump.
+Looking at the ABAP dump we can see the termination occurred in the ABAP program "/IBMMON/SAPLITM6" - in "/IBMMON/ITM_HOSTS".
+The main program was "RS_TESTFRAME_CALL ". 
+
+
+CAUSE
+Similar scenarios observed in the past dealt with missing ROLLKEYFORMAT in 
+ITM_CNFG.
+
+Verify that the ROLLKEYFORMAT entry is present in /IBMMON/ITM_CNFG by executing 
+the transaction /nSE16. 
+Enter /IBMMON/ITM_CNFG in Table Name, click on Table Contents ( F7) then click 
+on Execute (F8). If the ROLLKEYFORMAT entry is not listed, this is the reason for the problem. 
+In order to correct the problem, take the following steps: 
+
+1) Execute tcode /nSE16 and enter /IBMMON/ITM_CNFG in Table Name 
+2) Choose the Menu option Table --> Create Entries (F5) 
+3) Enter the value ROLLKEYFORMAT in PARM NAME 
+4) Enter the value 2 in VALUE CHAR (not VALUE INT) 
+5) Save the new entries 
+6) Restart the mySAP agent and check again the TEP workspaces. It should work fine now. 
+
+
+If instead the ROLLKEYFORMAT is correctly coded, the problem is most 
+likely related to the content of table /IBMMON/ITM_INSA.
+
+
+DIAGNOSING THE PROBLEM
+When the transaction /IBMMON/ITM_INSTANCE is executed in order to select/deselect instances for monitoring, then selected instances are added to the /IBMMON/ITM_INSA table. 
+
+
+If you have more than 9 instances into this table, at 7.1 FP1 level there is a known bug that leads to the observed ABAP dump.
+
+You can verify how many instances you have into ITM_INSA table by doing:
+
+1) From SAP GUI, run transaction se16 
+2) Give table name as /IBMMON/ITM_INSA 
+3) Press F7 
+4) Press F8. 
+
+If you have more than 9 instances and you are at 7.1 FP1 level, than you are likely experiencing the described misbehavior.
+
+
+RESOLVING THE PROBLEM
+The bug has been corrected with an internal defect delivered with MDV 7.1 FP1 IF01. 
+
+There is anyway also a workaround while waiting to apply the IF01 package. 
+
+You basically need to remove all the entries from table /IBMMON/ITM_INSA. 
+
+In this way, SAP Agent code will monitor all the available instances.
+If you are not going to customize the instances setting, then deleting all entries from /IBMMON/ITM_INSA table will work to solve the dump issue and it will be a valid workaround until IF01 is not installed. 
+
+You can follow below steps to delete /IBMMON/ITM_INSA table content: 
+
+
+1) From SAP GUI, run transaction se16 
+2) Give table name as /IBMMON/ITM_INSA 
+3) Press F7 
+4) Press F8. 
+5) Select all entries in this table 
+6) Delete them(Table entry->Delete->Delete entry)
+
+Then restart the agent to confirm that the error message disappeared.
+
+We strongly recommend anyway to install as soon as possible the InterimFix 01.
+
+Link to download SAP Agent 7.1 Fixpack 1 InterimFix 01
+
+http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=Tivoli%2BComposite%2BApplication%2BManager&product=ibm/Tivoli/Tivoli+Composite+Application+Manager+for+Applications&release=7.10.1.1&platform=All&function=aparId&apars=IV46719 [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=Tivoli%2BComposite%2BApplication%2BManager&product=ibm/Tivoli/Tivoli+Composite+Application+Manager+for+Applications&release=7.10.1.1&platform=All&function=aparId&apars=IV46719]
+
+
+
+PRODUCT ALIAS/SYNONYM
+ ITCAM MySAP Agent 7.1

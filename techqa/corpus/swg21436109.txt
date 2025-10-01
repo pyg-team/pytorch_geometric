@@ -1,0 +1,103 @@
+Title: IBM Running the SiteProtector DBServerInfo script - United States
+
+Text:
+DBServerInfo; DBInfo; database; DBSI; create; SQL TECHNOTE (FAQ)
+
+QUESTION
+ How do you run the SiteProtector DBServerInfo script? 
+
+CAUSE
+Since SiteProtector is based around the database, many errors can come from incorrect database configurations or database issues. The DBServerInfo script helps Customer Support determine if there are any problems with your database.
+
+ANSWER
+ 
+
+
+
+YouTube Video SiteProtector DBServerInfo (DBSI) Logging (3:20) This video describes how to generate SiteProtector DBServerInfo Logging. Watch the video on YouTube [https://www.youtube.com/watch?v=mIFlYFlhKyo&index=31&list=PLFip581NcL2VBFVjuObovOQWI-azUXEXc] (3:20) 
+
+Follow the instructions below to generate the DBServerInfo logging. 
+
+ 1. Open Windows Explorer on the server that contains your SiteProtector Application Server installation and navigate to the following directory:
+    
+    \Program Files\ISS\SiteProtector\Application Server\DBServerInfo
+    
+    
+ 2. If your database is on another machine, copy the DBServerInfo directory to the database server.
+    
+    
+ 3. (Optional) If the issue began within the previous hour, open SQL Server Management Studio and run the following queries to ensure that the latest data is available in the logging:
+    
+    use RealSecureDB
+    exec iss_DBSI_PrepareData_Update_Hourly
+    exec iss_DBSI_PrepareData_Update_Nightly
+    
+    Note: If you see that this step fails, take a screen capture of the error message and proceed to step 4. Submit this screen capture along with the logs at the end of this article.
+    
+    
+ 4. Run the utility on the database server from the folder as follows:
+    
+     1. If you are logged in as the local administrator account, do not have SiteProtector installed on a named instance of SQL Server, and have Windows authentication for SQL Server enabled, you can run the script from Windows Explorer by double-clicking the DBServerInfo.cmd file.
+        
+        
+     2. If you do not meet the conditions in step a above, you must run the script from a command prompt. Expand the section below for further details.
+        
+        >>> Expand Section 
+        
+        Video Instructions for Command Prompt 
+        
+        
+        
+        To run the DBServerInfo.cmd file from a command prompt, open a command prompt as administrator and use the cd command to change the directory to the DBServerInfo directory. Then, run the command as specified below: 
+        
+        DBServerInfo.cmd [SupportIncidentID] [SQLServerName(\InstanceName)] [OutputPath] [DBName] [SysAdminID] [SysAdminPassword] 
+        
+        Note: If the SysAdminID or SysAdminPassword contain any special characters, use double quotes to ensure that these entries do not get separated. 
+        
+        Example with a named instance: DBServerInfo.cmd TS123456789 SQLServerName\instancename C:\ RealSecureDB sa password 
+        
+        Example without a named instance: DBServerInfo.cmd TS123456789 SQLServerName C:\ RealSecureDB sa password 
+        
+        Notes: 
+         * SysAdminID must be a user with an access right to RealSecureDB, preferably sa. 
+           
+         * Each parameter is optional but skipping any parameter only works if the current Windows account is trusted in the database. If the account is not trusted, if it does not have access to RealSecureDB, or if Windows Authentication is not enabled in the database, you must manually specify SysAdminID and SysAdminPassword specifying a SQL login that does have access (you cannot specify another Windows account, only the account that is currently logged in to Windows can be used). Below are the defaults:
+           
+           SupportIncidentID - You are prompted for this
+           SQLServerName - local server
+           OutputPath - C:\
+           DBName - RealSecureDB
+           SysAdminID and SysAdminPassword - Windows Authentication connection that uses your current Windows login account, user must be trusted in the database
+           
+         * It is not possible to skip a parameter and then specify a latter one. Once a parameter is skipped, the remaining parameters must also be skipped. For example, if you would like to let SQLServerName default to the local server but you would like to specify the OutputPath to D:\, you must specify everything leading up to OutputPath. The command would look like: DBServerInfo.cmd TS123456789 SQLServerName D:\
+           
+         * If you have a named instance of SQL, the server name is FQDN\SQLName or IP\SQLName.
+           
+        
+        
+        
+    
+    
+ 5. Enter the case number then press enter (if no case has been created, enter any value here; it is only used to create the file name).
+    
+    
+ 6. Once the DBServerInfo completes, a compressed file should be created in the %SystemDrive% location. By default, it is in the following location in the format specified:
+    
+    C:\DBServerInfo_<Date>_<Case Number>.zip
+    
+    
+ 7. Send the compressed file to Support by using Enhanced Customer Data Repository (ECuRep) [http://www.ibm.com/de/support/ecurep/index.html].
+
+
+
+
+
+[/support/docview.wss?uid=swg21436109&aid=1] [https://ibm.biz/BdHdjw] [/support/docview.wss?uid=swg21436109&aid=2] [http://ibm.biz/InfraSecForumTechnote] [/support/docview.wss?uid=swg21436109&aid=3] [http://ibm.biz/SecSuptUTube] [/support/docview.wss?uid=swg21436109&aid=4] [http://ibm.biz/InfraSecFixes] [/support/docview.wss?uid=swg21436109&aid=5] [http://ibm.biz/FlexLicLogin] [/support/docview.wss?uid=swg21436109&aid=6] [http://ibm.biz/MyNotification] [/support/docview.wss?uid=swg21436109&aid=7] [http://ibm.biz/ContactSecSupport] 
+RELATED INFORMATION
+ A Spanish translation is available [http://www.ibm.com/support/docview.wss?uid=swg21902204]
+
+
+
+
+HISTORICAL NUMBER
+ 4537

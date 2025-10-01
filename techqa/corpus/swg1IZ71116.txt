@@ -1,0 +1,163 @@
+Title: IBM IZ71116: PROBLEMS ON PVU BASE AUDIT REPORT AND INSTALL BASE AUDIT REPORT CONCERNING SW PRODUCTS DETECTED ON THE AGENTS BY - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Abstract :Problems on PVU base audit report  and Install base
+   audit report concerning sw products detected on the agents by
+   
+   the TAD4D and imported on the TAMIT.
+   Detailed Desc
+   
+   Problems on PVU base audit report  concerning sw products
+   detected on the agents by
+   the TAD4D and imported on the TAMIT.
+   
+   The problems are two:
+   1. for one licence with 120 capacity value units, the report
+   shows 720
+   capacity value units.
+   2. for another licence no reports are generated, as if the
+   product were
+   not installed on the agent.
+   
+   Problem on Install base audit report for the license
+   1 . Install base audit for a License does not show any result
+   even though associated product has been deployed
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  there is no local fix or work around
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  PROBLEMS ON PVU BASE AUDIT REPORT  AND INSTALL BASE AUDIT REPORT
+    CONCERNING SW PRODUCTS DETECTED ON THE AGENTS BY
+   
+   Abstract :Problems on PVU base audit report  and Install base
+   audit report concerning sw products detected on the agents by
+   the TAD4D and imported on the TAMIT.
+   Detailed Desc
+   Problems on PVU base audit report  concerning sw products
+   detected on the agents by
+   the TAD4D and imported on the TAMIT.
+   The problems are two:
+   1. for one licence with 120 capacity value units, the report
+   shows 720
+   capacity value units.
+   2. for another licence no reports are generated, as if the
+   product were
+   not installed on the agent.
+   Problem on Install base audit report for the license
+   1 . Install base audit for a License does not show any result
+   even though associated product has been deployed
+   LOCAL FIX:
+   there is no local fix or work around
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This has been addressed in 7.2.1 .
+   
+   The fix for this APAR is contained in the following maintenance
+   package:
+      TAMIT721
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ71116
+   
+   
+ * REPORTED COMPONENT NAME
+   TIVOLI AM FOR I
+   
+   
+ * REPORTED COMPONENT ID
+   5724S94TA
+   
+   
+ * REPORTED RELEASE
+   720
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-02-26
+   
+   
+ * CLOSED DATE
+   2010-04-15
+   
+   
+ * LAST MODIFIED DATE
+   2010-04-15
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TIVOLI AM FOR I
+   
+   
+ * FIXED COMPONENT ID
+   5724S94TA
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R720 PSY
+   UP

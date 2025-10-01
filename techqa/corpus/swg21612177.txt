@@ -1,0 +1,37 @@
+Title: IBM Explanation on the maxsession.reloadcache attribute used in Maximo 7.5 - United States
+
+Text:
+maxsession; reloadcache; cluster; multiple; application server; maximo; 7.5; attribute; TPAESYSTEM TECHNOTE (FAQ)
+
+QUESTION
+ What is the maxsession.reloadcache attribute used for in Maximo 7.5? 
+
+ANSWER
+Q: What is the purpose of this attribute? 
+A: It is the means of communicating the cache change among different servers in the used cluster
+
+Q: What areas are affected or related to reloadcache attribute? 
+
+A: If a data dictionary entry is modified through the user action connecting to one server, the server updates its own cache, however needs to inform other servers that the cache needs to be reloaded. So, it puts the information on the other server's maxsession record to say "this is what has been changed, update yourself". 
+
+In other words, it is used to inform the other application servers in a system with multiple application servers(often in a cluster) that a change has been made to cached data and the application servers must reload that data. 
+
+Q: When is Maximo going to use this reloaded cache?
+
+A: Each server has a type thread poking the applicable Maximo record and this way querying it's own record in maxsession..This method then ensures the thread is looking into this entry. By default this occurs once every 60 seconds and updates the server timestamp with the current date and time. If the reloadcache column is not null, then the listed caches are reloaded and the value zeroed out. 
+
+Note!: Any Maximo cache will use this not just the data dictionary, e.g condition cache, maximodd, adminmode state, crontask/escalation definitions, properties, maxvars, autokey data and logging settings. 
+
+
+Q: What is affected when you change the attribute type or length, as below example?
+
+alter table maxsession modify (reloadcache varchar2(2048)); 
+update maxattribute set length=2048 where objectname='MAXSESSION' and attributename='RELOADCACHE'; 
+update maxattributecfg set length=2048 where objectname='MAXSESSION' and attributename='RELOADCACHE'; 
+
+A: The above statement example is fine as all it will do is increasing the length. However if you make it smaller then there may not be room for a long list. Do not change the attribute type!
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Systems and Asset Management Control Desk AIX, HP-UX 7.5 Systems and Asset Management Tivoli Asset Management for IT AIX, HP-UX, Linux, Solaris, Windows 7.5 Systems and Asset Management Tivoli Change and Configuration Management Database AIX, Linux, Windows, Solaris, HP-UX 7.5 Systems and Asset Management Tivoli Service Request Manager AIX, Linux, Solaris 7.5

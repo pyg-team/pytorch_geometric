@@ -1,0 +1,66 @@
+Title: IBM Indexing Properties that exceed the index size limit when using Force Case-Insensitive Search on IBM FileNet Content Manager for DB2 LUW - United States
+
+Text:
+indexing; list properties; case-insensitive search; SQL0614N TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Enabling Force Case-Insensitive Search (FCIS) for an object store causes Content Engine queries to be issued with the LOWER() operator on string columns and values in the WHERE clause. In order for the search to be fast, an index must be created for DB2 LUW on a generated column which uses the LOWER() function. When running against DB2 there is an index length limit of 8KB for the required CE pagesize of 32KB. For a multi-valued property search, the element_value column is of length 4000 vargraphic characters. Similarly, a single-valued property may have been created with a length of up to 4000 vargraphic characters.
+
+When a generated column is created on lower(columnName), for a vargraphic column of length 4000, the resulting column is of the varchar datatype with length 12000 bytes. The change of data type is because the return of the lower function is of the varchar data type. The tripling is to accommodate Unicode characters from the vargraphic type which are now stored using varchar. However the problem is that you cannot then create an index on the generated column of that size, because of the index size limit of 8KB.
+
+When using FCIS on DB2 LUW, in order to create a generated column index for the ListOfString table or for any vargraphic column in any table that has more than 8KB / 3 characters (minus overhead, and allowing space for composite columns), special steps must be taken as follows.
+
+1. In order to create the generated column index, follow these steps, connected to DB2 using command line or GUI database tools. The ListOfString table is used as an example here.
+
+DB2 SET INTEGRITY FOR schemaName.LISTOFSTRING OFF
+
+DB2 ALTER TABLE schemaName.LISTOFSTRING ADD COLUMN EV_LOWER VARCHAR(<n>) GENERATED ALWAYS AS (LOWER(ELEMENT_VALUE))
+
+DB2 SET INTEGRITY FOR schemaName.LISTOFSTRING IMMEDIATE CHECKED FORCE GENERATED
+
+DB2 CREATE INDEX I_EV_LOWER ON schemaName.LISTOFSTRING (EV_LOWER ASC, PARENT_PROP_ID ASC, PARENT_ID ASC)
+
+For ListOfString, <n> must be chosen to be no larger than 8151, because the index length limit is 8KB and there is some system overhead, and there are two additional columns being added.
+
+Similar steps would be executed for a single-valued property column. In the case of a single column index, the limit for <n> is 8189.
+
+2. For properties that need to be indexed, strictly speaking, the Content Engine multi-valued Property Definition length should be restricted in the Administration tools (FEM / ACCE) to less than or equal to 2717 characters. This is because the generated column will become 2717 * 3 = 8151 bytes which is the maximum allowed in the ListOfString example. For single-valued properties the maximum will be slightly higher (2729) if there are no additional columns added to the index.
+
+However in practice, for many languages, 3 bytes per character for all string characters will not be required. It is up to the site if the character limit can be relaxed. There would be an error trying to insert too long of a value in terms of the byte storage requirements, if the generated column is not large enough to hold a lot of characters requiring multiple bytes of storage.
+
+3. There are restrictions on when an index can be used. For example on DB2, the LIKE operator will not allow index use in a query plan when using FCIS. Refer to the following technote for information on that, as well as additional performance-critical information when performing a multi-valued property search:
+
+https://www.ibm.com/support/docview.wss?uid=swg21634810 [https://www.ibm.com/support/docview.wss?uid=swg21634810]
+
+Reference:
+http://pic.dhe.ibm.com/infocenter/p8docs/v5r2m0/topic/com.ibm.p8.ce.admin.tasks.doc/properties/pr_create_db_column_indexes.htm [http://pic.dhe.ibm.com/infocenter/p8docs/v5r2m0/topic/com.ibm.p8.ce.admin.tasks.doc/properties/pr_create_db_column_indexes.htm]
+
+
+SYMPTOM
+Create a generated column index gives this error: 
+
+SQL0614N The index or index extension "I_GENEV" cannot be created or altered because the combined length of the specified columns is too long. SQLSTATE=54008
+
+
+CAUSE
+Creating a generated column (using the lower function) is created by DB2 as a varchar column with 3x the byte size of the original which can exceed the index size limit of 8KB. 
+
+
+ENVIRONMENT
+DB2 LUW only.
+
+
+
+DIAGNOSING THE PROBLEM
+An index cannot be created using CE generated column index steps. Rather, error SQL0614N is received from the DBA tools executing the steps.
+
+
+
+RESOLVING THE PROBLEM
+Follow the special steps above.
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Enterprise Content Management Content Foundation Content Engine

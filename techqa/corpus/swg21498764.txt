@@ -1,0 +1,29 @@
+Title: IBM Content Collector initial configuration fails with E_BAD_CLASSID exception. - United States
+
+Text:
+ICC; {9A1B758B-9C7C-49B5-87F0-F13B57927BCD} TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Why does the IBM Content Collector initial configuration for FileNet P8 fails to create P8 document classes with the following error ?
+
+2011-05-06T02:45:14.341Z INFO [123] OUTPUT>E_BAD_CLASSID : ExceptionCode=E_BAD_CLASSID Class=FileNet.Api.Exception.ErrorRecord Source=com.filenet.api.exception.EngineRuntimeException Description=Class {9A1B758B-9C7C-49B5-87F0-F13B57927BCD} not found. 
+
+CAUSE
+Enabling date partitioning for indexes for FileNet P8 Object Store before executing IBM Content Collector P8 Repository Configuration will cause this issue.
+
+ENVIRONMENT
+IBM Content Collector 2.1.1 for FileNet P8 4.5.1 & IBM Content Collector 2.2 for FileNet P8 5.0.
+
+DIAGNOSING THE PROBLEM
+If you disable date partitioning on the object store you will be able to complete the IBM Content Collector P8 Repository Configuration.
+
+RESOLVING THE PROBLEM
+
+
+
+
+
+ 1. Recreate the Object Store 
+ 2. Disable date partitioning on the created FileNet P8 Object Store 
+ 3. Execute IBM Content Collector initial configuration for FileNet P8. 
+ 4. Enable date partitioning on the Object Store.

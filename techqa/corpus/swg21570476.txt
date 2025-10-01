@@ -1,0 +1,52 @@
+Title: IBM QMF for TSO/CICS compatibility with z/OS - United States
+
+Text:
+z/OS V1R10; z/OS 1.10; z/OS V1R11; z/OS 1.11; z/OS V1R12; z/OS 1.12; z/OS Version 1 Release 10; z/OS Version 1 Release 11; z/OS Version 1 Release 12; QMF and z/OS releases; QMF releases and z/OS releases; QMF compatibility with z/OS; QMF PTFs for z/OS compatibility; QMF PTFs for z/OS; QMF and z/OS PREVENTIVE SERVICE PLANNING
+
+ABSTRACT
+ I am migrating to a new release of z/OS. I would like to know if QMF for TSO/CICS has any known problems running with the new z/OS release. 
+
+CONTENT
+
+QMF for TSO/CICS Version 12.1:
+
+
+
+z/OS release level Known problems or APAR numbers 2.1 No known problems 2.2 No known problems 2.3 No known problems 
+QMF for TSO/CICS Version 11.2:
+
+
+
+z/OS release level Known problems or APAR numbers 1.12 No known problems 1.13 PM96778/UK97641. See Problem 1 for more info. 2.1 PM96778/UK97641. See Problem 1 for more info. 2.2 No known problems 2.3 No known problems 
+QMF for TSO/CICS Version 11.1:
+
+
+
+z/OS release level Known problems or APAR numbers 1.12 No known problems 1.13 PM96778/UK97641. See Problem 1 for more info. 2.1 PM96778/UK97641. See Problem 1 for more info. 2.2 No known problems 2.3 No known problems 
+QMF for TSO/CICS Version 10.1: 
+
+z/OS release level Known problems or APAR numbers 1.10 No known problems 1.11 No known problems 1.12 No known problems 1.13 PM96778/UK97640. See Problem 1 for more info. 2.1 PM96778/UK97640. See Problem 1 for more info. 2.2 No known problems 
+
+QMF for TSO/CICS Version 9.1: 
+
+z/OS release level Known problems or APAR numbers 1.10 No known problems 1.11 No known problems 1.12 No known problems 1.13 No known problems 2.1 No known problems 2.2 No known problems QMF for TSO/CICS Version 8.1:
+
+
+
+z/OS release level Known problems or APAR numbers 1.10 No known problems 1.11 No known problems 1.12 No known problems 1.13 No known problems 2.1 No known problems 2.2 No known problems 
+
+Problem 1 description: 
+
+
+Message IEC190I INVALID DCBE: DCBHIARC FLAGS ON BUT NO DCBE PTR can appear for the following commands:
+
+
+ * EXPORT to a new data set using all dataformats except DATAFORMAT=XML 
+ * EDIT QUERY 
+ * EDIT PROC
+
+
+This message is informational and does not indicate any error. The command will successfully execute. 
+If running with TSO PROFILE NOWTPMSG, users will not see the informational message. 
+
+This problem is fixed in QMF for TSO/CICS V10.1 and V11.1 in APAR PM96778 (UK97640 - V10 and UK97641 - V11).

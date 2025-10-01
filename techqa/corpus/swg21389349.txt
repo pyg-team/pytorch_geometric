@@ -1,0 +1,23 @@
+Title: IBM Automatic message decompression on IBM WebSphere DataPower SOA Appliance - United States
+
+Text:
+decompress; compress; gzip; pkzip; input filter; datapower; 9235; 9004; 9003 TECHNOTE (FAQ)
+
+QUESTION
+ How do I configure my IBM WebSphere DataPower SOA appliance to automatically decompress a compressed message before hitting the Multi-step processing policy? 
+
+ANSWER
+The processing rule configuration object has an Input Filter option that can be used to decompress all messages before any other processing occurs (a preprocess step). There are currently two decompression algorithms that the Input Filter provides. These are GZIP and PKZIP.
+
+To utilize the Input Filter option, follow the steps below:
+1. From the WebGUI, click OBJECTS -> Processing Rule (XML Processing section)
+2. Select the appropriate processing rule
+
+3. For the Input Filter option, select the appropriate decompression algorithm from the drop-down list. Select the algorithm to apply to the entire message payload prior to the first action of the rule executing
+
+
+
+
+Algorithms Details gzip The message will be decompressed using the gzip algorithm. pkzip The message will be decompressed using the pkzip algorithm. 
+
+Note: If the message is not compressed using the selected algorithm, an error will result.

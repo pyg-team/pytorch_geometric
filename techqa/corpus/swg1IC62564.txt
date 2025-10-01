@@ -1,0 +1,187 @@
+Title: IBM IC62564: DURING MIGRATION FROM V8.X TO V9.7 DATABASE CONFIGURATIONS ARE  INCORRECTLY SET TO 'AUTOMATIC'. - United States
+
+Text:
+z/os  FIXES ARE AVAILABLE
+DB2 Version 9.7 Fix Pack 1 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24023357]
+DB2 Version 9.7 Fix Pack 2 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24026928]
+DB2 Version 9.7 Fix Pack 3 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24027906]
+DB2 Version 9.7 Fix Pack 3a for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24028306]
+DB2 Version 9.7 Fix Pack 4 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24029745]
+DB2 Version 9.7 Fix Pack 5 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24031181]
+DB2 Version 9.7 Fix Pack 6 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24032754]
+DB2 Version 9.7 Fix Pack 7 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24033685]
+DB2 Version 9.7 Fix Pack 9a for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24037559]
+DB2 Version 9.7 Fix Pack 8 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24034634]
+DB2 Version 9.7 Fix Pack 9 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24036646]
+DB2 Version 9.7 Fix Pack 10 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24038641]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  During migration from V8.X to V9.5 the following Database
+   Configuration parameters are incorrectly changed to 'AUTOMATIC':
+   STMTHEAP
+   NUM_IOCLEANERS
+   NUM_IOSERVERS
+   DFT_PREFETCH_SZ
+   MAXAPPLS
+   AVG_APPLS
+   
+   
+   This includes migration through 'db2 migrate database <database
+   name>' as well as a migration that occurs from a restore from a
+   v8.X backup into v9.5.
+   
+   ONLY migrations from V8.X to V9.5 are affected by this APAR.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Manually update the affected database configuration parameters
+   to desired fixed value.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * User migrating from 8.x to 9.7                               *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * During migration from V8.X to V9.7 the following             *
+   * DatabaseConfiguration parameters are incorrectly changed     *
+   * to'AUTOMATIC'STMTHEAPNUM_IOCLEANERSNUM_IOSERVERSDFT_PREFETCH_S
+   * includes migration through 'db2 migrate                      *
+   * database<databasename>' as well as a migration that occurs   *
+   * from a restorefrom av8.X backup into v9.7.ONLY migrations    *
+   * from V8.X are affected by this.                              *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Migrate to 9.7 FP1 or later directly.                        *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  ONLY migrations from V8.X are affected by this.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  Manually update the affected database configuration parameters
+   
+   to desired fixed value.
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC62564
+   
+   
+ * REPORTED COMPONENT NAME
+   DB2 FOR LUW
+   
+   
+ * REPORTED COMPONENT ID
+   DB2FORLUW
+   
+   
+ * REPORTED RELEASE
+   970
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-08-14
+   
+   
+ * CLOSED DATE
+   2010-03-12
+   
+   
+ * LAST MODIFIED DATE
+   2010-03-12
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    IZ43719 [http://www-01.ibm.com/support/docview.wss?uid=swg1IZ43719]
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   DB2 FOR LUW
+   
+   
+ * FIXED COMPONENT ID
+   DB2FORLUW
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R820 PSN
+   UP
+   
+   
+ * R910 PSN
+   UP
+   
+   
+ * R950 PSN
+   UP
+   
+   
+ * R970 PSN
+   UP
+   
+   
+ * R980 PSN
+   UP

@@ -1,0 +1,30 @@
+Title: IBM Does the AS2 adapter support the SHA-1 signature algorithm? (SCI47049) - United States
+
+Text:
+STERLINGPRI TECHNOTE (FAQ)
+
+QUESTION
+ Does the AS2 adapter support the SHA-1 signature algorithm? (SCI47049) 
+
+ANSWER
+Yes, the AS2 adapter supports the SHA-1 signature algorithm.
+
+ 
+
+HISTORICAL NUMBER
+ PRI32307 
+
+PRODUCT ALIAS/SYNONYM
+ 
+
+Fact
+
+
+Gentran Integration Suite 
+SCI47049
+
+
+Goal
+
+
+FAQ: Does the AS2 adapter support the SHA-1 signature algorithm?

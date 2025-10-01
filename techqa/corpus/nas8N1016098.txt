@@ -1,0 +1,83 @@
+Title: IBM Automatically Starting WebSphere Servers with Autostart Jobs - United States
+
+Text:
+WAS; AUTOSTART; WEBSPHERE; QWASSTRSVR; JOB TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ To have your IBM WebSphere servers start automatically after you start the subsystem, add autostart job entries for each server you want started. 
+
+RESOLVING THE PROBLEM
+To have your IBM WebSphere servers start automatically after you start the subsystem, add autostart job entries for each server you want started. You should do the following: 
+
+ 
+
+ *  - [http://www.ibm.com/i/c.gif] Step 1: Create a job description (using the CRTJOBD CL command). Ensure the user is QEJBSVR, ALWMLTTHD is *YES, and the request data is similar to the following line but with the changes to instance and server names. Instance and server parameters are case sensitive. 
+   
+   V8.5
+   Request data . . . . . . . . . . . . . . . . . . : CALL PGM(QWAS85<x>/QWASSTRSVR) PARM('-profilePath' '<profileRoot>' '-server' '<myserver>')
+   
+   where: <profileRoot> is the fully-qualified path name for the profile, <myserver> is the name of the application server in the instance that you want to start, and <x> is the WAS installation library (typically A). 
+   
+   Example with profile and server of my85base: Request data . . . . . . . . . . . . . . . . . . : CALL PGM(QWAS85A/QWASSTRSVR) PARM('-profilePath' '/qibm/userdata/websphere/appserver/v85/base/profiles/my85base' '-server' 'my85base') 
+   
+   V8.0
+   Request data . . . . . . . . . . . . . . . . . . : CALL PGM(QWAS8<x>/QWASSTRSVR) PARM('-profilePath' '<profileRoot>' '-server' '<myserver>')
+   
+   where: <profileRoot> is the fully-qualified path name for the profile, <myserver> is the name of the application server in the instance that you want to start, and <x> is the WAS installation library (typically A). 
+   
+   Example with profile and server of my8base: Request data . . . . . . . . . . . . . . . . . . : CALL PGM(QWAS8A/QWASSTRSVR) PARM('-profilePath' '/qibm/userdata/websphere/appserver/v8/base/profiles/my8base' '-server' 'my8base') 
+   
+   V7.0
+   Request data . . . . . . . . . . . . . . . . . . : CALL PGM(QWAS7<x>/QWASSTRSVR) PARM('-profilePath' '<profileRoot>' '-server' '<myserver>')
+   
+   where: <profileRoot> is the fully-qualified path name for the profile, <myserver> is the name of the application server in the instance that you want to start, and <x> is the WAS installation library (typically A). 
+   
+   Example with profile and server of my7base: Request data . . . . . . . . . . . . . . . . . . : CALL PGM(QWAS7A/QWASSTRSVR) PARM('-profilePath' '/qibm/userdata/websphere/appserver/v7/base/profiles/my7base' '-server' 'my7base') 
+   
+   V6.1
+   Request data . . . . . . . . . . . . . . . . . . : CALL PGM(QWAS61<x>/QWASSTRSVR) PARM('-profilePath' '<profileRoot>' '-server' '<myserver>')
+   
+   where: <profileRoot> is the fully-qualified path name for the profile, <myserver> is the name of the application server in the instance that you want to start, and <x> is the WAS installation library. To locate the above parameters, run the following QSH command:
+   
+   /qibm/was/bin/queryWASinstalls
+   
+   Example with profile and server of my61base: Request data . . . . . . . . . . . . . . . . . . : CALL PGM(QWAS61A/QWASSTRSVR) PARM('-profilePath' '/qibm/userdata/websphere/appserver/v61/base/profiles/my61base' '-server' 'my61base') 
+   V6.0
+   Request data . . . . . . . . . . . . . . . . . . : QSYS/CALL PGM(QWAS6/QWASSTRSVR) PARM('-profilePath' '<profileRoot>' '-server' '<myserver>')
+   
+   where: <profileRoot> is the fully-qualified path name for the profile and <myserver> is the name of the application server in the instance that you want to start.
+   
+   V5.x
+   Request data . . . . . . . . . . . . . . . . . . : QSYS/CALL PGM(<library>/<program>) PARM('-instance' '<path>/<myinstance>' '-server' '<myserver>') 
+   
+   where: <program> is QEJBSTRSVR for the WebSphere Application Server (Base) and Network Deployment or QASESTRSVR for WebSphere Application Server - Express, <myinstance> is the name of your WebSphere Application Server instance, <myserver> is the name of the application server in the instance that you want to start, <library> is the library for the WebSphere Application Server product you are using (refer to the table below), and <path> is the Integrated File System path for your instance according to the WebSphere Application Server product you are using (refer to the table below).
+   
+   
+   
+   WebSphere Application Server Version and Edition Library Path 5.0 (Base) QEJBAS5 /QIBM/UserData/WebAS5/Base/ 5.1 (Base) QEJBAS51 /QIBM/UserData/WebAS51/Base/ 5.0 Express QASE5 /QIBM/UserData/WebASE/ASE5/ 5.1 Express QASE51 /QIBM/UserData/WebASE51/ASE/ 
+
+
+ *  - [http://www.ibm.com/i/c.gif] Step 2: After you create this job description, create an autostart job entry for the WebSphere subsystem by using the ADDAJE CL command with the following parameters:  
+   
+   Subsystem Description The WebSphere subsystem for the version you are using. 
+   
+   V5.0 Express: QASE5/QASE5
+   V5.0 (Base): QEJBAS5/QEJBAS5
+   V5.0 ND: QEJBAS5/QEJBASND5
+   V5.1 Express: QASE51/QASE51
+   V5.1 (Base): QEJBAS51/QEJBAS5
+   V5.1 ND: QEJBAS51/QEJBASND51
+   V6 Express, (Base), ND: QWAS6/QWAS6
+   V6.1 Express, (Base), ND: QWAS61/QWAS61
+   V7.0 Express, Base, ND: QWAS7/QWAS7
+   V8.0 Express, Base, ND: QWAS8/QWAS8
+   V8.5/V8.5.5 Express Base, ND: QWAS85/QWAS85 Jobname WebSphere server name Job description Job description created above 
+
+
+
+Test by ending your subsystem and starting it again. Your server should start.  
+
+
+Cross reference information Segment Product Component Platform Version Edition Operating System IBM i 7.2 Operating System IBM i 7.1 Operating System IBM i 6.1 
+HISTORICAL NUMBER
+ 338162524

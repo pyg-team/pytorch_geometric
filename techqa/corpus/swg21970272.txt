@@ -1,0 +1,25 @@
+Title: IBM Is the YJ J2EE agent supported on an AIX WPAR environment? - United States
+
+Text:
+system WPAR YJ TEMA CAMJ2INST CAMJ2ALL TECHNOTE (FAQ)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ US English 
+
+QUESTION
+ Is the YJ J2EE agent supported on an AIX WPAR environment? 
+
+ANSWER
+As of 4Q2015, the ITCAM Agent for J2EE is supported with the Product installed in a System WPAR on AIX 6.1.
+Please go to the Clarity Support matrix website here:
+http://www-969.ibm.com/software/reports/compatibility/clarity/softwareReqsForProduct.html [http://www-969.ibm.com/software/reports/compatibility/clarity/softwareReqsForProduct.html]
+- put "Composite Application Manager for J2EE" in the Search field and hit the search icon.
+- select the first hit, select 7.1.1 as Version and hit Submit 
+- on the next page, select the Hypervisors tab and you will see the YJ agent is supported on AIX 6.1 Endian OS. However, remote deploy is not supported due to current ITM limitations. Also, on the same site, check the other tabs and be sure you are using supported Middleware for the J2EE agent. 
+
+So looks like you can run the YJ agent on an AIX 6.1 system WPAR, which should have its own network/file system environment.
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ ITCAM for J2EE ITCAMfJ2EE

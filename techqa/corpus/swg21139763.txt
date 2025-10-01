@@ -1,0 +1,110 @@
+Title: IBM How to update an Expired License for an Installed DB2® Product - United States
+
+Text:
+license key expired evaluation temporary sql8000n sql8001N sql8002n sql8006w sql8007w sql8008n sql8011w sql8014n sql8015n; license for DB2; download db2 license; how to obtain db2 license; db2 license activation; DB2 UDB License; DB2 LUW License; DB2 License key; DB2 License; DB2; TECHNOTE (FAQ)
+
+QUESTION
+ Why am I getting "a valid product license was not found" error while trying to use DB2 and how do I resolve this? 
+
+CAUSE
+In some circumstances, a DB2® product might be installed with a evaluation or temporary license. After a period of time, this license will expire, making the DB2 product unusable. The license will then need to be updated with a valid license key in order to continue using DB2.The license will then need to be updated with a valid license key in order to continue using DB2.
+
+ANSWER
+The DB2 License Management Tool (db2licm) is a utility located under sqllib/bin (sqllib\bin on Windows). To view the license information for the currently installed DB2 product, log in to the machine with appropriate permissions (see the documentation for the 'db2licm' command in the DB2 Command Reference) and run the following command: 
+
+db2licm -l 
+
+ 
+
+The resulting output lists the license information for the installed product. 
+
+ 
+
+How do I know if my DB2 product is installed with an evaluation or temporary license? 
+
+Run the above command to list the license information. Check the value of the "Expiry Date". If this is a future date, or contains a value such as "Try & Buy", "Temporary", or "Evaluation", your DB2 product is currently installed with a temporary license. 
+
+ 
+
+How do I know if my DB2 product license has already expired? 
+
+List the license information using the db2licm -l command. If the license is expired, the "Expiry Date" will show "Expired". 
+
+ 
+
+What are some possible errors to look for if my license is still valid but about to expire? 
+
+If DB2 is installed with an evaluation license, error SQL8007 will occur when running some commands to remind you of the terms of the evaluation period. 
+
+ 
+
+What kinds of errors will occur if my product license has expired? 
+
+Errors that occur when attempting to use DB2 with an expired license fall in the range of SQL8000 to SQL8099. 
+
+ 
+
+I am getting the error: SQL8002N - "DRDA connect processing failed; a valid product license was not found", how do I resolve this? 
+
+
+This error typically happens in one of two scenarios:
+
+- You have a DB2 Connect product installed but it does not have the proper license applied. Use the "db2licm -l" command to verify that one of the DB2 Connect editions are installed and verify the license status.
+
+- You are trying to connect directly to a mainframe DB2 database product, but you do not have a DB2 Connect product installed. If this is the case, you will need to install a DB2 Connect product in order to do a direct connection such as this. 
+
+On a Windows environment, to find out what product you have installed on the system, please navigate to the "Add or Remove Programs" section of the Windows Control Panel and see the exact name of the product you have installed. 
+
+On a UNIX platform, please navigate to the $INSTHOME/sqllib/cfg directory. Look for the file with the extension .lvl. A DB2 Connect product is installed if you see a filename with the format of db2conXXX.lvl)
+
+If the product is one of the DB2 Clients or one of the other DB2 products which are not DB2 Connect, you will need remove this product and install a DB2 Connect product.
+
+Although you cannot connect directly to a mainframe DB2 system without a DB2 Connect product installed, it is possible to make a connection if you catalog through a DB2 Connect gateway to access the mainframe system. 
+
+ 
+
+Where do I find the permanent license key? 
+
+Version 8: The DB2 UDB Version 8 product license file is found on the original DB2 media in a directory called 'db2/license' under the main product directory. The name of the license file is typically an abbreviated form of the product name with a '.lic' extension. For example, the license file for DB2 Enterprise Server Edition is called db2ese.lic. 
+
+
+Version 9.x: The DB2 Version 9.x product license file is found on a separate disk with the word 'Activation' in the title. It can also be downloaded from Passport Advantage [http://www-1.ibm.com/support/docview.wss?rs=0&uid=swg21305417] if you have an account. 
+For example, "DB2 Enterprise Server Edition V9.1 - CPU Option - Activation" 
+
+ 
+
+Version 10: The DB2 Version 10 product license file is found on a separate disk with the word 'Activation' in the title. It can also be downloaded from Passport Advantage [http://www-1.ibm.com/support/docview.wss?rs=0&uid=swg21305417] if you have an account. 
+For example, "DB2 Enterprise Server Edition V10.1 - CPU Option - Activation" 
+
+ 
+
+What if I do not have my original installation media, thus cannot find the license file? 
+
+If the product license key file cannot be found, you must contact your IBM sales representative. Note that proof of entitlement for your DB2 product may be requested. 
+
+ 
+
+How do I install a valid product license? 
+
+Once the DB2 product license file is obtained, use the db2licm command to add the license [http://publib.boulder.ibm.com/infocenter/db2luw/v9/index.jsp?topic=/com.ibm.db2.udb.uprun.doc/doc/t0006749.htm]. 
+
+ 
+
+For example, if the license file db2ese.lic is copied to /tmp on the machine where DB2 ESE is installed, run the following command to update the license file: 
+
+ 
+
+db2licm -a /tmp/db2ese.lic 
+
+ 
+
+After running the above command, verify that the DB2 product license information now reports "Permanent". 
+
+
+
+
+
+[/support/docview.wss?uid=swg21139763&aid=1] [/support/docview.wss?uid=swg21139763&aid=1] 
+https://www.ibm.com/developerworks/community/forums/html/topic?id=77777777-0000-0000-0000-000001504059&ps=25 [https://www.ibm.com/developerworks/community/forums/html/topic?id=77777777-0000-0000-0000-000001504059&ps=25] RELATED INFORMATION
+ Download DB2 license from Passport Advantage [http://www.ibm.com/support/docview.wss?uid=swg21305417]
+Registering license with db2licm [http://pic.dhe.ibm.com/infocenter/db2luw/v10r1/topic/com.ibm.db2.luw.qb.server.doc/doc/t0006749.html]

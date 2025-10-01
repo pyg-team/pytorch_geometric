@@ -1,0 +1,187 @@
+Title: IBM JR56464: TRANSACTION LOG OVERFLOWS WHILE UPGRADING THE DATABASE DURING MIGRATION TO IBM BPM V8.5.6 - United States
+
+Text:
+  DIRECT LINKS TO FIXES
+bpm.8570.cf2016.09.delta.repository.2of2 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Standard&fixids=bpm.8570.cf2016.09.delta.repository.2of2&source=SAR]
+bpm.8570.cf2016.09.delta.repository.1of2 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Standard&fixids=bpm.8570.cf2016.09.delta.repository.1of2&source=SAR]
+8.5.6.2-WS-BPM-IFJR56464 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Standard&fixids=8.5.6.2-WS-BPM-IFJR56464&source=SAR]
+Downloading IBM Business Process Manager V8.5.7 Cumulative Fix 2016.09 [http://www-01.ibm.com/support/docview.wss?uid=swg24042580]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When you migrate to IBM Business Process Manager (BPM) V8.5.6,
+   you see an error like the following error:
+   
+   8/Jul/2016 20:44:29 FINE: com.lombardisoftware.tools.dbupgrade.
+   UpgradeDatabase.upgradeStandardDatabase - StatementCallback;
+   uncategorized SQLException for SQL [update lsw_bpd_instance set
+   lsw_bpd_instance.project_id=(select s.project_id from
+   lsw_snapshot s
+   where s.snapshot_id=lsw_bpd_instance.snapshot_id)]; SQL state
+   [57011];
+   error code [-964]; DB2 SQL Error: SQLCODE=-964, SQLSTATE=57011,
+   SQLERRMC=null, DRIVER=4.18.60; nested exception is
+   com.ibm.db2.jcc.am.
+   SqlException: DB2 SQL Error: SQLCODE=-964, SQLSTATE=57011,
+   SQLERRMC=null, DRIVER=4.18.60
+   org.springframework.jdbc.UncategorizedSQLException:
+   StatementCallback;
+   uncategorized SQLException for SQL [update lsw_bpd_instance set
+   lsw_bpd_instance.project_id=(select s.project_id from
+   lsw_snapshot s
+   where s.snapshot_id=lsw_bpd_instance.snapshot_id)]; SQL state
+   [57011];
+   error code [-964]; DB2 SQL Error: SQLCODE=-964, SQLSTATE=57011,
+   SQLERRMC=null, DRIVER=4.18.60; nested exception is
+   com.ibm.db2.jcc.am.
+   SqlException: DB2 SQL Error: SQLCODE=-964, SQLSTATE=57011,
+   SQLERRMC=null, DRIVER=4.18.60
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Increase the maximum size of the transaction log as described in
+   "Fixing an 'SQL0964C Transaction log for database is full'
+   error" at
+   http://www.ibm.com/support/docview.wss?uid=swg21121437. [http://www.ibm.com/support/docview.wss?uid=swg21121437.]
+   
+   Clean up the LSW_BPD_INSTANCE table as described in the
+   "Instances in Process Server" section of "Purging data in IBM
+   Business Process Manager" at
+   http://www.ibm.com/developerworks/bpm/bpmjournal/1312_spriet/131 [http://www.ibm.com/developerworks/bpm/bpmjournal/1312_spriet/131]
+   2_spriet.html.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  This issue occurs when the LSW_BPD_INSTANCE database table
+   contains a huge number of records.
+   
+   PRODUCTS AFFECTED
+   IBM BPM Advanced
+   IBM BPM Standard
+   IBM BPM Express
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A fix is available for IBM BPM V8.5.6.2 that introduces partial
+   commits to the database upgrade step and, therefore, reduces the
+   transaction log output.
+   
+   A fix will be included in IBM BPM V8.5.7 cumulative fix 2016.09
+   
+   On Fix Central (http://www.ibm.com/support/fixcentral), search
+   for JR56464:
+   
+    1. Select IBM Business Process Manager with your edition from
+   the product selector, the installed version to the fix pack
+   level, and your platform, and then click Continue.
+    2. Select APAR or SPR, enter JR56464, and click Continue.
+   
+   When you download fix packages, ensure that you also download
+   the readme file for each fix. Review each readme file for
+   additional installation instructions and information about the
+   fix.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR56464
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM ADVANCED
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9400
+   
+   
+ * REPORTED RELEASE
+   856
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-08-10
+   
+   
+ * CLOSED DATE
+   2016-09-21
+   
+   
+ * LAST MODIFIED DATE
+   2016-09-21
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   BPM STANDARD
+   
+   
+ * FIXED COMPONENT ID
+   5725C9500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R856 PSY
+   UP
+   
+   
+ * R857 PSY
+   UP

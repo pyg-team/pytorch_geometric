@@ -1,0 +1,10 @@
+Title: IBM The JREs provided in the CICS Transaction Gateway for Multiplatforms Media Pack might not contain the latest version of the JRE.  Check Fix Central for the latest version. - United States
+
+Text:
+ NEWS
+
+ABSTRACT
+ The JREs provided in the CICS Transaction Gateway for Multiplatforms Multilingual Media Pack might not be refreshed via fix packs. Updated JREs will be provided via Fix Central. 
+
+CONTENT
+JRE installation packages included in the CICS Transaction Gateway for Multiplatforms Multilingual Media Pack might not be at the most recent maintenance level. The most recent JREs will be made available for download from the IBM Fix Central web site: http://www.ibm.com/support/fixcentral/ [http://www.ibm.com/support/fixcentral/]

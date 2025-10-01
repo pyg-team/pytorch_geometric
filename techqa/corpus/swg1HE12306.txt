@@ -1,0 +1,121 @@
+Title: IBM HE12306: LOCAL SCHEDULE INFORMATION IS REPEATED MULTIPLE TIMES FOR CERTAIN LOCAL SCHEDULES IN ATLAS PORTAL. - United States
+
+Text:
+  A FIX IS AVAILABLE
+Download IBM Atlas Policy Suite Version 6.0.3 Fix Pack 3 [http://www-01.ibm.com/support/docview.wss?uid=swg24041515]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  For some specific schedules, schedule details like name,
+   description, schedule code, etc are displayed multiple times in
+   the Atlas Portal UI. The same schedules show up correctly
+   through Policy Atlas.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  When viewing certain local schedules from Atlas Portal, user is
+   seeing the schedule information appear multiple times for some
+   of the Local Schedules.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This fix is available now from FixCentral in 6.0.3.3
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   HE12306
+   
+   
+ * REPORTED COMPONENT NAME
+   ATLAS EDISCOVER
+   
+   
+ * REPORTED COMPONENT ID
+   5725D7500
+   
+   
+ * REPORTED RELEASE
+   603
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-07-21
+   
+   
+ * CLOSED DATE
+   2016-01-05
+   
+   
+ * LAST MODIFIED DATE
+   2016-01-05
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ATLAS EDISCOVER
+   
+   
+ * FIXED COMPONENT ID
+   5725D7500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R603 PSY
+   UP

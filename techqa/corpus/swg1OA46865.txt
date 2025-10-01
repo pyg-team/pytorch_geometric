@@ -1,0 +1,162 @@
+Title: IBM OA46865: OMEGAMON XDLIPOST EXIT MAY USE AN INCORRECT POINTER WHEN COLLECTING DL/I RESULTING IN 0C4/AKEA IN EXIT PROGRAM GLUEEXIT - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  OMEGAMON XDLIPOST exit may use an incorrect pointer when
+   collecting DL/I statistics for a PL/I program,
+   resulting in an 0C4/AKEA in exit program
+   GLUEEXIT at exit point XDLIPOST.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All OMEGAMON XE for CICS on z/OS users.      *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Abend 0C4/AKEA in GLUEEXIT at exit      *
+   *                      point XDLIPOST.                         *
+   *                                                              *
+   *                      Support for new CICS SIT parameters.    *
+   ****************************************************************
+   * RECOMMENDATION: Apply the PTF.                               *
+   ****************************************************************
+   When collection of DL/I file-level detail is active and a
+   PL/I program makes a DL/I TERM call, an invalid pointer will
+   be used. Use of that invalid pointer will cause undesirable
+   results which may include 0C4 abends.
+   
+   CICS SIT changes were introduced in these APARs:
+   ENCRYPTION=SSLV3
+    PI28038 - CICS TS 3.1 and CICS TS 3.2
+    PI27936 - CICS TS 4.1 and CICS TS 4.2
+    PI28039 - CICS TS 5.1 and CICS TS 5.2
+   RACFSYNC=YES|NO
+    PI22267 [http://www-01.ibm.com/support/docview.wss?uid=swg1PI22267] - CICS TS 4.1 and CICS TS 4.2
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  OMEGAMON DL/I file-level detail collection was corrected to
+   not use an invalid pointer.
+   
+   OMEGAMON SIT displays were updated to support these
+   parameters.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   OA46865
+   
+   
+ * REPORTED COMPONENT NAME
+   OMEG XE CICS Z/
+   
+   
+ * REPORTED COMPONENT ID
+   5698A5800
+   
+   
+ * REPORTED RELEASE
+   530
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-01-13
+   
+   
+ * CLOSED DATE
+   2015-02-26
+   
+   
+ * LAST MODIFIED DATE
+   2015-04-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UA76450 UA76451
+   
+   
+
+MODULES/MACROS
+ *     KC5ROV@S KC5SIA@S KC5SITC0 KC5SITD0 KOCCEP0A
+   KOCITD0A KOCLID00 KOCLUECA KOCLUEDA KOCSITC0 KOCSITD0 KOCUA200
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   OMEG XE CICS Z/
+   
+   
+ * FIXED COMPONENT ID
+   5698A5800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R510 PSY UA76450 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UA76450]
+   UP15/03/03 P F503
+   
+   
+ * R530 PSY UA76451 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UA76451]
+   UP15/03/03 P F503
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

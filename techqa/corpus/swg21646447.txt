@@ -1,0 +1,22 @@
+Title: IBM Datacap Studio 8.1.0 Shows An Error After Application Upgrade From 8.0.1 in IBM Datacap Taskmaster Capture - United States
+
+Text:
+dstudio; datacap studio error; application upgrade from 8.0.1 to 8.1 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Datacap Studio 8.1.0 Shows An Error After Application Upgrade From 8.0.1 in IBM Datacap Taskmaster Capture. 
+
+SYMPTOM
+After starting the application in 8.1.0 Datacap Studio, an error message appears: Error can't find library RSS/RXX.
+
+
+RESOLVING THE PROBLEM
+To correct the problem, take the following actions:
+
+
+
+ 1. Move C:\Datacap\ApplicationName\dco_ApplicationName\rules\Invoice.dll to the Desktop (or somewhere out of the way). It is not recommended to delete the original file. Use Invoice.dll from C:\Datacap\RRS\ instead.
+    
+ 2. In Datacap Studio, replace outdated actions. For example, "rr_Set" and "rr_Compare" in V8.0.1 are now "rrSet" and "rrCompare" (without the underscore) in V8.1. "Calculate" in v8.0.1 is now called "CalculateFields" in V8.1. V8.1.0 Invoice.dll no longer supports the action DoMsgbox() that was in V8.0.1 Invoice.dll.
+    
+ 3. You may have other actions highlighted in red that need to be replaced by their newer counter part.

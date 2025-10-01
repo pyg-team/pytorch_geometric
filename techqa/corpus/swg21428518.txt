@@ -1,0 +1,34 @@
+Title: IBM Error loading Web SSO Configuration due to missing ICC library - United States
+
+Text:
+lotus domino server; sso; single sign on; HTTP Server: Error loading Web SSO Configuration; http; error; configuration document; unexpected error from called function; icc library; web sso; files; fips TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+After creating/modifying a Single Sign-On (SSO) configuration document in Lotus Domino, you attempt to load the HTTP task and receive one of the following errors: 
+
+ * 
+ * 
+ * 
+   "HTTP Server: Error loading Web SSO Configuration 'LtpaToken' (Single Sign-On configuration is invalid)"
+
+After enabling Debug_SSO_Trace_Level=2, and attempting to reload HTTP, you see the following output indicating that there was a problem loading the ICC library: 
+
+ * 
+ * 
+
+SYMPTOM
+HTTP fails to load Web SSO Configuration document.
+
+
+CAUSE
+This problem occurs when the server is unable to load the ICC library files from their default directory:
+
+
+<Domino program directory>\domino_icc\icc\icclib\icclib.dll
+<Domino program directory>\domino_icc\icc\osslib\libeay32.dll
+
+These files constitute the FIPS 140-2 certified cryptography library used by the server for some types of document encryption. The files are needed when attempting to load a SSO document created by later releases of the Notes client.
+
+
+RESOLVING THE PROBLEM
+In one case, replacing the domino_icc directory from a working server resolved the issue.

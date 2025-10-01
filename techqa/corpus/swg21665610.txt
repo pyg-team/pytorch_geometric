@@ -1,0 +1,43 @@
+Title: IBM Oracle database schema changes required for upgrading to IBM Datacap Taskmaster 8.1 FP1 or above - United States
+
+Text:
+Datacap schema Oracle Admin Engine NENU upgrade FLASH (ALERT)
+
+ABSTRACT
+ If you upgrade from IBM Datacap Taskmaster v8.1.0 or prior to v8.1 FP1 or later, and your Taskmaster databases are in Oracle, you must update the database schemas using manual steps described in this Technote. 
+
+CONTENT
+Perform the steps under A) or B) below according to your situation. 
+
+A) If you want to update an existing application in Taskmaster 8.1 (base) to work with Taskmaster 8.1 FP1 (or above), update the existing Oracle database schemas in place and apply FP1 or FP2 directly. If you do not implement these changes, task conditions may not take effect, and NENU will be unable to modify the status of batches. 
+
+1. Run the following DDL commands on the Admin schema using SQLPlus or another similar tool. You most authenticate to Oracle as a user with permission to modify the database schema. Ignore any warnings that may be displayed about data truncation.
+alter table TASKS add (TS_OPTIONS1 varchar2 (400)); 
+update TASKS set TS_OPTIONS1=TS_OPTIONS; 
+alter table TASKS rename column TS_OPTIONS to TS_OPTIONS_ORG; 
+alter table TASKS rename column TS_OPTIONS1 to TS_OPTIONS; 
+
+2. (optional) Login to Taskmaster Web, select Administration and Workflow tabs. Click on each task in turn and confirm the Program is set properly for that task and that any conditions are displayed properly. Click on the Settings... link and confirm that the proper settings are displayed for the task. 
+
+3. Run the following DDL commands on the Engine schema: 
+alter table NENU drop constraint PK_NENU; 
+
+B) To convert a Taskmaster 8.0.1 (or prior) application to Taskmaster 8.1 FP1 (or above), follow these steps. If you do not follow these steps, the conversion may fail. NOTE: If you previously run the App Wizard conversion and received errors, start over with new schemas according to these instructions. 
+
+1. Create new 8.1 schemas using the 8.1 FP1 or FP2 scripts \Datacap\Support\Oracle*.sql with one modification. Before running the DDL script Oracle_Adm_base.sql, modify the DDL to change the TS_OPTIONS column on the TASKS table from VARCHAR2(400) to CLOB. The line in the script after editing should read:
+TS_OPTIONS CLOB NULL, 
+
+2. Run the Datacap Studio App Wizard and convert your application. There should be no errors. 
+
+3. Run the following DDL commands on the Admin schema. Ignore any warnings.
+alter table TASKS add (TS_OPTIONS1 varchar2 (400)); 
+update TASKS set TS_OPTIONS1=TS_OPTIONS; 
+alter table TASKS rename column TS_OPTIONS to TS_OPTIONS_ORG; 
+alter table TASKS rename column TS_OPTIONS1 to TS_OPTIONS; 
+
+4. (optional) Login to Taskmaster Web, select Administration and Workflow tabs. Click on each task in turn and confirm the Program is set properly for that task and that any conditions are displayed properly. Click on the Settings... link and confirm that the proper settings are displayed for the task.
+
+
+
+PRODUCT ALIAS/SYNONYM
+ Datacap

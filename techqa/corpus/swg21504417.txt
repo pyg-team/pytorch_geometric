@@ -1,0 +1,77 @@
+Title: IBM Omnibus 7.4 silent installation fails - United States
+
+Text:
+omnibus silent install; DE; deployment engine; installation TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When running the Omnibus silent installation, there are no errors reported to the screen, but the product is not installed. 
+
+SYMPTOM
+[clgrimes@servername]$ ./install.bin -i silent -f /tmp/omni74/sample-OMNIbus-response.txt 
+
+Preparing to install... 
+
+Extracting the JRE from the installer archive... 
+
+Unpacking the JRE... 
+
+Extracting the installation resources from the installer archive... 
+
+Configuring the installer for this system's environment... 
+
+ 
+
+Launching installer... 
+
+ 
+
+Preparing SILENT Mode Installation... 
+
+ 
+
+======================================================================== 
+
+OMNIbus (created with InstallAnywhere by Macrovision) 
+
+------------------------------------------------------------------------------- 
+
+
+CAUSE
+There is a Deployment Engine prequisite check error.
+
+
+ENVIRONMENT
+Deployment engine is installed in /usr/ibm/common/acsi for root installations and /home/<username>/.acsi_<username> for non-root installations. This directory will be referred to as DE_HOME.
+
+
+
+DIAGNOSING THE PROBLEM
+Check the installation log file DE_HOME/IA-Netcool-OMNIbus-<hostname>-<date>-0.log for errors. If a deployment engine prerequisite check fails, the silent installation will exit. Below is an example error message from the installation log file: 
+
+You are not running this installer as the super user or computer adminstrator. A global installation of the IBM Tivoli Deployment Engine (DE) is currently installed. If you continue, you will need full read-write access to the global installation of DE. If you are not sure that you have the required access, you should stop the installer, and either check your access permissions or run the installer once again as the super user or computer administrator.
+
+
+RESOLVING THE PROBLEM
+If you want to continue the installation and ignore the prequisite check failure, in the silent installation response file, add the property SKIP_DE_PRECHECKS and set it to true. Below is the behavior of this property for root and non-root installations when set to the default value false or when set explicitly to true. 
+
+SKIP_DE_PRECHECKS 
+
+ Controls whether the installation is terminated if one of the Deployment Engine (DE) prechecks is failed. Possible values are as follows: 
+
+ * true: If the installation fails the DE prechecks, the installation continues. 
+
+ * false: If the installation fails any of the DE prechecks, the installation is terminated and a warning message is sent to the log file. 
+
+The DE prechecks might be failed depending on whether you are installing as root or a non-root user, and on whether a root instance of the DE has already been installed. The following describes the conditions under which a precheck might be failed, depending on which user is installing the product. 
+
+ For installing as the root user: If a root instance of the DE is not installed on the computer: 
+
+ If SKIP_DE_PRECHECKS is set to true: A global DE is installed. 
+
+ If SKIP_DE_PRECHECKS is set to false (default value): The installation is terminated. A warning message is generated stating that if you install a root instance of the DE, this DE will be used by any user who installs a DE -based product on that computer, unless that user already has a single-user DE. 
+
+ For installing as a non-root user: If the non-root user does not have a single-user instance of DE and a root instance of DE is already installed: 
+
+ If SKIP_DE_PRECHECKS is set to true: The installation is attempted using the root instances of the DE. Use this setting only if you have write-permission to the root instances of the DE and no one else is currently using it. 
+
+ If SKIP_DE_PRECHECKS is set to false: The installation is terminated. A warning message is generated stating that the root instance of the DE will be used, and that you must have write permissions to the database.

@@ -1,0 +1,69 @@
+Title: IBM How to resolve memory issues for IBM Business Process Manager servers - United States
+
+Text:
+ibpms75relnotes; ibpma75relnotes; ibpme75relnotes; memory TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Higher memory requirements in IBM Business Process Manager can cause applications to fail in a 32-bit environment. 
+
+SYMPTOM
+There are two typical symptoms: 
+
+ * An OutOfMemory exception occurs and the server process stops. 
+ * Performance degrades significantly because either physical memory is over-committed and swapping occurs, or an excessive amount of time is being spent in garbage collection (gc).
+
+
+CAUSE
+New functional and integration capabilities in IBM Business Process Manager often result in an increase in the amount of system memory required as compared to predecessor products. These capabilities include: 
+
+The Business Process Manager servers include capabilities that are not present in the previous products that might be upgrading to IBM Business Process Manager. These capabilities, including Business Process Modeling Notation (BPMN) execution, the Performance Data Warehouse, and the Business Process Execution Language (BPEL) execution environment, inherently have a larger memory footprint than the predecessor products. DB2 9.7 Express is installed, and configured, by default. For existing WebSphere Process Server customers, this default configuration requires more memory than the previous default installation, which did not include DB2. Business Monitor extends its capability using Cognos, which runs in its own Java™ virtual machine (JVM) and requires additional system memory. ENVIRONMENT
+These changes are primarily an issue for 32-bit JVMs and 32-bit operating systems, where the amount of accessible memory is limited as compared to 64-bit systems.
+
+
+
+DIAGNOSING THE PROBLEM
+To study JVM heap usage, enable the verbosegc option using the WebSphere Application Server Administrative Console. To analyze system memory utilization, use the appropriate system memory tool, such as vmstat for Linux or UNIX-based operating systems and Performance Monitor or Task Manager for Microsoft Windows.
+
+
+
+RESOLVING THE PROBLEM
+For 64-bit operating systems, use a 64-bit JVM. 64-bit JVMs support much larger heap sizes than 32-bit JVMs; the practical limit is determined by the amount of physical memory available on the system. The throughput and memory efficiency of 64-bit JVMs is very similar to 32-bit JVMs in IBM Business Process Manager (unlike, for example, some earlier versions of WebSphere Process Server). Thus, there is typically no compelling reason to use 32-bit JVMs on 64-bit operating systems. 
+
+
+In addition to the previous information, there are several potential solutions, depending on the symptom: 
+
+ * If the symptom is that performance is severely degraded because swapping is occurring, do the following steps:  * Ensure that there is enough physical memory to back IBM Business Process Manager and all other running processes. Use the system memory tools that were mentioned previously to do the analysis. Note: Some 32-bit operating systems can only utilize a certain amount of physical memory (such as 3 GB for Windows) 
+    * Stop all processes that are not required, such as browsers, tools, or office applications. 
+    * Use a remote DB2 system and stop the DB2 processes on the local system. 
+    * For authoring, use a remote unit test environment and/or Process Center.
+   
+   
+ * If the symptom is either of the following situations:  * An OutOfMemory exception, and there is frequent garbage collection activity immediately prior to the OutOfMemory exception that results in very little free space in the Java™ heap. 
+    * Severely degraded performance without swapping occurs, but the system is spending an excessive amount of time doing garbage collection.
+   
+   Then, take the following actions:  * Increase the maximum Java heap size (-Xmx). The Java heap must be large enough to contain all of the required Java objects. However, on 32-bit systems, ensure that the value is not excessively large such that the amount of native memory becomes a bottleneck. Experimentation is required to determine these limits. 
+    * Tune the JVM heap. For a detailed discussion of this topic, see the Tuning the IBM virtual machine for Java topic in the WebSphere Application Server product documentation. The following information is a summary of key tuning points. (The parameters referenced below are applicable to IBM virtual machines for Java. HotSpot JVMs, used on HP-UX and Solaris systems, generally have similar options but the syntax is different. Consult the JVM documentation for details.:  * Enable verbosegc to obtain statistics on heap utilization and garbage collection. This information is required for tuning. 
+       * Tune the Java heap size parameters. 
+       * Experiment with different garbage collection policies. These are set using the –Xgcpolicy JVM option. There are two choices: optthruput and gencon. The gcpolicy choice can influence the amount of memory used, depending on the particular scenario. 
+       * If the gencon gc policy is used, tune the nursery size parameters (-Xmn<size>, -Xmns<initialSize>, and -Xmnx<maxSize>).
+      
+      
+   
+   
+ * If the symptom is an OutOfMemory exception, and there is not a garbage collection immediately prior to the OutOfMemory exception, then the issue is that native memory for a resource (such as threads, sockets, file handles, JIT compiled code) has been exhausted. In this case, decrease the maximum Java heap size (-Xmx) to allow more room for native memory in the JVM address space. Be aware that this is typically only an issue for 32-bit operating systems. 
+ * If the symptom is an OutOfMemory exception after choosing “Download Process Designer” from the Process Center, complete the following steps:  1. Restart the Process Center 
+    2. Start the administrative console 
+    3. Set a Web Container custom property by navigating as follows:
+       Servers > Application Servers > server name > WebContainer > Custom Properties 
+    4. Define the com.ibm.ws.webcontainer.channelwritetype property and set the value to “sync”. This action results in lower peak memory usage in the Process Center than the default value of “async”. 
+    5. Save your changes 
+    6. Stop and then restart the Process Center 
+    7. Choose Download Process Designer from the Process Center.
+   
+   
+
+ 
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Business Process Manager Advanced Memory AIX, Linux, Solaris, Windows 8.5.5, 8.5, 8.0.1, 8.0, 7.5.1, 7.5 Business Integration IBM Business Process Manager Express Memory Linux, Windows 8.5.5, 8.5, 8.0.1, 8.0, 7.5.1, 7.5 
+PRODUCT ALIAS/SYNONYM
+ BPM

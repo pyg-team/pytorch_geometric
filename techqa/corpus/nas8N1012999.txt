@@ -1,0 +1,112 @@
+Title: IBM Transaction Isolation Levels and WebSphere Application Server - United States
+
+Text:
+WAS TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This document will discuss how, what, and where transaction isolation levels are set in WebSphere Applications by default and for specific resource references. 
+
+ENVIRONMENT
+IBM i; WebSphere Application Server
+
+RESOLVING THE PROBLEM
+Requirements for setting data access isolation levels 
+
+READ FIRST! 
+Please read and review the following URL first to obtain a better understanding of how to determine and change the isolation level for a WAS DataSource.
+www-01.ibm.com/support/docview.wss?uid=swg21190874 [http://www-01.ibm.com/support/docview.wss?uid=swg21190874]
+
+Connections used by other 2.x enterprise beans and other non-CMP components
+
+Note: These are the most common types of connections. For other types of connections, refer to the following URL based on your version of WebSphere Application Server:
+
+WAS v7.0publib.boulder.ibm.com/infocenter/wasinfo/v7r0/index.jsp?topic=/com.ibm.websphere.express.iseries.doc/info/iseriesexp/ae/cdat_isolevel.html [http://publib.boulder.ibm.com/infocenter/wasinfo/v7r0/index.jsp?topic=/com.ibm.websphere.express.iseries.doc/info/iseriesexp/ae/cdat_isolevel.html] 
+
+WAS v8.0
+pic.dhe.ibm.com/infocenter/wasinfo/v8r0/topic/com.ibm.websphere.express.iseries.doc/info/iseriesexp/ae/cdat_isolevel.html [http://pic.dhe.ibm.com/infocenter/wasinfo/v8r0/topic/com.ibm.websphere.express.iseries.doc/info/iseriesexp/ae/cdat_isolevel.html]
+
+WAS v8.5
+pic.dhe.ibm.com/infocenter/wasinfo/v8r5/topic/com.ibm.websphere.express.iseries.doc/ae/cdat_isolevel.html [http://pic.dhe.ibm.com/infocenter/wasinfo/v8r5/topic/com.ibm.websphere.express.iseries.doc/ae/cdat_isolevel.html]
+
+WAS v9.0
+https://www.ibm.com/support/knowledgecenter/SSEQTP_9.0.0/com.ibm.websphere.base.doc/ae/cdat_isolevel.html [https://www.ibm.com/support/knowledgecenter/SSEQTP_9.0.0/com.ibm.websphere.base.doc/ae/cdat_isolevel.html]
+
+For all other JDBC connection instances (connections other than those used by CMP beans), you can specify an isolation level on the data source resource reference. For shareable connections that run in global transactions, this method is the only way to set the isolationLevelfor connections. Trying to directly set the isolation level through thesetTransactionIsolation()method on a shareable connection that runs in a global transaction is not allowed. To use a different isolation level on connections, you must provide a different resource reference. Set these defaults through your assembly tool.
+
+Each resource reference associates with one isolation level. When your application uses this resource reference Java Naming and Directory Interface (JNDI) name to look up a data source, every connection returned from this data source using this resource reference has the same isolation level.
+
+Components needing to use shareable connections with multiple isolation levels can create multiple resource references, giving them different JNDI names, and have their code look up the appropriate data source for the isolation level they need. In this way, you use separate connections with the different isolation levels enabled on them.
+
+It is possible to map these multiple resource references to the same configured data source. The connections still come from the same underlying pool; however, the connection manager does not allow sharing of connections requested by resource references with different isolation levels. Consider the following scenario:
+
+o A data source is bound to two resource references:jdbc/RRResRefandjdbc/RCResRef.
+o RRResRef has theRepeatableReadisolation level defined. RCResRef has theReadCommittedisolation level defined.
+
+If your application wants to update the tables or a BMP bean updates some attributes, it can use thejdbc/RRResRefJNDI name to look up the data source instance. All connections returned from the data source instance have a RepeatableRead isolation level. If the application wants to perform a query for read only, it is better to use thejdbc/RCResRefJNDI name to look up the data source.
+
+The resource references can be identified in the WEB-INF/web.xml file of the application. The web.xml will contain something similar to the following to identify the resource reference(s):
+
+<resource-ref id="ResourceRef_1102108961944">
+<res-ref-name>jdbc/RRResRef</res-ref-name>
+<res-type>javax.sql.DataSource</res-type>
+<res-auth>Application</res-auth>
+<res-sharing-scope>Shareable</res-sharing-scope>
+</resource-ref>
+
+<resource-ref id="ResourceRef_1102108961964">
+<res-ref-name>jdbc/RCResRef</res-ref-name>
+<res-type>javax.sql.DataSource</res-type>
+<res-auth>Application</res-auth>
+<res-sharing-scope>Shareable</res-sharing-scope>
+</resource-ref>
+
+The customization of the transaction isolation level is shown in the WEB-INF/ibm-web-ext.xmi file of the application. The ibm-web-ext.xmi will contain something similar to the following to specify the custom isolation level:
+
+<resourceRefExtensions xmi:id="ResourceRefExtension_1" isolationLevel="TRANSACTION_REPEATABLE_READ">
+<resourceRef href="WEB-INF/web.xml#ResourceRef_1102108961944"/>
+</resourceRefExtensions>
+<resourceRefExtensions xmi:id="ResourceRefExtension_2" isolationLevel="TRANSACTION_READ_COMMITTED">
+<resourceRef href="WEB-INF/web.xml#ResourceRef_1102108961964"/>
+</resourceRefExtensions>
+
+Note the isolationLevel parameter. This is where the custom isolation level is set. Also note the bolded ResourceRef tag. This references the specific resource reference defined in the web.xml file.
+
+If you do not specify the isolation level
+
+The product does not require you to set the isolation level on a data source resource reference for a non-CMP application module. If you do not specify isolation level on the resource reference, or if you specify TRANSACTION_NONE, the WebSphere Application Server run time uses a default isolation level for the data source. Application Server uses a default setting based on the JDBC driver.
+
+For most drivers, WebSphere Application Server uses an isolation level default of TRANSACTION_REPEATABLE_READ. Use the following table for quickreference:
+
+
+
+Database: DB2 Default isolation level:
+(for connections used by non-CMP entities) RR = JDBC Repeatable read (TRANSACTION_REPEATABLE_READ) = *RS (Read Stability) on the IBM i server. 
+Note:These same default isolation levels are used in cases of direct JNDI lookups of a data source. 
+
+o RR = JDBC Repeatable read (TRANSACTION_REPEATABLE_READ) 
+o RC = JDBC Read committed (TRANSACTION_READ_COMMITTED) 
+
+Available beginning in WebSphere Application Server v6.1 all editions: 
+
+To customize the default isolation level, you can use the webSphereDefaultIsolationLevelcustom property for the data source. In most cases, you should define the isolation level in the deployment descriptor when you package the EAR file; however, in certain situations, you might need to customize the default isolation level. This property will have no effect if any of the above options are used, and this custom property is provided for those situations in which there is no other means of setting the isolation level. 
+
+Use the following values for webSphereDefaultIsolationLevel custom property: 
+
+Possible values JDBC isolation level DB2 isolation level 8 TRANSACTION_SERIALIZABLE Repeatable Read (RR) 4 (default) TRANSACTION_REPEATABLE_READ Read Stability (RS) 2 TRANSACTION_READ_COMMITTED Cursor Stability (CS) 1 TRANSACTION_READ_UNCOMMITTED Uncommitted Read (UR) 0 TRANSACTION_NONE No Commit (NC) 
+
+Note : If TRANSACTION_NONE is used, the DB file does not have to be journaled. 
+
+To define this custom property for a data source, you should do the following: 1. ClickResources>JDBC provider>JDBC_provider. 2. ClickData sourcesin the Additional Properties section. 3. Click the name of the data source. 4. ClickCustom properties. 5. Create the webSphereDefaultIsolationLevel custom property
+a. ClickNew.
+b. Enter webSphereDefaultIsolationLevelfor the name field.
+c. Enter one of the "possible values" in the value field from the table above. i.e. 0, 1, 2, 4, or 8 The Application Server sets the isolation level by prioritizing the available settings. The Application Server will set the isolation level based on the values for the following, in this order: 
+
+1. Resource reference isolation level 
+2. Isolation level that is specified by the access intent policy 
+3. Custom property that configures an isolation level 
+4. Application Server's default setting.  
+
+
+Cross reference information Segment Product Component Platform Version Edition Operating System IBM i 7.2 Operating System IBM i 7.1 Operating System IBM i 6.1 Operating System IBM i 7.3 
+HISTORICAL NUMBER
+ 521997879

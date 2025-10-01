@@ -1,0 +1,167 @@
+Title: IBM JR48445: REST SERVICE PROVIDER CAN'T BE UPDATED CORRECTLY DURING UPGRADE FROM BPM V8.5.0.0 TO BPM V8.5.0.1 - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Version 8.5 Refresh Pack 5 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24037683]
+Version 8.5.0 Fix Pack 2 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24040683]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  In the scenario of BPM multiple deployment environment, REST
+   Service provider was not updated correctly during profile
+   upgrade from BPM V8.5.0.0 to BPM V8.5.0.1. After upgrading to
+   BPM V8.5.0.1 some widgets on Business Space can't work due to
+   some rest service error.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  IBM BPM users who try to upgrade from IBM   *
+   *                  BPM V8.5 to IBM BPM V8.5.0.1 with existing  *
+   *                  profiles.                                   *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: The REST service provider is not        *
+   *                      updated correctly when a profile is     *
+   *                      being upgraded from IBM BPM V8.5 to     *
+   *                      IBM BPM V8.5.0.1 in a multiple          *
+   *                      deployment environment setup. As a      *
+   *                      result, some widgets on Business        *
+   *                      Space do not work.                      *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   When a profile is being upgraded from IBM BPM V8.5 to IBM BPM
+   V8.5.0.1, the REST service provider is not updated correctly
+   if the source IBM BPM V8.5 is multiple deployment environment
+   (DE) setup. During the profile upgrade process, the REST
+   Services Gateway application that was in the cell scope in IBM
+   BPM V8.5 is removed and redeployed in each DE with a new name:
+   REST Services Gate-way_<deployment_target>.
+   The corresponding REST service provider should be assigned to
+   correct deployment target correctly. However, the REST service
+   provider for each DE environment is not updated correctly. The
+   admin con-sole, which users access by clicking Services > Rest
+   services > Rest service providers, shows that the REST service
+   provider for all DEs is assigned to the same deployment target
+   and REST service provider with the old application name,  &#162;&#226;&#130;&#172; &#147;
+   Services Gateway, &#162;&#226;&#130;&#172;  &#189; still listed.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A fix is available that assigns the REST service provider for
+   each DE to its correct deployment target and removes the REST
+   service provider with the old application name.
+   
+   On Fix Central (http://www.ibm.com/support/fixcentral), search
+   for JR48445. After you select the prod-uct group, product,
+   installed version, and platform, click Continue and then
+   select APAR or SPR, enter JR48445, and click Continue. When
+   downloading fix packages, ensure that you also download the
+   readme file for each fix. Review each readme file for
+   additional installation instructions and information about the
+   fix.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR48445
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM ADVANCED
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9400
+   
+   
+ * REPORTED RELEASE
+   850
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-11-12
+   
+   
+ * CLOSED DATE
+   2014-01-27
+   
+   
+ * LAST MODIFIED DATE
+   2014-01-27
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   BPM ADVANCED
+   
+   
+ * FIXED COMPONENT ID
+   5725C9400
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R800 PSY
+   UP

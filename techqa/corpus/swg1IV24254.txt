@@ -1,0 +1,190 @@
+Title: IBM IV24254: TARGET SEARCHES DON'T PROPERLY WORK - United States
+
+Text:
+  FIXES ARE AVAILABLE
+IBM Tivoli Remote Control Interim Fix 5.1.2-TIV-TRC512-IF0012 [http://www-01.ibm.com/support/docview.wss?uid=swg24033711]
+Tivoli Endpoint Manager for Remote Control Fix pack 8.2.1-TIV-TEMRC821-IF0002 [http://www-01.ibm.com/support/docview.wss?uid=swg24033728]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  TRC 5.1.2
+   
+   After upgrading to IF0011, the target searches don't not working
+   properly.
+   Here is the customer description of the issue:
+   " The first search after targets results in the expected list of
+   servers,
+   but the next one show the exact same results
+   even though the keywords have changed. Clicking "Show SQL" shows
+   the
+   previous selection and not the current one.
+   For example, I tried to search for targets with the keyword
+   "tsj" and
+   got 5 servers. I then searched for targets with the keyword
+   "was" and
+   got the same 5 servers (which do not contain the string "was").
+   This happens on 3 different stations we've tried to conduct the
+   searches
+   from, and we've performed a fallback to IF08. We still have
+   IF0011 on
+   our test server, which shows the same behavior. The TRC sessions
+   by the
+   way, work fine "
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  There is a simple workaround, which is to refresh the search
+   results
+   before doing a new search. Displaying a different report would
+   also
+   work, but it's a bit more cumbersome.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  USERS AFFECTED:
+   Controller:       N/A
+   Server:            ALL
+   Target:            N/A
+   
+   
+   Problem Description -
+   
+   
+   When conducting a search, the results returned can be the
+   results of a previous search. The user has to click on refresh
+   to force new results to show.
+   This issue is not confined to target searches but will also be
+   seen when carrying out other search types, for example, users,
+   user groups, target groups.
+   
+   
+   Problem Summary -
+   
+   TRC server has a feature that will cache reports for a period to
+   improve performance when requesting a report.
+    The user is able to select refresh to force the server to
+   regenerate the report on demand. A fix for
+    IV17399 [http://www-01.ibm.com/support/docview.wss?uid=swg1IV17399] - CPU consumption in Linux, prevented the same report
+   being added multiple times to the queue
+    awaiting for refresh. Now the server checks if a query with the
+   same
+    name is submitted twice, and if so it doesn't process it but
+   just returns the cached results. However in the case of
+    a search query, the name is static so all consecutive search
+   requests look like the same report request to the
+    server and therefore it returns the previously cached search
+   results. The fix now excludes search reports from the check,
+    resulting in the search being executed correctly.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This fix will be included  in 5.1.2-TIV-TRC512-IF0012
+   
+   |MDVREGR|5.1.2-TIV-TRC512-IF0011
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  Click refresh to force the correct results to appear
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV24254
+   
+   
+ * REPORTED COMPONENT NAME
+   REMOTE CONTROL
+   
+   
+ * REPORTED COMPONENT ID
+   5724C21RS
+   
+   
+ * REPORTED RELEASE
+   512
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-07-04
+   
+   
+ * CLOSED DATE
+   2012-07-25
+   
+   
+ * LAST MODIFIED DATE
+   2012-07-31
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   REMOTE CONTROL
+   
+   
+ * FIXED COMPONENT ID
+   5724C21RS
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R512 PSN
+   UP

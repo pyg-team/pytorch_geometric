@@ -1,0 +1,36 @@
+Title: IBM Getting a system core and the system libraries for AIX - United States
+
+Text:
+AIX core system libraries kill TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Instructions for generating a core file/system libraries for problems associated with IBM® WebSphere® Application Server on an AIX® system. Gathering this information before calling IBM support will help familiarize you with the troubleshooting process and save you time. 
+
+RESOLVING THE PROBLEM
+ 
+
+ 1. Refer to Crash on AIX produces no core or a truncated core [http://www.ibm.com/support/docview.wss?rs=180&uid=swg21052642] to ensure that your AIX system is properly set up to produce a full core file.
+    
+    
+ 2. Issue the following to generate a system core file:
+    
+    kill -11 <pid> 
+    Note: It might be necessary to run the kill -11 command twice to generate the core. This will terminate the process
+    
+    For AIX 5.2 and later, using gencore command will be helpful to get core files at regular intervals, since gencore will not terminate the process: 
+    gencore <pid> core_filename 
+    
+ 3. Refer to the How to process an IBM SDK core dump with Jextract [http://www-01.ibm.com/support/docview.wss?uid=swg21577379] to add information from your environment to the core file and produce an archive 
+    
+    
+ 4. Collect the output of the jextract command to submit to IBM support and follow the instructions at Exchanging information with IBM Technial Support [http://www.ibm.com/support/docview.wss?rs=180&uid=swg21153852] to send in the preceding documentation. 
+    
+    
+    Note: in some cases IBM support may request that you execute the attached getlib.sh to collect system information associated with the core files for submission. You must have dbx installed to run this script successfully . It is run as follows: 
+    
+    ./getlib.sh java_executable_fullpath core_filename [/support/docview.wss?uid=swg21253915&amp;aid=1] For example: [/support/docview.wss?uid=swg21253915&amp;aid=1] ./getlib.sh /usr/WebSphere/AppServer/java/bin/java core [/support/docview.wss?uid=swg21253915&amp;aid=1] 
+    [/support/docview.wss?uid=swg21253915&amp;aid=1] 
+
+getlib.sh [/support/docview.wss?uid=swg21253915&aid=3] [/support/docview.wss?uid=swg21253915&aid=2] 
+
+Cross reference information Segment Product Component Platform Version Edition Application Servers Runtimes for Java Technology Java SDK

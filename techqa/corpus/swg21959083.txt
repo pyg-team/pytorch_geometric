@@ -1,0 +1,231 @@
+Title: IBM Security Bulletin: Multiple Security Vulnerabilities fixed in IBM WebSphere Application Server 8.5.5.6 - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ Cross reference list for security vulnerabilites fixed in IBM WebSphere Application Server 8.5.5.6, IBM WebSphere Application Server Hypervisor 8.5.5.6 and IBM WebSphere Application Server Liberty Profile 8.5.5.6. 
+
+VULNERABILITY DETAILS
+CVEID: CVE-2015-0226 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-0226]
+DESCRIPTION: Apache WSS4J could allow a remote attacker to obtain sensitive information, caused by Bleichenbacher's attack on XML Encryption. By sending a specially-crafted message, an attacker could exploit this vulnerability to decrypt the key and obtain sensitive information.
+CVSS Base Score: 5
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/100836 [https://exchange.xforce.ibmcloud.com/vulnerabilities/100836] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:L/Au:N/C:P/I:N/A:N) 
+AFFECTED VERSIONS: The following IBM WebSphere Application Server Versions are affected: 
+
+Version 8.5 Liberty Profile 
+
+Remediation/Fixes: The recommended solution is to apply the Interim Fix, Fix Pack, or PTF for each named product as soon as practical. 
+
+Fix: 
+Apply an Interim Fix [http://www-01.ibm.com/support/docview.wss?uid=swg24039403], Fix Pack or PTF [https://www-304.ibm.com/support/docview.wss?rs=180&uid=swg27004980] containing this APAR PI36866, as noted below:
+
+For IBM WebSphere Application Server Liberty profile: 
+
+For V8.5.5.2 through 8.5.5.5: Apply Fix Pack 6 (8.5.5.6), or later. 
+-- OR Apply Interim Fix PI36866 [http://www-01.ibm.com/support/docview.wss?uid=swg24040191]
+
+Workaround(s): None known 
+Mitigation(s): None known 
+
+CVE ID: CVE-2015-1885 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-1885] (APAR PI33202 and PI36211) 
+
+DESCRIPTION: WebSphere Application Server Full Profile and Liberty Profile could allow a remote attacker to gain elevated privileges on the system when OAuth grant type of password is used. 
+
+CVSS: 
+CVSS Base Score: 9.3
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/101255 [https://exchange.xforce.ibmcloud.com/vulnerabilities/101255] for the current score
+CVSS Environmental Score*: Undefined
+CVSS String: (AV:N/AC:M/Au:N/C:C/I:C/A:C) 
+
+AFFECTED VERSIONS: The following IBM WebSphere Application Server Versions are affected: Version 8.5 Full Profile and Liberty Profile Version 8.0 Version 7.0 
+
+Remediation/Fixes: The recommended solution is to apply the Fix Pack or PTF for each named product as soon as practical. 
+
+Fix: 
+Apply an Interim Fix, Fix Pack or PTF [https://www-304.ibm.com/support/docview.wss?rs=180&uid=swg27004980] containing this APAR PI36211 for Full Profile and PI33202 for Liberty Profile, as noted below: 
+
+For IBM WebSphere Application Server 
+
+For V8.5.0.0 through 8.5.5.5 Full Profile: Apply Interim Fix PI36211 [http://www-01.ibm.com/support/docview.wss?uid=swg24039602]
+-- OR Apply Fix Pack 6 (8.5.5.6), or later. After the fix pack is installed, the fix will not be active until the installed OAuth ear, WebSphereOauth20SP.ear, is updated from the (WAS_HOME)/installableApps directory.
+
+
+For V8.5.0.0 through 8.5.5.4 Liberty Profile: Apply Interim Fix PI33202 [http://www-01.ibm.com/support/docview.wss?uid=swg24039594] [http://www-01.ibm.com/support/docview.wss?uid=swg24039594] [http://www-01.ibm.com/support/docview.wss?uid=swg24039403]
+-- OR Apply Fix Pack 5 (8.5.5.5), or later.
+
+For V8.0.0.0 through 8.0.0.10: Apply Interim Fix PI36211 [http://www-01.ibm.com/support/docview.wss?uid=swg24039602]
+-- OR Apply Fix Pack 11 (8.0.0.11), or later. After the fix pack is installed, the fix will not be active until the installed OAuth ear, WebSphereOauth20SP.ear, is updated from the (WAS_HOME)/installableApps directory.
+
+For V7.0.0.0 through 7.0.0.37: Apply Interim Fix PI36211 [http://www-01.ibm.com/support/docview.wss?uid=swg24039602]
+-- OR Apply Fix Pack 39 (7.0.0.39), or later. After the fix pack is installed, the fix will not be active until the installed OAuth ear, WebSphereOauth20SP.ear, is updated from the (WAS_HOME)/installableApps directory.
+
+Workaround(s): None known 
+Mitigation(s): None known 
+
+CVEID: CVE-2015-0250 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-0250]
+DESCRIPTION: Apache Batik could allow a remote attacker to obtain sensitive information. By persuading a victim to open a specially-crafted SVG file, an attacker could exploit this vulnerability to reveal files and obtain sensitive information.
+CVSS Base Score: 4.3
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/#/vulnerabilities/101614 [https://exchange.xforce.ibmcloud.com/#/vulnerabilities/101614] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:M/Au:N/C:P/I:N/A:N) 
+
+AFFECTED VERSIONS: The following IBM WebSphere Application Server Versions are affected: Version 8.5 Full Profile Version 8 Version 7 Version 6.1
+
+Remediation/Fixes: The recommended solution is to apply the Interim Fix, Fix Pack or PTF for each named product as soon as practical. 
+
+Fix: 
+Apply an Interim Fix [http://www-01.ibm.com/support/docview.wss?uid=swg24039403], Fix Pack or PTF [https://www-304.ibm.com/support/docview.wss?rs=180&uid=swg27004980] containing this APAR PI39768 or PI49437, as noted below:
+
+For IBM WebSphere Application Server Full profile and IBM WebSphere Application Server Hypervisor Edition
+
+For V8.5.0.0 through 8.5.5.5: Apply Fix Pack 6 (8.5.5.6), or later. 
+-- OR Apply Interim Fix PI39768 [http://www-01.ibm.com/support/docview.wss?uid=swg24040442]
+
+For V8.0.0.0 through 8.0.0.10: Apply Fix Pack 11 (8.0.0.11), or later. [http://www-01.ibm.com/support/docview.wss?uid=swg21693751]
+-- OR Apply Interim Fix PI39768 [http://www-01.ibm.com/support/docview.wss?uid=swg24040442] 
+
+For V7.0.0.0 through 7.0.0.37: Apply Fix Pack 39 (7.0.0.39), or later. [https://www-304.ibm.com/support/docview.wss?uid=swg21693757]
+-- OR Apply Interim Fix PI49437 [http://www-01.ibm.com/support/docview.wss?uid=swg24041163] [http://www-01.ibm.com/support/docview.wss?uid=swg24040442]
+
+For V6.1.0.0 through 6.1.0.47: Apply Fix Pack 47 (6.1.0.47), or later and then apply Interim Fix PI49437 [http://www-01.ibm.com/support/docview.wss?uid=swg24041163]
+
+
+Workaround(s): None known 
+Mitigation(s): None known 
+
+
+CVEID: CVE-2015-1927 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-1927]
+DESCRIPTION: IBM WebSphere Application Server could allow a remote attacker to gain elevated privileges on the system, caused by an application not having the correct serveServletsbyClassname setting. By a developer not setting the correct property, an attacker could exploit this vulnerability to gain unauthorized access.
+CVSS Base Score: 6.8
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/102872 [https://exchange.xforce.ibmcloud.com/vulnerabilities/102872] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:M/Au:N/C:P/I:P/A:P) 
+
+
+AFFECTED VERSIONS: The following IBM WebSphere Application Server Versions are affected: Version 8.5 Full Profile and Liberty Profile Version 8 Version 7
+
+Remediation/Fixes: The recommended solution is to apply the Fix Pack or PTF for each named product as soon as practical. 
+
+Fix: 
+Apply an Interim Fix [http://www-01.ibm.com/support/docview.wss?uid=swg24039403], Fix Pack or PTF [https://www-304.ibm.com/support/docview.wss?rs=180&uid=swg27004980] containing this APAR PI31622, as noted below:
+
+Please Note:This APAR has changed the default value of the WebContainer custom property com.ibm.ws.webcontainer.disallowServeServletsByClassname from false to true so that no security threat could occur. Prior to this change, it was up to the developer to remember to change the custom property to true before deploying into production. 
+
+
+Property Name: com.ibm.ws.webcontainer.disallowServeServletsByClassname 
+Description: If set to true, disallows the use of serveServletsByClassnameEnabled at the application server level, overriding any setting of serveServletsByClassnameEnabled at the application level. This property affects all applications. 
+Values: true(default)/false
+
+If you need to change the value please refer to the the following technote for instructions on enabling WebContainer custom properties: 
+
+Full Profile: http://www-01.ibm.com/support/docview.wss?uid=swg21284395 [http://www-01.ibm.com/support/docview.wss?uid=swg21284395]
+Liberty Profile: http://www-01.ibm.com/support/docview.wss?uid=swg21597753 [http://www-01.ibm.com/support/docview.wss?uid=swg21597753]
+
+For IBM WebSphere Application Server Full profile, IBM WebSphere Application Server Liberty Profile and IBM WebSphere Application Server Hypervisor Edition
+
+For V8.5.0.0 through 8.5.5.5: Apply Fix Pack 6 (8.5.5.6), or later. 
+-- OR Apply Interim Fix PI31622 [http://www-01.ibm.com/support/docview.wss?uid=swg24040348]
+
+For V8.0.0.0 through 8.0.0.10: Apply Fix Pack 11 (8.0.0.11), or later. [http://www-01.ibm.com/support/docview.wss?uid=swg21693751]
+-- OR Apply Interim Fix PI31622 [http://www-01.ibm.com/support/docview.wss?uid=swg24040348] 
+
+For V7.0.0.0 through 7.0.0.37: Apply Fix Pack 39 (7.0.0.39), or later. [https://www-304.ibm.com/support/docview.wss?uid=swg21693757]
+-- OR Apply Interim Fix PI31622 [http://www-01.ibm.com/support/docview.wss?uid=swg24040348]
+
+Workaround(s): Set the custom property com.ibm.ws.webcontainer.disallowServeServletsByClassName to true
+Mitigation(s): None known 
+
+CVEID: CVE-2015-1936 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-1936]
+DESCRIPTION: IBM WebSphere Application Server Administrative console could allow a remote authenticated attacker to hijack a user's session when Security is not enabled. An attacker could exploit this vulnerability using the JSESSIONID parameter to gain access to another user's session.
+CVSS Base Score: 4
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/103108 [https://exchange.xforce.ibmcloud.com/vulnerabilities/103108] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:L/Au:S/C:P/I:N/A:N) 
+
+AFFECTED VERSIONS: The following IBM WebSphere Application Server Versions are affected: Version 8.5 Full Profile Version 8 
+
+Remediation/Fixes: The recommended solution is to apply the Fix Pack or PTF for each named product as soon as practical. 
+
+Fix: 
+Apply an Interim Fix [http://www-01.ibm.com/support/docview.wss?uid=swg24039403], Fix Pack or PTF [https://www-304.ibm.com/support/docview.wss?rs=180&uid=swg27004980] containing this APAR PI37230, as noted below:
+
+
+For IBM WebSphere Application Server and IBM WebSphere Application Server Hypervisor Edition:
+
+For V8.5.0.0 through 8.5.5.5: Apply Fix Pack 6 (8.5.5.6), or later. 
+-- OR Apply Interim Fix PI37230 [http://www-01.ibm.com/support/docview.wss?uid=swg24040347]
+
+For V8.0.0.0 through 8.0.0.11: Apply Fix Pack 12 (8.0.0.12), or later. [http://www-01.ibm.com/support/docview.wss?uid=swg21693751]
+-- OR Apply Interim Fix PI37230 [http://www-01.ibm.com/support/docview.wss?uid=swg24040347]
+
+Workaround(s): None known 
+Mitigation(s): None known 
+
+CVEID: CVE-2015-1946 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-1946]
+DESCRIPTION: IBM WebSphere Application Server 8.5 and IBM WebSphere Virtual Enterprise 7.0 could allow a local attacker to gain elevated privileges on the system cause by the user roles not being handled properly.
+CVSS Base Score: 4.1
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/103201 [https://exchange.xforce.ibmcloud.com/vulnerabilities/103201] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:L/AC:M/Au:S/C:P/I:P/A:P) 
+
+AFFECTED VERSIONS: The following IBM WebSphere Application Server Versions are affected: Version 8.5 IBM WebSphere Application Server Version 7.0 IBM WebSphere Virtual Enterprise on WebSphere Application Server Version 7 and Version 8
+
+Remediation/Fixes: The recommended solution is to apply the Fix Pack or PTF for each named product as soon as practical. 
+
+Fix: 
+Apply an Interim Fix [http://www-01.ibm.com/support/docview.wss?uid=swg24039403], Fix Pack or PTF [https://www-304.ibm.com/support/docview.wss?rs=180&uid=swg27004980] containing this APAR PI35180, as noted below:
+
+For IBM WebSphere Application Server
+
+For V8.5.0.0 through 8.5.5.5: Apply Fix Pack 6 (8.5.5.6), or later. 
+-- OR Apply Interim Fix PI35180 [http://www-01.ibm.com/support/docview.wss?uid=swg24040235]
+
+For IBM WebSphere Virtual Enterprise using WebSphere Application Server V7.0 and V8.0: Apply WebSphere Virtual Enterprise Fix Pack 6 (7.0.0.6) or later. 
+
+Workaround(s): None known 
+Mitigation(s): None known 
+
+Other APARs shipped with 8.5.5.6 are included in the security bulletins below:
+PI33012 Security Bulletin for Dojo Toolkit Vulnerability [http://www-01.ibm.com/support/docview.wss?uid=swg21697284]
+PI36563 Security Bulletin for RSA Export Keys for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg21698613]
+PI36563 Security Bulletin for RC4 Stream Cipher for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg21701503]
+PI38302 Security Bulletin for Management Port for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg21883573]
+PI36417 Security Bulletin for RSA Export Keys for IBM HTTP Server [http://www-01.ibm.com/support/docview.wss?uid=swg21698959] 
+PI34229 Security Bulletin for RC4 Stream Cipher for IBM HTTP Server [http://www-01.ibm.com/support/docview.wss?uid=swg21701072] 
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+IMPORTANT NOTE
+ IBM strongly suggests that all System z customers be subscribed to the System z Security Portal to receive the latest critical System z security and integrity service. If you are not subscribed, see the instructions on the System z Security web site [http://www.ibm.com/systems/z/solutions/security_subintegrity.html]. Security and integrity APARs and associated fixes will be posted to this portal. IBM suggests reviewing the CVSS scores and applying all security or integrity fixes as soon as possible to minimize any potential risk. 
+
+REFERENCES
+Complete CVSS v2 Guide [http://www.first.org/cvss/v2/guide] 
+On-line Calculator v2 [http://nvd.nist.gov/CVSS-v2-Calculator] 
+
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] 
+
+CHANGE HISTORY
+ 26 June 2015: original document published
+29 June 2015: fix serveservlets custom property name and add workaround
+30 June 2015: fix serveservlets custom property
+16 July 2015: added additional links to ifixes
+13 August 2015: added additonal link to ifixes
+2 September 2015: updated fix pack dates and level
+13 November 2015: updated interim fix PI39768 with PI49437 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY. 
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Application Servers WebSphere Application Server Hypervisor Edition Application Servers WebSphere Virtual Enterprise

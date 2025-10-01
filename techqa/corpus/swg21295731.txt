@@ -1,0 +1,63 @@
+Title: IBM The error message "java.lang.Object not found" appears when trying to compile source code - United States
+
+Text:
+ID5; DEF; 1295731 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When you try to compile source code on IBM® Rational® Application Developer (RAD) v7.0, you might get an error message stating "java.lang.Object not found" in the Problems view. 
+
+SYMPTOM
+This problem has a couple of symptoms: 
+
+ * 
+ * 
+ * java.lang.Object
+ * 
+ * 
+ * 
+ * 
+ * Project Properties > Build Path
+ * 
+ * Project Explorer
+ * 
+
+
+CAUSE
+The JRE Library classpath container in RAD version 7.0 is populated by spawning an external Java process with a piece of code that determines the following data: 
+
+ *  Name of the JVM Java version The libraries installed in lib and lib/ext folder of the JVM 
+
+
+In RAD version 7.0 this process must finish within 10 seconds otherwise it will be stopped. If during that time no or incomplete data is returned, one of the following results may occur:  *  The JRE library classpath container might be empty The JRE library classpath container might be incomplete Instead of returning the correct Java version for the JVM, the default Java version in Rational Application Developer is attached to the JVM. As a result, you might not be able to use the JVM for certain tasks like deploying enterprise applications to the server and so on. 
+
+DIAGNOSING THE PROBLEM
+One indication that the problem occurs is an entry in the log file within your workspace. If you open <workspace>/.metadata/.log you will find an entry like this one (the path to the Java runtime might be different since the problem can happen with any Java runtime) 
+
+ 
+
+ * !ENTRY org.eclipse.jdt.launching 4 4 2007-12-03 07:57:07.765
+ * 
+ * !MESSAGE Failed to retrieve default libraries for C:\Programme\IBM\SDP70\runtimes\base_v51\java\jre
+
+
+Please note: If you experience the problem with IBM® WebSphere® Application Server version 6.0, you might see a different problem. If you have updated your RAD version 7.0 from a version below FixPack 7.0.0.4 to FixPack 7.0.0.4 using Installation Manager 1.1, the file <SDP70>/runtimes/base_v6/jre/bin/java.exe might have been deleted due to a defect which was fixed in Installation Manager 1.1.0.1. 
+
+RESOLVING THE PROBLEM
+There are three possible solutions to the problem: 
+
+ * 
+ * 
+ * 2. Reduce the time it takes for the external Java process to finish. You can accomplish this by stopping or reducing I/O intense background tasks like virus or mal ware scanners as well as getting better hardware. 
+ * 3. You can contact IBM Rational Client Support to obtain a TestFix for the problem which increases the timeout to 30 seconds for getting the JVM information from the external Java process. 
+ * 
+
+
+RELATED INFORMATION
+#Eclipe Bug: Library detection timeout should be longer [https://bugs.eclipse.org/bugs/show_bug.cgi?id=214581]
+
+
+
+
+
+
+Cross Reference information Segment Product Component Platform Version Edition Software Development Rational Software Architect Eclipse Linux, Windows 7.0, 7.0.0.1, 7.0.0.2, 7.0.0.3, 7.0.0.4, 7.0.0.5 All Editions Software Development Rational Software Modeler Eclipse Windows, Linux 7.0, 7.0.0.1, 7.0.0.2, 7.0.0.3, 7.0.0.4, 7.0.5 All Editions Software Development Rational Business Developer Extension Eclipse Linux, Windows 7.0, 7.0.0.3, 7.0.0.4, 7.0.0.5, 7.1 All Editions Software Development Rational Performance Tester Eclipse Windows, Linux 7.0, 7.0.0.1, 7.0.0.2, 7.0.0.3, 7.0.1, 7.0.1.1 All Editions Software Development Rational Systems Developer Eclipse Linux, Solaris, Windows 7.0, 7.0.0.1, 7.0.0.2, 7.0.0.3, 7.0.0.4, 7.0.5 All Editions Software Development Rational Manual Tester Eclipse Windows 7.0, 7.0.0.1, 7.0.0.2, 7.0.0.3, 7.0.1, 7.0.1.1, 7.0.1.2 All Editions Software Development Rational Functional Tester Eclipse Linux, Windows 7.0, 7.0.0.1, 7.0.0.2, 7.0.0.3, 7.0.1, 7.0.1.1, 7.0.1.2 All Editions Software Development Rational Elite Support for Eclipse Eclipse SDK Linux, Windows 1.0 All Editions

@@ -1,0 +1,131 @@
+Title: IBM How do you use a port other than default port of 80 for the Contributor web? - United States
+
+Text:
+port IIS TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ How do you use a port other than default port of 80 for the Contributor web? 
+
+ENVIRONMENT
+Windows 2003 IIS Manager 6
+
+Steps:
+
+1. Open IIS Manager and expand down to Web Sites.
+
+2. Right click on Web Sites and click New, Web Site and go through the wizard. Here are some example settings -
+
+Description = EP Cognos Web Site
+
+Enter the IP&. = All Unassigned
+
+TCP port&. = 81
+
+Host header&. = (leave blank)
+
+Path = C:\Inetpub\epcognos (name of website) (will need to add epcognos)
+
+Allow Anonymous access
+
+Allow the following permissions = Read
+
+3. Click Finish in the wizard.
+
+Right click on the newly created website and click Properties.
+
+On the Web Site tab, next to IP address click Advanced (you should have (All Unassigned) in the IP address field).
+
+Under Multiple identities for this Web Site you should have a 'Default" IP address, click Default and click Edit.
+
+In the Add/Edit window:
+
+IP address: (All Unassigned)
+
+TCP port: (port used in the wizard step above)
+
+Host Header value: web server's machine name
+
+Once done, click OK until all the windows for the website close.
+
+Now create the virtual directories needed to set up the Contributor web as per the instruction in the Installation Guide.
+
+The new URL used to connect to the Contributor website will now be:
+
+ht tp://Machinename:port_number/virtual_directory/contributor
+
+Example:
+
+Machine Name = webserver
+
+Virtual directory = epcognos
+
+Port = 81
+
+URL = http://webserver:81/ep cognos/contributor
+
+Note: Don't forget to go to planning44.asp page to configure the Web site.
+
+Keywords:
+
+port IIS
+
+RESOLVING THE PROBLEM
+ Steps:1. Open IIS Manager and expand down to Web Sites.
+
+2. Right click on Web Sites and click New, Web Site and go through the wizard. Here are some example settings -
+
+Description = EP Cognos Web Site
+
+Enter the IP&. = All Unassigned
+
+TCP port&. = 81
+
+Host header&. = (leave blank)
+
+Path = C:\Inetpub\epcognos (name of website) (will need to add epcognos)
+
+Allow Anonymous access
+
+Allow the following permissions = Read
+
+3. Click Finish in the wizard.
+
+Right click on the newly created website and click Properties.
+
+On the Web Site tab, next to IP address click Advanced (you should have (All Unassigned) in the IP address field).
+
+Under Multiple identities for this Web Site you should have a 'Default" IP address, click Default and click Edit.
+
+In the Add/Edit window:
+
+IP address: (All Unassigned)
+
+TCP port: (port used in the wizard step above)
+
+Host Header value: web server's machine name
+
+Once done, click OK until all the windows for the website close.
+
+Now create the virtual directories needed to set up the Contributor web as per the instruction in the Installation Guide.
+
+The new URL used to connect to the Contributor website will now be:
+
+http://Machinename:port_number/virtual_directory/contributor
+
+Example:
+
+Machine Name = webserver
+
+Virtual directory = epcognos
+
+Port = 81
+
+URL = http://webserver:81/epcognos/contributor
+
+Note: Don't forget to go to planning44.asp page to configure the Web site.
+
+ 
+
+Cross reference information Segment Product Component Platform Version Edition Business Analytics Cognos 8 Planning Contributor 8.1 
+HISTORICAL NUMBER
+ 1032154

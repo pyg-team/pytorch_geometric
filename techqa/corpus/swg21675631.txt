@@ -1,0 +1,37 @@
+Title: IBM TMWeb cannot connect to the Admin DB in IBM Datacap Taskmaster - United States
+
+Text:
+tmweb; logon; admin db TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Attempts to log into the TMWeb server using IBM TMWeb client results in the following error:
+
+"Unable to logon to Admin DB" 
+
+SYMPTOM
+New installation of a Taskmaster distributed environment. Clients on tmweb are not able to log into the Taskmaster We Server.
+
+
+CAUSE
+The TMWeb application pool user account which was originally used to import the encryption key was changed to another account. The encryption keys need to be imported for every account used.
+
+RESOLVING THE PROBLEM
+
+Solutions:
+
+
+
+1. Copy encryption key to the datacap\tmweb.net folder.
+
+
+Or
+
+
+2. Do steps below to correct the issue if TMWeb cannot connect to the Admin DB
+a) stop tmweb app pool
+b) login as new TMWeb app pool user
+c) run command shell (cmd)
+d) cd \datacap\taskmaster
+e) dcskey -d [this deletes any incorrect encryption keys for this user]
+f) dcskey -i [this imports keys from dc_KTF.xml located in the Taskmaster folder]
+g) restart tmweb app pool

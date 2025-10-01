@@ -1,0 +1,92 @@
+Title: IBM Collecting the version information on ITDS version 6.2 - United States
+
+Text:
+version info; idsversion; fixpack level; vrmf; Must Gather; 6.2 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ In order to begin diagnosing any issue on ITDS version 6.2, the first step is to identify the version, including fixpack level of the ITDS environment. 
+
+RESOLVING THE PROBLEM
+ITDS Version Information by platform: 
+
+
+
+
+
+
+
+[/support/docview.wss?uid=swg21393559&amp;aid=1] AIX 
+[/support/docview.wss?uid=swg21393559&amp;aid=2] HP 
+[/support/docview.wss?uid=swg21393559&amp;aid=3] Linux 
+[/support/docview.wss?uid=swg21393559&amp;aid=4] Solaris 
+[/support/docview.wss?uid=swg21393559&amp;aid=5] Windows 
+
+
+
+
+
+
+
+Gathering version information on AIX 
+Collect the output of the following commands: 
+
+/opt/IBM/ldap/V6.2/bin/idsversion 
+lslpp -l | grep gsk 
+idsilist -a 
+/usr/local/bin/db2ls 
+
+
+If the Web Administration Tool is installed and configured, please collect the following: 
+/opt/IBM/ldap/V6.2/idstools/deploy_IDSWebApp -v 
+
+Gathering version information on HP 
+Collect the output of the following commands: 
+
+/opt/IBM/ldap/V6.2/bin/idsversion 
+swlist | grep -i gsk 
+idsilist -a 
+/usr/local/bin/db2ls 
+
+If the Web Administration Tool is installed and configured, please collect the following: 
+/opt/IBM/ldap/V6.2/idstools/deploy_IDSWebApp -v 
+
+Gathering version information on Linux 
+Collect the output of the following commands: 
+
+/opt/ibm/ldap/V6.2/bin/idsversion 
+rpm -qa | grep -i gsk 
+idsilist -a 
+/usr/local/bin/db2ls 
+
+If the Web Administration Tool is installed and configured, please collect the following: 
+/opt/IBM/ldap/V6.2/idstools/deploy_IDSWebApp -v 
+
+Gathering version information on Solaris 
+Collect the output of the following commands: 
+
+/opt/IBM/ldap/V6.2/bin/idsversion 
+pkginfo | grep –i gsk 
+idsilist -a 
+/usr/local/bin/db2ls 
+
+If the Web Administration Tool is installed and configured, please collect the following: 
+/opt/IBM/ldap/V6.2/idstools/deploy_IDSWebApp -v 
+
+Gathering version information on Windows 
+Collect the output of the following commands: 
+
+<install_Drive>:\Program Files\IBM\LDAP\V6.2\bin\idsversion 
+<Install_Drive>:\Program Files\IBM\SQLLIB\bin\db2level.exe 
+Dir “<Install_Drive>:\Program Files\IBM\gsk” 
+idsilist -a 
+
+**Note: The db2ls command is not available on windows. 
+
+If the Web Administration Tool is installed and configured, please collect the following: 
+<install_Drive>:\Program Files\IBM\LDAP\V6.2\idstools\deploy_IDSWebApp -v  
+
+PRODUCT ALIAS/SYNONYM
+ TDS
+ITDS
+LDAP
+Tivoli Directory Server

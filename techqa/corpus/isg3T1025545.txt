@@ -1,0 +1,25 @@
+Title: IBM Question about Symphony EGO allocation ID - United States
+
+Text:
+ego allocation ID; SD_SDK; EGO_ALLOC_NEW; EGO_ALLOC_DONE; EGO_ALLOC_UPDATE; SOAM Consumer TECHNOTE (FAQ)
+
+QUESTION
+ In what conditions the EGO allocation ID for a SOAM consumer changes? And when is it reused? 
+
+ANSWER
+
+The SOAM consumer allocation ID changes are confirmed through the following test cases: 
+
+Case 1: If SSM pID is killed (crashes) and SSM restarted on same host 
+
+ *  alloc ID does not change new SSM is spawned and previous alloc ID is reused nothing logged in ego.stream file 
+
+Case 2: SSM host is close reclaimed and SSM restarted on different host  *  SD requests a new allocation from EGO, therefore alloc ID is now incremented new SSM is spawned on the new alloc ID EGO_ALLOC_DONE is logged in ego.stream file for the previous alloc ID 
+
+Case 3: SSM restarts on a different host due to recovery [say, when SSM host is powered off]  *  Once EGO detects that the SSM host is "unavailable", SD spawns a new SSM on another Management/SSM host However, the same alloc ID is reused EVENT_ALLOC_UPDATE is logged in ego.stream file for that reused alloc ID 
+
+Case 4: SSM exits because application is re-registered or disabled&enabled.  *  EVENT_ALLOC_DONE is logged in ego.stream file for old alloc ID SD spawns a new SSM on a new alloc ID 
+
+
+
+Cross reference information Segment Product Component Platform Version Edition IBM Spectrum Computing IBM Spectrum Symphony

@@ -1,0 +1,205 @@
+Title: IBM IV46272: WEBSPHERE MQ V7.1 AND V7.5: MQRC_SSL_PEER_NAME_MISMATCH ERROR WHEN CONNECTING TO QUEUE SHARING GROUP. - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Fix Pack 7.1.0.5 for WebSphere MQ V7.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24037553]
+WebSphere MQ V7.5 Fix Pack 7.5.0.4 [http://www-01.ibm.com/support/docview.wss?uid=swg24038252]
+8.5.5.5: WebSphere Application Server V8.5.5 Fix Pack 5 [http://www-01.ibm.com/support/docview.wss?uid=swg24039425]
+8.5.5.6: WebSphere Application Server V8.5.5 Fix Pack 6 [http://www-01.ibm.com/support/docview.wss?uid=swg24040035]
+8.5.5.7: WebSphere Application Server V8.5.5 Fix Pack 7 [http://www-01.ibm.com/support/docview.wss?uid=swg24040533]
+8.5.5.8: WebSphere Application Server V8.5.5 Fix Pack 8 [http://www-01.ibm.com/support/docview.wss?uid=swg24041178]
+8.5.5.9: WebSphere Application Server V8.5.5 Fix Pack 9 [http://www-01.ibm.com/support/docview.wss?uid=swg24041819]
+8.5.5.10: WebSphere Application Server V8.5.5 Fix Pack 10 [http://www-01.ibm.com/support/docview.wss?uid=swg24042150]
+8.5.5.11: WebSphere Application Server V8.5.5 Fix Pack 11 [http://www-01.ibm.com/support/docview.wss?uid=swg24043005]
+8.5.5.12: WebSphere Application Server V8.5.5 Fix Pack 12 [http://www-01.ibm.com/support/docview.wss?uid=swg24043844]
+8.5.5.13: WebSphere Application Server V8.5.5 Fix Pack 13 [http://www-01.ibm.com/support/docview.wss?uid=swg24044479]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When an application using WMQ classes for JMS V7.1 or V7.5
+   connects to
+   a Queue Sharing Group on zOS, the following error can be seen:
+   JMSException linked Exception:
+   com.ibm.mq.MQException: JMSCMQ0001: WebSphere MQ call failed
+   with compcode '2' ('MQCC_FAILED') reason '2398'
+   ('MQRC_SSL_PEER_NAME_MISMATCH').
+   at com.ibm.msg.client.wmq.common.internal.Reason.createException
+   (Reason.java:204)
+   at com.ibm.msg.client.wmq.internal.WMQSession.connect
+   (WMQSession.java:374)
+   at com.ibm.msg.client.wmq.internal.WMQSession.
+   (WMQSession.java:282)
+   ...
+   
+   and on zOS side, the following error is seen:
+   +CSQX620E =SQ1A CSQXRESP System SSL error
+   598              channel        ????
+   598              connection host (ip address)
+   598              function 'gsk_secure_socket_read' RC=437
+   +CSQX228E =SQ1A CSQXRESP Listener unable to start channel,
+   599  channel
+   599  TRPTYPE=TCP INDISP=GROUP
+   .
+   Additional symptoms/keywords:
+   CSQX209E CSQX228E 5655R3600 5655W9700
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   This issue affects users of:
+   
+   - The WebSphere MQ v7.1 or 7.5 classes for JMS
+   - The WebSphere MQ v7.1 or 7.5 messaging provider inside
+   WebSphere Application
+   Server
+   - The WebSphere MQ v7.1 or 7.5 resource adapter
+   
+   who attempt to create a JMS connection and
+   session using a JMS connection factory which is configured to
+   use an SSL
+   connection
+   to a QSG with two active members, and are using SSLPEER
+   filtering
+   such that each queue manager in the QSG has a different
+   certificate and a different SSLPEER filter
+   
+   Platforms affected:
+   All Distributed (iSeries, all Unix and Windows) +Java +Java zOS
+   ****************************************************************
+   PROBLEM SUMMARY:
+   When an application tried to create an SSL secured JMS
+   connection and session to a QSG with two active members, the
+   MQRC_SSL_PEER_NAME_MISMATCH error was seen while creating the
+   session.
+   
+   This was because the attempt to create the session reused some
+   of the connection details from the parent connection, including
+   the SSLPEERNAME property of the connection. If the session
+   attempted connection to a different member of the group to the
+   parent connection, the the certificate used to secure the
+   connection did not match this cached SSLPEERNAME, and so the
+   connection was rejected.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The WebSphere MQ classes for JMS have been updated so that the
+   SSLPEERNAME property from a JMS connection is no longer
+   reused for any child JMS session when a queue sharing group is
+   used.
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+   Version    Maintenance Level
+   v7.5       7.5.0.4
+   v7.1       7.1.0.5
+   
+   The latest available maintenance can be obtained from
+   'WebSphere MQ Recommended Fixes'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037]
+   
+   If the maintenance level is not yet available information on
+   its planned availability can be found in 'WebSphere MQ
+   Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV46272
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ LIN X86 V7
+   
+   
+ * REPORTED COMPONENT ID
+   5724H7224
+   
+   
+ * REPORTED RELEASE
+   710
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2013-07-30
+   
+   
+ * CLOSED DATE
+   2013-10-30
+   
+   
+ * LAST MODIFIED DATE
+   2016-07-14
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ LIN X86 V7
+   
+   
+ * FIXED COMPONENT ID
+   5724H7224
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R710 PSY
+   UP

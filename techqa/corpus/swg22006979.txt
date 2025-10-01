@@ -1,0 +1,94 @@
+Title: IBM com.spss.psapi.core.ServerConnectionException: Failed to connect to server '<user>@<IPaddr>:<Port>' - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Running a C&DS job fails. When reviewing the C&DS job/job-step log (Modeler stream) the message above is seen. The stream contains no ODBC data sources. What else could be failing the Modeler Server connection?
+
+
+
+SYMPTOM
+ 
+
+Review the start time within Deployment Manager client for the job which was run. 
+Review the corresponding date/time portion of the Modeler Server log:
+(<modeler server/log/server_logging.log directory). 
+
+Within Deployment Manager Client the user assigned to the Modeler Server Credentials 
+(Defined within the Content Explorer/Resource Definitions/Credentials) of the 'General' tab of the C&DS job/Job-step should appear within the Modeler Server log when an attempt is made to start a session and authenticate. For example: 
+
+
+Accepted connection from ::ffff:9.10.69.146.:58065
+Login failed for user: <userA>
+-- OR --
+Accepted connection from ::ffff:9.10.69.146.:58364
+AEQMC0034I: Login succeeded for user: <userA> 
+
+ 
+
+Review this information to make a determination.
+
+
+CAUSE
+Password value assigned to the Credential within Deployment Manager Client was incorrect. 
+
+Ensure the that within Deployment Manager Client 'Content Explorer/Resource Definitions/Credentials) the defined credential has the appropriate password applied. 
+
+To set the password for the defined Credential within Deployment Manager Client, open up the Credential by double clicking. Retype the password again, selecting Finish/save. 
+
+Now, ensure the job is closed/saved. Open up the same job again within Deployment Manager Client. Test running the job again after updating the password. 
+
+
+
+DIAGNOSING THE PROBLEM
+To further diagnose what is occurring the following can be done. This will require stopping/starting Modeler Server. Users utilizing Modeler Server will be interrupted by this step. 
+
+- Close the job within Deployment Manager Client.
+
+- Stop the Modeler Server the job is using. <Modeler Server/17.0/ 
+./modelersrv.sh stop)
+
+- Update the file <Modeler Server directory/config/log4cxx.properties top 4 lines to read as follows: Enabling Modeler Trace). 
+
+
+# Logging defaults
+# log4j.rootLogger=INFO, MainLog, ConsoleLog
+# Use this line instead to enable the trace log
+log4j.rootLogger=TRACE, MainLog, TraceLog 
+
+
+- Start Modeler Server (for example <Modeler Server/17.0/ 
+./modelersrv.sh start 
+
+- Open the C&DS job and run the job again. 
+
+This will generate a trace file within the /log directory of Modeler Server. Additional Trace files will be generated as more operations are performed interacting with Modeler Server.
+server_tracing_2069.log for example. 
+
+
+More detailed information may be contained in this trace file related to the failure of the 
+C&DS job/job step as seen above. One example of this would be 
+
+
+TRACE SDLSession Session process started: 2069
+TRACE SDLSession Session ::ffff:9.10.69.146.:58065
+TRACE SDLUser login: <userA>
+TRACE SDLUser login: using pam
+TRACE SDLUser login: service name == modelerserver
+TRACE SDLUser do_auth_pam: pam_authenticate() == 7
+TRACE SDLUser Authentication failure
+TRACE SDLUser login: using unix
+TRACE SDLUser do_auth_unix: bad password
+TRACE SDLUser login: failed
+ERROR SDLSessionServer AEQMC0033E: Login failed for user: <userA>
+INFO SDLSessionServer.ClientError AEQMC0132I: E3051: Login failed for user: <userA> (<group>)
+TRACE SDLSession Session process ended: 2069
+
+
+
+RESOLVING THE PROBLEM
+Within Deployment Manager Client, Content Explorer. Find and update the credential being used for this C&DS job/job-step under Resource Definitions/Credentials. 
+Close the C&DS job (if open) and save upon closing. 
+Open the C&DS job and run it again. 
+Review job history for this job to determine if the issue is resolved.

@@ -1,0 +1,217 @@
+Title: IBM PK56484: ABN= 0C4 - 00000011 ,U=SYSOPR ,C=L8200.600.CFM -CSQERCA1,M=CSQGFRCV,LOC=CSQELPLM. CSQERCA1 + 0564 - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  After a stop qmgr issued;
+   09.46.07 STC77022  CSQY002I +MQTA QUEUE MANAGER STOPPING
+   .
+   .
+   09.47.18 STC77022  IEA794I SVC DUMP HAS CAPTURED:  583
+      583             DUMPID=019 REQUESTED BY JOB (MQTAMSTR)
+      583             DUMP TITLE=MQTA,ABN=0C4-00000011,U=SYSOPR
+   ,C=L8200.600.CFM
+      583
+   QERCA1,M=CSQGFRCV,LOC=CSQELPLM.CSQERCA1+0564
+   .
+   Dump Title: MQTA,ABN=0C4-00000011,U=SYSOPR  ,C=L8200.600.CFM
+                -CSQERCA1,M=CSQGFRCV,LOC=CSQELPLM.CSQERCA1+0564
+   .
+     Symptom             Description
+     -------             -----------
+     PIDS/5655L8200      Program id: 5655L8200
+     RIDS/CSQELPLM#L     Load module name: CSQELPLM
+     RIDS/CSQERCA1       Csect name: CSQERCA1
+     AB/S00C4            System abend code: 00C4
+     PRCS/00000011       Abend reason code: 00000011
+     REGS/0E01C          Register/PSW difference for R0E: 01C
+     REGS/0C564          Register/PSW difference for R0C: 564
+     RIDS/CSQGFRCV#R     Recovery routine csect name: CSQGFRCV
+   .
+   OTHER SERVICEABILITY INFORMATION
+   .
+     Date Assembled:          20050509
+     Module Level:            14.49
+     Subfunction:             CFM  CSQERCA1Read CAT
+   .
+   PSW: 07740000 80000000 00000000 3BAC240C
+   Instruction length: 06   Interrupt code: 0011
+   Failing instruction text: D31A5820 D104D20F D31C2010
+   Translation exception address: 00000000_7FFFF000
+   .
+   Breaking event address: 00000000_00000000
+   AR/GR 0-1    76F05030/00000003_00000100
+   00000000/00000000_76EB2168
+   AR/GR 2-3    00000000/00000000_7FFFF000
+   00000000/00000000_00000000
+   AR/GR 4-5    00000000/00000000_FFFFFFFF
+   00000000/00000000_2824ABF8
+   AR/GR 6-7    00000000/00000000_1DCB71B8
+   00000000/00000000_00001000
+   AR/GR 8-9    00000000/00000000_76EB21A4
+   00000000/00000000_00000000
+   AR/GR 10-11  00000000/00000000_000000A0
+   00000000/00000000_00000001
+   AR/GR 12-13  00000000/00000000_3BAC1EA8
+   00000000/00000000_76EB2030
+   AR/GR 14-15  00000000/00000000_BBAC23F0
+   00000000/00000000_00000000
+   .
+   The abend is in the expiry worker task when module csqiexp2 has
+   a loop to browse all the messages on a shared queue (and in that
+   process msgs which are expired are removed...).
+   The reason for the abend is that csqimges has passed csqerca1 a
+   zero shared queue token. The left word of this should contain an
+   eSCB ptr and from that that we obtain pSTRB - but in this
+   case it gets an invalid address of 7FFFF000 from low core and
+   tries to use it.
+   Expiry tasks are supposed to shut down when
+   Ianc_2.expiry.fEXP1_quit is set on (by CSQIESTP during STOP
+   processing - and it IS ON) and there are many checks in csqiexp2
+   for this flag (but NONE inside the loop browsing messages for a
+   shared queue)
+   Additional Symptoms:
+   During a shutdown of the queue manager, you can receive the
+   following abend:
+   .
+   TITLE=MP02,ABN=5C6-00C94510,U=SYSOPR  ,C=L8200.600.DMC
+   -CSQIMGES,M=CSQGFRCV,LOC=CSQILPLM.CSQIMGES+037A
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All users of WebSphere MQ for z/OS Version 6 *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Abends:                                 *
+   *                      0C4-00000011 at CSQERCA1+0564           *
+   *                      after STOP QMGR issued                  *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   During QMGR shutdown CSQECLOS closes ALL shared queues and the
+   Shared Queue Token is zeroed while CSQIMGES/CSQERCA1 is
+   executing in the expiry worker task CSQIEXP2. The Shared Queue
+   Token is then passed by CSQIMGES to CSQEMGE2 or CSQERCA1.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Changes have been made to CSQIMGES and CSQIEXP1 to end
+   processing when STOP QMGR has been issued.
+   000Y
+   CSQIEXP2
+   CSQIMGES
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK56484
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ Z/OS V6
+   
+   
+ * REPORTED COMPONENT ID
+   5655L8200
+   
+   
+ * REPORTED RELEASE
+   000
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2007-11-13
+   
+   
+ * CLOSED DATE
+   2007-12-20
+   
+   
+ * LAST MODIFIED DATE
+   2008-05-13
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UK32532
+   
+   
+
+MODULES/MACROS
+ *     CSQIEXP2 CSQIMGES
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ Z/OS V6
+   
+   
+ * FIXED COMPONENT ID
+   5655L8200
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R000 PSY UK32532 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK32532]
+   UP08/01/10 P F801
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

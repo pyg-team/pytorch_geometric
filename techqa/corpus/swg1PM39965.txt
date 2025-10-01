@@ -1,0 +1,166 @@
+Title: IBM PM39965: TITLE=CSQ1,ABN=5C6 00D10301 U=SYSOPR ,C=L8200.600.RLMC- CSQJOLGR,M=CSQJRE01,LOC=CSQJL002.CSQJR001+ 11/07/06 PTF PECHANGE - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  IEA794I SVC DUMP HAS CAPTURED:
+   DUMPID=001 REQUESTED BY JOB (CSQ1MSTR)
+   DUMP TITLE=CSQ1,ABN=5C6 00D10301 U=SYSOPR  ,C=L8200.600.RLMC-
+             CSQJOLGR,M=CSQJRE01,LOC=CSQJL002.CSQJR001+0A1A
+   *CSQV086E QUEUE MANAGER ABNORMAL TERMINATION REASON=00D96001
+   IEF450I CSQ1MSTR PROCSTEP CSQ1MSTR - ABEND=S6C6 U0000
+            REASON=00000000
+   .
+   This occurs when a failure occurs during backwards migration
+   processing, and an attempt to backout the current unit of work
+   is made. This requires a log-read cursor, but the current EB
+   already has a log-read cursor from prior restart processing,
+   and only one log-read cursor can be open at a time, hence the
+   abend occurs.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All users of WebSphere MQ for z/OS V6.       *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: ABEND 5C6-00D10301 issued by CSQJR001,  *
+   *                      and queue manager abends with reason    *
+   *                      00D96001.                               *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   A queue manager was migrated to MQ V701 but, due to
+   circumstances which have nothing to do with the subsequent
+   problems, the decision was made to migrate backwards
+   to return to V600.
+   When the V600 qmgr is started, an attempt is made to expand a
+   page data set that does not have a secondary space allocation
+   (or not enough dasd space to expand) and the expansion fails.
+   The backwards migration code tries to back out the work that has
+   been done up to failure point, but this failed with the
+   5C6-00D10301 (this occurred as CSQIRREQ tried to open a log-read
+   cursor, but the current EB already had one open from restart
+   processing).
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  UK41649 UK49586 UK58031 UK63189 UK64901 UK65882 UK68119
+   CSQRRPRC has been updated to close the read cursor before
+   broadcasting the end of restart.
+   000Y
+   CSQRRPRC
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM39965
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ Z/OS V6
+   
+   
+ * REPORTED COMPONENT ID
+   5655L8200
+   
+   
+ * REPORTED RELEASE
+   000
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   YesPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-05-24
+   
+   
+ * CLOSED DATE
+   2011-07-11
+   
+   
+ * LAST MODIFIED DATE
+   2011-09-01
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UK69619
+   
+   
+
+MODULES/MACROS
+ *     CSQRRPRC
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ Z/OS V6
+   
+   
+ * FIXED COMPONENT ID
+   5655L8200
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R000 PSY UK69619 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK69619]
+   UP11/08/19 P F108
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

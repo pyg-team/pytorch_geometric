@@ -1,0 +1,27 @@
+Title: IBM ARCS-SAP Adapter Agent installation failure - United States
+
+Text:
+IGI ARCS SAP adapter agent TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ ARCS-SAP Adapter Agent installation failure due to the lack of a SAP Role 
+
+SYMPTOM
+Following the instructions at the Knowledge Center link: 
+
+https://www.ibm.com/support/knowledgecenter/SSGHJR_5.2.0/com.ibm.igi.doc/CrossIdeas_Topics/ARCS/ARCS_SAP_Agent/Installation_Procedure.html?lang=en [https://www.ibm.com/support/knowledgecenter/SSGHJR_5.2.0/com.ibm.igi.doc/CrossIdeas_Topics/ARCS/ARCS_SAP_Agent/Installation_Procedure.html?lang=en]
+
+in order to install IGI ARCS-SAP Adapter Agent, it is not possible to complete step 8:
+"In the SU01 transaction, create a user of type “Communication” and then assign it to the SAP role Z_CCS_REMOTE"
+
+
+CAUSE
+The role Z_CCS_REMOTE does not exist in the SAP system, because it has not been provided in the ARCS-SAP Adapter Agent installation package. Then it is not possible to assign it to the new user of type "Communication", and the ARCS-SAP Adapter Agent cannot be used.
+
+
+RESOLVING THE PROBLEM
+Extract the content of attached zip file Z_CCS_ARCS.zip. Follow the instructions in the document "Insert New role into sap.docx" in order to create the new role with structure definition contained in the file Z_CCS_ARCS.SAP 
+
+ 
+
+Z_CCS_ARCS.zip [/support/docview.wss?uid=swg21981417&aid=2]Z_CCS_ARCS.zip [/support/docview.wss?uid=swg21981417&aid=1]

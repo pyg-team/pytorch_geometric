@@ -1,0 +1,88 @@
+Title: IBM Supportability Q&A about IBM Notes and macOS High Sierra (OS X 10.13.x) - United States
+
+Text:
+ NEWS
+
+ABSTRACT
+ This technote contains questions and answers pertaining to installing and running IBM Notes on Apple's macOS High Sierra (OS X 10.13.x). 
+
+CONTENT
+ 
+
+** For related technotes about other OS X versions, refer to the Index of Supportability Q&A technotes for Notes and OS X and Windows (technote 1998488) [http://www.ibm.com/support/docview.wss?uid=swg21998488] ** 
+
+Q1. Does IBM Notes support Apple's macOS High Sierra (aka OS X 10.13)? 
+Yes. As of October 25th, 2017 (30 days after High Sierra General Availability) IBM supports OS X 10.13. Please review known install issue covered under the Known Issues section of this document. 
+
+IBM recommends applying the latest Fix Pack and Interim Fix available to benefit from the latest features and enhancements. 
+
+As was announced in Q4 2015 in the following technical document, Notes 9.0.1 Mac 32-bit is not supported with newer Mac operating systems, including macOS High Sierra: Statement of Direction: Recommended client for Mac 64-bit is Notes 9.0.1 64-bit [http://www.ibm.com/support/docview.wss?uid=swg21971524] 
+
+
+Q2. Are there any install issues specific to APFS? 
+Yes, there is an issue with install listed below that can occur on APFS file systems. Macs with SSD drives will be converted to APFS upon upgrading to OS X High Sierra; there is no option to prevent this. 
+
+If Notes 9.0.1 64-bit is installed before the upgrade, things will be fine. However, the first attempt to install Notes on a clean machine with APFS after upgrading to macOS High Sierra can result in install failure with the below error message. The second install attempt will succeed. So to work around the issue, you must run the installer a second time. (SPR HPXGAR67YY) 
+ * "File /Applications/Notes.app/Contents/MacOS/rcp/rcplauncher not found. Provisioning process failed to launch or was terminated before status could be determined."
+
+
+To address this issue, an updated 9.0.1 Mac 64-bit installer is slipstreamed available as of 9 March 2018. See Q5 for details. 
+
+
+Q3. What versions of Notes are supported on macOS High Sierra?  * More to come on supported Notes versions after testing and development completes in October.
+
+ * IBM Client Application Access (ICAA) is also supported. ICAA for Mac 64-bit is a lightweight solution that helps clients who want to move to a browser-based interface for email (IBM SmartCloud Notes web, IBM Verse, or iNotes), while continuing to work with existing Notes and Domino applications on-premises.
+
+
+Q4. I'm already at Notes 9.0.1 64-bit, where can I download 9.0.1 Interim Fix 14 or higher? 
+See this document [http://www.ibm.com/support/docview.wss?uid=swg21657963] for a list of fixes and download links for Notes 9.0.1 64-bit Interim Fixes. 
+
+
+Q5. Where can I download the latest IBM Notes 9.0.1 64-bit (revised March 2018) or the Mac 64-bit API Toolkit (released in 2015)? 
+
+Notes 9.0.1 64-bit was released in 2015 and then revised on 9 March 2018 to address an OS X 10.13 install issue. It is available from IBM Passport Advantage Online [http://www.ibm.com/software/howtobuy/passportadvantage/pao_customers.htm], Partner downloads, and in IBM Connections Cloud for SmartCloud Notes customers (see below table for more information) on availability and part #'s. 
+
+Description Passport Advantage 
+Part Number Comments IBM NOTES 9.0.1 MAC 64 BIT English CNQY7EN Revised 3/9/2018 IBM Notes 9.0.1 Mac 64 BIT Simplified Chinese and Traditional Chinese CNQY8ML Revised 3/9/2018 IBM Notes 9.0.1 Mac 64 BIT Japanese and Korean CNQY9ML Revised 3/9/2018 IBM Notes 9.0.1 Mac 64 BIT French, Brazilian Portuguese and Spanish CNQZ0ML Revised 3/9/2018 IBM Notes 9.0.1 Mac 64 BIT Italian and German CNQZ1ML Revised 3/9/2018 IBM Notes 9.0.1 Mac 64 BIT Danish and Dutch CNQZ2ML Revised 3/9/2018 IBM Notes 9.0.1 Mac 64 BIT Finnish, Norwegian and Swedish CNQZ3ML Revised 3/9/2018 IBM Notes 9.0.1 Mac 64 BIT Polish and Russian CNQZ4ML Revised 3/9/2018 IBM Notes 9.0.1 Mac 64 BIT Portuguese and Turkish CNQZ5ML Revised 3/9/2018 
+IBM Connections Cloud and IBM SmartCloud Notes customers can download Notes 9.0.1 64-bit. See the following document and use the part numbers above: FAQ: Software downloads for IBM SmartCloud Notes customers [http://www.ibm.com/support/docview.wss?uid=swg21674504]. 
+
+In addition to Passport advantage or partner downloads, anyone can download the toolkit from the IBM Software Download site as follows: 
+
+API Toolkit Download Instructions: 
+1. Go to the IBM C API Toolkit for Notes/Domino 9.0.1 API Download [https://www.ibm.com/marketing/iwm/tnd/nochargesearchquery.jsp?pgel=lnav] 
+2. Navigate through to download the following: 
+
+IBM C API Toolkit for Notes/Domino 9.0.1 Mac 64 bit English - C_API_TKT_NOTDOM901_64b_MACEN.zip(18 MB) 
+
+
+Q6. Are there any known issues? 
+In addition to the APFS-related install issue covered above in Q2, note the following known issues: 
+ * Running Java 8 update 152 or later can cause the Notes client to be unresponsive. This issue was addressed in IF13. Download the latest interim fix to address this issue. Notes 64-bit 9.0.1 IF13 RUYAASUQ66 Fixed problem of IBM Notes 9.0.1 (64-bit) on MAC not responsive after installing Java 8 Update 152 or later (technote 2012665 [http://www.ibm.com/support/docview.wss?uid=swg22012665]) 
+
+ * Running Java 9, Notes will not launch. Notes does not support Java 9x at this time. Please downgrade to Java 8x until Notes supports this release.
+
+HPXGATDA7Z: IBM Notes fail to start with Oracle 9.0.1 ( technote 2011888 [http://www.ibm.com/support/docview.wss?uid=swg22011888]) 
+
+IBM Notes 9.0.1.x 32-bit - Not supported, triggers one or more of the following issues:  * "Failed to launch platform provisioning. Refer to User/<current user./Library/Application Support/IBM Notes Data/Expeditor/Applications/logs/rcplauncher.log for more information." 
+ * "The Installation Failed. The installer encountered an error that caused the installation to fail. Contact the software manufacturer for assistance." 
+ * “This package is incompatible with this version of OS X and may fail to install” 
+ * “IBM Notes” cannot be opened. This application requires the legacy Java SE 6 runtime which is unavailable for this version of OS X.
+
+
+
+Q7. Can I install Notes 32-bit 9.0.1.x or earlier on a Mac running macOS High Sierra? 
+No. IBM Notes 9.0.1.x 32-bit will not function on macOS High Sierra. 
+
+
+Q8. If I am running Notes 32-bit, what steps can I take to work with macOS High Sierra? 
+Install Notes 9.0.1 64-bit + 9.0.1 Interim Fix 14 or higher for Mac. IBM Notes 9.0.1 64-bit for Mac also requires Oracle JRE 1.8 or higher. 
+
+Instructions to move from Notes 32-bit to 64-bit  * Step 1: Uninstall 32-bit Notes 9.0.1. The 32-bit version must be uninstalled first. Attempting to install 64-bit will prompt users to uninstall 32-bit version of Notes first. To uninstall, run the uninstall program using either the 9.0.1 32-bit package or the 9.0.1 64-bit package, which contains an uninstall program.
+
+ * Step 2: Install 64-bit Notes 9.0.1: You can install Notes either before upgrading to macOS High Sierra or after.
+
+ * Step 3: Install 64-bit Notes 9.0.1 Interim Fix 14 or higher
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Messaging Applications IBM Client Application Access

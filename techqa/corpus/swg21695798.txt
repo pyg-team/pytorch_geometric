@@ -1,0 +1,31 @@
+Title: IBM Action required for IBM Integration Bus Hypervisor Edition V9.0, WebSphere Message Broker Hypervisor Edition V8.0 and WebSphere Message Broker Hypervisor Edition V7.0 for the GNU C library (glibc) vulnerability (CVE-2015-0235) - United States
+
+Text:
+GHOST FLASH (ALERT)
+
+ABSTRACT
+ IBM Integration Bus Hypervisor Edition V9.0, WebSphere Message Broker Hypervisor Edition V8.0 and WebSphere Message Broker Hypervisor Edition V7.0 require customer action for the GNU C library (glibc) vulnerability that has been referred to as “GHOST”. 
+
+CONTENT
+IBM Integration Bus Hypervisor Edition V9.0 and WebSphere Message Broker Hypervisor Editions V8.0 and V7.0 ship with versions of Red Hat Enterprise Linux (RHEL) Server that are vulnerable to the GNU C library (glibc) vulnerability (CVE-2015-0235).
+
+IBM Integration Bus Hypervisor Edition V9.0 and WebSphere Message Broker Hypervisor Edition V8.0 ship with Red Hat Enterprise Linux (RHEL) Server 6.2.
+
+WebSphere Message Broker Hypervisor Edition V7.0 ships with Red Hat Enterprise Linux (RHEL) Server 5.5.
+
+Remediation: 
+
+IBM strongly recommends that you should contact Red Hat to obtain fixes and install fixes for Red Hat Enterprise Linux (RHEL) Server 6.2 or Red Hat Enterprise Linux (RHEL) Server 5.5 as applicable.
+
+RELATED INFORMATION
+ RedHat: [https://rhn.redhat.com/errata/RHSA-2015-0090.html]
+Redhat Remediation: [https://access.redhat.com/articles/1332213]
+A Japanese translation is available [http://www.ibm.com/support/docview.wss?uid=swg21696878]
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration WebSphere Message Broker Hypervisor Edition Linux 8.0, 7.0 
+PRODUCT ALIAS/SYNONYM
+ WMB MB WebSphere Message Broker IBM Integration Bus IIB IBMIB

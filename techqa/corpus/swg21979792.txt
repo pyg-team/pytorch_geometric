@@ -1,0 +1,53 @@
+Title: IBM Unable to configure Web GUI Users - United States
+
+Text:
+Webgui users; Webgui authentication TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Unable to configure any users after installed Web GUI 
+
+SYMPTOM
+User authentication does not work in the configuration process after 
+installing the Web GUI.
+
+
+RESOLVING THE PROBLEM
+For Web GUI 8.1 need to run configuration tool after installation to create users. 
+
+Starting the OMNIbus Web GUI configuration tool will helps to configure the Web GUI.
+
+Before you begin:
+If you encounter an issue while running the OMNIbus Web GUI Configuration Tool you can reference thencwConfigUI_<timestamp>.log file for further information. The log file is located in the omnibus_webgui home directory under /configtools/logs.
+For example:/opt/IBM/netcool/omnibus_webgui/configtool/logs. 
+
+Procedure:
+1.Navigate to the configuration tool directory :WEBGUI_HOME/configtool/<$PLATFORM>
+2.Run the ncwConfigUI command.
+
+Example for UNIX/Linux :
+1.Navigate to WEBGUI/HOME/configtool/linux.gtk.x86_64
+2.Run the following command:
+./ncwConfigUI -WASUserID <WAS_ADMIN_ID> -WASPassword <WAS_ADMIN_PASSWORD>
+
+For Windows:
+1.Navigate to C:\IBM\netcool\omnibus_webgui\configtool\win32.win32.x86_64
+2.Run the following command:
+ncwConfigUI.exe -WASUserID <WAS_ADMIN_ID> -WASPassword <WAS_ADMIN_PASSWORD>
+
+What to do next : 
+
+ * If you specified the option to create default users and groups, use the credentials of those users to log in. The initial password for default user accounts, for examplencoadmin andncouser, is the same as the WebSphere Server admin password. 
+ * If you did not specify the option to create users and groups, log in as the default Jazz for Service Management user. The credentials of this user were specified during the installation.
+
+
+Note: If an incorrect user name or password are entered into the OMNIbus Web GUI Configuration Tool an error message will be displayed when you create default users, or when the WebSphere Application Server is restarted. To correct this you can rerun the OMNIbus Web GUI Configuration Tool and enter the correct credentials. RELATED INFORMATION
+ Supplied users and groups [https://www.ibm.com/support/knowledgecenter/SSSHTQ_8.1.0/com.ibm.netcool_OMNIbus.doc_8.1.0/webtop/wip/concept/web_adm_webtopsuppliedusersandgroups.html?lang=en]
+Start the OMNIbus Web GUI Configuration Tool [http://www.ibm.com/support/knowledgecenter/SSSHTQ_8.1.0/com.ibm.netcool_OMNIbus.doc_8.1.0/webtop/wip/task/web_ins_im_configuimode.html]
+
+
+ 
+
+HISTORICAL NUMBER
+ 09293
+67C
+760

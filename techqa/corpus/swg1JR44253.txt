@@ -1,0 +1,179 @@
+Title: IBM JR44253: SOAPACTION NEEDS TO BE SEND BY SOAPCLIENT CLASS WHEN USING SOAP1.1 - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Secured Soap webservices are supported by using following
+   solution:
+   1. copy $TOP/samples/webservices/webservices.clients.jar to
+   $TOP/jars folder
+   2. update runtime classpath using configureEnv.sh or
+   updateRtClasspath.sh
+   3. invoke webservices using the following script:
+   
+   
+       var endpointUrl =
+   http://<ipaddress>:<port>/ProductWS_HTTPRouter/services/Prod u
+   c t P o rt";
+       var requestXmlStr = "<?xml version='1.0'
+   encoding='UTF-8'?>";
+       requestXmlStr = requestXmlStr + "<soapenv:Envelope
+   xmlns:soapenv='http://schemas.xmlsoap.org/soap/envelope/'> ";
+       requestXmlStr = requestXmlStr + "<soapenv:Header> ";
+       requestXmlStr = requestXmlStr + " <wsse:Security
+   xmlns:wsse='http://docs.oasis-open.org/wss/2004/01/oasis-200401-
+   wss-wssecurity-secext-1.0.xsd' soapenv:mustUnderstand='1'> ";
+       requestXmlStr = requestXmlStr + " <wsse:UsernameToken> " ;
+       requestXmlStr = requestXmlStr + "
+   <wsse:Username>cusadmin</wsse:Username> ";
+       requestXmlStr = requestXmlStr + "
+   <wsse:Password>cusadmin</wsse:Password> ";
+       requestXmlStr = requestXmlStr + " </wsse:UsernameToken> ";
+       requestXmlStr = requestXmlStr + " </wsse:Security> ";
+       requestXmlStr = requestXmlStr + "</soapenv:Header> ";
+       requestXmlStr = requestXmlStr + "<soapenv:Body> ";
+       ... ...
+       requestXmlStr = requestXmlStr + "</soapenv:Body> ";
+       requestXmlStr = requestXmlStr + "</soapenv:Envelope> ";
+       var soapClientConstructor =
+   createJavaConstructor("com.ibm.pim.services.clients.SoapClient")
+   ;
+       var client = runJavaConstructor(soapClientConstructor );
+       var soapClientMethod =
+   createJavaMethod("com.ibm.pim.services.clients.SoapClient",
+   "invokeService", "java.lang.String", "java.lang.String",
+   "boolean");
+       var resp = runJavaMethod(client, soapClientMethod,
+   endpointUrl, requestXmlStr, false);
+   
+   In current SoapClient implementation the SoapAction is not sent
+   properly, which is required when using SOAP1.1
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  n/a
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * All Master Data Management Collaboration Server              *
+   * implementations using the sample SoapClient program are      *
+   * affected by this issue                                       *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * The sample SoapClient program shipped with Master Data       *
+   * Management Collaboration Server doesn't work for SOAP 1.1    *
+   * version since the parameter SoapAction was not being passed  *
+   * from the SoapClient.                                         *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * IBM recommends that customers facing the issue reported by   *
+   * this APAR apply Master Data Management Collaboration Server  *
+   * version 9.1.0-FP11 to gain resolution to this problem        *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A fix for this problem has been included in Master Data
+   Management Collaboration Server version  9.1.0-FP11.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR44253
+   
+   
+ * REPORTED COMPONENT NAME
+   MDM SERVER FOR
+   
+   
+ * REPORTED COMPONENT ID
+   5724V5100
+   
+   
+ * REPORTED RELEASE
+   910
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-10-01
+   
+   
+ * CLOSED DATE
+   2013-05-31
+   
+   
+ * LAST MODIFIED DATE
+   2013-05-31
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   MDM SERVER FOR
+   
+   
+ * FIXED COMPONENT ID
+   5724V5100
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * RA00 PSY
+   UP

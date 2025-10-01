@@ -1,0 +1,146 @@
+Title: IBM IV66381: IBM TIVOLI NETCOOL/OMNIBUS GATEWAY FOR HP OPENVIEW SERVICECENTER / SERVICEMANAGER USERGUIDE NOT SHOWING CORRECT VERSION SUPPORT - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  IBM Tivoli Netcool/OMNIbus Gateway for HP OpenView ServiceCenter
+   / ServiceManager UserGuide not showing support for HP
+   ServiceManager 9.3 and HP Connect-It 9.4 on the following pages:
+   
+   
+   http://www-01.ibm.com/support/knowledgecenter/SSSHTQ/omnibus/gat
+   eways/hpservicecenter/wip/reference/hpscgw_summary.html?lang=en [http://www-01.ibm.com/support/knowledgecenter/SSSHTQ/omnibus/gateways/hpservicecenter/wip/reference/hpscgw_summary.html?lang=en]
+   
+   and
+   
+   http://www-01.ibm.com/support/knowledgecenter/SSSHTQ/omnibus/gat
+   eways/hpservicecenter/wip/reference/hpscgw_supportedversions.htm [http://www-01.ibm.com/support/knowledgecenter/SSSHTQ/omnibus/gateways/hpservicecenter/wip/reference/hpscgw_supportedversions.htm]
+   l?lang=en
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * All users of the IBM Tivoli Netcool/OMNIbus Gateway for HP   *
+   * ServiceCenter / ServiceManager.                              *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * The guide needs to be updated to clarify on which versions   *
+   * of the HP software the gateway is supported.                 *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * The updated guide will be uploaded to the Netcool/OMNIbus    *
+   * Knowledge Center during the next interim release.            *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The Gateway target row of the "Summary" table will be updated to
+   state the following support:
+   
+   
+   HP ServiceManager 9.3 running on HP Connect-It 9.4 and earlier
+   versions of both software.
+   
+   Note:  The gateway has not been tested on later versions of
+   either software.
+   
+   The Gateway version column of the "Supported versions and
+   platforms" table will be updated to state the following support:
+   
+   HP ServiceManager 9.3 running on HP Connect-It 9.4 and earlier
+   versions of both software.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV66381
+   
+   
+ * REPORTED COMPONENT NAME
+   HP SRVDESK GATE
+   
+   
+ * REPORTED COMPONENT ID
+   5724O73HP
+   
+   
+ * REPORTED RELEASE
+   100
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-10-29
+   
+   
+ * CLOSED DATE
+   2014-11-13
+   
+   
+ * LAST MODIFIED DATE
+   2014-11-13
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+Publications Referenced SC14763403 FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

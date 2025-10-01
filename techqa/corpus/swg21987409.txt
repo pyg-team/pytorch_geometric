@@ -1,0 +1,222 @@
+Title: IBM Impact of HADR db2diag.log messages - United States
+
+Text:
+DB2; db; HADR; db2diag.log TECHNOTE (FAQ)
+
+QUESTION
+ What is the impact of the following entries in the db2diag.log?
+
+
+
+2016-05-23-23.22.52.962778-240 I159583626A459 LEVEL: Warning
+
+PID : 16449544 TID : 9174 PROC : db2sysc 0
+
+INSTANCE: abcd NODE : 000 DB : TADDM
+
+HOSTNAME: abcde
+
+EDUID : 9174 EDUNAME: db2hadrp.0.1 (TADDM) 0
+
+FUNCTION: DB2 UDB, High Availability Disaster Recovery,
+
+hdrHandleRemoteConn, probe:30160
+
+MESSAGE : TCP socket connection accepted. Remote Host: xx.xx.xx.xxx
+
+Port: 4697
+
+
+
+2016-05-23-23.23.37.957348-240 I159584086A548 LEVEL: Error
+
+PID : 16449544 TID : 9174 PROC : db2sysc 0
+
+INSTANCE: abcd NODE : 000 DB : TADDM
+
+HOSTNAME: abcde
+
+EDUID : 9174 EDUNAME: db2hadrp.0.1 (TADDM) 0
+
+FUNCTION: DB2 UDB, High Availability Disaster Recovery,
+
+hdrGetTcpMessage, probe:36800
+
+MESSAGE : ZRC=0x8780013D=-2021654211=HDR_ZRC_GENERIC_ERROR
+
+"generic HADR error code"
+
+DATA #1 : <preformatted>
+
+Remote connection is not following correct msg format
+
+
+
+2016-05-23-23.23.37.958079-240 I159584635A532 LEVEL: Error
+
+PID : 16449544 TID : 9174 PROC : db2sysc 0
+
+INSTANCE: abcd NODE : 000 DB : TADDM
+
+HOSTNAME: abcde
+
+EDUID : 9174 EDUNAME: db2hadrp.0.1 (TADDM) 0
+
+FUNCTION: DB2 UDB, High Availability Disaster Recovery, hdrHandleHsAck,
+
+probe:39960
+
+MESSAGE : ZRC=0x8780013D=-2021654211=HDR_ZRC_GENERIC_ERROR
+
+"generic HADR error code"
+
+DATA #1 : <preformatted>
+
+HADR handshake with remote host failed.
+
+
+
+2016-05-23-23.23.37.958678-240 I159585168A566 LEVEL: Warning
+
+PID : 16449544 TID : 9174 PROC : db2sysc 0
+
+INSTANCE: abcd NODE : 000 DB : TADDM
+
+HOSTNAME: abcde
+
+EDUID : 9174 EDUNAME: db2hadrp.0.1 (TADDM) 0
+
+FUNCTION: DB2 UDB, High Availability Disaster Recovery,
+
+hdrHandleHsErrors, probe:30545
+
+MESSAGE : ZRC=0x8780013D=-2021654211=HDR_ZRC_GENERIC_ERROR
+
+"generic HADR error code"
+
+DATA #1 : <preformatted>
+
+HADR handshake with Unknown (0) failed. continue with old connection
+
+
+
+2016-05-23-23.23.37.959277-240 I159585735A376 LEVEL: Severe
+
+PID : 16449544 TID : 9174 PROC : db2sysc 0
+
+INSTANCE: abcd NODE : 000 DB : TADDM
+
+HOSTNAME: abcde
+
+EDUID : 9174 EDUNAME: db2hadrp.0.1 (TADDM) 0
+
+FUNCTION: DB2 UDB, High Availability Disaster Recovery,
+
+hdrEduAcceptEvent, probe:20290
+
+
+
+2016-05-23-23.23.37.961422-240 I159586112A459 LEVEL: Warning
+
+PID : 16449544 TID : 9174 PROC : db2sysc 0
+
+INSTANCE: abcd NODE : 000 DB : TADDM
+
+HOSTNAME: abcde
+
+EDUID : 9174 EDUNAME: db2hadrp.0.1 (TADDM) 0
+
+FUNCTION: DB2 UDB, High Availability Disaster Recovery,
+
+hdrHandleRemoteConn, probe:30160
+
+MESSAGE : TCP socket connection accepted. Remote Host: xx.xx.xx.xx
+
+Port: 6036
+
+
+
+2016-05-23-23.23.37.965151-240 I159586572A596 LEVEL: Error
+
+PID : 16449544 TID : 9174 PROC : db2sysc 0
+
+INSTANCE: abcd NODE : 000 DB : TADDM
+
+HOSTNAME: abcde
+
+EDUID : 9174 EDUNAME: db2hadrp.0.1 (TADDM) 0
+
+FUNCTION: DB2 UDB, High Availability Disaster Recovery,
+
+hdrGetTcpMessage, probe:37010
+
+MESSAGE : ZRC=0x8780013D=-2021654211=HDR_ZRC_GENERIC_ERROR
+
+"generic HADR error code"
+
+DATA #1 : <preformatted>
+
+Closing new connection that didn't send enough data.
+
+There is an existing Primary-Standby connection.
+
+
+
+2016-05-23-23.23.37.965977-240 I159587169A532 LEVEL: Error
+
+PID : 16449544 TID : 9174 PROC : db2sysc 0
+
+INSTANCE: abcd NODE : 000 DB : TADDM
+
+HOSTNAME: abcde
+
+EDUID : 9174 EDUNAME: db2hadrp.0.1 (TADDM) 0
+
+FUNCTION: DB2 UDB, High Availability Disaster Recovery, hdrHandleHsAck,
+
+probe:39960
+
+MESSAGE : ZRC=0x8780013D=-2021654211=HDR_ZRC_GENERIC_ERROR
+
+"generic HADR error code"
+
+DATA #1 : <preformatted>
+
+HADR handshake with remote host failed.
+
+
+
+2016-05-23-23.23.37.966668-240 I159587702A566 LEVEL: Warning
+
+PID : 16449544 TID : 9174 PROC : db2sysc 0
+
+INSTANCE: abcd NODE : 000 DB : TADDM
+
+HOSTNAME: abcde
+
+EDUID : 9174 EDUNAME: db2hadrp.0.1 (TADDM) 0
+
+FUNCTION: DB2 UDB, High Availability Disaster Recovery,
+
+hdrHandleHsErrors, probe:30545
+
+MESSAGE : ZRC=0x8780013D=-2021654211=HDR_ZRC_GENERIC_ERROR
+
+"generic HADR error code"
+
+DATA #1 : <preformatted>
+
+HADR handshake with Unknown (0) failed. continue with old connection 
+
+CAUSE
+External to DB2
+
+ANSWER
+These diag.log messages indicate that there is an unrelated program
+trying to contact the ports used by DB2 for HADR, like a ping program
+or some network monitoring program, or some other. This used to cause
+confusion to DB2 and we ended up dropping a good HADR connection with
+the standby. We have enhanced to limit the impact and not let such
+event to damage the good HADR connection. It is still good to track down the source of this program
+and hopefully not be generating such noise, but it is outside of control of DB2
+We can only protect ourselves and not let such event cause damage to the database service.

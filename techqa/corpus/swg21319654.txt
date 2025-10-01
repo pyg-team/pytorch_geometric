@@ -1,0 +1,60 @@
+Title: IBM Resolving 0c4 Abend in EDIIOS When Running Job EDIJDAT1 During Install of WebSphere® Data Interchange 3.3 - United States
+
+Text:
+0C4 Abend EDIIOS WDI 3.3 Data Interchange WebSphere® EDIJDAT1 Install Step 16 Installation SEDILMD1 APF Exception Protection TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ You are converting from V32 to V33. You are on step 16 - Importing Default
+Data into Version 3.3 
+
+You are receiving an abend: 
+
+A system abend 0C4 reason code X'4' occurred in module EDIIOS program 
+EDIIOS at offset X'8C'. 
+
+13.14.34 JOB00659 IEA995I SYMPTOM DUMP OUTPUT 553 
+553 USER COMPLETION CODE=4039 REASON CODE=00000000 
+553 TIME=13.14.34 SEQ=00153 CPU=0000 ASID=007D 
+553 PSW AT TIME OF ERROR 078D1400 97E9230E ILC 2 INTC 0D 
+553 NO ACTIVE MODULE FOUND 
+553 NAME=UNKNOWN 
+553 DATA AT PSW 17E92308 - 00181610 0A0D58D0 D00498EC 
+553 AR/GR 0: A4301EDE/84000000 1: 00000000/84000FC7 
+553 2: 00000000/0007D7D8 3: 00000000/00040004 
+553 4: 00000000/17E46EF0 5: 00000000/0007D36C 
+553 6: 00000000/00000000 7: 00000000/254622A8 
+553 8: 00000000/0007D7D8 9: 00000000/0007EEDE 
+553 A: 00000000/0007D36C B: 00000000/17E92238 
+553 C: 00000000/00074B58 D: 00000000/0007FFD8 
+553 E: 00000000/97E45FDC F: 00000002/00000000 
+553 END OF SYMPTOM DUMP 
+13.14.34 JOB00659 +IDI0001I Fault Analyzer V8R1M0 (UK35659 2008/04/24) invoked by IDIXCEE using SYS1.PARMLIB(IDICNF02) 
+13.14.38 JOB00659 +IDI0044I Current fault is a duplicate of fault ID F00173 in history file SYS2.IDI.HIST - the duplicate count is 
+1 
+13.14.38 JOB00659 +IDI0053I Fault history file entry suppressed 
+13.14.38 JOB00659 +IDI0002I Module EDIIOS, program EDIIOS, offset X'8C': Abend S0C4-X'4' (Protection Exception) 
+
+CAUSE
+SEDILMD1 loadlib in the APF List
+
+RESOLVING THE PROBLEM
+There are two ways to resolve this issue: 
+
+A. Verify that the Sedilmd1 loadlib is not in the APF list by running the following command: 
+
+/D Prog,APF,Dsname=Sedilmd1. 
+
+ 
+
+It should return the following:
+PLEX01 2008262 09:55:55.09 -ro plex02,D PROG,APF,DSNAME=EDI.V3R3M0.SEDILMD1 
+
+PLEX02 2008262 09:55:55.09 CSV452I DATA SET EDI.V3R3M0.SEDILMD1 IS NOT IN THE APF List
+
+If you do not get the above message then you will need to remove the SEDILMD1 From the APF List For information on removing the module from the APF List please refer to the following URL:
+
+http://www.ibm.com/support/knowledgecenter/SSLTBW_1.13.0/com.ibm.zos.r13.ieag100/d3prog.htm [http://www.ibm.com/support/knowledgecenter/SSLTBW_1.13.0/com.ibm.zos.r13.ieag100/d3prog.htm]
+
+If you do get the above message then verify that the SEDILMD1 loadlib is in the steplib of the job EDIJDAT1
+
+B. Apply ptf UK43320 [http://www.ibm.com/support/docview.wss?uid=swg1PK79950].

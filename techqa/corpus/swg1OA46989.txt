@@ -1,0 +1,160 @@
+Title: IBM OA46989: ABENDU29A IN DSIPSSND AT OFFSET X'320' - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  NetView took an ABENDU29A in DSIPSSND, PTF level UA66231, at
+   offset x'320'. The U29A occurs when NetView attempts to send
+   out data but the previous send is still in progress. This
+   happened because of a loss of session with the terminal that
+   resulted in the LOSTERM exit being driven.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All users of Tivoli NetView for z/OS         *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: If the session between a terminal       *
+   *                      (emulator) and a NetView operator       *
+   *                      station task (OST) is lost during       *
+   *                      certain presentation services           *
+   *                      processing, the task can take a user    *
+   *                      666 (x'29A') abend.                     *
+   *                      Additional search arguments:            *
+   *                      ABEND0666 ABENDU0666 ABEND29A           *
+   *                      ABENDU29A                               *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   When session loss occurs while an OST is in transition between
+   the NetView logon panel (after logon credentials have been
+   entered and verified) and the command facility (NCCF) screen,
+   the presentation services code handling the transition
+   encounters a failure to send data on the (now terminated)
+   session but is left in a state that appears as though not
+   all data has been sent and another send should be done.  When
+   the next send is requested, the code determines that a prior
+   send is still in progress and takes the x'29A' user abend.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Because, first and foremost, session loss (LOSTERM) processing
+   sets the OST up for termination, presentation services send
+   processing (part DSIPSSND) is being changed to detect task
+   termination and fail a send request before the progress of
+   any prior send is even examined, thus preventing the abend.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   OA46989
+   
+   
+ * REPORTED COMPONENT NAME
+   NETVIEW FOR Z/O
+   
+   
+ * REPORTED COMPONENT ID
+   5697NV600
+   
+   
+ * REPORTED RELEASE
+   10B
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-01-27
+   
+   
+ * CLOSED DATE
+   2015-08-20
+   
+   
+ * LAST MODIFIED DATE
+   2015-10-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    OA48682 [http://www-01.ibm.com/support/docview.wss?uid=swg1OA48682] UA78706
+   
+   
+
+MODULES/MACROS
+ *  DSIPSSND
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   NETVIEW FOR Z/O
+   
+   
+ * FIXED COMPONENT ID
+   5697NV600
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R10B PSY UA78706 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UA78706]
+   UP15/09/09 P F509
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

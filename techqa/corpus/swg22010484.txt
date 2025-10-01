@@ -1,0 +1,75 @@
+Title: IBM Exception when writing out eDiscovery search results to Content Platform Engine - United States
+
+Text:
+eDiscovery connection reset; java.net.SocketTimeoutException: Read timed out; G0020E.EXTERNAL_ERROR_MESSAGE TECHNOTE (TROUBLESHOOTING)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ English 
+
+PROBLEM(ABSTRACT)
+ When using eDiscovery to search, once the search results return they are written to a folder on Content Platform Engine. During this process, when using CPE and CSS 5.2.1.3 or higher, if the search results are very large (i.e > 50K or more) the following shows up for an eDiscovery 
+user;
+
+Error Code
+
+DYRS1019E
+
+The system cannot connect to the server. The server might be down or 
+there might be a network problem. HTTP error code: 0, error text: 
+Unable to load /EDMClient/Result.do?stkn=6546507634776835302 status: 0 
+Work with your site's system administrator to verify that all servers 
+are started and that no network problems exist 
+
+SYMPTOM
+eDiscovery search results fails to write to a folder on FileNet P8 Content Engine.
+
+
+CAUSE
+IBM Content Search Services configuration parameter or possibly a Loadbalancer time-out configuration.
+
+ENVIRONMENT
+Content Platform Engine, Content Search Services 5.2.1.3 or higher using eDiscovery as the search client.
+
+DIAGNOSING THE PROBLEM
+Review the CSS search-server traceX.log (where X refers to a number, typically 0 for the most current) and look for the exception very similar to this;
+
+
+<sequence>176</sequence>
+<logger>com.ibm.es.nuvo.inyo.util.InyoResultsSocketWriter</logger>
+<level>SEVERE</level>
+<class>com.ibm.es.nuvo.inyo.util.InyoResultsSocketWriter</class>
+<method>handleErrorInClient</method>
+<thread>92</thread>
+<message>IQQG0020E java.net.SocketException: Connection reset
+Causes of the problem:
+IQQG0020E java.net.SocketException: Connection reset
+
+also look in the IBM FileNet P8 p8_server_error.log for the exception similar to this;
+Caused by: ExtendedException: G0020E.EXTERNAL_ERROR_MESSAGE
+at com.ibm.es.nuvo.common.ExtendedException.<init>(ExtendedException.java:109)
+at com.ibm.es.nuvo.common.ExtendedException.<init>(ExtendedException.java:146)
+at com.ibm.es.nuvo.common.ExtendedException.<init>(ExtendedException.java:134)
+at com.ibm.ecmts.client.api.GeneralClientException.<init>(GeneralClientException.java:56)
+at com.ibm.ecmts.client.infra.Response.readAndParse(Response.java:215)
+at com.ibm.ecmts.client.infra.Response.readAndParse(Response.java:212)
+at com.ibm.ecmts.client.infra.Response.getStatusCode(Response.java:133)
+at com.ibm.ecmts.client.api.Query.execute(Query.java:171)
+at com.filenet.engine.cbrspi.cssimpl.CSECascadeQuery.callNonStreamingResultRangeSearch(CSECascadeQuery.java:524)
+... 19 more
+Caused by: java.net.SocketTimeoutException: Read timed out
+
+
+
+RESOLVING THE PROBLEM
+This could be related to a load balancer timeout setting, but likely it is the result of the following IBM Content Search Services configuration parameter that needs to be changed from true to false; 
+
+-enableConcurrentSearchOptimization. 
+
+In ECM Text Search version 5.2.1.3, a query can be run on different segments of a text collection concurrently when this parameter is set to true. When the parameter is set to true, the query runs concurrently for XML queries if the system is not already using more threads for concurrent search than are defined in the maxConcurrentSearchThreadsPerQuery parameter. When set to false it does not.
+
+Do the following on all CSS Search servers; 
+
+ 1. stop the CSS search server service 
+ 2. from the CSS search server /bin directory, run the following command;
+    configTool set -system -enableConcurrentSearchOptimization false 
+ 3. re-start the CSS search service and attempt to re-produce the problem

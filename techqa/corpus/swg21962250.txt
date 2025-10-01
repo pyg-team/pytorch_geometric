@@ -1,0 +1,42 @@
+Title: IBM Netcool Omnibus 8.1 Web GUI のインストールに失敗します - United States
+
+Text:
+install; webgui; prerequisite ; dashboard; 日本語 TECHNOTE(トラブルシューティング)
+
+問題(概要)
+ Web GUI のインストールを試行中、パッケージグループのインストール段階で以下のエラーメッセージを表示し、失敗します。
+"IBM Dashboard Application Service Hubのバージョンが見つかりません。3.1.0.3以降のバージョンが必要です。" 
+
+解決方法
+Web GUI のインストール文書は前提ソフトウェアが導入済みであることを前提に作られています。 
+
+WebGUI 8.1.0 に必要な前提ソフトウェアは WAS 8.5.01 及び Jazz for Service management 1.1.0.3 です。 
+
+Linux 及び AIX について必要なパーツ番号、インストールの順序の詳細は以下のようになります。 
+
+
+
+AIX
+ 1.  IBM Tivoli Netcool OMNIbus 8.1 Core – AIX 64bit Multilingual (CN05GML )
+ 2.  注: これをインストールしてなかったからといって Web GUI のインストールが完了しないわけではなく、Object Server がインストールされず、データソースの設定が出来ません。 
+ 3.  IBM WebSphere Application Server V8.5.0.1 for Jazz for Service Management for AIX Multilingual (CIES5ML )
+ 4.  この手順の途中で Installation Manager はWAS 8.0.5 及び WAS 8.5.01 を表示しますが、WAS 8.5.0.1 を選択します。 
+ 5.  Jazz for Service Management V1.1.0.3 for AIX Multilingual (CIXA1ML ) 
+ 6.  この手順の途中で Installation Manager はJazz Repository 内の２つの以下の必要なソフトウェアパッケージをリストします。これらの両方のパッケージはインストール対象として同時に選ぶ必要があります。 これらを順番にインストールしてはいけません。  1. Jazz for Service Management extension for IBM WebSphere 8.5
+     2. IBM Dashboard Application Services Hub 3.1.0.3
+    
+    
+ 7.  IBM Tivoli Netcool OMNIbus 8.1 WebGUI – AIX 64bit Multilingual (CN1FEML ) 
+
+
+LINUX
+ 1.  IBM Tivoli Netcool OMNIbus 8.1 Core – Linux 64bit Multilingual (CN05EML ) 
+ 2.  注: これをインストールしてなかったからといって Web GUI のインストールが完了しないわけではなく、Object Server がインストールされず、データソースの設定が出来ません。 
+ 3.  IBM WebSphere Application Server V8.5.0.1 for Jazz for Service Management for Linux Multilingual (CIES6ML ) 
+ 4.  class="ibm-alpha-list"> この手順の途中で Installation Manager はWAS 8.0.5 及び WAS 8.5.01 を表示しますが、WAS 8.5.0.1 を選択します。 
+ 5.  Jazz for Service Management V1.1.0.3 for Linux Multilingual (CIXA2ML )
+ 6.  この手順の途中で Installation Manager はJazz Repository 内の２つの以下の必要なソフトウェアパッケージをリストします。これらの両方のパッケージはインストール対象として同時に選ぶ必要があります。 これらを順番にインストールしてはいけません。  1. Jazz for Service Management extension for IBM WebSphere 8.5
+     2. IBM Dashboard Application Services Hub 3.1.0.3
+    
+    
+ 7.  IBM Tivoli Netcool OMNIbus 8.1 WebGUI – Linux 64bit Multilingual (CN1FCML )

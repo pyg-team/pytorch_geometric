@@ -1,0 +1,295 @@
+Title: IBM PJ37393: UNABLE TO HANDLE AUTOINCREMENT TIMEOUT, CAUSING HUNG THREAD CONDITION ON WAS - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Description of Problem (full details):
+   Customers current eForms 4.0.2.004 + one -offs recently deployed
+   in P8 4.5.x environment has been generating the following hung
+   thread conditions on WAS server :
+   ----------
+   [1/16/10 15:12:20:198 CST] 00000003 ThreadMonitor W   WSVR0605W:
+   Thread "WebContainer : 11" (00000039) has been active for 651029
+   milliseconds and may be hung.  There is/are 3 thread(s) in total
+   in the server that may be hung.
+       at java.net.SocketInputStream.socketRead0(Native Method)
+       at
+   java.net.SocketInputStream.read(SocketInputStream.java:140)
+       at
+   java.io.BufferedInputStream.fill(BufferedInputStream.java:229)
+       at
+   java.io.BufferedInputStream.read(BufferedInputStream.java:248)
+       at
+   org.apache.commons.httpclient.HttpParser.readRawLine(HttpParser.
+   java:77)
+       at
+   org.apache.commons.httpclient.HttpParser.readLine(HttpParser.jav
+   a:103)
+       at
+   org.apache.commons.httpclient.HttpConnection.readLine(HttpConnec
+   tion.java:1078)
+       at
+   org.apache.commons.httpclient.HttpMethodBase.readStatusLine(Http
+   MethodBase.java:2182)
+       at
+   org.apache.commons.httpclient.HttpMethodBase.readResponse(HttpMe
+   thodBase.java:1946)
+       at
+   org.apache.commons.httpclient.HttpMethodBase.processRequest(Http
+   MethodBase.java:2653)
+       at
+   org.apache.commons.httpclient.HttpMethodBase.execute(HttpMethodB
+   ase.java:1087)
+       at
+   org.apache.commons.httpclient.HttpClient.executeMethod(HttpClien
+   t.java:643)
+       at
+   org.apache.commons.httpclient.HttpClient.executeMethod(HttpClien
+   t.java:497)
+       at
+   com.filenet.eforms.core.queries.HttpQueryImpl.handleMethod(HttpQ
+   ueryImpl.java:211)
+       at
+   com.filenet.eforms.core.queries.HttpQueryImpl.autoIncrement(Http
+   QueryImpl.java:120)
+       at
+   com.filenet.eforms.core.queries.QueryImpl.execute(QueryImpl.java
+   :95)
+       at
+   com.filenet.eforms.core.datamodel.CellImpl.doAutoIncrement(CellI
+   mpl.java:385)
+       at
+   com.filenet.eforms.core.datamodel.FormImpl.doAutoIncrements(Form
+   Impl.java:465)
+       at
+   com.filenet.eforms.api.Form.doAutoIncrements(Form.java:749)
+       at
+   com.filenet.eforms.toolkit.server.util.form.LaunchFormProcessor.
+   finishPage(LaunchFormProcessor.java:340)
+       at
+   com.filenet.eforms.apps.server.ui.info.form.FormInfoPage.onStart
+   Page(FormInfoPage.java:159)
+       at
+   com.filenet.wcm.toolkit.server.base.WcmController.broadcastStart
+   PageEvent(WcmController.java:4749)
+       at
+   com.filenet.wcm.toolkit.server.base.WcmController.initializeModu
+   lesWork(WcmController.java:3815)
+       at
+   com.filenet.wcm.toolkit.server.base.WcmController.initializeModu
+   les(WcmController.java:3748)
+       at
+   com.filenet.wcm.toolkit.server.base.WcmController.initializeModu
+   les(WcmController.java:3625)
+       at
+   com.filenet.wcm.toolkit.server.base.WcmController.handleEvent(Wc
+   mController.java:3336)
+       at
+   com.filenet.wcm.apps.server.controller.WcmWorkplaceController.ha
+   ndleEvent(WcmWorkplaceController.java:635)
+       at
+   com.filenet.wcm.toolkit.server.base.WcmController.handleEvent(Wc
+   mController.java:3268)
+       at
+   com.ibm._jsp._LaunchForm._jspService(_LaunchForm.java:162)
+       at
+   com.ibm.ws.jsp.runtime.HttpJspBase.service(HttpJspBase.java:98)
+       at
+   javax.servlet.http.HttpServlet.service(HttpServlet.java:831)
+       at
+   com.ibm.ws.webcontainer.servlet.ServletWrapper.service(ServletWr
+   apper.java:1530)
+       at
+   com.ibm.ws.webcontainer.servlet.ServletWrapper.service(ServletWr
+   apper.java:1470)
+       at
+   com.ibm.ws.webcontainer.filter.WebAppFilterChain.doFilter(WebApp
+   FilterChain.java:131)
+       at
+   com.filenet.ae.toolkit.server.servlet.filter.ThreadLocalCleanupF
+   ilter.doFilter(ThreadLocalCleanupFilter.java:50)
+   ------------
+   Customer has confirmed internal DNS issue as cause with
+   HTTPLookup AutoIncrement hanging, however customer is looking
+   for some type of timeout setting to prevent this in the future.
+   
+   How long has the problem been occurring (recent changes)? Since
+   updated P8 env to 4.5.1
+   
+   Can the problem be replicated on an internal system?  No
+   
+   Is there a workaround? (Yes
+    describe, or No): No
+   
+   What is the impact to the customer/system?: Once hung threads
+   are encountered need to restart JVM on which application
+   resides.
+   
+   =======================
+   
+   1. Were the IBM knowledge bases searched prior to opening the
+   CRM, e.g., Wellspring, IBM Forums, etc? (Yes or No): yes
+   
+   2. Was the MustGather information collected, and is that
+   available for L3 Engineering? (Yes or No): yes
+   
+   3. How long has the problem been occurring (describe any recent
+   changes)? Since Sat 1/16
+   
+   4. Is there a workaround? (Yes
+    describe, or No): No
+   
+   5. What is the impact to the customer/system?: Having of App
+   Server JVM , requiring a App server restart
+   
+   6. Can the problem be replicated on an internal system? (Yes or
+   No) : No
+   By Who (L2 Support, L3 Engineering, etc.)
+   
+   
+   7. What is the current hypothesis from L2 Support on the cause
+   of the problem? Issue with customer eForm auto increment
+   function:
+   ----
+   at
+   com.filenet.eforms.core.datamodel.CellImpl.doAutoIncrement(CellI
+   mpl.java:385)
+       at
+   com.filenet.eforms.core.datamodel.FormImpl.doAutoIncrements(Form
+   Impl.java:465)
+       at
+   com.filenet.eforms.api.Form.doAutoIncrements(Form.java:749)
+   
+   8. Are there any similar or related Defects/APARs? (Yes
+    ID# or No): No
+   
+   9. Configuration/Environment:
+   Server OS:
+   Client OS:
+   Database:
+   Network:
+   App Server:
+   Browser:
+   Note if non US Language:
+   Other Product Component Versions:
+   Web Environment: (Yes or No)
+   WAS 6.1.0.23/ Linux
+   CE 4.5.002
+   PE 4.5.1/Windows 2003-SR1
+   eForms 4.0.2.004+one -offs
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * Users of P8eF who perform lookups from their forms.          *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * Unable to handle timeout causing hung thread condition on    *
+   * WAS.                                                         *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Upgrade to 4.0.2.7-P8eF-FP007 or higher.                     *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fixed in 4.0.2.7-P8eF-FP007.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PJ37393
+   
+   
+ * REPORTED COMPONENT NAME
+   PROCESS ENGINE
+   
+   
+ * REPORTED COMPONENT ID
+   5724R7607
+   
+   
+ * REPORTED RELEASE
+   450
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-02-04
+   
+   
+ * CLOSED DATE
+   2010-05-18
+   
+   
+ * LAST MODIFIED DATE
+   2010-05-18
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   PROCESS ENGINE
+   
+   
+ * FIXED COMPONENT ID
+   5724R7607
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R402 PSY
+   UP

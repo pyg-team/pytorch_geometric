@@ -1,0 +1,44 @@
+Title: IBM Tivoli Monitoring 6.3.0 Fix Pack 2 (6.3.0-TIV-ITM-FP0002) - United States
+
+Text:
+ DOWNLOADABLE FILES
+
+ABSTRACT
+ This is a cumulative fix pack for IBM Tivoli Monitoring version 6.3.0 
+
+DOWNLOAD DESCRIPTION
+This is a cumulative fix pack for IBM Tivoli Monitoring version 6.3.0.
+
+
+This Fix pack consists of the following files:
+
+
+
+Fix pack file name Description 6.3.0-TIV-ITM_TMV-Linuxx-FP0002.tar.gz Contains the IBM Tivoli Monitoring base product components, Performance Analyzer, the Warehouse Proxy and Summarization and Pruning agents for Linux® x86, as well as application support for the base agents and a selected set of IBM Tivoli Monitoring 6.x based distributed monitoring agents. 6.3.0-TIV-ITM_TMV-Linuxx64-FP0002.tar.gz Contains the IBM Tivoli Monitoring base product components, Performance Analyzer, the Warehouse Proxy and Summarization and Pruning agents for Linux® x86_64, as well as application support for the base agents and a selected set of IBM Tivoli Monitoring 6.x based distributed monitoring agents. 6.3.0-TIV-ITM_TMV-Linuxz-FP0002.tar.gz Contains the IBM Tivoli Monitoring base product components, Performance Analyzer, the Warehouse Proxy and Summarization and Pruning agents for Linux® on System z, as well as application support for the base agents and a selected set of IBM Tivoli Monitoring 6.x based distributed monitoring agents. 6.3.0-TIV-ITM_TMV-Unix-FP0002.tar.gz Contains the IBM Tivoli Monitoring base product components, Performance Analyzer, the Warehouse Proxy and Summarization and Pruning agents for Unix®, as well as application support for the base agents and a selected set of IBM Tivoli Monitoring 6.x based distributed monitoring agents. 6.3.0-TIV-ITM_TMV-Windows-FP0002.zip Contains the IBM Tivoli Monitoring base product components, Performance Analyzer, the Warehouse Proxy and Summarization and Pruning agents for 32-bit Windows®, as well as application support for the base agents and a selected set of IBM Tivoli Monitoring 6.x based distributed monitoring agents. 6.3.0-TIV-ITM_TMV-Windows64-FP0002.zip Contains the IBM Tivoli Monitoring base product components, Performance Analyzer, the Warehouse Proxy and Summarization and Pruning agents for 64-bit Windows®, as well as application support for the base agents and a selected set of IBM Tivoli Monitoring 6.x based distributed monitoring agents. 6.3.0-TIV-ITM_TMV-Agents-FP0002.tar.gz Contains the IBM Tivoli Monitoring base agents. This includes the following: Agentless Monitor (multiplatforms), i5/OS® agent, Windows OS agent, Linux OS agent, UNIX OS agent, UNIX Logs agent, IBM Tivoli Universal Agent. 6.3.0-TIV-ITM_TMV-Tools-FP0002.tar.gz Contains the IBM Tivoli Monitoring 5.1.2 Migration Toolkit, the Distributed Monitoring Upgrade Toolkit and the Tivoli Event Integration event synchronization component. 6.3.0-TIV-ITM_TMV-Agent-Reports-FP0002.tar.gz Contains the IBM Tivoli Monitoring OS Agents Reports. 6.3.0-TIV-ITM_TMV-ITPA-Common-FP0002.tar.gz IBM Tivoli Performance Analyzer Reports and Domain Definitions Multiplatform, Multilingual. 6.3.0-TIV-ITM_TMV-Dashboards-Authorization_Policy-FP0002.zip Contains the IBM Tivoli Monitoring Dashboards for Servers and Authorization Policy Components Assembly. 6.3.0-TIV-ITM_TMV-LP-FP0002-UC.tar.gz Contains the IBM Tivoli Monitoring Language Pack for all platforms
+Note: Updated April 14, 2014 to fix expired java certificates 
+
+The following levelset PTFs represent the equivalent maintenance level for the corresponding z/OS components which can be ordered via ShopzSeries: 
+
+UA70675 -- MGMT SERVER DS (Code) 
+UA70678 -- MGMT SERVER DS (Data) 
+UA70676 -- ITMS/ENGINE 1 of 2 
+UA70677 -- ITMS/ENGINE 2 of 2 
+
+Created/Revised by Date of Creation/Update Summary of Changes MBK 2013/05/16 Document created DMH 2013/09/13 Document updated DMH 2014/04/14 Refreshed Language Pack INSTALLATION INSTRUCTIONS
+Refer to the README file located in Fix Central for additional information. Also refer to the Installation and Setup Guide below.
+
+URL LANGUAGE SIZE(Bytes) Installation and Setup Guide [http://pic.dhe.ibm.com/infocenter/tivihelp/v61r1/topic/com.ibm.itm.doc_6.3fp2/install/itm_install.htm] English 999999999 
+DOWNLOAD PACKAGE
+
+
+Fix Central
+
+ Fix Central is a new way to acquire fixes and, for this fix, it is the only option for downloading. The two main differences are that the FTP option will be replaced by HTTP and you will need to use an IBM registered ID to acquire the files, which allows us to update you on any critical issues with the fix. Privacy is always maintained. 
+
+Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options 
+What is Fix Central(FC)? [https://www.ibm.com/support/fixcentral/help?page=swfaqs] 6.3.0-TIV-ITM-FP0002 13 Sep 13 English 999999999 FC [http://www.ibm.com/support/fixcentral/swg/quickorder?parent=ibm~Tivoli&product=ibm/Tivoli/IBM+Tivoli+Monitoring&platform=All&release=6.3.0&function=fixId&fixids=6.3.0-TIV-ITM-FP0002] [ ] 
+PRODUCT ALIAS/SYNONYM
+ ITM 
+
+ [/support/docview.wss?uid=swg24035402&aid=1]Problems (APARS) fixed [/support/docview.wss?uid=swg24035402&aid=2]Problems (APARS) fixed
+IV39406, IV40953, IV40954, IV41466, IV42158, IV42382, IV42750, IV43015, IV43893, IV44422, IV45374, IV46489, IV47196, IV47197, IV47198, IV47199, IV47273, IV47276, IV47286, IV47302, IV47326, IV47538, IV47540, IV47553, IV47559, IV47568, IV47569, IV47572, IV47580, IV47581, IV47585, IV47590, IV47591, IV47592, IV47619, IV47621, IV47622, IV47631, IV47632, IV47633, IV47634, IV47637, IV47642, IV47780, IV47782, IV47786, IV47788, IV47789, IV47790, IV47806, IV47808, IV47810, IV47811, IV47813, IV47815, IV47817, IV47818, IV47820, IV47890, IV47891, IV47954, IV47955, IV37224, IV38322, IV39758, IV39761, IV39763, IV39764, IV39765, IV39766, IV39767, IV39775, IV39778, IV39779, IV39780, IV39781, IV39784, IV39787, IV39788, IV39789, IV39790, IV39791, IV39792, IV39793, IV39794, IV39795, IV40052, IV40059, IV40120, IV40121, IV40122, IV40126, IV40131, IV40161, IV40259, IV41210, IV41466, IV41606, Inhertited security APARs: IV27192, IV30187, IV40115, IV40116

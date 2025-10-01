@@ -1,0 +1,44 @@
+Title: IBM FileNotFoundException seen in Portal startup after CF upgrade - United States
+
+Text:
+CF; upgrade; FileNotFoundException TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+After performing a CF upgrade on Portal you see the following in the Portal startup...
+Caused by: java.io.FileNotFoundException:
+/opt/IBM/WebSphere/PortalServer/version/installed.xml (A file or
+directory in the path name does not exist.)
+
+SYMPTOM
+No runtime issues; just this error in the logs:
+
+[4/14/14 14:10:17:872 CDT] 00000013 SystemOut O FileNotFoundException. 
+[4/14/14 14:10:17:872 CDT] 00000013 SystemOut O obj_ii == null when read entity.
+[4/14/14 14:10:17:877 CDT] 00000013 SystemOut O History file not found: /opt/IBM/WebSphere/PortalServer/version/histories/IBM WebSphere Portal Server V8/history.xml
+[4/14/14 14:10:17:877 CDT] 00000013 SystemOut O obj_hi == null when read entity.
+[4/14/14 14:10:17:943 CDT] 00000013 ProductServic W com.ibm.wps.services.product.ProductServiceImpl init EJPFD0050W: An exception occurred while checking installation history, no information about interim fixes and fix packs is available!
+com.ibm.websphere.product.IMVersionHelper$IMVersionHelperException: java.io.FileNotFoundException: /opt/IBM/WebSphere/PortalServer/version/installed.xml (A file or directory in the path name does not exist.)
+
+...
+
+Caused by: java.io.FileNotFoundException: /opt/IBM/WebSphere/PortalServer/version/installed.xml (A file or directory in the path name does not exist.)
+at java.io.FileInputStream.open(Native Method)
+
+
+CAUSE
+IIM copies these files from the IIM install root to the Portal install root during the CF upgrade. However, these files are copied at the end of the CF upgrade. Earlier in the CF upgrade IIM starts Portal and therefore these error are thrown. 
+
+DIAGNOSING THE PROBLEM
+This is just a timing issue. Upon subsequent Portal restarts these errors will not be there because the files will exist and the startup will read them and you should see something like this: 
+
+
+[4/22/14 11:23:44:886 CDT] 00000011 ProductServic I com.ibm.wps.services.product.ProductServiceImpl findInstalledFixes EJPFD0051I: The following fix packs have been installed:
+8.0.0.1 CF11 (com.ibm.websphere.PORTAL.SERVER.v80-8.0.1.20140324_2328)
+8.0.0.1 (com.ibm.websphere.PORTAL.WCM.v80-8.0.1.20130123_1756)
+[4/22/14 11:23:44:912 CDT] 00000011 ProductServic I com.ibm.wps.services.product.ProductServiceImpl findInstalledFixes EJPFD0062I: The following fixes have been installed:
+IFPM90774 (PM90774 - PageBuilder2 theme has error after migration to 
+8.0.0.1)
+
+
+RESOLVING THE PROBLEM
+Restart the Portal Server and verify the startup is successful.

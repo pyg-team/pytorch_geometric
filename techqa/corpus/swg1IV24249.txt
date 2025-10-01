@@ -1,0 +1,147 @@
+Title: IBM IV24249: FAILOVER MODEL CONTENT NOT REPLICATED CORRECTLY AFTER DISCOVERY SCOPE WAS REDUCED - United States
+
+Text:
+  FIXES ARE AVAILABLE
+IBM Tivoli Network Manager IP 3.9.0 Fix Pack 3, 3.9.0-TIV-ITNMIP-FP0003 [http://www-01.ibm.com/support/docview.wss?uid=swg24033501]
+IBM Tivoli Network Manager IP 3.9.0 Fix Pack 4, 3.9.0-TIV-ITNMIP-FP0004 [http://www-01.ibm.com/support/docview.wss?uid=swg24034724]
+IBM Tivoli Network Manager IP Edition 3.9.0 Fix Pack 5, 3.9.0-TIV-ITNMIP-FP0005 [http://www-01.ibm.com/support/docview.wss?uid=swg24037809]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  On a failover setup with shared NCIM, after running the
+   following steps, it caused the backup server to have more
+   entities than the primary in the ncimCache.entityData table:
+   Follow steps:
+   1. Restarted processes on both server
+   2. Reduced the scope of discovery and reran full discovery on
+   primary server.
+   3. Check model's ncimCache.entityData number of entities
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * All ITNM 3.9 Users                                           *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * On a failover setup with shared NCIM,  backup server to have *
+   * more                                                         *
+   * entities than the primary in the ncimCache.entityData table: *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * | fix pack | 3.9.0-ITNMIP-FP0002                             *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  There are multiple problems resolved under this ticket.
+   (1) Deletion of implicit entities from model do not propagate to
+   the gateway
+   (2) Deletion of an entity in the primary model, in
+   non-replicating failover
+   (a) fails to delete any implicit entities (eg ipEndPoints) in
+   the backup ncimCache
+   (b) Does not propagate deletions to the backup gateway
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV24249
+   
+   
+ * REPORTED COMPONENT NAME
+   NC/PREC DISCOVY
+   
+   
+ * REPORTED COMPONENT ID
+   5724O52DS
+   
+   
+ * REPORTED RELEASE
+   390
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-07-03
+   
+   
+ * CLOSED DATE
+   2012-07-18
+   
+   
+ * LAST MODIFIED DATE
+   2012-07-18
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   NC/PREC DISCOVY
+   
+   
+ * FIXED COMPONENT ID
+   5724O52DS
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R390 PSN
+   UP
+   
+   
+ * R390 PSY
+   UP

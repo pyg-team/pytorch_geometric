@@ -1,0 +1,66 @@
+Title: IBM Configuring Rational Asset Manager to use Lotus Domino LDAP - United States
+
+Text:
+LDAP; Domino; authentication PRODUCT DOCUMENTATION
+
+ABSTRACT
+ IBM Rational Asset Manager can integrate with Lightweight Directory Access Protocol (LDAP) repositories to perform user authentication, retrieve user information, and leverage group bindings. The following steps describe how to configure Rational Asset Manager to use Lotus Domino as an LDAP repository. 
+
+CONTENT
+These instructions were tested on the following configuration: 
+
+ * IBM WebSphere Application Server Network Deployment, Version 7.0.0.17 
+ * IBM Rational Asset Manager, Version 7.5.1 
+ * IBM DB2 Enterprise Server Edition, Version 9.7 
+ * IBM Lotus Domino Server, Version 8.5.3
+
+
+Prerequisite: Install Rational Asset Manager to use file-based authentication. To learn more about installing Rational Asset Manager, see Installing and upgrading Rational Asset Manager [http://publib.boulder.ibm.com/infocenter/ramhelp/v7r5m1/topic/com.ibm.ram.installguide.doc/topics/c_overview.html]. 
+
+Installing Rational Asset Manager to use file-based authentication 
+1. Use the following URL to start the Rational Asset Manager server setup application: http:// hostname : port /ram.setup/wizard/main/index.jsp. 
+2. In the Authentication type list, select File (Standalone Custom Registry). Do not select LDAP. 
+3. Use the server setup application to deploy the applications and to configure the Rational Asset Manager database and the Rational Team Concert database. Accept all of the default values supplied by the server setup application. To learn more about using the server setup application on WebSphere Application Server, see Deploying the server applications manually on WebSphere Application Server [http://publib.boulder.ibm.com/infocenter/ramhelp/v7r5m1/topic/com.ibm.ram.installguide.doc/topics/t_install_ram_was_main.html] and Deploying and configuring application files by using the server setup application [http://publib.boulder.ibm.com/infocenter/ramhelp/v7r5m1/topic/com.ibm.ram.installguide.doc/topics/t_configure_setup_asst.html]. 
+
+
+
+Follow these instructions to configure Rational Asset Manager to use Lotus Domino LDAP authentication.  * Changing authentication from file-based to LDAP 
+ * Testing the integration between Lotus Domino LDAP and Rational Asset Manager
+
+
+
+
+Changing the authentication from file-based to LDAP  1.  Log in to the Rational Asset Manager web client as a repository administrator. 
+ 2.  Click Administration. In the Repository Administration sidebar, click Configuration. 
+ 3.  In the Custom User Registry section, in the Administrator ID field, type the LDAP user ID to use to manage the repository. 
+ 4.  Click Configure, and then complete the form to configure the relationship between Rational Asset Manager and the LDAP registry schema. To learn more about configuring Rational Asset Manager to use LDAP, see Configuring for LDAP integration [http://publib.boulder.ibm.com/infocenter/ramhelp/v7r5m1/topic/com.ibm.ram.doc/topics/t_ldap.html]. 
+ 5.  Select the Use a Custom User Registry check box, and then click Save. 
+ 6.  In the Repository Administration sidebar, click Repository Administrators. Then, click Add Administrators. 
+ 7.  Type the LDAP username to use as the Rational Asset Manager repository administrator, and then click Search. Select the user ID, and then click Add. 
+ 8.  In a different web browser instance, use the following URL to open the internal Rational Team Concert server: http://hostname:port/ramjazz. 
+ 9.  Click User Management. In the User Management sidebar, click Active Users. Edit the user ID so that it is the LDAP user name to use as the Rational Asset Manager repository administrator, and then click Save. 
+ 10. In the same web browser, use the following URL to log on to the WebSphere administrative console: http://hostname:port/ibm/console. 
+ 11. In the sidebar, expand Security and then click Global security. In the User account repository section, select Standalone LDAP registry from the Available realm definitions list, and then click Set as current. Click Apply, and then click Save. 
+ 12. In the sidebar, expand Applications, expand Application types, and then click WebSphere enterprise applications. 
+ 13. In the Detail Properties section for ramjazz_war, click Security role to user/group mapping. Select the JazzAdmins role, and then click Map Users. 
+ 14. In the User realm list, select the address of the LDAP server to use. Click Search and then search for the LDAP username to use as the Rational Asset Manager repository administrator. Click OK, and then click Save. 
+ 15. Restart WebSphere Application Server. 
+ 16. Start the Rational Asset Manager server setup application: http://hostname:port/ram.setup/wizard/main/index.jsp. Ignore any error messages related to LDAP that are displayed. 
+ 17. Under Lifecycle management settings, click Edit. 
+ 18. In the Jazz Administrator ID and Project Area Administrator ID fields, type the LDAP username to use as the Rational Asset Manager repository administrator. Click Configure server. 
+ 19. Click Finish.
+
+
+
+
+Testing the integration between Lotus Domino LDAP and Rational Asset Manager  1.  Log in to the Rational Asset Manager web client as the repository administrator, using the LDAP username. 
+ 2.  Click Administration. 
+ 3.  In the Repository Administration sidebar, click Communities. Click New Community. Type a name for the community, and then click Save. 
+ 4.  Open the new community. On the Users page, click Add User. 
+ 5.  Type a username, select the Search company registry check box, and then click Search. 
+ 6.  On the Users page, click New User Group. Next to Public group, click Create. 
+ 7.  On the Bind a User Group to External Registry page, type a valid group name in the search field and then click Search. If the integration is working correctly, the group IDs are displayed. 
+ 8.  In the Repository Administration sidebar, click Master Lifecycles. 
+ 9.  Click New Master Lifecycle. 
+ 10. If Java is not enabled in the web browser, enable Java. 
+ 11. From the Workflow list, select Business Solution. If the integration is working correctly, the diagram of the Business Solution workflow is displayed.

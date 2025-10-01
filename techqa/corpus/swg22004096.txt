@@ -1,0 +1,16 @@
+Title: IBM Why does the OMNITool behave differently in the Event Viewer from the AEL? - United States
+
+Text:
+WebGUI; command tool; Event Viewer ping; Event Viewer traceroute TECHNOTE (FAQ)
+
+QUESTION
+ Why is there a need to deploy a .bat file for the OMNITool in the Event Viewer, whereas the Active Event List does not require this?
+
+
+CAUSE
+In the Java-based Active Event List (AEL) when a command line tool is used the associated command is immediately executed (e.g. a putty window is opened).
+
+In the Java-free Event Viewer from v8.1.0.9 onwards, when a command line tool is used the associated command is NOT immediately executed, and the .bat file is saved to the system prior to being executed.
+
+ANSWER
+Recent modifications to browsers have meant that there is less support for plugins and command access to local systems is blocked. The current solution is 'Javaless' which means it requires the extra steps.

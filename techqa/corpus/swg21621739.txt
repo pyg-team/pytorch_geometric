@@ -1,0 +1,24 @@
+Title: IBM Why cannot IBM Content Analytics detect the code page correctly? - United States
+
+Text:
+ICA; CCA; OEE TECHNOTE (FAQ)
+
+QUESTION
+ I use IBM Content Analytics with Enterprise Search (ICAwES).
+I use Windows File System crawler whose automatic code page detection is enabled in order to crawl Shift-JIS encoded documents.
+Sometimes the crawler detects the code page incorrectly when the documents contain several characters only, as a result, the summary is garbled.
+Why cannot ICAwES detect the code page correctly? 
+
+CAUSE
+Automatic code page detection is not exact science but heuristic process. Therefore there is no exact rules to detect as Shift_JIS.
+
+ANSWER
+Generally, the more characters with natural language the document has, the more correctly ICAwES can detect the code page. 
+
+In addition, for instance, in case of Shit_JIS, the byte sequence '81 42' (Ideographic Full Stop in hex code) helps ICAwES to detect the code page more accurately.
+
+If you do not have any tolerance of such mis-detection, consider applying either of the work around(s) below.
+
+
+ * Disable automatic code page detection and specify Shift_JIS explicitly if all documents are Shift-JIS encoded. 
+ * Make sure that all documents are UTF-8 encoded.

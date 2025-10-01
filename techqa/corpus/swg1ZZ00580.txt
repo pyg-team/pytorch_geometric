@@ -1,0 +1,154 @@
+Title: IBM ZZ00580: SCCM SUBSCRIPTION PUT REST API DOES NOT "PUT" ANY UPDATED RATE VALUES INTO THE DATABASE. - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+ DIRECT LINK TO FIX
+2.5.0-CSI-ICO-FP0003 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FIBM+SmartCloud+Orchestrator&fixids=2.5.0-CSI-ICO-FP0003&source=SAR]
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  SmartCloud Cost Management v2.1.0.5 integration with ICO 2.5
+   FP1, the Subscription REST API (PUT) does not work.
+   The standard configuration script calls
+   <SCCM_HOME>/bin/postconfig/configure_ico_offerings.sh, which
+   executes curl to call the Subscription PUT REST API - yet doing
+   so does not update the database with desired rate values.
+   1) The default script as shipped specifies "curl --stderr
+   /dev/null"
+   which hides all the error msgs.
+   2) By changing to use instead "curl -v" better messages
+   actually show up.
+   The WLP SCCM log file shows for each Subscription PUT request:
+   [4/21/16 16:10:36:061 CEST] 000000aa
+   com.ibm.ws.channel.ssl.internal.
+   SSLHandshakeErrorTracker     E CWWKO0801E: Unable to initialize
+   SSL connection. Unauthorized access
+   was denied or security settings have expired. Exception is
+   javax.net.ssl.SSLHandshakeException: Client requested protocol
+   TLSv1 not enabled or not supported
+   3) Specifying "--tlsv1.2" on the curl command causes the
+   request to "succeed" yet the rate values in the subscription
+   .json file(s) do not actually get loaded into the database -
+   all rate values in the db are still set to zero.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Specifying "--tlsv1.2" on the curl command causes the request to
+   "succeed" yet the rate values in the subscription .json file(s)
+   do not actually get loaded into the database - all rate values
+   in the db are still set to zero.
+   An SCCM IFIX is necessary to correct the SCCM subscription
+   issue.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  SCCM subscription put rest api does not put any updated rate
+   value into database
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A formal fix is provided to client.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   ZZ00580
+   
+   
+ * REPORTED COMPONENT NAME
+   SMTCLD ORCH ENT
+   
+   
+ * REPORTED COMPONENT ID
+   5725H28ET
+   
+   
+ * REPORTED RELEASE
+   250
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-06-14
+   
+   
+ * CLOSED DATE
+   2016-11-07
+   
+   
+ * LAST MODIFIED DATE
+   2016-11-07
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   SMTCLD ORCH ENT
+   
+   
+ * FIXED COMPONENT ID
+   5725H28ET
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R250 PSY
+   UP

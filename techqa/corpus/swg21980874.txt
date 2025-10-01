@@ -1,0 +1,13 @@
+Title: IBM Support for Cisco Ace 30 Load balancer in TIP - United States
+
+Text:
+TIPL2FAQ; TIP; support; Cisco Ace 30; Load balancer TECHNOTE (FAQ)
+
+QUESTION
+ Has Tivoli Integrated Portal been certified with the Cisco Ace 30 Load Balancer? 
+
+CAUSE
+Cisco Ace 30 Load Balancer configuration and IBM HTTPS Server settings are different in the way they are configured.
+
+ANSWER
+Currently, the Cisco Ace 30 Load balancer is not officially supported by TIP.

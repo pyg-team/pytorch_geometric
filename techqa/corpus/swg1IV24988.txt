@@ -1,0 +1,148 @@
+Title: IBM IV24988: SQL EXCEPTION OCCURS DURING CHANGE MANAGER - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The SQL Exception occurs when Change Manager has no change type
+   defined.
+    This is happening because the sql is built inproperly.
+   The error is:
+   
+   com.ibm.db2.jcc.b.eo: DB2 SQL Error: SQLCODE=-104,
+   
+   SQLSTATE=42601, SQLERRMC=HANDLED_BY_STATE_MANAGER;41601765211
+   AND
+   AND;, DRIVER=3.53.95
+   com.ibm.db2.jcc.b.eo: DB2 SQL Error: SQLCODE=-104,
+   SQLSTATE=42601,
+   SQLERRMC=HANDLED_BY_STATE_MANAGER;41601765211 AND AND;,
+   DRIVER=3.53.95
+   
+   
+   
+   This APAR is already fixed in 7.2.1 (RTC 31048)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  The SQL Exception occurs when Change Manager has no change type
+   happening because the sql is built inproperly. The error is:
+   com.ibm.db2.jcc.b.eo: DB2 SQL Error: SQLCODE=-104,
+   SQLSTATE=42601,
+   SQLERRMC=HANDLED_BY_STATE_MANAGER;41601765211 AND AND;,
+   DRIVER=3.53.95
+   com.ibm.db2.jcc.b.eo: DB2 SQL Error: SQLCODE=-104,
+   SQLSTATE=42601,
+   SQLERRMC=HANDLED_BY_STATE_MANAGER;41601765211 AND AND;,
+   DRIVER=3.53.95 This APAR
+   is already fixed in 7.2.1 (RTC 31048)
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix for this APAR is contained in the following maintenance
+   packages:
+   | Fix Pack | 7.2.0-TIV-ITADDM-FP0010
+   
+   Check the IBM Software Support web site for availability of the
+   above maintenance packages.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV24988
+   
+   
+ * REPORTED COMPONENT NAME
+   APP DEPENDENCY
+   
+   
+ * REPORTED COMPONENT ID
+   5724N5500
+   
+   
+ * REPORTED RELEASE
+   720
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-07-20
+   
+   
+ * CLOSED DATE
+   2012-09-03
+   
+   
+ * LAST MODIFIED DATE
+   2012-09-03
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   APP DEPENDENCY
+   
+   
+ * FIXED COMPONENT ID
+   5724N5500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R720 PSY
+   UP
+   
+   
+ * R721 PSY
+   UP

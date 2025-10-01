@@ -1,0 +1,44 @@
+Title: IBM Unable to create or edit desktop after upgrade to ICN 3.0.2 - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Following an upgrade from IBM Content Navigator (ICN) v2.0.3 to v3.0.2 no desktop can be edited or created, or a desktop setting could be changed but after saving and rechecking, the changes revert back to oringal values. 
+
+SYMPTOM
+No error occurs - the action just does nothing. In addition, the ICN ping page still displays the old version of ICN, despite the upgrade being successful.
+
+
+CAUSE
+Residual files are left in the /{root dir}/configure/explodedformat/navigator/web-inf/classes folder and not removed during the initial upgrade attempt.
+
+ENVIRONMENT
+ICN v3.0.2
+
+DIAGNOSING THE PROBLEM
+Check the installation logs for v3.0.2 to ensure that the upgrade was actually successful.
+
+
+
+
+Check the ICN ping page to see if it displays the correct ICN version.
+
+
+RESOLVING THE PROBLEM
+Perform the following steps: 
+
+
+1) Backup and then delete the following from the web-inf/classes folder:
+/com
+/netscape
+/org
+wcversion.properties
+
+2) Once the directories are removed, un-deploy Content Navigator and clear the Websphere cache. 
+
+3) Then run the following ICN Configuration and Deployment steps again:
+
+- Configure the IBM Content Navigator Web Application
+- Build the Web Application
+- Deploy the Web Application

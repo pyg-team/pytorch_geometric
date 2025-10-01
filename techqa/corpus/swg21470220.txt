@@ -1,0 +1,66 @@
+Title: IBM Changes related to WebSphere Portal 6.1 in March 2011 Software Catalog - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ What changes related to WebSphere Portal 6.1 are introduced in March 2011 Software Catalog ? 
+
+CAUSE
+Websphere Portal 6.1 installer deploys too many signature files.
+
+ANSWER
+Affected products: 
+
+IBM WebSphere Portal Extend Limited Use 6.1
+IBM WebSphere Portal Extend 6.1
+IBM WebSphere Portal Enable Limited Use 6.1
+IBM WebSphere Portal Enable 6.1
+IBM Web Content Manager 6.1 (previously known as IBM Lotus Web Content Management)
+IBM Web Content Manager Standard Edition 6.1 (previously known as IBM Lotus Web Content Management Standard Edition)
+
+Problem symptom:
+
+TLCM/ILMT/TAD is reporting too many WebSphere Portal 6.1 products on a single machine at the same time even though only one Portal 6.1 product has been installed.
+
+Problem background:
+
+Websphere Portal 6.1 installer deploys too many signature files with SYS2 extension.
+
+Affected signature files along with corresponding Portal product names:
+
+TLMPELU0601.SYS2 IBM WebSphere Portal Extend Limited Use 6.1
+TLMPE0601.SYS2 IBM WebSphere Portal Extend 6.1
+TLMWPENLU0601.SYS2 IBM WebSphere Portal Enable Limited Use 6.1
+TLMWPEN0601.SYS2 IBM WebSphere Portal Enable 6.1
+ITLMWCM0601.SYS2 IBM Web Content Manager 6.1
+ITLMWCMSE0601.SYS2 IBM Web Content Manager Standard Edition 6.1
+
+Customer impact:
+
+Final report may not properly reflect the Portal software that is actually installed resulting in incorrect PVU calculation.
+
+Solution:
+
+Since March 2011 Catalog WebSphere Portal installations without the fix PM31755: http://www-01.ibm.com/support/docview.wss?uid=swg1PM31755 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM31755]
+
+will be reported as follows:
+
+1. as a non-PVU "fake" product named "IBM WebSphere Portal - Enablement for TAD4/LMT missing (#1470220)" instead of all six Portal products
+
+2. won't be included in PVU report 
+
+It is recommended to perform installation of the Portal fix PM31755. After applying this patch products will be supported by ILMT and should be reported properly allowing generation of PVU report for installed products.
+
+In case when fix is not implemented products listed above are not supported by ILMT.
+
+For eligible products not supported by ILMT, you must refer to and use the rules for "Manual Calculation of Virtualization Capacity". These rules can be found at
+http://www-01.ibm.com/software/lotus/passportadvantage/Counting_Software_licenses_using_specific_virtualization_technologies.html [http://www-01.ibm.com/software/lotus/passportadvantage/Counting_Software_licenses_using_specific_virtualization_technologies.html] 
+
+
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Systems and Asset Management IBM License Metric Tool

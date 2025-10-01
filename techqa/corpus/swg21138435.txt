@@ -1,0 +1,69 @@
+Title: IBM MustGather: WebSphere Application Server Client problems in v9.0, v8.5.5, v8.0, and v7.0, - United States
+
+Text:
+MustGather; MustGather; MustGather; app client; application client; J2EE Application client; Applet client; ActiveX to EJB Bridge client; Plugable Application client; Enterprise client; CORBA C++ client; MustGatherDocument; wascet TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Collecting data for problems with the IBM WebSphere Application Server client component. Gathering this MustGather information before calling IBM support will help you understand the problem and save time analyzing the data. 
+
+RESOLVING THE PROBLEM
+ 
+
+TAB NAVIGATION
+ * Learn more [http://www.ibm.com/support/docview.wss?uid=swg21245014]- selected tab,
+ * Troubleshoot [http://www.ibm.com/support/docview.wss?uid=swg21245097]
+ * Collect data
+
+
+If you already contacted support, continue on to the Application Client MustGather information. Otherwise, click MustGather: Read first for all WebSphere Application Server products [http://www.ibm.com/support/docview.wss?rs=180&uid=swg21145599]. 
+
+Application Server Client specific MustGather information 
+The following is required troubleshooting information for problems with deploying the many types of application clients supported by WebSphere Application Server. 
+
+Required for efficient problem determination  1. Identify the type of client that is communicating with WebSphere Application Server:  * ActiveX application client 
+     * Applet client 
+     * Java™ 2 Platform, Enterprise Edition (J2EE) application client 
+     * Pluggable application client 
+     * Thin application client
+       
+    
+    
+ 2. Review the detailed system requirements [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27006921] for your particular application client and operating system. 
+ 3. Describe the client; for example, what are you trying to do in the client? 
+ 4. Collect trace information of client startup:  * Modify the launchClient script to include the following trace specification on the line that calls Java:
+       =all=enabled 
+       
+       
+     * For clients that start an Object Request Broker (ORB), provide the ORB versions for both client and version using the following command: 
+       install_root/java/bin/java -classpath install_root/lib/iwsorb.jar com.ibm.ws.orb.ORBInfo 
+       
+       
+       Where install_root is the home directory of the client or server.
+       
+       An ORB trace must be provided. For guidance in enabling ORB tracing, refer to the section, Stand Alone Java Client ORB Trace Instructions, in the technote MustGather: Object Request Broker (ORB) for all releases [http://www.ibm.com/support/docview.wss?rs=180&uid=swg21157005]
+       
+       
+     * If using J2EE application client also include: 
+       -CCtrace=*=all=enabled -CCtracefile=c:\trace.log
+       
+       
+     * If using Thin client also include: 
+       -DtraceSettingsFile=TraceSettings.properties 
+       
+       Edit the traceSettings.properites file in the install_root/properties directory.
+       
+       
+    
+    
+ 5. Follow instructions to send diagnostic information to IBM support [http://www.ibm.com/support/docview.wss?rs=180&uid=swg21153852].
+
+For a listing of all technotes, downloads, and educational materials specific to the Application Client component, search the WebSphere Application Server support site [https://www.ibm.com/support/home/product/C578916B44100K52/WebSphere_Application_Server].
+
+RELATED INFORMATION
+ Recording your screen to share with IBM Support [https://www.ibm.com/developerworks/community/blogs/IBMElectronicSupport/entry/recording_your_screen_to_share_with_support?lang=en]
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Application Servers WebSphere Application Server - Express Java SDK AIX, HP-UX, Linux, Solaris, Windows 8.0, 6.0, 5.1, 5.0 Application Servers Runtimes for Java Technology Java SDK Application Servers WebSphere Application Server for z/OS Java SDK z/OS 8.0, 7.0, 6.1, 6.0

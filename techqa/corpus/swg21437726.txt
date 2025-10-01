@@ -1,0 +1,103 @@
+Title: IBM Comparison between Notes Single Logon and Notes Shared Login - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ English 
+
+QUESTION
+What are some of the differences that exist between the Notes Single Logon feature and Notes Shared Login? What would be better to implement within my environment? 
+
+ANSWER
+Two features exist within Lotus Notes 8.x for password synchronization between OS and the Notes ID. 
+
+Notes Single Logon 
+The Notes Single Logon feature is the password synchronization option that most administrators are familiar with within the Notes 6.5.x and Notes 7.x clients. This feature is a service install on the local OS and can be enabled or disabled using a Notes preferences found within the security section of the client. The feature must added with the install of the client added using a modify of the Notes client install. To modify the install and add the Single Logon feature the line ADDLOCAL can be used. This is a example line modify line: msiexec /i "\\path\to\installfiles\Lotus Notes 7.0.msi" ADDLOCAL=ClientSingleLogon /qb+.  
+
+Limitations: 
+
+ * Notes Single Logon is not supported with roaming users. 
+ * Notes Single Logon needs to be installed initially with the installation of Notes or the install needs to be modified for the feature to be added. 
+ * Single Logon cannot be used with a Multi-User installation of DAMO 
+ * Single Logon will not work with a 64 bit OS. 
+   
+   Please note: 
+   
+   According to TechNote 1418129: 
+
+Prior to Notes 8.5.2 Fix Pack 2, Notes Single Login could not function on Windows 7 64-bit operating system. This was resolved by including 32 and 64 bit NSL files in the install package. During install run-time, a check is made to detect Windows 64-bit operating system in order to install the correct file. 
+
+This has been reported to quality engineering under SPR # JZJZ7XA7FS, and has been fixed in 8.5.2 FP2 and 8.5.3.
+
+
+ *  Active directory password resets do not sync with Notes passwords
+
+ * Notes Single Logon and ID Vault are not supported (enhancement request SPR# IWER8GAGBL)
+
+
+Troubleshooting Steps: 
+
+The main technote that is used for troubleshooting Single Logon issues is "Steps to ensure that Notes Single logon is working as designed (1304525)." Please see the technote link found at the bottom of this document. If none of the steps documented have resolved the Notes Single Logon feature please provide Lotus Notes Support with logging. 
+
+ 
+
+Logging:
+
+1. On the OS, set the following Windows System Environment 
+variables: 
+DEBUG_NSL=1 
+DEBUG_NPNOTES=1 
+
+This should create npnotes.log and nsl.log in the %windir%\%temp% directory. 
+
+2. Delete existing npnotes.log and nsl.log 
+
+3. Re-start client machine and perform all the operations to reproduce the problem. 
+
+4. Send Support the npnotes.log and nsl.log that are generated. 
+
+
+
+
+Notes Shared Login (NSL) 
+The new Notes Shared Login feature, when enabled via policy or manually by the end user, locks and encrypts the Notes ID in the current Windows Profile using the PC SID and Microsoft's Data Protection API (DPAPI). This allows for maximum security as the certificates within the ID are now locked and bound to that PC and that OS profile. The Notes Shared Login feature is limited to Windows. 
+
+Notes Shared Login is not supported if you have Notes IDs that are:  * Used on Mac or Linux clients 
+ * Protected by smartcards 
+ * Protected by multiple passwords 
+ * Used by roaming users - roaming users who roam their IDs cannot use Notes Shared Login. 
+ * Used with Notes on a USB drive 
+ * Used in a Citrix environment 
+ * With Windows mandatory profiles 
+ * Stored on network shares - the IDs can be used only from the computers on which shared login is activated. 
+ * Enabled for password checking/expiration (unless all servers are 8.5+) - the "Check password on Notes ID file" security setting is not supported. Domino servers ignore this setting for IDs enabled for shared login. If you use pre-8.5 Domino servers, the setting should be disabled for users with these IDs. 
+ * Used with Notes to Internet password synchronization - If Notes users were synchronizing Internet passwords with Notes passwords in an earlier release, they must now begin managing their Internet passwords. 
+ * Notes Shared Login enabled ID cannot be imported into mail file for iNotes access or BlackBerry access (create password protected copy to import) 
+
+
+
+The following configurations are unsupported when used with Notes Shared Login:  * Using Windows Roaming Profiles and logging into an Active Directory Domain from more than one system at the same time, which is a limitation of Microsoft DPAPI 
+ * Using Windows Roaming Profiles and logging into an Active Directory Domain from both Windows XP/2003 systems and Windows 2000 systems, which is a limitation of Microsoft DPAPI 
+ * Using Windows NT 4.0 Domains 
+ * Using Windows XP in a Windows Workgroup environment and resetting the user's Windows password 
+ * Joining or leaving a Windows Domain after enabling Notes Shared Login 
+
+
+Logging: 
+
+ * DEBUGNSL=1 can be enabled in Notes client notes.ini file.
+
+
+Related SPRs 
+
+ * Shared Login passwords do not sync with web access passwords (SAKI7P88GT). 
+ * Shared Login is not supported with a Citrix environment (Enhancement Request - AJAS7PKJ3M) 
+ * Password changes do not sync with the ID vault ( Enhancement Request - MBOK82QPPG) 
+ * Smartcards cannot be used with Shared Login (Enhancement Request - DJAG7CFLVK) 
+ * The ID file cannot be copied directly from one machine to another. (WTON7W8M6H) Procedures are documented in Help for copying steps. 
+
+RELATED INFORMATION
+ Windows 64 bit support for Single Log On [http://www.ibm.com/support/docview.wss?uid=swg21318766]
+Steps to ensure that Single Log On is working as design [http://www.ibm.com/support/docview.wss?uid=swg21304525]
+Details on exception allowing support of Notes Single L [http://www.ibm.com/support/docview.wss?rs=0&uid=swg21474626]

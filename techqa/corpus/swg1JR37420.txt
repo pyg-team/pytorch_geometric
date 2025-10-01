@@ -1,0 +1,136 @@
+Title: IBM JR37420: CMVC 201744 - UPDATE JAX-RS LIB TO INCLUDE SECURITY FIX OUTLINED HERE: HTTP://WWW-01.IBM.COM/SUPPORT/DOCVIEW.WSS?UID=SWG21433581 - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The interim fix for this APAR provides an update to the JAX-RS
+   library to include a security fix outlined here:
+   http://www-01.ibm.com/support/docview.wss?uid=swg21433581. [http://www-01.ibm.com/support/docview.wss?uid=swg21433581.]
+   
+   This issue is not exposed through WebSphere Commerce
+   Out-of-the-box (OOTB) behaviour, however it is possible that
+   users may expose it
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  USERS AFFECTED:
+   WebSphere Commerce 7.0 Feature Pack 1 users that expose RESTful
+   interfaces.
+   
+   PROBLEM ABSTRACT:
+   Update to the JAX-RS library to include a security fix installed
+   by WebSphere Commerce Feature Pack 1
+   
+   BUSINESS IMPACT:
+   This issue requires the reshipment of a WebSphere Application
+   Server security fix.
+   
+   RECOMMENDATION:
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This interim fix replaces the existing ibm-wink-jaxrs-1.0.0.jar
+   installed by WebSphere Commerce 7.0 Feature Pack 1.
+   
+   -------------------------------------------------------------
+   The latest available maintenance information can be obtained
+   from the Recommended Fixes for WebSphere Commerce technote:
+   http://www.ibm.com/support/docview.wss?rs=3046&uid=swg21261296 [http://www.ibm.com/support/docview.wss?rs=3046&uid=swg21261296]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR37420
+   
+   
+ * REPORTED COMPONENT NAME
+   WC BUS EDITION
+   
+   
+ * REPORTED COMPONENT ID
+   5724I3800
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-08-05
+   
+   
+ * CLOSED DATE
+   2011-08-12
+   
+   
+ * LAST MODIFIED DATE
+   2011-08-12
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WC BUS EDITION
+   
+   
+ * FIXED COMPONENT ID
+   5724I3800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R700 PSY
+   UP

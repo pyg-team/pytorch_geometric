@@ -1,0 +1,63 @@
+Title: IBM Task Status can be used to determine branching - United States
+
+Text:
+ICC; Task Status; Log Level TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Task Status can be used to affect the behavior of ICC processing. If a task does not complete successfully it may not make sense to continue on to the next step.
+
+Checking the task status in a decision point immediately after a task can be used to determine what steps to take next. 
+
+SYMPTOM
+Example: The "SP Manage P8 Links" task route deletes P8 document links that can not be resolved to a specific P8 document, and updates all other links.
+
+The "P8 Confirm Document" task checks if the stub link is still point to a document in P8. The link test result is passed on to the next task. Then the SP Manage Link task checks this result and if the link was not successfully resolved it is deleted.
+
+Unfortunately, when the "P8 Confirm Document" tasks fails to connect to the P8 repository is also results in links not being resolved. In this situation because the P8 document link could not be resolved, the "SP Manage Link" task deletes them from SharePoint.
+
+
+CAUSE
+When the "P8 Confirm Document" fails to authenticate to P8 it results in a status of "Warning". As a result the task route continues to processing on the next task. However, in this specific situation, because the SharePoint Links were not resolved the "SP Manage Link" task deletes them.
+
+
+ENVIRONMENT
+All tasks which return a Task Status.
+
+From example given: The "P8 Confirm Document" task returns a "Warning" status when their is a failure to authenticate to P8. In this situation ICC should avoid running the "SP Manage Link" task.
+
+DIAGNOSING THE PROBLEM
+For the example provided above:
+
+1) Valid SharePoint Stub Links were deleted unexpectedly.
+
+2) The P84xConnector log contains log entries with a "Warning" status like:
+
+Warning Could not fetch any documents with id = '{xxxxxxxxxxxxx}' using a P8 search scope.Reason: The user is not authenticated. 
+
+RESOLVING THE PROBLEM
+1. Add a decision point into the task route between the "P8 Confirm Document" task, and the "SP Manage Link" task.
+
+2. Configure the rule on the branch that links to the "SP Manage Link" task with this rule: 
+
+
+
+
+
+ GreaterThan ( 3, <Task Status, Log Level> )
+
+Note: This rule will check the task status Log Level and returns TRUE, if the value is >3
+
+For reference here are the log levels:
+Log Level 1 = Fatal
+Log Level 2 = Error
+Log Level 3 = Warning
+Log Level 4 = Information
+Log Level 5 = Trace
+Log Level 6 = Trace2
+
+
+A return Log Level value of 1 or 2 causes the task route to report an error and transfers further processing to the Error Task Route. 
+
+A return Log Level value of 3 is a warning, which is written to the logs, but processing continues on the existing task route. It it these warning situations where alternate processing can be beneficial in avoiding unexpected results (as in the example above).
+
+3. While a second branch is optional, you should add one to bypass the "SP Manage Link" task.

@@ -1,0 +1,116 @@
+Title: IBM Installing second Trial product activation kit fails with errors in Installation Manager - United States
+
+Text:
+SDP Licenses; pek.la.offering; is already installed in this package group; pek; trial; RSDP; RAD; RMT.RDA; v7; IM; Installation Manager; trial; trial license; product activation kit; activation kit; package; pek.la.offering is already installed in this package group; agentDataLocation; agentData; RATLC01232294; PK67896; 1306734; PK94023; agentData; agent data; installRegistry.xml; permanent license; update; updating; revert TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Attempts to install a second Trial product activation kit (permanent license) using IBM Installation Manager v1.1.x results in "failed to install". 
+
+SYMPTOM
+Scenario 1: 
+
+Evaluation users of "Trial" edition of various Rational Software Development Platform v7.0.x products such as Rational Application Developer, Rational Manual Tester, Rational Data Architect and others, would receive a new product activation kit (license) from their IBM Rational Sales representative.
+
+After the previous license expired and upgrading to Installation Manager v1.1.1, you could not import the new trial product activation kit.
+
+The following error message is encountered during the import:
+
+Rational Data Architect V7.0:
+"Package com.ibm.rational.data.architect.pek.la.offering is already installed in this package group" 
+
+
+Rational Manual Tester v7.0:
+"Package com.ibm.rational.manual.tester.pek.la.offering is already installed in this package group" 
+
+
+Rational Application Developer v7.0:
+"Package com.ibm.rational.appplication.developer.pek.la.offering is already installed in this package group" 
+
+
+Note: This error message is also present in the *.xml file in:
+
+C:\Documents and Settings\All Users\Application Data\IBM\Installation Manager\logs 
+
+
+corresponding to the date and time of the incident (Example: 20080529_1712.xml
+
+
+Scenario 2:
+
+It has also been reported that after upgrading from Rational Application Developer v7.5 to v7.5.3 ifix1 
+using Installation Manager v1.3.1, license status went back to trial, even after the Activation Kit was successfully installed.
+
+
+CAUSE
+Installation Manager v1.1.x defect APAR PK67896 had been submitted to address Scenario 1.
+
+Installation Manager v1.3.1 defect APAR PK94023 has been submitted to address Scenario 2.
+
+
+RESOLVING THE PROBLEM
+Scenario 1 is fixed in Installation Manager v1.2 [http://ibm.com/support/docview.wss?uid=swg24020170] under APAR PK67896 [http://www.ibm.com/support/docview.wss?uid=swg1PK67896]. Update to the latest version of Installation Manager after v1.2. If you still have this problem after migrating to Installation Manager v1.2 or higher, proceed to Scenario 2. 
+
+
+
+Scenario 2 involves Rational Application Developer for WebSphere Software v7.5 and other Rational Software Desktop Products (RSDP) v7.5.x updates and Installation Manager v1.3.1 (or v1.2.1+). It is being pursued under IM APAR PK94023 [http://www.ibm.com/support/docview.wss?uid=swg1PK94023].
+
+
+WORKAROUND:
+The following workaround has helped with this issue for pre-version 1.2 Installation Manager installs.
+
+Remove the existing licensing data in silent mode as follows: 
+
+1. Create a "removelicense.xml" Response file:
+
+
+<agent-input clean='true' temporary='true'>
+<uninstall> <offering profile='SDP Licenses' id='com.ibm.rad.pek'></offering>
+</uninstall>
+</agent-input >
+
+
+Here is a list of the license activation kit ids for some of the IBM Rational products.
+
+Use the "id" listed in below table to replace the license activation kit "id" in above response file (removelicense.xml): 
+
+Product Name Version License Activation Kit ID IBM Rational Software Modeler 7.0 com.ibm.rsm.pek IBM Rational Software Modeler 7.5 com.ibm.rational.software.modeler.pek.la.offering IBM Rational Application Developer 7.0 com.ibm.rad.pek IBM Rational Application Developer 7.5 com.ibm.rad.v75.pek IBM Rational Software Architect
+
+7.0 com.ibm.rsa.pek IBM Rational Software  Architect Standard 
+
+ Edition
+
+7.5 Rational Software Architect Standard Edition.pek.la.offering
+
+IBM Rational Software Architect for WebSphere
+
+7.5 com.ibm.rsa4ws.pek IBM Rational Software  Architect Realtime Edition
+
+7.5 com.ibm.rational.software.architect.rt.pek.offering Note: If your product is not listed, examine the file 
+C:\Documents and Settings\All Users\Application Data\IBM\Installation Manager\installRegistry.xml 
+and find the following section (usually at the bottom of the file): 
+
+<profile id='SDP Licenses' kind='license'> 
+... 
+</profile> 
+
+
+For example, if Rational Manual Tester v7.0.1 is installed, the file refers to 
+<offering id="com.ibm.rational.manual.tester.pek.la.offering">
+
+If in doubt contact IBM Support for the specific IBM Rational Product being used and not for IBM Installation Manager. 
+
+ 
+
+2. Run this command on the command line:
+
+<Installation Manager install root/Eclipse>/ ibmimc.exe --launcher.ini <Installation Manager install root/Eclipse>/ silent-install.ini -input <responsefile>
+
+Note: <Installation Manager install root/Eclipse>, in the case of Windows, defaults to
+C:\Program Files\IBM\Installation Manager\eclipse, unless installed elsewhwere. 
+
+
+If this still does not help, contact the IBM Support Team for the relevant product and ask for IBM Installation Manager assistance to investigate further.
+
+RELATED INFORMATION
+#Relocate IBM Installation Manager agentDataLocation to [http://www.ibm.com/support/docview.wss?uid=swg21307121]
+Finding IBM Installation Manager troubleshooting logs [http://www.ibm.com/support/docview.wss?uid=swg21258203]

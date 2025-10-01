@@ -1,0 +1,21 @@
+Title: IBM How to manually update the Oracle ojdbc6.jar JDBC Driver for IBM Sterling Integrator - United States
+
+Text:
+ojdbc6.jar; update Oracle jdbc driver TECHNOTE (FAQ)
+
+QUESTION
+ How to manually update the Oracle ojdbc6.jar JDBC Driver 
+
+CAUSE
+In order to stay up to date with the latest IBM Sterling B2B Integrator releases as well as for the latest Oracle database and driver releases it can be necessary to update the version of the ojdbc6.jar file.
+
+ANSWER
+You can follow the steps below to manually update the version of ojdbc6.jar.
+
+1). Go to the /install/properties directory and open the dynamicclasspath.cfg file.
+2). Search in the file for every entry pointing to the ojdbc6.jar file.
+3). Remove entirely the previous versions of the JAR files from all of the directories it appears under and replace it by the new version JAR file.
+4). Then Open the Sandbox.cfg file and also search for any entry pointing to ojdbc6.jar. This entry will point to the initial JAR file used for the original installation.
+5). Also replace this instance of the JAR file if it is located under the /install home directory as it could still get loaded during the startup of the application.
+6). Once all locations where the ojdbc6.jar file have been updated restart the application.
+7). You can open a Command prompt and place yourself under the /install/bin directory run the dump_info.sh or dump_info.cmd script to verify the version of the Oracle JDBC driver.

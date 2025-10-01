@@ -1,0 +1,73 @@
+Title: IBM Logfile Agent, alternate heartbeat method. (windows) - United States
+
+Text:
+.fmt; EE_HEARTBEAT; TEC Adaptor; format; "windows task scheduler" TECHNOTE (FAQ)
+
+QUESTION
+ Following on from the pseudo heartbeats on UNIX Logfile Agent, what variations are required on windows? 
+
+CAUSE
+ITM Autonomous Agents (depending on version) make a CO connection for each heartbeat controlled by the .xml config files, this is a variation to make normal events act like heartbeats.
+
+ANSWER
+Technote http://www.ib ... swg21675021 [http://www.ibm.com/support/docview.wss?uid=swg21675021] shows how to set up normal events to behave in a manner similar to the EE_HEARTBEATS but only on UNIX, there are slight changes needed for windows. 
+
+These were used to enable pseudo heartbeats on a Win 2008 system, starting with the .fmt file entry; 
+
+
+FORMAT DSHeartbeat FOLLOWS NT_Base
+%s %s HEARTBEAT
+sub_source heartbeat
+source win2008
+hostname DEFAULT
+origin DEFAULT
+msg PRINTF("%s %s", hostname, sub_source)
+END 
+
+The .conf file used was; 
+
+
+ServerLocation=192.123.123.135
+ServerPort=9998
+LogSources=C:\\heartbeat.log
+WINEVENTLOGS=System,Security,Application
+UseNewEventLogAPI=y
+PollInterval=10
+NO_UTF8_CONVERSION=YES
+BufEvtPath=C:\\IBM\\ITM\\tmp\\Zippy.cache
+UnmatchLog=C:\\IBM\\ITM\\tmp\\evlog.unmatch
+
+As long as you have permissions you could place the log in a better place than C:\, this was a lab system, use of UnmatchLog helps when fine tuning the .fmt file, if you think the Logfile Agent isn't detecting something it should, UnmatchLog shows what is not being turned into events.
+
+The windows equivalent to cron would be the windows task scheduler, the setting for it to run a heartbeat.bat file every 5 mins is hidden under the advanced tab, I set mine to run on system start-up and every 5 mins since then, attached is the export of the windows task, but it is easy enough to setup via the windows task scheduler GUI, the heartbeat task calls a heartbeat.bat in which I have;
+
+echo %date% %time% HEARTBEAT >> C:\heartbeat.log
+
+On the receiving EIF probe I set my heartbeats to clear, purely to test, if required you could make the pseudo heartbeats follow the same behaviour as the Autonomous Agents EE_HEARTBEATS regime.
+For testing I used;
+
+log(DEBUG, "<<<<< Entering.............. DS Rules eeif File ................... >>>>>")
+
+if( match($ClassName, "DSHeartbeat")) {
+@Severity = 0
+
+}
+log(DEBUG, "<<<<< Leaving.............. DS Rules File ................... >>>>>")
+
+APAR IV60851 has been raised to deal with the Autonomous agents only being able to heartbeat over ConnectionOriented using the .xml method. 
+APAR fixed in 6.3.0-TIV-ITM-FP0004 onwards, the .xml file has the ability to add a 
+connection_type="CL"
+
+When editing the <pc>_eventdest.xml file, a new option 
+"connection_type" can now be specified with "CO" 
+(connection-oriented, the default) or "CL" (connection-less). 
+This is added to the <Destination> section, for example: 
+
+<EventDest> 
+<Destination id="0" type="M" master_reset="Y" stat="Y" 
+default="Y" connection_type="CL"> 
+<Server location="server1" port="0" /> 
+</Destination> 
+</EventDest> 
+
+Heartbeat.xml [/support/docview.wss?uid=swg21676743&aid=2]Heartbeat.xml [/support/docview.wss?uid=swg21676743&aid=1]

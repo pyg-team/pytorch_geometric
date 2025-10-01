@@ -1,0 +1,24 @@
+Title: IBM Support for SHA-2 certificates on IBM Sterling Connect:Direct for HP NonStop - United States
+
+Text:
+Sterling Hp NonStop SHA-2 TECHNOTE (FAQ)
+
+QUESTION
+ Is support for SHA-2 certificates available on IBM Sterling Connect:Direct for HP NonStop version 3.6.0? 
+
+CAUSE
+Certificates are going to expire.
+
+ANSWER
+Support for SHA-2 certificates is not available in IBM Sterling Connect:Direct for HP NonStop version 3.6.0. To acquire that feature, you will need to install fix pack 3.6.0.1. With that installed, the application will support the following SHA-2 digests:
+
+SHA224
+SHA256
+SHA384
+SHA512
+
+Consider applying the latest iFix package (013) to IBM Sterling Connect:Direct for HP NonStop version 3.6.0.1, in order to bring your installation fully up-to-date. 
+Do that, in the following order,
+
+* download and install 3.6.0.1 (a fix pack)
+* download and install iFix 013 (cumulative iFixes)

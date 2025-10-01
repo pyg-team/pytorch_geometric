@@ -1,0 +1,138 @@
+Title: IBM PM84736: WAR FILE DEPLOYMENT FAILING WHEN PORTLET-APP ID CANNOT BE DETERMINED - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Fixes integrated in WebSphere Portal 8.0.0.0 Cumulative Fixes [http://www-01.ibm.com/support/docview.wss?uid=swg24033155]
+Fixes integrated in WebSphere Portal 8.0.0.1 Combined Cumulative Fixes [http://www-01.ibm.com/support/docview.wss?uid=swg24034497]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Occasionally SI was unable to find the ID of a portlet-app,
+   therefore the deployment failed. This occurred where
+   multiple portlet.xml fragments were found in the war file.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Occasionally SI was unable to find the ID of a portlet-app,
+   therefore the deployment failed. This occurred where
+   multiple portlet.xml fragments were found in the war file.
+   .
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A code fix for this issue is integrated into the 8.0.0.0
+   Combined Cumulative Fix 005 (PM84209 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM84209]) available from Fix
+   Central:
+   
+   http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent
+   =ibm~WebSphere&product=ibm/WebSphere/WebSphere+Portal&release=8. [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~WebSphere&product=ibm/WebSphere/WebSphere+Portal&release=8.]
+   0.0.0&platform=All&function=aparId&apars=PM84209
+   
+   as well as into the 8.0.0.1 Combined Cumulative Fix 005
+   (PM84211 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM84211]) available from Fix Central:
+   
+   http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent
+   =ibm~WebSphere&product=ibm/WebSphere/WebSphere+Portal&release=8. [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~WebSphere&product=ibm/WebSphere/WebSphere+Portal&release=8.]
+   0.0.0&platform=All&function=aparId&apars=PM84211
+   
+   You might need to type or paste the complete address into your
+   Web browser.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM84736
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSPHERE PORTA
+   
+   
+ * REPORTED COMPONENT ID
+   5724E7600
+   
+   
+ * REPORTED RELEASE
+   800
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-03-13
+   
+   
+ * CLOSED DATE
+   2013-05-27
+   
+   
+ * LAST MODIFIED DATE
+   2013-05-27
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBSPHERE PORTA
+   
+   
+ * FIXED COMPONENT ID
+   5724E7600
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R800 PSY
+   UP

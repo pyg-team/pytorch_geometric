@@ -1,0 +1,157 @@
+Title: IBM IV36135: JAVA.LANG.STRINGINDEXOUTOFBOUNDSEXCEPTION OCCURRED IN JAVA.UTIL.REGEX.MATCHER.FIND WHEN INPUT TEXT HAS UTF-16 SURROGATE PAIR CH - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Error Message: Exception in thread "main"
+   java.lang.StringIndexOutOfBoundsException: String index out of
+   range: -1
+   .
+   Stack Trace: at java.lang.String.charAt(String.java:686)
+           at
+   java.util.regex.Pattern$BmpCharProperty.match(Pattern.java:3366)
+           at
+   java.util.regex.Pattern$GroupHead.match(Pattern.java:4168)
+           at
+   java.util.regex.Pattern$GroupCurly.match0(Pattern.java:3972)
+           at
+   java.util.regex.Pattern$GroupCurly.match0(Pattern.java:3966)
+           at
+   java.util.regex.Pattern$GroupCurly.match(Pattern.java:3916)
+           at
+   java.util.regex.Pattern$SliceI.match(Pattern.java:3507)
+           at
+   java.util.regex.Pattern$Start.match(Pattern.java:3055)
+           at java.util.regex.Matcher.search(Matcher.java:1105)
+           at java.util.regex.Matcher.find(Matcher.java:535)
+           at test.RegexTestCase.main(RegexTestCase.java:13)
+   .
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  The exception occurred only when there is no match. Hence, the
+   application can catch java.lang.StringIndexOutOfBoundsException
+   and process it as a false condition.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Pattern match loop increment was not updated properly when input
+   text has UTF-16 surrogate pair characters
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This defect will be fixed in:
+   6.0.0 SR14
+   6.0.1 SR6
+   
+   .
+   Pattern match loop increment is modified to handle UTF-16
+   surrogate pair.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV36135
+   
+   
+ * REPORTED COMPONENT NAME
+   JAVA CLASS LIBS
+   
+   
+ * REPORTED COMPONENT ID
+   620700130
+   
+   
+ * REPORTED RELEASE
+   600
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-01-31
+   
+   
+ * CLOSED DATE
+   2013-05-21
+   
+   
+ * LAST MODIFIED DATE
+   2013-06-20
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   JAVA CLASS LIBS
+   
+   
+ * FIXED COMPONENT ID
+   620700130
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R600 PSY
+   UP
+   
+   
+ * R700 PSY
+   UP

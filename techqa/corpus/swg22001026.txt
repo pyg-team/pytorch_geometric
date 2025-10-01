@@ -1,0 +1,60 @@
+Title: IBM Security Bulletin: Multiple vulnerabilities in Open Source zlib affects IBM Netezza Platform Software clients (CVE-2016-9840, CVE-2016-9841 and CVE-2016-9843). - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ Open Source zlib is used by IBM Netezza Platform Software. IBM Netezza Platform Software has addressed the applicable CVEs. 
+
+VULNERABILITY DETAILS
+CVEID: CVE-2016-9840 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2016-9840]
+DESCRIPTION: zlib is vulnerable to a denial of service, caused by an out-of-bounds pointer arithmetic in inftrees.c. By persuading a victim to open a specially crafted document, a remote attacker could exploit this vulnerability to cause a denial of service.
+CVSS Base Score: 3.3
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/120508 [https://exchange.xforce.ibmcloud.com/vulnerabilities/120508] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:L/AC:L/PR:N/UI:R/S:U/C:N/I:N/A:L) 
+
+CVEID: CVE-2016-9841 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2016-9841]
+DESCRIPTION: zlib is vulnerable to a denial of service, caused by an out-of-bounds pointer arithmetic in inftrees.c. By persuading a victim to open a specially crafted document, a remote attacker could exploit this vulnerability to cause a denial of service.
+CVSS Base Score: 3.3
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/120509 [https://exchange.xforce.ibmcloud.com/vulnerabilities/120509] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:L/AC:L/PR:N/UI:R/S:U/C:N/I:N/A:L) 
+
+CVEID: CVE-2016-9843 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2016-9843]
+DESCRIPTION: zlib is vulnerable to a denial of service, caused by a big-endian out-of-bounds pointer. By persuading a victim to open a specially crafted document, a remote attacker could exploit this vulnerability to cause a denial of service.
+CVSS Base Score: 3.3
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/120511 [https://exchange.xforce.ibmcloud.com/vulnerabilities/120511] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:L/AC:L/PR:N/UI:R/S:U/C:N/I:N/A:L)
+
+AFFECTED PRODUCTS AND VERSIONS
+IBM Netezza clients from any of the following releases: 
+
+ *  IBM Netezza Platform Software 6.0.8.17 - 7.2.1.4-P1
+
+REMEDIATION/FIXES
+For NPS clients that are running any of the affected releases, IBM recommends upgrading to the following version: 
+
+
+Product VRMF Remediation/First Fix IBM Netezza Platform Software 7.2.1.4-P2 Link to Fix Central [https://www-945.ibm.com/support/fixcentral/swg/selectFixes?product=ibm/Information+Management/Netezza+NPS+Software+and+Clients&release=NPS_7.2.1&platform=All&function=fixId&fixids=7.2.1.4-P2-IM-Netezza-NPS-fp118051] WORKAROUNDS AND MITIGATIONS
+None
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v3 Guide [http://www.first.org/cvss/user-guide] 
+On-line Calculator v3 [http://www.first.org/cvss/calculator/3.0] 
+
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] 
+
+CHANGE HISTORY
+ 30 June 2017: Original version published 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.

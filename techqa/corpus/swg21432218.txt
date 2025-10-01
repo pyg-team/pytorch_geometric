@@ -1,0 +1,65 @@
+Title: IBM FileNet WorkplaceXT Microsoft Office 2003 Integration Logon Errors - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Errors occur when trying to logon FileNet WorkplaceXT from Microsoft Word 2003. 
+
+SYMPTOM
+Error message during FileNet WorkplaceXT Logon after entering User Credentials: 
+
+ 
+
+IBM Filenet Workplace XT Add: Unable to perform get preferences 
+Operation 
+Error Name: E_CLIRSPXMLPARSERERROR 
+HRESULT: 0x800405bb 
+Description: Required white space was missing 
+Details: DOM Parser Error Code=0xc00e509 Line=18 Position=56 
+
+
+Error Name E_SVRCMDXMLPARSERFAILED 
+HRESult: 0x8004042b 
+Description: Unable to parse command XML:null 
+Details: java.lang.nullpointerException 
+
+
+
+CAUSE
+User Tokens settings not enabled in Bootstrap properties.
+
+
+ENVIRONMENT
+FileNet WorkplaceXT 1.1.4, Microsoft Windows 2003, Microsoft Office 2003, FileNet Content Engine 4.5.1, FileNet Application Engine 4.0.2, IBM Websphere Application Server 6.1
+
+
+
+DIAGNOSING THE PROBLEM
+When using Application Integration the following error is received: 
+
+
+IBM Filenet Workplace XT Add: Unable to perform get preferences 
+Operation 
+Error Name: E_CLIRSPXMLPARSERERROR 
+HRESULT: 0x800405bb 
+Description: Required white space was missing 
+Details: DOM Parser Error Code=0xc00e509 Line=18 Position=56 
+
+
+Error Name E_SVRCMDXMLPARSERFAILED 
+HRESult: 0x8004042b 
+Description: Unable to parse command XML:null 
+Details: java.lang.nullpointerException 
+
+
+
+RESOLVING THE PROBLEM
+Verify Generate user tokens and Accept user tokens parameters in Workplace XT, site preferences bootstrap section are both set to Yes. 
+
+ 
+
+ * If you are unable to set Accept User Tokens to Yes then the steps outlined in the WorkplaceXT install guide for configuring user tokens was not done or was not done properly. 
+   
+   
+ *  Reference "Configuring WebSphere Application Server to support user tokens and WebDAV connections for Workplace XT" section in the FileNet WorkplaceXT install Guide.

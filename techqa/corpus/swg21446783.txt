@@ -1,0 +1,73 @@
+Title: IBM DFHPI0002 A severe error code 0607 has occurred in module DFHPIIW - United States
+
+Text:
+DFHPI0002 0607 DFHPIIW Pipeline start failure abendAEXZ aexz hang hung performance dispatch dispatching 5655M1500 R650 650 R500 500 HCI6500 5655-M15 5655M15 5655S9700 R660 660 R600 600 HCI6600 5655-S97 5655S97 5655S9700 R670 670 R700 700 HCI6700 5655-S97 5655S97 5655Y0400 R680 680 R800 800 HCI6800 5655-Y04 5655Y04 kixinfo TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Your CICS Transaction Server for z/OS (CICS TS) region receives error DFHPI0002 A severe error (code X'0607') has occurred in module DFHPIIW, and you notice a delay in dispatch time. 
+
+SYMPTOM
+DFHPI0002 [http://pic.dhe.ibm.com/infocenter/cicsts/v5r1/topic/com.ibm.cics.ts.messages.doc/DFHPI/DFHPI0002.html] A severe error (code X'0607 [http://pic.dhe.ibm.com/infocenter/cicsts/v5r1/topic/com.ibm.cics.ts.doc/dfhs6/topics/dfhs6_pi.html]') has occurred in module DFHPIIW.
+The 0607 means Pipeline start failure.
+You might also see an abend AEXZ [http://pic.dhe.ibm.com/infocenter/cicsts/v5r1/topic/com.ibm.cics.ts.messages.doc/AExx_abend_codes/AEXZ.html].
+
+
+CAUSE
+There are two parts that cause the hang: 
+
+ 1. The immediate problem is with an SSL request:
+    The following flow leads to a gap of (up to) several seconds:  1. A BPX1AIO call comes in.
+        AIO PART 1 begins and completes. 
+     2. Shortly before AIO PART 2 processing begins for this AIOCB, the caller's TCB processes another BPX1AIO call, which takes a long time. 
+     3. AIO PART 2 begins on an SRB for the AIO started in step 'a' above.
+        The SRB portion completes successfully.
+        It must post caller's TCB to perform exit processing.
+        Since the SRB completed, now the AIO operation needs to notify the caller's TCB.
+        But, this TCB is hung in TCPIP from step 'b' above. 
+     4. Caller's TCB (processing the hanging BPX1AIO call) times out and returns from the AIO part 1 (BPX1AIO) syscall. RV=FFFFFFFF RC=00000467 RSN=74620291 : ETIMEDOUT JrTcpError 
+     5. SIGIO signals can again be sent to the TCB.
+        The SIGIO matching PART 2 is delivered and control is returned to CICS.
+        
+        The complete asynchronous IO operation (part 1 + part 2) takes such a long time to return to CICS because of the unrelated TCPIP hang/timeout on the TCB. This is due to the fact that USS cannot deliver signals while the task is in this environment.
+        
+        
+    
+    
+ 2. The delay of the other BPX1AIO (step 'b' above) is waiting for a reply to a request sent a name server. It was done on behalf of a Resolver request (like getaddrinfo). The RESOLVERTIMEOUT for this address space as specified in the SYS1.TCPPARMS(TCPDATA) data set, pointed to by the SYSTCPD DD was 5 seconds.
+    
+    Since all Resolver calls are synchronous, the task making the request will be suspended until either the server responds or that timeout is reached.
+
+DIAGNOSING THE PROBLEM
+CICS trace shows:
+S8 SOCK ENTR RECEIVE_SSL_DATA
+...
+S8 SOSO ENTRY RECEIVE
+S8 DSAT ENTRY CHANGE_MODE
+SO DSAT EXIT CHANGE_MODE/OK
+SO SOUS EVENT ASYNCIO_ENTRY
+SO SOUS EVENT ASYNCIO_EXIT
+SO DSSR ENTRY WAIT_MVS SOCKET,RECEIVE
+...
+5 second gap
+...
+SO DSSR EXIT WAIT_MVS/OK
+SO DSAT ENTRY CHANGE_MODE
+S8 DSAT EXIT CHANGE_MODE/OK
+S8 SOSO EXIT RECEIVE
+S8 SOCK EXIT RECEIVE EXCEPTION REASON(CONNECTION_CLOSED)
+
+This is followed by abend AEXZ.
+
+
+
+RESOLVING THE PROBLEM
+Do the following: 
+
+ 1. Ensure that the list of name servers configured is correct, with the most reliable (or closest) one first. 
+ 2. If there will be a planned DNS outage, consider temporarily modifying the order of servers configured and doing a MODIFY RESOLVER,REFRESH [http://pic.dhe.ibm.com/infocenter/zos/v2r1/topic/com.ibm.zos.v2r1.halz001/stepsfordynamicallychangingtcpipdatawithout.htm] command in preparation for that outage. 
+ 3. Consider measuring the typical response time for the servers and reducing the value accordingly of the RESOLVERTIMEOUT [http://pic.dhe.ibm.com/infocenter/zos/v2r1/topic/com.ibm.zos.v2r1.halz001/rexolvertimeoutstatement.htm] as specified in the SYS1.TCPPARMS(TCPDATA) data set, pointed to by the SYSTCPD DD.
+
+
+
+PRODUCT ALIAS/SYNONYM
+ CICS/TS CICS TS CICS Transaction Server

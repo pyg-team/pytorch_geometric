@@ -1,0 +1,145 @@
+Title: IBM PI31342: With long host or server names, xscmd commands fail with an OutOfMemory error. - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Some xscmd commands that list servers or host names in table
+   format fail with an OutOfMemory error when the catalog service
+   domain has long server or host names.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  WebSphere eXtreme Scale users who run xscmd *
+   *                  and have long server or host names defined  *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: When an xscmd command prints a table,   *
+   *                      it wraps the last column to fit the     *
+   *                      command window, which might cause an    *
+   *                      infinite loop.                          *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   On some commands, such as showQuorumStatus, the server names
+   and hostname are printed in a table format. If the names are
+   very long, the last column does not fit and xscmd incorrectly
+   goes into a loop trying to fit the last column.
+   The xscmd table format was modified to wrap the last column to
+   another row if the table is too wide to fit the last column.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  To workaround, use the redirect output option on xscmd, -ro,
+   or pipe the xscmd to a file instead of printing directly to the
+   command window. See the following examples for Windows
+   operating systems:
+   
+   xscmd -c showQuorumstatus -ro out.txt
+   xscmd -c showQuorumstatus > out.txt
+   xscmd -c showQuorumStatus > out.txt 2>&1
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI31342
+   
+   
+ * REPORTED COMPONENT NAME
+   WS EXTREME SCAL
+   
+   
+ * REPORTED COMPONENT ID
+   5724X6702
+   
+   
+ * REPORTED RELEASE
+   850
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-12-11
+   
+   
+ * CLOSED DATE
+   2014-12-15
+   
+   
+ * LAST MODIFIED DATE
+   2014-12-15
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WS EXTREME SCAL
+   
+   
+ * FIXED COMPONENT ID
+   5724X6702
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R850 PSY
+   UP
+   
+   
+ * R860 PSY
+   UP

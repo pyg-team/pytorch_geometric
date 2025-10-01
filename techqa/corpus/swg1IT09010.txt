@@ -1,0 +1,134 @@
+Title: IBM IT09010: PUREAPPLICATION SYSTEM: WARNINGS MESSAGES ARE NOT SEEN WHEN USING INVALID REGULAR EXPRESSIONS IN SCRIPT PACKAGES. - United States
+
+Text:
+  A FIX IS AVAILABLE
+IBM PureApplication System Version 2.1.0.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24040112]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  In PureApplication System version 2.1.0.0, if using an invalid
+   regular expression in a classic virtual system pattern, a
+   warning is provided at build time in the Pattern Builder to
+   alert the user that the expression is invalid. This same
+   invalid regular expression is ignored at deploy time.
+   
+   For new architecture virtual system patterns, warnings are not
+   seen for invalid expressions in the pattern builder nor at
+   deploy time.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  The correct behavior here for both classic and new
+   architecture virtual system patterns is:
+   
+   - if a valid regular expression is used in a pattern to validate
+   a user input field the user input should be validated and
+   provide messages in the Pattern Builder and at deploy time.
+   
+   -  if there is an invalid regular expression used to validate a
+   user input field the user input is ignored and does not provide
+   messages.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A code fix is being provided in PureApplication System version
+   2.1.0.1.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT09010
+   
+   
+ * REPORTED COMPONENT NAME
+   PAPP SYS 8382 I
+   
+   
+ * REPORTED COMPONENT ID
+   5725G3200
+   
+   
+ * REPORTED RELEASE
+   200
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-05-22
+   
+   
+ * CLOSED DATE
+   2015-06-02
+   
+   
+ * LAST MODIFIED DATE
+   2015-06-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   PAPP SYS 8382 I
+   
+   
+ * FIXED COMPONENT ID
+   5725G3200
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R210 PSY
+   UP

@@ -1,0 +1,25 @@
+Title: IBM WTX/ITX 64 bit Launcher Memory allocation failure : FUNC:RunMercMap CHECKMMH FAILED mmh=FFFFFFFF89E78140 (s_system.c:1325) - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ An error such as 'Error 6, Run map error, Memory Allocation Error, CHECKMMH FAILED?' might be seen in the IBM WebSphere Transformation Extender (WTX) / IBM Transformation Extender (ITX) map logs running under the control of a 64 bit Launcher on the Windows platform. 
+
+SYMPTOM
+The Launcher logs may display an error such as:
+
+Memory allocation failure : FUNC:RunMercMap CHECKMMH FAILED mmh=FFFFFFFF89E78140 (s_system.c:1325)
+
+
+CAUSE
+The mmh handle address is truncated to 32 bits. So, any 64 bit WTX/ITX Launcher system on Windows can have this issue for malloc returns for map handle address that is over 4GB. Windows 10 in particular may fail right away because Windows 10 returns very high addresses for malloc, even for smaller address space.
+
+ENVIRONMENT
+WTX / ITX Launcher running on any support execution environment
+
+DIAGNOSING THE PROBLEM
+Monitor the memory & handle usage of the system using the Windows Task Manager.
+
+RESOLVING THE PROBLEM
+Obtain and apply the fix for APAR PI93881 from IBM.

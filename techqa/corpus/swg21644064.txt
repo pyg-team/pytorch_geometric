@@ -1,0 +1,31 @@
+Title: IBM Exportserverdata data base port specification - United States
+
+Text:
+TDWB; exportserverdata; 08001; -4499; AWKCLI102E; connectexception; connection; refused TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ "AWKCLI102E A database error occurred" and "ConnectException: Error opening socket to server" errors are received running exportserverdata.sh. 
+
+SYMPTOM
+When running the exportserverdata.sh (.cmd) you may see an error similar to: 
+
+AWKCLI102E A database error occurred. The internal error returned by
+the database manager is: "[jcc][t4][2043][11550][3.61.75] Exception java.net.
+ConnectException: Error opening socket to server /<ip_address> on port 50,000 with
+message: Connection refused: connect. ERRORCODE=-4499, SQLSTATE=08001".
+
+
+CAUSE
+One possibility is that the data base port is not the default. Setting up DB2 HADR can cause the default port number to shift from 50000 to 60000.
+
+
+RESOLVING THE PROBLEM
+You can edit the %TDWB_HOME%\config\CLIConfig.properties file to enter the correct database port. 
+
+In the section below: 
+
+# DAOCommon Configuration
+com.ibm.tdwb.dao.rdbms.rdbmsName=db2
+com.ibm.tdwb.dao.rdbms.useDataSource=false
+com.ibm.tdwb.dao.rdbms.jdbcPath=jdbc\:db2\://<db_host_name>\:50000/TWS <--- edit the port numbercom.ibm.tdwb.dao.rdbms.jdbcDriver=com.ibm.db2.jcc.DB2Driver
+com.ibm.tdwb.dao.rdbms.useSSLConnections=false

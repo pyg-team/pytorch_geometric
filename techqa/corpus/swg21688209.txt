@@ -1,0 +1,53 @@
+Title: IBM Using Packaging Utility for Netcool/OMNIbus repositories - United States
+
+Text:
+imcl; installation manager; omnibus; packaging utility TECHNOTE (FAQ)
+
+QUESTION
+ How do I use the IBM Packaging Utility to manage a Netcool/OMNIbus repository for IBM Installation Manager? 
+
+ANSWER
+Overview of IBM Packaging Utility
+IBM Packaging Utility is a partner utility to IBM Installation Manager. While Installation Manager can install, uninstalls, and maintains applications from their installation repositories, Packaging Utility is used to manage the installation repositories themselves.
+
+Netcool/OMNIbus core repositories
+The Netcool/OMNIbus core repositories for Installation Manager are available to entitled users that use the Installation Manager or Packaging Utility applications to install directly from the IBM website or to copy the repository to a local file system respectively. The repositories are also available as zip files downloadable from IBM Fix Central. Whichever method is used to access the files, the Netcool/OMNIbus install repositories are all platform-sliced repositories. This means that they were created by the IBM Packaging Utility application with the -platform parameter set.
+
+Packaging Utility and platform-sliced repositories
+The Packaging Utility graphical user interface (GUI) does not currently support working with platform-sliced repositories. To work with platform-sliced repositories, use the Packaging Utility's command-line interface (pucl) with the -platform switch.
+
+
+Locations for the Packaging Utility command-line application
+Windows: <install location>\IBM\Packaging Utility\PUCL.exe
+Unix/Linux: <install location>/IBM/PackagingUtility/PUCL
+
+Copying a repository from Passport Advantage® to a local repository
+The following command shows how to copy the Netcool/OMNIbus core repository from Passport Advantage to a local repository.
+
+PUCL copy com.ibm.tivoli.omnibus.core -connectPassportAdvantage -platform os=<operating_system>,arch=<architecture> -target <repository_destination> 
+-prompt -showProgress -acceptLicense
+
+Valid combinations for the -platform argument are in following table. 
+
+Platform Options Resulting Repository Windows os=win32,arch=x86
+os=win32,arch=x86_64 Windows 32 bit Linux os=linux,arch=x86
+os=linux,arch=x86_64 Linux 64 bit zLinux os=linux,arch=s390
+os=linux,arch=s390x ZLinux 64 bit AIX os=aix,arch=ppc
+os=aix,arch=ppc64 AIX 64 bit Solaris os=solaris,arch=sparc
+os=solaris,arch=sparc64 Solaris 64 
+Example to create a Windows repository in C:\OMNIbus_8.1: 
+PUCL copy com.ibm.tivoli.omnibus.core -connectPassportAdvantage -platform os=win32,arch=x86_64 -target C:\OMNIbus_8.1 -prompt -showProgress -acceptLicense 
+
+During the download from Passport Advantage, you are prompted for your user name and password to confirm your entitlement to the Netcool/OMNIbus product. 
+
+
+Copying an existing local repository 
+If you want to copy an existing local Netcool/OMNIbus repository and are unsure which platform combination was used to create the original repository, the following Packaging Utility command shows the available platform combinations. 
+PUCL listAvailablePackages -repositories <repository_location> -showPlatforms 
+
+Where the <repository_location> is the path to the repository.config file in the repository. 
+Example: 
+PUCL listAvailablePackages -repositories C:\OMNIbus_8.1 -showPlatforms 
+
+Packaging Utility Additional Resources 
+For more help and information about the Packaging Utility, see IBM Knowledge Centre [http://www-01.ibm.com/support/knowledgecenter/] in the IBM Installation Manager [http://www-01.ibm.com/support/knowledgecenter/SSDV2W/im_family_welcome.html] section.

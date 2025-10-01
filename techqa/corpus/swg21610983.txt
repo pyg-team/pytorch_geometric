@@ -1,0 +1,97 @@
+Title: IBM ITM - TEP authentication issues on Unix/Linux OS - United States
+
+Text:
+authentication TEMS TEPS unix linux user id password userid logon login fails failing invalid failure authenticating passwd TECHNOTE (FAQ)
+
+QUESTION
+ List the checkings that can be done on ITM environments running on Unix/Linux, if you have user authentication problems during TEP login; For example, you get error like KFWITM393E: User ID or Password is invalid. 
+
+ANSWER
+Possible actions for authentication issues on TEMS and TEPS servers running on Unix/Linux are :
+
+- Only one userid is failing ?
+- "sysadmin" account works ?
+- Launch the 'MTEMS' (via command : "/opt/ibm/itm/itmcmd manage &"), then go to -> "advanced settings" of the TEMS configuration, Security: Validate User, what happens if this entry is un-flagged?
+- LDAP user authentication - is LDAP used? 
+
+- TEMS server has the account defined locally, can the user/account logon to the OS of the TEMS ? 
+- Try a command line: tacmd -s <tems> : If it fails, then the TEP login will fail too.
+- if it worked previously, any changes (OS configuration) were made ?
+- The user ID and password are entered correctly ? On Unix/Linux they are case sensitive
+- The password includes special characters? Try without using special chars for testing purposes
+- The password from failing user id/account is longer than 15 characters ? 
+
+ See technote: 
+
+ 1286785 KFWITM393E message seen on TEPS login attempt 
+http://www-01.ibm.com/support/docview.wss?uid=swg21286785 [http://www-01.ibm.com/support/docview.wss?uid=swg21286785] 
+
+
+- Does it work with Java WebStart and/or TEP browser ?
+- User has permissions to logon, its password has not expired ?
+- The OS administrator has recently reset the password for the failing user ? 
+
+ If yes, update the user password on the OS.
+- Search "<host>_ms_xxx" log files for messages like : "Logon validation failed".
+- Check TEP window: "Administer Users"
+- If you cannot log on to TEP and the TEMS is running properly, the problem might be with the TEPS. 
+Try recycling the TEPS portal server.
+
+
+ 
+
+If all the above still did not help to determine what is wrong, you may need to enable traces on the TEPS server. 
+
+In the "cq.ini" file find the KBB_RAS1 variable. Edit it so that it reads like (one line) : KBB_RAS1=ERROR (UNIT:ctsql IN ER) (UNIT:ctdata IN ER) (UNIT:ctauth ALL) 
+Then restart the TEPS. Attempt to login to the TEPS and reproduce the error. Then collect/review the last few *_cq_* log files from the $CANDLHOME/logs on the TEPS, as well as the ms.ini from the TEMS. 
+
+Or collect and review the log files using "pdcollect" tool. 
+
+See also in InfoCenter, in the ITM Administrator guide, and refer to the chapter: "Troubleshooting logon error messages"
+
+- does a newly created 'testuser' for test purpose works ? 
+
+
+- Check authorization module "kdsvlunx" : 
+
+Log on as "root" account, stop all the ITM components including TEMS, TEPS, etc.
+Add (while logged as "root") to your ms.ini file: 
+KDS_VALIDATE_EXT=Y 
+So that you have both: 
+KDS_VALIDATE=$SECURITY$ 
+KDS_VALIDATE_EXT=Y 
+
+And in the <hostname>_ms_tems.config file, add (if not available): 
+KDS_VALIDATE='YES' 
+KDS_VALIDATE_EXT='Y' 
+
+Then execute (as root) the command:
+$CANDLEHOME/bin/SetPerm -s
+to enable "user validation" on the TEMS.
+This sets the suid bit for kdsvlunx
+(e.g. -rwsrwxrwx 1 root root 27620 Sep 30 2010 kdsvlunx) 
+
+Restart as root the TEMS and other ITM components. (All this needs to be done one time)
+
+Regarding the need to run the "SetPerm -s" command in order to enable user validation on the TEMS, please refer to the following technotes :
+
+- Technote 1419882 The itmcmd command documentation has errors 
+http://www-01.ibm.com/support/docview.wss?uid=swg21419882 [http://www-01.ibm.com/support/docview.wss?uid=swg21419882] 
+
+
+- Technote 1572403 tacmd login fails with invalid user id and password
+http://www-01.ibm.com/support/docview.wss?uid=swg21572403 [http://www-01.ibm.com/support/docview.wss?uid=swg21572403] 
+
+
+- Old (ITM 6.1) APAR IY80187 WHEN USER SECURITY ON - ALL USERS REJECTED 
+
+
+
+
+HISTORICAL NUMBER
+ 41140
+660
+706 
+
+PRODUCT ALIAS/SYNONYM
+ ITM IBM Tivoli Monitoring

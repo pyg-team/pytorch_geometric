@@ -1,0 +1,149 @@
+Title: IBM PM86753: MANAGESDK -SETNEWPROFILEDEFAULT NOT RESPECTED FOR SECURE PROXY A T SERVER LEVEL IN IBM JAVA SDK AFTER PROFILE CREATION ON Z/OS - United States
+
+Text:
+z/os SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  A previously set IBM Java Software Development Kit value (set
+   with
+   managesdk.sh -setNewProfileDefault) is ignored during creation
+   of a secure proxy
+   server at server level. The server-level results with Java SDK
+   6 64bit regardless of what the Java SDK value was set earlier.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  All users of IBM WebSphere Application      *
+   *                  Server V8.5 creating secureproxy on z/os    *
+   *                  who used managesdk.sh                       *
+   *                  -setNewProfileDefault                       *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Server level Java SDK does not          *
+   *                      reflect the value used for              *
+   *                      managesdk.sh -setNewProfileDefault      *
+   *                      after profile creation.                 *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   Server level Java SDK does not reflect the value used for
+   managesdk.sh -setNewProfileDefault after profile creation due
+   to hardcoded value. The value is that of Java SDK 6 64bit.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The hardcoded values have been removed so that managesdk.sh
+   -setNewProfileDefault will result with the desired Java SDK
+   being used for profile creation on node and server level.
+   
+   APAR PM86753 is currently targeted for inclusion in Fix
+   Pack 8.5.5 of WebSphere Application Server V8.5.
+   
+   Please refer to the Recommended Updates page for delivery
+   information:
+   http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+   
+   In addition, please refer to URL:
+   http://www.ibm.com/support/docview.wss?rs=404&uid=swg27006970 [http://www.ibm.com/support/docview.wss?rs=404&uid=swg27006970]
+   for Fix Pack PTF information.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM86753
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSPHERE FOR Z
+   
+   
+ * REPORTED COMPONENT ID
+   5655I3500
+   
+   
+ * REPORTED RELEASE
+   850
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-04-10
+   
+   
+ * CLOSED DATE
+   2013-04-15
+   
+   
+ * LAST MODIFIED DATE
+   2013-04-30
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBSPHERE FOR Z
+   
+   
+ * FIXED COMPONENT ID
+   5655I3500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R850 PSY
+   UP

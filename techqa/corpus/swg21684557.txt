@@ -1,0 +1,41 @@
+Title: IBM Disjoining TIP Servers in HA environment when DB2 Server is down - United States
+
+Text:
+TIPL2HA; TIPL2FAQ; DB2; disjoin High Availability Environment; HA TECHNOTE (FAQ)
+
+QUESTION
+ In a High Availability (HA) environment involving multiple Tivoli Integrated Portal servers, what is the proper way to disjoin a node from a cluster in case of power failure that makes the DB2 server unavailable? 
+
+
+CAUSE
+In order to disjoin a TIP node from current load balancing environment, access to the DB2 server is needed, but what if there is a power failure and the DB2 sever is not part of HA environment. Can the TIP nodes be disjoined anyway? 
+
+ANSWER
+You can manually disjoin by following below steps:
+
+1. Stop the TIP servers. 
+2. Go to: $TIPHOME/profiles/TIPProfile/config/cells/TIPCell/applications/isc.ear/deployments/isc/isclite.war/WEB-INF
+3. Take a backup of the tipha.properties file.
+4. Edit tipha.properties and set EnableHA to false 
+5. Go to $TIPHOME/profiles/TIPProfile/config/cells/TIPCell/nodes/TIPNode/servers/server1
+6. Edit resources.xml (also, please take a backup first)
+7. Remove all of the below section:
+
+<resources.jdbc:JDBCProvider xmi:id="JDBCProvider_1363796579233" name="TIP_Universal_JDBC_Driver" implementationClassName="com.ibm.db2.jcc.DB2ConnectionPoolDataSource" xa="false">
+<classpath>${TIP_JDBC_DRIVER_PATH}/db2jcc.jar</classpath>
+<classpath>${TIP_JDBC_DRIVER_PATH}/db2jcc_license_cu.jar</classpath>
+<factories xmi:type="resources.jdbc:DataSource" xmi:id="DataSource_1363796579303" name="tipds" jndiName="jdbc/tipds" description="TIP Data Source" authMechanismPreference="BASIC_PASSWORD" authDataAlias="TIPAlias" relationalResourceAdapter="builtin_rra" statementCacheSize="0" datasourceHelperClassname="com.ibm.websphere.rsadapter.DB2UniversalDataStoreHelper">
+<propertySet xmi:id="J2EEResourcePropertySet_1363796579334">
+<resourceProperties xmi:id="J2EEResourceProperty_1363796579340" name="databaseName" type="java.lang.String" value="tip_db" description="Location of db2 database."/>
+<resourceProperties xmi:id="J2EEResourceProperty_1363796579347" name="serverName" type="java.lang.String" value="x.x.x.x.x" description="Location of db2 database."/>
+<resourceProperties xmi:id="J2EEResourceProperty_1363796579353" name="portNumber" type="java.lang.String" value="50002" description="Location of db2 database port."/>
+<resourceProperties xmi:id="J2EEResourceProperty_1363796579359" name="driverType" type="java.lang.String" value="4" description="db2 driver type."/>
+</propertySet>
+<connectionPool xmi:id="ConnectionPool_1363796579308" connectionTimeout="180" maxConnections="10" minConnections="1" reapTime="180" unusedTimeout="1800" agedTimeout="0" purgePolicy="EntirePool" numberOfSharedPoolPartitions="0" numberOfUnsharedPoolPartitions="0" numberOfFreePoolPartitions="0" freePoolDistributionTableSize="0" surgeThreshold="-1" surgeCreationInterval="0" testConnection="false" testConnectionInterval="0" stuckTimerTime="0" stuckTime="0" stuckThreshold="0"/>
+<mapping xmi:id="MappingModule_1363796579308" mappingConfigAlias="DefaultPrincipalMapping" authDataAlias="TIPAlias"/>
+</factories>
+</resources.jdbc:JDBCProvider>
+
+6. Restart the TIP servers.
+
+Please Note: When you join/install HA again, the above datasource information will get automatically added to the resources.xml again, if it's not there.

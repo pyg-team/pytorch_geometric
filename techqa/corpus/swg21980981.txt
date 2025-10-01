@@ -1,0 +1,34 @@
+Title: IBM nzbackup failed for large data backup upon TSM, but it was successful for small data backup - United States
+
+Text:
+TSM nzbackup backup connection TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ nzbackup failed when it took long time, with error as follow in backup log
+
+"Connector exited with error: 'ANS1017E (RC-50) Session rejected: TCP/IP connection failure" 
+
+CAUSE
+TSM timeout parameter is too short to wait for nzbackup to push data
+
+RESOLVING THE PROBLEM
+Request customer to increase timeout parameters as follow in TSM side 
+
+ - CommTimeout
+- IdleTimeout
+
+* description of parameters
+The COMMTIMEOUT option specifies how long the server waits for an
+expected client message during an operation that causes a database
+update. If the length of time exceeds this time-out, the server ends
+the session with the client. You may want to increase the time-out
+value to prevent clients from timing out. Clients may time out if there
+is a heavy network load in your environment or they are backing up
+large files.
+
+The IDLETIMEOUT option specifies the amount of time, in minutes, that a
+client session can be idle before the server cancels the session. You
+may want to increase the time-out value to prevent clients from timing
+out if there is a heavy network load in your environment. Note,
+however, that a large number of idle sessions could prevent other users
+from connecting to the server.

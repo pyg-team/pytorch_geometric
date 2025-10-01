@@ -1,0 +1,183 @@
+Title: IBM IV41739: WEBSPHERE MQ ADAPTER FOR DYNAMICS AX 2012 (SUPPORTPAC MA7R) FAIL TO WRITE OUTBOUND DATA, A NULLREFERENCEEXCEPTION APPEAR. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  A correctly configured WebSphere MQ adapter for Dynamics AX 2012
+   (SupportPac MA7R) fails to write outbound data (fails to
+   retrieve data from Microsoft Dynamics AX). The following error
+   appear:
+   
+   System.Reflection.TargetInvocationException: Exception has been
+   thrown by the target of an invocation.
+   ---> System.NullReferenceException: Object reference not set to
+   an instance of an object.
+   
+   at IBM.WMQ.AxIntegrator.AifWmqMessage.getMQMessage()
+   at IBM.WMQ.AxIntegrator.AifWmqIntegrator.SendMessage(AifWmqMe
+   ssageaifMsg)
+   
+   --- End of inner exception stack trace ---
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  None ;end p,j;600-MDV-02-10;600;600.02.10;Linux (x86-64);U833083
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   IBM WebSphere MQ Adapter for Microsoft DynamicsAX 2012 customers
+   using Outbound scenario not containing RequestMessageID in the
+   XML message.
+   
+   
+   Platforms affected:
+   Windows
+   
+   ****************************************************************
+   PROBLEM SUMMARY:
+   The NullReferenceException appears to be happening due to the
+   adapter library specifically looking for the
+   "RequestMessageId" attribute in the incoming XML message.
+   
+   Typically in an Inbound scenario, for example an external
+   application invoking Sales order creation service, the
+   response sent by AX will contain the "RequestMessageId"
+   attribute. This "RequestMessageId" is actually the "MessageId"
+   of the request message sent by the application for creating a
+   sales order. Using the "RequestMessageId" an application can
+   verify if the response received is actually for the request it
+   had sent earlier.
+   
+   The MQ adapter sets the "RequestMessageId" attribute as a
+   property on MQ message. This is to help MQ applications to
+   select only the message that matches the "RequestMessageId"
+   and correlate request and response messages.
+   
+   In an outbound scenario, the action is initiated by AX, so the
+   XML message may not contain the "RequestMessageId" attribute.
+   Hence System.NullReferenceException exception is being thrown.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The DynamicsAX Client code has been fixed to handle the
+   RequestMessageId field from the XML depending on the Inbound and
+   Outbound scenario.
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+   Platform           v7.5
+   --------           --------------------
+   Multiplatforms     7.5.0.3
+   
+   The latest available maintenance can be obtained from
+   'WebSphere MQ Recommended Fixes'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037]
+   
+   If the maintenance level is not yet available information on
+   its planned availability can be found in 'WebSphere MQ
+   Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV41739
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ XMS
+   
+   
+ * REPORTED COMPONENT ID
+   5724H7247
+   
+   
+ * REPORTED RELEASE
+   750
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2013-05-07
+   
+   
+ * CLOSED DATE
+   2013-05-28
+   
+   
+ * LAST MODIFIED DATE
+   2017-12-04
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ XMS
+   
+   
+ * FIXED COMPONENT ID
+   5724H7247
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R750 PSY
+   UP

@@ -1,0 +1,198 @@
+Title: IBM IZ41187: MQRC_CLUSTER_PUT_INHIBITED WAS RETURNED WHEN AN OUT-DATED OBJECT DEFINITION FROM THE CLUSTER REPOSITORY WAS REFERENCED. - United States
+
+Text:
+  FIXES ARE AVAILABLE
+WebSphere MQ V6.0 Fix Pack 6.0.2.7 [http://www-01.ibm.com/support/docview.wss?uid=swg24022718]
+WebSphere MQ V7.0 for i5/OS Fix Pack 7.0.0.2 [http://www-01.ibm.com/support/docview.wss?uid=swg24022812]
+WebSphere MQ V7.0 Fix Pack 7.0.0.2 [http://www-01.ibm.com/support/docview.wss?uid=swg24022810]
+WebSphere MQ V7.0 Fix Pack 7.0.1.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24024528]
+WebSphere MQ V7.0.1 for i5/OS Fix Pack 7.0.1.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24025627]
+WebSphere MQ V7.0 Fix Pack 7.0.1.2 [http://www-01.ibm.com/support/docview.wss?uid=swg24026518]
+WebSphere MQ V7.0.1 for i5/OS Fix Pack 7.0.1.2 [http://www-01.ibm.com/support/docview.wss?uid=swg24026566]
+WebSphere MQ 6.0 for HP OpenVMS Alpha and Itanium - Fix Pack 6.0.2.7 [http://www-01.ibm.com/support/docview.wss?uid=swg24027266]
+WebSphere MQ 6.0 for HP OpenVMS Alpha and Itanium - Fix Pack 6.0.2.10 (FP03) [http://www-01.ibm.com/support/docview.wss?uid=swg24029987]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The local queue manager sees the definition of a cluster queue
+   hosted remotely, as PUT(DISABLED) when in reality it is PUT
+   (ENABLED) on the hosting queue manager and seen as PUT(ENABLED)
+   on the full repositories. The queue in question has not been
+   PUT to by the local queue manager for 30 days or more.
+   
+   An application connected to the local queue manager attempting
+   to put to the queue, receives MQRC_CLUSTER_PUT_INHIBITED and
+   can only be rectified by subsequent issuing of the REFRESH
+   CLUSTER command.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  As a workaround, the customer could issue:
+   REFRESH CLUSTER(ClusterName)
+   command on the affected partial repository queue manager.
+   This action would cause the contents of the repository to be
+   rebuilt using information from the full repository queue
+   managers.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   Users putting to cluster queues which have not been used for
+   more than 30 days, and where the cluster queues may be put
+   disabled.
+   
+   Platforms affected:
+   All Distributed (iSeries, all Unix and Windows)
+   ****************************************************************
+   PROBLEM SUMMARY:
+   The queue object held locally contained out-of-date information.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Maintain information properly about a put disabled queue object.
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+                      v6.0
+   Platform           Fix Pack 6.0.2.7
+   --------           --------------------
+   Windows            U200312
+   AIX                U821719
+   HP-UX (PA-RISC)    U821511
+   HP-UX (Itanium)    U822328
+   Solaris (SPARC)    U821514
+   Solaris (x86-64)   U822359
+   iSeries            tbc_p600_0_2_7
+   Linux (x86)        U822325
+   Linux (x86-64)     U822358
+   Linux (zSeries)    U822329
+   Linux (Power)      U822327
+   Linux (s390x)      U822357
+   
+                      v7.0
+   Platform           Fix Pack 7.0.0.2
+   --------           --------------------
+   Windows            U200302
+   AIX                U822354
+   HP-UX (PA-RISC)    U822349
+   HP-UX (Itanium)    U822351
+   Solaris (SPARC)    U822353
+   Solaris (x86-64)   U822394
+   iSeries            tbc_p700_0_0_2
+   Linux (x86)        U822348
+   Linux (x86-64)     U822393
+   Linux (zSeries)    U822352
+   Linux (Power)      U822350
+   
+   The latest available maintenance can be obtained from
+   'Websphere MQ Recommended Fixes'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037]
+   
+   If the maintenance level is not yet available, information on
+   its planned availability can be found in 'Websphere MQ
+   Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ41187
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ AIX V6
+   
+   
+ * REPORTED COMPONENT ID
+   5724H7201
+   
+   
+ * REPORTED RELEASE
+   602
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-01-12
+   
+   
+ * CLOSED DATE
+   2009-01-30
+   
+   
+ * LAST MODIFIED DATE
+   2009-01-30
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    PK81526 [http://www-01.ibm.com/support/docview.wss?uid=swg1PK81526]
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ AIX V6
+   
+   
+ * FIXED COMPONENT ID
+   5724H7201
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R600 PSY
+   UP

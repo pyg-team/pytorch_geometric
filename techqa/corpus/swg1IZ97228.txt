@@ -1,0 +1,248 @@
+Title: IBM IZ97228: CICS EXPLORER SIGNOFF RECEIVES ICH408I INVALID PASSWORD AND IRR013I VERIFICATION FAILED. - United States
+
+Text:
+z/os  DIRECT LINK TO FIX
+1.0.1.4-WS-CICSExplorer-WinLin [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FCICS+Explorer&fixids=1.0.1.4-WS-CICSExplorer-WinLin&source=SAR]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  CICS EXplorer level 1.0.11 connected to CICS TS 4.1
+   At signoff from the CICS Explorer the following messages
+   are seen : syslog
+   ICH408I USER(userid  ) GROUP(TSOUSER ) NAME(xxx, P R (PHIL)
+   )
+   LOGON/JOB INITIATION - INVALID PASSWORD
+   IRR013I  VERIFICATION FAILED. INVALID PASSWORD GIVEN.
+   .
+   In the WUI job log :
+   WUIlog shows that on signoff, we see :
+   DFHXS1201 02/22/2011 18:38:29 ES1DCICS The password supplied in
+   the verification request for userid was invalid. This occurred
+   in transaction CWXN when userid xxxxxxx was signed on at
+   netname ????????.
+   .
+   The CICS EXplorer servicedata shows the following trace entries:
+   In the CICS EXplorer trace we can see after the SIGNOFF :
+   - several 'OpenConnection'
+   - several 'SMCPSMConnection.discard() ?401, Basic Authentication
+   Error.
+   .
+   If the ICH408 messages occurs more than 5 times the userid
+   concerned can become revoked.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All CICS Explorer Users                      *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: CICS Explorer Signoff menu causes       *
+   *                      ICH4081 Invalid Password in CPSM WUI    *
+   *                      Server                                  *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   When using the CICS Explorer connected to a CPSM WUI server with
+   a CICS Management Interface connection, clicking the
+   Explorer->Signoff menu item causes a null password to be sent to
+   the server. An error is shown in the MSGLOG on the CPSM server.
+   
+   The error is intermittent and caused by the user password being
+   deleted from local storage on a different thread, before the
+   connection to the WUI server is discarded.
+   
+   Additional Keywords: DFHXS1201, MSGDFHXS1201, XS1201, MSGICH408,
+   ICH408
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The CICS Explorer core UI plugin has been modified so that the
+   deletion of the password from local storage is now performed on
+   the same thread as the job which disconnects the Explorer from
+   the CPSM WUI server.
+   
+   The CICS Explorer can be updated via one of two possible means:
+   
+   1. Update the CICS Explorer from within the CICS Explorer using
+   the IBM-hosted Update-Site.
+   2. Download the update from Fix Central to be installed locally
+   into the CICS Explorer.
+   
+   Updating using the Update-Site
+   
+   * Start CICS Explorer.
+   * Select Help -> Software Updates... from the main menu.
+   * Click the Installed Software tab and click Update...
+   * An update should be found for the CICS Explorer, verify that
+   the update version is 1.0.1.2_201105161706 or higher.
+   * Click Finish to install the update.
+   * Once the update has completed you'll be prompted to restart
+   the CICS Explorer for the update to take effect. Click Yes.
+   * Optionally, verify that the CICS Explorer version has been
+   updated:
+     * Select Help -> About IBM CICS Explorer from the main menu
+   and note the version, it should be 1.0.1.2 or higher.
+   
+   The CICS Explorer is now up-to-date with this update installed,
+   and no further action is necessary.
+   
+   If no update was found using the above steps, verify that the
+   version of the CICS Explorer is prior to 1.0.1.
+   
+   To do this select Help -> About IBM CICS Explorer from the main
+   menu and note the version currently installed.
+   
+   If the version is lower than 1.0.1.2 and no update was found,
+   then make sure that the IBM-hosted Update Site is installed (it
+   is by default):
+   * Select Help -> Software Updates...
+   * Click the Available Software tab.
+   * Click the Manage Sites... button.
+   * Make sure there is an entry with name "CICS Explorer" and a
+   location of:
+     http://download.boulder.ibm.com [http://download.boulder.ibm.com]
+     /ibmdl/pub/software/htp/cics/updates/explorer/1.0/latest/
+     (concatenate the URL above).
+   * If the entry is not there, or incorrect, delete the existing
+   entry, and click Add Site... and add the url above into the text
+   box and click OK.
+   * Retry updating the CICS Explorer as already described further
+   up.
+   
+   Updating using IBM Fix Central
+   To update the CICS Explorer using the Fix Central follow the
+   instructions below:
+   
+   * Open a browser and go to the Fix Central website:
+   http://www.ibm.com/support/fixcentral/ [http://www.ibm.com/support/fixcentral/]
+   * Select WebSphere from the Product Group drop-down menu.
+   * Select CICS Explorer from the Product drop-down menu.
+   * Select All from the Installed Version drop-down menu.
+   * Select All (or your platform) from the Platform drop-down menu
+   * Click Continue.
+   * Select the "APAR or SPR" option and enter IZ97228 into the
+   text box next to it.
+   * Click Continue.
+   * Select the corresponding Fix Pack's checkbox and click
+   Continue.
+   * Select the desired download mechanism and click Continue.
+   * Optionally, click on the readme to view it.
+   * Download the Update Site zip.
+   
+   Once the download has completed:
+   
+   * Start CICS Explorer.
+   * Select Help -> Software Updates... from the main menu.
+   * Click the Available Software tab.
+   * Click Add Site...
+   * Click the Archive... button.
+   * Find the update-site zip just downloaded, and click Open.
+   * Click OK to add that update-zip as an available update.
+   * Click the Installed Software tab and click Update...
+   * The update should be found for the CICS Explorer, verify that
+   the update version is 1.0.1.2_201105161706
+   * Click Finish to install the update.
+   * Once the update has completed you'll be prompted to restart
+   the CICS Explorer for the update to take effect. Click Yes.
+   * Optionally, verify that the CICS Explorer version has been
+   updated:
+     * Select Help -> About IBM CICS Explorer from the main menu
+   and note the version, it should be now 1.0.1.2
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ97228
+   
+   
+ * REPORTED COMPONENT NAME
+   CICS EXPLORER V
+   
+   
+ * REPORTED COMPONENT ID
+   5655S9701
+   
+   
+ * REPORTED RELEASE
+   101
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-03-25
+   
+   
+ * CLOSED DATE
+   2011-05-31
+   
+   
+ * LAST MODIFIED DATE
+   2011-05-31
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CICS EXPLORER V
+   
+   
+ * FIXED COMPONENT ID
+   5655S9701
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R101 PSY
+   UP

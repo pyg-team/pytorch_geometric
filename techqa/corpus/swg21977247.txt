@@ -1,0 +1,13 @@
+Title: IBM How do I turn off  global hold reminder only for a specific hold notice ? - United States
+
+Text:
+atlas ; GHR TECHNOTE (FAQ)
+
+QUESTION
+ How do I turn off global hold reminder in Atlas only for a specific hold notice ? 
+
+CAUSE
+Legal wants to make last minute changes to a hold notice and would like to turn off global hold reminder just for this hold notice.
+
+ANSWER
+You cannot turn off global hold reminder just for single hold notice. Any change in global hold reminder configuration is global and it will effect all hold notices.

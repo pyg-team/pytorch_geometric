@@ -1,0 +1,306 @@
+Title: IBM IV49794: UNABLE TO CANCEL PM WORK ORDERS - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  replicated in MBS 7118 maxdemo
+   1. Go to the Assets (Tr) application (Go To > Assets > Assets
+   (Tr))
+   2. Click on the new record icon.
+   3. Create a new asset MAY
+   add a continuous meter with an initial reading of 1 mile:
+   Meter = ODOM-M
+   Meter type = actual
+   Rollover = 999999
+   Average Calculation Method = ALL
+   Change status to OPERATING
+   4. Go to the Preventive Maintenance (Tr) application (Go To >
+   Preventive Maintenance > Preventive Maintenance (Tr))
+   5. Click on the new record icon.
+   6. Create a new PM.  Attach the same asset created above
+   7. Go to the frequency tab, meter based frequency tab
+   click new row, enter ODOM-M in the meter field
+   ensure only the Generate WO Based on Meter Reading (Do Not
+   Estimate) checkbox is checked
+   Set the Meter Based Frequency on the Frequency tab to 5.00
+   set the meter reading to 1.00 in the Last Work Order
+   Information section, set the meter reading date to yesterday in
+   the Last Work Order Information section
+    change the PM status to active
+   after save, next meter reading becomes  6
+   units to go becomes 5
+   
+   8. go to organizations application, bring up EAGLENA.  Go to
+   select action menu, PM option.  select Bedford site. Ensure
+   Automatic PM WO generation is selected
+   9. Go to the Cron Task Setup application. (Go To > System
+   Configuration > Platform Configuration > Cron Task Setup)
+   10. Ensure the PMWOGEN Cron Task is turned on.
+   11. Go to the Assets (Tr) application (Go To > Assets > Assets
+   (Tr))
+   12. Search for and select the asset record previously created
+   in step number two.
+   13. Enter a new meter reading using the Select Action menu
+   (Select Action > Meter Readings > Enter Meter Readings)
+   14. Go to select action menu, enter meter reading
+   Enter a meter reading greater than the frequency criteria on
+   the PM e.g. 100
+   Do NOT tick Rollover checkbox
+   Click on the Meters tab to review the update. The mileage
+   should now read 100
+   
+   Go to PM application, check meter based frequency tab
+   
+   15. Go to the Work Orders (Tr) application and ensure that the
+   PMWOGEN Cron Task has created a new Work Order 1175 (Go To >
+   Work Orders > Work Order Tracking (Tr))
+   Check the PM , meter based frequency
+   Last work order information
+   Meter reading = 100.00
+   
+   16. Go to the Assets (Tr) application (Go To ? Assets ?
+   Assets (Tr))
+   Search for and select the asset record previously created in
+   step number two.
+   17. Correct the mileage using the select action menu to a value
+   below the previous frequency threshold to trigger the PM e.g.
+   2.00 (Select Action ? Meter Readings ? Manage Meter
+   Reading History), tab out of the meter reading field, do not
+   tick rollover checkbox. Click OK.
+   
+   18. Go to the Work Order Tracking (Tr) application (Go To ?
+   Work Orders ? Work Order Tracking (Tr))
+   
+   19. Find the work order 1175  previously created by the PMWOGEN
+   Cron Task and change the status to canceled. Check PM meter
+   based frequency, meter reading
+   
+   20. When the PMWOGEN Cron Task runs again, another Work Order
+   1176  is created even though the PM is no longer due based on
+   the frequency criteria on the PM
+   
+   NOTE:  The Meter Reading field under Last Work Order
+   Information changes when a work order is opened by the PMWOGEN
+   Cron Task.
+   
+   If a work order is not open, the New Reading filed under the
+   Last Work Order information section is 1 mile and the fields
+   under the Next Work Order Projections section are populated.
+   
+   When the new Work Order is opened, the New Reading filed under
+   the Last Work Order information section changes to 2 miles
+   which is the current mileage of the asset
+   and the fields under the Next Work Order Projections section
+   become blank.
+   The New Mileage should not change until a new Work Order is
+   completed
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  n/a
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * Maximo users of meter-based PM work order generation         *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * ERRONEOUS PM WOGEN AFTER WORK ORDER CANCEL                   *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Apply latest fix pack                                        *
+   ****************************************************************
+   1. Go to the Assets (Tr) application (Go To > Assets > Assets
+   (Tr))
+   2. Click on the new record icon.
+   3. Create a new asset MAY
+   add a continuous meter with an initial reading of 1 mile:
+   Meter = ODOM-M
+   Meter type = actual
+   Rollover = 999999
+   Average Calculation Method = ALL
+   Change status to OPERATING
+   4. Go to the Preventive Maintenance (Tr) application (Go To >
+   Preventive Maintenance > Preventive Maintenance (Tr))
+   5. Click on the new record icon.
+   6. Create a new PM.  Attach the same asset created above
+   7. Go to the frequency tab, meter based frequency tab
+   click new row, enter ODOM-M in the meter field
+   ensure only the Generate WO Based on Meter Reading (Do Not
+   Estimate) checkbox is checked
+   Set the Meter Based Frequency on the Frequency tab to 5.00
+   set the meter reading to 1.00 in the Last Work Order
+   Information section, set the meter reading date to yesterday in
+   the Last Work Order Information section
+    change the PM status to active
+   after save, next meter reading becomes  6
+   units to go becomes 5
+   
+   8. go to organizations application, bring up EAGLENA.  Go to
+   select action menu, PM option.  select Bedford site. Ensure
+   Automatic PM WO generation is selected
+   9. Go to the Cron Task Setup application. (Go To > System
+   Configuration > Platform Configuration > Cron Task Setup)
+   10. Ensure the PMWOGEN Cron Task is turned on.
+   11. Go to the Assets (Tr) application (Go To > Assets > Assets
+   (Tr))
+   12. Search for and select the asset record previously created
+   in step number two.
+   13. Enter a new meter reading using the Select Action menu
+   (Select Action > Meter Readings > Enter Meter Readings)
+   14. Go to select action menu, enter meter reading
+   Enter a meter reading greater than the frequency criteria on
+   the PM e.g. 100
+   Do NOT tick Rollover checkbox
+   Click on the Meters tab to review the update. The mileage
+   should now read 100
+   
+   Go to PM application, check meter based frequency tab
+   
+   15. Go to the Work Orders (Tr) application and ensure that the
+   PMWOGEN Cron Task has created a new Work Order 1175 (Go To >
+   Work Orders > Work Order Tracking (Tr))
+   Check the PM , meter based frequency
+   Last work order information
+   Meter reading = 100.00
+   
+   16. Go to the Assets (Tr) application (Go To ? Assets ?
+   Assets (Tr))
+   Search for and select the asset record previously created in
+   step number two.
+   17. Correct the mileage using the select action menu to a value
+   below the previous frequency threshold to trigger the PM e.g.
+   2.00 (Select Action ? Meter Readings ? Manage Meter
+   Reading History), tab out of the meter reading field, do not
+   tick rollover checkbox. Click OK.
+   
+   18. Go to the Work Order Tracking (Tr) application (Go To ?
+   Work Orders ? Work Order Tracking (Tr))
+   
+   19. Find the work order 1175  previously created by the PMWOGEN
+   Cron Task and change the status to canceled. Check PM meter
+   based frequency, meter reading
+   
+   20. When the PMWOGEN Cron Task runs again, another Work Order
+   1176  is created even though the PM is no longer due based on
+   the frequency criteria on the PM
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  When a PM meter-based work order is canceled, a new work order
+   is no longer erroneously generated when the PM work order
+   generation cron task is run.
+   
+   The fix for this APAR is contained in the following maintenance
+   package:
+      | release\fix pack\interim fix for Release 7.1.1.13 of Base
+   Services and Release 7.5.0.6 of Base Services
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV49794
+   
+   
+ * REPORTED COMPONENT NAME
+   PREVENTIVE MAIN
+   
+   
+ * REPORTED COMPONENT ID
+   5724R46PM
+   
+   
+ * REPORTED RELEASE
+   711
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-09-20
+   
+   
+ * CLOSED DATE
+   2013-10-17
+   
+   
+ * LAST MODIFIED DATE
+   2013-10-17
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  MAXIMO
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   PREVENTIVE MAIN
+   
+   
+ * FIXED COMPONENT ID
+   5724R46PM
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R711 PSY
+   UP

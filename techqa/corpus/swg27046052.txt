@@ -1,0 +1,44 @@
+Title: IBM Content Navigator documentation: Upgrading your web applications without interrupting service to your users - United States
+
+Text:
+ PRODUCT DOCUMENTATION
+
+ABSTRACT
+ Starting in IBM Content Navigator, Version 2.0.3 Fix Pack 4, you can use application edition management to deploy updates to your users without downtime. 
+
+CONTENT
+WebSphere Application Server Network Deployment, Version 8.5 or later in a highly available cluster only. 
+
+If you deploy your applications on WebSphere Application Server Network Deployment, you can use application edition management to transition from one version of an application to the next without interrupting service to your users. 
+
+Usually when you upgrade your web application, you must stop the server to deploy a new version of an application. In addition, the new deployment overwrites your existing deployment. However, application edition management enables you to deploy a new version of the web application while the current version of the application is still running. It also makes it easier to roll back to a previously deployed version of an application if needed. 
+
+To upgrade your web applications without interrupting service to your users:
+
+
+ 1. Open the IBM Content Navigator Configuration and Deployment Tool and select Modify an existing deployment.
+    
+ 2. Select the deployment that you want to update.
+    
+ 3. Run the appropriate tasks to update your web application, but do not run the Deploy the Web Application task until after the next step:  * If you are updating an IBM Content Navigator application, see Upgrading an IBM Content Navigator deployment [http://www.ibm.com/support/knowledgecenter/SSEUEX_2.0.3/com.ibm.installingeuc.doc/eucup006.htm] to determine which tasks you must run to update your deployment. 
+     * If you are updating an IBM CMIS application, see Upgrading an IBM CMIS deployment [http://www.ibm.com/support/knowledgecenter/SSEUEX_2.0.3/com.ibm.installingeuc.doc/eucup026.htm] to determine which tasks you must run to update your deployment. 
+     * If you are updating an IBM FileNet Collaboration Services application, run the following tasks:  * Configuring IBM FileNet Collaboration Services [http://www.ibm.com/support/knowledgecenter/SSEUEX_2.0.3/com.ibm.installingeuc.doc/eucde104.htm] 
+        * Building the web application [http://www.ibm.com/support/knowledgecenter/SSEUEX_2.0.3/com.ibm.installingeuc.doc/eucde105.htm]
+          
+       
+       
+    
+    
+ 4. For the Deploy the Web Application task, in the Application Edition Management field, specify the unique edition name to use for this deployment. For example, if you are upgrading your IBM Content Navigator to Version 2.0.3 Fix Pack 4, you might enter ICN-2.0.3.4.
+    
+    If you do not want to use application edition management, in the Application Edition Management field, enter default. 
+    
+    For more information about deploying the web application, see the following tasks:  * If you are updating an IBM Content Navigator application, see Deploying the web application on WebSphere Application Server [http://www.ibm.com/support/knowledgecenter/SSEUEX_2.0.3/com.ibm.installingeuc.doc/eucde022.htm]. 
+     * If you are updating an IBM CMIS application, see Deploying the web application on WebSphere Application Server [http://www.ibm.com/support/knowledgecenter/SSEUEX_2.0.3/com.ibm.installingeuc.doc/eucde043.htm]. 
+     * If you are updating an IBM FileNet Collaboration Services application, see Deploying the web application on WebSphere Application Server [http://www.ibm.com/support/knowledgecenter/SSEUEX_2.0.3/com.ibm.installingeuc.doc/eucde106.htm].
+       
+    
+    
+ 5. Run the Deploy the Web Application task. After the task successfully completes, there are multiple editions of your application deployed on WebSphere Application Server.
+    
+ 6. Open the WebSphere Application Server administrative console and use the Edition control center to roll out the new edition. For more information, see Activating an edition [http://www.ibm.com/support/knowledgecenter/SSAW57_8.5.5/com.ibm.websphere.nd.doc/ae/twve_appedact.html].

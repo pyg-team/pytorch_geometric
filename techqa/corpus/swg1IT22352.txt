@@ -1,0 +1,159 @@
+Title: IBM IT22352: DB2 : IF ANY COMMAND WITH RECLAIM EXTENTS OPTION IS RUN ON AN MDC TABLE DURING A BACKUP, A ROLLFORWARD ON IT COULD FAIL - United States
+
+Text:
+z/os SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  - When one or more commands like "TRUCATE TABLE with REUSE
+   STORAGE option" or "AUTO or MANUAL REORG TABLE with RECLAIM
+   EXTENTS option" i.e. commands which perform a "reclaim extents"
+   operation are executed on an MDC table while an online backup is
+   in progress,
+   DB2 frees those extents for the table, but the operation is not
+   logged correctly.
+   The backup completes successfully.
+   
+   - Restore of this backup is also successful.
+   
+   - When the Rollforward is executed, DB2 tries to replay a
+   "create new block" operation in logs for the table in question
+   and fails with following error as these extents are no more
+   available, they were already freed .
+   
+   db2diag.log will have LEVEL: Error message:
+   
+   FUNCTION: DB2 UDB, buffer pool services, sqlbExtendObject,
+   probe:650
+   MESSAGE : ZRC=0x8402001A=-2080243686=SQLB_EMP_MAP_INFO_END "EMP
+   MAP INFO END"
+   
+   The fix will ensure that the "reclaim extent" operations run
+   during backup are logged correctly so replay during rollforward
+   will not fail.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  As a workaround, please avoid running the following when there
+   is an online backup in progress:
+   
+   1) TRUCATE TABLE with the REUSE STORAGE option on an MDC table
+   2) REORG TABLE with the RECLAIM EXTENTS option (AUTO or MANUAL)
+   on an MDC table
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * MDC TABLEs                                                   *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * See Error Description                                        *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Please, see Error Description and install the fix.           *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Please, see Error Description and install the fix.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT22352
+   
+   
+ * REPORTED COMPONENT NAME
+   DB2 FOR LUW
+   
+   
+ * REPORTED COMPONENT ID
+   DB2FORLUW
+   
+   
+ * REPORTED RELEASE
+   A50
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   YesHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-09-11
+   
+   
+ * CLOSED DATE
+   2018-07-16
+   
+   
+ * LAST MODIFIED DATE
+   2018-07-16
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    IT22385 [http://www-01.ibm.com/support/docview.wss?uid=swg1IT22385] IT22386 [http://www-01.ibm.com/support/docview.wss?uid=swg1IT22386]
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   DB2 FOR LUW
+   
+   
+ * FIXED COMPONENT ID
+   DB2FORLUW
+   
+   
+
+APPLICABLE COMPONENT LEVELS

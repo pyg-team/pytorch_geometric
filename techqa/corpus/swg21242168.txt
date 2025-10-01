@@ -1,0 +1,170 @@
+Title: IBM Clean uninstallation of Rational Functional Tester version 6 before a reinstallation - United States
+
+Text:
+uninstall; clean; remove; update failure; uninstall RFT; uninstall RAC; uninstall functional tester; reinstall; re-install; un-install; RPT; RAD; RWD; RSA; www.sysinternals.com; 1242168 TECHNOTE (FAQ)
+
+QUESTION
+ How do you perform a clean uninstall of IBM® Rational® Functional Tester (RFT) version 6.1.x on Microsoft® Windows®? 
+
+CAUSE
+The information in this document applies for both integrated development environments (IDE) of RFT. The IDEs are Java™ Scripting in Eclipse, and Microsoft Visual Studio .NET, the latter in both versions 2003 and 2005. 
+
+A clean uninstall removes everything that the installation procedure added. In case of installation or update failure, a clean uninstallation and reinstallation can result in a working RFT installation. 
+
+ 
+
+Note: This information is valid for versions 6 only.
+
+
+ANSWER
+ 
+
+The procedure below involves the following stages:
+
+
+
+
+
+
+
+Verifying the prerequisites
+
+Uninstallation of RFT
+
+Uninstallation of the IBM Rational Agent Controller
+
+Re-installing RFT
+
+
+
+
+
+
+
+
+
+Verifying the prerequisites  1. Ensure that no RFT IDE is running. 
+ 2. If you use .NET scripting, make sure, that you had installed one of these two combinations before the installation of RFT:  1. .NET 1.1 Framework with Microsoft Visual Studio 2003 
+     2. .NET 2.0 Framework with Microsoft Visual Studio 2005
+    
+    
+ 3. If you use Java Scripting for RFT, .NET Framework is mandatory. version 1.1 or 2.0 is required. 
+ 4. End all RFT processes. Use the tool Process Explorer from Microsoft Windows Sysinternals [http://www.sysinternals.com] and follow the steps below:  1. Find processes by DLL substring rtx  1. Select Find > Find Handle DLL. The Process Explorer Search window opens. 
+         2. Enter rtx in the field Handle or DLL substring. 
+        
+        
+     2. Kill all the processes, that appear in the Process Explorer Search window.
+    
+    
+
+
+ Back to top 
+
+
+
+
+
+
+
+Uninstallation of RFT 
+
+ 1. Uninstall RFT from the Windows Control Panel Add or Remove Programs. 
+ 2. Run post_uninstall.bat. You can find this file at:
+    C:\Documents and Settings\All Users\Application Data\IBM\RFT\UninstallRFTRMT. 
+    Note: You do not have to run it when you do not have this file. 
+ 3. Remove files under C:\Program Files\IBM\Rational. 
+ 4. Remove files under C:\Documents and Settings\Administrator\IBM\rationalsdp6.0. 
+ 5. Clean all the assembly entries. Follow either method 1 or method 2.  1. Method 1: through Assembly Explorer:  1. Go to Start > Run and type assembly. 
+         2. Delete all instances of the following:  1. rtxftnet 
+             2. SiebelDomainProxies 
+             3. SiebelIEHelper 
+             4. SiebelNotificationListener 
+             5. policy.6.1.rtxftnet[</code>]
+            
+            
+        
+        
+     2. Method 2: by using gacutil and regasm .NET commands:  1. Go to: Start > Programs > Microsoft Visual Studio .NET 2003 (or 2005) > Visual Studio .NET Tools > Visual Studio .NET 2003 (or 2005) Command Prompt. 
+         2. From the command prompt, to remove from Global Assembly Cache (GAC) enter the commands below:  1. gacutil /u "<path>\rtxftnet.dll" 
+             2. gacutil /u "<path>\SiebelDomainProxies.dll" 
+             3. gacutil /u "<path>\SiebelIEHelper.dll" 
+             4. gacutil /u "<path>\SiebelNotificationListener.dll" 
+             5. gacutil /u "<path>\ policy.6.1.rtxftnet.dll"
+            
+            
+         3. From the Command Prompt, to unregister the Assembly, enter the commands below:  1. regasm /unregister "<path>\rtxftnet.dll" 
+             2. regasm /unregister "<path>\SiebelDomainProxies.dll" 
+             3. regasm /unregister "<path>\SiebelIEHelper.dll" 
+             4. regasm /unregister "<path>\SiebelNotificationListener.dll" 
+             5. regasm /unregister "<path>\ policy.6.1.rtxftnet.dll"
+            
+            
+        
+        
+    
+    
+    
+
+ * Note:
+ * 
+ *  Open the Windows Registry editor. Search for all assemblies listed in Step 5 that you were unable to delete. Delete the entries from the Registry. Go back to Step 5 and try to delete the assembly entries once again. This time you should be able to delete them. Go to HKEY_LOCAL_MACHINE\SOFTWARE\Rational Software\RationalTest and delete the entire 8 Folder under it. 
+
+
+ Back to top 
+
+
+
+
+
+
+
+Uninstallation of Rational Agent Controller Warning: Uninstalling IBM Rational Agent Controller (RAC) can affect other Rational products, when they have a dependency on RAC. Among these are Rational Performance Tester, Rational Web Developer, Rational Application Developer and Rational Software Architect. 
+
+ 1. Stop the IBM Rational Agent Controller Service. 
+ 2. Run the following commands from the command prompt.  1. C:\Program Files\IBM\Rational\SDP\6.0\IBM_Agent_Controller/bin/managerservice.exe remove “IBM Agent Controller” 
+     2. regedit /s C:\Program Files\IBM\Rational\SDP\6.0\IBM_Agent_Controller\config\regDel.reg
+    
+    
+ 3. Delete the folder IBM_Agent_Controller.
+
+
+
+Finishing the uninstallation  1. Remove all files under C:\Program Files\IBM\Rational\SDP\6.0\FunctionalTester. 
+ 2. Remove all files under C:\Documents and Settings\Administrator\IBM\rationalsdp6.0. 
+
+
+ Back to top 
+
+
+
+
+
+
+
+
+Re-installing RFT The final step is to reinstall RFT and upgrade it to the desired version. 
+
+In case the installation fails, gather the following details to send to IBM Rational Client Support: 
+
+ 1. Operating System and Service Pack. 
+ 2. Visual Studio version. 
+ 3. .NET framework version. 
+ 4. RFT version. 
+ 5. Obtain logs from the following locations:  1. C:\Program Files\IBM\Rational\SDP\6.0\logs\rft_install.log 
+     2. C:\Program Files\IBM\Rational\FTTrial\6.1\logs\rft_install.log
+        This is optional; sometimes you do not have it: 
+     3. C:\Program Files\IBM\Rational\SDP\6.0\FunctionalTester\updater\workspace\.metadata\.log
+    
+    
+
+ * 
+ * Exchanging information with IBM Technical Support
+ * 
+ * 
+
+
+ Back to top 
+
+
+RELATED INFORMATION
+#1286423: Clean uninstallation of RFT v7 [http://www.ibm.com/support/docview.wss?uid=swg21286423]

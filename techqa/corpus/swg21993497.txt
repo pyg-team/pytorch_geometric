@@ -1,0 +1,23 @@
+Title: IBM TBSM announces support for new DASH Cumulative Patches - United States
+
+Text:
+ NEWS
+
+ABSTRACT
+ 
+TBSM 6.1.1 FP4 has been successfully tested with
+
+a) Cumulative patch 6 for Dashboard Application Services Hub 3.1.2.1 ( 3.1.2.1-TIV-JazzSM-DASH-Cumulative-Patch-0006 )
+
+and
+
+b) Cumulative patch 1 for Dashboard Application Services Hub 3.1.3.0 ( 3.1.3.0-TIV-JazzSM-DASH-Cumulative-Patch-0001 ). 
+
+
+The followings issues are resolved:
+- Icons are working for Topology and Tree Table views - work item 65999
+- Topology table view still has extra blank tab - work item 64437
+
+
+
+CONTENT

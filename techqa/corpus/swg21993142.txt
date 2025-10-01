@@ -1,0 +1,175 @@
+Title: IBM Upgrading Netezzza Performance portal for PureData System for Analytics - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How to upgrade Netezza Performance Portal ? 
+
+ANSWER
+1. What is the IBM Netezza performance portal?
+The IBM Netezza performance portal is a web-based administrative client for managing and monitoring IBM Netezza Performance Server systems. It has its own user accounts, which are different from Netezza database user accounts or Linux user accounts.
+
+2. Does IBM Netezza performance portal installation require downtime?
+No downtime required for NPS.
+
+3. How much time is required to install/upgrade the IBM Netezza performance portal?
+IBM Netezza performance portal installation/upgrade takes approximately 30 minutes to complete.
+
+4. How to upgrade IBM Netezza performance portal?
+It can be done in both ways. You can first uninstall previous Netezza performance portal and then install new one. Else you can directly start upgrading Netezza performance portal it will backup old Netezza performance directory.
+
+For example:
+The existing directory /usr/local/nzWebAdmin will be copied to /usr/local/nzWebAdmin.old.XXXXX
+
+5. Will the historical data of IBM Netezza performance portal be lost if we were to uninstall/install as required by Netezza performance portal upgrade process?
+It depends on the option installer choose. Installation script will asks below question. If he/she opt to overwrite User Directory by choosing 'y', then the historical data will be lost. If he/she opt not to overwrite User Directory by choosing 'n', then the historical data will be saved.
+
+A Users directory that contains the configuration of IBM Netezza Performance Portal users and monitored hosts already exists. If you choose to overwrite it, the configuration and the collected monitoring data will be lost. Do you want to overwrite the Users directory? (y/n)? [n] 
+
+
+6. How to uninstall IBM Netezza performance portal package?
+Uninstall the prior version of nzportal by performing the following steps as 'root' user:
+
+# cd /usr/local/nzWebAdmin
+# ./.uninstallnzportal
+-----------------------------------------------------------------
+IBM Netezza Data Warehouse Software -- IBM Netezza Performance Portal 2.1.0.0 
+Copyright 2011 IBM Corporation. All rights reserved.
+-----------------------------------------------------------------
+
+Copy existing IBM Netezza Performance Portal source and related files to a backup directory (y/n)? [y] y
+
+NOTICE:
+
+The existing directory /usr/local/nzWebAdmin has been copied to /usr/local/nzWebAdmin.old.21901
+
+Attempting to stop IBM HTTP Server service:
+The IBM HTTP Server is currently running.
+Would you like to stop it for uninstallation (y/n)? [y]
+nzportal: Stopping httpd
+[ OK ]
+
+Attempting to stop IBM Netezza Performance Portal service: 
+nzportal: Stopping nzSoapService server exiting. [ OK ]
+[ OK ]
+Removing files...
+- IBM Netezza Performance Portal application files : done 
+- Binaries, cache, etc. : done
+- Licenses : done
+- Configuration files :
+There are 1 user configuration file(s).
+Remove file(s) (y/n)? [y]
+User configuration file(s) removed
+Remove SoapService.conf file (y/n)? [y]
+
+Uninstall complete.
+
+
+7. How to download IBM Netezza performance portal package?
+Download Software Support tool package from IBM fixcentral with following procedure,
+
+---------------------------------------------
+URL: http://www-933.ibm.com/support/fixcentral/ [http://www-933.ibm.com/support/fixcentral/]
+Select product:
+Product Group* -> Information Management 
+Select from Information Management* -> IBM Netezza Applications
+Installed Version* -> PERFPORTAL_2.X
+Platform* -> Linux
+Continue -> Browse for fixes -> Continue -> (Download required Netezza performance portal package).
+---------------------------------------------
+
+8. How to install IBM Netezza performance portal package?
+Extract downloaded package and install it with folloiwng commands as root user,
+
+# tar -xvf nzportal.version.tar.z
+# ./unpack
+
+---------------------------------------------------------------
+IBM Netezza -- IBM Netezza Performance Portal 2.1.0.0 
+(C) Copyright IBM Corp. 2002, 2013 All Rights Reserved.
+---------------------------------------------------------------
+Validating package checksum ... ok
+
+Directory '/usr/local/nzWebAdmin' does not exist; create it (y/n)? [y]
+Checking the system...
+System is not an NPS appliance
+
+Checking if IBM HTTP Server is already installed/running:
+IBM HTTP Server is not running
+
+Checking if anything listens on ports 80 or 443:
+Ports 80 and 443 are not used at the moment
+
+Checking if IBM Netezza Performance Portal is already installed/running: 
+IBM Netezza Performance Portal is not running 
+
+***************************************************************
+Unpacking web application files into: /usr/local/nzWebAdmin
+***************************************************************
+Deleting existing cache files...
+Checking required OpenSSL libaries...
+OpenSSL libraries are verified.
+Checking OpenSSL version...
+Detected OpenSSL version lower than 1.0.1e.
+The new cryptographic standard which enables TLS 1.2 for connections will not
+be supported.
+
+0% 25% 50% 75% 100%
+|||||||||||||||||||||||||||||||||||||||||||||||||||
+
+Unpacking IBM Installation Manager...
+Unpacking IBM HTTP Server repository...
+Installing IBM HTTP Server...
+
+***************************************************************
+Generating certificate for IBM HTTP Server SSL
+***************************************************************
+Default SSL values settings:
+Country Name: US
+State or Province Name: New York
+Locality Name: Endicott
+Organization Name: International Business Machines Corporation
+Organizational Unit Name: 07
+Common Name: oc1424046082.ibm.com
+Do you want to use "US" as country name ? (y/n)? [y]
+Do you want to use "New York" as State or Province Name ? (y/n)? [y]
+Do you want to use "Endicott" as Locality Name ? (y/n)? [y]
+Do you want to use "International Business Machines Corporation" as
+Organization Name ? (y/n)? [y]
+Do you want to use "07" Organizational Unit Name ? (y/n)? [y]
+Do you want to use "oc1424046082.ibm.com" as Common Name ? (y/n)? [y]
+
+WARNING:
+The existing file /etc/rsyslog.conf has been moved to
+/etc/rsyslog.conf.old.17553
+
+Shutting down system logger: [ OK ]
+Starting system logger: [ OK ]
+nzportal: Starting nzSoapService server
+[ OK ]
+nzportal: Starting httpd
+[ OK ]
+Removing tmp directory...
+
+***************************************************************
+
+Be sure to check your firewall settings for restrictions.
+If ports 80 and/or 443 are blocked, the web application
+will not be accessible.
+Please consult the NzPortal_Readme.txt file for more information.
+
+To connect to IBM Netezza Performance Portal 
+please start a browser and point to:
+https://oc1424046082.ibm.com/com.netezza.portal.Portal/index.html [www.ibm.com]
+
+***************************************************************
+
+
+Unpacking complete.
+
+
+9. Now you need to restart the Portal services:
+
+# service nzportal-ihs start
+# service nzportal start

@@ -1,0 +1,35 @@
+Title: IBM APM V8 MQ monitoring agent shows offline on dashboard - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ WebSphere MQ monitoring agent is running, but is showing up as offline in the agent widget. 
+
+SYMPTOM
+A running WebSphere MQ agent shows "The agent is offline" in the dashboard.
+
+
+CAUSE
+The MQ agent was reconfigured to a different 'Agent Name' setting as per instructions in the link below. 
+
+http://www.ibm.com/support/knowledgecenter/SSHLNR_8.1.3/com.ibm.pm.doc/install/mq_config_set_unique_msn.htm [http://www.ibm.com/support/knowledgecenter/SSHLNR_8.1.2/com.ibm.pm.doc/install/mq_config_set_unique_msn.htm]
+
+This changed the Managed System Name (MSN) of the agent, which is constructed as follows:
+monitoredqueuemanagername:agentname:MQ 
+
+The application is still referring to the old agent MSN, which is now offline.
+
+
+
+RESOLVING THE PROBLEM
+On the dashboard, edit application(s) where the old agent is included. Remove old MSN for the agent, and add new MSN of running agent to the application(s). 
+
+e.g. remove QMGR1:oldAgtName:MQ and add QMGR1:newAgtName:MQ 
+
+The agent should now display data in the application widgets.
+
+
+
+PRODUCT ALIAS/SYNONYM
+ 5725U05MQTR IPM APM Monitoring

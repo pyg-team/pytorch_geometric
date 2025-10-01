@@ -1,0 +1,154 @@
+Title: IBM IC63253: DB2LOOK FAILS TO GENERATE INDEX DDL FOR THE MQTS DEFINED ON     NICKNAME - United States
+
+Text:
+z/os SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  db2 create nickname SECNICK for secd2.sahanant.tab2;
+   
+   db2 CREATE SUMMARY TABLE mqt (col2) as (select * from secnick)
+   DATA INITIALLY DEFERRED REFRESH DEFERRED;
+   
+   db2 create index idx on mqt(col2);
+   
+   Here the index 'idx' is created on MQT defined on nickname
+   
+   When you run db2look -d <dbname> -e you will find the index
+   statement missing in the db2look output
+   
+   
+   ------------------------------------------------
+   -- DDL Statements for table "DBGUEST3"."MQT"
+   ------------------------------------------------
+    SET CURRENT SCHEMA = "DBGUEST3";
+   SET CURRENT PATH =
+   "SYSIBM","SYSFUN","SYSPROC","SYSIBMADM","DBGUEST3";
+   CREATE SUMMARY TABLE mqt (col2) as (select * from secnick) DATA
+   INITIALLY
+   DEFERRED REFRESH DEFERRED;
+   REFRESH TABLE "DBGUEST3"."MQT";
+   
+   CONNECT RESET;
+   
+   TERMINATE;
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  No local fix
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * Software                                                     *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * DB2LOOK FAILS TO GENERATE INDEX DDL FOR THE MQTS DEFINED ON  *
+   * NICKNAME                                                     *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * move to v97 fp2                                              *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  fixed in v97 fp2
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC63253
+   
+   
+ * REPORTED COMPONENT NAME
+   DB2 FOR LUW
+   
+   
+ * REPORTED COMPONENT ID
+   DB2FORLUW
+   
+   
+ * REPORTED RELEASE
+   970
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-09-17
+   
+   
+ * CLOSED DATE
+   2010-03-26
+   
+   
+ * LAST MODIFIED DATE
+   2010-03-26
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    IC63215 [http://www-01.ibm.com/support/docview.wss?uid=swg1IC63215]
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   DB2 FOR LUW
+   
+   
+ * FIXED COMPONENT ID
+   DB2FORLUW
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R970 PSY
+   UP

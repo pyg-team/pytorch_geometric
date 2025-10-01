@@ -1,0 +1,76 @@
+Title: IBM java.lang.ClassNotFoundException: filenet.jpe.ptm.VWWorkflowServicesNode exception generated when trying to start the routercmd.bat script to start the Content Foundation Content Platform Engine legacy Component Manager - United States
+
+Text:
+connection TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ I get a java.lang.ClassNotFoundException: filenet.jpe.ptm.VWWorkflowServicesNode exception when trying to start the routercmd.bat script to start the Content Foundation Content Platform Engine legacy Component Manager 
+
+SYMPTOM
+When you try to run the routercmd.bat script in the C:\IBM\FileNet\WebClient\Router folder (or the routercmd.sh script on Unix/Linux in the corresponding directory), then the following error is generated: 
+
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+
+
+The error is displayed in the message pane at the bottom of the Process Task Manager window. 
+For example: 
+ * [/support/docview.wss?uid=swg21666022&amp;aid=1]
+
+
+You can get the full error by double-clicking on the error message. 
+CAUSE
+This problem happens on Workplace XT servers where the P8 software was upgraded from earlier versions. New P8 5.2 installations do not have this problem. The reason the error happens is because the taskmaninstances.xml configuration file for Workplace XT has obsolete entries from previous P8 versions.
+
+
+RESOLVING THE PROBLEM
+Delete obsolete entries from the taskmaninstances.xml configuration file for Workplace XT. 
+
+ 
+
+Back up the taskmaninstances.xml configuration file. Sample locations for the file on Windows: 
+
+ *  \Program Files\IBM\FileNet\Common Files OR \Program Files (x86)\IBM\FileNet\Common Files 
+
+Open the taskmaninstances.xml configuration file in a text editor. The following is a sample P8 5.0 configuration entry that should be deleted: 
+
+. 
+
+ * </Product> 
+   <Product name="TaskManager.JPE"> 
+   <properties>C:\IBM\FileNet\ProcessEngine\data\taskman.properties</properties> 
+   <classpath>C:\IBM\FileNet\ProcessEngine\lib\pe.jar;C:\IBM\FileNet\ProcessEngine\lib\peResources.jar;C:\IBM\FileNet\ProcessEngine\lib\pe3pt.jar</classpath> 
+   </Product> 
+   
+
+The following is a sample P8 4.5.1 configuration entry that should be deleted: 
+.  * </Product> 
+   <Product name="TaskManager.PE"> 
+   <properties>C:\FNSW\bin\taskman.properties</properties> 
+   <classpath>C:\FNSW\bin\pe.jar;C:\FNSW\bin\pe3pt.jar;C:\FNSW\bin\peResources.jar</classpath> 
+   </Product> 
+
+
+The following are two sample P8 5.2 (Content Platform Engine) entries that should NOT be removed: 
+ * <Product name="CaseAnalyzerSSASconnector"> 
+   <properties>C:\IBM\FileNet\CaseFoundation\Case Analyzer components\SSAS OLAP connector\jpa\taskman.properties</properties> 
+   <classpath>C:\IBM\FileNet\CaseFoundation\Case Analyzer components\SSAS OLAP connector\jpa\pa.jar;C:\IBM\FileNet\CaseFoundation\Case Analyzer components\SSAS OLAP connector\jpa\paResources.jar;C:\IBM\FileNet\CaseFoundation\Case Analyzer components\SSAS OLAP connector\jpa\pe.jar;C:\IBM\FileNet\CaseFoundation\Case Analyzer components\SSAS OLAP connector\jpa\pe3pt.jar;C:\IBM\FileNet\CaseFoundation\Case Analyzer components\SSAS OLAP connector\jpa\peResources.jar</classpath> 
+   </Product> 
+
+.  * <Product name="TaskManager.WPXT"> 
+   <properties>C:\IBM\FileNet\WebClient\Router\taskman.properties</properties> <classpath>C:\IBM\FileNet\WebClient\Router\lib\pe.jar;C:\IBM\FileNet\WebClient\Router\lib\peResources.jar;C:\IBM\FileNet\WebClient\Router\lib\xml-apis.jar;C:\IBM\FileNet\WebClient\Router\lib\xercesImpl.jar;C:\IBM\FileNet\WebClient\CE_API\lib\Jace.jar;C:\IBM\FileNet\WebClient\CE_API\wsi\lib\wasp.jar;C:\IBM\FileNet\WebClient\Router\lib\mailapi.jar;C:\IBM\FileNet\WebClient\Router\lib\smtp.jar;C:\IBM\FileNet\WebClient\Router\lib;C:\IBM\FileNet\WebClient\WorkplaceXT\download\pe3pt.jar</classpath> 
+   </Product>

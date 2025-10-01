@@ -1,0 +1,67 @@
+Title: IBM Daily current plan extend job (EQQDNTOP) extends to wrong time - United States
+
+Text:
+5697wsz01 OPC TWSZOS ITWSZ CPEXTEND EQQDNTOP TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ There are two different formats for the SYSIN data for the EQQDNTOP step. 
+
+RESOLVING THE PROBLEM
+One format extends the plan by a set number of hours and minutes (for example, 24 hours)
+and one extends the plan to a specific time of day. Using the wrong format can make
+it appear that the EQQDNTOP job is extending the plan to the wrong time. 
+
+The time that the current plan is extended to is shown in the 6.6 panel (EQQSGCPP), as "planning period end" for example: 
+
+
+EQQSGCPP --------- BROWSING GENERAL CURRENT PLAN INFORMATION
+
+Current plan created : 05/04/05 10.01 
+Planning period end : 05/04/06 12.00
+
+In this case, if the current plan were extended by 24 hours, using
+this format of the SYSIN:
+
+----+----1----+----2----+----3
+//SYSIN DD * 
+02400 11111111
+
+the new "planning period end" date would be 12.00 (noon) on the
+following day.
+
+Note that regardless of whether the EQQDNTOP job is run at noon,
+or 4 p.m. or 6 a.m., the CP will be extended until noon the
+following day.
+
+Sometimes this is not desirable, and it is preferred to have
+the current plan extended to a set time of day, for example
+6 a.m.
+
+To accomplish this, the second format of the EQQDNTOP SYSIN can
+be used, which uses the plan end date (in YYMMDD format) and time
+(in hhmm format), for example:
+
+----+----1----+----2----+----3-
+//SYSIN DD *
+050407060011111111 
+
+This would cause the planning period end to be set to 06:00 on 04/07/2005.
+
+To have a consistent plan end time without having to modify
+the date in the SYSIN date, variable substitution can be
+used in the EQQDNTOP job.
+
+For example:
+
+//*%OPC SCAN 
+//*%OPC SETVAR TDPX=(CYYMMDD+1WD)
+
+If this is inserted after the job card, variable TDPX will be
+set to one workday more than the current date.
+
+The SYSIN can then be coded as:
+
+//SYSIN DD *
+&TDPX.060011111111 
+
+This will extend the current plan to 06:00 on the NEXT work day, regardless of when the CP EXTEND job is executed.

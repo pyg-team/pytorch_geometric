@@ -1,0 +1,51 @@
+Title: IBM Security Bulletin: Reflected XSS in IBM Worklight OAuth Server Web Api - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ A Reflected Cross Site Scripting (XSS) vulnerability exists in the authorization function exposed by RESTful Web Api of IBM Worklight Framework. The vulnerable parameter is "scope", if you set as value a "realm"; not defined in authenticationConfig.xml you get an HTTP 403 Forbidden response and the value will be reflected in the body of the HTTP response. 
+
+VULNERABILITY DETAILS
+CVEID: CVE-2017-1500
+DESCRIPTION: IBM Worklight is vulnerable to cross-site scripting. This vulnerability allows users to embed arbitrary JavaScript code in the Web UI thus altering the intended functionality potentially leading to credentials disclosure within a trusted session.
+CVSS Base Score: 5.4
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/129404 [https://exchange.xforce.ibmcloud.com/vulnerabilities/129404]for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:N/AC:L/PR:L/UI:R/S:C/C:L/I:L/A:N)
+
+AFFECTED PRODUCTS AND VERSIONS
+ 
+
+IBM MobileFirst Platform Foundation 8.0.0.0
+IBM MobileFirst Platform Foundation 7.1.0.0
+IBM MobileFirst Platform Foundation 7.0.0.0
+IBM MobileFirst Platform Foundation 6.3.0.0
+IBM Worklight Enterprise Edition 6.2.0.1
+IBM Worklight Enterprise Edition 6.1.0.2
+
+REMEDIATION/FIXES
+ 
+
+Product VRMF APAR Remediation/First Fix IBM MobileFirst Platform Foundation 8.0.0.0 PI71750 Download the latest iFix for IBM MobileFirst Platform Foundation on FixCentral [https://www-945.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm%7EOther%2Bsoftware&product=ibm/Other+software/IBM+MobileFirst+Platform+Foundation&release=8.0.0.0&platform=All&function=all&source=fc] IBM MobileFirst Platform Foundation 7.1.0.0 Download the latest iFix for IBM MobileFirst Platform Foundation on FixCentral [https://www-945.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm%7EOther%2Bsoftware&product=ibm/Other+software/IBM+MobileFirst+Platform+Foundation&release=7.1.0.0&platform=All&function=all&source=fc] IBM MobileFirst Platform Foundation 7.0.0.0 Download the latest iFix for IBM MobileFirst Platform Foundation on FixCentral [https://www-945.ibm.com/support/fixcentral/swg/selectFixes?product=ibm%2FOther+software%2FIBM+MobileFirst+Platform+Foundation&fixids=7.0.0.0-MFPF-IF201707051305&source=SAR&function=fixId&parent=ibm/Other%20software] IBM MobileFirst Platform Foundation 6.3.0.0 Download the latest iFix for IBM MobileFirst Platform Foundation on FixCentral [https://www-945.ibm.com/support/fixcentral/swg/selectFixes?product=ibm%2FOther+software%2FIBM+MobileFirst+Platform+Foundation&fixids=6.3.0.0-MFPF-IF201707030743&source=SAR&function=fixId&parent=ibm/Other%20software] IBM Worklight Enterprise Edition 6.2.0.1 [/support/docview.wss?uid=swg2C1000316&amp;aid=1] Download the latest iFix for IBM Worklight Enterprise Edition on FixCentral [https://www-945.ibm.com/support/fixcentral/swg/selectFixes?product=ibm%2FOther+software%2FIBM+Worklight+Enterprise+Edition&fixids=6.2.0.1-WEE-IF201707170752&source=SAR&function=fixId&parent=ibm/Other%20software] IBM Worklight Enterprise Edition 6.1.0.2 [/support/docview.wss?uid=swg2C1000316&amp;aid=1] Download the latest iFix for IBM Worklight Enterprise Edition on FixCentral [https://www-945.ibm.com/support/fixcentral/swg/selectFixes?product=ibm%2FOther+software%2FIBM+Worklight+Enterprise+Edition&fixids=6.1.0.2-WEE-IF201707170753&source=SAR&function=fixId&parent=ibm/Other%20software] GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v3 Guide [http://www.first.org/cvss/user-guide] 
+On-line Calculator v3 [http://www.first.org/cvss/calculator/3.0] 
+
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] 
+
+ACKNOWLEDGEMENT
+The vulnerability was reported to IBM by Gabriele Gristina at Emaze Networks S.p.A. 
+
+CHANGE HISTORY
+ 21/07/2017 - Publish
+27/07/2017 - CVEID update 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.

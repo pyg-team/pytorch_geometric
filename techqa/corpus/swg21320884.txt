@@ -1,0 +1,94 @@
+Title: IBM Using Server Side Includes with HTML and JSP pages - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ You use IBM HTTP Server to serve static (HTML) pages and as a front-end to IBM WebSphere Application Server to serve dynamic (JSP) pages.
+
+You want to use Server Side Includes (SSI) to include a footer.html page into some of your HTML and JSP pages. How do you configure IBM HTTP Server for this to work? 
+
+ANSWER
+footer.html can be any normal HTML page that you want to include in other HTML and JSP pages. Here is the syntax used in those HTML and JSP pages to include the footer.html file:
+
+
+ * 
+ * <!--#include virtual="/footer.html" -->
+   
+
+
+Here are the changes needed in the IBM HTTP Server config ( httpd.conf file): 
+
+1) IBM HTTP Server needs to load the mod_include module: 
+ * LoadModule include_module modules/
+ * mod_include
+ * .so
+
+
+2) In the Directory statement for the htdocs/en_US directory, add Includes to the Options statement, like this: 
+
+ 
+
+ * <Directory "C:/Program Files/IBM/HTTPServer/htdocs/en_US">
+ * 
+ * Options Indexes FollowSymLinks 
+ * Includes
+ * 
+ * AllowOverride None
+ * 
+ * Order allow,deny
+ * 
+ * Allow from all
+ * 
+ * </Directory>
+
+
+ 
+
+3) Add an Output Filter to handle static (shtml and html) files like this: 
+
+ 
+
+ * # AddOutputFilter only applies to shtml and html files
+ * 
+ * # served by IBM HTTP Server.
+ * 
+ * 
+ * AddType text/html 
+ * .shtml
+ * 
+ * AddOutputFilter INCLUDES 
+ * .shtml .html
+
+
+ 
+
+4) Use a LocationMatch stanza to Set an Output Filter for dynamic (JSP) files like this:
+
+
+ * # Note: All resources filtered through mod_include have
+ * 
+ * # their Last-Modified date stripped because the date is
+ * 
+ * # not useful for server-parsed content.
+ * 
+ * # Carefully select which content is server-parsed by
+ * 
+ * # changing the regex in the LocationMatch directive.
+ * 
+ * 
+ * <LocationMatch 
+ * "\.jsp$"
+ * >
+ * 
+ * SetOutputFilter INCLUDES
+ * 
+ * </LocationMatch>
+
+
+ 
+
+5) Restart IBM HTTP Server for the changes to take effect.
+
+RELATED INFORMATION
+ SSI definition on Wikipedia [http://en.wikipedia.org/wiki/Server_Side_Includes]

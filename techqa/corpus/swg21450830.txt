@@ -1,0 +1,87 @@
+Title: IBM Collecting Data: Portal Access Control (PAC) for WebSphere Portal - United States
+
+Text:
+Collecting Data; Collecting Data; Collecting Data; MustGather; MustGather; MustGather; MustGatherDocument; PORTSE; PAC; Portal Access Control; Permission; Authorization TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+Collecting troubleshooting data for Portal Access Control issues with IBM WebSphere Portal expedites time to resolution by enabling IBM Support to provide informed problem analysis.
+
+RESOLVING THE PROBLEM
+If you have already contacted IBM Support and must collect data to determine the nature of a problem in WebSphere Portal, review the information below for the available methods of data collection. Otherwise, review Collecting Data: Read first for WebSphere Portal [http://www.ibm.com/support/docview.wss?uid=swg21672901]. 
+
+Collecting Portal Access Control information 
+
+Problems with Portal Access Control include: unable to deploy portlets due to lack of administrative rights, unable to perform administrative actions, unable to take proper actions on resources, such as pages and portlets, unable to search users or groups, unable to run XMLAccess, etc.
+
+Detailed Problem Description 
+
+ * Step-by-step process to recreate the problem. 
+ * Error message if any shown in the web browser or in logs; take screenshots if possible. 
+ * Special conditions such as only some user IDs having the problem but not others; use of non-standard or custom objectclasses or attributes; LDAP referrals or dynamic groups. 
+ * Whether the issue is intermittent or can be recreated at will.
+
+
+System Information  * Fix pack level of WebSphere Portal and WebSphere Application Server and interim fixes installed. 
+ * Platform and configuration (cluster or stand-alone, how many nodes if clustered, and so on). 
+ * Edge components, HTTP server, Load Balancer. 
+ * Network topology: remote or local servers, firewall configuration. 
+ * LDAP server vendor, version, user and group configuration and so on if available, provide the LDIF output of affected users and/or groups. 
+ * Database server type and version as well as JDBC driver info. 
+ * Specify whether there are third-party security components or other solutions such as Tivoli Access Manager integrated into the environment.
+
+Enable Tracing
+Enable the following traces:
+
+
+ * com.ibm.websphere.wim.*=all:com.ibm.ws.wim.*=all:com.ibm.wsspi.wim.*=all:
+ * 
+ * com.ibm.wps.ac.impl.AccessControlConfigFederator=all:
+ * 
+ * com.ibm.wps.puma.*=all:com.ibm.wps.ac.impl.AccessControlFederator=all:
+ * 
+ * com.ibm.wps.engine.Servlet=all:com.ibm.wps.engine.phases.*=all:
+ * com.ibm.wps.services.puma.*=all:com.ibm.wps.um.*=all:
+ * 
+ * com.ibm.wps.sso.*=all
+
+
+The trace string should be set as one continuous line with no line breaks and are separated with a colon (:). 
+
+We strongly recommend to increase the size of log files to 20 MB or more and historical copies to 20 or more. 
+
+If using rule based user groups, append the following string to the above trace: :com.ibm.wps.vmm.adapter.*=all
+
+If an External Security Manager (ESM) such as Tivoli Access Manager or Computer Associates' eTrust SiteMinder is configured for access control, add the following trace strings in addition to the above (colon separated and with no spaces):
+
+
+ * 
+ * com.ibm.wps.ac.esm.*=all:wps.ibm.wps.ac.authtable.*=all
+
+
+For further information regarding logging and tracing, refer to the InfoCenter [http://www-01.ibm.com/support/knowledgecenter/SSHRKX_8.5.0/mp/trouble/pd_intr_logs.dita]. 
+
+Collect logs and configuration data: 
+
+1. Recreate the problem and run wpcollector [http://www-01.ibm.com/support/knowledgecenter/SSHRKX_8.5.0/mp/trouble/tbl_apdt_over.dita] to collect the trace and server configuration data. Note the date and time when the problem was recreated in your update to IBM Support. 
+
+2. Generate a full export using XMLaccess with ExportRelease.xml as input, 
+<WP_root>/bin/xmlaccess.bat/.sh -in <WP_root>/doc/xml-samples/ExportRelease.xml -user <portaladmin> -pwd <password> -url http://<portalhost>:10039/wps/config -out pmrXXXXX.BBB.CCC.fullexport.xml 
+ * 
+ * <password>
+ * 
+ * <portaladmin>
+ * 
+
+
+3. Generate a list of invalid user references that exist in the WebSphere Portal database: 
+<WP_root>/bin/xmlaccess.bat/.sh -in <WP_root>/doc/xml-samples/CleanupUsers.xml -user <portaladmin> -pwd <password> -url http://<portalhost>:10039/wps/config -out pmrXXXXX.BBB.CCC.invalidUserRefs.xml 
+
+4. LDIF output: If the problem is related to permission settings for users and/or groups, generate LDIF output from the LDAP server for the objects involved. 
+
+5. List any notable PAC configurations: If specialized access control settings are used, such as role-blocks and nested groups or dynamic group configurations, please specify them clearly. 
+
+Send these files to IBM Support by using the instructions outlined in Exchanging information with IBM Technical Support for problem determination [http://www.ibm.com/support/docview.wss?rs=688&uid=swg21201571]. 
+
+Related Information  * IBM Support Portal: WebSphere Portal Troubleshooting [http://www.ibm.com/support/entry/portal/Troubleshooting/Software/WebSphere/WebSphere_Portal] [http://www.ibm.com/support/docview.wss?rs=688&uid=swg21201571] 
+ * WebSphere Portal Knowledge Center: Troubleshooting [http://www-01.ibm.com/support/knowledgecenter/SSHRKX_8.5.0/mp/trouble/troubleshooting.dita] 
+ * Collecting Data: Read first for WebSphere Portal [http://www.ibm.com/support/docview.wss?rs=688&uid=swg21672901]

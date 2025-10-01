@@ -1,0 +1,169 @@
+Title: IBM PI49312: NO COMMUTER UTILITY SHORT-CUT IN THE DIRECTORY WHERE SPSS STATISTICS 23 FIXPACK 2 ON MACINTOSH IS INSTALLED - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  You have installed IBM SPSS Release 23 plus FixPack 2 on a
+   Macintosh OSX computer. The software is installed as
+   network version with concurrent user license. However, when you
+   open the Applications folder on finder and navigate to the
+   installation directory of release 23 FP2 on Mac you see no
+   shortcut for the Commuter Utility option.
+   
+   This was reported to IBM SPSS development. As a workaround you
+   can right click on the SPSSStatistics.app and select
+   'Show package Content'. After that locate the bin folder. On bin
+   folder you should see the Commuter Utility and can create the
+   shortcut manually or open the utility from there.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  If you encounter the issue described above and it is not
+   possible for you to create the shortcut manually, please
+   download the public Interim Fix 23.0-IM-S23STAT-MAC-FP002-IF003
+   which address the issue.
+   Please log in to IBM FixCentral at
+   www.ibm.com/support/fixcentral/ with your IBM web ID and
+   password.
+   Select product group SPSS. From the dropdown select SPSS
+   Statistics.
+   As Installed Version select 23.0.0.2 and as Platform: Mac OSX,
+   click continue.
+   Select 'Browse for Fixes' and click continue.
+   Download Interim fix: 23.0-IM-S23STAT-MAC-FP002-IF003
+   Please note: as a prerequisite for this fix you must have
+   installed 23 FixPack 2 for Macintosh which is also available for
+   download on FixCentral
+   (Fixes for installed release version SPSS statistics 23.0.0.0
+   for Macintosh).
+   
+   fix pack: 23.0-IM-S23STATC-Mac-FP002 (interactive installation)
+   IBM SPSS Statistics Client 23.0 Mac Fix Pack 2
+   
+   fix pack: 23.0-IM-S23STATC-Mac-Silent-FP002 (silent
+   installation)
+   IBM SPSS Statistics Client 23.0 Mac Fix Pack 2 Silent.
+   
+   Note: Interim fixes are limited corrections to specific issues
+   reported by one or more customers.
+   They are normally sent only to customers who have reported one
+   of the corrected problems, and who require
+   an immediate correction. Interim Fixes do not address customer
+   enhancement requests, and not all defect
+   corrections can be delivered as Interim Fixes. Due to their
+   urgency Interim Fixes undergo only targeted
+   testing of specific fixes, not full regression testing. If the
+   fix is not urgently required, you may prefer
+   to wait for a scheduled Fix Pack Release, which will be fully
+   regression tested. Interim Fix
+   corrections, once fully regression tested, are automatically
+   included in a future Fix Pack.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * see APAR text                                                *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * This issue has been addressed in IBM SPSS Statistics 24,     *
+   * please upgrade to this release                               *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * This issue has been addressed in IBM SPSS Statistics 24,     *
+   * please upgrade to this release                               *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI49312
+   
+   
+ * REPORTED COMPONENT NAME
+   SPSS STATISTICS
+   
+   
+ * REPORTED COMPONENT ID
+   5725A54ST
+   
+   
+ * REPORTED RELEASE
+   N00
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2015-09-24
+   
+   
+ * CLOSED DATE
+   2016-05-10
+   
+   
+ * LAST MODIFIED DATE
+   2016-05-10
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * RO00 PSN
+   UP
+   
+   
+ * RO00 PSY
+   UP

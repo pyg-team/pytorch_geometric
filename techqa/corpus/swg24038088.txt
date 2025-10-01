@@ -1,0 +1,52 @@
+Title: IBM Intelligent Operations Center interim fix PO03650 - United States
+
+Text:
+ DOWNLOADABLE FILES
+
+ABSTRACT
+ Interim Fix PO03650 implements data receiver routing and time zone updates for IBM Intelligent Operations Center. Some further issues are also resolved by the Interim Fix. 
+
+DOWNLOAD DESCRIPTION
+This APAR implements data receiver routing and time zone updates for IBM Intelligent Operations Center. The following issues are also resolved by the PO03650 Interim Fix:
+
+
+ * If a CSV or a CAP data source is configured with the routing to Intelligent Operations Center option, the solution incorrectly retrieves character large object (CLOB) database column data as object data. As a result, if you click an item in the map and click More options, the following Key and Full Properties might contain a value similar to com.ibm.db2.jcc.am.ne: 
+   eventcode
+   parameters
+   resource
+   sender
+   For CSV data sources, check the data source configuration to determine the CLOB Key and Full Properties values.
+   This issue is now resolved. 
+ * If a CAP data source is configured with the routing to Intelligent Operations Center option, you might be unable to add an item to the map. An error might be displayed that indicates that the add item process failed. Also, an error might be displayed in the system log that is similar to the following text: 
+   7/24/14 17:31:26:093 CST] 00000108 SystemErr R com.ibm.db2.jcc.am.SqlSyntaxErrorException: DB2 SQL Error: SQLCODE=-286, SQLSTATE=42727, SQLERRMC=16384;IOCDBUSR, DRIVER=4.11.69
+   at com.ibm.db2.jcc.am.gd.a(gd.java:676)
+   at com.ibm.db2.jcc.am.gd.a(gd.java:60)
+   at com.ibm.db2.jcc.am.gd.a(gd.java:127)
+   at com.ibm.db2.jcc.am.jn.b(jn.java:2230)
+   This issue is now resolved. 
+ * If a CSV data source is configured with the routing to Intelligent Operations Center option, and the start and end date times are processed using two separate columns in the data source, the data import process might fail. As a result:  1. The CSV file remains in the processing stage. 
+    2. CSV data is not imported into the solution database. 
+   
+   This issue is now resolved. 
+ * For a CAP data source, if you click More Actions on the Map tab to add a data item and click Save, the data item addition process fails, and an error is displayed that begins with the following text:
+   [7/24/14 17:31:26:084 CST] 00000108 SystemErr R com.ibm.db2.jcc.am.SqlSyntaxErrorException: DB2 SQL Error: SQLCODE=-204, SQLSTATE=42704, SQLERRMC=IOC.TEMP_82, DRIVER=4.11.69
+   at com.ibm.db2.jcc.am.gd.a(gd.java:676)
+   at com.ibm.db2.jcc.am.gd.a(gd.java:60) 
+   This issue is now resolved. 
+ * If you update existing data items that are associated with a data source with a polling interval, the solution does not update the data item nor create a new data item. This issue is now resolved. 
+ * All of the JAR files in the solution that previously were backed up are now moved to a separate directory. The new directory is: /opt/IBM/ioc/bak on the application server. 
+ * If you install a new ioc.jar file, the current ioc.jar file is now backed up to a separate directory. The new directory is: /opt/IBM/ioc/bak on the application server.
+
+PREREQUISITES
+PO02350 [http://www-01.ibm.com/support/docview.wss?uid=swg24037402] PO03582 [http://www.ibm.com/support/docview.wss?uid=swg24037901]
+
+URL LANGUAGE SIZE(Bytes) Interim Fix PO02350 [http://www-01.ibm.com/support/docview.wss?uid=swg24037402] English 10300000000 interim Fix PO03582 [http://www.ibm.com/support/docview.wss?uid=swg24037901] English 101000000 
+DOWNLOAD PACKAGE
+
+
+
+
+Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options 
+What is Fix Central(FC)? [https://www.ibm.com/support/fixcentral/help?page=swfaqs] Interim Fix PO03650 30 Jul 2014 English 43100000 FC [http://www.ibm.com/support/fixcentral/swg/quickorder?parent=ibm/Other+software&product=ibm/Other+software/Intelligent+Operations+Center&function=fixid&fixids=1.6.0.2-Other-IBMIOC-Linux-PO03650] [ ] 
+ [/support/docview.wss?uid=swg24038088&aid=1]Problems (APARS) fixed [/support/docview.wss?uid=swg24038088&aid=2]Problems (APARS) fixed
+PO03650

@@ -1,0 +1,49 @@
+Title: IBM How do I change the width of the left column on my Start Center (Go To Applications)? - United States
+
+Text:
+TPAECUSTOMIZATION; TPAEUI; TPAESTARTCENTER; side menu; left menu TECHNOTE (FAQ)
+
+QUESTION
+ How do I change the width of the left column on my Maximo Start Center (Go To Applications)? 
+
+ANSWER
+The width of the column that contains the "Go To Applications" on the Start Center in Maximo 7.6 is determined by a value in the 
+
+Library.xml file. By default the column width is longer than any of the standard application names and looks like this: 
+
+
+[/support/docview.wss?uid=swg22012791&aid=1] [/support/docview.wss?uid=swg22012791&aid=1]
+
+Some clients would like the left column to be narrower and look more like this:
+
+[/support/docview.wss?uid=swg22012791&aid=2] [/support/docview.wss?uid=swg22012791&aid=2] 
+
+ 
+
+You can modify the width of the left hand column by modifying a value in your Library.xml file. Please try the following on
+a test environment to change the width of your left column on the Start Center. 
+
+First in Application Designer, click on Select Action / Export System XML and then select the Library xml. 
+
+After the Library xml opens in a browser,save the page to your 
+hard drive as LIBRARY.xml. Then make a backup of the LIBRARY.xml in case you need to restore the original version. 
+
+Then open LIBRARY.xml in a text editor such as Wordpad or Notepad and look for the following code: 
+
+<section cssclass="sysNav" id="GotoOnlyNav"> 
+<sectionrow id="t1rg"> 
+<sectioncol id="t1c0g" sysnav="true"> 
+<navcontainer collapsible="true" id="taskNavg" 
+pagenav="true" width="190"> 
+
+Then change the width value from 190 to a smaller value such as 100 and save your file. You will end up with the code below. You may have to 
+experiment with the exact width you would like but the process is the same. 
+
+<section cssclass="sysNav" id="GotoOnlyNav"> 
+<sectionrow id="t1rg"> 
+<sectioncol id="t1c0g" sysnav="true"> 
+<navcontainer collapsible="true" id="taskNavg" 
+pagenav="true" width="100"> 
+
+After saving your changes go back into Application Designer and click on "Import Application Definition" and browse for your modified LIBRARY.xml
+file and import your changed file. Then logout and back in and see if the left column is now at the desired width like the one shown above.

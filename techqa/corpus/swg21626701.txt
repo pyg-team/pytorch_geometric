@@ -1,0 +1,74 @@
+Title: IBM Background information about AppScan Source FIPS 140-2 support - United States
+
+Text:
+1626701; AppScan; AppScan Source; FIPS; Federal Information Processing; 140-2; Windows; Linux; OS X; background; fipscanister; OpenSSL; compliance; validated; validation TECHNOTE (FAQ)
+
+QUESTION
+ How did IBM Security AppScan Source achieve support for Federal Information Processing Standard (FIPS) Publication 140-2? 
+
+ANSWER
+AppScan Source uses FIPS 2.0 provided by OpenSSL. In order to meet the secure distribution requirements of FIPS 140-2, instructions at http://openssl.com/fips/verify.html [http://openssl.com/fips/verify.html] were followed. 
+
+The fipscanister build details are described here, by operating system:
+
+Linux: 
+
+ 1. Ubuntu Version 10.04 was installed. 
+ 2. The gcc-4.1 package was installed using this command:
+    sudo apt-get install gcc-4.1
+    (this matches 4.1.3 in the security procedure) 
+ 3. The existing gcc-4.4 package was removed. 
+ 4. A soft link was created between GCC/CC and gcc-4.1.
+
+
+These commands were issued to complete the build: 
+ * gunzip -c openssl-fips-2.0.tar.gz | tar xf -
+ * 
+ * cd openssl-fips-2.0
+ * 
+ * ./config no-asm
+ * 
+ * make
+ * 
+ * make install
+
+
+Windows:  1. Windows 7 was installed. 
+ 2. Microsoft Update was used to install critical security patches as of September 6, 2012. 
+ 3. Microsoft Visual Studio was obtained from MSDN and installed. 
+ 4. When using Visual Studio for the first time, C++ settings were chosen. 
+ 5. Active State perl 5.14.2 was downloaded. 
+ 6. These commands were issued:
+    ms\do_fips no-asm
+    run outdll32/fips_test_suite 
+ 7. C:\usr\local\ssl\fips-2.0 was copied to a build machine.
+
+
+These commands were issued to complete the build: 
+ * perl Configure VC-WIN32 fips no-asm
+ * 
+ * ms\do_nasm
+ * 
+ * nmake -f ms\ntdll.mak
+
+
+OS X: 
+
+Note: On OS X, AppScan Source is FIPS Publication 140-2 "user affirmed". 
+
+These commands were issued to complete the build (on OS X Version 10.7 with clang Version 4.0): 
+ * gunzip -c openssl-fips-2.0.tar.gz | tar xf -
+ * 
+ * cd openssl-fips-2.0
+ * 
+ * CFLAGS=-m32 ./config no-asm
+ * 
+ * make
+ * 
+ * make install
+
+RELATED INFORMATION
+ Operating in FIPS 140-2 mode on Windows and Linux [http://www.ibm.com/support/docview.wss?uid=swg21626684]
+Operating in FIPS 140-2 mode on OS X [http://www.ibm.com/support/docview.wss?uid=swg21625556]
+OpenSSL and FIPS 140-2 Validation Status [http://www.openssl.org/docs/fips/fipsvalidation.html]
+FIPS 140-2 Consolidated Validation Certificate #1747 [http://csrc.nist.gov/groups/STM/cmvp/documents/140-1/140crt/FIPS140ConsolidatedCertList0018.pdf]

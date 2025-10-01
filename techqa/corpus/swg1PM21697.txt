@@ -1,0 +1,120 @@
+Title: IBM PM21697: ORACLE HELPER CLASSES FOR 9I, 10G, AND 11G ARE NOT SET CORRECTLY. SUPERCEDES PM12028. - United States
+
+Text:
+  FIXES ARE AVAILABLE
+6.1.0.5 Download: WebSphere Portal and WCM V6.1.0 fix pack 5 [http://www-01.ibm.com/support/docview.wss?uid=swg24027475]
+Fixes integrated in WebSphere Portal V7.0 Combined Cumulative Fix [http://www-01.ibm.com/support/docview.wss?uid=swg24027254]
+Recommended Updates for WebSphere Portal and IBM Web Content Manager V7.0 [http://www-01.ibm.com/support/docview.wss?uid=swg24027857]
+6.1.0.6 Download: WebSphere Portal and WCM V6.1.0 fix pack 6 [http://www-01.ibm.com/support/docview.wss?uid=swg24030970]
+7.0.0.2 Download: WebSphere Portal and WCM V7.0 fix pack 2 [http://www-01.ibm.com/support/docview.wss?uid=swg24031676]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  PM12028 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM12028] added changes to the code to set the 11g Oracle Helper
+   class in the JDBC Provider if the 11g driver was used.  This
+   inadvertantly breaks the 9i helper class if 9i driver is used
+   (10g was not affected).
+   
+   This fix corrects the problem so that 9i, 10g, and 11g helper
+   classes are all set correctly.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Manually update the helper class in the JDBC provider to reflect
+   the correct version.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Oracle Helper classes in the JDBC providers are not set up
+   correctly by database-transfer and connect-database scripts.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM21697
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSPHERE PORTA
+   
+   
+ * REPORTED COMPONENT ID
+   5724E7600
+   
+   
+ * REPORTED RELEASE
+   610
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-09-01
+   
+   
+ * CLOSED DATE
+   2011-04-04
+   
+   
+ * LAST MODIFIED DATE
+   2011-04-04
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R610 PSY
+   UP

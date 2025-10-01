@@ -1,0 +1,49 @@
+Title: IBM Unknown Error - Transaction Log Full - United States
+
+Text:
+Unknown error; cannot save data; transaction log; truncate log TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When end users cannot save data changes on the web grid and received Unknown Error message and the PlanningErrorLog indicates that the transaction log file is full, the issue may in fact be that the transaction log file size is zero (0) and is not set to allow any growth. 
+
+SYMPTOM
+Database errors: number: 0x80004005, source: Microsoft OLE DB Provider for SQL Server, description: The transaction log for database 'intermec_test' is full. To find out why space in the log cannot be reused, see the log_reuse_wait_desc column in sys.databases, number: 0x80040e21, source: Microsoft OLE DB Provider for SQL Server, description: Multiple-step OLE DB operation generated errors. Check each OLE DB status value, if available. No work was done., details: nodestate, com error description: The transaction log for database 'intermec_test' is full. To find out why space in the log cannot be reused, see the log_reuse_wait_desc column in sys.databases 
+
+Process exception
+Operation is not allowed in this context.
+RESPONSE_ERROR (Operation is not allowed in this context.)
+
+
+
+CAUSE
+Transaction log file is full and autogrowth is not enabled and it is not rolling over 
+
+...or...
+transaction log file is zero (0) in size and autogrowth is not enabled.
+
+In either case, the transaction log file cannot be written to because there is no room.
+
+
+ENVIRONMENT
+SQL2005 running in SQL2000 compatibility mode
+
+
+
+RESOLVING THE PROBLEM
+Set the transaction log file to autogrowth. 
+
+
+Steps:
+
+
+ 1. On the application database, access the Properties, Files, log file Autogrowth. 
+ 2. Set to unrestricted growth. 
+ 3. When setting the transaction log to autogrowth, also ensure that the Recovery Mode is set to Simple, rather than Full which is the default setting, in order to avoid over-logging, i.e., unnecessarily logging each and every interaction between the software and database.
+
+
+
+
+
+Cross Reference information Segment Product Component Platform Version Edition Business Analytics Cognos Planning Contributor Windows 8.3, 8.4 
+HISTORICAL NUMBER
+ 1042483

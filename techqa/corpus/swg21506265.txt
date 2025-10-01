@@ -1,0 +1,25 @@
+Title: IBM How do I show the Computer ID property as a column for my computers on the Computers tab in the IEM/TEM console? - United States
+
+Text:
+Client; Console; Relevance; IEM Console; googlebigfix TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The Computer ID property is not available as a column heading on the Computers tab in your IEM/TEM console by default.
+
+This for the IEM/TEM Console. 
+
+RESOLVING THE PROBLEM
+To enable this property:
+
+
+
+ 1. Right click on the column headings and select Manage Properties. 
+ 2. Click Add New. 
+ 3. For the Name, enter: ComputerID 
+ 4. For the Relevance, enter: computer id 
+ 5. Click OK. 
+
+Now when you right click on your column headings in the IEM TEM Console you will see the ComputerID is available to select. Select it to view the Computer ID's in their own column.  
+
+HISTORICAL NUMBER
+ 1583

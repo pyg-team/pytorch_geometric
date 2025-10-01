@@ -1,0 +1,111 @@
+Title: IBM WMB/IIB Mustgather: problems with Web Services (HTTP, HTTPS) on z/OS - United States
+
+Text:
+Web Services HTTP HTTPS MustGather; MustGathers; Must Gather; Collect Troubleshooting Data; MustGatherDocument; Collecting; Trouble; Shooting TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ You are experiencing Web Services (HTTP, HTTPS) problems with WebSphere Message Broker (WMB) or IBM Integration Bus (IIB) on z/OS
+
+This mustgather document explains how to troubleshoot this problem by yourself, how to generate diagnostic data when the problem is happening, how to collect the available data from your system, and how to share that data with IBM support. 
+
+ENVIRONMENT
+These instructions are for WebSphere Message Broker or IBM Integration Bus on z/OS
+Return to the WebSphere Message Broker MustGather index [http://www-01.ibm.com/support/docview.wss?uid=swg21209857] for other systems.
+
+RESOLVING THE PROBLEM
+
+
+
+STEP 1: SELF-GUIDED TROUBLESHOOTING
+
+ 1. Consider Using the Test Client in trace and debug mode [http://publib.boulder.ibm.com/infocenter/wmbhelp/v8r0m0/topic/com.ibm.etools.mft.doc/af52260_.htm].
+ 2. 
+ 3. A user level trace [http://www-01.ibm.com/support/docview.wss?rs=849&uid=swg21177321#1] is intended to assist users with understanding how their ESQL is processed.
+    It will also show a high level view of the message flow behavior.
+ 4. 
+ 5. Check for known issues:  [http://publib.boulder.ibm.com/infocenter/wmbhelp/v8r0m0/index.jsp?topic=/com.ibm.etools.mft.doc/au16520_.htm] [http://publib.boulder.ibm.com/infocenter/wmbhelp/v8r0m0/topic/com.ibm.etools.mft.doc/au16530_.htm] [http://www.ibm.com/software/htp/cics/tserver/support/] [http://www.ibm.com/support/entry/portal/Overview/Software/WebSphere/WebSphere_Message_Broker]Dynamic guide to help troubleshooting Message Broke [https://www.ibm.com/developerworks/community/blogs/c7e1448b-9651-456c-9924-f78bec90d2c2/entry/try_a_dynamic_guide_to_help_with_troubleshooting_message_broker?lang=en]r
+    Working with HTTP flows [http://pic.dhe.ibm.com/infocenter/wmbhelp/v9r0m0/topic/com.ibm.etools.mft.doc/ac20450_.htm] 
+    IIB and Web Services [http://pic.dhe.ibm.com/infocenter/wmbhelp/v9r0m0/topic/com.ibm.etools.mft.doc/ac55700_.htm]
+    Implementing Web Services security in WMB [http://www.ibm.com/developerworks/websphere/library/techarticles/1008_fan/1008_fan.html]
+    Run the WebServices samples [http://pic.dhe.ibm.com/infocenter/wmbhelp/v9r0m0/topic/com.ibm.etools.mft.doc/ax20230_.htm]
+    WebSphere Message Broker support site [http://www-947.ibm.com/support/entry/portal/product/websphere/websphere_message_broker?productContext=-2089662493]
+    
+    
+    
+
+
+
+STEP 2: COLLECT DATA
+
+ 1. General Broker information
+    The mqsidc tool is not supported on z/OS, capture this information manually  * Record the IBM Integration Bus or WebSphere Message Broker version, release, and maintenance level.
+     * Record the operating system version, release, and maintenance level.
+     * Record the version, release, and maintenance level of any related products and components for the problematic application.
+     * Collect the Standard Error logs
+       IIB/WMB writes information to both STDOUT and STDERR. These files are located under the node or Message Broker workpath. 
+       See: Standard System Logs [http://pic.dhe.ibm.com/infocenter/wmbhelp/v9r0m0/topic/com.ibm.etools.mft.doc/au14165_.htm]
+     * 
+     * Collect the joblog 
+       IIB/WMB writes information to the JOBLOG on z/OS
+       See: z/OS broker joblogs [http://pic.dhe.ibm.com/infocenter/wmbhelp/v9r0m0/topic/com.ibm.etools.mft.doc/an20101_.htm]
+     * 
+     * Output of command: f <brokername>,list d=2 See: mqsilist command - z/OS [http://pic.dhe.ibm.com/infocenter/wmbhelp/v9r0m0/topic/com.ibm.etools.mft.doc/an28320_.htm]
+       
+       
+     * 
+     * Other information that can be collected Is IIB/WMB acting as service provider or service consumer?
+       
+       
+     * 
+    
+    
+ 2. 
+ 3. 
+ 4. 
+ 5. 
+ 6. 
+ 7. Project Interchange files for the problematic flow/set/ESQL/model
+     * You can export your Application and library project(s) into an archive file for easy transmission to IBM Support.
+       See: Exporting files from the Workbench [http://pic.dhe.ibm.com/infocenter/wmbhelp/v9r0m0/index.jsp?topic=%2Forg.eclipse.platform.doc.user%2Ftasks%2Ftasks-57.htm] 
+    
+    
+ 8. 
+ 9. Traces If the problem occurs during a runtime test or with the Toolkit test facility, WMB execution group traces [http://www-01.ibm.com/support/docview.wss?rs=849&uid=swg21177321] can be used to gain a better understanding of the problem.  * A user level trace [http://www-01.ibm.com/support/docview.wss?rs=849&uid=swg21177321#1] is intended to assist users with understanding how their ESQL is processed. It will also show a high level view of the message flow behavior.
+     * A service level trace [http://www-01.ibm.com/support/docview.wss?rs=849&uid=swg21177321#2] is intended to be provided to IBM Support to assist in the diagnosis of your issue.
+     *  SSL trace for HTTPS problems only
+    
+    
+
+
+
+
+
+ATTENTION: A good problem description is one of the most important tools IBM needs to analyze your data!
+When sending data to IBM, be sure to update your PMR or send a note with the following information:
+
+ *  Tell us what errors you saw, where you saw them, and what time they happened Search the [http://www.ibm.com/software/htp/cics/tserver/support/]WebSphere Message Broker support site [http://www.ibm.com/support/entry/portal/Overview/Software/WebSphere/WebSphere_Message_Broker] for known problems using symptoms like the message number and error codes.</li>Let us know if you made any changes to IBM Integration Bus, WebSphere Message Broker or the system before the problem Share any other observations which you think will help us to better understand the problem 
+
+
+
+STEP 3: SUBMIT DATA TO IBM
+
+ * Use IBM Service Request [http://www.ibm.com/support/servicerequest/] to open or view a problem record with IBM.
+ * Send your data to IBM [http://www.ibm.com/support/docview.wss?uid=swg21392217] for further analysis.
+
+
+
+
+
+Please see the IBM Software Support Handbook [http://www14.software.ibm.com/webapp/set2/sas/f/handbook/home.html] for more information on working with IBM support.
+
+
+
+Back to top
+
+ 
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Integration Bus Web Services z/OS 9.0 All Editions 
+PRODUCT ALIAS/SYNONYM
+ WMB MB WebSphere Message Broker MQ Integrator WBIMB WBI-MB MQSI WMQI

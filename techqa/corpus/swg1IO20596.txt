@@ -1,0 +1,194 @@
+Title: IBM IO20596: TDISRVCTL FAILS WITH CTGDJB125E - United States
+
+Text:
+z/os  DIRECT LINKS TO FIXES
+7.2.0-ISS-SDI-FP0005 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FSecurity+Directory+Integrator&fixids=7.2.0-ISS-SDI-FP0005&source=SAR]
+7.2.0-ISS-SDI-FP0004 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FSecurity+Directory+Integrator&fixids=7.2.0-ISS-SDI-FP0004&source=SAR]
+7.2.0-ISS-SDI-FP0003 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FSecurity+Directory+Integrator&fixids=7.2.0-ISS-SDI-FP0003&source=SAR]
+7.2.0-ISS-SDI-FP0002 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FSecurity+Directory+Integrator&fixids=7.2.0-ISS-SDI-FP0002&source=SAR]
+7.2.0-ISS-SDI-FP0001 [http://www-01.ibm.com/support/docview.wss?uid=swg24037895]
+7.2.0-ISS-SDI-FP0002 [http://www-01.ibm.com/support/docview.wss?uid=swg24039085]
+7.2.0-ISS-SDI-FP0003 [http://www-01.ibm.com/support/docview.wss?uid=swg24040694]
+7.2.0-ISS-SDI-FP0004 [http://www-01.ibm.com/support/docview.wss?uid=swg24044400]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Short description: tdisrvctl fails with CTGDJB125E
+   
+   Problem description:
+   When my customer issues the following command:
+   
+   /app/IBM/TDI/V7.1.1/bin/tdisrvctl -h localhost -v -op status -c
+   
+   He receives the following error message frequently (but not
+   every time) in tdisrvctl.log:
+   
+   2014-02-03 17:48:46,671 ERROR [tdisrvctl] - CTGDJB125E Unable to
+   get list of all running Configs.
+   2014-02-03 17:48:46,673 ERROR [tdisrvctl] - error unmarshalling
+   return;
+   nested exception is:
+    java.io.WriteAbortedException: writing aborted;
+   java.io.NotSerializableException: java.io.ByteArrayInputStream
+    sun.rmi.server.UnicastRef.invoke(UnicastRef.java:185)
+    com.ibm.di.api.remote.impl.ConfigInstanceImpl_Stub.getConfigura
+   tion(Con
+   figInstanceImpl_Stub.java:386)
+    com.ibm.di.cli.RemoteServerCommand.getRunningConfig(RemoteServe
+   rCommand
+   .java:3017)
+    com.ibm.di.cli.RemoteServerCommand.viewStatus(RemoteServerComma
+   nd.java:
+   2330)
+    com.ibm.di.cli.RemoteServerCommand.execStatus(RemoteServerComma
+   nd.java:
+   1598)
+    com.ibm.di.cli.RemoteServerCommand.serverControlCommand(RemoteS
+   erverCom
+   mand.java:294)
+    com.ibm.di.cli.RemoteServerCommand.main(RemoteServerCommand.jav
+   a:230)
+    Caused by: java.io.WriteAbortedException: writing aborted;
+   java.io.NotSerializableException:
+   java.io.ByteArrayInputStreamwriting
+   aborted; java.io.NotSerializableException:
+   java.io.ByteArrayInputStream
+    java.io.ObjectInputStream.readObject0(ObjectInputStream.java:13
+   50)
+    java.io.ObjectInputStream.readObject(ObjectInputStream.java:365
+   )
+    java.util.Hashtable.readObject(Hashtable.java:1005)
+    sun.reflect.GeneratedMethodAccessor5.invoke(Unknown Source)
+    sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMetho
+   dAccesso
+   rImpl.java:37)
+    java.lang.reflect.Method.invoke(Method.java:611)
+   ...
+   
+   The issue has been addressed in WI DI02000
+   
+   L3 provided file mmconfig.jar on Feb 7 and advised to use this
+   file along with previous miserver.jar & miconfig.jar from 4th
+   Feb  update.
+   
+   This fixed the issue.
+   
+   Cust's environment:
+   ITDI 7.1.1.3
+   AIX 7.1
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Workaround: use files mmconfig.jar from the Feb 7 and files
+   miserver.jar & miconfig.jar from Feb 4 update of WI DI02000
+   
+   According to L3, official fix would be made available in next
+   fixpack for 7.1.1 i.e. 7.1.1-TIV-TDI-FP0004 (No plan yet in Q1)
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Problem with TDI tdisrvctl utility.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This is bug in TDI code and has been fixed. formal fix will be
+   made available in 7.2.0-TIV-TDI-FP0001.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IO20596
+   
+   
+ * REPORTED COMPONENT NAME
+   ITDI MULTIPLATF
+   
+   
+ * REPORTED COMPONENT ID
+   5724D9960
+   
+   
+ * REPORTED RELEASE
+   720
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2014-02-18
+   
+   
+ * CLOSED DATE
+   2014-02-18
+   
+   
+ * LAST MODIFIED DATE
+   2014-02-18
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    IO20582 [http://www-01.ibm.com/support/docview.wss?uid=swg1IO20582]
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ITDI MULTIPLATF
+   
+   
+ * FIXED COMPONENT ID
+   5724D9960
+   
+   
+
+APPLICABLE COMPONENT LEVELS

@@ -1,0 +1,90 @@
+Title: IBM Readme for IBM WebSphere Application Server Liberty 17.0.0.4 - United States
+
+Text:
+17.0.0.4; readme; 17.0.0.4; 1700.4; ReadmeDocument PRODUCT README
+
+ABSTRACT
+ Readme documentation for Fix Pack 17.0.0.4 of the WebSphere Application Server Liberty offerings, including installation-related instructions, prerequisites, highlights, and known issues.
+
+
+CONTENT
+
+
+
+IBM WebSphere Application Server Liberty Core 
+IBM WebSphere Application Server Liberty 
+IBM WebSphere Application Server Liberty Network Deployment 
+IBM WebSphere Application Server Liberty for z/OS 
+IBM WebSphere Application Server Liberty ILAN
+IBM Web Enablement Liberty for IBM i 
+
+Table of Contents
+
+
+
+[/support/docview.wss?uid=swg27050542&amp;aid=1] What's new#history_ [/support/docview.wss?uid=swg27050542&amp;aid=2] About Fix Pack 17.0.0.4 [/support/docview.wss?uid=swg27050542&amp;aid=3] Prerequisites [/support/docview.wss?uid=swg27050542&amp;aid=4] Space requirements [/support/docview.wss?uid=swg27050542&amp;aid=5] Steps for installing Fix Pack 17.0.0.4 [/support/docview.wss?uid=swg27050542&amp;aid=6] Known issues [/support/docview.wss?uid=swg27050542&amp;aid=7] Change history [/support/docview.wss?uid=swg27050542&amp;aid=8] Additional information [/support/docview.wss?uid=swg27050542&amp;aid=9] Trademarks and service marks [/support/docview.wss?uid=swg27050542&amp;aid=10] 
+
+Compilation date: December 21, 2017 
+© Copyright International Business Machines Corporation 2017. All rights reserved. 
+US Government Users Restricted Rights – Use, duplication or disclosure restricted by GSA ADP Schedule Contract with IBM Corp.
+
+What's new 
+Support for using Java SE 6 with WebSphere Liberty ends in September 2017. See removal notice [http://www.ibm.com/support/knowledgecenter/SSEQTP_liberty/com.ibm.websphere.wlp.nd.multiplatform.doc/ae/rwlp_remfeat.html]. After the end of support, the Liberty kernel will be recompiled and can no longer run with Java SE 6. If you continue to use Java SE 6 on earlier fix packs after the end of support date, you could expose your environment to security risks. 
+
+Java SE 8 is the recommended Java SDK because it provides the latest features and security updates. 
+
+
+[/support/docview.wss?uid=swg27050542&amp;aid=11] Back to Top 
+
+About Fix Pack 17.0.0.4 
+Fix Pack 16.0.0.2 introduced new fix pack numbering for common Liberty fix packs that apply to both Version 8.5 and Version 9.0 of WebSphere Application Server on all supported platforms. You can use files from the Fix Pack 17.0.0.4 download page [http://www.ibm.com/support/docview.wss?uid=swg24044285] to update Liberty for both WebSphere Application Server Version 8.5 and Version 9.0. 
+
+Support for using Java SE 6 with WebSphere Liberty ends in September 2017. After the end of support, the Liberty kernel will be recompiled and can no longer run with Java SE 6. If you continue to use Java SE 6 on earlier fix packs after the end of support date, you could expose your environment to security risks. 
+
+Java SE 8 is the recommended Java SDK because it provides the latest features and security updates. 
+
+
+[/support/docview.wss?uid=swg27050542&amp;aid=12] Back to Top 
+Prerequisites 
+Before you install Liberty, verify that your system meets the relevant requirements listed on WebSphere Application Server detailed system requirements [http://www-01.ibm.com/support/docview.wss?rs=180&uid=swg27006921], IBM WebSphere SDK Java Technology Edition 7.1 Supporting Software [http://www-01.ibm.com/support/docview.wss?rs=180&uid=swg27042161] and IBM WebSphere SDK Java Technology Edition 8 Supporting Software. [http://www-01.ibm.com/support/docview.wss?uid=swg27045339] 
+For installing this Liberty fix pack using Installation Manager, download and install Installation Manager 1.8.5 or later from the IBM Installation Manager download website [http://www-947.ibm.com/support/entry/portal/Recommended_fix/Software/Rational/IBM_Installation_Manager]. The Liberty fix pack for Installation Manager must be installed on top of an existing Liberty installation. 
+
+
+
+
+[/support/docview.wss?uid=swg27050542&amp;aid=13] Back to Top 
+Space requirements 
+The amount of disk space required varies with the number of features or products installed. If you are installing the product using Installation Manager, the installation summary panel indicates the approximate amount of disk space required based on the features and products you have selected. For a fix pack, you need less than 500MB of free disk space. 
+
+[/support/docview.wss?uid=swg27050542&amp;aid=14] Back to Top 
+Steps for installing Fix Pack 17.0.0.4 
+For instructions on installing fix packs, see the product documentation for your platform: 
+
+ * Installing fix packs on distributed operating systems [https://www.ibm.com/support/knowledgecenter/SSAW57_liberty/com.ibm.websphere.wlp.nd.doc/ae/twlp_ins_install_fixpacks.html] 
+ * Installing fix packs on IBM i [https://www.ibm.com/support/knowledgecenter/SSAW57_liberty/com.ibm.websphere.wlp.nd.doc/ae/twlp_ins_upgrade_is_cl.html] 
+ * Installing Liberty interim fixes and fix packs on z/OS [https://www.ibm.com/support/knowledgecenter/SSAW57_liberty/com.ibm.websphere.wlp.nd.doc/ae/twlp_ins_install_fixes_z.html]
+
+
+
+
+[/support/docview.wss?uid=swg27050542&amp;aid=15] Back to Top 
+Known issues See Database changes for Java Batch in 16.0.0.4 [http://www-01.ibm.com/support/docview.wss?uid=swg21995665] 
+
+There is a behavior change in java.util.zip.ZipFile.getEntry() from IBM SDK V8 SR4 FP10. With this release, the name of the ZipEntry instance returned from java.util.zip.ZipFile.getEntry() always ends with / for any zip directory entry. To revert to the previous behavior, set the system property jdk.util.zip.ensureTrailingSlash to "false". See here [http://www.oracle.com/technetwork/java/javase/8u144-relnotes-3838694.html?printOnly=1] for details. 
+
+
+
+[/support/docview.wss?uid=swg27050542&amp;aid=16] Back to Top 
+Change history 
+Date Change December 21, 2017 Initial publication for Fix Pack 17.0.0.4 
+[/support/docview.wss?uid=swg27050542&amp;aid=17] Back to Top 
+Additional information 
+You can find additional information about the product in the WebSphere Application Server Liberty product documentation [http://www14.software.ibm.com/webapp/wsbroker/redirect?version=cord&product=was-nd-mp&topic=was_liberty]. 
+
+For more information about available updates, refer to Recommended updates for WebSphere Application Server [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]. 
+
+[/support/docview.wss?uid=swg27050542&amp;aid=18] Back to Top 
+Trademarks and service marks 
+For trademark attribution, visit the IBM Terms of Use [http://www.ibm.com/legal/us/] website. 
+
+[/support/docview.wss?uid=swg27050542&amp;aid=19] Back to Top

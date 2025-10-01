@@ -1,0 +1,28 @@
+Title: IBM Work Order & WOACTIVITY GL Account - United States
+
+Text:
+work order; change; status; glaccount; woactivity; task; job plan; location; asset; TPAEACM; TPAEWORK TECHNOTE (FAQ)
+
+QUESTION
+ Is there a reason that Maximo allows for a mismatch between GL accounts? 
+
+ANSWER
+Currently Maximo allows for there to be a mismatch between the Work Order and WOACTIVITY GL accounts. For instance if a user performs the following steps: 
+
+1. Create a new Work Order and either add a Location or Asset or manually add a GL account to the Work Order. 
+
+ 
+
+2. On the Plans tab now add a new task and the location, asset information is copied from the parent Work Order to the new Task Work Order that is now created. At this point the GL account information has been copied to the WOACTIVITY.GLACCOUNT field. Run the query below to confirm 
+
+ 
+
+Select GLACCOUNT from WOACTIVITY where WONUM = 'place activity work order number here' 
+
+ 
+
+Now save what was done and change the status of the Parent Work Order to approved. 
+
+ 
+
+3. Now that the Work Order is approved change the status back to the WAPPR. Change part of the GL account on the parent Work Order, save it and approve the Work Order. Run the above query again and notice that the WOACTIVITY GL account did not update, this is not a bug. Maximo was designed to only insert into this field on the creation of the WOACTIVITY and is not designed to keep it in synch when changes are made after it's creation.

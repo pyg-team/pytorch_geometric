@@ -1,0 +1,320 @@
+Title: IBM IT24429: MQ Classes for JMS write trace to a file called 'mqjava_%PID%.trc' instead of 'mqjms_%PID%.trc - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  A WebSphere MQ classes for JMS application is run using the
+   following Java argument:
+   
+    -Dcom.ibm.msg.client.commonservices.trace.status=ON
+   
+   It is expected that this should enable trace, which would be
+   written to a trace file with the name:
+   
+    mqjms_%PID%.trc
+   
+   located within the application's working directory (where
+   '%PID%' is the process identifier for the JVM).   However,  the
+   trace is actually written to a trace file called:
+   
+    mqjava_%PID%.trc
+   
+   in the application's working directory.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   This issue affects users of:
+   
+   - The WebSphere MQ V7.5.0.8 (or earlier) classes for JMS who
+   have applied an interim fix for APAR IV91716 [http://www-01.ibm.com/support/docview.wss?uid=swg1IV91716].
+   - The WebSphere MQ V7.5.0.8 (or earlier) resource adapter who
+   have applied an interim fix for APAR IV91716 [http://www-01.ibm.com/support/docview.wss?uid=swg1IV91716].
+   
+   - The IBM MQ V8.0.0.7 (or later) classes for JMS, who have
+   applications that load the IBM MQ classes for JMS from the JAR
+   file com.ibm.mqjms.jar, rather than the relocatable JAR file
+   com.ibm.mq.allclient.jar.
+   - The IBM MQ V8.0.0.7 (or later) resource adapter.
+   
+   - The IBM MQ V9.0.0.2 (or later) classes for JMS, who have
+   applications that load the IBM MQ classes for JMS from the JAR
+   file com.ibm.mqjms.jar, rather than the relocatable JAR file
+   com.ibm.mq.allclient.jar.
+   - The IBM MQ V9.0.0.2 (or later) resource adapter.
+   
+   and who are asked to collect trace by IBM Support:
+   
+   - Either by specifying the Java system property
+   "-Dcom.ibm.msg.client.commonservices.trace.status=ON".
+   - Or by using an IBM MQ classes for JMS configuration file,
+   where the configuration file does not contain an entry for the
+   property:
+   
+     com.ibm.msg.client.commonservices.trace.outputName
+   
+   
+   Platforms affected:
+   MultiPlatform
+   
+   ****************************************************************
+   PROBLEM DESCRIPTION:
+   The IBM MQ messaging client trace mechanism uses internal
+   properties files to determine the default name of any trace
+   files that are generated. If an internal properties file cannot
+   be found, then the default trace file name will be:
+   
+     mqjms_%PID%.trc
+   
+   where %PID% is the process identifier of the application being
+   traced.
+   
+   If an IBM MQ classes for JMS application only includes the IBM
+   MQ classes for JMS JAR file:
+   
+     com.ibm.mqjms.jar
+   
+   on their CLASSPATH, then when the JAR file is loaded the Java
+   Runtime Environment will use the information in the Class-Path
+   entry in the MANIFEST.MF file contained within the JAR file to
+   pull in some of the other JAR files shipped with IBM MQ. As a
+   result of this, the IBM MQ classes for Java JAR file:
+   
+     com.ibm.mq.jar
+   
+   will also loaded.
+   
+   
+   Prior to APAR IV91716 [http://www-01.ibm.com/support/docview.wss?uid=swg1IV91716], the com.ibm.mqjms.jar file and the other
+   JAR files that it pulled in via the Class-Path entry in its
+   MANIFEST.MF file did not contain any internal properties files
+   that specified a default trace file name. This meant that
+   whenever an IBM MQ classes for JMS application was traced, the
+   default trace file name was:
+   
+     mqjms_%PID%.trc
+   
+   APAR IV91716 [http://www-01.ibm.com/support/docview.wss?uid=swg1IV91716] added a new internal properties file to the IBM MQ
+   classes for Java JAR file:
+   
+     com.ibm.mq.jar
+   
+   which specified that the default trace file name to use for IBM
+   MQ classes for Java applications was:
+   
+     mqjava_%PID%.trc
+   
+   Now, as mentioned above, when an IBM MQ classes for JMS
+   application was run using a CLASSPATH that included:
+   
+     com.ibm.mqjms.jar
+   
+   the:
+   
+     com.ibm.mq.jar file
+   
+   was also loaded. This meant that the IBM messaging client trace
+   mechanism would use the information in the internal properties
+   file contained within this JAR file when determining the default
+   trace file to use. As a result, it would use a default trace
+   file name of:
+   
+     mqjava_%PID%.trc
+   
+   when IBM MQ classes for JMS applications were being traced.
+   
+   
+   In addition to this, the internal properties files that were
+   added to the following JAR files shipped with IBM MQ V9:
+   
+   - com.ibm.mq.jar
+   - com.ibm.mq.allclient.jar
+   
+   - com.ibm.mq.osgi.java_<version number>.jar
+   - com.ibm.mq.osgi.allclient_<version number>.jar
+   
+   as part of APAR IV91716 [http://www-01.ibm.com/support/docview.wss?uid=swg1IV91716] included a string that would be used as
+   the title and the product name shown in any FFDCs that were
+   generated by the IBM MQ classes for Java and classes for JMS.
+   This string included the characters:
+   
+     $PRODUCT_NAME
+   
+   which should have been replaced with:
+   
+     IBM MQ
+   
+   when the properties files were added to their respective JAR
+   files. However, this did not happen, which resulted in FFDCs
+   being generated where the title contained "$PRODUCT_NAME". An
+   example of this is shown below:
+   
+   ************************************************************
+    $PRODUCT_NAME classes for Java First Failure Symptom Report
+   
+   Product          :- $PRODUCT_NAME classes for Java First Failure
+   Symptom Report
+   .........
+   ************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  To resolve these issues, the following changes have been made:
+   
+   Change 1:
+   -------------
+   The following topics in the IBM MQ sections of IBM Knowledge
+   Center:
+   
+   - Collecting an IBM MQ classes for JMS trace by using a Java
+   system property
+   - Collecting an IBM MQ classes for JMS trace by using the IBM MQ
+   classes for JMS configuration file
+   - Collecting an IBM MQ classes for JMS trace dynamically by
+   using the traceControl utility"
+   
+   and the IBM MQ classes for JMS configuration file:
+   
+     jms.config
+   
+   shipped with WebSphere MQ V7.5, and IBM MQ V8 and V9, have been
+   updated to indicate that the default name of the trace file
+   generated by IBM MQ classes for JMS applications that do not
+   include the IBM MQ relocatable JAR file
+   (com.ibm.mq.allclient.jar) on their CLASSPATH is:
+   
+     mqjava_%PID%.trc.
+   
+   
+   Change 2:
+   -------------
+   The string "$PRODUCT_NAME" has been replaced with "IBM MQ" in
+   the internal properties files included in the following JAR
+   files shipped with IBM MQ V9.0:
+   
+   - com.ibm.mq.jar
+   - com.ibm.mq.allclient.jar
+   
+   - com.ibm.mq.osgi.java_<version number>.jar
+   - com.ibm.mq.osgi.allclient_<version number>.jar
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+   Version    Maintenance Level
+   v7.5       7.5.0.9
+   v8.0       8.0.0.11
+   v9.0 LTS   9.0.0.5
+   v9.1 CD    9.1.1
+   v9.1 LTS   9.1.0.1
+   
+   The latest available maintenance can be obtained from
+   'WebSphere MQ Recommended Fixes'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037]
+   
+   If the maintenance level is not yet available information on
+   its planned availability can be found in 'WebSphere MQ
+   Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT24429
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ BASE MULTIP
+   
+   
+ * REPORTED COMPONENT ID
+   5724H7241
+   
+   
+ * REPORTED RELEASE
+   750
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2018-03-19
+   
+   
+ * CLOSED DATE
+   2018-06-15
+   
+   
+ * LAST MODIFIED DATE
+   2018-07-20
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ BASE MULTIP
+   
+   
+ * FIXED COMPONENT ID
+   5724H7241
+   
+   
+
+APPLICABLE COMPONENT LEVELS

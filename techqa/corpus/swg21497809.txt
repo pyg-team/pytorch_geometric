@@ -1,0 +1,53 @@
+Title: IBM Compiling a Micro Focus Net Express COBOL TXSeries application to generate output in native code with .gnt extension - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ English 
+
+PROBLEM(ABSTRACT)
+ Procedure to compile a Micro Focus COBOL TXSeries program in Windows to generate the output in native code with .gnt extension 
+
+RESOLVING THE PROBLEM
+ 
+
+This document explains you a procedure to compile TXSeries COBOL application to generate the output into a Micro Focus native format with .gnt file extension using an example :
+
+1. Set COBCPY environment variable to include the copy books provided with TXSeries :
+set COBCPY= %CICSPATH%\include
+
+2. Use the cicstran command in TXSeries to translate the TXSeries COBOL source file with extension .ccp to the COBOL file with extension .cbl.
+
+C:\opt\cics\bin\cicstran -lCOBOL example.ccp
+
+See the topic, cicstran - translates source code in the TXSeries Information Center at http://publib.boulder.ibm.com/infocenter/txformp/v7r1/index.jsp?topic=/com.ibm.cics.tx.doc/reference/r_cicstran.html [http://publib.boulder.ibm.com/infocenter/txformp/v7r1/index.jsp?topic=/com.ibm.cics.tx.doc/reference/r_cicstran.html] for more information about cicstran.
+
+3. The cobol command provided by Micro Focus COBOL can be directly used on the .cbl extension file to produce native code with extension .gnt. 
+
+cobol example.cbl OMF"GNT" /CALL-RECOVERY /DATA-CONTEXT
+
+
+You can compile a TXSeries application involving Oracle database into .gnt format using the procedure provided below. 
+
+The following steps explains compilation with a Pro*MF COBOL/TXSeries application program named sample.pco:
+
+1. Set COBCPY environment variable for linking the TXSeries COBOL and Oracle copy book path:
+set COBCPY= .;%ORACLE_HOME%\PRECOMP\PUBLIC;%CICSPATH%\include
+
+2. Rename the sample.pco file as a TXSeries COBOL file with the extension, sample.ccp.
+move sample.pco sample.ccp
+
+3. Execute the cicstran command to pre-process the TXSeries statement in the file sample.ccp. It will generate the Micro Focus COBOL extension file, sample.cbl.
+C:\opt\cics\bin\cicstran -lCOBOL sample.ccp
+
+4. Rename the file, sample.cbl, which is being translated by TXSeries cicstran command back to sample.pco
+move sample.cbl sample.pco
+
+4. The cobolw command in Micro Focus COBOL can directly use the .pco extension file to produce native code with extension .gnt with the following option:
+
+cobolw sample.pco /gnt preprocess(cobsql) cstart cstop CSQLT=ORA end-c comp5=yes endp;
+
+This example was tested only on Micro Focus Net Express COBOL 5.1 and TXSeries 7.1. This method uses libraries and functionality from Micro Focus COBOL and Oracle. You need to check the respective product documentation for any changes in the functionality. 
+
+From the TXSeries perspective, it is recommended that you compile applications to a .cbmfnt format ( native dll format in windows for TXSeries) for production use. The details about .cbmfnt extension files are explained in TXSeries Information Center, http://publib.boulder.ibm.com/infocenter/txformp/v7r1/index.jsp?topic=/com.ibm.cics.tx.doc/tasks/t_compilng_micro_focus_net_exprss_cobol_app_prgrm_cics_win.html [http://publib.boulder.ibm.com/infocenter/txformp/v7r1/index.jsp?topic=/com.ibm.cics.tx.doc/tasks/t_compilng_micro_focus_net_exprss_cobol_app_prgrm_cics_win.html]

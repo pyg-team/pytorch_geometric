@@ -1,0 +1,35 @@
+Title: IBM Using the offline utilities how do you select batches with certain status flags? (SCI21821) - United States
+
+Text:
+STERLINGPRI TECHNOTE (FAQ)
+
+QUESTION
+ Using the offline utilities how do you select batches with certain status flags? (SCI21821) 
+
+ANSWER
+Use the -F parameter to control the selection criteria of status flags for batches.
+Example:
+cmulist -i mailboxa -FA!T
+This will list all batches in MailboxID mailboxa with a status flags A but not status flags T.
+
+ 
+
+HISTORICAL NUMBER
+ PRI34740 
+
+PRODUCT ALIAS/SYNONYM
+ 
+
+Fact
+
+
+CONNECT:Enterprise UNIX
+Release 1.2.04 
+SCI21821
+
+
+Goal
+
+
+FAQ: Using the offline utilities how do you select batches with certain status 
+flags?

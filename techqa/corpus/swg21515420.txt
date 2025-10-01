@@ -1,0 +1,52 @@
+Title: IBM Starting WebSphere Application Server gives warning message - Could not lock User prefs - United States
+
+Text:
+Websphere; startup; FileSystemPreferences; user prefs; prefs; Could not lock User prefs TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Warning message issued during the non-root or root startup of WebSphere stating that it can not lock the user or system preferences. 
+
+SYMPTOM
+The following message can be seen in the systemout.log: 
+
+[9/11/11 18:03:19:921 EDT] 00000001 prefs W java.util.prefs.FileSystemPreferences syncWorld Couldn't flush user prefs: java.util.prefs.BackingStoreException: Couldn't get file lock.
+[9/11/11 18:03:49:929 EDT] 00000001 prefs W java.util.prefs.FileSystemPreferences checkLockFile0ErrorCode Could not lock User prefs. Unix error code 2.
+
+
+CAUSE
+The non-root ID that is being used to start WebSphere Application Server does not have a user_home directory. Therefore this non-root ID is unable to access the root user's "/etc/.java/.systemPrefs". This produces the aforementioned warning messages every 30 seconds in the profile_root/logs/server_name/systemout.log.
+
+The root ID used to start Websphere Application Server can not find the Java system pref file. 
+
+
+DIAGNOSING THE PROBLEM
+For non-root, you can confirm this issue by trying to start WebSphere using the "root" ID. Review the Websphere_Home/profiles/<profile_name>/logs/<failing server_name/systemout.log to verify that you no longer see the warning messages. 
+
+
+For root, verify if the /etc/.java/.systemPrefs exists
+
+
+RESOLVING THE PROBLEM
+For non-root : 
+
+Create a User_Home directory for this non-root user and restart WebSphere Application Server. If this does not resolve the issue use the following 2 suggestions below : 
+
+NOTE : The "dot" in front of the directories below represent that these are "hidden" directories. So the "dot" must be in front of the directory name to go into the directory or to access them. 
+
+1. Try giving 755 permission for /home/wasadmin/.java/.userPrefs 
+
+2. Add "-Djava.util.prefs.userRoot=/home/wasadmin/preps" as a SDK generic jvm argument 
+
+
+To set the argument on the SDK: 
+
+ 1. In the administrative console, click Servers > Server Types > WebSphere application servers , and select the server that you want to add the generic argument to.. 
+ 2. Then, in the Server Infrastructure section, click Java and process management > Process definition > Java virtual machine. 
+ 3. Specify -Djava.util.prefs.userRoot=/home/wasadmin/preps for the Generic JVM Arguments property, and click OK . 
+ 4. Click Save to save your changes. 
+ 5. Restart the application server.
+
+
+For root :  1. Create a Java system pref directory
+    sudo mkdir -p /etc/.java/.systemPrefs 
+ 2. Restart the application server.

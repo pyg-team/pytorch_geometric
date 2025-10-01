@@ -1,0 +1,181 @@
+Title: IBM IT14570: THE ALERTS MAY NOT BE CORRECTLY MIGRATED WHEN UPGRADING IN IBM SPECTRUM CONTROL. - United States
+
+Text:
+AIX SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The following errors relative to the alerts migration can be
+   seen in the traceTPCInstall.log:
+   
+   2016-01-04 12:02:52.144+0000 INFO
+   com.ibm.tpc.install.backend.rules.RulesMigrationManager
+   consolidateAlertsAndRules No consolidation was done for this
+   alert.
+   2016-01-04 12:02:52.144+0000 ERROR
+   com.ibm.tpc.install.backend.rules.RulesMigrationManager
+   consolidateAlertsAndRules
+   com.ibm.db2.jcc.am.SqlIntegrityConstraintViolationException DB2
+   SQL Error: SQLCODE=-803, SQLSTATE=23505,
+   SQLERRMC=1;TPC.T_RULE_CONSTRAINT, DRIVER=3.65.77
+   com.ibm.db2.jcc.am.SqlIntegrityConstraintViolationException: DB2
+   SQL Error: SQLCODE=-803, SQLSTATE=23505,
+   SQLERRMC=1;TPC.T_RULE_CONSTRAINT, DRIVER=3.65.77
+   &#160;&#160;&#160;&#160;&#160;&#160;&#160; at com.ibm.db2.jcc.am.cd.a(cd.java:694)
+   &#160;&#160;&#160;&#160;&#160;&#160;&#160; at com.ibm.db2.jcc.am.cd.a(cd.java:60)
+   &#160;&#160;&#160;&#160;&#160;&#160;&#160; at com.ibm.db2.jcc.am.cd.a(cd.java:127)
+   &#160;&#160;&#160;&#160;&#160;&#160;&#160; at com.ibm.db2.jcc.am.jo.b(jo.java:2420)
+   &#160;&#160;&#160;&#160;&#160;&#160;&#160; at com.ibm.db2.jcc.am.jo.c(jo.java:2403)
+   &#160;&#160;&#160;&#160;&#160;&#160;&#160; at com.ibm.db2.jcc.t4.ab.l(ab.java:370)
+   &#160;&#160;&#160;&#160;&#160;&#160;&#160; at com.ibm.db2.jcc.t4.ab.a(ab.java:62)
+   &#160;&#160;&#160;&#160;&#160;&#160;&#160; at com.ibm.db2.jcc.t4.p.a(p.java:50)
+   &#160;&#160;&#160;&#160;&#160;&#160;&#160; at com.ibm.db2.jcc.t4.rb.b(rb.java:220)
+   &#160;&#160;&#160;&#160;&#160;&#160;&#160; at com.ibm.db2.jcc.am.ko.nc(ko.java:3414)
+   &#160;&#160;&#160;&#160;&#160;&#160;&#160; at com.ibm.db2.jcc.am.ko.b(ko.java:4377)
+   &#160;&#160;&#160;&#160;&#160;&#160;&#160; at com.ibm.db2.jcc.am.ko.hc(ko.java:2743)
+   &#160;&#160;&#160;&#160;&#160;&#160;&#160; at com.ibm.db2.jcc.am.ko.execute(ko.java:2723)
+   &#160;&#160;&#160;&#160;&#160;&#160;&#160; at
+   com.ibm.tpc.install.backend.rules.RulesMigrationDBQueryUtil.addR
+   uleConstraintToDB(RulesMigrationDBQueryUtil.java:2985)
+   
+   The error "An Unexpected response was received from the server."
+   occurs when trying to display the alerts in the IBM Spectrum
+   Control Web-GUI after the upgrade.
+   
+   
+   Other Affected Products/Components:
+   IBM Spectrum Control 5.2.8.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * IBM Spectrum Control 5.2.8 users                             *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * See ERROR DESCRIPTION.                                       *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Apply fix maintenance when available.                        *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix for this APAR is targeted for the following maintenance
+   package:
+   
+   | refresh pack | 5.2-TIV-TPC-RP0009 - target 2Q16
+   
+   Fixed in IBM Spectrum Control 5.2.9.
+   
+   http://www.ibm.com/support/docview.wss?&uid=swg21320822 [http://www.ibm.com/support/docview.wss?&uid=swg21320822]
+   
+   The target dates for future refresh packs do not represent a
+   formal commitment by IBM. The dates are subject to change
+   without notice.
+   
+   |MDVREGR 5.2-TIV-TPC-RP0008 |
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT14570
+   
+   
+ * REPORTED COMPONENT NAME
+   TPC ADVANCED
+   
+   
+ * REPORTED COMPONENT ID
+   5608TPCA0
+   
+   
+ * REPORTED RELEASE
+   528
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-04-01
+   
+   
+ * CLOSED DATE
+   2016-04-01
+   
+   
+ * LAST MODIFIED DATE
+   2016-04-01
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  ALERT
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TPC ADVANCED
+   
+   
+ * FIXED COMPONENT ID
+   5608TPCA0
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R528 PSY
+   UP

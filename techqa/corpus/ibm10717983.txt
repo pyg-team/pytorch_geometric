@@ -1,0 +1,33 @@
+Title: IBM SecureMain fails with error KCI1343E - United States
+
+Text:
+0403-027 The parameter list is too long; SecureMain; KCI1343E; 0403-027 TROUBLESHOOTING
+
+PROBLEM
+Agent install fails during secureMain step and generates an error - /usr/bin/chmod: 0403-027 The parameter list is too long
+
+SYMPTOM
+The itmsecure_<timestamp>.log shows the below error
+
+/Tivoli/itm/bin/secureLock[134]: /usr/bin/chmod: 0403-027 The parameter list is too long.
+KCI1343E secureMain completed with errors. For more information, check the log file /Tivoli/itm/logs/itmsecure_062012135428.log.
+
+CAUSE
+The real cause for this error is:
+
+The system has exceeded the AIX ARG_MAX value: 0403-027 The parameter list is too long. This AIX value can be increased with smitty.
+
+The maximum size, in 4KB blocks, that the ARG/ENV list is allowed when running exec subroutines. This prevents exec subroutines from failing if the argument list is too long. You can specify a value in the range of 6 through 1024. The default value is 6. Specifying a higher value may constrain system memory resources. This change takes affect immediately and is preserved over boot."
+
+ENVIRONMENT
+Any AIX system
+
+RESOLVING THE PROBLEM
+To resolve the issue increase the ARG_MAX value
+To check the value use the below command :
+
+lsattr -E -l sys0 -a ncargs
+
+To change the value use the below command. You can change the value to 32, or increase to few more than the original value.
+
+chdev -l sys0 -a ncargs='32' (default is 6)

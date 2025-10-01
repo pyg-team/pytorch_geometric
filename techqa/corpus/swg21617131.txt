@@ -1,0 +1,30 @@
+Title: IBM Required interim fix for APAR JR44669 prior to an IBM Business Process Manager (BPM) Version 8.0.1 database upgrade or bootstrap - United States
+
+Text:
+JR44669; interim fix; mandatory; 8.0.1 FLASH (ALERT)
+
+ABSTRACT
+ For IBM Business Process Manager Version 8.0.1, there is a mandatory interim fix for APAR JR44669 that you must install before you upgrade or bootstrap the database. Failure to install the interim fix will result in irreparable database corruption. 
+
+CONTENT
+This mandatory interim fix for APAR JR44669 on IBM Business Process Manager Version 8.0.1 addresses an issue with the Process Portal. It must be installed at the appropriate time depending on whether you are installing Version 8.0.1 as a new installation or upgrading an existing Version 8.0 installation to Version 8.0.1 using Version 8.0 Refresh Pack 1 [http://www.ibm.com/support/docview.wss?uid=swg24033777]. 
+
+ * If you are installing IBM Business Process Manager Version 8.0.1 (new IBM Business Process Manager installation), you must install the interim fix prior to bootstrapping the database.
+   
+   
+ * If you are upgrading IBM Business Process Manager from Version 8.0 to Version 8.0.1, you must install the interim fix concurrently with Version 8.0 Refresh Pack 1. 
+   
+    * If you are performing an upgrade on a machine that has an Internet connection, Installation Manager automatically installs the interim fix when the refresh pack is installed.
+      
+      
+    * If you are performing an upgrade on a machine that does not have an Internet connection, you must download the interim fix [http://www.ibm.com/support/fixcentral/swg/downloadFixes?parent=ibm~WebSphere&product=ibm/WebSphere/IBM+Business+Process+Manager+Standard&release=8.0.1.0platform=All&function=fixId&fixids=8.0.1.0-WS-BPM-IFJR44669&includeRequisites=1&includeSupersedes=0] from Fix Central, add the interim fix repository to Installation Manager along with the refresh pack repository, and select both the refresh pack and the interim fix to be installed.
+   
+   
+
+
+Note: This interim fix resolves an issue with version identifiers in the database, which allows the future application of maintenance (interim fixes, fix packs, and refresh packs). Failure to install the interim fix will result in irreparable database corruption.
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Business Process Manager Express Process Portal Linux, Linux zSeries, Windows 8.0.1, 8.0 Business Integration IBM Business Process Manager Standard Process Portal AIX, Linux, Linux zSeries, Solaris, Windows 8.0.1, 8.0

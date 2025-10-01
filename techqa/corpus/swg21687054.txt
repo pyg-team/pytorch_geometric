@@ -1,0 +1,16 @@
+Title: IBM The INDEXREC parameter is present in both the 'Database Configuration' file and the 'Database Manager Configuration' file. Which setting takes precedence ? - United States
+
+Text:
+INDEXREC; db cfg; dbm cfg TECHNOTE (FAQ)
+
+QUESTION
+ The INDEXREC parameter is present in both the 'Database Configuration' Setting and the 'Database Manager Configuration' Setting. Which setting takes precedence ? 
+
+ANSWER
+This parameter indicates when the database manager attempts to rebuild invalid indexes, and whether or not any index build is redone during rollforward or high availability disaster recovery (HADR) log replay on the standby database. 
+When the INDEXREC is set to 'SYSTEM' in the database configuration file (This setting is only valid for the database configuration setting) then the setting specified for INDEXREC in the database manager configuration file take precedence.
+
+For any other setting of the database configuration setting takes precedence over the database manager configuration setting. 
+
+RELATED INFORMATION
+ INDEXREC [http://www-01.ibm.com/support/knowledgecenter/SSEPGG_10.1.0/com.ibm.db2.luw.admin.config.doc/doc/r0000258.html?cp=SSEPGG_10.1.0%2F2-2-4-7-40&lang=en]

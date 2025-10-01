@@ -1,0 +1,26 @@
+Title: IBM Datacap Rulerunner Manager selects the login settings of the first application in the Application Manager - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Datacap Rulerunner Manager always imports authentication settings of the first application in the Datacap Application Manager (that is, the first application entry in the datacap.xml file). 
+
+SYMPTOM
+By default, the authentication type is set to TMA for all applications.
+
+
+RESOLVING THE PROBLEM
+This issue occurs only when a user uses multiple authentications with listed Datacap applications. If multiple applications are configured in Datacap, the Rulerunner Manager log in would depend on authentication of the first application that is listed in the datacap.xml file). 
+
+To use other authentication types with Rulerunner login, the application configured with respective authentication type should be moved to the top in the datacap.xml file. Only then, the desired authentication settings will be selected by Rulerunner Manager. 
+
+Example 
+
+If there are two applications in datacap.xml file: 
+
+ * First application - APT which is configured with TMA authentication 
+ * Second application - TravelDocs which is configured with LDAP authentication
+
+
+When the user configures Datacap with LDAP authentication and tries to log in the Rulerunner Manager, the user will not able to log in because Rulerunner Manager selects APT's authentication which is TMA (which is at topmost position in the application list in the datacap.xml file). Hence, the user needs to place the TravelDocs application at the topmost position in the application list in the datacap.xml file (which is configured with LDAP authentication) to proceed.

@@ -1,0 +1,97 @@
+Title: IBM Open Mic Webcast: Scanning precompiled .NET code with AppScan Source (with video recording) - United States
+
+Text:
+appsec-open-mic; STEwebcastDocument WEBCAST
+
+ABSTRACT
+ Join members of the AppScan Support team as they share information about using AppScan Source to scan precompiled .NET code. Attendees will be given an opportunity to ask questions. Throughout the event, attendees will also be encouraged to comment or ask questions in the IBM Connections Cloud Meeting group web chat. 
+
+CONTENT
+This Open Mic webcast was provided by IBM Security AppScan Technical Support. Our goal is to provide insight and to teach on-going sessions that help both users and administrators understand, maintain, troubleshoot, and resolve issues with their IBM Security products.
+
+
+This session describes how to automate the setup and scan of .NET pre-compiled code to prevent common compilation and DTE errors.
+
+Topic: Scanning precompiled .NET code with AppScan Source
+Date: Wednesday, 30 March 2016
+Time: 11:00 AM Eastern US time for 60 minutes
+
+
+
+
+
+
+Replay 
+A recording of the session is available at: https://youtu.be/Tu7j8roJZv8 [https://youtu.be/Tu7j8roJZv8] 
+
+
+Presentation 
+OpenMic_AppScanSource_Scanning_dotNET_code2.pdf [/support/docview.wss?uid=swg27047578&aid=2]OpenMic_AppScanSource_Scanning_dotNET_code2.pdf [/support/docview.wss?uid=swg27047578&aid=1] 
+
+
+Tool 
+Dotnet tool: dotnettool.zip [/support/docview.wss?uid=swg27047578&aid=4]dotnettool.zip [/support/docview.wss?uid=swg27047578&aid=3] 
+
+
+Forum link 
+http://ibm.biz/ScanningNETcodeInAppScanSource [http://ibm.biz/ScanningNETcodeInAppScanSource] 
+
+
+
+Transcript from the Chat and Live Q&A 
+
+Chat Questions 
+
+Q1: @Tarek - is this only for automation? can I use CLI as well? 
+Sherard Howe - You can use for CLI, but you can use it for scenario 1 which produces the .NET assembly project. Then from the CLI script you can use the open application command to open up the produced application and then scan it from there. The tool directly does not call CLI. Technically, automation calls CLI on a backend. 
+
+Q2: @SteveG - What is name of this tool - how do we identify it to support? 
+Sherard Howe - The .NET assembly App Gen. That's what you would tell us you're looking for. 
+
+Q3: @RossC - Can we see the first example again? 
+Sherard Howe - All this basically does is, with the current command, will create the application in .NET Assembly Project. 
+
+Q4: @Sai - Can ounceauto command scan the .net assembly project file just like a .sln file? 
+Sherard Howe - Yes. The DAS-S option will do that, since that is what it actually does. So I envisioned that would more likely be the problem since automation over CLI provides queueing. So the DAS-S option after you have installed directory, you're then pinning the bin directory plus the executable. Granted automation will need to be configured before using the -s option. But the command currently on the screen will create the application file, will apply the names of whatever filter is provided to the project level and the fire off the automation scan of that file, of that application. 
+
+Q5: @Sai - Is this available to every customer who has AppScan Automation? 
+Sherard Howe - It's going to be available to any customer that wants it. It's not going to be on DevWorks or anything. The reason being is so we can have a closer conversation. 'Does the tool do everything you want it to? Does it do everything you would like to see it do? What problems did you have?' It just makes it a little easier to have a conversation vs. guessing. But by request it’s available to any AppScan Source customer regardless if you have automation installed. 
+
+Live Questions 
+LQ1: Sam - Hi Sherard this is Sam. I'm wondering how soon this is available and what the steps are to contact support to get info on how to use this. 
+Sherard Howe - It is available immediately and you would go through the traditional PMR process. If you're using the service request tool you can go that way, or call in and at that point the information will be given to you in regards to the tool, and recognition that this wasn't an actual full product release code. 
+
+LQ2: Andrew McCarl - How often would updates be available for the tool, and how would they know about that? 
+Sherard Howe - The tool update is not necessarily scheduled. It's primarily if any issues are discovered, since it's not hooked to the product release cycle it is on an as needed basis. As far as knowing when it's available, that hasn't been detailed out yet. 
+
+LQ3: Steven - I'd like to go back to what the other person has asked about example number 1. One thing I run into a lot is problems with pop-ups. When I try to run the CLI, pop-ups will come up on Visual Studio and say, "Source Control" and that kills the ability to run through automation. I'm wondering, if we're using CLI as the main way of doing automation, what would be the procedure for creating a .NET Assembly App?" 
+Sherard Howe - Well that’s what this does. If I was running CLI directly in that automation, I would run from Scenario 1 – so I would run the Java Desk Jar, .NET Assembly, AppGen, or the -l command switch – then give it to solution. At that point it's going to output to me the application file that was created. In my CLI script I did alter it to do the OA to that created application file. 
+Steven - So this second line will create the application, and then I reference that application as what I want to scan from the CLI. 
+Sherard Howe - Correct. The first command is just acknowledging that at some point, without having it to do it right then and there, the debug build would have had to exist. What happens when you go to scan, you’re going to get an error say that whatever the name of the assembly doesn't exist. So it's just to acknowledge that the debug build would have had to occur before you perform a scan with this tool with the created application file. 
+Steven - When we get the tool, is there any documentation that goes with it? Is there any readme file that would have information in there? 
+Sherard Howe - It does have a readme file and it does have Help. So if you ran with a -h switch, or didn't give a switch at all, it will dump out the usage. 
+
+LQ4: Steven (follow up question for Q5) - What if your solution file contains C++ or CLI projects as well? 
+Sherard Howe - It would attempt to still do the build. I can't say you're going to get a proper scan in because we need an easy piece to interpret the correct symbols. You may not get an accurate scanning on the visual C++ assembly that was generated from that project. 
+Steven - What files would be needed in order to get it to scan correctly? 
+Sherard Howe - With C and C++ scanning, we use an intermediate interpreter called EDG. So a lot of times when you have scanning problems or compilation issues with our C++ scanning, it's because likely the setting or the flag EDG is correct. This tool doesn’t take in account for that because you really don't offer or state away to scan precompiled C++ code. That particular scan wasn't thought in mind because of that. This is more of C#, VB.net, ASP.NET. We don't have a solution to precompile C or C++ code. Those languages don't really apply to this. 
+
+
+
+About Open Mic Webcasts 
+IBM Security Systems Support wants to help you take full advantage of your products. Join us for our Open Mic Webcast series as technical experts share their knowledge and answer your questions. These webcasts are designed to address specific topics and provide an in-depth and focused technical exchange in a convenient online webcast format. 
+
+
+Visit the Support technical exchanges for Security Systems [https://www-947.ibm.com/support/entry/myportal/scheduled_tech_exchanges/security_systems/security_systems_support_%28general%29?productContext=-1089885148] page to see lists of all scheduled and past Open Mic events 
+[https://www-947.ibm.com/support/entry/myportal/scheduled_tech_exchanges/security_systems/security_systems_support_%28general%29?productContext=-1089885148] 
+To be on the mailing list that gets notified about Security Support's Open Mic webcasts, Send an e-mail to isssprt@us.ibm.com [isssprt@us.ibm.com?subject=ste%20subscribe%20InfraSec] with the subject line: 
+
+ste subscribe AppSec 
+
+We welcome you to follow us on Twitter [http://bit.ly/1jZ80d3] @AskIBMSecurity [http://bit.ly/1jZ80d3]. 
+
+
+
+
+ORIGINAL PUBLICATION DATE
+ 2016/2/25

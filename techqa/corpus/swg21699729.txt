@@ -1,0 +1,29 @@
+Title: IBM Workstation components for NetView V1R4 are going out of support. - United States
+
+Text:
+NetView V1R4 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ There are specific workstation components for NetView V1R4 that will no longer be supported. 
+
+RESOLVING THE PROBLEM
+Here are the specific announcement letters that involve NetView V1R4: 
+
+ * A15-0080 (Canada) 
+ * JP15-0054 (Japan) 
+ * WP15-0016 (AP) 
+ * ZP15-0054 (EMEA) 
+ * LP15-0055 (LA) 
+ * 915-025 (US)) 
+
+
+This announcements say that Workstation components for NetView V1R4 will no longer be supported after 6/30/2015. Here are a list of those workstation components: 
+NetView Management Console Topology Console 
+NetView Management Console Topology Server 
+NetView MultiSystem Manager Agent for the Tivoli Managed Region 
+NetView MultiSystem Manager IP Agent 
+NetView MultiSystem Manager's Open Toolkit Interface 
+NetView MultiSystem Manager Netfinity Agent 
+NetView MultiSystem Manager ATM Agent 
+NetView MultiSystem Manager Netware Agent 
+NetView Visual BLDVIEWS

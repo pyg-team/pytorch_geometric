@@ -1,0 +1,151 @@
+Title: IBM PK96053: UPLOADING A DOCUMENT FAILS WITH - United States
+
+Text:
+  FIXES ARE AVAILABLE
+6.1.0.4 Download: WebSphere Portal and WCM V6.1.0 fix pack 4 & 6.1.5 fix pack 1 [http://www-01.ibm.com/support/docview.wss?uid=swg24026394]
+6.1.0.5 Download: WebSphere Portal and WCM V6.1.0 fix pack 5 [http://www-01.ibm.com/support/docview.wss?uid=swg24027475]
+6.1.0.6 Download: WebSphere Portal and WCM V6.1.0 fix pack 6 [http://www-01.ibm.com/support/docview.wss?uid=swg24030970]
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When trying to upload a document for a content with Mime Types
+   defined in the Authoring Template, It fails with the following
+   error:
+   
+   IWKPL1489X: File Name X.X.X.X.doc (for eg) with extension
+   X.X.X.doc is not in allowed Mime Types
+   application/txt,application/pdf,application/msword,
+   application/vnd.ms-powerpoint,application/vnd
+   .ms-excel,image/jpe
+   g,
+   
+   Steps to recreate:
+   
+   1. Craete an Authoring Template ( AT  )
+   
+   2. Add an Element "File Resource Component"
+   
+   3. Click on the property and enter the valsue of Mime Type to
+   restrict
+   the file upload
+   
+   application/txt application/msword application/pdf
+   
+   4. Save it.
+   
+   5. Create a new Content and select above created AT
+   
+   6. Upload a file named X.X.X.X.doc (for eg) and it fails with
+   above exception
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  When trying to upload a document for a content with Mime Types
+   defined in the Authoring Template, It fails with the following
+   error:
+   
+   IWKPL1489X: File Name X.X.X.X.doc (for eg) with extension
+   X.X.X.doc is not in allowed Mime Types
+   application/txt,application/pdf,application/msword,
+   application/vnd.ms-powerpoint,application/vnd
+   .ms-excel,image/jpe
+   g,
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Code changes were provided.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK96053
+   
+   
+ * REPORTED COMPONENT NAME
+   LOTUS WEB CONT
+   
+   
+ * REPORTED COMPONENT ID
+   5724I2900
+   
+   
+ * REPORTED RELEASE
+   61B
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-09-14
+   
+   
+ * CLOSED DATE
+   2010-04-09
+   
+   
+ * LAST MODIFIED DATE
+   2010-04-09
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   LOTUS WEB CONT
+   
+   
+ * FIXED COMPONENT ID
+   5724I2900
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R61B PSY
+   UP

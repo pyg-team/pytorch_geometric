@@ -1,0 +1,161 @@
+Title: IBM IZ33290: WITH THE RESTORE API, EXPERIENCING ARRAY INDEX BOUNDS EXCEPTION - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The customer encountered an exception with the following API:
+   com.ibm.itim.apps.provisioning.AccountManager.restore(java.util.
+   Collection accounts, java.lang.String password, java.util.Date
+   scheduledTime)
+   The customer encounters the following exception (SystemOut.log)
+   when restoring a user (with password) where a user only has an
+   ITIM account:
+   Array index out of bounds[0]
+   
+   In the first parameter, within the collection of accounts
+   object, there is just one account which is the Person?s ITIM
+   account. The resulted exception was about ?an array index out of
+   bound [0]?. This is caused by the fact that the ITIM account is
+   a special system account, not like the other accounts defined in
+   the service profile. Internally within this restore call on the
+   server (EJB) side, it filters the passed in accounts with those
+   not required to have password upon restore. The ITIM account is
+   one of those, hence got filtered (note in the ITIM account
+   service profile, you can?t set the
+   ?PASSWORD_NOT_REQUIRED_ON_RESTORE? flag).
+   At the end, because we passed in just one ITIM account, and this
+   account got filtered, hence ended there is no account to
+   restore. But the EJB codes try to access the account DN array
+   which has nothing there, hence ended up the ?array index of
+   bound [0]? exception.
+   This API was introduced in ITIM 5 FP1 so it appears that it
+   doesn't work correctly if a user only has an ITIM account (ie.
+   An ITIM account and no other).
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Workaround: If the user has only ITIM accounts, then the
+   following restore() method without 'password' argument can be
+   used.
+   com.ibm.itim.apps.provisioning.AccountManager.restore(java.util.
+   Collection accounts, java.util.Date scheduledTime)
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Users affected:
+   Customers using the:
+   com.ibm.itim.apps.provisioning.AccountManager.restore() API.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This fix for this APAR will be contained in
+   the following maintenance packages:
+   | Interim Fix | 5.0.0.3-TIV-TIM-IF0015
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ33290
+   
+   
+ * REPORTED COMPONENT NAME
+   IBM TIV IDENT M
+   
+   
+ * REPORTED COMPONENT ID
+   5724C3404
+   
+   
+ * REPORTED RELEASE
+   500
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-09-25
+   
+   
+ * CLOSED DATE
+   2008-10-15
+   
+   
+ * LAST MODIFIED DATE
+   2008-10-15
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  SERVER
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   IBM TIV IDENT M
+   
+   
+ * FIXED COMPONENT ID
+   5724C3404
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R500 PSY
+   UP

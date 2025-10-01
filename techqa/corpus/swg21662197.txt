@@ -1,0 +1,26 @@
+Title: IBM WAS fix pack install in TIP fails with "Failure recovery unsuccessful" - United States
+
+Text:
+TIPL2; TIPL2INST; UPDI; WASServiceMsg; Failure; recovery unsuccessful; Websphere Update Installer; fix pack TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ A manual attempt to install a WAS fix pack in TIP 2.2 fails with "Failure recovery unsuccessful" 
+
+SYMPTOM
+The customer attempted to install a Tivoli Integrated Portal fix pack which failed. The TIP fix pack install failed while executing a WAS fix pack step (step_0000x_WASFP). A manual attempt to install the WAS fix pack was done as a troubleshooting measure. The manual attempt (using the WAS update installer (UPDI)) fails with the "Failure recovery unsuccessful" result. 
+
+
+CAUSE
+A previous failed installation of the was fix pack, most likely by the TIP fix pack install. The UPDI program is unable to complete the recovery because it has detected that the file "WASServiceMsg.dll" is in use.
+
+DIAGNOSING THE PROBLEM
+Review the update.log in the <TIP HOME>/logs/update for messages similar to:
+###
+(Jan 14, 2014 11:33:19 AM), Install,
+com.ibm.ws.install.ismp.actions.FailureRecoveryAction, err, The
+(bin/WASServiceMsg.dll) file cannot be replaced.
+###
+
+RESOLVING THE PROBLEM
+1. Disable the Windows service for Tivoli Integrated Portal. Open the Windows Services control panel. Right-click on the service for Tivoli Integrated Portal. Set the "Startup type" to "manual". Restart the TIP host server. 
+2. Retry the manual WAS fix pack install.

@@ -1,0 +1,21 @@
+Title: IBM Providing access to the Siebel File System through WebSphere Adapter for Siebel Business Applications V7.0 - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Does the WebSphere Adapter for Siebel Business Applications V7.0 provide access to the Siebel File System (SFS) ? 
+
+ANSWER
+The information contained in this document has been moved to developerWorks Answers located here [https://developer.ibm.com/answers/questions/168664/providing-access-to-the-siebel-file-system-through.html]. This technote will be archived in 60 days. Please bookmark the new location.
+
+Yes, the adapter supports SFS read/write with the help of integration objects. 
+
+In business service interface, the adapter is able to read and write the metadata from a file through defining a customized integration object. Details can be found here:
+http://download.oracle.com/docs/cd/E14004_01/books/SAI_OFM/SAI_OFM_REST9.html [Siebel%20adapter%20can%20support%20read%20and%20write] 
+Once the integration object is being defined, business services can be used to access the metadata.
+
+Example:
+BC: Account Attachment.
+
+It contains a few metadata such as "srcFile" which refers to a path in the Siebel File System. The adapter can modify the metadata of the file, but is not able to edit or save the content of a file.

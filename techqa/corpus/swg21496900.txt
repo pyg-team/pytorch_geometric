@@ -1,0 +1,81 @@
+Title: IBM The JVMs for WebSphere Lombardi Edition crash when the data source connection is lost - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ In your installation of WebSphere Lombardi Edition, whenever the database connection is lost, the Java™ virtual machines (JVM), which are associated with twprocsvr and twperfsvr, stop running. 
+
+SYMPTOM
+The SystemOut.log file contains messages that are similar to the following text and the servers stop automatically. 
+
+[12/16/10 15:04:16:579 PST] 00000010 ConnectionEve W J2CA0206W: A connection error occurred. To help determine the problem, enable the Diagnose Connection Usage option on the Connection Factory or Data Source.
+
+[...]
+
+[12/16/10 15:04:16:579 PST] 00000010 ConnectionEve A J2CA0056I: The Connection Manager received a fatal connection error from the Resource Adapter for resource jdbc/TeamWorksDB. The exception is: java.sql.SQLException: Read timed out[12/16/10 15:04:36:438 PST] 0000000f SibMessage I [twprocsvr_bus:ProcessCenter01.twprocsvr-twprocsvr_bus] CWSIS1594I: The messaging engine, ME_UUID=838C04FDB5D275C7, INC_UUID=186D186DECB11055, has lost the lock on the data store.
+[12/16/10 15:04:45:438 PST] 0000000f SibMessage I [twprocsvr_bus:ProcessCenter01.twprocsvr-twprocsvr_bus] CWSIS1519E: Messaging engine ProcessCenter01.twprocsvr-twprocsvr_bus cannot obtain the lock on its data store, which ensures it has exclusive access to the data.
+[12/16/10 15:06:12:547 PST] 0000000c SibMessage E [twprocsvr_bus:ProcessCenter01.twprocsvr-twprocsvr_bus] CWSID0046E: Messaging engine ProcessCenter01.twprocsvr-twprocsvr_bus detected an error and cannot continue to run in this server.
+[12/16/10 15:06:12:547 PST] 0000000c HAGroupImpl I HMGR0130I: The local member of group WSAF_SIB_BUS=twprocsvr_bus,WSAF_SIB_MESSAGING_ENGINE=ProcessCenter01.twprocsvr-twprocsvr_bus,type=WSAF_SIB has indicated that is it not alive. The JVM will be terminated.
+[12/16/10 15:06:12:547 PST] 0000000c SystemOut O Panic:component requested panic from isAlive
+[12/16/10 15:06:12:547 PST] 0000000c SystemOut O java.lang.RuntimeException: emergencyShutdown called: 
+[12/16/10 15:06:12:547 PST] 0000000c SystemOut O at com.ibm.ws.runtime.component.ServerImpl.emergencyShutdown(ServerImpl.java:633)
+[12/16/10 15:06:12:547 PST] 0000000c SystemOut O at com.ibm.ws.hamanager.runtime.RuntimeProviderImpl.panicJVM(RuntimeProviderImpl.java:92)
+[12/16/10 15:06:12:547 PST] 0000000c SystemOut O at com.ibm.ws.hamanager.coordinator.impl.JVMControllerImpl.panicJVM(JVMControllerImpl.java:56)
+[12/16/10 15:06:12:547 PST] 0000000c SystemOut O at com.ibm.ws.hamanager.impl.HAGroupImpl.doIsAlive(HAGroupImpl.java:833)
+[12/16/10 15:06:12:547 PST] 0000000c SystemOut O at com.ibm.ws.hamanager.impl.HAGroupImpl$HAGroupUserCallback.doCallback(HAGroupImpl.java:1331)
+[12/16/10 15:06:12:547 PST] 0000000c SystemOut O at com.ibm.ws.hamanager.impl.Worker.run(Worker.java:64)
+[12/16/10 15:06:12:547 PST] 0000000c SystemOut O at com.ibm.ws.util.ThreadPool$Worker.run(ThreadPool.java:1550)
+
+
+CAUSE
+WebSphere Application Server uses database tables to store Java Message Service (JMS) messages. Anytime the messaging engine loses its connection to the data store, the JVM shuts down in an orderly fashion to prevent data loss. If the messaging engine were to continue to run and accept work, results might be unpredictable and your messaging engine might be in an inconsistent state when the data store connection is restored.
+
+
+RESOLVING THE PROBLEM
+When you see this behavior, you must fix the root of the database connection problem. 
+
+
+If you continually see this problem, consider modifying the Retry Interval for existing pooled connections on your data source. This value specifies the length of time, in seconds, that the application server waits before retrying to make a connection if the initial attempt fails. By default, this value is 0. If you set the value to 3, the connection is retried instead of holding onto a bad connection. To change this value, log into the WebSphere Administrative Console and navigate to Resources > JDBC > Data sources > datasource_name > WebSphere Application Server data source properties
+
+
+You can find more information on data source properties in the WebSphere Application Server data source properties [http://publib.boulder.ibm.com/infocenter/wasinfo/v7r0/index.jsp?topic=/com.ibm.websphere.express.doc/info/exp/ae/udat_jdbcdatasorprops.html] topic within the WebSphere Application Server Information Center.
+
+
+
+Aside from preventing loss of the database connection, there are some recovery options. 
+
+
+
+The property that controls the behavior after a data store connection loss in WebSphere Application Server is sib.msgstore.jdbcFailoverOnDBConnectionLoss. In WebSphere Application Server Version 7, this property value is set to true, by default.. For more information, see the Configuring messaging engine and server behavior when a data store connection is lost [http://www14.software.ibm.com/webapp/wsbroker/redirect?version=compass&product=was-nd-mp&topic=tjm_dsconnloss] topic in the WebSphere Application Server Information Center. Some of the information from that topic is elaborated on in the following text: 
+
+
+
+
+When you set the property to true: "The high availability manager stops the messaging engine and its hosting application server when the next core group service Is alive check takes place (the default value is 120 seconds). If a node agent is monitoring the server, and you have enabled automatic restart in the monitoring policy for the server, the server restarts. The messaging engine starts when an appropriate server is available. 
+
+
+Note : Messages with a reliability level that is lower than assured persistent might be accepted by the messaging engine during the interval between Is alive checks, and might be lost." 
+
+
+When you are not in a Network Deployment type environment, you do not have a "high availability manager". The result is that the server goes into a failed state when the data store connection is lost, which is what is indicated by the the previous example log files. If you have a Network Deployment environment, your server stops to avoid losing any JMS messages. However, it can be restarted if automatic restart option is enabled in the monitoring policy. 
+
+The only WebSphere Lombardi Edition environments that are installed as a Network Deployment-type environment are clustered runtime environments. Even if a runtime environment is a single node, you can have a Network Deployment-type environment by installing with clustering enabled. Process Centers are not a Network Deployment-type environment as of WebSphere Lombardi Edition Version 7.2. 
+
+
+
+
+When you set the property to false: " The messaging engine continues to run and accept work, and periodically attempts to regain the connection to the data store. If work continues to be submitted to the messaging engine while the data store is unavailable, the results can be unpredictable, and the messaging engine can be in an inconsistent state when the data store connection is restored. 
+
+
+Note : If work continues to be submitted to the messaging engine, even nonpersistent messaging can fail because the messaging engine might need to use the data store, for example to allocate a unique ID to a message, or to move nonpersistent messages out of memory. " 
+
+
+So, as you can see, setting the property to false is not a good solution. It leaves the server up and the messaging engine continues sending messages that might be lost because the connection to the data store has been lost. 
+
+Finally, you do not want to increase the isAlive setting. The result of increasing this setting is that the data store can be down for a longer period of time before the JVM recognizes it and shuts down. The resulting behavior is essentially the same as having the sib.msgstore.jdbcFailoverOnDBConnectionLoss property set to false. You will have unpredictable results and potential data loss.
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ WLE WebSphere Lombardi Edition

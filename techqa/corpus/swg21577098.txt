@@ -1,0 +1,36 @@
+Title: IBM Replacing the certificate used by the IBM WebSphere DataPower Web Management Service (WebGUI) - United States
+
+Text:
+WebGUI; certificate; Untrusted; security certificate TECHNOTE (FAQ)
+
+QUESTION
+ When accessing the DataPower appliance through the Web Management Service (WebGUI), you may be greeted with one of the following messages: 
+
+* Internet Explorer
+"There is a problem with this website's security certificate.
+- Click here to close this webpage.
+- Continue to this website (not recommended)."
+
+* Firefox
+"This Connection is Untrusted
+- Get me out of here!
+- Add Exception..." 
+
+CAUSE
+By default, DataPower uses a self-signed certificate (signed by DataPower Technology, Inc.) with its Web Management Service (WebGUI). The certificate is not signed by a well-known Certificate authority (CA). The signer is not included in the list of trusted third parties with internet browsers, and therefore the connection is flagged as "Untrusted".
+
+ANSWER
+There is an option to replace the certificate used by the DataPower Web Management Service (WebGUI) with a certificate of your choice (for example, a certificate signed by your own organization or a certificate signed by a well-known trusted third party CA). 
+
+To replace the certificate, in the WebGUI: 
+
+ 1. Navigate to Control Panel -> Network -> Management -> Web Management Service 
+ 2. Switch to the Advanced tab. 
+ 3. Select or create one of the Custom SSL server types with the corresponding certificate for the Web Management Service:  * Use a Server Profile with the Custom SSL server profile 
+     * Use a Server SNI Profile with the Custom SSL SNI server profile 
+     * Use a reverse or two-way Proxy Profile (deprecated) with the Custom SSL proxy profile (deprecated)
+       
+    
+    
+
+Note: If you use an SSL Proxy Profile, which is deprecated, you must use one that is defined with the SSL direction as reverse or two-way. The SSL Proxy Profile applied to the Web Management Service acts as an SSL server in the SSL communication. A profile that is defined with the forward SSL Direction, such as the included system-wsgw-management-loopback SSL Proxy Profile, acts as an SSL client. A forward or client SSL Proxy Profile causes an Error 500: Internal Error when it is applied to the Web Management Service.

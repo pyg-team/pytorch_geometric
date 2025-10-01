@@ -1,0 +1,60 @@
+Title: IBM WASServiceMsg.dll is locked when installing Fix Packs and cumulative fixes on Windows - United States
+
+Text:
+install; fixpack; cumfix; 5.0; 5.1; wasservicemsg; wasservicmsg.dll; error 79; WCS; WSE; Workplace TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The WASServiceMsg.dll file is locked by the Microsoft Windows operating system and cannot be updated during the upgrade of WebSphere Application Server. 
+
+SYMPTOM
+The following error can occur when you have WebSphere Application Server set up to run as a service. It does not matter if the service starts automatically or not.
+
+2006-02-09T12:47:14+01:00 Error 79 -- Unable to open destination file:
+C:\Program Files\WebSphere\AppServer\\bin\WASServiceMsg.dll : C:\Program 
+
+Files\WebSphere\AppServer\\bin\WASServiceMsg.dll (The requested operation cannot be performed on a file with a user-mapped section open)
+2006-02-09T12:47:14+01:00 java.io.FileNotFoundException: C:\Program Files\WebSphere\AppServer\\bin\WASServiceMsg.dll (The requested operation cannot be performed on a file with a user-mapped section open)
+at java.io.FileOutputStream.open........
+
+
+In addition, during uninstalling and reinstalling the WASServiceMsg.dll file could remain locked after the uninstall has completed. This will cause the reinstall to fail.
+
+
+RESOLVING THE PROBLEM
+If you have WebSphere Application Server running as a service to start automatically, change this to start manually. Then reboot your machine and retry the installation.
+
+If you do not have WebSphere Application Server set to start automatically and it is already set to start manually, then reboot your machine to free the locked resource. Then retry the installation.
+
+If you are uninstalling and then reinstalling. Reboot your machine after a successful uninstall before reinstalling.
+
+In addition to the steps above, sometimes it is necessary to shut down the Windows Management Instrumentation service after your system has rebooted. Then retry the installation.
+
+Note that this particular can also become locked when the Windows Event Viewer (or third-party tools which provide a similar function) is browsing WebSphere-related entries in the Windows Event Log. If the UpdateInstaller continues to have issues with the WASServiceMsg.dll file, try to shut down the Windows Event Viewer and other services which may be monitoring the Windows Event Log.
+
+If the UpdateInstaller continues to fail when installing or uninstalling maintenance packs due to this DLL file, and all WebSphere processes and third-party utilities which monitor Windows Events have been shut down, then try this alternative solution:
+
+
+ 1. Shut down the UpdateInstaller.
+    
+ 2. Locate the WASServiceMsg.dll file, which is in the WAS_HOME\bin directory.
+    
+ 3. Rename WASServiceMsg.dll to a different file name. It is good practice to rename it to a file name which mentions the current WebSphere version. That way, you can easily distinguish this renamed file from other files, and you know that it belongs to a particular version of the product.
+    
+    For example, if you are using WebSphere Application Server V6.1.0.19, then rename the file to
+    WASServiceMsg.dll.61019
+    
+    Note that, despite the fact that the file is locked, Windows will still allow the file to be renamed.
+    
+ 4. Reboot the system. This will ensure that the file is no longer locked.
+    
+ 5. Using the UpdateInstaller, uninstall and reinstall the maintenance pack. This operation should not conflict with the WASServiceMsg.dll file anymore. (Note that once the Fix Pack is reinstalled, a new copy of the WASServiceMsg.dll file will be created.)
+    
+ 6. Optional: At this point, you can delete the old, renamed copy of WASServiceMsg.dll. (Do not delete the actual WASServiceMsg.dll file; instead, delete the copy of the file which was renamed in step 3.)
+    
+    Note: Although you can delete the file, there is a reason to keep it: An effect of using this solution is that the old WASServiceMsg.dll file will not be restored if the fix pack is uninstalled in the future. Therefore, in case you will uninstall the fix pack in the future, keep the renamed copy of the WASServiceMsg.dll file. That way, when the fix pack is uninstalled, the old WASServiceMsg.dll file can be renamed to its original name.
+    
+ 7. Done. You may now start the application servers.
+
+ 
+
+Cross reference information Segment Product Component Platform Version Edition Application Servers Runtimes for Java Technology Java SDK

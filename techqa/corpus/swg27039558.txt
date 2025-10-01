@@ -1,0 +1,16 @@
+Title: IBM Known Issue: Setting the value to zero for integer or float properties in Property View Designer does not work - United States
+
+Text:
+ RELEASE NOTES
+
+ABSTRACT
+ When you define a range for integer or float type properties in Property View Designer, do not use zero for the minimum or maximum value. 
+
+CONTENT
+When you specify a range for an integer or float type property, you specify a number value. If you use zero (0) as the minimum or maximum number value, the value does not persist when you save the view. 
+
+Workaround: 
+
+You can assign "0" as the minimum or maximum value when you define the range in the property definition. If you specify the range when you define the property, the value "0" will be retained and applied in the property view. 
+
+Important: If you set a range when you define the property, then any override of the range for that property that you create in the View Designer must fall within that range.

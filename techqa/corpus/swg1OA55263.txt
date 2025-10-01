@@ -1,0 +1,143 @@
+Title: IBM OA55263: TEMS LOG CONTAINS MESSAGE "CSV002I REQUESTS FOR MODULE KPDCSVG EXCEED MAXIMUM USE COUNT" - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  TEMS log contains message "CSV002I REQUESTS FOR MODULE KPDCSVG
+   EXCEED MAXIMUM USE COUNT"
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All users                                    *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: The new historical collector (PDSV2)    *
+   *                      loads module KPDCSVG repeatedly in      *
+   *                      several programs but never delete's     *
+   *                      it. The result is that, although the    *
+   *                      module is really only loaded once and   *
+   *                      occupies a single place in storage,     *
+   *                      the use count continues to be           *
+   *                      incremented and is never decremented.   *
+   *                      The storage agent will now load         *
+   *                      KPDCSVG only once when the product      *
+   *                      starts. All subsequent uses will        *
+   *                      simply get the saved address of the     *
+   *                      module and branch to it.                *
+   ****************************************************************
+   * RECOMMENDATION: Apply PTF                                    *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   OA55263
+   
+   
+ * REPORTED COMPONENT NAME
+   SHARED PROBES
+   
+   
+ * REPORTED COMPONENT ID
+   5608A41SP
+   
+   
+ * REPORTED RELEASE
+   740
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2018-04-03
+   
+   
+ * CLOSED DATE
+   2018-04-27
+   
+   
+ * LAST MODIFIED DATE
+   2018-05-01
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UA96074
+   
+   
+
+MODULES/MACROS
+ *     KDFDEVIN KDFDPDEV KDFDPFET KDFDPINS KDFDPSET
+   KDFDPTER KDFDTERM KDFSPDSH KDF3LDEV
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   SHARED PROBES
+   
+   
+ * FIXED COMPONENT ID
+   5608A41SP
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R740 PSY UA96074 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UA96074]
+   UP18/04/28 P F804
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

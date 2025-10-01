@@ -1,0 +1,35 @@
+Title: IBM Cube Designer shows Data Type of Member as Unknown - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When using Cube Designer 11.0.7 and Oracle 11g R2 Data source, after generating Dimension using data Sampling, the data type of the Member is shown Unknown. 
+
+DIAGNOSING THE PROBLEM
+To replicate this issue, I have used GOSALESDW Schema provided in IBM Cognos Samples 11.0.7. 
+
+1. Open Cube designer-->select "Create new from Metadata"-->select the data source and select GOSLAESDW schema. 
+2. Under Tables-->right click on FIN_SUBM_DIM-->Generate "Dimension using data Sampling" as shown in below.
+[/support/docview.wss?uid=swg22008661&aid=1] [/support/docview.wss?uid=swg22008661&aid=1]
+3. The data type of the Member : "Submission_Name_EN" is shown as "Unknown".
+4. Verify the JDBC driver being used, you may be using drivers like ojdbc5.jar / ojdbc6.jar / ojdbc7.jar .
+
+
+RESOLVING THE PROBLEM
+1. Stop Cognos services. 
+
+2. Place ojdbc8.jar in <cognos instal dir>/drivers/ location. 
+
+3. Start Cognos services. 
+
+4. Recreate the data source connection(of type JDBC) to Oracle DB. 
+
+5. Open Cube designer and re-test. Now, the Data type will be show correctly. 
+
+ 
+
+Note: Please refer related URLs section to see the document containing detailed table on the supportability of JDBC driver version with Oracle DB versions. 
+
+RELATED INFORMATION
+ Which version of JDBC drivers support which version of [http://www.oracle.com/technetwork/database/enterprise-edition/jdbc-faq-090281.html#01_02]

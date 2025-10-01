@@ -1,0 +1,36 @@
+Title: IBM ITCAM J2EE Weblogic Agent JMX user policy information - United States
+
+Text:
+ITCAM J2EE 7.1.1 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ What JMX policies are required by the Weblogic user when configuring and utilizing the agent? 
+
+RESOLVING THE PROBLEM
+The WebLogic user which is used for ITCAM Agent for J2EE needs to have the following JMX policy enabled: 
+
+ 
+1. Attributes: Permission to Read 
+2. Attributes: Permission to Write 
+3. Lookup Operations: Permission to Invoke 
+4. Operations: Permission to Invoke 
+
+Sample steps to enable these policy are: 
+- Log into the admin console with the admin credentials. 
+- Go to Security Realms 
+- Select the name of the realm that you want to control access to MBeans (for example, myrealm) - Go to configurations -> General tab. 
+- Check the box for Use Authorization Providers to Protect JMX Access. (Enable it) - Now go to the tab Roles and Policies -> Realm Policies 
+- Click on the link JMX Policy Editor 
+- The next screen will give you an option of selecting policy. 
+- Select global scope so that the policy applies to all instances 
+- click next 
+- Select Attributes: Permission to Read (If it does not have a policy to allow Monitor users to read MBeans, then create one) 
+
+Need to follow the same steps to enable the following Attributes: 
+Permission to Write, Lookup Operations: Permission to Invoke, and 
+Operations: Permission to Invoke. 
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ ITCAM J2EE

@@ -1,0 +1,130 @@
+Title: IBM Detailed System Requirements for IBM Optim Data Growth Solution for PeopleSoft Enterprise v6.2 - United States
+
+Text:
+ PRODUCT DOCUMENTATION
+
+ABSTRACT
+ This techdoc summarizes the hardware, platforms, and software supported by IBM Optim Data Growth Solution for PeopleSoft Enterprise v6.2. 
+
+CONTENT
+
+
+HARDWARE CONSIDERATIONS
+The following are minimum requirements. Actual hardware capacity for acceptable performance depends on many factors, including but not limited to data volume, service level agreement, and access to non-relational data, as well as the number of open dialogs, number of database tables that are active, and memory demands from other active applications and services. 
+
+MINIMUM HARDWARE REQUIREMENTS FOR AN OPTIM™ WORKSTATION, INCLUDING AN OPTIM WORKSTATION WITH OPTIM DESIGNER
+ * Intel® Pentium® or newer (e.g., Intel Celeron dual core or Intel Core i3)
+ * 1 – 2 Cores
+ * 1.5 GHz minimum or faster
+ * 1 - 2 GB RAM
+ * 1 GB disk for Optim software installation
+ * 10BaseT or 100BaseT network connection
+
+MINIMUM HARDWARE REQUIREMENTS FOR AN OPTIM SERVER
+AIX® Operating System
+
+ * IBM Power5 or newer (e.g., Power6 or Power7), or IBM Blade (Dual or Quad Core)
+ * 2 Cores
+ * 2.0 GHz minimum or faster
+ * 2 – 4 GB RAM
+ * 1 GB disk for Optim software installation
+ * 1 - 100 Mbit Network Interface Card or faster
+
+HP/UX Operating System
+
+ * PA-RISC or newer (e.g., HP Integrity Superdome), or HP BladeSystem (Dual or Quad Core)
+ * 2 Cores
+ * 2.0 GHz minimum or faster
+ * 2 – 4 GB RAM
+ * 1 GB disk for Optim software installation
+ * 1 - 100 Mbit Network Interface Card or faster
+
+Linux Operating System
+
+ * Intel® Xeon® or newer, AMD Opteron™, (Dual Core or Quad Core)
+ * 2 Cores
+ * 2.0 GHz minimum or faster
+ * 2 – 4 GB RAM
+ * 1 GB disk for Optim software installation
+ * 1 - 100 Mbit Network Interface Card or faster
+
+Solaris Operating System
+
+ * Sun SPARC Enterprise or newer, or Sun Blade (Dual or Quad Core)
+ * 2 Cores
+ * 2.0 GHz minimum or faster
+ * 2 – 4 GB RAM
+ * 1 GB disk for Optim software installation
+ * 1 - 100 Mbit Network Interface Card or faster
+
+Microsoft® Windows® Operating System
+
+ * Intel® Xeon® or newer, AMD Opteron™, (Dual Core or Quad Core)
+ * 2 Cores
+ * 2.0 GHz minimum or faster
+ * 2 – 4 GB RAM
+ * 1 GB disk for Optim software installation
+ * 1 - 100 Mbit Network Interface Card or faster
+
+SOFTWARE REQUIREMENTS
+Unless installing the Optim server (or absent the server, the workstation) on the database server, client software for the database management system is required. Optim is a 32-bit application, and requires 32-bit DBMS clients. Optim should be installed on a 32-bit platform or on a 64-bit platform that supports 32-bit applications.
+
+PLATFORM CONSIDERATIONS
+
+Supported Platforms Platform and Version Optim Server Optim Work station Comments AIX 5.2 Yes No [/support/docview.wss?uid=swg27018353&amp;aid=1] AIX 5.3 Yes No [/support/docview.wss?uid=swg27018353&amp;aid=1] AIX 6.1 Yes No [/support/docview.wss?uid=swg27018353&amp;aid=1] HP-UX 11.23(PA-RISC)1 Yes No [/support/docview.wss?uid=swg27018353&amp;aid=1] HP-UX 11.30(PA-RISC)1 Yes No [/support/docview.wss?uid=swg27018353&amp;aid=1] Red Hat Enterprise Linux 3 Yes No [/support/docview.wss?uid=swg27018353&amp;aid=1] Red Hat Enterprise Linux 4 Yes No [/support/docview.wss?uid=swg27018353&amp;aid=1] Red Hat Enterprise Linux 5 Yes No [/support/docview.wss?uid=swg27018353&amp;aid=1] SUSE Linux Enterprise 9 Yes No [/support/docview.wss?uid=swg27018353&amp;aid=1] SUSE Linux Enterprise 10 Yes No [/support/docview.wss?uid=swg27018353&amp;aid=1] Solaris 8 Yes No [/support/docview.wss?uid=swg27018353&amp;aid=1] Solaris 9 Yes No [/support/docview.wss?uid=swg27018353&amp;aid=1] Solaris 10 Yes No [/support/docview.wss?uid=swg27018353&amp;aid=1] Windows 2000 Yes Yes At least one workstation is required for each Optim implementation. Windows XP Professional Yes Yes At least one workstation is required for each Optim implementation. Windows Server 2003 Yes Yes At least one workstation is required for each Optim implementation. Windows Vista Yes Yes At least one workstation is required for each Optim implementation Windows Server 2008 Yes Yes At least one workstation is required for each Optim implementation 1 Optim supports the Intel Itanium® architecture for HP-UX if running the PA-RISC emulator. You must perform special installation steps to run Optim using the PA-RISC emulator. Currently only Oracle is supported in this environment. 
+
+SETUP CONSIDERATIONS FOR UNIX
+The following considerations apply when installing the Optim server on a UNIX platform:
+
+ * If you are upgrading the Optim server on a UNIX platform, you must first shut down the server, following the steps in the Optim Installation and Configuration Guide.
+ * By default, the Optim setup program requires a connection that supports a graphical interface. In the absence of a graphical interface or for convenience, you may also install from the command line, running a file that provides a response to all prompts. Both methods are described in detail in the Optim Installation and Configuration Guide as are troubleshooting tips for using a graphical interface.
+
+DATABASE CONSIDERATIONS
+
+Supported Databases DBMS and Version Support Level Oracle 8.1.71 Full support Oracle 9.0 Full support Oracle 9.2 Full support Oracle 10.1 Full support Oracle 10.2 Full support Oracle 11.12 Full support 1 Optim 7.2 does not support the download of sample data to Oracle 8.1.7. 
+2 In Optim 7.2, the DICOM Medical Image, 3D Spatial, and RFID tag data types are not supported. 
+
+
+OPTIM DESIGNER
+Optim is packaged with the optional Optim designer, which can be used to build and discover models for Optim on distributed platforms and Optim for z/OS. For use with Optim on distributed platforms, Optim designer must be installed on an Optim workstation.
+
+Optim designer requires an activated copy of InfoSphere™ Data Architect installed on the workstation. The Optim designer kit includes an InfoSphere Data Architect installation disc and an Optim designer installation disc for each operating system. Each Optim designer installation disc includes an InfoSphere Data Architect product activation kit, which you can use to activate InfoSphere Data Architect. Each Optim designer installation disc also includes an InfoSphere Data Architect fix repository. (The downloaded Optim designer installation package contains disc images for all of the discs that are included in the Optim designer kit.)
+
+You must use IBM Installation Manager 1.3.0 to install InfoSphere Data Architect and Optim designer. Installation Manager is included on the InfoSphere Data Architect disc. You must install Installation Manager first. Then, use Installation Manager to install InfoSphere Data Architect, any fix packs that are included on the Optim designer disc, and Optim designer. You can install these items sequentially, or you can install the fix packs and Optim designer at the same time. For more information on Installation Manager, see the Installation Manager information center at:
+
+
+http://publib.boulder.ibm.com/infocenter/install/v1r2/index.jsp [http://publib.boulder.ibm.com/infocenter/install/v1r2/index.jsp] 
+Optim 7.2.0 is packaged with Optim designer 2.1.0, which requires InfoSphere Data Architect 7.5.2.0 with Fix Pack 2.
+
+Optim 7.2.1 is packaged with Optim designer 2.1.1, which requires InfoSphere Data Architect 7.5.2.1. InfoSphere Data Architect 7.5.2.0 and Fix Pack for InfoSphere Data Architect 7.5.2.1 are included in the Optim designer 2.1.1 kit. 
+
+
+
+SUPPORTED PEOPLESOFT ENTERPRISE VERSIONS
+
+The Optim Data Growth Solution for PeopleSoft Enterprise v6.2 supports the following:
+
+ 
+
+PEOPLESOFT FINANCIAL AND SUPPLY CHAIN MANAGEMENT (FSCM)
+ * v7.52 (PeopleTools v7.63)
+ * v8.0 Service Pack 2 (PeopleTools v8.20)
+ * v8.4 (PeopleTools v8.44)
+ * v8.8 (PeopleTools v8.44 or v8.48)
+ * v8.9 (PeopleTools v8.45 or v8.47)
+ * v9.0 (PeopleTools v8.48, v8.49, or v8.50)
+
+PEOPLESOFT HUMAN CAPITAL MANAGEMENT (HCM)
+ * v7.51 (PeopleTools v7.63)
+ * v8.3 (PeopleTools v8.20)
+ * v8.8 (PeopleTools v8.44 or v8.48)
+ * v8.9 (PeopleTools v8.45 or v8.47)
+ * v9.0 (PeopleTools v8.48, v8.49, or v8.50)
+ * v9.1 (PeopleTools v8.50)
+
+PEOPLESOFT HCM/CAMPUS SOLUTIONS (HCM/CS)
+ * v8.9 (PeopleTools v8.45 or v8.47)
+ * v9.0 (PeopleTools v8.48, v8.49, or v8.50)
+
+PEOPLESOFT CUSTOMER RELATIONSHIP MANAGEMENT (CRM)
+ * v9.0 (PeopleTools v8.48, v8.49, or v8.50)

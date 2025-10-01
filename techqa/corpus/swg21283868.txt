@@ -1,0 +1,23 @@
+Title: IBM Data Collector cannot connect to the Tivoli Enterprise Monitoring Server - United States
+
+Text:
+WebSphere Application Server; 6.1.0.7; Data Collector; fix pack 2; fix pack 3; cannot connect; Tivoli Enterprise Monitoring Server. TECHNOTE (FAQ)
+
+QUESTION
+ On WebSphere Application Server 6.1.0.7 or later, after installing and configuring the data collector with fix pack 2 and then installing fix pack 3, the data collector cannot connect to the Tivoli Enterprise Monitoring Server.
+
+The problem occurs in the following scenario:
+1. Install the GA version of the data collector on WebSphere Application Server 6.1.0.7 or later.
+2. Install install data collector fix pack 2.
+3. Configure the data collector for data collection for the Tivoli Enterprise Portal but not for data collection for the managing server (Application Monitor user interface).
+4. Install data collector fix pack 3.
+5. Install the Tivoli Enterprise Monitoring Agent and configure it to connect to the Tivoli Enterprise Monitoring Server.
+
+The data collector does not connect to the Tivoli Enterprise Monitoring Server, this is evident due to the lack of application server instances displayed in the Tivoli Enterprise Portal workspaces. Why is this? 
+
+ANSWER
+If the scenario above has occurred, you need to configure the data collector again. See the instructions in the Distributed Data Collector Installation and Customization Guide.
+
+
+
+Cross Reference information Segment Product Component Platform Version Edition Systems and Asset Management Tivoli Composite Application Manager for WebSphere ITCAM for WebSphere (Dist) AIX, HP-UX, Linux, Solaris, Windows 6.1

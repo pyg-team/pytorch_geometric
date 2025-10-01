@@ -1,0 +1,174 @@
+Title: IBM IZ52777: TACMD BULKEXPORTSIT COMMAND CRASHED WITH JP CHARS SITUATION. - United States
+
+Text:
+  FIXES ARE AVAILABLE
+IBM Tivoli Monitoring 6.2.2 Fix Pack 8 (6.2.2-TIV-ITM-FP0008) [http://www-01.ibm.com/support/docview.wss?uid=swg24031354]
+IBM Tivoli Monitoring 6.2.2 Fix Pack 9 (6.2.2-TIV-ITM-FP0009) [http://www-01.ibm.com/support/docview.wss?uid=swg24032067]
+IBM Tivoli Monitoring 6.2.2 Fix Pack 6 (6.2.2-TIV-ITM-FP0006) [http://www-01.ibm.com/support/docview.wss?uid=swg24030135]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The tacmd bulkexportsit command crashed with situations having
+   Japanese characters.  This issue occurs with setting
+   LANG=ja_JP.utf8 on Linux only.
+   
+   Environment:
+   ITM 6.2 FP02 - RedHat Enterprise Linux 5
+   
+   Detailed Recreation Procedure:
+   Execute "/opt/IBM/ITM/bin/tacmd bulkExportSit -p /data/x".
+   
+   Then, the following failure occurs.
+   
+   [root@rhel52a bin]# /opt/IBM/ITM/bin/tacmd bulkExportSit -p
+   /data/x
+   *** glibc detected *** /opt/IBM/ITM/li6263/ui/bin/tacmd: free():
+   invalid next size (normal): 0x0a0a7fe0 ***
+   ======= Backtrace: =========
+   /lib/libc.so.6[0x785b16]
+   /lib/libc.so.6(cfree+0x90)[0x789030]
+   /opt/IBM/ITM/li6263/ui/lib/libkbb.so(BSS1_EndFormat+0x54)[0x1447
+   e0]
+   /opt/IBM/ITM/li6263/ui/lib/libkbb.so(RAS1_Format+0x4f)[0x14c6a7]
+   /opt/IBM/ITM/li6263/ui/lib/libkbb.so(RAS1_Event+0xef)[0x14c28b]
+   /opt/IBM/ITM/li6263/ui/lib/libkui61.so(_Z18trimEndOfICUStringPt+
+   0x84)[0xcd469a]
+   /opt/IBM/ITM/li6263/ui/lib/libkui61.so(parseSoapResponseIntoArra
+   y+0x28b)[0xcd3fcb]
+   /opt/IBM/ITM/li6263/ui/lib/bulkexportsit(exportFiles+0x49d)[0x53
+   ab9d]
+   /opt/IBM/ITM/li6263/ui/lib/bulkexportsit(processDescTable+0x63b)
+   [0x53998f]
+   /opt/IBM/ITM/li6263/ui/lib/bulkexportsit(bulkexportsit+0x36e)[0x
+   538796]
+   /opt/IBM/ITM/li6263/ui/bin/tacmd(main+0x854)[0x80551f0]
+   /lib/libc.so.6(__libc_start_main+0xdc)[0x732dec]
+   /opt/IBM/ITM/li6263/ui/bin/tacmd[0x8054901]
+   
+   Related Files and Output:
+   kuiras1.log on ECuRep.
+   
+   Approver:Leonida Gianfagna
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  export LANG=C, then execute the tacmd command.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  The tacmd bulkexportsit command crashed with situations having
+   Japanese characters.  This issue occured when setting
+   LANG=ja_JP.utf8 on Linux systems only.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The buffer size was adjusted to allow for the Japanese character
+   set.
+   
+   
+   
+   The fix for this APAR is contained in the following maintenance
+   packages:
+   
+     | fix pack | 6.2.2-TIV-ITM-FP0002
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ52777
+   
+   
+ * REPORTED COMPONENT NAME
+   TEMS
+   
+   
+ * REPORTED COMPONENT ID
+   5724C04MS
+   
+   
+ * REPORTED RELEASE
+   620
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-06-09
+   
+   
+ * CLOSED DATE
+   2010-03-05
+   
+   
+ * LAST MODIFIED DATE
+   2010-05-21
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TEMS
+   
+   
+ * FIXED COMPONENT ID
+   5724C04MS
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R622 PSY
+   UP

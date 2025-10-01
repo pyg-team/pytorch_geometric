@@ -1,0 +1,77 @@
+Title: IBM Error: CORBA BAD_OPERATION when attempting to log into FileNet Workplace XT after upgrading to WPXT 1.1.5.x - United States
+
+Text:
+COBRA BAD_OPERATION; login; Workplace XT TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Getting error, CORBA BAD_OPERATION, while logging into FileNet Workplace XT after upgrading to XT 1.1.5.x 
+
+SYMPTOM
+Detailed error message: 
+
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * ...........
+   Caused by: java.rmi.RemoteException: CORBA BAD_OPERATION 0x0 No; nested exception is: 
+   org.omg.CORBA.BAD_OPERATION: 
+   SERVER (id=xxxxxxx, host=xxxxx.xxx.net) TRACE START:
+   org.omg.CORBA.BAD_OPERATION: vmcid: 0x0 minor code: 0 completed: No at
+   com.filenet.apiimpl.transport.ejbstubs._EJSRemoteStatelessEngine_2e64c374_Tie._invoke(_EJSRemoteStatelessEngine_2e64c374_Tie.java:139)at
+   com.ibm.CORBA.iiop.ServerDelegate.dispatchInvokeHandler(ServerDelegate.java:623)
+   at com.ibm.CORBA.iiop.ServerDelegate.dispatch(ServerDelegate.java:476)
+   at com.ibm.rmi.iiop.ORB.process(ORB.java:513)
+   ........
+   
+   
+
+
+CAUSE
+Mismatched Content Engine (CE) client jar files.
+
+DIAGNOSING THE PROBLEM
+Verify the version of the CE client jar files match the CE/CPE server. In each of the jar files below, look in the META-INF directory for the MANIFEST.MF file. Open the MANIFEST.MF in a text editor and compare the "Specification-Version" value with the CE/CPE version from the CE ping page. Ensure the version of the CE client jar files below in the Workplace XT installed and deployed directories match the Content Engine server version. Example installation directory for CE client jar files: 
+
+ 
+
+ 1. ...\IBM\FileNet\WebClient\WorkplaceXT\WEB-INF\lib 
+    
+    - jace.jar 
+    - javaapi.jar
+    
+    
+ 2. Perform a search from the root level of the application server install directory for the above jar files.
+
+
+RESOLVING THE PROBLEM
+Steps to resolve this issue if the incorrect CE client jar files are installed for WorkplaceXT:
+
+
+ 1. Install the CE Client version matching to the CE server to update Workplace XT.
+    
+    
+ 2. Backup and recreate the web_client.war and web_client.ear in the Workplace XT installation directory by running the create_web_client_war.bat and create_web_client_ear.bat in this order. This is the default location where the batch files reside: 
+    
+    <Workplace XT Install directory>\WebClient\deploy
+    
+    
+ 3. Undeploy Workplace XT on the Application server.
+    
+    
+ 4. Stop the application server, clear the application server cache, then restart the application server. For instructions on clearing the application server cache, please see the below IBM Knowledge Center for FileNet P8 Platform link on the step 'Back up, undeploy and remove the Workplace XT Web application from the J2EE application server': 
+    
+    http://www-01.ibm.com/support/knowledgecenter/SSNW2F_5.1.0/com.ibm.p8.installingxt.doc/wxtut003.htm [http://www-01.ibm.com/support/knowledgecenter/SSNW2F_5.1.0/com.ibm.p8.installingxt.doc/wxtut003.htm]
+    
+    
+ 5. Redeploy the web_client.ear. 
+
+RELATED INFORMATION
+ Upgrading the Workplace XT software [http://www-01.ibm.com/support/knowledgecenter/SSNW2F_5.1.0/com.ibm.p8.installingxt.doc/wxtut003.htm]

@@ -1,0 +1,21 @@
+Title: IBM Hyphen in file name with COBOL for AIX - United States
+
+Text:
+1181287; dash; hyphen; code; Cobol; AIX TECHNOTE (FAQ)
+
+QUESTION
+ In IBM COBOL for AIX, how do I use a file name that contains a dash? For example:
+$ export MYFILE=/DIR2/my-file.txt
+My COBOL program is trying to read or write file.txt instead of my-file.txt 
+
+CAUSE
+The hyphen separates the file's type from its name.
+
+ANSWER
+This is unsupported. There is no way to code an environment variable or the SELECT ASSIGN USING clause to pass a hyphen as part of the file name. When COBOL's internal parser receives the string, it looks for a hyphen. In this example, the "my" is a comment and file.txt is the file's name. This is documented in the Programming guide. Suppose you coded 
+
+
+$ export MYFILE=/DIR2/vsam-FILE2.XYZ
+
+
+Then FILE2.XYZ would be treated as a VSAM file.

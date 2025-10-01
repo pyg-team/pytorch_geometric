@@ -1,0 +1,178 @@
+Title: IBM PK65017: CUSTOMER CANNOT EDIT DEFAULT VALUES FOR RUN LAUNCHER OF WAS APPLICATION CLIENT ON RAD - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Rational Software Architect, Version 7.0.0.7 [http://www-01.ibm.com/support/docview.wss?uid=swg24018957]
+Rational Application Developer for WebSphere Software, Version 7.0.0.7 [http://www-01.ibm.com/support/docview.wss?uid=swg24019582]
+6.1.1.7: WebSphere Application Server Toolkit Version 6.1.1 Fix Pack 7 [http://www-01.ibm.com/support/docview.wss?uid=swg24023507]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  'WebSphere v6.x Application Client' Run Launcher always defaults
+   under the Arguments and ClassPath Tabs
+   
+   a) Arguments Tab : VM Arguments refer to the default profile for
+   the Websphere Ruintime from the Application tab, instead of the
+   specific server and its profile selected with :
+   [x] Enable application client to connect to server
+   
+   Editing/changing this manually is not acceptable and error
+   prone.
+   
+   b) ClassPath Tab:
+   - Bootstrap Entries are set to the first Websphere
+   Application Server V6.x JRE installed
+   - User Entries properties folder and lib jars are also set from
+   the first WebSphere Application Server V6.x runtime installed.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  n/a
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  All users of WebSphere Application Server   *
+   *                  Toolkit v6.1.1 and Rational Application     *
+   *                  Developer v7                                *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Cannot change VM arguments and          *
+   *                      classpath in the WebSphere v6.x         *
+   *                      Application Client Launcher             *
+   *                      dialog                                  *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   The Websphere v6.1 Application Client Launcher can only uses
+   the VM arguments and classpath of the default WebSphere runtime
+   (usually the pre-existed runtimes of RAD, or the first added
+   runtime in AST), even if you change the "WebSphere runtime" in
+   the Launcher dialog, or the default runtime isn't valid any
+   more (such as the runtime has been uninstalled, or manually
+   removed from file system). If the users are not able to change
+   the VM arguments and classpath, they can not run the client
+   against the desired run-time. Most importantly, if the default
+   runtime has been removed, the client will be running against
+   invalid VM arguments and classpath. The execution will fail
+   over some runtime errors, or ClassnotfoundException. Manually
+   edit these value in the Launcher dialog is tedious job and
+   error-prone.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  With the fix to this APAR, the user should be able to change
+   the VM arguments and classpath of websphere v6.x Application
+   Clients by switch the "WebSphere runtime" in the Launcher
+   dialog. The launcher will use the vm arguments and classpath
+   of the selected WebSphere runtime.
+   
+   The fix for this APAR is currently targeted for inclusion in
+   the WebSphere Application Server Toolkit fixpack 7.1.1.7 and
+   Rational Application Developer fixpack 7.0.0.7.  Please refer
+   to the following Recommended Updates page for WebSphere
+   Application Server Toolkit delivery information:
+   http://www.ibm.com/support/docview.wss?uid=swg27004980 [http://www.ibm.com/support/docview.wss?uid=swg27004980]
+   and the following Recommended Updates page for Rational
+   Application Developer delivery information:
+   http://www.ibm.com/support/docview.wss?uid=swg27007823 [http://www.ibm.com/support/docview.wss?uid=swg27007823]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK65017
+   
+   
+ * REPORTED COMPONENT NAME
+   RATL APP DEV WI
+   
+   
+ * REPORTED COMPONENT ID
+   5724J1901
+   
+   
+ * REPORTED RELEASE
+   610
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-04-24
+   
+   
+ * CLOSED DATE
+   2008-05-30
+   
+   
+ * LAST MODIFIED DATE
+   2008-05-30
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBAPP SERVER A
+   
+   
+ * FIXED COMPONENT ID
+   5724J0820
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R610 PSY
+   UP

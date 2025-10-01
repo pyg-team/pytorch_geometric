@@ -1,0 +1,37 @@
+Title: IBM Schedule initialization stuck at 29% in Rational Performance Tester - United States
+
+Text:
+29%; stuck; schedule serialization; progress; RPT error TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Attempts to execute schedules in IBM Rational Performance Tester results in getting stuck at 29% of the progress 
+
+SYMPTOM
+You are not able to complete the scheduling successfully. It gets stuck when the progress is only 29%. 
+
+[/support/docview.wss?uid=swg21960773&aid=1] [/support/docview.wss?uid=swg21960773&aid=1]
+
+
+CAUSE
+The schedule launch hangs at 29% and could eventually fail when the Agent playback Engine JVM can't be spawned.
+
+
+
+
+RESOLVING THE PROBLEM
+At the stage where the Schedule launch is at 29%, RPT is attempting to create the Agent playback engine and establishing connectivity with it. In case the schedule gets stuck at this point and eventually fails, it potentially means that the Agent playback engine is unable to start up. 
+
+
+Procedure:
+
+
+ 1. Ensure that there are no unexpected java.exe processes running on the agent machine. Terminate them if there are any.
+    
+    
+ 2. Verify that the RPT_DEFAULT_MEMORY_SIZE is set to a value that is lesser than the maximum heap size that can be allocated for the JVM in the agent machine. Ensure that the agent machine has at least that much of free memory available.
+    
+    
+ 3. Ensure that no invalid VMARGs are being sent to the to the Agent playback engine. 
+
+Note: Use the following technote to understand how to set VMARGS on the agent: 
+http://www-01.ibm.com/support/docview.wss?uid=swg27022226 [http://www-01.ibm.com/support/docview.wss?uid=swg27022226]

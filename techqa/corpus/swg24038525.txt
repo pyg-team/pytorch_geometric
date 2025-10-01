@@ -1,0 +1,156 @@
+Title: IBM MobileFirst Platform Foundation 6.3 - United States
+
+Text:
+service release; modpack; mod pack; upgrade; refresh; refresh pack; download; update; install; installation DOWNLOADABLE FILES
+
+ABSTRACT
+ IBM MobileFirst Platform Foundation 6.3 has been made generally available and contains new features as well as fixes for client-reported and internally found defects. 
+
+DOWNLOAD DESCRIPTION
+ 
+
+Table of Contents Sections Description  * What's new
+
+The Change history section provides an overview on what is new in this release with a description of any new functions or enhancements when applicable.
+
+ * Impact assessment
+
+The How critical is this fix section provides information related to the impact of this release to allow you to assess how your environment may be affected.
+
+ * Prerequisites
+
+The Prerequisites section provides important information to review prior to the installation of this release.
+
+ * Download package
+
+The Download package section provides the direct link to obtain the download package for installation in your environment.
+
+ * Installation instructions
+
+The Installation instructions section provides the installation instructions necessary to apply this release into your environment.
+
+ * Known problems
+
+The Known side effects section contains a link to the known problems (open defects) identified at the time of this release.
+
+Supporting Documentation Document Description  * Detailed System Requirements [http://www.ibm.com/support/docview.wss?uid=swg27024838]
+
+Click to review the detailed system requirements information for a complete list of hardware requirements, supported operating systems, prerequisites and optional supported software, with component-level details and operating system restrictions.
+
+ * IBM Knowledge Center [https://www.ibm.com/support/knowledgecenter/SSNJXP/welcome.html]
+
+IBM Knowledge Center provides an entry point to product documentation. You can view, browse, and search online information related to the product.
+
+ * Fix List [http://www.ibm.com/support/docview.wss?uid=swg2C7000003]
+
+Click to review a complete list of the defects (APARs) resolved in this release including a list of resolved defects for the entire version family.
+
+ * developerWorks [https://developer.ibm.com/mobilefirstplatform/]
+
+Find technical developer content and resources.
+
+PREREQUISITES
+ 
+
+No prerequisites required.
+
+Back to top
+
+INSTALLATION INSTRUCTIONS
+ 
+
+Review the Installing and configuring [https://www.ibm.com/support/knowledgecenter/SSHS8R_6.3.0/com.ibm.worklight.installconfig.doc/topics/c_install_config.html] topic in the IBM Knowledge Center.
+
+Back to top
+
+DOWNLOAD PACKAGE
+ 
+
+Download options Access type Description  * Passport Advantage [https://www.ibm.com/software/howtobuy/softwareandservices/passportadvantage]
+
+Passport Advantage and Passport Advantage Express clients are required to sign in to download the software package.
+
+If you are entitled for IBM MobileFirst Platform Foundation and need to download your software from Passport Advantage, perform the following steps: 
+
+ 1. Logon to Passport Advantage [https://www.ibm.com/software/howtobuy/softwareandservices/passportadvantage].
+ 2. Select Software Downloads and Media Access.
+ 3. Select the Download Finder.
+ 4. Select Find by description or part number.
+ 5. Select the Product Description and All radio buttons and enter IBM MobileFirst Platform Foundation in the description field. 
+ 6. Select Continue.
+ 7. Expand the eAssemblies and you will see your entitled software.
+
+ * eAssemblies Parts List [http://www.ibm.com/support/docview.wss?uid=swg2C7000005]
+
+Review eAssemblies Parts List for a list of part numbers you can download for this product.
+
+Back to top
+
+HOW CRITICAL IS THIS FIX?
+ 
+
+Impact Assessment Impact Description Recommended
+
+This is a service release. It contains new features as well as fixes for client-reported and internally found defects.
+
+Test Results
+
+Close [x]
+
+DEFINITIONS
+Regression: An error in the Maintenance Delivery Vehicle [http://www.ibm.com/support/docview.wss?uid=swg27008656] (MDV) that produces incorrect or unexpected behavior causing a supported feature to stop functioning as designed. 
+This includes: 
+
+ * Coding errors that cause a regression
+ * Documentation or packaging problems that cause a regression
+ * Errors reported in a new function delivered in a MDV that cause a regression
+
+Incomplete: An error in the MDV has not regressed, but does not work as designed. 
+This includes: 
+
+ * Fixed APARs which did not solve the original problem but did not break anything new
+ * APARs reporting documentation errors, such as readme errors, that cause problems applying an MDV but do not lead to a regression
+
+
+
+
+Notes:  * Regression and incomplete APARs are considered fix-in-error or MDV-in-error
+ * Definitions above apply only to valid APARs that result in product fixes (APARs returned as working-as-designed are not assessed for being fix-in-error)
+ * Issues in major releases due to new functionality do not apply in this definition
+
+There are no known regressions to report.
+
+Back to top
+
+PROBLEMS SOLVED
+ 
+
+Defects resolved Click the Fix List link in the table of contents above to review a list of the problems solved in this release.
+
+KNOWN SIDE EFFECTS
+ 
+
+Review the following list of known issues and open defects: Review Known issues [https://www.ibm.com/support/knowledgecenter/SSHS8R_6.3.0/com.ibm.worklight.getstart.doc/start/c_known_issues.html] topic in the IBM Knowledge Center for details.
+
+OPEN DEFECTS
+Review the following list of open defects for IBM MobileFirst Platform Foundation [https://www.ibm.com/support/entry/myportal/search_results/other_software/ibm_mobilefirst_platform_foundation?sn=spe&q=%22APAR%20status%22%20OPEN&prod=N651135V62596I83&filter=language:en&productContext=-45999973#v%3D%2B1%26q%3D%2522APAR%2520status%2522%2520OPEN%26filter%3DDC.Type%3ACT748%2Blanguage%3Aen%26prod%3DN651135V62596I83] on the IBM Support Portal.
+
+Review technote 1461170: Open APARs for IBM products available on the Web [http://www.ibm.com/support/docview.wss?uid=swg21461170] for information on how to configure your MyNotifications subscription account and subscribe to the APARs you are interested in following.
+
+Back to top
+
+CHANGE HISTORY
+ 
+
+What's new Review What's new in V7.1.0 [https://www.ibm.com/support/knowledgecenter/SSHS8R_6.3.0/com.ibm.worklight.getstart.doc/start/c_what_s_new.html] topic in the IBM Knowledge Center for a complete list of new features and functions.
+
+Back to top
+
+TECHNICAL SUPPORT
+ 
+
+Follow IBM Cloud Support on Twitter [https://twitter.com/ibm_cts] | devWorks Blog [https://www.ibm.com/developerworks/community/blogs/ibmcloudsupport/?lang=en] Review the IBM Cloud Support BLOG article Enhance your IBM Cloud Support Experience [https://www.ibm.com/developerworks/community/blogs/ibmcloudsupport/entry/ibm_cloud_support_resources] for a complete list of the different support offerings along with a brief description on the best way to use each resource to improve your experience using IBM Cloud products and services.
+
+Forums [https://www.ibm.com/developerworks/community/blogs/ibmcloudsupport/entry/ibm_cloud_support_resources?lang=en#FORUM] | Communities [https://www.ibm.com/developerworks/community/blogs/ibmcloudsupport/entry/ibm_cloud_support_resources?lang=en#COM] | Documentation [https://www.ibm.com/developerworks/community/blogs/ibmcloudsupport/entry/ibm_cloud_support_resources?lang=en#DOC] | Contacting Support [https://www.ibm.com/developerworks/community/blogs/ibmcloudsupport/entry/ibm_cloud_support_resources?lang=en#SPT] | Helpful Hints [https://www.ibm.com/developerworks/community/blogs/ibmcloudsupport/entry/ibm_cloud_support_resources?lang=en#HELP]
+
+Back to top

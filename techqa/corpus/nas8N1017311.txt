@@ -1,0 +1,109 @@
+Title: IBM Changing the TCP/IP Address of the IBM System i System - United States
+
+Text:
+TCP; TCPIP TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This document provides information about how to change the TCP/IP address of the IBM System i system. 
+
+RESOLVING THE PROBLEM
+This document discusses how to change the TCP/IP address of the IBM System i system. It also discusses other possible changes that 
+
+should be taken into consideration when changing the TCP/IP address of a System i system.
+
+The change of the TCP/IP address can be done while TCP/IP is active on the system. The TCP/IP interface (TCP/IP address) changed must 
+be deactivated. However, the other (if any) interfaces defined on the iSeries family can remain active for this process.
+
+Step 1: Before changing the TCP/IP Address (interface), first determine if that interface has any associated routes. Check this from the 
+NETSTAT *IFC screen. By choosing Option 8, this can be done; as shown below:
+This is specifying Option 8, [/support/docview.wss?uid=nas8N1017311&aid=1] [/support/docview.wss?uid=nas8N1017311&aid=1]
+
+Selecting this option results in the following screen:
+This is the [/support/docview.wss?uid=nas8N1017311&aid=2] [/support/docview.wss?uid=nas8N1017311&aid=2]
+
+The routes listed with a Next Hop equal to *DIRECT can be ignored for this process. The other route(s) should be noted because they must 
+be removed before changing the TCP/IP address. It is a good idea to select Option 5 to display the details of the route, then press F6 to 
+print the details for reference when the route must be re-added to the routing configuration. This should be done for all of the non-*DIRECT
+routes listed on this screen.
+
+Step 2: Once this is completed, run the CFGTCP command, and select Option 2 to Work with TCP/IP Routes. Select Option 4 to remove
+the route(s) that were discussed above, as shown on the following screen:
+This is specifying Option 4, to remove a route, on the [/support/docview.wss?uid=nas8N1017311&aid=3] [/support/docview.wss?uid=nas8N1017311&aid=3]
+
+Once these routes are removed, any communications going over this route will be terminated. At this point, no local (LAN) traffic is affected.
+
+Step 3: Make the actual changes to the interface. To do this, the interface must be removed and a new interface (new TCP/IP address) is
+added. Before doing this, the interface to be changed must be deactivated. This can be done from the NETSTAT *IFC screen by typing 10 
+next to that interface as shown below:
+This is specifying Option 10 for [/support/docview.wss?uid=nas8N1017311&aid=4] [/support/docview.wss?uid=nas8N1017311&aid=4]
+
+Once this is done, any local (LAN) systems that are still communicating to this TCP/IP address are terminated. Now that the interface is 
+deactivated, it can be removed. 
+
+Reminder: It is suggested to select Option 5 next to that interface on the screen above to display the details, and then press F6 to print 
+these details for future reference. 
+
+Step 4: To remove the interface, run the CFGTCP command from the operating system command line, and select Option 1 from that 
+menu. Select Option 4 (to Remove) next to the interface to be changed as shown below:
+This is specifying Option 4, on the Work with TCP/IP Interfaces screen [/support/docview.wss?uid=nas8N1017311&aid=5] [/support/docview.wss?uid=nas8N1017311&aid=5]
+
+Note: Although Option 2 on this screen indicates changing the interface, the actual TCP/IP address of the interface is not a field that can be
+changed.
+
+Step 5: Now that the route(s) and interface are removed, create the new configuration in the reverse order. The new interface is added from
+the CFGTCP, Option 1 screen by selecting Option 1 and pressing the Enter key. Doing this shows the following screen:
+This is showing screen from the ADDTCPIFC command. [/support/docview.wss?uid=nas8N1017311&aid=6] [/support/docview.wss?uid=nas8N1017311&aid=6]
+
+For most configurations, update only the first three fields. Complete the Internet address field with the new TCP/IP address for the iSeries 
+family (you can type over the quotation marks), complete the Subnet mask field with the new subnet mask, and complete the remainder of the
+fields based on the printout from Step 3. An example is shown below:
+This is showing the internet address, line description, and subnet mask, filled in, on the ADDTCPIFC command. [/support/docview.wss?uid=nas8N1017311&aid=7] [/support/docview.wss?uid=nas8N1017311&aid=7]
+
+Step 6: After adding the interface, it must be activated. Do this from the NETSTAT *IFC screen. Select Option 9 next to the new interface 
+as shown below:
+This is showing Option 9, to Start a TCP/IP interface. [/support/docview.wss?uid=nas8N1017311&aid=8] [/support/docview.wss?uid=nas8N1017311&aid=8]
+
+Doing this changes the Status of the interface from Inactive to Active. At this point, other systems on the same LAN can communicate with the
+iSeries family system using TCP/IP. This can be verified by using the PING command.
+
+Note: At V5R1M0, the interface goes to a Failed status upon activation if that TCP/IP address is already being used by another active system
+on the network.
+
+Step 7: The next step is to add any new routes that use this interface (if any). 
+
+This can be done by selecting Option 2 from the CFGTCP menu. Type 1 in the Opt column to add a new route, and press the Enter key. In 
+this example, the same route is added back to the system, but the next hop has changed. The next hop address must be in the same subnet 
+as the interface that is using it. The configuration of the route is shown below.
+
+Note: If no routes were removed in Step 2, no routes must be added here. Contact your network administrator to determine if routes must 
+be added to your iSeries family system. 
+This is showing the adding of a network route. [/support/docview.wss?uid=nas8N1017311&aid=9] [/support/docview.wss?uid=nas8N1017311&aid=9]
+
+Routes cannot be activated or deactivated. Therefore, once the route is added, it can be used by TCP/IP.
+
+Step 8: From the CFGTCP menu, select Option 10, Work with TCP/IP host table entries. If you have any entry in the host table with the old
+TCP/IP address of your system, the entry must be removed and re-added it to make the TCP/IP address reflect the new TCP/IP address just 
+added. 
+
+Step 9: Another aspect of changing a TCP/IP address that must be considered is iSeries family TCP/IP printing configuration. Often, when
+a TCP/IP address is getting changed on the iSeries family system, it is not the only system being changed. If the TCP/IP address of the
+iSeries family changes to be a TCP/IP address on a different network (as in this example), the printers and/or print servers on the same 
+physical network also must change their TCP/IP addresses. If this is the case, changes are made to the following TCP/IP printing 
+configuration as it applies to your scenario: 
+
+[/support/docview.wss?uid=nas8N1017311&amp;aid=10] Remote Output Queues [/support/docview.wss?uid=nas8N1017311&amp;aid=10] Printer Device Descriptions Step 10: It may also be that the Domain Name System (DNS) TCP/IP address for the server is changing. If this is the case, this must be 
+updated on the iSeries family at the CFGTCP, Option 12, as shown below. 
+This is showing that the DNS IP address may need to be updated with the CHGTCPDMN command. [/support/docview.wss?uid=nas8N1017311&aid=11] [/support/docview.wss?uid=nas8N1017311&aid=11] 
+
+The Internet address fields at the bottom of this screen, identify the DNS server(s) that this iSeries family uses for name resolution. If no 
+addresses are listed, changes to this screen may not be required. However, if the address(es) listed must be changed, make those changes 
+here. Contact your network administrator to determine if your DNS server addresses are affected in this process. 
+
+Note: If making changes to this screen, signing off of your interactive session is required for the changes to take effect. 
+
+Once these steps are finished, your iSeries family TCP/IP configuration changes are complete.  
+
+
+Cross reference information Segment Product Component Platform Version Edition Operating System IBM i 7.2 Operating System IBM i 7.1 Operating System IBM i 6.1 
+HISTORICAL NUMBER
+ 23695045

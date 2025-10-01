@@ -1,0 +1,41 @@
+Title: IBM InfoSphere DataStage and QualityStage Operations Console session expires after approximately 12 hours - United States
+
+Text:
+ds87relnotes session expiry timeout time out kicked out expired expiration TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ IBM InfoSphere DataStage and QualityStage Operations Console session expires after approximately 12 hours, even if it is being used at that time. 
+
+SYMPTOM
+Depending on the operation being performed when the session expires, you might encounter one or more of the following events after approximately 12 hours from the time you log in : 
+
+ * You see a dialog that prompts you to enter a user name and password. 
+ * The operations console closes and you are redirected to the login page that contains a message: "The session has expired."
+
+
+CAUSE
+The session expiry occurs in a fixed period after logging into the operations console. It is not based on inactivity. You are logged out of the operations console after 760 minutes (approximately 12 hours) even if you have been using the operations console continuously during that period. 
+The session expiry occurs because of a security feature of WebSphere Application Server. In WebSphere Application Server, the LTPA session automatically expires after a fixed period of time. 
+
+
+DIAGNOSING THE PROBLEM
+If you encounter the symptoms, check the SystemOut.log file from WebSphere Application Server. Look for entries such as: 
+
+
+[7/22/11 3:54:29:168 BST] 0000003e LTPAServerObj W SECJ0371W: Validation of the LTPA token failed because the token expired with the following info: Token expiration Date: Fri Jul 22 03:54:00 BST 2011, current Date: Fri Jul 22 03:54:29 BST 2011.
+
+
+RESOLVING THE PROBLEM
+The automatic session expiry can not be prevented. However, you can change the session expiry time.The default session expiry is set to 760 minutes. Use the WebSphere Application Server admin console to change the expiry time:
+
+1) Open the WebSphere Application Server web admin console (https://<domain>:9043/ibm/console/login.do?action=secure) and login as the WebSphere administrative user (not the Information Server administrative user)
+2) Open the Security -> Global security pane from the left hand tree
+3) Open the LTPA link in the content pane
+4) Change the 'LTPA timeout" value from 760 to the desired value.
+5) Stop and restart WebSphere Application Server
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Information Management InfoSphere Information Server AIX, HP-UX, Linux, Solaris, Windows 8.7

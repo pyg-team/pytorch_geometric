@@ -1,0 +1,205 @@
+Title: IBM IZ29109: MEMORY LEAK IN CHANNEL PROCESSES WHEN SSL ERRORS OCCUR - United States
+
+Text:
+  FIXES ARE AVAILABLE
+WebSphere MQ V7.0 for i5/OS Fix Pack 7.0.0.2 [http://www-01.ibm.com/support/docview.wss?uid=swg24022812]
+WebSphere MQ V7.0 Fix Pack 7.0.0.2 [http://www-01.ibm.com/support/docview.wss?uid=swg24022810]
+WebSphere MQ V6.0 Fix Pack 6.0.2.6 [http://www-01.ibm.com/support/docview.wss?uid=swg24022324]
+WebSphere MQ V7.0 Fix Pack 7.0.1.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24024528]
+WebSphere MQ V7.0.1 for i5/OS Fix Pack 7.0.1.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24025627]
+WebSphere MQ V7.0 Fix Pack 7.0.1.2 [http://www-01.ibm.com/support/docview.wss?uid=swg24026518]
+WebSphere MQ V7.0.1 for i5/OS Fix Pack 7.0.1.2 [http://www-01.ibm.com/support/docview.wss?uid=swg24026566]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  A user noticed that the WebSphere MQ channel processes were
+   growing in memory usage by many megabytes over several hours.
+   The error logs revealed a large number of SSL errors (e.g.
+   AMQ9637) from the channel processes during the time period when
+   the memory usage was rising.
+   
+   Eventually the channel processes consumed many gigabytes of
+   memory and exhausted the system swap space. On a Unix system
+   this would lead to FFSTs with probe XC267011 reporting a
+   SIGDANGER condition.
+   
+   Please note that other conditions could also cause a swap space
+   shortage; this APAR only applies to the case when:
+   a) SSL channels are in use and
+   b) channel processes are consuming an increasing amount of
+   memory and
+   c) a large number of SSL-related errors are shown in the
+   WebSphere MQ error logs.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   WebSphere MQ users who use SSL channels where errors occur. The
+   memory leak only occurs in queue manager channel processes;
+   client SSL applications are not affected.
+   
+   Platforms affected:
+   All Distributed (iSeries, all Unix and Windows)
+   ****************************************************************
+   PROBLEM SUMMARY:
+   There was a defect in the WebSphere MQ SSL channel code which
+   meant that some SSL-related state data was not freed after
+   certain errors had occurred.
+   
+   Not all errors on SSL channels will provoke the leak. Errors
+   AMQ9618, AMQ9623, AMQ9629, AMQ9632, AMQ9660 and AMQ9714 on the
+   server side are likely to provoke a memory leak, but other
+   errors might also cause one.
+   
+   The WebSphere MQ client SSL code is unaffected by this issue, as
+   the affected code path is server-specific.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The WebSphere MQ channel code has been corrected to ensure that
+   SSL state data is always cleaned up after an error on an SSL
+   channel.
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+                      v6.0
+   Platform           Fix Pack 6.0.2.6
+   --------           --------------------
+   Windows            U200299
+   AIX                U819350
+   HP-UX (PA-RISC)    U819028
+   HP-UX (Itanium)    U819230
+   Solaris (SPARC)    U819232
+   Solaris (x86-64)   U819240
+   iSeries            tbc_p600_0_2_6
+   Linux (x86)        U818989
+   Linux (x86-64)     U819234
+   Linux (zSeries)    U819231
+   Linux (Power)      U819029
+   Linux (s390x)      U819233
+   
+                      v7.0
+   Platform           Fix Pack 7.0.0.1
+   --------           --------------------
+   Windows            U200301
+   AIX                U821414
+   HP-UX (PA-RISC)    U820765
+   HP-UX (Itanium)    U821296
+   Solaris (SPARC)    U820766
+   Solaris (x86-64)   U820880
+   iSeries            tbc_p700_0_0_1
+   Linux (x86)        U821407
+   Linux (x86-64)     U821295
+   Linux (zSeries)    U821294
+   Linux (Power)      U820881
+   
+   The latest available maintenance can be obtained from
+   'Websphere MQ Recommended Fixes'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037]
+   
+   If the maintenance level is not yet available, information on
+   its planned availability can be found in 'Websphere MQ
+   Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ29109
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ AIX V6
+   
+   
+ * REPORTED COMPONENT ID
+   5724H7201
+   
+   
+ * REPORTED RELEASE
+   600
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-08-05
+   
+   
+ * CLOSED DATE
+   2008-08-20
+   
+   
+ * LAST MODIFIED DATE
+   2009-03-10
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ AIX V6
+   
+   
+ * FIXED COMPONENT ID
+   5724H7201
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R600 PSY
+   UP

@@ -1,0 +1,129 @@
+Title: IBM Deployment Manager failed to start with error message WSVR0009E - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ You are unable to start the deployment manager or nodeagent or even an Application Server. 
+
+SYMPTOM
+[10/7/11 0:35:53:145 EDT] 0000000a SSLComponentI A CWPKI0007I: SSL service failed to start successfully 
+
+[10/7/11 0:35:53:173 EDT] 0000000a WsServerImpl E WSVR0009E: Error occurred during startup 
+
+META-INF/ws-server-components.xml 
+
+[10/7/11 0:35:53:190 EDT] 0000000a WsServerImpl E WSVR0009E: Error occurred during startup 
+
+com.ibm.ws.exception.ConfigurationError: com.ibm.ws.exception.ConfigurationError: com.ibm.websphere.crypto.KeyException: java.lang.NullPointerException 
+
+ at com.ibm.ws.runtime.WsServerImpl.bootServerContainer(WsServerImpl.java:185) 
+
+ at com.ibm.ws.runtime.WsServerImpl.start(WsServerImpl.java:140) 
+
+ at com.ibm.ws.runtime.WsServerImpl.main(WsServerImpl.java:461) 
+
+ at com.ibm.ws.runtime.WsServer.main(WsServer.java:59) 
+
+ at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method) 
+
+ at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:79) 
+
+ at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) 
+
+ at java.lang.reflect.Method.invoke(Method.java:618) 
+
+ at com.ibm.wsspi.bootstrap.WSLauncher.launchMain(WSLauncher.java:183) 
+
+ at com.ibm.wsspi.bootstrap.WSLauncher.main(WSLauncher.java:90) 
+
+ at com.ibm.wsspi.bootstrap.WSLauncher.run(WSLauncher.java:72) 
+
+ at org.eclipse.core.internal.runtime.PlatformActivator$1.run(PlatformActivator.java:78) 
+
+ at org.eclipse.core.runtime.internal.adaptor.EclipseAppLauncher.runApplication(EclipseAppLauncher.java:92) 
+
+ at org.eclipse.core.runtime.internal.adaptor.EclipseAppLauncher.start(EclipseAppLauncher.java:68) 
+
+ at org.eclipse.core.runtime.adaptor.EclipseStarter.run(EclipseStarter.java:400) 
+
+ at org.eclipse.core.runtime.adaptor.EclipseStarter.run(EclipseStarter.java:177) 
+
+ at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method) 
+
+ at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:79) 
+
+ at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) 
+
+ at java.lang.reflect.Method.invoke(Method.java:618) 
+
+ at org.eclipse.core.launcher.Main.invokeFramework(Main.java:336) 
+
+ at org.eclipse.core.launcher.Main.basicRun(Main.java:280) 
+
+ at org.eclipse.core.launcher.Main.run(Main.java:977) 
+
+ at com.ibm.wsspi.bootstrap.WSPreLauncher.launchEclipse(WSPreLauncher.java:321) 
+
+ at com.ibm.wsspi.bootstrap.WSPreLauncher.main(WSPreLauncher.java:89) 
+
+Caused by: com.ibm.ws.exception.ConfigurationError: com.ibm.websphere.crypto.KeyException: java.lang.NullPointerException 
+
+ at com.ibm.ws.ssl.core.SSLComponentImpl.initialize(SSLComponentImpl.java:204) 
+
+ at com.ibm.ws.runtime.component.ContainerImpl.initializeComponent(ContainerImpl.java:1338) 
+
+ at com.ibm.ws.runtime.component.ContainerImpl.initializeComponents(ContainerImpl.java:1136) 
+
+ at com.ibm.ws.runtime.component.ServerImpl.initialize(ServerImpl.java:355) 
+
+ at com.ibm.ws.runtime.WsServerImpl.bootServerContainer(WsServerImpl.java:178) 
+
+ ... 24 more 
+
+Caused by: com.ibm.websphere.crypto.KeyException: java.lang.NullPointerException 
+
+ at com.ibm.ws.crypto.config.KeySetGroupManager.initializeKeySetGroups(KeySetGroupManager.java:107) 
+
+ at com.ibm.ws.ssl.core.SSLComponentImpl.initialize(SSLComponentImpl.java:171) 
+
+ ... 28 more 
+
+Caused by: java.lang.NullPointerException 
+
+ at com.ibm.ws.crypto.config.WSScheduler.WSSchedulerInit(WSScheduler.java:73) 
+
+ at com.ibm.ws.crypto.config.WSScheduler.<init>(WSScheduler.java:66) 
+
+ at com.ibm.ws.crypto.config.WSKeySetGroup.<init>(WSKeySetGroup.java:63) 
+
+ at com.ibm.ws.crypto.config.KeySetGroupManager.initializeKeySetGroups(KeySetGroupManager.java:93) 
+
+ ... 29 more
+
+
+CAUSE
+security.xml is corrupted. 
+
+
+ENVIRONMENT
+ND (Network Deployment) cell topology or Possible with Single Server profile
+
+
+
+RESOLVING THE PROBLEM
+Find the last known good back of security.xml and try to restore the file. If you don't have good backup then this might required to rebuild the environment from scratch. Other possibility would be to compare with other environment and try fixing the missing tag, but not guaranteed that this will fix the issue. So overall if you have good backup great, if not then rebuild the environment. 
+
+For zOS specific client: 
+
+Solution for z/OS WebSphere 8.0 Deployment Manager start-up failure. 
+
+BBOO0222I: ADMN0015I: The administration service is initialized. 
+
+BBOO0222I: CWPKI0007I: SSL service failed to start successfully 
+
+BBOO0035W TERMINATING THE CURRENT PROCESS, REASONC9C21C4F. and IEF472I W8DN1AG W8DN1AG - COMPLETION CODE - SYSTEMDC3 USER0000 REASON000C0008 
+
+Probable cause: The operator issued CANCEL commands against the DMGR and DEMN address spaces while P DEMN was in process for a normal shutdown. 
+
+Doing so apparently left an empty (0 byte) security.xml file, but a good one in the backup directory.

@@ -1,0 +1,89 @@
+Title: IBM Rate Limiting Action commands - United States
+
+Text:
+limit action commands TECHNOTE (FAQ)
+
+QUESTION
+ How do you limit the rate at which action commands are issued? 
+
+ANSWER
+Introduction 
+
+A pure situation was used to monitor an event in the Windows Event log. At times the monitored event occurred every five minutes. The goal was to send out an email, but only if no email had been sent in the prior 30 minutes. 
+
+Situations mostly consider current conditions and have little memory, no 'between event' logic, and no calculations. However two situations, an external file, and a workflow policy can be used to accomplish this goal. 
+
+This is a Windows example, but a Linux/Unix example would be parallel. This is an example only, please consider it a toolkit of ideas. There are lots of ways to use workflow policies to extend ITM event processing. 
+
+ 
+
+Marker file 
+
+The following file will be created on the server where the Agent is running. In this example, this is a Windows server and the example file will be c:\temp\winevt.txt. You could change this to any filename or directory.
+
+
+Situation1 - IBM_winevt - a pure situation to alert on certain events.
+
+The situation alerts when there is an event on the Application Log and the ID is 900. Here is what the formula looks like:
+
+[/support/docview.wss?uid=swg21451264&amp;aid=1]
+
+The test of Time is present so that the action command may use the Local Time attributes.
+
+There is no action command because after testing, this command will not be started, but only used by a workflow policy.
+
+
+Situation 2 - IBM_Marker a sampled situation
+
+This situation is used to detect when the marker file c:\temp\appevt.txt - has not been updated in the last 30 minutes. The formula looks like this:
+
+[/support/docview.wss?uid=swg21451264&amp;aid=2]
+
+This is a typical stale file alert situation. Again there is no action command since it will be used by a workflow policy in a Evaluate Situation Now activity.
+
+Note that for this case, the IBM_Marker must be started and stopped once. That creates the SITDB rules which need to be present for the Evaluate Situation activity to work.
+
+
+Workflow Policy - IBM_notice 
+
+The general flow is:
+
+1) Wait for IBM_winevt
+2) Evaluate IBM_Marker
+3) If IBM_Marker is False then write a log message and end - this is
+the event when an email was sent recently - and restart policy
+4) If IBM_Marker is True then...
+5) Write new content into winevt.txt - to get date last written updated
+6) Write log message - in your case a command to run an email command.
+7) End - and this point the policy restarts
+
+The workflow policy looks like this:
+
+[/support/docview.wss?uid=swg21451264&aid=3] [/support/docview.wss?uid=swg21451264&aid=3]
+
+The Workflow policy and two situations all must be distributed to the windows server where the agent is. Correlation is by 'Managed System', and 'Restart' is enabled.
+
+Note that the end activities are just left unconnected. When there is no more work to do, the workflow policy will restart.
+
+If the waited for event is sampled [which makes no sense in the current example] you would need to connect the 'Wait until' situation true activity to a wait for situation reset activity. Workflow policies do not work off situation events, they work off of situation evaluations and so you would need to wait for the next false and then for the next true before continuing. Since this is a pure situation, no false event will ever arise and so there is no reason for doing that.
+
+
+Here is a file ev1.bat to create the Windows event for testing.
+
+eventcreate /l APPLICATION /so "IBM Test" /t ERROR /id 900 /d "Testing 1 2 3" 
+
+
+Production usage
+
+In real life usage, you might want to add additional actions to do logging of what happened and when. The real action would be something to alert someone - perhaps send an email.
+
+This scheme does not create events that will be seen on the Portal Client display. The two helper functions would normally not be running, so that is not an issue. If it were an issue, be sure to dissociate them from an TEP navigation node.
+
+
+Summary
+
+This document shows how to take a set of events that occur rapidly and slow down the response so an action is taken only occasionally.
+
+Attached are the sample situations, batch file, and worklflow policies.
+
+ratelim.zip [/support/docview.wss?uid=swg21451264&aid=5] ratelim.zip [/support/docview.wss?uid=swg21451264&aid=4]

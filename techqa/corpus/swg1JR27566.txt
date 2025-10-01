@@ -1,0 +1,144 @@
+Title: IBM JR27566: TOO MANY OPEN FILES EXCEPTIONS ITH WPS 6.0.1.6 - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Artifact loader crashes with error message :
+   
+   Too many open files (during deployment process of around 2048
+   files on Windows environment)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  -
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: Websphere Process Server 6.0.1 and 6.0.2     *
+   *                 users.  Specifically ones with a lot of      *
+   *                 jars and shared libraries.                   *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Artifact loader crashes with error      *
+   *                      message, Too many open files (during    *
+   *                      deployment process of around 2048       *
+   *                      files on Windows environment).          *
+   *                                                              *
+   *                                                              *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   Artifact Loader component within WPS doesnot close the files
+   and leaves file handles open. This leads to the following error.
+   
+   Artifact loader crashes with error message : Too many open
+   files (during deployment process of around 2048 files on
+   Windows environment).
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Applying this interim fix resolves the issue.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR27566
+   
+   
+ * REPORTED COMPONENT NAME
+   WEB PROC SERVER
+   
+   
+ * REPORTED COMPONENT ID
+   5724L0100
+   
+   
+ * REPORTED RELEASE
+   600
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2007-10-04
+   
+   
+ * CLOSED DATE
+   2007-12-05
+   
+   
+ * LAST MODIFIED DATE
+   2007-12-06
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEB PROC SERVER
+   
+   
+ * FIXED COMPONENT ID
+   5724L0100
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R601 PSY
+   UP
+   
+   
+ * R602 PSY
+   UP

@@ -1,0 +1,36 @@
+Title: IBM Liberty, CDI 1.0, and the Oracle JVM's bytecode verification in 8u11 and 7u65 - United States
+
+Text:
+ RELEASE NOTES
+
+ABSTRACT
+ Liberty, CDI 1.0, and the Oracle JVM's bytecode verification in 8u11 and 7u65 
+
+CONTENT
+A change in Oracle's release of Java 8 update 11 and 7 update 65 has impacted the Liberty CDI 1.0 feature. 
+
+The problem occurs in the JVM's bytecode verification starting with Java 8u11 and 7u65.
+
+You may see an error similar to either of the following:
+
+
+ * java.lang.VerifyError: Bad <init> method call from inside of a branch 
+ * java.lang.VerifyError: (class: xxxx) Illegal use of nonvirtual function call
+
+
+
+The Java language requires any call to a superclass constructor to be the first action undertaken by a constructor. This was not enforced by the bytecode verifier in earlier versions of Java 8. Oracle's decision to begin firmer enforcement of this language feature closed a language specification bug, but it impacts many tools. 
+
+The workaround for this issue is to use the -noverify switch. 
+
+Liberty has implemented this workaround as of 8.5.5.5, by adding the -noverify switch to the jvm.options file when CDI 1.0 feature is running on Oracle 8 update 11 or 7 update 65. 
+
+Known JVM versions with this problem: 
+
+1.7.0 update 65 
+1.7.0 update 67 
+
+1.8.0 update 11 
+1.8.0 update 20 
+
+The problem was not seen in earlier JVM updates.

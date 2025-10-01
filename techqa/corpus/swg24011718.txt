@@ -1,0 +1,70 @@
+Title: IBM PK13068; 6.0.2.7: adma8019e exception is thrown during application deployment - United States
+
+Text:
+PK13068; PK13068; PK13068 DOWNLOADABLE FILES
+
+ABSTRACT
+ Resource validation failed with error message ADMA8019E stating "TypeMismatch", for the resources J2CActivationSpec and MailSession. 
+
+DOWNLOAD DESCRIPTION
+PK13068 resolves the following problem:
+
+ERROR DESCRIPTION: 
+The following exception is thrown in the adminconsole during application deployment/update. 
+
+ADMA8019E : The resources that are assigned to the application are beyond the deployment target scope. 
+
+Even though we have defined a resource of type workmanager, the class which picks up the resources bindings present in the environment for validating the resource bindings contained in an application 
+seems to ignore the binding of type workmanager found in the environment. 
+
+Workmanager has been configured as follows. 
+AdminConsole > Resources > AsynchBean > WorkManager > 
+scope (Server=server1)> 
+Create New WorkManager(myWorkManager, wm/myWorkManager). 
+
+LOCAL FIX: 
+NA 
+
+PROBLEM SUMMARY
+
+USERS AFFECTED:
+WebSphere® Application Server users of version 6.0.2.
+
+PROBLEM DESCRIPTION:
+Resource validation failed with error message ADMA8019E stating
+"TypeMismatch", for the resources J2CActivationSpec and MailSession.
+
+RECOMMENDATION:
+None
+
+Validation for WebSphere resources J2CActivationSpec and MailSession are failing during application deployment. In the application, resources are defined as JMS and MailProvider. Resource validation code should map JMS resource definitions against J2CActivationSpec resource, and MailProvider against MailSession resource. 
+
+Since resource definitions in the application are valid, application management code should not thrown any false validation warnings.
+
+PROBLEM CONCLUSION: 
+Identified the root cause where appmanagement code fails to validate these resources, and made appropriate changes to validate JMS resource against J2CActivationSpec and MailProvider resource against MailSession. 
+
+The fix for this APAR is currently targeted for inclusion in fixpack 6.0.2.9. 
+
+Please refer to the recommended updates page for delivery information: 
+http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+
+PREREQUISITES
+Download the UpdateInstaller below to install this fix.
+
+URL LANGUAGE SIZE(Bytes) UpdateInstaller [http://www.ibm.com/support/docview.wss?rs=180&uid=swg21205991] US English 7250000 
+INSTALLATION INSTRUCTIONS
+Review the readme.txt for detailed installation instructions.
+
+URL LANGUAGE SIZE(Bytes) Readme [ftp://public.dhe.ibm.com/software/websphere/appserv/support/fixes/PK13068/readme.txt] US English 5910 
+DOWNLOAD PACKAGE
+
+
+Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options 
+What is DD? [http://www6.software.ibm.com/dldirector/doc/DDfaq_en.html] 6.0.2.x-WS-WAS-IFPK13068 02-27-2006 US English 17879 FTP [ftp://public.dhe.ibm.com/software/websphere/appserv/support/fixes/PK13068/6.0.2.x-WS-WAS-IFPK13068.pak] DD 
+TECHNICAL SUPPORT
+ Contact IBM Support using SR (http://www.ibm.com/software/support/probsub.html [http://www.ibm.com/software/support/probsub.html]), visit the WebSphere Application Server Support Web site (http://www.ibm.com/software/webservers/appserv/was/support/ [http://www.ibm.com/software/webservers/appserv/was/support/]), or contact 1-800-IBM-SERV(U.S. only). 
+
+Cross Reference information Segment Product Component Platform Version Edition Application Servers Runtimes for Java Technology Java SDK 
+ [/support/docview.wss?uid=swg24011718&aid=1]Problems (APARS) fixed [/support/docview.wss?uid=swg24011718&aid=2]Problems (APARS) fixed
+PK13068

@@ -1,0 +1,282 @@
+Title: IBM IV66840: WMQ V7 JAVA/JMS: ADD SUPPORT FOR SELECTED TLS CIPHERSPECS WHEN RUNNING IN NON-IBM JAVA RUNTIME ENVIRONMENT - United States
+
+Text:
+  A FIX IS AVAILABLE
+Fix Pack 8.0.0.2 for WebSphere MQ V8.0 [http://www-01.ibm.com/support/docview.wss?uid=swg24039436]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  This APAR adds new function to allow users of non-IBM Java
+   runtime environments to make use of TLS CipherSuites.
+   
+   For a full list of CipherSuite to CipherSpec mappings supported
+   by MQ consult the appropriate MQ Knowledge Center.
+   
+   The following WebSphere MQ CipherSuite to CipherSpec mappings
+   have been enabled by this APAR for WebSphere MQ v7.0.1, v7.1
+   and v7.5: :
+   
+   CipherSuite:                    CipherSpec:
+   
+   SSL_RSA_WITH_DES_CBC_SHA        TLS_RSA_WITH_DES_CBC_SHA
+   SSL_RSA_WITH_3DES_EDE_CBC_SHA   TLS_RSA_WITH_3DES_EDE_CBC_SHA
+   TLS_RSA_WITH_AES_128_CBC_SHA    TLS_RSA_WITH_AES_128_CBC_SHA
+   TLS_RSA_WITH_AES_256_CBC_SHA    TLS_RSA_WITH_AES_256_CBC_SHA
+   
+   The following WebSphere MQ CipherSuite to CipherSpec mappings
+   have been enabled by this APAR for WebSphere MQ v7.1 and v7.5
+   where the classes for Java and classes for JMS support SHA-2:￴
+   
+   
+   TLS_RSA_WITH_NULL_SHA256        TLS_RSA_WITH_NULL_SHA256
+   TLS_RSA_WITH_AES_128_CBC_SHA256 TLS_RSA_WITH_AES_128_CBC_SHA256
+   TLS_RSA_WITH_AES_256_CBC_SHA256 TLS_RSA_WITH_AES_256_CBC_SHA256
+   
+   
+   The following WebSphere MQ CipherSuite to CipherSpec mappings
+   have been enabled by this APAR for WebSphere MQ v8:
+   
+   CipherSuite -->
+   CipherSpec
+   
+   TLS_ECDHE_ECDSA_WITH_3DES_EDE_CBC_SHA -->
+   ECDHE_ECDSA_3DES_EDE_CBC_SHA256
+   
+   TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256 -->
+   ECDHE_ECDSA_AES_128_CBC_SHA256
+   
+   TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256 -->
+   ECDHE_ECDSA_AES_128_GCM_SHA256
+   
+   TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA384 -->
+   ECDHE_ECDSA_AES_256_CBC_SHA384
+   
+   TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384 -->
+   ECDHE_ECDSA_AES_256_GCM_SHA384
+   
+   TLS_ECDHE_ECDSA_WITH_NULL_SHA -->
+   ECDHE_ECDSA_NULL_SHA256
+   
+   TLS_ECDHE_ECDSA_WITH_RC4_128_SHA -->
+   ECDHE_ECDSA_RC4_128_SHA256
+   
+   TLS_ECDHE_RSA_WITH_3DES_EDE_CBC_SHA -->
+   ECDHE_RSA_3DES_EDE_CBC_SHA256
+   
+   TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256 -->
+   ECDHE_RSA_AES_128_CBC_SHA256
+   
+   TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256 -->
+   ECDHE_RSA_AES_128_GCM_SHA256
+   
+   TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384  -->
+   ECDHE_RSA_AES_256_CBC_SHA384
+   
+   TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 -->
+   ECDHE_RSA_AES_256_GCM_SHA384
+   
+   TLS_ECDHE_RSA_WITH_NULL_SHA -->
+   ECDHE_RSA_NULL_SHA256
+   
+   TLS_ECDHE_RSA_WITH_RC4_128_SHA -->
+   ECDHE_RSA_RC4_128_SHA256
+   
+   SSL_RSA_WITH_3DES_EDE_CBC_SHA -->
+   TLS_RSA_WITH_3DES_EDE_CBC_SHA
+   
+   TLS_RSA_WITH_AES_128_CBC_SHA -->
+   TLS_RSA_WITH_AES_128_CBC_SHA
+   
+   TLS_RSA_WITH_AES_128_CBC_SHA256 -->
+   TLS_RSA_WITH_AES_128_CBC_SHA256
+   
+   TLS_RSA_WITH_AES_128_GCM_SHA256 -->
+   TLS_RSA_WITH_AES_128_GCM_SHA256
+   
+   TLS_RSA_WITH_AES_256_CBC_SHA -->
+   TLS_RSA_WITH_AES_256_CBC_SHA
+   
+   TLS_RSA_WITH_AES_256_CBC_SHA256 -->
+   TLS_RSA_WITH_AES_256_CBC_SHA256
+   
+   TLS_RSA_WITH_AES_256_GCM_SHA384 -->
+   TLS_RSA_WITH_AES_256_GCM_SHA384
+   
+   SSL_RSA_WITH_DES_CBC_SHA -->
+   TLS_RSA_WITH_DES_CBC_SHA
+   
+   TLS_RSA_WITH_NULL_SHA256 -->
+   TLS_RSA_WITH_NULL_SHA256
+   
+   SSL_RSA_WITH_RC4_128_SHA -->
+   TLS_RSA_WITH_RC4_128_SHA256
+   
+   
+   
+   Due to import regulations in some countries, some JRE
+   providers supply default cryptographic jurisdiction policy
+   files that limit the strength of cryptographic algorithms, for
+   example cipher suites that use AES_256.  To use these
+   restricted cipher suites, installation of the JCE Unlimited
+   Strength Jurisdiction Policy files is required.
+   
+   If your JRE does not ship these files by default please obtain
+   the unlimited strength policy files from your JRE vendor.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   This issue affects users of non-IBM runtime environments, such
+   as Oracle, who are trying to use TLS ciphers to secure the
+   connections between a WebSphere MQ classes for Java or WebSphere
+   MQ classes for JMS application and a WebSphere MQ queue manager.
+   
+   
+   Platforms affected:
+   MultiPlatform
+   
+   ****************************************************************
+   PROBLEM DESCRIPTION:
+   Although the WebSphere MQ Knowledge Centre contained a list of
+   CipherSuite to CipherSpec mappings for both the SSL and TLS
+   protocols, only the SSL protocol CipherSuites could be used in
+   non-IBM Java runtime environments, such as Oracle.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  WebSphere MQ classes for Java or classes for JMS clients running
+   in non-IBM Java runtime environments, such as Oracle, can now
+   use the TLS CipherSuite to CipherSpec mappings as detailed in
+   the mappings table relevant to the version of the client in use.
+   
+   To enable these non-default mappings for non-IBM runtime
+   environments, the following Java System Property:
+   
+     com.ibm.mq.cfg.useIBMCipherMappings
+   
+   must be set to the value:
+   
+     false
+   
+   For example, this can be configured by using the JVM argument:
+   
+     -Dcom.ibm.mq.cfg.useIBMCipherMappings=false
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+   Version    Maintenance Level
+   v7.0       7.0.1.13
+   v7.1       7.1.0.7
+   v7.5       7.5.0.5
+   v8.0       8.0.0.2
+   
+   The latest available maintenance can be obtained from
+   'WebSphere MQ Recommended Fixes'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037]
+   
+   If the maintenance level is not yet available information on
+   its planned availability can be found in 'WebSphere MQ
+   Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV66840
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ LIN X86 V7
+   
+   
+ * REPORTED COMPONENT ID
+   5724H7224
+   
+   
+ * REPORTED RELEASE
+   701
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-11-12
+   
+   
+ * CLOSED DATE
+   2015-02-03
+   
+   
+ * LAST MODIFIED DATE
+   2015-12-11
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ LIN X86 V7
+   
+   
+ * FIXED COMPONENT ID
+   5724H7224
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R701 PSY
+   UP

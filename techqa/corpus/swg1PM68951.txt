@@ -1,0 +1,160 @@
+Title: IBM PM68951: 8.5 ARSDB -VI GETS DSNT408I SQLCODE = -104 WHEN IMPORTING A FILE CREATED BY AN 8.4.1 ARSDB - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  arsdb -vi receives
+   ARS0013E DB Error: {DB2 FOR OS/390}{ODBC DRIVER}{DSN09015}
+    DSNT408I SQLCODE = -104, ERROR:  ILLEGAL SYMBOL "-". SOME
+   SYMBOLS THAT MIGHT BE
+             LEGAL ARE: SELECT (
+    DSNT418I SQLSTATE   = 42601 SQLSTATE RETURN CODE
+    DSNT415I SQLERRP    = DSNHPARS SQL PROCEDURE DETECTING ERROR
+    DSNT416I SQLERRD    = 3  0  0  -1  34  502 SQL DIAGNOSTIC
+   INFORMATION
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All Content Manager OnDemand 8.5.0           *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Running an 8.5 arsdb -iv using a file   *
+   *                      created by a pre 8.5 arsdb -xv receives *
+   *                                                              *
+   *                      ARS0013E DB Error: {DB2 FOR OS/390}     *
+   *                       {ODBC DRIVER}{DSN09015}                *
+   *                       DSNT408I SQLCODE = -104, ERROR:        *
+   *                       ILLEGAL SYMBOL "-". SOME SYMBOLS THAT  *
+   *                       MIGHT BE LEGAL ARE: SELECT             *
+   *                       DSNT418I SQLSTATE   = 42601 SQLSTATE   *
+   *                                RETURN CODE                   *
+   *                       DSNT415I SQLERRP    = DSNHPARS SQL     *
+   *                                PROCEDURE DETECTING ERROR     *
+   *                       DSNT416I SQLERRD    = 3  0  0  -1  34  *
+   *                                502 SQL DIAGNOSTIC            *
+   *                                INFORMATION                   *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   ARNMVSIE was not properly converting the column names from a
+   pre-8.5 export file to Unicode.  This caused the generated SQL
+   to be invalid resulting in an SQLCODE -104
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  ARNMVSIE is changed to correctly convert the columns
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM68951
+   
+   
+ * REPORTED COMPONENT NAME
+   CM OD Z/OS, OD/
+   
+   
+ * REPORTED COMPONENT ID
+   5655H3900
+   
+   
+ * REPORTED RELEASE
+   850
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-07-16
+   
+   
+ * CLOSED DATE
+   2012-08-14
+   
+   
+ * LAST MODIFIED DATE
+   2012-09-05
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UK81069
+   
+   
+
+MODULES/MACROS
+ *  ARNMVSIE
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CM OD Z/OS, OD/
+   
+   
+ * FIXED COMPONENT ID
+   5655H3900
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R850 PSY UK81069 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK81069]
+   UP12/08/16 P F208
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

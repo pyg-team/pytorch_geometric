@@ -1,0 +1,70 @@
+Title: IBM Must Gather for IBM SPSS License Issues - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ What files or information can be gathered for submission to IBM SPSS Technical Support when facing a license problem with IBM SPSS products? 
+
+SYMPTOM
+error 11, 4. no license found. symptom 18
+
+
+RESOLVING THE PROBLEM
+Please provide as much of the following information as possible when opening the new PMR to IBM SPSS Technical Support 
+
+Required Environment Details: 
+
+• Operating system and bitness levels running IBM SPSS client (Example: Windows 7 64-bit or Macintosh OS X 10.9.2) 
+
+• Operating system and bitness levels running IBM SPSS Server if installed (Example: Windows 2008 R2 64-bit) 
+
+• Operating system and bitness levels running Sentinel RMS License Manager if concurrent installation (Example: Windows 2008 R2 64-bit) 
+
+• Exact version of IBM SPSS (Example for Text Analysis for Surveys: 4.0.1.1. To locate this information, launch IBM SPSS program and click Help->About) 
+
+• Exact version of Sentinel RMS License Manager if concurrent installation, (Example: 8.5.0.0021.) 
+
+• Authorization code used for installation. If you do not have one or need one created, please contact SPSS Client Care. 
+
+
+Detailed Problem Description: 
+
+• Is your issue related to an authorized installation of Statistics or concurrent installation? 
+
+• What is the exact problem you are experiencing, include as much detail as possible. 
+
+• Are you receiving an error? If so, list the exact text of the error message and when you receive it. 
+
+• Has it worked before? When? What has changed?
+
+• Does the problem occur for all users? If not, what might be different between the users? Does it occur for the same user on a different PC? Replication Scenario 
+
+• Is there a replication scenario? Please list detailed replication steps 
+
+• Can the issue be reproduced using one of our sample files? 
+
+ 
+
+Link to Supported Version Information: 
+
+http://www-969.ibm.com/software/reports/compatibility/clarity/index.jsp [http://www-969.ibm.com/software/reports/compatibility/clarity/index.jsp] 
+
+Link to Support Knowledge Base: 
+
+http://www-947.ibm.com/support/entry/portal/support [http://www-947.ibm.com/support/entry/portal/support]
+
+
+Link to Documentation 
+
+http://www-947.ibm.com/support/entry/portal/support [http://www-947.ibm.com/support/entry/portal/support]
+
+Most Frequently Used Technotes: 
+
+1613190, 1613684, 1489749, 16094851609485
+
+
+
+[/support/docview.wss?uid=swg21695583&amp;aid=1] [/support/docview.wss?uid=swg21695583&amp;aid=1] [/support/docview.wss?uid=swg21695583&amp;aid=1] [/support/docview.wss?uid=swg21695583&amp;aid=1] [/support/docview.wss?uid=swg21695583&amp;aid=1] [/support/docview.wss?uid=swg21695583&amp;aid=1] RELATED INFORMATION
+ Need more help? Our Statistics forum is Live! [https://developer.ibm.com/answers/topics/statistics.html?smartspace=predictive-analytics]
+Need more help? Our Licensing forum is Live! [https://developer.ibm.com/answers/topics/spsslicensing.html]

@@ -1,0 +1,140 @@
+Title: IBM HC95702: WE CANNOT SET WORD WRAP TO OFF AS A DEFAULT - United States
+
+Text:
+AIX SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS UNREPRODUCIBLE.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  scenario:
+   1- Open one of the CATDrawing file
+   2- Select the text Icon
+   3- Key in the following text:
+   This line is over 5 characters long
+   4- MB3 on the new piece of text and select properties + text
+   table
+   5- TURN THE WORD WRAP OPTION OFF
+   6- MB3 on the modified text and select - set as default
+   7- Select only user default option and create a new piece of
+   text
+   Note: the word wrap is still on and the set as default was
+   not adopted.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *   INCIDENT DIAGNOSIS:
+   This problem can be reproduced on V5R7 and V5R8.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *  THE PROBLEM WAS SUBMITTED ON :
+       CATIA VERSION 5 RELEASE 7
+   .
+   THIS PROBLEM IS NOT REPRODUCIBLE ON :
+       CATIA VERSION 5 RELEASE 10 GA level AND ON V5R*SP**
+   
+    REASON:
+   It has been corrected and does not occur on V5R9 SP1 and V5R10.
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   HC95702
+   
+   
+ * REPORTED COMPONENT NAME
+   CATIA V5/NT/200
+   
+   
+ * REPORTED COMPONENT ID
+   569151000
+   
+   
+ * REPORTED RELEASE
+   507
+   
+   
+ * STATUS
+   CLOSED UR3
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2002-07-01
+   
+   
+ * CLOSED DATE
+   2002-07-19
+   
+   
+ * LAST MODIFIED DATE
+   2002-07-19
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CATIA V5/NT/200
+   
+   
+ * FIXED COMPONENT ID
+   569151000
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R507 PSN
+   UP
+   
+   
+ * R508 PSN
+   UP
+   
+   
+ * R509 PSN
+   UP

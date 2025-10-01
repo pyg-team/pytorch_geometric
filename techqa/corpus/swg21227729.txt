@@ -1,0 +1,49 @@
+Title: IBM Using the Java JAR command to unpack ZIP files can change file permissions - United States
+
+Text:
+install; unzip; "jar -xvf"; bootStrapWCCMFiles.ant; java jar; jar; .zip; WebSphere TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Unpacking WebSphere Application Server install images, fix packs, refresh packs, and cumulative fixes that have been provided in a ZIP file format on a UNIX environment using the Java JAR command can cause the file permissions to change. The execute file permissions can be removed. 
+
+SYMPTOM
+Installation of WebSphere Application Server can fail because the execute file permissions have been removed. The result can be a failure to complete the configuration updates to WebSphere Application Server during the final stages of the installation or update.
+
+Examples of the type of errors that can occur are: 
+
+ * From the log.txt file:
+   
+   (Jan 11, 2006 11:05:36 AM), Install, com.ibm.ws.install.ni.ismp.actions.ISMPConfigManagerLaunchAction, msg1, INSTCONFSUCCESS: Post-installation configuration is successful.
+   (Jan 11, 2006 11:05:48 AM), Install, com.ibm.ws.install.ni.ismp.actions.ISMPWSProfileLaunchAction, err, INSTCONFFAILED: Cannot complete required configuration actions after the installation. The configuration failed. The installation is not successful. Refer to /opt/IBM/WebSphere/AppServer/logs/wasprofile/wasprofile_create_default.log for more details.
+   (Jan 11, 2006 11:05:48 AM), Install, com.ibm.ws.install.ni.ismp.actions.ISMPLogFileAction, msg1, The Profile Creation Tool (PCT) has finished.
+   (Jan 11, 2006 11:05:48 AM), Install, com.ibm.ws.install.ni.ismp.actions.ISMPLogSuccessMessageAction, msg1, INSTCONFFAILED
+   
+   
+ * From the wasprofle_create_default.log file:
+   
+   <message>Configuration action failed: com.ibm.ws.install.configmanager.actionengine.ANTAction-/opt/IBM/WebSphere/AppServer/profileTemplates/default/actions/bootStrapWCCMFiles.ant</message>
+   ...
+   <message>Creation of profile default at path /opt/IBM/WebSphere/AppServer/profiles/default failed.</message>
+   ...
+   <message>INSTCONFFAILED: Cannot create profile: The profile does not exist.</message>
+
+
+CAUSE
+In this particular situation, the WebSphere Application Server V6.0 base install image provided for this UNIX environment was provided as a ZIP file. The image ZIP file was unpacked on the UNIX server using the Java JAR command: 
+
+jar -xvf <image.zip>
+
+The use of the Java JAR command resulted in the loss of execute permissions in the Java directory. When the installation of WebSphere Application Server V6.0 was initiated, it failed with the messages indicated above.
+
+RESOLVING THE PROBLEM
+The same install ZIP image was unpacked using the unzip utility provided by the operating system. The file was unpacked with the following command:
+
+unzip <image.zip>
+
+Once unpacked, the execute permissions in the Java directory were verified as now having the proper execute permissions. The installation of WebSphere Application Server was initiated and completed successfully. 
+
+ 
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Application Servers Runtimes for Java Technology Java SDK

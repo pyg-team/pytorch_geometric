@@ -1,0 +1,25 @@
+Title: IBM Cognos Report Studio or other studios don't open in IE8 - United States
+
+Text:
+IBM Cognos BI Microsoft IE8 Report Studio Event Studio open x-frame-options deny IIS TECHNOTE (FAQ)
+
+QUESTION
+ If IBM Cognos Report Studio or other Studios like Event Studio open successfully in Firefox, but not in IE8 or newer browsers from Microsoft, what could be the cause, and how to prevent that from happening? 
+
+CAUSE
+New security feature in IIS which is used in IE8 and newer
+
+ANSWER
+Check your IIS web server settings for an entry like: 
+
+X-Frame-Options: Deny 
+
+This is a new security feature of IIS which is used from IE8 and newer Microsoft browsers to prevent "clickjacking". Simply removing this at least for the local (intranet) domains will solve the issues with IBM Cognos BI studios.
+
+Instructions how-to control the setting can be found on the following Microsoft Pages:
+http://support.microsoft.com/kb/2694329 [http://support.microsoft.com/kb/2694329]
+http://blogs.msdn.com/b/ieinternals/archive/2010/03/30/combating-clickjacking-with-x-frame-options.aspx [http://blogs.msdn.com/b/ieinternals/archive/2010/03/30/combating-clickjacking-with-x-frame-options.aspx]
+
+RELATED INFORMATION
+ MSDN page for IE8 (English) [http://msdn.microsoft.com/en-us/library/cc288472%28v=vs.85%29.aspx#_replace]
+MSDN page for IE8 (German) [http://msdn.microsoft.com/de-de/library/cc288472%28v=vs.85%29.aspx#Sicherheit_und_Datenschutz]

@@ -1,0 +1,77 @@
+Title: IBM When attempting to install a second Portal 8.5 instance on the same machine you receive the error, "ERROR: Error executing the work flow.  Step 'Basic Config' FAILED!" - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+In this case, the customer had a business requirement that required installing 2 separate Portal installs on the same AIX machine. The first instance of Portal installed successfully. However, the second Portal instance failed during install with the following error....
+
+ERROR: Error executing the work flow. Step 'Basic Config' FAILED!.
+Check the logs for additional error messages.
+[/opt/wps85/scm/PortalServer/installer/wp.
+config/wizard/repository/repository_actions.xml:622]
+
+SYMPTOM
+The IIM logs shows the following...
+[04/02/2015 17:29:30] PLPR0013I: Saving Console Enterprise Application
+[04/02/2015 17:29:30] PLPR0014I: Closing Console Enterprise Application
+[04/02/2015 17:29:48] PLPR0003I: Opening Console Enterprise Application
+- /opt/was85/base/scm/systemApps/isclite.ear
+[04/02/2015 17:30:01] PLPR0014I: Closing Console Enterprise Application
+
+StdErr: </message>
+</entry>
+<entry num='1037' time='1428010201865' elapsed='58:37.48' level='INFO'
+thread='Worker-1'>
+<logger>global</logger>
+<class>com.ibm.cic.agent.internal.core.IMLoggerImpl</class>
+<method>info</method>
+<message>Reset current process umask from 022 to 022.</message>
+</entry>
+<entry num='1038' time='1428010201937' elapsed='58:37.55' level='ERROR'
+uid='CRIMA1217E' thread='Worker-1'>
+<logger>com.ibm.cic.common.logging.LogManager</logger>
+<class>org.eclipse.equinox.log.internal.ExtendedLogReaderServiceFactory
+</class>
+<method>safeLogged</method>
+<message>
+<key>A problem occurred during the execution of the {0} file.
+ERROR: Error executing the work flow. Step 'Basic Config' FAILED!.
+Check the logs for additional error messages.
+[/opt/wps85/scm/PortalServer/installer/wp.config/wizard/repository/repos
+itory_actions.xml:622]
+
+A package has an issue that cannot be resolved by Installation Manager.
+Identify the package that has the issue by looking at the installation
+history. In Installation Manager, click File &gt; Installation History.
+In console mode, enter S: View Installation History. Contact IBM
+customer support.</key>
+
+<arg>/opt/wps85/scm/PortalServer/installer/wp.config/wizard/repository/r
+epository_actions.xml</arg>
+</message>
+</entry>
+</log>
+
+
+CAUSE
+In this case, the problem was caused by the fact that the first Portal install was still running when the second Portal install was attempted
+
+
+ENVIRONMENT
+Portal 8.5 
+
+AIX
+
+
+DIAGNOSING THE PROBLEM
+Further review of the IIM logs earlier in the install sequence shows the following message.. 
+
+
+ERROR 06:32.98 Running processes have been detected that may
+interfere with the current operation. Stop all WebSphere and related
+processes before continue.
+
+
+RESOLVING THE PROBLEM
+Stop all WebSphere processes on the machine and attempt to install the second Portal instance again

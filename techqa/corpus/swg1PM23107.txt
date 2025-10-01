@@ -1,0 +1,118 @@
+Title: IBM PM23107: CQWeb (IHS) leaks server type and version in its response messages. - United States
+
+Text:
+AIX SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PERMANENT RESTRICTION.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The default settings in the IHS installed with CQWeb 7.1.x are
+   such that the response messages from the CQWeb server include
+   the HTTP server type and version in their headers.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   The default settings in the IBM HTTP SERVER (IHS) installed
+   with IBM Rational ClearQuest 7.1.x are such that the
+   response messages from the ClearQuest Web server include the
+   HTTP server type and version in their headers.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The IBM HTTP Server (IHS) configuration as installed with
+   ClearQuest follows the standard IHS installation
+   configuration. Technote # 1497838 has been created to point
+   out this configuration issue and describes how it can be
+   addressed.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM23107
+   
+   
+ * REPORTED COMPONENT NAME
+   CLEARQUEST UNIX
+   
+   
+ * REPORTED COMPONENT ID
+   5724G3601
+   
+   
+ * REPORTED RELEASE
+   711
+   
+   
+ * STATUS
+   CLOSED PRS
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-09-23
+   
+   
+ * CLOSED DATE
+   2011-05-23
+   
+   
+ * LAST MODIFIED DATE
+   2011-05-23
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

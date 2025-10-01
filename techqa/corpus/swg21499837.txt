@@ -1,0 +1,46 @@
+Title: IBM Unable to install fix pack - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ US English 
+
+QUESTION
+ Why am I not able to install fix pack? 
+
+CAUSE
+Having different version of installer and a component
+
+ANSWER
+Sometimes the installation fails by throwing the following error messages:
+
+
+1) GYMCI9023W - No differences were found between desired topology state and current state of proviso installation. 
+
+2) GYMC19036E - Unable to perform installation because the host computer is not included in the model defined in the topology.xml 
+file. 
+
+We get similar error message while we are installing a fix pack on a server which has different component version and different component installer version. 
+
+ 
+
+For example:
+Application Component Version Build Registration Date 
+-------------------------------------------------------------------------------------------------------------------------------------
+DL SNMP.4.20 4.4.3.3.8 App Ginger.265.30; Lib Ginger.2010.09.24 03:40:10 
+INST Dataload.HNPROVISODL1 4.4.3.2 00 2009.11.08 14:28:56 
+
+In the above example, it is clear that DL of version 4.4.3.3.8 and it's INSTaller of version 4.4.3.2.
+In this case if you try to install 4.4.3.3-TIV-PROV-IFXXXX then it would fail with the above error messages.
+
+We probably got in to this situation because of one of these reasons:
+We installed 4432 DL using a 4433 deployer
+We installed 4433 DL but decided to back it down to 4432.
+
+Please note there are lots of other reasons for fix pack failure and this one of the important reason to consider.
+
+
+We need to do one of these to resolve this issue::
+1) Upgrade the DL installation to 4433 (./deployer -DTarget=DLU -DUsehostname=x [and we will have to do it on each DL host]) (Recommended)
+2) Modify our INST DL registration entry so it is 4432 and request IBM for 4432 fix.

@@ -1,0 +1,64 @@
+Title: IBM How to change the JDBC connection from DB2 Universal JDBC driver Provider (XA) to regular DB2 Universal JDBC driver provider. - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ In InfoSphere Warehouse, how can I change the JDBC connection from DB2 Universal JDBC Driver Provider (XA) to the regular DB2 Universal JDBC driver provider? 
+
+CAUSE
+The default JDBC connection in WebSphere Application Servier is using the DB2 Universal JDBC Driver Provider (XA). 
+
+When you use InfoSphere Warehouse features such as import or export on the database server, rather than import or export from the client, the runtime environment calls a stored procedure called ADMIN_CMD. This procedure is not compatible with XA transactions and will fail. That's why some customer has to change their JDBC connection from DB2 Universal JDBC Driver Provider (XA) to regular DB2 Universal JDBC driver provider, which is also called a non-XA provider.
+
+
+ANSWER
+To update the data source there are two configuration changes that you must make : 
+
+ 
+
+ 1. Delete and recreate the WebSphere Application Server data source to switch to the regular DB2 Universal JDBC driver provider. 
+ 2. Update the InfoSphere Warehouse metadata tables to indicate that the data source uses the normal DB2 connection and not the XA provider.
+
+
+To update the WebSphere data source from the Integrated Solutions Console : 
+
+1. Navigate to the Resources > JDBC Providers page and confirm that there is a data source provider named DB2 Universal JDBC Driver Provider. 
+
+If there is no DB2 Universal JDBC Driver Provider then you must create one by clicking New. Use the following settings:  * Use a scope that is something like this: Node=<server>Node01 
+ * Database Type = DB2. 
+ * Provider Type = DB2 Universal JDBC Driver Provider. 
+ * Implementation Type = Connection pool data source. The name should be filled in automatically as DB2 Universal JDBC Driver Provider. This string is used later in the setup.
+
+
+2. Navigate to the Resources > JDBC > Data Sources page. 
+
+3. Locate the data source that you need to convert and click on the data source name. Record the Name, JNDI name, component managed authentication alias, database name, server and port. 
+
+4. Navigate back to the Resource > JDBC > Data Source page. 
+
+5. Click the check box beside the data source to be deleted and click the Delete button. When you are prompted, save the Master Configuration. 
+
+6. Now click on the "New" button in order to create a new data source. Use a scope this looks like this: Node= <server> Node01Cell:nodes: <server> Node01 
+
+7. Enter the Data source name, JNDI name and choose the authentication alias recorded in step 2. 
+
+8. Select the existing JDBC provider named DB2 Universal JDBC Driver Provider. 
+
+9. Fill in the connection information for the database. 
+
+10. Verify the information and save the configuration. 
+
+
+To update the metadata in the DWECTRL database. 
+
+Back up the DWECTRL database before updating it. Minimally, you can export the contents of the DWEREPOS.ABX_PROPERTY_MAP tables, but a full database backkup is preferred. The following DB2 statements show how to convert the JDBC provider in the metadata database. You can use these examples by changing the JNDI name in the update statement. 
+
+CONNECT TO DWECTRL 
+
+UPDATE DWEREPOS.ABX_PROPERTY_MAP set VALUE = 'DB2 Universal JDBC Driver Provider'
+WHERE PROPERTY = 'jdbcprovider' and ID = ( SELECT ID FROM DWEREPOS.ABX_PROPERTY_MAP where 
+PROPERTY = 'jndiname' and value = 'jdbc/DWECTRL' )
+
+
+ The JDBC provider is converted from the XA version to the regular DB2 Universal JDBC driver provider.

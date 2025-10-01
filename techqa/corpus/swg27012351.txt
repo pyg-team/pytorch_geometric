@@ -1,0 +1,68 @@
+Title: IBM System Requirements for IBM WebSphere Product Center, Version 5.3.2, on Sun Solaris - United States
+
+Text:
+DSRdoc PRODUCT DOCUMENTATION
+
+ABSTRACT
+ This document contains system requirements for IBM® WebSphere® Product Center, Version 5.3.2, on the Sun Solaris operating system. 
+
+CONTENT
+ 
+
+This document describes the minimum product levels that need to be installed before opening a problem report with the WebSphere Product Center support team.
+
+The system requirements for WebSphere Product Center vary based on the scope and scale of your product information management (PIM) system. 
+
+You must set up both a client system and one or more server systems. The application server, database server, and HTTP server can all be on the same server machine, they can be combined together on server machines, or they can each be on their own server machine. The HTTP server is recommended, but optional, software.
+
+The following lists identify the products that are supported when IBM WebSphere Product Center runs on the Sun Solaris operating system.
+
+Application Server Requirements
+
+
+
+Operating Systems [/support/docview.wss?uid=swg27012351&amp;aid=1]  * Sun Solaris 9 
+ * Sun Solaris 10
+   
+
+Hardware Requirements [/support/docview.wss?uid=swg27012351&amp;aid=1]  * UltraSPARC-based system, with at least 2 - 4 processor cores (based on CPU speed) 
+ * RAM: 6 GB 
+ * Disk space: 50 GB
+
+
+Note: These hardware requirements represent the minimum hardware requirements for a small PIM system with less than 50,000 items supporting 10-20 concurrent users. You need to work with the IBM professional services team to determine the appropriate hardware requirements for your specific environment and PIM system.
+
+For performance reasons, try to use a gigabit network between the server machines when the appserver, workflow engine, or scheduler services and the database server are on different server machines. The performance of WebSphere Product Center is sensitive to any network latency between any of its server processes (appserver, workflow engine, and scheduler services) and the database. Application Server [/support/docview.wss?uid=swg27012351&amp;aid=1]  * IBM WebSphere Application Server Network Deployment, Version 6.0.2 (32-bit only) (See the documentation [http://publib.boulder.ibm.com/infocenter/wasinfo/v6r0/topic/com.ibm.websphere.nd.doc/info/welcome.html]) 
+ * BEA WebLogic Server 8.1, SP2 (32-bit only) [http://e-docs.bea.com/wls/docs81/]
+   Note: If you use WebLogic Server, you must use an Oracle database.
+   
+
+Java™ Development Kit [/support/docview.wss?uid=swg27012351&amp;aid=1]  * IBM Developer Kit, Java Technology Edition Version 1.4.x, which is shipped with WebSphere Application Server 
+ * Java Development Kit that is shipped with BEA WebLogic Server
+   
+
+Java Database Connectivity (JDBC) Drivers [/support/docview.wss?uid=swg27012351&amp;aid=1]  * Oracle JDBC Driver (ojdbc14.jar), version 10.2.0.1 
+   Note: You must use this JDBC driver (and this exact version) to connect to both Oracle 9i and 10g databases. Later versions will cause problems when using WebSphere Product Center. 
+   
+
+HTTP Server [/support/docview.wss?uid=swg27012351&amp;aid=1]  * IBM HTTP Server, Version 2 or later
+   Note: The WebSphere Application Server plug-in must match he version of WebSphere Application Server that you use for WebSphere Product Center. 
+ * Apache HTTP Server, Version 2
+
+
+
+Database Server Requirements 
+
+Operating Systems [/support/docview.wss?uid=swg27012351&amp;aid=1]  * Sun Solaris 9 
+ * Sun Solaris 10
+   
+
+Hardware Requirements [/support/docview.wss?uid=swg27012351&amp;aid=1]  * UltraSPARC-based system, with at least 4 processor cores 
+ * RAM: 8 GB 
+ * Disk space: 100-200 GB, in a RAID configuration
+   
+
+Database Server [/support/docview.wss?uid=swg27012351&amp;aid=1]  * Oracle 9i Enterprise Edition, version 9.2.0.8 or above (for AIX 5L Version 5.2 only) (32-bit or 64-bit). (See the documentation [http://www.oracle.com/technology/documentation/oracle9i.html]) [http://www-1.ibm.com/support/docview.wss?rs=2006&context=SSNJBH&dc=DB520&uid=swg21265029&loc=en_US&cs=utf-8&lang=en]
+   Note: You must use the Oracle 10g client to connect to this database. 
+ * Oracle 10g V2 Enterprise Edition, version 10.2.0.1 or above (32-bit or 64-bit). (See the documentation [http://www.oracle.com/technology/documentation/database10gR2.html]) [http://www-1.ibm.com/support/docview.wss?rs=2006&context=SSNJBH&dc=DB520&uid=swg21265029&loc=en_US&cs=utf-8&lang=en]
+   Note: You must use the Oracle 10g client to connect to this database.

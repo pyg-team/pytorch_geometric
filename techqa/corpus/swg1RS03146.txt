@@ -1,0 +1,169 @@
+Title: IBM RS03146: NULL POINTER EXCEPTION AFTER CLICKING ON SIMULATION IF NO DATA WAS PRESENT IN THE LATEST SIMULATION RUN - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When opening a simulation the page keep loading for ever. In
+   the server side you can see the stack trace below. The reason
+   is that in the database table VSREPORT the latest report has
+   its ERRORSCENARIOCOUNT to null.
+   In the SimulationHelper.getSuccessRate() we have the following
+   code:
+   
+   if (IlrReportStatusKind.STARTED_LITERAL.equals(status)
+                   ||
+   IlrReportStatusKind.STARTING_LITERAL.equals(status)
+                   ||
+   IlrReportStatusKind.FAILED_LITERAL.equals(status)) {
+         return Double.valueOf(0d);
+   }
+   Integer nbTests = report.getEstimatedScenarioCount();
+   if (nbTests == null || nbTests == 0) {
+        return Double.valueOf(0d);
+   }
+   int nbErrors = report.getErrorScenarioCount();
+   return Double.valueOf((double)(nbTests - nbErrors)/nbTests);
+   
+   The getErrorScenarioCount() return an Integer, with java
+   unboxing we got the NPE getErrorScenarioCount().intValue()
+   
+   Caused by: java.lang.NullPointerException
+   at
+   com.ibm.rules.decisioncenter.web.core.simulation.SimulationHelpe
+   r.getSuccessRate(SimulationHelper.java:559)
+   at
+   com.ibm.rules.decisioncenter.web.core.simulation.SimulationServi
+   ce.getLastReportInfo(SimulationService.java:415)
+   at
+   com.ibm.rules.decisioncenter.web.core.simulation.SimulationConfi
+   gurationEditView.getViewData(SimulationConfigurationEditView.jav
+   a:132)
+   at
+   com.ibm.rules.decisioncenter.web.core.simulation.SimulationConfi
+   gurationEditView.getViewData(SimulationConfigurationEditView.jav
+   a:42)
+   at
+   com.ibm.rules.decisioncenter.web.core.services.ViewHandlerServic
+   e.getViewData(ViewHandlerService.java:108)
+   at
+   com.ibm.rules.decisioncenter.web.core.ApplicationController.doVi
+   ewData(ApplicationController.java:242
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * Users in the decision center                                 *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * When opening a simulation the page keep loading for ever. In *
+   * the server side you can see the stack trace below. The       *
+   * reason is that in the database table VSREPORT the latest     *
+   * report has its ERRORSCENARIOCOUNT to null.                   *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The code was fixed.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   RS03146
+   
+   
+ * REPORTED COMPONENT NAME
+   WS DECISION CTR
+   
+   
+ * REPORTED COMPONENT ID
+   5725B6900
+   
+   
+ * REPORTED RELEASE
+   890
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2018-07-18
+   
+   
+ * CLOSED DATE
+   2018-07-19
+   
+   
+ * LAST MODIFIED DATE
+   2018-07-19
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WS DECISION CTR
+   
+   
+ * FIXED COMPONENT ID
+   5725B6900
+   
+   
+
+APPLICABLE COMPONENT LEVELS

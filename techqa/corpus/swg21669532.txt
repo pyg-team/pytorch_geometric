@@ -1,0 +1,109 @@
+Title: IBM Unable to Enter Storeroom on PO - United States
+
+Text:
+TPAECUSTOMIZATION; TPAEPURCHASE; MAXLOOKUPMAP; storeroom; BMXAA4146E; Not a valid GL account; Either the required components; Make sure the GL account value is entered in the appropriate format as defined in the GL Account application; BMXAA4107E; Because of an implementation or customization problem; system cannot determine how the attributes of object; correspond to the attributes of object; You might need to populate the MAXLOOKUPMAP; invcost TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Mapping problem and incorrect GL account in INVCOST prior to the upgrade. 
+
+SYMPTOM
+Steps: 
+
+ 1. Create a new PO. 
+ 2. Go to PO lines tab. 
+ 3. Create a new POLINE. Enter any valid item. 
+ 4. Select a valid storeroom. 
+
+
+Receive error: 
+BMXAA4146E - Not a valid GL account. Either the required components are not filled or the component values are not valid. Make sure the GL account value is entered in the appropriate format as defined in the GL Account application. 
+
+[/support/docview.wss?uid=swg21669532&aid=1] [/support/docview.wss?uid=swg21669532&aid=1] 
+
+Excerpt from log 
+
+07 Apr 2014 10:24:38:781 [INFO] [MXServer] BMXAA6719I - USER = (MAXADMIN) SPID = (34) app (null) object (LOCATIONS) : select * from locations where ((location like '%1234%')) and (status not in ( 'BROKEN' , 'DECOMMISSIONED' , 'INACTIVE' , 'MISSING' , 'SEALED' ) and ((1=1) and type in ( 'STOREROOM' )) and siteid = 'BEDFORD' and ( ( not exists ( select 1 from inventory where itemnum= '1234' and location=locations.location and siteid= 'BEDFORD' and itemsetid = 'ITEMSET' )) or location in ( select location from inventory where itemnum = '1234' and location = locations.location and siteid = 'BEDFORD' and itemsetid = 'ITEMSET' and status in ( 'ACTIVE' , 'PLANNING' , 'PENDOBS' )) )) and (rownum<=1000) 
+
+07 Apr 2014 10:24:52:109 [WARN] [MXServer] [] BMXAA4107E - Because of an implementation or customization problem, the system cannot determine how the attributes of object POLINE correspond to the attributes ORGID,GLACCOUNT of object CHARTOFACCOUNTS. You might need to populate the MAXLOOKUPMAP table and restart the server. 
+at psdi.mbo.Mbo.getMatchingAttrs(Mbo.java:7482) 
+at psdi.mbo.MAXTableDomain.getMatchingAttrs(MAXTableDomain.java:567) 
+at psdi.mbo.MAXTableDomain.validate(MAXTableDomain.java:128) 
+at psdi.app.financial.FldPartialGLAccount.validate(FldPartialGLAccount.java:103) 
+at psdi.mbo.MboValue.validate(MboValue.java:1696) 
+at psdi.mbo.MboValue.setValue(MboValue.java:888) 
+at psdi.mbo.MboValue._setValue(MboValue.java:1243) 
+at psdi.mbo.MboGLValue._setValue(MboGLValue.java:83) 
+at psdi.mbo.MboValue.setValue(MboValue.java:1139) 
+at psdi.mbo.Mbo.setValue(Mbo.java:2175) 
+at psdi.app.common.purchasing.FldPurStoreloc.getGLWithItemStore(FldPurStoreloc.java:495) 
+at psdi.app.common.purchasing.FldPurStoreloc.action(FldPurStoreloc.java:312) 
+at psdi.mbo.MboValue.validate(MboValue.java:1722) 
+at psdi.mbo.MboValue.setValue(MboValue.java:888) 
+at psdi.mbo.MboValue._setValue(MboValue.java:1243) 
+at psdi.mbo.MboValue.setValue(MboValue.java:1139) 
+at psdi.mbo.Mbo.setValue(Mbo.java:2175) 
+at psdi.mbo.MAXTableDomain.setValueFromLookup(MAXTableDomain.java:486) 
+at psdi.mbo.MAXTableDomain.setValueFromLookup(MAXTableDomain.java:517) 
+at psdi.app.common.purchasing.FldPurStoreloc.setValueFromLookup(FldPurStoreloc.java:91) 
+at psdi.mbo.MboValue.setValueFromLookup(MboValue.java:2554) 
+CAUSE
+The system does not how the attributes of object POLINE (target) correspond to the attributes ORGID,GLACCOUNT of object CHARTOFACCOUNTS (source).
+
+
+RESOLVING THE PROBLEM
+Steps: 
+
+1. Go to the Database Configuration application.
+2. Bring up POLINE.
+3. Click the Attributes tab, filter for STORELOC (the problem field).
+4. Click on the maxlookupmap icon on the right.
+5. Click the New Row button.
+6. Target Attribute = ORGID
+7. Source Object = CHARTOFACCOUNTS
+8. Source Key = ORGID
+9. Sequence = 1
+
+Attach a maxlookupmap to map POLINE.GLDEBITACCT to CHARTOFACCOUNTS.GLACCOUNT as follows:
+
+10. Click New Row button.
+11. Target Attribute = GLDEBITACCT (from poline object)
+12. Source Object = CHARTOFACCOUNTS
+13. Source Key = GLACCOUNT
+14. Sequence = 1
+
+15. Restart the Maximo Application Server for the change to take effect.
+
+If after adding the lookup mapping the same error still comes up, review the log file again. 
+
+ 
+
+Below is an excerpt of the log: 
+
+
+select * from invcost where itemnum = 'ITEM-BAD' and location = 'STORE-A' and siteid = 'BEDFORD' 
+and itemsetid = 'ITEMSET1' and condrate=100
+
+BMXAA4107E - Because of an implementation or customization problem, the system cannot determine how the attributes of object POLINE correspond to the attributes ORGID,GLACCOUNT of object CHARTOFACCOUNTS. You might need to populate the MAXLOOKUPMAP table and restart the server.
+
+Review the GL accounts in the invcost table. 
+
+Compare the GL accounts between the working item and the non-working item by running a query:
+
+select * from invcost where ITEMNUM in ('MAY','ITEM-BAD')
+
+NOTE: If there are no working records to compare, create a new record in Item Masters application. Add the item to a storeroom. Change the status to ACTIVE. 
+
+Run update statement to fix the invcost.controlacc and invcost.glaccount for those problems items
+
+For example:
+
+update invcost set controlacc = '00000-1111-0000', glaccount = '' WHERE itemnum = 'ITEM-BAD';
+
+COMMIT;
+
+After fixing the problem data, user should be able to receive the spare part.
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Systems and Asset Management Tivoli Service Request Manager Systems and Asset Management IBM Maximo Asset Management Essentials Systems and Asset Management Tivoli Change and Configuration Management Database Systems and Asset Management IBM Maximo Asset Management for IT Supplement

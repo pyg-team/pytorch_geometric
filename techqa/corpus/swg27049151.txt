@@ -1,0 +1,79 @@
+Title: IBM Datacap Version 9.1.0 Release Notes - United States
+
+Text:
+release notes; datacap; 9.1.0 RELEASE NOTES
+
+ABSTRACT
+ This Release Notes page contains information about IBM Datacap Version 9.1.0, and changes to the product. 
+
+CONTENT
+Datacap is a complete solution for document and data capture. Datacap scans, classifies, recognizes, validates, verifies, and exports data and document images quickly, accurately and cost effectively. 
+
+---------------------------------------------------------------------------------------------------------------
+Announcement
+---------------------------------------------------------------------------------------------------------------
+In the IBM Datacap 9.1.0 product announcement, learn about new features and changes that were introduced in IBM Datacap 9.1.0, including the following information:
+
+
+ * Detailed product description, including a description of new functionality 
+ * Product-positioning statement 
+ * Packaging and ordering details 
+ * International compatibility information
+
+--------------------------------------------------------------------------------------------------------------- 
+System Requirements 
+--------------------------------------------------------------------------------------------------------------- 
+For information about hardware and software prerequisites, see IBM Datacap 9.1.0 System Requirements [http://www.ibm.com/support/knowledgecenter/SSZRWV_9.1.0/com.ibm.dc.install.doc/sw_comp_reports.htm]. 
+
+--------------------------------------------------------------------------------------------------------------- 
+What's New in IBM Datacap 9.1.0 
+--------------------------------------------------------------------------------------------------------------- 
+The following list is also available in the IBM Datacap Version 9.1.0 documentation in the Knowledge Center [http://www.ibm.com/support/knowledgecenter/en/SSZRWV_9.1.0/com.ibm.datacaptoc.doc/dc_whats_new.htm]. 
+
+Enhancements to the IBM Datacap clients and services 
+
+Support for Thai language 
+
+Added support for Thai language for the OCR activities. To complete OCR activities for this language, you can use the ocr_a actions. 
+Currently, the following applications support Thai language: 
+ * IBM Datacap Navigator 
+ * Application Manager 
+ * Datacap Studio
+
+You can now OCR, Validate, Verify, and Export the Thai text. You can also add and edit DCO object names and variables with the Thai characters in Datacap Studio, and use common action libraries. 
+
+IBM ECM role-based redactions 
+
+Added a new role-based redactions feature. You can use the role-based redaction feature to hide specific sensitive information in a document or image. Also, you can use the new feature to: 
+ * Import redaction reasons (requires IBM Content Navigator Version 3.0, or later) into a Datacap application as redaction template fields. Each template redaction field defines a class of sensitive information that can be searched for and redacted. 
+ * Search the OCR results for sensitive data and automatically create redaction fields over those results. Deploy the RedactFields action in your application to create redaction fields over data that was located using Locate or DocumentAnalytics actions, or any other method. 
+ * Manually create or edit redactions in the Verify task. Resize, move, or delete any existing redaction. 
+ * Make redactions either opaque or transparent while viewing a page. 
+ * Assign and view the reason code for redactions. The reason identifies the type of sensitive content; for example, Social Security Number. 
+ * Export redactions together with the documents to IBM FileNet® P8. These redactions are securely burned-in opaque rectangles when displayed to normal users. Users with role-based permission to view specific redactions can make those rectangles transparent.
+
+
+Added new action in the FileIO action library 
+
+Added an enhancement is added to create a .zip file to store recognition results for every page of the document by using the ZipOcrResults action in the FileIO action library. 
+
+Annotator Enhancements 
+
+The ExtractText action supports AQL external dictionaries, and allows you to compile AQL annotators exported from the IBM InfoSphere® BigInsights web tools. 
+
+--------------------------------------------------------------------------------------------------------------- 
+Issues fixed in IBM Datacap 9.1.0 
+--------------------------------------------------------------------------------------------------------------- 
+
+APAR Number Component Summary IO24620 Datacap Web Both filter and sort on a custom column have no effect when the column contains more than 99 unique values. IO24702 Maintenance Manager The ProcessMoveDBRecords action fails, log shows "Cannot login to application" when using ADSI authentication. IO24735 Datacap Desktop Click "Replace" after selecting a document (not a page) in the batch tree view, the program crashes with an Unhandled Exception. IO24753 Datacap Desktop Starting the verify task in an application based on APT, but named otherwise, the program closes or crashes. IO24779 Datacap Navigator Application error messages displayed as a run-on sentence. IO24786 IMAIL actions Plain text emails with no attachments are ingested with no "body". IO24801 Datacap Navigator Click 'n' key with the mouse fails or selects an incorrect area when the image has non-square resolution. IO24844 Datacap Navigator The start panel does not display the application-generated error messages when validation fails. IO24852 Datacap Desktop / Medical Claims In the verify screen, Medical Claims forms are always displayed with the form overlay, even when they should not display the overlay. IO24977 Datacap Web Intermittently, the QID column becomes disabled in Job Monitor for valid batches when multiple applications are in use. IO24990 mvscan actions (Fixed in 9.0.1 Feature Pack 2) Empty folders are never deleted when they are nested two or more subfolders deep. IO24223 Medical Claims Medical Claims routes valid documents to fixup if the scan task settings have "Create Documents" turned off. IO24992 Datacap Server Intermittently, clients fail to login and receive message that server connection failed on port 2402. IO24993 Datacap Desktop Pressing the line item insert button in the Verify panel has no visible effect when the document contains no line items. 
+--------------------------------------------------------------------------------------------------------------- 
+Known Issues and Limitations 
+---------------------------------------------------------------------------------------------------------------  * When you use the PDFFREDocumentToImage action to convert a PDF file, which contains invalid embedded fonts, to TIFF format, the action fails to convert the PDF file to TIFF format. 
+ * In Datacap Desktop, if you use a virtual scan (vscan) task with the Start Batch Panel option enabled, Datacap Desktop shows an exception or hangs. 
+ * When you log in to an application in IBM Content Navigator using the Google Chrome browser with higher versions, the image is shown in the virtual viewer, and not in applet viewer even though you set an applet viewer for the application in IBM Content Navigator. 
+ * Documents with redactions can be exported to FileNet as single page TIF images. Multi-page documents are supported but each page in Datacap must have a separate TIF file. Datacap 9.1 does not allow redactions on PDF documents, multi-page TIFF images, or other types of image files for upload to FileNet.
+
+
+
+ORIGINAL PUBLICATION DATE
+ 2016/12/16

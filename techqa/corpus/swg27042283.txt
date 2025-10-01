@@ -1,0 +1,126 @@
+Title: IBM Open Mic Webcast: LDAP Configuration - 30 July 2014 - United States
+
+Text:
+STEwebcastDocument; lste_webcast WEBCAST
+
+ABSTRACT
+ IBM hosted an Open Mic Webcast on July 30, 2014. Brandon Kutsch gave a presentation on "LDAP Configuration" and he was joined by several members of the Domino Support and Development teams for Q&A. 
+
+CONTENT
+ 
+
+Presentation OpenMic_LDAP_073014.pdf [/support/docview.wss?uid=swg27042283&aid=2]OpenMic_LDAP_073014.pdf [/support/docview.wss?uid=swg27042283&aid=1] 
+
+
+Audio Replay 
+LDAP Configuration - Open Mic - 30 July 2014 (edited).mp3 [/support/docview.wss?uid=swg27042283&aid=4]LDAP Configuration - Open Mic - 30 July 2014 (edited).mp3 [/support/docview.wss?uid=swg27042283&aid=3] 
+ * 46:18 minutes long 
+ * Q&A begins at 43:30
+
+
+Q&A 
+Q1. Is it possible to do an LDAP lookup where you're querying a group whether an internet address in it? And is it possible that would work with nested groups since there is a size limit on groups? 
+Yes, you could do a boolean operation in your filter. You could do something like, I'm looking for objectclass=dominogroup and something with the email address. 
+ * Example
+ * 
+ * &((objectclass=dominogroup)(mail=*)) 
+
+
+
+Q2. "tell ldap quit" does not shut the task down correct? 
+- "tell ldap quit" actually does shut down the task. See LDAP Tell Commands [https://www-304.ibm.com/support/knowledgecenter/SSKTMJ_9.0.1/admin/admn_ldaptellcommands_r.dita] 
+- but the task would re-load if its in the notes.ini when the server restarts 
+
+
+Q3a. When you configure LDAP, is it a global setting which will affect all users? Can you split up the users so that LDAP is only applied to 1 group of users while non-ldap authentication would be used for another group? 
+Authentication through LDAP is configured by setting up Directory Assistance. This is a server-specific setting. Such authentication would be going to a secondary directory on an LDAP server. We would need more details on your environment to address your question completely. 
+
+
+Q3b. We have some users that won't be able to use LDAP authentication, while many others that would be able to. If we enable LDAP authentication, would this be a global change? Could we still have users that don't login via LDAP and use the standard Notes authentication? 
+If you are wanting to authenticate users against an external LDAP directory, it's going to apply to all connections to the server. So if you didn't want people to have their authentication handled that way, they would need to connect to another server to authenticate. 
+
+
+Q4. Will MS Exchange fetch records from Domino Directory using its LDAP? 
+Any LDAP client can send queries to Domino when it is running LDAP. Don't know the details on configuring Exchange, but you can certainly query Domino if you have an LDAP client with it. 
+
+
+Q5a. Will that workaround work for WebSphere Application Server Federated Repositories? (regarding "LDAPpre55Outlook=1" - the notes.ini variable for supporting the Base DN of "C=US"). Typically we have to fuddle with wimconfig.xml to support Group Searches is why I ask.  * the best way to configure WebSphere with Domino is to set Distinguished name of a base entry that uniquely identifies this set of entries in the realm to root and leave the 2nd entry blank (for the federated repository). 
+ * root is a special setting starting in WAS 7.0.0.19 that tells WebSphere to not use a base
+
+
+Q5b. Correct. But in WAS 8.5 - this seems to have been made inoperable. I have seen this issue with Sametime 9 and the version of WAS it is using. Hence looking at an "optional" approach to the Group Searching.. 
+I don't think that will work. I worry that will cause WAS to add c=US to the user names in the LtpaToken. You should be able to manage this with the settings in WAS 8.5, but I'll need to play with it a bit more 
+
+
+Q5c. OK..that seems plausible side effect. Would really like to see some testing on it. If it is viable alternative..would be much better that editing that wimconfig.xml...since a lot can go wrong with that file if done incorrectly... :-) 
+We will do more testing with was 8.5 and Domino and detail the best way to set up the federated repository. 
+
+
+Q6. Is the LDAPpre55Outlook variable Domino version specific? EX: only 8.5.x and 9.0.x? 
+No, it's not version specific. http://www-10.lotus.com/ldd/dominowiki.nsf/dx/ldappre55outlook [http://www-10.lotus.com/ldd/dominowiki.nsf/dx/ldappre55outlook] 
+
+
+Q7. Recently the schema.nsf has grown up to 10GB. What could be the reason for this and how we can prevent this from happening?  * We have seen issues with schema.nsf getting very large when it has been replicated. Make sure schema.nsf is not replicating, as it is updated using the schema daemon, not the replicator 
+ * Verify whether you have this size on your administration server. If not, delete the copies that are bad on the other servers, and then the schema daemon will pull a new copy 
+ * If the problem is on the Admin server, you will need to delete it there, and let it get re-created when LDAP is loaded. You would need to delete it on other servers, and let that get pushed out again using the daemon
+
+
+
+Q8. Recently I was asked to import into Domino LDAP about 1k users into a group. It looks like there is a limit of 32kb of users you can import into group document. Is it any workaround to import more users? Other LDAP's are not having this kind of limits. 
+There is a limit of 32kb in Notes for the "members" field on a group document, so you would need to make your large group into sub-groups that meet this fixed limit. See Limits of Lotus Notes [http://www-01.ibm.com/support/knowledgecenter/SSKTWP_8.5.3/com.ibm.notes85.client.doc/fram_limits_of_notes_r.html?lang=en] 
+
+
+Q9a. I would like to use Domino LDAP with an SMTP appliance (non-Domino). I also need multiple Internet addresses for some people. someone@domain1.com, someone@domain2.com. Internet address field only allows one value. 
+If the appliance is querying broadly enough for the person's information, you should be able to add the additional addresses as additional entries in the user name field on the Person document 
+
+
+Q9b. It seems to require a second query to get both fields. 
+You could add the additional email addresses to the user name field (cn value in an ldap search) or the shortname field (uid value in an ldap search) both of those are multi value fields 
+
+
+Q10. Your server must be running Domino 9.0 to upgrade database ODS to 52?  * Actually 9.0.1 to update to ODS 52 
+ * ODS 52 was shipped with 9.0.1
+
+
+Resource links  * RFC 4510: http://tools.ietf.org/html/rfc4510 [http://tools.ietf.org/html/rfc4510]
+
+ * IBM i considerations for LDAP: https://ibm.biz/BdFH8E [https://ibm.biz/BdFH8E]
+
+ * Softerra: http://www.ldapadministrator.com/ [http://www.ldapadministrator.com/]
+
+ * LDAP Admin: http://www.ldapadmin.org/ [http://www.ldapadmin.org/]
+
+ * Customizing the LDAP service configuration: https://ibm.biz/BdFHpq [https://ibm.biz/BdFHpq]
+
+ * CREATE_R9_DATABASES: https://ibm.biz/BdFHpM [https://ibm.biz/BdFHpM]
+
+ * Using the Domino Directory to extend the LDAP schema: https://ibm.biz/BdFHpS [https://ibm.biz/BdFHpS]
+
+ * Using ldapsearch: https://ibm.biz/BdFHpm [https://ibm.biz/BdFHpm]
+
+ * Directory assistance for the LDAP service: https://ibm.biz/BdFHpK [https://ibm.biz/BdFHpK]
+
+ * Getting the most from Domino Directory: http://www.redbooks.ibm.com/redbooks/pdfs/sg245986.pdf [http://www.redbooks.ibm.com/redbooks/pdfs/sg245986.pdf]
+
+ * Sametime and LDAP Best Practices: https://ibm.biz/BdFHpn [https://ibm.biz/BdFHpn]
+
+ * Configure WebSphere Portal to use Domino LDAP: https://ibm.biz/BdFHpe [https://ibm.biz/BdFHpe]
+
+ * LDAP integration: https://ibm.biz/BdFHpp [https://ibm.biz/BdFHpp]
+
+ * Domino LDAP schema and how objects and attributes relate to forms and fields: https://ibm.biz/BdFHp8 [https://ibm.biz/BdFHp8]
+
+ * Domino LDAP & Connections: https://ibm.biz/BdFH8n [https://ibm.biz/BdFH8n]
+
+ * Redwiki on integration of several IBM products and Domino LDAP: https://ibm.biz/BdFHph [https://ibm.biz/BdFHph]
+
+ * What are aliases, what is dereferencing?: https://ibm.biz/BdFHpV [https://ibm.biz/BdFHpV]
+
+ * Connections forum threads on SPNEGO and LDAP: https://ibm.biz/BdFHpJ [https://ibm.biz/BdFHpJ] & https://ibm.biz/BdFHpu [https://ibm.biz/BdFHpu]
+
+
+About Open Mic Webcasts IBM Collaboration Solutions (Lotus) Support wants to help you take full advantage of your products. Join us for our Open Mic Webcast series as technical experts share their knowledge and answer your questions. These webcasts are designed to address specific topics and provide an in-depth and focused technical exchange in a convenient online webcast format. For more information about our Open Mic webcasts, visit the IBM Collaboration Solutions Support Open Mics [http://www.ibm.com/software/lotus/support/lotus-open-mics/] page. 
+
+
+ORIGINAL PUBLICATION DATE
+ 2014/6/12

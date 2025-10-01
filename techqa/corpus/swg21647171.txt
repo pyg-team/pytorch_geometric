@@ -1,0 +1,24 @@
+Title: IBM Table "<Schema>"."<Table Name>" could not be found in the database. - United States
+
+Text:
+ISCDC; IIDR; Table Mapping; Mapping TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Table "<Schema>"."<Table Name>" could not be found in the database. Error message shows up when doing Table Mapping on Management Console. 
+
+SYMPTOM
+When doing a table mapping with DB2 as source, selecting a
+table which contains special characters on column comments like:
+
+COMMENT ON COLUMN <Schema>.<Table Name>.<Column> 
+IS 'Test comment ‘1’ complete';
+
+Mapping fails with following error message:
+Table <Schema>.<Table Name> could not be found in the database.
+
+
+CAUSE
+If operating system and database codepage both are UTF-8, but the data to be inserted is not Unicode, then data in the database might have incorrect codepoints (not-Unicode).
+
+RESOLVING THE PROBLEM
+Either remove special character from comment or follow the procedure from DB2 Technote number: 1412846

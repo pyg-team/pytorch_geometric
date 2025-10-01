@@ -1,0 +1,74 @@
+Title: IBM® Datacap Version 9.1.3 Interim Fix 002 readme file - United States
+
+Text:
+ PRODUCT README
+
+ABSTRACT
+ This readme file contains information about installation of the interim fix and about known problems, restrictions, and solutions in support of IBM® Datacap Version 9.1.3. 
+
+CONTENT
+ 
+
+
+Note: To view other versions of IBM Datacap 9.1.3 Interim Fixes readme files, click the respective tab: 
+
+LINKS TO IBM DATACAP 9.1.3 INTERIM FIXES LIBRARY DOCUMENTS
+ *  Version 9.1.3 Interim Fix 1 [http://www-01.ibm.com/support/docview.wss?uid=swg27050718] - selected tab, 
+ * 
+ * 
+ *  Version 9.1.3 Interim Fix 2 [http://www-01.ibm.com/support/docview.wss?uid=swg27050766] 
+ *  Version 9.1.3 Interim Fix 3 [http://www-01.ibm.com/support/docview.wss?uid=swg27050863] 
+ *  Version 9.1.3 Interim Fix 4 [http://www-01.ibm.com/support/docview.wss?uid=swg27050951] 
+ *  Version 9.1.3 Interim Fix 5 [http://www-01.ibm.com/support/docview.wss?uid=swg27051104] 
+
+
+Readme file for: IBM® Datacap
+Product or component release:
+IBM® Datacap
+Update name:
+Interim fix pack 002
+Fix ID: 
+9.1.3.0-Datacap-WIN-IF002
+Publication date:
+15 February 2018
+Last modified date:
+15 February 2018
+
+Download location 
+
+Download the fix from the following location: https://www-945.ibm.com/support/fixcentral/fixes [https://www-945.ibm.com/support/fixcentral/fixes] or access the fix from the following table. 
+
+Product or Component Name Platform File Name IBM® Datacap Windows 9.1.3.0-Datacap-WIN-IF002.zip 
+Known problems, restrictions, and solutions Known problems, restrictions, and solutions that affect administration and usage of interim fixes are documented as techdocs in the product support knowledge base. To review all known problems, restrictions, and solutions that affect Version 9.1.3 interim fixes, use the following link to query the product support knowledge base: https://www.ibm.com/support/home/product/Z865301M54010G81/Datacap [https://www.ibm.com/support/home/product/Z865301M54010G81/Datacap]. 
+
+The techdoc links are also provided here: 
+
+Viewer problems when using IBM Content Navigator V3.0.3 with IBM Datacap Version 9.1.3, or later [http://www-01.ibm.com/support/docview.wss?uid=swg22013382] Scan task does not show image when the first scan or hold on Chrome V62 [http://www.ibm.com/support/docview.wss?uid=swg22013455] Datacap Navigator problem about detecting scanner flatbed [http://www-01.ibm.com/support/docview.wss?uid=swg22013503] To review all known problems, restrictions, and solutions that affect Version 9.1.3, see IBM Datacap Version 9.1.3 Release Notes [http://www-01.ibm.com/support/docview.wss?uid=swg27050507]. Prerequisites for IBM® Datacap Version 9.1.3 Interim Fix 002 
+
+The official statements for hardware and software support for IBM® Datacap are provided as part of the hardware and software requirements for IBM® Datacap Version 9.1.3. 
+
+Before you install this fix, ensure that you installed IBM® Datacap Version 9.1.3. For more information about installing IBM® Datacap, see Installing IBM Datacap [https://www.ibm.com/support/knowledgecenter/SSZRWV_9.1.3/com.ibm.dc.install.doc/dc_inst.htm]. 
+
+For complete details about the hardware and software requirements for IBM® Datacap, see System requirements [https://www.ibm.com/support/knowledgecenter/SSZRWV_9.1.3/com.ibm.dc.install.doc/sw_comp_reports.htm] . 
+
+Installing IBM® Datacap interim fix 002 
+
+To install the IBM® Datacap interim fix 002, use the following procedure: 
+
+Procedure
+1. Download the 913 iFix 002 package from Fix Central [https://www-945.ibm.com/support/fixcentral/fixes].
+2. Extract the 913 iFix 002 package, and run the "Update.exe" file.
+Feature enhancements 
+
+As part of this interim fix, the following new enhancements have been added in Datacap Navigator: 
+
+
+
+ * You can hide snippets in the default panel. An option has been added in the task setting to show or hide the snippet above each field with the default panel under Field Details of Datacap Navigator (NVerify).
+ * You can see the text content in multiple line format in the default panel of the verify page. An option has been added in the task setting that you can configure to use multiple line text area to display captured text in Datacap Navigator.
+ * You can use the field variable to control the behavior of default fields panel, such as the ShowSnippet, EditorClass, FieldWidth, and FieldOrder variables.
+ * You can now manage default user settings administratively. For more information see, Managing user settings administratively in IBM Datacap, Version 9.1.3, Interim Fix 2 [http://www-01.ibm.com/support/docview.wss?uid=swg27050803].
+
+
+Fixed issues 
+The following issues are fixed in IBM Datacap 9.1.3, Interim Fix 2: Datacap application/component Description Datacap Navigator Spaces contained in variable value get trimmed after the variable value is saved page file. On the Settings page, under the Job Monitor tab, the "Sort by" feature does not remain consistent. Asynchronous upload progress bar and batch status does not map. When you rotate or move an image with single page mode, and click undo, the image does not come to its original position. The Zoom In feature does not work for the thumbnail and viewer modes. On the Internet Explorer browser, when you set scan task to upload immediately, scan some images, and submit, does not delete the local batch folder. Validation fails on empty Date fields on the Chrome browser. When you open two clients, for example, first open Fixup client, and the open Scan client, and close the Fixup client, the Scan client gets closed instead of Fixup client. Index, Verify document, and page labels are not displayed correctly when document and page labels are defined in PageID. The Batch preparation client does not open after launching web scan client. Improved page movement performance in scan page. The Filter list is not displayed. Disable rotation if the file type is PDF or MS Office file. Job Monitor does not display any entries. When you close task quickly, a "Missing JavaScript Event handler" error might occur. Datacap Web Services (wTM) wTM hangs while creating a thumbnail in the document information pane of the Job Monitor for a batch with a 0 byte page file. Services Operation error has been recorded in the "tms.log" file of the Datacap Server. Datacap Desktop The Merge Document feature for fails in Datacap Desktop. Datacap Desktop unexpectedly terminates on batch load. DotEdit, DotScan and FastDoc do not report proper elapsed time in the statistics table. The Verify panel throws an "Object Reference" error when a required page is missing from the document, and when validation occurs on the Main_Page. Multiselect drag and drop in thumbnail view does not highlight the thumbnail that is target of drop. Additional Task Profile, created in tmweb, is disabled, and does not work in Datacap Desktop. IBM Datacap Insight Edition (Document Analytics) Most of the pages that are classified using the VisualRecog action have an empty type associated with them. Datacap Web Client For operational shortcut in the tmweb for the "Manual for hold" mode, after clicking the select pending Datacap, does not process the oldest batch first. TMweb Verify task using the Verifine panel fails to load child fields in the Lookup script if they reference a standard field. In TmWeb > Admin > Group tab, the "Run Task" check box does not work. Datacap Studio When user tries to unlock the DCO in Datacap Studio on a DCO file that contains over 5,000 DCO objects, DCO fails to lock successfully, and fails to load fingerprints in the Zones tab. Using Barcode Byte Mode shuts down Rulerunner. Content Classification The ClassifyCC action throws the ABORT error when KnowledgeBase is not found. The ClassifyCC action gets an error: Unknown Knowledgebase or Decision Plan name. The CC Actions need option to specify txt or xml file for CC submission. [/support/docview.wss?uid=swg27050766&amp;aid=1] Convert.WordDocumentToImage() returns the "Memory stream is not expandable" error when you try to extract tiff image from the Word document.

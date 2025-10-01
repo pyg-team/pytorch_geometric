@@ -1,0 +1,59 @@
+Title: IBM Debug for z Systems Documentation - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Where can I find IBM Debug for z Systems v14.0 and v14.1 documentation? 
+
+CAUSE
+Searching the IBM Knowledge Center [https://www.ibm.com/support/knowledgecenter] for the product IBM Debug for z Systems documentation does not produce any direct results.
+
+ANSWER
+ 
+
+TAB NAVIGATION
+ * Version 14.1- selected tab,
+ * Version 14.0
+
+IBM Debug for z Systems is the stand-alone product that contains IBM z/OS Debugger (previously known as IBM Debug Tool and Integrated Debugger, now consolidated into one unified technology).
+IBM z/OS Debugger is included in three products:
+
+ 1. IBM Debug for z Systems
+ 2. IBM Developer for z Systems
+ 3. IBM Developer for z Systems Enterprise Edition
+
+The documentation for IBM z/OS Debugger is included in the IBM Developer for z Systems Knowledge Center.
+In particular you can find IBM z/OS Debugger information in the following sections:
+
+ * Installing > Host installation > Program Directory for IBM z/OS Debugger [https://www.ibm.com/support/knowledgecenter/SSQ2R2_14.1.0/ProgramDirectory/hadre00.html]
+ * Configuring > Host Configuration > IBM® z/OS Debugger Customization Guide [https://www.ibm.com/support/knowledgecenter/SSQ2R2_14.1.0/com.ibm.wsentdev.doc/topics/dtcg.html]
+ * Debugging Applications [https://www.ibm.com/support/knowledgecenter/SSQ2R2_14.1.0/com.ibm.wsentdev.doc/topics/c_node_debugging.html]
+ * Determining Code Coverage [https://www.ibm.com/support/knowledgecenter/SSQ2R2_14.1.0/com.ibm.debug.pdt.codecoverage.zpcl.doc/topics/tccdeter.html]
+ * 
+ * For more information see:
+ *  IBM Developer for z Systems Knowledge Center v14.1 [https://www.ibm.com/support/knowledgecenter/SSQ2R2_14.1.0] IBM Developer for z Systems Library [http://www-01.ibm.com/support/docview.wss?uid=swg27048563] 
+ * 
+
+IBM Debug for z Systems is the stand-alone product that contains IBM z/OS Debugger (previously known as IBM Debug Tool and Integrated Debugger, now consolidated into one unified technology).
+IBM z/OS Debugger is included in three products:
+
+ 1. IBM Debug for z Systems
+ 2. IBM Developer for z Systems
+ 3. IBM Developer for z Systems Enterprise Edition
+
+The documentation for IBM z/OS Debugger is included in the IBM Developer for z Systems Knowledge Center.
+In particular you can find IBM z/OS Debugger information in the following sections:
+
+ * Installing > Host installation > Program Directory for IBM z/OS Debugger [https://www.ibm.com/support/knowledgecenter/SSQ2R2_14.0.0/ProgramDirectory/hadre00.html]
+ * Configuring > Host Configuration > IBM® z/OS Debugger Customization Guide [https://www.ibm.com/support/knowledgecenter/SSQ2R2_14.0.0/com.ibm.wsentdev.doc/topics/dtcg.html]
+ * Debugging Applications [https://www.ibm.com/support/knowledgecenter/SSQ2R2_14.0.0/com.ibm.wsentdev.doc/topics/c_node_debugging.html]
+ * Determining Code Coverage [https://www.ibm.com/support/knowledgecenter/SSQ2R2_14.0.0/com.ibm.debug.pdt.codecoverage.zpcl.doc/topics/tccdeter.html]
+ * 
+ * For more information see:
+ *  IBM Developer for z Systems Knowledge Center v14.0 [https://www.ibm.com/support/knowledgecenter/SSQ2R2_14.0.0] IBM Developer for z Systems Library [http://www-01.ibm.com/support/docview.wss?uid=swg27048563] 
+ * 
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Software Development Debug Tool for z/OS Software Development Debug Tool Utilities and Advanced Functions for z/OS Software Development Rational Developer for System z

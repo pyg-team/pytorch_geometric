@@ -1,0 +1,31 @@
+Title: IBM What is changing in the Db2 Warehouse Private (formerly called dashDB Local) Support experience? - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ What is changing in the Db2 Warehouse Private (formerly called dashDB Local) Support experience?
+
+
+ANSWER
+We are always striving to seek new and better ways to improve our communications and the support we offer. We’re excited to announce we’re launching a new Support Community/Experience for a select number of IBM products. Db2 Warehouse Private will be one of these products going live with this new technology in the coming weeks. 
+The move to this new support experience should be seamless for you. 
+
+Specifically:
+· The e-mail and phone support channels offered to you today will remain unchanged
+· Bookmarks and existing access methods will automatically connect to the new Support Community once you’ve selected Db2 Warehouse Private as a product.
+· The same URLs you currently use will continue to work, or you can use a new URL to reach the new Support experience directly: https://www.ibm.com/mysupport [https://www.ibm.com/mysupport]
+· Any existing PMRs will be automatically converted to “Cases” in the new tool. Simply choose “cases” from the Db2 Warehouse Private support landing page to see status or make updates 
+
+We know you may have other IBM products and those too will be migrating to this new experience over time. Your experience with Db2 Warehouse Private support will continue to evolve as well. Among other improvements, we’re incorporating IBM Watson technology, and providing a truly “one-stop shop” for Customer Support related information for Db2 Warehouse Private. 
+
+You’ll find more information below on ways to access the experience, and you can see a quick video overview of the initial experience here: https://youtu.be/6zV076n4HKw [https://youtu.be/6zV076n4HKw]
+
+You will know that Db2 Warehouse Private has been migrated, once it appears in the product selection area on the new Support Community. 
+Directions for accessing the Community, once Db2 Warehouse Private has migrated: 
+1) Go to www.ibm.com/mysupport [http://www.ibm.com/mysupport%5Ch] , where you can select your product.
+2) For a personalized experience, you can login with your IBM ID. 
+If you do not have an IBM ID, go here to sign up for one https://www.ibm.com/account/us-en/signup/register.html [https://www.ibm.com/account/us-en/signup/register.html%5Ch]. 
+Note: You can also start in the legacy Service Request Tool (https://www-947.ibm.com/support/servicerequest/ [https://www-947.ibm.com/support/servicerequest/]), and once Db2 Warehouse Private has been migrated you will be automatically redirected to the new experience. 
+
+If you are experiencing a problem with the portal (such as a login issue, etc.), we are here to help. You can submit your issue via our Support Community [https://www.ibm.com/mysupport/s/] by clicking “Email IBM Support”, or emailing spe@us.ibm.com [spe@us.ibm.com] and someone will get back to you as quickly as possible.

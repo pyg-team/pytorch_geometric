@@ -1,0 +1,53 @@
+Title: IBM When running a report to CSV format interactively or scheduled, all the data is shown in a single column - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When trying to run report by clicking on 'Run with option' and selecting formatting type as CSV format, the output data is shown in a single column instead of separate column. The same behaviour is also observed when the report is send through email as an attachment. 
+
+CAUSE
+The following parameters where set at the ReportService and BatchReportService. 
+
+RSVP.CSV.DELIMITER set to , 
+RSVP.FILE.EXTENSION.XLS set to TRUE 
+RSVP.CSV.MIMETYPE set to application/vnd.ms-excel 
+
+These parameter should have been placed at the parent level ie. in the dispatcher properties.
+
+
+RESOLVING THE PROBLEM
+The resolution to this issue involves two steps: 
+
+a) Removing the parameters from ReportService and BatchReportService. 
+
+ 1) Login to Cognos Administration. 
+
+ 2) Click on Configuration (Tab) -> 'Dispatcher and Services' . Then click on the dispatcher URL so that it list all the services. 
+
+ 3) Click on Set properties [/support/docview.wss?uid=swg21439447&amp;aid=1] of ReportService -> Settings (Tab) -> Click on Edit link next to Advanced Settings. Remove all the parameters and Click on Ok. 
+
+ RSVP.CSV.DELIMITER set to , [Comma] 
+RSVP.FILE.EXTENSION.XLS set to TRUE 
+RSVP.CSV.MIMETYPE set to application/vnd.ms-excel
+
+
+ Follow the same steps for BatchReportService. 
+
+ 
+
+b) Adding the parameters to parent level ie. in the dispatcher properties. 
+
+ 1) Login to Cognos Administration. 
+
+ 2) Click on Configuration (Tab) -> 'Dispatcher and Services' . 
+
+ 3) Click on 'Set properties - Configuration' [/support/docview.wss?uid=swg21439447&amp;aid=2] at the top right corner -> Settings (Tab) -> Click on Edit link next to Advanced Settings. Add the following parameters and Click on Ok. 
+
+ RSVP.CSV.DELIMITER set to , 
+RSVP.FILE.EXTENSION.XLS set to TRUE 
+RSVP.CSV.MIMETYPE set to application/vnd.ms-excel
+
+Restart the Cognos Service for the changes to take effect.
+
+Now you should get the data in respective column when you view the report in CSV format.

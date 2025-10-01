@@ -1,0 +1,157 @@
+Title: IBM PM82402: PAGEBUILDER2 JAVASCRIPT & PT_BR - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Fixes integrated in WebSphere Portal 8.0.0.0 Cumulative Fixes [http://www-01.ibm.com/support/docview.wss?uid=swg24033155]
+Fixes integrated in WebSphere Portal 8.0.0.1 Combined Cumulative Fixes [http://www-01.ibm.com/support/docview.wss?uid=swg24034497]
+Fixes integrated in WebSphere Portal 7.0.0.1 & 7.0.0.2 Combined Cumulative Fixes [http://www-01.ibm.com/support/docview.wss?uid=swg24029452]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  PageBuilder2 errors with pt_BR locale on 7001 with cf19 that
+   were not happening at all with cf18.
+   
+   Message: 'com.ibm.pb.contextMenu' is null or not an object
+   Line: 425
+   Character: 1
+   URI:
+   http://hostname1.ibm.com [http://hostname1.ibm.com]
+   .br/wps/portal/!ut/p/b0/04_Sj9CPykssy0xP
+   LMnMz0vMAfGjzOKd3R09TMx9DAzcw3ycDDwdPQwDA0OBXFdzoIJIoAIDHMDRgJD-
+   cP0ovEoC
+   TaAK8Fjh55Gfm6pfkBthkGXiqAgAGy8AUQ! /
+   
+   Message: 'com.ibm.mashups.services' is null or not an object
+   Line: 156
+   Character: 1
+   URI:
+   http://hostname1.ibm.com [http://hostname1.ibm.com]
+   .br/wps/contenthandler/!ut/p/digest!1B2M
+   2Y8AsgTpgAmY7PhCfg/dav/fs-type1/themes/PageBuilder2/js/init.js
+   
+   Message: 'com.ibm.pb.themes' is null or not an object
+   Line: 45
+   Char: 2
+   URI:
+   http://hostname1.ibm.com [http://hostname1.ibm.com]
+   .br/wps/portal/!ut/p/b0/04_Sj9CPykssy0xP
+   LMnMz0vMAfGjzOKd3R09TMx9DAzcw3ycDDwdPQwDA0OBXFdzoIJIoAIDHMDRgJD-
+   cP0ovEoC
+   TaAK8Fjh55Gfm6pfkBthkGXiqAgAGy8AUQ! /
+   Opened for release 7001
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  pb2 errors with pt_BR locale on 7001 with cf19
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A code fix for this issue is integrated into the WebSphere
+   Portal & WCM Combined Cumulative Fix 21 (PM82594 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM82594]) for Portal
+   7.0.0.2 available from Fix Central:
+   
+   http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent
+   =ibm~WebSphere&product=ibm/WebSphere/WebSphere+Portal&release=7 [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~WebSphere&product=ibm/WebSphere/WebSphere+Portal&release=7]
+   .0.0.2&platform=All&function=aparId&apars=PM82594
+   
+   You might need to type or paste the complete address into your
+   Web browser.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM82402
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSPHERE PORTA
+   
+   
+ * REPORTED COMPONENT ID
+   5724E7600
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-02-08
+   
+   
+ * CLOSED DATE
+   2013-04-23
+   
+   
+ * LAST MODIFIED DATE
+   2013-04-23
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBSPHERE PORTA
+   
+   
+ * FIXED COMPONENT ID
+   5724E7600
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R700 PSY
+   UP

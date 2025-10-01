@@ -1,0 +1,62 @@
+Title: IBM SQLCODE -104 received for JDBC getTables or CLI SQLTables calls, or related functions, on DB2 9.7 - United States
+
+Text:
+DB2; DRDA; JDBC; JCC; CLI; SQLTables; SQLColumns; SQLFunctions; getTables; getColumns; getFunctions; getIndexInfo; SQL0104N; -104 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ On early iterations of DB2 for Linux, Unix and Windows version 9.7 (GA and Fix Pack 1), it is possible that calling CLI/ODBC metatdata functions (e.g. SQLTables, SQLColumns, etc) or the corresponding JDBC functions (e.g. DatabaseMetaData.getTables () ) will fail with SQLCODE -104 (SQL0104N, syntax error).
+
+
+
+
+SYMPTOM
+The error message will be similar to the following: 
+
+ SqlCode = -104
+SqlErrd = { -2145779603, 0, 0, 0, -705, 0 }
+SqlErrmc = ?;L K(;(
+SqlErrmcTokens = { ?, L K(, ( }
+SqlErrp = SQLNP021
+SqlState = 42601
+SqlWarn = 
+
+ 
+
+or 
+
+
+SQL0104N An unexpected token "?" was found following "L K(". Expected tokens may include: "(".
+
+To see the full list of affected functions:
+
+For JDBC, please refer to 'Table 11. Support for DatabaseMetaData methods' in the DB2 version 9.7 Information Center document 'Driver support for JDBC APIs' (link below).
+
+For ODBC/CLI, please refer to the section 'Obtaining information about the data source's system tables (catalog functions)' in the DB2 version 9.7 Information Center document 'CLI and ODBC function summary' (link below).
+
+
+CAUSE
+There is an issue with respect to receive character encoding on the DB2 server when connection concentration is enabled on the DB2 server. That is, the database manager configuration parameter MAX_CONNECTIONS, the maximum number of database connections, exceeds the value for MAX_COORDAGENTS, the maximum number of coordinating database agents. In this scenario, if there are concurrent connections from clients that use a different character encoding in their communications with DB2 (e.g. a JDBC Type 4 connection, and a DB2 command-line connection), the database server may not correctly interpret the communications data from the client application. A design change that went into effect in Fix Pack 2 resolves this problem.
+
+
+RESOLVING THE PROBLEM
+To resolve the problem, either disable connection concentrator, or apply Fix Pack 2 or later on the server. 
+
+To disable connection concentrator as a circumvention, update the database manager configuration so that there is not more connections than there are database agents; e.g.: 
+
+ 
+
+db2 update dbm cfg using MAX_CONNECTIONS MAX_COORDAGENTS 
+
+ 
+
+The MAX_CONNECTIONS parameter is configurable online, so an instance restart (db2stop / db2start) is not necessary.
+
+RELATED INFORMATION
+ SQL0104N [http://publib.boulder.ibm.com/infocenter/db2luw/v9r7/index.jsp?topic=/com.ibm.db2.luw.messages.sql.doc/doc/msql00104n.html]
+Connection concentrator [http://publib.boulder.ibm.com/infocenter/db2luw/v9r7/index.jsp?topic=/com.ibm.db2.luw.qb.dbconn.doc/doc/c0006169.html]
+max_connections - Maximum number of client connections [http://publib.boulder.ibm.com/infocenter/db2luw/v9r7/index.jsp?topic=/com.ibm.db2.luw.admin.config.doc/doc/r0003289.html]
+max_coordagents - Maximum number of coordinating agents [http://publib.boulder.ibm.com/infocenter/db2luw/v9r7/index.jsp?topic=/com.ibm.db2.luw.admin.config.doc/doc/r0000139.html]
+Updating the database manager configuration file [http://publib.boulder.ibm.com/infocenter/db2luw/v9r7/index.jsp?topic=/com.ibm.db2.luw.apdv.routines.doc/doc/t0004642.html]
+Driver support for JDBC APIs [http://publib.boulder.ibm.com/infocenter/db2luw/v9r7/index.jsp?topic=/com.ibm.db2.luw.apdv.java.doc/doc/rjvjdapi.html]
+CLI and ODBC function summary [http://publib.boulder.ibm.com/infocenter/db2luw/v9r7/index.jsp?topic=/com.ibm.db2.luw.apdv.cli.doc/doc/r0000553.html]
+DB2 Fix Packs by version [http://www.ibm.com/support/docview.wss?uid=swg27007053]

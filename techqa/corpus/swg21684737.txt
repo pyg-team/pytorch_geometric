@@ -1,0 +1,92 @@
+Title: IBM With Production Imaging Edition (PIE) pro viewer the annotation tooltip does not display the creator metadata. - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Annotations after saving and reopening of the image do not display the creator metadata when the cursor is placed over the annotation. 
+
+SYMPTOM
+[/support/docview.wss?uid=swg21684737&amp;aid=1] 
+
+ This is what the user sees with a mouse over of a saved annotation before closing the viewer.
+
+[/support/docview.wss?uid=swg21684737&amp;aid=2]
+This is what the user sees after reopening of the image in the viewer.
+
+Notice that the metadata does not contain the same level of information as the screen shot above.
+
+
+CAUSE
+The WcmJavaViewer.jsp file used by The PIE pro viewer is missing the following parameter:
+
+writeParam('FilenetAnnotationOutputCreator','true');
+
+
+
+
+RESOLVING THE PROBLEM
+1. Back up, undeploy, and remove the Workplace XT (web_client) web application from the J2EE application server. 
+
+2. Locate the file WcmJavaViewer.jsp and add the parameter : 
+
+ writeParam('FilenetAnnotationOutputCreator','true');
+
+The file to be edited can be located at: <WorkplaceXT install path>/WorkplaceXT/UI-INF/jsp/ui/iviewpro
+
+example:
+writeParam('userLogoutRedirectMatch','SessionError.jsf,ContainerLogin.jsp,<%=challengeProxyUri%>');
+writeParam('Photometric', 'true');
+writeParam('language', '<%=locale.toString()%>');
+if (servletStr != "getISContent")
+{
+writeParam('FilenetAnnotationOutputCreator','true');
+}
+writeParam('customAnnotationToolTip','<%=wsCreatedBy.toString(locale)%> <creator>, <%=wsCreatedOn.toString(locale)%> <createdate>'); 
+
+3. Rebuild the Workplace application.
+Re-creating the WAR and EAR files
+http://www-01.ibm.com/support/knowledgecenter/SSNW2F_5.2.0/com.ibm.p8.installingxt.doc/wxtut009.htm?lang=en [http://www-01.ibm.com/support/knowledgecenter/SSNW2F_5.2.0/com.ibm.p8.installingxt.doc/wxtut009.htm?lang=en] 
+
+4. Uninstall (undeploy) the Workplace XT application from your application server.
+
+WebSphere:
+Stop the Workplace XT application from the WebSphere administration console.
+Uninstall the Workplace XT application from Enterprise Applications.
+Save the changes and stop the WebSphere server.
+Delete the temporary Workplace XT directory (default: WorkplaceXT) from:
+<WAS_HOME>/profiles/<profile_name>/temp/<node_name>/<instance>/
+Delete all folders from the wstemp in the following location:
+<WAS_HOME>/profiles/><profile_name>/wstemp
+
+WebLogic:
+From the WebLogic administration console stop the Workplace XT Web Application Module.
+Make a backup copy of the Workplace XT folder or of the deployed Workplace XT directory:
+<WPXT_install_path>/WorkplaceXT
+<WPXT_install_path>/deploy/<application_name>.war
+<WPXT_install_path>/deploy/web_client.ear
+Delete the Workplace XT Web Application Module.
+Stop the WebLogic server.
+Delete the temporary Workplace XT directory (default: WorkplaceXT or web_client) from:
+<WL_HOME>/<domain>/servers/<instance>/tmp/_WL_user
+
+JBoss:
+Stop the JBoss server.
+<JBOSS_HOME>/server/<server_name>/deploy/<application_name>.war or .ear
+Delete the Workplace XT application from the deployed location.
+Clear out all files and folders within the following temp directories:
+<JBOSS_HOME>/server/<server_name>/tmp/deploy
+<JBOSS_HOME>/server/<server_name>/work/jboss.web/localhost 
+
+5. Deploy the Workplace XT application to your application server. 
+
+ Deploying Workplace XT after an upgrade or a change to the application
+http://www-01.ibm.com/support/knowledgecenter/SSNW2F_5.2.0/com.ibm.p8.installingxt.doc/wxtut013.htm?lang=en [http://www-01.ibm.com/support/knowledgecenter/SSNW2F_5.2.0/com.ibm.p8.installingxt.doc/wxtut013.htm?lang=en] 
+
+6. Once completed test by creating an annotation in the viewer and saving the annotation, closing the viewer window and then reopening the image with the newly created annotation.
+Then mouse over the annotation to see if the creator metadata displays. 
+
+ 
+
+Note: This will only effect newly created annotations from this point going forward.
+Those annotations created prior to adding this parameter will still not show the creator of the annotation.

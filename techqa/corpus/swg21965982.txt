@@ -1,0 +1,42 @@
+Title: IBM Interpreting IBM Software Product Compatibility Reports related to Hypervisors - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How to interprete IBM Software Product Compatibility Reports related to Hypervisors ? 
+
+ANSWER
+If you want to find out the support requirement and compatibility of DB2 produce on Virtualization Hypervisor environment, you can find on Hypervisors supported by a specific product [http://www-969.ibm.com/software/reports/compatibility/clarity/vesForProduct.html] page.
+Following picture is the example of searching for a specific DB2 version and edition.
+And for the first search filters, you can check the operating system(O/S) type.
+These operating system is the target O/S where DB2 will be installed.
+
+NOTE : Usually there is two hypervisors types which is native bare metal and hosted.
+( For the detail information, refer to the hypervisors wiki page [https://en.wikipedia.org/wiki/Hypervisor]. )
+
+And the operating system on this page does not mean the host O/S and hypervisor layer software.
+
+[/support/docview.wss?uid=swg21965982&aid=1] [/support/docview.wss?uid=swg21965982&aid=1]
+
+From the generated PDF document, you will see the section on left window like below picture.
+The top section is 'Hypervisors' but the listed O/S at third top section also means the final target O/S where DB2 will be installed as the result of search filters from above page.
+Under each O/S item, the various supported hypervisors are listed up including bare metal and hosted hypervisors.
+
+[/support/docview.wss?uid=swg21965982&amp;aid=2]
+
+For example, on AIX WPAR is the operating system level virtualization technology and PowerVM provides the virtualization of adapters and storage subsystems to the target AIX O/S from other logical partitions.
+Regarding Linux, VMWare ESXi is bare metal type and Microsoft Hyper-V is a type of the hosted hypervisors.
+
+Therefore when you refer the document, select the target O/S for DB2 installation and the hypervisor you are using or planning to use.
+
+RELATED INFORMATION
+ Hypervisors supported by a specific product [http://www-969.ibm.com/software/reports/compatibility/clarity/vesForProduct.html]
+Hypervisors type [https://en.wikipedia.org/wiki/Hypervisor]
+
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Information Management DB2 for Linux- UNIX and Windows

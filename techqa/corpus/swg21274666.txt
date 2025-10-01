@@ -1,0 +1,38 @@
+Title: IBM How do I format my Data Sheet for the Bulk Process tool in CS Explorer? I would - United States
+
+Text:
+PANAGON IDM CONTENT SERVICES TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ How do I format my Data Sheet for the Bulk Process tool in CS Explorer? I would 
+
+RESOLVING THE PROBLEM
+How do I format my Data Sheet for the Bulk Process tool in CS Explorer? I would like to use the Import Data Sheet function, but can find no examples of how that data sheet should be formatted. Software versions for: Content Services 5.1, 5.2. CS Explorer admin tool.
+
+Steps to verify that this problem applies:
+Customer wishes to use the Bulk Process tool to import users or items into the library. Customer wishes to import the user/item data from a file (eg Excel spreadsheet, comma delimited text file etc) into the Data Sheet in the Bulk Process tool.
+
+Steps to resolve the problem:
+To determine the format for a Data Sheet, create an example for yourself using your own data. Use the GUI Bulk Process tool to create one row of data in the Data Sheet window, using the File Name property and any other properties that you wish to include in your Bulk Process. This one row of data will represent one document that you want to bulk add into the library. Then use the Export function to create a file with this information that can be used as a template for the rest of your Bulk Process. 
+
+Follow these steps to export the data sheet:
+1. Create the first row of data in the Data Sheet window in the Bulk Process tool of CS Explorer. Validate the information for the Bulk Add and Save it.
+2. From the top menu select "Data" and then choose "Export" and "Data Sheet". 
+3. You will have the option to export the data to several different file formats, depending on the configuration of your machine. Choose the format you want and enter a filename for your exported data sheet. 
+4. Once the data has been exported, open the newly created file, and you will see the data sheet format. 
+
+You can now use this format to add more documents to this data sheet or to create new data sheets. 
+
+Follow these steps to import a saved data sheet:
+1. In the Bulk Process tool of CS Explorer, select "Data" from the top menu and then choose "Import" and "Data Sheet".
+2. Select your file format, browse to the directory where it is located, and follow the screen prompts.
+3. Once the Data Sheet is imported, click "Run" on the Top Toolbar to run your Bulk Process. 
+
+
+
+
+HISTORICAL NUMBER
+ 10003695 
+
+PRODUCT ALIAS/SYNONYM
+ CONTENT SERVICES

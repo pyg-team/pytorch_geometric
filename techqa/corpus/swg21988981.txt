@@ -1,0 +1,73 @@
+Title: IBM SFTP Client Begin Session Service - com.maverick.ssh.SshException: Failed to read remote identification [Unknown cause] - United States
+
+Text:
+com.maverick.ssh.SshException; Failed to read remote identification; sftp; sshd TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This error occurs as an indication that the remote server may be too busy to handle inbound connections or has set a certain limitations for the connections.
+
+Customer is using Sterling B2B Integrator SFTP Client (SB2BI) to send data to the remote SFTP server that is a pSeries LPAR running in the IBM Cloud Managed Services Boulder Data Center (CMS BLD LPAR) and getting intermittent outbound SFTP connection error in the SFTP Client Begin Session Service step with the error message of com.maverick.ssh.SshException: Failed to read remote identification [Unknown cause]. 
+
+SYMPTOM
+Observations: 
+
+1. Network packet traces taken on SB2BI SFTP client side and on the CMS BLD LPAR server side both showed CMS BLD LPAR server side closed the connection immediately upon SB2BI SFTP client connect (i.e., before SSH Handshake banner message from SFTP Server) 
+
+
+The network packet traces from client and server sides both show server sending FIN, ACK and SB2BI as a SFTP Client then closed the connection with ACK and FIN,ACK.
+
+2. sshd server on CMS BLD LPAR was overloaded and closed the connection as soon as SB2BI SFTP client opened.
+
+
+NOTE: This is also an indication that the remote server may be too busy to handle inbound connections or has set a certain limitations for the connections.
+
+
+CAUSE
+The remote server may be too busy to handle inbound connections or has set a certain limitations for the connections.
+
+MaxStartups in the /etc/ssh/sshd_config file on the AIX LPAR was set at a default value:
+
+i.e.
+
+[xxxxxxxxxx:/home/ibmadmin] grep -i maxstart /etc/ssh/sshd_config
+#MaxStartups 10
+[xxxxxxxxxx:/home/ibmadmin]
+
+NOTE: If it's too small, sshd will randomly close new connection requests until enough of the connection request backlog is dealt with.
+
+In this case, the customer using SB2BI SFTP Client was sending a larger batch of data each time and the server side had the above parameter setup that is the default and too low to handle large batch of connections and thus causing the maverick error of: com.maverick.ssh.SshException: Failed to read remote identification.
+
+
+DIAGNOSING THE PROBLEM
+Check MaxStartups in the /etc/ssh/sshd_config file on the AIX LPAR
+
+
+
+RESOLVING THE PROBLEM
+Increase MaxStartups in the /etc/ssh/sshd_config file on the AIX LPAR. 
+
+
+You'll have to stop and restart the sshd server for the change to take effect. 
+This will not impact existing ssh sessions. 
+
+stopsrc -s sshd
+startsrc -s sshd 
+
+ 
+
+If the trading partner involved is using the IBM Cloud Managed Services Boulder Data Center, the trading partner would need to open an IBM Support Request to engage other IBM team to assist further by reviewing the network packet traces, server side settings such as the MaxStartups in the /etc/ssh/sshd_config file on the AIX LPAR, etc.
+
+ 
+
+HISTORICAL NUMBER
+ 28229.004.000
+33122.122.000 
+
+PRODUCT ALIAS/SYNONYM
+ AIX
+Peoplesoft
+AIX LPAR
+Cloud Managed Services
+Sterling B2B Integrator
+SB2BI
+SI

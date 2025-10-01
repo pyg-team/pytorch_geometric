@@ -1,0 +1,174 @@
+Title: IBM IV93663: CHANGES REQUIRED FOR MANUAL/SEMI AUTOMATED RUN BOOKS, SUCH THAT ONLY ONE FIRST EVENT ENTRY IS RECORDED IN THE JOURNAL. - United States
+
+Text:
+  DIRECT LINKS TO FIXES
+7.1.0-TIV-NCI-ZLINUX-FP0010 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=7.1.0-TIV-NCI-ZLINUX-FP0010&source=SAR]
+7.1.0-TIV-NCI-WINDOWS-FP0010 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=7.1.0-TIV-NCI-WINDOWS-FP0010&source=SAR]
+7.1.0-TIV-NCI-SOLARIS-FP0010 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=7.1.0-TIV-NCI-SOLARIS-FP0010&source=SAR]
+7.1.0-TIV-NCI-LINUX-FP0010 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=7.1.0-TIV-NCI-LINUX-FP0010&source=SAR]
+7.1.0-TIV-NCI-AIX-FP0010 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=7.1.0-TIV-NCI-AIX-FP0010&source=SAR]
+IBM Tivoli Netcool/Impact V7.1.0 Fix Pack 10(7.1.0-TIV-NCI-FP0010) [http://www-01.ibm.com/support/docview.wss?uid=swg24043588]
+IBM Tivoli Netcool/Impact V7.1.0 Fix Pack 11(7.1.0-TIV-NCI-FP0011) [http://www-01.ibm.com/support/docview.wss?uid=swg24043858]
+IBM Tivoli Netcool/Impact V7.1.0 Fix Pack 12 (7.1.0-TIV-NCI-FP0012) [http://www-01.ibm.com/support/docview.wss?uid=swg24044312]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When Setting Get Updated Events in the Impact Services is
+   checked --> then the associated RB is executed each time the
+   event is coming, and the journal entry is done for each RB
+   invocation.
+   
+   For customers with Automated RBs, this behavior is ok, since
+   each execution should be recorded.
+   
+   
+   For manual RBs this behavior is not desired, since the RB has to
+   be executed only one time by Operator (probably to solve a
+   problem). The operator may want to make a notice in the Journal,
+   that can be associated with the coming event. There is not
+   desired, that the journal is full with the same event info,
+   coming e.g. with a minute frequency.
+   
+   Therefore question / proposal:
+   
+   Can RBA policy be modified the way, that for Manual and
+   Semi-automated RBs only one first event entry is recorded in the
+   journal? (Get Updated Events in the Impact Services is checked )
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * All Impact Users                                             *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * when Get Updated Events is set in the RBA_Eventreader, then  *
+   * journal entries                                              *
+   * are made for events that have been previously associated     *
+   * with a manual runbook.                                       *
+   * This is not desired,as the journal was filling up with the   *
+   * same info coming with high frequency.                        *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Add a check in RBA_EventsProcessing.js when a manual run     *
+   * book is being executed.                                      *
+   * Check if the event has RunbookStatus=Runbook set for manual  *
+   * execution,                                                   *
+   * If Yes, Do nothing as the event has previously been          *
+   * associated with a runbook.                                   *
+   * If No, then add this information into the event now, and     *
+   * write an entry into the event journal.                       *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix for this APAR is contained in the following
+   maintenance packages:
+   |Fix Pack | 7.1.0-TIV-NCI-FP0010
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV93663
+   
+   
+ * REPORTED COMPONENT NAME
+   NETCOOL/IMPACT
+   
+   
+ * REPORTED COMPONENT ID
+   5724O59IS
+   
+   
+ * REPORTED RELEASE
+   710
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-02-24
+   
+   
+ * CLOSED DATE
+   2017-05-16
+   
+   
+ * LAST MODIFIED DATE
+   2017-05-16
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  UNKNOWN
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   NETCOOL/IMPACT
+   
+   
+ * FIXED COMPONENT ID
+   5724O59IS
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R710 PSY
+   UP

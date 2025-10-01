@@ -1,0 +1,255 @@
+Title: IBM IT08076: JAZZSM NOT AVAILABLE FOR INSTALL AT MAIN TPC GUI INSTALLER SCREEN. - United States
+
+Text:
+AIX  FIXES ARE AVAILABLE
+Refresh Pack 5.2.6 (June 2015) for Tivoli Storage Productivity Center [http://www-01.ibm.com/support/docview.wss?uid=swg24040111]
+Refresh Pack 5.2.7 (August 2015) for Tivoli Storage Productivity Center [http://www-01.ibm.com/support/docview.wss?uid=swg24040451]
+IBM Spectrum Control V5.2.8 (December 2015) [http://www-01.ibm.com/support/docview.wss?uid=swg24041108]
+IBM Spectrum Control V5.2.9 (February 2016) [http://www-01.ibm.com/support/docview.wss?uid=swg24041547]
+IBM Spectrum Control V5.2.10 (May 2016) [http://www-01.ibm.com/support/docview.wss?uid=swg24041940]
+IBM Spectrum Control V5.2.10.1 (July 2016) [http://www-01.ibm.com/support/docview.wss?uid=swg24042484]
+IBM Spectrum Control V5.2.11 (August 2016) [http://www-01.ibm.com/support/docview.wss?uid=swg24042489]
+IBM Spectrum Control V5.2.12 (November 2016) [http://www-01.ibm.com/support/docview.wss?uid=swg24042717]
+IBM Spectrum Control V5.2.13 (March 2017) [http://www-01.ibm.com/support/docview.wss?uid=swg24043142]
+IBM Spectrum Control V5.2.14 (May 2017) [http://www-01.ibm.com/support/docview.wss?uid=swg24043414]
+IBM Spectrum Control V5.2.15 (August 2017) [http://www-01.ibm.com/support/docview.wss?uid=swg24043749]
+IBM Spectrum Control V5.2.15.2 (November 2017) [http://www-01.ibm.com/support/docview.wss?uid=swg24044286]
+IBM Spectrum Control V5.2.16 (March 2018) [http://www-01.ibm.com/support/docview.wss?uid=swg24044454]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  After a successful installation of the TPC application.
+   
+   The main TPC Installer will only show 'license upgrade' as an
+   option and does not allow progression to the other two
+   'Installation Type' (i.e. Single server/Multiple server) as they
+   are greyed out. After selecting either Single server or Multiple
+   server is the location where the JazzSM components are available
+   for selection to be installed.
+   
+   lax.out, will show similar messages when attempting to upgrade
+   the license.
+   
+   2015-03-24 10:02:43.947-0400 INFO
+   com.ibm.tpc.install.frontend.ia.actions.CheckLicenseUpgradeActio
+   n install Swtags and nodelock are not the same type
+   
+   Issue is relevant to the base TPC license:
+   i.e.
+   nodelock
+   Tivoli Storage Productivity Center license
+   
+   
+   RECREATE STEPS:
+   Install TPC 5.2.x successfully.
+   Prepare JazzSM to be installed.
+   Launching the main TPC Installer will only show 'license
+   upgrade' option and does not allow progession to other
+   Installation Types to show JazzSM install option.
+   
+   ________________________________________________________________
+   DB2 Version used for Server:    N/A
+   The defect is against component:   5608TPC00
+   Server/Manager build/release (TPC):   5.2.5
+   ________________________________________________________________
+   Problem as described by customer:   JazzSM not available for
+   Install at main TPC GUI installer screen.
+   Initial customer impact (low/med/high): med
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  TBD
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * Users which installed TPC 5.2.5 (having a license different  *
+   * than TPC Advanced License - Virtual Storage Center Storage   *
+   * Analytics Engine) without TPC reports and which want to run  *
+   * again later the TPC installer to install both JazzSM/TCR and *
+   * TPC reports.                                                 *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * When users install TPC 5.2.5 with the base TPC or TPC Select *
+   * Edition license (not the Advanced license) without TPC       *
+   * reports and they want to run again later the TPC installer   *
+   * to install both JazzSM/TCR and TPC reports, they don't have  *
+   * the option (i.e. the "Install now" button) to install        *
+   * JazzSM/TCR, the only choice being to upgrade the license.    *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Apply fix maintenance when available.                        *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix forthis APAR is targeted for the following maintenance
+   package:
+   
+   | refresh pack | 5.2-TIV-TPC-RP0006 - target June 2015
+   
+   http://www-01.ibm.com/support/docview.wss?&uid=swg21320822 [http://www-01.ibm.com/support/docview.wss?&uid=swg21320822]
+   The target dates for future fix packs do not represent a formal
+   commitment by IBM. The dates are subject to change without
+   notice.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  Copy
+   1986-03.com.ibm_IBM_Tivoli_Storage_Productivity_Center-5.2.5.swi
+   dtag
+   to C:\Program Files\IBM
+   . Then inside C:\Program Files\IBM,
+   rename it to:
+   TPC;iso-swid;1986-03.com.ibm_IBM_Tivoli_Storage_Productivity_Cen
+   ter-5.2.5.swidtag
+   
+   So the full path is: C:\Program
+   Files\IBM\TPC;iso-swid;1986-03.com.ibm_IBM_Tivoli_Storage_Produc
+   tivity_Center-5.2.5.swidtag
+   
+   Above the TPC installation path is C:\Program Files\IBM\TPC, but
+   the generic workaround would be:
+   Copy
+   1986-03.com.ibm_IBM_Tivoli_Storage_Productivity_Center-5.2.5.swi
+   dtag
+   to the parent folder/directory of <TPC_installation_path>, e.g.
+   for /opt/IBM/TPC, the parent directory is /opt/IBM
+   .
+   We can consider <TPC_parent_dir_of_TPC_installation_path> as the
+   placeholder for the parent folder/directory of
+   <TPC_installation_path>, while the directory that directly
+   contains TPC files is <TPC_dir_of_TPC_installation_path>, e.g.
+   when TPC installation path
+   is /opt/IBM/TPC, <TPC_dir_of_TPC_installation_path> is TPC (so
+   the last part after last "/" inside /opt/IBM/TPC.
+   Then inside <TPC_parent_dir_of_TPC_installation_path>,
+   rename it
+   to:<TPC_dir_of_TPC_installation_path>;iso-swid;1986-03.com.ibm_I
+   BM_Tivoli_Storage_Productivity_Center-5.2.5.swidtag
+   
+   So the full path is:
+   <TPC_parent_dir_of_TPC_installation_path>/<TPC_dir_of_TPC_instal
+   lation_path>;iso-swid;1986-03.com.ibm_IBM_Tivoli_Storage_Product
+   ivity_Center-5.2.5.swidtag
+   Note: use slash as file separator for Unix/Linux and backslash
+   for Windows.
+   
+   Then restart the TPC installer. After you agree the license and
+   click Next,
+   the following panel should be the "Before You Begin:
+   Prerequisites" panel,
+   the one which includes the "Install now" button for installing
+   JazzSM/TCR.
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT08076
+   
+   
+ * REPORTED COMPONENT NAME
+   TPC
+   
+   
+ * REPORTED COMPONENT ID
+   5608TPC00
+   
+   
+ * REPORTED RELEASE
+   525
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-04-03
+   
+   
+ * CLOSED DATE
+   2015-04-10
+   
+   
+ * LAST MODIFIED DATE
+   2015-04-10
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  INSTALL
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TPC
+   
+   
+ * FIXED COMPONENT ID
+   5608TPC00
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R525 PSY
+   UP

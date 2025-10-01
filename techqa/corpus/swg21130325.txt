@@ -1,0 +1,37 @@
+Title: IBM About temporary syncs files and ClearCase MultiSite - United States
+
+Text:
+syncs; temporary; lockfiles; 1130325 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This technote provides a brief overview of why syncs files may exist within a temporary directory after performing a syncreplica with IBM® Rational® ClearCase® MultiSite®. 
+
+RESOLVING THE PROBLEM
+ 
+
+What are these syncs files? 
+
+These files are created as a result of a syncreplica operation. These files are used as temporary place holders while ClearCase writes the cleartext and checks the data before importing. They are created in the form of syncs<pid> where the <pid> is the process id number of the pending import operation related to that packet. 
+
+
+Where are these files typically found? 
+
+ClearCase creates syncs<pid> files in a temporary directory. 
+
+On UNIX® and Linux® operating systems this directory is typically /var/tmp 
+
+On Microsoft® Windows® platforms, this directory is the directory specified by TEMP or TMP environment variable (default is "%USERPROFILE%\Local Settings\TEMP") . 
+
+ 
+
+Why are these files not removed? 
+
+ClearCase normally deletes these files after the syncreplica operation is finished. 
+
+If the syncreplica operation fails or is interrupted then the files remain. 
+
+ 
+
+Can I remove these files? 
+
+These files can be removed manually without causing any problem. Use the appropriate OS command, such as rm or delete.

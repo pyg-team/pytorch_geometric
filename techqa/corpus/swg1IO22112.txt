@@ -1,0 +1,130 @@
+Title: IBM IO22112: RV2 BACKGROUND USE REPORTS DON'T READ ALL RECORDS WHEN RUN AGAINST ORACLE WITH DATACAP 8.1 FP2 - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+ DIRECT LINK TO FIX
+IBM Datacap Taskmaster Capture 8.1 Fix Pack 3 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FDatacap+Taskmaster+Capture&fixids=8.1.0.3-Datacap-Taskmaster-WIN-FP003&source=SAR]
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  RV2 Background Use reports don't read all records when run
+   against Oracle with Datacap 8.1 FP2
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * windows user                                                 *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * See Error Description                                        *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * apply fix pack 3                                             *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  apply fix pack 3
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IO22112
+   
+   
+ * REPORTED COMPONENT NAME
+   DATACAP TASKMST
+   
+   
+ * REPORTED COMPONENT ID
+   5725C1500
+   
+   
+ * REPORTED RELEASE
+   810
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-09-15
+   
+   
+ * CLOSED DATE
+   2015-05-09
+   
+   
+ * LAST MODIFIED DATE
+   2015-05-09
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   DATACAP TASKMST
+   
+   
+ * FIXED COMPONENT ID
+   5725C1500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R810 PSY
+   UP

@@ -1,0 +1,207 @@
+Title: IBM IZ68087: WMQ 7.0.1: UNABLE TO PUT AND GET MESSAGE TO A TEMPORARY DYNAMIC QUEUE USING THE JMS CLIENT - United States
+
+Text:
+  FIXES ARE AVAILABLE
+WebSphere MQ V7.0.1 for i5/OS Fix Pack 7.0.1.3 [http://www-01.ibm.com/support/docview.wss?uid=swg24026933]
+WebSphere MQ V7.0 Fix Pack 7.0.1.3 [http://www-01.ibm.com/support/docview.wss?uid=swg24026932]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  A Java Message Service (JMS) application which creates a
+   temporary queue to put a message and then to get it will fail
+   after upgrading from 7.0.0.x to 7.0.1.x if client auto reconnect
+   is enabled.
+   
+   No FDC files and no messages in the general error log files are
+   created, but some generic messages are shown in the error
+   log for the queue manager:
+   AMQ9209: Connection to host 'x' closed.
+   AMQ9999: Channel program ended abnormally.
+   
+   The JMS exceptions are:
+   JMSWMQ2002: Failed to get a message from destination
+   'SYSTEM.DEFAULT.MODEL.QUEUE'.
+   ?com.ibm.msg.client.jms.DetailedIllegalStateException? at:
+   com.ibm.msg.client.wmq.common.internal.Reason.
+   reasonToException(Reason.java:496)
+   ...
+   Cause:
+   JMSCMQ0001: WebSphere MQ call failed with compcode '2'
+   ('MQCC_FAILED') reason '2033' ('MQRC_NO_MSG_AVAILABLE').
+   ?com.ibm.mq.MQException? at:
+   com.ibm.msg.client.wmq.common.internal.Reason.
+   createException(Reason.java:223)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  As a workaround, the MQ Client Configuration file located in
+   /var/mqm/mqclient.ini (or the file pointed by the location
+   specified by the environment variable MQCLNTCF) in the machine
+   where the scenario is failing needs to have disabled the
+   automatic reconnect option, as shown below:
+   .
+   CHANNELS:
+     DefRecon=NO
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   This issue affects users that create multiple JMS
+   producers/consumers from a temporary queue with client auto
+   reconnect enabled.
+   
+   Platforms affected:
+   All Distributed (iSeries, all Unix and Windows) +Java
+   ****************************************************************
+   PROBLEM SUMMARY:
+   When client auto reconnect is enabled, details of all open MQ
+   objects have to be cached so that the objects can be reopened if
+   the client reconnects.
+   
+   As part of this caching, a queue's name attribute was
+   incorrectly being set to the name of the model queue used to
+   create the temporary destination. This meant that each time the
+   destination was opened, a new dynamic queue was created instead
+   of the original dynamic queue being opened again.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The name of the dynamic queue is now correctly cached when a
+   temporary JMS destination is created, rather than caching the
+   name of the model queue.
+   
+   This means the temporary destination can be opened multiple
+   times and each instance will reference the same queue.
+   
+   The model queue is now only used if client reconnect is
+   triggered.  it is used to recreate the temporary destination.
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+                      v7.0
+   Platform           Fix Pack 7.0.1.3
+   --------           --------------------
+   Windows            tbc_p700_0_1_3
+   AIX                tbc_p700_0_1_3
+   HP-UX (PA-RISC)    tbc_p700_0_1_3
+   HP-UX (Itanium)    tbc_p700_0_1_3
+   Solaris (SPARC)    tbc_p700_0_1_3
+   Solaris (x86-64)   tbc_p700_0_1_3
+   iSeries            tbc_p700_0_1_3
+   Linux (x86)        tbc_p700_0_1_3
+   Linux (x86-64)     tbc_p700_0_1_3
+   Linux (zSeries)    tbc_p700_0_1_3
+   Linux (Power)      tbc_p700_0_1_3
+   
+   The latest available maintenance can be obtained from
+   'WebSphere MQ Recommended Fixes'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037]
+   
+   If the maintenance level is not yet available, information on
+   its planned availability can be found in 'WebSphere MQ
+   Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ68087
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ LIN X86 V7
+   
+   
+ * REPORTED COMPONENT ID
+   5724H7224
+   
+   
+ * REPORTED RELEASE
+   701
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-01-13
+   
+   
+ * CLOSED DATE
+   2010-02-26
+   
+   
+ * LAST MODIFIED DATE
+   2010-03-04
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ LIN X86 V7
+   
+   
+ * FIXED COMPONENT ID
+   5724H7224
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R701 PSY
+   UP

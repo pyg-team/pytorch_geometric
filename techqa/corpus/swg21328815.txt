@@ -1,0 +1,121 @@
+Title: IBM HowTo: Creating a table/itemset filter. - United States
+
+Text:
+table; filtering; itemset; search TECHNOTE (FAQ)
+
+QUESTION
+How do I filter what data is shown in a particular xforms widget that is bound to an itemset?
+
+ANSWER
+The solution to this problem is simpler than it may seem. It leverages the use of XPath and a few of its functions to modify the dataset that is defined in the XForms nodeset. 
+
+To implement the desired filtering behavior, we need to use the starts-with() XPath function. Based on the following instance structure: 
+
+
+<xforms:instance id="INSTANCE">
+<form> 
+
+ * 
+ * <row>  * 
+   
+   </row> 
+   <row>  * 
+   
+   </row> 
+   . . . 
+ * 
+
+</form> 
+</xforms:instance> 
+
+Below is the table markup that displays a list of animals. 
+
+<table sid="TABLE2_TABLE"> 
+<xforms:repeat id="TABLE2" nodeset="instance('INSTANCE')/table/row">  * 
+ * <xforms:group ref="."> 
+   <xforms:label></xforms:label>  * 
+    * <itemlocation>  * 
+       * 
+       * 
+      
+      </itemlocation> 
+    * 
+    * 
+    * 
+    * <xforms:output>  * 
+      
+      </xforms:output> 
+      <itemlocation>  * 
+       * 
+       * 
+      
+      </itemlocation> 
+    * 
+    * 
+    * 
+    * <xforms:input ref="Data">  * 
+      
+      </xforms:input> 
+      <itemlocation>  * 
+       * 
+       * 
+      
+      </itemlocation> 
+    * 
+   
+   </xforms:group> 
+   <padding>1</padding> 
+ * 
+
+</xforms:repeat> 
+<rowpadding>-2</rowpadding> 
+</table> 
+
+To create the filter, we must first place a field on the form and link it to the data model. This field will filter the table results based on the characters that the user has entered. 
+
+<field sid="FIELD1">  * 
+ * <xforms:label></xforms:label> 
+ * 
+ * 
+ * 
+ * <x>198</x> 
+   <y>36</y> 
+ * 
+ * 
+ * 
+
+</field> 
+
+Once we have the filter field on the page, we then proceed to modify the dataset that is defined in the XForms nodeset with the XPath function starts-with() . 
+
+You can read more about the starts-with() function at w3.org [http://www.w3.org/TR/xpath]. 
+
+<table sid="TABLE2_TABLE">  * 
+ * [starts-with(./Data, instance('INSTANCE')/filter)]
+ * 
+ * 
+ * 
+
+
+This function returns the set of elements that begin with the filter string. 
+
+This filtered set is then bound as the nodeset and displayed. 
+
+You can extend this same technique to other XForms items as demonstrated below. 
+
+For example, Popups (Where the popup will only show items that match the filter string): 
+
+<popup sid="POPUP1A">  * 
+ * <xforms:label>Select an Animal</xforms:label> 
+   <xforms:itemset nodeset="instance('INSTANCE')/popup/options [starts-with(./Data, instance('INSTANCE')/filter)]">  * 
+    * 
+    * 
+   
+   </xforms:itemset> 
+ * 
+
+</popup> 
+
+To go a step further, you can create a case insensitive filter by leveraging the translate() function. 
+
+<xforms:itemset nodeset="instance('INSTANCE')/tablerow [ starts-with(translate(./Data, 'abcdefghijklmnopqrstuvwxyz', 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'), translate(instance('INSTANCE')/filter, 'abcdefghijklmnopqrstuvwxyz', 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'))]">

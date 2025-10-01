@@ -1,0 +1,118 @@
+Title: IBM PJ33123: CANNOT RETRIEVE FILE WITH CONTENT SIZE GREATER THAN 1MB IN DATAB ASE STORAGE WITH DB2 - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Unable to retrieve file wtih content size that is greater than
+   1MB using .Net API.  Java API with EJB transport works fine.
+    The only affects cases where content is stored in a database
+   store, is stored in a DB2 database, and where the 9.5 version
+   of the DB2 JDBC drivers is in use.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  P8 4.0 developers using .NET APIUnable to retrieve file wtih con
+   1MB using the .Net API over the WSI transport.  The Java API wit
+   This primarily affects cases where content is stored in a DB2 da
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This is fixed in P8CE-4.0.1-003 and above.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PJ33123
+   
+   
+ * REPORTED COMPONENT NAME
+   CONTENT ENGINE
+   
+   
+ * REPORTED COMPONENT ID
+   5724R8101
+   
+   
+ * REPORTED RELEASE
+   401
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-03-06
+   
+   
+ * CLOSED DATE
+   2008-06-03
+   
+   
+ * LAST MODIFIED DATE
+   2008-06-03
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CONTENT ENGINE
+   
+   
+ * FIXED COMPONENT ID
+   5724R8101
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R401 PSY
+   UP

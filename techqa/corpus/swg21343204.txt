@@ -1,0 +1,26 @@
+Title: IBM How can we make an optional filter that shows text in a drop-down list, in Query Studio? - United States
+
+Text:
+[Enter additional search terms. Place a space between keywords.] TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ We wish to have a filter applied to a data item in Query Studio, but the filter should be optional, and should show a list of text values, but filter on the key value. 
+
+RESOLVING THE PROBLEM
+This is a tricky problem, because we want the prompt to always show up, but we don't want to have to enter a value. To do this, we need to use a "prompt" macro in a required model filter. To make the filter "optional", we have to specify a default value for the prompt macro, and write the filter expression so that the filter won't actually filter anything if this default is choosen.
+
+The following filter expression was applied to our Great Outdoors Warhouse (Query) sample in the query subject:
+Database View -> Sales and Marketing Data -> SLS_PRODUCT_DIM:
+
+>  [Sales and marketing data].[SLS_PRODUCT_DIM].[PRODUCT_LINE_CODE] = #prompt('PLCode','integer','-1','','[Sales and marketing data].[SLS_PRODUCT_DIM].[PRODUCT_LINE_CODE]')#
+OR
+-1=#prompt('PLCode','integer','-1','','[Sales and marketing data].[SLS_PRODUCT_DIM].[PRODUCT_LINE_CODE]')#
+
+
+To make this prompt display "PRoduct Line Name" instead of the numeric code, we set the "Prompt Info" properties of the "PRODUCT_LINE_CODE" data item. Specifically, we set the "Display Item Reference" to [Sales and marketing data].[SLS_PRODUCT_LINE_LOOKUP].[PRODUCT_LINE_EN], and set "Use Item Reference" to [Sales and marketing data].[SLS_PRODUCT_DIM].[PRODUCT_LINE_CODE].
+
+1040803_1.zip [/support/docview.wss?uid=swg21343204&aid=2] - 1040803_1.zip [/support/docview.wss?uid=swg21343204&aid=1]
+
+Cross Reference information Segment Product Component Platform Version Edition Business Analytics Cognos Business Intelligence Framework Manager Windows 8.3 
+HISTORICAL NUMBER
+ 1040803

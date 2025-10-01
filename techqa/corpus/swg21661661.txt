@@ -1,0 +1,31 @@
+Title: IBM No Garbage Collection Data in VE with WAS 8.5.5 - United States
+
+Text:
+CAMADALL; CAMADWASZDC TECHNOTE (TROUBLESHOOTING)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ Simplified Chinese 
+
+PROBLEM(ABSTRACT)
+ Client has redirected sysout using the WAS redirect_server_output_dir 
+command which then permits the usage of the ROLL_LOGS command so that 
+they can roll the SYSOUT output (send to a USS file) daily. Documentation regarding the ROLL_LOGS command can be found at the following doc-link: 
+http://pic.dhe.ibm.com/infocenter/wasinfo/v7r0/topic/com.ibm.websphere.installation.zseries.doc/info/zseries/ae/cins_outdest.html [http://pic.dhe.ibm.com/infocenter/wasinfo/v7r0/topic/com.ibm.websphere.installation.zseries.doc/info/zseries/ae/cins_outdest.html]
+
+
+SYMPTOM
+Joblog shows: TEMAGCCollector.gclog.path = JESLOG:SYSOUT:DISCARD
+
+
+CAUSE
+ITCAM on z/OS does not check for redirect_server_output. ITCAM z/OS uses the JES capture facility so to use the SYSOUT JES log for the GC data, because that is unique to each servant. 
+
+RESOLVING THE PROBLEM
+1. Add the WAS JVM parm Xverbosegclog - ITCAM expects to find the GC data in the sysout of the Xverbosegclog:${SERVER_LOG_ROOT}/<gclogpath> 
+
+ 2. The GC log file path specified in the Xverbosegclog JVM parm must be added to the kwjdc.properties parm "TEMAGCCollector.gclog.path=." 
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ ITCAM ITCAM4AD ITCAMfAD

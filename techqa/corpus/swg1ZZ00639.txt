@@ -1,0 +1,192 @@
+Title: IBM ZZ00639: HEAT TEMPLATE WITH GET_FILE FAILS IF SUBMITTED FROM ICO - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+ DIRECT LINK TO FIX
+2.5.0-CSI-ICO-FP0004 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FIBM+SmartCloud+Orchestrator&fixids=2.5.0-CSI-ICO-FP0004&source=SAR]
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Heat template with get_file fails if submitted from ICO
+   
+   
+   Problem description and business impact:
+   
+   
+   Product: IBM Cloud Orchestrator 2.5.0.2 and IBM cloud Manager
+   with
+   Openstack 4.3.0.6.4
+   Environment: Linux RHEL 7.1 x86_64
+   
+   Problem Description:
+   
+   When trying to deploy a heat template with the get_file
+   property
+   from
+   ICO, it fails with the error
+   
+   CTJCO0003E: Business process instance 633 of process Deploy
+   Heat
+   Template did not complete successfully. Status: Failed. Reason:
+   CTJCA2500: Deploying Heat stack failed , CTJCA2100: The
+   operation
+   failed. com.ibm.orchestrator.vmm.adapter.keystone.client.
+   OpenStackException: HT-5DEAEB8 Property error: : resources.
+   iis_ps_script.properties.config: : HT-EEF1009 No content found
+   in the
+   "files" section for get_file path:
+   http://172.18.185.165/scripts/IIS. [http://172.18.185.165/scripts/IIS.]
+   ps1
+   
+   However, when running the same template from the heat command
+   line or
+   from Horizon GUI it is created successfully.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  no workaround
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Heat template with get_file fails if submitted from ICO
+   
+   
+   Problem description and business impact:
+   
+   
+   Product: IBM Cloud Orchestrator 2.5.0.2 and IBM cloud Manager
+   with
+   Openstack 4.3.0.6.4
+   Environment: Linux RHEL 7.1 x86_64
+   
+   Problem Description:
+   
+   When trying to deploy a heat template with the get_file
+   property
+   from
+   ICO, it fails with the error
+   
+   CTJCO0003E: Business process instance 633 of process Deploy
+   Heat
+   Template did not complete successfully. Status: Failed. Reason:
+   CTJCA2500: Deploying Heat stack failed , CTJCA2100: The
+   operation
+   failed. com.ibm.orchestrator.vmm.adapter.keystone.client.
+   OpenStackException: HT-5DEAEB8 Property error: : resources.
+   iis_ps_script.properties.config: : HT-EEF1009 No content found
+   in the
+   "files" section for get_file path:
+   http://172.18.185.165/scripts/IIS. [http://172.18.185.165/scripts/IIS.]
+   ps1
+   
+   However, when running the same template from the heat command
+   line or
+   from Horizon GUI it is created successfully.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Updated the heat template file and corresponding toolkit
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   ZZ00639
+   
+   
+ * REPORTED COMPONENT NAME
+   SMRTCLOUD ORCHS
+   
+   
+ * REPORTED COMPONENT ID
+   5725H2800
+   
+   
+ * REPORTED RELEASE
+   250
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-03-14
+   
+   
+ * CLOSED DATE
+   2017-07-13
+   
+   
+ * LAST MODIFIED DATE
+   2017-07-13
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   SMRTCLOUD ORCHS
+   
+   
+ * FIXED COMPONENT ID
+   5725H2800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R250 PSY
+   UP

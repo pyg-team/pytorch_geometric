@@ -1,0 +1,23 @@
+Title: IBM Usage of script from SPSS 16.0 on Windows Vista gives error. - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ I have installed spss 16.0 on Windows Vista and ty to export a table or chart to PowerPoint, or I try to open a new script Window.
+I receive the following error "unexpected error: quitting"
+What is the reason for this error ? 
+
+RESOLVING THE PROBLEM
+This problem has been reported to SPSS Development and has been fixed in SPSS 17.0.
+We apologize for any inconvenience this has caused. 
+
+Please see the workaround described below for version 16.
+
+There are several registry key entries that need to be established for any script based procedures to run correctly. These procedures include using the actuall Script interface (File->New->Script or File->Open->Script), exporting to Powerpoint, or running standalone scripts through the Utility menu. 
+The current workaround for this problem is to have someone with sufficient system privledges run a script to get these registry entries created. System administrators are ideally suited to this and they should make sure to run SPSS as administrator by right-clicking the SPSS icon and then selecting "Run as Administrator..." option. Once SPSS is running just open a script window through File->New->Script. At this point all users on the affected computer should be able to run scripts or open up script windows.
+
+
+
+HISTORICAL NUMBER
+ 74401

@@ -1,0 +1,216 @@
+Title: IBM Remote Syslog over TLS setup - United States
+
+Text:
+remote syslog; encryption; TLS; SSL; certificates TECHNOTE (FAQ)
+
+QUESTION
+ How do I set up Remote Syslog to encrypt data over TLS? 
+
+ANSWER
+
+
+REMOTE SYSLOG OVER TLS SETUP GUIDE
+
+Note: Remote Syslog over TLS is applicable only to IBM Security Network Protection 5.3.1.7 or 5.3.2.1 and later releases. Any 5.3.1.x or 5.3.2 releases prior to these updates do not include this feature. 
+
+Insert a custom TLS tag for all TLS configurations in the existing comment field on the Edit Remote Syslog Object page. 
+
+REMOTE SYSLOG CONFIGURATION
+
+Select Secure -> Network Access Policy, then click New -> Response -> Alert -> Remote syslog. 
+Type the <TlsExtension> tag information in the comment field. 
+Example: 
+<TlsExtension> 
+key1=value2 
+key2=value2 
+: 
+</TlsExtension> 
+
+KEY LIST
+
+enabled = [true|false] (default false)  * 
+
+cryto.level = [compatible|strict] (default strict)  * 
+ * (a1)
+ *  
+ * 
+ * 
+ * (a2)
+
+security.mode = [trust-all|first-time-trust|explicit-trust] (default first-time-trust)  * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+
+security.server.cert = <Base64 PEM-encoded data> (Not required in Trust-All or First-Time-Trust setting. Optional in Explicit-Trust)  * 
+
+security.ocsp.enabled = [true|false] (default false)  * 
+
+security.ocsp.aia.first = [true|false] (default false)  * 
+
+security.ocsp.proxy.server = <IP address or Hostname>  * 
+
+security.ocsp.proxy.port = 1-65535  * 
+
+security.ocsp.url = <URL string>  * 
+ * 
+ * 
+ * 
+ * Example:
+ * 
+ * http://ocsp.foo.com:8888/ocsp
+
+security.ocsp.timeout = 0-6400 (default: 30)  * 
+
+
+MANAGEMENT CERTIFICATE AUTHORITIES CONFIGURATION
+
+Select Manage -> Management Certificate Authorities. 
+Upload a trusted root (CA) and/or intermediate CA to the IBM Security Network Protection appliance. You can also delete a CA if you want to revoke it. If you need to import intermediate CA certificates, you must first import the corresponding root CA. 
+Self-signed certificates do not need to be imported. Use security.server.cert to input self-signed certificate contents. 
+
+ADVANCED TUNING PARAMETER CONFIGURATION
+
+Select Manage -> Advanced Tuning Parameters. 
+These settings are optional. The Network Protection appliance uses default settings if Keys and Values are left blank. 
+tls.host_check.enabled = [true|false] (default true)  * 
+ * (a3)
+ * 
+ * 
+
+
+WORKING WITH ONLINE CERTIFICATE STATUS PROTOCOL (OCSP)
+
+The call to access the OCSP responder returns one of the following three responses: 
+Good – The certificate is valid. 
+Revoked – The certificate is revoked. The appliance rejects the TLS connection and issues an error system event. 
+Unknown – An unkown response can be returned for one of three reasons:  * The appliance cannot access the OCSP responder. 
+ * The OCSP responder has sent a response, but the appliance cannot verify the digital signature of the response. 
+ * The OCSP responder has sent a response that indicates that it has no revocation data for the certificate.
+
+
+DIGITAL SIGNING OF OCSP RESPONSES
+
+An OCSP responder can sign its responses in any of three ways. Your responder will inform you which method is used. If the digital signing of OCSP responses does not fulfill one of the following requirements, the Network Protection appliance will ignore the OCSP response and allow a TLS connection.  * The OCSP response can be digitally signed using the same CA certificate that issued the certificate you are checking. In this case, you do not need to set up any additional certificates; the steps you have already taken to establish SSL connectivity are sufficient to verify the OCSP response. 
+ * The OCSP response can be digitally signed using another certificate signed by the same (CA) that issued the certificate you are checking. The signing certificate is flowed together with the OCSP response in this case. The certificate flowed from the OCSP responder must have an Extended Key Usage Extension set to id-kp-OCSPSigning, so that it can be trusted for this purpose. Because the OCSP response is flowed with the certificate that signed it (and that certificate is signed by a CA which is already trusted for SSL connectivity), no additional certificate setup is required. 
+ * The OCSP response can be digitally signed using another certificate that is not directly related to the certificate you are checking. In this case, the OCSP Response is signed by a certificate issued by the OCSP responder itself. You must add a copy of the OCSP responder certificate to Management Certificate Authorities in the LMI. When a CA certificate is added, by default it is added as a trusted root, which is the required setting in this context. If this certificate is not added, ISNP cannot verify the digital signature on the OCSP response and the OCSP check results in an Unknown response.
+
+
+NOTES
+ 1. For NIAP/FIPS 140/UCR compliant, the crypto.level must be set to strict and security.mode must be set to Explicit-trust. tls.host_check.enabled must not be set to false. 
+ 2. XGS 5.3.1.7 and XGS 5.3.2.1 does not support multiple identical self-signed (depth 1) certificates. Every Remote Syslog Object must point to a remote syslog server with unique certificate. 
+ 3. The certificate is stored permanently once a connection is established with syslog server in First-time-trust security level. If syslog server certificate is changed, the remote syslog object must be deleted and recreate in order to save the new certificate. 
+ 4. OCSP settings can be set separately by each remote syslog object, or have the global settings (a4) to apply on all objects which security.ocsp.enabled is set to false or not set. 
+ 5. Any imported Certificate Authorities certificates must be re-imported after a firmware update for XGS version 5.3.1.x.
+
+
+APPENDIX
+
+(a1) 
+The following ciphers are supported by the IBM Security Network Protection 5.3.1.7 release. 
+crypto.level = strict - only allow TLSv1.2 cipher suites 
+
+TLS1.0 Ciphers = 
+TLS_RSA_WITH_AES_128_CBC_SHA 
+TLS_RSA_WITH_AES_256_CBC_SHA 
+TLS_RSA_WITH_3DES_EDE_CBC_SHA 
+
+TLS1.1 Ciphers = 
+TLS_RSA_WITH_AES_128_CBC_SHA 
+TLS_RSA_WITH_AES_256_CBC_SHA 
+TLS_RSA_WITH_3DES_EDE_CBC_SHA 
+
+TLS1.2 Ciphers = 
+TLS_RSA_WITH_AES_128_CBC_SHA 
+TLS_RSA_WITH_AES_256_CBC_SHA 
+TLS_RSA_WITH_3DES_EDE_CBC_SHA 
+TLS_RSA_WITH_AES_128_GCM_SHA256 
+TLS_RSA_WITH_AES_256_GCM_SHA384 
+TLS_RSA_WITH_AES_128_CBC_SHA256 
+TLS_RSA_WITH_AES_256_CBC_SHA256 
+TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256 
+TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA384 
+TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256 
+TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384 
+TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256 
+TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384 
+TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256 
+TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 
+
+(a2) 
+NIAP/FIPS/TIC/UCAPL compliant certificate algorithm 
+TLS_SIGALG_RSA_WITH_SHA224 
+TLS_SIGALG_RSA_WITH_SHA256 
+TLS_SIGALG_RSA_WITH_SHA384 
+TLS_SIGALG_RSA_WITH_SHA512 
+TLS_SIGALG_ECDSA_WITH_SHA224 
+TLS_SIGALG_ECDSA_WITH_SHA256 
+TLS_SIGALG_ECDSA_WITH_SHA384 
+TLS_SIGALG_ECDSA_WITH_SHA512 
+
+(a3) 
+Alternative Name matching order is DNSname > IPAddress > Common Name 
+Remote syslog sever address in policy is: syslog.abc.com 
+
+Certificate A <- Trusted 
+DNSName.1 = server.abc.com 
+DNSName.2 = *.abc.com <- DNSName matched 
+IPAddress.1 = 192.168.0.100 
+Common Name = *.xyz.com 
+
+Certificate B <- Rejected
+DNSName.1 = *.xyz.com <- DNSName has value therefore one of the value must match 
+IPAddress.1 = 
+Common Name = *.abc.com 
+
+Certificate C <- Trusted
+DNSName.1 = 
+IPAddress.1 = 
+Common Name = *.abc.com <- This is matched since preceding values are not given 
+When IP address is used as syslog server address in policy, only Alternative IP Address is matched. 
+Remote syslog server address in policy is: 192.168.0.100 
+
+Certificate D <- Trusted 
+DNSName.1 = *.xyz.com 
+IPAddress.1 = 192.168.0.50 
+IPAddress.2 = 192.168.0.100 
+Common Name = *.abc.com 
+
+Certificate E <- Reject 
+DNSName.1 = *.xyz.com 
+DNSName.2 = 192.168.0.100 <- IP only matches in IPAddress field 
+IPAddress.1 = 192.168.0.50 
+Common Name = *.abc.com 
+
+Certificate F <- Rejected 
+DNSName.1 = *.xyz.com 
+Common Name = 192.168.0.100 <- IP address match does not support Common Name 
+
+Wildcard “*” character can be used in the left-most label of the reference identifier only. It can be used to match at least one or more characters. Wildcard character does not match to separator “.” and cannot be used in IP Addresses. 
+e.g. syslog.abc.com 
+Matches - 
+*.abc.com 
+s*.abc.com 
+*og.abc.com 
+S*sl*g.abc.com 
+Not matches - 
+syslog.*.com 
+*.com 
+syslog.* 
+*.syslog.abc.com 
+sys*log.abc.com 
+Please refer to RFC 6125 for more detail matching criteria. 
+
+(a4) 
+Global OCSP settings can be set in Advanced Tuning Parameters. 
+
+List of available parameters. 
+- ocsp.enabled (Also applies to OCSP settings for X-press Update Server and SiteProtector) 
+- ocsp.url (Also applies to OCSP settings for X-press Update Server and SiteProtector. This parameter replace "ocsp.cert.revocation.url" from 5.3.1.6) 
+- ocsp.aia.first 
+- ocsp.proxy.server 
+- ocsp.proxy.port 
+- ocsp.timeout

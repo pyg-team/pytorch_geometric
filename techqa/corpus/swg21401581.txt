@@ -1,0 +1,25 @@
+Title: IBM Getting an exception when executing rules, "could not load file or assembly ILOG.Rules.ExecutionServer.SessionService" - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ When executing rules, what does the exception "could not load file or assembly ILOG.Rules.ExecutionServer.SessionService" indicate? 
+
+ANSWER
+When executing rules the following exception might appear 
+
+ * Exception :
+ * Unhandled Exception: System.ServiceModel.FaultException`1[ILOG.Rules.ExecutionServer.Session.RuleSess ionExceptionDetail]: RESES_SESSION_0001: Execution Service exception.Caused by : ILOG.Rules.ExecutionServer.Session.RuleSessionException: Caused by : Could not load file or assembly 'ILOG.Rules.ExecutionServer.SessionService, Version=3.0.2016.0, Culture=neutral, PublicKeyToken=249b1f6759e7ef16' or one of its dependencies. The system cannot find the file specified. (Fault Detail is equal to ILOG.Rules.ExecutionServer.Session.RuleSessionExceptionDetail).
+ * 
+ * Cause:
+ * This appear when the ExecutionBaseDir property is not referencing a valid directory.
+ * Correction:
+
+ * Open the configuration file (App.config / Web.config). 
+ * Check if the property ILOG.Rules.ExecutionServer.Execution.BaseDirectory points to a valid Execution Service directory -- that is, a directory that contains a subdirectory Private Assemblies containing the Rule Execution Server DLL file. 
+
+
+
+HISTORICAL NUMBER
+ rulesfor.net/FAQ/25

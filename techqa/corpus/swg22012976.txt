@@ -1,0 +1,65 @@
+Title: IBM WebSphere Commerce throws NoClassDefFoundError during search indexing - United States
+
+Text:
+NoClassDefFoundError buildindex index solr search indexing fails failed TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ While building the search index, a NoClassDefFoundError is thrown at random for LoggingHelper$1 
+
+SYMPTOM
+SEVERE: error: Expected mime type application/octet-stream but got text/html. Error 500: javax.servlet.ServletException: java.lang.NoClassDefFoundError: com/ibm/commerce/foundation/common/util/logging/LoggingFileHandler$1
+
+Jun 15, 2017 12:34:34 PM com.ibm.commerce.foundation.dataimport.util.DataImportHelper printException
+INFO: Data import process was unsuccessful. An unrecoverable error has occurred.
+org.apache.solr.common.SolrException: /MC_3074457345616676668_CatalogEntry_Unstructured_en_US/dataimport Indexing failed
+at com.ibm.commerce.foundation.dataimport.process.util.SolrUtil.makeDataImportNoCleanCommand(SolrUtil.java:566)
+at com.ibm.commerce.foundation.dataimport.process.DataImportProcessorMain.fullDataImport(DataImportProcessorMain.java:1839)
+at com.ibm.commerce.foundation.dataimport.process.DataImportProcessorMain.executeDIH(DataImportProcessorMain.java:971)
+at com.ibm.commerce.foundation.dataimport.process.DataImportProcessorMain.main(DataImportProcessorMain.java:447)
+
+
+CAUSE
+This issue occurs at random when admin.log needs to rollover.
+The root cause is unknown at this time
+
+ENVIRONMENT
+AdminLogger traces enabled with admin.log reaching 1MB in size resulting in rollover
+
+DIAGNOSING THE PROBLEM
+This issue seems to only occur at random with steps such as (although not limited to) the following:
+1. Enable AdminLogger tracing.
+2. Fill up admin.log so that it is >1MB in size.
+3. Run preprocess and then buildindex.
+4. Buildindex fails.
+
+To help IBM find the root cause of this issue, we require javacore and system cores capturing the issue.
+The following Xdump configuration will trigger automatic javacore and dump generation if the error occurs for this specific method:
+
+-Xdump:system+java:events=throw+systhrow,filter=java/lang/NoClassDefFoundError#com/ibm/commerce/foundation/common/util/logging/LoggingFileHandler.publish*,request=exclusive+prepwalk+preempt
+
+This should produce a javacore and system dump (core file) when the NoClassDefFoundError is thrown.
+Process the system dump with jextract like this:
+
+[path to JDK]/jre/bin/jextract [.dmp file]
+
+This will produce a zip file containing the dump itself, all the shared libraries from the process, and some metadata.
+Open a PMR with IBM Commerce Support and send this file, along with the javacore for root cause analysis.
+
+RESOLVING THE PROBLEM
+Disable AdminLogger.
+Note that it may look like it is disabled but should be
+explicitly disabled using the following trace setting:
+*=info:com.ibm.commerce.foundation.logging.AdminLogger=off
+
+
+
+
+
+See the following APAR for more information: 
+
+http://www.ibm.com/support/docview.wss?uid=swg1JR55855 [http://www-01.ibm.com/support/docview.wss?uid=swg1JR55855]
+
+Update the trace setting on both the Commerce and Solr servers
+(Runtime and Configuration tabs) to ensure the AdminLogger is disabled.
+Alternatively, you can clear or delete the admin.log files to prevent
+the log from rolling over.

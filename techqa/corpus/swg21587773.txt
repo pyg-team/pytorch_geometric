@@ -1,0 +1,52 @@
+Title: IBM Unable to see any rules for the rule project in Rule Team Server - United States
+
+Text:
+test suites; smart views; permissions; ruleflow; action rules; business rules; templates; queries TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ We are unable to see any rules for our rule project in Rule Team Server (RTS). The diagnostics do not show any warnings or errors, and the RuleApp is generated successfully and contains the expected rules. 
+
+SYMPTOM
+The Explore tab shows no rules and displays the message: 
+
+ * 
+ * "There is no view available in this project. Please contact your administrator"
+
+
+or the section "Business Rules" displays the message: 
+
+ * 
+ * "There are no business rules at this level"
+
+
+in a folder where you have published or created action rules. 
+CAUSE
+By default, the rules are visible in RTS through the Business Rules smart view. This Business Rules smart view may have been accidentally deleted.
+
+Another possibility could be that security is enforced for this project but the current user does not have permissions to view elements of type "Smart View" and/or "Action Rule".
+
+
+RESOLVING THE PROBLEM
+If security is enforced for the project, verify that the current user does have permissions to view elements of type "Smart View" and "Action Rule". See the product documentation at WebSphere ILOG JRules BRMS V7.1 > WebSphere ILOG Rule Team Server online help > Configure: Manage your project configuration > Permissions > Setting permissions [http://publib.boulder.ibm.com/infocenter/brjrules/v7r1/topic/com.ibm.websphere.ilog.jrules.doc/Content/Business_Rules/Documentation/_pubskel/JRules/ps_JRules_Global1319.html] for more information. Note that this also applies if you cannot view other artifacts in RTS, such as test suites, functions, technical rules, and so on. 
+
+ 
+
+If the Business Rules smart view has been deleted , recreate it in RTS as follows: 
+
+ * In the "Compose" tab, in the left panel under "Start from a type", choose "Smart View", and click on "OK". 
+ * In "Step 1: Properties", set the Name as "%businessRulesView_key" 
+ * In "Step 2: Query", set the query as:  * Find all business rules
+    * 
+    * [such that] 
+   
+   
+ * In "Step 3: Displayed Properties", choose "Folder" in the "Available Properties" list, and click on the right-facing arrow to move it to the "Displayed Properties" list 
+ * Click "Finish"
+
+
+This should recreate the Business Rules smart view, and all your rules should be visible. See the documentation at WebSphere ILOG JRules BRMS V7.1 > WebSphere ILOG Rule Team Server online help > Compose: Create project elements > Creating a smart view [http://publib.boulder.ibm.com/infocenter/brjrules/v7r1/topic/com.ibm.websphere.ilog.jrules.doc/Content/Business_Rules/Documentation/_pubskel/JRules/ps_JRules_Global1213.html] for more information.
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Operational Decision Manager Platform Independent 8.0, 7.5

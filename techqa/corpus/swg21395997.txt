@@ -1,0 +1,43 @@
+Title: IBM How to install Tivoli® Provisioning Manager for OS Deployment with centralized DB2 on Linux - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How to install Tivoli® Provisioning Manager for OS Deployment with centralized DB2 on Linux 
+
+ANSWER
+Note: Some paths and parameter values depend on your DB2® installation. Paths and values provided here are only examples. 
+
+1. Install DB2 9.1 ESE at the required fix pack level on the parent server machine.
+2. Create an instance where you can create the database, choosing, for example, rembodb as its name.
+3. Ensure that you have Sun Java 1.4.2 in your server $PATH for both the parent and child. If there are multiple JVMs installed, ensure that 1.4.2 is the first JVM listed in the $PATH.
+4. Create two links from /usr/tpmfos for the files db2jcc.jar and db2jcc_license_cu.jar: 
+ln -s /opt/IBM/DB2/V9.1/java/db2jcc.jar
+ln -s /opt/IBM/DB2/V9.1/java/db2jcc_license_cu.jar
+5. From the directory where you have extracted the build of Tivoli® Provisioning Manager for OS Deployment, start the Java™ database gateway issuing the following command from a shell prompt: 
+java -cp dbgw.jar:db2jcc.jar:db2jcc_license_cu.jar \
+-Djdbc.drivers=com.ibm.db2.jcc.DB2Driver com.rembo.dbgw.Dbgw -d 
+6. On another terminal, verify the database connectivity using: 
+telnet localhost 2020 
+use db2://127.0.0.1:50000/tpmfosd,db2inst1,<password>
+7. Stop the dbgw process. If you do not, you will encounter errors when running setup.
+8. Go to the /usr/tpmfos directory.
+9. To install Tivoli Provisioning Manager for OS Deployment, start ./setup in the current directory and follow the setup program instructions. Mandatory parameters specific to using the product with DB2 are CLASSPATH, JDBCDRIVER, and JDBCURL. Default values for these parameters may not fit your particular installation of DB2. Make sure to provide appropriate values to the installer to have a working OS deployment server. In this example, you should use the following values: 
+CLASSPATH = /usr/tpmfos/db2jcc.jar:/usr/tpmfos/db2jcc_license_cu.jar
+JDBCDRIVER = com.ibm.db2.jcc.DB2Driver
+JDBCURL = db2://127.0.0.1:50000/tpmfosd
+10. On the child server, install the DB2 9.1 client, matching the Fix Pack level running on the parent. Allow setup to create a new instance.
+11. Install the child server, specifying the parent database when asked.
+12. After the parent and child have completed the Tivoli Provisioning Manager for OS Deployment installation, stop the following on both the parent and child: rembo server, rembo agent, and dbgw
+13. The parent's (IP 192.168.128.10) radb.ini file is: 
+cat ./files/global/rad/radb.ini with settings: ODBC_Source=db2://192.168.128.10:50000/rembodb, ODBC_Username=db2inst1, ODBC_Password=A740034ED1FDAF767F1177B230031971 
+14. The child's (IP 192.168,128.11), radb.ini file is: 
+cat /opt/tpmfos/files/global/rad/radb.ini with settings: ODBC_Source=db2://192.168.128.10:50000/rembodb , ODBC_Username=db2inst1, ODBC_Password=A740034ED1FDAF767F1177B230031971 
+15. The child now points to the parent's database as its own database.
+16. When you finish the configuration, restart dbgw, rembo server, and rembo agent on both servers.
+17. Connect to the parent Web GUI and select Server Parameters -> Replicate
+18. You can now see both servers under "Standalone OS Deployment Servers"
+19. Select the parent and follow the link "Make this OS deployment server a parent OS deployment server"
+20. Select the child and follow the link "Make this OS deployment server a child OS deployment server"
+21. Point the child server to the parent server.

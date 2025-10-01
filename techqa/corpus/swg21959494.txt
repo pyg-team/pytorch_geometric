@@ -1,0 +1,34 @@
+Title: IBM Insufficient permissions error when deploying the AnywhereWorkManager.war - United States
+
+Text:
+TPAEANYWHERE; mobile; permissions; worklight TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When deploying the AnywhereWorkManager.war you may run into Insufficient Permissions errors in the console window during the deployment process witht he Config Tool. 
+
+SYMPTOM
+The WorkLight Config tool fails with the following exception when invoking wsadmin 
+
+[configureapplicationserver] [java] call-wsadmin-callee:
+[configureapplicationserver] [java] 
+[configureapplicationserver] [java] [echo] BUILD FAILED
+[configureapplicationserver] [java] 
+[configureapplicationserver] [java] C:\Users\Admin\AppData\Local\Temp\2\23123124\configure.xml:3357: Insufficient permissions for making changes to the WebSphere Application Server in D:\IBM\WebSphere\AppServer.
+[configureapplicationserver] [java] 
+[configureapplicationserver] [java] Total time: 4 seconds
+[configureapplicationserver] 
+[configureapplicationserver] BUILD FAILED
+
+
+
+
+CAUSE
+This is caused by running the Config Tool with a user that doesn't have admin rights. 
+
+
+RESOLVING THE PROBLEM
+The wsadmin tool which is invoked by the WorkLight Config Tool requires administrative rights to run via the command prompt. As the Config Tool is invoking this command it must also be launched as an Admin. 
+
+ 
+
+Before opening the Config Tool, right click and choose run as Administrator. Your deployment should invoke the wsadmin scripting tool correctly now with the appropriate permissions.

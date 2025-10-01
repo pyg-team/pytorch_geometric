@@ -1,0 +1,67 @@
+Title: IBM Cannot confirm Atlas hold notices in Lotus Notes version 8.5.3 or later. - United States
+
+Text:
+Atlas eDiscovery Policy Management; PolicyAtlas; Lotus Notes 8.5.3 Lotus Notes 9.0 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ If a custodian clicks "Submit Response" button on a hold notice to record the response, Lotus Notes opens the browser with invalid PolicyAtlas url instead of actual Atlas server in the url. The url is similar to http : // www.~web8073.htm / PolicyAtlas. 8073 is the random number. This number could be different each time the custodian presses the "Submit Response" button. 
+
+CAUSE
+There is a new Image Whitelist Policy that was introduced from Lotus Notes 8.5.3 and later. This policy breaks the java script based email forms. This policy is applied automatically when the Image security is turned on under Preferences even when there is no image in the email. 
+
+More info can be found here.
+http://www-10.lotus.com/ldd/dominowiki.nsf/dx/Image_whitelist-new_in_Lotus_Notes_8.5.3 [http://www-10.lotus.com/ldd/dominowiki.nsf/dx/Image_whitelist-new_in_Lotus_Notes_8.5.3] 
+
+
+ENVIRONMENT
+Atlas --> Lotus Notes 8.5.3
+
+
+
+DIAGNOSING THE PROBLEM
+If the Image Security is turned off under Lotus Notes File==>Preferences==>Mail==>Internet, Then the Atlas users are able to confirm the hold notice without any issues.
+
+
+
+RESOLVING THE PROBLEM
+To resolve the issue without turning off the Image Security 
+
+Logon to Lotus Domino Administrator as Domino administrator and complete the tasks below.
+1: MailSetting
+1.1) Create a MailSetting 
+1.2) Enter the name of the MailSetting. for example: WhitelistMailSetting
+1.3) Under Basics==>Image Security, enter the host name:port without protocol or other symbols
+For example: if http://mycompanyintranet.com/PolicyAtlas is the Atlas url
+then enter mycompanyintranet.com
+If the Port # is to be included in the url such as:http://mycompanyintranet.com:9080/PolicyAtlas 
+
+then enter mycompanyintranet.com:9080 
+1.4) Click save and close.
+
+2: Desktop Setting
+2.1) Create a Desktop setting
+2.2) Enter the name of the desktop setting
+2.3) Under custom settings==>notes.ini .
+2.4) Enter EnableImageWhiteList=1
+2.5) Click save and close.
+
+3: Policy
+3.1) Create a Policy
+3.2) Enter the name of the Mail Policy. for exmaple : whitelistpolicy.
+3.3) Under Setting Type==>Mail select the mailsetting you created earlier in step1. 
+3.4) Under Setting Type==>Desktop , select the desktop setting you created in step2.
+3.5) Under PolicyAssignment tab, Select users or groups for which this policy will be applied.
+3.6) Click save and close.
+
+4: Process Policy
+4.1)Goto ServerConsole and the type "tell adminp process mail policy" Domino command and click Send 
+
+5: Open and Close the Lotus Notes
+5.1)Ask the users to close and reopen the notes once after the mail policy is applied.
+
+
+
+
+
+RELATED INFORMATION
+ Image whitelist - New in Lotus Notes 8.5.3 [http://www-10.lotus.com/ldd/dominowiki.nsf/dx/Image_whitelist-new_in_Lotus_Notes_8.5.3]

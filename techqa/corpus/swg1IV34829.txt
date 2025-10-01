@@ -1,0 +1,165 @@
+Title: IBM IV34829: JSC SHOWS PERMISSION ERROR WHEN CHANGING A JOB PRIORITY WITH ALTPRI SECURITY SETTING. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  JSC displays the following permission error unexpectedly when
+   changing priority of the job with ALTPRI security setting.
+   
+   GJS0089E
+   AWSJSY508E You do not have permissions to perform the operation
+   "DELDEP" on the following object type "JOB" with object key
+   
+   Environment:
+   MDM: TWS 8.4 + FP0006 on AIX
+   JSC: JSC 8.4 + FP0003 on Windows
+   
+   Replication steps:
+   1. Define a security of a user.  JOB and JOBSTREAM has ALTPRI
+      setting.
+   For example:
+   USER OPERATOR
+           CPU=@+LOGON=testuser
+   BEGIN
+     USEROBJ CPU=@
+   ACCESS=ADD,DELETE,DISPLAY,MODIFY,ALTPASS,UNLOCK
+     JOB     CPU=@   ACCESS=ALTPRI,DISPLAY,LIST
+     SCHEDULE        CPU=@   ACCESS=ALTPRI,DISPLAY,LIST
+     :
+   
+   2. Using JSC, "all scheduled job" -> right click -> properties
+   -> change priority -> OK -> error is displayed.
+   
+     => It can be confirmed that ALTPRI operation is actually
+        performed.
+   
+   Notes: Performing the same scenario to job stream completes
+   without any error messages.
+   
+   Notes:
+   The issue occurs on the following environment also.
+   1. TDWC 8.5.1 + TWS 8.5.1.
+   2. TDWC 8.6.0 + TDWC 8.6.0
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Ignore the message.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  JSC displays the following permission error unexpectedly when
+    changing priority of the job with ALTPRI security setting.
+   
+    GJS0089E
+    AWSJSY508E You do not have permissions to perform the operation
+    "DELDEP" on the following object type "JOB" with object key
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  8.6.0-TIV-TWS-FP0003, 8.5.1-TIV-TWS-FP0005, 8.5.0-TIV-TWS-FP0004
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV34829
+   
+   
+ * REPORTED COMPONENT NAME
+   TIV WKLD SCHDL
+   
+   
+ * REPORTED COMPONENT ID
+   5698WKB84
+   
+   
+ * REPORTED RELEASE
+   84A
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-01-15
+   
+   
+ * CLOSED DATE
+   2013-02-27
+   
+   
+ * LAST MODIFIED DATE
+   2013-02-27
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TIV WKLD SCHDL
+   
+   
+ * FIXED COMPONENT ID
+   5698WKB84
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R848 PSY
+   UP

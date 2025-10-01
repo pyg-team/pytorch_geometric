@@ -1,0 +1,137 @@
+Title: IBM PM48474: BUILDING APRIORI MODEL WITH FIELDS THAT CONTAIN AMPERSAND CHARACTERS IN THEIR NAME CAUSES SAVED STREAM TO FAIL TO LOAD - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Building apriori model with fields that contain ampersand
+   characters in their name allows a model to be generated and used
+   to score data. When the stream is saved and a reload attempt is
+   attempted an error is displayed and the stream cannot be loaded:
+   
+   "the reference to entity "H" must end with the ';' delimiter.".
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * Users loading streams that contain apriori models built on   *
+   * fields that contain ampersand characters in their name       *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * Building an apriori model with fields that contain ampersand *
+   * characters in their name allows a model to be generated and  *
+   * used                                                         *
+   * to score data. When the stream is saved and a reload attempt *
+   * is                                                           *
+   * attempted an error is displayed and the stream cannot be     *
+   * loaded:                                                      *
+   *                                                              *
+   * "the reference to entity "H" must end with the ';'           *
+   * delimiter.".                                                 *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Upgrade to Modeler 14.2 FP2 to resolve this problem          *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  After applying 14.2 FP2 you will not have issues loading such
+   streams.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM48474
+   
+   
+ * REPORTED COMPONENT NAME
+   SPSS MODELER
+   
+   
+ * REPORTED COMPONENT ID
+   5725A64MD
+   
+   
+ * REPORTED RELEASE
+   E10
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-09-22
+   
+   
+ * CLOSED DATE
+   2011-12-15
+   
+   
+ * LAST MODIFIED DATE
+   2011-12-15
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   SPSS MODELER
+   
+   
+ * FIXED COMPONENT ID
+   5725A64MD
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * RE20 PSY
+   UP

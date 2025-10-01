@@ -1,0 +1,143 @@
+Title: IBM PM09352: metaclasses.txt mentioned in doc missing - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The documentation of the 'General:Model:AvailableMetaclasses' pr
+   operty
+   indicates :
+   
+   Rhapsody allows you to hide any out-of-the-box element types tha
+   t
+   your users will not need.
+   
+   The availability of metaclasses is determined by the property
+   
+   AvailableMetaclasses. This property is defined using a comma-sep
+   arated
+   list of strings.
+   
+   To keep all of the out-of-the box metaclasses, leave this proper
+   ty
+   blank.
+   
+   To limit the availability of certain metaclasses, use this prope
+   rty
+   to indicate only the metaclasses that you would like to have ava
+   ilable.
+   The strings to use to represent the different metaclasses can be
+   
+   found in the file metaclasses.txt in the Doc directory of your R
+   hapsody
+   installation.
+   
+   In Rhapsody 7.5.1, I can't find the file 'metaclasses.txt' in th
+   e 'Doc'
+   directory of my Rhapsody installation.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  metaclasses.txt needs to be included in installation of
+   Rational Rhapsody
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fixed in 7.5.2
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM09352
+   
+   
+ * REPORTED COMPONENT NAME
+   TLOGIC RHAPSODY
+   
+   
+ * REPORTED COMPONENT ID
+   5724V74RP
+   
+   
+ * REPORTED RELEASE
+   750
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-03-08
+   
+   
+ * CLOSED DATE
+   2010-06-11
+   
+   
+ * LAST MODIFIED DATE
+   2010-06-11
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TLOGIC RHAPSODY
+   
+   
+ * FIXED COMPONENT ID
+   5724V74RP
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R750 PSN
+   UP

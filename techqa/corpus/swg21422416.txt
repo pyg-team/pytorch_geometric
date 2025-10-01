@@ -1,0 +1,61 @@
+Title: IBM Create view from CCRC 7.1.1 reports error:  MalformedResponseException: Premature EOF error - United States
+
+Text:
+1422416; CC; CM Server; 7.1.1; Solaris 10; x86; EOF; CCRC; MalformedResponseException; PM08209; MalformedResponseException: Premature EOF; com.ibm.rational.clearcase.remote_core.rpc.MalformedResponseException; com; ibm; rational; clearcase; remote_core; rpc; Premature EOF; create view TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+This technote identifies an issue that can occur where creating a view from IBM Rational ClearCase Remote Client (CCRC) 7.1.1 reports an error: MalformedResponseException: Premature EOF.
+
+SYMPTOM
+ 
+
+When attempting to create a view from a CCRC 7.1.1 client, the following error is seen: 
+
+
+CRVAP0087E CCRC command 'mkview' failed: Error: "com.ibm.rational.clearcase.remote_core.rpc.MalformedResponseException: Premature EOF" 
+
+
+In the CM Server system logs, the following is seen: 
+
+
+[2/3/10 14:05:34:560 EST] 00000026 ConnectionEve A J2CA0056I: The Connection Manager received
+a fatal connection error from the Resource Adapter for resource
+eis/com/ibm/rational/stp/server/oncrpc/CcRpc. The exception which was received is JRPC.RPCError: I/O Error (EOF).
+[2/3/10 14:05:34:560 EST] 0000001f CMLogger E CRVSV0072E 
+server error occurred while processing request.
+[2/3/10 14:05:34:571 EST] 0000001f CMLogger E CRVSV0571I 
+Exception reason code: internal-server-error 
+[2/3/10 14:05:34:572 EST] 0000001f CMLogger E CRVSV0072E 
+server error occurred while processing request.
+[2/3/10 14:05:34:572 EST] 0000001f CMLogger E CRVSV0960I Caused by:
+[2/3/10 14:05:34:573 EST] 0000001f CMLogger E I/O Error (EOF).
+
+
+
+CAUSE
+ 
+
+ 1. The issue has been identified as a product defect under APAR PM08209 (applies only if seen on a Solaris 10 x86 CM Server with version 7.1.1 installed).
+    
+    
+ 2. The issue has also been seen to occur when permissions on the ClearCase_check directory of the ClearCase server are too restrictive.
+
+
+RESOLVING THE PROBLEM
+ 
+
+For Cause 1 
+
+ 
+
+Defect APAR PM08209 has been resolved in ClearCase 7.1.1.1 [http://www.ibm.com/support/docview.wss?rs=984&uid=swg21265307]. [http://www.ibm.com/support/docview.wss?uid=swg1PM08209] 
+
+ 
+
+For Cause 2 
+
+
+Change the permissions on the ClearCase_Check directory to provide the ability of all users who will need a ClearCase license to be able to create a file in this directory. 
+
+
+Also, refer to technote 1431848 [http://www.ibm.com/support/docview.wss?uid=swg21431848]Displaying VOB list is very slow when licensing caching directory permissions are too restrictive.

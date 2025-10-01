@@ -1,0 +1,13 @@
+Title: IBM Impact of the leap second on 31-Dec-2016 to IBM Security Lifecycle Manager (SKLM ) - United States
+
+Text:
+leap second; SKLM TECHNOTE (FAQ)
+
+QUESTION
+ There will be a leap second on 31 Dec 2016 UTC. Is there any impact and/or concern to IBM Security Lifecycle Manager (SKLM ) ?
+
+Leap second reference:
+http://www.space.com/33361-leap-second-2016-atomic-clocks.html [http://www.space.com/33361-leap-second-2016-atomic-clocks.html] 
+
+ANSWER
+SKLM product in particular will not be affected since the way SKLM works is not time base as far as serving keys are concerned.

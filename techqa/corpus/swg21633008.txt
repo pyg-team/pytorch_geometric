@@ -1,0 +1,27 @@
+Title: IBM Portal Server fails to start on Windows after adding -Xlp JVM argument - United States
+
+Text:
+xlp; windows; tuning guide; startServer; native_stderr.log TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ After adding the -Xlp JVM argument to the WebSphere_Portal server on a Windows environment, the JVM no longer initializes correctly 
+
+SYMPTOM
+In the native_stderr.log, you see the following error:
+
+=====================
+JVMJ9GC032E System configuration does not support option '-Xlp'
+=====================
+
+
+CAUSE
+The JVM argument '-Xlp' will only work on Windows if the Windows user has been given the 'Lock Pages in Memory' permission. If this permission is not granted, the above issue occurs.
+
+RESOLVING THE PROBLEM
+To resolve the problem, follow this Microsoft article to enable the 'Lock Pages in Memory' permission:
+
+http://msdn.microsoft.com/en-us/library/ms190730.aspx [http://msdn.microsoft.com/en-us/library/ms190730.aspx]
+
+ 
+
+Cross reference information Segment Product Component Platform Version Edition Organizational Productivity- Portals & Collaboration WebSphere Portal End of Support Products Windows 7.0, 6.1

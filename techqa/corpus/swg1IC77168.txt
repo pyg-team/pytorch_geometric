@@ -1,0 +1,239 @@
+Title: IBM IC77168: FDCS CREATED FOR WEBSPHERE MQ V5.3.1 ON HP NONSTOP, PROBE IDS INCLUDE ZI095217, XC130003, ZL000008, XECS_E_MEM_SET_NOT_FOUND - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  FDCs occur on HP NonStop Server running WebSphere MQ V5.3.1 with
+   error code xecS_E_MEM_SET_NOT_FOUND
+   
+   The FDCs contain the following Probe IDs :
+    ZI095217 from zifConnectToAgent
+    XC130003 from xehExceptionHandler
+    ZL000008 from zlaMain from LQMA
+   
+   Review of the SHM files on the OSS file system may reveal some
+   are missing in the shmem directory.  The affected CPU can be
+   identified in the Process listing of the FDC header.
+   
+   WebSphere MQ First Failure Symptom Report
+   =========================================
+   Product Long Name :- WebSphere MQ for HP NonStop Server
+   Probe Id          :- ZI095217
+   Component         :- zifConnectToAgent
+   Process           :- 5,126 $Y983 OSS(337576554)
+   Minor Errorcode   :- xecS_E_MEM_SET_NOT_FOUND
+   Probe Type        :- MSGAMQ6118
+   Probe Description :- AMQ6118: An internal WebSphere MQ error
+   has occurred
+   ------------------------------------------------------
+   MQM Function Stack
+   rppPoolMain
+   cccJobStart_ut
+   cccJobMonitor
+   ccxGiveConv
+   cciTcpGiveConv
+   ccxResponder
+   rrxResponder
+   rriAcceptSess
+   lpiSPIMQConnect
+   zstMQConnect
+   zifMQCONN
+   zifConnectToAgent
+   xcsFFST
+   
+   WebSphere MQ First Failure Symptom Report
+   =========================================
+   Product Long Name :- WebSphere MQ for HP NonStop Server
+   Probe Id          :- XC130003
+   Component         :- xehExceptionHandler
+   Major Errorcode   :- STOP
+   Probe Type        :- HALT6109
+   Probe Description :- AMQ6109: An internal WebSphere MQ error
+   has occurred.
+   FDCSequenceNumber :- 1
+   Arith1            :- 11 b
+   Comment1          :- SIGSEGV
+   ---------------------------------------------------------
+   MQM Function Stack
+   rppPoolMain
+   cccJobStart_ut
+   cccJobMonitor
+   ccxGiveConv
+   cciTcpGiveConv
+   ccxResponder
+   rrxResponder
+   rriAcceptSess
+   lpiSPIMQConnect
+   zstMQConnect
+   zifClearUpAgent
+   xcsDestroySharedMemSet
+   xcsFFST
+   ----------------------------------------------------------
+   
+   WebSphere MQ First Failure Symptom Report
+   ========================================
+   Product Long Name :- WebSphere MQ for HP NonStop Server
+   Probe Id          :- ZL000008
+   Component         :- zlaMain
+   Major Errorcode   :- xecF_E_UNEXPECTED_RC
+   Minor Errorcode   :- xecS_E_MEM_SET_NOT_FOUND
+   Probe Description :- AMQ6118: An internal WebSphere MQ error
+   has occurred
+   ---------------------------------------------------------
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Exclude WMQ processes from the CPU that is affected, by changing
+   the qmproc.ini file and doing a refresh qmgr type(nsproc).
+   That CPU is unusable until the queue manager is recycled.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Logic intended to create queue manager-specific shared memory
+   sets is erroneously triggered in some cases following certain
+   types of filesystem errors in the shared memory code. This
+   triggers cleanup logic which incorrectly deletes the existing
+   files associated with the shared memory set and does not restore
+   them. This causes the xecS_E_MEM_SET_NOT_FOUND FDCs and
+   prevents processes in the CPU from connecting to the queue
+   manager
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Remove the logic which allows shared memory set cleanup during
+   normal queue manager operation, and add additional logging code
+   to create an FDC reporting the filesystem error which triggered
+   the original problem prior to the fix.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  Under some circumstances IBM support may be able to provide a
+   tool (shmoss) which can repair the missing shm files and
+   restore the CPU to operation.
+   
+   Workround is to exclude WMQ processes from the affected CPU by
+   To exclude:
+   
+   1. If CPUs attribute is not present in the AllProcesses, LQMA,
+      MCA or Repository stanzas add a
+        CPUs=
+      stanza to AllProcesses for all cpus you wish to start new
+      MCA or LQMA processes in.
+   2. If CPUs is specified remove the problem cpu from the list.
+   Refresh the qmproc.ini rules using runmqsc command
+     REFRESH QMGR TYPE(NSPPROC)
+   Ensure the EC has validated the change by reviewing the
+   queue manger log EC validation entries generated.
+   .
+   For example if cpu 3 has a issue and only the AllProcesses
+   is present and contains CPUs=0,1,2,3,4,8 the CPUs would be
+   changed to CPUs=0,1,2,4,8 .
+   .
+   When the queue manager is to be recycled, restore the qmproc.ini
+   file to its original state to return the CPU to service when the
+   queue manager restarts.
+   
+   The problem affects only new connections to the queue manager -
+   existing connections are not affected.
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC77168
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBS MQ NSS MIP
+   
+   
+ * REPORTED COMPONENT ID
+   5724A3901
+   
+   
+ * REPORTED RELEASE
+   531
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-06-28
+   
+   
+ * CLOSED DATE
+   2011-07-15
+   
+   
+ * LAST MODIFIED DATE
+   2011-07-15
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBS MQ NSS MIP
+   
+   
+ * FIXED COMPONENT ID
+   5724A3901
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R531 PSY
+   UP

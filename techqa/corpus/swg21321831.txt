@@ -1,0 +1,192 @@
+Title: IBM Rational Product General Collector available through IBM Support Assistant - United States
+
+Text:
+isa; collector; collect; support; addon; add-on NEWS
+
+ABSTRACT
+ This document describes how to use the IBM Rational Product General Collector that is available as part of Rational desktop product add-ons for IBM Support Assistant. The collector provides an automated way for customers to gather information for our Rational support team. 
+
+CONTENT
+IBM Support Assistant (ISA) is a cross-product extensible client application that increases your capacity for self-help by making it easier to access support resources. Additionally, it provides capability for automated data collection capability for you to gather the necessary data for support team to help with initial diagnosis of your problem with the product.
+
+You can now automate data collection for problems you have with the following Rational desktop products on both Windows and Linux platforms (if applicable). 
+
+ * Rational Application Developer for WebSphere Software 7.x 
+ * Rational Asset Manager 7.1 and 7.2 
+ * Rational Functional Tester 7.0 
+ * Rational Manual Tester 7.0 
+ * Rational Performance Tester 7.0, 8.x 
+ * Rational Software Analyzer 7.0 
+ * Rational Software Architect 7.0 
+ * Rational Software Architect for WebSphere Software 7.5 
+ * Rational Software Architect Standard Edition 7.5 
+ * Rational Software Modeler 7.x 
+ * Rational Systems Developer 7.0 
+ * Rational Team Concert 1.0 - client 
+ * Rational Requirements Composer 2.0 - client
+
+
+The Rational Product General Collector is made available as ISA add-ons for the above list of products. Each product add-on provides a product specific id for the collector to enable gathering of product specific information. 
+
+
+
+
+
+
+>Prerequisites 
+
+>Installation Instructions 
+
+>Using ISA collector 
+
+>Details: Rational Product General Collector 
+
+
+
+
+
+
+Prerequisites 
+
+IBM Support Assistant V4.0.x or higher (Workbench) 
+
+http://www.ibm.com/software/support/isa/ [http://www.ibm.com/software/support/isa/] 
+
+
+
+
+
+
+Installation Instructions 
+
+First, determine the product that you have a concern with, then follow the installation instructions below to pull the add-ons to ISA. 
+
+
+To install the IBM Support Assistant add-on: 
+
+ 1. Start IBM Support Assistant 
+ 2. Select Update > Find new > Product Add-ons from the menu. 
+ 3. Expand the Rational 
+ 4. Select <product of specific version> and click Next. 
+ 5. Click Next again. 
+ 6. Select I accept the terms in the license agreements and click Next. 
+ 7. Click Finish. 
+ 8. Click Finish again and click Yes to restart ISA. 
+
+
+You may also want to pick up updates. To do so: 
+ 1. Start IBM Support Assistant 
+ 2. Select Update > Find Updates to Add-ons from the menu. 
+ 3. Select the updates you want and click Next. 
+ 4. Select I accept the terms in the license agreements and click Next. 
+ 5. Click Finish. 
+ 6. Click Finish again and click Yes to restart ISA.
+
+
+
+
+Using ISA collector 
+
+ 
+
+Once ISA is started with the product add-on installed, click on Analyze Problem. Expand to the product, and you should see <product> General Collector. Select the collector and click on Add. This will add the collector to the Collector Queue to be run. 
+
+A Rational Software Architect for WebSphere Software example is shown below: 
+
+[/support/docview.wss?uid=swg21321831&aid=1] [/support/docview.wss?uid=swg21321831&aid=1]
+
+
+Click on Collect All to start the collection. 
+
+If you have multiple products added, each of these collectors will run in sequence per the Collector Queue. You can click on View Details to get more information on the progress of each of these collectors collector. More information can be found in ISA product help system at Help > Help Contents. 
+
+For a more in-depth understanding of the various methods on deploying the IBM Support Assistant collectors see: Collecting diagnostic information using the IBM Support Assistant [http://www.ibm.com/developerworks/websphere/techjournal/0809_supauth/0809_supauth.html]. 
+
+
+
+
+
+
+Rational Product General Collector
+
+Use this collector for general Rational desktop product issues. Please refer to the above section to determine which products this is applicable to. This collector will not modify your system in anyway.
+
+
+What are the information being collected? 
+
+This data collector will gather the following contents: 
+
+
+ * Set of data gathered from IBM Installation Manager Collector [http://www.ibm.com/support/docview.wss?rs=3455&context=SSLLVC&uid=swg21321795#IBM%20Installation%20Manager%20Collecto]. 
+ * Determines whether the product is found on the system.  * If the system does not have the product installed, it will prompt the user for data collection of another product that's found. 
+    * If product is available, collects Eclipse and product workspaces data.
+   
+   
+ * Eclipse data are pulled from the <eclipse_install> of the product.  * feature/*.* 
+    * links/*.* 
+    * plugins/PLUGIN_DIR_LIST.txt - directory listing of plugins/*.* 
+    * configuration/*.ini, *.log 
+    * configuration/org.eclipse.update/ (and subdirectories) 
+    * configuration/org.eclipse.core.runtime/ (and subdirectories) 
+    * configuration/org.eclipse.debug.core/ (and subdirectories) 
+    * configuration/org.eclipse.equinox.simpleconfiguration/ (and subdirectories) 
+    * configuration/org.eclipse.osgi/ (and subdirectories) - only if .lazy* is found. 
+    * runtime/*/logs/*.*
+   
+   
+ * For each workspace found from recent workspace list - the following information are collected:  * .metadata/*.* 
+    * .metadata/.plugins/org.eclipse.core.runtime/.settings/ (and subdirectories) 
+    * directory listing of contents of .metadata/.plugins if available 
+    * directory listing of contents of .metadata/.jazz3/.flags if available.
+   
+   
+ * The following type of files are ignored from the directories:  * Image files (*.jpg, *.gif, *.bmp) 
+    * lock files (*.lck , *.lock) 
+    * *.jar / *.zip 
+    * */bundles/* are also ignored.
+   
+   
+ * In addition, this collector gathers system inventory and collector execution logs. 
+
+
+The information collected is used for initial assessment of the problem for our support team. 
+Walk thru for the Rational Product General Collector 
+
+Since all Rational Product General collector are customized for a specific product, the following is an example walk through using IBM Rational Software Architect for WebSphere Software 7.5. This collector will first inform you what data is being collected. When click OK, it will then proceed to collect these. 
+
+
+[/support/docview.wss?uid=swg21321831&aid=2] [/support/docview.wss?uid=swg21321831&aid=2]
+
+You can click on the "Current Status" tab on ISA to view the detailed collector execution.
+
+If the product is not found on your system, or if you run the collector against a different version of the product than specified by the collector, a prompt will display providing a list of products installed on your system.
+
+[/support/docview.wss?uid=swg21321831&aid=3] [/support/docview.wss?uid=swg21321831&aid=3]
+
+Select a product from the pull down menu and click OK. Or, you can choose to Skip to let the collector run to completion, gathering only the install information.
+
+
+When the collector is completed, it will request feedback about ISA. Select Yes, to provide feedback. Select No to continue. 
+
+It will also ask you whether you would like to FTP the collected data. Please note that this is using the ftp protocol. If you have concern on the security of the data being transferred, please leverage the service request web page to transfer the data to your IBM Support team. 
+
+These are the FTP options. 
+
+ 1. FTP the Logs to IBM. If you have a PMR number, you can send the collected data directly to IBM Support team. 
+ 2. FTP the Logs to a Different Location. If you have an ftp site you want to send the files to - use this option. 
+ 3. Do Not FTP the Logs. Do nothing. 
+
+
+Click OK and continue. If you choose the above 1 or 2 option, you'll have additional panels to fill in information that will for FTP information. When the collector is completed, a link will be provided to you for quick access to the .zip file containing the collected data. You can use any unzip tool to extract the files. Alternatively, you can use the case manager capabilities within ISA to extract and examine the files collected.
+
+
+RELATED INFORMATION
+#IBM Support Assistant [http://www.ibm.com/software/support/isa/]
+Collecting diagnostic information using the IBM Support [http://www.ibm.com/developerworks/websphere/techjournal/0809_supauth/0809_supauth.html]
+
+
+
+
+
+
+Cross Reference information Segment Product Component Platform Version Edition Software Development Rational Asset Manager Eclipse Client Linux, Windows 7.1, 7.1.0.1, 7.1.1, 7.1.1.1, 7.2, 7.2.0.1, 7.2.0.2 Software Development Rational Functional Tester Linux, Windows 7.0 Software Development Rational Manual Tester Windows 7.0 Software Development Rational Performance Tester Windows, Linux 7.0, 8.0, 8.1 Software Development Rational Software Analyzer Linux, Windows 7.0 Software Development Rational Software Architect Linux, Windows 7.0 Software Development Rational Software Architect for WebSphere Software Linux, Windows 7.5 Software Development Rational Software Architect Standard Edition Linux, Windows 7.5 Software Development Rational Software Modeler Windows, Linux 7.0, 7.5 Software Development Rational Systems Developer Linux, Windows 7.0 Software Development Rational Team Concert Windows, Linux 1.0 Software Development Rational Requirements Composer Linux, Windows 2.0 Standard

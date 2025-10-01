@@ -1,0 +1,32 @@
+Title: IBM How to fix the login issue for Operational Decision Manager consoles in a cluster of WebSphere Application Server Liberty servers behind an IBM HTTP Server - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ If you create a cluster of WebSphere Application Server (WAS) Liberty servers behind an IBM HTTP Server (IHS), users might be automatically logged out when they try to log in to an Operational Decision Manager (ODM) console in the cluster. 
+
+CAUSE
+The problem might be caused by the configuration of the HTTP session affinity, which routes the requests of a client to a specific server. When the session affinity is disabled, the IHS load balancing policy determines where to route requests. When a user tries to log in to an ODM console, the load balancing policy might route the request to the wrong server. If the server cannot validate the security token in the request, the user is logged out automatically.
+
+RESOLVING THE PROBLEM
+To resolve this problem: 
+
+ 1. In the server.xml file of each Liberty server, create a unique clone ID for the server by adding this element:
+    <httpSession cloneId="<clone-id>"/>
+    
+    Note: Replace <clone-id> with the unique clone ID.
+    
+ 2. In the IHS plugin-cfg.xml file, map each server to its clone ID, for example:
+    
+    <ServerCluster Name="server1_Cluster" CloneSeparatorChange="false" LoadBalance="Round Robin" PostBufferSize="64" IgnoreAffinityRequests="true" PostSizeLimit="-1" RemoveSpecialHeaders="true"RetryInterval="60">
+    
+    <!-- configure clone ID here -->
+    
+    <Server CloneID="<clone-id>" Name="server1" ConnectTimeout="5" ExtendedHandshake="false" ServerIOTimeout="60" LoadBalanceWeight="1" MaxConnections="-1" WaitForContinue="false">
+    
+    <Transport Hostname="119.81.189.135" Port="9091" Protocol="http"/>
+    
+    <Transport Hostname="119.81.189.135" Port="9091" Protocol="https"/>
+    
+    </Server>

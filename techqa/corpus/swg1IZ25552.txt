@@ -1,0 +1,190 @@
+Title: IBM IZ25552: AGENT STOPS COLLECTING DATA WITH NULL POINTER EXCEPTIONS. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Software implemented
+   ====================
+   
+   TNSQM 4.1, BES 4.1 and Blackberry 4.1 agent inplementation
+   
+   PROBLEM
+   =======
+   
+   Agent stops collecting data with Null pointer exceptions.
+   
+   Agent frequently stops collecting the MIB data
+   with Null pointer exception errors. There are some MIB fields
+   which don't report data frequently and this causes the agent to
+   stop collecting data.
+   
+   Here are couple of error messages from the log file:
+   Exception in thread "Timer-1" java.lang.NullPointerException
+   at
+   com.comnitel.sm.agent.blackberry.BESUserHealthTableHandler.rearr
+   ange
+   (BESUserHealthTableHandler.java:125)
+   at com.comnitel.sm.agent.blackberry.BESTableHandler.process
+   (BESTableHandler.java:181)
+   at
+   com.comnitel.sm.agent.blackberry.snmp.MibTable.endOfTable(MibTab
+   le.
+   java:179)
+   at
+   com.comnitel.sm.agent.blackberry.snmp.MibPoller.poll(MibPoller.j
+   ava:
+   231)
+   at
+   com.comnitel.sm.agent.blackberry.PollTimer$PollTask.run(PollTime
+   r.
+   java:82)
+   at java.util.TimerThread.mainLoop(Timer.java:527)
+   at java.util.TimerThread.run(Timer.java:477)
+   Exception in thread "Timer-1" java.lang.NullPointerException
+   at java.util.regex.Matcher.getTextLength(Matcher.java:1143)
+   at java.util.regex.Matcher.reset(Matcher.java:300)
+   at java.util.regex.Matcher.reset(Matcher.java:320)
+   at
+   com.comnitel.sm.agent.blackberry.Filter$Match.match(Filter.java:
+   87)
+   at
+   com.comnitel.sm.agent.blackberry.Filter$Lookup.lookup(Filter.jav
+   a:58)
+   at
+   com.comnitel.sm.agent.blackberry.Filter.filter(Filter.java:95)
+   at
+   com.comnitel.sm.agent.blackberry.BESUserHealthTableHandler.rearr
+   ange
+   (BESUserHealthTableHandler.java:85)
+   at com.comnitel.sm.agent.blackberry.BESTableHandler.process
+   (BESTableHandler.java:181)
+   at
+   com.comnitel.sm.agent.blackberry.snmp.MibTable.endOfTable(MibTab
+   le.
+   java:179)
+   at
+   com.comnitel.sm.agent.blackberry.snmp.MibPoller.poll(MibPoller.j
+   ava:
+   231)
+   at
+   com.comnitel.sm.agent.blackberry.PollTimer$PollTask.run(PollTime
+   r.
+   java:82)
+   at java.util.TimerThread.mainLoop(Timer.java:527)
+   at java.util.TimerThread.run(Timer.java:477)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Restart the Agent whenever it hangs.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  PROBLEM DESCRIPTION
+   
+   Blackberry 4.1 Agent stops collecting data with Null pointer
+   exceptions.
+   
+   COMMENT
+   It is a code vulnerable to data integrity issues at datasourc.
+   When a username is null in the besUserHealthTable, the BES MIB
+   agent logs the exception.
+   
+   PROBLEM CONCLUSION
+   
+   Fixed in Blackberry 520 PATCH and Blackberry 521 PATCH
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ25552
+   
+   
+ * REPORTED COMPONENT NAME
+   NETCOOL SVC QUA
+   
+   
+ * REPORTED COMPONENT ID
+   5724T0300
+   
+   
+ * REPORTED RELEASE
+   410
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2008-06-25
+   
+   
+ * CLOSED DATE
+   2008-12-12
+   
+   
+ * LAST MODIFIED DATE
+   2008-12-12
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   NETCOOL SQMBLAC
+   
+   
+ * FIXED COMPONENT ID
+   5724T03BB
+   
+   
+
+APPLICABLE COMPONENT LEVELS

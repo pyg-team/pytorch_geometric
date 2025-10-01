@@ -1,0 +1,47 @@
+Title: IBM Bash Code Injection vulnerabilities in IBM N series Produces CVE-2014-6271, CVE-2014-7169, CVE-2014-7186, CVE-2014-7187, CVE-2014-6277, CVE-2014-6278 - United States
+
+Text:
+ FLASH (ALERT)
+
+ABSTRACT
+ This document is to assist IBM Support in responding to client questions about the effect of the Bash vulnerability on IBM N series Products 
+
+CONTENT
+Description
+This document provides guidance to IBM Support on responding to clients with questions about whether the 
+Bash Code Injection vulnerability affects N Series products. This Technote is also intended to highlights the discussion points for customer inquiries about fixes for the Bash vulnerability referred to as "Bash Bug" or "Shellshock" on N series.
+
+You should first tell clients with questions about Bash and the N series that IBM is taking the situation seriously and working hard on fixes for impacted products. You should also suggest to customers with inquiries about fixes for N series (and other IBM products) to actively monitor both the IBM Support Portal [http://www-947.ibm.com/support/entry/portal/support] for available fixes. You should also tell the customer they can sign up for “My Notifications” for N series products from the IBM Support Portal (http://www-01.ibm.com/software/support/einfo.html [http://www-01.ibm.com/software/support/einfo.html]). My Notifications allows customers to automatically receive support communications, including security bulletins, on a particular product. 
+
+If a customer asks if a N series product is affected by Bash, you can answer their question based on the information in the chart below in the “Affected Releases” column and tell the customer IBM is working on providing a Bash fix on the code levels in the “Code Fix Releases” column:
+
+Affected Products 
+
+NetApp Product used by IBM Is Product Vulnerable to a bash shell vulnerability (yes/no/not sure) Releases Affected Releases Code Fix Releases Clustered Data ONTAP yes 7.3 and earlier 
+8.1, 8.2 8.1, 8.2 8.1.4P6, 8.2.2P1 Data ONTAP operating in 7-mode yes 7.3 and earlier 
+8.1, 8.2 8.1, 8.2 8.1.4P6, 8.2.2P1 OnCommand Unified Manager for Clustered Data ONTAP (6.x) yes 6.1 6.1 6.1R1 
+
+Data ONTAP 8.0.x has reached End of Support. Any customer running an 8.0.x release will need to update to one of the patch releases listed above. 
+
+The Data ONTAP 7.3.x release family is not affected by the Bash Code Injection vulnerability. 
+
+If a customer is concerned about not yet having a fix for the vulnerability, you can explain to customers that it can take steps to mitigate the risk of the vulnerability until IBM provides a fix. 
+
+Clustered Data ONTAP and Data ONTAP operating in 7-Mode versions 8.x are not exploitable by the “Shellshock” collection of CVEs in the default configuration. There is a configuration that is exploitable when diagnostic account (diag) is enabled. Mitigating steps that will remediate the attack are outlined below and it is the responsibility of the security and/or storage administrator for each individual environment to decide if these steps are sufficient for their specific environment. Regardless of this mitigation, recommend to the customer that they obtain a Bash fix for their product when it is made available by IBM. Attack Vectors: 
+
+To date, "Shellshock" has three primary vectors that could possibly be exploited to gain escalated privileges:
+1. SSH or other shell protocols
+2. CGI
+3. DHCP 
+
+After evaluating all of these potential exploit vectors, we have determined as of the date of this release (through code inspection, analysis and testing), that they are not exploitable. 
+· SSH as implemented does not invoke bash. 
+· CGI is not included and is not a viable attack vector. 
+· DHCP does not use bash in processing DHCP responses. As implemented, DHCP is not a viable attack vector. 
+
+There is a configuration that is exploitable when the diagnostic account (diag) is enabled - a user account that is disabled by default. Steps below indicate how to lock the ‘diag’ user and disable the diagnostic account. 
+· The command to disable the diag account for Data ONTAP operating in 7-Mode is: priv set advanced; useradmin diaguser lock
+· The command to disable the diag account for clustered Data ONTAP is: security login lock diag 
+
+Target Fix
+IBM is working diligently with NetApp on fix dates and will provide dates to support staff when made available. If you encounter any N series customers who insistently demand to know when Bash fixes will be available, you may contact Tomas Carroll ( tomasc@us.ibm.com [tomasc@us.ibm.com]) in System Storage development for guidance in determining how to respond to the customer.

@@ -1,0 +1,117 @@
+Title: IBM Appliance does not respond to connection requests: How to prepare to work with WebSphere DataPower SOA Appliance support on the telephone. - United States
+
+Text:
+MustGatherDocument; wsdpcru TRIAGE TRIAGEPROJECT TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ A preview of how to be prepared to work with IBM Support on the telephone to recover and troubleshoot problems when the WebSphere DataPower SOA Appliance does not respond to connection attempts. 
+
+RESOLVING THE PROBLEM
+If this is a system down or production system outage, contact IBM WebSphere DataPower Support for immediate assistance. Use the phone numbers in our how to Contact IBM Support technote. [http://www.ibm.com/support/docview.wss?uid=swg21236322]
+IBM Support's goal is to recover the appliance with your team on the telephone using the approach listed in this document as a starting point for the conversation. 
+
+
+Section 1. Prepare for the phone call with IBM Support to debug and recover. 
+
+Follow all safety precautions listed in the documents linked from: 
+Removing and Replacing Parts provided by IBM Level 2 for IBM WebSphere DataPower SOA Appliances using the book for your machine type. [http://www.ibm.com/support/docview.wss?rs=2362&uid=swg21313112]
+
+
+You will need: 
+
+ *  A personal computer with a serial connection. 
+ * An emulator such as Microsoft's Hyperterminal, Putty, etc. 
+ * The IBM serial cable supplied with the appliance. 
+ * Physical access to the appliance. 
+ * A day and time range when a person will be at the failing appliance to work with IBM Support on the telephone. 
+ * A person which can re-seat CRU parts per the following instructions: Removing and Replacing Parts provided by IBM Level 2 for IBM WebSphere DataPower SOA Appliances using the book for your machine type. [http://www.ibm.com/support/docview.wss?rs=2362&uid=swg21313112]
+
+
+
+Section 2. Starting point for telephone call with IBM Support 
+
+
+IBM suport will work with you on a telephone call to obtain a serial connection to debug and recover the appliance. During the telephone call, IBM support will step you through this document recording the information as each step is performed. Based on the symptoms, the steps may change from those listed. 
+
+Only review this information, IBM support will start at step 1 when they call you on the telephone. 
+ 1. IBM Support will document:  1. The current symptoms. 
+     2. Steps leading up to the problem. 
+     3. When the problem started. 
+     4. History of the appliance. 
+     5. Serial number, model, and machine type. 
+     6. The LEDs status on the front and rear of the appliance, documenting which LEDs are on, the color of the LED, blink rate and which LEDs are not on. 
+    
+    
+ 2. IBM Support will help you attempt to connect to the appliance via the network and WebGUI. If this does not work then, during the phone call, IBM Support will work with you to connect via the serial port on the appliance:  1. Test the personal computer, serial cable and emulator software to confirm the connection works:  1. Take a personal computer and theIBM WebSphere DataPower supplied serial cable and attach it directly to the serial port on a working appliance to make sure you have a good connection. Do not use any other serial connection devices.  1. Confirm the terminal emulator is set to 9600 Baud, no parity, 8 data bits, 1 stop bit, and no flow control (not software, not hardware, none). 
+             2. Make sure you are using the serial cable supplied with the appliance. Other serial cables might not have the correct pinout. 
+             3. Check that both ends of the cable are well connected. 
+            
+            
+         2. Make sure you have a working CLI session and that you can enter commands like: show system. 
+         3. Resolve any problems connecting to the working appliance
+        
+        
+     2. Take the same personal computer and serial cable and attach it to the failing device. If you use CNTRL-S or scroll lock in Microsoft® Hyper Terminal, the appliance could appear to be in a hung state. This can be reversed by hitting CNTRL-Q (if you hit CNTRL-S) or scroll lock (if you used scroll lock). If this does not connect, IBM support will guide you though these steps:  1. With the serial connection active, power off the failing appliance, unplug all electrical connections, wait 60 seconds, reconnect all electrical connections. 
+         2. Unplug all network cable connections. 
+         3. Power on the appliance. 
+         4. Reset the connection with the emulator software for example, when using Microsoft's HyperTerminal, after the power on, click on hang up and then reconnect, if no messages are being displayed. 
+         5. Listen to the fans after the power off and power on. Do you hear anything? Does the fan sound change after waiting a full 10 seconds, after 40 seconds? Describe the sounds to IBM support. 
+         6. Reset the emulator software, for example, when using Microsoft's HyperTerminal, after the power on, click on hang up and then reconnect, if no messages are being displayed. 
+         7. Describe what you see on the emulator screen, including partial or unexpected characters to IBM support. If the logon prompt is not displayed, then based on what is seen, IBM support might recommend:  1. Double check the power connections.  1. Confirm that both ends of all power cords are firmly connected from the device to a working power source. 
+                 2. Confirm the power switch is on. 
+                 3. Report the status of the LEDs on each power supply.  *  Is the LED on? What is the color of the LED? 
+                    
+                    
+                
+                
+             2. Check the LEDs on the front of the appliance.  1. Report which LEDs are on. 
+                 2. The color of each LED. 
+                 3. If the LED is blinking, is the interval a rapid blink-blink-blink or a blink, one second, blink?
+                
+                
+             3. For each ethernet port which has a wire connected, report the lights and colors for each port to IBM support in the telephone call. 
+            
+            
+        
+        
+    
+    
+ 3. If the login prompt appears, determine if you are able to enter a userid but not the password? IBM support might walk you though this technote: Initial password does not work when installing for the first time. [http://www.ibm.com/support/docview.wss?rs=2362&uid=swg21305232]To make sure the serial cable is correct. 
+ 4. If you are only able to enter only one CLI command? IBM Support might reference you to technote: Critical updates for IBM WebSphere DataPower SOA appliances [http://www.ibm.com/support/docview.wss?rs=2362&uid=swg21390112] 
+ 5. If the "Fail Safe" prompt appears IBM support will work with you to debug this problem in the telephone call. 
+ 6. With IBM support, if the problem found is that is you can enter commands at the CLI prompt now, but the WebGUI does not respond? IBM support might ask you to:  1. Capture the output from these commands to check the network connectivity, configuration values, and system state.
+        show int 
+        show int mode 
+        show network 
+        show route 
+        show load 
+        show system
+        show filesystem
+        show web-mgmt
+        show acl web-mgmt
+        show crypto-engine 
+     2. Review these values and compare them to your expected network configuration and correct any configuration changes need. 
+     3. IBM support might recommend the WebSphere DataPower SOA Appliances: Ethernet port test [http://www-01.ibm.com/support/docview.wss?rs=2362&uid=swg21307258] 
+     4. If the serial connection being dropped, then IBM support might recommend:  1. Unplug the Ethernet cables. 
+         2. Log back in and disable all the application domains. 
+         3. Plug the Ethernet cables in again. 
+         4. Enable the application domains one at a time to see if the problem can be isolated to an application domain. 
+            
+        
+        
+    
+    
+
+Section 3. If you have not contacted IBM support: 
+ 1. Obtain the serial number of the appliance which experienced the problem. This is need for IBM entitlement processing, before a PMR can be created. Based on the problem:  * Use the WebGUI, select Status > System > Version Information, 
+     * locate the tag on the case of the appliance, 
+     * From the CLI use Show System
+    
+    
+ 2. Have your IBM customer number ready. 
+ 3. Determine a day and time range for IBM remote support to call you to walk through these steps when you are at the failing appliance. 
+ 4. Determine the severity of your problem, 
+ 5. Prepare to describe how the problem affects your business operations. 
+ 6. Determine which telephone number IBM should use to contact you concerning this problem report. 
+ 7. Do not send any proprietary or confidential information from your company. 
+ 8. Use this technote to contact IBM support: Contact IBM Support technote. [http://www.ibm.com/support/docview.wss?uid=swg21236322]

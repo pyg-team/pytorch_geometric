@@ -1,0 +1,143 @@
+Title: IBM PI30765: PORTAL KNOWLEDGE CENTER IS MISSING INSTRUCTIONS FOR ASSIGNING ACCESS CONTROL TO THEME RESOURCES LOCATED IN WEBDAV - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  AFFECTED URL:
+   http://www-01.ibm.com/support/knowledgecenter/SSHRKX_8.5.0/mp/ad
+   min-system/mash_webdav_store.dita?lang=en [http://www-01.ibm.com/support/knowledgecenter/SSHRKX_8.5.0/mp/admin-system/mash_webdav_store.dita?lang=en]
+   .
+   TEXT READS:
+   N/A
+   .
+   TEXT SHOULD READ:
+   Additional instructions should be added to configure access
+   control so non-admin users are allowed to update/modify
+   existing files:
+   1) ConfigEngine.bat export-nodes -DWasPassword=wpsadmin
+   -DPortalAdminPwd=wpsadmin -Dquery="/filestore/fs-type1/themes"
+   -Dwp.content.repository.output.dir="c:\temp\jcr"
+   2) Change by adding the manager role + user:
+   <icm:node>
+   <icm:access>
+     <icm:wps>
+      <icm:owner>
+       <icm:principal
+   icm:name="uid=wpsadmin,o=defaultwimfilebasedrealm"
+   icm:type="USER" />
+      </icm:owner>
+    <icm:role
+   icm:actions="actionset:Manager,actions:Traverse,View,Edit,Add_Ch
+   ild,Delete,Join,">
+       <icm:principal
+   icm:name="uid=testuser,o=defaultwimfilebasedrealm"
+   icm:type="USER" />
+      </icm:role>
+     </icm:wps>
+   </icm:access>
+   </icm:node>
+   3) ConfigEngine.bat import-nodes -DWasPassword=wpsadmin
+   -DPortalAdminPwd=wpsadmin
+   -Dwp.content.repository.input.dir="c:\temp\jcr"
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Refer to the above.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  This is planned to be changed in the product documentation.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This is planned to be changed in the product documentation.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI30765
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSPHERE PORTA
+   
+   
+ * REPORTED COMPONENT ID
+   5724E7600
+   
+   
+ * REPORTED RELEASE
+   850
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-12-03
+   
+   
+ * CLOSED DATE
+   2015-01-29
+   
+   
+ * LAST MODIFIED DATE
+   2015-01-29
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

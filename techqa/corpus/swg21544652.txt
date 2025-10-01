@@ -1,0 +1,28 @@
+Title: IBM Logon problems in WMSYantra - United States
+
+Text:
+STERLINGPRI TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Logon problems in WMSYantra 
+
+SYMPTOM
+PART: Yantra WMS 
+
+When trying to log into Wms, the following message is recieved. " Oracle Error : -1435 Sqlcode [0] SQLCD [ORA-01435 user does not exist] SqlMessage: ORA-01435: user does not exist. I am
+getting this error upon logon. I can still get into the system after it
+shows this error several times
+
+
+RESOLVING THE PROBLEM
+The problem was we recreated the Oracle database giving it a different SID. When I created the new warehouse, I kept the same name as the old warehouse in the old SID. All these records were still on the warehouse schema map files. So when the system referred to the files, it looked at the warehouse code on the old SID. That created the user and table/sequence problem.
+
+
+
+HISTORICAL NUMBER
+ PRI47844 
+
+PRODUCT ALIAS/SYNONYM
+ 
+
+Fact

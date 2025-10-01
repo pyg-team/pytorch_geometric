@@ -1,0 +1,58 @@
+Title: IBM What should I download if having a full Netezza upgrade performed? - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ What packages should be downoaded if I perform a Full Netezza upgrade. 
+
+ANSWER
+Download The packages listed and described in the following Tech Notes which are referenced in the Related information section. 
+
+ * What should I download if only having a NPS upgrade performed? 
+ * Where can I find the minimum versions of HPF and FDT required for a NPS upgrade?
+
+
+Download the following the following HPF and FDT packages as well. 
+
+HPF:  * see "fixcentral
+ * " 
+ * 
+ *  
+ * Related information section
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * Version
+ * 
+ * 
+
+FDT:  * see "fixcentral
+ * " 
+ * 
+ *  
+ * Related information section
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * Version
+ * 
+
+RELATED INFORMATION
+ Fixcentral [http://www-933.ibm.com/support/fixcentral/]
+What should I download if only having a NPS upgrade pe [http://www.ibm.com/support/docview.wss?uid=swg21982203 ]
+Where can I find the minimum versions of HPF and FDT re [http://www.ibm.com/support/docview.wss?uid=swg21982196]

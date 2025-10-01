@@ -1,0 +1,75 @@
+Title: IBM WebSphere Application Server and IBM SDK for Java: Current News - United States
+
+Text:
+ NEWS
+
+ABSTRACT
+ Support information for IBM WebSphere Application Server and IBM SDK for Java 
+
+CONTENT
+An improved hashing algorithm had been made available as an option for string keys stored in hashed data structures with: 
+
+ *  IBM SDK for Java Version 7 service refresh 2 
+ *  IBM SDK for Java Version 6 service refresh 11 
+ *  IBM SDK for Java Version 5 service refresh 14
+
+
+The new Hashmap algorithm is not used by default unless it is enabled with a JVM property. This new algorithm is available with IBM WebSphere Application Server Fixpacks 8.5.0.2, 8.0.0.6, 7.0.0.27, 6.1.0.45 or later. 
+
+PLEASE NOTE: IBM highly recommends you test your applications thoroughly before enabling this property in a production environment. 
+
+More details describing the new enhancement is available from the following technotes: 
+For IBM SDK for Java Version 7 http://www.ibm.com/support/docview.wss?uid=swg21605439 [http://www.ibm.com/support/docview.wss?uid=swg21605439] 
+For IBM SDK for Java Version 6 http://www.ibm.com/support/docview.wss?uid=swg21605450 [http://www.ibm.com/support/docview.wss?uid=swg21605450] 
+For IBM SDK for Java Version 5 http://www.ibm.com/support/knowledgecenter/SSYKE2/earlier_releases/earlier_releases.html [http://www.ibm.com/support/knowledgecenter/SSYKE2/earlier_releases/earlier_releases.html] 
+
+Improved hashing algorithms An improved hashing algorithm is available for string keys stored in hashed data structures. You can adjust the threshold that invokes the algorithm with the system property, jdk.map.althashing.threshold. This algorithm can change the iteration order of items returned from hashed maps. Applications that are sensitive to the index value of the hash elements, may require code changes to adapt to the index differences. For more information about the system property, see System Property command-line optionsin the technotes above. [https://infocenters.hursley.ibm.com/java/v7/topic/com.ibm.java.lnx.70.doc/diag/appendixes/cmdline/cmdline_properties.html]
+
+This system property controls the use of an enhanced hashing algorithm for hashed maps. This alternative hashing algorithm is used for string keys when a hashed data structure has a capacity larger than value. 
+
+A value of 1 ensures that this algorithm is always used, regardless of the hashed map capacity. A value of -1 prevents the use of this algorithm, which is the default value. 
+
+The hashed map structures affected by this threshold are: java.util.HashMap, java.util.Hashtable, java.util.LinkedHashMap, java.util.WeakHashMap, java.util.concurrent.ConcurrentHashMap, java.util.HashSet and java.util.LinkedHashSet. 
+
+The capacity of a hashed map is related to the number of entries in the map, multiplied by the load factor. Because the capacity of a hashed map is rounded up to the next power of two, setting the threshold to intermediate values has no affect on behavior. For example, threshold values of 600, 700, and 1000 have the same effect. However, values of 1023 and 1024 cause a difference in behavior. For a more detailed description of the capacity and load factor, see http://docs.oracle.com/javase/7/docs/api/java/util/HashMap.html [http://docs.oracle.com/javase/7/docs/api/java/util/HashMap.html]. 
+
+When entries are removed from a hashed map the capacity does not shrink. Therefore, if the map ever exceeds the threshold to use alternative hashing for Strings, the map always uses alternative hashing for Strings. This behavior does not change, even if entries are later removed or the map is emptied using clear(). 
+
+ 
+
+To change this value in WebSphere Application Server: 
+
+ 1.  Login to the WebSphere Administration Console 
+ 2.  Navigate to the appropriate place to set the property: Application Servers, Proxy Servers, Node Agents or Deployment Manager 
+ 3.  Under "Server Infrastructure", expand "Java and Process Management". 
+ 4.  Click "Process definition" or "Control". 
+ 5.  Under "Additional Properties", click "Java Virtual Machine". 
+ 6.  The property can be set in one of two ways, either with the "Generic JVM arguments" or by defining a Custom Property.  * To set the property via "Generic JVM arguments"  * Add "-Djdk.map.althashing.threshold=<value>" to the Generic JVM arguments field. Replace "<value>" with the desired value. Click "OK".
+        
+        
+      * To define a Custom Property  * Under "Additional Properties", click "Custom properties". Click "New". Enter "jdk.map.althashing.threshold" in the "Name" field and the desired value in the "Value" field. Click "OK". 
+        
+        
+     
+     
+ 7.  Repeat the above steps to set the property on other servers in your cell, as desired. 
+ 8.  Once the property has been set on all the desired servers, save the changes as follows: 
+ 9.  Expand "System administration" in the left navigation panel. 
+ 10. Click "Save changes to master repository". 
+ 11. Check the box in front of "Synchronize changes with Nodes". 
+ 12. Click "Save". 
+ 13. After the changes have been saved, stop and restart the servers where the property was set in order to make the changes effective.
+
+
+Items to consider when using this property: 
+
+ * The hashing algorithm was changed to avoid a potential denial of service (DOS). 
+ * It may impact your application if you are using java.util.HashMap, java.util.Hashtable, java.util.LinkedHashMap, java.util.WeakHashMap, java.util.concurrent.ConcurrentHashMap, java.util.HashSet, or java.util.LinkedHashSet. 
+ * If your application uses hashmap and is sensitive to the index value that the old algorithm was using, then your application may fail to start or break. 
+ * You can use the threshold as a way to control when the new algorithm is used. There is a balancing act with the threshold property. For some applications, when the hash is small, it will work well. If the hash is too big, you can adjust the threshold, but there may be performance implications. If the threshold is too low, you are at risk for the Denial of Service if your hash is gathering data from a remote source and you may want to fix your application to avoid this DOS attack. IBM recommends a performance test be run. 
+ * We recommend starting with a hash value of 512. 
+ * If you are using the WebSphere Application Server Feature Pack for SCA, you will need to install Feature Pack for SCA V1.0.1.17 targeted availability of 16 December 2013. 
+
+
+Change History:  * 14 November 2012 : original publish date 
+ * 15 April 2013: Updates available with latest fixpacks - additional information added

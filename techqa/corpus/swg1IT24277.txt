@@ -1,0 +1,211 @@
+Title: IBM IT24277: SPECTRUM PROTECT SERVER START UP OR RESTORE FAILS WITH ANR9999D AND ERROR 4530 - United States
+
+Text:
+AIX SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Spectrum protect server will not start up correctly and reports:
+   
+   ANR9999D_1338619854 dbiInit(dbiinit.c:864) Thread<0>: Error 4530
+    setting DB Configuration when started in the foreground. The
+   same messages can also be seen when attempting to run a DB
+   restore while the issue is taking place.
+   
+   The problem comes from DB2 not being able to stop the DB due to
+   an active or stale connection that still exists to the DB.
+   
+   Customer/L2 Diagnostics:
+   Starting server in the foreground will report the message:
+   ANR9999D_1338619854 dbiInit(dbiinit.c:864) Thread<0>: Error 4530
+   setting DB Configuration
+   
+   A DB trace (DBCONN DBITXN DBADM DBCMD DBCLI DBSTMT DBEXEC DBRC)
+   will also show messages:
+   
+   15:14:46.756
+   [4][rdbdb.c][1640][RdbDeactivateDatabaseThread]:Attempting
+   unconditional deactivation
+   15:15:00.746 [4][rdbdb.c][1646][RdbDeactivateDatabaseThread]:Got
+   sqlcode 1495 from sqle_deactivate_db
+   15:15:00.746
+   [4][rdbdb.c][1666][RdbDeactivateDatabaseThread]:Deactivation
+   failed - connections still exist
+   15:15:00.746
+   [4][rdbdb.c][1682][RdbDeactivateDatabaseThread]:Exit, rc 4530
+   
+   SQL code 1495 means
+   
+   SQL1495W  Deactivate database is successful, however, there is
+   still a connection to the database.
+   
+   Tivoli Storage Manager Versions Affected: 7.1 , 8.1
+   
+   
+   Initial Impact: (high/med/low)
+   med
+   
+   Additional Keywords:
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Open a DB2 command window, set the DB2INSTANCE environment
+   variable to the server's instance name, and issue
+   db2 list active databases
+   db2 list applications for database tsmdb1 show detail
+   
+   If these show that someone is connected to the database, use the
+   information in the LIST APPLICATIONS command to try to identify
+   who it might be.
+   Then, use commands such as:
+   
+   db2 deactivate database tsmdb1 force
+   or
+   db2 force application all
+   
+   to get the applications to disconnect from the database.  Once
+   there are no applications connected, restart the server and
+   check for any additional error messages.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * All IBM Spectrum Protect server users.                       *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * See error description.                                       *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Apply fixing level when available. This problem is currently *
+   * projected to be fixed in level 8.1.6. Note that this is      *
+   * subject to change at the discretion of IBM.                  *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This problem was fixed.   A new message will be issued when the
+   server cannot update database configuration parameters because
+   connections exist to the database.
+   
+   ANR3303E Error updating database configuration parameters:
+   Unable to deactivate database.
+   Message Explanation:
+   The server attempted to deactivate the database while updating
+   database configuration parameters. However, the database could
+   not be deactivated because connections still exist.
+   
+   System Action:
+   The server terminates.
+   
+   User Response:
+   Log in as the instance user.  Issue the DB2 LIST APPLICATIONS
+   FOR DATABASE tsmdb1 SHOW DETAIL command to display information
+   about applications that are connected to the database. Issue the
+   DB2 FORCE APPLICATION ALL command to force all applications to
+   disconnect from the database. When all applications have
+   disconnected, start the server.
+   
+   Affected platforms for reported release:  AIX, Linux, and
+   Windows.
+   Platforms fixed:  AIX, Linux, and Windows.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT24277
+   
+   
+ * REPORTED COMPONENT NAME
+   TSM SERVER
+   
+   
+ * REPORTED COMPONENT ID
+   5698ISMSV
+   
+   
+ * REPORTED RELEASE
+   71W
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2018-03-09
+   
+   
+ * CLOSED DATE
+   2018-03-20
+   
+   
+ * LAST MODIFIED DATE
+   2018-03-20
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TSM SERVER
+   
+   
+ * FIXED COMPONENT ID
+   5698ISMSV
+   
+   
+
+APPLICABLE COMPONENT LEVELS

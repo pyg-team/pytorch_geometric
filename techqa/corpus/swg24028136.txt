@@ -1,0 +1,79 @@
+Title: IBM WebSphere Application Server 7.0 Test Environment Extension 7.0.0.11 update1 - United States
+
+Text:
+Version 7 Fix Pack 11; 7.0.0.11; 70011 DOWNLOADABLE FILES
+
+ABSTRACT
+ Update 1 for IBM® WebSphere® Application Server Version 7 Fix Pack 11, also known as Version 7.0.0.11, for an installed test environment extension. 
+
+DOWNLOAD DESCRIPTION
+This download includes the following update to the WebSphere Application Server v7.0 Test Environment extension included with Rational Software Delivery Platform products:
+
+
+ * IBM WebSphere Application Server Version 7 Fix Pack 11, also known as Version 7.0.0.11. For details about this update, such as known issues, view the WebSphere Application Server 7.0.0.11 readme at http://www-01.ibm.com/support/docview.wss?uid=swg24026857 [http://www-01.ibm.com/support/docview.wss?uid=swg24026857]. 
+ * Feature Pack for Web 2.0 1.0.1. 
+ * Feature Pack for CEA Fix Pack 1.0.0.5 [http://www-01.ibm.com/support/docview.wss?uid=swg24027105] plus the following fixes:  * IFPM19186CEA 
+    * IFPM17635CEA
+   
+   
+ * Feature Pack for SCA Fix Pack 1.0.1.7 [http://www-01.ibm.com/support/docview.wss?uid=swg24027718] 
+ * XML Feature Pack Fix Pack 1.0.0.7 [http://www-01.ibm.com/support/docview.wss?uid=swg24027719]
+
+PREREQUISITES
+You must have the WebSphere Application Server v7.0 Test Environment extension installed with one of the following products: 
+
+IBM Rational Application Developer for WebSphere Software, v7.5.x IBM Rational Software Architect for WebSphere Software, v7.5.x 
+You need up to 3.35 GB of disk space to install the fix pack. To download and extract the compressed installation files, you need an additional 3.25 GB of disk space. INSTALLATION INSTRUCTIONS
+
+
+Important: By default, you do not need to download the compressed files that contain the update; the update is downloaded and installed by IBM Installation Manager directly from the IBM update repository.
+
+
+For instructions on installing this update using Installation Manager, see the topic "Updating Installed Product Packages" in the information center for Rational Application Developer for WebSphere Software [http://publib.boulder.ibm.com/infocenter/radhelp/v7r5/topic/com.ibm.rad.install.doc/topics/t_update.html] or Rational Software Architect for WebSphere Software [http://publib.boulder.ibm.com/infocenter/rsawshlp/v7r5m0/topic/com.ibm.xtools.installation.rsaws.doc/topics/t_update.html].
+
+
+To download and install the update from the compressed files, complete the following steps: 
+
+
+ 1. 
+ 2. Download the update files from Fix Central by following the link listed in the download table below.
+ 3. 
+ 4. Extract the compressed files in an appropriate directory. For example, choose to extract to C:\temp\update
+ 5. 
+ 6. 
+ 7. Add the update's repository location in IBM Installation Manager:
+     1.  
+     2.  Start IBM Installation Manager.
+     3.  
+     4.  On the Start page of Installation Manager, click File > Preferences, and then click Repositories. The Repositories page opens.
+     5.  
+     6.  On the Repositories page, click Add Repository.
+     7.  
+     8.  In the Add repository window, browse to or enter the file path to the diskTag.inf file, which is located in the disk1 sub-directory in the directory where you extracted the compressed files and then click OK. For example, enter C:\temp\updates\disk1\diskTag.inf.
+     9.  
+     10. Click OK to close the Preference page.
+     11. 
+    
+    
+    
+ 8. Install the update as described in the the topic "Updating Installed Product Packages" in the information center for Rational Application Developer for WebSphere Software [http://publib.boulder.ibm.com/infocenter/radhelp/v7r5/topic/com.ibm.rad.install.doc/topics/t_update.html] or Rational Software Architect for WebSphere Software [http://publib.boulder.ibm.com/infocenter/rsawshlp/v7r5m0/topic/com.ibm.xtools.installation.rsaws.doc/topics/t_update.html]. 
+ 9. 
+
+
+DOWNLOAD PACKAGE
+You can download the fix pack from Fix Central using either Download Director or HTTP. Follow the link in the table below to access Fix Central. 
+
+ 1. Under group_refresh_pack: 7.5.5.2-Rational-RAD-groupfixpack (IBM Rational Application Developer for WebSphere Software), Version 7.5.5.2 , click Show contained fixes. 
+ 2. Ensure that you select fix pack: 7.0.0.11u1-Rational-WAS70-fixzippack (WebSphere Application Server v70 version 7.0.0.11u1) 
+
+
+If you are unable to use either of these methods, you can download the fix pack using HTTP from the following URLs:  * http://delivery04-bld.dhe.ibm.com/sar/CMA/RAA/0145r/0/was70011u1.update.disk1.zip [http://delivery04-bld.dhe.ibm.com/sar/CMA/RAA/0145r/0/was70011u1.update.disk1.zip] 
+ * http://delivery04-bld.dhe.ibm.com/sar/CMA/RAA/0145r/0/was70011u1.update.disk2.zip [http://delivery04-bld.dhe.ibm.com/sar/CMA/RAA/0145r/0/was70011u1.update.disk2.zip] 
+ * http://delivery04-bld.dhe.ibm.com/sar/CMA/RAA/0145r/0/was70011u1.update.disk3.zip [http://delivery04-bld.dhe.ibm.com/sar/CMA/RAA/0145r/0/was70011u1.update.disk3.zip] 
+ * http://delivery04-bld.dhe.ibm.com/sar/CMA/RAA/0145r/0/was70011u1.update.disk4.zip [http://delivery04-bld.dhe.ibm.com/sar/CMA/RAA/0145r/0/was70011u1.update.disk4.zip] 
+ * http://delivery04-bld.dhe.ibm.com/sar/CMA/RAA/0145r/0/was70011u1.update.disk5.zip [http://delivery04-bld.dhe.ibm.com/sar/CMA/RAA/0145r/0/was70011u1.update.disk5.zip]
+
+
+
+Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options 
+What is Fix Central(FC)? [https://www.ibm.com/support/fixcentral/help?page=swfaqs] Fix pack 7.5.5.2 8 Oct 2010 English 1 FC [http://www-933.ibm.com/support/fixcentral/swg/quickorder?parent=ibm~Rational&product=ibm/Rational/IBM+Rational+Application+Developer+for+WebSphere+Software&release=7.5.5.2&platform=All&function=all&source=fc] [ ]

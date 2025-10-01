@@ -1,0 +1,31 @@
+Title: IBM What does the message "Warning: Unable to find the triplet X'01'..." mean? - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ What does the message "Warning: Unable to find the triplet X'01'...." mean when archiving an AFP spooled file into Content Manager OnDemand for i Common Server? 
+
+CAUSE
+The application that created the AFP spooled file omitted the triplet X'01' in the structured field X'D3A8A8'
+
+ANSWER
+The Content Manager OnDemand system log message number 87 or 88 may contain a message similar to the following when attempting to archive an AFP spooled file into the DB2 Content Manager OnDemand for i Common Server environment: 
+
+Warning: Unable to find the triplet X'01' for the structured field X'D3A8A8' in the file ./SP_INVNEW1_DSP02_ONDENU_057233_000001_RDR400M_1030925_135442.out
+
+This is a warning message and not an error. The triplet can be used to identify the CCSID of the file. However the indexer will use the CCSID of the job archiving the spool file.
+
+If received in system log message 87, the spooled file was archived successfully and no further action is necessary.
+
+If received in system log message 88, there is another problem that is causing the spooled file not to archive. You can check the following sources to help determine the real problem:
+
+
+ * Check the home directory of the user archiving the spooled file for indexer output from the failed archive. Review the indexer output for differences from the expected output. If differences are found, corrective action will be required. The indexer output will be in a file named similar to the following: 
+   /home/bjsmith/SP_INVNEW1_DSP02_ONDENU_057233_000001_RDR400M_1030925_135442.ind
+
+ * Use the graphical indexer to verify that you have the correct indexer parameters defined. Make sure you use sample data from the spooled file that is failing. Sample data already stored on your system might be out of date and not match the current spooled file.
+
+ * Check for job logs from the Add Report to OnDemand (ADDRPTOND) or Start Monitor for OnDemand (STRMONOND) command.
+
+ * Check for job logs from the qshell jobs started by the ADDRPTOND or STRMONOND command.

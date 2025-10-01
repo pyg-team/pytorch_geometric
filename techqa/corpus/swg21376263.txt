@@ -1,0 +1,40 @@
+Title: IBM How do I configure the Active Directory User ID by using one of the supported configuration formats - United States
+
+Text:
+active; directory; smtp; distinguished; name; AFUP0010E; connector; e-mail; server TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ I am configuring IBM Content Collector for Microsoft Exchange and I need to know the acceptable formats that I can use to specify Active Directory user ID in the Configuration Manager of IBM Content Collector. 
+
+SYMPTOM
+A connection to the Active Directory is not established. Task routes are not able to archive messages in either automatic or interactive mode.
+
+
+CAUSE
+Log on credentials will not be accepted by the Active Directory. This is due to the method used by the Active Directory administrator when they set up and configured their Active Directory domain.
+
+ENVIRONMENT
+Microsoft Exchange Server 2003 and Microsoft Exchange Server 2008
+
+DIAGNOSING THE PROBLEM
+Look for the following conditions:
+
+
+ * Automatic or interactive task routes do not archive messages 
+ * Error messages appear in the C:\Program Files\IBM\ContentCollector\ctms\Log\afu_mailconnector_trace.log which indicates a failed connection attempt. The message will typically resemble the following:
+   SEVERE AFUP0010E Could not create global session. Error message: com.ibm.afu.mailinterface.MailException: javax.naming.AuthenticationException: [LDAP: error code 49 -80090308: LdapErr: DSID-0C090334, comment: AcceptSecurityContext error, data 525, vece ] [com.ibm.afu.mailconnector.MailConnectorService: initMailinterface]
+
+RESOLVING THE PROBLEM
+When you are setting up the E-Mail Server Connector in the Content Collector configuration manager, configure the User ID field on the Active Directory tab using one of the following three formats: 
+
+ * smtp format: userid@company.com 
+ * domain and userid format: domain\userid 
+ * distinguished name (DN) format: CN=Username, CN=Users, DC=MyCompany, DC=com
+
+
+After both the ICC Task Routing Engine and the ICC E-Mail Connector services have been started, check the afu_mailconnector_trace.log to determine if you have obtained a successful connection to the mail server. If you see the "CONFIG ConnectorContext created" message in the C:\Program Files\IBM\ContentCollector\ctms\Log\afu_mailconnector_trace.log, it means you have connected successfully. If each format attempt fails, you should attempt to connect to the Active Directory server by using an application such as LDAPsoft LDAP Browser to validate the user ID format and password. Supply the user ID and password credentials in the proper format when you configure the Content Collector Active Directory connector.
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Enterprise Content Management Content Collector Content Collector for Email Windows 2003 server 2.1 All Editions

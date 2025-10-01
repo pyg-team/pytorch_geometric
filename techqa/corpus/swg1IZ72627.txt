@@ -1,0 +1,201 @@
+Title: IBM IZ72627: WHEN RUNNING MULTI-THREADED APPLICATIONS USING WEBSPHERE MQ V7  JMS/JAVA CLASSES, THREADS MAY HANG WHILE RECEIVING MESSAGES - United States
+
+Text:
+  FIXES ARE AVAILABLE
+WebSphere MQ V7.0.1 for i5/OS Fix Pack 7.0.1.3 [http://www-01.ibm.com/support/docview.wss?uid=swg24026933]
+WebSphere MQ V7.0 Fix Pack 7.0.1.3 [http://www-01.ibm.com/support/docview.wss?uid=swg24026932]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When running multi-threaded applications it is noticed that some
+   threads stop receiving messages, even though enough work exists
+   for all the threads to be active.  Analysis of the inactive
+   threads reveals that they are waiting while executing an MQGET
+   with an unlimited wait on the queue.
+   
+   No errors or exceptions are observed.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   This issue affects users of WebSphere MQ (WMQ) v7 classes for
+   Java or WMQ classes for Java Message Service (JMS) client
+   applications, where multiple threads running in parallel are
+   being used to retrieve messages from the queue.
+   
+   For the problem to be observed, some of the messages being
+   retrieved off the queue must be larger in size than 4Kb.
+   
+   The problem is observed more frequently when a bindings mode
+   connection is being used, as opposed to a TCP client connection.
+   
+   Platforms affected:
+   All Distributed (iSeries, all Unix and Windows) +Java
+   ****************************************************************
+   PROBLEM SUMMARY:
+   When the message size of messages on a WebSphere MQ queue are
+   greater than 4Kb, the WebSphere MQ Classes for Java/JMS client
+   retrieves the message off the queue in two stages.
+   
+   If multiple threads are getting the messages off the queue
+   simultaneously, then it was possible that one thread could take
+   the message in between this two-stage receive operation.  When
+   this occurred, the first thread would request the message with a
+   wait interval equivalent to that issued by the application.
+   
+   For example, when using the JMS interface, if a 30 seconds
+   receive with wait was issued:
+   
+   MessageConsumer.receive(30000);
+   
+   and this problem condition occurred, the thread would wait 30
+   seconds to receive the message from the queue which had been
+   removed by another thread.  To the end user, the thread would
+   appear to have hung for that 30 seconds.
+   
+   If an indefinite wait interval was specified, then the thread
+   would appear to hang indefinitely.  To the end user, the effect
+   of this would be to observe that the system's rate of message
+   retrieval would be reduced, possibly leading to a build up of
+   messages on the queue in a busy system.
+   
+   Testing has shown that the problem is experienced more
+   frequently when using a bindings mode connection.  At the time
+   of writing, there have been no confirmed reports of the problem
+   being observed when using a TCP client connection, although it
+   is theoretically possible that it could do.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The code was changed such that the second stage get does a
+   receive without a wait.  This ensures that the thread becomes
+   immediately available for further processing should the message
+   have been removed from the queue by another thread.
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+                      v7.0
+   Platform           Fix Pack 7.0.1.3
+   --------           --------------------
+   Windows            tbc_p700_0_1_3
+   AIX                tbc_p700_0_1_3
+   HP-UX (PA-RISC)    tbc_p700_0_1_3
+   HP-UX (Itanium)    tbc_p700_0_1_3
+   Solaris (SPARC)    tbc_p700_0_1_3
+   Solaris (x86-64)   tbc_p700_0_1_3
+   iSeries            tbc_p700_0_1_3
+   Linux (x86)        tbc_p700_0_1_3
+   Linux (x86-64)     tbc_p700_0_1_3
+   Linux (zSeries)    tbc_p700_0_1_3
+   Linux (Power)      tbc_p700_0_1_3
+   
+   The latest available maintenance can be obtained from
+   'WebSphere MQ Recommended Fixes'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037]
+   
+   If the maintenance level is not yet available, information on
+   its planned availability can be found in 'WebSphere MQ
+   Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ72627
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ AIX V7
+   
+   
+ * REPORTED COMPONENT ID
+   5724H7221
+   
+   
+ * REPORTED RELEASE
+   701
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-03-10
+   
+   
+ * CLOSED DATE
+   2010-03-29
+   
+   
+ * LAST MODIFIED DATE
+   2010-03-29
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ AIX V7
+   
+   
+ * FIXED COMPONENT ID
+   5724H7221
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R701 PSY
+   UP

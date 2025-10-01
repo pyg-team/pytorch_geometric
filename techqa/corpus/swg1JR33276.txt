@@ -1,0 +1,160 @@
+Title: IBM JR33276: PROBLEM IN HANDLING NULL LOB VALUES IN ODBC CONNECTOR - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When the ODBC Connector stage is used to pass the LOBs either as
+   inline data or by reference, the following issues are observed.
+   
+   1. When the key column in the table and in the columns property
+   is set to be a column of type decimal data type, the following
+   error is thrown while running the job.
+   
+   Message: ODBC_Connector_CARS2_ROD,0: ?? (IIS-CONN-ODBC-000004;
+   ODBC function {0} reported:  SQLSTATE = HY000: Native Error Code
+   = 921: Msg = [IBM(DataDirect OEM)][ODBC Oracle Wire Protocol
+   driver][Oracle]ORA-00921: unexpected end of SQL command;
+   CC_OdbcInputStream; open; CC_OdbcInputStream.cpp; 118)
+   
+   2. When the LOB columns have NULL data in some records, the
+   following error is thrown and the job aborts.
+   
+   Unable to determine data size for field <FieldName>, which this
+   driver requires for data streaming operations"
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   Users using the LOB functionality in the ODBC Connector.
+   ****************************************************************
+   PROBLEM DESCRIPTION:
+   When the ODBC Connector stage is used to pass the LOBs either
+   asinline data or by reference, the following issues are
+   observed.
+         1. When the key column in the table
+   and in the columns property is set to be a column of type
+   decimal data type, the following  error is thrown while running
+   the job.
+      Message: ODBC_Connector_CARS2_ROD,0: ??
+   (IIS-CONN-ODBC-000004;
+   ODBC function {0} reported:  SQLSTATE = HY000: Native Error
+   CodeDirect OEM)][ODBC Oracle Wire Protocol
+   driver][Oracle]ORA-00921: unexpected end of SQL command;
+   CC_OdbcInputStream; open; CC_OdbcInputStream.cpp; 118)
+        2. When the LOB columns
+   have NULL data in some records, the  following error is
+   thrown and the job aborts.
+          Unable to determine data size for field
+   <FieldName>, which this driver requires for data streaming
+   operations"
+   ****************************************************************
+   RECOMMENDATION:
+   Apply the APAR.
+   The fix has been included in the IS 8.1 FP1. Apply the FixPack1
+   for IS 8.1.
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Modified the code to handle the LOB references when the key
+   column is of Decimal datatype. Also, improved the Null handling
+   for LOBs in the code.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR33276
+   
+   
+ * REPORTED COMPONENT NAME
+   WIS DATASTAGE
+   
+   
+ * REPORTED COMPONENT ID
+   5724Q36DS
+   
+   
+ * REPORTED RELEASE
+   810
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-06-08
+   
+   
+ * CLOSED DATE
+   2009-06-29
+   
+   
+ * LAST MODIFIED DATE
+   2009-12-19
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WIS DATASTAGE
+   
+   
+ * FIXED COMPONENT ID
+   5724Q36DS
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R810 PSN
+   UP

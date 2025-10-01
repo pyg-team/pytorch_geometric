@@ -1,0 +1,134 @@
+Title: IBM Query amount of data backed up by incremental-forever-incremental (IFINCR) - United States
+
+Text:
+tsm dp tdp ve tdp4ve tdpforve stats statistics TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The Backup-Archive GUI or vCenter plug-in restore does not show the size of the incremental-forever-incremental backup for a virtual machine backed up using the Incremental forever backup strategy (-mode=IFIncremental). 
+
+SYMPTOM
+The vCenter plug-in restore function shows the backup type but not the amount of data backed up. For example : 
+
+[/support/docview.wss?uid=swg21645078&aid=1] [/support/docview.wss?uid=swg21645078&aid=1]
+
+The Backup-Archive GUI shows the backup type and the size but the size listed is the size of the Virtual Machine, not the amount of data backed up. For example :
+
+[/support/docview.wss?uid=swg21645078&amp;aid=2]
+
+
+DIAGNOSING THE PROBLEM
+The amount of data backed up is displayed when the backup is performed via the command line. For example : 
+
+
+C:\Program Files\Tivoli\TSM\baclient>dsmc backup vm "MY-TEST-VM" -mode=ifincr
+IBM Tivoli Storage Manager
+Command Line Backup-Archive Client Interface
+Client Version 6, Release 4, Level 0.10
+Client date/time: 07/25/2013 13:39:30
+(c) Copyright by IBM Corporation and other(s) 1990, 2013. All Rights Reserved.
+...
+Backup VM command started. Total number of virtual machines to process: 1
+...
+Creating snapshot for virtual machine 'MY-TEST-VM'
+...
+Backing up Full VM configuration information for 'MY-TEST-VM'
+18,864 VM Configuration [Sent]
+Processing snapshot
+disk: [Datastore1] MY-TEST-VM/MY-TEST-VM.vmdk (Hard Disk 1)
+Capacity: 10,737,418,240
+Data to Send: 13,041,664
+Transport: (nbd)[sending]
+Volume --> 10,737,418,240 [Datastore1] MY-TEST-VM/MY-TEST-VM.vmdk (Hard Disk 1) [Sent]
+< 12.45 MB> [ - ]
+Successful Full VM backup of VMware Virtual Machine 'MY-TEST-VM'
+mode: 'Incremental Forever - Incremental'
+
+In this example, the amount of data backed up by the IFINCR backup is 12.45 MB.
+The amount of data backed up by the IFINCR backup can also be obtained once the backup is complete using the query vm command.
+
+
+RESOLVING THE PROBLEM
+Use the client command line to verify the amount of data backed up. The "query vm" with the detail option provides information on the amount of data backed up by the incremental-forever-incremental backup. Examine the "The size of this incremental backup" field. For example : 
+
+
+C:\Program Files\Tivoli\TSM\baclient>dsmc query vm "MY-TEST-VM" -detail -inactive
+IBM Tivoli Storage Manager
+Command Line Backup-Archive Client Interface
+Client Version 6, Release 4, Level 0.10
+Client date/time: 07/25/2013 13:48:26
+(c) Copyright by IBM Corporation and other(s) 1990, 2013. All Rights Reserved.
+...
+# Backup Date Mgmt Class Size Type A/I Virtual Machine
+--- ------------------- ---------- ----------- ------ --- ---------------
+1 07/25/2013 12:00:35 VTL1MG 11.71 GB IFFULL I MY-TEST-VM
+The size of this incremental backup: n/a
+The number of incremental backups since last full: 0
+The amount of extra data: 0
+The TSM objects fragmentation: 0
+Backup is represented by: 70 TSM objects
+Application protection type: VMware
+VMDK[1]Label: Hard Disk 2
+VMDK[1]Name: [Datastore1] MY-TEST-VM/MY-TEST-VM_1-000001.vmdk
+VMDK[1]Status: Skipped: User
+VMDK[2]Label: Hard Disk 3
+VMDK[2]Name: [Datastore1] MY-TEST-VM/MY-TEST-VM_2-000001.vmdk
+VMDK[2]Status: Skipped: User
+VMDK[3]Label: Hard Disk 1
+VMDK[3]Name: [Datastore1] MY-TEST-VM/MY-TEST-VM.vmdk
+VMDK[3]Status: Protected
+
+2 07/25/2013 12:21:28 VTL1MG 11.71 GB IFINCR I MY-TEST-VM
+The size of this incremental backup: 12736 KB
+The number of incremental backups since last full: 1
+The amount of extra data: 0
+The TSM objects fragmentation: 2
+Backup is represented by: 93 TSM objects
+Application protection type: VMware
+VMDK[1]Label: Hard Disk 2
+VMDK[1]Name: [Datastore1] MY-TEST-VM/MY-TEST-VM_1-000001.vmdk
+VMDK[1]Status: Skipped: User
+VMDK[2]Label: Hard Disk 3
+VMDK[2]Name: [Datastore1] MY-TEST-VM/MY-TEST-VM_2-000001.vmdk
+VMDK[2]Status: Skipped: User
+VMDK[3]Label: Hard Disk 1
+VMDK[3]Name: [Datastore1] MY-TEST-VM/MY-TEST-VM.vmdk
+VMDK[3]Status: Protected
+
+3 07/25/2013 12:27:03 VTL1MG 11.71 GB IFINCR A MY-TEST-VM
+The size of this incremental backup: 5568 KB
+The number of incremental backups since last full: 2
+The amount of extra data: 0
+The TSM objects fragmentation: 2
+Backup is represented by: 113 TSM objects
+Application protection type: VMware
+VMDK[1]Label: Hard Disk 2
+VMDK[1]Name: [Datastore1] MY-TEST-VM/MY-TEST-VM_1-000001.vmdk
+VMDK[1]Status: Skipped: User
+VMDK[2]Label: Hard Disk 3
+VMDK[2]Name: [Datastore1] MY-TEST-VM/MY-TEST-VM_2-000001.vmdk
+VMDK[2]Status: Skipped: User
+VMDK[3]Label: Hard Disk 1
+VMDK[3]Name: [Datastore1] MY-TEST-VM/MY-TEST-VM.vmdk
+VMDK[3]Status: Protected
+-----------------------------------------------------------------------------
+All averages are calculated only for incremental forever backups displayed above.
+The average size of incremental backup: 9152 KB
+The average number of incremental backups since last full: 2
+The average overhead of extra data: 0
+The average TSM objects fragmentation: 1
+The average number of TSM objects per backup: 92
+
+In above output., backup # 1 was the first backup of the VM, which was performed with -mode=IFFull.
+The second backup was performed with -mode=IFIncremental and shows that only 12736 KB were backed up as the output shows : 
+
+2 07/25/2013 12:21:28 VTL1MG 11.71 GB IFINCR I MY-TEST-VM
+The size of this incremental backup: 12736 KB
+
+The third backup was also performed with -mode=IFIncremental and shows that only 5568 KB were backed up as the output shows : 
+
+3 07/25/2013 12:27:03 VTL1MG 11.71 GB IFINCR A MY-TEST-VM
+The size of this incremental backup: 5568 KB
+
+
+RELATED INFORMATION
+ Query amount of data backup up by IFFULL [http://www.ibm.com/support/docview.wss?uid=swg21649777]

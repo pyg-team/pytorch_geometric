@@ -1,0 +1,207 @@
+Title: IBM PK59878: DWW0566S RC08 RSN861 DUPLEXING IN PROGRESS - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  After a major disaster, all CICS regions were down and
+   CF structures deallocated.
+     CICSVR forward recovery failed with message
+   .
+   DWW0566S Browse of MVS log stream CICS.CICSEWF1.J04 failed.
+    The return code is 00000008 and the reason code is 00000861
+    The answer area contains:  00000028000000000000000000000000
+               000000000401000100000000000000000000000000000000.
+   .
+      The Return and Reason codes are found in manual
+    z/OS V1R8 MVS Authorized Assembler Services Reference EDT-IXG
+   for the IXGBROWSE.  RC8 RSN861 means that the operating system
+   responded with DUPLEXING IN PROGRESS.
+   CICS/VR terminates processing.
+   .
+     When the CICSVR recovery utility starts its batch job,
+   the first thing it does is IXGBROWSE on a logstream.
+   Because all of the CICS regions are down,
+   all of the structures are deallocated.
+     The structure would naturally be empty.
+   To read a logstream, the structure, the MVS dataspace and the
+   journalled logstreams to DASD are all one logical logstream.
+   All must be available to do an IXGBROWSE.
+     Usually the structure is already there.
+   Since they are not,  XCF initiates a structure build.
+   If the structure is specified as DUPLEX(ENABLED),
+   XCF immediately duplexes the newly-allocated structure.
+   IXGLOGR returns a RC=08 REASON CODE -861.
+   CICS/VR fails the recovery job.
+   .
+     Since there are no active connectors against the structure,
+   CICS/VR will be the first connector every time. This will
+   cause the structure rebuild and start to duplex every time.
+   So, RC08 RSN861 will be returned every time.
+     The solution would be to wait for one second then retry
+   the request once more, up to a maximum of 60 attempts
+   before allowing the job to fail
+   .
+   Additional Keywords
+   RC8 RC08 REASON861 REASON0861 RSN861 RSN0861
+   RC00000008 RSN00000861 REASON00000861
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Start a CICS region
+   Do an OPEN to a RECOVERABLE file.
+   This drives the specific structure that needs to be allocated
+   and duplexed.  But it will not initiate a BROWSE, or UDATE
+   because no applications will be running.
+    With CICS up and the structure allocated,
+   the recovery job will work.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: This APAR affects CICSVR 4.1 and 4.2 users   *
+   *                 that use log streams allocated on structures *
+   *                 specified as DUPLEX(ENABLE).                 *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: If CF structures is deallocated, CICSVR *
+   *                      forward recovery fails with message     *
+   *                      DWW0566S.                               *
+   *                                                              *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  If IXGLOGR returns a REASON CODE from 860 to 8CF, CICSVR will
+   wait for one second and then retry the request once more and
+   will keep repeating the request after one second.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK59878
+   
+   
+ * REPORTED COMPONENT NAME
+   CICS VSAM RECOV
+   
+   
+ * REPORTED COMPONENT ID
+   5655P3000
+   
+   
+ * REPORTED RELEASE
+   410
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   YesHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-01-24
+   
+   
+ * CLOSED DATE
+   2008-02-22
+   
+   
+ * LAST MODIFIED DATE
+   2008-04-01
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UK33941 UK33942 UK33943 UK33944
+   
+   
+
+MODULES/MACROS
+ *     DWWARLLM DWWFRM   DWWJRBRB DWWJRBRW DWWJRCON
+   DWWJRIT  DWWJUTOP DWWMHTBE ZXTEMP   ZYTEMP1  ZYTEMP2
+   
+   
+    
+   
+   
+
+Publications Referenced SC34668601 SC34680300 FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CICS VSAM RECOV
+   
+   
+ * FIXED COMPONENT ID
+   5655P3000
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R41E PSY UK33942 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK33942]
+   UP08/03/05 P F803
+   
+   
+ * R410 PSY UK33941 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK33941]
+   UP08/03/05 P F803
+   
+   
+ * R42E PSY UK33944 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK33944]
+   UP08/03/06 P F803
+   
+   
+ * R420 PSY UK33943 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK33943]
+   UP08/03/06 P F803
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

@@ -1,0 +1,23 @@
+Title: IBM Exception has been thrown by the target of an invocation error with IBM Datacap Taskmaster Capture - United States
+
+Text:
+exception thrown target invocation TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Datacap Studio fails to start, stating that an exception has been thrown by the target of an invocation. 
+
+SYMPTOM
+The following message box appears: 
+
+[/support/docview.wss?uid=swg21570474&amp;aid=1]
+
+Title: Studio
+Body: application error! Exception has been thrown by the target of an invocation.
+
+
+CAUSE
+This issue can occur if a necessary font such as Arial is not installed on the workstation.
+
+
+RESOLVING THE PROBLEM
+Ensure that all standard fonts are installed on the workstation, to include Arial by confirming it is visible in the %windir%\Fonts folder. If not, install the font.

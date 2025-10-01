@@ -1,0 +1,16 @@
+Title: IBM Cognos account stored on Active Directory locks out after 5 minutes. - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ After changing the CognosAdministrator Active Directory password via Windows Change Password, the account is locked out causing scheduled tasks in Cognos Connection to fail. 
+
+SYMPTOM
+cogserver.log file contains... 
+
+CAM-AAA-0094 Unable to authenticate because the account is locked out.
+
+
+RESOLVING THE PROBLEM
+A new version control application had been installed onto the environment which seemed to cache the old CognosAdministrator password.

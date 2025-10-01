@@ -1,0 +1,146 @@
+Title: IBM HE12012: UNABLE TO SELECT INTERVIEW QUESTIONNAIRES PAST THE FIRST PAGE WHEN CREATING A HOLD RULES TEMPLATE. - United States
+
+Text:
+  DIRECT LINKS TO FIXES
+6.0.1-ATLAS-WINDOWS-FP0007 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FGlobal+Retention+Policy+and+Schedule+Management&fixids=6.0.1-ATLAS-WINDOWS-FP0007&source=SAR]
+6.0.1-ATLAS-SOLARIS-FP0007 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FGlobal+Retention+Policy+and+Schedule+Management&fixids=6.0.1-ATLAS-SOLARIS-FP0007&source=SAR]
+6.0.1-ATLAS-LINUX-FP0007 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FGlobal+Retention+Policy+and+Schedule+Management&fixids=6.0.1-ATLAS-LINUX-FP0007&source=SAR]
+6.0.1-ATLAS-FP0007-README.pdf [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FGlobal+Retention+Policy+and+Schedule+Management&fixids=6.0.1-ATLAS-FP0007-README&source=SAR]
+Download IBM Atlas Suite V6.0.1 Fix Pack 7 [http://www-01.ibm.com/support/docview.wss?uid=swg24039392]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When creating or editing a hold rules template, if you check the
+   "Include Virtual Interview" box and attempt to add
+   questionnaires, you will only be able to add them from the first
+   page that is displayed. When you click on "Next" or on "2", "3"
+   etc for other pages, the page comes back to the Initial Notice
+   page and does not allow any questionnaires from ensuing pages to
+   be chosen.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  De-select the "Confirmation Required" check-box and select it
+   agian. This will take you to the page you selected prior with
+   the questionnaires of interest.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *    When you assign an interview questionnaire to a hold notice
+   rules template, you cannot select any questionnaire past the
+   first page. When you click Next, the Initial Notice page is
+   displayed.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This fix is available now from FixCentral in fixpack 6.0.1.7.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   HE12012
+   
+   
+ * REPORTED COMPONENT NAME
+   ATLAS EDISCOVER
+   
+   
+ * REPORTED COMPONENT ID
+   5725D7500
+   
+   
+ * REPORTED RELEASE
+   601
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-02-24
+   
+   
+ * CLOSED DATE
+   2015-03-11
+   
+   
+ * LAST MODIFIED DATE
+   2015-03-11
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *     None
+   Intervie
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ATLAS EDISCOVER
+   
+   
+ * FIXED COMPONENT ID
+   5725D7500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R601 PSY
+   UP

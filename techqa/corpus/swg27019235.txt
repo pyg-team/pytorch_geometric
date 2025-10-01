@@ -1,0 +1,160 @@
+Title: IBM Known Issues: WebSphere Process Server and WebSphere Enterprise Service Bus V7.0.0 Fix Pack 3 (V7.0.0.3) - United States
+
+Text:
+known issues; known issues; known issues; fix pack 7.0.0.3; fix pack 7.0.0.3 PRODUCT README
+
+ABSTRACT
+ This document details known issues with the installation of IBM WebSphere Enterprise Service Bus and IBM WebSphere Process Server, version 7.0.0 Fix Pack 3 (V7.0.0.3). 
+
+CONTENT
+
+
+ * WebSphere Process Server [http://www.ibm.com/support/docview.wss?uid=swg24027662]
+ * WebSphere Enterprise Service Bus [http://www.ibm.com/support/docview.wss?uid=swg24027661]
+
+TAB NAVIGATION
+ * Fix Pack Install [http://www.ibm.com/support/docview.wss?uid=swg27019234]
+ * Profile upgrade [http://www.ibm.com/support/docview.wss?uid=swg27019233]
+ * Special case [http://www.ibm.com/support/docview.wss?uid=swg27019236]
+ * Known issues [http://www.ibm.com/support/docview.wss?uid=swg27019235]- selected tab,
+
+
+
+This document provides solutions to problems you may encounter (Known issues) while upgrading to IBM WebSphere Enterprise Service Bus and IBM WebSphere Process Server, version 7.0.0 Fix Pack 3 (V7.0.0.3) in addition to information regarding mandatory interim fixes. 
+
+Recommended maintenance for a IBM WebSphere Process Server V7 - Business Process Choreographer environment can be found here [http://www.ibm.com/support/docview.wss?uid=swg21461599]
+
+This section will be updated often, please review this section before you start upgrading your installation. Additions to this document will be placed at the top of each section.
+
+Table of Contents
+
+ * Business object parsing modes are partially available in Version 7.0.0.3
+ * Known issues
+
+
+
+
+Business object parsing modes are partially available in Version 7.0.0.3 
+WebSphere Process Server and WebSphere Enterprise Service Bus have enabled a new lazy parsing mode for business objects in version 7.0.0.3. Although the lazy parsing mode is available for all components of 7.0.0.3, usage of the business object lazy parsing mode is not supported for mediation flow components. For modules containing mediation flow components, use of the business object lazy parsing mode is offered as a technology preview, and should only be used by early adopters. IBM provides the business object lazy parsing mode technology preview for mediation flow components "as is" and does not include IBM support as specified in the version 7 WebSphere Process Server and WebSphere Enterprise Service Bus license agreement under the terms for technology preview code. 
+
+The business object eager parsing mode (which corresponds with the business object parsing mode in all previous version 6.x releases) continues to be the default in version 7.0.0.3, and remains the business object parsing mode for production use for any module that contains mediation flow components. WebSphere Integration Developer 7.0.0.3 allows the business object lazy parsing mode to be selected for a module that contains one or more mediation flow components, but displays a warning dialog to indicate that this mode is not fully supported for the selected module.
+
+Note: In the version 7.0.0.1 or 7.0.0.2 technical previews, the lazy parsing mode capability was referred to as the business object framework version 7.
+
+
+Back to top
+
+
+ 
+
+Known issues 
+Problem: 
+You will encounter the ClassCastException when using SCA bindings with the XCI lazy parsing.
+This failure is caused by enabling cross-scope copy in the XCI mode. 
+The SCA import handler copies the message wrapper, but does not copy the contained objects, because they are not EMF objects, but plain java objects.
+
+Solution:
+
+Apply the interim fix JR37645 after installing the WebSphere Process Server fixpack. This interim fix is mandatory after installing WebSphere Process Server or WebSphere Enterprise Service Bus 7.0.0 fixpack 3 (7.0.0.3).
+
+
+Back to top
+
+
+
+Problem: In a parent business process execution language calling a child parent business process execution language the parent passes complex data to the child which functions well. 
+On the way back, the data (an explicit null value set by the child) passed by the eclipse modelling framework-based child is changed when the XCI-based parent gets that data back. 
+In contrast, using the same business process execution language child but with an eclipse modelling framework version of the same parent process also functions well. 
+
+Solution: 
+Install the service component architecture feature fix 1.0.1.7-WS-WASSCA-IFPM21187 to make this behavior consistent with the operation of an eclipse modelling framework-based parent. 
+Back to top
+
+
+
+Problem:
+Invocation of an export fails under XCI mode due to duplicate namespaces. 
+
+
+Solution:
+Install XML feature fix 1.0.0.7-WS-WASXML-IFPM20967.
+
+
+Back to top
+
+
+
+Problem: IBM Installation Manager on Windows XP does not always recognize profile upgrade errors. You will still get this green message: "The packages are updated" instead of a yellow message: "The packages are updated with warnings", even if there are errors.
+
+Solution: On Windows XP always check the file <install_root>\logs\wbi\install.FP7003\installconfig_wps_profileMaintenance.log. If the final message in this log file is "INSTCONFPARTIALSUCCESS" instead of "INSTCONFSUCCESS" then follow the instructions in Recovering after profile update errors [http://www.ibm.com/support/docview.wss?uid=swg27019233#recoverFailure].
+
+
+Back to top
+
+
+
+Problem: Install dependency when using end-to-end business process versioning in combination with WebSphere Business Modeler.
+
+Solution: When using this new feature WebSphere Process Server, WebSphere Integration Developer and WebSphere Business Modeler need to be upgraded to V7.0.0.3. Find additional details here [http://www.ibm.com/support/docview.wss?uid=swg21424234]. [http://www.ibm.com/support/docview.wss?rs=2308&uid=swg2%3Cdoc#%3E]
+
+
+Back to top
+
+
+
+Problem:
+When you configure a WebSphere Process Server environment with a remote DB2 for z/OS database you might encounter an XA exception in your SystemOut.log file, similar to the following:
+
+[4/7/10 15:27:06:448 CST] 00000000 XATransaction E J2CA0027E: An exception occurred while invoking start on an XA Resource Adapter from DataSource jdbc/WPSDB, within transaction ID {XidImpl: formatId(57415344), gtrid_length(36), bqual_length(54), data(00000127d72a4df3000000010000004ba72cb909f7597533242fe83f55de1376f236ee7400000127d72a4df3000000010000004ba72cb909f7597533242fe83
+f55de1376f236ee74000000010000000000000000000000000001)} : com.ibm.db2.jcc.am.uo: [jcc][t4][10401][12066][3.57.82] XA exception: XAER_OUTSIDE ERRORCODE=-4228, SQLSTATE=null
+at com.ibm.db2.jcc.am.bd.c(bd.java:453)
+at com.ibm.db2.jcc.am.bd.c(bd.java:477)
+at com.ibm.db2.jcc.t4.ac.a(ac.java:1703)
+at com.ibm.db2.jcc.t4.ac.start(ac.java:1570)
+at com.ibm.ws.rsadapter.spi.WSRdbXaResourceImpl.start(WSRdbXaResourceImpl.java:1506)
+
+Solution: The fix for this issue is provided by APAR IC67698 for DB2 V9.1, by APAR IC67695 for DB2 V9.5, and by APAR IC67694 for DB2 V9.7. As a workaround: 
+
+ 1. Go to the admin console. Click Resources > JDBC > Business Integration Data Sources. 
+    
+    
+ 2. From the list, click the data source with JNDI Name "jdbc/WPSDB". 
+    
+    
+ 3. Click Custom properties. Create a new custom property with Name "queryCloseImplicit", Value "2", and with Type "java.lang.Integer". 
+    
+    
+ 4. Save your changes and restart the server where you encountered the exception in SystemOut.log.
+
+
+Related APARs:  * IC67694 [https://www.ibm.com/support/entdocview.wss?uid=swg1IC67694]
+   
+   
+ * IC67695 [https://www.ibm.com/support/entdocview.wss?uid=swg1IC67695]
+   
+   
+ * IC67698 [https://www.ibm.com/support/entdocview.wss?uid=swg1IC67698]
+
+
+Back to top
+
+
+
+Problem: On HP Unix, WebSphere Application Server cannot be updated to V7.0.0.11 or later using IBM Installation Manager if the current version of WebSphere is V7.0.0.7 or less.
+
+Solution: Update to WebSphere Application Server V7.0.0.9, using the Update Installer, and re-import WebSphere into IBM Installation Manager. Then use IBM Installation Manager to update to WebSphere V7.0.0.11 or later.
+
+
+
+Back to top
+
+
+
+Trademarks and service marks 
+For trademark information, see the IBM Terms of Use [http://www.ibm.com/legal] Web site. 
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration WebSphere Enterprise Service Bus Install AIX, HP-UX, i5/OS, Linux, Linux iSeries, Linux pSeries, Linux xSeries, Linux zSeries, Solaris, Windows 7.0.0.3

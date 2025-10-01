@@ -1,0 +1,10 @@
+Title: IBM What data is kept for the Audit Process "keep for a minimum of" period? - United States
+
+Text:
+What data is kept for the Audit Process "keep for a minimum of" period? Is it all of the data; or just the results of the Audit Process in Report Result Data Row? TECHNOTE (FAQ)
+
+QUESTION
+ What data is kept for the Audit Process "keep for a minimum of" period? Is it all of the data, or just the results of the Audit Process in Report Result Data Row? 
+
+ANSWER
+It's just the result of the Audit Process in the "Report Result Data Row". Also unless you have a link to the report you will not be able to access it. The data that was used to create the report is saved as many days as the normal purge setting say "purge data older than X days".

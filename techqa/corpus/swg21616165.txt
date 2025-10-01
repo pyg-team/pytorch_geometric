@@ -1,0 +1,35 @@
+Title: IBM Archive Manager for z/VM Considerations for a z/VM Single System Image (SSI) Environment - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How should I configure IBM Archive Manager for z/VM to run in a z/VM V6.2 or z/VM V6.3 environment that supports SSI and Live Guest Relocation (LGR)? 
+
+ANSWER
+There are several things to consider when using Archive Manager for z/VM on multiple systems that are being managed in a z/VM V6.2 (or later) Single System Image cluster. 
+
+ 1. Archive Manager for z/VM must be configured and running on each LPAR (or member) of the cluster. This is required so that  *  Files in the VMSYSx file pools on each member can be archived, and When multiconfiguration user IDs archive their own data, they can then easily find their own data in the archive catalog (separate from data archived by the same user ID on a different member.)
+       
+    
+    
+ 2. Specifically:  * The installation user ID 5697J05x can be a single configuration user, so you only need to install the code once. 
+     * The administrator user ID AMVADMIN can be a single configuration user, so you can administer the product from one user ID on any member of the cluster. 
+     * All Archive Manager service machines (AMVARKIV, AMVWRKnn) must be multiconfiguration (IDENTITY) users and thus configured on each member of the cluster. 
+     * Sample directory entries [http://www.ibm.com/support/docview.wss?uid=swg21616182] for 5697J05x, AMVADMIN, AMVARKIV, and AMVWRKnn are also available.
+       
+    
+    
+ 3. If you would like to have only one SFS server to contain the catalog data for all members of the cluster, the Shared File System (SFS) server you define for the Archive Manager catalog must be a single configuration user. Each of the Archive Manager servers on each member of the cluster can use the same SFS file pool for catalog data. 
+ 4. You must create a separate filespace within the SFS file pool for the archive catalog on each member of the SSI cluster. The default filespace is AMVCATLG, but should be changed to something unique on each member within a cluster. Specify the filespace name in AMVSYSTM CONFIG.
+    
+    This is required so that when multiconfiguration user IDs archive their own data, they can then easily find their own data in the archive catalog (separate from data archived by the same user ID on a different member.) 
+    
+    This also means single configuration users will only be able to find and recall data that was archived from the same member to which they are currently logged on. I.e. if USER1 is logged onto MEMBERA and archives file XXXXX YYYYYY A, then USER1 must also be logged onto MEMBERA in order to find and recall that file. When USER1 logs onto MEMBERB, they will only see the files they archived from MEMBERB. They will not see any files they archived from MEMBERA. 
+ 5. If you choose, you can use the same SFS server for both Backup and Restore Manager for z/VM and Archive Manager for z/VM. Make sure this SFS server has enough space for all the catalogs. The filespace(s) used by Archive Manager must be different than the one used by Backup and Restore Manager. A sample directory entry for an SFS server (e.g. BKRSVSFS) is available in the Getting Started [http://www.ibm.com/software/products/en/backup-restore-manager-for-zvm] presentation on the Resources tab of the Backup and Restore Manager website. 
+ 6. If you are archiving to tape (instead of or in addition to disk) and are using Tape Manager for z/VM to manage the tape environment, [http://www.ibm.com/support/search.wss?q=SSI&tc=SSMR3B]more information is available on configuring Tape Manager [http://www-01.ibm.com/support/docview.wss?uid=swg21969624] to share a single catalog across multiple LPARs [http://www.ibm.com/support/search.wss?q=SSI&tc=SSMR3B] [http://www.ibm.com/support/docview.wss?uid=swg21613690] [http://www-01.ibm.com/support/docview.wss?uid=swg21615659].
+
+
+For detailed, step-by-step instructions for installing and configuring Archive Manager for z/VM in a z/VM V6.2 or z/VM V6.3 SSI cluster, refer to: [http://www.ibm.com/software/stormgmt/zvm/backup/library.html] 
+
+ * The Getting Started [http://www.ibm.com/software/products/en/archive-manager-for-zvm] presentation on the Resources tab of the Archive Manager website

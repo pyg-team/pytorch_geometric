@@ -1,0 +1,41 @@
+Title: IBM Configuring XA transactions in Microsoft SQL Server for IBM Business Process Manager (BPM) - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How do you configure XA transactions in Microsoft SQL Server for IBM Business Process Manager? 
+
+ANSWER
+Note: The information that is contained in this document has been moved to dW Answers at this location [https://developer.ibm.com/answers/questions/171639/configuring-xa-transactions-in-microsoft-sql-serve.html]. The new format will allow you to ask questions of the community to better understand the information. This technote will be archived in 60 days. Please bookmark the new location.
+
+
+Starting in IBM Business Process Manager Version 7.5 installations with Microsoft SQL Server, the database and database user needs XA transactions. Complete the following steps to configure XA in Microsoft SQL Server (JDBC Distributed Transaction Components)
+
+
+
+ 1. Download the Microsoft SQL Server JDBC Driver 2.0 [https://www.microsoft.com/en-us/download/details.aspx?id=2505] from the Microsoft website. [http://www.microsoft.com/download/en/details.aspx?id=2505]Download and read the license agreement. Within the agreement, there is a link to the driver download.
+    
+    
+ 2. Extract the archive to any temporary folder.
+    
+    
+ 3. Copy the sqljdbc_xa.dll file from the JDBC unzipped directory to the Bin directory of the Microsoft SQL Server computer. If you are using XA transactions with a 32-bit Microsoft SQL Server, use the sqljdbc_xa.dll file in the x86 folder even if the SQL Server is installed on a x64 processor. If you are using XA transactions with a 64-bit Microsoft SQL Server on the x64 processor, use the sqljdbc_xa.dll file in the x64 folder.
+    
+    
+ 4. Run the xa_install.sql database script on the Microsoft SQL Server. This script is located in the 'xa' folder of the extracted drivers. This script installs the extended stored procedures that are called by the sqljdbc_xa.dll script. These extended stored procedures implement distributed transaction and XA support for the Microsoft SQL Server JDBC Driver. Run this script as an administrator of the Microsoft SQL Server instance.
+    
+    
+ 5. Grant permission to a specific user to participate in distributed transactions with the JDBC driver. Add the user to the SqlJDBCXAUser role in master database. For example, for the mbf_bpm user, add the master database in User mappings and check the SqlJDBCXAUser role. See the following image.
+    
+    
+    [/support/docview.wss?uid=swg21574110&amp;aid=1]
+
+
+
+For more information, see the Configuring XA transactions topic in the Version 8.0.1 Knowledge Center [https://www.ibm.com/support/knowledgecenter/SSFPJS_8.0.1/com.ibm.wbpm.imuc.ebpm.doc/topics/db_xa_nd_win.html]. [http://pic.dhe.ibm.com/infocenter/dmndhelp/v8r0m1/topic/com.ibm.wbpm.imuc.ebpmps.doc/topics/db_xa_sa_win.html]  
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Business Process Manager Advanced AIX, Linux, Windows 8.0.1, 8.0, 7.5.1, 7.5 
+PRODUCT ALIAS/SYNONYM
+ BPM

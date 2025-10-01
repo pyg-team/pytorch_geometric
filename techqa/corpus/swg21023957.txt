@@ -1,0 +1,18 @@
+Title: IBM Searches performed with wildcard characters, logical operators, and append field - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ This document defines the features of search operators Like and Not Like, and details the distinction between the AND and OR logical operators. The effect of using the Append check box is also explained. 
+
+ANSWER
+Wildcard characters in searches: Use wildcard characters with the Like and Not Like search operators to represent other letters, numbers, or special characters. IBM® DB2® Content Manager (CM) OnDemand uses two wildcard characters: 
+
+ * The underscore character ( _ ) matches any single letter, number, or other special character. For example, if you type 1_0 in a string field, CM OnDemand will find 100, 110, 120...190. 
+ * The percent character (%) matches zero or more letters, numbers, or other special characters. For example, if you type MARS% in a string field, CM OnDemand will find "MARS," "MARSCH," "MARSHELL," "MARSTEENS," and so on. If you type %SMITH% in a string field, CM OnDemand will find "SMITH, JOHN," "JOHN SMITH," "BILL SMITHSON," and so on.
+
+
+AND/OR: CM OnDemand connects search fields using the AND/OR logical operators in the Search Criteria and Document List windows. The standard search connects fields with AND (that is, the search must satisfy all search fields). The OR logical operator means the search must satisfy at least one of the search criteria. 
+
+Note: Even when you choose the OR logical operator, the date field is combined with the rest of the search fields using the AND logical operator. Append: The Append check box places new search results after those that are already in the document list in the Search Criteria and Document List windows. The CM OnDemand Client usually clears the Document List window every time you choose Search. If you select the Append check box, you can continue to add search results to a list of existing items that satisfied a previous search. Clear the check box and the CM OnDemand Client clears the Document List window before placing new items in the list.

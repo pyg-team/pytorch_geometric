@@ -1,0 +1,219 @@
+Title: IBM IC62386: XASESSION.CLOSE() DOES NOT DISCONNECT FROM THE QUEUE MANAGER, EVENTUALLY LEADING TO "AMQ9513: MAX CHANNELS REACHED" ERRORS. - United States
+
+Text:
+  FIXES ARE AVAILABLE
+WebSphere MQ V7.0 Fix Pack 7.0.1.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24024528]
+WebSphere MQ V7.0 Fix Pack 7.0.1.2 [http://www-01.ibm.com/support/docview.wss?uid=swg24026518]
+WebSphere MQ V7.0.1 for i5/OS Fix Pack 7.0.1.2 [http://www-01.ibm.com/support/docview.wss?uid=swg24026566]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When an application using the WebSphere MQ V7 classes for Java
+   Message Service (JMS) calls XASession.close(), the underlying
+   connection to the queue manager is left open.
+   
+   After a period of time, the application will get the following
+   exception when calling XAConnection.createXASession():
+   
+   com.ibm.msg.client.jms.DetailedIllegalStateException:
+   JMSWMQ0018: Failed to connect to queue manager '<queue manager
+   name>' with connection mode '1' and host name '<hostname>'.
+   Check the queue manager is started and if running in client
+   mode, check there is a listener running. Please see the linked
+   exception for more information.
+   at com.ibm.msg.client.wmq.common.internal.Reason.
+   reasonToException(Reason.java:489)
+   at com.ibm.msg.client.wmq.common.internal.Reason.
+   createException(Reason.java:219)
+   at com.ibm.msg.client.wmq.internal.WMQSession.
+   (WMQSession.java:340)
+   at com.ibm.msg.client.wmq.internal.WMQXASession.
+   (WMQXASession.java:81)
+   at com.ibm.msg.client.wmq.internal.WMQXAConnection.
+   createXASession(WMQXAConnection.java:95)
+   at com.ibm.msg.client.jms.internal.JmsXAConnectionImpl.
+   createXASession(JmsXAConnectionImpl.java:103)
+   at com.ibm.mq.jms.MQXAConnection.
+   createXASession(MQXAConnection.java:82)
+   
+   and the error message:
+   
+   AMQ9513: MAX CHANNELS REACHED
+   
+   will appear in the queue manager error logs.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Temporarily increase the Max Channels attribute for the queue
+   manager.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   This issue affects all WebSphere MQ V7 applications which use
+   the classes for Java Message Service (JMS) and create XA
+   Sessions.
+   
+   Platforms affected:
+   All Distributed (iSeries, all Unix and Windows) +Java
+   ****************************************************************
+   PROBLEM SUMMARY:
+   Consider the following code:
+   
+   XASession_object = XAConnection_object.createXASession();
+   MQSession_object = XASession_Object.getSession();
+   .... do operations with MQSessionObject here ....
+   XASession_object.close();
+   
+   When the XASession_object is closed, the backing MQSession is
+   also closed which in turn closes the underlying physical
+   connection.
+   
+   However when we have code like this:
+   
+   XASession_object = XAConnection_object.createXASession();
+   MQSession_object = XASession_Object.getSession();
+   .... do operations with MQSessionObject here ....
+   MQSession_object.close();
+   XASession_object.close();
+   
+   the underlying physical connection is marked as closed by the
+   call to MQSession_object.close() but is actually left open
+   (which is valid behaviour). The subsequent call to
+   XASession_object.close() checks the state of connection, finds
+   it is marked as closed and so does not attempt to close it.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The underlying physical connection is now closed as part of the
+   call to XASession.close().
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+                      v7.0
+   Platform           Fix Pack 7.0.1.2
+   --------           --------------------
+   Windows            U200316
+   AIX                U829807
+   HP-UX (PA-RISC)    U829678
+   HP-UX (Itanium)    U829681
+   Solaris (SPARC)    U829806
+   Solaris (x86-64)   U829680
+   iSeries            tbc_p700_0_1_2
+   Linux (x86)        U829677
+   Linux (x86-64)     U829676
+   Linux (zSeries)    U829682
+   Linux (Power)      U829679
+   
+   The latest available maintenance can be obtained from
+   'WebSphere MQ Recommended Fixes'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037]
+   
+   If the maintenance level is not yet available, information on
+   its planned availability can be found in 'WebSphere MQ
+   Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC62386
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ WINDOWS V7
+   
+   
+ * REPORTED COMPONENT ID
+   5724H7220
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-08-05
+   
+   
+ * CLOSED DATE
+   2009-08-12
+   
+   
+ * LAST MODIFIED DATE
+   2014-04-16
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ WINDOWS V7
+   
+   
+ * FIXED COMPONENT ID
+   5724H7220
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R700 PSY
+   UP

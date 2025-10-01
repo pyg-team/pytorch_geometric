@@ -1,0 +1,64 @@
+Title: IBM The feature level of the VOB family is not high enough to permit this operation - United States
+
+Text:
+mkreplica; import; VOB; family; feature; level; 4; 1119416 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This technote explains why attempts to import an IBM® Rational® ClearCase MultiSite® replica creation packet results in the error Unable to create VOB replica: The feature level of the VOB family is not high enough to permit this operation and provides instructions to resolve the issue. 
+
+CAUSE
+ 
+
+Attempts to import a Replica Creation packet results in the following error: 
+
+C:\>multitool mkreplica -import -workdir c:\temp\wdir -tag \rep_testvob -vob \\server1\ccstg_c\VOBs\rep_testvob.vbs -nc -perms_preserve 
+"C:\shipping\ms_ship\incoming\repl_original"
+multitool: Warning: Version mismatch, software:5.0, packet:4.0
+multitool: Warning: In a permissions-preserving replica, cleartool protect 
+operations will fail on client machines running ClearCase versions associated with feature level 3 or lower.
+Should I create a permissions-preserving replica? [no] y
+The packet can only be used to create replica "testvob_rep"
+- VOB family is 9c31341c.526e11d4.a80d.00:c0:4f:09:da:07
+- replica OID is ed9fad2c.fad14819.8664.e0:0d:f5:0c:ea:23
+Should I create this replica? [no] y
+Processing packet C:\shipping\ms_ship\incoming\repl_original...
+Loading database...
+Dumped schema version is 54
+3000 events loaded (thru Tuesday, November 05, 2002 8:17:27 AM)...
+4763 events loaded.
+5000 pass 2 actions performed...
+10000 pass 2 actions performed...
+11318 pass 2 actions performed.
+Loader done.
+multitool: Error: Operation ... not valid while VOB feature level is less than 949.
+multitool: Error: Unable to create VOB replica: The feature level of the VOB 
+family is not high enough to permit this operation. 
+
+ 
+
+The import was run on a server running a version of ClearCase that does not support permissions-preserving replicas.
+
+
+RESOLVING THE PROBLEM
+ 
+
+ 
+
+The server has to support VOB feature level 4 or greater in order to create permissions-preserving replicas. 
+
+Upgrade the server to a version of ClearCase MultiSite that supports feature level 4 or higher. Review technote 1119269 [http://www.ibm.com/support/docview.wss?rs=984&uid=swg21119269] to see which version correspond to a particular feature level.
+
+
+
+
+
+
+RELATED INFORMATION
+#Raise the feature level of a VOB [http://www.ibm.com/support/docview.wss?uid=swg21150579]
+
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Software Development Rational ClearCase Replica Creation

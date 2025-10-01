@@ -1,0 +1,177 @@
+Title: IBM IV03413: IN A FAILOVER SCENARIO, BACKUP NCP_MODEL INCORRECTLY UPDATES NCIM.DOMAINMGR WHEN USING SHARED NCIM - United States
+
+Text:
+  FIXES ARE AVAILABLE
+IBM Tivoli Network Manager IP 3.9.0 Fix Pack 3, 3.9.0-TIV-ITNMIP-FP0003 [http://www-01.ibm.com/support/docview.wss?uid=swg24033501]
+IBM Tivoli Network Manager IP 3.9.0 Fix Pack 4, 3.9.0-TIV-ITNMIP-FP0004 [http://www-01.ibm.com/support/docview.wss?uid=swg24034724]
+IBM Tivoli Network Manager IP Edition 3.9.0 Fix Pack 5, 3.9.0-TIV-ITNMIP-FP0005 [http://www-01.ibm.com/support/docview.wss?uid=swg24037809]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  ITNM 3.9 failover setup with shared NCIM (db2),
+   When we start the backup ncp services using ncp_ctrl
+   command,  then the backup domain's ncp_model incorrectly update
+   the ncim.domainMgr table
+   
+    db2 => select * from ncim.DOMAINMGR
+   
+    DOMAINMGRID DOMAINNAME
+    CREATIONTIME               LASTUPDATED
+    MANAGERNAME
+    DESCRIPTION
+    WEBTOPDATASOURCE                 DOMAINHOST
+    DOMAINPORT  BATCHUPDATEPERCENT
+   
+              1 <DOMAINNAME>
+    2011-06-07-07.35.01.000000 2011-06-28-13.58.46.000000
+    PrecisionIP
+    -
+    DOMAIN_V                           IP.IP.IP.IP
+    7968                  0
+   
+      1 record(s) selected.
+   
+   IP.IP.IP.IP is the backup server IP. After that In GUI "Network
+   discovery configuration" is showing Error : "Unable to download
+   discovery configuration data"
+   
+   And "Active discovery status" showing The "Server is currently
+   busy !!"
+   
+   If we start the failover setup then customer not able
+   to run the discovery in the primary server.
+   
+   Platform Details: Replication is possible in all Platform.
+   ITNM Version:         3.9
+   Build Level:          32
+   Operating System:     AIX 6.1
+   Database and Version: DB2 9.5
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * All ITNM 3.9 users.                                          *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * IN A FAILOVER SCENARIO, BACKUP NCP_MODEL INCORRECTLY UPDATES *
+   * NCIM.DOMAINMGR WHEN USING SHARED NCIM                        *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * | fix pack | 3.9.0-ITNMIP-FP0001                             *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A check has been added to model so that it will not update the
+   domainMgr table if it is the backup domain and replicating NCIM
+   is enabled."
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV03413
+   
+   
+ * REPORTED COMPONENT NAME
+   NC/PRECISIONIP
+   
+   
+ * REPORTED COMPONENT ID
+   5724O52RC
+   
+   
+ * REPORTED RELEASE
+   390
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-07-18
+   
+   
+ * CLOSED DATE
+   2011-08-10
+   
+   
+ * LAST MODIFIED DATE
+   2011-08-10
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   NC/PRECISIONIP
+   
+   
+ * FIXED COMPONENT ID
+   5724O52RC
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R390 PSN
+   UP
+   
+   
+ * R390 PSY
+   UP

@@ -1,0 +1,128 @@
+Title: IBM Security Bulletin: IBM® Db2® is affected by multiple file overwrite vulnerabilities (CVE-2018-1450, CVE-2018-1449, CVE-2018-1451, CVE-2018-1452) - United States
+
+Text:
+file overwrite; CVE-2018-1450; CVE-2018-1449; CVE-2018-1451; CVE-2018-1452 SECURITY BULLETIN
+
+SUMMARY
+ Db2 is affected by multiple file overwrite vulnerabilities. An unprivileged user can overwrite arbitrary
+files by creating a symlink that points to a file owned by the Db2 instance account. 
+
+VULNERABILITY DETAILS
+CVEID: CVE-2018-1450 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2018-1450]
+DESCRIPTION: IBM DB2 for Linux, UNIX and Windows (includes DB2 Connect Server) contains a vulnerability that could allow a local user to overwrite arbitrary files owned by the DB2 instance owner.
+CVSS Base Score: 7.7
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/140045 [https://exchange.xforce.ibmcloud.com/vulnerabilities/140045] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:L/AC:L/PR:N/UI:N/S:U/C:N/I:H/A:H) 
+
+CVEID: CVE-2018-1449 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2018-1449]
+DESCRIPTION: IBM DB2 for Linux, UNIX and Windows (includes DB2 Connect Server) contains a vulnerability that could allow a local user to overwrite arbitrary files owned by the DB2 instance owner.
+CVSS Base Score: 7.7
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/140044 [https://exchange.xforce.ibmcloud.com/vulnerabilities/140044] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:L/AC:L/PR:N/UI:N/S:U/C:N/I:H/A:H) 
+
+CVEID: CVE-2018-1451 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2018-1451]
+DESCRIPTION: IBM DB2 for Linux, UNIX and Windows (includes DB2 Connect Server) contains a vulnerability that could allow a local user to overwrite arbitrary files owned by the DB2 instance owner.
+CVSS Base Score: 7.7
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/140046 [https://exchange.xforce.ibmcloud.com/vulnerabilities/140046] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:L/AC:L/PR:N/UI:N/S:U/C:N/I:H/A:H) 
+
+CVEID: CVE-2018-1452 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2018-1452]
+DESCRIPTION: IBM DB2 for Linux, UNIX and Windows (includes DB2 Connect Server) contains a vulnerability that could allow a local user to overwrite arbitrary files owned by the DB2 instance owner.
+CVSS Base Score: 7.7
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/140047 [https://exchange.xforce.ibmcloud.com/vulnerabilities/140047] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:L/AC:L/PR:N/UI:N/S:U/C:N/I:H/A:H) 
+
+AFFECTED PRODUCTS AND VERSIONS
+All fix pack levels of IBM Db2 V9.7, V10.1, V10.5, and V11.1 editions on all platforms except Windows are affected.
+
+REMEDIATION/FIXES
+The recommended solution is to apply the appropriate fix for this vulnerability. 
+
+FIX:
+The fix for DB2 V11.1 is in V11.1.3.3 iFix001, available for download from Fix Central [http://www-01.ibm.com/support/docview.wss?uid=swg24044872]. 
+
+Customers running any vulnerable fixpack level of an affected Program, V9.7, V10.1, and V10.5, can download the special build containing the interim fix for this issue from Fix Central. These special builds are available based on the most recent fixpack level for each impacted release: DB2 V9.7 FP11, V10.1 FP6, and V10.5 FP9. They can be applied to any affected fixpack level of the appropriate release to remediate this vulnerability.
+
+
+
+
+Release Fixed in fix pack APAR Download URL V9.7 TBD IT24217 [http://www-01.ibm.com/support/docview.wss?uid=swg1IT24217] Special Build for V9.7 FP11:  * AIX 64-bit
+ * 
+ * HP-UX 64-bit
+ * 
+ * Linux 32-bit, x86-32
+ * 
+ * Linux 64-bit, x86-64 
+ * 
+ * Linux 64-bit, POWER™ big endian
+ * 
+ * Linux 64-bit, System z®, System z9® or zSeries®
+ * 
+ * Solaris 64-bit, SPARC
+ * 
+ * Solaris 64-bit, x86-64 
+
+V10.1 TBD IT24216 [http://www-01.ibm.com/support/docview.wss?uid=swg1IT24216] Special Build for V10.1 FP6:  * AIX 64-bit
+ * 
+ * HP-UX 64-bit
+ * 
+ * Linux 32-bit, x86-32
+ * 
+ * Linux 64-bit, x86-64 
+ * 
+ * Linux 64-bit, POWER™ big endian
+ * 
+ * Linux 64-bit, System z®, System z9® or zSeries®
+ * 
+ * Solaris 64-bit, SPARC
+ * 
+ * Solaris 64-bit, x86-64 
+
+V10.5 TBD IT24215 [http://www-01.ibm.com/support/docview.wss?uid=swg1IT24215] Special Build for V10.5 FP9:  * AIX 64-bit
+ * 
+ * HP-UX 64-bit
+ * 
+ * Linux 32-bit, x86-32
+ * 
+ * Linux 64-bit, x86-64 
+ * 
+ * Linux 64-bit, POWER™ big endian
+ * 
+ * Linux 64-bit, POWER™ little endian
+ * 
+ * Linux 64-bit, System z®, System z9® or zSeries®
+ * 
+ * Solaris 64-bit, SPARC
+ * 
+ * Solaris 64-bit, x86-64 
+ * 
+ * Inspur
+
+V11.1.3.3 iFix001 IT24171 [http://www-01.ibm.com/support/docview.wss?uid=swg1IT24171] http://www-01.ibm.com/support/docview.wss?uid=swg24044872 [http://www-01.ibm.com/support/docview.wss?uid=swg24044872] WORKAROUNDS AND MITIGATIONS
+None.
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v3 Guide [http://www.first.org/cvss/user-guide] 
+On-line Calculator v3 [http://www.first.org/cvss/calculator/3.0] 
+
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] 
+
+ACKNOWLEDGEMENT
+The vulnerabilities were reported to IBM by Rich Mirch. 
+
+CHANGE HISTORY
+ May 22, 2018: Original Version Published 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.

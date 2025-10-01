@@ -1,0 +1,99 @@
+Title: IBM Information Server parallel Job may fail at runtime because of data source column names and table names containing '#' and '$' characters - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ For Information Server Parallel engine, '#' and '$' characters are internally reserved characters.
+However, Information Server supports most of the cases where those characters are used in data source column names, and table names.
+All database "Connectors" stages properly handle such columns and table names, but this support may vary for the other type of Stages accessing databases that might be used.
+Caution should be taken especially when migrating Jobs from "Server" to "Parallel" engine.
+This article describes how Information Server handles these situations and if needed, what to do in the development phase to get this feature enabled. 
+
+SYMPTOM
+At runtime, parallel Job may fail with error message like : 
+
+---- 
+Syntax error: Error in "pxbridge" operator: Error in output 
+redirection: Error in output parameters: Error in modify adapter: Error
+in binding: Expected '=', got: "#", line 121 
+Error in binding: Expected '=', got: "#", line 146 
+Error in binding: Expected '=', got: "$", line 151 
+Error in binding: Expected '=', got: "$", line 152 
+Error in binding: Expected '=', got: "$", line 153 
+Error in binding: Expected '=', got: "#", line 155 
+Error in binding: Expected '=', got: "#"
+.../...
+====
+Note that when such a failure occurs, the Parallel Job has not yet started processing any data.
+
+CAUSE
+For Information Server Parallel engine, '#' and '$' characters are internally reserved characters. 
+
+Some operators may need additional environment variables for Information Server to support that situation.
+
+
+ENVIRONMENT
+Only Parallel Jobs may encounter the problem. The type of stages affected are : Oracle or DB2 operators, "DRS" stage (all databases), and "Change Data Capture" stage. All "Connectors" work fine in regards of this feature.
+
+
+
+DIAGNOSING THE PROBLEM
+One of the data source have one or more columns names or table names containing the '#' or '$' characters.
+
+
+
+RESOLVING THE PROBLEM
+Two Information Server environment variables enable parallel engine to handle those particular column (or table) names : 
+
+DS_ENABLE_RESERVED_CHAR_CONVERT is to handle column names with "#" or "$" in the column name
+DS_ENABLE_RESERVED_CHAR_CONVERT_TABLE is to handle table names with "#" or "$" in the column name => It is supported only with the "Oracle OCI Plugin" stage.
+
+The environment variables above are set if they are defined with a value which is different from "0" or "False" (case sensitive). Default Information Server behaviour is as if they are unset.
+Note that the behaviour commanded by those environment variables may vary with the type of Stage used. 
+Following table shows how Information Server supports and/or behaves for the various types of Stages affected by this functionality :
+
+Column titled "Support / Behavior" in this table may contain the following values :
+- "Yes" : Stage supports the functionality with the environment variable set
+- "No" : Stage does not support the functionality
+= "ON" : Stage behaves as if the environment variable was set
+
+
+
+Stage type Environment variables Support / Behaviour Comment Oracle OCI Plugin DS_ENABLE_RESERVED_CHAR_CONVERT
+DS_ENABLE_RESERVED_CHAR_CONVERT_TABLE Yes 
+Yes [/support/docview.wss?uid=swg21590770&amp;aid=1] DRS Plugin -
+Oracle OCI flavor DS_ENABLE_RESERVED_CHAR_CONVERT
+DS_ENABLE_RESERVED_CHAR_CONVERT_TABLE = "ON" 
+No [/support/docview.wss?uid=swg21590770&amp;aid=1] DRS Plugin - Informix flavor DS_ENABLE_RESERVED_CHAR_CONVERT
+DS_ENABLE_RESERVED_CHAR_CONVERT_TABLE Yes 
+No [/support/docview.wss?uid=swg21590770&amp;aid=1] DRS Plugin - MSSQL Bulk Load flavor DS_ENABLE_RESERVED_CHAR_CONVERT
+DS_ENABLE_RESERVED_CHAR_CONVERT_TABLE Yes 
+No [/support/docview.wss?uid=swg21590770&amp;aid=1] DRS Plugin - ODBC flavor DS_ENABLE_RESERVED_CHAR_CONVERT
+DS_ENABLE_RESERVED_CHAR_CONVERT_TABLE = "ON" 
+No [/support/docview.wss?uid=swg21590770&amp;aid=1] DRS Plugin - 
+DB2 flavor DS_ENABLE_RESERVED_CHAR_CONVERT
+DS_ENABLE_RESERVED_CHAR_CONVERT_TABLE = "ON" 
+No [/support/docview.wss?uid=swg21590770&amp;aid=1] DRS Plugin - Oracle OCI Bulk Load flavor DS_ENABLE_RESERVED_CHAR_CONVERT
+DS_ENABLE_RESERVED_CHAR_CONVERT_TABLE Yes 
+No [/support/docview.wss?uid=swg21590770&amp;aid=1] DRS Plugin - Sybase flavor DS_ENABLE_RESERVED_CHAR_CONVERT
+DS_ENABLE_RESERVED_CHAR_CONVERT_TABLE Yes 
+No [/support/docview.wss?uid=swg21590770&amp;aid=1] DRS Plugin - 
+DB2 UDB 
+Bulk Load flavor DS_ENABLE_RESERVED_CHAR_CONVERT
+DS_ENABLE_RESERVED_CHAR_CONVERT_TABLE Yes 
+No [/support/docview.wss?uid=swg21590770&amp;aid=1] Oracle EE Stage DS_ENABLE_RESERVED_CHAR_CONVERT
+DS_ENABLE_RESERVED_CHAR_CONVERT_TABLE = "ON" 
+No (*1,2) APAR JR32340 DB2 EE - Entreprise DS_ENABLE_RESERVED_CHAR_CONVERT
+DS_ENABLE_RESERVED_CHAR_CONVERT_TABLE Yes 
+No [/support/docview.wss?uid=swg21590770&amp;aid=1] Connector Stage
+(All databases) DS_ENABLE_RESERVED_CHAR_CONVERT
+DS_ENABLE_RESERVED_CHAR_CONVERT_TABLE = "ON" 
+= "ON" [/support/docview.wss?uid=swg21590770&amp;aid=1] DB2 Plugin DS_ENABLE_RESERVED_CHAR_CONVERT
+DS_ENABLE_RESERVED_CHAR_CONVERT_TABLE = "ON" 
+= "ON" ECase # 75494 (*3) CDC Stage
+(Change Data Capture) DS_ENABLE_RESERVED_CHAR_CONVERT
+DS_ENABLE_RESERVED_CHAR_CONVERT_TABLE = "ON" 
+= "ON" Requires CDC 652 IF 2 and following
+(*4) 
+(*1, 2, 3, 4 : Please ask your Information Server Technical Support for more information)

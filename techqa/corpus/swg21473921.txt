@@ -1,0 +1,87 @@
+Title: IBM Configure ClearCase Global Monitor for use with SRFM enabled VOBs - United States
+
+Text:
+CC; global monitor; srfm; synchronous request for mastership; reqmaster; vob; srfm enabled; gen_replica_sits.bat; gen_replica_sits; bat; configure; setup TECHNOTE (FAQ)
+
+QUESTION
+ How can you configure IBM Rational ClearCase MultiSite Global Monitor for use with Synchronous Request for Mastership (SRFM) enabled VOBs? 
+
+ANSWER
+ 
+
+Synchronous request for mastership 
+
+ 
+
+Synchronous request for mastership (SRFM) allows a user to immediately checkout a file or directory version even if the branch is initially mastered at another replica in the VOB family, provided it is safe to do so. When invoked on a remotely mastered branch, the feature silently sends a request for mastership to the remote master. If any blocking conditions are encountered, for instance, if someone already has a reserved checkout on the branch at the mastering site, the SRFM request is denied, and the requesting user’s SRFM checkout fails. However, if no blocking conditions are encountered, the remote master transfers mastership as it would for any reqmaster request. In this case, the requesting user’s SRFM checkout succeeds, and the user can modify the file or directory. The SRFM checkout is said to be in a pending reserved state. No one else may perform a reserved checkout on that branch. However the user may not check in the file or directory until mastership arrives (by the normal MultiSite syncreplica process). 
+
+ 
+
+Refer to technote 1470733 [http://www.ibm.com/support/docview.wss?uid=swg21470733]for more details of how to configure and use SRFM. 
+
+ 
+
+ 
+
+Configure Global Monitoring for use with SRFM enabled VOBs 
+
+ 
+
+To use the SRFM feature, a ClearCase administrator must raise the family feature level of every replicated VOB family where users will be allowed to use SRFM to Feature Level 6. This feature level change requires the administrator to modify a script file to reflect the change used by the Global Monitoring function. See Raising the VOB family feature level [https://publib.boulder.ibm.com/infocenter/cchelp/v7r1m2/index.jsp?topic=/com.ibm.rational.clearcase.cc_ms_admin.doc/c_raising_vob_fam_feat_lvls.htm] and the cleartool chflevel [https://publib.boulder.ibm.com/infocenter/cchelp/v7r1m2/index.jsp?topic=/com.ibm.rational.clearcase.cc_ref.doc/topics/ct_chflevel.htm]man page for details. 
+
+ 
+
+ 
+
+Location of script file and how to change it 
+
+ 
+
+After installing ClearCase 7.1.2.2 patch (or newer version) on a VOB server host or a view server host, you need to modify the following script file: 
+
+
+/opt/IBM/ITM/platform/rc/bin/gen_replica_sits.bat (on Unix and Linux) 
+
+C:\IBM\ITM\TAMITM6\gen_replica_sits.bat (on Windows) 
+
+ 
+
+Replace this line in VerMapFL subroutine: 
+
+ if ( $cc_ver =~ m/7(.*)/ ) { 
+
+ 
+
+with the following lines: 
+
+ 
+
+ if ( $cc_ver =~ m/7.1.(\d).(\d)/ ) {
+if ( $1 == 2 && $2 >= 2 ) {
+$fl = "6";
+} elsif ($1 > 2) {
+$fl = "6";
+} else {
+$fl = "5";
+}
+} elsif ( $cc_ver =~ m/7.1.(\d)/ ) {
+if ( $1 >= 3 ) {
+$fl = "6";
+}
+else {
+$fl = "5";
+}
+} elsif ( $cc_ver =~ m/7(.*)/ ) {
+
+
+ 
+
+The ClearCase administrator must stop Global Monitoring on that VOB or view server host and restart it after modifying the script file.
+
+
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Software Development Rational ClearCase Mastership: Reqmaster AIX, HP-UX, Linux, Solaris, Windows 7.1.2.2

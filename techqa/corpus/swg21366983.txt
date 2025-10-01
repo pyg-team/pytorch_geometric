@@ -1,0 +1,166 @@
+Title: IBM Collecting Data for a Failed Information Server Installation on Linux or Unix - United States
+
+Text:
+MustGather; MustGather; MustGather; MustGatherDocument TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Collecting the following information before calling IBM Technical Support will help you understand the problem and save time analyzing the data and determining next steps. 
+
+CAUSE
+Installation of IBM InfoSphere Information Server is not successful on a Linux or Unix operating system. Capture the following information to assist in diagnosing installation failure. 
+
+DIAGNOSING THE PROBLEM
+If you have not yet contacted IBM Technical Support for your installation problem, please view the Troubleshooting section of the Information Center as well as the release notes and installation frequently asked questions. Resolution to your problem may already be covered in an existing topic. 
+
+RESOLVING THE PROBLEM
+The following step by step instructions explain how to capture all the necessary information. These steps are for both Information Server 8.0.1 and 8.1 unless noted specifically for the step. In addition to the steps which are common for all platforms, there are also some platform-specific steps which must be performed. Once all information has been captured, instructions are provided for packaging the information so it can be submitted to IBM Technical support. 
+
+
+
+
+
+
+
+ 
+
+Collect common operating system information 
+
+ * Collect filesystem information
+   df -k > /tmp/collect-filesystems.txt
+   
+   
+ * Collect services information
+   cat /etc/services > /tmp/collect-services.txt
+   
+   
+ * Collect hosts information
+   cat /etc/hosts > /tmp/collect-hosts.txt 
+   
+   
+ * Collect root user ulimit; must execute this as root user
+   ulimit -a > /tmp/collect-limits-root.txt
+
+
+Collect Information Server logs 
+
+ 1. cd /opt/IBM/InformationServer/logs 
+ 2. tar -cf /tmp/collect-islogs.tar *
+
+
+If DB2 is used as the repository, Collect DB2 support information
+The following commands must be performed as the DB2 instance owner user id. The commands assume that your repository database name is XMETA. If your database is named something else then replace the name accordingly. 
+
+ * Collect database instance information
+   $DB2DIR/bin/db2support /tmp -o collecting-db2info.txt
+   
+   
+ * Collect XMETA database information including a connection test
+   $DB2DIR/bin/db2support /tmp -o collecting-db2xmeta.txt -d XMETA -c
+
+
+If WebSphere Application Server (WAS) was pre-installed, capture logs for server1 
+
+ 1. cd /opt/IBM/WebSphere/AppServer/profiles/default/logs/ 
+ 2. tar -cf /tmp/collect-waslogs.tar server1
+
+
+
+
+
+ 
+
+Platform-specific steps for Linux 
+
+ * Collect kernel parameter settings
+   sysctl -a > /tmp/collect-kernel.txt
+   
+   
+ * Collect kernel information
+   uname -a > /tmp/collect-uname.txt
+   
+   
+ * Collect the limits settings; issue this command as root user
+   cat /etc/security/limits.conf > /tmp/collect-limits-conf.txt
+   
+   
+ * Collect the installed packages
+   rpm -qa --qf "%{name}-%{version}-%{release}.%{arch}\n" | sort > /tmp/collect-packages.txt
+   
+   
+ * Collect the operating system release (Suse only)
+   cat /etc/suse-release.txt > /tmp/collect-release.txt
+   
+   
+ * Collect the operating system release (Redhat only)
+   cat /etc/redhat-release.txt > /tmp/collect-release.txt
+   
+   
+ * Collect memory statistics
+   cat /proc/meminfo > /tmp/collect-meminfo.txt
+
+
+
+
+
+ 
+
+Platform-specific steps for AIX 
+
+ * Collect the limits settings; issue this command as root user
+   cat /etc/security/limits > /tmp/collect-limits.txt
+   
+   
+ * Collect the installed packages
+   lslpp -l > /tmp/collect-lslpp.txt
+   
+   
+ * Collect the operating system release
+   oslevel -r > /tmp/collect-oslevel.txt
+   
+   
+ * Collect hardware and machine information
+   prtconf > /tmp/collect-prtconf.txt
+   getconf -a > /tmp/collect-getconf.txt
+
+
+
+ 
+
+Platform-specific steps for Solaris 
+
+ * Collect the installed packages
+   pkginfo -l > /tmp/collect-pkginfo.txt
+   
+   
+ * Collect hardware and kernel parameter information
+   prtconf > /tmp/collect-prtconf.txt
+   sysdef > /tmp/collect-sysdef.txt
+
+
+
+ 
+
+Platform-specific steps for HP-UX 
+
+ * Collect the installed packages
+   swlist > /tmp/collect-swlist.txt
+   
+   
+ * Collect hardware and kernel parameter information
+   machinfo > /tmp/collect-machinfo.txt
+   /usr/sbin/kctune > /tmp/collect-kctune.txt
+
+
+
+
+
+
+
+
+Submitting collected information to IBM Technical Support 
+
+Use the following commands to package all the files created in the collection process into a single archive that can be attached to your PMR or emailed to a support representative. Optionally, you can remove the files created in /tmp once you have submitted the archive. 
+
+ 1. cd /tmp 
+ 2. tar -cf collected-files-infoserver.tar collect* 
+ 3. gzip collected-files-infoserver.tar

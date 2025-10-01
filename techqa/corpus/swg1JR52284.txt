@@ -1,0 +1,235 @@
+Title: IBM JR52284: MEMORY LEAK WHEN CUSTOMERS USE POLICY SET IN WEB SERVICE OF com/ibm/ws/sm/workspace/impl/WorkSpaceImpl OBJECTS - United States
+
+Text:
+  DIRECT LINKS TO FIXES
+bpm.8560.cf1.delta.repository.2 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Standard&fixids=bpm.8560.cf1.delta.repository.2&source=SAR]
+bpm.8560.cf1.delta.repository.1 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Standard&fixids=bpm.8560.cf1.delta.repository.1&source=SAR]
+8.5.5.0-WS-BPM-IFJR52284 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Standard&fixids=8.5.5.0-WS-BPM-IFJR52284&source=SAR]
+8.5.6.0-WS-BPM-IFJR52284 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Standard&fixids=8.5.6.0-WS-BPM-IFJR52284&source=SAR]
+8.5.0.1-WS-BPM-IFJR52284 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Standard&fixids=8.5.0.1-WS-BPM-IFJR52284&source=SAR]
+Version 8.5.0 Fix Pack 2 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24040683]
+Version 8.5 Refresh Pack 7 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24041575]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When you use inbound web service with policy set settings. For
+   every inbound request there will be a policy set workspace
+   created and stored in memory without being released after use.
+   This made the memory keeps on increasing and leading to
+   java.lang.OutOfMemoryError.
+   
+      The heapdump shows these objects in abundance.
+   TotalSize (TotalSize/HeapSize%) [ObjectSize]
+   NumberOfChildObject(112,007) ObjectName Address
+   |- 2,178,652,544 (68.78%) [4,112] 488 array of
+   java/util/HashMap$Entry 0x1050f8e80
+      |- 16,334,040 (0.52%) [24] 3 java/util/HashMap$Entry
+   0xec4c81a0
+      |  |- 13,067,232 (0.41%) [24] 3 java/util/HashMap$Entry
+   0xde521cd0
+      |  |  |- 9,800,424 (0.31%) [24] 3 java/util/HashMap$Entry
+   0xe2aa1140
+      |  |  |  |- 6,533,616 (0.21%) [24] 3 java/util/HashMap$Entry
+   0xfb7cc7f0
+      |  |  |  |- 3,266,696 (0.1%) [88] 14
+   com/ibm/ws/sm/workspace/impl/WorkSpaceImpl 0xe2aa64a0
+      |  |  |  |- 88 (0%) [24] 1 java/lang/String 0xe2aa6488
+      |  |  |- 3,266,696 (0.1%) [88] 14
+   com/ibm/ws/sm/workspace/impl/WorkSpaceImpl 0xde521ce8
+      |  |  |- 88 (0%) [24] 1 java/lang/String 0xc2989418
+      |  |- 3,266,696 (0.1%) [88] 14
+   com/ibm/ws/sm/workspace/impl/WorkSpaceImpl 0xec4c8210
+      |  |- 88 (0%) [24] 1 java/lang/String 0xec4c81f8
+      |- 13,067,360 (0.41%) [24] 3 java/util/HashMap$Entry
+   0x124864698
+      |  |- 9,800,424 (0.31%) [24] 3 java/util/HashMap$Entry
+   0xe8b41cc0
+      |  |- 3,266,824 (0.1%) [88] 10
+   com/ibm/ws/sm/workspace/impl/WorkSpaceImpl 0x124864440
+      |  |- 88 (0%) [24] 1 java/lang/String 0x1239fbeb8
+      |- 13,067,232 (0.41%) [24] 3 java/util/HashMap$Entry
+   0x120d91820
+      |- 13,067,232 (0.41%) [24] 3 java/util/HashMap$Entry
+   0x131024570
+      |- 13,067,232 (0.41%) [24] 3 java/util/HashMap$Entry
+   0x1242e4518
+      |- 13,067,232 (0.41%) [24] 3 java/util/HashMap$Entry
+   0x1362836d0
+      |- 13,067,232 (0.41%) [24] 3 java/util/HashMap$Entry
+   0x1271c4ca0
+      |- 9,800,552 (0.31%) [24] 3 java/util/HashMap$Entry
+   0x1293e2dd0
+      |- 9,800,552 (0.31%) [24] 3 java/util/HashMap$Entry
+   0x132db6578
+      |- 9,800,552 (0.31%) [24] 3 java/util/HashMap$Entry
+   0x127b30280
+      |- 9,800,552 (0.31%) [24] 3 java/util/HashMap$Entry
+   0x1274aa6f0
+      |- 9,800,552 (0.31%) [24] 3 java/util/HashMap$Entry
+   0x134a61ca0
+      |- 9,800,552 (0.31%) [24] 3 java/util/HashMap$Entry
+   0x12a83c2a0
+      |- 9,800,552 (0.31%) [24] 3 java/util/HashMap$Entry
+   0x130b41e08
+      |- 9,800,552 (0.31%) [24] 3 java/util/HashMap$Entry
+   0x132c4c078
+      |- 9,800,424 (0.31%) [24] 3 java/util/HashMap$Entry
+   0x12af41b40
+      |- 9,800,424 (0.31%) [24] 3 java/util/HashMap$Entry
+   0xed23dc98
+      |- 9,800,424 (0.31%) [24] 3 java/util/HashMap$Entry
+   0x12f555018
+      |- 9,800,424 (0.31%) [24] 3 java/util/HashMap$Entry
+   0xc5b3f7d8
+      |- 9,800,424 (0.31%) [24] 3 java/util/HashMap$Entry
+   0x106457f98
+      |- There are 468 more children
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  n/a
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  IBM Business Process Manager V8.5 Express,  *
+   *                  Std, Adv                                    *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: When you use web service with           *
+   *                      policy set settings. For every          *
+   *                      request reached there will be a         *
+   *                      policy set workspace created and        *
+   *                      stored in memory without being          *
+   *                      released after use. This made the       *
+   *                      memory keeps on increasing and          *
+   *                      leading to OutOfMemory Exception.       *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   An policy set workspace is needed for loading the policy set
+   settings. When an inbound request message  reached inbound web
+   service we will create a policyset workspace to load policy
+   set data configured for this inbound web service. The
+   workspace will not be released automatically when the request
+   is complete. We need to add code to delete that after use. The
+   same happens when you use web service integration to issue an
+   request to the target web service server with police set
+   settled.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A fix is available for IBM Business Process Manager V8.5.0.1
+   to release the policy set workspace after use.
+   
+   On Fix Central (http://www.ibm.com/support/fixcentral), search
+   for JR52284:
+   1.Select Business Process Manager with your edition from the
+   product selector, the installed version to the fix pack level,
+   and your platform,  and then click Continue.
+   2.Select APAR or SPR, enter JR52284, and click Continue.
+   
+   When you download fix packages, ensure that you also download
+   the readme file for each fix. Review each readme file for
+   additional installation instructions and information about the
+   fix.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR52284
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM ADVANCED
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9400
+   
+   
+ * REPORTED RELEASE
+   850
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2015-01-15
+   
+   
+ * CLOSED DATE
+   2015-03-11
+   
+   
+ * LAST MODIFIED DATE
+   2017-01-20
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   BPM ADVANCED
+   
+   
+ * FIXED COMPONENT ID
+   5725C9400
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R800 PSY
+   UP

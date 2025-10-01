@@ -1,0 +1,202 @@
+Title: IBM PM49209: CONTINUATION OF CORRECTIONS TO THE DOCUMENTATION IN THE INFORMATION CENTERS FOR THE IBM WEBSPHERE APPLICATION SERVER V7 - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  This APAR is a contiinuation of APAR, PM47070 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM47070].  It addresses
+   issues that customer encountered with IBM WebSphere Application
+   Server Version 7.  These issues were resolved as information
+   center updates for September, 2011.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  This APAR provides a continuation of APAR   *
+   *                  PM47070 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM47070], which contains a                   *
+   *                  cumulative list of the documentation issues *
+   *                  for September, 2011                         *
+   *                  that affect users of IBM WebSphere          *
+   *                  Application Server Version 7.0.             *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: The Information Centers for WebSphere   *
+   *                      Application Server Version 7.0 need     *
+   *                      to reflect customer enhancement         *
+   *                      requests received in problem            *
+   *                      management records (PMRs). These        *
+   *                      enhancements can include fixing         *
+   *                      technical inaccuracies or clarifying    *
+   *                      vague information.                      *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   See the Problem Conclusion section for a description of the
+   issues, which are described in customer PMRs, and the
+   documentation change or changes that will address these issues.
+   Problem Conclusion: Note: We update our information centers
+   monthly. The following
+   Version 7.0 modifications will be available in September,
+   2011 update to the Information Centers. To access the latest
+   on-line documentation, go to the product library page at
+   http://www.ibm.com/software/webservers/appserv/library and
+   select the version and product that is appropriate for your
+   WebSphere Application Server environment.
+   The following Version 7.0 issues continue the problem
+   descriptions documented in APAR PM47070 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM47070] for WebSphere
+   Application Server Version 7.0:
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  ID: 716550
+   
+   Problem: When using the administrative console to configure
+   SPNEGO web authentication, you only need to specify the
+   "LTPA" option and not the "LTPA and Kerberos" option on the
+   administrative console.   Also, after a realm change in
+   federated repositories, the administrative console
+   administrative users and group need to re-map existing
+   user/role assignments using the configuration panel of the
+   administrative console.  The WebSphere Application Server
+   information center Version 7 does not describe this process.
+   Mistakes in configuring SPNEGO web authentication can result.
+   
+   
+   Resolution: Topic,  &#162;&#226;&#130;&#172; &#147;SPNEGO troubleshooting tips &#162;&#226;&#130;&#172;  &#189; is
+   adding a new section,  &#162;&#226;&#130;&#172; &#147;Correcting realm change issues and
+   subsequent SPNEGO logon failures &#162;&#226;&#130;&#172;  &#189;, which reads as follows
+   
+   Correcting realm change issues and subsequent SPNEGO logon
+   failures In a SPNEGO web authentication environment in which a
+   realm change is to occur, errors can occur in making the realm
+   change, which then can lead to subsequent SPNEGO logon
+   failures. Here are the steps to correct these errors.
+   
+   Realm Change: The realm can consist of identities in the
+   file-based repository that is built into the system, in one or
+   more external repositories, or in both the built-in,
+   file-based repository and one or more external repositories.
+   You can change realms in a SPNEGO environment by changing the
+   name as follows:
+   1. In the administrative console, click Security > Global
+   security > Kerberos configuration > SPNEGO Web authentication
+   and uncheck the Enable SPNEGO checkbox.
+   2 .In the administrative console, click Security > Global
+   security.
+   3. Under User account repository, select Federated
+   repositories from the Available realm definitions field and
+   click Configure.
+   4. When you finish adding or updating your federated
+   repository configuration, go to the Security > Global security
+   panel and click Apply to validate the changes.
+   5. If you have removed a user/role identity and want it to
+   function successfully under the new realm, you must add it
+   back to the new realm after the realm name change.
+   6. Restart the deployment manager to ensure that these the
+   user/role identity can function under the new realm.
+   SPNEGO Web authentication: To ensure that the user/role
+   changes can successfully logon under this new realm, perform
+   the following:
+   1 .Ensure that the application server is running.
+   2 .In the administrative console, click Security > Global
+   security
+   3. Under Authentication, highlight the radio button for LTPA.
+   Note: The Kerberos and LTPA option is not be selectable unless
+   you have configured Kerberos prior to this step. For SPNEGO,
+   you ONLY need to use the LTPA option.
+   4. Click Apply. Users under the new realm can now SPNEGO logon.
+   
+   This same information will be added to the Version 8
+   Information Center.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM49209
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSPHERE APP S
+   
+   
+ * REPORTED COMPONENT ID
+   5724J0800
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-10-03
+   
+   
+ * CLOSED DATE
+   2011-10-04
+   
+   
+ * LAST MODIFIED DATE
+   2011-10-10
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

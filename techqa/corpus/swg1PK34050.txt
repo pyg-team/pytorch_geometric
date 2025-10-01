@@ -1,0 +1,148 @@
+Title: IBM PK34050: MS INSTALLATION FAILED. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Environment : na
+   
+   Problem Description : MS installation failed and generates
+     following errors in install log..
+   
+     <LogText><![CDATA[DATA:        The database server you have
+     specified seems to be a remote host. The database can only be
+     created on the database server. The installation will complete
+     without creating the database.]]></LogText>
+     --------
+      DATA:        process output data: ADMA5033E: The target
+      server
+      cl_app100_xlab300_lab3 specified for
+      octigate.web-ws51.war+WEB-INF/web.xml is a part of cluster
+      cl_app100_lab3, but cluster cl_app100_lab3 is not specified
+      in the list of targets.
+   
+   Related files : none
+   
+   Recreating Senario : Install MS
+   
+   Approver : SP
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Problem Description : MS installation failed and generates
+     following errors in install log..
+   
+     <LogText><![CDATA[DATA:        The database server you have
+     specified seems to be a remote host. The database can only be
+     created on the database server. The installation will complete
+     without creating the database.]]></LogText>
+     --------
+      DATA:        process output data: ADMA5033E: The target
+      server
+      cl_app100_xlab300_lab3 specified for
+      octigate.web-ws51.war+WEB-INF/web.xml is a part of cluster
+      cl_app100_lab3, but cluster cl_app100_lab3 is not specified
+      in the list of targets.
+   
+   Related files : none
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Resolved issue for a remote database
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK34050
+   
+   
+ * REPORTED COMPONENT NAME
+   ITCAM WAS DIST
+   
+   
+ * REPORTED COMPONENT ID
+   5724L6200
+   
+   
+ * REPORTED RELEASE
+   600
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2006-11-03
+   
+   
+ * CLOSED DATE
+   2006-11-14
+   
+   
+ * LAST MODIFIED DATE
+   2006-11-14
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ITCAM WAS DIST
+   
+   
+ * FIXED COMPONENT ID
+   5724L6200
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R600 PSY
+   UP

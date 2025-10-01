@@ -1,0 +1,32 @@
+Title: IBM Unable to load the DASH login page after failed rollback of DASH 3.1.2 - United States
+
+Text:
+DASH; JazzSM; SetXFrameOptionFilter; error 500; logon.jsp; login page; rollback TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ After a failed attempt to roll back DASH 3.1.2 (or 3.1.2.1) the DASH login page no longer loads and instead returns a "Error 500" message with the root exception: "Could not find required filter class -SetXFrameOptionFilter.classcom.ibm.isclite.container.servlet." 
+
+SYMPTOM
+"Error 500"message is being displayed
+
+
+CAUSE
+The failed rollback left the install in a mixed state where some 3.1.2. code calls other 3.1.2 code that was no longer in place after the rollback attempt.
+
+DIAGNOSING THE PROBLEM
+If the issue surfaced after a failed DASH 3.1.2 (or 3.1.2.1) rollback and the error page shown when trying to load the DASH login page includes the "Error 500" and missing "...SetXFrameOptionFilter.class" reference, this DCF is applicable.
+
+RESOLVING THE PROBLEM
+Obtain a copy of the <JazzSM Home>/profile/installedApps/JazzSMNode01Cell/isc.ear/isclite.jar from a working DASH 3.1.2 (or 3.1.2.1 if appropriate) system. A copy can be obtained by IBM Support if needed by way of opening a PMR. To apply the working isclite.jar:
+
+
+
+
+
+ 1. Stop DASH 
+ 2. Make a backup of the existing isclite.jar file under:
+    <JazzSM Home>/profile/installedApps/JazzSMNode01Cell/isc.ear/
+    
+    For example, make a copy called isclite.jar.bak 
+ 3. Replace the existing isclite.jar file with the working copy. Make sure the file is owned by the user you used to install DASH/JazzSM. 
+ 4. Restart DASH.

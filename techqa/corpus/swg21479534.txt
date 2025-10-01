@@ -1,0 +1,29 @@
+Title: IBM Getting I/O error when saving in SPSS Statistics - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ I have opened an .sav file into IBM SPSS Statistics to perform some analysis. When I tried to save the file, I received the follow error message:
+
+"The attempt to save the file has failed because the disk is full. An I/O error has occurred, the variable dictionary is invalid, or the task was interrupted. IF SAVING OVER AN EXISTING FILE, THAT FILE HAS BEEN LOST."
+
+I also received an Error 1407 and Warning 5322 in my output viewer. When I tried to save the file to another drive or with a new file name, I received the same error.
+
+I have heard having duplicate variables can be one possible cause of this error. Doesn't SPSS Statistics prevent duplicate variables from occurring? 
+
+RESOLVING THE PROBLEM
+While the application will check for duplicate variable names when creating a new file, there have been a few reports of duplicate variable names being imported into SPSS Statistics, and attempting to save a file with duplicate variable names is one thing that can cause the I/O error(s) described above.
+
+One easy way to check to see whether you have duplicate variable name present in your file: In the variable view, click once on the first variable and drag your mouse all the way down until you have highlighted all of your variables. Click on EDIT->COPY. Next, open up a new dataset (File->New->Data) and create a string variable. Paste your variables into the data view and run a FREQUENCY on this string variable. Check the Frequency table for variables with counts higher than 1. Rename these duplicate variables in your original dataset and you should then be able to save your file as a .sav file with no errors. 
+
+If you've performed this check and have found no duplicate variable names, there's likely a different cause. Please contact IBM SPSS Technical Support for further assistance.
+
+RELATED INFORMATION
+ Need more help? Our Statistics forum is Live! [https://developer.ibm.com/answers/topics/statistics.html?smartspace=predictive-analytics]
+
+
+ 
+
+HISTORICAL NUMBER
+ 25837

@@ -1,0 +1,183 @@
+Title: IBM JR57586: YOU RECEIVE THE "E_OBJECT_NOT_FOUND: THE REQUESTED ITEM WAS NOT FOUND. PROPERTYNAME=IBM_BPM_SECURITYCOMBINER" ERROR - United States
+
+Text:
+  DIRECT LINKS TO FIXES
+bpm.8570.cf2017.03.delta.repository [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Standard&fixids=bpm.8570.cf2017.03.delta.repository&source=SAR]
+Downloading IBM Business Process Manager V8.5.7 Cumulative Fix 2017.03 [http://www-01.ibm.com/support/docview.wss?uid=swg24043252]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  After you upgraded IBM Business Process Manager (BPM) V8.5.5 or
+   V8.5.6 with Basic Case Management to V8.5.7 and reassigned a
+   task to a user, you saw an error like the following error in the
+    SystemOut.log of the server:
+   
+   [3/8/17 4:53:09:337 CST] 0000051c Engine        E   CWLLG0181E:
+   The following error occurred in the 534,297 task: Error updating
+   authorization. Details: CWTDS0000E: An unexpected failure
+   occurred. Details: 'FNRCE0051: E_OBJECT_NOT_FOUND: The requested
+   item was not found. propertyName=IBM_BPM_SecurityCombiner,
+   referenced objectId={108DAD5A-0000-CE33-A43A-C02E16A4CA0C},
+   referenced className=IBM_BPM_SecurityCombiner, referenced
+   classId={68304471-E694-48A6-8D88-139F53122AF9}'
+   Explanation: An exception was thrown.
+   Action: Check the server log files.
+   
+   com.lombardisoftware.core.TeamWorksException: Error updating
+   authorization. Details: CWTDS0000E: An unexpected failure
+   occurred. Details: 'FNRCE0051: E_OBJECT_NOT_FOUND: The requested
+   item was not found. propertyName=IBM_BPM_SecurityCombiner,
+   referenced objectId={108DAD5A-0000-CE33-A43A-C02E16A4CA0C},
+   referenced className=IBM_BPM_SecurityCombiner, referenced
+   classId={68304471-E694-48A6-8D88-139F53122AF9}'
+   Explanation: An exception was thrown.
+   Action: Check the server log files.
+    at
+   com.ibm.bpm.embeddedecm.authorization.AuthorizationHelper.perfor
+   mUpdates(AuthorizationHelper.java:353)
+    at
+   com.ibm.bpm.embeddedecm.authorization.AuthorizationHelper.access
+   $000(AuthorizationHelper.java:43)
+    at
+   com.ibm.bpm.embeddedecm.authorization.AuthorizationHelper$1.befo
+   rePrepare(AuthorizationHelper.java:121)
+    at
+   com.lombardisoftware.utility.spring.ProgrammaticTransactionSuppo
+   rt.executeCallbacks(ProgrammaticTransactionSupport.java:1028)
+    at
+   com.lombardisoftware.utility.spring.ProgrammaticTransactionSuppo
+   rt.access$500(ProgrammaticTransactionSupport.java:96)
+    at
+   com.lombardisoftware.utility.spring.ProgrammaticTransactionSuppo
+   rt$3.doInTransaction(ProgrammaticTransactionSupport.java:505)
+   
+   The error can also happen after other operations, for example
+   when a process goes to the next activity and creates a task.
+   
+   The error can also happen on systems without Basic Case
+   Management but that use an external IBM FileNet Content Manager
+   as repository for the IBM BPM document store.
+   
+   PRODUCTS AFFECTED
+   IBM BPM Advanced
+   IBM BPM Standard
+   IBM BPM Express
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  On a system with the Basic Case Management function enabled or
+   with an external FileNet Content Manager as the repository for
+   the IBM BPM document store, fine-grained access control is
+   applied to local documents and case folders. When the tasks for
+   an instance change, for example when a new task is created or
+   when a task is reassigned, these updates must be propagated to
+   authorize the documents and case folder of the instance. During
+   this update, IBM BPM builds a batch with updates for the IBM BPM
+   document store. This batch contained the creation of a new
+   object as second item, but the first item already used this new
+   object.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A fix will be included in IBM BPM V8.5.7 cumulative fix 2017.03
+   that ensures items are inserted in the correct order into the
+   batch.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR57586
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM ADVANCED
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9400
+   
+   
+ * REPORTED RELEASE
+   857
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-03-12
+   
+   
+ * CLOSED DATE
+   2017-03-22
+   
+   
+ * LAST MODIFIED DATE
+   2017-03-22
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   BPM STANDARD
+   
+   
+ * FIXED COMPONENT ID
+   5725C9500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R857 PSY
+   UP

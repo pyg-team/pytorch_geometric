@@ -1,0 +1,159 @@
+Title: IBM How to install IBM SPSS Concurrent Licensing Tools (License Manager) on Windows Server 2016? - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ I would like to use IBM SPSS Statistics 24 with concurrent (Network) Licenses. Before I can install the software on the Client computers I need to install the Sentinel RMS License Manager on a server.
+
+I would like to use a Windows Server 2016, for example a Windows Server 2016 Standard edition as operating system for the License Manager installation. 
+Is that possible? 
+
+ANSWER
+Yes, you can install Concurrent Licensing Tools 9.6.1 (License Manager Version 8.6.2.3001) on a Windows 2016 Server. 
+This is possible even if Windows 2016 Server is not officially tested for Sentinel License Manager version 8.6.x, but it will work nonetheless.
+
+For supported operating systems for SPSS products you also check the IBM Software products Compatibility reports on:
+https://www.ibm.com/software/reports/compatibility/clarity/index.jsp [https://www.ibm.com/software/reports/compatibility/clarity/index.jsp]
+
+For detailed documentation and additional questions see also the concurrent Licensing Administrators Guide on IBM SPSS Statistics 24 Documentation [http://www-01.ibm.com/support/docview.wss?uid=swg27047033]
+
+Read all 3 sections below:
+1. Installation of IBM SPSS Sentinel RMS License Manager on Windows 2016 Server
+2. Installation of SPSS License Tools (WlmAdmin) on the Windows 2016 Server
+3. Using Licenseactivator with Authorization codes to implement the IBM SPSS Concurrent network licenses
+
+1. Installation of IBM SPSS Sentinel RMS License Manager on Windows 2016 Server
+
+
+[/support/docview.wss?uid=swg21999396&aid=1] [/support/docview.wss?uid=swg21999396&aid=1] 
+
+To do so, from your IBM Passport Advantage Download area locate the below package:
+
+IBM SPSS Statistics Concurrent User Licensing Server 24.0 English Multiplatform eAssembly (CRZ0YEN)
+Size 7 Images (582MB), Date posted: 15 Mar 2016
+
+Then as a sub-package from the above locate:
+IBM SPSS Concurrent Licensing Tools 9.6.1 - License Manager Microsoft Windows English (CNC5JEN ) - 
+Size 275MB, Date posted: 1 Aug 2016
+
+Download this e-Assembly to your Windows 2016 Server.
+The name of the file you download is a zip file:
+
+licensemanagerandtools9.6_win64.zip
+
+When you extract the zip file you will get 2 folders "manager" and "tools"
+[/support/docview.wss?uid=swg21999396&amp;aid=2]
+
+Select the manager folder first
+
+The content of this folder is:
+Data1.cab
+Data2.cab
+Lservnt.exe
+Sentinel RMS License Manager 8.6.1.msi
+Setup.exe
+
+[/support/docview.wss?uid=swg21999396&aid=3] [/support/docview.wss?uid=swg21999396&aid=3] 
+
+To install the Sentinel RMS License manager right click on Setup.exe and select "Run as Administrator"
+
+[/support/docview.wss?uid=swg21999396&amp;aid=4] 
+
+Follow the instructions on the screen:
+
+[/support/docview.wss?uid=swg21999396&amp;aid=5] 
+
+[/support/docview.wss?uid=swg21999396&amp;aid=6] 
+
+Enter the Administrator user name and your Organization. Install the license manager for anyone who use the computer 
+
+[/support/docview.wss?uid=swg21999396&amp;aid=7] 
+
+
+It is strongly recommended to use the DEFAULT path for installation: 
+C:\Program Files (x86)\Common Files\SafeNet Sentinel\Sentinel RMS License Manager\
+
+[/support/docview.wss?uid=swg21999396&amp;aid=8] 
+
+[/support/docview.wss?uid=swg21999396&amp;aid=9]
+
+For installation it is necessary to check the option "Unblock the system firewall for the Sentinel RMS License Manager:
+
+
+[/support/docview.wss?uid=swg21999396&amp;aid=10] 
+
+[/support/docview.wss?uid=swg21999396&amp;aid=11] 
+
+[/support/docview.wss?uid=swg21999396&amp;aid=12] 
+
+2. Installation of SPSS License Tools (WlmAdmin) on the Windows 2016 Server
+
+After installation of the license manager you now should install the License Tools to be able to monitor the license usage and license availability.
+
+Select the tools folder on the desktop
+
+The content of this folder is:
+Setup.exe
+
+[/support/docview.wss?uid=swg21999396&aid=13] [/support/docview.wss?uid=swg21999396&aid=13] 
+
+Start the installation by right click on setup exe and select 'Run as Administrator': 
+
+[/support/docview.wss?uid=swg21999396&aid=14] [/support/docview.wss?uid=swg21999396&aid=14] 
+
+Follow the instructions on the screen: 
+
+[/support/docview.wss?uid=swg21999396&amp;aid=15] 
+
+[/support/docview.wss?uid=swg21999396&amp;aid=16] 
+
+Please use again the default folder for installation: 
+
+C:\Program Files (x86)\Common Files\SafeNet Sentinel\Sentinel RMS License Manager\WinNT\
+[/support/docview.wss?uid=swg21999396&amp;aid=17] 
+
+[/support/docview.wss?uid=swg21999396&amp;aid=18] 
+
+After installation of both License Manager and the tools go to 
+
+Control Panel\System and Security\Administrative Tools\Services and See if the Sentinel RMS License manager Service is started:
+
+[/support/docview.wss?uid=swg21999396&aid=19] [/support/docview.wss?uid=swg21999396&aid=19]
+
+3. Using Licenseactivator with Authorization codes to implement the IBM SPSS Concurrent network licenses
+
+To implement your IBM SPSS concurrent network licenses for the SPSS Products you purchased, open an Administrator Command prompt. During licensing procedure your server must be connected to the internet. Please note that the License manager version can manage network licenses for all current SPSS products that require a license and can manage also older release versions, for example SPSS Statistics 24 and 23, AMOS or Modeler 18 and below versions.
+
+
+[/support/docview.wss?uid=swg21999396&amp;aid=20] 
+
+On command prompt change directory to C:\Program Files (x86)\Common Files\SafeNet Sentinel\Sentinel RMS License Manager\WinNT\
+
+use licenseactivator <your 20 digit authorization code> as on example below and press enter:
+
+
+[/support/docview.wss?uid=swg21999396&aid=21] [/support/docview.wss?uid=swg21999396&aid=21]
+
+After successful use of the licenseactivator please create an environment variable LSERVOPTS on your server where you can define how many of your network licenses 
+could be checked out as commuter license. A value of -com 50 means that 50% of your availabel network tokens are available as commuter license.
+The value -l "C:\Program Files (x86)\Common Files\SafeNet Sentinel\Sentinel RMS License Manager\slm_log.txt" means that a usage log file is created on the installation directory.
+
+LSERVOPTS
+-com 50 -l "C:\Program Files (x86)\Common Files\SafeNet Sentinel\Sentinel RMS License Manager\slm_log.txt"
+
+[/support/docview.wss?uid=swg21999396&aid=22] [/support/docview.wss?uid=swg21999396&aid=22] 
+
+[/support/docview.wss?uid=swg21999396&aid=23] [/support/docview.wss?uid=swg21999396&aid=23] 
+
+Finally, go to Control Panel - Services again and RESTART the Sentinel RMS License manager Service 
+
+[/support/docview.wss?uid=swg21999396&aid=24] [/support/docview.wss?uid=swg21999396&aid=24] 
+
+Open the WlmAdmin tools now (Sentinel RMS Server Administration). The version of the WlmAdmin tool is 8.6.2.3001. 
+
+On below example you see network licenses for SPSS Statistics re leases 23 and 24 installed with 50 network tokens. 
+
+[/support/docview.wss?uid=swg21999396&amp;aid=25] 
+
+[/support/docview.wss?uid=swg21999396&aid=26] [/support/docview.wss?uid=swg21999396&aid=26]

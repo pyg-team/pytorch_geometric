@@ -1,0 +1,79 @@
+Title: IBM Removing duplicate event records from EventQueue with UpdateEventQueue - United States
+
+Text:
+netcool; impact; netcool/impact; nci; event; queue; update; remove; delete; duplicate; copy; eventqueue; updateevent; updateeventqueue; prevent; reprocess; process TECHNOTE (FAQ)
+
+QUESTION
+ Prevent multiple reprocessing of events by removing copies built up in EventQueue. 
+
+CAUSE
+In situations where the EventReader can build up a backlog of events (for example: heavy load) there is the potential for the EventReader to recapture the same event multiple times. These are held in the EventReader EventQueue and can lead to unwanted multiple reprocessing of the same event.
+
+ANSWER
+The UpdateEventQueue() function of Impact Policy Language can assist in handling this situation. 
+
+The most common action is to use this function to remove any copies of the event currently being processed from the EventQueue. This is achieved by identifying the EventQueue by the name of the EventReader and the event by a unique field value (for example: Identifier) or combination of field values and setting the IsDelete Boolean parameter to True. For example:
+
+
+
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+
+
+The above example employs a style of logging espoused in the TechNote "Structured logging in Policies" [ link below]. 
+
+When utilised with a flag field to indicate that an event is currently being processed, this tool can prevent the majority of situations that lead to unwanted multiple reprocessing of events. For example: 
+
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+
+
+Please see the TechNotes "Event flagging" [ link below] and "Avoiding unwanted event reprocessing" [ link below]. 
+
+Please also see the TechNotes "Event Flagging with Go_NoGo checking" [ link below] and "Using EventLocking to help prevent multiple event reprocessing" [ link below]. 
+RELATED INFORMATION
+ Structured logging in Policies [http://www-01.ibm.com/support/docview.wss?uid=swg21596180]
+Event flagging [http://www-01.ibm.com/support/docview.wss?uid=swg21626633]
+Avoiding unwanted event reprocessing [http://www-01.ibm.com/support/docview.wss?uid=swg21386538]
+Event Flagging with Go_NoGo checking [http://www-01.ibm.com/support/docview.wss?uid=swg21675015]
+Using EventLocking to help prevent multiple event repro [http://www-01.ibm.com/support/docview.wss?uid=swg21675051]

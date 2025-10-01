@@ -1,0 +1,62 @@
+Title: IBM BasicTroubleshooting for incorrect time display in Lotus Notes Calendar - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+Sometimes the time of a meeting is reported as incorrect when compared to the expected time of the meeting, the time of the Operating System etc. 
+
+To help locate the source of the problem, these guidelines apply: 
+
+Calendar entries should appear correctly once the following three component rules are adhered to:
+
+1. The Operating System time zone rules. These are the rules that are used when composing the contents of the StartTimeZone field and EndTimeZone fields, as well as the core time/date fields on the calendar invites. 
+
+2. ICU4J data. This effects how the calendar invites fall into the proper slots in the grid in the various calendar views. 
+
+The ICU4J data can be viewed in the systemsummary.txt: file and takes the following format:
+
+================ICU4J Info================= 
+ICU4J TZ Data Version is 2010j 
+XPD ICU4J Data Update Patch version is 3.8.1.v20100526_2010j 
+Current TZ is: GMT+0100, offset: 1, In DST=false, Time in this 
+Timezone 14:01:1
+
+The data version indicated in the above example would be: 2010j. This indicates that the timezone data is derived from 2010 so if there has been a timezone policy change for the relevant country affected since that time, the ICU4J data would need to be updated.
+
+
+
+The systemsummary.txt file is contained within the files collected when selecting (in the Notes Standard Client) Help > Support > Collect Support Data.
+
+If you find that the ICU4J data is too old for the relevant country affected, then it is recommended to contact IBM Support to ascertain whether there is a relevant fixpack or other resolution available to update the ICU4J data version.
+
+3. JTZU data. 
+
+Similarly to ICU4J data, the JTZU data can be checked in the systemsummary.txt file. It is recommended to search for the string: 'tzdata' in this systemsummary.txt file. This controls the Java timezone information used by the Notes JVM. It will appear with such an example format: tzdata2014j.
+
+If an issue appears, for example, where hovering a mouse icon over a calendar entry displays the time incorrectly, then this will relate to Java timezone information deployed. 
+
+The JTZU is especially important for examining DST changes and their effect after issues have been reported. The tool is available here:
+http://www.ibm.com/developerworks/java/jdk/dst/index.html [http://www.ibm.com/developerworks/java/jdk/dst/index.html]
+
+All three of these time zone data stores must be updated for any situation where a time zone changes its time zone rules. 
+
+
+
+
+SYMPTOM
+The timezone on a calendar entry or on a calendar view is not as expected. 
+
+
+CAUSE
+This problem can arise if either the Operating System, ICU4J or JTZU rules are not synchronised correctly.
+
+
+
+ENVIRONMENT
+Notes/Domino 8.5.x
+
+
+
+DIAGNOSING THE PROBLEM
+Checking whether the Operating System rules, ICU4J rules and JTZU rules are all correct should be the first items to check.

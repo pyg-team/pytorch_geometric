@@ -1,0 +1,195 @@
+Title: IBM Detailed example of running JMSAdmin on MQ 7.1, 7.5 and 8.0 in Unix - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ You want to see a detailed example of running the WebSphere MQ JMSAdmin tool on MQ 7.1, 7.5 and 8.0 in Unix. 
+
+RESOLVING THE PROBLEM
+
+The use of JMSAdmin requires an initial setup. The following technote provides a very detailed procedure for the necessary steps when using MQ 7.0.1 (Chapter 1, pages 3 thru 11):
+Configuring and running simple JMS P2P and Pub/Sub applications in MQ V7 [http://www.ibm.com/support/docview.wss?rs=171&uid=swg27023212]
+
+However, when using MQ 7.1, 7.5 or later, the new command "setmqenv" (introduced with MQ 7.1) needs to be used during the initial setup.
+This technote has the complete list of steps customized for using MQ 7.1 or later:
+
+Due to the Multi-Version feature introduced in MQ 7.1, it is necessary to run the setmqenv command to setup the PATH and other environment variables that are appropriate with the desired version of MQ installed in the system.
+The following procedure shows the scenario in which MQ 7.0.1.x, MQ 7.1 and MQ 7.5 are installed in the same host. The concepts are also applicable when there is only one installation, such as MQ 7.1 or MQ 7.5.
+
+The JMSAdmin tool is located in the following directory:
+$MQ_JAVA_INSTALL_PATH/java/bin
+
+Where $MQ_JAVA_INSTALL_PATH is setup by the MQ command "setmqenv", introduced in MQ 7.1.
+
+Step 1: Look at the following file created by the MQ installer in order to find out the directories where the non-MQ 7.0 installations are located.
+By default, Installation0 is associated with MQ 7.0.1 and it is mapped to /usr/mqm (AIX) or /opt/mqm (non-AIX)
+
+The following shows 2 additional installations, one for MQ 7.1 and another for MQ 7.5:
+$ cat /etc/opt/mqm/mqinst.ini
+Installation:
+Name=Installation1
+Description=
+Identifier=1
+FilePath=/opt/mqm71
+Installation:
+Name=Installation2
+Description=
+Identifier=2
+FilePath=/opt/mqm75
+
+Step 2: Consult the following technote regarding the creation of scripts that will help you with the task of setting at runtime the proper variables for the desired version of MQ installed in your system:
+
+Installing WebSphere MQ 7.1 to coexist with MQ 7.0.1.7 in Linux + applying fix pack 7.1.0.1 [http://www.ibm.com/support/docview.wss?rs=171&uid=swg27023934]
+
+Let's create a script for MQ 7.5:
+$ mkdir $HOME/bin
+$ cd $HOME/bin
+$ vi set-mq-75.ksh
+Notice from Step 1 that the installation Name is: installation1
+============= begin script
+#!/usr/bin/ksh
+# Name: set-mq-75.ksh
+# Purpose: to setup the environment to run MQ 7.5
+. /opt/mqm75/bin/setmqenv -n Installation2
+# Additional MQ 7.5 directories for the PATH
+export PATH=$PATH:$MQ_INSTALLATION_PATH/bin:$MQ_INSTALLATION_PATH/java/bin:$MQ_INSTALLATION_PATH/samp/bin:$MQ_INSTALLATION_PATH/samp/jms/samples:
+# Add local directory for running Java/JMS programs
+export CLASSPATH=$CLASSPATH:.
+# end
+============= end of script
+Notice that additional directories are included in the PATH.
+The setmqenv will setup the proper directory for MQ_INSTALLATION_PATH.
+
+You will need to specify the script as executable:
+$ chmod 755 $HOME/bin/set-mq-75.ksh
+
+You will need to add $HOME/bin in the PATH in your .bashrc or .profile:
+PATH=$PATH:$HOME/bin:.
+export PATH
+
+You will need to invoke the script with the leading dot!
+. set-mq-75.ksh
+| |
+| +--- blank
++--- dot
+
+Step 3: Creation of physical objects (for example, a Queue) in the queue manager
+The following is an example:
+Queue Manager name: QM_VER
+Host: veracruz.x.com
+Port: 1414
+$ runmqsc QM_VER
+DEFINE QL(Q1)
+END
+
+Step 4: Create a directory where the JMS configuration objects will be located in a file name ".bindings".
+For example, in UNIX, you can create the following subdirectory in the same directory where the other MQ objects are stored:
+mkdir /var/mqm/JNDI-Directory
+
+Step 5: Copy the JMSAdmin.config file from its default location, into /var/mqm
+The default file is located at:
+$MQ_JAVA_INSTALL_PATH/bin/JMSAdmin.config
+
+In this document we follow the best practice of not writing files under /opt/mqm (/usr/mqm). Thus, you need to copy the JMSAdmin.config file:
+cp $MQ_JAVA_INSTALL_PATH/bin/JMSAdmin.config /var/mqm/JMSAdmin.config
+
+Ensure that you can write into the file (the original file is read-only):
+chmod 644 /var/mqm/JMSAdmin.config
+
+Step 6: Modify /var/mqm/JMSAdmin.config
+These 2 variables need to be properly specified in the config file.
+
++ INITIAL_CONTEXT_FACTORY
+The following is common for UNIX and Windows and it indicates that a file will be used:
+INITIAL_CONTEXT_FACTORY=com.sun.jndi.fscontext.RefFSContextFactory
+
++ PROVIDER_URL
+
+For UNIX: notice the 3 forward slashes after "file:".
+PROVIDER_URL=file:///var/mqm/JNDI-Directory
+
+For Windows: notice only 1 forward slash after "file:" and notice the drive letter "C:/"
+PROVIDER_URL=file:/C:/JNDI-Directory
+
+
+Notice that ONLY one INITIAL_CONTEXT_FACTORY and PROVIDER_URL must be uncommented. If there are more uncommented lines, then the last entry is the winner, and overwrites any earlier entries of the same type.
+
+Step 7: Create a shell script called "myJMSAdmin.sh" that has these lines:
+============= begin script
+#!/usr/bin/ksh
+echo "running: JMSAdmin -cfg /var/mqm/JMSAdmin.config"
+$MQ_JAVA_INSTALL_PATH/bin/JMSAdmin -cfg /var/mqm/JMSAdmin.config
+============= end of script
+
+This script will invoke the JMSAdmin tool using the JMSAdmin.config that was copied and modified under /var/mqm.
+Ensure that the myJMSAdmin.sh script is in a directory under $PATH.
+Ensure that the script is executable:
+chmod 755 myJMSAdmin.sh
+
+Step 8: Start JMSAdmin by running the script.
+
+The following file is created by JMSAdmin when you first define a JMS administrative object:
+PROVIDER_URL/.bindings
+In this case, PROVIDER_URL is /var/mqm/JNDI-Directory, thus, the full path for the .bindings file is:
+/var/mqm/JNDI-Directory/.bindings
+Notice: The first dot in a file name in Unix makes it "hidden". You need to use the -a flag to show it when using "ls", that is "ls -a".
+
+$ myJMSAdmin.sh
+.
+Notice the prompt for the tool:
+InitCtx>
+It means: Initial Context
+
+Now you can define a Connection Factory, and JMS Destinations (Queue and Topic).
+
+# Define a connection factory
+InitCtx> DEF CF(CF1) QMGR(QM_VER) TRANSPORT(CLIENT) HOSTNAME(veracruz.x.com) PORT(1414)
+
+# Define Queue Q1
+InitCtx> DEF Q(Q1) QMGR(QM_VER) QUEUE(Q1)
+
+# Exit JMSAdmin
+InitCtx> end
+
+
++++ Note about specifying multi-instance queue managers in a connection factory
+
+1: This is a baseline, no multi-instance queue manager, just a single host and port. Notice that the field CONNECTIONNAMELIST field is formed from the specified values of HOSTNAME and PORT:
+
+DEF CF(CF1) QMGR(QM_VER) TRANSPORT(CLIENT) CHANNEL(MY.SVRCONN) HOSTNAME(veracruz.x.com) PORT(1414)
+
+Relevant fields during DISPLAY CF(*)
+CONNECTIONNAMELIST(veracruz.x.com(1414))
+HOSTNAME(veracruz.x.com)
+PORT(1414)
+
+2: This is how to specify the hosts involved in a multi-instance queue manager.
+Notice that CONNECTIONNAMELIST needs to be specified.
+Do not specify HOSTNAME nor PORT.
+Do not use single quotes or double quotes inside CONNECTIONNAMELIST (see item 3 below).
+
+DEF CF(CF2) QMGR(QM_VER) TRANSPORT(CLIENT) CHANNEL(MY.SVRCONN) CONNECTIONNAMELIST(veracruz.x.com(1414),cbeech.x.com(1414))
+
+Relevant fields during DISPLAY CF(*)
+Notice that JMSAdmin gets the first value from CONNECTIONNAMELIST and creates the fields HOSTNAME and PORT.
+
+CONNECTIONNAMELIST(veracruz.x.com(1414),cbeech.x.com(1414))
+HOSTNAME(veracruz.x.com)
+PORT(1414)
+
+3: This is similar to 2, but it is included to illustrate the problem that happens when single or double quotes are specified inside CONNECTIONNAMELIST: the first single quote is incorrectly added as being part of the host name.
+
+DEF CF(CF3) QMGR(QM_VER) TRANSPORT(CLIENT) CHANNEL(MY.SVRCONN) CONNECTIONNAMELIST('veracruz.x.com(1414),cbeech.x.com(1414)')
+
+Relevant fields during DISPLAY CF(*)
+CONNECTIONNAMELIST('veracruz.x.com(1414))
+HOSTNAME('veracruz.x.com)
+PORT(1414)
+
+
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ WebSphere MQ WMQ MQSeries

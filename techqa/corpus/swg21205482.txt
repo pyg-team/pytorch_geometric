@@ -1,0 +1,66 @@
+Title: IBM Applications still reside in the WebSphere Test Environment v6.x server after the workspace has been deleted - United States
+
+Text:
+projects; missing; IWAE0037E; ConfigurationWarning; OpenFailureException; WAS 6; WAS v6; v6; test; environment; RAD 6 test environment; RAD 6 server error; WTE; WSAS; websphere test environment; 1205482; WTE; RAD; WAS TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Applications added to the IBM WebSphere Test Environment v6 or later server from a Rational Application Developer for WebSphere Software workspace still reside in the server when you delete the workspace. 
+
+SYMPTOM
+The server logs might show errors that the project resources are missing if you create a new workspace and start the WebSphere Test Environment server.
+
+CAUSE
+Rational Application Developer test environments v6 or later are complete Base edition WebSphere Application Server installations. Unlike WebSphere Studio versions 5.x where each WebSphere Test Environment server instance had its own comprehensive version 4.x or 5.x server configuration, the WebSphere Test Environment version 6.x and later has simple server configurations that refer to a server profile, and profiles can be shared across multiple workspaces. 
+
+When a new workspace is created, the default profile will be utilized. If an Enterprise Application is published to this profile, then it will keep a reference to this application until it is removed from the server using the "Add/Remove applications" dialog. This means that even if the server is started from a different workspace or using the command-line tools then this application will still be started.
+
+RAD offers a server configuration option to run these new test environments with resources in the workspace or to run the server with resources on the server. By default, the server will run with resources in the workspace, which means that if the workspace is deleted, then the project will not be found when the server is started.
+
+
+RESOLVING THE PROBLEM
+There are several ways to resolve this problem. 
+
+
+Rational Application Developer version 6.x has a limited server configuration editor for the WebSphere Test Environment version 6 server, as compared to the legacy WebSphere Test Environment version 5.x server configuration editors. You are now required to configure the WebSphere server profile using the WebSphere Application Server Administrative Console.There are still a few settings to be aware of in the WebSphere Test Environment version 6 server configuration editor. 
+
+To open the server configuration editor, open the Servers view and then double click the server to open the editor.
+
+Under the Publishing section, there are two options:
+
+
+ 1. Run server with resources in the workspace 
+ 2. Run server with resources on server
+
+
+By default, the server is set to run with resources in the workspace. This means that when an EAR is published to the server, the server will look for the project files in the workspace rather than in the WebSphere Application Server profile installedApps folder. 
+
+By selecting the second option (to run the server with resources on the server), the EAR is copied and expanded to the WAS installedApps folder (for example, < RAD Install Directory >\runtimes\base_v6\profiles\default\installedApps\{myHostName}Node01Cell\<MyEAR>). Deleting a workspace when you use this option does not cause any run-time errors but the project will still remain on the server. 
+
+To fully remove a project from the server, you must remove the application using the WebSphere Application Server Administrative console by following these instructions: 
+ 1. Start the WebSphere Test Environment server. 
+ 2. Right-click on the server and select Run administrative console. 
+ 3. Click login  * Note: If security is disabled (default) then any username may be supplied
+    
+    
+ 4. Expand Applications and select Enterprise Applications. 
+ 5. Check all of the projects that you want to remove and click the Uninstall button. 
+ 6. Click OK to confirm and then save the configuration.
+
+
+In order to avoid having this problem occur, you can create a new server profile, as the new profile will have no references to any of the other profile's settings. To create a new server profile, refer to How to create a new profile for integrated v6.0 WebSphere Application Server, linked in the Related information section below. 
+
+
+
+RELATED INFORMATION
+#How to create a new profile for integrated server [http://www.ibm.com/support/docview.wss?uid=swg21201697]
+Using the Profile creation wizard [http://publib.boulder.ibm.com/infocenter/ws60help/index.jsp?topic=/com.ibm.websphere.base.doc/info/aes/ae/tins_instances.html]
+Rapid deployment of J2EE applications [http://publib.boulder.ibm.com/infocenter/ws60help/index.jsp?topic=/com.ibm.etools.wrd.freeform.doc/topics/cwrdrapid.html]
+Constructing a J2EE application from artifacts [http://publib.boulder.ibm.com/infocenter/ws60help/index.jsp?topic=/com.ibm.etools.wrd.freeform.doc/topics/tbyparts.html]
+Education and Skills Transfer to RAD v6.x Tooling [http://www.ibm.com/support/docview.wss?uid=swg21199368]
+
+
+
+
+
+
+Cross Reference information Segment Product Component Platform Version Edition Software Development Rational Software Architect Integrated WebSphere Test Environment Linux, Windows 6.0, 6.0.0.1, 6.0.1.0, 6.0.1.1

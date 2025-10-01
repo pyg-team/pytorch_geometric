@@ -1,0 +1,166 @@
+Title: IBM PI52660: DFHSJ0216 A CALL TO CELQPIPI CODE INIT_SUB HAS FAILED. (RETURN CODE - X'00000000' ) - United States
+
+Text:
+z/os SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When trying to enable or configure your JVMServer you receive
+   message:
+   DFHSJ0216 A call to CELQPIPI code INIT_SUB has failed. (Return
+   code - X'00000000'  )
+   The return code of x'00000000' is not very helpful for getting
+   to root cause of your problem. You find that the root problem
+   is the result of incorrect entries in your JVMPROFILE and your
+   USSHOME directories
+   When the attempt to process the JVM profile fails this is not
+   reported immediately.  Instead DFHSJSC continues on and tries
+   to validate the contents of USSHOME and also to redirect the
+   JVM output.  If the USSHOME validation fails then DFHSJSC
+   reports that error and returns. However, it does not set a
+   specific response and reason code so they remain set at their
+   initial values.  SJIN_RESPONSE is set to indicate that the
+   enclave initialization failed.
+   On return to DFHSJIN it believes the enclave initialization
+   fails so message DFHSJ0216 is issued.  The PIPI return code is
+   0 because that is the correct value.  The enclave did
+   initialize successfully.
+   The problem of delaying reporting the JVM profile error and
+   continuing with other processing should be corrected.
+   Additional Symptom(s) Search Keyword(s): SJ0216 , JVMPROFILEDIR
+   ,  KIXREVEPH
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All CICS Users.                              *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: When attempting to install a JVMSERVER  *
+   *                      CICS issues message DFHSJ0216           *
+   *                      indicating CELQPIPI INIT_SUB has failed *
+   *                      with RC=0.                              *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   A JVMSERVER is being installed in CICS.  The JVM profile is
+   parsed and a problem is detected.  The problem is not reported
+   immediately and DFHSJSC continues processing.  DFHSJSC attempts
+   to validate that the CICS datasets and zFS directories are at
+   the same service level and will also attempt redirect the
+   standard i/o streams before finally reporting the JVM profile
+   error.
+   
+   If the validation of the service level fails then message
+   DFHSJ0216 is issued indicating a problem creating an LE enclave.
+   The return code from LE is included in the message.  The
+   enclave was successfully initialised so the return code is 0.
+   
+   The incorrect message and return code of 0 make it much harder
+   to determine what the real error was.
+   
+   Keywords: msgDFHSJ0216 SJ0216
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *  This APAR is being closed FIN with concurrence from the
+   submitting customer.  This means that a fix to this APAR is
+   expected to be delivered from IBM in a release which is being
+   developed at the time that the APAR was closed.
+   The latest release of the product to exit development at the
+   time this APAR was closed was:
+     CICS Transaction Server for z/OS V5.2.
+   HER94835  HER 94835
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI52660
+   
+   
+ * REPORTED COMPONENT NAME
+   CICS TS Z/OS V5
+   
+   
+ * REPORTED COMPONENT ID
+   5655Y0400
+   
+   
+ * REPORTED RELEASE
+   900
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-11-17
+   
+   
+ * CLOSED DATE
+   2015-11-23
+   
+   
+ * LAST MODIFIED DATE
+   2015-11-23
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R900 PSN
+   UP

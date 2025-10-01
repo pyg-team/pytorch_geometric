@@ -1,0 +1,25 @@
+Title: IBM LAPP013I An invalid keyword value was found - United States
+
+Text:
+STERLINGPRI TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ LAPP013I An invalid keyword value was found 
+
+SYMPTOM
+LAPP013I 
+An invalid keyword value was found 
+Invalid usage in this statement 
+Run Task SYSOPTS='aaa "bbb" ccc'
+
+
+CAUSE
+SYSOPTS string has to be enclosed by double quotes.
+
+RESOLVING THE PROBLEM
+Code SYSOPTS="aaa 'bbb' ccc"
+
+
+
+HISTORICAL NUMBER
+ PRI19718

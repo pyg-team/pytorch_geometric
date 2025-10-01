@@ -1,0 +1,71 @@
+Title: IBM MustGather: Collecting data for Guardium STAP - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ If there is a problem with the Guardium STAP, what information must be gathered before contacting IBM Software Support? 
+
+ANSWER
+ 
+
+TAB NAVIGATION
+ * STAP diag from GUI [http://www-01.ibm.com/support/docview.wss?uid=swg21606592]
+ * UNIX diag [http://www-01.ibm.com/support/docview.wss?uid=swg21579891]- selected tab,
+ * Windows diag [http://www-01.ibm.com/support/docview.wss?uid=swg21579969]
+ * Windows Manual diag [http://www-01.ibm.com/support/docview.wss?uid=swg21607492]
+
+
+
+
+The UNIX diag Tab ( above ) provides a method for obtaining the most comprehensive diagnostics and should be used in preference to the method described here.
+
+In cases where the UNIX diag cannot be obtained then the following STAP diag from GUI can be used to obtain some diagnostics that could be helpful to IBM Guardium Technical Support 
+
+ 
+From the GUI please access: 
+ADMINISTRATION CONSOLE --> STAP CONTROL --> 
+click on the send command [/support/docview.wss?uid=swg21606592&amp;aid=1] 
+select "Run Diagnostics" as shown in the visual below. 
+Choose the appropriate Debug Level (usually 4 or higher) and Debug Duration, then click Apply. 
+
+[/support/docview.wss?uid=swg21606592&aid=2] [/support/docview.wss?uid=swg21606592&aid=2] 
+
+Debug Levels 
+
+
+
+0 - only critical error information 
+1 - all above plus repeatable not critical error information 
+2 - all above plus lost data information (discontinued from version 4.03 and above) 
+3 - all above plus brief information about packets sent to a Guardium 
+4 - all above plus local sniffing log 
+5 - all above plus network sniffing log 
+6 - all above plus heartbeat receiving log 
+7 - all above plus miscellaneous debugging information 
+
+
+Note: 
+
+For Windows 
+
+See here for steps to get logs for v10 Windows S-TAP. [http://www-01.ibm.com/support/docview.wss?uid=swg22003486] 
+
+The log files are created in STAP_LOGS. In v9.5 and above, once completed they are sent to the collector in /var/log/guard/stap_diagnostic directory which can be accessed via fileserver [http://www-01.ibm.com/support/docview.wss?uid=swg21499434]. 
+
+In v9.1 the files are sent to /var/gim_file_upload_dir. However this directory can not be accessed via fileserver. To overcome this problem a patch has been produced which moves the files to /var/log/guard/stap_diagnostic directory. 
+
+Patch v9.0p319 :- 
+SqlGuard-9.0p319.tgz.enc [/support/docview.wss?uid=swg21606592&aid=4]SqlGuard-9.0p319.tgz.enc [/support/docview.wss?uid=swg21606592&aid=3] 
+
+Please ensure that GPU p300 [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~Information%2BManagement&product=ibm/Information+Management/InfoSphere+Guardium&release=All&platform=All&function=textSearch&text=p300] is installed as a pre-requisite 
+
+The latest GPU and Ad-Hoc patches can be found in Fix Central [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~Information%2BManagement&product=ibm/Information+Management/InfoSphere+Guardium&release=All&platform=All&function=all] 
+
+Historically - earlier Guardium versions, windows, debug files will be located in STAP_HOME/TempSnapshot/ with a filename like debug_Feb_25_2009_10_59_59.txt. 
+
+For Unix Debug files will be located in the /tmp directory with the following filenames 
+
+v9 and higher S-TAPs /tmp/diag.<hostname.date_time>.tar.gz v8.2 S-TAP /tmp/guard_stap.stderr.txt 
+
+More information can be found by clicking the question mark indicator [/support/docview.wss?uid=swg21606592&amp;aid=5] in the top right of the IBM Guardium GUI window

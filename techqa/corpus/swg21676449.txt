@@ -1,0 +1,39 @@
+Title: IBM "Error occurred when deleting temporary VFP files: ODBC Error (2)" when using Controller 10.2 (or later) with 64-bit Oracle client - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ User performs a database optimise. After a few minutes, user receives an error. 
+
+SYMPTOM
+Error occurred when deleting temporary VFP files: ODBC Error (2)
+
+
+CAUSE
+There are other potential causes of this (or similar) errors. 
+
+ * TIP: See separate IBM Technote #1365329 for more examples.
+
+
+This Technote specifically relates to the scenario where the small 32-bit portion of the Controller server (the FoxPro components) cannot locate a 32-bit Oracle database client. 
+ENVIRONMENT
+Both of the following are true: 
+
+ * Customer using 64-bit version of Controller server software (i.e. Controller 10.2 or later) 
+ * Controller application server only has 64-bit version of Oracle client installed on Controller application server.
+
+RESOLVING THE PROBLEM
+Install 32-bit version of the same Oracle client on the Controller application server. 
+
+ 
+
+Steps: 
+
+Assuming that the customer has installed the Oracle 11G rel2 64-bit client already, then now install the Oracle 11G rel2 32-bit client. 
+
+ * TIP: For full details of how to do this, see separate IBM Technote #1656559.
+
+RELATED INFORMATION
+#1365329 - **Troubleshooting** 'Error occured when delet [http://www.ibm.com/support/docview.wss?uid=swg21365329]
+1656559 - How to install Oracle 11G r2 client (and patc [http://www.ibm.com/support/docview.wss?uid=swg21656559]

@@ -1,0 +1,21 @@
+Title: IBM PureData System for Analytics NPS Update Tutorials - United States
+
+Text:
+IBM PureData Systems for Analytics NPS Pre-upgrade checks and NPS Upgrade PRODUCT LIFECYCLE
+
+ABSTRACT
+ Step-by-step video guidance to perform very successful pre-upgrade checks and upgrades. 
+
+CONTENT
+Virtual Enzee: Life Saving Checkup and Upgrade of your Netezza Platform Software (NPS) TechTalk [https://engage.vevent.com/index.jsp?eid=556&seid=84951&code=ns] to learn how to upgrade your Netezza Platform Software (NPS) yourself easily and successfully. Direct video link. [http://ibm.biz/techtalk_nps]
+[http://ibm.biz/techtalk_nps]
+PureData System for Analytics NPS Update Tutorials Playlist [http://ibm.biz/techtalk_nps] has both of the step-by-step videos regarding NPS pre-upgrade checks and upgrades below:
+
+
+Step-by-step PureData System for Analytics Netezza Platform Software (NPS) Upgrade Pre-Checks [https://www.youtube.com/watch?v=R2pA5oQQxcw&list=PLdCTCL7DbgsmsWavFtI9uk6fbhKsEHaKB&index=1]
+It is important for you to have your systems up to date containing the latest features and fixes to previously reported problems. To achieve a great upgrade experience, you must perform a pre-upgrade check on the system two to seven days prior to the scheduled upgrade date. The pre-upgrade checks are non-intrusive and can be run while the system is online. It helps determine any current issues on the systems and allows time to fix any identified issues.
+
+Step-by-step PureData System for Analytics Netezza Platform Software (NPS) Upgrade [https://www.youtube.com/watch?v=iOwJ7P44lDQ&list=PLdCTCL7DbgsmsWavFtI9uk6fbhKsEHaKB&index=2]
+Please try upgrading your NPS using the IBM Knowledge Collection: PureData System for Analytics Netezza Platform Software (NPS) Upgrades [http://www-01.ibm.com/support/docview.wss?uid=swg21984053] as a reference alongside with assistance from this video.
+
+If you experience issues you are unable to resolve using IBM Knowledge Collection: PureData System for Analytics Netezza Platform Software (NPS) Upgrades [www-01.ibm.com/support/docview.wss?uid=swg21984053] [https://www-304.ibm.com/support/entdocview.wss?uid=swg21984053.], IBM Support Portal [https://www-947.ibm.com/support/entry/myportal/product/information_management/puredata_system_for_analytics?productContext=-1708477406]or IBM Knowledge Center [http://www.ibm.com/support/knowledgecenter/SSULQD/SSULQD_welcome.html] then please log a PMR with IBM support for further assistance.

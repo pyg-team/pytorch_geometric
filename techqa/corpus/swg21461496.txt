@@ -1,0 +1,21 @@
+Title: IBM Base Services 7.1.1.x Recommends Upgrading WebSphere 6.1 to at Least Fix Pack 35 - United States
+
+Text:
+performance; fixpack; fixpack; websphere; WAS; TPAEPERFORMANCE TECHNOTE (FAQ)
+
+QUESTION
+ Recommended WebSphere 6.1 fix pack level for Maximo 
+
+ANSWER
+Maximo / TPAE is recommending all customers using Base Services 7.1.1.x to upgrade their WebSphere environment to at least WebSphere 6.1 fix pack 35 i.e WAS 6.1.0.35. Due to numerous memory and high CPU usage fixes in WebSphere that are directly impacting Maximo stability and performance it is important for Maximo/TPAE 7.1.1.x customers to upgrade their environment to at least WebSphere 6.1 fix pack 35. You can update to the latest fix pack, which at the time of this document posting is fix pack 41.
+Along with the WebSphere 6.1 fix pack upgrade, Java SDK must be upgraded. Java SDK upgrade is a separate download and upgrade apart from the WebSphere upgrade. 
+
+
+Customers using IBM HTTP Server (IHS) along with WebSphere must upgrade the IBM HTTP Server to WebSphere fix pack compatible version of IHS fix pack. IHS fix pack is included in the WebSphere fix pack download link, but is a separate fix pack to download. 
+
+Please follow the instructions provided with the download and use updateInstaller to upgrade your environment.
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Systems and Asset Management Maximo Asset Management Essentials Systems and Asset Management Tivoli Asset Management for IT Systems and Asset Management Tivoli Change and Configuration Management Database Systems and Asset Management Tivoli Service Request Manager

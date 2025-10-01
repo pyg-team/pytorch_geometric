@@ -1,0 +1,75 @@
+Title: IBM Collecting Data: How to determine version information for IBM Forms - United States
+
+Text:
+version info; forms version info; ibm forms Viewer version; viewer version; webform server version; ibm forms designer version; how to get ibm forms version info; mustgatherdocument TECHNOTE (FAQ)
+
+QUESTION
+ How do you determine product version of IBM Forms and related products?
+
+ANSWER
+IBM Forms Viewer: 
+
+ 1. Open Viewer 
+ 2. Hold down both Alt buttons and select the About button
+
+[/support/docview.wss?uid=swg21457001&amp;aid=1] 
+
+
+
+
+IBM Forms Designer: 
+ 1. Open Designer 
+ 2. Select Help->About Eclipse Platform 
+ 3. Select Designer Icon [/support/docview.wss?uid=swg21457001&amp;aid=2]
+
+[/support/docview.wss?uid=swg21457001&amp;aid=3] 
+
+
+
+
+IBM Forms Webform Server: 
+ 1. Access the Translator Toolbelt at the following URL: http://<server host name>:8085/translator/Translate?Action=toolbelt 
+ 2. Select About button [/support/docview.wss?uid=swg21457001&amp;aid=4]
+    [/support/docview.wss?uid=swg21457001&amp;aid=5]
+    
+ 3. If additional patches have been deployed, provide a directory listing of the Translator folder by navigating to <Webform Server install location>/Server/4.0/WebformServer/Translator and running the following command.
+    
+    For Windows: dir /s >C:\output.txt
+    For Unix: ls -R > /opt/output.txt
+
+
+
+
+
+IBM Forms Forms Experience Builder (FEB): 
+
+1. Log into FEB. 
+2. At the bottom, select the About button. 
+
+[/support/docview.wss?uid=swg21457001&amp;aid=6] 
+Note: You can also check the systemOut.log under WebSphere\AppServer\profiles\<profile name>\logs\<server> and search for "Experience Builder Application build level". You should find something like WSVR0203I: Application: Experience Builder Application build level: 8.0.0.1016 
+
+
+
+
+WebSphere Application Server: 
+ 1. Run script at <WAS install location>\AppServer\bin\versionInfo.bat/sh
+
+
+
+
+
+WebSphere Portal Server: 
+ 1. Run script at <Portal install location>\PortalServer\bin\WPVersionInfo.bat/sh
+
+
+
+
+
+Java version: 
+
+Webform Server 
+ 1. Navigate to WebSphere Application Server JVM at <WAS install location>\WebSphere\AppServer\java\bin 
+ 2. Run command: java -version
+
+[/support/docview.wss?uid=swg21457001&aid=7] [/support/docview.wss?uid=swg21457001&aid=7]

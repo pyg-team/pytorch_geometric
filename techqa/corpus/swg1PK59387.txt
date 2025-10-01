@@ -1,0 +1,176 @@
+Title: IBM PK59387: EJBDEPLOY LEAVES BEHIND TEMP DIRECTORIES WITHIN THE DEPLOYED APPLICATION DIRECTORY. - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Rational Software Architect, Version 7.0.0.7 [http://www-01.ibm.com/support/docview.wss?uid=swg24018957]
+Rational Application Developer for WebSphere Software, Version 7.0.0.7 [http://www-01.ibm.com/support/docview.wss?uid=swg24019582]
+Java SDK 1.5 SR8 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24020073]
+Java SDK 1.5 SR8 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24021203]
+Java SDK 1.5 SR10 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24024201]
+6.1.0.31: Java SDK 1.5 SR11 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24026453]
+6.1.0.33: Java SDK 1.5 SR12 FP1 Cumulative Fix for WebSphere [http://www-01.ibm.com/support/docview.wss?uid=swg24027786]
+6.1.1.7: WebSphere Application Server Toolkit Version 6.1.1 Fix Pack 7 [http://www-01.ibm.com/support/docview.wss?uid=swg24023507]
+6.1.0.29: Java SDK 1.5 SR11 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24025191]
+6.1.0.35: Java SDK 1.5 SR12 FP2 Cumulative Fix for WebSphere [http://www-01.ibm.com/support/docview.wss?uid=swg24028574]
+6.1.0.37: Java SDK 1.5 SR12 FP3 Cumulative Fix for WebSphere [http://www-01.ibm.com/support/docview.wss?uid=swg24029525]
+6.1.0.39: Java SDK 1.5 SR12 FP4 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24030426]
+6.1.0.41: Java SDK 1.5 SR12 FP5 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24031035]
+6.1.0.43: Java SDK 1.5 SR13 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24031963]
+6.1.0.45: Java SDK 1.5 SR14 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24033270]
+6.1.0.47: WebSphere Application Server V6.1 Fix Pack 47 [http://www-01.ibm.com/support/docview.wss?uid=swg24035508]
+6.1.0.47: Java SDK 1.5 SR16 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24035649]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When running EJBDeploy, the temp working directory created does
+   not get cleaned out in AST/RAD 6.0 onwards.
+   
+   This has been identfied as a BUG and might be related to the
+   following method ie AddShutdownhook
+   
+    http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Runtime.html# [http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Runtime.html#]
+   addShutdownHook(java.lang.Thread)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Clean the directory manually. But in a multiproject/multi member
+   teams this can cause confusion and needs to be addressed within
+   the EJBDeploy call.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All users of the command-line EJB Deploy     *
+   *                 code generation tool in IBM WebSphere        *
+   *                 Application Server V6.0 and V6.1             *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: If the -keep command-line flag is not   *
+   *                      specified then the EJB Deployment       *
+   *                      working directory is not deleted.       *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   If the -keep command-line flag is specified for EJBDeploy then
+   it will not delete the working directory upon completion of
+   the code generation.  However, if -keep is not specified then
+   it is suppose to delete the working directory but this does
+   not occur as certain files are still locked by the JVM when
+   the deletion occurs, preventing the working directory from
+   being completely cleaned.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  If -keep is not specified then the ejbdeploy scripts
+   (ejbdeploy.bat on Windows and ejbdeploy.sh on UNIX platforms)
+   will now be responsible for deleting the working directory
+   after the ejbdeploy JVM is terminated.  The fix for this APAR
+   is currently scheduled for inclusion in the WebSphere
+   Application Server v6.0.2.29 and v6.1.0.19 fix packs.  Please
+   refer to the Recommended Updates page for delivery
+   information:
+   http://www.ibm.com/support/docview.wss?uid=swg27004980 [http://www.ibm.com/support/docview.wss?uid=swg27004980]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK59387
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBAPP SERVER A
+   
+   
+ * REPORTED COMPONENT ID
+   5724J0820
+   
+   
+ * REPORTED RELEASE
+   600
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-01-16
+   
+   
+ * CLOSED DATE
+   2008-03-28
+   
+   
+ * LAST MODIFIED DATE
+   2008-03-28
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBAPP SERVER A
+   
+   
+ * FIXED COMPONENT ID
+   5724J0820
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R600 PSY
+   UP
+   
+   
+ * R610 PSY
+   UP

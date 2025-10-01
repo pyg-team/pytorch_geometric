@@ -1,0 +1,214 @@
+Title: IBM PM25376: UPDATE TO ITCAM MS VE CAUSING LOGIN REDIRECT DUE TO ITCAM_APPLICATION NAME CHANGE - United States
+
+Text:
+  FIXES ARE AVAILABLE
+7.1.0.2-TIV-ITCAMAD-IF0001: ITCAM for Application Diagnostics V7.1 FP2 IF1 [http://www-01.ibm.com/support/docview.wss?uid=swg24029067]
+7.1.0.2-TIV-ITCAMAD-IF0006: ITCAM for Application Diagnostics V7.1 FP2 IF6 [http://www-01.ibm.com/support/docview.wss?uid=swg24031010]
+7.1.0.2-TIV-ITCAMAD-IF0007: ITCAM for Application Diagnostics V7.1 FP2 IF7 [http://www-01.ibm.com/support/docview.wss?uid=swg24031710]
+7.1.0.2-TIV-ITCAMAD-IF0010: ITCAM for Application Diagnostics V7.1 FP2 IF10 [http://www-01.ibm.com/support/docview.wss?uid=swg24032110]
+7.1.0-TIV-ITCAMAD-FP0003: ITCAM for Application Diagnostics V7.1 Fix Pack 3 [http://www-01.ibm.com/support/docview.wss?uid=swg24032604]
+7.1.0.3-TIV-ITCAMAD-IF0001: ITCAM for Application Diagnostics V7.1 FP3 IF1 [http://www-01.ibm.com/support/docview.wss?uid=swg24032985]
+7.1.0.3-TIV-ITCAMAD-IF0004: ITCAM for Application Diagnostics V7.1 FP3 IF4 [http://www-01.ibm.com/support/docview.wss?uid=swg24033735]
+7.1.0.3-TIV-ITCAMAD-IF0005: ITCAM for Application Diagnostics V7.1 FP3 IF5 [http://www-01.ibm.com/support/docview.wss?uid=swg24033938]
+7.1.0.3-TIV-ITCAMAD-IF0004: ITCAM for Application Diagnostics V7.1 FP3 IF6 [http://www-01.ibm.com/support/docview.wss?uid=swg24034668]
+7.1.0.3-TIV-ITCAMAD-IF0008: ITCAM for Application Diagnostics V7.1 FP3 IF8 [http://www-01.ibm.com/support/docview.wss?uid=swg24037994]
+7.1.0-TIV-ITCAMAD-FP0004: ITCAM for Application Diagnostics V7.1 Fix Pack 4 [http://www-01.ibm.com/support/docview.wss?uid=swg24041705]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  ITCAM for WebSphere/J2EE
+   APAR Opening Form
+   ---------------------------------
+   
+   Problem Abstract:
+   Update to ITCAM MS VE causing login redirect due to
+   ITCAM_Application name change
+   
+   ---------------------------------
+   Users Affected: VE user login
+   
+   ---------------------------------
+   Problem Description:
+   VE login is redirecting to login page after userid/password
+   
+   Reference archived pmr 64798,49R,000
+   
+   
+   ---------------------------------
+   Keyword/Symptom:
+   
+   ---------------------------------
+   Component ID:
+   5724L62MS
+   
+   ---------------------------------
+   Severity: 3
+   
+   ---------------------------------
+   Local Fix/Workaround:
+   
+   
+   The Problem was We had different names of the ITCAM application
+   in CCI Prod. The intial names were octigate (instead of
+   ITCAM_Application)/help_ws61 instead of help_was61.
+   When we tried to do the upgrade, this just messed up the
+   security as well.
+   
+   I renamed the applications and.. redid the security
+   configuration. After which the Console works fine.
+   
+   
+   ---------------------------------
+   Approvals:
+   
+   L2: John Horton
+   L3: Calvin So
+   ---------------------------------
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  rename ITCAM_Application/help_was61 to
+   ITCAM_Application/help_ws61
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:
+   *
+   * ITCAM Managing server users who have renamed the default ITCAM
+   * application names and are performing update to a later
+   * interim fix or fixpack version.
+   *
+   ****************************************************************
+   *
+   * PROBLEM DESCRIPTION:
+   *
+   * If the default VE application ear file names are changed and
+   * the upgrade is perfored, the user is redirected back to the
+   * login page after the correct user name and password are
+   * supplied.
+   *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix introduces the following new properties to the
+   silentUpdate.properties while updating the Managing server to a
+   newer version:
+   
+   updateVe.appName.ITCAM_Application
+   updateVe.appName.eclipseHelp
+   updateVe.appName.Itcamdata
+   updateVe.appName.DataQuery
+   
+   If the default application names have been changed, then the
+   above properties need to have values that indicate the changed
+   names so that the update is done correctly.
+   
+   The fix for this APAR is contained in the following maintenance
+   packages:
+   
+     | interim fix | 6.1.0.5-TIV-ITCAMfWAS_SVR-IF0015
+     | fix pack | 7.1.0-TIV-ITCAMAD-FP0002
+     | interim fix | 7.1.0.1-TIV-ITCAMAD-IF0004
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM25376
+   
+   
+ * REPORTED COMPONENT NAME
+   ITCAM WAS MGING
+   
+   
+ * REPORTED COMPONENT ID
+   5724L62MS
+   
+   
+ * REPORTED RELEASE
+   610
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-10-27
+   
+   
+ * CLOSED DATE
+   2010-12-30
+   
+   
+ * LAST MODIFIED DATE
+   2010-12-30
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ITCAM WAS MGING
+   
+   
+ * FIXED COMPONENT ID
+   5724L62MS
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R610 PSY
+   UP

@@ -1,0 +1,222 @@
+Title: IBM JR42025: INCORRECT fault object type returned on mediation flow resulting in CWSXM1003E - United States
+
+Text:
+  FIXES ARE AVAILABLE
+WebSphere Process Server V7.0.0 Fix Pack 5 (V7.0.0.5) [http://www-01.ibm.com/support/docview.wss?uid=swg24032709]
+WebSphere Enterprise Service Bus V7.0.0 Fix Pack 5 (7.0.0.5) [http://www-01.ibm.com/support/docview.wss?uid=swg24032713]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  CreateResponseBG problem and also the xml tag missed problem in
+   SMO
+   .
+   [1/27/12 8:48:51:513 EST] 0000000a FTPRAResource E
+   com.ibm.j2ca.ftp.  FTPFileInteraction create CWYFT0118E: File
+   s75is041 already exists in the specified directory
+   /home/your.com/ppay/ for the outbound Create operation.
+   Explanation=An error occurred during the Create operation
+   because the file already exists. A file by the same name should
+   not exist in the directory.
+   UserAction=Ensure that the file does not exist
+   in the specified directory, and try again.
+   .-------------------------------------------------
+   .
+   [1/27/12 8:48:51:529 EST] 0000000a SCAInvocation E
+   ServiceMessageObject: ServiceMessageObject@4ed24ed2
+   (context=ContextType@4f194f19, headers=HeadersType@129d129d,
+   body=createFTPFileDuplicateRecordFaultMsg@72e872e8)
+   .
+   [1/27/12 8:48:51:529 EST] 0000000a MediationFlow E   CWSXM1019E:
+   Response fault flow runtime instance is unavailable due to a
+   flow build error:
+   'CWSXM1003E: No response fault flow found for fault message
+   {http://Your.ComPositivePayFTPOut/FTPImport}
+   createFTPFileDuplicateRecordFaultMsg from operation
+   createFTPFile on reference Your.ComFTPImportPartner. In
+   mediation component Your.ComPositivePayFTPOut in module
+   CITIPositivePayFTPOut'.
+   .
+   [1/27/12 8:48:51:529 EST] 0000000a MFCImplementa E   CWSXM0206E:
+   An unexpected exception occurred.: CWSXM1019E: Response fault
+   flow runtime instance is unavailable due to a flow build error:
+   'CWSXM1003E:
+   No response fault flow found for fault message
+   {http: //Your.ComPositivePayFTPOut/FTPImport}
+   createFTPFileDuplicateRecordFaultMsg
+   from operation createFTPFile on reference
+   Your.ComFTPImportPartner.
+   In mediation component CITIPositivePayFTPOut in module
+   Your.ComPositivePayFTPOut'.
+   .
+   [1/27/12 8:48:51:529 EST] 0000000a FlowActionFac E   CWSXM0111E:
+   Service runtime exception calling an import from mediation
+   component Your.ComPositivePayFTPOut in module
+   Your.ComPositivePayFTPOut:
+   CWSXM0206E: An unexpected exception occurred.:
+   CWSXM1019E: Response fault flow runtime instance is unavailable
+   due to a flow build error:
+   'CWSXM1003E: No response fault flow found for fault message
+   {http://Your.ComPositivePayFTPOut/FTPImport}
+   createFTPFileDuplicateRecordFaultMsg
+   from operation createFTPFile on reference
+   Your.ComFTPImportPartner. In
+   mediation component Your.ComPositivePayFTPOut in module
+   Your.ComPositivePayFTPOut'.
+   .
+   [1/27/12 8:48:51:529 EST] 0000000a MediationFlow E   CWSXM1025E:
+   An unexpected exception occurred when the flow was called:
+   CWSXM0111E:
+   Service runtime exception calling an import from mediation
+   component Your.ComPositivePayFTPOut in module
+   Your.ComPositivePayFTPOut:
+   CWSXM0206E: An unexpected exception occurred.:
+   CWSXM1019E: Response fault flow runtime
+   instance is unavailable due to a flow build error:
+   'CWSXM1003E: No response fault flow found for fault message
+   {http://Your.ComPositivePayFTPOut/FTPImport}
+   createFTPFileDuplicateRecordFaultMsg
+   from operation createFTPFile on reference
+   Your.ConmFTPImportPartner. In
+   mediation component Your.ComPositivePayFTPOut in module
+   Your.ComPositivePayFTPOut'.
+   .
+   [1/27/12 8:48:51:529 EST] 0000000a MFCImplementa E   CWSXM0202E:
+   An unexpected exception occurred when processing mediation flow
+   for component Your.ComPositivePayFTPOut in module
+   Your.ComPositivePayFTPOut:
+   CWSXM1025E: An unexpected exception occurred when the flow was
+   called:
+   CWSXM0111E:  Service runtime exception calling an import from
+   mediation component Your.ComPositivePayFTPOut in module
+   Your.ComPositivePayFTPOut:
+   CWSXM0206E: An unexpected exception occurred.: CWSXM1019E:
+   Response fault flow runtime instance is unavailable due to a
+   flow build error:
+   'CWSXM1003E: No response fault flow found for fault message
+   {http://Your.ComPositivePayFTPOut/FTPImport}
+   createFTPFileDuplicateRecordFaultMsg
+   from operation createFTPFile on reference
+   Your.ComFTPImportPartner. In mediation component
+   Your.ComPositivePayFTPOut in module Your.ComPositivePayFTPOut'.
+   .
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  User using WPS 7.0.0.4                      *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: When returning from FTP adapter         *
+   *                      binding, CreateResponseBG the BO does   *
+   *                      not                                     *
+   *                      have all properties set.                *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   Incorrect CreateResponseBG returned for ftp adapter binding
+   and misses one property. This incorrect BG causes the BO
+   serializer to output invalid XML which is missing a tag.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Update the exception handling code to catch this
+   incorrect BG exception and correct the BG, corresponding XML is
+   correct after the BG set correctly
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR42025
+   
+   
+ * REPORTED COMPONENT NAME
+   WEB PROC SERVER
+   
+   
+ * REPORTED COMPONENT ID
+   5724L0100
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-02-23
+   
+   
+ * CLOSED DATE
+   2012-05-08
+   
+   
+ * LAST MODIFIED DATE
+   2012-06-12
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEB PROC SERVER
+   
+   
+ * FIXED COMPONENT ID
+   5724L0100
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R700 PSY
+   UP

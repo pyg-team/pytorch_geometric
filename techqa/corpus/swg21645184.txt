@@ -1,0 +1,43 @@
+Title: IBM Log File Agent: truncation and MaxEventSize - United States
+
+Text:
+truncate MaxEventSize lose event drop omnibus receiver EIF exceed TECHNOTE (FAQ)
+
+QUESTION
+ In case there's an event which size exceeds EventMaxSize, how will it get truncated? 
+
+CAUSE
+For example, if EventMaxSize is set at 4096 bytes, and LFA handles an event of 6096 bytes, how will the event be truncated? Will it be:
+1.The last 2000 bytes will be truncated,
+or
+2.The first 2000 bytes will be truncated ?
+
+ANSWER
+Basically, it truncates from the end of the data or event, so the beginning will be normal, but anything at the end exceeding the maximum length will be dropped off. There are a few important things to note though.
+
+First, this is the total size of the generated event, not just the size of the input data. So for example, if you have a simple format like:
+
+REGEX test
+^(.*)$
+msg $1
+END
+
+and you feed it some simple data:
+
+$ echo data >> log
+
+the resulting event will look like this:
+
+test;msg='data';END
+
+This is an EIF event, but this representation is always used internally, even when sending events to ITM only. So although the data itself was only 4 bytes, the full event is 19. The more slots there are defined in
+the format, the more of this overhead there will be (although usually the data is bigger than the overhead -- this is just a simplified example with very small data).
+
+If the data is sufficiently large, you can also lose subsequent name and values off the end resulting in a malformed event which would be dropped by the receiver.
+
+Second, if the events are being sent via EIF (e.g. to OMNIbus via the EIF probe), the receiver also has a size limit. If you set the LFA's limit to something larger than what the receiver is willing to accept, then the result may be that the receiver will not truncate; it will drop the event completely. So the receiver's max size setting should be at least as big as the sender's.
+
+
+
+PRODUCT ALIAS/SYNONYM
+ ITM Tivoli Monitoring LFA KLO Log File Agent

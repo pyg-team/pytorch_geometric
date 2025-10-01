@@ -1,0 +1,221 @@
+Title: IBM IZ42609: GATE.RESYNC.ENABLE : TRUE PREVENTS SAF FILE REPLAY DURING FAILOVER TO BACKUP OBJECTSERVER - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Tivoli Netcool/OMNIbus 7.2.0 InterimFix 4, 7.2.0-TIV-NCOMNIbus-IF0004 [http://www-01.ibm.com/support/docview.wss?uid=swg24024892]
+Tivoli Netcool/OMNIbus 7.2.1 Fix Pack 7, 7.2.1-TIV-NCOMNIbus-FP0007 [http://www-01.ibm.com/support/docview.wss?uid=swg24025507]
+Tivoli Netcool/OMNIbus 7.2.1 Fix Pack 15, 7.2.1-TIV-NCOMNIbus-FP0015 [http://www-01.ibm.com/support/docview.wss?uid=swg24036693]
+Tivoli Netcool/OMNIbus 7.2.1 Fix Pack 13, 7.2.1-TIV-NCOMNIbus-FP0013 [http://www-01.ibm.com/support/docview.wss?uid=swg24031554]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Product: OMNIBUS
+   Release: 7.x
+   Severity: 2
+   
+   Current behaviour/symptoms/Problem description:
+   In the current ESF architecture, events can be lost from the
+   Collection to Aggregation layer gateway when it failsover to the
+   Backup Aggregation Layer ObjectServer.  The gateway reader
+   retrieves events during IDUC from the Collection server, and
+   performs the feedback SQL flagging those events as processed in
+   the RoutingGWSync field.
+   
+   If the destination Aggregation ObjectServer fails before the
+   gateway writer inserts the events, the gateway writes the events
+   to the store-and-forward file.
+   
+   It then proceeds to failover to the Backup Aggregation
+   ObjectServer.  On failing over, it ignores the store-and-forward
+   file because Gate.Resync.Enable : TRUE.
+   
+   It then proceeds to replicate the Collection and Aggregation
+   Layer alerts.status tables, but it applies the 'RoutingGWSync'
+   filter.  In doing so, the events that were sent to
+   store-and-forward (saf) are lost, they are not replicated nor
+   are the forwarded via saf.
+   
+   
+   Steps to re-create:
+   In a default ESF 1_3 architecture, insert 20 events into the
+   collection layer, 1 event at a time at a rate of 1 per 10
+   seconds.  Once 10 events are inserted, shutdown the Aggregation
+   Layer Primary and force the collection-to-aggregation
+   uni-directional gateway to failover to the Backup Aggregation
+   Layer ObjectServer.  Events inserted into the Collection Layer
+   prior to failover are lost from the Backup.
+   
+   Expected behaviour:
+   The gateway should replay the saf file prior to
+   resynchronization on failover.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   OMNIbus environments using the Event Service Framework (ESF)
+   architecture.
+   ****************************************************************
+   PROBLEM DESCRIPTION:
+   By design, a gateway does not replay a store and forward (SAF)
+   file when Gate.Resync.Enable is set to
+   TRUE, which can lead to event loss in an Event Services
+   Framework (ESF) architecture. When a gateway
+   is writing to a virtual ObjectServer pair, and the primary
+   ObjectServer fails, events are stored in
+   the SAF file until failover to the backup ObjectServer is
+   complete. The events in the SAF file are
+   then lost because Gate.Resync.Enable overrides SAF replay.
+   ****************************************************************
+   RECOMMENDATION:
+   Apply one of the maintenance packages listed in the Problem
+   Conclusion, and enable the new property as appropriate for your
+   environment.
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  To relieve this problem, new boolean properties for gateways
+   have been added to allow SAF replay to occur when
+   Gate.Resync.Enable is set to TRUE. For unidirectional gateways,
+   use the property "Gate.Writer.SAFReplayOnResync". For
+   bidirectional gateways, use the properties
+   "Gate.ObjectServerA.SAFReplayOnResync" and
+   "Gate.ObjectServerB.SAFReplayOnResync".
+   
+   When Gate.<name>.SAFReplayOnResync is set to TRUE, SAF replay
+   now occurs regardless of whether Gate.Resync.Enable is set to
+   TRUE. When Gate.<name>.SAFReplayOnResync is set to FALSE, SAF
+   replay occurs only when Gate.Resync.Enable is set to FALSE. The
+   default value of Gate.<name>.SAFReplayOnResync is FALSE.
+   
+   There are also new command-line arguments that correspond to the
+   new properties. For unidirectional gateways,
+   "-writersafreplayonresync boolean" has been added. For
+   bidirectional gateways, "-objectserverasafreplayonresync
+   boolean" and "-objectserverbsafreplayonresync boolean" have
+   been added.
+   
+   The fix for this APAR is contained in the following maintenance
+   packages:
+    fix pack: 7.1.0.10-TIV-NCOMNIbus-FP0010
+    fix pack: 7.2.0.5-TIV-NCOMNIbus-FP0005
+    fix pack: 7.2.1.3-TIV-NCOMNIbus-FP0003
+   
+   These maintenance packages are expected to be released on March
+   31, 2009.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ42609
+   
+   
+ * REPORTED COMPONENT NAME
+   NETCOOL/OMNIBUS
+   
+   
+ * REPORTED COMPONENT ID
+   5724O4800
+   
+   
+ * REPORTED RELEASE
+   710
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-01-27
+   
+   
+ * CLOSED DATE
+   2009-03-31
+   
+   
+ * LAST MODIFIED DATE
+   2009-03-31
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  GATEWAY
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   NETCOOL/OMNIBUS
+   
+   
+ * FIXED COMPONENT ID
+   5724O4800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R710 PSY
+   UP
+   
+   
+ * R720 PSY
+   UP
+   
+   
+ * R721 PSY
+   UP

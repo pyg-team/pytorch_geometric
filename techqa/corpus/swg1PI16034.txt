@@ -1,0 +1,179 @@
+Title: IBM PI16034: COLUMN DISPLAY DATA PARTIALLY TRUNCATES SOME CELLS WHEN USING WRAP WORDS AND COMPACT VIEW - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Rational Quality Manager 5.0 [http://www-01.ibm.com/support/docview.wss?uid=swg24037464]
+Rational Quality Manager 5.0.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24037766]
+Rational Quality Manager 5.0.2 [http://www-01.ibm.com/support/docview.wss?uid=swg24038339]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  In Rational Quality Manager (RQM) when viewing the Browse Test
+   Case or Browse Test Script information, some of the columns can
+   show the data with the last character partially truncated if the
+   Wrap words and Compact view options are used.
+   
+   
+   SYMPTOMS
+   
+   Steps to reproduce:
+   1. Login to RQM and open Browse 'Test Case'
+   2. Click and open the 'Change Column Display Settings'
+   3. Select 'Wrap words to show all' From the 'Cell Text Display '
+   4. Select ' Compact' from the 'Row Display'
+   5. In the available column move all columns to 'Display Columns'
+   6. Click Ok
+   
+   Expected result:
+   The Columns are displayed correctly.
+   
+   Actual result:
+   Some of the entries show the last character partially truncated.
+   
+   
+   WORKAROUND:
+   Manually change the size of the column.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Manually change the size of the column.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * RQM: Some words are truncated when using the &#131;  Wrap Words   *
+   * to show all&#131;   and Compact option in a list view             *
+   * Rational Quality Manager                                     *
+   * Found in 4.0.6                                               *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * 1. Login to RQM and open the Browse "Test Case"              *
+   * 2. Click and open the "Change Column Display Settings"       *
+   * 3. Select "Wrap words to show all" From the "Cell Text       *
+   * Display "                                                    *
+   * 4. Select " Compact" from the "Row Display"                  *
+   * 5. In the available column move all columns to "Display      *
+   * Columns"                                                     *
+   * 6. Click ok.                                                 *
+   *                                                              *
+   *                                                              *
+   * You'll not in some of the cells the last character of a word *
+   * is cut off                                                   *
+   * I've attached a screen shot with two cells displaying the    *
+   * word  &#131;  sen&#131;   when the correct display should be           *
+   * &#131;  Sent&#131;  .                                                  *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fixed in version 5.0
+   In compact mode, we reduced the horizontal padding too. This
+   allowed the text in the cell to flow further to the right and be
+   clipped. Increased the right padding fixed the problem. This
+   forces the text to wrap 'sooner'. This doesn't affect the
+   'compactness' of the row, since the compact row is to reduce the
+   row height.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI16034
+   
+   
+ * REPORTED COMPONENT NAME
+   RATL QUALITY MG
+   
+   
+ * REPORTED COMPONENT ID
+   5724V1000
+   
+   
+ * REPORTED RELEASE
+   406
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-04-15
+   
+   
+ * CLOSED DATE
+   2014-06-02
+   
+   
+ * LAST MODIFIED DATE
+   2014-09-26
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   RATL QUALITY MG
+   
+   
+ * FIXED COMPONENT ID
+   5724V1000
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R406 PSY
+   UP

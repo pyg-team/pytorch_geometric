@@ -1,0 +1,136 @@
+Title: IBM IV45586: DOCUMENT AND DESCRIPTION.TXT NEEDS TO BE CHANGED FOR INSTALLING CONFIGURATION ANALSYER FOR MTTRAPD PROBE - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Probe's description.txt and document at below link mentioned
+   that the way to install Config Analyser is by using nco_patch
+   command.
+   http://publib.boulder.ibm.com/infocenter/tivihelp/v8r1/topic/com
+   .ibm.netcool_OMNIbus.doc/snmp-pdf.pdf [http://publib.boulder.ibm.com/infocenter/tivihelp/v8r1/topic/com.ibm.netcool_OMNIbus.doc/snmp-pdf.pdf]
+   This is only true / applicable for OMNIbus v7.2.1 or below.
+   OMNIbus v7.3.0 and above is using nco_install_integration.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  n/a
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * All users of the SNMP probe.                                 *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * The description of how to install the Configuration Analyser *
+   * on UNIX and Linux systems is incomplete. The use of          *
+   * nco_patch applies to IBM Tivoli Netcool/OMNIbus V7.2.1 only. *
+   * Information on the nco_install_integration, which is used    *
+   * from IBM Tivoli Netcool/OMNIbus V7.3.0 and later, is         *
+   * missing.                                                     *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * The product documentation will be updated with the next      *
+   * release of the probe.                                        *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  In the Reference Guide for the IBM Tivoli Netcool/OMNIbus SNMP
+   Probe, modify the section named Installing the Configuration
+   Analyser on UNIX and Linux systems. Modify the text to provide a
+   summary of the procedure that the user follows to install the
+   analyser. In here, specify clearly which utility to use for the
+   applicable versions of Tivoli Netcool/OMNIbus. In addition, add
+   a reference to the IBM Tivoli Netcool/OMNIbus Installation and
+   Deployment Guide for details of how to use that utility.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV45586
+   
+   
+ * REPORTED COMPONENT NAME
+   NC/OBUS MTTRAPD
+   
+   
+ * REPORTED COMPONENT ID
+   5724P03MT
+   
+   
+ * REPORTED RELEASE
+   100
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-07-15
+   
+   
+ * CLOSED DATE
+   2013-08-27
+   
+   
+ * LAST MODIFIED DATE
+   2013-08-27
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+Publications Referenced SC11772805 FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

@@ -1,0 +1,58 @@
+Title: IBM Mobile Foundation, IBM Worklight, and IBM Worklight Foundation support Google Android 5.0 (Lollipop) - United States
+
+Text:
+ NEWS
+
+ABSTRACT
+ You can now run existing and new applications that are created using IBM Mobile Foundation V5.0.6.x and 6.0.x; IBM Worklight V5.0.6.x, 6.0.x, and 6.1.x; and IBM Worklight Foundation V6.2.x on Google Android 5.0 (Lollipop). 
+
+CONTENT
+To address known issues, interim fixes are available for these products. After you apply these fixes, you must rebuild your applications. The interim fixes are available for download from IBM Fix Central [http://www.ibm.com/support/fixcentral/].
+When you apply an interim fix to Worklight Studio, verify that the interim fix is applied to all instances of Worklight Studio that [http://www-933.ibm.com/support/fixcentral/]are running on the same machine. Build resources are shared across Worklight Studio instances. Applying an interim fix to some instances and not to others causes inconsistencies; the fix might not be applied properly.
+Download the latest interim fixes for your product and version. 
+
+ * V5.0.6: IBM Worklight Consumer Edition [http://www.ibm.com/support/fixcentral/swg/quickorder?parent=ibm%7EOther%2Bsoftware&product=ibm/Other+software/IBM+Worklight+Consumer+Edition&release=5.0.6.2&platform=All&function=all&source=fc], IBM Worklight Enterprise Edition [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~Other%2Bsoftware&product=ibm/Other+software/IBM+Worklight+Enterprise+Edition&release=5.0.6.2&platform=All&function=all], IBM Mobile Foundation Consumer Edition [http://www.ibm.com/support/fixcentral/swg/quickorder?parent=ibm%7EOther%2Bsoftware&product=ibm/Other+software/IBM+Mobile+Foundation+Consumer+Edition&release=5.0.6.2&platform=All&function=all&source=fc], IBM Mobile Foundation Enterprise Edition [http://www.ibm.com/support/fixcentral/swg/quickorder?parent=ibm%7EOther%2Bsoftware&product=ibm/Other+software/IBM+Mobile+Foundation+Enterprise+Edition&release=5.0.6.2&platform=All&function=all&source=fc]
+   
+   
+ * V6.0.x: IBM Worklight Consumer Edition [http://www.ibm.com/support/fixcentral/swg/quickorder?parent=ibm%7EOther%2Bsoftware&product=ibm/Other+software/IBM+Worklight+Consumer+Edition&release=6.0.0.2&platform=All&function=all&source=fc], IBM Worklight Enterprise Edition [http://www.ibm.com/support/fixcentral/swg/quickorder?parent=ibm%7EOther%2Bsoftware&product=ibm/Other+software/IBM+Worklight+Enterprise+Edition&release=6.0.0.2&platform=All&function=all&source=fc], IBM Mobile Foundation Consumer Edition [http://www.ibm.com/support/fixcentral/swg/quickorder?parent=ibm%7EOther%2Bsoftware&product=ibm/Other+software/IBM+Mobile+Foundation+Consumer+Edition&release=5.0.6.2&platform=All&function=all&source=fc], IBM Mobile Foundation Enterprise Edition [http://www.ibm.com/support/fixcentral/swg/quickorder?parent=ibm%7EOther%2Bsoftware&product=ibm/Other+software/IBM+Mobile+Foundation+Enterprise+Edition&release=6.0.0.2&platform=All&function=all&source=fc]
+   
+   
+ * V6.1.x: IBM Worklight Consumer Edition [http://www.ibm.com/support/fixcentral/swg/quickorder?parent=ibm%7EOther%2Bsoftware&product=ibm/Other+software/IBM+Worklight+Consumer+Edition&release=6.1.0.2&platform=All&function=all&source=fc], IBM Worklight Enterprise Edition [http://www.ibm.com/support/fixcentral/swg/quickorder?parent=ibm%7EOther%2Bsoftware&product=ibm/Other+software/IBM+Worklight+Enterprise+Edition&release=6.1.0.2&platform=All&function=all&source=fc]
+   
+   
+ * V6.2.x: IBM Worklight Foundation Consumer Edition [http://www.ibm.com/support/fixcentral/swg/quickorder?parent=ibm%7EOther%2Bsoftware&product=ibm/Other+software/IBM+Worklight+Consumer+Edition&release=6.2.0.0&platform=All&function=all&source=fc], IBM Worklight Foundation Enterprise Edition [http://www.ibm.com/support/fixcentral/swg/quickorder?parent=ibm%7EOther%2Bsoftware&product=ibm/Other+software/IBM+Worklight+Enterprise+Edition&release=6.2.0.0&platform=All&function=all&source=fc]
+
+
+
+The following additional known items are corrected by the interim fixes:  * APAR PI28971 [http://www.ibm.com/support/docview.wss?uid=swg1PI28971]: An application crashed when the "WL.Client.reloadClient" API is used.
+   
+   This method reloads the application. It is used to recover an application from errors. You should avoid using it and use alternative error handling mechanisms instead. The method is available for compatibility with earlier versions.
+   
+   
+   Worklight functions, such as DirectUpdate, internally use the reloadApp API. Therefore, you might notice that the application crashes after it receives a direct update. The main symptoms are:  * The application crashes when the WL.Client.reloadApp API is used.
+      
+      
+    * The application crashes after direct update is used.
+      
+      
+    * The application crashes when an attempt is made to reload the application and the dialog for reloading the application is displayed.
+      
+      
+   
+   
+   The problem is only found in IBM Worklight Foundation V6.2.
+   
+   
+ * APAR PI27393 [http://www.ibm.com/support/docview.wss?uid=swg1PI27393]: A defect in Cordova returns "unknown" when connected to a cellular network.
+   
+   This defect occurs because Android L changes the network type from "mobile" to "cellular". For more details, see https://issues.apache.org/jira/browse/CB-7595 [https://issues.apache.org/jira/browse/CB-7595].
+   
+   
+   No regressions in Cordova are known except for this defect, which occurs when reporting a cellular connection.
+   
+   
+   Users must evaluate what this change means for their applications if the relevant API is used. Function loss does not occur in the product. The defect only changes the default value of the timeout when the server is unreachable.
+
+ 
+
+Cross reference information Segment Product Component Platform Version Edition Mobile- Speech and Enterprise Access IBM Mobile Foundation Documentation Google Android 6.0, 5.0.6 Consumer, Enterprise

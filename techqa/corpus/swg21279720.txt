@@ -1,0 +1,59 @@
+Title: IBM Domino and Notes license questions are handled by the Passport Advantage team - United States
+
+Text:
+license; entitlement; passport; advantage TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+You manage the IBM Lotus Notes and Domino environment for your organization and require information regarding product licences.
+
+RESOLVING THE PROBLEM
+The Passport Advantage hotline handles licenses and entitlement questions.
+Phone : United States 1-800-426-2255
+
+Which license do they need?
+How many licenses do they need?
+
+Additional Public technotes :
+
+IBM Lotus Notes and Domino licensing [http://www-142.ibm.com/software/sw-lotus/products/product4.nsf/wdocs/notesdominolicensing]
+IBM License Information document: a list of all IBM Licenses [http://www-03.ibm.com/software/sla/sladb.nsf/lilookup/FC3C3AC257BA96F300257073004521F4?opendocument&li_select=C1923601AA3EDC0000257073004521D4]
+
+NOTE: This topic regarding product licensing is not related the to the Domino server task that monitors the licenses used within a Domino domain : "License Tracking". Please see the Administration Help document "License Tracking" for details. 
+
+The IBM Passport Advantage Website : www.ibm.com/software/passportadvantage [www.ibm.com/software/passportadvantage] 
+
+
+Select the link 'Passport Advantage online'
+On the next page, select the link 'Customer Sign In'
+On the next page, if you have not created an IBM ID and password
+already, select 'register' and 
+create an IBM ID and password using your email address as an IBM ID.
+
+You may self nominate by entering your site number, agreement number (
+for Passport Advantage Express, agreement number is not required ) and please check on
+the box which says "I believe I am the Primary contact for the site." Once approved by our team you
+will be able to access the Passport Advantage site.
+
+To grant access to other users on the site, following is the procedure:
+Once you are logged in, you may click on 'Account Management' 
+
+> 'Manage Access' > Add a new user now >
+Enter the new user's IBM ID and e-mail address and the new user will be
+able to login to Passport Advantage Site.
+
+To register for an IBM ID for a new user, please visit the following URL:
+http://www.ibm.com/account/profile [http://www.ibm.com/account/profile]
+Select the link 'Register' and create and IBM ID ( email address ) with an
+appropriate password.
+
+To order media or download software, 
+select 'Software download and media access'. 
+Tick on the box of the software you wish to download/order media for and 
+select 'Download'/'Order Media' option.
+
+
+
+
+
+ * 
+ *

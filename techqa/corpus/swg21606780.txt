@@ -1,0 +1,28 @@
+Title: IBM Schedule Failure:
+
+"RQP-DEF-0177 An error occurred while performing operation 'sqlScrollBulkFetch' status='-121'. DPR-ERR-2082 An error has occurred. Please contact your administrator. The complete error has been logged by CAF with SecureErrorID:2012-07- - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ 
+Corresponding error in the cogserver.log :
+
+"[Microsoft SQL Native Client]The transaction log for database 'tempdb' 
+is full. To find out why space in the log cannot be reused, see the 
+log_reuse_wait_desc column in sys.databases (SQLSTATE=42000, 
+SQLERRORCODE=9002 " 
+
+
+
+CAUSE
+Not enough memory on the Microsoft SQL Server installation drive to store temp files.
+
+RESOLVING THE PROBLEM
+
+
+
+Increase the space in the directory where Microsoft SQL Server is installed. 
+
+This activity is outside the scope of the Cognos Administrator. Please contact Microsoft SQL Server Admin to perform this step.

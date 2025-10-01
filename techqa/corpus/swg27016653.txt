@@ -1,0 +1,58 @@
+Title: IBM Open Mic Replay: IBM CICS Explorer - United States
+
+Text:
+CICS Explorer ; CICS TS ; CICS Transaction Server ; CICS Configuration Manager ; CICS CM ; CICS Interdependency Analyzwer ; CICS IA ; CICS Performance Analyzwer ; CICS PA ; wste_webcast; WSTE; Support Technical Exchange; education; presentation; webcasts; STEwebcastDocument; 5697E93 5655M1500 R640 640 R400 400 HCI6400 R650 650 R500 500 HCI6500 5655-M15 5655M15 ; 5655S9700 R660 660 R600 600 HCI6600 5655-S97 5655S97; kixinfo WEBCAST
+
+ABSTRACT
+ The IBM CICS Explorer is a new graphical tooling interface for CICS, providing significantly enhanced levels of usability and integration. This Support Technical Exchange includes a short introduction to the CICS Explorer followed by a question and answer period in which a group of subject matter experts answers your questions about the topic. 
+
+CONTENT
+Open Mic sessions are conducted in a question and answer format. The table below provides a time index (minutes:seconds) to the recording and describes the questions or topics discussed. You can fast forward to any question using the time index. A table containing the panel of experts is also included.
+
+To play or download the audio of this Open Mic session, see the Audio Section of this document.
+
+See Related information below for the Podcast and Redbooks that are referenced. 
+
+
+
+
+
+
+
+
+
+Open Mic session 
+11 November 2009 - 11:00 a.m. - 12:30 p.m. EST 
+
+Time Questions asked 00:00 Silence 00:00 General introduction 04:11 Technical introduction 06:29 Will I be able to stop and start regions from the CICS Explorer? 07:20 What does integrating the tools into the CICS Explorer give me? 10:55 Do I need CICSPlex SM (CPSM) to use the CICS Explorer? 13:00 Will CPSM Workload Management (WLM) become part of the CICS Explorer? 14:15 Will CICS Performance Analyzer include any more information such as statistical data in future? 15:45 CICS Configuration Manager supports packages and migration schemes in its ISPF interface. Will these become part of the CICS Explorer? 17:57 For Rational Developer for System z (RD/z) users, when will IBM “sync up” the stand-alone release of CICS Explorer with the version bundled with RD/z so that we just use RD/z? 22:09 Will I be able to use CICS Interdependency Analyzer data inside RD/z to help see the impact of program source changes? 24:07 When will IBM implement a filter that allows users to ignore any IBM supplied transactions and programs so that we can view just our own? 26:02 With the use of the CICS Performance Analyzer (CICS PA) plug-in, can we use CICS PA to analyze real time data? 26:57 Since we now have the CPSM WUI and CEDA and the CICS Explorer all essentially performing the same functions, will all of these interfaces that allow CSD manipulation continue to be supported in the future? 30:15 What version of the CICS Interdependency Analyzer and CICS Performance Analyzer plug-ins are suitable for version 7.6 of RD/z 34:39 I wondered if you could discuss how you write a plug-in for the CICS Explorer that would interface with CICS? With 3270 we had BMS, are there any kind of similar facilities for writing applications that run in Eclipse with CICS? 42:47 Which version of the CICS Explorer is shipping with RD/z 7.6? Is there any thought about CICS Explorer doing more deep analysis real time like tracing memory chains? 45:20 What was the APAR that was mentioned to allow CICS Explorer to connect to a single CICS region? 46:10 Closing remarks 47:25 End of Call 
+Panel of Experts: Colin Stone CICS PA plug-in Developer Joe Winchester CICS Explorer, IA, CM, PA Software Developer John Knutson CICS Tools Marketing Manager Kat Sharp CICS IA and CM plug-ins Developer Matthew Webster CICS Tools UI Strategist: CICS Explorer Will Yates CICS Explorer System Test Specialist 
+
+
+
+PRESENTATION
+[http://www.ibm.com/i/v16/icons/weblecture.gif]WSTE-11112009-OpenMic-IBMCICSExplorer-Hamilton.pdf [/support/docview.wss?uid=swg27016653&aid=2] [/support/docview.wss?uid=swg27016653&aid=1] 
+
+Note: This open mic was recorded back in 2009 and since then CICS Explorer has changed considerably. 
+
+
+[http://www.ibm.com/i/v14/icons/sout.gif] Get Adobe Reader [http://www.adobe.com/products/acrobat/readstep2.html] to view PDF
+
+
+AUDIO
+[http://www.ibm.com/i/v16/icons/aud.gif]Click on Download Audio [ftp://public.dhe.ibm.com/software/websphere/techexchange/Nov-11-2009-Hamilton.mp3] to play the recording of this 47 minutes conference call (5.0MB - MP3 format). Right-click and select Save As to store the file on your local computer for later playback. Remember that you can fast forward to any question using the time index.
+
+
+
+RELATED INFORMATION
+ Other CICS Technical Exchanges [http://www.ibm.com/support/docview.wss?uid=swg27007244]
+Podcast number 25: CICS Explorer Update [http://www.ibm.com/software/os/systemz/podcasts/websphereonz/]
+Redbooks publication: CICS Explorer [http://www.redbooks.ibm.com/redpieces/abstracts/sg247778.html?Open]
+Redbooks publication: Extending the CICS Explorer [http://www.redbooks.ibm.com/redpieces/abstracts/sg247819.html]
+
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Host Transaction Processing CICS Configuration Manager for z/OS z/OS 2.1, 1.2 Host Transaction Processing CICS Interdependency Analyzer for z/OS Capability z/OS 2.2 Host Transaction Processing CICS Performance Analyzer for z/OS z/OS 3.1, 2.1 PRODUCT ALIAS/SYNONYM
+ CICS/TS CICS TS CICS Transaction Server

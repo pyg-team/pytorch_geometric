@@ -1,0 +1,59 @@
+Title: IBM Procedure for rolling back to a previously installed TSAMP version - United States
+
+Text:
+rollback; migrate; uninstall; backout; restore; install; remove; downgrade; TSA; TSAMP; RSCT; backlevel TECHNOTE (FAQ)
+
+QUESTION
+ TSAMP does not have a rollback/uninstall option that will return your systems to a previously installed version, how would this be accomplished? 
+
+ANSWER
+ Rolling back to a previous version of TSAMP is not recommended but there are cases where it might be required. This technote will detail the steps to accomplish this and point out some potential trouble spots.
+Below are a list of steps if you need to rollback to a previous TSAMP level. We do not recommend rollbacks in general as it will reintroduce bugs that were resolved at the higher code level and could lead to other issues. The following procedure is generalized and requires some knowledge of TSAMP and RSCT commands. For more information on any given step please contact TSAMP support.
+
+1. Issue the following command in your shell window as root:
+export CT_MANAGEMENT_SCOPE=2
+
+2. Save the current automation policy/configuration :
+sampolicy -s domainname_YYY-MM-DD.xml 
+
+Note: it would be better if you could use a policy xml file that was saved at the older level to avoid having to edit a newer xml file to work with an older TSAMP level.
+
+3. Disable Critical Resource Protection (prevents RSCT from rebooting a server if a problem is encountered while stopping or removing the domain in the subsequent steps) :
+chrsrc -c IBM.PeerNode CritRsrcProtMethod=5
+
+4. Remove the domain :
+rmrpdomain -f <domain_name>
+
+Ensure the domain is gone from all nodes in the cluster with the "lsrpdomain" command.
+
+5. Uninstall the TSAMP and RSCT software on all nodes in the cluster :
+/opt/IBM/tsamp/sam/uninst/uninstallSAM
+
+Note: RSCT is not un-installed on AIX by 'uninstallSAM', so if the RSCT level needs to be downgraded as well, use the appropriate AIX uninstall procedures since RSCT is part of the AIX OS.
+
+6. Install TSAMP and RSCT on all nodes in the cluster at required level using the TSAMP install script from the associated install media. However, you will need to ensure you have the correct license file for the TSAMP version you are going to be installing ... TSAMP 3.2.x.x. requires "sam32.lic" and TSAMP 3.1.x.x requires "sam31.lic" ... copy into the "license" sub-directory of your TSAMP installation media. Then you can run the installer :
+<your_install_media>/installSAM
+
+7. [Optional] Ensure all cluster configuration is cleared from all nodes by running the following command on all nodes (save your /var/ct/cfg/netmon.cf, /var/ct/cfg/trace.conf, and /var/ct/cfg/ConfigRM.cfg files first) :
+/usr/sbin/rsct/install/bin/recfgct
+
+Note: while not required, this step is strongly recommended for all platforms because there is a small chance of leftover registry entries and/or modified files that this process will clean up.
+
+8. Prepare the nodes for a new domain by running the following command on each node that will part of the new domain :
+preprpnode <node1> <node2> ...
+
+9. Create a new domain using the same domain name as below (so as to match the saved policy xml file that will later be used to restore the automation policy) :
+mkrpdomain <domain_name> <node1> <node2>...
+
+Note: if a domain name change is desired, then you must edit the domain name within the saved xml policy file from step #2
+
+10. Start the empty domain :
+startrpdomain <domain_name> 
+
+11. Restore/activate the previously saved policy file :
+sampolicy -a domainname_YYY-MM-DD.xml
+
+12. Set your CritRsrcProtMethod to 3
+chrsrc -c IBM.PeerNode CritRsrcProtMethod=3
+
+Note: Changing the CritRsrcProtMethod back to default (1 = Hard reset and reboot) is not required as the re-install of TSAMP and RSCT will ensure this value is back to its default of 1. TSAMP Support recommends a CritRsrcProtMethod value of 3 as this will allow the systems time to 'sync' prior to RSCT initiating a kernel panic and rebooting ... this allows for a much better chance of saving important log and trace messages to disk.

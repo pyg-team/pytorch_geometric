@@ -1,0 +1,48 @@
+Title: IBM Content Collector(ICC) fails to archive emails - United States
+
+Text:
+FileNet; Server TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ ICC Content Process Engine stops processing / archiving all emails.
+
+Both the FileNet(P8) and Lotus Connector services are stopped just after the services have been started with an error:
+
+"0x426 - The service has not been started". 
+
+
+
+SYMPTOM
+Error while sending black list entry:
+
+(FYDIBOHF23SPDLT)/CN=CONFIGURATION/CN=Content Process EngineS/CN=WSIEMB04/CN=MICROSOFT
+PRIVATE
+;FILEPATH==null140@000000007392C684E3541A419A84123B84551CAE07001E
+FB691290D65C4BBA6FE4D781B1F7E90000000ABEBC000069A8EE26E2775147BDBD7F9672
+8145C801945BA02B9E0000148@outlook:000000007392C684E3541A419A84123B84551C
+AE07001EFB691290D65C4BBA6FE4D781B1F7E90000000ABEBC000069A8EE26E2775147BD
+BD7F96728145C801945BA02B9E0000 to connector
+ibm.ctms.lotusconnectorReason: failed writing: The handle is invalid.
+(error 0x6 - The handle is invalid.) ibm::ctms::taskrouting::`anonymous
+namespace'::BlackListDataSender::visit (connectormanager.cpp:850)
+0x1b4c ...
+
+The next error is then listed during shutdown of the P8 connector.0x426 - The service has not been started
+
+
+CAUSE
+The Content Process Engine is only checking for JNP (Java Naming Provider) responses, not HTTPS responses.
+
+
+The issue occurs due to the Content Process Engine, responding to JNP but not HTTPS requests. JNP is the protocol listening port for the Naming Service for java applications that communicate with jBOSS Application Content Process Engines. 
+
+The main difference between JNP and the HTTP protocol is that HTTP traverses firewalls.
+
+
+DIAGNOSING THE PROBLEM
+The P8 Connector service shuts down, thereby preventing the archiving of mails from ICC to the P8 repository.
+
+
+
+RESOLVING THE PROBLEM
+Restarting Content Process Engine on the P8 server should resolve the issue.

@@ -1,0 +1,222 @@
+Title: IBM IV75424: MALLOC_ARENA_MAX SHOULD NOT BE SET ON SUSE LINUX SYSTEMS. ITNM MAY FAIL TO START. - United States
+
+Text:
+  DIRECT LINKS TO FIXES
+4.1.1-TIV-ITNMIP-Linux-FP0002 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Network+Manager+IP+Edition&fixids=4.1.1-TIV-ITNMIP-Linux-FP0002&source=SAR]
+4.1.1_README_NLS_FP0002 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Network+Manager+IP+Edition&fixids=4.1.1_README_NLS_FP0002&source=SAR]
+4.1.1_README_FP0002 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Network+Manager+IP+Edition&fixids=4.1.1_README_FP0002&source=SAR]
+3.9.0-TIV-ITNMIP-Solaris-FP0005 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Network+Manager+IP+Edition&fixids=3.9.0-TIV-ITNMIP-Solaris-FP0005&source=SAR]
+3.9.0_INSTALL_NLS_FP0005 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Network+Manager+IP+Edition&fixids=3.9.0_INSTALL_NLS_FP0005&source=SAR]
+3.9.0_INSTALL_FP0005 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Network+Manager+IP+Edition&fixids=3.9.0_INSTALL_FP0005&source=SAR]
+3.9.0-TIV-ITNMIP-Windows-FP0005 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Network+Manager+IP+Edition&fixids=3.9.0-TIV-ITNMIP-Windows-FP0005&source=SAR]
+3.9.0-TIV-ITNMIP-zLinux-FP0005 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Network+Manager+IP+Edition&fixids=3.9.0-TIV-ITNMIP-zLinux-FP0005&source=SAR]
+3.9.0-TIV-ITNMIP-Linux-FP0005 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Network+Manager+IP+Edition&fixids=3.9.0-TIV-ITNMIP-Linux-FP0005&source=SAR]
+3.9.0-TIV-ITNMIP-AIX-FP0005 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Network+Manager+IP+Edition&fixids=3.9.0-TIV-ITNMIP-AIX-FP0005&source=SAR]
+IBM Tivoli Network Manager IP Edition 3.9.0 Fix Pack 5, 3.9.0-TIV-ITNMIP-FP0005 [http://www-01.ibm.com/support/docview.wss?uid=swg24037809]
+IBM Tivoli Network Manager IP Edition 4.1.1 Fix Pack 2, 4.1.1-TIV-ITNMIP-FP0002 [http://www-01.ibm.com/support/docview.wss?uid=swg24041066]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  3.9 fp4+if1
+   
+   After applying
+   3.9.0.4-TIV-ITNMIP-IF0001-CORE.Linux.V39.116.tar
+   on a certain SUSE 10 SP4 machine we noticed that ITNM would no
+   longer start.
+   It would time out when requesting the status of the processes
+   with the following error:
+   
+   Network Manager:
+   
+     Domain:  SOME_DOMAIN
+   
+         ncp_ctrl               RUNNING  PID=26512 SOME_DOMAIN
+   
+   GenericRPC::OnTimeOut() - Request Timed Out - reply subject was
+   INBOX/ncp_perl_27803_SOME_DOMAIN1
+   
+         Request to ncp_ctrl timed out
+   
+   The problem was a change that was made to the ncp_common script
+   which included the following changes
+   
+   # Ticket 28803 - On Redhat 6 malloc uses lots of virtual memory
+   MALLOC_ARENA_MAX=1
+   export MALLOC_ARENA_MAX
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Stop all processes and make sure they are all stopped.
+   
+   Edit the ncp_common script under
+   $NCHOME/precision/bin
+   and remove the two lines relating to MALLOC_ARENA_MAX
+   
+   Restart ITNM
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * SuSE Linux users.                                            *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * After applying                                               *
+   * 3.9.0.4-TIV-ITNMIP-IF0001-CORE.Linux.V39.116.tar             *
+   * on a certain SUSE 10 SP4 machine we noticed that ITNM would  *
+   * no                                                           *
+   * longer start.                                                *
+   * It would time out when requesting the status of the          *
+   * processes                                                    *
+   * with the following error:                                    *
+   *                                                              *
+   * Network Manager:                                             *
+   *                                                              *
+   *   Domain:  SOME_DOMAIN                                       *
+   *                                                              *
+   *       ncp_ctrl               RUNNING  PID=26512 SOME_DOMAIN  *
+   *                                                              *
+   * GenericRPC::OnTimeOut() - Request Timed Out - reply subject  *
+   * was                                                          *
+   * INBOX/ncp_perl_27803_SOME_DOMAIN1                            *
+   *                                                              *
+   *       Request to ncp_ctrl timed out                          *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * The following fixpacks will contain the fix:                 *
+   * | fix pack | 3.9.0-ITNMIP-FP0005                             *
+   * | fix pack | 4.1.0-ITNMIP-FP0001                             *
+   * | fix pack | 4.1.1-ITNMIP-FP0002                             *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  In ncp_common, we should set MALLOC_ARENA_MAX=1 only if not on
+   SuSE.
+   
+               # IV75424 - Set only if not on SuSE
+               if [ ! -f /etc/SuSE-release ]; then
+                   MALLOC_ARENA_MAX=1
+                   export MALLOC_ARENA_MAX
+               fi
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV75424
+   
+   
+ * REPORTED COMPONENT NAME
+   TIV NETWK MGR I
+   
+   
+ * REPORTED COMPONENT ID
+   5724S4500
+   
+   
+ * REPORTED RELEASE
+   390
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2015-07-23
+   
+   
+ * CLOSED DATE
+   2015-09-25
+   
+   
+ * LAST MODIFIED DATE
+   2015-09-25
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TIV NETWK MGR I
+   
+   
+ * FIXED COMPONENT ID
+   5724S4500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R390 PSN
+   UP
+   
+   
+ * R390 PSY
+   UP
+   
+   
+ * R410 PSN
+   UP
+   
+   
+ * R410 PSY
+   UP
+   
+   
+ * R411 PSN
+   UP
+   
+   
+ * R411 PSY
+   UP

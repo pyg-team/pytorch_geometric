@@ -1,0 +1,53 @@
+Title: IBM Manually uninstalling Rational Performance Tester version 8.0 and later - United States
+
+Text:
+RN8.0; SRX TECHNOTE (FAQ)
+
+QUESTION
+ What are the steps to remove IBM® Rational® Performance Tester 8.0 (and later) manually from a Microsoft® Windows® computer or a Linux® computer, if it was installed from IBM Installation Manager? 
+
+ANSWER
+To uninstall Rational Performance Tester, do the following: 
+
+First Method: Installation Manager 
+
+If you installed Rational Performance Tester (RPT) using Installation Manager (IM), try to uninstall RPT by using IM. To do this, from the IM main window, click Uninstall, select RPT, and follow the instructions in the wizard. If you cannot uninstall RPT using IM, perform the following steps to manually uninstall RPT. 
+
+Second Method: Manual Alternative 
+
+Note: Do not attempt to manually uninstall RPT unless you have been unsuccessful using Installation Manager to uninstall RPT, or you have been unsuccessful in later attempts to install RPT. 
+
+First, stop the Data Collection Infrastructure (DCI) and Rational Agent Controller (RAC) services. To learn how to stop these services, see the following technote: Manually uninstalling IBM® Rational® Agent Controller or IBM® Data Collection Infrastructure [http://www.ibm.com/support/docview.wss?uid=swg21390606]. 
+
+Next, on Windows, stop any Rational Quality Manager (RQM) services that are running. To stop RQM services, open a command prompt, and then navigate to the following directory: 
+
+
+C:/Program Files/IBM/SDP/RPT-RST_RQMAdapter/bin/
+
+In that directory, from the command prompt type the following:
+
+servicemgr.exeremove"IBM RPT adapter for RQM" 
+
+ 
+
+Finally, delete the following folders. 
+
+
+Important: If you have installed multiple products using IM, uninstall all of those products before deleting these folders. 
+
+ * Windows: 
+
+
+C:/Program Files/IBM/SDP C:/Program Files/IBM/IBMIMShared 
+
+ * Linux: 
+
+
+/opt/IBM/SDP /opt/IBM/IBMIMShared
+
+
+
+
+
+PRODUCT ALIAS/SYNONYM
+ RPT

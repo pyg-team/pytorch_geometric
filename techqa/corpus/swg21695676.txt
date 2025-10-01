@@ -1,0 +1,20 @@
+Title: IBM Action required for IBM WebSphere MQ Hypervisor Edition for Red Hat Enterprise Linux Server for the GNU C library (glibc) vulnerability (CVE-2015-0235) - United States
+
+Text:
+ FLASH (ALERT)
+
+ABSTRACT
+ IBM WebSphere MQ Hypervisor Edition for Red Hat Enterprise Linux Server requires customer action for the GNU C library (glibc) vulnerability that has been referred to as "GHOST". 
+
+CONTENT
+IBM WebSphere MQ Hypervisor Edition for Red Hat Enterprise Linux Server ships with Red Hat Enterprise Linux (RHEL) that is vulnerable to the GNU C library (glibc) vulnerability (CVE-2015-0235).
+
+Remediation:
+IBM strongly recommends that you should contact Red Hat to obtain fixes and install fixes for Red Hat Enterprise Linux (RHEL).
+
+Change History:
+January 29, 2015: Original version published
+
+RELATED INFORMATION
+ Red Hat Customer Portal - GHOST vulnerability [https://access.redhat.com/articles/1332213]
+A Japanese translation is available [http://www.ibm.com/support/docview.wss?uid=swg21696879]

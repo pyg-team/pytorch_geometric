@@ -1,0 +1,150 @@
+Title: IBM IT17833: REUSE OF SSH PERSISTENT CONNECTIONS WHEN TIMEOUT OCCURS MAY CAUSE UNEXPECTED RELOAD. - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Fix packs for DataPower Service Gateway version 7.0 [http://www-01.ibm.com/support/docview.wss?uid=swg24037486]
+Fix packs for DataPower B2B Appliance version 7.0 [http://www-01.ibm.com/support/docview.wss?uid=swg24037487]
+Fix packs for DataPower Integration Appliance version 7.0 [http://www-01.ibm.com/support/docview.wss?uid=swg24037488]
+Fix packs for DataPower Gateway version 7.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24038524]
+Fix packs for DataPower Gateway version 7.2 [http://www-01.ibm.com/support/docview.wss?uid=swg24039783]
+Fix packs for DataPower Gateway version 7.5 [http://www-01.ibm.com/support/docview.wss?uid=swg24041543]
+Fix packs for DataPower Gateway version 7.5.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24042194]
+Fix packs for DataPower Gateway version 7.5.2 [http://www-01.ibm.com/support/docview.wss?uid=swg24042699]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  If DataPower is managing connections over SSH and using
+   persistent connections in the same respect, if a timeout occurs
+   around the reuse it may cause an unexpected reload.  This is
+   more likely to happen with a SFTP Poller FSH having a delay
+   between polls equal to the persistent connection idle timeout.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Disable persistent connections in the SSH Client Profile object
+   attached to the SFTP Front Side Poller.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Affected is the use of the SFTP Poller Front Side Handler and
+   the SSH Client Profile.
+   
+   Prior to the fix in certain timing situations, DataPower might
+   restart.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fix is available in 7.0.0.17, 7.1.0.14, 7.2.0.11, 7.5.0.5,
+   7.5.1.4 and 7.5.2.2
+   
+   For a list of the latest fix packs available, please see:
+   http://www-01.ibm.com/support/docview.wss?uid=swg21237631 [http://www-01.ibm.com/support/docview.wss?uid=swg21237631]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT17833
+   
+   
+ * REPORTED COMPONENT NAME
+   DATAPOWER
+   
+   
+ * REPORTED COMPONENT ID
+   DP1234567
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-11-07
+   
+   
+ * CLOSED DATE
+   2017-01-05
+   
+   
+ * LAST MODIFIED DATE
+   2017-01-18
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  0-0
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   DATAPOWER
+   
+   
+ * FIXED COMPONENT ID
+   DP1234567
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R752 PSY
+   UP

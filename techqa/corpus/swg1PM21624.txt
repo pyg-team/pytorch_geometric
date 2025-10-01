@@ -1,0 +1,145 @@
+Title: IBM PM21624: ITCAMAD 7.1 FP1 APPLICATION SUPPORT INSTALLATION ERRORS. - United States
+
+Text:
+  A FIX IS AVAILABLE
+7.1.0-TIV-ITCAMAD-FP0001: ITCAM for Application Diagnostics V7.1 Fix Pack 1 [http://www-01.ibm.com/support/docview.wss?uid=swg24027199]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  If the base ITCAMAD 7.1 Agent support files were installed on
+   the TEPS
+   
+   ITCAM for Application Diagnostics V7.1: ITCAM Agent support
+   files,Multiplatform,English (CZB6REN)
+   
+   When you try to install Application Support fixpack, it fails
+   with the message:
+   
+   "The CD you are trying to install is a fixpack CD and cannot be
+   installed on a machine without an existing image to upgrade."
+   
+   ****************************************************************
+   FP1 was incomplete and that a new deliverable
+   (7.1.0-TIV-ITCAMAD_ITM-FP0001) will be added
+   
+   ****************************************************************
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  For non z/OS customers you can get around this by installing the
+   Base ITCAM AD 7.1 agent support on the TEPS/TEMS then install
+   the FP1 Support.
+   
+   For z/OS customers:
+   FP1 was incomplete and that a new deliverable
+   (7.1.0-TIV-ITCAMAD_ITM-FP0001) will be added
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Download Page updated to include binary file
+   7.1.0-TIV-ITCAMAD_ITM-FP0001.tar
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  | MDVREGR 7.1.0-TIV-ITCAMAD-FP0001 |
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM21624
+   
+   
+ * REPORTED COMPONENT NAME
+   TCAM AD WAS TEM
+   
+   
+ * REPORTED COMPONENT ID
+   5724Y92WD
+   
+   
+ * REPORTED RELEASE
+   710
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-08-31
+   
+   
+ * CLOSED DATE
+   2010-08-31
+   
+   
+ * LAST MODIFIED DATE
+   2010-10-07
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TCAM AD WAS TEM
+   
+   
+ * FIXED COMPONENT ID
+   5724Y92WD
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R710 PSY
+   UP

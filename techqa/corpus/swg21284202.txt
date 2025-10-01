@@ -1,0 +1,47 @@
+Title: IBM Authentication cache allows old passwords to continue functioning in Lotus Connections even after the password is modified - United States
+
+Text:
+Logon; login; credentials; cache; caching; change; changed; updated; modified; password; username; user name TECHNOTE (FAQ)
+
+QUESTION
+You Lotus® Connections user changes her password, but she can still access the server using the old password as her credentials. What can cause this to occur?
+
+CAUSE
+IBM® WebSphere® Application Server (WAS) can cache the user name and password. As a result, after a user changes his password, the user can still log on while utilizing the old password. 
+
+The old password will continue to function until the cache is expired.
+
+
+ANSWER
+You can disable the cache in WAS by following the steps below in the IBM Integrated Solutions Console (ISC). 
+
+ 
+
+ 1. Click Servers --> Application servers --> server_name. 
+    
+    
+ 2. Under Server Infrastructure, expand Java and Process Management section.
+    
+    
+ 3. Click Process Definition --> Java Virtual Machine. 
+    
+    
+ 4. Under Additional properties, click Custom properties --> New. 
+    
+    
+ 5. Under General Properties, specify the property name and its value. 
+    com.ibm.websphere.security.util.authCacheEnabled 
+    
+    
+ 6. Click OK. 
+
+
+
+**Note:** 
+com.ibm.websphere.security.util.authCacheEnabled 
+
+This property specifies whether to disable the authentication cache. It is recommended that you leave the authentication cache enabled for performance-related reasons. However, this cache may be disabled for debug or measurement purposes. 
+
+
+ * 
+ *

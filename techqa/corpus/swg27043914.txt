@@ -1,0 +1,37 @@
+Title: IBM Detailed hardware and software requirements for Sterling Secure Proxy - United States
+
+Text:
+ DETAILED SYSTEM REQUIREMENTS
+
+ABSTRACT
+ This document contains system requirements for Sterling Secure Proxy. 
+
+CONTENT
+The detailed system requirements information is available through the Software Product Compatibility Reports [http://publib.boulder.ibm.com/infocenter/prodguid/v1r0/clarity/index.jsp] web site. This web site provides you will the ability to dynamically generate operating system, prerequisite, server virtualization environment, translation, end of service, and detailed system requirements reports for your specific product, release, and operating system. 
+
+This document describes the minimum product levels that need to be installed before opening a problem report with Sterling Secure Proxy. Because other products frequently ship fixes, updates, and new releases, testing every configuration is not possible. In general and unless otherwise stated, you can install and run with updates to supported products if those updates are forward compatible. 
+
+Select a link below based on your operating system to see the report for Sterling Secure Proxy system requirements.
+
+Note: For a complete view of all requirements that is easy to read, select "Download PDF" from the report screen.
+
+
+
+TAB NAVIGATION
+ * V3.4.2- selected tab,
+ * V3.4.3- selected tab,
+
+
+Operating System  * AIX [http://www-969.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1352153880719&osPlatforms=AIX&duComponentIds=D001%7CS002%7CS003&mandatoryCapIds=25&optionalCapIds=12%7C35%7C121%7C26]
+ * HP [http://www-969.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1352153880719&osPlatforms=HP&duComponentIds=D001%7CS002%7CS003&mandatoryCapIds=25&optionalCapIds=12%7C35%7C121%7C26]
+ * Linux [http://www-969.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1352153880719&osPlatforms=Linux&duComponentIds=D001%7CS002%7CS003&mandatoryCapIds=25&optionalCapIds=12%7C35%7C121%7C26]
+ * Solaris [http://www-969.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1352153880719&osPlatforms=Solaris&duComponentIds=D001%7CS002%7CS003&mandatoryCapIds=25&optionalCapIds=12%7C35%7C121%7C26]
+ * Windows [http://www-969.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1352153880719&osPlatforms=Windows&duComponentIds=D001%7CS002%7CS003&mandatoryCapIds=25&optionalCapIds=12%7C35%7C121%7C26]
+
+
+
+Operating System  * AIX [http://www-969.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=4B4EB3A04B3F11E5BC9A648287B82B03&osPlatforms=AIX&duComponentIds=D003%7CS002%7CS001&mandatoryCapIds=25&optionalCapIds=12%7C35%7C121%7C26]
+ * HP [http://www-969.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=4B4EB3A04B3F11E5BC9A648287B82B03&osPlatforms=HP&duComponentIds=D003%7CS002%7CS001&mandatoryCapIds=25&optionalCapIds=12%7C35%7C121%7C26]
+ * Linux [http://www-969.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=4B4EB3A04B3F11E5BC9A648287B82B03&osPlatforms=Linux&duComponentIds=D003%7CS002%7CS001&mandatoryCapIds=25&optionalCapIds=12%7C35%7C121%7C26]
+ * Solaris [http://www-969.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=4B4EB3A04B3F11E5BC9A648287B82B03&osPlatforms=Solaris&duComponentIds=D003%7CS002%7CS001&mandatoryCapIds=25&optionalCapIds=12%7C35%7C121%7C26]
+ * Windows [http://www-969.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=4B4EB3A04B3F11E5BC9A648287B82B03&osPlatforms=Windows&duComponentIds=D003%7CS002%7CS001&mandatoryCapIds=25&optionalCapIds=12%7C35%7C121%7C26]

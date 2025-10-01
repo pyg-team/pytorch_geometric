@@ -1,0 +1,56 @@
+Title: IBM Launching Rational Rhapsody 7.6.1 results in "Support removed for feature" error - United States
+
+Text:
+Support removed for Rhapsody features; Support removed for feature Rhapsody_SA_Addon; Support removed for feature RPCM; Support removed for feature RPDoors; Support removed for feature RPRoseImport; Support removed for feature RPSysDesign; Support removed for feature RPAutosar; Support removed for feature RPUSDLSuiteIntegration; Support removed for feature RPUStmBlock; Rhapsody; RHP; license logs; maintenance renewals; S&S renewals TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Attempts to launch IBM Rational Rhapsody 7.6.1 results in the error "Support removed for feature" in the license logs with no check out of license 
+
+SYMPTOM
+The following image displays the error: 
+
+[/support/docview.wss?uid=swg21615545&aid=1] [/support/docview.wss?uid=swg21615545&aid=1]
+
+CAUSE
+Verify if the latest maintenance renewals dates are applied to the license key that is deployed to the license server
+
+
+
+RESOLVING THE PROBLEM
+To resolve the issue, apply the latest maintenance renewals (S&S) for IBM Rational Rhapsody licenses from the IBM Rational license key center by following the steps mentioned below:
+
+
+ 1.  Navigate to IBM Rational License Key Center [http://www.ibm.com/software/rational/support/licensing/] website
+     
+     
+ 2.  Login into the License account
+     
+     
+ 3.  Click on Get keys from the left navigation bar
+     
+     
+ 4.  Select IBM Rational Rhapsody from the product line
+     
+     
+ 5.  Select IBM Rational Rhapsody floating S&S renewal
+     
+     
+ 6.  Select the number of renewals required
+     
+     
+ 7.  Click Next
+     
+     
+ 8.  Select the appropriate license server from the list displayed where the maintenance renewals needs to be applied
+     
+     Once the maintenance renewals are applied to the license keys 
+     
+     
+ 9.  Deploy the new license key with the latest maintenance renewals to the license server
+     
+     
+ 10. Restart the license server
+
+
+RELATED INFORMATION
+#Understanding the Date Based Licensing [http://www-01.ibm.com/support/docview.wss?uid=swg27023507]

@@ -1,0 +1,170 @@
+Title: IBM IC46834: AE IC43234 FIX COMPLETION. TSM WINDOWS CLIENT BACKUP FAILS WITH UNKNOWN SYSTEM ERROR PROCESSING OBJECT WITH PATH/NAME > 1024 - United States
+
+Text:
+AIX SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  TSM Windows backup/archive client fails to backup object whose
+   path/name exceeds 1024 bytes. More precisely the problem occurs
+   when the path (HL to TSM) is greater than 1015 bytes (the 1024
+   byte limit comes in as 8 bytes are added for the unicode tag
+   and 1 byte for the directory delimiter.
+   Attempts to backup such objects fail with unknown sytem error
+   messages. After several of these are received a session
+   disconnection occurs followed by opteration termination:
+   ANS1809W Session is lost; initializing session reopen procedure.
+   ANS2820E An interrupt has occured. The curent operation will end
+            and the client will shut down.
+   ************************* PLEASE NOTE **************************
+   This apar will NOT address support for the backup/archive of
+   objects with a path/name greater than 1015/1024. This apar will
+   ONLY address the incorrect termination of the client when such
+   an object or set of objects is encountered during backup.
+   ****************************************************************
+   | AE 5.2.4.0 |
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: V5.3 TSM Windows client                      *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: IC43234 [http://www-01.ibm.com/support/docview.wss?uid=swg1IC43234] was supposed to prevent crashes *
+   *                      or a backup stopping when the path was  *
+   *                      greater than 1024 characters. The object*
+   *                      would not be backed up; it would be     *
+   *                      skipped with an error message and no    *
+   *                      crash.                                  *
+   *                      After the fix for IC43234 [http://www-01.ibm.com/support/docview.wss?uid=swg1IC43234], objects with *
+   *                      paths between 1015 and 1024 characters  *
+   *                      can cause the protocol error and either *
+   *                      the operation stopping or a crash, just *
+   *                      like what used to occur with objects    *
+   *                      with more than 1024 character paths.    *
+   ****************************************************************
+   * RECOMMENDATION: Apply the csd when available. Target: 5.3.2  *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix for IC43234 [http://www-01.ibm.com/support/docview.wss?uid=swg1IC43234] did not take into account the 8-byte
+   Unicode tag that would be added onto the path after the check
+   for path length by the client, but before the object was sent
+   to the TSM server.  It is now accounted for.
+   Note: this fix does not backup objects with paths greater than
+   1015 or 1024 - it just skips them and allows the operation
+   to proceed with the next object, without incorrectly terminating
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  Interim fix 5.3.0.15 for Windows
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC46834
+   
+   
+ * REPORTED COMPONENT NAME
+   TSM CLIENT 5.1
+   
+   
+ * REPORTED COMPONENT ID
+   5698ISMCL
+   
+   
+ * REPORTED RELEASE
+   53W
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2005-07-15
+   
+   
+ * CLOSED DATE
+   2005-08-31
+   
+   
+ * LAST MODIFIED DATE
+   2006-05-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  DSMC
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TSM CLIENT 5.1
+   
+   
+ * FIXED COMPONENT ID
+   5698ISMCL
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R53W PSY
+   UP
+   
+   
+ * R53D PSY
+   UP

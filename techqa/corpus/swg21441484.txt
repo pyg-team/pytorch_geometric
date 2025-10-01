@@ -1,0 +1,45 @@
+Title: IBM Installation and run-time support for CICS/VSE 2.3 on z/VSE 4.3 and higher - United States
+
+Text:
+z/VSE 4.3 CICS VSE CICS TS compatibility upgrading migrating upgrade migrate 568602601 R14X R14V R14W R230 5686-026 5686026 KIXINFO NEWS
+
+ABSTRACT
+ When z/VSE V4.3 became generally available on 26 November 2010, the installation and run-time support for CICS/VSE V2.3 changed significantly. z/VSE V4.3 is the last release that can be used as the run-time environment for CICS/VSE V2.3, but even this is subject to a number of restrictions. This document explains some of the changes that you need to be aware of when upgrading to z/VSE V4.3 or later versions and releases. 
+
+CONTENT
+z/VSE V4.3 no longer provides product installation support for CICS/VSE V2.3. However, providing that DL/I is not required, IBM will not prohibit you from using CICS/VSE V2.3 with z/VSE V4.3. You will be able to install CICS/VSE V2.3 from an extended base tape supplied with a z/VSE V4.2 or earlier system. Alternatively, the CICS/VSE V2.3 sublibraries will remain in place if a Fast Service Upgrade (FSU) is used to upgrade to z/VSE V4.3. All other z/VSE V4.3 changes will be transparent.
+
+z/VSE V4.3 is the last release that can be used as the run-time environment for CICS/VSE V2.3. For example, z/VSE V5.1 cannot be used as a run-time environment.
+
+IBM recommends that you migrate CICS/VSE V2.3 applications to run on CICS TS for VSE/ESA on z/VSE V4.2 before upgrading to z/VSE V4.3 or later versions and releases such as z/VSE V5.1. If you want to run CICS/VSE V2.3 on z/VSE V4.3, ensure that both user and vendor applications still run successfully on CICS/VSE V2.3. 
+
+z/VSE-supplied support for a CICS coexistence environment is removed. However, you will still be able to run CICS/VSE V2.3 and CICS Transaction Server for VSE/ESA (CICS TS) V1.1.1 together on z/VSE V4.3.
+
+IBM announced an end of support (EOS) date for CICS/VSE V2.3 of 31 October 2012. See CICS/VSE V2.3 End of Support announcement [http://www.ibm.com/support/docview.wss?uid=swg21508736] for more details.
+
+Note: z/VSE V4.2 and later releases enable you to run RPG programs under CICS TS for VSE/ESA V1.1.1.
+
+The following information is from the US Announcement Letter for IBM z/VSE V4.3 [http://www.ibm.com/common/ssi/cgi-bin/ssialias?subtype=ca&infotype=an&appname=iSource&supplier=897&letternum=ENUS210-313] [http://www.i1bm.com/common/ssi/cgi-bin/ssialias?infotype=an&subtype=ca&supplier=897&letternum=ENUS210-204] (ENUS210-313). Other country announcements are available on the IBM Offering Information page [http://www.ibm.com/common/ssi/index.wss].
+
+Enhancements for z/VSE V4.3 include: 
+
+ * DOS/VS RPG II support for CICS Transaction Server for VSE/ESA™ (CICS TS):  * Allows RPG programs implemented for CICS/VSE V2.3 to run with CICS TS. Support is also available on z/VSE V4.2 with PTFs. See DOS/VS RPG II support for CICS TS for VSE/ESA V1.1.1 on z/VSE [http://www-01.ibm.com/support/docview.wss?uid=swg21456832] for more information.
+   
+   
+
+
+Migration from CICS/VSE V2.3 to CICS Transaction Server for VSE/ESA on z/VSE V4.2:  * z/VSE V4.3 fulfils the statement of direction in Software Announcement 207-228 [http://www.ibm.com/common/ssi/cgi-bin/ssialias?infotype=an&subtype=ca&supplier=897&letternum=ENUS207-228], dated October 09, 2007. It will no longer offer CICS/VSE V2.3 as part of the z/VSE V4.3 package and will remove the CICS coexistence environment. 
+ * Recent improvements, including BSM security enhancements in z/VSE V3, additional VSE tasks, and DOS/VS RPG II support for CICS TS in z/VSE V4.2, offer you the capability of migrating your CICS/VSE programs on z/VSE V4.2 prior to performing an upgrade to z/VSE V4.3 or higher releases. 
+ * Clients migrating to CICS TS might benefit from virtual storage constraint relief in CICS TS and in z/VSE V4.3. 
+
+
+DL/I VSE V1.12:  * DL/I VSE V1.12 is an optional product of z/VSE V4.3. This new DL/I release will provide constraint relief for the limited 24-bit virtual storage area. Moving various resources above the 16 MB line will also allow for keeping more data in storage which might result in faster access to DL/I data. DL/I VSE V1.12 is the only DL/I release that can be used with z/VSE V4.3. It replaces DL/I VSE V1.11 and DL/I DOS/VS V1.10.
+
+RELATED INFORMATION
+#z/VSE web site [http://www.ibm.com/systems/z/os/zvse/]
+
+
+
+
+PRODUCT ALIAS/SYNONYM
+ CICS/VSE CICS VSE

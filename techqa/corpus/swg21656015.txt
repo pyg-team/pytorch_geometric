@@ -1,0 +1,39 @@
+Title: IBM WebSphere DataPower Appliance and WAMC - Log Target "WAMT_Manager_Primary" Uses Custom SSL Proxy Profile - United States
+
+Text:
+WAMC; DataPower; SSL; Proxy; Profile; WAMT_Manager_Primary; Wrong; Direction TECHNOTE (FAQ)
+
+QUESTION
+ Why does the Log Target "WAMT_Manager_Primary" cause errors, which say my custom SSL Proxy Profile object is in the wrong direction? 
+
+CAUSE
+When a device is added to WAMC, a log target will be created on the DataPower appliance with the name "WAMT_Manager_Primary". 
+
+This log target will automatically use any custom SSL Proxy Profile which configured by the XML Management Interface (XMI).
+
+If the custom SSL Proxy Profile is configured to be 'reverse' facing, the "WAMT_Manager_Primary" log target will fail. This is indicated by the following error message:
+
+SSL connection to 'https://WAMC_Host:5555/' failed, SSL Proxy Profile 'custom-sslproxy' is in the wrong direction
+
+ANSWER
+A workaround for this issue is to create a self-signed certificate with WAMC's ikeyman and add it to the custom SSL proxy profile's Valcred Object. This will allow the connection between the logging and WAMC. 
+
+The following steps describe how to configure this work-around:
+
+WAMC: 
+
+ 1.  On the machine running WAMC, run the ikeyman program. The ikeyman program is located in the installation_directory/bin directory, where installation_directory is the directory in which you unpacked the installation images. 
+ 2.  Click Open and locate the .jks file you created previously when you set up the SSL connection between WAMC and DataPower. 
+ 3.  On the dropdown menu, select 'Personal Certificates' and then create a new Self-Signed personal certificate by clicking on the 'New Self-Signed' button. 
+ 4.  After your new self-signed certificate is created, choose the 'Extract Certificate' button and save the certificate to a local directory.
+     
+     DataPower: 
+ 5.  Access the DataPower WebGUI, and navigate to Objects > Crypto Configuration > SSL Proxy Profile. Select the SSL Proxy Profile that is used by the WAMT logging target. 
+ 6.  Select the "..." next to reverse crypo profile. 
+ 7.  Select the "..." next to validation credentials. 
+ 8.  Select the "+" to create a new certificate. 
+ 9.  Upload the new self-signed certificate you created with ikeyman and create a name for your new crypto certificate object and select 'Apply.' 
+ 10. Select the new crypto certificate object from the drop-down list and select 'Add' to add it to the list of Certificates. 
+ 11. Continue to select the 'Apply' button until you reach the "Configure SSL Proxy Profile" page. Apply and Save your SSL Proxy Profile. 
+ 12. Locate the "WAMT_Manager_Primary" log target by navigating to Objects > Logging Configuration > Log Target. Delete the "WAMT_Manager_Primary" log target. 
+ 13. To confirm these steps have worked, stop and restart WAMC so that a new WAMT logging target is created with the SSL Proxy Profile.

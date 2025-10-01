@@ -1,0 +1,127 @@
+Title: IBM PO04281: AUTHORIZATION IS GETTING FAILED WHEN MORE THAN 300 CHARACTERS ARE ENTERED ON THE AUTHORIZATION COMMENTS FIELD - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Steps:
+   1)Login as intakeuser. Regiser a person.
+   2)Create an application case. Add the program.
+   3)Click on Authorize link for program.
+   4)Enter more than 300 characters in comments on Authorize
+   Program modal.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  AUTHORIZATION IS GETTING FAILED WHEN MORE THAN 300 CHARACTERS
+   ARE ENTERED ON THE AUTHORIZATION COMMENTS FIELD
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This APAR is included in Release 6.2.0.2. Please refer the
+   release notes under
+   http://www-01.ibm.com/support/docview.wss?uid=swg27048751 [http://www-01.ibm.com/support/docview.wss?uid=swg27048751]
+   PO04281, WorkItem:102159 - Authorization fails when more than
+   300 characters are entered for authorization comments
+   Previously when authorizing an application case, authorization
+   failed if more than 300 characters were entered into the
+   authorization comments field. This issue has now been resolved
+   by increasing the size of the field to cater to a maximum of
+   1957 characters.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PO04281
+   
+   
+ * REPORTED COMPONENT NAME
+   CURAM SOCIAL PG
+   
+   
+ * REPORTED COMPONENT ID
+   5725H2600
+   
+   
+ * REPORTED RELEASE
+   605
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2014-10-29
+   
+   
+ * CLOSED DATE
+   2015-04-20
+   
+   
+ * LAST MODIFIED DATE
+   2016-09-25
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  CIR
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R605 PSY
+   UP

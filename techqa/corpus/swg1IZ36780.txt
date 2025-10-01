@@ -1,0 +1,189 @@
+Title: IBM IZ36780: BOTH OF THE USERID PRINTS DISAPEAR, SHOULD BE THE USERID USED DURING THE CREATION OF THE SAP ACCONT AND HR LINKING IS FAILING - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Both of the USERID prints disapear, should be the USERID used
+   during the creation of the SAP accont and HR linking is failing
+   
+   
+    We
+   created 3 accounts in ARD 203 using HR# 50000030.  The first
+   time Bruce
+   was totally out of PA30.  User ID and email were updated
+   successfully.
+   Second time Bruce was in PA30, but on a different account than
+   50000030.
+   User ID and email address were updated successfully.  Third time
+   Bruce
+   actually had HR# 50000030 open in PA30.  In this final instance,
+   User ID
+   and email address were not updated.  However, according to TIM,
+   the
+   account was updated successfully.
+   
+   Conclusion -
+   
+   Simply being in PA30 does not cause the transaction to fail -
+   the
+   specific record that you are attempting to update has to be open
+   (and
+   thus locked) for it to fail.
+   
+   
+   
+   Customr Recreate:   yes
+   
+   L2 Support Recreate:  none
+   
+   Desired Behavior:
+   
+   Steps Duplicate:
+    1). In the logs there should be the following lines displayed:
+   
+    ....
+    DBG:08/10/31 04:33:24 Thread:004040 Linking Username within the
+   Add:
+   <USERID>
+    ...
+    DBG:08/10/31 04:33:25 Thread:004040 Linking Username within the
+   emplcomm_change: '<USERID>
+    ...
+   
+   Both of the above USERID prints should be the USERID used during
+   the
+   creation of the SAP account. If this is we should see a
+   successful
+   result of the HR linking. If not we are still losing the
+   reference to
+   the userid
+   
+   
+   Environment:
+         ITIM Version= 4.6
+   ITIM FP + IF=   FP61 Build 5813
+   ITIM OS= on  Windows Server 2003
+   Agent / Adapter Version= SAP ADK
+   Solution: a new beta version provided.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  n/a
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Current SAP architecture allows linking to only
+    one HR system. New adapter architecture, SAP Netweaver Adapter,
+    allows extension points to customize this behavior.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+ *  Beta version of SAP Netweaver Adapter shipped to
+   customer.
+   
+   
+    
+   
+   
+
+COMMENTS
+ *  New SAP Netweaver Adapter will ship on Dec 8, 2008. Th
+   is will allow extension points to customize HR linking behavior.
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ36780
+   
+   
+ * REPORTED COMPONENT NAME
+   ITIM AGENTS
+   
+   
+ * REPORTED COMPONENT ID
+   5724C34AG
+   
+   
+ * REPORTED RELEASE
+   460
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-11-06
+   
+   
+ * CLOSED DATE
+   2008-11-30
+   
+   
+ * LAST MODIFIED DATE
+   2008-11-30
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  AGENT
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R500 PSY
+   UP

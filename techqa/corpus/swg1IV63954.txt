@@ -1,0 +1,148 @@
+Title: IBM IV63954: EXTENDED ORACLE DATABASE AGENT NOT COLLECT INSTANCE INFORMATION BY DLA WHEN STARTED BY NON-ROOT - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Extended Oracle Database agent does not collect instance
+   information by
+   DLA when started by non-root.
+   
+   Detailed Recreation Procedure:
+   1) Install and configure Extended Oracle Database agent
+   v6.31FP2.
+   2) Started by non-root user like itmuser;
+   3) Run tmsdla to export IDML book on teps;
+   4) run loadidml to import above IDML book then failed to see
+   oracle
+   instance information.
+   5) If agent started by root/oracle, then can see above oracle
+   instance
+   on taddm.
+   
+   Related Files and Output: N/A
+   (53F5A6C7.0033-2:krzdlautil.cpp,188,"Krz_DLABaseParameterRequest
+   ::prepar
+   eInstanceInfo") Active RAS1 Classes: EVERYT EVERYE EVERYU
+   (53F5A6C7.0034-2:krzdlautil.cpp,188,"Krz_DLABaseParameterRequest
+   ::prepar
+   eInstanceInfo") Entry
+   ...
+   (53F5A6C7.071F-2:krzutil.cpp,401,"krzGetEnvValueByPID") Exit:
+   0x0
+   (53F5A6C7.0720-2:krzutil.cpp,906,"krzGetOracleHome") Exit: 0x0
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  n/a
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  The formal fix is in 6.3.1.2-TIV-ITM_KRZ-IF0002.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The formal fix is in 6.3.1.2-TIV-ITM_KRZ-IF0002.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV63954
+   
+   
+ * REPORTED COMPONENT NAME
+   ITCAM EXT AGNT
+   
+   
+ * REPORTED COMPONENT ID
+   5724V09OR
+   
+   
+ * REPORTED RELEASE
+   631
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-08-25
+   
+   
+ * CLOSED DATE
+   2015-11-20
+   
+   
+ * LAST MODIFIED DATE
+   2015-11-20
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ITCAM EXT AGNT
+   
+   
+ * FIXED COMPONENT ID
+   5724V09OR
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R631 PSY
+   UP

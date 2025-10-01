@@ -1,0 +1,215 @@
+Title: IBM JR44036: UPDATE TRACKING DEFINITION USES ILLEGAL TEMPORARY DIRECTORY - United States
+
+Text:
+  A FIX IS AVAILABLE
+Version 8.0 Refresh Pack 1 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24033777]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The Update Tracking Definition action in the Process Designer
+   application in Business Process Manager automatically
+   generates and installs a monitor model for a process
+   application to IBM Business Monitor.
+   
+   In a network deployment environment where the deployment manager
+   and managed nodes are on different physical machines, this
+   action fails because on a machine where a managed node is
+   running, the action attempts to create a temporary directory
+   underneath a directory that does not exist.  An error similar
+   to the following is written to SystemOut.log, on the node agent
+   machine (managed profile logs directory):
+   
+   wle           E  CWLLG2015E:  An unexpected runtime exception
+   occurred. See exception for more details.
+   Error: java.lang.RuntimeException: CWPFD2062E: It was not
+   possible to create the directory:
+   ''/opt/IBM/WebSphere/AppServer/profiles/Dmgr/config/temp/com
+   .ibm.bpm.fds/Node1/server1/1344947184329_2/assetImport''..
+   
+   com.ibm.bpm.fds.common.FDSException:
+   java.lang.RuntimeException: CWPFD2062E: It was not possible to
+   create the directory:
+   ''/opt/IBM/WebSphere/AppServer/profiles/Dmgr/config/temp/com
+   .ibm.bpm.fds/Node1/App.Srv01No01/1344947184329_2/assetImport''.
+   
+   In this example, the deployment manager profile is named "Dmgr"
+   and the managed node profile is named "Node1".  On the managed
+   node machine, the path
+   "/opt/IBM/WebSphere/AppServer/profiles/Dmgr" does not exist
+   (this would exist on the deployment manager machine only).
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  Users of BPM Express, BPM Standard and BPM  *
+   *                  Advanced.                                   *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: The Update Tracking Definition action   *
+   *                      in the Process Designer                 *
+   *                      application in Business Process         *
+   *                      Manager automatically                   *
+   *                      generates and installs a monitor        *
+   *                      model for a process                     *
+   *                      application to IBM Business Monitor.    *
+   *                      In a network deployment environment     *
+   *                      where the deployment manager            *
+   *                      and managed nodes are on different      *
+   *                      physical machines, this                 *
+   *                      action fails because on a machine       *
+   *                      where a managed node is                 *
+   *                      running, the action attempts to         *
+   *                      create a temporary directory            *
+   *                      underneath a directory that does not    *
+   *                      exist.  An error similar                *
+   *                      to the following is written to          *
+   *                      SystemOut.log, on the node agent        *
+   *                      machine (managed profile logs           *
+   *                      directory):                             *
+   *                      wle      E CWLLG2015E: An               *
+   *                      unexpected runtime exception            *
+   *                      occurred. See exception for more        *
+   *                      details.                                *
+   *                      Error: java.lang.RuntimeException:      *
+   *                      CWPFD2062E: It was not                  *
+   *                      possible to create the directory:       *
+   *                      ''/opt/IBM/WebSphere/AppServer/profiles *
+   *                      /Dmgr/config/temp/com                   *
+   *                      .ibm.bpm.fds/Node1/server1/134494718432 *
+   *                      9_2/assetImport''.                      *
+   *                      com.ibm.bpm.fds.common.FDSException:    *
+   *                      java.lang.RuntimeException:             *
+   *                      CWPFD2062E: It was not possible to      *
+   *                      create the directory:                   *
+   *                      ''/opt/IBM/WebSphere/AppServer/profiles *
+   *                      /Dmgr/config/temp/com                   *
+   *                      .ibm.bpm.fds/Node1/App.Srv01No01/134494 *
+   *                      7184329_2/assetImport''.                *
+   *                      In this example, the deployment         *
+   *                      manager profile is named "Dmgr"         *
+   *                      and the managed node profile is named   *
+   *                      "Node1".  On the managed                *
+   *                      node machine, the path                  *
+   *                      "/opt/IBM/WebSphere/AppServer/profiles/ *
+   *                      Dmgr" does not exist                    *
+   *                      (this would exist on the deployment     *
+   *                      manager machine only).                  *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   The issue is caused by failure of the generated monitor model
+   application EAR file to download properly from the deployment
+   manager to the managed node (the attempt to create a temporary
+   directory fails because there is an invalid assumption that
+   the deployment manager profile exists on the machine where the
+   managed node is running).
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The code now creates a temporary directory on the managed node
+   machine based on the managed profile name, not the deployment
+   manager profile name.
+   
+   An interim fix for Business Process Manager Version 7.5.1.0 has
+   been published to Fix Central.  Please refer to the separate
+   file that is automatically downloaded with the interim fix
+   for prerequisite information and installation/uninstallation
+   instructions.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR44036
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM ADVANCED
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9400
+   
+   
+ * REPORTED RELEASE
+   751
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-09-10
+   
+   
+ * CLOSED DATE
+   2012-12-21
+   
+   
+ * LAST MODIFIED DATE
+   2012-12-21
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    JR44026
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   BPM ADVANCED
+   
+   
+ * FIXED COMPONENT ID
+   5725C9400
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R750 PSY
+   UP

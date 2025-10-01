@@ -1,0 +1,27 @@
+Title: IBM Class doesn't support Automation error with IBM Datacap Taskmaster Capture - United States
+
+Text:
+Get2DBarcodeBP; class automation bp_tp TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Running the Get2DBarcodeBP action on a new installation of Taskmaster 8.1 fix pack 2, results in the following error:
+
+09:05:36.208 (0) t:15EC p:11F64D0 Running barcode recognition for the entire page.
+09:05:36.271 (62) t:15EC p:11F64D0 Warning: Error encountered while attempting to obtain the barcode type. Make sure that the variable 'bp_tp' is populated with the correct data type (long). Error description: Class doesn't support Automation
+09:05:36.271 (0) t:15EC p:11F64D0 Warning: Barcode type defaulted to 'Unknown' (all possible barcode types will be searched).
+09:05:36.271 (0) t:15EC p:11F64D0 Attempting to read barcode of type(s) 'Unknown'
+09:05:36.271 (0) t:15EC p:11F64D0 Confidence required (Datacap): 1
+09:05:36.271 (0) t:15EC p:11F64D0 Confidence required (converted to Barcode Reader confidence range): 11
+09:05:36.271 (0) t:15EC p:11F64D0 Error (before barcode analysis: Class doesn't support Automation
+09:05:36.271 (0) t:15EC p:11F64D0 Source: Microsoft VBScript runtime error
+09:05:36.271 (0) t:15EC p:11F64D0 Number: 430 
+
+CAUSE
+Fix Pack 2 did not install correctly.
+
+ENVIRONMENT
+Windows 7
+Datacap Taskmaster 8.1 with fix pack 2
+
+RESOLVING THE PROBLEM
+Re-run Taskmaster 8.1 fix pack 2 using the Update option to correct the fix modules.

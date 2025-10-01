@@ -1,0 +1,159 @@
+Title: IBM IV18333: VULNERABILITY AND SECURITY SCAN ON APPLICATION INTERFACE - 'SESSION FIXATION'. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Problem title
+   Vulnerability and Security scan on application interface -
+   'session fixation'.
+   
+   Problem description
+   
+   We are currently running ITNCM version 6.3 and we ran VA
+   scanner for the application (IBM Rational AppScan) and found
+   few vulnerabilities with the following recomendation,
+   
+   1. Do not accept externally created session identifiers
+   2. Do not allow caching of SSL pages
+   3. Enforce the use of HTTPS when sending sensitive information
+   4. Always use SSL and POST (body) parameters when sending
+   sensitive information.
+   5. Add the 'Secure' attribute to all sensitive cookies
+   6. Add the 'HttpOnly' attribute to all session cookies
+   7. Avoid storing sensitive session information in permanent
+   cookies
+   8. Remove sensitive information from HTML comments
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  No workaround.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * ITNCM users on version 6.3.0.2 or earlier                    *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * App Scan identified some potential security vulnerabilities  *
+   * along the lines of:                                          *
+   *                                                              *
+   * 1. Do not accept externally created session identifiers      *
+   * 2. Do not allow caching of SSL pages                         *
+   * 3. Enforce the use of HTTPS when sending sensitive           *
+   * information                                                  *
+   * 4. Always use SSL and POST (body) parameters when sending    *
+   * sensitive information.                                       *
+   * 5. Add the 'Secure' attribute to all sensitive cookies       *
+   * 6. Add the 'HttpOnly' attribute to all session cookies       *
+   * 7. Avoid storing sensitive session information in permanent  *
+   * cookies                                                      *
+   * 8. Remove sensitive information from HTML comments           *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Upgrade to ITNCM 6.3.0.3 or 6.4.0.0                          *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Security vulnerabilities identified have been addressed
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV18333
+   
+   
+ * REPORTED COMPONENT NAME
+   N/C CONFIG MGR(
+   
+   
+ * REPORTED COMPONENT ID
+   5724Z3100
+   
+   
+ * REPORTED RELEASE
+   630
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-03-27
+   
+   
+ * CLOSED DATE
+   2012-04-20
+   
+   
+ * LAST MODIFIED DATE
+   2012-04-20
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   N/C CONFIG MGR(
+   
+   
+ * FIXED COMPONENT ID
+   5724Z3100
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R630 PSY
+   UP

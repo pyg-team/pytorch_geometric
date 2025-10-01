@@ -1,0 +1,66 @@
+Title: IBM Specifying a userid for the CICS VR server started task to avoid authorization errors - United States
+
+Text:
+userid ; user id ; specifying specify CICSVR RACF errors started task spawns spawned authorization authority ; batch backout ; DWWBAFJS5655P3000 R420 R42E R42K 5655-P30 5655P30 FMID HCCV420 JCCV42E JCCV42K 5655P3000 R430 R43E R43K 5655-P30 5655P30 FMID HCCV430 JCCV43E JCCV43K TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When you try to start the CICS VSAM Recovery for z/OS (CICS VR) server address space, CICS VR spawns a task. The program DWW1SJST tries to define files DWWPRINT and DWWHIST, and get UPDATE access to the preallocated file DWWMSG. But, the userid receives RACF (or other external security manager) authorization errors. So, you would like to know how to specify a userid for the CICS VR server started task. 
+
+SYMPTOM
+CICS VR messages: 
+
+DWW267I [http://publib.boulder.ibm.com/infocenter/cicsts/v4r2/topic/com.ibm.cics.cvr.doc/dwwmd/dwwmd000153.html]VSAM BATCH REDO LOGGING FAILED. ASID (IN HEX): 0072
+RETURN CODE (IN HEX): 00000024
+REASON CODE (IN HEX): 73050099
+
+X'73050099' Explanation: The VSAM application program completed abnormally or with a non-zero completion code. Some after image log records were not written.
+
+Programmer Response: Investigate and fix the problem that caused the job step to terminate abnormally.
+
+
+DWW264I [http://publib.boulder.ibm.com/infocenter/cicsts/v4r2/topic/com.ibm.cics.cvr.doc/dwwmd/kw00509.html]VSAM BATCH UNDO LOGGING COMPLETED SUCCESSFULLY.
+ASID (IN HEX): 0072
+RETURN CODE (IN HEX): 00000000
+REASON CODE (IN HEX): 73050094
+
+73050094 Explanation: Job step terminated abnormally. Automatic backout submission was requested and a backout job was submitted.
+
+Programmer Response: Verify the success of the CICS VR batch backout job that was submitted. Next, investigate and fix the problem that caused the job step to terminate abnormally. Then, resubmit the batch job, starting at the step that encountered the abend.
+
+
+If you are running CA Top Secret as your external security manager, you might see messages:
+TSS7220E 101 J=DWWBAFJS A=DWWBAFJS VOL=XXXXNX ACC=UPDATE DSN=hlq.xxxx
+TSS7221E Dataset Not Accessible -hlq.xxxx.XNNNNNX.XXXXXX
+
+CAUSE
+The CICS VR server address space is spawned. CICS VR module DWW1STRT issues an ASCRE macro to create the CICS VR server address space as an MVS started task.
+
+
+
+RESOLVING THE PROBLEM
+See Assigning CICS VR proper access authority [http://publib.boulder.ibm.com/infocenter/cicsts/v4r2/topic/com.ibm.cics.cvr.doc/dwwig/dwwig00078.html] in the CICS VR information center:
+
+By default, all processes started by the CICS VR server address space run under an undefined RACF user ID. 
+
+If RACF, or similar security product, is implemented, you must define the CICS VR started task to RACF and assign it a user ID with appropriate authorization that allows the CICS VR server address space to update and delete information from the appropriate RCDS, log streams, and log stream copies. For example, you can run: 
+
+ * 
+ * RDEFINE STARTED CICSVR.* STDATA(USER(SYSTASK)) 
+   SETR RACLIST(STARTED) REFRESH
+ * 
+
+If you plan on using CICS VR automatic batch backout, and if RACF or a similar security product is in place, be sure to define the DWWBAFJS started task to RACF and assign it a user ID with appropriate authorization to browse the output of the batch backout job. For example, you can run:
+
+ * RDEFINE STARTED DWWBAFJS.* STDATA(USER(user ID))
+   SETR RACLIST(STARTED) REFRESH
+
+
+If you plan on using automated recovery, and if RACF or a similar security product is in place, be sure to define the DWWCBINF, DWWCBRRG and DWWCBRRY started tasks to RACF. Assign these tasks to a user ID with appropriate authorization to browse the output of automated recovery job. 
+RELATED INFORMATION
+#Change CICSVR started task job names and authorization [http://www.ibm.com/support/docview.wss?uid=swg21232280]
+
+
+
+
+PRODUCT ALIAS/SYNONYM
+ CICSVR CICS VR CICS/VR

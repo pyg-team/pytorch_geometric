@@ -1,0 +1,60 @@
+Title: IBM Suspension of Manual and Automatic Bufferpool Decrease Operations - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Why is a bufferpool decrease operation taking a long time ? Why did STMM ( Self-Tuning Memory Manager ) stop tuning ? 
+
+CAUSE
+Bufferpool decrease operations must obtain exclusive access to any bufferpool pages which need to be removed and will block until such access can be acquired. In STMM tuning environments, automatic tuning will be suspended until the agent/application activity that is holding the bufferpool page advances and releases it. 
+
+ANSWER
+Bufferpool decrease operations remove the upper range of pages matching the size of the decrease. In order to remove the bufferpool page, the agent processing the decrease must obtain exclusive access to the bufferpool page, or it will block as long as necessary. 
+
+In general these waits are momentary and do not significantly impact the elapsed time of the bufferpool decrease operation. DB2 runtime activity generally ties down bufferpool pages for very brief time periods (long enough to read/write data to/from the page). However, during some operations a bufferpool page will be held longer to improve performance - typically these are related to some requirement to store/manipulate temporary data. 
+
+A problematic scenario can arise when an application stops retrieving the remaining result set that is being held on its behalf by the database server. If a cursor is left open while a runtime operation is still in progress, any bufferpool page related to the operation can remain "locked-down". For example, a sort which is in progress may stall until more rows are read by the client, and a small number of pages may remain inaccessible for the purposes of removal. If a client application is left in such an idle state for a long period of time, a bufferpool decrease operation needing to remove any associated pages cannot complete and will seem hung. This can compromise the performance and availability of a system relying on STMM tuning. 
+
+It is not considered a good practice to have applications with open/incomplete requests for extended periods of time. Besides the specific problem affecting bufferpool decrease operations, such behaviour ties up resources on the server. This can lead to other resource-related problems (again, compromising performance and reliability). Such unfinished requests may come from incomplete end-user tasks or abnormal application behaviour. While it is common for timeout mechanisms to be enforced on the client side, inactive connections can also be managed by DB2's Workload Manager (WLM) by using the CONNECTIONIDLETIME threshold. 
+
+ 
+
+Identifying suspension of STMM tuning on a bufferpool decrease operation (presumably a DBA will already be aware of the delay if it is a manual operation) : 
+
+1. db2diag.log is absent of expected STMM tuning activities. (bufferpool and database configuration updates). 
+
+2. STMM logs are no longer appended to by the STMM agent. Ensure that the string "stmmMemoryTunerMain" has appeared recently for the database in question (STMM logs are located under <DIAGPATH>/stmmlog) 
+
+3. On a UNIX system, use the db2pd -stack command to generate a traceback of the db2stmm EDU (this is example is for the "SAMPLE" database :
+$ db2pd -stack `db2pd -edus|awk '/SAMPLE/ && /db2stmm/{print $1}'` dumpdir="/home/db2inst1"
+
+Check the stack.txt file generated, and the function call stack will appear somewhat similar to below:
+sqloWaitEDUWaitPost
+sqlbRemInvalidPagesFromBufferPool 
+sqlbDecreaseBufferpoolSize
+sqlbResizeBufferPool
+sqlbAlterAutomaticBufferPool
+sqlrlStmmAlterBufferPool 
+
+
+Identify and force off the application holding on to bufferpool resources : (Note there is no capability to monitor contention on specific bufferpool pages, it must be done by time correlation.)
+
+Using either an application snapshot or the MON_GET_ACTIVITY routine, look for an application which has a status time change or an activity start time within the range of when the db2stmm EDU stopped logging. The activity start time from MON_GET_ACTIVITY corresponds to an open cursor event.
+
+For example, if STMM's last logging time was approximately 2017-04-24-14.55, check for application activities which started in the previous 5 minutes :
+
+db2 select application_handle, local_start_time from table"(mon_get_activity(null,null))" where local_start_time between "'2017-04-24-14.50' and '2017-04-24-14.55'"
+
+For application snapshots, check the Status change time, UOW start time, and Open local/remote cursors relative to the STMM suspension time (showing selected fields) :
+
+db2 get snapshot for all applications :
+...
+Status change time = 04/24/2017 14:54:00.850781
+Open remote cursors = 2
+Open local cursors = 0
+Most recent operation start timestamp = 04/24/2017 14:54:01.187058
+
+After investigating the nature of the offending application, force off the application if deemed safe to do so.
+
+db2 force application "(<application_handle>)"

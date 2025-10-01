@@ -1,0 +1,48 @@
+Title: IBM Weak ciphers are being used for SSL V3 when not using Internet site document - United States
+
+Text:
+CVE-2005-2969; SSL V3; SSL V2; RC4; MD5; AES; DES; Disable; cipher; weak TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+Server admin received following suggestion from security scan: 
+
+SSL Version 2 (v2) Protocol Detection. The remote service encrypts
+traffic using a protocol with known.
+
+The remote service accepts connections encrypted using SSL 2.0, which reportedly suffers from several cryptographic flaws and has been deprecated for several years. 
+An attacker may be able to exploit these issues to conduct man-in-the-middle attacks or decrypt communications between the affected service and clients.
+
+Ports : 25
+
+Consult the application's documentation to disable SSL 2.0 and use
+SSL 3.0, TLS 1.0, or higher instead.
+
+
+ENVIRONMENT
+Customer has checked configuration in Server document: 
+
+Under Ports > Internet Ports, 'Enable SSLv2' is not checked.
+'Protocol version' set as V3.0 only.
+
+SSL Ciphers selected:
+AES encryption with 128-bit key and SHA-1 MAC
+AES encryption with 256-bit key and SHA-1 MAC
+Triple DES encryption with 168-bit key and SHA-1 MAC
+'SSL negotiated over TCP/IP port' set as Disabled.
+
+However, weak ciphers like RC4-MD5 are still being used by SSL V3 connection.
+
+
+RESOLVING THE PROBLEM
+The problem was reported by Nessus with CVE ID: CVE-2005-2969 
+
+http://www.tenable.com/plugins/index.php?view=single&id=20007 [http://www.tenable.com/plugins/index.php?view=single&id=20007]
+
+Workaround
+
+Create Internet Site Document for SMTP Inbound.
+Set server document to load Internet configurations from
+Server\Internet Sites documents: Enabled.
+
+
+This issue was reported to Quality Engineering as SPR #ZKCO8W47XF [http://www-10.lotus.com/ldd/fixlist.nsf/SPRNum/41145CEEB359CBE285257B4200580FCB?OpenDocument&ca=drs-fo] and has been fixed in Domino 8.5.3 Fix Pack 4 and 9.0 Social Edition.

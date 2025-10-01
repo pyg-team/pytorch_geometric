@@ -1,0 +1,175 @@
+Title: IBM IZ95382: CALLS TO GETINSTANCES.VBS FROM OS AGENT NEVER TERMINATE - United States
+
+Text:
+  FIXES ARE AVAILABLE
+IBM Tivoli Monitoring 6.2.2 Fix Pack 8 (6.2.2-TIV-ITM-FP0008) [http://www-01.ibm.com/support/docview.wss?uid=swg24031354]
+IBM Tivoli Monitoring 6.2.2 Fix Pack 9 (6.2.2-TIV-ITM-FP0009) [http://www-01.ibm.com/support/docview.wss?uid=swg24032067]
+IBM Tivoli Monitoring 6.2.2 Fix Pack 6 (6.2.2-TIV-ITM-FP0006) [http://www-01.ibm.com/support/docview.wss?uid=swg24030135]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The watchdog script getInstances.vbsrequires CANDLE_HOME
+   to be set when it is invoked from the OS agent.
+   There appears to be a problem/limitation on Windows that the
+   environmentvariable is not passed to the script from the
+   environment after a new ITM install is done, until the machine
+   is rebooted. The calls to the script hang and do not terminate
+   The same problem occurs with the getstat.vbs script, which is
+   called less often.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  There are several workarounds, just one needs to be selected:
+   1.  Reboot the machine and then restart that OS agent.
+   2.  Temporarily disable Watchdog:
+         - Move all files under %CANDLE_HOME%&#65415;TMAITM6&#65415;CAP to a
+           backup location.
+         - Restart the agent
+   3.  Hard code the value for %CANDLE_HOME% in the script.
+         - Make a backup copy of %CANDLE_HOME%&#65415;TMAITM6&#65415;getInstances
+   .vbs
+         - Edit the file and in the following line replace
+   %CANDLE_HOME%
+           with the value of the directory.  FOr example change:
+              const CinfoExec  = "%CANDLE_HOME%&#65415;InstallITM&#65415;kincinfo
+              -o"
+           to
+              const CinfoExec  = "C:&#65415;IBM&#65415;ITM&#65415;InstallITM&#65415;kincinfo
+              -o"
+         - Save the file.  Verify the script works by invoking it
+   directly:
+         > cscript //Nologo
+   %CANDLE_HOME%&#65415;TMAITM6&#65415;getinstances_new.vbs 2 nt
+           Primary
+         - There is no need to restart the agent, it will use the
+   updated
+           file on next invocation.
+         - The same change should be done for getstat.vbs.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  The Watchdog component of the OS Agents for Windows calls two
+   .vbs files to query kincinfo for obtaining instances and running
+   agents. On a machine that has a new install of Windows OS Agent,
+   if the machine has not been rebooted after the install, then the
+   calls to the scripts do not terminate. This results in multiple
+   getinstances.vbs or getstat.vbs processes running.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The scripts expect the %CANDLE_HOME% environment variable to be
+   set in the environment to call the kincinfo utility. There is a
+   problem/limitation with the Windows Service Manager that it is
+   not passing in the environment variable to the scripts until a
+   reboot is done.
+   
+   The code has been updated to determine the path to KinCInfo.exe
+   relative to the location of the .vbs scripts so %CANDLE_HOME%
+   does not need to be set.
+   
+   
+   The fix for this APAR is included in the following maintenance
+   vehicles:
+       | fix pack | 6.2.2-TIV-ITM-FP0005
+       | interim fix | 6.2.2.4-TIV-ITM_WIN-IF0001
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ95382
+   
+   
+ * REPORTED COMPONENT NAME
+   ITM AGENT WINDO
+   
+   
+ * REPORTED COMPONENT ID
+   5724C040W
+   
+   
+ * REPORTED RELEASE
+   622
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-02-21
+   
+   
+ * CLOSED DATE
+   2011-03-31
+   
+   
+ * LAST MODIFIED DATE
+   2011-08-05
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ITM AGENT WINDO
+   
+   
+ * FIXED COMPONENT ID
+   5724C040W
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R622 PSY
+   UP

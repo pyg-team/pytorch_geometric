@@ -1,0 +1,65 @@
+Title: IBM Version 7.5.0 Fix Pack 1 for the IBM Business Process Manager products - United States
+
+Text:
+ DOWNLOADABLE FILES
+
+ABSTRACT
+ This download is V7.5.0 Fix Pack 1 for the IBM Business Process Manager products 
+
+DOWNLOAD DESCRIPTION
+In this document, IBM Business Process Manager Advanced, IBM Business Process Manager Standard, and IBM Business Process Manager Express are collectively referred to as the IBM Business Process Manager products.
+
+
+IBM Business Process Manager is a comprehensive BPM platform that gives you visibility and insight to manage business processes. It scales smoothly and easily from an initial project to a full enterprise-wide program. IBM Business Process Manager harnesses complexity in a simple environment to break down silos and better meet customer needs. 
+
+Version 7.5.0 Fix Pack 1 introduces refactoring capability in the Process Designer tool. This capability allows a process designer to refactor common assets from the process application. This capability enables a Process Designer to move common assets like services from a process application to a toolkit or from a process application to another process application.
+
+The fix pack also introduces support for Windows-based authentication for Microsoft SQL Server.
+
+V7.5.0 Fix Pack 1 (V7.5.0.1) is the first fix pack for the IBM Business Process Manager Version 7.5 products, which first shipped in June 2011 on the following operating systems:
+
+
+ * AIX (32 and 64-bit) 
+ * Linux on x86 (32 and 64-bit) 
+ * Linux on zSeries (31 and 64-bit) 
+ * Solaris on SPARC (32 and 64-bit) 
+ * Windows (32 and 64-bit)
+
+
+The links in the download section link to the download packages for V7.5.0 Fix Pack 1 (V7.5.0.1) for the following products on all applicable operating systems:  * IBM Business Process Manager Standard 
+ * IBM Business Process Manager Advanced 
+ * IBM Business Process Manager Advanced: Process Server 
+ * IBM Business Process Manager Express 
+ * IBM Process Designer
+
+PREREQUISITES
+You can install this fix pack on top of IBM Business Process Manager Version 7.5.0 products only.
+
+INSTALLATION INSTRUCTIONS
+The following links contain the installation and upgrade instructions for the fix pack. You are strongly encouraged to read these documents prior to installing the fix pack. 
+
+
+URL LANGUAGE SIZE(Bytes) Install Instructions [http://www.ibm.com/support/docview.wss?uid=swg27022244] English 82270 Profile upgrade instructions [http://www.ibm.com/support/docview.wss?uid=swg27022245] English 82270 Fix list for V7.5 [http://www.ibm.com/support/docview.wss?uid=swg27022242] English 82270 Install instructions for IBM Process Designer V7.5.0.1 [http://www.ibm.com/support/docview.wss?uid=swg27022298] English 82270 
+DOWNLOAD PACKAGE
+IBM Business Process Manager V7.5.0 Fix Pack 1 (V7.5.0.1)
+
+
+HOW CRITICAL IS THIS FIX?
+Recommended
+
+
+
+CHANGE HISTORY
+First fix pack release for the IBM Business Process Manager Version 7.5 products
+
+
+
+Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options 
+What is Fix Central(FC)? [https://www.ibm.com/support/fixcentral/help?page=swfaqs] IBM BPM Express 7.5.0.1 9 Aug 2011 English 494324130 FC [http://www-933.ibm.com/support/fixcentral/swg/quickorder?parent=ibm/WebSphere&product=ibm/WebSphere/IBM+Business+Process+Manager+Express&release=All&platform=All&function=fixId&fixids=bpmExp.7501.repository&includeSupersedes=0&source=fc] [ ] IBM BPM Standard 7.5.0.1 9 Aug 2011 English 494648522 FC [http://www-933.ibm.com/support/fixcentral/swg/quickorder?parent=ibm/WebSphere&product=ibm/WebSphere/IBM+Business+Process+Manager+Standard&release=All&platform=All&function=fixId&fixids=bpmStd.7501.repository&includeSupersedes=0&source=fc] [ ] IBM BPM Advanced 7.5.0.1 9 Aug 2011 English 698839859 FC [http://www-933.ibm.com/support/fixcentral/swg/quickorder?parent=ibm/WebSphere&product=ibm/WebSphere/IBM+Business+Process+Manager+Advanced&release=All&platform=All&function=fixId&fixids=bpmPC.7501.repository&includeSupersedes=0&source=fc] [ ] IBM BPM Adv Process Server 7.5.0.1 9 Aug 2011 English 696343872 FC [http://www-933.ibm.com/support/fixcentral/swg/quickorder?parent=ibm/WebSphere&product=ibm/WebSphere/IBM+Business+Process+Manager+Advanced&release=All&platform=All&function=fixId&fixids=bpmPS.7501.repository&includeSupersedes=0&source=fc] [ ] IBM Process Designer 7.5.0.1 9 Aug 2011 English 121771555 FC [http://www-933.ibm.com/support/fixcentral/swg/quickorder?parent=ibm/WebSphere&product=ibm/WebSphere/IBM+Business+Process+Manager+Express&release=All&platform=All&function=fixId&fixids=pdesigner.7501.repository.zip&includeSupersedes=0&source=fc] [ ] 
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Business Process Manager Standard General AIX, Linux, Linux zSeries, Solaris, Windows 7.5.0.1 Business Integration IBM Business Process Manager Express General Linux, Windows 7.5.0.1 
+PRODUCT ALIAS/SYNONYM
+ BPM 
+
+
+ [/support/docview.wss?uid=swg24030569&aid=1]Problems (APARS) fixed [/support/docview.wss?uid=swg24030569&aid=2]Problems (APARS) fixed
+IC72320 IC72700 IC73064 IC73894 IC74692 IC76007 IC76141 IC77556 JR38705 JR38741 JR38995 JR39109 JR39179 JR39381 JR39410 JR39413 JR39491 JR39606 JR39617 JR39657 JR39677 JR39712 JR39719 JR39720 JR39722 JR39729 JR39749 JR39766 JR39807 JR39818 JR39880 JR39971 JR39988 JR40009 JR40011 JR40026 IC76926 JR40053 IC75904 JR39911 JR39909 IC77017 IC76926 IC76724 IC75834 IC73521 IC74924 IC74042

@@ -1,0 +1,65 @@
+Title: IBM MQ security exception when accessing the URL of the WBE admin console in clustered environments configured using MQ as a messaging engine. - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ the error appears "Server might be down. Can not retrieve details " when following the URL of the WBE admin console in "https://hostname:port/wbe/administrator/console.jsp " 
+
+SYMPTOM
+[3/20/12 13:49:15:759 CDT] 00000110 ConnectionEve W J2CA0206W: A 
+connection error occurred. To help determine the problem, enable the 
+Diagnose Connection Usage option on the Connection Factory or Data 
+Source. 
+[3/20/12 13:49:15:759 CDT] 00000110 ConnectionEve A J2CA0056I: The 
+Connection Manager received a fatal connection error from the Resource 
+Adapter for resource 
+JMS$WbeQueueConnectionFactory$JMSManagedConnection@9. The exception is: 
+com.ibm.msg.client.jms.DetailedJMSSecurityException: JMSWMQ2008: Failed 
+to open MQ queue 'SYSTEM.DEFAULT.MODEL.QUEUE'. JMS attempted to perform 
+an MQOPEN, but WebSphere MQ reported an error. Use the linked exception 
+to determine the cause of this error. Check that the specified queue and
+queue manager are defined correctly.:com.ibm.mq.MQException: JMSCMQ0001:
+WebSphere MQ call failed with compcode '2' ('MQCC_FAILED') reason '2035'
+('MQRC_NOT_AUTHORIZED'). 
+
+
+CAUSE
+The WBE admin console makes use of a temporary queue to facilitate communications with the events engine. By default, MQ uses the queue 'SYSTEM.DEFAULT.MODEL.QUEUE' to support temporary queue creation so appropriate authority must be granted to the MQ userid used for the events engine usage of MQ. 
+
+RESOLVING THE PROBLEM
+Grant +put and +dsp authority to the appropriate model queue for the userid used for the events engine usage of MQ. If the default model queue 'SYSTEM.DEFAULT.MODEL.QUEUE' is inappropriate for use, a different model queue can be configured as follows: 
+
+Defining a new model queue (see example below) to be used for the WBE console, give it appropriate permissions, and then modify the connection factory, advanced settings, under 
+Temporary destinations, WebSphere MQ model queue name field to the name of the model queue created. 
+
+Note: Make sure your MQ admin issues the Refresh Security command after you give your model queue MQ permissions using setmqaut. 
+Granting a user authority to put to a model queue. As an example, assuming that WBE console application is using a dynamic queue instead of a topic. 
+* Defining a new model queue using runmqsc: 
+
+define qmodel(WBE.MODEL.QUEUE) like(SYSTEM.DEFAULT.MODEL.QUEUE) 
+. 
+You can use the MQ Explorer if you prefer. 
+. 
+* Setting appropriate permissions for the new queue and dynamic 
+queue(s). 
+. 
+setmqaut -m QMName -t queue -n WBE* -g GroupName +inq +put +get +browse 
+. 
+* Refreshing the MQ security cache: 
+
+echo "refresh security" | runmqsc QM Name 
+. 
+* In the WAS Admin Console go to Connection Factory used by the WBE 
+Console application. 
+. 
+Resources -> JMS 
+Connection factories > ConnectionFactoryName > Advanced properties 
+
+Under "Temporary destinations" configure the following: 
+
+WebSphere MQ model queue name 
+WBE.MODEL.QUEUE 
+
+Temporary queue prefix 
+WBE

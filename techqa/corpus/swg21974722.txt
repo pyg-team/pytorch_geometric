@@ -1,0 +1,16 @@
+Title: IBM iNotes & SmartCloud Notes web browser support statement for Internet Explorer - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+Microsoft's support for older versions of Internet Explorer has ended (http://www.microsoft.com/en-us/WindowsForBusiness/End-of-IE-support [http://www.microsoft.com/en-us/WindowsForBusiness/End-of-IE-support]). How are IBM iNotes and SmartCloud Notes web browser support for Internet Explorer affected by this announcement?
+
+ANSWER
+IBM iNotes 9.x and SmartCloud Notes web no longer support versions prior to Internet Explorer 11 beginning January 12, 2016. 
+
+While the earlier versions of Internet Explorer may still be used satisfactorily with IBM iNotes and SmartCloud Notes web, administrators are strongly encouraged to upgrade their end users as IBM is no longer testing prior versions, will not be able to address issues that may arise from their use or some features may stop working. 
+
+Starting in January 2016, version 11 is the only version of Internet Explorer that will be supported by iNotes and SmartCloud Notes web. Although access with older versions of Internet Explorer (versions 8, 9 and 10) is not being blocked at this time, end users on those versions may experience issues. 
+
+For a list of supported browsers per release, refer to IBM iNotes System Requirements: http://www.ibm.com/support/docview.wss?uid=swg27007763 [http://www.ibm.com/support/docview.wss?uid=swg27007763]

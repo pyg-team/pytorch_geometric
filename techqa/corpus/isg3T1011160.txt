@@ -1,0 +1,128 @@
+Title: IBM Configuring Hostbased Authentication with ssh. - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ How to configured Hostbased Authentication in AIX using ssh. 
+
+RESOLVING THE PROBLEM
+This document will show you how to configure HostbasedAuthentication 
+
+with OpenSSH on AIX 5.x and 6.x. It will demonstrate this with
+a new user account on both the ssh client and server.
+
+Obviously, if you already have existing users, then you just need to
+take the principles discussed below and apply it to your existing
+accounts.
+
+=====================================================================
+Note: Here is the username and client and server information that
+will be used in this document:
+
+Username: foo
+SSH client short hostname: MachineA
+SSH client fully qualified hostname: MachineA.austin.ibm.com
+SSH server short hostname: MachineB
+SSH server fully qualified hostname: MachineB.austin.ibm.com
+=====================================================================
+
+- Create user "foo" on the client and server
+
+- Set "foo" passwd on client and server
+
+- Telnet or 'su' to the "foo" account and verify that you can access
+$HOME/foo without any errors on both client and server
+
+- Verify that $HOME/foo currently does not have a .ssh on both client
+and server
+
+- On client, 'su' to "foo" and ssh to the server and login as "foo"
+-- You will be asked to accept the server's host key here
+-- You may also be asked to change your password if you haven't
+already done so
+
+- Exit out of the ssh session
+
+- There should now be a .ssh directory on the client with a
+known_hosts file in it
+foo@MachineA:/home/foo> ls -l .ssh
+-rw-r--r-- 1 foo staff 229 Dec 14 16:33 known_hosts
+
+- On server, 'su' to "foo" and ssh to the client and login as "foo"
+-- You will be asked to accept the client's host key here
+-- You may also be asked to change your password if you haven't
+already done so
+
+- Exit out of the ssh session
+
+- There should now be a .ssh directory on the server with a
+known_hosts file in it
+foo@MachineB:/home/foo> ls -l .ssh
+-rw-r--r-- 1 foo staff 231 Dec 14 16:37 known_hosts
+
+- On the server, cat the "known_hosts" file
+foo@MachineB:/home/foo> cat .ssh/known_hosts
+MachineA,9.3.58.116 ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAIEAw7skzOj
+pforZpKQWCJOpqFOe+NU8cWlXUMyIp0SutvGdpkXObMqywmGQZZjSCaRxm8uXpKup
+0a5Nm8jF60jJ9U79mUgE1T1g+ob/1D8YzXK9GTtufup8vyk78A/Ai3LzRUczckBps
+PSgFu3dVYhrVCHisMwKpj48cE5GWyJnZmc=
+
+- Note that the client key only has the short hostname (MachineA)
+and ip address, it does not have the fully qualified name
+
+foo@MachineB:/home/foo> host 9.3.58.116
+MachineA.austin.ibm.com is 9.3.58.116
+
+- Since the IP of the client will be resolved to a fully qualified
+name (MachineA.austin.ibm.com), there should also be a key in
+the server's known_hosts file with the long name. NOTE: If it returned
+with just the shortname you don't need to add another entry.
+
+- Modify the known_hosts file on the server to also contain the
+fully qualified name of the client
+-- Be careful editing this file because each key is one long line
+-- There should be no newline char in the middle of a key
+-- The final known_hosts file should look like this:
+
+foo@MachineB:/home/foo> cat .ssh/known_hosts
+MachineA,9.3.58.116 ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAIEAw7skzOj
+pforZpKQWCJOpqFOe+NU8cWlXUMyIp0SutvGdpkXObMqywmGQZZjSCaRxm8uXpKup
+0a5Nm8jF60jJ9U79mUgE1T1g+ob/1D8YzXK9GTtufup8vyk78A/Ai3LzRUczckBps
+PSgFu3dVYhrVCHisMwKpj48cE5GWyJnZmc=
+
+MachineA.austin.ibm.com ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAIEAw7s
+kzOjpforZpKQWCJOpqFOe+NU8cWlXUMyIp0SutvGdpkXObMqywmGQZZjSCaRxm8uX
+pKup0a5Nm8jF60jJ9U79mUgE1T1g+ob/1D8YzXK9GTtufup8vyk78A/Ai3LzRUczc
+kBpsPSgFu3dVYhrVCHisMwKpj48cE5GWyJnZmc=
+
+- On the server, modify /etc/ssh/sshd_config to allow
+HostbasedAuthentication:
+# vi /etc/ssh/sshd_config --> Enable the following:
+HostbasedAuthentication yes
+
+- On the server, add an /etc/ssh/shosts.equiv file with the
+client's long and user name:
+# cat /etc/ssh/shosts.equiv
+MachineA.austin.ibm.com foo
+
+- On the server, restart sshd
+# stopsrc -s sshd
+# startsrc -s sshd
+
+- On the client, modify /etc/ssh/ssh_config to allow
+HostbasedAuthentication:
+# vi /etc/ssh/ssh_config --> Enable the following:
+HostbasedAuthentication yes
+EnableSSHKeysign yes
+
+- On the client, 'su' to the "foo" user and ssh to the server
+
+- You should be allowed access without being prompted for
+the password
+
+- If this does not work, then get an sshd debug log on the
+server of a failure and submit it for analysis
+
+Notes:
+Make sure you can do reverse lookup on clients ip.

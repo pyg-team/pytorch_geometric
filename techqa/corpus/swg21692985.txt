@@ -1,0 +1,37 @@
+Title: IBM Installing a Content Analytics system to use WebSphere Application Server Network Deployment - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ I want to use WebSphere Application Server Network Deployment, not the application server that is embedded in a Content Analytics system. How do I install the Content Analytics software to use WebSphere Application Server ND? 
+
+ANSWER
+Prepare your WebSphere Application Server ND environment before you run the Content Analytics installation program:
+
+1. Install WebSphere Application Server ND on the server that you plan to use as the Content Analytics master server and on all servers that you plan to use as Content Analytics search servers. 
+
+ *  
+   a. Create a DMgr profile on the master server. 
+   b. Create a Custom profile (recommended) or an Application server profile on all servers that will have the search role, including the master server if it will be installed as an all-on-one master server. 
+   c. Ensure that all custom profiles are managed by Dmgr. 
+
+
+2. If you plan to use IBM HTTP Server (IHS), install IHS on all servers that will have the search role. Be sure to configure the IHS plug-in properly. 
+
+Install the Content Analytics software: 
+
+When you run the installation program ( install.exe on Windows or .install.bin on AIX or Linux), add the following options if you do not use IHS and there is no web server definition: 
+-D'$IGNORE_IHS_INSTALL_DIRECTORY$'=true -D'$IGNORE_WAS_WEB_SERVER_NAME$'=true 
+
+1. Run the installation program on the master server, selecting the "All-on-one master" option or "Distributed master" option, as appropriate. 
+ * 
+ * 
+ * 
+
+2. Run the installation program on all servers that you plan to use as search servers. Select the "Additional server" option when running the installation program. 
+ * 
+
+ 
+
+Cross reference information Segment Product Component Platform Version Edition Watson Group Watson Content Analytics AIX, Linux, Linux on Power systems, Linux on System z, Windows 3.5

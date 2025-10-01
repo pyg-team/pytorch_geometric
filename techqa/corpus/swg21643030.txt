@@ -1,0 +1,48 @@
+Title: IBM Failure to apply trial, evaluation or temporary floating license for RPT - United States
+
+Text:
+RPT; LKAD; License Server; Temporary License Key TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Attempts to apply IBM Rational Performance Tester (RPT) trial, evaluation or temporary floating license key result in failure. 
+
+SYMPTOM
+Steps to Reproduce: 
+
+ 1. Download trial, evaluation or temporary floating license key for IBM Rational Performance Tester (RPT) from Rational License Key Center. 
+ 2. Double click the downloaded license (.upd) file to import into Rational License Key Administrator (LKAD) 
+ 3. After importing the license file, restart the license server
+
+
+
+Expected result: RPT license should be listed on Rational License Key Administrator (LKAD) successfully. 
+Actual result: RPT license is not shown on LKAD and user cannot continue using the product.
+
+CAUSE
+License key information is not applied on the license server. 
+
+
+
+RESOLVING THE PROBLEM
+ 
+
+WORKAROUND: 
+
+Apply the following steps to circumvent the issue. 
+
+ 1. Open the license key (.upd) file with Notepad or text editor and copy the contents of this file to clipboard.
+    
+    
+ 2. Open the rational_server_temp.dat file with notepad or text editor.
+    
+    If Rational License Key Server (RLKS) v8.1.x is installed in default path, you
+    can find this file at C:\Program Files(x86)\IBM\RationalRLKS\common
+    
+    
+ 3. Paste the content of the clipboard into this file at the end.
+    
+    
+ 4. Restart the License Server (Click Start > All programs > IBM Rational > License tools (LMTOOLS) > Start/Stop/ReRead tab > Stop Server > Start Server > ReRead License file.
+    
+    
+ 5. Check LKAD if RPT license is shown and you can start the product successfully.

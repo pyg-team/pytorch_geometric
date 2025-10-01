@@ -1,0 +1,142 @@
+Title: IBM Tivoli Monitoring Logfile agent silent install on Windows - United States
+
+Text:
+ibm tivoli monitoring; logfile agent; silent install; silent installation; windows TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ How can I install and configure the ITM Logfile Agent silently on Windows? 
+
+SYMPTOM
+When attempting to perform a local installation without using ITM remote deployment, you can install and configure the agent silently on Windows as follows
+
+
+RESOLVING THE PROBLEM
+Silent install procedure - 
+
+ 
+
+C:\DownloadDirector\KLO\WINDOWS>start /wait setup 
+
+/z"/sfC:\$user\temp\LO_silent_ 
+
+Install.txt" /s /f2"C:\temp\silent_setup.log" 
+
+ 
+
+C:\IBM\ITM\BIN>more C:\$user\temp\LO_silent_install.txt 
+
+;********************************************************************* 
+
+; 
+
+; Tivoli Log File Agent 
+
+; 
+
+; Silent Installation Response File 
+
+; 
+
+;********************************************************************* 
+
+; 
+
+; 
+
+;--------------------------------------------------------------------- 
+
+[ACTION TYPE] 
+
+;--------------------------------------------------------------------- 
+
+; 
+
+;--------------------------------------------------------------------- 
+
+[INSTALLATION SECTION] 
+
+;--------------------------------------------------------------------- 
+
+License Agreement=I agree to use the software only in accordance with 
+
+the instal 
+
+led license. 
+
+Install Directory=C:\IBM\ITM 
+
+Install Folder=IBM Tivoli Monitoring 
+
+EncryptionKey=IBMTivoliMonitoringEncryptionKey 
+
+;--------------------------------------------------------------------- 
+
+; 
+
+[FEATURES] 
+
+;--------------------------------------------------------------------- 
+
+KLOWICMA=Tivoli Log File Agent 
+
+; 
+
+;********************************************************************* 
+
+; END OF SILENT INSTALLATION FILE. 
+
+;********************************************************************* 
+
+ 
+
+1) Tivoli Log File Adapter is installed following previous procedure, 
+
+but is not configured 
+
+ 
+
+2) Create new instance GRIMES_TEST_INSTANCE 
+
+From the command line, in C:\IBM\ITM\InstallITM 
+
+kinconfg -wKLOGRIMES_TEST_INSTANCE 
+
+ 
+
+3) Update the new instance configuration file 
+
+Edit the file C:\IBM\ITM\TMAITM6\klocma_GRIMES_TEST_INSTANCE.ini 
+
+At the bottom, add the following: 
+
+ 
+
+[Override Local Settings] 
+
+KLO_FORMAT_FILE=C:\$user\temp\klo.fmt 
+
+KLO_SEND_EIF_EVENTS=Yes 
+
+KLO_AUTO_INIT_SYSLOG=No 
+
+KLO_SEND_ITM_EVENTS=No 
+
+KLO_CONF_FILE=C:\$user\temp\klo.conf 
+
+ 
+
+4) Configure the agent 
+
+From the command line, in C:\IBM\ITM\InstallITM 
+
+kinconfg -n -ciKLOGRIMES_TEST_INSTANCE -L"kinconfg.log" 
+
+ 
+
+5) Verify configuration settings 
+
+Right-click and select Advanced->Edit Variables 
+
+ 
+
+All 5 overide local settings above should be displayed.

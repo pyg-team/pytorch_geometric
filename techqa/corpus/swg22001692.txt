@@ -1,0 +1,61 @@
+Title: IBM Microsoft SQL Server agent does not collect data for the Error Event Detail attribute group - United States
+
+Text:
+KOQ; OQ; MSSQLSERVER TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Microsoft SQL Server agent does not collect data for the Error Event Detail attribute group. 
+
+SYMPTOM
+Situation is not getting triggered on the Error Event Detail attribute group.
+
+
+CAUSE
+When the situation on the Error Event Detail attribute group is started, the Microsoft SQL Server agent reads and parses the SQL Server ERRORLOG file. The address of the last line of the ERRORLOG file, which the agent reads, is saved in the <Instance Name>_KOQERROR_EVENT temporary file. This address is called offset. When the Microsoft SQL server writes new errors in the ERRORLOG file, the agent reads only those errors that are listed after the offset. 
+
+If you stop the situation on the Error Event Detail attribute group, and before you restart the situation, if the SQL Server ERRORLOG file gets recycled or wrapped, then the offset value that is available in the <Instance Name>_KOQERROR_EVENT temporary file becomes invalid for reading the new SQL Server ERRORLOG file. If the agent uses the old offset value to read from the new SQL Server ERRORLOG file, the "Error in fgetws" error occurs and the situation is not triggered. 
+
+
+ENVIRONMENT
+This issue is observed in the Microsoft SQL Server agent version 06.31.10.00, and earlier.
+
+
+
+DIAGNOSING THE PROBLEM
+Check the <Host Name>_oq_<Instance Name>_koqagent_* agent log files that are available at the following location: 
+
+ 
+For 32-bit Windows systems: %candle_home%\TMAITM6\logs
+For 64-bit Windows systems: %candle_home%\TMAITM6_x64\logs 
+
+The agent log files must include lines that are similar to:
+(581B4403.0088-6454:koqqwagt.cpp,129,"TakeSampleConstructor") event_request_count:1.
+(581B4403.0089-23DC:koqerror.cpp,524,"GetServerCollation") Server collation is S 
+(581B4403.008A-23DC:koqerror.cpp,137,"MonitorErrorLog") Errolog file name is 'D:\Program Files\Microsoft SQL Server\MSSQL10_50.MSSQLSERVER\MSSQL\Log\ERRORLOG'.
+
+(581B4403.008B-23DC:koqerror.cpp,183,"MonitorErrorLog") Errorlog min severity :'10'.
+(581B4403.008C-23DC:koqerror.cpp,187,"MonitorErrorLog") PrevParseDetailFile: C:\IBM\ITM\TMAITM~1\logs\tmp\KOQ\USBDIBMSQLVC01\USBDIBMSQLVC01_KOQERROR_EVENT.
+
+(581B4403.008D-23DC:koqerror.cpp,1123,"ReadConfiguration") Errrolog Configuration: statrup_minutes ='0', startup_rows='0', max_event_row='50'.
+
+(581B4409.0000-2988:koqerror.cpp,903,"ErrorLogParser") Error in fgetws
+(581B4409.0001-2988:koqerror.cpp,1287,"ThreadErrorLogParser") 
++581B4409.0001 Number of error found :0.
+
+
+RESOLVING THE PROBLEM
+Solution : This issue is fixed in MS SQL Server agent version 06.31.10.01. 
+
+
+Workaround :
+Please follow below steps:
+1. Delete the <instance name>_KOQERROR_EVENT temporary file that is available at the following location:
+· For Windows 32-bit systems: %candle_home%\TMAITM6\logs\tmp\KOQ\<Instance Name>
+· For Windows 64-bit systems: %candle_home%\TMAITM6_x64\logs\tmp\KOQ\< Instance Name > 
+
+2. Restart the agent.
+
+
+
+PRODUCT ALIAS/SYNONYM
+ SQL Agt

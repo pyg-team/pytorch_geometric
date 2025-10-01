@@ -1,0 +1,59 @@
+Title: IBM JMS application fails with JMSMQ2008 and 2035 when opening AMS protected queue. - United States
+
+Text:
+AMS Advanced Message Security ESE MCA JMS JMSMQ2008 2035 MQRC_NOT_AUTHORIZED policy TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Your WebSphere MQ (WMQ) JMS application fails with error JMSMQ2008 when attempting to open a queue that has an Advanced Message Security (AMS) policy enabled. The linked exception reveals that there is a security error; 2035 ( MQRC_NOT_AUTHORIZED ). 
+
+SYMPTOM
+You have verified that your AMS configuration is correct and mirrors the example given in the "Quick Start Guide for Java clients [http://pic.dhe.ibm.com/infocenter/wmqv7/v7r5/topic/com.ibm.mq.sec.doc/q014710_.htm]" in the WMQ documentation, but you still receive a JMSMQ2008 exception when the application tries to open the queue with a defined AMS protection policy.
+
+
+CAUSE
+The exception occurs because you do not have an AMS enabled client or the AMS JMS client application is running under a non-IBM JRE, which is not supported. This is a known limitation, [http://pic.dhe.ibm.com/infocenter/wmqv7/v7r5/index.jsp?topic=%2Fcom.ibm.mq.sec.doc%2Fq014670_.htm] which is listed in the WMQ documentation. The limitation reads:
+
+"All Java™ applications are dependant on IBM® Java Runtime.
+WebSphere MQ AMS does not support JRE provided by other vendors."
+
+DIAGNOSING THE PROBLEM
+Enabling JMS tracing for the failing client application reveals the following exceptions:
+
+com.ibm.msg.client.jms.DetailedJMSSecurityException: JMSWMQ2008:
+Failed to open MQ queue 'NAMED_QUEUE'.
+JMS attempted to perform an MQOPEN, but WebSphere MQ reported an error.
+Use the linked exception to determine the cause of this error. Check that the specified queue and queue manager are defined correctly
+
+c.i.m.client.jms.DetailedJMSSecurityException
+----+----+---- { setLinkedException(Exception)
+[com.ibm.mq.MQException: JMSCMQ0001: WebSphere MQ call failed with compcode '2' ('MQCC_FAILED') reason '2035' ('MQRC_NOT_AUTHORIZED').]
+
+RESOLVING THE PROBLEM
+There are three options for working around this issue:
+
+1. Start your JMS application under a supported IBM JRE with an AMS enabled WMQ client.
+
+2. Move your application to the same machine where your queue manager is running and have it connect using a bindings mode connection. A bindings mode connection uses platform native libraries to perform the WMQ API calls. Accordingly, the native AMS interceptor is used to perform the AMS operations and there is no reliance on the capabilities of the JRE.
+
+3. Use an MCA interceptor because this allows signing and encryption of messages as soon as they arrive at the queue manager, without the need for the client to perform any AMS processing. Given that the protection is applied at the queue manager, an alternate mechanism must be used to protect the messages in transit from the client to the queue manager. Most commonly this is achieved by configuring SSL encryption on the server connection channel used by the application.
+
+Refer to the WMQ online documentation for further details:
+
+
+WebSphere MQ > Security > WebSphere MQ Advanced Message Security > Using keystores and certificates >> Message Channel Agent (MCA) interception [http://pic.dhe.ibm.com/infocenter/wmqv7/v7r5/topic/com.ibm.mq.sec.doc/q014780_.htm]
+
+Notes:
+A. For MCA Interception to work properly, your client applications must run with "client AMS disabled". This can be accomplish by:
+
+
+ * 
+ * 
+ * 
+ * AMQ_DISABLE_CLIENT_AMS=TRUE
+ * 
+
+
+B. A security policy must be in place for each queue that the MCA Interceptor will deliver messages onto. In other words, the target queue needs to have an AMS security policy in place with the signer and recipient's DN (distinguished name) matching that of the certificate assigned to the MCA Interceptor (i.e. the DN of the certificate designated by cms.certificate.channel.SYSTEM.DEF.SVRCONN property in the keystore.conf used by the QMgr).  
+
+PRODUCT ALIAS/SYNONYM
+ WMQAMS AMS ESE

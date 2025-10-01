@@ -1,0 +1,33 @@
+Title: IBM Webcast replay: Windows Native Memory Problem Determination Techniques and Tools for WebSphere Application Server - United States
+
+Text:
+wste_webcast; WSTE; Support Technical Exchange; education; presentation; webcast; STEwebcastDocument; Native OutOfMemoryError; OutOfMemory; OOM; NOOM WEBCAST
+
+ABSTRACT
+ This WebSphere Support Technical Exchange is designed to cover native memory issues for WebSphere Application Server, particularly native OutOfMemoryErrors and leaks on Windows. It covers theory, detecting and monitoring, isolating and avoiding, and finally analyzing leaks with UMDH, LeakDiag, DebugDiag, VMMap and windbg.
+
+
+Level of Difficulty: Advanced 
+
+Presenter(s): Kevin Grigorenko
+
+Date: 22 June 2011 
+
+PRESENTATION
+[http://www.ibm.com/i/v16/icons/weblecture.gif]WSTE-06222011-WindowsNativeMemoryProblemDeterminationWAS-Grigorenko.pdf [/support/docview.wss?uid=swg27021906&aid=2] WSTE-06222011-WindowsNativeMemoryProblemDeterminationWAS-Grigorenko.pdf [/support/docview.wss?uid=swg27021906&aid=1]
+
+
+Click the PDF file above to play the slide presentation for this Webcast. Right-click and select Save As to store the file on your local computer for later review.
+
+Get Adobe Reader [http://www.adobe.com/products/acrobat/readstep2.html] to view PDF
+
+AUDIO
+[http://www.ibm.com/i/v16/icons/aud.gif]To replay the recording of this 46 minutes Webcast, click on Download Audio [http://public.dhe.ibm.com/software/websphere/techexchange/Jun-22-2011-Grigorenko.mp3] (5.0MB - audio in MP3 format) then open the PDF file above.
+
+Right-click and select Save As to store the file on your local computer for later playback.
+
+Problem listening to the audio replay?
+If you are having a problem listening to the audio when you use a left-click on the audio link above, you need to download the MP3 file to your local computer before playback by doing a right-click and Save As.
+
+RELATED INFORMATION
+ WebSphere Support Technical Exchange [http://www.ibm.com/software/websphere/webcast]

@@ -1,0 +1,144 @@
+Title: IBM IC89366: CLPPLUS SHOULD NOT GET INTO INTERACTIVE MODE WHEN USER SPECIFIES INCORRECT CREDENTIALS IN THE CONNECT STRING GIVEN WHILE LAUNCHI - United States
+
+Text:
+z/os  FIXES ARE AVAILABLE
+DB2 Version 9.7 Fix Pack 8 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24034634]
+DB2 Version 9.7 Fix Pack 9 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24036646]
+DB2 Version 9.7 Fix Pack 9a for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24037559]
+DB2 Version 9.7 Fix Pack 10 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24038641]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS REQUIREMENT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Currently when a user launches CLPPlus (Windowed or Non Window
+   mode) specifying the connection parameters, and due to some
+   reason, the connection fails to establish, CLPPlus launches and
+   connection parameters are requested:
+   
+   CLPPlus: Version 1.6
+   Copyright (c) 2009, 2011, IBM CORPORATION.  All rights reserved.
+   
+   
+   [jcc][t4][2043][11550][4.16.8] Exception
+   java.net.ConnectException: Error
+   opening socket to server
+   regrlnxamd07.torolab.ibm.com/9.26.93.154 on port
+   50,000 with message: Connection refused: connect.
+   ERRORCODE=-4499,
+    SQLSTATE=08001
+   
+   Enter DATABASE NAME [Sample]:
+   
+   
+   The user wants the behavior to be changes such that:
+   
+   When connection fails to establish, the user CLPPlus should be
+   launched and error message should be displayed and a message
+   prompt should be displayed which requests the user to press
+   ENTER key in order to exit the winodw:
+   
+   CLPPlus: Version 1.6
+   Copyright (c) 2009, 2011, IBM CORPORATION.  All rights reserved.
+   
+   
+   [jcc][t4][2043][11550][4.16.8] Exception
+   java.net.ConnectException: Error
+   opening socket to server
+   regrlnxamd07.torolab.ibm.com/9.26.93.154 on port
+   50,000 with message: Connection refused: connect.
+   ERRORCODE=-4499,
+    SQLSTATE=08001
+   
+   Connection failed to be established. Press enter to Exit.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *  This APAR is to correct the default behavior of CLPPlus window,
+   such that CLPPlus window is not launched when user gives
+   incorrect connect string while launching CLPPlus.
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC89366
+   
+   
+ * REPORTED COMPONENT NAME
+   DB2 FOR LUW
+   
+   
+ * REPORTED COMPONENT ID
+   DB2FORLUW
+   
+   
+ * REPORTED RELEASE
+   970
+   
+   
+ * STATUS
+   CLOSED REQ
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-01-04
+   
+   
+ * CLOSED DATE
+   2013-04-01
+   
+   
+ * LAST MODIFIED DATE
+   2013-04-01
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    IC91752
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

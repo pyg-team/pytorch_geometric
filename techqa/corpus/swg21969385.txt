@@ -1,0 +1,83 @@
+Title: IBM SPSS製品の再インストール･再認証について - United States
+
+Text:
+ 技術情報(FAQS)
+
+この文書は以下の言語にのみ有効な内容です
+ 日本語 
+
+質問
+ SPSS製品の使用PC変更、OS入替、HDD交換などの事情により、製品を再インストール・再認証する場合の手続きを教えてください。 
+
+回答
+SPSS製品を再インストール・再認証される場合は、以下の手順で手続きを行ってください。
+1. 認証履歴取り消し申請 （旧：認証コードUPDATE申請）
+2. 旧マシンからの製品アンインストール
+3. 新しいマシンへの再インストール
+
+1.と 2.は順番が前後にしても構いません。また、マシンの故障や破棄などで、アンインストールができない場合、2.は省略されても結構です。
+※なお、サポートを終了しているバージョンについては、ご案内を終了しておりますので予めご了承ください。
+サポートバージョンはこちら（英語サイト） [http://www-01.ibm.com/software/support/lifecycleapp/PLCSearch.wss?q=spss&scope=F523070D12499J17-I645032G36539U31-K317640T42411B13-O610988L12375W12-W703098F12306M33-X105958Q73400Q82&ibm-search.x=0&ibm-search.y=0&sort=E]をご参照ください。 
+
+
+1. 認証履歴取り消し申請
+[「認証履歴取り消し依頼」に必要な情報]をメール本文に記載の上、Client Care担当 （spsscs@jp.ibm.com）へメールをご送付ください。メールの件名は「認証履歴取り消し申請」としてください。
+
+メールアドレス：spsscs@jp.ibm.com
+メールの件名：認証履歴取り消し申請
+メール本文：「認証履歴取り消し依頼」に必要な情報
+
+[「認証履歴取り消し依頼」に必要な情報]
+
+- IBMお客様番号(*1)
+- サイト番号(*2)
+- ご勤務先、ご氏名、ご連絡先
+- ソフトウェア製品名およびバージョン
+- 認証コード(英数20桁)(*3)
+- 再インストール台数
+- 認証履歴を取り消すマシンのロックコード(*4)
+
+* 番号はすべて「半角英数字」で記載してください。
+*1, *2 ご購入時に送付されている「IBMソフトウェア・ライセンスのご案内」メールに添付されている[ライセンス証書.pdf]ファイルの1枚目に記述されております。販売店経由で購入されているお客様はお持ちでない場合がございます。サイト番号は、購入時期や契約により、「ソフトウェア･サイト番号」「パスポートアドバンテージ・サイト番号」、 「IBMサイト番号」のいずれかの名称で記載されています。
+*3 認証コードが複数ある場合は、すべて記載してください。
+*4 ロックコードは、ライセンス認証ウィザードを起動後、[製品認証]画面に表示される 『このコンピュータのロックコード：x-xxxxx』のコードのことです。不明の場合は不明と記載してください。
+SPSS Statisticsのロックコードの確認方法 [http://www-01.ibm.com/support/docview.wss?uid=swg21574528]
+Amosのロックコードの確認方法 [http://www-01.ibm.com/support/docview.wss?uid=swg21574523]
+
+* 「認証コードUPDATE申請ウェブフォームはサービスを終了いたしました。今後はメールで申請してください。
+* 事前に以下対応OSの案内をご参照ください。
+
+[対応OS一覧] 
+Windows 10： Statistics 23.0/Amos 23.0 / Modeler 18.0 以上
+Windows 8： Statistics 21.0/Amos 21.0 以上 /Text Analytics for Surveys 4.0.1/Modeler 15.0～18.0
+Windows 7： Statistics 18.0/Amos 18.0/Text Analytics for Surveys 4.0/Modeler 14.0 以上
+Windows Vista： SPSS 16.0/Amos 16.0/Text Analytics for Surveys 2.1 以上
+Mac OS X 10.13： Statistics 25.0/Modeler 18.0 以上
+Mac OS X 10.12： Statistics 24.0/Modeler 18.0 以上
+Mac OS X 10.11： Statistics 23.0/Modeler 18.0 以上
+Mac OS X 10.10： Statistics 22.0 以上/Modeler 18.0
+Mac OS X 10.9： Statistics 22.0～23.0
+Mac OS X 10.8： Statistics 21.0～23.0
+Mac OS X 10.7： Statistics 20.0～22.0
+Mac OS X 10.6： Statistics 18.0～21.0
+
+*対応OS以外は、動作保証およびサポートを行っておりません。
+また、サポートを終了しているバージョンについては、認証履歴取り消しやライセンスコード発行も含めてご案内を終了しておりますので予めご了承ください。
+サポートバージョンはこちら（英語サイト） [http://www-01.ibm.com/software/support/lifecycleapp/PLCSearch.wss?q=spss&scope=F523070D12499J17-I645032G36539U31-K317640T42411B13-O610988L12375W12-W703098F12306M33-X105958Q73400Q82&ibm-search.x=0&ibm-search.y=0&sort=E]をご参照ください。 
+最新バージョン購入をご検討いただく場合は、弊社営業部までご連絡ください。
+
+営業部連絡先
+メールアドレス：JPSALES@jp.ibm.com
+
+2. 旧マシンからの製品アンインストール
+Windowsの場合は、コントロールパネルからプログラムを削除してください。
+Macの場合は、プログラムをゴミ箱に移し、ゴミ箱を空にしてください。
+アンインストール方法の詳細については各製品の技術情報をご確認ください。
+Statisticsのアンインストール手順について [http://www-01.ibm.com/support/docview.wss?uid=swg21678475]
+Amosのアンインストール手順について [http://www-01.ibm.com/support/docview.wss?uid=swg21682695]
+
+3. 新しいマシンへの再インストール
+お客様からの「認証履歴取り消し依頼」メールを受信後、1営業日以内に完了通知メールを送付いたします。新しいマシンでのインストール・認証に関しては、完了通知メールをご参照ください。 
+
+関連情報
+ Need more help? Our Statistics forum is Live! [https://developer.ibm.com/answers/topics/statistics.html?smartspace=predictive-analytics]

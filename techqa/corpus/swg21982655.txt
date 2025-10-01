@@ -1,0 +1,44 @@
+Title: IBM Deploying Connector Creator when the Analysis Repository is not a DB2 database - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How do I deploy Connector Creator in IBM i2 Analyze 4.1.1 when the Analysis Repository is a Microsoft SQL Server or an Oracle database? 
+
+ANSWER
+
+
+The online documentation for IBM i2 Analyze describes how to deploy Connector Creator when the Analysis Repository is a DB2 database. It is also possible to deploy Connector Creator when the Analysis Repository is a Microsoft SQL Server or an Oracle database.
+
+BEFORE YOU BEGIN
+Connector Creator does not require the Analysis Repository to be a DB2 database, but it does require an instance of DB2 for its own storage. The version requirements on this instance of DB2 are the same as if you were to use it for the Analysis Repository. ABOUT THIS TASK
+The IBM Support website has complete instructions for deploying Connector Creator [http://www-01.ibm.com/support/docview.wss?uid=swg27047823] into an environment where a DB2 server hosts all of the i2 Analyze system databases. When the Analysis Repository is not a DB2 database, the following instructions replace Chapter 2, Installing Connector Creator. The instructions assume that you already have a working deployment of i2 Analyze 4.1.1. PROCEDURE
+ 1.  Deploy or get access to an instance of IBM DB2 for which you have administrative rights. The instance that you use can be deployed on the same server as i2 Analyze, or on a separate server.
+ 2.  On the server where DB2 is deployed, locate the JDBC driver file, which is stored at IBM\SQLLIB\java\db2jcc4.jar by default.
+ 3.  Copy the JDBC driver file to the deployment toolkit on the i2 Analyze server. You must save the file in the toolkit\configuration\environment\common\jdbc-drivers directory.
+ 4.  On the i2 Analyze server, open a command prompt and navigate to the scripts directory of the i2 Analyze deployment toolkit.
+ 5.  Run the following command to add Connector Creator to your i2 Analyze deployment configuration: setup -t addConnectorCreator
+     
+     The command adds a fragment for Connector Creator to the toolkit\configuration\fragments directory, and information about the configuration database to the topology file.
+ 6.  Using a text editor, open the ApolloServerSettingsDaodMandatory.properties file from the new toolkit\configuration\fragments\Connected\WEB-INF\classes directory.
+ 7.  Delete the following line, and then save and close the file: MainSearchIndex=C:/IBM/iap/daod5-data
+     
+     
+ 8.  Using an XML editor, open the topology.xml file from the toolkit\configuration\environment directory.
+ 9.  Complete the information about the configuration database by providing the host-name and the instance-name. <database database-type="ccConfig" dialect="db2" instance-name="InstanceName"
+               database-name="CONFIG" xa="true" id="config"
+               host-name="HostName" port-number="50000">
+     
+     The default instance name for a Windows deployment of DB2 is DB2. For a Linux deployment, the default instance name is db2inst1. The host name must identify the server on which DB2 is deployed.
+ 10. Using a text editor, open the credentials.properties file from the toolkit\configuration\environment directory.
+ 11. Provide db.config.user-name and db.config.password with the user name and password of a user with permission to add and modify the configuration database in DB2.
+ 12. At the command prompt, run the following sequence of commands to deploy Connector Creator and restart i2 Analyze: setup -t stopLiberty
+     setup -t deploy
+     setup -t startLiberty
+     
+     
+ 13. Restart the HTTP server, and then open the Intelligence Portal in your web browser. The application toolbar contains a new Connected button that enables users to work with the external data sources that are connected through Connector Creator. However, no data sources are available until you also add those to the i2 Analyze deployment.
+
+WHAT TO DO NEXT
+When you have completed this procedure successfully, you can continue to deploy Connector Creator by following the instructions in the IBM Knowledge Center. The next task is to add an external data source [http://www.ibm.com/support/knowledgecenter/SSFKBU/com.ibm.i2.deploy.connector.doc/connector_creator_external_source.html] to the deployment.

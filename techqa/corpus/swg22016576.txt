@@ -1,0 +1,26 @@
+Title: IBM ALLOWUSERKEYCSA(YES/NO) question - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ We are running CDC in place of EP, there is a question on whether the ALLOWUSERKEYCSA(YES/NO) is required to be YES for CDC and what implications there could be if it is set to N. 
+
+ANSWER
+
+In V9.1 and V9.5 we had this requirement for our XM protocol, but that was removed by the V10.1 release. This is no longer a concern in our supported products (i.e. V11.3 and V11.1) and we run our systems with NO with no known problems. 
+
+z/OS V2.3 is the last z/OS release planned to support YES. 
+
+The customer should not need YES for Classic CDC, however, it is good practice to phase this through their test environments to assess for impact across all their application programs. 
+
+Note: Coding ALLOWUSERKEYCSA(NO) for this option will cause user key programs attempting to obtain CSA storage to ABEND with abend code B78, reason code xxxxxx5C. (The first three bytes of the reason code provide internal failure details.) The default setting for this option is 
+ALLOWUSERKEYCSA(NO). 
+
+Allowing programs to obtain user key CSA creates a security risk because CSA storage can then be modified by any unauthorized program. 
+IBM recommends that ALLOWERUSERKEYCSA(NO) be coded in the active DIAGxx parmlib member.
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Information Management InfoSphere Classic Change Data Capture for z/OS

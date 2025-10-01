@@ -1,0 +1,116 @@
+Title: IBM PM80571: Image quality of Cognos Charts degraded in Cognos for MS Office documents - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS SUGGESTION FOR FUTURE RELEASE.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Information comes from previous PMR (62410,999,649):?Problem
+   description?It appears the issue is when using Cognos for MS
+   Office the images are displayed in bitmap ( .bmp ) format and
+   produce a lower quality /blurry version of the image. Whereas
+   the PDF export are using vector graphics so they are of better
+   quality.??Client test case:?Using with the Office Plugin.?Open
+   Microsoft Powerpoint 2010?Click on the IBM Cognos tab in the
+   ribbon.?Launce the IBM Cognos plugin.?Login to server.?Navigate
+   to report.?Select the report and select import content.?Rather
+   than run the report live, we tend to use the Most Recent Version
+   option.?Import a chart.?At this point the chart appears, not as
+   ?crisp? as it is in Cognos, but when printing the document the
+   chart is almost unreadable.??Here are the steps when we try just
+   using the image directly.?Sign into Cognos Connection. Navigate
+   to report. Open saved HTML version of report.?Right click chart
+   -> select Download Chart option.?Save the image locally
+   (defaults to a .png file as attached)?Open Powerpoint or word
+   and import the image.?Again, the chart appears but it is not
+   ?crisp? as it is in Cognos.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *  Cognos Graphic Services is working as designed. This component p
+   rovides small, lightweight files that are used when running web
+   reports or sending via email.
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM80571
+   
+   
+ * REPORTED COMPONENT NAME
+   COG FOR MS OFFI
+   
+   
+ * REPORTED COMPONENT ID
+   5724W12GO
+   
+   
+ * REPORTED RELEASE
+   A10
+   
+   
+ * STATUS
+   CLOSED SUG
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-01-14
+   
+   
+ * CLOSED DATE
+   2013-01-22
+   
+   
+ * LAST MODIFIED DATE
+   2013-01-22
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

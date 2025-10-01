@@ -1,0 +1,172 @@
+Title: IBM IY79457: WMQ V6.0 client channel fails when a MQCSP structure is specified on the MQCNO passed into a MQCONNX call. - United States
+
+Text:
+  FIXES ARE AVAILABLE
+WebSphere MQ V6.0 for iSeries Fix Pack 6.0.1.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24012223]
+WebSphere MQ V6.0 Refresh Pack 6.0.2.0 [http://www-01.ibm.com/support/docview.wss?uid=swg24013482]
+WebSphere MQ V6.0 Fix Pack 6.0.1.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24011320]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  A MQCSP (Connection security parameters structure) can be
+   specified on a client MQCONNX call using the
+   SecurityParmsOffset or SecurityParmsPtr fields in the MQCNO
+   (Connection options structure) structure.
+   If an MQCSP is specified on the MQCNO of a client MQCONNX call,
+   then the client may fail to connect to the queue manager.
+   This occurs when the client application and queue manager are
+   on different machines, using different character sets (CCSID).
+   The channel failure occurs on the queue manager side.
+   If the queue manager is running on a UNIX platform an FFST
+   showing a SIGSEGV within an amqrmppa or amqcrsta process is
+   observed. If the queue manager is running on Windows,
+   then an access violation is observed within an AMQRMPPA.EXE
+   process.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   Customer passing an MQCSP structure to a client MQCONNX call.
+   
+   Platforms affected:
+    All Distributed (iSeries, all Unix and Windows)
+   ****************************************************************
+   PROBLEM SUMMARY:
+   The codepage conversion of the network flows between client and
+   server, containing the MQCSP information, was performed
+   incorrectly.
+   This caused the server-side message channel agent to access
+   invalid storage, and or raise a SIGSEGV  or access violation.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The code was fixed to correct the codepage conversion.
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+                      v6.0
+   Platform           Fix Pack 6.0.1.1
+   --------           --------------------
+   Windows            U200247
+   AIX                U804921
+   HP-UX (PA-RISC)    U805233
+   HP-UX (Itanium)    U805767
+   Solaris (SPARC)    U805234
+   Solaris (x86-64)   U805768
+   iSeries            SI21854
+   Linux (x86)        U805235
+   Linux (x86-64)     U805770
+   Linux (zSeries)    U805236
+   Linux (Power)      U805237
+   Linux (s390x)      U805769
+   
+   The latest available maintenance can be obtained from
+   'WebSphere MQ Recommended Fixes'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037]
+   
+   If the maintenance level is not yet available, information on
+   its planned availability can be found in 'WebSphere MQ
+   Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IY79457
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBS MQ FOR LIN
+   
+   
+ * REPORTED COMPONENT ID
+   5724H7204
+   
+   
+ * REPORTED RELEASE
+   600
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2005-12-05
+   
+   
+ * CLOSED DATE
+   2005-12-22
+   
+   
+ * LAST MODIFIED DATE
+   2009-10-29
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBS MQ FOR LIN
+   
+   
+ * FIXED COMPONENT ID
+   5724H7204
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R600 PSY
+   UP

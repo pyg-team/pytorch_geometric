@@ -1,0 +1,101 @@
+Title: IBM June, 2018 - IBM Power Systems Technical Support Newsletter - United States
+
+Text:
+Newsletter; configuration; installation; faqs; support; upgrade; errors; fixes; trouble shooting; problem resolution NEWSLETTER
+
+ABSTRACT
+ Client self assist - Technical Support Information for IBM Power Systems Administrators 
+
+CONTENT
+ 
+
+
+[/support/docview.wss?uid=isg3T7000744&amp;aid=1] [/support/docview.wss?uid=isg3T7000744&amp;aid=1] 
+[/support/docview.wss?uid=isg3T7000744&amp;aid=1] [/support/docview.wss?uid=isg3T7000744&amp;aid=1] [/support/docview.wss?uid=isg3T7000744&amp;aid=1] [/support/docview.wss?uid=isg3T7000744&amp;aid=1] 
+[/support/docview.wss?uid=isg3T7000744&aid=2] [https://www.ibm.com/support/entry/portal/support?brandind=System%20Storage] Power Systems Technical Support Newsletter
+June 10, 2018 | Issue #6 [/support/docview.wss?uid=isg3T7000744&amp;aid=1] [/support/docview.wss?uid=isg3T7000744&amp;aid=1] [/support/docview.wss?uid=isg3T7000744&amp;aid=1] [/support/docview.wss?uid=isg3T7000744&amp;aid=1] 
+[/support/docview.wss?uid=isg3T7000744&amp;aid=1] 
+IBM Power Systems
+
+
+Welcome to the IBM Power Systems technical support information update. This communication is designed to help you derive maximum value from your software by providing the most up-to-date technical information, answers to frequently asked questions, and links to other key information. 
+
+Notice: Newsletter emails discontinued after May 2018
+
+
+To improve our communications and reduce the number of emails you receive from us, we will be making changes to the distribution of this newsletter. Starting in June, we will continue to publish the IBM Power Systems Newsletter [http://www.ibm.com/support/docview.wss?uid=isg3T7000744] in an on-line version only and highlighting it on our Support Portal and social channels, however we will no longer send the associated email version. You can continue to receive direct notifications (through emails or RSS feeds) about newly published newsletters by subscribing to your product(s) through MyNotifications [https://www-947.ibm.com/systems/support/myview/subscription/css.wss/].
+
+
+Also, please continue to follow our IBM Systems social channels IBM Power Systems Twitter [https://twitter.com/IBMPowerSystems], IBM Power Systems Facebook [https://www.facebook.com/IBMPowerSystems/] and IBM Power Systems YouTube [https://www.youtube.com/user/ibmpowersystems], where we share these newsletters and a wealth of other information from our support teams.
+
+
+Support Resources
+ 
+
+ *  IBM Power Systems Support Portal [https://www.ibm.com/support/home/product/5465312/POWER8_systems] 
+   
+   POWER8 Systems Information Knowledge Center [https://www.ibm.com/support/knowledgecenter/POWER8/p8hdx/POWER8welcome.htm] 
+   
+   POWER9 Systems Information Knowledge Center [https://www.ibm.com/support/knowledgecenter/POWER9/p9hdx/POWER9welcome.htm] 
+   
+   IBM Support Site Assistance [https://www.ibm.com/support/home/widgets/siteAssistance/siteAssistance.html] 
+   Working with IBM to help support your IBM product(s). Click on the "Call Home Web" tab to learn more and check out 
+    * Configuring connection to IBM Call Home Web [https://www.ibm.com/support/knowledgecenter/STZSWD_11.5.4/UG/xiv_sds_ch4_web_call_home.html]
+   
+    * Introducing and managing IBM Call Home - YouTube videos [https://www.youtube.com/playlist?list=PLMp5LlSAupxKmVavYofVlbpvh8bJZj3SN&cm_mc_uid=15901765926914915305918&cm_mc_sid_50200000=1491571195]
+   
+   
+
+
+Latest Technotes and FAQs
+ * 
+ *  Collecting useful data to troubleshoot CDE Login Manager Hangs [http://www.ibm.com/support/docview.wss?uid=isg3T1027648] 
+ *  Resolving issues installing Open Source RPM Packages on AIX [http://www.ibm.com/support/docview.wss?uid=isg3T102750] 
+ *  Capacity BackUp is designed to support customer's disaster recovery and high availability needs [http://www.ibm.com/support/docview.wss?uid=isg3T1027721] 
+ *  Capacity on Demand for Power servers with dynamic logical partitioning offers clients the ability to non-disruptively activate (no boot required) processors and memory [http://www.ibm.com/support/docview.wss?uid=isg3T1027713] 
+ *  Db2 for i is an IBM i integrated Relational Database Management System that leverages the high performance, virtualization, and energy efficiency features of IBM Power Systems [http://www.ibm.com/support/docview.wss?uid=isg3T1027715] 
+ *  Db2 Web Query for i is a business intelligence and analytics platform for companies using IBM i systems that helps turn data into insight and insight into business outcomes [http://www.ibm.com/support/docview.wss?uid=isg3T1027714] 
+ *  IBM AIX: Step by step instructions for configuring system activity accounting [http://www.ibm.com/support/docview.wss?uid=isg3T1027805] 
+ *  IBM AIX: CIFS client end of support [http://www.ibm.com/support/docview.wss?uid=isg3T1027670] 
+ *  Making AIX SHA-256 and SHA-512 passwords compatible with other OS's [http://www.ibm.com/support/docview.wss?uid=isg3T102759] 
+ *  AIX daemons managed by SRC may not start [http://www.ibm.com/support/docview.wss?uid=isg3T1027587] 
+ *  What is the memory usage by the CIFS driver? [http://www.ibm.com/support/docview.wss?uid=isg3T1027593] 
+ *  ntpV4 fails to install without the file set openssl.base [http://www.ibm.com/support/docview.wss?uid=isg3T1027669] 
+ *  IBM Advanced Job Scheduler for i is a job scheduling system designed to allow unattended operations, automate operator functions, and control report distribution [http://www.ibm.com/support/docview.wss?uid=isg3T1027570] 
+ * 
+
+
+Latest Downloads and Fixes  
+
+ *  IBM Support FixCentral [https://www.ibm.com/support/fixcentral/] 
+
+
+
+Education and Training
+
+ *  IBM Systems Educational Videos [https://mediacenter.ibm.com/channel/Systems/62944711] 
+   
+   IBM Electronic Support Educational Videos [https://mediacenter.ibm.com/channel/Electronic%2BSupport/71754582] 
+   
+
+
+Problem Solving Resources  
+
+ *  Power Systems Prerequisites is now part of FLRT [https://www.ibm.com/developerworks/community/blogs/systemssupport/entry/Power_Systems_Prerequisites_is_now_part_of_FLRT?lang=en] 
+   IBM Fix Level Recommendation Tool (FLRT) is your one-stop-shop for information about your Power systems 
+
+
+
+Forums and Wikis  
+
+ *  IBM Systems Director Forum (System x, System z, Power Systems) [https://www.ibm.com/developerworks/community/forums/html/forum?id=11111111-0000-0000-0000-000000000759] 
+
+[/support/docview.wss?uid=isg3T7000744&amp;aid=1] 
+[/support/docview.wss?uid=isg3T7000744&amp;aid=1] [/support/docview.wss?uid=isg3T7000744&amp;aid=1] [/support/docview.wss?uid=isg3T7000744&amp;aid=1] [/support/docview.wss?uid=isg3T7000744&amp;aid=1] Want to provide feedback? Enter your comments in the "Rate this page" section at the bottom of the online version of this newsletter.
+
+View a list of other Storage products that offer these newsletters: IBM Systems Technical Information Newsletters [http://www.ibm.com/support/docview.wss?uid=swg27046284] 
+
+
+
+IBM Privacy Statement [http://www.ibm.com/privacy/]Copyright and trademark information [http://www.ibm.com/legal/copytrade.shtml] [/support/docview.wss?uid=isg3T7000744&amp;aid=1] [/support/docview.wss?uid=isg3T7000744&amp;aid=1] [/support/docview.wss?uid=isg3T7000744&amp;aid=1] [/support/docview.wss?uid=isg3T7000744&amp;aid=1] RELATED INFORMATION
+ IBM Systems Technical Support Newsletters [http://www.ibm.com/support/docview.wss?uid=swg27046284]

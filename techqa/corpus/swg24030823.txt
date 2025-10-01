@@ -1,0 +1,72 @@
+Title: IBM Rational Publishing Engine 1.1.2.1 - United States
+
+Text:
+ DOWNLOADABLE FILES
+
+ABSTRACT
+ IBM Rational Publishing Engine 1.1.2.1 contain fixes and features. 
+
+DOWNLOAD DESCRIPTION
+For a detailed list of problems (APARs) solved in this Fix Pack, click the Fix List link in the Problems solved section below.
+
+PREREQUISITES
+
+
+Supporting Documentation For a brief description of the new features and restrictions, review the Release Notes [http://publib.boulder.ibm.com/infocenter/rpehelp/v1r1m1/index.jsp?topic=/com.ibm.rational.pe.relnotes.doc/topics/rpe_release_notes_1.1.2.1.html] documentation.
+
+For a detailed list of the system requirements prior to installing, review the Detailed System Requirements [http://www.ibm.com/support/docview.wss?uid=swg27021350] documentation.
+
+To view, browse, and search on-line information related to this product, visit the Information Center [http://publib.boulder.ibm.com/infocenter/rpehelp/v1r1m1/index.jsp]
+
+
+URL LANGUAGE SIZE(Bytes) Upgrading from another release [http://publib.boulder.ibm.com/infocenter/rpehelp/v1r1m1/index.jsp?topic=/com.ibm.rational.pe.install.doc/topics/c_plan_consider_upgrade_product.html] English 13400 Installing Rational Publishing Engine [http://publib.boulder.ibm.com/infocenter/rpehelp/v1r1m1/index.jsp?topic=/com.ibm.rational.pe.install.doc/topics/t_install112container.html] English 12000 
+DOWNLOAD PACKAGE
+You can download the Rational Publishing Engine 1.1.2.1 fixpack from Fix Central [http://www-933.ibm.com/support/fixcentral/].
+
+PROBLEMS SOLVED
+
+
+Fix List For details on problems fixed in this Fix Pack, refer to the Fix List [http://www.ibm.com/support/docview.wss?uid=swg27021467] document.
+
+
+Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options 
+What is Fix Central(FC)? [https://www.ibm.com/support/fixcentral/help?page=swfaqs] 1.2.1 Fix Pack 1 3 Nov 2011 English 10 FC [http://www-933.ibm.com/support/fixcentral/swg/quickorder?parent=ibm~Rational&product=ibm/Rational/IBM+Rational+Publishing+Engine&release=1.1.2.1&platform=Windows&function=all&useReleaseAsTarget=true&source=fc] [ ] 
+TECHNICAL SUPPORT
+ 
+
+TAB NAVIGATION
+ * General Support Information- selected tab,
+ * Support Portal [http://www.ibm.com/software/rational/support/]
+ * developerWorks [http://www.ibm.com/developerworks/rational/]
+ * Jazz Community [http://jazz.net/]
+
+
+
+
+IBM Rational Software Support Communities 
+
+ * Support Portal: Click the Support Portal tab above to begin configuring your support portal experience to review FAQs, lists of known problems, fixes, and a wealth of important support information. 
+ * developerWorks: Click the developerWorks tab above to access an online collection of tutorials, sample code, standards, forums and other resources provided by experts at IBM to assist software developers using Rational tools including access to the IBM RFE Community [http://www.ibm.com/developerworks/rfe/]. 
+ * Jazz Community: Click the Jazz Community tab above if you are using one of the Rational tools created using the Jazz platform to interact directly with the Jazz development teams and other community members, download product trials and betas and track developement progress. 
+
+
+
+
+HELPFUL HINTS FOR OBTAINING TECHNICAL ASSISTANCE:
+Before you contact IBM Rational Software Support, gather the background information that you need to describe the problem. When you describe a problem to an IBM software support specialist, be as specific as possible and include all relevant background information so that the specialist can help you solve the problem efficiently. To save time, know the answers to these questions: 
+
+ * What software versions were you running when the problem occurred? 
+ * Do you have logs, traces, or messages that are related to the problem? 
+ * Can you reproduce the problem? If so, what steps do you take to reproduce it? 
+ * Is there a workaround for the problem? If so, be prepared to describe the workaround. 
+
+If you have helpful information to diagnose or identify the problem on your system, you can provide this data by following the instructions to exchange information with IBM Technical Support [http://www.ibm.com/software/support/exchangeinfo.html]. 
+
+ 
+
+Follow IBM Rational Client Support on Twitter [http://twitter.com/rationalsupport] | Facebook [http://facebook.com/rationalsupport] | YouTube [http://www.youtube.com/ibmrationalsupport] | devWorks Blog [https://www.ibm.com/developerworks/mydeveloperworks/blogs/nfrsblog/?lang=en]
+
+
+
+
+ Back to top

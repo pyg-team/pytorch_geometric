@@ -1,0 +1,18 @@
+Title: IBM Unnecessary network view creation, ITNM failover domain - United States
+
+Text:
+dynamic; autoprovision; networkviews; failover; primary; virtualdomain TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ xml files that exist in the autoprovision directory $NCHOME/precision/profiles/TIPProfile/etc/tnm/autoprovision get processed on failover ITNM 
+
+SYMPTOM
+unnecessary views
+
+
+RESOLVING THE PROBLEM
+Since the primary ITNM domain will send the NetworkViews.xml file to the failover domain and keep it updated, the xml file in the autoprovision directory is not necessary. If TIP were restarted, it could regenerate views. 
+
+Move xml, xml.error, and xml.processed files from that autoprovision directory to the default directory (autoprovision/default). This applies to the backup TIP/ core installation, that services that failover ITNM domain. 
+
+The primary domain ITNM will use these files to create the dynamic views for both.

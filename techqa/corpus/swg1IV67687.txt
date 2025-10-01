@@ -1,0 +1,246 @@
+Title: IBM IV67687: WMQ-RA MDB ON Z/OS USING ACTSPEC WITH TRANSPORT MODE "BINDINGS, THEN CLIENT" THROWS DETAILEDILLEGALSTATEEXCEPTION - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  For a MDB using Activation Specification (ActivationSpec)
+   with a Connection Factory Transport of
+   "bindings, then client" in a WebSphere AppServer
+   Cluster environment to Queue Manager in WMQ Queue Sharing
+   group can receive a DetailedIllegalStateException with
+   a JMSWMQ0018 and JMSCMQ0001.
+   .
+   In the WebSphere Servant Region (SR) and Adjunct Region (CRA),
+   you will see the following error messages:
+   .
+   SourceId: com.ibm.msg.client.wmq.common.internal.Reason.
+    reasonToException
+    (int,String,String,String,String,HashMap
+    ? extends Object>)
+    com.ibm.msg.client.wmq.common.internal.Reason)
+    ExtendedMessage: Exit;
+    com.ibm.msg.client.jms.DetailedIllegalStateException:
+    JMSWMQ0018: Failed to connect to queue manager 'XXXX'
+    with connection mode 'Bindings' and host name
+    'xxx.xxx.xxx.xxx(port)'..
+   
+    Check the queue manager is started and if running in client
+   mode, check there is a listener running. Please see the linked
+   exception for more information..
+   at com.ibm.msg.client.wmq.common.internal.Reason.
+    reasonToException (Reason.java:474).
+   at com.ibm.msg.client.wmq.common.internal.Reason.createException
+    (Reason.java:216).
+   at com.ibm.msg.client.wmq.internal.WMQConnection.
+    (WMQConnection.java:422).
+   at com.ibm.msg.client.wmq.factories.WMQConnectionFactory.
+    createV7ProviderConnection(WMQConnectionFactory.java:6772).
+   at com.ibm.msg.client.wmq.factories.WMQConnectionFactory.
+    createProviderConnection(WMQConnectionFactory.java:6151).
+   at com.ibm.msg.client.jms.admin.JmsConnectionFactoryImpl.
+    createConnection(JmsConnectionFactoryImpl.java:280).
+   at com.ibm.mq.jms.MQConnectionFactory.createCommonConnection
+    (MQConnectionFactory.java:6143).
+   ..
+   ..
+   SourceId: com.ibm.msg.client.jms.DetailedIllegalStateException.
+   setLinkedException(Exception)
+   (com.ibm.msg.client.jms.DetailedIllegalStateException)
+   ExtendedMessage: Entry; com.ibm.mq.MQException:
+   JMSCMQ0001: WebSphere MQ call failed with compcode '2'
+   ('MQCC_FAILED') reason '2009' ('MQRC_Q_MGR_NOT_AVAILABLE')..
+   at com.ibm.msg.client.wmq.common.internal.Reason.
+    createException(Reason.java:204).
+   at com.ibm.msg.client.wmq.internal.WMQConnection.
+    (WMQConnection.java:422).
+   at com.ibm.msg.client.wmq.factories.WMQConnectionFactory.
+    createV7ProviderConnection(WMQConnectionFactory.java:6772).
+   at com.ibm.msg.client.wmq.factories.WMQConnectionFactory.
+    createProviderConnection(WMQConnectionFactory.java:6151).
+   at com.ibm.msg.client.jms.admin.JmsConnectionFactoryImpl.
+    createConnection(JmsConnectionFactoryImpl.java:280).
+   at com.ibm.mq.jms.MQConnectionFactory.createCommonConnection
+    (MQConnectionFactory.java:6143).
+   at com.ibm.mq.jms.MQConnectionFactory.createConnection
+    (MQConnectionFactory.java:6199).
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   The APAR affects users of the WebSphere MQ classes for JMS
+   resource adapter running inside WebSphere Application Server on
+   z/OS that use Activation Specifications with "Bindings, then
+   client" as the transport mechanism.
+   
+   
+   Platforms affected:
+   z/OS
+   
+   ****************************************************************
+   PROBLEM DESCRIPTION:
+   When using WebSphere Application Server to define an Activation
+   Specification using the WebSphere MQ messaging provider, the
+   default transport type is set to "Bindings, then client". This
+   means that when the Activation Specification starts, it first
+   attempts to establish a BINDINGS (shared local memory) transport
+   mode connection to WebSphere MQ. However should this fail, it
+   then attempts to establish a CLIENT (TCP/IP) transport mode to
+   WebSphere MQ.
+   
+   For WebSphere Application Server on z/OS, you can configure an
+   Activation Specification using the WebSphere MQ messaging
+   provider to connect to a Queue Sharing Group (QSG), again using
+   the "Bindings, then client" transport type.
+   
+   If, for example, a BINDINGS transport mode connection is
+   successfully established for this Activation Specification to a
+   local queue manager within the QSG then the connection details
+   are cached within the WebSphere MQ resource adapter (the
+   component of WebSphere Application Server that handles all
+   communication with WebSphere MQ). If this BINDINGS mode
+   connection was then broken, e.g., because the queue manager is
+   shutting down, the intended behaviour was for the Activation
+   Specification reconnection logic to attempt another BINDINGS
+   transport mode connection to the QSG and resort to attempting a
+   CLIENT transport mode should that fail.
+   
+   However, due to the cached details from the original connection,
+   the Activation Specification only ever attempted to connect
+   using the same transport mode setting that was previously
+   successfully used. Therefore, if the original connection used
+   the BINDINGS transport mode, and the BINDINGS transport mode
+   reconnection attempt failed, the Activation Specification would
+   not then attempt a subsequent connection using the CLIENT
+   transport mode.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The WebSphere MQ resource adapter code has been modified such
+   that, for Activation Specifications running on a WebSphere
+   Application Server for z/OS system that are configured to use
+   the "Bindings, then client" transport mode, if a previously
+   established connection is broken then any reconnection attempts
+   by the Activation Specification first attempt to use the
+   BINDINGS transport mode before subsequently attempting a CLIENT
+   transport mode connection if unsuccessful.
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+   Version    Maintenance Level
+   v7.1       7.1.0.7
+   v7.5       7.5.0.6
+   v8.0       8.0.0.3
+   
+   The latest available maintenance can be obtained from
+   'WebSphere MQ Recommended Fixes'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037]
+   
+   If the maintenance level is not yet available information on
+   its planned availability can be found in 'WebSphere MQ
+   Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV67687
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ LIN X86 V7
+   
+   
+ * REPORTED COMPONENT ID
+   5724H7224
+   
+   
+ * REPORTED RELEASE
+   710
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-12-08
+   
+   
+ * CLOSED DATE
+   2015-02-27
+   
+   
+ * LAST MODIFIED DATE
+   2015-02-27
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ LIN X86 V7
+   
+   
+ * FIXED COMPONENT ID
+   5724H7224
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R710 PSY
+   UP

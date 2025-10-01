@@ -1,0 +1,103 @@
+Title: IBM Hardware considerations for Rational ClearCase server - United States
+
+Text:
+VMWare ; CITRIX; CLEARCASE; MEMORY; NIC; virtualization TECHNOTE (FAQ)
+
+QUESTION
+ What is the recommended hardware for a physical or virtual IBM Rational ClearCase server? 
+
+CAUSE
+The server runs too slowly under the load that you impose.
+
+ANSWER
+ 
+
+Physical and virtual (Citrix or VMWare) Windows servers 
+
+
+ 
+
+ * Maximum number of child processes
+   
+   
+   - Maximum number of albd child processes
+   
+   The maximum number of albd child processes is 2048. A view server can run a maximum of 2048 views. This number is smaller if the same host is also a VOB server. A single VOB can cause the albd to start several db_server and vobrpc_server child processes. The real number depends on the number of users and their activity. 50 users can reduce the number of possible active views by 50 of a single VOB.
+   
+   
+   - Desktop heap size
+   
+   On 32 bit Windows, the maximum number of albd child processes is around 720.
+   On Windows 2008 server the desktop heap limit is dynamic. Here, the desktop heap space does not limit the number of albd child processes.
+   
+   
+   - Lock manager
+   
+   The lock manager on Windows allows that 1018 user processes concurrently access the VOB server. 50 users can get at that limit if all of them run a build at the very same time on 20 VOBs. The real number of VOBs and users is higher because not all processes are accessing the VOBs within the very same second.
+   While the lock manager allows to work with an unlimited number of VOBs, the albd child process limit reduces the number of VOBs that can be active.
+   A single VOB server can host 300 VOBs.
+   
+   
+ * Main memory The minimum requirement depends on the version. See the release notes and official documentation for your specific version.
+   
+   
+    *  View server: minimum 4 GB
+      
+      VOB server: minimum 8 GB
+      
+   
+   A VOB server needs a lot of memory to keep the VOB databases of all VOBs in memory and avoid swapping memory to disk. A simple rule for optimal performance is that the each VOB uses half the size of the VOB DB folder size as memory.
+   
+   
+   EXAMPLES  * A server with 64 GB memory can host 6 VOBs, if each of them has a database size of 20 GB.
+      
+      
+    * It can host 60 VOBs, if each of them has a database size of 2 GB. 
+      
+   
+   
+   To be prepared for growth, the server needs more memory. Note also that this is the memory that ClearCase uses. If anything else is running on the server, you must increase the memory.
+   In your environment it is sufficient to have one server for all. That one server can host 200 views and 150 VOBs. Depending on the size of the VOB databases, together the server might need 128 GB. This is not recommended, because with one server you have a single point of failure.
+   
+   
+   
+   The ClearCase registry is single threaded. It can only use one core.
+   
+   
+   
+   The minimum required memory for the CM server is 8 GB (not including any running process). If you install the CM server on the same machine as the view server or VOB server, review the CM server requirement for your version.
+   
+   
+   
+   
+   Additional information for virtual servers 
+   
+   
+ * The VM server needs real memory for the images to load VOB databases into the file
+   system cache. Do not allocate memory to VM images which does not exist (spawning/sharing).
+   
+   
+ * Use a dedicated NIC for the VOB server, avoid sharing NIC with other VM, ClearCase rely a lot on the network, shared NIC are source of performance issues.
+   
+   
+ * Use real disk and avoid virtual disk.
+
+
+
+If you want to monitor the load of the VOB servers, you need to monitor the memory usage (including file system cache) the number of albd child processes (ClearCase utility albd_list in /etc/utils) and the 
+CPU load. 
+
+ * CPU load must be below 80%
+   
+   
+ * Memory usage must be below 80%
+   
+   
+ * albd child processes at 80% of 2048 or 720 depends on the OS architecture.
+
+
+
+For more information about Virtualization and virtual machine: 
+Rational Support Policy Addendum for VMware support [http://www-01.ibm.com/support/docview.wss?uid=swg21180182] 
+Be smart with virtualization (part 1) [http://www.ibm.com/developerworks/rational/library/smart-virtualization-1/index.html] 
+Be smart with virtualization (part 2) [http://www.ibm.com/developerworks/rational/library/smart-virtualization-2/index.html]

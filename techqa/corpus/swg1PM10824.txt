@@ -1,0 +1,153 @@
+Title: IBM PM10824: PORTAL 6017 UPGRADE FAILS DURING 'ACTION-PK72027-UPDATE-ROLE' - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  If your applications are configured to have more than one target
+   mapping (such as a Cluster and a Web Server), the 6.0.1.7
+   upgrade will fail during the configuration step with this
+   message:
+   
+   ===================================
+   [wsadmin] WASX7017E: Exception received while running file
+   
+   "/usr/WebSphere/PortalServer/config/was/wp_ProfileEarAdminPortle
+   tMapRolesToUsersBasic.jacl"; exception information:
+   com.ibm.ws.scripting.ScriptingException: WASX7025E: Error found
+   in String
+   "{_Websphere_Config_Data_Display_Name=PortalCluster(cells/myCell
+   /applications/Dynamic Cache
+   Monitor.ear/deployments/Dynamic Cache
+   Monitor|deployment.xml#ClusteredTarget_1201017051108)"
+   "webserver1(cells/myCell/applications/Dynamic
+   Cache Monitor.ear/deployments/Dynamic Cache
+   Monitor|deployment.xml#ServerTarget_1207313529048)"}
+   cannot create ObjectName.
+   [wsadmin] WASX7303I: The following options are passed to the
+   scripting environment and are available as argument that is
+   stored in the argv variable:
+   "[/usr/WebSphere/PortalServer, Manage_Pag_Favorites_*,
+   exportPortalPagesRole]"
+   [wsadmin] WASX7017E: Exception received while running file
+   "/usr/WebSphere/PortalServer/config/was/wp_ModifyEarAttributesMa
+   pRolesToUsers.jacl"; exception
+   information: com.ibm.bsf.BSFException: error while eval'ing Jacl
+   expression:
+   [wsadmin] can't read "AppName": no such variable
+   [wsadmin]     while executing
+   [wsadmin] "$AdminConfig getid /Deployment:$AppName/"
+   [wsadmin]     invoked from within
+   [wsadmin] "set DeploymentId [$AdminConfig getid
+   /Deployment:$AppName/]"
+   ===================================
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  6017 upgrade fails if you have multiple targets defined for each
+   of your applications.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A fix is available from Fix Central:
+   http://www.ibm.com/eserver/support/fixes/fixcentral/swg/quickord
+   er?productid=WebSphere%20Portal&brandid=5&apar=PM10824 [http://www.ibm.com/eserver/support/fixes/fixcentral/swg/quickorder?productid=WebSphere%20Portal&brandid=5&apar=PM10824]
+    You might need to type or paste the complete address into your
+    Web browser.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM10824
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSPHERE PORTA
+   
+   
+ * REPORTED COMPONENT ID
+   5724E7600
+   
+   
+ * REPORTED RELEASE
+   600
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-03-25
+   
+   
+ * CLOSED DATE
+   2010-03-30
+   
+   
+ * LAST MODIFIED DATE
+   2010-03-30
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBSPHERE PORTA
+   
+   
+ * FIXED COMPONENT ID
+   5724E7600
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R60M PSY
+   UP

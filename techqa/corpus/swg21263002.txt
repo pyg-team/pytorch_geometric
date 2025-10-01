@@ -1,0 +1,51 @@
+Title: IBM Error ORA-27486 during schema creation. - United States
+
+Text:
+MAXINST UpdateDB; TPAEORACLE FLASH (ALERT)
+
+ABSTRACT
+ Schema installation will encounter ORA-27486 if the schema owner does not have CREATE JOB privilege.
+
+
+CONTENT
+
+Maximo 6.0.3 and later on Oracle 10g or higher uses DBMS_SCHEDULE instead of DBMS_JOB for the text index synchronization job. DBMS_SCHEDULE requires CREATE JOB privilege.
+Problem
+
+Schema install or upgrade fails with the following error in the log:
+
+java.sql.SQLException: ORA-27486: insufficient privileges
+ORA-06512: at "SYS.DBMS_ISCHED", line 99
+ORA-06512: at "SYS.DBMS_SCHEDULER", line 262
+ORA-06512: at "MAXIMO.MAXIMO_TS_JOB_CALL", line 1
+ORA-06512: at line 1
+
+When the Maximo schema is on Oracle 10g or higher, it must be granted CREATE JOB privilege.
+
+
+Solution
+
+If you are running Maximo on Oracle 10g or higher, please do the following:
+
+1. Using SQLPLUS, connect to the database as SYSTEM.
+2. Type the following (change MAXIMO to your schema name if not MAXIMO):
+
+GRANT CREATE JOB TO MAXIMO;
+
+3. Rerun the utility which failed.
+
+
+Important:
+
+This privilege is not needed if you are running Oracle 9i. However, if your databases migrated to Oracle 10g, you will then need to add this privilege. You can still add the GRANT command to the CREATEMaximoES.SQL script. It will get a harmless error if run on Oracle 9i, but will then be ready for future use with Oracle 10g or 11g.
+
+ 
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Systems and Asset Management Tivoli Asset Management for IT All Systems and Asset Management Maximo Asset Management Essentials All Systems and Asset Management Tivoli Service Request Manager 
+HISTORICAL NUMBER
+ M04804 
+
+PRODUCT ALIAS/SYNONYM
+ MAXIMO

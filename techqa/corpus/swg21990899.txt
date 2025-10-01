@@ -1,0 +1,114 @@
+Title: IBM Security Bulletin: FileNet Workplace XT and FileNet Workplace (Application Engine), can be affected by Cross Site Scripting vulnerabilities (CVE-2016-5981) - United States
+
+Text:
+XSS; cross; site; scripting; vulnerability SECURITY BULLETIN
+
+SUMMARY
+ FileNet Workplace XT and FileNet Workplace (Application Engine) are susceptible to Cross Site Scripting vulnerabilities. 
+
+VULNERABILITY DETAILS
+Relevant CVE Information: 
+
+CVEID: CVE-2016-5981 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2016-5981]
+DESCRIPTION: IBM FileNet Workplace XT and FileNet Workplace (Application Engine) are vulnerable to cross-site scripting. This vulnerability allows users to embed arbitrary JavaScript code in the Web UI thus altering the intended functionality potentially leading to credentials disclosure within a trusted session.
+CVSS Base Score: 5.4
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/116466 [https://exchange.xforce.ibmcloud.com/vulnerabilities/116466] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:N/AC:L/PR:L/UI:R/S:C/C:L/I:L/A:N)
+
+AFFECTED PRODUCTS AND VERSIONS
+FileNet Workplace XT 1.1.5 
+
+FileNet Workplace 4.0.2
+
+REMEDIATION/FIXES
+Refer to the Workarounds and Mitigations section below
+
+WORKAROUNDS AND MITIGATIONS
+Prerequisite
+- For FileNet Workplace XT, ensure that you are on 1.1.5.2-WPXT-LA011 or higher.
+- For FileNet Workplace, ensure that you are on 4.0.2.14-P8AE-IF001 or higher.
+
+Procedure
+- Modify the following two sections of the security filter XML file.
+
+1) RegExpSecurityFilter filter
+
+The “RegExpSecurityFilter” filter is a data type filter where the request parameter value is validated by its data type. The filter has two main sections called “expressions” and “parameters”. The “expressions” section defines the list of supported data types and their regular expressions. The regular expression is used to validate the request parameter value. Some of the predefined data types are Boolean, ipAddress, ipV6Address, number and so on. For a numeric data type, the expression definition is:
+
+<object key="expression">
+<setting key="name"> number </setting>
+<setting key="regexp"> ^-?\d+$ </setting>
+</object>
+
+The “parameters” section contains the list of request parameters and the corresponding data types. For a numeric data type parameter, the parameter mapping definition is:
+
+<object key="parameter">
+<setting key="name">detailedPageSize</setting>
+<setting key="expression">number</setting>
+</object> 
+
+Based on these two definitions, the “detailedPageSize” parameter value will be validated for numeric value only. Any other non-numeric value will be rejected by the filter.
+
+The customer can add new “expression” definitions and new “parameter” mappings needed to address their security requirements.
+
+
+2) ScriptSecurityFilter filter
+
+The “ScriptSecurityFilter” filter is a black list filter that evaluates the request parameter value for invalid script values. The filter will reject an incoming request if an invalid script value is found. Similar to the previous filter, the “ScriptSecurityFilter” has two main sections: “expressions” and “parameter”. The “expressions” section contains a list of regular expressions that is used to identify invalid scripts. The customer can modify this regular expression list to define any new expressions needed to address the security requirements.
+
+<array key="expressions">
+<value>&lt;\s*img\s*</value>
+<value>&lt;\s*script\s*&gt;</value>
+<value>&lt;/\s*script\s*&gt;</value>
+<value>\s*javascript\s*:|(^|\s+)on[a-zA-Z]*\s*=</value>
+<value>\s*\'\s*[\+;\-]</value>
+<value>\s*\"\s*[\+;\-]</value> 
+<value>\s+STYLE\s*=</value>
+</array
+
+The “parameters” section contains the list of request parameters that will be checked against the “expressions” entries for invalid scripts. The “parameter” section supports an “includes” list and an “excludes” list. All parameters in the “includes” will be tested for invalid scripts.
+
+<array key="includes">
+<value>eventTarget</value>
+<value>eventName</value>
+<value>dummy</value>
+<value>browserTime1</value>
+<value>browserTime2</value>
+<value>browserOffset1</value>
+<value>browserOffset2</value>
+…..
+</array>
+
+
+For more information:
+Please refer to the following techdoc for more details on addressing Cross Site Scripting vulnerabilities within FileNet Workplace XT and FileNet Workplace (Application Engine): http://www-01.ibm.com/support/docview.wss?uid=swg27022201 [http://www-01.ibm.com/support/docview.wss?uid=swg27022201] 
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v3 Guide [http://www.first.org/cvss/user-guide] 
+On-line Calculator v3 [http://www.first.org/cvss/calculator/3.0] 
+
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] 
+
+ACKNOWLEDGEMENT
+This vulnerability was reported to IBM by Roshan Thomas at secvibe.com 
+
+CHANGE HISTORY
+ 7 Oct 2016: Original version published 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY. 
+
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Enterprise Content Management FileNet Content Manager Application Engine AIX, HP-UX, Linux, Solaris, Windows 4.0.2

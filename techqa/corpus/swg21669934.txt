@@ -1,0 +1,55 @@
+Title: IBM How to find cause of IIS-DSEE-TBLD-00008 message? - United States
+
+Text:
+decimal conversion error TECHNOTE (FAQ)
+
+QUESTION
+ InfoSphere DataStage parallel job drops rows emitting next warning. What's the meaning of the message and how to eliminate it?
+
+Item #: 42
+Event ID: 219
+Timestamp: 2014-04-10 16:53:12
+Type: Warning
+User Name: dsadm
+Message Id: IIS-DSEE-TBLD-00008
+Message: Transformer_1,0: Field 'APT_Decimal::ErrorBase: From: the source decimal has even precision, but non-zero in the leading nybble, or is too large for the destination decimal..' from input dataset '0' is NULL. Record dropped.
+
+
+CAUSE
+IIS-DSEE-TBLD-00008 message appears when there is decimal data conversion error.
+
+ANSWER
+Meaning of 
+
+ * "the source decimal has even precision, but non-zero in the leading nybble" message
+
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+
+ * "is too large for the destination decimal..' from input dataset '0' is NULL" message
+
+ * 
+
+
+
+To find out what value causes the conversion error, attach a reject link to the problem Transformer stage, and review decimal column values in the rejected rows. 
+
+If the decimal values in rejected rows are correct, adjust the precision and scale of the decimal column in Columns tab of the Transformer. 
+If the value in reject row is corrupt, clean it up in the data source. 
+
+Note: 
+IIS-DSEE-TBLD-00008 message like below also occurs when invalid input data given to the StringToDecimal() [http://www-01.ibm.com/support/knowledgecenter/SSZJPZ_9.1.0/com.ibm.swg.im.iis.ds.parjob.dev.doc/topics/r_deeref_Type_Conversion_Functions.html] funtion. 
+
+Item #: 34 
+Event ID: 55 
+Timestamp: 2014-05-02 15:16:34 
+Type: Warning 
+User Name: dsadm 
+Message Id: IIS-DSEE-TBLD-00008 
+Message: Transformer_1,0: Conversion error calling conversion routine decimal_from_string data may have been lost RELATED INFORMATION
+ Packed-decimal format [http://www-01.ibm.com/support/knowledgecenter/SS6SG3_4.2.0/com.ibm.entcobol.doc_4.2/PGandLR/concepts/cpari09.htm]

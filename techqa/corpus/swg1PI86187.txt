@@ -1,0 +1,189 @@
+Title: IBM PI86187: BOOTSTRAP CODE TO CHECK THE WEBSPHERE PRODUCT VERSION XML FILES FOR UPDATES TO DETERMINE OSGI CACHE STATE - United States
+
+Text:
+  FIXES ARE AVAILABLE
+8.5.5.13: WebSphere Application Server V8.5.5 Fix Pack 13 [http://www-01.ibm.com/support/docview.wss?uid=swg24044479]
+9.0.0.7: WebSphere Application Server traditional V9.0 Fix Pack 7 [http://www-01.ibm.com/support/docview.wss?uid=swg24044620]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  After a fix (fixpack or ifix) install, rollback or uninstall is
+   performed, administrative scrips such as syncNode can fail if
+   the if the  OSGI bundle cache fails to be cleaned and is left
+   in a stale state.
+   The following error can be see when running the syncNode script
+   after a fixpack update.
+   [7/25/17 9:57:40:677 EDT] 00000001 AdminTool     E   ADMU0111E:
+   Program exiting with error: java.lang.NoClassDefFoundError:
+   com.ibm.ffdc.config.Formattable
+       at java.lang.ClassLoader.defineClassImpl(Native Method)
+       at java.lang.ClassLoader.defineClass(ClassLoader.java:346)
+       at org.eclipse.osgi.internal.baseadaptor.DefaultClassLoader.
+           defineClass(Def aultClassLoader.java:188)
+       at org.eclipse.osgi.baseadaptor.loader.ClasspathManager.
+           defineClass (Classpa thManager.java:580)
+       at org.eclipse.osgi.baseadaptor.loader.ClasspathManager.
+        findClassIm pl(Class pathManager.java:550)Page 10 of 139
+       ... continues
+   Caused by: java.lang.ClassNotFoundException:
+   com.ibm.ffdc.config.Formattable
+       at org.eclipse.osgi.internal.loader.BundleLoader.
+           findClassInternal( BundleLo ader.java:506)
+       at org.eclipse.osgi.internal.loader.BundleLoader.findClass
+           (BundleLo ader.jav a:422)
+       at org.eclipse.osgi.internal.loader.BundleLoader.findClass
+           (BundleLo ader.jav a:410)
+       ... 54 more
+   This APAR will allow bootstrap code to check the WAS product
+   version XML files for updates which will provide a more robust
+   means of checking for a stale OSGi cache, allowing OSGI to
+   proactively run in -clean mode.  Updating this logic will make
+   the changes applicable to  syncnode in addition to all admin
+   scripts.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  n/a
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  All users of IBM WebSphere Application      *
+   *                  Server                                      *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Class loading failures occur in the     *
+   *                      OSGi framework after a fixpack or       *
+   *                      other maintenance package is applied    *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   The OSGi framework that manages server class loading maintains
+   a cache of bundle data and relationships.  When modifications
+   are made to the server's binaries, this cached data can become
+   out of date, leading to failures in class loading.  The
+   cache is regenerated as part of the first server start
+   following maintenance application, but other tools (such as
+   syncNode) run prior to this first server start may fail.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Additional checking was added to more aggressively clean the
+   OSGi framework cache after maintenance packages have been
+   applied.
+   
+   The fix for this APAR is currently targeted for inclusion in
+   fix packs 8.5.5.13 and 9.0.0.7.  Please refer to the
+   Recommended Updates page for delivery information:
+   http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  Run the osgiCfgInit.sh|bat script from the server or profile
+   bin directory to clear the OSGi cache manually.
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI86187
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBS APP SERV N
+   
+   
+ * REPORTED COMPONENT ID
+   5724H8800
+   
+   
+ * REPORTED RELEASE
+   850
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-08-21
+   
+   
+ * CLOSED DATE
+   2018-01-24
+   
+   
+ * LAST MODIFIED DATE
+   2018-01-24
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBS APP SERV N
+   
+   
+ * FIXED COMPONENT ID
+   5724H8800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R850 PSY
+   UP
+   
+   
+ * R900 PSY
+   UP

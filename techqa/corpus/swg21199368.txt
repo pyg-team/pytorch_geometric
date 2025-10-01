@@ -1,0 +1,26 @@
+Title: IBM Education and Skills Transfer for Rational Application Developer version 6.x tooling - United States
+
+Text:
+RAD; WTE; v6; server; WAS; education; IBM Education Assistant; WebSphere Test Environment; tutorials; WebSphere Application Server; Rational Application Developer; RAD education; 1199368 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This technote directs you to readily available IBM Education for Rational® Application Developer (RAD) version 6.x tooling and the associated version 6.x WebSphere® Test Environment. 
+
+RESOLVING THE PROBLEM
+"IBM Education Assistant" , a web-based education resource, is now available (see link below). Once you are on the web page: 
+
+ 1. Use the "Rational Software products" link to go to the education modules. 
+ 2. Select "IBM Rational Application Developer Version 6" to see both Topic view and Role view. 
+ 3. Expand the views to see the topic-based and role-based education modules available. 
+ 4. In the Topic-based view, for example, click on the "Test, debug and profile applications" topic to view educational material on "Testing applications with WebSphere Application Server V6" which includes information on the many changes in the Server Tools, also referred to as the Integrated WebSphere Test Environment
+
+
+If you are making the transition from WebSphere® Studio Application Developer version 5.x to RAD, you will benefit from the available material and demonstration viewlets. 
+
+Note: Topic-based selections are also available for WebSphere Application Server version 5 and version 6 education. 
+
+
+
+
+RELATED INFORMATION
+#IBM Education Assistant [http://www-306.ibm.com/software/info/education/assistant/]

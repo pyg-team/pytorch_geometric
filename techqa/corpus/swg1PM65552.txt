@@ -1,0 +1,141 @@
+Title: IBM PM65552: HTTP STATUS CODE 404 RETURNED WHEN ACCESSING STATIC CONTENT OF W EB FRAGMENT IN A FRAGMENT BUNDLE. - United States
+
+Text:
+  FIXES ARE AVAILABLE
+8.5.0.1: WebSphere Application Server V8.5 Fix Pack 1 [http://www-01.ibm.com/support/docview.wss?uid=swg24033606]
+8.5.0.2: WebSphere Application Server V8.5 Fix Pack 2 [http://www-01.ibm.com/support/docview.wss?uid=swg24034672]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  HTTP status code 404 returned when accessing static content of
+   web fragment in a fragment bundle.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  Users of IBM WebSphere Application Server   *
+   *                  Liberty Profile server using web-fragmants  *
+   *                  bundles                                     *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Web application bundles cannot          *
+   *                      serve static content from a             *
+   *                      web-fragment if it is not in certain    *
+   *                      locations in the WEB-INF/lib            *
+   *                      directory of its jar.                   *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   Web application bundles (WAB) cannot serve static content from
+   the META-INF/resources directory of a web-fragment if the web
+   fragment archive is not in the WEB-INF/lib directory of the
+   WAB. This problem occurs when a bundle fragment is attached
+   to the WAB.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The code has been changed to support the serving of static
+   content from anywhere within the web-fragment.
+   
+   The fix for this APAR is currently targeted for inclusion in
+   fix pack 8.5.0.1. Please refer to the Recommended Updates page
+   for delivery information:
+   http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM65552
+   
+   
+ * REPORTED COMPONENT NAME
+   LIBERTY PROFILE
+   
+   
+ * REPORTED COMPONENT ID
+   5724J0814
+   
+   
+ * REPORTED RELEASE
+   850
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-05-25
+   
+   
+ * CLOSED DATE
+   2012-09-28
+   
+   
+ * LAST MODIFIED DATE
+   2012-09-28
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   LIBERTY PROFILE
+   
+   
+ * FIXED COMPONENT ID
+   5724J0814
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R850 PSY
+   UP

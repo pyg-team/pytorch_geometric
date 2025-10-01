@@ -1,0 +1,241 @@
+Title: IBM IR42812: PS/2 DUMPING WITH CANADIAN DATAPAC - United States
+
+Text:
+ 
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  -XXMGVC06  MGVC        -569654600  -ELINKGB    -P3S3-00/01/07-1
+   I have a problem when I try to use an asynchrone connection with
+   a datapac line. I have OS-v2 9900 with GSA 9802. The PC are
+   9585. Thanks.
+   The controller will constaltly dump as soon as I start an async.
+   communication. I send the dump into your FTP site called
+   PMR83970.zip.  Thanks.
+    -LESLIE, DEBORRAH      -569654600  -L112/HOST  -P3S3-00/01/07-1
+   A Controller dump was received and placed on the LAN as M98.
+   ****************************************************************
+   PIDS/5639F5301  LVLS/101      MNTS/9900           PTFS/9900.
+   DEVS/4690POS        PRCS/System          RIDS/m98ct8sl
+   HL/SSYSWBUG         STA/80B00004         VALU/H00250000
+   PNS/dserv
+   ----------------------------------------------------------------
+   Dump reason: Syswbug.
+     Syswbug - Communications - ASYNC
+   Store 520    ControllerID CC    NodeType 015
+   Dump taken  09:52:00 01/07/20 Model-IBM PS/2 Model 9585
+   ADXCT8SL.286   Cks 3CEAA3    Jdate 9936551    Type S
+   Interrupts enabled - Dispatching is ON
+    -HIGGINS, STEVE        -569654600  -L112/PAG   -P3S3-00/01/07-1
+   well, this is failing in the artic async driver with an RC which
+   implies that the artic card is not peoperly configured. When
+   you say this worked ok on a REL1 system, was rel1 running
+   on THIS machine with the very same artic configuration???
+   Regardless, I'd suggest double-checking your artic
+   configuration against the documentation.
+    -XXMGVC06  MGVC        -569654600  -ELINKGB    -P3S3-00/02/23-1
+    did remove the artic card. The situation is still the same,
+   as soon as I start the datapac task the controller is dumpind.
+    =FEUERBACH, TJ         -569654600  -L112/HOST  -P3S3-00/02/23-1
+   Just to reiterate, you did re-check the configuration, correct?
+   Also, have you tried another card?  Is this only happening
+   on one controller?
+    -XXMGVC06  MGVC        -569654600  -ELINKGB    -P3S3-00/02/23-1
+   I did re-check the config, I did try another card and also
+   another machine with out the artic card. The situation is on
+   CC and DD. Thanks
+    =MCALLISTER, SCOTT (00)-569654600  -L112/-------P3S3-00/02/24-1
+   The failure is with the RAPID001 link.  This link is associated
+   with serial 1.  The dump shows that the motherboard serial
+   port is disabled.   Therefore I assume that RAPID001 is
+   supposed to be using the ARTIC card.
+   However, the ARTIC card has some configuration
+   problems:
+     1) The shared storage window is 16K in size.  It must be
+   set to 8K.
+     2) The interrupt level is 10.  It must be set to 12.
+   The PS/2 reference disk needs to be used to fix this
+   problem.  I would expect another ARTIC card to fail in the
+   same way, unless the ARTIC interrupt level and window
+   size were first re-configured.  If the MGV3201C application
+   fails after the ARTIC card has been re-configured, I would
+   like to see another dump, because it probably has a
+   different cause.
+    -LESLIE, DEBORRAH      -569654600  -L112/HOST  -P3S3-00/02/25-0
+   A Controller dump was received and placed on the LAN
+   as A51.
+   ****************************************************************
+   Attempt to open the OS product control file failed.
+   ****************************************************************
+   DEVS/4690POS        PRCS/System          RIDS/a51ct8sl
+   HL/SSYSWBUG         STA/80B00004         VALU/H00250000
+   PNS/dserv
+   ----------------------------------------------------------------
+   Dump reason: Syswbug.
+     Syswbug - Communications - ASYNC
+   Store 1    ControllerID DD    NodeType 00B
+   Dump taken  10:25:00 02/24/1999   Model - IBM PS/2 Model 57SLC2/
+    =MCALLISTER, SCOTT (00)-569654600  -L112/-------P3S3-00/02/29-1
+   The Per Unit Globals have some inconsistent data.
+   I'd like to examine the Host Configuration data.  I wonder
+   if the Host configuration did not migrate to V2 correctly.
+   Please do the following:
+   1) Activate Modify the Host configuration slightly.
+   2) Activate the Host Configuration.
+   3) Change the Host Configuration back to it initial value.
+   4) Activate the configuration.
+   5) IPL the controller.
+   6) Verify that the problem is still present
+   7) Generate a 4690 Host Communications Report.
+   This will force the 4690 OS to verify the Host
+   Communications configuration and it will allow me to look
+   for problems in the configuration.
+    -XXMGVC06  MGVC        -569654600  -ELINKGB    -P3S3-00/03/01-1
+   I did all the steps above and still got the problem, the
+   report that you want is it the format trace of the
+   communition line?, if this is what you want the trace
+   doesn't have the time to monitor data, because
+   as soon the datapac is started the controller dump. Thanks
+    =MCALLISTER, SCOTT (00)-569654600  -L112/-------P3S3-00/03/01-1
+   I don't need a trace.  I just need the HOST
+   CONFIGURATION configuration report the
+   BACKGROUND APPLICATION configuration report.
+    -JOHNSON, SANDRA, K.   -569653800  -L112/HOST  -P3S3-00/03/03-1
+   FILES PLACED ON LAN AS C71.
+    =MCALLISTER, SCOTT (00)-569653800  -L112/-------P3S3-00/03/06-1
+   I'm confused.  The RAPID001 line is configured for the
+   built-in ASYNC port, yet in the dump, we had come to
+   the conclusions that it was using the ARTIC card.
+   What is the correct interface for RAPID001 to use?
+   - If it is supposed to be the ARTIC card, then the
+   RAPID001 line is configured incorrectly.
+    -XXMGVC06  MGVC        -569653800  -ELINKGB    -P3S3-00/03/06-1
+   The correct config for the rapid line in async port.
+   We do not use the Artic card for the rapid line. Thanks
+    =MCALLISTER, SCOTT (00)-569653800  -L112/-------P3S3-00/03/07-0
+   Real-Time Clock I/O is returning an unexpected value.
+   I think there are two possibilities:
+   1) There's a hardware problem with the PS/2 being used.
+   2) There's a change 4690 Version 2 that prevents
+   Canadian Datapac from working correclty on a PS/2.
+   Have you tried this same function on a different PS/2?
+    -XXMGVC06  MGVC        -569653800  -ELINKGB    -P3S3-00/03/07-1
+   I did try this set up with 2 different PS/2. Thanks
+    =MCALLISTER, SCOTT (00)-569653800  -L112/-------P3S3-00/03/07-1
+   Please open APAR as follows:
+   APAR Abstract: PS/2 Dumping with Canadian Datapac
+   APAR Owner:    Cheselley Robinson
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *       Dump attempting to start a DataPac line due
+        to a SYSWBUG (80B0 0004 00000025) being invoked
+        because the system clock interval is not an expected
+        value.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *       Modified code to use a system timer instead of
+        intercepting the timer interrupt.  This is possible
+        because at V2, timer intervals can be in microseconds.
+        Also removed SYSWBUG call.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IR42812
+   
+   
+ * REPORTED COMPONENT NAME
+   IBM 4690 OS VER
+   
+   
+ * REPORTED COMPONENT ID
+   5639F5300
+   
+   
+ * REPORTED RELEASE
+   201
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2000-04-03
+   
+   
+ * CLOSED DATE
+   2000-04-04
+   
+   
+ * LAST MODIFIED DATE
+   2000-06-21
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    IR42528
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *     ADXHSA2C
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   IBM 4690 OS VER
+   
+   
+ * FIXED COMPONENT ID
+   5639F5300
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R201 PSY UR52128
+   UP00/06/13 I 1000

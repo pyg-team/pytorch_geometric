@@ -1,0 +1,71 @@
+Title: IBM Installing the SAP Server components for IBM InfoSphere Pack for SAP BW version 4.3.3 - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How do I install the SAP Server components for IBM InfoSphere Pack for SAP BW version 4.3.3 ? 
+
+ANSWER
+In addition to installing the client and server components of the SAP Pack on the Information Server tiers, you also need to install the following components on your SAP system to use the Pack:
+Authorization roles that can be assigned to users: 
+
+ * Z-DS-ADM-ALL 
+ * Z-DS-DESIGN-ALL 
+ * Z-DS-DESIGN-BWEXTRACT 
+ * Z-DS-DESIGN-BWLOAD 
+ * Z-DS-DESIGN-BWLOAD7X 
+ * Z-DS-RUNTIME-ALL 
+ * Z-DS-RUNTIME-BWEXTRACT 
+ * Z-DS-RUNTIME-BWLOAD 
+ * Z-DS-RUNTIME-BWLOAD7X
+
+For more information about the provided authorization roles, see technote 1992251 [http://www.ibm.com/support/docview.wss?uid=swg21992251]. 
+Note: Users can choose to manually create the authorization roles in SAP instead of importing the transports provided. 
+
+Step 1: Uploading the transport request files 
+
+To import the transport request files, you must first copy them to a directory on the SAP system. 
+
+Procedure  1. Log on to the SAP system as a system administrator. 
+ 2. Copy the transport files provided on the installation medium to the /usr/sap/trans/cofiles and /usr/sap/trans/data folders respectively on the SAP system. The original location of the transport files depends on the SAP version:
+
+SAP BW version Path on installation medium BW 3.5 ISPackForSAPBW/AuthorizationTransports/BW/BW3.5 BW 7.0 and higher ISPackForSAPBW/AuthorizationTransports/BW/BW7.X 
+Step 2: Importing the transport request files 
+
+The SAP administrator can import the transport request files by using one of the following methods: 
+
+Option 1. Importing the transport request files by using the Transport Management System 
+
+Procedure 
+ 1.  Log on to the SAP system using the SAP GUI as the SAP administrator. 
+ 2.  Enter the transaction STMS. 
+ 3.  Click Overview > Imports. 
+ 4.  Double-click the current SID in the Queue column. 
+ 5.  Click Extras > Other Requests > Add. 
+ 6.  Select the transport request ID for your SAP system configuration (see the table below) and click Continue. 
+ 7.  Select the transport request in the import queue and click Request > Import. 
+ 8.  Enter the client number. 
+ 9.  Check the option "Ignore component version" on the Options tab, if available, and click Continue. 
+ 10. Verify that the authorization roles were imported successfully by using any appropriate transactions such as SU01.
+
+
+Option 2: Importing the transport request files at the operating system level 
+
+Procedure 
+ 1. Log on to the SAP system as a system administrator. 
+ 2. Add the appropriate requests to the import buffer by running the following command:
+    tp addtobuffer <transport request> <SID> 
+    For example:
+    tp addtobuffer DIBK900274DD1 
+ 3. Import the transport requests by running the following command:
+    tp import <transport request> <SID> client=<NNN>
+    where <NNN> is the client number. For example:
+    tp import DIBK900274DD1 client=800 
+ 4. Verify that the function module and authorization roles were imported successfully by using appropriate transactions such as SU01.
+
+
+The following table contains the transport request IDs for different SAP system configurations: 
+
+
+SAP BW VERSION AUTHORIZATION ROLES BW 3.5 M07K900123 BW 7.X DIBK900274

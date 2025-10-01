@@ -1,0 +1,182 @@
+Title: IBM PK63207: COMPONENT LINKS IN THE RICH TEXT ELEMENT ARE NOT RENDERED FOR ANONYMOUS USERS SYSTEM WORKSPACE SHOULD BE USED LIKE PK62508 - United States
+
+Text:
+ 
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When an anonymous user accesses content that has a Rich Text
+   Element that includes links to both secure and non-secure file
+   resource components the links are not rendered as expected. Only
+   the text for the link to the secure file resources are rendered
+   the test is not however a link.  links to non-secure file
+   resources are rendered as expected.
+   ..
+   The following error may be logged:
+    com.ibm.icm.jcr.access.AccessDeniedException: The requested
+    operation violates one or more access constraints.
+    at com.ibm.icm.jcr.NodeImpl.checkPermissions
+      (NodeImpl.java:6042)
+    at com.ibm.icm.jcr.WorkspaceImpl.getNodeByUuid
+       (WorkspaceImpl.java:1188)
+    at com.ibm.icm.jcr.WorkspaceImpl.getNodeByUuid
+       (WorkspaceImpl.java:1066)
+    at com.ibm.workplace.wcm.services.repository.RepositoryServiceI
+       getNodeByUUID(RepositoryServiceImpl.java:427)
+    at com.ibm.workplace.wcm.services.repository.RepositoryServiceI
+       getByUUID(RepositoryServiceImpl.java:1240)
+    at com.ibm.workplace.wcm.services.repository.RepositoryServiceI
+       getLazy(RepositoryServiceImpl.java:401)
+    at com.ibm.workplace.wcm.services.content.ContentServiceImpl.ge
+       (ContentServiceImpl.java:1805)
+    at com.ibm.workplace.wcm.services.content.ContentServiceImpl.ge
+       (ContentServiceImpl.java:1631)
+    at com.aptrix.pluto.cmpnt.link.ControllableLinkReference.
+       getControllable(ControllableLinkReference.java:163)
+    at com.aptrix.pluto.cmpnt.link.ResourceLinkReference.getAuthori
+       (ResourceLinkReference.java:65)
+    at com.aptrix.pluto.cmpnt.link.ResourceLinkReference.getURL
+       (ResourceLinkReference.java:95)
+    at com.aptrix.pluto.cmpnt.LinkCmpnt.resolve(LinkCmpnt.java:385)
+    at com.aptrix.pluto.cmpnt.Cmpnt.resolveCmpnt(Cmpnt.java:211) .
+      . . .
+   ..
+   .
+   ReCreate Steps:
+   (1) Create a new piece of test content with only a Rich Text Ele
+   (2) Using Insert Link in the RTE create two links one to anonymo
+       file resource component and the other to secure file resourc
+       component.
+   (3) Assign anonymous user access to the new content.
+   (4) Render the content (preview) drag mouse over both links and
+       will see in the lower left the address is as expected.
+   (5) Logout
+   (6) Render the new content as anonymous user and you will find
+       that the link to the secured file resource component is not
+       rendered. The text is there but it is plain text and not a
+       link to the component.
+   .
+   The system workspace should be used to generate the link to the
+   secured content/components in order to ensure the link is
+   created the link will use /myconnect/ and therefore redirect
+   anonymous users to the login screen.
+   ..
+   KeyWords: Rich Text Element links insert link anonymous missing
+             AccessDeniedException secure connect myconnect
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  When an anonymous user accesses content that has a Rich text
+   Element links to secure file resource components will not be
+   rendered.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fail to get the actual component due to a security checking, in
+   that case the url for that component is null. Bypass the
+   security checking for generating the url for the component, the
+   security checking will be processed after the user click that
+   link.
+   
+   An interim fix for this APAR is available from Fix Central at:
+   
+   6.0.1.3
+   
+   http://www.ibm.com/eserver/support/fixes/fixcentral/swgquickorde
+   r?brandid=2&productid=Workplace%20Web%20Content%20Management&fix [http://www.ibm.com/eserver/support/fixes/fixcentral/swgquickorder?brandid=2&productid=Workplace%20Web%20Content%20Management&fix]
+   es=6.0.1.3-WCM-PK63207
+   
+   You will need to copy/paste in the entire URL address for the
+   address to resolve.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK63207
+   
+   
+ * REPORTED COMPONENT NAME
+   WRKPLC WEB CON
+   
+   
+ * REPORTED COMPONENT ID
+   5724I2900
+   
+   
+ * REPORTED RELEASE
+   60G
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-03-24
+   
+   
+ * CLOSED DATE
+   2008-03-31
+   
+   
+ * LAST MODIFIED DATE
+   2008-05-16
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WRKPLC WEB CON
+   
+   
+ * FIXED COMPONENT ID
+   5724I2900
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R60G PSY
+   UP

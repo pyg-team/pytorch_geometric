@@ -1,0 +1,41 @@
+Title: IBM Improving WebSphere Performance and Reducing Hung Threads - United States
+
+Text:
+TPAEPERFORMANCE; TPAEWEBSPHERE; TPAEAPPSERVER; Performance; Hung Threads; WebSphere Application Server; Fail; stuck; login; deploy; temporary; temp; transaction; log; WAS TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ WebSphere Application Servers (WAS) are designed to recover from catastrophic failure. To do this, temp and transaction files are maintained at all times. If files are not cleared at deployment time they can cause hung threads and failures in deployment. 
+
+SYMPTOM
+Hung threads, missing changes after a new deployment, and unexpected results from a deployed EAR file
+
+
+CAUSE
+TEMP and TRANLOG files contain outdated information
+
+DIAGNOSING THE PROBLEM
+If, after a deployment, users experience hung threads or unexpected results, it may be the result of not properly clearing temp and tranlog directories in the WebSphere directory structure
+
+RESOLVING THE PROBLEM
+Java Applications use Application Server technology extensively to handle a host of functionality that no longer needs to be built in to applications. Procedures to cluster, scale and load balance, manage messages and more are all handled at the application server level. When you deploy an application (Enterprise ARchive or EAR file) to and application server, it starts the process by extracting the code for use by the Java Virtual Machine (JVM) and proceeds to build directories and files for temporary storage, transactions, logs, and more. The result is an intricate hierarchy of folders and files used to support the application.
+
+
+When an application is uninstalled, theoretically, these folders and files are removed. Often there may be reasons why they cannot be removed for example they may be locked by the operating system (OS). 
+Each time an application is redeployed on a WebSphere platform, temporary and transaction logs should be checked and removed if they still exist after an uninstall. 
+
+The procedure for proper deployment at a high level is:
+
+
+ * Uninstall the application if it has previously been deployed 
+ * Check the OS level and delete if necessary temp and tranlog files 
+ * Install/Deploy the application
+
+
+The typical directory structure for WebSphere temporary and transaction log files shows below but these can be changed. The key action is to remove old temporary and transaction log files wherever they exist. 
+
+Once you have located the temp and tranlog directories, they should be expanded drilled down to find the server files that should be removed. This path structure will depend on the naming used for the deployment manager and nodes as well as path chosen during the install procedure. The paths shown below are for example only. 
+
+For more details, see Clearing WebSphere temporary file caches for Maximo Asset Management [http://www.ibm.com/support/docview.wss?uid=swg21660821].  
+
+
+Cross reference information Segment Product Component Platform Version Edition Systems and Asset Management Tivoli Asset Management for IT Systems and Asset Management Tivoli Change and Configuration Management Database Systems and Asset Management Tivoli Service Request Manager Systems and Asset Management Control Desk

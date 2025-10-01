@@ -1,0 +1,29 @@
+Title: IBM Why does the Microsoft SQL Server agent identify the default instance as MSSQLSERVER instead of host name? - United States
+
+Text:
+KOQ; OQ; MSSQLSERVER TECHNOTE (FAQ)
+
+QUESTION
+ Why does the Microsoft SQL Server agent identify the default instance as MSSQLSERVER instead of host name? 
+
+ANSWER
+For Microsoft SQL Server agent V06.31.08.00 and earlier, the agent was designed to name the default instance with the host name. You could also create a second named instance on the Microsoft SQL Server with the instance name same as the host name. 
+When you installed the two instances of the Microsoft SQL Server on the same machine, one as the default instance and other as the named instance with the same name as the host name, the Microsoft SQL Server agent could not separately identify the presence of both the instances. The agent acknowledged only one instance for the agent configuration.
+
+
+Example
+Consider that a host machine with the name "PTD09480" had following two instances of Microsoft SQL Server installed on it: Default instance with the name MSSQLSERVER and a named instance with the name PTD09480.
+· The Microsoft SQL Server agent (V06.31.08.00 and earlier) identified the default instance as the host name, that is "PTD09480"
+· The agent identified the named instance as PTD09480
+
+
+Because both instances were being identified with same name, the agent was unable to differentiate between the instances.
+
+For the Microsoft SQL Server agent V06.31.08.01 and later, the agent design was modified. The agent now identifies the default instance as MSSQLSERVER. This name is unique for a particular host. 
+
+Remember: For the Microsoft SQL Server agent version 06.31.08.01 and later, because the name of the default instance was changed from host name to MSSQLSERVER, the previously configured default instance does not work as expected. When you upgrade the agent version from V06.31.08.00 or earlier, to any later version (fix pack or interim fix), you must unconfigure the default instance (that has the same name as the host name), and reconfigure the default instance with the name as MSSQLSERVER.
+
+
+
+PRODUCT ALIAS/SYNONYM
+ SQL Agt

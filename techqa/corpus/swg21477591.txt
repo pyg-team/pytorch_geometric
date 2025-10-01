@@ -1,0 +1,19 @@
+Title: IBM Hierarchical Cluster Analysis causes SPSS to crash - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ I have attempted to run a Hierarchical Cluster Analysis using SPSS version 15. The first time I ran the analysis, my computer crashed. The next time, only SPSS hung and would not allow me to restart. I am attempting to examine about 6 variables, but I have a great many cases. What am I doing wrong? 
+
+RESOLVING THE PROBLEM
+This problem has been fixed for Release 17. We apologize for any inconvenience. In earlier versions affected by the defect, if you specify PLOTS=NONE in command syntax, or uncheck the Plots checkbox in the main Hierarchical Cluster Analysis dialog box, and do not request printing of the proximities matrix, you may be able to compete the analysis. If you need the proximity matrix, you can use the MATRIX OUT subcommand to have that saved to an SPSS file rather than printed. All of the plots produced by the procedure would be difficult if not impossible to print, view or interpret with a very large number of cases, so suppressing the plots is probably desirable
+
+RELATED INFORMATION
+ Need more help? Our Statistics forum is Live! [https://developer.ibm.com/answers/topics/statistics.html?smartspace=predictive-analytics]
+
+
+ 
+
+HISTORICAL NUMBER
+ 68449

@@ -1,0 +1,45 @@
+Title: IBM Attempts to open AppScan Source for Analysis and AppScan Source for Development (Eclipse plug-in) on Linux result in a white box - United States
+
+Text:
+xulrunner; mozilla_five_home TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Attempts to launch the IBM Security AppScan Source for Analysis or AppScan Source for Development (Eclipse plug-in) user interface result in an empty white box or not showing anything. 
+
+SYMPTOM
+After entering login credentials, you may see a blank white box appear or you may not see anything happen. In either case, the UI does not launch as expected.
+
+
+CAUSE
+The underlying Eclipse version that AppScan Source is built on or installed to is incompatible with XULRunner version 1.9.2.26-2 or later.
+
+ENVIRONMENT
+This problem is typically seen on RHEL 5.8 and RHEL 6.3, but it can occur on any version of RHEL with a newer version of XULRunner.
+
+RESOLVING THE PROBLEM
+Resolution for AppScan Source for Analysis version 8.6.x or earlier, and for AppScan Source for Development installed to Eclipse version 3.6 or earlier:
+
+
+ * 
+ * 
+ * https://developer.mozilla.org/en-US/docs/XULRunner_1.8.0.4_Release_Notes
+ * 
+ * 
+ *  Set MOZILLA_FIVE_HOME to the XULRunner installation location. Update LD_LIBRARY_PATH to append (or pre-pend) $MOZILLA_FIVE_HOME. 
+ * 
+ * 
+
+
+Resolution for AppScan Source for Analysis Version 8.7.x, and for AppScan Source for Development installed to Eclipse Version 3.7 or later: 
+ * 
+ * yum install webkitgtk.i686
+ * 
+ * 
+ * 
+ * 
+ * 
+ *  Set MOZILLA_FIVE_HOME to the XULRunner installation location. Update LD_LIBRARY_PATH to append (or pre-pend) $MOZILLA_FIVE_HOME. 
+
+Resolution for Eclipse 32-bit using a 32-bit JDK on RHEL 5.8 crashing when launched from the UI menu. 
+ * 
+ *

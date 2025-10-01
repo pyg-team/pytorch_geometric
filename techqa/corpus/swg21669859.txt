@@ -1,0 +1,80 @@
+Title: IBM Security Bulletin: IBM Sterling B2B Integrator and IBM Sterling File Gateway are affected by vulnerabilities in OpenSSL (CVE-2014-0160 and CVE-2014-0076) - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ Security vulnerabilities have been discovered in the OpenSSL libraries which a customer may use with the SWIFTNet adapters IBM Sterling B2B Integrator and IBM Sterling File Gateway. 
+
+VULNERABILITY DETAILS
+Although the product does not ship with OpenSSL, SWIFTNet adapters of IBM Sterling B2B Integrator and IBM Sterling File Gateway may be configured by the customer to use OpenSSL libraries for cryptography. If a customer has downloaded and is using OpenSSL libraries Version 1.0.1 with the SWIFTNet adapters, then the following security vulnerabilities discovered in OpenSSL libraries Version 1.0.1 are applicable. IBM Sterling B2B Integrator and IBM Sterling File Gateway customers who do not use OpenSSL with the SWIFTNet adapters are not impacted by this vulnerability.
+
+CVE-ID: CVE-2014-0160 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-0160] [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2013-4353] 
+
+DESCRIPTION: : OpenSSL could allow a remote attacker to obtain sensitive information, caused by an error in the TLS/DTLS heartbeat functionality. An attacker could exploit this vulnerability to expose 64k of private memory and retrieve secret keys. This vulnerability can be remotely exploited, authentication is not required and the exploit is not complex. An exploit can affect the confidentially, but not integrity or availability. 
+
+CVSS Base Score: 5
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/92322 [https://exchange.xforce.ibmcloud.com/vulnerabilities/92322]
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:L/Au:N/C:C/I:N/A:N)
+
+Warning: We strongly encourage you to take action as soon as possible as potential implications to your environment may be more serious than indicated by the CVSS score.
+
+CVE-ID: CVE-2014-0076 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-0076] 
+
+DESCRIPTION: OpenSSL could allow a local attacker to obtain sensitive information, caused by an implementation error in ECDSA (Elliptic Curve Digital Signature Algorithm). An attacker could exploit this vulnerability using the FLUSH+RELOAD cache side-channel attack to recover ECDSA nonces. This vulnerability can only be exploited locally, authentication is not required and the exploit is not complex. An exploit can only partially affects confidentially, but not integrity or availability. 
+
+CVSS Base Score: 2.1
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/91990 [https://exchange.xforce.ibmcloud.com/vulnerabilities/91990]
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:L/AC:L/Au:N/C:P/I:N/A:N)
+
+AFFECTED PRODUCTS AND VERSIONS
+IBM Sterling B2B Integrator 5.2.x or IBM Sterling File Gateway 2.2.x. Prior versions of Sterling Integrator and Sterling File Gateway are not impacted by this issue. 
+
+REMEDIATION/FIXES
+Customer must upgrade their current version of OpenSSL to version 1.0.1g
+
+After upgrading OpenSSL to 1.0.1g, additional instructions are needed for CVE-2014-0160:
+
+1) Replace your SSL Certificates. 
+
+ * 
+ * 
+
+2) Reset User Credentials  * 
+
+
+Warning: Your environment may require additional fixes for other products, including non-IBM products. Please replace the SSL certificates and reset the user credentials after applying the necessary fixes to your environment. WORKAROUNDS AND MITIGATIONS
+None Known
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v2 Guide [http://www.first.org/cvss/v2/guide] 
+On-line Calculator v2 [http://nvd.nist.gov/CVSS-v2-Calculator] 
+OpenSSL vulnerability website [http://www.openssl.org/news/vulnerabilities.html] 
+Heartbleed [http://heartbleed.com/] 
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] 
+
+CHANGE HISTORY
+ 11 April 2014: Clarified "Affected Products and Versions"
+10 April 2014: Original version published 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY. 
+
+RELATED INFORMATION
+ A Japanese translation is available [http://www.ibm.com/support/docview.wss?uid=swg21670368]
+
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Commerce Sterling File Gateway AIX, All, HP-UX, i5/OS, Linux, Windows 2.2

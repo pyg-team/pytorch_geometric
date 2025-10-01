@@ -1,0 +1,237 @@
+Title: IBM PK09708: SHIP INTERNAL DEFECT FIXES FOR WEBSPHERE BUSINESS INTEGRATION SERVER FOUNDATION V5.1.0 FOR Z/OS. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Ship internal defect fixes for WebSphere Business Integration
+   Server Foundation V5.1.0 for z/OS
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All users of WebSphere Business Integration  *
+   *                 Server Foundation V5.1.0 for z/OS.           *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: APAR PK09708 addresses various defects  *
+   *                      in WebSphere Business Integration       *
+   *                      Server Foundation V5.1.0 for z/OS.      *
+   *                      Application of APAR PK09708 brings      *
+   *                      WebSphere Business Integration          *
+   *                      Server Foundation V5.1.0 for z/OS to    *
+   *                      functional equivalence to WebSphere     *
+   *                      Business Integration Server Foundation  *
+   *                      Version 5.1.1 (Cumulative Fix 2) on the *
+   *                      distributed platform.                   *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   APAR PK09708 addresses various defects in WebSphere Business
+   Integration Server Foundation V5.1.0 for z/OS.  Application of
+   APAR PK09708 brings WebSphere Business Integration Server
+   Foundation V5.1.0 for z/OS to functional equivalence to
+   WebSphere Business Integration Server Foundation Version
+   5.1.1 (Cumulative Fix 2) on the distributed platform.
+   
+   This APAR includes the following WebSphere Business Integration
+   Server Foundation Version 5.1.1 (Cumulative Fix 2) distributed
+   Platform fixes:
+   
+   APAR    Description
+   IY66608 CALL TO PROCESS B FAILS IF PROCESS B RESIDES ON
+           DIFFERENT SERVER
+   IY66642 NULLPOINTEREXCEPTION THROWN BPEL.INSTANCELOCATORIMPL.
+           GETFINDERMTHOD(INSTANCELOCATORIMPL.JAVA:359)
+   IY66788 ASYNCHRONOUS CALL UPDATES THE CORRELATION INFO+AIID+PIID
+           IN THE DATABASE IN TABLE AWAITED_INVOCATION_T.
+   IY66885 GENERATING DEPLOY CODE FAILS FOR BPEL PROCESSES WITH
+           OUTBOUND
+   IY67006 WEBCLIENT: INSTANCE LIST IS BLOATED BY INVALID HTML
+   IY67392 BPE SERIALIZER DESERIALIZER THROWS AN EOF EXCEPTION
+   IY67810 "OLD" PROCESS TEMPLATE STILL IN CACHE, AND IS STOPPED BY
+           THE STOP TEMPLATE STEP, AND ITS RELATED APPLICATION IS
+           UNAVAILABLE.
+   IY67994 WORK_ITEM_T TABLE GROWS WHEN RUNNING QUERIES THAT TAKE A
+           LONG PERIOD OF TIME
+   IY68049 ASSERTION EXCEPTION ON THREAD CALL
+   IY68072 UNDO ACTION NOT CALLED DURING COMPENSATION IN A LONG-
+           RUNNING PROCESS
+   IY68086 WORKITEMS NOT DISPLAYED IN WEBCLIENT WHEN PROCESS IN
+           STATE FAILING
+   IY68193 INBOUND WSDL FOR PROCESS NOT GENERATED
+   IY68245 NULL POINTER IS OCCURING DURING GENERATOR CODE DUE TO
+           MISSING THE 'PATTERN' ATTRIBUTE IN THE BPEL FILE
+   IY68437 NESTED FAULT HANDLER SCOPES CAUSE INCORRECT AFFILIATION
+           ON THE RETURN PATH RESULTING IN INCORRECT NAVIGATION.
+   IY68543 MODELING A PROCESS IN TOOLING ENABLES THE CHECK-BOX
+           BUSINESS RELEVANCE ON PICK PER DEFAULT.
+   IY68585 FVT FAILED FOR BPEL PROCESS THAT INVOKES OUTBOUND
+           WEB SERVICES
+   IY68699 PERFORMANCE ISSUS. NEEDS PUBLISHING TIMES TO BE IMPROVED
+           WHEN BROWSING/DEPLOYING TIME.
+   IY68789 BPEL SUBFLOW NOT DEPLOYED
+   IY68895 NULL POINTER EXCEPTION DURING DEPLOYMENT OF BUSINESS
+           PROCESS
+   IY69390 WSIF EXCEPTION RESULTING FROM INCORRECT WSDL IS SWALLOW-
+           ED BY BUSINESS PROCESS CHOREOGRAPHER
+   IY69447 JAVA BEANS GENERATED FOR PROCESS MESSAGES DO NOT CONTAIN
+           DEFAULT CONSTRUCTORS
+   IY69957 WORK_ITEM1 DOES NOT GET CANCELLED IF CLAIMED BY BPE
+           SYSTEM ADMIN
+   IY70218 BPEE0087E EXCEPTION AFTER UPGRADE WBISF FROM 5.1.1 TO
+           5.1.1.1
+   IY70285 BPE CONTAINER LOADER PROBLEM IN BPC CLASSES NOT FOUND.
+   IY70930 UNDEFINED PARTNER LINK OPERATION ERROR AFTER DEPLOY WITH
+           INLINE XSD.
+   PK00922 PROBLEMS WITH PARALLEL PORTLET RENDERING USING ASYNC
+           BEANS
+   PK01147 SCHEDULER MAY DEADLOCK OR CAUSE TASKINVALID EXCEPTIONS.
+   PK02040 UNABLE TO CREATE MUTIPLE BPC IN WSAS 5.1.1 USING ADMIN
+           CONSOLE
+   PK02135 UNABLE TO DESERIALIZE CERTAIN ASYNCHBEANS OBJECTS ACROSS
+           RELEASES
+   PK02503 FFDC LOGS CONTAIN READABLE PASSWORD WHICH PRESENT
+           SECURITY PROBLEMS
+   PK02958 SCHEDULER DOES NOT ROLL BACK A TRANSACTION WHEN THERE IS
+           AN IN-DOUBT TRANSACTION LOCK ON THE SCHEDULER TABLE
+   PK03540 ROLE BASED AUTHORIZATION CHECKERROR SEEN AFTER UPGRADE
+           OF WBISF FROM 5.1.1.1 AND WAS 5.1.1.3 (PME 5.1.1.1)
+   PK03593 J2EECONTEXT INCOMPLETE FOR EVENT LISTENER IN SAME
+           TRANSACTION
+   PK03786 [http://www-01.ibm.com/support/docview.wss?uid=swg1PK03786] SCHEDULER MAY THROW TASKINVALID EXCEPTION WHEN USING
+           ISERIES DB2
+   PK04226 GETSTATUS() RETURNS SUSPENDED FOR A CANCELLED TASK.
+   PK04318 KILLING NODEAGENT & SERVERS SIMULTAENOUSLY: WLM DOES
+           NOT FAILBACK PROPERLY
+   PK05216 [http://www-01.ibm.com/support/docview.wss?uid=swg1PK05216] WBSIF SERVICE UPGRADE PROCESSING DOES NOT PROPERLY
+           HANDLE SYMBOLIC LINKS
+   PK05561 DEBUG REDUCE AMOUNT OF TRANSACTION ROLLBACKS IN THE
+           SCHEDULER LEASE MANAGER
+   PQ88801 ADD NEW METHODS TO JTA EXTENSIONS.
+   PQ97759 SCHEDULER CRON FAILS WITH LATE DAY OF MONTH
+   PQ98510 EVENT LISTENERS REGISTERED AT MAX_LISTENER_SEQUENCE_
+           VALUE ARE IGNORED
+   PQ99261 IF SYSTEM TIME IS CHANGED FREQUENTLY SCHEDULER MIGHT
+           FAIL.
+   
+   
+   For APAR details please see the WebSphere Business
+   Integration Server Foundation Version 5.1.1 defect
+   list at URL:
+   
+   http://www-1.ibm.com/support/docview.wss?rs=1079&uid=swg27005358 [http://www-1.ibm.com/support/docview.wss?rs=1079&uid=swg27005358]
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  WebSphere Business Integration Server Foundation V5.1.0 for z/OS
+   is modified to be functionally equivalent to WebSphere Business
+   Integration Server Foundation Version 5.1.1 (Cumulative Fix 2)
+   on the distributed platform.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK09708
+   
+   
+ * REPORTED COMPONENT NAME
+   WBI FNDTN SVR Z
+   
+   
+ * REPORTED COMPONENT ID
+   5655L8500
+   
+   
+ * REPORTED RELEASE
+   510
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2005-08-01
+   
+   
+ * CLOSED DATE
+   2005-08-03
+   
+   
+ * LAST MODIFIED DATE
+   2005-09-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UK05973
+   
+   
+
+MODULES/MACROS
+ *  BBZ00001 BBZ00015 BBZ00016 BBZ00017 BBZ00024
+   BBZ00026 BBZ00030 BBZ00032 BBZ00040 BBZ00042 BBZ00047 BBZ000
+   
+   ***This field was truncated.  To obtain the full apar record, please contact your local support center.***
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WBI FNDTN SVR Z
+   
+   
+ * FIXED COMPONENT ID
+   5655L8500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R510 PSY UK05973
+   UP05/08/12 P F508

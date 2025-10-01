@@ -1,0 +1,140 @@
+Title: IBM IV87362: SUPPORT DOMAIN USER IN UPN FORMAT WHEN LOGON - United States
+
+Text:
+  A FIX IS AVAILABLE
+IBM Editor for Messages for Distributed Systems, 2.0.0-TIV-EDITORMSGS-IF0009 [http://www-01.ibm.com/support/docview.wss?uid=swg24042784]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  SUPPORT DOMAIN USER IN UPN FORMAT WHEN LOGON
+   
+   Users Affected:
+   users who want to input domain user in user principal name
+   format when logon
+   
+   Environment:
+   Windows only. ValidateUser parameter is set to yes in
+   config.xml.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  NA
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  This APAR is used to support UPN(User Principle Name) format
+   when login PathWAI Editor for Messages.
+   
+   For domain user, type 'domain\username' as the 'User ID' in
+   login page. A backslash is used to delimit.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Code change is made in kxymsged.jar.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  n/a
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV87362
+   
+   
+ * REPORTED COMPONENT NAME
+   EDITOR MESSAGES
+   
+   
+ * REPORTED COMPONENT ID
+   5724K3700
+   
+   
+ * REPORTED RELEASE
+   200
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-07-29
+   
+   
+ * CLOSED DATE
+   2016-08-14
+   
+   
+ * LAST MODIFIED DATE
+   2016-08-14
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   EDITOR MESSAGES
+   
+   
+ * FIXED COMPONENT ID
+   5724K3700
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R200 PSY
+   UP

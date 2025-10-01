@@ -1,0 +1,75 @@
+Title: IBM Security Bulletin: IBM FileNet System Monitor/IBM Enterprise Content Management System Monitor is potentially affected by vulnerabilities in IBM Java SDK/JRE - United States
+
+Text:
+ FLASH (ALERT)
+
+ABSTRACT
+ Multiple security vulnerabilities exist in the IBM Java SDK/JREs that are shipped with IBM FileNet System Monitor/IBM Enterprise Content Management System Monitor product. 
+
+CONTENT
+
+VULNERABILITY DETAILS: 
+
+
+DESCRIPTION: 
+The IBM FileNet System Monitor/IBM Enterprise Content Management System Monitor product ships with IBM Java SDK/JREs The IBM Java SDK/JREs are based on the Oracle version of the SDK/JRE. In February 2013, Oracle has released critical patch updates (CPU) that contain security vulnerability fixes. These issues are present in the IBM JDK/JREs that are shipped with the System Monitor product.
+
+CVEID: CVE-2013-0440
+CVSS Base Score: 5
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/81799 [https://exchange.xforce.ibmcloud.com/vulnerabilities/81799]
+for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:L/Au:N/C:N/I:N/A:P)
+
+CVEID: CVE-2013-0169
+CVSS Base Score: 4.3
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/81902 [https://exchange.xforce.ibmcloud.com/vulnerabilities/81902] 
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:M/Au:N/C:P/I:N/A:N)
+
+
+AFFECTED PRODUCTS AND VERSIONS: 
+The following versions of the System Monitor product are potentially affected:
+
+IBM FileNet System Monitor v4.5.0
+IBM Enterprise Content Management System Monitor v5.1.0
+
+
+REMEDIATION: 
+
+For IBM FileNet System Monitor v4.5.0:
+
+Upgrade to the platform specific version of the IBM SDK/JRE that is available in IBM FileNet System Monitor v4.5.0 Fix Pack 3.
+
+For IBM Enterprise Content Management System Monitor v5.1.0:
+
+Upgrade to the platform specific version of the IBM SDK/JRE that is available in IBM Enterprise Content Management System Monitor v5.1.0 Fix Pack 1.
+
+
+If you need further assistance, please contact IBM Support.
+
+
+REFERENCES: 
+[https://www-304.ibm.com/support/docview.wss?uid=swg21496117&wv=1]· Complete CVSS Guide [http://www.first.org/cvss/v2/guide]
+· On-line Calculator V2 [http://nvd.nist.gov/cvss.cfm?calculator&adv&version=2] 
+· CVE-2013-0440 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE--2013-0440]
+· CVE-2013-0169 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE--2013-0169]
+· X-Force Vulnerability Database https://exchange.xforce.ibmcloud.com/vulnerabilities/81799 [https://exchange.xforce.ibmcloud.com/vulnerabilities/81799]
+· X-Force Vulnerability Database https://exchange.xforce.ibmcloud.com/vulnerabilities/81902 [https://exchange.xforce.ibmcloud.com/vulnerabilities/81902]
+· Security Bulletin: WAS - Oracle CPU Feb 2013 [http://www.ibm.com/support/docview.wss?uid=swg21627634]
+· Updated Release of Oracle Java SE CPU Advisory Feb 2013 [http://www.oracle.com/technetwork/topics/security/javacpufeb2013-1841061.html]
+
+RELATED INFORMATION: 
+IBM Secure Engineering Web Portal [https://www-304.ibm.com/jct03001c/security/secure-engineering/]
+IBM Product Security Incident Response Blog [https://www.ibm.com/blogs/PSIRT]
+
+CHANGE HISTORY
+12 July, 2013: Original Copy Published
+
+
+
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Flash. 
+
+
+Note: According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.

@@ -1,0 +1,32 @@
+Title: IBM For WebSphere Process Server (WPS, a user-defined fault is not propagated back to the client in a web service export and a TransactionRolledBackException is thrown - United States
+
+Text:
+TransactionRolledBackException; ServiceBusinessException; web service export TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When a service component architecture (SCA) service is invoked through Web service export, a new transaction is unconditionally started by the export during the invocation. As a result, when the session is marked for rollback only by the downstream service or a ServiceBusinessException is raised, the new transaction is rolled back. Also, the EJB container converts the business exception into a TransactionRolledBackException during the post invoke processing. 
+
+SYMPTOM
+You see the following exceptions in the SystemOut.log file: 
+
+[12/5/08 13:03:01:046 CST] 00000055 ServiceLogger I com.ibm.ws.ffdc.IncidentStreamImpl open FFDC0009I: FFDC opened incident stream file C:\IBM\WID61\pf\wps\logs\ffdc\server1_00000055_08.12.05_13.03.01_0.txt
+[12/5/08 13:03:01:103 CST] 00000055 ServiceLogger I com.ibm.ws.ffdc.IncidentStreamImpl resetIncidentStream FFDC0010I: FFDC closed incident stream file C:\IBM\WID61\pf\wps\logs\ffdc\server1_00000055_08.12.05_13.03.01_0.txt
+[12/5/08 13:03:01:107 CST] 00000055 WSATSOAPServe > handleFault Entry
+com.ibm.ws.webservices.engine.MessageContext@20b420b4
+com.ibm.ws.Transaction.wstx.WSATSOAPServerHandler@25be25be
+[12/5/08 13:03:01:111 CST] 00000055 WSATHandlerHe 3 Fault code/string/actor
+soapenv:Server.generalException
+javax.transaction.TransactionRolledbackException: ; nested exception is: 
+com.ibm.websphere.csi.CSITransactionRolledbackException: Transaction marked rollbackonly
+
+
+CAUSE
+Transaction attributes were not configured for the Service Endpoint interface in the deployment descriptor for web services export. 
+
+
+RESOLVING THE PROBLEM
+If you are running with WebSphere Process Server V6.1 and WebSphere Process Server V6.1.2 runtime interim fix JR32139, the corresponding WebSphere Integration Developer interim fix JR32469 needs to be applied. Subsequently, your application needs to be removed, re-built, and installed again. Also, users of WebSphere Process Server V6.1.0 Fix Pack 2 need to apply interim fix JR28770 for the scenario to work correctly. 
+
+If you are running with WebSphere Process Server V6.2, then WebSphere Process Server V6.2.0 Fix Pack 1 [http://www.ibm.com/support/docview.wss?uid=swg24022185] needs to be applied. Subsequently, relevant applications need to be removed, re-built in WebSphere Integration Developer V6.2.0 Fix Pack 1, and installed again.
+
+The interim fixes enhance the SCA web services export so that it participates in the incoming transaction. It also propagates the transaction context from the incoming call to the target SCA service. As a result, when a user-defined fault is raised by the target SCA service, it is flown back to the client.

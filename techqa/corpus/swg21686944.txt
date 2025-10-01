@@ -1,0 +1,50 @@
+Title: IBM Tivoli Integrated Portal does not start properly - United States
+
+Text:
+TIPL2AUTH; TIPL2SEC; start; certificate ; changed; expired; LDAP TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ After stopping the TIP server, when trying to restart, it cannot be restarted. 
+
+SYMPTOM
+TIP server does not start
+
+
+CAUSE
+A certificate has been changed on the LDAP server , which prevents proper authentication of the tipadmin user when trying to start the TIP server. 
+
+DIAGNOSING THE PROBLEM
+Check the startServer.log and systemout log for errors like these: 
+
+Caused by: com.ibm.websphere.wim.exception.WIMSystemException: 
+CWWIM4520E The 'javax.naming.CommunicationException: simple bind failed: 
+tdbfg.com:636 [Root exception is javax.net.ssl.SSLHandshakeException: 
+com.ibm.jsse2.util.h: No trusted certificate found]' naming exception 
+occurred during processing. 
+
+
+
+RESOLVING THE PROBLEM
+1) Edit the wimconfig.xml file located under (please take a backup of this file prior to editing):
+
+<TIP HOME>/profiles/TIPProfile/config/cells/TIPCell/wim/config/
+
+
+
+
+and change: 
+
+<config:realms delimiter="/" name="TIPRealm" securityUse="active"> 
+
+to: 
+
+<config:realms delimiter="/" name="TIPRealm" securityUse="active" 
+allowOperationIfReposDown="true"> 
+
+2) Then restart the TIP Server. This will allow you to login as with tipadmin, (who is a user in the local file registry. 
+
+3) Once you are able to log in again, you can do a "retrieve from port" against the LDAP server, to load a new signer certificate. 
+
+For further details on how to load a new signer certificate, please see 
+
+ Steps to replace the default certificate in TIP/WAS via the admin console http://www.ibm.com/support/docview.wss?uid=swg21607528 [http://www.ibm.com/support/docview.wss?uid=swg21607528]

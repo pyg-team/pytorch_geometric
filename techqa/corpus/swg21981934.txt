@@ -1,0 +1,38 @@
+Title: IBM FSR - How can I reduce the size of my database? - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Over time the FSR database gets larger and larger. How can an FSR administrator reduce the size of the database dramatically and also possibly improve performance overall? 
+
+CAUSE
+What happens is that over time the repeated act of pressing "save" on an object creates a full audit entry (copy of the object) in the database each time.
+
+Now you take 20 reports, with say 300 objects, and approximately 100 saves per object over the years (it is probably even more then that) and you very quickly reach 600,000 rows of data just as an example
+(20x300x100).
+
+Eventually you can even reach a point where a SQL query (DB Call) will time out as there are simply too many rows of data to shift through.
+
+ANSWER
+While the best solution would be to optimize the reports and move to Cognos Disclosure Management (CDM) - where you can actually export entire reports from the front-end before deleting as well as other enhancements - we do have a quick fix for now in FSR.
+
+You can force delete all OLD copies of objects (the object audit trials) so that the database dramatically shrinks, and this might help speeds overall as well! We strongly recommend you talk to IBM Technical Support if you have any questions about this procedure or you need guidance. 
+
+
+FSR Database Size Reduction:
+
+1. Note this deletion is not reversible, so make a FULL Database Backup copy before proceeding.
+
+2. Run one of the below scripts. You can choose to do all Reports, or target a specific report one-by-one by grabbing the report ID # (from the bottom of FSR once you open the report its the # next to the report
+name).
+
+Remove Audit Trial Entries from 1 Report (Replace # with report ID, for example 55)
+Delete From Object Where ProjectID=# AND Version IS NOT NULL
+
+Remove Audit Trial Entires from All Reports (Shrinks entire database)
+Delete FROM object where Version IS NOT NULL
+
+
+Alternative: You can delete old copies of reports you do not need. 
+Please note this deletion is not reversible, so make a FULL Database Backup copy before proceeding so you can restore it elsewhere to access old reports (kind of like an archive database).

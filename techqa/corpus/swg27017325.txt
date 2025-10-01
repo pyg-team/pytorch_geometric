@@ -1,0 +1,64 @@
+Title: IBM InfoSphere Change Data Capture
+Management Console Tracing and Support Assistant - United States
+
+Text:
+CDC support assistant PRODUCT DOCUMENTATION
+
+ABSTRACT
+ Two new features have been added to Management Console to assist with the collection of information for submitting along with defects:
+
+1.Trace Options provides a mechanism to enable tracing from Management Console without requiring the user to stop Access Server and hand-edit files.
+
+2.Support Assistant provides a mechanism to collect information from Management Console, Access Server, and datastores to submit with a defect. The collection includes configuration information for the products, any log files, or error reports. 
+
+CONTENT
+Trace Options 
+
+Three new options exist for enabling tracing from within Management Console. No matter which options are selected, the end-user will collect those files using Support Assistant. To access these options:
+
+1. Start Management Console.
+
+2. Select the Help > Service Information > Trace Options menu item.
+
+[/support/docview.wss?uid=swg27017325&amp;aid=1]
+
+3. The first item “Enable Management Console message capture” allows the user to quickly turn on and off capture of messages that occur between Management Console, Access Server, and datastores. This information is specific to that single user, so it is sometimes more convenient to collect in environments where there are a lot of users connecting to Access Server.
+
+NOTE: This option is automatically turned off when the user stops Management Console. They can turn if off manually by unchecking the option.
+
+4. The second item “Enable Access Server message capture” allows the user to capture all messages send/received by Access Server. It is equivalent to running Access Server with the “debug” option, but does not require the user to stop Access Server in order to engage it.
+
+NOTE: This option is automatically turned off when the user stops Access Server. They can turn it off manually by clicking “Disable Access Server tracing and logging”.
+
+5. The second item “Enable Access Server logging” allows the user to capture internal information about Access Server. This is not normally required.
+
+NOTE: This option is automatically turned off when the user stops Access Server. They can turn it off manually by clicking “Disable Access Server tracing and logging”.
+
+In general, when there is an issue connecting to a datastore, configuring a datastore, or monitoring, the end-user should turn on “Enable Management Console message capture” and try to reproduce the problem. Once the user reproduces the problem, they should turn off tracing and run Support Assistant to collect the files.
+
+Support Assistant
+
+Support Assistant provides a tool that allows customer to collect information that development typically requests when trying to investigate an issue. To access Support Assistant:
+
+1. Start Management Console.
+
+2. Select the Help > Service Information > Support Assistant menu item.
+
+[/support/docview.wss?uid=swg27017325&amp;aid=2]
+
+3. Support Assistant always collects information about Management Console and Access Server, including any files generated as a result of enabling tracing options.
+
+4. Any datastores that support Support Assistant (e.g Java engine 6.3.1 FP3, z/OS is not yet available) and are connected, are displayed in the datastores list. To collect information from a datastore, click the “Enable Collection” checkbox.
+
+5. If development requests “Detailed” collection for the datastore, click the “Options” button after enabling collection for at least one datastore.
+
+[/support/docview.wss?uid=swg27017325&amp;aid=3]
+
+6. Normally the end-user should allow Support Assistant to clean-up diagnostic files after collection as we do not want to collect them again.
+
+7. Click “Collect Now” to start.
+
+8. After the files are collected, the user is presented with a screen that tells them where to get the file(s). If detailed collection is enabled, the screen will indicate where the end-user will go to get the datastore files, once the datastore has created them.
+
+[/support/docview.wss?uid=swg27017325&amp;aid=4]
+** Please note that you can always download the latest version of CDC's Management Console from Fix Central :http://www-933.ibm.com/support/fixcentral/ [http://www-933.ibm.com/support/fixcentral/]

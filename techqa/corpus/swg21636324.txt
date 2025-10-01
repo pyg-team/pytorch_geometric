@@ -1,0 +1,87 @@
+Title: IBM Security Bulletin:  WebSphere DataPower XC10 Appliance vulnerability in administrative access (CVE-2013-0600) and multiple TLS vulnerabilities in IBM Java as shipped with the WebSphere DataPower XC10 Appliance (CVE-2013-0440, CVE-2013-0443, CVE-2013-0169 - United States
+
+Text:
+ FLASH (ALERT)
+
+ABSTRACT
+ A security vulnerability in the WebSphere DataPower XC10 Appliance may allow unathenticated access to adminstrative operations, and multiple security vulnerabilities in Java TLS may allow attackers access to sensitive data. 
+
+CONTENT
+VULNERABILITY DETAILS: 
+CVE-2013-0600 - A knowledgeable user may submit administrative commands to the WebSphere DataPower XC10 Appliance without authentication.
+CVSS Base Score: 9.3
+CVSS Temporal Score: See http://xforce.iss.net/xforce/xfdb/83617 [http://xforce.iss.net/xforce/xfdb/83617] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:M/AU:N/C:C/I:C/A:C)
+
+CVE-2013-0440 - Unspecified vulnerability in Java Runtime Environment allows remote attackers to affect availability via vectors related to JSSE.
+CVSS Base Score: 5
+CVSS Temporal Score: See http://xforce.iss.net/xforce/xfdb/81799 [http://xforce.iss.net/xforce/xfdb/81799]
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:L/Au:N/C:N/I:N/A:P)
+
+CVE-2013-0443 - Unspecified vulnerability in Java Runtime Environment allows remote attackers to affect confidentiality and integrity via vectors related to JSSE.
+CVSS Base Score: 4
+CVSS Temporal Score: See http://xforce.iss.net/xforce/xfdb/81801 [http://xforce.iss.net/xforce/xfdb/81801]
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:H/Au:N/C:P/I:P/A:N)
+
+CVE-2013-0169 - The TLS protocol does not properly consider timing side-channel attacks, which allows remote attackers to conduct distinguishing attacks and plain-text recovery attacks via statistical analysis of timing data for crafted packets, aka the "Lucky Thirteen" issue.
+CVSS Base Score: 4.3
+CVSS Temporal Score: See http://xforce.iss.net/xforce/xfdb/81902 [http://xforce.iss.net/xforce/xfdb/81902]
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:M/Au:N/C:P/I:N/A:N)
+
+
+AFFECTED PRODUCTS AND VERSIONS: 
+
+WebSphere DataPower XC10 Appliance Version 2.0
+WebSphere DataPower XC10 Appliance Version 2.1
+
+REMEDIATION: 
+
+For WebSphere DataPower XC10 Appliance V2.1 on appliance 9235-92X apply the Version 2.1 Fix Pack 3 firmware upgrade [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~WebSphere&product=ibm/WebSphere/WebSphere+DataPower+XC10+Appliance&release=2.1.0.3&platform=All&function=fixId&fixids=2.1.0.3-WS-DPXC10-IFIC91726-9235&includeSupersedes=0] (APAR IC91726)
+
+For WebSphere DataPower XC10 Appliance V2.1 on appliance 7199-92X apply the Version 2.1 Fix Pack 3 firmware upgrade [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~WebSphere&product=ibm/WebSphere/WebSphere+DataPower+XC10+Appliance&release=2.1.0.3&platform=All&function=fixId&fixids=2.1.0.3-WS-DPXC10-IFIC91726-7199&includeSupersedes=0] (APAR IC91726)
+
+WebSphere DataPower XC10 Appliance users running 2.0 versions of the firmware can apply one of the Version 2.1 firmware upgrades. 
+
+
+
+Workarounds:
+None
+
+Mitigations:
+None
+
+REFERENCES: 
+· CVSS Complete Guide [http://www.first.org/cvss/v2/guide]
+· On-line Calculator V2 [http://nvd.nist.gov/cvss.cfm?calculator&adv&version=2] 
+· CVE-2013-0600 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2013-0600]
+· CVE-2013-0440 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2013-0440]
+· CVE-2013-0443 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2013-0443]
+· CVE-2013-0169 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2013-0169]
+· http://xforce.iss.net/xforce/xfdb/83617 [http://xforce.iss.net/xforce/xfdb/83617]
+· http://xforce.iss.net/xforce/xfdb/81799 [http://xforce.iss.net/xforce/xfdb/81799]
+· http://xforce.iss.net/xforce/xfdb/81801 [http://xforce.iss.net/xforce/xfdb/81801]
+· http://xforce.iss.net/xforce/xfdb/81902 [http://xforce.iss.net/xforce/xfdb/81902]
+· IBM Security Alerts [https://www.ibm.com/developerworks/java/jdk/alerts/]
+
+
+
+RELATED INFORMATION: 
+IBM Secure Engineering Web Portal [https://www-304.ibm.com/jct03001c/security/secure-engineering/]
+IBM Product Security Incident Response Blog [https://www.ibm.com/blogs/PSIRT]
+
+
+CHANGE HISTORY
+06 May 2013 Original Version Published
+22 May 2013 Revised Version Published
+
+
+
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Flash. 
+
+
+Note: According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.

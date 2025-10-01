@@ -1,0 +1,25 @@
+Title: IBM Unable to place string variables in Aggregate Variables area in Aggregate Data dialog box - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ I'm using SPSS for Windows 14.0 or earlier and I'm trying to use the Data->Aggregate dialog box to aggregate some string data using the FIRST, LAST, MIN, and MAX functions. All the documentation I've read on the AGGREGATE command indicates that those four functions (and only those four functions) can be used on string varaibles. But when I select a string variable in the variable list the arrow to place it in the "Aggregate Variable(s):" area won't activate.
+
+What's wrong? Will this work if I just write the command syntax for it? 
+
+RESOLVING THE PROBLEM
+The dialog box behavior is left over from when the ability to aggregate string data was not available. This was corrected in version 15.0.
+
+The appropriate corresponding command syntax, however, will function properly.
+
+The dialog box problem has been fixed in an upcoming release of SPSS for Windows. We apologize for the inconvenience
+
+RELATED INFORMATION
+ Need more help? Our Statistics forum is Live! [https://developer.ibm.com/answers/topics/statistics.html?smartspace=predictive-analytics]
+
+
+ 
+
+HISTORICAL NUMBER
+ 51047

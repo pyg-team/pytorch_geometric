@@ -1,0 +1,25 @@
+Title: IBM Tivoli Management Framework, IBM Tivoli Monitoring and IBM Tivoli Monitoring for Virtual Servers: Citrix MetaFrame Access Suite cannot be run within a Citrix session. - United States
+
+Text:
+Tivoli Management Framework; IBM Tivoli Monitoring; IBM Tivoli Monitoring for Virtual Servers: Citrix MetaFrame Access Suite; Citrix TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Tivoli Management Framework, IBM Tivoli Monitoring and IBM Tivoli Monitoring for Virtual Servers: Citrix MetaFrame Access Suite cannot be run within a Citrix session, but must be run on the base operating system. 
+
+RESOLVING THE PROBLEM
+Tivoli Management Framework and IBM Tivoli Monitoring for Virtual Servers
+IBM Tivoli Monitoring for Virtual Servers: Citrix MetaFrame Access Suite
+IBM Tivoli Monitoring for Virtual Servers V5.1.2: Citrix MetaFrame Access Suite, which monitors Citrix, runs in a Windows environment, which is supported by Tivoli Management Framework and IBM Tivoli Monitoring V5.1.2. There is no claim of support for running Tivoli Management Framework, IBM Tivoli Monitoring or IBM Tivoli Monitoring for Virtual Servers: Citrix MetaFrame Access Suite inside Citrix in such a way that it is exported or virtualized. Tivoli Management Framework, IBM Tivoli Monitoring and IBM Tivoli Monitoring for Virtual Servers: Citrix MetaFrame Access Suite cannot be run within a Citrix session, but must be run on the base operating system. Since IBM Tivoli Monitoring for Virtual Servers: Citrix MetaFrame Access Suite is running in a Windows environment, there is no need to recreate problems without Citrix present. See the attached diagram for a pictorial representation of this supported environment ( citrixenv.PRZ [/support/docview.wss?uid=swg21214773&aid=2] [/support/docview.wss?uid=swg21214773&aid=1]citrixenv.bmp [/support/docview.wss?uid=swg21214773&aid=4] [/support/docview.wss?uid=swg21214773&aid=3])
+
+Multi-user Environments [ex: MS Terminal Server, Citrix Presentation Server (formerly MetaFrame), WinDD etc.]
+Tivoli Management Framework endpoints can be installed on a supported operating system which also provides multiple (local or remote) user sessions. Tivoli Management Framework can only manage the base operating system itself. Tivoli Management Framework does not manage or interact with the user sessions hosted by the operating system.
+
+Virtual Environments [ex: Virtual PC, VMWare, MS Virtual Sever, etc.]
+Tivoli Management Framework endpoints can be installed on a supported operating system running within a virtual environment, as long as the virtual environment provides a complete emulation of the normal system requirements for a physical system. Tivoli Management Framework does not manage virtual images or the virtual environment itself. Any problems which are specific to the virtual environment and cannot be reproduced on a physical system are the responsibility of the virtual system provider to resolve.
+
+Note: IBM Tivoli Monitoring for Virtual Servers V5.1.2 provides monitoring software for Citrix MetaFrame Access Suite and VMware ESX. Monitoring of other environments mentioned here is not provided by IBM Tivoli Monitoring for Virtual Servers. 
+
+Additional information received:
+
+When moving the Quorum resource to the other server, the virtual IP does not follow it. That causes an
+EP error. Force the IP to failover with the Quorum resource. You will receive a message that says that the login is successful.

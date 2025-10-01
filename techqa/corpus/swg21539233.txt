@@ -1,0 +1,34 @@
+Title: IBM Why is the difference in space allocated for stats ESDS and KSDS not the same percent as the difference in number of records specified in the IDCAMS define? (7.0.4100290.2251524) - United States
+
+Text:
+STERLINGPRI TECHNOTE (FAQ)
+
+QUESTION
+ Why is the difference in space allocated for stats ESDS and KSDS not the same percent as the difference in number of records specified in the IDCAMS define? (7.0.4100290.2251524) 
+
+ANSWER
+ESDS and KSDS have different record sizes. The KSDS records are much smaller than the ESDS records.
+
+So when the KSDS is defined with 75% of the number of records the ESDS is defined with, the space allocated to the KSDS is not 75% of the space allocated to the ESDS.
+
+ 
+
+HISTORICAL NUMBER
+ PRI10527 
+
+PRODUCT ALIAS/SYNONYM
+ 
+
+Fact
+
+
+CONNECT:Direct OS/390, All Releases 
+7.0.4100290.2251524
+
+
+Goal
+
+
+FAQ Why is the difference in space allocated for stats ESDS and KSDS not the 
+same percent as the difference in number of records specified in the IDCAMS 
+define?

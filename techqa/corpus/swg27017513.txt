@@ -1,0 +1,82 @@
+Title: IBM Rational Rhapsody 7.5.x packaging changes - United States
+
+Text:
+rational rhapsody; rhapsody gateway NEWSLETTER
+
+ABSTRACT
+ This document summarizes the changes to the packaging and configuration of Rational Rhapsody 7.5.x family to include integrations with other Rational products within the base products. 
+
+CONTENT
+
+
+
+Packaging changes with Rational Rhapsody 7.5.3 release 
+
+Effective December 17, 2010, Rational Rhapsody 7.5.3 adds AUTOSAR system authoring capabilities to IBM Rational Rhapsody Designer for Systems Engineers and IBM Rational Rhapsody Architect for Systems Engineers. Users that want to gain access to the AUTOSAR capability can update their licenses for the listed products in the license key center. 
+
+IBM Rational Rhapsody Developer for C++, C and Java software adds support for SUSE Linux Enterprise Server (SLES) 10.0 x86-32, 32-bit 
+
+Packaging changes with Rational Rhapsody 7.5.1 release 
+
+Effective December 1, 2009, Rational Rhapsody 7.5.1 includes changes in the packaging and configuration of the Rational Rhapsody family. Integrations with other IBM Rational products are now included within the IBM Rational Rhapsody base products and some other functionality is consolidated into the Rational Rhapsody Tools and Utilities Add On for users on active maintenance (Subscription and Support). 
+
+IBM Rational Rhapsody base products are: 
+
+ * IBM Rational Rhapsody Developer 
+ * IBM Rational Rhapsody Developer for Ada 
+ * IBM Rational Rhapsody Developer for C++, C, and Java 
+ * IBM Rational Rhapsody Architect for Software 
+ * IBM Rational Rhapsody Architect for Systems Engineers 
+ * IBM Rational Rhapsody Designer for Systems Engineers 
+
+
+Packaging changes with Rhapsody 7.5.1 include: Effective March 30, 2010, IBM® will withdraw from marketing the IBM Rational Rhapsody Interfaces Add On for new license purchase. Its functionality is distributed into the base IBM Rational Rhapsody products and the IBM Rational Rhapsody Tools and Utilities Add on. The following functionality from Rational Rhapsody Interfaces Add On is moved in to the Rational Rhapsody base editions: 
+
+ * Interface to configuration management tools including IBM Rational Clearcase, IBM Rational Synergy, IBM Rational Team Concert plus other third party tools 
+ * IBM Rational Rose Import 
+ * Interface to IBM Rational Systems Architect 
+ * Interface to IBM Rational SDL Suite 
+ * Interface to IBM Rational Statemate 
+ * Legacy IBM Rational DOORS Interface
+
+
+The following functionality is added to the IBM Rational Tools and Utilities Add On from the Rational Rhapsody Interfaces Add On:  * Interface to The Mathworks Simulink 
+ * XMI model interchange for import/export to other modeling tools
+
+
+Users who previously purchased the IBM Rational Rhapsody Interfaces Add On can continue purchasing renewal Subscription and Support (maintenance) for their current licenses past March 30, 2010. In the future, if they wish to add additional licenses for XMI and the MathWorks Simulink interface, they will need to purchase the IBM Rational Rhapsody Tools and Utilities Add On. Effective March 30, 2010, IBM will withdraw from marketing the IBM Rational Rhapsody Gateway Add On for new license purchase. Basic IBM Rational DOORS and IBM Rational Requisite Pro export of model information is moved into the Rhapsody base products. All other capabilities in the IBM Rational Rhapsody Gateway Add On (including but not limited to impact analysis, coverage analysis, interfaces to other non-IBM requirements management tools, and advanced capabilities of the IBM Rational DOORS and IBM Rational Requisite Pro interfaces) are moved into the IBM Rational Rhapsody Tools and Utilities Add On. 
+
+Users who have previously purchased the IBM Rational Rhapsody Gateway Add On can continue purchasing renewal Subscription and Support (maintenance) for their current licenses past March 30, 2010. In the future, if they wish to add additional licenses for impact analysis, coverage analysis, interfaces to other non-IBM requirements management tools, and advanced capabilities of the IBM Rational DOORS and IBM Rational Requisite Pro interfaces, they will need to purchase the IBM Rational Rhapsody Tools and Utilities Add On. 
+
+In summary, after these changes, the IBM Rational Tools and Utilities Add On contains the following capabilities: 
+
+ * Interface to The Mathworks Simulink 
+ * XMI model interchange for import/export to other modeling tools 
+ * Advanced requirements analysis and traceability capabilities with Rhapsody Gateway feature 
+ * Customizable documentation generation with Rhapsody ReporterPlus 
+ * Support for SOA design approach with net centric profile and generation and import of WSDL files 
+ * Graphical panels with knobs, buttons, dials, and meters for creating a mock up for simulation 
+ * Webify capability to automatically generate a web based interface for rapid prototyping 
+ * Siemens TeamCenter Systems Engineering Interface
+
+
+Packaging notes from IBM Rational Rhapsody V7.5 release effective on June 2, 2009: 
+
+Rhapsody for DoDAF Add On and Rhapsody for MODAF Add On are combined to become Rhapsody for DoDAF, MODAF, and UPDM Add On. Customers on active maintenance (Subscription and Support) with a license of either package are upgraded to a license of the Rhapsody for DoDAF, MODAF, and UPDM Add On. 
+
+Telelogic Rhapsody for AUTOSAR Add On is now a standard part of the Rhapsody Architect for Software, Rhapsody Developer for C++, C, and Java, and Rhapsody Developer. 
+
+Rhapsody Net Centric Systems Add On and Rhapsody for Teamcenter Interface are now part of the Rhapsody Tools and Utilities Add On. Existing customers with licenses on active maintenance are upgraded to a license of the IBM Rational Rhapsody Tools and Utilities Add On. 
+
+Rhapsody Developer RulesComposer Add On, Rhapsody Developer Code Generation RulesEditor Add On, and Rhapsody in Ada Developer Reverse Engineering RulesEditor Add On get combined under the name Rhapsody Developer Rules Composer Add On. Existing users on active maintenance (Subscription and Support) of the individual products are upgraded to the Rhapsody Developer Rules Composer Add On. 
+
+The IBM Rational Rhapsody for VBA Interface is no longer available for new purchases. Existing customers of the IBM Rational Rhapsody for VBA Interface can still renew maintenance for their existing licenses until May, 2010 when end of life of the part occurs. New purchases are not possible. It is recommended for users to migrate existing VBA macros to Visual Basic with minimal code changes or to use IBM Rational Rhapsody's Java API. Please see TechNote "Alternatives for Migrating IBM Rational Rhapsody VBA Macros" [http://www-01.ibm.com/support/docview.wss?rs=0&q1=rhapsody+visual+studio&uid=swg21428105&loc=en_US&cs=utf-8&cc=us&lang=en] for some guidance on this process. 
+
+Users on active maintenance can use the License Key Center to manage licenses impacted by these changes. This includes Telelogic software purchases made through IBM as well as for legacy orders through Telelogic AB. 
+
+
+
+
+
+ORIGINAL PUBLICATION DATE
+ 2009/11/30

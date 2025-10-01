@@ -1,0 +1,278 @@
+Title: IBM IT03221: ANS1746E ERROR ON 'RESTORE VM' WHEN NO LUN CONNECTION IS AVAILABLE FOR PRDM DISKS - United States
+
+Text:
+AIX  FIXES ARE AVAILABLE
+IBM Tivoli Storage Manager (TSM) client 7.1.1.x interim fix downloads [http://www-01.ibm.com/support/docview.wss?uid=swg24038694]
+TSM Client 7.1.2 Downloads and READMEs [http://www-01.ibm.com/support/docview.wss?uid=swg24039740]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The 'RESTORE VM' for a VMware guest machine that originally had
+   pRDM disks to a target environment where the original LUN
+   backing this pRDM is not available, will fail with the following
+   errors seen in the dsmerror.log of the datamover client :
+   
+    ANS1746E No available LUNs were found.  Confirm that the
+     storage adapters are configured correctly on the host
+     and that the LUNs are not mapped to another virtual
+     machine.
+    ANS5250E An unexpected error was encountered.
+     TSM function name : vmCreateNewVmMachine
+     TSM function      : Can not create virtual machine
+     TSM return code   : 4389
+     TSM file          : ..\..\common\vm\vmcommonrestvddk.cpp (995)
+    ANS9404E Error creating the specified Virtual Machine.
+     See log files for more information.
+    ANS4177E Full VM restore of VMware Virtual Machine 'vmname'
+     failed with RC=4389 target node name='<datacenter_node>', data
+     mover node name='<datamovernode>'
+   
+   NOTE: This behavior will also be seen with vRDM disks.  Those
+   disks will not be created, and their data will not be restored.
+   
+   Tivoli Storage Manager Versions
+   Affected: All Tivoli Storage Manager client on Windows and Linux
+   
+   Initial Impact: Medium
+   
+   Additional Keywords: tdp4ve tsm4ve RDM VMPROCESSVMWITHPRDM
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: Tivoli Storage Manager for Virtual           *
+   *                 Environments data mover and Tivoli Storage   *
+   *                 Manager backup-archive client version 6.4    *
+   *                 and 7.1 running on all Windows and Linux     *
+   *                 platforms.                                   *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: see ERROR DESCRIPTION                   *
+   ****************************************************************
+   * RECOMMENDATION: Apply fixing level when available. This      *
+   *                 problem is currently projected to be fixed   *
+   *                 in level 7.1.2.  Note that this is subject   *
+   *                 to change at the discretion of IBM.          *
+   ****************************************************************
+   *
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The backup-archive client has two new options that will allow
+   all pRDM or vRDM disks with missing LUNs to be converted into
+   thin-previsioned VMFS disks.  The two new options are
+   Vmnoprdmdisks and Vmnovrdmdisks and are described below.
+   
+   Vmnoprdmdisks
+   -------------
+   This option enables Tivoli Storage Manager to restore
+   configuration information for the pRDM volumes that are
+   associated with a VMware virtual machine, even if the LUNs
+   that were associated with the volumes cannot be found.
+   Because pRDM volumes are not included in virtual machine
+   snapshot, only the configuration information can be
+   restored, and not the data that was on the volumes.
+   
+   This option does not apply to backups of Microsoft Hyper-V
+   virtual machines.
+   
+   This option is valid for Windows and Linux clients that are
+   installed on a vStorage backup server.
+   
+   Options File
+   For Windows, place this option in the client options file
+   (dsm.opt), or specify it as a command-line parameter on the
+   restore vm command.
+   For Linux, place this option in the client options file
+   (dsm.opt), in the client system options file (dsm.sys), or
+   specify it as a command-line parameter on the restore vm
+   command.
+   
+   Syntax
+                     '-NO--'
+   >>-VMNOPRDmdisks--+-----+------------------------------><
+                     '-YES-'
+   
+   Parameters
+   YES
+   Specify this value if you must restore a virtual machine that
+   you backed up with -vmprocesswithprdm=yes, and the original
+   LUNs that were mapped by the raw device mappings file cannot
+   be located. This setting causes the client to skip attempts
+   to locate the missing LUNs used by the pRDM volumes, and
+   restore the configuration information (disk labels) that were
+   associated with them. The pRDM volumes are restored as
+   thin-provisioned VMFS VMDKs. You can then use the vSphere
+   client to create the necessary pRDM mappings.
+   NO
+   Setting -vmnoprdmdisk=no causes restore operations for virtual
+   machines that were backed up with -vmprocessvmwithprdm=yes to
+   fail if the original LUNs that were mapped to by the raw
+   device mappings file cannot be located. This value is the
+   default value.
+   
+   Examples:
+   Option file:
+   VMNOPRDMDISKS YES
+   
+   Command line:
+   dsmc restore vm vm123 -vmnoprdmdisks=yes
+   
+   
+   Vmnovrdmdisks
+   -------------
+   This option enables Tivoli Storage Manager to restore
+   configuration information and data for vRDM volumes that are
+   associated with a VMware virtual machine, even if the LUNs
+   that were associated with the volumes cannot be found.
+   
+   This option does not apply to backups of Microsoft Hyper-V
+   virtual machines.
+   
+   This option is valid for Windows and Linux clients that are
+   installed on a vStorage backup server.
+   
+   Options File
+   For Windows, place this option in the client options file
+   (dsm.opt), or specify it as a command-line parameter on the
+   restore vm command.
+   For Linux, place this option in the client options file
+   (dsm.opt), in the client system options file (dsm.sys), or
+   specify it as a command-line parameter on the restore vm
+   command.
+   
+   Syntax
+                     '-NO--'
+   >>-VMNOVRDmdisks--+-----+-------------------------------><
+                     '-YES-'
+   Parameters
+   YES
+   Specify this value if you must restore a virtual machine
+   that you backed up, and the original LUNs that were mapped by
+   the raw device mappings file cannot be located. This setting
+   causes the client to skip attempts to locate the missing LUNs
+   used by the vRDM volumes, and restore the configuration
+   information (disk labels) and the data that was backed up. The
+   vRDM volumes are restored as thin-provisioned VMFS VMDKs.  NO
+   Setting -vmnovrdmdisk=no causes restore operations for virtual
+   machines that had vRDM volume to fail, if the original LUNs
+   that were mapped to by the raw device mappings file cannot be
+   located. This value is the default value.
+   
+   Examples
+   
+   Option file:
+   VMNOVRDMDISKS YES
+   
+   Command line:
+   dsmc restore vm vm123 -vmnovrdmdisks=yes
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT03221
+   
+   
+ * REPORTED COMPONENT NAME
+   TSM CLIENT
+   
+   
+ * REPORTED COMPONENT ID
+   5698ISMCL
+   
+   
+ * REPORTED RELEASE
+   71W
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-07-19
+   
+   
+ * CLOSED DATE
+   2014-08-29
+   
+   
+ * LAST MODIFIED DATE
+   2015-04-14
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  DSMC
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TSM CLIENT
+   
+   
+ * FIXED COMPONENT ID
+   5698ISMCL
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R71L PSY
+   UP
+   
+   
+ * R71W PSY
+   UP

@@ -1,0 +1,178 @@
+Title: IBM IZ86403: UPGRADE INSTALLER ON ITMF CITRIX AGENT CD-ROM - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  PROBLEM DESCRIPTION:
+   
+   
+   The 6.1 release of the ITMf Citrix Agent uses a no longer
+   supported
+   installer version of kinjinst.exe. The following trace messages
+   appear
+   in the "Abort IBM Tivoli Monitoring for Virtual Servers
+   xxxx.log" file:
+   
+   9-23-2010 14:14:09 RegistryKeyExist Key(HKLM\SOFTWARE\IBM\Java2
+   Runtime
+   Environment\1.4.2) key does not exist.
+   9-23-2010 14:14:09 IBM Java2 Runtime Environment for 1.4.2 NOT
+   installed, count=30 key not found
+   9-23-2010 14:14:10 Java 1.4.2 install failed.
+   9-23-2010 14:14:10 Java is required to run install, cannot
+   continue.
+   9-23-2010 14:14:10 !Java is required to run install, cannot
+   continue.
+   9-23-2010 14:14:10 ERROR: Install aborted.
+   
+   
+   RECREATE INSTRUCTIONS:
+   
+   1. Install ITM 6.2.2 FP2 TEMS
+   2. Install ITM 6.2.2 FP2 Windows OS Agent
+   3. Execute tacmd addBundles -i <Citrix CD-ROM/Deploy)
+   4. Execute tacmd addSystem -n Primary:endpoint:NT -t QX
+   5. Observe:
+   
+   KDY1024E: The agent failed to respond to the command C:
+   \IBM\ITM\InstallITM\Batch\kincli -startagent -akqx did not start
+   or stop
+   agent. The command returned a failure return code.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Attempt uninstall of the corrupted Citrix Agent installation
+   from
+   Add/Remove Programs.
+   Attempt local installation using CD-ROM.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   *****
+   * USERS AFFECTED: ITM 6.2.2 IF2 users remote deploying the
+   agent.
+   ****************************************************************
+   *****
+   * PROBLEM DESCRIPTION: The Citrix Agent fails to remote deploy
+   with
+   * ITM 6.2.2 FP2.
+   *
+   ****************************************************************
+   *****
+   * RECOMMENDATION: Install the refresh image of the Citrix Agent.
+   ****************************************************************
+   *****
+   The refresh image of the product solve the problem:
+   IBM Tivoli Monitoring for Virtual Servers V6.2.2: Citrix Agent
+   V6.1
+   (TMVS) , Windows, English (CZU7YEN)
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix for this APAR is contained in the following refresh
+   image
+   of the product:
+   
+   IBM Tivoli Monitoring for Virtual Servers V6.2.2: Citrix Agent
+   V6.1 (TMVS) , Windows, English (CZU7YEN)
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ86403
+   
+   
+ * REPORTED COMPONENT NAME
+   ITMF CITX METFR
+   
+   
+ * REPORTED COMPONENT ID
+   5724L92CO
+   
+   
+ * REPORTED RELEASE
+   610
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-10-14
+   
+   
+ * CLOSED DATE
+   2010-12-17
+   
+   
+ * LAST MODIFIED DATE
+   2010-12-17
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ITMF CITX METFR
+   
+   
+ * FIXED COMPONENT ID
+   5724L92CO
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R610 PSY
+   UP

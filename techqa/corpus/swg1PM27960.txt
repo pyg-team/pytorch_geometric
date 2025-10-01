@@ -1,0 +1,233 @@
+Title: IBM PM27960: WLM Compressor Fix and Enhancements - United States
+
+Text:
+  FIXES ARE AVAILABLE
+6.1.0.37: Java SDK 1.5 SR12 FP3 Cumulative Fix for WebSphere [http://www-01.ibm.com/support/docview.wss?uid=swg24029525]
+7.0.0.17: Java SDK 1.6 SR9 FP1 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24029894]
+6.1.0.47: WebSphere Application Server V6.1 Fix Pack 47 [http://www-01.ibm.com/support/docview.wss?uid=swg24035508]
+7.0.0.27: Java SDK 1.6 SR13 FP2 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24035324]
+6.1.0.39: Java SDK 1.5 SR12 FP4 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24030426]
+6.1.0.41: Java SDK 1.5 SR12 FP5 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24031035]
+6.1.0.43: Java SDK 1.5 SR13 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24031963]
+6.1.0.45: Java SDK 1.5 SR14 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24033270]
+6.1.0.47: Java SDK 1.5 SR16 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24035649]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  This APAR contains a fix to optimize how the workload
+   management (WLM) component will compress and decompress data
+   being sent betweenprocesses. This is designed to reduce
+   compression overhead in large WebSphere Process Server or
+   service integration bus (SIBus) topologies, specifically with
+   a large number of destinations (more effective at 2,000 or more
+   destinations). It addresses scenarios in which many clusters
+   have been defined and one or more non-messaging engine (ME)
+   clusters are restarted while the messaging engine cluster is
+   running. A customer experiencing this may see the following:
+   
+   ThreadMonitor W   WSVR0605W: Thread
+   "server.startup : 0" (00000038) has been active for 686179
+   milliseconds and may be hung.  There is/are 1 thread(s) in total
+   in the server that may be hung.
+   at java.lang.Object.wait(Native Method)
+   at java.lang.Object.wait(Object.java:199)
+   at
+   com.ibm.ws.sib.jfapchannel.impl.ExchangeReceiveListener.waitToCo
+   mplete(ExchangeReceiveListener.java:235)
+   
+   In addition this fixes a rare condition which could result in
+   compressed data being lost.  This would only occur if a series
+   of bytes to be compressed could not actually be compressed
+   (every byte was unique). This would then cause a potential loss
+   of data due to how WLM handled the uncompressed bytes.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  IBM WebSphere Process Server users or users *
+   *                  of IBM WebSphere Application Server with    *
+   *                  service integration bus (SIBus)             *
+   *                  configurations.                             *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Workload management (WLM) Compressor    *
+   *                      Fix and Enhancements                    *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   In scenarios in which many clusters have been defined
+   and one or more non-ME clusters are restarted while the
+   messaging engine cluster is running, a customer experiencing
+   this may see the following:
+   
+   ThreadMonitor W   WSVR0605W: Thread
+   "server.startup : 0" (00000038) has been active for 686179
+   milliseconds and may be hung.  There is/are 1 thread(s) in total
+   in the server that may be hung.
+   at java.lang.Object.wait(Native Method)
+   at java.lang.Object.wait(Object.java:199)
+   at
+   com.ibm.ws.sib.jfapchannel.impl.ExchangeReceiveListener.waitToCo
+   mplete(ExchangeReceiveListener.java:235)
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This APAR contains a fix to optimize how the WLM component
+   will compress and decompress data being sent between
+   processes. This is designed to reduce compression overhead in
+   large WPS/SIB topologies, specifically with a large number of
+   destinations (more effective at 2,000 or more destinations).
+   
+   In addition this fixes a rare condition which could result in
+   compressed data being lost.  This would only occur if a series
+   of bytes to be compressed could not actually be compressed
+   (every byte was unique). This would then cause a potential loss
+   of data due to how WLM handled the uncompressed bytes.
+   
+   Although it is not recommended, the compression optimizations
+   can be removed and the code reverted back to the prior code if
+   problems are seen by setting a cell level custom property:
+   
+   In the administrative console, go to the Custom properties
+   page for the cell.
+   
+   System administration > Cell >  cell_name, and then, under
+   Additional Properties, click Custom Properties
+   
+   Create a new custom property with a name of:
+   
+   IBM_CLUSTER_USE_LEGACY_COMPRESSOR
+   
+   and a value of true.  Save, Synchronize the nodes and restart
+   all of the processes in the cell to pick up this change.
+   
+   The fix for this APAR is currently targeted for inclusion in
+   fix packs 6.1.0.37 and 7.0.0.17.  Please refer to the
+   Recommended Updates page for delivery information:
+   http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM27960
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBS APP SERV N
+   
+   
+ * REPORTED COMPONENT ID
+   5724H8800
+   
+   
+ * REPORTED RELEASE
+   61I
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-12-01
+   
+   
+ * CLOSED DATE
+   2011-03-02
+   
+   
+ * LAST MODIFIED DATE
+   2011-03-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBS APP SERV N
+   
+   
+ * FIXED COMPONENT ID
+   5724H8800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R61A PSY
+   UP
+   
+   
+ * R61H PSY
+   UP
+   
+   
+ * R61I PSY
+   UP
+   
+   
+ * R61P PSY
+   UP
+   
+   
+ * R61S PSY
+   UP
+   
+   
+ * R61W PSY
+   UP
+   
+   
+ * R61Z PSY
+   UP
+   
+   
+ * R700 PSY
+   UP

@@ -1,0 +1,238 @@
+Title: IBM PM85345: OVERLAY PORTS NOT CREATED DURING MIGRATION TO V8.5 - United States
+
+Text:
+  FIXES ARE AVAILABLE
+7.0.0.29: WebSphere Application Server V7.0 Fix Pack 29 [http://www-01.ibm.com/support/docview.wss?uid=swg24034966]
+8.0.0.7: WebSphere Application Server V8.0 Fix Pack 7 [http://www-01.ibm.com/support/docview.wss?uid=swg24035457]
+8.0.0.8: WebSphere Application Server V8.0 Fix Pack 8 [http://www-01.ibm.com/support/docview.wss?uid=swg24036729]
+7.0.0.31: WebSphere Application Server V7.0 Fix Pack 31 [http://www-01.ibm.com/support/docview.wss?uid=swg24036768]
+7.0.0.33: WebSphere Application Server V7.0 Fix Pack 33 [http://www-01.ibm.com/support/docview.wss?uid=swg24037573]
+8.0.0.9: WebSphere Application Server V8.0 Fix Pack 9 [http://www-01.ibm.com/support/docview.wss?uid=swg24037574]
+7.0.0.35: WebSphere Application Server V7.0 Fix Pack 35 [http://www-01.ibm.com/support/docview.wss?uid=swg24038310]
+8.0.0.10: WebSphere Application Server V8.0 Fix Pack 10 [http://www-01.ibm.com/support/docview.wss?uid=swg24039242]
+7.0.0.37: WebSphere Application Server V7.0 Fix Pack 37 [http://www-01.ibm.com/support/docview.wss?uid=swg24039338]
+8.0.0.11: WebSphere Application Server V8.0 Fix Pack 11 [http://www-01.ibm.com/support/docview.wss?uid=swg24040425]
+7.0.0.39: WebSphere Application Server V7.0 Fix Pack 39 [http://www-01.ibm.com/support/docview.wss?uid=swg24041013]
+8.0.0.12: WebSphere Application Server V8.0 Fix Pack 12 [http://www-01.ibm.com/support/docview.wss?uid=swg24041590]
+7.0.0.41: WebSphere Application Server V7.0 Fix Pack 41 [http://www-01.ibm.com/support/docview.wss?uid=swg24041931]
+8.0.0.13: WebSphere Application Server V8.0 Fix Pack 13 [http://www-01.ibm.com/support/docview.wss?uid=swg24042746]
+7.0.0.43: WebSphere Application Server V7.0 Fix Pack 43 [http://www-01.ibm.com/support/docview.wss?uid=swg24043400]
+8.0.0.14: WebSphere Application Server V8.0 Fix Pack 14 [http://www-01.ibm.com/support/docview.wss?uid=swg24044096]
+7.0.0.45: WebSphere Application Server V7.0 Fix Pack 45 [http://www-01.ibm.com/support/docview.wss?uid=swg24044551]
+8.0.0.15: WebSphere Application Server V8.0 Fix Pack 15 [http://www-01.ibm.com/support/docview.wss?uid=swg24044734]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The migration from WebSphere Application Server V6.1 to
+   WebSphere Application Server V8.5 completes but the
+   OVERLAY_TCP_LISTENER_ADDRESS and  OVERLAY_UDP_LISTENER_ADDRESS
+   ports are not added to the serverindex.xml of the nodeagent
+   and application servers.
+   -
+   The WASPostUpgrade trace shows:
+   nodeagent@OVERLAY_UDP_LISTENER_ADDRESS
+   com.ibm.wsspi.migration.document.wccm.WCCMDocument@ee871327
+   :serverindex.xml
+   ?3/18/13 11:38:28:126 EDT? 00000001 ServerConfigC 1
+   Exceptable exception.  Likely caused by server existing in new
+   configuration, but not old configuration.
+   java.net.URISyntaxException: Illegal character in path
+   at index 16:
+   file:/D:/Program Files/IBM/Websphere/AppServer/profiles/
+   AppSrv01/config/cells/Cell01/nodes/Node01/serverindex.xml
+   at java.net.URI$Parser.fail(URI.java:2821)
+   at java.net.URI$Parser.checkChars(URI.java:2994)
+   ...
+   -
+   When the application server is started this error is issued
+   in the systemout.log:
+   ODCF8005E: There was an unexpected exception while
+   initializing  the SON overlay; the exception is
+   java.io.IOException: The P2P layer was unable to bind to a UDP
+   port.
+   -
+   The error is seen when the WebSphere Application Server
+   install location has a space, such as the one in
+   "Program Files".
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  The ports can be manually added to the nodeagent and app servers
+   to allow the application servers to start,
+    1. Start DMGR. Stop nodeagent and app servers.
+    2. From the Admin Console
+        System Adminstration > nodeagents > nodeagent > ports >
+    3. NEW
+        check user-defined port
+        Port name: OVERLAY_TCP_LISTENER_ADDRESS
+        hoast: localhost
+        port 11007
+        OK
+    4. NEW
+        check user-defined port
+        Port name: OVERLAY_UDP_LISTENER_ADDRESS
+        hoast: localhost
+        port 11008
+        OK
+    5. Servers > server types > Websphere application servers >
+        server1
+    6. Ports
+    7. NEW
+        check user-defined port
+         Port name: OVERLAY_TCP_LISTENER_ADDRESS
+         hoast: localhost
+         port 11009
+         OK
+    8. NEW
+         check user-defined port
+         Port name: OVERLAY_UDP_LISTENER_ADDRESS
+         hoast: localhost
+         port 11010
+         OK
+    9. SAVE
+   10. Run the syncNode cmd on the node's profile bin directory
+        > ./syncNode.sh  localhost 8879 -trace -username xxx
+            -password yyyy
+   11. Start the nodeagent and the app server.
+   12. IF you still have trouble, run the collector cmd again.
+    -
+   Keywords: migrate waspreupgrade waspostupgrade endpoints end
+             points
+             upgrade migration
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  All users of IBM WebSphere Application      *
+   *                  Server                                      *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: During migration to Wesphere            *
+   *                      Application Server v8.5, the profile    *
+   *                      template adds new server endpoints,     *
+   *                      but migration fails to insert them      *
+   *                      into the migrated profile.              *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   When trying to insert the additions in the server template to
+   the nodeagent of the profile, an error occurs if the path to
+   the template file has a space in it.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fixed the code so that the path to the template file can
+   include a space and the migration code will tolerate it.
+   
+   The fix for this APAR is currently targeted for inclusion in
+   fix packs 7.0.0.29, 8.0.0.7, and 8.5.5.1.  Please refer to the
+   Recommended Updates page for delivery information:
+   http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM85345
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSPHERE APP S
+   
+   
+ * REPORTED COMPONENT ID
+   5724J0800
+   
+   
+ * REPORTED RELEASE
+   850
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-03-21
+   
+   
+ * CLOSED DATE
+   2013-05-07
+   
+   
+ * LAST MODIFIED DATE
+   2013-05-07
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBSPHERE APP S
+   
+   
+ * FIXED COMPONENT ID
+   5724J0800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R700 PSY
+   UP
+   
+   
+ * R800 PSY
+   UP
+   
+   
+ * R850 PSY
+   UP

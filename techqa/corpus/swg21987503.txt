@@ -1,0 +1,71 @@
+Title: IBM 在诊断日志中出现 "Host failure detection time for RSCT is not setup correctly."这样的错误信息。 - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+疑问
+ purescale环境下，由于参数 HostFailureDetectionTime 配置不正确, 当重启primary CF机器时，standby CF 可能需要超过10分钟的时间来takeover. 
+
+原因
+参考诊断日志中的错误信息：
+
+2016-07-08-15.43.55.159591+480 E18607E402 LEVEL: Error
+PID : 52311 TID : 140172411721504 PROC : db2start
+INSTANCE: db2inst1 NODE : 000
+HOSTNAME: cqec_cf1
+FUNCTION: DB2 UDB, high avail services, sqlhaGetInfoForClusterObject,
+probe:4546
+MESSAGE : ECF=0x90000617=-1879046633=ECF_SQLHA_COMM_GROUP_BAD_CONFIG
+A communication group is in bad configuration
+
+2016-07-08-15.43.55.159971+480 I19010E854 LEVEL: Warning
+PID : 52311 TID : 140172411721504 PROC : db2start
+INSTANCE: db2inst1 NODE : 000
+HOSTNAME: cqec_cf1
+FUNCTION: DB2 UDB, high avail services, sqlhaVerifyClusterResources,
+probe:16395
+MESSAGE : ZRC=0x827301A7=-2106392153=HA_ZRC_COMM_GROUP_BAD_CONFIG
+"Communication group has a bad configuration"
+DATA #1 : String, 60 bytes
+Host failure detection time for RSCT is not setup correctly.
+DATA #2 : String, 67 bytes
+Recommendation (as root user): Set host failure detection time with
+DATA #3 : String, 99 bytes
+'db2cluster -cm -set -option hostfailuredetectiontime -value <value>'
+to correct the RSCT settings.
+DATA #4 : String, 77 bytes
+The recommended value is 4 for systems with SCSI-3 PR enabled and 8
+otherwise
+DATA #5 : unsigned integer, 8 bytes
+0
+....
+
+2016-07-08-16.14.33.691306+480 I941648E2720 LEVEL: Warning
+PID : 27170 TID : 140715480835840 PROC : db2sysc 0
+INSTANCE: db2inst1 NODE : 000
+HOSTNAME: cqec_mb0
+EDUID : 36 EDUNAME: db2CFConnPoolMgr 0
+FUNCTION: DB2 UDB, Shared Data Structure Abstraction Layer for CF,
+SQLE_SINGLE_CA_HANDLE::sqleSingleCaCreateNewConnectionsForPool,
+probe:2514
+MESSAGE : Port state detected by RSCT to be online, but encountered
+error
+establishing a uDAPL connection.
+DATA #1 : String, 67 bytes
+Netname, member device name, CF node number, m_whichCa, link number
+DATA #2 : SAL CF Server Name, PD_TYPE_SAL_CF_SERVER_NAME, 12 bytes
+cqec_cf0-ib1
+DATA #3 : SAL Member Device Name, PD_TYPE_SAL_MEMBER_DEVICE_NAME, 10
+bytes
+ofa-v2-ib1
+DATA #4 : SAL CF Node Number, PD_TYPE_SAL_CF_NODE_NUM, 2 bytes 
+
+答案
+1) "db2cluster -cm -list -HostFailureDetectionTime" 检查HostFailureDetectionTime当前的值
+
+
+2)修改HostFailureDetectionTime为正确的值
+root# /opt/IBM/db2/V10.5/bin > ./db2cluster -cm -set -option HostFailureDetectionTime -value 4 
+
+相关信息
+ An US English translation is available [http://www.ibm.com/support/docview.wss?uid=swg21987501]

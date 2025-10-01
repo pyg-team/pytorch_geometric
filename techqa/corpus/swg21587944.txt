@@ -1,0 +1,74 @@
+Title: IBM WebSphere DMZ Secure Proxy Server v7.0 on Windows using "static routing" topology - United States
+
+Text:
+DMZ Secure Proxy NDDMZ TECHNOTE (FAQ)
+
+QUESTION
+ I want to install and configure a WebSphere DMZ Secure Proxy Server v7.0, using "static routing", in my Windows environment. What are the step-by-step instructions? 
+
+ANSWER
+These instructions assume that the WebSphere Application Server ND v7.0 environment has already been installed and updated to the latest fixpack level, and everything is active including:
+Deployment Manger
+WebSphere Nodes
+WebSphere Appservers
+Applications
+
+The DMZ Secure Proxy Server will be a system inside the DMZ (between firewall 1 and firewall 2). But all other WebSphere nodes and servers are behind firewall 2. Here is a diagram:
+
+browser --FW1-- DMZ Secure Proxy--FW2-- WAS Dmgr, Nodes and Appservers
+
+
+PART 1: On the DMZ system INSTALL the DMZ Secure Proxy software, as follows...
+
+1) download one of these packages from the IBM Passport Advantage site [http://www.ibm.com/software/howtobuy/passportadvantage/]:
+IBM DMZ Secure Proxy Server V7.0 ​(C1G1EML) for 32-bit Windows
+IBM DMZ Secure Proxy Server V7.0 ​(C1G1FML) for 64-bit Windows
+
+2) unzip the file on the DMZ system.
+
+3) in the NDDMZ folder run install.exe
+
+4) use the installer wizard to install the DMZ Proxy Server. Be sure to select the "Secure Proxy" option when prompted.
+
+5) After the install has completed, you will notice that it created the following profile directory:
+C:\Program Files\IBM\WebSphere\AppServer\profiles\SecureProxySrv01
+
+6) download and install the latest fixpacks [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980] for NDDMZ and WASSDK.
+
+
+PART 2: On the WebSphere Network Deployment Manager v7.0 system run these commands:
+
+cd C:\Program Files\IBM\WebSphere\AppServer\profiles\Dmgr01\
+
+bin\wsadmin.bat -lang jython
+
+mbean=AdminControl.queryNames('*:*,type=TargetTreeMbean,process=dmgr')
+
+AdminControl.invoke(mbean, 'exportTargetTree', 'C:/Temp/targetTree.xml')
+
+quit
+
+Transfer the "targetTree.xml" file from C:\Temp\ directory on the deployment manager, to this directory on the DMZ Proxy system:
+C:\Program Files\IBM\WebSphere\AppServer\profiles\SecureProxySrv01\staticRoutes\
+
+
+PART 3: Start the DMZ Secure Proxy Server and test it:
+
+Use this command to start the DMZ Secure Proxy Server process:
+"C:\Program Files\IBM\WebSphere\AppServer\profiles\SecureProxySrv01\bin\startServer.bat" proxy1
+
+Test it by connecting to one of the WAS applications going through the DMZ Secure Proxy Server.
+http://dmz_proxy_server_hostname/snoop
+
+
+
+
+The instructions above, are based on the "static routing" topology option, as documented here:
+
+Configure secure routing for a DMZ Secure Proxy Server
+http://publib.boulder.ibm.com/infocenter/wasinfo/v7r0/topic/com.ibm.websphere.nd.doc/info/ae/ae/tjpx_secrouting.html [http://publib.boulder.ibm.com/infocenter/wasinfo/v7r0/topic/com.ibm.websphere.nd.doc/info/ae/ae/tjpx_secrouting.html]
+
+But there are other topology types, and other configuration methods, that can be used with DMZ Secure Proxy Server. You can read about them here:
+
+Selecting a DMZ Secure Proxy Server for IBM WebSphere Application Server topology
+http://publib.boulder.ibm.com/infocenter/wasinfo/v7r0/topic/com.ibm.websphere.nd.doc/info/ae/ae/tjpx_topologies.html [http://publib.boulder.ibm.com/infocenter/wasinfo/v7r0/topic/com.ibm.websphere.nd.doc/info/ae/ae/tjpx_topologies.html]

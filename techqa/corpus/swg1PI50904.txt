@@ -1,0 +1,156 @@
+Title: IBM PI50904: INVALID URL REQUEST VALUES NEED MORE SPECIFIC DETAILS IN THE EXCEPTION PRODUCED - United States
+
+Text:
+z/os  FIXES ARE AVAILABLE
+8.5.5.10: WebSphere Application Server V8.5.5 Fix Pack 10 [http://www-01.ibm.com/support/docview.wss?uid=swg24042150]
+8.5.5.11: WebSphere Application Server V8.5.5 Fix Pack 11 [http://www-01.ibm.com/support/docview.wss?uid=swg24043005]
+8.5.5.12: WebSphere Application Server V8.5.5 Fix Pack 12 [http://www-01.ibm.com/support/docview.wss?uid=swg24043844]
+8.5.5.13: WebSphere Application Server V8.5.5 Fix Pack 13 [http://www-01.ibm.com/support/docview.wss?uid=swg24044479]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When a URL request is audited for valid values, there should be
+   more detail than today's
+   current:java.lang.IllegalArgumentException.   There are
+   multiple things that could be wrong and sharing some additional
+   detail on why the URI was an illegal argument would be more
+   helpful information.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  n/a
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  All users of IBM WebSphere Application      *
+   *                  Server V8.5                                 *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: The WAS URL handler throws an           *
+   *                      exception with an                       *
+   *                      insufficiently-detailed message.        *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   The WAS utility that parses URLs checks for illegal URL
+   structure, particularly URLs that escape ("..") past their
+   point of origin, and throws an IllegalStateException if this
+   occurs.  The exception text includes the URL but does
+   not specify why the exception was thrown.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Additional explanatory text was added to the message field of
+   the IllegalStateException.
+   
+   APAR PI50904 is currently targeted for inclusion in Fix Pack
+   8.5.5.10 of WebSphere Application Server.
+   
+   Please refer to the Recommended Updates page for delivery
+   information:
+   http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+   
+   In addition, please refer to URL:
+   http://www.ibm.com/support/docview.wss?rs=404&uid=swg27006970 [http://www.ibm.com/support/docview.wss?rs=404&uid=swg27006970]
+   for Fix Pack PTF information.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI50904
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSPHERE FOR Z
+   
+   
+ * REPORTED COMPONENT ID
+   5655I3500
+   
+   
+ * REPORTED RELEASE
+   850
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2015-10-20
+   
+   
+ * CLOSED DATE
+   2016-02-11
+   
+   
+ * LAST MODIFIED DATE
+   2016-02-11
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBSPHERE FOR Z
+   
+   
+ * FIXED COMPONENT ID
+   5655I3500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R850 PSY
+   UP

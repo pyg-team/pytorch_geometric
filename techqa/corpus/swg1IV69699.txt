@@ -1,0 +1,185 @@
+Title: IBM IV69699: INSTALL FAILS AT PREREQCHECK FOR JAZZSM 1.1.0.3 FOR WINDOWS SERVER 2012 R2 STANDARD - United States
+
+Text:
+  DIRECT LINK TO FIX
+1.1.2.0-TIV-JazzSM-multi [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FJazz+for+Service+Management&fixids=1.1.2.0-TIV-JazzSM-multi&source=SAR]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  APAR SEV: 3
+   COMPID: 5724C04JI
+   RELEASE: JazzSM 1.1.0.3
+   APPROVER: SA
+   Environment: Windows
+   
+   Abstract: Install fails at PrereqCheck for JazzSM 1.1.0.3 for
+   Windows Server 2012 R2 Standard
+   
+   Problem : Customer  is unable to install JazzSM 1.1.0.3 due to
+   PreReq Check failure in Windows Server 2012 R2 Standard
+   
+   JazzSM 1.1.0.3 should allow to install using Launchpad ->Custom
+   mode in Windows Server 2012 R2 Standard
+   
+   Affected Levels : JazzSM 1.1.0.3
+   
+   Initial impact : Unable to proceed with JazzSM 1.1.0.3
+   installation due to Prereq failure.
+   
+   Results.txt:
+   
+   IBM Prerequisite Scanner
+       Version:   1.2.0.15
+       Build:     20141127
+       OS name:   Windows Server 2012 R2 Standard
+   
+   Scenario:  Prerequisite Scan
+   
+   ODP - Common prerequisites in JazzSM [version 01010002]:
+   
+   Property                                                  Result
+   Found
+   Expected
+   ========                                                  ======
+   =====
+   ========
+   OS Version                                                  FAIL
+   Windows Server 2012 R2 Standard
+   regex{Microsoft Windows Server 2008 Standard *}
+   ... regex{Microsoft Windows Server 2008 Enterprise *}
+   ... regex{Microsoft Windows Server 2008 R2 Standard *}
+   ... regex{Microsoft Windows Server 2008 R2 Enterprise *}
+   ... regex{Microsoft Windows Server 2008 R2 Datacenter *}
+   ... regex{Microsoft Windows Server 2012 Standard *}
+   ... regex{Microsoft Windows Server 2012 Datacenter *}
+   
+   .....
+   
+   Overall result: FAIL (ODP 01010002: FAIL, DSH 03010002: FAIL,
+   FRS 01010002: FAIL, FAS 01010002: FAIL, ESS 01010002: FAIL, TCR
+   03010002: PASS)
+   
+   -----
+   
+   Local Fix: Updated the Prereq config file to make warning for OS
+   version and intel.cpu properties, Rerun the installation.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  JazzSm 1.1.0.3 supports 'Windows Server 2012 R2 Standard'
+   
+   Please perform the following steps:
+   
+   1) Exit from Launchpad, go to
+   <JazzSM_image>/PrereqScanner/Windows
+   
+   2) In file 'FAS_01010002.cfg' replace 'intel.cpu=2.93GHz' with
+   'intel.cpu=[sev:WARN]2.93GHz'
+   
+   3) In latest files 'ODP_01010002.cfg', 'DSH_03010002.cfg',
+   'FRS_01010002', 'FAS_01010002','ESS_01010002',
+    replace 'OS Version=regex{Microsoft Windows Server............'
+    with 'OS Version=[sev:WARN]regex{Microsoft Windows
+   Server...........'
+   
+   this will add warning for OS version and intel.cpu properties
+   and install proceeds to next step.
+   
+   4) Invoke Launchpad and start the installation again.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Support for Windows 2012 and warning added for intel.cpu
+   property for PRS check. Fix will be available in JazzSM 112
+   release.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV69699
+   
+   
+ * REPORTED COMPONENT NAME
+   JAZZ SM INSTAL
+   
+   
+ * REPORTED COMPONENT ID
+   5724C04JI
+   
+   
+ * REPORTED RELEASE
+   110
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-02-19
+   
+   
+ * CLOSED DATE
+   2015-02-27
+   
+   
+ * LAST MODIFIED DATE
+   2015-02-27
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R110 PSY
+   UP

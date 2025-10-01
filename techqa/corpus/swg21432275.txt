@@ -1,0 +1,36 @@
+Title: IBM Database transaction log space full error occurs with WebSphere Process Server (WPS) and IBM Business Process Manager (BPM) Advanced when deleting a process instance - United States
+
+Text:
+SQLCODE -964 tran log full tranlog KeepOverMultipleWhileLoopIterations wait activities BPEDB data build up infinite loop BPC Business Process Choreographer deleteCompletedProcessInstances IZ58181 IZ58189 IZ58176; v602rnotes; v61rnotes; v612rnotes; v62rnotes; v70rnotes TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Long-running loops within a process can cause large amounts of process-related data to build up in the Business Process Choreographer database (BPEDB). When you try to delete a process instance, you might receive an error showing that the database transaction log space is full. 
+
+SYMPTOM
+With DB2 you might see this error: 
+com.ibm.db2.jcc.b.SqlException: DB2 SQL Error: SQLCODE=-964, SQLSTATE=57011, SQLERRMC=null, DRIVER=3.53.95 
+
+Your long-running process contains a long-running loop, which includes child processes, in-line human tasks, or wait activities. 
+
+When the instance deletion is performed, you can see a lot of rows being deleted from the process instance, human task, or work item database tables. These changes can lead to problems with the database running out of transaction log space or other associated database resources. 
+
+
+CAUSE
+This problem is caused by large amounts of data associated with a process instance building up over time in the database usually because the process contains a long-running loop. This situation can make it difficult to remove the process instance. It can also lead to performance issues with the BPEDB depending on how much data builds up. 
+
+
+RESOLVING THE PROBLEM
+To prevent this issue, design your long-running business processes to avoid using long-running loops. If you need to use this sort of loop, then try to reduce the number of iterations of the loop and keep the number of constructs in the loop to a minimum. For example, use a peer subprocess for the content so that the subprocess can be deleted when it finishes. 
+
+To clean up the current processes that have built up a lot of associated data, you can delete the completed processes individually with the deleteCompletedProcessInstances.py script. For more information about the script, see Deleting completed process instances [http://publib.boulder.ibm.com/infocenter/dmndhelp/v7r0mx/index.jsp?topic=/com.ibm.websphere.bpc.doc/doc/bpc/t7deleteproc.html] in the product documentation. You should also temporarily set the transaction log space large enough to accommodate the removal of a large number of rows in one transaction. 
+
+WebSphere Process Server Version 7.0 includes an enhancement to delete in-line human tasks as they complete. This enhancement also handles wait activities because they are treated the same as in-line human tasks. For more information about this change to the default behavior, see step 14 of the 
+Postmigration tasks for Business Process Choreographer [http://publib.boulder.ibm.com/infocenter/dmndhelp/v7r0mx/index.jsp?topic=/com.ibm.websphere.wps.doc/doc/tmig_vtv_bpc_post.html] topic in the product documentation. Fix packs are available for versions prior to Version 7.0 that use a custom property to change the deletion behavior. For more information, see APAR IZ58176. This APAR is included in 6.1.0 Fix Pack 4 and 6.2.0 Fix Pack 3
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Business Process Manager Advanced Business Process Execution Language (BPEL) AIX, Linux, Linux zSeries, Solaris, Windows, z/OS 7.5.1, 7.5 
+PRODUCT ALIAS/SYNONYM
+ WPS
+BPM

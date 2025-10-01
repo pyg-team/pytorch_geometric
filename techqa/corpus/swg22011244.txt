@@ -1,0 +1,25 @@
+Title: IBM Configuring IBM Business Process Manager (BPM) profile on Ubuntu 16.04 fails because of wrong Java version - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When trying to create the IBM Business Process Manager (BPM) deployment manager profile on Ubuntu 16.04 with a silent installation, the configuration fails because WebSphere Application Server installs Java 6 instead of Java 8.
+
+
+SYMPTOM
+The configuration fails. You might see the following error in the log: 
+
+Configuring the deployment manager.
+Creating the deployment manager profile.
+The following validation errors were present with the command line arguments:
+profileName: CWMCF8510E: You cannot augment a profile with Business Process Manager when the active Java version is 1.6. Use the managesdk command to switch to a supported Java version: [1.8].
+CWMCB0003E: A profile was not created for DmgrProfile.
+
+
+CAUSE
+If you install WebSphere Application Server V8.5.5.12 on Ubuntu 16.4 with the Installation Manager silent mode and option -properties user.wasjava=java8 or with the response file mode and setting, embedded Java 6 is installed instead of Java 8.
+
+
+RESOLVING THE PROBLEM
+For the solution, see https://developer.ibm.com/answers/questions/415996/java-8-is-not-embeded-on-binary-of-was-85512-for-l.html [https://developer.ibm.com/answers/questions/415996/java-8-is-not-embeded-on-binary-of-was-85512-for-l.html]

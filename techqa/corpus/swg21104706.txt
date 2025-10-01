@@ -1,0 +1,173 @@
+Title: IBM MustGather: Crash on Linux (WebSphere Application Server) - United States
+
+Text:
+MustGather; MustGather; MustGather; crash; linux; autopd; auto pd; MustGatherDocument; ProblemDeterminationTool; MustGatherEnablementTool TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Your application server terminated without warning or a system core is generated but you are not sure what data to collect. The following MustGather will assist you in collecting the critical data to troubleshoot issues with an IBM® WebSphere® Application Server crash on the Linux® platform. 
+
+RESOLVING THE PROBLEM
+
+
+Your application server terminated without warning or a system core is generated but you are not sure what data to collect. The following MustGather will assist you in collecting the critical data to troubleshoot issues with an IBM® WebSphere® Application Server crash on the Linux® platform.
+
+
+DATA TO COLLECT:
+
+WebSphere Application Server
+Location of dumps are usually in the profile root (/opt/IBM/WebSphere/AppServer/profiles/PROFILE_NAME/) 
+
+ * Javacore*.txt, heapdump*.phd, snap*.trc files (if produced) 
+ * Jextract output (from processing the IBM SDK dump file)  * Provide the core dump if processing failed
+   
+   
+ * Appserver logs, including the following:  * SystemOut.log 
+    * SystemErr.log 
+    * native_stderr.log 
+    * native_stdout.log
+   
+   
+ * /var/log/messages 
+ * Configuration data: server.xml  * NOTE: You may also run the collector tool to capture all configuration (and logs) for a particular profile into a single JAR file. The collector.sh script is located in the bin directory in the profile’s root.
+   
+   
+
+WebSphere Liberty
+Location of dumps are usually in the server root (/opt/IBM/wlp/user/servers/SERVER_NAME/) 
+
+ * Javacore*.txt, heapdump*.phd, snap*.trc files (if produced) 
+ * Jextract output (from processing the IBM SDK dump file) or jstack output (latter on Oracle JDK)  * Provide the core dump if processing failed or if you had run jstack (latter on Oracle JDK)
+      Also on Oracle JDK, hs_err_pid file will be generated
+   
+   
+ * Appserver logs, including  * console.log 
+    * messages.log 
+    * Verbose GC data (if verbose GC is turned on and GC data is redirected to a file)
+   
+   
+ * /var/log/messages 
+ * Configuration data, including  * server.xml 
+    * jvm.options
+      
+   
+   
+
+NOTE: If running WebSphere Liberty on a non_IBM JDK, no javacores, heapdumps, or snap files will be produced, and jextract will not process the core file. Instead send in the core dump, the hs_err_pid, and the jstack output, along with the rest of the data (i.e. logs and configuration).  
+
+ 
+
+PROCESSING THE CORE DUMP 
+
+IBM SDK (WebSphere Application Server and WebSphere Liberty)http://www.ibm.com/support/docview.wss?uid=swg21577379 [http://www.ibm.com/support/docview.wss?uid=swg21577379] 
+
+Make sure to attempt processing the core dump with the command jextract. You will need to locate which IBM SDK was used to run the application server (the javacore contains this information, or simply restart your application server and locate the process with the ps command), and run the associated jextract executable for that SDK install. 
+
+Example with a 8192 MB heap, and a JVM that was running with compressed references: 
+
+./jextract -J-Xcompressedrefs -J-Xmx8192m/opt/IBM/WebSphere/AppServer/profiles/Dmgr01/core.DATE.TIME.PID.COUNT.dmp 
+
+The result will be a zip file that contains the core dump, some XMLs, and any required libraries for processing. 
+
+ 
+
+Oracle® JDK (WebSphere Liberty) 
+
+If you happen to be running an Oracle JDK on WebSphere Liberty and have a crash, the core dump can be processed with the jstack command. This will pull all of the threads, and you can redirect the output to a text file.. 
+http://docs.oracle.com/javase/7/docs/technotes/tools/share/jstack.html [http://docs.oracle.com/javase/7/docs/technotes/tools/share/jstack.html] 
+
+Syntax
+./jstack [options] JAVA_EXE CORE_FILE > jstack.out
+
+
+JAVA_EXE is the path + filename of the java executable. You can determine this from the output of the ps command when the process is normally running. 
+
+For other options, see the link above, but to name a few: 
+
+ * Use the -m option so both Java and native stack frames are displayed. 
+ * Use the -l option to print out locks. 
+ * The option -J-d64 may be required for 64-bit JVMs.
+   
+
+
+In addition, an hs_err_pid file will be generated in the profile root (with the process id appended to the end of the filename). 
+
+
+NO CORE DUMP GENERATED 
+
+If you find no core dump, and none of the logs (such as native_stderr.log) indicate one was generated, check first if the nodeagent had terminated the JVM and restarted it, as you may not get a dump if that occurs. 
+
+Another reason for this, especially if a crash was registered in the error output, is that the ulimits for core and file are not set to unlimited. See Crash on Linux produces no core or truncated core [http://www.ibm.com/support/docview.wss?rs=180&uid=swg21115658] for more information. 
+
+ 
+
+If there were no dumps and no signs of a crash, but the process did terminate, check this document for further debugging. 
+
+WebSphere Application Server process exits without leaving a footprint in log files or no core dumps
+http://www.IBM.com/support/docview.wss?uid=swg21144595 [http://www.IBM.com/support/docview.wss?uid=swg21144595] 
+
+ 
+
+
+
+OTHER SCRIPTS 
+
+If jextract continues to fail, and you have ensured that a full core dump is processing, you can try these alternative scripts to attempt at pulling the correct libraries so IBM support can utilize the dump. This should only be done if requested by IBM support. 
+
+All scripts require the GNU Debugger (GDB) is installed on the system.
+
+
+gdb -x gdb_commands.txt [JAVA_PATH] [CORE_FILE] > gdb_out.txt
+
+./libsgrabber.sh [JAVA_PATH] [CORE_FILE]
+
+
+This generates the file libs.tar.gz in the current directory.
+
+[CORE_FILE] should contain the complete path of the core file.
+[JAVA_PATH] is the location to the java executable. Replace with install_root/java/jre/bin/java
+
+
+
+[/support/docview.wss?uid=swg21104706&aid=2] [/support/docview.wss?uid=swg21104706&aid=1] [/support/docview.wss?uid=swg21104706&aid=4] [/support/docview.wss?uid=swg21104706&aid=3] 
+For a listing of all technotes, downloads, and educational materials specific to the Crash component, search the WebSphere Application Server support site [http://www.ibm.com/software/webservers/appserv/was/support/]. 
+
+RELATED INFORMATION 
+
+How to process an IBM SDK core dump with jextract [http://www.ibm.com/support/docview.wss?uid=swg21577379] 
+Crash on Linux produces no core or truncated core [http://www.ibm.com/support/docview.wss?uid=swg21115658] [http://www.ibm.com/support/docview.wss?uid=swg21165403] 
+Steps to getting support for WebSphere Application Server [http://www.ibm.com/developerworks/websphere/support/appserver_support.html] 
+Exchanging information with IBM Technical Support [http://www.ibm.com/support/docview.wss?uid=swg21153852] 
+MustGather: Read first for WebSphere Application Server [http://www.ibm.com/support/docview.wss?uid=swg21145599] 
+Troubleshooting guide for WebSphere Application Server [http://www.ibm.com/support/docview.wss?uid=swg27005324] 
+
+
+
+EXCHANGING DATA WITH IBM SUPPORT
+To diagnose or identify a problem, it is sometimes necessary to provide Technical Support with data and information from your system. In addition, Technical Support might also need to provide you with tools or utilities to be used in problem determination. You can submit files using one of following methods to help speed problem diagnosis: 
+
+ * IBM Support Assistant (ISA) 
+ * Service Request (SR)
+ * E-mail 
+ * FTP to the Enhanced Customer Data Repository (ECuRep)
+
+
+
+
+Instructions for exchanging information with IBM Support [http://www.ibm.com/support/docview.wss?uid=swg21153852]
+
+READ FIRST AND RELATED MUSTGATHERS
+MustGather: Read first for WebSphere Application Server [http://www.ibm.com/support/docview.wss?uid=swg21145599]
+
+
+
+
+ Hang / High CPU / Performance Problem [http://www.ibm.com/support/search.wss?tc=SSCMPB9&q=MustGatherDocument] Out of Memory Problem [http://www.ibm.com/support/search.wss?tc=SSCMPCY&q=MustGatherDocument] 
+
+RELATED INFORMATION
+ Recording your screen to share with IBM Support [https://www.ibm.com/developerworks/community/blogs/IBMElectronicSupport/entry/recording_your_screen_to_share_with_support?lang=en]
+
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Application Servers Runtimes for Java Technology Java SDK Application Servers WebSphere Application Server - Express Linux 8.5.5, 8.0, 7.0

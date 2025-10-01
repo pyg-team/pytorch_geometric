@@ -1,0 +1,180 @@
+Title: IBM Collect troubleshooting data for problems in WebSphere Lombardi Edition - United States
+
+Text:
+MustGatherDocument; MustGather; Mustgather; Mustgather; mustgather: must gather; websphere lombardi edition; lombardi; 7.1.0; 7.1 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ You are having a problem with WebSphere Lombardi Edition. You would like to know what documentation you must collect (MustGather) so that the WebSphere Lombardi Edition Support team can diagnose your problem. If you gather this documentation before contacting support it will expedite the troubleshooting process, and save you time. 
+
+RESOLVING THE PROBLEM
+Provide the following information at the time the service request (PMR) is opened: 
+
+DESCRIPTION OF THE PROBLEM AND YOUR ENVIRONMENT
+
+
+
+ 1. What is the problem that you are seeing? 
+    Provide as much detail as possible, for example:  * Where are you experiencing the problem? For example, is the problem with the Process Center, Portal, Authoring Environment, performance data warehouse, or something else? 
+     * It is extremely helpful if you have a portable, isolated test case or reproducible steps that we can run. 
+     * If you are having a problem in a service or business process definition (BPD), be aware that in order for us to run in our environment it has to be able to run without any custom code or access to your external systems. 
+     * If you are experiencing an error, provide us with the exact error message and the steps to recreate the problem. 
+     * Submit screen shots of the problem or errors, if applicable.
+    
+    
+ 2. What is the environment in which you are running WebSphere Lombardi Edition?
+    Include the following information:  * Your version of WebSphere Lombardi Edition including any APARs (hot fixes) 
+     * Operating System type (specify 32-bit vs. 64-bit) 
+     * Database type and version (DB2, Oracle, Microsoft SQL Server)
+    
+    
+
+
+COLLECTING LOG AND TRACE DATA
+
+
+
+Collect all of the files and sub directories in the following steps and compress them to a .zip, tar.gz, or .rar file: 
+
+ *  Set the main logging to DEBUG.
+   The Webcast replay: Overview of Logging in WebSphere Lombardi Edition [http://www.ibm.com/support/docview.wss?uid=swg27021573] covers an overview of logging and how to change it for WebSphere Lombardi Edition. Open and modify the log4j.xml file, which is located in the [install_dir]\process_server\config\ directory. A server restart is not required to have logging take effect. Modify the log4j.xml file on each server to collect trace data The following example is at the debug level:
+   <category name="com.lombardisoftware" additivity="false">
+   <priority value="debug"/>
+   <appender-ref ref="TWDynamicAppender"/>
+   <appender-ref ref="TWDebugAppender"/>
+   <appender-ref ref="TWInfoAppender"/>
+   <appender-ref ref="TWWarnAppender"/>
+   <appender-ref ref="TWErrorAppender"/>
+   </category>
+   
+   Note: Additional component debug information might be required depending on component area that is affected. Run the scenario that produces the error. Collect the following log files:  * Process center environments - [install_dir]/process-center/logs/* 
+      OR
+      Process server * (runtime environments) - [install_dir]/process-server/logs/* 
+    * [install_dir/performance-data-warehouse/logs/* 
+    * [install_dir]/AppServer/Profiles/Lombardi/logs/*
+   
+   
+ * * Note: Process servers might be clustered. Collect the log data for each node in the cluster. 
+   
+
+The following information shows the component-specific logging and which log4j.xml categories to modify:  * User security issues
+   Note: This logging is very intensive; increase the roll over size and the file size
+   
+   
+   <category name="com.lombardisoftware.security" additivity="false">
+   <priority value="debug"/>
+   <appender-ref ref="TWDynamicAppender"/>
+   <appender-ref ref="TWSecurityAppender"/>
+   </category>
+   <category name="com.lombardisoftware.userorg" additivity="false">
+   <priority value="debug"/>
+   <appender-ref ref="TWDynamicAppender"/>
+   <appender-ref ref="TWSecurityAppender"/>
+   </category>
+   
+   
+ * Undercover agent (UCA) issues
+   <category name="com.lombardisoftware.server.UcaExecution" additivity="false">
+   <priority value="debug"/>
+   <appender-ref ref="TWUcaAppender"/>
+   </category>
+   <category name="com.lombardisoftware.server.eventmgr" additivity="true">
+   <priority value="debug"/>
+   <appender-ref ref="TWEventMgrAppender"/>
+   </category>
+   <category name="com.lombardisoftware.servlet.eventmgr" additivity="true">
+   <priority value="debug"/>
+   <appender-ref ref="TWEventMgrAppender"/>
+   </category>
+   
+   
+ * Web API issues
+   <category name="com.lombardisoftware.webapi" additivity="false">
+   <priority value="debug"/>
+   <appender-ref ref="TWWebAPIAppender" />
+   </category>
+   <category name="webapi" additivity="false">
+   <priority value="debug"/>
+   <appender-ref ref="TWWebAPIAppender" />
+   </category>
+   
+   
+ * Inbound web services issues - The services that are hosted and built within WebSphere Lombardi Edition
+   <category name="twwebservices.inbound" additivity="false">
+   <priority value="debug"/>
+   <appender-ref ref="TWInboundWebServices"/>
+   </category>
+   
+   
+ * Outbound web services issues - These services are external to WebSphere Lombardi Edition
+   <category name="twwebservices.outbound" additivity="false">
+   <priority value="debug"/>
+   <appender-ref ref="TWOutboundWebServices"/>
+   </category>
+   
+   
+ * JavaScript™ blocks and custom JavaScript code issues
+   <category name="JavaScript" additivity="false">
+   <priority value="debug"/>
+   <appender-ref ref="TWDynamicAppender"/>
+   <appender-ref ref="TWDebugAppender"/>
+   <appender-ref ref="TWJSAppender"/>
+   </category> 
+ * Installing snapshot issues
+   Enable the main debug trace on the Process Center and the Process Server. Start the installation and collect log files on both servers after the failure. The main process server and Performance Data Warehouse log files are required. 
+
+
+VERSION INFORMATION
+
+
+
+
+ 1. From the main [install_dir], send all of the version*.txt files. 
+ 2. If a fix pack or APAR (interim fix) has been applied, send the names of all of the directories within the [install_dir]/wlebackup directory. For all of the applied fixes, make backup copies of files that were replaced. 
+
+
+
+AUTHORING ENVIRONMENT ISSUES
+
+
+
+The Authoring Environment (AE) is installed locally on end user computers. The Authoring Environment can be decompressed and run from any location. There is no standard installation directory. Collect and send the following files from the directory in which the Authoring Environment is installed: 
+
+ * All ae.log files 
+ * All orbtrc files 
+ * eclipse.ini file 
+ * All log files from the Process Center
+
+
+For example, the files might exist in the C:\Program Files\Lombardi Authoring Environment directory. 
+
+
+OUT-OF-MEMORY OR SUPPORT REQUESTS PORTAL HEAP DUMP (PHD) ISSUES
+
+
+
+If the problem is an out-of-memory or support requests portal heap dump files issue, then compress and send the contents or send a compressed version of the ...\AppServer\profiles\Lombardi directory. 
+
+
+
+
+SUBMITTING INFORMATION TO IBM SUPPORT
+
+
+
+Include all of the following information with the support ticket: 
+
+ * Problem description 
+ * Diagnostic traces 
+ * Version information 
+
+To upload your MustGather data, see Exchanging Information with IBM Technical Support. [http://www.ibm.com/support/docview.wss?uid=swg21153852] RELATED INFORMATION
+#MustGather: Installation issues with WebSphere Lombardi [http://www.ibm.com/support/docview.wss?uid=swg21439995]
+Support Page [http://www.ibm.com/support/entry/portal/product/software/websphere/websphere_lombardi_edition]
+
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ WLE
+Teamworks
+Lombardi

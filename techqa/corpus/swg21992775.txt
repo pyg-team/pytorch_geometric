@@ -1,0 +1,119 @@
+Title: IBM Known Issues and Limitations: Version 8.1 Data Protection for Oracle - United States
+
+Text:
+ PREVENTIVE SERVICE PLANNING
+
+ABSTRACT
+ 
+This document details the Known Issues & Limitations for IBM Spectrum Protect for Databases: Data Protection for Oracle 8.1.x. 
+
+CONTENT
+ 
+
+This document is divided into linked sections for ease of navigation. You may use the links below to jump to the desired section of the document. 
+
+
+Installation Issues
+Removal / Uninstall of Data Protection for Oracle
+Other Known Problems
+
+
+Installation Issues 
+
+ 
+
+ * For non-English environments, the IBM Spectrum Protect for Databases: Data Protection for Oracle 8.1 installation on AIX will only display the license in English when UTF8 locales are used. The license can be reviewed online, prior to installation, using the following steps:
+
+
+The following scenario provides instructions that you can use to view a license agreement online. In this scenario, the product is IBM Spectrum Protect for Databases 8.1.  1. From a web browser, enter the address for the IBM License site: http://www.ibm.com/software/sla/sladb.nsf [http://www.ibm.com/software/sla/sladb.nsf] 
+ 2. From the IBM License site homepage, click Search for a specific program license agreement. 
+ 3. In the search criteria field, enter the product name. For example, Tivoli Storage Manager Databases. 
+ 4. Select the link for IBM Tivoli Storage Manager for Databases V81 . For this particular example, the option is toward the bottom of the page.
+
+
+After the license is selected, the license can be displayed in any of the following languages:  * English 
+ * Chinese - Simplified 
+ * Chinese - Traditional 
+ * Czech 
+ * French 
+ * German 
+ * Greek 
+ * Italian 
+ * Japanese 
+ * Korean 
+ * Lithuanian 
+ * Polish 
+ * Portuguese 
+ * Russian 
+ * Slovenian 
+ * Spanish 
+ * Turkish
+
+(99546) 
+
+ * The Data Protection for Oracle installation immediately exits when trying to install if the locale language is different from en_US.UTF-8
+
+
+Workaround: set DO_NOT_FORK=1 in the environment. (142016) 
+Removal / Uninstall of Data Protection for Oracle
+
+
+
+ * Uninstalling the Data Protection for Oracle on HP-UX, Linux, and Solaris
+
+
+Follow these steps to uninstall all the packages related to Data Protection for Oracle. Make sure to that you uninstall the packages in the given order. 
+
+1. Data Protection for Oracle language packages: 
+
+If one or more language messages packages have been installed, these must be removed before removing the Data Protection for Oracle package. Change directory to /opt/tivoli/tsm/client/oracle and execute the following command as root user: 
+
+./_uninstall_<xx>/uninstall -i <option> 
+
+Where <xx> is the language and <option> is the installation mode of either gui, console or silent. 
+
+
+2. Data Protection for Oracle package: 
+
+Enter the following commands to uninstall Data Protection for Oracle. This will uninstall all the components of Data Protection for Oracle. Change directory to /opt/tivoli/tsm/client/oracle and execute the following command as root user: 
+
+./_uninstall/uninstall -i <option> 
+
+Where <option> is the installation mode of either gui, console or silent. 
+
+
+Other Known Problems: 
+
+ * Compatibility issue when installing using GNU JVM.
+
+
+Attempting installation using GNU JVM may result in an error. Support Incident #SIOA-000089928 opened with Macrovision. Requirement of Support for GNU JVM. 
+
+There is no workaround. 
+ * With error message "ANS1088E (RC124) File space '*' does not exist" when there is no DP for Oracle file space on the Tivoli Storage Manager server.
+
+
+Data Protection for Oracle returns an unexpected error message when Oracle RMAN CROSSCHECK, DELETE EXPIRED, and CHANGE BACKUPPIECE are run. This occurs only when the Data Protection for Oracle file space does not exist on Tivoli Storage Manager server. (97963) 
+
+There is no workaround. 
+
+ * An incorrect Product ID (PID) is reflected in the header information of some Data Protection for Oracle files
+
+
+Header information associated with some Data Protection for Oracle files, such as: 
+libobk.so 
+tdpoconf 
+tdposync 
+
+may display the Product ID 5608-APD instead of 5608-E04. 
+
+For example: 
+
+IBM Tivoli Storage Manager for Databases, Data Protection for Oracle. 
+Licensed Materials - Property of IBM 
+5608-APD (C) Copyright IBM Corporation 1990, 2013 All Rights Reserved. 
+US Government Users Restricted Rights - Use, duplication or 
+disclosure restricted by GSA ADP Schedule Contract with IBM CORP 
+
+Workaround: None. This issue does not affect the functionality of the software. (IT06682, 93243) 
+ * When performing an IBM Spectrum Protect for Databases, Data Protection for Oracle version 7.1.3.0 or higher backup, a logon will be made to SQLPLUS for a query to the database front end capacity. If the SQLNET.AUTHENTICATION_SERVICES setting is set to NONE within the $ORACLE_HOME/network/admin/sqlnet.ora or <TNS_ADMIN>/sqlnet.ora file, this will leave orphaned processes. The Data Protection for Oracle client requires the SQLNET.AUTHENTICATION_SERVICES setting to be set to any other eligible value (not NONE) to allow the "sqlplus / as sysdba" commands to complete correctly.

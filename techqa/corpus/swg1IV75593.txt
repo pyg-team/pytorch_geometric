@@ -1,0 +1,239 @@
+Title: IBM IV75593: BMXAA5598E ERROR SENDING EXPIRATION DATE OR ACTIVE FLAG USING MIF MXCOAINTERFACE - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Problem Description: Sending expiration date or active flag
+   using MIF MXCOAInterface gives error:
+   BMXAA5598E - Processing of an inbound transaction failed. The
+   processing exception is identified in document 1.
+       BMXAA4211E - Database error number 1 has occurred when
+   operating on
+   CHARTOFACCOUNTS :  Organization=EAGLENA GL
+   Account=6000-229-000. Report
+   the error to the owner of the deployment.
+   Stack trace from MIF import:
+   [[7/7/15 19:02:20:457 EDT] 000000e3 SystemOut     O 07 Jul 2015
+   19:02:20:457 [ERROR] [MXServer] [] Processing failed for
+   MXCOAInterface. The object structure is 1. The primary object is
+   CHARTOFACCOUNTS. The key is EAGLENA~6000-229-000.BMXAA4211E -
+   Database
+   error number 1 has occurred when operating on CHARTOFACCOUNTS :
+   Organization=EAGLENA GL Account=6000-229-000. Report the error
+   to the owner of the deployment.
+   [7/7/15 19:02:20:457 EDT] 000000e3 SystemOut     O 07 Jul 2015
+   19:02:20:457 [INFO] [MXServer] [] Error processing inbound
+   transaction
+   document/line 1. BMXAA4211E - Database error number 1 has
+   occurred when operating on CHARTOFACCOUNTS :
+   Organization=EAGLENA GL
+   Account=6000-229-000. Report the error to the owner of the
+   deployment.
+   psdi.util.MXSystemException: BMXAA4211E - Database error number
+   1 has occurred when operating on CHARTOFACCOUNTS :
+   Organization=EAGLENA GL
+   Account=6000-229-000. Report the error to the owner of the
+   deployment.
+       at psdi.mbo.MboSet.saveTransaction(MboSet.java:7355)
+       at
+   psdi.txn.MXTransactionImpl.saveTransaction(MXTransactionImpl.jav
+   a:221)
+       at
+   psdi.txn.MXTransactionImpl.save(MXTransactionImpl.java:156)
+       at
+   psdi.iface.mos.MosProcessImpl.save(MosProcessImpl.java:1863)
+       at
+   psdi.iface.mos.MosProcessImpl.processExternalData(MosProcessImpl
+   .java:346)
+       at
+   psdi.iface.mic.MicSetIn.processExternalData(MicSetIn.java:147)
+   ...
+   Reproduced on 7.5.0.8 maxdemo VM using out of the box
+   MXCOAInterface
+   Steps to reproduce:
+   Go to Integration > External Systems
+   Query EXTSYS1 (make sure it is enabled)
+   Click on External Systems tab
+   Select MXCOAInterface
+   Click on Data Import button
+   Check Import Preview and select an xml file with the following
+   xml data saved to the file:
+   <?xml version="1.0" encoding="UTF-8"?>
+   <SyncMXCOA xmlns="http://www.ibm.com/maximo"
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   creationDateTime="2015-07-02T15:59:35-04:00" transLanguage="EN"
+   baseLanguage="EN" messageID="1435867175424912228"
+   maximoVersion="7 5
+   20140827-1420 V7512--1" event="0">
+     <MXCOASet>
+       <CHARTOFACCOUNTS action="AddChange">
+         <ACTIVEDATE>2011-02-10T16:00:00-04:00</ACTIVEDATE>
+         <EXPIREDATE>2015-06-18T14:18:45-04:00</EXPIREDATE>
+         <ACTIVE>0</ACTIVE>
+         <GLACCOUNT>
+           <VALUE>6000-229-000</VALUE>
+         </GLACCOUNT>
+         <ORGID>EAGLENA</ORGID>
+       </CHARTOFACCOUNTS>
+     </MXCOASet>
+   </SyncMXCOA>
+   If you remove <ACTIVEDATE> you get this error:
+   BMXAA5598E - Processing of an inbound transaction failed. The
+   processing exception is identified in document 1.
+       BMXAA1169E - Expiration date must be after the active date.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  change the GLACCOUNT format it should work
+   from:
+   <GLACCOUNT>
+           <VALUE>6000-229-000</VALUE>
+   </GLACCOUNT>
+   to:
+   <GLACCOUNT>6000-229-000</GLACCOUNT>
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * Maximo 7508 users who used MIF COA to import Chartofaccounts *
+   * to set expiration date of a chartofaccount.                  *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * User could not use the same xml to import chartofaccounts to *
+   * maximo to set expiration date of a chartofaccount in MAXIMO  *
+   * 7508. The same xml used to work in 7507 and earlier          *
+   * releases.                                                    *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Change the GLACCOUNT in the import xml                       *
+   *                                                              *
+   * from:                                                        *
+   *                                                              *
+   * <GLACCOUNT>                                                  *
+   *         <VALUE>6000-229-000</VALUE>                          *
+   * </GLACCOUNT>                                                 *
+   *                                                              *
+   * to:                                                          *
+   *                                                              *
+   * <GLACCOUNT>6000-229-000</GLACCOUNT>                          *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This is fixed in code.
+   The fix for this APAR is contained in the following maintenance
+   package:
+     | release\fix pack | Interim Fix for Release 7.5.0.9 Product
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV75593
+   
+   
+ * REPORTED COMPONENT NAME
+   INTEGRATION
+   
+   
+ * REPORTED COMPONENT ID
+   5724R46I1
+   
+   
+ * REPORTED RELEASE
+   751
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-07-29
+   
+   
+ * CLOSED DATE
+   2015-07-31
+   
+   
+ * LAST MODIFIED DATE
+   2015-08-19
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  MAXIMO
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   INTEGRATION
+   
+   
+ * FIXED COMPONENT ID
+   5724R46I1
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R750 PSY
+   UP

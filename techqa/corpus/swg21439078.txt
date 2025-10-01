@@ -1,0 +1,31 @@
+Title: IBM Collecting logs and config info from the WAS TEMA for ITCAM for AD 7.1 on a Linux/Unix system. - United States
+
+Text:
+ITCAMAD71 TEMA DB2 WAS WebSphere server kyncollect kyncollect.sh logs Linux CAMADALL CAMADINST TECHNOTE (FAQ)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ US English 
+
+QUESTION
+ How to collect the logs and config info from the WAS TEMA for ITCAM for AD 7.1 on a Linux/Unix system. 
+
+ANSWER
+The location of the logs and config dir has changed in ITCAM for Application Diagnostics v7.1 on the Data Collector/TEMA. 
+
+This technote is specifically for Linux/Unix systems. Here is the Windows [http://www-01.ibm.com/support/docview.wss?uid=swg21440469] equivalent of this technote. 
+
+Related links: 
+
+Collecting logs and config info on the Managing Server for ITCAM for AD 7.1 on a Linux/Unix system. [http://www-01.ibm.com/support/docview.wss?uid=swg21439034] 
+
+Collecting logs and config info on the Data Collector for ITCAM for AD 7.1 on a Linux/Unix system. [http://www-01.ibm.com/support/docview.wss?uid=swg21439051] 
+
+(Note: In this technote, default directories are used. If you are using a non-Linux platform (like AIX, or HP-UX or Solaris) simply replace the 'opt' in the path with 'usr' or if you are using non-default directories, then collect the logs using the non-default directories.) 
+
+* Collecting the WAS TEMA logs and config info: The new WAS TEMA logs are now in the /opt/IBM/ITM/logs dir. Use the ITCAM-provided kyncollect.sh script to collect the WAS TEMA logs and the config info. The output log file created is in the /opt/IBM/ITM/tmp/kyn dir. Send this output file to your friendly IBM support engineer for analysis.
+[/support/docview.wss?uid=swg21439078&aid=1] [/support/docview.wss?uid=swg21439078&aid=1]
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ TEMA ITCAMAD71 ITCAM for WAS ITCAM for Application Diagnostics AD ITCAM for TEMA

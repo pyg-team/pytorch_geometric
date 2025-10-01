@@ -1,0 +1,152 @@
+Title: IBM IZ01146: Supplied ulimit commands produce error messages "ulimit: exceeds allowable limit" - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When typing the commands suggested in the Quick Beginnings for
+   HP-UX manual, the following error messages are seen:
+   > ulimit -d unlimited
+   ksh: ulimit: exceeds allowable limit
+   > ulimit -s unlimited
+   ksh: ulimit: exceeds allowable limit
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  This is a doc APAR.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   Users following the instructions in the Quick Beginnings for
+   HP-UX manual, attempting to raise the limits on data and stack
+   segment sizes.
+   
+   Platforms affected:
+   HP-UX (Itanium),HP-UX (PA-RISC)
+   
+   ****************************************************************
+   PROBLEM SUMMARY:
+   Quick Beginnings for HP-UX manual suggests setting the system
+   resource limit for data segment and stack segment to unlimited
+   using the following commands :
+   ulimit -d unlimited
+   ulimit -s unlimited
+   
+   In fact the settings that must be investigated are the HP-UX
+   Tunable Kernel Parameters maxdsiz, maxdsiz_64bit, maxssiz, and
+   maxssiz_64bit.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The Quick Beginnings for HP-UX manual will be corrected with the
+   following information.
+   
+   The WebSphere MQ recommended minimum values for the HP-UX
+   Tunable Kernel Parameters that pertain to data and stack segment
+   sizes are:
+   
+     Parameter name  Recommended minimum (bytes)
+     --------------- ---------------------------
+     maxdsiz                          1073741824
+     maxdsiz_64bit                    1073741824
+     maxssiz                             8388608
+     maxssiz_64bit                       8388608
+   
+   Shell settings for "ulimit" will not need to be made.
+   
+   Other software running on the machine may have its own
+   recommended minimum settings for the above HP-UX Tunable Kernel
+   Parameters.  If these are set higher than the WebSphere MQ
+   recommended settings, this is not expected to harm operation of
+   WebSphere MQ.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ01146
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ HP V6
+   
+   
+ * REPORTED COMPONENT ID
+   5724H7202
+   
+   
+ * REPORTED RELEASE
+   600
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2007-07-09
+   
+   
+ * CLOSED DATE
+   2007-07-20
+   
+   
+ * LAST MODIFIED DATE
+   2007-07-20
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

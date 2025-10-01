@@ -1,0 +1,10 @@
+Title: IBM leap year 2016 - United States
+
+Text:
+leap year; TCM; 2016 leap; Tivoli Configuration Manager TECHNOTE (FAQ)
+
+QUESTION
+ Does the leap year 2016 impact TCM 4.3.1? 
+
+ANSWER
+No: TCM 4.3.1 works fine in the occurrence of the leap year and leap year 2016 too

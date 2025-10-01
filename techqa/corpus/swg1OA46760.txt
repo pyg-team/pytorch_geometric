@@ -1,0 +1,154 @@
+Title: IBM OA46760: ADDRESS SPACE ABENDS WITH A03 WHEN STOPPING THE MQ AGENT. - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Shutdown of the MQ agent will result in ABEND A03 if there are
+   still outstanding connections to the queue managers at the time
+   that the KLV LOADER subtask is detached.
+   
+   You will also see a symptom dump of user completion code 0300 in
+   JESMSGLG if IEA995I message is not suppressed.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All IBM Tivoli OMEGAMON XE for Messaging:    *
+   *                 WebSphere MQ Monitoring 7.0.0 users.         *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Shutdown of the MQ agent will result    *
+   *                      in ABEND A03 if any attached MVS tasks  *
+   *                      have not terminated. You will also see  *
+   *                      a symptom dump of user completion code  *
+   *                      0300 in JESMSGLG if IEA995I message is  *
+   *                      not suppressed.                         *
+   ****************************************************************
+   * RECOMMENDATION: Apply the PTF.                               *
+   ****************************************************************
+   The MQ agent attaches a few MVS tasks under the Engine
+   LOADER TCB. These MVS tasks rely on the code running under
+   the Engine PRIMARY TCB to drive them to terminate during
+   agent shutdown. However, a logic error in the code doesn't
+   wait for these code to finish. As the result, some MVS
+   tasks may be left in the Engine LOADER TCB, leading to A03
+   ABEND when the Engine LOADER TCB is subsequently detached.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The code is corrected to ensure all MVS tasks are driven to
+   terminate during the agent shutdown.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   OA46760
+   
+   
+ * REPORTED COMPONENT NAME
+   OMG XE MSG ZOS
+   
+   
+ * REPORTED COMPONENT ID
+   5608A1100
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-12-16
+   
+   
+ * CLOSED DATE
+   2014-12-17
+   
+   
+ * LAST MODIFIED DATE
+   2015-02-03
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    OA46651 [http://www-01.ibm.com/support/docview.wss?uid=swg1OA46651]
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  KMQAITSY KMQAMQS2
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   OMG XE MSG ZOS
+   
+   
+ * FIXED COMPONENT ID
+   5608A1100
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R700 PSY UA75896 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UA75896]
+   UP15/01/09 P F501
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

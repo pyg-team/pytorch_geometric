@@ -1,0 +1,11 @@
+Title: IBM Question on duplicate sysres message at IPL - United States
+
+Text:
+What is this document:
+This document has the abstract of a technical article that is available to authorized users after you have logged on. Please use the link to actual document below to access the full document. You will be asked to log on if you are not already logged in. After log in, if you do not have the right authorization for this document, there will be instructions on what to do next.
+
+abstract text
+I have a DR system which has a sysres plus a backup sysres. Both have volsers RES830 and are on device address 2402 and 2410 respectively. When I IPL from 2402, all is fine and the IPL proceeds normally. When I IPL from the backup on 2410, I get messages: IEA214A DUPLICATE SYSRES 'RES830' FOUND ON DEVICE 2402. IEA214A VERIFY THAT CORRECT DEVICE WAS USED FOR IPL. IEA214A DUPLICATE DEVICE WILL REMAIN OFFLINE. IEA214A REPLY 'CONT' TO CONTINUE IPL I rechecked everything and made sure that I had all the corr
+
+link to actual document
+http://www.ibm.com/support/docview.wss?uid=isg3T1021093 [http://www.ibm.com/support/docview.wss?uid=isg3T1021093]

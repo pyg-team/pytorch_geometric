@@ -1,0 +1,134 @@
+Title: IBM LO49258: E71 UNABLE TO SUCCESSFULLY INSTALL TRAVLER CLIENT. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Customer reported that they are unable to install the Lotus
+   Notes Traveler client on their E71 devices.  The device appears
+   to hange during the install/config process.  Other Nokia and
+   Windows Mobile devices work fine.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  NA
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  On some Nokia devices, generally E71, the device would hang
+   during install of the Lotus Notes Traveler client.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This was found to actually be a defect in the Nokia device
+   itself.  We reported the problem to Nokia support, but were able
+   to work around it by avoiding the call that would hang the
+   device.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  This fix will be included in 8.5.1.2 and any future releases.
+   See this technote for latest maintenance info.
+   
+   http://www.ibm.com/support/docview.wss?uid=swg24019529 [http://www.ibm.com/support/docview.wss?uid=swg24019529]
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   LO49258
+   
+   
+ * REPORTED COMPONENT NAME
+   LOTUS NOTES TRA
+   
+   
+ * REPORTED COMPONENT ID
+   5724E6204
+   
+   
+ * REPORTED RELEASE
+   851
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-02-25
+   
+   
+ * CLOSED DATE
+   2010-03-17
+   
+   
+ * LAST MODIFIED DATE
+   2010-03-17
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   LOTUS NOTES TRA
+   
+   
+ * FIXED COMPONENT ID
+   5724E6204
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R851 PSY
+   UP

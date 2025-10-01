@@ -1,0 +1,35 @@
+Title: IBM Featured documents for the IBM Worklight Foundation, IBM Worklight, and IBM Mobile Foundation products - United States
+
+Text:
+FeaturedDocument; PremiumSupportTips; featured documents; featured; top 10; top ten; popular; most popular; recommended; most requested; highlight; database configuration; database config; db config; PremiumSupportTips NEWSLETTER
+
+ABSTRACT
+ IBM MobileFirst Platform Foundation Support is increasingly focused on delivering content that is social. As a result, this document will no longer contain a quarterly summary of content. We would like to encourage you to engage with the IBM MobileFirst Platform Foundation Team in our social channels. 
+
+CONTENT
+Recent industry surveys show a trend towards social content that allows clients to collaborate with companies like IBM. As part of becoming more social, IBM MobileFirst Platform Foundation Support will no longer be sending out emails for the quarterly Support Newsletters or updating the associated featured links that were previously in this on-line document. 
+
+
+
+
+The IBM MobileFirst Platform Foundation support team is now posting questions and answers on developerWorks Answers (dW Answers ) [https://developer.ibm.com/answers/questions/] where anyone can contribute easily. You can "Like", "Unlike", or "Comment" on any question or answer. You can post questions and receive responses from the community of users and many of them are IBMers. You can also share your expertise by answering questions from others in the community.
+
+dW Answers makes it easy to view content in different ways. For example, you can view the following information: 
+
+ *  Newest content tagged with worklight on dW Answers [https://developer.ibm.com/answers/topics/worklight/?sort=newest] 
+ *  Newest content tagged with mobilefirst on dW Answers [https://developer.ibm.com/answers/topics/mobilefirst/?sort=newest] 
+ * Worklight content with the most Likes on dW Answers [https://developer.ibm.com/answers/topics/worklight/?sort=votes] 
+ * Mobilefirst content with the most Likes on dW Answers [https://developer.ibm.com/answers/topics/mobilefirst/?sort=votes]
+
+
+From any question with the worklight or mobilefirst tag, you can click the tag then click "+Follow" to be notified by email of things like new questions asked or new answers accepted. You define the email notifications that you want and the frequency by setting up "My preferences" within dW Answers. You can also follow tags using the RSS feed. 
+
+As a result of these changes, this document will be removed from the web in May 2016. Bookmark the new links. 
+
+
+ORIGINAL PUBLICATION DATE
+ 2013/12/10 
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Mobile- Speech and Enterprise Access IBM Mobile Foundation Documentation AIX, Apple iOS, BlackBerry OS, Google Android, HP-UX, Linux, Linux Red Hat - xSeries, Linux Red Hat - zSeries, Linux SUSE - xSeries, Linux SUSE - zSeries, Mac OS X, Solaris, Windows, Windows 2008 server, Windows 7, Windows Mobile, Windows Vista, Windows XP, Windows 8 6.0, 5.0.6, 5.0.5, 5.0 Consumer, Enterprise

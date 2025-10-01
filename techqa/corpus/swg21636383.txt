@@ -1,0 +1,42 @@
+Title: IBM NIST SP800-131A capable products - United States
+
+Text:
+NIST; special publication; national institute of standards and technology; FIPS; 800-131A; SP800-131A; SiteProtector 3.0; XGS; GX 4.6.1 TECHNOTE (FAQ)
+
+QUESTION
+ Which IBM Security devices are strict SP800-131A capable? 
+
+CAUSE
+NIST's Special Publication 800-131A
+
+ANSWER
+The IBM Security devices that are SP800-131A capable are: 
+
+ * IBM Security SiteProtector System 3.0 or greater 
+ * IBM Security Network Protection XGS product line (XGS 5100, XGS 4100, XGS 3100) 
+ * IBM Security Network Intrusion Prevention Systems product line with 4.6.1 firmware or higher
+
+
+The National Institute of Standards and Technology (NIST) Special Publication 800-131A (SP800-131A) standard strengthens algorithms and increases key lengths to improve security. The SP800-131A standard also provides for a transition period to move to the new standard. The transition period enables a user to run in a mixed environment of settings not supported under the standard along with those that are supported. The SP800-131A standard requires that users be configured for strict enforcement of the standard. See the National Institute of Standards and Technology web site at http://www.nist.gov/index.html [http://www.nist.gov/index.html] for more details. To conform to the SP800-131A standard, devices must meet the following criteria. 
+
+ * Use Secure Sockets Layer (SSL) over the TLS v1.2 protocol. 
+ * Use SHA-256 or stronger hashing functions. 
+ * Use 2048-bit strength or stronger RSA keys. 
+
+IBM Security devices define the following convention:  * Strict means complying with SP800-131A by using only protocol TLS v1.2, SHA-256 or stronger hashing functions, and 2048-bit strength or stronger RSA keys. 
+ * Compatible means using protocols TLS v1.0, TLS v1.1 or TLS v1.2, SHA-1 hashing functions, and 2048-bit RSA key strength. 
+
+
+SiteProtector 3.0 and greater can be installed in either Strict or Compatible mode. Depending on your deployed devices, there are two encryption scenarios:  * Compatible – SiteProtector supports all devices not configured for the SP800-131A standard 
+ * Strict – SiteProtector supports only devices configured for the SP800-131A standard
+
+Note: A mixture of strict and compatible modes is not supported. 
+
+
+
+
+[/support/docview.wss?uid=swg21636383&aid=1] [https://ibm.biz/BdHdjw] [/support/docview.wss?uid=swg21636383&aid=2] [http://ibm.biz/InfraSecForumTechnote] [/support/docview.wss?uid=swg21636383&aid=3] [http://ibm.biz/SecSuptUTube] [/support/docview.wss?uid=swg21636383&aid=4] [http://ibm.biz/InfraSecFixes] [/support/docview.wss?uid=swg21636383&aid=5] [http://ibm.biz/FlexLicLogin] [/support/docview.wss?uid=swg21636383&aid=6] [http://ibm.biz/MyNotification] [/support/docview.wss?uid=swg21636383&aid=7] [http://ibm.biz/ContactSecSupport] 
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Security IBM Security Network Protection General Information All Editions Security IBM Security Network Intrusion Prevention System Firmware 4.6.1

@@ -1,0 +1,40 @@
+Title: IBM JavaScript example of changing ownership of an object using bulk processing with Administration Console for Content Engine (ACCE) - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ JavaScript example of changing ownership of an object using bulk processing with Administration Console for Content Engine (ACCE) in FileNet Content Manager 
+
+ANSWER
+In the Administration Console for Content Engine (ACCE) you can apply JavaScript bulk actions to the search results of an object store query. This example shows how to change the ownership of an object using bulk processing with Administration Console for Content Engine (ACCE) 
+
+ 1. Open an object store and create an object store search.
+    
+    
+ 2. On the SQL view tab, enter the following query:
+    
+    
+    SELECT TOP 100 This FROM Document
+    
+    
+ 3. Select Enable bulk action on the bulk action tab.
+    
+    
+ 4. In the Script section, click Run script.
+    
+    
+ 5. Copy the following JavaScript code and paste it into the Script field. Replace "Principal Name" with your user/group (ie. user@domain.com).
+    
+    
+    importClass(Packages.com.filenet.api.constants.RefreshMode);
+    
+    function OnCustomProcess (CEObject)
+    {CEObject.set_Owner("Principal Name")
+    CEObject.save(RefreshMode.REFRESH);}
+    
+    
+ 6. Click Run. The administration console runs the query and the JavaScript action.
+    
+    
+ 7.  After the query runs, confirm that the owner of the object has been updated.

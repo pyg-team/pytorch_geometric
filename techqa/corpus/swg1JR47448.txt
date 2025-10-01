@@ -1,0 +1,181 @@
+Title: IBM JR47448: PROCESSPORTAL LOCALIZATION PROBLEM - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Version 8.0.1 Fix Pack 2 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24035701]
+Version 8.5 Refresh Pack 5 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24037683]
+Download Version 8.0.1 Fix Pack 3 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24037734]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  After installation FixPack 1 on 8.0.1 version, users cannot use
+   language localization ( specifically noticed with regard to
+   Russian ) in the ProcessPortal. As a result, even when a user
+   changes the language in their portal preferences, everything is
+   still seen in English.
+   
+   When this issue occurs, you will see a 'Failed to initialize
+   registry' message when a profile is upgraded from 8010 to 8011.
+   Creating a new profile on 8011 does not result in the same
+   message. This problem caused by the resource bundle id not
+   being updated when upgrading from 8010 to 8011, so the new
+   resource bundle will not get imported to the database. A patch
+   is required for the bootstrap code to resolve this behavior.
+   After applying the fix the bootstrap must be done again with
+   the patched code.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Partial workaround: export localization from 8.0.1 Process
+   Portal App and then import it to the 8.0.1.1 version. After
+   deployment of new snapshot on server, changing language changes
+   display language in most areas. However, installation of new
+   snapshot doesn't help to translate header of report page with
+   action links Save, Manage EPV and Export - which still display
+   in English.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  IBM BPM users who want translations,        *
+   *                  specifically Russian, of the product        *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Some translations, specifically         *
+   *                      Russian, of the product are not         *
+   *                      available after users install the       *
+   *                      V8.0.1.1 fix pack.                      *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   After installing fix pack 1 on V8.0.1, users cannot use the
+   language localization feature in Process Portal. This issue
+   was specifically noticed regarding Russian. Even when a user
+   changes the language in the preferences, everything is still
+   displayed in English. When this issue occurs, users see a
+    &#162;&#226;&#130;&#172; &#147;Failed to initialize registry &#162;&#226;&#130;&#172;  &#189; message when a prof
+   upgraded from V8.0.1. to V8.0.1.1.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This problem occurs because the resource bundle ID is not
+   updated when users upgrade from V8.0.1 to V8.0.1.1; therefore,
+   the new resource bundle is not imported into the database. A
+   fix for IBM BPM V8.0.1.1 is available so that the resource
+   bundle ID is updated.
+   
+   On Fix Central (http://www.ibm.com/support/fixcentral), search
+   for JR47798 [http://www-01.ibm.com/support/docview.wss?uid=swg1JR47798]. After you select the product group, product,
+   installed version, and platform, click Continue and then
+   select APAR or SPR, enter JR47798 [http://www-01.ibm.com/support/docview.wss?uid=swg1JR47798], and click Continue. When
+   downloading fix packages, ensure that you also download the
+   readme file for each fix. Review each readme file for
+   additional installation instructions and information about the
+   fix.
+   
+   After you apply the fix, run the bootstrap file again with the
+   patched code. For the steps to run the bootstrap, see Loading
+   the database with system information in a network deployment
+   environment(http://pic.dhe.ibm.com/infocenter/dmndhelp/v8r0m1/in
+   dex.jsp?topic=%2Fcom.ibm.wbpm.imuc.ebpmps.doc%2Ftopics%2Fdb_boot
+   strap_nd.html)
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR47448
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM STANDARD
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9500
+   
+   
+ * REPORTED RELEASE
+   801
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-08-06
+   
+   
+ * CLOSED DATE
+   2013-11-20
+   
+   
+ * LAST MODIFIED DATE
+   2013-11-20
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   BPM STANDARD
+   
+   
+ * FIXED COMPONENT ID
+   5725C9500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R800 PSY
+   UP

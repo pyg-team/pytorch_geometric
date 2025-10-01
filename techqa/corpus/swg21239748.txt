@@ -1,0 +1,74 @@
+Title: IBM Configuring ClearQuest connections for Oracle RAC server - United States
+
+Text:
+1239748; RAC; CQ; ClearQuest; fail over; cluster; clustering; oracle; load balancing; failover; unix; windows; PK55125; RATLC01039696; fail-over; clustered TECHNOTE (FAQ)
+
+QUESTION
+ How can you configure connections to an Oracle RAC database from IBM Rational ClearQuest? 
+
+CAUSE
+The DataDirect drivers that ship with ClearQuest 2003.06.16 and 7.x are able to connect to Oracle RAC databases. Additional parameters are required to take advantage of advanced RAC functionality, such as Load Balancing and Failover.
+
+
+Note: ClearQuest 2003.06.16 only supports Oracle RAC servers on the Microsoft Windows. 7.x supports both Windows and UNIX and Linux-based platforms.
+
+
+ANSWER
+ 
+
+
+Load Balancing
+To enable load balancing, add these parameters to the connect options for each database: 
+
+EXTRA_PARAMS='AlternateServers=(HostName=primary_server1:
+PortNumber=primary_port1:SID=primary_sid1,
+HostName=server2:PortNumber=port2:SID=sid2,…);LoadBalancing=1'
+
+
+ * The AlternateServers parameter is a comma separated list of servers, contained in parentheses. Each server must be identified by its host name or IP address, port, and SID. 
+ * The LoadBalancing parameter is used to enable or disable load balancing. A value of 0 will disable load balancing, and a value of 1 enables it. 
+
+
+When AlternateServers is specified and load balancing not enabled, the DataDirect drivers will always attempt to connect to the first server in the list. If that server is unavailable, the driver will connect to the next server in the list. This continues until either a connection is successful, or attempts were made to connect to all the defined servers. 
+When the options are set to enable load balancing, the DataDirect driver will randomly connect to any of the servers listed in the AlternateServers list. If that server is unavailable, a different server in the list is selected at random for the connection attempt. This continues until a connection is successful, or or attempts were made to connect to all the defined servers. 
+
+Note: The EXTRA_PARAMS connect option will need to be set in both the schema repository connection properties with ClearQuest Maintenance Tool and the user database(s) connection properties with ClearQuest Designer.
+
+Note: These parameters will not be verified in any way by ClearQuest. It is the responsibility of the administrator to ensure that the contents of these parameters are correct. 
+
+
+ 
+
+Failover
+Connection Failover allows ClearQuest to connect to any of the available servers in the list provided when the application starts. If one or more servers are unavailable, other servers can be used to complete the connection. 
+
+
+If a connection drops during a session, then there are no further attempts to reconnect. The ClearQuest session needs to be restarted. At that time, if the server used in the first session is unavailable, the DataDirect driver will attempt to connect to one of the alternate servers. If that connection is successful, you can continue to work. Without the alternate servers information, the connection on the second session will not work. The server is unavailable.
+
+
+To enable connection failover, add these parameters to the connect options for each database: 
+
+
+EXTRA_PARAMS='AlternateServers=(HostName=primary_server1:
+PortNumber=primary_port1:SID=primary_sid1,
+HostName=server2:PortNumber=port2:SID=sid2,…);
+ConnectionRetryCount=n;ConnectionRetryDelay=m'
+
+
+ * The AlternateServers parameter is a comma-separated list of servers, contained in parentheses. Each server must be identified by its host name or IP address, port, and SID. 
+
+
+Connection failover will be enabled once the AlternateServers list is entered. To enable multiple tries at connecting to each server, add ConnectionRetryCount= n. " n" is the number of tries that will be made before a failure is reported. To set a delay between retries, add ConnectionRetryDelay= m. " m" is the number of seconds to wait between tries. If ConnectionRetryDelay is not specified, it will default to " 3". 
+
+Note: The EXTRA_PARAMS connect option will need to be set in both the schema repository connection properties with ClearQuest Maintenance Tool and the user database(s) connection properties with ClearQuest Designer. 
+
+Note: These parameters will not be verified in any way by ClearQuest. It is the responsibility of the administrator to ensure that the contents of these parameters are correct. ClearQuest simply passes these parameters to the Oracle server.  
+
+Issue specific to ClearQuest 7.0.1.x connections for Oracle RAC server 
+
+ClearQuest 7.0.1 ships with a version of the DataDirect drivers that might cause errors when connecting to Oracle RAC. See technote 1391892 [http://ibm.com/support/docview.wss?uid=swg21391892] for more details.
+
+
+
+RELATED INFORMATION
+#ClearQuest Support for Oracle RAC [http://www.ibm.com/support/docview.wss?uid=swg21247220]

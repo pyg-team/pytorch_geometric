@@ -1,0 +1,248 @@
+Title: IBM ITCAM Agent for WebSphere MQ File Transfer Edition 7.0.1 IFix 01 - United States
+
+Text:
+interim fix km6 V7.0.1 7.0.1-TIV-ITM_KM6-IF0001 DOWNLOADABLE FILES
+
+ABSTRACT
+ This is the first interim fix after ITCAM Agent for WebSphere MQ File Transfer Edition Version 7.0.1 
+
+DOWNLOAD DESCRIPTION
+This interim fix applies to users who plan to upgrade their current version of ITCAM Agent for WebSphere MQ File Transfer Edition Version 7.0.1 to the latest version 7.0.1 IF01. This interim fix pack contains the following fixes:
+
+
+1. Refresh Java Certificates.
+2. APAR IV74491: Memory leak when processing scheduler data.
+3. APAR IV16072: Add 6 variables to support SSL connection.
+4. Add ping timeout configure variable.
+5. The km6client can't start when setting trace level to km6 ALL.
+
+PREREQUISITES
+ITCAM Agent for WebSphere MQ File Transfer Edition Version 7.0.1 must be installed.
+
+INSTALLATION INSTRUCTIONS
+=========================================================================
+Local agent update
+=========================================================================
+1. Transfer the appropriate 7.0.1-TIV-ITM_KM6-IF0001.tar or .zip 
+archive file to a temporary directory on the system that 
+contains the agent code to be updated. For example, the
+<TEMP> symbol represents the fully qualified path to this
+directory. Note: On a Windows system, this path includes the
+drive letter.
+
+2. On UNIX systems, use the "tar" command to expand the archive file 
+or on Windows systems use the extract utility. This step creates a
+directory structure that contains fixes for all the supported
+platforms.
+
+3. Use the "itmpatch" command to install the fix for the operating
+system for the agent. For more information about the "itmpatch"
+command, see section [6.2].
+
+On UNIX systems, if the fix was expanded to <TEMP>/7.0.1-TIV-ITM_KM6-IF0001,
+the installation command is:
+
+> itmpatch -h <CANDLEHOME>
+-i <TEMP>/7.0.1-TIV-ITM_KM6-IF0001/km6_xxxxxx_tema_if0001.tar
+
+where:
+- xxxxxx corresponds to the value in the first column returned
+by the ./cinfo -i command.
+
+In the following example, the file is "km6_lx8266_tema_if0001.tar".
+> ./cinfo -i
+m6 Monitoring Agent for WebSphere MQ File Transfer Edition
+lx8266 Version: 07.01.00.00
+
+On Windows system, if the fix was expanded to
+<TEMP>\7.0.1-TIV-ITM_KM6-IF0001, the installation command is:
+
+> <TEMP>\7.0.1-TIV-ITM_KM6-IF0001\itmpatch -h <CANDLEHOME>
+-i <TEMP>\7.0.1-TIV-ITM_KM6-IF0001\km6_xxxxxx_tema_if0001.cab
+
+=========================================================================
+Remote agent update
+=========================================================================
+1. Transfer the appropriate 7.0.1-TIV-ITM_KM6-IF0001.tar or .zip 
+archive file to a temporary directory on the Tivoli Enterprise 
+Monitoring Server system. For example, the <TEMP> symbol 
+represents the fully qualified path to this directory. 
+Note: On Windows systems, this path includes the drive letter.
+
+2. On UNIX systems, expand the archive file by using the "tar" 
+command or on Windows systems use an extract utility. This 
+procedure creates a directory structure that contains fixes 
+for the supported operating systems.
+
+3. On UNIX sytems, to add the agent fix bundles to the remote 
+deployment depot, use the "tacmd addBundles" command in 
+the $CANDLEHOME/bin directory. On Windows systems, use 
+the command in the %CANDLE_HOME%\bin directory. For more
+information about the "tacmd addBundles" command, see the IBM 
+Tivoli Monitoring Command Reference Guide.
+
+On UNIX systems,
+if the fix was expanded to <TEMP>/7.0.1-TIV-ITM_KM6-IF0001:
+> $CANDLEHOME/bin/tacmd addBundles -n -i <TEMP>/7.0.1-TIV-ITM_KM6-IF0001
+
+On Windows systems,
+if the fix was expanded to <TEMP>\7.0.1-TIV-ITM_KM6-IF0001:
+> %CANDLE_HOME%\bin\tacmd addBundles -n -i <TEMP>\7.0.1-TIV-ITM_KM6-IF0001
+
+where:
+-n indicates that prerequisite bundles are not automatically
+added. The -n parameter must be used because the fix
+directory does not contain any prerequisites that the fix
+requires. See Section 3.1 for the prerequisites
+for this fix.
+-i is the directory that contains the deployment bundles to be
+added to the depot.
+
+4. To log in to the Tivoli Enterprise Monitoring Server and deploy
+the fix to the appropriate nodes where the agent is running, use
+the following "tacmd" commands. 
+
+On UNIX system:
+> $CANDLEHOME/bin/tacmd login -s <server>
+-u <itmuser>
+-p <password>
+
+> $CANDLEHOME/bin/tacmd listSystems
+
+For more information about the "tacmd login" and "updateAgent" commands, 
+see the IBM Tivoli Monitoring Command Reference Guide.
+
+The output shows the Managed System Name for the OS agent on the
+remote system to be updated. Use this value as the target of the
+"tacmd updateAgent" command.
+
+> $CANDLEHOME/bin/tacmd updateAgent -t m6
+-n <Managed system name>
+-v 070100001
+
+On Windows systems:
+> %CANDLE_HOME%\bin\tacmd login -s <server>
+-u <itmuser>
+-p <password>
+
+> %CANDLE_HOME%\bin\tacmd listSystems
+
+The output shows the Managed System Name for the OS agent on the
+remote system to be updated. Use this value as the target of the
+"tacmd updateAgent" command.
+
+> %CANDLE_HOME%\bin\tacmd updateAgent -t M6
+-n <Managed system name>
+-v 070100001
+Note:
+- The component (-t) for the "tacmd updateAgent" command is 
+specified as 2 characters (m6), not 3 characters (km6).
+- The node (-n) for the "tacmd updateAgent" command is the managed
+system name of the operating system (OS) agent to be updated.
+The target node for the "tacmd updateAgent" command is always 
+an OS agent.
+
+=========================================================================
+Agent support update
+=========================================================================
+Fix 7.0.1-TIV-ITM_KM6-IF0001 includes changes to the agent support files 
+that must be installed. Use the following steps to update the Tivoli 
+Enterprise Portal Server, or Tivoli Enterprise Portal Desktop.
+
+1. Transfer the appropriate 7.0.1-TIV-ITM_KM6-IF0001.tar
+or .zip archive file to the Tivoli Enterprise Portal 
+Server, or Tivoli Enterprise Portal Desktop.
+
+2. On UNIX systems, use the "tar" command to expand the archive file 
+or on Windows systems use an extract utility. This step creates a
+directory structure that includes a subdirectory called CD-ROM, 
+with the necessary updates.
+
+3. Expand the km6_tems_teps_tepd_if0001.tar or .zip archive file 
+that contains the updates for the Tivoli Enterprise Portal Browser, 
+and Tivoli Enterprise Portal Desktop.
+
+4. To install the application support files, use the Application Support
+Installer (ASI) GUI or the silent installation procedure.
+
+GUI installation option
+------------------------
+To start the GUI, from within the CD-ROM directory where the "setup.jar" 
+file is located, use one of the following commands:
+
+On UNIX systems:
+> ./itmasi.sh [-h <CANDLEHOME>] [-j <JAVAHOME>]
+
+On Windows systems:
+> itmasi [-h <CANDLEHOME>] [-j <JAVAHOME>]
+
+When prompted by the Application Support Installer for the
+installable media directory, select the CD-ROM directory, not the
+component directory. The installer installs updates for
+multiple components at the same time.
+
+Silent installation option
+--------------------------
+To use the silent installation option, from the CD-ROM directory 
+where the "setup.jar" file is located, use one of the following
+commands:
+
+
+On UNIX systems:
+> ./itmasi.sh -h <CANDLEHOME> [-silent]
+[-r <response file>]
+[-j <JAVAHOME>]
+
+On Windows systems:
+> itmasi -h <CANDLEHOME> [-silent]
+[-r <response file>]
+[-j <JAVAHOME>]
+
+where:
+-h <CANDLEHOME> - Required. The path to the IBM Tivoli
+Monitoring installation directory.
+
+-r <response file> - Optional. Customized response file name.
+The default response file "response.txt" in
+the CD-ROM directory can be copied and modified
+for your environment. Do not update "response.txt".
+
+-j <JAVAHOME> - Optional. The fully qualified path to the "bin"
+directory where Java(R) is installed. The
+location of Java on your system might vary.
+
+Note: For the silent installation option for Linux and zLinux
+operating systems, use the following files: 
+- Linux: setupLinux.bin
+- zLinux: setupLinux390.bin
+
+These files are contained in the Interim fix 6.2-TIV-ITM_ASI-IF0002 
+(http://www-01.ibm.com/support/docview.wss?uid=swg24034924 [http://www-01.ibm.com/support/docview.wss?uid=swg24034924]).
+
+Follow the installation instructions that are contained in the
+"6.2-TIV-ITM_ASI-IF0002.README".
+
+5. Next, in the Application Support Installer, you select the Tivoli Monitoring 
+components to which you want to add application support.
+For this fix, check or clear the check boxes as shown here:
+
+[checked | cleared] - Tivoli Enterprise Monitoring Server (TEMS)
+[checked | cleared] - Tivoli Enterprise Portal Server (TEPS)
+[checked | cleared] - Tivoli Enterprise Desktop Client (TEPD)
+
+To continue the installation, select the IBM Tivoli Composite Application 
+Manager Agent for WebSphere MQ File Transfer Edition 7.0.1 Interim Fix IF0001.
+
+6. If the Tivoli Enterprise Portal Desktop or Tivoli Enterprise Portal
+Browser is running when you install the update, you must restart it.
+
+URL LANGUAGE SIZE(Bytes) 7.0.1-TIV-ITM_KM6-IF0001 [https://www-945.ibm.com/support/fixcentral/swg/selectFixes?product=ibm%2FTivoli%2FTivoli+Composite+Application+Manager+for+Applications&fixids=7.0.1-TIV-ITM_KM6-IF0001&source=SAR&function=fixId&parent=Tivoli%20Composite%20Application%20Manager] English 25901 
+DOWNLOAD PACKAGE
+
+
+
+
+Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options 
+What is Fix Central(FC)? [https://www.ibm.com/support/fixcentral/help?page=swfaqs] 7.0.1-TIV-ITM_KM6-IF0001 29 Sep 2016 English 16122448 FC [https://www-945.ibm.com/support/fixcentral/swg/selectFixes?product=ibm%2FTivoli%2FTivoli+Composite+Application+Manager+for+Applications&fixids=7.0.1-TIV-ITM_KM6-IF0001&source=SAR&function=fixId&parent=Tivoli%20Composite%20Application%20Manager] [ ] 
+ [/support/docview.wss?uid=swg24042821&aid=1]Problems (APARS) fixed [/support/docview.wss?uid=swg24042821&aid=2]Problems (APARS) fixed
+IV74491 IV16072

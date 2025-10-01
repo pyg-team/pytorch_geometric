@@ -1,0 +1,154 @@
+Title: IBM PI72039: MQ V8 - "AN UNEXPECTED ERROR (3228) HAS OCCURRED (AMQ4999)" IS BEING ISSUED TRYING TO DELETE A CHLAUTH RECORD WITH MQEXPLORER. - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  "An unexpected error (3228) has occurred (AMQ4999)" is
+   being issued trying to delete a CHLAUTH record with the
+   MQExplorer.
+   
+    It's possible to remove the CHLAUTH record by an MQSC command:
+   SET CHLAUTH(' ') TYPE(ADDRESSMAP) ADDRESS(1) ACTION(REMOVE)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All users of WebSphere MQ for z/OS Version 8 *
+   *                 Release 0 Modification 0.                    *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Channel authentication records          *
+   *                      with invalid profile names may          *
+   *                      be created.                             *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   Attempting to create a Channel Authentication record with
+   a profile name that is prefixed by blanks or consists
+   entirely of blanks succeeds.
+   
+   The rules for naming MQ objects states that leading blanks
+   are not permitted for names so the attempt to define a
+   Channel Authentication record with such a name should fail.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Processing has been amended to ensure that attempts to define
+   Channel Authentication records with profile names containing
+   leading blanks are rejected.
+   000Y
+   CSQMSCA
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI72039
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ Z/OS 8
+   
+   
+ * REPORTED COMPONENT ID
+   5655W9700
+   
+   
+ * REPORTED RELEASE
+   000
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-11-09
+   
+   
+ * CLOSED DATE
+   2017-01-23
+   
+   
+ * LAST MODIFIED DATE
+   2017-04-04
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    PI75042 [http://www-01.ibm.com/support/docview.wss?uid=swg1PI75042] UI44130
+   
+   
+
+MODULES/MACROS
+ *  CSQMSCA
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ Z/OS 8
+   
+   
+ * FIXED COMPONENT ID
+   5655W9700
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R000 PSY UI44130 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI44130]
+   UP17/03/04 P F703
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

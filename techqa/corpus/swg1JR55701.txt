@@ -1,0 +1,173 @@
+Title: IBM JR55701: SECURITY APAR - CVE-2016-0349 - INCORRECT AUTHORIZATION FOR UPDATE OF PROCESS INSTANCE VARIABLES IN IBM BPM - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+ DIRECT LINKS TO FIXES
+8.5.6.2-WS-BPM-IFJR55701 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Standard&fixids=8.5.6.2-WS-BPM-IFJR55701&source=SAR]
+bpm.8570.cf2016.06.delta.repository.2of2 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Standard&fixids=bpm.8570.cf2016.06.delta.repository.2of2&source=SAR]
+bpm.8570.cf2016.06.delta.repository.1of2 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Standard&fixids=bpm.8570.cf2016.06.delta.repository.1of2&source=SAR]
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Because the action of updating process instance variables is not
+   correctly authorized, users without required permission can
+   update process instance variables in IBM Business Process
+   Manager.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  IBM Business Process Manager (BPM) provides a REST API to update
+   process instance variables that applies insufficient
+   authorization checks.
+   
+   PRODUCTS AFFECTED
+   IBM Business Process Manager (BPM) Advanced
+   IBM BPM Standard
+   IBM BPM Express
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A fix is available for IBM BPM V8.5.6 and V8.5.7 that adds an
+   authorization check for the REST API. This check verifies that
+   the user is either an IBM BPM admin or member of the IBM Process
+   Portal admin team that is defined for the process application
+   containing the process instance. As long as no IBM Process
+   Portal admin team is defined, you can authorize additional users
+   by setting the ACTION_UPDATE_INSTANCE_VARIABLE action policy.
+   
+   If set to "false", the members defined for an action policy can
+   perform the corresponding action, regardless of whether the
+   Portal Admin Team is defined.
+   
+   For IBM BPM V8.5.6 Cumulative Fix 2, go to Fix Central
+   (http://www.ibm.com/support/fixcentral) and search for JR55701:
+   
+   1. Select IBM Business Process Manager with your edition from
+     the product selector, the installed version to the fix pack
+     level, and your platform, and then click Continue.
+   
+   2. Select APAR or SPR, enter JR55701, and click Continue.
+   
+   When you download fix packages, ensure that you also download
+   the readme file for each fix. Review each readme file for
+   additional installation instructions and information about the
+   fix.
+   
+   For IBM BPM V8.5.7, a fix will be included in an upcoming IBM
+   Business Process Manager (BPM) V8.5 cumulative maintenance
+   vehicle.
+   
+   To determine whether the cumulative fix is available and
+   download it if it is, complete the following steps on Fix
+   Central:
+   
+   1. Select IBM Business Process Manager with your edition from
+   the product selector, the installed version to the fix pack
+   level, and your platform, and then click Continue.
+   2. Select Text, enter ?cumulative fix?, and click Continue.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR55701
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM STANDARD
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9500
+   
+   
+ * REPORTED RELEASE
+   856
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-04-06
+   
+   
+ * CLOSED DATE
+   2016-06-24
+   
+   
+ * LAST MODIFIED DATE
+   2016-06-24
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   BPM STANDARD
+   
+   
+ * FIXED COMPONENT ID
+   5725C9500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R856 PSY
+   UP
+   
+   
+ * R857 PSY
+   UP

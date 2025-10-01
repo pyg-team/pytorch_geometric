@@ -1,0 +1,135 @@
+Title: IBM PI25667: RAA INFORMATION CENTER INDICATES INSTALLATION MANAGER'S ROLLBACK FUNCTION IS SUPPORTED BUT IT IS NOT. - United States
+
+Text:
+  DIRECT LINKS TO FIXES
+readme.htm [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FRational%2FIBM+Rational+Asset+Analyzer&fixids=RAA-6.1.0.7-readme&source=SAR]
+RAAInstallRepository [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FRational%2FIBM+Rational+Asset+Analyzer&fixids=RAA-6.1.0.7-Install-IMRepository&source=SAR]
+RAAInstall [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FRational%2FIBM+Rational+Asset+Analyzer&fixids=RAA-6.1.0.7-Install&source=SAR]
+Rational Asset Analyzer Fix Pack 7 (6.1.0.7) for 6.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24039256]
+Rational Asset Analyzer Fix Pack 8 (6.1.0.8) for 6.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24039670]
+Rational Asset Analyzer Fix Pack 9 (6.1.0.9) for 6.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24041290]
+Rational Asset Analyzer Fix Pack 10 (6.1.0.10) for 6.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24042015]
+Rational Asset Analyzer Fix Pack 11 (6.1.0.11) for 6.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24042668]
+Rational Asset Analyzer Fix Pack 12 (6.1.0.12) for 6.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24043093]
+Rational Asset Analyzer Fix Pack 13 (6.1.0.13) for 6.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24043361]
+Rational Asset Analyzer Fix Pack 14 (6.1.0.14) for 6.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24043718]
+Rational Asset Analyzer Fix Pack 15 (6.1.0.15) for 6.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24044105]
+Rational Asset Analyzer Fix Pack 16 (6.1.0.16) for 6.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24044556]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  RAA Information Center mentions Rollback function of
+   Installation Manager as being usable with RAA, but in fact, the
+   rollback functionality is not supported by RAA installation.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Use Installation Manager to Uninstall (after backing up
+   contents of <RAA Installation Directory>/config , and then use
+   Installation Manager to install desired level of RAA code.
+   Uninstalling and reinstalling RAA using Installation Manager
+   will not remove the RAA database from DB2.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  RAA documentation indicated Roll back feature of Installation
+   Manager could be used to revert to previous RAA code level, but
+   that is incorrect.  Installation Manager Roll back is not
+   supported by RAA.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Removed topic "Reverting updates to previous version".  Updated
+   "Installation Manager overview" topic -added note that
+   "rollback is not available for RAA".
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI25667
+   
+   
+ * REPORTED COMPONENT NAME
+   RATL ASSET ANAL
+   
+   
+ * REPORTED COMPONENT ID
+   5724V2700
+   
+   
+ * REPORTED RELEASE
+   610
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-09-12
+   
+   
+ * CLOSED DATE
+   2015-02-24
+   
+   
+ * LAST MODIFIED DATE
+   2015-02-24
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

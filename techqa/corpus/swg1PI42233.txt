@@ -1,0 +1,163 @@
+Title: IBM PI42233: SPSS STATISTICS CLIENT SCRIPTING FAILED TO START. THE NETWORK HOST CANNOT BE FOUND, INET:LOCAL COMPUTER:0 - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  You have installed IBM SPSS Statistics 23.0 client for Mac OSX
+   and attempt to launch.  Immediately you are met with the error
+   message:
+   
+   'SPSS Statistics Client Scripting failed to start. The network
+   host cannot be found, inet:Local Computer:0'
+   
+   and the Statistics Server login dialog is presented.  Thus far,
+   in most reported cases, you are able to select the "Local
+   Computer" entry and click "OK" to complete launching the
+   product.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  This behavior has been traced to a known issue with Java 7 on
+   Mac OS X.
+   
+   This issue will be addressed in the next Fix Pack. Please
+   refer to the Fix Pack schedule at
+   http://www.ibm.com/support/docview.wss?uid=swg21599157 for
+   information on upcoming Fix Packs.
+   
+   If you encounter the issue described above please open a Service
+   Request with IBM SPSS Technical Support. An Interim Fix was
+   developed for customers who need the fix prior to the next
+   upcoming Fix Pack.
+   
+   Please contact Technical Support with reference to APAR PI42233
+   and technote # 1959190. Before you apply this interim Fix make
+   sure you have installed IBM SPSS Statistics 23 for Macintosh on
+   default path location and do not use other installation
+   directories.
+   about Interim Fix 10 for Statistics 23.0 on Mac OS X.
+   
+   Note: Interim fixes are limited corrections to specific issues
+   reported by one or more customers. They are normally sent only
+   to customers who have reported one of the corrected problems,
+   and who require an immediate correction. Interim Fixes do not
+   address customer enhancement requests, and not all defect
+   corrections can be delivered as Interim Fixes. Due to their
+   urgency Interim Fixes undergo only targeted testing of specific
+   fixes, not full regression testing. If the fix is not urgently
+   required, you may prefer to wait for a scheduled Fix Pack
+   Release, which will be fully regression tested. Interim Fix
+   corrections, once fully regression tested, are automatically
+   included in a future Fix Pack.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * Users of IBM SPSS Statistics 23.0 for MAc                    *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * SPSS STATISTICS CLIENT SCRIPTING FAILED TO START. THE        *
+   * NETWORK                                                      *
+   * HOST CANNOT BE FOUND, INET:LOCAL COMPUTER:0                  *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * This issue has been resolved for IBM SPSS Statistics 23.0    *
+   * FP2 for Mac. Please upgrade to IBM SPSS Statistics 23.0 FP2  *
+   * for Mac                                                      *
+   ****************************************************************
+   Please upgrade to IBM SPSS Statistics 23.0 FP2 for Mac
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI42233
+   
+   
+ * REPORTED COMPONENT NAME
+   SPSS STATISTICS
+   
+   
+ * REPORTED COMPONENT ID
+   5725A54ST
+   
+   
+ * REPORTED RELEASE
+   N00
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2015-06-02
+   
+   
+ * CLOSED DATE
+   2016-04-11
+   
+   
+ * LAST MODIFIED DATE
+   2016-04-11
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * RO00 PSN
+   UP
+   
+   
+ * RO00 PSY
+   UP

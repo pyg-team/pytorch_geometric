@@ -1,0 +1,42 @@
+Title: IBM VMVSS-type backups are listed only for active Exchange databases - United States
+
+Text:
+TSM TDPEXC TDP4VE replica cluster high availability missing TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When protecting Exchange 2010 Servers with Data Protection for VMware in-guest application protection, only active Exchange databases are available for database-level recovery. 
+
+SYMPTOM
+Even when all requirements are met and the Exchange Server virtual guests are correctly protected by Tivoli Storage Manager for Virtual Environments - Data Protection for VMware, only active databases are listed in the MMC GUI of Tivoli Storage Manager for Mail: Data Protection for Exchange.
+
+
+CAUSE
+Exchange 2010 uses separate VSS writers to snapshot active and passive database copies. 
+
+If the Exchange 2010 VSS writer for replicas is disabled, no application aware backup of these databases can be performed. 
+
+
+ENVIRONMENT
+Exchange 2010 DAG environments. 
+
+
+
+DIAGNOSING THE PROBLEM
+1. Verify the Exchange server virtual machine is protected at database-level: 
+
+ * 
+ * 
+ * dsmc query vm VMname-of-Exchange-Server -detail -asnode=datacenter_node 
+ * The output should contain the following line:
+   Application(s) protected: MS Exchange 2010 (database-level recovery)
+
+
+2. Check on the Exchange Server if the following registry key is set to 0: 
+
+ * 
+
+RESOLVING THE PROBLEM
+In this case the Exchange Replica Writer needs to be enabled by removing the EnableVSSwriter key and recycling of the Exchange Replication service. 
+
+
+For further information consult: https://technet.microsoft.com/en-us/library/dd876851%28v=exchg.141%29.aspx [https://technet.microsoft.com/en-us/library/dd876851%28v=exchg.141%29.aspx]

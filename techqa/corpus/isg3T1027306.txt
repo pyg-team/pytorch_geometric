@@ -1,0 +1,53 @@
+Title: IBM WEBGUI logged out with Java.io.FileNotFoundException messages - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Intermittently WEBGUI page will log out automatically and prompt below error messages.
+Java.io.FileNotFoundException:SRVE0190E:File not found:/logout.do&error= 
+
+CAUSE
+The browser used is not supported.
+
+ANSWER
+By checking message_gui_server.log, you can see below messages. Further confirm that the user is using Chrome 64 bit, which is NOT in the supported browser list(https://www.ibm.com/support/knowledgecenter/SSZUMP_7.2.0/product_table/browsers.html [https://www.ibm.com/support/knowledgecenter/SSZUMP_7.2.0/product_table/browsers.html]) 
+
+By using supported browsers there is no such issue. 
+
+
++++++++++++++++++++++++++++++++++++++++++++
+[2/18/18 12:03:01:912 CET] 0000008b com.ibm.ws.channel.ssl.internal.SSLHandshakeErrorTracker E CWWKO0801E: Unable to initialize SSL connection. Unauthorized access was denied or security settings have expired. Exception is javax.net.ssl.SSLHandshakeException: Client requested protocol TLSv1 not enabled or not supported
+at com.ibm.jsse2.C.z(C.java:574)
+at com.ibm.jsse2.ap.b(ap.java:606)
+at com.ibm.jsse2.ap.c(ap.java:109)
+at com.ibm.jsse2.ap.wrap(ap.java:161)
+at javax.net.ssl.SSLEngine.wrap(SSLEngine.java:21)
+at com.ibm.ws.channel.ssl.internal.SSLUtils.handleHandshake(SSLUtils.java:682)
+at com.ibm.ws.channel.ssl.internal.SSLConnectionLink.readyInbound(SSLConnectionLink.java:546)
+at com.ibm.ws.channel.ssl.internal.SSLConnectionLink.ready(SSLConnectionLink.java:319)
+at com.ibm.ws.tcpchannel.internal.NewConnectionInitialReadCallback.sendToDiscriminators(NewConnectionInitialReadCallback.java:174)
+at com.ibm.ws.tcpchannel.internal.NewConnectionInitialReadCallback.complete(NewConnectionInitialReadCallback.java:83)
+at com.ibm.ws.tcpchannel.internal.WorkQueueManager.requestComplete(WorkQueueManager.java:504)
+at com.ibm.ws.tcpchannel.internal.WorkQueueManager.attemptIO(WorkQueueManager.java:574)
+at com.ibm.ws.tcpchannel.internal.WorkQueueManager.workerRun(WorkQueueManager.java:929)
+at com.ibm.ws.tcpchannel.internal.WorkQueueManager$Worker.run(WorkQueueManager.java:1018)
+at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1153)
+at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:628)
+at java.lang.Thread.run(Thread.java:785)
+Caused by: javax.net.ssl.SSLHandshakeException: Client requested protocol TLSv1 not enabled or not supported
+at com.ibm.jsse2.j.a(j.java:12)
+at com.ibm.jsse2.ap.a(ap.java:133)
+at com.ibm.jsse2.C.a(C.java:441)
+at com.ibm.jsse2.C.a(C.java:138)
+at com.ibm.jsse2.E.a(E.java:781)
+at com.ibm.jsse2.E.a(E.java:870)
+at com.ibm.jsse2.C.r(C.java:69)
+at com.ibm.jsse2.C$b.a(C$b.java:4)
+at com.ibm.jsse2.C$b.run(C$b.java:1)
+at java.security.AccessController.doPrivileged(AccessController.java:686)
+at com.ibm.jsse2.C$c.run(C$c.java:3)
+at com.ibm.ws.channel.ssl.internal.SSLUtils.handleHandshake(SSLUtils.java:740)
+... 11 more
+
++++++++++++++++++++++++++++++++++++++++++++

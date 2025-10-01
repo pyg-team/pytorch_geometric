@@ -1,0 +1,20 @@
+Title: IBM Support for client certificate authentication in TIP - United States
+
+Text:
+TIPL2 TIPL2SSL certificate authentication x.509 Tivoli Integrated Portal SSL TECHNOTE (FAQ)
+
+QUESTION
+ Is client certificate authentication supported in Tivoli Integrated Portal? 
+
+ANSWER
+The function of authentication in Tivoli Integrated Portal is controlled by the Websphere Administration Server component, which supports client certificate authentication. Instructions for configuring client certificate authentication are available here:
+
+Client Certificate Authentication configuration instructions [http://pic.dhe.ibm.com/infocenter/wasinfo/v7r0/index.jsp?topic=%2Fcom.ibm.websphere.base.doc%2Finfo%2Faes%2Fae%2Fcsec_ssl_clientauth.html] 
+
+
+Note:
+The Websphere document includes a step to edit a file called web.xml. There are many instances of web.xml in a typical TIP installation. For the purposes of configuring client certificate authentication, the following files should be edited:
+
+<TIP HOME>\profiles\TIPProfile\config\cells\TIPCell\applications\isc.ear\deployments\isc\isclite.war\WEB-INF\web.xml
+<TIP HOME>\profiles\TIPProfile\config\cells\TIPCell\applications\isc.ear\deployments\isc\isc.war\WEB-INF\web.xml
+<TIP HOME>\profiles\TIPProfile\config\cells\TIPCell\applications\isc.ear\deployments\isc\com.ibm.tivoli.rest.war\WEB-INF\web.xml

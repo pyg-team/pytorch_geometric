@@ -1,0 +1,143 @@
+Title: IBM How to change the UrbanCode Deploy server from HTTPS to HTTP - United States
+
+Text:
+ssl; http; https TECHNOTE (FAQ)
+
+QUESTION
+ How do you disable SSL on the IBM UrbanCode Deploy server? 
+
+CAUSE
+When the server is installed, you can specify whether the Web UI always uses secure connections using SSL. It is possible to change this setting without reinstalling the server.
+
+ANSWER
+Three files on the server must be modified to disable SSL: 
+
+ * install_folder/conf/server/installed.properties 
+ * install_folder/opt/tomcat/conf/server.xml 
+ * install_folder/opt/tomcat/webapps/ROOT/WEB-INF/web.xml
+
+
+Note: Use the server installation directory for install_folder. 
+
+
+
+
+Procedure:
+
+ 1. Back up the files above in order to easily restore SSL when needed.
+    
+    
+ 2. In installed.properties, change the following properties:
+     * Set install.server.web.always.secure to n
+       
+       
+     * Remove install.server.web.https.port
+       
+       
+     * Verify that install.server.web.port is set to the desired port. 
+       
+       Note: The default value is 8080
+       
+       
+     * Change server.external.web.url to the following:
+       
+       http\://<hostname>\:<port>
+       
+       Note: The protocol must be changed to http and the port must be changed to the value of install.server.web.port
+       
+       
+    
+    
+ 3. In server.xml:
+     * Find the <Connector> element with the port attribute ${install.server.web.https.port} and delete the entire <Connector> element. 
+       
+       Note: You should have one more <Connector> element with the port attribute ${install.server.web.port} after this
+       
+       
+     * In the remaining <Connector>, modify the server attribute to have the value SERVER
+       
+       
+     * Add the following attributes to the <Connector>
+       
+       compression="1024"
+       
+       noCompressionUserAgents="gozilla, traviata"
+       
+       compressableMimeType="text/html,text/xml,text/javascript,text/css,text/plain,application/json"
+       
+       
+     * ​Find the <Context> element and verify that the sessionCookieName attribute value is JSESSIONID_${install.server.web.port}
+       
+       
+     * ​Find the <Context> element
+       
+       A child of this element will be a <Valve> element with the className attribute org.apache.catalina.authenticator.NonLoginAuthenticator
+       
+       Delete the entire <Valve> element.
+       
+       
+    
+    
+ 4. In web.xml:
+     * Scroll all the way to the bottom
+       
+       There should be three chunks of elements at the bottom:
+       <security-constraint>
+       <servlet>
+       <security-constraint>
+       
+       
+       1. Leave the <servlet> chunk untouched
+       
+       2. Comment out the two <security-constraint> elements
+       
+       BEFORE:
+       
+       <!--@@SECURE_START@@ -->
+       <security-constraint>
+       <web-resource-collection>
+       <web-resource-name>HTTPSOnly</web-resource-name>
+       <url-pattern>/*</url-pattern>
+       </web-resource-collection>
+       <user-data-constraint>
+       <transport-guarantee>CONFIDENTIAL</transport-guarantee>
+       </user-data-constraint>
+       </security-constraint>
+       <!--@@SECURE_END@@ -->
+       
+       AFTER (section commented out):
+       
+       <!--@@SECURE_START@@ 
+       <security-constraint>
+       <web-resource-collection>
+       <web-resource-name>HTTPSOnly</web-resource-name>
+       <url-pattern>/*</url-pattern>
+       </web-resource-collection>
+       <user-data-constraint>
+       <transport-guarantee>CONFIDENTIAL</transport-guarantee>
+       </user-data-constraint>
+       </security-constraint>
+       @@SECURE_END@@ -->
+       
+       
+    
+    
+ 5. Start the server.
+    
+    
+ 6. Go to Settings > System Settings to edit the agents
+     * Verify the External Agent URL and External User URL are both using http and your http port (if not, update them)
+       
+       Note: The agents are going to need to "upgrade" after this change. Go through and upgrade all of them. Do not upgrade more than 10-15 at a time. You might want to wait for a weekend or some lengthy downtime if you have a lot of agents. 
+       
+       To upgrade agents:
+       
+       1. Navigate to Resources > Agents 
+       2. Find the agents that are not showing green
+       3. Select the update option from the drop down next to the agent
+    
+    
+
+
+RELATED INFORMATION
+ How to uninstall agents [http://www.ibm.com/support/docview.wss?uid=swg21687857]

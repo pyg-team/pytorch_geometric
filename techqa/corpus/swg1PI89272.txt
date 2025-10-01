@@ -1,0 +1,273 @@
+Title: IBM PI89272: ADMIN_INFO_SQL GENERATES BAD PIECESIZE FOR VALUES GREATER THAN 128MB AND ENDING AT DATE TIME TYPE FOR PRE-V11 CREATED INDEXES - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  1/
+   ADMIN_INFO_SQL / Service SQL only handled PIECESIZE up to
+   67108864 (64G)  It does not handle 128G and 256G, so bad output
+   was generated.
+   
+   2/ For pre-V11 created partitioning indexes with datetime type
+   ADMIN_INFO_SQL generates LIMITKEY without quotes (which is
+   derived fron v10 definitions). Such DDL need manual re-work
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  manual rework of DDL
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * All Db2 11 for z/OS and Db2 12 for z/OS                      *
+   * customers who use the Db2-supplied                           *
+   * stored procedure SYSPROC.ADMIN_INFO_SQL                      *
+   * or the batch program DSNADMSB to collect                     *
+   * Db2 environmental service data either                        *
+   * directly or via any of the following                         *
+   * tools:                                                       *
+   * o Query Environment Capture feature of                       *
+   * Data Studio                                                  *
+   * o Query Environment Capture feature of                       *
+   * Optim Query Workload Tuner                                   *
+   * o Capture Query Environment feature of                       *
+   * Data Server Manager                                          *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * The following problems may occur                             *
+   * when running the batch program                               *
+   * DSNADMSB or the Db2-supplied                                 *
+   * stored procedure                                             *
+   * SYSPROC.ADMIN_INFO_SQL:                                      *
+   * (1) An invalid PIECESIZE value is                            *
+   * specified in the generated CREATE                            *
+   * INDEX PIECESIZE clause, such as:                             *
+   * PIECESIZE       134217728                                    *
+   * PIECESIZE       268435456                                    *
+   * instead of:                                                  *
+   * PIECESIZE       128 G                                        *
+   * PIECESIZE       256 G                                        *
+   * causing the CREATE INDEX statement                           *
+   * to fail with SQLCODE -199.                                   *
+   * (2) A date value in the CREATE INDEX                         *
+   * ENDING AT clause is not enclosed in                          *
+   * single quotes, such as:                                      *
+   * ENDING AT (31.12.2000)                                       *
+   * instead of:                                                  *
+   * ENDING AT ('31.12.2000')                                     *
+   * causing the CREATE INDEX statement                           *
+   * to fail with SQLCODE -104.                                   *
+   * (3) An invalid value is specified in                         *
+   * the CREATE TABLE ENDING AT clause:                           *
+   * o MAXVALUE is followed by a                                  *
+   * constant, such as:                                           *
+   * ENDING AT (MAXVALUE,X'FFFF',                                 *
+   * MAXVALUE,X'FFFFFFFFFFFC')                                    *
+   * instead of:                                                  *
+   * ENDING AT (X'FF',X'FFFF',                                    *
+   * X'FF',X'FFFFFFFFFFFC')                                       *
+   * o MAXVALUE is enclosed in single                             *
+   * quotes, such as:                                             *
+   * ENDING AT (MAXVALUE,' MAXVALUE',                             *
+   * ' MAXVALUE',' MAXVALUE')                                     *
+   * instead of:                                                  *
+   * ENDING AT (MAXVALUE,MAXVALUE,                                *
+   * MAXVALUE,MAXVALUE)                                           *
+   * o MINVALUE is enclosed in single                             *
+   * quotes, such as:                                             *
+   * ENDING AT ('MINVALUE','MINVALUE',                            *
+   * 'MINVALUE','MINVALUE')                                       *
+   * instead of:                                                  *
+   * ENDING AT (MINVALUE,MINVALUE,                                *
+   * MINVALUE,MINVALUE)                                           *
+   * causing the CREATE TABLE statement                           *
+   * to fail with SQLCODE -636.                                   *
+   * (4) A SET CURRENT SCHEMA statement                           *
+   * is assigned a blank value, (i.e.,                            *
+   * SET CURRENT SCHEMA = ''), causing                            *
+   * the SET CURRENT SCHEMA statement                             *
+   * to fail with SQLCODE -713.                                   *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Apply corrective PTF when available.                         *
+   ****************************************************************
+   The following problems may be found in the DDLs generated by
+   the batch program DSNADMSB or the Db2-supplied stored
+   procedure SYSPROC.ADMIN_INFO_SQL:
+   (1) The SYSIBM.SYSINDEXES.PIECESIZE values of 134217728
+   and 268435456 are currently not recognized by DSNADMSB or
+   ADMIN_INFO_SQL. Therefore, in the generated CREATE INDEX
+   ENDING AT clause, these particular PIECESIZE values do not
+   have the keyword K, M, or G appended to them, causing the
+   CREATE INDEX statement to fail with SQLCODE -199.
+   
+   (2) A date value with the format dd.mm.yyyy in a CREATE
+   INDEX ENDING AT clause is not recognized by DSNADMSB or
+   ADMIN_INFO_SQL. Therefore, it is not enclosed in single
+   quotes, causing the CREATE INDEX statement to fail with
+   SQLCODE -104.
+   
+   (3) The following invalid values may be specified in the
+   CREATE TABLE ENDING AT clause, causing the CREATE statement
+   to fail with SQLCODE -636.
+   o A key value of x'FF' is arbitrarily changed to MAXVALUE,
+   even if MAXVALUE is followed by a constant.
+   o MAXVALUE is enclosed with single quotes if MAXVALUE is
+   preceded by one or more blanks.
+   o MINVALUE is enclosed with single quotes.
+   
+   (4) The SET CURRENT SCHEMA statement that precedes a CREATE
+   VIEW statement is set to blank when the VIEW is not found in
+   the Db2 catalog SYSDEPENDENCIES, but is found in SYSVIEWDEP.
+   Currently, DSNADMSB and ADMIN_INFO_SQL queries SYSDEPENDENCIES
+   only to determine the value to be assigned to SET CURRENT
+   SCHEMA.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  To address the issues described in the Problem Description
+   section of this APAR, DSNADMSB and ADMIN_INFO_SQL are
+   modified as follows:
+   (1) Support SYSIBM.SYSINDEXES.PIECESIZE values of
+       134217728 and 268435456.
+   (2) Check the Db2 catalog table SYSCOLUMNS for key column
+       types DATE, TIMESTMP, TIMESTZ, and TIME, instead of
+       relying on the format of a datetime key value when
+       determining whether to enclose a datetime key value
+       with single quotes in a CREATE INDEX ENDING AT clause.
+   (3) CREATE TABLE ENDING AT clause:
+       - Do not change a key value of x'FF' to MAXVALUE.
+       - Do not enclose MAXVALUE with single quotes if
+         MAXVALUE is preceded by one or more blanks.
+       - Do not enclose MINVALUE with single quotes.
+   (4) When setting the value of the SET CURRENT SCHEMA and
+       SET CURRENT PATH statements that are related to a view,
+       search the Db2 catalog table SYSVIEWDEP if the view is
+       not found in SYSDEPENDENCIES.
+   
+       Likewise, when searching for view dependencies or
+       checking whether a routine has a view that is dependent
+       on it, search SYSVIEWDEP if the view is not found in
+       SYSDEPENDENCIES.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI89272
+   
+   
+ * REPORTED COMPONENT NAME
+   DB2 OS/390 & Z/
+   
+   
+ * REPORTED COMPONENT ID
+   5740XYR00
+   
+   
+ * REPORTED RELEASE
+   B10
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-10-25
+   
+   
+ * CLOSED DATE
+   2018-02-15
+   
+   
+ * LAST MODIFIED DATE
+   2018-03-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UI53904 UI53906
+   
+   
+
+MODULES/MACROS
+ *  DSN@DMSS DSNADMSS
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   DB2 OS/390 & Z/
+   
+   
+ * FIXED COMPONENT ID
+   5740XYR00
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * RC10 PSY UI53904 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI53904]
+   UP18/03/02 I 1000
+   
+   
+ * RB10 PSY UI53906 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI53906]
+   UP18/03/02 I 1000
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

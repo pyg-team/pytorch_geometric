@@ -1,0 +1,256 @@
+Title: IBM IY44424: WEBSEAL NOT FILTERING JAVASCRIPT PROPERLY IN INTERVOWEN BACKEND PRODUCT. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Customer is reporting that WebSEAL is not filtering Javascript
+   properly when junctioned to an INTERWOVEN product. I think they
+   want the ability to filter javascript function calls.  Comments
+   from customer below:
+   ---------------------
+   .
+   CUSTOMERS DESCRIPTION OF PROBLEM
+   Our issue since day one has been the inconsistency of the
+   translation. I'm still awaiting an explanation of this. Please
+   note the critical line below from the previously-sent files:
+   .
+   with ws:
+   attributes.add("value","Test urls:\r\nu[IBM Home
+   page;http://w3.ibm.com]\r\nu[You and IBM Home
+   page;http://w3.ibm.com/hr]\r\nu[CareerPlanner;http://w3.ibm.com/
+   hr/careerplanner]\r\nu[You and IBM CSR
+   View;http://w3.ibm.com/hr/csr]");
+   .
+   without ws:
+   attributes.add("value","Test urls:\r\nu[IBM Home
+   page;http://w3.ibm.com]\r\nu[You and IBM Home
+   page;https://hrextam01/w3/hr]\r\nu[CareerPlanner;http://w3.ibm.c
+   om/hr/careerplanner]\r\nu[You and IBM CSR
+   View;https://hrextam01/w3/hr/csr]");
+   .
+   This particular examples contains four URLs. Two get changed,
+   and two are left alone.  If WebSEAL is designed to change all
+   the references that appear in the javascript, why is it only
+   changing some? There is still a bug here if, as you say, WebSEAL
+   is supposed to be changing all of them.
+   .
+   If there's no bug, then there must be some explicable reason why
+   half of these are left alone. Please let us know what it is and
+   we'll change the other two.
+   ----
+   COMMENTS FROM DEVELOPMENT BELOW
+   .
+   Lance,
+   .
+   WebSEAL does not filter javascript function calls, which means,
+   that if there is a URL in a function call (like their example
+   below) WebSEAL will not filter it.  To fix their problem they
+   will need to create a variable BEFORE the function call that has
+   the URL defined and pass the variable to the function.
+   .
+   For example:
+   BEFORE:
+   attributes.add("value","Test urls:\r\nu[IBM Home
+   page;http://w3.ibm.com]\r\nu[You and IBM Home
+   page;http://w3.ibm.com/hr]\r\nu[CareerPlanner;http://w3.ibm.com/
+   hr/careerplanner]\r\nu[You and IBM CSR
+   View;http://w3.ibm.com/hr/csr]");
+   .
+   AFTER:
+   w3_url = "http://w3.ibm.com";
+   hr_url = "http://w3.ibm.com/hr";
+   career_url = "http://w3.ibm.com/hr/careerplanner";
+   csr_url = "http://w3.ibm.com/hr/csr";
+   attributes.add("value","Test urls:\r\nu[IBM Home page;" +
+                                               w3_url + "]\r\nu[You
+   and IBM Home page;" +
+                                               hr_url +
+   "]\r\nu[CareerPlanner;" +
+                                               career_url + " +
+   "]\r\nu[You and IBM CSR View;" +
+                                               csr_url + "]");
+   .
+   But I do agree with you, if they want this to work they way they
+   expect it, it will be an enhancement, but I believe the way it
+   filters is as designed.
+   .
+   Hope this helps,
+   .
+   Cheers,
+   Dev
+   .
+   Thanks
+   .
+   Lance D Clinton
+   .
+   Hi, Lance--
+   You have no idea how happy I am to receive this response. What
+   this engineer says, "WebSEAL does not filter javascript function
+   calls," is exactly what the customer expects and wants. We agree
+   WebSEAL should NOT alter these URLs. Trouble is, it does.
+   Intermittently and unpredictables. This is the behavior we have
+   reported as a problem and need corrected.
+   .
+   Please see the example lines below. When accessed directly, the
+   attributes.add line contains four urls, all on
+   http://w3.ibm.com. Through WebSEAL, two of them get changed to
+   include the webseal server and junction, https://hrextam01/w3. [https://hrextam01/w3.]
+   If the engineer's statement is accurate, this should not happen.
+   Direct access (without ws): function call contains four urls.
+   attributes.add("value","Test urls:\r\nu[IBM Home
+   page;http://w3.ibm.com]\r\nu[You and IBM Home
+   page;http://w3.ibm.com/hr]\r\nu[CareerPlanner;http://w3.ibm.com/
+   hr/careerplanner]\r\nu[You and IBM CSR
+   View;http://w3.ibm.com/hr/csr]");
+   .
+   Access through WebSEAL: two of the urls within the function
+   callare changed while two are not.
+   attributes.add("value","Test urls:\r\nu[IBM Home
+   page;http://w3.ibm.com]\r\nu[You and IBM Home
+   page;https://hrextam01/w3/hr]\r\nu[CareerPlanner;http://w3.ibm.c
+   om/hr/careerplanner]\r\nu[You and IBM CSR
+   View;https://hrextam01/w3/hr/csr]");
+   .
+   On looking at my message from May 2, I switched the "without ws"
+   and "with ws" labels. I apologize for any confusion this may
+   have caused.
+   .
+   I encourage you or the unnamed engineer to configure these two
+   junctions on a test server, using the same settings as HR, and
+   observe the behavior first hand.
+   --Jeff
+   .
+   Lance,
+   The product does something your engineer says it should not. I
+   would like that to be documented as a defect.
+   .
+   The developer says, in the note below, "WebSEAL does not filter
+   javascript function calls, which means, that if there is a URL
+   in a function call (like their example below) WebSEAL will not
+   filter it."
+   .
+   I have explained, three times now, that it DOES filter URLs in
+   the function call.
+   .
+   This will impair w3 and www.ibm.com's ability to deploy WebSEAL
+   worldwide.
+   .
+   I reiterate my request that this defect be referred to a
+   developer for examination and repair.
+   .
+   Thank you.
+   .
+   --Jeff
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Turn off filtering and make code changes in the INTERWOVEN
+   Product
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Fixed in patch 4.1-AWS-0004LA.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fixed in patch 4.1-AWS-0004LA.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IY44424
+   
+   
+ * REPORTED COMPONENT NAME
+   ACCESS MGR E-BU
+   
+   
+ * REPORTED COMPONENT ID
+   5724C0800
+   
+   
+ * REPORTED RELEASE
+   410
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2003-05-13
+   
+   
+ * CLOSED DATE
+   2003-06-30
+   
+   
+ * LAST MODIFIED DATE
+   2003-10-31
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    IY50414
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ACCESS MGR E-BU
+   
+   
+ * FIXED COMPONENT ID
+   5724C0800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R410 PSY
+   UP

@@ -1,0 +1,53 @@
+Title: IBM Running and testing Windows software depends on the version of Windows - United States
+
+Text:
+local system account; Client; Patch; Console; googlebigfix TECHNOTE (FAQ)
+
+QUESTION
+ How do I run and test Windows software in the Local System account? 
+
+ANSWER
+
+
+TEM uses the local system account when performing operations such as software distribution on client machines. To troubleshoot that a client can run applications as local system, run the following commands: 
+
+NT/95/98/ME/2000/XP/2003  
+
+ 1. Open a Command Prompt Window (Start > Run > cmd.exe).
+ 2. Check your local system time (TIME, then hit enter to dismiss any time changes).
+ 3. Run the command: AT [time + 1 min] /interactive cmd.exe (remember to include the AM/PM if using non-military time).
+ 4. Run AT to make sure it says it's set to run today (if it says tomorrow, delete the job AT [jobnumber] /d and try again).
+ 5. At the appropriate time a window will pop open.
+
+Example: 
+at 10:00AM /interactive cmd.exe Vista/7/2008
+
+Running an interactive system account session is prevented in Vista due to security concerns. To test applications using the system account, download PSTools from SysInternals from the following site: 
+http://technet.microsoft.com/en-us/sysinternals/default.aspx?PHPSESSID=9692e6 [http://technet.microsoft.com/en-us/sysinternals/default.aspx?PHPSESSID=9692e6] 
+Extract the files locally and you will use the file named PSexec.exe.  1. Run cmd.exe as an Administrator (right-click shortcut or executable and select "Run as administrator").
+ 2. Navigate to the PSTools extract directory from within the shell window.
+ 3. Run the following command: psexec -i -s applicationexample.exe.
+
+Examples: 
+Internet Explorer: 
+psexec -i -s "C:\Program Files\Internet Explorer\Iexplore.exe" 
+Command: 
+psexec -i -s cmd.exe How to test the Windows software depends on the version of Windows being used. 
+
+For Windows XP or 2003, use the AT command to schedule the launch of the command interpreter shell. First, note the current time and convert to a 24 hour clock, if necessary. Next, click Start, Run, and type:
+AT 15:00 /interactive cmd.exe
+
+The time on the command line should be a minute or two in the future. At the specified time, a new command prompt window will open and can be used to launch your software. Use Task Manager to verify that the cmd.exe process is running as SYSTEM.
+
+For Windows Vista, 7, or 2008, scheduled commands will not be able to interact with your user session (this may affect older versions of Windows as well if using Terminal Services or Remote Desktop to interact with them, consider using mstsc.exe /console.) This will block the AT method from working, but Sysinternals psexec will help. After downloading the tool, click Start and type cmd.exe. Right-click the Command Prompt menu item and select Run as Administrator. Next, type:
+psexec -i -s cmd.exe
+
+You might need to accept a license prompt. If so, a command prompt window will open and can be used to launch your software. Use Task Manager to verify that one of the two cmd.exe process is running as SYSTEM (you will need to click the "Show processes from all users" button to see SYSTEM in the User Name column).
+
+Note that a command prompt running under Local System privileges is a security risk and you should exit it promptly when finished. To do so, type:
+exit
+
+ 
+
+HISTORICAL NUMBER
+ 1681

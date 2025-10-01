@@ -1,0 +1,22 @@
+Title: IBM Dependent module libxerces-c.a could not be loaded - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The logs show the following error when trying to start brokers.
+
+exec(): 0509-036 Cannot load program /initiate/product90/broker9.0.0.231/bin/msgbroker because of the following errors:
+
+0509-150 Dependent module libxerces-c.a could not be loaded.
+0509-022 Cannot load module libxerces-c.a.
+0509-026 System error: A file or directory in the path name does not exist. 
+
+CAUSE
+This error message possibly indicates that there were installation problems or that the user id used to run/start the broker does not have the proper permissions for the libxerces-c.a file. By default, this library file should be located within the Message Broker Suite installation directory (ROOT_DIR) under the lib folder.
+
+RESOLVING THE PROBLEM
+Once an environment variable was corrected the Brokers started up and became operational with no errors or issues.
+
+
+Ensure that the proper permission are set for the user starting the brokers and make sure all environment variables are correctly set, check if the lib folder is available as part of LD_LIBRARY_PATH, LIBPATH.

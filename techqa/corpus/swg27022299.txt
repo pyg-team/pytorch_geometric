@@ -1,0 +1,34 @@
+Title: IBM Recommended Fixes for IBM Business Process Manager V7.5.x products - United States
+
+Text:
+ PRODUCT DOCUMENTATION
+
+ABSTRACT
+ This page provides links to the recommended maintenance packages that are available for IBM Business Process Manager suite of products. 
+
+CONTENT
+IBM Business Process Manager products collectively refers to IBM Business Process Manager Advanced, IBM Business Process Manager Advanced: Process Server, IBM Business Process Manager Standard, and IBM Process Business Manager Express. 
+
+
+
+Software maintenance updates for the IBM Business Process Manager products are supplied in the form of bundled fix packages, which are called fix packs or refresh packs. These updates are summarized in the following table or tables, which are organized by release. 
+
+
+When you apply a fix pack or refresh pack to an installation of the IBM Business Process Manager products, the version of that installation changes to reflect the update. For example, if you apply V7.5.0 Fix Pack 1 to an installation of IBM Business Process Manager Advanced V7.5, the new version of that installation is V7.5.0.1.
+
+
+
+
+Version 7.5 Release Fix Level Date Notes 7.5.1 Fix Pack 2 [http://www.ibm.com/support/docview.wss?uid=swg24036462] 7.5.1.2 March 7, 2014 Installation instructions and known issues [http://www.ibm.com/support/docview.wss?uid=swg27040258] 7.5.1 Fix Pack 1 [http://www.ibm.com/support/docview.wss?uid=swg24033036] 7.5.1.1 September 25, 2012 Installation instructions and known issues [http://www.ibm.com/support/docview.wss?uid=swg27035489] [https://www.ibm.com/software/howtobuy/passportadvantage/paocustomer/Login?abu=https%3A%2F%2Fwww-112.ibm.com%3A443%2Fsoftware%2Fhowtobuy%2Fpassportadvantage%2Fpaocustomer%2Fpassporthome.nsf%2Fpassportadvantage%3FOpenAgent] 7.5.0 Refresh Pack 1 [http://www.ibm.com/support/docview.wss?uid=swg24031230] 7.5.1 November 18, 2011 Installation Instructions [http://www.ibm.com/support/docview.wss?uid=swg27023410] 7.5.0 Fix Pack 1 [http://www.ibm.com/support/docview.wss?uid=swg24030569] 7.5.0.1 August 9, 2011 Installation instructions and known issues [http://www.ibm.com/support/docview.wss?uid=swg27022244] [https://www.ibm.com/software/howtobuy/passportadvantage/paocustomer/Login?abu=https%3A%2F%2Fwww-112.ibm.com%3A443%2Fsoftware%2Fhowtobuy%2Fpassportadvantage%2Fpaocustomer%2Fpassporthome.nsf%2Fpassportadvantage%3FOpenAgent] Release 7.5 7.5 June 17, 2011 Download full installation from Passport Advantage [http://www.ibm.com/software/howtobuy/passportadvantage/] 
+
+Fix information for V7.5  * Interim Fixes for V7.5 Releases [http://www.ibm.com/support/docview.wss?uid=swg27022242]
+
+
+
+ORIGINAL PUBLICATION DATE
+ 2011/8/3 
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Business Process Manager Standard General AIX, Linux, Linux zSeries, Solaris, Windows 7.5.1.2, 7.5.1.1, 7.5.1, 7.5.0.1, 7.5 Business Integration IBM Business Process Manager Express General Linux, Windows 7.5.1.2, 7.5.1.1, 7.5.1, 7.5.0.1, 7.5 PRODUCT ALIAS/SYNONYM
+ BPM

@@ -1,0 +1,120 @@
+Title: IBM JR42387: IHS BLOCKS PROPFIND REQUESTS, CAUSING NO STYLES TO BE LISTED. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  No space styles are listed when creating space. This is caused
+   by the IHS blocking PROPFIND requests which are needed to
+   request the style from the webDAV filestore in BSpace.
+   
+   IHS has a technote on this:
+   http://ibm.com/support/docview.wss?uid=swg21305363 [http://ibm.com/support/docview.wss?uid=swg21305363]
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Follow technote instructions:
+   
+   http://ibm.com/support/docview.wss?uid=swg21305363 [http://ibm.com/support/docview.wss?uid=swg21305363]
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  No space styles are listed when creating space. This is caused
+   by the IHS blocking PROPFIND requests which are needed to
+   request the style from the webDAV filestore in BSpace. Needed to
+   document the essential content and state that is required for
+   Business Space.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Correct content fixed in InfoCenter v750, with correct
+   content already available for v751.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR42387
+   
+   
+ * REPORTED COMPONENT NAME
+   BUSINESS SPACE
+   
+   
+ * REPORTED COMPONENT ID
+   AIMBUSSPC
+   
+   
+ * REPORTED RELEASE
+   751
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-03-28
+   
+   
+ * CLOSED DATE
+   2012-04-20
+   
+   
+ * LAST MODIFIED DATE
+   2012-04-20
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

@@ -1,0 +1,59 @@
+Title: IBM Security Bulletin: TLS padding vulnerability affects IBM Content Collector for SAP Applications (CVE-2014-8730) - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ Transport Layer Security (TLS) padding vulnerability via a POODLE (Padding Oracle On Downgraded Legacy Encryption) like attack affects IBM Content Collector for SAP Applications 
+
+VULNERABILITY DETAILS
+CVE-ID: CVE-2014-8730 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-8730]
+
+DESCRIPTION: 
+IBM HTTP Server could allow a remote attacker to obtain sensitive information, caused by the failure to check the contents of the padding bytes when using CBC cipher suites of some TLS implementations. A remote user with the ability to conduct a man-in-the-middle attack could exploit this vulnerability via a POODLE (Padding Oracle On Downgraded Legacy Encryption) like attack to decrypt sensitive information and calculate the plain text of secure connections.
+
+CVSS Base Score: 4.3
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/99216 [https://exchange.xforce.ibmcloud.com/vulnerabilities/99216] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:M/Au:N/C:P/I:N/A:N) 
+
+AFFECTED PRODUCTS AND VERSIONS
+This vulnerability affects product versions: 
+
+ * IBM Content Collector for SAP Applications V3.0 
+ * IBM Content Collector for SAP Applications V4.0
+
+REMEDIATION/FIXES
+None
+
+WORKAROUNDS AND MITIGATIONS
+On the system where the server package (V3.0) or the base package (V4.0) is installed, complete these steps : 
+
+ 1. Stop Collector Server.
+ 2. Set the following environment variable for the user that starts Collector Server (archpro): 
+    GSK_STRICTCHECK_CBCPADBYTES=GSK_TRUE
+ 3. Restart Collector Server.
+
+On the system where the client package (V3.0) or the add-ons package (V4.0) is installed and where Archiving Client, Viewing Client, or an application that uses the API of Content Collector for SAP (csclient.dll) are running, complete these steps:
+
+ 1. Stop all running clients.
+ 2. Set the following environment variable for the user that starts the clients: 
+    GSK_STRICTCHECK_CBCPADBYTES=GSK_TRUE
+ 3. Restart the clients.
+
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v2 Guide [http://www.first.org/cvss/v2/guide] 
+On-line Calculator v2 [http://nvd.nist.gov/CVSS-v2-Calculator] 
+
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.

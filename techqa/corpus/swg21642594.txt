@@ -1,0 +1,65 @@
+Title: IBM ANR2971E Database backup fails with DB2 sqlcode -5005 error - United States
+
+Text:
+SQL5005C DB BACKUP fail SQL2428C TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Tivoli Storage Manager DB backup fails with DB2 sqlcode -5005 error. 
+
+SYMPTOM
+While attempting to run BACKUP DB the command fails, and the activity log reports the following error message: 
+
+ANR2971E Database backup/restore/rollforwardterminated - DB2 sqlcode -5005 error. 
+
+The db2diag.log shows following error:
+
+2013-06-29-10.38.23.072007-420 I1493A414 LEVEL: Error 
+PID : 5308450 TID : 772 PROC : db2acd 0 
+INSTANCE: tsminst1 NODE : 000 
+EDUID : 772 EDUNAME: db2acd 0 
+FUNCTION: DB2 UDB, config/install, sqlfGetDbmCfg, probe:10 
+MESSAGE : SQL5005: sqlf_openfile rc = 
+DATA #1 : Hexdump, 4 bytes 
+0x000000011050A250 : 860F 000A 
+
+
+CAUSE
+The sqlcode -5005 translates to: 
+"The operation failed because the database manager failed to access either the database manager configuration file or the database configuration file."
+
+
+DIAGNOSING THE PROBLEM
+When querying DB2 for more details on this error the following explanation is shown: 
+
+
+$ db2 "? sql5005"
+
+SQL5005C System Error.
+
+Explanation:
+
+A system error, probably an I/O error, was encountered while accessing a configuration file.
+
+The command cannot be processed.
+
+User Response:
+
+Resubmit the command.
+
+If the error persists, check the db2diag.log file for details and ensure that the configuration file is accessible. If unable to resolve the problem, contact an IBM Service Representative for assistance.
+
+
+RESOLVING THE PROBLEM
+The db2systm configuration file is created in the sqllib subdirectory of the instance directory (/home/<instance_name>/sqllib) when the instance is initially created. 
+
+To resolve this error, check following:
+
+1. The permissions for this file should be similiar to the following: 
+-rw-rw-r-- 1 <instance_name> <sysadm group> 16384 Jun 29 2013 db2systm 
+
+2. If the db2systm file is not present then contact DB2 support for further assistance.
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ TSM

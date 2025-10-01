@@ -1,0 +1,54 @@
+Title: IBM How can uninstall Data Studio 3.1.1 where Control Panel uninstall process gets an error? - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ We are able to install Data Studio (DS) 4.1.2 successfully but unable to uninstall the 
+existing Data Studio 3.1.1. When uninstall Data Studio 3.1.1 from Control Panel, it 
+raises an error message pop-up window and can not uninstall it. Here is the message:
+
++-------------------------------------------------------------------------
+| Java Virtual Machine Launcher
++-------------------------------------------------------------------------
+| X Could not find the main class: com.zerog.lax.LAX. Program will exit.
++-------------------------------------------------------------------------
+
+How can uninstall Data Studio 3.1.1 where Control Panel uninstall process gets an error?
+
+
+CAUSE
+It is an known behavior/limitation. 
+
+ANSWER
+It may be happened where two versions Data Studio 3.1.1 and 4.1.2 installed machine. 
+
+Here is an workaround. Please try to uninstall all products including Install Manager 
+(IM) then reinstall IM and Data Studio 4.1.2. Below are detailed steps:
+
+1. Use IM to uninstall as many packages as possible.
+
+2. Identify the packages that are still installed, and manually clean 
+them up.
+
+Example on Windows:
+- C:\Program Files\IBM\{IBMIMShared | SDPShared}
+
+3. Delete IBM Installation Manager.
+
+Example on Windows:
+- Delete the IM install directory:
+C:\Program Files\IBM\Installation Manager\
+- Delete the AppData directory (IM Agent Data):
+Windows 7: C:\ProgramData\IBM\Installation Manager
+- Delete the Windows registry (regedit) entry : 
+HKEY_LOCAL_MACHINE\SOFTWARE\IBM\Installation Manager
+- re-install IM
+
+4. Reinstall DS 4.1.2 and other products.
+
+Note:
+This behavior might be changed without notice in the future. We can confirm whether this technote
+is valid or not by following above.
+Please contact your Sales Rep to submit a potential design change towards a future release.
+Or please open a ticket, Request For Enhancement at https://www.ibm.com/developerworks/rfe/ [https://www.ibm.com/developerworks/rfe/]

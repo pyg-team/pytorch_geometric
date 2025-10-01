@@ -1,0 +1,53 @@
+Title: IBM Datamart Pooling: Java OutofMemory exception - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When we run the following command to execute the Datamart Process Accounts job it fails with a Java OutofMemory exception, how do we resolve it?
+
+
+
+$ALGO_HOME/uds/bin/datamart -o processaccounts --solution 'Basel - Pillar 1' --pipes 5 --audit $ALGO_HOME/TOP/dynamic/reports/DMxxx-dm.process/xxxxx-dm.process-audit_file.log --reportpool --pools $ALGO_HOME/TOP/Basel/config/dm_pool_descriptors.xml --outputdir $ALGO_HOME/TOP/dynamic/reports/xxx.dm.process/ --catglist retail,wholesale --session_date 20151231 -S default -U xxx -P XXXXX -R algosuite 
+
+
+
+
+
+
+SYMPTOM
+INFO [datamart] Pool unit RETAIL_IRB (0 accounts -> 0 pools),10093 ms. 
+
+[CRITICAL] java.lang.OutOfMemoryError: null
+java.lang.OutOfMemoryError
+at java.lang.String.<init>(String.java:299)
+at com.algorithmics.tuple.io.NIOreader.getUTF(NIOreader.java:675)
+at com.algorithmics.tuple.io.NIOreader.read(NIOreader.java:250)
+at com.algorithmics.tuple.io.NIOreader.read(NIOreader.java:454)
+at com.algorithmics.tuple.io.NIOreader.read(NIOreader.java:502)
+at com.algorithmics.tuple.io.NIOreader.readObject(NIOreader.java:151)
+at com.algorithmics.ads.io.format.TupleReadWriteFormatter.readIOMessage(TupleReadWriteFormatter.java:117)
+at com.algorithmics.ads.api.ProxyConnectionReceiver.processReply(ProxyConnectionReceiver.java:269)
+at com.algorithmics.ads.api.ProxyConnectionReceiver.run(ProxyConnectionReceiver.java:143)
+at com.algorithmics.ads.util.ADSThreadPool$WThread.run(ADSThreadPool.java:128)
+
+[INFO] Current Java Heap Size is ~4096 MEG while Maximum Java Heap Size is set to ~4096 MEG
+[INFO] Current number of threads is 28
+
+DM Threads (2) daemon prio=5 in BLOCKED
+
+
+CAUSE
+The Java heap is where the objects of a Java program live. It is a repository for live objects, dead objects, and free memory. The Java "-X" flag to set the limit of the heap space is "Xmx", it specifies the maximum memory allocation pool for a Java Virtual Machine (JVM). If the Xmx value is too low, the JVM process will be unable to operate within the constraints of that limit set by the user and Java will then generate the OutofMemory exception. This is a high-level summary, setting of the Xmx parameter is a widely documented topic beyond the scope of this article.
+
+DIAGNOSING THE PROBLEM
+1) Obtain the current setting of the Xmx value by consulting the $ALGO_TOP/cfg/datamart.jvmargs file, if that does not exist then check $DATAMART_HOME/bin/datamart.jvmargs
+2) Locate any *javacore*.txt or *Snap*.trc file these are the dump files produced when the OutofMemory exception occurs, these files contain diagnostic information
+
+RESOLVING THE PROBLEM
+1) If datamart.jvmargs is not in $ALGO_TOP/cfg, move it there from $DATAMART_HOME/bin/datamart.jvmargs
+2) (assuming AIX for this example) look for a line like this:
+datamart AIX 64bit -Xmx4096m -Xgcpolicy:gencon
+3) Edit the Xmx value to be less than or equal to your application server's RAM
+4) Save the datamart.jvmargs file
+5) Rerun the batch

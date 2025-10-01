@@ -1,0 +1,63 @@
+Title: IBM How do I upgrade/update a (solo/non-redundant) License Manager installed on a host machine with a Windows operating system? - United States
+
+Text:
+sentinel license manager update upgrade replace lm lms slm windows TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ How do I upgrade a solo/non-redundant SPSS (Sentinel RMS) License Manager installed on a host machine with a Windows operating system? 
+
+CAUSE
+There are multiple different versions of the License Manager. Some versions of the License Manager require specific procedures in order to successfully update.
+
+ENVIRONMENT
+All supported operating environments.
+
+RESOLVING THE PROBLEM
+The most current version of the Sentinel RMS License Manager is available on the IBM Passport Advantage website [http://www.ibm.com/software/howtobuy/softwareandservices/passportadvantage]. 
+
+
+The following instructions assume you have already downloaded, and where required, extracted the contents of the compressed installation media. 
+
+ 1.  Create a backup directory outside the License Manager installation path (example: LM_Backup on the Desktop). 
+ 2.  Locate the License Manager installation directory. If you are unsure as to the location of the License Manager installation directory, see TechNote 1989210 [http://www.ibm.com/support/docview.wss?uid=swg21989210]. 
+ 3.  If found, back up all of the following files to the backup directory:
+     
+     lservrc
+     lsreserv
+     echoid.dat
+     
+ 4.  Determine if the following Windows system environment variable exists: LSERVOPTS 
+ 5.  IF LSERVOPTS exists, determine if the '-l' configuration switch has been used. The '-l' switch is used to (a) activate usage logging and (b) determine the location and file name of the usage log file. 
+ 6.  IF the '-l' configuration switch has been used, THEN the location and file name of the usage log should appear in double-quotes ("). Example:
+     
+     -l "C:\Program Files (x86)\Common Files\SafeNet Sentinel\Sentinel RMS License Manager\WinNT\slm_log.txt"
+     
+ 7.  IF a usage log file has been defined, THEN copy the usage log file to the backup directory. 
+ 8.  Stop the 'Sentinel RMS License Manager' Windows Service. 
+ 9.  Locate the following file in the License Manager installation directory: loadls.exe 
+ 10. Right-click file 'loadls.exe' 
+ 11. Select the 'Run as administrator' option. If prompted, provide Administrator credentials. 
+ 12. Select the 'Remove' button. 
+ 13. A window indicating 'The Sentinel RMS License Manager Service has been removed' will display. 
+ 14. Select the 'OK' button. 
+ 15. Uninstall the current version of the License Manager from Control Panel 'Programs and Features' (or 'Add/Remove Programs'). 
+ 16. Uninstall the current version of the Licensing Tools from Control Panel 'Programs and Features' (or 'Add/Remove Programs'). 
+ 17. Install the new License Manager and Tools according the Concurrent (Network) License Administrator’s Guide corresponding the product version associated with the License Manager available via the IBM Support Portal [http://www.ibm.com/support/entry/portal/support?lnk=msdTS-docu-usen]. 
+ 18. When the License Manager installation is complete (including any restart of the host if required), locate the 'Sentinel RMS License Manager' Windows Service. 
+ 19. Stop the 'Sentinel RMS License Manager' Windows Service. 
+ 20. Open the 'Path to executable' dialog as described in TechNote 1989210 [http://www.ibm.com/support/docview.wss?uid=swg21989210]. 
+ 21. Open the LSERVOPTS system environment variable. 
+ 22. Compare the location of the usage log file indicated by the '-l' switch in LSERVOPTS to the location indicated in the 'Path to executable' dialog. 
+ 23. IF the directory location indicated in the Windows Service 'Path to executable' dialog is different from the location of the usage log file indicated by '-l' switch in the LSERVOPTS, THEN edit the location of the usage log to the installation directory of the License Manager as indicated by the 'Path to executable' dialog. Confirm that the location and file name of the usage log file begin and end with double-quotes ("). 
+ 24. Copy the usage log file to the current License Manager installation directory. 
+ 25. Copy all of the files backed up in Step 3 to the current License Manager installation directory overwrite any files by the same name. 
+ 26. Restart the License Manager host machine.
+
+RELATED INFORMATION
+ Need more help? Our Statistics forum is Live! [https://developer.ibm.com/answers/topics/statistics.html?smartspace=predictive-analytics]
+Need more help? Our Licensing forum is Live! [https://developer.ibm.com/answers/topics/spsslicensing.html]
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Analytics SPSS Modeler Business Analytics SPSS Amos

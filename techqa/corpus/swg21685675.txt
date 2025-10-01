@@ -1,0 +1,31 @@
+Title: IBM No data in TEP for WebSphere Data Power agent - United States
+
+Text:
+CAMADALL TECHNOTE (TROUBLESHOOTING)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ US English 
+
+PROBLEM(ABSTRACT)
+ No data in the TEP for the ITCAM WebSphere Data Power Agent 
+
+SYMPTOM
+In the BN agent instance kbn_*_trace.logtrace log you will see the following:
+
+ERROR - ch2udlab00 - pool-1-thread-5 - 
+com.ibm.management.soa.dp.monitor.agent.attrgroup.NetworkTransmitDataThr 
+oughputAttrGroup.collectData - [subnode=prd1-dmz-noded-wdp.ussco.com; 
+request id=4] occured Unknown exception 
+org.apache.xmlbeans.impl.values.XmlValueOutOfRangeException: string 
+value 'Other' is not a valid enumeration value for dmInterfaceType in 
+namespace http://www.datapower.com/schemas/management [http://www.datapower.com/schemas/management] 
+
+
+CAUSE
+The DataPower firmware is 7.0 or above
+
+DIAGNOSING THE PROBLEM
+Determine if the DataPower device has firmware at 7.0 or above
+
+RESOLVING THE PROBLEM
+Apply Interim Fix: 0002, 7.1.0.1-TIV-ITM_WDP-IF0002

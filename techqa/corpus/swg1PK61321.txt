@@ -1,0 +1,222 @@
+Title: IBM PK61321: WITH DFHLOG LOG OF DUMMY IN CMAS EYUDREP FILE CAN NOT BE DEFINED AS A RECOVERABLE FILE - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  If DFHLOG log is defined as dummy in the CMAS then the EYUDREP
+   file can not be a recoverable file.  If DFHLOG log is set up as
+   a real log in the CMAS then EYUDREP file can be a recoverable
+   file.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All CICSPlex/SM V3R1M0 Users                 *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:    You observe resources missing from   *
+   *                      the CMAS's data repository, and incon-  *
+   *                      sistent BAS definitions stored in the   *
+   *                      repository while DFHLOG in the CMAS     *
+   *                      is defined as TYPE=DUMMY.               *
+   ****************************************************************
+   * RECOMMENDATION:    After applying the PTF that resolves this *
+   *                 APAR, all CMASes and MASes must be recycled  *
+   *                 to pick up the new code.  Note that the      *
+   *                 restarts do not need to be done at the same  *
+   *                 time.                                        *
+   *                    Before starting a CICSPlex SM CMAS with   *
+   *                 libraries containing the fix for this APAR,  *
+   *                 you must insure that the DFHLOG JOURNALMODEL *
+   *                 for the CMAS specifies TYPE(MVS). If the     *
+   *                 DFHLOG JOURNALMODEL used by a CMAS does not  *
+   *                 specify TYPE(MVS), the CMAS will terminate   *
+   *                 after issuing message                        *
+   *                 .                                            *
+   *                   EYUXD0113E  Data Repository initialization *
+   *                               failed.                        *
+   *                 .                                            *
+   *                 Either Coupling Facility or DASD-Only log    *
+   *                 streams may be specified.                    *
+   *                    Refer to CICS Transaction Server for z/OS *
+   *                 Installation Guide, Version 3 Release 1      *
+   *                 (GC34-6426-05), Chapter 25 "Defining the     *
+   *                 logger environment for CICS journaling" for  *
+   *                 information on how to define logstreams for  *
+   *                 the CICS System Log.                         *
+   ****************************************************************
+      CPSM requires that the EYUDREP file be recoverable, so that
+   incomplete changes can be backed out if a repository update
+   fails or an exception occurs during processing associated with
+   a repository update (for example, BAS Inconsistent Set or
+   Inconsistent Scope checking).  Otherwise, the repository may
+   be updated with invalid resources, or resources may be deleted
+   without any audit trail.  At one time module EYU0XDIN (XDIN -
+   Data Repository Initialization) checked to insure that DFHLOG
+   was not associated with a dummy logstream, but this check was
+   bypassed during development of a prior release of CPSM so that
+   CMASes could run on processors which did not support the MVS
+   logger.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *     The check to insure that DFHLOG is not associated with a
+   dummy logstream is restored.  In addition, termination methods
+   for several CPSM subcomponents were updated to avoid abends due
+   to unavailable structures when a CMAS terminates because of an
+   exception during initialization.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *              *********
+               * HIPER *
+               *********
+   FIX AVAILABLE BY PTF ONLY
+   
+   
+    
+   
+   
+
+COMMENTS
+ *     You observe resources missing from
+   the CMAS's data repository, and incon-
+   sistent BAS definitions stored in the
+   repository while DFHLOG in the CMAS
+   is defined as TYPE=DUMMY.
+   
+   
+      CPSM requires that the EYUDREP file be recoverable, so that
+   incomplete changes can be backed out if a repository update
+   fails or an exception occurs during processing associated with
+   a repository update (for example, BAS Inconsistent Set or
+   Inconsistent Scope checking).  Otherwise, the repository may
+   be updated with invalid resources, or resources may be deleted
+   without any audit trail.  At one time module EYU0XDIN (XDIN -
+   Data Repository Initialization) checked to insure that DFHLOG
+   was not associated with a dummy logstream, but this check was
+   bypassed during development of a prior release of CPSM so that
+   CMASes could run on processors which did not support the MVS
+   logger.
+   
+   
+      The check to insure that DFHLOG is not associated with a
+   dummy logstream is restored.  In addition, termination methods
+   for several CPSM subcomponents were updated to avoid abends due
+   to unavailable structures when a CMAS terminates because of an
+   exception during initialization.
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK61321
+   
+   
+ * REPORTED COMPONENT NAME
+   CPSM CICS 3.1
+   
+   
+ * REPORTED COMPONENT ID
+   5655M1501
+   
+   
+ * REPORTED RELEASE
+   100
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   YesHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-02-19
+   
+   
+ * CLOSED DATE
+   2008-04-29
+   
+   
+ * LAST MODIFIED DATE
+   2008-05-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    PK61294 [http://www-01.ibm.com/support/docview.wss?uid=swg1PK61294] UK36010
+   
+   
+
+MODULES/MACROS
+ *     DYU0MOXT EYU0CITM EYU0MOXT EYU0PTRM EYU0TSTM
+   EYU0WTRM EYU0XDIN EYU0XLBV EYU0XLES EYU9XLEV
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CPSM CICS 3.1
+   
+   
+ * FIXED COMPONENT ID
+   5655M1501
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R100 PSY UK36010 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK36010]
+   UP08/05/01 P F804
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

@@ -1,0 +1,120 @@
+Title: IBM About Feature Levels and ClearCase - United States
+
+Text:
+ClearCase; feature levels; LearningMoreDocument; Feature Level 4; FL4; xml; html; rose; chflevel; element types; 1119269; TRANS; 1385113; ACL TECHNOTE (FAQ)
+
+QUESTION
+ Where is the information pertaining to new features and what are some of the high level changes made to the currently supported versions of IBM Rational ClearCase? 
+
+ANSWER
+A feature level is an integer that is incremented at each ClearCase release that introduces features that affect the way data is stored in VOBs. The feature level of a VOB determines what features are available when working in that VOB. For detailed documentation on feature level administration, search for "feature level" in the ClearCase Knowledge Center [http://www.ibm.com/support/knowledgecenter/SSSH27/welcome?lang=en]. 
+
+The following table lists the ClearCase releases in which new feature levels were introduced.
+
+
+
+Feature Level Introduced in release 1 3.0 (not supported) 2 4.0 (not supported) 3 2002.05.00 (not supported in v9.0.x) 4 2003.06.00 (not supported in v9.0.x) 5 7.0 (not supported in v9.0.x) 6 7.1.2.2 7 8.0 8 8.0.1 9 9.0 
+
+
+
+
+Following are descriptions of all feature levels and the features that they enable.  
+
+Feature Level 9: 
+
+ Raising the feature level to 9 enables the following features: 
+
+
+1. Assignment of explicit mastership to branches.
+
+2. New oplog entry to support replication of "sideways" rebase operations. 
+
+For more information about these features, refer to technote http://www.ibm.com/support/docview.wss?uid=swg21972269 [http://www.ibm.com/support/docview.wss?uid=swg21972269]. 
+
+Feature Level 8: 
+
+ Raising the feature level to 8 enables the following features: 
+
+ * Introduces ACLs (Access Control Lists) to control access to VOBs. When the VOB family feature level of a replica is 8, changing a replica from non-preserving to preserving is blocked; this prevents inconsistent notions of identities and permissions among members of the VOB family.
+
+
+ * Feature Level 8 also changes mkelem/mkdir behavior for the new element's group, as explained in the info center 'mkelem' reference page. At Feature Level 8, the element group is copied from the containing directory's group, rather than from one of the user's groups. 
+ * When the VOB family feature level of a replica is 8, changing a replica from non-preserving to preserving is blocked; this prevents inconsistent notions of identities and permissions among members of the VOB family. 
+
+ Reference Version 8 mkelem documentation [http://www.ibm.com/support/knowledgecenter/SSSH27_8.0.1/com.ibm.rational.clearcase.cc_ref.doc/topics/ct_mkelem.htm] 
+
+ 
+
+Feature Level 7: 
+
+ 
+
+Raising the feature level to 7 (or in the case of a replicated VOB, raising the replicated VOB family to feature level 7) enables the following features:
+
+
+ * Evil twin detection and prevention 
+ * Support for additional integrations with Rational Team Concert 
+ * Predefined element types for Unicode type managers 
+ * Improved UCM Performance 
+ * More precise event time storage during checkin and checkout
+
+
+Feature Level 6:
+
+
+Raising the replicated VOB family to feature level 6 results in the following changes in the VOB: 
+
+ * Introduces new Synchronous Request for Mastership (SRFM) functionality which allows a user to request mastership during a checkout operation. Refer to technote 1470733 [http://www.ibm.com/support/docview.wss?uid=swg21470733] for further details.
+   
+
+
+ Back to top 
+
+Feature Level 5: 
+
+Raising the feature level to 5 (or in the case of a replicated VOB, raising the replicated VOB family to feature level 5) results in the following changes in the VOB:
+
+
+ * A VOB at feature level 5 is able to contain elements that are larger than 2 GB.
+   
+   
+ * A UCM project in which the PVOB and all component VOBs are at feature level 5 can take advantage of improvements in several UCM operations.
+   
+   
+   
+ * When a replica family is at feature level 5, replication becomes more efficient in cases where the -maxsize option is used with syncreplica.
+
+
+ Back to top 
+
+
+Feature Level 4: 
+
+Raising the feature level to 4 (or in the case of a replicated VOB, raising the replicated VOB family to feature level 4) results in the following changes in the VOB: 
+
+ 
+
+ * Feature level 3 placed constraints on client/server compatibility in UCM environments. Feature level 4 introduces no additional constraint; it is equivalent to feature level 3 in terms of PVOB client/server compatibility. Also note that read-only streams and single-stream projects are restricted to PVOBs at feature levels 3 and higher (see the reference page for mkstream). 
+ * Permission preserving replication mode was introduced for MultiSite between Feature level 4 and higher VOBs. 
+   
+ * The predefined element types xml, html, and rose (if they exist) are renamed to xml_v5.0, html_v5.0, and rose_v5.0, respectively. Similarly, element type names that you have changed are renamed to name_v5.0. The v5.0 types lose their status as well-known element types. Accordingly, when you create new elements, the file-to-type mapping mechanism no longer treats these types as the defaults (see the cc.magic reference page). The type of an existing element does not change; however, you can use chtype to change it.
+   
+   
+ * The new predefined element types xml, html, and rose are created. The purpose of replacing these types is to base the type managers on the binary_delta type manager instead of the text_file_delta manager. The cc.magic file maps new elements to these types by default.
+   
+   
+ * The element type, xde, is created.
+
+
+ Back to top 
+
+
+
+
+
+
+
+ Back to top 
+
+RELATED INFORMATION
+ A Japanese translation is available [http://www.ibm.com/support/docview.wss?uid=swg21385113]

@@ -1,0 +1,113 @@
+Title: IBM Users are unable to login when their Home Sametime Server field is populated - United States
+
+Text:
+home sametime server field; sametime server field; person document; blank; empty; populated; field; home server; unable to login; distribute; load; failover; cluster; community; awareness TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+The Sametime Server field in the Person document (commonly referred to as the Home Sametime Server field) is used to help distribute load over a multi-server environment by forcing users to login to a particular server or cluster of servers. However, if this field is filled out incorrectly, users may not be able to login to sametime.
+
+RESOLVING THE PROBLEM
+Check the following items: 
+
+1. Home Sametime Server field is incorrect 
+
+The most common reason that users are unable to login after populating the Home Sametime Server field is because the field is populated incorrectly. 
+
+ 
+
+Domino Directory authentication 
+
+When using a Domino Directory for authentication, a user's Home Sametime Server field must be the full hierarchical name of the Sametime server for standalone Sametime servers, or the Clustername for clustered Sametime servers. 
+
+ * 
+ * 
+ * CN=STServer/O=Blue
+ * Example of a Cluster name: stcluster
+
+
+This field can be verified in document properties by: 
+
+ * 
+ * 
+ * b. Right-clicking on the document. 
+ * c. Selecting Document Properties 
+ * d. Opening the Design tab (the second from the left). 
+ * e. Finding the SametimeServer field in the right pane. 
+ * f. Verifying the value in the left pane.
+
+
+LDAP Authentication 
+
+When using LDAP for authentication, the Home Server Attribute must be specified in the LDAP Server document in the stconfig.nsf. Additionally, the corresponding attribute must be populated in the Attribute. Just as with a Domino Directory, the field must be set to the full hierarchical name of the Sametime server for standalone Sametime servers or the Clustername for clustered Sametime servers. Refer to the examples above. 
+
+EXCEPTION: If Domino LDAP is being used, the Domino Server converts the Sametime Server field before transmitting over LDAP. 
+
+ 
+
+Example of Domino LDAP with a standalone Sametime server: 
+
+If the Home Sametime Server field in the Person document is set to CN=STServer/O=Blue, the Domino LDAP server will send the value as CN=STServer,O=blue. In order for the Sametime server to interpret the Home Sametime Server field correctly, LDAP Customized Attributes must be used. 
+
+ 
+
+Example of Domino LDAP with Clustered Sametime Servers: 
+
+If the Home Sametime Server field in a user's Person document is set to STCluster, the Domino LDAP server will send the value as CN=STCluster. There are two options to configure this properly: 
+
+a. Use the LDAP Customized Attributes to remove the "CN=". 
+
+b. Modify the cluster documents in the stconfig to be named in the format "CN=clustername." 
+
+ 
+
+2. The Sametime Server is binding to the wrong IP address
+
+I Mux 22/Jul/03, 09:53:19 Mux configured to login to following servers:127.0.0.1 (127.0.0.1) 
+I Mux 22/Jul/03, 09:53:19 Mux configured to Http Server on ip=9.10.87.70, port=80
+I Mux 22/Jul/03, 09:53:19 Mux configured to max of 200 favoured http connections
+I Mux 22/Jul/03, 09:53:19 Mux configured to manage persistent channels to following services: 49 53 57 
+I Mux 22/Jul/03, 09:53:19 CBR initialization:
+I Mux 22/Jul/03, 09:53:19 CBR entry: url=/meetingcbr, serverIp=9.10.87.70, port=8081 ---------------------->>>>>Correct IP
+I Mux 22/Jul/03, 09:53:19 CBR entry: url=/broadcastcbr, serverIp=9.10.87.70, port=8083 ---------------------->>>>>Correct IP
+I Mux 22/Jul/03, 09:53:19 Logged in to server 127.0.0.1, loginId <10 090a5746>
+I Mux 22/Jul/03, 09:53:19 Changing Http server IP on login: ip=127.0.0.1
+I Mux 22/Jul/03, 09:53:20 Received CONNECTIVITY update from configuration
+I Mux 22/Jul/03, 09:53:20 Received Http hostname update: hostname=Server.Domain.com
+I Mux 22/Jul/03, 09:53:20 Received Http port update: port=8082
+I Mux 22/Jul/03, 09:53:20 Received hostname update: hostname=Server.Domain.com
+I Mux 22/Jul/03, 09:53:20 Received port update: port=1533
+I Mux 22/Jul/03, 09:53:20 Received Https hostname update: hostname=Server.Domain.com
+I Mux 22/Jul/03, 09:53:20 Received Https port update: port=0
+I Mux 22/Jul/03, 09:53:20 Received Http server hostname update: hostname=Server.Domain.com, ip=9.5.109.93 
+I Mux 22/Jul/03, 09:53:20 Received Http server port update: port=80
+I Mux 22/Jul/03, 09:53:20 Received meeting CBR hostname update: hostname=Server.Domain.com, ip=9.5.109.93
+I Mux 22/Jul/03, 09:53:20 Received meeting CBR port update: port=8081
+I Mux 22/Jul/03, 09:53:20 Received broadcast CBR hostname update: hostname=Server2.Domain.com, ip=9.5.109.93 ---------------------->>>>>Incorrect IP
+I Mux 22/Jul/03, 09:53:20 Received broadcast CBR port update: port=554
+
+A fix is available for this issue and can be obtained by opening a service request with IBM Support. 
+
+ 
+
+3. A server in the community is configured to listen on the wrong IP address. 
+
+This issue is more likely to occur in multiple server environments. The simplest way to pinpoint this issue is by checking the server's CommunityConfig.txt. This is an output file that is generated by the Sametime server on startup. The file lists its own IP address and the IP addresses of other servers that are in the Sametime Community. By default, the communityConfig.txt file is located in the C:\lotus\Domino folder for Windows servers, the /local/notesdata folder for AIX and Solaris, and the Domino Data folder for iSeries. 
+
+If populating a user's Home Sametime Server field to STServerA results in the user's login failing, then STServerA's communityConfig.txt file should be examined. If one of the servers is added to the community with the address 127.0.0.1, it is possible that the STServerA will forward all connections to that server. 
+
+
+ * 
+ * CN=STServerB/O=Blue
+ * 
+ * 127.0.0.1
+ * NOTE: All servers are referred to by clusterName even though they are standalone servers.
+
+
+If this occurs, the Net Address for STServerB is most likely set to 127.0.0.1. The Net Address is located in the Server document -> Ports tab -> Notes Network tab. The IP Address for STServerB must be corrected, the names.nsf must be replicated to STServerA, and STServerA must be restarted for the change to take effect. This issue can also be seen in the STCommunity.txt debug by enabling VPS_AUTH_DEBUG=1 in the [Debug] section of the sametime.ini. If this is occurring, users that have the Home Sametime Server field blank will be logged into another server. 
+
+For example, if User 1/Blue is logging in directly to stservera/blue, the StCommunity.txt debug will show that User 1/Blue is getting logged into stserver/blue, as below:
+
+
+ * 
+ * cn=stserverb/o=blue
+ *

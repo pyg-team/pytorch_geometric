@@ -1,0 +1,89 @@
+Title: IBM Installation Manager, version 1.0.0.5 - United States
+
+Text:
+fix pack; IM; installation manager; Version 1.0.0.5; v1005; 7.0.0.2; 1005; 7002 DOWNLOADABLE FILES
+
+ABSTRACT
+ This document describes how to download and install this fix pack to IBM Installation Manager, version 1.0. 
+
+DOWNLOAD DESCRIPTION
+IMPORTANT: This update has been superseded and is no longer available for download from ibm.com. You should update your product with the most recent version available. See http://www.ibm.com/support/docview.wss?uid=swg27025142 [http://www.ibm.com/support/docview.wss?uid=swg27025142] [http://www-01.ibm.com/support/docview.wss?rs=2042&uid=swg27007823] for the most recent version.
+
+
+
+
+This fix pack contains fixes to the version 1.0 release of IBM Installation Manager.
+
+IBM Installation Manager is a program that helps you install, update, modify, and uninstall packages on your workstation.
+
+PREREQUISITES
+Before you can install certain products, you must install IBM Installation Manager, Version 1.0; by default, it is automatically installed when you update or install packages by using an earlier version.
+
+For more information, refer to the version 1.0.0.5 readme file at: [http://download.boulder.ibm.com/ibmdl/pub/software/rationalsdp/v7/im/1005/docs/readme/readme.html]http://download.boulder.ibm.com/ibmdl/pub/software/rationalsdp/v7/im/1005/docs/readme/readme.html [http://download.boulder.ibm.com/ibmdl/pub/software/rationalsdp/v7/im/1005/docs/readme/readme.html]
+
+INSTALLATION INSTRUCTIONS
+To download and install the fix pack, complete the following steps: 
+
+
+ 1. 
+ 2. Download the fix pack (im-1.0.0.5.zip) from the download URL below.
+ 3. 
+ 4. Extract the compressed file in an appropriate directory. For example, choose to extract to C:\temp.
+ 5. 
+ 6. Add the fix pack repository location in IBM Installation Manager:
+     1. Start IBM Installation Manager.
+     2. 
+     3. On the Start page of Installation Manager, click File > Preferences, and then click Repositories. The Repositories page opens.
+     4. 
+     5. On the Repositories page, click Add Repository.
+     6. 
+     7. In the Add repository window, browse to or enter the file path to the repository.config file, which is located in the directory where you extracted the compressed files. For example, enter C:\temp\ or C:\temp\repository.config and then click OK.
+    
+    
+    
+ 7. Installation of the fix pack will begin once you click on Install Packages or Update Packages.
+ 8. 
+
+
+
+If IBM Installation is not currently installed, you can install this version by completing the following steps: 
+ 1.  
+ 2.  Download the installer from the download URL in the table below:
+ 3.   im.installer.win32-1.0.0.5.zip (on Windows) im.installer.linux-1.0.0.5.zip (on Linux) 
+ 4.  Extract the compressed file into an appropriate directory.
+ 5.  
+ 6.  Run install.exe (Windows), or install (Linux). 
+ 7.  
+ 8.  If IBM Installation Manager is not currently installed, or if the installed version is older than 1.0.0.5, the Installation Manager installer will be launched. Follow the wizard pages to install it.
+ 9.  
+ 10. 
+ 11. 
+
+DOWNLOAD PACKAGE
+
+
+
+
+Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options im-1.0.0.5.zip 7/13/2007 English 33518132 HTTP [http://download.boulder.ibm.com/ibmdl/pub/software/rationalsdp/v7/im/1005/zips/im-1.0.0.5.zip] im.installer.linux-1.0.0.5.zip 7/13/2007 English 121060786 HTTP [http://download.boulder.ibm.com/ibmdl/pub/software/rationalsdp/v7/im/1005/zips/im.installer.linux-1.0.0.5.zip] im.installer.win32-1.0.0.5.zip 7/13/2007 English 78148820 HTTP [http://download.boulder.ibm.com/ibmdl/pub/software/rationalsdp/v7/im/1005/zips/im.installer.win32-1.0.0.5.zip] 
+TECHNICAL SUPPORT
+ Technical Support
+IBM Rational Software Support provides you with technical assistance.
+
+
+For contact information and guidelines or reference materials that you will need when you require support, read the IBM Software Support Handbook at: http://techsupport.services.ibm.com/guides/handbook.html [http://techsupport.services.ibm.com/guides/handbook.html]
+
+
+Before you contact IBM Rational Software Support, gather the background information that you will need to describe your problem. When describing a problem to an IBM software support specialist, be as specific as possible and include all relevant background information so that the specialist can help you solve the problem efficiently. To save time, know the answers to these questions: 
+ * 
+ * What software versions were you running when the problem occurred?
+ * 
+ * Do you have logs, traces, or messages that are related to the problem?
+ * 
+ * Can you reproduce the problem? If so, what steps do you take to reproduce it?
+ * 
+ * Are you using a workaround for the problem? If so, be prepared to describe the workaround.
+ * 
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Software Development Rational Software Architect Installation Manager Linux, Windows 7.0.0.3 Software Development Rational Software Modeler Installation Manager Windows, Linux 7.0.0.3 Software Development Rational Systems Developer Installation Manager Linux, Windows 7.0.0.3 Software Development Rational Application Developer for WebSphere Software Installation Manager Windows, Linux 7.0.0.3 Software Development Rational Modeling Extension for Microsoft .NET Installation Manager Windows 7.0.0.3 Software Development Rational Business Developer Extension Installation Manager Linux, Windows 7.0.0.3 Software Development Rational Functional Tester Installation Manager Linux, Windows 7.0.0.2

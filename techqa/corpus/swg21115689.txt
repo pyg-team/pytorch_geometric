@@ -1,0 +1,46 @@
+Title: IBM Understanding how the z/OS Communications Server IP resolver queries DNS for a host name to IP address resolution - United States
+
+Text:
+NS12 5665HAL00 TECHNOTE (FAQ)
+
+QUESTION
+ How do z/OS Communications Server TCPIP.DATA statements impact the method and amount of time that a host name resolution can take? The following describes the case of the resolver using UDP to send DNS queries to resolve a host name to its IP addresses. 
+
+ANSWER
+The default behavior of the z/OS Communications Server resolver is to attempt to use any configured Domain Name Servers (DNS) for resolution requests. If the resolution request cannot be satisfied by the DNS or if no DNS usage is indicated then local host tables are used. 
+
+Starting with z/OS V1R11 the resolver supports caching of DNS responses. If the host name data is in the cache the cache contents will be used for completing the resolution request. In order to populate the cache a DNS needs to respond to a resolver query; that processing is described below. See the z/OS Communications Server IP Configuration Guide [http://publibz.boulder.ibm.com/cgi-bin/bookmgr_OS390/BOOKS/f1a1b3b0/2.5] for information on resolver caching [http://publibz.boulder.ibm.com/cgi-bin/bookmgr_OS390/BOOKS/f1a1b3b0/2.5.8.1].
+
+The following describes the common usage of UDP (the ResolveVia UDP TCPIP.DATA statement) to query Domain Name Servers (DNS) to resolve a host name to its IP addresses.
+
+The following TCPIP.DATA statements can influence the amount of time it takes to resolve a host name:
+
+
+ * The number of domain names in the SEARCH list 
+ * The number of DNSs to query (NameServer/NSInterAddr) 
+ * The number of "dots" in a name before it is considered a fully-qualified name (OPTIONS ndots:) 
+ * The time to wait for a DNS response (ResolverTimeOut) 
+ * The number of times to try the list of DNS (ResolverUDPRetries) 
+
+
+In addition, with the IPv6 resolver API support, a single request can generate queries for both an IPv4 resource and an IPv6 resource. Each use the logic in the following example for querying the DNS. 
+
+This example is for a GetAddrInfo API call to obtain an IPv4 address. Assume that the default of OPTIONS ndots:1 is used and that the input host name contains no dots. 
+
+The resolver builds a DNS query containing the fully-qualified domain name (FQDN) for the requested host name. Based on our assumptions, it does that in the following manner: 
+
+1. The resolver adds a domain name to the application input. The domain name is either specified by the DomainOrigin statement value or by the list of domain names specified by the SEARCH statement. If SEARCH is specified, the resolver starts with the first domain name specified by the search list, then uses the remaining domain names until the name is resolved by a DNS or until the list of domain names is exhausted. 
+
+2. The FQDN query is then sent using a UDP sendto to the first DNS IP address configured. 
+ * If the name server replies NOERROR, the resolution is complete and the resolution attempts terminate. 
+ * If the name server replies NXDOMAIN, the resolution attempt of this FQDN terminates. If there are other domain names in the SEARCH list, a new FQDN is created and another UDP sendto is performed. 
+ * If the query times out or a SERVFAIL reply or a REFUSED reply is received, the next name server, if any, is tried with the current FQDN. If the name servers all time out, the current query is tried again with the same list of DNS until the ResolverUDPRetries value is reached. (Note that ResolverUDPRetries is the total number of attempts to contact a DNS, not just the number of retries.) If the ResolverUDPRetries value is reached and all the name servers have timed out, the resolution is terminated, even if there are additional domain names in the SEARCH list specification.
+
+
+3. If after trying all FQDN and the name is not resolved, the resolver tries one last DNS query specifying the original name as presented across the API as the FQDN. 
+
+4. If none of the DNS queries resolve the name, the resolver tries local host tables as determined by the API environment of the call (for example, Native MVS or z/OS UNIX). 
+
+See the z/OS Communications Server IP Configuration Guide [http://publibz.boulder.ibm.com/cgi-bin/bookmgr_OS390/BOOKS/f1a1b3b0/CONTENTS] for the Native MVS environment local host tables' search order [http://publibz.boulder.ibm.com/cgi-bin/bookmgr_OS390/BOOKS/f1a1b3b0/2.5.9.3.3] and z/OS UNIX environment local host tables' search order [http://publibz.boulder.ibm.com/cgi-bin/bookmgr_OS390/BOOKS/f1a1b3b0/2.5.9.2.3]. 
+
+See the z/OS Communications Server IP Configuration Reference [http://publibz.boulder.ibm.com/cgi-bin/bookmgr_OS390/BOOKS/f1a1b4b0/CCONTENTS] for a description of TCPIP.DATA statements [http://publibz.boulder.ibm.com/cgi-bin/bookmgr_OS390/BOOKS/f1a1b4b0/5.0].

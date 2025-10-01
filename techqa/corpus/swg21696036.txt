@@ -1,0 +1,149 @@
+Title: IBM Trouble Shooting issues between IBM Cognos Disclosure Management and IBM Cognos Controller via Financial Analytical Publisher (FAP) - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Issues with displaying Cognos Controller data in Cognos Disclosure Management via OLAP database connection. 
+
+SYMPTOM
+There are many issues like the following: 
+
+ 1. No data in the Cognos Disclosure Management Report 
+ 2. Incorrect IBM Cognos data within IBM Cognos Disclosure Management Report 
+ 3. Failed to access to data connection between IBM Cognos Disclosure Management and IBM Cognos Controller
+
+
+ENVIRONMENT
+Microsoft Windows
+
+
+RESOLVING THE PROBLEM
+The following are areas that can be troubleshooting the issues with IBM Cognos Controller and Cognos Disclosure Management via FAP (Financial Analytical Publisher) 
+
+ 
+
+Overview: 
+
+The recommended approach to connected IBM Cognos Controller with Cognos Disclosure Management is via FAP (Financial Analytical Publisher). The FAP is a connection between IBM Cognos and IBM Cognos TM1 data source. Since TM1 is data source that can be connected as part of the database connection as such it is recommended approach to use when dealing with Cognos Disclosure Management and IBM Cognos Controller. The rationale is TM1 connection allows for automatic refresh of Cognos Controller Data with the IBM Cognos Disclosure Management report refresh process. 
+
+ 
+
+Hint: Users can work with IBM Cognos Controller data within in CDM via the excel add-in report. The issue is the direct excel add-in report is not dynamically refresh as part of IBM Cognos Controller data updates within IBM Cognos Disclosure Management. This technote will describe how to trouble shoot the TM1/FAP connection between IBM Cognos Controller with Cognos Disclosure Management. 
+
+ 
+
+FAP and IBM Cognos Controller Connection - Overview 
+
+FAP Client 
+
+ * An administrative console where you configure the basic settings for FAP, scope of the trickle-publish, and where FAP log files can be monitored.
+
+
+FAP Database 
+
+ * A temporary database to which changes in data and structures are moved prior to it is transformed into cube format. Same collation as the Controller database.
+
+
+FAP Service 
+
+ * Transforms Controller data (relational) into cube format. 
+
+
+FAP Cube(s) 
+
+ * The “read-only” TM1 cube(s) that contains the trickle-published data.
+
+
+
+
+[/support/docview.wss?uid=swg21696036&aid=1] [/support/docview.wss?uid=swg21696036&aid=1] 
+
+Figure 1 - shows the financial publishing process between IBM Cognos Controller and IBM Cognos TM1 
+
+
+FAP Reporting Cube Before users create the data source/connection in Cognos Disclosure Management it is important to understand the structure of the data. Figure 2 shows the FAP TM1 reporting cube with account – by form dimension displayed. FAP publishes the following tables that will have fastnet.NRTR_Controller Field_Name:
+
+Hint:
+The initial FAP process create as serious of tables that are used by TM1 as part of the reporting of IBM Cognos Controller FAP publishing process. Users may want to review this document as it relates to the configuring of FAP and Controller: http://www-01.ibm.com/support/docview.wss?uid=swg21679216 [http://www-01.ibm.com/support/docview.wss?uid=swg21679216]
+
+
+[/support/docview.wss?uid=swg21696036&amp;aid=2]
+
+Figure 2 - shows the TM1 FAP Tables
+
+
+Review the TM1 cube/dimension structures by signing on to TM1 architect and the FAP Server. Figure 3 will show the dimensions\account – by form structures. 
+
+Hint: Working with Forms in IBM Cognos Controller allows you worked with pre-defined forms as part of loading data within IBM Cognos Controller. 
+[/support/docview.wss?uid=swg21696036&aid=3] [/support/docview.wss?uid=swg21696036&aid=3]
+Figure 3 - shows a sample of the forms/accounts available in IBM Cognos Controller
+
+Review the FAP Adapter connections as this is were users define data sources that will be used by TM1 as part of the near-real-time-reporting. The data connection of FAP should be review to ensure it has been started and/or if the connection is working properly with IBM Cognos Controller. The are four areas to review:
+
+
+ * Service Settings 
+ * Sources 
+ * Data Marts 
+ * Logs
+
+
+For additional information then feel free to reviewed the following technote: http://www-01.ibm.com/support/docview.wss?uid=swg21679216 [http://www-01.ibm.com/support/docview.wss?uid=swg21679216] 
+
+[/support/docview.wss?uid=swg21696036&aid=4] [/support/docview.wss?uid=swg21696036&aid=4] 
+
+Figure 4 - shows the configuration options for FAP connector 
+
+Test the data 
+
+Users should verified the connection is working including name, provider, server, authentication and user/password. 
+
+[/support/docview.wss?uid=swg21696036&amp;aid=5] 
+
+Figure 5 - data connection between Cognos Controller and Cognos Disclosure Management 
+
+Defining OLAP Data Query 
+Users should review the page options to ensure the columns and rows reflect the proper information. Hint: Users may find it helpful to have Controller/TM1 open as part configuring the data query within Cognos Disclosure Management. The below figure defines the "PeriodMonthly" in the columns and the "Account" in the rows. 
+
+[/support/docview.wss?uid=swg21696036&aid=6] [/support/docview.wss?uid=swg21696036&aid=6] 
+Figure 6 - shows the page option when adding a data query 
+
+The query results will show the information that will be shown in the Controller Report within the IBM Cognos Disclosure Management Report. 
+
+[/support/docview.wss?uid=swg21696036&aid=7] [/support/docview.wss?uid=swg21696036&aid=7] 
+Figure 7 - shows the query results 
+
+Users can checkout the report as part of modifying the report using Cognos Disclosure Management Functionality. The below is formatted Balance Sheet for a company. The focus on the below balance sheet should be on Balance Sheet account#B030030. B030030 shows a balance of 24,647.97 as compare to Computer Software Licenses $24,648. Since account B030030 equals the Computer Software Licenses then the data query has pulled the correct data. 
+
+Hint: Users may want to verified the report has the correct source data as part of testing the data connection between IBM Cognos Disclosure Management and IBM Cognos Controller. 
+
+[/support/docview.wss?uid=swg21696036&aid=8] [/support/docview.wss?uid=swg21696036&aid=8] 
+Figure 8 - shows a Consolidated Balance Sheet 
+Users can then compare the Consolidated Balance Sheet with the any of the Cognos Controller Reports within IBM Cognos Controller. The below figure 9 will use the "Trial Balance with Drill Down from IBM Cognos Controller and compare it to the Balance Sheet in Figure 8. The "B030010 - Goodwill" account will be used for the comparison/validation process. Users can see the B030010 account is showing $107,388 in "Trial Balance with Drill down Report and that amount equals the amount in the Consolidated Balance Sheet (Figure 8). 
+
+
+[/support/docview.wss?uid=swg21696036&aid=9] [/support/docview.wss?uid=swg21696036&aid=9] 
+
+Figure 9 - shows the IBM Cognos Controller Trial Balance with Drill Down 
+
+ 
+
+Other notes: 
+
+Reporting methods that may be considered as part of building IBM Cognos Controller Reports with Cognos Disclosure Management: 
+
+ * Users can group the accounts together as part of building the report, i.e. many to one relationship or one to one relationship. 
+ * Once the users has completed the updates of the document then the document can be checked back into Cognos Disclosure Management
+
+
+Hint: Once the report has been loaded into Cognos Disclosure Management then users need to follow best practices on how to build reports with Cognos Disclosure Management. 
+
+ 
+
+Hint: IBM Cognos Controller provides consolidated solutions as such the users may want to link to high-level of the data. IBM Cognos Controller allows different views of the data as such you may want to build a few reports based on the user’s requirements, i.e. IFRS, US-GAAP, etc. 
+
+ 
+
+Other References 
+
+ 1. Cognos Disclosure Management Best Practices Guide - http://www-01.ibm.com/support/docview.wss?uid=swg27036748&aid=1 [http://www-01.ibm.com/support/docview.wss?uid=swg27036748&aid=1]

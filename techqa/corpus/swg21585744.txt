@@ -1,0 +1,33 @@
+Title: IBM Disabling interbatch prompts in Taskmaster Web in IBM Datacap Taskmaster Capture - United States
+
+Text:
+OK hold stop continue prompt TECHNOTE (FAQ)
+
+QUESTION
+ How to disable prompts between processing batches in Taskmaster Web. 
+
+CAUSE
+The following two messages are visible by default while running an operation shortcut: 
+
+1. Batch [batch ID] finished with status '[status]' (Hold and OK buttons) 
+
+2. Batch [batch ID] finished with status '[status]' / Stop or continue processing (Stop and Continue buttons)
+
+The first prompt allows operators to place the batch on hold after task completion. The second prompt allows operators to either continue processing the current shortcut or to click Stop in order to return to the Operations page.
+
+
+ANSWER
+Hold / OK Prompt 
+
+The Hold / OK prompt can be disabled by setting Hold=0 in \Datacap\tmweb.net\apps.ini on the web server for all applicable applications. As a consequence of this change, operators will not be able to place batches on hold after batch completion. 
+
+ 
+
+Note: In certain pages such as averify, operators will still have a Hold button inside the task itself, which can be used to place batches on hold while working on the task:
+[/support/docview.wss?uid=swg21585744&amp;aid=1]
+This is a different Hold button than the one associated with the Hold / OK prompt, and may be hidden by updating the correlating BPP or ICP setting.
+
+
+Stop / Continue Prompt 
+
+The Stop / Continue prompt can be disabled by setting the shortcut's mode to Prompt/Web select. Doing so will cause the shortcut to always process pending or new batches; batches on hold will be ignored and when applied to a batch creation task, by design Taskmaster Web will return to the Operations page after completion. It may be preferable to instead lower the message's wait time by updating Delay=20 in apps.ini to a more reasonable value.

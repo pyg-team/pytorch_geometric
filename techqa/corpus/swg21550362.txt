@@ -1,0 +1,37 @@
+Title: IBM What steps are needed in Gentran when upgrading JD Edwards product? (SCI49398) - Sterling Gentran:Server for iSeries - United States
+
+Text:
+STERLINGPRI TECHNOTE (FAQ)
+
+QUESTION
+ What steps are needed in Gentran when upgrading JD Edwards product? (SCI49398) 
+
+ANSWER
+1. Add any NEW files to the application definition or create new application definitions over the files needed.
+2. Re-retrieve DDS on all the Application Files in Gentran that are built over JD Edwards Files.
+3. Run APPSYNCH (Option 32 on EACH Application Definition).
+
+
+ 
+
+HISTORICAL NUMBER
+ PRI10035 
+
+PRODUCT ALIAS/SYNONYM
+ 
+
+Fact
+
+
+Gentran:Server for AS/400, All Releases 
+World 
+One World 
+
+Enterprise 
+SCI49398
+
+
+Goal
+
+
+FAQ: What steps are needed in Gentran when upgrading JD Edwards product?

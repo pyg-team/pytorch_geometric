@@ -1,0 +1,82 @@
+Title: IBM 【セキュリティ情報】WebSphere Transformation Extender with Launcher Hypervisor Edition [for RHEL] GNU C library (glibc)の脆弱性(CVE-2015-0235) - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ WebSphere Transformation Extender with Launcher Hypervisor Edition [for RHEL] で提供されている Red Hat Enterprise Linux (RHEL) の GNU C library (glibc) に脆弱性が存在します。(CVE-2015-0235).
+
+
+VULNERABILITY DETAILS
+脆弱性の詳細：
+CVEID:CVE-2015-0235 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-0235] 
+内容：GNU C library (glibc)の__nss_hostname_digits_dots() 関数にバッファオーバフローの脆弱性が存在します。
+細工したホスト名を gethostbyname などの関数の引数に渡すことにより、バッファオーバーフローが発生します。
+この脆弱性を悪用された場合、アプリケーションの異常終了や、任意のコードが実行可能になる可能性があります。
+この脆弱性は、"Ghost"と呼ばれています。 
+
+CVSS Base Score: 7.6
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/100386 [https://exchange.xforce.ibmcloud.com/vulnerabilities/100386] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:H/Au:N/C:C/I:C/A:C)
+
+AFFECTED PRODUCTS AND VERSIONS
+影響のある製品・バージョン： 
+
+次の製品に影響があります。
+
+製品: WebSphere Transformation Extender with Launcher Hypervisor Edition [for RHEL]
+
+バージョン:
+* 8.4.0.0 - 8.4.0.5
+* 8.4.1.0 - 8.4.1.2
+
+REMEDIATION/FIXES
+修正策：
+
+Fix Central から interim fix for APAR PI34228 [http://www.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~WebSphere&product=ibm/WebSphere/WebSphere+Transformation+Extender&release=All&platform=All&function=aparId&apars=PI34228] を導入してください。 [http://www.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~WebSphere&product=ibm/WebSphere/WebSphere+Transformation+Extender&release=All&platform=All&function=aparId&apars=PI34228]
+
+
+FIXを導入後、glibcを用いたプロセスを再開始する必要があります。
+システムの多くのプロセスがglibcを使う場合、FIX導入後、システムを再起動することを推奨いたします。
+
+オペレーティングシステムを含むglibcの脆弱性を確認し、適切な緩和と改善措置をとるために、全ての環境を見直すよう、推奨いたします。詳細はあなたのオペレーティングシステム・プロバイダーに連絡してください。
+
+WORKAROUNDS AND MITIGATIONS
+回避策/軽減策： 
+
+なし
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v2 Guide [http://www.first.org/cvss/v2/guide] 
+On-line Calculator v2 [http://nvd.nist.gov/CVSS-v2-Calculator] 
+参照情報： 
+
+[IBMサイト] 
+この文書は、米国 IBM 社の資料を翻訳した参考文書です。翻訳元の文書は、以下のリンクよりご参照ください。 
+Security Bulletin: GNU C library (glibc) vulnerability affects WebSphere Transformation Extender with Launcher Hypervisor Edition [for RHEL] (CVE-2015-0235) [http://www.ibm.com/support/docview.wss?uid=swg21696243] 
+
+[CVSS情報] 
+独立行政法人 情報処理推進機構: 共通脆弱性評価システムCVSS概説 [http://www.ipa.go.jp/security/vuln/CVSS.html] 
+JVN iPedia: CVSS計算ソフトウェア日本語版 [http://jvndb.jvn.jp/cvss/ja.html] 
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] 
+. 関連情報：
+.
+[お問合せ先]
+技術的な内容に関して、サービス契約のあるお客様はIBMサービス・ラインにお問い合わせください。
+IBM サービス・ライン [http://www.ibm.com/jp/news/20070420001.html]
+.
+
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY. 
+
+関連情報
+ An US English translation is available [http://www.ibm.com/support/docview.wss?uid=swg21696243]

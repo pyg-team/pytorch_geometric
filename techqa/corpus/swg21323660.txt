@@ -1,0 +1,17 @@
+Title: IBM Why am I receiving "Timer heap overflow" messages from my application. - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Why am I receiving "Timer heap overflow" messages from my application. 
+
+ANSWER
+
+
+You should use the CPP_CG::Framework::TimerMaxTimeouts property to do this. You can find this field within the Project Properties and increase the value that may be in the field currently. You can find out more about this within the online help under List of Books>Properties Reference Guide .  
+
+1376AnswerProduct versionPartner ContentInternal ContentCategoryReference ID 
+
+HISTORICAL NUMBER
+ 10357

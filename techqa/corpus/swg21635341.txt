@@ -1,0 +1,55 @@
+Title: IBM Portal 8 installation unable to detect the WebSphere Application Server - United States
+
+Text:
+portal reinstall fails; install into existing WAS fails TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+The IBM Installation Manager is unable to detect that a WebSphere Application Server exists when attempting to install Portal.
+
+SYMPTOM
+This issue seems to manifest when an existing Portal has been uninstalled and WebSphere Application Server is not uninstalled. When Portal install is attempted again, but this time to install into the existing WebSphere Application Server then Installation Manager will throw an excecption that notes that it is unable to detect WebSphere Application Server on the system 
+
+We have also seen an issue where the install fails indicating the version of WAS detected is insufficient and we see an exception like this in IIM logs:
+
+
+49 INFO 00:03.14 This Cumulative Fix requires that IBM
+WebSphere Portal Server version 8.0.0.0 be previously installed. You
+must first install the base release and then update it with the
+Cumulative Fix. You cannot install them at the same time.
+50 ERROR 00:03.15 The required version 8.0.0.5 or later of
+WebSphere Application Server has not been detected on this system.
+Select the WebSphere Application Server Package to install WebSphere
+Application Server and WebSphere Portal.
+51 INFO 00:03.21 Stopping Installation Manager.
+52 INFO 00:03.28 No log properties file found in:
+/home/wasadmin/var/ibm/InstallationManager/logs
+
+
+
+CAUSE
+The issue is caused by Portal files that are not correctly removed from the AppServer folder structure when Portal is uninstalled.
+
+
+ENVIRONMENT
+Portal 8.0.0.x and WAS 8.0.0.x
+
+
+
+
+RESOLVING THE PROBLEM
+Navigate to the AppServer folder and remove the following files (they are regenerated with a reinstall of Portal):
+
+lib/ext/commons-codec-1.3.jar
+lib/ext/commons-httpclient-3.0.1.jar
+lib/ext/openid4java-full-0.9.5.jar
+lib/ext/wp.auth.base.sua_RedirectServletFilter.jar
+lib/ext/wp.auth.base.sua_loginmodule.jar
+lib/ext/wp.auth.tai.jar
+lib/wp.user.connections.jar
+lib/wp.wire.jar
+plugins/com.ibm.patch.was.plugin.jar
+plugins/com.ibm.wp.was.plugin.jar
+plugins/wp.ext.jar
+properties/jndi.properties
+
+Select the Recheck Status button. It should now say "All prerequisites are met."

@@ -1,0 +1,45 @@
+Title: IBM Controlling the number of connections to OMNIbus - United States
+
+Text:
+Impact; connections; datasource; objectserver TECHNOTE (FAQ)
+
+QUESTION
+ Which configuration elements do I need to consider when controlling the number of connections Impact makes to an OMNIbus object server? 
+
+ANSWER
+There are four main elements to consider. 
+
+Firstly, there is the Connections property in OMNIbus. This limits the number of connections that the object server will allow. The object server will report errors in $NCHOME/omnibus/log/<osname>.log and refuse further connections if the value in this property has been reached. This can be set for an object server via the OMNIbus Administrator or by editing $NCHOME/omnibus/etc/<osname>.props. A restart of the object server is required to pick up the change. 
+
+Secondly, within Impact there is the MAXSQLCONNECTION property for any object server datasource in Impact. This property limits the number of connections that can be made to the object server datasource per service and appname. This requires a little further explanation: 
+
+ * datasource: a typical initial Impact configuration contains a single object server datasource called defaultobjectserver, which is based on the file $NCHOME/impact/etc/NCI_defaultobjectserver.ds. It is possible to configure further object server datasources. It is possible to configure multiple datasources that connect to the same object server. 
+ * service: the typical service that makes use of an object server datasource is an event reader such as the OMNIbusEventReader. Other service types connecting to an object server datasource are, however, possible. 
+ * appname: by default, event reader services will connect to the object server using the appname NCI:Impact whereas connections made in policy processing will use the appname Impact. Impact will allocate each of these appnames a set of connections up to MAXSQLCONNECTION for the datasource being used.
+
+
+Thirdly, as hinted above, there is the number of services using the same datasource. Each service gets its own set of connections up to MAXSQLCONNECTION, so having two or three event readers connecting to the same datasource will double or triple the number of connections. Fourthly, there are a set of properties that can be added to $NCHOME/impact/etc/<servername>_server.props:
+impact.objectserver.appname=<AnyName> 
+impact.objectserver.username=<username> 
+impact.objectserver.password=<password> 
+
+By default, a separate appname - called Impact - is used for event processor/policy connections to the object server, whereas event reader connections use NCI:Impact. Setting these properties forces a single appname to be used for connections to the object server. Since connections are per appname, this reduces the number of connections made. 
+
+Some brief examples:
+If, defaultobjectserver has MAXSQLCONNECTION = 30 + single event reader + impact.objectserver.appname not set
+then there would be a maximum of 30 Impact connections and 30 NCI:Impact connections, therefore 60.
+
+If, defaultobjectserver has MAXSQLCONNECTION = 10 + 5 event reader services + impact.objectserver.appname not set
+then there would be a maximum of 10 Impact connections + 50 NCI:Impact connections, therefore 60.
+
+If, defaultobjectserver has MAXSQLCONNECTION = 25 + 2 event reader services + impact.objectserver.appname set to NCI:Impact
+then there would be a maximum of 0 Impact connections + 50 NCI:Impact connections, therefore 50.
+
+Finally, there is a further option to be considered, and that is having multiple datasources connecting to the same object server. In the context of controlling the number of connections, the main reason for doing this would be in order to enforce a different connection limit for event processor/policy connections. For example:
+If, 
+defaultobjectserver has MAXSQLCONNECTION = 10
+defaultobjectserver2 has MAXSQLCONNECTION = 30
+there are two event reader services using defaultobjectserver
+there are multiple policies making explicit queries on defaultobjectserver2
+impact.objectserver.appname not set
+then there will be a maximum of 20 NCI:Impact connections and 30 Impact connections, in total 50.

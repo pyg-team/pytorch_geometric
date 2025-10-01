@@ -1,0 +1,150 @@
+Title: IBM HD78033: CLEANER : EXTERNAL REFERENCES ARE CORRUPTED IN A - United States
+
+Text:
+AIX SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PERMANENT RESTRICTION.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Scenario :
+   1/ Start CATIA without cache mode activated.
+   2/ Open C000189058.CATProduct
+   3/ Expand the tree of C000189060 until
+   QREF_C000189060_PDB_E95.
+   ==> As a result, you will see that this CATPart
+   contains both "External references" and
+   "References externes". This is not normal.
+   ==> Some of them have synchronized external
+   links, but also isolated geometries.
+   There is no real scenario, just open the CATProduct
+   to see the problems.
+   The data is corrupted and cannot be cleaned by the
+   CATDUA tool. The user does not know why his data
+   is corrupted.
+   .
+   .
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  CLEANER : EXTERNAL REFERENCES ARE CORRUPTED IN A
+   SPECIFIC CATPART
+   Scenario :
+   1/ Start CATIA without cache mode activated.
+   2/ Open C000189058.CATProduct
+   3/ Expand the tree of C000189060 until
+   QREF_C000189060_PDB_E95.
+   ==> As a result, you will see that this CATPart
+   contains both "External references" and
+   "References externes". This is not normal.
+   ==> Some of them have synchronized external
+   links, but also isolated geometries.
+   There is no real scenario, just open the CATProduct
+   to see the problems.
+   The data is corrupted and cannot be cleaned by the
+   CATDUA tool. The user does not know why his data
+   is corrupted.
+   .
+   .
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  THIS PROBLEM IS PERMANENT RESTRICTION IN CATIA
+   Incident Diagnosis:
+   External references are corrupted in a specific CATPart
+   Restriction Explanation:
+   There is no corruption in the data.You need to understand that
+   an user is free to change the name of the geometrical sets and
+   move some features from a set to another.
+   It is easy to arrive to this configuration by using the
+   menu "properties" and changing the name and also by moving
+   the features with CCP. So unless you indicate a specific
+   scenario, I cannot consider the model as corrupted.
+   By-Pass:
+   You can move the features as you wish and delete the extra
+   sets.
+   .
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   HD78033
+   
+   
+ * REPORTED COMPONENT NAME
+   CATIA V5 NT>XP
+   
+   
+ * REPORTED COMPONENT ID
+   569151000
+   
+   
+ * REPORTED RELEASE
+   518
+   
+   
+ * STATUS
+   CLOSED PRS
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-09-18
+   
+   
+ * CLOSED DATE
+   2008-11-26
+   
+   
+ * LAST MODIFIED DATE
+   2008-11-26
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

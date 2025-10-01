@@ -1,0 +1,29 @@
+Title: IBM Enabling weak cipher suites for IBM Algo One - Counterparty Credit Risk v.5.0.0 is NOT recommended
+Flash (Alert) - United States
+
+Text:
+ FLASH (ALERT)
+
+ABSTRACT
+ With the recent attention to RC4 “Bar Mitzvah” Attack for SSL/TLS, this is a reminder to NOT enable weak or export-level cipher suites for IBM Algo One - Counterparty Credit Risk.
+
+
+CONTENT
+IBM Algo One - Counterparty Credit Risk by default disables the RC4 stream cipher. If you enabled the RC4 stream cipher you are exposed to the attack described above. IBM recommends that you review your entire environment to identify other areas where you have enabled the RC4 stream cipher and take appropriate mitigation and remediation actions. 
+In order to disable the weak RC4 cipher suite at the JRE, preform the following steps. 
+* Locate the JAVA_HOME directory. For Algo Core, this directory will be $ALGO_HOME/third-party-apps/jdk/<platform>
+* Edit the "master security properties file" which is by default: $JAVA_HOME/jre/lib/security/java.security
+* Locate "Algorithm restrictions for Secure Socket Layer/Transport Layer Security processing". This is the property "jdk.tls.disabledAlgorithms". If this property is commented out, introduce it on a new line.
+* Add the cipher suite "RC4" to the comma separated list of disabled algorithms in the step above:
+jdk.tls.disabledAlgorithms=RC4
+
+
+Remember to restart any Java instance for this to take affect. The following code snippet can be used as a diagnostic to determine which cipher suites are available in JRE:
+
+SSLContext context = SSLContext.getDefault();
+SSLSocketFactory sf = context.getSocketFactory();
+String[] cipherSuites = sf.getSupportedCipherSuites();
+
+for(String cipherSuite : cipherSuites){
+System.out.println(cipherSuite);
+}

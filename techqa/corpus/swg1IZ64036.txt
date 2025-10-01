@@ -1,0 +1,281 @@
+Title: IBM IZ64036: WEBSPHERE MQ V7.0.1 SSL CHANNEL STARTUP IS DELAYED WHEN         ATTEMPTING TO CONTACT AN UNREACHABLE OCSP SERVER. - United States
+
+Text:
+  FIXES ARE AVAILABLE
+WebSphere MQ V7.0 Fix Pack 7.0.1.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24024528]
+WebSphere MQ V7.0.1 for i5/OS Fix Pack 7.0.1.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24025627]
+WebSphere MQ V7.0 Fix Pack 7.0.1.2 [http://www-01.ibm.com/support/docview.wss?uid=swg24026518]
+WebSphere MQ V7.0.1 for i5/OS Fix Pack 7.0.1.2 [http://www-01.ibm.com/support/docview.wss?uid=swg24026566]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When attempting to start an SSL channel, a user noticed a long
+   delay. SSL message channels remain in BINDING status with a
+   substate of SSLHANDSHK. SSL client applications experience a
+   hang in the MQ connect call.
+   
+   A core dump or debugger output of the delay shows a thread stack
+   similar to the following:
+   
+   #1  0x408682c8 in connect () from /lib/libpthread.so.0
+   #2  0x41b9e189 in GSKHTTPChannel::OpenChannel_real () from
+   /usr/lib/libgsk7cms.so
+   #3  0x41b9df64 in GSKHTTPChannel::OpenChannel () from
+   /usr/lib/libgsk7cms.so
+   #4  0x41b9dbf4 in GSKHTTPChannel::open () from
+   /usr/lib/libgsk7cms.so
+   #5  0x41b9f9eb in GSKHttpClient::openChannel () from
+   /usr/lib/libgsk7cms.so
+   #6  0x41b9fc58 in GSKHttpClient::reconnectIfNeeded () from
+   /usr/lib/libgsk7cms.so
+   #7  0x41bd5694 in GSKOcspClient::getHttpResponse () from
+   /usr/lib/libgsk7cms.so
+   
+   The exact appearance of the stack may vary between platforms,
+   however the key symptom is a connect() call issued from within
+   GSKOcspClient::getHttpResponse(), inside the
+   gsk_secure_soc_init() function.
+   
+   In most cases, the channel times out and the delay ends after
+   several minutes. What happens next depends upon the MQ
+   OCSPAuthentication configuration setting.
+   
+   When using the default OCSPAuthentication REQUIRED setting, the
+   channel will fail and error AMQ9716 is logged. In the case of
+   client application, reason code MQRC_SSL_INITIALIZATION_ERROR
+   (2393) is returned by the MQ connect call. In the case of a
+   message channel, the channel enters the RETRYING state.
+   
+   When OCSPAuthentication is set to WARN then a warning message
+   AMQ9717 is logged and the channel will start. Both message
+   channels and client applications will then function normally
+   from this point onwards.
+   
+   When OCSPAuthentication is set to OPTIONAL then the channel will
+   start. Both message channels and client applications will then
+   function normally from this point onwards.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  The environment variable AMQ_SSL_OCSP_NO_CHECK_AIA can be set.
+   export AMQ_SSL_OCSP_NO_CHECK_AIA=1
+   This should be done in the shell that the QMgr is started in.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   Users of WebSphere MQ 7.0.1.0 SSL channels whose digital
+   certificates contain the AuthorityInfoAccess certificate
+   extension and whose MQ systems cannot connect to the OCSP
+   responder URL in the AuthorityInfoAccess certificate extension.
+   The issue can affect both SSL message channels and SSL client
+   applications.
+   
+   Platforms affected:
+   All Distributed (iSeries, all Unix and Windows)
+   ****************************************************************
+   PROBLEM SUMMARY:
+   Some digital certificates used for SSL/TLS channels contain a
+   certificate extension known as AuthorityInfoAccess (or AIA).
+   This certificate extension specifies the location of an OCSP
+   responder server which can be queried to discover if the
+   certificate is revoked.
+   
+   In WebSphere MQ 7.0.1.0, AuthorityInfoAccess certificate
+   extensions are checked by default in order to provide enhanced
+   protection against the use of revoked digital certificates.
+   Users whose existing digital certificates already contained
+   AuthorityInfoAccess extensions might experience SSL connectivity
+   delays if the OCSP responder server is not reachable from within
+   their network.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Users are strongly recommended to enable connectivity to the
+   OCSP responder server identified in their digital certificates
+   so that they can gain the security benefits of the additional
+   revocation checking. WebSphere MQ OCSP queries are made using
+   the HTTP protocol, so use of an HTTP proxy server is one
+   possible solution.
+   
+   Users whose network firewall rules do not permit access to their
+   Certificate Authority's OCSP server and who do not want OCSP
+   checking are recommended to discuss with their Certificate
+   Authority and obtain digital certificates without
+   AuthorityInfoAccess extensions. Digital certificates
+   periodically expire and must be replaced, so expiry time would
+   be suitable to remove any unwanted AuthorityInfoAccess
+   extensions.
+   
+   For cases where an immediate work-around is required to suppress
+   the OCSP check, this APAR introduces a new ini file setting.
+   Users can add the following setting to their SSL stanza:
+     OCSPCheckExtensions=no
+   
+   This can be set in the client ini file (for example,
+   mqclient.ini) or in the queue manager configuration (for
+   example, qm.ini or the Windows registry equivalent).
+   
+   With this setting in place then WebSphere MQ will ignore
+   AuthorityInfoAccess certificate extensions and will not attempt
+   the OCSP check.
+   
+   On a queue manager it is necessary to issue a REFRESH SECURITY
+   TYPE(SSL) MQSC command (or the equivalent MQCMD_REFRESH_SECURITY
+   PCF command) before the new setting will take effect.
+   
+   On a client it is necessary for the client application either to
+   restart or to close all of its SSL connections before the new
+   setting will take effect.
+   
+   The WebSphere MQ documentation will be updated to describe the
+   new setting. In particular, topic cs13400 will be updated. Also
+   topics sy13000 and e_auth_info_ocsp will specify that
+   AuthorityInfoAccess extensions are not checked if
+   OCSPCheckExtensions=no in the SSL stanza.
+   
+   Users who have set the OCSPCheckExtensions setting must remove
+   the setting before removing the APAR fix. Also, users who revert
+   to WebSphere MQ fixpack 7.0.1.0 or earlier must remove the
+   OCSPCheckExtensions setting before removing the fixpack.
+   
+   | MDVREGR 7.0-WS-MQ-Windows-RP0001        |
+   | MDVREGR 7.0-WS-MQ-SolarisX64-RP0001     |
+   | MDVREGR 7.0-WS-MQ-SolarisSparc64-RP0001 |
+   | MDVREGR 7.0-WS-MQ-LinuxX64-RP0001       |
+   | MDVREGR 7.0-WS-MQ-LinuxS390X-RP0001     |
+   | MDVREGR 7.0-WS-MQ-LinuxPPC64-RP0001     |
+   | MDVREGR 7.0-WS-MQ-LinuxIA32-RP0001      |
+   | MDVREGR 7.0-WS-MQ-HpuxPaRISC64-RP0001   |
+   | MDVREGR 7.0-WS-MQ-HpuxIA64-RP0001       |
+   | MDVREGR 7.0-WS-MQ-AixPPC64-RP0001       |
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+                      v7.0
+   Platform           Fix Pack 7.0.1.1
+   --------           --------------------
+   Windows            U200310
+   AIX                U827232
+   HP-UX (PA-RISC)    U826485
+   HP-UX (Itanium)    U826884
+   Solaris (SPARC)    U827125
+   Solaris (x86-64)   U827374
+   iSeries            tbc_p700_0_1_1
+   Linux (x86)        U826321
+   Linux (x86-64)     U827231
+   Linux (zSeries)    U827105
+   Linux (Power)      U826779
+   
+   The latest available maintenance can be obtained from
+   'WebSphere MQ Recommended Fixes'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037]
+   
+   If the maintenance level is not yet available, information on
+   its planned availability can be found in 'WebSphere MQ
+   Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ64036
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ SOL SPARC
+   
+   
+ * REPORTED COMPONENT ID
+   5724H7223
+   
+   
+ * REPORTED RELEASE
+   701
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-10-29
+   
+   
+ * CLOSED DATE
+   2009-11-11
+   
+   
+ * LAST MODIFIED DATE
+   2010-04-08
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ SOL SPARC
+   
+   
+ * FIXED COMPONENT ID
+   5724H7223
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R701 PSY
+   UP

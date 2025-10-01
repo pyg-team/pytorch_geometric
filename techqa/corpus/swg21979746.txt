@@ -1,0 +1,20 @@
+Title: IBM Migrate SCA database to a new SQL Sever - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ I need to migrate SCA database on a new SQL Server 
+
+ANSWER
+
+1) Stop the SCA service via the Windows services manager in the server where SCA application was installed in.
+
+2) Backup and Delete your database configuration file: '<TEMAinstallation directory>\config\database.yml'.
+
+3) Start the SCA service via the Windows services manager. 
+
+4) Access the SCA web interface from the SCA hostserver. You'll be able to re-enter your new SCA database connection info. 
+
+Note :- Due to the complexity and risks of migrating IEM Servers, it is strongly recommended that a DBA Technician help in performing the SCA SQL Server Migration process.
+We kindly suggest you you to implement the procedure in a test environment before since this is un-supported scenario.

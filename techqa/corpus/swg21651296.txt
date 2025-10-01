@@ -1,0 +1,30 @@
+Title: IBM UDA-SQL-0196 The table or view "dsb_sequence" was not found in the dictionary - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Attempting to run a Data Manager build via the data movement service fails with an error.
+
+Unsetting the DM_AUDIT_DB and DM_AUDIT_DB_DRIVER variables removes the error but no audit information is written. 
+
+SYMPTOM
+DM-DBM-0400 UDA driver reported the following on connection ALIAS_0106BD90
+UDA-SQL-0107 A general exception has occurred during the operation "columns".
+ORA-00942: table or view does not exist
+UDA-SQL-0196 The table or view "dsb_sequence" was not found in the dictionary.
+
+
+CAUSE
+Data Manager audit tables don't exist in the audit database
+
+ENVIRONMENT
+Windows
+
+
+DIAGNOSING THE PROBLEM
+Check DM_AUDIT_DB and DM_AUDIT_DB_DRIVER variables
+
+RESOLVING THE PROBLEM
+DM_AUDIT_DB and DM_AUDIT_DB_DRIVER variables were set but were pointing to a separate database to the Data Manager catalog database. The audit database did not contain the Data Manager audit tables.
+Either change the audit variables to use the Data Manager catalog database for auditing or create the audit tables in the audit database. The simplest way to do this is to create a new Data Manager catalog in the audit database as this will create the audit tables automatically.

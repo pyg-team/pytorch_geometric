@@ -1,0 +1,150 @@
+Title: IBM PM17714: FP4: REQUESTAGGREGATORWRAPPER NOT FOUND MESSAGE FLOODS LOGS - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Install 6.1.0.4 DC successfully and install  TEMA v6.2 FP4
+   successfully.
+   Start J2SE application and configure DC/TEMA.
+   Restart J2SE and TEMA.
+   After sending simpleaction/JDOAction/JDBC  requests, the error
+   message, "RequestAggregator was not found" can be found in the
+   log file.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   ***********************
+   * USERS AFFECTED: Customers using ITCAM for J2EE v6.1.0.4 J2SE
+   DC/TEMA
+   ****************************************************************
+   ***********************
+   ERROR DESCRIPTION:
+   
+   Install 6.1.0.4 DC successfully and install  TEMA v6.2 FP4
+   successfully.
+   Start J2SE application and configure DC/TEMA.
+   Restart J2SE and TEMA.
+   After sending simpleaction/JDOAction/JDBC  requests, the error
+   message, "RequestAggregator was not found" can be found in the
+   log file.
+   
+   ****************************************************************
+   ***********************
+   * RECOMMENDATION: apply ITCAM for J2EE V6.2, TEMA Fix Pack 5
+   when
+   * available
+   ****************************************************************
+   ***********************
+   
+   When using ITCAM for J2EE v6.1.0.4 J2SE DC/TEMA to monitor a
+   J2SE application, "RequestAggregator was not found" can be found
+   in the log file.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix for this APAR is contained in the following maintenance
+   packages:
+   | fix pack | 6.2.0-TIV-ITCAM_J2EE_TEMA-FP005
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM17714
+   
+   
+ * REPORTED COMPONENT NAME
+   ITCAM WAS DIS T
+   
+   
+ * REPORTED COMPONENT ID
+   5724L62TM
+   
+   
+ * REPORTED RELEASE
+   620
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-07-01
+   
+   
+ * CLOSED DATE
+   2010-07-15
+   
+   
+ * LAST MODIFIED DATE
+   2010-07-15
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ITCAM WAS DIS T
+   
+   
+ * FIXED COMPONENT ID
+   5724L62TM
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R610 PSY
+   UP
+   
+   
+ * R620 PSY
+   UP

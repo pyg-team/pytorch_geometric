@@ -1,0 +1,96 @@
+Title: IBM Autoscript to change color and font of pivot table - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ I would like to change the font color of the data cells, row labels, column labels, footnotes, and title for my pivot table. I would also like to change the font type for the aforementioned values. How can I do this using an Autoscript? 
+
+RESOLVING THE PROBLEM
+The following example uses a Chi-Square Tests table from the Crosstabs output. First, create a Chi-Square Tests table. Click on Analyze->Descriptive Statistics->Crosstabs. Place a categorical variable in each of the row and column box. Next, click on the Statistics pushbutton and click on the box called Chi-Square. Click Continue and then OK. Locate the Chi-Square Tests table in the Crosstabs output. Right-click on the Chi-Square Tests table and choose Create/Edit Autoscript from the pop-up menu, or click Utilities->Create/Edit Autoscript after selecting the table.
+
+To the Crosstabs_Table_ChiSquareTests_Create autoscript subroutine, below the green comments, add the following:
+
+
+objTable.SelectTable
+objTable.TextColor= RGB(255,0,255)
+objTable.TextFont= "Lucida Sans Unicode"
+
+If the other changes made by the Autoscript are not desired, they can be omitted by commenting them out by adding an apostrophe ' at the beginning of each line of text. It should turn green, indicating that it is being treated as a comment. 
+
+Anything between
+
+Sub Crosstabs_Table_ChiSquareTests_Create
+
+and
+
+End Sub
+
+can safely be deleted, but it may be better to preserve the original code as comments in case it is required later.
+
+Save the modified Autoscript.
+
+'If you would like the TextColor to be other than magenta, use the following code in place of the RGB values above.
+
+'Color code below
+'RGB values follow the color name
+'Black 0, 0, 0
+'Blue 0, 0, 255
+'Cyan 0, 255, 255
+'Green 0, 255, 0
+'Magenta 255, 0, 255
+'Red 255, 0, 0
+'White 255, 255, 255
+'Yellow 255, 255, 0
+
+'If you would like the FontType to be other than Lucida Sans Unicode, type in a different font type in the double quotes above. 
+
+Click Edit->Options->Scripts tab, and ensure that Crosstabs_Table_ChiSquareTests_Create has a checkmark and that Autoscripts are enabled. You may have to exit out of SPSS and then re-open SPSS after the changes have been made. 
+
+Run the Crosstabs procedure and make sure the Chi-Square Tests option is checked under the Statistics pushbutton. The font color and font type of the table should be magenta and Lucida Sans Unicode, respectively. 
+
+*Alternatively, in place of the added three lines in the Crosstabs_Table_ChiSquareTests_Create autoscript subroutine, above, you may insert the line, 
+
+Call ChgColFont (objTable)
+
+and then insert the following subroutine, ChgColFont, below the line, End Sub, of the 
+Crosstabs_Table_ChiSquareTests_Create autoscript subroutine. 
+
+Sub ChgColFont (objTable As Object)
+objTable.SelectTable
+objTable.TextColor= RGB(255,0,255)
+objTable.TextFont= "Lucida Sans Unicode"
+
+End Sub
+
+Your screen would look like:
+----------------------------------------do not paste these dotted separation lines ---------------------------------------
+
+Sub Crosstabs_Table_ChiSquareTests_Create(objTable As Object, objOutputDoc As Object, lngIndex As Long)
+'Autoscript
+'Trigger Event: ChiSquareTests Table Creation after running Crosstabs procedure.
+
+'additional comments in green may be here 
+
+Call ChgColFont (objTable)
+
+End Sub
+
+Sub ChgColFont (objTable As Object)
+objTable.SelectTable
+objTable.TextColor= RGB(255,0,255)
+objTable.TextFont= "Lucida Sans Unicode"
+
+End Sub
+---------------------------------------do not paste these dotted separation lines --------------------------------------------- 
+
+Both methods should produce the same result.
+
+RELATED INFORMATION
+ Need more help? Our Statistics forum is Live! [https://developer.ibm.com/answers/topics/statistics.html?smartspace=predictive-analytics]
+
+
+ 
+
+HISTORICAL NUMBER
+ 22342

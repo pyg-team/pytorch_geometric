@@ -1,0 +1,141 @@
+Title: IBM LO69973: INOTES WEBCLIENT DOES NOT RECEIVE NEW CHATS - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  I am running the WebClient from IBM SmartCloud with Instant
+   Messaging in a hybrid environment.  I am having the following
+   issue.
+   
+   I am away from my computer for a period of time. This last time
+   was an hour for a meeting.
+   
+   I came back to my desk and clicked on the we and the sametime
+   contacts went grey and then appeared.
+   
+   States I am available but, people are not able to IM me. I am
+   seeing awareness.
+   
+   I am able to IM users and they can respond.
+   A new IM from a person to me does not come through on my
+   computer.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  A programming error was found and will be corrected in a future
+    release.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A programming error was found and will be corrected in a future
+    release.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+ *  This APAR is associated with SPR# DMEN8V8SKE.
+   A programming error was found and will be corrected in a future
+    release.
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   LO69973
+   
+   
+ * REPORTED COMPONENT NAME
+   LOTUS SAMETIME
+   
+   
+ * REPORTED COMPONENT ID
+   5724J2300
+   
+   
+ * REPORTED RELEASE
+   852
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-06-13
+   
+   
+ * CLOSED DATE
+   2012-12-01
+   
+   
+ * LAST MODIFIED DATE
+   2012-12-01
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   LOTUS SAMETIME
+   
+   
+ * FIXED COMPONENT ID
+   5724J2300
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R852 PSN
+   UP

@@ -1,0 +1,45 @@
+Title: IBM Open Mic Replay: SSL and TLS in WebSphere MQ - United States
+
+Text:
+wste_webcast; WSTE; Support Technical Exchange; education; presentation; webcast; STEwebcastDocument; SSL; TLS; GSKit; iKeyMan; DCM; RACF; key repository; key database; keyring; certificate; digital certificate; personal certificate; CA; X.509; channel; JSSE WEBCAST
+
+ABSTRACT
+ This session is for WebSphere MQ users who use SSL or TLS to secure their channels. It covers an overview of terminology, certificate administration (GSKit, Java, RACF and DCM) and problem diagnosis. The session covers Windows, UNIX, IBM i, z/OS, JMS and Java (including JSSE). 
+
+CONTENT
+Open Mic sessions are conducted in a question and answer format. The table below provides a time index (minutes:seconds) to the recording and describes the questions or topics discussed. You can fast forward to any question using the time index, a table containing the panel of experts is also included.
+
+
+To play or download the audio of this Open Mic session, see the Audio Section of this document.
+
+See the Related Information Section of this document for a list of documents referenced during the presentation.
+
+
+
+
+
+
+
+
+Open Mic session 
+29 April 2010 - 11:00 a.m. - 12:00 p.m. EDT 
+
+Time Questions asked 00:00 Silence 00:00 General introduction 03:55 Technical introduction 05:21 What are CA certificates, signer certificates, personal certificates, client certificates and server certificates? 08:31 What is a certificate chain and how do I view it? 17:51 How do I renew an expired certificate? 21:50 How do I make sure that SSL/TLS is set up correctly? 36:12 What has changed in MQ SSL/TLS since version 5.3? 43:41 Must the environment variable MQSSLKEYR be always defined? Does it apply to all MQ versions and platforms? 44:57 Does SSL work for only point to point channels, or can it work in a clustered environment? If yes, how do you handle keystore and personal certificate in a clustered environment? 45:42 On Windows, we seem to require having the full certificate chain of certificates we want to authenticate, whereas on Unix it appears the root certificate CA is sufficient to authenticate. Is this difference in behavior expected between the two platforms? 47:42 We have queue managers on AIX that were installed without the SSL components and we moved them up to 6.0.2.6 and also added some additional patches to them. What is the best way to get them to use SSL? 51:41 When using the MQCONNX verb to connect a WMQ client to the server, what do I need to specify in the options for the key database or does MQSSLKEYR work? 53:15 For slide 36, how do I manipulate the OCSPs in MQ V7.0.1 to be active or not? 56:20 Closing remarks 57:19 End of Call 
+Panel of Experts: Alex Fehners WebSphere MQ New Market Reach Development Andrew Akehurst WebSphere MQ Distributed L3 Service Calista Stevens WebSphere MQ System i Level 2 Support Jonathan Rumsey Lead System i Developer WebSphere MQ Mike Horan WebSphere MQ Software Developer Rhys Francis WebSphere MQ for z/OS Level 3 Tameka Woody WebSphere MQ Windows and System i Level 2 Support Mark Womack WebSphere MQ z/OS Level 2 Support - TSANet PgmMgr Tiffanie Pearson WebSphere MQ Unix and VMS Level 2 Support 
+
+PRESENTATION
+[http://www.ibm.com/i/v16/icons/weblecture.gif]WSTE-04292010-OpenMic-SSLandTLSinWebSphereMQ-Pearson.pdf [/support/docview.wss?uid=swg27018213&aid=2] [/support/docview.wss?uid=swg27018213&aid=1]
+
+[http://www.ibm.com/i/v14/icons/sout.gif] Get Adobe Reader [http://www.adobe.com/products/acrobat/readstep2.html] to view PDF
+
+AUDIO
+[http://www.ibm.com/i/v16/icons/aud.gif]Click on Download Audio [ftp://public.dhe.ibm.com/software/websphere/techexchange/Apr-29-2010-Pearson.mp3] to play the recording of this 57 minutes conference call (6.0MB - MP3 format). Right-click and select Save As to store the file on your local computer for later playback. Remember that you can fast forward to any question using the time index.
+
+RELATED INFORMATION
+ WebSphere Support Technical Exchange [http://www.ibm.com/software/websphere/webcast]
+
+
+
+
+PRODUCT ALIAS/SYNONYM
+ WMQ MQ

@@ -1,0 +1,28 @@
+Title: IBM Jazz for Service Managementの"システム前提条件の検査"が失敗する - United States
+
+Text:
+tpc; jazz; prereq scanner; Japanese; Windows TECHNOTE(トラブルシューティング)
+
+問題(概要)
+ Tivoli Storage Productivity Center 同梱のJazz for Service Managementを導入時、"システム前提条件の検査"の各項目がすべてPASSにもかかわらず、検査結果がエラーとなり、パッケージが導入できません。 
+
+原因
+Jazz for Service Management 1.1.0.3 が使用されていますが、既知の問題、IV67746 のため、導入時の検査が失敗します。
+IV67746
+INSTALL FAILS FOR JAZZSM 1.1.0.3 ON JAPANESE WINDOWS SYSTEMS AND DURING PREREQUISITE SCAN
+
+
+解決方法
+Jazz for Service Management パッケージの解凍ディレクトリーを \JazzSMとします。 
+
+
+\JazzSM\PrereqScanner\nls\message_ja-JP.properties ファイルを編集し、下記の行を変更します。
+
+修正前
+PREREQ STR=（日本語文字列） 
+
+修正後
+PREREQ STR=Prerequisite Scan
+
+
+その後、Jazz for Service Management の導入を行ってください。

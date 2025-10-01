@@ -1,0 +1,60 @@
+Title: IBM Devices unable to establish secured connection with IBM Mobile Connect for HTTP Access Services traffic - Certificate Validation Error - United States
+
+Text:
+Certificates; Validation Error; GSK_ERROR_CERT_VALIDATION TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+This technote describes how to troubleshoot connection issues from a mobile device to the IBM Mobile Connect (IMC) Connection Manager that stem from a Certificate Validation error.
+
+CAUSE
+It is possible sometimes to obtain a certificate which may not contain all of the required root / intermediate signers. If a certificate is added to the Key Database file configured for use with IBM Mobile Connect, when this incomplete certificate is used in IMC, you get a validation failure.
+
+
+ * 
+ * [ERROR] SSLPort: failed to attach secure connection, fd=X: [X.X.X.X:29254] GSK_ERROR_CERT_VALIDATION(rc=8,ec=0)
+ * 
+
+This error is seen in the wg.log file during a connection attempt by a mobile device. 
+ * (Windows) C:\Program Files\ibm\Connection Manager\logs
+ * 
+ * (Linux) \opt\ibm\ConnectionManager\logs
+ * 
+ * (AIX) \opt\IBM\ConnectionManager\logs
+
+
+The error according to the Global Security Kit means a Certificate Validation error. 
+RESOLVING THE PROBLEM
+- In some cases this return code 8 may mean that the certificate has expired, and must be renewed in order to resume securing connections. For instructions on generating a new CSR request to accept a new certificate into the key database file, see technote 1460867 - Using SSL certificates with IBM Mobile Connect & HTTP Access Services [http://www.ibm.com/support/docview.wss?uid=swg21460867] 
+
+ 
+
+- Another reason for the rc=8 is that not all of the required root signer certificates have been added into the key database (.kdb) file using the Key Manager. Sometimes certificates have Intermediate signers which are also required in order to fully secure a device to server connection. Unless all required signers are included in the KDB file, the failure above will occur. 
+
+ 
+
+- Actions to take if the certificate is not expired is to go back to the Certificate Authority to determine what trusted root certificates are required for this certificate type. Then have them send those files for addition to the key database file. Or, alternatively, use the Key Management utility to try and import the certificate into the key database, which may result in getting the Personal Certificate into the keystore as well as the trusted signer's. Steps provided below. 
+
+ * 
+ * 
+ * 
+ * 
+   [/support/docview.wss?uid=swg21672723&aid=1] [/support/docview.wss?uid=swg21672723&aid=1]
+   
+   2. Select the Import Key option (may be the only option if no other certificates are currently in this database) and browse to your certificate file on the computer. Be sure to choose the correct key file type. PKCS12 will normally work the best with the Key Manager.
+   
+   [/support/docview.wss?uid=swg21672723&aid=2] [/support/docview.wss?uid=swg21672723&aid=2]
+   
+   3. You will get a popup showing the list of labels available for the certificate. Click OK
+   
+   [/support/docview.wss?uid=swg21672723&aid=3] [/support/docview.wss?uid=swg21672723&aid=3]
+   
+   
+   4. You are offered the change to change the selected label. Select OK and now the trusted root signer certificates should be viewable from the Signer Certificates view in the Key Management.
+   
+   [/support/docview.wss?uid=swg21672723&aid=4] [/support/docview.wss?uid=swg21672723&aid=4]
+   
+   5. Close the Key Database File and Key Management
+   
+   6. Restart the Connection Manager as any change to certificates which are being used or to be used immediately will require a restart of the Connection Manager. 
+   
+   7. Attempt to log in to the Connection Manager now and devices should be able to successfully connect provided the entire trusted root signers are stored within the key database. Check the wg.log if the problem is not resolved, and engage the IBM Support team if necessary. https://www-947.ibm.com/account/userservices/jsp/login.jsp?persistPage=true&page=/support/entry/myportal/product&PD-REFERER=http://www-947.ibm.com/support/entry/portal/product/collaboration_solutions/ibm_mobile_connect%3FproductContext%3D-1038176277&error= [https://www-947.ibm.com/account/userservices/jsp/login.jsp?persistPage=true&page=/support/entry/myportal/product&PD-REFERER=http://www-947.ibm.com/support/entry/portal/product/collaboration_solutions/ibm_mobile_connect%3FproductContext%3D-1038176277&error=]

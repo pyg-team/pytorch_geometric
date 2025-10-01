@@ -1,0 +1,30 @@
+Title: IBM Why do some custodians receive a system error when submitting an interview? - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Why do some custodians receive a system error when submitting an interview? 
+
+ANSWER
+If some custodians are reporting that they receive a system error screen when submitting an interview and other custodians are submitting their responses successfully this could be related to an authentication/single sign-on (SSO) timeout issue. There are a couple of clues to focus on to identify if this is the issue.
+
+(1) Try to ask some of the custodians who encountered the error how long they spent responding to the interview. If you find that they are spending a long time like 30 minutes or an hour before they finally click submit this is a clue that a timeout is being reached.
+
+(2) From the application log files if you see exceptions similiar to the following during times when custodians said they received the system error it is also another clue:
+
+Caused by: java.lang.NumberFormatException: null
+at java.lang.Long.parseLong(Long.java:372)
+at java.lang.Long.valueOf(Long.java:518)
+at pagecode.pages.matter.QuestionnaireResponse.onPageLoadBegin(QuestionnaireResponse.java:51)
+
+The first thing to understand when attacking this issue is to figure out exactly what the authentication/SSO timeout is in your environment. Is is 30 minutes, 1 hour? If the timeout is very short this becomes an issue for the interview as they are often lengthy and require a Custodian to research information.
+
+For customers running Atlas version 4.x, it is recommended to clearly state in the interview header how long the timeout value is to warn custodians to not leave the application open that long before submitting their responses. If the custodians know that it will take a long time to put the responses together they should collect the information offline before responding to the actual interview.
+
+For customers running Atlas version 5.x and beyond there is functionality that allows custodians to save a draft of their interview responses. There is also an auto-save feature that is configurable by an administrator. With these two new features it will prevent custodians from encountering the system error and losing all the responses they entered.
+
+
+
+HISTORICAL NUMBER
+ 1349

@@ -1,0 +1,92 @@
+Title: IBM Installation failure for Tivoli Integrated Portal - United States
+
+Text:
+TIPL2; TIPL2INST; FileNotFoundException; Tivoli Integrated Portal; TIP 00001_IAGLOBAL_COI_STEP_eWAS; CIT TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ IBM products, which include the IBM® Tivoli® Integrated Portal (TIP) component, fail during the TIP installation steps when the host system has EMC disks installed. 
+
+SYMPTOM
+The product installation fails during the TIP installation steps. The installation log includes the following error:
+
+
+IA-TIPInstall-00.log: 
+
+...
+The following error occurred while executing this line:
+/opt/IBM/tivoli/tip/_uninst/TIPInstall/plan/install/MachinePlan_localhost/00001_IAGLOBAL_COI_STEP_eWAS/IAGLOBAL_COI_STEP_eWAS.xml:292: 
+java.io.FileNotFoundException: /opt/IBM/tivoli/tip/properties/TIPPortDef.properties (A file or directory in the path name does not exist.)
+
+Locate the log (IA-*.log) in the following locations:
+
+[/support/docview.wss?uid=swg21499664&amp;aid=1]
+The install log will be in the installing user's home directory.
+
+[/support/docview.wss?uid=swg21499664&amp;aid=2]
+c:\Document and Settings\<group or install user> 
+
+
+CAUSE
+Deployment Engine (DE) releases older than 1.3.1.23 or 1.4.0.3 are unable to parse the xml output from the /usr/ibm/common/acsi/bin/wscanhw command when the host system uses EMC storage devices. For example, the "&gt" in the device serial number below is interpreted as a symbol ">", and not a literal string which breaks the XML structure:
+
+
+
+<Storage version="1" timestamp="1281369091">
+<Index IsKey="1">6</Index>
+<ID IsKey="1">1b453412a68a198100c6a9563eb0c8fe</ID>
+<Type>Hard Disk</Type>
+<Model>SYMMETRIX</Model>
+<Manufacturer>EMC</Manufacturer>
+<SerialNumber>59!+&gt;000Q</SerialNumber>
+<Cylinders>44</Cylinders>
+<Sectors>64</Sectors>
+<Heads>15</Heads>
+<TotalSize>20</TotalSize>
+</Storage> 
+
+The issue is addressed in DE release 1.3.1.23 and 1.4.0.3. 
+
+ENVIRONMENT
+All TIP consuming products
+
+
+
+DIAGNOSING THE PROBLEM
+Examine the IA-TIPInstall-00.log for the error: 
+
+The following error occurred while executing this line:
+/opt/IBM/tivoli/tip/_uninst/TIPInstall/plan/install/MachinePlan_localhost/00001_IAGLOBAL_COI_STEP_eWAS/IAGLOBAL_COI_STEP_eWAS.xml:292: 
+java.io.FileNotFoundException: /opt/IBM/tivoli/tip/properties/TIPPortDef.properties (A file or directory in the path name does not exist.)
+
+Execute the following command to capture the hardware scan performed by the WebSphere installation step:
+
+
+[/support/docview.wss?uid=swg21499664&amp;aid=3]
+For root installations:
+/usr/ibm/common/acsi/bin/wscanhw > /tmp/wscanhw.out
+
+For non-root installations:
+<home>/<user name>/asci/bin/wscanhw > /tmp/wscanhw.out
+
+[/support/docview.wss?uid=swg21499664&amp;aid=4]
+wscanhw.bat >> wscanhw.out
+
+Examine the wscanhw.out file for the existence of XML entities such as "&lt;" or "&gt;" in either the device serial number values, or any other fields populated by the output of the wscanhw command.
+
+
+RESOLVING THE PROBLEM
+Those deploying the product should incorporate DE 1.4.0.3 as early as possible. 
+
+
+Acquire DE version 1.3.1.23 (if you are using DE 1.3.1.22 and lower) or 1.4.0.3 (if you are using DE 1.4.0.2 and lower)
+
+DE packages can be acquired from: https://cs.opensource.ibm.com/frs/?group_id=1059 [https://cs.opensource.ibm.com/frs/?group_id=1059]. 
+
+Upgrade the DE version in the product installation package
+
+
+ 1. Open the archive of the consuming product installation package into the temporary directory on the target server. 
+ 2. Replace the setup.jar file located in the installation media:
+    Locate the "DE/.data" subdirectory in the installation package. Replace the setup.jar in that location with the recommended (DE 1.3.0.23/DE 1.4.0.3 or higher) version of the same file. 
+ 3. Make sure that the setup.jar file has sufficient access permission for the user which will be running the Installer. 
+ 4. Retry the installation of the consuming product.

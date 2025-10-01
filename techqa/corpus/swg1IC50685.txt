@@ -1,0 +1,156 @@
+Title: IBM IC50685: NON-NATIVE STATIC LIBRARY MQMTNS CREATED AS FORMAT 2 FILE RESULTS IN BINDING THIS LIBRARY TO FAIL. - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Download and Installation of WebSphere MQ for HP NonStop Server, V5.3.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24014780]
+WebSphere MQ for HP NonStop Server V5.3.1 fix pack 5.3.1.6 [http://www-01.ibm.com/support/docview.wss?uid=swg24025461]
+WebSphere MQ for HP NonStop Server V5.3.1 fix pack 5.3.1.7 [http://www-01.ibm.com/support/docview.wss?uid=swg24027369]
+WebSphere MQ for HP NonStop Server V5.3.1 fix pack 5.3.1.8 [http://www-01.ibm.com/support/docview.wss?uid=swg24030009]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  WebSphere MQ V5.3 for NSS Itanium (All patch level)
+   WebSphere MQ for NSS provides non-native static library MQMTNS
+   (file code 100)
+   
+   This file is created as format 2 file when installing WebSphere
+   MQ on H06.06 or higher RVU.
+   
+   This causes BINDing MQMTNS to fail because BIND doesn't support
+   Format 2 file.
+   
+   Side effect by changing Format 2 is VPROC and NOFT on Guardian
+   return error 580 as well as BIND.
+   
+   (NOFT on OSS can handle Format 2 file)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *   Needed changes by the customer will be made.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *   Instmqm runs in the HP Open System Services
+   (OSS) environment, copying files to the Guardian file system as
+   required to complete an installation of WMQ for HP NonStop
+   Server.  In the G06.29 or H06.06.00 or higher levels of OSS,
+   instmqm copies the non-native library MQMTNS to Guardian.  A
+   subsequent attempt to link applications with MQMTNS fails with
+   an error from the BIND utility indicating that the MQMTNS
+   library is an unsupported format.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *   In the G06.29 or H06.06.00 or higher levels
+   of HP OSS, a change was made by HP to OSS to support files
+   larger than 2Gb.  The underlying Guardian file is created using
+   the non-default Format 2 structure for these large files.  If an
+   OSS file of any size is copied to Guardian using the OSS 'cp'
+   utility, the fileis created in Guardian as a Format 2 file.
+   Instmqm uses 'cp' to copy MQMTNS to Guardian and it gets created
+   as a Format 2 file.  Unfortunately the HP non-native linker,
+   BIND, does not support Format 2 files and hence fails.
+   The fix is for instmqm to create an empty MQMTNS as a Format 1
+   file, and then append the data from the OSS file to the new
+   file using the OSS 'cat' utility.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC50685
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBS MQ NSS ITA
+   
+   
+ * REPORTED COMPONENT ID
+   5724A3902
+   
+   
+ * REPORTED RELEASE
+   530
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2006-10-04
+   
+   
+ * CLOSED DATE
+   2007-01-30
+   
+   
+ * LAST MODIFIED DATE
+   2007-01-30
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBS MQ NSS ITA
+   
+   
+ * FIXED COMPONENT ID
+   5724A3902
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R530 PSY
+   UP

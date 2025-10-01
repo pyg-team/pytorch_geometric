@@ -1,0 +1,33 @@
+Title: IBM SPSS Authorization codes are incorrectly generated - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ I have recently purchases an additional module for SPSS base such as CTABLES. I received the authorization code and entered it successfully. However when I start SPSS, the requested module is absent. Running command syntax for this module prompts me with the error message below. Why is this happening?
+
+Error # 70xx
+There is no license for <this module>
+This command not executed.
+
+Specific symptom number: 18 
+
+RESOLVING THE PROBLEM
+Please contact SPSS Customer Service to verify the accuracy of the code. If you have a valid code, please use it in License Authorzation Wizard and verify that the corresponding license has been saved to your lservrc file. 
+
+We also see this error when an incorrect authorization code has been generated for your release of SPSS. Again Customer Service will be able to determine whether or not the code is valid. For North America you may use the contact information below.
+
+North America
+Phone: (800) 521-1337
+EMAIL: spsscs@us.ibm.com
+
+Once you receive the new code, enter it by selecting Start->Programs->SPSS Inc->License Authorization Wizard. Follow the instructions in the License Authorization Wizard and you should now have the requested module
+
+RELATED INFORMATION
+ Need more help? Our Statistics forum is Live! [https://developer.ibm.com/answers/topics/statistics.html?smartspace=predictive-analytics]
+
+
+ 
+
+HISTORICAL NUMBER
+ 67914

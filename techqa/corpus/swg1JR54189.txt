@@ -1,0 +1,169 @@
+Title: IBM JR54189: ARRAY INDEX OUT OF BOUNDS EXCEPTION WRITTEN TO FFDC WHEN YOU ACCESS THE DEPLOYMENT ENVIRONMENT FROM THE ADMIN CONSOLE - United States
+
+Text:
+  A FIX IS AVAILABLE
+Version 8.5 Refresh Pack 7 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24041575]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When there is a SI (system integration) bus with no messaging
+   engines, you cannot access the IBM Business Process Manager
+   (BPM) deployment environment (DE) from the admin console. The
+   existing DE is not listed and an FFDC entry is written that
+   contains the following ArrayIndexOutOfBoundsException:
+   
+   
+     [9/1/15 11:06:03:556 PDT] FFDC
+   Exception:java.lang.ArrayIndexOutOfBoundsException
+   SourceId:com.ibm.ws.console.wbi.ndtopology.NDTopologyRTHelper.ge
+   tTopologyDetailForms ProbeId:100
+   Reporter:java.lang.Class@c386f53e
+   java.lang.ArrayIndexOutOfBoundsException: Array index out of
+   range: 0
+     at
+   com.ibm.bpm.config.model.wccm.util.DataSourceHelper.getMEDataSou
+   rcesJndiNames(DataSourceHelper.java:127)
+   at
+   com.ibm.bpm.config.model.wccm.util.DataSourceHelper.populateData
+   SourceInfo(DataSourceHelper.java:152)
+   at
+   com.ibm.bpm.config.model.wccm.util.DataSourceHelper.getDataSourc
+   es(DataSourceHelper.java:81)
+   at
+   com.ibm.bpm.config.model.wccm.util.DataSourceHelper.getDataSourc
+   es(DataSourceHelper.java:58)
+   at
+   com.ibm.ws.console.wbi.ndtopology.NDTopologyRTHelper.getTopology
+   DetailForm(NDTopologyRTHelper.java:153)
+   at
+   com.ibm.ws.console.wbi.ndtopology.NDTopologyRTHelper.getTopology
+   DetailForms(NDTopologyRTHelper.java:100)
+   at
+   com.ibm.ws.console.wbi.ndtopology.NDTopologyHelper.initCollectio
+   nFormList(NDTopologyHelper.java:448)
+   at
+   com.ibm.ws.console.wbi.ndtopology.NDTopologyCollectionController
+   .createCollectionForm(NDTopologyCollectionController.java:49)
+   at
+   com.ibm.ws.console.wbi.common.BaseController2.getCollectionForm(
+   BaseController2.java:197)
+   at
+   com.ibm.ws.console.wbi.common.BaseController2.perform(BaseContro
+   ller2.java:144)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  * If you see the problem when you creating new SIBUS ,
+   unrelated to any of the BPM deployment environment , complete
+   the SIBUS configuration by creating database for ME datastore.
+   or delete the unused SIBUS
+   
+   * You may also see this problem, if you saved a new Deployment
+   environment which had problems creating the database tables
+   when generating the DE environment.   You can complete the
+   manually creating the required database  to complete the DE
+   creation or delete the new Deployment environment using
+   BPMConfig -delete option  and recreate the DE environment after
+   fixing the previous database creation failures
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  No additional information is available.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+ *  You can add message engines for the SI (system integration) bus
+   , or remove it if it is not required.
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR54189
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM ADVANCED
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9400
+   
+   
+ * REPORTED RELEASE
+   855
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-09-01
+   
+   
+ * CLOSED DATE
+   2015-11-02
+   
+   
+ * LAST MODIFIED DATE
+   2015-11-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R855 PSY
+   UP

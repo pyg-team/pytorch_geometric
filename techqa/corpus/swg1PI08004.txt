@@ -1,0 +1,182 @@
+Title: IBM PI08004: PORTAL CLIENT SUPPORT FOR ORACLE JAVA 7 U51 - United States
+
+Text:
+z/os SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS UNREPRODUCIBLE IN NEXT RELEASE.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Support security enhancements introduced in Oracle Java 7 u51
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Set JRE security level to medium or lower.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: OMEGAMON XE for DB2 PE/DB2PM                 *
+   *                 users of component                           *
+   *                 - TEMA / TEMS                                *
+   *                 - TEP                                        *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: For OMPE V510 only.                     *
+   *                      TEP Client support for                  *
+   *                      Oracle Java 7 u51.                      *
+   ****************************************************************
+   * RECOMMENDATION: For OMPE V510 apply this PTF and             *
+   *                 install fixpack 5.1.0-TIV-KD5-FP0002.        *
+   ****************************************************************
+   PROBLEM SUMMARY:
+   TEP Client support for Oracle Java 7 u51.
+   Oracle Java 7 u51 provides additional security updates that
+   require that all JAR files used in applet or Java Web Start
+   deployments have the permissions attribute set in the JAR
+   manifest file. This requirement will affect the TEP client,
+   both browser and Java Web Start modes. Without compliance with
+   this requirement, the TEP client may not start after
+   downloading. This issue does not affect other releases or
+   levels of Java.
+   
+   PROBLEM CONCLUSION:
+   The supplied application support for OMEGAMON XE for DB2 PE/PM
+   has been rebuilt to comply with the new security requirements
+   of Oracle Java 7 u51.
+   
+   KEYWORDS:
+   TEP CLIENT ORACLE JAVA 7 U51 PERMISSION
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *  PROBLEM SUMMARY:
+   TEP Client support for Oracle Java 7 u51.
+   Oracle Java 7 u51 provides additional security updates that
+   require that all JAR files used in applet or Java Web Start
+   deployments have the permissions attribute set in the JAR
+   manifest file. This requirement will affect the TEP client,
+   both browser and Java Web Start modes. Without compliance with
+   this requirement, the TEP client may not start after
+   downloading. This issue does not affect other releases or
+   levels of Java.
+   
+   PROBLEM CONCLUSION:
+   The supplied application support for OMEGAMON XE for DB2 PE/PM
+   has been rebuilt to comply with the new security requirements
+   of Oracle Java 7 u51.
+   
+   KEYWORDS:
+   TEP CLIENT ORACLE JAVA 7 U51 PERMISSION
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI08004
+   
+   
+ * REPORTED COMPONENT NAME
+   OM XE DB2PE/PM
+   
+   
+ * REPORTED COMPONENT ID
+   5655OPE00
+   
+   
+ * REPORTED RELEASE
+   510
+   
+   
+ * STATUS
+   CLOSED UR1
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   YesSpecatt / Serviceability
+   
+   
+ * SUBMITTED DATE
+   2013-12-13
+   
+   
+ * CLOSED DATE
+   2014-05-13
+   
+   
+ * LAST MODIFIED DATE
+   2014-06-03
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    PI08011 [http://www-01.ibm.com/support/docview.wss?uid=swg1PI08011] PI08012 [http://www-01.ibm.com/support/docview.wss?uid=swg1PI08012]
+   
+   
+
+MODULES/MACROS
+ *  DUMM1KO2
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   OM XE DB2PE/PM
+   
+   
+ * FIXED COMPONENT ID
+   5655OPE00
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R510 PSN UI17917 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI17917]
+   UP14/05/31 P F405
+   
+   
+ * R520 PSN UI17918 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI17918]
+   UP14/05/31 P F405
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

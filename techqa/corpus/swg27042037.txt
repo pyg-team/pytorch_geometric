@@ -1,0 +1,88 @@
+Title: IBM Detailed System Requirements for IBM InfoSphere Optim Archive Enterprise Edition, Optim Archive Work Group Edition, Optim Data Growth Solution, and Optim Solution for Application Retirement - United States
+
+Text:
+ DETAILED SYSTEM REQUIREMENTS
+
+ABSTRACT
+ The IBM® InfoSphere® Optim™ Archive Enterprise Edition, Optim Archive Work Group Edition, Optim Data Growth Solution, Optim Solution for Application Retirement, Optim Solution for Application Retirement - Open Data Manager, and Information Lifecycle Governance for Structured Data consist of a number of components. The system requirements for the components are compiled in this document. 
+
+CONTENT
+
+
+In general, all data growth, archive, and application retirement products support these data sources [http://www.ibm.com/support/docview.wss?&uid=swg27041700#sources]. Use the following links to view the detailed system requirements for each component and product. All data growth, archive, and application retirement products include the following components:
+
+ Workstation and server [http://www.ibm.com/support/docview.wss?&uid=swg27043068]
+
+ Designer [http://www.ibm.com/support/docview.wss?&uid=swg27043069]
+
+ Web applications [http://www.ibm.com/support/docview.wss?&uid=swg27043070]
+
+Use the following links to view additional requirements by product:
+
+ * IBM InfoSphere Optim Archive Enterprise Edition
+ * IBM InfoSphere Optim Information Lifecycle Governance for Structured Data
+ * IBM InfoSphere Optim Archive Workgroup Edition
+ * IBM InfoSphere Optim Data Growth Solution
+ * IBM InfoSphere Optim Solution for Application Retirement
+ * IBM InfoSphere Optim Data Growth Starter Edition for JD Edwards
+
+IBM INFOSPHERE OPTIM ARCHIVE ENTERPRISE EDITION
+ * IBM InfoSphere Federation Server v10.5 [http://www.ibm.com/support/docview.wss?&uid=swg27040515]
+ * IBM InfoSphere Big Insights Standard Edition v3.0 [http://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1369437433336&osPlatform=Linux]
+ * IBM InfoSphere Data Explorer v9.0 [http://pic.dhe.ibm.com/infocenter/dataexpl/v9r0/index.jsp?topic=%2Fcom.ibm.swg.im.infosphere.dataexplorer.product.doc%2Fcom.ibm.swg.im.infosphere.dataexpl.common.doc%2Fc_installation-requirements.html]
+ * IBM Infosphere Discovery v4.6.2 [http://www.ibm.com/software/reports/compatibility/clarity/softwareReqsForProduct.html]
+ *  IBM InfoSphere Information Governance Catalog v11.3 [http://www.ibm.com/support/docview.wss?uid=swg27042343]
+ * IBM InfoSphere Optim Archive Enterprise Edition for Oracle Applications:  * IBM InfoSphere Optim Data Growth Solution for JD Edwards EnterpriseOne 11.3 [http://www.ibm.com/support/docview.wss?&uid=swg27041747]
+    * IBM InfoSphere Optim Solution for Application Retirement for JD Edwards EnterpriseOne 11.3 [http://www.ibm.com/support/docview.wss?&uid=swg27041747]
+    * IBM InfoSphere Optim Data Growth Solution for Oracle E-Business 11.3 [http://www.ibm.com/support/docview.wss?&uid=swg27041756]
+    * IBM InfoSphere Optim Solution for Application Retirement for Oracle E-Business 11.3 [http://www.ibm.com/support/docview.wss?&uid=swg27041756]
+    * IBM InfoSphere Optim Data Growth Solution for PeopleSoft Enterprise 11.3 [http://www.ibm.com/support/docview.wss?&uid=swg27041757]
+    * IBM InfoSphere Optim Solution for Application Retirement for PeopleSoft Enterprise 11.3 [http://www.ibm.com/support/docview.wss?&uid=swg27041757]
+    * IBM InfoSphere Optim Data Growth Solution for Siebel CRM 11.3 [http://www.ibm.com/support/docview.wss?&uid=swg27041751]
+    * IBM InfoSphere Optim Solution for Application Retirement for Siebel CRM 11.3 [http://www.ibm.com/support/docview.wss?&uid=swg27041751]
+   
+   
+ * IBM InfoSphere Optim Archive Enterprise Edition Guardium Data Usage Analyzer:  * InfoSphere Guardium Collector Software Appliance 9.1 [http://www.ibm.com/support/docview.wss?&uid=swg27039049]
+    * InfoSphere Guardium Standard Activity Monitor for Databases 9.1 [http://www.ibm.com/support/docview.wss?&uid=swg27039049]
+    * IBM InfoSphere Guardium - Entitlement Reports 9.1 [http://www.ibm.com/support/docview.wss?&uid=swg27039049]
+   
+   
+
+IBM INFOSPHERE OPTIM INFORMATION LIFECYCLE GOVERNANCE FOR STRUCTURED DATA
+ * IBM InfoSphere Optim Information Lifecycle Governance for Structured Data.  * IBM InfoSphere Federation Server v10.5 [http://www.ibm.com/support/docview.wss?&uid=swg27040515]
+    * IBM InfoSphere Big Insights Standard Edition v3.0 [http://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1369437433336&osPlatform=Linux]
+    * IBM InfoSphere Data Explorer v9.0 [http://pic.dhe.ibm.com/infocenter/dataexpl/v9r0/index.jsp?topic=%2Fcom.ibm.swg.im.infosphere.dataexplorer.product.doc%2Fcom.ibm.swg.im.infosphere.dataexpl.common.doc%2Fc_installation-requirements.html]
+    * IBM Infosphere Discovery v4.6.2 [http://www.ibm.com/software/reports/compatibility/clarity/softwareReqsForProduct.html]
+    *  IBM InfoSphere Information Governance Catalog v11.3 [http://www.ibm.com/support/docview.wss?uid=swg27042343]
+   
+   
+ * IBM InfoSphere Optim Information Lifecycle Governance for Oracle Applications:  * IBM InfoSphere Optim Data Growth Solution for JD Edwards EnterpriseOne 11.3 [http://www.ibm.com/support/docview.wss?&uid=swg27041747]
+    * IBM InfoSphere Optim Data Growth Solution for Oracle E-Business 11.3 [http://www.ibm.com/support/docview.wss?&uid=swg27041756]
+    * IBM InfoSphere Optim Data Growth Solution for PeopleSoft Enterprise 11.3 [http://www.ibm.com/support/docview.wss?&uid=swg27041757]
+    * IBM InfoSphere Optim Data Growth Solution for Siebel CRM 11.3 [http://www.ibm.com/support/docview.wss?&uid=swg27041751]
+   
+   
+
+IBM INFOSPHERE OPTIM ARCHIVE WORKGROUP EDITION
+ * IBM InfoSphere Federation Server v10.5 [http://www.ibm.com/support/docview.wss?&uid=swg27040515]
+ * IBM InfoSphere Optim Archive Workgroup Edition Non-Relational Connectors:  * IBM InfoSphere Optim Data Growth Solution for JD Edwards EnterpriseOne 11.3 [http://www.ibm.com/support/docview.wss?&uid=swg27041747]
+    * IBM InfoSphere Optim Solution for Application Retirement for JD Edwards EnterpriseOne 11.3 [http://www.ibm.com/support/docview.wss?&uid=swg27041747]
+    * IBM InfoSphere Optim Data Growth Solution for Oracle E-Business 11.3 [http://www.ibm.com/support/docview.wss?&uid=swg27041756]
+    * IBM InfoSphere Optim Solution for Application Retirement for Oracle E-Business 11.3 [http://www.ibm.com/support/docview.wss?&uid=swg27041756]
+    * IBM InfoSphere Optim Data Growth Solution for PeopleSoft Enterprise 11.3 [http://www.ibm.com/support/docview.wss?&uid=swg27041757]
+    * IBM InfoSphere Optim Solution for Application Retirement for PeopleSoft Enterprise 11.3 [http://www.ibm.com/support/docview.wss?&uid=swg27041757]
+    * IBM InfoSphere Optim Data Growth Solution for Siebel CRM 11.3 [http://www.ibm.com/support/docview.wss?&uid=swg27041751]
+    * IBM InfoSphere Optim Solution for Application Retirement for Siebel CRM 11.3 [http://www.ibm.com/support/docview.wss?&uid=swg27041751]
+   
+   
+
+IBM INFOSPHERE OPTIM DATA GROWTH SOLUTION
+ * IBM InfoSphere Federation Server v10.5 [http://www.ibm.com/support/docview.wss?&uid=swg27040515]
+ * IBM InfoSphere Data Explorer v9.0 [http://pic.dhe.ibm.com/infocenter/dataexpl/v9r0/index.jsp?topic=%2Fcom.ibm.swg.im.infosphere.dataexplorer.product.doc%2Fcom.ibm.swg.im.infosphere.dataexpl.common.doc%2Fc_installation-requirements.html]
+
+IBM INFOSPHERE OPTIM SOLUTION FOR APPLICATION RETIREMENT 11.3
+ * IBM InfoSphere Federation Server v10.5 [http://www.ibm.com/support/docview.wss?&uid=swg27040515]
+ * IBM InfoSphere Data Explorer v9.0 [http://pic.dhe.ibm.com/infocenter/dataexpl/v9r0/index.jsp?topic=%2Fcom.ibm.swg.im.infosphere.dataexplorer.product.doc%2Fcom.ibm.swg.im.infosphere.dataexpl.common.doc%2Fc_installation-requirements.html]
+
+IBM INFOSPHERE OPTIM DATA GROWTH STARTER EDITION FOR JD EDWARDS
+ * IBM InfoSphere Federation Server v10.5 [http://www.ibm.com/support/docview.wss?&uid=swg27040515]

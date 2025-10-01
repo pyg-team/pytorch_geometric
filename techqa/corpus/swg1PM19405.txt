@@ -1,0 +1,213 @@
+Title: IBM PM19405: WASREQURL WRONG WHEN PAGES RENDER SLOWLY - United States
+
+Text:
+  FIXES ARE AVAILABLE
+6.1.0.5 Download: WebSphere Portal and WCM V6.1.0 fix pack 5 [http://www-01.ibm.com/support/docview.wss?uid=swg24027475]
+Fixes integrated in WebSphere Portal V7.0 Combined Cumulative Fix [http://www-01.ibm.com/support/docview.wss?uid=swg24027254]
+Recommended Updates for WebSphere Portal and IBM Web Content Manager V7.0 [http://www-01.ibm.com/support/docview.wss?uid=swg24027857]
+6.1.0.6 Download: WebSphere Portal and WCM V6.1.0 fix pack 6 [http://www-01.ibm.com/support/docview.wss?uid=swg24030970]
+7.0.0.2 Download: WebSphere Portal and WCM V7.0 fix pack 2 [http://www-01.ibm.com/support/docview.wss?uid=swg24031676]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When a user opens two browser windows and has two authenticated
+   Portal sessions, rendering a page in one window while logging
+   out in the second window can lead to the WasReqURL cookie being
+   wrong. That is, the WasReqURL cookie will point to the first
+   resource that is requested without a valid security context (as
+   the logout in the second window has already been processed).
+   When the same user tried to login again with second window, the
+   login process believes the WasReqURL cookie to point a Portal
+   page that the user wants to visit, when in fact it is just a
+   resource (e.g. an image) that was requested from the first
+   window. Rather than landing on a proper Portal page, the user
+   is redirected to that resource.
+   
+   In more common use case scenarios, the effect observed will be
+   the end user will be redirected and see a Web Content Management
+   (WCM) image after login, rather than the expected / default
+   Portal landing page.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  None available.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  When a user opens two browser windows and has two
+   authenticated Portal sessions, rendering a page in one window
+   while logging out in the second window can lead to the WasReqURL
+   cookie being wrong. That is, the WasReqURL cookie will point to
+   the first resource that is requested without a valid security
+   context (as the logout in the second window has already been
+   processed). When the same user tried to login again with second
+   window, the login process believes the WasReqURL cookie to point
+   a Portal page that the user wants to visit, when in fact it is
+   just a resource (e.g. an image) that was requested from the
+   first window. Rather than landing on a proper Portal page, the
+   user is redirected to that resource.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This APAR introduces a login filter that can be enabled and
+   configured to validate the WasReqURL cookie. In the WAS Admin
+   Console, add the following custom property to the resource
+   environment provider "WP Authentication Service":
+   
+   login.explicit.filterchain=com.ibm.wps.auth.impl.ValidateRedirec
+   tLoginFilter
+   
+   You can determine which redirect URLs should be considered as
+   "invalid" and should be replaced by a default redirect URL by
+   setting the following additional property:
+   
+   filterchain.properties.com.ibm.wps.auth.impl.ValidateRedirectLog
+   inFilter.blacklist.pattern=<regexp>
+   
+   where "regexp" will be interpreted as a regular expression (see
+   java.util.regex.Pattern) and compared to redirect URL
+   (case-insensitive). If, for example, all redirect URLs that end
+   with *.* should be considered as invalid, the following pattern
+   can be used: .*/[^/]*[.]+[^/]*
+   
+   If the current redirect URL matches the specified pattern, then
+   this redirect URL will be replaced by "/wps/myportal". A
+   different redirect URL can be configured with property:
+   
+   filterchain.properties.com.ibm.wps.auth.impl.ValidateRedirectLog
+   inFilter.redirect.url
+   
+   Failing Module(s):
+      Authorization/Authentication (login/logout)
+   
+   Affected Users:
+      All users
+   
+   Version Information:
+      Portal Version(s): 6.1.0.3, 6.1.0.4
+       Pre-Requisite(s): ---
+        Co-Requisite(s): ---
+   
+   Manuel Steps:
+      None
+   
+   Platform Specific:
+      This fix applies to all platforms.
+   
+   
+   PM19405 is part of Cumulative Fix 07 for Portal 6.1.0.3 /
+   6.1.5.0:
+   http://www.ibm.com/eserver/support/fixes/fixcentral/swgquickorde
+   r?apar=PM18585&productid=WebSphere%20Portal&brandid=5 [http://www.ibm.com/eserver/support/fixes/fixcentral/swgquickorder?apar=PM18585&productid=WebSphere%20Portal&brandid=5]
+   
+   and also part of Cumulative Fix 07 for Portal 6.1.0.4 / 6.1.5.1:
+   http://www.ibm.com/eserver/support/fixes/fixcentral/swgquickorde
+   r?apar=PM18610&productid=WebSphere%20Portal&brandid=5 [http://www.ibm.com/eserver/support/fixes/fixcentral/swgquickorder?apar=PM18610&productid=WebSphere%20Portal&brandid=5]
+   
+   You may need to type or paste the complete address into your Web
+   browser.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM19405
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSPHERE PORTA
+   
+   
+ * REPORTED COMPONENT ID
+   5724E7600
+   
+   
+ * REPORTED RELEASE
+   615
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-07-29
+   
+   
+ * CLOSED DATE
+   2010-08-31
+   
+   
+ * LAST MODIFIED DATE
+   2010-09-27
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBSPHERE PORTA
+   
+   
+ * FIXED COMPONENT ID
+   5724E7600
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R615 PSY
+   UP
+   
+   
+ * R61C PSY
+   UP

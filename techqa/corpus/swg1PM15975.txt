@@ -1,0 +1,176 @@
+Title: IBM PM15975: DFHAP0001 ABEND (CODE 0C1/AKEA) OR 0C4 IN DFHMQCON DURING CICS START UP JUST AFTER MESSAGE DFHMQ0307. 10/06/08 PTF PECHANGE - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Sometimes during restart of a CICS region an 0C1 in Module
+   DFHMQCON occurs during connection to MQ-Series (V6)
+   The CICS TS 4.1 message log shows :
+   DFHMQ0307  CICS1234 Successful connection to queue manager MQT4
+                       release 0600 group MQTS
+   DFHAP0001  CICS1234 An abend (code 0C1/AKEA) has occurred at
+   offset X'FFFFFFFF' in module DFHMQCON
+   Another time an abend 0c4 occurs :
+   DFHAP0001 CICS5678 An abend (code 0C4/AKEA) has occurred at
+   offset X'FFFFFFFF' in module DFHMQCON.
+   Another time an abend 0c6 occurs :
+   DFHAP0001 CICS5678 An abend (code 0C6/AKEA) has occurred at
+   offset X'FFFFFFFF' in module DFHMQCON.
+   
+   .
+   The failing transaction is always CPLT and this task
+   has picked up a register save area from the CICS CSA
+   (CSAOSRSA).
+   Just prior to issuing the DFHMQ0307 message in DFHMQCON (during
+   which we go into the WAIT) we had previously issued a DFHDSAT
+   macro call to perform RELEASE_OPEN_TCB function and that set
+   R13 to point at the CSA. After that call R13 should have been
+   reset to point to EISTG and failure to reset R13 led to
+   an incorrect register save area getting loaded causing 0c1 / 0c4
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All CICS Transaction Server for z/OS V3.2    *
+   *                 users who have applied PTF UK55399.          *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Various program checks in DFHMQCON      *
+   *                      during connect processing.              *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   DFHMQCON fails to reset R13 to address the EISTG before issuing
+   a CICS message.  When DFHMQCON issues message DFHMQ0307,
+   register 13 is still addressing the CSA and its register save
+   area.  During processing of the DFHMQ0307 message, DFHMQCON is
+   suspended.  Another task gets control which also uses the CSA
+   register save area and doing so corrupts DFHMQCON's registers
+   leading to the program checks.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  UK55399
+   
+   DFHMQCON has been changed to correctly restore the EISTG
+   address into R13 after each function call.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  FIX AVAILABLE BY PTF ONLY
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM15975
+   
+   
+ * REPORTED COMPONENT NAME
+   CICSTS V3 Z/OS
+   
+   
+ * REPORTED COMPONENT ID
+   5655M1500
+   
+   
+ * REPORTED RELEASE
+   500
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   YesPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-06-07
+   
+   
+ * CLOSED DATE
+   2010-06-24
+   
+   
+ * LAST MODIFIED DATE
+   2010-12-22
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    PM14115 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM14115]
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UK58173
+   
+   
+
+MODULES/MACROS
+ *     DFHMQCON
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CICSTS V3 Z/OS
+   
+   
+ * FIXED COMPONENT ID
+   5655M1500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R500 PSY UK58173 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK58173]
+   UP10/06/29 P F006
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

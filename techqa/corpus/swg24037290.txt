@@ -1,0 +1,56 @@
+Title: IBM Tivoli System Automation Integrated Operations Management., V2.1.2 - United States
+
+Text:
+ DOWNLOADABLE FILES
+
+ABSTRACT
+ This document describes how to download Tivoli System Automation Integrated Operations Management V2.1.2 using the Passport Advantage web site. 
+
+DOWNLOAD DESCRIPTION
+Download Tivoli System Automation Integrated Operations Management V2.1.2 and either start to migrate as described below or install from scratch.
+
+PREREQUISITES
+Migrating from version 2.1.1.5 to 2.1.2
+It is required that you have version 2.1.1.5 already installed before you can migrate to version 2.1.2. 
+
+
+It is required to migrate your data to ensures that System Automation Integrated Operations Management continues to work properly after migrating from version 2.1.1.5 to version 2.1.2. 
+The base of the alert and escalation feature is changed significantly in version 2.1.2. If you are not using the alert and escalation feature of the product you may skip “Migrating DBNOTIFY database” and start with “Uninstalling”.
+During uninstallation, the two directories config and scripts are saved to the new standard location of System Automation Integrated Operations Management, which is the default installation directory of Microsoft Installer. 
+After migration, the panel of the alert and escalation feature is now available and integrated into the client.
+Version 2.1.2 uses non java technology.
+Save a copy of the directories to a different location. The two relevant directories in which all user data is saved are the subdirectory config and scripts. If you wish to save your existing alert and escalation database, you may copy the directory derby to a different location as well.
+License
+System Automation Integrated Operations Management version 2.1.2 installer is distributed on a CD together with the appropriate license. The server will only be installable if the license is present on the media from which you install. The installer will look for the license on the CD. If the license is not available, only the client is installable. You can copy the installer and send it to any user to install the new client using the new installer. On those systems only the client install will be presented. If you wish to use the new alert and escalation feature ensure that the old client is uninstalled and the new client is installed on the end user systems. You must save the rpclient.dat file from the config directory manually before uninstalling the existing 2.1.1.x versions of the client only installer. During uninstallation, rpclient.dat is not saved.
+Legacy 3270 board support
+The install of legacy drivers to support coax 3270 boards is only possible on 32 bit systems and therefore not presented on 64 bit machines.
+Migrating DBNOTIFY database
+All alert and escalation data is saved in the directory DBNotify in the derby directory under the main directory System Automation Integrated Operations Management. The user data is saved in the config directory and the scripts directory contains all scripts necessary for automation as well as your own written scripts. The two directories config and scripts are copied by the uninstaller of the 2.1.1.5 level of System Automation Integrated Operations Management into the new installation standard directory SAIOM (without blank after the SA). These two directories can be used straight after migration to get version 2.1.1 to run.
+The alert and escalation data, which is saved in the DBNotify database must be converted to the new ESCDB format. This can be done with the scripts located the 2.1.1.5 level scripts directory. To convert the DBNotify database, enable the new alert and escalation feature by inserting this line
+ALERT_ESCALATION = YES into the rpsvrprf.txt
+Now recycle the server service once. Be sure that derby is running. Start the client rpclient. Authenticate and navigate to the input field where you enter script names to start them on the server. Start the script notifyconvert.rex and open the console window by double clicking on the name in the running scripts window. The script prompts you to enter Y to ensure you want the convert. The script will now convert your data from the DBNotify database to the new ESCDB format and will write its data to the config directory within subdirectory EscDB.
+After you have done this step you may run the script notifyList.rex to see that the data is converted correctly. Browse the list of converted items and browse the XML data in the EscDB database to verify the data, but be sure not to corrupt it by altering the data or files. Instead of manually browsing the files, you can also use the rexx script notiflist.rex to browse through the list. The uninstaller will not preserve the derby directory, so if you want to save the database be sure to save DBNotify before you uninstall 2.1.1.5.
+Uninstalling
+After you migrated your database data and saved the config and scripts directory, it is required to uninstall version 2.1.1.5. Run the uninstaller of the product level 2.1.1.5. The uninstaller will prepare the new directory for version 2.1.1 and copy the config and scripts directory to the new location. It will only use the standard directories supported in the migration. The standard directory is C:\Program Files\IBM\SA IOM or C:\Program Files (x86)\IBM\SA IOM.
+The new standard directory is C:\Program Files (x86)\IBM\SAIOM. You may recognize that only the blank is missing from the new directory. You can find the subdirectories config and scripts in the new directory.
+The uninstaller uninstalls the whole product and its prerequisites including derby and EWAS. It will not uninstall the shared C++ libs which are required for the version 2.1.2 and the ODBC data drivers. Uninstall manually the drivers afterwards. Do not uninstall the C++ shared libs. They are used by version 2.1.2. In case you uninstalled the C++ shared libs, they will be reinstalled automatically during the installation.
+After uninstall you may recognize that some artifacts of the old product are still on the system. You can delete the version 2.1.1.5 System Automation Integrated Operations Management directory (the one with the blank between the letters). Don’t mix it up with your new SAIOM directory, this will be used with version 2.1.2 installer and contains your valuable user data.
+The new Windows based installer is significantly smaller than the old installer. The correct size of the Windows installer file is around 15 MB. As we don’t have any prerequisites combined anymore, the footprint of the new installer decreased.
+
+INSTALLATION INSTRUCTIONS
+Installing System Automation Integrated Operations Management V2.1.2
+System Automation Integrated Operations Management version 2.1.2 uses the Windows Installer replacing earlier versions' use of the InstallAnywhere program by Macrovision Corporation. There are two install programs: 
+
+ * setup.msi: Main installation program of System Automation Integrated Operations Management 
+ * ClientOnly.msi: Installation of a separate System Automation Integrated Operations Management client program
+
+Note: Do not use the same installation location as the main setup.msi. To install either of two packages start the .msi and follow the guiding panels. 
+Note: The .msi files contain all the necessary files. They are used as input to the Windows msiexec.exe either directly by running msiexe specifying the msi file as parameter or indirectly by double clicking on the msi file in Windows 
+Explorer. Specify /? for a list of possible options such as quite mode. DOWNLOAD PACKAGE
+IBM Passport Advantage: http://www.ibm.com/software/howtobuy/passportadvantage/pao_customers.htm [http://www.ibm.com/software/howtobuy/passportadvantage/pao_customers.htm]
+
+
+
+
+TECHNICAL SUPPORT
+ Passport Advantage Online support: http://www.ibm.com/software/howtobuy/passportadvantage/paocustomer/docs/en_US/ecare.html [http://www.ibm.com/software/howtobuy/passportadvantage/paocustomer/docs/en_US/ecare.html]

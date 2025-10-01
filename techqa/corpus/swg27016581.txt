@@ -1,0 +1,76 @@
+Title: IBM Using an MDB with JMS message selectors with WebSphere MQ V7.x and WebSphere Application Server V7 and V8.x - United States
+
+Text:
+ WHITE PAPER
+
+ABSTRACT
+ To demonstrate the use of a simple Message Driven Bean (MDB) in WebSphere Application Server V7 / V8.x, which interacts with WebSphere MQ V7.x as the Java™ Messaging Service (JMS) provider. 
+
+This MDB has in its Deployment Descriptor the specification of a JMS message selector for the following user-defined property and value:
+color=”blue” 
+
+CONTENT
+The document is provided in the attached file: WAS7_MQ7_MDB_JMS_Selectors.pdf 
+
+This demonstrates the use of a simple Message Driven Bean (MDB) in WebSphere Application Server V7 / V8.x, which interacts with WebSphere MQ V7.x as the Java Messaging Service (JMS) provider. 
+
+This MDB has in its Deployment Descriptor the specification of a JMS message selector for the following user-defined property and value:
+color=”blue”
+
+This means that this MDB will only receive messages that comply with this selector.
+
+A sample Java program is provided which allows you to create a message with or without a property named “color”. You can specify at run time the value for the property. In that way, you can test that the MDB will handle only those messages that comply with the above selector, and those messages that do not comply, are ignored by the MDB.
+
+This document describes the setup and testing of 3 scenarios:
+
+Scenario 1
+Scenario 1, the MDB "SampleJMSSelectorMdbEjbEAR" is used with a Listener Port. 
+The MDB itself needed to be modified with RAD or another development tool in order to specify the message selector in the Deployment Descriptor. The reason is that the definition of a Listener Port does not have a field for a message selector.
+
+Scenario 2
+In contrast, in Scenario 2, the same MDB "SampleJMSSelectorMdbEjbEAR" was used with an Activation Specification. This Activation Specification does NOT handle the message selector specified in the Deployment Descriptor of the MDB. Instead, the message selector is specified in the Activation Specification.
+
+Scenario 3
+Scenario 3, shows how an MDB which does NOT have a message selector in the Deployment Descriptor and instead, an Activation Specification with a message selector will be used. The MDB is the one described in the referenced techdoc:
+"Using WebSphere MQ V7 as JMS Provider for WebSphere Application Server V7"
+The name of the MDB is: SampleMDBEJBEAR
+
+Related techdocs and articles 
+
+ * This techdoc is based on the configuration, deployment and test steps described in the following techdoc. Using WebSphere MQ V7 as JMS Provider for WebSphere Application Server V7 [http://www.ibm.com/support/docview.wss?rs=171&uid=swg27016505] 
+ * The MDB was created with Rational Application Developer (RAD) 7.5 and the Enterprise Archive File (EAR) file which contains the MDB can be downloaded from this techdoc. For more details on how to create and test this MDB, see the following techdoc: Developing and testing an MDB using RAD 7.5, WebSphere Application Server V7 and MQ V7 as JMS Provider [http://www.ibm.com/support/docview.wss?rs=171&uid=swg27016507] 
+
+
+Requisite software  * SUSE Linux Enterprise Server (SLES) 9: 
+ * WebSphere Application Server 7.0.0.5 
+ * WebSphere MQ 7.0.0.2 
+ * Firefox (also known as Mozilla)
+
+
+Downloadable files  * WAS7_MQ7_MDB_JMS_Selectors.pdf 
+ * EAR file with MDB: SampleJMSSelectorMdbEjbEAR.ear 
+ * Text file with code excerpt: onMessage-JMSselectors.txt 
+ * Java source: SampleJMSMsgProperty.java
+
+
+DISCLAIMER: All source code and/or binaries attached to this document are referred to here as "the Program". IBM is not providing program services of any kind for the Program. IBM is providing the Program on an "AS IS" basis without warranty of any kind. IBM WILL NOT BE LIABLE FOR ANY ACTUAL, DIRECT, SPECIAL, INCIDENTAL, OR INDIRECT DAMAGES OR FOR ANY ECONOMIC CONSEQUENTIAL DAMAGES (INCLUDING LOST PROFITS OR SAVINGS), EVEN IF IBM, OR ITS RESELLER, HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES. 
+
+WAS7_MQ7_MDB_JMS_Selectors.pdf [/support/docview.wss?uid=swg27016581&aid=2] [/support/docview.wss?uid=swg27016581&aid=1]
+File name: WAS7_MQ7_MDB_JMS_Selectors.pdf
+File size: 400 KB
+
+SampleJMSSelectorMdbEjbEAR.ear [/support/docview.wss?uid=swg27016581&aid=4] [/support/docview.wss?uid=swg27016581&aid=3]
+File name: SampleJMSSelectorMdbEjbEAR.ear
+File size: 4 KB
+
+onMessage-JMSselectors.txt [/support/docview.wss?uid=swg27016581&aid=6] [/support/docview.wss?uid=swg27016581&aid=5]
+File name: onMessage-JMSselectors.txt
+File size: 2 KB
+
+SampleJMSMsgProperty.java [/support/docview.wss?uid=swg27016581&aid=8] [/support/docview.wss?uid=swg27016581&aid=7]
+File name: SampleJMSMsgProperty.java
+File size: 6 KB
+
+
+Cross reference information Segment Product Component Platform Version Edition Application Servers WebSphere Application Server Java Message Service (JMS) AIX, HP-UX, Linux, Solaris, Windows 8.5, 8.0, 7.0 Business Integration IBM MQ PRODUCT ALIAS/SYNONYM
+ WebSphere MQ WMQ Application Server WAS WSAS

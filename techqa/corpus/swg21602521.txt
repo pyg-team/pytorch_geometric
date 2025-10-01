@@ -1,0 +1,43 @@
+Title: IBM Leap Second bug in older Linux kernels may affect IBM MQ and WebSphere MQ - United States
+
+Text:
+ FLASH (ALERT)
+
+ABSTRACT
+ Leap seconds are a periodic one-second adjustment of Coordinated Universal Time (UTC) required to keep a system's time of day close to the mean solar time.
+
+A leap second is scheduled for 31 December 2016 at 23h 59m 60s UTC.
+
+In the past, the addition of leap seconds caused some systems running older Linux kernels to fail. IBM MQ and WebSphere MQ queue managers running on these systems generated repeated FDC files showing Probe Id XY348010 or XC272003 from xcsCreateThread, with error code xecP_E_NO_RESOURCE. Other FDCs are also possible. 
+
+CONTENT
+On 31 December 2016, the Network Time Protocol (NTP) daemon will schedule a leap second [http://en.wikipedia.org/wiki/Leap_second] to occur at midnight, making the final minute of the day 61 seconds long. Prior leap second insertions, including the 30 June 2016 leap second, caused some Linux systems to exhibit unexplained high CPU usage.
+
+
+IBM MQ and WebSphere MQ use the Native POSIX Thread Library (NPTL) which relies on futuxes ("fast userspace mutexes") for synchronization between threads. Futexes can exhibit high CPU spins after leap seconds on Linux kernel versions 2.6.22 through 3.5-rc7, inclusive, although some Linux distributions shipped patches for kernels in this range:
+
+
+ * 
+ * Leap Second to be added on December 31st 2016
+ * 
+ * 
+ * 
+ * General information on Leap Second 2016
+ * 
+ * Fixes and workarounds to avoid issues caused by Leap Second 2015
+ * 
+ * 
+ * 
+ * Addition of leap second causes spuriously high CPU usage and futex lockups
+
+
+
+Contact your Linux vendor to check the status of other distributions, or check the Linux kernel version using "uname -r" and confirm that your system is older than 2.6.22 or running 3.5 or later. 
+
+If you encounter this problem, the following workaround may resolve the high CPU usage. As root, run: 
+ * date -s "$(LC_ALL=C date)"
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ IBM MQ WMQ WebSphere MQ MQSeries

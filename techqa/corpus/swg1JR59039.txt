@@ -1,0 +1,190 @@
+Title: IBM JR59039: AFTER YOU MIGRATE A BPEL APPLICATION FROM IBM BPM V8.0.1.3 TO V8.6, IT FAILS WITH A JAVA.LANG.VERIFYERROR - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+ DIRECT LINK TO FIX
+bpm.8600.cf2018.03.delta.repository [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Standard&fixids=bpm.8600.cf2018.03.delta.repository&source=SAR]
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When you execute BPEL applications that contain large XML
+   documents and complex XSL stylesheets (for example, in mediation
+    flows), you receive a java.lang.VerifyError with a stack trace
+   similar to the following stack trace in the FFDC logs:
+   
+   [11/3/17 20:47:00:106 UTC]     FFDC
+   Exception:java.lang.VerifyError
+   SourceId:com.ibm.ws.sca.internal.message.impl.MessageDispatcherI
+   mpl.processMessageWithPCI ProbeId:720
+   Reporter:com.ibm.ws.sca.internal.message.impl.MessageDispatcherI
+   mpl@255cfad2
+   java.lang.VerifyError: JVMVRFY012 stack shape inconsistent;
+   class=Transform_SC_To_Canonical_res,
+   method=http$colon$$slash$$slash$ProdMgmt_SC_Med$slash$xslt$slash
+   $Transform_SC_To_Canonical_res$colon$Transform_SC_To_Canonical_r
+   es2$outline$0(LTransform_SC_To_Canonical_res$1;)V, pc=46796
+   Exception Details:
+     Location:
+   
+   Transform_SC_To_Canonical_res.http$colon$$slash$$slash$ProdMgmt_
+   SC_Med$slash$xslt$slash$Transform_SC_To_Canonical_res$colon$Tran
+   sform_SC_To_Canonical_res2$outline$0(LTransform_SC_To_Canonical_
+   res$1;)V @46796: JBaload
+     Reason:
+       Type top (current frame, locals[6]) is not assignable to
+   'reference' type
+     Current Frame:
+       bci: @46796
+       flags: { }
+       locals: { 'Transform_SC_To_Canonical_res',
+   'Transform_SC_To_Canonical_res$1',
+   'com/ibm/xslt4j/org/apache/rnm1/xml/serializer/SerializationHand
+   ler', 'java/lang/Object',
+   'com/ibm/xslt4j/org/apache/rnm1/xalan/xsltc/DOM', integer, top,
+   top, 'Trasform_SC_To_Canonical_res',
+   'com/ibm/xslt4j/org/apache/rnm1/xml/dtm/DTMAxisIterator', top,
+   top, top, top, top, top, top, top, top, top, top, top, top, top,
+   top, top, top, top,
+   'com/ibm/xslt4j/org/apache/rnm1/xml/dtm/DTMAxisIterator', top,
+   'com/ibm/xslt4j/org/apache/rnm1/xml/dtm/DTMAxisIterator' }
+       stack: { 'Transform_SC_To_Canonical_res$1', integer,
+   'com/ibm/xslt4j/org/apache/rnm1/xml/serializer/SerializationHand
+   ler', 'java/lang/String' }
+           at java.lang.J9VMInternals.newInstanceImpl(Native
+   Method)
+           at java.lang.Class.newInstance(Class.java:1899)
+           at
+   com.ibm.xslt4j.org.apache.rnm1.xalan.xsltc.trax.TemplatesImpl.ge
+   tTransletInstance(TemplatesImpl.java:437)
+           at
+   com.ibm.xslt4j.org.apache.rnm1.xalan.xsltc.trax.TemplatesImpl.ne
+   wTransformer(TemplatesImpl.java:466)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  In your modules, use lazy parsing instead of eager parsing as
+   the business object parsing mode.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  IBM BPM uses the XSLT processor from the XSLT4J library in BPEL
+   processes and mediation flows. This XSLT processor can't handle
+   large and complex XSL stylesheets, which causes a
+   java.lang.VerifyError when you use a Java 8 runtime environment.
+   
+   PRODUCTS AFFECTED
+   IBM Business Process Manager (BPM)
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  An interim fix that uses the XSL transformation built into the
+   IBM JDK that comes with WebSphere instead of the XSLT4J library
+   is available for IBM BPM V8.6 CF2017.09 on Fix Central.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  Not applicable
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR59039
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM ON CLOUD
+   
+   
+ * REPORTED COMPONENT ID
+   5725L6300
+   
+   
+ * REPORTED RELEASE
+   860
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2018-01-26
+   
+   
+ * CLOSED DATE
+   2018-02-22
+   
+   
+ * LAST MODIFIED DATE
+   2018-02-22
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   BPM
+   
+   
+ * FIXED COMPONENT ID
+   5737A5700
+   
+   
+
+APPLICABLE COMPONENT LEVELS

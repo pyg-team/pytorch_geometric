@@ -1,0 +1,266 @@
+Title: IBM IT22044: MQ Java clients receive MQRC 2063 and are unable to consume messages from AMS protected queues - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  An IBM MQ classes for Java or classes for JMS application is
+   able to send messages to an Advanced Message Security (AMS)
+   protected MQ queue however it is unable to consume the messages
+   afterwards.
+   
+   When using the MQ classes for JMS to synchronously consume a
+   previously put message to an AMS protected queue, the following
+   exception is thrown:
+   
+   com.ibm.msg.client.jms.DetailedJMSSecurityException:
+     JMSWMQ2002: Failed to get a message from destination
+   'MY_AMS_QUEUE'.
+   IBM MQ classes for JMS attempted to perform an MQGET; however
+   IBM MQ reported an error.
+   Use the linked exception to determine the cause of this error.
+   at
+   com.ibm.msg.client.wmq.common.internal.Reason.reasonToException
+   at com.ibm.msg.client.wmq.common.internal.Reason.createException
+   at
+   com.ibm.msg.client.wmq.internal.WMQMessageConsumer.checkJmqiCall
+   Success
+   at
+   com.ibm.msg.client.wmq.internal.WMQMessageConsumer.checkJmqiCall
+   Success
+   at com.ibm.msg.client.wmq.internal.WMQConsumerShadow.getMsg
+   at
+   com.ibm.msg.client.wmq.internal.WMQSyncConsumerShadow.receiveInt
+   ernal
+   at com.ibm.msg.client.wmq.internal.WMQConsumerShadow.receive
+   at com.ibm.msg.client.wmq.internal.WMQMessageConsumer.receive
+   at
+   com.ibm.msg.client.jms.internal.JmsMessageConsumerImpl.receiveIn
+   boundMessage
+   at
+   com.ibm.msg.client.jms.internal.JmsMessageConsumerImpl.receive
+   at com.ibm.mq.jms.MQMessageConsumer.receive
+   Caused by: com.ibm.mq.MQException: JMSCMQ0001: IBM MQ call
+   failed with compcode '2' ('MQCC_FAILED') reason '2063'
+   ('MQRC_SECURITY_ERROR').
+   	at
+   com.ibm.msg.client.wmq.common.internal.Reason.createException(Re
+   ason.java:203)
+   	... 11 more
+   WMQ Completion code: 2
+   WMQ Reason code: 2063
+   
+   
+   The following messages are also written to the mqjms.log file:
+   
+   ----------------------------------------------------------------
+   ----
+   com.ibm.mq.ese.prot.MessageProtectionBCImpl
+     java.lang.Exception: No suitable trust path found
+   ----------------------------------------------------------------
+   ----
+   com.ibm.mq.ese.intercept.JmqiGetInterceptorImpl
+   The IBM MQ Advanced Message Security Java interceptor failed to
+   unprotect the received message.
+   An error occurred when the IBM MQ Advanced Message Security Java
+   interceptor was unprotecting the received message.
+   See subsequent messages in the exception for more details about
+   the cause of the error
+   ----------------------------------------------------------------
+   ----
+   com.ibm.mq.ese.service.EseMQServiceImpl
+   The IBM MQ Advanced Message Security interceptor has put a
+   defective message on error handling queue
+   'SYSTEM.PROTECTION.ERROR.QUEUE                   '.
+   
+   EXPLANATION:
+   This is an informational message that indicates the IBM MQ
+   Advanced Message Security put a message it could not interpret
+   on the specified error handling queue.
+   
+   ACTION:
+   Make sure only valid messages are put onto queues protected by
+   IBM MQ Advanced Message Security.
+   ----------------------------------------------------------------
+   ----
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   This issue affects users of the:
+   
+     - IBM MQ V9 classes for JMS
+     - IBM MQ V9 classes for Java
+     - IBM MQ V9 JCA Resource Adapter
+     - IBM MQ V9 OSGi bundles
+   
+   who connect to queue managers using the CLIENT transport mode,
+   consume messages from an Advanced Message Security (AMS)
+   protected queue and use chained certificates.
+   
+   
+   Platforms affected:
+   MultiPlatform
+   
+   ****************************************************************
+   PROBLEM DESCRIPTION:
+   When an Advanced Message Security (AMS) protected message is
+   consumed from an MQ queue by an classes for JMS or classes for
+   Java application that connects to a queue manager using the
+   CLIENT transport mode, the client side AMS interceptor will
+   attempt to unprotect the message before returning it to the
+   application.  If the application and AMS messaging solution used
+   a set of chained certificates, then a certification path could
+   not be built or verified using the signer information in the AMS
+   protected message because the issuer of the certificate used
+   when the message was put could not be found.
+   
+   The Bouncy Castle library used by the IBM MQ Java client AMS
+   interceptor would throw the exception:
+   
+     No issuer certificate for certificate in certification path
+   found. [java.security.cert.CertPathBuilderException] at:
+   
+   org.bouncycastle.jce.provider.PKIXCertPathBuilderSpi.engineBuild
+   
+   
+   As an example, this issue would have affected applications that
+   use a set of three chain certificates consisting of a
+   self-signed root certificate, that is used to sign an
+   intermediary certificate which itself is then used to sign a
+   third personal certificate referenced within an AMS policy
+   definition.
+   
+   As a result, the message was not unprotected and was moved to
+   the AMS error queue named, "SYSTEM.PROTECTION.ERROR.QUEUE".
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The logic used by the IBM MQ V9 Java client Advanced Message
+   Security (AMS) interceptor to build a certification path for a
+   chained certificate used within an AMS policy has been updated.
+    After this APAR, for messages protected using chained
+   certificates, the Java security PKIXBuilderParameters class is
+   used to determine the set of the most-trusted certificate
+   authorities from the AMS KeyStore used by the application that
+   is then used to build the certification path during the
+   processing of unprotecting the message.
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+   Version    Maintenance Level
+   v9.0 CD    9.0.5
+   v9.0 LTS   9.0.0.3
+   
+   The latest available maintenance can be obtained from
+   'WebSphere MQ Recommended Fixes'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037]
+   
+   If the maintenance level is not yet available information on
+   its planned availability can be found in 'WebSphere MQ
+   Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT22044
+   
+   
+ * REPORTED COMPONENT NAME
+   IBM MQ AMS V9.0
+   
+   
+ * REPORTED COMPONENT ID
+   5724H7263
+   
+   
+ * REPORTED RELEASE
+   903
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-08-17
+   
+   
+ * CLOSED DATE
+   2017-10-23
+   
+   
+ * LAST MODIFIED DATE
+   2017-10-23
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   IBM MQ AMS V9.0
+   
+   
+ * FIXED COMPONENT ID
+   5724H7263
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R903 PSY
+   UP

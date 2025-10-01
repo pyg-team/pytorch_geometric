@@ -1,0 +1,43 @@
+Title: IBM Rational Application Developer version 6.0.0.1 Interim Fix 003 causes Portal Server to not start - United States
+
+Text:
+server; crash; PTE; UTE; hang; starting; classcast; remote; publish; ifix003; 6001; RAD; RSA; 1217274; PK09544; RATLC01097103 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ After upgrading to IBM Rational Application Developer for WebSphere Software version 6.0.0.1 Interim Fix 003, the Portal Server can no longer start. The status remains as Starting. 
+
+SYMPTOM
+Here is a list of some of the symptoms: 
+
+ 1. Web Deployment Descriptor node in project explorer does not show any children. (For a Portlet project, there are always children.) 
+ 2. Portlet Deployment Descriptor node in project explorer does not show any children. 
+ 3. Clicking on either of these nodes causes a ClassCastException from ReferencedXMIResourceImpl to either WebAppResource (for the Web Deployment Descriptor) or PortletAppResource (for the Portlet Deployment Descriptor).You will see the following errors in the .log:
+    
+    java.lang.ClassCastException: com/ibm/wtp/emf/resource/ReferencedXMIResourceImpl incompatible with com/ibm/etools/portal/model/PortletAppResource
+    
+    or
+    
+    java.lang.ClassCastException: org/eclipse/ui/internal/EditorActionBars incompatible with org/eclipse/ui/internal/ViewActionBars
+    
+    
+ 4. The WebSphere Portal Server (WPS) and WebSphere Portal Test Environment (PTE) will hang in the "Starting..." state. (Running either a Portlet or a Portal project on the PTE.) 
+ 5. Errors occur trying to use the New Portlet wizard (or any other wizard that modifies either the Web Deployment Descriptor or the Portlet Deployment Descriptor) 
+ 6. You get an "Unable to Create Part" error when opening a JSF page in the Page Designer.
+    In the .log you see:
+    !STACK 0
+    java.lang.ClassCastException: com/ibm/wtp/emf/resource/ReferencedXMIResourceImpl incompatible with com/ibm/etools/portal/model/PortletAppResource
+    at com.ibm.etools.portal.tools.editmodel.PortletEditModel.getPortletXmiResource(Unknown Source)
+    at com.ibm.etools.portal.tools.editmodel.PortletEditModel.getPortletType(Unknown Source)..
+
+
+
+CAUSE
+This issue was identified as a product defect and logged under APAR PK09544 [http://www.ibm.com/support/docview.wss?uid=swg1PK09544]. 
+
+In iFix 003 for 6.0.0.1, there was a change to the base support for Web projects. Portlet projects are enhanced Web projects. This prevented the models in a Portlet project (including the base Web modules) from loading properly.
+
+Without these models (which are represented in the Web Deployment Descriptor, the Portlet Deployment Descriptor, and other artifacts), the tooling and support for these types of projects does not recognize Portlet projects as valid projects. You could not edit the Web Deployment Descriptor, or the Portlet Deployment Descriptor, and you could not run the project on a server. (Not even the test server.)
+
+
+RESOLVING THE PROBLEM
+If you have installed iFix 003 for version 6.0.0.1 and have Portlet projects in your workspace, you will need to upgrade to Rational Application Developer version 6.0.1.

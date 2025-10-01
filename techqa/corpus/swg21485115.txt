@@ -1,0 +1,36 @@
+Title: IBM I am receiving the message 'Sentinel RMS Development Kit: Error[92]: The given license code is invalid.' when attempting to add a license code to my Sentinel RMS License Manager. - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ I am receiving the message 'Sentinel RMS Development Kit: Error[92]: The given license code is invalid.' when attempting to add a license code to my Sentinel RMS License Manager. How do I correct this problem? 
+
+CAUSE
+There are multiple causes for this behavior.
+
+RESOLVING THE PROBLEM
+There are multiple causes for this behavior requiring different responses:
+
+
+(1) Using a license authorization code from an older version of a SPSS product on a newer version of the License Manager can result in this behavior. If the product version is supported, please contact IBM SPSS Support for assistance. If the product is no longer supported, IBM SPSS does not provide support with unsupported product versions. The recommendation of IBM SPSS Support would be to migrate to supported products. 
+
+(2) Using a license authorization code of a newer product on an older version of the License Manager can result in this behavior. Please upgrade your License Manager to the current version. 
+
+ (3) Using an Authorized User (and not a Concurrent) license authorization code to license a License Manager can result in this behavior. Acquire and apply a Concurrent license authorization code for use with the License Manager. 
+
+(4) Using the Sentinel RMS License Server Administrator (WlmAdmin) tool 'Add Feature' right-click menu option to add either as license authorization code or license code will result in this behavior. Use the 'licenseactivator' license authorization tool from the operating system command line. 
+
+If you have confirmed that 'Error 92' does not result from 1-4 above, the problem may corrected by manually adding the license code to the Sentinel RMS License Manager license file -- lservrc -- located in the installation directory of the Sentinel RMS License Manager. Confirmation of 1-3 can be performed in the License Key Center or by opening a service request with IBM SPSS Client Care and providing the authorization license code(s) to be analyzed.
+
+RELATED INFORMATION
+ Need more help? Our Statistics forum is Live! [https://developer.ibm.com/answers/topics/statistics.html?smartspace=predictive-analytics]
+Need more help? Our Licensing forum is Live! [https://developer.ibm.com/answers/topics/spsslicensing.html]
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Analytics SPSS Amos Not Applicable Business Analytics SPSS Modeler Platform Independent Not Applicable 
+HISTORICAL NUMBER
+ 86975

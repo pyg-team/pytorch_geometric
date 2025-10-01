@@ -1,0 +1,26 @@
+Title: IBM RequisitePro support for Microsoft Windows 8 and 2012 operating system - United States
+
+Text:
+ReqPro; ReqWeb; Microsoft Windows 8; Windows 8; support; Microsoft Windows 8 Operating system; Microsoft Windows 2012; Windows 2012 PREVENTIVE SERVICE PLANNING
+
+ABSTRACT
+ Does IBM Rational RequisitePro support the Microsoft Windows 8 and 2012 operating system? 
+
+CONTENT
+IBM Rational RequisitePro version 7.1.3.5 added support for Microsoft Windows 8 and 2012 with certain known issues and limitations as listed below. 
+
+RequisitePro version 7.1.3.5 
+
+ 
+
+[/support/docview.wss?uid=swg21620339&amp;aid=1] Windows 8 Internet Explorer 10 Windows 2012 Comments Client Supported IE 10 for Desktop Compatibility view Supported IE 10 Standard mode is not supported Server Not Supported Not Supported Not Supported Supported version of IBM WebSphere Application Server does not support Windows 8 or Windows 2012 
+
+Limitations:  * IBM Rational ClearQuest and IBM Rational ClearCase integration is not supported on Windows 8 or Windows 2012. 
+ * For systems with Windows User Account Control (UAC) enabled and information about working with documents see document 1573220: Rational RequisitePro is enabled for standard users of Windows latest releases [http://www.ibm.com/support/docview.wss?uid=swg21573220].
+
+
+
+
+PRODUCT ALIAS/SYNONYM
+ ReqPro
+ReqWeb

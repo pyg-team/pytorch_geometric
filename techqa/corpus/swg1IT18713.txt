@@ -1,0 +1,154 @@
+Title: IBM IT18713: DB TRUNCATION ERROR WHEN WRITING FILE SYSTEM MBX EVENT - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Mbx collection requesting more than 50 characters to write to
+   Procauditlog_tb.EventName column - DB error and EVT entry
+   created
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Alter the mailbox name to be less than 25 characters.
+   
+   STRTRC 523662
+   MAH/MAH
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  PROBLEM DESCRIPTION:  When doing a file collection with a
+   mailbox name longer than 42 characters, it creates audit log
+   entries with an event name longer than the
+   max database column size (50 chars).  While the Audit service
+   truncates the event name string to 50 chars before doing a SQL
+   insert, it still writes a warning
+   message to the Event Log about the truncation.  Since multiple
+   audit log entries are written for a single file collection,
+   these truncation warnings fill up the
+   Event Log making it difficult to find real errors.  Also, if any
+   notifications are generated during the file collection, the
+   Audit service does not truncate the
+   event name string in that case and SQL truncation errors are
+   written to the Event Log.
+   
+   USERS AFFECTED: Any user that has collection mailbox names that
+   are longer than 42 characters.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  FIX DESCRIPTION:  Changed the audit log writes to not write a
+   truncation warning message to the Event Log and added a max
+   string length check and truncation code
+   to the notify log writes.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT18713
+   
+   
+ * REPORTED COMPONENT NAME
+   STR GENTRAN MS
+   
+   
+ * REPORTED COMPONENT ID
+   5725D0903
+   
+   
+ * REPORTED RELEASE
+   531
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-01-09
+   
+   
+ * CLOSED DATE
+   2017-03-14
+   
+   
+ * LAST MODIFIED DATE
+   2017-03-14
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   STR GENTRAN MS
+   
+   
+ * FIXED COMPONENT ID
+   5725D0903
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R520 PSY
+   UP
+   
+   
+ * R530 PSY
+   UP
+   
+   
+ * R531 PSY
+   UP

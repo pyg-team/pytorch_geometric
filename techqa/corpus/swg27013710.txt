@@ -1,0 +1,13 @@
+Title: IBM List of supported software for WebSphere Business Modeler Publishing Server V6.2 - United States
+
+Text:
+SystemRequirementsDocument; prereq; coreq; installation prerequisites; DSRdoc PRODUCT DOCUMENTATION
+
+ABSTRACT
+ The list below identifies supported software options by operating system for WebSphere Business Modeler Publishing Server V6.2. 
+
+CONTENT
+Select the operating system where WebSphere Business Modeler Publishing Server V6.2 will be running to view supported software options. 
+
+[/support/docview.wss?uid=swg27013710&amp;aid=1]Windows [http://www-969.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1276655487418&osPlatforms=Windows&duComponentIds=S000&mandatoryCapIds=30%7C9%7C26&optionalCapIds=20%7C46%7C74]
+[/support/docview.wss?uid=swg27013710&amp;aid=2]Linux [http://www-969.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1276655487418&osPlatforms=Linux&duComponentIds=S000&mandatoryCapIds=30%7C9%7C26&optionalCapIds=20%7C46%7C74]

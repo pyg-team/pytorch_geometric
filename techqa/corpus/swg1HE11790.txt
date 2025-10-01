@@ -1,0 +1,144 @@
+Title: IBM HE11790: When processing email with a wrong codepage declaration, IBM Content Collector stops processing with an out of memory error - United States
+
+Text:
+  A FIX IS AVAILABLE
+IBM Content Collector V3.0 Fix Pack 4 [http://www-01.ibm.com/support/docview.wss?uid=swg24035525]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When processing a lot of Lotus Domino email documents with a
+   wrong codepage declaration, the IBM Content Collector Email
+   Connector might stop processing with an insufficient memory
+   error. The problem occurs if the codepage conversion fails and
+   many documents are added to the Content Collector blacklist.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  To prevent the problem, specify a codepage mapping table that
+   maps all unsupported codepages to a supported codepage. See APAR
+    HE11156 [http://www-01.ibm.com/support/docview.wss?uid=swg1HE11156] for detailed information:
+   http://www.ibm.com/support/docview.wss?uid=swg1HE11156 [http://www.ibm.com/support/docview.wss?uid=swg1HE11156]
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  If a lot of Lotus Domino email documents (more than 2500) that
+   cause a codepage conversion problem are processed and these
+   documents are added to the IBM Content Collector blacklist
+   without restarting the IBM Content Collector services, the
+   Content Collector Email Connector might report an insufficient
+   memory error and stop processing. No further email can be
+   processed until the archiving services are restarted.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Starting with IBM Content Collector 3.0.0.3 LA001 and 3.0 Fix
+   pack 4, the memory leak that caused the Email Connector to stop
+   when too many documents with a codepage conversion problem were
+   added to the blacklist has been fixed.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  IBM Content Collector V3.0.0.3 LA1
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   HE11790
+   
+   
+ * REPORTED COMPONENT NAME
+   ICC FOR EMAIL
+   
+   
+ * REPORTED COMPONENT ID
+   5724V5700
+   
+   
+ * REPORTED RELEASE
+   300
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-04-12
+   
+   
+ * CLOSED DATE
+   2013-08-24
+   
+   
+ * LAST MODIFIED DATE
+   2013-08-24
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ICC FOR EMAIL
+   
+   
+ * FIXED COMPONENT ID
+   5724V5700
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R300 PSY
+   UP

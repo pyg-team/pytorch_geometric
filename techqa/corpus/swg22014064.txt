@@ -1,0 +1,53 @@
+Title: IBM Urgent Reminder:  April 30, 2018 – WebSphere Application Server V7.0 & V8.0 End of Support - United States
+
+Text:
+ FLASH (ALERT)
+
+ABSTRACT
+ In September 2016, IBM announced the End of Service date for WebSphere Application Server (WAS) V7.0 and V8.0 is April 2018. 
+
+CONTENT
+For complete details please reference the Announcement Letters for WebSphere Distributed [https://ibm.co/2w6thhF] and z/OS [https://ibm.co/2vsuUJz] environments.
+IBM recommends moving your existing applications and workloads to later versions of WebSphere and Java runtime to avoid potential end of support situations affecting your core business applications. WAS V8.5.5 and V9.0 are available today at no additional charge to WAS clients with active subscription and support. 
+
+Moving your applications to newer versions of WebSphere requires planning and preparation. The following resources and programs will help you plan and implement a successful upgrade. 
+
+ * Access to best practices and resources for self-paced migration planning. WebSphere Migration Knowledge Collection [https://www-01.ibm.com/support/docview.wss?uid=swg27008724] – Migration Planning and Best Practices 
+   
+   Migration Tools and Resources [https://www.ibm.com/developerworks/websphere/downloads/migtoolkit/] – Overview of tools and guides for WebSphere Migration 
+   
+   WebSphere Migration Assist Program [https://www.ibm.com/developerworks/community/blogs/aimsupport/entry/websphere_application_server_migration_assist_Program_Information_on_participation?lang=en] – IBM Support guidance for WAS migration 
+   
+   
+ * Access to complimentary Migration Tools for self-pace migrations. WebSphere Migration Strategy [http://whichwas.mybluemix.net/] – Migration Planning Tool to decide which WAS fits your strategy 
+   
+   Transformation Advisor [https://developer.ibm.com/recipes/tutorials/using-the-transformation-advisor-on-ibm-cloud-private/] – Migration Resource Planning Tool 
+   
+   Migration Discovery Tool [https://ibm.biz/MigrationDiscovery] – WAS environment evaluation to estimate effort 
+   
+   Download Migration Tools [https://developer.ibm.com/wasdev/downloads/] – Download migration tools from WASdev 
+   
+   
+ * Access to recorded proof of technology sessions and webinars. On-site demonstrations may be available on request. Video Playlist for Remote Migration Demonstration [https://www.youtube.com/playlist?list=PL_4RxtD-BL5sOxq6ruiD8W5qw-mzySBQk] 
+   
+   Video Playlist for Local Migration Demonstration [https://www.youtube.com/watch?v=LuyAKDqTYuA&list=PL_4RxtD-BL5sfI7AN07R20MzV01yhshVv] 
+   
+   Easy Migration to WebSphere V9.0 Webinar [https://www.imwuc.org/p/do/sd/sid=3775] (includes no-cost membership to IBM Middleware User Community) 
+   
+   WebSphere Migration Tool for IBM Cloud Webinar [https://www.imwuc.org/p/do/sd/sid=3677] (include no-cost membership to IBM Middleware User Community) 
+   
+   
+ * Access to a migration architect (on request): Remote session with a migration architect to discuss your requirements and to get guidance on an appropriate migration path for your specific workloads. 
+ * Migration assessment services (fee based): Our ten (10) day migration assessment services will help you analyze your complex workloads with multiple versions and then provide a detailed plan to quickly migrate workloads to a suitable supported runtime environment. 
+ * Migration and Modernization implementation services (fee based): Our migration implementation services will provide hands-on assistance to migrate or modernize workloads based on the plan and findings from a migration assessment engagement.
+
+
+Contact Information: For specific migration problems, you may open a PMR. 
+
+For migration education, general guidance and best practices, contact the Migration Assistance Program [https://www.ibm.com/developerworks/community/blogs/aimsupport/entry/websphere_application_server_migration_assist_Program_Information_on_participation?lang=en] (ma@us.ibm.com [ma@us.ibm.com]). 
+
+For extended services, on-site demonstrations, migration assessments or assistance with implementing your upgrade, contact the IBM Deployment Acceleration Team (dat@us.ibm.com [dat@us.ibm.com]). 
+
+ 
+
+We thank you for reviewing this information. It is very important to share this information with other departments within your enterprise which might use IBM Middleware so they can make any necessary arrangements before the end of support arrives on April 30, 2018.

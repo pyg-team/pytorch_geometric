@@ -1,0 +1,137 @@
+Title: IBM JR57392: PARALLEL JOB SEQUENTIAL FILE STAGE IS NOT ABLE TO HANDLE A CHAR/VARCHAR FIELD CONTAINING A RECORD TERMINATOR - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The PX Import Operatr (Sequential File stage) cannot read
+   correctly a line with a Char/VarChar field containing a quoted
+   terminator such a  carriage return if you are running on
+   Windows.
+   The Server job Sequential File stage has this ability with the
+   column option "Contains Terminators".
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Use a Server job instead with column option "Contains
+   Terminators"
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *   PARALLEL JOB SEQUENTIAL FILE STAGE IS NOT ABLE TO HANDLE
+   ACHAR/VARCHAR FIELD CONTAINING A RECORD TERMINATOR
+   e created a parallel job (LKL_PORTALSERVICE_JM) that reads data
+   from a .
+   csv-file using an sequential file stage and loads the data to
+   an oracle
+   table.
+   Some records of the csv file may contain fields with a word
+   wrap, but
+   the text in these fields have double quotes at the start and
+   the end.
+   Example:
+   EVENT;"Kunden-Portal|Fahrzeuge|Fahrzeuge
+   registrieren/vehicleRegistrationApplicationMailSuccess/<SPRACH_I
+   D>
+   - BTN vehicle-registration--application-mail-success--back";
+   Fahrzeugregistrierung ;Validierungsfehler  Backend. Eingabe
+   korrigieren;
+   10
+   How can we import those records without throwing an error?
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR57392
+   
+   
+ * REPORTED COMPONENT NAME
+   WIS DATASTAGE
+   
+   
+ * REPORTED COMPONENT ID
+   5724Q36DS
+   
+   
+ * REPORTED RELEASE
+   B50
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-02-09
+   
+   
+ * CLOSED DATE
+   2017-04-17
+   
+   
+ * LAST MODIFIED DATE
+   2017-04-17
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  SERVER
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * RB50 PSY
+   UP

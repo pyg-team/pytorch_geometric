@@ -1,0 +1,63 @@
+Title: IBM Command line uninstall for Windows OS (NT) agent on multiple machines - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ We have run into a problem that necessitates uninstalling and reinstalling the 6.3.0 FP2 OS agent for Windows on a large number of machines. We need an uninstall method that can be automated. 
+
+DIAGNOSING THE PROBLEM
+ITM Windows OS agent: version 6.3 or higher
+
+RESOLVING THE PROBLEM
+There are two methods which can be used to uninstall a component from multiple Windows servers. 
+
+1) Remote Deploy using the agent depot:
+
+Remote Deploy requires that the agent version that is installed on the endpoint be present in the TEMS depot. 
+
+Prior to the removal of the product, Remote Deploy confirms that all of the product prerequisite packages are present on the endpoint prior to removal of the product. 
+
+If one or several of the prerequisite packages are not present on the endpoint, Remote Deploy will download those prerequisites prior to the product's removal. 
+
+For Windows targets ONLY, when the product and its prerequisites are installed on the endpoint Remote Deploy will download the product's package to the endpoint's %Candle_Home%/tmaitm6/agentdepot directory to run the silent uninstall from this directory. This is done because the setup.exe program requires ITM's installer component (IN) to be present to perform the removal process. Additionally, the setup.exe program for ITM is not present in the %Candle_Home% directory once the product is 
+installed. 
+
+Recall that there is the possibility of the removal of an Agent's Instance, and not the entire Agent product. In this case only the specific Instance would need to be removed, and this requires that the installer have its required components present to perform this removal operation. 
+
+2) Silent uninstall performed on each server. These are the instructions listed in the user guide
+http://www-01.ibm.com/support/knowledgecenter/SSTFXA_6.3.0/com.ibm.itm.doc_6.3/install/uninstall_silent_windows.htm?lang=en [http://www-01.ibm.com/support/knowledgecenter/SSTFXA_6.3.0/com.ibm.itm.doc_6.3/install/uninstall_silent_windows.htm?lang=en]
+
+The bundle from the depot is the smallest supported image to transfer to an endpoint. Use the following files to create the uninstall bundle.
+
+From the image WINDOWS directory. 
+setup.exe 
+setup.ini 
+0x*.ini 
+*.mst 
+INSTALL.exe 
+INSTALLX.exe 
+INSTALLY.exe 
+ISSetup.dll 
+silent_agent_uninstall.txt (the uninstall response file) 
+TMV620.msi 
+InstallITM\ITMISUtil.dll 
+InstallITM\mfc90.dll 
+InstallITM\ServiceStatus.exe 
+InstallITM\msvcr90.dll 
+InstallITM\Microsoft.VC90.CRT.manifest 
+InstallITM\Microsoft.VC90.MFC.manifest 
+InstallITM\msvcp90.dll 
+InstallITM\mfc90u.dll 
+VerFiles\KINWIINS.ini 
+VerFiles\INSTALL.ver 
+VerFiles\INSTALLX.ver 
+VerFiles\INSTALLY.ver 
+NOTE: Look at the silent.agent.txt file for information about uninstalling all of ITM silently.
+
+Following the above steps should help with the uninstall.
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Systems and Asset Management Tivoli Monitoring V6

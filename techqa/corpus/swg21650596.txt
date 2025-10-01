@@ -1,0 +1,79 @@
+Title: IBM SDK - Database and Application errors ,  using Oracle as a data source , intermittent operation on the Oracle connection - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Errors in the Cognos Logfile , with ORA-xxxxx database errors.
+This happens both in the Cognos Server and in Software Development Kit applications.
+It also happens in in a different Application Server than the delivered Tomcat AppServer with IBM Cognos Business Intelligence software , Published WAR / EAR files to Applications servers.
+
+The running of reports within the applications gives Oracle errors in the log files. 
+
+CAUSE
+Using incorrect Connection Software and Libraries for the Oracle Database Connection.
+Especially in all Application Servers , using an incorrect Java JDBC driver may cause unstable operation and loss of connection, with the result that SDK Code or the Business Applications have issues and intermittent operation.
+
+Symptoms are :
+
+1. Oracle error shows in the Cognos Logs.
+
+An error occurred while executing the 'asynchRun_Request' command. 
+RQP-DEF-0177 An error occurred while performing operation
+'sqlPrepareWithOptions' status='-90'. 
+UDA-SQL-0023 The connection to the "XYZZY" database has been terminated due to an unrecoverable error. ORA-03114: not connected to ORACLE
+
+2. A few SDK operations may work, but thereafter it does fail to connect.
+3. Initial run of Reports fails, but when initiated thereafter it works.
+
+
+
+ANSWER
+Oracle produced several variants of different JDBC drivers for the Oracle products , including the ones that can be found inside the Oracle installation Server and Client. 
+
+
+IBM Cognos tests, QA's and recommends to use the appropriate drivers for the level of the Oracle product installation.
+
+Old Oracle Drivers :
+Classes12.jar - designed for Java 1.2 and 1.3 runtime environments (JRE), an old driver by today's standard.
+ojdbc14.jar - for Java 1.4 environments
+
+For Oracle Client 10 and 11gR2, there are several different JDBC drivers that can be found in the Oracle installation.
+ojdbc5.jar - for Java 1.5
+ojdbc6.jar - for Java 1.6
+
+In the Oracle directories , there are several other ojdbcXX.jar versions.
+Please consult the Oracle documentation for the specific use cases of these ojdbc jar driver files.
+
+IBM Cognos software requires you to add only one of the above JDBC jar Library files to the Cognos installation. This will ensure connection and connectivity to any Oracle database. An Oracle license file, allowing use of this library might need to be included too.
+
+This Oracle JDBC driver is to be added to the location in the ../webapps/p2pd/WEB-INF/lib folder in Cognos
+This would be included with the WAR / EAR file generation by IBM Cognos , for the use in any other supported Application Server , beyond the default Tomcat.
+
+Consult also the Cognos Software Product Compatibility Reports, for example in Cognos 10.2.0 and 10.2.1 the SDK Development Tools listing has the conformance of IBM Java JDK 6.0 and IBM Java JDK 7.0 environments only. 
+In order to use the SDK Applications with Cognos and Oracle 11, the ojdbc6.jar driver must be used with the Cognos Systems, and the ojdbc5.jar file must be removed from any Cognos Installation.
+
+For the SDK or any other Application that is designed with Java, that makes use of Connectivity to Oracle, it is now very important that the correct library file is being used with the installed application.
+
+Base Java versions for IBM Cognos Software :
+
+Cognos JAVA 6 Based
+Cognos 10.0
+Cognos 10.1.1
+Cognos 10.2.0
+
+Cognos Java 7 Based
+Cognos 10.2.1
+Cognos 10.2.2
+Cognos Analytics C11
+
+RELATED INFORMATION
+ TN 1651263 - SDK - Test failure of Custom Authenticatio [https://www-304.ibm.com/support/docview.wss?rs=0&uid=swg21651263]
+TN 1426915 - SDK - Product information and Upgrading So [https://www-304.ibm.com/support/docview.wss?rs=0&uid=swg21426915]
+
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Analytics Cognos Analytics AIX, HP-UX, Linux, Solaris, Windows 11.0 Edition Independent

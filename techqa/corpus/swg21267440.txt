@@ -1,0 +1,61 @@
+Title: IBM DFHSR0601 0C2 with reason code 00000002 when using CA-Top Secret - United States
+
+Text:
+DFHRM0001 ; abend AKEA ; abendAKEA ; 01C6 DFHRMXN4 ; DFHSR0601 ; 0C2 S0C2 ABEND 0C2 ; 00000002 RSN00000002 RSN02 CAKSRD64 1298 TSS6002I 5655M1500 R640 640 R400 400 HCI6400 5655-M15 5655M15 CICS KIXINFO; retention31 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ You made two small changes to your CICS Transaction Server for z/OS (CICS TS) V3.1 region and after cold starting the region, you receive the following:
+
+DFHRM0001 An abend (code ---/AKEA) has occurred at offset X'01C6' in module DFHRMXN4
+DFHSR0601 Program interrupt occurred with system task III in control 
+IEA995I SYMPTOM DUMP OUTPUT 555 
+SYSTEM COMPLETION CODE=0C2 REASON CODE=00000002 
+
+SYMPTOM
+An abend0C4 in CAKSRD64 caused by incorrect offset to a control block.
+
+
+CAUSE
+Missing fix for CA-Top Secret
+
+DIAGNOSING THE PROBLEM
+You made two minor changes to your CICS region: 
+
+ * Added //DFHJOUT DD SYSOUT=(&RDRC,INTRDR) to the startup JCL. 
+ * Deleted two TCPIPSERVICE definitions for unused ports 5560 and 5561.
+
+
+Then after restarting the region code, it abended with the following messages: 
+DFHRM0001 An abend (code ---/AKEA) has occurred at offset X'01C6' in module DFHRMXN4 
+DFHSR0601 Program interrupt occurred with system task III in control 
+
+IEA995I SYMPTOM DUMP OUTPUT 555 
+SYSTEM COMPLETION CODE= 0C2 [http://publibfi.boulder.ibm.com/cgi-bin/bookmgr/BOOKS/iea2h780/2.175?SHELF=&DT=20070427225855&CASE=] REASON CODE=00000002 
+TIME=12.31.52 SEQ=06428 CPU=0000 ASID=005E 
+PSW AT TIME OF ERROR 078D1000 983478C4 ILC 4 INTC 02 
+NO ACTIVE MODULE FOUND 
+
+In order to get the region back up, you had to back out the 2 changes and auto start the region. The dump shows the running task is the CSXM task #00004. It had received an abend 0C4 program check with the following registers and PSW: 
+
+PSW: 070C0000 9A1090DE IL 6 IC 04 
+0-3 00000000 00000000 0000002C 7F5BD000 
+4-7 9A0F1F98 00016B88 009F96E0 7F5BE000 
+8-B 182802B0 00016800 1A108FB6 1A107E80 
+C-F 0005D680 00016940 1A0F31D0 2116A530 
+
+The PSW is pointing to a MVC instruction: D203 10C0 A162 in CA module CAKSRD64 at x'1298'. The abend is occurring because Reg1 is zeros. The previous message for this CICS job is: 
+
+TSS6002I - TSS/CICS Initialization Phase 2 Started. 
+
+You contacted CA for further assistance with this abend and referencing APAR KGF7455 for the release of Top Secret. They provided the following response: 
+
+"KGF7455 has been published as QO83020, which has a description of: CTS 3.1 ABENDS AT STARTUP, S0C4 IN CAKSRD64. At times during the startup of CTS 3.1 region there could be an abend with S0C4 in CAKSRD64. Error was caused by invalid offset to a control block." 
+RESOLVING THE PROBLEM
+Apply CA APAR QO83020. If you need additional assistance contact [/support/docview.wss?uid=swg21267440&amp;aid=1]CA Technologies [http://www.ca.com/].
+
+
+
+
+
+PRODUCT ALIAS/SYNONYM
+ CICS/TS CICS TS CICS Transaction Server

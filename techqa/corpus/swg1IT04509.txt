@@ -1,0 +1,152 @@
+Title: IBM IT04509: SECURITY APAR CVE-2014-6101 - CROSS-SITE-SCRIPTING VULNERABILITY IN IBM BPM WHEN YOU USE REDIRECT-LOGIN MECHANISM - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+ DIRECT LINK TO FIX
+WLE-7.2.0.5-HotFix-IT04509 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FWebSphere+Lombardi+Edition&fixids=WLE-7.2.0.5-HotFix-IT04509&source=SAR]
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  IBM Business Process Manager (BPM) and IBM WebSphere Lombardi
+   Edition use a redirect-login mechanism that allows a user to
+   automatically (non-interactively) log in based on previously
+   submitted credentials. You use this capability, for example,
+   when you launch coaches from within Process Inspector. However,
+   this redirect-login mechanism is vulnerable to
+   cross-site-scripting attacks, potentially enabling attackers to
+   run code in a user's browser.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  The redirect-login mechanism sends a login page to a user's
+   browser. This page is then automatically submitted by the
+   browser back to the server, without the user interacting with
+   it. The vulnerability allows an attacker to construct a
+   malicious URL that injects code into this login page and that
+   code runs in the user's browser.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A fix is available that removes the vulnerability.
+   
+   On Fix Central (http://www.ibm.com/support/fixcentral), search
+   for IT04509:
+   
+   1. Select WebSphere Lombardi Edition from the product selector,
+     the installed version to the fix pack level, and your
+     platform, and then click Continue.
+   
+   2. Select APAR or SPR, enter IT04509, and click Continue.
+   
+   When you download fix packages, ensure that you also download
+   the readme file for each fix. Review each readme file for
+   additional installation instructions and information about the
+   fix.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  Not applicable
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT04509
+   
+   
+ * REPORTED COMPONENT NAME
+   WS LOMBRDI EDTN
+   
+   
+ * REPORTED COMPONENT ID
+   5725A3600
+   
+   
+ * REPORTED RELEASE
+   720
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-09-23
+   
+   
+ * CLOSED DATE
+   2014-12-17
+   
+   
+ * LAST MODIFIED DATE
+   2014-12-17
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    JR51211 [http://www-01.ibm.com/support/docview.wss?uid=swg1JR51211]
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WS LOMBRDI EDTN
+   
+   
+ * FIXED COMPONENT ID
+   5725A3600
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R720 PSY
+   UP

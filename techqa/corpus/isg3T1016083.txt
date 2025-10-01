@@ -1,0 +1,31 @@
+Title: IBM lsbeventsloader log file shows error: "java.sql.SQLException: Io exception: Broken pipet" - United States
+
+Text:
+java exception broken pipe TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ lsbeventsloader log file shows error: "java.sql.SQLException: Io exception: Broken pipet" 
+
+RESOLVING THE PROBLEM
+
+
+You see similar error messages to the ones below in the lsbeventsloader log file:
+
+ ERROR com.platform.pi.PaServices.jsFunction_executeSQL(PaServices.java:1776)
+java.sql.SQLException: Io exception: Broken pipet
+at oracle.jdbc.driver.DatabaseError.throwSqlException(DatabaseError.java:112) 
+
+ ERROR com.platform.pi.PaServices.jsFunction_executeSQL(PaServices.java:1776)
+java.sql.SQLException: No more data to read from socke
+at oracle.jdbc.driver.DatabaseError.throwSqlException(DatabaseError.java:112) 
+
+ ERROR com.platform.pi.PaServices.jsFunction_executeSQL(PaServices.java:1776)
+java.sql.SQLException: OALL8 is in an inconsistent state
+at oracle.jdbc.driver.DatabaseError.throwSqlException(DatabaseError.java:112) 
+
+This message is harmless and can be ignored. The error message logs because an obsolete connection occurs. A connection in the pool may be obsolete if it has not been accessed within a certain period. In such a case, Platform Intelligence will drop the obsolete connection and select another active connection. 
+Note: A connection pool is a cache of database connections maintained so that the connections can be reused when future requests to the database are required. Connection pools are used to enhance the performance of executing commands on a database.  
+
+ 
+
+Cross reference information Segment Product Component Platform Version Edition IBM Spectrum Computing IBM Spectrum Analytics Server

@@ -1,0 +1,34 @@
+Title: IBM Unable to log onto FileNet Content Engine. - United States
+
+Text:
+login to FEM hang; FNRCC0110E: CONTENT_FCP_OPERATION_FAILED TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Unable to connect to FileNet Content Engine via FileNet Application Engine Workplace or FileNet Enterprise Manager. It comes up partially and hangs. Sometimes it will hang while navigating the object store. 
+
+SYMPTOM
+ 
+
+ * Object Store connects to Image Services via FileNet Content Federation Services for Image Service (CFS-IS). 
+ * Issues reported with other clients as well connecting to IS such as FileNet IDM Open Client. 
+   
+
+
+CAUSE
+Image Services in bad state.
+
+DIAGNOSING THE PROBLEM
+Error seen in P8_Server_Error.log:
+
+YYYY-06-14T15:42:31.601Z 3EF83EF8 CSTG FNRCC0110E - ERROR
+FixedContentProviderCache.getProvider failed to init provider com.filenet.api.exception.EngineRuntimeException: FNRCC0110E: CONTENT_FCP_OPERATION_FAILED: The [connect] operation on the fixed content provider [ImageServicesFCP(6)] failed.
+..........
+Caused by: IS_SSI_5125: : Debugging info: receiveRPC I/O exception: ERROR INFO: loopcount = 1 messageCount = -1 messageStreamType = -1 messageEOM = -1 corLowVer = -1 corHiVer = -1
+..........
+
+
+
+
+
+RESOLVING THE PROBLEM
+Full restart of Image Services and resetting the password in FileNet Enterprise Manager configured to connect to FileNet Image Services.

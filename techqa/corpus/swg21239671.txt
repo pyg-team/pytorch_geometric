@@ -1,0 +1,133 @@
+Title: IBM On custom configurations of WebSphere Commerce with WebSphere MQ - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ This document answers the following questions about possible custom configurations of WebSphere Commerce with WebSphere MQ:
+A. How do I use multiple inbound queues?
+B. How do I use different outbound queue for different message types?
+C. Is it possible to define outbound connector specifications without specifying inbound queue parameters?
+D. Is it possible to use multiple MQ queue managers when integrating with WebSphere Commerce? 
+
+ANSWER
+ 
+
+A. How do I declare multiple inbound queues?
+To use multiple inbound queues, you have to define multiple inbound listeners for WebSphere MQ. By default, WebSphere Commerce configuration provides two inbound listeners (one serial listener and one parallel listener). The configuration with several MQ listeners has not been officially tested, but has been proven to work. To add another listener follow these steps: 
+
+1. Define JMS queue destinations in WebSphere Application Server Administrative Console as described in the Additional Software Guide [http://www.ibm.com/support/docview.wss?uid=pub1gc10426505&loc=en_US&cs=utf-8&lang=en]. 
+
+2. Make a backup copy of the instance_name.xml file. 
+
+3. Edit the instance_name.xml file. Locate the segment that defines a default inbound listener:
+<Inbound>
+<InboundSerialConnector
+TimeToReconnect="600"
+default="true"
+enabled="true" id="1" name="Listener for WebSphere MQ (JMS Inbound) - Serial">
+.........
+</InboundSerialConnector> 
+
+4. Add another definition as shown below:
+<InboundSerialConnector
+TimeToReconnect="600"
+default="true"
+enabled="true"id="3"name="Listener for WebSphere MQ (JMS Inbound) - Serial - Custom">
+<JNDI
+JndiName="eis/JCAJMS" display="false"/>
+<ConnectionSpec
+ClassName="com.ibm.commerce.messaging.adapters.jcajms.JCAJMSConnectionSpec" default="true">
+<EditableProperty
+Admin="factory"
+display="false"
+editable="Yes"
+name="setConnectionFactory" value="JMSQueueConnectionFactory"/>
+<EditableProperty
+Admin="inQueue"
+display="false"
+editable="Yes"
+name="setInboundQueue" value="CustomJMSSerialInboundQueue"/>
+<EditableProperty
+Admin="errorQueue"
+display="false"
+editable="Yes"
+name="setErrorQueue" value="JMSErrorQueue"/>
+<EditableProperty
+Admin="outQueue"
+display="false"
+editable="Yes"
+name="setOutboundQueue" value="JMSOutboundQueue"/>
+</ConnectionSpec>
+<InteractionSpec
+ClassName="com.ibm.commerce.messaging.adapters.jcajms.JCAJMSInteractionSpec" default="true">
+<EditableProperty
+Admin="timeOut"
+display="false"
+editable="Yes"
+name="setTimeOut" value="4"/>
+<EditableProperty
+Admin="mode"
+display="false"
+editable="Yes"
+name="setMode" value="2"/>
+</InteractionSpec>
+</InboundSerialConnector>
+
+Note: 
+
+ *  Make sure to substitute the correct JMS object names (shown in BOLD above) for connection factories and queue destinations. Make sure to set id (shown in BOLD above) to a unique number. 
+   
+
+5. Restart the WebSphere Commerce server for changes to take effect.  * 
+
+
+B. How do I use different outbound queues for different message types? 
+To create different outbound queues for different message types: 
+1. Create a JMS queue definition in the WebSphere Application Server Administration Console as outlined in the Additional Software Guide [http://www.ibm.com/support/docview.wss?uid=pub1gc10426505&loc=en_US&cs=utf-8&lang=en] (for example, JMSOutboundQueueCustom). 
+
+2. When specifying message types from WebSphere Commerce Administration Console on the Parameters page, specify the name of the JMS object (for example, JMSOutboundQueueCustom) for the outbound queue you will use for this message type. 
+
+3. If you want to set the queue destination programmatically in your custom code you need to use the following method of the SendMsgCmd command: 
+
+public void setConfigData(String key, String value) 
+
+The parameter name for outbound queue is "outQueue". For example, 
+msg.setConfigData("outQueue", "JMSOutboundQueueCustom"); 
+
+See the WebSphere Commerce Knowledge Center for more details on using the setConfigData method of SendMsgCmd: Configuration of transport services used for a message [http://www.ibm.com/support/knowledgecenter/SSZLC2_6.0.0/com.ibm.commerce.integration.doc/refs/rcvomin4.htm?lang=en] 
+ * 
+
+
+C. Is it possible to define outbound connector specifications without specifying inbound queue parameters? 
+Yes, it is possible. If you are using WebSphere MQ for outbound messages only and do not want to create an inbound queue. It is possible to change outbound connector specifications to omit inbound queue parameters. This way you do not need to have a JMS object defined for the inbound queue. To define outbound connector specifications: 1. Backup the instance_name.xml file. 
+
+2. Edit instance_name.xml. Locate outbound connector description and comment out inQueue parameter: 
+
+
+<OutboundConnector default="true" enabled="true" id="3" name="JMS" retries="3"> <JNDI JndiName="eis/JCAJMS" display="false"/>
+<ConnectionSpec ClassName="com.ibm.commerce.messaging.adapters.jcajms.JCAJMSConnectionSpec" default="true">
+<EditableProperty Admin="factory" display="false" editable="Yes" name="setConnectionFactory" value="JMSQueueConnectionFactory"/>
+<!-- 
+<EditableProperty Admin="inQueue" display="false"
+editable="Yes" name="setInboundQueue" value="JMSInboundQueue"/> 
+--> 
+<EditableProperty Admin="errorQueue" display="false" editable="Yes" name="setErrorQueue" value="JMSErrorQueue"/>
+<EditableProperty Admin="outQueue" display="false" editable="Yes" name="setOutboundQueue" value="JMSOutboundQueue"/>
+</ConnectionSpec>
+.....
+</OutboundConnector> 
+
+3. Restart the WebSphere Commerce server for changes to take effect. 
+
+D. Is it possible to use more than one MQ queue manager with WebSphere Commerce?
+Yes, it is possible. You need to define a connection factory object in WebSphere Application Server Administration Console for each queue manager. Refer to the Additional Software Guide [http://www.ibm.com/support/docview.wss?uid=pub1gc10426505&loc=en_US&cs=utf-8&lang=en] for information on how to accomplish this. 
+
+If you need to use the additional queue connection factory for an additional inbound queue, refer to the first section of this document. 
+
+If you need to use additional queue connection factory for the additional outbound queue, refer to "How do I use different outbound queue for different message types?" section of this document. Make sure to specify correct connection factory when configuring message type parameters in WebSphere Commerce Administration Console or use setConfigData to set correct "factory" parameter.
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Commerce WebSphere Commerce Enterprise AIX, Linux, Solaris, Windows 6.0 Enterprise

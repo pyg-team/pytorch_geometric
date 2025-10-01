@@ -1,0 +1,162 @@
+Title: IBM PQ81174: During UAT tests of WBI-FN: CSV002I REQUESTS FOR MODULE DSLNMQH EXCEED MAXIMUM USE COUNT - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  During our UAT tests of WBI-FN we hit the following problem :
+   
+   CSV002I REQUESTS FOR MODULE DSLNMQH  EXCEED MAXIMUM USE COUNT
+   After which we had 100s of the following BIP error messages
+   
+   BPXF024I (PSTOMVS) Nov 12 15:55:56 LMVS01 WMQIv210 16777297 :
+   271 (BUL1BRK.DNF_FIN_EG01) 16 BIP2232E: Error detected whilst
+   handling a previous error in node.... etc.
+   
+   During a test of 4000 msgs cde count for DSLNMQH increased by
+   4694. EP address did not change (according to TMON). Private
+   storage increased by +5804K. Module DSLNMQH is REentrant and
+   reusable.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: ALL MERVA ESA WBI-FN users                   *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: CSV002I REQUESTS FOR MODULE DSLNMQH     *
+   *                      EXCEED MAXIMUM USE COUNT.               *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   The system generated maximum use count exceeds because
+   the function did not free the module DSLNMQH.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  DSLNICTM is changed to close the function to free the use count.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  A FIX IS AVAILABLE BY CHANGE TEAM.
+   
+   
+    
+   
+   
+
+COMMENTS
+ *  THE FIX WAS SENT TO CUSTOMER FOR FIXTEST.
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   PQ81174
+   
+   
+ * REPORTED COMPONENT NAME
+   MERVA ESA 4.1.0
+   
+   
+ * REPORTED COMPONENT ID
+   5648B2900
+   
+   
+ * REPORTED RELEASE
+   410
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2003-11-20
+   
+   
+ * CLOSED DATE
+   2004-02-20
+   
+   
+ * LAST MODIFIED DATE
+   2004-04-03
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UQ85595
+   
+   
+
+MODULES/MACROS
+ *  DSLNICTM
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   MERVA ESA 4.1.0
+   
+   
+ * FIXED COMPONENT ID
+   5648B2900
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R410 PSY UQ85595 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UQ85595]
+   UP04/03/05 P F403
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

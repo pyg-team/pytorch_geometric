@@ -1,0 +1,160 @@
+Title: IBM OA36799: HOD: ADDING A USER WITHOUT A PASSWORD FAILS. - United States
+
+Text:
+z/os  FIXES ARE AVAILABLE
+IBM Rational Host On-Demand V11.0.4.0 Manufacturing Refresh [http://www-01.ibm.com/support/docview.wss?uid=swg24031730]
+Rational Host On-Demand 11.0.9 [http://www-01.ibm.com/support/docview.wss?uid=swg24037050]
+Rational Host On-Demand 11.0.11 [http://www-01.ibm.com/support/docview.wss?uid=swg24038596]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  HoD 10.0.8.1 and 11.03 on z/OS, server-based client
+   
+   Customer is using the HoD internal UID/PW database HOD 10.0.8.1
+   or  11.03 on
+   z/OS, server-based client. Trying to add a new user without a PW
+   using the Admin client fails. Customer states that the problem
+   started with HoD 11.03, and is also found in 10.0.8.1. If the
+   user adds a PW, the user ID is created
+   successfully.
+   
+   The problem is on on zOS platform.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: Host On-Demand administrators creating       *
+   *                 user IDs with blank passwords                *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: When HOD Administrators create a new    *
+   *                      user ID with a blank password or if an  *
+   *                      existing user changes the password to   *
+   *                      blank when AllowBlankPassword property  *
+   *                      is missing in config.properties file,   *
+   *                      a Jave exception is thrown, Null        *
+   *                      pointer exception and the operation     *
+   *                      fails.                                  *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   Whenever there is no AllowBlankPassword property in the
+   config.properties file, this property value was not getting
+   set to the default value true and the code was failing to
+   handle it.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The code was modified to set the property to default value of
+   yes.
+   
+   Fix is in HOD 10.0.9 Refresh pack
+   Fix is scheduled to be available in HOD 11.0.4 Refresh pack
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   OA36799
+   
+   
+ * REPORTED COMPONENT NAME
+   HOD MVS
+   
+   
+ * REPORTED COMPONENT ID
+   5733A5900
+   
+   
+ * REPORTED RELEASE
+   B00
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-06-16
+   
+   
+ * CLOSED DATE
+   2011-11-16
+   
+   
+ * LAST MODIFIED DATE
+   2011-11-16
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   HOD MVS
+   
+   
+ * FIXED COMPONENT ID
+   5733A5900
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * RA00 PSY
+   UP
+   
+   
+ * RB00 PSY
+   UP

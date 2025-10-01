@@ -1,0 +1,248 @@
+Title: IBM PI64867: PORTAL INSTALLATION PROBLEM WITH WINDOWS PATHS CONTAINING BACKSLASH U - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Fixes integrated in WebSphere Portal 8.0.0.1 Combined Cumulative Fixes [http://www-01.ibm.com/support/docview.wss?uid=swg24034497]
+Fixes integrated in WebSphere Portal 8.5.0.0 and V9.0 Combined Cumulative Fixes [http://www-01.ibm.com/support/docview.wss?uid=swg24037786]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The error occurs in the task sequence
+   
+   action-install-wcm-hidden-authoring-->install-wcm-hidden-autho
+   
+   ring-page-->action-set-wcm-authoring-permissions
+   
+   
+   
+   It appears that the extraneous depends="init" on the
+   
+   action-install-wcm-hidden-authoring   task is causing the
+   
+   problem.  The init task is already
+   
+   called by default in ConfigEngine so it shouldn't be necessary
+   
+   to call it again.  I suspect that the  init call may be pulling
+   additional path properties into
+   
+   the environment causing the error in the GetProperties.jacl
+   
+   script
+   
+   #load $propFileName as property file in the Properties object
+   
+   
+   
+   $fileprop load $fileStream
+   
+   
+   
+   The $fileStream loads from wp_portal.properties and the paths
+   
+   are all correctly escaped with double backslash
+   
+   env.WAS_PATH=C\:\\IBM\\WebSphere\\AppServer\\lib\\native\\win\\x
+   
+   
+   
+   86_64;........;c\:\\rbfg\\uuj\\uuj1;C\:\\Program
+   
+   Files\\Universal\\USap\\bin\\;
+   
+   
+   
+   I ran a second install and as soon as the prereq.wcm_cfg.xml
+   
+   file was installed, I edited the file , removed the
+   
+   depends="init" and saved the file.
+   
+   The install then completed successfully.
+   
+   
+   
+   In order to fix this properly we would need an iFix containing
+   
+   the updated prereq.wcm_cfg.xml , that would be installed by IM
+   
+   as part of the 8001 install.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  remove directory path with /u
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  The error occurs in the task sequence
+   
+   action-install-wcm-hidden-authoring-->install-wcm-hidden-autho
+   
+   ring-page-->action-set-wcm-authoring-permissions
+   
+   
+   
+   It appears that the extraneous depends="init" on the
+   
+   action-install-wcm-hidden-authoring   task is causing the
+   
+   problem.  The init task is already
+   
+   called by default in ConfigEngine so it shouldn't be necessary
+   
+   to call it again.  I suspect that the  init call may be pulling
+   additional path properties into
+   
+   the environment causing the error in the GetProperties.jacl
+   
+   script
+   
+   #load $propFileName as property file in the Properties object
+   
+   
+   
+   $fileprop load $fileStream
+   
+   
+   
+   The $fileStream loads from wp_portal.properties and the paths
+   
+   are all correctly escaped with double backslash
+   
+   env.WAS_PATH=C\:\\IBM\\WebSphere\\AppServer\\lib\\native\\win\\x
+   
+   
+   
+   86_64;........;c\:\\rbfg\\uuj\\uuj1;C\:\\Program
+   
+   Files\\Universal\\USap\\bin\\;
+   
+   
+   
+   I ran a second install and as soon as the prereq.wcm_cfg.xml
+   
+   file was installed, I edited the file , removed the
+   
+   depends="init" and saved the file.
+   
+   The install then completed successfully.
+   
+   
+   
+   In order to fix this properly we would need an iFix containing
+   
+   the updated prereq.wcm_cfg.xml , that would be installed by IM
+   
+   as part of the 8001 install.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A code fix for this issue is integrated into the WebSphere
+   Portal & WCM Combined Cumulative Fix 22 (PI66392 [http://www-01.ibm.com/support/docview.wss?uid=swg1PI66392]) for Portal
+   8.0.0.1 available from Fix Central:
+   
+   
+   http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent
+   =ibm/WebSphere&product=ibm/WebSphere/WebSphere+Portal&release=Al [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm/WebSphere&product=ibm/WebSphere/WebSphere+Portal&release=Al]
+   l&platform=All&function=aparId&apars=PI66392
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI64867
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSPHERE PORTA
+   
+   
+ * REPORTED COMPONENT ID
+   5724E7600
+   
+   
+ * REPORTED RELEASE
+   800
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-06-24
+   
+   
+ * CLOSED DATE
+   2017-02-28
+   
+   
+ * LAST MODIFIED DATE
+   2017-02-28
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBSPHERE PORTA
+   
+   
+ * FIXED COMPONENT ID
+   5724E7600
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R800 PSY
+   UP

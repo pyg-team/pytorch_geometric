@@ -1,0 +1,15 @@
+Title: IBM Possible delay for caching automation scripts on clustered environment - United States
+
+Text:
+automation script cache; automation script testing; TPAESCRIPTING TECHNOTE (FAQ)
+
+QUESTION
+ When testing Automation Scripts on a clustered environment is there a delay for the scripts to cache? 
+
+ANSWER
+Some clients have noted a delay for script changes to take effect on a clustered environment. You may need to allow some time for the script to be cached and propagated to all Java Virtual Machine (JVM) instances in a clustered environment. Users may also experience a delay on non-clustered environments depending on how long it takes the environment to be refreshed.
+Maximo implements a script cache that loads the Java byte code representation of a script into memory. This cache enables script execution to be more efficient. The script cache is refreshed under certain conditions. Caching was implemented to improve performance, so every time a script is executed you do not incur a database read. For a busy system it may take a few cycles for the cache to be updated. Please see the Developerworks blog for more details on script caching and propagation in a clustered environment. 
+
+https://www.ibm.com/developerworks/community/blogs/a9ba1efe-b731-4317-9724-a181d6155e3a/entry/maximo_scripting_script_compilation_and_caching1?lang=en [https://www.ibm.com/developerworks/community/blogs/a9ba1efe-b731-4317-9724-a181d6155e3a/entry/maximo_scripting_script_compilation_and_caching1?lang=en] 
+
+The script caching can not be turned off. and you may need to wait for the cache to sync, this could be a few minutes.

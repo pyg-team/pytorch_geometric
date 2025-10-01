@@ -1,0 +1,72 @@
+Title: IBM Upgrading from omnibus WebGUI 8.1.0.3 to 8.1.0.7 fails with SDK Error - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The upgrade failed with the following error msg,
+
+A problem occurred during the execution of the /opt/IBM/IMShared/files/com.ibm.tivoli.netcool.omnibus.webgui.antfile_8.1.7.201609061435.xml file. ERROR: The following error occurred while executing this line: /opt/IBM/IMShared/files/com.ibm.tivoli.netcool.omnibus.webgui.antfile_8.1.7.201609061435.xml:1812: exec returned: 105 [/opt/IBM/IMShared/files/com.ibm.tivoli.netcool.omnibus.webgui.antfile_8.1.7.201609061435.xml:584] A package has an issue that cannot be resolved by Installation Manager. Identify the package that has the issue by looking at the installation history. In Installation Manager, click File > Installation History. In console mode, enter S: View Installation History. Contact IBM customer support. 
+
+SYMPTOM
+The installation seems to fail at the following step: 
+
+ 
+<!-- To enable a standalone server profile to use SDK 7 at a server level (wsadmin) -->
+<exec dir="${WAS_PROFILE_PATH}/bin" executable="${WAS_PROFILE_PATH}/bin/wsadmin${platform.script.ext}" 
+resultproperty="setServerSDK.rc" failonerror="true">
+<redirector output="${InstallLog}/setServerSDK.out" error="${InstallLog}/setServerSDK.err"/>
+<arg value="-conntype"/>
+<arg value="NONE"/>
+<arg value="-lang"/>
+<arg value="jython"/>
+<arg value="-f"/>
+<arg value="${WAS_HOME}/bin/setServerSDK.py"/>
+<arg value="${WAS_SERVER_NAME}"/>
+<arg value="${WAS_NODE_NAME}"/>
+<arg value="${JAVA7_64}"/>
+</exec> 
+
+<antcall target="setServerSDK"/> 
+
+WASX7017E: Exception received while running file 
+"/opt/app/Tivoli/netcool/IBM/WebSphere/AppServer/bin/setServerSDK.py"; 
+exception information: com.ibm.bsf.BSFException: exception from Jython: 
+Traceback (innermost last): 
+File "<string>", line 89, in ? 
+File "<string>", line 59, in configureAppServerSDK 
+
+
+CAUSE
+Java 1.7_64 Not found or not installed on the server
+
+
+RESOLVING THE PROBLEM
+Go to $WAS_HOME/bin and run: ./managesdk.sh -listEnabledProfileAll 
+
+
+Check $WAS_HOME\java_1.7_64 does exist as you can see below. 
+
+[root@BLR-MMRHELR bin]# ./managesdk.sh -listEnabledProfileAll
+CWSDK1004I: Profile JazzSMProfile :
+CWSDK1006I: PROFILE_COMMAND_SDK = 1.6_64
+CWSDK1008I: Node JazzSMNode01 SDK name: 1.6_64
+CWSDK1009I: Server server1 SDK name: 1.6_64
+CWSDK1001I: Successfully performed the requested managesdk task.
+
+However, the profile does not contain java_1.7_64. 
+
+Try to manually create it. 
+
+If you already have that version (meaning it is installed) please stop WebGUI, run: 
+./managesdk.sh -enableProfile -profileName WSRRSrv01 -sdkname 1.7_64 
+and check again if now it correctly appears for dash profile: 
+/managesdk.sh -listEnabledProfileAll 
+
+[root@BLR-MMRHELR bin]# ./managesdk.sh -enableProfile -profileName 
+JazzSMProfile -sdkname 1.7.1_64 -enableServers 
+CWSDK1017I: Profile JazzSMProfile now enabled to use SDK 1.7.1_64. 
+CWSDK1001I: Successfully performed the requested managesdk task. 
+
+And if you have the sdk 7.0.9.10 uninstall it and reinstall the 7.1.3.40.
+Then re-attempt the installation of 8.1 Fix pack 7.

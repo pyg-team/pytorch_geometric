@@ -1,0 +1,39 @@
+Title: IBM Rational Rhapsody fails to launch with error 0xc0150002 - United States
+
+Text:
+crash; crashes; cannot start; does not run TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Rational Rhapsody fails to launch with error code 0xc0150002. 
+
+SYMPTOM
+After a correct installation you get this error message when attempting to launch Rhapsody. Also other executables like Diffmerge bring the same error code.
+
+
+CAUSE
+This can happen when an attempt is made to start an application compiled against RTI .Net libraries in a system where the "Visual Studio 2005 Service Pack 1 Redistributable Package MFC Security Update" is not installed. 
+
+ 
+The underlying cause is that the system is trying to find the "microsoft.VC80.CRT" file, provided in that Security Update. 
+
+
+ENVIRONMENT
+Microsoft Windows
+
+
+
+DIAGNOSING THE PROBLEM
+In Windows "Control Panel > Programs and Features" the Visual C++ 2005 Redistributable 
+
+1. is missing, or 
+2. it is shown with a lower version number than 8.0.61001 (e.g. 8.0.56336), or
+3. only the x64 version (64 bit version) is installed and not the 32 bit version.
+
+
+RESOLVING THE PROBLEM
+Install the Redistributable Package MFC Security Update and then attempt to run Rhapsody again. 
+
+ 
+The Microsoft Visual C++ 2005 Service Pack 1 Redistributable Package MFC Security Update can be obtained from the following Microsoft website: 
+
+http://www.microsoft.com/download/en/details.aspx?id=26347 [http://www.microsoft.com/download/en/details.aspx?id=26347]

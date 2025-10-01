@@ -1,0 +1,137 @@
+Title: IBM LO43336: ENHANCEMENT OF LDAP DIRECTORY ASSISTANCE - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PERMANENT RESTRICTION.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Through Directory Assistance customer would like to be able
+   to:
+   
+             Configure a server to include an LDAP directory such
+   that it shows up
+   in the drop down for a NAB Name Picker field for the purpose of
+   searching that
+   LDAP for an entry using a dialogue search box similar to the one
+   provided
+   today.  The field returned by default would the user s LDAP
+   Hierarchical name
+   (as it is today) when you have and LDAP configured locally.
+   
+   Additionally, a developer should be able to specify what
+   attribute of the LDAP
+   is returned as a result of picking a name from the LDAP.  This
+   would allow
+   additional capabilities for applications to return flexible
+   information for
+   work flow applications (Manager s Name, Departments, phone
+   numbers, email
+   addresses, etc .).
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  A programming error was found but will not be corrected. It will
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A programming error was found but will not be corrected. It will
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+ *  This APAR is associated with SPR# YDFS7UW376.
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   LO43336
+   
+   
+ * REPORTED COMPONENT NAME
+   DOMINO SERVER
+   
+   
+ * REPORTED COMPONENT ID
+   5724E6200
+   
+   
+ * REPORTED RELEASE
+   801
+   
+   
+ * STATUS
+   CLOSED PRS
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-08-13
+   
+   
+ * CLOSED DATE
+   2009-08-22
+   
+   
+ * LAST MODIFIED DATE
+   2009-08-22
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  NA
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

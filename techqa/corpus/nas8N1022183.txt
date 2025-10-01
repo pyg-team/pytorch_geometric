@@ -1,0 +1,54 @@
+Title: IBM Integrated Application Server (IAS) v8.5, Integrated Web Services (IWS) v2.6, WebSphere Liberty Server Startup Issues: CWWKZ0002E - United States
+
+Text:
+IWS; Web Services; Startup; Fail; Error; CWWKZ0002E TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When a large amount of applications/web services are deployed to a single IBM Integrated Application v8.5 Server (iAS), IBM Integrated Web Services (IWS) v2.6 Server, or WebSphere Liberty Server; the IWS server may not successfully start all of the deployed applications/web services. 
+
+SYMPTOM
+Not all deployed web services will start when the IWS Server is started.
+
+
+CAUSE
+The WebSphere Liberty runtime class loading TCCL maximum lock wait time has been reached
+
+ENVIRONMENT
+IBM i OS; IBM Integrated Application v8.5 Server; IBM Integrated Web Services v2.6 Server; WebSphere Liberty
+
+DIAGNOSING THE PROBLEM
+One or more occurrence(s) of the following message will be logged in the /www/<server>/wlp/usr/servers/<server>/logs/messages.log file.
+
+
+CWWKZ0002E: An exception occurred while starting the application XYZ. 
+The exception message was: java.lang.IllegalStateException: Unable to acquire TCCL store lock
+
+
+RESOLVING THE PROBLEM
+ 
+
+1) Open a web browser and go to the URL, http://<server>:2001/HTTPAdmin, to display the IBM Web Administration for i console web application.
+
+If you are not prompted for a userID and password, execute the following CL command to ensure the ADMIN server is started: 
+
+STRTCPSVR *HTTP HTTPSVR(*ADMIN) 
+
+If you continue to experience issues accessing the IBM Web Administration for i console, please open a Service Request (PMR) with IBM here [http://www-01.ibm.com/software/support/servicerequest/quick_start.html] or call 1-800-IBM-SERV. 2) Select Manage -> Application Servers from the tabs in the top, left-hand corner of the console. Then, select your IWS v2.6 Server from the drop-down list next to the Server field.
+NOTE: This document only applies to IWS v2.6 servers.
+
+[/support/docview.wss?uid=nas8N1022183&amp;aid=1] 3) On the left-hand, vertical menu bar under Server Properties; click on the Properties link.
+
+[/support/docview.wss?uid=nas8N1022183&amp;aid=2] 4) Click on the JVM Options tab and click on the Edit button.
+
+[/support/docview.wss?uid=nas8N1022183&amp;aid=3] 5) Add the following argument on a new line at the bottom of the IWS server's jvm.options file.
+
+-Dcom.ibm.ws.classloading.tcclLockWaitTimeMillis=300000 6) Click the OK button to save the changes.
+
+[/support/docview.wss?uid=nas8N1022183&aid=4] [/support/docview.wss?uid=nas8N1022183&aid=4] 7) Restart your IWS Server to enable the tracing. This can be done by clicking on the Stop button [/support/docview.wss?uid=nas8N1022183&amp;aid=5] button to stop the server and the Start button [/support/docview.wss?uid=nas8N1022183&amp;aid=6] button to start the server. 8) Verify your IWS server and all of the deployed web services start successfully. 
+
+If you continue to experience web service start up issues, you might need to increase the number of milliseconds specified on the -Dcom.ibm.ws.classloading.tcclLockWaitTimeMillis JVM argument. Repeat steps 1-4 and then modify the JVM argument value to a larger number. Click OK, restart the IWS server, and test the IWS server start up process again.
+
+If you continue to experience issues starting your IBM Integrated Web Services Server, please gather the data recommended in the URL, http://www-01.ibm.com/support/docview.wss?uid=nas8N1012787 [http://www-01.ibm.com/support/docview.wss?uid=nas8N1012787], and then open a Service Request (PMR) with IBM here [http://www-01.ibm.com/software/support/servicerequest/quick_start.html] or call 1-800-IBM-SERV. 
+
+
+Cross reference information Segment Product Component Platform Version Edition Operating System IBM i 7.3 Operating System IBM i 7.2 Operating System IBM i 7.1

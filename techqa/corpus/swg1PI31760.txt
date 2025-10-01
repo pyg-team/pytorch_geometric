@@ -1,0 +1,213 @@
+Title: IBM PI31760: AKC3 ABENDS. DFHPG0002 CODE X'0913' LEAVES PROGRAM LOCKED WITHOUT LOCK OWNER AND TASKS TIME-OUT - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  CICS tasks unexpectedly abend with AKC3 abends (purged).
+   The dump shows that tasks were timing out while waiting for the
+   program lock for a user program. PG domain in a console dump
+   shows that the program lock for the user program is held but
+   the lock owner is gone. See the ????? for lock owner:
+   .
+   PPTE              MOD    LANG  DATA  DPL   LOAD     USE
+   ADDRESS           TYPE   DED   LOC   SUBS  STAT    COUNT
+            PROGRAM     LANG         EXEC   RE   HOLD      LOCK
+            NAME        DEF          KEY   LOAD  STAT      OWNER
+   _____________________________________________________________
+   1E00FF30 pppppppp  PG NDF CO2  B   U  F  N  L  T      1 ?????
+   .
+   Immediately prior to the start of the AKC3 abends was a
+   DFHPG0002 error:
+   .
+   DFHPG0002 A severe error (code X'0913') has occurred in module
+    DFHPGPG.
+   .
+   The PG0002 dump shows that the task that owned the program lock
+   had been hung and a purge was requested and deferred. Trace
+   shows CICS actioned the purge when the task was trying to get
+   the PGLOCK.
+   .
+   Kernel stacks show that processing at the time of the DFHPG0002
+   message was in DFHPGPG, in the RELEASE_PROGRAM_LOCK proc.
+   Before releasing the Program lock for the user program, DFHPGPG
+   first has to get the PGLOCK. But the purge is actioned when the
+   tasks suspends for the PGLOCK and the Program lock for the user
+   program is never freed.
+   .
+   Additional Symptom(s) Search Keyword(s): KIXREVswm
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All CICS Users.                              *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: The ppte program lock is held by an     *
+   *                      unknown lock owner or by a task that    *
+   *                      has never used the program making the   *
+   *                      program unusable.                       *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   While initial linking to a program (PGPG Initial_link), the task
+   ends up in a suspend, waiting for the PG domain lock. While it
+   is waiting, the task is forcepurged.
+   
+   Prior to the forcepurge the task would have been within the
+   ACQUIRE_PROGRAM logic which ensures that the ppte_program_lock
+   is held to ensure that multiple tasks do not simultaneously load
+   and language initialise the program. When the task no longer
+   needs the ppte_program_lock it will release it but it will first
+   require the PG domain lock (pga_lock_token). It is while it is
+   waiting for the pglock that the task is forcepurged.
+   
+   The task will enter recovery however it will not return a purged
+   response and also does not release the ppte program lock
+   beforehand. This results in the program lock being held by an
+   unknown lock owner or appearing to be held by another task that
+   has actually never interacted with the program. Other tasks may
+   want to initial_link the program but find they are in an
+   indefinite wait as the ppte_program_lock will never be released.
+   This can lead to various results depending upon dtimeout values,
+   etc. The program is unusable until CICS is restarted.
+   
+   Additional Keywords: get_pglock_error PGLE PGXE PG0002 0913 1313
+                        X'1313'
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  DFHPGPG has been altered so that when a task is purged this
+   response is returned to the caller and the ppte program lock is
+   released if it is still being held.
+   
+   DFHPGLE and DFHPGXE have also been altered to ensure that
+   the ppte program lock is released during this scenario.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  *********
+               * HIPER *
+               *********
+   FIX AVAILABLE BY PTF ONLY
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI31760
+   
+   
+ * REPORTED COMPONENT NAME
+   CICS TS Z/OS V5
+   
+   
+ * REPORTED COMPONENT ID
+   5655Y0400
+   
+   
+ * REPORTED RELEASE
+   800
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   YesHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-12-18
+   
+   
+ * CLOSED DATE
+   2015-02-04
+   
+   
+ * LAST MODIFIED DATE
+   2015-03-03
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    PI28904 [http://www-01.ibm.com/support/docview.wss?uid=swg1PI28904]
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UI24932 UI24933
+   
+   
+
+MODULES/MACROS
+ *  DFHPGAI  DFHPGAQ  DFHPGDD  DFHPGEX  DFHPGIS  DFHPGLD  DFHPGLE
+   DFHPGLK  DFHPGLU  DFHPGPG  DFHPGRP  DFHPGST  DFHPGUE  DFHPGXE
+   DFHPGXM
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CICS TS Z/OS V5
+   
+   
+ * FIXED COMPONENT ID
+   5655Y0400
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R800 PSY UI24932 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI24932]
+   UP15/02/14 P F502 ½
+   
+   
+ * R900 PSY UI24933 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI24933]
+   UP15/02/14 P F502 ½
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

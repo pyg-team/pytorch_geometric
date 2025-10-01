@@ -1,0 +1,52 @@
+Title: IBM Unexpected #AnonType_ prepended to SOAP Request Header data type during WSDL discovery in IBM Business Process Manager (BPM) Process Designer - United States
+
+Text:
+BPM; ICI: SOAP; Web Service TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ You create a Web Service Integration Service in Process Designer using a Web Service WSDL, which is provided by IBM Content Integrator (ICI). The SOAP Request Header is defined as the '#AnonType_RequestHeader' data type instead of the 'RequestHeader' data type for all operations defined in the WSDL during WSDL discovery. As a result, you see a COEB3013E message in the SystemOut.log file during the execution of the Web Service Integration Service. 
+
+SYMPTOM
+You can see error messages in the SystemOut.log file that are similar to the following messages: 
+
+[14/05/12 14:57:13:281 EST] 0000007c SystemOut O 2012-05-14 14:57:13.281 ERROR [ICI] com.ibm.eci.soaservice.InternationalizationUtil --> COEB3013E: The SOAP request header could not be parsed. Check the exception stack trace for more details.
+java.lang.Exception: org.apache.axis2.databinding.ADBException: Unsupported type http://soaservice.eci.ibm.com/#AnonType_RequestHeader
+at com.ibm.eci.soaservice.RequestHeader$Factory.parse(RequestHeader.java:528)
+at com.ibm.eci.soaservice.InternationalizationUtil.setClientLocaleFromSOAPHeader(InternationalizationUtil.java:147)
+at com.ibm.eci.soaservice.SOAServiceSkeleton.CreateFolder(SOAServiceSkeleton.java:1769)
+at com.ibm.eci.soaservice.SOAServiceMessageReceiverInOut.invokeBusinessLogic(SOAServiceMessageReceiverInOut.java:171)
+at org.apache.axis2.receivers.AbstractInOutMessageReceiver.invokeBusinessLogic(AbstractInOutMessageReceiver.java:40)
+
+
+CAUSE
+This approach is working as designed as it follows the W3C XML Schema Standard [http://www.w3.org/TR/xmlschema-0/]. The following information comes from the standard:
+
+2.2.2 Global Elements & Attributes
+Put concretely, global declarations cannot contain the ref attribute, they must use the type attribute (or, as we describe shortly, be followed by an anonymous type definition).
+
+2.4 Anonymous Type Definitions
+In general, you can identify anonymous types by the lack of a type= in an element (or attribute) declaration, and by the presence of an un-named (simple or complex) type definition.
+
+The WSDL file, which is provided by ICI, is defined with the following SOAP header:
+
+<!-- header element --> 
+<xsd:element name="RequestHeader"> 
+<xsd:complexType> 
+<xsd:sequence> 
+<xsd:element maxOccurs="1" minOccurs="0" name="InternationalizationContext" nillable="false" type="tns:InternationalizationContextType"/> 
+<xsd:element maxOccurs="1" minOccurs="0" name="Encryption" nillable="false" type="tns:EncryptionType"/> 
+</xsd:sequence> 
+</xsd:complexType> 
+</xsd:element>
+
+Because the header definition is global and anonymous, IBM Business Process Manager prepends '#AnonType_' to the request header.
+
+
+RESOLVING THE PROBLEM
+Because this kind of SOAP Request Header definition is not supported and IBM Business Process Manager complies with the W3C XML Schema Standard, you need modify the WSDL file to avoid the global and anonymous header definition.
+
+ 
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Business Process Manager Advanced Web Services Linux, Windows 8.5.5, 8.5, 8.0, 7.5.1, 7.5.0.1, 7.5 Business Integration IBM Business Process Manager Express Web Services Linux, Windows 8.5.5, 8.5, 8.0, 7.5.1, 7.5.0.1, 7.5

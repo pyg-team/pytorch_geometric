@@ -1,0 +1,252 @@
+Title: IBM LO44524: AFTER UPGRADING TO 801 FROM 656 UNABLE TO CREATE FTI WITH ATTACH MENTS - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  *** Begin Update: August 11, 2008
+   
+   This is what we know so far.  When the customer indexes
+   attachments using
+   keyview version 9.2 with NFS mounted, full text indexing is
+   unable to complete
+   indexing when merging completes because not all of the temporary
+   directories we
+   need to delete are empty.  Upon further research we see the
+   following type file
+   is left in a directory we need to clean up:
+   
+    /export/notesdata/mail/dashri.ft/ftgi.K00:
+       total 40
+       17176822 -rw-rw-r-- 1 notes notes 35604 Jul 22 19:12
+   .nfs00000000010618f60000674c
+   
+   
+   Running the command fuser on such a file reveals the
+   following:
+   
+   [root@ldsptv12 dashri.ft]# cd ftgi.K00
+   
+   [root@ldsptv12 ftgi.K00]# ls -la
+   
+   total 48
+   
+   drwxrwxr-x 2 notes notes  4096 Aug  5 13:09 .
+   
+   drwxrwx--- 7 notes notes  4096 Aug  5 13:09 ..
+   
+   -rw-rw-r-- 1 notes notes 35604 Aug  5 13:09
+   .nfs000000000029b68500000081
+   
+   
+   [root@ldsptv12 ftgi.K00]# fuser .nfs000000000029b68500000081
+   
+   .nfs000000000029b68500000081: 32142
+   
+   
+   
+   [root@ldsptv12 ftgi.K00]# ps -ef | grep 32142
+   
+   notes    32142 32138  0 13:09 ?        00:00:00
+   
+   /opt/lotus/notes/80010/linux/ voop 15 18 -2130706432
+   
+   
+   
+   When we turn off indexing of attachments then we do not run into
+   this problem
+   and the indexes are created successuflly.  The customer has not
+   run into this
+   problem with Domino 6.56 and keyview version 7.0..
+   *** End Update: August 11, 2008
+   
+   After upgrading to 801 the customer can no longer create a Full
+   Text Index for
+   databases when they include attachments.
+   
+   Errors seen :
+   
+   21/07/2008 14:34:14   Full Text message:
+   
+   /export/notesdata/mail/dashri.ft/ftgi.K00 Delete error. errcode
+   = 2304
+   erro = 39 (Directory not empty)
+   
+   21/07/2008 14:34:14   Error full text indexing document
+   NT0000111E
+   /export/notesdata/mail/dashri.ft (rc=3857) Full text error; see
+   log for
+   more information
+   
+   21/07/2008 14:34:14   Error full text indexing
+   
+   /export/notesdata/mail/dashri.nsf: Full text error from Topic
+   
+   21/07/2008 14:34:14   Index update process shutdown: Full text
+   error
+   from Topic
+   
+   
+   R8.0.1
+   Redhat Linux - 5.1
+   
+   Files are being stored on a remote location
+   
+   
+   The origin of the error when creating some of your FTI-es is
+   caused by
+   the existence of temporary NFS files in the FTI temp
+   directories.  You
+   will most probably never find these .nfsxxxx files on your disk
+   after
+   the process (in this case the domino indexer process) has
+   terminated as
+   these files are typical "silly renamed" files (renamed by the
+   NFS
+   system).
+   
+   For some reason one of the temporary files within these
+   directories
+   couldn't be deleted by the NFS system as it was evaluated by NFS
+   as
+   still being in-use by a process.  In order to workaround such
+   issues,
+   the NFS system does a silly rename of the file and as soon as
+   the
+   process using the file has terminated, the temp renamed file is
+   deleted
+   by the NFS system.
+   
+   
+   
+   The Domino FTI process runs then into an issue as this temp
+   directory
+   normally should be empty, the process expects all temporary
+   files to
+   have been deleted prior to the moment it tries to remove the
+   temp
+   directory itself - this is part of the clean-up process.  I have
+   the
+   impression FTI ran into such problems several times as these FTI
+   temp
+   directories haven't been cleaned-up on your system.  They are
+   still
+   there but empty.
+   
+   
+   
+   In order to get to the root of this problem, I was wondering if
+   some
+   kind of activity tracing can be enabled on NFS level in order to
+   find
+   the origin of the "silly rename".  That would give us a lead to
+   what has
+   led to NFS having to resort to the "silly rename" in specific
+   
+   conditions.
+   
+   As you stated that this problem doesn't occur with new replica's
+   of the
+   same dbs, some issue must exist with the FTI's of the existing
+   dbs on
+   this NFS system.
+   
+   Have you checked if deleting the FTI from one of the problem dbs
+   and
+   recreating it from scratch makes any difference ? Please , make
+   sure the
+   complete <dbname>.ft directory has been removed from the NFS
+   drive,
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *  This APAR is associated with SPR# RSTN7HBMZP.
+   Support should continue to log additional reports.  If
+    additional reports, may be reconsidered for a future release
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   LO44524
+   
+   
+ * REPORTED COMPONENT NAME
+   DOMINO SERVER
+   
+   
+ * REPORTED COMPONENT ID
+   5724E6200
+   
+   
+ * REPORTED RELEASE
+   850
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-09-21
+   
+   
+ * CLOSED DATE
+   2010-09-20
+   
+   
+ * LAST MODIFIED DATE
+   2010-09-20
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R850 PSN
+   UP

@@ -1,0 +1,163 @@
+Title: IBM IY86018: QUEUE BASED AGGREGATION PERFORMANCE DEGRADES AFTER BACKEND OUTAGE - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  QUEUE BASED AGGREGATION PERFORMANCE DEGRADES AFTER BACKEND
+   OUTAGE
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All message aggregation users.               *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: After a back-end system outage that     *
+   *                      delays the reply messages,              *
+   *                      queue-based message aggregation fails   *
+   *                      to catch up with the backlog of         *
+   *                      messages.                               *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   An aggregation message flow will fan-out multiple requests and
+   aggregate all the replies into one response message. If some
+   of the replies are delayed, due to a temporary back-end system
+    outage for example, but eventually arrive at the fan-in
+   message flow all together, there may  be a build up of
+   messages on the fan-in input queue. If timeouts have been
+   specified, then  many of these aggregations will be timed out
+   but these replies still need to be processed.
+   
+   When a reply message is read from the fan-in queue, the
+   AggregationReply node looks for a  matching request on the
+   Aggregation SYSTEM.BROKER.AGGR.REQUEST queue.
+   
+   If a matching request is found, the AggregationReply node next
+   looks for the Control message  on the
+   SYSTEM.BROKER.AGGR.CONTROL queue.
+   When timeout processing is occurring, it's possible for the
+   Control message to have expired  such that it's not found on
+   the Control queue, or that this actual MQGET call causes the
+   Control message to expire, resulting in a message on the
+   SYSTEM.BROKER.AGGR.TIMEOUT queue. But this MQGET call for the
+   Control message is performed with a one second wait which can
+   significantly slow down message throughput, particularly for
+   aggregation messages flows that are processing multiple
+   messages per second.
+   A wait time is required because another thread processing a
+   second instance of the same message flow may also be
+   processing a reply for the same aggregation, and has got the
+   Control  message off the queue to update the count of reply
+   messages that are outstanding before puttng  the message back
+   to the Control queue.
+   With a large build of messages on the fan-in queue, when they
+   come to be processed by the  AggregationReply node many of the
+   Control messages expire when the MQGET call is made to find
+   the matching Control message. With many one second delays
+   occurring, the throughput of the  AggregationReply node can
+   become slower than the rate of replies arriving on the fan-in
+   input  queue, and thus the queue builds up and the
+   AggregationReply node never recovers.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The wait time on the MQGET for the control message has been
+   changed from 1 second to 10 milliseconds.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IY86018
+   
+   
+ * REPORTED COMPONENT NAME
+   WMB AIX V6
+   
+   
+ * REPORTED COMPONENT ID
+   5724J0501
+   
+   
+ * REPORTED RELEASE
+   100
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2006-06-13
+   
+   
+ * CLOSED DATE
+   2006-08-30
+   
+   
+ * LAST MODIFIED DATE
+   2006-08-30
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMB AIX V6
+   
+   
+ * FIXED COMPONENT ID
+   5724J0501
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R100 PSY
+   UP

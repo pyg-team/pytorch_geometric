@@ -1,0 +1,106 @@
+Title: IBM Collecting Data: Read first for all IBM Operational Decision Management Components - United States
+
+Text:
+Collecting Data; Collecting Data; Collecting Data; MustGather; MustGather; MustGather; MustGatherDocument TECHNOTE (FAQ)
+
+QUESTION
+ Collecting data for problems with IBM Operational Decision Management Components . Collecting this MustGather information before calling IBM support will help you understand the problem and save time analyzing the data. 
+
+ANSWER
+IBM Operational Decision manager comprises a set of modules that operate in different environments, and also work together to provide a comprehensive Operational Decision Management system. 
+Namely the components are:
+
+
+ * Rule Designer (RD) 
+ * Event Designer (ED) 
+ * Insight Designer (ID) 
+ * Rule Execution Server (RES) 
+ * zRule Execution Server for z/OS (zRES) 
+ * Decision Validation Services (DVS) 
+ * Insight Server (IS) 
+ * Decision Center (DC) 
+ * Rule Solution for Office (RSO) 
+ * Build Command (BC)
+
+
+Properly identifying the component with the problem will significantly improve the support team's response time. 
+
+
+WHAT TO DO FIRST
+
+ 1. Find out if you are using the latest update of the product:
+    - use the following document to find the version of ODM components [http://www-01.ibm.com/support/docview.wss?uid=swg21400738]. 
+    - since 7.5 the version number is defined as follow V.R.M.F where V is the version number, R is the release number, M is the Modification number and F is the Fix pack number (read more in this document [http://www.ibm.com/support/docview.wss?uid=swg27008656]).
+    - make sure that all modules deployed and used are at the same exact version (V.R.M.F).
+    
+    
+ 2. Check the lifecycle information [http://www-01.ibm.com/software/support/lifecycleapp/PLCSearch.wss?q=Operational+Decision&scope=&sort=P#FN_GA]to see if you should upgrade to a newer release or version.
+    
+    
+ 3. Check the ODM detailed system requirements [http://www.ibm.com/support/docview.wss?uid=swg27023067] to verify that you are using a supported configuration.
+    
+    
+ 4. Check the fix list [http://www-01.ibm.com/support/docview.wss?uid=swg27023767] for corrections already available in updates and newer version of the product or component.
+    
+    
+ 5. Install the latest update or upgrade as possible. Find the download you need here [http://www-01.ibm.com/support/docview.wss?uid=swg24031636]. 
+    
+    
+ 6. Review the logs of the module(s) being used to find any meaningful error messages and stack traces : the root cause at the bottom of the stack is usually the most relevant and use the troubleshooting and support [http://pic.dhe.ibm.com/infocenter/dmanager/v8r5/topic/com.ibm.wodm.family.troubleshooting/topics/con_support_troubleshoot.html] section of the documentation to diagnoes. See details to retrieve the logs for each module below. 
+    
+     * the documentation located respectively in the knowledge center [http://www.ibm.com/support/knowledgecenter/SSQP76/kc_welcome_odm.html].
+    
+    
+ 7. Search information related to your specific issue or question in:  * the support site [http://www-947.ibm.com/support/entry/portal/troubleshooting] for existing technotes [http://www-01.ibm.com/support/search.wss?rs=2025&tc=SS9TUK+SSRNUX+SSQP76&dc=DB560+DB520&dtm], published APARs [http://www-01.ibm.com/support/search.wss?rs=2025&tc=SSRNUX+SS9TUK&dc=DB550+DB100&dtm](using the error message found in the logs)
+       
+       
+    
+    
+ 8. When nothing seems to be helpful to resolve your problem or answer your question it is time for you to collect the specific information that illustrate your issue and contact IBM Support [http://www.ibm.com/software/support/servicerequest/quick_start.html]. Follow the direction according to the component you are using so that the support team receives all the data it needs for a timely resolution.
+
+
+COLLECTING DATA MANUALLY
+
+
+In order to diagnose and resolve an issue the Support Team needs the following information, 
+ * The version information for the ODM module(s) used (V.R.M.F) and also the environment where those are running: Operating System (OS), application server, database, database driver, Eclipse... when applicable 
+ * Log files 
+ * Circumstances: it happened right the first time the feature was used or after a change in the configuration, only with one specific project or all projects... 
+ * Steps to reproduce 
+ * A minimal sample to reproduce (preferably reproduce with a project or sample from the distribution)
+
+
+The more accurate and comprehensive the data you provide the more efficient the Support team will be in assisting you. 
+The following section describes a tool that will help you gathering the information needed with a few clicks. 
+
+
+COLLECTING COMPONENTS SPECIFIC INFORMATION
+
+
+If your symptoms are specific to one of the component listed below follow the instructions in the associated MustGather document: 
+ * Rule Designer (RD) [http://www.ibm.com/support/docview.wss?uid=swg21653741] 
+ * Event Designer (ED) [http://www.ibm.com/support/docview.wss?uid=swg21653741] 
+ * Rule Execution Server (RES) [http://www-01.ibm.com/support/docview.wss?uid=swg21653982] 
+ * Decision Center (DC) [http://www-01.ibm.com/support/docview.wss?uid=swg21653986] 
+ * zRule Execution Server for z/OS (zRES) [http://www.ibm.com/support/docview.wss?uid=swg21978484] 
+ * Build Command (BC) [http://www.ibm.com/support/docview.wss?uid=swg22007933]
+
+
+COLLECTING FEATURE SPECIFIC INFORMATION
+
+
+If your symptoms are specific to one feature listed below follow the instructions in the associated MustGather document: 
+ * Synchronization between Rule Designer and Decision Center [http://www.ibm.com/support/docview.wss?uid=swg21975435]. 
+ * Deploying a RuleApp [http://www.ibm.com/support/docview.wss?uid=swg21983535]
+
+
+
+WHAT TO DO NEXT
+
+
+Once you have collected the information, you can submit the diagnostic data to IBM support RELATED INFORMATION
+ ODM 8.9 Knowledge Center - Troubleshooting and Support [https://www.ibm.com/support/knowledgecenter/SSQP76_8.9.0/com.ibm.odm.distrib.troubleshooting/topics/con_support_troubleshoot.html]
+ODM 8.8 Knowledge Center - Troubleshooting and Support [https://www.ibm.com/support/knowledgecenter/SSQP76_8.8.1/com.ibm.odm.distrib.troubleshooting/topics/con_support_troubleshoot.html]
+ODM 8.7 Knowledge Center - Troubleshooting and Support [https://www.ibm.com/support/knowledgecenter/SSQP76_8.7.1/com.ibm.odm.distrib.troubleshooting/topics/con_support_troubleshoot.html]
+ODM 8.6 Knowledge Center - Troubleshooting and Support [https://www.ibm.com/support/knowledgecenter/SSQP76_8.6.0/com.ibm.odm.distrib.troubleshooting/topics/con_support_troubleshoot.html]
+ODM 8.5 Knowledge Center - Troubleshooting and Support [https://www.ibm.com/support/knowledgecenter/SSQP76_8.5.1/com.ibm.odm.distrib.troubleshooting/topics/con_support_troubleshoot.html]

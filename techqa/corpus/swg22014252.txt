@@ -1,0 +1,34 @@
+Title: IBM Db2 12 integrated workload query tuning support in OMEGAMON Db2 V540 - United States
+
+Text:
+OMPEDB2XE FLASH (ALERT)
+
+ABSTRACT
+ This document describes how to enable integrated query workload tuning support in OMEGAMON XE for Db2 Performance Expert V540 for Db2 11 or Db2 12 originated queries when using the integrated Infosphere Optim Performance Manager UI (commonly referred to as Extended Insight or the SQL Dashboard) or the PE Client Java GUI. 
+
+CONTENT
+The purpose of this flash is to inform technical support personnel how to get query workload tuning support in OMEGAMON XE for Db2 Performance Expert V540 for Db2 11 or Db2 12 originated queries when using the integrated Infosphere Optim Performance Manager UI (commonly referred to as Extended Insight or the SQL Dashboard) or the PE Client Java GUI. (See Entitlement below.) 
+Problem Symptoms: Customer could experience the following trying to call the Data Studio Query Workload Tuner integration points from Extended Insight, the SQL Dashboard, or the PE Client: 
+
+ * The Data Studio UI freezes when trying to pass a query workload to DataStudio 4.1.2. 
+ * The only resolution is to kill the Java process running DataStudio. 
+ * This happens with Db2 11 statements as well as Db2 12.
+
+
+Solution  1. Download and install Data Studio 4.1.3 if not already installed. Note that older versions of Data Studio cannot be migrated (overlayed); 4.1.3 needs to be a new installation 
+ 2. Burn the LAK (License Activation Kit) you received from IBM to DVD and run the LAK. Extracting the .iso file also works e.g. using 7zip. [See below for Entitlement]
+
+
+This link describes how to install LAK on Data Studio: https://www.ibm.com/support/knowledgecenter/en/SS7LB8_4.1.1/com.ibm.datatools.qrytune.installconfig.doc/topics/ioqwt411_installwithim.html [https://www.ibm.com/support/knowledgecenter/en/SS7LB8_4.1.1/com.ibm.datatools.qrytune.installconfig.doc/topics/ioqwt411_installwithim.html] 
+
+*** Be advised that even though the License Activation Kit install Welcome message says Version 4.1.2, that it is still applicable to 4.1.3 
+[/support/docview.wss?uid=swg22014252&aid=1] [/support/docview.wss?uid=swg22014252&aid=1] 
+
+This link describes how to activate full set of tuning features (after LAK is installed): https://www.ibm.com/support/knowledgecenter/en/SS7LB8_4.1.1/com.ibm.datatools.qrytune.installconfig.doc/topics/ioqwt411_top.html [https://www.ibm.com/support/knowledgecenter/en/SS7LB8_4.1.1/com.ibm.datatools.qrytune.installconfig.doc/topics/ioqwt411_top.html] 
+
+Entitlement OMEGAMON XE for Db2 Performance Expert/Monitor on z/OS (5655-W37 / 5655-W38) customers can receive on request a License Activation Kit (LAK) to be used together with Data Studio V4.1.3 if they have licensed any of the following:  * IBM Db2 Performance Solution Pack V1.4 (5655-E74) or higher 
+ * IBM Db2 SQL Performance Solution Pack V1 (5655-SQ1) or higher 
+ * IBM Db2 Query Workload Tuner for z/OS V5 (5655-AB4) or higher for the purposes of performing SQL tuning via launch of IBM Data Studio from the OMEGAMON XE for Db2 PE SQL Dashboard, the Extended Insight Analysis Dashboard, or the PE client GUI. 
+
+
+To receive a copy of the License Activation Kit, open a Service Request with IBM.

@@ -1,0 +1,88 @@
+Title: IBM The AIX "dataseg" Utility - United States
+
+Text:
+Domino Server; Server; Crash PRODUCT DOCUMENTATION
+
+ABSTRACT
+ The goal of this paper is to educate the Domino AIX user base on the dataseg utility. By defining what it does, showing examples of using it, and caveats. 
+
+CONTENT
+The goal of this paper is to educate the Domino® AIX® user base on the dataseg utility. By defining what it does, showing examples of using it, and caveats. 
+
+dataseg
+
+What does it do?
+
+The dataseg utility provides a safe method of modifying AIX binaries, to allow Notes® APIs or add-in tasks (including Domino server tasks, LEI, Domino.Doc®, etc.) access to greater than 256 MB of memory, the default maximum available to a process in AIX under the 32 bit memory management model of AIX 4.x or 5.x.
+
+It does this by exchanging segments that could be allocated by the application for shared memory to become process memory. In terms of Domino this would add 256 MB per segment exchanged. 
+
+
+How does it do this?
+
+Basically, what "dataseg" does is it flips a bit on the bmaxdata flag post compile time. The bmaxdata flag is what ultimately controls the maximum size of a process. By default, bmaxdata is set to zero, or a 256 MB maximum size. The utility allows for up to seven segments to be exchanged, however, most environments should only allocate two additional segments maximum (without a thorough understanding of shared memory allocation on the specific server in question). 
+
+
+Where is it useful?
+
+dataseg is useful with crashes related to the error message "Insufficient Memory" or "Memory allocation error" that are proven to be process memory based. This can give both server uptime and time to analyze the specific problem with the system. It can be used on code prior to version 5.0.9, even though it ships with 5.0.9.
+
+
+Using the dataseg utility
+
+To use dataseg, root authority is required, based on default permissions in the directory /opt/lotus/notes/latest/ibmpow. The server should be down as well. The generic command, to be executed with the server down is as follows:
+
+# dataseg -s *
+
+That is, the default for dataseg is to add 2 segments to all notes binaries. This is how 5.0.9 ships. In general, the approach should be to modify all binaries. The examples below illustrate various ways to manipulate the command using a single binary. 
+
+Examples:
+
+A. Running dataseg with only a file argument will tell if the binary has been modified. Any user can issue this command.
+
+d0xdbXXX:/home/notes# dataseg http
+
+file = "http"
+data/stack seg# = 0 # of shared segs avail. = 11 = 2816 Meg
+
+B. This is the default change dataseg would make with the -s flag
+
+d0xdbXXX:/home/notes# dataseg -s http
+file = "http"
+Old: data seg# = 0 # of shared segs avail. = 11 = 2816 Meg
+New: data seg# = 2 # of shared segs avail. = 9 = 2304 Meg
+
+
+C. This is an example of the -f flag which accepts numbers between 0 - 7.
+
+d0xdbXXX:/home/notes# dataseg -f 0 http
+file = "http"
+Old: data seg# = 2 # of shared segs avail. = 9 = 2304 Meg
+New: data seg# = 0 # of shared segs avail. = 11 = 2816 Meg
+
+D. This example shows what happens if the file is open at the time (likely to occur on partitioned servers when all partitions have not been taken down). 
+
+dataseg -f 0 /opt/lotus/notes/latest/ibmpow/server
+file = "/opt/lotus/notes/latest/ibmpow/server" 
+invalid or no access to file "/opt/lotus/notes/latest/ibmpow/server" errno = 26 "Text file busy"
+
+E. The following error will occur if the non-root attempts to modify a binary.
+
+dataseg -f 0 /opt/lotus/notes/latest/ibmpow/http
+file = "/opt/lotus/notes/latest/ibmpow/http"
+invalid or no access to file "/opt/lotus/notes/latest/ibmpow/http" errno = 13 "Permission denied"
+
+
+Caveats
+
+1. All third party API's (including homegrown) or add-in tasks to Domino should be modified to the same number of segments as the Domino binaries. The following error can occur when data segments between API/add-in tasks mismatch those of the Domino distribution (when the API is executing calls to shared memory):
+
+0x01FE:This process "tmmscan" is unable to map the required amount of shared memory. Please refer to the documentation on how to fix this.
+
+Note: "tmmscan" is the add-in task in question in the error message. 
+
+2. In large scale deployments it may be necessary to reduce the number of segments allocated to process memory in 5.0.9 code or higher. Sites that have 8 or 9 shared memory segments allocated before implementing 5.0.9 code or above should strongly consider setting all Domino binaries and third party add-ins to zero segments, so they do not run out of shared memory. The number of shared memory segments allocated to Domino can be determined via the "ipcs -mb" command. 
+
+3. AIX ulimits must be properly adjusted for the data segment and the memory (virtual memory). The user account for the Domino server must have these limits adjusted in concert with changes for the data segment. This concerns primarily those sites using either AIX defaults or those who are not using unlimited for these AIX resources. If these are not properly accounted for Domino will continue to crash prior to 256 MB.
+
+Related Documents:

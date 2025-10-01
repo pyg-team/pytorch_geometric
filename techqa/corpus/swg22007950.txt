@@ -1,0 +1,30 @@
+Title: IBM Best business practice question regarding HISTDB access - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Best business practice question regarding HISTDB access 
+
+CAUSE
+As DBA's we are reluctant to allow queries outside of our group against this database for various reasons. Would you please provide us with reasoning as to why we should or should not avoid giving access?
+
+ANSWER
+Best Practices and this example was giving SPSS user access. 
+
+
+Carefully plan the relationship between the SPSS user accounts and the database user accounts that they use to connect to the monitored IBM® Netezza® systems. Or in this case access to the HISTDB. As the SPSS accounts will be running queries that gather the data for the HISTDB.
+
+To minimize the query impact on a Netezza system, consider the following recommended practices:
+
+If your SPSS users have a common set of objects that they manage on the Netezza system, use the same database user account for these users to connect to the Netezza system. For example, you could create a spss_user database user account with the appropriate privileges, then configure the SPSS accounts to connect to the HISTDB using that spss_user database account. Implement a policy where only the SPSS admin user can configure the Netezza host connections for each spss account. That is, do not allow spss users to add Netezza host connections on their own. Define the host connections as part of the portal user account creation process.
+
+General Concerns with this Access
+
+How will you know that their queries will not take up a lot of time on the NPS?
+
+Another thought, the most important thing to remember about the query history database is that it's subject to all the same best practices as elsewhere.. the most important being to regularly generate stats. Who will do that for the SPSS folks? 
+
+You still need to adhere to the best-practices commonly associated with any Netezza query - and associated with analytic-style forensics which is required of the history database. in this case placing a "floor" boundary on the query for each of the given views so that they don't scan their entire contents. It is unlikely that query history information is useful in deep history - it is usually most relevant for the past several weeks if not days. Each of these is a complex view on its own, so joining them into an even more complex view has a price. 
+
+Another Netezza best practice concerning complex operations is to break them into smaller (time-bounded) CTAS operations that refine the data, then perform a final,simpler join or select on the results.

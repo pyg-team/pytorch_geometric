@@ -1,0 +1,143 @@
+Title: IBM IV03416: UNIX OS AGENT ON AIX TAKES MORE THAT 2 SECONDS TO COLLECT AND PROCESS DATA - United States
+
+Text:
+  FIXES ARE AVAILABLE
+IBM Tivoli Monitoring 6.2.2 Fix Pack 8 (6.2.2-TIV-ITM-FP0008) [http://www-01.ibm.com/support/docview.wss?uid=swg24031354]
+IBM Tivoli Monitoring 6.2.2 Fix Pack 9 (6.2.2-TIV-ITM-FP0009) [http://www-01.ibm.com/support/docview.wss?uid=swg24032067]
+IBM Tivoli Monitoring 6.2.2 Fix Pack 6 (6.2.2-TIV-ITM-FP0006) [http://www-01.ibm.com/support/docview.wss?uid=swg24030135]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  On AIX the Monitoring Agent for UNIX OS takes more
+   than 2 seconds to collect/process information. This
+   behavior is due to a 2 seconds sleep in the code
+   that is going to be removed and replaced with a
+   configurable delay.
+   
+   Environment: The Monitoring Agent for UNIX OS 6.2.2 on AIX
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  UNIX OS agent on AIX takes more than 2 seconds to collect and
+   process data.
+   
+   On AIX, the Monitoring Agent for UNIX OS takes more than 2
+   seconds to collect and process information.  This behavior is
+   due to a 2 seconds sleep in the code that will be replaced with
+   a configurable delay.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A new environment variable has been added to the UNIX OS Agent
+   which can be used to set the delay interval between the two
+   process datacollection (getprocs64 API) used to evaluate CPU
+   consumption of processes.  The default value is 2000
+   milliseconds (2 seconds) but it can be reduced using the
+   following key in the ux.ini file:
+   KUX_GETPROCS_DELAY=<time in milliseconds>, for example:
+   KUX_GETPROCS_DELAY=50
+   
+   The fix for this APAR is going to be included in the following
+   maintenance vehicle:
+   
+       | fix pack | 6.2.2-TIV-ITM-FP0006
+       | interim fix |  6.2.2.4-TIV-ITM_UNIX-IF0004
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV03416
+   
+   
+ * REPORTED COMPONENT NAME
+   ITM AGENT UNIX
+   
+   
+ * REPORTED COMPONENT ID
+   5724C040U
+   
+   
+ * REPORTED RELEASE
+   622
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-07-18
+   
+   
+ * CLOSED DATE
+   2011-07-29
+   
+   
+ * LAST MODIFIED DATE
+   2011-09-28
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ITM AGENT UNIX
+   
+   
+ * FIXED COMPONENT ID
+   5724C040U
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R622 PSY
+   UP

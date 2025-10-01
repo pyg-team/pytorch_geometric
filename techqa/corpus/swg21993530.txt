@@ -1,0 +1,93 @@
+Title: IBM "[INS-10102] Installer initialization failed ... An unexpected error occured while initializing the Installer" when installing Oracle 12c 32-bit client on Controller application server - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Because the Controller application server contains a small portion of 32-bit code (in addition to the vast majority of 64-bit code) it is necessary to install both the Oracle 64-bit and 32-bit clients (on the application server).
+
+Administrator therefore installs the Oracle 12c 64-bit client first. This is successful.
+
+Afterwards, the administrator attempts to launch the Oracle 12c 32-bit client installer (setup.exe). An error appears. 
+
+SYMPTOM
+The error message/symptom will vary depending on environment. 
+
+ 
+
+Example: Windows 2016
+[/support/docview.wss?uid=swg21993530&aid=1] [/support/docview.wss?uid=swg21993530&aid=1]
+[INS-10102] Installer initialization failed.
+
+Cause - An unexpected error occured while initializing the Installer. Action - Contact Oracle Support Services or refer logs Summary - [INS-10002] Inventory initialization failed
+
+
+CAUSE
+Limitation (see link at the end of this Technote) of Oracle client software, when installing two copies of the Oracle client on the same Windows device.
+
+
+RESOLVING THE PROBLEM
+After installing the 64-bit Oracle client, rename an Oracle registry key. Then install the Oracle 32-bit client. Finally, rename the Oracle registry key back to its original name. 
+
+ 
+
+Steps: 
+
+The following is based on Oracle 12c, and was correct at the time of writing. The steps may differ slightly for future patch versions of Oracle. 
+
+1. Download the latest patchset version of the Oracle 12C release 1 64-bit client. 
+
+ * At the time of writing, this is the file “winx64_12102_client.zip”.
+
+
+2. Extract this file (“winx64_12102_client.zip”) onto the Controller application server, and run 'setup.exe' 
+
+ * VITAL: During the client installation wizard, select a full 'Administrator' install option:
+
+[/support/docview.wss?uid=swg21993530&aid=2] [/support/docview.wss?uid=swg21993530&aid=2]  * Typically choose all the default options for the other wizard choices.
+
+
+TIP: After the install has finished, check that it has installed all the expected components, by looking at the size of the "C:\app" folder (or wherever you have installed it to). The total size should be approximately 1.41Gb. 
+
+ 
+
+3. Now create/edit your TNSNAMES.ORA file. 
+
+ * By default, this is located here: C:\app\client\Administrator\product\12.1.0\client_1\network\admin 
+ * Ensure that it contains entries on how to connect to your Oracle database server(s)
+
+
+4. Create a ‘System Variable’ (on your Controller application server) called ‘TNS_ADMIN’ to point to the location of your TNSNAMES.ORA file. 
+
+ * By default, the value would be: C:\app\client\Administrator\product\12.1.0\client_1\network\admin
+
+[/support/docview.wss?uid=swg21993530&amp;aid=3] 
+
+5. Rename the registry key “HKLM\Software\Oracle” to “HKLM\Software\Oracle.OLD”: 
+[/support/docview.wss?uid=swg21993530&aid=4] [/support/docview.wss?uid=swg21993530&aid=4] 
+6. Download the latest patchset version of the Oracle 12C release 1 32-bit client. 
+
+ * Specifically, you need to download “winnt_12102_client32.zip”.
+
+
+7. Extract this file (“winnt_12102_client32.zip”) onto the Controller application server, and run 'setup.exe' 
+
+ * VITAL: During the client installation wizard, select a full 'Administrator' install option:
+
+[/support/docview.wss?uid=swg21993530&aid=5] [/support/docview.wss?uid=swg21993530&aid=5] 
+ * 
+ * IMPORTANT
+ * 
+ *  For example, install it into the folder: C:\app_32\Administrator 
+
+8. After the install has finished, check that it has installed all the expected components, by looking at the size of the "C:\app_32" folder (or wherever you have installed it to). 
+
+ * The total size should be approximately 1.41Gb.
+
+
+9. IMPORTANT: Finally, undo the registry key renaming that you did earlier. 
+
+ * In other words, rename the registry key “HKLM\Software\Oracle.OLD” to “HKLM\Software\Oracle”.
+
+[/support/docview.wss?uid=swg21993530&aid=6] [/support/docview.wss?uid=swg21993530&aid=6] RELATED INFORMATION
+ Third Party (Oracle) - Unable to install 12c 32 bit cli [https://community.oracle.com/thread/3725625]

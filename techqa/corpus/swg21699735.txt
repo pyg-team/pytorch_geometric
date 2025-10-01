@@ -1,0 +1,121 @@
+Title: IBM Customizing APMUI dashboard - United States
+
+Text:
+5724G70UITR; scapm; smartcloud TECHNOTE (FAQ)
+
+QUESTION
+ How can one customize dashboard for Linux OS monitoring agent in APMUI? 
+
+CAUSE
+You want to show different attributes on Linux OS dashboard than the ones displayed on out of the box (OOTB) agent dashboard.
+
+ANSWER
+The "customBuilder" utility can be used to add a new dashboard category to include in the customized dashboard. It does not modify the default OOTB dashboard, instead it creates the new customized dashboard.
+As described in user guide, for option "-i", the id should be without "_". The tool adds "_" automatically to distinguish it from the OOTB dashboard.
+The command is as follows:
+
+./customBuilder.sh -i klz -u apmadmin -p apmpass -o 8080 -d /opt/IBM/tmp/klz/
+
+
+- where the custom jsons are placed in /opt/IBM/tmp/klz/ directory.
+
+And then you see this result:
+
+[root]:customCfg>./customBuilder.sh -i klz -u apmadmin -p apmpass -o 8080 -d /opt/IBM/tmp/klz/
+Note: ID must start with "_" and it is prefixed automatically.
+Processing request.
+Processing request.
+Please input a keyword to query datasources in:
+To list all datasources, press the ENTER key:
+
+Processing request.
+1. Universal Data Provider
+2. Web Response Time
+3. Universal Agent
+4. DB2
+5. Warehouse Proxy
+6. MS Host Integration Server
+7. Active Directory
+8. Robotic Response Time
+9. Lotus Domino
+10. mySAP
+11. i5/OS
+12. Microsoft Hyper-V Server
+13. SNMP HP-UX Systems
+14. mySAP Agent
+15. Microsoft ISA
+16. Performance Analyzer Warehouse Agent
+17. Microsoft Exchange Server
+18. Agentless Linux OS
+19. IBM Tivoli Monitoring 5.x Endpoint Agent
+20. All Managed Systems
+21. System Management Agent Systems
+22. CIM Solaris Systems
+23. IBM Tivoli Monitoring 5.x Endpoint
+24. MS .NET Framework
+25. Microsoft HIS
+26. MS SharePoint Portal Server
+27. Sun Management Center Systems
+28. UNIX OS
+29. Linux OS
+30. SNMP AIX Systems
+31. Microsoft Lync Server
+32. Monitored Network Devices
+33. Network Devices Monitoring Agent
+34. Microsoft IIS
+35. Agentless AIX OS
+36. Agentless Solaris OS
+37. MS BizTalk Server
+38. Windows OS
+39. Summarization and Pruning Agent
+40. Microsoft SQL Server
+41. Oracle Database Extended
+42. UDB Agent
+43. MS ISA Server 2000
+44. Clients
+45. Applications
+46. Oracle Data Guard
+47. MS Cluster Server
+48. Application Management Console
+49. UNIX Logs
+50. SNMP Windows Systems
+51. SAP Solman
+52. Oracle RDBMS
+53. Tivoli Enterprise Portal Server
+54. Internet Services
+55. Agentless HP-UX OS
+56. UISolution.manager
+57. Oracle ASM
+58. WMI Windows Systems
+59. SNMP Linux Systems
+60. Agentless Windows OS
+98. Input a new keyword
+99. Quit
+29 <-------------------------------------------- enter the Linux OS datasource number from the list.
+Processing request.
+Processing request.
+Category Overall Summary: Added 1,Updated 0,Failed 0
+DataSource Overall Summary: Added 1,Updated 0,Failed 0
+Group Widget Overall Summary: Added 7,Updated 0,Failed 0
+Page Overall Summary: Added 2 , Updated 0, Failed 0
+Application Template Overall Summary: Added 1, Updated 0, Failed 0
+
+
+After that, go back to APMUI and add/modify application for new component Linux OS(_KLZ), as shown in the screen print below:
+
+[/support/docview.wss?uid=swg21699735&aid=1] [/support/docview.wss?uid=swg21699735&aid=1]
+
+This is the one you just added. You also see the original OOTB component "Linux OS".
+
+When you add an instance from the new component, you see the result as defined in the custom jsons.
+
+[/support/docview.wss?uid=swg21699735&aid=2] [/support/docview.wss?uid=swg21699735&aid=2]
+
+
+The custom dashboard (in screen print above) was created using the sample jsons provided with APMUI installation. These json files are found under following folder:
+APMUI_HOME/usr/servers/apmui/apps/resources/samples/klz
+
+You can also modify or delete your customized dashboard with customBuilder tool, the steps and samples are in the User's Guide
+
+RELATED INFORMATION
+ User's Guide: Customizing the Dashboard [http://www.ibm.com/support/knowledgecenter/SSATHD_7.7.0/com.ibm.apm.doc_77/apm_ui_docs/apmui_77fp1/customizingthedashboard.html]

@@ -1,0 +1,18 @@
+Title: IBM Connections Mail: Session timeout for SSO with LTPA & Kerberos authentication does not reset when user logs out - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+ In an IBM Connections Mail environment that supports both IBM Lotus Domino and Microsoft Exchange mail servers, also using LTPA & Kerberos authentication, if a user logs in and out via the IBM Connections menu, but leaves the browser open, the user may unexpectedly see that their session has timed out. This is because session timeout for SSO with LTPA & Kerberos authentication doesn't reset when a user logs out. 
+
+The first time a user logs in, it could take two hours before their SSO "LTPA and Kerberos" times out and the user is notified of the session timeout. If that user logs in and logs out in the same browser, and after 1 hour, the user logs in again, the user will see a session timeout after 1 hour.
+
+
+CAUSE
+WebSphere Application Server LTPA & Kerberos authentication does not set the SSO timeout period for a user who logs in and logs out, and back in again, in the same browser session. 
+
+
+
+RESOLVING THE PROBLEM
+There is currently no work around. This issue has been reported to IBM Connections Mail development.

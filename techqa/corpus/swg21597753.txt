@@ -1,0 +1,46 @@
+Title: IBM Setting custom properties in the WebSphere Application Server V8.5 Liberty profile - United States
+
+Text:
+liberty wlp TECHNOTE (FAQ)
+
+QUESTION
+ How do I configure custom properties for the WebSphere Application Server V8.5 Liberty profile? 
+
+ANSWER
+There are many custom properties available for the WebSphere Application Server V8.5 Liberty profile. The elements, attributes and sub-elements that can be configured are listed on the product documentation page - Liberty profile: Configuration elements in the server.xml file [https://www.ibm.com/support/knowledgecenter/en/SSD28V_8.5.5/com.ibm.websphere.wlp.core.doc/autodita/rwlp_metatype_core.html].
+If you are working with IBM Support, or resolving an issue independently through the IBM Support Portal [http://www.ibm.com/support], you might also be asked to set a custom property.
+
+WebSphere custom properties for the Liberty profile are set in the server.xml file of the application server.
+
+Note: For the default server instance, the server.xml file is located in the following location:
+
+<liberty install root>/usr/servers/defaultServer/server.xml 
+
+ 
+
+For example: To configure the deferServletLoad web container custom property
+
+
+ *   * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+   
+   
+
+
+Add the following line to the server.xmlconfiguration file: 
+
+<webContainer deferServletLoad="false"/> 
+
+
+Note: To configure a Java Virtual Machine custom property, set the property in the jvm.options file. This is described in section "Customize JVM options by using jvm.options files" in the following Knowledge Center article... 
+
+Customizing the Liberty environment [http://www-01.ibm.com/support/knowledgecenter/SSEQTP_8.5.5/com.ibm.websphere.wlp.doc/ae/twlp_admin_customvars.html?cp=SSEQTP_8.5.5&lang=en] 
+
+The server management script searches for jvm.options in two locations: ${wlp.install.dir}/etc/jvm.options and ${server.config.dir}/jvm.options. If both files are present, the options in the ${server.config.dir}/jvm.options file are used.

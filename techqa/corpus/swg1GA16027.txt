@@ -1,0 +1,161 @@
+Title: IBM GA16027: AIX SERVER HANG CAUSED BY GUARDIUM STAP - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  ERROR DESCRIPTION:
+   Guardium STAP is causing AIX server hang due to a stack overflow
+   when STAP receives packets from the Guardium appliance where
+   the  data length is greater than 61k.
+   .
+   This was noted with the following
+   Appliance is v9 p613, STAP is r81265, DB is Oracle 11g, OS is
+   AIX 6.1
+   .
+   The issue is caused because STAP does not check if the data
+   received from the network exceeds the predefined maximum data
+   length (61k). So if data received from the Guardium appliance
+   doesreach the maximum, the memroy will be out of bounds.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  The issue has been fixed in
+   v9 STAP revision r89990 and later
+   v10 STAP revision r53234 and later.
+   .
+   All latest GPU Fix Pack , Sniffer, Security and Agent patches
+   are available from Fix Central -
+   Note the below 3 url lines needs to be pasted IN FULL to see
+   the fixes
+   http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent
+   =ibm~Information+Management&product=ibm/InformationManagement/In [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~Information+Management&product=ibm/InformationManagement/In]
+   foSphere+Guardium&release=All&platform=All&function=all
+   .
+   Some ad-hoc patches may not be placed on Fix Central - In that
+   event - or if the patch(es) are not yet shown on Fix Central
+   and no later GPU or fixpack is listed then please contact IBM
+   Security Guardium Support
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Guardium STAP is causing AIX server hang due to a stack overflow
+   when STAP receives packets from the Guardium appliance where
+   the  data length is greater than 61k.
+   
+   This was noted with the following
+   Appliance is v9 p613, STAP is r81265, DB is Oracle 11g, OS is
+   AIX 6.1
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The issue is caused because STAP does not check if the data
+   received from the network exceeds the predefined maximum data
+   length (61k). So if data received from the Guardium appliance
+   doesreach the maximum, the memroy will be out of bounds.
+   
+   The issue has been fixed in v9 STAP with revision r89990 and
+   later and v10 STAP with revision r53234 and later.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   GA16027
+   
+   
+ * REPORTED COMPONENT NAME
+   SEC GUARD APPLI
+   
+   
+ * REPORTED COMPONENT ID
+   5725I1100
+   
+   
+ * REPORTED RELEASE
+   950
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-03-08
+   
+   
+ * CLOSED DATE
+   2017-11-15
+   
+   
+ * LAST MODIFIED DATE
+   2017-11-15
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   SEC GUARD APPLI
+   
+   
+ * FIXED COMPONENT ID
+   5725I1100
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * RA10 PSY
+   UP

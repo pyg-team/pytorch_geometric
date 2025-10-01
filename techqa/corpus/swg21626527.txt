@@ -1,0 +1,26 @@
+Title: IBM Rational Functional Tester - It is not possible to take a Data Verification Point/Data Drive on Adobe Flex controls such as Spark Combobox and Spark Dropdown List controls. - United States
+
+Text:
+RFT; Flex; Spark Combobox; Spark DropDown List; DropDown; Verification Point; Datapool; All Items; Spark; RN8.2; RN8.2.0.1; RN8.2.0.2; RN8.2.1; RN8.2.1.1; RN8.2.2; RN8.2.2.1; RN8.3; RN8.3.0.1 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ It is not possible to take a Data Verification Point/Data Drive on Spark Combobox and Spark Dropdown List controls in Rational Functional Tester. 
+
+CAUSE
+Due to a limitation in the Adobe Flex software development kit (SDK), the items can be fetched only if the drop-down remains open.
+
+RESOLVING THE PROBLEM
+Taking a Data Drive on Spark Combobox / Spark DropDown List is not supported at present. 
+
+To take Data Verification Points for a Spark Combobox or Spark DropDown List, use the Time Delayed Selection. Complete these steps:
+
+
+ 1. Select the control for which you want to take a Data Verification Point, and open the Verification Point and Action Wizard. 
+ 2. Select Time Delayed Selection from the Selection Method list. 
+ 3. Set the Seconds before selection value. The default value its 10. 
+ 4. Click the Object Finder icon. 
+ 5. Open the drop-down and move the mouse to hover over the Spark Combobox/DropDownList control, and not the Combobox/DropDownList items, as shown in the following figures: 
+ 6.  
+ 7. [/support/docview.wss?uid=swg21626527&aid=1] [/support/docview.wss?uid=swg21626527&aid=1] 
+ 8.  
+ 9. After the time set in the Seconds before selection, the All Items verification point is captured for the control.

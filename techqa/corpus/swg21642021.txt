@@ -1,0 +1,83 @@
+Title: IBM A silent installation of IBM Business Process Manager (BPM) Advanced - Process Server fails when creating the profile during the installation process - United States
+
+Text:
+CRIMA1075E; Installation Manager TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When you create profiles during the silent installation process for IBM Business Process Manager Advanced - Process Server, the process fails and you see a "Administrative user name is required" error. 
+
+SYMPTOM
+The silent installation process fails with the following errors: 
+
+
+<?xml version="1.0" encoding="UTF-8"?>
+<result>
+<error uid="CRIMA1075E"> Error during "install" phase:</error>
+<error uid="CRIMA1075E">
+Unable to find custom install operation com.ibm.ws.exec.command.Exec
+A package has an issue that cannot be resolved by Installation Manager.
+Identify the package that has the issue by looking at the installation history. In Installation Manager, click File > Installation History. In console mode, enter S: View Installation History. Contact IBM customer support.
+java.lang.ClassNotFoundException: com.ibm.ws.exec.command.Exec
+</error>
+<error>
+Administrative user name is required.
+</error>
+<warning>
+Configuration errors were detected during the installation. You should view the log files to investigate the severity of the errors. For more details, refer to this log file: <missing argument>
+</warning>
+</result>
+
+
+CAUSE
+IBM Business Process Manager Advanced - Process Server has the capability to create a profile during a binary installation process. You can include the wps.profile.feature property in the silent installation response file, which attempts to create a profile after installing the product.
+
+The following table lists the properties that are available for a silent installation. 
+
+Property Description wps.profile.feature Creates a Process Server development profile (qbpmaps) for a test environment. esb.profile.feature Creates a WebSphere Enterprise Service Bus development profile (qesb) for a test environment. user.bpm.admin.username Specifies a user name for the administrative console. The default value is admin. This property is needed only if you are creating a profile. user.bpm.admin.password Specifies a password for the user.bpm.admin.username value. The default value is admin. This property is needed only if you are creating a profile. 
+To create a profile, you must set the administrative user name and password. Without these values, the installation fails with the previously listed errors. The following code is a snippet from a sample response file:
+
+- <profile installLocation="${INSTALL_LOCATION}" id="IBM Business
+Process Manager Advanced Process Server ">
+<data key="eclipseLocation" value="${INSTALL_LOCATION}" />
+<data key="cic.selector.nl" value="en" />
+<data key="user.import.profile" value="false" />
+<data key="user.select.64bit.image,com.ibm.websphere.ND.v70"
+value="false" />
+- <!--
+###################################
+<data key='user.bpm.admin.username' value='admin'/>
+<data key='user.bpm.admin.password' value='admin'/>
+#####################################
+
+-->
+</profile>
+
+<install modify="false">
+<offering profile="IBM Business Process Manager Advanced Process Server" version="7.5.1001.20120915_1230" id="com.ibm.ws.WBPMPS"
+features="wps.client.feature,wps.server.feature,wps.profile.feature,esb.profile.feature"/>
+</install>
+
+
+RESOLVING THE PROBLEM
+To resolve this issue, complete the following steps: 
+
+ 1. Edit the response file and remove the xml comments "- <!--", and "-->" around the user.bpm.admin.username and user.bpm.admin.password data keys.
+    
+    
+ 2. Enter the desired WebSphere administrator user name and password for the new profile. For example:
+    
+    
+    <data key='user.bpm.admin.username' value='admin'/>
+    <data key='user.bpm.admin.password' value='admin'/>
+    
+    
+
+Alternatively you can remove the wps.profile.feature and esb.profile.feature properties from the response file under the <Install> section. Then, you can create the desired profile after the binary installation RELATED INFORMATION
+ V8.0.1 Information Center: Silent installation [http://pic.dhe.ibm.com/infocenter/dmndhelp/v8r0m1/index.jsp?topic=/com.ibm.wbpm.imuc.ebpmps.doc/topics/inst_sil_cmd_win.html]
+V7.5.1: Installing the Process Server silently [http://pic.dhe.ibm.com/infocenter/dmndhelp/v7r5m1/index.jsp?topic=/com.ibm.wbpm.imuc.ebpmps.doc/topics/tins_inst_silent_cmd.html]
+
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ BPM

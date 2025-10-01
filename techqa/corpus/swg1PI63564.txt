@@ -1,0 +1,144 @@
+Title: IBM PI63564: UNABLE TO EXPORT TO DIRECTORY CONTAINING AMPERSAND USING OMS UTILITY. SAME AS APAR PI411632 RESOLVED IN STATISTICS 23.0 FP2 - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Using IBM SPSS Statistics 24.0-GA, exporting output objects
+   using the OMS utility will fail (no error message is displayed)
+   when output path contains an ampersand. E.g. C:\Temp\Success &
+   Fail
+   
+   Removing the ampersand character in the directory structure will
+   succeed. E.g. C:\Temp\Success and Fail
+   
+   Usage of an ampersand character is acceptable and OMS should be
+   able to write to a directory containing this character.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Remove any ampersand that may be present in the directory path
+   for the OMS output.
+   
+   This issue will be addressed in the next Fix Pack. Please
+   refer to the Fix Pack schedule at
+   https://www-01.ibm.com/software/analytics/support/fixes/pbi_sche
+   dule.html [https://www-01.ibm.com/software/analytics/support/fixes/pbi_schedule.html]  for
+   information on upcoming Fix Packs.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * All users of IBM SPSS Statistics                             *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * UNABLE TO EXPORT TO DIRECTORY CONTAINING AMPERSAND USING OMS *
+   * UTILITY. SAME AS APAR PI411632 RESOLVED IN STATISTICS 23.0   *
+   * FP2                                                          *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * This issue has been resolved for Statistics 24.0 FP1 and     *
+   * 25.0.  Please upgrade to  Statistics 24.0 FP1 or 25.0.       *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI63564
+   
+   
+ * REPORTED COMPONENT NAME
+   SPSS STATISTICS
+   
+   
+ * REPORTED COMPONENT ID
+   5725A54ST
+   
+   
+ * REPORTED RELEASE
+   N00
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-06-03
+   
+   
+ * CLOSED DATE
+   2017-05-03
+   
+   
+ * LAST MODIFIED DATE
+   2017-05-03
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * RN00 PSN
+   UP
+   
+   
+ * RN00 PSY
+   UP
+   
+   
+ * RO00 PSN
+   UP
+   
+   
+ * RO00 PSY
+   UP

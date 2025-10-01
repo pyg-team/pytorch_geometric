@@ -1,0 +1,119 @@
+Title: IBM Slow performance and intermittent "!java.lang.OutOfMemoryError!" errors/failures when running "Intercompany Reports" - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ User clicks "Group / reports / intercompany reports". User chooses selections, including the period (for example 1110 or whatever), and clicks "Run Report".
+
+This intermittently fails, or is very slow. 
+
+SYMPTOM
+Depending on the environment/database, some/all of the following symptoms will occur: 
+
+ * Sometimes the report works OK, although it will take a long time to run (for example approximately 3 minutes) 
+ * Intermittently the report fails silently (no error) after 2-3 minutes. Alternatively, sometimes the report will fail with an error. 
+ * Opening the report for a *different* period (say 1106-1109) works fine, with the report showing up after approximately 10-30 seconds
+
+
+Examples of the intermittent errors include: 
+
+ * 
+ * 
+ * 
+ * 
+ * 
+ * Permission denied
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * !java.lang.OutOfMemoryError!
+ * 
+ * 
+
+
+CAUSE
+Code production issue (APAR PM53417) in Controller 10.1.364 and earlier. 
+One side-effect is that the Controller application server's Java Virtual Machine (JVM) may run low (or run out of) memory. 
+
+ * By default, the maximum memory (heap size) is 512Mb. This may not be enough for complex tasks.
+
+ENVIRONMENT
+Problem/error will be more likely to occur when multiple users are accessing the system.
+
+
+
+RESOLVING THE PROBLEM
+Fix 
+
+Upgrade to a later version of Controller: 
+
+ * As a minimum, you should upgrade to Controller 10.1.377 (where APAR PM53417 is fixed) or later.  * TIP: for instructions on how to apply 10.1 fixes to an existing 10.x installation, see separate IBM Technote #1504613.
+   
+   
+ * However, it is recommended to upgrade to the very latest version of Controller, which contains extra improvements (for example a 64-bit JAVA service) to Java memory handling.  * TIP: For more details, see separate IBM Technote #1616770.
+   
+   
+
+
+Workaround: 
+The following may help slightly, although it by no means will completely fix the problem:  * Increase the memory allocation (the JAVA maximum memory limit ) for the Java Virtual Machine (JVM) that is running the Controller application server proxy system. To achieve this, create/modify the file 'CCRProxy.options'. 
+ * Afterwards, restart the Windows service "IBM Cognos Controller Java Proxy".
+
+
+
+Steps: 
+1. Logon to the Controller application server as a Windows administrator 
+2. Browse to the folder ...c10\server (TIP: By default, this is here: C:\Program Files\IBM\cognos\c10\server ) 
+3. Check to see if the file CCRProxy.options exists.  * By default this file will not exist. 
+ * If it does exist then (as a precaution) create a backup of the file (for example, copy it to CCRProxy.options.backup)
+
+
+4. Save the file CCRProxy.options (attached to this Technote) inside that folder 
+
+TIP: The file contains two parameters (XMS and XMX), which are the settings for the initial and maximum heap memory size. In the attached (example) file, the settings are: 
+
+-Xms512M 
+-Xmx1024M 
+
+If you are using Controller 10.1.364 and earlier, then using this file, doubles the maximum heap size - from the default (512Mb) to 1024 Mb. 1024Mb should be enough for many customer's needs, although (naturally) it can be increased if necessary.  * TIP: For more memory examples, see separate IBM Technote 1616770 
+ * Naturally you must ensure that your Controller application server has sufficient memory physically installed in the server, so that it can cope with this extra memory requirement.
+
+
+IMPORTANT:  * Make sure that the XMX value is at least as much (or larger than) the value of XMS 
+ * It is not recommended to have the value of XMX higher than 1396M  * This is to allow the other parts of the JAVA stack to have some spare memory for the other parts of its stack (underneath the 2048 Mb 32-bit limit) 
+    * See separate IBM Technote #1693253 for more details.
+   
+   
+
+
+5. Right-click on "My Computer" and choose "Manage" 
+6. Open the section "Services" 
+7. Restart the Windows service " IBM Cognos Controller Java Proxy" . 
+
+More Information on suggested Xms & Xmx values: 
+These parameters control the amount of memory used for Java code (more commonly known as Java Heap)  * the –Xms parameter is what memory Java will allocate from the start 
+ * the –Xmx is the maximum amount. 
+
+
+However, Java will also need to use memory for the:  * Java stack 
+ * and JNI (Java Native Interface – function calls to for example the operating system, or plain regular .dll files that may be in use - in other words, anything that is not Java code).
+
+
+In one real-life customer environment (using Controller 10.1.0) the Java functions would not open until the –Xmx setting was reduced from 2048M). After trial and error, the final adjustment was 1396M.  * If the –Xmx parameter is set too low, it will generate java.lang.OutOfMemoryException errors 
+ * However, if it is set too high, Java will simply allocate memory until the stack and heap meet; and then the process seemingly crashes.
+
+As long as the allocated objects in Java are not bigger than the –Xmx setting, then it should be fine (in theory) because the memory in question is usually not allocated for long (and Java will do garbage collection on the deallocated objects when it can do so). RELATED INFORMATION
+ APAR PM53417 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM53417]
+1616770 - Intermittent "Error in AFC:!java.lang.OutOfMe [http://www.ibm.com/support/docview.wss?uid=swg21616770]
+1693253 -"Could not attach to JVM" error caused by inv [http://www.ibm.com/support/docview.wss?uid=swg21693253]
+
+
+CCRProxy.options [/support/docview.wss?uid=swg21573307&aid=2]CCRProxy.options [/support/docview.wss?uid=swg21573307&aid=1]

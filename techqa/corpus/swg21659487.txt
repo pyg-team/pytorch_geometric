@@ -1,0 +1,39 @@
+Title: IBM In IBM Connections, what is maximum number of entries that can be added to an Activity? - United States
+
+Text:
+activity; nodes; CLFRA0784E TECHNOTE (FAQ)
+
+QUESTION
+In IBM Connections, it is possible to add content to an activity either in the form of an entry, to-do, section, etc. Internally, each of these types of items is classed as a node.
+
+When trying to add a new entry to a large Activity that already has many such nodes, the user will receive the following error: 
+
+"There were problems saving this form.
+
+CLFRA0784E: Error adding node. This activity has reached the maximum allowed number of nodes." 
+
+Screen capture of error text [/support/docview.wss?uid=swg21659487&aid=1] [/support/docview.wss?uid=swg21659487&aid=1]
+
+
+
+CAUSE
+The maximum number of nodes that can be created per Activity is set to a hard-coded limit of 2000. 
+The user receives the above error when this limit has been reached. 
+
+The limitation is non-configurable. It was imposed because of the load on the database needed to retrieve the data associated with large Activities. During internal testing, it was found that Activities in excess of this size caused performance and stability issues.
+
+
+ANSWER
+In order to determine if an Activity is close to or has reached this limit, the database administrator can run the following SQL query:
+
+SELECT COUNT(DISTINCT OA_NODE.NODEUUID)
+FROM ACTIVITIES.OA_NODE OA_NODE
+WHERE
+OA_NODE.ACTIVITYUUID = '<activityuuid>'
+AND OA_NODE.ISDELETED = 0
+AND OA_NODE.ISHIDDEN = 0 
+AND (NOT OA_NODE.NODETYPE = 'activities/activitylink+template')
+AND (NOT OA_NODE.NODETYPE = 'application/activitynode+template')
+AND OA_NODE.NODEFAMILY != 2 "
+
+...where <activityuuid> is the UUID for the Activity in question. This value can be obtained from the URL in the address bar when the Activity is open in the browser.

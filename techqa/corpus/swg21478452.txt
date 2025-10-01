@@ -1,0 +1,27 @@
+Title: IBM How do I licence Modeler\Clementine Solution Publisher Runtime? - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ I have installed both Modeler\Clementine Client and Modeler\Clementine Solution Publisher Runtime. I have been given 2 authorization codes (one for Modeler\Clementine and the other for Solution Publisher). I have applied the Modeler\Clementine authorisation to license Modeler\Clementine but I cannot find a way to apply the authorization code to Solution Publisher Runtime. 
+
+ANSWER
+Modeler\Clementine Solution Publisher Runtime does not have its own license code. You can just install the product and use it. 
+
+The ability to publish Modeler\Clementine streams so that you can execute them with Modeler\Clementine Solution Publisher Runtime is controlled by a license option in Modeler\Clementine Client. If you receive two seperate authorization codes from SPSS then the one marked for Solution Publisher is the code that will enable you to publish streams from the client. Both authorisation codes need to be applied to your Modeler\Clementine Client installation(s).
+
+If you have not applied the authorization or license code to Modeler\Clementine client to enable you to publish streams you will get the error:
+
+Modeler\Clementine Solution Publisher licence is unavailable/expired
+
+when you try to publish a stream
+
+RELATED INFORMATION
+ Need more help? Our Modeler forum is Live! [https://developer.ibm.com/answers/topics/modeler/?smartspace=predictive-analytics]
+
+
+ 
+
+HISTORICAL NUMBER
+ 61332

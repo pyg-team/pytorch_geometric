@@ -1,0 +1,81 @@
+Title: IBM The start IBM Business Process Manager (BPM) process instances using startProcessByName might be blocked - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Under certain circumstances, starting a process instance using the startProcessByName() JavaScript method might be blocked if it is called by a service that is attached to an undercover agent (UCA). 
+
+SYMPTOM
+The process creation might hang. In the SystemOut.log file, you see a hung thread exception for a thread holding a database connection. For example: 
+
+[17.07.14 15:10:55:669 CEST] 000000bd ThreadMonitor W WSVR0605W: Thread "WorkManager.bpm-em-workmanager : 0" (0000041d) has been active for 745100 milliseconds and may be hung. There is/are 1 thread(s) in total in the server that may be hung.
+at java.net.SocketInputStream.socketRead0(Native Method)
+at java.net.SocketInputStream.read(SocketInputStream.java:140)
+at com.ibm.db2.jcc.t4.z.b(z.java:199)
+at com.ibm.db2.jcc.t4.z.c(z.java:259)
+at com.ibm.db2.jcc.t4.z.c(z.java:372)
+at com.ibm.db2.jcc.t4.z.v(z.java:1147)
+at com.ibm.db2.jcc.t4.cb.a(cb.java:68)
+at com.ibm.db2.jcc.t4.q.a(q.java:57)
+at com.ibm.db2.jcc.t4.sb.a(sb.java:225)
+at com.ibm.db2.jcc.am.kn.a(kn.java:2936)
+at com.ibm.db2.jcc.am.kn.d(kn.java:4870)
+at com.ibm.db2.jcc.am.kn.a(kn.java:4318)
+at com.ibm.db2.jcc.am.kn.c(kn.java:4156)
+at com.ibm.db2.jcc.am.kn.executeBatch(kn.java:2436)
+at com.ibm.ws.rsadapter.jdbc.WSJdbcPreparedStatement.pmiExecuteBatch(WSJdbcPreparedStatement.java:1037)
+at com.ibm.ws.rsadapter.jdbc.WSJdbcStatement.executeBatch(WSJdbcStatement.java:843)
+at com.lombardisoftware.bpd.runtime.engine.BPDInstanceDAO.insertNewBDVariables(BPDInstanceDAO.java:1292)
+at com.lombardisoftware.bpd.runtime.engine.BPDInstanceDAO.saveSearchableValues(BPDInstanceDAO.java:1005)
+at com.lombardisoftware.bpd.runtime.engine.BPDInstanceDAO.createBPDInstance(BPDInstanceDAO.java:180)
+at com.lombardisoftware.server.ejb.bpd.BPDEngineServicesCore.doStartBPD(BPDEngineServicesCore.java:452)
+at com.lombardisoftware.server.ejb.bpd.BPDEngineServicesCore.doStartBPD(BPDEngineServicesCore.java:281)
+at com.lombardisoftware.server.ejb.bpd.BPDEngineServicesCore.startBPD(BPDEngineServicesCore.java:200)
+at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:60)
+at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:37)
+at java.lang.reflect.Method.invoke(Method.java:611)
+at org.springframework.aop.support.AopUtils.invokeJoinpointUsingReflection(AopUtils.java:310)
+at org.springframework.aop.framework.ReflectiveMethodInvocation.invokeJoinpoint(ReflectiveMethodInvocation.java:182)
+at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:149)
+at com.lombardisoftware.utility.spring.TransactionInterceptor$2.call(TransactionInterceptor.java:67)
+at com.lombardisoftware.utility.spring.ProgrammaticTransactionSupport$1.doInTransaction(ProgrammaticTransactionSupport.java:436)
+at org.springframework.transaction.jta.WebSphereUowTransactionManager$UOWActionAdapter.run(WebSphereUowTransactionManager.java:306)
+at com.ibm.ws.uow.embeddable.EmbeddableUOWManagerImpl.runUnderNewUOW(EmbeddableUOWManagerImpl.java:790)
+at com.ibm.ws.uow.embeddable.EmbeddableUOWManagerImpl.runUnderUOW(EmbeddableUOWManagerImpl.java:369)
+at org.springframework.transaction.jta.WebSphereUowTransactionManager.execute(WebSphereUowTransactionManager.java:252)
+at com.lombardisoftware.utility.spring.ProgrammaticTransactionSupport.executeInNewTransaction(ProgrammaticTransactionSupport.java:431)
+at com.lombardisoftware.utility.spring.ProgrammaticTransactionSupport.execute(ProgrammaticTransactionSupport.java:294)
+at com.lombardisoftware.utility.spring.TransactionInterceptor.invoke(TransactionInterceptor.java:65)
+at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:171)
+at com.lombardisoftware.utility.spring.CoreEntryInterceptor.invoke(CoreEntryInterceptor.java:44)
+at com.lombardisoftware.utility.spring.PSCoreEntryInterceptor.invoke(PSCoreEntryInterceptor.java:14)
+at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:171)
+at org.springframework.aop.framework.JdkDynamicAopProxy.invoke(JdkDynamicAopProxy.java:204)
+at com.sun.proxy.$Proxy75.startBPD(Unknown Source)
+at com.lombardisoftware.client.delegate.BPDEngineServicesDelegateDefault.startBPD(BPDEngineServicesDelegateDefault.java:150)
+at com.lombardisoftware.core.script.js.AbstractTWSystemScriptable.startNewProcess(AbstractTWSystemScriptable.java:1458)
+at com.lombardisoftware.core.script.js.AbstractTWSystemScriptable.jsFunction_startProcessByName(AbstractTWSystemScriptable.java:979)
+
+
+CAUSE
+The observed behavior is currently a limitation in the product.
+
+
+DIAGNOSING THE PROBLEM
+The following steps reproduce the issue: 
+
+ 1. Define a UCA with an attached service. In the attached service, start a new process instance using the tw.system.startProcessByName() JavaScript method. The process that you start has variables that are defined as "Available in Search" within the Business Data Search section of the business process definition (BPD) editor. 
+ 2. Start the UCA either through an outbound message event, REST API, or an invoke-UCA-component in a service.
+
+RESOLVING THE PROBLEM
+In his case, use the BPMN best practice, which is to model the process with a start message event. The UCA is then attached to the start message event . 
+
+ 
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Business Process Manager Express Business Process Definition (BPD) Linux, Windows 8.5.5, 8.5, 8.0.1, 8.0, 7.5.1, 7.5 Business Integration IBM Business Process Manager Advanced Business Process Definition (BPD) AIX, Linux, Solaris, Windows 8.5.5, 8.5, 8.0.1, 8.0, 7.5.1, 7.5 
+PRODUCT ALIAS/SYNONYM
+ BPM

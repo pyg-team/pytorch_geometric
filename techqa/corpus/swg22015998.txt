@@ -1,0 +1,135 @@
+Title: IBM Cognos Acronyms A - F - United States
+
+Text:
+abbreviation abbreviations TECHNOTE (FAQ)
+
+QUESTION
+ The following is a list of acronyms that you may see in any document discussing IBM Cognos, to help avoid any confusion or questions. 
+
+
+AAA
+Authentication Authorization Accounting
+
+ACL
+Access Control List
+
+ADO
+Active X Directory Objects 
+
+API 
+Application Interface
+
+AR 
+Active Report
+
+ATC 
+Application Tier Components
+
+BAPI 
+Business Application Programming Interface 
+
+BIBUS 
+Communication between services (protocol) 
+
+BME 
+BMT Engine
+
+BMT 
+Batch Metadata Tool
+
+BMTFW 
+Batch Metadata Tool Framework Manager 
+
+BMTFW 
+BMT UI Framework
+
+CAF 
+Cognos Application Firewall 
+
+CAM 
+Cognos Access Manager 
+
+CATALINA_OPTS 
+Variable for Apache Tomcat 
+
+CCD 
+Cognos Content Database 
+
+CFX 
+GetCFXHandler
+
+CGI 
+Common Gateway Interface 
+
+CM 
+Content Manager
+
+CMM 
+Metric Studio
+
+COBRA 
+Common Object Request Broker Architecture 
+
+CQE 
+Cognos Query Engine
+
+CRP 
+Cryptography
+
+CRX 
+Cognos Report Expression 
+
+CSK 
+Common Symmetric Keystore 
+
+DA&M 
+Data Access and Modeling 
+
+DIS 
+Data Integration Service 
+
+DISP 
+Dispatcher
+
+DLS 
+Delivery Service
+
+DMB 
+Dynamic MOLAP Builder 
+
+DMR 
+Dimensionally Modeled 
+
+DOM 
+Relational Document Object Model
+
+DQA 
+Dynamic Query Analyzer 
+
+DQM 
+Dynamic Query Mode
+
+DRU 
+Dynamic Reportspec Updater 
+
+EMS 
+Event Management 
+
+ES 
+Service Event Studio
+
+FFP 
+Full Fidelity Publish
+
+FM 
+Framework Manager
+
+FMMD
+Framework Manager MetaData
+
+
+
+CAUSE
+Documents discussing Cognos often have acronyms that are un-explained, the purpose of this document at it's successors are to offer a glossary for these
+
+ANSWER

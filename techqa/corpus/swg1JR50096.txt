@@ -1,0 +1,162 @@
+Title: IBM JR50096: THE 'CONTROL EXTENSION PROPERTY' IS NOT GETTING SERIALIZED AND THE TRANSACTION FAILS. - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The implemented 'Asynchronous Suspected Duplicate'
+   is working fine with the base services but with custom services
+   the following errors are generated.
+   Note: The ControlExtensionProperty object is used to provide
+   additional control properties in the main request that triggers
+   the 'Asynchronous Suspected Duplicate'.
+   The error message found in the logs is similar to the following:
+   "00000105 ConnectionEve W
+   J2CA0206W: A connection error occurred.  To help determine the
+   problem, enable the Diagnose Connection Usage option on the
+   Connection Factory or Data Source.
+   ...00000105 ConnectionEve A
+   J2CA0056I: The Connection Manager received a fatal connection
+   error from the Resource Adapter for resource
+   JMS$AsynchronousWork_QCF$JMSManagedConnection@10. The exception
+   is: com.ibm.msg.client.jms.DetailedMessageFormatException:
+   JMSCC0052: An exception occurred while serializing the object:
+   'java.io.NotSerializableException:
+   com.dwl.base.ControlExtensionProperty'.
+   It was not possible to serialize the object because of the
+   exception.
+   Examine the linked exception for details of the
+   error.:java.io.NotSerializableException:
+   com.dwl.base.ControlExtensionProperty
+   ...
+   Caused by: java.io.NotSerializableException:
+   com.dwl.base.ControlExtensionProperty
+           at
+   java.io.ObjectOutputStream.writeObject0(ObjectOutputStream.java:
+   1184)
+           ... 52 more
+   ... 00000105 TCRMCoreParty E   1056
+   DIERR 49322 Failed to send asynchronous suspect processing work
+   message."
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * NONE                                                         *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * This issue was fixed in 11.0.0.1 fix pack and it is          *
+   * available on IBM Support site.                               *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * IBM recommends that customers facing the issue reported by   *
+   * this APAR apply MDM 11.0.0.1 fix pack to gain resolution to  *
+   * this problem.                                                *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A fix for this problem has been included in MDM 11.0.0.1 fix
+   pack.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR50096
+   
+   
+ * REPORTED COMPONENT NAME
+   INTMASTERDATA
+   
+   
+ * REPORTED COMPONENT ID
+   5725B6300
+   
+   
+ * REPORTED RELEASE
+   B00
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-04-28
+   
+   
+ * CLOSED DATE
+   2014-07-30
+   
+   
+ * LAST MODIFIED DATE
+   2014-07-30
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   INTMASTERDATA
+   
+   
+ * FIXED COMPONENT ID
+   5725B6300
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * RB00 PSY
+   UP

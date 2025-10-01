@@ -1,0 +1,130 @@
+Title: IBM PI66834: ROUND-TRIP XLS AND CSV IMPORT LOSES LINE BREAKS WHEN THE PROJECTWAS CREATED IN JAPANESE (WI 108403) - United States
+
+Text:
+  A FIX IS AVAILABLE
+Rational DOORS Next Generation 6.0.3 [http://www-01.ibm.com/support/docview.wss?uid=swg24043110]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DUPLICATE OF ANOTHER APAR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  1) Install both the English and Japanese language packs on the
+   RDNG server.
+   2) Set the browser to the Japanese language.
+   3) Access RDNG and ensure that everything is loaded in Japanese.
+   Refresh the browser if necessary.
+   4) Create a new project.
+   5) Switch the browser to the English language. Refresh the
+   browser.
+   6) Verify that the Manage Project Properties page shows that
+   system-defined types are created in Japanese. This is expected.
+   7) Create a module.
+   8) In the module, create an artifact that contains the following
+   text. Use "Shift + Enter" to separate the lines:
+   Line 1
+   Line 2
+   Line 3
+   9) Add the Name column to the module view.
+   10) Save the module view.
+   11) Export that view to Microsoft Excel (XLS) format
+   12) Import the spreadsheet back to update the module.
+   
+   Expected Results:
+   The text remains formatted with line breaks.
+   
+   Actual Results:
+   The line breaks disappear and everything appears on one line.
+   
+   Please refer to the following jazz.net work item for more
+   information on this defect:
+   https://jazz.net/jazz03/resource/itemName/com.ibm.team.workitem. [https://jazz.net/jazz03/resource/itemName/com.ibm.team.workitem.]
+   WorkItem/108403
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *  This APAR is a duplicate of PI66833 [http://www-01.ibm.com/support/docview.wss?uid=swg1PI66833]
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI66834
+   
+   
+ * REPORTED COMPONENT NAME
+   RATL DOORS NG
+   
+   
+ * REPORTED COMPONENT ID
+   5724W87NG
+   
+   
+ * REPORTED RELEASE
+   602
+   
+   
+ * STATUS
+   CLOSED DUB
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-08-01
+   
+   
+ * CLOSED DATE
+   2016-08-10
+   
+   
+ * LAST MODIFIED DATE
+   2016-12-05
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

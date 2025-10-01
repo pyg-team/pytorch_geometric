@@ -1,0 +1,44 @@
+Title: IBM Unable to publish packages from a particular FM model: BMT-MDC-0001  CM-REQ-4192  CM-REQ-4230 - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ No longer able to publish packages from a particular Framework Manager model 
+
+SYMPTOM
+BMT-MDC-0001 Impossible to publish.
+CCL-RCI-0002 Soap server transmits a Soap error
+CM-REQ-4192 The property "policies" (for an object of class "Secured Function") is incorrect.
+CM-REQ-4230 Your request contains a search path that has an invalid object reference. The object "CAMID(":Consumers")" does not exist.
+
+CAUSE
+The model has incorporated security that has been changed in the namespace. For example, the existing role has had its name either changed, removed, or its permissions have changed.
+
+If security roles are often changed, the best approach is either not to include the security in FM model, or include the Administrator only (assuming that this role is never changed).
+
+RESOLVING THE PROBLEM
+ 
+
+For example, if the name of the role was changed you will need to:
+
+ 1. Log to Cognos Connection and go to Tools -> Directory.
+ 2. Click on the Cognos namespace.
+ 3. Find the role in question.
+ 4. Re-name it back to what it was before the change
+
+Once done, publishing the package from FM should no longer be a problem.
+
+Steps:  1. Log to Cognos Connection with a user that has Admin privileges.
+ 2. Go to Tools -> Directory
+ 3. Click on the Cognos namespace. The list of all groups and roles available will be display.
+ 4. Navigate to the role that has been changed.
+ 5. Under Actions, select Set Properties.
+ 6. In the General tab, under the Name section, rename the group/role to the name it had before.
+ 7. Click OK to save changes.
+
+
+
+Cross Reference information Segment Product Component Platform Version Edition Business Analytics Cognos 8 Business Intelligence Framework Manager Business Analytics Cognos 8 Business Intelligence Install and Config Business Analytics Cognos 8 Business Intelligence Report Studio 
+HISTORICAL NUMBER
+ 1020893

@@ -1,0 +1,159 @@
+Title: IBM PI35144: THE XPATH() FUNCTION DOES NOT WORK ON STERLING B2B INTEGRATOR WITH A RETURN CODE -1 DETECTED BY LASTERRORCODE() FUNCTION - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The XPATH() function does not work on Sterling B2B Integrator
+   with return code -1 detected by LASTERRORCODE() function.
+   
+   The LASTERRORMSG() function results appear to be empty.
+   
+   The xmllib->XPATH function is successful and may be used as a
+   workaround.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  WTXCQ - WTX00046311
+   PB / PB
+   Circumvention: Use the xmllib->XPATH() function.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Users Affected:
+   WebSphere Transformation Extender customers who use the XPath
+   function in a Sterling B2B Integrator runtime environment.
+   
+   Problem Description:
+   The XPath function does not work on Sterling B2B Integrator.
+   
+   Platforms Affected:
+   All
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The Sterling B2B Integrator installation scripts,
+   InstallWTXService.sh/bat, need to deploy the XPath Java module,
+   dtxxmlfn.jar.  Before this fix, the dtxxmlfn.jar module was not
+   deployed, which in turn caused the XPath function to fail.
+   
+   Applies to:
+   8.4.1.2
+   
+   Fixed in the next service packs and releases.
+   
+   To obtain the fix for this APAR:
+   
+   To see if the next service pack or product release is available,
+   check the WebSphere Transformation Extender Downloads page:
+   http://www.ibm.com/support/entry/portal/product/other_software/t [http://www.ibm.com/support/entry/portal/product/other_software/t]
+   ransformation_extender
+   
+   If the service pack or product release is available, download it
+   from PassportAdvantage:
+   http://www.ibm.com/software/howtobuy/passportadvantage/pao_custo
+   mers.htm [http://www.ibm.com/software/howtobuy/passportadvantage/pao_customers.htm]
+   
+   If the service pack or product release is not available and you
+   require the APAR fix immediately, request a Limited Availability
+   Interim Fix (LAIF) by opening a PMR:
+   https://www.ibm.com/support/servicerequest/Home.action [https://www.ibm.com/support/servicerequest/Home.action]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI35144
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSPHERE DESIG
+   
+   
+ * REPORTED COMPONENT ID
+   5724M4008
+   
+   
+ * REPORTED RELEASE
+   841
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2015-02-18
+   
+   
+ * CLOSED DATE
+   2015-03-30
+   
+   
+ * LAST MODIFIED DATE
+   2016-07-05
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBSPHERE DESIG
+   
+   
+ * FIXED COMPONENT ID
+   5724M4008
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R841 PSY
+   UP

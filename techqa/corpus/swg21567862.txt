@@ -1,0 +1,42 @@
+Title: IBM PureData Systems for Analytics - nzsql error, Records trailing spring space set to 512 is too small - United States
+
+Text:
+netezza PDA TECHNOTE (FAQ)
+
+QUESTION
+ What does the message "ERROR: Records trailing spring space set to 512 is too small..." mean? 
+
+ANSWER
+The following error may appear in the pg.log file: 
+
+ERROR: Records trailing spring space set to 512 is too small : Bump it up using the environment variable NZ_SPRINGFIELD_SIZE 
+
+This error can occur when a query includes multiple aggregates against varchar or nvarchar columns. As the query is being processed the system allocates memory for each row of the result set. This includes each of the GROUP BY columns and each of the aggregates. For queries doing aggregates on variable length columns, the total length of the record will vary during the process. For example, if the current min value is "Boston" and the new min value is "Albuquerque" space for the new min value needs to increase. 
+
+The NZ_SPRINGFIELD_SIZE is an extra pseudo-column that is tacked onto each row. It does not contain any data. It is a filler that starts out at NZ_SPRINGFIELD_SIZE and then dynamically shrinks and expands as needed to keep each of the aggregate rows at a fixed length. There is a single springfield in each grouping record that has to shrink and grow to offset the combined changes in width of the running values for all min/max aggregates. 
+
+To avoid this error message, increase the value for this parameter as follows: 
+
+1. nzstop
+2. export NZ_SPRINGFIELD_SIZE=1024
+3. nzstart 
+
+You can confirm that the environment variable took effect by running the command "nzsystem showregistry". The output should contain the following: "system.maxSpringFieldSize = 1024". 
+
+Unfortunately, the setting for NZ_SPRINGFIELD_SIZE will revert to its default value the next time the database is stopped and started without the NZ_SPRINGFIELD_SIZE environment variable being set. To ensure that the setting persists after every database restart, do the following:
+1. Add the following line to the /nz/data/config/system.cfg file. (Create the file if it does not exist.) 
+
+system.maxSpringFieldSize = 1024
+2. nzstop
+3. nzstart 
+
+If 1024 does not work, try higher values. Setting the limit may take a little trial and error. Increasing this value should not have a noticeable impact on other system performance. 
+
+ 
+
+Note: "By default 512 bytes is allocated to each row taking part in aggregations. By increasing this value by 512 we allocate over 30MB more memory for every 1 000 000 rows participating in aggregations. This is for one query, there might be other queries in the system which do aggregations as well. The more memory that is allocated for NZ_SPRINGFIELD_SIZE (for each row) the less memory left for other processes. Having said this, it is not uncommon to see NZ_SPRINGFIELD_SIZE set to 8192 without consequence but care must be taken and one must still be aware of how increasing NZ_SPRINGFIELD_SIZE will impact resources, thus increase it wisely. " 
+
+ 
+
+HISTORICAL NUMBER
+ NZ755310

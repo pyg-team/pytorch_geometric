@@ -1,0 +1,23 @@
+Title: IBM Condition for ping probe reloads ping.file - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ English 
+
+QUESTION
+ The ping probe does not read ping.file, what are conditions that the the ping probe reloads the ping.file? 
+
+CAUSE
+The ping probe is supposed to reload ping.file periodically. (ping.file is a file that includes a list of target host) 
+Though the files was replaced, the newly replaced hosts were not processed by the probe. 
+
+
+ANSWER
+The ping probe reloads the ping.file with conditions below. 
+
+1) PingFileCheck timer has elapsed?
+2) File stat on modification timestamp has changed?
+If the ping file is copied with "co -p" command, Unix will preserve modification and access time on the target file.
+Then, the requirements above for probe to reload ping.file is not met.

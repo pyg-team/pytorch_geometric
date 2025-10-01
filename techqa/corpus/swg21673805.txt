@@ -1,0 +1,72 @@
+Title: IBM Data Server Driver Package FAQ: Frequently Asked Questions about  IBM Data Server Driver Package. - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ DB2 FAQ: This document contains Frequently Asked Questions (FAQ) about IBM Data Server Driver Package (A lightweight deployment solution for IBM database applications ).
+
+
+ANSWER
+The IBM Data Server Driver Package (also referred to as the DS driver package) can be used to provide runtime support for various applications that interact with DB2 for Linux®, UNIX®, and Windows®, z/OS®, IBM i®, and Informix® databases through APIs, including ODBC/CLI, .NET, and JDBC. The IBM Data Server Driver Package supports open source and Java™, as well as applications that use ODBC, OLE DB, and .NET provider. It has a small footprint and is designed to be used by independent software vendors (ISVs) for mass application deployment scenarios that are typical of large enterprises. 
+1) Where can I download the DS Driver Package? 
+
+ * DS Driver Package
+ * 
+ * IBM Data Server Client Packages
+ * 
+ * 
+ * http://www-01.ibm.com/support/docview.wss?uid=swg27016878
+
+
+2) How do I install the DS driver package?  * On Windows, GUI installation can be done using setup.exe included in the product. 
+ * On Linux/Unix systems, use the installDSDriver command.
+   More info:: http://www-01.ibm.com/support/knowledgecenter/SSEPGG_9.7.0/com.ibm.swg.im.dbclient.install.doc/doc/t0007315.html?cp=SSEPGG_9.7.0%2F2-0-10-4-1-2&lang=en [http://www-01.ibm.com/support/knowledgecenter/SSEPGG_9.7.0/com.ibm.swg.im.dbclient.install.doc/doc/t0007315.html?cp=SSEPGG_9.7.0%2F2-0-10-4-1-2&lang=en]
+
+
+3) How do I add a license to the DS driver installation when I connect to DB2 z/OS directly? I do not see db2licm with DS driver installation. Do I use the same activation file that is used by DB2 Connect?  * 
+ * 
+ * Activating the license key for DB2 Connect Unlimited Edition (System z)
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * http://www-01.ibm.com/support/knowledgecenter/SSEPGG_9.7.0/com.ibm.swg.im.dbclient.install.doc/doc/r0054687.html?lang=en
+
+
+4) With DB2 Connect, I was able to catalog the remote connections using 'catalog node', 'catalog dcs directory' and 'catalog db directory' statements. How do I catalog connections now?  * 
+   
+ * 
+ * 
+ * 
+ * 
+ * 
+ * http://www-01.ibm.com/support/knowledgecenter/SSEPGG_9.7.0/com.ibm.swg.im.dbclient.config.doc/doc/c0054555.html?lang=en
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * http://www-01.ibm.com/support/knowledgecenter/SSEPGG_9.7.0/com.ibm.swg.im.dbclient.config.doc/doc/r0054557.html?lang=en
+ * 
+ * 
+
+5) Is there a way to test the connections or validate the DS Driver installation? 
+ * 
+ * db2cli validate
+ * 
+ * 
+ * 
+ * 
+ * 
+ * http://www-01.ibm.com/support/knowledgecenter/SSEPGG_9.7.0/com.ibm.swg.im.dbclient.install.doc/doc/r0058814.html?lang=en
+ * 
+ * 
+
+RELATED INFORMATION
+ Video:Installation and Configuration of IBM DS Driver P [https://www.ibm.com/developerworks/community/blogs/ff78a96f-bf23-457e-befa-77f266844cbb/entry/video_installation_and_configuration_of_ibm_ds_driver_package?lang=en]
+Get started developing applications with the IBM Data S [http://www.ibm.com/developerworks/data/library/techarticle/dm-1103dataserverdriver/index.html?ca=dat]

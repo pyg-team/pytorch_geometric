@@ -1,0 +1,32 @@
+Title: IBM Supported TLS and SSL secure protocol versions - United States
+
+Text:
+SSL; TLS; SSLTLS; protocol; versions; security; communication; supported SSL version; supported TLS version; ciphers; cipherspec; SHA; MD5; DES; AES TECHNOTE (FAQ)
+
+QUESTION
+ What secure protocol versions of TLS and SSL are supported for use with the Security(Tivoli) Directory Server? 
+
+ANSWER
+ 
+
+ 1. Security Directory Server in SDS VA 8.0.1 [https://www.ibm.com/support/knowledgecenter/SS3Q78_8.0.1/com.ibm.IBMDS.doc_8.0.1/ds_ag_srv_adm_nist_ds_tls_11_12.html], Security Directory Server V6.4 [https://www.ibm.com/support/knowledgecenter/SSVJJU_6.4.0/com.ibm.IBMDS.doc_6.4/ds_ag_srv_adm_nist_ds_tls_11_12.html] and V6.3.1 [http://www.ibm.com/support/knowledgecenter/SSVJJU_6.3.1.5/com.ibm.IBMDS.doc_6.3.1.5/ds_ag_srv_adm_nist_ds_tls_11_12.html] supports TLS 1.2, TLS 1.1, TLS 1.0 as well as SSL v3. 
+    
+    
+ 2. Tivoli Directory Server V6.3 is enhanced to support TLS 1.2 (and also TLS 1.1) in 6.3.0.17 (and later 6.3.0.* fix levels, including the latest recommended fix level) [http://www.ibm.com/support/docview.wss?uid=swg27009778#ver63] in addition to TLS 1.0 and SSL V3. Refer to the following documentation for additional details:
+    IBM Tivoli Directory Server support for NIST SP 800-131A [http://www.ibm.com/support/docview.wss?uid=swg21610440]
+    
+    
+ 3. Tivoli Directory Server V6.3 (levels below 6.3.0.17), V6.2 and V6.1 supports TLS 1.0 and SSL V3 with the list of ciphers in the table below:
+
+ *  Encryption level Attribute Supported SSL / TLS Version AES 256-bit encryption ibm-slapdSslCipherSpec: AES SSLV3/TLS1.0 Triple DES encryption with a 168-bit key and a SHA-1 MAC ibm-slapdSslCipherSpec: TripleDES-168 SSLV3/TLS1.0 AES 128-bit encryption ibm-slapdSslCipherSpec: AES-128 SSLV3/TLS1.0 RC4 encryption with a 128-bit key and a SHA-1 MAC ibm-slapdSslCipherSpec: RC4-128-SHA SSLV3/TLS1.0 RC4 encryption with a 128-bit key and a MD5 MAC ibm-slapdSslCipherSpec: RC4-128-MD5 SSLV3/TLS1.0 DES encryption with a 56-bit key and a SHA-1 MAC ibm-slapdSslCipherSpec: DES-56 SSLV3/TLS1.0 RC2 encryption with a 40-bit key and a MD5 MAC ibm-slapdSslCipherSpec: RC2-40-MD5 SSLV3/TLS1.0 RC4 encryption with a 40-bit key and a MD5 MAC ibm-slapdSslCipherSpec: RC4-40-MD5 SSLV3/TLS1.0 
+
+
+
+PRODUCT ALIAS/SYNONYM
+ SDS
+TDS
+ISDS
+ITDS
+Directory Server
+Security Directory Server
+Tivoli Directory Server

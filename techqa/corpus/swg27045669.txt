@@ -1,0 +1,57 @@
+Title: IBM How to identify MQ client connections and stop them - United States
+
+Text:
+ WHITE PAPER
+
+ABSTRACT
+ MQ client applications can connect to a queue manager through a transport type of "client", instead of "bindings". WebSphere MQ runmqsc, MQ Explorer and SupportPac MS6B (chstat script) can be set to identify connections of this type, and stop them. To learn how to configure these options, use the information in this note and in the attached PDF document.
+
+
+
+CONTENT
+The processes described here have been tested with the following configurations: 
+
+1: An MQ JMS client, used by WebSphere Application Server, with the automatic client reconnect option enabled.
+2: The amqsputc sample MQ application, with the automatic client reconnect option disabled. 
+3: The amqsphac high availability put sample MQ application, with the automatic client reconnect option enabled.
+4: MQ Explorer, with the automatic client reconnect option disabled.
+
+If you already have some knowledge and experience in this area, here is a set of example commands for using runmqsc to identify MQ client connections and stop them:
+
+- To display all the connections (both bindings and client), use:
+display qmstatus conns
+
+- To display the client applications using a server-connection channel:
+display conn(*) where(channel NE '') APPLTAG CHANNEL CONNAME CONNOPTS
+
+- To stop a connection (using the desired connection number from "display conn(*)"):
+stop conn(connectionNumberfromDisplayConn)
+
+- To stop a server-connection channel and allow it to be restarted by new connections:
+stop channel(channelName) status(INACTIVE)
+
+- To stop a server-connection channel and force it to remain stopped:
+stop channel(channelName) status(STOPPED)
+
+For a more complete picture, see the attached PDF document. This document has the following contents:
+- Chapter 1: Identifying the clients that are connected through channels from the MQ Explorer
+- Chapter 2: Identifying the clients that are connected through channels from runmqsc: DISPLAY
+CONN(*) where(channel NE '')
+- Chapter 3: Identifying the clients that are connected through channels, using 'chstat' from
+SupportPac MS6B
+- Chapter 4: Stopping a connection through MQ Explorer
+- Chapter 5: Stopping a connection through runmqsc: STOP CONN
++ Scenario 1: Stopping a connection from a client that is not using automatic client
+reconnect.
++ Scenario 2: Trying to stop a connection from a client that is using automatic client
+reconnect.
+- Chapter 6: Stopping a connection through runmqsc: STOP CHANNEL STATUS(STOPPED)
++ Scenario 1: Stopping a channel and specifying STATUS(INACTIVE)
++ Scenario 2: Stopping a channel and specifying STATUS(STOPPED)
+
+
+
+How to identify MQ client connections and stop them.pdf [/support/docview.wss?uid=swg27045669&aid=2]How to identify MQ client connections and stop them.pdf [/support/docview.wss?uid=swg27045669&aid=1]
+
+ORIGINAL PUBLICATION DATE
+ 2015/5/12

@@ -1,0 +1,87 @@
+Title: IBM WMB/IIB MustGather: problems with Migration on Windows - United States
+
+Text:
+Migration; Migrate; MustGather; MustGathers; Must Gather; Collect Troubleshooting Data; MustGatherDocument; Collecting; Trouble; Shooting TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ You are migrating your WebSphere Message Broker (WMB) or IBM Integration Bus (IIB) and are experiencing a problem. 
+
+This MustGather document explains how to troubleshoot this problem by yourself, how to generate diagnostic data when the problem is happening, how to collect the available data from your system, and how to share that data with IBM support. 
+
+ENVIRONMENT
+These instructions are for WebSphere Message Broker or IBM Integration Bus on Windows systems.
+Return to the WebSphere Message Broker MustGather index [http://www-01.ibm.com/support/docview.wss?uid=swg21209857] for other systems.
+
+RESOLVING THE PROBLEM
+
+
+
+STEP 1: SELF-GUIDED TROUBLESHOOTING
+
+ 1. Review the WebSphere Technical Exchange for your version:
+    Webcast replay: Migrating to IBM Integration Bus v9.0 [http://www-01.ibm.com/support/docview.wss?uid=swg27038933]
+    
+ 2. Check for known issues:
+    Resolving problems that occur when migrating or importing resources [http://www.ibm.com/support/knowledgecenter/en/SSMKHH_10.0.0/com.ibm.etools.mft.doc/au16662_.htm]
+    WebSphere Support Blog (WMB Migration) [https://www.ibm.com/developerworks/community/blogs/aimsupport/search?lang=en&t=entry&f=all&q=migration%20wmb]
+    [http://www.ibm.com/software/htp/cics/tserver/support/]WebSphere Message Broker support site [http://www.ibm.com/support/entry/portal/Overview/Software/WebSphere/WebSphere_Message_Broker]
+    
+
+
+
+STEP 2: COLLECT DATA
+
+ 1. mqsidc See: mqsidc usage instructions [http://www.ibm.com/support/knowledgecenter/en/SSMKHH_10.0.0/com.ibm.etools.mft.doc/bu46012_.htm]
+    
+    
+     * When running the tool, select the option for 'Broker Collector', when prompted.
+    
+    
+ 2. 
+ 3. mqsimigratecomponents command
+    If you used 'mqsimigratecomponents', please send in the output of the command from the time of the failing migration. You can used the same command, post migration, to check or verify the current components.
+    See: mqsimigratecomponents command [http://www.ibm.com/support/knowledgecenter/en/SSMKHH_9.0.0/com.ibm.etools.mft.doc/an26150_.htm] 
+ 4. 
+ 5. General Broker information
+    If the mqsidc tool was not run, then capture this information manually  * Record the WebSphere Message Broker version, release, and maintenance level.
+       This can be captured using the command 'mqsiservice -v'..
+     * Record the operating system version, release, and maintenance level.
+     * Record the version, release, and maintenance level of any related products and components for the problematic application.
+     * Collect the local error log.
+       On Window systems, the local error log is the Windows Application Event Log.
+       You can find the Event Viewer from the Windows Control Panel.
+       See: Event viewer logs [http://www.ibm.com/support/docview.wss?rs=849&uid=swg21295454]
+     * Collect the Standard Output/Error logs.
+       On Window systems, WMB writes information to a 'console.out' file.
+       This file is located under the Message Broker workpath.
+       See: Standard System Logs [http://www.ibm.com/support/knowledgecenter/en/SSMKHH_9.0.0/com.ibm.etools.mft.doc/au14165_.htm]
+    
+    
+
+
+
+ATTENTION: A good problem description is one of the most important tools IBM needs to analyze your data!
+When sending data to IBM, be sure to update your PMR or send a note with the following information:
+
+ *  Tell us what errors you saw, where you saw them, and what time they happened Let us know if you made any changes to WebSphere Message Broker or the system before the problem Share any other observations which you think will help us to better understand the problem 
+
+
+
+STEP 3: SUBMIT DATA TO IBM
+
+ * Use IBM Service Request [http://www.ibm.com/support/servicerequest/] to open or view a problem record with IBM.
+ * Send your data to IBM [http://www.ibm.com/support/docview.wss?uid=swg21392217] for further analysis.
+
+
+
+
+Please see the IBM Software Support Handbook [http://www14.software.ibm.com/webapp/set2/sas/f/handbook/home.html] for more information on working with IBM support.
+
+
+
+Back to top
+
+
+
+PRODUCT ALIAS/SYNONYM
+ WMB MB WebSphere Message Broker MQ Integrator WBIMB WBI-MB MQSI WMQI

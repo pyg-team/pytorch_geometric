@@ -1,0 +1,21 @@
+Title: IBM SCM check analyses are showing as <not activated> the SCA user interface - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The reason why your check analyses are no longer showing activated and returning data in the SCA user interface. 
+
+SYMPTOM
+Check analyses in the SCA interface are showing as <not activated> in the SCA user interface where at one point they were activated and returning data. Now they are not activated and not returning data.
+
+
+CAUSE
+The operator who activated the analysis has been deleted. The audit trail cleaner tool was run and it removed the operator and de-activated the analysis.
+
+RESOLVING THE PROBLEM
+To resolve the issue, have an active operator reactivate the check analyses and then run a new import in SCA. As a best practice, it is recommended that you have an operator account dedicated to activating the SCM check analyses in your deployment. This account should never be deleted.
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Security IBM BigFix Compliance

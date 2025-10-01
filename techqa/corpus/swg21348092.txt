@@ -1,0 +1,62 @@
+Title: IBM 'The log file for database 'controller' is full. Back up....' when using Controller - United States
+
+Text:
+db device TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ User receives error message when performing functions in Controller.
+
+
+SYMPTOM
+Example #1: User is trying to copy values between periods in Controller 2.x 
+
+Information
+Standard Error
+Number: -2147217900
+Source: FrangoDirect.CopyValuesD.GroupJouBetweenPer#FrCopyValuesBT.CopyValuesT.CopyValues
+Description: The log file for database 'controller' is full. Back up the transacion log for the database to free up some log space.
+[OK]
+
+
+Example #2: User is trying to run a report in Controller 10.1
+COMException (0x80040E14): The transaction log for database 'tempdb' is full. To find out why space in the log cannot be reused, see the log_reuse_wait_desc column in sys.databases 
+
+CAUSE
+Microsoft SQL server cannot increase the size of the transaction log (LDF file) for the relevant database. 
+
+ 
+There are several potential causes for this, such as: 
+
+ * The SQL server's hard drive is full, so it cannot increase the size of the LDF file 
+ * The relevant database (for example 'controller' or 'tempdb') has been configured to have a maximum log file size. This maximum limit has now been reached.
+
+ENVIRONMENT
+Controller application database hosted on Microsoft SQL Server.
+
+
+
+RESOLVING THE PROBLEM
+Ask your I.T. department's SQL DBA to reconfigure the SQL server so that the SQL database(s) can grow. 
+
+ 
+
+Steps: 
+
+The steps that the DBA will need to perform will depend on the relevant cause (and customer's environment/needs). Below are some suggestions: 
+
+ * Truncate (compact) the database transaction log  * TIP: For more details, see separate IBM Technote #1367388
+   
+   
+ * Free up diskspace on the drive where database is located (for example, delete unwanted files) 
+ * If the transaction logfile have growth restrictions, remove these restrictions 
+ * Increase the drive space of the database server 
+ * Reconfigure the databases so that their MDF/LDF data files are moved to a hard drive with more space.
+
+RELATED INFORMATION
+#1367388 - How to shrink a Microsoft SQL database transa [http://www.ibm.com/support/docview.wss?uid=swg21367388]
+
+
+
+
+HISTORICAL NUMBER
+ 1040902

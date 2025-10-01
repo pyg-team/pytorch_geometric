@@ -1,0 +1,16 @@
+Title: IBM Data sources are not showing up under Data servers - United States
+
+Text:
+data source; data servers; allow web-based modeling TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Data sources are not showing up under the Data servers section in Manage content. 
+
+CAUSE
+Data sources created in the legacy Cognos Administration interface do not have the "Allow web-based modeling" option selected.
+
+DIAGNOSING THE PROBLEM
+Check the connection tab in the properties for the data source connection in the legacy Cognos Administration interface to see if the "Allow web-based modeling" option has been selected.
+
+RESOLVING THE PROBLEM
+Check the box for "Allow web-based modeling" on the Connection tab under properties for the data source connection in the legacy Cognos Administration interface. Once this is done the data source should appear in the Cognos Analytics user interface.

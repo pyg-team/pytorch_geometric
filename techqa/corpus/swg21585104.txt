@@ -1,0 +1,36 @@
+Title: IBM What database changes should I make when importing production data into a test or development database? - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ What database changes should I make when importing production data into a test or development database for the Atlas application? 
+
+ANSWER
+For development or test instances of Atlas it is common to import data from the production instance. After importing the production data, you will need to prevent the production users from receiving alerts or emails from your development or test instances. This can cause quite a lot of confusion if left as is.
+There are several changes that can be done to prevent alerts and emails from being sent from the test system.
+
+
+ * If you do not want the instance of Atlas sending any emails at all, you can remove the SMTPSERVER setting from the MAILSETTINGS component. This will allow you to work with the application, but you will not be able test any of the notice functionality. Once the change is made to the SMTPSERVER setting, you will need to restart the Atlas server.
+
+ * A second approach is to change all the email addresses and alert settings. It is important to understand that email addresses for users are stored on both the PERSON table (notices) and USERPREFERENCES table (alerts). This approach will allow emails to still be sent from the test instance when needed, but prevent any of the original emails or alerts from being sent to production users. You will need to run the SQL statements in the attached scripts (updates_from_PROD_to_TEST_v3.zip and update_email_alerts.sql.zip). Restart the Atlas server after making the changes. The script will perform the following:  * Replace the email addresses with a bogus email address extension. 
+    * Disable all the current notice reminders. 
+    * Disable all the alert email preferences. 
+    * Replace the alert email addresses with a bogus email address extension.
+   
+   
+
+ * The attachment updates_from_PROD_to_TEST_v3.zip has additional DB scripts that can be run to prevent unwanted emails from being sent from a test environment. This script contains multiple SQL statements that affect various functions in the application, so it needs to be reviewed and customized before executing. All the entries in brackets, example "<xxx>", need to be replaced with values relevant to your environment.
+
+ * When data is imported from production to a test environment, the Oracle Text indexes may not be transferred between databases. This may require you to recreate the Oracle Text indexes in order for parts of the Atlas application to function properly. Please read through the following technote [https://www-304.ibm.com/support/entdocview.wss?uid=swg21580830] on how to recreate the indexes.
+
+ * You should also verify if the HR data is being processed in your test instance. If it is enabled, when the HR data is processed all the user email addresses may be updated back to their actual email values. If you believe this will cause issues, you will want to disable the HR load in your test instance.
+
+RELATED INFORMATION
+ How to recreate Oracle Text Indexes [https://www-304.ibm.com/support/entdocview.wss?uid=swg21580830]
+
+
+update_email_alerts.sql.zip [/support/docview.wss?uid=swg21585104&aid=2]update_email_alerts.sql.zip [/support/docview.wss?uid=swg21585104&aid=1]updates_from_PROD_to_TEST_v3.zip [/support/docview.wss?uid=swg21585104&aid=4]updates_from_PROD_to_TEST_v3.zip [/support/docview.wss?uid=swg21585104&aid=3]
+
+HISTORICAL NUMBER
+ 245

@@ -1,0 +1,170 @@
+Title: IBM IC98040: BAR BUILD FOR THE JAVA LIBRARIES CAUSES STACK OVERFLOW ERROR - United States
+
+Text:
+  FIXES ARE AVAILABLE
+IBM Integration Toolkit Version 9.0.0.1 Interim Fix 001 [http://www-01.ibm.com/support/docview.wss?uid=swg24037076]
+WebSphere Message Broker Toolkit Version 8.0 Fix Pack 4 [http://www-01.ibm.com/support/docview.wss?uid=swg24037195]
+IBM Integration Toolkit Version 9.0 Fix Pack 2 [http://www-01.ibm.com/support/docview.wss?uid=swg24037415]
+WebSphere Message Broker Toolkit Version 8.0 Fix Pack 5 [http://www-01.ibm.com/support/docview.wss?uid=swg24038327]
+IBM Integration Toolkit Version 9.0 Fix Pack 3 [http://www-01.ibm.com/support/docview.wss?uid=swg24038557]
+WebSphere Message Broker Toolkit Version 8.0 Fix Pack 6 [http://www-01.ibm.com/support/docview.wss?uid=swg24040293]
+IBM Integration Toolkit version 9.0 Fix Pack 4 [http://www-01.ibm.com/support/docview.wss?uid=swg24040553]
+WebSphere Message Broker Toolkit Version 8.0 Fix Pack 7 [http://www-01.ibm.com/support/docview.wss?uid=swg24041963]
+IBM Integration Toolkit version 9.0 Fix Pack 6 [http://www-01.ibm.com/support/docview.wss?uid=swg24042446]
+WebSphere Message Broker Toolkit Version 8.0 Fix Pack 8 [http://www-01.ibm.com/support/docview.wss?uid=swg24042950]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When a Library referencing another Broker Library which
+   references other Java projects is added to the BAR file, the
+   StackOverflow error occurs as a result of the circular java to
+   library compilation cycle.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   All users of WebSphere Message Broker Toolkit V8.0 and IBM
+   Integration Toolkit V9.0 who use WMB/IIB Java Libraries
+   referencing other Java libraries in the workspace.
+   
+   
+   Platforms affected:
+   MultiPlatform
+   
+   ****************************************************************
+   PROBLEM SUMMARY:
+   When a WMB/IIB Application or Library uses another WMB/IIB
+   Java library that references a java library in the workspace,
+   a StackOverFlow error may occur when adding such an
+   application or library to the BAR file. The problem is due to
+   the circular dependency in the build cycle.
+   
+   
+   
+   There are a number of resource name changes between WebSphere
+   Message Broker and IBM Integration Bus Version 9.0. For
+   details visit
+   http://pic.dhe.ibm.com/infocenter/wmbhelp/v9r0m0/topic/com.ibm.e
+   tools.mft.doc/bb23814_.htm [http://pic.dhe.ibm.com/infocenter/wmbhelp/v9r0m0/topic/com.ibm.etools.mft.doc/bb23814_.htm]
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The product now detects and bypasses the circular build cycles
+   to avoid the exception while building the BAR file.
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+   Version    Maintenance Level
+   v8.0       8.0.0.4
+   v9.0       9.0.0.1 Interim Fix 001
+   
+   The latest available maintenance can be obtained from:
+   'Recommended fixes for WebSphere Message Broker Toolkit'
+   http://www-1.ibm.com/support/docview.wss?rs=849&uid=swg27009742 [http://www-1.ibm.com/support/docview.wss?rs=849&uid=swg27009742]
+   
+   If the maintenance level is not yet available, information on
+   its planned availability can be found in 'WebSphere Message
+   Broker Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=849&uid=swg27006308 [http://www-1.ibm.com/support/docview.wss?rs=849&uid=swg27006308]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC98040
+   
+   
+ * REPORTED COMPONENT NAME
+   WEB MB TOOLKIT
+   
+   
+ * REPORTED COMPONENT ID
+   5724J0521
+   
+   
+ * REPORTED RELEASE
+   800
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-12-02
+   
+   
+ * CLOSED DATE
+   2013-12-30
+   
+   
+ * LAST MODIFIED DATE
+   2013-12-30
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEB MB TOOLKIT
+   
+   
+ * FIXED COMPONENT ID
+   5724J0521
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R800 PSY
+   UP

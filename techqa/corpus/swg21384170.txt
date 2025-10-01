@@ -1,0 +1,80 @@
+Title: IBM New tool to synchronize doctaba with changed document class disposition settings - United States
+
+Text:
+doctaba_retent_update; doctaba; synchronize; disposition; class; f_deletedate; f_archivedate NEWS
+
+ABSTRACT
+ New tool, doctaba_retent_update, is introduced to allow the user to synchronize doctaba with changed document class disposition settings 
+
+CONTENT
+Doctaba_retent_update allows the user to synchronize doctaba with changed document class settings, specifically disposition settings such as retention offset (in months), retention base ('Date Filed' (Chronological) or 'Date Closed' (Event Based Retention EBR)), or retention disposition (Archive or Delete). From changes in these settings, f_deletedate or f_archivedate is modified accordingly. 
+
+Users would run this tool to synchronize doctaba retention settings with the current settings for the document's document class settings. The document class settings may have changed a number of times in the life of the document. This tool allows documents created under previous document class settings to be adjusted to the current document class policy. 
+
+Usage:
+>doctaba_retent_update
+This program updates DOCTABA to be consistent with the DCL.
+To run this program, enter:
+
+doctaba_retent_update 
+{-doc_file <filename> | -first <doc_id> -last <doc_id> | -all}
+[-dcl <document class name>]
+[-sds_include]
+[-verbose | -list]
+[-nice <real number seconds>]
+[-testmode]
+
+where (doc_file, range or all) are required as follows:
+-doc_file <filename> - Specifies the name of a text file of document ids,
+one id per line.
+-first <doc_id> - Specifies first document in range.
+-last <doc_id> - Specifies last document in range.
+-all - Specifies all documents.
+
+Optional parameters:
+-dcl <DCL name> - Filter on a particular DCL. Default is no filter.
+-sds_include - By default if a document is already associated
+with an ISDS unit and has a sds_id value in the DOCS
+table, the associated DOCTABA retention info will not
+be updated. If the -sds_include flag is set, then the 
+DOCTABA retention info will be updated regardless of the
+DOCS sds_id setting.
+-verbose - Verbose mode. Show retention Doctaba retention sets
+before and after the update of each document.
+Both -list & -verbose options may not be selected. 
+-list - Just lists the doc_id successfully updated
+-nice <real number secs> - sleep between processing a batch (200) of documents
+The sleep value is in seconds and may be sub-seconds
+since real number may be used. For example one tenth
+second sleep would be .1 for nice value. The max sleep
+value is 100.0 seconds. Default is no sleep. 
+-testmode - Does not actually do the doctaba update. This
+is useful when used in conjunction with -verbose
+or -list options.
+
+Notes:
+- Run doctaba_retent_update on the Root/Index Server for best performance.
+- This program will compare the DCL and doctaba retention settings to see if
+a change is needed in the doctaba to be consistent with DCL. These are
+the retention settings in the DCL and doctaba:
+
+retent_disposition: Delete or Archive
+retent_offset: in months
+retent_base: 'Date Filed' (Chronological) or 'Date Closed' (Event Based Retention EBR)
+
+- In addition, this program will clean up inconsistent retention settings. For example if
+the retention disposition in doctaba is set to DELETE and the F_ARCHIVEDATE in the
+doctaba is set to non-NULL, this program will set F_ARCHIVEDATE to a NULL value.
+- When the DCL is set to Chrono, the following formula is used to
+calculate the retention date:
+
+new_doctaba.deletedate = doctaba.entry_date + dcl.offset
+
+- When the DCL retention base is EBR and the doctaba is Chrono, doctaba will be updated
+to be EBR open (F_DELETEDATE/F_ARCHIVEDATE = NULL).
+- When DCL and Doctaba are both EBR and deletedate is set (closed) and the
+dcl and doctaba offset is different, the following formula will be used to
+re-calculate the retention date:
+
+deletedate = old_doctaba.deletedate - 
+(old_doctaba.retent_offset - dcl.retent_offset)

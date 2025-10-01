@@ -1,0 +1,55 @@
+Title: IBM Maximo install/upgrade can fail with error ORA-29861 - United States
+
+Text:
+ORA-29861; domain index; Upgrade; UpdateDB; TPAEUpgrade TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Installing a Maximo fixpack can fail during upgrade of the Oracle database with error:
+
+
+
+ORA-29861: domain index is marked LOADING/FAILED/UNUSABLE
+
+
+SYMPTOM
+Upgrade fails. UpdateDB log shows: 
+
+BMXAA7025E -- Script failed while running.;
+sql#29861;
+ORA-29861: domain index is marked LOADING/FAILED/UNUSABLE
+
+
+CAUSE
+This error message occurs when a corrupt index exists in the database associated with one of the tables that is being upgraded when the error occurs. 
+
+
+ENVIRONMENT
+Oracle database platforms only
+
+
+
+DIAGNOSING THE PROBLEM
+The following statement will list any invalid indexes:
+
+Select index_name,index_type,status,domidx_status,domidx_opstatus From
+user_indexes Where index_type like '%DOMAIN%' And (domidx_status <> 'VALID' Or
+domidx_opstatus <> 'VALID'); 
+
+
+
+RESOLVING THE PROBLEM
+If the results of the SQL return any indexes, rebuild the invalid indexes with an SQL command of this type:
+Alter Index <indexname> Rebuild;
+e.g. Alter Index ACTCI_T1DX REBUILD 
+
+After rebuilding the invalid indexes, again try to upgrade the database. If this fails to resolve the problem, then it may be necessary to rebuild all the text indexes. This technote explains how to rebuild Oracle text indexes http://www-01.ibm.com/support/docview.wss?uid=swg21298705 [http://www-01.ibm.com/support/docview.wss?uid=swg21298705]. Rebuild the text indexes, then again launch the upgrade of the database.
+
+RELATED INFORMATION
+#Rebuilding Oracle Text Indexes for Maximo [http://www-01.ibm.com/support/docview.wss?uid=swg21298705]
+
+
+ 
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Systems and Asset Management Tivoli Asset Management for IT Not Applicable Systems and Asset Management Tivoli Change and Configuration Management Database Not Applicable Systems and Asset Management Tivoli Service Request Manager Not Applicable

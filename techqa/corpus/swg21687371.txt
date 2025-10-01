@@ -1,0 +1,78 @@
+Title: IBM Brazilian Daylight Saving time 2014 - 2015 - Notes/Domino Known Issues & 
+Recommended Actions - United States
+
+Text:
+dst; daylight saving time; daylight; summer time; brazil; brazilian; horário de verão; horário brasileiro de verão; agenda; correio; 1 hora; 1h; daylight savings TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+ Brazilian Daylight Saving time will end on 2015 exceptionally on the fourth Sunday of February, instead of on the third Sunday. Described below are known issues that Notes/Domino administrators and users may encounter and the actions required to address each issue. 
+
+SYMPTOM
+Users may observe a 1 hour shift in time in mail messages and calendar entries on key dates for Brazilian DST 2014-2015. Such as on the weekends that it starts or ends, or during the weekend when DST normally would have ended, but was postponed to end one week later. 
+
+
+CAUSE
+ 
+
+ * Domino handles DST start and end by using the notes.ini variable DSTLAW, which gets its value from the OS. So, if the OS value varies, then Domino will behave accordingly.
+
+ * Calendar entries store the DST start and end configuration from the time when the entry itself was created. So, if DST boundaries change, then this information also needs to be updated in Calendar entries, as described below for Issue #2. 
+
+ENVIRONMENT
+Notes and Domino (all versions) running in Brazilian timezones: (UTC -03:00) Brasilia and (UTC -04:00) Cuiabá. 
+
+
+
+RESOLVING THE PROBLEM
+ 
+
+Below are the known issues and recommended actions regarding Notes & Domino and the 2014 - 2015 Brazilian DST cycle. 
+
+ 
+
+Issue #1: Server console changes time at 2 AM Saturday instead of at 12 AM Sunday The Domino server console changes time at 2 AM Saturday instead of at 12 AM Sunday. This issue can occur both on DST start (October 18 - 19, 2014) and on DST end (February 21 - 22, 2015). This issue is tracked as SPR# JRED8DVKSU. 
+
+Impacts:  * Wrong time shown on the server console, logs, replication, Program and Agent document schedules, etc.. (e.g., all of them may be executed with a 1 hour shift in time.) 
+ * Wrong time on calendar entries on Saturday, October 18, 2014 and on Saturday, February 21, 2015. 
+ * Wrong timestamp on mail messages sent or received on Saturday, October 18, 2014 and on Saturday, February 21, 2015. 
+ * Possibly the wrong time will appear on custom application documents and views. 
+
+
+What is Not Impacted: 
+
+ * Domino server continues to run normally; no crash or hang is expected. 
+
+
+Recommended Actions:  * IBM has developed a fix for the 8.5.3 Fix Pack 6 and 9.0.1 Fix Pack 2 versions of Notes & Domino that will make them adjust to and from DST accordingly. Although this fix is still being tested, it may be provided to customers under the condition of a "Test Fix." That is, some problems may be found and, if so, should be reported. To request this fix, open a service request with IBM Support. [http://www.ibm.com/software/support/probsub.html]
+   
+   Issue #2 - Times are wrong for calendar entries in February , 2015 
+
+Although there is a change on DST scheduled end in Brazil, from the third to fourth Sunday of February 2015, Windows will consider the change to happen on the third Saturday of February (21st). 
+So, the fields StartTimeZone and EndTimeZone shoud contain the proper values for display on correct times. 
+
+Impact:  * No impact is expected
+
+
+Recommended Actions:  * Do not run agents to change DST configuration settings on calendar entries or rooms and resources reservations. StartTimeZone and EndTimeZone fields should contain the following value:
+   
+   "Z=3$DO=1$DL=10 3 7 2 3 7$ZX=31$ZN=E. South America"
+   
+ * If an agent was already run, open a service request with IBM Support to request a new agent code to revert the changes back to the correct configuration.
+
+
+Issue #3 - iNotes error - "Your timezone setting is different from your operating system's current one" As described for the above issue, the DST end date will be changed in 2015 and, therefore, iNotes must be properly configured to mirror that change. 
+
+Impact:  * Users receive error message when accessing iNotes and in several activities in it.
+
+
+Recommended Actions:  * Administrators should change the iNotes DST configuration to indicate the DST will end on the fourth weekend, instead of on the third, as described in technotes below:  * To fix the problem directly in the timezone settings configured for users, see technote 1206991 - "Your timezone setting is different from your operating system's current one [http://www-01.ibm.com/support/docview.wss?uid=swg21206991]" 
+    * Or, as an alternate solution, administrators can create a new timezone setting for users to select. For instructions, see the following wiki article: How to add entries to iNotes time zone table [http://www-10.lotus.com/ldd/dominowiki.nsf/dx/How_to_add_entries_to_iNotes_time_zone_table]
+   
+   
+   Note: Although the change will happen on the fourth weekend of February, Windows will actually change the date on the third Saturday, so, if the iNotes DST configuration was already set to 10 3 7 2 3 7, then no change should be required.
+
+
+Issue #4 - Traveler server may stop synchronizing at 2 AM on Saturday, October 18, 2014 and at 2 AM on Saturday, February 21, 2015 Impact:  * Synchronization with Traveler devices does not work for mail, calendar and contacts.
+
+
+Recommended Actions:  * This issue was fixed in APAR LO77815, which is included in Traveler versions 9.0.1 IF1 and later, 9.0.0.1 IF3 and later, and 8.5.3 UP2 IF5 and later. To avoid this issue, be sure that your servers are running the latest Traveler server versions, as described in the following technote: Index of recommended maintenance for IBM Notes Traveler [http://www-01.ibm.com/support/docview.wss?uid=swg24019529] (technote 4019529). For additional information on Traveler APARs, refer to the following wiki article: Notes Traveler APAR listing [http://www-10.lotus.com/ldd/dominowiki.nsf/dx/Lotus_Notes_Traveler_APAR_listing].

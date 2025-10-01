@@ -1,0 +1,42 @@
+Title: IBM Troubleshooting enterprise applications on WebSphere Application Server which simultaneously use JDBC providers from JDBC 3.0 and 4.0 specification levels - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Enterprise applications may reference multiple Java Database Connectivity (JDBC) providers through datasource instances. In doing so, care must be taken to avoid references to both a JDBC 3.0 and a JDBC 4.0 driver class from the same vendor in an application. Doing so may result in the inability of the application to access JDBC 4.0 API methods on the datasource interfaces. 
+
+SYMPTOM
+Application code may raise exceptions indicating that a method or feature is not implemented if an attempt is made to access JDBC 4.0 specific API methods. The exception may look similar to the following: 
+
+...
+Caused by: java.sql.SQLFeatureNotSupportedException: DSRA1300E: Feature is not implemented: PreparedStatement.setBinaryStream
+at com.ibm.ws.rsadapter.AdapterUtil.notSupportedX(AdapterUtil.java:1466)
+at com.ibm.ws.rsadapter.jdbc.WSJdbcPreparedStatement.setBinaryStream(WSJdbcPreparedStatement.java:1424)
+at com.ibm.icm.da.portable.common.sql.PPreparedStatement.setBinaryStream(PPreparedStatement.java:423)
+at com.ibm.icm.da.portable.data.WideTableData.bindValue(WideTableData.java:1582)
+at com.ibm.icm.da.portable.data.WideTableData.changeItems(WideTableData.java:596)
+at com.ibm.icm.da.portable.data.WideTableData.bindValue(WideTableData.java:1582)
+at com.ibm.icm.da.portable.data.WideTableData.changeItems(WideTableData.java:596)
+... 63 more
+Caused by: java.lang.AbstractMethodError: java/sql/PreparedStatement.setBinaryStream(ILjava/io/InputStream;)V
+at com.ibm.ws.rsadapter.jdbc.WSJdbcPreparedStatement.setBinaryStream(WSJdbcPreparedStatement.java:1408)
+... 66 more
+
+
+CAUSE
+The Resource Manager of the WebSphere Application Server configures the classpath of an enterprise application to provide access to datasource/JDBC provider classes referenced by the application. It does so by placing the associated jar files configured in the resource provider on the classpath. Because the names of JDBC 3.0 and JDBC 4.0 implementation classes are the same, the application classloader will load the classes from whichever JDBC provider jar file is placed on the classpath first. The order of the JDBC provider jars on the classpath is non-deterministic and as a result the application may load the JDBC 3.0 version of the class first, causing later attempts by the application code to call class methods specific to the JDBC 4.0 API to fail with an exception. Alternatively, but typically less problematic because of backward compatibility between the JDBC specification levels, the application may load a JDBC 4.0 version of a driver class instead of the expected JDBC 3.0 version.
+
+
+ENVIRONMENT
+The problem may arise in an enterprise application with one or more references to a datasource/JDBC provider configured to use a JDBC 3.0 driver and one or more references to another datasource/JDBC provider configured to use a JDBC 4.0 driver from the same vendor.
+
+
+
+DIAGNOSING THE PROBLEM
+If an enterprise application which has been configured as described in the Environment section of this document fails to start, or throws exceptions will trying to access its datasources, examine the server logs and FFDC for the exceptions similar to those listed in the Cause section of this document..
+
+
+
+RESOLVING THE PROBLEM
+If both datasource references are JDBC type 4 and do not require configuration of a native classpath, you may be able to correct the problem by modifying the configuration of one or both JDBC providers to isolate them. For details, see the IBM Information Center for WebSphere Application Server (all editions) and review topics JDBC provider settings [http://publib.boulder.ibm.com/infocenter/wasinfo/v8r0/index.jsp?topic=/com.ibm.websphere.nd.multiplatform.doc/info/ae/ae/udat_manjdbcprodet.html] and Considerations for isolated resource providers [http://publib.boulder.ibm.com/infocenter/wasinfo/v8r0/index.jsp?topic=/com.ibm.websphere.nd.multiplatform.doc/info/ae/ae/rdat_isolatedlimitations.html] for more information.

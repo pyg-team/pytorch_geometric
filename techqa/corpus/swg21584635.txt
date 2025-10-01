@@ -1,0 +1,39 @@
+Title: IBM Disable the TIP stopServer command username prompt - United States
+
+Text:
+TIPL2; TIPL2CONF; Tivoli Integrated Portal; stopServer; username; prompt; soap; properties TECHNOTE (FAQ)
+
+QUESTION
+ Is it possible to disable the username prompt from the Tivoli Integrated Portal stopServer command? 
+
+ANSWER
+The following procedure can be used to suppress the login prompt from the stopServer.sh command: 
+
+ 1. Make a backup of the following file:
+    
+    <TIP HOME>/profiles/TIPProfile/properties/soap.client.props
+    
+    For example, make a copy of the file:
+    
+    /export/home/netcool/tip/profiles/TIPProfile/properties/soap.client.props.bak
+    
+    
+ 2. Edit the original file as follows:
+    
+    com.ibm.SOAP.securityEnabled=false <-- set to "true"
+    
+    com.ibm.SOAP.loginUserid= <-- set to your primary administrative user ID (Usually "tipadmin")
+    com.ibm.SOAP.loginPassword= <-- set to the primary administrative user password
+    
+    
+ 3. Save the file and verify the stopServer.sh script does not prompt for the admin user credentials
+    
+    
+ 4. Optional: The following command can be used to encode the password so it is not in plain text. 
+    
+    ./PropFilePasswordEncoder.sh <TIP HOME>/profiles/TIPProfile/properties/soap.client.props com.ibm.SOAP.loginPassword
+    
+    
+
+
+Note: If the password for the primary administrative user is changed, you'll need to manually update the soap.client.props file to reflect the change. Otherwise, the stopServer.sh command will fail.

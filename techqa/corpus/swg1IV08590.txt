@@ -1,0 +1,233 @@
+Title: IBM IV08590: ADVICE ON CONFIGURING CRYPTOGRAPHIC HARDWARE USING THE GSKIT COMMAND LINE TOOLS FOR WEBSPHERE MQ V7 IS MISSING - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The section titled "Managing certificates on PKCS #11 hardware"
+   which describes how to setup and configure WebSphere MQ v7 for
+   use with cryptographic hardware is missing references to
+   the use of the command line interface for this task.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   Users of WebSphere MQ on Windows or UNIX who encounter problems
+   configuring cryptographic hardware using the command line
+   interface for certificate management tasks.
+   
+   Platforms affected:
+   Windows,All Unix
+   
+   ****************************************************************
+   PROBLEM SUMMARY:
+   The information contained in the following sections of the
+   WebSphere MQ v7 Information Center need updating to include
+   details of the use of command line configuration of
+   cryptographic hardware.
+   
+   WebSphere MQ / Security / WebSphere MQ SSL and TLS Support /
+   Working with SSL or TLS on UNIX or Windows systems /
+   Configuring for cryptographic hardware / Managing certificates
+   on PKCS #11 hardware /
+   http://publib.boulder.ibm.com/infocenter/wmqv7
+   /v7r0/index.jsp?topic=/com.ibm.mq.csqzas.doc/sy12390_.htm [http://publib.boulder.ibm.com/infocenter/wmqv7/v7r0/index.jsp?topic=/com.ibm.mq.csqzas.doc/sy12390_.htm]
+   
+   WebSphere MQ / Security / WebSphere MQ SSL and TLS Support /
+   Working with SSL or TLS on UNIX or Windows systems /
+   Configuring for cryptographic hardware / Managing certificates
+   on PKCS #11 hardware / Requesting a personal certificate for
+   your PKCS #11 hardware /
+   http://publib.boulder.ibm.com/infocenter/wmqv7
+   /v7r0/index.jsp?topic=/com.ibm.mq.csqzas.doc/sy12400_.htm [http://publib.boulder.ibm.com/infocenter/wmqv7/v7r0/index.jsp?topic=/com.ibm.mq.csqzas.doc/sy12400_.htm]
+   
+   WebSphere MQ / Security / WebSphere MQ SSL and TLS Support /
+   Working with SSL or TLS on UNIX or Windows systems /
+   Configuring for cryptographic hardware / Managing certificates
+   on PKCS #11 hardware / Importing a personal certificate to
+   your PKCS #11 hardware /
+   http://publib.boulder.ibm.com/infocenter/wmqv7
+   /v7r0/index.jsp?topic=/com.ibm.mq.csqzas.doc/sy12410_.htm [http://publib.boulder.ibm.com/infocenter/wmqv7/v7r0/index.jsp?topic=/com.ibm.mq.csqzas.doc/sy12410_.htm]
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  WebSphere MQ / Security / WebSphere MQ SSL and TLS Support /
+   Working with SSL or TLS on UNIX or Windows systems /
+   Configuring for cryptographic hardware / Managing certificates
+   on PKCS #11 hardware :
+   
+   Using the command line:
+   
+   To prepare the WebSphere MQ environment you will need to
+   create a key database (whether you intend to store CA
+   certificates in it or not) for the queue manager to reference
+   in it's SSLKEYR field, or for the client application to
+   reference in the MQSSLKEYR environment variable.
+   
+   This key database is also required if you are creating a
+   certificate request.
+   
+   To create this key database follow the instructions in Setting
+   up a key repository:
+   http://publib.boulder.ibm.com/infocenter/wmqv7
+   /v7r0/index.jsp?topic=/com.ibm.mq.csqzas.doc/sy12150_.htm [http://publib.boulder.ibm.com/infocenter/wmqv7/v7r0/index.jsp?topic=/com.ibm.mq.csqzas.doc/sy12150_.htm]
+   
+   WebSphere MQ / Security / WebSphere MQ SSL and TLS Support /
+   Working with SSL or TLS on UNIX or Windows systems /
+   Configuring for cryptographic hardware / Managing certificates
+   on PKCS #11 hardware / Requesting a personal certificate for
+   your PKCS #11 hardware:
+   
+   Using the command line:
+   
+   To create a certificate request which can be sent to a
+   Certificate Authority (CA) follow the steps in Requesting
+   a personal certificate:
+   http://publib.boulder.ibm.com/infocenter/wmqv7
+   /v7r0/index.jsp?topic=/com.ibm.mq.csqzas.doc/sy12270_.htm [http://publib.boulder.ibm.com/infocenter/wmqv7/v7r0/index.jsp?topic=/com.ibm.mq.csqzas.doc/sy12270_.htm]
+   
+   
+   WebSphere MQ / Security / WebSphere MQ SSL and TLS Support /
+   Working with SSL or TLS on UNIX or Windows systems /
+   Configuring for cryptographic hardware / Managing certificates
+   on PKCS #11 hardware / Importing a personal certificate to
+   your PKCS #11 hardware
+   
+   Using the command line:
+   
+   On UNIX systems, issue the following command:
+   
+   gsk7cmd -cert -receive -file filename
+   -crypto pkcs11PathToLib
+   -tokenlabel hardwareToken
+   -pw hardwarePassword
+   -format ascii
+   
+   On Windows, issue the following command:
+   
+   runmqckm -cert -receive -file filename
+   -crypto pkcs11PathToLib
+   -tokenlabel hardwareToken
+   -pw hardwarePassword
+   -format ascii
+   
+   On UNIX systems or Windows, issue the following command:
+   
+   gsk7capicmd -cert -receive -file filename
+   -crypto pkcs11PathToLib
+   -tokenlabel hardwareToken
+   -pw hardwarePassword
+   -format ascii -fips
+   
+   Where:
+   
+   -file filename  is the fully qualified file name of the file
+   containing the personal certificate.
+   -crypto pkcs11PathToLib  is the fully qualified path to the
+   PKCS #11 library supplied with the
+   hardware.
+   -tokenlabel hardwareToken   is the label given to the storage
+   part of the cryptographic hardware
+   during installation.
+   -pw password  is the password for access to the hardware
+   -format ascii  is the format of the certificate. The value
+   can be ascii for Base64-encoded ASCII or
+   binary for Binary DER data. The default is
+   ascii.
+   -fips  specifies that the command is run in FIPS mode
+   This mode disables the use of the BSafe cryptographic
+   library. Only the ICC component is used and this
+   component must be successfully initialized in FIPS
+   mode. When in FIPS mode, the ICC component uses
+   algorithms that have been FIPS 140-2 validated. If
+   the ICC component does not initialize in FIPS mode,
+   the gsk7capicmd command fails.
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV08590
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ LIN X86 V7
+   
+   
+ * REPORTED COMPONENT ID
+   5724H7224
+   
+   
+ * REPORTED RELEASE
+   701
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-09-30
+   
+   
+ * CLOSED DATE
+   2011-11-09
+   
+   
+ * LAST MODIFIED DATE
+   2011-11-09
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

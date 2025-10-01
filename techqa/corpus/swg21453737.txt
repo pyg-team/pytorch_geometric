@@ -1,0 +1,28 @@
+Title: IBM Creating a union for multiple query subjects in Framework Manager - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Data being captured is stored in multiple schemas by year. We have a request to create a model which will report across the multiple years out of report studio as well as an adhoc type request 
+out of query studio. The multiple schemas have identical table structures. What options do we have in 
+framework to achieve this result set or do we have to leverage some sort of a view at the data layer unioning these queries prior to modeling? 
+
+RESOLVING THE PROBLEM
+The optimal approach for something like this is it implement it on the database side; ideally by using an ETL process to consolidate it to a single table with appropriate indexes (and for best results, materialized views or whatever the equivalent is on the target database). 
+Assuming that isn't feasible, a database View should allow us to create a "union all" on all the tables (i.e. select * from year1.table 
+union all 
+select * from year2.table 
+union all
+...
+etc).
+
+Cognos can consume the view as a single query subject, allowing us to push the aggregations to the database. 
+. 
+If we need to avoid modifying the database entirely, we can create a query subject for each year of data, and then create a query set out of them. This is a bit of work, because in FM we can only union 
+two query subjects at a time, so if (for example) you had four years, you'd have to create a query set to union Year1 with Year2, and another one to union Year3 with Year4. Finally, we'd need a third set to union the first union with the second union. This modeling approach forces Cognos to do a lot of additional processing, which is liable to impact report performance. 
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Analytics Cognos Business Intelligence Framework Manager AIX, HP-UX, Linux, Solaris, Windows 10.2, 10.2.1, 10.2.1.1, 10.2.2 Edition Independent

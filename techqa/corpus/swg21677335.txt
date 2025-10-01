@@ -1,0 +1,53 @@
+Title: IBM Security Bulletin: ClassLoader manipulation with Apache Struts affecting Tivoli Provisioning Manager (CVE-2014-0114) - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ There is a ClassLoader manipulation vulnerability in Apache Struts that is used by Tivoli Provisioning Manager.
+
+Moreover, the same vulnerability has been identified in WebSphere Application Server shipped with Tivoli Provisioning Manager. 
+
+VULNERABILITY DETAILS
+CVEID: CVE-2014-0114 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-0114]
+
+DESCRIPTION: Apache Struts 1.X could allow a remote attacker to execute arbitrary code on the system, caused by the failure to restrict the setting of Class Loader attributes. There is partial impact to confidentiality, integrity, and availability.
+
+CVSS Base Score: 7.5
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/92889 [https://exchange.xforce.ibmcloud.com/vulnerabilities/92889] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:L/Au:N/C:P/I:P/A:P)
+
+
+Please, consult the Security Bulletin: ClassLoader manipulation with Apache Struts in Websphere Application Server CVE-2014-0114 [http://www.ibm.com/support/docview.wss?uid=swg21672316] for the vulnerability details in WebSphere Application Server.
+.
+
+AFFECTED PRODUCTS AND VERSIONS
+Tivoli Provisioning Manager 5.1
+Tivoli Provisioning Manager 7.1 - 7.2
+
+REMEDIATION/FIXES
+For Tivoli Provisioning Manager, refer to the following table listing the remediation fix for each version: 
+
+Product VRMF APAR Remediation/First Fix Tivoli Provisioning Manager 7.1 7.1.1.7 None 7.1.1-TIV-TPM-IF00011 [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~Tivoli&product=ibm/Tivoli/Tivoli+Provisioning+Manager&release=7.1.1.0&platform=All&function=fixId&fixids=7.1.1-TIV-TPM-IF00011*&includeSupersedes=0] Tivoli Provisioning Manager 7.2 7.2.2 None 7.2.2.0-TIV-TPM-IF00001 [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~Tivoli&product=ibm/Tivoli/Tivoli+Provisioning+Manager&release=7.2.2.0&platform=All&function=fixId&fixids=7.2.2.0-TIV-TPM-IF00001*&includeSupersedes=0] For out of support versions, contact IBM technical support [http://www.ibm.com/planetwide] for assistance. 
+. WORKAROUNDS AND MITIGATIONS
+None
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v2 Guide [http://www.first.org/cvss/v2/guide] 
+On-line Calculator v2 [http://nvd.nist.gov/CVSS-v2-Calculator] 
+Security Bulletin: ClassLoader manipulation with Apache Struts in Websphere Application Server CVE-2014-0114 [http://www.ibm.com/support/docview.wss?uid=swg21672316] 
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] 
+
+CHANGE HISTORY
+ 8 July 2014: Original Copy Published 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.

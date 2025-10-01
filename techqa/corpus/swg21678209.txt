@@ -1,0 +1,61 @@
+Title: IBM Error SRVE0190E during WebSphere Portal migration - United States
+
+Text:
+migration; SRVE0190E TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+During the upgrade-profile task it fails with the following...
+
+SRVE0190E: File not found:
+
+SYMPTOM
+The ConfigTrace.log shows the following...
+
+Thu Jun 05 15:45:51 CDT 2014
+Target started: import-nodes
+
+import-nodes:
+--- Exception Thrown ---
+/websphere/websphere8/PortalServer/jcr/wp.content.repository.install/con
+fig/includes/jcr.install_cfg.xml:815:
+com.ibm.icm.jcr.task.TaskException: TASK001X: Remote task execution
+failed with response code 404 due to exception : Not Found . Please
+check the server log for more information.
+at
+com.ibm.icm.jcr.task.AbstractRemoteTask.execute(AbstractRemoteTask.java:
+840)
+
+This indicates a problem during Portal startup. Review of the SystemOut.log shows the following...
+
+[6/5/14 15:45:52:141 CDT] 000000b3 filter E
+com.ibm.ws.webcontainer.filter.FilterInstanceWrapper doFilter
+SRVE8109W: Uncaught exception thrown by filter Extensible Filter:
+java.io.FileNotFoundException: SRVE0190E: File not found:
+/jcr/remotetask
+at
+com.ibm.ws.webcontainer.extension.DefaultExtensionProcessor._processEDR(
+DefaultExtensionProcessor.java:949)
+
+
+CAUSE
+This indicates that the WCM application is not starting correctly during Portal startup.
+
+Further review of the SystemOut.log shows that the JCR application is not initializing because the startup does not contain the following line...
+
+Starting application: JavaContentRepository
+
+This can occur when the WASPostUpgrade task fails to migrate the
+JavaContentRepository.ear. If so, this would be seen in the WASPostUpgrade logs....
+
+MIGR0340W: Application JavaContentRepository.ear did not deploy.
+
+
+ENVIRONMENT
+Portal 8.0x
+Linux
+
+DIAGNOSING THE PROBLEM
+See sections above...
+
+RESOLVING THE PROBLEM
+In this case, the customer simply manually moved the missing application from the migration bundle and placed them into the <portal_profile_root>/config/cells/<cellname>/applications directory and re-ran the WASPostUpgrade task

@@ -1,0 +1,163 @@
+Title: IBM PI39760: PENDING SUBJOB SUBMISSIONS WHEN THE 'ENDED' NOTIFICATION IS LOST - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+8.0.0.5: WebSphere Extended Deployment Compute Grid V8.0 Fix Pack 5 [http://www-01.ibm.com/support/docview.wss?uid=swg24040426]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Customer was getting hung threads in their environment:
+   
+   BossLog: { 0325} 2015/04/12 11:56:08.367 03 SYSTEM=CPU4
+   CELL=FGSCELL NODE=FGSNODE4 CLUSTER=WFGSB1 SERVER=WFGSB14
+   PID=0X060440 TID=0X2ECC2C000000007F t=8C20A8 c=UNK
+   ./bbgrjtr.cpp+733 tag= ... BBOO0221W: WSVR0605W: Thread
+   "WorkManager.DefaultWorkManager : 0" (000000e3) has been active
+   for 671199 milliseconds and may be hung.  There is/are 5
+   thread(s) in total in the server that may be hung.
+     at java.lang.Thread.sleep(Native Method)
+     at java.lang.Thread.sleep(Thread.java:897)
+     at
+   com.ibm.ws.gridcontainer.parallel.impl.ParallelExecutor._monitor
+   SubJobs(ParallelExecutor.java:644)
+   
+   The _monitorSubJobs method is what the ParallelJobManager uses
+   to check for final status of all subjobs and mark itself as
+   complete.  If this thread is hung, this will prevent the TLJ
+   from ending.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  All users of Parallel Job Manager           *
+   *                  function in IBM  WebSphere Compute          *
+   *                  Grid V8.                                    *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: The Parallel Job Manager Top Level      *
+   *                      Job remains in executing status.  The   *
+   *                      system log shows hung threads in the    *
+   *                      ParallelExecutor _monitorSubJobs        *
+   *                      method.                                 *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   If a subjob completion notification
+   is missed, the Top Level Job will
+   continue to execute and never end.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The code has been changed to allow the Top Level Job to
+   recover from a missing subjob completion notification.
+   
+   APAR PI39760 is currently targeted for inclusion in Fix Packs
+   8.0.0.5 of WebSphere Compute Grid V8. APAR PI39799 [http://www-01.ibm.com/support/docview.wss?uid=swg1PI39799] included
+   this fix in Fix Pack 8.5.5.6 of WebSphere Application Server
+   V8.5.
+   
+   Please refer to the Recommended Updates page for delivery
+   information:
+   http://www-01.ibm.com/support/docview.wss?rs=180&uid=swg27022998 [http://www-01.ibm.com/support/docview.wss?rs=180&uid=swg27022998]
+   
+   In addition, please refer to URL:
+   http://www.ibm.com/support/docview.wss?rs=404&uid=swg27006970 [http://www.ibm.com/support/docview.wss?rs=404&uid=swg27006970]
+   for Fix Pack PTF information.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI39760
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSPHERE FOR Z
+   
+   
+ * REPORTED COMPONENT ID
+   5655I3500
+   
+   
+ * REPORTED RELEASE
+   850
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-04-23
+   
+   
+ * CLOSED DATE
+   2015-06-29
+   
+   
+ * LAST MODIFIED DATE
+   2015-06-29
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBSPHERE FOR Z
+   
+   
+ * FIXED COMPONENT ID
+   5655I3500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R850 PSY
+   UP

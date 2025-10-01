@@ -1,0 +1,154 @@
+Title: IBM PH00908: WASX7487E(BLUEMIXUTILITY.PY) HAPPENS ON REMOTE CUSTOMER'S WSADMIN CLIENT - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When we configure a remote wsadmin client, we see the following
+   error
+   
+   C:\MyThinClient>mywsadmin.bat -user admin -password admin
+   WASX7209I: Connected to process "adminagent" on node yNode01
+   using SOAP connector;  The type of process is: AdminAgent
+   Exception: <type 'java.util.MissingResourceException'>
+   java.util.MissingResourceException: Can't find bundle for base
+   name com.ibm.ws.bluemix.utility.
+   resources.bluemixutility, locale en_US
+   WASX7487E: Failed to import script libraries modules:
+   c:\MyThinClient\scriptLibraries\bluemixutility\BluemixUtility.py
+   ; Examine the wsadmin log file t
+   o determine the problem.
+   WASX7031I: For help, enter: "print Help.help()"
+   wsadmin>
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  All users of IBM WebSphere Thin Client      *
+   *                  version V9 or later                         *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Using wsadmin script libraries in       *
+   *                      Administrative Thin Client              *
+   *                      environment fails with "Can't find      *
+   *                      bundle for com.ibm.ws.bluemix.utility.  *
+   *                      resources.bluemixutility".              *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   Using wsadmin script libraries in Administrative Thin
+   Client environment fails with error below:
+   Exception: <type 'java.util.MissingResourceException'>
+   java.util.MissingResourceException: Can't find bundle for base
+   name com.ibm.ws.bluemix.utility.resources.bluemixutility,
+   locale en_US
+   WASX7487E: Failed to import script libraries modules:
+   c:\MyThinClient\scriptLibraries\bluemixutility\BluemixUtility.py
+   ; Examine the wsadmin log file to determine the problem.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Administrative Thin Client jar was updated to include the
+   missing classes.
+   The fix for this APAR is currently targeted for inclusion in
+   fix pack 9.0.0.10.  Please refer to the Recommended Updates
+   page for delivery information:
+   http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PH00908
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBS APP SERV N
+   
+   
+ * REPORTED COMPONENT ID
+   5724H8800
+   
+   
+ * REPORTED RELEASE
+   900
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2018-07-27
+   
+   
+ * CLOSED DATE
+   2018-08-10
+   
+   
+ * LAST MODIFIED DATE
+   2018-08-10
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBS APP SERV N
+   
+   
+ * FIXED COMPONENT ID
+   5724H8800
+   
+   
+
+APPLICABLE COMPONENT LEVELS

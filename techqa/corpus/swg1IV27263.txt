@@ -1,0 +1,153 @@
+Title: IBM IV27263: AGENT HANGS IN GETUTENT API. - United States
+
+Text:
+  FIXES ARE AVAILABLE
+IBM Tivoli Monitoring 6.2.3 Fix Pack 5 (6.2.3-TIV-ITM-FP0005) [http://www-01.ibm.com/support/docview.wss?uid=swg24035801]
+IBM Tivoli Monitoring 6.2.3 Fix Pack 4 (6.2.3-TIV-ITM-FP0004) [http://www-01.ibm.com/support/docview.wss?uid=swg24034252]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Randomly the Monitoring Agent for Linux OS hangs and doesn't
+   report metrics in TEP while collecting users information (it
+   hangs in getutent API):
+   
+        Thread 18 (Thread 1170246560 (LWP 25992)):
+        #0  0xffffe410 in __kernel_vsyscall ()
+        #1  0x40c10164 in __fcntl_nocancel () from /lib/libc.so.6
+        #2  0x40c504bb in getutent_r_file () from /lib/libc.so.6
+        #3  0x40c4f328 in getutent_r () from /lib/libc.so.6
+        #4  0x40c4f0c1 in getutent () from /lib/libc.so.6
+        #5  0x0813dad0 in UserInfo::SetUserInfoStats ()
+        #6  0x0813d9c7 in UserInfo::UserInfo ()
+        #7  0x080b00b8 in klz_klzsys_agent::TakeSample ()
+        #8  0x405209e6 in ctira::DriveDataCollection ()
+        #9  0x405285a7 in TableManager::checkForExpiredRequests ()
+        #10 0x40528b21 in TableManager::timeout ()
+        #11 0x404eb1e2 in CTRA_timer_base::TimerCallbackHandler ()
+        #12 0x404e9c0e in Handler_base ()
+        #13 0x404ec494 in CTRA_timer_task ()
+        #14 0x40a1f2ab in start_thread () from /lib/libpthread.so.0
+        #15 0x40c1eb9e in clone () from /lib/libc.so.6
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Agent hangs in getutent API.
+   
+   Randomly the Monitoring Agent for Linux OS hangs and does not
+   report metrics in portal client while collecting users
+   information (it hangs in getutent API).
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Code has been changed in order to use a more stable API.
+   
+   
+   The fix for this APAR is contained in the following maintenance
+   packages:
+   
+      | fix pack | 6.2.3-TIV-ITM-FP0003
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV27263
+   
+   
+ * REPORTED COMPONENT NAME
+   ITM AGENT LINUX
+   
+   
+ * REPORTED COMPONENT ID
+   5724C04LN
+   
+   
+ * REPORTED RELEASE
+   622
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-08-30
+   
+   
+ * CLOSED DATE
+   2012-09-28
+   
+   
+ * LAST MODIFIED DATE
+   2013-05-10
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ITM AGENT LINUX
+   
+   
+ * FIXED COMPONENT ID
+   5724C04LN
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R623 PSY
+   UP

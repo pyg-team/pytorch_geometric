@@ -1,0 +1,49 @@
+Title: IBM System requirements for IBM TXSeries for Multiplatforms V8.1 on Solaris - United States
+
+Text:
+ NEWS
+
+ABSTRACT
+ The following tables provide you with a listing of supported IBM and vendor-acquired software for use with IBM TXSeries for Multiplatforms V8.1 on Solaris. 
+
+CONTENT
+
+This document provides information on IBM and vendor-acquired software that is compatible with TXSeries for Multiplatforms V8.1. The minimum maintenance levels are listed. TXSeries is not tested with every maintenance level of every product. In general, you can install and run with updates to supported product levels, if those updates are forward compatible. If you use later maintenance levels and experience problems, test with the levels specified in this document before contacting your IBM support representative. 
+
+For the supported software that is listed, refer to the respective product web site for their system requirements and specifications. 
+
+Note: 
+
+ * TXSeries is a 32-bit product. All libraries linked with TXSeries must be 32-bit libraries. Most vendors offering 64-bit versions of their products also provide 32-bit client libraries. On 64-bit operating systems, TXSeries runs in 32-bit compatibility mode. 
+ * IBM recommends that you maintain your TXSeries system environments at the latest fix pack level. See TXSeries for Multiplatforms support policy statement [http://www.ibm.com/support/docview.wss?uid=swg21663762] for more details.
+
+Operating System 
+
+ 
+
+Software Version Notes Oracle Solaris (for SPARC) 10 UP 9 [/support/docview.wss?uid=swg21656680&amp;aid=1] Compilers 
+
+Software Version Notes Sun Studio Compiler Collection Sun Studio 12 Update 1 [/support/docview.wss?uid=swg21656680&amp;aid=1] MicroFocus Server Express COBOL 5.1 WP7 [/support/docview.wss?uid=swg21656680&amp;aid=1] Solaris-IBM Hybrid Java 2 SDK 7.0 SR 5 [/support/docview.wss?uid=swg21656680&amp;aid=1] 
+Databases 
+
+Software Client Version Notes IBM DB2 UDB 9.7 FP 5 
+10.1 
+10.5 [/support/docview.wss?uid=swg21656680&amp;aid=1] Oracle 11.2.0.3 [/support/docview.wss?uid=swg21656680&amp;aid=1] Informix Client SDK 3.7 Supported with Informix Dynamic Server Version 11.70 FC 7. Sybase 15.7 [/support/docview.wss?uid=swg21656680&amp;aid=1] Note: All the databases listed above are tested and supported with the 32-bit client versions. 
+Communication software
+
+
+
+Software Version Notes Data Connection SNAP-IX 7.0.2.9 [/support/docview.wss?uid=swg21656680&amp;aid=1] 
+Monitoring tools 
+
+Software Version Notes IBM Tivoli Monitoring 6.2.1 [/support/docview.wss?uid=swg21656680&amp;aid=1] 
+Integration Middleware 
+
+Software Version Notes IBM WebSphere MQ (WMQ) Any supported version of WMQ  * Refer to WMQ System Requirements [http://www.ibm.com/support/docview.wss?uid=swg27006467] page for more details.
+
+
+Clients
+
+
+
+Software Version Notes IBM CICS Transaction Gateway (CTG) Any supported version of CTG Refer to CTG System Requirements [http://www-01.ibm.com/software/htp/cics/ctg/reqs/] [http://www.ibm.com/software/htp/cics/connectors/]page for more details.

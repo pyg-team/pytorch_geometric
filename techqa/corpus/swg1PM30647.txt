@@ -1,0 +1,249 @@
+Title: IBM PM30647: Documentation: 6.1.0 information center missing steps to config db user registry or a ppty extension db when creating a cluster - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Affected URL:
+   http://publib.boulder.ibm.com/infocenter/wpdoc/v6r1/topic/com.ib
+   m.wp.ent.doc_v6101/install/linux_cluster.html [http://publib.boulder.ibm.com/infocenter/wpdoc/v6r1/topic/com.ibm.wp.ent.doc_v6101/install/linux_cluster.html]
+   This change also applies to all operating systems and to dynamic
+   clusters.
+   
+   TEXT READS:
+   5.  Optional: If you configured a database user registry or a
+   property extension (lookaside) database, run the following task
+   to set up access to the database drivers:
+   Note: You will also need to run this task if you migrated the
+   primary node from a previous release, even if you did not
+   configure a database user registry or a property extension
+   (lookaside) database.
+   
+   a. Set the property value for federated.db.DbType if using a
+   database user registry or set the property value for la.DbType
+   if using a property extension database in the wkplc.properties
+   file.
+   
+   Note: If you migrated the primary node from a previous version
+   and you are not using a database user registry or a property
+   extension database, set the property value for
+   federated.db.DbType to the same value that is in the
+   wkplc.properties file on the primary node.
+   
+   b.  Run the ./ConfigEngine.sh
+   wp-node-prep-vmm-db-secured-environment -DWasPassword=password
+   -DDbDomain=la|federated.db -DVmmNodeName=node_name
+   -Ddb_type.NodeDbLibrary=local full path of the database jars
+   task from the wp_profile_root/ConfigEngine directory to create
+   the variable used to access the VMM database jars.
+   
+   Note: VmmNodeName is a list of one or more WebSphere Portal
+   nodes names in the cell which share the same database driver
+   paths. The db_type in db_type.NodeDbLibrary should be set to the
+   type of database you are using, for example db2. The local full
+   path of the database jars should be one of the following
+   options:
+   DB2 Type 2 driver: db2java.zip
+   DB2 Type 4 driver: db2jcc.jar;db2jcc_license_cu.jar
+   DB2 for z/OS Type 2 driver: db2java.zip
+   DB2 for z/OS Type 4 driver:
+   db2jcc.jar;db2jcc_license_cisuz.jar;db2jcc_javax.jar
+   Oracle: ojdbc14.jar
+   SQL Server JDBC driver provided by Microsoft: sqljdbc.jar
+   SQL Server JDBC driver provided by DataDirect:
+   sqlserver.jar;base.jar;util.jar
+   ...
+   
+   TEXT SHOULD READ:
+   5.  Optional: If you configured a database user registry or a
+   property extension (lookaside) database, run the following task
+   to set up access to the database drivers:
+   Note: You will also need to run this task if you migrated the
+   primary node from a previous release, even if you did not
+   configure a database user registry or a property extension
+   (lookaside) database.
+   
+   a.  Set the property value for federated.db.DbType if using a
+   database user registry or set the property value for la.DbType
+   if using a property extension database in the wkplc.properties
+   file.
+   
+   Note: If you migrated the primary node from a previous version
+   and you are not using a database user registry or a property
+   extension database, set the property value for
+   federated.db.DbType to the same value that is in the
+   wkplc.properties file on the primary node.
+   
+   b.  Perform the following steps add the library paths to the
+   VMM_JDBC_CLASSPATH variable:
+   Logon to the WebSphere Application Server Administrative
+   Console.
+   Click Environment > WebSphere Variables.
+   Select scope: cell.
+   Select the VMM_JDBC_CLASSPATH variable or click New to create
+   the variable if it does not exist.
+   Enter the complete paths to the library files, separated by ':",
+   in the Value field; for example, enter
+   SQLLIB/java/db2jcc.jar:SQLLIB/java/db2jcc_license_cu.jar.
+   Copy the above library files into the appserver/lib directory.
+   Then stop and restart the server1 and WebSphere_Portal servers
+   to load the library files. In a clustered environment, you must
+   also stop and restart the Deployment Manager and the nodeagents.
+   
+   c.  Run the ./ConfigEngine.sh wp-prep-vmm-db-secured-environment
+   -DWasPassword=password -DDbDomain=la
+   -Ddb_type.DmgrDbLibrary=local path of the database jars on the
+   Deployment Manager -DDmgrNodeName=dmgr_node_name task from the
+   wp_profile_root/ConfigEngine directory to create the local
+   Deployment Manager WebSphere variable used to access the
+   database jars.
+   Note: The db_type in db_type.DmgrDbLibrary should be set to the
+   type of database you are using, for example db2. The local path
+   of the database jars on the Deployment Manager should be one of
+   the following options:
+   DB2 Type 2 driver: db2java.zip
+   DB2 Type 4 driver: db2jcc.jar;db2jcc_license_cu.jar
+   DB2 for z/OS Type 2 driver: db2java.zip
+   DB2 for z/OS Type 4 driver:
+   db2jcc.jar;db2jcc_license_cisuz.jar;db2jcc_javax.jar
+   Oracle: ojdbc14.jar
+   SQL Server JDBC driver provided by Microsoft: sqljdbc.jar
+   SQL Server JDBC driver provided by DataDirect:
+   sqlserver.jar;base.jar;util.jar
+   
+   d.  Run the following task for EACH WebSphere Portal node that
+   participates in the cluster to set up access to the database
+   drivers; if multiple nodes share the same database library path
+   you can submit a comma separated list of node names:
+   
+   Note: This task does not need to be executed from the node
+   identified in the VmmNodeName parameter.
+   Set the property value for la.DbType in the wkplc.properties
+   file.
+   
+   e.  Run the ./ConfigEngine.sh
+   wp-node-prep-vmm-db-secured-environment -DWasPassword=password
+   -DDbDomain=la -DVmmNodeName=node_name
+   -Ddb_type.NodeDbLibrary=local full path of the database jars
+   task from the wp_profile_root/ConfigEngine directory on each
+   node to create the variable used to access the VMM database
+   jars.
+   Note: VmmNodeName is a list of one or more WebSphere Portal
+   nodes names in the cell which share the same database driver
+   paths. The db_type in db_type.NodeDbLibrary should be set to the
+   type of database you are using, for example db2. The local full
+   path of the database jars should be one of the following
+   options:
+   DB2 Type 2 driver: db2java.zip
+   DB2 Type 4 driver: db2jcc.jar;db2jcc_license_cu.jar
+   DB2 for z/OS Type 2 driver: db2java.zip
+   DB2 for z/OS Type 4 driver:
+   db2jcc.jar;db2jcc_license_cisuz.jar;db2jcc_javax.jar
+   Oracle: ojdbc14.jar
+   SQL Server JDBC driver provided by Microsoft: sqljdbc.jar
+   SQL Server JDBC driver provided by DataDirect:
+   sqlserver.jar;base.jar;util.jar
+   
+   Stop and restart all necessary servers to propagate your
+   changes.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Refer to the above.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Refer to the above.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This will be updated in the product documentation.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM30647
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSPHERE PORTA
+   
+   
+ * REPORTED COMPONENT ID
+   5724E7600
+   
+   
+ * REPORTED RELEASE
+   610
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-01-17
+   
+   
+ * CLOSED DATE
+   2011-06-16
+   
+   
+ * LAST MODIFIED DATE
+   2011-06-16
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

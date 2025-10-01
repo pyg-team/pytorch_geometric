@@ -1,0 +1,34 @@
+Title: IBM DataPower RBM behavior when using LDAP method for Authentication and Authorization - United States
+
+Text:
+RBM LDAP authentication authorization retry TCP retries timeout time out TECHNOTE (FAQ)
+
+QUESTION
+ Why does IBM WebSphere DataPower WebGUI take longer for login with RBM setting configured to use LDAP method for Authentication and Authorization? 
+
+CAUSE
+When the LDAP connection fails, the DataPower appliance continues to retry connecting to LDAP until it times out once the TCP Retries are completed.
+
+ANSWER
+When the RBM setting uses the LDAP method for Authentication and Authorization, the DataPower appliance tries to connect to the LDAP server to validate credentials. In situations when the LDAP server is not available, the appliance attempts to establish the connection based on TCP Retries parameter and eventually times out once all TCP retries are completed. 
+
+The TCP Retries parameter is found in the WebGUI Network > Interface > Network Settings. 
+
+The following timestamps are example retries for a failed LDAP server connection using the WebGUI login. The DataPower appliance doubles the time for each successive connection retry attempt. The following timestamps show the increase of elapsed time for each successive connection attempt until the LDAP connection times out.
+
+(1) 2013-09-04 08:53:38.222696
+- 3 seconds -
+(2) 2013-09-04 08:53:41.222484
+- 6 seconds -
+(3) 2013-09-04 08:53:47.222496
+-12 seconds -
+(4) 2013-09-04 08:53:59.222484
+- 24 seconds -
+(5) 2013-09-04 08:54:23.222511
+- 48 seconds -
+(6) 2013-09-04 08:55:11.222506
+- 96 seconds - 
+
+ 
+
+By default, the TCP Retries setting is configured to 5 retry attempts before the connection times out, which takes about 3 minutes.

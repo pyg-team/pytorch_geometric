@@ -1,0 +1,48 @@
+Title: IBM Content Navigator installer fails to launch with a java.lang.OutOfMemory error - United States
+
+Text:
+outofmemory; java.lang.outofmemory; systhrow; JVMDUMP039I; JVMDUMP032I; configmgr.ini; .bin TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The IBM Content Navigator installer fails to launch, throwing a java.lang.OutOfMemory error. 
+
+SYMPTOM
+The installer (.bin file) fails with the following errors, seen on the command line
+JVMDUMP039I Processing dump event "systhrow", detail "java/lang/OutOfMemoryError" at 2015/12/10 8:49:17 - please wait.
+JVMDUMP032I JVM requested Heap dump using '/opt/filenet/P8/TEMPDIR/install.dir.8061160/heapdump.
+20151210.084917.8061160.0001.phd' in response to an event
+JVMDUMP010I Heap dump written to /opt/filenet/P8/TEMPDIR/install.dir. 8061160/heapdump.20151210.084917.8061160.0001.phd
+.... 
+
+Stack Trace:
+java.lang.OutOfMemoryError: Java heap space
+at java.io.UnixFileSystem.list(Native Method)
+at java.io.File.list(File.java:984)"
+
+
+
+CAUSE
+There is insufficient heap space available for the installer to run.
+
+
+ENVIRONMENT
+This issue is seen more often on AIX, Linux environments.
+
+
+
+RESOLVING THE PROBLEM
+To resolve this issue, use one of the two solutions below: 
+
+ 1. Launch the IBM_CONTENT_NAVIGATOR-2.0.3-xxx.bin installer file using this command
+    IBM_CONTENT_NAVIGATOR-2.0.3-xxx.bin -Dlax.nl.java.option.java.heap.size.initial=512000000
+    -Dlax.nl.java.option.java.heap.size.max=1024000000 
+ 2. add the same parameters into the configmgr.ini file as shown below and launch the installer
+    -vm
+    ../jre/bin
+    gui
+    -vmargs
+    -Djava.compiler=none
+    -Djava.util.logging.config.file=./configuration/cmlogging.properties
+    -Dfilenet.pe.peorb.properties.org.omg.CORBA.ORBClass=com.ibm.CORBA.iiop.ORB
+    -Dlax.nl.java.option.java.heap.size.initial=512000000
+    -Dlax.nl.java.option.java.heap.size.max=1024000000

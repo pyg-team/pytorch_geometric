@@ -1,0 +1,47 @@
+Title: IBM How come I am getting an ARS0146E error message when starting ARSSOCKD in IBM® Content Manager OnDemand for z/OS®? - United States
+
+Text:
+ARS0146E; ERRNO=115; ERRNO=0 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When I started the z/OS® OnDemand ARSSOCKD server, I received the following message text:
+ARS0146E ARSMSG THE COMMUNICATION LAYER WAS UNABLE TO RECEIVE DATA.ERRNO=115
+
+And, on another system I receive this set of messages:
+IEF403I ARSSOCKD - STARTED - TIME=16.32.16 
+ARS0154E ARSMSG UNABLE TO ESTABLISH SERVER COMMUNICATIONS WITH NETWORK. RC=2 
+ARS0146E ARSMSG THE COMMUNICATION LAYER WAS UNABLE TO RECEIVE DATA.ERRNO=0 
+ARS0179E ARSSOCKD LICENSE SERVER FAILED. RC=6 
+IEF404I ARSSOCKD - ENDED - TIME=16.32.26 
+$HASP395 ARSSOCKD ENDED 
+
+SYMPTOM
+"ARS0146E ARSMSG THE COMMUNICATION LAYER WAS UNABLE TO RECEIVE DATA" error message
+
+
+CAUSE
+This error occurs when a z/OS OnDemand ARSSOCKD server is started using identical characteristics (instance name, port number, etc.) as another server instance on the same system, or when TCP/IP is not functioning properly.
+
+ENVIRONMENT
+z/OS OnDemand
+
+DIAGNOSING THE PROBLEM
+Locate the "ARS0146E ARSMSG THE COMMUNICATION LAYER WAS UNABLE TO RECEIVE DATA" error message.
+
+RESOLVING THE PROBLEM
+When you receive an ERRNO=115 on the ARS0146E message, you have attempted to start an ARSSOCKD server using identical characteristics (instance name, port number, and so on) as another server instance on the same system. Do the following:
+
+
+
+
+ * verify you have specified the correct DB2 instance on the startup ARSSOCKD JCL (ARCHIVE is the default when you do not specify the DB2 instance on the PARM statement) 
+ * verify the DB2 instance settings in the ars.ini file (usually located in the /etc/ars directory) are unique 
+ * stop (if needed) and restart the OnDemand ARSSOCKD server
+
+Note: Do not initiate more than one unique instance of the ARRSOCKD server on the same z/OS image. 
+
+When you receive an ERRNO=0 on the ARS0146E error message and an ARS0154E, this indicates a TCP/IP problem, most likely TCP/IP is not up and running. Do the following:  * verify your TCP/IP is started successfully 
+ * stop (if needed) and restart the OnDemand ARSSOCKD server
+
+
+Note: The /usr/include/errno.h file may contain more information on the ERRNO received.

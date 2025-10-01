@@ -1,0 +1,79 @@
+Title: IBM MQ and WebSphere MQ Problem Resolution Resources - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ What resources are available to resolve problems when working with IBM MQ and WebSphere MQ? 
+
+ANSWER
+
+
+ * Where can I find solutions to my problems?
+ * Where can I ask questions about MQ?
+ * Where can I download fix packs for MQ?
+ * How do I open a Problem Management Record with IBM?
+
+
+
+
+WHERE CAN I FIND SOLUTIONS TO MY PROBLEMS?
+
+ * The MQ Support Portal [https://www.ibm.com/support/entry/portal/product/websphere/websphere_mq] has an extensive collection of support documents, troubleshooting documentation, blogs, and other resources for MQ..
+ * The MQ Knowledge Center [https://www.ibm.com/support/knowledgecenter/SSFKSJ_8.0.0/com.ibm.mq.helphome.v80.doc/WelcomePagev8r0.htm] contains the MQ product documentation.
+ * Access the social media channels [https://www.ibm.com/support/docview.wss?uid=swg21410956] for MQ and other WebSphere products.
+ * The Messaging blog on developerWorks [https://www.ibm.com/developerworks/community/blogs/messaging/] has useful videos and postings on MQ.
+ * The Systems Middleware Support Blog [https://www.ibm.com/developerworks/community/blogs/aimsupport/] covers MQ as well as other WebSphere products.
+ * The dW Answers Messaging space [https://developer.ibm.com/answers/smartspace/messaging] has the answers to many MQ questions.
+ * Visit MQ on Facebook [https://www.facebook.com/pages/IBM-WebSphere-MQ/8304628654] and follow MQ on Twitter [https://twitter.com/IBM_WMQ].
+
+
+
+Back to top
+
+
+
+WHERE CAN I ASK QUESTIONS ABOUT MQ?
+
+ * Ask your question on the dW Answers Messaging space [https://developer.ibm.com/answers/smartspace/messaging] to receive help from MQ experts.
+ * Post your question to the MQ forum on developerWorks [https://www.ibm.com/developerworks/community/forums/html/forum?id=11111111-0000-0000-0000-000000000280] which mirrors the ibm.software.websphere.mq newsgroup.
+ * Post your question to the mqseries.net forums [http://www.mqseries.net/] which are frequented by other MQ administrators and users.
+ * Search the MQ Listserv archives [https://listserv.meduniwien.ac.at/archives/mqser-l.html] or manage your subscription to the list.
+
+
+
+Back to top
+
+
+
+WHERE CAN I DOWNLOAD FIX PACKS FOR MQ?
+
+ * Current MQ Fix Packs are available from the Recommended Fixes [https://www.ibm.com/support/docview.wss?uid=swg27006037] page, as are older MQ Fix Packs.
+ * Future MQ Fix Pack release dates are on the Planned Maintenance [https://www.ibm.com/support/docview.wss?uid=swg27006309] page, though these dates are subject to change.
+ * The list of APARs shipped in MQ Fix Packs is available for all MQ versions on the Fixes by Version [https://www.ibm.com/support/docview.wss?uid=swg21254675] page.
+
+
+
+Back to top
+
+
+
+HOW DO I OPEN A PROBLEM MANAGEMENT RECORD WITH IBM?
+
+ 1. IBM customers with a valid support agreement may open a Problem Management Record (PMR) with IBM support. Use IBM Passport Advantage [https://www.ibm.com/software/passportadvantage/pao_customer.html] to review or change your support entitlement.
+    
+    Microsoft Azure users should refer to the Support Policy for IBM Software on Microsoft Azure [https://www.ibm.com/support/docview.wss?uid=swg21687768].
+    
+    
+ 2. 
+ 3. Use IBM Service Request [https://www.ibm.com/support/servicerequest/] to open a new PMR for IBM support.
+ 4. 
+ 5. Follow the MQ MustGather [https://www.ibm.com/support/docview.wss?uid=swg21229861] instructions to collect information from MQ using the automated MQ runmqras [https://www.ibm.com/support/docview.wss?uid=swg21624944] tool.
+ 6. 
+ 7. Send the data to the /toibm/websphere directory of the IBM Enhanced Customer Data Repository (ECuRep) [https://www.ibm.com/de/support/ecurep/send.html] using your PMR number, or for MQ on z/OS to the /toibm/mvs directory instead.
+ 8. 
+ 9. Refer to the IBM Software Support Handbook [https://www.ibm.com/support/customercare/sas/f/handbook/getsupport.html] for information on how to work with IBM support to resolve your problem.
+
+
+
+Back to top

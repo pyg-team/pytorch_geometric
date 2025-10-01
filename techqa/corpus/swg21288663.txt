@@ -1,0 +1,56 @@
+Title: IBM DSRA0304E, DSRA0302E, WTRN0037W errors occur during startup after Portal transfer to Oracle - United States
+
+Text:
+DSRA0304E; DSRA0302E; WTRN0037W; XAER_RMERR; tranlog; xa TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+After a successful database transfer to Oracle®, you see the following errors in the SystemOut.log during IBM® WebSphere® Portal startup and runtime:
+
+[date/time] 00000014 InternalOracl I DSRA8203I: Database
+product name : Oracle
+[date/time] 00000014 InternalOracl I DSRA8204I: Database
+product version : Oracle Database 10g Enterprise Edition Release 10.1.0.3.0
+- Production
+With the Partitioning and Data Mining options
+[date/time] 00000014 InternalOracl I DSRA8205I: JDBC
+driver name : Oracle JDBC driver
+[date/time] 00000014 InternalOracl I DSRA8206I: JDBC
+driver version : 10.2.0.1.0
+[date/time] 00000014 InternalOracl I
+DATA_STORE_HELPER_NAME
+[date/time] 00000014 WSRdbDataSour I DSRA8208I: JDBC
+driver type : ""
+[date/time] 00000014 WSRdbXaResour E DSRA0304E:
+XAException occurred. XAException contents and details are: The cause
+is : null.
+[date/time] 00000014 WSRdbXaResour E DSRA0302E:
+XAException occurred. Error code is: XAER_RMERR (-3). Exception is:
+<null>
+[date/time] 00000014 XARminst E WTRN0037W: The
+transaction service encountered an error on an xa_recover operation. The
+resource was com.ibm.ws.rsadapter.spi.WSRdbXaResourceImpl@57e23eb7. The
+error code was XAER_RMERR. The exception stack trace follows:
+javax.transaction.xa.XAException
+at oracle.jdbc.xa.OracleXAResource.recover
+(OracleXAResource.java:526)
+at com.ibm.ws.rsadapter.spi.WSRdbXaResourceImpl.recover
+(WSRdbXaResourceImpl.java:962)
+at com.ibm.ws.Transaction.JTA.XARminst.recover
+(XARminst.java:137)
+at com.ibm.ws.Transaction.JTA.XARecoveryData.recover
+(XARecoveryData.java:690)
+at com.ibm.ws.Transaction.JTA.PartnerLogTable.recover
+(PartnerLogTable.java:514)
+at com.ibm.ws.Transaction.JTA.RecoveryManager.resync
+(RecoveryManager.java:1896)
+at com.ibm.ws.Transaction.JTA.RecoveryManager.run
+(RecoveryManager.java:2608)
+at java.lang.Thread.run(Thread.java:570)
+
+CAUSE
+This condition could be caused by corrupt transaction logs.
+
+RESOLVING THE PROBLEM
+Please refer to the following WebSphere Application Server TechNote for instructions on how to properly handle the correction of the tranlogs 
+
+http://www-01.ibm.com/support/docview.wss?uid=swg21196663 [http://www-01.ibm.com/support/docview.wss?uid=swg21196663]

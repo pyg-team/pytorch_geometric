@@ -1,0 +1,100 @@
+Title: IBM Rational Asset Analyzer 6.1 - United States
+
+Text:
+service release; modpack; mod pack; upgrade; refresh; refresh pack DOWNLOADABLE FILES
+
+ABSTRACT
+ IBM Rational Asset Analyzer 6.1 has been made generally available on both Fix Central and the IBM Passport Advantage website. 
+
+DOWNLOAD DESCRIPTION
+ 
+
+Table of Contents Sections Description  * What's new
+
+This section provides an overview on what is new in this release with a description of any new functions or enhancements when applicable.  * Impact assessment
+
+This section provides information related to the impact of this release to allow you to assess how your environment may be affected.  * Prerequisites
+
+This section provides important information to review prior to the installation of this release.  * Download package
+
+This section provides the direct link to obtain the download package for installation in your environment.  * Installation instructions
+
+This section provides the installation instructions necessary to apply this release into your environment.  * Known problems
+
+This section contains a link to the known problems (open defects) identified at the time of this release. Supporting Documentation Document Description  * Detailed System Requirements [http://www.ibm.com/support/docview.wss?uid=swg27036581]
+
+Click to review the detailed system requirements information for a complete list of hardware requirements, supported operating systems, prerequisites and optional supported software, with component-level details and operating system restrictions.  * Information Center [http://pic.dhe.ibm.com/infocenter/rassan/v6r1/index.jsp]
+
+The information center provides you with user assistance for the product. You can view, browse, and search online information related to the product. You can also visit IBM Product information [http://www.ibm.com/support/publications/us/library/index.shtml#letter_R] page the to browse for additional information centers.  * Fix List [http://www.ibm.com/support/docview.wss?uid=swg27021389]
+
+Click to review a complete list of the defects (APARs) resolved in this release including a list of resolved defects for the entire version family. PREREQUISITES
+ IBM Installation Manager, Version 1.4 or later [http://www.ibm.com/support/docview.wss?uid=swg27025142] is required to install Rational Asset Analyzer 6.1.
+
+
+For information about additional prerequisites see Detailed System Requirements [http://www.ibm.com/support/docview.wss?uid=swg27036581].
+
+INSTALLATION INSTRUCTIONS
+ For installation instructions, see Installing Rational Asset Analyzer [http://pic.dhe.ibm.com/infocenter/rassan/v6r1/topic/com.ibm.install.raav6006.doc/topics/c_installingproduct.html] in the information center.
+
+DOWNLOAD PACKAGE
+ 
+
+Download options Access type Description Passport Advantage [https://www.ibm.com/software/howtobuy/softwareandservices/passportadvantage] Passport Advantage and Passport Advantage Express clients are required to sign in to download the software package. Fix Central Obtain the software from Fix Central by using HTTP or Download Director. IBM OEM software [https://www.ibm.com/software/howtobuy/softwareandservices/oem] IBM Software Group OEM offerings are designed for partners who develop and sell business solutions with embedded or bundled IBM middleware software. Clients with Flexible Contract Type (FCT) license purchases and IBM Business Partners must sign in to download the software package. 
+HOW CRITICAL IS THIS FIX?
+ 
+
+Impact Assessment Impact Description Recommended This release is a service release of Rational Asset Analyzer 6.1. It contains new features as well as fixes for client-reported and internally found defects. 
+
+PROBLEMS SOLVED
+ Click the Fix List link in the table of contents above to review a list of the problems solved in this release.
+
+
+
+KNOWN SIDE EFFECTS
+ The following defects were not resolved in this release. 
+
+ 
+
+APAR Description [/support/docview.wss?uid=swg24034622&amp;aid=1] [/support/docview.wss?uid=swg24034622&amp;aid=1] PM64930 [http://www.ibm.com/support/docview.wss?uid=swg1PM64930] SQL Select reference is not registered in database. PM67012 [http://www.ibm.com/support/docview.wss?uid=swg1PM67012] Incomplete message on statement scope impact analysis. PM80545 [http://www.ibm.com/support/docview.wss?uid=swg1PM80545] The" Show program tree" view is missing the "Run in Background" button. PM81948 [http://www.ibm.com/support/docview.wss?uid=swg1PM81948] Misaligned highlighting and sometimes extra text viewing source code in RAA with Japanese characters. PM82862 DMH5219E message returned when using RAA if directives are placed incorrectly in httpd.conf. PM83083 [http://www.ibm.com/support/docview.wss?uid=swg1PM83083] Scanning PL/I assets with the compiler-based scanner in 6.0.0.11 can generate rc=12 and leave little error message information. PM84231 [http://www.ibm.com/support/docview.wss?uid=swg1PM84231] Batch jobs (JCL) not shown in application-scoped impact analysis results in RAA 6.0.0.11. PM86768 [http://www.ibm.com/support/docview.wss?uid=swg1PM86768] RAA for System z produces sun.io.malformedinputexception exception viewing source with some '0E' or '0F' character. 
+CHANGE HISTORY
+ For what's new, see IBM Rational Asset Analyzer What's new [http://pic.dhe.ibm.com/infocenter/rassan/v6r1/topic/com.ibm.raa.product.doc/helpindex_raa.html] in the information center. 
+
+ 
+
+Back to top
+
+
+Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options 
+What is Fix Central(FC)? [https://www.ibm.com/support/fixcentral/help?page=swfaqs] RAA-6.1.0-WindowsInstall.zip 31 May 2013 English 496315220 FC [http://www.ibm.com/support/fixcentral/swg/downloadFixes?parent=ibm~Rational&product=ibm/Rational/IBM+Rational+Asset+Analyzer&release=6.1.0&platform=Windows&function=fixId&fixids=RAA-6.1.0-WindowsInstall&includeRequisites=1&includeSupersedes=0] [ ] RAA-6.1.0-InstallManagerRepository.zip 16 May 2013 English 360929236 FC [http://www.ibm.com/support/fixcentral/swg/downloadFixes?parent=ibm~Rational&product=ibm/Rational/IBM+Rational+Asset+Analyzer&release=6.1.0&platform=Windows&function=fixId&fixids=RAA-6.1.0-InstallManagerRepository&includeRequisites=1&includeSupersedes=0] [ ] RAA-6.1.0-EclipsePluginForRDz.zip 31 May 2013 English 147767026 FC [http://www.ibm.com/support/fixcentral/swg/downloadFixes?parent=ibm~Rational&product=ibm/Rational/IBM+Rational+Asset+Analyzer&release=6.1.0&platform=Windows&function=fixId&fixids=RAA-6.1.0-EclipsePluginForRDz&includeRequisites=1&includeSupersedes=0] [ ] 
+TECHNICAL SUPPORT
+ 
+
+TAB NAVIGATION
+ * General Support Information- selected tab,
+ * Support Resources [http://www.ibm.com/support/docview.wss?uid=swg27020747]- selected tab,
+
+
+
+
+
+
+
+HELPFUL HINTS FOR OBTAINING TECHNICAL ASSISTANCE:
+Before you contact IBM Software Support, gather the background information that you need to describe the problem. When you describe a problem to an IBM software support specialist, be as specific as possible and include all relevant background information so that the specialist can help you solve the problem efficiently. To save time, know the answers to these questions: 
+
+ * What software versions were you running when the problem occurred? 
+ * Do you have logs, traces, or messages that are related to the problem? 
+ * Can you reproduce the problem? If so, what steps do you take to reproduce it? 
+ * Is there a workaround for the problem? If so, be prepared to describe the workaround. 
+
+If you have helpful information to diagnose or identify the problem on your system, you can provide this data by following the instructions to exchange information with IBM Technical Support [http://www.ibm.com/software/support/exchangeinfo.html]. 
+
+ 
+
+
+
+
+ Back to top 
+
+ [/support/docview.wss?uid=swg24034622&aid=2]Problems (APARS) fixed [/support/docview.wss?uid=swg24034622&aid=3]Problems (APARS) fixed
+PM25415, PM30417, PM30802, PM30806, PM34607, PM35761, PM37927, PM39241, PM39758, PM40312, PM40344, PM40588, PM41115, PM41225, PM41270, PM41282, PM41291, PM41460, PM41784, PM41814, PM41819, PM42309, PM42806, PM43374, PM44081, PM44099, PM45047, PM46318, PM46883, PM47909, PM48690, PM49244, PM49429, PM49744, PM49985, PM50104, PM50244, PM50847, PM50952, PM50958, PM50960, PM51131, PM51520, PM51557, PM51746, PM52616, PM54135, PM55727, PM55731, PM56098, PM56257, PM56645: PM58326, PM58717, PM58963, PM59105, PM59430, PM59764, PM59913, PM60311, PM60404, PM61301, PM61305, PM61362, PM61860, PM63085, PM63610, PM63614, PM63649, PM63720, PM63752, PM64586, PM64624, PM64984, PM65129, PM65840, PM65848, PM66007, PM66269, PM66955, PM67764, PM68143, PM69649, PM69674, PM70028, PM70527, PM70952, PM71280, PM71347, PM71388, PM71498, PM72745, PM74109, PM74624, PM75017, PM75708, PM77179, PM77506, PM78559, PM78741, PM78759, PM78947, PM81578, PM83569, PM83656, PM83659, PM84057, PM85001, PM85039, PM85047, PM86371, PM86391, PM87555

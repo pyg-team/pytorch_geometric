@@ -1,0 +1,16 @@
+Title: IBM Default Rational Rhapsody file locations when installed on Windows Vista - United States
+
+Text:
+windows vista; vista; install; files; location TECHNOTE (FAQ)
+
+QUESTION
+ Why am I unable to find some of the installed components in my IBM Rational Rhapsody installation on Microsoft Windows Vista? 
+
+ANSWER
+If IBM Rational Rhapsody is installed on a Microsoft Windows Vista platform you might find that certain files you are used to finding in the installed directory are not in there. 
+
+The reason for this might be caused by the Redirection methodology that is employed by Vista. You might have the experience that when you install Rational Rhapsody or other products to a particular directory, that all the files will be installed into the location they direct the installation to. For example, you may choose to install Rational Rhapsody in the "c:\Program Files\IBM\Rational\Rhapsody\"' directory and all the files will be placed into the sub-folders of this directory. 
+
+In Vista this is not the case if you try to install software into the Program Files directory. Due to security issues within Vista, any files that are writeable will be redirected to a user location. The writeable files will not be placed into the above directed location, but will be redirected to a user folder. So you will find files such as the rhapsody.ini file and the samples models installed into their user directory "c:\Users\<username>\AppData\Local\VirtualStore\Program Files\IBM\Rational\Rhapsody\". 
+
+If you do not choose to have the software installed into the Program files directory, then the software should install under a single directory path.

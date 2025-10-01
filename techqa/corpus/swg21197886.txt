@@ -1,0 +1,86 @@
+Title: IBM Collect troubleshooting data for SOAP for CICS feature problems in CICS TS for z/OS - United States
+
+Text:
+SOAP for CICS feature ; SOAP for CICS ; ABENDAWST ; ABEND AWST ; MustGather; MustGathers; Must Gather; Collect Troubleshooting Data; MustGatherDocument; Collecting; Trouble; Shooting; 5697E9304 R100 100 HCAVI00 R200 200 HCAV200 5697-E93 5697E93 5697E9300 R630 630 HCI6300 5697-E93 5697E93 5655M1500 R640 640 R400 400 R650 650 R500 500 HCI6400 HCI6500 5655-M15 5655M15 kixinfo retention23 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ You are having a SOAP for CICS feature problem in CICS Transaction Server for z/OS (CICS TS). The SOAP for CICS feature was withdrawn from support, 30 September 2009, when CICS Transaction Server for z/OS (CICS TS) V2.3 was withdrawn from support. This MustGather document contains information on what documenation you can gather that can help you resolve your problem. 
+
+CAUSE
+SOAP for CICS feature problems can occur for many different reasons. It is common to receive error messages and abends if the SOAP for CICS feature is set up incorrectly.
+
+RESOLVING THE PROBLEM
+Collect this MustGather data before contacting IBM Support:
+
+ * Collecting general information for all problems
+ * Collecting data for SOAP for CICS problems
+ * Troubleshooting hints and tips
+ * Exchanging data with IBM Support
+ * 
+ * Collect troubleshooting data for CICS products - Read first [http://www.ibm.com/support/docview.wss?uid=swg21208053]
+
+
+
+Collecting general information for all problems
+
+If you have already contacted IBM Support, you can continue on to the component-specific MustGather information. Otherwise, go to Collect troubleshooting data for CICS products - Read first [http://www.ibm.com/support/docview.wss?uid=swg21208053]. Back to top
+
+
+
+Collecting data for SOAP for CICS feature problems
+
+The SOAP for CICS feature was withdrawn from support, 30 September 2009, when CICS Transaction Server for z/OS (CICS TS) V2.3 was withdrawn from support. See SOAP for CICS feature End of Support announcement [http://www.ibm.com/support/docview.wss?rs=1083&uid=swg21305795] for details. The SOAP for CICS feature has never been supported in CICS TS V4.1 or later. See Migrating from the SOAP for CICS feature [http://publib.boulder.ibm.com/infocenter/cicsts/v4r1/index.jsp?topic=/com.ibm.cics.ts.migration.doc/topics/dfhws_migratefromfeature.html] in the CICS TS V4.1 information center.
+
+When you have a SOAP for CICS feature problem, you should ensure the samples shipped with the product work prior to developing your own applications. This will verify that the CICS Web services are functioning correctly in the region, as well as the SOAP process.
+
+If you still have a problem after getting the samples to work, the following documentation can help you diagnose the problem.
+
+Required (MustGather) data: 
+
+ * CICS internal trace [http://www.ibm.com/support/docview.wss?uid=swg21213746#Internaltrace] that is included in the MVS system dump when tracing is active. Set the trace table size to at least 10240K and set all standard level trace components to level 1 except the following which should be set to 1-2: BA, DH, EI, EM, SH, SO and WB. 
+ * MVS system dump [http://www.ibm.com/support/docview.wss?uid=swg21213747#Systemd] taken at the point of failure. If you are receiving a transaction abend or a message at the time of the error, enter one of the following CICS commands to capture the system dump:
+   a. CEMT SET TRD(xxxx) SYS MAX(1) ADD where xxxx is a transaction abend code, like awst. Ensure that MAX is 1 greater than CUR to capture a dump. Check this by entering CEMT INQ TRD(xxxx).
+   b. CEMT SET SYD(xxxxx) SYS MAX(1) ADD where xxxxx is the CICS message without the DFH. For example, if you are receiving a DFHWB0100 you can specify WB0100.
+
+
+
+Optional (MustGather) data:  * If you need a larger trace consider using CICS auxiliary trace [http://www.ibm.com/support/docview.wss?uid=swg21213746#Auxtrace] or GTF Trace [http://www.ibm.com/support/docview.wss?uid=swg21213746#GTFtrace] in combination with the MVS system dump. Use the same level of tracing documented above for CICS internal trace.
+
+Back to top
+
+
+Troubleshooting hints and tips 
+Diagnostic tips: 
+
+ * Review the logs and dumps generated at the point of failure. 
+ * Search the [http://www.ibm.com/software/htp/cics/tserver/support/]CICS support site [http://www.ibm.com/support/entry/portal/Overview/Software/Other_Software/CICS_Transaction_Server] for known problems using symptoms like the message number and error codes. 
+ * If you find a fixing PTF, see Ordering CICS products and maintenance [http://www.ibm.com/support/docview.wss?uid=swg21049360] for the options that are available to order CICS maintenance. 
+ * Gather the documentation and work with the CICS support team to resolve your problem.
+   
+   
+
+Learn more about SOAP for CICS feature:  * Soap for CICS feature User's Guide [http://publibfi.boulder.ibm.com/epubs/pdf/c3463151.pdf] (Set up and Samples) 
+ * SOAP for CICS feature End of Support announcement [http://www.ibm.com/support/docview.wss?rs=1083&uid=swg21305795] 
+ * Migrating from the SOAP for CICS feature [http://publib.boulder.ibm.com/infocenter/cicsts/v4r1/index.jsp?topic=/com.ibm.cics.ts.migration.doc/topics/dfhws_migratefromfeature.html] to CICS Web services
+
+Back to top
+
+
+
+Exchanging data with IBM Support
+
+ 1. See Exchanging information with IBM Technical Support [http://www.ibm.com/support/docview.wss?uid=swg21204910] for FTP and email instructions using the IBM Enhanced Customer Data Repository (ECuRep).
+    
+ 2. Go to the Service Request page [http://www.ibm.com/support/servicerequest/] to open or update a problem. If you have a SoftwareXcel enterprise edition for zSeries [http://www.ibm.com/services/us/index.wss/offering/its/a1000185] contract, you can also ask a non-defect installation and usage questions.
+    
+    Note: Always update your Service Request (problem record) to indicate that data has been sent. 
+
+
+If you need to speak to an IBM technical support representative call your country representative [http://www.ibm.com/planetwide/]. If you need to speak to an IBM technical support representative in the US, call 1-800-IBM-SERV. 
+
+Back to top
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ Soap for CICS Feature CICS/TS CICS TS CICS Transaction Server

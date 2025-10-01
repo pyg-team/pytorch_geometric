@@ -1,0 +1,49 @@
+Title: IBM Open workbench: "The "IBM Rational Performance Tester" license key cannot be found" - United States
+
+Text:
+VU; RPT; concurrent TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When you open the IBM Rational Performance Tester (RPT) workbench, you receive error "license key cannot be found". 
+
+SYMPTOM
+The full error message is as follows:
+
+
+Error: license Key Cannot Be Found
+
+The "IBM Rational Performance Tester" license key cannot be found.
+Click Manage Licenses to apply a license or uninstall the product. If you click Exit Workbench, you can resolve this issue later via the Installation Manager or by restarting the product and clicking Manage Licenses.
+
+
+
+At the bottom of in this error message window, you can click on buttons for: 
+Manage Licenses and Exit Workbench
+
+The licensing is setup as floating.
+
+
+
+
+CAUSE
+Possible causes include the following.
+
+
+
+ 1. The network connection to the license server does not work. 
+    
+    
+ 2. You do not own a base floating license for RPT.
+    
+    
+ 3. The cause is an erroneous floating license support configuration in the IBM Installation Manager.
+
+
+RESOLVING THE PROBLEM
+For cause A, fix the network connection. Possibly your license server is behind a firewall.
+
+For cause B, contact IBM sales to acquire the right licences. Refer to the Directory of worldwide contacts [http://www.ibm.com/planetwide/].
+Note: you get the same error when you own only a virtual-users license.
+
+
+For cause C, see technote Opening workbench results in "License Cannot Be Found" [http://www.ibm.com/support/docview.wss?uid=swg21329134].

@@ -1,0 +1,57 @@
+Title: IBM TIP : Change browser language in Internet Explorer - United States
+
+Text:
+TIPL2CUST; TIPL2CONF; ie; internet; explorer; tip; customize; browser; language; lang TECHNOTE (FAQ)
+
+QUESTION
+ How do I change the browser language for IBM Tivoli Integrated Portal (TIP) in Internet Explorer (IE) ? 
+
+CAUSE
+Customization.
+
+ANSWER
+Kindly follow the steps noted below to change the browser language in Internet Explorer: 
+
+1. Open Internet Explorer, go toTools and select Internet Options. Alternatively, in Windows, Internet Options can be accessed via Control Panel. 
+
+ Tools Menu in Internet Explorer [/support/docview.wss?uid=swg21680343&amp;aid=1] 
+
+ 
+
+2. A new pop-up window/Internet Options appears. Under General tab, look for Appearance. Click on Languages button. 
+
+
+Internet Options window [/support/docview.wss?uid=swg21680343&amp;aid=2]
+
+3. A small window called Language Preference appears. Click on Add button to add a new language.
+
+Language Preference window [/support/docview.wss?uid=swg21680343&amp;aid=3]
+
+4. In the Add Language window, select your preferred language and click Ok. Here, we would like to select Japanese (ja) as our example.
+
+Add Language window [/support/docview.wss?uid=swg21680343&amp;aid=4]
+
+5. The language that is displayed when you access the portal is always the first language in your browser's language settings. Therefore, move the Japanese (ja) language above current first language using Move Up button (in this example below, English is the first language). In case your preferred language is already available in Language Preference window/settings, just Move Up your selected language to make it default.
+
+Language Preference window [/support/docview.wss?uid=swg21680343&amp;aid=5]
+
+6. Once finished, click OK all the way to exit Language Preference and Internet Options window.
+
+7. Now, open or refresh any TIP portal/URL and the page will be displayed in your preferred language. Here, we are using Japanese (ja) as our example - see below. 
+
+
+Translated TIP portal/page [/support/docview.wss?uid=swg21680343&aid=6] [/support/docview.wss?uid=swg21680343&aid=6]
+
+Take note, changing Language settings in Internet Explorer does not alter your language settings in your operating system (OS).
+
+
+For a list of supported language in TIP, please refer to http://www-01.ibm.com/support/docview.wss?uid=swg21680103 [http://www-01.ibm.com/support/docview.wss?uid=swg21680103] 
+
+ 
+
+If you require further assistance, please engage IBM Support.
+
+
+
+PRODUCT ALIAS/SYNONYM
+ TIP

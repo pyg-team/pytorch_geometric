@@ -1,0 +1,180 @@
+Title: IBM IY51525: Mutually authencticated SSL junctions can't load balance. - United States
+
+Text:
+AIX  DIRECT LINKS TO FIXES
+5.1.0-TIV-TAM-IF0043-WIN [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Access+Manager+for+e-business&fixids=5.1.0-TIV-TAM-IF0043-WIN&source=SAR]
+5.1.0-TIV-TAM-IF0043-LIN [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Access+Manager+for+e-business&fixids=5.1.0-TIV-TAM-IF0043-LIN&source=SAR]
+5.1.0-TIV-TAM-IF0043-PPC [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Access+Manager+for+e-business&fixids=5.1.0-TIV-TAM-IF0043-PPC&source=SAR]
+5.1.0-TIV-TAM-IF0043-SOL [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Access+Manager+for+e-business&fixids=5.1.0-TIV-TAM-IF0043-SOL&source=SAR]
+5.1.0-TIV-TAM-IF0043-S390 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Access+Manager+for+e-business&fixids=5.1.0-TIV-TAM-IF0043-S390&source=SAR]
+5.1.0-TIV-TAM-IF0043-HP [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Access+Manager+for+e-business&fixids=5.1.0-TIV-TAM-IF0043-HP&source=SAR]
+5.1.0-TIV-TAM-IF0043-AIX [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Access+Manager+for+e-business&fixids=5.1.0-TIV-TAM-IF0043-AIX&source=SAR]
+Tivoli Access Manager for e-Business WebSEAL, Patch 5.1.0-TIV-AWS-FP0039 [http://www-01.ibm.com/support/docview.wss?uid=swg24021081]
+Tivoli Access Manager for e-Business WebSEAL, Patch 5.1.0-TIV-AWS-FP0040 [http://www-01.ibm.com/support/docview.wss?uid=swg24025790]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Customer is running TAM 4.1 FP02 with WebSeal on Solaris 2.8
+   
+   
+   Problem Description:
+   Here are some details about the problem I've seen with WebSEAL
+   in
+   relation to mutual authentication over SSL junctions while also
+   using
+   load balancing.
+   I have a WebSEAL junction pointing to 3 backend IIS servers.
+   This
+   junction is configured as a mutual authentication using ssl
+   junction.
+   Now when there is only one server in the junction the mutual
+   authentication works fine. However if I add another server, then
+   mutual
+   ssl authentication won't work for that server.
+   In fact, the only server it works for is always the first server
+   defined in the junction.
+   I can modify the junction XML file and change the order of the
+   files
+   and this is still true.
+   
+   
+   ---------
+   Further information from development:
+   
+   There is a defect in our product that causes this problem.  The
+   problem
+   is that the current implementation of the Junction persistance
+   handling
+   (to file) does not cater for all Mutually Authenticated SSL
+   junctions
+   options (this code was written before support was added and has
+   not been
+   updated ;( ).  They seem to be only implemented within the
+   initial
+   junction definition and not for a each server that is added.
+   
+   The function that needs updating is:
+   
+    void pdWSjuncent::write_serverinfo(wand_extern_jct_t
+   *extern_info)
+   
+   This needs to go through the whole jct definition and write the
+   content
+   of such to the Jct repository, which at the moment is an XML
+   file.
+   
+   The workaround for the customer is that as long as the default
+   certificate is used for each junction server definition, all
+   will
+   function correctly.  If the customer uses one certificate for
+   each
+   server, then only the first one defined within the actual
+   junction
+   definition will function.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  see main problem description
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fixed in 4.1-AWS-0010LA.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IY51525
+   
+   
+ * REPORTED COMPONENT NAME
+   ACCESS MGR WEBS
+   
+   
+ * REPORTED COMPONENT ID
+   5724C0811
+   
+   
+ * REPORTED RELEASE
+   410
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2003-12-04
+   
+   
+ * CLOSED DATE
+   2004-03-12
+   
+   
+ * LAST MODIFIED DATE
+   2004-03-12
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    IY54532 [http://www-01.ibm.com/support/docview.wss?uid=swg1IY54532]
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ACCESS MGR WEBS
+   
+   
+ * FIXED COMPONENT ID
+   5724C0811
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R410 PSN
+   UP

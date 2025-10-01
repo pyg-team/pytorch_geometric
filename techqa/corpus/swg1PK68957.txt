@@ -1,0 +1,192 @@
+Title: IBM PK68957: JAVA.SQL.SQLEXCEPTION: ORA-01795: MAXIMUM NUMBER OF EXPRESSIONS IN A LIST IS 1000 - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Exception occured during processing: "java.sql.SQLException:
+   ORA-01795: maximum number of expressions in a list is 1000
+   This apar will update WMM to address this Oracle error, and will
+   also address the following issue:
+   CMVC 174977 Unexpected InvalidAttributeIdentifierException
+   is thrown on IDS.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  This is a cumulative WMM fixs for Portal 6.0x.
+   The following new problems are fixed by this interim fix
+   package:
+   - Unexpected InvalidAttributeIdentifierException thrown on IDS
+   - Solution to the Oracle limitation: maximum is 1000 in IN
+     clause
+   Additionally, this cumulative fix supercedes these prior WMM
+   fixes/cumulative fixes and includes all fixes contained in
+   these prior fixes:
+   PK31592
+   PK34284 [http://www-01.ibm.com/support/docview.wss?uid=swg1PK34284]
+   PK38588 [http://www-01.ibm.com/support/docview.wss?uid=swg1PK38588]
+   PK41763 [http://www-01.ibm.com/support/docview.wss?uid=swg1PK41763]
+   PK47297 [http://www-01.ibm.com/support/docview.wss?uid=swg1PK47297]
+   PK49610 [http://www-01.ibm.com/support/docview.wss?uid=swg1PK49610]
+   PK52656 [http://www-01.ibm.com/support/docview.wss?uid=swg1PK52656]
+   PK56083 [http://www-01.ibm.com/support/docview.wss?uid=swg1PK56083]
+   PK57151 [http://www-01.ibm.com/support/docview.wss?uid=swg1PK57151]
+   PK58406 [http://www-01.ibm.com/support/docview.wss?uid=swg1PK58406]
+   PK58977 [http://www-01.ibm.com/support/docview.wss?uid=swg1PK58977]
+   PK61736 [http://www-01.ibm.com/support/docview.wss?uid=swg1PK61736]
+   PK62457 [http://www-01.ibm.com/support/docview.wss?uid=swg1PK62457]
+   PK65112 [http://www-01.ibm.com/support/docview.wss?uid=swg1PK65112]
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Code in WMM has been changed to correct the above mentioned new
+   issues.
+   Affected Users:
+      All
+   
+   Version Information:
+   Portal Version(s): 6.0.1.4
+     Pre-Requisite(s): ---
+     Co-Requisite(s): ---
+   Portal Version(s): 6.0.1.3
+     Pre-Requisite(s): ---
+     Co-Requisite(s): ---
+   Portal Version(s): 6.0.1.1
+     Pre-Requisite(s): ---
+     Co-Requisite(s): ---
+   Portal Version(s): 6.0.1.0
+     Pre-Requisite(s): ---
+     Co-Requisite(s): ---
+   Portal Version(s): 6.0.0.1
+     Pre-Requisite(s): ---
+     Co-Requisite(s): ---
+   Portal Version(s): 6.0.0.0
+     Pre-Requisite(s): ---
+     Co-Requisite(s): ---
+   Platform Specific:
+   This fix applies to all platforms.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK68957
+   
+   
+ * REPORTED COMPONENT NAME
+   PORTAL DOCUMENT
+   
+   
+ * REPORTED COMPONENT ID
+   5724E7605
+   
+   
+ * REPORTED RELEASE
+   60A
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-07-15
+   
+   
+ * CLOSED DATE
+   2010-05-21
+   
+   
+ * LAST MODIFIED DATE
+   2010-05-21
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  WMM
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   PORTAL DOCUMENT
+   
+   
+ * FIXED COMPONENT ID
+   5724E7605
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R600 PSY
+   UP
+   
+   
+ * R60A PSY
+   UP
+   
+   
+ * R601 PSY
+   UP
+   
+   
+ * R60E PSY
+   UP
+   
+   
+ * R60G PSY
+   UP
+   
+   
+ * R60H PSY
+   UP

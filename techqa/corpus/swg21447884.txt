@@ -1,0 +1,71 @@
+Title: IBM Failed to upload IMS Server Soft CA error during IMS Config - United States
+
+Text:
+issuerDN 8.1 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ During the initial IMS 8.x configuration, the process may fail with the following error message in the IMS config UI:
+"Failed to upload IMS Server Soft CA"
+
+
+SYMPTOM
+The SystemOut.log shows the following error:
+
+[1/20/10 8:51:30:718 PST] 0000008e SetupImsKeySt I SetupImsKeyStoreCommand OK
+[1/20/10 8:51:31:531 PST] 0000008e UploadImsCert I Uploading cert: CN=WIN-NIGOJAW5CCZ.essotest.support.lab, OU=Root Certificate, OU=WIN-NIGOJAW5CCZCell01, OU=WIN-NIGOJAW5CCZCellManager01, O=IBM, C=US to the IMSTrustedCA table
+[1/20/10 8:51:45:109 PST] 0000008e FfdcProvider I com.ibm.ws.ffdc.impl.FfdcProvider logIncident FFDC1003I: FFDC Incident emitted on C:\Program Files\IBM\WebSphere\AppServer\profiles\AppSrv01\logs\ffdc\server1_4ced4ced_10.01.20_08.51.31.81256413.txt com.ibm.ws.rsadapter.jdbc.WSJccPreparedStatement.pmiExecuteUpdate 807
+[1/20/10 8:51:45:156 PST] 0000008e FfdcProvider I com.ibm.ws.ffdc.impl.FfdcProvider logIncident FFDC1003I: FFDC Incident emitted on C:\Program Files\IBM\WebSphere\AppServer\profiles\AppSrv01\logs\ffdc\server1_4ced4ced_10.01.20_08.51.45.14056414.txt com.ibm.ws.rsadapter.jdbc.WSJdbcPreparedStatement.executeUpdate 449
+[1/20/10 8:51:45:156 PST] 0000008e SystemOut O rdbErrorCode = -302
+[1/20/10 8:51:45:156 PST] 0000008e UploadImsCert E Uploading IMS certificates failed
+encentuate.ims.data.ImsDataStoreException: com.ibm.db2.jcc.b.jm: The value of a host variable in the EXECUTE or OPEN statement is too large for its corresponding use.. SQLCODE=-302, SQLSTATE=22001, DRIVER=3.50.152
+at encentuate.ims.data.CertRdbDo.addCA(CertRdbDo.java:899)
+at encentuate.ng.wizards.front.commands.UploadImsCerts.execute(UploadImsCerts.java:56)
+at encentuate.ng.chains.ChainManager.execute(ChainManager.java:100)
+at encentuate.ims.async.FrontAppExecutionAsyncTask.invoke(FrontAppExecutionAsyncTask.java:123)
+at encentuate.util.async.impl.AsyncRequest.run(AsyncRequest.java:61)
+at edu.emory.mathcs.backport.java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:650)
+at edu.emory.mathcs.backport.java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:675)
+at java.lang.Thread.run(Thread.java:735)
+Caused by: com.ibm.db2.jcc.b.jm: The value of a host variable in the EXECUTE or OPEN statement is too large for its corresponding use.. SQLCODE=-302, SQLSTATE=22001, DRIVER=3.50.152
+at com.ibm.db2.jcc.b.wc.a(wc.java:571) 
+
+NOTE: some versions of ESSO/JDBC Driver may not output as verbose a message as above. The key to determining the cause of the issue, is to review the SQLCODE and SQLSTATE values being thrown to the log (e.g. SQLCODE=-302, SQLSTATE=22001 ).
+
+
+CAUSE
+If the IMS server has a long fully qualified hostname, the DistinguishedName for the Certificate Issuer may exceed the default limit (128 characters) of the 'issuerDN' columns in some of the IMS tables.
+
+
+RESOLVING THE PROBLEM
+In order to prevent/resolve this issue, modify the following file: 
+
+%IMS_HOME%\com.ibm.tamess.ims-delhi.build.boot\src\database\data\sql\<db_type>\create-schema\init.sql
+(replace <db_type> in the path above, with the appropriate database platform (db2, sql, etc..))
+
+Increase the VARCHAR limit for every instance of 'issuerDN'
+
+Example:
+
+
+ * 
+ * 128
+ * 
+ * 
+ * 
+ * 
+ * 256)
+ * 
+ * 
+
+'issuerDN' should be in the following tables: 
+
+IMSRevokedCertificate 
+IMSAppCertificate 
+IMSTrustedCA 
+IMSCertificate 
+IMSCertServer 
+
+Save the changes, and when the IMS Configuration is run, the 'issuerDN' columns will be created with a larger limit. 
+
+PRODUCT ALIAS/SYNONYM
+ ESSO IMS

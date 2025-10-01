@@ -1,0 +1,16 @@
+Title: IBM Set IER Retention Period when documents stored on FCD - United States
+
+Text:
+retention period IER CPE FCD TECHNOTE (FAQ)
+
+QUESTION
+ How do I set the retention period for IBM Enterprise Records (IER) when documents are stored on a fixed content device? 
+
+CAUSE
+When declaring documents as records in IER, the IBM FileNet P8 Content Platform Engine (CPE) retention period or the native retention period on the fixed storage device (FCD) e.g. NetApp, cannot be used with these documents. 
+
+There will be a conflict between the separate mechanisms trying to control the deletion of the documents. 
+
+
+ANSWER
+IER does not support native retention period or hold functionality on FCD or CPE as it conflicts with IER's retention functionality.

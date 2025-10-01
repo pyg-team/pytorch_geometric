@@ -1,0 +1,26 @@
+Title: IBM Error message 600E 000001F7 appears when attempting to use SSL with IBM Host On-Demand - United States
+
+Text:
+1180043 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ An error, 600E 000001F7, occurs when using a IBM Host On-Demand session with telnet SSL secured by a Verisign® certificate. 
+
+DIAGNOSING THE PROBLEM
+The following error appears when attempting to start a secure SSL connection with a z/OS® telnet server using a Verisign certificate:
+
+10:53:53 EZZ0053I COMMAND VARY OBEY COMPLETED SUCCESSFULLY 
+11:05:28 EZZ6034I TELNET CONN 00000063 LU **N/A** ACCEPTED 2323. 
+11:05:28 IPADDR..PORT 159.144.30.26..2048 
+11:05:33 EZZ6035I TELNET DEBUG CLIENT IPADDR..PORT 159.144.30.26..204 
+11:05:33 CONN: 00000063 LU: MOD: EZBTTSMT 
+11:05:33 RCODE: 600E-00 SSL/TLS handshake Timed out. 
+11:05:33 PARM1: 000001F7 PARM2: PARM3: GSK_SECURE_SOCKET_INIT 
+
+RESOLVING THE PROBLEM
+Add both the Verisign Root CA and Intermediate CA certificates to the key ring in RACF. 
+
+Note for Intermediate certificates: 
+
+ *  As well as issuing SSL Certificates, the Trusted Root CA certificate can be used to create another certificate, which in turn will then be used to issue SSL Certificates. 
+ * As the Intermediate Certificate is issued by the Trusted Root CA, any SSL Certificates issued by the Intermediate Certificate inherit the trust of the Trusted Root, effectively creating a certification chain of trust.

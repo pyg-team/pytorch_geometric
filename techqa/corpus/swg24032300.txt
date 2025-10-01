@@ -1,0 +1,46 @@
+Title: IBM JR42324:  Launchpad hangs at 41% during a typical installation - United States
+
+Text:
+Launchpad Hang Business Progress Management DOWNLOADABLE FILES
+
+ABSTRACT
+ The Launchpad hangs at 41% when you install an IBM Business Process Manager (BPM) product using the typical installation method in some Microsoft Windows environments. 
+
+DOWNLOAD DESCRIPTION
+ The attached compressed file (.zip) contains four files. These files are replacement files for the Launchpad, which will fix this problem. 
+
+For more information on this issue, see Launchpad hangs at 41% during a typical installation for the IBM Business Process Server (BPM) products [http://www.ibm.com/support/docview.wss?uid=swg21588515].
+
+INSTALLATION INSTRUCTIONS
+Step1: Backup the following four files in your launchpad image.
+
+<extract_directory>/launchpad/content/scripts/runIM.bat
+<extract_directory>/launchpad/content/global.properties
+<extract_directory>/launchpad/content/installation/utils/InstallUtils.js
+<extract_directory>/launchpad/content/installation/widgets/InstallingPane.js
+
+Where extract_directory is the directory where the product image is unzipped 
+
+Step2: Place the patch file (zip file) at <extract_directory> folder
+Step3: unzip zip file (Right click -> extract_directory All
+Step4: Accept the default path listed by unzip utility ( Make sure you see "launchpad" folder at the end of default path)
+Step4: extract_directory ( Accept YES TO ALL to the the Confirm File Replace Dialog)
+Step5(optional): Make sure the following file are replaced
+
+<extract_directory>/launchpad/content/scripts/runIM.bat
+<extract_directory>/launchpad/content/global.properties
+<extract_directory>/launchpad/content/installation/utils/InstallUtils.js
+<extract_directory>/launchpad/content/installation/widgets/InstallingPane.js
+
+launchpad.zip [/support/docview.wss?uid=swg24032300&aid=2]launchpad.zip [/support/docview.wss?uid=swg24032300&aid=1]
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Business Process Manager Express Installation / Configuration Windows 7.5.1 Business Integration IBM Business Process Manager Advanced Installation / Configuration Windows 7.5.1 
+PRODUCT ALIAS/SYNONYM
+ BPM 
+
+
+ [/support/docview.wss?uid=swg24032300&aid=3]Problems (APARS) fixed [/support/docview.wss?uid=swg24032300&aid=4]Problems (APARS) fixed
+JR42324

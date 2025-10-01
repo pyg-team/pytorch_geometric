@@ -1,0 +1,164 @@
+Title: IBM IZ89230: AVG_RESP_TIME IS NOT CALCULATED USING WEIGHTED MEAN TIME FOR SAP ATTRIBUTE GROUP R3_SERVICE_RESPONSE_TIME. - United States
+
+Text:
+  A FIX IS AVAILABLE
+IBM Tivoli Monitoring for Applications: mySAP Agent, 6.2.0-TIV-ITM_SAP-IF0015 [http://www-01.ibm.com/support/docview.wss?uid=swg24033394]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Severity:   2
+   Approver:   Wang Guo Qing
+   Compid:     5724B97SO
+   Release:    6.2
+   Abstract:   ITM warehouse data not correct
+   Environment: mySAP agent 6.2 iF0008 ITM 6.2.2
+   .
+   Problem Description: In R3_Service_Response_Time_H/_D/etc table
+   Avg Resp Time is calculated from R3_Service_Response_Time table
+   into R3_Service_Response_Time_H table.  But the average
+   AVG_Resp_Time is not calculated using Weighted Mean (ITM use
+   average without weight instead). This causes the KPI in _H table
+   is meaningless. The same issue for other summary table.
+   .
+   Detailed Recreation Procedure:
+   1. Start historical collection for R/3_Reponse_Time attribute
+   group and configure Summarization and Pruning setting for this
+   attribute group.
+   2. After agent running one day, check R3_Service_Response_Time_H
+   and R3_Service_Response_Time_D table, you will find average
+   AVG_Resp_Time is not calculated using Weighted Mean
+   (Dialog/Steps).
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Manually modify the application support files to use the
+   WHSC parameter.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  In R3_Service_Response_Time_H/_D/etc table
+   Avg Resp Time is calculated from R3_Service_Response_Time table
+   into R3_Service_Response_Time_H table.  But the average
+   AVG_Resp_Time is not calculated using Weighted Mean (ITM use
+   average without weight instead). This causes the KPI in _H table
+   is meaningless. The same issue for other summary table.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Add WHSC option to let warehouse summarization and pruning agent
+   to caculate with weight mean. Below is an example.
+   
+   We plan to deliver this fix in 6.2 IF0012 at the end of January
+   2011.
+   
+   *BEHAV: SAMPLECOUNT
+   *WHSC:
+   Avg_Response_Time,Avg_Wait_Time,Avg_CPU_Time,Avg_Database_Reques
+   t_Time
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  Has delivered a temp fix to customer
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ89230
+   
+   
+ * REPORTED COMPONENT NAME
+   ITMF APPL - SAP
+   
+   
+ * REPORTED COMPONENT ID
+   5724B97SO
+   
+   
+ * REPORTED RELEASE
+   620
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-11-15
+   
+   
+ * CLOSED DATE
+   2010-12-30
+   
+   
+ * LAST MODIFIED DATE
+   2010-12-30
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ITMF APPL - SAP
+   
+   
+ * FIXED COMPONENT ID
+   5724B97SO
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R620 PSY
+   UP

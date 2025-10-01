@@ -1,0 +1,140 @@
+Title: IBM LO46462: UNREAD ENTRIES IN THE INBOX ARE BOLD AFTER SEARCHING WHEN USING THE PLAIN RED TEXT OPTION - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DUPLICATE OF ANOTHER APAR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  If you choose the option in preferences to display unread mail
+   in Plain red
+   text (the default is Bold Black text) and then perform a search
+   the unread docs
+   become Bold Red Text. This does not revert to plain red text
+   unless yo go back
+   and reset the preference.
+   I have tested this in 8.5.2 11/10 build and reproduced., it
+   appears to be a
+   problem with all releases using the Plain Red Text for unread
+   entries.
+   
+   Steps to reproduce:
+   
+   1. In your mail file go to Preferences and choose Fonts and
+   Colors
+   2. For the Unread Mail Indication select Plain red text in the
+   dropdown
+   3. Apply and save your changes and the setting takes effect.
+   4. Perform a search on something that will return several docs,
+   the word 'Mail"
+   should give a good return.
+   5. Scan through the results and if the result set includes
+   unread docs , you
+   will see that they are now Bold Red.
+   6. Clear the search and now your unread messages will continue
+   to be Bold red.
+   
+   You can reset the preferences but after searching the setting
+   will remain Bold
+   red.
+   
+   Theory:
+   We use Bold Black as the default and the search routine sets the
+   bold bit for
+   unread documents and we did not change that to consider the new
+   preference.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Re Apply the preference
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *  This APAR is associated with SPR# CSMH7XXJ9Q.
+   The record was closed as a duplicate.
+   This APAR is a duplicate of LO45366 [http://www-01.ibm.com/support/docview.wss?uid=swg1LO45366]
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   LO46462
+   
+   
+ * REPORTED COMPONENT NAME
+   NOTES CLIENT
+   
+   
+ * REPORTED COMPONENT ID
+   5724E6255
+   
+   
+ * REPORTED RELEASE
+   800
+   
+   
+ * STATUS
+   CLOSED DUB
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-11-19
+   
+   
+ * CLOSED DATE
+   2009-12-18
+   
+   
+ * LAST MODIFIED DATE
+   2010-02-11
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

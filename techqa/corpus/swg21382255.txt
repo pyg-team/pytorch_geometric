@@ -1,0 +1,30 @@
+Title: IBM EJPAH2025E error occurs while creating a virtual portal. - United States
+
+Text:
+EJPAH2025E; virtual portal; hostname; host name; error; creating a virtual portal TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ You are trying to create a new virtual portal using the Virtual Portal Manager portlet in IBM WebSphere Portal. The creation of your new virtual portal fails with the following error:
+
+EJPAH2025E: Hostname is already used in default virtual portal. 
+
+CAUSE
+When using the same host name for your virtual portal as you do for the base portal, the host name field should be left blank when creating the virtual portal.
+
+RESOLVING THE PROBLEM
+ 
+
+To resolve the issue, leave the host name field blank when creating the virtual portal, or use a host name that is not already in use by another virtual portal or by the base portal itself. 
+
+Further details about the virtual portal host name are documented in the WebSphere Portal Information Center [http://publib.boulder.ibm.com/infocenter/wpdoc/v6r1m0/index.jsp?topic=/com.ibm.wp.ent.doc/welcome_main.html] as follows:
+----------------------------------------------------------------------------------------
+The hostname of the virtual portal. This attribute is optional. Use it to add a host name of your choice for the virtual portal. The portal uses that host name for the friendly URL of the virtual portal as follows: http://your_hostname_example:port/wps/portal. You can pass that friendly URL to your Portal users for easier access to your Portal.
+
+Notes: 
+1. This URL will be used internally to access the virtual portal instance, even if you specify a user friendly context URL as mentioned above. Make sure that the host name that you specify here is accessible. 
+
+2. You cannot use the same virtual portal host name twice in the same Portal installation.
+----------------------------------------------------------------------------------------
+
+RELATED INFORMATION
+ Administering virtual portals [http://publib.boulder.ibm.com/infocenter/wpdoc/v6r1m0/topic/com.ibm.wp.ent.doc_v6101/admin/advptsk.html?]

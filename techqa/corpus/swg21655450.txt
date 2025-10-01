@@ -1,0 +1,28 @@
+Title: IBM The initialization of the  MSSQL database failed in IBM FileNet Image Services - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ fn_util initrdb failed with an error 121,99,1 SQLSTATE = 42000, NativeError = 1934 in filenet elog. 
+
+SYMPTOM
+Elogs show error
+121,99,1 <fnsw_dev> Xdifprog.exe 
+(3776.2904.94 0xec0.b58) ... [SERIOUS] 
+Error in GDBY_exec: SQLExecDirect STMT, 'ALTER TABLE doctaba ADD a31 
+VARCHAR(239)', hstmt = 43389960 (&0207c080) (..\src\GDBY.c, VERSION 
+4.1.1.1, @3553). SQLSTATE = 42000, NativeError = 1934, 
+ErrorMsg = '[Microsoft][ODBC SQL Server Driver][SQL Server]INSERT failed 
+because the following SET options have incorrect settings: 
+'CONCAT_NULL_YIELDS_NULL, ANSI_WARNINGS, ANSI_PADDING'. Verify that SET 
+options are correct for use with indexed views and/or indexes on 
+computed columns and/or query notifications and/or xml data type 
+methods. 
+
+
+CAUSE
+ MSSQL triggers were set to expressly block any attempt by an application to create or modify database objects 
+
+RESOLVING THE PROBLEM
+Customer disabled all MSSQL database triggers

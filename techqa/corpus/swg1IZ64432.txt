@@ -1,0 +1,224 @@
+Title: IBM IZ64432: AFTER SSL REFRESH CLIENT CONNECTIONS INTERMITTENTLY FAIL WITH ERROR 2397 MQRC_JSSE_ERROR OR 2393 MQRC_SSL_INITIALIZATION_ERROR - United States
+
+Text:
+  FIXES ARE AVAILABLE
+WebSphere MQ V7.0 Fix Pack 7.0.1.2 [http://www-01.ibm.com/support/docview.wss?uid=swg24026518]
+WebSphere MQ V7.0.1 for i5/OS Fix Pack 7.0.1.2 [http://www-01.ibm.com/support/docview.wss?uid=swg24026566]
+WebSphere MQ V6, Fix Pack 6.0.2.9 [http://www-01.ibm.com/support/docview.wss?uid=swg24025669]
+WebSphere MQ V6.0 for iSeries Fix Pack 6.0.2.9 [http://www-01.ibm.com/support/docview.wss?uid=swg24025670]
+WebSphere MQ 6.0 for HP OpenVMS Alpha and Itanium - Fix Pack 6.0.2.10 (FP03) [http://www-01.ibm.com/support/docview.wss?uid=swg24029987]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  After updating an expiring SSL certificate, the administrator
+   ran the command "REFRESH SECURITY TYPE(SSL)" against the queue
+   manager.  Although this command gave no errors, some client
+   applications were not able to connect to the queue manager after
+   the old certificate expired.  The old SSL certificate was still
+   being used by some of the queue manager processes.
+   
+   Java/JMS client applications would fail with the following
+   exception:
+   
+   MQException = MQJE001: Completion Code '2',
+   Reason '2397'.errorCode 2397com.ibm.mq.jmqi.JmqiException:
+   CC=2;RC=2397;AMQ9204: Connection to host '  ' rejected.
+   [1=com.ibm.mq.jmqi.JmqiException[CC=2;RC=2397;AMQ9771: SSL
+   handshake failed.
+   [1=javax.net.ssl.SSLHandshakeException
+   [sun.security.validator.ValidatorException:
+   PKIX path validation failed:
+   java.security.cert.CertPathValidatorException: timestamp check
+   failed],]
+   
+   In other client applications, the MQ connect call would fail
+   with reason code 2393 (MQRC_SSL_INITIALIZATION_ERROR).
+   
+   The server error logs contained error message AMQ9665 (SSL
+   connection closed by remote end of channel).
+   
+   SSL message channels could also be affected by this failure. The
+   message channel would go into the RETRYING state with error
+   AMQ9633 or AMQ9665.
+   
+   Users should note that other issues could also cause similar
+   symptoms. This APAR is applicable only in cases where the user
+   has changed the digital certificates in their queue manager's
+   key repository and has issued the SSL refresh security command.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   WebSphere MQ users who use SSL or TLS to secure their channels
+   and who use the REFRESH SECURITY TYPE(SSL) MQSC command after
+   updating their queue manager's key repository. The
+   MQCMD_REFRESH_SECURITY PCF command and the MQ Explorer GUI
+   equivalent are also affected.
+   
+   Platforms affected:
+   All Distributed (iSeries, all Unix and Windows)
+   ****************************************************************
+   PROBLEM SUMMARY:
+   Firstly, the code used to scan the list of amqrmppa processes
+   during an SSL refresh was not sufficiently robust. The refresh
+   code did not correctly serialise the list of amqrmppa processes,
+   nor did it scan the entire list. On systems with large numbers
+   of amqrmppa processes (50 or more) the later processes in the
+   list were not asked to refresh and would therefore keep their
+   old cached SSL settings.
+   
+   Secondly, the error handling in the SSL refresh code did not
+   correctly act upon all errors. In some cases, errors were not
+   reported, so that an SSL refresh operation could fail silently
+   without reporting its failure to the user. Again, this could
+   leave some processes using an outdated set of certificates.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The WebSphere MQ SSL refresh code has been corrected to refresh
+   all channel processes and to properly handle errors during the
+   refresh operation.
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+                      v6.0
+   Platform           Fix Pack 6.0.2.9
+   --------           --------------------
+   Windows            U200313
+   AIX                U828012
+   HP-UX (PA-RISC)    U827381
+   HP-UX (Itanium)    U827383
+   Solaris (SPARC)    U827693
+   Solaris (x86-64)   U828055
+   iSeries            tbc_p600_0_2_9
+   Linux (x86)        U827380
+   Linux (x86-64)     U827694
+   Linux (zSeries)    U827590
+   Linux (Power)      U827382
+   Linux (s390x)      U827695
+   
+                      v7.0
+   Platform           Fix Pack 7.0.1.2
+   --------           --------------------
+   Windows            U200316
+   AIX                U829807
+   HP-UX (PA-RISC)    U829678
+   HP-UX (Itanium)    U829681
+   Solaris (SPARC)    U829806
+   Solaris (x86-64)   U829680
+   iSeries            tbc_p700_0_1_2
+   Linux (x86)        U829677
+   Linux (x86-64)     U829676
+   Linux (zSeries)    U829682
+   Linux (Power)      U829679
+   
+   The latest available maintenance can be obtained from
+   'WebSphere MQ Recommended Fixes'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037]
+   
+   If the maintenance level is not yet available, information on
+   its planned availability can be found in 'WebSphere MQ
+   Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ64432
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ AIX V6
+   
+   
+ * REPORTED COMPONENT ID
+   5724H7201
+   
+   
+ * REPORTED RELEASE
+   600
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-11-04
+   
+   
+ * CLOSED DATE
+   2009-12-24
+   
+   
+ * LAST MODIFIED DATE
+   2009-12-24
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ AIX V6
+   
+   
+ * FIXED COMPONENT ID
+   5724H7201
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R600 PSY
+   UP

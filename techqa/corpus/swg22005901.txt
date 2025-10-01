@@ -1,0 +1,46 @@
+Title: IBM Receive an FNRPA0624E error when trying to deploy a solution that has a large number of properties defined for a single case type. - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Receive an FNRPA0624E error when trying to deploy a solution that has a large number of properties defined for a single case type 
+
+SYMPTOM
+For a solution that includes a single case type in which a large number of properties are defined, the solution deployment fails with the following message in the deployment logs and application server logs. Having choice lists associated with the properties can further increase the likelihood of the issue. 
+
+FNRPA0624E The rules could not be deployed
+because of the following error: The value given for a property or list
+element lies outside the permitted range or value set, or exceeds the
+maximum length allowed. The length of the value (65,966) specified for
+property CmAcmCaseTypeXSD exceeds the maximum permitted length (65,536). 
+FNRPA0093E The previous error was caused by: The
+value given for a property or list element lies outside the permitted
+range or value set, or exceeds the maximum length allowed. The length
+of the value (65,966) specified for property CmAcmCaseTypeXSD exceeds
+the maximum permitted length (65,536). 
+FNRPA0252E The case type folder <CaseType>
+could not be updated because of the following error: The value given
+for a property or list element lies outside the permitted range or
+value set, or exceeds the maximum length allowed. The length of the
+value (65,966) specified for property CmAcmCaseTypeXSD exceeds the
+maximum permitted length (65,536). 
+
+
+
+CAUSE
+The predefined length of the defined Case Type XSD (CmAcmCaseTypeXSD) property on the Deployed Case Type class is 64K. If a large number of properties are associated with a particular case type, the size of the Case Type XSD can exceed the 64K limit.
+
+
+
+RESOLVING THE PROBLEM
+Increase the length of the Case Type XSD property on the Deployed Case Type class to be greater than 64K by performing the following steps: 
+
+ 1. Log in to the Administration Console for Content Platform Engine (ACCE) and open the target object store. 
+ 2. Navigate to 'Data Design' > Classes > Folder > 'Deployed Case Type' 
+ 3. With 'Deployed Case Type' open, select the 'Properties' tab. 
+ 4. Within 'Properties' select the drop-down for 'Property Definitions', and select 'Case Type XSD'. 
+ 5. With 'Case Type XSD' property definition open, navigate to the 'Maximum Length String' property and change the value from 64K (65535) to 256K (262144).
+
+
+With IBM Case Manager 5.3.1 or later, the 'Case Type XSD' property on the 'Deployed Case Type' class in the target object store is increased to 256K by default.

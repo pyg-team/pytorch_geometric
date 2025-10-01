@@ -1,0 +1,55 @@
+Title: IBM Security Bulletin: Vulnerability in OpenSSL affects IBM GPFS V3.5 (CVE-2016-2842) - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ This bulletin addresses CVE-2016-2842 for GPFS for Windows V3.5 
+
+VULNERABILITY DETAILS
+OpenSSL vulnerabilities were disclosed on March 1, 2016 by the OpenSSL Project. OpenSSL is used by GPFS for Windows V3.5. GPFS for Windows V3.5 addressed the applicable CVEs with the details provided in: 
+
+ Security Bulletin: Multiple vulnerabilities in OpenSSL affect IBM GPFS V3.5 [http://www.ibm.com/support/docview.wss?uid=isg3T1023478] 
+
+An additional CVE, CVE-2016-2842, was also fixed but was not initially included in the March 1, 2016 OpenSSL Project announcement or in the associated security bulletin for this product. This bulletin only addresses CVE-2016-2842. Please see the bulletin linked above for the other CVEs that were addressed by the March 1, 2016 OpenSSL Project.
+
+
+
+CVE-ID: CVE-2016-2842 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2016-2842]
+Description: OpenSSL is vulnerable to a denial of service, caused by the failure to verify that a certain memory allocation succeeds by the doapr_outch function. A remote attacker could exploit this vulnerability using a specially crafted string to cause an out-of-bounds write or consume an overly large amount of resources.
+CVSS Base Score: 7.5
+CVSS Temporal Score: https://exchange.xforce.ibmcloud.com/vulnerabilities/111304 [https://exchange.xforce.ibmcloud.com/vulnerabilities/111304] for more information
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H)
+
+AFFECTED PRODUCTS AND VERSIONS
+OpenSSH for GPFS V3.5 for Windows
+
+REMEDIATION/FIXES
+In GPFS V3.5.0.30, IBM upgraded OpenSSH for GPFS on Windows to use OpenSSL 1.0.2g to address these vulnerabilities. System administrators should update their systems to GPFS V3.5.0.30 by following the steps below. 
+
+1. Download the GPFS 3.5.0.30 update package into any directory on your system from http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=Cluster%2Bsoftware&product=ibm/power/IBM+General+Parallel+File+System&release=3.5.0&platform=Windows&function=all [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=Cluster%2Bsoftware&product=ibm/power/IBM+General+Parallel+File+System&release=3.5.0&platform=Windows&function=all]
+
+2. Extract the contents of the ZIP archive so that the .msi file it includes is directly accessible to your system.
+
+3. Follow the instructions in the README included in the update package in order to install the OpenSSH msi package. This updated OpenSSH msi package is built using OpenSSL 1.0.2g.
+
+If GPFS multiclustering is configured on Windows nodes, upgrade all OpenSSL packages that may have been installed. The following can be done on a small group of nodes at each time (ensuring that quorum is maintained) to maintain file system availability:
+
+a. Stop GPFS on the node
+b. Install the version of OpenSSL 
+c. Restart GPFS on the node
+
+IBM recommends if there are multiple servers sharing the same certificate to get new certificates, preferably one per server. 
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v3 Guide [http://www.first.org/cvss/user-guide] 
+On-line Calculator v3 [http://www.first.org/cvss/calculator/3.0] RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] *The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.

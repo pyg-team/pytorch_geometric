@@ -1,0 +1,193 @@
+Title: IBM IV07692: NCP_DH_PING CORED WITH DEBUG 4 ON AND WHENEVER TRACEROUTE AGENT ENABLED - United States
+
+Text:
+  FIXES ARE AVAILABLE
+IBM Tivoli Network Manager IP 3.9.0 Fix Pack 3, 3.9.0-TIV-ITNMIP-FP0003 [http://www-01.ibm.com/support/docview.wss?uid=swg24033501]
+IBM Tivoli Network Manager IP 3.9.0 Fix Pack 4, 3.9.0-TIV-ITNMIP-FP0004 [http://www-01.ibm.com/support/docview.wss?uid=swg24034724]
+IBM Tivoli Network Manager IP Edition 3.9.0 Fix Pack 5, 3.9.0-TIV-ITNMIP-FP0005 [http://www-01.ibm.com/support/docview.wss?uid=swg24037809]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  ncp_dh_ping cored with debug 4 on and whenever TraceRoute agent
+   enabled.
+   
+   The following message shown in nco_dh_ping.DomainName.trace:
+   
+   *** glibc detected *** ncp_dh_ping: double free or corruption
+   (!prev): 0x080969a0 ***
+   CDiscoPingHelper::DHProcessIO
+   CDiscoPingHelper::DHProcessIO - packetLen=56 sockID=11
+   fromaddr=9.42.16.1
+   CDiscoTracePinger::DRPProcessIOReply()
+   Received 56 bytes in the return packet
+     45 C0 00 38  A4 7F 00 00  FF 01 E3 B8  09 2A 10 01
+     09 2A 10 78  0B 00 38 34  00 00 00 00  45 00 00 1C
+     00 00 40 00  01 11 31 D5  09 2A 10 78  AC 1E 82 3C
+     88 6A 09 08  78 61 B2 F7 Traceroute time exceeded
+   CDiscoTracePinger::DRPProcessIOReply() packet received on wrong
+   port so discarding
+   ======= Backtrace: =========
+   /lib/libc.so.6[0xf7a6c911]
+   /lib/libc.so.6(__libc_free+0x84)[0xf7a6df84]
+   /usr/lib/libstdc++.so.6(_ZdlPv+0x21)[0xf7c0b1e1]
+   /usr/lib/libstdc++.so.6(_ZdaPv+0x1d)[0xf7c0b23d]
+   /opt/IBM/tivoli/netcool/precision/platform/linux2x86/lib/libVert
+   igo.so.1(_ZN18CPingPacketBuilderD1Ev+0x28)[0xf7da1738]
+   /opt/IBM/tivoli/netcool/precision/platform/linux2x86/lib/libDisc
+   oCommon.so.1(_ZN17CDiscoTracePinger14DTPDoPingTraceEv+0x394)[0xf
+   7d3c1b4]
+   /opt/IBM/tivoli/netcool/precision/platform/linux2x86/lib/libDisc
+   oCommon.so.1(_ZN17CDiscoTracePinger17DTPDoPingAndTraceEPKcii+0x2
+   9f)[0xf7d3c78f]
+   ncp_dh_ping(_ZN16CDiscoPingHelper14DPHDoTracePingE22EDiscoPingRe
+   sponseTypePKciiiP10CRivRecord+0xb7)[0x804dbc7]
+   ncp_dh_ping(_ZN16CDiscoPingHelper11DHDoRequestEP10CRivRecord+0x3
+   6c)[0x804f0fc]
+   /opt/IBM/tivoli/netcool/precision/platform/linux2x86/lib/libDisc
+   oHelper.so.1(_ZN12CDiscoHelper16DHProcessRequestEP10CRivRecord+0
+   x92)[0xf7d5aab2]
+   /opt/IBM/tivoli/netcool/precision/platform/linux2x86/lib/libDisc
+   oHelper.so.1(_Z18newRequestThreadFnPvS_+0x30)[0xf7d5d650]
+   /opt/IBM/tivoli/netcool/precision/platform/linux2x86/lib/libNCPB
+   ase.so.1(_ZN12CRivServPool12MainWorkLoopEv+0xcf)[0xf7eed22f]
+   /opt/IBM/tivoli/netcool/precision/platform/linux2x86/lib/libNCPB
+   ase.so.1(_ZN12CRivServPool19ThreadStartFunctionEPv+0x29)[0xf7eec
+   829]
+   /lib/libpthread.so.0[0xf7c7234b]
+   /lib/libc.so.6(__clone+0x5e)[0xf7ac665e]
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * User with TraceRoute agent enabled and have ping helper at   *
+   * debug 4 trace level.                                         *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * Ncp_dh_ping core with message ?double free or corruption? to *
+   * log file when running at debug 4 level.                      *
+   *                                                              *
+   * *** glibc detected *** ncp_dh_ping: double free or           *
+   * corruption (!prev): 0x080969a0 ***                           *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * The problem occurs only if the debug 4 trace is enabled in   *
+   * ping helper.                                                 *
+   * Before applying the fix, disabling the debug 4 trace would   *
+   * prevent the problem.                                         *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A double free was occurring when the ping helper was run in
+   debug 4.
+   
+   An object was created for debug output which consumed some
+   memory that was then freed later. After creation, grab back the
+   memory to prevent the double free.
+   
+   The following fixpacks will contain the fix:
+   | fix pack | 3.9.0-ITNMIP-FP0001
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV07692
+   
+   
+ * REPORTED COMPONENT NAME
+   NC/PREC DISCOVY
+   
+   
+ * REPORTED COMPONENT ID
+   5724O52DS
+   
+   
+ * REPORTED RELEASE
+   390
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-09-13
+   
+   
+ * CLOSED DATE
+   2011-09-23
+   
+   
+ * LAST MODIFIED DATE
+   2011-09-23
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   NC/PREC DISCOVY
+   
+   
+ * FIXED COMPONENT ID
+   5724O52DS
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R390 PSN
+   UP
+   
+   
+ * R390 PSY
+   UP

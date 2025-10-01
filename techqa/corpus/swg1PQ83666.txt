@@ -1,0 +1,142 @@
+Title: IBM PQ83666: LUSessionPend QSession not always mutually exclusive - United States
+
+Text:
+z/os SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  If LUSESSIONPEND is coded in TELNETPARMS and
+   QUEUESESSION is coded in BEGINVTAM, no warning messages
+   are issued and 'QUEUESESSION' is made active.  This is
+   contrary to what is described in the documentation.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All users of Communications Server           *
+   *                 z/OS Version 1 Release 2,                    *
+   *                 Version 1 Release 4 and                      *
+   *                 Version 1 Release 5 IP Telnet                *
+   *                 facilities.                                  *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: If User codes LUSESSIONPEND in          *
+   *                      TELNETPARMS and QUEUESESSION in the     *
+   *                      BEGINVTAM section, no warning message   *
+   *                      is issued, and the QUEUESESSION parm    *
+   *                      takes precedence. The Defaultappl       *
+   *                      will not be gotten back into session    *
+   *                      following UNBIND from another Appl.     *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   If TELNETPARMS has LUSESSIONPEND coded and BEGINVTAM has
+   QUEUESESSION coded, no warning is issued and QUEUESESSION
+   stays in effect. If the Defaultappl does not use SIMLOGON
+   for QUEUESESSION, the Defaultappl will not get back into
+   session following an UNBIND from another Appl.
+   +-------------------------------------------------------------+
+   + Please check our Communications Server for OS/390 homepages +
+   + for common networking tips and fixes.  The URL for these    +
+   + homepages can be found in Informational APAR II11334 [http://www-01.ibm.com/support/docview.wss?uid=isg1II11334].       +
+   +-------------------------------------------------------------+
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *  This apar is being closed FIN (Fixed In Next).
+   PTR MV29865 is created for development to track this.
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   PQ83666
+   
+   
+ * REPORTED COMPONENT NAME
+   TCP/IP V3 MVS
+   
+   
+ * REPORTED COMPONENT ID
+   5655HAL00
+   
+   
+ * REPORTED RELEASE
+   120
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2004-01-23
+   
+   
+ * CLOSED DATE
+   2004-02-04
+   
+   
+ * LAST MODIFIED DATE
+   2004-02-04
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R120 PSN
+   UP
+   
+   
+ * R140 PSN
+   UP
+   
+   
+ * R150 PSN
+   UP

@@ -1,0 +1,82 @@
+Title: IBM Customer requirements answered in CICS 5.2 Tools - United States
+
+Text:
+RFE ; RFEs ; CICS request for enhancements ; CICS requirements ; delivered ; answered ; implemented ; provided CICSCM 5.2 ; CICS Configuration Manager ; 5697CIC00 5697CIC01 R520 R52E R52K 5697-CIC 5697CIC FMID HCCK520 JCCK52E JCCK52K CICSDA 5.2 ; CICS Deployment Assistant ; 5655Y2900 5655Y2901 R520 R52C R52E R52K 5655-Y29 5655Y29 FMID HGEM520 CICSIA 5.2 ; CICS Interdependency Analyzer ; 5655Y2200 5655Y2201 R520 R52E R52K 5655-Y22 5655Y22 FMID H274520 J27452E J27452K CICSPA 5.2 ; CICS Performance Analyzer ; 5655Y2300 5655Y2301 R520 R52C R52E R52K R52S 5655-Y23 5655Y23 FMID H24D520 J24D52E J24D52K J24D52C J24D52S CICSVR 5.2 ; CICS VSAM Recovery ; 5655Y2400 R520 R52E R52K 5655-Y24 ; 5655Y24 FMID HCCV520 JCCV52E JCCV52K retention52 PRODUCT DOCUMENTATION
+
+ABSTRACT
+ This document lists the customer requirements or requests for enhancements (RFEs) that have been delivered in version 5.2 of the IBM CICS Tools products. 
+
+CONTENT
+For more information about each customer requirement that was delivered in V5.2 of the CICS Tools, click on the headline text in the following tables. This will display the corresponding entry in the IBM Request For Enhancement (RFE) Community [http://www.ibm.com/developerworks/rfe/]*.
+
+
+
+ * CICS Configuration Manager for z/OS V5.2 (CICS CM)
+ * CICS Deployment Assistant V5.2 (CICS DA)
+ * CICS Interdependency Analyzer for z/OS V5.2 (CICS IA)
+ * CICS Performance Analyzer for z/OS V5.2 (CICS PA) 
+ * CICS VSAM Recovery for z/OS V5.2 (CICS VR) 
+
+* requires (free) IBM developerWorks registration [https://www.ibm.com/developerworks/dwwi/jsp/Register.jsp].
+
+For information about how to use RFE to give feedback and ideas for changes and improvements to CICS Tools, see this blog: How to let the team know what you want in CICS - use RFE! [https://www.ibm.com/developerworks/community/blogs/aimsupport/entry/how_to_let_the_team_know_what_you_want_in_cics_use_rfe?maxresults=15&lang=en]
+
+
+
+
+
+
+
+
+
+
+IBM CICS Configuration Manager for z/OS V5.2 (CICS CM) RFE ID Headline 38122 CICS CM - Provide string compare function on Standards Enforcement exit [http://www.ibm.com/developerworks/rfe/execute?use_case=viewRfe&CR_ID=38122] 40335 CICS CM - Migrate of WLM specifications between two CICSPlex SM data repositories [http://www.ibm.com/developerworks/rfe/execute?use_case=viewRfe&CR_ID=40335] 
+Back to top
+
+
+
+
+
+
+
+IBM CICS Deployment Assistant for z/OS V5.2 (CICS DA) RFE ID Headline 15353 CICS Deployment Assistant: To provide cloning function for non-CICSPLEX environment [http://www.ibm.com/developerworks/rfe/execute?use_case=viewRfe&CR_ID=15353] 
+Back to top
+
+
+
+
+
+
+
+IBM CICS Interdependency Analyzer for z/OS V5.2 (CICS IA) RFE ID Headline 72144 "CICS IA Command Flow Options". The ability to run generic searches to tasks without a UserID or TermID, such as an asynchronous task. [http://www.ibm.com/developerworks/rfe/execute?use_case=viewRfe&CR_ID=72144] 76146 Command Flow Run limited to one user ID in V5.1 (no wildcard allowed any more) [http://www.ibm.com/developerworks/rfe/execute?use_case=viewRfe&CR_ID=76146] 76282 Add CODESET and TERRITORY to CICS IA CIUCNFG1 customization clist for CIUUDBC CREATE DATABASE on UDB [http://www.ibm.com/developerworks/rfe/execute?use_case=viewRfe&CR_ID=76282] 82357 Full tab names should appear when hovering over a tab in the left middle window [http://www.ibm.com/developerworks/rfe/execute?use_case=viewRfe&CR_ID=82357] 
+Back to top
+
+
+
+
+
+
+
+IBM CICS Performance Analyzer for z/OS V5.2 (CICS PA) RFE ID Headline 15431 CICS PA Batch reporting of CICS TS and CICS TG statistics [http://www.ibm.com/developerworks/rfe/execute?use_case=viewRfe&CR_ID=15431] 15603 CICS PA LISTX report for TRANFLAG abnormal termination bit [http://www.ibm.com/developerworks/rfe/execute?use_case=viewRfe&CR_ID=15603] 31395 CICS PA Find command when viewing CICS TS and CICS TG statistics data using the ISPF dialogues [http://www.ibm.com/developerworks/rfe/execute?use_case=viewRfe&CR_ID=31395] 36016 CICS PA plug-in - Allow date modification when plugging data into MS Excel [http://www.ibm.com/developerworks/rfe/execute?use_case=viewRfe&CR_ID=36016] 
+Back to top
+
+
+
+
+
+
+
+IBM CICS VSAM Recovery for z/OS V5.2 (CICS VR) RFE ID Headline 15328 Inability to delete records from the RCDS without recalling migrated LOGS [http://www.ibm.com/developerworks/rfe/execute?use_case=viewRfe&CR_ID=15328] 15329 CICS VR Recovered Data set Statistics Report needs to report on backout record counts and actions [http://www.ibm.com/developerworks/rfe/execute?use_case=viewRfe&CR_ID=15329] 15330 Reset BWO bit by BATCH utility [http://www.ibm.com/developerworks/rfe/execute?use_case=viewRfe&CR_ID=15330] 20952 CICS VR needs to be re-architected to allow only 1 unique module for DWW1SCSR and DWW1VS00 [http://www.ibm.com/developerworks/rfe/execute?use_case=viewRfe&CR_ID=20952] 32974 CICS VR support of old CDS until run conversion program [http://www.ibm.com/developerworks/rfe/execute?use_case=viewRfe&CR_ID=32974] 32975 Implement and backout CICS VR without an IPL [http://www.ibm.com/developerworks/rfe/execute?use_case=viewRfe&CR_ID=32975] 34181 Currently CICS VR supports only 1 DSCB Format. Need extended volume format of DSCB8 DCSB9form [http://www.ibm.com/developerworks/rfe/execute?use_case=viewRfe&CR_ID=34181] 34183 CICS VR generated JCL customization [http://www.ibm.com/developerworks/rfe/execute?use_case=viewRfe&CR_ID=34183] 39781 Allow user specification of CICS VR trans IDs [http://www.ibm.com/developerworks/rfe/execute?use_case=viewRfe&CR_ID=39781] 42974 CICS VR 5.1 needs to coexist with prior versions [http://www.ibm.com/developerworks/rfe/execute?use_case=viewRfe&CR_ID=42974] 
+Back to top
+
+RELATED INFORMATION
+ Announcement Letters for CICS Products [http://www.ibm.com/support/docview.wss?uid=swg21227090]
+Customer requirements answered in CICS TS 5.2 [http://www.ibm.com/support/docview.wss?uid=swg27041548]
+
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Host Transaction Processing CICS Configuration Manager for z/OS Availability z/OS 5.2 Host Transaction Processing CICS Deployment Assistant for z/OS Availability z/OS 5.2 Host Transaction Processing CICS Interdependency Analyzer for z/OS Availability z/OS 5.2 Host Transaction Processing CICS Performance Analyzer for z/OS Availability z/OS 5.2 Host Transaction Processing CICS VSAM Recovery for z/OS Availability z/OS 5.2 PRODUCT ALIAS/SYNONYM
+ CICSCM CICS CM CICSDA CICS DA CICSIA CICS IA CICSPA CICS PA CICSVR CICS VR

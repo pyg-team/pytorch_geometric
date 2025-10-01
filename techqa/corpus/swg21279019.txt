@@ -1,0 +1,40 @@
+Title: IBM DFHIS0002 error 010A in DFHISDM after upgrading to CICS TS 3.2 - United States
+
+Text:
+DFHIS0002 IS0002 010A MSGDFHIS0002 5655M1500 R650 650 R500 500 HCI6500 5655-M15 5655M15 KIXINFO kixdcfcic650 retention32 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ After control is given to CICS, you receive message DFHIS0002 A severe error (code X'010A') has occurred in module DFHISDM. You are initial starting one of your CICS Transaction Server for z/OS (CICS TS) regions for the first time after upgrading to V3.2. 
+
+SYMPTOM
+The system log contains the following messages: 
+
+DFHSI1517 Control is being given to CICS.
+DFHEJ0102 Enterprise Java domain initialization has ended.
+DFHIS0002 [http://publib.boulder.ibm.com/infocenter/cicsts/v3r2/index.jsp?topic=/com.ibm.cics.ts.messages.doc/cics_mc/dfhis/IS0002.html] A severe error (code X'010A') has occurred in module DFHISDM.
+DFHME0116 (Module:DFHMEME) CICS symptom string for message DFHIS0002 is
+PIDS/5655M1500 LVLS/650 MS/DFHIS0002 RIDS/DFHISDM PTFS/HCI6500
+PRCS/0000010A
+DFHDU0201 ABOUT TO TAKE SDUMP. DUMPCODE: IS0002 , DUMPID: 1/0001
+DFHDU0202 SDUMPX COMPLETE. SDUMPX RETURN CODE X'00'
+DFHDM0105 Unsuccessful initialization of DFHIS domain. CICS will terminate.
+DFHME0116 (Module:DFHMEME) CICS symptom string for message DFHDM0105 is PIDS/5655M1500 LVLS/650 MS/DFHDM0105 RIDS/DFHDMDS PTFS/HCI6500
+
+
+
+CAUSE
+Group DFHISCIP in missing from your CICS region. The CICS-supplied group DFHISCIP was introduced in CICS TS V3.2 and contains the default autoinstall user program for IPIC connections, DFHISAIP.
+
+
+
+RESOLVING THE PROBLEM
+Use the DFHCSDUP UPGRADE command [http://publib.boulder.ibm.com/infocenter/cicsts/v3r2/topic/com.ibm.cics.ts.doc/dfha6/topics/dfha6ax.html] to upgrade your existing DFHCSD or Create a new DFHCSD [http://publib.boulder.ibm.com/infocenter/cicsts/v3r2/topic/com.ibm.cics.ts.doc/dfha2/topics/dfha2_set_sysdef_dataset.html] that when initialized will include group DFHISCIP.
+
+DFHISCIP is included in the default CICS startup grouplist DFHLIST. If you use a different CICS startup grouplist, ensure that you append the DFHISCIP group to it.
+
+
+
+
+
+PRODUCT ALIAS/SYNONYM
+ CICS/TS CICS TS CICS Transaction Server

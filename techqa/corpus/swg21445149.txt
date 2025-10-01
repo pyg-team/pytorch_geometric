@@ -1,0 +1,23 @@
+Title: IBM Finding WebSphere Transformation Extender documentation - United States
+
+Text:
+TX; WTX; WTX PDF; WTX library; WTX books; WTX documentation TECHNOTE (FAQ)
+
+QUESTION
+ Where do I find IBM® WebSphere® Transformation Extender documentation? 
+
+ANSWER
+ 
+
+An information center is installed with WebSphere Transformation Extender base products. You can access the WebSphere Transformation Extender information center: 
+
+ * From the Help menu from within Design Studio applications 
+ * From the Microsoft® Windows® Programs menu 
+ * From the library web page [http://www.ibm.com/software/integration/wdatastagetx/library/] for your version and release
+
+
+Optionally, you can install the WebSphere Transformation Extender documentation PDF files. The products that you install determine which PDF documents are installed with the Online Library and the SDK Library. To view all of the documentation to which you are entitled, install all product components before you install the Online Library. 
+
+After you install the Online Library, you can access it from the IBM WebSphere Transformation Extender program menu or by navigating to the following path: 
+
+install_dir /docs/en/library.pdf

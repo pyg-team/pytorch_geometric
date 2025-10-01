@@ -1,0 +1,209 @@
+Title: IBM IV03978: TPMFOSD_SETTARGETSAPS WORKFLOW HAS AGENT PORT 9510 HARDCODED - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  .................................................
+   Seeing as we are using TPM with a TPMfOSD boot server to deploy
+   images
+   
+   (and TCAs at provision time), the workflow TPMfOSd_SetTargetSaps
+   is
+   called to set up any new targets SAP credentials.  However, in
+   this
+   workflow, the port that is defined on new targets with TCA is
+   hardcoded
+   to 9510, when it should really attempt to pull the
+   CA-Listening-Port SRT
+   variable from the Tivoli Common Agent Stack and then, only if it
+   doesn't
+   exist, set the port to 9510.
+   
+   I think that this issue should probably be addressed so that
+   customers
+   who use OSD and TCAs can also change the TCA default ports.
+   What
+   follows is the section of the workflow I mentioned to you.  The
+   sections
+   in bold are changes that I made to it to properly attempt to
+   pull that
+   SRT variable. I am going to make this change to my TPM instance
+   by
+   modifying the tcdriver and reinstalling it, but let me know if
+   you think
+   this is as much of a glaring inconsistency as I do:
+   
+   # --- check if we have deployed common agents ---
+     #
+     if Jython[deployTCAWithImage == "true"] then
+   
+      appProtocolName = "CommonAgent"
+      sapName = "Agent-Server"
+   
+      var stackName = "Tivoli Common Agent Stack"
+      portNumber =
+   DCMQuery(/SoftwareModule[@name=$stackName]/SoftwareResourceTempl
+   ate/Chil
+   dSoftwareResourceTemplate[@name like "TCA
+   default%"]/TemplateParam[@name="CA-Listening-Port"]/@value)
+   
+      if Jython[not portNumber] then
+       portNumber = "9510"
+      endif
+      searchKey  = "agent"
+   
+      if Jython[imageOsFamily.find("Windows") >= 0] then
+       deviceModelName = "Tivoli Common Agent SAP TO DOS"
+      else
+       deviceModelName = "Tivoli Common Agent SAP TO BASH"
+      endif
+     else
+   
+      if Jython[imageOsFamily.find("Windows") >= 0] then
+          appProtocolName = "RXA"
+          sapName = "RXA-Server"
+          portNumber = "445"
+          deviceModelName = "Tivoli Remote Execution and Access
+   Service
+   Access Point"
+          searchKey = rxaSearchKey
+      else
+          appProtocolName = "SSH"
+          sapName = "SSH-Server"
+          portNumber = "22"
+          deviceModelName = "SSH Service Access Point"
+          searchKey = sshSearchKey
+      endif
+     endif
+     log debug "sapName = " + sapName
+     log debug "appProtocolName = " + appProtocolName
+     log debug "portNumber = " + portNumber
+     log debug "deviceModelName = " + deviceModelName
+   
+     targetSapId =
+   DCMQuery(/applicationprotocol[@name=$appProtocolName]/sap[@manag
+   edsystem
+   id=$TargetDeviceId and @host="Y"]/@id)
+     log debug Jython["targetSapId = " + (targetSapId or "NULL")]
+     if Jython[not targetSapId] then
+         log info "Creating " + sapName + " SAP on a target device
+   at id: "
+   + TargetDeviceId + "..."
+      targetSapId = DCMInsert
+   parent=DCMQuery(/server[@id=$TargetDeviceId])
+   <<EOF
+       <sap name="$sapName" port="$portNumber" protocol-type="ipv4"
+   app-protocol="$appProtocolName" role="host" locale="en_US"
+   is-device-model="$deviceModelName" />
+      EOF
+     endif
+   ...........................................
+   
+   We need to update TPMfOSd_SetTargetSaps such that it will pass
+   the agent port properly
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  This is resolved in 7.2.0.2-TIV-TPM-IF00002 release
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This is resolved in 7.2.0.2-TIV-TPM-IF00002 release
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV03978
+   
+   
+ * REPORTED COMPONENT NAME
+   TIV PROVISIONIN
+   
+   
+ * REPORTED COMPONENT ID
+   5608TPM00
+   
+   
+ * REPORTED RELEASE
+   720
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-07-29
+   
+   
+ * CLOSED DATE
+   2011-08-17
+   
+   
+ * LAST MODIFIED DATE
+   2011-08-17
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TIV PROVISIONIN
+   
+   
+ * FIXED COMPONENT ID
+   5608TPM00
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R720 PSY
+   UP

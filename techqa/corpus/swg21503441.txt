@@ -1,0 +1,24 @@
+Title: IBM "Last login information is not available." from secondary SMS server - United States
+
+Text:
+DB2 lastlogin cluster standalone TECHNOTE (FAQ)
+
+QUESTION
+ Last login information cannot be retrieved from an additional Session Management Servers configured in the WebSEAL config file. 
+
+CAUSE
+Session Management Servers are configured as stand-alone WAS environments and use DB2 for storing the Last Login information.
+
+ANSWER
+When using multiple SMS servers, they need to be clustered according to the documentation. When this requirement is not perfectly implemented , it could happen that only 1 of the serves configured in [dsess-cluster] can retrieve last login information from the DB2 .
+
+RELATED INFORMATION
+ SMS 6.1.0 best practices [https://www.ibm.com/developerworks/community/wikis/home?lang=en#!/wiki/IBM%20Security%20Federated%20Identity%20Manager/page/Best%20Practices]
+SMS 6.1.1 best practices [https://www-01.ibm.com/support/knowledgecenter/SSPREK_6.1.1/com.ibm.itame.doc_6.1.1/am611_sms_admin64.htm%23wq85?lang=en]
+SMS 7.0.0 best practices [https://www-01.ibm.com/support/knowledgecenter/SSPREK_7.0.0.1/com.ibm.isam.doc_80/ameb_smsadmin_guide/reference/ref_sms_best_practice.html?lang=en]
+
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ SMS TAMeB sessions

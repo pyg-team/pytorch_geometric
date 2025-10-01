@@ -1,0 +1,38 @@
+Title: IBM Adding the ability to send bind requests to LDAP synchronously - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+ Some LDAP servers might not accept asynchronous authentication bind requests from a Sametime Community Server. 
+
+LDAP servers known to exhibit this problem are as follows: 
+
+ * Novell eDirectory 
+ * OpenLDAP Directory Server
+
+SYMPTOM
+The easy way to identify the issue, apart from other LDAP network disconnection issues, is when Authentication by Password functionality sometimes does not work well, but other LDAP requests such as Authentication by token and Resolve requests continue to work fine.
+
+
+CAUSE
+ Some LDAP servers can work only with synchronous bind requests, meaning that when a bind request was sent, the LDAP server will cause other requests on the same connection to fail before sending the response to the bind request. When LDAP receives requests before responding to the bind request, it also hangs the connection.
+
+
+
+RESOLVING THE PROBLEM
+For Sametime 8.0, a hotfix ST-8.0.0.-W32-LKRK-7XEBEG provides new configuration flags that allow the Sametime server to send bind requests synchronously, while continuing sending search requests asynchronously. The fix is included in Sametime 8.5. 
+
+
+To apply, set the following in sametime.ini under [Directory] section:
+[Directory]
+ST_DB_LDAP_PENDING_BIND_MAX=1
+ST_DB_LDAP_PENDING_BIND_LOW=0
+
+Please notice that the ST_DB_LDAP_PENDING_MAX and ST_DB_LDAP_PENDING_LOW flags should not be changed and should be left as they were (in case that these flags were present).
+
+In additional to the new settings, existing flag should be set under [Directory] section ST_DB_LDAP_KEEPALIVE_INTERVAL=0
+
+This setting would disable the keep-alive messages that are sent on idle LDAP connections. 
+
+Note: For Sametime Community server 8.5, the keep-alive message would be sent to the LDAP only when there are no pending requests on the connection in order not to send any search request while there is a pending bind request. This means that for 8.5 there is no need to disable the keep-alive mechanism.

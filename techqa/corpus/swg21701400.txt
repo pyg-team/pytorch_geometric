@@ -1,0 +1,35 @@
+Title: IBM Power8 support for ITM System P Agents - United States
+
+Text:
+support; agents; systemP; system P; cec agent; px agent; ph agent; pk agent; certification; itm; power 8 TECHNOTE (FAQ)
+
+QUESTION
+ Are System P Agents V6.2.2 supported with new Power8 systems ? 
+
+CAUSE
+When moving AIX LPAR on a new hardware, most often it is requested to maintain unchanged the applications running on the LPAR to avoid additional effort. 
+But it in this case it is important to know if the application version running on current hardware is expected to work with no major issues on the new processors
+
+
+ANSWER
+Certification test have been performed and completed with no problems on March 2015 on the following agents: 
+
+AIX Premium Agent 6.2.2 FP2 IF4 
+
+CEC Agent 6.2.2 FP2 IF3 
+
+HMC Agent 6.2.2 FP3 
+
+ 
+
+VIOS 6.2.2 FP2 has been instead previously certified together with VIOS 2.2.3.3. 
+
+Further detail about VIOS agent certification with Power 8 systems can be found in technote: 
+
+
+http://www-01.ibm.com/support/docview.wss?uid=swg21687681 [http://www-01.ibm.com/support/docview.wss?uid=swg21687681]
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ IBM Tivoli Monitoring System P Agents

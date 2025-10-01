@@ -1,0 +1,57 @@
+Title: IBM InfoSphere Information Server for Smart Analytics System 7700, V8.5 for AIX - United States
+
+Text:
+ DOWNLOADABLE FILES
+
+ABSTRACT
+ This document describes how to download IBM InfoSphere Information Server for Smart Analytics System 7700, Version 8.5, for AIX from IBM Passport Advantage. 
+
+DOWNLOAD DESCRIPTION
+
+
+To learn about the installation process:
+
+
+Read the Quick Start Guide [http://www.ibm.com/support/docview.wss?uid=swg27020975] for the process overview.
+
+
+InfoSphere Information Server combines the technologies of IBM InfoSphere Business Glossary, IBM InfoSphere DataStage, IBM InfoSphere FastTrack, IBM InfoSphere Information Analyzer, IBM InfoSphere Information Services Director, IBM InfoSphere Metadata Workbench, and IBM InfoSphere QualityStage into a single unified platform that enables companies to understand, cleanse, transform, and deliver trustworthy and context-rich information.
+
+Downloading the product
+
+Your proof of entitlement directs you to your license file. This license file controls which of the product modules you can install and run.
+
+To download the product: 
+
+ 1. Go to the Find Downloads and Media [http://www.ibm.com/software/howtobuy/passportadvantage/paocustomer/sdma/SDMA?PO=DOWNLOAD_FIND_BY_PART_NUMBER] Web page and log in.
+ 2. Under the Download finder options, select the Find by part number search option.
+ 3. Search for each downloadable image by the part number.
+ 4. Download all the required images.
+ 5. Extract each of the images into a single, temporary directory on your system. Use a file extracting utility that supports large file extractions.
+ 6. Download the Quick Start Guide [http://www.ibm.com/support/docview.wss?uid=swg27020975]. Follow the instructions to perform the basic installation of the product.
+
+After receiving a proof of entitlement, you can download any or all of the installation images listed below.
+
+Installation images Only the Microsoft Windows installation image contains both the server and the client installation software. To install the product on operating systems other than Microsoft Windows, you must download both the Microsoft Windows installation image, for the client installation, and the installation image for the operating system onto which you want to install the server.
+
+Go to the Microsoft Windows download document [http://www.ibm.com/support/docview.wss?uid=swg24029585] to download the installation image for Microsoft Windows.
+
+
+[http://www.ibm.com/i/c.gif] AIX [http://www.ibm.com/support/docview.wss?uid=swg24029581] [http://www.ibm.com/i/c.gif] HP-UX [http://www.ibm.com/support/docview.wss?uid=swg24029582] [http://www.ibm.com/i/c.gif] Linux [http://www.ibm.com/support/docview.wss?uid=swg24029583] [http://www.ibm.com/i/c.gif] Solaris [http://www.ibm.com/support/docview.wss?uid=swg24029584] [http://www.ibm.com/i/c.gif] Windows [http://www.ibm.com/support/docview.wss?uid=swg24029585] [http://www.ibm.com/i/c.gif] 
+Supported operating systems
+
+ * AIX
+
+
+Product description File Name Part number IBM InfoSphere Information Server v8.5 Quick Start Guide Multilingual InfoSvr_v8.5_QuickStartGuide.pdf CZG5PML IBM InfoSphere Information Server v8.5 AIX Multilingual InfoSvr_v8.5_AIX.tar.gz CZG5GML IBM InfoSphere Information Server v8.5 for Smart Analytics System 7700 AIX Multilingual eAssembly n/a CRE6KML 
+WebSphere Application Server 
+Download these images to install IBM WebSphere Application Server. 
+
+Product description File Name Part number IBM WebSphere Application Server Network Deployment V7.0 for AIX on PowerPC 64-bit, Multilingual N/A C1G2QML IBM WebSphere Application Server Network Deployment V7.0 Supplements (1 of 2) for AIX on PowerPC 64-bit (IBM HTTP Server, Web Server Plug-ins and Update Installer) Multilingual N/A C1G2RML IBM WebSphere Application Server Network Deployment V7.0 Supplements (2 of 2) for AIX on PowerPC 64-bit (Migration Tool) Multilingual N/A C1G2SML 
+DB2 
+Download these images to install IBM DB2. 
+
+Product description File Name Part number IBM DB2 Enterprise Server Edition V9.7 for AIX English DB2_ESE_97_AIX.tar.gz CZ19JEN DOWNLOAD PACKAGE
+You can download or request a media pack for this product from the Passport Advantage site by clicking the link in the following table. 
+
+URL RELEASE DATE LANGUAGE SIZE(Bytes) Passport Advantage Online web site [http://www.ibm.com/software/howtobuy/passportadvantage/pao_customers.htm] 04/05/2011 English 11842

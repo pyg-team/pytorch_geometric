@@ -1,0 +1,150 @@
+Title: IBM HE11951: COLLECTION PLAN PUBLISH ERROR DISPLAYED EVEN WHEN ALL REQUIRED PLAN CRITERIA FIELDS HAVE VALUES - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  In the following sequence of steps, when attempting to publish
+   a collection plan where all the required criteria fields have
+   values the following error is displayed "Cannot proceed with
+   transaction since some of mandatory query parameters in
+   Criteria tab has not been specified".
+   [preparation]
+   Create a collection plan template that is not associated to any
+   data source from the Admin > Hold and Collection Templates. Add
+   some criteria fields that will be required. I chose fields with
+   various types: text, number, date, boolean.
+   [reproduce]
+   1. Create a new collection plan for a matter.
+   2. When configuring the Plan Details set the following:
+       - Data source = No Data Source
+       - Template = <template you created>
+       - Index By Custodian = <checked> + "Manually add custodians"
+   3. Save the Plan Details
+   4. On the Criteria tab, fill in all the criteria fields and
+   click "Save".
+   5. On the Custodian tab, add at least one custodian.
+   6. On the Ownership tab, add at least one owner.
+   7. Go back to the Plan Details tab. Click first on the "Save"
+   button and then try to use the "Publish/Resume" button.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  First click away from the collection plan. For example go back
+   to the Collection List screen or Matter Detail screen and this
+   click back into the same collection plan. At that point when
+   you click "Publish" it will publish the plan without the error.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Clicking Publish on a newly saved collection plan, you see an
+   error message that mandatory query criteria is not specified,
+   even though the collection plan is complete and valid. The
+   problem was due to obsolete session data.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix is available now from FixCentral in fixpack 6.0.1.6.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   HE11951
+   
+   
+ * REPORTED COMPONENT NAME
+   ATLAS EDISCOVER
+   
+   
+ * REPORTED COMPONENT ID
+   5725D7500
+   
+   
+ * REPORTED RELEASE
+   601
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-10-01
+   
+   
+ * CLOSED DATE
+   2014-04-02
+   
+   
+ * LAST MODIFIED DATE
+   2014-04-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ATLAS EDISCOVER
+   
+   
+ * FIXED COMPONENT ID
+   5725D7500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R601 PSY
+   UP
+   
+   
+ * R602 PSY
+   UP

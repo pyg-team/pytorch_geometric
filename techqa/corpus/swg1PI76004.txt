@@ -1,0 +1,232 @@
+Title: IBM PI76004: REPEATED AMQI ABENDS IN CKBR AFTER MQ REQUEST RETURNS MQRC MQRC=2217 - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  This issue is similar to the problem addressed by  APARs
+   PM84130 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM84130] & PM71673 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM71673]. Except in this occurrence, the MQRC being
+   passed back is 2217 instead of 2063. The 2217 indicates that
+   there is a RACF/Security issue.
+   
+   You encounter a runaway abend event when using the CICS-MQ
+   bridge with MQ Advanced Message Security (AMS).  You did not
+   add SCSQANLE and SCSQAUTH to the list of program-controlled
+   libraries in the * profile in the PROGRAM class in RACF.  As a
+   result, the bridge monitor task CKBR abended repeatedly with an
+   AMQI abend code for several hours until the CICS region was
+   cancelled.
+   
+   You see messages like:
+   
+   +DFHMQ0700 I CKBR CICS-MQ BRIDGE INITIALIZATION IN PROGRESS.
+   +DFHMQ0710 E CKBR MQCC=2 MQRC=2217 RETURNED FOR OPEN.
+   +GSVC201E (Task) Tran=CKBR Task= ##### Code=AMQI
+   Program=DFHMQBR0
+   ReqID=* Resource=*
+   
+   Any MQRC that causes CKBR to abend should be carried out as it
+   is handled in PM84130/PM71673 instead of the constant retrying
+   and abending.
+   
+   Additional Symptom(s) Search Keyword(s): 2217, 000008A9,
+   KIXREVRJL
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  n/a
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All CICS users.                              *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: An attempt to open the CICS-MQ Bridge   *
+   *                      Queue fails with MQRC=2217 and can      *
+   *                      cause a loop.                           *
+   ****************************************************************
+   An application tries to MQOPEN the CICS-MQ Bridge Queue but
+   the SCSQANLE and SCSQAUTH datasets are not included in the list
+   of program-controlled libraries in the * profile of the PROGRAM
+   class in RACF. IBM MQ AMS passes an MQRC 2217 back to the
+   CICS-MQ Bridge code. As the bridge code does not handle this
+   specific MQRC, the application continues to attempt the MQOPEN
+   indefinitely.
+   KEYWORDS: msgDFHMQ0710 MQ0710 ICH420I CSQ0629E CSQ0214E CSQ0217E
+   AMQI ABENDAMQI
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  DFHMQBR0 has been changed to handle an MQRC of 2217 and issue
+   new message DFHMQ0727.
+   
+   The IBM Knowledge Center for CICS Transaction Server 5.1.0,
+   5.2.0, 5.3.0 and 5.4.0 will all be updated in Reference >
+   CICS Transaction Server messages > CICS messages >
+   DFHMQnnnn messages, so that a new message is inserted as
+   follows:-
+   
+   DFHMQ0727I date time applid tranid trannum CICS-MQ Bridge Open
+   failed because IBM MQ AMS could not create a security
+   environment.
+   
+   Explanation: IBM MQ Advanced Message Security is being used to
+   protect IBM MQ queues being accessed via a CICS application,
+   but the MQOpen request has resulted in reason 2217 from IBM MQ
+   AMS.
+   
+   System action: CICS-MQ bridge queue is not opened.
+   
+   User Response: Investigate IBM MQ AMS documentation for
+   the cause of the 2217 reason code.
+   
+   Module: DFHMQBR0
+   
+   XMEOUT Parameters: date,time, applid, tranid, trannum
+   
+   Destination: Console and Transient Data Queue
+   CMQM and Terminal End User.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI76004
+   
+   
+ * REPORTED COMPONENT NAME
+   CICS TS Z/OS V5
+   
+   
+ * REPORTED COMPONENT ID
+   5655Y0400
+   
+   
+ * REPORTED RELEASE
+   800
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-02-03
+   
+   
+ * CLOSED DATE
+   2017-10-03
+   
+   
+ * LAST MODIFIED DATE
+   2017-11-01
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UI50819 UI50820 UI50821 UI50822 UI50823 UI50824 UI50825 UI50826
+   
+   
+
+MODULES/MACROS
+ *  DFHMEMQC DFHMEMQE DFHMEMQK DFHMQP0@ DFHMQP1@ DFHMQP3@ DFHMQR0@
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CICS TS Z/OS V5
+   
+   
+ * FIXED COMPONENT ID
+   5655Y0400
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R000 PSY UI50825 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI50825]
+   UP17/10/07 P F710
+   
+   
+ * R003 PSY UI50826 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI50826]
+   UP17/10/07 P F710
+   
+   
+ * R100 PSY UI50823 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI50823]
+   UP17/10/07 P F710
+   
+   
+ * R103 PSY UI50824 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI50824]
+   UP17/10/07 P F710
+   
+   
+ * R800 PSY UI50819 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI50819]
+   UP17/10/07 P F710
+   
+   
+ * R803 PSY UI50820 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI50820]
+   UP17/10/07 P F710
+   
+   
+ * R900 PSY UI50821 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI50821]
+   UP17/10/07 P F710
+   
+   
+ * R903 PSY UI50822 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI50822]
+   UP17/10/07 P F710
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

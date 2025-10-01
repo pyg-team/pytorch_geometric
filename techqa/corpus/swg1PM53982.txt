@@ -1,0 +1,152 @@
+Title: IBM PM53982: NEW FUNCTION IN SUPPORT OF LATEST NIST PUBLISHED RECOMMENDATIONS FOR STRONGER CRYPTOGRAPHIC KEYS - United States
+
+Text:
+z/os SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The National Institute of Standards and Technology (NIST) has
+   published a recommendation, "Transitions:  Recommendation for
+   Transitioning the Use of Cryptographic Algorithms and Key
+   Lengths", NIST special publication 800-131A,
+   http://csrc.nist.gov/publications/nistpubs/800-131A/sp800-131A.p [http://csrc.nist.gov/publications/nistpubs/800-131A/sp800-131A.p]
+   df, for using stronger cryptographic keys and more robust
+   algorithms to protect sensitive information.
+   The default encryption key lengths have been increased for
+   the Digital Signature Algorithm (DSA)  and the Diffie-Hellman
+   Algorithm (DH), to conform to the NIST recommendations.  Support
+   for this NIST recommendation has also been implemented in ICSF
+   FMID HCR7790 and ICSF FMID HCR7780 with APAR OA36882 [http://www-01.ibm.com/support/docview.wss?uid=isg1OA36882] applied.
+   **
+   This new function is specific to the z/OS IBMPKCS11Impl provider
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  The z/OS IBMPKCS11Impl provider may throw exceptions due to
+   software cryptographic key length changes.  These exceptions
+   are caused when software cryptographic provider keys are
+   translated to hardware cryptographic provider keys with
+   lengths greater than what is supported by installed
+   cryptographic services.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Beginning with IBM SDK 6.0 SR10, IBM SDK 6.0.1 SR1, and IBM
+   SDK 7.0 SR1, default key lengths have been increased for the
+   Digital Signature Algorithm (DSA), and the Diffie-Hellman
+   Algorithm (DH), to conform to the NIST 800-131A
+   recommendations.  The default key length for DSA and DH
+   where changed from 1024 to 2048.
+   
+   One of the exceptions that may be thrown in such a situation
+   is a java.security.InvalidKeyException that includes the
+   string "Invalid key spec:  Attribute value is invalid"
+   
+   ICSF PKCS #11 supported key lengths can be found in "z/OS
+   Cryptographic Services ICSF Writing PKCS #11 Applications",
+   publication SA23-2231-04.
+   http://publibz.boulder.ibm.com/epubs/pdf/csfbaz40.pdf. [http://publibz.boulder.ibm.com/epubs/pdf/csfbaz40.pdf.]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM53982
+   
+   
+ * REPORTED COMPONENT NAME
+   JAVA Z/OS 31
+   
+   
+ * REPORTED COMPONENT ID
+   620700105
+   
+   
+ * REPORTED RELEASE
+   600
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-12-09
+   
+   
+ * CLOSED DATE
+   2011-12-14
+   
+   
+ * LAST MODIFIED DATE
+   2011-12-14
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   JAVA Z/OS 31
+   
+   
+ * FIXED COMPONENT ID
+   620700105
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R600 PSN
+   UP
+   
+   
+ * R601 PSN
+   UP
+   
+   
+ * R700 PSN
+   UP

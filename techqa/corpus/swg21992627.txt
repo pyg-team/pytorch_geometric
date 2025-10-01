@@ -1,0 +1,23 @@
+Title: IBM Certain icons and features in Cognos Analytics 11.0.4 do not appear as intended upon launching the service in Internet Explorer 11. - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How can missing icons and features in Cognos Analytics 11.0.4 be made visible when using Internet Explorer 11? 
+
+Having carried out an ‘over-the-top’ upgrade from Cognos Analytics 11.0.3 to 11.0.4, some of the icons associated with the report types when attempting to create new reports, stories or other projects are not visible. For example, whilst the report type name is present such as ‘Story’, the icon assigned to it is not. This functionality only occurs in Internet Explorer 11, not in Firefox or Google Chrome. 
+
+ANSWER
+The security content within Internet Explorer 11 may need updating after completing the ‘over-the-top’ installation of Cognos Analytics 11.0.4.
+The following steps should be used to adjust the security content settings and subsequently enable the additional icons and features to be visible and accessible: 
+
+1. On Internet Explorer 11, click the ‘Tools’ icon in the top right hand corner. 
+
+2. Click ‘Internet Options’ from the available list. 
+
+3. Under the ‘Security’ tab, click ‘Custom level…’. 
+
+4. Under the sub-heading ‘Miscellaneous’, view the ‘Display mixed content’ section and point it to ‘Enable’. 
+
+Restart your web browser after the above changes have been made as well as your Cognos service.

@@ -1,0 +1,139 @@
+Title: IBM IV73605: THE TASK "RUN CAPACITY SCAN AND UPLOAD RESULTS" DOES NOT RETRY IF HE ENCOUNTERS A FAILURE. - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The task "Run Capacity Scan and Upload Results" does not retry
+   if he encounters a failure by default.
+   
+   It cause the customer needs to start the task again manually.
+   
+   This APAR is opened to change the default behavior.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Run the task manually.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   ERROR DESCRIPTION:
+   When the Run Capacity Scan and Upload Results task fails, it
+   does not try to re-run the scan.
+   Behavior after you install the update:
+   The task can be re-run after it fails.
+   ****************************************************************
+   * RECOMMENDATION: Apply appropriate update when available or
+   * refer to the documentation update
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix for this APAR is contained in the following maintenance
+   packages:
+    | Update | SUA 9.2.0.2 site 51
+    | Update | ILMT 9.2.0.2 site 63
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV73605
+   
+   
+ * REPORTED COMPONENT NAME
+   IEM SW USE ANL
+   
+   
+ * REPORTED COMPONENT ID
+   5725F57MT
+   
+   
+ * REPORTED RELEASE
+   910
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-05-26
+   
+   
+ * CLOSED DATE
+   2015-06-30
+   
+   
+ * LAST MODIFIED DATE
+   2015-06-30
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   IEM SW USE ANL
+   
+   
+ * FIXED COMPONENT ID
+   5725F57MT
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R910 PSY
+   UP

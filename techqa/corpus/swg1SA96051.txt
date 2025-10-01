@@ -1,0 +1,198 @@
+Title: IBM SA96051: MQM400 MCH3601 FROM & TO MODULE AMQXIINX_N FROM & TO PROCEDURE G - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Customer sees many jobs in SEMW. They do not go away even
+   when the queue manager is ended. After running a diagnostic
+   for this we were able to isolate it to a job in the
+   AMQXIINX_N module at statement 35 in the procedure
+   GetSubpoolsLock after a SYSREQ option 2 per:
+   WRKUSRJOB User for jobs *ACTIVE.
+   .
+   Option 8 ..until you find the job (you will have the
+   job number) If you dont find it..this isnt the problem. STOP.
+   If you do find it. Note the JOBname and Carry on to the next
+   stage.
+   .
+   DSPJOB number/user/Jobname
+   Display the job log go to the end..F10 and page up.
+   .
+   Look for the LAST Message:
+   Message :   Pointer not set for location referenced.
+   Take F1.
+   .
+   If the details of the message are EXACTLY as follows
+   .
+    MCH3601    Escape
+     From module . . . . . . . . :   AMQXIINX_N
+     From procedure  . . . . . . :   GetSubpoolsLock
+     Statement . . . . . . . . . :   35
+     To module . . . . . . . . . :   AMQXIINX_N
+     To procedure  . . . . . . . :   GetSubpoolsLock
+     Statement . . . . . . . . . :   35
+   .
+   You have the problem..and need to end the job.
+   .
+   IF
+   Message is not MCH3601              OR
+   MCH3601 for any other function      OR
+   Statement number is not 35 for function GetSubpoolsLock
+   STOP... its a different problem.
+   .
+   The problem can be avoided by NOT taking SYSREQ2 after
+   WRKMQMCHL.
+   .
+   If a developer keeps a separate session for any WRKMQMCHL..
+   and ENDS the session rather than taking SYSREQ2 this should
+   prevent the lock occurring in the first place.
+   .
+   The fix for the problem is extensive and is being worked
+   under defect 73251
+   The problem ONLY occurs when the cancel handler is called,
+   if the call stack is outside the scope of the cancel handler
+   we have no need to reinitialize the resources for the job -
+   generally in MQ commands we are only in the scope of the
+   cancel handler when in an MQI call (i.e. we have MQ resources
+   to release) so this is a timing window. In summary - this
+   lockup will never happen unless you hit SysReq-2 in a timing
+   window and attempt to carry out any MQ activity without first
+   signing off your session.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Do not use the SYSREQ-2 when in the cancel handler
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  When using the CHGMQMQ command to change the Put
+   Enabled,Triggering Enabled, Sharing Enabled or Get Enabled parm
+   from *YES to *SAME, the parameter changes to *NO.Steps To
+   Recreate:1. Make sure that either the Put Enabled, Triggering
+   Enabled, Sharing Enabled or Get Enabled parameter is set to
+   *YES.2. Perform a CHGMQMQ command changing the *YES to *SAME.3.
+   Display the queue.  Instead of seeing *SAME in the parameter you
+   will see *NO.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix will be included in:
+   WebSphere MQ V5.3 CSD06
+   
+   Windows           U200202
+   AIX               U489863
+   HP-UX             U489864
+   Linux on Intel    U489865
+   Linux on zSeries  U489967
+   Sun Solaris       U489972
+   
+   MQSeries V5.2     CSD09
+   
+   WINDOWS V5.2.0    U200203
+   WINDOWS V5.2.1    U200204
+   AIX               U495149
+   HP-UX V10         U495150
+   HP-UX V11         U495169
+   HP-UX V11 DCE     U495217
+   SUN SOLARIS       U495167
+   LINUX             U495168
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   SA96051
+   
+   
+ * REPORTED COMPONENT NAME
+   MQSERIES FOR AS
+   
+   
+ * REPORTED COMPONENT ID
+   5733A3800
+   
+   
+ * REPORTED RELEASE
+   520
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2003-02-21
+   
+   
+ * CLOSED DATE
+   2003-08-19
+   
+   
+ * LAST MODIFIED DATE
+   2004-11-10
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   MQSERIES FOR AS
+   
+   
+ * FIXED COMPONENT ID
+   5733A3800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R520 PSY SF67795
+   UP04/11/10 I 1000

@@ -1,0 +1,116 @@
+Title: IBM JR34808: IN INTERNET EXPLORER V6, KPI WIDGET CONFIGURATION CLEARS THE    CHECKBOX ON WIRING TAB - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  With Internet Explorer Version 6 as the browser, if you
+   configure the KPI widget and the checkbox to enable events on
+   the Wiring tab was checked prior to configuring, saving the
+   configuration will result in the checkbox being unchecked.
+   Subsequently, no data will be sent from the KPI widget to the
+   widget to which it is wired.
+   
+   This does not occur with Internet Explorer Version 7, or
+   with Firefox.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Each time you configure the KPI widget, ensure that the
+   checkbox to enable events on the Wiring tab is checked, if
+   desired, before saving the configuration changes.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  This problem exists in WebSphere Business Monitor Version 6.2.
+   It will be addressed in WebSphere Business Monitor V6.2 Fix Pack
+   3 (6.2.0.3).
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR34808
+   
+   
+ * REPORTED COMPONENT NAME
+   WEB BUS MONITOR
+   
+   
+ * REPORTED COMPONENT ID
+   5724M2400
+   
+   
+ * REPORTED RELEASE
+   620
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-11-11
+   
+   
+ * CLOSED DATE
+   2009-11-25
+   
+   
+ * LAST MODIFIED DATE
+   2009-11-25
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R620 PSY
+   UP

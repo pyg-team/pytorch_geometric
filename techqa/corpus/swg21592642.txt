@@ -1,0 +1,21 @@
+Title: IBM Compatible Rational SoDA and Rational Requisite Pro version with Rational ClearCase 7.1.2.4 - United States
+
+Text:
+SoDA; Requisite Pro; Clearcase; version; compatible TECHNOTE (FAQ)
+
+QUESTION
+ What is the compatible version of IBM Rational SoDA and IBM Rational Requisite Pro with IBM Rational ClearCase 7.1.2.4? 
+
+CAUSE
+Rational SoDA 7.0.4.3 and Rational Requisite Pro 7.1.1.1 installation does not proceed due to compatibility issues with Rational ClearCase 7.1.2.4.
+
+ANSWER
+With reference to the document id 4028116 [http://www-01.ibm.com/support/docview.wss?uid=swg24028116], 7.0.4, 7.1.2, and the 8.1.1 licensing components are aligned releases. They are supported for use with each other when installed on the same machine. 
+
+
+However , you need to install Rational SoDA 7.0.4.4 [http://www-01.ibm.com/support/docview.wss?uid=swg24030544] and Rational Requisite Pro 7.1.2.04 [http://www-01.ibm.com/support/docview.wss?uid=swg24030766] with the Rational ClearCase 7.1.2.04.
+
+
+RELATED INFORMATION
+#Rational RequisitePro Fix Pack 4 (7.1.2.4) for 7.1.2 [4030766]
+IBM Rational SoDA for Word version 7.0.4.4 (7.0.4. FixP [4030544]

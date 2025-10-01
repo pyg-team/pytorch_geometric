@@ -1,0 +1,127 @@
+Title: IBM IC99466: SECURITY APAR CVE-2014-0050 - DENIAL OF SERVICE VULNERABILITY IN APACHE COMMONS FILEUPLOAD LIBRARY - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Version 8.5 Refresh Pack 5 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24037683]
+Download Version 8.0.1 Fix Pack 3 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24037734]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  SECURITY APAR CVE-2014-0050 - DENIAL OF SERVICE VULNERABILITY
+   IN APACHE COMMONS FILEUPLOAD LIBRARY
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  SECURITY APAR CVE-2014-0050 - DENIAL OF SERVICE VULNERABILITY IN
+   APACHE COMMONS FILEUPLOAD LIBRARY
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  FIX AVAILABILITY:
+   iFix for 7.2.0.5 is/will be available on Fix Central; search for
+   APAR IC99466 at http://www.ibm.com/support/fixcentral/ [http://www.ibm.com/support/fixcentral/]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC99466
+   
+   
+ * REPORTED COMPONENT NAME
+   WS LOMBARDI EDI
+   
+   
+ * REPORTED COMPONENT ID
+   5725A0900
+   
+   
+ * REPORTED RELEASE
+   720
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-02-19
+   
+   
+ * CLOSED DATE
+   2014-04-30
+   
+   
+ * LAST MODIFIED DATE
+   2014-04-30
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    JR49375 [http://www-01.ibm.com/support/docview.wss?uid=swg1JR49375]
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WS LOMBARDI EDI
+   
+   
+ * FIXED COMPONENT ID
+   5725A0900
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R720 PSY
+   UP

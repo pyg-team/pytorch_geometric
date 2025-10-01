@@ -1,0 +1,23 @@
+Title: IBM How to stop Replication on federated documents in FileNET P8 Content Platform Engine (CPE) - United States
+
+Text:
+CFS-IS; Federate; Replicate; stop Replication TECHNOTE (FAQ)
+
+QUESTION
+ Once the documents have been federated from FileNet Image Services (IS) to Content Platform Engine , the delete operation will be propogated from CPE to IS. It means that if we delete the documents on CE, they will be removed on IS as well. How can we only delete documents on CE and not on IS? 
+
+ANSWER
+Follow the procedure below to stop the replication on federated documents:
+
+
+ 1. Login into FileNet Enterprise Manager (FEM) or Administration Console for Content Platform Engine (ACCE) with the P8 Admin user.
+    
+ 2. Search for all federated documents in either FEM Query Builder or ACCE Search. 
+    
+ 3. Select all of the federated documents and right click to select Multiselect Operations.
+    
+ 4. Click the Actions tab and select Stop Replication in FEM. In ACCE, click the Bulk Actions tab, in the Replications section, select Remove group association.
+    
+ 5. Click OK
+    
+ 6. Check the document properties. Right click on a document, select Properties, and click on the Properties tab, select the All Properties option. Verify the Replication Group and External Replica Identities are null.

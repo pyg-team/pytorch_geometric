@@ -1,0 +1,90 @@
+Title: IBM ERRORCODE=-4221, InvalidKeyException when using AES encryption with DB2 JDBC Driver - United States
+
+Text:
+InvalidKeyException; ERRORCODE=-4221; JCE; ASE; JDBC TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ May get error as "ERRORCODE=-4221, InvalidKeyException" from your Java application when using AES encryption with DB2 JDBC Driver 
+
+SYMPTOM
+The java application may return error message like below: 
+
+Exception: com.ibm.db2.jcc.am.SqlException: [jcc][1068][10625][4.15.82] Caught java.security.InvalidKeyException while encrypting data. See attached Throwable
+for details. ERRORCODE=-4221, SQLSTATE=null
+com.ibm.db2.jcc.am.SqlException: [jcc][1068][10625][4.15.82] Caught java.security.InvalidKeyException while encrypting data. See attached Throwable for details
+. ERRORCODE=-4221, SQLSTATE=null
+at com.ibm.db2.jcc.am.fd.a(fd.java:680)
+at com.ibm.db2.jcc.am.fd.a(fd.java:60)
+at com.ibm.db2.jcc.am.fd.a(fd.java:85)
+at com.ibm.db2.jcc.am.rc.a(rc.java:557)
+at com.ibm.db2.jcc.am.rc.a(rc.java:497)
+at com.ibm.db2.jcc.t4.b.h(b.java:2837)
+at com.ibm.db2.jcc.t4.b.a(b.java:6491)
+at com.ibm.db2.jcc.t4.b.b(b.java:844)
+at com.ibm.db2.jcc.t4.b.a(b.java:761)
+at com.ibm.db2.jcc.t4.b.a(b.java:424)
+at com.ibm.db2.jcc.t4.b.a(b.java:399)
+at com.ibm.db2.jcc.t4.b.<init>(b.java:337)
+at com.ibm.db2.jcc.DB2SimpleDataSource.getConnection(DB2SimpleDataSource
+.java:232)
+at com.ibm.db2.jcc.DB2SimpleDataSource.getConnection(DB2SimpleDataSource
+.java:198)
+at com.ibm.db2.jcc.DB2Driver.connect(DB2Driver.java:475)
+at com.ibm.db2.jcc.DB2Driver.connect(DB2Driver.java:116)
+at java.sql.DriverManager.getConnection(DriverManager.java:571)
+at java.sql.DriverManager.getConnection(DriverManager.java:215)
+at ConnectSample.main(ConnectSample.java:10)
+Caused by: java.security.InvalidKeyException: Illegal key size
+at javax.crypto.Cipher.checkCryptoPerm(Cipher.java:1024)
+at javax.crypto.Cipher.implInit(Cipher.java:790)
+at javax.crypto.Cipher.chooseProvider(Cipher.java:849)
+at javax.crypto.Cipher.init(Cipher.java:1348)
+at javax.crypto.Cipher.init(Cipher.java:1282)
+at com.ibm.db2.jcc.am.rc.a(rc.java:552)
+... 15 more
+
+
+
+CAUSE
+When use AES encryption from Java application, Unrestricted policy file for JCE (IBM Java) or the JCE Unlimited Strength Jurisdiction Policy File (ORACLE Java), needs to be installed, depending on the Java you are using. If these files are not found, a java.security.InvalidKeyException is thrown.
+
+
+DIAGNOSING THE PROBLEM
+1> Check if you are using AES encryption i.e check if db2.jcc.encryptionAlgorithm or db2.jcc.override.encryptionAlgorithm property of DB2 JDBC Driver is set to 2 
+
+2> Your Java application will throw error message similar to below: 
+
+C:\Program Files\Java\jdk1.7.0_45\jre\bin>java ConnectSample 
+
+Exception: com.ibm.db2.jcc.am.SqlException: [jcc][1068][10625][4.15.82] Caught java.security.InvalidKeyException while encrypting data. See attached Throwable
+for details. ERRORCODE=-4221
+
+
+
+RESOLVING THE PROBLEM
+If you are using IBM Java, you can get the Unrestricted policy file for JCE from . 
+
+https://www14.software.ibm.com/webapp/iwm/web/preLogin.do?source=jcesdk [https://www14.software.ibm.com/webapp/iwm/web/preLogin.do?source=jcesdk]
+
+
+If you are using ORACLE Java, JCE Unlimited Strength Jurisdiction Policy File is available from ORACLE. 
+
+1> Download JCE Unlimited Strength Jurisdiction Policy File for the Java you are using. Unzip it. 
+
+ It will have 2 files:
+
+local_policy.jar 
+US_export_policy.jar 
+
+
+2> Rename existing local_policy.jar and US_export_policy.jar in jre\lib\security directory to local_policy_orig.jar and US_export_policy_orig.jar, then copy new local_policy.jar and US_export_policy from Unlimited JCE files to jre\lib\security folder
+
+3> Run your failing Java application again. You will not see "ERRORCODE=-4221, InvalidKeyException" this time For eg:
+
+C:\Program Files\Java\jdk1.7.0_45\jre\bin>java ConnectSample
+Connected to Server
+
+
+RELATED INFORMATION
+ encryptionAlgorithm [http://www-01.ibm.com/support/knowledgecenter/api/content/SSEPGG_10.1.0/com.ibm.db2.luw.apdv.java.doc/src/tpc/imjcc_r0052607.html]
+Security under the IBM Data Server Driver for JDBC [http://www-01.ibm.com/support/knowledgecenter/SSEPGG_10.1.0/com.ibm.db2.luw.apdv.java.doc/src/tpc/imjcc_cjvjcsec.html]

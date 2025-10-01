@@ -1,0 +1,137 @@
+Title: IBM IC64362: ESQL QUERY WITH WHERE CLAUSE AND AND OPERATOR DOES NOT EVALUATE THE EXPRESSION CORRECTLY - United States
+
+Text:
+  A FIX IS AVAILABLE
+WebSphere Message Broker V6.1 - Fix Pack 6.1.0.7 [http://www-01.ibm.com/support/docview.wss?uid=swg24026355]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  ESQL query with WHERE clause and AND operator does not evaluate
+   the expression correctly
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All users of WebSphere Message Broker        *
+   *                 using an ESQL query with an AND operator     *
+   *                 in the WHERE clause                          *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: If an ESQL query contains an AND        *
+   *                      operator in the WHERE clause and one    *
+   *                      of the expressions has to be            *
+   *                      evaluated completely at the broker,     *
+   *                      BIP2110 is thrown while evaluating      *
+   *                      the query.                              *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   BIP2110 is thrown when broker tries to evaluate an ESQL query
+   with an AND operator in the WHERE clause having an expression
+   that has to be evaluated completely at the broker rather than
+   at the database, because the code does not handle this case
+   correctly.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  WebSphere Message Broker has been modified so that an ESQL
+   query with an AND operator in the WHERE clause is evaluated
+   correctly.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC64362
+   
+   
+ * REPORTED COMPONENT NAME
+   WMB WINDOWS V6
+   
+   
+ * REPORTED COMPONENT ID
+   5724J0500
+   
+   
+ * REPORTED RELEASE
+   610
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-11-05
+   
+   
+ * CLOSED DATE
+   2009-12-29
+   
+   
+ * LAST MODIFIED DATE
+   2009-12-29
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMB WINDOWS V6
+   
+   
+ * FIXED COMPONENT ID
+   5724J0500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R610 PSY
+   UP

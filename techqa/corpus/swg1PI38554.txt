@@ -1,0 +1,154 @@
+Title: IBM PI38554: LDAP filter issues with VMM - United States
+
+Text:
+  FIXES ARE AVAILABLE
+8.5.5.6: WebSphere Application Server V8.5.5 Fix Pack 6 [http://www-01.ibm.com/support/docview.wss?uid=swg24040035]
+8.5.5.7: WebSphere Application Server V8.5.5 Fix Pack 7 [http://www-01.ibm.com/support/docview.wss?uid=swg24040533]
+8.5.5.8: WebSphere Application Server V8.5.5 Fix Pack 8 [http://www-01.ibm.com/support/docview.wss?uid=swg24041178]
+8.5.5.9: WebSphere Application Server V8.5.5 Fix Pack 9 [http://www-01.ibm.com/support/docview.wss?uid=swg24041819]
+8.5.5.10: WebSphere Application Server V8.5.5 Fix Pack 10 [http://www-01.ibm.com/support/docview.wss?uid=swg24042150]
+8.5.5.11: WebSphere Application Server V8.5.5 Fix Pack 11 [http://www-01.ibm.com/support/docview.wss?uid=swg24043005]
+8.5.5.12: WebSphere Application Server V8.5.5 Fix Pack 12 [http://www-01.ibm.com/support/docview.wss?uid=swg24043844]
+8.5.5.13: WebSphere Application Server V8.5.5 Fix Pack 13 [http://www-01.ibm.com/support/docview.wss?uid=swg24044479]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Information Server 11.3 is now shipping with Liberty profile.
+   The productInfo version shows 8.5.5.1 running on Suse Linux
+   11.3. Both tivoli and AD filters are not working.
+   
+   There are no error with these filters, you simply get back all
+   my users and all your groups when requesting a user/group list
+   from your application. Adding the same filters to WebSphere
+   Application Server Network Deployment edition standalone LDAP
+   they behave correctly.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  All users of IBM WebSphere Application      *
+   *                  Server Liberty Profile- Virtual Member      *
+   *                  Manager (VMM)                               *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Provide a way to configure an LDAP      *
+   *                      entity type specific search filter,     *
+   *                      search Base and an Object class         *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   Prior to this fix, a Liberty profile user working with the LDAP
+   registry did not have a way to configure an LDAP entity type
+   specific search filter, search Base and an Object class. These
+   were critical in order to narrow down the LDAP query to specific
+   records. With this fix, it is possible to specify those
+   attributes.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This fix will provide an extra configuration of LDAP entity type
+   in LDAP registry by which user will be able to define new set of
+   rules like search filter, search Base and an Object class.
+   
+   The fix for this APAR is currently targeted for inclusion in fix
+   pack 8.5.5.6.  Please refer to the Recommended Updates page for
+   delivery information:
+   http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI38554
+   
+   
+ * REPORTED COMPONENT NAME
+   LIBERTY PROFILE
+   
+   
+ * REPORTED COMPONENT ID
+   5724J0814
+   
+   
+ * REPORTED RELEASE
+   850
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-04-08
+   
+   
+ * CLOSED DATE
+   2015-04-22
+   
+   
+ * LAST MODIFIED DATE
+   2015-04-22
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   LIBERTY PROFILE
+   
+   
+ * FIXED COMPONENT ID
+   5724J0814
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R850 PSY
+   UP

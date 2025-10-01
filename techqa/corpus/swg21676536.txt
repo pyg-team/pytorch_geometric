@@ -1,0 +1,53 @@
+Title: IBM Image Construction and Composition Tool is affected by OpenSSL vulnerabilities - United States
+
+Text:
+security vulnerability; Image Construction and Composition Tool FLASH (ALERT)
+
+ABSTRACT
+ Security vulnerabilities have been discovered in OpenSSL that were reported on June 5, 2014 by the OpenSSL Project. 
+
+CONTENT
+VULNERABILITY DETAILS:
+CVE ID: CVE-2014-0224 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-0224]
+
+DESCRIPTION:
+OpenSSL is vulnerable to a man-in-the-middle attack, caused by the use of weak keying material in SSL/TLS clients and servers. A remote attacker could exploit this vulnerability using a specially-crafted handshake to conduct man-in-the-middle attacks to decrypt and modify traffic. 
+
+CVSS:
+CVSS Base Score: 5.8
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/93586 [https://exchange.xforce.ibmcloud.com/vulnerabilities/93586] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:M/Au:N/C:P/I:P/A:N)
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Flash.
+
+AFFECTED PRODUCTS AND VERSIONS: 
+
+Image Construction and Composition Tool Version 2.2.1.1 Image Construction and Composition Tool Version 2.2.1.3 Image Construction and Composition Tool Version 2.3.1.0 
+
+REMEDIATION:
+Apply APAR IV61506
+
+
+WORKAROUND:
+None
+
+MITIGATION:
+None
+
+
+REFERENCES:
+Complete CVSS Guide (http://www.first.org/cvss/v2/guide [http://www.first.org/cvss/v2/guide])
+On-line Calculator V2 (http://nvd.nist.gov/cvss.cfm?calculator&adv&version=2 [http://nvd.nist.gov/cvss.cfm?calculator&adv&version=2])
+OpenSSL Project vulnerability website (http://www.openssl.org/news/vulnerabilities.html [http://www.openssl.org/news/vulnerabilities.html])
+
+
+RELATED INFORMATION:
+IBM Secure Engineering Web Portal [https://www-304.ibm.com/jct03001c/security/secure-engineering/]
+IBM Product Security Incident Response Blog [https://www.ibm.com/blogs/PSIRT]
+
+CHANGE HISTORY:
+19 June 2014 - Original Copy Published
+
+
+Note: According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.

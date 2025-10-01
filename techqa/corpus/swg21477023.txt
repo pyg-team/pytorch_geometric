@@ -1,0 +1,35 @@
+Title: IBM Repeated measures with constant covariates in GLM - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When I include a constant covariate in my GLM repeated measures ANOVA, my output shows an interaction between the within-subjects (WS) effects and my covariate. It's my understanding that when you include a constant covariate in a repeated measures model, the covariate should not appear as part of the WS effects. How can I estimate a model in SPSS GLM that adheres to my understanding regarding how this should be done? 
+
+RESOLVING THE PROBLEM
+Author's note: In this response, although I refer to covariates in the plural form, the principles discussed apply as well to models having only a single covariate.
+
+To get the classical repeated measures ANCOVA results for repeated measures with constant covariates --like those modeled in Winer (1971)-- you'll have to run two GLM models. Run the first model with the covariates, but only report the between-subjects portion of that analysis. Run the second model without the covariates, but only report the within-subjects (WS) portion of that model. 
+
+If you only run one model that includes the covariates, the covariates appear in the WS portion of the model as interactions with the WS factor. This is not the same as partialling the covariates from the WS factor; it is what it looks like --a set of interaction terms. This is the way other so-called GLM programs (e.g., SAS and SYSTAT) handle covariates in repeated measures models, but that doesn't necessarily mean that it's what you want to do. If you want to run Winer's model, then use the two-model approach described in the previous paragraph. 
+
+If you choose to run Winer's model, you would do well to examine the WS portion of the output from the model that includes the covariate. A significant interaction between a covariate and a WS factor indicates that the slope of the covariate is not the same across levels of the WS factor. This is a violation of the homogeneity of slopes (HOS) assumption in ANCOVA. As such, it invalidates the use of ANCOVA in modeling your data.
+
+Finally, there are two alternative ways to estimate Winer's model in SPSS. First, you can run the model using commands in the older SPSS MANOVA program. Second, you can run the model in SPSS MIXED. For a worked example of how to model Winer's (1971; p. 803) example in MIXED, see Resolution 22273. Both MANOVA and MIXED adopt Winer's convention. A constant covariate is partialled from the between-subjects effects, but it is neither partialled from nor does it interact with the WS effects. 
+
+___________________
+
+References
+
+Winer, B. J. (1971). Statistical principles in experimental design (2nd Ed.). New York: McGraw-Hill.
+
+Winer, B. J., Brown, D. R. & Michels, K. M. (1991). Statistical principles in experimental design (3rd Ed.). New York: McGraw-Hill.
+
+RELATED INFORMATION
+ Need more help? Our Statistics forum is Live! [https://developer.ibm.com/answers/topics/statistics.html?smartspace=predictive-analytics]
+
+
+ 
+
+HISTORICAL NUMBER
+ 22133

@@ -1,0 +1,94 @@
+Title: IBM Configure an Oracle ODBC data source for TM1 on UNIX and Linux - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ This Technote provides guidelines for configuring Oracle as an ODBC data source on UNIX and Linux system running TM1. 
+
+ANSWER
+Oracle ODBC connectivity from the TM1 Server on UNIX and Linux is supported through unixODBC.
+Both unixODBC and the Oracle 64 bit client must be installed. The Oracle client installation must include the Oracle ODBC drivers. This example assumes the Oracle 64 bit client is installed to a directory /apps/oracle/product/11.2.0/client64. The Oracle 11 ODBC driver file is /apps/oracle/product/11.2.0/client64/lib/libsqora.so.11.1. If Oracle 12 is used the ODBC driver file is named libsqora.so.12.1.
+
+Environment Variables 
+
+The user account running TM1 must have the following environment variables configured:
+
+ORACLE_HOME=/apps/oracle/product/11.2.0/client64
+LD_LIBRARY_PATH=/usr/lib:/usr/lib64/:$ORACLE_HOME/lib
+PATH=$PATH:$ORACLE_HOME/bin
+TNS_ADMIN=$ORACLE_HOME/network/admin
+
+
+Tnsnames.ora File
+
+A tnsname.ora file should exist in the TNS_ADMIN directory and be configured to connect to the Oracle database. This is an example of the tnsnames.ora file.
+
+ORCL =
+(DESCRIPTION =
+(ADDRESS = (PROTOCOL = TCP)(HOST = 9.24.88.88)(PORT = 1521))
+(CONNECT_DATA =
+(SERVER = DEDICATED)
+(SERVICE_NAME = orcl.ibmlab.com)
+)
+)
+
+Sqlplus can be used to test to confirm the environment variables and tnsnames.ora file are correct, and that the Oracle client can connect. The following screenshot shows sqlplus being used to test the Oracle database connection.
+
+[/support/docview.wss?uid=swg22002330&aid=1] [/support/docview.wss?uid=swg22002330&aid=1]
+
+A successful sqlplus connection does not indicate that TM1 will be able to access the Oracle datasource. TM1 uses an ODBC connection where as sqlplus uses a native Oracle connection. 
+
+
+Tm1s.cfg File
+
+In the tm1s.cfg file configure the ODBCLibraryPath parameter to point to the unixODBC driver. For example:
+
+ODBCLibraryPath=/usr/lib64/libodbc.so
+
+The TM1 Server must be restarted after adding or updating this parameter.
+
+
+Odbc.ini and Odbcinst.ini Files
+
+In the home directory of the profile running TM1 create a .odbc.ini and .odbcinst.ini file. Note the period character at the start of these file names. If the .odbc.ini and .odbcinst.ini files do not exist in the profile directory unixODBC uses the odbc.ini and odbcinst.ini file from the /etc directory. 
+
+Sample contents for the .odbc.ini file:
+
+[Oracle11]
+Driver = Oracle11
+DSN = Oracle11
+ServerName = ORCL
+UserID = sample
+Password = password
+
+The ServerName parameter matches the entry in the tnsnames.ora file being used.
+
+Sample contents for the .odbcinst.ini file:
+
+[Oracle11]
+Description = Oracle 11 ODBC
+Driver = /apps/oracle/product/11.2.0/client64/lib/libsqora.so.11.1
+
+
+Using isql to Test
+
+We can use the unixODBCs isql program to test the ODBC connection. 
+
+isql -v Oracle11
+
+The following screenshot shows a successful ODBC connection using isql.
+
+[/support/docview.wss?uid=swg22002330&aid=2] [/support/docview.wss?uid=swg22002330&aid=2]
+
+Assuming isql can connect the TM1 Server should also be able to connect. Test by creating a new Ti process that uses an ODBC data source. The Oracle11 DSN should be available in the list of ODBC Data Sources in the Data Source tab of the Ti process.
+
+
+
+Troubleshooting
+
+If the isql test fails with a message about the libsqora.so.11.1 file then confirm the file exists in the correct location and the dependancies of the file are correct using the command ldd /apps/oracle/product/11.2.0/client64/lib/libsqora.so.11.1.
+
+[/support/docview.wss?uid=swg22002330&aid=3] [/support/docview.wss?uid=swg22002330&aid=3]
+
+The above screenshot indicates that all dependencies are found. A missing dependency could indicate a missing Oracle dependency or it could indicate the LIBPATH or LD_LIBRARY_PATH needs to be updated to include the Oracle lib directory, or the /usr/lib64 directory.

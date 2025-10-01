@@ -1,0 +1,149 @@
+Title: IBM OA23447: COPC ABENDUC001 IN EVESPPIC AFTER CICS STARTUP - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  After receiving the CICS initialization message:
+   DFHSI1517 MICICT02 Control is being given to CICS.
+     and SAzOS CICS Product Automation message:
+   EVE172I ISCICS02 : PPI ACTIVE
+   intermittently for a CICS region, COPC abends with
+   DFHAC2236 mm/dd/yyyy hh:mm:ss cicsregn Transaction COPC abend
+   C001 in program EVESPPIC term ????. Updates to local
+   recoverable resources will be backed out.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All SA z/OS V3R1 customers.                  *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: When an APL resource is coded as        *
+   *                      external start INITIAL it is possible   *
+   *                      that the APL will also be started       *
+   *                      twice.                                  *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   An APL resource coded as external start INITIAL should not be
+   started more than once when its parent is also involved in the
+   start-up.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Automation logic deck INGLOGIC has been changed to ensure an
+   INITIAL external start is honored for an APL resource.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   OA23447
+   
+   
+ * REPORTED COMPONENT NAME
+   SYSTEM AUTO Z/O
+   
+   
+ * REPORTED COMPONENT ID
+   5698SA300
+   
+   
+ * REPORTED RELEASE
+   310
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2007-12-06
+   
+   
+ * CLOSED DATE
+   2007-12-21
+   
+   
+ * LAST MODIFIED DATE
+   2008-01-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  INGLOGIC
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   SYSTEM AUTO Z/O
+   
+   
+ * FIXED COMPONENT ID
+   5698SA300
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R310 PSY UA38727 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UA38727]
+   UP07/12/25 P F712
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

@@ -1,0 +1,211 @@
+Title: IBM JR49325: Avoid ORA-01795 Oracle issue in Management Center when the number of stores is more than 1000 - United States
+
+Text:
+  A FIX IS AVAILABLE
+WebSphere Commerce Version 7 Feature Pack 7 Cumulative1 interim fix [http://www-01.ibm.com/support/docview.wss?uid=swg24037931]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When using Oracle DB and loading more than 1000 stores  with the
+   "markfordelete" property set to 0 in the STOREENT table, the
+   system can return the following error message:
+    "ORA-01795: maximum number of expressions in a list is 1000".
+   In the SystemOut.log file you will see:
+   
+    [2/3/14 1:20:37:101 CST] 0000005f MediatorImpl  E   SQL
+   Exception: java.sql.SQLSyntaxErrorException: ORA-01795: maximum
+   number of expressions in a list is 1000
+   
+      at
+   oracle.jdbc.driver.T4CTTIoer.processError(T4CTTIoer.java:439)
+      at
+   oracle.jdbc.driver.T4CTTIoer.processError(T4CTTIoer.java:395)
+      at
+   oracle.jdbc.driver.T4C8Oall.processError(T4C8Oall.java:802)
+      at oracle.jdbc.driver.T4CTTIfun.receive(T4CTTIfun.java:436)
+      at oracle.jdbc.driver.T4CTTIfun.doRPC(T4CTTIfun.java:186)
+      at oracle.jdbc.driver.T4C8Oall.doOALL(T4C8Oall.java:521)
+      at
+   oracle.jdbc.driver.T4CPreparedStatement.doOall8(T4CPreparedState
+   ment.java:205)
+      at
+   oracle.jdbc.driver.T4CPreparedStatement.executeForDescribe(T4CPr
+   eparedStatement.java:861)
+      at
+   oracle.jdbc.driver.OracleStatement.executeMaybeDescribe(OracleSt
+   atement.java:1145)
+      at
+   oracle.jdbc.driver.OracleStatement.doExecuteWithTimeout(OracleSt
+   atement.java:1267)
+      at
+   oracle.jdbc.driver.OraclePreparedStatement.executeInternal(Oracl
+   ePreparedStatement.java:3449)
+      at
+   oracle.jdbc.driver.OraclePreparedStatement.executeQuery(OraclePr
+   eparedStatement.java:3493)
+      at
+   oracle.jdbc.driver.OraclePreparedStatementWrapper.executeQuery(O
+   raclePreparedStatementWrapper.java:1491)
+      at
+   com.ibm.ws.rsadapter.jdbc.WSJdbcPreparedStatement.executeQuery(W
+   SJdbcPreparedStatement.java:703)
+      at
+   com.ibm.ws.sdo.mediator.jdbc.JDBCAdapter.executeDirectquery(JDBC
+   Adapter.java:161)
+      at
+   com.ibm.ws.sdo.mediator.jdbc.ConnectionWrapperImpl.executeDirect
+   Query(ConnectionWrapperImpl.java:216)
+      at
+   com.ibm.ws.sdo.mediator.jdbc.MediatorImpl.getResultSets(Mediator
+   Impl.java:265)
+      at
+   com.ibm.ws.sdo.mediator.jdbc.MediatorImpl.getGraph(MediatorImpl.
+   java:178)
+      at
+   com.ibm.commerce.foundation.internal.server.services.dataaccess.
+   graphbuilderservice.jdbc.JDBCMediatorSupplyQuery.getGraph(JDBCMe
+   diatorSupplyQuery.java:226)
+      at
+   com.ibm.commerce.foundation.internal.server.services.dataaccess.
+   graphbuilderservice.jdbc.JDBCGraphBuilderService.getGraph(JDBCGr
+   aphBuilderService.java:115)
+      at
+   com.ibm.commerce.foundation.internal.server.services.dataaccess.
+   datamediator.jdbc.JDBCDataMediator.getEntityObjects(JDBCDataMedi
+   ator.java:260)
+      at
+   com.ibm.commerce.foundation.server.services.dataaccess.AbstractD
+   ataServiceFacade.getEntityObjects(AbstractDataServiceFacade.java
+   :158)
+      at
+   com.ibm.commerce.foundation.server.services.dataaccess.AbstractD
+   ataServiceFacade.getPhysicalDataContainer(AbstractDataServiceFac
+   ade.java:85)
+      at
+   com.ibm.commerce.seo.registry.SEOConfigurationRegistry.readDefau
+   ltURLLangIdForStores(SEOConfigurationRegistry.java:299)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  USERS AFFECTED:
+    WebSphere Commerce V7 users using Oracle DB and more than 1000
+   open stores
+   
+    PROBLEM ABSTRACT:
+    Avoid ORA-01795 Oracle issue in Management Center when the
+   number of stores is more than 1000
+   
+    BUSINESS IMPACT:
+    Users will be unable to work with stores and catalogs in CMC
+   
+    RECOMMENDATION:
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Updated logic to check how many stores are returned and split
+   the openStoreIds while executing the query in a while loop
+   
+   
+    -------------------------------------------------------------
+    The latest available maintenance information can be obtained
+   from the Recommended Fixes for WebSphere Commerce technote:
+    http://www.ibm.com/support/docview.wss?rs=3046&uid=swg21261296 [http://www.ibm.com/support/docview.wss?rs=3046&uid=swg21261296]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR49325
+   
+   
+ * REPORTED COMPONENT NAME
+   WC BUS EDITION
+   
+   
+ * REPORTED COMPONENT ID
+   5724I3800
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-02-11
+   
+   
+ * CLOSED DATE
+   2014-03-24
+   
+   
+ * LAST MODIFIED DATE
+   2014-03-24
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WC BUS EDITION
+   
+   
+ * FIXED COMPONENT ID
+   5724I3800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R700 PSY
+   UP

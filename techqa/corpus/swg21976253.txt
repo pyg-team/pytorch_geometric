@@ -1,0 +1,26 @@
+Title: IBM Granting access to CWA source packages for Query Users - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When accessing Cognos Workspace Advanced a user is greeted with a blank metadata area and when switching to Toolbox this area is also blank. 
+
+SYMPTOM
+Missing options on right side, no options to create a new report otherwise. Could be perceived as javascript being stuck, no browser indications of this however.
+
+
+CAUSE
+There is a capability involved which is not enabled for the user.
+
+ENVIRONMENT
+Cognos BI 10.2.2 - any operating system
+
+RESOLVING THE PROBLEM
+1) Launch IBM Cognos Administration
+2) Click on Security > Capabilities
+3) Click on the Report Studio capability
+4) Click on the arrow to the right of the "Create/Delete" capability and select "Set Properties"
+5) Click on Permissions and look at the list of users/groups listed in this view. The user in question needs to be part of this list and have Execute and Traverse permissions granted on the capability.
+
+Ensure also that the user has Execute and Traverse on the "Report Studio" capability.

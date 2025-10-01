@@ -1,0 +1,153 @@
+Title: IBM PI80554: RHAPSODY 8.2: BUILDING CODE WITH MICROC: "UNABLE TO MAKE 'MXF_CFG.H'" ERROR WHEN 8.1.5 IS UNINSTALLED - United States
+
+Text:
+  A FIX IS AVAILABLE
+IBM Rational Rhapsody 8.2.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24043638]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Description:
+   
+   
+   User has 8.1.5 and 8.2 installed on their system. When building
+   code using the MicroC profile, it works correctly.
+   User then uninstalls 8.1.5. If they now try and build MicroC
+   code using 8.2, they get the error "NMAKE : fatal error U1073:
+   don't know how to make 'mxf_cfg.h'' See attached ErrorLog1.txt
+   Reinstalling 8.2 (and not 8.1.5) does not solve the issue. User
+   has to reinstall both 8.1.5 and 8.2 in order for the MicroC code
+   to build correctly.
+   All projects without MicroC build correctly.
+   
+   I was able to reproduce the issue on my VM environment.
+   - Uninstalling 8.1.5 broke the 8.2 install.
+   - The JVM would no longer run at all on 8.2: No project
+   structure, no mxf_cfg.h, empty APILog, etc..
+   - To fix I had to reinstall both 8.1.5 and 8.2
+   
+   Escalation:
+   
+   https://l2l3-cmn-rtc.ratl.swg.usma.ibm.com:9443/ccm/web/projects
+   /Rational%20Escalation#action=com.ibm.team.workitem.viewWorkItem [https://l2l3-cmn-rtc.ratl.swg.usma.ibm.com:9443/ccm/web/projects/Rational%20Escalation#action=com.ibm.team.workitem.viewWorkItem]
+   &id=65243
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * Rhapsody                                                     *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * Uninstalling Rhapsody 8.1.5 (or any other version)           *
+   * unregister the latest registered RhapsodyServer. But another *
+   * Rhapsody (8.2 in our case) cannot register it if it doesn't  *
+   * run as Administrator.                                        *
+   * Workaround is to run the following command as Administrator  *
+   * (only once, if no other installations/uninstallations done)  *
+   * >rhapsody.exe  -RegServer                                    *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Rhapsody will register type library for current user
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI80554
+   
+   
+ * REPORTED COMPONENT NAME
+   TLOGIC RHAPSODY
+   
+   
+ * REPORTED COMPONENT ID
+   5724V74RP
+   
+   
+ * REPORTED RELEASE
+   820
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-04-25
+   
+   
+ * CLOSED DATE
+   2017-06-11
+   
+   
+ * LAST MODIFIED DATE
+   2017-06-11
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TLOGIC RHAPSODY
+   
+   
+ * FIXED COMPONENT ID
+   5724V74RP
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R820 PSN
+   UP

@@ -1,0 +1,103 @@
+Title: IBM Java error : illegal XML character is specified when calling an ITX map from Sterling B2B Integrator - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Using an ITX map with Sterling B2B Integrator calling a DocToDOM function can result in an error
+
+DEBUG 1040098 : org.w3c.dom.DOMException:
+INVALID_CHARACTER_ERR: An invalid or illegal XML character is specified.
+at org.apache.xerces.dom.CoreDocumentImpl.createElement(Unknown Source)
+at com.sterlingcommerce.woodstock.xpathutil.XPathHelper.createNode(XPathHel per.java:1467)
+at com.sterlingcommerce.woodstock.xpathutil.XPathHelper.createTargetContext (XPathHelper.java:1141) 
+
+SYMPTOM
+The following is reported in the wtxlogger.log: 
+
+2018-02-27 15:51:50.56] DEBUG 1040098 : Map Status: (0) Map completed successfully
+[2018-02-27 15:51:50.591] DEBUG 1040098 : removed wtx external dataharness from object pool
+[2018-02-27 15:51:50.591] DEBUG 1040098 : org.w3c.dom.DOMException: INVALID_CHARACTER_ERR: An invalid or illegal XML character is specified. 
+at org.apache.xerces.dom.CoreDocumentImpl.createElement(Unknown Source)
+at com.sterlingcommerce.woodstock.xpathutil.XPathHelper.createNode(XPathHelper.java:1467)
+at com.sterlingcommerce.woodstock.xpathutil.XPathHelper.createTargetContext(XPathHelper.java:1141)
+at com.sterlingcommerce.woodstock.xpathutil.XPathHelper.createTargetContext(XPathHelper.java:1053)
+at com.sterlingcommerce.woodstock.workflow.WFCUtil.setDataInTree(WFCUtil.java:1113)
+at com.sterlingcommerce.woodstock.workflow.WFCUtil.setDataInTree(WFCUtil.java:784)
+at com.sterlingcommerce.woodstock.workflow.WorkFlowContext.setWFContent(WorkFlowContext.java:3066)
+at com.sterlingcommerce.woodstock.workflow.WorkFlowContext.setWFContent(WorkFlowContext.java:3029)
+at com.sterlingcommerce.woodstock.workflow.WorkFlowContext.setWFContent(WorkFlowContext.java:3013)
+at com.sterlingcommerce.woodstock.workflow.WorkFlowContext.putDocument(WorkFlowContext.java:1963)
+at com.ibm.websphere.dtx.si.service.WTXSIMapServiceMapInvocation.postProcessCards(WTXSIMapServiceMapInvocation.java:1307)
+at com.ibm.websphere.dtx.si.service.WTXSIMapServiceMapInvocation.executeMap(WTXSIMapServiceMapInvocation.java:1173)
+at com.ibm.websphere.dtx.si.service.WTXSIMapServiceRMIImpl.executeMap(WTXSIMapServiceRMIImpl.java:82)
+at com.ibm.websphere.dtx.si.service.WTXSIMapServiceImpl.processData(WTXSIMapServiceImpl.java:590)
+at com.sterlingcommerce.woodstock.workflow.activity.engine.ActivityEngineHelper.invokeService(ActivityEngineHelper.java:1818)
+at com.sterlingcommerce.woodstock.workflow.activity.engine.ActivityEngineHelper.nextMainLogic(ActivityEngineHelper.java:631)
+at com.sterlingcommerce.woodstock.workflow.activity.engine.ActivityEngineHelper.next(ActivityEngineHelper.java:362)
+at com.sterlingcommerce.woodstock.workflow.queue.WorkFlowQueueListener.doWork(WorkFlowQueueListener.java:440)
+at com.sterlingcommerce.woodstock.workflow.queue.WorkFlowQueueListener.run(WorkFlowQueueListener.java:236)
+at com.sterlingcommerce.woodstock.workflow.queue.WorkFlowQueueListener.onMessage(WorkFlowQueueListener.java:197)
+at com.sterlingcommerce.woodstock.workflow.queue.WorkFlowQueueListener.onMessage(WorkFlowQueueListener.java:184)
+at com.sterlingcommerce.woodstock.workflow.queue.wfTransporter.run(wfTransporter.java:444)
+at com.sterlingcommerce.woodstock.workflow.queue.BasicExecutor$Worker.run(BasicExecutor.java:508)
+at java.lang.Thread.run(Thread.java:781)
+
+[2018-02-27 15:51:50.607] DEBUG 1040098 : java.rmi.RemoteException: Null object specified - Native function: MjpiGetObject
+at com.ibm.websphere.dtx.si.service.WTXSIMapServiceMapInvocation.executeMap(WTXSIMapServiceMapInvocation.java:1197)
+at com.ibm.websphere.dtx.si.service.WTXSIMapServiceRMIImpl.executeMap(WTXSIMapServiceRMIImpl.java:82)
+at com.ibm.websphere.dtx.si.service.WTXSIMapServiceImpl.processData(WTXSIMapServiceImpl.java:590)
+at com.sterlingcommerce.woodstock.workflow.activity.engine.ActivityEngineHelper.invokeService(ActivityEngineHelper.java:1818)
+at com.sterlingcommerce.woodstock.workflow.activity.engine.ActivityEngineHelper.nextMainLogic(ActivityEngineHelper.java:631)
+at com.sterlingcommerce.woodstock.workflow.activity.engine.ActivityEngineHelper.next(ActivityEngineHelper.java:362)
+at com.sterlingcommerce.woodstock.workflow.queue.WorkFlowQueueListener.doWork(WorkFlowQueueListener.java:440)
+at com.sterlingcommerce.woodstock.workflow.queue.WorkFlowQueueListener.run(WorkFlowQueueListener.java:236)
+at com.sterlingcommerce.woodstock.workflow.queue.WorkFlowQueueListener.onMessage(WorkFlowQueueListener.java:197)
+at com.sterlingcommerce.woodstock.workflow.queue.WorkFlowQueueListener.onMessage(WorkFlowQueueListener.java:184)
+at com.sterlingcommerce.woodstock.workflow.queue.wfTransporter.run(wfTransporter.java:444)
+at com.sterlingcommerce.woodstock.workflow.queue.BasicExecutor$Worker.run(BasicExecutor.java:508)
+at java.lang.Thread.run(Thread.java:781)
+
+[2018-02-27 15:51:50.607] DEBUG 1040098 : Status_Report WTX Service engine....<mapInstances>
+<mapInstance1040098>
+<message>Null object specified - Native function: MjpiGetObject</message>
+</mapInstance1040098>
+</mapInstances>
+
+
+
+CAUSE
+In the buisness process calling the map service and the DoctoDOM function an extra space is present at end of assign to out1 statement & Assign" to="PrimaryDocument"
+from="DocToDOM : 
+
+<operation name="Qry Ptcar">
+<participant name="WTXMapService"/>
+<output message="WTXMapServiceTypeInputMessage">
+<assign to="." from="*"></assign>
+<assign to="MapServerLocation">/maps/mymap.mmc</assign>
+<assign to="." from="*"></assign>
+<assign to="out1">output-file.xml </assign> <- Extra space after file name
+<assign to="in1">PrimaryDocument</assign>
+</output>
+<input message="inmsg">
+<assign to="." from="*"></assign>
+</input>
+</operation>
+<assign name="Assign" to="PrimaryDocument"
+from="DocToDOM(output-file.xml )"></assign> <- Extra space after file name
+
+
+
+DIAGNOSING THE PROBLEM
+The stack trace can be seen in the wtxlogger.log file after running the map. 
+
+
+
+RESOLVING THE PROBLEM
+Remove the extra space at the end of the file name definition statements. 
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Commerce Sterling B2B Integrator Business Integration WebSphere Transformation Extender for Integration Servers AIX, HP-UX, Linux, Solaris, Windows Version Independent All Editions

@@ -1,0 +1,167 @@
+Title: IBM HC89125: SMARTFLOW SERVER LICENSING DOES NOT WORK WITH V5 INSTALLED - United States
+
+Text:
+AIX SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Abstract: SmartFlow server licensing does not work with V5
+   installed
+   .
+   Operating System:  Windows2000
+   Product Group:  SmarTeam 110 on WinNT
+   Area Affected: SmartFlow Licensing
+   Showstopper: NO
+   Regression: NA
+   Recommended Fixes Installed: YES
+   .
+   Environment:
+   Both machines have win 2000 with Catia V5R7 SP3, and
+   SmarTeam SP4.
+   .
+   Problem:
+   Hi,
+   I cannot get the SmartFlow to work with a network (red)
+   dongle when I have Catia V5 installed.  I have 2
+   machines; one set up as a TeamPDM Client and the other
+   setup as a TeamPDM server with a red dongle.  The dongle
+   contains 5 licenses for all of the SmarTeam products.
+   What I am trying to do is to run SmartFlow on the client,
+   however, it cannot find the SmartFlow License on the
+   server.
+   The NetHasp.ini file is set correctly, as well as the
+   SmTeam32.ini file; I made sure that the NetworkPlug =
+   Yes, and I have enabled TCPIP and entered all IPs
+   correctly.  If I run the LicenseDiagnostics.exe from the
+   bin directory of the TeamPDM install on the client, it
+   detects that I have a network(red) dongle.  It also
+   detects all of my licences.  Also, if I remove Catia V5,
+   everything works perfectly fine without making any
+   changes.
+   I believe that this problem is caused by Catia licensing
+   with SmarTeam because if I remove V5 everything works.
+   Please advise me on the Problem,
+   
+   
+   
+   Hi,
+   I have just tested this with Service Pack 5 for V5R7 and
+   this
+   still does not work.
+   
+   
+   The Client has win2000 with a nodlocked AL2 license.  The
+   server
+   has has win2000 with a red network dongle for SmarTeam.  The
+   server
+   is using NeHasp licensing for SmarTeam and does not or never
+   had
+   Catia or any Catia licensing installed.  If I run the
+   smarTeam
+   licensing diagnostics on the client, it detects the dongle.
+   Also,
+   if I unistall Catia on the Client everything works as it
+   should.
+   .
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  SmarTeam answer :
+   corrected in ST4.005 + HF20
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *  SmarTeam answer :
+   corrected with ST4.005 + HF20
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   HC89125
+   
+   
+ * REPORTED COMPONENT NAME
+   CATIA V5 NT_INT
+   
+   
+ * REPORTED COMPONENT ID
+   569151000
+   
+   
+ * REPORTED RELEASE
+   507
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2002-01-08
+   
+   
+ * CLOSED DATE
+   2002-06-12
+   
+   
+ * LAST MODIFIED DATE
+   2002-06-12
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R507 PSN
+   UP
+   
+   
+ * R508 PSN
+   UP

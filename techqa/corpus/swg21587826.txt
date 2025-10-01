@@ -1,0 +1,64 @@
+Title: IBM Deployer fix pack failing on a TIP fix pack 2.2.0.3 - United States
+
+Text:
+TIPL2INST ; TIPL2 ; DEL2; LMT ; patch ; CODPT0003E ; ACUINI0095E; lock TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ An IBM product fix pack or upgrade that includes Tivoli Integrated Portal is failing when installing TIP 2.2 Fix Pack 3 
+
+SYMPTOM
+The installer fails during the TIP fix pack installation step.
+
+
+CAUSE
+When updates to the DE installation database are needed, DE puts a lock file into the <DE_install_dir>/logs directory. When DE finishes the update, it deletes the lock file. If a program or update ends abnormally, DE might not delete the lock file. With the lock file still in the directory, the next DE function that tries to lock the installation database will fail. Therefore, during the software upgrade, if you encounter a fatal error in the middle of a database action, the lock files might not get removed; likewise if there is a problem with DE commands or APIs that is related to reading or writing to the installation database. 
+
+ In such cases, subsequent DE install will fail with 
+
+LockAlreadyExistsException with msg id: ACUINI0095E 
+
+check the <DE_install_dir>/logs directory and delete all files with 
+
+file names that begin with .lock. The lock file names and types are: 
+
+.lock_0_* :READ locks 
+
+.lock_1_* :WRITE locks 
+
+.lock_2_* :EXCLUSIVE locks 
+
+
+DIAGNOSING THE PROBLEM
+DE_Install.log and TIPFPInstaller-00.log show the following errors: 
+
+09-03-2012 00:53:42.678 SIInstaller install 
+
+com.ibm.ac.si.install.impl.LockAlreadyExistsException: ACUINI0095E Deployment Engine is already in use. It could be that the previous Deployment Engine operation has been interrupted. If this is the case, please check for the .lock_?_? files under logs directory of Deployment Engine install location and remove them before resuming the installer. 
+
+2012-03-09 00:53:42.875+09:00 : STDERR : Caused by: 
+
+2012-03-09 00:53:42.877+09:00 : STDERR : 
+
+com.ibm.ac.si.runtime.lock.LockNotAllowedException: lock_not_allowed 
+
+2012-03-09 00:53:43.007+09:00 : STDOUT : # DE Install Status = SI_INSTALL_FATAL_ERROR 
+
+LockAlreadyExistsException with msg id: ACUINI0095E 
+
+ 
+
+
+RESOLVING THE PROBLEM
+Check the <DE_install_dir>/logs directory and delete all files with file names that begin with .lock. 
+
+The lock file names and types are: 
+
+.lock_0_* :READ locks 
+
+.lock_1_* :WRITE locks 
+
+.lock_2_* :EXCLUSIVE locks 
+
+ 
+
+Please check if such lock files are present, and if so, delete them and re-try the installation.

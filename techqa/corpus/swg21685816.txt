@@ -1,0 +1,27 @@
+Title: IBM Tivoli Netcool/Impact: services processed by the event processor - United States
+
+Text:
+event processor TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The current Netcool/Impact v5.1.1 documentation has the following statement:
+
+The event processor is the service responsible for managing events coming into
+Tivoli Netcool/Impact through the event reader, event listener, and e-mail reader
+services. 
+
+SYMPTOM
+The event processor does not read events from e-mail reader.
+
+
+RESOLVING THE PROBLEM
+The following statement is the corrected version. 
+
+The event processor is the service responsible for managing events coming into
+Tivoli Netcool/Impact through the following services: 
+
+ * OMNIbusEventReader 
+ * DatabaseEventReader 
+ * JMSMessageListener 
+ * OMNIbusEventListener 
+ * DatabaseEventListener

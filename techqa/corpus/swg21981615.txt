@@ -1,0 +1,37 @@
+Title: IBM Network performance for DB2 HADR when receiving a SQL1768N RC=7? - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Network performance for DB2 HADR when receiving a SQL1768N RC=7? 
+
+CAUSE
+
+Use a dedicated network for the HADR primary-standby connection Other traffic (such as client-server communication, database backup, and
+log archive) on the network used for HADR communication can cause hiccups in HADR performance. 
+
+The network is the most important part of an HADR landscape, as network connectivity is required to replicate database changes from the primary 
+to the standby, keeping the two databases synchronized. 
+
+Another point - Whether dedicated or shared, the bandwidth for the HADR network must be greater than the database log generation rate (which
+can be calculated by monitoring the database and looking at the amount of logs generated in a time period and any other shared network activity.
+
+
+
+
+ANSWER
+ 
+
+Complete additional network testing to ensure the NIC's MTU Communication block size match's the network block size. The network would attempt to
+fragment the blocks of communication.
+
+If the NIC's MTU communication block size does NOT match the network block size, then DB2 HADR initial handshake will fail, DB2 will time out and 
+report a SQL1768N RC=7.
+
+Reconfigure your network to matching block sizes, support jumbo frames and eliminate the network fragmentation.
+
+RELATED INFORMATION
+ SQL1768N [http://www.ibm.com/support/knowledgecenter/SSEPGG_9.7.0/com.ibm.db2.luw.messages.sql.doc/doc/msql01768n.html]
+SQL1768N RC7 (HADR [http://www.ibm.com/support/docview.wss?uid=swg21460503]
+Best practices DB2 HADR [https://www.ibm.com/developerworks/community/wikis/home?lang=en#!/wiki/Wc9a068d7f6a6_4434_aece_0d297ea80ab1/page/High%20Availability%20Disaster%20Recovery]

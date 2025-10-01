@@ -1,0 +1,78 @@
+Title: IBM EmailReader EmailDriverException - United States
+
+Text:
+netcool; impact; netcool/impact; nci; email; reader; error; info; emailreader; pop; 3 ; pop3; server; exchange; ms; microsoft; outlook; mail; read; receive; get; acquire; pull; capture; fetch; message; messages TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Error message for EmailReader reading emails from POP3 email server 
+
+SYMPTOM
+EmailReader Service log: 
+
+ * 
+ * 
+
+
+ImpactServer log: 
+ * 
+ * Error processing email com.micromuse.response.email.EmailDriverException: Unable to fetch messages
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * Caused by: com.micromuse.response.email.MailException: Error retrieving mail
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * Caused by: com.micromuse.response.email.MailException: Mail server connection failed
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * Caused by: java.util.concurrent.TimeoutException
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+
+
+CAUSE
+Timeout exception collecting the email 
+
+
+
+
+
+RESOLVING THE PROBLEM
+By default the timeout is set to 10 seconds. One can change this timeout by adding the following property: 
+
+
+
+
+ * 
+
+
+(where [n] is the number of seconds) to ones EmailReader properties file: 
+
+ * 
+
+
+Try increasing the timeout and see if the exception is still received. 
+
+Avoid any leading or tailing white space characters around the property as in earlier versions of Impact these can negate the action of the property.

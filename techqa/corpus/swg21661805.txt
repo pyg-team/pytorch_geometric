@@ -1,0 +1,27 @@
+Title: IBM Migrate a virtual machine template from one datastore to another datastore - United States
+
+Text:
+migrate datastore TECHNOTE (FAQ)
+
+QUESTION
+ You can use ESXi with multiple datastores. How do you migrate the virtual machine template, which is created by the Image Construction and Composition Tool for IBM SmartCloud Orchestrator, from one datastore to another datastore? 
+
+ANSWER
+You can use one of the following methods to migrate the virtual machine template: 
+
+ * Move the datastore within the same VMware region
+   Do not move, delete, or clone the image. Just change the datastore using VMware. You do not need to register the image again.
+   
+   
+ * Move datastore 1 (DS1) to datastore 2 (DS2) across VMware region server 1 (RS1) to region server 2 (RS2).  1. Identify the image (IM1) in glance. Look for a property called metadata. The property contains the UUID of the ISO image, which contains the metadata. You can find the ISO file as /var/lib/glance/images/<image-uuid> on region server 1 (RS1). 
+       
+    2. Clone the image (IM1) from datastore (DS1) on region server 1 (RS1) to datastore (DS2) on region server 1 (RS2). For this example, use IM2 as the name for this second image. You can use both vmotion or the reference repository check in and check out.
+       
+       
+    3. Create a new image in glance region server (RS2), pass it the ISO files that were copied from step 1, and take note of the UUID. 
+       
+       
+    4. Create or update the glance metadata image property for the image (IM2) to the UUID value that was noted in the previous step.
+       
+       
+    5. Register the cloned image (IM2) in IBM SmartCloud Orchestrator

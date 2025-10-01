@@ -1,0 +1,146 @@
+Title: IBM PJ36840: INFOSPHERE DESIGN STUDIO V9. NOT CORRECTLY REVERSE ENGINEERING THE SOURCE MODEL WHEN USING GENERIC JDBC CONNECTOR. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Defect: wsdbu00268676
+   
+   We are using  IBM Infosphere warehouse 9.7 edition . We are
+   using the SQL workbench feature of Infosphere Design Studio  to
+   build the flows and populate the data in our warehouse.
+   
+   We are using Generic JDBC connection to connect to a third party
+   data modeling (EII) tool and pull out that data.
+   When connecting using this connector we are not able to see the
+   Source Models reflected properly in the Infosphere Warehouse
+   Design Studio for building the flows.
+   
+   The root issue seems to be that InfoSphere Design Studio 9.7 is
+   not properly reverse engineering the source Model when using
+   this JDBC Connector.
+   
+   Our third party data modeling tool is optimized for Java 1.5.In
+   fact when using that tool to connect to Database from Eclipse, I
+   used to start the eclipse specifying the VM args pointing to
+   JRE-1.5. As Infosphere warehouse Edition uses Java 1.6
+   exclusively , so we unable to get the reverse Engineered Source
+   Model appropriately.
+   
+   Expected Results:
+   The Reverse Engineering should work properly using the Reverse
+   Engineering Wizard.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Drag the schema from the Data Source Explorer and drop it in
+   Data Project Explorer's Data Model folder under the Data Design
+   Project.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Design Studio v9.7 is not correctly reverse engineering the
+   source model when using generic JDBC connector.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This is resolved in Data Studio Tools v2.2.2.1.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PJ36840
+   
+   
+ * REPORTED COMPONENT NAME
+   DWE DESIGN STUD
+   
+   
+ * REPORTED COMPONENT ID
+   5724DWEDS
+   
+   
+ * REPORTED RELEASE
+   970
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-10-28
+   
+   
+ * CLOSED DATE
+   2010-03-18
+   
+   
+ * LAST MODIFIED DATE
+   2010-03-18
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   DWE DESIGN STUD
+   
+   
+ * FIXED COMPONENT ID
+   5724DWEDS
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R970 PSY
+   UP

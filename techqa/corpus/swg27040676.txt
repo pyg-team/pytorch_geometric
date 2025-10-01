@@ -1,0 +1,32 @@
+Title: IBM Manually configuring Process Designer for IBM Case Manager on WebLogic 10.3.4, 10.3.5, 10.3.6, or 11gR1 - United States
+
+Text:
+ RELEASE NOTES
+
+ABSTRACT
+ If your Workplace XT installation is not automatically configured by the Case Manager configuration tool, you might need to manually configure access to Process Designer. 
+
+CONTENT
+For the Workplace XT instance in a development environment, additional configuration is required. These changes apply to the instance of Workplace XT that is used by Case Manager Builder. 
+
+If your Workplace XT is in the same application server instance as IBM® Case Manager, the IBM Case Manager configuration tool can make these configuration changes for you. If you want to use the configuration tool, skip this task.
+
+To configure Workplace XT for a development environment:
+
+
+ 1. On the IBM Case Manager server, navigate to the CaseManagement/WorkplaceXTConfig directory. 
+ 2. Copy the following files:  * ICMSolutionEdit.jar 
+     * jaxb-api.jar 
+     * jaxb-impl.jar 
+     * weblogic.xml (only for WebLogic Server environments) 
+     * weblogic-application.xml (only for WebLogic Server environments)
+    
+    
+ 3. On the Workplace XT server, navigate to WebClient/WorkplaceXT/WEB-INF/lib directory. 
+ 4. Paste the following files in the directory:  * ICMSolutionEdit.jar 
+     * jaxb-api.jar 
+     * jaxb-impl.jar
+    
+    
+ 5. For WebLogic Server systems, navigate to the WebClient/WorkplaceXT/WEB-INF directory and paste the copy of the weblogic.xml file into the directory. 
+ 6. For WebLogic 10.3.4, 10.3.5, or 10.3.6 systems where Workplace XT will be deployed as an EAR, navigate to the WebClient/deploy/META-INF directory and paste the copy of the weblogic-application.xml file into the directory.

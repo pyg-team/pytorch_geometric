@@ -1,0 +1,62 @@
+Title: IBM Maximo 7.6 MIF JVM/cluster Native OutofMemory error - United States
+
+Text:
+MIF; Integration; OOM; Outofmemory; Native; memory leak; Crash; JIT TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Maximo running well and only MIF JVM/Cluster experiencing frequent native out of memory error. Upon restarting issue is temporarily resolved until memory continues to build up and crashes with an out of memory error. 
+
+SYMPTOM
+Upon analysing heapdumps and javacores, the below is the primary suspect in memory leak for MIF JVM.
+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+# Maximo Asset Management 7.6.0.2 
+# WebSphere Application Server ND 8.5.5.7 
+# Windows Server 2012 R2 6.3 build 9600 
+# Java SDK 7.1.3.10 (pwa6470_27sr3fp10-20150708_01(SR3 FP10) ) 
+# -Xshareclasses:name=webspherev85_1.7.1_64,nonFatal 
+
+### core.20151207.161830.15580.0005.dmp 
+2MEMUSER +--JIT: 1,767,260,280 bytes / 28759 allocations 
+3MEMUSER | +--JIT Code Cache: 268,435,456 bytes / 1 allocation 
+3MEMUSER | +--JIT Data Cache: 23,069,376 bytes / 11 allocations 
+3MEMUSER | +--Other: 1,475,755,448 bytes / 28747 allocations 
+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+
+
+
+
+CAUSE
+Potential native leak issue with JIT at Java level (7.1.3.10) when using -XShareclasses. 
+
+ENVIRONMENT
+Maximo 7.6.x.x
+WebSphere 8.5.5.x
+Java SDK 7.1.3.10
+
+DIAGNOSING THE PROBLEM
+Review heapdumps and javacores for MIF JVM where OOM has occurred.
+There has -Xshareclasses:name=webspherev85_1.7.1_64,nonFatal in 
+There has some increse in JIT Memory allocation. 
+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+# Maximo Asset Management 7.6.0.2 
+# WebSphere Application Server ND 8.5.5.7 
+# Windows Server 2012 R2 6.3 build 9600 
+# Java SDK 7.1.3.10 (pwa6470_27sr3fp10-20150708_01(SR3 FP10) ) 
+# -Xshareclasses:name=webspherev85_1.7.1_64,nonFatal 
+
+### core.20151207.161830.15580.0005.dmp 
+2MEMUSER +--JIT: 1,767,260,280 bytes / 28759 allocations 
+3MEMUSER | +--JIT Code Cache: 268,435,456 bytes / 1 allocation 
+3MEMUSER | +--JIT Data Cache: 23,069,376 bytes / 11 allocations 
+3MEMUSER | +--Other: 1,475,755,448 bytes / 28747 allocations 
+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+
+RESOLVING THE PROBLEM
+1) The fix is available as IV79744 and will be included in Java SDK 7.1.3.30.
+"IV79744: MEMORY LEAK UNDER THE -XSHARECLASSES OPTION" 
+http://www.ibm.com/support/docview.wss?uid=swg1IV79744 [http://www.ibm.com/support/docview.wss?uid=swg1IV79744] 
+WebSphere version 8.5.5.9 or later comes bundled with Java SDK 7.1.3.30 to include this APAR fix.
+
+2) There is also a local workaround to add -Xnoaot option in generic JVM arguments and see if it can prevent the memory leak from occurring. The -Xnoaot might increase start-up times a little but should not have any affect on the throughput of the server once it has been running for a while. 
+"Setting generic JVM arguments in WebSphere Application Server" 
+http://www.ibm.com/support/docview.wss?uid=swg21417365 [http://www.ibm.com/support/docview.wss?uid=swg21417365]

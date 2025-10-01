@@ -1,0 +1,38 @@
+Title: IBM Domino warning message "Server key too strong for EXPORT ciphers" - United States
+
+Text:
+SSLCipherSpec; SSL; RSA; Domino Server; Incident 1546815; Server; Security; Encryption TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+You have modified the SSL cipher restrictions for HTTP on your Lotus Domino server. Users with a Web browser that supports 40-bit or 56-bit encryption can no longer access the server and the following message appears on the server console: 
+
+ * 
+ * 
+
+
+Does Domino support using SSL ciphers such as SSL_RSA_WITH_DES_CBC_SHA and SSL_RSA_EXPORT_WITH_RC4_40_MD5? 
+RESOLVING THE PROBLEM
+Using export-grade ciphers with an RSA server key stronger than 512-bits is explicitly prohibited in the SSL v3 and TLS specifications. The Domino SSL server will refuse to use an EXPORT cipher with a server key larger than 512-bits or an EXPORT1024 cipher with a server key larger than 1024-bits. Therefore, when this situation occurs, the warning message shown above appears on the console and in the log. 
+
+How to prevent the warning
+
+You can prevent this warning message from appearing on the Domino server console and in the log by disabling the 40-bit and 56-bit ciphers as follows:
+
+
+ * If using the Server document settings to configure your Web server, then in the Server document go to Ports -> Internet Ports tab, and in the SSL Security section, click Modify and clear the 40-bit and 56-bit ciphers.
+
+ * If using the Internet Sites view to configure your Web server, then go to the Internet Site document, Security tab, to modify the ciphers.
+
+
+Disabling this cipher has no effect on the Domino server because the ciphers are automatically disabled every time a client makes a connection. 
+
+Web browsers and 128-bit encryption Domino follows the standard set by the RFC that states that if using 128-bit encryption, you should not allow lower level encryption. For SSL to work properly with Domino, Web browsers must be at 128-bit encryption.
+
+RELATED INFORMATION
+ A simplified Chinese translation is available [http://www.ibm.com/support/docview.wss?uid=swg21604005]
+
+
+
+
+HISTORICAL NUMBER
+ 197910

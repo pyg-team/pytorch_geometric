@@ -1,0 +1,27 @@
+Title: IBM Limit to the Xmx switch - United States
+
+Text:
+xmx; eclipse; error; code; JVM; terminated; exit; exit code=1; rsa; rsd; rsm; rda; rad; rft; rmt; rpt; ram; rtc; team concert; 1294392 TECHNOTE (FAQ)
+
+QUESTION
+ Is there a limit to the Xmx switch the eclipse.ini file used with IBM Rational Software Architect on Microsoft Windows? 
+
+CAUSE
+Setting the Xmx switch in the eclipse.ini file for SDP tools higher than ~1675MB causes SDP tools to fail to launch with JVM Terminated Exit Code=1 on Windows 
+
+This is a Windows operating system kernel limitation due to a 2GB application process assignment.
+
+
+ANSWER
+Error Code=1 is reported because the application requested more memory than the operating system could allocate. 
+
+ 
+
+Xmx has a practical limit of approximately 1.5GB 
+
+ 
+
+A full detailed explanation can be found in:
+http://download.boulder.ibm.com/ibmdl/pub/software/dw/jdk/diagnosis/dw3gbswitch3.pdf [http://download.boulder.ibm.com/ibmdl/pub/software/dw/jdk/diagnosis/dw3gbswitch3.pdf]
+
+This problem does not appear to exist with Linux.

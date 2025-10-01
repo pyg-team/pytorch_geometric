@@ -1,0 +1,161 @@
+Title: IBM IV45267: DISCOVERY MANAGEMENT PORTAL CERTIFICATE EXPIRED JUNE 9, 2013. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The certificate used for the Discovery Management Portal expired
+   on June 9, 2013. Customers who have certificate checking enabled
+   may not be able to launch the Discovery Management Portal. The
+   following error may be seen;
+   
+   java.security.cert.CertificateRevokedException: Certificate has
+   been
+   revoked, reason: KEY_COMPROMISE, revocation date: Mon Jan 14
+   11:42:44
+   EST 2013, authority: CN=VeriSign Class 3 Code Signing 2009-2 CA,
+   OU=Terms of use at https://www.verisign.com/rpa (c)09,
+   OU=VeriSign
+   Trust Network, O="VeriSign, Inc.", C=US, extensions: {}
+    at com.sun.deploy.security.RevocationChecker.checkOCSP(Unknown
+   Source)
+    at com.sun.deploy.security.RevocationChecker.check(Unknown
+   Source)
+    at
+   com.sun.deploy.security.TrustDecider.checkRevocationStatus(Unkno
+   wn
+   Source)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Disable certificate checking in the Java Control Panel Advanced
+   tab --> Security.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  The certificate used for the Discovery Management Portal expired
+   on June 9, 2013. Customers who have certificate checking enabled
+   may not be able to launch the Discovery Management Portal. The
+   following error may be seen;
+   
+   java.security.cert.CertificateRevokedException: Certificate has
+   been
+   revoked, reason: KEY_COMPROMISE, revocation date: Mon Jan 14
+   11:42:44
+   EST 2013, authority: CN=VeriSign Class 3 Code Signing 2009-2 CA,
+   OU=Terms of use at https://www.verisign.com/rpa (c)09,
+   OU=VeriSign
+   Trust Network, O="VeriSign, Inc.", C=US, extensions: {}
+   at com.sun.deploy.security.RevocationChecker.checkOCSP(Unknown
+   Source)
+   at com.sun.deploy.security.RevocationChecker.check(Unknown
+   Source)
+   at
+   com.sun.deploy.security.TrustDecider.checkRevocationStatus(Unkno
+   wn
+   Source)
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix for this APAR is contained in the following maintenance
+   packages:
+   | Fix Pack | 7.2.1-TIV-ITADDM-FP0005
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV45267
+   
+   
+ * REPORTED COMPONENT NAME
+   APP DEPENDENCY
+   
+   
+ * REPORTED COMPONENT ID
+   5724N5500
+   
+   
+ * REPORTED RELEASE
+   721
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-07-09
+   
+   
+ * CLOSED DATE
+   2013-07-31
+   
+   
+ * LAST MODIFIED DATE
+   2013-07-31
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   APP DEPENDENCY
+   
+   
+ * FIXED COMPONENT ID
+   5724N5500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R721 PSY
+   UP

@@ -1,0 +1,23 @@
+Title: IBM Possible Causes for RCLSTG Hangs - United States
+
+Text:
+RCLSTG TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This document describes possible causes for Reclaim Storage (RCLSTG) hanging. 
+
+RESOLVING THE PROBLEM
+At R530 and earlier releases, one possible cause of Reclaim Storage (RCLSTG) or RCLSTG *DBXREF hanging is that the one of the jobs that handles the maintenance of the DB cross reference files is hung up in a CNDW status. The jobs that handle the maintenance of the DBXREF files are QDBSRVXR and QDBSRVXR2. However, at R540, the normal status for QDBSRVXR and QDBSRVXR2 is CNDW. 
+
+Note: Another possible symptom is ODBC connections that hang with no errors.
+
+If the RCLSTG has been hanging for a long time at a particular percent (%) complete, it might be hung. Press the SYSRQS key and select Option 3 to examine the joblog for errors. If the process is not progressing, consider ending it with a SYSRQS Option 2. After the process has ended, determine the status of the QDBSRVXR and QDBSRVXR2 jobs by typing WRKACTJOB JOB(*SYS) or by typing WRKACTJOB and scrolling down to the bottom. You should find the two jobs. The normal status of these jobs is DEQW (RUN is okay sometimes, but it should not be in RUN status for a long time). At R530 and earlier, if it shows CNDW (condition wait), then that is most likely why the RCLSTG was hung.
+
+Note: You might see the XREF jobs hung up in CNDW if a user has tried to do a Reorganize Physical File Mbr (RGZPFM) on one of the XREF files in QSYS. A sample list of XREF files are: QADBCCST, QADBFCST, QADBFDEP, QADBIFLD, QADBKFLD, QADBPKG, QADBXMQT, QADBXRDBD, QADBXREF, QADBXSFLD, QADBXTRIGB, QADBXTRIGC, and QADBXTRIGD.
+
+To resolve this situation, do the following: 
+
+1 End the RCLSTG. 2 Type CHGIPLA STRRSTD(*YES). This sets the system to come up in restricted state at the next IPL. This is a one time change. The system will automatically reset this value during the IPL so you do not have to undo it. 3 Ensure the system (or the partition) is in normal mode. 4 Type PWRDWNSYS *IMMED RESTART(*YES) and press the Enter key. 5 When the system (or partition) comes back up, sign on as QSECOFR or its equivalent. 6 Type WRKACTJOB JOB(*SYS) and look at the QDBSRVXR and QDBSRVXR2 jobs. At first after the IPL they will be in a RUN status doing the normal tasks they do after an IPL. Usually after less than 10 minutes those jobs will go back to a DEQW status. 7 When the jobs are in DEQW status, type RCLSTG *DBXREF (or RCLSTG if you want to). 
+
+HISTORICAL NUMBER
+ 417797948

@@ -1,0 +1,27 @@
+Title: IBM Receive Access Denied error when trying to run Rose - United States
+
+Text:
+access; denied; launch; rose; start; error; privilege; privileges; folder; file; rights; 1120170; 115465735 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This technote will resolve the Access Denied error when trying to open IBM® Rational Rose® on Microsoft® Windows®. 
+
+CAUSE
+The user installing Rose was logged into the domain and installed on the local machine.
+
+RESOLVING THE PROBLEM
+There are two possibilities.
+
+
+ 1. Uninstall Rose and install while logged into the local machine with administrator privileges.
+    
+    or
+    
+ 2. Change the security settings on the directories and files for the Rose installation.  1. Right click on the Rose folder and click Properties. (The default location is C:\Program Files\Rational\Rose) 
+     2. Click on the Security tab and click Advanced. 
+     3. Select Inherit from parent the permission entries that apply to child objects. Include these with entries explicitly defined here. 
+     4. Select Replace permission entries on all child objects with entries shown here that apply to child objects. 
+     5. Click on Apply. 
+     6. Click on OK. 
+     7. Click on OK. 
+     8. Run Rose.

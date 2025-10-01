@@ -1,0 +1,70 @@
+Title: IBM EventReader Filters not applied to SQL select statement - United States
+
+Text:
+netcool; impact; netcool/impact; nci; eventreader; omnibus; omnibuseventreader; event; reader; like; uselikeoperator; operator; filter; filters; use; uselike; likeoperator TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The contents of the Filters in the EventReader are not being applied to the SQL statement being sent out by the EventReader 
+
+SYMPTOM
+The outgoing SQL statements are simply: 
+
+ * 
+ * 
+
+
+and ALL events in the ObjectServer are being captured and processed over and over again. 
+
+* except for Class 10500 events (Impact Self Monitoring synthetic events) - see TechNote "EventReader filters out Class 10500 event by default" [ link below]. 
+
+CAUSE
+If any of the Filters use a "like" operator - for example: 
+
+
+
+
+ * 
+
+
+Impact strips out the Filter to avoid any complication with other databases. This is a default protective action. 
+
+
+DIAGNOSING THE PROBLEM
+Impact fails to acquire the expected events from the ObjectServer or acquires events that are not supposed to be processed by Impact or repeated reprocesses events that have been marked as processed. Examine the SQL query being created by the Impact EventReader. 
+
+
+
+
+
+RESOLVING THE PROBLEM
+An option was added to the properties available to the EventReader that is not documented in the manuals listed in Knowledge Centre [link below]. To access it one edits the file: 
+
+
+
+
+ * 
+
+
+where [ImpactServerName] is the name of the ImpactServer (NCI by default) and [EventReaderName] is the lower-case name of the EventReader (for example: omnibuseventreader) and one adds the line: 
+
+ * 
+
+
+where, again, [EventReaderName] is the lower-case name of the EventReader (for example: omnibuseventreader). By default it is internally set to false, to avoid using it, by declaring the property and setting the value to true one is able to use the like operator in the EventReader's Filters. 
+
+N.B. In the APAR IZ54766 "COMPARISONS OF OBJECT SERVER FIELDS IN EVENT READER FILTERS" [ link below] and TechNote "Filter Analyzer and Filters comparing ObjectServer fields" [ link below] is the comment: 
+
+ * 
+
+
+To clarify: it does NOT refer to the use of the UseLikeOperator property. It only refers to the use of the ConsolidateFilters property. The UseLikeOperator property IS required for any EventReader containing any Filters that employ the "like" operator to ensure the filter is applied in the outgoing SQL select statement. 
+
+Additional information is available in the links below. 
+RELATED INFORMATION
+ IZ54766: COMPARISONS OF OBJECT SERVER FIELDS IN EVENT R [http://www-01.ibm.com/support/docview.wss?uid=swg1IZ54766]
+Knowledge Center [http://www.ibm.com/support/knowledgecenter]
+EventReader filters out Class 10500 event by default [http://www-01.ibm.com/support/docview.wss?uid=swg21459392]
+Filter Analyzer and Filters comparing ObjectServer fiel [http://www-01.ibm.com/support/docview.wss?uid=swg21675858]
+IZ73857: EVENTREADER FILTER ANALYZER THROWS ERROR WHENE [http://www-01.ibm.com/support/docview.wss?uid=swg1IZ73857]
+IZ35154: CANGES IN EVENTREADER FILTER CONDITIONS [http://www-01.ibm.com/support/docview.wss?uid=swg1IZ35154]
+IV02207: FILTER ANALYZER INCORRECTLY REPORTS AN ERROR W [http://www-01.ibm.com/support/docview.wss?uid=swg1IV02207]

@@ -1,0 +1,21 @@
+Title: IBM E300 and change in ownerpercentage to 100%. - United States
+
+Text:
+E700 etyp 90 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Why is value on OB-account not counterbooked on account for Change in Group Structure for etyp 90 Minority when company has changed ownerpercentage to 100%? 
+
+RESOLVING THE PROBLEM
+Since E700 or etyp 90 only looks for values in companies owned less than 100%, there will be no booking on account for Change in Group Structure in this automatic journal when ownerpercentage is changed to 100%.
+
+It is possible to get neither OB nor change booked, so that these accounts are incorrect, but the CB is correct. In menu Maintain / Configuration / Automatic journals / Control Tables - Acquisition calculations, open E700 and fill in the OB account as To account instead of blank.
+
+From account 1 From account 2 Sign To account (change) 
+
+OB account OB account - OB account
+
+ 
+
+HISTORICAL NUMBER
+ 1018003

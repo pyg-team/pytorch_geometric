@@ -1,0 +1,46 @@
+Title: IBM Security Bulletin: IBM Forms Server could be vulnerable to a denial of service attack (CVE-2014-8901) - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ IBM Forms Server utilizes the XML4C library which could be vulnerable to a denial of service attack when a specifically crafted IBM Form is loaded 
+maliciously. 
+
+VULNERABILITY DETAILS
+CVEID: CVE-2014-8901 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-8901]
+
+DESCRIPTION: 
+IBM XML4J and XML4C libraries contain a denial of service vulnerability when loading specially crafted content. This causes the CPU to consume 100% of available resources and creates serious performance degradation to the system. 
+
+CVSS Base Score: 4
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/99110 [https://exchange.xforce.ibmcloud.com/vulnerabilities/99110] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:L/Au:S/C:N/I:N/A:P) 
+
+AFFECTED PRODUCTS AND VERSIONS
+IBM Forms Server 4.0.*
+IBM Forms Server 8.0.*
+IBM Forms Server 8.1
+
+REMEDIATION/FIXES
+ 
+
+Product VRMF APAR Remediation IBM Forms Server 4.0.0.* LO84073 Download and apply update LO84073 for Forms 4.x from Fix Central [http://www.ibm.com/support/fixcentral/swg/quickorder?product=ibm/Lotus/Forms+Server&release=4.0.0.0&function=fixId&fixids=IBMFormsServer-400-WFS-LO84073] IBM Forms Server 8.0.0.* LO84073 Download and apply update LO84073 for Forms 8.x from Fix Central [http://www.ibm.com/support/fixcentral/swg/quickorder?product=ibm/Lotus/Forms+Server&function=fixId&fixids=IBMFormsServer-WFS-LO84073] IBM Forms Server 8.0.1.* LO84073 IBM Forms Server 8.1 LO84073 GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v2 Guide [http://www.first.org/cvss/v2/guide] 
+On-line Calculator v2 [http://nvd.nist.gov/CVSS-v2-Calculator] 
+
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] 
+
+CHANGE HISTORY
+ 14 April 2015: Original copy published 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.

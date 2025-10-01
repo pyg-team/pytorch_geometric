@@ -1,0 +1,31 @@
+Title: IBM Download for IBM Worklight V6.0.0 Fix Pack 2 and IBM Mobile Foundation V6.0.0 Fix Pack 2 - United States
+
+Text:
+IMF60; 6.0.0.2; fix pack DOWNLOADABLE FILES
+
+ABSTRACT
+ This update provides fixes and new features for the V6.0 release. 
+
+DOWNLOAD DESCRIPTION
+Note: A change that is introduced by this fix pack might negatively affect existing product function. Refer to APAR PI17825 [https://www.ibm.com/support/entdocview.wss?uid=swg1PI17825] for a description of the problem and corrective action. Evaluate this APAR for the potential impact in your environment.
+
+INSTALLATION INSTRUCTIONS
+See Installing fix packs for IBM Worklight and IBM Mobile Foundation [http://www.ibm.com/support/docview.wss?uid=swg27028172] for detailed installation instructions.
+
+DOWNLOAD PACKAGE
+The fix pack can be downloaded from either IBM Fix Central [http://www-933.ibm.com/support/fixcentral/] or developerWorks [http://www.ibm.com/developerworks/downloads/ws/worklight/] depending on the edition. 
+
+Edition Fix Pack IBM Worklight Consumer Edition Download [http://www-933.ibm.com/support/fixcentral/swg/quickorder?parent=ibm%7EOther%2Bsoftware&product=ibm/Other+software/IBM+Worklight+Consumer+Edition&release=6.0.0.0&platform=All&function=fixId&fixids=6.0.0-WL-WCE-FP002&includeSupersedes=0&source=fc] IBM Worklight Enterprise Edition Download [http://www-933.ibm.com/support/fixcentral/swg/quickorder?parent=ibm%7EOther%2Bsoftware&product=ibm/Other+software/IBM+Worklight+Enterprise+Edition&release=6.0.0.0&platform=All&function=fixId&fixids=6.0.0-WL-WEE-FP002&includeSupersedes=0&source=fc] IBM Mobile Foundation Consumer Edition Download [http://www-933.ibm.com/support/fixcentral/swg/quickorder?parent=ibm%7EOther%2Bsoftware&product=ibm/Other+software/IBM+Mobile+Foundation+Consumer+Edition&release=6.0.0.0&platform=All&function=fixId&fixids=6.0.0-WL-MFCE-FP002&includeSupersedes=0&source=fc] IBM Mobile Foundation Enterprise Edition Download [http://www-933.ibm.com/support/fixcentral/swg/quickorder?parent=ibm%7EOther%2Bsoftware&product=ibm/Other+software/IBM+Mobile+Foundation+Enterprise+Edition&release=6.0.0.0&platform=All&function=fixId&fixids=6.0.0-WL-MFEE-FP002&includeSupersedes=0&source=fc] 
+Documentation 
+
+ * IBM Worklight 6.0 product documentation [http://pic.dhe.ibm.com/infocenter/wrklight/v6r0m0/topic/com.ibm.help.doc/wl_home.html] 
+ * Getting Started with IBM Worklight 6.0 [http://www.ibm.com/developerworks/mobile/worklight/getting-started.html] 
+ * IBM Worklight Version 6.0.0 Fix Pack 1 Supports Apple iOS 7 [http://www.ibm.com/support/docview.wss?uid=swg27039574] 
+ * Fix list for IBM Worklight and IBM Mobile Foundation V6.0 [http://www.ibm.com/support/docview.wss?uid=swg27039801]
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Mobile- Speech and Enterprise Access IBM Mobile Foundation Upgrades AIX, Apple iOS, BlackBerry OS, Google Android, Linux, Mac OS X, Solaris, Windows 6.0.0.2, 6.0 Consumer, Enterprise 
+
+ [/support/docview.wss?uid=swg24036987&aid=1]Problems (APARS) fixed [/support/docview.wss?uid=swg24036987&aid=2]Problems (APARS) fixed
+PI09913 PI09770 PI09662 PI09569 PI09432 PI09370 PI09321 PI09315 PI09233 PI08960 PI08819 PI08789 PI08685 PI08601 PI08583 PI08388 PI08222 PI08189 PI08127 PI07983 PI07527 PI07217 PI07150 PI06961 PI06943 PI06828 PI06709 PI06652 PI06586 PI06568 PI06567 PI06519 PI06287 PI06251 PI06058 PI05976 PI05887 PI05823 PI05556 PI05503 PI05454 PI05447 PI05241 PI05147 PI05121 PM99731 PM99506 PM99472 PM99467 PM99361 PM98957 PM98941 PM98764 PM98294 PM98129 PM97820 PM97529 PM97251 PM97083 PM96338 PM93742

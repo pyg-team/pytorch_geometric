@@ -1,0 +1,109 @@
+Title: IBM LO52167: DJX AGENT "DJXEXECQUEUE2" CRASHED AND DOMINO SERVER RESTARTED 2 TIMES. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DUPLICATE OF ANOTHER APAR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  DJX database has a schedule agent "DJXExecQueue2" for
+   registration work which
+   is to read request documents and register it to Domino.   The
+   agent crashed and
+   domino server restarted two times.
+   
+   Memo for NSD:
+   Administrator user noticed the DJX agent issue. So, he used
+   command "tell amgr
+   run" command to run the agent.   However, the agent crashed.
+   
+   The agent can run usually normally, two crash issues occurred
+   suddenly.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *  This APAR is associated with SPR# YSAI84Q9MX.
+   This APAR is a duplicate of LO51005
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   LO52167
+   
+   
+ * REPORTED COMPONENT NAME
+   DOMINO SERVER
+   
+   
+ * REPORTED COMPONENT ID
+   5724E6200
+   
+   
+ * REPORTED RELEASE
+   850
+   
+   
+ * STATUS
+   CLOSED DUA
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-06-01
+   
+   
+ * CLOSED DATE
+   2010-12-06
+   
+   
+ * LAST MODIFIED DATE
+   2011-08-05
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

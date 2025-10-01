@@ -1,0 +1,149 @@
+Title: IBM JR47904: TASK SEARCH IN PROCESS PORTAL LEADS TO ERROR IN ORACLE JDBC DRIVER: ORA-01795: - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Version 8.5 Refresh Pack 5 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24037683]
+Download Version 8.0.1 Fix Pack 3 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24037734]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Oracle DB has a limitation of 1000 parameters in an sql 'IN'
+   clause. Having a huge number of tasks can lead to hitting that
+   limitation.
+   The SystemOut.log shows the following exception:
+   java.sql.SQLSyntaxErrorException: ORA-01795:
+   maximum number of expressions in a list is 1000
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  n/a
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Oracle limitation when searching for tasks in Process
+   
+   PROBLEM DETAILED DESCRIPTION:
+   Customer does a task search in the process portal and gets
+   "CWTBG0019E: Unexpected exception during execution".
+   This is caused by an error thrown from the oracle jdbc driver,
+   since the internally used jdbc statement contains more than
+   1000 parameters in the 'IN' clause: ORA-01795: maximum number
+   of expressions in a list is 1000.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The internal query construction logic was fixed to not cause the
+   problem anymore.
+   
+   FIX AVAILABILITY:
+   iFix for 8.0.1.1 is available on Fix Central, search for APAR
+   JR47904 at http://www.ibm.com/support/fixcentral/ [http://www.ibm.com/support/fixcentral/]
+   iFix for 8.0.1.2 is available on Fix Central, search for APAR
+   JR47904 at http://www.ibm.com/support/fixcentral/ [http://www.ibm.com/support/fixcentral/]
+   Fix is also targetted for inclusion in next fixpack for BPM
+   8.0.1
+   
+   When obtaining any of the above fixes, be sure to download the
+   accompanying readme, for itself, and any prerequisite fixes, and
+   review them thorougly.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR47904
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM ADVANCED
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9400
+   
+   
+ * REPORTED RELEASE
+   801
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-09-25
+   
+   
+ * CLOSED DATE
+   2014-01-15
+   
+   
+ * LAST MODIFIED DATE
+   2014-01-15
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   BPM STANDARD
+   
+   
+ * FIXED COMPONENT ID
+   5725C9500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R801 PSY
+   UP

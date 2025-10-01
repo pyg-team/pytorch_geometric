@@ -1,0 +1,26 @@
+Title: IBM How to monitor users logging on to DOORS - United States
+
+Text:
+monitor usage; logs; DOORS client login; KB6906 TECHNOTE (FAQ)
+
+QUESTION
+ How do you monitor the number of users who are logging on to IBM Rational DOORS? 
+
+CAUSE
+The administrative functions for DOORS does not provide a usage monitor capability
+
+ANSWER
+DOORS client usage can be monitored in the License server log or a DOORS database log.
+
+
+ * License Server log [http://www.ibm.com/support/docview.wss?uid=swg21405073]
+   DOORS clients connecting to the database are required to obtain a license when starting doors and return the license when closing doors. In environments using distributed Flexlm licensing 
+   this activity is monitored and recorded in the server log.
+   This logging does not impact DOORS database transactional performance.
+   
+   
+ * DOORS Database Server log [http://www.ibm.com/support/docview.wss?uid=swg21399206]
+   By default database logging is not turned on since it can impact performance.
+   You will need to to monitor client connections to a database server. 
+   
+   Warning: Enabling database logging puts additional overhead on transactions and will have an impact that could degrade the DOORS Database Server performance or the speed to complete a requested function. Therefore it is recommended to keep logging enabled only when necessary for limited diagnostic periods. Logging can be used for other database monitoring of client server transactions; therefore logging level values range from 1 to 6, with six being the most verbose logging. It is suggested to use the lowest level necessary since higher levels of logging put more overhead on transactions.

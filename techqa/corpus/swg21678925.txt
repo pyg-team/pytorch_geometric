@@ -1,0 +1,34 @@
+Title: IBM Seven Day Versus Five Day Calendar - United States
+
+Text:
+Calendar; shift; 5 day; 7 day; escalation; scheduler; work flow; apply; define; TPAEUI; TPAEESC TECHNOTE (FAQ)
+
+QUESTION
+ Which calendar is best to use if considering a seven versus a five day schedule? 
+
+CAUSE
+Depending on where the calendar is used different results can be seen. The results will be determined by how the shifts are defined.
+
+ANSWER
+When a 5 day calendar is created it looks like this. 
+
+Defined 5 day shift
+[/support/docview.wss?uid=swg21678925&aid=1] [/support/docview.wss?uid=swg21678925&aid=1]
+
+Keep in mind that a week is actually 7 days and not 5. Since the shift is to be applied every 5 days the calendar will end up looking like this:
+
+[/support/docview.wss?uid=swg21678925&aid=2] [/support/docview.wss?uid=swg21678925&aid=2]
+Since the shift pattern is every 5 days our calendar shows availability for every day. Based on this calendar set up you have a 9 hour shift for each day. If you wanted to have Saturday and Sunday not considered we would have to open those days, change the work period and then delete the days not needed. Without deleting those days, Maximo will indicate that you have labor available for those days. 
+
+If a 7 day pattern is used it will allow for you to define the days off ahead of time. The shift pattern is defined like this:
+
+[/support/docview.wss?uid=swg21678925&aid=3] [/support/docview.wss?uid=swg21678925&aid=3]
+
+
+The start day is Sunday with Saturday and Sunday identified as days off. At this point the shift can be applied to the Calendar.
+
+
+
+[/support/docview.wss?uid=swg21678925&amp;aid=4] 
+[/support/docview.wss?uid=swg21678925&aid=5] [/support/docview.wss?uid=swg21678925&aid=5] 
+Notice that Saturday and Sunday are blank and no further editing is available. Since there is no time defined for these days, they will not be considered when using this calendar in applications.

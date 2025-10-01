@@ -1,0 +1,70 @@
+Title: IBM ITCAMfT - RRT (T6) RPT Kerberos HTTP test script playback - high response time - United States
+
+Text:
+71RRT-RPTREC; 71RRT-RPTPLAY; 71RRT-RPTRPTG; 71RRT-RPTWV; 71RRT-RPTTS; 71RRT-RPTG; 71RRT-WV; 71RRT-TS; rpt; rational performance tester; kerberos TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ RPT V8.2 HTTP test scripts using Kerberos authentication are showing very high Overall Time in ITCAM for Transactions 7.3 TEP Robotic "Response Time breakdown" workspace views. Most of the unexpected time is reported as Client Time. 
+
+CAUSE
+T6 robotic agent is using a krb5.ini file provided by the RPT test script that uses UDP protocol by default
+
+ENVIRONMENT
+Windows RRT (T6) agent, RPT, Kerberos server and authentication
+
+DIAGNOSING THE PROBLEM
+Use Wireshark or similar network analyser tool on T6 robotic agent. 
+
+1. Capture the traffic by manually simulating the script test steps, using an internet browser.
+
+2. Compare the .pcap KRB Kerberos traffic with data captured from the T6 agent robotic playback of the RPT HTTP script.
+
+
+Look for the following error and information in the network capture from the T6 Robotic playback:
+
+KRB5 Error: krb5krb_err_response_too_big 
+
+- The above message is seen several times 
+
+- Very slow KRB5 packet traffic exchanges between source (T6 agent) and destination address (Kerberos server)
+
+
+RESOLVING THE PROBLEM
+The RRT T6 agent may need TCP (instead of UDP) protocol to be used to communicate with Kerberos server. 
+
+Recommendations: 
+
+- Check in Windows Registry on the RRT (T6) agent which parameters are set, if any. 
+
+- Check with the Kerberos server administration team to determine if the Kerberos server is using TCP protocol 
+
+- Add the line (udp_preference_limit = 1) into krb5.ini on the RPT Workbench system
+
+For example : 
+
+C:\Documents and Settings\Administrator\IBM\rationalsdp\workspace_rptse\Projects\krb5.ini file : [libdefaults] 
+
+ default_realm = xxxxxx 
+
+ default_tkt_enctypes = rc4-hmac des-cbc-md5 
+
+ default_tgs_enctypes = rc4-hmac des-cbc-md5 
+
+ udp_preference_limit = 1 
+
+- Export the script to the AMC (T3) agent so the new script is distributed to and played back on the RRT T6 agent. 
+
+- Check the results seen in ITM TEP GUI, "Response Time breakdown" workspace, after the script has been automatically played back several iterations. 
+
+For reference, 
+
+ udp_preference_limit = 1 : means to always use the TCP protocol 
+
+Extra details available at:
+
+http://www-01.ibm.com/support/knowledgecenter/SS7JFU_7.0.0/com.ibm.websphere.express.doc/info/exp/ae/tsec_kerb_create_conf.html?cp=SS7JFU_7.0.0%2F1-8-30-2-2-3-1-0 [http://www-01.ibm.com/support/knowledgecenter/SS7JFU_7.0.0/com.ibm.websphere.express.doc/info/exp/ae/tsec_kerb_create_conf.html?cp=SS7JFU_7.0.0%2F1-8-30-2-2-3-1-0]
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ itcam itcam for transactions rational performance tester itcam4tx itcamfortx

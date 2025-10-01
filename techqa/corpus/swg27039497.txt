@@ -1,0 +1,49 @@
+Title: IBM Ask the Experts Replay: JNDI Naming Configuration and Problem Determination - United States
+
+Text:
+wste_webcast; WSTE; Support Technical Exchange; education; presentation; webcast; STEwebcastDocument; JNDI; Naming; NameNotFoundException; lookup; indirect; direct; namespace; namestore.xml; EJB WEBCAST
+
+ABSTRACT
+ IBM Ask the Experts discussion about JNDI Naming Configuration and Problem Determination on 24 October 2013. 
+
+WebSphere Application Server includes support for the Java Naming and Directory Interface (JNDI). It provides a name server and JNDI implementation to allow access to resources. This webcast covers questions on using JNDI in WebSphere Application Server. 
+
+CONTENT
+Ask the Experts sessions are conducted in a question and answer format.
+
+
+The table below provides a time index (minutes:seconds) to the recording and describes the questions or topics discussed. You can fast forward to any question using the time index.
+A table containing the panel of experts is also included.
+
+To play or download the audio of this Ask the Experts session, see the Audio Section of this document.
+
+See the Related Information Section of this document for a list of documents referenced during the presentation.
+
+
+
+
+
+
+
+Ask the Experts session 
+24 October 2013 - 11:00 a.m. - 12:00 p.m. EDT 
+
+Time Questions asked 00:00 General introduction 03:39 Technical introduction 05:12 What are some common reasons why I might get a NameNotFoundException when looking up a data source? 11:26 What are the common troubleshooting steps that I can take to resolve a JNDI lookup problem? 16:50 What are the differences and advantages of doing a direct and indirect JNDI lookup? 24:15 How can I resolve EJB 3.x (Enterprise Bean) JNDI lookup failures? 28:35 When the size of the namestore.xml file in my environment grows rapidly, causing memory-related issues, how can I safely remove the entries in this file? 32:18 Open lines for live question and answer period 32:30 Are there any performance implications if using indirect lookup compared to direct lookup? 33:28 Closing remarks 35:45 End of Call 
+Panel of Experts: David Tiler WebSphere Application Server Level 2 Support Analyst Krishna Jaladhi WebSphere Application Server Level 2 Support Analyst Toan Nguyen WebSphere Application Server Level 2 Support Analyst Randal Anders WebSphere Application Server Level 2 Support Analyst Al Gilchrist WebSphere Application Server Level 2 Support Analyst 
+
+
+PRESENTATION
+[http://www.ibm.com/i/v16/icons/weblecture.gif]WSTE-10242013-AskTheExperts-JNDI_Naming_configuration_and_problem_determination.pdf [/support/docview.wss?uid=swg27039497&aid=2]WSTE-10242013-AskTheExperts-JNDI_Naming_configuration_and_problem_determination.pdf [/support/docview.wss?uid=swg27039497&aid=1] 
+
+
+
+Get Adobe Reader [http://www.adobe.com/products/acrobat/readstep2.html] to view PDF
+
+
+AUDIO
+[http://www.ibm.com/i/v16/icons/aud.gif]To replay the recording of this conference call, click on Download Audio [http://public.dhe.ibm.com/software/websphere/techexchange/October-24-2013-Jaladhi-Tiler-Nguyen-Anders-Gilchrist.mp3] (audio in MP3 format). Right-click and select Save As to store the file on your local computer for later playback. Remember that you can fast forward to any question using the time index.
+
+
+
+RELATED INFORMATION
+ WebSphere Support Technical Exchange [http://www.ibm.com/software/websphere/webcast]

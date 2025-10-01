@@ -1,0 +1,178 @@
+Title: IBM HD78103: DRAFTING (GENDRAFT) / FONT SIZE NOT TAKEN FROM STANDARDS - United States
+
+Text:
+AIX SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Drafting (GenDraft) / Font size not taken from
+   Standards
+   .
+   Scenario:
+   1 - Open CATIA in admin mode
+   2 - Navigate to
+   Tools / Standards / Drafting / ISO / Styles /
+   Length/Distance
+   Default / Font
+   3 - Change BOLD = Yes, Underline = Yes, Color =
+   Green and Size = 14
+   4 - File / New / Part and create a simple pad
+   5 - File / New / Drawing and select ISO format.
+   6 - Take a Front View of the pad
+   7 - Select Dimensions and take a measurement
+   from the front-view.
+   Result is OK ,e.g. Green, underlined, bold text at
+   14mm size.
+   8 - Tools / Options / General / Parameters and
+   Measure / Units
+   and change Length to measure in Inches (inch)
+   9 -Redo steps 4-7
+   .
+   Problem:Result is KO for Font Size
+   .
+   Expected result:Result should be OK for Font Size.
+   .
+   .
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Drafting (GenDraft) / Font size not taken from Standards
+   Drafting (GenDraft) / Font size not taken from
+   Standards
+   .
+   Scenario:
+   1 - Open CATIA in admin mode
+   2 - Navigate to
+   Tools / Standards / Drafting / ISO / Styles /
+   Length/Distance
+   Default / Font
+   3 - Change BOLD = Yes, Underline = Yes, Color =
+   Green and Size = 14
+   4 - File / New / Part and create a simple pad
+   5 - File / New / Drawing and select ISO format.
+   6 - Take a Front View of the pad
+   7 - Select Dimensions and take a measurement
+   from the front-view.
+   Result is OK ,e.g. Green, underlined, bold text at
+   14mm size.
+   8 - Tools / Options / General / Parameters and
+   Measure / Units
+   and change Length to measure in Inches (inch)
+   9 -Redo steps 4-7
+   .
+   Problem:Result is KO for Font Size
+   .
+   Expected result:Result should be OK for Font Size.
+   .
+   .
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  THIS PROBLEM WILL BE FIXED ON CATIA VERSION
+   5 RELEASE 19 SP02 LEVEL.
+   Incident Diagnosis
+   .
+   Font size not taken from Standards
+   .
+   Correction Explanation
+   .
+   Inch unit not correctly taken into account.The
+   problem has been corrected now
+   .
+   .
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   HD78103
+   
+   
+ * REPORTED COMPONENT NAME
+   CATIA V5 NT>XP
+   
+   
+ * REPORTED COMPONENT ID
+   569151000
+   
+   
+ * REPORTED RELEASE
+   518
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-09-22
+   
+   
+ * CLOSED DATE
+   2008-10-01
+   
+   
+ * LAST MODIFIED DATE
+   2008-11-07
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CATIA V5 NT>XP
+   
+   
+ * FIXED COMPONENT ID
+   569151000
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R519 PSN SP51902
+   UP08/11/07 I 1000

@@ -1,0 +1,73 @@
+Title: IBM Upgrade to Maximo for Transportation 7.5 fails - United States
+
+Text:
+Transportation; V7500_06; ORA-00933; special characters TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Upgrading to Maximo for Transportation 7.5.1 can fail in patch V7500_06.class with error:
+
+java.sql.SQLException: ORA-00933: SQL command not properly ended
+
+
+SYMPTOM
+Upgrade to Maximo for Transportation 7.5 or 7.5.1 can fail in patch V7500_06. Review UpdateDB log ...\maximo\tools\maximo\log:
+
+-- Calling the class : psdi.transportation.en.V7500_06 Fri Jun 17 03:29:51 PDT 2016
+-- -------------------------------------------------------------------
+java.sql.SQLException: ORA-00933: SQL command not properly ended
+
+at oracle.jdbc.driver.SQLStateMapping.newSQLException(SQLStateMapping.java:74)
+at oracle.jdbc.driver.DatabaseError.newSQLException(DatabaseError.java:131)
+at oracle.jdbc.driver.DatabaseError.throwSqlException(DatabaseError.java:204)
+at oracle.jdbc.driver.T4CTTIoer.processError(T4CTTIoer.java:455)
+at oracle.jdbc.driver.T4CTTIoer.processError(T4CTTIoer.java:413)
+at oracle.jdbc.driver.T4C8Oall.receive(T4C8Oall.java:1034)
+at oracle.jdbc.driver.T4CStatement.doOall8(T4CStatement.java:183)
+at oracle.jdbc.driver.T4CStatement.executeForDescribe(T4CStatement.java:780)
+at oracle.jdbc.driver.T4CStatement.executeMaybeDescribe(T4CStatement.java:855)
+at oracle.jdbc.driver.OracleStatement.doExecuteWithTimeout(OracleStatement.java:1186)
+at oracle.jdbc.driver.OracleStatement.executeQuery(OracleStatement.java:1377)
+at oracle.jdbc.driver.OracleStatementWrapper.executeQuery(OracleStatementWrapper.java:387)
+at psdi.configure.Util.rowFound(Util.java:15062)
+at psdi.transportation.en.V7500_06.insertSigOption(V7500_06.java:639)
+at psdi.transportation.en.V7500_06.init(V7500_06.java:66)
+
+
+
+CAUSE
+The most likely cause is the database contains data that is unexpected and not able to be processed by Transportation patch V7500_06.class.
+
+ENVIRONMENT
+Maximo for Transportation 7.5/7.5.1; Oracle
+
+DIAGNOSING THE PROBLEM
+Run this SQL and review the results:
+
+Select Distinct groupname From applicationauth Where app In ('ASSET', 'ASSETCAT', 'CONTPURCH', 'INVENTOR', 'INVOICE', 'ITEM', 'JOBPLAN', 'LABREP', 'LOCATION', 'MASTERPM', 'MULTISITE', 'PM', 'PO', 'PR', 'QUICKREP', 'PERSON', 'RECEIPTS', 'RFQ', 'ROUTES', 'WORKMAN', 'WOTRACK') Order By 1, 2, 3 ;
+
+Review the query results for values that contain special characters. Special characters might not be recognized or are not able to be processed by UpdateDB and/or SQL. In particular search for any instances of an apostrophe or single quote. For example:
+BOGUE'S WELDING
+
+SQL is unable to distinguish between an apostrophe and a single quote. Consequently an apostrophe can be interpreted as a single quote, which denotes a SQL string terminator. And so this SQL statement:
+
+select 1 from applicationauth where app = 'WOTRACK' and optionname = 'PLUSCHKTL' and groupname = 'BOGUE'S WELDING' ;
+
+is incorrectly interpreted as this string with some leftover garbage:
+
+select 1 from applicationauth where app = 'WOTRACK' and optionname = 'PLUSCHKTL' and groupname = 'BOGUE' ;
+
+The leftover garbage - consisting of the characters S WELDING' - cannot be interpreted by SQL and so causes the statement and UpdateDB to fail.
+
+
+RESOLVING THE PROBLEM
+Remove any embedded apostrophes (single quotes) as follows:
+
+Update applicationauth Set groupname='BOGUES WELDING' Where groupname='BOGUE''S WELDING' ;
+
+If desired, when UpdateDB completes, reset the values with this SQL:
+
+Update applicationauth Set groupname='BOGUE''S WELDING' Where groupname='BOGUES WELDING' ;
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Systems and Asset Management Maximo for Transportation Not Applicable 7.5 Systems and Asset Management Control Desk 7.5

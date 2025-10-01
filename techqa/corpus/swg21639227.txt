@@ -1,0 +1,52 @@
+Title: IBM How do I change the time interval in which tag manager runs? - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Tag Manager is running too often and is causing performance issues. 
+
+CAUSE
+By default tag manager is set to run every 10 seconds.
+
+RESOLVING THE PROBLEM
+By default the tag manager is set to run every 10 seconds. To change this setting you will need to do the following depending on the version:
+
+For version 9.0 and newer:
+The settings for Tag Manager can be found within the engine.xml file engine.xml location: $MAD_HOMEDIR/inst/{inst_name}/conf/engine.xml
+
+For versions 9.2 and newer:
+The file must be created. Simply create a new file called com.initiate.server.tag.cfg in the $MAD_HOMEDIR/inst/{inst_name}/conf/ directory. The default configuration settings for Tag Manager should be:
+
+threadCount=1
+chunkSize=500
+multiEngine=true
+managerSleepTime=1000
+daemonSleepTime=10000
+syncSleepTime=10000
+maxRelatedMembers=-1
+
+The above configuration will have the tag manager running every 10 seconds which is the default. To change the run time you will modify the daemonSleepTime. This is done in milliseconds.
+
+Below is a definition of the fields:
+
+multiEngine - This is a true/false setting. 
+
+If set to true only if there are multiple hub engine instances in the deployment. This flag enables a process to sync up possible changes to tag definitions. In a multiEngine scenario, a tag definition could come through engine A and flow through the database. when multiEngine is true, the tag engine running on engine B will check the database and pick up the changes to the tag definition,
+
+syncSleepTime - Time is stored in milliseconds - default 10000
+This only used if multiEngine is true. the time to wait between checks of the database to see if tag metadata has been change by another engine process.
+
+threadCount - This is a number value.
+This determines the number of tag types that can process in parallel on the engine
+
+managerSleepTime Time is stored in milliseconds - default 1000 
+This is how long the manager will sleep if ALL TagDaemons have determined there is no work to do before checking again.
+
+daemonSleepTime - Time is stored in milliseconds - default 10000
+This the time an individual TagDaemon thread will wait between trying to execute.
+
+chunkSize - This is a number value.
+This is the maximum number of tasks that will be processed by a given TagDaemon is in a single processing execution.
+
+The engine must be restarted in order for the new changes to take effect.

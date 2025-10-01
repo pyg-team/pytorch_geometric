@@ -1,0 +1,12 @@
+Title: IBM PureApplication Software Release Note: Deployments in a multisystem environment might fail if you misconfigure an IP group, deploy a pattern, correct the IP group configuration, and then deploy another pattern - United States
+
+Text:
+sw2101rlsnotes RELEASE NOTES
+
+ABSTRACT
+ If you misconfigure an IP group in a multisystem environment, deploy a pattern, correct the issue with the configuration, and then deploy another pattern, a deployment might fail with this error: "CWZIP1900E An internal error The virtual machine cannot be deployed because the Mac address is not found for the ip address. occurred. For details, see the log/trace files." 
+
+CONTENT
+Problem: If you misconfigure an IP group in a multisystem environment, such as setting it to the wrong VLAN, deploy a pattern, correct the issue with the configuration, and then deploy another pattern, a deployment might fail with this error: "CWZIP1900E An internal error The virtual machine cannot be deployed because the Mac address is not found for the ip address. occurred. For details, see the log/trace files."
+
+Resolution:Look for the virtual machine that has two IP addresses, but one of the IP addresses is missing a MAC address. Note the IP address that has a MAC address and delete the deployment. Then, delete the IP address from the associated IP group and add it back. Deploy the pattern again.

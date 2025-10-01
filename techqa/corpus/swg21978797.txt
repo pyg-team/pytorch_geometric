@@ -1,0 +1,52 @@
+Title: IBM While attempting to start Portal 8.5 we see the following error, ADML0004E in the startServer.log - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ While attempting to start Portal 8.5 we see the following error, ADML0004E in the startServer.log 
+
+SYMPTOM
+After installing Portal 8.5 you attempt to start Portal and see nothing logged to the SystemOut.log and the following logged to the startServer.log.... 
+
+[3/1/16 14:54:27:390 CST] 00000000 AdminTool A ADMU3100I: Reading
+configuration for server: WebSphere_Portal
+[3/1/16 14:54:27:415 CST] 00000000 ImplFactory W WSVR0072W:
+Ignoring undeclared override of interface,
+com.ibm.websphere.cluster.topography.DescriptionManager, with
+implementation,
+com.ibm.ws.cluster.propagation.bulletinboard.BBDescriptionManager
+[3/1/16 14:54:27:727 CST] 00000000 ModelMgr I WSVR0801I:
+Initializing all server configuration models
+[3/1/16 14:54:30:016 CST] 00000000 WorkSpaceMana A WKSP0500I:
+Workspace configuration consistency check is disabled.
+[3/1/16 14:54:30:422 CST] 00000000 LaunchCommand A ADML0004E: An
+exception occurred when attempting to expand variable
+${SERVER_LOG_ROOT}/native_stderr.log
+com.ibm.wsspi.runtime.variable.UndefinedVariableException: Undefined
+variable SERVER_LOG_ROOT
+at
+com.ibm.ws.runtime.component.VariableMapImpl.expand(VariableMapImpl.java
+:373)
+at
+com.ibm.ws.runtime.component.VariableMapImpl.expand(VariableMapImpl.java
+:325)
+
+
+CAUSE
+In this case the problem was determined that the sys admin had installed Portal and turned it over to the developer. However, the developer did not have the proper file system permissions. Specifically to this file...
+
+/IBM/Portal/wp_profile/config/cells/MyCell/nodes/MyNode/ser
+vers/WebSphere_Portal/variables.xml
+
+Because the user starting Portal could not read this file the startup could not determine the location of where to write the SystemOut.log so the startup immediately failed.
+
+
+ENVIRONMENT
+Portal 8.5 
+
+Windows
+
+
+RESOLVING THE PROBLEM
+Ask sys admin to correct the OS permissions issue. Once the user as the proper permissions to read the files in the Portal file system then the Portal startup should not have these problems.

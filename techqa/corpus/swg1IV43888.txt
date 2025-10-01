@@ -1,0 +1,168 @@
+Title: IBM IV43888: STACKOVERFLOWERROR DURING STORAGE OF CISCO ENTITYMIB DISCOVERY DATA - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Discover of a particular Cisco device results in the following
+   StackOverflowError and may also cause an OutOfMemory condition:
+   
+   2013-05-22 14:46:14,732 TopologyManager [RMI TCP
+   Connection(422)-10.2.3.4]  ERROR engine.TopologyManagerEngine -
+   [TopologyStorageEngine.E.7] An error occurred, a request to
+   persist an object did not finish. The specific cause of the
+   failure should have been logged earlier.
+   java.rmi.RemoteException: [TopologyStorageEngine.E.8] An
+   unexpected error, java.lang.StackOverflowError, occurred.;
+   nested exception is:
+           java.lang.StackOverflowError
+   
+   Lower within the stacktrace, the following lines can be found
+   repeating many times:
+   
+   at
+   com.collation.topomgr.jdo.topology.phys.physpkg.PhysicalFrameJdo
+   .generat
+   eDisplayNameWithNamingRule0(PhysicalFrameJdo.java:315)
+           at
+   com.collation.topomgr.jdo.topology.phys.physpkg.PhysicalFrameJdo
+   .generat
+   eDisplayName(PhysicalFrameJdo.java:296)
+           at
+   com.collation.topomgr.jdo.topology.phys.physpkg.PhysicalFrameJdo
+   .generat
+   eDisplayNameWithNamingRule0(PhysicalFrameJdo.java:315)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Discover of a particular Cisco device results in the following
+   StackOverflowError and may also cause an OutOfMemory condition:
+   
+   2013-05-22 14:46:14,732 TopologyManager [RMI TCP
+   Connection(422)-10.2.3.4]  ERROR engine.TopologyManagerEngine -
+   [TopologyStorageEngine.E.7] An error occurred, a request to
+   persist an object did not finish. The specific cause of the
+   failure should have been logged earlier.
+   java.rmi.RemoteException: [TopologyStorageEngine.E.8] An
+   unexpected error, java.lang.StackOverflowError, occurred.;
+   nested exception is:
+           java.lang.StackOverflowError
+   
+   Lower within the stacktrace, the following lines can be found
+   repeating many times:
+   
+   at
+   com.collation.topomgr.jdo.topology.phys.physpkg.PhysicalFrameJdo
+   .generat
+   eDisplayNameWithNamingRule0(PhysicalFrameJdo.java:315)
+           at
+   com.collation.topomgr.jdo.topology.phys.physpkg.PhysicalFrameJdo
+   .generat
+   eDisplayName(PhysicalFrameJdo.java:296)
+           at
+   com.collation.topomgr.jdo.topology.phys.physpkg.PhysicalFrameJdo
+   .generat
+   eDisplayNameWithNamingRule0(PhysicalFrameJdo.java:315)
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix for this APAR is contained in the following maintenance
+   packages:
+   | Fix Pack | 7.2.1-TIV-ITADDM-FP0006
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV43888
+   
+   
+ * REPORTED COMPONENT NAME
+   APP DEPENDENCY
+   
+   
+ * REPORTED COMPONENT ID
+   5724N5500
+   
+   
+ * REPORTED RELEASE
+   721
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-06-07
+   
+   
+ * CLOSED DATE
+   2013-08-09
+   
+   
+ * LAST MODIFIED DATE
+   2013-08-09
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   APP DEPENDENCY
+   
+   
+ * FIXED COMPONENT ID
+   5724N5500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R721 PSY
+   UP

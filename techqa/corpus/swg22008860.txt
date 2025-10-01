@@ -1,0 +1,46 @@
+Title: IBM Attempt to save a new report in RPE Web App results in http 400 error - United States
+
+Text:
+Web Application; Document Generation; Document Builder TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Creating a new report in IBM Rational Publishing Engine (RPE) Web App fails with "Error creating report.:POST http://servername:8080/dgaas/report/change [http://servername:8080/dgaas/report/change] returned a response status of 400 Bad Request" which is also recorded in rpeng.log located in Tomcat temp directory. 
+
+SYMPTOM
+In rpedgaas.log, the following error is logged: 
+
+CRRPE2039I Downloading file http://servername:8080/rpeng/api/templates/5?action=download to C:\apache-tomcat-7.0.59\temp\RPE\temp\url_d6593e5b-1900-45ef-af82-635dce9b54c4.tmp. Could not load template http://servername:8080/rpeng/api/templates/5?action=download [http://servername:8080/rpeng/api/templates/5?action=download]. Error is: 
+
+<error in opening zip file>
+CRRPE3005E The template could not be loaded. error in opening zip file
+
+
+CAUSE
+It is most likely caused by version incompatibility of Tomcat or Java Runtime Environment (JRE).
+
+
+ENVIRONMENT
+Rational Publishing Engine Web App (aka. Document Builder) running on Apache Tomcat
+
+
+
+RESOLVING THE PROBLEM
+Use IBM Java Runtime Environment (JRE) embedded in RPE installation for running Apache Tomcat. For example, create/modify setenv.bat file in [Tomcat_Inst_Dir]\bin\, and add following line 
+
+set "JRE_HOME=C:\Program Files (x86)\IBM\Rational\Publishing Engine\jre"
+
+
+If RPE is not installed, try to find other IBM JRE installed in this server. As there is no standalone product of IBM JRE for Windows, you may need to use IBM JRE which is bundled with other IBM application (eg. IBM Websphere Application Server, Installation Manager, Eclipse). IBM JRE version 1.7.0 (32-bit or 64-bit) with the latest fixpack is preferable. Oracle JRE often does not work for running Web App. 
+
+ 
+
+If problem persists, upgrade Tomcat to version 8. 
+
+RELATED INFORMATION
+ Java Runtime Environment (JRE) [https://www.ibm.com/support/knowledgecenter/SS6RHZ_2.1.2/com.ibm.rational.pe.install.doc/topics/c_java.html]
+
+
+
+
+PRODUCT ALIAS/SYNONYM
+ RPE

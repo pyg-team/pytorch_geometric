@@ -1,0 +1,40 @@
+Title: IBM Specific concerns regarding Report Performance in TRIRIGA - United States
+
+Text:
+TRIPERFORMANCE; TRIBIRT; birt; report; performance; TRIRIGA; best; practice TECHNOTE (FAQ)
+
+QUESTION
+ What are the main topics I need to take into consideration when having report performance issues, or planning on report performance for my system? 
+
+ANSWER
+The details at the bottom of this technote serve to supplement the following information from Report Performance [https://www.ibm.com/developerworks/community/wikis/home?lang=en#!/wiki/IBM%20TRIRIGA1/page/Report%20performance]: 
+
+There are multiple solutions for accessing and presenting the data maintained by the TRIRIGA system. Simple tabular reports, queries, and graphs that combine data from multiple records into a single presentation can be produced using the TRIRIGA Report Manager.
+
+
+If you need a multiple record presentation that is beyond the capabilities of the TRIRIGA Report Manager, you can use the TRIRIGA Advanced Reporting feature. TRIRIGA uses Eclipse Business Intelligence Reporting Tools (BIRT) as the enabling technology for the Advanced Reporting feature.
+
+
+When isolated application processes seem slow, performance log analysis should be conducted for that process, and if slow running queries are identified as the primary bottleneck, the recommendations inIBM TRIRIGA 3.5.x Best Practices for System Performance [https://www.ibm.com/developerworks/community/wikis/home?lang=en#!/wiki/IBM%20TRIRIGA1/page/Best%20Practices%20for%20System%20Performance]can help with tuning.
+
+
+See the TRIRIGA Log Analysis [https://www.ibm.com/developerworks/community/groups/service/html/communityview?communityUuid=9e3a5b9d-6a06-4796-a6c1-5137b626e39c#fullpageWidgetId=W89a8af160e64_4167_a047_b5bc553dcaf4&file=873f1736-ee6f-42e5-b13e-58aa46b3552d]presentation or the Workflow Analysis Utility [https://www.ibm.com/developerworks/community/wikis/home?lang=en#!/wiki/IBM%20TRIRIGA1/page/Workflow%20Analysis%20Utility]for more information as well. 
+
+ 
+
+
+
+
+
+
+In addition, it is also strongly recommend that you set a separate JVM for running BIRT Reports, that will free the main process server of this task. Below is a summary of it. You can look at the TRIRIGA manual for further information. 
+
+BIRT Report Offloading 
+
+You can specify that BIRT reports be offloaded and processed by a separate BIRT process server, which is a separate TRIRIGA server that is configured as the BIRT process server. If you do not configure a separate process server, the BIRT report processing is done locally. 
+
+The following system properties are used to enable BIRT report offloading: 
+
+ * BIRT_PROCESS_SERVER_HOST_NAME (Set this in all servers pointing to the BIRT process server) 
+ * BIRT_PROCESS_SERVER_PORT (This is the port all servers will point to) 
+ * BIRT_PROCESS_SERVER_LISTENING_PORT (This is set only in the BIRT process server and tells "Hey, I am listening to this port, send me your reports here")

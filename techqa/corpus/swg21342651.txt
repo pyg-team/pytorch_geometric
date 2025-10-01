@@ -1,0 +1,38 @@
+Title: IBM What is the difference between generateCredentials and generateTrustedCredentials method? - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ In the Custom Authentication provider, what is the difference between generateCredentials and generateTrustedCredentials methods and when are they called? 
+
+ANSWER
+When is generateTrustedCredential method called? - Cognos Connection invokes this method on several occasions. 
+
+The most popular place is the My Preferences >> Personal tab to create or renew the user credentials. For specifics on return values see the javadocs.
+
+When is generateCredential method called? - When assigning SSO to a database based on a namespace. 
+
+This is done when you select "An external namespace" for "Select the type of authentication to use, whether a password is required and whether to create a signon" when setting up a datasource. For specifics on return values see the javadocs. 
+
+An other place where credentials based on the User are generated is when a Job or Reports are being Scheduled. For the current user who created the scheduling item, the credentials are internally generated and written with the object to the Content Store. 
+
+This Credential is not Writable by SDK or by Anyone else, and is only written by the Internal code of the IBM Cognos Components. 
+
+This is the main reason that those User's are required to Renew the Credentials, when changing their password in the Authentication Source, before running any Scheduled Item in IBM Cognos. 
+
+For the IBM Cognos 10 software renewing credentials for Scheduled Items like Jobs or Reports in the Content Store is no longer needed, as that is looked after now by the Internal Components of Cognos 10 automatically.
+
+Related Documents:
+
+Custom Authentication Provider documentation
+JavaDocs <install location>\sdk\java\AuthenticationProvider\javadoc
+
+RELATED INFORMATION
+# [\]Chapter2 Custom Authentication Provider documentationCustom Authentication Provider JavaDocs <install location>\sdk\java\AuthenticationProvider\javadoc
+
+
+ 
+
+HISTORICAL NUMBER
+ 1037836

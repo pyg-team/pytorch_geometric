@@ -1,0 +1,18 @@
+Title: IBM Processor Value Unit(PVU) in connection with VMWare - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Our WMS systems run on VMware and virtual capacity with PVU entitlement. Please clarify if:
+
+A) VMWARE affinity rules can be used as the controlling mechanism for assigning virtual nodes to physical hardware
+
+B) Or should we set up dedicated VMware clusters for this purpose
+
+
+ANSWER
+IBM uses ILMT to count the core involved with the use of any Program. This will count the physical Core associated with all environments that run the program in the period monitored. The use of VMware with or without affinity rules does not alter this statement. If the Customer sets up a DRS group to relegate the operating environments within a cluster where our Program(s) are run to specific hardware/server(s), it should work. Because the outcome is that we are only ever active on that hardware. Alternatively, Customer could limit the operating environments to a maximum core count in a sub capacity format and also limit the license requirement. Note that dispatching different physical core does not inflate the core count. We are also cluster agnostic. We count the maximum configurable dispatched core. If they don't want to or cannot limit the core available to the environment then using affinity to slave the operating environment to a physical server may be useful to them.
+
+Reference link related to IBM PVU :
+https://www-01.ibm.com/software/passportadvantage/pvu_licensing_for_customers.html [https://www-01.ibm.com/software/passportadvantage/pvu_licensing_for_customers.html]

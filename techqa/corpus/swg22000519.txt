@@ -1,0 +1,20 @@
+Title: IBM OpenPagesのグローバル検索の検索結果を洗練する - United States
+
+Text:
+ 技術情報(FAQS)
+
+質問
+ OpenPagesのグローバル検索機能の検索結果を洗練するにはどうしたらよいですか？ 
+
+回答
+関連情報にあるYouTubeビデオをご覧ください。
+
+関連情報
+ VIDEO: Refining Search Results in OpenPages [https://www.youtube.com/watch?v=MERPxki25l8]
+An US English translation is available [http://www.ibm.com/support/docview.wss?uid=swg22000343]
+
+
+
+
+HISTORICAL NUMBER
+ 2000343

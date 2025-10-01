@@ -1,0 +1,36 @@
+Title: IBM WebSphere Adapter for JDBC receives WTRN0059E Errors Associated with a java.lang.NullPointerException - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ WebSphere Adapter for JDBC receives many error messages in the trace.log file during inbound processing. 
+
+SYMPTOM
+The following error messages can be seen in trace.log during the inbound processing:
+
+
+Message: BBOO0221W: WTRN0059E: Exception caught from rollback operation 
+during recovery of transaction {XidImpl: formatId(c3c20186 
+Õ), gtrid_length(36), bqual_length(54), 
+Õdata(124e9897d8c710aa000000b300016b12c7e1be8934166ca100000ca40000000100
+000000124e9897d8c710aa000000b300016b12c7e1be8934166ca100000ca 
+Õ40000000100000000000000010000015400000d6f000000000001)}: 
+java.lang.NullPointerException 
+------- 
+
+
+Eventually the following exception appears:
+ExtendedMessage: BBOO0220E: J2CA0045E: Connection not available while invoking method createOrWaitForConnection for resource jdbc/
+
+
+CAUSE
+This can be caused by changing the Event status in the Event table from 0 to 1 which is not a supported operation. The status value of zero (0) indicates that it is ready for the adapter to process and a value of 1 indicates that the event has been delivered to an export. 
+
+Changing the event status manually fromzero (0) to one (1) will impact the normal adapter functionality, depending on whether it's changed before the adapter starts or while it's processing. If the status is changed before the adapter starts up, the adapter will delete the event on start up assuming that the event was already delivered. 
+
+If it happens during processing, the adapter may either not process the record at all or have an inconsistent state if the status change happens after the adapter has picked up the event for processing.
+
+
+RESOLVING THE PROBLEM
+This inconsistent state can result in unwanted side effects until the in flight data is cleaned from the system. In a production environment, this can result in significant delays and data loss. It is therefore highly recommended to not manually edit the status of events in the adapter event table while the adapter is processing.

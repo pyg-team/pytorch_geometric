@@ -1,0 +1,55 @@
+Title: IBM Security Bulletin:  Vulnerability in Diffie-Hellman ciphers affects IBM Rational Connector for SAP Solution Manager (CVE-2015-4000) - United States
+
+Text:
+security; vulnerability; psirt; CVE-2015-4000 SECURITY BULLETIN
+
+SUMMARY
+ The Logjam Attack on TLS connections using the Diffie-Hellman (DH) key exchange protocol affects the IBM Rational Connector for SAP Solution Manager. You should configure the product to eliminate these weak ciphers. 
+
+VULNERABILITY DETAILS
+CVE-ID: CVE-2015-4000 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-4000]
+Description: The TLS protocol could allow a remote attacker to obtain sensitive information, caused by the failure to properly convey a DHE_EXPORT ciphersuite choice. An attacker could exploit this vulnerability using man-in-the-middle techniques to force a downgrade to 512-bit export-grade cipher. Successful exploitation could allow an attacker to recover the session key as well as modify the contents of the traffic. This vulnerability is commonly referred to as "Logjam".
+
+CVSS Base Score: 4.3
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/103294 [https://exchange.xforce.ibmcloud.com/vulnerabilities/103294]for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:M/Au:N/C:P/I:N/A:N)
+
+AFFECTED PRODUCTS AND VERSIONS
+Rational SAP Connector 4.0.0.x (4.0.0.1, 4.0.0.2, 4.0.0.3, 4.0.0.4, 4.0.0.5, 4.0.0.6, 4.0.0.7)
+
+REMEDIATION/FIXES
+Upgrade to Rational SAP Connector 4.0.0.8 [https://jazz.net/downloads/sap-connector/releases/4.0.0.8].
+
+WORKAROUNDS AND MITIGATIONS
+If your product is deployed on IBM WebSphere® Application Server (WAS), you should apply the WAS remediation/mitigation according to the bulletin published by WAS. Please monitor the IBM Product Security Incident Response Blog [https://www.ibm.com/blogs/psirt] for WAS bulletins.
+
+To disable vulnerable ciphers on Tomcat: 
+
+ 1. Open the server.xml file located in Tomcat conf directory 
+ 2. Locate the <Connector port="9443" section 
+ 3. Modify the <Connector> element, ciphers property to use this list: 
+
+ * 
+
+
+Note: To be able to use the 256 bit AES Ciphers, it is necessary to install the JCE Unlimited Strength Jurisdiction Policy Files, which can be found here [http://www.oracle.com/technetwork/java/javase/downloads/index.html]. 
+
+You should verify applying this configuration change does not cause any compatibility issues. Not disabling the weak ciphers will expose yourself to the attack described above. IBM recommends that you review your entire environment to identify other areas where you have enabled the weak ciphers and take appropriate mitigation and remediation actions. GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v2 Guide [http://www.first.org/cvss/v2/guide] 
+On-line Calculator v2 [http://nvd.nist.gov/CVSS-v2-Calculator] 
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] ACKNOWLEDGEMENT
+Reported to IBM by The WeakDH team athttps://weakdh.org [https://weakdh.org] 
+
+CHANGE HISTORY
+ * 25 June 2015: Original Version Published 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.

@@ -1,0 +1,20 @@
+Title: IBM Web GUI 8.1 unable to see System filters while creating a page - United States
+
+Text:
+webgui 8.1 can not find system filters TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ While creating/editing Event Viewer (or AEL) widget on a page in WebGUI 8.1, the System Filters are missing from the down. 
+
+RESOLVING THE PROBLEM
+In IBM Tivoli Netcool/OMNIbus V8.1, while editing the widget properties the System filters can be seen by selecting the check box as shown in below screen shot . 
+
+[/support/docview.wss?uid=swg21965676&amp;aid=1]
+
+In Web GUI 8.1 FP2 you need to do the following before you would see the System Filters.
+
+1. Click on Gear Icon in DASH/WebGUI console and then click on "User Preferences for Netcool/OMNIbus Web GUI" 
+2. Select your user Id and click modify.
+3. In the following section select "Show system filters in event lists"
+
+[/support/docview.wss?uid=swg21965676&amp;aid=2]

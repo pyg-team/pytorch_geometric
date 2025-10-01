@@ -1,0 +1,214 @@
+Title: IBM IY94576: AMWPMCFG FAILS WHEN USING INTERACTIVE MODE AND WAS IS CLUSTER - United States
+
+Text:
+  DIRECT LINKS TO FIXES
+6.0.0-ISS-TAM-IF0039-LIN_NPTL [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Access+Manager+for+e-business&fixids=6.0.0-ISS-TAM-IF0039-LIN_NPTL&source=SAR]
+6.0.0-ISS-TAM-IF0039-WIN [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Access+Manager+for+e-business&fixids=6.0.0-ISS-TAM-IF0039-WIN&source=SAR]
+6.0.0-ISS-TAM-IF0039-SOL-X86 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Access+Manager+for+e-business&fixids=6.0.0-ISS-TAM-IF0039-SOL-X86&source=SAR]
+6.0.0-ISS-TAM-IF0039-SOL [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Access+Manager+for+e-business&fixids=6.0.0-ISS-TAM-IF0039-SOL&source=SAR]
+6.0.0-ISS-TAM-IF0039-S390 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Access+Manager+for+e-business&fixids=6.0.0-ISS-TAM-IF0039-S390&source=SAR]
+6.0.0-ISS-TAM-IF0039-LIN-PPC [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Access+Manager+for+e-business&fixids=6.0.0-ISS-TAM-IF0039-LIN-PPC&source=SAR]
+6.0.0-ISS-TAM-IF0039-LIN [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Access+Manager+for+e-business&fixids=6.0.0-ISS-TAM-IF0039-LIN&source=SAR]
+6.0.0-ISS-TAM-IF0039-HP-IA64 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Access+Manager+for+e-business&fixids=6.0.0-ISS-TAM-IF0039-HP-IA64&source=SAR]
+6.0.0-ISS-TAM-IF0039-HP [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Access+Manager+for+e-business&fixids=6.0.0-ISS-TAM-IF0039-HP&source=SAR]
+6.0.0-ISS-TAM-IF0039-AIX [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Access+Manager+for+e-business&fixids=6.0.0-ISS-TAM-IF0039-AIX&source=SAR]
+6.0.0-ISS-TAM-IF0037-WIN [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Access+Manager+for+e-business&fixids=6.0.0-ISS-TAM-IF0037-WIN&source=SAR]
+6.0.0-ISS-TAM-IF0037-SOL-X86 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Access+Manager+for+e-business&fixids=6.0.0-ISS-TAM-IF0037-SOL-X86&source=SAR]
+6.0.0-ISS-TAM-IF0037-SOL [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Access+Manager+for+e-business&fixids=6.0.0-ISS-TAM-IF0037-SOL&source=SAR]
+6.0.0-ISS-TAM-IF0037-S390 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Access+Manager+for+e-business&fixids=6.0.0-ISS-TAM-IF0037-S390&source=SAR]
+6.0.0-ISS-TAM-IF0037-LIN-PPC [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Access+Manager+for+e-business&fixids=6.0.0-ISS-TAM-IF0037-LIN-PPC&source=SAR]
+6.0.0-ISS-TAM-IF0037-LIN_NPTL [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Access+Manager+for+e-business&fixids=6.0.0-ISS-TAM-IF0037-LIN_NPTL&source=SAR]
+6.0.0-ISS-TAM-IF0037-LIN [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Access+Manager+for+e-business&fixids=6.0.0-ISS-TAM-IF0037-LIN&source=SAR]
+6.0.0-ISS-TAM-IF0037-HP-IA64 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Access+Manager+for+e-business&fixids=6.0.0-ISS-TAM-IF0037-HP-IA64&source=SAR]
+6.0.0-ISS-TAM-IF0037-HP [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Access+Manager+for+e-business&fixids=6.0.0-ISS-TAM-IF0037-HP&source=SAR]
+6.0.0-ISS-TAM-IF0037-AIX [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Access+Manager+for+e-business&fixids=6.0.0-ISS-TAM-IF0037-AIX&source=SAR]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  After applying fixpack 5, amwpmcfg will loop asking for dmgr
+   hostname and port. This loop occurs even though hostname and
+   soap port for WAS cluster is correct.
+   
+   This issue was recreated in local lab. Here is output:
+   ----------------------------
+   bash-2.05# ./amwpmcfg -action config -interactive
+   Enter the IBM WebSphere Application Server or Deployment Manager
+   installation full path [/opt/IBM/WebSphere/AppServer]:
+   Enter the hostname of the Access Manager
+   policy server [aaabb]:
+   Enter the port number of the Access Manager policy server
+   [7135]:
+   Does the Access Manager domain contain an
+   Authorization Server (y/n) [y]?
+   Enter the hostname of the Access Manager
+   authorization server [aaabb.aaabb.austin.ibm.com]:
+   Enter the port number of the Access Manager authorization server
+   [7136]:
+   Tivoli Access Manager administrator ID: [sec_master]:
+   Password for Tivoli Access Manager administrator:*********
+   Enter the hostname of the IBM WebSphere Application Server
+    or Deployment Manager[aaabb.aaabb.austin.ibm.com]:
+   Enter the SOAP Admin port number of the WebSphere
+    Application Server or Deployment Manager [8879]: 60100
+   Is WebSphere security enabled (y/n) [n]?
+   
+   Enter the hostname of the IBM WebSphere Application Server
+    or Deployment Manager[aaabb.aaabb.austin.ibm.com]:
+   Enter the SOAP Admin port number of the WebSphere
+    Application Server or Deployment Manager [60100]:
+   Is WebSphere security enabled (y/n) [n]?
+   
+   Enter the hostname of the IBM WebSphere Application Server
+    or Deployment Manager[aaabb.aaabb.austin.ibm.com]:
+   Enter the SOAP Admin port number of the WebSphere
+    Application Server or Deployment Manager [60100]:
+   Is WebSphere security enabled (y/n) [n]?
+   
+   Enter the hostname of the IBM WebSphere Application Server
+    or Deployment Manager[aaabb.aaabb.austin.ibm.com]:
+   ------------------------------------
+   
+   As seen above after asking if global security is turned on,
+   'amwpmcfg' ask the the information again. No error is show.
+   
+   Not sure what happens if global security information is entered.
+   However, this environment does not have global security turned
+   on.
+   
+   WAS Dmgr is up and running and listening on 60100 soap port
+   
+   Excuting the command in non-interactive mode works. Therefore
+   this issue is strictly related to interactive mode.
+   
+   
+   Here is output of command in non-interactive mode
+   -------------------------
+   bash-2.05# ./amwpmcfg -action config  -admin_id sec_master
+   -admin_pwd xxxxxxx
+   -policysvr aaabb.aaabb.austin.ibm.com -waspath
+   /opt/IBM/WebSphere/AppServer
+   -wasdeploy FIM611 -was_host aaabb -was_port 60100
+   Configuration of Access Manager Web Portal Manager is in
+   progress.
+   This might take several minutes.
+   bash-2.05#
+   ----------------------------------------
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  use non-interactive mode and supply all parameters on command
+   line
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  When running amwpmcfg against a WAS cluster in
+   interactive mode, amwpmcfg will issue the same three prompts in
+   an infinite loop.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix for this APAR is expected to be cont
+   ained in the following maintenance delivery vehicles:
+   | LA interim fix | 6.0.0-TIV-TAM-LA0010
+   | fixpack | 6.0.0-TIV-TAM-FP0011
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IY94576
+   
+   
+ * REPORTED COMPONENT NAME
+   ACCESS MGR E-BU
+   
+   
+ * REPORTED COMPONENT ID
+   5724C0800
+   
+   
+ * REPORTED RELEASE
+   600
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2007-02-06
+   
+   
+ * CLOSED DATE
+   2007-05-31
+   
+   
+ * LAST MODIFIED DATE
+   2007-05-31
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ACCESS MGR E-BU
+   
+   
+ * FIXED COMPONENT ID
+   5724C0800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R600 PSN
+   UP

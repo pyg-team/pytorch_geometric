@@ -1,0 +1,50 @@
+Title: IBM Tivoli Monitoring 6 JRE Update (6.X.X-TIV-ITM_JRE_TEP-20140404 ) - United States
+
+Text:
+ DOWNLOADABLE FILES
+
+ABSTRACT
+ This fix updates the IBM® SDK, Java™ Technology Edition for the portal server to address documented security vulnerabilities 
+
+DOWNLOAD DESCRIPTION
+This fix updates the IBM SDK Java Technology Edition Java Runtime Environment (JRE) which the portal server distributes to clients. It addresses security vulnerabilities as documented in the Security bulletin: http://www.ibm.com/support/docview.wss?uid=swg21668742. [http://www.ibm.com/support/docview.wss?uid=swg21668742] 
+
+
+The vulnerabilities addressed by this fix exist when the affected JRE is installed on systems running the Tivoli Enterprise Portal Browser client or Java WebStart client. 
+
+The affected JRE is installed on a system when logging into the IBM Tivoli Enterprise Portal using the Browser client or WebStart client and a JRE at the required level does not exist. The portal provides an option to download the provided JRE to the system. 
+
+This fix provides updated JRE packages for the portal server which can be downloaded by new client systems. Once the fix has been installed on the portal server, instructions in the README can be used to update the portal clients.
+
+There are three fixes provided: 
+
+
+
+Fix Name Description 6.X.X-TIV-ITM_JRE_TEP_5.16.05.00 This is a fix for IBM Tivoli Monitoring version 6.20.xx.xx, 6.21.xx.xx, 6.22.xx.xx, and 6.23.00.00. It contains the updated IBM Runtime Environment, Java 2 Technology Edition, Version 5 SR16 FP5 for portal server distribution. 6.X.X-TIV-ITM_JRE_TEP_6.15.01.00 This is a fix for IBM Tivoli Monitoring version 6.23.01.00 and above. It contains the updated IBM Runtime Environment, Java Technology Edition, Version 6 SR15 FP1 and IBM Runtime Environment, Java 2 Technology Edition, Version 5 SR16 FP5 for portal server distribution. 6.X.X-TIV-ITM_JRE_TEP_7.06.01.00 This is a fix for IBM Tivoli Monitoring version 6.30.00.00 and above. It contains the updated IBM Runtime Environment, Java Technology Edition, Version 7 SR6 FP1 and IBM Runtime Environment, Java Technology Edition version 6 SR15 FP1 for portal server distribution. PREREQUISITES
+The follow prerequisites are documented in section 3.1 in the README file located in Fix Central for additional information.
+
+If you install IBM SDK Java Technology Edition Java Runtime Environment (JRE) version 6 or 7 for the portal client, you must do the following:
+
+1) Apply the provisional patch for APAR IV51394 to the portal server as described here:
+
+http://www.ibm.com/support/docview.wss?uid=swg21654776 [http://www.ibm.com/support/docview.wss?uid=swg21654776]
+
+2) Take action with respect to some new security implications as described here:
+
+http://www.ibm.com/support/docview.wss?uid=swg21659560 [http://www.ibm.com/support/docview.wss?uid=swg21659560]
+
+INSTALLATION INSTRUCTIONS
+Refer to the README file located in Fix Central for additional information.
+
+DOWNLOAD PACKAGE
+
+
+
+
+Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options 
+What is Fix Central(FC)? [https://www.ibm.com/support/fixcentral/help?page=swfaqs] 6.X.X-TIV-ITM_JRE_TEP-20140404 4 Apr 2014 English 999999999 FC [http://www.ibm.com/support/fixcentral/swg/quickorder?parent=ibm~Tivoli&product=ibm/Tivoli/IBM+Tivoli+Monitoring&platform=All&release=6.2.3&function=fixId&fixids=6.X.X-TIV-ITM_JRE_TEP-20140404] [ ] 
+PRODUCT ALIAS/SYNONYM
+ ITM 
+
+ [/support/docview.wss?uid=swg24037276&aid=1]Problems (APARS) fixed [/support/docview.wss?uid=swg24037276&aid=2]Problems (APARS) fixed
+IV52806

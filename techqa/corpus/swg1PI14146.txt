@@ -1,0 +1,139 @@
+Title: IBM PI14146: PORTAL PAGES SYNDICATE BUT SUBSCRIBER DOES NOT GET UPDATED - United States
+
+Text:
+  A FIX IS AVAILABLE
+Fixes integrated in WebSphere Portal 8.0.0.1 Combined Cumulative Fixes [http://www-01.ibm.com/support/docview.wss?uid=swg24034497]
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When updating a portal page on the syndicator and removing a
+   portlet entity from the page, the portlet is not removed from
+   the subscribers page. Other updates like new title or new
+   description are successfully syndicated to the subscriber. When
+   investigating the WCM Portal Page on the subscriber you see the
+   correct XML blob, however, the import of this XML does not
+   remove the portlet.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  When updating a portal page on the syndicator and removing a
+   portlet entity from the page, the portlet is not removed from
+   the subscribers page. Other updates like new title or new
+   description are successfully syndicated to the subscriber. When
+   investigating the WCM Portal Page on the subscriber you see the
+   correct XML blob, however, the import of this XML does not
+   remove the portlet.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix ensures that removed portlet instance references are
+   syndicated to the subscriber.
+   .
+   A code fix for this issue is integrated into the WebSphere
+   Portal & WCM Combined Cumulative Fix 12 (PI14791 [http://www-01.ibm.com/support/docview.wss?uid=swg1PI14791]) for Portal
+   8.0.0.1 available from Fix Central:
+   
+   http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent
+   =ibm/WebSphere&product=ibm/WebSphere/WebSphere+Portal&release=Al [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm/WebSphere&product=ibm/WebSphere/WebSphere+Portal&release=Al]
+   l&platform=All&function=aparId&apars=PI14791
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI14146
+   
+   
+ * REPORTED COMPONENT NAME
+   LOTUS WEB CONT
+   
+   
+ * REPORTED COMPONENT ID
+   5724I2900
+   
+   
+ * REPORTED RELEASE
+   800
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-03-20
+   
+   
+ * CLOSED DATE
+   2014-05-15
+   
+   
+ * LAST MODIFIED DATE
+   2014-05-15
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   LOTUS WEB CONT
+   
+   
+ * FIXED COMPONENT ID
+   5724I2900
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R800 PSY
+   UP

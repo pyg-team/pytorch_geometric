@@ -1,0 +1,16 @@
+Title: IBM My Requests pod in Self Service Center does not show ticket count - United States
+
+Text:
+TPAESCCD; requests; pod; count; summary; self; service TECHNOTE (FAQ)
+
+QUESTION
+ Why does the ticket count not shown correctly in My Requests pod when using Internet Explorer? 
+
+ANSWER
+In Self Service Center, you will be able to see your Service Requests ticket count/status in My Requests pod. 
+
+For example :-
+My Requests pod in Firefox [/support/docview.wss?uid=swg21595943&amp;aid=1] 
+
+If this is working correctly in other browsers, but not in Internet Explorer browser (as shown below), you will need to install Silverlight to your Internet Explorer browser so the ticket status/count will be shown correctly.
+My Requests pod in IE [/support/docview.wss?uid=swg21595943&amp;aid=2]

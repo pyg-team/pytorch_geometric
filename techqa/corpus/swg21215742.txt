@@ -1,0 +1,36 @@
+Title: IBM Cannot connect to a WebSphere Application Server v6.0.2 with FIPS enabled - United States
+
+Text:
+FIPS; RSA; 1215742.Federal Information Processing Standard; WebSphere TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ If you are using Rational Web Developer, Rational Application Developer, or Rational Software Architect v6.0.0.1, the workbench cannot connect or start a WebSphere Application Server v6.0.2 Integrated Test Environment that has Federal Information Processing Standard (FIPS) enabled. 
+
+CAUSE
+When the WebSphere Application Server v6.0.2 is FIPS enabled, the workbench fails to connect due to any of the following reasons:
+
+
+ * Incorrect configuration to enable FIPS on the server 
+ * The workbench is at a Java Development Kit (JDK) level that is lower than JDK 1.4.2 SR1w.
+
+
+RESOLVING THE PROBLEM
+ 
+
+ 
+
+ 1. Upgrade your installation of Rational Software Architect (RSA), Rational Application Developer (RAD), or Rational Web Developer to v6.0.1.0. The upgrade can be applied by invoking the Rational Product Updater. The 6.0.1.0 versions of the affected products make use of a JDK at the required level.
+    
+    
+ 2. On general, if the problem persists, lookup the RAD/RSA Info center item for your RAD/RSA product version (for example RAD v8 IC topic: Configuring a WebSphere Application Server v6.x with Federal Information Processing Standard enabled ,under the Related URL section below)
+
+
+RELATED INFORMATION
+#RAD Doc: Configuring a WAS v6.x with FIPS enabled [http://www.ibm.com/support/knowledgecenter/SSRTLW_8.0.4/com.ibm.servertools.doc/topics/tfipsv6.html]
+
+
+ 
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Software Development Rational Web Developer for WebSphere Software Integrated WebSphere Test Environment v6.0, v6.0.0.1 Software Development Rational Software Architect Integrated WebSphere Test Environment V6.0, V6.0.0.1

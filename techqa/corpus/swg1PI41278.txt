@@ -1,0 +1,170 @@
+Title: IBM PI41278: MANY "JAVA.UTIL.MISSINGRESOURCEEXCEPTION" MESSAGES MAY BE PRINTED INTO TRACE.LOG AND SYSTEMERR.LOG - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  After installing/upgrading to MobileFirst 6.3, many
+   "java.util.MissingResourceException: Can't find resource for
+   bundle java.util.PropertyResourceBundle" messages may be printed
+    into trace.log and SystemErr.log
+   
+   00000902 SystemErr     R java.util.MissingResourceException:
+   Can't find resource for bundle java.util.PropertyResourceBundle,
+   key could not piggyback configprofile due to invalid or
+   incomplete headers sent from client
+   00000902 SystemErr     R  at
+   java.util.ResourceBundle.getObject(ResourceBundle.java:502)
+   00000902 SystemErr     R  at
+   java.util.ResourceBundle.getString(ResourceBundle.java:516)
+   00000902 SystemErr     R  at
+   com.worklight.common.i18n.MessageFormatter.format(MessageFormatt
+   er.java:111)
+   00000902 SystemErr     R  at
+   com.worklight.common.i18n.MessageFormatter.format(MessageFormatt
+   er.java:89)
+   ...
+   
+   
+   Additional Keywords:
+   
+   Worklight Versions Affected: 6.3
+   
+   Initial Impact: Medium
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  You can resolve the problem by adding this to your trace
+   specification:
+   com.worklight.gadgets.serving.ClientConfigProfileServlet.*=sever
+   e
+   
+   You can leave any other "com.worklight.*" part of the trace
+   specification as it is, it's OK to have both.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * Users may see incorrect warning message printed to           *
+   * java.util.logging output (console or file) as a result of    *
+   * basic usage of the WL client API.                            *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * An internal method call is incorrectly attempting to produce *
+   * a warn message for conditions that are expected in the       *
+   * ClientConfigProfileServlet.  When the warn API is called, a  *
+   * message is passed as a parameter when a properties file key  *
+   * should have been passed.  This results in an internal        *
+   * exception, which in turn prints a stack trace and error to   *
+   * the log.                                                     *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * -                                                            *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Install the ifix that contains this APAR, which changes the
+   internal API call to call debug instead of warn, which reduces
+   the verbosity of the log, and is an API call that permits a
+   message rather than requiring a properties file key.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI41278
+   
+   
+ * REPORTED COMPONENT NAME
+   WL/MFPF CONSUME
+   
+   
+ * REPORTED COMPONENT ID
+   5725I4301
+   
+   
+ * REPORTED RELEASE
+   630
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-05-18
+   
+   
+ * CLOSED DATE
+   2015-06-01
+   
+   
+ * LAST MODIFIED DATE
+   2015-06-01
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WL/MFPF CONSUME
+   
+   
+ * FIXED COMPONENT ID
+   5725I4301
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R630 PSY
+   UP

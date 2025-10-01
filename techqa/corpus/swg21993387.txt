@@ -1,0 +1,68 @@
+Title: IBM Not all Streams resources upgraded on RedHat 6.  Workaround available. - United States
+
+Text:
+ FLASH (ALERT)
+
+ABSTRACT
+ When upgrading from IBM Streams 4.0.x or 4.1.x to IBM Streams 4.2.x or later on RedHat 6 environments, some resources may not be correctly upgraded. To avoid this problem, use one of the workarounds documented below. 
+
+CONTENT
+Problem: 
+When upgrading from IBM Streams 4.0 or 4.1 to IBM Streams 4.2 or later in RedHat 6 environments, some resources may not be correctly upgraded to 4.2.x. Both Pre-upgrade and Post-upgrade instructions to address this issue follow. The workaround requires you download and execute the script available using the link in the Related information section of this document.
+
+If you already attempted the upgrade, follow the Post-upgrade steps, check for the Post-upgrade symptom to confirm you have encountered the problem. If you have not attempted the upgrade, follow the Pre-upgrade steps.
+
+Post-upgrade symptom:
+If you have already upgraded Streams to Streams 4.2.x, you can determine whether all resources were correctly upgraded to the new version using streamtool getdomainresource --long. The following shows example output showing host4 as NOT upgraded to 4.2.0.1:
+
+domain: myStreams State: STARTED
+Resource Status Services 
+Tags Version 
+host4.myDomain.com RUNNING RUNNING:controller(6346:system) 
+*4.1.1.1 
+host5.myDomain.com RUNNING WAITING:controller(22127:system) RUNNING:aas(22631),auditlog(22631),jmx(22820),sws(23200) 
+*4.1.1.1,4.2.0.1 
+
+
+Work around:
+
+Pre-upgrade steps:
+
+If you have not already attempted the upgrade, follow these steps.
+1. Run the fix up script. See Instructions for running the fix up script for details.
+2. Perform the upgrade following the upgrade process in Knowledge Center.
+
+Post-upgrade steps:
+
+If you have already attempted the upgrade and hit the problem, follow these steps.
+
+1. Run the fix up script. See Instructions for running the fix up script for details.
+
+2. Set up the Streams environment variables for the version ( i.e 4.1 or later, or 4.0 or later ) you are upgrading from by running the following command: source streamprofile.sh
+
+3. Stop the domain using the following command: streamtool stopdomain -d <your-domain> --zkconnect <your-connection-string)
+
+4. Set up the Streams environment variables for the new version (i.e. 4.2 or later) by running
+the following command: 
+source <new-version-install-dir>/<version>/bin/streamprofile.sh
+
+5. Start the domain using the following commend: streamtool startdomain -d <your-domain> --zkconnect <your-connection-string)
+
+6. Verify all the resources are running at the new version by running the following command: streamtool getdomainstate --long
+
+Instructions for running the fix up script 
+
+On each resource in your domain run the following steps as either the installation owner or the user root.
+
+1. Download the streamsFixRHEL6.sh script using the link in the Related information section of this document.
+
+2. Change to the directory where you downloaded the streamsFixRHEL6.sh script.
+
+3. Set the execute permissions on the streamsFixRHEL6.sh by using the following command:chmod 755 streamsFixRHEL6.sh
+
+4. Set up the Streams environment variables for the version ( i.e 4.1 or later, or 4.0 or later ) you are upgrading from by running the following command from the correct install location: source streamprofile.sh
+
+5. Run the script by using the following command. This will update files in the installation for the environment set up by the streamsprofile.sh you ran in the prior step : ./ streamsFixRHEL6.sh 
+
+RELATED INFORMATION
+ streamsFixRHEL6.sh [http://www-01.ibm.com/support/docview.wss?uid=swg24042979]

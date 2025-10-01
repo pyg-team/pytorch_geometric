@@ -1,0 +1,68 @@
+Title: IBM The Portal or Coach session expiration for IBM Business Process Manager (BPM) is shorter than desired - United States
+
+Text:
+session; timeout; bpm; coach; teamworks; portal TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ You want a long session time, possibly several hours, for Portal or a Coach. However, session expiration exception messages are seen after you set up the Portal or Coach session. 
+
+SYMPTOM
+You might see an exception message in the Potal that is similar to the following text: 
+
+The service you are trying to run has expired. Id is px.
+
+
+CAUSE
+Portal and Coach sessions can be set up individually.
+
+
+RESOLVING THE PROBLEM
+As a work around, you can set up a long session by using an LTPA session, which is at a different level scope, than the HTTP session. 
+
+
+Complete the following steps in the Administrative Console to set up long time session. This configuration is for a one hour (60 minute) session.
+
+
+ 1.  Select Applications > Application Types > WebSphere enterprise applications > IBM_BPM_Portal_[node]_[server] > Session management > Session timeout.
+     
+     
+ 2.  Specify 60 minutes for the Session timeout value.
+     
+     
+ 3.  Select Applications > Application Types > WebSphere enterprise applications > IBM_BPM_WebAPI_[node]_[server] > Session management > Session timeout.
+     
+     
+ 4.  Specify 60 minutes for the Session timeout value.
+     
+     
+ 5.  Select Applications > Application Types > WebSphere enterprise applications > IBM_BPM_Teamworks_[node]_[server] > Session management > Session timeout.
+     
+     
+ 6.  Specify 60 minutes for the Session timeout value.
+     
+     
+ 7.  Select Security > Global security > Authentication cache settings > Cache timeout.
+     
+     
+ 8.  Specify 60 minutes for the Cache timeout value.
+     
+     
+ 9.  Select Security > Global security > LTPA > LTPA timeout.
+     
+     
+ 10. Specify 60 minutes for the LTPA timeout value.
+     
+     
+ 11. Click Save to save the configuration.
+     
+     
+ 12. Restart your configuration.
+
+
+
+Note: If you use 120 as the value instead of 60, the time out is expanded to two (2) hours.  
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Business Process Manager Express Security Linux, Linux zSeries, Windows 8.0.1, 8.0, 7.5.1, 7.5 Business Integration IBM Business Process Manager Standard Security AIX, Linux, Linux zSeries, Solaris, Windows 8.0.1, 8.0, 7.5.1, 7.5 
+PRODUCT ALIAS/SYNONYM
+ BPM

@@ -1,0 +1,55 @@
+Title: IBM PM65886; 7.0.0.23: dates with hyphens processed incorrectly when using arabic eg - United States
+
+Text:
+PM65886; PM65886; PM65886 DOWNLOADABLE FILES
+
+ABSTRACT
+ The IBM supplied ICU4J library incorrectly processes hyphens for dates when using the Arabic Egypt locale. 
+
+DOWNLOAD DESCRIPTION
+PM65886 resolves the following problem:
+
+ERROR DESCRIPTION: 
+Hyphens are incorrectly interpreted as negative characters when processing dates when using the Arabic Egypt locale. 
+
+LOCAL FIX: 
+
+PROBLEM SUMMARY
+
+USERS AFFECTED:
+All users of IBM WebSphere Application Server V7.0 with the Arabic Egypt locale enabled.
+
+PROBLEM DESCRIPTION:
+The IBM supplied ICU4J library incorrectly processes hyphens for dates when using the Arabic Egypt
+locale.
+
+RECOMMENDATION:
+None
+
+ICU4J (shipped as com.ibm.icu.jar) incorrectly recognizes hyphens in a date string as negative value indicators. This issue occurs when the ICU4J library is running within a system using the Arabic Egypt locale. Consider the following date: 2012-01-30-17.47.33 . The year 2012 is recognized as '-2012'. A
+java.text.ParseException is thrown by the library, but is usually caught and not directly shown to the user. The WebSphere Application Server v7.0 includes ICU4J v3.4.5. This problem has been fixed in ICU4J v3.6.
+
+PROBLEM CONCLUSION: 
+ICU4J code was updated to properly handle the hyphens as separators between elements of the date string. 
+
+The fix for this APAR is currently targeted for inclusion in fix pack 7.0.0.25. Please refer to the Recommended Updates page for delivery information: 
+http://www.ibm.com/support/docview.wss?uid=swg27004980 [http://www.ibm.com/support/docview.wss?uid=swg27004980]
+
+PREREQUISITES
+Please download the UpdateInstaller below to install this fix.
+
+URL LANGUAGE SIZE(Bytes) UpdateInstaller [http://www.ibm.com/support/docview.wss?rs=180&uid=swg21205991] US English 7250000 
+INSTALLATION INSTRUCTIONS
+Please review the readme.txt for detailed installation instructions.
+
+URL LANGUAGE SIZE(Bytes) Readme [ftp://public.dhe.ibm.com/software/websphere/appserv/support/fixes/PM65886/7.0.0.23/readme.txt] US English 6356 
+DOWNLOAD PACKAGE
+
+
+Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options 
+What is Fix Central(FC)? [http://www.ibm.com/systems/support/fixes/en/fixcentral/help/faq_sw.html] 7.0.0.0-WS-WAS-IFPM65886 27 Jun 2012 US English 63779 FC [http://www.ibm.com/support/fixcentral/quickorder?fixids=7.0.0.0-WS-WAS-IFPM65886&product=ibm%2FWebSphere%2FWebSphere+Application+Server&source=dbluesearch] [ ] 
+TECHNICAL SUPPORT
+ Contact IBM Support using SR (http://www.ibm.com/software/support/probsub.html [http://www.ibm.com/software/support/probsub.html]), visit the WebSphere Application Server support web site (http://www.ibm.com/support/entry/portal/overview//software/websphere/websphere_application_server [http://www.ibm.com/support/entry/portal/overview//software/websphere/websphere_application_server]), or contact 1-800-IBM-SERV (U.S. only). 
+
+ [/support/docview.wss?uid=swg24032976&aid=1]Problems (APARS) fixed [/support/docview.wss?uid=swg24032976&aid=2]Problems (APARS) fixed
+PM65886

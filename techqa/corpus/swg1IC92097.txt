@@ -1,0 +1,157 @@
+Title: IBM IC92097: SET EGSHAREDCLASSLOADER AS CONTEXT CLASSLOADER BEFORE CALLING JCN EVALUATE METHOD - United States
+
+Text:
+  A FIX IS AVAILABLE
+WebSphere Message Broker V6.1 - Fix Pack 6.1.0.12 [http://www-01.ibm.com/support/docview.wss?uid=swg24036648]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The EgSharedClassLoader is not currently set as the thread
+   context classloader when the evaluate method of a customer's
+   JavaCompute node is executed. This means that in some
+   instances the JavaCompute node may not be able to find a
+   required class or resource, or may find one that is not
+   deployed, but placed in the shared-classes directory.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   All users of WebSphere Message Broker v6.1 who use external Java
+   libraries in JavaCompute nodes.
+   
+   
+   Platforms affected:
+   MultiPlatform, z/OS
+   
+   ****************************************************************
+   PROBLEM SUMMARY:
+   The EgSharedClassLoader is not currently set as the thread
+   context classloader when the evaluate method of a customer's
+   JavaCompute node is executed.
+   This means that in some instances the Java Compute node may
+   not be able to find a required class or resource, or may find
+   one that is not deployed, but placed in the shared-classes
+   directory.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  WebSphere Message Broker v6.1 now sets the EgSharedClassLoader
+   as the thread context classloader before calling the
+   onInitialize and evaluate method's of a JavaCompute Node.
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following:
+   
+   Version            v6.1
+   --------           --------------------
+   Fix available in:  6.1.0.12
+   
+   The latest available maintenance can be obtained from
+   'WebSphere Message Broker Recommended Fixes'
+   http://www.ibm.com/support/docview.wss?rs=849&uid=swg27006041 [http://www.ibm.com/support/docview.wss?rs=849&uid=swg27006041]
+   
+   If the maintenance level is not yet available, information on
+   its planned availability can be found in 'WebSphere Message
+   Broker Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=849&uid=swg27006308 [http://www-1.ibm.com/support/docview.wss?rs=849&uid=swg27006308]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC92097
+   
+   
+ * REPORTED COMPONENT NAME
+   WMB WINDOWS V6
+   
+   
+ * REPORTED COMPONENT ID
+   5724J0500
+   
+   
+ * REPORTED RELEASE
+   610
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-05-03
+   
+   
+ * CLOSED DATE
+   2013-07-18
+   
+   
+ * LAST MODIFIED DATE
+   2013-07-18
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMB WINDOWS V6
+   
+   
+ * FIXED COMPONENT ID
+   5724J0500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R610 PSY
+   UP

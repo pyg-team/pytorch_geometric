@@ -1,0 +1,19 @@
+Title: IBM Known Issue: Some search documents do not behave as expected when added to specific widgets - United States
+
+Text:
+ RELEASE NOTES
+
+ABSTRACT
+ Some search documents that are created in Workplace XT or IBM Content Navigator do not behave as expected when they are added to specific widgets. 
+
+CONTENT
+When you try to add certain types of search documents to the Case Document widget or the Work Item Attachment widget, unexpected behavior can occur. Issues are seen with the following three types of search documents: 
+
+ 
+- A search template that is created in Workplace XT
+- A stored search that is created in Workplace XT
+- A saved search in IBM Content Navigator
+
+These search documents cannot be added to the Case Document widget. 
+
+You can add the search documents to the Work Item Attachment wizard, and the documents can be opened. However, the documents do not perform a search or display search results.

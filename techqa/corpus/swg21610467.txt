@@ -1,0 +1,21 @@
+Title: IBM DB2 Version 9.8 Activation key part numbers - United States
+
+Text:
+DB2 license activation key part numbers TECHNOTE (FAQ)
+
+QUESTION
+ I downloaded and installed the IBM® DB2® pureScale® Feature for Enterprise Server Edition product from Passport Advantage® but it says that I need a license. Where do I obtain the license file from? 
+
+CAUSE
+The license files for DB2 V9.8 pureScale Feature, are shipped separately. This is done for convenience so that downloading the license file takes less time due to its small size. You will need to download the license activation key from Passport Advantage and then install it. 
+
+ANSWER
+Find the DB2 V9.8 Activation part number from the list and then use the technote which describes; How do I download my DB2 license from Passport Advantage [http://www.ibm.com/support/docview.wss?rs=0&uid=swg21305417]. 
+
+
+DB2 Version 9.8 Activation key part numbers:
+
+
+
+IBM DB2 pureScale Feature for Enterprise Server Edition V9.8 Quick Start and Activation Multiplatform Multilingual CZS35ML RELATED INFORMATION
+ How to download activation from Passport Advantage? [http://www.ibm.com/support/docview.wss?uid=swg21305417]

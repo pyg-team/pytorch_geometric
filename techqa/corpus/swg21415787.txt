@@ -1,0 +1,58 @@
+Title: IBM SQL Server case-sensitivity support for CommonDB and BPC components - United States
+
+Text:
+SQL Server database; case-sensitivity; case-sensitive; wpsv6rnotes; v601rnotes; v602rnotes; v61rnotes; v612rnotes; v62rnotes; v70rnotes TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Due to the existing limitations of the components in WebSphere Process Server and WebSphere Enterprise Service Bus when configured to use Microsoft SQL Server, you need to use a case-insensitive database for the CommonDB (WPRCSDB) and a case-sensitive database for BPC (BPEDB).
+
+
+SYMPTOM
+If WebSphere Process Server or WebSphere Enterprise Service Bus is configured to use Microsoft SQL Server as the common database and the database is set to be case-sensitive, you will see the following message when you access Failed Event manager using the administrative console: "The Recovery sub-system is disabled. Enable the Recovery sub-system in order to work with failed events." 
+
+An exception will be logged in the SystemOut.log as below:
+Caused by: javax.resource.ResourceException: addSync: caught Exception
+at com.ibm.ejs.j2c.XATransactionWrapper.addSync(XATransactionWrapper.jav 
+at com.ibm.ejs.j2c.ConnectionManager.initializeForUOW(ConnectionManager. 
+at com.ibm.ejs.j2c.ConnectionManager.involveMCInTran(ConnectionManager.j 
+at com.ibm.ejs.j2c.ConnectionManager.allocateConnection(ConnectionManage 
+at com.ibm.ws.rsadapter.cci.WSRdbConnectionFactoryImpl.getConnection(WSR 
+at com.ibm.ws.rsadapter.cci.WSRelationalRAAdapter.getConnection(WSRelati 
+at com.ibm.ws.ejbpersistence.cache.TransactionListenerImpl.getConnection 
+at com.ibm.ws.ejbpersistence.dataaccess.DataAccessRequestImpl.execute(Da 
+... 23 more 
+Caused by: javax.transaction.RollbackException: Transaction rolled back 
+at com.ibm.ws.Transaction.JTA.TransactionImpl.registerSynchronization(Tr 
+at com.ibm.ws.Transaction.JTA.TransactionImpl.registerSynchronization(Tr 
+at com.ibm.ws.Transaction.JTA.TranMaahnagerSet.registerSynchronization(Tra 
+at com.ibm.ejs.j2c.XATransactionWrapper.addSync(XATransactionWrapper.jav 
+... 30 more 
+at com.ibm.ejs.j2c.work.WorkProxy.run(WorkProxy.java:419) 
+ava.sql.SQLException: [IBM][SQLServer JDBC
+Driver][SQLServer]Invalid object name 'FAILEDEVENTS'.DSRA0010E: SQL 
+State = 42S02t
+com.ibm.ws.util.ThreadPool$Worker.run(ThreadPool.java:1473) 
+Caused by: java.sql.SQLException: [IBM][SQLServer JDBC
+Driver][SQLServer]Invalid object name 'FAILEDEVENTS'.DSRA0010E: SQL 
+Strate = 42S02, Error Code = 208
+... 43 more 
+---- Begin backtrace for Nested Throwables 
+java.sql.SQLException: [IBM][SQLServer JDBC 
+Driver][SQLServer]Statement(s) could not be prepared.
+
+
+CAUSE
+Current limitations for SQL Server database support are detailed below for WebSphere Process Server and WebSphere Enterprise Service Bus products:
+
+
+ * Components such as Recovery or Relationships, which use WPRCSDB as the database do not support case-sensitive database for SQL Server. Therefore, WPRCSDB must be created as a case-insensitive database. 
+ * The BPEDB database used by Business Process Choreographer must be case-sensitive. Therefore, if you are using Microsoft SQL Server for the WPRCSDB database, you must have a separate case-sensitive BPEDB database. 
+
+RESOLVING THE PROBLEM
+Use a case-insensitive database for the CommonDB (WPRCSDB) and a case-sensitive database for BPC (BPEDB).
+
+ 
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration WebSphere Enterprise Service Bus General AIX, HP-UX, i5/OS, Linux, Linux iSeries, Linux pSeries, Linux xSeries, Linux zSeries, Solaris, Windows, z/OS 7.0.0.1, 7.0, 6.2.0.2, 6.2.0.1, 6.2

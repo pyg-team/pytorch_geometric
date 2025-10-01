@@ -1,0 +1,81 @@
+Title: IBM An error might occur when you run the command-line Configuration Manager to deploy Content Engine on WebSphere Application Server or JBoss Application Server during an upgrade from version 4.0.1, 4.5.0, or 4.5.1 - United States
+
+Text:
+ RELEASE NOTES
+
+ABSTRACT
+ The applicationserver.xml file in version 5.0.0 of Content Engine differs from the file used in previous versions. Therefore, you must manually edit this file before you run the configureloginmodules task using the command-line Configuration Manager as part of a Content Engine upgrade to version 5.0.0. 
+
+CONTENT
+The Important note in step 3 of the topic Configuring upgraded instances by using the command line [http://publib.boulder.ibm.com/infocenter/p8docs/v5r0m0/topic/com.ibm.p8.install.doc/p8pup026.htm?resultof=%22%43%6f%6e%66%69%67%75%72%69%6e%67%20%75%70%67%72%61%64%65%64%20%69%6e%73%74%61%6e%63%65%73%20%62%79%22%20] needs to be expanded to read:
+
+
+Important The generateupgrade command might return a message saying that an upgrade profile already exists. If you are upgrading Content Engine from version 4.0.1, continue at step 4 in the topic. If you are upgrading from version 4.5.0 or 4.5.1, the following steps:
+
+
+
+ 1. Edit the configurebootstrap.xml file in your profile by adding the following line, if it is not already present: 
+    
+    implementorid="upgrade"
+    
+    
+ 2. If you are upgrading in a WebSphere Application Server environment, edit the applicationserver.xml file in your profile by adding the following property directly after the ApplicationServerInstallationFolder property if it does not exist already:
+    
+    <property name="ApplicationServerProfileFolder">
+    <value>/opt/IBM/WebSphere/AppServer/profiles/AppSrvr01/</value>
+    <description>
+    Enter the absolute path to the directory where the WebSphere
+    Application Server profile for Content Engine is stored. If you are
+    installing Content Engine on a node in a cluster or on a managed
+    server node and the deployment manager is remote from Configuration Manager, use the directory for the WebSphere profile that is located on the node.
+    </description> 
+    <displayName>Application server profile directory</displayName>
+    </property>
+    
+    Verify that the values that are specified for both the ApplicationServerInstallationFolder and the ApplicationServerProfileFolder properties are correct for your system. 
+    
+    The property value for ApplicationServerInstallationFolder must reference the server installation path, not the profile path. For example, in WebSphere Application Server, this path is /opt/IBM/WebSphere/AppServer.
+    
+    
+ 3. If you are upgrading in a JBoss environment, edit the applicationserver.xml file by changing the version number in the <value> attribute to the value that corresponds to your JBoss application server version, and modify the description attribute, as shown in the following table:
+    
+    If your JBoss version is... Change <value> attribute to... Enterprise Application Platform 4.3 4.3_EAP Enterprise Application Platform 5.0.1 or 5.1.0 5.x_EAP Application Server 5.0.1 or 5.1.0 5.x_AS 
+
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+
+
+Continue at step 4 in the topic.

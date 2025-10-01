@@ -1,0 +1,10 @@
+Title: IBM Load balancing MQ servers from the  IBM WebSphere DataPower SOA Appliance - United States
+
+Text:
+mq; load balance; failover; fail over; fail-over; datapower TECHNOTE (FAQ)
+
+QUESTION
+ Can the IBM WebSphere DataPower SOA Appliance load balance MQ servers? 
+
+ANSWER
+It is currently not possible to configure DataPower to load balance MQ backend servers. However, there is support for MQ failover which can be accomplished by the use of the MQ Queue Manager Group object. More information on the MQ Queue Manager Group object can be found in the IBM WebSphere DataPower Information Center [http://www.ibm.com/software/integration/datapower/library/documentation/].

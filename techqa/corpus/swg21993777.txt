@@ -1,0 +1,91 @@
+Title: IBM Security Bulletin: Multiple OpenSSL and Non-OpenSSL vulnerabilities in Node.js included in Rational Application Developer for WebSphere Software - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ OpenSSL vulnerabilities were disclosed on September 22 and 26, 2016 by the OpenSSL Project. OpenSSL is used by IBM SDK for Node.js. IBM SDK for Node.js has addressed the applicable CVEs, plus three additional vulnerabilities unrelated to the OpenSSL release. 
+
+VULNERABILITY DETAILS
+CVEID:CVE-2016-6304 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2016-6304]
+DESCRIPTION:OpenSSL is vulnerable to a denial of service. By repeatedly requesting renegotiation, a remote authenticated attacker could send an overly large OCSP Status Request extension to consume all available memory resources.
+CVSS Base Score: 6.5
+CVSS Temporal Score: Seehttps://exchange.xforce.ibmcloud.com/vulnerabilities/117110 [https://exchange.xforce.ibmcloud.com/vulnerabilities/117110]for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:N/AC:L/PR:L/UI:N/S:U/C:N/I:N/A:H) 
+
+CVEID:CVE-2016-6303 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2016-6303]
+DESCRIPTION:OpenSSL is vulnerable to a denial of service, caused by an integer overflow in the MDC2_Update function. By using unknown attack vectors, a remote attacker could exploit this vulnerability to trigger an out-of-bounds write and cause the application to crash.
+CVSS Base Score: 5.3
+CVSS Temporal Score: Seehttps://exchange.xforce.ibmcloud.com/vulnerabilities/117023 [https://exchange.xforce.ibmcloud.com/vulnerabilities/117023]for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:L) 
+
+CVEID:CVE-2016-2178 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2016-2178]
+DESCRIPTION:OpenSSL could allow a remote attacker to obtain sensitive information, caused by an error in the DSA implementation that allows the following of a non-constant time codepath for certain operations. An attacker could exploit this vulnerability using a cache-timing attack to recover the private DSA key.
+CVSS Base Score: 5.3
+CVSS Temporal Score: Seehttps://exchange.xforce.ibmcloud.com/vulnerabilities/113889 [https://exchange.xforce.ibmcloud.com/vulnerabilities/113889]for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:N/A:N) 
+
+CVEID:CVE-2016-6306 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2016-6306]
+DESCRIPTION:OpenSSL is vulnerable to a denial of service, caused by missing message length checks when parsing certificates. A remote authenticated attacker could exploit this vulnerability to trigger an out-of-bounds read and cause a denial of service.
+CVSS Base Score: 4.3
+CVSS Temporal Score: Seehttps://exchange.xforce.ibmcloud.com/vulnerabilities/117112 [https://exchange.xforce.ibmcloud.com/vulnerabilities/117112]for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:N/AC:L/PR:L/UI:N/S:U/C:N/I:N/A:L) 
+
+CVEID:CVE-2016-2183 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2016-2183]
+DESCRIPTION:OpenSSL could allow a remote attacker to obtain sensitive information, caused by an error in the in the Triple-DES on 64-bit block cipher, used as a part of the SSL/TLS protocol. By capturing large amounts of encrypted traffic between the SSL/TLS server and the client, a remote attacker able to conduct a man-in-the-middle attack could exploit this vulnerability to recover the plaintext data and obtain sensitive information. This vulnerability is known as the SWEET32 Birthday attack.
+CVSS Base Score: 3.7
+CVSS Temporal Score: Seehttps://exchange.xforce.ibmcloud.com/vulnerabilities/116337 [https://exchange.xforce.ibmcloud.com/vulnerabilities/116337]for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:N/AC:H/PR:N/UI:N/S:U/C:L/I:N/A:N) 
+
+CVEID:CVE-2016-7099 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2016-7099]
+DESCRIPTION:Node.js could allow a remote attacker to bypass security restrictions, caused by the improper verification of the host name. By sending a specially-crafted certificate containing wildcard characters, a remote attacker could exploit this vulnerability to gain access to the system.
+CVSS Base Score: 6.5
+CVSS Temporal Score: Seehttps://exchange.xforce.ibmcloud.com/vulnerabilities/117538 [https://exchange.xforce.ibmcloud.com/vulnerabilities/117538]for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:L/A:N) 
+
+CVEID:CVE-2016-5325 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2016-5325]
+DESCRIPTION:Node.js is vulnerable to HTTP response splitting attacks, caused by improper validation of user-supplied input by the reason argument in ServerResponse#writeHead() function. A remote attacker could exploit this vulnerability to inject arbitrary HTTP headers and cause the server to return a split response, once the URL is clicked. This would allow the attacker to perform further attacks, such as Web cache poisoning or cross-site scripting, and possibly obtain sensitive information.
+CVSS Base Score: 6.1
+CVSS Temporal Score: Seehttps://exchange.xforce.ibmcloud.com/vulnerabilities/117539 [https://exchange.xforce.ibmcloud.com/vulnerabilities/117539]for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:N/AC:L/PR:N/UI:R/S:C/C:L/I:L/A:N) 
+
+DESCRIPTION:Node.js could allow a local attacker to execute arbitrary code on the system, caused by the loading of third-party engine modules when the ENGINE_load_builtin_engines() function is used. By impersonating malicious code as a module, an attacker could exploit this vulnerability to execute arbitrary code on the system.
+CVSS Base Score: 4.9
+CVSS Temporal Score: Seehttps://exchange.xforce.ibmcloud.com/vulnerabilities/117537 [https://exchange.xforce.ibmcloud.com/vulnerabilities/117537]for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:L/AC:H/PR:N/UI:N/S:U/C:L/I:L/A:L)
+
+AFFECTED PRODUCTS AND VERSIONS
+IBM Rational Application Developer for WebSphere Software v9.1 and v9.5
+
+REMEDIATION/FIXES
+ 
+
+Rational Application Developer 9.1.x and 9.5.x PI70891  * Apply IBM SDK for Node.js Version 1.1 release updated equivalent to the Joyent Node.js API version 0.10.47 [https://developer.ibm.com/node/sdk/#v11] to the Cordova platform in the product.
+   
+   Installation instructions for applying the update to the Cordova platform in the product can be found here:
+   
+   Upgrading the IBM SDK for Node.js used by Cordova [http://www.ibm.com/support/docview.wss?uid=swg21684946]
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v3 Guide [http://www.first.org/cvss/user-guide] 
+On-line Calculator v3 [http://www.first.org/cvss/calculator/3.0] 
+
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.

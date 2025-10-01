@@ -1,0 +1,291 @@
+Title: IBM IX90068: CORBA.MARSHAL: ACCESS DENIED WITH JAVA2 SECURITY ON - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Error Message:
+   .
+   Stack Trace: java.lang.reflect.UndeclaredThrowableException
+    at $Proxy107.run(Unknown Source)
+    at test._BeanBRemote_Stub.run(_BeanBRemote_Stub.java)
+    at test.BeanA.runTest(BeanA.java:26)
+    at
+   test.EJSRemote0SLBeanA_832d6f0e.runTest(EJSRemote0SLBeanA_832d6f
+   0e.java)
+    at
+   test._EJSRemote0SLBeanA_832d6f0e_Tie.runTest(_EJSRemote0SLBeanA_
+   832d6f0e_Tie.java)
+    at
+   test._EJSRemote0SLBeanA_832d6f0e_Tie._invoke(_EJSRemote0SLBeanA_
+   832d6f0e_Tie.java)
+    at
+   com.ibm.CORBA.iiop.ServerDelegate.dispatchInvokeHandler(ServerDe
+   legate.java:626)
+    at
+   com.ibm.CORBA.iiop.ServerDelegate.dispatch(ServerDelegate.java:4
+   79)
+    at com.ibm.rmi.iiop.ORB.process(ORB.java:514)
+    at com.ibm.CORBA.iiop.ORB.process(ORB.java:1574)
+    at com.ibm.rmi.iiop.Connection.respondTo(Connection.java:2880)
+    at com.ibm.rmi.iiop.Connection.doWork(Connection.java:2753)
+    at com.ibm.rmi.iiop.WorkUnitImpl.doWork(WorkUnitImpl.java:63)
+    at com.ibm.ejs.oa.pool.PooledThread.run(ThreadPool.java:118)
+    at com.ibm.ws.util.ThreadPool$Worker.run(ThreadPool.java:1648)
+   Caused by: java.rmi.MarshalException: CORBA MARSHAL 0x4942f8b1
+   No; nested exception is:
+    org.omg.CORBA.MARSHAL  vmcid: IBM  minor code: 8B1  completed:
+   No
+    at
+   com.ibm.CORBA.iiop.UtilDelegateImpl.mapSystemException(UtilDeleg
+   ateImpl.java:277)
+    at javax.rmi.CORBA.Util.mapSystemException(Util.java:84)
+    at com.ibm.rmi.util.ProxyUtil.copyObjects(ProxyUtil.java:210)
+    at
+   com.ibm.rmi.util.ProxyUtil.invokeWithClassLoaders(ProxyUtil.java
+   :600)
+    at
+   com.ibm.CORBA.iiop.ClientDelegate.invoke(ClientDelegate.java:117
+   2)
+    ... 15 more
+   Caused by: org.omg.CORBA.MARSHAL  vmcid: IBM  minor code: 8B1
+   completed: No
+    at
+   com.ibm.rmi.util.FastPathForCollocated.deepCopy(FastPathForCollo
+   cated.java:267)
+    at
+   com.ibm.rmi.iiop.ObjectCopierFactory$DeepObjectArrayCopier.doWor
+   k(ObjectCopierFactory.java:511)
+    at
+   com.ibm.rmi.iiop.ObjectCopierFactory$AbstractCopier.waitForCompl
+   etion(ObjectCopierFactory.java:166)
+    at com.ibm.rmi.util.ProxyUtil.copyObjects(ProxyUtil.java:206)
+    ... 17 more
+   Caused by: java.lang.reflect.InvocationTargetException
+    at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+    at
+   sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessor
+   Impl.java:60)
+    at
+   sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethod
+   AccessorImpl.java:37)
+    at java.lang.reflect.Method.invoke(Method.java:611)
+    at
+   com.ibm.rmi.util.FastPathForCollocated.invokeReadObjectMethod(Fa
+   stPathForCollocated.java:643)
+    at
+   com.ibm.rmi.util.FastPathForCollocated.invokeWriteAndReadObjects
+   (FastPathForCollocated.java:513)
+    at
+   com.ibm.rmi.util.FastPathForCollocated.deepCopy(FastPathForCollo
+   cated.java:255)
+    ... 20 more
+   Caused by: org.omg.CORBA.MARSHAL: Access denied
+   (java.lang.RuntimePermission
+   accessClassInPackage.sun.util.calendar)  vmcid: IBM  minor code:
+   8B1  completed: No
+    at
+   com.ibm.rmi.util.FastPathForCollocated.writeNonStaticNonTransien
+   tFields(FastPathForCollocated.java:333)
+    at
+   com.ibm.rmi.io.IIOPInputStream.defaultReadObject(IIOPInputStream
+   .java:791)
+    at java.util.Calendar.readObject(Calendar.java:2637)
+    ... 27 more
+   Caused by: org.omg.CORBA.MARSHAL: Access denied
+   (java.lang.RuntimePermission
+   accessClassInPackage.sun.util.calendar)  vmcid: IBM  minor code:
+   8B1  completed: No
+    at
+   com.ibm.rmi.util.VMDeepCopier.performDeepCopy(VMDeepCopier.java:
+   233)
+    at
+   com.ibm.rmi.util.FastPathForCollocated.writeNonStaticNonTransien
+   tFields(FastPathForCollocated.java:322)
+    ... 29 more
+   Caused by: org.omg.CORBA.MARSHAL: Access denied
+   (java.lang.RuntimePermission
+   accessClassInPackage.sun.util.calendar)  vmcid: IBM  minor code:
+   8B1  completed: No
+    at
+   com.ibm.rmi.util.FastPathForCollocated.deepCopy(FastPathForCollo
+   cated.java:267)
+    at com.ibm.rmi.util.ORBVM.deepCopyIfRequired(ORBVM.java:82)
+    at
+   com.ibm.oti.vm.ORBVMHelpers.vmDeepCopy(ORBVMHelpers.java:193)
+    at
+   com.ibm.rmi.util.VMDeepCopier.performDeepCopy(VMDeepCopier.java:
+   228)
+    ... 30 more
+   Caused by: java.security.AccessControlException: Access denied
+   (java.lang.RuntimePermission
+   accessClassInPackage.sun.util.calendar)
+    at
+   java.security.AccessController.checkPermission(AccessController.
+   java:108)
+    at
+   java.lang.SecurityManager.checkPermission(SecurityManager.java:5
+   44)
+    at
+   com.ibm.ws.security.core.SecurityManager.checkPermission(Securit
+   yManager.java:208)
+    at
+   java.lang.SecurityManager.checkPackageAccess(SecurityManager.jav
+   a:1539)
+    at
+   sun.misc.Launcher$AppClassLoader.loadClass(Launcher.java:355)
+    at java.lang.ClassLoader.loadClass(ClassLoader.java:612)
+    at
+   org.eclipse.osgi.internal.loader.BundleLoader.findClassInternal(
+   BundleLoader.java:502)
+    at
+   org.eclipse.osgi.internal.loader.BundleLoader.findClass(BundleLo
+   ader.java:422)
+    at
+   org.eclipse.osgi.internal.loader.BundleLoader.findClass(BundleLo
+   ader.java:410)
+    at
+   org.eclipse.osgi.internal.baseadaptor.DefaultClassLoader.loadCla
+   ss(DefaultClassLoader.java:107)
+    at java.lang.ClassLoader.loadClass(ClassLoader.java:638)
+    at
+   com.ibm.ws.bootstrap.ExtClassLoader.loadClass(ExtClassLoader.jav
+   a:113)
+    at java.lang.ClassLoader.loadClass(ClassLoader.java:612)
+    at
+   com.ibm.ws.classloader.ProtectionClassLoader.loadClass(Protectio
+   nClassLoader.java:62)
+    at
+   com.ibm.ws.classloader.ProtectionClassLoader.loadClass(Protectio
+   nClassLoader.java:58)
+    at
+   com.ibm.ws.classloader.CompoundClassLoader.loadClass(CompoundCla
+   ssLoader.java:564)
+    at java.lang.ClassLoader.loadClass(ClassLoader.java:612)
+    at java.lang.Class.forNameImpl(Native Method)
+    at java.lang.Class.forName(Class.java:166)
+    at com.ibm.rmi.util.ClassCache.loadClass(ClassCache.java:166)
+    at com.ibm.rmi.util.ClassCache.getClass(ClassCache.java:107)
+    at com.ibm.rmi.util.ClassCache.get(ClassCache.java:63)
+    at
+   com.ibm.rmi.util.FastPathForCollocated.getTargetClass(FastPathFo
+   rCollocated.java:297)
+    at
+   com.ibm.rmi.util.FastPathForCollocated.deepCopy(FastPathForCollo
+   cated.java:186)
+    ... 33 more
+   .
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  An IllegalArgumentException is thrown in an ORB collocated
+   scenario.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This defect will be fixed in:
+   6.0.1 GA FP1
+   
+   The class loading order was
+   changed, which caused this problem. The error has been fixed.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IX90068
+   
+   
+ * REPORTED COMPONENT NAME
+   ORB
+   
+   
+ * REPORTED COMPONENT ID
+   620700123
+   
+   
+ * REPORTED RELEASE
+   260
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-06-17
+   
+   
+ * CLOSED DATE
+   2011-06-17
+   
+   
+ * LAST MODIFIED DATE
+   2011-06-17
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ORB
+   
+   
+ * FIXED COMPONENT ID
+   620700123
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R260 PSY
+   UP

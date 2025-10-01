@@ -1,0 +1,1103 @@
+Title: IBM WebSphere Portal V7.0.0.2 hardware and software requirements - United States
+
+Text:
+DSRdoc; DSR; WPv7002eGA; hardware; software; requirements; portal 7.0.0.2; V7.0.0.2; 7002eGA PRODUCT DOCUMENTATION
+
+ABSTRACT
+ WebSphere Portal V7.0.0.2 hardware and software requirements for Server, Enable and Extend editions, as well as Lotus Web Content Management V7.0.0.2, on supported Linux platforms and distributions. 
+
+CONTENT
+
+
+This page describes the minimum product levels that need to be installed before opening a problem report with IBM WebSphere Portal Technical Support. The software versions and any maintenance levels listed on this page have been explicitly verified as working. 
+
+EARLIER LEVEL OF A LISTED SOFTWARE: Software versions at a lower level than those noted on this page are unsupported. LDAP software at an earlier level is considered untested and best effort support only. For more details and exceptions, refer to the WebSphere Portal Support Statement [http://publib.boulder.ibm.com/infocenter/wpdoc/v6r1m0/topic/com.ibm.wp.ent.doc/overview/inst_req_supt.html]. Also see the listing of software explicitly not supported for use with WebSphere Portal 7.0.0.2 in WebSphere Portal Support Statement Addendum - Unsupported Products [http://www.ibm.com/support/docview.wss?uid=swg27019552] (#7019552 [http://www.ibm.com/support/docview.wss?rs=688&uid=swg27019552]). 
+
+LATER LEVEL OF A LISTED SOFTWARE: Because other products frequently ship fixes, updates, and new releases, testing every configuration is not possible. In general, you can install and run with updates to supported products if those updates are compatible with the tested versions. For more details and exceptions, refer to the WebSphere Portal Support Statement [http://publib.boulder.ibm.com/infocenter/wpdoc/v6r1m0/topic/com.ibm.wp.ent.doc/overview/inst_req_supt.html]. Also see the listing of software explicitly not supported for use with WebSphere Portal 7.0.0.2 in WebSphere Portal Support Statement Addendum - Unsupported Products [http://www.ibm.com/support/docview.wss?uid=swg27019552] (#7019552 [http://www.ibm.com/support/docview.wss?rs=688&uid=swg27019552]). 
+
+UNLISTED SOFTWARE: Software not listed on this page at any level is unsupported. LDAP software not listed is considered untested and best effort support only. For more details and exceptions, refer to the WebSphere Portal Support Statement [http://publib.boulder.ibm.com/infocenter/wpdoc/v6r1m0/topic/com.ibm.wp.ent.doc/overview/inst_req_supt.html]. Also see the listing of software explicitly not supported for use with WebSphere Portal 7.0.0.2 in WebSphere Portal Support Statement Addendum - Unsupported Products [http://www.ibm.com/support/docview.wss?uid=swg27019552] (#7019552 [http://www.ibm.com/support/docview.wss?rs=688&uid=swg27019552]). 
+
+
+WEBSPHERE PORTAL SERVER, ENABLE, EXTEND AND LOTUS WEB CONTENT MANAGEMENT 7.0.0.2
+TAB NAVIGATION
+ *  AIX - selected tab, 
+ *  IBM i 
+ *  Linux 
+ *  Solaris 
+ *  Windows 
+
+TAB NAVIGATION
+ *  AIX 
+
+
+
+
+OUTLINE
+ * Hardware Requirements  *  Disk Space 
+    *  Media Drive 
+    *  Memory 
+    *  Processor 
+   
+   
+ * Software Requirements  *  Operating System 
+    *  Application Servers 
+   
+   
+ * Optional Supported Software  *  Application Servers 
+    *  Collaboration 
+    *  Databases 
+    *  Identity Management 
+    *  Java Technology 
+    *  JDBC Drivers 
+    *  Miscellaneous 
+    *  Process Server 
+    *  Security 
+    *  Tools 
+    *  Virtualization 
+    *  Web Browsers 
+    *  WebDAV Client 
+    *  Web Servers 
+   
+   
+
+
+
+
+Hardware Requirements Group Applicable OS Notes Disk Space All Applicable AIX OS  Minimum 2.5 GB free disk space for installation for WebSphere Portal
+Minimum 1.4 GB free disk space for installation for WebSphere Application Server
+Minimum 4 GB total disk space recommended for installation
+
+Media Drive All Applicable AIX OS  A CD/DVD drive is required.
+
+Memory All Applicable AIX OS  Physical memory requirements and recommendations for WebSphere Portal:
+
+ *  Under minimal load, WebSphere Portal can function with 2GB of RAM and a remote database.
+ *  In a production environment, 4GB is an optimal starting point for RAM.
+
+Processor All Applicable AIX OS  IBM POWER family of processors
+
+ Back to top 
+
+Operating Systems Operating System Attributes Notes AIX Platform listing of supported OS AIX 5.3 POWER System and future OS fix packs Bitness: 32 Bit, 64 Bit Exploit
+Hardware platform: POWER System Technology and service release level requirements:
+ *  Technology level 12 or later
+ *  Service release 1 or later
+
+For example: (5300-07-01)
+
+WebSphere Application Server requirements depending on operating system bit:
+ *  32-bit JDK/WebSphere Application Server on 32-bit OS
+ *  32-bit JDK/WebSphere Application Server on 64-bit OS
+ *  64-bit JDK/WebSphere Application Server on 64-bit OS
+
+AIX 6.1 POWER System and future OS fix packs Bitness: 32 Bit, 64 Bit Exploit
+Hardware platform: POWER System Technology and service release level requirements: 
+
+ * Technology level 5 or later. 
+ * Service release 2 or later. 
+
+For example: 6100-04-02 
+
+WebSphere Application Server requirements depending on operating system bit:
+
+ * 32-bit JDK/WebSphere Application Server on 64-bit OS 
+ * 64-bit JDK/WebSphere Application Server on 64-bit OS 
+
+AIX 7.1 POWER System and future OS fix packs Bitness: 32 Bit, 64 Bit Exploit
+Hardware platform: POWER System WebSphere Application Server requirements depending on operating system bit:  * 32-bit JDK/WebSphere Application Server on 64-bit OS 
+ * 64-bit JDK/WebSphere Application Server on 64-bit OS 
+
+ Back to top 
+
+Software Requirements Group Product Applicable OS Notes Application Servers WebSphere Application Server 7.0.0.19 and future fix packs (overview) [http://www.ibm.com/software/webservers/appserv/was/] (support) [http://www.ibm.com/support/entry/portal/Overview/Software/WebSphere/WebSphere_Application_Server] All Applicable AIX OS  Download mandatory APAR PM52049 for WebSphere Application server 7.0.0.19 from this site -
+
+ Fix Central Link for PM52049 [http://www-933.ibm.com/support/fixcentral/swg/selectFix?product=ibm/WebSphere/WebSphere+Application+Server&fixids=7.0.0.19-WS-WAS-IFPM52049&source=dbluesearch&function=fixId&parent=ibm/WebSphere]
+
+ [http://www.ibm.com/support/docview.wss?uid=swg24029137]
+
+1. IBM Java SDK V5 reached end of service in 2015. If you continue to use WebSphere Application Server 7.0.x after that date with extended support, Java SDK V5 is no longer included. It is recommended that you upgrade to IBM Java SDK V6.
+
+2. IBM Java SDK V6 will reach end of service in Apr 2018. If you continue to use WebSphere Application Server 7.0.x after that date with extended support, Java SDK V6 is no longer included.
+
+ Back to top 
+
+Optional Supported Software Group Product Applicable OS Notes Application Servers WebSphere Application Server Feature Pack for XML 1.0.0.7 and future fix packs (overview) [http://www.ibm.com/software/webservers/appserv/was/featurepacks/xml/index.html] All Applicable AIX OS WebSphere Application Server V7 Feature Pack for Communications Enabled Applications 1.0.0.7 and future fix packs (overview) [http://www.ibm.com/software/webservers/appserv/was/featurepacks/cea/] All Applicable AIX OS WebSphere Application Server V7 Feature Pack for Service Component Architecture 1.0.1.7 and future fix packs (overview) [http://www.ibm.com/software/webservers/appserv/was/featurepacks/sca/] (support) [http://www.ibm.com/support/entry/portal/Overview/Software/WebSphere/WebSphere_Application_Server] All Applicable AIX OS WebSphere eXtreme Scale 7.1 and future fix packs (overview) [http://www.ibm.com/software/webservers/appserv/extremescale/] (support) [http://www.ibm.com/support/entry/portal/Overview/Software/WebSphere/WebSphere_eXtreme_Scale] All Applicable AIX OS Requires version 7.1.0.0 WebSphere Virtual Enterprise 6.1 and future fix packs (overview) [http://www.ibm.com/software/webservers/appserv/extend/virtualenterprise/] (support) [http://www.ibm.com/support/entry/portal/Overview/Software/WebSphere/WebSphere_Virtual_Enterprise] All Applicable AIX OS Requires fix pack version 6.1.1.2 Collaboration IBM Connections 3.0.1 and future fix packs (overview) [http://www.ibm.com/software/lotus/products/connections/index.html] (support) [http://www.ibm.com/support/entry/portal/Overview/Software/Lotus/IBM_Connections] All Applicable AIX OS Lotus Connections 2.5 and future fix packs (overview) [http://www.ibm.com/software/lotus/products/connections/index.html] (support) [http://www.ibm.com/support/entry/portal/Overview/Software/Lotus/Lotus_Connections] All Applicable AIX OS Lotus Connections 3.0 and future fix packs (overview) [http://www.ibm.com/software/lotus/products/connections/index.html] (support) [http://www.ibm.com/support/entry/portal/Overview/Software/Lotus/Lotus_Connections] All Applicable AIX OS Lotus Domino 8.5.1 and future fix packs (overview) [http://www.ibm.com/software/lotus/products/domino/] (support) [http://www.ibm.com/software/lotus/support/domino/support.html] All Applicable AIX OS Lotus Domino 8.5.2 and future fix packs (overview) [http://www.ibm.com/software/lotus/products/domino/] (support) [http://www.ibm.com/software/lotus/support/domino/support.html] All Applicable AIX OS Lotus Quickr for Domino 8.2 and future fix packs (overview) [http://www.ibm.com/software/lotus/products/quickr/] (support) [http://www.ibm.com/support/entry/portal/Overview/Software/Lotus/Lotus_Quickr_for_Domino] All Applicable AIX OS Lotus Quickr for Domino 8.5 and future fix packs (overview) [http://www.ibm.com/software/lotus/products/quickr/] (support) [http://www.ibm.com/support/entry/portal/Overview/Software/Lotus/Lotus_Quickr_for_Domino] All Applicable AIX OS Lotus Quickr for WebSphere Portal 8.1.1 Feature Packs and future fix packs (overview) [http://www.ibm.com/software/lotus/products/quickr/] (support) [http://www.ibm.com/support/entry/portal/Overview/Software/Lotus/Lotus_Quickr_for_WebSphere_Portal] All Applicable AIX OS Lotus Quickr for WebSphere Portal 8.5 and future fix packs (overview) [http://www.ibm.com/software/lotus/products/quickr/] (support) [http://www.ibm.com/support/entry/portal/Overview/Software/Lotus/Lotus_Quickr_for_WebSphere_Portal] All Applicable AIX OS Lotus Sametime Entry 8.0 and future mod levels and fix packs (overview) [http://www.ibm.com/software/lotus/products/sametime/entry/] (support) [http://www.ibm.com/software/lotus/support/sametime/support.html] All Applicable AIX OS IBM Lotus Sametime Entry 8.0.2 requires hot fix BMUY-87SL83 
+
+Lotus Sametime Entry 8.5 and future fix packs (overview) [http://www.ibm.com/software/lotus/products/sametime/entry/] (support) [http://www.ibm.com/software/lotus/support/sametime/support.html] All Applicable AIX OS Requires hot fix BMUY-87SL83
+
+Lotus Sametime Standard 8.5 and future fix packs (overview) [http://www.ibm.com/software/lotus/products/sametime/standard/] (support) [http://www.ibm.com/software/lotus/support/sametime/support.html] All Applicable AIX OS Requires hot fix BMUY-87SL83
+
+Databases Apache Derby 10.3 and future fix packs All Applicable AIX OS Not supported in a production environment.
+
+DB2 9 for Linux, UNIX and Windows 9.1.0.9 and future fix packs All Applicable AIX OS  Includes Workgroup Server, Enterprise Server, and Express Server editions.
+
+ High Availability Disaster Recovery (HADR) Feature is supported.
+
+DB2 Enterprise Server Edition 9.7.0.1 and future fix packs (overview) [http://www.ibm.com/software/data/db2/linux-unix-windows/edition-enterprise.html] (support) [http://www.ibm.com/software/data/db2/support/db2_9/] All Applicable AIX OS  Includes Workgroup Server, Enterprise Server, and Express Server editions.
+
+ High Availability Disaster Recovery (HADR) Feature is supported.
+
+ Database parameter 'cur_commit' must be set to 'DISABLED' for database of WebSphere Portal 7
+
+DB2 for i5/OS 6.1 and future fix packs All Applicable AIX OS DB2 for i5/OS 7.1 and future fix packs All Applicable AIX OS DB2 for i5/OS V5R4 and future fix packs All Applicable AIX OS DB2 for z/OS 9.1 and future fix packs (overview) [http://www.ibm.com/software/data/db2/zos/] (support) [http://www.ibm.com/software/data/db2/support/db2zos/] All Applicable AIX OS  High Availability Disaster Recovery (HADR) Feature is supported.
+
+ WebSphere Portal 7.0 works with DB2 for z/OS V9.1 - PUT level 0912.
+
+ The following are required:
+
+ *  APAR PK75093 or later
+ *  APAR PK92163:
+   http://www-01.ibm.com/support/docview.wss?uid=swg1PK92163 [http://www-01.ibm.com/support/docview.wss?uid=swg1PK92163]
+ *  APAR PK68265
+
+DB2 for z/OS 10.1 and future fix packs (overview) [http://www.ibm.com/software/data/db2/zos/] (support) [http://www.ibm.com/software/data/db2/support/db2zos/] All Applicable AIX OS DB2 pureScale Feature for Enterprise Server Edition 9.8.0.3 and future fix packs All Applicable AIX OS  Requires 7.0.0.1 CF007 or higher.
+
+ Refer to the steps documented here: http://www-10.lotus.com/ldd/portalwiki.nsf/dx/Configuring_WebSphere_Portal_V7.0.0.1_with_DB2_pureScale?open [http://www-10.lotus.com/ldd/portalwiki.nsf/dx/Configuring_WebSphere_Portal_V7.0.0.1_with_DB2_pureScale?open]
+
+DB2 Universal Database for z/OS 8.1 and future fix packs All Applicable AIX OS  WebSphere Portal 7.0 works with DB2 for z/OS V8.1 - PUT level 0912 or later service level.
+
+ High Availability Disaster Recovery (HADR) Feature is supported.
+
+DB2 Workgroup Server Edition 9.5.0.5 and future fix packs (overview) [http://www.ibm.com/software/data/db2/linux-unix-windows/edition-workgroup.html] (support) [http://www.ibm.com/software/data/db2/support/db2_9/] All Applicable AIX OS  Includes Workgroup Server, Enterprise Server, and Express Server editions.
+
+ High Availability Disaster Recovery (HADR) Feature is supported.
+
+Microsoft SQL Server Enterprise Edition 2005 SP2 and future fix packs All Applicable AIX OS Microsoft SQL Server Enterprise Edition 2008 and future fix packs All Applicable AIX OS Microsoft SQL Server Enterprise Edition 2008 R2 All Applicable AIX OS Oracle Database 10g Enterprise Edition Release 1 10.1.0.5 and future fix packs All Applicable AIX OS See Note #3 Oracle Database 10g Enterprise Edition Release 2 10.2.0.4 and future fix packs All Applicable AIX OS See Note #3 Oracle Database 10g Standard Edition Release 1 10.1.0.5 and future fix packs All Applicable AIX OS See Note #3 Oracle Database 10g Standard Edition Release 2 10.2.0.4 and future fix packs All Applicable AIX OS See Note #3 Oracle Database 11g Enterprise Edition Release 1 11.1.0.6 and future fix packs All Applicable AIX OS See Note #3 Oracle Database 11g Enterprise Edition Release 1 11.1.0.7 and future fix packs All Applicable AIX OS See Note #3 Oracle Database 11g Enterprise Edition Release 2 11.2.0.2 and future fix packs All Applicable AIX OS See Note #3 Oracle Database 11g Standard Edition Release 1 11.1.0.6 and future fix packs All Applicable AIX OS See Note #3 Oracle Database 11g Standard Edition Release 1 11.1.0.7 and future fix packs All Applicable AIX OS See Note #3 Oracle Database 11g Standard Edition Release 2 11.2.0.2 and future fix packs All Applicable AIX OS See Note #3 Identity Management IBM z/OS.e Security Server 1.6 and future fix packs All Applicable AIX OS IBM z/OS.e Security Server 1.7 and future fix packs All Applicable AIX OS IBM z/OS Security Server 1.6 and future fix packs All Applicable AIX OS IBM z/OS Security Server 1.7 and future fix packs All Applicable AIX OS Lotus Domino 8.0 and future fix packs (overview) [http://www.ibm.com/software/lotus/products/domino/] (support) [http://www.ibm.com/software/lotus/support/domino/support.html] All Applicable AIX OS Lotus Domino 8.0.1 and future fix packs (overview) [http://www.ibm.com/software/lotus/products/domino/] (support) [http://www.ibm.com/software/lotus/support/domino/support.html] All Applicable AIX OS Lotus Domino 8.0.2 and future fix packs (overview) [http://www.ibm.com/software/lotus/products/domino/] (support) [http://www.ibm.com/software/lotus/support/domino/support.html] All Applicable AIX OS Lotus Domino 8.5 and future fix packs (overview) [http://www.ibm.com/software/lotus/products/domino/] (support) [http://www.ibm.com/software/lotus/support/domino/support.html] All Applicable AIX OS Lotus Domino 8.5.1 and future fix packs (overview) [http://www.ibm.com/software/lotus/products/domino/] (support) [http://www.ibm.com/software/lotus/support/domino/support.html] All Applicable AIX OS Lotus Domino 8.5.2 and future fix packs (overview) [http://www.ibm.com/software/lotus/products/domino/] (support) [http://www.ibm.com/software/lotus/support/domino/support.html] All Applicable AIX OS Microsoft Active Directory 2003 and future fix packs All Applicable AIX OS Microsoft Active Directory 2008 and future fix packs All Applicable AIX OS Microsoft Active Directory Application Mode (ADAM) 2003 and future fix packs All Applicable AIX OS Microsoft AD LDS(Lightweight Directory Services) Windows 2008 and future fix packs All Applicable AIX OS Novell eDirectory 8.7.3 and future fix packs All Applicable AIX OS Novell eDirectory 8.8 and future fix packs All Applicable AIX OS Sun Java System Directory Server 6.1 and future fix packs All Applicable AIX OS Service Pack 10 or later is required. Sun Java System Directory Server 6.3 and future fix packs All Applicable AIX OS Sun Java System Directory Server 7.0 and future fix packs All Applicable AIX OS Tivoli Directory Server 6.0 and future fix packs (overview) [http://www.ibm.com/software/tivoli/products/directory-server/] (support) [http://www.ibm.com/software/sysmgmt/products/support/IBMDirectoryServer.html] All Applicable AIX OS Tivoli Directory Server 6.1 and future fix packs (overview) [http://www.ibm.com/software/tivoli/products/directory-server/] (support) [http://www.ibm.com/software/sysmgmt/products/support/IBMDirectoryServer.html] All Applicable AIX OS Fix pack 4 or later is required. Tivoli Directory Server 6.2 and future fix packs (overview) [http://www.ibm.com/software/tivoli/products/directory-server/] (support) [http://www.ibm.com/software/sysmgmt/products/support/IBMDirectoryServer.html] All Applicable AIX OS Java Technology IBM Runtime Environment, Java Technology Edition 6.0 and future mod levels and fix packs All Applicable AIX OS  Requirements:
+
+ *  Java version included or recommended by WebSphere Application Server 7.0.0.19.
+
+Sun Java SDK/JRE/JDK 6.0 Update 17 and future fix packs All Applicable AIX OS Supported Java runtime environments 1.5.x or 1.6.x (requires one) for the Web Content Management authoring portlet
+
+JDBC Drivers Apache Derby 10.3 JDBC 4.0 and future fix packs All Applicable AIX OS Derby is a non-production environment. V10.3.3.1 or later is required. DataDirect Connect for JDBC 4.0 (type 4) and future fix packs All Applicable AIX OS DB2 Driver for JDBC and SQLJ (type 2/4) 4.0 and future fix packs All Applicable AIX OS DB2 9.5 and DB2 9.7 require DB2 Driver for JDBC and SQLJ (type 2/4) 4.0 IBM Application Connectivity to DB2 for z/OS Feature Version and future fix packs All Applicable AIX OS IBM DB2 Universal JDBC Provider (XA) from DB2 z/OS (type 4) Version and future fix packs All Applicable AIX OS Requires APAR PK93123 for DB2 on z/OS V8.1 and V9.1. You can obtain the fix from DB2 on z/OS support or IBMLINK. IBM Toolbox for Java/JTOpen JDBC Driver 6.0 and future fix packs All Applicable AIX OS Check for the latest jt400.jar file at:http://sourceforge.net/projects/jt400/files/ [http://sourceforge.net/projects/jt400/files/] Microsoft SQL Server JDBC Driver 2.0 and future fix packs All Applicable AIX OS Microsoft SQL Server JDBC Driver 3.0 All Applicable AIX OS Oracle JDBC Driver (XA) 10g Any and future fix packs All Applicable AIX OS  Oracle 11g JDBC Driver Thin (type 4) (11.2.0.2 or higher)
+
+ Requires the ojdbc6.jar file.
+
+Oracle JDBC Driver (XA) 11g 11.2.0.2 and future fix packs All Applicable AIX OS  Oracle 11g JDBC Driver Thin (type 4) (11.2.0.2 or higher)
+
+ Requires the ojdbc6.jar file.
+
+Miscellaneous IBM License Metric Tool 7.2.1 and future fix packs (overview) [http://www.ibm.com/software/tivoli/products/license-metric-tool/] (support) [http://www.ibm.com/software/sysmgmt/products/support/IBMLicenseMetricTool.html] All Applicable AIX OS Tivoli Directory Integrator 7.0 and future fix packs (overview) [http://www.ibm.com/software/tivoli/products/directory-integrator/] (support) [http://www.ibm.com/software/sysmgmt/products/support/IBMDirectoryIntegrator.html] All Applicable AIX OS Tivoli License Compliance Manager 2.3 Fixpack 1 and future fix packs (overview) [http://www.ibm.com/software/tivoli/products/license-mgr/] (support) [http://www.ibm.com/software/sysmgmt/products/support/IBMTivoliLicenseManager.html] All Applicable AIX OS Process Server WebSphere Process Server 7.0.0.3 and future fix packs (overview) [http://www.ibm.com/software/integration/wps/] (support) [http://www.ibm.com/support/entry/portal/Overview/Software/WebSphere/WebSphere_Process_Server] All Applicable AIX OS Security CA SiteMinder 6.0 and future fix packs All Applicable AIX OS Tivoli Access Manager for e-business 6.0 and future fix packs (overview) [http://www.ibm.com/software/tivoli/products/access-mgr-e-bus/] (support) [http://www.ibm.com/software/sysmgmt/products/support/IBMTivoliAccessManagerfore-business.html] All Applicable AIX OS Tivoli Access Manager for e-business 6.1 and future fix packs (overview) [http://www.ibm.com/software/tivoli/products/access-mgr-e-bus/] (support) [http://www.ibm.com/software/sysmgmt/products/support/IBMTivoliAccessManagerfore-business.html] All Applicable AIX OS Tools Rational Application Developer for WebSphere Software 8.0 and future fix packs (overview) [http://www.ibm.com/software/awdtools/developer/application/index.html] (support) [http://www.ibm.com/software/awdtools/developer/application/support/index.html] All Applicable AIX OS WebSphere Portlet Factory 7.0 and future fix packs (overview) [http://www.ibm.com/software/genservers/portletfactory/] (support) [http://www.ibm.com/software/genservers/portletfactory/support/] All Applicable AIX OS Virtualization IBM PowerVM Hypervisor (LPAR, DPAR, Micro-Partition) any supported version and future fix packs All Applicable AIX OS IBM PR/SM any version and future fix packs All Applicable AIX OS Red Hat KVM as delivered with Red Hat Enterprise Linux (RHEL) 5.4 and future fix packs All Applicable AIX OS WPAR: Product installed in System Workload Partition AIX 6.1 and future fix packs AIX 5.3 POWER System,
+AIX 6.1 POWER System Refer to the following technote for installation instructions: 
+
+http://www-01.ibm.com/support/docview.wss?uid=swg21426713 [http://www-01.ibm.com/support/docview.wss?uid=swg21426713] 
+
+WPAR: Product installed in System Workload Partition AIX 7.1 and future fix packs AIX 7.1 POWER System Web Browsers Apple Safari 4.0 and future fix packs All Applicable AIX OS  Refer to the following link for Known limitations when using Google Chrome and Apple Safari Web browsers with WebSphere Portal V7.0.x:
+
+ For more information on Web browser support with WebSphere Portal, refer to "WebSphere Portal Support Statement Addendum - Web browsers" at 
+
+ http://www-01.ibm.com/support/docview.wss?uid=swg27016293 [http://www-01.ibm.com/support/docview.wss?uid=swg27016293]
+
+Google Chrome 8 and future releases, mod levels and fix packs All Applicable AIX OS  Refer to the following link for Known limitations when using Google Chrome and Apple Safari Web browsers with WebSphere Portal V7.0.x:
+
+ For more information on Web browser support with WebSphere Portal, refer to "WebSphere Portal Support Statement Addendum - Web browsers" at
+
+ http://www-01.ibm.com/support/docview.wss?uid=swg27016293 [http://www-01.ibm.com/support/docview.wss?uid=swg27016293]
+
+Microsoft Internet Explorer 6.0 SP2 and future fix packs All Applicable AIX OS  Internet Explorer 6.0 SP2 on Windows XP SP1/SP2 and Windows 2000 SP4 and Windows 2003. Support for Microsoft Internet Explorer v6.0 is deprecated in this release and due to its limited capabilities many WebSphere Portal features do not function or render correctly, including Client-Side Aggregation (CSA), Page Builder, Mashup integration, Wikis and Blogs. Some legacy pages and themes can be successfully rendered by Microsoft Internet Explorer v6.0, but use of this Web browser is not recommended.
+
+ For more information on Web browser support with WebSphere Portal, refer to "WebSphere Portal Support Statement Addendum - Web browsers" at http://www-01.ibm.com/support/docview.wss?uid=swg27016293 [http://www-01.ibm.com/support/docview.wss?uid=swg27016293]
+
+Microsoft Internet Explorer 7.0 and future fix packs All Applicable AIX OS  Internet Explorer 7.0 is supported on all versions of Windows that are supported by WebSphere Portal.
+
+ For more information on Web browser support with WebSphere Portal, refer to "WebSphere Portal Support Statement Addendum - Web browsers" at http://www-01.ibm.com/support/docview.wss?uid=swg27016293 [http://www-01.ibm.com/support/docview.wss?uid=swg27016293]
+
+Microsoft Internet Explorer 8.0 and future fix packs All Applicable AIX OS See Note #1 Microsoft Internet Explorer 9.0 and future fix packs All Applicable AIX OS  Refer to the IE9 Support statement for more information:
+
+ http://www.ibm.com/support/docview.wss?uid=swg21496054 [http://www.ibm.com/support/docview.wss?uid=swg21496054]
+
+ For more information on Web browser support with WebSphere Portal, refer to "WebSphere Portal Support Statement Addendum - Web browsers" at 
+
+ http://www-01.ibm.com/support/docview.wss?uid=swg27016293 [http://www-01.ibm.com/support/docview.wss?uid=swg27016293]
+
+Mozilla Firefox 3.0 and future fix packs All Applicable AIX OS See Note #1 Mozilla Firefox 3.5 and future fix packs All Applicable AIX OS See Note #1 Mozilla Firefox 3.6 and future fix packs All Applicable AIX OS See Note #1 Mozilla Firefox 4.0 and future releases, mod levels and fix packs All Applicable AIX OS See Note #1 Opera 10.0 and future fix packs All Applicable AIX OS See Note #1 WebDAV Client davfs2 1.4.6 All Applicable AIX OS  Refer to the technote for version information and limitations -
+
+ Recommended WebDAV clients for accessing IBM WebShpere Portal version 7.0.0.2 [http://www-01.ibm.com/support/docview.wss?uid=swg27023805]
+
+JSCAPE AnyClient 2.2 All Applicable AIX OS  Refer to the technote for version information and limitations -
+
+ Recommended WebDAV clients for accessing IBM WebShpere Portal version 7.0.0.2 [http://www-01.ibm.com/support/docview.wss?uid=swg27023805]
+
+SRT WebDrive 9.1 All Applicable AIX OS  Refer to the technote for version information and limitations -
+
+ Recommended WebDAV clients for accessing IBM WebShpere Portal version 7.0.0.2 [http://www-01.ibm.com/support/docview.wss?uid=swg27023805]
+
+Web Servers Apache HTTP Server 2.0.59 and future fix packs All Applicable AIX OS Apache HTTP Server 2.2 and future fix packs All Applicable AIX OS IBM HTTP Server 6.1 and future fix packs (overview) [http://www.ibm.com/software/webservers/httpservers/] (support) [http://www.ibm.com/support/entry/portal/Overview/Software/WebSphere/IBM_HTTP_Server] All Applicable AIX OS IBM HTTP Server 7.0 and future fix packs (overview) [http://www.ibm.com/software/webservers/httpservers/] (support) [http://www.ibm.com/support/entry/portal/Overview/Software/WebSphere/IBM_HTTP_Server] All Applicable AIX OS IBM HTTP Server for i5/OS Any and future fix packs All Applicable AIX OS  IBM HTTP Server for i5/OS versions V5R4, V6R1 and V7R1
+
+IBM HTTP Server for z/OS Any and future fix packs All Applicable AIX OS Lotus Domino 8.0 and future fix packs (overview) [http://www.ibm.com/software/lotus/products/domino/] (support) [http://www.ibm.com/software/lotus/support/domino/support.html] All Applicable AIX OS Lotus Domino 8.0.1 and future fix packs (overview) [http://www.ibm.com/software/lotus/products/domino/] (support) [http://www.ibm.com/software/lotus/support/domino/support.html] All Applicable AIX OS Lotus Domino 8.0.2 and future fix packs (overview) [http://www.ibm.com/software/lotus/products/domino/] (support) [http://www.ibm.com/software/lotus/support/domino/support.html] All Applicable AIX OS Lotus Domino 8.5 and future fix packs (overview) [http://www.ibm.com/software/lotus/products/domino/] (support) [http://www.ibm.com/software/lotus/support/domino/support.html] All Applicable AIX OS Lotus Domino 8.5.1 and future fix packs (overview) [http://www.ibm.com/software/lotus/products/domino/] (support) [http://www.ibm.com/software/lotus/support/domino/support.html] All Applicable AIX OS Lotus Domino 8.5.2 and future fix packs (overview) [http://www.ibm.com/software/lotus/products/domino/] (support) [http://www.ibm.com/software/lotus/support/domino/support.html] All Applicable AIX OS Microsoft Internet Information Services 6.0 and future fix packs All Applicable AIX OS Microsoft Internet Information Services 7.0 and future fix packs All Applicable AIX OS Microsoft Internet Information Services 7.5 and future fix packs All Applicable AIX OS Supported as Web server plugins when hosted on the Windows Server 2008 R2 edition. Sun Java System Web Server 6.1 SP10 and future fix packs All Applicable AIX OS  Sun Java System Web Server 6.1 Service pack 10 or later is required.
+
+Sun Java System Web Server 7.0 Update 8 and future fix packs All Applicable AIX OS  Sun Java System Web Server 7.0 Update 8 or later is required.
+
+ Back to top 
+
+
+
+
+TAB NAVIGATION
+ *  IBM i 
+
+
+
+
+OUTLINE
+ * Hardware Requirements  *  Disk Space 
+    *  Media Drive 
+    *  Memory 
+    *  Processor 
+   
+   
+ * Software Requirements  *  Operating System 
+    *  Application Servers 
+   
+   
+ * Optional Supported Software  *  Application Servers 
+    *  Collaboration 
+    *  Databases 
+    *  Identity Management 
+    *  Java Technology 
+    *  JDBC Drivers 
+    *  Miscellaneous 
+    *  Process Server 
+    *  Security 
+    *  Tools 
+    *  Virtualization 
+    *  Web Browsers 
+    *  WebDAV Client 
+    *  Web Servers 
+   
+   
+
+
+
+
+Hardware Requirements Group Applicable OS Notes Disk Space All Applicable IBM i OS  Minimum 5.0 GB free disk space with 6 disk arms (cache is desired) for installation for WebSphere Portal
+
+Media Drive All Applicable IBM i OS  A CD/DVD drive is required.
+
+Memory All Applicable IBM i OS  Physical memory: 8 GB minimum
+Production environments and environments featuring multiple profiles will require more memory.
+Note: The amount of memory assigned to the *INTERACT pool should be set at a minimum of well over 1 GB and a maximum of 100%. If the *INTERACT pool cannot be given enough memory, then the database tasks have to be started with SBMJOB so that they run in the *BASE pool.
+
+Processor All Applicable IBM i OS  Recent System i5 and eServer i5 models with at least 3800 CPW
+System i model 820 with processor feature 2395
+
+ Back to top 
+
+Operating Systems Operating System Attributes Notes IBM i Platform listing of supported OS IBM i 5.4 POWER System and future OS fix packs Bitness: 64 Bit Exploit
+Hardware platform: POWER System See Note #7 IBM i 6.1 POWER System and future OS fix packs Bitness: 64 Bit Exploit
+Hardware platform: POWER System See Note #7 IBM i 7.1 POWER System and future OS fix packs Bitness: 64 Bit Exploit
+Hardware platform: POWER System See Note #7  Back to top 
+
+Software Requirements Group Product Applicable OS Notes Application Servers WebSphere Application Server 7.0.0.19 and future fix packs (overview) [http://www.ibm.com/software/webservers/appserv/was/] (support) [http://www.ibm.com/support/entry/portal/Overview/Software/WebSphere/WebSphere_Application_Server] All Applicable IBM i OS  Download mandatory APAR PM52049 for WebSphere Application server 7.0.0.19 from this site -
+
+ Fix Central Link for PM52049 [http://www-933.ibm.com/support/fixcentral/swg/selectFix?product=ibm/WebSphere/WebSphere+Application+Server&fixids=7.0.0.19-WS-WAS-IFPM52049&source=dbluesearch&function=fixId&parent=ibm/WebSphere]
+
+ [http://www.ibm.com/support/docview.wss?uid=swg24029137]
+
+ Back to top 
+
+Optional Supported Software Group Product Applicable OS Notes Application Servers WebSphere Application Server Feature Pack for XML 1.0.0.7 and future fix packs (overview) [http://www.ibm.com/software/webservers/appserv/was/featurepacks/xml/index.html] All Applicable IBM i OS WebSphere Application Server V7 Feature Pack for Communications Enabled Applications 1.0.0.7 and future fix packs (overview) [http://www.ibm.com/software/webservers/appserv/was/featurepacks/cea/] All Applicable IBM i OS WebSphere Application Server V7 Feature Pack for Service Component Architecture 1.0.1.7 and future fix packs (overview) [http://www.ibm.com/software/webservers/appserv/was/featurepacks/sca/] (support) [http://www.ibm.com/support/entry/portal/Overview/Software/WebSphere/WebSphere_Application_Server] All Applicable IBM i OS WebSphere eXtreme Scale 7.1 and future fix packs (overview) [http://www.ibm.com/software/webservers/appserv/extremescale/] (support) [http://www.ibm.com/support/entry/portal/Overview/Software/WebSphere/WebSphere_eXtreme_Scale] All Applicable IBM i OS Requires version 7.1.0.0 WebSphere Virtual Enterprise 6.1 and future fix packs (overview) [http://www.ibm.com/software/webservers/appserv/extend/virtualenterprise/] (support) [http://www.ibm.com/support/entry/portal/Overview/Software/WebSphere/WebSphere_Virtual_Enterprise] All Applicable IBM i OS Requires fix pack version 6.1.1.2 Collaboration IBM Connections 3.0.1 and future fix packs (overview) [http://www.ibm.com/software/lotus/products/connections/index.html] (support) [http://www.ibm.com/support/entry/portal/Overview/Software/Lotus/IBM_Connections] All Applicable IBM i OS Lotus Connections 2.5 and future fix packs (overview) [http://www.ibm.com/software/lotus/products/connections/index.html] (support) [http://www.ibm.com/support/entry/portal/Overview/Software/Lotus/Lotus_Connections] All Applicable IBM i OS Lotus Connections 3.0 and future fix packs (overview) [http://www.ibm.com/software/lotus/products/connections/index.html] (support) [http://www.ibm.com/support/entry/portal/Overview/Software/Lotus/Lotus_Connections] All Applicable IBM i OS Lotus Domino 8.5.1 and future fix packs (overview) [http://www.ibm.com/software/lotus/products/domino/] (support) [http://www.ibm.com/software/lotus/support/domino/support.html] All Applicable IBM i OS Lotus Domino 8.5.2 and future fix packs (overview) [http://www.ibm.com/software/lotus/products/domino/] (support) [http://www.ibm.com/software/lotus/support/domino/support.html] All Applicable IBM i OS Lotus Quickr for Domino 8.2 and future fix packs (overview) [http://www.ibm.com/software/lotus/products/quickr/] (support) [http://www.ibm.com/support/entry/portal/Overview/Software/Lotus/Lotus_Quickr_for_Domino] All Applicable IBM i OS Lotus Quickr for Domino 8.5 and future fix packs (overview) [http://www.ibm.com/software/lotus/products/quickr/] (support) [http://www.ibm.com/support/entry/portal/Overview/Software/Lotus/Lotus_Quickr_for_Domino] All Applicable IBM i OS Lotus Quickr for WebSphere Portal 8.1.1 Feature Packs and future fix packs (overview) [http://www.ibm.com/software/lotus/products/quickr/] (support) [http://www.ibm.com/support/entry/portal/Overview/Software/Lotus/Lotus_Quickr_for_WebSphere_Portal] All Applicable IBM i OS Lotus Quickr for WebSphere Portal 8.5 and future fix packs (overview) [http://www.ibm.com/software/lotus/products/quickr/] (support) [http://www.ibm.com/support/entry/portal/Overview/Software/Lotus/Lotus_Quickr_for_WebSphere_Portal] All Applicable IBM i OS Lotus Sametime Entry 8.0 and future mod levels and fix packs (overview) [http://www.ibm.com/software/lotus/products/sametime/entry/] (support) [http://www.ibm.com/software/lotus/support/sametime/support.html] All Applicable IBM i OS IBM Lotus Sametime Entry 8.0.2 requires hot fix BMUY-87SL83 
+
+Lotus Sametime Entry 8.5 and future fix packs (overview) [http://www.ibm.com/software/lotus/products/sametime/entry/] (support) [http://www.ibm.com/software/lotus/support/sametime/support.html] All Applicable IBM i OS Requires hot fix BMUY-87SL83
+
+Lotus Sametime Standard 8.5 and future fix packs (overview) [http://www.ibm.com/software/lotus/products/sametime/standard/] (support) [http://www.ibm.com/software/lotus/support/sametime/support.html] All Applicable IBM i OS Requires hot fix BMUY-87SL83
+
+Databases DB2 for i5/OS 6.1 and future fix packs All Applicable IBM i OS DB2 for i5/OS 7.1 and future fix packs All Applicable IBM i OS DB2 for i5/OS V5R4 and future fix packs All Applicable IBM i OS DB2 for z/OS 10.1 and future fix packs (overview) [http://www.ibm.com/software/data/db2/zos/] (support) [http://www.ibm.com/software/data/db2/support/db2zos/] All Applicable IBM i OS Microsoft SQL Server Enterprise Edition 2008 R2 All Applicable IBM i OS Identity Management IBM Tivoli Directory Server for iSeries V5R4 and future fix packs All Applicable IBM i OS IBM Tivoli Directory Server for iSeries V6R1 and future fix packs All Applicable IBM i OS IBM Tivoli Directory Server for iSeries V7R1 and future fix packs All Applicable IBM i OS IBM z/OS.e Security Server 1.6 and future fix packs All Applicable IBM i OS IBM z/OS.e Security Server 1.7 and future fix packs All Applicable IBM i OS IBM z/OS Security Server 1.6 and future fix packs All Applicable IBM i OS IBM z/OS Security Server 1.7 and future fix packs All Applicable IBM i OS Lotus Domino 8.0 and future fix packs (overview) [http://www.ibm.com/software/lotus/products/domino/] (support) [http://www.ibm.com/software/lotus/support/domino/support.html] All Applicable IBM i OS Lotus Domino 8.0.1 and future fix packs (overview) [http://www.ibm.com/software/lotus/products/domino/] (support) [http://www.ibm.com/software/lotus/support/domino/support.html] All Applicable IBM i OS Lotus Domino 8.0.2 and future fix packs (overview) [http://www.ibm.com/software/lotus/products/domino/] (support) [http://www.ibm.com/software/lotus/support/domino/support.html] All Applicable IBM i OS Lotus Domino 8.5 and future fix packs (overview) [http://www.ibm.com/software/lotus/products/domino/] (support) [http://www.ibm.com/software/lotus/support/domino/support.html] All Applicable IBM i OS Lotus Domino 8.5.1 and future fix packs (overview) [http://www.ibm.com/software/lotus/products/domino/] (support) [http://www.ibm.com/software/lotus/support/domino/support.html] All Applicable IBM i OS Lotus Domino 8.5.2 and future fix packs (overview) [http://www.ibm.com/software/lotus/products/domino/] (support) [http://www.ibm.com/software/lotus/support/domino/support.html] All Applicable IBM i OS Microsoft Active Directory 2003 and future fix packs All Applicable IBM i OS Microsoft Active Directory 2008 and future fix packs All Applicable IBM i OS Microsoft Active Directory Application Mode (ADAM) 2003 and future fix packs All Applicable IBM i OS Microsoft AD LDS(Lightweight Directory Services) Windows 2008 and future fix packs All Applicable IBM i OS Novell eDirectory 8.7.3 and future fix packs All Applicable IBM i OS Novell eDirectory 8.8 and future fix packs All Applicable IBM i OS Sun Java System Directory Server 6.1 and future fix packs All Applicable IBM i OS Service Pack 10 or later is required. Sun Java System Directory Server 6.3 and future fix packs All Applicable IBM i OS Sun Java System Directory Server 7.0 and future fix packs All Applicable IBM i OS Tivoli Directory Server 6.0 and future fix packs (overview) [http://www.ibm.com/software/tivoli/products/directory-server/] (support) [http://www.ibm.com/software/sysmgmt/products/support/IBMDirectoryServer.html] All Applicable IBM i OS Tivoli Directory Server 6.1 and future fix packs (overview) [http://www.ibm.com/software/tivoli/products/directory-server/] (support) [http://www.ibm.com/software/sysmgmt/products/support/IBMDirectoryServer.html] All Applicable IBM i OS Fix pack 4 or later is required. Tivoli Directory Server 6.2 and future fix packs (overview) [http://www.ibm.com/software/tivoli/products/directory-server/] (support) [http://www.ibm.com/software/sysmgmt/products/support/IBMDirectoryServer.html] All Applicable IBM i OS Java Technology IBM Runtime Environment, Java Technology Edition 6.0 and future mod levels and fix packs All Applicable IBM i OS  J2SE 6.0 32-bit for IBM i V5R4
+Product 5722JV1, option 11 with latest Java group PTF applied
+J2SE 6.0 32-bit for IBM i V6R1
+Product 5761JV1, option 11 with latest Java group PTF applied
+J2SE 6.0 64-bit for IBM i V6R1
+Product 5761JV1, option 12 with latest Java group PTF applied
+
+Sun Java SDK/JRE/JDK 6.0 Update 17 and future fix packs All Applicable IBM i OS Java Developer Kit 6.0 64-bit for IBM i V5R4
+Product 5722JV1, option 10 with latest Java group PTF applied 
+Java Developer Kit 6.0 64-bit for IBM i V6R1
+Product 5761JV1, option 10 with latest Java group PTF applied JDBC Drivers IBM Toolbox for Java/JTOpen JDBC Driver 6.0 and future fix packs All Applicable IBM i OS Check for the latest jt400.jar file at:http://sourceforge.net/projects/jt400/files/ [http://sourceforge.net/projects/jt400/files/] Microsoft SQL Server JDBC Driver 3.0 All Applicable IBM i OS Miscellaneous IBM License Metric Tool 7.2.1 and future fix packs (overview) [http://www.ibm.com/software/tivoli/products/license-metric-tool/] (support) [http://www.ibm.com/software/sysmgmt/products/support/IBMLicenseMetricTool.html] All Applicable IBM i OS Tivoli Directory Integrator 7.0 and future fix packs (overview) [http://www.ibm.com/software/tivoli/products/directory-integrator/] (support) [http://www.ibm.com/software/sysmgmt/products/support/IBMDirectoryIntegrator.html] All Applicable IBM i OS Tivoli License Compliance Manager 2.3 Fixpack 1 and future fix packs (overview) [http://www.ibm.com/software/tivoli/products/license-mgr/] (support) [http://www.ibm.com/software/sysmgmt/products/support/IBMTivoliLicenseManager.html] All Applicable IBM i OS Process Server WebSphere Process Server 7.0.0.3 and future fix packs (overview) [http://www.ibm.com/software/integration/wps/] (support) [http://www.ibm.com/support/entry/portal/Overview/Software/WebSphere/WebSphere_Process_Server] All Applicable IBM i OS Security CA SiteMinder 6.0 and future fix packs All Applicable IBM i OS Tivoli Access Manager for e-business 6.0 and future fix packs (overview) [http://www.ibm.com/software/tivoli/products/access-mgr-e-bus/] (support) [http://www.ibm.com/software/sysmgmt/products/support/IBMTivoliAccessManagerfore-business.html] All Applicable IBM i OS Tivoli Access Manager for e-business 6.1 and future fix packs (overview) [http://www.ibm.com/software/tivoli/products/access-mgr-e-bus/] (support) [http://www.ibm.com/software/sysmgmt/products/support/IBMTivoliAccessManagerfore-business.html] All Applicable IBM i OS Tools Rational Application Developer for WebSphere Software 8.0 and future fix packs (overview) [http://www.ibm.com/software/awdtools/developer/application/index.html] (support) [http://www.ibm.com/software/awdtools/developer/application/support/index.html] All Applicable IBM i OS WebSphere Portlet Factory 7.0 and future fix packs (overview) [http://www.ibm.com/software/genservers/portletfactory/] (support) [http://www.ibm.com/software/genservers/portletfactory/support/] All Applicable IBM i OS Virtualization IBM PowerVM Hypervisor (LPAR, DPAR, Micro-Partition) any supported version and future fix packs All Applicable IBM i OS IBM PR/SM any version and future fix packs All Applicable IBM i OS Red Hat KVM as delivered with Red Hat Enterprise Linux (RHEL) 5.4 and future fix packs All Applicable IBM i OS Web Browsers Apple Safari 4.0 and future fix packs All Applicable IBM i OS  Refer to the following link for Known limitations when using Google Chrome and Apple Safari Web browsers with WebSphere Portal V7.0.x:
+
+ For more information on Web browser support with WebSphere Portal, refer to "WebSphere Portal Support Statement Addendum - Web browsers" at 
+
+ http://www-01.ibm.com/support/docview.wss?uid=swg27016293 [http://www-01.ibm.com/support/docview.wss?uid=swg27016293]
+
+Google Chrome 8 and future releases, mod levels and fix packs All Applicable IBM i OS  Refer to the following link for Known limitations when using Google Chrome and Apple Safari Web browsers with WebSphere Portal V7.0.x:
+
+ For more information on Web browser support with WebSphere Portal, refer to "WebSphere Portal Support Statement Addendum - Web browsers" at
+
+ http://www-01.ibm.com/support/docview.wss?uid=swg27016293 [http://www-01.ibm.com/support/docview.wss?uid=swg27016293]
+
+Microsoft Internet Explorer 6.0 SP2 and future fix packs All Applicable IBM i OS  Internet Explorer 6.0 SP2 on Windows XP SP1/SP2 and Windows 2000 SP4 and Windows 2003. Support for Microsoft Internet Explorer v6.0 is deprecated in this release and due to its limited capabilities many WebSphere Portal features do not function or render correctly, including Client-Side Aggregation (CSA), Page Builder, Mashup integration, Wikis and Blogs. Some legacy pages and themes can be successfully rendered by Microsoft Internet Explorer v6.0, but use of this Web browser is not recommended.
+
+ For more information on Web browser support with WebSphere Portal, refer to "WebSphere Portal Support Statement Addendum - Web browsers" at http://www-01.ibm.com/support/docview.wss?uid=swg27016293 [http://www-01.ibm.com/support/docview.wss?uid=swg27016293]
+
+Microsoft Internet Explorer 7.0 and future fix packs All Applicable IBM i OS  Internet Explorer 7.0 is supported on all versions of Windows that are supported by WebSphere Portal.
+
+ For more information on Web browser support with WebSphere Portal, refer to "WebSphere Portal Support Statement Addendum - Web browsers" at http://www-01.ibm.com/support/docview.wss?uid=swg27016293 [http://www-01.ibm.com/support/docview.wss?uid=swg27016293]
+
+Microsoft Internet Explorer 8.0 and future fix packs All Applicable IBM i OS See Note #1 Microsoft Internet Explorer 9.0 and future fix packs All Applicable IBM i OS  Refer to the IE9 Support statement for more information:
+
+ http://www.ibm.com/support/docview.wss?uid=swg21496054 [http://www.ibm.com/support/docview.wss?uid=swg21496054]
+
+ For more information on Web browser support with WebSphere Portal, refer to "WebSphere Portal Support Statement Addendum - Web browsers" at 
+
+ http://www-01.ibm.com/support/docview.wss?uid=swg27016293 [http://www-01.ibm.com/support/docview.wss?uid=swg27016293]
+
+Mozilla Firefox 3.0 and future fix packs All Applicable IBM i OS See Note #1 Mozilla Firefox 3.5 and future fix packs All Applicable IBM i OS See Note #1 Mozilla Firefox 3.6 and future fix packs All Applicable IBM i OS See Note #1 Mozilla Firefox 4.0 and future releases, mod levels and fix packs All Applicable IBM i OS See Note #1 Opera 10.0 and future fix packs All Applicable IBM i OS See Note #1 WebDAV Client davfs2 1.4.6 All Applicable IBM i OS  Refer to the technote for version information and limitations -
+
+ Recommended WebDAV clients for accessing IBM WebShpere Portal version 7.0.0.2 [http://www-01.ibm.com/support/docview.wss?uid=swg27023805]
+
+JSCAPE AnyClient 2.2 All Applicable IBM i OS  Refer to the technote for version information and limitations -
+
+ Recommended WebDAV clients for accessing IBM WebShpere Portal version 7.0.0.2 [http://www-01.ibm.com/support/docview.wss?uid=swg27023805]
+
+SRT WebDrive 9.1 All Applicable IBM i OS  Refer to the technote for version information and limitations -
+
+ Recommended WebDAV clients for accessing IBM WebShpere Portal version 7.0.0.2 [http://www-01.ibm.com/support/docview.wss?uid=swg27023805]
+
+Web Servers Apache HTTP Server 2.0.59 and future fix packs All Applicable IBM i OS Apache HTTP Server 2.2 and future fix packs All Applicable IBM i OS IBM HTTP Server 6.1 and future fix packs (overview) [http://www.ibm.com/software/webservers/httpservers/] (support) [http://www.ibm.com/support/entry/portal/Overview/Software/WebSphere/IBM_HTTP_Server] All Applicable IBM i OS IBM HTTP Server 7.0 and future fix packs (overview) [http://www.ibm.com/software/webservers/httpservers/] (support) [http://www.ibm.com/support/entry/portal/Overview/Software/WebSphere/IBM_HTTP_Server] All Applicable IBM i OS IBM HTTP Server for i5/OS Any and future fix packs All Applicable IBM i OS  IBM HTTP Server for i5/OS versions V5R4, V6R1 and V7R1
+
+IBM HTTP Server for z/OS Any and future fix packs All Applicable IBM i OS Lotus Domino 8.0 and future fix packs (overview) [http://www.ibm.com/software/lotus/products/domino/] (support) [http://www.ibm.com/software/lotus/support/domino/support.html] All Applicable IBM i OS Lotus Domino 8.0.1 and future fix packs (overview) [http://www.ibm.com/software/lotus/products/domino/] (support) [http://www.ibm.com/software/lotus/support/domino/support.html] All Applicable IBM i OS Lotus Domino 8.0.2 and future fix packs (overview) [http://www.ibm.com/software/lotus/products/domino/] (support) [http://www.ibm.com/software/lotus/support/domino/support.html] All Applicable IBM i OS Lotus Domino 8.5 and future fix packs (overview) [http://www.ibm.com/software/lotus/products/domino/] (support) [http://www.ibm.com/software/lotus/support/domino/support.html] All Applicable IBM i OS Lotus Domino 8.5.1 and future fix packs (overview) [http://www.ibm.com/software/lotus/products/domino/] (support) [http://www.ibm.com/software/lotus/support/domino/support.html] All Applicable IBM i OS Lotus Domino 8.5.2 and future fix packs (overview) [http://www.ibm.com/software/lotus/products/domino/] (support) [http://www.ibm.com/software/lotus/support/domino/support.html] All Applicable IBM i OS Microsoft Internet Information Services 6.0 and future fix packs All Applicable IBM i OS Microsoft Internet Information Services 7.0 and future fix packs All Applicable IBM i OS Microsoft Internet Information Services 7.5 and future fix packs All Applicable IBM i OS Supported as Web server plugins when hosted on the Windows Server 2008 R2 edition. Sun Java System Web Server 6.1 SP10 and future fix packs All Applicable IBM i OS  Sun Java System Web Server 6.1 Service pack 10 or later is required.
+
+Sun Java System Web Server 7.0 Update 8 and future fix packs All Applicable IBM i OS  Sun Java System Web Server 7.0 Update 8 or later is required.
+
+ Back to top 
+
+
+
+
+TAB NAVIGATION
+ *  Red Hat Enterprise Linux (RHEL) 
+ *  Red Hat Enterprise Linux (RHEL) Server 
+ *  Red Hat Enterprise Linux (RHEL) Workstation 
+ *  SUSE Linux Enterprise Desktop (SLED) 
+ *  SUSE Linux Enterprise Server (SLES) 
+
+
+
+
+OUTLINE
+ * Hardware Requirements  *  Disk Space 
+    *  Media Drive 
+    *  Memory 
+    *  Processor 
+   
+   
+ * Software Requirements  *  Operating System 
+    *  Application Servers 
+   
+   
+ * Optional Supported Software  *  Application Servers 
+    *  Collaboration 
+    *  Databases 
+    *  Identity Management 
+    *  Java Technology 
+    *  JDBC Drivers 
+    *  Miscellaneous 
+    *  Process Server 
+    *  Security 
+    *  Tools 
+    *  Virtualization 
+    *  Web Browsers 
+    *  WebDAV Client 
+    *  Web Servers 
+   
+   
+
+
+
+
+Hardware Requirements Group Applicable OS Notes Disk Space All Applicable Linux OS  Minimum 2.5 GB free disk space for installation for WebSphere Portal
+Minimum 1.4 GB free disk space for installation for WebSphere Application Server
+Minimum 4 GB total disk space recommended for installation
+
+Media Drive All Applicable Linux OS  A CD/DVD drive is required.
+
+Memory All Applicable Linux OS  Physical memory requirements and recommendations for WebSphere Portal:
+
+ *  Under minimal load, WebSphere Portal can function with 2GB of RAM and a remote database.
+ *  In a production environment, 4GB is an optimal starting point for RAM.
+
+Processor Red Hat Enterprise Linux (RHEL) 4 Update 6 AS/ES x86-32,
+Red Hat Enterprise Linux (RHEL) 4 Update 6 AS/ES x86-64,
+Red Hat Enterprise Linux (RHEL) 4 Update 6 Desktop x86-32,
+Red Hat Enterprise Linux (RHEL) 4 Update 6 WS x86-32,
+Red Hat Enterprise Linux (RHEL) 5 Update 2 Advanced Platform x86-32,
+Red Hat Enterprise Linux (RHEL) 5 Update 2 Advanced Platform x86-64,
+Red Hat Enterprise Linux (RHEL) 5 Update 2 Desktop editions x86-32,
+Red Hat Enterprise Linux (RHEL) Server 6 x86-32,
+Red Hat Enterprise Linux (RHEL) Server 6 x86-64,
+Red Hat Enterprise Linux (RHEL) Workstation 6 x86-32,
+Red Hat Enterprise Linux (RHEL) Workstation 6 x86-64,
+SUSE Linux Enterprise Desktop (SLED) 10.0 SP2 x86-32,
+SUSE Linux Enterprise Desktop (SLED) 11.0 x86-32,
+SUSE Linux Enterprise Server (SLES) 10 SP2 x86-32,
+SUSE Linux Enterprise Server (SLES) 10 SP2 x86-64,
+SUSE Linux Enterprise Server (SLES) 11 x86-32,
+SUSE Linux Enterprise Server (SLES) 11 x86-64,
+SUSE Linux Enterprise Server (SLES) 9 SP4 x86-32,
+SUSE Linux Enterprise Server (SLES) 9 SP4 x86-64  Processor: CPU speeds of late-model, mid-range to high-end servers are recommended (32-bit or 64-bit support). Pentium 800 MHz or equivalent at a minimum. Production environments should consider the Pentium 4 processor at 1.4 GHz or higher. AMD Opteron, Intel EM64T
+
+Red Hat Enterprise Linux (RHEL) 4 Update 6 AS/ES POWER System,
+Red Hat Enterprise Linux (RHEL) 5 Update 2 Advanced Platform POWER System,
+Red Hat Enterprise Linux (RHEL) Server 6 POWER System,
+SUSE Linux Enterprise Server (SLES) 10 SP2 POWER System,
+SUSE Linux Enterprise Server (SLES) 11 POWER System,
+SUSE Linux Enterprise Server (SLES) 9 SP4 POWER System  IBM System i (iSeries) IBM System p (pSeries), IBM OpenPower, or IBM BladeCenter.
+System p includes IBM system product lines System i5 models that support LPAR (64-bit support only) with minimum of 450 CPW in Linux Partition, System p models that support Linux (64-bit support only), BladeCenter JS20, and OpenPower that are based on IBM System p architecture technology and run the same Linux distributions from Red Hat and Novell SUSE.
+
+Red Hat Enterprise Linux (RHEL) 4 Update 6 AS/ES System z,
+Red Hat Enterprise Linux (RHEL) 5 Update 2 Advanced Platform System z,
+Red Hat Enterprise Linux (RHEL) Server 6 System z,
+SUSE Linux Enterprise Server (SLES) 10 SP2 System z,
+SUSE Linux Enterprise Server (SLES) 11 System z,
+SUSE Linux Enterprise Server (SLES) 9 SP4 System z  System z processors
+
+ Back to top 
+
+Operating Systems Operating System Attributes Notes Linux Platform listing of supported OS Red Hat Enterprise Linux (RHEL) 4 Update 6 AS/ES POWER System and future OS fix packs Bitness: 64 Bit Exploit
+Hardware platform: POWER System WebSphere Application Server requirements depending on operating system bit:
+
+ * 32-bit JDK/WebSphere Application Server on 64-bit OS 
+ * 64-bit JDK/WebSphere Application Server on 64-bit OS 
+
+Red Hat Enterprise Linux (RHEL) 4 Update 6 AS/ES System z and future OS fix packs Bitness: 64 Bit Exploit
+Hardware platform: System z See Note #8 Red Hat Enterprise Linux (RHEL) 4 Update 6 AS/ES x86-32 and future OS fix packs Bitness: 32 Bit
+Hardware platform: x86-32 See Note #5 Red Hat Enterprise Linux (RHEL) 4 Update 6 AS/ES x86-64 and future OS fix packs Bitness: 32 Bit, 64 Bit Exploit
+Hardware platform: x86-64 See Note #7 Red Hat Enterprise Linux (RHEL) 4 Update 6 Desktop x86-32 and future OS fix packs Bitness: 32 Bit
+Hardware platform: x86-32 See Note #2 Red Hat Enterprise Linux (RHEL) 4 Update 6 WS x86-32 and future OS fix packs Bitness: 32 Bit
+Hardware platform: x86-32 See Note #2 Red Hat Enterprise Linux (RHEL) 5 Update 2 Advanced Platform POWER System and future OS fix packs Bitness: 64 Bit Exploit
+Hardware platform: POWER System See Note #7 Red Hat Enterprise Linux (RHEL) 5 Update 2 Advanced Platform System z and future OS fix packs Bitness: 64 Bit Exploit
+Hardware platform: System z See Note #8 Red Hat Enterprise Linux (RHEL) 5 Update 2 Advanced Platform x86-32 and future OS fix packs Bitness: 32 Bit
+Hardware platform: x86-32 See Note #5 Red Hat Enterprise Linux (RHEL) 5 Update 2 Advanced Platform x86-64 and future OS fix packs Bitness: 32 Bit, 64 Bit Exploit
+Hardware platform: x86-64 See Note #7 Red Hat Enterprise Linux (RHEL) 5 Update 2 Desktop editions x86-32 and future OS fix packs Bitness: 32 Bit
+Hardware platform: x86-32 See Note #2 Red Hat Enterprise Linux (RHEL) Server 6 POWER System and future OS fix packs Bitness: 64 Bit Exploit
+Hardware platform: POWER System WebSphere Application Server requirements depending on operating system bit:
+
+• 32-bit JDK/WebSphere Application Server on 64-bit OS
+• 64-bit JDK/WebSphere Application Server on 64-bit OS Red Hat Enterprise Linux (RHEL) Server 6 System z and future OS fix packs Bitness: 64 Bit Exploit
+Hardware platform: System z WebSphere Application Server requirements depending on operating system bit:
+
+• 64-bit JDK/WebSphere Application Server on 64-bit OS Red Hat Enterprise Linux (RHEL) Server 6 x86-32 and future OS fix packs Bitness: 32 Bit
+Hardware platform: x86-32 WebSphere Application Server requirements depending on operating system bit:
+
+• 32-bit JDK/WebSphere Application Server on 32-bit OS Red Hat Enterprise Linux (RHEL) Server 6 x86-64 and future OS fix packs Bitness: 32 Bit, 64 Bit Exploit
+Hardware platform: x86-64 WebSphere Application Server requirements depending on operating system bit:
+
+• 32-bit JDK/WebSphere Application Server on 64-bit OS
+• 64-bit JDK/WebSphere Application Server on 64-bit OS Red Hat Enterprise Linux (RHEL) Workstation 6 x86-32 and future OS fix packs Bitness: 32 Bit
+Hardware platform: x86-32 WebSphere Application Server requirements depending on operating system bit:
+
+• 32-bit JDK/WebSphere Application Server on 32-bit OS Red Hat Enterprise Linux (RHEL) Workstation 6 x86-64 and future OS fix packs Bitness: 64 Bit Exploit
+Hardware platform: x86-64 See Note #8 SUSE Linux Enterprise Desktop (SLED) 10.0 SP2 x86-32 and future OS fix packs Bitness: 32 Bit
+Hardware platform: x86-32 See Note #2 SUSE Linux Enterprise Desktop (SLED) 11.0 x86-32 and future OS fix packs Bitness: 32 Bit
+Hardware platform: x86-32 See Note #2 SUSE Linux Enterprise Server (SLES) 10 SP2 POWER System and future OS fix packs Bitness: 64 Bit Exploit
+Hardware platform: POWER System See Note #7 SUSE Linux Enterprise Server (SLES) 10 SP2 System z and future OS fix packs Bitness: 64 Bit Exploit
+Hardware platform: System z See Note #8 SUSE Linux Enterprise Server (SLES) 10 SP2 x86-32 and future OS fix packs Bitness: 32 Bit
+Hardware platform: x86-32 See Note #4 SUSE Linux Enterprise Server (SLES) 10 SP2 x86-64 and future OS fix packs Bitness: 64 Bit Exploit
+Hardware platform: x86-64 See Note #6 SUSE Linux Enterprise Server (SLES) 11 POWER System and future OS fix packs Bitness: 64 Bit Exploit
+Hardware platform: POWER System See Note #6 SUSE Linux Enterprise Server (SLES) 11 System z and future OS fix packs Bitness: 64 Bit Exploit
+Hardware platform: System z WebSphere Application Server requirements depending on operating system bit:
+
+ * 64-bit JDK/WebSphere Application Server on 64-bit OS
+
+SUSE Linux Enterprise Server (SLES) 11 x86-32 and future OS fix packs Bitness: 32 Bit
+Hardware platform: x86-32 See Note #5 SUSE Linux Enterprise Server (SLES) 11 x86-64 and future OS fix packs Bitness: 32 Bit, 64 Bit Exploit
+Hardware platform: x86-64 See Note #7 SUSE Linux Enterprise Server (SLES) 9 SP4 POWER System and future OS fix packs Bitness: 64 Bit Exploit
+Hardware platform: POWER System See Note #7 SUSE Linux Enterprise Server (SLES) 9 SP4 System z and future OS fix packs Bitness: 64 Bit Exploit
+Hardware platform: System z See Note #8 SUSE Linux Enterprise Server (SLES) 9 SP4 x86-32 and future OS fix packs Bitness: 32 Bit
+Hardware platform: x86-32 See Note #5 SUSE Linux Enterprise Server (SLES) 9 SP4 x86-64 and future OS fix packs Bitness: 32 Bit, 64 Bit Exploit
+Hardware platform: x86-64 See Note #7  Back to top 
+
+Software Requirements Group Product Applicable OS Notes Application Servers WebSphere Application Server 7.0.0.19 and future fix packs (overview) [http://www.ibm.com/software/webservers/appserv/was/] (support) [http://www.ibm.com/support/entry/portal/Overview/Software/WebSphere/WebSphere_Application_Server] All Applicable Linux OS  Download mandatory APAR PM52049 for WebSphere Application server 7.0.0.19 from this site -
+
+ Fix Central Link for PM52049 [http://www-933.ibm.com/support/fixcentral/swg/selectFix?product=ibm/WebSphere/WebSphere+Application+Server&fixids=7.0.0.19-WS-WAS-IFPM52049&source=dbluesearch&function=fixId&parent=ibm/WebSphere]
+
+ [http://www.ibm.com/support/docview.wss?uid=swg24029137]
+
+ Back to top 
+
+Optional Supported Software Group Product Applicable OS Notes Application Servers WebSphere Application Server Feature Pack for XML 1.0.0.7 and future fix packs (overview) [http://www.ibm.com/software/webservers/appserv/was/featurepacks/xml/index.html] All Applicable Linux OS WebSphere Application Server V7 Feature Pack for Communications Enabled Applications 1.0.0.7 and future fix packs (overview) [http://www.ibm.com/software/webservers/appserv/was/featurepacks/cea/] All Applicable Linux OS WebSphere Application Server V7 Feature Pack for Service Component Architecture 1.0.1.7 and future fix packs (overview) [http://www.ibm.com/software/webservers/appserv/was/featurepacks/sca/] (support) [http://www.ibm.com/support/entry/portal/Overview/Software/WebSphere/WebSphere_Application_Server] All Applicable Linux OS WebSphere eXtreme Scale 7.1 and future fix packs (overview) [http://www.ibm.com/software/webservers/appserv/extremescale/] (support) [http://www.ibm.com/support/entry/portal/Overview/Software/WebSphere/WebSphere_eXtreme_Scale] All Applicable Linux OS Requires version 7.1.0.0 WebSphere Virtual Enterprise 6.1 and future fix packs (overview) [http://www.ibm.com/software/webservers/appserv/extend/virtualenterprise/] (support) [http://www.ibm.com/support/entry/portal/Overview/Software/WebSphere/WebSphere_Virtual_Enterprise] All Applicable Linux OS Requires fix pack version 6.1.1.2 Collaboration IBM Connections 3.0.1 and future fix packs (overview) [http://www.ibm.com/software/lotus/products/connections/index.html] (support) [http://www.ibm.com/support/entry/portal/Overview/Software/Lotus/IBM_Connections] All Applicable Linux OS Lotus Connections 2.5 and future fix packs (overview) [http://www.ibm.com/software/lotus/products/connections/index.html] (support) [http://www.ibm.com/support/entry/portal/Overview/Software/Lotus/Lotus_Connections] All Applicable Linux OS Lotus Connections 3.0 and future fix packs (overview) [http://www.ibm.com/software/lotus/products/connections/index.html] (support) [http://www.ibm.com/support/entry/portal/Overview/Software/Lotus/Lotus_Connections] All Applicable Linux OS Lotus Domino 8.5.1 and future fix packs (overview) [http://www.ibm.com/software/lotus/products/domino/] (support) [http://www.ibm.com/software/lotus/support/domino/support.html] All Applicable Linux OS Lotus Domino 8.5.2 and future fix packs (overview) [http://www.ibm.com/software/lotus/products/domino/] (support) [http://www.ibm.com/software/lotus/support/domino/support.html] All Applicable Linux OS Lotus Quickr for Domino 8.2 and future fix packs (overview) [http://www.ibm.com/software/lotus/products/quickr/] (support) [http://www.ibm.com/support/entry/portal/Overview/Software/Lotus/Lotus_Quickr_for_Domino] All Applicable Linux OS Lotus Quickr for Domino 8.5 and future fix packs (overview) [http://www.ibm.com/software/lotus/products/quickr/] (support) [http://www.ibm.com/support/entry/portal/Overview/Software/Lotus/Lotus_Quickr_for_Domino] All Applicable Linux OS Lotus Quickr for WebSphere Portal 8.1.1 Feature Packs and future fix packs (overview) [http://www.ibm.com/software/lotus/products/quickr/] (support) [http://www.ibm.com/support/entry/portal/Overview/Software/Lotus/Lotus_Quickr_for_WebSphere_Portal] All Applicable Linux OS Lotus Quickr for WebSphere Portal 8.5 and future fix packs (overview) [http://www.ibm.com/software/lotus/products/quickr/] (support) [http://www.ibm.com/support/entry/portal/Overview/Software/Lotus/Lotus_Quickr_for_WebSphere_Portal] All Applicable Linux OS Lotus Sametime Entry 8.0 and future mod levels and fix packs (overview) [http://www.ibm.com/software/lotus/products/sametime/entry/] (support) [http://www.ibm.com/software/lotus/support/sametime/support.html] All Applicable Linux OS IBM Lotus Sametime Entry 8.0.2 requires hot fix BMUY-87SL83 
+
+Lotus Sametime Entry 8.5 and future fix packs (overview) [http://www.ibm.com/software/lotus/products/sametime/entry/] (support) [http://www.ibm.com/software/lotus/support/sametime/support.html] All Applicable Linux OS Requires hot fix BMUY-87SL83
+
+Lotus Sametime Standard 8.5 and future fix packs (overview) [http://www.ibm.com/software/lotus/products/sametime/standard/] (support) [http://www.ibm.com/software/lotus/support/sametime/support.html] All Applicable Linux OS Requires hot fix BMUY-87SL83
+
+Databases Apache Derby 10.3 and future fix packs All Applicable Linux OS Not supported in a production environment.
+
+DB2 9 for Linux, UNIX and Windows 9.1.0.9 and future fix packs All Applicable Linux OS  Includes Workgroup Server, Enterprise Server, and Express Server editions.
+
+ High Availability Disaster Recovery (HADR) Feature is supported.
+
+DB2 Enterprise Server Edition 9.7.0.1 and future fix packs (overview) [http://www.ibm.com/software/data/db2/linux-unix-windows/edition-enterprise.html] (support) [http://www.ibm.com/software/data/db2/support/db2_9/] All Applicable Linux OS  Includes Workgroup Server, Enterprise Server, and Express Server editions.
+
+ High Availability Disaster Recovery (HADR) Feature is supported.
+
+ Database parameter 'cur_commit' must be set to 'DISABLED' for database of WebSphere Portal 7
+
+DB2 for i5/OS 6.1 and future fix packs All Applicable Linux OS DB2 for i5/OS 7.1 and future fix packs All Applicable Linux OS DB2 for i5/OS V5R4 and future fix packs All Applicable Linux OS DB2 for z/OS 9.1 and future fix packs (overview) [http://www.ibm.com/software/data/db2/zos/] (support) [http://www.ibm.com/software/data/db2/support/db2zos/] All Applicable Linux OS  High Availability Disaster Recovery (HADR) Feature is supported.
+
+ WebSphere Portal 7.0 works with DB2 for z/OS V9.1 - PUT level 0912.
+
+ The following are required:
+
+ *  APAR PK75093 or later
+ *  APAR PK92163:
+   http://www-01.ibm.com/support/docview.wss?uid=swg1PK92163 [http://www-01.ibm.com/support/docview.wss?uid=swg1PK92163]
+ *  APAR PK68265
+
+DB2 for z/OS 10.1 and future fix packs (overview) [http://www.ibm.com/software/data/db2/zos/] (support) [http://www.ibm.com/software/data/db2/support/db2zos/] All Applicable Linux OS DB2 pureScale Feature for Enterprise Server Edition 9.8.0.3 and future fix packs All Applicable Linux OS  Requires 7.0.0.1 CF007 or higher.
+
+ Refer to the steps documented here: http://www-10.lotus.com/ldd/portalwiki.nsf/dx/Configuring_WebSphere_Portal_V7.0.0.1_with_DB2_pureScale?open [http://www-10.lotus.com/ldd/portalwiki.nsf/dx/Configuring_WebSphere_Portal_V7.0.0.1_with_DB2_pureScale?open]
+
+DB2 Universal Database for z/OS 8.1 and future fix packs All Applicable Linux OS  WebSphere Portal 7.0 works with DB2 for z/OS V8.1 - PUT level 0912 or later service level.
+
+ High Availability Disaster Recovery (HADR) Feature is supported.
+
+DB2 Workgroup Server Edition 9.5.0.5 and future fix packs (overview) [http://www.ibm.com/software/data/db2/linux-unix-windows/edition-workgroup.html] (support) [http://www.ibm.com/software/data/db2/support/db2_9/] All Applicable Linux OS  Includes Workgroup Server, Enterprise Server, and Express Server editions.
+
+ High Availability Disaster Recovery (HADR) Feature is supported.
+
+Microsoft SQL Server Enterprise Edition 2005 SP2 and future fix packs All Applicable Linux OS Microsoft SQL Server Enterprise Edition 2008 and future fix packs All Applicable Linux OS Microsoft SQL Server Enterprise Edition 2008 R2 All Applicable Linux OS Oracle Database 10g Enterprise Edition Release 1 10.1.0.5 and future fix packs All Applicable Linux OS See Note #3 Oracle Database 10g Enterprise Edition Release 2 10.2.0.4 and future fix packs All Applicable Linux OS See Note #3 Oracle Database 10g Standard Edition Release 1 10.1.0.5 and future fix packs All Applicable Linux OS See Note #3 Oracle Database 10g Standard Edition Release 2 10.2.0.4 and future fix packs All Applicable Linux OS See Note #3 Oracle Database 11g Enterprise Edition Release 1 11.1.0.6 and future fix packs All Applicable Linux OS See Note #3 Oracle Database 11g Enterprise Edition Release 1 11.1.0.7 and future fix packs All Applicable Linux OS See Note #3 Oracle Database 11g Enterprise Edition Release 2 11.2.0.2 and future fix packs All Applicable Linux OS See Note #3 Oracle Database 11g Standard Edition Release 1 11.1.0.6 and future fix packs All Applicable Linux OS See Note #3 Oracle Database 11g Standard Edition Release 1 11.1.0.7 and future fix packs All Applicable Linux OS See Note #3 Oracle Database 11g Standard Edition Release 2 11.2.0.2 and future fix packs All Applicable Linux OS See Note #3 Identity Management IBM z/OS.e Security Server 1.6 and future fix packs All Applicable Linux OS IBM z/OS.e Security Server 1.7 and future fix packs All Applicable Linux OS IBM z/OS Security Server 1.6 and future fix packs All Applicable Linux OS IBM z/OS Security Server 1.7 and future fix packs All Applicable Linux OS Lotus Domino 8.0 and future fix packs (overview) [http://www.ibm.com/software/lotus/products/domino/] (support) [http://www.ibm.com/software/lotus/support/domino/support.html] All Applicable Linux OS Lotus Domino 8.0.1 and future fix packs (overview) [http://www.ibm.com/software/lotus/products/domino/] (support) [http://www.ibm.com/software/lotus/support/domino/support.html] All Applicable Linux OS Lotus Domino 8.0.2 and future fix packs (overview) [http://www.ibm.com/software/lotus/products/domino/] (support) [http://www.ibm.com/software/lotus/support/domino/support.html] All Applicable Linux OS Lotus Domino 8.5 and future fix packs (overview) [http://www.ibm.com/software/lotus/products/domino/] (support) [http://www.ibm.com/software/lotus/support/domino/support.html] All Applicable Linux OS Lotus Domino 8.5.1 and future fix packs (overview) [http://www.ibm.com/software/lotus/products/domino/] (support) [http://www.ibm.com/software/lotus/support/domino/support.html] All Applicable Linux OS Lotus Domino 8.5.2 and future fix packs (overview) [http://www.ibm.com/software/lotus/products/domino/] (support) [http://www.ibm.com/software/lotus/support/domino/support.html] All Applicable Linux OS Microsoft Active Directory 2003 and future fix packs All Applicable Linux OS Microsoft Active Directory 2008 and future fix packs All Applicable Linux OS Microsoft Active Directory Application Mode (ADAM) 2003 and future fix packs All Applicable Linux OS Microsoft AD LDS(Lightweight Directory Services) Windows 2008 and future fix packs All Applicable Linux OS Novell eDirectory 8.7.3 and future fix packs All Applicable Linux OS Novell eDirectory 8.8 and future fix packs All Applicable Linux OS Sun Java System Directory Server 6.1 and future fix packs All Applicable Linux OS Service Pack 10 or later is required. Sun Java System Directory Server 6.3 and future fix packs All Applicable Linux OS Sun Java System Directory Server 7.0 and future fix packs All Applicable Linux OS Tivoli Directory Server 6.0 and future fix packs (overview) [http://www.ibm.com/software/tivoli/products/directory-server/] (support) [http://www.ibm.com/software/sysmgmt/products/support/IBMDirectoryServer.html] All Applicable Linux OS Tivoli Directory Server 6.1 and future fix packs (overview) [http://www.ibm.com/software/tivoli/products/directory-server/] (support) [http://www.ibm.com/software/sysmgmt/products/support/IBMDirectoryServer.html] All Applicable Linux OS Fix pack 4 or later is required. Tivoli Directory Server 6.2 and future fix packs (overview) [http://www.ibm.com/software/tivoli/products/directory-server/] (support) [http://www.ibm.com/software/sysmgmt/products/support/IBMDirectoryServer.html] All Applicable Linux OS Java Technology IBM Runtime Environment, Java Technology Edition 6.0 and future mod levels and fix packs All Applicable Linux OS  Requirements:
+
+ *  Java version included or recommended by WebSphere Application Server 7.0.0.19.
+
+Sun Java SDK/JRE/JDK 6.0 Update 17 and future fix packs All Applicable Linux OS Supported Java runtime environments 1.5.x or 1.6.x (requires one) for the Web Content Management authoring portlet
+
+JDBC Drivers Apache Derby 10.3 JDBC 4.0 and future fix packs All Applicable Linux OS Derby is a non-production environment. V10.3.3.1 or later is required. DataDirect Connect for JDBC 4.0 (type 4) and future fix packs All Applicable Linux OS DB2 Driver for JDBC and SQLJ (type 2/4) 4.0 and future fix packs All Applicable Linux OS DB2 9.5 and DB2 9.7 require DB2 Driver for JDBC and SQLJ (type 2/4) 4.0 IBM Application Connectivity to DB2 for z/OS Feature Version and future fix packs All Applicable Linux OS IBM DB2 Universal JDBC Provider (XA) from DB2 z/OS (type 4) Version and future fix packs All Applicable Linux OS Requires APAR PK93123 for DB2 on z/OS V8.1 and V9.1. You can obtain the fix from DB2 on z/OS support or IBMLINK. IBM Toolbox for Java/JTOpen JDBC Driver 6.0 and future fix packs All Applicable Linux OS Check for the latest jt400.jar file at:http://sourceforge.net/projects/jt400/files/ [http://sourceforge.net/projects/jt400/files/] Microsoft SQL Server JDBC Driver 2.0 and future fix packs All Applicable Linux OS Microsoft SQL Server JDBC Driver 3.0 All Applicable Linux OS Oracle JDBC Driver (XA) 10g Any and future fix packs All Applicable Linux OS  Oracle 11g JDBC Driver Thin (type 4) (11.2.0.2 or higher)
+
+ Requires the ojdbc6.jar file.
+
+Oracle JDBC Driver (XA) 11g 11.2.0.2 and future fix packs All Applicable Linux OS  Oracle 11g JDBC Driver Thin (type 4) (11.2.0.2 or higher)
+
+ Requires the ojdbc6.jar file.
+
+Miscellaneous IBM License Metric Tool 7.2.1 and future fix packs (overview) [http://www.ibm.com/software/tivoli/products/license-metric-tool/] (support) [http://www.ibm.com/software/sysmgmt/products/support/IBMLicenseMetricTool.html] All Applicable Linux OS Tivoli Directory Integrator 7.0 and future fix packs (overview) [http://www.ibm.com/software/tivoli/products/directory-integrator/] (support) [http://www.ibm.com/software/sysmgmt/products/support/IBMDirectoryIntegrator.html] All Applicable Linux OS Tivoli License Compliance Manager 2.3 Fixpack 1 and future fix packs (overview) [http://www.ibm.com/software/tivoli/products/license-mgr/] (support) [http://www.ibm.com/software/sysmgmt/products/support/IBMTivoliLicenseManager.html] All Applicable Linux OS Process Server WebSphere Process Server 7.0.0.3 and future fix packs (overview) [http://www.ibm.com/software/integration/wps/] (support) [http://www.ibm.com/support/entry/portal/Overview/Software/WebSphere/WebSphere_Process_Server] All Applicable Linux OS Security CA SiteMinder 6.0 and future fix packs All Applicable Linux OS Tivoli Access Manager for e-business 6.0 and future fix packs (overview) [http://www.ibm.com/software/tivoli/products/access-mgr-e-bus/] (support) [http://www.ibm.com/software/sysmgmt/products/support/IBMTivoliAccessManagerfore-business.html] All Applicable Linux OS Tivoli Access Manager for e-business 6.1 and future fix packs (overview) [http://www.ibm.com/software/tivoli/products/access-mgr-e-bus/] (support) [http://www.ibm.com/software/sysmgmt/products/support/IBMTivoliAccessManagerfore-business.html] All Applicable Linux OS Tools Rational Application Developer for WebSphere Software 8.0 and future fix packs (overview) [http://www.ibm.com/software/awdtools/developer/application/index.html] (support) [http://www.ibm.com/software/awdtools/developer/application/support/index.html] All Applicable Linux OS WebSphere Portlet Factory 7.0 and future fix packs (overview) [http://www.ibm.com/software/genservers/portletfactory/] (support) [http://www.ibm.com/software/genservers/portletfactory/support/] All Applicable Linux OS Virtualization IBM PowerVM Hypervisor (LPAR, DPAR, Micro-Partition) any supported version and future fix packs All Applicable Linux OS IBM PR/SM any version and future fix packs All Applicable Linux OS KVM in SUSE Linux Enterprise Server (SLES) 11 SUSE Linux Enterprise Server (SLES) 11 POWER System,
+SUSE Linux Enterprise Server (SLES) 11 System z,
+SUSE Linux Enterprise Server (SLES) 11 x86-32,
+SUSE Linux Enterprise Server (SLES) 11 x86-64 Red Hat KVM as delivered with Red Hat Enterprise Linux (RHEL) 5.4 and future fix packs All Applicable Linux OS VMware ESX 4.0 and future releases, mod levels and fix packs All Applicable Linux OS VMware ESXi 4.0 and future releases, mod levels and fix packs All Applicable Linux OS z/VM 6.1 and future fix packs (overview) [http://www.vm.ibm.com/] All Applicable Linux OS Web Browsers Apple Safari 4.0 and future fix packs All Applicable Linux OS  Refer to the following link for Known limitations when using Google Chrome and Apple Safari Web browsers with WebSphere Portal V7.0.x:
+
+ For more information on Web browser support with WebSphere Portal, refer to "WebSphere Portal Support Statement Addendum - Web browsers" at 
+
+ http://www-01.ibm.com/support/docview.wss?uid=swg27016293 [http://www-01.ibm.com/support/docview.wss?uid=swg27016293]
+
+Google Chrome 8 and future releases, mod levels and fix packs All Applicable Linux OS  Refer to the following link for Known limitations when using Google Chrome and Apple Safari Web browsers with WebSphere Portal V7.0.x:
+
+ For more information on Web browser support with WebSphere Portal, refer to "WebSphere Portal Support Statement Addendum - Web browsers" at
+
+ http://www-01.ibm.com/support/docview.wss?uid=swg27016293 [http://www-01.ibm.com/support/docview.wss?uid=swg27016293]
+
+Microsoft Internet Explorer 6.0 SP2 and future fix packs All Applicable Linux OS  Internet Explorer 6.0 SP2 on Windows XP SP1/SP2 and Windows 2000 SP4 and Windows 2003. Support for Microsoft Internet Explorer v6.0 is deprecated in this release and due to its limited capabilities many WebSphere Portal features do not function or render correctly, including Client-Side Aggregation (CSA), Page Builder, Mashup integration, Wikis and Blogs. Some legacy pages and themes can be successfully rendered by Microsoft Internet Explorer v6.0, but use of this Web browser is not recommended.
+
+ For more information on Web browser support with WebSphere Portal, refer to "WebSphere Portal Support Statement Addendum - Web browsers" at http://www-01.ibm.com/support/docview.wss?uid=swg27016293 [http://www-01.ibm.com/support/docview.wss?uid=swg27016293]
+
+Microsoft Internet Explorer 7.0 and future fix packs All Applicable Linux OS  Internet Explorer 7.0 is supported on all versions of Windows that are supported by WebSphere Portal.
+
+ For more information on Web browser support with WebSphere Portal, refer to "WebSphere Portal Support Statement Addendum - Web browsers" at http://www-01.ibm.com/support/docview.wss?uid=swg27016293 [http://www-01.ibm.com/support/docview.wss?uid=swg27016293]
+
+Microsoft Internet Explorer 8.0 and future fix packs All Applicable Linux OS See Note #1 Microsoft Internet Explorer 9.0 and future fix packs All Applicable Linux OS  Refer to the IE9 Support statement for more information:
+
+ http://www.ibm.com/support/docview.wss?uid=swg21496054 [http://www.ibm.com/support/docview.wss?uid=swg21496054]
+
+ For more information on Web browser support with WebSphere Portal, refer to "WebSphere Portal Support Statement Addendum - Web browsers" at 
+
+ http://www-01.ibm.com/support/docview.wss?uid=swg27016293 [http://www-01.ibm.com/support/docview.wss?uid=swg27016293]
+
+Mozilla Firefox 3.0 and future fix packs All Applicable Linux OS See Note #1 Mozilla Firefox 3.5 and future fix packs All Applicable Linux OS See Note #1 Mozilla Firefox 3.6 and future fix packs All Applicable Linux OS See Note #1 Mozilla Firefox 4.0 and future releases, mod levels and fix packs All Applicable Linux OS See Note #1 Opera 10.0 and future fix packs All Applicable Linux OS See Note #1 WebDAV Client davfs2 1.4.6 All Applicable Linux OS  Refer to the technote for version information and limitations -
+
+ Recommended WebDAV clients for accessing IBM WebShpere Portal version 7.0.0.2 [http://www-01.ibm.com/support/docview.wss?uid=swg27023805]
+
+JSCAPE AnyClient 2.2 All Applicable Linux OS  Refer to the technote for version information and limitations -
+
+ Recommended WebDAV clients for accessing IBM WebShpere Portal version 7.0.0.2 [http://www-01.ibm.com/support/docview.wss?uid=swg27023805]
+
+SRT WebDrive 9.1 All Applicable Linux OS  Refer to the technote for version information and limitations -
+
+ Recommended WebDAV clients for accessing IBM WebShpere Portal version 7.0.0.2 [http://www-01.ibm.com/support/docview.wss?uid=swg27023805]
+
+Web Servers Apache HTTP Server 2.0.59 and future fix packs All Applicable Linux OS Apache HTTP Server 2.2 and future fix packs All Applicable Linux OS IBM HTTP Server 6.1 and future fix packs (overview) [http://www.ibm.com/software/webservers/httpservers/] (support) [http://www.ibm.com/support/entry/portal/Overview/Software/WebSphere/IBM_HTTP_Server] All Applicable Linux OS IBM HTTP Server 7.0 and future fix packs (overview) [http://www.ibm.com/software/webservers/httpservers/] (support) [http://www.ibm.com/support/entry/portal/Overview/Software/WebSphere/IBM_HTTP_Server] All Applicable Linux OS IBM HTTP Server for i5/OS Any and future fix packs All Applicable Linux OS  IBM HTTP Server for i5/OS versions V5R4, V6R1 and V7R1
+
+IBM HTTP Server for z/OS Any and future fix packs All Applicable Linux OS Lotus Domino 8.0 and future fix packs (overview) [http://www.ibm.com/software/lotus/products/domino/] (support) [http://www.ibm.com/software/lotus/support/domino/support.html] All Applicable Linux OS Lotus Domino 8.0.1 and future fix packs (overview) [http://www.ibm.com/software/lotus/products/domino/] (support) [http://www.ibm.com/software/lotus/support/domino/support.html] All Applicable Linux OS Lotus Domino 8.0.2 and future fix packs (overview) [http://www.ibm.com/software/lotus/products/domino/] (support) [http://www.ibm.com/software/lotus/support/domino/support.html] All Applicable Linux OS Lotus Domino 8.5 and future fix packs (overview) [http://www.ibm.com/software/lotus/products/domino/] (support) [http://www.ibm.com/software/lotus/support/domino/support.html] All Applicable Linux OS Lotus Domino 8.5.1 and future fix packs (overview) [http://www.ibm.com/software/lotus/products/domino/] (support) [http://www.ibm.com/software/lotus/support/domino/support.html] All Applicable Linux OS Lotus Domino 8.5.2 and future fix packs (overview) [http://www.ibm.com/software/lotus/products/domino/] (support) [http://www.ibm.com/software/lotus/support/domino/support.html] All Applicable Linux OS Microsoft Internet Information Services 6.0 and future fix packs All Applicable Linux OS Microsoft Internet Information Services 7.0 and future fix packs All Applicable Linux OS Microsoft Internet Information Services 7.5 and future fix packs All Applicable Linux OS Supported as Web server plugins when hosted on the Windows Server 2008 R2 edition. Sun Java System Web Server 6.1 SP10 and future fix packs All Applicable Linux OS  Sun Java System Web Server 6.1 Service pack 10 or later is required.
+
+Sun Java System Web Server 7.0 Update 8 and future fix packs All Applicable Linux OS  Sun Java System Web Server 7.0 Update 8 or later is required.
+
+ Back to top 
+
+
+
+
+TAB NAVIGATION
+ *  Solaris 
+
+
+
+
+OUTLINE
+ * Hardware Requirements  *  Disk Space 
+    *  Media Drive 
+    *  Memory 
+    *  Processor 
+   
+   
+ * Software Requirements  *  Operating System 
+    *  Application Servers 
+   
+   
+ * Optional Supported Software  *  Application Servers 
+    *  Collaboration 
+    *  Databases 
+    *  Identity Management 
+    *  Java Technology 
+    *  JDBC Drivers 
+    *  Miscellaneous 
+    *  Process Server 
+    *  Security 
+    *  Tools 
+    *  Virtualization 
+    *  Web Browsers 
+    *  WebDAV Client 
+    *  Web Servers 
+   
+   
+
+
+
+
+Hardware Requirements Group Applicable OS Notes Disk Space All Applicable Solaris OS  Minimum 2.5 GB free disk space for installation for WebSphere Portal
+Minimum 1.4 GB free disk space for installation for WebSphere Application Server
+Minimum 4 GB total disk space recommended for installation
+
+Media Drive All Applicable Solaris OS  A CD/DVD drive is required.
+
+Memory All Applicable Solaris OS  Physical memory requirements and recommendations for WebSphere Portal:
+
+ *  Under minimal load, WebSphere Portal can function with 2GB of RAM and a remote database.
+ *  In a production environment, 4GB is an optimal starting point for RAM.
+
+Processor Solaris 10 x86-64  AMD Opteron (64 bit kernel support only); Intel EM64T (64 bit kernel support only) 
+
+ Back to top 
+
+Operating Systems Operating System Attributes Notes Solaris Platform listing of supported OS Solaris 10 SPARC and future OS fix packs Bitness: 32 Bit, 64 Bit Exploit
+Hardware platform: SPARC WebSphere Application Server requirements depending on operating system bit:
+
+ * 32-bit JDK/Application Server on 64-bit OS
+ * 64-bit JDK/Application Server on 64-bit OS
+
+Solaris 10 x86-64 and future OS fix packs Bitness: 64 Bit Exploit
+Hardware platform: x86-64 See Note #8 Solaris 9 SPARC and future OS fix packs Bitness: 32 Bit
+Hardware platform: SPARC WebSphere Application Server requirements depending on operating system bit:
+
+ * 32-bit JDK/WebSphere Application Server on 64-bit OS 
+
+ Back to top 
+
+Software Requirements Group Product Applicable OS Notes Application Servers WebSphere Application Server 7.0.0.19 and future fix packs (overview) [http://www.ibm.com/software/webservers/appserv/was/] (support) [http://www.ibm.com/support/entry/portal/Overview/Software/WebSphere/WebSphere_Application_Server] All Applicable Solaris OS  Download mandatory APAR PM52049 for WebSphere Application server 7.0.0.19 from this site -
+
+ Fix Central Link for PM52049 [http://www-933.ibm.com/support/fixcentral/swg/selectFix?product=ibm/WebSphere/WebSphere+Application+Server&fixids=7.0.0.19-WS-WAS-IFPM52049&source=dbluesearch&function=fixId&parent=ibm/WebSphere]
+
+ [http://www.ibm.com/support/docview.wss?uid=swg24029137]
+
+ Back to top 
+
+Optional Supported Software Group Product Applicable OS Notes Application Servers WebSphere Application Server Feature Pack for XML 1.0.0.7 and future fix packs (overview) [http://www.ibm.com/software/webservers/appserv/was/featurepacks/xml/index.html] All Applicable Solaris OS WebSphere Application Server V7 Feature Pack for Communications Enabled Applications 1.0.0.7 and future fix packs (overview) [http://www.ibm.com/software/webservers/appserv/was/featurepacks/cea/] All Applicable Solaris OS WebSphere Application Server V7 Feature Pack for Service Component Architecture 1.0.1.7 and future fix packs (overview) [http://www.ibm.com/software/webservers/appserv/was/featurepacks/sca/] (support) [http://www.ibm.com/support/entry/portal/Overview/Software/WebSphere/WebSphere_Application_Server] All Applicable Solaris OS WebSphere eXtreme Scale 7.1 and future fix packs (overview) [http://www.ibm.com/software/webservers/appserv/extremescale/] (support) [http://www.ibm.com/support/entry/portal/Overview/Software/WebSphere/WebSphere_eXtreme_Scale] All Applicable Solaris OS Requires version 7.1.0.0 WebSphere Virtual Enterprise 6.1 and future fix packs (overview) [http://www.ibm.com/software/webservers/appserv/extend/virtualenterprise/] (support) [http://www.ibm.com/support/entry/portal/Overview/Software/WebSphere/WebSphere_Virtual_Enterprise] All Applicable Solaris OS Requires fix pack version 6.1.1.2 Collaboration IBM Connections 3.0.1 and future fix packs (overview) [http://www.ibm.com/software/lotus/products/connections/index.html] (support) [http://www.ibm.com/support/entry/portal/Overview/Software/Lotus/IBM_Connections] All Applicable Solaris OS Lotus Connections 2.5 and future fix packs (overview) [http://www.ibm.com/software/lotus/products/connections/index.html] (support) [http://www.ibm.com/support/entry/portal/Overview/Software/Lotus/Lotus_Connections] All Applicable Solaris OS Lotus Connections 3.0 and future fix packs (overview) [http://www.ibm.com/software/lotus/products/connections/index.html] (support) [http://www.ibm.com/support/entry/portal/Overview/Software/Lotus/Lotus_Connections] All Applicable Solaris OS Lotus Domino 8.5.1 and future fix packs (overview) [http://www.ibm.com/software/lotus/products/domino/] (support) [http://www.ibm.com/software/lotus/support/domino/support.html] All Applicable Solaris OS Lotus Domino 8.5.2 and future fix packs (overview) [http://www.ibm.com/software/lotus/products/domino/] (support) [http://www.ibm.com/software/lotus/support/domino/support.html] All Applicable Solaris OS Lotus Quickr for Domino 8.2 and future fix packs (overview) [http://www.ibm.com/software/lotus/products/quickr/] (support) [http://www.ibm.com/support/entry/portal/Overview/Software/Lotus/Lotus_Quickr_for_Domino] All Applicable Solaris OS Lotus Quickr for Domino 8.5 and future fix packs (overview) [http://www.ibm.com/software/lotus/products/quickr/] (support) [http://www.ibm.com/support/entry/portal/Overview/Software/Lotus/Lotus_Quickr_for_Domino] All Applicable Solaris OS Lotus Quickr for WebSphere Portal 8.1.1 Feature Packs and future fix packs (overview) [http://www.ibm.com/software/lotus/products/quickr/] (support) [http://www.ibm.com/support/entry/portal/Overview/Software/Lotus/Lotus_Quickr_for_WebSphere_Portal] All Applicable Solaris OS Lotus Quickr for WebSphere Portal 8.5 and future fix packs (overview) [http://www.ibm.com/software/lotus/products/quickr/] (support) [http://www.ibm.com/support/entry/portal/Overview/Software/Lotus/Lotus_Quickr_for_WebSphere_Portal] All Applicable Solaris OS Lotus Sametime Entry 8.0 and future mod levels and fix packs (overview) [http://www.ibm.com/software/lotus/products/sametime/entry/] (support) [http://www.ibm.com/software/lotus/support/sametime/support.html] All Applicable Solaris OS IBM Lotus Sametime Entry 8.0.2 requires hot fix BMUY-87SL83 
+
+Lotus Sametime Entry 8.5 and future fix packs (overview) [http://www.ibm.com/software/lotus/products/sametime/entry/] (support) [http://www.ibm.com/software/lotus/support/sametime/support.html] All Applicable Solaris OS Requires hot fix BMUY-87SL83
+
+Lotus Sametime Standard 8.5 and future fix packs (overview) [http://www.ibm.com/software/lotus/products/sametime/standard/] (support) [http://www.ibm.com/software/lotus/support/sametime/support.html] All Applicable Solaris OS Requires hot fix BMUY-87SL83
+
+Databases Apache Derby 10.3 and future fix packs All Applicable Solaris OS Not supported in a production environment.
+
+DB2 9 for Linux, UNIX and Windows 9.1.0.9 and future fix packs All Applicable Solaris OS  Includes Workgroup Server, Enterprise Server, and Express Server editions.
+
+ High Availability Disaster Recovery (HADR) Feature is supported.
+
+DB2 Enterprise Server Edition 9.7.0.1 and future fix packs (overview) [http://www.ibm.com/software/data/db2/linux-unix-windows/edition-enterprise.html] (support) [http://www.ibm.com/software/data/db2/support/db2_9/] All Applicable Solaris OS  Includes Workgroup Server, Enterprise Server, and Express Server editions.
+
+ High Availability Disaster Recovery (HADR) Feature is supported.
+
+ Database parameter 'cur_commit' must be set to 'DISABLED' for database of WebSphere Portal 7
+
+DB2 for i5/OS 6.1 and future fix packs All Applicable Solaris OS DB2 for i5/OS 7.1 and future fix packs All Applicable Solaris OS DB2 for i5/OS V5R4 and future fix packs All Applicable Solaris OS DB2 for z/OS 9.1 and future fix packs (overview) [http://www.ibm.com/software/data/db2/zos/] (support) [http://www.ibm.com/software/data/db2/support/db2zos/] All Applicable Solaris OS  High Availability Disaster Recovery (HADR) Feature is supported.
+
+ WebSphere Portal 7.0 works with DB2 for z/OS V9.1 - PUT level 0912.
+
+ The following are required:
+
+ *  APAR PK75093 or later
+ *  APAR PK92163:
+   http://www-01.ibm.com/support/docview.wss?uid=swg1PK92163 [http://www-01.ibm.com/support/docview.wss?uid=swg1PK92163]
+ *  APAR PK68265
+
+DB2 for z/OS 10.1 and future fix packs (overview) [http://www.ibm.com/software/data/db2/zos/] (support) [http://www.ibm.com/software/data/db2/support/db2zos/] All Applicable Solaris OS DB2 pureScale Feature for Enterprise Server Edition 9.8.0.3 and future fix packs All Applicable Solaris OS  Requires 7.0.0.1 CF007 or higher.
+
+ Refer to the steps documented here: http://www-10.lotus.com/ldd/portalwiki.nsf/dx/Configuring_WebSphere_Portal_V7.0.0.1_with_DB2_pureScale?open [http://www-10.lotus.com/ldd/portalwiki.nsf/dx/Configuring_WebSphere_Portal_V7.0.0.1_with_DB2_pureScale?open]
+
+DB2 Universal Database for z/OS 8.1 and future fix packs All Applicable Solaris OS  WebSphere Portal 7.0 works with DB2 for z/OS V8.1 - PUT level 0912 or later service level.
+
+ High Availability Disaster Recovery (HADR) Feature is supported.
+
+DB2 Workgroup Server Edition 9.5.0.5 and future fix packs (overview) [http://www.ibm.com/software/data/db2/linux-unix-windows/edition-workgroup.html] (support) [http://www.ibm.com/software/data/db2/support/db2_9/] All Applicable Solaris OS  Includes Workgroup Server, Enterprise Server, and Express Server editions.
+
+ High Availability Disaster Recovery (HADR) Feature is supported.
+
+Microsoft SQL Server Enterprise Edition 2005 SP2 and future fix packs All Applicable Solaris OS Microsoft SQL Server Enterprise Edition 2008 and future fix packs All Applicable Solaris OS Microsoft SQL Server Enterprise Edition 2008 R2 All Applicable Solaris OS Oracle Database 10g Enterprise Edition Release 1 10.1.0.5 and future fix packs All Applicable Solaris OS See Note #3 Oracle Database 10g Enterprise Edition Release 2 10.2.0.4 and future fix packs All Applicable Solaris OS See Note #3 Oracle Database 10g Standard Edition Release 1 10.1.0.5 and future fix packs All Applicable Solaris OS See Note #3 Oracle Database 10g Standard Edition Release 2 10.2.0.4 and future fix packs All Applicable Solaris OS See Note #3 Oracle Database 11g Enterprise Edition Release 1 11.1.0.6 and future fix packs All Applicable Solaris OS See Note #3 Oracle Database 11g Enterprise Edition Release 1 11.1.0.7 and future fix packs All Applicable Solaris OS See Note #3 Oracle Database 11g Enterprise Edition Release 2 11.2.0.2 and future fix packs All Applicable Solaris OS See Note #3 Oracle Database 11g Standard Edition Release 1 11.1.0.6 and future fix packs All Applicable Solaris OS See Note #3 Oracle Database 11g Standard Edition Release 1 11.1.0.7 and future fix packs All Applicable Solaris OS See Note #3 Oracle Database 11g Standard Edition Release 2 11.2.0.2 and future fix packs All Applicable Solaris OS See Note #3 Identity Management IBM z/OS.e Security Server 1.6 and future fix packs All Applicable Solaris OS IBM z/OS.e Security Server 1.7 and future fix packs All Applicable Solaris OS IBM z/OS Security Server 1.6 and future fix packs All Applicable Solaris OS IBM z/OS Security Server 1.7 and future fix packs All Applicable Solaris OS Lotus Domino 8.0 and future fix packs (overview) [http://www.ibm.com/software/lotus/products/domino/] (support) [http://www.ibm.com/software/lotus/support/domino/support.html] All Applicable Solaris OS Lotus Domino 8.0.1 and future fix packs (overview) [http://www.ibm.com/software/lotus/products/domino/] (support) [http://www.ibm.com/software/lotus/support/domino/support.html] All Applicable Solaris OS Lotus Domino 8.0.2 and future fix packs (overview) [http://www.ibm.com/software/lotus/products/domino/] (support) [http://www.ibm.com/software/lotus/support/domino/support.html] All Applicable Solaris OS Lotus Domino 8.5 and future fix packs (overview) [http://www.ibm.com/software/lotus/products/domino/] (support) [http://www.ibm.com/software/lotus/support/domino/support.html] All Applicable Solaris OS Lotus Domino 8.5.1 and future fix packs (overview) [http://www.ibm.com/software/lotus/products/domino/] (support) [http://www.ibm.com/software/lotus/support/domino/support.html] All Applicable Solaris OS Lotus Domino 8.5.2 and future fix packs (overview) [http://www.ibm.com/software/lotus/products/domino/] (support) [http://www.ibm.com/software/lotus/support/domino/support.html] All Applicable Solaris OS Microsoft Active Directory 2003 and future fix packs All Applicable Solaris OS Microsoft Active Directory 2008 and future fix packs All Applicable Solaris OS Microsoft Active Directory Application Mode (ADAM) 2003 and future fix packs All Applicable Solaris OS Microsoft AD LDS(Lightweight Directory Services) Windows 2008 and future fix packs All Applicable Solaris OS Novell eDirectory 8.7.3 and future fix packs All Applicable Solaris OS Novell eDirectory 8.8 and future fix packs All Applicable Solaris OS Sun Java System Directory Server 6.1 and future fix packs All Applicable Solaris OS Service Pack 10 or later is required. Sun Java System Directory Server 6.3 and future fix packs All Applicable Solaris OS Sun Java System Directory Server 7.0 and future fix packs All Applicable Solaris OS Tivoli Directory Server 6.0 and future fix packs (overview) [http://www.ibm.com/software/tivoli/products/directory-server/] (support) [http://www.ibm.com/software/sysmgmt/products/support/IBMDirectoryServer.html] All Applicable Solaris OS Tivoli Directory Server 6.1 and future fix packs (overview) [http://www.ibm.com/software/tivoli/products/directory-server/] (support) [http://www.ibm.com/software/sysmgmt/products/support/IBMDirectoryServer.html] All Applicable Solaris OS Fix pack 4 or later is required. Tivoli Directory Server 6.2 and future fix packs (overview) [http://www.ibm.com/software/tivoli/products/directory-server/] (support) [http://www.ibm.com/software/sysmgmt/products/support/IBMDirectoryServer.html] All Applicable Solaris OS Java Technology IBM Runtime Environment, Java Technology Edition 6.0 and future mod levels and fix packs All Applicable Solaris OS  Requirements:
+
+ *  Java version included or recommended by WebSphere Application Server 7.0.0.19.
+
+Sun Java SDK/JRE/JDK 6.0 Update 17 and future fix packs All Applicable Solaris OS Supported Java runtime environments 1.5.x or 1.6.x (requires one) for the Web Content Management authoring portlet
+
+JDBC Drivers Apache Derby 10.3 JDBC 4.0 and future fix packs All Applicable Solaris OS Derby is a non-production environment. V10.3.3.1 or later is required. DataDirect Connect for JDBC 4.0 (type 4) and future fix packs All Applicable Solaris OS DB2 Driver for JDBC and SQLJ (type 2/4) 4.0 and future fix packs All Applicable Solaris OS DB2 9.5 and DB2 9.7 require DB2 Driver for JDBC and SQLJ (type 2/4) 4.0 IBM Application Connectivity to DB2 for z/OS Feature Version and future fix packs All Applicable Solaris OS IBM DB2 Universal JDBC Provider (XA) from DB2 z/OS (type 4) Version and future fix packs All Applicable Solaris OS Requires APAR PK93123 for DB2 on z/OS V8.1 and V9.1. You can obtain the fix from DB2 on z/OS support or IBMLINK. IBM Toolbox for Java/JTOpen JDBC Driver 6.0 and future fix packs All Applicable Solaris OS Check for the latest jt400.jar file at:http://sourceforge.net/projects/jt400/files/ [http://sourceforge.net/projects/jt400/files/] Microsoft SQL Server JDBC Driver 2.0 and future fix packs All Applicable Solaris OS Microsoft SQL Server JDBC Driver 3.0 All Applicable Solaris OS Oracle JDBC Driver (XA) 10g Any and future fix packs All Applicable Solaris OS  Oracle 11g JDBC Driver Thin (type 4) (11.2.0.2 or higher)
+
+ Requires the ojdbc6.jar file.
+
+Oracle JDBC Driver (XA) 11g 11.2.0.2 and future fix packs All Applicable Solaris OS  Oracle 11g JDBC Driver Thin (type 4) (11.2.0.2 or higher)
+
+ Requires the ojdbc6.jar file.
+
+Miscellaneous IBM License Metric Tool 7.2.1 and future fix packs (overview) [http://www.ibm.com/software/tivoli/products/license-metric-tool/] (support) [http://www.ibm.com/software/sysmgmt/products/support/IBMLicenseMetricTool.html] All Applicable Solaris OS Tivoli Directory Integrator 7.0 and future fix packs (overview) [http://www.ibm.com/software/tivoli/products/directory-integrator/] (support) [http://www.ibm.com/software/sysmgmt/products/support/IBMDirectoryIntegrator.html] All Applicable Solaris OS Tivoli License Compliance Manager 2.3 Fixpack 1 and future fix packs (overview) [http://www.ibm.com/software/tivoli/products/license-mgr/] (support) [http://www.ibm.com/software/sysmgmt/products/support/IBMTivoliLicenseManager.html] All Applicable Solaris OS Process Server WebSphere Process Server 7.0.0.3 and future fix packs (overview) [http://www.ibm.com/software/integration/wps/] (support) [http://www.ibm.com/support/entry/portal/Overview/Software/WebSphere/WebSphere_Process_Server] All Applicable Solaris OS Security CA SiteMinder 6.0 and future fix packs All Applicable Solaris OS Tivoli Access Manager for e-business 6.0 and future fix packs (overview) [http://www.ibm.com/software/tivoli/products/access-mgr-e-bus/] (support) [http://www.ibm.com/software/sysmgmt/products/support/IBMTivoliAccessManagerfore-business.html] All Applicable Solaris OS Tivoli Access Manager for e-business 6.1 and future fix packs (overview) [http://www.ibm.com/software/tivoli/products/access-mgr-e-bus/] (support) [http://www.ibm.com/software/sysmgmt/products/support/IBMTivoliAccessManagerfore-business.html] All Applicable Solaris OS Tools Rational Application Developer for WebSphere Software 8.0 and future fix packs (overview) [http://www.ibm.com/software/awdtools/developer/application/index.html] (support) [http://www.ibm.com/software/awdtools/developer/application/support/index.html] All Applicable Solaris OS WebSphere Portlet Factory 7.0 and future fix packs (overview) [http://www.ibm.com/software/genservers/portletfactory/] (support) [http://www.ibm.com/software/genservers/portletfactory/support/] All Applicable Solaris OS Virtualization IBM PR/SM any version and future fix packs All Applicable Solaris OS Red Hat KVM as delivered with Red Hat Enterprise Linux (RHEL) 5.4 and future fix packs All Applicable Solaris OS Web Browsers Apple Safari 4.0 and future fix packs All Applicable Solaris OS  Refer to the following link for Known limitations when using Google Chrome and Apple Safari Web browsers with WebSphere Portal V7.0.x:
+
+ For more information on Web browser support with WebSphere Portal, refer to "WebSphere Portal Support Statement Addendum - Web browsers" at 
+
+ http://www-01.ibm.com/support/docview.wss?uid=swg27016293 [http://www-01.ibm.com/support/docview.wss?uid=swg27016293]
+
+Google Chrome 8 and future releases, mod levels and fix packs All Applicable Solaris OS  Refer to the following link for Known limitations when using Google Chrome and Apple Safari Web browsers with WebSphere Portal V7.0.x:
+
+ For more information on Web browser support with WebSphere Portal, refer to "WebSphere Portal Support Statement Addendum - Web browsers" at
+
+ http://www-01.ibm.com/support/docview.wss?uid=swg27016293 [http://www-01.ibm.com/support/docview.wss?uid=swg27016293]
+
+Microsoft Internet Explorer 6.0 SP2 and future fix packs All Applicable Solaris OS  Internet Explorer 6.0 SP2 on Windows XP SP1/SP2 and Windows 2000 SP4 and Windows 2003. Support for Microsoft Internet Explorer v6.0 is deprecated in this release and due to its limited capabilities many WebSphere Portal features do not function or render correctly, including Client-Side Aggregation (CSA), Page Builder, Mashup integration, Wikis and Blogs. Some legacy pages and themes can be successfully rendered by Microsoft Internet Explorer v6.0, but use of this Web browser is not recommended.
+
+ For more information on Web browser support with WebSphere Portal, refer to "WebSphere Portal Support Statement Addendum - Web browsers" at http://www-01.ibm.com/support/docview.wss?uid=swg27016293 [http://www-01.ibm.com/support/docview.wss?uid=swg27016293]
+
+Microsoft Internet Explorer 7.0 and future fix packs All Applicable Solaris OS  Internet Explorer 7.0 is supported on all versions of Windows that are supported by WebSphere Portal.
+
+ For more information on Web browser support with WebSphere Portal, refer to "WebSphere Portal Support Statement Addendum - Web browsers" at http://www-01.ibm.com/support/docview.wss?uid=swg27016293 [http://www-01.ibm.com/support/docview.wss?uid=swg27016293]
+
+Microsoft Internet Explorer 8.0 and future fix packs All Applicable Solaris OS See Note #1 Microsoft Internet Explorer 9.0 and future fix packs All Applicable Solaris OS  Refer to the IE9 Support statement for more information:
+
+ http://www.ibm.com/support/docview.wss?uid=swg21496054 [http://www.ibm.com/support/docview.wss?uid=swg21496054]
+
+ For more information on Web browser support with WebSphere Portal, refer to "WebSphere Portal Support Statement Addendum - Web browsers" at 
+
+ http://www-01.ibm.com/support/docview.wss?uid=swg27016293 [http://www-01.ibm.com/support/docview.wss?uid=swg27016293]
+
+Mozilla Firefox 3.0 and future fix packs All Applicable Solaris OS See Note #1 Mozilla Firefox 3.5 and future fix packs All Applicable Solaris OS See Note #1 Mozilla Firefox 3.6 and future fix packs All Applicable Solaris OS See Note #1 Mozilla Firefox 4.0 and future releases, mod levels and fix packs All Applicable Solaris OS See Note #1 Opera 10.0 and future fix packs All Applicable Solaris OS See Note #1 WebDAV Client davfs2 1.4.6 All Applicable Solaris OS  Refer to the technote for version information and limitations -
+
+ Recommended WebDAV clients for accessing IBM WebShpere Portal version 7.0.0.2 [http://www-01.ibm.com/support/docview.wss?uid=swg27023805]
+
+JSCAPE AnyClient 2.2 All Applicable Solaris OS  Refer to the technote for version information and limitations -
+
+ Recommended WebDAV clients for accessing IBM WebShpere Portal version 7.0.0.2 [http://www-01.ibm.com/support/docview.wss?uid=swg27023805]
+
+SRT WebDrive 9.1 All Applicable Solaris OS  Refer to the technote for version information and limitations -
+
+ Recommended WebDAV clients for accessing IBM WebShpere Portal version 7.0.0.2 [http://www-01.ibm.com/support/docview.wss?uid=swg27023805]
+
+Web Servers Apache HTTP Server 2.0.59 and future fix packs All Applicable Solaris OS Apache HTTP Server 2.2 and future fix packs All Applicable Solaris OS IBM HTTP Server 6.1 and future fix packs (overview) [http://www.ibm.com/software/webservers/httpservers/] (support) [http://www.ibm.com/support/entry/portal/Overview/Software/WebSphere/IBM_HTTP_Server] All Applicable Solaris OS IBM HTTP Server 7.0 and future fix packs (overview) [http://www.ibm.com/software/webservers/httpservers/] (support) [http://www.ibm.com/support/entry/portal/Overview/Software/WebSphere/IBM_HTTP_Server] All Applicable Solaris OS IBM HTTP Server for i5/OS Any and future fix packs All Applicable Solaris OS  IBM HTTP Server for i5/OS versions V5R4, V6R1 and V7R1
+
+IBM HTTP Server for z/OS Any and future fix packs All Applicable Solaris OS Lotus Domino 8.0 and future fix packs (overview) [http://www.ibm.com/software/lotus/products/domino/] (support) [http://www.ibm.com/software/lotus/support/domino/support.html] All Applicable Solaris OS Lotus Domino 8.0.1 and future fix packs (overview) [http://www.ibm.com/software/lotus/products/domino/] (support) [http://www.ibm.com/software/lotus/support/domino/support.html] All Applicable Solaris OS Lotus Domino 8.0.2 and future fix packs (overview) [http://www.ibm.com/software/lotus/products/domino/] (support) [http://www.ibm.com/software/lotus/support/domino/support.html] All Applicable Solaris OS Lotus Domino 8.5 and future fix packs (overview) [http://www.ibm.com/software/lotus/products/domino/] (support) [http://www.ibm.com/software/lotus/support/domino/support.html] All Applicable Solaris OS Lotus Domino 8.5.1 and future fix packs (overview) [http://www.ibm.com/software/lotus/products/domino/] (support) [http://www.ibm.com/software/lotus/support/domino/support.html] All Applicable Solaris OS Lotus Domino 8.5.2 and future fix packs (overview) [http://www.ibm.com/software/lotus/products/domino/] (support) [http://www.ibm.com/software/lotus/support/domino/support.html] All Applicable Solaris OS Microsoft Internet Information Services 6.0 and future fix packs All Applicable Solaris OS Microsoft Internet Information Services 7.0 and future fix packs All Applicable Solaris OS Microsoft Internet Information Services 7.5 and future fix packs All Applicable Solaris OS Supported as Web server plugins when hosted on the Windows Server 2008 R2 edition. Sun Java System Web Server 6.1 SP10 and future fix packs All Applicable Solaris OS  Sun Java System Web Server 6.1 Service pack 10 or later is required.
+
+Sun Java System Web Server 7.0 Update 8 and future fix packs All Applicable Solaris OS  Sun Java System Web Server 7.0 Update 8 or later is required.
+
+ Back to top 
+
+
+
+
+TAB NAVIGATION
+ *  Windows 7 
+ *  Windows Server 2003 
+ *  Windows Server 2008 
+ *  Windows Vista 
+ *  Windows XP 
+
+
+
+
+OUTLINE
+ * Hardware Requirements  *  Disk Space 
+    *  Media Drive 
+    *  Memory 
+   
+   
+ * Software Requirements  *  Operating System 
+    *  Application Servers 
+   
+   
+ * Optional Supported Software  *  Application Servers 
+    *  Collaboration 
+    *  Databases 
+    *  Identity Management 
+    *  Java Technology 
+    *  JDBC Drivers 
+    *  Miscellaneous 
+    *  Process Server 
+    *  Security 
+    *  Tools 
+    *  Virtualization 
+    *  Web Browsers 
+    *  WebDAV Client 
+    *  Web Servers 
+   
+   
+
+
+
+
+Hardware Requirements Group Applicable OS Notes Disk Space All Applicable Windows OS  Minimum 2.5 GB free disk space for installation for WebSphere Portal
+Minimum 1.4 GB free disk space for installation for WebSphere Application Server
+Minimum 4 GB total disk space recommended for installation
+
+Media Drive All Applicable Windows OS  A CD/DVD drive is required.
+
+Memory All Applicable Windows OS  Physical memory requirements and recommendations for WebSphere Portal:
+
+ *  Under minimal load, WebSphere Portal can function with 2GB of RAM and a remote database.
+ *  In a production environment, 4GB is an optimal starting point for RAM.
+
+ Back to top 
+
+Operating Systems Operating System Attributes Notes Windows Platform listing of supported OS Windows 7 Enterprise x86-32 Bitness: 32 Bit
+Hardware platform: x86-32 Support for developer platform only.
+
+WebSphere Application Server requirements depending on operating system bit:
+
+ * 32-bit JDK/WebSphere Application Server on 32-bit OS
+
+Windows 7 Enterprise x86-64 Bitness: 32 Bit, 64 Bit Exploit
+Hardware platform: x86-64 Support for developer platform only.
+
+WebSphere Application Server requirements depending on operating system bit:
+
+ * 32-bit JDK/WebSphere Application Server on 64-bit OS
+ * 64-bit JDK/WebSphere Application Server on 64-bit OS
+
+Windows 7 Professional x86-32 Bitness: 32 Bit
+Hardware platform: x86-32 Support for developer platform only.
+
+WebSphere Application Server requirements depending on operating system bit:
+
+ * 32-bit JDK/WebSphere Application Server on 32-bit OS
+
+Windows 7 Professional x86-64 Bitness: 32 Bit, 64 Bit Exploit
+Hardware platform: x86-64 Support for developer platform only.
+
+WebSphere Application Server requirements depending on operating system bit:
+
+ * 32-bit JDK/WebSphere Application Server on 64-bit OS
+ * 64-bit JDK/WebSphere Application Server on 64-bit OS
+
+Windows Server 2003 R2 Standard Edition x86-32 and future OS fix packs Bitness: 32 Bit
+Hardware platform: x86-32 Base Level Service: SP2
+
+WebSphere Application Server requirements depending on operating system bit:
+
+ * 32-bit JDK/WebSphere Application Server on 32-bit OS
+
+Windows Server 2003 R2 Standard Edition x86-64 and future OS fix packs Bitness: 32 Bit, 64 Bit Exploit
+Hardware platform: x86-64 Base Level Service: SP2
+
+WebSphere Application Server requirements depending on operating system bit:
+
+ * 32-bit JDK/WebSphere Application Server on 64-bit OS
+ * 64-bit JDK/WebSphere Application Server on 64-bit OS
+
+Windows Server 2003 SP2 Datacenter Edition x86-32 and future OS fix packs Bitness: 32 Bit
+Hardware platform: x86-32 See Note #4 Windows Server 2003 SP2 Datacenter Edition x86-64 and future OS fix packs Bitness: 32 Bit, 64 Bit Exploit
+Hardware platform: x86-64 See Note #6 Windows Server 2003 SP2 Enterprise Edition x86-32 and future OS fix packs Bitness: 32 Bit
+Hardware platform: x86-32 See Note #4 Windows Server 2003 SP2 Enterprise Edition x86-64 and future OS fix packs Bitness: 32 Bit, 64 Bit Exploit
+Hardware platform: x86-64 See Note #6 Windows Server 2003 SP2 Standard Edition x86-32 and future OS fix packs Bitness: 32 Bit
+Hardware platform: x86-32 See Note #4 Windows Server 2003 SP2 Standard Edition x86-64 and future OS fix packs Bitness: 32 Bit, 64 Bit Exploit
+Hardware platform: x86-64 See Note #6 Windows Server 2008 R2 Datacenter Edition x86-64 and future OS fix packs Bitness: 32 Bit, 64 Bit Exploit
+Hardware platform: x86-64 See Note #6 Windows Server 2008 R2 Enterprise Edition x86-64 and future OS fix packs Bitness: 32 Bit, 64 Bit Exploit
+Hardware platform: x86-64 See Note #6 Windows Server 2008 R2 Standard Edition x86-64 and future OS fix packs Bitness: 32 Bit, 64 Bit Exploit
+Hardware platform: x86-64 See Note #6 Windows Server 2008 SP2 Datacenter Edition x86-32 and future OS fix packs Bitness: 32 Bit
+Hardware platform: x86-32 See Note #4 Windows Server 2008 SP2 Datacenter Edition x86-64 and future OS fix packs Bitness: 32 Bit, 64 Bit Exploit
+Hardware platform: x86-64 See Note #6 Windows Server 2008 SP2 Enterprise Edition x86-32 and future OS fix packs Bitness: 32 Bit
+Hardware platform: x86-32 See Note #4 Windows Server 2008 SP2 Enterprise Edition x86-64 and future OS fix packs Bitness: 32 Bit, 64 Bit Exploit
+Hardware platform: x86-64 See Note #6 Windows Server 2008 SP2 Standard Edition x86-32 and future OS fix packs Bitness: 32 Bit
+Hardware platform: x86-32 See Note #4 Windows Server 2008 SP2 Standard Edition x86-64 and future OS fix packs Bitness: 32 Bit, 64 Bit Exploit
+Hardware platform: x86-64 See Note #6 Windows Vista Enterprise x86-32 Bitness: 32 Bit
+Hardware platform: x86-32 Supported for developer platform only
+
+WebSphere Application Server requirements depending on operating system bit:
+
+ * 32-bit JDK/WebSphere Application Server on 32-bit OS
+
+Windows Vista Enterprise x86-64 Bitness: 32 Bit, 64 Bit Exploit
+Hardware platform: x86-64 Supported for developer platform only.
+
+WebSphere Application Server requirements depending on operating system bit:
+
+ * 32-bit JDK/WebSphere Application Server on 64-bit OS
+ * 64-bit JDK/WebSphere Application Server on 64-bit OS
+
+Windows XP SP2 Professional x86-32 and future OS fix packs Bitness: 32 Bit
+Hardware platform: x86-32 Supported for developer platform only.
+
+WebSphere Application Server requirements depending on operating system bit:
+
+ * 32-bit JDK/WebSphere Application Server on 32-bit OS
+
+Windows XP SP2 Professional x86-64 and future OS fix packs Bitness: 32 Bit, 64 Bit Exploit
+Hardware platform: x86-64 Supported for developer platform only.
+
+WebSphere Application Server requirements depending on operating system bit:
+
+ * 32-bit JDK/WebSphere Application Server on 64-bit OS
+ * 64-bit JDK/WebSphere Application Server on 64-bit OS
+
+ Back to top 
+
+Software Requirements Group Product Applicable OS Notes Application Servers WebSphere Application Server 7.0.0.19 and future fix packs (overview) [http://www.ibm.com/software/webservers/appserv/was/] (support) [http://www.ibm.com/support/entry/portal/Overview/Software/WebSphere/WebSphere_Application_Server] All Applicable Windows OS  Download mandatory APAR PM52049 for WebSphere Application server 7.0.0.19 from this site -
+
+ Fix Central Link for PM52049 [http://www-933.ibm.com/support/fixcentral/swg/selectFix?product=ibm/WebSphere/WebSphere+Application+Server&fixids=7.0.0.19-WS-WAS-IFPM52049&source=dbluesearch&function=fixId&parent=ibm/WebSphere]
+
+ [http://www.ibm.com/support/docview.wss?uid=swg24029137]
+
+ Back to top 
+
+Optional Supported Software Group Product Applicable OS Notes Application Servers WebSphere Application Server Feature Pack for XML 1.0.0.7 and future fix packs (overview) [http://www.ibm.com/software/webservers/appserv/was/featurepacks/xml/index.html] All Applicable Windows OS WebSphere Application Server V7 Feature Pack for Communications Enabled Applications 1.0.0.7 and future fix packs (overview) [http://www.ibm.com/software/webservers/appserv/was/featurepacks/cea/] All Applicable Windows OS WebSphere Application Server V7 Feature Pack for Service Component Architecture 1.0.1.7 and future fix packs (overview) [http://www.ibm.com/software/webservers/appserv/was/featurepacks/sca/] (support) [http://www.ibm.com/support/entry/portal/Overview/Software/WebSphere/WebSphere_Application_Server] All Applicable Windows OS WebSphere eXtreme Scale 7.1 and future fix packs (overview) [http://www.ibm.com/software/webservers/appserv/extremescale/] (support) [http://www.ibm.com/support/entry/portal/Overview/Software/WebSphere/WebSphere_eXtreme_Scale] All Applicable Windows OS Requires version 7.1.0.0 WebSphere Virtual Enterprise 6.1 and future fix packs (overview) [http://www.ibm.com/software/webservers/appserv/extend/virtualenterprise/] (support) [http://www.ibm.com/support/entry/portal/Overview/Software/WebSphere/WebSphere_Virtual_Enterprise] All Applicable Windows OS Requires fix pack version 6.1.1.2 Collaboration IBM Connections 3.0.1 and future fix packs (overview) [http://www.ibm.com/software/lotus/products/connections/index.html] (support) [http://www.ibm.com/support/entry/portal/Overview/Software/Lotus/IBM_Connections] All Applicable Windows OS Lotus Connections 2.5 and future fix packs (overview) [http://www.ibm.com/software/lotus/products/connections/index.html] (support) [http://www.ibm.com/support/entry/portal/Overview/Software/Lotus/Lotus_Connections] All Applicable Windows OS Lotus Connections 3.0 and future fix packs (overview) [http://www.ibm.com/software/lotus/products/connections/index.html] (support) [http://www.ibm.com/support/entry/portal/Overview/Software/Lotus/Lotus_Connections] All Applicable Windows OS Lotus Domino 8.5.1 and future fix packs (overview) [http://www.ibm.com/software/lotus/products/domino/] (support) [http://www.ibm.com/software/lotus/support/domino/support.html] All Applicable Windows OS Lotus Domino 8.5.2 and future fix packs (overview) [http://www.ibm.com/software/lotus/products/domino/] (support) [http://www.ibm.com/software/lotus/support/domino/support.html] All Applicable Windows OS Lotus Quickr for Domino 8.2 and future fix packs (overview) [http://www.ibm.com/software/lotus/products/quickr/] (support) [http://www.ibm.com/support/entry/portal/Overview/Software/Lotus/Lotus_Quickr_for_Domino] All Applicable Windows OS Lotus Quickr for Domino 8.5 and future fix packs (overview) [http://www.ibm.com/software/lotus/products/quickr/] (support) [http://www.ibm.com/support/entry/portal/Overview/Software/Lotus/Lotus_Quickr_for_Domino] All Applicable Windows OS Lotus Quickr for WebSphere Portal 8.1.1 Feature Packs and future fix packs (overview) [http://www.ibm.com/software/lotus/products/quickr/] (support) [http://www.ibm.com/support/entry/portal/Overview/Software/Lotus/Lotus_Quickr_for_WebSphere_Portal] All Applicable Windows OS Lotus Quickr for WebSphere Portal 8.5 and future fix packs (overview) [http://www.ibm.com/software/lotus/products/quickr/] (support) [http://www.ibm.com/support/entry/portal/Overview/Software/Lotus/Lotus_Quickr_for_WebSphere_Portal] All Applicable Windows OS Lotus Sametime Entry 8.0 and future mod levels and fix packs (overview) [http://www.ibm.com/software/lotus/products/sametime/entry/] (support) [http://www.ibm.com/software/lotus/support/sametime/support.html] All Applicable Windows OS IBM Lotus Sametime Entry 8.0.2 requires hot fix BMUY-87SL83 
+
+Lotus Sametime Entry 8.5 and future fix packs (overview) [http://www.ibm.com/software/lotus/products/sametime/entry/] (support) [http://www.ibm.com/software/lotus/support/sametime/support.html] All Applicable Windows OS Requires hot fix BMUY-87SL83
+
+Lotus Sametime Standard 8.5 and future fix packs (overview) [http://www.ibm.com/software/lotus/products/sametime/standard/] (support) [http://www.ibm.com/software/lotus/support/sametime/support.html] All Applicable Windows OS Requires hot fix BMUY-87SL83
+
+Databases Apache Derby 10.3 and future fix packs All Applicable Windows OS Not supported in a production environment.
+
+DB2 9 for Linux, UNIX and Windows 9.1.0.9 and future fix packs All Applicable Windows OS  Includes Workgroup Server, Enterprise Server, and Express Server editions.
+
+ High Availability Disaster Recovery (HADR) Feature is supported.
+
+DB2 Enterprise Server Edition 9.7.0.1 and future fix packs (overview) [http://www.ibm.com/software/data/db2/linux-unix-windows/edition-enterprise.html] (support) [http://www.ibm.com/software/data/db2/support/db2_9/] All Applicable Windows OS  Includes Workgroup Server, Enterprise Server, and Express Server editions.
+
+ High Availability Disaster Recovery (HADR) Feature is supported.
+
+ Database parameter 'cur_commit' must be set to 'DISABLED' for database of WebSphere Portal 7
+
+DB2 for i5/OS 6.1 and future fix packs All Applicable Windows OS DB2 for i5/OS 7.1 and future fix packs All Applicable Windows OS DB2 for i5/OS V5R4 and future fix packs All Applicable Windows OS DB2 for z/OS 9.1 and future fix packs (overview) [http://www.ibm.com/software/data/db2/zos/] (support) [http://www.ibm.com/software/data/db2/support/db2zos/] All Applicable Windows OS  High Availability Disaster Recovery (HADR) Feature is supported.
+
+ WebSphere Portal 7.0 works with DB2 for z/OS V9.1 - PUT level 0912.
+
+ The following are required:
+
+ *  APAR PK75093 or later
+ *  APAR PK92163:
+   http://www-01.ibm.com/support/docview.wss?uid=swg1PK92163 [http://www-01.ibm.com/support/docview.wss?uid=swg1PK92163]
+ *  APAR PK68265
+
+DB2 for z/OS 10.1 and future fix packs (overview) [http://www.ibm.com/software/data/db2/zos/] (support) [http://www.ibm.com/software/data/db2/support/db2zos/] All Applicable Windows OS DB2 pureScale Feature for Enterprise Server Edition 9.8.0.3 and future fix packs All Applicable Windows OS  Requires 7.0.0.1 CF007 or higher.
+
+ Refer to the steps documented here: http://www-10.lotus.com/ldd/portalwiki.nsf/dx/Configuring_WebSphere_Portal_V7.0.0.1_with_DB2_pureScale?open [http://www-10.lotus.com/ldd/portalwiki.nsf/dx/Configuring_WebSphere_Portal_V7.0.0.1_with_DB2_pureScale?open]
+
+DB2 Universal Database for z/OS 8.1 and future fix packs All Applicable Windows OS  WebSphere Portal 7.0 works with DB2 for z/OS V8.1 - PUT level 0912 or later service level.
+
+ High Availability Disaster Recovery (HADR) Feature is supported.
+
+DB2 Workgroup Server Edition 9.5.0.5 and future fix packs (overview) [http://www.ibm.com/software/data/db2/linux-unix-windows/edition-workgroup.html] (support) [http://www.ibm.com/software/data/db2/support/db2_9/] All Applicable Windows OS  Includes Workgroup Server, Enterprise Server, and Express Server editions.
+
+ High Availability Disaster Recovery (HADR) Feature is supported.
+
+Microsoft SQL Server Enterprise Edition 2005 SP2 and future fix packs All Applicable Windows OS Microsoft SQL Server Enterprise Edition 2008 and future fix packs All Applicable Windows OS Microsoft SQL Server Enterprise Edition 2008 R2 All Applicable Windows OS Oracle Database 10g Enterprise Edition Release 1 10.1.0.5 and future fix packs All Applicable Windows OS See Note #3 Oracle Database 10g Enterprise Edition Release 2 10.2.0.4 and future fix packs All Applicable Windows OS See Note #3 Oracle Database 10g Standard Edition Release 1 10.1.0.5 and future fix packs All Applicable Windows OS See Note #3 Oracle Database 10g Standard Edition Release 2 10.2.0.4 and future fix packs All Applicable Windows OS See Note #3 Oracle Database 11g Enterprise Edition Release 1 11.1.0.6 and future fix packs All Applicable Windows OS See Note #3 Oracle Database 11g Enterprise Edition Release 1 11.1.0.7 and future fix packs All Applicable Windows OS See Note #3 Oracle Database 11g Enterprise Edition Release 2 11.2.0.2 and future fix packs All Applicable Windows OS See Note #3 Oracle Database 11g Standard Edition Release 1 11.1.0.6 and future fix packs All Applicable Windows OS See Note #3 Oracle Database 11g Standard Edition Release 1 11.1.0.7 and future fix packs All Applicable Windows OS See Note #3 Oracle Database 11g Standard Edition Release 2 11.2.0.2 and future fix packs All Applicable Windows OS See Note #3 Identity Management IBM z/OS.e Security Server 1.6 and future fix packs All Applicable Windows OS IBM z/OS.e Security Server 1.7 and future fix packs All Applicable Windows OS IBM z/OS Security Server 1.6 and future fix packs All Applicable Windows OS IBM z/OS Security Server 1.7 and future fix packs All Applicable Windows OS Lotus Domino 8.0 and future fix packs (overview) [http://www.ibm.com/software/lotus/products/domino/] (support) [http://www.ibm.com/software/lotus/support/domino/support.html] All Applicable Windows OS Lotus Domino 8.0.1 and future fix packs (overview) [http://www.ibm.com/software/lotus/products/domino/] (support) [http://www.ibm.com/software/lotus/support/domino/support.html] All Applicable Windows OS Lotus Domino 8.0.2 and future fix packs (overview) [http://www.ibm.com/software/lotus/products/domino/] (support) [http://www.ibm.com/software/lotus/support/domino/support.html] All Applicable Windows OS Lotus Domino 8.5 and future fix packs (overview) [http://www.ibm.com/software/lotus/products/domino/] (support) [http://www.ibm.com/software/lotus/support/domino/support.html] All Applicable Windows OS Lotus Domino 8.5.1 and future fix packs (overview) [http://www.ibm.com/software/lotus/products/domino/] (support) [http://www.ibm.com/software/lotus/support/domino/support.html] All Applicable Windows OS Lotus Domino 8.5.2 and future fix packs (overview) [http://www.ibm.com/software/lotus/products/domino/] (support) [http://www.ibm.com/software/lotus/support/domino/support.html] All Applicable Windows OS Microsoft Active Directory 2003 and future fix packs All Applicable Windows OS Microsoft Active Directory 2008 and future fix packs All Applicable Windows OS Microsoft Active Directory Application Mode (ADAM) 2003 and future fix packs All Applicable Windows OS Microsoft AD LDS(Lightweight Directory Services) Windows 2008 and future fix packs All Applicable Windows OS Novell eDirectory 8.7.3 and future fix packs All Applicable Windows OS Novell eDirectory 8.8 and future fix packs All Applicable Windows OS Sun Java System Directory Server 6.1 and future fix packs All Applicable Windows OS Service Pack 10 or later is required. Sun Java System Directory Server 6.3 and future fix packs All Applicable Windows OS Sun Java System Directory Server 7.0 and future fix packs All Applicable Windows OS Tivoli Directory Server 6.0 and future fix packs (overview) [http://www.ibm.com/software/tivoli/products/directory-server/] (support) [http://www.ibm.com/software/sysmgmt/products/support/IBMDirectoryServer.html] All Applicable Windows OS Tivoli Directory Server 6.1 and future fix packs (overview) [http://www.ibm.com/software/tivoli/products/directory-server/] (support) [http://www.ibm.com/software/sysmgmt/products/support/IBMDirectoryServer.html] All Applicable Windows OS Fix pack 4 or later is required. Tivoli Directory Server 6.2 and future fix packs (overview) [http://www.ibm.com/software/tivoli/products/directory-server/] (support) [http://www.ibm.com/software/sysmgmt/products/support/IBMDirectoryServer.html] All Applicable Windows OS Java Technology IBM Runtime Environment, Java Technology Edition 6.0 and future mod levels and fix packs All Applicable Windows OS  Requirements:
+
+ *  Java version included or recommended by WebSphere Application Server 7.0.0.19.
+
+Sun Java SDK/JRE/JDK 6.0 Update 17 and future fix packs All Applicable Windows OS Supported Java runtime environments 1.5.x or 1.6.x (requires one) for the Web Content Management authoring portlet
+
+JDBC Drivers Apache Derby 10.3 JDBC 4.0 and future fix packs All Applicable Windows OS Derby is a non-production environment. V10.3.3.1 or later is required. DataDirect Connect for JDBC 4.0 (type 4) and future fix packs All Applicable Windows OS DB2 Driver for JDBC and SQLJ (type 2/4) 4.0 and future fix packs All Applicable Windows OS DB2 9.5 and DB2 9.7 require DB2 Driver for JDBC and SQLJ (type 2/4) 4.0 IBM Application Connectivity to DB2 for z/OS Feature Version and future fix packs All Applicable Windows OS IBM DB2 Universal JDBC Provider (XA) from DB2 z/OS (type 4) Version and future fix packs All Applicable Windows OS Requires APAR PK93123 for DB2 on z/OS V8.1 and V9.1. You can obtain the fix from DB2 on z/OS support or IBMLINK. IBM Toolbox for Java/JTOpen JDBC Driver 6.0 and future fix packs All Applicable Windows OS Check for the latest jt400.jar file at:http://sourceforge.net/projects/jt400/files/ [http://sourceforge.net/projects/jt400/files/] Microsoft SQL Server JDBC Driver 2.0 and future fix packs All Applicable Windows OS Microsoft SQL Server JDBC Driver 3.0 All Applicable Windows OS Oracle JDBC Driver (XA) 10g Any and future fix packs All Applicable Windows OS  Oracle 11g JDBC Driver Thin (type 4) (11.2.0.2 or higher)
+
+ Requires the ojdbc6.jar file.
+
+Oracle JDBC Driver (XA) 11g 11.2.0.2 and future fix packs All Applicable Windows OS  Oracle 11g JDBC Driver Thin (type 4) (11.2.0.2 or higher)
+
+ Requires the ojdbc6.jar file.
+
+Miscellaneous IBM License Metric Tool 7.2.1 and future fix packs (overview) [http://www.ibm.com/software/tivoli/products/license-metric-tool/] (support) [http://www.ibm.com/software/sysmgmt/products/support/IBMLicenseMetricTool.html] All Applicable Windows OS Tivoli Directory Integrator 7.0 and future fix packs (overview) [http://www.ibm.com/software/tivoli/products/directory-integrator/] (support) [http://www.ibm.com/software/sysmgmt/products/support/IBMDirectoryIntegrator.html] All Applicable Windows OS Tivoli License Compliance Manager 2.3 Fixpack 1 and future fix packs (overview) [http://www.ibm.com/software/tivoli/products/license-mgr/] (support) [http://www.ibm.com/software/sysmgmt/products/support/IBMTivoliLicenseManager.html] All Applicable Windows OS Process Server WebSphere Process Server 7.0.0.3 and future fix packs (overview) [http://www.ibm.com/software/integration/wps/] (support) [http://www.ibm.com/support/entry/portal/Overview/Software/WebSphere/WebSphere_Process_Server] All Applicable Windows OS Security CA SiteMinder 6.0 and future fix packs All Applicable Windows OS Tivoli Access Manager for e-business 6.0 and future fix packs (overview) [http://www.ibm.com/software/tivoli/products/access-mgr-e-bus/] (support) [http://www.ibm.com/software/sysmgmt/products/support/IBMTivoliAccessManagerfore-business.html] All Applicable Windows OS Tivoli Access Manager for e-business 6.1 and future fix packs (overview) [http://www.ibm.com/software/tivoli/products/access-mgr-e-bus/] (support) [http://www.ibm.com/software/sysmgmt/products/support/IBMTivoliAccessManagerfore-business.html] All Applicable Windows OS Tools Rational Application Developer for WebSphere Software 8.0 and future fix packs (overview) [http://www.ibm.com/software/awdtools/developer/application/index.html] (support) [http://www.ibm.com/software/awdtools/developer/application/support/index.html] All Applicable Windows OS WebSphere Portlet Factory 7.0 and future fix packs (overview) [http://www.ibm.com/software/genservers/portletfactory/] (support) [http://www.ibm.com/software/genservers/portletfactory/support/] All Applicable Windows OS Virtualization IBM PR/SM any version and future fix packs All Applicable Windows OS Red Hat KVM as delivered with Red Hat Enterprise Linux (RHEL) 5.4 and future fix packs All Applicable Windows OS VMware ESX 4.0 and future releases, mod levels and fix packs All Applicable Windows OS VMware ESXi 4.0 and future releases, mod levels and fix packs All Applicable Windows OS Web Browsers Apple Safari 4.0 and future fix packs All Applicable Windows OS  Refer to the following link for Known limitations when using Google Chrome and Apple Safari Web browsers with WebSphere Portal V7.0.x:
+
+ For more information on Web browser support with WebSphere Portal, refer to "WebSphere Portal Support Statement Addendum - Web browsers" at 
+
+ http://www-01.ibm.com/support/docview.wss?uid=swg27016293 [http://www-01.ibm.com/support/docview.wss?uid=swg27016293]
+
+Google Chrome 8 and future releases, mod levels and fix packs All Applicable Windows OS  Refer to the following link for Known limitations when using Google Chrome and Apple Safari Web browsers with WebSphere Portal V7.0.x:
+
+ For more information on Web browser support with WebSphere Portal, refer to "WebSphere Portal Support Statement Addendum - Web browsers" at
+
+ http://www-01.ibm.com/support/docview.wss?uid=swg27016293 [http://www-01.ibm.com/support/docview.wss?uid=swg27016293]
+
+Microsoft Internet Explorer 6.0 SP2 and future fix packs All Applicable Windows OS  Internet Explorer 6.0 SP2 on Windows XP SP1/SP2 and Windows 2000 SP4 and Windows 2003. Support for Microsoft Internet Explorer v6.0 is deprecated in this release and due to its limited capabilities many WebSphere Portal features do not function or render correctly, including Client-Side Aggregation (CSA), Page Builder, Mashup integration, Wikis and Blogs. Some legacy pages and themes can be successfully rendered by Microsoft Internet Explorer v6.0, but use of this Web browser is not recommended.
+
+ For more information on Web browser support with WebSphere Portal, refer to "WebSphere Portal Support Statement Addendum - Web browsers" at http://www-01.ibm.com/support/docview.wss?uid=swg27016293 [http://www-01.ibm.com/support/docview.wss?uid=swg27016293]
+
+Microsoft Internet Explorer 7.0 and future fix packs All Applicable Windows OS  Internet Explorer 7.0 is supported on all versions of Windows that are supported by WebSphere Portal.
+
+ For more information on Web browser support with WebSphere Portal, refer to "WebSphere Portal Support Statement Addendum - Web browsers" at http://www-01.ibm.com/support/docview.wss?uid=swg27016293 [http://www-01.ibm.com/support/docview.wss?uid=swg27016293]
+
+Microsoft Internet Explorer 8.0 and future fix packs All Applicable Windows OS See Note #1 Microsoft Internet Explorer 9.0 and future fix packs All Applicable Windows OS  Refer to the IE9 Support statement for more information:
+
+ http://www.ibm.com/support/docview.wss?uid=swg21496054 [http://www.ibm.com/support/docview.wss?uid=swg21496054]
+
+ For more information on Web browser support with WebSphere Portal, refer to "WebSphere Portal Support Statement Addendum - Web browsers" at 
+
+ http://www-01.ibm.com/support/docview.wss?uid=swg27016293 [http://www-01.ibm.com/support/docview.wss?uid=swg27016293]
+
+Mozilla Firefox 3.0 and future fix packs All Applicable Windows OS See Note #1 Mozilla Firefox 3.5 and future fix packs All Applicable Windows OS See Note #1 Mozilla Firefox 3.6 and future fix packs All Applicable Windows OS See Note #1 Mozilla Firefox 4.0 and future releases, mod levels and fix packs All Applicable Windows OS See Note #1 Opera 10.0 and future fix packs All Applicable Windows OS See Note #1 WebDAV Client davfs2 1.4.6 All Applicable Windows OS  Refer to the technote for version information and limitations -
+
+ Recommended WebDAV clients for accessing IBM WebShpere Portal version 7.0.0.2 [http://www-01.ibm.com/support/docview.wss?uid=swg27023805]
+
+JSCAPE AnyClient 2.2 All Applicable Windows OS  Refer to the technote for version information and limitations -
+
+ Recommended WebDAV clients for accessing IBM WebShpere Portal version 7.0.0.2 [http://www-01.ibm.com/support/docview.wss?uid=swg27023805]
+
+SRT WebDrive 9.1 All Applicable Windows OS  Refer to the technote for version information and limitations -
+
+ Recommended WebDAV clients for accessing IBM WebShpere Portal version 7.0.0.2 [http://www-01.ibm.com/support/docview.wss?uid=swg27023805]
+
+Web Servers Apache HTTP Server 2.0.59 and future fix packs All Applicable Windows OS Apache HTTP Server 2.2 and future fix packs All Applicable Windows OS IBM HTTP Server 6.1 and future fix packs (overview) [http://www.ibm.com/software/webservers/httpservers/] (support) [http://www.ibm.com/support/entry/portal/Overview/Software/WebSphere/IBM_HTTP_Server] All Applicable Windows OS IBM HTTP Server 7.0 and future fix packs (overview) [http://www.ibm.com/software/webservers/httpservers/] (support) [http://www.ibm.com/support/entry/portal/Overview/Software/WebSphere/IBM_HTTP_Server] All Applicable Windows OS IBM HTTP Server for i5/OS Any and future fix packs All Applicable Windows OS  IBM HTTP Server for i5/OS versions V5R4, V6R1 and V7R1
+
+IBM HTTP Server for z/OS Any and future fix packs All Applicable Windows OS Lotus Domino 8.0 and future fix packs (overview) [http://www.ibm.com/software/lotus/products/domino/] (support) [http://www.ibm.com/software/lotus/support/domino/support.html] All Applicable Windows OS Lotus Domino 8.0.1 and future fix packs (overview) [http://www.ibm.com/software/lotus/products/domino/] (support) [http://www.ibm.com/software/lotus/support/domino/support.html] All Applicable Windows OS Lotus Domino 8.0.2 and future fix packs (overview) [http://www.ibm.com/software/lotus/products/domino/] (support) [http://www.ibm.com/software/lotus/support/domino/support.html] All Applicable Windows OS Lotus Domino 8.5 and future fix packs (overview) [http://www.ibm.com/software/lotus/products/domino/] (support) [http://www.ibm.com/software/lotus/support/domino/support.html] All Applicable Windows OS Lotus Domino 8.5.1 and future fix packs (overview) [http://www.ibm.com/software/lotus/products/domino/] (support) [http://www.ibm.com/software/lotus/support/domino/support.html] All Applicable Windows OS Lotus Domino 8.5.2 and future fix packs (overview) [http://www.ibm.com/software/lotus/products/domino/] (support) [http://www.ibm.com/software/lotus/support/domino/support.html] All Applicable Windows OS Microsoft Internet Information Services 6.0 and future fix packs All Applicable Windows OS Microsoft Internet Information Services 7.0 and future fix packs All Applicable Windows OS Microsoft Internet Information Services 7.5 and future fix packs All Applicable Windows OS Supported as Web server plugins when hosted on the Windows Server 2008 R2 edition. Sun Java System Web Server 6.1 SP10 and future fix packs All Applicable Windows OS  Sun Java System Web Server 6.1 Service pack 10 or later is required.
+
+Sun Java System Web Server 7.0 Update 8 and future fix packs All Applicable Windows OS  Sun Java System Web Server 7.0 Update 8 or later is required.
+
+ Back to top 
+
+
+
+
+NOTES
+ *  Note #1:  For more information on Web browser support with WebSphere Portal, refer to "WebSphere Portal Support Statement Addendum - Web browsers" at 
+   
+    http://www-01.ibm.com/support/docview.wss?uid=swg27016293 [http://www-01.ibm.com/support/docview.wss?uid=swg27016293]
+   
+   
+ *  Note #2:  Development Platform Only
+   WebSphere Application Server requirements depending on operating system bit:
+   
+    *  32-bit JDK/WebSphere Application Server on 32-bit OS
+   
+   
+ *  Note #3:  Includes Support for Oracle RAC.
+   
+   
+ *  Note #4: WebSphere Application Server requirements depending on operating system bit:
+   
+    * 32-bit JDK/WebSphere Application Server on 32-bit OS
+   
+   
+ *  Note #5:  WebSphere Application Server requirements depending on operating system bit:
+   
+    *  32-bit JDK/WebSphere Application Server on 32-bit OS
+   
+   
+ *  Note #6: WebSphere Application Server requirements depending on operating system bit:
+   
+    * 32-bit JDK/WebSphere Application Server on 64-bit OS
+    * 64-bit JDK/WebSphere Application Server on 64-bit OS
+   
+   
+ *  Note #7:  WebSphere Application Server requirements depending on operating system bit:
+   
+    *  32-bit JDK/WebSphere Application Server on 64-bit OS
+    *  64-bit JDK/WebSphere Application Server on 64-bit OS
+   
+   
+ *  Note #8:  WebSphere Application Server requirements depending on operating system bit:
+   
+    *  64-bit JDK/WebSphere Application Server on 64-bit OS

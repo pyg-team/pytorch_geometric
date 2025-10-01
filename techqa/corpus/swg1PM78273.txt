@@ -1,0 +1,188 @@
+Title: IBM PM78273: RUNNING A SSL COMPONENT TRACE TO DEBUG A CICS SSL REQUEST SHOWS A FCNTL(F_GETFL) FAILED FOR SOCKET, 113 - BAD FILE DESCRIPTOR. - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Attempting to debug a failing CICS SSL Application using the SSL
+   GSKSRVR Component Trace displays the following error:
+   .
+   CICS      MESSAGE   00000004  09:14:39.277108  SSL_ERROR
+     Job CICSNAME  Process 00020136 Thread 00000001
+                   default_setsocketoptions
+     fcntl(F_GETFL) failed for socket 766487040:
+     113 - EDC5113I Bad file descriptor.
+   .
+   System SSL will put out this message when the File Descriptor
+   that was passed to us is not a valid file descriptor.  SSL will
+   continue processing because it's not known if the application
+   is sending us a pointer to a structure instead of the actual
+   file descriptor.  Therefore, the SSL Handshake will continue
+   despite the error shown above.
+   .
+   The message is issued due to CICS not supplying a callback
+   routine for SETSOCKETOPTIONS.  This causes system SSL to use the
+   native TCPIP routine which then fails with EBADF because the
+   file desciptor passed to it is not a real file descriptor.  CICS
+   should provide a callback for the setsocketoptions call.
+   .
+   Additional Symptom(s) Search Keyword(s):
+   KIXREVRJL
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All CICS users                               *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: An SSL component trace taken during a   *
+   *                      CICS SSL handshake process contains     *
+   *                      SSL_ERROR entries, but the handshake is *
+   *                      successful.                             *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   CICS has not provided an io_setsocketoptions() callback routine
+   to be used during the SSL handshake process, so System SSL
+   attempts to use the default routine.  However the socket
+   descriptor passed to this routine is not a true socket
+   descriptor, but is an internal token used by CICS.  The default
+   routine attempts an fcntl(F_GETFL) function, which fails with an
+   EBADF response because of the invalid socket descriptor.  The
+   handshake is successful, but a SOCKET_ERROR condition is logged
+   on the System SSL component trace.  This can lead to misleading
+   diagnostics.
+   
+   Additional keywords: MSGEDC5113I EDC5113I gsk_secure_socket_init
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  DFHSOSE has been changed to supply a dummy version of the
+   io_setsocketoptions() callback routine.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  FIX AVAILABLE BY PTF ONLY
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM78273
+   
+   
+ * REPORTED COMPONENT NAME
+   CICS TS Z/OS V4
+   
+   
+ * REPORTED COMPONENT ID
+   5655S9700
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-12-03
+   
+   
+ * CLOSED DATE
+   2013-03-26
+   
+   
+ * LAST MODIFIED DATE
+   2013-05-03
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    PM85135 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM85135] UK93344 UK93345 UK93346
+   
+   
+
+MODULES/MACROS
+ *     DFHLEPT@
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CICS TS Z/OS V4
+   
+   
+ * FIXED COMPONENT ID
+   5655S9700
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R603 PSY UK93345 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK93345]
+   UP13/04/20 P F304
+   
+   
+ * R703 PSY UK93346 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK93346]
+   UP13/04/20 P F304
+   
+   
+ * R600 PSN
+   UP
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

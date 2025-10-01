@@ -1,0 +1,220 @@
+Title: IBM PM48397: RESTART OF A LOAD INCURSOR UTILITY ABENDS WITH RC00E4005 WHEN RESTARTING IN THE SORT PHASE - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  We had a large table 350 million+ rows that we had to cross load
+   - it failed after a 6 hours in the SORT phase.
+   A restart caused the LOAD utility to restart in the RELOAD phase
+   causing a second 6 hour RELOAD phase.
+   From reading the DB2 Utility Guide we can see in the Table 47
+   LOAD restart information Note 10 that:
+   "Any job that finished abnormally in the RELOAD, SORT, BUILD,
+   SORTBUILD phase restarts from the beginning of the RELOAD
+   phase."
+   We would like to know why this is - as we can't see any reason
+   for a failed sort not being restartable fromthe beginning of
+   the SORT phase.
+   .
+   My question is: Why is it not possible to perform a restart at
+   the beginning of the SORT Phase. I understand that DB2
+   currently doesn't do that, working as designed but not the
+   reason why?
+   Reason from IBM:
+   This is because in our current design , with default SORTKEYS ,
+   we always pass the index keys in memory rahter than written to
+   them workfile, during the reload phase. So we have to restart
+   from the reload phase to re-get the keys in memory. This design
+   could reduce the elapsed time from the start of RELOAD to the
+   end of BUILD.
+   .
+   Update from customer and conerns:
+   What we are having problems understand is that in case of a
+   restart after a failed SORT phase we have to re-load 350+
+   millions rows before you can start the SORT phase.
+   Given your reply it should be necessary to re-read extract the
+   index keys with a tablespace scan during restart processing
+   rather than re-setting and reloading the entire tablespace
+   again.
+   This is hurting our availability in the case of a failed SORT
+   phase as it took 6 hourse to get back to the beginning of the
+   SORT phase becuase all successfully loaded data had to be
+   processed from SYSREC again - rather than perform a tablespace
+   scan that should, at worse, take 10-30 minutes.
+   .
+   I'm not sure why using crossload should prevent restarting
+   in the SORT phase.
+   .
+   The RELOAD phase should have been completed and the data used
+   by the sort should be in the tablespace.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All DB2 9 for z/OS and DB2 10 for z/OS       *
+   *                 utility users of LOAD                        *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Restart of a LOAD INCURSOR utility      *
+   *                      that abended in the SORT phase resulted *
+   *                      in ABEND04E RC00E40005 from DSNUGSOR    *
+   *                      and messages MSGICE017A - INVALID       *
+   *                      POSITION OR LENGTH IN CONTROL FIELD -   *
+   *                      REASON CODE IS 06 and MSGICE012A -      *
+   *                      MISSING FIELDS OPERAND DEFINER are      *
+   *                      issued.                                 *
+   ****************************************************************
+   * RECOMMENDATION: Apply corrective PTF when available          *
+   ****************************************************************
+   Restart of a LOAD INCURSOR utility that had originally abended
+   in the SORT phase, ended with an ABEND04E RC00E40005 from
+   DSNUGSOR.  Also, messages MSGICE017A - INVALID POSITION OR
+   LENGTH IN CONTROL FIELD - REASON CODE IS 06 and MSGICE012A -
+   MISSING FIELDS OPERAND DEFINER are issued.
+   
+   An example of the invalid parameter is (from the joblog - the
+   underlined portion is the value in error):
+   
+   SORT FIELDS=
+   (00006.0,00000.4,A,00012.0,00002.0,A,00001.0,00001.5,A,0001*
+       4.0,00000.0,A,00001.0,00005.0,A)
+           _______
+   
+   A valid parameter would be:
+   
+   SORT FIELDS=
+   (00006.0,00000.4,A,00012.0,00002.0,A,00001.0,00001.5,A,0001*
+       4.0,00219.0,A,00001.0,00005.0,A)
+           _______
+   
+   The abend occurred because the parameter list passed to DFSORT
+   did not have the correct offset for the index(es) that were
+   defined on the table.  DFSORT abended it's process when it
+   discovered the invalid parameter.
+   
+   
+   This abend could also occur on a LOAD utility that does not
+   specify INCURSOR.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  LOAD restart code has been changed to correctly set up the
+   offset(s) for the SORT FIELDS parameter(s).
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM48397
+   
+   
+ * REPORTED COMPONENT NAME
+   DB2 OS/390 & Z/
+   
+   
+ * REPORTED COMPONENT ID
+   5740XYR00
+   
+   
+ * REPORTED RELEASE
+   910
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-09-22
+   
+   
+ * CLOSED DATE
+   2011-12-14
+   
+   
+ * LAST MODIFIED DATE
+   2012-02-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UK74989 UK74994
+   
+   
+
+MODULES/MACROS
+ *  DSNURSIX
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   DB2 OS/390 & Z/
+   
+   
+ * FIXED COMPONENT ID
+   5740XYR00
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * RA10 PSY UK74989 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK74989]
+   UP12/01/07 P F201
+   
+   
+ * R910 PSY UK74994 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK74994]
+   UP12/01/10 P F201
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

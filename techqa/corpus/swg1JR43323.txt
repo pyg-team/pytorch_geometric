@@ -1,0 +1,157 @@
+Title: IBM JR43323: DUPLICATE ENTRIES ERROR OCCURS WHEN PUBLISH THE CHANGES FROM INTEGRATION DESIGNER BACK TO PROCESS CENTER - United States
+
+Text:
+  A FIX IS AVAILABLE
+Version 7.5.1 Fix Pack 1 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24033036]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When the process application or toolkits contains the
+   sub-processes, and opened the process application or toolkit
+   into Integration Designer(IID), the IID tools will generate the
+   .cmt2 files and .wsdl files for those sub-process. This caused
+   duplicated error occurs when user tries to publish the changes
+   from IID back to process center.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Generated Interfaces for the subprocesses were not able to be
+   deleted in Integration Developer.
+   
+   USER AFFECTED:
+   Process Designer and Integration Developer Users
+   
+   PROBLEM DETAILED DESCRIPTION:
+   A guard to prevent the generation of WSDLs for subprocesses was
+   not in place to prevent the generation of newly created
+   subprocesses in Process Apps and Toolkits, that were already
+   associated with advanced content.  Upon trying to delete these
+   resources, code was present to prevent deletion of WSDLs
+   belonging to BPDs on the IID side.
+   
+   ADDITIONAL INFO:
+   To benefit from this fix, it is necessary to perform additional
+   procedures after installation.
+   
+   (Important: JR44923 [http://www-01.ibm.com/support/docview.wss?uid=swg1JR44923] is an additional recommended fix. Perform
+   these steps, if you have not applied JR44923 [http://www-01.ibm.com/support/docview.wss?uid=swg1JR44923]. If you have
+   applied JR44923 [http://www-01.ibm.com/support/docview.wss?uid=swg1JR44923], please follow the steps provided for that fix,
+   only)
+   
+   1) In IID, go to the default library and run action
+   "Disassociate from the Process Center".
+   2) Back up the library (in case there are changes the customer
+   has in that library). You could rename it for example.
+   3) Now delete the ProcessApp (or Toolkit) from the workspace,
+   and choose to remove the project contents (Note, the contents
+   for the projects other than the disassicated default library are
+   still on the ProcessCenter).
+   4) Now open the ProcessApp in the workspace again. The default
+   library will be regenerated again.
+   5) Compare the new default library and the one you backed up and
+   copy anything back to the new default from the old.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fixed the issue by placing a guard and allowing the deletion of
+   the wsdl
+   
+   FIX AVAILABILITY:
+   Fix delivered in 7.5.1.1.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR43323
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM ADVANCED
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9400
+   
+   
+ * REPORTED RELEASE
+   750
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-07-04
+   
+   
+ * CLOSED DATE
+   2012-09-25
+   
+   
+ * LAST MODIFIED DATE
+   2013-02-07
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R751 PSY
+   UP

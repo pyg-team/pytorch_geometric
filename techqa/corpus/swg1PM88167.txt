@@ -1,0 +1,143 @@
+Title: IBM PM88167: INSTALLING WMB 8.0.0.1 FIX PACK CAUSES TRANSFORMATION PERSPECTIVE WITHIN TOOLKIT NOT TO WORK AND THROWS EXCEPTION - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Installing WMB 8.0.0.1 fix pack causes Transformation
+   Perspective within toolkit not to work and throws exception
+   errors.
+   
+   Now WMB 8.0.0.1 toolkit is calling launcher.bat file and not
+   mb.exe as in 8.0.0.0. WMB Toolkit is now running 64 bit
+   libraries because of the running of launcher.bat file on Win 7
+   and WIN 2008 R2 64 bit OS. This causes Transformation
+   Perspective which is still 32 bit to fail to work properly.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  WTXCQ - WTX00041722
+   AR / PP
+   Circumvention: None
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Users Affected:
+   WebSphere Transformation Extender customers who install
+   WebSphere Message Broker 8.0.0.1 fix pack
+   
+   
+   Problem Description:
+   Installing WMB 8.0.0.1 fix pack causes Transformation
+   Perspective within toolkit not to work and throws exception
+   errors.
+   
+   Platforms Affected:
+   Windows
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The information about WTX root install directory is now resolved
+    using the registry key
+   
+   Delivered in:
+   8.4.1.1
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM88167
+   
+   
+ * REPORTED COMPONENT NAME
+   WTX FOR INT SER
+   
+   
+ * REPORTED COMPONENT ID
+   5724M4010
+   
+   
+ * REPORTED RELEASE
+   840
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2013-04-30
+   
+   
+ * CLOSED DATE
+   2013-08-23
+   
+   
+ * LAST MODIFIED DATE
+   2013-10-04
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WTX FOR INT SER
+   
+   
+ * FIXED COMPONENT ID
+   5724M4010
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R841 PSY
+   UP

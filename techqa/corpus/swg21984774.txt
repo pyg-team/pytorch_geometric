@@ -1,0 +1,63 @@
+Title: IBM End of support for firmware versions prior to 4.6.1 on IBM Security Network IPS sensors - United States
+
+Text:
+GX; Network IPS PRODUCT LIFECYCLE
+
+ABSTRACT
+ This document provides information on the lifecycle of the IBM Security Network Intrusion Prevention System (GX) sensors. 
+
+CONTENT
+IBM is constantly reviewing and updating approaches for helping you maintain a protected environment. The IBM X-Force research team issues regular security content updates for GX appliances. We also make available firmware updates and encourage our customers to upgrade to the latest versions. Over time, it is important to retire the older firmware versions to ensure that the installed firmware is benefiting from up-to-date security research and meeting the latest standards for secure code. Therefore, we are announcing that effective 31 July 2016, the GX Firmware versions prior to 4.6.1 will no longer be supported by IBM Security.
+
+After July 31st, the supported GX firmware versions will be 4.6.1 and 4.6.2. We expect that most customers have already upgraded to one of these more recent versions, so action on your part might not be required. However, if you are using an older firmware version, we recommend that you upgrade to the latest version as soon as it is convenient.
+
+If you are unsure of the version of firmware on your GX, there are two ways to determine what it is:
+
+
+ * If the appliance is registered to SiteProtector, open the SiteProtector Console and select the group in which the agent resides. In the upper right, go to Agent View and look at the Version column.
+   
+ * If the appliance is not registered to SiteProtector, log into the Local Manager Interface (LMI) by opening your browser and typing the address of your Network IPS in the address bar. You will need to log in as the admin user. On the Appliance Dashboard page, you will see a System Summary box that displays all of the information for the appliance, such as model and serial number. Look for the Last Firmware Update line. This will give you the current firmware version of the appliance. If it indicates a version prior to 4.6.1, you will need to upgrade the firmware.
+
+
+To receive continued support, customers with active maintenance will need to upgrade to one of the two most recent GX firmware versions by July 31, 2016. 
+
+If you have specific questions about upgrading to the latest version or you would like assistance with upgrading, please contact IBM Technical Support [http://www.ibm.com/support/customercare/sas/f/handbook/contacts.html]. 
+
+If you have any questions about network security, including about our next generation IBM Security Network Protection XGS platform, please contact your IBM Account Manager or learn more here [http://www.ibm.com/software/products/en/network-protection]. 
+
+
+
+
+
+Frequently asked questions about EOL for versions prior to 4.6.1 
+
+
+Why is it mandatory that I update my firmware to 4.6.1 or 4.6.2? 
+The version that we are asking customers to upgrade to allows IBM to respond more quickly to security vulnerabilities in your appliance, which in turn helps to keep your assets and data secure. 
+
+Do I need to update my GV virtual appliance to 4.6.1 or 4.6.2? 
+Yes. 
+
+What Firmware version should I upgrade to before July 31, 2016? 
+IBM recommends that you moved to the most current version, which is 4.6.2. This ensures that not only can we respond more quickly to security vulnerabilities, but also includes all current bug fixes. 
+
+Is there a situation where I would want to upgrade to 4.6.1? 
+IBM support recommends that you upgrade all the way to version 4.6.2. We will support version 4.6.1 but it does not have all current GX bug fixes. 
+
+What happens if I do not upgrade? 
+Security upgrades will still work in firmware versions previous to 4.6.1, however they will not be tested and therefore we cannot guarantee they are effectively stopping attacks in your infrastructure. In addition, IBM will not be able to make any fixes to the older firmware including PSIRT fixes and bug fixes. The only way to ensure that your IPS is stopping attacks efficiently, will receive security patches, and will receive bug fixes is to upgrade to firmware 4.6.1 and above. 
+
+Do I need to upgrade my XGS firmware? 
+This current announcement is regarding the GX line of products. So, while the upgrades discussed here are not applicable to the XGS line, we do encourage customers to ensure that they are running the latest firmware for their XGS appliances. 
+
+How do I request a support extension for the version I am running now? 
+It will not be possible to get contract extensions for firmware versions previous 4.6.1. IBM wants to ensure that we are securing your environment the best we can but, because there is no longer support for the underlying API’s in the older firmware we won’t be able to provide an acceptable level of security. 
+
+
+
+
+[/support/docview.wss?uid=swg21984774&aid=1] [http://ibm.biz/KC-SNIPS] [/support/docview.wss?uid=swg21984774&aid=2] [http://ibm.biz/InfraSecForumTechnote] [/support/docview.wss?uid=swg21984774&aid=3] [http://ibm.biz/SecSuptUTube] [/support/docview.wss?uid=swg21984774&aid=4] [http://ibm.biz/InfraSecFixes] [/support/docview.wss?uid=swg21984774&aid=5] [http://ibm.biz/FlexLicLogin] [/support/docview.wss?uid=swg21984774&aid=6] [http://ibm.biz/MyNotification] [/support/docview.wss?uid=swg21984774&aid=7] [http://ibm.biz/ContactSecSupport] 
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Security Proventia Virtualized Network Security Platform General Information Firmware 3.3, 4.1, 4.3, 4.4, 4.5, 4.6, 4.6.1, 4.6.2

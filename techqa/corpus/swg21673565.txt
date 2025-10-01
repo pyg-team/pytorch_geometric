@@ -1,0 +1,87 @@
+Title: IBM ** Troubleshooting ** Standard Reports appear to hang / freeze when sending the output to PDF - United States
+
+Text:
+PDF report progress bar intermittently hangs TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ User runs a report (e.g. a BI report or a Controller 'standard report', also known as a 'system report'). By default, this displays in HTML initially. This works OK.
+
+User then clicks the dropdown box to modify it to appear as PDF. The display changes to an Adobe Acrobat Reader-style GUI. However, the PDF report does not fully finish appearing (does not completely finish opening).
+
+The problem may appear to be intermittent - sometimes the report displays OK, but sometimes it fails. 
+
+SYMPTOM
+The symptoms vary depending on the version of Acrobat Reader version installed on the 
+client device: 
+
+ * Adobe Reader 9.5 - a completely empty white page appears with white 
+   thumbnails below 
+ * Adobe Reader 10.1.x - PDF report progress bar intermittently hangs  * Specifically, a progress meter appears within the Reader 
+      frame but never finishes (see below for example):
+   
+   
+
+[/support/docview.wss?uid=swg21673565&aid=1] [/support/docview.wss?uid=swg21673565&aid=1] The amount of the report downloaded (in the example above 347.0 Kb) varies each time the same report is run. Sometimes it will hang/stop at a higher figure, sometimes at a lower figure/amount. 
+
+ * In one real-life example, these 'large' files are typically approximately 1Mb, and the download stream stalled at various points such as 282KB, 440KB and 968KB. 
+
+
+CAUSE
+There are several possible causes for similar symptoms: 
+
+ * Scenario #1 - Incompatible settings for how Adobe Reader displays PDF files inside internet browsers  * For full details, see separate IBM Technote #1672938.
+   
+   
+
+ * Scenario #2 - Defect (APAR PM86538) in Cognos BI 10.2  * For full details, see separate IBM Technote #1673252.
+   
+   
+
+ * Scenario #3 - Limitation of some versions of Adobe Reader
+
+ * Scenario #4 - Limitation of the Cognos BI engine (in some environments) caused by the setting "Temporary objects location".  * For full details, see separate IBM Technote #1689973.
+   
+   
+
+ENVIRONMENT
+Scenario #3 
+
+In one real-life customer example, the problem only occurred for client PCs that had Adobe Reader version 10.1.8.24 (bad)
+The problem did not occur on client devices with version 10.1.2.45 (good) installed.
+
+
+
+RESOLVING THE PROBLEM
+Scenario #1 
+
+Ask the end user to modify their Adobe Acrobat Reader internet settings.
+· For full details, see separate IBM Technote #1672938.
+
+Scenario #2
+Upgrade to either:
+· IBM Cognos Business Intelligence 10.2 Refresh Pack 1
+· or IBM Cognos Business Intelligence 10.2 Fix Pack 2
+...or any later Fix Pack version (recommended).
+
+For full details, see separate IBM Technote #1673252.
+
+Scenario #3
+Check/upgrade your version of Adobe Reader. 
+
+ * For example, in one real-life customer example, the problem did not occur when using Adobe Acrobat Reader version 10.1.2.45 
+ * In a different customer's environment, upgrading to Acrobat Reader version 10.1.16 solved the problem.
+
+
+Scenario #4 
+Modify the BI (Cognos Connection) setting " Temporary objects location" to be ' Content Store'.  * For full details, see separate IBM Technote #1689973.
+
+RELATED INFORMATION
+ 1689973 - Standard Reports (e.g. Reconcile between acco [http://www.ibm.com/support/docview.wss?uid=swg21689973]
+1672938 - PDF Standard Reports intermittently hang cau [http://www.ibm.com/support/docview.wss?uid=swg21672938]
+1673252 - PDF report progress bar intermittently hangs [http://www.ibm.com/support/docview.wss?uid=swg21673252]
+APAR PM86538 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM86538]
+
+
+ 
+
+Cross reference information Segment Product Component Platform Version Edition Business Analytics Cognos Business Intelligence Cognos Connection Windows 10.1.1

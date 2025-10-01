@@ -1,0 +1,162 @@
+Title: IBM PI66809: PROCESS SPECIFICATION BECOMES CORRUPT DURING UPGRADE (WI 108389) - United States
+
+Text:
+  A FIX IS AVAILABLE
+Rational DOORS Next Generation 6.0.3 [http://www-01.ibm.com/support/docview.wss?uid=swg24043110]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Users may receive the following errors when attempting to open
+   migrated DOORS Next Generation project areas:
+   
+   We're Sorry...
+   An error occurred while retrieving the dashboard:
+   HTTP/1.1 400 Bad Request
+   /rm/web/dojo/../../service/com.ibm.team.dashboard.common.interna
+   l.service.IDashboardRestService/dashboard?id=50
+   java.lang.IllegalArgumentException: Unexpected element 'data'
+   
+   The DNG ETL may also fail with the following error:
+   
+   07/03/2016 23:46:44,363
+   [dcc_etl_ProjectArea_ODS_RRCResourceGroup0_fetcher_0] ERROR Can
+   not retrieve the resources after 10 retries.
+   org.xml.sax.SAXParseException: XML document structures must
+   start and end within the same entity.
+       at
+   org.apache.xerces.util.ErrorHandlerWrapper.createSAXParseExcepti
+   on(Unknown Source)
+       at
+   org.apache.xerces.util.ErrorHandlerWrapper.fatalError(Unknown
+   Source)
+       at
+   org.apache.xerces.impl.XMLErrorReporter.reportError(Unknown
+   Source)
+   
+   The problem is caused by corruption in the process template that
+   needs to be repaired.  Contact support for assistance and
+   reference the associated defect work item below.
+   
+   Refer to the following defect work item for details:
+   
+   https://jazz.net/jazz03/resource/itemName/com.ibm.team.workitem. [https://jazz.net/jazz03/resource/itemName/com.ibm.team.workitem.]
+   WorkItem/108389
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * All users/environments are affected                          *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * In some cases a process specification becomes corrupt. The   *
+   * symptoms vary depending on what the user tried to do. The    *
+   * most common symptom is that a dashboard can't be opened when *
+   * a project area is opened via <url>/web                       *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This issue is fixed in the DOORS Next Generation 6.0.2 iFix004
+   release.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI66809
+   
+   
+ * REPORTED COMPONENT NAME
+   RATL DOORS NG
+   
+   
+ * REPORTED COMPONENT ID
+   5724W87NG
+   
+   
+ * REPORTED RELEASE
+   602
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-08-01
+   
+   
+ * CLOSED DATE
+   2016-08-22
+   
+   
+ * LAST MODIFIED DATE
+   2016-08-22
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   RATL DOORS NG
+   
+   
+ * FIXED COMPONENT ID
+   5724W87NG
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R602 PSY
+   UP

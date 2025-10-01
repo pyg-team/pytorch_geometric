@@ -1,0 +1,31 @@
+Title: IBM Security Bulletin: A security vulnerability has been identified in IBM Websphere shipped with IBM Security Directory Integrator (CVE-2014-4263, CVE-2014-4244) - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ IBM Websphere is shipped as a component of IBM Security Directory Integrator. Information about two security vulnerabilities affecting IBM Websphere has been published in a security bulletin. 
+
+VULNERABILITY DETAILS
+Two security vulnerabilities have been identified in IBM WebSphere shipped with IBM Security Directory Integrator (CVE-2014-4263 , CVE-2014-4244). Please consult the security bulletin "Security Bulletin: Multiple vulnerabilities in current IBM SDK for Java for WebSphere Application Server July 2014 CPU" [http://www-01.ibm.com/support/docview.wss?uid=swg21680418] for vulnerability details and information regarding fixes.
+
+AFFECTED PRODUCTS AND VERSIONS
+IBM Security Directory Integrator 6.1, 7.0, 7.1, 7.1.1, 7.2
+
+REMEDIATION/FIXES
+ 
+
+Product Release Fix information IBM Security Directory Integrator 6.1, 7.0 7.0.0-TIV-TDI-LA0019 [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=Security%2BSystems&product=ibm/Tivoli/Tivoli+Directory+Integrator&release=7.0.0&platform=All&function=all] IBM Security Directory Integrator 7.1, 7.1.1 7.1.1-TIV-TDI-LA0020 [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=Security%2BSystems&product=ibm/Tivoli/Tivoli+Directory+Integrator&release=7.1.1&platform=All&function=all] IBM Security Directory Integrator 7.2 7.2.0-ISS-SDI-LA0002 [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=Security%2BSystems&product=ibm/Tivoli/Security+Directory+Integrator&release=7.2.0&platform=All&function=all] WORKAROUNDS AND MITIGATIONS
+None
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v2 Guide [http://www.first.org/cvss/v2/guide] 
+On-line Calculator v2 [http://nvd.nist.gov/CVSS-v2-Calculator] RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/PSIRT] *The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.

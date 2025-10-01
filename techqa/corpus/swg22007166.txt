@@ -1,0 +1,39 @@
+Title: IBM maxmessage entry missing for oslc#stableresourcenotfound - United States
+
+Text:
+maxmessage; oslc#stableresourcenotfound; TPAEANYWHERE; OSLC TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The maxmessage for the error oslc#stableresourcenotfound is missing. 
+
+SYMPTOM
+The above error is displayed when a stableid can't be found when paging through OSLC data however there is no details provided as the entry for maxmessage is missing.
+
+
+CAUSE
+This is caused by a missing entry for oslc#stableresourcenotfound in the maxmessage table.
+
+RESOLVING THE PROBLEM
+This problem is fixed under APAR IV95836 in the next release of Maximo, however for 7.6.0.8 and previous releases the maxmessage will need to be updated manually. We can do that using the below steps.
+
+1. Open the Database Configuration application.
+2. Select 'Messages' from the More Actions menu.
+3. Add the following values.
+
+Message Group : oslc
+Message Key : stableresourcenotfound
+Message ID Prefix : BMXAA
+Message ID Suffix : E
+Value : The stable page resource has expired.The idle expiry time has been exceeded or reload of a stable page has been attempted. Pages cannot be reloaded when using stable paging.
+
+Buttons : Select the 'OK?' button
+
+Explanation : Current and previously loaded stable pages cannot be reloaded. The current stable page and those pages not yet loaded stay in memory until the idle expiry time has been
+exceeded. Idle expiry time is controlled by the mxe.oslc.idleexpiry system property.
+
+4. Click Ok.
+
+
+
+RELATED INFORMATION
+ IV95836: MAXMESSAGE ENTRY MISSING FOR OSLC#STABLERESOUR [http://www-01.ibm.com/support/docview.wss?uid=swg1IV95836&acss=danl_4623_web]

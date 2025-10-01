@@ -1,0 +1,31 @@
+Title: IBM Access for Windows Navigator and Use of Never Look-Up IP Address - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This document discusses how an Access for Windows Navigator connection behaves when it is configured for a Host Name with the option to Never look up the IP address using DNS but to specify the IP address for the connection. Specifically, this document explains the behavior when this IP address is changed. 
+
+RESOLVING THE PROBLEM
+The Access for Windows connection definition in the Access for Windows Navigator Connection Properties contains a parameter for IP address look-up frequency. This controls how often Access for Windows requests that the TCP/IP protocol to resolve the iSeries Host Name to an IP address. When the Access for Windows connection is created with a Host Name (for example, 'iseries' or 'iseries.mycompany.org'), this setting defaults to Always. This indicates that every connection attempt will request the current IP address for the Host Name and update it in the connection Properties. If the Access for Windows connection is configured with an IP Address for the host name, this setting changes to 'Never - specify IP address', and the IP address typed in is shown in the connection Properties. 
+
+A scenario arose where there was an Access for Windows connection defined to a Host Name of 'iseries', and the IP address look-up frequency was set to the default of Always. The Windows network environment had the PCs configured to communicate to a DNS server for Host Name resolution, and this DNS server had an entry for the Host Name 'iseries'.
+
+A situation occurred where the IP Address for 'iseries' had to be changed immediately, and the DNS Administrator was not available to change the entry in the DNS server to the new IP address. This means that the Access for Windows connections kept trying to connect to the old IP address that was being recalled from the DNS server.
+
+To address this issue, the user attempted to bypass the Host Name look-up to the DNS server by changing the connection still defined to the Host Name of 'iseries' to an IP address look-up frequency of 'Never - specify IP address and entering the new IP address'. This worked with partial success.
+
+Non-Access for Windows Navigator functions like PC5250, Data Transfer, and so on, worked; however, there was significant difficulty with Navigator functions. First, if Navigator was not closed and reopened after making this change, Navigator functions do not work. They fail with a message similar to "CWBCO1048 - A time-out occurred trying to connect". If Navigator is not restarted after making the change, it continues to recall the previous setting and communicates to the DNS server and retrieves the old IP address and attempts to connect to that.
+
+If the Access for Windows Navigator is restarted after making the connection property change, the File System and Network containers work as expected; however, trying to expand any other container fails with a message similar to "An unexpected failure occurred, check the java trace for more details. Operation timed out: could be due to invalid address".
+
+This is because of the high level of integration of Management Central-based functions throughout the Access for Windows Navigator. Investigation showed that Navigator was connecting to the Central Server at the new IP address; however, then the Management Central Server must connect to the Management Central Endpoint and does this by connecting to the Host Name of 'iseries' that was sent in as part of the Management Central Server connection. The IBM i is also configured to connect to the same DNS server and is, therefore, receiving the incorrect, old, IP address for 'iseries'.
+
+In this environment, the most efficient approach is to define a new connection with the actual new IP address of the IBM i as the Server Name and to use that connection for iSeries Access functions until the DNS server can be updated with the new IP address for the Host Name 'iseries'. Then, that connection can be used again.
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Operating System IBM i 6.1 Operating System IBM i 7.1 
+HISTORICAL NUMBER
+ 448826909

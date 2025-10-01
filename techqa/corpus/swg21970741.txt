@@ -1,0 +1,60 @@
+Title: IBM FileNet Workplace XT Unable to log in and launch the bootstrap page. Getting NullPointerException - United States
+
+Text:
+Workplace XT; NullPointerException; login; bootstrap TECHNOTE (TROUBLESHOOTING)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ English 
+
+PROBLEM(ABSTRACT)
+ Workplace XT Unable to log in. The bootstrap page doesn't come up and getting java.lang.NullPointerException error. 
+
+SYMPTOM
+Below error displayed after logging in: 
+
+
+java.lang.NullPointerException at com.filenet.wcm.apps.server.util.prefs.LabelConfiguration.getConfiguredLabelResource (LabelConfiguration.java:106)
+at com.filenet.wcm.apps.server.ui.info.prefs.PrefBootstrapInfoPage.render (PrefBootstrapInfoPage.java:263)
+at com.filenet.wcm.toolkit.server.base.WcmUiModule.renderJSP (WcmUiModule.java:676)
+at com.filenet.wcm.toolkit.server.util.ui.WcmLayout.renderRegion (WcmLayout.java:68)
+at com.filenet.wcm.apps.server.presentation.util.WorkplaceLayout.render (WorkplaceLayout.java:221)
+at com.filenet.wcm.apps.server.ui.WcmInfoModule.render (WcmInfoModule.java:399)
+at com.filenet.wcm.toolkit.server.base.WcmUiModule.renderJSP (WcmUiModule.java:676)
+at com.filenet.wcm.toolkit.server.util.WcmUi.render (WcmUi.java:90)
+at com.filenet.wcm.toolkit.server.util.WcmUi.render (WcmUi.java:82)
+at com.ibm._jsp._WcmBootstrap._jspService (_WcmBootstrap.java:131)
+at com.ibm.ws.jsp.runtime.HttpJspBase.service (HttpJspBase.java:99)
+at javax.servlet.http.HttpServlet.service (HttpServlet.java:831)
+at com.ibm.ws.cache.servlet.ServletWrapper.serviceProxied (ServletWrapper.java:307)
+at com.ibm.ws.cache.servlet.CacheHook.handleFragment (CacheHook.java:576)
+at com.ibm.ws.cache.servlet.CacheHook.handleServlet (CacheHook.java:250)
+at com.ibm.ws.cache.servlet.ServletWrapper.service (ServletWrapper.java:259)
+at com.ibm.ws.webcontainer.servlet.ServletWrapper.service (ServletWrapper.java:1661)
+at com.ibm.ws.webcontainer.servlet.ServletWrapper.service (ServletWrapper.java:1602)
+at com.ibm.ws.webcontainer.filter.WebAppFilterChain.doFilter (WebAppFilterChain.java:113)
+at com.ibm.ws.webcontainer.filter.WebAppFilterChain._doFilter (WebAppFilterChain.java:80)
+at com.ibm.ws.webcontainer.filter.WebAppFilterManager.doFilter (WebAppFilterManager.java:908)
+at com.ibm.ws.webcontainer.servlet.ServletWrapper.handleRequest (ServletWrapper.java:939)
+at com.ibm.ws.webcontainer.servlet.ServletWrapper.handleRequest (ServletWrapper.java:507)
+at com.ibm.ws.webcontainer.servlet.ServletWrapperImpl.handleRequest (ServletWrapperImpl.java:181)
+at com.ibm.wsspi.webcontainer.servlet.GenericServletWrapper.handleRequest (GenericServletWrapper.java:121)
+at com.ibm.ws.jsp.webcontainerext.AbstractJSPExtensionServletWrapper.handleRequest (AbstractJSPExtensionServletWrapper.java:259)
+at com.ibm.ws.jsp.webcontainerext.AbstractJSPExtensionProcessor.handleRequest (AbstractJSPExtensionProcessor.java:353)
+at com.ibm.ws.webcontainer.webapp.WebAppRequestDispatcher.include (WebAppRequestDispatcher.java:732)
+at com.filenet.wcm.toolkit.server.base.WcmController.serverSideInclude (WcmController.java:5503)
+at com.filenet.wcm.toolkit.server.base.WcmController.handleEvent (WcmController.java:3155)
+at com.ibm._jsp._WcmBootstrap._jspService (_WcmBootstrap.java:141)
+
+
+
+CAUSE
+PrimaryViews.xml file has encoding that's set incorrectly to ANSI. By default, this file should be set to UCS-2 Big Endian after XT installation.
+
+
+RESOLVING THE PROBLEM
+ 
+
+ 1. Open the <XT install folder>FileNet/Config/WebClient/PrimaryViews.xml into Notepad ++. 
+ 2. Select Encoding menu. 
+ 3. Select Convert to UCS-2 Big Endian then save the change. 
+ 4. Stop and restart the Workplace XT application server

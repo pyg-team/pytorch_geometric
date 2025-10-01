@@ -1,0 +1,15 @@
+Title: IBM Crypto on Cisco ASA firewall with Cisco ASA 8.2.3 will not work with QRM - United States
+
+Text:
+Cisco ASA failed ssh; SSH to the ASA may fail - ASA may send Reset; WI 36598 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Cisco ASA 8.2.3 is not supported and should not be attempted with QRM.
+
+
+SYMPTOM
+In the Configuration Source Management interface, attempting to backup a Cisco ASA device using software v8.2.3 causes the Cisco ASA device to fail due to an SSH issue. For more information, see your Cisco documentation or the following Cisco bug ID CSCtf01287 (login required): https://tools.cisco.com/bugsearch/bug/CSCtf01287 [http://www.cisco.com/cgi-bin/Support/Bugtool/onebug.pl?bugid=CSCtf01287]
+
+
+RESOLVING THE PROBLEM
+Workaround: Upgrade your Cisco ASA device to software v8.2.4 or above.

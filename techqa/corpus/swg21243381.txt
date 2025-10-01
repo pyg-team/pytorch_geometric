@@ -1,0 +1,49 @@
+Title: IBM CSX Task startup failure with error "Cannot find class 'PagedResultsControl'. The minimum required JAVA version is 5.0" - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ When you start the CSX Task after migrating from CSX 8.2.3 or 8.3.0, the following error message is displayed on the console:
+
+task_831: Initialization failure: Could not access data in Active Directory <AD parameters>
+because: Cannot find class 'PagedResultsControl'. The minimum required JAVA version is 5.0
+task_831: shutting down now... 
+
+CAUSE
+While CSX 8.3.0 uses the Java Runtime Environment (JRE) 1.4.2, CSX 8.3.1 uses the JRE 1.5.0. This Java version is installed by CSX. It is used for installing, uninstalling, as well as for running the CSX Task and the CommonStore Server to avoid the need for even more different JRE versions. During the upgrade from CSX 8.3.0 to 8.3.1, the installation procedure replaces version 1.4.2 of the JRE with version 1.5.0. This step fails in some situations, resulting in the backlevel Java version remaining in the CSX installation directory. To check what your current Java version is: 
+
+ 1. Change to your CSX installation directory. 
+ 2. Change to the java\jre\bin directory in the installation directory. 
+ 3. Enter:
+    java -version
+    
+    If Java 1.5.0 has been correctly installed, the following information is displayed on the console:
+    IBM J9 VM (build 2.3, J2RE 1.5.0 IBM J9 2.3 Windows XP x86-32 j9vmwi3223-20060504 (JIT enabled)
+    J9VM - 20060501_06428_lHdSMR
+    JIT - 20060428_1800_r8
+    GC - 20060501_AA)
+    JCL - 20060511a
+
+ANSWER
+To overcome the problem, perform the following steps: 
+
+ 
+
+ 1. If you still need the old PST archiving tool (csxpst),
+    back up the directory "Personal Folder Archiving" inside your CSX installation directory. 
+ 2. Stop all CommonStore processes. 
+ 3. Uninstall CSX 8.3.0 using Add or Remove Programs on the Windows Control Panel. 
+ 4. Delete the java directory in your CSX installation directory manually.
+    You must perform this step manually because the error during migration also caused the removal of the Java 1.4.2 installation information, which is required for a complete automatic removal of the JRE. 
+ 5. Install the new version of CSX. 
+ 6. If you backed up the old PST archiving tool (csxpst), restore the Personal Folder Archiving directory and register the PST library. Register the library as follows:  1. Open a Command Prompt window. 
+     2. Navigate to the restored Personal Folder Archiving directory . 
+     3. Enter:
+        regsvr32 csxpst.dll
+    
+    
+ 7. Start the CSX Task.
+
+
+Important: Upgrading the JRE on your workstation does not solve the problem because CSX does not use the primary JRE of the operating system.

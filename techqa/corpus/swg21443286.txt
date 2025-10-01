@@ -1,0 +1,73 @@
+Title: IBM An MDB listener does not reconnect to a WebSphere MQ queue manager that has been recycled - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When the WebSphere MQ V7 Resource Adapter (RA) is connecting to a WebSphere MQ V6 queue manager, MDB listeners will not reconnect to the queue manager if the queue manager is recycled or the channel is stopped and restarted. 
+
+WebSphere Application Server V7 uses the WebSphere MQ V7 RA. This also applies with when PROVIDERVERSION=6 is being used with a WebSphere MQ V7 queue manager. 
+
+SYMPTOM
+Excerpts from Systemout.log: 
+
+WMSG0018E: Error on JMSConnection for MDB MDB1 , JMSDestination jms/q1 : javax.jms.JMSException: MQJMS1025: failed to browse message.
+
+com.ibm.mq.MQException: MQJE001: Completion Code '2', Reason '2161'.
+
+WMSG0057E: Error on JMSConnection for MDB MDB1 , JMSDestination jms/q1 , JMS Linked Exception : com.ibm.mq.MQException: MQJE001: Completion Code '2', Reason '2161'.
+
+WMSG0043I: MDB Listener LP1 stopped for JMSDestination jms/q1
+WMSG0058I: Listener Port LP1 will attempt to restart in 180 seconds
+
+J2CA0056I: The Connection Manager received a fatal connection error from the Resource Adapter for resource jms/callnotesqmgr. The exception is: javax.jms.JMSException: MQJMS1025: failed to browse message.
+
+
+on restart of the listener:
+WMSG0018E: Error on JMSConnection for MDB MDB1 , JMSDestination jms/q1 : javax.jms.JMSException: MQJMS2005: failed to create MQQueueManager 
+
+com.ibm.mq.MQException: MQJE001: Completion Code '2', Reason '2059'.
+
+WMSG0057E: Error on JMSConnection for MDB MDB1 , JMSDestination jms/q1 , JMS Linked Exception : com.ibm.mq.MQException: MQJE001: Completion Code '2', Reason '2059'.
+
+WMSG0043I: MDB Listener LP1 stopped for JMSDestination jms/q1
+WMSG0058I: Listener Port LP1 will attempt to restart in 180 seconds
+
+Then there is no subsequent automatic restart of the listener.
+
+
+RESOLVING THE PROBLEM
+
+For distributed platforms, apply IC64098 [http://www.ibm.com/support/docview.wss?uid=swg1IC64098]. Depending on the [http://publib.boulder.ibm.com/infocenter/wasinfo/v7r0/topic/com.ibm.websphere.nd.multiplatform.doc/info/ae/ae/tmm_ep.html]messaging provider [http://www.ibm.com/support/knowledgecenter/SSAW57_7.0.0/com.ibm.websphere.nd.multiplatform.doc/info/ae/ae/tm_ep.html] you are using, the fix is in:
+- WebSphere MQ Fix Pack [http://www.ibm.com/support/docview.wss?uid=swg27014224] 7.0.1.1 
+- WebSphere Application Server Fix Pack [http://www.ibm.com/support/docview.wss?uid=swg27014463] 7.0.0.9
+
+
+For the z/OS platform, the fix for IC64098 is included in: 
+- WebSphere MQ Fix Pack 7.0.1.1 via PM03843 [http://www.ibm.com/support/docview.wss?uid=swg1PM03843] 
+- WebSphere Application Server Fix Pack 7.0.0.9 via PM09165 [http://www.ibm.com/support/docview.wss?uid=swg1PM09165].
+
+
+Another z/OS-specific fix for a symptom of J2CA0056I with RC=2059 is:
+PK64409 [http://www.ibm.com/support/docview.wss?uid=swg1PK64409] (WebSphere MQ 6.0 base feature) plus fixpack 6.0.2.5 PK67851 [http://www.ibm.com/support/docview.wss?uid=swg1PK67851] and PK77733 [http://www.ibm.com/support/docview.wss?uid=swg1PK77733] (Java™/JMS feature) and
+
+
+If the fix for IC64098 (or its equivalent) is being picked up, the System.out JVM log will list the following level (or higher):
+WMSG1703I: RAR implementation version 7.0.1.1-k701-101-091116
+
+
+If the log still says:
+WMSG1703I: RAR implementation version 7.0.0.0-k700-L080820
+
+
+then follow the procedure Adjusting the WebSphere MQ resource adapter configuration when migrating profiles between maintenance level 7.0.0.0 and later levels [http://www.ibm.com/support/knowledgecenter/SSEQTP_7.0.0/com.ibm.websphere.base.doc/info/aes/ae/tmm_mig.html?cp=SSEQTP_7.0.0%2F1-4-6-2].
+
+
+The procedure has a link to details about profile_root for distributed platforms. Comparable z/OS details are under the topic Directory conventions [http://www.ibm.com/support/knowledgecenter/SS7K4U_7.0.0/com.ibm.websphere.installation.zseries.doc/info/zseries/ae/rins_dircon.html?cp=SS7K4U_7.0.0%2F1-5-0-2-3].. 
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Application Servers WebSphere Application Server Java Message Service (JMS) AIX, HP-UX, Linux, Solaris, Windows 7.0 Application Servers WebSphere Application Server for z/OS Java Messaging Service (JMS) z/OS 7.0 
+PRODUCT ALIAS/SYNONYM
+ WebSphere MQ WMQ

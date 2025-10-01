@@ -1,0 +1,34 @@
+Title: IBM Cannot promote the Correlation ID property in your message flow - United States
+
+Text:
+promote Correlation ID property message flow TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ You attempt to have just one instance of an IBM Integration Bus (IIB) or WebSphere Message Broker (WMB) message flow, but alter the promoted property for Correlation ID, so that each instance of the message flow reads for a different Correlation ID. 
+
+When you look at the bar file Configure tab and choose the MQInput node, there are only two properties: Queue Name and Topic. No matter what you do in the message flow to promote another property you cannot see it reflected in your Configure tab when working on the bar file. 
+
+CAUSE
+Only a small number of node property values can be overridden when a message flow is deployed. These are known as configurable properties, and you can use these to modify some characteristics of a deployed message flow without changing the message flow definitions. For example, you can update queue manager information.
+
+The configurable properties are queue names, data sources, and file locations. These are all properties that are outside of the message flow.
+
+These are different from a promotable property, in that promotable properties are held completely within the message flow and apply to properties of the flow itself. These properties become part of the message flow and are not configurable once compiled and loaded into a bar file.
+
+
+RESOLVING THE PROBLEM
+It is not possible to promote the Correlation ID to a configurable property. However there are two things you can do. 
+
+ 
+
+ 1. Promote the CorrelID property of the Input Node to the flow. Then on the flow's properties, you can edit the ID to 1, then deploy that flow to EG1. Then repeat for the other three correl IDs. This is keeping the name of the flow the same, but will force you to deploy the flow to different execution groups. 
+ 2. Create four copies of the flow in your flow project, and name them accordingly. (FLOW_w_Correl_ID_1, and so on...). The property here can also be promoted to the flow, but now you can compile all four of the flows at the same time and deploy them to a single Execution Group.
+
+ 
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Integration Bus Application Development AIX, HP-UX, Linux, Solaris, Windows, z/OS 9.0 All Editions 
+HISTORICAL NUMBER
+ 85459 422 000 
+
+PRODUCT ALIAS/SYNONYM
+ WMB MB WebSphere Message Broker IBM Integration Bus IIB IBMIB MQ Integrator WBIMB WBI-MB MQSI WMQI

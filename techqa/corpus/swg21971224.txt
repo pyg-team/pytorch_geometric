@@ -1,0 +1,56 @@
+Title: IBM Where can I find AlgoBatch.StreamLauncher port range - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Where can I find AlgoBatch.StreamLauncher port range definition?
+
+
+
+The port number from command $ALGOBATCH_HOME/bin/start-launcher appears to be dynamic?
+
+
+SYMPTOM
+[2015-11-03 15:51:59] Executing AlgoBatch on host i-hostname
+*** AlgoBatch Application: AlgoBatch.StreamLauncher.Ping.default ***
+2015-11-03 15:52:00,545 INFO [AlgoBatch] Found 'StreamLauncherService'service registered in lookup: hostname:45420/axis2/services/StreamLauncher?wsdl
+2015-11-03 15:52:00,545 INFO [AlgoBatch] Connecting to corresponding StatusService: hostname:45420/axis2/services/ServiceStatus?wsdl
+2015-11-03 15:52:00,879 DEBUG [AlgoBatchLauncher] Received SOAP Message: <?xml version='1.0' encoding='utf-8'?><soapenv:Envelope xmlns:soapenv="schemas.xmlsoap.org/soap/envelope/"><soapenv:Body><tns:ping xmlns:tns="www.algorithmics.com/launcher"/></soapenv:Body></soapenv:Envelope>
+2015-11-03 15:52:00,879 DEBUG [AlgoBatchLauncher] Sending SOAP Response: <?xml version='1.0' encoding='utf-8'?><soapenv:Envelope xmlns: soapenv="schemas.xmlsoap.org/soap/envelope/"><soapenv:Body><ns:pingResponse xmlns:ns="www.algorithmics.com/launcher"><return>true</return></ns:pingResponse></soapenv:Body></soapenv:Envelope>
+2015-11-03 15:52:00,889 INFO [AlgoBatch] Laucher Service is up and running.
+[2015-11-03 15:52:00] AlgoBatch Completed: 0
+Elapsed Time: 00:00:01
+
+
+CAUSE
+Algo® Setup includes a feature to set unique port numbers automatically (dynamically) for both common services and individual components. The software checks the ports already in TCP LISTENING state and does not use ports within those ranges. You can check the ports already in use with 'netstat -a'
+
+
+DIAGNOSING THE PROBLEM
+Algo® Service Browser is a GUI-based tool that lets you view and administer the services registered in the common Algo Lookup Services such as ACS and the Configuration Server. System operators can use Service Browser to manage any Algo Core service that runs as an agent. Service Browser also contains Config Admin UI, which lets you access all the configuration variables provided by the Configuration Server to its clients. 
+
+To start Algo Service Browser in UNIX from the command line, type $ALGOSB_HOME/bin/service-browser
+
+RESOLVING THE PROBLEM
+
+
+
+
+
+Software Procedure
+$SETUP_HOME/bin/algosetup (or additionally use the parameter '-c $ALGO_HOME/cfg/ConfigServer.cfg' if AlgoSecurity is not running)
+Select Defaults > Assign Ports. 
+In the Assign Port Number dialog box, enter a Starting Port Number. Enable the option Set port numbers to 0 for all apps that support it. Or Algo Setup takes the number you enter and increments it by 1 when assigning port numbers. 
+Click Go. 
+$ALGOBATCH_HOME/bin/start-launcher
+
+Port numbers are assigned to the components. Review the port values in the Services tabs in the bottom half of the user interface of AlgoSetup. Most port numbers can be set to 0. The ports for the algowebapps services cannot be set to 0. 
+
+Operating System Procedure
+
+This behaviour is also related to the operating system. The processes which use random ports should not use the specific ports that had been configured for the algo processes which use these specific ports.
+
+1. Users can look at reserving these specific ports at the operating system level so that the operating system does not assign them as random ports by modifying (as root): /proc/sys/net/ipv4/ip_local_reserved_ports
+
+2. Users can also look at modifying the local port range at the operating system level so that it does not assign them as random ports (e.g. port numbers below 32768), this can be done (as root) by modifying: /proc/sys/net/ipv4/ip_local_port_range

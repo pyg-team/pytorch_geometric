@@ -1,0 +1,38 @@
+Title: IBM Receiving error message when saving an SPSS data file to a network drive - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ I sometimes have problems to save a IBM SPSS Statistics data file (*.sav) to a network drive.
+For example I get the below messages:
+
+>Error. Command name: SAVE 
+>Error opening a SPSS Statistics data file: \\network folder\user1\My Documents\SPSS files\test.sav: Permission denied (DATA1201) 
+>Execution of this command stops. 
+
+>Error # 1407 
+>Error when writing the dictionary to a new data file. 
+
+>Warning # 5322. Command name: SAVE 
+>The attempt to save the data file has failed because the disk is full, an I/O 
+>error has occurred, the variable dictionary is invalid, or the task was 
+>interrupted. IF SAVING OVER AN EXISTING FILE, THAT FILE HAS BEEN LOST. 
+
+
+RESOLVING THE PROBLEM
+There can be various reasons for save problems to a network drive: 
+
+First make sure that the user who wants to save to a particular network drive have write and execute permissions on that particular network folder.
+
+If the problem occur occasionally although the permission were granted save the file to a local drive and then try again to save to the network drive after a short wait time. Sometimes the save issue is caused by network performance delay when there is a lot of traffic.
+
+Another possible reason for a save issue on a network drive can be caused by other application e.g. Anti-Virus software or firewalls. As a workaround stop these programs for a short time frame and try to save to the network again to see if the other software is causing the problem.
+
+Lastly, make sure your file paths are short and the do not contain special characters. We suggest no more than 3 directories deep and do not use apostrophes or other special characters in the folder/file names. 
+
+However, an enhancement request for receiving a more detailed error message when saving an SPSS data file to a network drive was submitted to IBM SPSS Development.
+Reference ID: ECM00191719
+
+RELATED INFORMATION
+ Need more help? Our Statistics forum is Live! [https://developer.ibm.com/answers/topics/statistics.html?smartspace=predictive-analytics]

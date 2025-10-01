@@ -1,0 +1,36 @@
+Title: IBM Applications not stopping at breakpoints while running in debug mode on WebSphere Test Environment 5.1 - United States
+
+Text:
+EJB; WAS; WebSphere Application Server; RAD; breakpoints; debug mode; RSA; 1240896 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Code execution is not stopping at breakpoints when you are debugging an application in Rational® Application Developer (RAD) on the WebSphere® Test Environment (WTE) version 5.1 in debug mode on a Microsoft® Windows® operating system. Instead of stopping, the program continues execution until it is complete. 
+
+CAUSE
+A possible reason for this behavior is that another process is already using port 7777, which is the port that is used by RAD and the WTE to communicate with each other.
+
+RESOLVING THE PROBLEM
+Follow these steps to verify whether or not port 7777 is being used by another process: 
+
+ 1. Restart your Windows operating system to ensure a clean environment 
+ 2. At a command prompt, type "netstat -a" (without quotes) to make sure port 7777 is not listed 
+ 3. Start RAD 
+ 4. Check "netstat -a" again, to make sure port 7777 is not listed 
+ 5. Start the server in debug mode. Do not use "Debug on Server" but select to start the server in debug mode. 
+ 6. Check "netstat -a" again. Port 7777 should now be in use.
+
+
+If at any point prior to starting the server in debug mode you see a service using port 7777, then you must prevent this service from using this particular port. 
+
+
+
+
+
+
+
+
+Cross Reference information Segment Product Component Platform Version Edition Software Development Rational Application Developer for WebSphere Software Integrated WebSphere Test Environment Windows 6.0, 6.0.0.1, 6.0.1.0, 6.0.1.1 
+HISTORICAL NUMBER
+ 88054
+756
+000

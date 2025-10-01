@@ -1,0 +1,39 @@
+Title: IBM Solution to disable gethostbyname error message in SAP system log - United States
+
+Text:
+gethostbyname mySAP TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ A list of recurring 'gethostbyname' error messages logged in SAP system log. 
+
+SYMPTOM
+A list of recurring 'gethostbyname' error messages logged in SAP system log.
+
+
+CAUSE
+The root cause of the problem is the mySAP agent calls the SAP kernel call 'RFCControl' to retrieve IP address from user's terminal (hostname). The 'gethostbyname' error messages are thrown out by this kernel call if it fails to retrieve IP address from hostname. Many reasons may case IP retrieving failure, for example, hostname of SAP user's terminal is not in Domain Name System (DNS).
+
+RESOLVING THE PROBLEM
+
+
+
+If all the IP addresses can be retrieved correctly from DNS, these error messages will not occur, otherwise they will be continually logged in SAP system log. 
+
+A solution is provided in IBM Tivoli Monitoring for Application: mySAP 6.2 IF0008 to give customer a control option to disable retrieving IP addresses and then avoid such error messages in SAP system log. If customer decides to use this function, the 'IP Address' and 'IP Address(v4/v6)' columns have no data in 'Logon Information' workspace, please pay attention to this.
+
+Below are the detailed steps to disable 'gethostbyname' error messages logged in SAP system log:
+1. Download IBM Tivoli Monitoring for Application: mySAP 6.2 IF0008 and apply this ifix. 
+2. Logon monitored SAP system via SAP GUI and run 'SE16' transaction code.
+3. Enter '/IBMMON/ITM_CNFG' as the table name.
+4. Press 'F5' to create a new entry into this table.
+5. Enter 'DISABLE_LOGON_IP' in the 'PARM NAME' input field
+and 'YES' in the 'VALUE CHAR' input field.
+6. Save the changes.
+7. Restart mySAP agent. 
+
+
+
+
+
+PRODUCT ALIAS/SYNONYM
+ Domain Name System: DNS

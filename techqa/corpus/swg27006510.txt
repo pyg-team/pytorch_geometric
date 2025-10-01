@@ -1,0 +1,183 @@
+Title: IBM MQSeries for Linux V5.2 README - United States
+
+Text:
+MQSeries Linux V5.2 README PRODUCT README
+
+ABSTRACT
+ This document contains the MQSeries for Linux V5.2 README. 
+
+CONTENT
+MQSeries for Linux, V5.2 README 
+
+Welcome to MQSeries for Linux, Version 5.2 
+
+This README file contains information that was not available in time for our publications.
+In addition to this file, README.TXT, there is also more information on the MQSeries web site, located here: 
+
+http://www.ibm.com/software/products/en/ibm-mq [http://www.ibm.com/software/products/en/ibm-mq] 
+
+The SupportPac page is here:
+
+http://www.ibm.com/software/integration/support/supportpacs/ [http://www-306.ibm.com/software/integration/support/supportpacs/]
+
+
+
+
+
+1) A new MQRC value has been added:
+MQRC_NEXT_RECORD_ERROR (2361, X'0939')
+NextRecord parameter not valid.
+
+Explanation: An MQXCLWLN call was issued from a cluster
+workload exit to obtain the address of the next record
+in the chain, but the address specified for the 
+"NextRecord" parameter is either null, not valid,
+or the address of read-only storage.
+
+Completion Code: MQCC_FAILED
+
+Programmer Response: Specify a valid address for the 
+"NextRecord" parameter.
+
+
+2) A new MQRCCF code has been added:
+MQRCCF_CHANNEL_CLOSED: value 4090.
+Channel closed.
+
+Explanation: The channel was closed prematurely. This
+can occur because a user stopped the channel while it
+was running, or a channel exit decided to close the
+channel.
+
+Corrective action: Determine the reason why the channel
+was closed prematurely. Restart the channel if required.
+
+
+3) The HTML versions of some of the MQSeries books on the
+CD-ROM mention the product "MQSeries for OS/390 Version
+2.2". All mentions of this product should read 
+"MQSeries for OS/390 Version 5.2".
+
+
+4) When writing a "Cluster Workload Exit", you will need to
+resolve the MQXCLWLN function by linking with the "mqutl"
+library on windows NT, or the "libmqutl" library on unix
+platforms. 
+
+5) Uninstalling MQSeries
+
+In the MQSeries for Linux Quick Beginnings Book, it 
+describes to uninstall all of the MQSeries files at once 
+using the command:
+
+rpm -q -a | grep "MQSeries" | xargs rpm -e
+
+however, if a Queue Manager is running when you issue this 
+command then only part of MQSeries will be uninstalled. 
+From that point onwards you will be unable to stop any 
+remaining Q-Managers or uninstall the remaining components.
+YOU MUST ENSURE THAT YOU STOP ALL RUNNING QUEUE MANAGERS
+BEFORE ATTEMPTING TO USE THIS COMMAND.
+
+If you do run this command, while a queue manager is running, 
+then you will need to either reboot your machine or 
+re-install the removed parts of MQSeries to allow you to 
+stop the Queue Manager before you can fully complete the
+uninstallation.
+
+
+MQSeries for Linux V5.2 Quick Beginnings GC34-5691-01 
+Chapter 2 
+In the section called "Compiling user exits".
+
+The instructions on how to do this, starting with "gcc",
+do not work for data conversion exits because they need
+a special header file amqsvmha.h. 
+To compile a user exit program for a nonthreaded environment
+use
+gcc -I/opt/mqm/inc -shared -lmqm -ldl -o exit .c
+
+and for a user exit program for a multithreaded environment use:
+
+gcc -I/opt/mqm/inc -D_REENTRANT -shared -lmqm_r 
+-lpthread -ldl -o exit_r .c
+
+
+
+MQSeries V5.2 Release Guide GC34-5761-00 
+Chapter 1 
+
+The current version of "MQWXP - Cluster workload exit parameter
+structure" is described in the section "Navigating cluster 
+workload records".
+
+The description of the CacheType field in the MQWXP structure
+should read:
+
+CacheType (MQLONG) Type of cluster cache.
+
+The type of the cluster cache can be one of the following:
+
+MQCLCT_STATIC Static cluster cache.
+
+If the cluster cache has this type, the size of the cache 
+is fixed, and cannot grow as the queue manager operates.
+The MQXCLWLN call need not be used to navigate the records
+in this type of cache.
+
+MQCLCT_DYNAMIC Dynamic cluster cache.
+
+If the cluster cache has this type, the size of the cache
+is not fixed, and can grow as the queue manager operates. 
+The MQXCLWLN call must be used to navigate the records
+in this type of cache.
+
+
+
+MQSeries Systems Administration Manual SC33-1873-01 
+Chapter 11 
+Section mqs.ini stanzas
+
+In the LogDefaults stanza the maximum value of the LogBufferPages
+attribute is increased from 32 to 512.
+
+For guidance on the use of this parameter see the SupportPac [http://www-1.ibm.com/support/docview.wss?rs=977&uid=swg27007205]
+MQSeries for Linux Version 5.2 Capacity Planning Guidance expected 
+availability 1st Quarter 2001
+
+
+
+Trademarks 
+The following terms are trademarks of International Business
+Machines Corporation in the United States, other countries,
+or both: 
+
+IBM, MQSeries, OS/400, SupportPac 
+
+Unix is a registered trademark in the United States and / or other 
+countries licensed exclusively through X/Open Company Limited. 
+
+Microsoft and Windows NT are registered trademarks of Microsoft 
+Corporation in the United States, other countries, or both. 
+
+Other company, product or service names may be the trademarks 
+or service marks of others 
+
+
+
+Change History
+Last updated: 14 October 2005 
+
+ * 14 October 2005: Moved information from a static page 
+ * 5 January 2003
+   Amendment to Systems Administration manual added. (LogBufferPages attribute)
+   Important information regarding un-installation problems added.
+   
+
+
+
+ORIGINAL PUBLICATION DATE
+ 2005/8/12 
+
+PRODUCT ALIAS/SYNONYM
+ MQ MQSeries MQ Series

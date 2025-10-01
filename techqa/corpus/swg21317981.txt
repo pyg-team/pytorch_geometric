@@ -1,0 +1,93 @@
+Title: IBM 'EJPDB0160E: The sanity checks of the database layer failed' error occurs during startup after successful database transfer - United States
+
+Text:
+EJPDB0160E: The sanity checks of the database layer failed. EJPDB0160E TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ After receiving a 'Build Successful' message during a database transfer for IBM® WebSphere® Portal, you attempt to start WebSphere_Portal and receives this error message, "EJPDB0160E: The sanity checks of the database layer failed". 
+
+SYMPTOM
+The entire error message and stack trace will appear like this in the SystemOut.log: 
+
+=======================================================================================
+
+[8/19/08 15:51:50:788 EDT] 0000001e DataStoreServ W com.ibm.wps.services.datastore.DataStoreServiceImpl checkCorrectSetup EJPDB0085W: The character encoding of the database is not UTF-8.
+[8/19/08 15:51:50:822 EDT] 0000001e Servlet E com.ibm.wps.engine.Servlet init EJPFD0016E: Initialization of service failed.
+com.ibm.wps.util.DataBackendException: EJPDB0160E: The sanity checks of the database layer failed.
+at com.ibm.wps.services.datastore.DataStoreServiceImpl.checkCorrectSetup(DataStoreServiceImpl.java:669)
+at com.ibm.wps.services.datastore.DataStoreServiceImpl.init(DataStoreServiceImpl.java:288)
+at com.ibm.wps.services.Service.init(Service.java:107)
+at com.ibm.wps.services.Service.init(Service.java:83)
+at com.ibm.wps.services.ServiceManager.createService(ServiceManager.java:391)
+at com.ibm.wps.services.ServiceManager.initInternal(ServiceManager.java:285)
+at com.ibm.wps.services.ServiceManager.init(ServiceManager.java:179)
+at com.ibm.wps.services.ServiceManager.init(ServiceManager.java:114)
+at com.ibm.wps.engine.Servlet.init(Servlet.java:239)
+at com.ibm.ws.webcontainer.servlet.ServletWrapper.init(ServletWrapper.java:199)
+at com.ibm.ws.wswebcontainer.servlet.ServletWrapper.init(ServletWrapper.java:319)
+at com.ibm.ws.webcontainer.servlet.ServletWrapper.initialize(ServletWrapper.java:1230)
+at com.ibm.ws.wswebcontainer.servlet.ServletWrapper.initialize(ServletWrapper.java:152)
+at com.ibm.wsspi.webcontainer.extension.WebExtensionProcessor.createServletWrapper(WebExtensionProcessor.java:99)
+at com.ibm.ws.webcontainer.webapp.WebApp.getServletWrapper(WebApp.java:849)
+at com.ibm.ws.webcontainer.webapp.WebApp.getServletWrapper(WebApp.java:771)
+at com.ibm.ws.webcontainer.webapp.WebApp.initializeTargetMappings(WebApp.java:491)
+at com.ibm.ws.webcontainer.webapp.WebApp.commonInitializationFinish(WebApp.java:328)
+at com.ibm.ws.wswebcontainer.webapp.WebApp.initialize(WebApp.java:290)
+at com.ibm.ws.wswebcontainer.webapp.WebGroup.addWebApplication(WebGroup.java:90)
+at com.ibm.ws.wswebcontainer.VirtualHost.addWebApplication(VirtualHost.java:157)
+at com.ibm.ws.wswebcontainer.WebContainer.addWebApp(WebContainer.java:665)
+at com.ibm.ws.wswebcontainer.WebContainer.addWebApplication(WebContainer.java:618)
+at com.ibm.ws.webcontainer.component.WebContainerImpl.install(WebContainerImpl.java:335)
+at com.ibm.ws.webcontainer.component.WebContainerImpl.start(WebContainerImpl.java:551)
+at com.ibm.ws.runtime.component.ApplicationMgrImpl.start(ApplicationMgrImpl.java:1303)
+at com.ibm.ws.runtime.component.DeployedApplicationImpl.fireDeployedObjectStart(DeployedApplicationImpl.java:1138)
+at com.ibm.ws.runtime.component.DeployedModuleImpl.start(DeployedModuleImpl.java:569)
+at com.ibm.ws.runtime.component.DeployedApplicationImpl.start(DeployedApplicationImpl.java:817)
+at com.ibm.ws.runtime.component.ApplicationMgrImpl.startApplication(ApplicationMgrImpl.java:949)
+at com.ibm.ws.runtime.component.ApplicationMgrImpl$AppInitializer.run(ApplicationMgrImpl.java:2122)
+at com.ibm.wsspi.runtime.component.WsComponentImpl$_AsynchInitializer.run(WsComponentImpl.java:342)
+at com.ibm.ws.util.ThreadPool$Worker.run(ThreadPool.java:1473)
+
+======================================================================================
+
+
+CAUSE
+The database was not created using UTF-8 character encoding. 
+
+
+DIAGNOSING THE PROBLEM
+On an Oracle® environment you can run these SQL statements to determine the character sets: 
+
+
+
+SELECT VALUE FROM NLS_DATABASE_PARAMETERS WHERE PARAMETER IN ('NLS_CHARACTERSET', 'NLS_NCHAR_CHARACTERSET'); 
+SELECT PROPERTY_VALUE FROM DATABASE_PROPERTIES WHERE PROPERTY_NAME IN 
+('NLS_CHARACTERSET', 'NLS_NCHAR_CHARACTERSET'); 
+
+In this case the customer had these results for both SQL statements:
+
+============================= 
+PROPERTY_VALUE 
+------------- 
+WE8ISO8859P1 
+AL16UTF16 
+=============================
+
+If the database character sets had been setup correctly then both lines would have read "AL16UTF16". In this case NLS_CHARACTERSET returns "WE8ISO8859P1" which is not a supported format. If the database had been setup correctly both lines would have produced "AL16UTF16". 
+
+
+
+RESOLVING THE PROBLEM
+At this point there is no way to salvage the database in its current state. The entire Portal database must be dropped and recreated using the specifications provided in the InfoCenter at this link: 
+
+
+http://publib.boulder.ibm.com/infocenter/wpdoc/v6r1m0/topic/com.ibm.wp.e [http://publib.boulder.ibm.com/infocenter/wpdoc/v6r1m0/index.jsp?topic=/com.ibm.wp.ent.doc/config/aix_oracle_create_db.html]
+nt.doc/config/aix_oracle_create_db.html [http://publib.boulder.ibm.com/infocenter/wpdoc/v6r1m0/index.jsp?topic=/com.ibm.wp.ent.doc/config/aix_oracle_create_db.html] 
+
+This is the specific information in the Information Center pertaining to character encoding:
+
+=============================
+
+All databases must be created using UNICODE Database and National character sets such as UTF8, AL32UTF8, or AL16UTF16. 
+
+=============================

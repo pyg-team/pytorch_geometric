@@ -1,0 +1,27 @@
+Title: IBM REGISTER ADMIN command with "authentication=ldap" uses default login name - United States
+
+Text:
+"$QBB200-T9HFVL6RBPUS" reg admin tsm server ldap msad active directory TECHNOTE (FAQ)
+
+QUESTION
+ Registering a new admin on Tivoli Storage Manager Server with "authentication=ldap" option set
+will register a new admin with logon name equal to "$QBB200-T9HFVL6RBPUS". 
+
+ANSWER
+The IBM Tivoli Storage Manager Server command "register admin" with "authentication=ldap" option set will successfully register a new admin on the Tivoli Storage Manager server and create an InetOrgPerson object in the "TSM OU" in Active Directory (AD), but the logon name will not be the one indicated in the command but it will be always equal to "$QBB200-T9HFVL6RBPUS". 
+
+Example:
+"reg admin tsmadmin password authentication=ldap" 
+
+The admin "tsmadmin" will be correctly created in Tivoli Storage Manager but in Active Directory the login name will be created equal to " $QBB200-T9HFVL6RBPUS".
+
+" $QBB200-T9HFVL6RBPUS" is the default login name that Microsoft Active Directory assigns to an account because Tivoli Storage Manager does not provide one when creating it. 
+The IBM Tivoli Storage Manager uses the LDAP standard distinguished name to authenticate rather than the value for the Windows logon name field. 
+Changing the Tivoli Storage Manager command to use a AD object name that match the admin name will have no effect on Tivoli Storage Manager, unless one tries to use the same name in the domain. 
+Active Directory requires that these names be unique across the domain.
+
+Active Directory requires that these names be unique across the domain.
+
+So if you had a Windows logon account you would not be able to have a Tivoli Storage Manager admin account with the same name. 
+It would also prevent multiple Tivoli Storage Manager servers using separate areas of the directory to have the same admin or node name. 
+It would even prevent an admin having the same name as a node which is currently very common in Tivoli Storage Manager environments.

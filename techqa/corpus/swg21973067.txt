@@ -1,0 +1,52 @@
+Title: IBM "ERROR: Could not find a supported version of WTX" message when installing SPE 8.5.1.1 with WTX 8.4.1.3 - United States
+
+Text:
+SPE; WTX; WebSphere Transformation Extender; Standards Processing Engine; 8.4.1.3; 8.5.1.1; install TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ "ERROR: Could not find a supported version of WTX" message when installing Standards Processing Engine (SPE) 8.5.1.1 version with WebSphere Transformation Extender (WTX) 8.4.1.3 version. 
+
+SYMPTOM
+"ERROR: Could not find a supported version of WTX" message when installing SPE 8.5.1.1 with WTX 8.4.1.3.
+
+
+CAUSE
+SPE 8.5.1.1/2.0.1.1 was released before WTX 8.4.1.3, so the SPE installer does not recognize WTX 8.4.1.3 as a supported version. The combination has been tested together and is supported, and thus requires a work around for the installation process.
+
+DIAGNOSING THE PROBLEM
+Confirm that WTX 8.4.1.3 version has been installed.
+
+RESOLVING THE PROBLEM
+For Windows platforms:
+Install SPE 8.5.1.1 before installing WTX 8.4.1.3.
+Install WTX 8.4.1.3
+Manually configure both SPE and WTX 8.4.1.3 to recognize the install location of the other product.
+
+For UNIX platforms:
+WTX 8.4.1.3 can be installed either before or after SPE 8.5.1.1
+However, do not specify the WTX directory option when you install SPE 8.5.1.1
+Manually configure both SPE and WTX 8.4.1.3 to recognize the install location of the other product.
+
+Manual configuration instructions:
+1. To configure WTX, edit the WebSphere Transformation Extender dtx.ini file by appending the following lines:
+
+[SPE]
+SPE_INSTALL_DIR=C:/IBM/Standards Processing Engine <version>
+
+2. To configure SPE, edit or create the spewtx64env and/or spewtxenv scripts in the <SPE install dir>/bin directory. Change this line to set DTXHOME to the WTX install directory:
+
+%INSTALLREPLACEMENTSTRING%
+
+For Windows, the spewtxenv.bat script should specify the 32-bit WTX installation (if installed), and the spewtx64env.bat script should specify the 64-bit WTX installation (if installed).
+
+The spewtxenv.bat script is always created as part of the SPE install. If you install a 32-bit WTX version after installing SPE, you would need to update the %INSTALLREPLACEMENTSTRING% line to set the DTXHOME environment variable. For example, in spewtxenv.bat script the new line might look like this:
+
+set DTXHOME=C:\IBM\WebSphere Transformation Extender 8.4.1 32bit
+
+The spewtx64env.bat script is only created during the SPE install if a 64-bit WTX version is present at that time. If you install a 64-bit WTX version after installing SPE, you would need to create an spewtx64env.bat file by copying the existing spewtxenv.bat file. Then update the %INSTALLREPLACEMENTSTRING% line (or DTXHOME line, if it was set for a 32-bit WTX install) to set the DTXHOME environment variable to the 64-bit WTX directory. For example, in spewtx64env.bat script the new line might look like this:
+
+set DTXHOME=C:\IBM\WebSphere Transformation Extender 8.4.1 64bit
+
+For UNIX / Linux platforms, SPE does not use a separate spewtx64env script. The spewtxenv.sh script should specify the WTX installation. For example, in spewtxenv.sh script the new line might look like this:
+
+DTXHOME="/opt/ibm/wtx"; export DTXHOME

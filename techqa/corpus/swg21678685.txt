@@ -1,0 +1,20 @@
+Title: IBM Considerations when upgrading SAP ABAP code from WebSphere Business Integration mySAP Adapter to WebSphere Adapter for SAP - United States
+
+Text:
+adapter; sap; abap; wbi; upgrade; migration TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ WebSphere Business Integration (WBI) Adapter for mySAP.com cannot access all of the functionalities as supported earlier on a SAP system using its ABAP Extension module, if the system has SAP transports for IBM WebSphere Adapter for SAP installed. This behaviour is true even if the SAP transports of WBI Adapter had been installed on that SAP system before. 
+
+SYMPTOM
+IBM WebSphere Adapter for SAP (from now on called JCA Adapter) and its predecessor product WebSphere Business Integration Adapter for mySAP.com (from now on called WBI Adapter) deliver some SAP transports containing SAP artifacts and SAP ABAP code. These transports can be installed on a SAP system. 
+
+The transports enable the Adapters to communicate with SAP using the ABAP Extension module in the case of WBI SAP Adapter and the Advanced Event Processing functionality in the case of the JCA SAP Adapter.
+
+
+RESOLVING THE PROBLEM
+WBI SAP Adapter cannot work with the transports which are delivered with the JCA SAP Adapter, and vice versa. 
+
+If you install the transports of the JCA Adapter to a SAP system which already has the transports for the WBI Adapter installed, then it is not possible to use the ABAP Extension module of a WBI Adapter with this SAP system. This is important to know when migrating WBI to JCA Adapters. 
+
+This is valid for all versions of both Adapters.

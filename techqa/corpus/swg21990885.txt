@@ -1,0 +1,28 @@
+Title: IBM Loadlibrary failed with error 87: the Parameter is incorrect in IBM SPSS Statistics - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ I have installed IBM SPSS on a Windows operating system. When I try and launch the product, I receive the error message
+
+Loadlibrary failed with error 87: the Parameter is incorrect.
+
+SPSS then does not launch. What is happening?
+
+
+CAUSE
+Atig6pxx.dll file on machine
+
+ENVIRONMENT
+Windows
+
+RESOLVING THE PROBLEM
+The error is related to a specific file on your machine. Perform a search on your computer for a file called Atig6pxx.dll. This is an ATI graphics card file. Once you locate the file, right click on it and choose rename. Call it Atig6pxx.dll.bak. 
+
+
+
+Now launch SPSS by right clicking on the SPSSicon and choose run as administrator to launch. SPSS should launch normally. 
+
+RELATED INFORMATION
+ Need more help? Our Statistics forum is Live! [https://developer.ibm.com/answers/topics/statistics.html?smartspace=predictive-analytics]

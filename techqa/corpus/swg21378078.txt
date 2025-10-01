@@ -1,0 +1,130 @@
+Title: IBM The pivot "Cost Center Cross Charge with Attributes" is missing the band "Client - Single Attribute(s)" - United States
+
+Text:
+RN7.1.1.2iFix005; RPM; documentation; document TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When the information for the pivot “Cost Center Cross Charge with Attributes” is displayed, the band "Client - Single Attribute(s)" does not appear, nor is it available when customizing this pivot. In addition, the Header "Client" displays "RPM" instead of the Cost Center. 
+
+SYMPTOM
+Since Rational Portfolio Manager version 6.0, the established business rule was to allow only one Client Cost per project. In other words, one project can only have one (1) organization that works as the Client Cost. The other pivots, Project Cross Charge, and Cost Center Cross Charge, were working correctly to enforce this business rule, but prior to Rational Portfolio Manager version 7.1.x.x, the pivot "Cost Center Cross Charge with Attributes" would allow the customer to associate multiple Cost Centers with multiple Client Costs. If we were to allow this scenario to occur, we would end up duplicating the amounts that are displayed. 
+
+Steps to Reproduce the problem: 
+
+Step 1 
+
+In the Application Administration view, in the Attributes tab and Clients/Cost Centers sub-tab, create the following attributes: 
+
+ * Category: SAP 
+ * Classification: Kostenstellenart
+   Attribute: EO / PH
+   Category: Category 
+ * Classification: Classification
+   Attribute: Attribute
+
+
+[/support/docview.wss?uid=swg21378078&aid=1] [/support/docview.wss?uid=swg21378078&aid=1] 
+
+
+Step 2 
+In the Clients/Cost Centers view, create the following 2 cost centers: 
+Folder: Custom Clients/Produkthierarchie  * Client/Cost Center: 51200205 
+ * Client/Cost Center: 102810
+
+
+[/support/docview.wss?uid=swg21378078&aid=2] [/support/docview.wss?uid=swg21378078&aid=2] 
+
+
+Step 3 
+Assign the attribute EO / PH to the Cost Center 102810. Check-in. 
+
+[/support/docview.wss?uid=swg21378078&aid=3] [/support/docview.wss?uid=swg21378078&aid=3] 
+
+
+Step 4 
+Assign the attribute Attribute to the Client 51200205. Check-in. 
+
+[/support/docview.wss?uid=swg21378078&aid=4] [/support/docview.wss?uid=swg21378078&aid=4] 
+
+
+Step 5 
+Assign the Cost Center 102810 to a resource. Check-in. 
+
+[/support/docview.wss?uid=swg21378078&aid=5] [/support/docview.wss?uid=swg21378078&aid=5] 
+
+
+Step 6 
+Create a Proposal with 1 Task of about 200 hours. 
+
+[/support/docview.wss?uid=swg21378078&aid=6] [/support/docview.wss?uid=swg21378078&aid=6] 
+
+
+Step 7 
+Assign the resource to the Task with a regular cost of 10$. 
+
+[/support/docview.wss?uid=swg21378078&aid=7] [/support/docview.wss?uid=swg21378078&aid=7] 
+
+
+Step 8 
+Right-click on the Proposal and select Copy Proposed to Plan and then Publish to Team. 
+
+
+Step 9 
+Add actuals for the resource in the Task. 
+
+[/support/docview.wss?uid=swg21378078&aid=8] [/support/docview.wss?uid=swg21378078&aid=8] 
+
+Check-in. 
+
+
+Step 10 
+Open the Description view for the Project. 
+Maximize the Financials portlet (add the Financial portlet if it is not there). 
+ * Go to the Cross Charge tab 
+ * Add the Client 51200205 
+ * If the WorkSheet Labor & Non-Labor Revenue band displays 100% for the RPM Cost Center (this is the default), then this will also become the default Client that is displayed.
+
+
+[/support/docview.wss?uid=swg21378078&aid=9] [/support/docview.wss?uid=swg21378078&aid=9] 
+
+
+Step 11  * Select the Project and click on the Portfolio button. 
+ * Run the Cost Center Cross Charge With Attributes pivot, Monthly.
+
+
+[/support/docview.wss?uid=swg21378078&amp;aid=10] 
+[/support/docview.wss?uid=swg21378078&amp;aid=11] 
+ * The pivot now displays the value of RPM in the Client header, (instead of the appropriate Cost Center), and only the Band "Cost Center - Single Attribute(s) appears. 
+
+
+[/support/docview.wss?uid=swg21378078&aid=12] [/support/docview.wss?uid=swg21378078&aid=12] 
+ * The other Band "Client - Single Attribute(s)" is missing and is not available to be selected, from the Customize Layout option.
+
+
+[/support/docview.wss?uid=swg21378078&aid=13] [/support/docview.wss?uid=swg21378078&aid=13] 
+
+CAUSE
+Setup / Configuration issue
+
+
+
+RESOLVING THE PROBLEM
+This can be resolved with a change in the setup and configuration, in the Description View of the project in the Financials portlet, Cross Charge tab, and changing the default Client Cost. 
+
+
+Steps to Resolve the problem:
+
+The appearance of the Band "Client - Single Attribute(s)" is controlled by the setup and configuration in the WorkSheet Revenue - Charge% band. 
+
+ * Open the Description view of the project, and maximize the Financials portlet and check-out. Go to the Cross Charge tab. 
+ * In the WorkSheet band "Labor & Non Labor Revenue", under the header Charge%, change the default RPM value from 100% to 0%. 
+ * This will cause the Charge% for the other Cost Center to become 100%, making it the new default. Check-in.
+
+
+[/support/docview.wss?uid=swg21378078&aid=14] [/support/docview.wss?uid=swg21378078&aid=14] 
+
+And since this Cost Center has an attribute assigned to it, the pivot will now correctly display the Band "Client - Single Attribute(s)".  * Run the pivot again for "Cost Center Cross Charge with Attributes". 
+
+
+[/support/docview.wss?uid=swg21378078&aid=15] [/support/docview.wss?uid=swg21378078&aid=15] 
+You can now see that the proper Client Cost now appears, and the Band "Client - Single Attribute(s)" also appears.

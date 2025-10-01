@@ -1,0 +1,137 @@
+Title: IBM PM51814: CONCURRENT QUERY PROCESSING CAUSING ERROR "RSV-SRV-0040 AN APPLICATION ERROR HAS OCCURRED. CONTACT YOUR ADMINISTRATOR." - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  If a report Prompt Page has a page query, the Execution Method
+   property cannot be set to Concurrent.  In addition, any prompt
+   queries that are shared by 2 or more prompts cannot have an
+   Execution Method of Concurrent when there is a Page Query.
+   ??ERROR MESSAGE?RSV-SRV-0040 An application error has occurred.
+   Contact your Administrator. ?Details ?CCLAssertError:0:Fatal:
+   CCL_ASSERT_NAMED(m_bAllRowsOptimization == false, "The master
+   dataset cannot be re-used for a second iterator if AllRows
+   optimization was applied when the query was executed.");
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Set Query property - Query Hings > Execution Method = Sequential
+   .
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * All Users                                                    *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * See error description.                                       *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Upgrade to IBM Cognos 10 Business Intelligence 10.1.1 Fix    *
+   * Pack 1                                                       *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Code Fix
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM51814
+   
+   
+ * REPORTED COMPONENT NAME
+   COG8 BI REPORT
+   
+   
+ * REPORTED COMPONENT ID
+   5724W12RS
+   
+   
+ * REPORTED RELEASE
+   A10
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-11-08
+   
+   
+ * CLOSED DATE
+   2012-07-24
+   
+   
+ * LAST MODIFIED DATE
+   2012-07-24
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   COG8 BI REPORT
+   
+   
+ * FIXED COMPONENT ID
+   5724W12RS
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * RA11 PSN
+   UP

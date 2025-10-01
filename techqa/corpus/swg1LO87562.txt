@@ -1,0 +1,180 @@
+Title: IBM LO87562: DOMINO TLS 1.2 CLIENT HELLO DOES NOT OFFER A SIGNATURE ALGORITHM EXTENSION CAUSING SOME HANDSHAKES TO FAIL - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Domino server set up in sending TLS SMTP Messages to Microsoft
+   Server are failing
+   
+   
+   Customer has a microsoft IIS server with ECHDE ciphers enabled
+   and a certificated signed with SHA-256 or greater (not sure).
+   The handshake Domino sends rejected by the server with a
+   connection reset, we suspect the rejection is caused by no
+   signature algorithm extension and strict interpretation of the
+   RFC text below.
+   
+   When using TLS 1.2 we should add the signature algorithm
+   extension with all the signatures we support.
+   
+   From the tls 1.2 RFC
+   
+     If the client supports only the default hash and signature
+   algorithms
+      (listed in this section), it MAY omit the
+   signature_algorithms
+      extension.  If the client does not support the default
+   algorithms, or
+      supports other hash and signature algorithms (and it is
+   willing to
+      use them for verifying messages sent by the server, i.e.,
+   server
+      certificates and server key exchange), it MUST send the
+   signature_algorithms extension, listing the algorithms it is
+   willing
+      to accept.
+   
+      If the client does not send the signature_algorithms
+   extension, the
+      server MUST do the following:
+   
+      -  If the negotiated key exchange algorithm is one of (RSA,
+   DHE_RSA,
+         DH_RSA, RSA_PSK, ECDH_RSA, ECDHE_RSA), behave as if
+   client had
+         sent the value {sha1,rsa}.
+   
+      -  If the negotiated key exchange algorithm is one of
+   (DHE_DSS,
+         DH_DSS), behave as if the client had sent the value
+   {sha1,dsa}.
+   
+      -  If the negotiated key exchange algorithm is one of
+   (ECDH_ECDSA,
+         ECDHE_ECDSA), behave as if the client had sent value
+   {sha1,ecdsa}.
+   
+      Note: this is a change from TLS 1.1 where there are no
+   explicit
+      rules, but as a practical matter one can assume that the peer
+      supports MD5 and SHA-1.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Add a sigalg extension for clienthello creation to allow IIS
+    (Microsoft) to accept Domino TLS1.2 hello
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Add a sigalg extension for clienthello creation to allow IIS
+    (Microsoft) to accept Domino TLS1.2 hello
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+ *  This APAR is associated with SPR# MKENA4SQ7R.
+   Add a sigalg extension for clienthello creation to allow IIS
+    (Microsoft) to accept Domino TLS1.2 hello
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   LO87562
+   
+   
+ * REPORTED COMPONENT NAME
+   DOMINO SERVER
+   
+   
+ * REPORTED COMPONENT ID
+   5724E6200
+   
+   
+ * REPORTED RELEASE
+   901
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-01-04
+   
+   
+ * CLOSED DATE
+   2016-02-12
+   
+   
+ * LAST MODIFIED DATE
+   2016-02-12
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   DOMINO SERVER
+   
+   
+ * FIXED COMPONENT ID
+   5724E6200
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R901 PSN
+   UP

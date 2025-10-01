@@ -1,0 +1,200 @@
+Title: IBM IC78841: VIOLATION OF LSWC_UXREF_UQ CONSTRAINT WHEN CREATING MULTIPLE TASKS FOR A NEW LDAP USER - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Customer was experiencing an issue on WLE 7.2 where the process
+   would fail in particular place. The error in the logs was:
+   {code}
+   2011-08-10 09:16:57,430 [ThreadPool worker thread #0] ERROR
+   com.lombardisoftware.server.ejb.taskservices.TaskServicesBean  -
+   Exception in EJB call
+   org.springframework.jdbc.UncategorizedSQLException:
+   PreparedStatementCallback; uncategorized SQLException for SQL
+   [insert into LSW_USR_XREF (USER_ID,USER_NAME,FULL_NAME,PROVIDER)
+   values (?,?,?,?)]; SQL state []; error code [0]; Cannot insert
+   duplicate key row in object 'dbo.LSW_USR_XREF' with unique index
+   'LSWC_UXREF_UQ'.; nested exception is
+   com.jnetdirect.jsql.JSQLException: Cannot insert duplicate key
+   row in object 'dbo.LSW_USR_XREF' with unique index
+   'LSWC_UXREF_UQ'.
+    at
+   org.springframework.jdbc.support.SQLStateSQLExceptionTranslator.
+   translate(SQLStateSQLExceptionTranslator.java:124)
+    at
+   org.springframework.jdbc.support.SQLErrorCodeSQLExceptionTransla
+   tor.translate(SQLErrorCodeSQLExceptionTranslator.java:322)
+    at
+   org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.
+   java:607)
+    at
+   org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.
+   java:619)
+    at
+   org.springframework.jdbc.core.JdbcTemplate.batchUpdate(JdbcTempl
+   ate.java:866)
+    at
+   com.lombardisoftware.server.ejb.persistence.dao.UnversionedPODAO
+   .doInserts(UnversionedPODAO.java:491)
+    at
+   com.lombardisoftware.server.ejb.persistence.dao.UnversionedPODAO
+   .saveInternal(UnversionedPODAO.java:481)
+    at
+   com.lombardisoftware.server.ejb.persistence.AbstractDAO.save(Abs
+   tractDAO.java:89)
+    at
+   com.lombardisoftware.server.ejb.persistence.AbstractDAO.save(Abs
+   tractDAO.java:70)
+    at
+   com.lombardisoftware.server.core.UserCore.getOrCreateUserInfoObj
+   ect(UserCore.java:115)
+    at
+   com.lombardisoftware.server.core.UserCore.getOrCreateUserInfoObj
+   ect(UserCore.java:94)
+    at
+   com.lombardisoftware.server.core.ParticipantHelper.handleUser(Pa
+   rticipantHelper.java:204)
+    at
+   com.lombardisoftware.server.core.ParticipantHelper.handleGroup(P
+   articipantHelper.java:70)
+    at
+   com.lombardisoftware.server.core.ParticipantHelper.handleData(Pa
+   rticipantHelper.java:84)
+    at
+   com.lombardisoftware.server.core.ParticipantHelper.handleGroup(P
+   articipantHelper.java:60)
+    at
+   com.lombardisoftware.server.core.ParticipantHelper.resolveUserGr
+   oups(ParticipantHelper.java:285)
+   {code}
+   
+   
+   Which really looks like one of these issues: THU-5990, THU-8400,
+   THU-2586 but they are all supposed to be fixed in WLE 7.2...
+   
+   So, we kept investigating and what we found out was that the
+   problem can be reproduced when you have a new user in LDAP and
+   the task is assigned to that user and multiple such instances
+   would be created at almost the same time, so, both threads will
+   try to insert the record into LSW_USR_XREF table and the
+   violation would occur.
+   
+   I was able to reproduce this problem locally with the following
+   steps:
+   
+   1) Create a brand new user in LDAP (Test_user)
+   2) Do NOT login with this user to any web applications (Portal,
+   Process Admin)
+   3) Create two BPD's with default human service and set Routing
+   to Custom -> "USER:Test_user"
+   4) Start first BPD and second BPD at almost the same time from
+   AE
+   
+   ==> you may get an error in AE suggesting that there is a server
+   side error occurred, so, open tw-error.log and you will see
+   exactly the same error as in customer's case (attached is the
+   snippet of the log) and only one instance from one of the BPD's
+   would be generated but the instance from another BPD would not
+   be generated...
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Synchornize LDAP users before using them in tasks assignment
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Fixed in 7.5.1
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC78841
+   
+   
+ * REPORTED COMPONENT NAME
+   WS LOMBARDI EDI
+   
+   
+ * REPORTED COMPONENT ID
+   5725A0900
+   
+   
+ * REPORTED RELEASE
+   720
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-09-21
+   
+   
+ * CLOSED DATE
+   2011-12-14
+   
+   
+ * LAST MODIFIED DATE
+   2011-12-14
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R710 PSN
+   UP
+   
+   
+ * R720 PSN
+   UP

@@ -1,0 +1,158 @@
+Title: IBM PM42783: CZECH VALUE LABELS OF A BREAK VARIABLE ARE NOT DISPLAYED PROPERLY WHEN AGGREGATION IS PERFORMED TWICE - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  You are working with IBM SPSS Statistics 19.0.0.1 and your data
+   file includes a variable with Czech characters in it's value
+   labels. You use this variable as BREAK variable in an AGGREGATE
+   syntax command.
+   The syntax performs well. You then close the aggregated data set
+   and run the same AGGREGATE command for the original data set a
+   second time.
+   This time the Czech characters in the value labels of the BREAK
+   variable are no longer properly displayed in Data View and
+   Variable View of Data Editor. The characters are replaced with
+   question marks. However, when you run a frequency table for the
+   break variable in the aggregated data set is displayed with the
+   correct Czech characters.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * Users with Czech characters in value labels in a data file   *
+   * using AGGREGATE function                                     *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * You are working with IBM SPSS Statistics 19.0.0.1 and your   *
+   * data                                                         *
+   * file includes a variable with Czech characters in it's value *
+   * labels. You use this variable as BREAK variable in an        *
+   * AGGREGATE                                                    *
+   * syntax command.                                              *
+   * The syntax performs well. You then close the aggregated data *
+   * set                                                          *
+   * and run the same AGGREGATE command for the original data set *
+   * a                                                            *
+   * second time.                                                 *
+   * This time the Czech characters in the value labels of the    *
+   * BREAK                                                        *
+   * variable are no longer properly displayed in Data View and   *
+   * Variable View of Data Editor. The characters are replaced    *
+   * with                                                         *
+   * question marks. However, when you run a frequency table for  *
+   * the                                                          *
+   * break variable in the aggregated data set is displayed with  *
+   * the                                                          *
+   * correct Czech characters.                                    *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Upgrade to IBM SPSS Statistics 20.                           *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Upgrade to IBM SPSS Statistics 20.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM42783
+   
+   
+ * REPORTED COMPONENT NAME
+   SPSS STATISTICS
+   
+   
+ * REPORTED COMPONENT ID
+   5725A54ST
+   
+   
+ * REPORTED RELEASE
+   J00
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-06-30
+   
+   
+ * CLOSED DATE
+   2011-10-17
+   
+   
+ * LAST MODIFIED DATE
+   2011-10-17
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   SPSS STATISTICS
+   
+   
+ * FIXED COMPONENT ID
+   5725A54ST
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * RK00 PSN
+   UP
+   
+   
+ * RK00 PSY
+   UP

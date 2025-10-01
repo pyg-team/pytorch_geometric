@@ -1,0 +1,19 @@
+Title: IBM How can I launch the authorization wizard if it doesn't appear in my start menu? - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ I am using SPSS for Windows version 13.x or higher. I received new authorization codes to renew my SPSS licenses. How can I launch the authorization wizard if it doesn't appear in my Start menu? 
+
+ANSWER
+The file that launches the SPSS License Authorization Wizard is called Activator.rac. (You may see it in Windows Explorer as Activator, with a file type listed as RAC for Rainbow Activator Configuration File. A network installation will most likely have that file in the LAW subdirectory.) Double-click on this file to launch the License Authorization Wizard
+
+RELATED INFORMATION
+ Need more help? Our Statistics forum is Live! [https://developer.ibm.com/answers/topics/statistics.html?smartspace=predictive-analytics]
+
+
+ 
+
+HISTORICAL NUMBER
+ 52268

@@ -1,0 +1,35 @@
+Title: IBM DASH Services Stops Automatically After Few hours.  "Too many open files" - United States
+
+Text:
+DASHL2; JazzSM; too many open files; ulimit; open files; descriptors TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The Dashboard Application Services Hub (DASH) - JazzSM service shuts down automatically after running for a few hours. The systemOut log has messages indicating: "Too many open files" 
+
+CAUSE
+The open files ulimit option is set too low for the OS user that run the DASH server process
+
+DIAGNOSING THE PROBLEM
+The SystemOut may contain messages like:
+###
+[9/30/15 9:09:07:765 EDT] 000000a6 HttpMethodDir I 
+org.apache.commons.httpclient.HttpMethodDirector executeWithRetry I/O 
+exception (java.net.SocketException) caught when processing request: Too
+many open files 
+### 
+
+Check the ulimit settings for the user. Execute the following on the command line:
+
+ulimit -a 
+
+RESOLVING THE PROBLEM
+Websphere Support generally recommends a minimum value of 8000 for the open files ulimit setting. To increase the value to 8000 execute:
+
+ulimit -n 8000
+
+That value can be used initially and increased if it determined to be too low. The value is only good for the current log in session. Once a working value is determined, the value must be set at the system level to make it permanent. The following Websphere documentation provides more detail on setting the ulimit value:
+
+
+
+
+http://www-01.ibm.com/support/docview.wss?uid=swg21469413 [http://www-01.ibm.com/support/docview.wss?uid=swg21469413]

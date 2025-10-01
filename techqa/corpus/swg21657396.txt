@@ -1,0 +1,42 @@
+Title: IBM How to maintain time in the DateTime property field when properties on a document are modified in FileNet Workplace XT - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ The time will reset to 12:00 AM for a DateTime field when other properties are modified on a document and then saved. 
+
+CAUSE
+FileNet Workplace XT's Site Preferences file controls the behavior on Date and Time fields. The values for the Time format and the Edit date properties fields in the Site Preferences for Workplace XT have to be modified.
+
+ANSWER
+To maintain time in the DateTime property field, modify the Time format and the Edit date properties fields using these steps. 
+
+ 1.  Login to Workplace XT
+     
+     
+ 2.  Click Tools
+     
+     
+ 3.  Click Administration
+     
+     
+ 4.  Click Site Preferences
+     
+     
+ 5.  Click General
+     
+     
+ 6.  In User Settings, change the Time format to Medium(h:mm:ss a) level to preserve the value all the way to the seconds.
+     
+     
+ 7.  On the same page go to General Settings
+     
+     
+ 8.  Go to Display
+     
+     
+ 9.  Change Edit date Properties to, Show date and time
+     
+     
+ 10. Click OK to save the changes

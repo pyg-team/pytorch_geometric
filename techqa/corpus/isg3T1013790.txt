@@ -1,0 +1,17 @@
+Title: IBM Where can I obtain a temporary support license key? - United States
+
+Text:
+temporary demo support license expire renew TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Where can I obtain a temporary support license key? 
+
+RESOLVING THE PROBLEM
+My LSF license is due to expire tomorrow and we are still in the process of renewing them. Where can I obtain a temporary support license key to keep LSF running until we get our renewed license?A temporary ‘demo’ license key is made available by Support. You need to contact them in order to get the key sent to you. The demo key will only work for a 4 day period before expiring, which is the longest duration support engineers can provide. 
+
+If need a temporary license longer than four days, please contact your account manager.
+
+
+ 
+
+Cross reference information Segment Product Component Platform Version Edition IBM Spectrum Computing IBM Spectrum LSF

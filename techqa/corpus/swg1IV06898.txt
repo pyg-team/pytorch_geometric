@@ -1,0 +1,149 @@
+Title: IBM IV06898: SAP AGENT CRASHED WHEN MONITORED SAP INSTANCE WAS STOPPED. - United States
+
+Text:
+  A FIX IS AVAILABLE
+IBM Tivoli Monitoring for Applications: mySAP Agent, 6.2.0-TIV-ITM_SAP-IF0015 [http://www-01.ibm.com/support/docview.wss?uid=swg24033394]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Customer is monitoring the  SAP system and when monitored SAP
+   instance is stopped, then sap agent crashed. This issue is
+   occurring rarely.
+   
+   Environment:
+   ITM for Applications 6.2 IF0013
+   AIX 6.1
+   
+   Detailed Recreation Procedure:
+   1. Install sap agent IF0013 to monitor a SAP Instance.
+   2. Start SAP Agent and observe for 15 mins
+   3. Stop SAP Central Instance. This will crash sap agent.
+   NOTE: If not reproduce then in 2nd step and observe for 1 hr
+   then perform 3rd.
+   
+   Approver: Shen Gang
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ERROR DESCRIPTION:
+   Customer is monitoring the SAP system and when monitored SAP
+   instance is stopped, then sap agent crashed. This issue is
+   occurring rarely.
+   Environment:
+   ITM for Applications 6.2 IF0013
+   AIX 6.1
+   Detailed Recreation Procedure:
+   1. Install sap agent IF0013 to monitor a SAP Instance.
+   2. Start SAP Agent and observe for 15 mins
+   3. Stop SAP Central Instance. This will crash sap agent.
+   NOTE: If not reproduce then in 2nd step and observe for 1 hr
+   then perform 3rd.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The formal fix for this APAR is contained in the following
+   package:
+   IBM(R) Tivoli(R) Monitoring for Applications: mySAP Agent,
+   Version 6.2.0
+   Limited Availability Fix: 0014, 6.2.0-TIV-ITM_SAP-IF0014
+   Component ID: 5724B97SO
+   Date: September , 2011
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV06898
+   
+   
+ * REPORTED COMPONENT NAME
+   ITMF APPL - SAP
+   
+   
+ * REPORTED COMPONENT ID
+   5724B97SO
+   
+   
+ * REPORTED RELEASE
+   620
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-08-25
+   
+   
+ * CLOSED DATE
+   2011-09-15
+   
+   
+ * LAST MODIFIED DATE
+   2011-09-15
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ITMF APPL - SAP
+   
+   
+ * FIXED COMPONENT ID
+   5724B97SO
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R620 PSY
+   UP

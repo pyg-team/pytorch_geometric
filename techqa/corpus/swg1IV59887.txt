@@ -1,0 +1,189 @@
+Title: IBM IV59887: EXTENDED ORACLE DB AGENT FAILS TO START ON ZLINUX WITH ITM 6.3 - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  After installing ITM 6.3.0,2 of ITM on zlinux the RZ agent
+   is installed at ls3246 but OS agent is at ls3266
+   
+   This causes the RZ Agent to fail on error locating the
+   GSkit version 7:
+   
+   
+   
+   Error:
+   
+   
+   /opt/IBM/ITM/ls3246/rz/bin/krzagent: error while loading shared
+   libraries: libgsk7iccs_64.so: cannot open shared object file: No
+   suchfile or directory
+   
+   Cinfo looks like this:
+   
+   ax IBM Tivoli Monitoring Shared Libraries ls3246 06.22.02.00
+   d0126a
+   20140411 1246 0
+    ax IBM Tivoli Monitoring Shared Libraries ls3266 06.30.02.00
+   d3248a
+   20140411 1025 0
+    gs IBM GSKit Security Interface ls3266 08.00.50.05 d3221a - 0
+   jr Tivoli Enterprise-supplied JRE ls3246 05.12.01.00 d1075a - 0
+   jr Tivoli Enterprise-supplied JRE ls3266 07.04.02.00
+   201308061911 - 0
+   lz Monitoring Agent for Linux OS ls3266 06.30.02.00 32341
+   20140411 1025
+   0
+   rz Monitoring Agent for Oracle Database Extended ls3246
+   06.31.02.00
+   201308022411 20140419 0921 0
+    ui Tivoli Enterprise Services User Interface ls3246 06.22.02.00
+   d0126a
+   20140411 1246 0
+   ui Tivoli Enterprise Services User Interface ls3266 06.30.02.00
+   d3248a
+   20140411 1025 0
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  1) Change to /opt/IBM/ITM/tmaitm6/links/lnxzx6-l22-g32 directory
+   Modify lib link from
+   lib -> <install_dir>/tmaitm6/ls3246/lib
+   to
+   lib -> <install_dir>/tmaitm6/ls3266/lib
+   
+   2) Add <install_dir>/tmaitm6/ls3266/lib at the beginning of
+   LD_LIBRARY_PATH and LD_LIBRARY_PATH_64 in
+   <install_dir>/config/rz.ini
+   and <install_dir>/config/rz_<instance>.cfg
+   
+   Take rz.ini as example:
+   LD_LIBRARY_PATH=<install_dir>/tmaitm6/ls3266/lib:$ICCRTE_DIR$/$G
+   SKLIB$:$
+   CANDLEHOME$/$BINARCH$/$PRODUCTCODE$/lib:$CANDLEHOME$/$ARCHITECTU
+   RE$/lib
+   LD_LIBRARY_PATH_64=<install_dir>/tmaitm6/ls3266/lib:$CANDLEHOME$
+   /$BINARC
+   H$/$PRODUCTCODE$/lib:$CANDLEHOME$/$ARCHITECTURE$/lib:$ICCRTE_DIR
+   $/lib64
+   
+   3) Start RZ agent.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ITCAM Extended Agent for Oracle Database (RZ) Versoin 6.3.1 FP2
+   and below version fails to start with ITM v6.3 on zLinux.
+   krzagent fails to load GSKit v7 libraries. Error message:
+   
+   <install_dir>/ls3246/rz/bin/krzagent: error while loading shared
+   libraries:
+   libgsk7iccs_64.so: cannot open shared object file: No such file
+   or directory.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix will be included in Oracle Database Extended agent 6.31
+   FP3 and above versions
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV59887
+   
+   
+ * REPORTED COMPONENT NAME
+   ITCAM EXT AGNT
+   
+   
+ * REPORTED COMPONENT ID
+   5724V09OR
+   
+   
+ * REPORTED RELEASE
+   631
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-04-29
+   
+   
+ * CLOSED DATE
+   2015-01-30
+   
+   
+ * LAST MODIFIED DATE
+   2015-01-30
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ITCAM EXT AGNT
+   
+   
+ * FIXED COMPONENT ID
+   5724V09OR
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R631 PSY
+   UP

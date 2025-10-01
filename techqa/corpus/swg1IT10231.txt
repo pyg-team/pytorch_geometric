@@ -1,0 +1,275 @@
+Title: IBM IT10231: HADR STANDY MIGHT FAIL WITH SQLPSWSRENAMELOGFILE, PROBE:10 SQLP_LERR "FATAL LOGIC ERROR" - United States
+
+Text:
+z/os SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  A HADR STANDY might fail with sqlpSWSRenameLogFile, probe:10
+   SQLP_LERR "Fatal Logic Error" and shutdown HADR when at the same
+   time at the PRIMARY a backup is performed via SET WRITE SUSPEND
+   operation.
+   
+   In db2diag.log we see on the PRIMARY:
+   
+   2015-07-10-01.22.51.991689+120 I103694678A504       LEVEL: Info
+   PID     : 55508994             TID : 156756         PROC :
+   db2sysc 0
+   INSTANCE: db2SAMPLE               NODE : 000           DB   :
+   SAMPLE
+   APPHDL  : 0-39791              APPID:
+   *LOCAL.db2SAMPLE.150709232251
+   AUTHID  : DB2SAMPLE               HOSTNAME: db2inst2
+   EDUID   : 156756               EDUNAME: db2agent (SAMPLE) 0
+   FUNCTION: DB2 UDB, base sys utilities, sqleSetWriteSuspend,
+   probe:4549
+   DATA #1 : <preformatted>
+   Set Write Suspend issued from member 0
+   
+   2015-07-10-01.22.52.088594+120 I103695183A541       LEVEL:
+   Warning
+   PID     : 55508994             TID : 156756         PROC :
+   db2sysc 0
+   INSTANCE: db2SAMPLE               NODE : 000           DB   :
+   SAMPLE
+   APPHDL  : 0-39791              APPID:
+   *LOCAL.db2SAMPLE.150709232251
+   AUTHID  : DB2SAMPLE               HOSTNAME: db2inst2
+   EDUID   : 156756               EDUNAME: db2agent (SAMPLE) 0
+   FUNCTION: DB2 UDB, data protection services, sqlpSuspendLog,
+   probe:205
+   DATA #1 : <preformatted>
+   LSO at suspend time is 17963498086161. Log file at suspend time
+   is 62316
+   
+   2015-07-10-01.23.02.404580+120 I103697792A502       LEVEL: Info
+   PID     : 55508994             TID : 155275         PROC :
+   db2sysc 0
+   INSTANCE: db2SAMPLE               NODE : 000           DB   :
+   SAMPLE
+   APPHDL  : 0-39793              APPID:
+   *LOCAL.db2SAMPLE.150709232303
+   AUTHID  : DB2SAMPLE               HOSTNAME: db2inst2
+   EDUID   : 155275               EDUNAME: db2agent (SAMPLE) 0
+   FUNCTION: DB2 UDB, base sys utilities, sqleSetWriteResume,
+   probe:5516
+   DATA #1 : <preformatted>
+   Set Write Resume issued from member 0
+   
+   In this example Log S0062316.LOG was current at this time.
+   
+   Looking at db2diag.log of the STANDBY the following appears
+   while handling the next Log (+1) (S0062317.LOG):
+   
+   015-07-10-01.23.10.231797+120 E73506015A741        LEVEL: Error
+   PID     : 46727216             TID : 5342           PROC :
+   db2sysc 0
+   INSTANCE: db2SAMPLE               NODE : 000           DB   :
+   SAMPLE
+   HOSTNAME: db2inst1
+   EDUID   : 5342                 EDUNAME: db2lfr.0 (SAMPLE) 0
+   FUNCTION: DB2 UDB, data protection services,
+   sqlpSWSRenameLogFile, probe:10
+   MESSAGE : ZRC=0x8710001D=-2028994531=SQLP_LERR "Fatal Logic
+   Error"
+             DIA8526C A fatal error occurred in data protection
+   services.
+   DATA #1 : <preformatted>
+   The current log file being renamed could not be recorded
+   in the LFH and will not be automatically renamed back
+   by rollforward stop. Rollforward stop may encounter
+   SQL1273 as a result.
+   The log file being renamed is "62317".
+   
+   2015-07-10-01.23.10.284240+120 E73506757A720        LEVEL: Error
+   PID     : 46727216             TID : 5342           PROC :
+   db2sysc 0
+   INSTANCE: db2SAMPLE               NODE : 000           DB   :
+   SAMPLE
+   HOSTNAME: db2inst1
+   EDUID   : 5342                 EDUNAME: db2lfr.0 (SAMPLE) 0
+   FUNCTION: DB2 UDB, data protection services,
+   sqlpSWSRenameLogFile, probe:200
+   MESSAGE : ZRC=0x870F0016=-2029060074=SQLO_SHAR "File sharing
+   violation."
+             DIA8519C A file sharing violation has occurred,
+   filename was "".
+   DATA #1 : String, 26 bytes
+   Failed to rename log file.
+   DATA #2 : String, 53 bytes
+   /db2/SAMPLE/log_dir/NODE0000/LOGSTREAM0000//S0062317.LOG
+   DATA #3 : String, 53 bytes
+   /db2/SAMPLE/log_dir/NODE0000/LOGSTREAM0000//S0062317.SWS
+   
+   2015-07-10-01.23.10.285063+120 E73507478A856        LEVEL:
+   Warning
+   PID     : 46727216             TID : 5342           PROC :
+   db2sysc 0
+   INSTANCE: db2SAMPLE               NODE : 000           DB   :
+   SAMPLE
+   HOSTNAME: db2inst1
+   EDUID   : 5342                 EDUNAME: db2lfr.0 (SAMPLE) 0
+   FUNCTION: DB2 UDB, data protection services,
+   sqlpgoleHandleSplitMirror, probe:3260
+   MESSAGE : ZRC=0x870F0016=-2029060074=SQLO_SHAR "File sharing
+   violation."
+             DIA8519C A file sharing violation has occurred,
+   filename was "".
+   DATA #1 : <preformatted>
+   Ignoring log file
+   "/db2/SAMPLE/log_dir/NODE0000/LOGSTREAM0000/S0062317.LOG"
+   because it was updated/changed
+   while set write suspend was active. An attempt to rename this
+   file was made but failed with return code  -2029060074.
+   The dabatase manager will attempt to rename this  file again
+   later. No user action is required.
+   
+   ... till eventually
+   
+   2015-07-10-01.23.12.445496+120 I73521167A610        LEVEL:
+   Severe
+   PID     : 46727216             TID : 14797          PROC :
+   db2sysc 0
+   INSTANCE: db2SAMPLE               NODE : 000           DB   :
+   SAMPLE
+   APPHDL  : 0-1592               APPID: *LOCAL.DB2.150708005004
+   HOSTNAME: db2inst1
+   EDUID   : 14797                EDUNAME: db2agent (SAMPLE) 0
+   FUNCTION: DB2 UDB, recovery manager, sqlpReplayMaster,
+   probe:2500
+   MESSAGE : ZRC=0x860F000A=-2045837302=SQLO_FNEX "File not found."
+             DIA8411C A file "" could not be found.
+   DATA #1 : <preformatted>
+   Fatal error during HADR replay.  Forcing the database to shut
+   down.
+   
+   2015-07-10-01.23.19.761831+120 I73584287A458        LEVEL: Info
+   PID     : 46727216             TID : 14797          PROC :
+   db2sysc 0
+   INSTANCE: db2SAMPLE               NODE : 000           DB   :
+   SAMPLE
+   APPHDL  : 0-1592               APPID: *LOCAL.DB2.150708005004
+   HOSTNAME: db2inst1
+   EDUID   : 14797                EDUNAME: db2agent (SAMPLE) 0
+   FUNCTION: DB2 UDB, High Availability Disaster Recovery,
+   hdrEduShutdown, probe:29002
+   MESSAGE : HADR Shutdown has completed.
+   
+   This causes HADR standby to shutdown.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * ALL                                                          *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * See Error Description                                        *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Upgrade to DB2 10.5 Fix Pack 7                               *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  First fixed in DB2 10.5 Fix Pack 7
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT10231
+   
+   
+ * REPORTED COMPONENT NAME
+   DB2 FOR LUW
+   
+   
+ * REPORTED COMPONENT ID
+   DB2FORLUW
+   
+   
+ * REPORTED RELEASE
+   A50
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2015-07-22
+   
+   
+ * CLOSED DATE
+   2017-05-08
+   
+   
+ * LAST MODIFIED DATE
+   2017-05-08
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    IT10234 IT10235 [http://www-01.ibm.com/support/docview.wss?uid=swg1IT10235] IT10236
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   DB2 FOR LUW
+   
+   
+ * FIXED COMPONENT ID
+   DB2FORLUW
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * RA50 PSN
+   UP

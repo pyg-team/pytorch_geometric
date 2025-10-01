@@ -1,0 +1,165 @@
+Title: IBM PM23579: JSESSIONID COOKIE NOT CORRECTLY REVOKED ON LOGOUT - United States
+
+Text:
+  A FIX IS AVAILABLE
+6.1.0.6 Download: WebSphere Portal and WCM V6.1.0 fix pack 6 [http://www-01.ibm.com/support/docview.wss?uid=swg24030970]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The JSESSIONID cookie is to be revoked upon logout, but the
+   cookie modification code does not always set the correct cookie
+   path. In this case, browsers will ignore the cookie change and
+   send the outdated cookie in further requests. With external
+   security authentication, this can lead to misinterpretation of
+   a session timeout scenario so that portal session suspend and
+   resume is not triggered during login.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  NA
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  The JSESSIONID cookie is to be revoked upon logout, but the
+   cookie modification code does not always set the correct cookie
+   path. In this case browsers will ignore the cookie change and
+   send the outdated cookie in further requests. With external
+   security authentication, this can lead to misinterpretation of a
+   session timeout scenario so that portal session suspend and
+   resume is not triggered during login.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The path entry for cookie modification is correctly handled with
+   this APAR.
+   
+   Failing Module(s):
+      Authorization/Authentication (login/logout)
+   
+   Affected Users:
+      All users
+   
+   Version Information:
+   
+   PM23579 is part of Cumulative Fix 09 for Portal 6.1.0.3 /
+   6.1.5.0:
+   
+   http://www.ibm.com/eserver/support/fixes/fixcentral/swgquickorde
+   r?apar=PM22177&productid=WebSphere%20Portal&brandid=5 [http://www.ibm.com/eserver/support/fixes/fixcentral/swgquickorder?apar=PM22177&productid=WebSphere%20Portal&brandid=5]
+   
+   as well as part of Cumulative Fix 09 for Portal 6.1.0.4 /
+   6.1.5.1:
+   
+   http://www.ibm.com/eserver/support/fixes/fixcentral/swgquickorde
+   r?apar=PM22188&productid=WebSphere%20Portal&brandid=5 [http://www.ibm.com/eserver/support/fixes/fixcentral/swgquickorder?apar=PM22188&productid=WebSphere%20Portal&brandid=5]
+   
+   Manuel Steps:
+      None
+   
+   Platform Specific:
+      This fix applies to all platforms.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM23579
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSPHERE PORTA
+   
+   
+ * REPORTED COMPONENT ID
+   5724E7600
+   
+   
+ * REPORTED RELEASE
+   61C
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-10-01
+   
+   
+ * CLOSED DATE
+   2010-10-20
+   
+   
+ * LAST MODIFIED DATE
+   2010-10-20
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBSPHERE PORTA
+   
+   
+ * FIXED COMPONENT ID
+   5724E7600
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R615 PSY
+   UP
+   
+   
+ * R61C PSY
+   UP

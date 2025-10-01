@@ -1,0 +1,25 @@
+Title: IBM Format of the processing file name for the poller front side handlers changed in DataPower firmware version 6.0 - United States
+
+Text:
+xs xg xi xb xm 600change poller front side handler processing file name TECHNOTE (FAQ)
+
+QUESTION
+ Why did the format of the processing file name for the poller front side handlers change in DataPower firmware version 6.0? 
+
+CAUSE
+When a server input file is seized by a poller front side handler, the file is temporarily renamed during the period when the DataPower appliance is processing the file. The temporary file name has the following components: 
+
+ * Name derived from the processing file renaming pattern configuration parameter 
+ * Device serial number 
+ * Domain name 
+ * Poller name 
+ * Timestamp 
+
+The goal of the processing file name format is to ensure that the file name is unique, which allows multiple pollers to poll the same directory with the same match pattern. 
+
+The format of the processing file name changed to include the device host name for DataPower Virtual Edition firmware level 5.0. Since virtual appliances do not have unique serial numbers, the host name field was added to maintain the uniqueness of the overall file name. However, this change was not made in the 5.0 level firmware for physical appliances. 
+ANSWER
+DataPower firmware level 6.0 incorporates the additional host name field in the processing file name format. This is to ensure that all DataPower appliances, whether physical or virtual, use the same file name format. 
+
+
+Note that this change implies that when using the processing seize time out, all DataPower appliances polling the same directory must be using the same processing file name format.

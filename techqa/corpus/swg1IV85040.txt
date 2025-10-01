@@ -1,0 +1,175 @@
+Title: IBM IV85040: SCA IMPORT FAILED DUE TO NULL VALUES - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  SCA server imports the data from iem server to
+   database.Imports were
+   not happening from 4 days back we tried through import now
+   option, again it is
+   failing.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Dev is planning to include fix in SCA 1.8
+   patch 1 ,
+   
+   Most probably the customer has an analysis that pulls too much
+   data which exceeds LONGQUESTIONRESULTS limit for ResultsText.
+   It may also cause problem on
+   a client side since this data has to be transfers and uploaded
+   to database.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  SCA server imports the data from iem server to  database.Imports
+    were
+   not happening from 4 days back we tried through import now
+   option, again it is
+   failing. Last import was happened on  13-May-2016.
+   below error was found on log:
+   2016-05-16 02:05:42 (+0:00:00.001) INFO: ETL Datasource task:
+   from
+   Datasource - ComputerPropertyValue
+   (0x000000020352D5C4 -
+   N/A): Start
+   2016-05-16 02:06:00 (+0:00:18.418) ERROR: SQL: {call [dbo].
+   [etl_computer_property_values](?,?,?,?,?,?)}
+   2016-05-16 02:06:00 (+0:00:00.001) ERROR: Batch execution error:
+   2016-05-16 02:06:00 (+0:00:00.011) INFO: ETL Datasource task:
+   from
+   Datasource - ComputerPropertyValue
+   (0x000000020352D5C4 -
+   0x000000020666A698): Failed
+   2016-05-16 02:06:01 (+0:00:01.229) ERROR: Sequel::
+   NotNullConstraintViolation: Java::JavaSql::BatchUpdateException:
+   Cannot
+   insert the value NULL into column 'value', table
+   'tem_analytics.dbo.
+   computer_property_values'; column does not allow nulls. INSERT
+   fails.
+    com.microsoft.sqlserver.jdbc.SQLServerPreparedStatement.execute
+   Batch
+   (com/microsoft/sqlserver/jdbc/SQLServerPreparedStatement.java:11
+   78)
+    java.lang.reflect.Method.invoke(java/lang/reflect/Method.java:6
+   20)
+    Sequel::JDBC::Dataset::PreparedStatementBatchMethods.execute_ba
+   tch(D:
+   /Program Files (x86)/BigFix
+   Enterprise/TEMA/wlp/usr/servers/server1/apps/tema.war/WEB-
+   INF/lib/sequel/extensions/batch_execution.rb:23)
+   .
+   Also, I have enabled debug mode and restart TEMA. Below is the
+   error
+   screenshot on SCA.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Scans are running fine now. Thank you very much for your help!
+   PMR is now
+   closed
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV85040
+   
+   
+ * REPORTED COMPONENT NAME
+   TV EP MG SEC CF
+   
+   
+ * REPORTED COMPONENT ID
+   5725C43SM
+   
+   
+ * REPORTED RELEASE
+   926
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-05-23
+   
+   
+ * CLOSED DATE
+   2016-10-20
+   
+   
+ * LAST MODIFIED DATE
+   2016-10-20
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TV EP MG SEC CF
+   
+   
+ * FIXED COMPONENT ID
+   5725C43SM
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R810 PSY
+   UP

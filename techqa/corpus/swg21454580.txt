@@ -1,0 +1,34 @@
+Title: IBM MS SQL Server:  Connections server's CPU reaches and maintains 100% utilization after connection with MS SQL Server is severed. - United States
+
+Text:
+SQL Server; 100% CPU TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+The problem is with the Java Database Connectivity Driver 2.0 driver. There is a problem closing resources when the connection to the database terminates unexpectedly.
+
+SYMPTOM
+The WebSphere/Connections Java process consumes all available CPU resources.
+
+
+CAUSE
+The Microsoft SQL Server 2.0 JDBC driver experiences a problem when issuing a closing statement to the database when the connection to the database server has already terminated. This termination can take place for a variety of reasons, for example, if the database servers have been restarted, or if there is a loss of network connectivity with the server.
+
+DIAGNOSING THE PROBLEM
+Check for a Java process for WebSphere/Connections in Windows Task Manager after the connection between Connections and the Microsoft SQL Server database has been broken. If the CPU usage is 100% and MS SQL Server JDBC 2.0 driver is in use, then it is likely the problem exists and the steps in the resolution section of this technote should be followed.
+
+RESOLVING THE PROBLEM
+1. Review this notice from Microsoft: 
+
+http://support.microsoft.com/kb/977305 [http://support.microsoft.com/kb/977305]
+
+2. Call Microsoft technical support to obtain the hotfix for the SQL Server 2.0 JDBC driver, at the present time this fix is only available by contacting Microsoft technical support. You must know if the server is 32 or 64bit. 
+
+For a complete list of Microsoft Customer Support Services telephone numbers visit the following Microsoft Web site: http://support.microsoft.com/contactus/?ws=support [http://support.microsoft.com/contactus/?ws=support]
+
+3. Stop the WebSphere completely, including the Deployment Manager, all servers and nodes. It may be necessary to terminate the process from Windows as the WebSphere process may not stop. Stopping the applications alone is not sufficient as the database connections are held by the WebSphere servers.
+
+4. Replace the existing drivers MS SQL Server JDBC 2.0 driver used by WebSphere. Be sure to save a copy of the original driver, but not in the same folder as the patched driver. Also, you must assure that only one driver jar file is present in the folder configured as the location of the MS SQL Server JDBC 2.0 driver in WebSphere, since WebSphere 7 uses Java 1.6, this is sqljdbc4.jar. 
+
+The version reported for the drivers in the WebSphere logs may stay the same, so its important to verify the location of the driver configured in WebSphere is where the patched driver is located.
+
+5. Reboot the WebSphere server and restart WebSphere and the applications.

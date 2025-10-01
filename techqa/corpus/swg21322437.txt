@@ -1,0 +1,22 @@
+Title: IBM "SOAPEnvelope must contain a body element which is either first or second child element of the SOAPEnvelope" exception invoking JAX-WS sample JSPs - United States
+
+Text:
+RN7.5; SRX; Web service; JAX-WS; SOAPEnvelope TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When attempting to invoke a Web service using the JAX-WS client sample JSPs, the following exception is seen in the results view: "exception: java.util.concurrent.ExecutionException: javax.xml.ws.soap.SOAPFaultException: SOAPEnvelope must contain a body element which is either first or second child element of the SOAPEnvelope." 
+
+SYMPTOM
+This exception can sometimes occur when the "Bypass JAXB and use raw SOAP messages" option is selected in the Quality of Service frame of the sample JSPs. In the input frame, if the SOAP Message contains an empty <soapenv:Header> element, the following error may be returned when using some versions of IBM WebSphere Application Server Version 6.1: 
+
+"exception: java.util.concurrent.ExecutionException: javax.xml.ws.soap.SOAPFaultException: SOAPEnvelope must contain a body element which is either first or second child element of the SOAPEnvelope."
+
+
+
+CAUSE
+Some versions of the IBM WebSphere Application Server Version 6.1 runtime do not support SOAP messages that contain an empty Header element.
+
+
+
+RESOLVING THE PROBLEM
+Delete the <soapenv:Header> </soapenv:Header> element from the SOAP message in the input frame before invoking the service or add the header input if required by the Web service.

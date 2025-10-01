@@ -1,0 +1,175 @@
+Title: IBM PK65562: CLASSCASTEXCEPTION MAY OCCUR WHEN A CRL IS CONFIGURED FOR USE WITH WS-SECURITY ENABLED JAX-WS WEB SERVICES APPLICATION - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When a Java API for XML-Based Web Services (JAX-WS) application
+   is configured to use a certificate revocation list (CRL) in its
+   ws-security policy binding, the following exception may occur:
+   
+   Exception: javax.xml.ws.soap.SOAPFaultException:
+   CWWSS7049E: Exception received while loading the web services
+   security custom bindings:: java.lang.ClassCastException:
+   com.ibm.xmlns.prod.websphere._200608.ws_securitybinding.
+   X509Certificates incompatible with com.ibm.xmlns.prod.
+   websphere._200608.ws_securitybinding.CRL
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  WebSphere Application Server administrators *
+   *                  of ws-security enabled JAX-WS web services  *
+   *                  applications using CRLs                     *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: When a JAX-WS service's ws-security     *
+   *                      config has a cert store that contains a *
+   *                      CRL and a cert, a ClassCastException    *
+   *                      will occur                              *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   When JAX-WS web services provider's ws-security policy bindings
+   have a certificate store that contains both one or more
+   certificate revocation list (CRL) and one or more intermediate
+   certificate, the following ClassCastException may occur when
+   starting the application:
+   
+   Exception: javax.xml.ws.soap.SOAPFaultException:
+   CWWSS7049E: Exception received while loading the web services
+   security custom bindings:: java.lang.ClassCastException:
+   com.ibm.xmlns.prod.websphere._200608.ws_securitybinding.
+   X509Certificates incompatible with com.ibm.xmlns.prod.
+   websphere._200608.ws_securitybinding.CRL
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The web services security component was updated to properly
+   support both certificate revocation lists (CRL) and intermediate
+   certificates in the certificate store.
+   
+   The fix for this APAR is currently targeted for inclusion in
+   fixpack 6.1.0.19.  Please refer to the Recommended Updates
+   page for delivery information:
+   http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK65562
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSPH APP SERV
+   
+   
+ * REPORTED COMPONENT ID
+   5724J0800
+   
+   
+ * REPORTED RELEASE
+   61W
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-05-06
+   
+   
+ * CLOSED DATE
+   2008-05-08
+   
+   
+ * LAST MODIFIED DATE
+   2008-05-08
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBSPH APP SERV
+   
+   
+ * FIXED COMPONENT ID
+   5724J0800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R61A PSY
+   UP
+   
+   
+ * R61H PSY
+   UP
+   
+   
+ * R61I PSY
+   UP
+   
+   
+ * R61P PSY
+   UP
+   
+   
+ * R61S PSY
+   UP
+   
+   
+ * R61W PSY
+   UP
+   
+   
+ * R61Z PSY
+   UP

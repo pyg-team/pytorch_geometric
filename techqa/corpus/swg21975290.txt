@@ -1,0 +1,61 @@
+Title: IBM Security Bulletin: Vulnerability in MD5 Signature and Hash Algorithm affects IBM Notes (CVE-2015-7575) - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ The MD5 "SLOTH" vulnerability on TLS 1.2 affects IBM Notes. 
+
+VULNERABILITY DETAILS
+ 
+
+CVEID: CVE-2015-7575 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-7575]
+DESCRIPTION: The TLS protocol could allow weaker than expected security caused by a collision attack when using the MD5 hash function for signing a ServerKeyExchange message during a TLS handshake. An attacker could exploit this vulnerability using man-in-the-middle techniques to impersonate a TLS server and obtain credentials. 
+
+ * 
+ * 
+ * 
+ * 
+ * https://exchange.xforce.ibmcloud.com/vulnerabilities/109415
+ * 
+ * 
+ * 
+ * 
+ * 
+
+AFFECTED PRODUCTS AND VERSIONS
+ IBM Notes 9.0.1 Fix Pack 3 Interim Fix 2 through 9.0.1 Fix Pack 5.
+
+NOTE: Since this vulnerability involves TLS 1.2, neither IBM Notes 9.0 nor IBM Notes 8.5.x are affected.
+
+REMEDIATION/FIXES
+
+The Notes SLOTH vulnerability is tracked as SPR KLYHA5YRVP and a fix is introduced in the following releases:
+
+
+ * IBM Notes 9.0.1 Fixpack 5 IF 2 (for Windows) 
+ * IBM Notes 9.0.1 Fixpack 5 IF 1 (for Linux) 
+ * IBM Notes 64-bit 9.0.1 IF1 (for Mac 64-bit platform)
+
+
+For Fix download links, refer to the following technote:  * Notes & Domino 9.0.1 Fix Packs and Interim Fixes - http://www.ibm.com/support/docview.wss?uid=swg21657963 [http://www-01.ibm.com/support/docview.wss?uid=swg21657963]
+
+
+Customers who remain on the following releases may open a Service Request with IBM Support [https://www-947.ibm.com/support/servicerequest/Home.action] and reference SPR KLYHA5YRVP for a custom hotfix:  * IBM Notes 9.0.1 Fix Pack 3 IF3 and later 
+ * IBM Notes 9.0.1 Fix Pack 4 and all Interim Fixes
+
+
+You should verify applying this fix does not cause any compatibility issues. The fix disables MD5 signature hash by default. If you change the default setting after applying the fix, you will expose yourself to the attack described above. IBM recommends that you review your entire environment to identify other areas where you have enabled the MD5 signature hash and take appropriate mitigation and remediation GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v3 Guide [http://www.first.org/cvss/user-guide] 
+On-line Calculator v3 [http://www.first.org/cvss/calculator/3.0] RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/PSIRT] ACKNOWLEDGEMENT
+Reported to IBM by Karthikeyan Bhargavan at INRIA in Paris, France 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.

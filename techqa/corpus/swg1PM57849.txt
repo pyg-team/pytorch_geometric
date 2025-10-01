@@ -1,0 +1,247 @@
+Title: IBM PM57849: FORMATTING ERRORS OCCURS USING CICS EXPLORER IN MIXED, INTERCONNECTED CPSM ENVIRONMENT - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Running an interconnected CPSM environment with three
+   Maintenance Points, all of which are initially at CICS/TS 4.1
+   and any of the 4.1 WUI servers can be used to see and manage
+   resources in any of the CICS regions regardless of the CICSPLex
+   the WUI server or LMAS are in.
+   
+   Two of the MPs on the same sysplex and their associated CMAS
+   and WUI servers are progressively upgraded to CICS/TS 4.2.
+   
+   Naturally, as each CMAS is upgraded, it is not longer able to
+   be assigned to the CICSPLex(es) managed by the remaining 4.1 MP
+   residing on a different Sysplex but the 4.1 CMAS regions remain
+   assigned to the CICSPlexes managed by the 4.2 MPs.
+   
+   Attempting to use the 4.1 WUI browser continues to operate
+   without any noticable problem but attempting to use the CICS
+   Explorer (versions 1.0 and 1.1) using CMCI correctly shows the
+   CICSPLexes and the number of MASes both defined and active but
+   problems arise when further exploring.
+   
+   Regions still running CICS 4.1 and CPSM 4.2 agent code are
+   fine.  However, those running totally 4.2 produce the following
+   error:
+   
+      CNX0595E: An unexpected failure occurred: Format error
+      encountered processing data" when trying to view various
+      items of information such as CICS region information.
+   
+   Using the Explorer through the data interface gives the same
+   error message with just those CICSPLexes managed by the 4.1 MP
+   displayed.
+   
+   In the CICS trace of the local WUI the following exception
+   occurs:
+   
+      AP A3C2 WURSF *EXC* - i2eAbend
+   
+   
+   Additional Symptom(s) Search Keyword(s): KIXREVGJT
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  n/a
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: CICS Explorer users using CMCI connections   *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:    Your CICSplex is managed by CMASes   *
+   *                      running different levels of CPSM code.  *
+   *                                                              *
+   *                         You start CICS Explorer and connect  *
+   *                      to a WUI server that is connected to    *
+   *                      one of the lower-release CMASes, using  *
+   *                      the CMCI.  If you try to display        *
+   *                      resources from regions connected to a   *
+   *                      higher-level CMAS, you may receive the  *
+   *                      following errors in the CICS Explorer:  *
+   *                                                              *
+   *                      CNX0595E: An unexpected failure         *
+   *                                occurred: Format error        *
+   *                                encountered processing data   *
+   *                                                              *
+   *                      CNX0624E: Get resource_type from        *
+   *                                context failed                *
+   *                                                              *
+   *                      CICS Internal Trace and AUX trace will  *
+   *                      contain the following exception trace   *
+   *                      entry:                                  *
+   *                                                              *
+   *                      AP A3C2 WURSF *EXC* - i2eAbend          *
+   *                                                              *
+   ****************************************************************
+   * RECOMMENDATION: After applying the PTF that resolves this    *
+   *                 APAR, all MASes which are configured as      *
+   *                 CMCI servers must be recycled to pick up     *
+   *                 the new code.  Note that the restarts do     *
+   *                 not need to be done at the same time.        *
+   ****************************************************************
+      When a CMCI request is made through the CICS Explorer to get
+   information about a resource from a higher-level system,
+   resource records and/or resource attributes may be returned that
+   are unknown by the lower-level system.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Code has been changed to allow display of known attributes and
+   provide additional diagnostic trace entries if requested.
+   
+   DFHWUINT has been updated to define two new trace points.
+   
+   DFHWUI2E and DFHWURSF have been updated to allow a lower-level
+   system to handle table differences from a higher-level system.
+   
+   DFHWUTRI has been updated to format new trace entries.
+   
+   The following additional trace entries have been added:
+   
+   ID      Module    Lvl  Type          Data
+   AP A4A7 DFHWUI2E  EXC  badCicsRel    1-CICS Name
+                                        2-Release level data
+                                        3-Release level max
+   
+   AP A3D7 DFHWURSF  EXC  i2eAbendData  1-Output Buffer data
+                                        2-Length of buffer data
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  FIX AVAILABLE BY PTF ONLY
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM57849
+   
+   
+ * REPORTED COMPONENT NAME
+   CICS TS Z/OS V4
+   
+   
+ * REPORTED COMPONENT ID
+   5655S9700
+   
+   
+ * REPORTED RELEASE
+   60M
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-02-09
+   
+   
+ * CLOSED DATE
+   2012-06-13
+   
+   
+ * LAST MODIFIED DATE
+   2012-07-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UK79533 UK79534 UK79535 UK79536
+   
+   
+
+MODULES/MACROS
+ *     DESWUI2E DESWURSF DFHWUINT DFHWUI2E DFHWURSF
+   DFHWUTRI
+   
+   
+    
+   
+   
+
+Publications Referenced SC34701302 SC34718701 FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CICS TS Z/OS V4
+   
+   
+ * FIXED COMPONENT ID
+   5655S9700
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R60M PSY UK79534 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK79534]
+   UP12/06/19 P F206
+   
+   
+ * R600 PSY UK79533 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK79533]
+   UP12/06/19 P F206
+   
+   
+ * R70M PSY UK79536 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK79536]
+   UP12/06/19 P F206
+   
+   
+ * R700 PSY UK79535 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK79535]
+   UP12/06/19 P F206
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

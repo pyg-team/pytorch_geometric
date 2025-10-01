@@ -1,0 +1,167 @@
+Title: IBM ZZ00308: MULTI-REGION UPGRADE FAILURE DUE TO MISMATCH NIC NAMES - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  If a customer has more than one region, and the network
+   interface names are not the same, then some region updates will
+   fail at the following error message:
+   
+   
+   [2014-10-22 02:54:56,497] 9.37.133.9
+   ================================================================
+   ================^[[0m^M
+   
+   [2014-10-22 02:54:56,498] 9.37.133.9 ^[[31mRecipe Compile Error
+   in
+   /var/chef/cache/cookbooks/openstack-common/recipes/set_endpoints
+   _by_interface.rb^[[0m^M
+   
+   [2014-10-22 02:54:56,498] 9.37.133.9
+   ================================================================
+   ================^[[0m^M
+   
+   [2014-10-22 02:54:56,498] 9.37.133.9 ^M
+   
+   [2014-10-22 02:54:56,498] 9.37.133.9 ^[[0m^M
+   
+   [2014-10-22 02:54:56,499] 9.37.133.9 NoMethodError^[[0m^M
+   
+   [2014-10-22 02:54:56,499] 9.37.133.9 -------------^[[0m^M
+   
+   [2014-10-22 02:54:56,499] 9.37.133.9 undefined method `[]' for
+   nil:NilClass^[[0m^M
+   
+   [2014-10-22 02:54:56,499] 9.37.133.9 ^M
+   
+   [2014-10-22 02:54:56,499] 9.37.133.9 ^[[0m^M
+   
+   [2014-10-22 02:54:56,500] 9.37.133.9 Cookbook Trace:^[[0m^M
+   
+   [2014-10-22 02:54:56,500] 9.37.133.9 ---------------^[[0m^M
+   
+   [2014-10-22 02:54:56,500] 9.37.133.9
+   /var/chef/cache/cookbooks/openstack-common/libraries/network.rb:
+   29:in `address_for'^M
+   
+   [2014-10-22 02:54:56,501] 9.37.133.9
+   /var/chef/cache/cookbooks/openstack-common/libraries/endpoints.r
+   b:101:in `address'^M
+   
+   [2014-10-22 02:54:56,501] 9.37.133.9
+   /var/chef/cache/cookbooks/openstack-common/recipes/set_endpoints
+   _by_interface.rb:28:in `block in from_file'^M
+   
+   [2014-10-22 02:54:56,501] 9.37.133.9
+   /var/chef/cache/cookbooks/openstack-common/recipes/set_endpoints
+   _by_interface.rb:26:in `each'^M
+   
+   [2014-10-22 02:54:56,502] 9.37.133.9
+   /var/chef/cache/cookbooks/openstack-common/recipes/set_endpoints
+   _by_interface.rb:26:in `from_file'^[[0m^M
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Revert your central server back to pre-upgrade snapshot as it
+   may not work for an upgrade re-run in this situation.
+   Change NIC names to be consistent in each region.
+   
+   This issue has been addressed in ICO Fixpack 1 code stream
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  NIC name mismatch in mutliregion upgrade
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  management interface naming mismatch is fixed ICO 2.4 Fixpack 1
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   ZZ00308
+   
+   
+ * REPORTED COMPONENT NAME
+   SMRTCLOUD ORCHS
+   
+   
+ * REPORTED COMPONENT ID
+   5725H2800
+   
+   
+ * REPORTED RELEASE
+   240
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-11-05
+   
+   
+ * CLOSED DATE
+   2015-08-21
+   
+   
+ * LAST MODIFIED DATE
+   2015-08-21
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

@@ -1,0 +1,138 @@
+Title: IBM IZ28106: The XMS .NET Client was not updating the correct CCSID in WebSphere MQ Message Descriptor. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The XMS .NET Client was not updating the correct CCSID into the
+   WebSphere MQ Message Descriptor. As a result, the XMS .NET
+   Client was sending the message with a wrong CCSID in the
+   WebSphere MQ Message Descriptor.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Set environment variable MQCCSID to 1208.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   This affects the client applications which use XMS .NET Client
+   to send messages to the WebSphere MQ Queue Manager running on an
+   iSeries  Machine and when the client application sets the
+   property XMSC.WMQ_TARGET_CLIENT to XMSC.WMQ_TARGET_DEST_MQ on
+   the Destination object.
+   Also this affected the client applications that publish messages
+   to a topic on queue manager running on the iSeries Machine.
+   
+   Platforms affected:
+   All Distributed (iSeries, all Unix and Windows)
+   ****************************************************************
+   PROBLEM SUMMARY:
+   The XMS .NET client was not updating the correct CCSID value int
+   the message descriptor and as result, the message was being sent
+   with 1252 CCSID always.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The XMS .NET Client is writing the correct CCSID into the
+   message descriptor.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ28106
+   
+   
+ * REPORTED COMPONENT NAME
+   MSG SRVCS CL .N
+   
+   
+ * REPORTED COMPONENT ID
+   5724M2100
+   
+   
+ * REPORTED RELEASE
+   126
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-07-24
+   
+   
+ * CLOSED DATE
+   2008-08-19
+   
+   
+ * LAST MODIFIED DATE
+   2008-08-19
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   MSG SRVCS CL .N
+   
+   
+ * FIXED COMPONENT ID
+   5724M2100
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R126 PSY
+   UP

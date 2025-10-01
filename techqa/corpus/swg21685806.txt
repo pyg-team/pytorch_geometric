@@ -1,0 +1,51 @@
+Title: IBM Web GUI 8.1 event search tools don't work after upgrade to SCA-LA V1.2.0.3 - United States
+
+Text:
+zero; rows; search; NOI 1.2; SCA-LA 1.2.0.3; scala.version; scala.app.keyword; scala.app.static.dashboard TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ SCA-LA 1.2.0.3 is only compatible with Web GUI 8.1 FP1 and OMNIbusInsightPack V1.1.0.2 [or above] 
+
+SYMPTOM
+Web GUI 8.1 returns zero rows when there is data to be returned. 
+
+The two symptoms are: 
+
+1)The event search launched into SCA-LA returns 0 result while there are events to be returned. 
+
+2) An error message is raised when "Show event dashboard" tool is launched from Web GUI
+
+
+CAUSE
+The query syntax used in the SCA-LA 1.2 integration is of the form:
+
+AlertGroup:=="Fabric to Switch Association" AND Type:=="Problem" AND Severity:=="Critical" 
+
+For SCA-LA 1.2.0.3 compatibility the new syntax is:
+
+AlertGroup:"Fabric to Switch Association" AND Type:"Problem" AND Severity:"Critical" 
+
+SCA-LA 1.2.0.3 does not use the ":==" syntax making the SCA-LA search bar incompatible with Insight and Web GUI.
+
+
+ENVIRONMENT
+SCA-LA 1.2.0.3 
+
+
+
+DIAGNOSING THE PROBLEM
+Review the query syntax to confirm the issue, and fix pack level for Insight and Web GUI
+
+
+
+RESOLVING THE PROBLEM
+In order to use event searches with SCA-LA V1.2.0.3: 
+
+
+upgrade Web GUI to V8.1 FP1 and OMNIbusInsightPack to V1.1.0.2
+
+After the upgrade to Web GUI V8.1 FP1, modify the value of three properties in the Web GUI servers server.init file to support SCA-LA V1.2.0.3 and OMNIbusInsightPackV1.1.0.2:
+
+scala.version = 1.2.0.2 => 1.2.0.3
+scala.app.keyword = OMNIbus_SetSearchFilter => OMNIbus_Keyworkd_Search
+scala.app.static.dashboard = OMNIbus_Event_Distribution => OMNIbus_Static_Dashboard

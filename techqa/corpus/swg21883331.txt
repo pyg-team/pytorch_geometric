@@ -1,0 +1,83 @@
+Title: IBM Security Bulletin: Multiple vulnerabilities have been identified in IBM Tivoli Monitoring shipped with IBM Cloud Orchestrator Enterprise and IBM SmartCloud Orchestrator Enterprise - United States
+
+Text:
+CVE-2015-0138; CVE-2014-3566; CVE-2014-8730; CVE-2015-2808; CVE-2015-4000; CVE-2014-6593; CVE-2015-0410; CVE-2015-1920; CVE-2015-0488; CVE-2015-0478; CVE-2015-1916; CVE-2015-5003; CVE-2015-2017; CVE-2015-1829; CVE-2015-3183; CVE-2015-1283; CVE-2015-4947; CVE-2015-2808; CVE-2015-7450; CVE-2015-2017; CVE-2015-4938; CVE-2015-1932; CVE-2015-1927; CVE-2015-2017; CVE-2015-7417; CVE-2015-4872; CVE-2015-4911; CVE-2015-4893; CVE-2015-4803; CVE-2015-4734; CVE-2015-5006; CVE-2015-7450; CVE-2016-0201; CVE-2015-7411 SECURITY BULLETIN
+
+SUMMARY
+ IBM Tivoli Monitoring is shipped as a component of IBM Cloud Orchestrator Enterprise and IBM SmartCloud Orchestrator Enterprise. Information about security vulnerabilities affecting IBM Tivoli Monitoring has been published in the security bulletins below. 
+
+VULNERABILITY DETAILS
+Consult the following security bulletins for IBM Tivoli Monitoring for vulnerability details and information about fixes. 
+
+ * Security Bulletin: Vulnerability in IBM Java SDK affect IBM Tivoli Monitoring (CVE-2015-7575)
+
+ * Security Bulletin: Vulnerability in RC4 stream cipher affects IBM Tivoli Monitoring (CVE-2015-2808) [http://www-01.ibm.com/support/docview.wss?uid=swg21883223]
+
+ * Security Bulletin: Vulnerability in IBM Java Runtime affects IBM Tivoli Monitoring (CVE-2015-0138) [http://www-01.ibm.com/support/docview.wss?uid=swg21701519]
+
+ * Security Bulletin: A security vulnerabilities has been identified in Websphere Application Server shipped with Jazz for Service Management (CVE-2016-0306) [http://www-01.ibm.com/support/docview.wss?uid=swg21981087]
+
+ * Security Bulletin: IBM Tivoli Monitoring Privileges Escalation through Authorization Bypass (CVE-2015-7411) [http://www-01.ibm.com/support/docview.wss?uid=swg21973559] 
+ *  Security Bulletin: A vulnerability in the GSKit component of IBM Tivoli Monitoring (CVE-2016-0201) [http://www-01.ibm.com/support/docview.wss?uid=swg21976125] 
+
+ * Security Bulletin: IBM Tivoli Monitoring Remote Code Execution (CVE-2015-5003) [http://www-01.ibm.com/support/docview.wss?uid=swg21970361]
+   
+ * Security Bulletin: Multiple vulnerabilities in IBM Java Runtime affect IBM Tivoli Monitoring clients (CVE-2015-2590 plus additional CVEs) [http://www.ibm.com/support/docview.wss?uid=swg21964027]
+   
+ * Security Bulletin IBM Tivoli Monitoring embedded WebSphere Application Server (CVE-2015-7450, CVE-2015-2017, CVE-2015-4938, CVE-2015-1932, CVE-2015-1927)
+
+ * Security Bulletin: Multiple security vulnerabilities has been identified in WebSphere Application Server shipped with Jazz for Service Management (CVE-2015-7450) (CVE-2015-2017) [http://www-01.ibm.com/support/docview.wss?uid=swg21971097] 
+ * Security Bulletin: Multiple security vulnerabilities has been identified in IBM HTTP Server shipped with Jazz for Service Management / Websphere Application Server (CVE-2015-1283,CVE-2015-3183) [http://www-01.ibm.com/support/docview.wss?uid=swg21968301]
+   
+   
+ * Security Bulletin: IBM Tivoli Monitoring (CVE-2015-1829, CVE-2015-3183, CVE-2015-1283, CVE-2015-4947, CVE-2015-2808) [http://www.ibm.com/support/docview.wss?uid=swg21970056] 
+   
+   
+ * Security Bulletin: IBM Tivoli Monitoring embedded WebSphere Application Server (CVE-2015-1920) [http://www-01.ibm.com/support/docview.wss?uid=swg21963474]
+   
+   
+ *  [http://www-01.ibm.com/support/docview.wss?uid=swg21963473]Security Bulletin: Vulnerability in Diffie-Hellman ciphers affects IBM Tivoli Monitoring (CVE-2015-4000) [http://www.ibm.com/support/docview.wss?uid=swg21962739]
+   
+   
+ * Security Bulletin: Vulnerability in Diffie-Hellman ciphers affects the Enterprise Common Collector component of the IBM Tivoli zEnterprise Monitoring Agent (CVE-2015-4000) [http://www-01.ibm.com/support/docview.wss?uid=swg21960019]
+   
+   
+ * Security Bulletin: Multiple vulnerabilities in IBM Java SDK affect IBM Tivoli Monitoring (CVE-2014-6593, CVE-2015-0410) [http://www-01.ibm.com/support/docview.wss?uid=swg21963473]
+   
+   
+ * Security Bulletin: Multiple vulnerabilities in IBM Java Runtime affect the Enterprise Common Collector component of the IBM Tivoli zEnterprise Monitoring Agent (CVE-2015-0488, CVE-2015-0478, CVE-2015-1916) [http://www-01.ibm.com/support/docview.wss?uid=swg21902886]
+   
+   
+ * Security Bulletin: Vulnerability in IBM Java Runtime affects IBM Tivoli Monitoring (CVE-2015-0138) [http://www.ibm.com/support/docview.wss?uid=swg21701519]
+   
+   
+ * Security Bulletin: Multiple vulnerabilities in IBM Java Runtime affecting IBM Tivoli Monitoring clients [http://www.ibm.com/support/docview.wss?uid=swg21695592]
+   
+   
+ * Security Bulletin: Vulnerability in TLS affects IBM Tivoli Monitoring (CVE-2014-8730) [http://www.ibm.com/support/docview.wss?uid=swg21694339]
+   
+   
+ * Security Bulletin: Vulnerability in RC4 stream cipher affects the Enterprise Common Collector component of the IBM Tivoli zEnterprise Monitoring Agent (CVE-2015-2808) [http://www.ibm.com/support/docview.wss?uid=swg21713608]
+
+AFFECTED PRODUCTS AND VERSIONS
+ 
+
+Principal Product and Versions Affected Supporting Product and Version IBM Cloud Orchestrator Enterprise 2.5, 2.5.0.1, 2.5.0.1 Interim Fix1, 2.4, 2.4.0.1, 2.4.0.2 and 2.4.0.3 IBM Tivoli Monitoring 6.3.0.2 IBM SmartCloud Orchestrator Enterprise 2.3 and 2.3.0.1 IBM Tivoli Monitoring 6.3.0.1 GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v2 Guide [http://www.first.org/cvss/v2/guide] 
+On-line Calculator v2 [http://nvd.nist.gov/CVSS-v2-Calculator] 
+
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] 
+
+CHANGE HISTORY
+ * 20 May 2016:Last Update new bulletins
+* 30 April 2015: Original copy published 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.

@@ -1,0 +1,30 @@
+Title: IBM WMQ JMS MDB gets a message with the same correlation id more than once - United States
+
+Text:
+mqminfo duplicate same message msgid correlid mdb jms asf was wsas unique identical TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ A remote application sends messages with unique correlation IDs to a WebSphere MQ queue where a WMQ JMS application that is running as a Message Driven Bean (MDB) in a WebSphere Application Server (WAS) will get the messages. Intermittently, the WAS MDB application will do an MQGET for a message and will receive a message with the same correlid two times. 
+
+CAUSE
+The problem is related to the message ID of the received messages. To explain what is happening requires an understanding of how WAS and the JMS client supply messages to Message Driven Beans. 
+
+When a MDB is deployed, the application server will use part of the JMS specification known as the Application Server Facilities (ASF). As part of the ASF setup, the WebSphere MQ classes for JMS (the JMS client code) will create a thread that will browse the message queue for messages that can be dispatched to the MDB. 
+
+The implementation of the ASF classes is in two parts. As stated previously, there is a thread that will browse the message queue looking for suitable messages. The second part of the ASF implementation is within the JMS Session object and performs the actual destructive get of the messages from the queue, and passes the received messages to the MDB code. The browsing thread passes a MessageReference containing details of the message to a JMS Session, which is then run on a new thread, and this Session uses the MessageReference to perform the destructive get of the message from the queue (in whatever transactional context is required). 
+
+When the Session performs the destructive get, it uses the MessageID to ensure that the correct message is retrieved from the queue. It is for this reason that the ASF implementation of the JMS client code requires that messages each have different MessageIds. When a message is put to a Queue or Topic by JMS, a new MessageID is assigned to the message at put time; there is no way within JMS to override this and avoid setting a MessageID. However, if a non-JMS application is used to put the original message then it is possible to put that message without a suitable, unique, MessageId being set.
+
+
+DIAGNOSING THE PROBLEM
+We can see in the trace, a number of consume() calls, in which the Session will perform the get of the message. Each consume traces out the MessageId and CorrelationId of the message to be retrieved, and, although the CorrelationId of each message appears to be different, in every case, the MessageId is stated to be "404040404040404040404040404040404040404040404040" (as a hex representation of the byte values). 
+
+
+
+RESOLVING THE PROBLEM
+Ensure that the original putting application sets a unique MessageId or uses the appropriate putMessageOptions (MQPMO_NEW_MSG_ID) to ensure that the queue manager creates a new MessageId for each message that is put to the queue.
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ wmq/mq

@@ -1,0 +1,101 @@
+Title: IBM RRT fails to playback RPT script with certificate - United States
+
+Text:
+71INS-RRT; 71RRT-RPTPLAY; 71RRT-RPTTS; RPXE5103I; rational performance tester; robotic response time; itcam for transactions; 5724s79rr TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When RRT (T6) agent plays back a RPT HTTPS Script that involves a client certificate, playback fails. 
+
+SYMPTOM
+ 
+
+ 1. Within RPT (Rational Performance Tester) Workbench, recorded HTTPS script fails to playback 
+ 2. HTTPS script works in RPT Workbench, but fails to playback when exported to the RRT (Robotic Response Time) T6 agent 
+ 3. A recorded script that previously worked now fails after updating its certificate (under scenario #1 or #2).
+
+
+CAUSE
+ By default, a JRE (Java Runtime Environment) does not allow unlimited strength encryption to be used. The exact default cryptographic strength allowed depends on the version of JRE shipped.
+
+When an HTTPS script with client certificate is executed, the playback process requires the JRE to authenticate not just the client certificate, but also its entire trust chain. So while the client certificate might be at an acceptable cryptographic strength level (eg 1024bit RSA) its parent certificate (eg root certificate is 2048 bit RSA) might not be. This can be the cause for symptom #3 listed above, as the signing authority upgrades the root certificates over time.
+
+RPT ships with its own JRE, so does the T6 agent. The RPT version doesn't necessarily match. That is why it is possible for the script to run properly within RPT Workbench but fail on a T6 agent (symptom scenario #2).
+
+
+DIAGNOSING THE PROBLEM
+Turn on T6 agent debugging , section 7. 
+
+
+Reproduce the problem on the T6 agent and observe in the CommonBaseEvent logs 
+java.security.InvalidKeyException: Illegal key size 
+
+Observe in the trace-robotic*.log the follow error message:
+java.lang.UnsupportedOperationException 
+at com.ibm.rational.test.lt.models.wscore.datamodel.security.util.
+KeyStoreUtil$SSLCreationUtil.createKeyStore(KeyStoreUtil.java:137) 
+at com.ibm.rational.test.lt.models.wscore.datamodel.security.util. 
+KeyStoreUtil$SSLCreationUtil.getKeyManagerFactory(KeyStoreUtil.java:171) 
+
+
+RESOLVING THE PROBLEM
+ 
+
+The following two policy files dictate the maximum encryption strength a JRE is allowed to use:
+%JAVA_HOME%\jre\lib\security\local_policy.jar
+%JAVA_HOME%\jre\lib\security\US_export_policy.jar
+Replace these files with unlimited/higher strength policy files. Follow the two sets of instructions below; one for the RPT's JRE, and one for the T6 agent's JRE.
+
+Upgrade policy [https://www14.software.ibm.com/webapp/iwm/web/preLogin.do?source=jcesdk] files (link in Related URL)
+
+Replace the security files/JRE for RPT located in 
+C:\Program Files\IBM\SDP\jdk\jre\lib\security
+C:\Program Files\IBM\SDP\AgentController\jdk\jre\lib\security (only if you use AgentController)
+
+Replace security files/JRE for the T6 agent located in 
+[ITM_HOME]\tmaitm6\java60\jre\lib\security 
+
+
+
+Instructions for upgrading policy files on the RPT Workbench 
+
+Reference the RPT Creating performance tests document for specific information on recording a test with digital certificates. [http://www.ibm.com/support/knowledgecenter/SSMMM5_8.2.0/com.ibm.rational.test.lt.doc/topics/treccert.html] 
+
+Follow the directions to download and install the required policy files [http://www.ibm.com/support/docview.wss?uid=swg21245273]. 
+
+
+Note: In addition to the Personal certificate, examine all the Signer certificates to determine if any of them require stronger encryption. 
+
+
+Instructions for upgrading policy files on the T6 agent 
+
+In order to enable strong encryption, you need to download and install policy files from IBM developerWorks. This involves acceptance of licensing terms. 
+
+The steps to enable strong encryption are as follows: 
+
+ 1.  Go to the IBM developerWorks Java Security [http://www.ibm.com/support/knowledgecenter/SSYKE2_6.0.0/com.ibm.java.security.component.60.doc/security-component/sdkpolicyfiles.html] page for Java SE 6 [http://www-106.ibm.com/developerworks/java/jdk/security/] 
+ 2.  Click on the IBM SDK Policy files [https://www14.software.ibm.com/webapp/iwm/web/preLogin.do?source=jcesdk]. 
+ 3.  On the Sign in page, supply your IBM ID and Password to download the policy files. 
+ 4.  Select "Unrestricted JCE Policy files for Java....." and click "Continue." 
+ 5.  Scroll down to the License portion of the resulting page and click on the "View license" link to see the licensing terms for the download. 
+ 6.  If the licensing terms are acceptable, check "I agree" and click on the "I confirm" link. 
+     If the terms are not acceptable, and you do not want to enable strong encryption, click "I cancel". 
+ 7.  Click the "Download now" link to download the unrestricted.zip file. 
+ 8.  Extract the local_policy.jar and US_export_policy.jar files from the unrestricted.zip archive. 
+ 9.  Back up the files in the [ITM_HOME]\tmaitm6\java60\jre\lib\security directory. 
+ 10. Copy the unlimited local_policy.jar and US_export_policy.jar files into the [ITM_HOME]\tmaitm6\java60\jre\lib\security directory, replacing the existing files. 
+ 11. Restart the T6 agent to load the new policy files. 
+
+RELATED INFORMATION
+ Enabling Strong Encryption (encryption key lengths >128 [http://www.ibm.com/support/docview.wss?uid=swg21245273]
+Java security for Java SE 6 [http://www.ibm.com/support/knowledgecenter/SSYKE2_6.0.0/com.ibm.java.security.component.60.doc/security-component/sdkpolicyfiles.html]
+T6 Agent debugging [http://www.ibm.com/support/docview.wss?uid=swg21326667]
+Upgrade Policy Files [https://www14.software.ibm.com/webapp/iwm/web/preLogin.do?source=jcesdk]
+Recording a test with digital certificates [http://www.ibm.com/support/knowledgecenter/SSMMM5_8.2.0/com.ibm.rational.test.lt.doc/topics/treccert.html]
+Enabling Strong Encryption greater than 128bit [http://www.ibm.com/support/docview.wss?uid=swg21245273]
+
+
+
+
+PRODUCT ALIAS/SYNONYM
+ itcamft
+itcam4t

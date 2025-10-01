@@ -1,0 +1,272 @@
+Title: IBM PN86989: MULTIPLE CICS SOCKET GETHOSTBYNAME OR GETHOSTBYADDR CALLS CAUSES DEPLETION OF CICS OSCOR(BELOW 16M LINE). - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  In a CICS environment that has a high peak of CICS socket appl
+   issuing gethostbyname or gethostbyaddr calls, a depletion of
+   CICS oscor may occur. The following message is also seen when
+   the problem occurs:
+       IEW4000I FETCH FOR MODULE EZACICRE FROM DDNAME STEPLIB  FAIL
+         BECAUSE INSUFFICIENT STORAGE WAS AVAILABLE.
+   CSV04031I LIBRARY ACCESS FAILED FOR MODULE EZACICRE, RETURN CODE
+             REASON CODE 26080021, DDNAME STEPLIB
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Additional Symptoms:
+   CICS abend80a due to unavailable storage below 16mb.
+   Verification Steps:
+   Customer was able to Monitor CICS oscor usage with a
+   cics monitor and could see high amounts of oscor
+   usage. This would occur during peak socket transaction
+   periods with applications issuing gethostbyname calls.
+   Customer removed gethostbyname call from their application
+   and saw oscor storage usage remain dramatically unchanged.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All users of TCP/IP for MVS Version 3        *
+   *                 Release 1                                    *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: CICS transactions issuing TCP/IP for    *
+   *                      MVS GetHostByName or GetHostByAddr      *
+   *                      functions could experience S80A or S878 *
+   *                      abends because EZACICRE has AMODE(31)   *
+   *                      RMODE(24) LINKEDIT characteristics.     *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   When CICS transactions issue GetHostByName or GetHostByAddr
+   functions, module EZACICRE is loaded into storage below the line
+   for each GetHostByName or GetHostByAddr request. EZACICRE is
+   approximately 250K in size. When several GetHostByName or
+   GetHostByAddr functions are issued from concurrent CICS
+   transactions, all available storage below the line can become
+   occupied causing the CICS region to fail when additional
+   unconditional storage allocation requests are issued.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Module EZAAE05I has been changed to provide storage areas used
+   by the MVS EXTRACT macro to reside below the line at the time
+   the MVS EXTRACT MACRO is issued. The module is now linked as
+   AMODE(31), RMODE(ANY).
+   
+   The installation of this PTF requires special processing.
+   
+   First APPLY the PTF - do NOT ACCEPT at this stage.
+   
+   Second retrieve and modify the RELINKIT job in member EZACRE31
+          from SEZAINST to conform to your site standards.
+   
+   Third, create a backup copy of load module EZAZZCRE from the
+          distribution library. (We made a member called EZA24CRE
+          in our distribution library).
+   
+   Fourth, submit the modified RELINKIT job.
+   
+   Fifth, after successful completion of the RELINKIT job,
+          RE-APPLY the PTF specifying REDO.
+          (The re-apply of this PTF is required for the resulting
+           load module EZACICRE to be formed correctly.)
+   
+   Sixth ACCEPT the PTF. (THIS PTF CAN NOT BE RESTORED).
+   
+   *********************************************************
+   **                                                     **
+   ** Failure to follow the installation instructions for **
+   ** this PTF may cause your TCPIP system to have        **
+   ** unpredictable behavior, and require TCPIP to be     **
+   ** REINSTALLED to correct the problem.                 **
+   **                                                     **
+   *********************************************************
+   
+   The following JCL is included in this fix as a sample part
+   (EZACRE31) and should be used as a template for the post
+   apply link-edit required to properly apply this fix:
+   
+   //RELINKIT JOB
+   //*
+   //************************************************************
+   //*                                                          *
+   //* Please note: This JCL can be found in MEMBER EZACRE31    *
+   //*              specified in the SEZAINST library.          *
+   //*                                                          *
+   //* PLEASE READ THE FOLLOWING INSTRUCTIONS CAREFULLY:        *
+   //*                                                          *
+   //* After applying APAR PN86989, the following JCL is used   *
+   //* to re-link EZAZZCRE so that the load module had          *
+   //* AMODE(31) and RMODE(ANY) attributes.                     *
+   //*                                                          *
+   //* First, create a backup copy of load module EZAZZCRE from *
+   //* the distribution library.  (We named ours EZAXXCRE in    *
+   //* distribution library).                                   *
+   //*                                                          *
+   //* Examine the JCL below carefully, making the appropriate  *
+   //* changes required for your facility.                      *
+   //*                                                          *
+   //* Next run this job.                                       *
+   //*                                                          *
+   //* After this is complete, then re-apply APAR PN86989 to    *
+   //* your system specifying REDO.                             *
+   //*                                                          *
+   //* From this point forward, the maintenance will be         *
+   //* continually carried forward and no additional post       *
+   //* install processing will be necessary.  If for any        *
+   //* reason, TCPIP Version 3 Release 1 is re-installed        *
+   //* this procedure will need to be performed.                *
+   //*                                                          *
+   //*                                                          *
+   //************************************************************
+   //*                                                          *
+   //*   Relink   EZAZZCRE                                      *
+   //*                                                          *
+   //************************************************************
+   //*
+   //EZAZZCRE EXEC PGM=IEWL,PARM='LIST'
+   //SYSPRINT DD SYSOUT=*
+   //SYSUT1   DD UNIT=VIO,                  <-------- verify Unit
+   //            SPACE=(CYL,(1,1))
+   //AEZAMOD1 DD DISP=SHR,
+   //            DSN=TCPIP.AEZAMOD1         <---- verify dist lib
+   //SEZACMTX DD DISP=SHR,
+   //            DSN=TCPIP.SEZACMTX         <-- verify target lib
+   //*
+   //SYSLMOD  DD DISP=SHR,
+   //            DSN=TCPIP.AEZAMOD1         <---- verify dist Lib
+   //SYSLIN   DD *
+     INCLUDE SEZACMTX(CISMSG)     /* new maintenance PN86989   */
+     INCLUDE AEZAMOD1(EZAZZCRE)   /* existing base module      */
+     MODE AMODE(31),RMODE(ANY)    /* change AMODE/RMODE        */
+     NAME    EZAZZCRE(R)          /* new base module           */
+   /*
+   //
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PN86989
+   
+   
+ * REPORTED COMPONENT NAME
+   TCP/IP V3 MVS
+   
+   
+ * REPORTED COMPONENT ID
+   5655HAL00
+   
+   
+ * REPORTED RELEASE
+   310
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   1996-07-23
+   
+   
+ * CLOSED DATE
+   1996-08-09
+   
+   
+ * LAST MODIFIED DATE
+   1996-09-03
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UN93969
+   
+   
+
+MODULES/MACROS
+ *  EZAAASVM EZAAD0BU EZAAD0B5 EZAAD0PR EZAAD0PS
+   EZAAD0PT EZAAD0PU EZAAD0PV EZAAD0PW EZAAD0PX EZAAD0P0 EZAAD0P2
+   EZAAD0P3 EZAAD0XE EZAAD0XH EZAAD0XP EZAAD0ZP EZAAD02E EZAAD028
+   EZAAD065 EZAAE00D EZAAE01D EZAAE029 EZAAE03Q EZAAE03V EZAAE04A
+   EZAAE05I EZAAE050 EZAAE060 EZAAE061 EZACICRC EZACICRE EZACRE31
+   EZAEOMSG EZAEO061 EZAMSGLC EZAMSGP  EZAMSGW  EZAOEGLC EZAOEMSP
+   EZAOE0B5 EZAOE0PV EZAOE0XE EZAOE0XH EZAOE0ZP EZAOE02E EZARXGLC
+   EZARXMSP EZARX0BU EZARX0B5 EZARX0PR EZARX0PS EZARX0PT EZARX0PU
+   EZARX0PV EZARX0PW EZARX0PX EZARX0P0 EZARX0P2 EZARX0P3 EZARX0XE
+   EZARX0XH EZARX0ZP EZARX02E EZARX028 EZARX065 EZAXRMSG EZAXR061
+   HTCP310J
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TCP/IP V3 MVS
+   
+   
+ * FIXED COMPONENT ID
+   5655HAL00
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R310 PSY UN93969 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UN93969]
+   UP96/08/15 P F608
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

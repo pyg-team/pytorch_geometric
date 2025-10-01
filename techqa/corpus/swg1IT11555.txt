@@ -1,0 +1,142 @@
+Title: IBM IT11555: SCC CRASHES :ORA-01795: MAXIMUM NUMBER OF EXPRESSIONS IN A LIST IS 1000 - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  trying to netmap connection summary report get oracle sql error
+   ORA-
+   01795: maximum number of expressions in a list is 1000 and all
+   of SCC
+   crashes
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Description of issue: The following SQL error occurred when
+   running a "Netmap Connections Summary Report": ORA-01795:
+   maximum number of expressions in a list is 1000.  This occurs if
+    the query contains more than 1000 items in an IN(......) clause
+    when using an Oracle database.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Description of fix:  Modified the query to use multiple
+   IN(.....) clauses , if needed, each containing 1000 items.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  Description of issue: The following SQL error occurred when
+   running a "Netmap Connections Summary Report": ORA-01795:
+   maximum number of expressions in a list is 1000.  This occurs if
+    the query contains more 1000 items in an IN(......) clause when
+    using an Oracle database.
+   
+   Description of fix:  Modified the query to use multiple
+   IN(.....) clauses , if needed, each containing 1000 items.
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT11555
+   
+   
+ * REPORTED COMPONENT NAME
+   STR CONTROL CEN
+   
+   
+ * REPORTED COMPONENT ID
+   5725D0200
+   
+   
+ * REPORTED RELEASE
+   542
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-10-02
+   
+   
+ * CLOSED DATE
+   2015-10-12
+   
+   
+ * LAST MODIFIED DATE
+   2015-10-12
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   STR CONTROL CEN
+   
+   
+ * FIXED COMPONENT ID
+   5725D0200
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R542 PSY
+   UP
+   
+   
+ * R600 PSY
+   UP

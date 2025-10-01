@@ -1,0 +1,75 @@
+Title: IBM Using masking characters in Net Search Extender Search - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How do I use masking characters in Net Search Extender Search? 
+
+ANSWER
+Net Search Extender uses two masking characters to express wildcard searches namely percent (%) and underscore (_).
+Percent (%) represents any number of arbitrary characters, while underscore (_) represents a single character in a search term.
+- A masked search term, for example doc%, is expanded within the internal search engine. 
+An index lookup is done and all terms starting with "doc" are added to a candidate token list.
+This token list is then passed for searching. The token list can only contain up to 1000 tokens. 
+If more than 1000 matching tokens are found in the index, the query is determined to be too general 
+and the following message is displayed:
+
+"CTE0360 "Search result truncated by mask limit" SQLSTATE=38960"
+
+In order to retrieve a result, the query must be rerun with an explicit EXPANSION LIMIT 
+parameter set that allows for a larger token list.
+For example:
+db2 select docid from mytable where contains(mycolumn, ' EXPANSION LIMIT 10000 "doc%" ')=1 
+
+- There is an exception to the behaviour described above. 
+If a query contains tokens that consist of only one masking character, the token is not
+interpreted as a wildcard expression, but as the original symbol.
+A search for just "%" will find documents that contain a "%" character, for example documents
+that contain the word "100%" . In other words, if "%" is not part of a search term token,
+it will not be interpreted as a wildcard character.
+
+- If documents that are indexed contain "%" or "_" as part of a word, for example, function_id or 
+symbol%path, the indexing engine needs to know if these characters are part of the search term and 
+are not wildcards.
+To do so, set the parameter AdditionalAlphanumCharacters in the file cteixcfg.ini in 
+<instance dir>/sqllib/db2ext as follows:
+
+AdditionalAlphanumCharacters="%_" 
+
+If "%" or "_ " is part of the search term, these characters must be prefixed using an escape 
+character.
+For example:
+
+db2 select docid from mytable where contains(mycolumn, ' " function!_id" ESCAPE "!" ')=1
+
+This search will return documents that contain the word "function_id". A wildcard search is no longer
+possible. 
+
+
+Example:
+
+1) If the configuration parameter AdditionalAlphanumCharacters (in cteixcfg.ini) is not
+set to "%" and "_" , words like 100% or 98%ig are tokenized as follows: 
+
+100
+%
+98
+%
+ig
+
+A query "100%" or "98%ig" will not return a result, but a query "100 %" or "98 % ig"
+will retrieve text containing "100%" and "98%ig".
+
+2) If the configuration parameter AdditionalAlphanumCharacters is set to "%_",
+these two characters are considered as part of a word and the index will contain:
+
+100%
+98%ig
+
+A search for 100% will find text containing this word, but the character %
+must be preceded by an escape character in the query, for example, ' "100!%" ESCAPE "!" ', otherwise the following error message is returned:
+
+SQLSTATE with diagnostic text "CTE0103 An internal error occurred. Location: "353", "10".". SQLSTATE=38703
+
+Note: All of the above only applies to single-byte codesets. DBCS codesets for languages like Japanese, Korean, and Chinese, do not have the wildcard matching functionality (and do not need it). If you use wildcards in DBCS search strings, they will be treated as the actual characters '%' and '_' themselves, and in most cases, will return no results, because those characters are not in the document.

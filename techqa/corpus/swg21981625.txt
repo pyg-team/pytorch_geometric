@@ -1,0 +1,50 @@
+Title: IBM Issue with creating Entity Analytics repository in Modeler Premium 18.0 - United States
+
+Text:
+ICC_PKCS11_ROOT EA entity analytics modeler 18.0 upgrading new version repository creation fails TECHNOTE (FAQ)
+
+QUESTION
+ I am unable to create a repository to be used for Entity Analytics for Modeler 18.0. Whenever I try to create a repository, I get a general repository creation failed error in the Modeler client and then in the EA logs which are found here:
+
+C:\ProgramData\IBM\SPSS\Modeler\18.0\EA\logs
+C:\ProgramData\IBM\SPSS\Modeler\18.0\EA\tmp
+
+I see these errors:
+
+
+
+[ERROR] || G2Wrapper::callG2WebService |
+
+Failed to start web service on port: 1321, username=administrator
+
+
+
+[api_5516_20160321172827:5284] CRIT: CRITICAL
+
+ERROR:
+
+[api_5516_20160321172827:5284] CRIT: {
+
+[api_5516_20160321172827:5284] CRIT:
+
+[EAS-8521E]: Anonymization with a named salt requires the Secure Store
+
+to be initialised.
+
+[api_5516_20160321172827:5284] CRIT: } 
+
+CAUSE
+This error is caused by either a missing environment variable called "ICC_PKCS11_ROOT" or if the user attempting to create the repository does not have write permission on the folder defined for the "ICC_PKCS11_ROOT" environment variable. The error will also occur if the "ICC_PKCS11_ROOT" environment variable is pointing to a directory location that does not exist.
+
+ANSWER
+New to Modeler 18.0, you must define an environment variable called "ICC_PKCS11_ROOT". Refer to the Modeler Premium Installation guide, page 5 in the section titled "After you install SPSS Modeler Premium". Specifically step 1 which says: 
+
+Add an environment variable called: ICC_PKCS11_ROOT. Ensure that the user you are logged into
+Windows as has full permissions on the folder. 
+
+On Windows you can add Environment Variables by right clicking on My Computer > Properties > Advanced System Settings > Environment Variables. Under System Variables click New. Add the variable name ICC_PKCS11_ROOT and set the value to an exisiting directory that he user you are logged into Windows as has full permissions to the directory. 
+
+On a Unix system, follow the steps outlined in our documentation found on the IBM Knowledge Center [http://www.ibm.com/support/knowledgecenter/SS3RA7_18.0.0/modeler_install_prem_project_ddita/clementine/install_premium/post_installation_server.html] 
+
+RELATED INFORMATION
+ Need more help? Our Modeler forum is Live! [https://developer.ibm.com/answers/topics/modeler/?smartspace=predictive-analytics]

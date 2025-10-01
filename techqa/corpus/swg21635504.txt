@@ -1,0 +1,35 @@
+Title: IBM How do I enable logging for RuleRunner in Datacap TaskMaster Capture 8.1? - United States
+
+Text:
+log file; mustgather; must gather TECHNOTE (FAQ)
+
+QUESTION
+ How do I enable logging for RuleRunner in Datacap TaskMaster Capture 8.1? 
+
+ANSWER
+These are the steps to turn on logging for IBM Datacap Taskmaster RuleRunner versions 8.1 or higher. Although there are logging configuration options that can be used for different levels of logging, these steps are specific to providing maximum logging to troubleshoot Rulerunner issues when they occur. If desired, logging may be left on continuously for a test or development system, but should be set to minimum on a production server, as it will negatively impact performance.
+Enabling Rulerunner Logging
+
+
+ 1.  Run Taskmaster Rulerunner Manager. 
+ 2.  Select the Rulerunner Login tab, enter login information as needed, and then click on Connect. 
+ 3.  Click on the Logging tab, then on the Quick Log subtab at the bottom. 
+ 4.  Slide the slider all the way to Debug at the right. 
+ 5.  Optional – If logging needs to be left on to capture an intermittent event, and the event does not cause the Rulerunner engine itself to fail, uncheck Reflush buffer on the Rulerunner tab. This causes Rulerunner to cache logging events and reduces performance degradation caused by the logging. 
+ 6.  Click on Save. 
+ 7.  On the Rulerunner Login tab, click on Disconnect. 
+ 8.  Exit Taskmaster Rulerunner Manager. 
+ 9.  Generate the error or perform the action for which logging information is needed. 
+ 10. There will potentially be a number of log files created.  1. rulerunnerX.log where X is the thread. Located by default in the Datacap folder, it contains general logging for the Rulerunner process. 
+      2. rulerunner_thread_X_atmY.log where X is the thread and Y is the log sequence number. Located by default in the Datacap folder, it contains detailed logging for the Rulerunner process. 
+      3. Z_rrs.log where Z is the task name. Located in the batch folder, it contains logging detailing the execution of the batch. 
+      4. WRRS logs such as "wrrs-62bb5e8.log" are created when rules are run by the client, the creation of these files depends upon the severity of RRS (actions) log settings.
+     
+     
+
+
+Additional Information 
+
+The Rulerunner service does not have to be restarted after saving logging configuration settings, as the service will pick up the changes automatically once all existing Tasks have been processed. This normally will be fairly quick. However, restarting the service can be done to force changes to be implemented immediately. 
+
+The Rulerunner service uses managed logging for all but the rrs logs. Once all log files are full, the oldest file will be deleted and a new file started. This allows logging to be left on without worrying about filling up the hard disk.

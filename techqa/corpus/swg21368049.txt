@@ -1,0 +1,16 @@
+Title: IBM Which formats can PowerPlay 8 reports be generated in? - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ PowerPlay 8 reports can be generated in various formats. From within PowerPlay Studio, you can export a report to Excel, PDF and CSV. When running a report in Cognos Viewer, however, only PDF output can be generated. 
+
+When a PowerPlay report is included in a Job, you will see these additional formats as available choices. These formats are listed since jobs can contain all types of reports, including PowerPlay 8. While they are available choices, PowerPlay reports will not be generated in a format other than PDF. 
+
+RESOLVING THE PROBLEM
+If you would like a PowerPlay 8 report to appear in Cognos Viewer but in a non-PDF format, you may want to consider migrating that report to Report Studio or Analysis studio, using the 'Open With' feature. You will be able to open these migrated reports in Cognos Viewer in any format that the respective studio will allow (HTML, Excel, etc...)
+
+
+
+Cross Reference information Segment Product Component Platform Version Edition Business Analytics Cognos Business Intelligence PowerPlay Server AIX, HP-UX, Linux, Solaris, Windows 8.4

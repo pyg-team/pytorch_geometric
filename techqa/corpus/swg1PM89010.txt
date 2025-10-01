@@ -1,0 +1,162 @@
+Title: IBM PM89010: 8001 CF05 INSTALL ON SECONDARY NODE FAILURE - United States
+
+Text:
+  A FIX IS AVAILABLE
+Fixes integrated in WebSphere Portal 8.0.0.1 Combined Cumulative Fixes [http://www-01.ibm.com/support/docview.wss?uid=swg24034497]
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Looking at the ConfigTrace, it ultimately failed with:
+   action-deploy-content-templating-libraries:
+   [mkdir] Created dir:
+   C:\IBM\WebSphere\wp_profile\ConfigEngine\config\work\ct_import
+   [unzip] Expanding:
+   C:\IBM\WebSphere\PortalServer\pzn.ext\wp.templating.wcm\deploy
+   \WebContentTemplatingLibrary.zip into
+   C:\IBM\WebSphere\wp_profile\ConfigEngine\config\work\ct_import
+   Trying to override old definition of task trycatch
+   Trying to override old definition of task trycatch
+   Thu May 09 15:21:08 EDT 2013
+   Target started: import-wcm-data
+   
+   import-wcm-data:
+   Trying to override old definition of task trycatch
+   Trying to override old definition of task trycatch
+   Thu May 09 15:21:12 EDT 2013
+   Target started: run-wcm-admin-task
+   
+   run-wcm-admin-task:
+   [echo] VirtualPortalContext =  , VirtualPortalHost =
+   [echo] Initialized: host &lt;host replaced&gt;
+   vpContext
+   [echo] To call ConfigModuleClient: host
+   &lt;host replaced&gt;  vpContext
+   --- Exception Thrown ---
+   C:\IBM\WebSphere\PortalServer\wcm\prereq.wcm\config\includes\p
+   rereq.wcm_cfg.xml:3829: Error executing task. User name must
+   be defined.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  A code fix for this issue is integrated into the 8.0.0.1
+   Combined Cumulative Fix 006 (PM88093 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM88093])
+   
+   http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent
+   =ibm~WebSphere&product=ibm/WebSphere/WebSphere+Portal&release=8. [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~WebSphere&product=ibm/WebSphere/WebSphere+Portal&release=8.]
+   0.0.0&platform=All&function=aparId&apars=PM88093
+   
+   You might need to type or paste the complete address into your
+   Web browser.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A code fix for this issue is integrated into the 8.0.0.1
+   Combined Cumulative Fix 006 (PM88093 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM88093])
+   
+   http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent
+   =ibm~WebSphere&product=ibm/WebSphere/WebSphere+Portal&release=8. [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~WebSphere&product=ibm/WebSphere/WebSphere+Portal&release=8.]
+   0.0.0&platform=All&function=aparId&apars=PM88093
+   
+   You might need to type or paste the complete address into your
+   Web browser.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM89010
+   
+   
+ * REPORTED COMPONENT NAME
+   LOTUS WEB CONT
+   
+   
+ * REPORTED COMPONENT ID
+   5724I2901
+   
+   
+ * REPORTED RELEASE
+   800
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-05-14
+   
+   
+ * CLOSED DATE
+   2013-07-16
+   
+   
+ * LAST MODIFIED DATE
+   2013-07-16
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   LOTUS WEB CONT
+   
+   
+ * FIXED COMPONENT ID
+   5724I2901
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R800 PSY
+   UP

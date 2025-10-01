@@ -1,0 +1,144 @@
+Title: IBM PI56594: DECISION TREES PRODUCES DISCREPANT NODE FREQUENCIES IN CRT TREE DIAGRAM VS TREE-GENERATED SCORING SYNTAX FOR SAME DATA - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  You have generated a CRT tree with the Decision Trees procedure
+   (TREE command) in SPSS Statistics. You requested that node
+   numbers and predicted values be saved, using the Save dialog or
+   /SAVE subcommand. You also requested that SPSS syntax rules for
+   assigning to terminal nodes be printed in the output. You copied
+   these rules to a syntax window and ran the commands for the same
+   data set that produced the tree. However, the counts in the tree
+   diagram and saved node numbers  were very discrepant from the
+   counts in the nodes assigned by the rules syntax.
+   are the tree diagram and /save results in error or the scoring
+   rules or both?
+   This problem was observed in one dataset and referred to
+   Development as a defect for investigation.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * see APAR text                                                *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * This issue has been addressed in IBM SPSS Statistics 23 Fix  *
+   * Pack 3                                                       *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * This issue has been addressed in IBM SPSS Statistics 23 Fix  *
+   * Pack 3                                                       *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This issue has been addressed in IBM SPSS Statistics 23 Fix Pack
+   3
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI56594
+   
+   
+ * REPORTED COMPONENT NAME
+   SPSS STATISTICS
+   
+   
+ * REPORTED COMPONENT ID
+   5725A54ST
+   
+   
+ * REPORTED RELEASE
+   N00
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-02-03
+   
+   
+ * CLOSED DATE
+   2016-05-10
+   
+   
+ * LAST MODIFIED DATE
+   2016-05-10
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   SPSS STATISTICS
+   
+   
+ * FIXED COMPONENT ID
+   5725A54ST
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * RN00 PSN
+   UP
+   
+   
+ * RN00 PSY
+   UP

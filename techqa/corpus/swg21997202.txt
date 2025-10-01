@@ -1,0 +1,14 @@
+Title: IBM End of Support for WebSphere Message Broker V8 - United States
+
+Text:
+ FLASH (ALERT)
+
+ABSTRACT
+ EOS for WebSphere Message Broker V8 is announced for 4/30/2017. WebSphere BI for FN customers running on WMB V8 need to get a support extension for WMB V8 in order to ensure continuous support for the WBIFN environment after this date. 
+
+CONTENT
+WeSphere BI for FN V3.1.1 is supported to run with WebSphere Message Broker V 8, however, this WMB version is not bundled with WBIFN. 
+
+Customers running WBIFN V3.1.1 with WMB V8 must have a service extension for WMB V 8 in place to ensure continuous support for broker related issues in the WBIFN environment beyond the WMB V8 EOS date. 
+
+Please contact your IBM Sales representative to get this service extension.

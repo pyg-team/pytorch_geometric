@@ -1,0 +1,99 @@
+Title: IBM Client for JMS on J2SE with IBM WebSphere Application Server - United States
+
+Text:
+ DOWNLOADABLE FILES
+
+ABSTRACT
+ A significantly reduced footprint JMS Client that allows a JMS application running in a J2SE environment to connect to an IBM WebSphere Application Server service integration bus. 
+
+DOWNLOAD DESCRIPTION
+The IBM Client for Java™ Message Service (JMS) on Java 2, Standard Edition (J2SE) with WebSphere Application Server is an embeddable technology that provides JMS V1.1 connections to a service integration bus messaging engine in WebSphere Application Server V6.0.2 (or above) or any IBM product that incorporates the service integration bus. The connection to the service integration bus messaging engine can be either TCP or SSL. HTTP connectivity is not supported. 
+
+The functionality provided by the IBM Client for JMS on J2SE with IBM WebSphere Application Server is now superseded by the stand-alone thin clients supplied in the runtimes directory of a WebSphere Application Server Version 7.0 installation. See the Migration to the Thin Client for JMS with WebSphere Application Server [http://www14.software.ibm.com/webapp/wsbroker/redirect?version=compass&product=was-nd-mp&topic=rjj_jmsthcli_migrate602] topic of the WebSphere Application Server Version 7.0 information center for further information.
+
+You can install the client in any location.
+
+The client supports the following Java Runtime Environments (JREs):
+
+IBM JRE 1.4.2 and 1.5.0
+Sun JRE 1.4.2 and 1.5.0
+
+
+Change history 
+
+ * March 2009  * Fix for PK76300 Cannot establish JMS connections in an OSGi environment with boot delegation disabled
+   
+   
+ * March 2008:  * Fix for PK56272 An application may periodically delay for periods of time while sending messages 
+    * Fix for PK56464 ArrayIndexOutOfBoundsException from SocketIOBaseRequestContext.run() 
+    * Fix for PK58698 Custom property to configure the TCP connect timeout 
+    * Added OEM re-distributable downloadable file
+   
+   
+ * October 2007:  * Fix for PK54957 NullPointerException from SibTr.getMEName() when trace is enabled.
+   
+   
+ * July 2007:  * Fix for PK48875 Client creates multiple connections when redirected from bootstrap server
+   
+   
+ * November 2006:  * Fix for PK34488 iSeries ClassNotFoundException 
+    * Limited Support for WebSphere Application Server V5.1
+   
+   
+ * August 2006:  * Initial release
+   
+   
+
+PREREQUISITES
+WebSphere Application Server V6.0.2 (or above) or any IBM product that incorporates the service integration bus is required.
+
+INSTALLATION INSTRUCTIONS
+See the Getting Started guide to select the correct dowloadable file. 
+The download installation file supports multiple install options. To perform an install of the client enter:
+
+
+
+java –jar <installation file>.jar [flags] [arguments] 
+Flags:  * -text install using a command-line interface 
+ * -silent install using silent license acceptance 
+ * -xpd install Lotus Expeditor v6.1 Device Runtime Environment J2SE 5.0 ready executables
+
+
+Arguments:  1. The install option, one of jms, jms_jndi_ibm, jms_jndi_sun, nls (see below)
+    
+    
+ 2. The installation directory.
+
+
+The following install options are available:  * jms - JMS only
+   Choose this option if you require JMS v1.1 function only. All connection factories must be programmatically created, since no Java Naming and Directory Interface (JNDI) function is available. This option has the smallest installed footprint.
+   
+   
+ * jms_jndi_ibm - JMS + JNDI for IBM JREs
+   Choose this option if you require JMS v1.1 with basic JNDI function to run under an IBM JRE.
+   
+   
+ * jms_jndi_sun - JMS + JNDI for Sun JREs
+   Choose this option if you require JMS v1.1 with basic JNDI function to run under a Sun JRE.
+   
+   
+ * nls - optional National Language Support (NLS) files
+   Choose this option if you require support for languages other than English.
+
+
+For example, to install JMS + JNDI for IBM JREs into c:\jms use: 
+
+java –jar sibc_install-<build>.jar jms_jndi_ibm c:\jms 
+For further information on configuration see the Getting Started guide. URL LANGUAGE SIZE(Bytes) Getting Started [ftp://public.dhe.ibm.com/software/websphere/appserv/support/tools/JMSclient/GettingStarted.html] US English 81499 
+DOWNLOAD PACKAGE
+
+
+
+
+
+Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options 
+What is DD? [http://www6.software.ibm.com/dldirector/doc/DDfaq_en.html] JMS Client 3/10/2009 US English 3443428 FTP [ftp://public.dhe.ibm.com/software/websphere/appserv/support/tools/JMSclient/sibc_install-o0902.06.jar] DD JMS Client (OEM) 3/10/2009 US English 3447895 FTP [ftp://public.dhe.ibm.com/software/websphere/appserv/support/tools/JMSclient/sibc_oeminst-o0902.06.jar] DD 
+TECHNICAL SUPPORT
+ Contact IBM Support using Electronic Service Request [http://www.ibm.com/software/support/probsub.html], visit the WebSphere Application Server Support Web site [http://www.ibm.com/software/webservers/appserv/was/support/], or contact 1-800-IBM-SERV (U.S. only). 
+
+Cross reference information Segment Product Component Platform Version Edition Application Servers Runtimes for Java Technology Java SDK Application Servers WebSphere Application Server for z/OS z/OS 6.0

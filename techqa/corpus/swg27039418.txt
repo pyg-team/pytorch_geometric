@@ -1,0 +1,24 @@
+Title: IBM Included APAR fixes in WebSphere Cast Iron Cloud integration 6.4.0.1 fix pack - United States
+
+Text:
+ RELEASE NOTES
+
+ABSTRACT
+ APARs resolved in WebSphere Cast Iron Cloud integration 6.4.0.1 fix pack. 
+
+CONTENT
+
+
+TAB NAVIGATION
+ * Overview [http://www.ibm.com/support/docview.wss?uid=swg21647655]- selected tab,
+ * Included Fixes [http://www.ibm.com/support/docview.wss?uid=swg27039418]
+ * Known Issues [http://www.ibm.com/support/docview.wss?uid=swg27039417]
+ * Download Links [http://www.ibm.com/support/docview.wss?uid=swg24035612]
+
+
+
+ The following table details the APARs that are addressed in WebSphere Cast Iron Cloud integration 6.4.0.1 fix pack.
+
+
+
+APAR Summary LI77263 [http://www.ibm.com/support/docview.wss?uid=swg1LI77263] MAPPINGS MAY DISAPPEAR FROM VIEW IN ACTIVITIES UNTIL THE MAPPINGTREE IS MINIMIZED OR MAXIMIZED IN CAST IRON STUDIO LI77265 [http://www.ibm.com/support/docview.wss?uid=swg1LI77265] NOT SPECIFYING "LISTEN AT URL" IN HTTP RECEIVE REQUEST ACTIVITY CAUSES ORCHESTRATION FAILURE LI77431 [http://www.ibm.com/support/docview.wss?uid=swg1LI77431] SAP ADAPTER RECEIVES COMPLEX TYPE ELEMENT, BUT IS PROCESSING ONLY THE FIRST VALUE AND IGNORING THE OTHERS. LI77432 [http://www.ibm.com/support/docview.wss?uid=swg1LI77432] UNABLE TO SET PARAMETRIZED HTTP LISTENER URL AS A CONFIGURATION PROPERTY IN 6.3.0.1 VERSION OF STUDIO LI77470 [http://www.ibm.com/support/docview.wss?uid=swg1LI77470] THE "NET ADD ETCHOST"ERROR MESSAGE DOES NOT CLEARLY INDICATE IF HOSTNAME/IP ADDRESS MAPPING WAS A SUCCESS OR A FAILURE. LI77472 [http://www.ibm.com/support/docview.wss?uid=swg1LI77472] REPUBLISHING THE SAME PROJECT WITH SAME NAME INTO WMC REMOVES THE PUBLISHER PRIVILEGES ON THE PROJECT. LI77478 [http://www.ibm.com/support/docview.wss?uid=swg1LI77478] LAUNCHING WEBSPHERE CAST IRON V6.4 STUDIO DISPLAYS V6.3 ON THE SPLASH PANEL LI77484 [http://www.ibm.com/support/docview.wss?uid=swg1LI77484] DOWNLOAD OF CAST IRON REPOSITORY ON WMC DOES NOT COMPLETE AFTER USER CLICK ON THE "DOWNLOAD NOW" LINK LI77487 [http://www.ibm.com/support/docview.wss?uid=swg1LI77487] NPE WHILE ADDING A WSDL WHICH CONTAINS EMPTY PORTTYPE ELEMENT LI77492 [http://www.ibm.com/support/docview.wss?uid=swg1LI77492] ROLL UP OF SERVICEABILITY IMPROVEMENTS FOR CAST IRON LI77522 [http://www.ibm.com/support/docview.wss?uid=swg1LI77522] SAP ENDPOINT TEST CONNECTION MESSAGE IS NOT SHOWN UNTIL PROJECT IS CLOSED Back to top

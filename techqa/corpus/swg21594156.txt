@@ -1,0 +1,37 @@
+Title: IBM listIU.sh -v fails with message ACUIR00003E - United States
+
+Text:
+ACUIR00003E; listIU; listIU.sh; TCR; fails TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Command "listIU.sh -v", issued as root, runs for a while and then terminate with error message:
+
+ACUIR00003E The query failed with return code, 2 
+
+DIAGNOSING THE PROBLEM
+You can examine the logs file located in the folders: 
+
+/usr/ibm/common/acsi/logs/<user> (for DE installed as root)
+/home/.acsi_<username>/logs (for DE installed as non-root) 
+
+by looking for any meaningful troubleshooting information concerning the listIU execution failure.
+
+
+RESOLVING THE PROBLEM
+Most of the time the problem is related to locked files which prevent the process from executing smoothly, or maybe DE is not running at all.
+Before any further investigation on the logs files, try restarting DE with these steps:
+
+If DE is installed as root
+/usr/ibm/common/acsi/bin # ./acsisrv.sh -stop 
+/usr/ibm/common/acsi/bin # ./acsisrv.sh -start
+
+iF DE is installed as non-root
+/home/.acsi_<username>/bin # ./acsisrv.sh -stop 
+/home/.acsi_<username>/bin # ./acsisrv.sh -start
+
+Then issue listIU.sh again.
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ Tivoli Common Reporting V1.3 V2.x

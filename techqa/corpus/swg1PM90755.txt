@@ -1,0 +1,185 @@
+Title: IBM PM90755: WMQ V7.0.1 - MESSAGE HANDLE IS NOT FREED WHEN AN IMS MPP PROGRAM ENDS AND AN IMPLICIT DISCONNECT TAKES PLACE. - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Message handle is not freed when an implicit disconnect takes
+   place.
+   
+   A small PLI/PL1 program running in an IMS MPP environment,
+   linked with CSQQSTUB issues the following commands:
+   
+   MQCONN - MQCRTMH - MQSETMP - MQSETMP - MQPUT1
+   ==> no MQDLTMH nor MQDISC are issued.
+   
+   When the program ends an implicit disconnect takes place and
+   CSQQTTHD does not call CSQBCRMH to clear the message handle.
+   In case of an explicit MQDISC call, CSQQNORM calls CSQBCRMH
+   to clear the message handle.
+   
+   This problem may lead to a memory leak in the IMS MPP region
+   which is filled with message handles ( BMSGH ) and message
+   properties blocks in Subpool 131 (SP131) key8.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All users of WebSphere MQ for z/OS Version 7 *
+   *                 Release 0 Modification 1 and Version 7       *
+   *                 Release 1 Modification 0.                    *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Memory leak in IMS MPP region when      *
+   *                      programs running in it issue an         *
+   *                      MQCRTMH, but end without a MQDISC so    *
+   *                      the message handle is not freed.        *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   An application program running in an IMS MPP region creates a
+   message handle with a MQCRTMH and does not issue a MQDLTMH or a
+   MQDISC.
+   So an implicit disconnect is done when the application ends. But
+   this does not cause CSQBCRMH to be be called to free the message
+   handle storage - which is done by CSQQNORM when an explicit
+   MQDISC is issued.
+   Over time this will cause a memory leak in the IMS MPP region.
+   Another potential symptom is
+   CSV002I REQUESTS FOR MODULE CSQAPEPL EXCEED MAXIMUM USE COUNT
+   Additional Keywords: CSQBPAPI
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  CSQQSSON and CSQQTTHD have been updated to call CSQBCRMH on
+   an implicit disconnect to free message handle storage.
+   CSQQTMID has also been updated to free the copy of CSQBCRMH
+   which may be loaded by the fix.
+   010Y
+   100Y
+   CSQQSSON
+   CSQQTMID
+   CSQQTTHD
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+ *  &#158;**** PE15/02/10 FIX IN ERROR. SEE APAR PI34742 [http://www-01.ibm.com/support/docview.wss?uid=swg1PI34742]  FOR DESCRIPTION
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM90755
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ Z/OS V7
+   
+   
+ * REPORTED COMPONENT ID
+   5655R3600
+   
+   
+ * REPORTED RELEASE
+   018
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-06-10
+   
+   
+ * CLOSED DATE
+   2013-10-30
+   
+   
+ * LAST MODIFIED DATE
+   2015-03-03
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UI11930 UI11931
+   
+   
+
+MODULES/MACROS
+ *  CSQQSSON CSQQTMID CSQQTTHD
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ Z/OS V7
+   
+   
+ * FIXED COMPONENT ID
+   5655R3600
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R010 PSY UI11930 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI11930]
+   UP13/11/20 P F311
+   
+   
+ * R100 PSY UI11931 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI11931]
+   UP13/11/20 P F311
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

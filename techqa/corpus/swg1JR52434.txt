@@ -1,0 +1,171 @@
+Title: IBM JR52434: NEW MODULE IS ADDED TO THE VERY BOTTOM OF LEFT NAVIGATIONAL PANE - United States
+
+Text:
+  DIRECT LINKS TO FIXES
+IBM InfoSphere Master Data Management Collaboration Server Version 11.5.0, Fix Pack 5 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FInfoSphere+Master+Data+Management+Collaboration+Server&fixids=11.5.0.5-MDM-CE-FP05IF000&source=SAR]
+IBM InfoSphere Master Data Management Collaboration Server Version 11.4.0, Fix Pack 3 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FInfoSphere+Master+Data+Management+Collaboration+Server&fixids=11.4.0-WS-MDMCS-FP003&source=SAR]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  In IBM InfoSphere Master Data Management Collaboration Server
+   11.4.0, when a new module is added to the left navigation pane
+   through the pull down, it appears at the very bottom instead of
+   right below the earlier module. Customer noticed that any new
+   module that is chosen from the pull down on the Left
+   Navigational Pane is being added to the very bottom of the left
+   navigation pane while the entire space above it remains blank.
+   A vertical scroll bar gets added.
+   
+   Steps to reproduce:
+   
+    -  let only one catalog be available on the left navigation
+   pane (close off the rest to reproduce for this test)
+   
+    -  change the width of the left navigation pane
+   
+    -  add a new catalog or hierarchy to the left navigation pane
+   
+    -  the new module will be added to the very bottom of the left
+   navigation pane while the entire space above it remains blank.
+    A vertical scroll bar gets added.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Do not change the width of the left navigation pane
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * All InfoSphere Master Data Management Collaborative Edition  *
+   * implementations are affected by this issue.                  *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * In IBM InfoSphere Master Data Management Collaboration       *
+   * Server 11.4.0, when a new module is added to the left        *
+   * navigation pane through the pull down, it appears at the     *
+   * very bottom instead of right below the earlier module.       *
+   * Customer noticed that any new module that is chosen from the *
+   * pull down on the Left Navigational Pane is being added to    *
+   * the very bottom of the left navigation pane while the entire *
+   * space above it remains blank. A vertical scroll bar gets     *
+   * added. Steps to reproduce: - let only one catalog be         *
+   * available on the left navigation pane (close off the rest to *
+   * reproduce for this test) - change the width of the left      *
+   * navigation pane - add a new catalog or hierarchy to the left *
+   * navigation pane - the new module will be added to the very   *
+   * bottom of the left navigation pane while the entire space    *
+   * above it remains blank. A vertical scroll bar gets added.    *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Customers facing this issue should apply IBM InfoSphere      *
+   * Master Data Management Collaboration Server Version 11.4.0,  *
+   * Fix Pack 3 to gain resolution for this problem.              *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This issue was fixed in IBM InfoSphere Master Data Management
+   Collaboration Server Version 11.4.0, Fix Pack 3 and is available
+   on the IBM Support site.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR52434
+   
+   
+ * REPORTED COMPONENT NAME
+   MDM SERVER FOR
+   
+   
+ * REPORTED COMPONENT ID
+   5724V5100
+   
+   
+ * REPORTED RELEASE
+   B40
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2015-01-29
+   
+   
+ * CLOSED DATE
+   2015-08-14
+   
+   
+ * LAST MODIFIED DATE
+   2015-08-14
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   MDM SERVER FOR
+   
+   
+ * FIXED COMPONENT ID
+   5724V5100
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * RB40 PSY
+   UP

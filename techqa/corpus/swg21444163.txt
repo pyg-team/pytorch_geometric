@@ -1,0 +1,71 @@
+Title: IBM SQL2048N error RC=4 on offline backup due to corrupted or missing SYSTOOLS object - United States
+
+Text:
+SQL2048N; Backup; SYSTOOLSPACE; Backup Policy TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ SQL2048N error RC=4 on offline backup due to corrupted or missing object in the SYSTOOLSPACE tablespace 
+
+SYMPTOM
+The following error message or one similar to the below might be seen:
+
+SQL2048N An error occurred while accessing object "Tablespace: 4, Table: SQL00003". Reason code: "4"
+
+
+
+
+CAUSE
+The problem might have occurred due to a corrupted table in the SYSTOOLSPACE tablespace.
+
+DIAGNOSING THE PROBLEM
+The SQL2048N with RC=4 has the following explanation: 
+
+SQL2048N An error occurred while accessing object object. Reason code: reason-code.
+An error occurred while accessing an object during the processing of a database utility. The following is a list of reason codes:
+
+4 = Access to an object failed.
+
+User response:
+Please check that object exists and is accessible. Ensure that you have correct privileges/permissions to access it.
+
+The object SQL00003 represents the Table ID 3 in the SYSTOOLSPACE tablespace. The table ID may vary in the error message. The following db2diag.log message serves as an eye catcher in diagnosing the problem:
+
+2010-08-17-06.03.14.789638-300 I151250257A1107 LEVEL: Severe
+PID : 610728 TID : 7105 PROC : db2sysc 0
+INSTANCE: xxxxxx NODE : 000 DB : XXXXXX
+APPHDL : 0-23120 APPID: *LOCAL.xxxxxx.123456789012
+AUTHID : XXXXXX
+EDUID : 7105 EDUNAME: db2agent (XXXXXXX) 0
+FUNCTION: DB2 UDB, relation data serv, sqlrr_dump_sibling, probe:200
+MESSAGE : section stmt
+DATA #1 : Hexdump, 127 bytes
+0x0770000025A2DAE0 : 5345 4C45 4354 2050 4F4C 4943 5920 4652 SELECT POLICY FR
+0x0770000025A2DAF0 : 4F4D 2053 5953 544F 4F4C 532E 504F 4C49 OM SYSTOOLS.POLI
+0x0770000025A2DB00 : 4359 2057 4845 5245 204D 4544 3D27 4442 CY WHERE MED='DB
+0x0770000025A2DB10 : 3244 6174 6162 6173 6552 6563 6F76 6572 2DatabaseRecover
+0x0770000025A2DB20 : 794D 4544 2720 414E 4420 4445 4349 5349 yMED' AND DECISI
+0x0770000025A2DB30 : 4F4E 3D27 4442 4261 636B 7570 4465 6369 ON='DBBackupDeci
+0x0770000025A2DB40 : 7369 6F6E 2720 414E 4420 4E41 4D45 3D27 sion' AND NAME='
+0x0770000025A2DB50 : 4442 4261 636B 7570 506F 6C69 6379 27 DBBackupPolicy'
+
+
+RESOLVING THE PROBLEM
+The table addressed is the SYSTOOLS.POLICY table. The SYSTOOLS.POLICY is the table that holds the backup policy and is run whenever a backup is run. This table needs to be recreated. Follow the below steps to recreate the problem:
+
+To drop the SYSTOOLS.POLICY table:
+$ db2 "call sysproc.sysinstallobjects ('policy', 'D', '', '')"
+
+Return Status = 0
+
+To create the SYSTOOLS.POLICY table:
+$ db2 "call sysproc.sysinstallobjects ('policy', 'C', '', '')"
+
+Return Status = 0
+
+Note: The backup entries in the history file will not be lost due to the drop and recreate of the policy tables. However, the various user defined policies will be set back to the default ones. 
+
+Once the table has been successfully created, the backup should also complete successfully.
+
+RELATED INFORMATION
+ SQL2048N [http://publib.boulder.ibm.com/infocenter/db2luw/v9r5/topic/com.ibm.db2.luw.messages.sql.doc/doc/msql02048n.html]
+SYSINSTALLOBJECTS [http://publib.boulder.ibm.com/infocenter/db2luw/v9r5/topic/com.ibm.db2.luw.sql.rtn.doc/doc/r0011876.html]

@@ -1,0 +1,152 @@
+Title: IBM PI22134: PRODUCT BUILD PROCESS USES OLD ORB LIBRARIES FOR THIN CLIENT JARS - United States
+
+Text:
+  FIXES ARE AVAILABLE
+7.0.0.35: WebSphere Application Server V7.0 Fix Pack 35 [http://www-01.ibm.com/support/docview.wss?uid=swg24038310]
+7.0.0.37: WebSphere Application Server V7.0 Fix Pack 37 [http://www-01.ibm.com/support/docview.wss?uid=swg24039338]
+7.0.0.39: WebSphere Application Server V7.0 Fix Pack 39 [http://www-01.ibm.com/support/docview.wss?uid=swg24041013]
+7.0.0.41: WebSphere Application Server V7.0 Fix Pack 41 [http://www-01.ibm.com/support/docview.wss?uid=swg24041931]
+7.0.0.43: WebSphere Application Server V7.0 Fix Pack 43 [http://www-01.ibm.com/support/docview.wss?uid=swg24043400]
+7.0.0.45: WebSphere Application Server V7.0 Fix Pack 45 [http://www-01.ibm.com/support/docview.wss?uid=swg24044551]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When a fix pack is applied to WebSphere Application Server, the
+   com.ibm.ws.orb_7.0.0.jar is not updated with the most current
+   Java SDK ORB libraries.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  No workaround when using thin client libraries and non-IBM SDK.
+   Can workaround by running application in WebSphere Application
+   Server environment.
+   Also, can workaround when using the IBM SDK. This will work
+   because the SDK will contain the up-to-date ORB libraries.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  All users of IBM WebSphere Application      *
+   *                  Server that experience a problem with the   *
+   *                  orb that is addressed in the newer          *
+   *                  version.                                    *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: The orb used with WebSphere             *
+   *                      Application Server Thin clients is an   *
+   *                      old version.                            *
+   ****************************************************************
+   * RECOMMENDATION:  Applying this APAR will update the          *
+   *                  orb used in the thin clients and the orb    *
+   *                  will also be updated in WebSphere           *
+   *                  Application Server 7.0.0.35.                *
+   ****************************************************************
+   Thin client orb was an old version.  The thin client orb has
+   been updated in 7.0.0.35.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix for this APAR is currently targeted for inclusion in
+   fix pack 7.0.0.35.  Please refer to the Recommended Updates
+   page for delivery information:
+   http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI22134
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBS APP SERV N
+   
+   
+ * REPORTED COMPONENT ID
+   5724H8800
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-07-16
+   
+   
+ * CLOSED DATE
+   2014-09-18
+   
+   
+ * LAST MODIFIED DATE
+   2014-11-03
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBS APP SERV N
+   
+   
+ * FIXED COMPONENT ID
+   5724H8800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R700 PSY
+   UP

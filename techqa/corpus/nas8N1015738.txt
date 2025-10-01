@@ -1,0 +1,69 @@
+Title: IBM How To Run WebSphere Application Server In Its Own Shared Memory Pool - United States
+
+Text:
+Memory; Pool; WAS; Route; CHGSBSD; CHGRTGE; WebSphere Application Server TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This document provides a few simple steps to switch all WebSphere Application Servers to run in their own shared memory pool. 
+
+ENVIRONMENT
+IBM i; IBM WebSphere Application Server
+
+RESOLVING THE PROBLEM
+If you would like to route specific WebSphere Application Servers to different memory pools, please refer to the How To Route Specific WebSphere Application Servers To Different Memory Pools [http://www-01.ibm.com/support/docview.wss?uid=nas8N1011502] IBM Software Technical Document for more information on how to set this up.
+
+Step 1: Determine the version of WebSphere Application Server you wish to move into its own shared memory pool and obtain the name of the subsystem from the following table:
+
+
+IBM WebSphere Application Server Version Subsystem Name WebSphere 3.5 QEJBSVR WebSphere 4 QEJBADV4 WebSphere Express 5 QASE5 WebSphere Base 5 QEJBAS5 WebSphere Express 5.1 QASE51 WebSphere Base 5.1 QEJBAS51 WebSphere 6.0 (All editions) QWAS6 WebSphere 6.1 (All editions) QWAS61 WebSphere 7.0 (All editions) QWAS7 WebSphere 8.0 (All editions) QWAS8 WebSphere 8.5 (All editions) QWAS85 WebSphere 9.0 (All editions) QWAS9 
+In the proceeding steps, I will use the QWAS8 subsystem as an example in my commands. You will want to substitute the subsystem name for QWAS8 based on the IBM WebSphere Application Server version you are working with. 
+
+Step 2: Display your subsystem description using the Display Subsystem Description ( DSPSBSD) command. DSPSBSD SBSD(QWAS8/QWAS8) 
+
+Step 3: Select Option 2 to look at the subsystem's Pool Definitions. By default, you will see Pool ID 1 with a Storage Size (K) of *Base. An additional pool ID must be added for WebSphere to run in its own shared memory pool. 
+
+Step 4: Find an available memory pool to use for the WebSphere subsystem. Execute the WRKSHRPOOL command from the command line. Locate the first pool name that does not have a Pool ID assigned to it. We will use *SHRPOOL1 in the example below. 
+
+Screen shot of the WRKSHRPOOL command output. [/support/docview.wss?uid=nas8N1015738&aid=1] [/support/docview.wss?uid=nas8N1015738&aid=1] 
+
+Step 5: The following command examples are for WebSphere v8.0, You will want to make the necessary subsystem name substitutions for your specific WebSphere Application Server version. 
+
+On the operating system command line, type the following: 
+
+CHGSBSD SBSD(QWAS8/QWAS8) POOLS((2 *SHRPOOL1)) 
+
+Press the Enter key. This adds a subsystem pool ID of 2 to the QWAS8 subsystem. The subsystem pool ID will be associated with *SHRPOOL1. 
+
+How to remove a subsystem pool ID 
+
+CHGSBSD SBSD(QWAS8/QWAS8) POOLS((2 *RMV)) 
+
+Press the Enter key. This removes the subsystem pool ID of 2 from the QWAS8 subsystem. The subsystem pool ID will no longer be associated with a memory pool. 
+
+Step 6: To give the shared pool some memory and an activity level, on the operating system command line type the following: 
+
+WRKSHRPOOL 
+
+Press the Enter key. Locate your specific shared memory pool (in this case *SHRPOOL1), and change the memory (Defined size column) and activity level (Max active column). The minimum memory size you should specify is 1GB (1000MB). The minimum activity level you should specify is 100. 
+
+Press F11 (Display tuning data). Then, set the Size % Minimum so that the percentage equals the desired amount of the Total Main storage size. For example, if the Main storage size is 8Gb and you want 2 Gb in the WebSphere Application Server pool, set the Size % Minimum to 25.00. This keeps the pool from dropping below the desired 2 Gb minimum. 
+
+Step 7: To tell the subsystem to use this new pool, display the subsystem description again. Select Option 7 for Routing Entries. By default, you will see only with 9999 as the sequence number. 
+
+Step 8: To change the routing entry, on the operating system command line type the following: 
+
+CHGRTGE SBSD(QWAS8/QWAS8) SEQNBR(9999) POOLID(2) 
+
+Press the Enter key. This changed any new jobs coming into the subsystem to be run in subsystem pool 2 created in Step 4. 
+
+Step 9: Restart the QWAS8 subsystem for the changes to take affect. 
+
+ENDSBS QWAS8 
+STRSBS QWAS8/QWAS8 
+
+Congratulations! You have successfully moved a WebSphere Application Server subsystem and its associated jobs into its own shared memory pool.  
+
+
+Cross reference information Segment Product Component Platform Version Edition Operating System IBM i 7.2 Operating System IBM i 7.1 Operating System IBM i 6.1 Operating System IBM i 7.3 
+HISTORICAL NUMBER
+ 365585115

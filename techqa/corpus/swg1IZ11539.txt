@@ -1,0 +1,135 @@
+Title: IBM IZ11539: KDDOS.EXE ERROR HAPPENS ON LARGE DB ENV - United States
+
+Text:
+  FIXES ARE AVAILABLE
+IBM Tivoli Monitoring for Database Microsoft SQL Server 6.2.0-TIV-ITM_SQL-LA0002 [http://www-01.ibm.com/support/docview.wss?uid=swg24020082]
+IBM Tivoli Monitoring for Database Microsoft SQL Server 6.2.0-TIV-ITM_SQL-IF0005 [http://www-01.ibm.com/support/docview.wss?uid=swg24023163]
+IBM Tivoli Monitoring for Databases:Sybase Server Agent 6.1.0-TIV-ITM_SYB-LA0006 [http://www-01.ibm.com/support/docview.wss?uid=swg24021335]
+IBM Tivoli Monitoring for Database Microsoft SQL Server 6.2.0-TIV-ITM_SQL-IF0007 [http://www-01.ibm.com/support/docview.wss?uid=swg24024095]
+IBM Tivoli Monitoring for Database Microsoft SQL Server 6.2.0-TIV-ITM_SQL-IF0010 [http://www-01.ibm.com/support/docview.wss?uid=swg24027415]
+IBM Tivoli Monitoring for Databases:Sybase Server Agent 6.1.0-TIV-ITM_SYB-IF0008 [http://www-01.ibm.com/support/docview.wss?uid=swg24029755]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The problem randomly occurs, but when it does, it is when a user
+   is logging onto a server.  At logon, numerous windows pop up
+   which have to be acknoledged. It only happens when numerous
+   datanase agents are running on one server.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Code updated to address problem.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This APAR has been fixed and delivered in a limited availability
+   fix 6.1.0.1-TIV-ITM_ORA-LA0007. This maintenance delivery
+   vehicle is a limited availability patch and therefore is in a
+   "hidden directory." Level 2 Support can provide down load
+   instructions to you. Contact level 2 support at:
+   
+   http://www.ibm.com/software/sysmgmt/products/support/Contact_L2_
+   Support.html [http://www.ibm.com/software/sysmgmt/products/support/Contact_L2_Support.html]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ11539
+   
+   
+ * REPORTED COMPONENT NAME
+   TIV MON ORACLE
+   
+   
+ * REPORTED COMPONENT ID
+   5724B96OO
+   
+   
+ * REPORTED RELEASE
+   610
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2007-12-19
+   
+   
+ * CLOSED DATE
+   2008-03-27
+   
+   
+ * LAST MODIFIED DATE
+   2008-03-27
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TIV MON ORACLE
+   
+   
+ * FIXED COMPONENT ID
+   5724B96OO
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R610 PSY
+   UP
+   
+   
+ * R620 PSY
+   UP

@@ -1,0 +1,68 @@
+Title: IBM Downloading the components of version 11.3 of the InfoSphere Optim solutions for use on AIX - United States
+
+Text:
+ DOWNLOADABLE FILES
+
+ABSTRACT
+ This document lists the downloads for the components of version 11.3 of the IBM® InfoSphere® Optim™ solutions on the Passport Advantage® website. 
+
+DOWNLOAD DESCRIPTION
+You must install and configure a workstation on a Microsoft Windows computer before installing Optim components on any other operating system. 
+
+For the latest guidelines on how to perform an installation in your environment, refer to Optim Data Growth Solution or the Optim Test Data Management Solution [http://www.ibm.com/support/knowledgecenter/SSMLQ4_11.3.0/] in Knowledge Center [http://www.ibm.com/support/knowledgecenter/SSMLNW_11.3.0/].
+
+Contents
+
+
+ * Downloading from Passport Advantage 
+ * Download and DVD part numbers 
+ * Extract files with the GNU TAR utility 
+ * Trial edition license 
+ * System i and Teradata 2.5 data sources
+
+
+
+Downloading from Passport Advantage 
+
+After proof of entitlement, download any or all of the images listed here. To obtain the download images: 
+ 1. Navigate to the Find Downloads and Media web page on the IBM Passport Advantage website. 
+ 2. Under Download finder options, select the Find by part number search option. 
+ 3. Search for each downloadable image by download name. 
+ 4. Download all required parts. You must create a temporary directory for each download. 
+ 5. Use a file extracting utility that supports large file extractions to extract each of the parts into a single, temporary directory on your system. 
+ 6. Follow the installation instructions in the image you downloaded.
+
+
+
+Download and DVD part numbers 
+
+Operating system Download part number DVD part number Windows CN595EN C6KU1EN AIX CN596EN C6KU2EN *License file for Data Privacy solutions 
+CN59JEN 
+C6KH6EN *License file for Data Growth or Application Retirement solutions 
+CN59HEN 
+C6KH4EN *License file for Test Data Management solutions 
+CN59IEN 
+C6KH5EN 
+*License files apply to installations from downloads after September 30, 2015. 
+
+Extract files with the GNU TAR utility 
+
+The installation package contains files with long file names. When you use the native TAR utility in AIX to extract files from the installation package, the native TAR utility truncates the long file names. The launchpad therefore cannot find files with the original file names. Download the GNU TAR utility and use GNU TAR to extract files from the installation packages. 
+
+You can find the GNU TAR utility here: 
+http://www.gnu.org/software/tar/ [http://www.gnu.org/software/tar/]  
+
+Trial edition license 
+
+You can install a 30-day full-function trial of Optim to create demos and proofs of concepts by using the following license information: 
+
+ * Company Name: OPTIMDEMO 
+ * Company ID: 388713 
+ * Company Password: 9863ZU 
+ * License Key: LRIOLG-FVKFPN-STMBJ7-QY7EZS-4ZWSG1
+
+
+System i and Teradata 2.5 data sources 
+
+Optim is packaged with IBM InfoSphere Federation Server. To process data on System i or Teradata 2.5, you must install Federation Server on the Optim server. To obtain the downloads for Federation Server, see the Federation Server download document [http://www.ibm.com/support/docview.wss?rs=3551&uid=swg24035029]. PREREQUISITES
+Detailed system requirements for Optim 11.3:

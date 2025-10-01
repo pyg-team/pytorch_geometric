@@ -1,0 +1,218 @@
+Title: IBM PM56709: V8 MIGRATION FAILED TO MAP MODULES TO SERVER PROPERLY FOR APPLICATIONS WITH WAR MODULES HAVING PATHS - United States
+
+Text:
+  FIXES ARE AVAILABLE
+8.0.0.3: WebSphere Application Server V8.0 Fix Pack 3 [http://www-01.ibm.com/support/docview.wss?uid=swg24032315]
+8.0.0.4: WebSphere Application Server V8.0 Fix Pack 4 [http://www-01.ibm.com/support/docview.wss?uid=swg24033190]
+8.0.0.5: WebSphere Application Server V8.0 Fix Pack 5 [http://www-01.ibm.com/support/docview.wss?uid=swg24033754]
+8.0.0.6: WebSphere Application Server V8.0 Fix Pack 6 [http://www-01.ibm.com/support/docview.wss?uid=swg24034673]
+8.0.0.7: WebSphere Application Server V8.0 Fix Pack 7 [http://www-01.ibm.com/support/docview.wss?uid=swg24035457]
+8.0.0.8: WebSphere Application Server V8.0 Fix Pack 8 [http://www-01.ibm.com/support/docview.wss?uid=swg24036729]
+8.0.0.9: WebSphere Application Server V8.0 Fix Pack 9 [http://www-01.ibm.com/support/docview.wss?uid=swg24037574]
+8.0.0.10: WebSphere Application Server V8.0 Fix Pack 10 [http://www-01.ibm.com/support/docview.wss?uid=swg24039242]
+8.0.0.11: WebSphere Application Server V8.0 Fix Pack 11 [http://www-01.ibm.com/support/docview.wss?uid=swg24040425]
+8.0.0.12: WebSphere Application Server V8.0 Fix Pack 12 [http://www-01.ibm.com/support/docview.wss?uid=swg24041590]
+8.0.0.13: WebSphere Application Server V8.0 Fix Pack 13 [http://www-01.ibm.com/support/docview.wss?uid=swg24042746]
+8.0.0.14: WebSphere Application Server V8.0 Fix Pack 14 [http://www-01.ibm.com/support/docview.wss?uid=swg24044096]
+8.0.0.15: WebSphere Application Server V8.0 Fix Pack 15 [http://www-01.ibm.com/support/docview.wss?uid=swg24044734]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Environment:
+   -----------
+   OS: Microsoft Windows 2008 SP2, 32 bit
+   WebSphere Application Server Network Deployment edition
+   V7.0.0.17 migrating to WAS WebSphere Application Server
+   Network Deployment edition V8.0.0.2
+   
+   Problem description:
+   -------------------
+   Customer tried to migrate from 7.0.0.17 to 8.0.0.2.  The
+   migration was successful, but some of the applications did not
+   get migrated successfully due to the following exception:
+   
+   MIGR0496W: The migration of D:/IBM/WebSphere/32bit/8.
+   
+   0/profiles/DMGR_DEV/installableApps/WFM_DEV.ear/ terminated
+   unexpectedly.
+   com.ibm.wsspi.migration.document.exceptions.NotFoundException:
+   lib/axis.
+   war
+   
+   [01/18/2012 12:12:39:191 EST] ADMA5026E: No valid target is
+   specified in
+   ObjectName
+   WebSphere:cell=aaaaaa,node=bbbbbb,server
+   =server1 for module lib/axis.war+WEB-INF/web.xml.
+   [01/18/2012 12:12:39:191 EST]
+   com.ibm.websphere.management.exception.AdminException:
+   ADMA5026E: No
+   valid target is specified in ObjectName
+   WebSphere:cell=aaaaaa,node=bbbbbb,server
+   =server1 for module lib/axis.war+WEB-INF/web.xml.
+   [01/18/2012 12:12:39:191 EST]  at
+   com.ibm.ws.management.application.task.ConfigRepoHelper.getServe
+   rNames(C
+   onfigRepoHelper.java:2270)
+   [01/18/2012 12:12:39:191 EST]  at
+   com.ibm.ws.management.application.task.ConfigRepoHelper.getAddRe
+   moveServ  P
+   erNames(ConfigRepoHelper.java:2175)
+   [01/18/2012 12:12:39:191 EST]  at
+   com.ibm.ws.management.application.task.ConfigRepoHelper.getServe
+   rNames(C
+   onfigRepoHelper.java:2048)
+   [01/18/2012 12:12:39:191 EST]  at
+   com.ibm.ws.management.application.AppAssociation.getServerNames(
+   AppAssoc
+   iation.java:1293)
+   [01/18/2012 12:12:39:191 EST]  at
+   com.ibm.websphere.management.application.AppDeploymentUtil.getNo
+   deInfoFo
+   rTargets(AppDeploymentUtil.java:307)
+   [01/18/2012 12:12:39:191 EST]  at
+   com.ibm.ws.management.application.task.ValidateAppTask.performTa
+   sk(Valid
+   ateAppTask.java:219)
+   [01/18/2012 12:12:39:191 EST]  at
+   com.ibm.ws.management.application.SchedulerImpl.run(SchedulerImp
+   l.java:3
+   15)
+   P
+   [01/18/2012 12:12:39:191 EST]  at
+   java.lang.Thread.run(Thread.java:769)
+   [01/18/2012 12:12:40:191 EST] ADMA5011I: The cleanup of the temp
+   directory for application DWF_STG is complete.
+   
+   It appeared that the migration process did not take into account
+   the possiblity of war modules having paths.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  All users of IBM WebSphere Application      *
+   *                  Server v8.0 Migration tools with            *
+   *                  applications failing to migrate             *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: The generated application install       *
+   *                      scripts fail becuase they have          *
+   *                      incomplete map module settings.         *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   If a Web Module's relative location includes a path and it is
+   mapped to more than one location, then the migration code must
+   look up whether it is using a sip.xml or a web.xml META-INF
+   file.  This lookup is causing the generated map module
+   information to be incomplete.  Thus the application install
+   script is incorrect and will fail.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The migration tools now handle these path situations, and
+   gather the complete map module information when creating the
+   application install scripts used for migration.
+   
+   The fix for this APAR is currently targeted for inclusion in
+   fix pack 8.0.0.3.  Please refer to the Recommended Updates
+   page for delivery information:
+   http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM56709
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBS APP SERV N
+   
+   
+ * REPORTED COMPONENT ID
+   5724H8800
+   
+   
+ * REPORTED RELEASE
+   800
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-01-25
+   
+   
+ * CLOSED DATE
+   2012-02-07
+   
+   
+ * LAST MODIFIED DATE
+   2012-02-07
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBS APP SERV N
+   
+   
+ * FIXED COMPONENT ID
+   5724H8800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R800 PSY
+   UP

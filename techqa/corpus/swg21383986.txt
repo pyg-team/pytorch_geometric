@@ -1,0 +1,49 @@
+Title: IBM Script for manual datatrimming of the Octigate database - United States
+
+Text:
+slow; datatrim; octigate; db2; oracle; CAMADMSALL CAMADMSDB TECHNOTE (FAQ)
+
+QUESTION
+ The datatrim process may take a lot of time to complete (up to 24 hours or more, in specific cases). What can be done as an alternative cleaning mechanism, without losing all the historical data? 
+
+ANSWER
+The sql scripts provided here are to be used exclusively when the normal datatrim process does not respond well because of the large amount of data on certain few days (millions of requests per day). The standard datatrim job is still recommended as a general rule. 
+
+This script can be run either via cronjob or manually, and the following 3 tables are handled for datatrim: 
+
+ * REQUEST 
+ * METHOD 
+ * IMSEVENTS
+
+
+It creates a temporary table using a statement as below retaining <n> days of data e.g. for Oracle db with n=1 
+
+create table request_tmp as select * from request where END_TIME > (sysdate - 1); 
+
+e.g. for DB2 with n=3 
+
+insert into request_tmp select * from request where END_TIME > (current_timestamp - 3days); 
+
+The main table REQUEST is then truncated and all entries from the above temporary table are inserted back into the REQUEST table. The temporary table is dropped. The commits are intermediate since the log resource could be a bottleneck to the number of rows that can be held in pending state. The script can be customized as needed. 
+
+IMPORTANT: As a first step, please make a full backup of the OCTIGATE database, just in case some problem occurs while running the db tasks (e.g. SQL0964C The transaction log for the database is full), as no checks are implemented in this script! For the same reason, you should always stop the entire Managing Server (both MS-VE and external java processes, via am-stop.sh script) before running this method. 
+
+ * How to execute the script for DB2 (replace the <...> parts with appropriate values)
+
+
+datatrim_external_db2.sql [/support/docview.wss?uid=swg21383986&aid=2] [/support/docview.wss?uid=swg21383986&aid=1] result_db2.txt [/support/docview.wss?uid=swg21383986&aid=4] [/support/docview.wss?uid=swg21383986&aid=3] db2 connect to octigate user <dbuser> using <dbpasswd>
+db2 -tvf datatrim_external_db2.sql > result.txt 
+
+Review the output for errors. See also the attached result_db2.txt for a sample expected output. 
+
+ * How to execute the script for Oracle Db (replace the <...> parts with appropriate values)
+
+
+datatrim_external.sql [/support/docview.wss?uid=swg21383986&aid=6] [/support/docview.wss?uid=swg21383986&aid=5] result.txt [/support/docview.wss?uid=swg21383986&aid=8] [/support/docview.wss?uid=swg21383986&aid=7] sqlplus <OCT_DBUSER>/<DB_PASSWD> @<SQL_LOCATION>/datatrim_external.sql 
+
+See also the attached result.txt for a sample expected output.
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Systems and Asset Management Tivoli Composite Application Manager for Application Diagnostics ITCAM for APPLICATION DIAGNOSTICS Managing Server AIX, HP-UX, Linux, Solaris, Windows 7.1

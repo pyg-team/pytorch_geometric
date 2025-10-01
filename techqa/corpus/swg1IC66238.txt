@@ -1,0 +1,152 @@
+Title: IBM IC66238: DB2FMCD COMMAND DOES NOT WORK IF BLANK LINES ARE APPENDED AFTER FMC ENTRY IN  /ETC/INITTAB FILE. - United States
+
+Text:
+z/os  FIXES ARE AVAILABLE
+DB2 Version 9.7 Fix Pack 2 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24026928]
+DB2 Version 9.7 Fix Pack 3 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24027906]
+DB2 Version 9.7 Fix Pack 3a for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24028306]
+DB2 Version 9.7 Fix Pack 4 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24029745]
+DB2 Version 9.7 Fix Pack 5 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24031181]
+DB2 Version 9.7 Fix Pack 6 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24032754]
+DB2 Version 9.7 Fix Pack 7 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24033685]
+DB2 Version 9.7 Fix Pack 8 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24034634]
+DB2 Version 9.7 Fix Pack 9a for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24037559]
+DB2 Version 9.7 Fix Pack 9 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24036646]
+DB2 Version 9.7 Fix Pack 10 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24038641]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Fault monitor entry will be inserted into /etc/inittab when we
+   run ./db2fmcu command,
+   Fault monitor entry should be deleted when we execute ./db2fmcd
+   command.
+   
+   The problem is when we have a blank line immediately after fmc
+   entry in /etc/inittab file, we were not able to delete the fmc
+   entry (blank lines were not taken care).
+   
+   This caused problems during uninstall of TSM products.  This fix
+   will take care of the blank lines in the /etc/inittab file.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * Users on V9.7 GA and FP1                                     *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * Fault monitor entry will be inserted into /etc/inittab       *
+   * whenwerun ./db2fmcu command,Fault monitor entry should be    *
+   * deleted when we execute./db2fmcdcommand.The problem is when  *
+   * we have a blank line immediately afterfmcentry in            *
+   * /etc/inittab file, we were not able to delete thefmcentry    *
+   * (blank lines were not taken care).This caused problems       *
+   * during uninstall of TSM products.  Thisfixwill take care of  *
+   * the blank lines in the /etc/inittab file.                    *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Upgrade to V9.7 FixPack 2                                    *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  First Fixed in Fix Pack 2
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC66238
+   
+   
+ * REPORTED COMPONENT NAME
+   DB2 FOR LUW
+   
+   
+ * REPORTED COMPONENT ID
+   DB2FORLUW
+   
+   
+ * REPORTED RELEASE
+   970
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-02-12
+   
+   
+ * CLOSED DATE
+   2010-07-29
+   
+   
+ * LAST MODIFIED DATE
+   2010-07-29
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    IZ39234 [http://www-01.ibm.com/support/docview.wss?uid=swg1IZ39234]
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   DB2 FOR LUW
+   
+   
+ * FIXED COMPONENT ID
+   DB2FORLUW
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R970 PSY
+   UP

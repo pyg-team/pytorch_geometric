@@ -1,0 +1,147 @@
+Title: IBM PM54578: Update EJBDeploy - United States
+
+Text:
+  FIXES ARE AVAILABLE
+6.1.0.47: WebSphere Application Server V6.1 Fix Pack 47 [http://www-01.ibm.com/support/docview.wss?uid=swg24035508]
+6.1.0.43: Java SDK 1.5 SR13 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24031963]
+6.1.0.45: Java SDK 1.5 SR14 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24033270]
+6.1.0.47: Java SDK 1.5 SR16 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24035649]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  RATLC00327847: EJBDeploy fails Caused by:
+   org.apache.commons.logging.LogConfigurationException on WAS
+   6.1.0.39
+   RATLC00327847: EJBDeploy is generating code that will not
+   compile for EJB whose table contains a CLOB column
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  All users of IBM WebSphere Application      *
+   *                  Server V6.1                                 *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Cummulative fixes for EJBDeploy         *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   RATLC00327847: EJBDeploy fails Caused by:
+   org.apache.commons.logging.LogConfigurationException on
+   WebSphere Application Server V6.1.0.39
+   RATLC00327847: EJBDeploy is generating code that will not
+   compile for EJB whose table contains a CLOB column
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fixes for EJBDeploy fails Caused by:
+   org.apache.commons.logging.LogConfigurationException and
+   EJBDeploy is generating code that will not compile for EJB
+   whose table contains a CLOB column
+   
+   The fix for this APAR is currently targeted for inclusion in
+   fix pack 6.1.0.43.  Please refer to the Recommended Updates
+   page for delivery information:
+   http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM54578
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSPHERE APP S
+   
+   
+ * REPORTED COMPONENT ID
+   5724J0800
+   
+   
+ * REPORTED RELEASE
+   61W
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-12-16
+   
+   
+ * CLOSED DATE
+   2012-01-18
+   
+   
+ * LAST MODIFIED DATE
+   2012-01-18
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBSPHERE APP S
+   
+   
+ * FIXED COMPONENT ID
+   5724J0800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R61I PSY
+   UP
+   
+   
+ * R61W PSY
+   UP

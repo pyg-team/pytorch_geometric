@@ -1,0 +1,36 @@
+Title: IBM Role assignments for LDAP users don't stick in the TIP "User Roles" portlet - United States
+
+Text:
+TIPL2; TIPL2LDAP; TIPL2AUTH; User Roles; LDAP TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ After assigning roles to LDAP users in the Tivoli Integrated Portal "User Roles" portlet, and then refreshing the view of the assigned roles, none of the previously selected roles show as assigned. 
+
+CAUSE
+Either:
+There is a case mismatch in the configuration of the LDAP repository for the search base. Some or all of the search base was entered in upper case characters, but the corresponding path in LDAP is actually lower case.
+
+Or:
+The base entry in the LDAP configuration contains quotes around portions of the directory names, but there are no quotes in the actual directory names in LDAP. For example, and directory name in LDAP called OU=Office Admins was entered in the TIP/WAS LDAP configuration panels as OU="Office Admins". 
+
+In both cases, the mismatch prevents the User Roles portlet from matching the user's unique ID to entries in the authorization policy files, so no roles are returned.
+
+DIAGNOSING THE PROBLEM
+Search for an affected user in the Users and Groups > Manage Users portlet. Compare the value in the "Unique Name" column of the search results to the user's unique ID in the LDAP repository itself. The ldeapsearch tool can be used to quickly access the user's information in LDAP. See the following technical note for directions on assembling an LDAP search:
+www-01.ibm.com/support/docview.wss?uid=swg21622359
+
+
+RESOLVING THE PROBLEM
+Update the base entry value in the LDAP configuration in TIP/WAS to match the LDAP directories. 
+
+
+
+
+
+ 1. Launch the Websphere Administrative Console (in TIP, Settings > Websphere Administrative Console). 
+ 2. Go to Security > Global Security 
+ 3. Click on the "Configure" button in the "Available realm definitions" section of the page 
+ 4. Click on the link for the base entry in question in the "Repositories in the realm:" table 
+ 5. Correct the values in both "Repositories in the realm..." fields. 
+ 6. Click Apply, and then Save (to the configuration). 
+ 7. Restart TIP.

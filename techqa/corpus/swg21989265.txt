@@ -1,0 +1,15 @@
+Title: IBM Effect of leap seconds on Sterling B2B Integrator and Sterling File Gateway - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Do leap seconds affect Sterling B2B Integrator or Sterling File Gateway? 
+
+CAUSE
+A leap second is a one second adjustment that is applied to UTC time to remain consistent with atomic time. Occasionally a second is added or removed from a day so that time differences between the two time measurements never exceed 0.9 seconds.
+On December 31, 2016, during the last second of the day, a new leap second will be added to global time.
+
+
+ANSWER
+During numerous validations performed over the years, we have not encountered this issue. There have been several leap seconds over the years through the history of Sterling B2B Integrator and Sterling File Gateway (such as Dec 2008, June 2012, and June 2015) however our customers have never encountered this issue in their production environments.

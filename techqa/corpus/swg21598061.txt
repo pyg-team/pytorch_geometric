@@ -1,0 +1,18 @@
+Title: IBM Atlas Reports system error "Can't find bundle for base name AtlasReportStrings" - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How to resolve the Atlas Reports system error "Can't find bundle for base name AtlasReportStrings" found in the application server log file 
+
+CAUSE
+This error is a result of not having the Atlas Properties folder in the classpath for the application server where Atlas Reports is running. In the application server log file the following type of error will be found:
+Caused by: java.util.MissingResourceException: Can't find resource for bundle AtlasReportStrings, key en_US
+at java.util.ResourceBundle.getBundleImpl(Unknown Source)
+at java.util.ResourceBundle.getBundle(Unknown Source)
+at com.secretseal.atlasreports.framework.Bundles.<clinit>(Bundles.java:10) 
+
+
+ANSWER
+To resolve this issue the application server configuration will need to be updated to ensure the classpath contains the directory location for the Atlas Properties file. The Properties folder contains important files required by the Atlas Reports application such as AtlasReportConfig.properties and AtlasReportStrings.properties. Please refer to the Atlas Suite Deployment Guide for your version of the software to see more details on configuring the classpath.

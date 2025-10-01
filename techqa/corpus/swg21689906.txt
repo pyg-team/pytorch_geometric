@@ -1,0 +1,18 @@
+Title: IBM Message flows missing from the Integration Server view - United States
+
+Text:
+Message flow; BAR deployment; Integration Server TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Message flows or subflows are missing from the Integration Server view in IBM Integration Bus (IIB) when the broker archive (BAR) file has deployed.
+
+
+SYMPTOM
+Message flows or subflows are selected to be included as deployable resources, but the flow files are missing from the Manage tab of the Broker Archive editor when the BAR file has built successfully. When the BAR file is deployed to the integration server, the flow files are not shown in the Integration Server view.
+
+
+CAUSE
+Files under the 'src' folder are not added to the BAR file as deployable resources. The 'src' folder name is reserved for use in the Broker Archive editor’s source code; as a result, if the schema name contains the string 'src', the files are treated as hidden source files in the BAR file and they are not deployed to the integration server.
+
+RESOLVING THE PROBLEM
+Do not use the string 'src' as the name of the broker schema for files that you want to deploy to the integration server.

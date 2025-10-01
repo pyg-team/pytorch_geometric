@@ -1,0 +1,267 @@
+Title: IBM LO86649: INSTALLING CCM ON TOP OF IC 5.0 CR3: CE SERVER AND FNCS + FIXPACKS INSTALL OK. BUT CE CLIENT FIXPACK FAILS. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS VENDOR SOLUTION.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  PROBLEM DESCRIPTION:
+   Customer has an environment that already has IBM Connections
+   5.0 with CR3 for the core components, but CCM has not been
+   installed yet.
+   
+   
+   Customer wants to now add CCM to the environment by installing
+   the 3 required FileNet components, along with the FixPack
+   levels supported for CR3.
+   This process succeeds for the CE server and fixpack, ICN (FNCS)
+   and its fixpack and the CE client. However, the CE client
+   fixpack does not get applied.
+   
+   ENVIRONMENT:
+   IBM Installation Manager 1.8.2 32 bit
+   
+   Windows 2012 R2
+   
+   IBM Connections 5.0 CR3
+   
+   
+   STEPS TO REPRODUCE:
+   
+   1. Create folder on file system and copy the following Filenet
+   
+   installers into it:
+   
+   5.2.1.2-P8CPE-CLIENT-WIN-FP002.EXE
+   
+   5.2.1.2-P8CPE-WIN-FP002.EXE
+   
+   5.2.1-P8CPE-CLIENT-WIN.EXE
+   
+   5.2.1-P8CPE-WIN.EXE
+   
+   IBM_CONTENT_NAVIGATOR-2.0.3.3-FP003-WIN.exe
+   
+   IBM_CONTENT_NAVIGATOR-2.0.3-WIN.exe
+   
+   2. Open IIM Preferences and add the repositories for
+   Connections 5.0
+   Base installer and CR3.
+   
+   3. Shut down Connections & nodeagent. Only dmgr is running.
+   
+   4. Run IIM installer for Connections in Modify mode.
+   
+   5. Proceed through the installer screens and choose to install
+   CCM.
+   Select New Deployment and browse to the installers listed in
+   step #1.
+   6. For the purposes of reproducing this issue, in the Topology
+   screen,
+   do not choose to install CCM into a Large Topology or into a
+   new node.
+   Instead, choose Small and install CCM into the already existing
+   
+   cluster/server where all the other applications are currently
+   installed.
+   7. Start the install by clicking Modify.
+   
+   
+   
+   RESULTS:
+   
+   The installer reports success, but the ccmInstall.log shows
+   that the CE
+   client fixpack install failed:
+   
+        [exec]      [echo] Installing CE:
+   C:/temp/ccm/5.2.1-P8CPE-WIN.EXE
+   -f
+   "C:/IBM/Connections/ccm/ccm/ccm/work/ce_silent_install_windows.t
+   xt"
+        [exec]      [echo] CE install result: 0
+   
+        [exec]      [echo] ... CE install completed.
+   
+        [exec]      [echo] Installing Content Platform Engine fix
+   pack:
+   C:/temp/ccm/5.2.1.2-P8CPE-WIN-FP002.EXE -f
+   
+   "C:/IBM/Connections/ccm/ccm/ccm/work/ce_silent_install_windows.t
+   xt"
+        [exec]      [echo] CE fixpack install result: 0
+   
+        [exec]      [echo] ... Content Platform Engine fix pack
+   install
+   completed.
+   
+        [exec]      [echo] Installing FNCS:
+   
+   C:/temp/ccm/IBM_CONTENT_NAVIGATOR-2.0.3-WIN.exe -i silent -f
+   
+   "C:/IBM/Connections/ccm/ccm/ccm/work/FNCS-2.0.0.0-WIN_SilentInst
+   all.prop
+   erties"
+   
+        [exec]      [echo] FNCS install result: 2000
+   
+        [exec]      [echo] ... FNCS install completed.
+   
+        [exec]      [echo] Installing FNCS:
+   
+   C:/temp/ccm/IBM_CONTENT_NAVIGATOR-2.0.3.3-FP003-WIN.exe -i
+   silent -f
+   "C:/IBM/Connections/ccm/ccm/ccm/work/FNCS-2.0.0.0-WIN_SilentInst
+   all.prop
+   erties"
+   
+        [exec]      [echo] FNCS install result: 2000
+   
+        [exec]      [echo] ... FNCS fix pack install completed.
+   
+        [exec]      [echo] Installing CE client:
+   
+   C:/temp/ccm/5.2.1-P8CPE-CLIENT-WIN.EXE -i silent -f
+   
+   "C:/IBM/Connections/ccm/ccm/ccm/work/ceclient_silent_install_win
+   dows.txt
+   "
+   
+        [exec]      [echo] CE client install result: 0
+   
+        [exec]      [echo] ... CE client install completed.
+   
+        [exec]      [echo] Installing CE client fix pack:
+   
+   C:/temp/ccm/5.2.1.2-P8CPE-CLIENT-WIN-FP002.EXE -f
+   
+   "C:/IBM/Connections/ccm/ccm/ccm/work/ce_silent_install_windows.t
+   xt"
+        [exec]      [echo] CE client fixpack install result: -1
+   
+        [exec]      [echo] ... Content Platform Engine client fix
+   pack
+   install completed.
+   
+   
+   
+   In this file, the version number for CE client is wrong:
+   
+   \IBM\Connections\addons\ccm\CEClient\ce_version.txt
+   
+   "Content Search Services Client 521 v 5.2.1.0 build 4694"
+   
+   
+   
+   The version for CE server however is correct:
+   
+   \IBM\Connections\addons\ccm\ContentEngine\ce_version.txt
+   
+   Content Search Services Client 521 v 5.2.1.2 build 4832
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  WORKAROUND:
+   Apply CE client fixpack manually by running
+   this command from <Connections_Home>/ccm/ccm/ccm/scripts
+   directory:
+   update-fncs-ceclient.bat -was.dm.path "C:\Program Files
+   
+   (x86)\IBM\WebSphere\AppServer\profiles\Dmgr01" -was.admin.user
+   wasadmin
+   -was.admin.password password -doInstallFNCS n
+   -skipInstallFNCSBase y
+   -doInstallCEClient y -ceclient.fp.installer.location
+   
+   "C:\temp\CCM\5.2.1.2-P8CPE-CLIENT-WIN-FP002.EXE"
+   -supportIBMDocs n
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *  Fixed in a later version of Filenet CE
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   LO86649
+   
+   
+ * REPORTED COMPONENT NAME
+   CONNECTION PROF
+   
+   
+ * REPORTED COMPONENT ID
+   5724S6804
+   
+   
+ * REPORTED RELEASE
+   500
+   
+   
+ * STATUS
+   CLOSED ISV
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2015-10-08
+   
+   
+ * CLOSED DATE
+   2016-07-11
+   
+   
+ * LAST MODIFIED DATE
+   2016-07-11
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

@@ -1,0 +1,32 @@
+Title: IBM Why might I receive the "Connection could not be established" message in Content Manager OnDemand for i? - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ I've recently upgraded my IBM i operating system to V7.1 from V6.1. Now, when I try to launch the OnDemand Administrator, I see the message "Connection could not be established" for my instance. Why might this be? 
+
+CAUSE
+It could be that your 57xx-RD1 product release version does not match your 57xx-SS1 product release version. Or, it could be that you do not have two key TCP/IP server jobs started.
+
+ANSWER
+One of the reasons you might see this error message is because your instance cannot be started. This can occur if your Content Manager OnDemand for i software version does not match your operating system version. To confirm that yours does match, type GO LICPGM and then select option 10, Display installed licensed programs. Check the version you are running for 57xx-SS1. V7.1, V7.2 and V7.3 will all show 5770-SS1. Press F11 to show the Installed Release, such as V7R1M0, V7R2M0 or V7R3M0. Then look for 5770-RD1. It should also show the same version as the operating system, If instead you see 5761-RD1, which is the V6.1 of OnDemand for i, or any other version that is not identical to the operating system version, this will not work. It is incompatible with the operating system. 
+
+The correct version of Content Manager OnDemand for i software (5770-RD1) should be installed, plus all its PTFs. Refer to the Related information section below for instructions on how to download the appropriate version of Content Manager OnDemand for i, as well as the the current PTF listing for the product. 
+
+Two other things to check relate to TCP/IP. Make sure that the instance server job has been started (STRTCPSVR *ONDMD), as well as NetServer (STRTCPSVR *NETSVR). 
+
+
+If this information does not address your question, contact IBM software support for further assistance. 
+
+
+Stay Informed by Receiving Product and Lifecycle Notifications:
+Click here [http://www.ibm.com/support/docview.wss?uid=swg21674106]
+
+RELATED INFORMATION
+ How do I obtain OnDemand for V7.1? [http://www.ibm.com/support/docview.wss?uid=swg21404514]
+What are the latest 5770-RD1 PTFs for V7.1? [http://www-912.ibm.com/n_dir/nas4apar.nsf/c79815e083182fec862564c00079d117/1dff6229566176fb862575e0003ca859?OpenDocument&Highlight=2,ii14497]
+How do I obtain OnDemand for i V7.2? [http://www.ibm.com/support/docview.wss?uid=swg21671807]
+What are the latest 5770-RD1 PTFs for V7.2? [http://www-912.ibm.com/n_dir/nas4apar.nsf/ec1b2529a9beacbe86257cc8006c842a/9ea2f60de3047ff786257ccd003c7104?OpenDocument]
+How do I obtain OnDemand for i V7.3? [http://www.ibm.com/support/docview.wss?uid=swg21976946]
+What are the latest 5770-RD1 PTFs for V7.3? [http://www-912.ibm.com/n_dir/nas4apar.nsf/0713e715ecaa3a2e86257f9300668cac/8d02470a191d668686257f94003c6f44?OpenDocument]

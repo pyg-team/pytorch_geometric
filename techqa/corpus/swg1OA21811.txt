@@ -1,0 +1,158 @@
+Title: IBM OA21811: APAR CREATION REGARDING RE-WRITE OF THE TBSM SAMPLE RULES FOR THE TEC SERVER - United States
+
+Text:
+AIX SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS NEW FUNCTION.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  TEC Level 3 has re-written the TBSM sample rules for the TEC
+   Server to resolve your issue with the failure to close ITM
+   events when TEC events are closed by TBSM.
+   
+   They have forwarded the rules changes to TBSM Level 3 and
+   requested that they create an APAR and incorporate their
+   changes into the TBSM product for distribution with that
+   product.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  create apar
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All TBSM 3.1 users.                          *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: In an environment that has ITM 6, TEC,  *
+   *                      and TBSM, and ITM event is received by  *
+   *                      TEC and forwarded to TBSM. An           *
+   *                      operator in TBSM then takes ownership   *
+   *                      of the event and then later closes the  *
+   *                                                              *
+   *                      event. The ACK and CLOSE are sent from  *
+   *                                                              *
+   *                      TBSM to TEC, and the event in TEC is    *
+   *                      updated correctly, but the status       *
+   *                      update is not sent back to ITM, so      *
+   *                      the event is never closed in ITM.       *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   When this code was written, ITM did not exist, and therefore
+   the code was working properly for the environment and product
+   set available at that time.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The TEC status rls for status updates from TBSM and the sample
+   ihstttec rls will be updated.
+   
+   The fix for this APAR is contained in the following
+   maintenance packages:
+   | Interim fix | 3.1.0.2-TIV-BSM-IF0015
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   OA21811
+   
+   
+ * REPORTED COMPONENT NAME
+   TIVOLI BSM OS/
+   
+   
+ * REPORTED COMPONENT ID
+   5698BSM00
+   
+   
+ * REPORTED RELEASE
+   31D
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2007-07-11
+   
+   
+ * CLOSED DATE
+   2007-10-08
+   
+   
+ * LAST MODIFIED DATE
+   2007-10-08
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TIVOLI BSM OS/
+   
+   
+ * FIXED COMPONENT ID
+   5698BSM00
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R21D PSN
+   UP
+   
+   
+ * R21E PSN
+   UP
+   
+   
+ * R31D PSY
+   UP

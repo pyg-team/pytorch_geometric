@@ -1,0 +1,27 @@
+Title: IBM "Error creating a connection to the Event Server" - United States
+
+Text:
+ TECHNOTE(トラブルシューティング)
+
+この文書は以下の言語にのみ有効な内容です
+ 日本語 
+
+問題(概要)
+ posteifmsgコマンドはキャッシュファイルに正しくREAD/WRITE権限が付与されていない場合、"Error creating a connection to the Event Server"メッセージを出力しコマンドが失敗する場合がある。 
+
+解決方法
+posteifmsgコマンドが使用するキャッシュファイルは実行ユーザーがREAD/WRITEできるように権限を正しく付与する必要がある。READ/WRITE権限が正しく設定されていない場合、"Error creating a connection to the Event Server"メッセージが出力され、イベントはキャッシュに出力されない。 
+
+例
+-r--r--r-- 1 netcool ncoadmin 0 May 23 17:49 posteifmsg.cache 
+-r--r--r-- 1 netcool ncoadmin 126 May 02 2012 posteifmsg.conf 
+-rwxrwxrwx 1 netcool ncoadmin 28748 May 30 2011 posteifmsg.out 
+$ ./posteifmsg -f ./posteifmsg.conf 2222222222 33333 
+Error creating a connection to the Event Server 
+
+構成ファイルにはREAD権限が付与される必要がある。構成ファイルにREAD権限が正しく設定されていない場合"Can not fopen"メッセージが出力される。
+-rw-rw-rw- 1 netcool ncoadmin 0 May 23 17:47 posteifmsg.cache 
+---x--x--x 1 netcool ncoadmin 126 May 02 2012 posteifmsg.conf 
+-rwxrwxrwx 1 netcool ncoadmin 28748 May 30 2011 posteifmsg.out 
+$ ./posteifmsg -f ./posteifmsg.conf ssss cccc 
+./posteifmsg.conf: Can not fopen

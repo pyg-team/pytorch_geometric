@@ -1,0 +1,28 @@
+Title: IBM Sterling Commerce Support Addendum for using Internet Explorer 11 with Sterling Selling and Fulfillment Suite 8.5 and higher versions. - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Does IBM support the usage of IE 11 with Sterling Selling and Fulfillment Suite 8.5 and higher?
+
+
+CAUSE
+We have received requests from our customers asking to confirm if IE 11 is supported with Sterling Order Management 8.5 and higher.
+
+ANSWER
+As per IBM's published system requirements guide, the currently supported versions of IE with Sterling Selling and Fulfillment Suite do not include IE11. 
+
+We understand that the user community desires to use the latest versions of the browser. As an attempt to provide the best support possible for our customers, IBM will support IE 11 with Sterling Selling and Fulfillment Suite 8.5, 9.0, 9.1, 9.2.0, 9.2.1 and 9.3.0 in "Compatibility mode" only.
+
+
+IBM's support of compatibility mode for IE 11 is under the assumption that this setting provides complete backwards compatibility from Microsoft. For example, we assume that IE11 in IE8 compatibility mode functions the same as the official IE 8 browser version. If there is a difference found during problem analysis that points to a difference in the way the browser functions in compatibility mode, IBM reserves the right to request that Microsoft Support team be involved to fix the compatibility issue.
+IE 11 is supported only for Sterling Application console screens NOT for Commerce Call Center and Store Web applications.
+
+Please Note: Customers are urged to complete end to end testing involving all UI components before rolling IE11 Compatibility Mode usage into production.
+
+ 
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Commerce Sterling Order Management 9.3 Commerce Sterling Selling and Fulfillment Suite AIX, HP-UX, Linux, Solaris, Windows 9.2.1, 9.2, 9.1, 9.0, 8.5

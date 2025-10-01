@@ -1,0 +1,34 @@
+Title: IBM Slowness in applications using Microsoft Access admin/engine databases in IBM Datacap Taskmaster Capture - United States
+
+Text:
+NENU; AutoDelete; Access; slowness; performance TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Clients such as Taskmaster Client and Taskmaster Web are slow in an environment containing one or more applications that have Microsoft Access admin and engine databases in IBM Datacap Taskmaster Capture 
+
+SYMPTOM
+Latency may be apparent in client such as Taskmaster Client and Taskmaster Web when attempting to view the Job Monitor, Operations page, workflow, etc.
+
+
+CAUSE
+Only Taskmaster Server communicates to the admin and engine databases. In cases where either database is large, communication may be slow, which may lead to other certain incoming requests (e.g. Job Monitor page, running a new batch) to become backed up. When using multiple applications, one application's databases may impact other applications if they share the same Taskmaster Server.
+
+RESOLVING THE PROBLEM
+Microsoft Access is not recommended in large scale environments, SQL Server or Oracle should be considered depending upon volume. However, even small volume systems using Microsoft Access may be affected over time if older batches and task statistics are not removed. Resolution steps A and B are recommended.
+
+
+A) Decrease the size of the databases by removing or transferring any older unnecessary data. Deletion or transfer of database records is facilitated by NENU or AutoDelete, where NENU replaces AutoDelete in IBM Datacap Taskmaster Capture 8.0.0 and later. What data can or cannot be deleted or transferred will depend upon corporate policy and requirements: 
+
+1. Admin database - the [audit] table can be cleared if login and logoff records are not required. 
+
+2. Engine database - batches and task statistics can be removed based on a date range adequate for applicable retention policies. 
+
+ * 
+ * 
+ * ii. Records for batches visible in the Job Monitor are stored in [queue], [qstats] and [tmbatch]. 
+ * iii. The [debug] table will contain a record for each transaction that updates a batch status -- writing to debug is enabled on a client basis and will quickly grow.
+
+
+Note: if updating the engine database manually (e.g. external to NENU), it is generally recommended to keep the file system and database in sync in some manner.  
+
+B) Compacting and repairing the Microsoft Access databases regularly during maintenance windows is recommended. It is feasible to automate compact and repair using some program or batch file. The databases should be compacted and repaired after using NENU or AutoDelete to clean up the databases.

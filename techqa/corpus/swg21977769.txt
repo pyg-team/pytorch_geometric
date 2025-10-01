@@ -1,0 +1,29 @@
+Title: IBM ARA 5.1 supports IE 11 however ARA does not permit access to login page - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ ARA 5.1 introduces IE 11 support and removes support for previous releases of IE such as v9 and v10. IE is the only supported we browser for ARA 5.1
+
+However when IE 11 is used to connect to the ARA server, the following message is displayed:
+
+"Browser Compatibility: Algo Risk is compatible with the following browser(s): - Internet Explorer 11".
+
+How do I fix this? 
+
+CAUSE
+It is likely that IE 11 has been enabled with Compatibility Mode, which causes IE 11 to behave like a IE9 or IE10 web browser.
+
+ANSWER
+From IE 11 settings (cog) button, go to the "Compatibility View Settings" and ensure compatibility view is not enabled for the ARA webserver host/domain. 
+
+It may also be necessary to ensure the "F12 developer tools" are also not set to emulate an earlier version of IE.
+
+RELATED INFORMATION
+# 
+
+
+
+PRODUCT ALIAS/SYNONYM
+ internet explorer ie11 ie9 ie10 webbrowser ARA compatibility_view F12 devloper tools ARA510

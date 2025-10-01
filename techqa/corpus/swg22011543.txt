@@ -1,0 +1,19 @@
+Title: IBM Compatibility between Windows BigFix V9.5 agents and BigFix V9.2 servers/relays - United States
+
+Text:
+Windows 10 upgrading compatibility agents servers TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ In the process to migrate to BigFix V9.5, some compatibility issues might appear when agents are an upper version than servers and relays. 
+
+RESOLVING THE PROBLEM
+No compatibility issues exist, on a general basis, if Windows agents are V9.5.7.94 or higher, and servers and relays are at least V9.2.12. However, many new features and functions work only in a complete (agents, relays and servers) V9.5 infrastructure. 
+
+For example, regarding Unicode, agents have their server's limitations. If a V9.5 agent is communicating its reports to a V9.2 server, they are transmitted in the server Report Encoding, usually the FXF encoding (1252 for example). The agent cannot report everything that a V9.5 server might instead receive. 
+
+For more information about upgrading, see 
+https://www.ibm.com/developerworks/community/wikis/home?lang=en#!/wiki/Tivoli%20Endpoint%20Manager/page/Upgrading [https://www.ibm.com/developerworks/community/wikis/home?lang=en#!/wiki/Tivoli%20Endpoint%20Manager/page/Upgrading] 
+
+and 
+
+https://www.ibm.com/support/knowledgecenter/en/SS6MER_9.5.0/com.ibm.bigfix.doc/Platform/Installation/c_upgrade_paths.html [https://www.ibm.com/support/knowledgecenter/en/SS6MER_9.5.0/com.ibm.bigfix.doc/Platform/Installation/c_upgrade_paths.html]"

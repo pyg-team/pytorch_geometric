@@ -1,0 +1,14 @@
+Title: IBM Default number of threads for ncp_poller - United States
+
+Text:
+Available threads for ncp_poller TECHNOTE (FAQ)
+
+QUESTION
+ What are the number of threads assigned by default for ncp_poller? Is the same number of threads applicable for additional Pollers too? 
+
+ANSWER
+There are 100 threads assigned for default Pollers in all three releases (v3.7, v3.8 & v3.9). 
+The additional poller is a new feature in v3.8 and higher versions, so additional Poller threads is not applicable for v3.7. But when you create additional pollers in v3.8/v3.9 same # of thread (i.e. 100) pool is assigned.
+
+In v3.8, v3.9 - you can also increase the default 100 to a higher value by modifying and uncommenting the following line in $NCHOME/etc/precision/NcPollerSchema.cfg
+//update config.properties set BatchExtraThreads = 150;

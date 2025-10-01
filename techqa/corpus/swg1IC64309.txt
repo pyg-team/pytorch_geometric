@@ -1,0 +1,178 @@
+Title: IBM IC64309: .BINDINGS FILES CREATED PRIOR TO WMQ V7.0.1 WILL NOT UPDATE     CORRECTLY - United States
+
+Text:
+  FIXES ARE AVAILABLE
+WebSphere MQ V7.0 Fix Pack 7.0.1.2 [http://www-01.ibm.com/support/docview.wss?uid=swg24026518]
+WebSphere MQ V7.0.1 for i5/OS Fix Pack 7.0.1.2 [http://www-01.ibm.com/support/docview.wss?uid=swg24026566]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The 'port' and 'host' fields of a .bindings file created by a
+   file system JNDI initial context may get out of sync with the
+   'connection list' if the file was created pre v7.0.1.
+   
+   If a 'connection list' is modified by a V7.0.1 client, the
+   'connection list' value will be saved into JNDI, but the 'host'
+   and 'port' fields will not be updated in the .bindings file.
+   This means that an older client looking up the connection
+   factory will still read the unmodified 'host' and 'port fields.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   This issue affects users who modify their file system Java
+   Message Service (JMS) initial context using a v7.0.1 client and
+   use the same initial context with clients at a lower level (v6,
+   v7.0.0)
+   
+   Platforms affected:
+   All Distributed (iSeries, all Unix and Windows) +Java
+   ****************************************************************
+   PROBLEM SUMMARY:
+   The connectionNameList property on an MQConnectionFactory was
+   introduced at v7.0.1.0 for use with the client reconnection
+   capabilities.  Clients at earlier versions of the product (v6.x,
+   v7.0.0.x) use the host and port fields to specify a single host
+   to connect to, rather than a list of them.  When the
+   connectionNameList was updated by a v7.0.1.0 client, the host
+   and port fields were not being updated and so earlier clients
+   would not have access to the modified connection details.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  In order to fix this issue, when the connectionNameList is
+   updated, the first entry in the list is copied to the host and
+   port fields.
+   
+   Please be aware that if an earlier client (v6.x or v7.0.0.x)
+   subsequently updates any of the values for the connection
+   factory, all entries in the connectionNameList will be
+   overwritten with the single new host/port value.
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+                      v7.0
+   Platform           Fix Pack 7.0.1.2
+   --------           --------------------
+   Windows            U200316
+   AIX                U829807
+   HP-UX (PA-RISC)    U829678
+   HP-UX (Itanium)    U829681
+   Solaris (SPARC)    U829806
+   Solaris (x86-64)   U829680
+   iSeries            tbc_p700_0_1_2
+   Linux (x86)        U829677
+   Linux (x86-64)     U829676
+   Linux (zSeries)    U829682
+   Linux (Power)      U829679
+   
+   The latest available maintenance can be obtained from
+   'WebSphere MQ Recommended Fixes'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037]
+   
+   If the maintenance level is not yet available, information on
+   its planned availability can be found in 'WebSphere MQ
+   Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC64309
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ WINDOWS V7
+   
+   
+ * REPORTED COMPONENT ID
+   5724H7220
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-11-04
+   
+   
+ * CLOSED DATE
+   2009-12-22
+   
+   
+ * LAST MODIFIED DATE
+   2009-12-22
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ WINDOWS V7
+   
+   
+ * FIXED COMPONENT ID
+   5724H7220
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R700 PSY
+   UP

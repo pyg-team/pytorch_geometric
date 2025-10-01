@@ -1,0 +1,213 @@
+Title: IBM PK22217: ABEND 0C4 / ASRA IN EYUCSLT DURING STARTUP OF CMAS - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When starting the CMAS, an abend 0C4 occurs in EYU0CSLT around
+   offset x'ED4' on a LH instruction:  48E2 0000.  The psw is
+   pointing into the MAL_CLOCKS_EXPCHK2 routine and occurs because
+   Reg2, which should contain the addres of the MAL PROPER, is
+   invalid.  Reg2 is loaded from the MAL PREFIX via Reg9+4.
+   .
+   During startup, CSLT allocates a chunk of CICS EDSA storage to
+   hold MALRL elements that are used during MAL timeout processing.
+   CSLT allocates enough storage to handle 1024 elements.  However,
+   at the time of the abend, the site had 1094 elements.  Instead
+   of recognizing we didn't have enough room, we end up overlaying
+   storage.  The MALPRFX, MAL, and TSPBLK are all corrupted which
+   results in the 0C4 abend.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All CICSPlex/SM V3R1M0 Users                 *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: An ASRA/S0C4 abend may occur in a CMAS  *
+   *                      in method EYU0CSLT (CSLT) if the        *
+   *                      COMMTSBLOCKS EYUPARM is set to a value  *
+   *                      greater than 1024.                      *
+   ****************************************************************
+   * RECOMMENDATION: After applying the PTF that resolves this    *
+   *                 APAR, all CMASes must be restarted.  Note    *
+   *                 that the restarts do not need to occur at    *
+   *                 the same time.                               *
+   ****************************************************************
+   Every five minutes, CSLT processes all outstanding requests to
+   see if any should be timed out.  To do this, CSLT calls method
+   EYU0XCLG (XCLG) to place all of the MAL Response List (CMRL)
+   elements for the outstanding requests into a buffer.  The buffer
+   can hold 1024 elements, but CSLT passes an invalid length to
+   XCLG, which indicates that the buffer can hold 1097 elements.
+   If more than 1097 elements exist, then XCLG returns an error to
+   CSLT, which issues an exception trace record with a debug text
+   of GETCLSTF and a trace point ID of 10.  CSLT then continues
+   processing.  If more than 1024 but less than 1097 elements
+   exist, then XCLG populates the buffer with the elements.  This
+   results in an overlay of storage where the 1025th element is
+   placed, which will result in the ASRA/S0C4 abend in CSLT.
+   
+   The maximum number of CMRL elements that can exist is equal to
+   the COMMTSBLOCKS EYUPARM value.  If the default of 512 or any
+   value less than 1025 is used, this problem will not occur.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  CSLT has been updated to use the COMMTSBLOCKS value or 1024,
+   which ever is greater, when determining how many elements to
+   allocate for the CMRL buffer.  CSLT has also been updated to
+   pass the proper size of the CMRL buffer to XCLG.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  FIX AVAILABLE BY PTF ONLY
+   
+   
+    
+   
+   
+
+COMMENTS
+ *  An ASRA/S0C4 abend may occur in a CMAS
+   in method EYU0CSLT (CSLT) if the
+   COMMTSBLOCKS EYUPARM is set to a value
+   greater than 1024.
+   
+   
+   Every five minutes, CSLT processes all outstanding requests to
+   see if any should be timed out.  To do this, CSLT calls method
+   EYU0XCLG (XCLG) to place all of the MAL Response List (CMRL)
+   elements for the outstanding requests into a buffer.  The buffer
+   can hold 1024 elements, but CSLT passes an invalid length to
+   XCLG, which indicates that the buffer can hold 1097 elements.
+   If more than 1097 elements exist, then XCLG returns an error to
+   CSLT, which issue an exception trace record with a debug text of
+   GETCLSTF and a trace point ID of 10.  CSLT then continues
+   processing.  If more than 1024 but less than 1097 elements
+   exist, then XCLG populates the buffer with the elements.  This
+   results in an overlay of storage where the 1025 element is
+   placed, which will result in the ASRA/S0C4 abend in CSLT.
+   
+   The maximum number of CMRL elements that can exist is equal to
+   the COMMTSBLOCKS EYUPARM value.  If the default of 512 or any
+   value less than 1025 is used, this problem will not occur.
+   
+   
+   CSLT has been updated to use the COMMTSBLOCKS value or 1024,
+   which ever is greater, when determining how many elements to
+   allocate for the CMRL buffer.  CSLT has also been updated to
+   pass the proper size of the CMRL buffer to XCLG.
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK22217
+   
+   
+ * REPORTED COMPONENT NAME
+   CPSM CICS 3.1
+   
+   
+ * REPORTED COMPONENT ID
+   5655M1501
+   
+   
+ * REPORTED RELEASE
+   100
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2006-03-27
+   
+   
+ * CLOSED DATE
+   2006-11-16
+   
+   
+ * LAST MODIFIED DATE
+   2006-12-01
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    PK22221
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UK19742
+   
+   
+
+MODULES/MACROS
+ *     EYU0CSLT
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CPSM CICS 3.1
+   
+   
+ * FIXED COMPONENT ID
+   5655M1501
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R100 PSY UK19742 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK19742]
+   UP06/11/18 P F611
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

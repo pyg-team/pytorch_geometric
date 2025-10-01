@@ -1,0 +1,181 @@
+Title: IBM Detailed system requirements for IBM Web Experience Factory - United States
+
+Text:
+System requirements; platform; platforms; operating systems; supported; sys reqs; system requirements; hardware requirements; software requirements; upgrade; operating system requirements; os req; platform requirements; supported os; supporting platforms; platforms supported; supported operating systems; portlet factory; wpf; websphere portlet factory; web experience factory; wef; dsr; supported hw/sw; requirements; DSRdoc; DSRentry PRODUCT DOCUMENTATION
+
+ABSTRACT
+ The list below identifies the supported releases of IBM Web Experience Factory (formerly WebSphere Portlet Factory) from which you can select specific detailed system requirements. 
+
+CONTENT
+ 
+
+Always up-to-date system requirement reports can be dynamically generated using the Software Product Compatibility Reports (SPCR) tool [http://pic.dhe.ibm.com/infocenter/prodguid/v1r0/clarity/index.html]. 
+
+For your convenience, the tabs below identify the supported releases of IBM Web Experience Factory from which you can select detailed system requirement reports for different contexts (by Operating System, by component). Note that clicking a link will always generate a new, up-to-date report.
+
+TAB NAVIGATION
+ * 8.5- selected tab,
+ * 8.0
+ * 7.0
+ * 6.1.5
+ * 6.1
+
+REQUIREMENTS
+BY PLATFORM
+ * AIX [http://pic.dhe.ibm.com/infocenter/prodguid/v1r0/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1314193078901&osPlatform=AIX]
+ * HP [http://pic.dhe.ibm.com/infocenter/prodguid/v1r0/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1314193078901&osPlatform=HP]
+ * IBM i [http://pic.dhe.ibm.com/infocenter/prodguid/v1r0/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1314193078901&osPlatform=IBM i]
+
+ * Linux [http://pic.dhe.ibm.com/infocenter/prodguid/v1r0/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1314193078901&osPlatform=Linux]
+ * Solaris [http://pic.dhe.ibm.com/infocenter/prodguid/v1r0/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1314193078901&osPlatform=Solaris]
+ * Windows [http://pic.dhe.ibm.com/infocenter/prodguid/v1r0/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1314193078901&osPlatform=Windows]
+
+ * Supported Hypervisors [http://pic.dhe.ibm.com/infocenter/prodguid/v1r0/clarity-reports/report/html/vesForProduct?deliverableId=1314193078901]
+
+
+
+
+REQUIREMENTS
+BY COMPONENT
+ * Desktop [http://pic.dhe.ibm.com/infocenter/prodguid/v1r0/clarity-reports/report/html/softwareReqsForProductByComponent?deliverableId=1314193078901&duComponent=Desktop]
+
+ * Server [http://pic.dhe.ibm.com/infocenter/prodguid/v1r0/clarity-reports/report/html/softwareReqsForProductByComponent?deliverableId=1314193078901&duComponent=Server]
+
+
+
+
+RELATED REQUIREMENTS
+No related requirements.
+
+REQUIREMENTS
+BY PLATFORM
+ * AIX [http://pic.dhe.ibm.com/infocenter/prodguid/v1r0/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1285167588264&osPlatform=AIX]
+ * IBM i [http://pic.dhe.ibm.com/infocenter/prodguid/v1r0/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1285167588264&osPlatform=IBM i]
+ * Linux [http://pic.dhe.ibm.com/infocenter/prodguid/v1r0/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1285167588264&osPlatform=Linux]
+
+ * Solaris [http://pic.dhe.ibm.com/infocenter/prodguid/v1r0/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1285167588264&osPlatform=Solaris]
+ * Windows [http://pic.dhe.ibm.com/infocenter/prodguid/v1r0/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1285167588264&osPlatform=Windows]
+ * z/OS [http://pic.dhe.ibm.com/infocenter/prodguid/v1r0/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1285167588264&osPlatform=z/OS]
+
+ * Supported Hypervisors [http://pic.dhe.ibm.com/infocenter/prodguid/v1r0/clarity-reports/report/html/vesForProduct?deliverableId=1285167588264]
+
+
+
+
+REQUIREMENTS
+BY COMPONENT
+ * Desktop [http://pic.dhe.ibm.com/infocenter/prodguid/v1r0/clarity-reports/report/html/softwareReqsForProductByComponent?deliverableId=1285167588264&duComponent=Desktop]
+
+ * Server [http://pic.dhe.ibm.com/infocenter/prodguid/v1r0/clarity-reports/report/html/softwareReqsForProductByComponent?deliverableId=1285167588264&duComponent=Server]
+
+
+
+
+RELATED REQUIREMENTS
+No related requirements.
+
+REQUIREMENTS
+BY PLATFORM
+ * AIX [http://pic.dhe.ibm.com/infocenter/prodguid/v1r0/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1245867880606&osPlatform=AIX]
+ * IBM i [http://pic.dhe.ibm.com/infocenter/prodguid/v1r0/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1245867880606&osPlatform=IBM i]
+ * Linux [http://pic.dhe.ibm.com/infocenter/prodguid/v1r0/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1245867880606&osPlatform=Linux]
+
+ * Solaris [http://pic.dhe.ibm.com/infocenter/prodguid/v1r0/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1245867880606&osPlatform=Solaris]
+ * Windows [http://pic.dhe.ibm.com/infocenter/prodguid/v1r0/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1245867880606&osPlatform=Windows]
+
+ * Supported Hypervisors [http://pic.dhe.ibm.com/infocenter/prodguid/v1r0/clarity-reports/report/html/vesForProduct?deliverableId=1245867880606]
+
+
+
+
+REQUIREMENTS
+BY COMPONENT
+ * Desktop [http://pic.dhe.ibm.com/infocenter/prodguid/v1r0/clarity-reports/report/html/softwareReqsForProductByComponent?deliverableId=1245867880606&duComponent=Desktop]
+
+ * Server [http://pic.dhe.ibm.com/infocenter/prodguid/v1r0/clarity-reports/report/html/softwareReqsForProductByComponent?deliverableId=1245867880606&duComponent=Server]
+
+
+
+
+RELATED REQUIREMENTS
+No related requirements.
+
+REQUIREMENTS
+BY PLATFORM
+ * AIX [http://pic.dhe.ibm.com/infocenter/prodguid/v1r0/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1238172452661&osPlatform=AIX]
+ * HP [http://pic.dhe.ibm.com/infocenter/prodguid/v1r0/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1238172452661&osPlatform=HP]
+ * IBM i [http://pic.dhe.ibm.com/infocenter/prodguid/v1r0/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1238172452661&osPlatform=IBM i]
+ * Linux [http://pic.dhe.ibm.com/infocenter/prodguid/v1r0/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1238172452661&osPlatform=Linux]
+
+ * Solaris [http://pic.dhe.ibm.com/infocenter/prodguid/v1r0/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1238172452661&osPlatform=Solaris]
+ * Windows [http://pic.dhe.ibm.com/infocenter/prodguid/v1r0/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1238172452661&osPlatform=Windows]
+ * z/OS [http://pic.dhe.ibm.com/infocenter/prodguid/v1r0/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1238172452661&osPlatform=z/OS]
+
+
+
+
+REQUIREMENTS
+BY COMPONENT
+ * Desktop [http://pic.dhe.ibm.com/infocenter/prodguid/v1r0/clarity-reports/report/html/softwareReqsForProductByComponent?deliverableId=1238172452661&duComponent=Desktop]
+
+ * Server [http://pic.dhe.ibm.com/infocenter/prodguid/v1r0/clarity-reports/report/html/softwareReqsForProductByComponent?deliverableId=1238172452661&duComponent=Server]
+
+
+
+
+RELATED REQUIREMENTS
+No related requirements.
+
+REQUIREMENTS
+BY PLATFORM
+ * AIX [http://pic.dhe.ibm.com/infocenter/prodguid/v1r0/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1194471171337&osPlatform=AIX]
+ * HP [http://pic.dhe.ibm.com/infocenter/prodguid/v1r0/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1194471171337&osPlatform=HP]
+ * IBM i [http://pic.dhe.ibm.com/infocenter/prodguid/v1r0/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1194471171337&osPlatform=IBM i]
+ * Linux [http://pic.dhe.ibm.com/infocenter/prodguid/v1r0/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1194471171337&osPlatform=Linux]
+
+ * Solaris [http://pic.dhe.ibm.com/infocenter/prodguid/v1r0/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1194471171337&osPlatform=Solaris]
+ * Windows [http://pic.dhe.ibm.com/infocenter/prodguid/v1r0/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1194471171337&osPlatform=Windows]
+ * z/OS [http://pic.dhe.ibm.com/infocenter/prodguid/v1r0/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1194471171337&osPlatform=z/OS]
+
+
+
+
+REQUIREMENTS
+BY COMPONENT
+ * Desktop [http://pic.dhe.ibm.com/infocenter/prodguid/v1r0/clarity-reports/report/html/softwareReqsForProductByComponent?deliverableId=1194471171337&duComponent=Desktop]
+
+ * Server [http://pic.dhe.ibm.com/infocenter/prodguid/v1r0/clarity-reports/report/html/softwareReqsForProductByComponent?deliverableId=1194471171337&duComponent=Server]
+
+
+
+
+RELATED REQUIREMENTS
+No related requirements.
+
+
+
+
+WHY UPGRADE?
+Every release of an IBM product includes powerful new features. See what you've been missing, then contact us to upgrade your software.
+
+ *  [<a href=]http://www-01.ibm.com/support/knowledgecenter/SSRUWN_8.5.0/com.bowstreet.designer.doc_8.5.0/designer/c_whats_new.htm [http://www-01.ibm.com/support/knowledgecenter/SSRUWN_8.5.0/com.bowstreet.designer.doc_8.5.0/designer/c_whats_new.htm]">What's new in IBM Web Experience Factory 8.5
+
+CONTACT IBM
+ * Request a quote [http://www.ibm.com/services/forms/signup.do?source=raq&S_TACT=109HD02W&lang=en_US]
+ * E-mail us [http://www.ibm.com/services/forms/signup.do?source=swgmail&S_TACT=109HD02W&lang=en_US]
+ * Or call us at: 1-877-426-37741-877-426-3774 [tel:1-877-426-3774] 
+   Priority code: Lotus
+   
+   
+
+
+RELATED INFORMATION
+ Web Experience Factory support [http://www.ibm.com/support/entry/portal/Overview/Software/Lotus/IBM_Web_Experience_Factory]
+Web Experience Factory wiki [http://www.lotus.com/ldd/pfwiki.nsf]
+Web Experience Factory documentation [http://www.lotus.com/ldd/pfwiki.nsf/xpViewCategories.xsp?lookupName=Product%20Documentation]
+
+
+
+
+ORIGINAL PUBLICATION DATE
+ 2015/5/12

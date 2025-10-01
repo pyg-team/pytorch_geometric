@@ -1,0 +1,129 @@
+Title: IBM PI76509:Hang on org/apache/webbeans/context/sessioncontext.addchildrequest - United States
+
+Text:
+PI76509; PI76509; PI76509 DOWNLOADABLE FILES
+
+ABSTRACT
+ Server threads hang on org/apache/webbeans/context/sessioncontext.addchildrequest 
+
+DOWNLOAD DESCRIPTION
+PI76509 resolves the following problem:
+
+ERROR DESCRIPTION: 
+Hanging threads after applying fix pack 8.5.5.11 / 8.0.0.13 or liberty 
+16.0.0.4 or 17.0.0.1 
+
+SystemOut.log and Java cores show: 
+
+[9-2-17 16:13:45:421 CET] 0000002f ThreadMonitor W WSVR0605W: 
+Thread "WebContainer : 35" (0000011d) has been active for 697463
+milliseconds and may be hung. There is/are 1 thread(s) in 
+total in the server that may be hung. 
+at 
+java/util/HashMap.put(HashMap.java:506(Compiled 
+Code)) at java/util/HashSet.add(HashSet.java:229(Compiled Code))
+at 
+org/apache/webbeans/context/SessionContext.addChildRequest(Sessi
+onContext.java:118(Compiled Code)) 
+at 
+org/apache/webbeans/web/context/WebContextsService.initRequestCo
+ntext(WebContextsService.java:550(Compiled Code)) 
+at 
+org/apache/webbeans/web/context/WebContextsService.startContext(
+WebContextsService.java:417(Compiled Code)) 
+at 
+com/ibm/ws/webbeans/services/JCDIWebListener.requestInitialized(
+JCDIWebListener.java:321(Compiled Code)) 
+at 
+com/ibm/ws/webcontainer/webapp/WebApp.notifyServletRequestCreate
+d(WebApp.java:1908(Compiled Code)) 
+
+Additional symptoms: session invalidation threads begin to 
+become blocked and an error similar to the following is logged 
+in javacores 
+
+Webcontainers 38,23,20,18 and 7 were blocked behind webcontainer
+21 which was runnable and Owns Monitor Lock on 
+com/ibm/ws/session/store/memory/MemorySession@0x000000000852C740
+
+at 
+java/util/HashMap$HashIterator.remove(HashMap.java:955(Compiled 
+Code)) 
+at 
+org/apache/webbeans/context/SessionContext.isAnyRequestActive(Se
+ssionContext.java:137(Compiled Code)) 
+at 
+org/apache/webbeans/context/SessionContext.isAnyRequestActive(Se
+ssionContext.java:123(Compiled Code)) 
+at 
+org/apache/webbeans/web/context/WebContextsService.destroySessio
+nContext(WebContextsService.java:717(Compiled Code)) 
+at 
+org/apache/webbeans/web/context/WebContextsService.endContext(We
+bContextsService.java:269(Compiled Code)) 
+at 
+com/ibm/ws/webbeans/services/JCDIWebListener.sessionDestroyed(JC
+DIWebListener.java:397(Compiled Code)) 
+at 
+com/ibm/ws/session/http/HttpSessionObserver.sessionDestroyed(Htt
+pSessionObserver.java:180(Compiled Code)) 
+at 
+com/ibm/ws/session/SessionEventDispatcher.sessionDestroyed(Sessi
+onEventDispatcher.java:160(Compiled Code)) 
+at 
+com/ibm/ws/session/StoreCallback.sessionInvalidated(StoreCallbac
+k.java:126(Compiled Code)) 
+at 
+com/ibm/ws/session/store/memory/MemorySession.invalidate(MemoryS
+ession.java:232) 
+at 
+com/ibm/ws/session/store/memory/MemorySession.invalidate(MemoryS
+ession.java:878) 
+
+LOCAL FIX: 
+None 
+
+PROBLEM SUMMARY
+
+USERS AFFECTED:
+All users of IBM WebSphere Application
+Server using CDI
+
+PROBLEM DESCRIPTION:
+Concurrent modification can corrupt a
+HashSet leading to hanging threads
+
+RECOMMENDATION:
+None
+
+A HashSet in the org.apache.webbeans.context.SessionContext
+was undergoing concurrent modification. A hanging
+thread with SessionContext on the stack is likely to be
+resolved by this APAR.
+
+PROBLEM CONCLUSION: 
+The Set in question was updated to use a different Set 
+implementation that can accept concurrent modification. 
+
+The fix for this APAR is currently targeted for inclusion in 
+fix packs 8.5.5.12, 8.0.0.14 and Liberty 17.0.0.2. Please 
+refer to the Recommended Updates page for delivery information: 
+http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+
+PREREQUISITES
+None
+
+INSTALLATION INSTRUCTIONS
+Please review the readme.txt for detailed installation instructions.
+
+URL LANGUAGE SIZE(Bytes) V85 Readme [ftp://public.dhe.ibm.com/software/websphere/appserv/support/fixes/PI76509/8.5.5.11/readme.txt] US English 7633 V80 Readme [ftp://public.dhe.ibm.com/software/websphere/appserv/support/fixes/PI76509/8.0.0.13/readme.txt] US English 7738 16.0.0.4 Archive Readme [ftp://public.dhe.ibm.com/software/websphere/appserv/wlparchive/support/fixes/PI76509/16.0.0.4/readme.txt] US English 7810 17.0.0.1 Archive Readme [ftp://public.dhe.ibm.com/software/websphere/appserv/wlparchive/support/fixes/PI76509/17.0.0.1/readme.txt] US English 7798 16.0.0.4 Readme [ftp://public.dhe.ibm.com/software/websphere/appserv/support/fixes/PI76509/16.0.0.4/readme.txt] US English 7607 17.0.0.1 Readme [ftp://public.dhe.ibm.com/software/websphere/appserv/support/fixes/PI76509/17.0.0.1/readme.txt] US English 7657 
+DOWNLOAD PACKAGE
+
+
+Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options 
+What is Fix Central(FC)? [https://www.ibm.com/support/fixcentral/help?page=swfaqs] 8.5.5.11-WS-WAS-IFPI76509 03-17-2017 US English 273677 FC [http://www.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm/WebSphere&product=ibm/WebSphere/WebSphere Application Server&release=All&platform=All&function=fixId&fixids=8.5.5.11-WS-WAS-IFPI76509&includeSupersedes=0] [ ] 8.0.0.13-WS-WAS-IFPI76509 03-17-2017 US English 266477 FC [http://www.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm/WebSphere&product=ibm/WebSphere/WebSphere Application Server&release=All&platform=All&function=fixId&fixids=8.0.0.13-WS-WAS-IFPI76509&includeSupersedes=0] [ ] 16.0.0.4-WS-WLP-IFPI76509 17-4-25 US English 1669148 FC [http://www.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm%2FWebSphere&product=ibm/WebSphere/WebSphere+Liberty&release=All&platform=All&function=fixId&fixids=16.0.0.4-WS-WLP-IFPI76509&includeSupersedes=0] [ ] 17.0.0.1-WS-WLP-IFPI76509 17-4-25 US English 1672194 FC [http://www.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm%2FWebSphere&product=ibm/WebSphere/WebSphere+Liberty&release=All&platform=All&function=fixId&fixids=17.0.0.1-WS-WLP-IFPI76509&includeSupersedes=0] [ ] 16004-wlp-archive-IFPI76509 17-4-25 US English 1597777 FC [http://www.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm%2FWebSphere&product=ibm/WebSphere/WebSphere+Liberty&release=All&platform=All&function=fixId&fixids=16004-WS-WLP-IFPI76509&includeSupersedes=0] [ ] 17001-wlp-archive-IFPI76509 17-4-25 US English 1601352 FC [http://www.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm%2FWebSphere&product=ibm/WebSphere/WebSphere+Liberty&release=All&platform=All&function=fixId&fixids=17001-WS-WLP-IFPI76509&includeSupersedes=0] [ ] 
+TECHNICAL SUPPORT
+ Contact IBM Support using SR (http://www.ibm.com/software/support/probsub.html [http://www.ibm.com/software/support/probsub.html]), visit the WebSphere Application Server support web site (http://www.ibm.com/software/webservers/appserv/was/support/ [http://www.ibm.com/software/webservers/appserv/was/support/]), or contact 1-800-IBM-SERV (U.S. only). 
+
+ [/support/docview.wss?uid=swg24043475&aid=1]Problems (APARS) fixed [/support/docview.wss?uid=swg24043475&aid=2]Problems (APARS) fixed
+PI76509

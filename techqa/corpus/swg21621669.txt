@@ -1,0 +1,30 @@
+Title: IBM Decision Server Events runtime may hold JDBC connections for an unnecessarily long period under a default configuration - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Decision Server Events runtime may hold JDBC connections from the WAS JDBC connection pool for an unnecessarily long period under a default configuration. If such connections are subject to a network outage, connections might be leaked from the connection pool. 
+
+SYMPTOM
+PMI or SystemOut.log reports that Decision Server Events runtime is holding JDBC connections from the WAS connection pool named jdbc/wbe/repository for a long period, even when the runtime is not busy. The shared connections are reported to be in STATE_TRAN_WRAPPER_INUSE state, waiting for transaction end and connection close.
+
+
+CAUSE
+The default configuration does not allow idle JDBC connections to be recycled.
+
+RESOLVING THE PROBLEM
+Follow the following steps to reconfigure the properties of the JDBC connection pool used by Events runtime: 
+
+1. From the WAS Administrative Console, navigate to the following path: Resources > JDBC > Data sources > Event Runtime Datasource > Connection pool properties > Connection pool custom properties.
+2. Add a custom property with the name "defaultConnectionTypeOverride" and the value "unshared".
+
+The following settings on the Resources > JDBC > Data sources > Event Runtime Datasource >Connection pool properties page should also be reviewed:
+1. Set the "Minimum connections" property to 0.
+2. Ensure that the "Purge policy" property is set to "EntirePool".
+3. Adjust the values of "Unused timeout", "Aged timeout", and "Reap time" properties so that the connection pool connections are re-scanned by WAS in a way that enables timely termination of idle connections for your applications but not to cause too much unnecessary system operation overhead. The description of these properties can be found at:
+http://pic.dhe.ibm.com/infocenter/wasinfo/v8r0/topic/com.ibm.websphere.nd.doc/info/ae/ae/udat_conpoolset.html [http://pic.dhe.ibm.com/infocenter/wasinfo/v8r0/topic/com.ibm.websphere.nd.doc/info/ae/ae/udat_conpoolset.html]
+
+
+RELATED INFORMATION
+#JDBS connection pool settings [http://pic.dhe.ibm.com/infocenter/wasinfo/v8r0/index.jsp?topic=%2Fcom.ibm.websphere.express.doc%2Finfo%2Fexp%2Fae%2Fudat_conpoolset.html]

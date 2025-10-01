@@ -1,0 +1,20 @@
+Title: IBM CSPA202E SSL handshake failure, reason=GSK_ERR_SOCKET_CLOSED, using Client Authentication. - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ After adding a new certificate to the key database the PNODE receives - CSPA202E SSL handshake failure, reason=GSK_ERR_SOCKET_CLOSED when Client Authentication is being used. It appears that all the CA certificate headers are being sent back from the SNODE to the PNODE. The problem was caused when a new certificate was added because the total length of the certificate chain now exceeded an 8K internal buffer which resulted in the above error. When any certificate is removed (it doesn't matter which certificate), the transmission again works. 
+
+SYMPTOM
+CSPA202E SSL handshake failure, reason=GSK_ERR_SOCKET_CLOSED
+
+
+CAUSE
+The V2.BUFSIZE was set too small on both sides, causing Connect:Direct to build an internal buffer that was only 8K. The CA certificate headers are sent back to the PNODE because Client Authentication is turned on. These headers, collectively, were greater than 8K, causing the error.
+
+DIAGNOSING THE PROBLEM
+It was determined that the problem was a result of the V2.BUFSIZE being set too low on both sides on the transmission.
+
+RESOLVING THE PROBLEM
+Increase the V2.BUFSIZE Init Parm on both sides, preferably to 32K or 64K, and recycle Connect:Direct on both sides.

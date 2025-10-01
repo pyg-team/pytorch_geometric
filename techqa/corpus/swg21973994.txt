@@ -1,0 +1,34 @@
+Title: IBM DB2 SQL Error: SQLCODE=-206, SQLSTATE=42703 when running CDT and comparing source and target environment - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ DB2 SQL Error: SQLCODE=-206, SQLSTATE=42703 when running CDT and comparing source and target environments 
+
+SYMPTOM
+You are running CDT tool and using Configuration Data Deployment option to compare source and target database. You are seeing the above mentioned error.
+
+
+ENVIRONMENT
+Sterling Order Management
+
+DIAGNOSING THE PROBLEM
+Error example:
+
+
+ <Error ErrorCode="-206" ErrorDescription="DB2 SQL Error: SQLCODE=-206, SQLSTATE=42703, SQLERRMC=YFS_USER.EXTN_USER_ACTIVE, DRIVER=3.62.56" ErrorRelatedMoreInfo=""> 
+
+ 
+
+This error suggests database is missing EXTN_USER_ACTIVE column in YFS_USER table. 
+
+
+RESOLVING THE PROBLEM
+ You have extended source database but did not apply same extensions on target environment. CDT can not add extended column(s) to target database, CDT migrates its data. Please apply same extensions to your target environment (database) to resolve the problem. 
+
+ 
+
+Note: At the moment, CDT does not migrate Shadow columns data. To populate Shadow columns please run YCPCaseInsensitiveDataLoaderAgent in the target environment. 
+
+[/support/docview.wss?uid=swg21973994&amp;aid=1]

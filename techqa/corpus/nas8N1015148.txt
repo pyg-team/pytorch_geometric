@@ -1,0 +1,79 @@
+Title: IBM Concurrent Update Is Partially Successful But Does Not Apply - United States
+
+Text:
+MSGHSCF0053 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This document describes a concurrent server firmware update issue. 
+
+RESOLVING THE PROBLEM
+This document describes a concurrent server firmware update issue. 
+
+If a managed server Licensed Internal Code concurrent update is applied to a server with a deferred update that is pending, the concurrent update fails to apply. It returns with the message Partially successful, details are available. Displaying the details shows deferred updates included in the previous fix pack. Displaying the current code levels shows that the new fix pack failed to apply.
+
+The problem is a code defect in the Change Licensed Internal Code function of the HMC System Manager. The problem affects HMC 5.1 and 5.1.1. It will be fixed in a future service pack or version. One circumvention to the problem is to use the HMC updlic command to concurrently apply the fixpack.
+
+Example with SF235 Firmware
+
+The update of FSP Server Firmware via HMC to SF235_160_160 is disruptive, but a concurrent update to SF235_180_160 can be performed. When the concurrent update is performed, the following sequence of screens are displayed at the conclusion of the process.
+
+After the concurrent firmware update has completed, the Change Licensed Internal Code Wizard Progress window shows that it was Partially successful, details are available.
+
+After the concurrent firmware update has completed, the Change Licensed Internal Code Wizard Progress window shows that it was Partially successful; details are available. [/support/docview.wss?uid=nas8N1015148&amp;aid=1]
+
+When the Details... button is pressed, it shows that the problem is due to deferred fixes for defects 528979 and 520148 (in a window with message ID HSCF0053).
+
+When the Details... button is pressed, it shows that the problem is due to deferred fixes for defects 528979 and 520148 (in a window with message ID HSCF0053). [/support/docview.wss?uid=nas8N1015148&aid=2] [/support/docview.wss?uid=nas8N1015148&aid=2]
+When the status of the update is determined by confirming the resultant FSP Server Firmware levels, the upgrade to SF235_180_160 shows it did in fact complete, and the Installed Level and Activated Level both show SF235_180_160.
+
+When the status of the update is determined by confirming the resultant FSP Server Firmware levels, the upgrade to SF235_180_160 shows it did in fact complete, and the Installed Level and Activated Level both show SF235_180_160. [/support/docview.wss?uid=nas8N1015148&aid=3] [/support/docview.wss?uid=nas8N1015148&aid=3]
+
+This example shows that the update to SF235_180_160 was performed. The subsequent level, SF235_185_160, is also available.
+
+A concurrent upgrade to SF235_185_160 from the SF235_180_160 level could also be attempted. You should be able to perform this prior to applying the deferred fixes from the SF235_180_160 upgrade; unfortunately, this is not the case in this situation.
+
+When the apply of SF235_185_160 is attempted concurrently, the update fails. The Confirmation Level Details panel shows that the Level After Operation will be 185. This is as expected so far.
+
+The Confirmation Level Details panel shows that the Level After Operation will be 185. [/support/docview.wss?uid=nas8N1015148&amp;aid=4]
+
+Click the Finish button to commence the update to SF235_185_180 (as shown below).
+
+The Change Licensed Internal Code Wizard has a message that you are about to start concurrent install and activate. [/support/docview.wss?uid=nas8N1015148&amp;aid=5]
+
+After a short delay of about 30 seconds, the HMC reports the same Partially successful, details are available message.
+
+The HMC reports the same  [/support/docview.wss?uid=nas8N1015148&amp;aid=6]
+
+Using the Details... button, the resulting window lists the same two deferred fixes from FSP Server Firmware level SF235_180_160.
+
+Using the Details... button, the resulting window lists the same two deferred fixes from FSP Server Firmware level SF235_180_160. [/support/docview.wss?uid=nas8N1015148&aid=7] [/support/docview.wss?uid=nas8N1015148&aid=7]
+If we view the FSP Server Firmware levels that now reside on the machine, it shows that no update was applied. The levels applied are exactly what they were before the upgrade was attempted (SF235_180_160 is applied as shown below).
+
+The FSP Server Firmware levels show that no update was applied. The levels applied are exactly what they were before the upgrade was attempted (SF235_180_160). [/support/docview.wss?uid=nas8N1015148&aid=8] [/support/docview.wss?uid=nas8N1015148&aid=8]
+
+The problem here is that the Change Internal Code for the current release function is incorrectly checking for outstanding deferred fixes and is stopping the update. As indicated, this will be resolved in a level of HMC code after 5.1.1.
+
+One circumvention is to perform a Platform IPL to apply the deferred fixes for SF235_180_160 (this requires powering down all partitions). After this has been completed, SF235_185_160 can be concurrently applied.
+
+Another circumvention is to use the updlic command (in rshterm on the HMC). This works properly and installs the second concurrent FSP Server Firmware level without any problem (even though there are outstanding deferred fixes).
+
+The syntax of this command follows:
+
+updlic -o a -r dvd -l latestconcurrent -t sys -m 9406-5xx*xxxxxxxxx
+
+Notes: 
+
+1. The -l flag is mandatory, and it is best to explicitly specify a concurrent update to prevent the possibility of grabbing a disruptive update accidentally (because one might be available from the repository in the command). Accidentally choosing a disruptive update would crash the partitions when the update commences. This should not be a problem with the DVD repository because it usually only contains a single image that you have chosen. It is best to be in the habit of specifying the concurrent update so it does not happen when choosing one of the other repositories. 2. For the Managed System name (the parameter that is specified following the -m flag), use one of the following methods to determine what to use in this field:
+
+Method 1: Use lssysconn -r all to show the MTMS (Machine Type, Model Serial number) and use it as the -m parameter. For example, the output shown below has the MTMS highlighted in bold blue.
+
+hscroot@hmc520:~> lssysconn -r all
+resource_type=sys,type_model_serial_num=9406-5xx*xxxxxxx,sp=primary,ipaddr=10.0.0.254,alt_ipaddr=unavailable,state=Connected
+
+Method 2: You can also use lssyscfg -r sys to see the system name and use it in place of the MTMS above. For example, the output shown below has the Managed System name highlighted in bold blue.
+
+hscroot@hmc520:~> lssyscfg -r sys
+name=Server-9406-5xx-SNxxxxxxx,type_model=9406-520,serial_num=xxxxxxx,ipaddr=10.0.0.254,state=Operating,sys_time=27/02/2006 15:16:13,power_off_policy=1,cod_mem_capable=0,cod_proc_capable=0,hca_capable=0,micro_lpar_capable=1,os400_capable=1,5250_application_capable=1,shared_eth_failover_capable=1,sni_msg_passing_capable=0,sp_failover_capable=0,vet_activation_capable=1,virtual_io_server_capable=0,assign_5250_cpw_percent=0,max_lpars=20,max_power_ctrl_lpars=1,service_lpar_id=1,service_lpar_name=V5R3M0_1,curr_sys_keylock=norm,pend_sys_keylock=norm,curr_power_on_side=temp,pend_power_on_side=temp,curr_power_on_speed=fast,pend_power_on_speed=fast,curr_power_on_speed_override=none,pend_power_on_speed_override=none,power_on_type=11,power_on_option=standby,pend_power_on_option=standby,power_on_method=08,power_on_attr=6000,sp_boot_attr=5000,sp_boot_major_type=0B,sp_boot_minor_type=08,sp_version=00030020,mfg_default_config=0,curr_mfg_default_ipl_source=b,pend_mfg_default_ipl_source=b,curr_mfg_default_boot_mode=norm,pend_mfg_default_boot_mode=norm  
+
+HISTORICAL NUMBER
+ 404519768

@@ -1,0 +1,222 @@
+Title: IBM JR44180: LOCK CONTENTION WHEN USING PDW IN A CLUSTER OR WHEN SENDING TRACKING DEFINITIONS. - United States
+
+Text:
+  A FIX IS AVAILABLE
+Version 7.5.1 Fix Pack 2 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24036462]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The Performance Data Warehouse application requires a table lock
+   while doing certain activities. If similiar activities are also
+   being run in other threads or on other servers then it can lead
+   to lock contention and lock timeouts.
+   This can cause problems with sending tracking definitions to
+   the PDW server or PDW data transfer.
+   
+   Here are examples of the lock timeout errors that may be
+   related to the PDW DB lock contention:
+   
+   
+   Caused by: com.ibm.db2.jcc.am.SqlTransactionRollbackException:
+   DB2 SQL Error: SQLCODE=-911, SQLSTATE=40001, SQLERRMC=68,
+   DRIVER=3.61.65
+   at com.ibm.db2.jcc.am.ed.a(ed.java:663)
+   ...
+   at
+   com.lombardisoftware.server.tracking.loader.LockHolder$LockQuery
+   ConnectionCallback.doInConnection(LockHolder.java:109)
+   at
+   org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.
+   java:342)
+   
+   
+   [8/27/12 16:55:07:984 IDT] 00000028 wle           E
+   CWLLG2229E: An exception occurred in an EJB call.  Error:
+   ConnectionCallback; bad SQL grammar []; nested exception is
+   java.sql.SQLSyntaxErrorException:
+   ORA-02049: timeout: distributed transaction waiting for lock
+   ORA-06512: at "SYS.DBMS_LOCK", line 82
+   ORA-06512: at "SYS.DBMS_LOCK", line 110
+   ORA-06512: at line 1
+   ...
+   at
+   com.lombardisoftware.server.tracking.loader.LockHolder$1.run(Loc
+   kHolder.java:251)
+   at
+   com.lombardisoftware.server.tracking.loader.LockHolder$1.run(Loc
+   kHolder.java:247)
+   at
+   java.security.AccessController.doPrivileged(AccessController.jav
+   a:202)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Run the PDW app on one server or a cluster with only one server
+   running. You should also try to deploy tracking definitions at
+   times of low traffic. LSW_PERF_DATA_TRANSFER table can be
+   monitored for issues. Large growth in this table can be a sign
+   of an issue with sending tracking definitions or data.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  Users of BPM Express, BPM Standard and BPM  *
+   *                  Advanced.                                   *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: The Performance Data Warehouse          *
+   *                      application requires a table lock       *
+   *                      while doing certain activities. If      *
+   *                      similiar activities are also being run  *
+   *                      in other threads or on other servers    *
+   *                      then it can lead to lock contention     *
+   *                      and lock timeouts. This can cause       *
+   *                      problems with sending tracking          *
+   *                      definitions to the PDW server or PDW    *
+   *                      data transfer.                          *
+   *                      Here are examples of the lock timeout   *
+   *                      errors that may be related to the PDW   *
+   *                      DB lock contention:                     *
+   *                      Caused by:                              *
+   *                      com.ibm.db2.jcc.am.SqlTransactionRollba *
+   *                      ckException:                            *
+   *                      DB2 SQL Error: SQLCODE=-911,            *
+   *                      SQLSTATE=40001, SQLERRMC=68,            *
+   *                      DRIVER=3.61.65                          *
+   *                      at                                      *
+   *                      com.ibm.db2.jcc.am.ed.a(ed.java:663)    *
+   *                      ...                                     *
+   *                      at                                      *
+   *                      com.lombardisoftware.server.tracking.lo *
+   *                      ader.LockHolder$LockQuery               *
+   *                      ConnectionCallback.doInConnection(LockH *
+   *                      older.java:109)                         *
+   *                      at                                      *
+   *                      org.springframework.jdbc.core.JdbcTempl *
+   *                      ate.execute(JdbcTemplate.java:342)      *
+   *                      [8/27/12 16:55:07:984 IDT] 00000028     *
+   *                      wle           E                         *
+   *                      CWLLG2229E: An                          *
+   *                      exception occurred in an EJB call.      *
+   *                      Error: ConnectionCallback;              *
+   *                      bad SQL grammar []; nested exception    *
+   *                      is                                      *
+   *                      java.sql.SQLSyntaxErrorException:       *
+   *                      ORA-02049: timeout: distributed         *
+   *                      transaction waiting for lock            *
+   *                      ORA-06512: at "SYS.DBMS_LOCK", line 82  *
+   *                      ORA-06512: at "SYS.DBMS_LOCK", line     *
+   *                      110                                     *
+   *                      ORA-06512: at line 1                    *
+   *                      ...                                     *
+   *                      at                                      *
+   *                      com.lombardisoftware.server.tracking.lo *
+   *                      ader.LockHolder$1.run(LockHolder.java:2 *
+   *                      51)                                     *
+   *                      at                                      *
+   *                      com.lombardisoftware.server.tracking.lo *
+   *                      ader.LockHolder$1.run(LockHolder.java:2 *
+   *                      47)                                     *
+   *                      at                                      *
+   *                      java.security.AccessController.doPrivil *
+   *                      eged(AccessController.java:202)         *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   Contention among threads accessing the Performance Data
+   Warehouse database can result in this issue.  Limiting the
+   number of threads that can access the database concurrently
+   (in code) resolves the issue.
+   For Version 7.5.x customers, this issue will be resolved in an
+   upcoming maintenance release on Version7.5.1.  For Version
+   8.0.x customers, the issue is addressed in Version 8.0.1.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR44180
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM ADVANCED
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9400
+   
+   
+ * REPORTED RELEASE
+   751
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-09-24
+   
+   
+ * CLOSED DATE
+   2012-12-20
+   
+   
+ * LAST MODIFIED DATE
+   2012-12-20
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R750 PSY
+   UP

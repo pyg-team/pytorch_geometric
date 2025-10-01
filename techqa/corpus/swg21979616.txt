@@ -1,0 +1,24 @@
+Title: IBM Data Server Manager (DSM) showing SQLCODE=-206 "T1.TOTAL_RQST_TIME" is not valid in the context where it is used - United States
+
+Text:
+DSM SQLCODE=-206 T1.TOTAL_RQST_TIME TOTAL_ROLLBACK_PROC_TIME SQL0206 migration HealthSnapshotLogger TECHNOTE (FAQ)
+
+QUESTION
+ Why is Data Server Manager (DSM) showing the following error in HealthSnapshotLogger file, after installing/migrating DSM to a newer version:
+"T1.TOTAL_RQST_TIME" is not valid in the context where it is used.. SQLCODE=-206, SQLSTATE=42703, DRIVER=3.69.56 
+
+CAUSE
+Two new columns have been added to the IBMOTS.WORKLOAD_STATS table in DSM Repository Database after V1.1.2.1:
+- TOTAL_ROLLBACK_PROC_TIME bigint"
+- TOTAL_RQST_TIME bigint"
+
+For some reason the migration process did not update the table successfully.
+
+
+ANSWER
+To fix the issue, stop DSM, connect to the DSM Repository Database using the DSM instance owner, and run the following DB2 commands: 
+
+- db2 "alter table IBMOTS.WORKLOAD_STATS add column TOTAL_ROLLBACK_PROC_TIME bigint"
+- db2 "alter table IBMOTS.WORKLOAD_STATS add column TOTAL_RQST_TIME bigint"
+
+Restart DSM.

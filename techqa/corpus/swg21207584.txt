@@ -1,0 +1,27 @@
+Title: IBM WebSphere Application Server StaleConnectionException - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ What causes com.ibm.websphere.ce.cm.StaleConnectionException to be thrown and what can you do about it? 
+
+CAUSE
+While there are some specific SQL return codes that IBM® WebSphere Application Server will map to a StaleConnectionException (SCE), such as ResourceAllocation, DuplicateKey, TableAlreadyExists, TableDoesNotExist, more frequently, a SCE occurs after a connection has been created and used, then returned to the connection free pool for re-use. If an event occurs outside of the WebSphere Application Server to cause the connection to become invalid, such as a firewall connection timeout, database server drop, or network problem, when the WebSphere application attempts to re-use the connection and discovers the connection is no longer valid, the SCE results. 
+At that time, the default configuration option is to purge any remaining connections in the free pool, assuming if one is invalid, the remaining connections in the free pool are invalid as well, and a subsequent connection request will result in a new connection being created. 
+
+
+RESOLVING THE PROBLEM
+There are a few possible ways to address a SCE issue. 
+
+ * Write your application code to catch SCE's and retry the connection request x number of retries. This is the preferred method.
+   
+   
+ * Configure the datasource minimum connections to 0 and the Unused timeout value well below whatever is timing out the connections in the network. This causes WebSphere to drop connections BEFORE the external source, so WebSphere will not have invalid connections to retry. Active connections which are closed will still be returned to the free pool and available for re-use as long as they are used before the Unused timer expires. This allows you to still realize the benefit of a connection pool but minimize the SCE exposure. This option will not eliminate all SCE's, but is a good alternative for situations where you are aware of the cause of the SCE such as firewalls or database server maintenance.
+   
+   
+ * Configure connection validation to test every connection obtained from the free pool before use. This will resolve the problem, but can affect performance, depending on the amount of connections obtained. Information on "Validate new connections" and "Validate existing pooled connections" can be found in Knowledge Center article WebSphere Application Server data source properties [https://www.ibm.com/support/knowledgecenter/SSAW57_8.5.5/com.ibm.websphere.nd.doc/ae/udat_jdbcdatasorprops.html].
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Application Servers Runtimes for Java Technology Java SDK

@@ -1,0 +1,165 @@
+Title: IBM IC47528: RCDMQIMG taking long time to complete - United States
+
+Text:
+  FIXES ARE AVAILABLE
+WebSphere MQ V6.0 for iSeries Fix Pack 6.0.1.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24012223]
+WebSphere MQ V6.0 Refresh Pack 6.0.2.0 [http://www-01.ibm.com/support/docview.wss?uid=swg24013482]
+WebSphere MQ V6.0 Fix Pack 6.0.1.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24011320]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  In MQ 6.0, the RCDMQIMG takes long to complete.  The queue
+   manager error logs shows a looping of AMQ7234 messages during
+   this time.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   RCDMQIMG on MQ 6.0
+   
+   Platforms affected:
+    All Distributed (iSeries, all Unix and Windows)
+   ****************************************************************
+   PROBLEM SUMMARY:
+   There was a number of load/unload of the queue was
+   required during the RCDMQIMG which took a long time due to the
+   huge size of the queue file and this caused a slow down in
+   recording the media image.  The AMQ7234 message is getting
+   logged in the error log at each time when the queue load
+   happens.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The load/unload of the queue during the rcdmqimg needs to be
+   controlled to avoid the delay.  Make sure the queue is loaded
+   before the rcdmqimg starts, and keep the queue loaded until it
+   completes recording.
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+                      v6.0
+   Platform           Fix Pack 6.0.1.1
+   --------           --------------------
+   Windows            U200247
+   AIX                U804921
+   HP-UX (PA-RISC)    U805233
+   HP-UX (Itanium)    U805767
+   Solaris (SPARC)    U805234
+   Solaris (x86-64)   U805768
+   iSeries            SI21854
+   Linux (x86)        U805235
+   Linux (x86-64)     U805770
+   Linux (zSeries)    U805236
+   Linux (Power)      U805237
+   Linux (s390x)      U805769
+   
+   The latest available maintenance can be obtained from
+   'WebSphere MQ Recommended Fixes'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037]
+   
+   If the maintenance level is not yet available, information on
+   its planned availability can be found in 'WebSphere MQ
+   Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC47528
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBS MQ FOR WIN
+   
+   
+ * REPORTED COMPONENT ID
+   5724H7200
+   
+   
+ * REPORTED RELEASE
+   600
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2005-10-03
+   
+   
+ * CLOSED DATE
+   2005-12-05
+   
+   
+ * LAST MODIFIED DATE
+   2007-08-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBS MQ FOR WIN
+   
+   
+ * FIXED COMPONENT ID
+   5724H7200
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R600 PSY
+   UP

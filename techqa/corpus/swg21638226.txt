@@ -1,0 +1,45 @@
+Title: IBM SDK - Schedules fail to run - CM-REQ-4159 and CM-HDR-4012 The search path "CAMID("namespace:u:usera")/credential[@name='Credential']" does not select one credential object. - United States
+
+Text:
+CJAP; CAP TECHNOTE (FAQ)
+
+QUESTION
+ Users log in and create their credentials. They try to schedule a report and the credentials show on the schedule page. The scheduled report when run fails with CM-HDR-4012(cm_trace.log). The credentials have been removed on the My preferences page and reports in the My folders of that user can no longer be found. Why does this occur? 
+
+CAUSE
+The custom authentication provider was using a tenant ID to implement a multi-tenant solution. However the trusted credentials created in the provider's generateTrustedCredential method did not include the user's tenant id. When the schedule was run, it was run as a "public" or unspecified tenant.
+1) Account change from "public" to a "specific tenant", the account proxy and all its descendants are updated to belong to that tenant. This is intended to deal with the upgrade scenario to a multi-tenancy environment.
+
+2) Account change from "specific tenant" to any other tenant (including public), the account proxy is updated to belong to that tenant and all its descendants are deleted which includes the credentials used for scheduled jobs and the user's "My folder".
+
+
+ANSWER
+Ensure that the trusted credential used when running schedules in a multi-tenant environment includes the user's tenant ID so that scheduled tasks can run successfully. 
+
+
+Here is a code snippet that shows how to set and retrieve credential fields:
+
+
+public ITrustedCredential generateTrustedCredential...
+String[] orgIdArray = m_user.getCustomPropertyValue("OrganizationId");
+
+if (orgIdArray != null && orgIdArray[0].length() > 0)
+{
+tc.addCredentialValue("orgcode", orgIdArray[0]);
+}
+tc.addCredentialValue("username", m_user.getUserName() );
+tc.addCredentialValue("password", m_user.getPassword() );
+...
+
+public IVisa logon...
+{
+TenantVisa visa = null;
+String[] username = null;
+String[] password = null;
+String[] orgcode = null;
+boolean trusted = false;
+// 1 - Look for trusted credentials
+username = theAuthRequest.getTrustedCredentialValue("username");
+password = theAuthRequest.getTrustedCredentialValue("password");
+orgcode = theAuthRequest.getTrustedCredentialValue("orgcode");
+...

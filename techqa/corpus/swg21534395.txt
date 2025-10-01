@@ -1,0 +1,63 @@
+Title: IBM How do I configure pacing? (SCI50244) - United States
+
+Text:
+STERLINGPRI TECHNOTE (FAQ)
+
+QUESTION
+ How do I configure pacing? (SCI50244) 
+
+ANSWER
+
+
+There are two places where pacing can be set; initparms, which determines the default values for all transfers, and netmap which defines the values on a per node basis.
+
+
+
+_initparms_
+
+
+
+pacing.send.delay 
+Specifies the default time, in milliseconds, to wait between send operations if the value is not in the network map entry. The value entered in the Pacing Send Delay field of the TCP/IP Communication Mode object overrides this value. A value of zero indicates that a data buffer should be sent as soon as possible. A numeric value from 0?a??86,400,000 (one day in milliseconds). The default is 00.00.00.
+
+
+
+_netmap_
+Same as above, but relates specifically to one node:
+
+
+
+Buffersize 
+Specifies the buffer size for transmitting data to and from the remote Connect:Direct node. This value overrides the value in the initialization parameters file. A numeric value from 256 - 32,767. The default is 4096.
+
+
+
+Pacing Send Count 
+Specifies the number of send operations to perform before automatically waiting for a pacing response from the remote
+Connect:Direct node. A value of 0 indicates that there is no pacing. This value overrides the value in the initialization parameters file. A numeric value from 0?a??63. The default is 0.
+
+
+
+Pacing Send Delay 
+Specifies the amount of time Connect:Direct waits before sending each outbound data buffer to the remote node. This can prevent flooding the network. A value of 0 indicates that Connect:Direct sends each data buffer as soon as possible. This value overrides the value in the initialization parameters file. An integer from 0-86400. The default is 0.
+
+ 
+
+HISTORICAL NUMBER
+ PRI12338 
+
+PRODUCT ALIAS/SYNONYM
+ 
+
+Fact
+
+
+Connect:Direct Windows Server
+Release 4.1.00 
+SCI50244
+
+
+Goal
+
+
+FAQ: How do I configure pacing?

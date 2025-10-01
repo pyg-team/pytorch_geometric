@@ -1,0 +1,139 @@
+Title: IBM PM73147: SERVLETEXCEPTION WHEN CLICKING "VIEW JVM LOGS" - United States
+
+Text:
+  FIXES ARE AVAILABLE
+8.5.0.1: WebSphere Application Server V8.5 Fix Pack 1 [http://www-01.ibm.com/support/docview.wss?uid=swg24033606]
+8.5.0.2: WebSphere Application Server V8.5 Fix Pack 2 [http://www-01.ibm.com/support/docview.wss?uid=swg24034672]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When an error occurs starting a server, the message to view
+   the JVM logs should not include a link. Since the server is
+   not running, the link will throw the ServletException.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  All users of IBM WebSphere Application      *
+   *                  Server V8.5 administrative console error    *
+   *                  message to view JVM logs                    *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: An exception is thrown when clicking    *
+   *                      on the message "View JVM logs" after    *
+   *                      an On-Demand Router (ODR) fails to      *
+   *                      start.                                  *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   When a server fails to start, it is not possible to retrieve
+   the JVM logs. So an exception is thrown when the link in the
+   message is clicked.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Now, we do not include the link in the message when the server
+   fails to start.
+   
+   The fix for this APAR is currently targeted for inclusion in
+   fix pack 8.5.0.1.  Please refer to the Recommended
+   Updates page for delivery information:
+   http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM73147
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSPHERE APP S
+   
+   
+ * REPORTED COMPONENT ID
+   5724J0800
+   
+   
+ * REPORTED RELEASE
+   850
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-09-18
+   
+   
+ * CLOSED DATE
+   2012-09-28
+   
+   
+ * LAST MODIFIED DATE
+   2012-09-28
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBSPHERE APP S
+   
+   
+ * FIXED COMPONENT ID
+   5724J0800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R850 PSY
+   UP

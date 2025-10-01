@@ -1,0 +1,39 @@
+Title: IBM After source control checkout, WebSphere Message Broker Toolkit is unable to open *.inadapter file for WebSphere Adapter for SAP - United States
+
+Text:
+JCA SAP; inadapter; outadapter; WMB; WMBT; message set TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ After source control checkout, WebSphere Message Broker Toolkit is unable to open *.inadapter file for WebSphere Adapter for SAP 
+
+SYMPTOM
+From WebSphere Message Broker Toolkit a new workspace was recently checked out from Source Control containing message sets / message flows involving the WebSphere Adapter for SAP. After the check out the adapter properties can no longer be modified by opening either the *.inadapter or *.outadapter files. 
+
+
+Instead, an error is displayed reporting the following:
+
+SAP Inbound Resource Adapter
+No resource adapter can be found for the selected adapter component. The resource adapter connector project required by this adapter component may not exist in the workspace. Or, there are no connector projects referenced by the message set project containing the adapter component.
+
+
+Exception details : There are no connector projects referenced by this message set project.
+
+
+
+
+[/support/docview.wss?uid=swg21458590&aid=1] [/support/docview.wss?uid=swg21458590&aid=1] 
+RESOLVING THE PROBLEM
+The message set project containing the in/out adapter file needs to have a valid Java Project reference to the adapter project in the same workspace. For example, say you have a workspace with a message set project called, 'MATMAS05_MessageSet'. This project needs to have a Java Project reference to a WebSphere Adapter for SAP project called, "CWYAP_SAPAdapter_Tx". This project is created by the adapter connection / discovery wizard and contains all the libs needed to load and edit the in / out adapter files.
+
+Often times, when the generated message set artifacts are moved into a new workspace, (such as from a source control system), the matching adapter project is not included.
+
+Please ensure that the project "CWYAP_SAPAdapter_Tx" also exists in your workspace. If it does not exist then you can import "RAR" and browse to the adapter rar file from the WMBT folder / ResourceAdapters folder. This should then create the adapter project in your workspace. Next you need to ensure that the message set contains a valid Java project reference to your new adapter project. Also be sure to remove any only bad project references at the same time.
+
+Then do a clean / build all. Now you should be able to reopen your in/out adapter file.
+
+In summary, review the following points: 
+
+ 1. In your source workspace, ensure that it contains a project for the WebSphere Adapter for SAP, 'CWYAP_SAPAdapter_Tx'. 
+ 2. In your source workspace, ensure that your Source Control System checked-in the project, 'CWYAP_SAPAdapter_Tx'. 
+ 3. In your destination workspace, ensure that you have checked-out the 'CWYAP_SAPAdapter_Tx' Project. 
+ 4. In your destination workspace, ensure that your Message Set Project contains a Java Project reference to 'CWYAP_SAPAdapter_Tx'.

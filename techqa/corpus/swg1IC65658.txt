@@ -1,0 +1,227 @@
+Title: IBM IC65658: INCORRECT GRANT STATEMENT WITH DB2LOOK WHEN TWO FUNCTIONS WITH  SAME NAME BUT DIFFERENT SCHEMA - United States
+
+Text:
+z/os  FIXES ARE AVAILABLE
+DB2 Version 9.1 Fix Pack 9 for Linux, UNIX and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24026384]
+DB2 Version 9.1 Fix Pack 10 for Linux, UNIX and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24029027]
+DB2 Version 9.1 Fix Pack 11 for Linux, UNIX and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24031281]
+DB2 Version 9.1 Fix Pack 12 for Linux, UNIX and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24033023]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Repro Steps
+   1) create table s1.tab1(c1 smallint NOT NULL, c2 int, c3 bigint)
+   2) create function s1.func1() specific func1 returns integer
+   language sql reads sql data deterministic no external action
+   begin declare i integer; set i = (select c3 from s1.tab1 where
+   c2 = 22);return i;end
+   3) grant execute on function s1.func1 to user ZURBIE
+   4) create function s2.func1(x int) specific func1 returns
+   integer fenced language java parameter style java external name
+   'Functions!squire' no external action called on null input
+   deterministic no sql
+   5) grant execute on function s2.func1 to user zurbie
+   
+   6) db2look -d <dbname> -l -e -x
+   
+   Here is a snippet from the db2look output ...
+   
+   -----------------------------------------------------
+   -- Authorization Statements on User Defined Functions
+   -----------------------------------------------------
+   GRANT EXECUTE ON FUNCTION "S1      "."FUNC1"(INTEGER) TO USER
+   "ZURBIE  " ;
+   GRANT EXECUTE ON FUNCTION "S1      "."FUNC1"(INTEGER) TO USER
+   "ZURBIE  " ;
+   GRANT EXECUTE ON FUNCTION "S2      "."FUNC1"(INTEGER) TO USER
+   "ZURBIE  " ;
+   GRANT EXECUTE ON FUNCTION "S2      "."FUNC1"(INTEGER) TO USER
+   "ZURBIE  " ;
+   
+   If I try to execute the grant statement on s1.func1 as provided
+   by db2look, I get the following error:
+   
+   GRANT EXECUTE ON FUNCTION "S1      "."FUNC1"(INTEGER) TO USER
+   "ZURBIE  "
+   DB21034E  The command was processed as an SQL statement because
+   it was not a valid Command Line Processor command.  During SQL
+   processing it returned:
+   SQL0458N  In a reference to routine "S1.FUNC1" by signature, a
+   matching routine could not be found.  SQLSTATE=42883
+   
+   I believe that the GRANT statement is created incorrectly, as
+   there should be no (INTEGER). If you drop function s2.func1,
+   then run db2look again, you will get the correct GRANT DDL stmt
+   of
+   GRANT EXECUTE ON FUNCTION "S1      "."FUNC1"() TO USER "ZURBIE
+   " ;
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * All users of db2look                                         *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * Repro Steps                                                  *
+   * 1) create table s1.tab1(c1 smallint NOT NULL, c2 int, c3     *
+   * bigint)                                                      *
+   * 2) create function s1.func1() specific func1 returns integer *
+   * language sql reads sql data deterministic no external action *
+   * begin declare i integer; set i = (select c3 from s1.tab1     *
+   * where c2 = 22);return i;end                                  *
+   * 3) grant execute on function s1.func1 to user ZURBIE         *
+   * 4) create function s2.func1(x int) specific func1 returns    *
+   * integer fenced language java parameter style java external   *
+   * name 'Functions!squire' no external action called on null    *
+   * input deterministic no sql                                   *
+   * 5) grant execute on function s2.func1 to user zurbie         *
+   *                                                              *
+   * 6) db2look -d <dbname> -l -e -x                              *
+   *                                                              *
+   * Here is a snippet from the db2look output ...                *
+   *                                                              *
+   * -----------------------------------------------------        *
+   * -- Authorization Statements on User Defined Functions        *
+   * -----------------------------------------------------        *
+   * GRANT EXECUTE ON FUNCTION "S1      "."FUNC1"(INTEGER) TO     *
+   * USER "ZURBIE  " ;                                            *
+   * GRANT EXECUTE ON FUNCTION "S1      "."FUNC1"(INTEGER) TO     *
+   * USER "ZURBIE  " ;                                            *
+   * GRANT EXECUTE ON FUNCTION "S2      "."FUNC1"(INTEGER) TO     *
+   * USER "ZURBIE  " ;                                            *
+   * GRANT EXECUTE ON FUNCTION "S2      "."FUNC1"(INTEGER) TO     *
+   * USER "ZURBIE  " ;                                            *
+   *                                                              *
+   * If I try to execute the grant statement on s1.func1 as       *
+   * provided by db2look, I get the following error:              *
+   *                                                              *
+   * GRANT EXECUTE ON FUNCTION "S1      "."FUNC1"(INTEGER) TO     *
+   * USER "ZURBIE  "                                              *
+   * DB21034E  The command was processed as an SQL statement      *
+   * because it was not a valid Command Line Processor command.   *
+   * During SQL processing it returned:                           *
+   * SQL0458N  In a reference to routine "S1.FUNC1" by signature, *
+   * a matching routine could not be found.  SQLSTATE=42883       *
+   *                                                              *
+   * I believe that the GRANT statement is created incorrectly,   *
+   * as there should be no (INTEGER). If you drop function        *
+   * s2.func1, then run db2look again, you will get the correct   *
+   * GRANT DDL stmt of                                            *
+   * GRANT EXECUTE ON FUNCTION "S1      "."FUNC1"() TO USER       *
+   * "ZURBIE  " ;                                                 *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Upgrade to db2 v9.1 fp9                                      *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Upgrade to db2 v9.1 fp9
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC65658
+   
+   
+ * REPORTED COMPONENT NAME
+   DB2 FOR LUW
+   
+   
+ * REPORTED COMPONENT ID
+   DB2FORLUW
+   
+   
+ * REPORTED RELEASE
+   910
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-01-19
+   
+   
+ * CLOSED DATE
+   2010-04-14
+   
+   
+ * LAST MODIFIED DATE
+   2010-04-14
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    IC65704 [http://www-01.ibm.com/support/docview.wss?uid=swg1IC65704]
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   DB2 FOR LUW
+   
+   
+ * FIXED COMPONENT ID
+   DB2FORLUW
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R910 PSN
+   UP
+   
+   
+ * R950 PSN
+   UP
+   
+   
+ * R970 PSN
+   UP

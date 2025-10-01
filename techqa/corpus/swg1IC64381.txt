@@ -1,0 +1,169 @@
+Title: IBM IC64381: WMB TOOLKIT SAP ADAPTER WIZARD CANNOT FIND SAPJCO LIBRARY - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The following exception is seen when using the SAP adapter
+   wizard shipped with the WMB Toolkit on Linux
+   
+   com.ibm.adapter.framework.BaseException
+   
+   Reason:
+   
+   JCO.classInitialize(): Could not load middleware
+   layer 'com.sap.mw.rfc.MiddlewareRFC'.....cannot open shared
+   abject
+   file: No such file directory
+   
+   CO.classInitialize(): Could not load middleware
+   layer 'com.sap.mw.jco.rfc.MiddlewareRFC'
+   JCO.nativeInit(): Could not initialize dynamic link library
+   sapjcorfc
+   
+   [sapjcorfc (librfccm.so: cannot open shared object file: No
+   such file or directory)].
+   java.library.path
+   
+   [/home/xxxxxxx/sapjco:/opt/IBM/WMBT610/jdk/jre/bin:/opt/ibm/mqsi
+   /6.1/jre15/bin/classic:/opt/ibm/mqsi/6.1/jre15/bin:/opt/mqm/java
+   /lib:/opt/ibm/mqsi/6.1/xml4c/lib:/opt/ibm/mqsi/6.1/lib:/opt/ibm/
+   mqsi/6.1/bin:/opt/ibm/mqsi/6.1/ODBC32/V5.3/lib:/opt/ibm/mqsi/6.1
+   /xlxpc/lib:/opt/ibm/mqsi/6.1/jre15/bin/classic:/opt/ibm/mqsi/6.1
+   /jre15/bin:/opt/mqm/java/lib:/opt/ibm/mqsi/6.1/xml4c/lib:/opt/ib
+   m/mqsi/6.1/lib:/opt/ibm/mqsi/6.1/bin:/opt/ibm/mqsi/6.1/ODBC32/V5
+   .3/lib:/opt/ibm/mqsi/6.1/xlxpc/lib::/home/db2inst2/sqllib/lib32:
+   /usr/lib/xulrunner-
+   1.8.0.14eol:/usr/lib]
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  In order to use adapters on Linux, you have to set path for
+   shared libraries using LD_LIBRARY_PATH variables and put the SAP
+   libraries sapjco.jar, librfccm.so, libsapjcorfc.so in the
+   directory pointed to by this path variable and invoke toolkit
+   from the same window. You can verify the LD_LIBRARY_PATH
+   setting by typing env in the window.
+   
+   export LD_LIBRARY_PATH=/home/user/path
+   
+   type 'env' and you should see it set.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   All WebSphere Message Broker Toolkit users of the SAP adapter
+   wizard on Linux.
+   
+   Platforms Affected:
+   Toolkit Platforms (Windows, Linux x86 and Linux x86-64)
+   ****************************************************************
+   PROBLEM SUMMARY:
+   exception generated when using the SAP adapter wizard shipped
+   with WMB Toolkit on Linux
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The infocenter will be updated to state:
+   
+   In order to use adapters on Linux, a user has to set the path
+   for shared libraries using LD_LIBRARY_PATH variables and put
+   the SAP libraries sapjco.jar, librfccm.so, libsapjcorfc.so in
+   the directory pointed to by this path variable and invoke
+   toolkit from the same window.
+   A user can verify the LD_LIBRARY_PATH setting by typing env in
+   the window.
+   
+   export LD_LIBRARY_PATH=/home/user/path
+   
+   type 'env' and the display should show it set.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC64381
+   
+   
+ * REPORTED COMPONENT NAME
+   WMB WINDOWS V6
+   
+   
+ * REPORTED COMPONENT ID
+   5724J0500
+   
+   
+ * REPORTED RELEASE
+   610
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-11-09
+   
+   
+ * CLOSED DATE
+   2009-12-01
+   
+   
+ * LAST MODIFIED DATE
+   2009-12-01
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

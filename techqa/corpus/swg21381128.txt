@@ -1,0 +1,103 @@
+Title: IBM JCR Troubleshooting: Exception with JCR PAC tables SQLCODE: -803, SQLSTATE: 23505 - United States
+
+Text:
+Exception with JCR PAC tables SQLCODE: -803; SQLSTATE: 23505 TECHNOTE (FAQ)
+
+QUESTION
+In IBM Web Content Management (WCM), you experience an exception error in the Java™ Content Repository (JCR) Portal Access Control (PAC) tables with SQLCODE: -803, SQLSTATE: 23505. 
+
+Sample exception error:
+com.ibm.wps.util.DataBackendException:
+EJPDB0099E: Error occurred during database access. Last SQL statement is [INSERT INTO JCR.PROT_RES (OID, CREATED, MODIFIED, RES_TYPE, EXTERNAL_OID, EXTERNAL_UID, PARENT_OID, OWNER_TYPE, OWNER_UID, INHERITANCE, PROPAGATION, EXTERNALIZED, IS_PRIVATE, NAME, IS_LEAF) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)]. Transaction has status [STATUS_ACTIVE].
+com.ibm.db2.jcc.c.SqlException: DB2 SQL error: SQLCODE: -803, SQLSTATE: 23505, SQLERRMC: 6;JCR.PROT_RES
+
+
+CAUSE
+Duplicate row in the PROT_RES table.
+
+
+ANSWER
+There are occasional scenarios in which the PAC data is not completely removed from the database when content is removed from either WCM or Personalization. When this occurs to the point of stopping a current function, the data must cleaned up with the following methods: 
+
+
+WARNING:
+The queries/process below are ok to use on Portal 6.1.x or 7.x but should NEVER be used for Portal 8.x or 8.5.x. It will wipe out ALL wcm roles for those versions, not just the stale entries. 
+
+NOTE: ALWAYS backup the database before making any SQL updates of this type.
+
+DB2:
+
+
+ * 
+ * 
+ * 
+ * 
+
+
+Oracle:  * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ *  You must have a Java 1.5 JVM installed (note that this should be available via WebSphere). Since this application connects directly to the database, you must stop the Portal server while running this application. We recommend executing the application with a maximum amount of virtual memory available. This reduces the chance of running out of memory when processing large amounts of data. 
+ * 
+ * Usage: 
+ * 
+ * 
+ * 
+ * 
+ * Instructions:
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ *  <oracle-lib>/ojdbc14.jar; <applications-loc>/dbapplications.jar, 
+   
+   where <oracle-lib> is the location of the Oracle Java libraries and <applications-loc> is the location on the file system where you downloaded the dbapplications.jar file. 
+   
+ * 
+ * <PortalServer>
+ * 
+ * 
+ * jcr.database.type 
+   jcr.database.name 
+   jcr.database.userid 
+   jcr.database.password 
+   jcr.database.schema 
+   jcr.database.driver 
+   jcr.database.drivertype 
+   jcr.database.hostname 
+   jcr.database.port 
+   
+ * 
+ * java -Xmx1500m com.ibm.jcr.db.pac.ProtResCleaner -db <PortalServer>/jcr/lib/com/ibm/icm/icm.properties 
+   
+   NOTE: You may change the value of "-Xmx1500m" as needed. Increase this value if you encounter an Out Of Memory error or decrease this value if you get an error that Java cannot create the virtual machine. 
+   
+ * 
+ * 
+ * 
+ * 
+ * java -Xmx1500m com.ibm.jcr.db.pac.ProtResCleaner -db <PortalServer>/jcr/lib/com/ibm/icm/icm.properties -update 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * NOTE: 
+ * 
+
+dbapplications.jar [/support/docview.wss?uid=swg21381128&aid=2] [/support/docview.wss?uid=swg21381128&aid=1]

@@ -1,0 +1,40 @@
+Title: IBM Deployment Manager, Server or Node Agent may fail to start if WebSphere's JVM's shared classes become corrupted. - United States
+
+Text:
+WASSDK; startup; initialization; server; deployment manager; SDK 5.0; SDK; hang; clearclasscache TECHNOTE (FAQ)
+
+QUESTION
+ IBM® SDKs can share classes between JVM (Java™ Virtual Machine) processes, available starting with Java 2 Standard Edition (J2SE) 5.0. This feature improves performance since class byte code needs to be loaded only once. Specifically, server startup time can be improved quite a bit this way. Class byte code is loaded into a shared cache. This cache is then accessed by multiple JVMs to run the class bytecode. 
+
+CAUSE
+As you upgrade the IBM WebSphere® Application Server product and SDK, the cache can sometimes become corrupted. This can cause failure in the startup of the Deployment Manager (DMGR), Server or Node Agent. It may appear that the DMGR, Server or Node Agent is hung. In the SystemOut.log it will report the DMGR, Server or Node Agent is waiting for initialization. Sometimes you may see an actual error message pointing to the cache as the problem in the native_stderr.log. 
+Java technology, IBM style: Class sharing [http://www.ibm.com/developerworks/java/library/j-ibmjava4/]
+
+
+ANSWER
+To resolve this issue we will need to clear the cache. 
+
+You can not delete the cache while any of the JVM's are running and using the cache. 
+
+Run the following script from WAS_HOME/bin/clearClassCache.bat/sh [http://publib.boulder.ibm.com/infocenter/wasinfo/v6r1/topic/com.ibm.websphere.nd.doc/info/ae/ae/urun_rconfproc_jvm.html]. 
+
+ 
+
+**For Windows the clearClassCache.bat may not work if customer is using Windows Services. They will need to follow the below steps: 
+
+Clear the following directory contents: 
+
+For Windows XP/Windows 2003: 
+
+C:\Documents and Settings\DefaultUser\Local Settings\ ApplicationData\javasharedresources\ 
+
+For Window Vista/Windows 7/Windows 2008: 
+
+C:\Users\[WSAS_User]\AppData\Local\javasharedresources\ 
+
+For Windows 64 bit machines check for this additional location
+C:\Windows\SysWOW64\config\systemprofile\AppData\Local\javasharedresources
+
+**For Linux
+
+Check under the /tmp directory for /javasharedresouces. If found, clear the contents.

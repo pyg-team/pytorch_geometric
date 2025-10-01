@@ -1,0 +1,140 @@
+Title: IBM GA15666: SOFTWARE_TAP_HOST IN SOFTWARE_TAP_EVENTS TABLE IS NOT ALWAYS POPULATED. V10 - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  SOFTWARE_TAP_HOST in SOFTWARE_TAP_EVENTS table is not always
+   populated in v10
+   
+   This cause Host field to be  empty in STAP events reports in
+   gui.
+   
+   Some of the EVENT_TYPE and TAP_MESSAGE's that have a blank
+   SOFTWARE_TAP_HOST
+   
+   LOG_ERR     To enable FIPS 140-2 mode set use_tls=1
+   failover_tls=0
+   LOG_ERR     Server 9.180.214.15 wasn't heard from for ** sec,
+   closing and
+   re-opening
+   NOTICE      Guardium TAP starting
+   LOG_ERR     Disconnected from Primary Server 9.180.214.15
+   LOG_WARNING Delayed server connection to 9.180.214.15 error:
+   Connection refused
+   LOG_ERR     Connected to Primary Server 9.180.214.15
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  In the STAP Events report, Software Tap Host is being logged
+   blank. Cause of the issue was protocol-related in the manner
+   that STAP was sending Software Tap information to the Collector.
+   Issue was only reported on v10.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Remediated by revising STAP code to properly queue outgoing
+   Software Tap messages until required information, such as
+   Software Tap IP, are available to send. Fix is available in v10
+   STAP r84814.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   GA15666
+   
+   
+ * REPORTED COMPONENT NAME
+   SEC GUARD DAT S
+   
+   
+ * REPORTED COMPONENT ID
+   5725I1200
+   
+   
+ * REPORTED RELEASE
+   A00
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2015-12-24
+   
+   
+ * CLOSED DATE
+   2016-02-16
+   
+   
+ * LAST MODIFIED DATE
+   2016-02-16
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   SEC GUARD DAT S
+   
+   
+ * FIXED COMPONENT ID
+   5725I1200
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * RA00 PSY
+   UP

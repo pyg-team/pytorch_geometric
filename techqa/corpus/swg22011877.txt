@@ -1,0 +1,40 @@
+Title: IBM SEVERE: EXIT IBM DASH instance not found & CTGTRI784W - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Should IBM Tivoli Common Reporting be installed with or without DASH when using it as part of the Cognos BI Reporting for IBM Spectrum Control? Which components of IBM Jazz for Service Management should be selected for installation? 
+
+ANSWER
+IBM Dashboard Application Services Hub (DASH) should NOT be installed as part of Jazz for Service Management component to be used with IBM Spectrum Control. The following severe error is logged in the TCR310InstallTrace log file when installing it correctly and should be ignored: 
+
+com.ibm.tivoli.reporting.advanced.cognos.installer.actions.CollectOSDPInfo dashNotFound
+SEVERE: EXIT ^IBM DASH instance not found^n^
+
+
+A warning later lets you know the installation will continue without DASH. 
+
+
+CTGTRI784W IBM Dashboard Application Services Hub (DASH) is not installed in this environment. Proceed, if you want to install Tivoli Common Reporting without DASH. 
+
+ 
+
+These messages are expected and do not indicate a problem. The installation will proceed. 
+
+ 
+
+Note: 
+
+If you are installing the optional Jazz for Service Management and IBM Tivoli Common Reporting component, do so by launching from the Spectrum Control setup program. When prompted for the Jazz for Service Management components to install, you must change everything except the Reporting Services and IBM WebSphere Application Server to "None", as shown in the graphic below. Security Services can be optionally installed if needed. Do not take the default values and install the other services. DB2 should already be installed and recognized. 
+
+
+[/support/docview.wss?uid=swg22011877&aid=1] [/support/docview.wss?uid=swg22011877&aid=1] 
+
+Refer to the IBM Spectrum Control Knowledge Center for more details.
+Installing Jazz for Service Management and Tivoli Common Reporting [https://www.ibm.com/support/knowledgecenter/SS5R93_5.2.15/com.ibm.spectrum.sc.doc/fqz0_c_jazzsm_tcr.html]
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Storage Management IBM Spectrum Control Advanced Edition Storage Management Tivoli Storage Productivity Center

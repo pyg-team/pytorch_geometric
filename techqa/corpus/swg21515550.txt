@@ -1,0 +1,42 @@
+Title: IBM DataSource MAXSQLCONNECTION value setting - United States
+
+Text:
+netcool; impact; netcool/impact; nci; connections; sql; datasource; source; data; type; datatype; maximum; threads; event; processor; eventprocessor; max; sql; maxsql; maxsqlconnections; connection TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Calculating the number of DataSource connections (Maximum SQL Connection) required? 
+
+RESOLVING THE PROBLEM
+ 
+
+In creating/editing a DataSource there has been some misunderstanding regarding the setting of the value for Maximum SQL Connection:
+
+
+
+ * [/support/docview.wss?uid=swg21515550&amp;aid=1]
+
+
+Although this is primarily designed to limit the number of connections allowed to a specific database there are a couple of other factors to take into account. 
+
+First, the number of connections made to the database will be the total of this value multiplied by the number of ImpactServers in the Cluster. 
+
+Second, the number of connections should be at least equal to the maximum number of threads configured in the EventProcessor: 
+
+ * [/support/docview.wss?uid=swg21515550&amp;aid=2]
+
+
+This value is then multiplied by the number of ImpactServers in the Cluster. So, now you're asking "How many threads should be configured in the EventProcessor?" Old advice for multi-threaded Impact pre-dating version 5 was: 
+
+ * 
+
+
+The latest versions of Impact self regulate the number of threads, but acquainting oneself with the current setting in the EventProcessor is useful for setting the number of connections in DataSources. The current advice for setting minimum and maximum values for threads is: 
+
+ * 
+
+
+Always ensure that the number of connections for each DataSource is at least equal to the maximum number of threads, if not more. In the case of a default EventProcessor ( as in the example above) an absolute minimum number of connections for each DataSource would be 20 for a standalone, single ImpactServer. 
+
+Please also remember that the EventProcessor configuration is not replicated across the Cluster so that one can configure each EventProcessor relevant to the capabilities of the ImpactServer host upon which they reside. 
+
+In some situations the capability of the ImpactServer host may mean that one could configure the EventProcessor to use quite a large number of threads. At this point one has to consider the point of limitation would instead be the number of connections allowed to the target databases via the DataSources. Database administrators may not be happy with allowing 100+ connections to their databases and so the limiting factor would be what the DBAs will allow. This would then also be the limit for the Maximum Number of Threads setting in the EventProcessor.

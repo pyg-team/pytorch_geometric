@@ -1,0 +1,77 @@
+Title: IBM I want to make sure SLON is not running. How can I see if SLON is running on my Guardium appliance? and how can I see how large is the SLON file? - United States
+
+Text:
+How to check if SLON is running on guardium appliance TECHNOTE (FAQ)
+
+QUESTION
+ How can I see if SLON is running on my Guardium appliance? and how can I see how large is the SLON file? I want to make sure SLON is not running. It has happened to us before that SLONs have filled up the guardium appliance. 
+
+ANSWER
+This is the way to check if SLON is running on an appliance:
+In cli run this command:
+support store slon off
+
+If it say Slon does not seem to be running! then it was not running.
+
+Example:
+vmguard3.hursley.ibm.com> support store slon off
+Slon does not seem to be running!
+err
+vmguard3.hursley.ibm.com>
+
+Here's example on how it looks like if SLON was running:
+
+vmguard3.hursley.ibm.com> support store slon off
+No SQL sniffer activities were logged during slon operation.
+Results file slon_packets.tar can be downloaded using "fileserver" command.
+ok
+
+Take note! it mentions a file slon_packets.tar that it created. Actually the file is called slon_packets.tar.gz.
+
+
+Also how do you know if there's a large slon file on the appliance that take up disk?
+
+The slon file is actually called slon_packets.tar.gz to look for it use this CLI command:
+support show large_files 100 0 
+The command shows files that are larger than 100MB and less than 0 days old.
+
+vmguard3.hursley.ibm.com> support show large_files 100 0
+100 /var/IBM/Guardium/data/mysql/ibdata1
+105 /var/IBM/Guardium/data/mysql/undo/undo002
+125 /var/IBM/Guardium/data/mysql/undo/undo001
+192 /tmp/gmh_files
+325 /var/gim_dist_packages/guard-bundle-FAM-10.1.2_r100595_v10_1_2_1-rhel-6-linux-x86_64.gim
+325 /var/IBM/Guardium/log/gim_packages/guard-FAM-10.1.2_r100595_v10_1_2_1-rhel-6-linux-x86_64.tar.gz.signed
+386 /var/IBM/Guardium/log/patches/SqlGuard_10.0p4023_SnifferUpdate_Jan-26-2017.zip
+423 /var/support/gholmes/DIST_DASH/TURBINE.GDM_CONSTRUCT_TEXT.sql.data.SAVED_1
+497 /var/IBM/Guardium/log/patches/SqlGuard_10.0p4023_SnifferUpdate_Jan-26-2017/SqlGuard-10.0p4023_Snif_Jan_26_2017.tgz.enc.sig
+1580 /var/support/gmh_backup_vmguard3.hursley.ibm.com_2017-04-28_03-03-01.tar.gz
+2032 /var/IBM/Guardium/log/slon_packets.tar.gz
+4097 /var/IBM/Guardium/data/mysql/ib_logfile0
+4097 /var/IBM/Guardium/data/mysql/ib_logfile1
+4097 /var/IBM/Guardium/data/mysql/ib_logfile2
+4097 /var/IBM/Guardium/data/mysql/ib_logfile3
+ok
+vmguard3.hursley.ibm.com>
+
+If you find no slon_packets.tar.gz file in the output above then there's no SLON file, or it's smaller than 100 MB
+If you find a file slon_packets.tar.gz and it's large enough to be a problem then please log a pmr, and ask IBM support to remove it for you.
+
+TAKE NOTE! in the output above.
+2032 /var/IBM/Guardium/log/slon_packets.tar.gz
+Take note! the number 2032 means the file /var/IBM/Guardium/log/slon_packets.tar.gz is 2032MB large that is about 2GB
+
+In this case I would recommend you log a severity 2 pmr with the support and ask support to delete the file for you.
+Alternatively you can also use the diag command to delete the file if you know how to use it. -->
+diag
+4 Perform Maintenance Actions
+3 Clean disk space
+
+in example above the file is in
+/var/log
+so clean that directory.
+
+This may not always work for the SLON file that is why I recommend you to log a pmr also, especially if you're not used to clean disk space with diag command.
+
+Here's an also article on how to use the SLON:
+http://www-01.ibm.com/support/docview.wss?uid=swg21508960 [http://www-01.ibm.com/support/docview.wss?uid=swg21508960]

@@ -1,0 +1,198 @@
+Title: IBM JR55583: BPMCONFIG SCRIPT FAILS WITH A NULLPOINTEREXCEPTION ON SUN SOLARIS PLATFORMS - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+ DIRECT LINKS TO FIXES
+bpm.8570.cf2016.06.delta.repository.2of2 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Standard&fixids=bpm.8570.cf2016.06.delta.repository.2of2&source=SAR]
+bpm.8570.cf2016.06.delta.repository.1of2 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Standard&fixids=bpm.8570.cf2016.06.delta.repository.1of2&source=SAR]
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When you try to create an IBM Business Process Manager (BPM)
+   deployment environment on Sun Solaris platforms, the DE creation
+    fails with a NullPointerException similar to the following
+   exception:
+   
+   [3/22/16 13:01:46:617 CET] 00000001 BPMConfig     E
+   com.ibm.bpm.config.BPMConfig main CWMCB0046E: The
+   'createClusterMember' command failed: null
+   
+   com.ibm.bpm.config.util.ConfigException: CWMCB0046E: The
+   'createClusterMember' command failed: null
+    at
+   com.ibm.bpm.config.util.ConfigHelper.invokeTaskCommand(ConfigHel
+   per.java:2097)
+    at
+   com.ibm.bpm.config.tasks.BPMCreateClusterMemberStep.createCluste
+   rMember(BPMCreateClusterMemberStep.java:214)
+    at
+   com.ibm.bpm.config.capability.ProvisionNode.provisionNode(Provis
+   ionNode.java:144)
+    at
+   com.ibm.bpm.config.BPMConfig.configureDeploymentEnvironment(BPMC
+   onfig.java:776)
+    at
+   com.ibm.bpm.config.BPMConfig$Actions.createDe(BPMConfig.java:445
+   2)
+    at
+   com.ibm.bpm.config.cli.CreateAction.runInner(CreateAction.java:1
+   38)
+    at
+   com.ibm.bpm.config.cli.AbstractConfigAction.run(AbstractConfigAc
+   tion.java:129)
+    at
+   com.ibm.bpm.config.cli.CreateAction.run(CreateAction.java:34)
+    at com.ibm.bpm.config.BPMConfig.main(BPMConfig.java:289)
+   :
+   Caused by: java.lang.NullPointerException
+    at java.lang.String.contains(String.java:2044)
+    at
+   com.ibm.bpm.config.util.ConfigHelper.addGenericJvmArguments(Conf
+   igHelper.java:4506)
+    at
+   com.ibm.bpm.config.capability.ProvisionNode.customizeAppServerSe
+   ttings(ProvisionNode.java:275)
+    at
+   com.ibm.bpm.config.tasks.BPMCreateClusterMemberStep.customizeBpm
+   ServerSettings(BPMCreateClusterMemberStep.java:348)
+    at
+   com.ibm.bpm.config.tasks.BPMCreateClusterMemberStep.provisionClu
+   sterMember(BPMCreateClusterMemberStep.java:278)
+    at
+   com.ibm.bpm.config.tasks.BPMCreateClusterMemberStep.executeStep(
+   BPMCreateClusterMemberStep.java:139)
+    at
+   com.ibm.websphere.management.cmdframework.provider.AbstractTaskC
+   ommand.executeReal(AbstractTaskCommand.java:844)
+    at
+   com.ibm.websphere.management.cmdframework.provider.AbstractTaskC
+   ommand.execute(AbstractTaskCommand.java:807)
+    at
+   com.ibm.bpm.config.util.ConfigHelper.invokeTaskCommand(ConfigHel
+   per.java:2076)
+    ... 34 more
+   
+   PRODUCTS AFFECTED
+   IBM BPM Advanced
+   IBM BPM Standard
+   IBM BPM Express
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  While the BPMConfig command runs on a Sun Solaris platform, a
+    method is called with a null parameter; however, the method
+   does not accept null parameters. As a result, you receive the
+   NullPointerException.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A fix that enhances the BPMConfig command on Sun Solaris
+   platforms is planned for inclusion in an upcoming IBM BPM
+   V8.5.7.0 cumulative fix.
+   
+   PRODUCTS AFFECTED
+   IBM BPM Advanced
+   IBM BPM Standard
+   IBM BPM Express
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR55583
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM ADVANCED
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9400
+   
+   
+ * REPORTED RELEASE
+   857
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-03-21
+   
+   
+ * CLOSED DATE
+   2016-06-27
+   
+   
+ * LAST MODIFIED DATE
+   2016-06-27
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   BPM ADVANCED
+   
+   
+ * FIXED COMPONENT ID
+   5725C9400
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R857 PSY
+   UP

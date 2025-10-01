@@ -1,0 +1,180 @@
+Title: IBM PM43117: DATA COLLECTOR CAUSES UNWANTED EXCEPTIONS IN WAS'S SYSTEMOUT.LOG,INVOLVING THE ORG.APACHE.AXIS.SERVER PACKAGE. - United States
+
+Text:
+  FIXES ARE AVAILABLE
+7.1.0.2-TIV-ITCAMAD-IF0006: ITCAM for Application Diagnostics V7.1 FP2 IF6 [http://www-01.ibm.com/support/docview.wss?uid=swg24031010]
+7.1.0.2-TIV-ITCAMAD-IF0007: ITCAM for Application Diagnostics V7.1 FP2 IF7 [http://www-01.ibm.com/support/docview.wss?uid=swg24031710]
+7.1.0.2-TIV-ITCAMAD-IF0010: ITCAM for Application Diagnostics V7.1 FP2 IF10 [http://www-01.ibm.com/support/docview.wss?uid=swg24032110]
+7.1.0-TIV-ITCAMAD-FP0003: ITCAM for Application Diagnostics V7.1 Fix Pack 3 [http://www-01.ibm.com/support/docview.wss?uid=swg24032604]
+7.1.0.3-TIV-ITCAMAD-IF0001: ITCAM for Application Diagnostics V7.1 FP3 IF1 [http://www-01.ibm.com/support/docview.wss?uid=swg24032985]
+7.1.0.3-TIV-ITCAMAD-IF0004: ITCAM for Application Diagnostics V7.1 FP3 IF4 [http://www-01.ibm.com/support/docview.wss?uid=swg24033735]
+7.1.0.3-TIV-ITCAMAD-IF0005: ITCAM for Application Diagnostics V7.1 FP3 IF5 [http://www-01.ibm.com/support/docview.wss?uid=swg24033938]
+7.1.0.3-TIV-ITCAMAD-IF0004: ITCAM for Application Diagnostics V7.1 FP3 IF6 [http://www-01.ibm.com/support/docview.wss?uid=swg24034668]
+7.1.0.3-TIV-ITCAMAD-IF0008: ITCAM for Application Diagnostics V7.1 FP3 IF8 [http://www-01.ibm.com/support/docview.wss?uid=swg24037994]
+7.1.0-TIV-ITCAMAD-FP0004: ITCAM for Application Diagnostics V7.1 Fix Pack 4 [http://www-01.ibm.com/support/docview.wss?uid=swg24041705]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  java.io.EOFException
+   at org.apache.xerces.impl.XMLEntityScanner.load(Unknown
+   Source)
+     at org.apache.xerces.impl.XMLEntityScanner.skipSpaces(Unknown
+   Source)
+   ...
+   com.ibm.tivoli.itcam.axis.webservices.AxisContextHelper$1.run(A
+   xisContex
+   ...
+   java.security.AccessController.doPrivileged(AccessController.ja
+   va:192)
+   ...
+   com.ibm.tivoli.itcam.axis.webservices.AxisContextHelper.invoke(
+   AxisConte
+   ...
+   com.ibm.tivoli.itcam.axis.webservices.AxisContextHelper.getFaul
+   tCode(Axi
+   ...
+   com.ibm.tivoli.itcam.webservice.WsServerHanlder.handleFault(WsS
+   erverHanl
+   ...
+   com.ibm.tivoli.itcam.axis.webservices.AxisServerHanlder.handleF
+   ault(Axis
+   ...
+   com.ibm.tivoli.itcam.axis.callbacks.capturewebservices.AxisCall
+   backWebSe
+   ...
+   rvices.afterAxisServerInvokeException(AxisCallbackWebServices.j
+   ava:100)
+     at
+   org.apache.axis.server.AxisServer.invoke(AxisServer.java:334)
+   ...
+   org.apache.axis.transport.http.AxisServlet.doPost(AxisServlet.j
+   ava:699)
+     at
+   javax.servlet.http.HttpServlet.service(HttpServlet.java:763)
+     ...
+   At Axis1.4 provider side (mostly running as a web application
+   deployed
+   to a WAS server), if exceptions were thrown during handling
+   client
+   requests, DC tries to invoke Axis1.4 API to parse the xml
+   message
+   returned as part of AxisFault to collect fault code and fault
+   string.
+   At the customer site, Axis1.4 runtime classes generate the above
+   exception when parsing fault xml message.
+   ==============
+   Users Affected
+   ==============
+   Axis1.4 applications deployed to WAS servers.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  TBD
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  TBD
+   
+   The fix for this APAR is contained in the following maintenance
+   packages:
+   
+     | interim fix | 7.1.0.2-TIV-ITCAMAD-IF0005
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM43117
+   
+   
+ * REPORTED COMPONENT NAME
+   TCAM AD WAS DC
+   
+   
+ * REPORTED COMPONENT ID
+   5724Y92DC
+   
+   
+ * REPORTED RELEASE
+   710
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-07-06
+   
+   
+ * CLOSED DATE
+   2011-08-08
+   
+   
+ * LAST MODIFIED DATE
+   2011-08-08
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TCAM AD WAS DC
+   
+   
+ * FIXED COMPONENT ID
+   5724Y92DC
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R710 PSY
+   UP

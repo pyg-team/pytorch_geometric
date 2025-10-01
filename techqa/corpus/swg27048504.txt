@@ -1,0 +1,57 @@
+Title: IBM What's New in IBM Business Process Manager V8.5.7 Cumulative Fix 2016.09 - United States
+
+Text:
+ PRODUCT README
+
+ABSTRACT
+ The following new feature and fixes are included in IBM Business Process Manager (BPM) V8.5.7 cumulative fix 2016.09. 
+
+CONTENT
+
+
+TAB NAVIGATION
+ * Fix list [http://www.ibm.com/support/docview.wss?uid=swg27048799]
+ * What's new [http://www.ibm.com/support/docview.wss?uid=swg27048504]- selected tab,
+ * Downloading the cumulative fix [http://www.ibm.com/support/docview.wss?uid=swg24042580]
+ * Installing the cumulative fix [http://www.ibm.com/support/docview.wss?uid=swg27048470]
+ * Upgrading profiles from V8.5.x [http://www.ibm.com/support/docview.wss?uid=swg27048472]
+ * Post-upgrade tasks [http://www.ibm.com/support/docview.wss?uid=swg27048418]
+
+With this update, you can 
+
+
+ * Invoke REST services directly from your business processes 
+ * Create custom integrations using new low code web-based service editors to discover Java and REST based services 
+ * Deploy IBM BPM Advanced assets and manage the health of your processes using new self service facilities for IBM BPM on Cloud 
+ * Deactivate users who are no longer in the user registry and clean up their group memberships
+
+
+IBM BPM V8.5.7 Cumulative Fix 2016.09 also offers new supported environments: 
+ * Microsoft Edge (for IBM Process Portal and responsive coaches) 
+ * Oracle 12c multi-tenant feature 
+ * Microsoft SQL Server 2016 
+ * IBM DB2 11.1
+
+
+For more information about supported configurations, see the IBM BPM support site: 
+ * IBM BPM Advanced [http://ibm.biz/BPMAdvSysReqs] 
+ * IBM BPM Standard [http://ibm.biz/BPMStdSysReqs] 
+ * IBM BPM Express [http://ibm.biz/BPMExpSysReqs]
+
+
+Notes:  * You can also find out what was new [http://www.ibm.com/support/knowledgecenter/SSFPJS_8.5.7/com.ibm.wbpm.admin.doc/topics/cbpm_whatsnew-cf2016.06.html] in IBM Business Process Manager (BPM) V8.5.7 cumulative fix 2016.06. 
+ * The functions that are deprecations and removals in IBM BPM V8.5.7 cumulative fix 2016.09 are flagged in Deprecated and removed features of IBM Business Process Manager V8.5.7 [https://www.ibm.com/support/knowledgecenter/SSFPJS_8.5.7/com.ibm.wbpm.main.doc/topics/gbpm_deprecationlist.html].
+
+
+For more information, see What's new in IBM Business Process Manager V8.5.7 Cumulative Fix 2016.09 [http://www.ibm.com/support/knowledgecenter/SSFPJS_8.5.7/com.ibm.wbpm.admin.doc/topics/cbpm_whatsnew-cf2016.09.html].
+
+
+
+
+ORIGINAL PUBLICATION DATE
+ 2016/9/16 
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Business Process Manager Express Installation / Configuration Linux, Windows 8.5.7.CF201609, 8.5.7 Business Integration IBM Business Process Manager Standard Installation / Configuration AIX, Linux, Solaris, Windows 8.5.7.CF201609, 8.5.7 PRODUCT ALIAS/SYNONYM
+ BPM

@@ -1,0 +1,44 @@
+Title: IBM How to downgrade a Lotus Domino Server to a lower version - United States
+
+Text:
+Domino server; downgrade; upgrade; fixpack; hotfix; fix pack; hot fix; uninstall; how to; lower version; older; revert; instructions; options TECHNOTE (FAQ)
+
+QUESTION
+You have upgraded your Lotus Domino server to a higher version, or installed a Hotfix or a Fix Pack. Now, you need to revert to a previous or lower Version of Domino. What options do you have, and what are the possible effects on the server?
+
+ANSWER
+The following instructions will help you to downgrade your Domino server to a lower version. 
+Important Notes:
+
+
+ * All steps during an installation (upgrade or downgrade) must be performed with great care and caution. When unsure, stop and ask for advice.
+
+ * These instructions only apply to a downgrade to a lower Version of Domino of the same Major Release. For Instance, a downgrade from Domino Version 6.5.4 Fix Pack 1 to 6.5.4 or a lower 6.5.x version, or from Domino 6.0.5 to a 6.0.4 or other a lower 6.0.x version. These instructions are not valid to perform a downgrade to a lower Major Version, such as from Domino 6.x to Domino 5.x.
+
+ * If you have a Language Pack installed on the Domino Server, you will have to be re-install it again after the downgrade if you wish to continue using one on the new version.
+
+ * As with an upgrade, if you currently have templates installed that must be preserved during the downgrade, first make a backup of these templates and restore them after the downgrade. For standard templates shipping with Domino, please note that using a template version higher than that of the Server is not supported. The exceptions are the templates used for Names.NSF (Pubnames.NTF) and Admin4.NSF (Admin4.NTF).
+
+ * Concerning Names.NSF and Admin4.NSF: When you downgrade to a lower version, you may choose to keep the current design of Names.NSF and Admin4.NSF. If you have a specific requirement to do so, you may also downgrade the design of Names.NSF and Admin4.NSF by replacing its design with that of the current template.
+
+ * Before running any kind of installation process, be it Hotfix Installer or regular Installer, always shut down Domino first and ensure all processes have properly terminated. Use Task Manager on Windows or shell command ps -eF on Unix to verify the list of processes running on the system. Also consider performing a backup of the current system to protect yourself against a failure during an installation.
+
+ * When performing a downgrade, your Domino server configuration (Mail Routing, Web Server, etc.) will remain unchanged. You can restart your Domino server after the downgrade without any further configuration changes.
+
+
+
+Downgrading from a Hotfix to a base version (Uninstall a Hotfix): 
+
+Example: Downgrade from Domino 6.5.4 HF450 to Domino 6.5.4 
+ * This can be performed in one of two ways. One method is to run the Hotfix installer (654HF450_W32.exe on Windows; ./install script of Hotfix on Unix) on the server on which the Hotfix is currently installed. In this case, the Hotfix installer will recognize that the current Hotfix is already installed and prompt to uninstall the Hotfix. When confirmed, the Installer will proceed to uninstall the existing Hotfix and revert to the version that was previously installed.
+
+ * The second method to uninstall a Hotfix is to perform a Direct Downgrade, as described below.
+
+
+
+Direct Downgrade: 
+
+The simple way to downgrade to a lower version is to directly install the lower version of Domino over the existing higher version. This is done by running the Installer of the version to install and specifying the path for Program and Data directory of the existing installation. For example, to downgrade from Domino 6.5.4 Fix Pack 1 to Domino 6.5.3, install Domino 6.5.3 over the existing installation in the same directories. 
+
+Note: Starting with Domino 7.0, and due to ISMP installer restrictions as well as forward compatibility considerations, you must uninstall the newer version of Domino and then install the older version. Instructions for installing over fixpacks and hotfixes does not change for Domino 7.0, although the preferred way is to uninstall the hotfix or fixpack. RELATED INFORMATION
+#

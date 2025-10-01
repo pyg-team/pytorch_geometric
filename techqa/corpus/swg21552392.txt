@@ -1,0 +1,69 @@
+Title: IBM AFT GIS listener mailbox, then AFT routes data via SFTP client to a Windows remote, Windows TP sees (x'0D') is stripped - United States
+
+Text:
+STERLINGNFX TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ AFT GIS listener mailbox, then AFT routes data via SFTP client to a Windows remote, Windows TP sees (x'0D') is stripped 
+
+SYMPTOM
+
+
+Remote Mainframe FTPs non-SSL (using IBM FTP client, send in ascii mode and each record delimeter is a x'0D0A' (CR/LF) data to GIS on Linux platform using AFT Route listener mailbox partner TRUSTGROUP01, at this point the records only end with x'0A' due to GIS is on Linux. Next AFT automatically routes this data via GIS SFTP client to a remote SFTP Server on a Windows OS platform (using SSH Tecia SFTP Server v 5.0.2.63). The problem is the Windows TP views their received file in hexadecimal and the data is good, but each record delimeter/end-of-line character is a x'0A' (or Linefeed), the TP expected each record delimeter to be x'0D0A' CR/LF especially since the SFTP Server resides on a Windows OS platform. Note: X'0A' is the record delimeter on a Unix or Linux platform and x'0D0A' is the record delimeter on a Windows platform. 
+
+In GIS AFT SFTP Client or SFTP Client adapter there is no way to specify the 'File Representation type' of Ascii or Binary and no way to specify what the remote platform is (Windows or Unix/Linux) to ensure the record delimeter is sent correctly for that platform. 
+
+Note: ER1372781(article ENH1354) - Add ability to be able to select the correct file record delimeter (x'0D0A' or x’0A) to GIS SFTP Client to ensure it is appropriate on the remote Operating System platform, but this ER was denied 4/8/09.
+
+
+
+
+RESOLVING THE PROBLEM
+
+
+Sterling consultant provided customer with custom SFTP protocol code which added a new option in the AFT SFTP partner called 'Add Carriage Return'. Simply put in a 'Y' for an existing partner. It will go through and add a x'0D' to the data so each record will be sent out with a x'0D0A' at the end, which is required at the remote TP on a Windows Platform. Below list the files that were modified for this custom code and how it should be implemented. This solution was directed only for this particular one customer; legacy case 4982265/ SF30067.
+
+AFTExtensionsCustomer.properties
+Drop this file in <gisinstalldir>/container/Applications/aft/WEB-INF/classes/resources
+
+AFTExtensionsCustomer.xml
+Drop this file in <gisinstalldir>/container/Applications/aft/WEB-INF/classes/resources/xml
+
+Custom_AFTRouteSFTPPut
+Check in this modified BP.
+
+After putting in the files and BP, bounce GIS for the changes to take effect.
+
+
+
+
+ 
+
+HISTORICAL NUMBER
+ NFX6257 
+
+PRODUCT ALIAS/SYNONYM
+ 
+
+Function Area
+
+
+AFT SFTP Client
+
+
+Escalation ID
+
+
+30067
+
+
+Severity
+
+
+Normal
+
+
+Type
+
+
+NewFunctionality

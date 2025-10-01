@@ -1,0 +1,51 @@
+Title: IBM Map an application record with only Reserved Words using Sterling Gentran for z/OS - United States
+
+Text:
+Inbound Application Constant Records TECHNOTE (FAQ)
+
+QUESTION
+ How to map an application record with only Reserved Words, Constants or HashTotals? 
+
+ANSWER
+Preferred method: 
+A new 'Inbound Application Constant Records' feature allows you to output records containing only constants or reserved words.For example, you can map EDI trailer information or create summary records using totals calculated during processing.
+There are three types of Application Constant Records that can be setup.
+End of Section Records (area code 'C')
+- Can be output at the end of each section, which may be in the middle of a single transaction.
+Trailer Records (area code 'T', 'G', 'I') 
+- Are output when corresponding EDI trailers are read. 
+- There are separate record types for Transaction, Group, and Interchange trailers.
+End of Run Records (area code 'R')
+- Occur only at the end of the mapper run. They are useful for file totals that span multiple Documents or Interchanges.
+Documentation User Guide - refer to chapter 7 [http://www.ibm.com/support/docview.wss?uid=swg27023603]
+
+Work around: 
+If you do not use the 'Inbound Application Constant Records', you must follow the rule that constants and reserved words are only triggered when at least one piece of information is mapped. A normal application record will not output if it contains solely of constants or reserved words.
+An Application Record will only be written when triggered via a move from within the Transaction map. Thus, Application Records that only have Reserved words require the steps below to trigger the Record to write.
+* With Inbound mapping, all alternate maps are evaluated.
+
+To trigger a move from within the Transaction Map:
+1) Fill in the application map's 'Field Value' column with the correct Reserved words. (syntax is located in the Glossary of the Technical Reference)
+2) Look for a Mandatory Segment in the area = 'H' of the transaction map on screen EDIM504 5.2.5 SEGMENTS. 'S'elect and PF5 on that segment
+3) Pick a Mandatory Element and 'E' PF5 to the extend mapping inbound screen.
+4) On this screen enter the Application Field name into the 'Application Target Field' area, and enter the Reserved word into the 'Target field'.
+
+See illustration:
+
+EDIM513 __________ EXTENDED ELEMENT MAPPING INBOUND
+
+Transaction ID........: ANSI3030IN S/R........: R
+Segment Sequence......: 00100 Segment ID.: BIG Segment Version: 00
+Segment Description...: BEGINNING SEGMENT FOR INVOICE
+Element Number........: _10 ID...: 245 Ver: 00 INVOICE DATE
+Mandatory Cd..........: M Type.: DT Length (Min-Max)..: 6 - 6
+Element Group.........: Type.: Group Req Cd......: Related...: N
+
+Application Target Field: H-ISA-SEND-ID____ Mapping Number..: 00
+VALUE OP VALUE OP VALUE
+Target Field = ISA06__________ __ _______________ __ _______________ 
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Commerce Sterling Gentran for z/OS Mapping and Translation

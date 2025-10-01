@@ -1,0 +1,81 @@
+Title: IBM Why does the FEB Portlet not show my form? - United States
+
+Text:
+FEB; portlet; configuration; proxy; error; ltpa TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+This article discusses how to troubleshoot the FEB portlet if it is not rendering your form.
+
+SYMPTOM
+The Forms Experience Builder (FEB) portlet does not render a form.
+
+
+RESOLVING THE PROBLEM
+There are several different things that could be wrong when your FEB portlet does not render a form properly. The first thing to do is to step back and take a measured approach to determine the source of the problem. Please refer to the documentation [http://www-10.lotus.com/ldd/lfwiki.nsf/xpDocViewer.xsp?lookupName=Forms+Experience+Builder+8.5+documentation#action=openDocument&res_title=Integrating_with_IBM_WebSphere_Portal_FEB_850&content=pdcontent]for this configuration process for further details. 
+
+Verify that the FEB URL is allowed to pass through the proxy. 
+
+1. Open a web browser and log in to a portal. 
+
+2. Change the address of the web page to a URL, for example: 
+
+ * 
+ * http://portalServer:port/wps/proxy/http/febServer:port/forms 
+
+
+When you enter this URL in your web browser you will see one of three outcomes:  
+
+a. You get an error such as: 
+
+ * 
+ * 
+ * 
+
+b. You see the FEB login screen. If you see this then it means that the LTPA tokens have not been exported from your Portal Server and imported into the WebSphere where FEB is deployed. 
+
+Note: If you have changed the LTPA cookie name under Global Security...Single sign-on (SSO) in the WAS Administrative console then you will need to make sure you change the cookie names in the proxy-config.xml as well. 
+
+ 
+
+c. You see a white page that says "Loading Manager...". If you see this then you are clear to move on to the next stage of this investigation. 
+
+Note: If you make a change to the proxy-config.xml then you will have to check the file in using the ConfigEngine.bat and restart the Portal Server. 
+
+ 
+
+Verify the FEB Portlet Configuration Values 
+
+1. Enter Edit mode within Portal. 
+
+2. Select Configure for the FEB portlet. 
+
+3. The IBM Forms Experience Builder URL should be set to the full URL for the FEB server. This should be exactly the same URL that was specified in the proxy-config.xml (without the trailing *). 
+
+4. The Portal Proxy URL should be set to /wps/proxy. 
+
+ 
+
+Verify the Builder_config.properties 
+
+If you are using a webserver or have customized the URL for the FEB server then you will need to verify that the serverURI in the Builder_config.properties is set to the URL being used. 
+
+Note: The serverURI should be set to exactly what is being used in the proxy-config.xml and the IBM Forms Experience Builder URL. 
+
+The Builder_config.properties can be found in its default location: 
+
+ * 
+ * 
+ * C:\ibm\Forms\extensions (Windows)
+
+
+If your file cannot be found here then you will need to create this directory structure, place the file and then restart the FEB server.  
+
+Verify the FEB Portlet Shared Settings 
+
+1. Enter Edit mode within Portal. 
+
+2. Select Edit Shared Settings for the FEB portlet. 
+
+3. Click the Browse Applications button, this button should load a list of applications that are deployed on your FEB server. 
+
+4. If the list of applications does not load, you could also try copying and pasting a FEB application URL directly in to the URL field. You can get the URL from the Manage page of FEB, in the details of the application you want to show.

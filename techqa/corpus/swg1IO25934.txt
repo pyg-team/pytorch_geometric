@@ -1,0 +1,131 @@
+Title: IBM IO25934: THE DATE PICKER DOES NOT DISPLAY THE CALENDAR POP UP WINDOW WHEN CLICKING ON THE PICKER ICON. - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  In IBM Content Navigator, when using Microsoft Internet
+   Explorer (IE) and Google Chrome, the date picker does not
+   display the calendar pop up window when clicking on the icon.
+   However, clicking the text field next to the icon will bring up
+   the calendar pop up window. Clicking the icon and the text
+   field will display the pop up calendar window when using
+   Mozilla Firefox.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Click the text field in IE and Chrome or use Firefox.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  When using Microsoft Internet Explorer and Google Chrome, the
+   date picker does not display the calendar pop up window when
+   clicking on the icon. However, clicking the text field next to
+   the icon will bring up the calendar pop up window.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  With this fix (in ICN V2.0.3.8 LA016, V3.0.2 LA003, and V3.0.3
+   LA001), clicking both the icon and the text field will display
+   the calendar pop window in these browsers.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IO25934
+   
+   
+ * REPORTED COMPONENT NAME
+   CONTENT NAVIGAT
+   
+   
+ * REPORTED COMPONENT ID
+   ISCONTNAV
+   
+   
+ * REPORTED RELEASE
+   203
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-12-13
+   
+   
+ * CLOSED DATE
+   2018-02-05
+   
+   
+ * LAST MODIFIED DATE
+   2018-02-05
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CONTENT NAVIGAT
+   
+   
+ * FIXED COMPONENT ID
+   ISCONTNAV
+   
+   
+
+APPLICABLE COMPONENT LEVELS

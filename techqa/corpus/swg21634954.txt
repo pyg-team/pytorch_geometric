@@ -1,0 +1,29 @@
+Title: IBM Running launchpad.sh on Linux with Firefox 10.0 results in "Unable to find supported browser" error - United States
+
+Text:
+RN1.0; RN1.0.0.1; RN1.1; adapters; integration; RN1.1.0.1 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Attempts to run the IBM Rational Lifecycle Integration Adapters Standard Edition launchpad.sh script on Linux with Firefox version 10.0 or higher results in the error "An error occurred while starting the launchpad." 
+
+SYMPTOM
+If you run launchpad.sh on a Linux system with Firefox version 10.0 or higher the launchpad fails to run with the following message: 
+
+Unable to find supported browser. An error occurred while starting the launchpad. This error typically occurs when the launchpad is unable to find a supported browser. Check your product's documentation for a list of supported browsers.
+
+
+CAUSE
+ Launchpad for Rational Lifecycle Integration Adapters Standard Edition does not support Firefox browser versions 10.0 or higher.
+
+
+RESOLVING THE PROBLEM
+ 
+
+WORKAROUND: 
+
+Install IBM Installation Manager and Rational Lifecycle Integration Adapters Standard Edition, by executing ./install from the InstallerImage_linux folder on the installation disk or electronic image. Follow the instructions on screen and complete the installation. 
+
+For detailed information on installation steps using Installation Manager, refer to the installation information in the Rational Lifecycle Integration Adapters Standard Edition Information Center. [http://www.ibm.com/support/knowledgecenter/SSWMXJ]
+
+RELATED INFORMATION
+ Latest support documents [http://www-947.ibm.com/support/entry/portal/search_results/software/rational/rational_lifecycle_integration_adapters?sn=spe&q=rational%20lifecycle%20integration%20adapters&prod=H165648M71246W31&filter=language:en]

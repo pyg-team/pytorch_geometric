@@ -1,0 +1,143 @@
+Title: IBM IV02109: "AGENT STARTED SUCCESSFULLY" MESSAGE WRITTEN UNNECESSARILY. - United States
+
+Text:
+  FIXES ARE AVAILABLE
+IBM Tivoli Monitoring: Unix(R) OS Agent 6.2.2.2-TIV-ITM_UNIX-IF0008 [http://www-01.ibm.com/support/docview.wss?uid=swg24030536]
+IBM Tivoli Monitoring: Linux(R) OS Agent 6.2.2.4-TIV-ITM_LINUX-IF0004 [http://www-01.ibm.com/support/docview.wss?uid=swg24030947]
+IBM Tivoli Monitoring 6.2.2 Fix Pack 8 (6.2.2-TIV-ITM-FP0008) [http://www-01.ibm.com/support/docview.wss?uid=swg24031354]
+IBM Tivoli Monitoring 6.2.2 Fix Pack 9 (6.2.2-TIV-ITM-FP0009) [http://www-01.ibm.com/support/docview.wss?uid=swg24032067]
+IBM Tivoli Monitoring 6.2.2 Fix Pack 6 (6.2.2-TIV-ITM-FP0006) [http://www-01.ibm.com/support/docview.wss?uid=swg24030135]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The message "Monitoring Agent for Linux OS Operational Event:
+   Agent started successfully" message sometimes is written to
+   KLZ:LG0 every two minutes.  The message is written during the
+   availability checking for the agent when the agent is running.
+   It can occur on the UNIX or Linux OS agent
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  "AGENT STARTED SUCCESSFULLY" message written unnecessarily.
+   
+   The message "Monitoring Agent for Linux OS Operational Event:
+   Agent started successfully" message sometimes is written to
+   KLZ:LG0 every two minutes.  The message is written during the
+   availability checking for the agent when the agent is running.
+   The message can be ignored.  It can occur on the UNIX or Linux
+   OS agent.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The code was updated to not write the message during
+   availability checking.
+   
+   
+   The fix for this APAR will be contained in the following
+   maintenance packages:
+   
+     | interim fix |  6.2.2.4-TIV-ITM_LINUX-IF0001
+     | interim fix |  6.2.2.4-TIV-ITM_UNIX-IF0002
+     | interim fix |  6.2.2.3-TIV-ITM_UNIX-IF0004
+     | interim fix |  6.2.2.2-TIV-ITM_LINUX-IF0008
+     | interim fix |  6.2.2.2-TIV-ITM_UNIX-IF0008
+     | fix pack | 6.2.2-TIV-ITM-FP0006
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV02109
+   
+   
+ * REPORTED COMPONENT NAME
+   ITM AGENT LINUX
+   
+   
+ * REPORTED COMPONENT ID
+   5724C04LN
+   
+   
+ * REPORTED RELEASE
+   622
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-06-19
+   
+   
+ * CLOSED DATE
+   2011-06-29
+   
+   
+ * LAST MODIFIED DATE
+   2011-12-01
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ITM AGENT LINUX
+   
+   
+ * FIXED COMPONENT ID
+   5724C04LN
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R622 PSY
+   UP

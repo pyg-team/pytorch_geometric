@@ -1,0 +1,190 @@
+Title: IBM PI83062: LU61 CICS IMS CONNECTION GETS DFHZC2431 REQUEST TO RELEASED NODEAND DFHZC3434 UNBIND WHILE STILL ACTIVE - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The CICS to IMS LU61 sessions are successfully acquired.
+   However, if a transaction is initiated from CICS to IMS, the
+   session that was used to send the request is unbound by IMS.
+   The following messages are seen in CICS message log:
+   .
+   DFHZC2431 Request to a released node.
+   .        VTAM RETURN CODE 0C0B
+   .        ((1) Module name: DFHZSYX)
+   DFHZC3434 Unbind received while session still active.
+   .        ((3) Module name: DFHZSCX)
+   .
+     The internal trace in a CICS dump taken for message DFHZC3434
+   with TC=1-2 shows the first x'A' bytes for FMH5 attach request.
+   After that are two requests:
+       x'06C480000B00'
+       x'020B9316...'
+   These are Origin Descriptor Record ( ODR ) data.
+   ODR was only intended for MRO and IPIC connections.
+   But, it looks like there may be an error in DFHXFP
+   transformer 1  ( XFRM1 XFORM1 ) for the START command
+   that allows it to be included in LU6.1 and LU6.2.
+   This only happenS when the transaction definition of the
+   transaction in the START command is defined with LOCALQ(YES).
+   .
+   Additional Symptom(s) Search Keyword(s): KIXREVxxx
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  A work around would be to specify LOCALQ(NO) in the transaction.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All CICS users.                              *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Message DFHZC3434, Unbind received      *
+   *                      while session still active, is issued   *
+   *                      for an LU6.1 CICS to IMS connection.    *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   There was a CICS to IMS LU6.1 connection and LOCALQ(YES) was
+   specified on a remote transaction definition.
+   An EXEC CICS START NOCHECK request was issued to function ship
+   the transaction. The CICS transformer code in DFHXFP created a
+   TIOA to send the request to IMS and incorrectly included
+   Origin Descriptor Record (ODR) data. ODR is not supported for
+   LU6.1 connections.
+   IMS did not recognise the ODR data and the session was
+   unbound. CICS issued messages DFHZC2431 and DFHZC3434 to
+   report the unbinding of the session.
+   
+   Additional keywords: ZC2431 MSGDFHZC2431 ZC3434 MSGDFHZC3434
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  CICS is changed so that ODR is not included on a function
+   shipping request for a transaction with LOCALQ(YES) when using
+   an LU6.1 connection.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *              *********
+               * HIPER *
+               *********
+   FIX AVAILABLE BY PTF ONLY
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI83062
+   
+   
+ * REPORTED COMPONENT NAME
+   CICS TS Z/OS V4
+   
+   
+ * REPORTED COMPONENT ID
+   5655S9700
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   YesHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-06-14
+   
+   
+ * CLOSED DATE
+   2017-07-20
+   
+   
+ * LAST MODIFIED DATE
+   2017-08-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    PI79454 [http://www-01.ibm.com/support/docview.wss?uid=swg1PI79454]
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UI48963
+   
+   
+
+MODULES/MACROS
+ *  DFHXFP   DFHXFQ
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CICS TS Z/OS V4
+   
+   
+ * FIXED COMPONENT ID
+   5655S9700
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R700 PSY UI48963 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI48963]
+   UP17/07/26 P F707 ¢
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

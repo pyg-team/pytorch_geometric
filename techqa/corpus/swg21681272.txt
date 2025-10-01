@@ -1,0 +1,34 @@
+Title: IBM Running wpcollector fails with "problem opening <path to file>/wp.mustgather.zip" - United States
+
+Text:
+wpcollector; problem opening; wp.mustgather.zip TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+When attempting to run the wpcollector tool to collect logs the following error occurs...
+
+Example: “BUILD FAILED
+
+C:\Program Files
+(x86)\IBM\WebSphere\PortalServer\installer\wp.collector\config\includes\
+autopd.collection.xml:318: problem opening C:\Program Files
+(x86)\IBM\WebSphere\wp_profile\filesForAutoPD\wp.mustgather.zip”
+
+SYMPTOM
+“BUILD FAILED
+
+C:\Program Files
+(x86)\IBM\WebSphere\PortalServer\installer\wp.collector\config\includes\
+autopd.collection.xml:318: problem opening C:\Program Files
+(x86)\IBM\WebSphere\wp_profile\filesForAutoPD\wp.mustgather.zip”
+
+
+CAUSE
+This can be caused by an existing wp.mustgather.zip file.
+
+ENVIRONMENT
+Windows
+Linux
+AIX
+
+RESOLVING THE PROBLEM
+Remove the existing wp.mustgather.zip file and re-run the wpcollector command

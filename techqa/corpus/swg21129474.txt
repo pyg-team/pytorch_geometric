@@ -1,0 +1,111 @@
+Title: IBM No more memory available - United States
+
+Text:
+text_file_delta; No more memory available; multitool; Child process aborted with signal 11; Unable to invoke operation; create_version; -1; Unable to store new version; error detected by ClearCase subsystem; 1129474 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This technote explains why the IBM® Rational® ClearCase MultiSite® syncreplica import fails on UNIX® and Linux® with the error No more memory available and Child process aborted with signal 11 along with instructions to workaround the problem. 
+
+CAUSE
+ 
+
+Attempts to import a large syncreplica packet on UNIX® or Linux® results in the following error:
+
+text_file_delta: Error: No more memory available.
+multitool: Error: Child process aborted with signal 11
+multitool: Error: Unable to invoke operation "create_version" for manager "text_file_delta": -1
+multitool: Error: (Operation pathname was:"/usr/atria/lib/mgrs/text_file_delta/create_version")
+multitool: Error: Unable to store new version.
+multitool: Error: Unable to replay oplog entry 53325: error detected by ClearCase subsystem.
+
+The process by which text_file_delta determines the deltas between a new file version and its predecessor is extremely memory intensive. This has been improved significantly in ClearCase version 7.0, but it remains a memory intensive operation, proportional to the number of lines in the file. 
+
+In earlier versions it is further proportional to the absolute size of the file, and the absolute size of the predecessor.
+
+As a result, this problem has often been seen on very large files (over 100 MBs as a very rough guide).
+
+Generally speaking, "text_file" is an inappropriate element type for files this large.
+
+
+RESOLVING THE PROBLEM
+
+
+
+Change the element type of the problem element to something less memory intensive
+
+
+Make more memory available to the importing process
+
+
+
+
+ 
+
+Change the element type of the problem element 
+
+Note that this must be done at the site which masters the element. Since the change will (probably) come to the importing site from oplogs, it is necessary to remove the version(s) which are actually causing the problem.
+
+
+ 1. At the element-mastering site, run the cleartool chtype command to change the element to a different element type. for example 
+    
+    cleartool chtype compressed_file "our-huge-ascii-file.log"
+    
+    
+ 2. At the exporting site, checkout the file and then checkin -identical to preserve the data. 
+    
+    Note: It is important this is done AFTER the chtype, and must be done in a view that selects the problem version.
+    
+    cleartool checkout -c "our-huge-ascii-file.log"
+    
+    cleartool checkin -identical -c "Moved data from predecessor version to workaround MultiSite problem" "our-huge-ascii-file.log"
+    
+    
+ 3. At the exporting site, remove the data from the problematic version which cannot be imported.
+    
+    cleartool describe -long "our-huge-ascii-file.log@@/main/<branch>/<version>"
+    
+    Note: The describe command will show any labels, hyperlinks... attached to the version
+    
+    cleartool mklabel -replace .... 
+    
+    Note: The mklabel -replace command will move the metadata to the new version.
+    
+    cleartool rmver -data "our-huge-ascii-file.log@@/main/<branch>/<version>"
+    
+    Note: The rmver -data command will remove version.
+    
+    
+ 4. At importing site remove the old packets from the incoming bay
+    
+    
+ 5. At export site reset the epoch table as per technote 1231237 and generate fresh set of packets and import the new packets at the importing site.
+    
+    Note: A variation on this approach would be to create a new element and copy all versions to the new element, then "rmelem" the problem file. However, this would not be appropriate in a UCM environment.
+
+
+ Back to top 
+
+
+
+
+ 
+
+Make more memory available to the importing process 
+
+In the above example, the process /usr/atria/lib/mgrs/text_file_delta/create_version (executable is tfdmgr) is being refused a memory allocation request by the operating system. 
+
+
+The amount of virtual memory allowed to a process is determined by a number of platform-dependent factors - MMU hardware, OS process address space layout, kernel configuration, drive swap space, and more.
+
+Generally on UNIX/Linux operating systems, the systems administrator can constrain how much virtual memory is allowed to a single process using the "ulimit" command.
+
+So the main constraints are:
+
+1. The amount of total Virtual Memory available on the host
+2. The amount of Virtual Memory allowed per process
+
+UNIX/Linux Administrators should consult UNIX/Linux operating systems guides for the procedures on configuring available process Virtual Memory. Each operating system has tools to monitor the system resources, such as top, ps, or vmstat.
+
+Example: You can use ulimit command to have per process limit.
+
+Note: This workaround may not work especially on 32-bit systems, where the writable VM is typically limited to 1-2 Gigabytes. Review technote 1117796 [http://www.ibm.com/support/docview.wss?rs=984&uid=swg21117796] for more details.

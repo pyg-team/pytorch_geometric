@@ -1,0 +1,23 @@
+Title: IBM Handling Program Start Request Failures - United States
+
+Text:
+MSGCPF1269 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This document provides helpful tips on problem determination for failing program start requests. 
+
+RESOLVING THE PROBLEM
+When a program start request is received by an Operating System/400 (IBM OS/400 or IBM i5/OS) subsystem, it attempts to start a job based on information that is sent with the program start request. The user's authority to the system, existence of the requested program, and many other items are checked. 
+
+If the subsystem determines that it cannot start the job, the subsystem sends a message (CPF1269) to the QSYSMSG message queue or to QSYSOPR, or the configured message queue when QSYSMSG does not exist. An example of this is when the requested program is not found. The CPF1269 message contains two reason codes (you can ignore reason codes of zero).
+
+Note: The subsystem does not send the CPF1269 message with reason code 401 in all the instances. The following describes subsystem conditions and their resulting CPF1269 message statuses.
+
+
+
+1. No subsystem available - A CPF1269 is issued once for each mode description on APPC device descriptions when there is no subsystem to accept the incoming request. Repetitive CPF1269 messages (which previously occurred in restricted state, for example) have been eliminated at V4R4M0. 2. Incorrectly configured device or subsystem - One CPF1269 message is sent if a device or subsystem is incorrectly configured. Besides attempting to fix the configuration error, the user should vary off and vary on the device. This will permit another CPF1269 message to be received if the configuration error is not properly resolved. If the device is not varied off and varied on, a persistent configuration error may result in a failure for which no message is issued. At times, two nonzero reason codes may appear. This occurs when the OS/400 or i5/OS subsystem cannot determine if the program start request is supposed to start a job in the IBM System/36 environment or under the OS/400 or i5/OS subsystem. One of the reason codes explains why the System/36 environment rejected the program start request. The other reason code explains why OS/400 or i5/OS rejected the program start request. When you receive two reason codes, you should determine where the job runs, and correct the problem.  
+
+
+Cross reference information Segment Product Component Platform Version Edition Operating System IBM i 6.1 Operating System IBM i 7.1 
+HISTORICAL NUMBER
+ 22731712

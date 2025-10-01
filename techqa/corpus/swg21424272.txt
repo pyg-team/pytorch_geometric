@@ -1,0 +1,79 @@
+Title: IBM Domino Configuration Tuner configuration and fine-tuning Open Mic on March 11, 2010 - United States
+
+Text:
+open mic; domino configuration tuner; tuner; config; configuration; march 11; 2010; questions; answers; q&a; STEwebcastDocument; replay; recording; webcast; slides NEWS
+
+ABSTRACT
+ 
+Lotus Developers and Support Engineers hosted an Open Mic conference call on March 11, 2010 to discuss configuration and fine-tuning with Domino Configuration Tuner (DCT). This document contains questions and answers and the slide presentation from the call. 
+
+CONTENT
+
+Performance recommendations for compacting databases: 
+
+ * Do execute when the database is off-line. 
+ * Do not run during peak operational hours. 
+ * System databases, such as events4 and admin4, should be compacted only when the server is offline.
+   
+
+For more information, refer to the technote Compacting in-use system databases [http://www.ibm.com/support/docview.wss?rs=899&uid=swg21244011]. 
+
+Questions and Answers from the Open Mic call:
+
+Q: How can I obtain DCT?  * A. To download DCT at no charge, refer to Domino Configuration Tuner (DCT) provides easy-to-use self-service configuration [http://www-01.ibm.com/support/docview.wss?uid=swg24019358&rs=0&cs=utf-8&context=SWA00&dc=D400&q1=dct]
+
+
+Q: What is the purpose of DCT?  * 
+ * 
+
+About Domino Configuration Tuner (DCT) [http://www-10.lotus.com/ldd/dominowiki.nsf/dx/domino-configuration-tuner] 
+
+Q: We are running Domino 7.0.1 on RHEL 4. Will DCT work in this environment?  * 
+ *  
+ * 
+ *  
+ * 
+
+
+Q: Is DCT a default feature with Domino 8.5?  * 
+
+
+Q: What do we need to check if nserver.exe takes up high cpu?  * 
+
+
+Q: How do we analyze the cluster communication and boost communication?  * 
+
+
+Q: What are the minimum requirements to run DCT?  * 
+
+
+Q: Please explain nlcache_size.  * 
+
+
+Q: What is availability index and how do we analyze this?  * 
+ * 1164405 How is the Server Availability Index (SAI) calculated
+
+
+Q: Do you recommend running DCT on a periodic basis against all servers?  * 
+
+
+Q: What is the impact on the server when DCT scans the system?  * 
+
+
+Q: Can DCT be used to analyze applications running on servers, such as WebSphere or McAfee?  * 
+
+
+Resources:
+ * Download DCT [http://www-01.ibm.com/support/docview.wss?uid=swg24019358&rs=0&cs=utf-8&context=SWA00&dc=D400&q1=dct] 
+ * Notes/Domino Wiki DCT Entry [http://www-10.lotus.com/ldd/dominowiki.nsf/dx/domino-configuration-tuner] 
+ * 'Tuner Blog [http://www.bleedyellow.com/blogs/DCT/?lang=en_us] 
+ * DCT Video Tour [http://download.boulder.ibm.com/ibmdl/pub/software/dw/lotus/dct/dct_video_tour.html]
+
+
+Presentation: 
+
+PDF file, size 1,935,802 bytes 
+OpenMic_Configuration_and_Fine-Tuning_DCT.pdf [/support/docview.wss?uid=swg21424272&aid=2] [/support/docview.wss?uid=swg21424272&aid=1]
+
+ * 
+ *

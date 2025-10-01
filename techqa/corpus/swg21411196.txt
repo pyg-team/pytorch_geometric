@@ -1,0 +1,32 @@
+Title: IBM Questions about expired public CA certificates on IBM WebSphere DataPower SOA Appliances - United States
+
+Text:
+DataPower; pubcert; expire; certificate; crypto ; expiring; certificates TECHNOTE (FAQ)
+
+QUESTION
+ What are some guidelines with respect to managing expired third-party public CA certificates in the pubcert: directory on the IBM WebSphere DataPower SOA appliance? 
+
+ANSWER
+While the IBM WebSphere DataPower SOA appliance provides some standard public CA certificates in pubcert: for convenience, you may encounter missing certificate file errors after firmware upgrades across major release boundaries.
+
+What would cause a certificate file to be removed from pubcert:?
+At the beginning of any major firmware release (3.7.1.0 or 3.7.2.0 or 3.7.3.0 or 3.8.0.0), all expired public CA certificates are removed from the pubcert: directory in the firmware packaging. Expired public CA certificates are not removed in minor firmware releases. This means that upgrading within a release series will not cause a certificate file to be removed from pubcert: but upgrading across a major release boundary might.
+
+Will a firmware upgrade fix the missing certificate file error?
+A firmware upgrade will not fix the missing certificate file error since firmware upgrades do not include replacement public certificates to update expired certificates. Replacement certificates for expired public certificates must be obtained from the vendor's public site and uploaded to the DataPower appliance. 
+
+How can I fix my configuration when a certificate file is removed from pubcert:?
+If the CA in question is not needed by the customer, then the configuration can be repaired by removing references to the removed certificate file. This can be accomplished by first finding any Crypto Certificate objects that refer to the removed file (they will be in a down state), then by removing references to that Crypto Certificate from any configuration objects that refer to it (such as Validation Credentials objects), and finally by deleting the Crypto Certificate object in question.
+
+If the CA in question is needed by the customer, then the user must obtain an updated copy from the CA's public site, upload the new certificate to the DataPower appliance, and then reconfigure the down Crypto Certificate object to refer to the new certificate file.
+
+How can I monitor for certificate expiration?
+Customers have the option of defining a Certificate Monitor, a configurable periodic task used to check and report on expiration dates of Crypto Certificate objects. Refer to the Administrator's Guide for details on configuring the monitor. Note that the Certificate Monitor only checks certificates for which a Crypto Object is configured in that it scans the list of configured objects rather than scanning all files in a given directory. Refer to the WebSphere DataPower product documentation portal [http://www.ibm.com/support/docview.wss?rs=2362&uid=swg21377654] to access the Administrator's Guide. You will need to sign into the portal with your IBM registration ID.
+
+For example, the terminology as logged by the error log might contain errors like these
+
+1,20140225T064505Z,default,audit,error,,,95,,0x8240001b,,,"(SYSTEM:default:*:*): certificate 'ABC-Global-CA-pem' - File is unreadable"
+
+1,20140225T064506Z,default,crypto,error,certificate,GTE-CyberTrust-Root-4-pem,95,,0x80600086,,,"*certificate file 'pubcert:ABC-CyberTrust-Root-4.pem' unreadable*"
+
+The files are listed as unreadable. If a user goes into the file system and views one of these certificates, they will see the validity date has passed.

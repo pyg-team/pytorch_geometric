@@ -1,0 +1,73 @@
+Title: IBM TXSeries CICS ENCINA SFS HACMP CONFIGURATION ISSUES - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The customer is trying to set up a HACMP environment with TXSeries 
+Machine A had the /var directories and raw logical volumes on the Disk Tower.
+Machine B was to start the CICS region and SFS server.
+
+
+SYMPTOM
+Failure to start the SFS server, PPC Gateway, and CICS region.
+
+
+CAUSE
+configuration.
+
+RESOLVING THE PROBLEM
+The problem typically sounds like an install problem. What really happened is the customer installed the software and created the SFS and CICS on System-A but not on System-B. There are resources created when the SFS and CICS are installed and built which are not present on System-B. These resources need to be created on System-B.
+
+
+1) Users - Both the SFS and PPC will need a user for versions up to V6.2. After V6.2 they share the CICS user. CICS will need just one user for all the regions. Look at the users on System-A using SMIT. The SFS user name is the name of the SFS server. The SFS should have an user of "S???????". CICS will have an user of "CICS". The user id (the number not the name) has to be the same on both systems for an user. Permissions are granted by the user id not the user name. 
+
+
+2) When a SFS server and CICS regions are created, a Subsystem Resource Controller (SRC) entry is made in the ODM for each. These entries need to be identical between system a and system b.
+
+Using the "lssrc -a" command to list the entries, look for the cics.<regionName> and cicssfs.<sfsShortName>.
+
+SFS SERVER:
+The command for SFS is as follows when "kevin" is the name of the SFS and 207 is the user id:
+
+mkssys -s cicssfs.SFS_KEV -a "-n /.:/cics/sfs/kevin" -p /usr/bin/sfs -u 207 -i /dev/null -o /var/cics_servers/SSD/cics/sfs/kevin/msg -e /var/cics_servers/SSD/cics/sfs/kevin/msg -O -Q -E 20 -S -n 2 -f 15 -d -w 180
+
+Remember after V6.2 the user id is the CICS user id. Start the SFS. All the files that were present in the original SFS should be present. Verify this by looking for the seven region files.
+
+CICS REGION:
+Issue the following to generate the SRC entry.
+
+mksys -s cics.<regionName> -a "-r <regionName>" -p /usr/lpp/cics/bin/cics -u <user id # of user CICS> -i /dev/null -o /var/cics_regions/<regionName>/console.msg -e /var/cics_regions/<regionName>/console.msg -O -Q -E 20 -S -n 1 -f 15 -d -w 180
+
+3) The next item to cover is the AsynchI/O. This needs to be turned on for system B. In smitty ->devices->AsynchronousIO
+
+verify (or change) the state to "available". If changed, the system will need to be restarted (reboot).
+The SFS utilizes AsynchIO
+
+4) This step is for CICS versions 5.1 and previous only. 
+
+Resolving message ERZ038054E/0165 Unable to find entry name in SSD. The SFS would not start on the backup machine. 
+
+
+Take the host name out of the server_bindings file. The host name should never be in an entry. The entry would look like this:
+/.:/cics/sfs/sfsName ncadg_ip_udp:10050
+
+Reset the information for the Encina SFS server by:
+a) Ensure the SFS and region are down
+b) shut down the DCE
+c) mv /var/dce/dced/Ep.db to /var/dce/dced/Ep.db.old
+d) restart DCE
+
+The Ep.db is rebuilt with the correct entries for that host when the SFS and region are restarted. 
+
+
+5) When a PPC Gateway is used then the environment variable CICS_PPC_IP_ADDR is needed on both systems. The value for the environment variable is the IP address shared between the systems. This is needed to do the failure in the gethostbyname and gethostname AIX API calls performed by the PPC Gateway. Set CICS_PPC_IP_ADDR to the IP shared between machines. 
+
+For versions 5.1 and previous use ENCINA_PPC_IP_ADDR in place of CICS_PPC_IP_ADDR. 
+
+
+6) Items to be concerned about are the mounting of the SSA device and the mounting of the /DEV.
+It is important to mount the SSA device with the same device number on both systems. The software has a dependency on the device number. 
+The logical volumes for the SFS are under the /DEV directory. Insure the logical volumes are mounted the same on both systems. Verify the mirrors are available.
+
+7) On failures with the standard in, out, or error files, the user id starting the software needs at least “x” permission on all the directories above where the file pointed to sits. The user id will most likely need “rwx” in the directory where the file sits.

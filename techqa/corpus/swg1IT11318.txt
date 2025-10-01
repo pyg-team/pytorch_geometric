@@ -1,0 +1,180 @@
+Title: IBM IT11318: WMQ V8: IF A PASSWORD IS NOT PROVIDED WHEN USING CONNAUTH, MQ BASE JAVA APPLICATIONS CAN STILL CONNECT TO A QUEUE MAN - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  If CONNAUTH is enabled on a queue manager and the CHCKCLNT
+   parameter is set to OPTIONAL in AUTHINFO definition and if a
+   client application using MQ base Java classes provides a userid
+   without a password, it connects successfully.
+   
+   The behaviour is different when using other APIs, such as JMS or
+   the native MQ API which fail to connect.
+   
+   So for MQ base Java applications if a userid is provided
+   without password, then the connection should also fail.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   This issue affects users of the WebSphere MQ V8 Classes for Java
+   using the MQCSP authentication mode with an application which
+   specifies a user id, but no password and which connects to a V8
+   queue manager which is using the CONNAUTH feature to
+   authenticate passwords.
+   
+   
+   Platforms affected:
+   MultiPlatform
+   
+   ****************************************************************
+   PROBLEM DESCRIPTION:
+   A WebSphere MQ V8 Classes for Java application was developed to
+   connect to a V8 queue manager using MQCSP authentication mode.
+   
+   The application specified a user Id for the connection (either
+   by setting the 'userID' field on an MQEnvironment object, or by
+   setting the CMQC.USER_ID_PROPERTY in a Hashtable which was
+   subsequently passed to the MQQueueManager constructor) but no
+   password was specified.
+   
+   The application set
+   "MQConstants.USE_MQCSP_AUTHENTICATION_PROPERTY" to "true" or
+   specified the Java system property:
+   "com.ibm.mq.cfg.jmqi.useMQCSPauthentication=Y"
+   
+   When the application attempted to connect the MQ Classes for
+   Java should have sent a MQCSP structure to the queue manager
+   containing a user Id (with no password).  The queue manager
+   should have rejected this connection attempt because the
+   password was invalid.  Instead the MQ Classes for Java did not
+   send the MQCSP structure so the queue manager allowed the
+   connection to succeed.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The MQ Classes for Java have been updated to ensure that when a
+   user Id is specified and the application is using MQCSP
+   authentication mode then the MQCSP structure will be sent to the
+   queue manager regardless of whether the password is provided or
+   not.
+   
+   As a result if the queue manager is configured to use connection
+   authentication then it will validate the user Id and password
+   when a connection attempt is made and reject the connection if
+   no password is provided.
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+   Version    Maintenance Level
+   v8.0       8.0.0.5
+   
+   The latest available maintenance can be obtained from
+   'WebSphere MQ Recommended Fixes'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037]
+   
+   If the maintenance level is not yet available information on
+   its planned availability can be found in 'WebSphere MQ
+   Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT11318
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ BASE MULTIP
+   
+   
+ * REPORTED COMPONENT ID
+   5724H7251
+   
+   
+ * REPORTED RELEASE
+   800
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2015-09-18
+   
+   
+ * CLOSED DATE
+   2016-01-11
+   
+   
+ * LAST MODIFIED DATE
+   2016-01-11
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ BASE MULTIP
+   
+   
+ * FIXED COMPONENT ID
+   5724H7251
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R800 PSY
+   UP

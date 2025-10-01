@@ -1,0 +1,202 @@
+Title: IBM Packaging Utility 1.8 - United States
+
+Text:
+service release; modpack; mod pack; upgrade; refresh; refresh pack DOWNLOADABLE FILES
+
+ABSTRACT
+ IBM Packaging Utility 1.8 has been made generally available and contains any fixes for client-reported and internally found defects. 
+
+DOWNLOAD DESCRIPTION
+ 
+
+Table of Contents Sections Description  * What's new
+
+The Change history section provides an overview on what is new in this release with a description of any new functions or enhancements when applicable.
+
+ * Impact assessment
+
+The How critical is this fix section provides information related to the impact of this release to allow you to assess how your environment may be affected.
+
+ * Prerequisites
+
+The Prerequisites section provides important information to review prior to the installation of this release.
+
+ * Download package
+
+The Download package section provides the direct link to obtain the download package for installation in your environment.
+
+ * Installation instructions
+
+The Installation instructions section provides the installation instructions necessary to apply this release into your environment.
+
+ * Known problems
+
+The Known side effects section contains a link to the known problems (open defects) identified at the time of this release.
+
+Supporting Documentation Document Description  * Detailed System Requirements [http://www.ibm.com/support/docview.wss?uid=swg27036456]
+
+Click to review the detailed system requirements information for a complete list of hardware requirements, supported operating systems, prerequisites and optional supported software, with component-level details and operating system restrictions.
+
+ * IBM Knowledge Center [http://www.ibm.com/support/knowledgecenter/SSDV2W_1.8.0/com.ibm.cic.auth.ui.doc/helpindex_pu.html]
+
+IBM Knowledge Center provides an entry point to product documentation. You can view, browse, and search online information related to the product.
+
+ * Fix List [http://www.ibm.com/support/docview.wss?uid=swg27036454#tab_1.8]
+
+Click to review a complete list of the defects (APARs) resolved in this release including a list of resolved defects for the entire version family.
+
+PREREQUISITES
+ 
+
+Prerequisites include: Review the Detailed System Requirements [http://www.ibm.com/support/docview.wss?uid=swg27036456] for any prerequisites required for this release.
+
+Back to top
+
+INSTALLATION INSTRUCTIONS
+ 
+
+Use Installation Manager to install and update Packaging Utility. If Installation Manager is installed, you can use the Packaging Utility repository on www.ibm.com to install or update Packaging Utility without downloading files. If Installation Manager is not installed, you must download the Packaging Utility files. Installation Manager is included in the Packaging Utility download packages.
+
+The installer package for Packaging Utility is pu.offering.disk.platform_version.zip where platform indicates the operating system and version indicates the version of Packaging Utility. The installer package contains files for only one platform. Using this package, you can install Packaging Utility and Installation Manager by running the install command. You can also add this package as a repository in Installation Manager and use the package to update Packaging Utility.
+
+The fix pack package for Packaging Utility is pu.update_version.zip. The fix pack contains files for all supported platforms. You can add this fix pack as a repository to update Packaging Utility. You cannot install Packaging Utility or Installation Manager with this fix pack.
+
+Packaging Utility is available in 64-bit mode. Review information information about bit mode for installation or updates: Packaging Utility bit mode information [https://www.ibm.com/support/knowledgecenter/SSDV2W_1.8.0/com.ibm.cic.auth.ui.doc/topics/r_pu_bit_mode.html].
+
+For more information about Packaging Utility and Installation Manager, Review the Installation Manager Knowledge Center [http://www.ibm.com/support/knowledgecenter/SSDV2W/im_family_welcome.html].
+
+
+INSTALL OR UPDATE PACKAGING UTILITY WITHOUT DOWNLOADING FILES
+You must have Internet access and Installation Manager must be installed to install or update Packaging Utility without downloading files. The Packaging Utility repository located on www.ibm.com contains the latest version of Packaging Utility.
+
+You must have an IBM user name and password to access the repository. To register for these credentials, go to: http://www.ibm.com/account/profile.
+
+
+IBM Knowledge Center topics that are specified by operating system for installing and updating Packaging Utility. The installation topics contain information about downloading the Installation Manager installation files. 
+
+Operating System Action Packaging Utility topic located in the IBM Installation Manager Knowledge Center Windows
+Linux
+UNIX
+Mac OS X operating system Installation Installing Packaging Utility in wizard mode [http://www.ibm.com/support/knowledgecenter/SSDV2W_1.8.0/com.ibm.cic.auth.ui.doc/topics/r_pu_wm.html] Installing Packaging Utility by using console mode [http://www.ibm.com/support/knowledgecenter/SSDV2W_1.8.0/com.ibm.cic.commandline.doc/topics/t_pu_console_install.html] Installing or updating Packaging Utility by using imcl commands [http://www.ibm.com/support/knowledgecenter/SSDV2W_1.8.0/com.ibm.cic.commandline.doc/topics/t_pu_install_imcl.html] Update Updating Packaging Utility in wizard mode [http://www.ibm.com/support/knowledgecenter/SSDV2W_1.8.0/com.ibm.cic.auth.ui.doc/topics/t_pu_update.html] Updating Packaging Utility by using console mode [http://www.ibm.com/support/knowledgecenter/SSDV2W_1.8.0/com.ibm.cic.commandline.doc/topics/t_pu_console_update.html] Installing or updating Packaging Utility by using imcl commands [http://www.ibm.com/support/knowledgecenter/SSDV2W_1.8.0/com.ibm.cic.commandline.doc/topics/t_pu_install_imcl.html] IBM z/OS Installation Installing Packaging Utility by using console mode [http://www.ibm.com/support/knowledgecenter/SSDV2W_1.8.0/com.ibm.cic.commandline.doc/topics/t_pu_console_install.html] Installing or updating Packaging Utility by using imcl commands [http://www.ibm.com/support/knowledgecenter/SSDV2W_1.8.0/com.ibm.cic.commandline.doc/topics/t_pu_install_imcl.html] Update Updating Packaging Utility by using console mode [http://www.ibm.com/support/knowledgecenter/SSDV2W_1.8.0/com.ibm.cic.commandline.doc/topics/t_pu_console_update.html] Installing or updating Packaging Utility by using imcl commands [http://www.ibm.com/support/knowledgecenter/SSDV2W_1.8.0/com.ibm.cic.commandline.doc/topics/t_pu_install_imcl.html] 
+Back to top
+
+DOWNLOAD PACKAGE
+ 
+
+The following sections provide detailed information related to this release.
+
+Click the FC link below to obtain the release from Fix Central.
+
+
+
+HOW CRITICAL IS THIS FIX?
+ 
+
+Impact Assessment Impact Description Recommended This is a service release. It contains new features as well as fixes for client-reported and internally found defects.
+
+Test Results
+
+Close [x]
+
+DEFINITIONS
+Regression: An error in the Maintenance Delivery Vehicle [http://www.ibm.com/support/docview.wss?uid=swg27008656] (MDV) that produces incorrect or unexpected behavior causing a supported feature to stop functioning as designed. 
+This includes: 
+
+ * Coding errors that cause a regression
+ * Documentation or packaging problems that cause a regression
+ * Errors reported in a new function delivered in a MDV that cause a regression
+
+Incomplete: An error in the MDV has not regressed, but does not work as designed. 
+This includes: 
+
+ * Fixed APARs which did not solve the original problem but did not break anything new
+ * APARs reporting documentation errors, such as readme errors, that cause problems applying an MDV but do not lead to a regression
+
+
+
+
+Notes:  * Regression and incomplete APARs are considered fix-in-error or MDV-in-error
+ * Definitions above apply only to valid APARs that result in product fixes (APARs returned as working-as-designed are not assessed for being fix-in-error)
+ * Issues in major releases due to new functionality do not apply in this definition
+
+There are no known regressions to report.
+
+Back to top
+
+
+
+PROBLEMS SOLVED
+ 
+
+Defects resolved Click the Fix List link in the table of contents above to review a list of the problems solved in this release.
+
+
+
+KNOWN SIDE EFFECTS
+ 
+
+Review the following list of known issues and open defects: There are no known issues report.
+
+OPEN DEFECTS
+Review the following list of open defects for IBM Installation Manager and Packaging Utility [https://www-947.ibm.com/support/entry/myportal/search_results/rational/ibm_installation_manager?sn=spe&q=%22APAR%20status%22%20OPEN&prod=N340276G72802P18&filter=language:en&productContext=864296863#q%3D%22APAR%20status%22%20OPEN%26filter%3DDC.Type%3ACT748%2Blanguage%3Aen%26prod%3DN340276G72802P18] on the IBM Support Portal.
+
+Review technote 1461170: Open APARs for Rational products available on the Web [http://www.ibm.com/support/docview.wss?uid=swg21461170] for information on how to configure your MyNotifications subscription account and subscribe to the APARs you are interested in following.
+
+Back to top
+
+
+
+CHANGE HISTORY
+ 
+
+What's new No new features or functions.
+
+Back to top
+
+Click the link in the Download Options column:
+
+
+
+Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options 
+What is Fix Central(FC)? [https://www.ibm.com/support/fixcentral/help?page=swfaqs] Packaging Utility downloads (1.8) 11 Sep 2014 English 1 FC [http://www.ibm.com/support/fixcentral/swg/quickorder?parent=ibm%7ERational&product=ibm/Rational/IBM+Packaging+Utility&release=All&platform=All&function=all&source=fc] [ ] 
+TECHNICAL SUPPORT
+ 
+
+TAB NAVIGATION
+ * General Support Information- selected tab,
+ * Support Resources [http://www.ibm.com/support/docview.wss?uid=swg27020747]- selected tab,
+
+
+
+
+IBM Rational Software Support Communities 
+
+ * Visit the IBM Support Portal [http://www.ibm.com/support/entry/portal/Overview/Software/Rational/product] to configure your support portal experience and review FAQs, lists of known problems, fixes, and a wealth of important support information.
+   
+   
+ * Visit developerWorks [http://www.ibm.com/developerworks/rational/] to access an online collection of tutorials, sample code, standards, forums and other resources provided by experts at IBM to assist software developers using Rational tools including access to the IBM RFE Community [http://www.ibm.com/developerworks/rfe/].
+   
+   
+ * Visit the Jazz Community [http://jazz.net/] if you use a Rational product created using the Jazz platform to interact directly with the Jazz development team and other community members, download product trials and betas and track developement progress. 
+
+
+
+
+HELPFUL HINTS FOR OBTAINING TECHNICAL ASSISTANCE:
+Before you contact IBM Rational Software Support, gather the background information that you need to describe the problem. When you describe a problem to an IBM software support specialist, be as specific as possible and include all relevant background information so that the specialist can help you solve the problem efficiently. To save time, know the answers to these questions: 
+
+ * What software versions were you running when the problem occurred? 
+ * Do you have logs, traces, or messages that are related to the problem? 
+ * Can you reproduce the problem? If so, what steps do you take to reproduce it? 
+ * Is there a workaround for the problem? If so, be prepared to describe the workaround. 
+
+If you have helpful information to diagnose or identify the problem on your system, you can provide this data by following the instructions to exchange information with IBM Technical Support [http://www.ibm.com/software/support/exchangeinfo.html]. 
+
+ 
+
+Follow IBM Rational Client Support on Twitter [http://twitter.com/rationalsupport] | Facebook [http://facebook.com/rationalsupport] | YouTube [http://www.youtube.com/ibmrationalsupport] | devWorks Blog [https://www.ibm.com/developerworks/mydeveloperworks/blogs/nfrsblog/?lang=en]
+
+
+
+
+ Back to top

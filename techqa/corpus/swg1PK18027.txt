@@ -1,0 +1,138 @@
+Title: IBM PK18027: CUSTOMER'S WEB APP, WHICIH REQUIRES JAVA CONFIGURATION, WON'T RU N WHEN RECORDING WITH RPT - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PERMANENT RESTRICTION.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Problem has been duplicated locally in RPT 6.1.2.
+   The customer's Web-based application doesn't work under RPT
+   recording but does work if run in IE outside of RPT.
+   We've been able to duplicate the behavior using their site.
+   Their application requires changes to your java.policy file
+   since it downloads an executable and then runs it on your
+   machine.  The java.policy file changes are:
+     permission java.util.PropertyPermission "user.pathtemp",
+   "read";
+     permission java.io.FilePermission "${user.pathtemp}${/}*",
+   "read,write,execute";
+   Also had to add "-Duser.pathtemp=c:/tmp/abutmp" to the Java
+   Runtime Parameters in my Java Plug-in Control Panel.
+   If you don't have these changes, the customer's app won't run
+   even without RPT.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Customer is having difficulty doing a recording in RPT. RPT
+   seem
+   s to hang during the recording. The hang is related to
+   attemptin
+   g to run a Java applet which requires special
+   security, as speci
+   fied in the system's java.policy file.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Since  the customer's Java applet requires a customized
+   java.policy, the changes that they make to their system's
+   java.policy need to be replicated in RPT's java.policy which
+   is located in
+   <install_directory>\eclipse\jre\lib\security
+   directory, for example, C:\Program
+   Files\IBM\Rational\SDP\6.0\eclipse\jre\lib\security.
+   Once this change is made, need to restart Agent Controller.
+   Then recording will work.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK18027
+   
+   
+ * REPORTED COMPONENT NAME
+   PERF TESTER 6.1
+   
+   
+ * REPORTED COMPONENT ID
+   5724J9601
+   
+   
+ * REPORTED RELEASE
+   610
+   
+   
+ * STATUS
+   CLOSED PRS
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2006-01-17
+   
+   
+ * CLOSED DATE
+   2006-11-30
+   
+   
+ * LAST MODIFIED DATE
+   2006-11-30
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  na
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

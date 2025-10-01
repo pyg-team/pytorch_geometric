@@ -1,0 +1,47 @@
+Title: IBM Database Creation during version 11 Install - United States
+
+Text:
+TBS4K TBS8K TBS16K LONGSPACE1 INDEXSPACE1 EMESPACE1 EMESPACE2 db2 -tvf db2 -td "The database home is not valid" com.ibm.im.mdm.install.validation.util.DB2Service; The database cannot be connected .Could not add URL to the class path SQLLIB IVT createProcess error=2 DB21034E The command was processed as an SQL statement because it was not a valid Command Line Processor command. During SQL processing it returned: SQL1024N A database connection does not exist. SQLSTATE=08003 SQL1031N The database directory cannot be found on the indicated file system. SQLSTATE=58031 STATE=HY000; CODE=-1031 TECHNOTE (FAQ)
+
+QUESTION
+ I successfully completed the MDM version 11 install and although there were no errors, the database and the database schema were not created. Why weren't they created?
+
+OR
+I installed the DB2 database (bundled with MDS build) with the installation manager, but on the database configuration screen, the "Test Connection" always fails. Why is the connection failing?
+
+OR
+I successfully completed the MDM version 11 install and although there were no errors, I am unable to connect to the database using "madconfig test_datasource" or through the DB2 command line. Why is that? 
+
+CAUSE
+Along with binaries for Websphere, DB2, and MDM, the installation media also contains a "Startup Kit". This start up kit contains script for creating the database, table space, and the database schema. For version 11 GA, this kit is contained as part of package # CIM6EML. 
+
+This is an optional package because it is not needed in certain circumstances where the schema is already present e.g. upgrades, but if you are creating a new database schema, then this package is required and without it, we will see the following behavior: 
+
+ 1. The install will complete since all the specified packages are installed but the database will not be created causing complications. 
+ 2. Since the database does not exist, "Test Connection" will fail in the database configuration screen of "Installation Manager". 
+ 3. Although the install completed, but since the database does not exist, all attempts to connect to it via "madconfig test_datasource" or through the DB2 command line will fail.
+
+
+Note: The "Startup toolkit" is different from the "Application Toolkit" which is also a part of the available installation media 
+ANSWER
+If you are working on a new install and completed it without this package, then we have the following options: 
+
+ 
+
+ 1. Download this package from IBM Support portal and then upgrade the current install with this new package. 
+ 2. Since this package is only used for brand new installs, so you may uninstall the current applications without fearing loss of data and re-install the product to include this package.
+
+
+To add this package to the installation set-up, open "Installation Manager" > "File" > "Preferences" > "Respositories" > "Add Repository" and browse to the "diskTag.inf" file which is a part of the downloaded package. Once this has been added, the start up kit will be included with the "Install" or "Upgrade" options. 
+
+If you want to customize the database set-up, then you may do so by modifying the CreateDB.sql and CreateTS.sql script within STARTUPKIT_INSTALL_HOME/CoreData/Full/DB2/Standard/ddl/ directory (where STARTUPKIT_INSTALL_HOME is the location of the installed kit). CreateDB.sql script creates the database (default is named MDMDB) while CreateTS.sql creates the table space. Refer to the information center for details. 
+
+PRODUCT ALIAS/SYNONYM
+ MDS
+Master Data Service
+MDM
+MDMSE
+Master Data Management
+IBM Infosphere Master Data Service
+MDM Standard Edition
+MDM Hybrid Edition

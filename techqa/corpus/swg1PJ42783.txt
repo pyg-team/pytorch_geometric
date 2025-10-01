@@ -1,0 +1,168 @@
+Title: IBM PJ42783: ADD A NEW MESSAGE TYPE TO IMESSAGE INTERFACE FOR CONSTRUCTOR USE WHEN AN EMAIL FORMAT IS DETERMINED TO BE UNRECOGNIZED - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  For Content Platform Engine (CPE) and Content Search Services
+   Customers (CSS) using IBM Content Collector (ICC) for document
+   indexing ingestion, a new message type is required for specific
+   document level errors that fall into the category of
+   'unrecognized format' according to the current IBM Content
+   Collector parsers. This new type will allow ICC Support for
+   Content Search Services to better handle the case when an
+   unrecognized email format is encountered.
+   
+   
+   Results
+   -------
+   Actual Results:
+   As it is now, when an unrecognized email format is encountered,
+   there is a TASK_ERROR being thrown which fails an entire CPE
+   batch instead of just the single email that is unrecognized.
+   This leads to situations where the IndexRequests can build up
+   and you will see the retry counts going up on the failing
+   content.
+   
+   Expected Results:
+   Document level errors be handled so that the customer can report
+   the problem to IBM Support and once they obtain the fix they
+   could go back and reindex the failing content.
+   
+   
+   Workaround
+   ----------
+   There is a tuning parameter that can help to reduce the impact
+   of unrecognized email formats until a fix is available.
+   Modify the constructors.xml file to change <batchSize> from 15
+   to 1.
+   Restart the CSS Servers after this change.
+   This will cause the TASK_ERROR to fail only the single item that
+   is unrecognized, allowing the other 14 items in that batch to be
+   processed separately.
+   The result will be less items will be left to be retried in
+   IndexRequests queue.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * 5.2.0.2-P8CSS-IF001 and 5.2.1.0-P8CSS and prior when IBM     *
+   * Content Collector (ICC) is indexing unknown email format     *
+   * types                                                        *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * IBM Content Collector (ICC) is indexing unknown email format *
+   * types that are not recognized.                               *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Upgrade to 5.2.0.2-P8CSS-IF002 or 5.2.1.2-P8CSS-FP002 or     *
+   * higher.                                                      *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fixed in 5.2.0.2-P8CSS-IF002 and 5.2.1.2-P8CSS-FP002and higher.
+   Resolved by adding a new message type to IMessage interface for
+   the constructor to use when an email type is not recognized.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PJ42783
+   
+   
+ * REPORTED COMPONENT NAME
+   CONTENT SEARCH
+   
+   
+ * REPORTED COMPONENT ID
+   5724R8109
+   
+   
+ * REPORTED RELEASE
+   520
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-12-10
+   
+   
+ * CLOSED DATE
+   2015-03-11
+   
+   
+ * LAST MODIFIED DATE
+   2015-03-11
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CONTENT SEARCH
+   
+   
+ * FIXED COMPONENT ID
+   5724R8109
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R520 PSY
+   UP

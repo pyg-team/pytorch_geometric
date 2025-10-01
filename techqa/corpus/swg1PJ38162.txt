@@ -1,0 +1,270 @@
+Title: IBM PJ38162: INFORMATION FOR CONFIGURING IS ORGANIZATION IS MISLEADING AND CAN CAUSE CONFUSION. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  In the P8 451 InfoCenter docs in section:
+   
+   Install additional IBM FileNet P8 products > IBM FileNet Content
+   Federation Services for Image Services, Version 4.5.1+ > Content
+   Engine server > Create an object store > Create a fixed content
+   device in EM
+   
+   Documentation states:
+   IS Organization: This should be your company name, such as
+   yourco, bigcorp, and so on.
+   
+   The above statement can be misleading for customers and cause
+   them to enter the incorrect information.  In most cases it will
+   be FileNet.
+   
+   Customers comments:
+   "IS Organization should be FileNet unless you paid Xerox to
+   change it."
+   
+   That area of the documentation should be changed to be more
+   consistent with other areas of the documentation:
+   
+   IBM FileNet P8 documentation > System Administration > Content
+   Engine Administration > FileNet P8 domain > How to... > View and
+   modify FileNet P8 domain properties
+   Fixed Content Devices properties (General tab) > IBM FileNet
+   Image Services configuration parameters
+   
+   IS Organization:
+   "In most cases, this value is "FileNet." This value is stored as
+   another part of the Service name configuration parameter in the
+   fixed content device. Enter up to 20 alphanumeric characters.
+   
+   The <organization> portion of a two- or three-part NCH name of
+   the associated Image Management System (IMS). NCH names are
+   case-sensitive. NCH three-part names use the form:
+   <object>:<domain>:<organization>. The object name must be 1 to
+   40 bytes (bytes, not characters). If present, it always has the
+   value of DefaultIMS. The organization name must be 1 to 20
+   bytes."
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * P8 System Administrators                                     *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * Description of Problem (full details)                        *
+   *                                                              *
+   * In the P8 451 InfoCenter docs in section:                    *
+   *                                                              *
+   * Install additional IBM FileNet P8 products > IBM FileNet     *
+   * Content Federation Services for Image Services, Version      *
+   * 4.5.1+ > Content Engine server > Create an object store >    *
+   * Create a fixed content device in EM                          *
+   *                                                              *
+   * Documentation states:                                        *
+   * IS Organization: This should be your company name, such as   *
+   * yourco, bigcorp, and so on.                                  *
+   *                                                              *
+   * The above statement can be misleading for customers and      *
+   * cause them to enter the incorrect information.  In most      *
+   * cases it will be FileNet.                                    *
+   *                                                              *
+   * Customers comments:                                          *
+   * "IS Organization should be FileNet unless you paid Xerox to  *
+   * change it."                                                  *
+   *                                                              *
+   * That area of the documentation should be changed to be more  *
+   * consistent with other areas of the documentation:            *
+   *                                                              *
+   * IBM FileNet P8 documentation > System Administration >       *
+   * Content Engine Administration > FileNet P8 domain > How      *
+   * to... > View and modify FileNet P8 domain properties         *
+   * Fixed Content Devices properties (General tab) > IBM FileNet *
+   * Image Services configuration parameters                      *
+   *                                                              *
+   * IS Organization:                                             *
+   * "In most cases, this value is "FileNet." This value is       *
+   * stored as another part of the Service name configuration     *
+   * parameter in the fixed content device. Enter up to 20        *
+   * alphanumeric characters.                                     *
+   *                                                              *
+   * The <organization> portion of a two- or three-part NCH name  *
+   * of the associated Image Management System (IMS). NCH names   *
+   * are case-sensitive. NCH three-part names use the form:       *
+   * <object>:<domain>:<organization>. The object name must be 1  *
+   * to 40 bytes (bytes, not characters). If present, it always   *
+   * has the value of DefaultIMS. The organization name must be 1 *
+   * to 20 bytes."                                                *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Upgrade to P8 version 5.0 to see the updated topic.          *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  For the past several releases, we have recommended that clients
+   
+   use their own company name, rather than FileNet, for the
+   
+   organization portion of the three-part NCH name in the form:
+   <object>:<domain>:<organization>.  To paraphrase Alan Babich,
+   
+   STSM, Image Manager Architect, "Companies should not use
+   
+   FileNet as the organization name in order  to prevent great
+   inconvenience when companies that use Image Services are merged
+   or want to collaborate with other companies that use Image
+   Services."
+   
+   
+   Dr. Babich also mentions that Xerox no longer registers
+   organization names for XNS. However, the alternative of
+   
+   registering the organization name with the American National
+   Standards Institute (ANSI)  is a great alternative.
+   <http://www.ansi.org/other_services/registration_programs/reg_or
+   g.aspx >
+   
+   "The organization name is case sensitive, and must not exceed
+   
+   20 characters total, including embedded spaces, if any.  ANSI
+   
+   requires that the name be alphanumeric -- letters and numbers
+   only, and I think embedded spaces are allowed. ...
+   
+   
+   "There is the additional benefit that their registered
+   
+   organization name will also be unique on planet earth in the
+   LDAP naming hierarchy. (Actually, that's why ANSI is
+   
+   registering organization names. ... ) That's a strong selling
+   point, because most customers are using LDAP nowadays."
+   
+   
+   Therefore, to be consistent, we're going to leave the
+   
+   following topic as-is: Install additional IBM FileNet P8
+   products > IBM FileNet Content Federation Services for Image
+   Services, Version 4.5.1+ > Content Engine server > Create an
+   
+   object store > Create a fixed content device in EM
+   
+   Documentation states:
+   IS Organization: This should be your company name, such as
+   
+   yourco, bigcorp, and so on.
+   
+   
+   But we will change the topic: IBM FileNet P8 documentation >
+   System Administration > Content Engine Administration > FileNet
+   P8 domain > How to... > View and modify FileNet P8 domain
+   properties
+   Fixed Content Devices properties (General tab) > IBM FileNet
+   Image Services configuration parameters
+   
+   OLD:
+   IS Organization:
+   "In most cases, this value is "FileNet." This value is
+   
+   stored as another part of the Service name configuration
+   parameter in the fixed content device. Enter up to 20
+   alphanumeric characters.
+   
+   NEW:
+   IS Organization:
+   "In some cases, this value is "FileNet." However, in many
+   
+   cases this value is your company name, such as yourco,
+   
+   bigcorp, and so on. This value is stored as another part of the
+   
+   Service name configuration parameter in the fixed content
+   device. Enter up to 20 alphanumeric characters.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PJ38162
+   
+   
+ * REPORTED COMPONENT NAME
+   CONTENT ENGINE
+   
+   
+ * REPORTED COMPONENT ID
+   5724R8101
+   
+   
+ * REPORTED RELEASE
+   451
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-09-15
+   
+   
+ * CLOSED DATE
+   2010-09-15
+   
+   
+ * LAST MODIFIED DATE
+   2010-09-15
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

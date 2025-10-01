@@ -1,0 +1,58 @@
+Title: IBM Migrating an existing schema from one Oracle instance to another - United States
+
+Text:
+Oracle migrate migration copy registerOracleSchema ORA-30944 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Attempts to upgrade IBM SPSS C&DS by migrating an existing schema from one Oracle instance to another will result in the following error when running C&DS configuration tool: 
+
+
+
+ERROR: registerOracleSchema schema evolve failed for namespace: xml.spss.com/scoring/logging
+
+java.sql.SQLException: [SPSSOEM][Oracle JDBC Driver][Oracle]ORA-30944: Error during rollback for XML schema 'http://xml.spss.com/scoring/logging' table "SPSSPLAT"."Info671_TAB" column ''
+
+ORA-02304: invalid object identifier literal
+
+ORA-30942: XML Schema Evolution error for schema 'http://xml.spss.com/scoring/logging' table <n/a> column ''
+
+ORA-31088: object "SPSSPLAT"."BIN$/1mzNKjtJtHgQyAhGArrrA==$0" depends on the schema
+
+ORA-06512: at "XDB.DBMS_XMLSCHEMA_INT", line 153
+
+ORA-06512: at "XDB.DBMS_XMLSCHEMA", line 221
+
+ORA-06512: at "SPSSPLAT.SPSSEVOLVE", line 1
+
+ORA-06512: at line 1 
+
+SYMPTOM
+Configuration of C&DS will fail with the above error
+
+
+CAUSE
+Although the steps to migrate their Oracle schema seem successful and did not present any errors, it appears that the migrated schema is still not in the correct format that is recognized by our C&DS configuration tool. This is supported by the fact that a configuration is successful over a new/empty schema. 
+
+ENVIRONMENT
+IBM SPSS Collaboration & Deployment Services using a copy of an Oracle database
+
+DIAGNOSING THE PROBLEM
+This problem is seen when working with a copy of an existing Oracle database. 
+This problem can happen even if the option to discard is chosen during the configuration. 
+Review the engine.log for the following: 
+
+ERROR: registerOracleSchema schema evolve failed for namespace:http://xml.spss.com/scoring/logging
+java.sql.SQLException: [SPSSOEM][Oracle JDBC Driver][Oracle]ORA-30944: Error during rollback for XML schema 'http://xml.spss.com/scoring/logging' table "SPSSPLAT"."Info671_TAB" column ''
+ORA-02304: invalid object identifier literal
+ORA-30942: XML Schema Evolution error for schema 'http://xml.spss.com/scoring/logging' table <n/a> column ''
+ORA-31088: object "SPSSPLAT"."BIN$/1mzNKjtJtHgQyAhGArrrA==$0" depends on the schema
+ORA-06512: at "XDB.DBMS_XMLSCHEMA_INT", line 153
+ORA-06512: at "XDB.DBMS_XMLSCHEMA", line 221
+ORA-06512: at "SPSSPLAT.SPSSEVOLVE", line 1
+ORA-06512: at line 1
+
+RESOLVING THE PROBLEM
+Please contact your database vendor to request help with instructions on migrating XML data from one schema to another. 
+
+RELATED INFORMATION
+ Need more help? Our C&DS forum is Live! [https://developer.ibm.com/answers/topics/collaboration.html?smartspace=predictive-analytics]

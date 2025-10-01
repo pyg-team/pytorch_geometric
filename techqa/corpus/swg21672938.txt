@@ -1,0 +1,72 @@
+Title: IBM PDF Standard Reports intermittently hang, caused by Adobe Reader settings - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ User runs a report (e.g. a BI report or a Controller 'standard report', also known as a 'system report'). By default, this displays in HTML initially. This works OK.
+
+User then clicks the dropdown box to modify it to appear as PDF. The display changes to an Adobe Acrobat Reader-style GUI, and there is a progress bar showing the PDF loading. After a few seconds, the progress bar stops/hangs. The PDF report never appears.
+
+The problem is intermittent - sometimes the report displays OK, but sometimes it fails.
+
+The problem only seems to affect 'large' reports (i.e. when the system has to download larger PDFs, for example around 1Mb). 
+
+SYMPTOM
+The symptoms vary depending on the version of Acrobat Reader version installed on the 
+client device: 
+
+ * Adobe Reader 9.5 - a completely empty white page appears with white 
+   thumbnails below 
+ * Adobe Reader 10.1.4 - a progress meter appears within the Reader 
+   frame but never finishes (see below for example):
+
+[/support/docview.wss?uid=swg21672938&aid=1] [/support/docview.wss?uid=swg21672938&aid=1] The amount of the report downloaded (in the example above 347.0 Kb) varies each time the same report is run. Sometimes it will hang/stop at a higher figure, sometimes at a lower figure/amount. 
+
+ * In one real-life example, these 'large' files are typically approximately 1Mb, and the download stream stalled at various points such as 282KB, 440KB and 968KB. 
+
+
+CAUSE
+There are several possible causes for PDF reports to fail to work correctly with BI (or associated products like Controller). 
+
+For example, see separate IBM Technotes #1673565 & 1671436. 
+This Technote specifically relates to the scenario where the cause is a limitation of Adobe Acrobat Reader.  * Specifically the cause is related to the settings for how Adobe Reader displays PDF files inside internet browsers:
+
+[/support/docview.wss?uid=swg21672938&aid=2] [/support/docview.wss?uid=swg21672938&aid=2] 
+DIAGNOSING THE PROBLEM
+Ask the end user to launch Adobe Acrobat Reader in their client device. 
+
+ * If using Citrix (to deliver the Cognos program), this means that the end user will need to have Adobe Reader delivered to them (via a Citrix published application).
+
+RESOLVING THE PROBLEM
+Ask the end user to modify their Adobe Acrobat Reader internet settings. 
+
+ 
+
+Steps: 
+
+The exact steps will vary depending on the environment (for example version of Adobe Reader). In one real-life example the solution was: 
+
+1. Launch Adobe Reader 
+
+2. Click "Edit - Preferences" 
+
+3. Click section "Internet" 
+
+4. Untick the following boxes: 
+
+ * Display on Read Mode by default 
+ * Allow fast web view" 
+ * Allow speculative downloading in the background
+
+[/support/docview.wss?uid=swg21672938&aid=3] [/support/docview.wss?uid=swg21672938&aid=3] 
+
+5. Click OK, and test. RELATED INFORMATION
+#1671436 - Problems viewing and printing PDF versions of [http://www.ibm.com/support/docview.wss?uid=swg21671436]
+1673565 - ** Troubleshooting ** PDF report progress bar [http://www.ibm.com/support/docview.wss?uid=swg21673565]
+
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Analytics Cognos Business Intelligence Cognos Connection Windows 10.1.1

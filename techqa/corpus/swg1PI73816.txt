@@ -1,0 +1,160 @@
+Title: IBM PI73816: REFRESH ITEMS TASK INCORRECTLY PROCESSING ALL ITEMS FROM CURRENT REPOSITORY WHEN IMPORTING SITE CREATION SYSTEM LIBRARY - United States
+
+Text:
+  A FIX IS AVAILABLE
+Fixes integrated in WebSphere Portal 8.5.0.0 and V9.0 Combined Cumulative Fixes [http://www-01.ibm.com/support/docview.wss?uid=swg24037786]
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When the site creation system library is created internally via
+   a library import process (ie: creating a new virtual portal or
+   
+   the initial server startup during migration), the refresh items
+   task that is executed is incorrectly querying and processing
+   all
+   items across all libraries from the current repository. The
+   
+   refresh items task should instead be processing items from the
+   
+   newly imported library only.
+   
+   
+   
+   As a result of this issue, the initial server startup during
+   
+   migration can take a long time to complete as this task is
+   
+   incorrectly processing every item across all items on the
+   
+   system. Additionally, creating a new virtual portal on a
+   
+   environment with the Managed Pages feature disabled and also
+   
+   with large amounts of data can take a very long time to
+   complete
+   due to the same problem.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  When the site creation system library is created internally via
+   a library import process (ie: creating a new virtual portal or
+   the initial server startup during migration), the refresh items
+   task that is executed is incorrectly querying and processing all
+   items across all libraries from the current repository. The
+   refresh items task should instead be processing items from the
+   newly imported library only.
+   
+   
+   As a result of this issue, the initial server startup during
+   migration can take a long time to complete as this task is
+   incorrectly processing every item across all items on the
+   system. Additionally, creating a new virtual portal on a
+   environment with the Managed Pages feature disabled and also
+   with large amounts of data can take a very long time to complete
+   due to the same problem.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A code fix for this issue is integrated into the WebSphere
+   Portal & WCM Combined Cumulative Fix 14 (PI73835 [http://www-01.ibm.com/support/docview.wss?uid=swg1PI73835]) for Portal 8.5
+   and 9.0 available from Fix Central:
+   
+   
+   http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent
+   =ibm/WebSphere&product=ibm/WebSphere/WebSphere+Portal&release=Al [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm/WebSphere&product=ibm/WebSphere/WebSphere+Portal&release=Al]
+   l&platform=All&function=aparId&apars=PI73835
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI73816
+   
+   
+ * REPORTED COMPONENT NAME
+   LOTUS WEB CONT
+   
+   
+ * REPORTED COMPONENT ID
+   5724I2900
+   
+   
+ * REPORTED RELEASE
+   850
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-12-14
+   
+   
+ * CLOSED DATE
+   2017-06-27
+   
+   
+ * LAST MODIFIED DATE
+   2017-06-27
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   LOTUS WEB CONT
+   
+   
+ * FIXED COMPONENT ID
+   5724I2900
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R850 PSY
+   UP

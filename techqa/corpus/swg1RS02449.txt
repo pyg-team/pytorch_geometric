@@ -1,0 +1,148 @@
+Title: IBM RS02449: RULE DESIGNER PUBLISHES RES URIS WITHOUT CONSIDERING THE ORDER - United States
+
+Text:
+  A FIX IS AVAILABLE
+Operational Decison Manager z/OS 8.8.1.1 Fix Pack [http://www-01.ibm.com/support/docview.wss?uid=swg24042837]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When a RuleApp is deployed to RES, it includes the XOM URIs
+   that it requires.
+   But it seems that the order in which the XOM URIs are published
+   is not taken into account once on RES.
+   In other words, it seems that even if I specify a specific
+   order for the XOMs to be used (to avoid class conflicts when
+   the same class might show up more than once for example) it is
+   ignored by the deployment process and the order on RES may be
+   different than the one configured in RD.
+   This is currently causing issues in the customer's projects.
+   After each deployment, They must manually check the order of
+   the RES URIs in order to make sure the order is the right one
+   on RES in order to avoid issues.
+   The issue can be reproduced with the project attached. We want
+   the xom4 entry to be first. and although configured as such it
+   does not deploy as such on RES.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Manually check (and correct) the order of the RES URIs in order
+   to make sure the order is the right one on RES in order to
+   avoid issues.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  There is a need to preserve ordering of XOM entries in deployed
+   rulesets.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The code is fixed
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   RS02449
+   
+   
+ * REPORTED COMPONENT NAME
+   WDS FOR RULES
+   
+   
+ * REPORTED COMPONENT ID
+   5725B6903
+   
+   
+ * REPORTED RELEASE
+   860
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-07-08
+   
+   
+ * CLOSED DATE
+   2016-08-31
+   
+   
+ * LAST MODIFIED DATE
+   2016-08-31
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  999
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WDS FOR RULES
+   
+   
+ * FIXED COMPONENT ID
+   5725B6903
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R881 PSY
+   UP

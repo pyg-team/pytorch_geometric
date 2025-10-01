@@ -1,0 +1,152 @@
+Title: IBM PI78671: Rhapsody 8.2 ifix2 64bit update breaks Eclipse plugin "Can't load IA 32-bit .dll on a AMD 64-bit platform" - United States
+
+Text:
+  A FIX IS AVAILABLE
+IBM Rational Rhapsody 8.2.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24043638]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The Rhapsody 8.2 Ifix2 update requires a manual installation to
+   complete the Eclipse 64bit platform integration plugins upgrade.
+   However, once this is completed the plugin no longer loads
+   correctly in the Eclipse 64bit client. Looking at the Eclipse
+   workspace log file, there is an error:
+   
+   - Exception in
+   com.ibm.rational.rhapsody.platformintegration.ui.PlatformIntegra
+   tionPlugin.start()
+   
+   followed by
+   
+   - rhapsody.dll: Can't load IA 32-bit .dll on a AMD 64-bit
+   platform
+   
+   STEPS TO REPRODUCE:
+   
+   1) Install Rhapsody 8.2 64bit #build 9794446
+   2) Install Eclipse Mars 4.5.x and install the Rhapsody Eclipse
+   plugin from Rhapsody installation
+   3) Create a Rhapsody project in Eclipse and visually confirm the
+   Rhapsody Modelling perspective loads.
+   4) Download Rhapsody82iFix002_x64.zip from fixcentral and
+   install following the readme instructions.
+   5) Update the Rhapsody plugin in Eclipse 64bit client via the
+   Help menu > Install new software.
+   6) Rhapsody Modelling perspective no longer loads in Eclipse
+   64bit client.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * Rhapsody                                                     *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * The published MSI installation zip got corrupted             *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Updating fix central with fixed MSI installation.
+   Now named: Rhapsody82iFix002a_x64.zip
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI78671
+   
+   
+ * REPORTED COMPONENT NAME
+   TLOGIC RHAPSODY
+   
+   
+ * REPORTED COMPONENT ID
+   5724V74RP
+   
+   
+ * REPORTED RELEASE
+   820
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-03-23
+   
+   
+ * CLOSED DATE
+   2017-06-12
+   
+   
+ * LAST MODIFIED DATE
+   2017-06-12
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TLOGIC RHAPSODY
+   
+   
+ * FIXED COMPONENT ID
+   5724V74RP
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R820 PSN
+   UP

@@ -1,0 +1,169 @@
+Title: IBM JR30081: RUNNING LOAD COMMAND WITH MANY COLUMN PAIRS VIA ADMIN_CMD CAN   FAIL WITH SQL0104 - United States
+
+Text:
+  FIXES ARE AVAILABLE
+DB2 Version 9.5 Fix Pack 3b for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24022591]
+DB2 Version 9.5 Fix Pack 2a for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24020633]
+DB2 Version 9.5 Fix Pack 2 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24020242]
+DB2 Version 9.5 Fix Pack 4 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24023213]
+DB2 Version 9.5 Fix Pack 3a for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24021838]
+DB2 Version 9.5 Fix Pack 3 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24021563]
+DB2 Version 9.5 Fix Pack 4a for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24024215]
+DB2 Version 9.5 Fix Pack 5 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24025421]
+DB2 Version 9.5 Fix Pack 6a for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24027747]
+DB2 Version 9.5 Fix Pack 7 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24028731]
+DB2 Version 9.5 Fix Pack 8 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24030302]
+DB2 Version 9.5 Fix Pack 9 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24032087]
+DB2 Version 9.5 Fix Pack 10 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24033308]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Running a LOAD with many columns / column pairs via ADMIN_CMD
+   can fail with SQL0104. Running the same LOAD outside ADMIN_CMD
+   will work as expected.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  * Run LOAD outside ADMIN_CMD
+   * Use fewer columns/column pairs
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  USERS AFFECTED  ALL
+   
+   PROBLEM DESCRIPTION
+   
+   Running a LOAD with many columns / column pairs via ADMIN_CMD
+   can fail with SQL0104. Running the same LOAD outside ADMIN_CMD
+   will work as expected.
+   
+   PROBLEM SUMMARY
+   
+   Running a LOAD with many columns / column pairs via ADMIN_CMD
+   can fail with SQL0104. Running the same LOAD outside ADMIN_CMD
+   will work as expected.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The complete fix for this problem first appears in DB2 UDB
+   Version 9.5 FixPak 2.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  * Run LOAD outside ADMIN_CMD
+   * Use fewer columns/column pairs
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR30081
+   
+   
+ * REPORTED COMPONENT NAME
+   DB2 UDB ESE WIN
+   
+   
+ * REPORTED COMPONENT ID
+   5765F4101
+   
+   
+ * REPORTED RELEASE
+   950
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-08-12
+   
+   
+ * CLOSED DATE
+   2008-08-27
+   
+   
+ * LAST MODIFIED DATE
+   2008-08-27
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    JR27747 [http://www-01.ibm.com/support/docview.wss?uid=swg1JR27747]
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   DB2 UDB ESE WIN
+   
+   
+ * FIXED COMPONENT ID
+   5765F4101
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R810 PSN
+   UP
+   
+   
+ * R820 PSN
+   UP
+   
+   
+ * R910 PSN
+   UP
+   
+   
+ * R950 PSN
+   UP

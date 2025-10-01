@@ -1,0 +1,154 @@
+Title: IBM IT15100: JCC DRIVER RETURNS WRONG XAEXCEPTION ERROR CODE FOR CONNECTION FAILURE FOR 1PC - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Using JCC driver, when a connection failure occurs during a
+   commit call on XAResource in a single phase commit, the driver
+   returns XA_RETRY error code of XAException as opposed to
+   XAER_RMFAIL.
+   [jcc][Time:2016-03-10-15:11:19.599][Thread:default
+   task-8][DB2XAConnection@4bb9ae29] close () called
+   [jcc][Time:2016-03-10-15:11:19.599][Thread:default
+   task-8][T4XAResource@1734bc52] removeXaresFromSameRMchain (0)
+   called
+   [jcc][t4] [time:2016-03-10-15:11:19.599][Thread:default
+   task-8][tracepoint:251]prevXAResourcenull
+   currXAResource=com.ibm.db2.jcc.t4.bc@1734bc52
+   currXAResource.nextSameRM_=com.ibm.db2.jcc.t4.bc@630ac870
+   [jcc][Time:2016-03-10-15:11:19.599][Thread:default
+   task-8][T4XAResource@1734bc52] xaTransactionFinished (0) called
+   [jcc] BEGIN TRACE_DIAGNOSTICS
+   [jcc][Thread:default task-8][XAException@1c748ed]
+   javax.transaction.xa.XAException
+   [jcc][Thread:default task-8][XAException@1c748ed] Message =
+   [jcc][t4][10401][12066][4.13.127] XA exception: XA_RETRY :
+   [jcc][t4][2030][11211][4.13.127] A communication error occurred
+   during operations on the connection's underlying socket, socket
+   input stream,
+   or socket output stream.  Error location: Reply.fill() -
+   insufficient data (-1).  Message: Insufficient data.
+   ERRORCODE=-4499, SQLSTATE=08001 ERRORCODE=-4228, SQLSTATE=null
+   [jcc][Thread:default task-8][XAException@1c748ed] Stack trace
+   follows
+   com.ibm.db2.jcc.am.XaException:
+   [jcc][t4][10401][12066][4.13.127] XA exception: XA_RETRY :
+   [jcc][t4][2030][11211][4.13.127] A communication error occurred
+   during operations on the connection's underlying socket, socket
+   input stream,
+   or socket output stream.  Error location: Reply.fill() -
+   insufficient data (-1).  Message: Insufficient data.
+   ERRORCODE=-4499, SQLSTATE=08001 ERRORCODE=-4228, SQLSTATE=null
+       at com.ibm.db2.jcc.am.id.c(id.java:454)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  First fixed in JDBC driver 4.22.4 or higher (included in DB2
+   11.1 Fix Pack 1)
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Upgrade to JDBC driver 4.22.4 or higher (included in DB2
+   11.1 Fix Pack 1)
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT15100
+   
+   
+ * REPORTED COMPONENT NAME
+   DB2 JDBC SQLJ D
+   
+   
+ * REPORTED COMPONENT ID
+   DB2DSDRVR
+   
+   
+ * REPORTED RELEASE
+   A50
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-05-04
+   
+   
+ * CLOSED DATE
+   2017-05-25
+   
+   
+ * LAST MODIFIED DATE
+   2017-05-25
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   DB2 JDBC SQLJ D
+   
+   
+ * FIXED COMPONENT ID
+   DB2DSDRVR
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * RB10 PSY
+   UP

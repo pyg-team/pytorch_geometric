@@ -1,0 +1,33 @@
+Title: IBM How can I verify that my Distributed Server Architecture (DSA) setup is functioning normally? - United States
+
+Text:
+Distributed Server Architecture; DSA; Replication tab; Distance; Expected Latency; Last Replication Time; TEM Admin; BESAdmin; Database; Server; googlebigfix TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The Replication tab of the TEM Admin tool is the way to properly verify successful replication between Servers. 
+
+RESOLVING THE PROBLEM
+
+
+The TEM Admin tool, Replication tab, will report important information such as Server, Distance, Expected Latency, Last Replication Time, and Last Error Message each of which can be used to troubleshoot any issues.
+
+ Note: The text in the Replication tab, server list; will remain as red characters until the replication completes.
+
+If you believe you are experiencing an error you can further troubleshoot by referring to the Filldb.log located in the following location (Default): C:\Program Files (x86)\BigFix Enterprise\BES Server\FillDBData
+
+Notes: 
+
+ * Please be patient as initial replication can and will take time depending upon database size and latency between Servers. 
+ * Please review the following related URL's below. 
+
+
+RELATED INFORMATION
+ What does the following error indicate from my Filldb [http://www-01.ibm.com/support/docview.wss?uid=swg21506185]
+How do I fix the error "Replication was interrupted to [http://www-01.ibm.com/support/docview.wss?uid=swg21505751]
+How do I ensure proper fail-over of Clients and Relays [http://www-01.ibm.com/support/docview.wss?uid=swg21506249]
+
+
+ 
+
+HISTORICAL NUMBER
+ 884

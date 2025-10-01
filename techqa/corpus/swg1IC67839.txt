@@ -1,0 +1,169 @@
+Title: IBM IC67839: REDISTRIBUTE ON MDC TABLES WITH MANY CELLS CRASHES OR PERFORMS  SLOWLY - United States
+
+Text:
+z/os  FIXES ARE AVAILABLE
+DB2 Version 9.5 Fix Pack 6a for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24027747]
+DB2 Version 9.5 Fix Pack 7 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24028731]
+DB2 Version 9.5 Fix Pack 8 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24030302]
+DB2 Version 9.5 Fix Pack 9 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24032087]
+DB2 Version 9.5 Fix Pack 10 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24033308]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  During regular processing, the redistribute utility will create
+   a number of control files (CF) to record progress about the
+   current redistribute operation. These files allow redistribute
+   to restart after a failure, and allow the user to CONTINUE or
+   ABORT the operation.
+   
+   Redistribute on an MDC table can create too many of these
+   control files and hit one of these problems:
+   1)Operating System being unable to handle the number of open
+   files or
+   2) Insufficient space in the file system.
+   3) Slow redistribute performance due to REDISTRIBUTE keeping
+   track of all the file handles on receiver partitions. This
+   problem affects systems with MDC tables with many cells and a
+   large number of sender partitions.
+   
+   During the redistribute of an MDC table, redistribute can
+   generate a large number of 28 and 56 byte files in the
+   redistribute control file directory. This scenario occurs when
+   the redistribute utility is redistributing an MDC table, but no
+   data from an MDC cell is leaving from a sender partition to a
+   receiver partition.  Each MDC cell in which there is no data
+   being sent, will first result in an open CF of 28 bytes, many of
+   these can be opened simultaneously, because there is no
+   throttling mechanism.  If too many are open, it can result in
+   Operating System being unable to handle the number of files
+   created.  After redistribute processing on the receiver
+   partitions, the CF will eventually be closed, and the CF of 56
+   bytes will stay until the end of the redistribute operation.
+   Redistribute will fail to prune these unnecessary 56 byte CF
+   files during processing.  This can result in too much space
+   being used in the redistribute control file directory where
+   these files are stored.   Due to REDISTRIBUTE having to keep
+   track of these files we might hit one of the problems mentioned
+   above.
+   
+   This problems affects a regular REDISTRIBUTE operation as well
+   as a REDISTRIBUTE ABORT/CONTINUE.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * Users with DPF                                               *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * Redistribute on an MDC table can create too many control     *
+   * files and hit this APAR.                                     *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Customer could abort the redistribute if it is slow and      *
+   * continue after the instance recycle.                         *
+   * Recommend to apply fixpack 6 to resolve the issue.           *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This APAR is first fixed in Fixpack 6
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC67839
+   
+   
+ * REPORTED COMPONENT NAME
+   DB2 FOR LUW
+   
+   
+ * REPORTED COMPONENT ID
+   DB2FORLUW
+   
+   
+ * REPORTED RELEASE
+   950
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-04-13
+   
+   
+ * CLOSED DATE
+   2010-09-09
+   
+   
+ * LAST MODIFIED DATE
+   2010-09-09
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    IC68070 [http://www-01.ibm.com/support/docview.wss?uid=swg1IC68070] IC68071
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   DB2 FOR LUW
+   
+   
+ * FIXED COMPONENT ID
+   DB2FORLUW
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R950 PSY
+   UP

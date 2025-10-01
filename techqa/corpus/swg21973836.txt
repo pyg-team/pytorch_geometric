@@ -1,0 +1,14 @@
+Title: IBM Minimum access required to run WebClientConfig.exe with IBM Datacap Navigator - United States
+
+Text:
+WebClientConfig TECHNOTE (FAQ)
+
+QUESTION
+ What is the minimum permission required to run WebClientConfig.exe on a Thin Client workstation with IBM Datacap Navigator. 
+
+ANSWER
+Please see the 'Important' note at the top of Page 99 of the Datacap 9.0 Installation and Configuration Guide at the following link:
+
+http://publibfp.dhe.ibm.com/epubs/pdf/c2763780.pdf [http://publibfp.dhe.ibm.com/epubs/pdf/c2763780.pdf]
+
+This process must be repeated for all non administrator users logging into the same client workstation and encountering the popup dialog box requiring to run WebClientConfig.

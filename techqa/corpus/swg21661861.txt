@@ -1,0 +1,31 @@
+Title: IBM Unreadable characters displayed in the GUI when using Installation Manager with an X Window System (X11) - United States
+
+Text:
+RN1.6.3.1; RN1.7; RN1.7.1; RN1.7.2; RN1.8; RN1.8.1; RN1.8.2; SRX; X11; X Window System TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When using X11 to display the IBM Installation Manager GUI installed on an IBM AIX host, the characters in the text can appear illegible or corrupted. 
+
+CAUSE
+The X11 font fileset is not installed or is missing some packages.
+
+RESOLVING THE PROBLEM
+If the text in the Installation Manager when displayed using X11 appears unreadable ask the AIX system administrator to check that the X11 font filesets in the list below are installed. One manner of generating the list is by running the command: 
+
+
+lslpp -l | grep X11.fnt
+
+
+Note that the list below is just a suggested list, and you may find that using X11 to display the graphical mode displays fine with a different list of filesets installed. Also note that this list of filesets was derived from AIX 7.1 systems. Other supported versions of AIX may use varied, but very similar names for these filesets. 
+
+
+X11.fnt.coreX
+X11.fnt.defaultFonts
+X11.fnt.iso1
+X11.fnt.iso_T1
+
+
+
+Additional information:
+Please note that you'll need to use fontserver, if you are using a remote display. Please see the below tech note for more information.
+http://www-01.ibm.com/support/docview.wss?uid=isg3T1024936 [http://www-01.ibm.com/support/docview.wss?uid=isg3T1024936]

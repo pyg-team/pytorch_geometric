@@ -1,0 +1,35 @@
+Title: IBM How do I enable logging for FastDoc in Datacap TaskMaster Capture 8.1? - United States
+
+Text:
+fast doc; log file; mustgather; must gather TECHNOTE (FAQ)
+
+QUESTION
+ How do I enable logging for FastDoc in Datacap TaskMaster Capture 8.1? 
+
+ANSWER
+These are the steps to turn on logging for IBM Datacap Taskmaster FastDoc versions 8.1 or higher. Although there are logging configuration options that can be used for different levels of logging, these steps are specific to providing maximum logging to troubleshoot FastDoc issues when they occur. If desired, logging may be left on continuously for a test or development system, but should be set to minimum on a production server, as it will negatively impact performance.
+Enabling FastDoc Logging
+
+
+ 1. Enable executable logging.  1. Navigate to the \Datacap\FastDoc folder and edit FastDoc.exe.config. 
+     2. In the User Settings area, set Log = True. 
+     3. Save the file.
+    
+    
+ 2. Enable Rulerunner (rrs) logging.  * If running FastDoc in Local Mode:  1. Navigate to the \Datacap\FastDoc folder and edit BatchProfiles.xml. 
+        2. Locate the rrslog tag specific to the task for which logging is needed. 
+        3. Within the tag, set ServiceLog=”5”. 
+        4. Save the file.
+       
+       
+     * If running FastDoc in Taskmaster Mode:  1. Run Taskmaster Web, log in to the application to be run, and select the Administrator tab. 
+        2. Expand the Workflow and highlight the task for which logging is needed. 
+        3. In the Rulerunner settings section, Rulerunner service log settings subsection, set Rulerunner service log to 5 and check Flush Buffer. 
+        4. Scroll to the bottom and click Save.
+       
+       
+    
+    
+ 3. Run FastDoc and generate the error or perform the action for which logging information is needed. 
+ 4. There will be two log files generated.  1. X_rrs.log where X is the task name. Located in the batch folder it logs execution of the actions by the Rulerunner engine. 
+     2. FastDoc.log - Located in the \Users\(username)\AppData\Local\IBM\IBM Datacap Taskmaster Capture\8.1.0.38 folder, it contains logging for the FastDoc executable.

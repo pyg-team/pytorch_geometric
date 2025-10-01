@@ -1,0 +1,35 @@
+Title: IBM Scanning task aborting in IBM Datacap Taskmaster Capture version 7.6 and earlier - United States
+
+Text:
+Vscan; error; task abort; long file name TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Batches aborting during VScan task. During scanning of electronic images errors are reported in the RRS logs. No electronic images are imported into batches 
+
+SYMPTOM
+VScan tasks aborting constantly causing delays to the IBM Datacap Taskmaster Capture environment 
+
+Error message in RRS logs state: 
+
+ERROR! --> 'name of your task' 
+
+DESCRIPTION: Multiple-step operation generated errors. Check each 
+
+status value. 
+
+NUMERIC ID: -2147217887 
+
+SOURCE: Microsoft Cursor 
+
+
+CAUSE
+The combination of the name/path of the electronic file imported to IBM Datacap Taskmaster Capture is larger then 128 characters. Or there is a special character in the filename of the image not recognized by IBM DatacapTaskmaster Capture.
+
+
+DIAGNOSING THE PROBLEM
+Review length of file name and path. See if images that are expected to be imported have special characters in their file names
+
+
+
+RESOLVING THE PROBLEM
+Edit name of the image file imported into the IBM DatacapTaskmaster Capture application so that the length of the file path and name is shorter then 128 characters. Also, remove any special characters from the file name.

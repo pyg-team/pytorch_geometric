@@ -1,0 +1,173 @@
+Title: IBM PM50021: BO WRITING INTO FFDC FILES LEADING TO OutOfMemoryError - United States
+
+Text:
+z/os SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Customer has some invalid Xml characters which were processed
+   and during runtime BO was throwing a FFDC log. This included
+   complete BO object into the FFDC which was leading to heavy heap
+   usage, and ultimately OOM (OutOfMemoryError).
+   .
+   [9/28/11 14:00:48:162 EDT]     FFDC Exception:java.lang.
+   RuntimeException SourceId:java.lang.RuntimeException caught
+   trying to
+   serialize BO
+   com.ibm.wsspi.sca.message.impl.DocumentRootImpl@3e293e29
+   (mixed: [soap:body=com.ibm.ws.sca.internal.message.impl.
+   ManagedMessageImpl$ManagedBodyElementImpl@7e147e14 java.lang.
+   RuntimeException: An invalid XML character (Unicode: 0x1a) was
+   found in
+   the element content:1319 P LEASANT MEADOW ROAD
+    at
+   org.eclipse.emf.ecore.xmi.impl.XMLSaveImpl$Escape.convertText
+   (XMLSaveImpl.java:3101)
+    at org.eclipse.emf.ecore.xmi.impl.XMLSaveImpl.getDatatypeValue
+   (XMLSaveImpl.java:2758)
+    at com.ibm.ws.bo.bomodel.util.BOXMLSaveImpl.getDatatypeValue
+   (BOXMLSaveImpl.java:256)
+    at
+   com.ibm.ws.bo.bomodel.util.BOXMLSaveImpl.getTrueType(BOXMLSaveIm
+   pl.
+   java:895)
+    at
+   com.ibm.ws.bo.bomodel.util.BOXMLSaveImpl.saveElement(BOXMLSaveIm
+   pl.
+   java:275)
+    at
+   com.ibm.ws.bo.bomodel.util.BOXMLSaveImpl.saveDataTypeElementSing
+   le
+   (BOXMLSaveImpl.java:263)
+    at
+   org.eclipse.emf.ecore.xmi.impl.XMLSaveImpl.saveFeatures(XMLSaveI
+   mpl.
+   java:1366)
+    at
+   com.ibm.ws.bo.bomodel.util.BOXMLSaveImpl.saveFeatures(BOXMLSaveI
+   mpl.
+   java:977)
+    at org.eclipse.emf.ecore.xmi.impl.XMLSaveImpl.saveElementID
+   (XMLSaveImpl.java:2458)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  *****************************************
+   * Users affected: All users of WebSphere*
+   * Process Server for z/OS V7.0 using BOs*
+   * which cause ffdc files to be written  *
+   *****************************************
+   * BO data was being included as part of *
+   * the data used to determine if ffdc was*
+   * the first such incident. Since all BOs*
+   * were different every error was logged *
+   * with ffdc file leading to large       *
+   * number of files and eventually to OOM *
+   *****************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This fix solved the problem by preventing the BO data
+   being used to test for uniqueness
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM50021
+   
+   
+ * REPORTED COMPONENT NAME
+   WEB PROC SRVR F
+   
+   
+ * REPORTED COMPONENT ID
+   5655W0500
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-10-13
+   
+   
+ * CLOSED DATE
+   2011-12-15
+   
+   
+ * LAST MODIFIED DATE
+   2015-04-29
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEB PROC SRVR F
+   
+   
+ * FIXED COMPONENT ID
+   5655W0500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R700 PSY
+   UP

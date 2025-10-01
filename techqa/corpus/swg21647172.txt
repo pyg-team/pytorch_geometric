@@ -1,0 +1,47 @@
+Title: IBM How to import data from Caliber to RRC - United States
+
+Text:
+import; migrate; migration; data; caliber; requirements management; rm; rrc TECHNOTE (FAQ)
+
+QUESTION
+ How can you import data from Borland Caliber requirements management into IBM Rational Requirements Composer (RRC)? 
+
+CAUSE
+ 
+
+Data needs to be imported into RRC as part of migration from Caliber to RRC.
+
+
+ANSWER
+ 
+
+You can import data from Caliber to Rational Requirements Composer using a two step process.
+
+
+
+ 1. Convert your Caliber data to CSV format.
+    
+    Refer to your Borland documentation for information on how to do this. 
+    
+    Note: To account for the tab continuation marks you can use a comma as the field separation mark.
+    
+    
+ 2. Import the CSV file data into RRC.
+    
+    Follow the steps documented in Importing CSV files into a requirements project [http://pic.dhe.ibm.com/infocenter/clmhelp/v4r0m3/index.jsp?re=1&topic=/com.ibm.rational.rrm.help.doc/topics/t_import_csv.html&scope=null]
+    
+    
+
+Note: You should try the migration process out on a test server before you import to your real server (in case there are any data problems). 
+
+
+The following documentation will help to explain the CSV file format and import process: 
+
+ * Importing and exporting using the CSV format [https://jazz.net/wiki/bin/view/Main/DNGCSVImpExp] 
+ * CVS file import into requirements projects [http://pic.dhe.ibm.com/infocenter/clmhelp/v4r0m3/index.jsp?re=1&topic=/com.ibm.rational.rrm.help.doc/topics/c_import_csv.html?resultof=%22import%22%20%22csv%22%20&scope=null] 
+
+
+
+Leverage the Jazz Community The Jazz based products have an active community that can provide you with additional resources. Browse and contribute to the User forums, contribute to the Team Blog and review the Team wiki.
+
+Review technote 1319600: Leveraging the Jazz Community on Jazz.net [http://www.ibm.com/support/docview.wss?uid=swg21319600] for details.

@@ -1,0 +1,222 @@
+Title: IBM IZ66122: BMXAA4214E - AN UNKNOWN ERROR HAS OCCURRED. PLEASE CONTACT YOUR SYSTEM ADMINISTRATOR FOR ASSISTANCE. NULL - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Steps to reproduce in Maximo 7.1.1.4 with Utilities 7.1.0.0
+   Build 20081212-0732 DB Build V7110-172:
+   
+   
+   
+   
+   1. Go to the Crafts application and edit the LINEMAN record.
+   Add two lines to the "Outside Rates" table:
+      Skill Level = APPRENTICE vendor = FSC Standard Rate = 30.00
+      Skill Level = Null  Vendor = FSC Standard Rate = 40.00
+      Save record.
+   2. Go to the Labor application and create two new labor records:
+       Labor = A1 Person = A1  First Name = A
+       On the Crafts tab add a new row.
+       Craft = LINEMAN Skill Level = APPRENTICE Vendor = FSC
+       Save record.
+   3. Go to the Labor application and create two new labor records:
+       Labor = B1 Person = B1  First Name = B
+       On the Crafts tab add a new row.
+       Craft = LINEMAN Skill Level = Null  Vendor = FSC
+       Save record.
+   4. Go to the Crew Types (T&D) application and create a new
+   record called CT002.
+     - Add two required crafts with the following values:
+       Position = DRIVER Skill Level = APPRENTICE
+       Position = LEADER Skill Level = Null
+       Save record. Change status to ACTIVE.
+   5. Go to the Crew Management (T&D) application and create a new
+   record called CL002.
+     - Add CT002 to the  Crew Type field.  This will apply the
+   required crafts.
+     - Go to the Labor Assignments tab.  Add two new rows to the
+   Assigned Labor table:
+       Position = DRIVER Labor = A
+       Position = LEADER  Labor = B
+       Save record.  Change status to Active.
+   6. Go to the CU Library (T&D) application and create a new
+   record called UNP1.
+     - Go to the Labor sub-tab and add the following:
+       Crew Type = CT002 Install = 2 Remove = 0 Transfer =
+   0 Abandon = 0
+       Save record.
+   7. Go to the CU Estimating (T&D) application and create a new
+   record called TEST.
+     - On the version sub-tab add a new row and add the following:
+       Estimate Version = 1 Description = Version Work Group =
+   NORTH Storeroom = CENTRAL
+     _ Go to the Stations tab and on the Stations sub-tab add the
+   following:
+       Station = 1 Description = Station 1
+       Save the record.
+   8. While on the record from step 7, go to the main tab.
+     - From the Target WO field go to Work Order Tracking (T&D)
+   application.
+     - Create a new work order called TESTWO.  Save the record and
+   leave in WAPPR status.  Return with value.
+     Save the record.
+   9. While continuing to work with the TEST record, from the
+   select action menu select Perform Estimation.  Click Ok.
+   10. While continuing to work with the TEST record, from the
+   select action menu select Perform Acceptance.  Click OK.
+   11. Go to the Work Order Tracking (T&D) application and retrieve
+   TESTWO.
+      - Go to the Plans tab and verify that the crew type CT002 is
+   estimated for 8 hours.
+      - Approve the work order.  Save record.
+   12. Go to the Actuals tab and then to the Labor sub-tab.
+      - Click on Enter Time By Crew.  This will add the labor
+   lines.
+      - Add CL002 to the Crew field and then click on the refresh
+   button.
+      - Click on the Select Work Order button which will place
+   TESTWO in the work order line.
+      - Add 8 to the Start Time field and 10 to the End Time field.
+      - Click Ok.  The result is that the following error message
+   is displayed:
+   
+    BMXAA4214E - An unknown error has occurred.
+    Please contact your system administrator for assistance.
+    null
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: SOLEX S.A.                                   *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: When informing data in Plan tab, in     *
+   *                      Work Order Tracking (T&D) application,  *
+   *                      an error message is displayed:          *
+   *                      BMXAA4214E - An unknown error has       *
+   *                      occurred.                               *
+   *                                                              *
+   *                      Please contact your system              *
+   *                      administrator for assistance.           *
+   *                                                              *
+   *                      null                                    *
+   *                                                              *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   *                                                              *
+   *                                                              *
+   *                                                              *
+   ****************************************************************
+   When informing data in Plan tab, in Work Order Tracking (T&D)
+   application, an error message is displayed
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This Issue has already been corrected in IS Utilities HF 001
+   build (UTIL7100_hfixes.20090630-1206.zip). See the Issue
+   09-12167 for more details.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ66122
+   
+   
+ * REPORTED COMPONENT NAME
+   MAXIMO UTILITIE
+   
+   
+ * REPORTED COMPONENT ID
+   5724R5600
+   
+   
+ * REPORTED RELEASE
+   710
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-12-01
+   
+   
+ * CLOSED DATE
+   2010-01-19
+   
+   
+ * LAST MODIFIED DATE
+   2010-01-19
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  MAXIMO
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   MAXIMO UTILITIE
+   
+   
+ * FIXED COMPONENT ID
+   5724R5600
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R710 PSY
+   UP

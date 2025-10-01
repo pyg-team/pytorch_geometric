@@ -1,0 +1,56 @@
+Title: IBM TNPM 1.3.1 Steps to upgrade deployed TIP version to TIP 2.2.0,7 (TIP 2.2 Fix Pack 7) - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ What are the steps to upgrade the existing deployed version of TIP in TNPM 1.3.1 
+
+CAUSE
+These specific installation instructions are needed based on current deployment scenarios
+
+ANSWER
+Base platform : TNPM 1.3.1 + TIP/TCR 2.1 
+
+ 
+Installations on top of the base platform :
+1. Commonpackservice 1.1.5.5 + ModelMaker 1.5.0.5 + Cognos
+2. Apply TNPM 1.3.1 IF 13 and TCR 2.1 Interim Fix 4 *see note #1 below
+3. Webgui 7.3.1 (using the refresh GA)
+4. Apply TNPMWebgui integration
+
+Upgrade Scenario #1
+1. Upgrade TCR 2.1 -> TCR 2.1.1 *see note #1 below
+2. Upgrade TIP 2.1 -> TIP 2.2.0.1 via the TIP_FP directory in TCR installation file
+3. Upgrade TIP 2.2.0.1 -> TIP 2.2.0.7
+4. Apply TCR 2.1.1 Fix Pack 6
+5. Apply Webgui 7.3.1 Fix Pack 4
+
+Upgrade Scenario #2
+1. Upgrade TIP 2.1 -> TIP 2.2.0.1
+2. Upgrade TCR 2.1 -> TCR 2.1.1 *see note #1 below
+3. Upgrade TIP 2.2.0.1 -> TIP 2.2.0.7
+4. Apply TCR 2.1.1 Fix Pack 6
+5. Apply Webgui 7.3.1 Fix Pack 4
+
+Notes :
+
+#1 : Known issue : If the TCR 2.1 Interim Fix 3 and above is applied before upgrading TCR 2.1 -> TCR 2.1.1, the upgrade would fail with an error “CTGTRI674E The installation was not completed. Check the log files for details. Composite Offering Installer (COI) installer component reported the following step failure: .” in the TCR211InstallMessage00.log file.
+
+The workaround is to manually amend the installer file :-
+
+<TCR 2.1.1 installation file>/TCRInstaller/COI/PackageSteps/TCRCore_Upgrade/META-INF/packagedIU.xml
+
+At the line below (occurs twice in the file) :-
+<supersededFixes>TCR-2100-0001 TCR-2100-0002</supersededFixes>
+
+Amend as per below :-
+<supersededFixes>TCR-2100-0001 TCR-2100-0002 TCR-2100-0003 TCR-2100-0004 TCR-2100-0005</supersededFixes>
+
+Save and close the file. Proceed with the TCR 2.1.1 installation.
+
+#2 : TIP 2.2.0.7 must be installed on top of TCR 2.1.1 platform.
+
+#3 : TCR Fix Pack 6 must be applied on top of TIP 2.2.0.7.
+
+**********************

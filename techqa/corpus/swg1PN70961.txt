@@ -1,0 +1,141 @@
+Title: IBM PN70961: COBOL VERSION OF DFHTCTTE IS CODED AS PL/I STYLE COMMENT RESULTSIN COMPILER ERROR WHEN ANY COBOL PROG INCLUDING IT IS COMPILED. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Correct copyright statement in COBOL version of DFHTCTTE the
+   cobol version of DFHTCTTE is currently coded as a PL/I style
+   comment which results in compiler error when any cobol program
+   including it is compiled.  Ditto for DFHJCADS.
+   Build process has added invalid COPYRIGHT statement to DFHTCTTE
+   and DFHJCADS COBOL copybooks.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: CICS/VSE R230 users of the Cobol versions    *
+   *                 of copybooks DFHTCTTE and DFHJCADS.          *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Compiler errors result when compiling   *
+   *                      the Cobol versions of copybooks         *
+   *                      DFHTCTTE and DFHJCADS.                  *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   The COBOL versions of copybooks DFHTCTTE and DFHJCADS are
+   currently coded with PL/1 style comments for the COPYRIGHT
+   header statements. Any COBOL program including these Cobol
+   copybooks will therefore compile with errors.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  DFHTCTTE and DFHJCADS have had their COPYRIGHT header
+   changed from PL/I style to Cobol style comments.
+   
+   Keywords: PTM 74316 PTM74316 PL1 PLI
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PN70961
+   
+   
+ * REPORTED COMPONENT NAME
+   CICS/VSE
+   
+   
+ * REPORTED COMPONENT ID
+   568602601
+   
+   
+ * REPORTED RELEASE
+   14X
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   1995-05-03
+   
+   
+ * CLOSED DATE
+   1995-05-09
+   
+   
+ * LAST MODIFIED DATE
+   1995-06-16
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UN76709
+   
+   
+
+MODULES/MACROS
+ *  DFHJCADS DFHTCTTE
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CICS/VSE
+   
+   
+ * FIXED COMPONENT ID
+   568602601
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R14X PSY UN76709
+   UP95/05/10 P E140

@@ -1,0 +1,39 @@
+Title: IBM Enabling Login Trace for IBM InfoSphere Information Server in Websphere Application Server (WAS) Console - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Information Server Web Console Login problems.
+
+Unable to log in to ISF admin console 
+
+SYMPTOM
+Various errors when attempting login to Information Server Web Console. The directory configuration seems to be correct but you are still not able to login in to ISF admin console.
+
+
+DIAGNOSING THE PROBLEM
+To debug further, you can turn on debug traces in ASBIdentityLoginModule. From WebSphere administrative console, 
+
+ 1. Go to Security -> Global security -> JAAS Configuration -> System logins. Click RMI_INBOUND -> JAAS login modules -> com.ascential.acs.security.auth.modules.websphere.ASBIdentityLoginModule -> Custom properties. Click New, and fill the form with Name as debug, Value as true, click OK. 
+ 2. Go to Security -> Global security -> JAAS Configuration -> System logins. Click WEB_INBOUND -> JAAS login modules -> com.ascential.acs.security.auth.modules.websphere.ASBIdentityLoginModule -> Custom properties. Click New, and fill the form with Name as debug, Value as true, click OK. 
+ 3. Click Ok, save link in the top screen and then save button to commit the change. 
+ 4. Restart WAS
+
+
+Now if you make a call to the login method of ISF authentication service from your test clients or you login using ISF admin console, then you see a lot of information like principalid of the user being logged in, user groups, user roles, etc... in the Websphere SystemOut.log. 
+RESOLVING THE PROBLEM
+Use SystemOut.log to debug login problem. 
+
+Unix/Linux default location for versions 8.0.1 and 8.1:
+/opt/IBM/WebSphere/AppServer/profiles/default/logs/server1/SystemOut.log
+
+Windows default location for versions 8.0.1 and 8.1:
+C:\IBM\Websphere\Application Server\profiles\default\logs\server1\SystemOut.log
+
+
+Unix/Linux default location for version 8.5:
+/opt/IBM/WebSphere/AppServer/profiles/InfoSphere/logs/server1/SystemOut.log
+
+Windows default location for version 8.5:
+C:\IBM\WebSphere\AppServer\profiles\InfoSphere\logs\server1\SystemOut.log

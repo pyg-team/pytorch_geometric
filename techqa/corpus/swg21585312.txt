@@ -1,0 +1,32 @@
+Title: IBM How to delete old WAS regions from Navigator list - United States
+
+Text:
+itcamfwas itcam websphere navigator delete navigator server AppServer TECHNOTE (FAQ)
+
+QUESTION
+ How to delete old WAS regions from TEP Navigator list if the ITCAM DC was not unconfigured. 
+
+ANSWER
+1. Stop the YN agent process 
+In z/OS, take down the YN and YNSA started tasks.
+2. Remove the off-line entries from the TEP for this agent. 
+You do this by right clicking --> “Remove off-line agent” for the entries in the Navigator list that you want to delete. The YN agent process MUST be down for this option to be available.
+3. In your itm_home/config directory make a backup of the file 
+hostname_yn.xml 
+4. In your itm_home/config directory delete all the .ctx files 
+5. In your itm_home/config directory delete all the .xml files with the 
+server name you no longer want to see. 
+6. In your itm_home/config directory delete the hostname_yn.xml file 
+
+7. Re-configure your YN agent via the itmcmd or itmcmd config -A yn 
+commands. On z/OS you will use the ICAT tool to configure the agent.
+
+8. Restart your YN agent.
+Restart the YN started tasks. 
+
+ 
+
+HISTORICAL NUMBER
+ 31779
+550
+000

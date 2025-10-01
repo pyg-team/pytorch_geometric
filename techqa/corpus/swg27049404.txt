@@ -1,0 +1,63 @@
+Title: IBM Open Mic Webcast: What's changing in browser support for applets? - 08 March 2017 [presentation, audio + Q&A attached] - United States
+
+Text:
+lste_webcast STEwebcastDocument WEBCAST
+
+ABSTRACT
+ With the removal of support for NPAPI in modern browsers, Java applets will no longer run in those browsers. This leads to the need to be able to identify what Domino applications are currently using Domino Java applets. This session will dive into what is happening and why and when each of the browsers will be removing support for Java.
+
+The discontinuation of NPAPI support for multiple browsers will have minor effects to IBM Connections as our platform is heavily reliant on JavaScript and not Java applets. This session will provide a brief overview of the affected IBM Connections components.
+
+Follow us on Twitter @IBM_ICSsupport. 
+
+CONTENT
+ 
+
+ * Topic: What's changing in browser support for applets? 
+ * Date: Wednesday, March 8, 2017
+
+Presentation OpenMic_Applet_030817.pdf [/support/docview.wss?uid=swg27049404&aid=2]OpenMic_Applet_030817.pdf [/support/docview.wss?uid=swg27049404&aid=1] 
+
+Audio recording 
+ftp://public.dhe.ibm.com/software/lotus/info/openmic/OpenMic_Applets_030817.mp3 [ftp://public.dhe.ibm.com/software/lotus/info/openmic/OpenMic_Applets_030817.mp3] 
+
+
+Q&A 
+Q1. What is your recommendation for mobilizing Domino applications with extensive usage of rich text fields including tables, doclinks, sections, attachments etc.? 
+- If you are looking to mobilize the full application I would look at either Darwino or Aveedo. The key really comes back to what skills you have in your organization to do the work. I would still recommend taking a look at Sapho just to get a feel for what they can do as well. They have a demo at the bottom of this link which shows how they can create a micro-app from a Domino application. - https://www.sapho.com/product/connector/ibm-domino-integration/ [https://www.sapho.com/product/connector/ibm-domino-integration/] 
+
+- If you have the skills within your organization, redesigning the application to use XPages instead of forms would be another suggested route. 
+
+
+Q2. So does this subscription-based "Ask The Experts" forum mean that the experts will reduce their availability on the current community forums? 
+I don't think so. The difference is that we have service level guidelines we try to meet on responsiveness and we are proactive in finding someone (we look to find the person most available with the appropriate skills to answer the question) 
+
+
+Q3. How does the removal of NPAPI affect iNotes? 
+As far as we know there are no portions of iNotes that use NPAPI so there should be no impact to iNotes. 
+
+
+Q4. As far as I know there is not support for sections within Notes rich text field in the CK Editor? How to handle this? 
+We would have to see that would be simulated in a Web context. 
+
+
+Q5. I recall an experience when I removed an action applet and the resuting form did not fire a javascript event, and caused lots of problems.* 
+More details are needed but that should not be happening. Please open a PMR. 
+ * *Additional response: I'll have to gather more info on the javascript event, but the action bar was disabled/switched to html, and eventually I found a technote describing this problem which I shall research further.
+
+
+Q6. How will the view frame of the Domino directory be displayed in the future? 
+I don't think we have the answer to that today but that is one of the considerations that the Development team is looking into as they decide how to update the address book for this particular issue. 
+
+
+
+About Open Mic Webcasts IBM Collaboration Solutions (Lotus) Support wants to help you take full advantage of your products. Join us for our Open Mic Webcast series as technical experts share their knowledge and answer your questions. These webcasts are designed to address specific topics and provide an in-depth and focused technical exchange in a convenient webcast format. For more information about our Open Mic webcasts, visit the IBM Collaboration Solutions Support Open Mics [http://www.ibm.com/software/lotus/support/lotus-open-mics/] page. 
+
+
+
+ORIGINAL PUBLICATION DATE
+ 2017/2/15 
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Organizational Productivity- Portals & Collaboration IBM Connections

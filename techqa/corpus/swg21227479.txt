@@ -1,0 +1,56 @@
+Title: IBM Debugging EJB Deploy RMIC Errors - United States
+
+Text:
+RMIC; EJB; deploy; JVM; JRE; WebSphere; Application; Server; WAS; WSAS; JAR; Dependencies; MANIFEST.MF; RC=1; RSA; 1227479 TECHNOTE (FAQ)
+
+QUESTION
+ What are the main causes of RMIC RC=1 errors from ejbdeploy in IBM Rational Application Developer for WebSphere Software 6.x, 7.x and 8.x and the WebSphere Application Servers, and what can be done to help debug the causes? 
+
+ANSWER
+The main causes of RMIC RC=1 errors during the EJB deploy process are the following: 
+
+ 1. Compilation errors in any of the EJB classes or bean dependency classes: RMIC uses Java reflection to gather the necessary information from the EJB class files to generate the corresponding stub and tie classes. If the EJB class files do not exist due to compilation errors then RMIC will always fail.
+    
+    
+ 2. Missing class file dependencies: As related to problem 1 above, if an EJB project references a JAR file on its Java Build Path then it will also need to be added to the EJB modules MANIFEST.MF Class-Path entry, unless it is a JAR file that the targeted Application Server provides on its classpath. This can be accomplished by viewing the Java JAR Dependencies properties of an EJB project and ensuring that the JAR file is selected. This applies for all of the dependent JAR files for the EJB project and their referenced JAR files. If dependent jar files specified twice (in Java Build Path and in Java JAR Dependencies) they should be removed from the Java Build Path. Anything specified as a Java JAR dependency is also added to the build path.
+    
+    
+ 3. Starting with Rational Application Developer 6.0, RMIC will be invoked on all of the classes involved with the bean that is being deployed. This means that if the EJB has a reference to another bean or is part of a container managed relationship (CMR) then these referenced classes will also have RMIC invoked upon them. If any of theses classes do not exist then the RMIC process will fail.
+    
+    
+ 4. As part of the RMIC process, all EJB classes are loaded so any static initialization code will be invoked. If this code could throw an exception then it needs to be handled by user code as the RMIC process will not consume the exceptions as it did prior to IBM JDK 1.4.2. This applies to EJB projects targeting WebSphere® Application Server version 6.x,7x, or version 5.1.x with recent JDK updates. These kinds of errors are logged in the log file (.log) under<workspace>.\metadata and can be used to identify what needs to be recoded.
+    
+    
+ 5. If your EJB project has the server target set to WebSphere Application Server v6.0 and it has a separate source and output folder, then you will need to upgrade the server to at least v6.0.1 and then apply APAR PK05908 to the server. If your EJB project has the server target set to WebSphere Application Server v5.1 then it is recommended that you upgrade to WebSphere Application Server v5.1.1 and then apply the latest Cumulative SDK fix. 
+    
+    In general upgrade to the latest JDK update available for your version of WebSphere Application Server. As of Rational Application Developer v7.5, updates for the WebSphere Application Server(s) and their JDKs are provided, via IBM Installation Manager updates. Otherwise, WebSphere Application Server v6.x and 7.x and their associated JDK updates should be obtained from the WebSphere Application Server support site and installed using the WebSphere Update Installer. Rational Application Developer provides its own copy of the EJBdeploy processor(s) for each WebSphere Application Server that it supports.
+    
+    Note: The EJB deploy process uses the RMIC code provided by the targeted WebSphere Application Server JDK to generate the stub and tie code. See the Defect Fix for EJB Deploy RMIC error link in the Related Information section for more details on this problem.
+    
+    
+    
+ 6. If an EJB project is configured to have a separate source and output folder (i.e. not the default ejbModule) and the Workspace preference Build Automatically is disabled, then you may experience an RMIC RC=1 error due to not able to load certain generated class. This is being addressed by APAR PK10718. A workaround solution is to set the output folder to ejbModule for the project via its Java Build Path property.
+
+
+For the most part, the best way to start resolving RMIC problems during the EJB Deploy procedure is to upgrade the WebSphere Test Environment SDK that is being used to compile your application code. As mentioned in item 5 above, the EJB deploy process uses the RMIC code provided by the targeted WebSphere Application Server to generate the stub and tie code. For the v5.x WebSphere Test Environment, the SDK update is provided in a separate package (search for Cumulative SDK). For the v6.x WebSphere Test Environment, SDK updates are packaged with the WebSphere Application Server Fix Packs. Both of these can be found on the WebSphere Application Server support page which can be found in the Related Information section below. It is also advisable to keep RAD itself up-to-date because improvements in "deploy" such as detail message and traces can help to pinpoint the problems better. 
+
+If RMIC is still failing after reviewing the above items then you can start Rational Application Developer with a console window so that all of the System output information is visible. To do this, navigate to the <Rational Application Developer>\eclipse directory and invoke the following command: 
+
+jre\bin\java.exe -cp startup.jar org.eclipse.core.launcher.Main 
+
+This will start Rational Application Developer with a console that has all of the output and error text visible. This might help to determine why the RMIC process is failing, as it will show all of the exceptions that it throws. 
+
+If you have any further questions or issues with EJBDeploy, contact IBM Rational Application Developer support which provides and supports EJBDeploy. 
+WebSphere Application Server 5.x is out of service. Contact IBM Rational Application Developer Support or IBM WebSphere Application Server Support, as appropriate, for further details. 
+RELATED INFORMATION
+#Defect Fix for EJB Deploy RMIC error [http://www.ibm.com/support/docview.wss?uid=swg21211218]
+Recommended Fixes for WebSphere Application Server [http://www.ibm.com/support/docview.wss?uid=swg27004980]
+WAS Support Site [http://www.ibm.com/support/entry/portal/Overview/Software/WebSphere/WebSphere_Application_Server]
+RAD Support site [http://www.ibm.com/support/entry/portal/Overview/Software/Rational/Rational_Application_Developer_for_WebSphere_Software]
+
+
+
+
+
+
+Cross Reference information Segment Product Component Platform Version Edition Software Development Rational Software Architect EJB / J2EE Development Linux, Windows 6.0, 6.0.0.1

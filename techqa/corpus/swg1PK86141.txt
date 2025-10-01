@@ -1,0 +1,224 @@
+Title: IBM PK86141: During validation, multiple errors of the form 'ResourceExceptio n:Marker id not found' are written to the log - United States
+
+Text:
+  A FIX IS AVAILABLE
+Rational Application Developer for WebSphere Software, Version 7.5.3 [http://www-01.ibm.com/support/docview.wss?uid=swg24022966]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Using Rational Application Developer V7.5.1 and V7.5.2
+   Validation - Exceptions in the log when deleting markers - Resou
+   rceException: Marker id  not found.
+   
+   resulting in many false J2EE project validation errors
+   
+   Workspace .log shows:
+   
+   
+   
+   !ENTRY org.eclipse.wst.validation 4 0 2009-05-05 10:26:28.812
+   
+   !MESSAGE Marker id 374992 not found.
+   
+   !STACK 1
+   
+   org.eclipse.core.internal.resources.ResourceException: Marker id
+    374992
+   not found.
+   
+    at org.eclipse.core.internal.resources.Marker.checkInfo(Unknown
+    Source)
+    at org.eclipse.core.internal.resources.Marker.getAttribute(Unkn
+   own
+   Source)
+   
+    at
+   
+   org.eclipse.wst.validation.internal.TaskListUtility.getValidatio
+   nTasks(U
+   nknown Source)
+   
+    at
+   
+   org.eclipse.wst.validation.internal.TaskListUtility.getValidatio
+   nTasks(U
+   nknown Source)
+   
+    at
+   
+   org.eclipse.wst.validation.internal.TaskListUtility.getValidatio
+   nTasks(U
+   nknown Source)
+   
+    at
+   
+   org.eclipse.wst.validation.internal.TaskListUtility.removeTaskSu
+   bset(Unk
+   nown Source)
+   
+    at ...
+   
+           ...
+   
+           at
+   
+   org.eclipse.core.internal.events.BuildManager.basicBuild(Unknown
+    Source)
+    at org.eclipse.core.internal.events.BuildManager.basicBuildLoop
+   (Unknown
+   Source)
+   
+    at org.eclipse.core.internal.events.BuildManager.build(Unknown
+   Source)
+    at org.eclipse.core.internal.events.AutoBuildJob.doBuild(Unknow
+   n
+   Source)
+   
+    at org.eclipse.core.internal.events.AutoBuildJob.run(Unknown So
+   urce)
+    at org.eclipse.core.internal.jobs.Worker.run(Unknown Source)
+   
+   ...
+   
+   ..
+   
+   !SUBENTRY 1 org.eclipse.core.resources 4 376 2009-05-05 10:26:28
+   .812
+   !MESSAGE Marker id 374992 not found.
+   
+   10:52:09 AM: ...!ENTRY org.eclipse.wst.validation 4 0
+   2009-05-05 10:26:35.406
+   
+   !MESSAGE java.lang.reflect.InvocationTargetException: IWAE0027E
+   Could
+   not retrieve the validation configuration for resource    {resou
+   rce name}
+   
+   Found that this WORKAROUND can clear the validation errors:
+   
+   
+   
+   1. Run Validation on all projects till no errors (typically 5+ t
+   imes)
+   2. Do Project Clean on all projects (at least twice)
+   
+   3. restart RAD
+   
+   4. sometime the workspace will be now be without validation erro
+   rs
+   If not go back to 1. and repeat till no validation errors.
+   
+   
+   
+   This can take up two hours out of their development day.
+   
+   It affects all of the clients development machines randomly (eve
+   ry 2 weeks or every 2 days) on large 2 GB workspace
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  See Error Description
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Catch the exception and ignore the markers.
+   Fix delivered in Rational Application Developer V7.5.3
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK86141
+   
+   
+ * REPORTED COMPONENT NAME
+   RATL APP DEV WI
+   
+   
+ * REPORTED COMPONENT ID
+   5724J1901
+   
+   
+ * REPORTED RELEASE
+   751
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-05-07
+   
+   
+ * CLOSED DATE
+   2009-06-29
+   
+   
+ * LAST MODIFIED DATE
+   2009-06-29
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   RATL APP DEV WI
+   
+   
+ * FIXED COMPONENT ID
+   5724J1901
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R751 PSN
+   UP

@@ -1,0 +1,26 @@
+Title: IBM Why can't I see any policy violations in QRadar logs from Guardium Data Encryption? - United States
+
+Text:
+GDE Guardium Data Encryption policy violations checks admin secadmin Qradar syslog agent TECHNOTE (FAQ)
+
+QUESTION
+ Why can't I see any policy violations in QRadar logs from Guardium Data Encryption?
+
+I'm sending syslog to QRadar. I have configured: 
+- Syslog enabled, it's checked. 
+- DSM to send Syslog to QRadar. 
+- Agent send Syslog to QRadar. 
+
+The result is that I can only see login and logouts into Guardium Data Encryption in Qradar log activity. I can see nothing about policy check results / policy violations in QRadar. 
+
+ANSWER
+You don't get any policy violations sent from Guardium Data Encryption unless you configure secadmin user to log to syslog and to QRadar.
+You need to configure both admin user and secadmin user to log to syslog and to QRadar to get all logs.
+
+Policy check results / policy exceptions come from secadmin user.
+Admin events, like login to DSM, come from admin user.
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ GDE Guardium Data Encryption.

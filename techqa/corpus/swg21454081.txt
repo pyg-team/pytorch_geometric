@@ -1,0 +1,46 @@
+Title: IBM JCR Message Engine does not start - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+When transferring data from the default Derby database on IBM® WebSphere® Portal Version 7 to DB2 for z/OS, the JCR messaging engine, JCRSeedBus, may not start when starting the WebSphere Portal Server. The JCR content resource search may also not work. Dynamic allocation in DB2 for z/OS is not supported.
+
+
+SYMPTOM
+You may find the following errors and exceptions in the Portal Server SystemOut.log file: 
+
+00000007 SibMessage E [JCRSeedBus:tyger3Node.WebSphere_Portal-JCRSeedBus] CWSIS0002E: The messaging engine encountered an exception while starting. Exception: com.ibm.ws.sib.msgstore.PersistenceException: CWSIS1501E: The data source has produced an unexpected exception: java.lang.IllegalStateException: CWSIS1523E: Dynamic allocation of database objects in DB2 for z/OS is not allowed.
+00000007 SibMessage E [JCRSeedBus:tyger3Node.WebSphere_Portal-JCRSeedBus] CWSID0035E: Messaging engine tyger3Node.WebSphere_Portal-JCRSeedBus cannot be started; detected error reported during com.ibm.ws.sib.msgstore.impl.MessageStoreImpl start()
+00000007 SibMessage E [JCRSeedBus:tyger3Node.WebSphere_Portal-JCRSeedBus] CWSID0027E: Messaging engine tyger3Node.WebSphere_Portal-JCRSeedBus cannot be restarted because a serious error has been reported.
+
+
+RESOLVING THE PROBLEM
+Perform the following steps to resolve the problem: 
+
+
+1. Verify that you ran the create-jcr-jms-resources-post-dbxfer task in the ConfigEngine directory to create JMS resources in the database. If you haven't, run this task now from the following directory: wp_profile_root/ConfigEngine. 
+
+For more information about the directory root structure, refer to http://www-10.lotus.com/ldd/portalwiki.nsf/dx/Directory_structure_wp7 [http://www-10.lotus.com/ldd/portalwiki.nsf/dx/Directory_structure_wp7].
+
+
+2. Run the sibDDLGenerator command to generate the DDL statements in the wp_profile_root/bin directory. The output of the command should be redirected to a file with the following configuration:
+.../sibDDLGenerator.sh -system <DBMS name> -version <DBMS version> -platform< DBMS platform> -schema <schema name> -user <db user name> -create -database <database name> -storagegroup <storage group name> -statementend ";" > sib_jcr.ddl
+
+3. Copy the sib_jcr.ddl ouput file to your DB2 for z/OS environment and run the .ddl file. Before you execute the .ddl file, remove the CREATE DATABASE statement from the sib_jcr.ddl output file. The database is created during the JCR database transfer process. 
+
+4. Open the WebSphere Application Server administrative console and navigate to Buses --> JCRSeedBus --> Bus members --> Messaging engines for tyger3Node:WebSphere_Portal --> NodeName.WebSphere_Portal-JCRSeedBus --> Data store. Deselect "Create Tables."
+
+5. Create a file named sib.properties and add the following line to this file: sib.msgstore.jdbcPerformColumnChecks=false
+
+6. Save the file to the wp_profile_root/properties directory.
+
+7. Change the permission of the file as follows: chmod 777 sib.properties
+
+8. Restart the WebSphere Application Server and WebSphere Portal servers.
+
+
+
+
+ * 
+ *

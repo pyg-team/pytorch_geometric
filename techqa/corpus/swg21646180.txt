@@ -1,0 +1,189 @@
+Title: IBM Preventing errors when installing InfoSphere Information Server 9.1.2.0 on the engine tier server - United States
+
+Text:
+ds91relnotes ds9120relnotes TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Before installing InfoSphere Information Server 9.1.2.0, read the following information to determine whether changes are required for your platform. 
+
+SYMPTOM
+1. Incompatible version of memcpy() in glibc 
+
+Unpredictable behavior of InfoSphere Information Server on the engine tier might occur when certain versions of glibc are installed on Redhat Enterprise Linux 6.
+
+2. ulimit settings in dsenv exceed allowable values
+
+When performing a fix pack update of InfoSphere Information Server 9.1.2.0 on Unix platforms, ulimit settings in dsenv that exceed the allowable values on the engine tier server might cause failures. The following is reported in the installation log file:
+
+SEVERE: com.ibm.is.install.update.installer.Updater
+java.lang.Exception: Exit Code: 1, Error: /tmp/scriptn...n.sh[2]:
+ulimit: 0403-045 The specified value is outside the user's allowable range.
+
+3. readonly environment variables
+
+A problem might occur on UNIX when the root user has read-only environment variables defined on the engine tier server. The uv -admin -start command issued during the install might fail to start the DataStage server engine. Subsequent actions requiring the DataStage server engine generate the following message:
+
+SEVERE: com.ibm.is.install.core.UVInstance
+java.lang.Exception: Exit Code: 1, Error: An error has occurred during DataStage initialization
+Please contact the system administrator
+Error code: 2 2
+
+4. UV.ACCOUNT file contains remote Universe account information
+
+When performing a fix pack update of InfoSphere Information Server on the engine tier, remote Universe account records in UV.ACCOUNT might cause failures. The update installer treats all UV.ACCOUNT entries as DataStage projects. The following types of messages are generated:
+
+SEVERE: com.ibm.is.install.core.UVInstance CDIIN2899E: Failed to catalog:
+n.n.n.n:31438!/UVaccount-path\DSD_BP.O\DSD_GenRuntime.B in catalog: DSD_BP
+SEVERE: com.ibm.is.install.core.UVInstance
+java.lang.Exception: Cannot run program "C:\IBM\InformationServer\Server\DSEngine\bin\uvsh" (in directory
+"n.n.n.n:31438!\UVaccount-path"): CreateProcess error=267, The directory name is invalid.
+
+
+RESOLVING THE PROBLEM
+1. Incompatible version of memcpy() in glibc 
+
+Determine the version of glibc installed:
+
+# rpm -q glibc --qf '%{name}-%{version}-%{release}.%{arch}\n' 
+
+Ensure the packages installed are greater than or equal to those listed below:
+
+glibc-2.12-1.47.el6_2.9.i686
+glibc-2.12-1.47.el6_2.9.x86_64
+
+This is related to TechNote 1580287. Information Server 9.1.2.0 installs successfully when the glibc package with the memcpy change is in place. However, random errors are reported
+during operations such as job import.
+
+2. ulimit settings in dsenv exceed allowable values
+
+Check whether the dsenv file contains any ulimit commands. Note that on AIX dsenv is shipped with ulimit command lines.
+
+# grep ulimit IIS-path/Server/DSEngine/dsenv
+
+If found, log in as the DataStage Administrator and source dsenv to verify that no warnings are
+issued.
+
+# cd IIS-path/Server/DSEngine
+# . ./dsenv
+
+If errors are reported, determine which ulimit command line(s) are the cause. Ask an Unix administrator
+for help with increasing the appropriate soft and hard limits. On AIX, this involves modifications to
+/etc/security/limits.conf.
+
+3. readonly environment variables
+
+Check whether the root user can successfully invoke uv -admin -start.
+
+# cd IIS-path/Server/DSEngine
+# . ./dsenv
+# bin/uv -admin -stop
+# bin/uv -admin -start
+# bin/uv -admin -info
+
+If uv -admin -info reports an Engine status of Not running, look for a dsenv.errs.* file in
+IIS-path/Server/DSEngine and errors similar to:
+
+/opt/IBM/InformationServer/Server/DSEngine/sample/ds.rc[line#]: envvar: This variable is read only.
+
+Update the IIS-path/Server/DSEngine/sample/ds.rc file by adding a line to remove the readonly variable. Cut and paste the line
+
+| grep -v '^LOGNAME' \
+
+and replace LOGNAME with the appropriate readonly variable name. Retry the uv -admin -start
+above to ensure it is now successful.
+
+The 9.1.2.0 release installs a new version of the ds.rc script as well as invoking a new script called
+ds.setenv. The portion of the ds.rc file which sources dsenv has been moved to ds.setenv. Manual
+steps must be taken if readonly variables are discovered in the above procedure, or if the ds.rc
+scripts has already been modified to handle this problem.
+
+Check whether ds.rc has been changed.
+
+# cd IIS-path/Server/DSEngine/sample
+# diff ds.rc.orig ds.rc
+
+If differences are found, follow the appropriate special instructions below.
+
+To avoid the startup problem when performing a full suite install on the engine tier, edit the ds.setenv.orig file in is-suite/payloads/DataStageCommon/DSEngine/payload/BASE/sample. Add line(s) so that the 
+readonly variable(s) are removed from the environment used for the DataStage server engine.
+Cut and paste the line
+
+| grep -v '^LOGNAME' \
+
+and replace LOGNAME with the appropriate readonly variable name.
+
+To avoid the problem when performing a fix pack update, copy ds.rc to ds.rc.pre91FP2.
+
+# cd IIS-path/Server/DSEngine/sample
+# cp ds.rc ds.rc.pre91FP2
+
+This bypasses the fix pack actions to replace ds.rc with the new version which doesn't contain the readonly variable change.
+
+After a successful fix pack update, move the new version of ds.rc into place.
+
+# cd IIS-path/Server/DSEngine/sample
+# mv ds.rc.FPupdate ds.rc
+
+Edit ds.rc to set correct values for INSTANCETAG and DSHOME, and add readonly variable changes.
+Stop and restart NodeAgents and DSEngine.
+
+4. UV.ACCOUNT file contains remote Universe account information
+
+Check for remote Universe account information in UV.ACCOUNT.
+
+On Windows:
+
+# cd IIS-path\Server\DSEngine
+# bin\uvsh 'LIST UV.ACCOUNT WITH PATH LIKE "...!..."'
+
+On UNIX:
+
+# cd IIS-path/Server/DSEngine
+# . ./dsenv
+# bin/uvsh 'LIST UV.ACCOUNT WITH PATH LIKE "...!..."'
+
+This should return
+
+0 records listed.
+
+If records are returned, UV.ACCOUNT should be modified temporarily before the fix pack update.
+
+On Windows:
+
+# cd IIS-path\Server\DSEngine
+# cp -p UV.ACCOUNT UV.ACCOUNT.BACKUP
+# bin\uvsh
+> PTERM CASE INVERT
+> SELECT UV.ACCOUNT WITH PATH LIKE "...!..."
+>> DELETE UV.ACCOUNT
+(will prompt to confirm deletion of selected records)
+> Q
+
+On UNIX:
+
+# cd IIS-path/Server/DSEngine
+# . ./dsenv
+# cp -p UV.ACCOUNT UV.ACCOUNT.BACKUP
+# bin/uvsh
+> PTERM CASE INVERT
+> SELECT UV.ACCOUNT WITH PATH LIKE "...!..."
+>> DELETE UV.ACCOUNT
+(will prompt to confirm deletion of selected records)
+> Q
+
+After fix pack update, restore the original.
+
+On Windows:
+
+# cd IIS-path\Server\DSEngine
+# mv UV.ACCOUNT.BACKUP UV.ACCOUNT 
+
+On UNIX
+
+# cd IIS-path/Server/DSEngine
+# mv UV.ACCOUNT.BACKUP UV.ACCOUNT
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Information Management InfoSphere Information Server AIX, HP-UX, Linux, Solaris 9.1.2.0

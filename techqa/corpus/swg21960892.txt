@@ -1,0 +1,32 @@
+Title: IBM Disable RC4 cipher suites in the DataPower TAM/ISAM client functionality. - United States
+
+Text:
+ FLASH (ALERT)
+
+ABSTRACT
+ IBM recommends upgrading the DataPower TAM/ISAM client to disable the RC4 cipher suites as used in the "Bar Mitzvah" Attack. 
+
+CONTENT
+Automatically disable the RC4 cipher suites by applying the following DataPower Fixpack releases 
+and disable any specific RC4 cipher suites that might have been manually configured.
+
+Fixpack Release 
+6.0.0.15 
+6.0.1.11
+7.0.0.8
+7.1.0.5
+
+You should verify applying this firmware does not cause compatibility issues. Especially you should confirm with the ISAM/TAM administrator at your site that disabling RC4 ciphers to remediate the 'Bar Mitzvah' SSl/TLS attack is supported by existing ISAM/TAM servers. You should confirm with the LDAP or Active Directory administrator (if different to the above) at your site that disabling the RC4 ciphers is supported by the corresponding registry servers.
+
+If the default cryptographic entries in the Access Manager and Active Directory configuration files have not been changed, then no further changes are required.
+
+The ISAM 7.0 client configuration files allow more control of cryptographic options. If these options have been enabled, then checks should be made to ensure that no specific RC4 cipher suites have been enabled. They need to be removed from the list of valid ciphers. To check this, view the [ssl] stanza in the Access Manager Configuration file. If the default LDAP registry is selected with the 
+'Use SSL with Registry Server' property set 'true', then if the entry 'ssl-tls-cipher-specs' is present it may only contain a combination of ciphers 0A, 2F and 35. If the entry 'tls-v12-cipher-specs' is present, it should not contain the entries TLS_RSA_WITH_RC4_128_SHA, TLS_ECDHE_RSA_WITH_RC4_128_SHA or TLS_ECDHE_ECDSA_WITH_RC4_128_SHA.
+
+If the ISAM 7.0 client version is configured and Active Directory is the configured registry and the 
+'Use SSL with Registry Server' is set 'true', then the Active Directory Configuration file should be checked to determine if any specific RC4 cipher suites have been enabled. They need to be removed from the list of valid ciphers. To check this, view the [uraf-registry] stanza in the Active Directory Configuration file. Apply the same restrictions to the entries in the stanza corresponding to those entries in the [ldap] stanza of the Access Manager Configuration file.
+
+Note: A quick way to enforce the correct ciphers is to enable FIPS mode in the TAM/ISAM client. For all TAM clients set the 'Run in FIPS Mode' property to 'on'. For TAM clients configured for version 7.0.0, also set the 'Select a NIST Compliance Mode' to 'FIPS' or higher (any option other than 'None'). This property overrides any specific cipher configuration. FIPS mode enforces other restrictions, so use of this option should be discussed with the ISAM and registry administrators at your site.
+
+RELATED INFORMATION
+ Vulnerability in RC4 stream cipher affects IBM DataPowe [http://www-01.ibm.com/support/docview.wss?uid=swg21702165]

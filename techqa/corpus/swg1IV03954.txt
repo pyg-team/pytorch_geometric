@@ -1,0 +1,224 @@
+Title: IBM IV03954: ENUM THRESHOLD FAILS FOR SCALED ATTRIBUTE - United States
+
+Text:
+  FIXES ARE AVAILABLE
+IBM Tivoli Monitoring 6.2.2 Fix Pack 8 (6.2.2-TIV-ITM-FP0008) [http://www-01.ibm.com/support/docview.wss?uid=swg24031354]
+IBM Tivoli Monitoring 6.2.2 Fix Pack 9 (6.2.2-TIV-ITM-FP0009) [http://www-01.ibm.com/support/docview.wss?uid=swg24032067]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  If a threshold is set using an EQ comparison against an ENUM
+   value for an Attribute having a SCALE specification, cells
+   having the matching value will not be highlighted.  The problem
+   is reported in association with built-in thresholding of the
+   event results workspace but it will also happen if the same
+   threshold is set directly on a table view.
+   
+   
+   RECREATE INSTRUCTIONS:
+   
+   This problem can be seen using the customer environment:
+   
+   MQ        WebSphere MQ Monitoring Agent
+             WINNT Version: 07.00.03.00 Build: 201012292155
+   
+   CQ        Tivoli Enterprise Portal Server
+             WINNT Version: 06.21.04.00 Build: d0323a
+   
+   With following maintenance applied:
+   
+   APAR IZ76353 [http://www-01.ibm.com/support/docview.wss?uid=swg1IZ76353] and then the testfix from MQ Agent team
+   for co-requisite APAR IZ79111 [http://www-01.ibm.com/support/docview.wss?uid=swg1IZ79111].
+   1-Create the following situation associated with a Queue
+   Statistics
+   navigator item and wait for it to fire:
+   Name                   : test_sit
+   Full Name              : test_sit1
+   Description            :
+   Type                   : MQSERIES
+   Formula                : *IF *VALUE
+   Queue_Statistics.Time_to_Full_Queue
+   *EQ Zero_Put_Get_Rates
+   Sampling Interval      : 0/0:0:30
+   Run At Start Up        : Yes
+   Distribution           : QM1::MQ,QMDCC.2::MQ
+   Text                   :
+   Action Location        : Agent
+   Action Selection       : System Command
+   System Command         : *NONE
+   True For Multiple Items: Action on First Item only
+   TEC Severity           :
+   TEC Forwarding         : Y
+   TEC Destination        : 0
+   
+   2-Click on the Queue Statistics navigator item in Physical Tree.
+   For this item a situation event is already available (red alert
+   icon).
+   3-Click on the event in the flyover so Initial Situation Values
+   and
+   Current Situation values are shown in the workspace.
+   The "Time to Full Queue (Secs)" column is not red but should be
+   4-Open the Threshold tab into the Properties panel of the
+   Initial
+   Situation Values view and confirmed that the threshold was set
+   to RED
+   when "Time to Full Queue (Secs)" = Zero Put Get Rates
+   
+   The same problem will be seen if the same threshold is set on
+   any table
+   view showing the "Time to Full Queue (Secs)" column.
+   
+   The problem can be simulated on the windows platform by editing
+   the following entry in the docknt file to change the existing
+   ENUM specification so that it will match a data value,
+   displaying a table view of the data after recycling the TEP and
+   TEPS and setting the threshold for the column equal to the
+   doctored ENUM name.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  For 622fp5, specify the threshold as a scaled version of the
+   value associated with the the ENUM.  e.g. for *ENUM:  xxx=-2 and
+   *SCALE: 2, setting the threshold to EQ -0.02 will cause the
+   value to highlight.
+   
+   This change should not be made on the Event Results Workspace as
+   this will replace the product-provided workspace and will not
+   work  correctly after the fix is in place.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Situation Event Results workspace does not highlight the fields
+   causing the situation to be true.
+   
+   
+   It is possible to specify a threshold based on a value being
+   equal to an enumerated constant. If this is done for a scaled
+   attribute the matching values will not be highlighted. Post
+   filter expressions of this kind will not work either.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Use unscaled values when evaluating expressions involving
+   enumerated constants.
+   
+   The fix for this APAR is contained in the following maintenance
+   packages:
+     | fix pack | 6.2.2-TIV-ITM-FP0007
+     | fix pack | 6.2.3-TIV-ITM-FP0001
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  For Fix Pack 5 and above, specify the threshold as a scaled
+   version of the value associated with the ENUM. e.g. for *ENUM:
+   xxx=-2 and *SCALE: 2, setting the threshold to EQ -0.02 will
+   cause the value to highlight. This option did not work prior to
+   Fix Pack 5 because the input field will not accept the scaled
+   threshold value.
+   
+   This change should not be made on the Event Results Workspace as
+   this will replace the product-provided workspace and will not
+   work correctly after the fix is in place.
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV03954
+   
+   
+ * REPORTED COMPONENT NAME
+   TEP
+   
+   
+ * REPORTED COMPONENT ID
+   5724C04EP
+   
+   
+ * REPORTED RELEASE
+   621
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-07-29
+   
+   
+ * CLOSED DATE
+   2011-10-25
+   
+   
+ * LAST MODIFIED DATE
+   2012-06-07
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TEP
+   
+   
+ * FIXED COMPONENT ID
+   5724C04EP
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R622 PSY
+   UP

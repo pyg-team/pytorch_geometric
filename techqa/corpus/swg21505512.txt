@@ -1,0 +1,38 @@
+Title: IBM Oracle Extended Agent (rz) fails loading Oracle OCI library - United States
+
+Text:
+5724V09ORTR; 5724V09ORTR02; 5724V09ORTR03; extended agent; oracle; reconfigure TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The Oracle Extended Agent is not running properly and produces the error: Loading Oracle OCI library failed! 
+
+SYMPTOM
+The Oracle Extended Agent starts and connects to TEMS but the Agent does not display Oracle data.
+
+
+CAUSE
+This error occurs because the Oracle Extended Agent (rz) can not use the Oracle Client Interface (OCI) to connect to the Oracle instance. 
+
+DIAGNOSING THE PROBLEM
+The Oracle Extended Agent on Unix / Linux starts the rzagent process and then launches the rzclient process. The rzclient process fails when it tries to connect to the Oracle database. 
+
+
+instance_rz_server_rzclient_timestamp.log reflects the following errors: 
+
+
+Fail to dynamically load library libclntsh.so.10.1, return code 8
+Try to load another possible Oracle OCI library
+Fail to dynamically load library libclntsh.so.11.1, return code 2
+Loading Oracle OCI library failed!
+
+
+
+RESOLVING THE PROBLEM
+Establishing the agent configuration again can resolve this problem. Reconfigure the agent and restart. 
+
+ * Check the agent configuration setting for Oracle home or Oracle Instant Client Library. Update these to the correct values, after checking specifically with the Oracle DBA. Reconfigure the agent and restart with the updated value.
+   
+   Windows configuration panel
+   [/support/docview.wss?uid=swg21505512&aid=1] [/support/docview.wss?uid=swg21505512&aid=1]
+   
+   Unix/Linux configuration panel [/support/docview.wss?uid=swg21505512&aid=2] [/support/docview.wss?uid=swg21505512&aid=2]

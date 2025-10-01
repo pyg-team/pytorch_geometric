@@ -1,0 +1,67 @@
+Title: IBM IE01: WebSphere Message Broker - Proxy Servlet for the HTTP nodes - United States
+
+Text:
+ie01; HTTP Listener WBIMB WMB broker WebServices DOWNLOADABLE FILES
+
+ABSTRACT
+ Enables users to implement the functionality of the WebSphere Message Broker HTTP listener in an external Servlet Container 
+
+DOWNLOAD DESCRIPTION
+This SupportPac enables WebSphere Message Broker (WMB) users to implement the functionality of the WMB broker HTTP listener in an external Servlet Container (for example, WAS or TOMCAT). 
+
+
+If the Servlet Container supports HTTPS then the WMB V6 or WMB V6.1 broker will be able to receive HTTP requests over HTTPS(SSL).
+
+Note: The new SOAP nodes in WMB V6.1 are not supported by this SupportPac.
+
+Possible Uses
+This SupportPac has the following use:
+
+To implement multiple HTTP (or HTTPS) listeners associated to one broker for the HTTP nodes, removing a possible single point of failure and to enable large numbers of concurrent HTTP connections.
+
+Skill Level Required
+User of this SupportPac should have a good understanding of WMB V6 or WMB V6.1, HTTP nodes, Web Services and installation/configuration of Java Servlets on a Web Container.
+
+New in this Release
+Fix for:
+• IC68185: Servlet exceptions when deploying IE01 to WAS 5 or other Java 1.4 based servlet container.
+
+Details
+Author: Vicente Suarez, EMEA WebSphere Lab Services, Hursley
+Category: 3
+Initial Release: 11Apr05
+Last updated: 24May10
+Current Version: 2.4
+»Please note that the version number shown in the right-hand pane is the version of the MQ or WBI product that this SupportPac applies to. The date is the last webpage refresh. 
+
+To view the complete portfolio of WebSphere MQ SupportPacs please visit the WebSphere MQ SupportPacs homepage. [http://www-306.ibm.com/software/integration/support/supportpacs]
+
+PREREQUISITES
+ 
+
+This SupportPac requires the following:
+• Java SDK V1.4.1 or later
+• WMB V6.0 (GA) or later
+• WMB V6.1 (GA) or later
+• WMQ V6.0 (GA) or later INSTALLATION INSTRUCTIONS
+To install the SupportPac:
+1. In Windows, copy the ie01.zip file to a temporary directory of choice.
+2. Uncompress using "unzip".
+3. Install the "IE01.war" in the Servlet container of choice.
+4. Follow the instructions in the User Guide to complete installation and details on usage.
+
+URL LANGUAGE SIZE(Bytes) ie01.pdf [ftp://public.dhe.ibm.com/software/integration/support/supportpacs/individual/ie01.pdf] US English 1688455 
+DOWNLOAD PACKAGE
+
+
+
+
+Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options ie01.zip 24/05/2010 US English 1405161 HTTP [http://www14.software.ibm.com/cgi-bin/weblap/lap.pl?popup=Y&li_formnum=L-AFOS-6UFHMU&accepted_url=ftp://public.dhe.ibm.com/software/integration/support/supportpacs/individual/ie01.zip] 
+TECHNICAL SUPPORT
+ Category 3 WebSphere MQ (MQSeries) SupportPacs are supplied under the standard terms and conditions provided by the International Program License Agreement (IPLA) and thus, carry program defect service. 
+
+If you encounter what you believe to be a defect with the SupportPac you may request Program Services, by reporting the problem via the same defect reporting channel you use for the WebSphere MQ or WebSphere Business Integration product/s with which you are using the SupportPac. These products must themselves have service support.
+
+Please read the license file that accompanies it, to determine if you want to use it. No proof of Entitlement or License Information is required to use this SupportPac.
+
+Service is available for this SupportPac for as long as the WebSphere MQ or WebSphere Business Integration product(s) specified as pre-requisites have service support.

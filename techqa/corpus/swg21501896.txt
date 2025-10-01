@@ -1,0 +1,30 @@
+Title: IBM BIP2322E Database exceptions when migrating to WMB V7 - United States
+
+Text:
+mqiinfo; BIP2322E; IM004; mqsimigratecomponents TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When migrating from WebSphere Message Broker (WMB) V6.x to V7 using mqsimigratecomponents command, the following error occurs:
+
+BIP2322E: Database error: SQL State ''IM004''; Native Error Code '0'; Error Text ''[DataDirect][ODBC lib] Driver's SQLAllocHandle on SQL_HANDLE_ENV failed''. 
+
+The error has the following diagnostic information: SQL State ''IM004'' SQL Native Error Code '0' SQL Error Text ''[DataDirect][ODBC lib] Driver's SQLAllocHandle on SQL_HANDLE_ENV failed'' 
+
+CAUSE
+Environment is not set correctly.
+
+RESOLVING THE PROBLEM
+You can follow these steps to resolve the problem:
+
+
+ 1. Define the WMB V6.0 broker database as a DB2 ODBC data source for WMB 7 in odbc.ini file 
+ 2. Export the DB2 library reference by using an environment variable: MQSI_64BIT_DB2_LIBRARY_NAME. 
+    
+
+For example: 
+export MQSI_64BIT_DB2_LIBRARY_NAME='<DB2_LOC>/lib64/libdb2.a(shr_64.o)' 
+
+After completing this step, rerun the mqsimigratecomponents command.  
+
+PRODUCT ALIAS/SYNONYM
+ WMB MB Message Broker MQ Integrator WBIMB WBI-MB MQSI WMQI

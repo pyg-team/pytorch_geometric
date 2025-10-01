@@ -1,0 +1,34 @@
+Title: IBM setdbtype.bat fails with ConnectException when configuring with a remote database - United States
+
+Text:
+db2 connectException setdbtype remote database TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Attempts to run setdbtype.bat to configure the WebSphere Commerce Developer environment to a remote database result in a java.net.ConnectException error when using IBM WebSphere Commerce Developer. 
+
+SYMPTOM
+Examining the setdbtype.log in the <WCDEinstallDir>\logs directory reveals: 
+
+Detailed error: "[jcc][t4][2043][11550][4.3.111] Exception java.net.ConnectException: Error opening socket to server localhost/127.0.0.1 on port 50,000 with message: Connection refused: connect. ERRORCODE=-4499, SQLSTATE=08001"
+
+
+
+CAUSE
+The local DB2 client, IBM Data Server Client, does not have an instance TCP/IP port that it listens to. Since there is not a DB2 client listening to port 50,000 as expected by the setdbtype command, it fails.
+
+
+
+RESOLVING THE PROBLEM
+Specify the optional remote parameters as specified in the WebSphere Commerce V7.0 Information Center. These parameters are dbHost, dbServerPort, and dbNode.
+
+
+
+RELATED INFORMATION
+#Running the setdbtype.bat command [http://publib.boulder.ibm.com/infocenter/wchelp/v7r0m0/index.jsp?topic=/com.ibm.commerce.install.doc/tasks/tmgdevchgdb.htm]
+
+
+
+
+
+
+Cross Reference information Segment Product Component Platform Version Edition Commerce WebSphere Commerce Developer Express Implementation / Usage Windows 7.0 Commerce WebSphere Commerce Developer Professional Edition Installation Windows 7.0

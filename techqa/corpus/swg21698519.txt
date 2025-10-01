@@ -1,0 +1,49 @@
+Title: IBM Differentiate between a TIP session invalidation timeout vs. LTPA timeout - United States
+
+Text:
+TIPL2FAQ; LTPA; timeout; sessioninvalidation; double login TECHNOTE (FAQ)
+
+QUESTION
+ When a user is timed out, how can they tell if it was a Tivoli Integrated Portal (TIP) session timeout or if it was caused by a Lightweight Third Party Authentication (LTPA) timeout? 
+
+ANSWER
+TIP Session invalidation timeout : 
+
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * http://www-01.ibm.com/support/docview.wss?uid=swg21574647
+
+
+LTPA timeout : 
+ * 
+
+
+Double login issue when the LTPA Token is timed out: 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * <TIPHOME>\profiles\TIPProfile\config\cells\TIPCell\security.xml 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * <TIPHOME>\profiles\TIPProfile\config\cells\TIPCell\applications\isc.ear\deployments\isc\deployment.xml 
+ * 
+ * 
+
+ *

@@ -1,0 +1,31 @@
+Title: IBM Configuring the ITCAM for Microsoft Applications .NET data collector - United States
+
+Text:
+.NET SOA Transactions TECHNOTE (FAQ)
+
+QUESTION
+ How to configure data collection for .NET based services and applications 
+
+ANSWER
+You can use the ITCAM for Microsoft Applications data collector for tracking web services for ITCAM for SOA. The .NET Data Collector supports IBM Tivoli Composite Application Manager for SOA V 7.1.1, Fix Pack 2, or later. 
+
+
+To configure data collection using the ITCAM for Microsoft Applications .NET data collector, complete the following steps: 
+
+
+1. Install and start the ITCAM for SOA agent [https://publib.boulder.ibm.com/infocenter/tivihelp/v24r1/topic/com.ibm.itcamfapps_soa.doc_7201/soa_install_guide/installitcam4soa.html].
+
+Remember:Do not configure the ITCAM for SOA .NET data collector. Selecting .NET option of the ITCAM for SOA ConfigDC utility adds older versions of the Tivoli® libraries to the .NET environment.
+
+2. Install ITCAM for Microsoft Applications .NET Data Collector version 7.3.1. For information about installing the data collector, the"Installing .NET Data Collector" in the ITCAM for Microsoft Applicationsinformation center [http://publib.boulder.ibm.com/infocenter/tivihelp/v24r1/index.jsp?topic=%2Fcom.ibm.itcamms.doc_6.3%2Fnetdatacollector%2Fkto_landing_user.html].
+
+3. (Optional) Configure the ITCAM for Microsoft Applications .NET data collector to monitor .NET transactions. For information about integrating the data collector with ITCAM for Microsoft Applications, see "Configuring .NET Data Collector" in the ITCAM for Microsoft Applicationsinformation center [http://publib.boulder.ibm.com/infocenter/tivihelp/v24r1/index.jsp?topic=%2Fcom.ibm.itcamms.doc_6.3%2Fnetdatacollector%2Fkto_landing_user.html].
+
+4. Integrate the ITCAM for Microsoft Applications .NET data collector with the ITCAM for SOA agent. 
+
+ *  Navigate to the ITM\TMAITM6\K4\config directory and modify the dotNetDcConfig.properties.inactive file as follows:  * default.kd4.enabled=true
+   
+   Navigate to the ITM\TMAITM6\K4\bin directory. Issue theconfigdc activateconfigcommand to activate the configuration change. Issue theiisresetcommand from a command prompt window to reset the IIS Server. If you have not already integrated the .NET or DataPower® data collector with ITCAM for Transactions, issue theconfigdc registerdccommand to register the .NET data collector as an administrator. Restart the ITCAM for SOA monitoring agent for the change to take effect. 
+
+
+5. (Optional) Integrate the ITCAM for Microsoft Applications .NET data collector with ITCAM for Transactions. For information about configuring the transaction tracking API for Microsoft .NET, see Integrating with ITCAM for Transactions [http://publib.boulder.ibm.com/infocenter/tivihelp/v24r1/index.jsp?topic=%2Fcom.ibm.itcamms.doc_6.3%2Fnetdatacollector%2Fkto_config_reg.html]. Microsoft .NET transaction data is displayed in the ITCAM for Transactions workspaces in the Tivoli Enterprise Portal. This step is not required if you issued the configdc registerdccommand to register the .NET Data Collector. For information about installing and configuring .NET Data Collector version 7.3.1, seeIBM® Tivoli Composite Application Manager for Microsoft Applications: .NET Data Collector User’s Guidein the ITCAM for Microsoft Applicationsinformation center [http://publib.boulder.ibm.com/infocenter/tivihelp/v24r1/index.jsp?topic=%2Fcom.ibm.itcamms.doc_6.3%2Fnetdatacollector%2Fkto_landing_user.html].

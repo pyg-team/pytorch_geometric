@@ -1,0 +1,15 @@
+Title: IBM Text in the body of HTML mail is missing when viewed in Notes or Domino Web Access - United States
+
+Text:
+mail rendering incorrectly; mail; render; text; missing text; attachment; attachments shown; viewed in other clients; client; thunderbird ; outlook; notes; DWA; sent from HTML application; HTML; mail body; mail properties; body properties; domino web access; inbox; domino web access; mail file TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+Messages in HTML format are sent from a third-party application to your Inbox. The text in the body of the message does not render correctly when viewed in Lotus Domino Web Access (DWA) or Lotus notes. Attachments are rendered correctly. However, the body of the message appears empty.
+
+RESOLVING THE PROBLEM
+This issue was reported to Quality Engineering as SPR# NKEY7HRERW.
+
+As a workaround, set the "Format preference for incoming mail" in the Person document to "Notes rich text" for the text to display correctly.
+
+RELATED INFORMATION
+#

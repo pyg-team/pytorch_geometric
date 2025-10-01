@@ -1,0 +1,28 @@
+Title: IBM Cannot update a Notice Questionnaire Template or publish a Hold Notice - United States
+
+Text:
+Oracle 11.2.0.4.0 Atlas Publish Questionnaire TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ After attempting to update a Notice Questionnaire Template or Publish a Hold Notice using IBM Atlas, the changes are not reflected in the user interface after the action. 
+
+SYMPTOM
+This happens for any updates performed on all versions of Atlas running with Oracle 11.2.0.4.0
+
+
+CAUSE
+This is caused by Oracle bug (17501296) in version 11.2.0.4 
+
+ENVIRONMENT
+All Platforms
+
+DIAGNOSING THE PROBLEM
+After updating a notice questionnaire template or publishing a Hold Notice, no visible change is noticed in the user interface. If the user tries to update using sqlplus, the following exception is thrown when the transaction is committed
+ERROR at line 1:
+ORA-00604: error occurred at recursive SQL level 1
+ORA-06550: line 1, column 7:
+PLS-00306: wrong number or types of arguments in call to 'SYNCRN'
+ORA-06550: line 1, column 7: PL/SQL: Statement ignored
+
+RESOLVING THE PROBLEM
+Please contact Oracle support and apply the Patch:17501296

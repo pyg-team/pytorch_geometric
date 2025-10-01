@@ -1,0 +1,90 @@
+Title: IBM Security Bulletin: Rational Directory Server could be affected by vulnerabilities in Apache Tomcat server (CVE-2013-4286, CVE-2014-0033, CVE-2013-4322, and CVE-2013-4590) - United States
+
+Text:
+security; vulnerability; psirt; Telelogic Directory Server; Apache; Tomcat; security vulnerabilities; security vulnerability; CVE-2013-4286; CVE-2014-0033; CVE-2013-4322; CVE-2013-4590 SECURITY BULLETIN
+
+SUMMARY
+ This security bulletin is a notice of security vulnerabilities in Apache Tomcat server which impacts IBM Rational Directory Server 5.2.x and 5.1.1.x. 
+
+VULNERABILITY DETAILS
+ 
+
+Subscribe to My Notifications to be notified of important product support alerts like this.  * Follow this link [https://www.ibm.com/systems/support/myview/subscription/css.wss/subscriptions?methodName=startSearchToSubscribe&uctug_rational_dcfsbblurb_2013-11-05_myn_adoption_promo] for more information (requires login with your IBM ID)
+
+
+CVE ID: CVE-2013-4286 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2013-4286] 
+
+Description: Apache Tomcat is vulnerable to HTTP request smuggling, caused by an incomplete fix related to the handling of malicious requests. An attacker could exploit this vulnerability to poison the web cache, bypass web application firewall protection, and conduct XSS attacks. 
+
+CVSS Base Score: 4.3 
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/91426 [https://exchange.xforce.ibmcloud.com/vulnerabilities/91426] for the current score 
+CVSS Environmental Score*: Undefined 
+CVSS Vector: (AV:N/AC:M/Au:N/C:N/I:P/A:N) 
+
+
+CVE ID: CVE-2014-0033 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-0033] [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2013-4286] 
+
+Description: Apache Tomcat could allow a remote attacker to hijack a valid user's session, caused by an error even when disableURLRewriting is enabled. By persuading a victim to visit a specially-crafted link and log into the application, a remote attacker could exploit this vulnerability to hijack another user's account and possibly launch further attacks on the system. 
+
+CVSS Base Score: 4.3 
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/91423 [https://exchange.xforce.ibmcloud.com/vulnerabilities/91423] for the current score 
+CVSS Environmental Score*: Undefined 
+CVSS Vector: (AV:N/AC:M/Au:N/C:N/I:P/A:N) 
+
+
+CVE ID: CVE-2013-4322 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2013-4322] [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2013-4286] 
+
+Description: The fix for CVE-2012-3544 was not complete. It did not cover all cases. 
+
+CVSS Base Score: 5 
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/91625 [https://exchange.xforce.ibmcloud.com/vulnerabilities/91625] [https://exchange.xforce.ibmcloud.com/vulnerabilities/91426] for the current score 
+CVSS Environmental Score*: Undefined 
+CVSS Vector: (AV:N/AC:L/Au:N/C:N/I:N/A:P) 
+
+
+CVE ID: CVE-2013-4590 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2013-4590] 
+
+Description: Apache Tomcat could allow a remote attacker to obtain sensitive information. By sending a specially-crafted request, an attacker could exploit this vulnerability to read arbitrary files and obtain sensitive information. 
+
+CVSS Base Score: 4.3 
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/91424 [https://exchange.xforce.ibmcloud.com/vulnerabilities/91424] for the current score 
+CVSS Environmental Score*: Undefined 
+CVSS Vector: (AV:N/AC:M/Au:N/C:P/I:N/A:N) AFFECTED PRODUCTS AND VERSIONS
+ 
+
+Affected PRODUCT versions Apache Tomcat version used IBM Rational Directory Server Tivoli 5.2, 5.2.0.1, 5.2.0.2 Tomcat 6.0.x IBM Rational Directory Server Tivoli 5.1.1, 5.1.1.1 Tomcat 6.0.x 
+IMPORTANT: IBM Rational Directory Server (Tivoli) versions 5.2.1 version and later, and IBM Rational Directory Server (Tivoli) versions 5.1.1.2 and later are not affected by this problem as they use IBM WAS Liberty profile instead of Tomcat. REMEDIATION/FIXES
+Apply the appropriate fix as soon as practical. 
+
+
+
+Product Version Remediation IBM Rational Directory Server (Tivoli) 5.2, 
+5.2.0.1, 
+5.2.0.2 (Recommended) RDS iFix.
+Upgrade to Rational Directory Server (Tivoli) Interim Fix 3 for 5.2.0.2 [http://www.ibm.com/support/docview.wss?uid=swg24037715] IBM Rational Directory Server (Apache) 5.1.1,
+5.1.1.1 (Recommended) Upgrade to RDS 5.1.1.2 [http://www.ibm.com/support/docview.wss?uid=swg24033412], which uses IBM WAS Liberty Profile 8.5. 
+Review the following instructions for upgrading Apache Tomcat for IBM Rational Directory Server (RDS) and Rational Directory Administrator (RDA): How to upgrade Apache Tomcat server deployed on RDS and RDA prior to version 5.2.1 and 5.1.1.2 [http://www.ibm.com/support/docview.wss?uid=swg21669669] WORKAROUNDS AND MITIGATIONS
+Upgrade to Apache Tomcat 6.0.39 [http://tomcat.apache.org/download-60.cgi#6.0.39] or later version.
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v2 Guide [http://www.first.org/cvss/v2/guide] 
+On-line Calculator v2 [http://nvd.nist.gov/CVSS-v2-Calculator] 
+
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] 
+
+ACKNOWLEDGEMENT
+None 
+
+CHANGE HISTORY
+ * 9 June 2014: Added Rational Directory Server (Tivoli) fix
+* 19 May 2014: Original copy published 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.

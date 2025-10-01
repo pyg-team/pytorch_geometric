@@ -1,0 +1,159 @@
+Title: IBM IV87089: NOI: SINGLE QUOTE IN HISTORICAL EVENTS FIELDS - NO DATA DISPLAY - United States
+
+Text:
+  DIRECT LINKS TO FIXES
+7.1.0-TIV-NCI-ZLINUX-FP0007 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=7.1.0-TIV-NCI-ZLINUX-FP0007&source=SAR]
+7.1.0-TIV-NCI-WINDOWS-FP0007 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=7.1.0-TIV-NCI-WINDOWS-FP0007&source=SAR]
+7.1.0-TIV-NCI-SOLARIS-FP0007 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=7.1.0-TIV-NCI-SOLARIS-FP0007&source=SAR]
+7.1.0-TIV-NCI-AIX-FP0007 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=7.1.0-TIV-NCI-AIX-FP0007&source=SAR]
+7.1.0-TIV-NCI-LINUX-FP0007 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=7.1.0-TIV-NCI-LINUX-FP0007&source=SAR]
+IBM Tivoli Netcool/Impact V7.1.0 Fix Pack 7(7.1.0-TIV-NCI-FP0007) [http://www-01.ibm.com/support/docview.wss?uid=swg24042688]
+IBM Tivoli Netcool/Impact V7.1.0 Fix Pack 8(7.1.0-TIV-NCI-FP0008) [http://www-01.ibm.com/support/docview.wss?uid=swg24042885]
+IBM Tivoli Netcool/Impact V7.1.0 Fix Pack 9(7.1.0-TIV-NCI-FP0009) [http://www-01.ibm.com/support/docview.wss?uid=swg24043378]
+IBM Tivoli Netcool/Impact V7.1.0 Fix Pack 10(7.1.0-TIV-NCI-FP0010) [http://www-01.ibm.com/support/docview.wss?uid=swg24043588]
+IBM Tivoli Netcool/Impact V7.1.0 Fix Pack 11(7.1.0-TIV-NCI-FP0011) [http://www-01.ibm.com/support/docview.wss?uid=swg24043858]
+IBM Tivoli Netcool/Impact V7.1.0 Fix Pack 12 (7.1.0-TIV-NCI-FP0012) [http://www-01.ibm.com/support/docview.wss?uid=swg24044312]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  NOI: Single quote in IDVALUE / Summary causes Show
+   Historical Events to not show any data for Seasonality Events
+   
+   The escapeSpecialCharacters() function in NOI Utils Policy adds
+   the following code &#39; for single quote and later cannot be
+   decoded or escaped for DB2 while executing an SQL statement,
+   which causes it to not return any data. The single quote should
+   be escaped by a double single quote for DB2 to produce results.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Temporary fix replacing &#39; with %27%27 in policy
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * All Impact NOI Users                                         *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * NOI: Single quote in IDVALUE / Summary causes Show           *
+   * Historical Events to not show any data for Seasonality       *
+   * Events                                                       *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix for this APAR is contained in the following maintenance
+   packages:
+   |Fix Pack | 7.1.0-TIV-NCI-FP0007
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV87089
+   
+   
+ * REPORTED COMPONENT NAME
+   NETCOOL/IMPACT
+   
+   
+ * REPORTED COMPONENT ID
+   5724O59IS
+   
+   
+ * REPORTED RELEASE
+   710
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-07-20
+   
+   
+ * CLOSED DATE
+   2016-10-05
+   
+   
+ * LAST MODIFIED DATE
+   2016-10-05
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  UNKNOWN
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   NETCOOL/IMPACT
+   
+   
+ * FIXED COMPONENT ID
+   5724O59IS
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R710 PSY
+   UP

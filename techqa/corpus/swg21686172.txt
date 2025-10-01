@@ -1,0 +1,90 @@
+Title: IBM Stopping a TSAMP domain while leaving application online - United States
+
+Text:
+tsa; tsamp; samp; rsct; stoprpdomain; stoprpdomain -f; force stop; procedure TECHNOTE (FAQ)
+
+QUESTION
+ At times its necessary to stop the cluster/domain while leaving the highly available application online. This technote will provide the generic steps to do this for a TSAMP domain and also give steps that allow for resetting the RSCT daemons while the domain is offline. 
+
+CAUSE
+Some of the reasons why this procedure might be used: 
+
+ * Multiple or unknown daemons are hanging and need to be reset 
+ * TSAMP is in a "confused" state and a reset of the automation level is needed 
+ * Apply a TSAMP/RSCT hotfix/fixpack while leaving the application online 
+ * Stopping TSAMP/RSCT from taking any actions at all for maintenance reasons
+
+ANSWER
+This procedure is written to be generic and will require modifications for use in a real environment. 
+
+Optional steps are prefaced with "Optional" in the step description. 
+
+All steps should be run as "root" without exception. 
+
+ 
+
+1. Set the cluster scope (any node) 
+
+export CT_MANAGEMENT_SCOPE=2 
+
+This must be set prior to running cluster commands. If you switch to another user, open a new shell or reload your environment in any way you must re-export this environmental variable. 
+
+ 
+
+2. Optional - Enable manual mode (any node) 
+
+samctrl -M T 
+
+This will stop TSAMP from taking any action during the domain stop and startup. This setting/mode has no effect on RSCT or its operations. While manual mode is enabled (verify with lssam or lssamctrl) TSAMP will not stop nor start any resources so manual control of the highly available application is required. 
+
+ 
+
+3. Change Critical Resource Protection (any node) 
+
+chrsrc -c IBM.PeerNode CritRsrcProtMethod=5 
+
+When force stopping the domain the core RSCT daemons might exit abnormally, with the default setting of CritRsrcProtMethod this will lead to a kernel panic and reboot. Setting this variable to 5 prevents the kernel panic and reboot. 
+
+Verify the change with 
+
+lsrsrc -c IBM.PeerNode 
+
+ 
+
+4. Force stop the domain (any node, check on all nodes) 
+
+stoprpdomain -f <domain_name> 
+
+This will force stop the domain. Check all nodes in the domain to ensure that the domain has stopped on all nodes, use the following command on each node to verify that the domain shows offline: 
+
+lsrpdomain 
+
+ 
+
+5. Optional - Reset RSCT daemons (run on all nodes)
+/usr/sbin/rsct/bin/rmcctrl -z
+/usr/sbin/rsct/bin/rmcctrl -A
+/usr/sbin/rsct/bin/rmcctrl -p
+
+These commands will stop and start the core RSCT daemons. For more information see the man page for rmcctrl. These commands must be performed on all nodes in the cluster to ensure that the problematic daemon is reset.
+
+
+6. Start the domain (any node)
+startrpdomain <domain_name>
+
+Once this command is issued monitor the output of lsrpdomain to see when the domain shows Online. When it shows Online from the node where startrpdomain was issued check the output of lsrpnode to ensure that all nodes also show online.
+
+7. Check lssam for problems (any node)
+lssam
+Verify that all resources appear as they were or that they are showing up properly (this depends on the reason why you are performing this procedure).
+
+
+8. Optional - Disable manual mode (any node)
+samctrl -M F
+Verify with lssam or lssamctrl that manual mode is no longer enabled.
+
+
+9. Reset Critical Resource Protection back to normal (any node)
+chrsrc -c IBM.PeerNode CritRsrcProtMethod=3
+Verify that the chance took with:
+lsrsrc -c IBM.PeerNode

@@ -1,0 +1,50 @@
+Title: IBM RTC work item search engine and filters in Eclipse - United States
+
+Text:
+work item; search engine; filter; results TECHNOTE (FAQ)
+
+QUESTION
+ How does IBM Rational Team Concert (RTC) work item search engine and filter work in Eclipse? 
+
+CAUSE
+RTC (IBM Rational Team Concert) work item search engine might not always produce the results that are expected.
+
+ANSWER
+IBM Rational Team Concert (RTC) in Eclipse uses Lucene indexes for text searching. 
+
+Basic search and filter action: 
+
+1. The first step in the query process is to find all matches for the provided text search term against the Lucene indexes. 
+
+2. Those results are then filtered further based on the provided work item type, owner, and so on.
+
+
+Knowing the above order of process for search and filter is especially relevant when the number of results that are returned is over 1,000. 
+
+In the example where 5,000 work items are returned, for example, and a full text limit of 1,000, only the first 1,000 work items available are returned, which are then further refined with the relational database query. If other filters are then applied, like current contributor, owner or process area, there is the possibility that no valid results are returned. This might occur because the first 1,000 full text results would not match the other filters. 
+
+ 
+
+NOTE: The default result set size is 100, but it can be increased as far as 1,000 as referenced above. Increasing from 100 to 1000 might already introduce some performance degradation. 
+
+ 
+
+The default value can be changed in one of the following two methods: 
+
+ 
+
+ 1.  In the Advanced Configurations:
+
+
+
+https://<url:port>/admin#action=com.ibm.team.repository.admin.configuredAdvanced
+[/support/docview.wss?uid=swg22004441&aid=1] [/support/docview.wss?uid=swg22004441&aid=1] 
+
+[/support/docview.wss?uid=swg22004441&amp;aid=2] [/support/docview.wss?uid=swg22004441&amp;aid=2] 2. In the server.properties file, set the following property: 
+com.ibm.team.workitem.query.fulltext.merge.limit=1000
+
+
+Whether the result set size is set to 100 or 1,000, we recommend the following tips to improve effectiveness: 
+
+ * Narrow the work items that are returned from the text search by using a more specific search term. 
+ * If the returned number of work items is likely to be higher than the results set limit then avoid using wild characters.

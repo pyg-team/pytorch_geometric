@@ -1,0 +1,262 @@
+Title: IBM PK59610: TWO DIRECTORY TO INSTALL APPLICATION OPTIONS ARE MISSING FROM THE WEBSPHERE APPLICATION SERVER (BASE) DOCUMENTATION - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Two options are missing from the "Directory to install
+   application" field description within the "Select installation
+   options settings" topic. This issue pertains specifically to
+   the WebSphere Application Server (Base) documentation. There
+   are five options for specifying the directory to install
+   applications. Two of the five options are missing from this
+   documentation. These two options use the $(CELL) variable.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: This APAR affects users who are reading      *
+   *                 the documentation on the application         *
+   *                 installation options within the              *
+   *                 Information Centers for WebSphere            *
+   *                 Application Server Versions 6.1.             *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: The "Select installation options        *
+   *                      settings" topic does not provide        *
+   *                      information in the Directory to         *
+   *                      install application field description   *
+   *                      for using the $(CELL) variable. This    *
+   *                      issue applies specifically to the       *
+   *                      WebSphere Application Server product    *
+   *                      documentation and not to the            *
+   *                      WebSphere Application Server Network    *
+   *                      Deployment, WebSphere Application       *
+   *                      Server - Express, and WebSphere         *
+   *                      Application Server for z/OS product     *
+   *                      documentation.                          *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   The Directory to install application field description within
+   the "Select installation options settings" needs to be
+   enhanced to include information on the $(CELL) variable.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The description for the Directory to install application field
+   has been updated. The following information is a complete
+   description of the field and replaces the information in the
+   current description for the WebSphere Application Server
+   product:
+   
+   Directory to install application
+   Specifies the directory to which the enterprise archive (EAR)
+   file will be installed.
+   
+   By default, the EAR file is installed in the
+   profile_root/installedApps/cell_name/application_name.ear
+   directory.
+   Setting options include the following:
+   -Do not specify a value and leave the field empty.
+    If you do not specify a directory for Directory to install
+    application, the default value of APPDEPL_INSTALL_DIR is used.
+    The default value is APP_INSTALL_ROOT/cell_name, where the
+    APP_INSTALL_ROOT variable is profile_root/installedApps. A
+    directory having the EAR file name of the application being
+    installed is appended to APP_INSTALL_ROOT/cell_name. Thus, if
+    you do not specify a directory, the EAR file is installed in
+    the profile_root/installedApps/cell_name/application_name.ear
+    directory.
+   
+   -Specify a directory.
+    If you specify a directory for Directory to install
+    application, the application is installed in
+    specified_path/application_name.ear directory. A directory
+    having the EAR file name of the application being installed is
+    appended to the path that you specify for Directory to install
+    application. For example, if you are installing Clock.ear and
+    specify C:/myapps on Windows machines, the application is
+    installed in the myapps/Clock.ear directory. The
+    APP_INSTALL_ROOT variable is set to the specified path.
+   
+   -Specify ${APP_INSTALL_ROOT}/${CELL) for the initial
+    installation of the application.
+    If you intend to export the application from one cell and
+    later install the exported application on a different cell,
+    specify the $(CELL) variable for the initial installation of
+    the application. For example, specify
+    ${APP_INSTALL_ROOT}/${CELL) for this setting. Exporting the
+    application creates an enhanced EAR file that has the
+    application and its deployment configuration. The deployment
+    configuration retains the cell name of the initial
+    installation in the destination directory unless you specify
+    the $(CELL) variable. Specifying the $(CELL) variable ensures
+    that the destination directory has the current cell name, and
+    not the original cell name.
+   
+    Important: If an installation directory is not specified when
+    an application is installed on a single-server configuration,
+    the application is installed in APP_INSTALL_ROOT/cell_name.
+    When the server is made a part of a multiple-server
+    configuration (using the addNode utility), the cell name of
+    the new configuration becomes the cell name of the deployment
+    manager node. If the -includeapps option is used for the
+    addNode utility, then the applications that are installed
+    prior to the addNode operation still use the installation
+    directory APP_INSTALL_ROOT/cell_name. However, an application
+    that is installed after the server is added to the network
+    configuration uses the default installation directory
+    APP_INSTALL_ROOT/network_cell_name. To move the application to
+    the APP_INSTALL_ROOT/network_cell_name location upon running
+    the addNode operation, explicitly specify the installation
+    directory as ${APP_INSTALL_ROOT}/${CELL) during installation.
+    In such a case, the application files can always be found
+    under APP_INSTALL_ROOT/current_cell_name.
+   
+   -If the application has been exported and you are installing
+    the exported EAR file in a different cell or location, specify
+    $(APP_INSTALL_ROOT)/cell_name/application_name.ear if you did
+    not specify ${APP_INSTALL_ROOT}/${CELL) for the initial
+    installation.
+   
+    The exported EAR file is an enhanced EAR file that has the
+    application and its deployment configuration. The deployment
+    configuration retains the value for Directory to install
+    application that was used for the previous installation of the
+    application. Unless you specify a different value for
+    Directory to install application for this installation, the
+    enhanced EAR file will be installed to the same directory as
+    for the previous installation.
+   
+    If you did not specify the $(CELL) variable during the initial
+    installation, the deployment configuration uses the cell name
+    of the initial installation in the destination directory. If
+    you are installing on a different cell, specify
+    $(APP_INSTALL_ROOT)/cell_name/application_name.ear, where
+    cell_name is the name of the cell to which you want to install
+    the enhanced EAR file. If you do not designate the current
+    cell name, cell_name will be the original cell name even
+    though you are installing the enhanced EAR file on a cell that
+    has a different name.
+   
+   -Specify an absolute path or a use pathmap variable.
+    You can specify an absolute path or use a pathmap variable
+    such as ${MY_APPS}. You can use a pathmap variable in any
+    installation.
+   
+    This Directory to install application field is the same as the
+    Location (full path) setting on an Application binaries page.
+    Data Type  String
+    Units  Full path name
+   
+   Date that the information will be available externally to
+   customers:
+   Periodically, we update the documentation in our information
+   centers. Thus, the changes might have been made before you
+   read this text. To access the latest on-line documentation,
+   complete the following steps:
+   1. Go to the product library page at the following Web site:
+   http://www.ibm.com/software/webservers/appserv/library [http://www.ibm.com/software/webservers/appserv/library]
+   2. Locate the appropriate version and product.
+   3. Under "Documentation - Information center format", click
+   the appropriate link. In most cases, the WebSphere Application
+   Server documentation is available in both an online version
+   and in an IBM Eclipse Help System version. For more
+   information on the IBM Eclipse Help system, see the following
+   Web site: http://www.alphaworks.ibm.com/tech/iehs [http://www.alphaworks.ibm.com/tech/iehs]
+   
+   If you install the IBM Eclipse Help System, you must also
+   install the appropriate help system plug-in for the WebSphere
+   Application Server documentation in its eclipse/plugins
+   directory. The plug-in is available from our product library
+   page.
+   
+   The modified documentation will be available in the March 2008
+   update to the information centers.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK59610
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSPH APP SERV
+   
+   
+ * REPORTED COMPONENT ID
+   5724J0800
+   
+   
+ * REPORTED RELEASE
+   60W
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-01-21
+   
+   
+ * CLOSED DATE
+   2008-01-25
+   
+   
+ * LAST MODIFIED DATE
+   2008-01-25
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

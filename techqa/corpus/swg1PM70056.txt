@@ -1,0 +1,183 @@
+Title: IBM PM70056: ABEND5C4 RC082C0019 FROM RRS AFTER RRS WAITED ON END CONTEXT BACKOUT EXIT CALL TO DB2 AND RECEIVED ABEND30D. - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  A chain of events led to the ABEND5C4 082C0019 to DB2 threads:
+   WebSphere job first received ABEND878 followed by ABEND40D-10.
+   The affected threads appear hung and could not be cancelled.
+   Eventually (3 to 4 minutes) RRS got an ABEND30D because
+   it was waiting on the END CONTEXT BACKOUT exit call to
+   DB2.  RRS abended the BACKOUT exit call with ABEND5C4 082C0019.
+   It takes a DB2 recycle to clear the hung threads.
+   The logrec shows ABEND05C4 RC082C0019 at DSN3EPX.DSN3RRSX
+   or ABEND05C4 RC082C0019 at DSNVSRX.DSNVSRBW following the
+   ABEND0D5 RC00000021.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All DB2 for z/OS users.                      *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: A WebSphere Application Server          *
+   *                      address space received                  *
+   *                      multiple ABEND878s followed by an       *
+   *                      ABEND40D RC00000010.  End Context       *
+   *                      processing for a WebSphere thread       *
+   *                      caused z/OS RRS to call the DB2 RRSAF   *
+   *                      Backout exit which received an ABEND0D5 *
+   *                      RC00000021 and the exit processing did  *
+   *                      not return to RRS.  Eventually z/OS RRS *
+   *                      received an ABEND30D because it was     *
+   *                      still waiting on the Backout exit call. *
+   *                      RRS ABEND05C4 RC082C0019 may then       *
+   *                      occur in DSN3RRSX or DSNVSRBW.          *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   Termination processing for WebSphere triggered an End Context
+   Backout exit call to DB2 RRSAF.  The DB2 Backout exit processing
+   received an ABEND0C5 RC00000021 and did not return to z/OS RRS.
+   RRS waited on the exit call and eventually received an ABEND30D
+   and DB2 received RRS ABEND5C4 RC082C0019.
+   ABEND30D in z/OS RRS.
+   ABEND0D5 RC00000021.
+   ABEND5C4 RC082C0019 in DSN3RRSX or DSNVSRBW.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Module DSN3RRSF and DSN3RRSM recovery processing has been
+   updated.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  *********
+   * HIPER *
+   *********
+   
+   
+    
+   
+   
+
+COMMENTS
+ *  &#158;**** PE12/10/19 FIX IN ERROR. SEE APAR PM75487 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM75487]  FOR DESCRIPTION
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM70056
+   
+   
+ * REPORTED COMPONENT NAME
+   DB2 OS/390 & Z/
+   
+   
+ * REPORTED COMPONENT ID
+   5740XYR00
+   
+   
+ * REPORTED RELEASE
+   A10
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   YesHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-08-01
+   
+   
+ * CLOSED DATE
+   2012-08-21
+   
+   
+ * LAST MODIFIED DATE
+   2012-12-06
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  DSN3RRSF DSN3RRSM
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   DB2 OS/390 & Z/
+   
+   
+ * FIXED COMPONENT ID
+   5740XYR00
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * RA10 PSY UK81228 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK81228]
+   UP12/09/11 P F209
+   
+   
+ * R910 PSY UK81229 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK81229]
+   UP12/09/11 P F209
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

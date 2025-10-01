@@ -1,0 +1,39 @@
+Title: IBM Creating your SPSS authorization code through the IBM SPSS License Key Center - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How to generate an SPSS authorization code / How to access and use the IBM SPSS License Key Center 
+
+ANSWER
+Create your SPSS authorization code through the IBM SPSS License Key Center
+The IBM SPSS License Key Center is a self-service Authorization code and License key management service that provides you with easy access to and the ability to custom create your SPSS authorization and license codes. 
+
+
+Request access
+To access your IBM SPSS License Key Center account:
+1. Navigate to the IBM SPSS License Key Center [https://spss.subscribenet.com/control/ibmp/login]
+2. Either choose forgot your password if you already have access
+3. Or choose don’t have a password to request access
+The designated Primary and Site Technical Contact [http://www-01.ibm.com/support/docview.wss?uid=swg21389775#2] at your company have automatically been given permission to access the IBM SPSS License Key Center and may manage access to others
+
+
+How to videos
+Review these short videos [https://developer.ibm.com/predictiveanalytics/videos/category/license/] on how to manage user access to the IBM SPSS License Key Center, create and search authorization codes and much more.
+
+
+Login
+Login and start using the IBM SPSS License Key Center [https://spss.subscribenet.com/control/ibmp/login] 
+
+[/support/docview.wss?uid=swg21980065&aid=1] [/support/docview.wss?uid=swg21980065&aid=1]
+
+RELATED INFORMATION
+ Need more help? Our Statistics forum is Live! [https://developer.ibm.com/answers/topics/statistics.html?smartspace=predictive-analytics]
+Need more help? Our Licensing forum is Live! [https://developer.ibm.com/answers/topics/spsslicensing.html]
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Analytics SPSS Amos Business Analytics SPSS Modeler Business Analytics SPSS SamplePower Business Analytics SPSS Statistics Business Analytics SPSS Statistics for Linux on System z Business Analytics SPSS Text Analytics for Surveys Business Analytics SPSS Text Mining for Clementine-Japanese Business Analytics SPSS Visualization Designer

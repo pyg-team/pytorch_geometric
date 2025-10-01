@@ -1,0 +1,24 @@
+Title: IBM ISDM  7.2.2  Supported SUSE operating systems - United States
+
+Text:
+Novell OS upgrade migrate patch yast TECHNOTE (FAQ)
+
+QUESTION
+ What SUSE operating systems are supported with ISDM 7.2.2? 
+
+ANSWER
+As of January 2013, ISDM 7.2.2 is supported on SUSE Linux Enterprise Server (SLES) versions 10.3 and 11.1.
+
+
+Customers running ISDM 7.2.2 on SLES 10.3 can install the latest operating system patches by down loading the following package from IBM Fix Central at:
+http://www-933.ibm.com/support/fixcentral/swg/downloadFixes?parent=ibm/Tivoli&product=ibm/Tivoli/IBM+Service+Delivery+Manager&release=7.2.2.0&platform=Linux&function=fixId&fixids=ISDM722_SLES10_SP3_X86_64_PATCHES&includeRequisites=1&includeSupersedes=0&downloadMethod=http [http://www-933.ibm.com/support/fixcentral/swg/downloadFixes?parent=ibm/Tivoli&product=ibm/Tivoli/IBM+Service+Delivery+Manager&release=7.2.2.0&platform=Linux&function=fixId&fixids=ISDM722_SLES10_SP3_X86_64_PATCHES&includeRequisites=1&includeSupersedes=0&downloadMethod=http] 
+
+
+
+Customers wanting to upgrade their SUSE operating system to SLES 11.1 can down load an iso image from IBM Fix Central at:http://www-933.ibm.com/support/fixcentral/swg/downloadFixes?parent=ibm~Tivoli&product=ibm/Tivoli/IBM+Service+Delivery+Manager&release=7.2.2.0&platform=All&function=fixId&fixids=SLES-11-SP1-DVD-x86_64-GM-DVD1_image&includeRequisites=1&includeSupersedes=0&downloadMethod=http [http://www-933.ibm.com/support/fixcentral/swg/downloadFixes?parent=ibm~Tivoli&product=ibm/Tivoli/IBM+Service+Delivery+Manager&release=7.2.2.0&platform=All&function=fixId&fixids=SLES-11-SP1-DVD-x86_64-GM-DVD1_image&includeRequisites=1&includeSupersedes=0&downloadMethod=http] 
+
+
+The instructions for installing SLES 11.1 can be found in the ISDM 7.2.4 for System x Release Notes at: 
+https://www-304.ibm.com/support/entdocview.wss?uid=swg24033732 [https://www-304.ibm.com/support/entdocview.wss?uid=swg24033732] 
+
+To install SLES 11.1 on ISDM 7.2.2, follow the instructions in step 4: Updating the SLES installation for any IBM Service Delivery Manager image.

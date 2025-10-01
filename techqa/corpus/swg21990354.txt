@@ -1,0 +1,68 @@
+Title: IBM How to start Guardium Agent if the File system is not mounted? - United States
+
+Text:
+stap ; file system ; mount ; start TECHNOTE (TROUBLESHOOTING)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ English 
+
+PROBLEM(ABSTRACT)
+ How to start Guardium Agent on 
+Linux and AIX if the file system where guardium was installed didn't
+
+mount on system start up?
+
+
+For example if guardium is installed in /mnt/guardium and this FS was 
+not mounted after system reboot.
+
+What are the steps to get guardium agent running after mounting 
+/mnt/guardium
+? 
+
+RESOLVING THE PROBLEM
+If you installed in a mounted directory, you need to make sure that the file system is available before the services are started. 
+
+For example, in AIX, you should add the mounted file system to /etc/filesystems.
+
+The risk with mounted file systems is that, if something goes wrong with the mount point, for example stale NFS handles, then it will cause issues with STAP.
+
+To start the STAP, please check this link -
+https://www.ibm.com/support/knowledgecenter/en/SSMPHH_10.1.0/com.ibm.guardium.doc.stap/stap/unix_stap.html [https://www.ibm.com/support/knowledgecenter/en/SSMPHH_10.1.0/com.ibm.guardium.doc.stap/stap/unix_stap.html]
+
+Log on to the database server system by using the root account.
+For all non-Red Hat Enterprise Linux 6
+Open the /etc/inittab file for editing.
+Un-comment the following two statements by deleting the comment character (: for AIX, # for all others) at the start of each line:
+
+#utap:2345:respawn:/usr/local/guardium/guard_stap/guard_stap/usr/local/guardium/guard_stap/guard_tap.ini
+
+Optional. If you are using the TEE monitoring mechanism, un-comment the following two statements by deleting the comment character (: for AIX, # for all others) at the start of each line.
+
+
+Note: These processes are not used in the default configuration and must not be started if you are using the K-Tap monitoring mechanism.
+
+#utee:2345:respawn:/usr/local/guardium/guard_stap/guard_tee/usr/local/guardium/guard_stap/guard_tap.ini
+#hsof:2345:respawn:/usr/local/guardium/guard_stap/guard_hnt
+
+Run the init q command to restart the S-TAP processes. 
+
+For Red Hat Enterprise Linux 6
+List the currently running agents by using the operating system command initctl list. The output shows the agents that are listed as in the following example:
+
+gim_33264 start/running, process 910
+gsvr_33264 start/running, process 2552
+
+Start each of the agents by using the start <agent> command where agent would be the first entry in the list from a. See the following example.
+
+start gim_33264
+start gsvr_33264
+start guard_utap
+
+Run ps -ef | grep stap to verify that S-TAP is running.
+
+
+From the administrator portal of the Guardium system to which this S-TAP reports, verify that the Status light in the S-TAP control panel is green.
+
+RELATED INFORMATION
+ STAP - Unix [https://www.ibm.com/support/knowledgecenter/en/SSMPHH_10.1.0/com.ibm.guardium.doc.stap/stap/unix_stap.html]

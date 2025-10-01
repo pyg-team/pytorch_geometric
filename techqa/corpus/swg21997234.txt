@@ -1,0 +1,37 @@
+Title: IBM REGISTRY SERVICE INSTALL 1.1.2.1 FAILURE ON RHEL 7.2 - United States
+
+Text:
+5724C04JI TECHNOTE (FAQ)
+
+QUESTION
+ When installing Registry service 1.1.2.1 on RHEL 7.2 the installation fails with the CRIMA1217E error.
+
+****
+Error during "post-install configure" phase: CRIMA1217E: A problem occurred during the execution of the /opt/IBM/JazzSM/install/fsconfig.xml file.
+Explanation: A package has an issue that cannot be resolved by Installation Manager.
+User Action: Identify the package that has the issue by looking at the installation history. In Installation Manager, click File > Installation History. In console mode, enter S: View Installation History. Contact IBM customer support.
+The following error occurred while executing this line: /opt/IBM/JazzSM/install/frs/frs_config.xml:201: The following error occurred while executing this line: /opt/IBM/JazzSM/install/frs/frs_config.xml:211: The following error occurred while executing this line: /opt/IBM/JazzSM/install/frs/frs_db_config.xml:51: The following error occurred while executing this line: /opt/IBM/JazzSM/install/frs/frs_db_config.xml:123: CTGFI3007E: Failed in configuring Registry Services Database. Check /opt/IBM/JazzSM/registry/logs directory for more information. [/opt/IBM/JazzSM/install/fsconfig.xml:200]
+**** 
+
+ANSWER
+To get past this issue execute the following steps:
+• Running JazzSM 1.1.2.1 full install on the server, fails while installing Registry Services. However DB2, IIM and WebSphere get installed before the installation failure.
+• Run the following commands as db2 instance owner:
+db2 start
+db2 connect to FRSDB
+db2 catalog database FRSDB as TSMAL001 at node TSMNODE1
+db2 list db directory
+db2 catalog db FRSDB on /home/smadmin1
+db2 upgrade db FRSDB
+• Uninstall WebSphere through IM only (if it is already installed)
+• Clean up and Delete JazzSM and WebSphere directories under /opt/IBM.
+• Run JazzSM installation through IM and select all the packages except schema installation for the Registry Services.
+The existing FRSDB will be used while installation.
+Ensure umask is set to 0022 and start the installation using IIM. Installation fails is umask is set to anything else.
+
+NOTE: Registry service along with Admin and Security services have been deprecated post 1.1.2.1 and can't be installed in JazzSM 1.1.3.0. If you are not using these service please do not install them to avoid an overhead on your servers.
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Systems and Asset Management Tivoli Components

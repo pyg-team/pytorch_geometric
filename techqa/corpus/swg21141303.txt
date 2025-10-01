@@ -1,0 +1,109 @@
+Title: IBM MustGather: CMS key database (.kdb) and certificate problems - United States
+
+Text:
+mustgather; mustgather; mustgather; HTTP Server; IHS; kdb; troubleshooting; debug; autopd; auto pd; wasemp; MustGatherDocument TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Collecting data for CMS key database (.kdb) and certificate problems with IBM® HTTP Server. Gathering this information before calling IBM support will help familiarize you with the troubleshooting process and save you time. 
+
+RESOLVING THE PROBLEM
+If you have already contacted support, continue on to the component-specific MustGather information. Otherwise, click: MustGather: Read first for IBM HTTP Server [http://www.ibm.com/support/docview.wss?uid=swg21192683].
+CMS key database and certificate specific MustGather information
+The following contains a list of files that are needed for debugging CMS key database (.kdb) and certificate issues. 
+
+ 1.  IBM HTTP Server version.
+     
+     Type 1 of the following commands to display the full IBM HTTP Server version:  * For Windows®:
+        
+        ihs_install_root\bin\apache -V
+        
+        
+      * For UNIX®:
+        
+        ihs_install_root/bin/apachectl -V
+        
+        
+     
+     
+ 2.  Configuration file:
+     
+     ihs_install_root/conf/httpd.conf
+     Note: all conf files called by Include directive if configured
+     
+     
+ 3.  Error log:  * For Windows:
+        
+        ihs_install_root/logs/error.log
+        ihs_install_root/logs/access.log
+        
+        
+      * For UNIX:
+        
+        ihs_install_root/logs/error_log
+        ihs_install_root/logs/access_log
+        
+        
+     
+     
+ 4.  Global Security Kit (GSKit) version (IBM HTTP Server 7.0 or later version)
+     
+      * All platforms:
+        
+        ihs7.0_install_root/bin/gsk7ver
+        ihs8.0_install_root/bin/gskver
+        ihs8.5_install_root/bin/gskver
+        ihs9.0_install_root/bin/gskver
+        
+        
+     
+     
+ 5.  CMS key database file (.kdb).
+     
+     The CMS Key database file is defined by the KeyFile directive in the httpd.conf file:
+     
+     KeyFile /fully qualified path to key file/key.kdb
+     
+     For example:
+     
+     /usr/HTTPServer/ssl/key.kdb
+     
+     Note: Include the password.
+     
+     
+ 6.  Password stashfile (.sth).
+     
+     For example:
+     
+     /usr/HTTPServer/ssl/key.sth
+     
+     
+ 7.  Request database (.rdb).
+     
+     For example:
+     
+     /usr/HTTPServer/ssl/key.rdb
+     
+     
+ 8.  Server and Client Certificate (.arm, .p12, .cer, .der, and so on).
+     
+     
+ 9.  CA Signer Certificate (Verisign, Thwarte, Entrust, internalCA, Godaddy and so on).
+     
+     For example: CAroot.cer, CA.arm, CAROOT.der, and so on.
+     
+     
+ 10. Follow instructions to send diagnostic information to IBM support [http://www.ibm.com/support/docview.wss?uid=swg21153852].
+
+
+
+For a listing of all technotes, downloads, and educational materials specific to CMS key database and certificate problems, search the IBM HTTP Server support site [http://www.ibm.com/support/entry/portal/Overview/Software/WebSphere/IBM_HTTP_Server] [http://www.ibm.com/software/webservers/appserv/was/support/]. RELATED INFORMATION
+ Submitting information to IBM support [http://www.ibm.com/support/docview.wss?uid=swg21153852]
+Steps to getting support [http://www.ibm.com/developerworks/websphere/support/appserver_support.html]
+MustGather: Read first [http://www.ibm.com/support/docview.wss?uid=swg21192683]
+Troubleshooting guide [http://www.ibm.com/support/docview.wss?uid=swg27005324]
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Application Servers WebSphere Application Server IBM HTTP Server

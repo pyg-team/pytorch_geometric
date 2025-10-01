@@ -1,0 +1,13 @@
+Title: IBM Tivoli Integrated portal integration with IBM Dashboard Application (DASH) - United States
+
+Text:
+DASHL2; JazzSM DASH; Tivoli Integrated portal integration; Third Party Integration portlet TECHNOTE (FAQ)
+
+QUESTION
+ Can I integrate TIP with IBM Dashboard Application Services Hub (DASH) using Third Party Integration Portlet? 
+
+ANSWER
+The Third Party Integration portlet can be used to display web applications in DASH that may require authentication, form or browser-based. The third party widget can display applications that can be iFramed. 
+
+
+TIP will not work in the web widget or the Third Party Integration portlet. The reason is that after getting the TIP login screen to display in DASH environment the login page pops out of the Third Party Integration portlet widget. There is code that prohibits this purposely. The Third Party Integration widget uses iFrame to display web application. Once TIP detects it is running in an iFrame, it breaks out of it. Thus you will see the login window expanding to cover the whole window instead of displaying in the page.

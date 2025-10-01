@@ -1,0 +1,39 @@
+Title: IBM Applications using IBM Worklight for Apple iOS might be rejected by the Apple App Store - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Starting with IBM Worklight V6.0, some Apple iOS applications that are submitted to the Apple App Store might be rejected. The rejection notice states that the application references the non-public selectors "controlFrame" and "textBackgroundColor." 
+
+RESOLVING THE PROBLEM
+Interim Fix PM97820 is available to address this issue. 
+
+ * IBM Worklight Consumer Edition [http://www-933.ibm.com/support/fixcentral/swg/quickorder?parent=ibm%7EOther+software&product=ibm/Other+software/IBM+Worklight+Consumer+Edition&release=6.0.0.1&platform=All&function=aparId&apars=PM97820&source=fc] 
+ * IBM Worklight Enterprise Edition [http://www-933.ibm.com/support/fixcentral/swg/quickorder?parent=ibm%7EOther+software&product=ibm/Other+software/IBM+Worklight+Enterprise+Edition&release=6.0.0.1&platform=All&function=aparId&apars=PM97820&source=fc] 
+ * IBM Mobile Foundation Consumer Edition [http://www-933.ibm.com/support/fixcentral/swg/quickorder?parent=ibm%7EOther+software&product=ibm/Other+software/IBM+Mobile+Foundation+Consumer+Edition&release=6.0.0.1&platform=All&function=all&source=fc] 
+ * IBM Mobile Foundation Enterprise Edition [http://www-933.ibm.com/support/fixcentral/swg/quickorder?parent=ibm%7EOther+software&product=ibm/Other+software/IBM+Mobile+Foundation+Enterprise+Edition&release=6.0.0.1&platform=All&function=all&source=fc]
+
+
+
+After you apply the interim fix, you must recreate each of the Worklight iOS environments (either iPhone or iPad) in existing Worklight Hybrid Applications for the updated libraries to be included in those iOS environments. Worklight Environments for iOS that you create after you apply the interim fix will contain the updated libraries.
+
+
+To recreate the Worklight Environments for Apple iOS in a Worklight Hybrid Application, complete the following steps: 
+
+ 1. Select the Worklight iOS environment (either iPhone or iPad).
+    
+    
+ 2. Delete the environment.
+    
+    
+ 3. Select the Worklight Hybrid Application and then click New > Worklight Environment.
+    
+    
+ 4. Select the appropriate iOS environment (either iPhone or iPad).
+    
+    
+ 5. Repeat the previous steps for each Worklight iOS environment in the Worklight Hybrid Application.
+    
+    
+ 6. When all of the environments are created, select the Worklight Hybrid Application and then click Run As > Build All and Deploy.

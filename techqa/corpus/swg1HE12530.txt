@@ -1,0 +1,146 @@
+Title: IBM HE12530: "REMOVE" AND "EDIT REASON" BUTTONS ARE NOT DISABLED WHEN NO RECIPIENTS ARE SELECTED IN HOLD NOTICE RECIPIENT PAGE. - United States
+
+Text:
+  DIRECT LINKS TO FIXES
+6.0.3-ATLAS-WINDOWS-FP0005 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FGlobal+Retention+Policy+and+Schedule+Management&fixids=6.0.3-ATLAS-WINDOWS-FP0005&source=SAR]
+6.0.3-ATLAS-AIX-FP0005 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FGlobal+Retention+Policy+and+Schedule+Management&fixids=6.0.3-ATLAS-AIX-FP0005&source=SAR]
+6.0.3-ATLAS-LINUX-FP0005 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FGlobal+Retention+Policy+and+Schedule+Management&fixids=6.0.3-ATLAS-LINUX-FP0005&source=SAR]
+IBM Atlas Policy Suite Version 6.0.3 Fix Pack 5 Download Document [http://www-01.ibm.com/support/docview.wss?uid=swg24043662]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  "Remove" and "Edit Reason" buttons are not disabled when no
+   recipients are selected in Hold Notice Recipient page.
+   Steps to reproduce the problem:
+   1. Log in to Atlas.
+   2. Click on Matters. Select a matter.
+   3. Click on Holds > New > Hold Notice.
+   4. In the Create a New Notice pop-up window, input the required
+   fields and select Create.
+   5. In the next screen, go to Rules tab.
+   6. Click on Recipients.
+   7. In the list of recipients, select the custodians which you
+   want to remove.
+   8. Click on "Recipients" Recipients list will get displayed
+   9. Select the custodians which you want to remove and click
+   on Remove from Request. Select either options to maintain hold
+   or release hold.
+   10. After the selected custodians are removed, the Edit Reason
+   and Remove buttons should be disabled. But they are still
+   enabled.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Select another user and unselect it. Then the Remove and Edit
+   Reason buttons become disabled.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  "REMOVE" AND "EDIT REASON" BUTTONS ARE NOT DISABLED WHEN NO
+       RECIPIENTS ARE SELECTED IN HOLD NOTICE RECIPIENT PAGE.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix is now available on Fix Central as part of Atlas 6.0.3
+   Fix Pack 5
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   HE12530
+   
+   
+ * REPORTED COMPONENT NAME
+   ATLAS EDISCOVER
+   
+   
+ * REPORTED COMPONENT ID
+   5725D7500
+   
+   
+ * REPORTED RELEASE
+   603
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-04-01
+   
+   
+ * CLOSED DATE
+   2017-05-23
+   
+   
+ * LAST MODIFIED DATE
+   2017-05-23
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ATLAS EDISCOVER
+   
+   
+ * FIXED COMPONENT ID
+   5725D7500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R603 PSY
+   UP

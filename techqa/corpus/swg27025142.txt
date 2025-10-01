@@ -1,0 +1,36 @@
+Title: IBM Installation Manager and Packaging Utility download documents - United States
+
+Text:
+Download links PRODUCT DOCUMENTATION
+
+ABSTRACT
+This is a high level summary document and provides links to download documents for the IBM Installation Manager and IBM Packaging Utility releases. The version-specific document in the Download Tables below include the download links and component install instructions.
+
+
+CONTENT
+Go directly to the Fix Central full-install or upgrade download links by component:
+
+ *   * Packaging Utility Download Links (all versions/platforms) [http://www.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~Rational&product=ibm/Rational/IBM+Packaging+Utility&function=all]
+    * Installation Manager Download Links (all versions/platforms) [http://www.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~Rational&product=ibm/Rational/IBM+Installation+Manager&function=all]
+   
+   
+ * or proceed to the version/component specific Download Document tables below:
+    * Proceed to Download Document Tables 
+   
+   Note the pre-1.8 versions of the IBM Installation Manager and IBM Packaging Utility components have been superseded and are no longer available for download from ibm.com. You should update your pre-1.8 components with the most recent version available.
+   
+   If you have been directed to this document by error message CRIMA1249E, see the important note below: 
+   IMPORTANT: For IBM Installation Manager users who have been directed here because your Installation Manager tried to update itself to a version that no longer supports the platform that is in use. The failed IM update attempt shows this error message: 
+   "CRIMA1249E: Installation Manager cannot be updated to the latest version on the platform that is in use." 
+
+ * Explanation: Newer releases of the Installation Manager no longer support platforms that are past their End-Of-Support dates. 
+
+ * User Action: You will need to transition to a platform that is supported by 1.8.x version of the IBM Installation Manager. See the System Requirements for IBM Installation Manager document http://www.ibm.com/support/docview.wss?uid=swg27036456 [http://www.ibm.com/support/docview.wss?uid=swg27036456]. 
+
+
+
+Download Tables 
+
+Selecting the "Download document" link from the tables below will take you to version-specific document containing the download links. Select the version of the Installation Manager or Packaging Utility that you wish to download/install:
+
+Version 1.8 Version Installation Manager Packaging Utility 1.8.9.1 Download document [http://www.ibm.com/support/docview.wss?uid=ibm10718873] Download document [http://www.ibm.com/support/docview.wss?uid=ibm10719007] 1.8.9 Download document [http://www.ibm.com/support/docview.wss?uid=swg24044637] Download document [http://www.ibm.com/support/docview.wss?uid=swg24044638] 1.8.8 Download document [http://www.ibm.com/support/docview.wss?uid=swg24044395] Download document [http://www.ibm.com/support/docview.wss?uid=swg24044396] 1.8.7.1 Download document [http://www.ibm.com/support/docview.wss?uid=swg24044148] Download document [http://www.ibm.com/support/docview.wss?uid=swg24044147] 1.8.7 Download document [http://www.ibm.com/support/docview.wss?uid=swg24043549] Download document [http://www.ibm.com/support/docview.wss?uid=swg24043548] 1.8.6.1 Download document [http://www-01.ibm.com/support/docview.wss?uid=swg24043658] Download document [http://www-01.ibm.com/support/docview.wss?uid=swg24043659] 1.8.6 Download document [http://www.ibm.com/support/docview.wss?uid=swg24043138] Download document [http://www.ibm.com/support/docview.wss?uid=swg24043139] 1.8.5.1 Download document [http://www.ibm.com/support/docview.wss?uid=swg24042905] Not Applicable 1.8.5 Download document [http://www.ibm.com/support/docview.wss?uid=swg24041188] Download document [http://www.ibm.com/support/docview.wss?uid=swg24041189] 1.8.4.1 Download document [http://www.ibm.com/support/docview.wss?uid=swg24041665] Download document [http://www.ibm.com/support/docview.wss?uid=swg24041664] 1.8.4 Download document [http://www.ibm.com/support/docview.wss?uid=swg24040291] Download document [http://www.ibm.com/support/docview.wss?uid=swg24040292] 1.8.3 Download document [http://www.ibm.com/support/docview.wss?uid=swg24039631] Download document [http://www.ibm.com/support/docview.wss?uid=swg24039632] 1.8.2.1 Download document [http://www.ibm.com/support/docview.wss?uid=swg24039708] Download document [http://www.ibm.com/support/docview.wss?uid=swg24039709] 1.8.2 Download document [http://www.ibm.com/support/docview.wss?uid=swg24039012] Download document [http://www.ibm.com/support/docview.wss?uid=swg24039013] 1.8.1 Download document [http://www.ibm.com/support/docview.wss?uid=swg24038357] Download document [http://www.ibm.com/support/docview.wss?uid=swg24038355] 1.8 Download document [http://www.ibm.com/support/docview.wss?uid=swg24037640] Download document [http://www.ibm.com/support/docview.wss?uid=swg24037641] Versions 1.7.4.7 and prior have been superseded by 1.8.x and users of all pre-1.8 releases should upgrade their systems to one of the releases above. Back to top

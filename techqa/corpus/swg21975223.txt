@@ -1,0 +1,37 @@
+Title: IBM SSL key error in DataStage web service client stage - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ After installing a new certificate on remote web service hosting a web service used by the Web Service Client or Web Service Connector stage, the job now fails with one of the following erros: 
+javax.net.ssl.SSLKeyException: RSA premaster secret error 
+caused by: java.security.InvalidKeyException: Illegal key size or default parameters 
+or
+java.lang.NoClassDefFoundError: javax.crypto.b (initialization failure) 
+Caused by: java.lang.SecurityException: Cannot set up certs for trusted CAs
+Caused by: java.lang.SecurityException: Jurisdiction policy files are not signed by trusted signers! 
+
+
+
+Cannot set up certs for trusted CAs 
+
+RESOLVING THE PROBLEM
+After installing a new certificate on remote web service hosting a web service used by the Web Service Client or Web Service Connector stage, the job now fails with one of the following erros: 
+
+javax.net.ssl.SSLKeyException: RSA premaster secret error 
+caused by: java.security.InvalidKeyException: Illegal key size or default parameters 
+
+or
+
+java.lang.NoClassDefFoundError: javax.crypto.b (initialization failure) 
+Caused by: java.lang.SecurityException: Cannot set up certs for trusted CAs
+Caused by: java.lang.SecurityException: Jurisdiction policy files are not signed by trusted signers! 
+
+The solution for the first error is discussed in the following technote:
+http://www-01.ibm.com/support/docview.wss?uid=swg21971637 [http://www-01.ibm.com/support/docview.wss?uid=swg21971637]
+
+However, often after correcting the initial issue with the above steps, the job will then fail with the second error relating to trusted certificates and signers. That error is requires an update to the JDK shipped with Information Server. Information Server 9.1 ships with JDK 1.6 SR10. However, JDK 1.6 SR13 or higher is needed to avoid the second error. 
+
+The following technote discusses how to get latest JDK for Information Server 9.1 which will update java level to 1.6 SR16:
+http://www-01.ibm.com/support/docview.wss?uid=swg21964927 [http://www-01.ibm.com/support/docview.wss?uid=swg21964927]

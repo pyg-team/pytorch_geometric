@@ -1,0 +1,24 @@
+Title: IBM Understanding the sampling rate / MOD-level for TEMA and DC - United States
+
+Text:
+tema; dc; modlevel; sampling rate; relationship; CAMADALL CAMADMSMOD TECHNOTE (FAQ)
+
+QUESTION
+ Both TEMA and Datacollector can be configured with a sampling rate and a monitoring level. Are these related? 
+
+ANSWER
+The sampling rate % as defined on MS-WebUI is for Managing Server only. Its purpose is to archive data in the Octigate DB for the historical reports using a specific sampling rate. In TEMA the sampling rate % is used by the Request Aggregator which is connected to the TEMA only. Hence, the MS-WebUI MOD-level is totally independent from the Request Data Monitoring Level available in TEMA.
+In order to further clarify, here is a typical user scenario:
+
+
+ * set (L1, 2%) on MS-WebUI (default) 
+ * set (L1, 100%) on TEMA, with Request Data Fixed Interval = 60sec 
+ * load the J2EE application with one SQL call per sec, by using Servlet or EJB 
+ * in the Request Analysis workspace (TEP) you will see the Application Times only, for the transaction. All other metrics will be zeros as expected. Also the datasources workspace is empty as expected (L1) 
+ * set (L2, 100%) on TEMA using the predefined take action 
+ * in the Request Analysis workspace you should now see a more detailed report; there are application times, SQL and JCA metrics as well as the datasource values in the Datasources workspace 
+ * as an additional check you can verify that the <DC>/runtime/.../...mod file still contains the value '1', that means the MS still sees the DC running at (L1, 2%). No SQL reports can be produced on MS side as expected.
+
+ 
+
+Cross reference information Segment Product Component Platform Version Edition Systems and Asset Management Tivoli Composite Application Manager for Application Diagnostics ITCAM for APPLICATION DIAGNOSTICS Agent for WebSphere AIX, HP-UX, Linux, Solaris, Windows, z/OS 7.1

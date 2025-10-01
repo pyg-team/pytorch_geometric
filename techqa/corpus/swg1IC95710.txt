@@ -1,0 +1,162 @@
+Title: IBM IC95710: SQL0104N IS RETURNED WHEN UPDATING SYSSTAT.COLDIST.COLVALUE VIA DB2LOOK MIMIC MODE - United States
+
+Text:
+z/os  FIXES ARE AVAILABLE
+DB2 Version 9.7 Fix Pack 9 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24036646]
+DB2 Version 9.7 Fix Pack 9a for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24037559]
+DB2 Version 9.7 Fix Pack 10 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24038641]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The update of statistics of SYSSTAT.COLDIST.COLVALUE generated
+   via db2look -m (mimic mode) may fail with SQL0104N error.
+   
+   The same output looks as follows:
+   
+   UPDATE SYSSTAT.COLDIST
+   SET COLVALUE=''<value>  '',
+         VALCOUNT=<value>
+   WHERE COLNAME = '<value>' AND TABNAME =
+   '<value>' AND TABSCHEMA = '<SCHEMA>    ' AND TYPE      =
+   '<value>' AND SEQNO     =  <value>
+   DB21034E  The command was processed as an SQL statement because
+   it was not a valid Command Line Processor command.  During SQL
+   processing it
+   returned:
+   SQL0104N  An unexpected token "<value>" was found following
+   "DIST SET
+   COLVALUE=''".  Expected tokens may include:  "CONCAT".
+   SQLSTATE=42601
+   
+   This occurs because of character wrapping for COLVALUE: db2look
+   -m adds
+   two single quotes instead of one single quote.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  As a temporary workaround:
+   
+   
+   Remove one single quote for the COLVALUE literal in
+   the update statement, then run the statement again:
+   
+   UPDATE SYSSTAT.COLDIST SET COLVALUE='<value>  ',
+   VALCOUNT=<value> WHERE COLNAME = '<value>' AND TABNAME =
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * All users on DB2 v97 FP8 and lower                           *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * See Error Description                                        *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Upgrade to DB2 V97 FP9                                       *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  First Fixed in DB2 V97 FP9
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC95710
+   
+   
+ * REPORTED COMPONENT NAME
+   DB2 FOR LUW
+   
+   
+ * REPORTED COMPONENT ID
+   DB2FORLUW
+   
+   
+ * REPORTED RELEASE
+   970
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-09-04
+   
+   
+ * CLOSED DATE
+   2013-12-17
+   
+   
+ * LAST MODIFIED DATE
+   2013-12-17
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    IC95866 [http://www-01.ibm.com/support/docview.wss?uid=swg1IC95866] IC95867 [http://www-01.ibm.com/support/docview.wss?uid=swg1IC95867] IC96371 [http://www-01.ibm.com/support/docview.wss?uid=swg1IC96371] IC96693 [http://www-01.ibm.com/support/docview.wss?uid=swg1IC96693]
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   DB2 FOR LUW
+   
+   
+ * FIXED COMPONENT ID
+   DB2FORLUW
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R970 PSY
+   UP

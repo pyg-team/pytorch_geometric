@@ -1,0 +1,17 @@
+Title: IBM DFHIS1027 while running EC01 transaction from CICS TG to CICS TS over IPIC - United States
+
+Text:
+IPIC IPCONN INVALID PASSWORD AUTHORITY MISMATCH_MESSAGE_VERIFY 080F6051 5655M1500 R640 640 R400 400 HCI6400 R650 650 R500 500 HCI6500 5655-M15 5655M15 5655S9700 R660 660 R600 600 HCI6600 5655-S97 5655S97 5655S9700 R670 670 R700 700 HCI6700 5655-S97 5655S97 kixinfo TECHNOTE (FAQ)
+
+QUESTION
+ You have a CICS Transaction Server for z/OS (CICS TS) IP interconnectivity (IPIC) connection to CICS Transaction Gateway (CICS TG) defined with USERAUTH set to VERIFY on the IPCONN definition. You run the sample transaction EC01 using EciB1 from CICS TG, passing the correct USERID and PASSWORD. Although processing is otherwise nomal, you receive message DFHIS1027 with the USERID as "????????". If an incorrect USERID or PASSWORD is supplied, you see 4 DFHIS1027 messages, with the USERID field showing the actual value in the second message, and "????????" in the USERID field for the other 3 messages. You want to know, why is the DFHIS1027 message occurring with the sample EC01 transaction? 
+
+ANSWER
+The EciB1 process with connectivity to CICS TG through IPIC to CICS TS and USERAUTH=VERIFY security is working as expected from a Batch job.
+
+EciB1 has no "knowledge" that the CICS TS region it is connecting to requires security so it attempts to start the EC01 transaction with no USERID or PASSWORD; this maps to an IPIC flow that does not contain an IS8 header. This will trigger message "DFHIS1027 [http://publib.boulder.ibm.com/infocenter/cicsts/v4r2/topic/com.ibm.cics.ts.messages.doc/cics_mc/dfhis/IS1027.html] Security violation has been detected using IPCONN ipconn and transaction id EC01 by userid userid"and MISMATCH_MESSAGE_VERIFY with sense 080F6051 in the CICS TS region if security is required, and an error will be returned as expected. Once the security error is returned and the USERID and PASSWORD are supplied on the next call, the IPIC flow will contain an IS8 header and it should work appropriately, based on the credentials supplied.
+
+
+
+PRODUCT ALIAS/SYNONYM
+ CICS/TS CICS TS CICS Transaction Server

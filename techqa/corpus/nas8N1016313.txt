@@ -1,0 +1,39 @@
+Title: IBM Database Host Server Connections Drop after a Period of Inactivity - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Network hardware causes connection drops after a period of inactivity. This can be prevented with changes to hardware settings or the use of keep-alive timers. 
+
+RESOLVING THE PROBLEM
+Problem Description 
+
+Connections made by Database Host Server clients such as IBM Toolbox for Java JDBC or iSeries Access for Windows ODBC are dropped after a long period of inactivity. The error is typically seen when a user returns to an application after an hour or more. In applications that use connection pooling (such as Web servers), the problem may appear more intermittent. 
+
+Clients report a communications error such as Communication link failure. Communications errors return a SQL State of 08xxx. The most common error is SQL State 08S01. Internal traces and stack dumps usually indicate the underlying socket return code. The most common socket error is connection reset by peer. Applications that do not handle communications errors may go into a loop, continuously reporting errors such as 08003 - Connection does not exist.
+
+The database host server job associated with the connection may not receive any notification the communication error occurred. If the IBM iSeries TCP layer receives no notification in the form a TCP FIN or RST, then the job will remain active (but idle) until the dead connection is detected by the TCP keep-alive timer. The default setting allows for the job to stay active for 2 to 4 hours.
+
+Other database server clients that may be affected include iSeries Access for Windows OLE DB (IBMDA400), .Net data provider, and Data transfer.
+
+Problem Detail
+
+The cause of the problem is an idle timer in the network. This is typically a switch or firewall. The common default value is 1 hour. There is no idle time-out in database server or in the iSeries TCP layer. There is no idle time-out in the client (ODBC driver or JDBC driver). Any idle time-out must come from the network.
+
+Verify that the problem is related to idle time and not a specific time of day (for example, the problem always occurs to connections active at 1am). Connection errors that occur at specific times, particularly late night or early morning, are often caused by a user or maintenance program running the ENDJOB or ENDSBS command rather than network idle time-outs. This type of activity is logged in the QZDASOINIT joblog (job ended by user xxx messages), the history log, and also in QSYSOPR message queue.
+
+If required, iSeries communications traces, client side traces, and sniffer traces in each segment can be used to locate the network component ending the connection. Idle time-outs are implemented by sending a TCP reset (RST). Some components send the reset to only one end of a connection. If a reset is sent only to the client, the database server job will not end until the iSeries keep-alive timer (if enabled) detects the broken connection. The default value is 2 hours. This implies that the database server job can stay active for between 2 and 4 hours.
+
+Problem Resolution
+
+To avoid the network idle time-out, consider the following: 
+
+o Adjust the idle time-out for the firewall or router. o Adjust any connection pools idle time-out value to a value lower than the idle time-out of the network. o Lower the TCP keep-alive. The keep-alive frame may reset the inactivity timer. Some network components appear to ignore keep-alives.
+
+The system TCP keep-alive is set using the CFGTCP command, Option 3. The value must be less than half the value of the idle timer. For example, if the firewall idle timer is 60 minutes, the keep-alive should be set to 29 minutes or less.
+
+iSeries Access for Windows includes the cwbcopwr utility which can be used to adjust various socket options on the PC, including keep-alive. Options can be server or API specific. See the cwbcopwr documentation for further information (<iSeries Access for Windows install directory>\cwbcopwr.htm). As a best practices guide, applications should always monitor for communications-related errors by checking the SQL State. SQLStates of 08xxx imply that the connection is no longer active. Applications should immediately disconnect, then reconnect rather than continuing to attempt to use the inactive connection.  
+
+HISTORICAL NUMBER
+ 323321439

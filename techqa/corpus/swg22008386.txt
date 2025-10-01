@@ -1,0 +1,24 @@
+Title: IBM How do I remove remove old data  from the  history database - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Query history database has entries frrom 2-3 years ago how do I purge? 
+
+CAUSE
+History database is growing and wasting space
+
+ANSWER
+You can use clean up old data periodically using the nzhistcleanupdb. 
+
+For example: 
+nzhistcleanupdb -u admin -p **** -d HISTDB -t "2014- 
+10-01" -g 
+
+About to DELETE all history entries older than 2014-10-01 00:00:00 
+(GMT) from HISTDB. 
+Proceed (yes/no)? :yes 
+
+RELATED INFORMATION
+ nzhistcleanupdb command [https://www.ibm.com/support/knowledgecenter/en/SSULQD_7.2.1/com.ibm.nz.adm.doc/r_sysadm_nzhistcleanupdb_cmd.html]

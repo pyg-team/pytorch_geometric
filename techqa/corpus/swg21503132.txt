@@ -1,0 +1,61 @@
+Title: IBM WebSphere Process Server (WPS) client installation on WebSphere Portal reports: SCA Container disabled - United States
+
+Text:
+WPS client; SCA Container disabled; WPS profile is not set; PMWC0001W TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ After a successful setup of a WebSphere Portal V7 / WebSphere Process Server V7.0.0.3 environment based on WebSphere Application Server ND V7.0.0.13 the Service Component Architecture (SCA) service manager throws an exception, indicating that SCA Container is disabled because the WPS profile is not set. Using the cross-cell pattern, the WPS client was created on top of the Portal server profile using the augmentation process with INSTCONFSUCCESS. 
+
+SYMPTOM
+The "Manager Processes Portlet" is able to show process templates, but could NOT initiate process instances. 
+
+The FFDC record contains:
+[04.05.11 10:46:50:407 CEST] FFDC Exception:com.ibm.websphere.sca. 
+ServiceRuntimeException SourceId:com.ibm.websphere.sca.ServiceManager.
+create ProbeId:55 
+com.ibm.websphere.sca.ServiceRuntimeException: SCA Container is 
+disabled because WPS profile is not set 
+at com.ibm.ws.sca.internal.container.impl.ContainerImpl.start (ContainerImpl.java:423) at com.ibm.ws.sca.internal.manager.impl.ServiceManagerImpl.<init> 
+(ServiceManagerImpl.java:68) 
+at java.lang.J9VMInternals.newInstanceImpl(Native Method) 
+at java.lang.Class.newInstance(Class.java:1328) 
+
+The SystemOut.log file shows:
+[5/10/11 18:01:08:669 CEST] 00000000 WBICheckServe W PMWC0001W: The
+WebSphere integration server functionality is disabled because the 
+following integration server configuration file cannot be found: 
+server-wbi.xml. 
+[5/10/11 18:01:09:986 CEST] 00000000 BPCCheckServe W PMWC0001W: 
+WebSphere Business Process Choreographer functionality is disabled due 
+to missing integration server config file: server-bpc.xml 
+
+
+CAUSE
+The SCA service manager running as part of the WPS client on WebSphere Portal cannot find the file that indicates that a client installation of WebSphere Process Server is present because the augmentation process does not copy the file to the correct location. The name of the XML file in the SystemOut.log file may be misleading as the missing file is the configuration information for the core WebSphere Process Server (client and server): "server-core.xml". This file is not found and most of the integration server client functionality is disabled.
+
+
+ENVIRONMENT
+The environment is a cross-cell scenario including WebSphere Process Server and WebSphere Portal. More information about the setup can be found here: 
+
+http://www.ibm.com/developerworks/websphere/zones/portal/proddoc/dw-w-integratewps/ [http://www.ibm.com/developerworks/websphere/zones/portal/proddoc/dw-w-integratewps/]
+
+
+RESOLVING THE PROBLEM
+1. Do NOT copy the sca.jar to <any> (like <Portal_root>/shared/app folder) location if you get a NoClassDefFoundError. 
+
+
+2. Copy the server-core.xml from the profile templates folder to the WebSphere_Portal 
+folder at <Profile_root>\config\cells\<cellname>\nodes\<nodename>\servers
+For example:
+/<process_server_root>/profileTemplates/default.wbicore/documents/config/templates/ servertypes/APPLICATION_SERVER/servers/default 
+to 
+/<portal_server_root>/profiles/wp_profile/config/cells/portal/nodes/portal/servers/WebSphere_Portal
+
+3. Restart WebSphere Portal and WebSphere Process Server. 
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Organizational Productivity- Portals & Collaboration WebSphere Portal General Linux 7.0 
+PRODUCT ALIAS/SYNONYM
+ WPS

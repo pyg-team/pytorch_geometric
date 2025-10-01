@@ -1,0 +1,141 @@
+Title: IBM WITHDRAWN:  WebSphere Appliance Management Center for WebSphere Appliances - United States
+
+Text:
+ DOWNLOADABLE FILES
+
+ABSTRACT
+ WebSphere Appliance Management Center for WebSphere Appliances is withdrawn. 
+
+DOWNLOAD DESCRIPTION
+Withdrawal Notice: 
+
+Technical Support for WebSphere Appliance Management Center (WAMC) will be withdrawn effective Monday 24 August 2015. If you are interested in contributing or leveraging the functionality from WAMC you should consider the open-source Appliance Management Center (AMC) project, available at
+https://github.com/ibm-datapower/appliance-management-center [https://github.com/ibm-datapower/appliance-management-center]
+
+WebSphere Appliance Management Center for WebSphere Appliances provides fast time to value, with firmware deployment, domain and service configuration, and deployment policy management capabilities.
+
+Centrally manage appliance firmware and configurations across groups of WebSphere DataPower appliances, and monitor key metrics and events from groups of WebSphere DataPower appliances: 
+
+• Web-based user interface
+• Support for multiple generations of WebSphere DataPower appliances
+• Firmware management
+• Domain and configuration management, including support for deployment policies across multiple environments
+• Appliance monitoring
+• Operating systems: Windows, Linux, and AIX
+
+Possible uses
+WebSphere Appliance Management Center for WebSphere Appliances provides the capability to centrally manage and monitor groups of WebSphere DataPower appliances. 
+
+This offering is intended for deployments with two, or more, WebSphere DataPower appliances, which can span multiple deployment environments (for example, development, test, and production). 
+
+WebSphere Appliance Management Center for WebSphere Appliances serves as the control point for lifecycle management of firmware and configurations across one, or more, groups of appliances. 
+
+Also included is IBM Tivoli Composite Application Manager Agent for WebSphere DataPower Appliance, which you can use to monitor key metrics from multiple appliances in a central location.
+
+New in this Release
+23 May 2016:
+• Security fixes.
+
+18 February 2016:
+• Security fixes.
+
+30 November 2015:
+• Security updates.
+
+03 August 2015:
+• Security fixes.
+• Update WebSphere Liberty to version 8.5.5.6.
+
+30 June 2015:
+• Security fixes.
+
+29 May 2015:
+• Security fixes.
+
+31 March 2015:
+• This update addresses PMR fixes.
+• Support for IBM DataPower Gateway firmwares and DataPower model 8436.
+
+21 November 2014:
+• This update addresses PMR fixes.
+
+31 October 2014:
+• This update addresses PMR fixes.
+
+02 July 2014:
+• This update addresses PMR fixes.
+• Support for IBM WebSphere DataPower Version 7 firmware
+
+08 January 2014:
+• Minor fixes added in refresh.
+
+Functions reintroduced from WebSphere Appliance Management Center V4:
+• Secure backup and restore both to and from an FTP server.
+• Use of a remote certificate that is accessed through a URL for secure backup.
+• Ability to set the quiesce timeout at domain level.
+• Ability to select an appliance as the source of a deployment policy or domain configuration.
+• Automatic synchronization of a domain with its configuration source and deployment policy.
+
+Details
+Author: DataPower Development Team
+Category: 3
+Released: 26Jun12
+Latest Update: 23May16
+»Note the Software version number shown in the side-bar is the most recent version of the WebSphere DataPower firmware product to which this offering applies. The modified date is the date of the last web page refresh. 
+
+PREREQUISITES
+Hardware requirements:
+Platform for one of the supported operating systems.
+Disk space - ensure the computer on which you want to install WebSphere Appliance Management Center for WebSphere Appliances meets the following disk space requirements: 
+- 300 MB free disk space on installation drive.
+- 400 MB temporary free disk space for installation files.
+- Additional space for logs and for files transferred to and from appliances, such as firmware images. The amount of space varies depending on how the product is used. 
+Memory - Minimum: 2 GB
+
+Software requirements:
+Supported operating systems - one of the following is required:
+• AIX 6.1/7.1 (64-bit)
+• RHEL 5/6 (System z/x86-64)
+• SLES 10/11 (System z/x86-64)
+• Windows Server 2008 (x86-64)
+• Windows Server 2008 R2 (x86-64)
+
+Supported devices:
+Firmware: V3.8.2, or later
+• WebSphere DataPower XML Accelerator XA35 (9235 model only)
+• WebSphere DataPower XML Security Gateway XS40 (9235 model only)
+• WebSphere DataPower Integration Appliance XI50 (9235 model only)
+• WebSphere DataPower Integration Blade XI50B
+• WebSphere DataPower Integration Appliance XI50 for zEnterprise™
+• WebSphere DataPower B2B Appliance XB60
+• WebSphere DataPower Low Latency Appliance XM70
+• WebSphere DataPower Service Gateway XG45
+• WebSphere DataPower Integration Appliance XI52
+• WebSphere DataPower B2B Appliance XB62
+Firmware: V1.0, or later
+• WebSphere DataPower Edge Appliance XE82
+Firmware: V2.0.0, or later
+• WebSphere DataPower XC10 Appliance
+
+INSTALLATION INSTRUCTIONS
+To install WebSphere Appliance Management Center for WebSphere Appliances, see the product entry in IBM Knowledge Center.
+
+URL LANGUAGE SIZE(Bytes) Knowledge Center [http://www.ibm.com/support/knowledgecenter/SSSRTQ_5.0.0/welcome/welcome.html] US English 111 
+DOWNLOAD PACKAGE
+
+
+
+
+
+Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options WebSphere Appliance Management Center downloads 23 May 2016 US English 111 HTTPS [https://www.ibm.com/services/forms/preLogin.do?source=swg-wasmcma ] 
+TECHNICAL SUPPORT
+ WebSphere Appliance Management Center for WebSphere Appliances is supplied under the standard terms and conditions provided by the International Program License Agreement (IPLA) and thus carries program defect service.
+
+Please Read the license files that accompany the offering to ensure that you understand the conditions under which it is provided. No Proof of Entitlement is required for this offering. 
+
+If you encounter what you believe to be a defect with the offering, you can request Program Services by reporting the problem through the same defect reporting channel that you employ for the WebSphere appliance with which you are using the offering.
+
+This offering has service support for as long as the WebSphere appliances that it supports remain in service. For the relevant service information, see the WebSphere product lifecycle pages. [http://www.ibm.com/software/websphere/support/lifecycle/] This offering is supported only with WebSphere appliances that are themselves supported. 
+
+NOTE ON LICENSING:
+Please Note the "Supporting Program" restriction clause in the license. It means that the IBM Tivoli Composite Application Manager (ITCAM) Agent for WebSphere DataPower Appliance is supplied only for standalone use with WebSphere Appliance Management Center for WebSphere Appliances. The Licensee is prohibited from using ITCAM Agent for WebSphere DataPower Appliance in connection with any other software, this prohibition includes connecting it to an enterprise monitoring infrastructure. Please Contact an IBM Sales Representative if you want to license ITCAM Agent for WebSphere DataPower Appliance for connecting to your enterprise monitoring infrastructure.

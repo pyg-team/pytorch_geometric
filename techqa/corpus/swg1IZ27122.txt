@@ -1,0 +1,172 @@
+Title: IBM IZ27122: INVALID GL ACCOUNT WHEN TRYING TO RECORD ACTUALS AGAINST AN ASSET THAT HAS NO LOCATION OR GL - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Open Assets and create a new Asset.
+   Do not give the asset a location or GL Account
+   Create and approve a work order for the asset.
+   Try to add a labor actual
+   
+   Recieve an error that the GL Account is invalid or incomplete
+   
+   If you do the same test against a location with out a gl
+   account, you are able to approve labor actuals. This is with GL
+   Validation turned on.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Create GL's for all locations and associate the asset to a
+   location.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All users of maximo of release 6.2 and above *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Open Assets and create a new Asset.     *
+   *                                                              *
+   *                      Do not give the asset a location or GL  *
+   *                      Account                                 *
+   *                                                              *
+   *                      Create and approve a work order for the *
+   *                      asset.                                  *
+   *                                                              *
+   *                      Try to add a labor actual               *
+   *                                                              *
+   *                      Recieve an error that the GL Account is *
+   *                      invalid or incomplete                   *
+   *                                                              *
+   *                      If you do the same test against a       *
+   *                      location with out a gl                  *
+   *                                                              *
+   *                      account, you are able to approve labor  *
+   *                      actuals. This is with GL                *
+   *                                                              *
+   *                      Validation turned on.                   *
+   *                                                              *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   *                                                              *
+   *                                                              *
+   *                                                              *
+   ****************************************************************
+   INVALID GL ACCOUNT WHEN TRYING TO RECORD ACTUALS AGAINST AN
+   ASSET THAT HAS NO LOCATION OR GL
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This problem could not be reproduced. It works in the same way
+   for both asset with no glaccount as well as location with no gl
+   account associated with a workorder and creating labor actuals
+   for this workorder. When the GL validation is turned on, the gl
+   debit and credit accounts are required and should not be
+   partial.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ27122
+   
+   
+ * REPORTED COMPONENT NAME
+   ASSETS
+   
+   
+ * REPORTED COMPONENT ID
+   5724R46AS
+   
+   
+ * REPORTED RELEASE
+   620
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-07-16
+   
+   
+ * CLOSED DATE
+   2008-08-07
+   
+   
+ * LAST MODIFIED DATE
+   2008-08-07
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  MAXIMO
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ASSETS
+   
+   
+ * FIXED COMPONENT ID
+   5724R46AS
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R620 PSY
+   UP

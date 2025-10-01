@@ -1,0 +1,308 @@
+Title: IBM PM28671: URE during the workarea conflict detection while synchronizing a workarea - United States
+
+Text:
+  A FIX IS AVAILABLE
+Rational Synergy 7.2 [http://www-01.ibm.com/support/docview.wss?uid=swg24029577]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  0) Reproduced with Synergy 7.1.0.2.01 on linux
+   (the customer indicated the problem appeared after applying the
+   patch 7.1.0.2.01 on top of 7.1.0.2)
+   
+   1) Start a classic session as ccm_admin
+   -create a type called vbs for example, with supertype binary.
+   -Add the following Pattern as Migrate rule:
+   .*.\vbs
+   (although this syntax is not correct)
+   -Save and exit
+   
+   2) Start a Java client session with the Web mode (=? there is no
+   error with the standard mode)
+   -Create a new project.
+   -Go in the workarea and create a new file: toto.vbs
+   -Right click on the project and select 'Sync Workarea/Members
+   Only'
+   -The Workarea Conflict detection Dialog appears, but after a few
+   second there is an URE.
+   In the user's 'synergy.log' there is the error:
+   ###
+   2010-12-10T10:50:41.445+0000 WARNING: --- BEGIN UNHANDLED
+   EXCEPTION ERROR REPORT ---
+   An internal error has occurred at Fri Dec 10 10:50:41 GMT 2010
+   Unhandled runtime exception:
+   java.util.regex.PatternSyntaxException
+   Exception Message: Illegal/unsupported escape sequence near
+   index 4
+   .*.\VBS
+       ^
+   
+   Stack trace:
+   java.util.regex.PatternSyntaxException: Illegal/unsupported
+   escape sequence near index 4
+   .*.\VBS
+       ^
+    at java.util.regex.Pattern.error(Pattern.java:1724)
+    at java.util.regex.Pattern.escape(Pattern.java:2188)
+    at java.util.regex.Pattern.atom(Pattern.java:1963)
+    at java.util.regex.Pattern.sequence(Pattern.java:1845)
+    at java.util.regex.Pattern.expr(Pattern.java:1763)
+    at java.util.regex.Pattern.compile(Pattern.java:1471)
+    at java.util.regex.Pattern.?init?(Pattern.java:1144)
+    at java.util.regex.Pattern.compile(Pattern.java:834)
+    at
+   com.telelogic.cm.internal.objectapi.typedef.TypeDefImpl.?init?(T
+   ypeDefImpl.java:108)
+    at
+   com.telelogic.cm.internal.objectapi.AccentCaller.returnTypeDefLi
+   st(AccentCaller.java:2452)
+    at
+   com.telelogic.cm.internal.objectapi.typedef.TypeDefUtilsImpl.get
+   AllTypeDefinitions(TypeDefUtilsImpl.java:49)
+    at
+   com.telelogic.cm.internal.objectapi.typedef.TypeDefUtilsImpl.get
+   TypeMappings(TypeDefUtilsImpl.java:58)
+    at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+    at
+   sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessor
+   Impl.java:45)
+    at
+   sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethod
+   AccessorImpl.java:37)
+    at java.lang.reflect.Method.invoke(Method.java:599)
+    at
+   com.telelogic.cm.service.ServiceContainer.call(ServiceContainer.
+   java:706)
+    at
+   com.telelogic.cm.service.ServiceContainer.dispatch(ServiceContai
+   ner.java:431)
+    at
+   com.telelogic.cm.service.ServiceContainer.dispatch(ServiceContai
+   ner.java:478)
+    at
+   com.telelogic.cm.service.ConnectionManager$RemoteExecutorLogger.
+   callService(ConnectionManager.java:400)
+    at
+   com.telelogic.cm.service.ConnectionBasedCallHandler$RequestExecu
+   tor.run(ConnectionBasedCallHandler.java:143)
+    at
+   com.telelogic.cm.util.concurrent.SharedThreadPoolExecutor$Shared
+   ThreadPoolTaskWrapper.run(SharedThreadPoolExecutor.java:272)
+    at
+   java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoo
+   lExecutor.java:896)
+    at
+   java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExe
+   cutor.java:918)
+    at java.lang.Thread.run(Thread.java:735)
+    at
+   com.telelogic.cm.service.ClientProxy.addLocalStackToException(Cl
+   ientProxy.java:264)
+    at
+   com.telelogic.cm.service.ClientProxy.access$200(ClientProxy.java
+   :60)
+    at
+   com.telelogic.cm.service.ClientProxy$1.forward(ClientProxy.java:
+   342)
+    at
+   com.telelogic.cm.service.ClientProxy.invoke(ClientProxy.java:239
+   )
+    at $Proxy30.getTypeMappings(Unknown Source)
+    at
+   com.telelogic.cm.internal.objectapi.ProjectGetWorkAreaConflictsC
+   mdImpl.executeImpl(ProjectGetWorkAreaConflictsCmdImpl.java:350)
+    at
+   com.telelogic.cm.internal.objectapi.command.StoppableProgressing
+   MessagingCmd.executeImpl(StoppableProgressingMessagingCmd.java:9
+   8)
+    at
+   com.telelogic.cm.internal.objectapi.command.ProgressingCmd.execu
+   teImpl(ProgressingCmd.java:71)
+    at
+   com.telelogic.cm.internal.objectapi.command.BasicCmd.executeTemp
+   late(BasicCmd.java:85)
+    at
+   com.telelogic.cm.internal.objectapi.ProjectGetWorkAreaConflictsC
+   mdImpl.execute(ProjectGetWorkAreaConflictsCmdImpl.java:395)
+    at
+   com.telelogic.cm.ccm_client.components.ClientProject.getWorkArea
+   Conflicts(ClientProject.java:991)
+    at
+   com.telelogic.cm.ccm_client.actions.SyncAction$SyncActionSwingWo
+   rker.doInBackground(SyncAction.java:799)
+    at
+   com.telelogic.cm.ccm_client.actions.SyncAction$SyncActionSwingWo
+   rker.doInBackground(SyncAction.java:717)
+    at javax.swing.SwingWorker$1.call(SwingWorker.java:289)
+    at
+   java.util.concurrent.FutureTask$Sync.innerRun(FutureTask.java:31
+   4)
+    at java.util.concurrent.FutureTask.run(FutureTask.java:149)
+    at javax.swing.SwingWorker.run(SwingWorker.java:328)
+    at
+   java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoo
+   lExecutor.java:896)
+    at
+   java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExe
+   cutor.java:918)
+    at java.lang.Thread.run(Thread.java:735)
+    at
+   com.telelogic.cm.ccm_client.util.threadpool.SwingHelper.wrapExce
+   ptionForThread(SwingHelper.java:302)
+    at
+   com.telelogic.cm.ccm_client.util.threadpool.SwingHelper.throwIfU
+   nchecked(SwingHelper.java:57)
+    at
+   com.telelogic.cm.ccm_client.util.threadpool.CcmSwingWorker.updat
+   eInterfaceOnError(CcmSwingWorker.java:193)
+    at
+   com.telelogic.cm.ccm_client.util.threadpool.CcmSwingWorker.done(
+   CcmSwingWorker.java:232)
+    at javax.swing.SwingWorker$5.run(SwingWorker.java:729)
+    at
+   javax.swing.SwingWorker$DoSubmitAccumulativeRunnable.run(SwingWo
+   rker.java:875)
+    at
+   sun.swing.AccumulativeRunnable.run(AccumulativeRunnable.java:107
+   )
+    at
+   javax.swing.SwingWorker$DoSubmitAccumulativeRunnable.actionPerfo
+   rmed(SwingWorker.java:885)
+    at javax.swing.Timer.fireActionPerformed(Timer.java:282)
+    at javax.swing.Timer$DoPostEvent.run(Timer.java:212)
+    at
+   java.awt.event.InvocationEvent.dispatch(InvocationEvent.java:220
+   )
+    at java.awt.EventQueue.dispatchEvent(EventQueue.java:608)
+    at
+   java.awt.EventDispatchThread.pumpOneEventForFilters(EventDispatc
+   hThread.java:284)
+    at
+   java.awt.EventDispatchThread.pumpEventsForFilter(EventDispatchTh
+   read.java:194)
+    at
+   java.awt.EventDispatchThread.pumpEventsForHierarchy(EventDispatc
+   hThread.java:184)
+    at
+   java.awt.EventDispatchThread.pumpEvents(EventDispatchThread.java
+   :179)
+    at
+   java.awt.EventDispatchThread.pumpEvents(EventDispatchThread.java
+   :171)
+    at
+   java.awt.EventDispatchThread.run(EventDispatchThread.java:132)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   URE during workarea conflict detection while synchronizing a
+   workarea
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fixed in Synergy 7.2.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM28671
+   
+   
+ * REPORTED COMPONENT NAME
+   TLOGIC SYNERGY
+   
+   
+ * REPORTED COMPONENT ID
+   5724V66SN
+   
+   
+ * REPORTED RELEASE
+   710
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-12-10
+   
+   
+ * CLOSED DATE
+   2011-05-13
+   
+   
+ * LAST MODIFIED DATE
+   2011-05-13
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TLOGIC SYNERGY
+   
+   
+ * FIXED COMPONENT ID
+   5724V66SN
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R710 PSN
+   UP

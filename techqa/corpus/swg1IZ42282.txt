@@ -1,0 +1,201 @@
+Title: IBM IZ42282: DLQ HANDLER SHOULD DELIVER THE MESSAGE EVEN IF IT FAILS TO CONVERT APPLICATION DATA - United States
+
+Text:
+  FIXES ARE AVAILABLE
+WebSphere MQ V6.0 Fix Pack 6.0.2.7 [http://www-01.ibm.com/support/docview.wss?uid=swg24022718]
+WebSphere MQ V7.0 for i5/OS Fix Pack 7.0.0.2 [http://www-01.ibm.com/support/docview.wss?uid=swg24022812]
+WebSphere MQ V7.0 Fix Pack 7.0.0.2 [http://www-01.ibm.com/support/docview.wss?uid=swg24022810]
+WebSphere MQ V7.0 Fix Pack 7.0.1.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24024528]
+WebSphere MQ V7.0.1 for i5/OS Fix Pack 7.0.1.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24025627]
+WebSphere MQ V7.0 Fix Pack 7.0.1.2 [http://www-01.ibm.com/support/docview.wss?uid=swg24026518]
+WebSphere MQ V7.0.1 for i5/OS Fix Pack 7.0.1.2 [http://www-01.ibm.com/support/docview.wss?uid=swg24026566]
+WebSphere MQ 6.0 for HP OpenVMS Alpha and Itanium - Fix Pack 6.0.2.7 [http://www-01.ibm.com/support/docview.wss?uid=swg24027266]
+WebSphere MQ 6.0 for HP OpenVMS Alpha and Itanium - Fix Pack 6.0.2.10 (FP03) [http://www-01.ibm.com/support/docview.wss?uid=swg24029987]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The DLQ handler (runmqdlq) attempts to convert the message while
+   retrieving it from the queue manager SYSTEM.DEAD.LETTER.QUEUE
+   (DLQ). Failure in the conversion causes the DLQ handler to leave
+   the message back in the queue. This causes the DLQ handler to
+   retry the operation, as mentioned in the DLQ handler rules
+   table.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  One simple workaround is to change the qmgr CCSID to that of the
+   message. With this, runmqdlq will not carry out any data
+   conversion.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   Users having messages on DLQ which fail conversion from message
+   CCSID to queue manager CCSID.
+   
+   Platforms affected:
+   All Distributed (iSeries, all Unix and Windows)
+   ****************************************************************
+   PROBLEM SUMMARY:
+   Failure to retrieve the message from the DLQ due to
+   MQRC_DBCS_ERROR causes the message to remain on the DLQ and
+   be retried after some time. The retry count depends on the
+   "RETRY" attribute in the rules table.
+   
+   This cause the runmqdlq handler to make repeated attempts and
+   fail in message conversion repeatedly.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  When MQGET() returns with MQCC_WARNING, with the reason code
+   set to MQRC_DBCS_ERROR while converting application data, the
+   MQGET() should succeed and it should be delivered to the
+   destination queue without any conversion. The
+   MQMD.CodedCharSetId and MQMD.Encoding should be set to
+   appropriate values to reflect  application's CCSID and Encoding.
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+                      v6.0
+   Platform           Fix Pack 6.0.2.7
+   --------           --------------------
+   Windows            U200312
+   AIX                U821719
+   HP-UX (PA-RISC)    U821511
+   HP-UX (Itanium)    U822328
+   Solaris (SPARC)    U821514
+   Solaris (x86-64)   U822359
+   iSeries            tbc_p600_0_2_7
+   Linux (x86)        U822325
+   Linux (x86-64)     U822358
+   Linux (zSeries)    U822329
+   Linux (Power)      U822327
+   Linux (s390x)      U822357
+   
+                      v7.0
+   Platform           Fix Pack 7.0.0.2
+   --------           --------------------
+   Windows            U200302
+   AIX                U822354
+   HP-UX (PA-RISC)    U822349
+   HP-UX (Itanium)    U822351
+   Solaris (SPARC)    U822353
+   Solaris (x86-64)   U822394
+   iSeries            tbc_p700_0_0_2
+   Linux (x86)        U822348
+   Linux (x86-64)     U822393
+   Linux (zSeries)    U822352
+   Linux (Power)      U822350
+   
+   The latest available maintenance can be obtained from
+   'Websphere MQ Recommended Fixes'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037]
+   
+   If the maintenance level is not yet available, information on
+   its planned availability can be found in 'Websphere MQ
+   Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ42282
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ LIN X86 V6
+   
+   
+ * REPORTED COMPONENT ID
+   5724H7204
+   
+   
+ * REPORTED RELEASE
+   602
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-01-21
+   
+   
+ * CLOSED DATE
+   2009-01-31
+   
+   
+ * LAST MODIFIED DATE
+   2009-03-10
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ LIN X86 V6
+   
+   
+ * FIXED COMPONENT ID
+   5724H7204
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R600 PSY
+   UP

@@ -1,0 +1,32 @@
+Title: IBM Framework Manager not connecting to TCR - United States
+
+Text:
+CAM-CRP-1132; certificate authority; http; 401; TCR; Cognos; Framework Manager TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ TCR is installed on a 64bit Linux server, Framework Manager installed on a 32bit Windows machine.
+Framework Manager fails to connect to TCR even if the configuration seems to be correct. 
+
+SYMPTOM
+Framework Manager returns error message:
+[ ERROR ] CAM-CRP-1132 An error occurred while attempting to request a certificate from the Certificate Authority service. Unable to connect to the Certificate Authority service. Ensure that the Content Manager computer is configured and that the Cognos 8 services on it are currently running. The HTTP result code '401' was returned from the server.
+
+
+CAUSE
+If Framework Manager is installed on a 32 bit Windows machine, it requires the installation of the Cognos Modeling Fix (FIPS) package only if it is expected to connect a 32 bit TCR. 
+
+If Framework Manager is used with a 64bit TCR, FIPS is not needed.
+If you installed FIPS on the Framework Manager, error CAM-CRP-1132 can occur if connecting a 64 bit TCR environment.
+
+
+RESOLVING THE PROBLEM
+If you need to use Framework Manager with a 64bit TCR and you have already installed FIPS, proceed as follow :
+1) perform a full uninstall of the Framework Manager from the Windows machine
+2) reinstall Framework Manager from scratch
+3) DO NOT INSTALL Cognos Modeling Fix (FIPS) package
+4) verify that Framework Manager is now able to talk with TCR as expected.
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ Tivoli Common Reporting 2.1.1

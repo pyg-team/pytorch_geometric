@@ -1,0 +1,69 @@
+Title: IBM Adding Property Definitions to the Audit Log - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How do I add FileNet Content Platform Engine user-defined Property Definitions to the P8 Audit Log 
+
+CAUSE
+With versions of CPE 5.0 and higher, it is possible to extend user-defined properties to the P8 Audit log database table. When an auditable event occurs, the audit table will be populated according to the AuditAs settings.
+
+ANSWER
+The steps of associating a new property to a Document Class are as follows 
+
+ 1.  Create a new Property Template
+     
+     
+ 2.  Associate the Property Template to a Document Class
+     
+     
+ 3.  Modify the newly created Property Definition to use "AuditAs" to identify properties to monitor
+     
+     
+ 4.  Enable Auditing on the Document Class
+     
+     
+ 5.  Enable Object Change Event to hold user-defined properties 
+     
+     
+ 6.  Query the "EVENT" database table to examine the audit results of the new column
+     
+     
+ 7.  Create a new Property Template named "Audit_Property_test"  *  Using ACCE select the respective Object Store Open the Data Design folder Property Templates New Display name "Audit_Property_Test" Next Data Type = string Next Finish 
+     
+     
+ 8.  Associate the Property Template to a Document Class  *  Using ACCE, select Data Design Classes Document Select the Property Definitions TabAdd button Scroll through to find and select "Audit_Property_Test" 
+     
+     
+ 9.  Modify the newly created Property Definition to use "AuditAs" to identify properties to monitor
+     
+     
+ 10. Enable Auditing on the Document Class
+     
+     
+ 11. Enable Object Change Event to hold user-defined properties 
+     
+     
+ 12. Query the "EVENT" database table to examine the audit results of the new column  * 
+      * 
+      * Open the Data Design folder > Property Templates > New > Display name > "Audit_Property_Test" > Next > Data Type = string > Next > Finish
+     
+     
+
+For example: Assuming that the Property Template "Audit_Property" is associated with "Document Class" where auditing is enabled for the "Creation" event
+
+
+
+ * Via ACCE, open the respective Object Store where the audit log is to be customized 
+ * Select Other Classes 
+ *  Event 
+ * Object Change Event 
+ * Creation Event 
+ * Add 
+ *  "Audit_Property" 
+ * Add "Audit_Property" into additional events as required
+
+
+
+[/support/docview.wss?uid=swg21698710&aid=1] [/support/docview.wss?uid=swg21698710&aid=1]

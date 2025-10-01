@@ -1,0 +1,43 @@
+Title: IBM JR36532:Service Runtime Exception "Cannot resolve module" is seen when two modules are interacting in Cross-Cluster scenario - United States
+
+Text:
+JR36532; Module not found; 7002 known issue. TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Cross-module invocation between two Service Component Architecture (SCA) modules deployed on different application servers/clusters and interacting using SCA binding can result in an exception. 
+
+SYMPTOM
+The following exception is observable in FFDC log or when SCA trace is turned on:
+
+0000002c Core Z com.ibm.ws.sca.internal.scdl.resources.impl.BusResourceImpl com.ibm.ws.sca.internal.scdl.resources.impl.BusResourceImpl#001 Exception: com.ibm.websphere.sca.ServiceRuntimeException: Cannot resolve module: {ModuleName}
+at com.ibm.ws.sca.internal.scdl.resources.impl.BusResourceImpl.getEObject(BusResourceImpl.java:100)
+at org.eclipse.emf.ecore.resource.impl.ResourceSetImpl.getEObject(ResourceSetImpl.java:213)
+at org.eclipse.emf.ecore.util.EcoreUtil.resolve(EcoreUtil.java:197)
+at com.ibm.ws.sca.internal.headers.impl.ManagedInteractionHeaderImpl$1.run(ManagedInteractionHeaderImpl.java:70)
+at java.security.AccessController.doPrivileged(AccessController.java:202)
+at com.ibm.ws.sca.internal.headers.impl.ManagedInteractionHeaderImpl.eResolveProxy(ManagedInteractionHeaderImpl.java:68)
+at com.ibm.wsspi.sca.headers.impl.InteractionHeaderImpl.getTargetPort(InteractionHeaderImpl.java:317) 
+
+Cross-module invocation between two Service Component Architecture (SCA) modules deployed on different application servers/clusters and interacting using SCA binding can result in a "Cannot resolve module" error. Most of the time this error can be ignored. However, selected components in WebSphere Process Server may not behave correctly if they rely on header information in the response message to perform internal cleanup. These services include WBI session and WBI Monitoring.
+
+
+CAUSE
+When a response message is returned from a cross-module invocation, the response message header contains references to some meta-data in the target module, which may fail to be resolved in the context of the source module when the source and target modules are deployed to different servers/clusters. 
+
+
+DIAGNOSING THE PROBLEM
+This problem only happens during request/response cross-module invocation using SCA binding when the source and target modules are deployed to different servers or clusters. 
+
+Look for this error in FFDC log: 
+
+com.ibm.ws.sca.internal.scdl.resources.impl.BusResourceImpl com.ibm.ws.sca.internal.scdl.resources.impl.BusResourceImpl#001 Exception: com.ibm.websphere.sca.ServiceRuntimeException: Cannot resolve module: {ModuleName}
+at com.ibm.ws.sca.internal.scdl.resources.impl.BusResourceImpl.getEObject(BusResourceImpl.java:100)
+at org.eclipse.emf.ecore.resource.impl.ResourceSetImpl.getEObject(ResourceSetImpl.java:213)
+at org.eclipse.emf.ecore.util.EcoreUtil.resolve(EcoreUtil.java:197)
+
+
+RESOLVING THE PROBLEM
+The interim fix for JR36532 resolves the issue. Download the interim fix from the Fix Central links below:WebSphere Process Server and WebSphere Process Server Client Editions [http://www-933.ibm.com/support/fixcentral/swg/quickorder?parent=ibm~WebSphere&product=ibm/WebSphere/WebSphere+Process+Server&release=All&platform=All&function=aparId&apars=JR36352] 
+
+
+WebSphere Enterprise Service Bus [http://www-933.ibm.com/support/fixcentral/swg/quickorder?parent=ibm~WebSphere&product=ibm/WebSphere/WebSphere+Enterprise+Service+Bus&release=All&platform=All&function=aparId&apars=JR36352]

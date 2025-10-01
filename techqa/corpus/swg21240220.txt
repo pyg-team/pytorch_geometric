@@ -1,0 +1,75 @@
+Title: IBM How do I enable Content Manager OnDemand Web Enablement Kit (ODWEK) trace? - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How do I enable IBM® Content Manager OnDemand Web Enablement Kit (ODWEK) trace? 
+
+ANSWER
+ODWEK trace was introduced in ODWEK V7.1.2.5 and writes trace statements to a file named arswww.trace. Starting in ODWEK V7.1.2.7, ODWEK will archive and rename old arswww.trace files with the naming convention of arswww.trace<timestamp>. 
+
+Be aware of the following: 
+
+ * Multiple ODWEK trace files may be written. 
+ * As with any form of tracing, there will be an impact on performance. 
+ * The trace file is not circular, might grow quite large, and must be manually deleted periodically. 
+ * ODWEK trace is only intended to assist in problem determination and is subject to change.
+
+
+The way to turn on ODWEK trace depends on how your Java application is coded. 
+ 1. If your application uses Java APIs with the ODServer(ODConfig cfg) constructor:
+    
+    In your application code, set the TraceDir and TraceLevel as follows:
+    
+    ODConfig cfg = new ODConfig(
+    /*AfpViewer*/ ODConstant.PLUGIN,
+    /*LineViewer*/ ODConstant.APPLET,
+    /*MetaViewer default*/ null,
+    /*MaxHits*/ 500,
+    /*AppletDir*/ "/applets",
+    /*Language*/ "ENU",
+    /*TempDir*/ "c:\\temp",
+    /*TraceDir*/ "c:\\path\\to\\trace",
+    /*TraceLevel*/ 4);
+    
+     1. The arswww.trace trace file is created in the directory that is referenced by the TraceDir parameter. 
+     2. Your ODWEK application must be recompiled and restarted for the ODConfig change to take effect.
+    
+    
+ 2. If your application uses Java APIs with the deprecated method ODServer.initialize(String ConfigDir, String applicationName), or if your application is the IBM provided servlet or ODWEK CGI (both deprecated in CMOD 9.5): 
+     1. Open the file with the name arswww.ini in the directory ConfigDir (that is, the first argument used in this API), or in the directory configured for the servlet or CGI. Modify the following debug stanza to reflect the following:
+        
+        [debug]
+        ;Trace:None=0, Error=1, Error+Warn=2, Err+Warn+Info=3,All=4
+        Trace=4
+        TraceDir=/path/to/trace
+        
+        Tip: If you are using an arswww.ini from a previous release of ODWEK, delete the old debug section. Having multiple debug sections might inhibit ODWEK tracing.
+        
+     2. The arswww.trace trace file is created in the directory that is referenced by the TraceDir parameter. 
+     3. Your ODWEK application must be restarted for the arswww.ini file changes to take effect.
+    
+    
+
+
+After tracing is enabled, recreate the issue and send all arswww.trace* files to IBM Support. 
+
+
+Additional Information:
+ * If you use an application package (e.g., IBM Content Navigator - ICN or FileNet P8 Workplace XT - WPXT), and do not have access to the Java source code, check the application documentation or contact the application support for instruction. For example, IBM WPXT Support can show you the steps to update some Websphere files then rebuild the WPXT EAR and WAR. For another example, ICN has the following screen for the user to control ODWEK trace:[/support/docview.wss?uid=swg21240220&aid=1] [/support/docview.wss?uid=swg21240220&aid=1] 
+
+ * If your application uses the second method (the deprecated one), you are encouraged to change to the first method. The second method may be removed someday and you will not be able to recompile your application. Besides, the first method gives you more functions, e.g., limiting the size of the trace. See below.
+
+ * The trace file grows forever unless you limit its size. This can be done by using the constructor 'Properties' of the ODWEK class ODConfig. For example, the statement props.setProperty(ODConfig.MAX_TRACELOG_SIZE, "100") limits the trace file to 100 mb. When a file reaches this size, it will be closed and renamed to arsww.trace.timestamp, and a new arswww.trace file will be created. For an example of how to code the constructor 'Properties', see http://www-01.ibm.com/support/docview.wss?uid=swg21273746 [http://www-01.ibm.com/support/docview.wss?uid=swg21273746]
+
+ * In ODWEK V8.5.0.0 and later, the trace file is written in binary. To convert the trace file from its binary format, use the arstfmt command found in the bin directory of your OnDemand server V8.5 and later installation. A sample command to convert the ODWEK trace file:
+   
+   /usr/lpp/ars/bin/arstfmt -i arswww.trace -o arswww.trace.txt
+   
+ * Tracing can be set to many different levels with the Trace parameter. When troubleshooting an ODWEK issue, set the trace level to the highest level, unless otherwise instructed by IBM Support.
+
+ * Setting the trace at lower levels such as Trace=1, creates minimal overhead while alerting you only of error conditions. The lower trace levels are ideal for monitoring an ODWEK application that is in a steady state, while higher levels are typically used for troubleshooting a current ODWEK issue.
+
+RELATED INFORMATION
+ How to programmatically configure the ODConfig object [http://www.ibm.com/support/docview.wss?rs=0&uid=swg21241045]

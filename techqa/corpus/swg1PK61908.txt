@@ -1,0 +1,180 @@
+Title: IBM PK61908: KO2ORCVB+2362 ABEND0C2-02 TPROT (TEST PROTECTION) - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Dump Title: OMEGAMON II FOR DB2 DUMP:  TASK=COMMCOLL,ID=V410.
+   ,MOD=KO2OCNTB,OFFSET=005850,CODE=S0C2/00000002
+   ABEND0C2-02 KO2ORCVB+2362 (PK59975 [http://www-01.ibm.com/support/docview.wss?uid=swg1PK59975]) on a TPROT (Test Protection)
+   instruction E50110002000 in PROBLEM STATE.  The SYSTRACE entry
+   showed the PSW with the Problem State bit = 1 (bit 15):
+    00AB51B8 *PGM 002 070D0000 A2EABE88  00060002 00000000 00AB8000
+   KO2ORCVB is an error recovery CESCT and was processing an
+   ABEND0C3 issued just prior to this ABEND -- the ABEND0C3 being
+   caused by KO2OMEMB+768 (PK59975 [http://www-01.ibm.com/support/docview.wss?uid=swg1PK59975]) to document a storage shortage.
+   Just prior to the PSW address for the ABEND0C3 will show:
+            KO2O0951E OMEM - Private Storage Exhausted
+   Error messages in the JOBLOG showed:
+    07:01:01  CSV002I REQUESTS FOR MODULE EZASOH03 EXCEED MAXIMUM
+              USE COUNT
+    07:01:01  KO2O0951E OMEM - Private Storage Exhausted
+    07:01:01  KO2I0170U S0C2 ABEND IN MODULE KO2OCNTB PERCOLATED TO
+              D5API MODULE KO2ACONB
+   IP VERBX VSMDATA showed
+     TCB/OWNER   SP#   KEY    BELOW    ABOVE     TOTAL
+     ---------   ---   ---    -----    -----     -----
+        7CAE88   100    7      3000 32D3D000  32D40000
+   *******
+   PK59938 [http://www-01.ibm.com/support/docview.wss?uid=swg1PK59938] is applied.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: OMEGAMON XE for DB2 PE/DB2PM                 *
+   *                 users of component                           *
+   *                 - OMEGAMON Server                            *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: 1. ABEND0C2 issuing privileged          *
+   *                         instructions in problem state.       *
+   *                      2. Message CSV002I repeatedly issued    *
+   *                         due to LOAD of EZASOH03 module       *
+   *                         exceeding maximum.                   *
+   ****************************************************************
+   * RECOMMENDATION: Apply this PTF                               *
+   ****************************************************************
+   PROBLEM SUMMARY:
+   1. Changed code to issue TESTAUTH followed by MODESET, if
+      needed, to switch to supervisor state before issuing
+      privileged instructions.
+   2. Changed code to issue DELETE of EZASOH03 when no longer
+      needed.
+   
+   PROBLEM CONCLUSION:
+   1. Issue TESTAUTH followed by MODESET. if needed, to switch
+      to supervisor state before issuing privileged instructions.
+   2. Issue DELETE of EZASOH03 when no longer needed.
+   
+   KEYWORDS: ABEND0C2 CSV002I EZASOH03
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  1. Issue TESTAUTH followed by MODESET. if needed, to switch
+      to supervisor state before issuing privileged instructions.
+   2. Issue DELETE of EZASOH03 when no longer needed.
+   
+   KEYWORDS: ABEND0C2 CSV002I EZASOH03
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK61908
+   
+   
+ * REPORTED COMPONENT NAME
+   OM XE DB2PE/PM
+   
+   
+ * REPORTED COMPONENT ID
+   5655OPE00
+   
+   
+ * REPORTED RELEASE
+   410
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2008-02-28
+   
+   
+ * CLOSED DATE
+   2008-03-15
+   
+   
+ * LAST MODIFIED DATE
+   2017-02-04
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UK34627
+   
+   
+
+MODULES/MACROS
+ *     KO2CTHIA KO2CTHIS KO2CTHI2 KO2ORCVB
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   OM XE DB2PE/PM
+   
+   
+ * FIXED COMPONENT ID
+   5655OPE00
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R410 PSY UK34627 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK34627]
+   UP08/03/18 P F803
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

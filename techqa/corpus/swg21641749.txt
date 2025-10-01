@@ -1,0 +1,33 @@
+Title: IBM Only ISO format of Rational Performance Tester and Rational Performance Tester Agent is available on Passport Advantage - United States
+
+Text:
+RN8.5; SRX TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ In releases prior to 8.5, apart from the ISO format of files, you could download the .zip formats of Rational Performance Tester and Rational Performance Tester Agent from the Passport Advantage site. In 8.5, you have the files only in the ISO format. The files are listed here:
+- RPT_8.5_Setup
+- RPT_8.5_Part_1
+- RPT_Agent_Controller_8.5_Part_1
+
+This problem is temporary and will be fixed for version 8.5. 
+
+RESOLVING THE PROBLEM
+You can download the ISO images of the files and use one of the following ways for installation: 
+
+ * Burn a DVD with the ISO image. 
+ * Mount the ISO image by using a third party DVD/CD mounting tool:  * For Microsoft Windows operating system:  * Microsoft Windows 8 and 2012 has built-in support to mount ISO images. 
+       * For Windows XP and Windows Vista, you can use Virtual CD-ROM Control Panel utility. (http://www.microsoft.com/en-us/download/details.aspx?id=38780 [http://www.microsoft.com/en-us/download/details.aspx?id=38780] ). This utility might not work on Windows 7 64-bit and Windows 2008 64-bit. 
+       * Use any third party tools to mount ISO images.
+      
+      
+    * For Linux operating system, open the terminal, change directory to the location where the ISO file is downloaded, and pass the following commands:  1. mkdir /mnt/mydir 
+       2. mount -o loop RPT_8.5_Part_1.iso /mnt/mydir 
+       3. cd /mnt/mydir
+      
+      Note: The file and directory names are just for example purpose and can be different based on the file that user has downloaded.
+   
+   
+ * Directly extract the ISO image to a directory by using the compression utilities that allow extraction of ISO images.
+
+
+After completing the above steps, you can follow the installation topic hosted on the information center [http://pic.dhe.ibm.com/infocenter/rpthelp/v8r5m0/topic/com.ibm.rational.test.lt.install.doc/topics/t_preinst_prep_launch.html].

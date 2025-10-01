@@ -1,0 +1,48 @@
+Title: IBM PeopleSoft domain & process scheduler agent not showing data - United States
+
+Text:
+PeopleSoft; domain; process scheduler; agent; OBJECT NOT FOUND; 5724V09PS TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ PeopleSoft domain & process scheduler agent - workspaces no longer show data following agent restart. 
+
+SYMPTOM
+Customer recently installed both the PeopleSoft domain (p8) & Process scheduler agent (P9) on to a Redhat Linux server. It has been working fine for a few weeks. After restarting the p8 agent, all of the Custom Objects in the SCH Performance Object Status workspace are returning the error OBJECT NOT FOUND and all the PeopleSoft Process Scheduler and Domain workspaces are not being populated except for the Availability workspace where many of the process show down, when in reality the processes are actually running. This was verified with a ps ef | grep processname.
+
+
+Note that after restarting p8 the other p9 agent workspaces were working fine. Then the same occurred in p9 agent after restarting it.
+
+
+CAUSE
+When the agents were installed, the /IBM/ITM directory was owned by the root user.
+
+Since the OS agent also needs to be installed, it was assumed the PeopleSoft agents would required the same authority.
+
+
+ENVIRONMENT
+Redhat Linux;2.6.32-358.el6.x86_64
+Installer Lvl: 06.30.02.00
+p8 Monitoring Agent for PeopleSoft Domain 07.11.00.01, Comp ID 5724V09PS 
+p9 Monitoring Agent for PeopleSoft Process Scheduler 07.11.00.00
+
+
+
+DIAGNOSING THE PROBLEM
+Determine the owner and group for the directory */IBM/ITM/
+
+Run a PDCollect and check the dir.info file. Look at the permissions assigned to */IBM/ITM/ 
+
+
+OR 
+
+
+Run the following command from the directory */IBM/ITM 
+ls -la 
+
+
+RESOLVING THE PROBLEM
+The ITM directory needs to be owned by a valid Siebel user. 
+
+When the system is restarted the OS agent will default to the root user. The root account will be able to start the PeopleSoft agents and the OS agent. 
+
+By making the owner of the ITM directory a valid Siebel user account the PeopleSoft agents can access files they could not when the directory was owned by root.

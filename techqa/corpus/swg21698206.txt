@@ -1,0 +1,49 @@
+Title: IBM QRadar: Sensitive Data Protection with Obfuscated Data and Event Log Hashing - United States
+
+Text:
+data obfuscation; audit policy; sensitive data; file integrity; protection data; read-only; event hashing; ariel hashing; system settings event log hashing TECHNOTE (FAQ)
+
+QUESTION
+ Data obfuscation is a feature where administrators can configure event data to be written to disk in a non-human readable format. How does this feature provide data access protection? 
+
+ANSWER
+The Data Obfuscation feature allows administrators to encrypt specific fields in the event payloads to ensure that data is not visible to non-authorized users. This helps prevent unauthorized access to sensitive or user identifiable information, data obfuscation encrypts sensitive data. Regular expressions are used to identify the event or flow fields that must be encrypted and these expressions are evaluated and written to disk in encrypted format. The encryption uses an RSA public/private key pair to secure the information and due to how the data is written to disk in encrypted format, the data is protected from unauthorized users as long as the private key is stored in a secure location. 
+
+Any information from the event payload, such as user name, card number, or host name fields can be obfuscated. Use data obfuscation to help meet regulatory commission requirements and corporate privacy policies. 
+
+Information about data obfuscation can be reviewed here: http://www.ibm.com/support/knowledgecenter/SS42VS_7.2.4/com.ibm.qradar.doc_7.2.4/c_qradar_adm_data_obfuscation.html?lang=en [http://www.ibm.com/support/knowledgecenter/SS42VS_7.2.4/com.ibm.qradar.doc_7.2.4/c_qradar_adm_data_obfuscation.html?lang=en] 
+
+The general process for enabling data obfuscation is to: 
+
+ 1. Create the RSA public/private key pair 
+ 2. Configure the regular expressions for log sources that require data obfuscation (command-line).
+    Restriction:You cannot obfuscate a normalized numeric fields, such as port numbers or IP addresses. 
+ 3. Validate that the Log Activity tab is generating non-human readable data in the user interface. 
+ 4. If required, de-obfuscate event data to complete investigations. 
+    
+
+
+However, data obfuscation is not a replacement for data integrity checking to ensure that the data has not been altered or tampered with on the appliance. The data will exist in an obfuscated format, however, to ensure that data has not been decrypted, then re-encrypted, administrators should review procedures to enable file integrity. File integrity checking relies on hashes being enabled from the QRadar system settings for event data. After hashing is enabled, a command-line utility can be run that informs administrators if the file hash has been changed since the data was originally written to disk. Since data obfuscation writes data to disk in an obfuscated format, the event log hash can be verified by the check_ariel_integrity.sh script. If the data has been de-obfuscated, then the script will return an ERROR or FAILED message when the hash does not match what ariel writer expects when it first wrote the data to disk. This allows data obfuscation and file integrity to work together to valid sensitive data for audit purposes. 
+
+ 
+
+The general process for continued data protection with event log hashing: 
+
+ 1. Configure data obfuscation for sensitive data. 
+ 2. In the QRadar system settings, enable Event Log Hashing. For more information, see http://www.ibm.com/support/knowledgecenter/SS42VS_7.2.4/com.ibm.qradar.doc_7.2.4/t_qradar_adm_conf_sys_setting.html?lang=en [http://www.ibm.com/support/knowledgecenter/SS42VS_7.2.4/com.ibm.qradar.doc_7.2.4/t_qradar_adm_conf_sys_setting.html?lang=en] 
+ 3. Use the check_ariel_integrity.sh script as required by corporate policy to do continuous validation of event data. For more information, see http://public.dhe.ibm.com/software/security/products/qradar/documents/7.2.4/QRadar/EN/LogIntegrityEventFlowLogs.pdf [http://public.dhe.ibm.com/software/security/products/qradar/documents/7.2.4/QRadar/EN/LogIntegrityEventFlowLogs.pdf] 
+
+
+In summary, data access is not restricted on the QRadar appliance. However, the system protects potential users with root access from viewing sensitive events with data obfuscation using an RSA private/public key pair to ensure the data is not usable by unauthorized sources. Administrators can further validate and protect data by using event data hashing to determine if the obfuscated data has been tampered with since the time when the event data was initially written to disk. 
+
+ 
+
+ 
+Where do you find more information? 
+
+
+
+
+[/support/docview.wss?uid=swg21698206&aid=1] [http://ibm.biz/QRadar-KC] [/support/docview.wss?uid=swg21698206&aid=2] [https://ibm.biz/qradarforums] [/support/docview.wss?uid=swg21698206&aid=3] [http://ibm.biz/qradarknowledge] [/support/docview.wss?uid=swg21698206&aid=4] [http://ibm.biz/SecSuptUTube] [/support/docview.wss?uid=swg21698206&aid=5] [http://ibm.biz/qradarsoftware] [/support/docview.wss?uid=swg21698206&aid=6] [http://ibm.biz/MyNotification] [/support/docview.wss?uid=swg21698206&aid=7] [http://ibm.biz/SuptRegQuikStart] 
+RELATED INFORMATION
+ Data Obfuscation [http://www-01.ibm.com/support/knowledgecenter/SS42VS_7.2.4/com.ibm.qradar.doc_7.2.4/c_qradar_adm_data_obfuscation.html?lang=en]

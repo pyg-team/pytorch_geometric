@@ -1,0 +1,70 @@
+Title: IBM Image Services Supports Windows 64-bit Operating System - United States
+
+Text:
+ReadmeDocument; Windows; Windows 64-bit; Windows 32-bit; DBMS; Oracle 64-bit; SQL Server 64-bit; DB2 64-bit; Windows; Oracle; DB2; SQL Server; Image Services; 4.1.2; 4.2.0; TNS_ADMIN TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Image Services, a 32-bit application, can now run in a 64-bit Windows environment. 
+
+SYMPTOM
+Image Services now adds support for the 64-bit Windows Operating System. The supported 64-bit Windows Operating System versions include: Windows 2008 R2, 2008, 2003, and 2003 R2. These supported Operating System versions are the same as their counterparts on a 32-bit Operating System, with Image Services 4.1.2 FixPack 6 and up, and 4.2.0. 
+
+All three relational database types (DB2, Oracle and SQL Server) are supported, which includes both 32-bit and 64-bit databases, remotely or locally with Image Services. The supported 64-bit database versions are the same as those on 32-bit databases for Image Services 4.1.2 and 4.2.0.
+
+
+RESOLVING THE PROBLEM
+Image Services is supported on Windows 64-bit Operating System with the following restriction: Optical Storage Libraries (OSAR) are not supported; only MSAR and SDS are supported in a 64-bit Windows environment. 
+
+Following is the information for each relational database type:
+I. DB2: Only remote databases are supported, to align with the Image Services DB2 support policy. The DB2 client on the IS server can be either 32-bit or 64-bit, with version 8.2, 9.1, 9.5, 9.7, and up. The Fix Pack requirements are the same for both the 32-bit and 64-bit DB2 client. No special configuration is required to support Image Service with DB2 on a 64-bit Windows server.
+
+II. SQL Server: The database can be collocated with IS on a server or be remote on another server. Both 32-bit or 64-bit versions of SQL Server are supported with Windows 2000, 2005, 2008, and up. The 64-bit SQL Server Service Pack requirements are the same as that for a 32-bit SQL Server on 32-bit Windows, for Image Services 4.1.2 and 4.2.0.
+
+III. Oracle: The database can be collocated with IS on a server or be remote on another server.
+· Remote Oracle databases can be located on any platform that Image Services currently supports. A 32-bit Oracle Client is needed because Image Services is a 32-bit application. The 64-bit Oracle client is not supported.
+
+· Local Oracle database: Oracle only supports a 64-bit database server on 64-bit Windows. Oracle does not support a 32-bit Oracle database server on 64-bit Windows. In order for Image Services to work with an Oracle 64-bit local database, the following is required:
+
+Oracle Instant Client for Microsoft Windows (32-bit) - Instant Client Package – Basic
+Oracle Instant Client can be downloaded from the Oracle website:
+
+http://www.oracle.com/technology/software/tech/oci/instantclient/htdocs/winsoft.html [http://www.oracle.com/technology/software/tech/oci/instantclient/htdocs/winsoft.html]
+
+
+ *  Image Services uses the same procedure that is required for a remote Oracle database. The “fn_util whichfn” command will return a status that Image Services is connected to a remote Oracle database even though it is actually collocated with Image Services. This is OK since fn_util whichfn is for informational purposes only and it will not impact any Image Services functionality. 
+
+
+Below is a simplified procedure to set up Image Services with a local 64-bit Oracle database for 1 instance dedicated to Image Services: 
+
+1. Install a 64-bit Oracle database server on an appropriate version of 64-bit Windows 
+2. Create a 64-bit local database and needed tablespace, with a minimum of 1 permanent and 1 temporary tablespace, for Image Services 
+3. Create an Oracle listener and startup the listener service 
+4. Download the appropriate version of Instant Client Package – Basic for Microsoft Windows 32-bit, which is required to be the same version as the Oracle database server installed. 
+ * [Note for Oracle 12c:
+ * 
+ * Oracle 11.2.0.x
+ *  Instant Client
+ * 
+ * ]
+
+
+5. Unzip the packages into a single directory such as " instantclient".  * 
+ * C:\instantclient\instantclient_11_2
+ * 
+
+6. Set the library loading path in your environment to the " instantclient"directory. (For Oracle 11.2.0.x, it will be " C:\instantclient\instantclient_11_2"). On Windows platform, PATH is the appropriate environment variable; the Instant Client home should be before the 64-bit Oracle database home. 
+7. Add a new system environment variable, LOCAL, with the value pointing to the TNS alias or connection identifier set on tnsnames.ora file, such as LOCAL=sitedb 
+8. Add a new system environment variable, TNS_ADMIN, with the value pointing to the directory/path where tnsnames.ora and sqlnet.ora located, such as TNS_ADMIN=C:\app\Administrator\product\11.2.0\dbhome_1\NETWORK\ADMIN 
+9. Create database users, f_sw, f_sqi, f_open, and f_maint, by simply issuing “create user <f_user> identified by <f_user_password>” and "grant create session to <f_user>" on sqlplus as sysdba 
+10. Run fn_edit 
+11. Run fn_setup_rdb –f 
+12. Run fn_oracle setquotas 
+13. Run following scripts "\fnsw_loc\oracle\ora_users.sql" and "\fnsw\oracle\FileNet.sql" on sqlplus as sysdba 
+14. Run fn_util init 
+15. Startup IS by initfnsw start 
+
+There are special requirements for installing an Oracle database server on Microsoft Windows 2008 according to Oracle Metalink. The following is an excerpt from Metalink: 
+· Use Oracle Database 11gR1 Release 1 (11.1.0.7.0) for Microsoft Windows 2008 Server. Do not install with the 11.1.0.6.0 version. 
+· Do not install Oracle Database 10g Release 2 on Windows Server 2008 using the 10.2.0.1 version. You must use the 10.2.0.3 (32-bit) or 10.2.0.4 (x64) versions specifically created for Windows Server 2008 to install Oracle Database 10g Release 2 on the operating system. 
+
+Please refer to Oracle release notes and installation guides for more information on the installation of different Oracle database versions.

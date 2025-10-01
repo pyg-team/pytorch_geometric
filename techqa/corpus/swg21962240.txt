@@ -1,0 +1,59 @@
+Title: IBM Content Navigator with a FileNet repository, PDF and Tiff files fail to load in the viewer when being streamed by the IBM Daeja viewer. - United States
+
+Text:
+Viewer; Daeja; Navigator; streamer; streaming; FileNet viewer; ICN. TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Attempting to view PDF or Tiff files with the Streamer function enabled. 
+
+SYMPTOM
+The following error is displayed: 
+
+[/support/docview.wss?uid=swg21962240&aid=1] [/support/docview.wss?uid=swg21962240&aid=1]
+
+
+The error in the streamer log is: WebContainer : 6 Jul 7, 2015 10:34:50 AM (000001984/000000000): ViewOnePlatform.navigator.streamer> Sending error Error: Invalid document ID specified to client <ip addreess>
+
+
+CAUSE
+IBM Content Navigator is missing parameters for the IBM Daeja viewer streaming.
+
+
+ENVIRONMENT
+IBM Content Navigator 2.0.3.
+
+
+
+DIAGNOSING THE PROBLEM
+Review the streamer log: <Content Navigator Install path>/ECMClient/config/streamer.log
+Look for the error: 'Error: Invalid document ID specified to client'.
+
+
+
+RESOLVING THE PROBLEM
+ 
+
+ 1. Log into IBM Content Navigator Admin Desktop.
+    
+    
+ 2. Go to the 'Daeja ViewONE' node.
+    
+    
+ 3. Click on the tab 'Document Streaming'.
+    
+    
+ 4.  Under 'Additional settings' click new.
+    
+    
+ 5. Add the following parameters and values:
+    
+    docIdPrototype=${originalDocURL}
+    modifiedDocumentCheckMethod=uniqueid
+    
+    
+ 6. Save and Close.
+    
+    
+ 7. Log out of Navigator and log back into Navigator to test.
+    
+    note: You may need to stop the navigator jvm and clear the application server temp files.

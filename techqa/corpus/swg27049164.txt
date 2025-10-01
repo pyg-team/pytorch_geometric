@@ -1,0 +1,36 @@
+Title: IBM System requirements for IBM Data Replication Version 11.4 and IBM InfoSphere Data Replication V11.4 - United States
+
+Text:
+ DETAILED SYSTEM REQUIREMENTS
+
+ABSTRACT
+ This document describes the system requirements for IBM Data Replication V11.4 and IBM InfoSphere Data Replication V11.4. 
+
+CONTENT
+
+
+PRODUCT DESCRIPTION
+IBM Data Replication and IBM InfoSphere Data Replication consist of three technologies:
+
+ * CDC Replication
+ * Q Replication
+ * SQL Replication
+
+As the system requirements for each technology differ, you should pay close attention to the notes for each requirement to verify that they apply to your chosen technology.
+
+For more information about IBM Data Replication and IBM InfoSphere Data Replication, see the product overview [http://www-03.ibm.com/software/products/en/infodatarepl].
+
+TABLE OF SUPPORTED SYSTEM REQUIREMENTS
+The links in the table below are located in the IBM Software Product Compatibility Reports (SPCR) tool and go directly to the supported operating systems, prerequisites, system requirements, and optional supported software for the specific operating system. Because the report is dynamically generated, it might take a moment to open.
+
+IBM InfoSphere Data Replication V11.4 and IBM InfoSphere Data Replication V11.4 CDC for FlexRep [http://www-969.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=E3FF6980B5DF11E686D823753F804D5F&osPlatforms=Linux|Windows&duComponentIds=S005&optionalCapIds=9] CDC for DB2 for i [http://www-969.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=E3FF6980B5DF11E686D823753F804D5F&osPlatforms=IBM%20i&duComponentIds=S010&optionalCapIds=9] CDC for DB2 LUW/Db2 Warehouse [http://www-969.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=E3FF6980B5DF11E686D823753F804D5F&osPlatforms=AIX|Linux|Windows&duComponentIds=S009&optionalCapIds=9] CDC for Files/DataStage/Hadoop/Cloudant [http://www-969.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=E3FF6980B5DF11E686D823753F804D5F&osPlatforms=AIX|Linux|Windows&duComponentIds=S004&optionalCapIds=9] CDC for Microsoft SQL Server [http://www-969.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=E3FF6980B5DF11E686D823753F804D5F&osPlatforms=Windows&duComponentIds=S007&optionalCapIds=9] CDC for Netezza Technology [http://www-969.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=E3FF6980B5DF11E686D823753F804D5F&osPlatforms=Linux&duComponentIds=S001&optionalCapIds=9] CDC for Oracle databases [http://www-969.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=E3FF6980B5DF11E686D823753F804D5F&osPlatforms=AIX|Linux|Windows&duComponentIds=S008&optionalCapIds=9 ] CDC for Kafka [http://www-969.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=E3FF6980B5DF11E686D823753F804D5F&osPlatforms=Linux&duComponentIds=S006&optionalCapIds=9] CDC for Teradata [https://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/osForProduct?deliverableId=E3FF6980B5DF11E686D823753F804D5F&osPlatforms=AIX|Linux|Windows&duComponentIds=S012] Management Console [http://www-969.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=E3FF6980B5DF11E686D823753F804D5F&osPlatforms=Windows&duComponentIds=D013&optionalCapIds=9] Access Server [http://www-969.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=E3FF6980B5DF11E686D823753F804D5F&osPlatforms=AIX|Linux|Windows&duComponentIds=D014&optionalCapIds=9] Q Replication [http://www-969.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=B0D13420B65311E69435D12D2A0E8113&osPlatforms=AIX|Linux|Windows&duComponentIds=S000&mandatoryCapIds=184&optionalCapIds=9] SQL Replication [http://www-969.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=C85D96A0B65911E69435D12D2A0E8113&osPlatforms=AIX|Linux|Windows&duComponentIds=S000&optionalCapIds=9]  Update: Exadata [http://www.ibm.com/support/docview.wss?uid=swg21668784] is supported for IIDR-CDC for Oracle databases.
+
+For the z/OS version of this product, see System requirements for IBM InfoSphere Data Replication for DB2 for z/OS [http://www.ibm.com/support/docview.wss?uid=swg27049863].
+
+SPCR TOOL AVAILABLE FOR ALL SOFTWARE PRODUCTS
+IBM has created a Software Product Compatibility Reports (SPCR) tool where you can locate and find complete lists of supported operating systems, system requirements, prerequisites, and optional supported software for your product version.
+
+ 1. Click the following link to reach the front page of SPCR: Detailed system requirements for a specific product in SPCR [http://publib.boulder.ibm.com/infocenter/prodguid/v1r0/clarity/softwareReqsForProduct.html] 
+ 2. Then choose the following options to obtain the supported operating systems, system requirements, and optional supported software for your product version.  1. Select the desired product.
+     2. Select the desired version.
+     3. Select your operating system or your product component.

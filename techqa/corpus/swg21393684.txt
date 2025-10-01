@@ -1,0 +1,36 @@
+Title: IBM Content Manager not running when deployed in Wepshpere - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ User gets error page "Content Manager not running", when they are accessing the content manager URI. i.e. http://<server>:9300/p2pd/servlet 
+
+SYMPTOM
+User has installed Cognos 8.4 on an IBM AIX 5.3 machine, and deployed it on IBM Websphere Application Server (WAS) 6.1. The Content Store is DB2. 
+
+The Content Store connection is successful. The build of p2pd.ear file is successful and the deployment of IBM Cognos 8 application on the WAS server instance is also successful.
+
+However, user gets error page "Content Manager not running", when they are accessing the content manage URI. i.e. http://<server>:9300/p2pd/servlet
+
+
+
+CAUSE
+JAVA_HOME is pointing to the different JDK and not the one which used by the IBM Websphere Application Server (WAS) 6.1 
+
+
+On UNIX platform user can type <env> command and on Windows platform user can open the command prompt and type the <set> command to find out the environment variables set for the user
+
+
+RESOLVING THE PROBLEM
+Set the environment variable JAVA_HOME to point to the JDK that is being used by the IBM Websphere Application Server (WAS) 6.1 
+
+
+UNIX administrator should be consult on how to set JAVA_HOME environment variable.
+
+
+
+
+
+
+Cross Reference information Segment Product Component Platform Version Edition Business Analytics Cognos Business Intelligence Install and Config AIX, Windows 8.4

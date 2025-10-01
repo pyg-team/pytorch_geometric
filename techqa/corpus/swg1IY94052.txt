@@ -1,0 +1,192 @@
+Title: IBM IY94052: IOEXCEPTION WHEN RUNNING $NCHOME/BIN/WASCE START - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When $NCHOME/bin/wasce start is running in an Impact 4.0
+   installation, this error thread has been seen:
+   
+   Error thread starts:
+   
+   13:05:21,424 ERROR [ManagerBase] IOException while loading
+   persisted
+   sessions: java.io.WriteAbortedException: writing aborted;
+   java.io.NotSerializableException:
+   com.micromuse.response.client.soapclient.SoapORBClient
+   java.io.WriteAbortedException: writing aborted;
+   java.io.NotSerializableException:
+   com.micromuse.response.client.soapclient.SoapORBClient
+    at
+   java.io.ObjectInputStream.readObject0(ObjectInputStream.java:130
+   3)
+    at
+   java.io.ObjectInputStream.defaultReadFields(ObjectInputStream.ja
+   va:1912)
+    at
+   java.io.ObjectInputStream.readSerialData(ObjectInputStream.java:
+   1836)
+    at
+   java.io.ObjectInputStream.readOrdinaryObject(ObjectInputStream.j
+   ava:1713
+   )
+    at
+   java.io.ObjectInputStream.readObject0(ObjectInputStream.java:129
+   9)
+    at
+   java.io.ObjectInputStream.defaultReadFields(ObjectInputStream.ja
+   va:1912)
+    at
+   java.io.ObjectInputStream.readSerialData(ObjectInputStream.java:
+   1836)
+    at
+   java.io.ObjectInputStream.readOrdinaryObject(ObjectInputStream.j
+   ava:1713
+   )
+    at
+   java.io.ObjectInputStream.readObject0(ObjectInputStream.java:129
+   9)
+    at
+   java.io.ObjectInputStream.readObject(ObjectInputStream.java:339)
+    at java.util.Hashtable.readObject(Hashtable.java:848)
+    at sun.reflect.GeneratedMethodAccessor77.invoke(Unknown Source)
+   
+   The error is not serious, as it does not prevent Impact from
+   starting up, but should be prevented.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  None at present
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All Netcool/Impact users                     *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: IO Expception when starting wasce       *
+   *                      server.                                 *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   *                                                              *
+   ****************************************************************
+   Step to replicate: 1) Start wasce server /bin/wasce start 2)
+   login to Impact using the GUI 3) Stop wasce while the user is
+   logged in to the GUI 3) Start wasce and observe the following
+   exception ERROR  ManagerBase  IOException while loading
+   persisted sessions: java.io.WriteAbortedException: writing
+   aborted; java.io.NotSerializableException:
+   com.micromuse.response.client.soapclient.SoapORBClient
+   java.io.WriteAbortedException: writing aborted;
+   java.io.NotSerializableException:
+   com.micromuse.response.client.soapclient.SoapOR
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fixed in 4.0.2-TIV-NCI
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IY94052
+   
+   
+ * REPORTED COMPONENT NAME
+   NETCOOL/IMPACT
+   
+   
+ * REPORTED COMPONENT ID
+   5724O59IS
+   
+   
+ * REPORTED RELEASE
+   400
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2007-01-26
+   
+   
+ * CLOSED DATE
+   2007-12-17
+   
+   
+ * LAST MODIFIED DATE
+   2007-12-17
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *     NETCOOL
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   NETCOOL/IMPACT
+   
+   
+ * FIXED COMPONENT ID
+   5724O59IS
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R400 PSY
+   UP

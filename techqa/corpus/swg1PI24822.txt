@@ -1,0 +1,162 @@
+Title: IBM PI24822: WI 328661 RTC WEB PLAN VIEW HAS UNEXPECTED SCROLL BEHAVIOR WHEN INITIALLY LOADING HIDDEN ITEMS - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Description:
+   In IBM Rational Team Concert (RTC), when user tries to scroll
+   down a long list of item and iterations in a plan using the web
+   client, the Focus keeps resetting to the top of the screen and
+   mixes the links between uploaded files and other work items.
+   
+   Steps to reproduce:
+   
+   Setup:
+   1. In an Out of the Box (OTB) Scrum process template, create a
+   Release Backlog plan with some Epic WIs, and create some Stories
+   and task WIs under each Epic.
+   2. Disable the "Expand All" option in the plan.
+   2. Expand manually in each categories.
+   3. Start scrolling to any side (up or down) that has items
+   without the "Progress" loaded.
+   
+   Observed behavior:
+   The load notification states that it is loading, "Progress"
+   loads, once the group has loaded, the viewport resets to the
+   next item after the last item selected.
+   
+   Expected behavior:
+   The load notification should state it is loading and the
+   "Progress" should be loaded on first view and maintain the
+   current viewport.
+   
+   Affected browsers:
+   1. Mozilla Firefox.
+   2. Microsoft Internet Explorer.
+   
+   Possible workarounds:
+   1. Deselect the item, by clicking outside the area of items,
+   like attachment 26063.
+   2. Use Google Chrome (or Chromium).
+   
+   See the following jazz.net defect WI for details:
+   
+   https://jazz.net/jazz/web/projects/Rational%20Team%20Concert#act
+   ion=com.ibm.team.workitem.viewWorkItem&id=328661 [https://jazz.net/jazz/web/projects/Rational%20Team%20Concert#action=com.ibm.team.workitem.viewWorkItem&id=328661]
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * All users/environments affected.                             *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * Web plan view has quirky scroll behavior when initially      *
+   * loading hidden items.                                        *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Upgrade to CLM 5.0.2                                         *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Corrected code to display correctly under the web browsers.
+   Fixed in 5.0.2
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI24822
+   
+   
+ * REPORTED COMPONENT NAME
+   RATL TEAM CONCE
+   
+   
+ * REPORTED COMPONENT ID
+   5724V0400
+   
+   
+ * REPORTED RELEASE
+   406
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-08-28
+   
+   
+ * CLOSED DATE
+   2014-12-05
+   
+   
+ * LAST MODIFIED DATE
+   2014-12-05
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   RATL TEAM CONCE
+   
+   
+ * FIXED COMPONENT ID
+   5724V0400
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R502 PSY
+   UP

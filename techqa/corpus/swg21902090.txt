@@ -1,0 +1,77 @@
+Title: IBM 【セキュリティ情報】WebSphere Commerce へのRC4 アルゴリズムの脆弱性の影響 (CVE-2015-2808) - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ IBM WebSphere Application Server, IBM HTTP Server, IBM DB2 LUWは、WebSphere Commerceのコンポーネントとして、同梱されています。
+IBM WebSphere Application Server, IBM HTTP Server, IBM DB2 LUWにおいて、SSL/TLS通信で使用される RC4 アルゴリズムの脆弱性 ("Bar Mitzvah"攻撃と呼ばれる)が公開されました。
+
+
+VULNERABILITY DETAILS
+IBM WebSphere Application Server, IBM HTTP Server, IBM DB2 LUW のSecurity Bulletinが、公開されていますので、下記を参照し、対応お願いします。
+WebSphere Application Serverにおける RC4 アルゴリズムに関する脆弱性の影響について（CVE-2015-2808）
+http://www.ibm.com/support/docview.wss?uid=swg21882818 [http://www.ibm.com/support/docview.wss?uid=swg21882818] 
+
+
+HTTP Serverにおける RC4 アルゴリズムに関する脆弱性の影響について（CVE-2015-2808）
+http://www.ibm.com/support/docview.wss?uid=swg21882522 [http://www.ibm.com/support/docview.wss?uid=swg21882522]
+
+Security Bulletin: Vulnerability in RC4 stream cipher affects IBMR DB2R LUW (CVE-2015-2808)
+http://www.ibm.com/support/docview.wss?uid=swg21717865 [http://www.ibm.com/support/docview.wss?uid=swg21717865]
+
+
+AFFECTED PRODUCTS AND VERSIONS
+影響のある製品・バージョン： 
+
+次の製品に影響があります。
+
+
+
+主要な製品・バージョン 影響のある製品とバージョン WebSphere Commerce V6.0 and V7.0 IBM WebSphere Application Server  * Version 8.5 and 8.5.5 Full Profile and Liberty Profile 
+ * Version 8 
+ * Version 7 
+ * Version 6.1
+
+WebSphere Commerce V6.0 and V7.0 IBM HTTP Server  * Version 8.5.5 
+ * Version 8.5 
+ * Version 8.0 
+ * Version 7.0 
+ * Version 6.1 
+
+WebSphere Commerce V6.0 and V7.0 All fix pack levels of IBM DB2 V9.5, V9.7, V10.1 and V10.5 WORKAROUNDS AND MITIGATIONS
+回避策/軽減策： 
+
+なし
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v2 Guide [http://www.first.org/cvss/v2/guide] 
+On-line Calculator v2 [http://nvd.nist.gov/CVSS-v2-Calculator] . 
+参照情報： 
+
+[IBMサイト] 
+この文書は、米国 IBM 社の資料を翻訳した参考文書です。翻訳元の文書は、以下のリンクよりご参照ください。 
+Security Bulletin: A security vulnerability has been identified in IBM WebSphere Application Server, IBM HTTP Server and IBM DB2 LUW shipped with WebSphere Commerce (CVE-2015-2808) [http://www.ibm.com/support/docview.wss?uid=swg21883169] 
+
+公開済みのフィックスパックについては、以下のサイトよりご利用いただけます。 
+Recommended fixes and settings for WebSphere Commerce [http://www.ibm.com/support/docview.wss?uid=swg21261296] 
+
+[CVSS情報] 
+独立行政法人 情報処理推進機構: 共通脆弱性評価システムCVSS概説 [http://www.ipa.go.jp/security/vuln/CVSS.html] 
+JVN iPedia: CVSS計算ソフトウェア日本語版 [http://jvndb.jvn.jp/cvss/ja.html] RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/PSIRT] . 
+関連情報： 
+. 
+[お問合せ先] 
+技術的な内容に関して、サービス契約のあるお客様はIBMサービス・ラインにお問い合わせください。 
+IBM サービス・ライン [http://www.ibm.com/jp/news/20070420001.html] *The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.
+
+関連情報
+ An US English translation is available [http://www.ibm.com/support/docview.wss?uid=swg21883169 ]

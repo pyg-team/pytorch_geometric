@@ -1,0 +1,27 @@
+Title: IBM Application Monitoring parameters changed in the on-line help - United States
+
+Text:
+Application Monitoring parameters; Application Monitoring; parameters; on-line help TECHNOTE (FAQ)
+
+QUESTION
+ Have Application Monitoring parameters changed? 
+
+ANSWER
+Yes. The second parameter for Application Monitoring is Mon_Status not Monitoring_Enabled. Use the Mon_Status parameter as a Boolean parameter, where 0 means disable application monitoring and 1 means enable application monitoring. In addition, use 4 for enabling monitoring for situations. The 4 parameter enables monitoring when baselining for that application stops; otherwise the take action will have no effect. 
+
+In addition, the following Monitoring Status attribute definitions have changed. The correct values are: 
+
+Discovered - An application was found. Discovery occurs when the Data Collector or TEMA connect, or when the Data Collector reports a new application was deployed. During the first connection, all deployed applications should be discovered, only newly deployed applications have this status. 
+
+Enabled - Application Monitoring is enabled. Set this value using the Start_Baselining attribute or the Set_Application_Monitoring take actions. The AppDiscovered situation invokes Start_Baselining. 
+
+Disabled - Application Monitoring is disabled. Set this value using the Set_Application_Monitoring take action. 
+
+Off-line - An application configuration with Discovered status loaded from context while the Data Collector was off-line. The status reverts to Discovered status when the Data Collector comes back on-line and reports that the application remains deployed. 
+
+
+
+
+
+
+Cross Reference information Segment Product Component Platform Version Edition Systems and Asset Management Tivoli Composite Application Manager for J2EE ITCAM J2EE TEMA AIX, HP-UX, Linux, Solaris, Windows 6.1

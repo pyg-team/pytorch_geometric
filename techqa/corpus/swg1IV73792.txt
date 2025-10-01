@@ -1,0 +1,195 @@
+Title: IBM IV73792: OS AGENT CRASHES IF <USER> STANZA MISSING IN KCIRUNAS.CFG FLIE - United States
+
+Text:
+  A FIX IS AVAILABLE
+IBM Tivoli Monitoring 6.3.0 Fix Pack 6 (6.3.0-TIV-ITM-FP0006) [http://www-01.ibm.com/support/docview.wss?uid=swg24040390]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The Monitoring Agent for Linux OS terminates shortly after
+   startup if the kcirunas.cfg has been updated for an agent that
+   Watchdog is monitoring and is missing the <user>stanza for an
+   instance.
+   
+   Recreate steps:
+   1.  Have Watchdog monitor a non-OS agent (such as MQ agent).
+   
+   2.  Update the kcirunas.cfg file, with no <user> </user> stanza
+   for an instance.
+     <productCode>mq</productCode>
+              <instance>
+                    <name>None</name>
+                    <autoStart>no</autoStart>
+              </instance>
+              <instance>
+                    <name>QAA2438R1</name>
+                    <user>mocandle</user>
+              </instance>
+   
+   3.  Watchdog reads the kcirunas.cfg to see if an agent should be
+   restarted with a different userid if it needs to be restarted.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  1. Add the <user> stanza in kcirunas.cfg file, for example:
+     <instance>
+          <name>None</name>
+          <user>mquser</user>
+          <autoStart>no</autoStart>
+     </instance>
+     <instance>
+          <name>QAA2438R1</name>
+          <user>mocandle</user>
+     </instance>
+   
+   2. Start the agent.
+   
+   Related Files and Output:
+   None.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  The Monitoring Agent for Linux OS terminates shortly after
+   startup if the kcirunas.cfg has been updated for an agent that
+   Watchdog is monitoring and is missing the <user> stanza for an
+   instance.
+   
+   For example, the <user> stanza is missing the from the Instance
+   "None" below:
+   
+   <productCode>mq</productCode>
+   <instance>
+   <name>None</name>
+   <autoStart>no</autoStart>
+   </instance>
+   <instance>
+   <name>QAA2438R1</name>
+   <user>mocandle</user>
+   </instance>
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Code has been added to handle the condition when the stanza for
+   an instance is missing.
+   
+   The fix for this APAR is contained in the following maintenance
+   packages:
+   
+     | fix pack | 6.3.0-TIV-ITM-FP0006
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  Add the <user> stanza in kcirunas.cfg file, for example:
+   
+   <instance>
+     <name>None</name>;
+     <user>mquser</user>      <== add this line
+     <autoStart>no</autoStart>
+   </instance>
+   <instance>
+     <name>QAA2438RT</name>
+     <user>mocandle</user>
+   </instance>
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV73792
+   
+   
+ * REPORTED COMPONENT NAME
+   ITM AGENT LINUX
+   
+   
+ * REPORTED COMPONENT ID
+   5724C04LN
+   
+   
+ * REPORTED RELEASE
+   630
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-06-01
+   
+   
+ * CLOSED DATE
+   2015-08-11
+   
+   
+ * LAST MODIFIED DATE
+   2015-12-08
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ITM AGENT LINUX
+   
+   
+ * FIXED COMPONENT ID
+   5724C04LN
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R630 PSY
+   UP

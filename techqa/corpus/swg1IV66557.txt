@@ -1,0 +1,147 @@
+Title: IBM IV66557: AFTER RUNNING MIGRATE-EXPORT, USERS CANNOT LOG IN - United States
+
+Text:
+  A FIX IS AVAILABLE
+IBM Tivoli Monitoring 6.3.0 Fix Pack 6 (6.3.0-TIV-ITM-FP0006) [http://www-01.ibm.com/support/docview.wss?uid=swg24040390]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  After running migrate-export many times over a period of time,
+   users are
+   unable to log in to the portal client. The portal server log
+   shows many
+   messages like the following:
+   
+   ERRMSG: Warning: 100 active connections. Retry #4 on datasource
+   'TEPS'
+   
+   RECREATE INSTRUCTIONS:
+   - start the portal server
+   - run the migrate-export script
+   - from db2 prompt, enter 'list applications'
+   - result will show open connections from KfwServices
+   - run migrate-export script again
+   - run 'list applications' again
+   - result will show an increase of one in open connections from
+   KfwServices
+   - if run 100 times, the 100 active connections error will appear
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Users are unable to log in to the portal client.  The portal
+   server log shows many messages similar to the following:
+   
+   ERRMSG: Warning: 100 active connections.  Retry #4 on datasource
+   'TEPS'
+   
+   The problem may start during an execution of the migrate-export
+   script.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fixed an issue where the portal server was not releasing
+   connections to the portal server database.
+   
+   The fix for this APAR is contained in the following maintenance
+   packages:
+   
+     | fix pack | 6.3.0-TIV-ITM-FP0006
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV66557
+   
+   
+ * REPORTED COMPONENT NAME
+   TEPS
+   
+   
+ * REPORTED COMPONENT ID
+   5724C04PS
+   
+   
+ * REPORTED RELEASE
+   630
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-11-06
+   
+   
+ * CLOSED DATE
+   2015-08-11
+   
+   
+ * LAST MODIFIED DATE
+   2015-12-10
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TEPS
+   
+   
+ * FIXED COMPONENT ID
+   5724C04PS
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R630 PSY
+   UP

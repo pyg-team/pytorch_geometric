@@ -1,0 +1,42 @@
+Title: IBM Microsoft Word Track Changes option is disabled and cannot be turned off - United States
+
+Text:
+reqpro; track; changes; word; track changes; grayed out; protected; accept changes; protect; unprotect; reject; 1118027; greyed out; disable; grayed out; 170235722 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+This technote provides the necessary steps to turn the Track Changes option in Microsoft® Word on or off when used with IBM® Rational® RequisitePro®. 
+
+CAUSE
+When the document is protected, track changes is not available and cannot be disabled. Word's Track Changes is not available and cannot be turned off in a RequisitePro document because of this protection. 
+
+RESOLVING THE PROBLEM
+Open the document and perform these steps: 
+
+ For disabling track changes in Word 2003 
+
+ *  In Microsoft Word, select the Tools menu and then select Unprotect Document
+   This will remove protection that has been placed on the document After selecting Unprotect Document the Tools menu will display Protect Document Select the Tools menu and then select Track Changes  * If Track Changes is enabled, the black text TRK will appear in the status bar of Microsoft Word which is located at the bottom of the program window. 
+    *  If Track Changes is disabled, the grey text TRK will appear in the status bar of Microsoft Word which is located at the bottom of the program window. 
+      
+      Accepting Track Changes 
+      Accepting Track Changes can be accessed by clicking on the Accept Track Changes icon on the Word toolbar (has an icon that looks like a folder with checkmark). 
+      
+      The options are: Accept Change, Accept All Changes Shown, Accept All Changes in Document.
+      
+      Rejecting Track Changes
+      Rejecting Track Changes can be accessed from the Word menu by clicking on the Reject Track Changes icon (looks like a folder with a red X). 
+      
+      The options are:  * Reject Change/Delete comment, 
+       * Reject All Changes Shown, 
+       * Reject All Changes in Document, 
+       * Delete All Comments Shown, 
+       * Delete All Comments in Document.
+      
+      
+   
+   After making the selection to Accept or Reject Changes, disableTrack Changes by going to theTools menu and then selectTrack Changes. To verify that the option is disabled, check thatTRK is in grey text in the status bar.
+   
+   
+ * For disabling track changes in Microsoft Word 2007
+ * 
+ *  1. Go to Review tab on the Ribbon 2. Go to Accept button and click down arrow, select Accept all Changes. 3. Then to turn off track changes select Track Changes button and make sure it is not highlighted/Orange

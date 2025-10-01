@@ -1,0 +1,35 @@
+Title: IBM Importing External Jars in MDM bundles - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ We want to add an external jar to our OSGI classpath but Java Build Path option under project properties doesn't work. As a result, we are getting ClassNotFoundError at runtime. Why are we getting this and how can we circumvent this error? 
+
+CAUSE
+Before v-11, MDM was using standard J2EE model where we could modify the classpath within workbench by clicking on the project name > going to properties > Java Build Path > Libraries and then using the 'Add Jars' or 'Add External Jars' option to add the jars to the run time as shown below:
+[/support/docview.wss?uid=swg21692535&aid=1] [/support/docview.wss?uid=swg21692535&aid=1]
+
+V-11 onwards we use OSGi bundles and as a result the previous workflow is no longer valid. Adding libraries or project references directly to the project's build path will not be reflected at runtime. Doing so is not desirable and will lead to run time exceptions
+
+
+ANSWER
+To modify the classpath in OSGi, the correct way is to add it as an imported package in the bundle Manifest file. By extension, to resolve dependency between enterprise bundle (eba) and composite bundle (cba), we have to export the package from one and import it in the other. 
+
+In some cases, an import package is not possible because the desired dependency is not in the RAD/RSA target runtime or the package is not exported from the source bundle (making it not visible). This is usually the case in third party jars and libraries.
+
+To add these jars, we again go to Project Properties > Deployment Assembly and add the specific jar using the Add button as shown below:
+[/support/docview.wss?uid=swg21692535&aid=2] [/support/docview.wss?uid=swg21692535&aid=2]
+
+
+
+PRODUCT ALIAS/SYNONYM
+ Master Data Management
+Reference Data Management
+MDM Server
+Physical MDM
+Hybrid MDM
+Initiate
+MDM SE
+MDM AE
+MDS

@@ -1,0 +1,52 @@
+Title: IBM How to use clustering in Application Builder - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ We tried building the site that searched the collection 'example-metadata' on Application Builder. It seemed that the search results were displayed correctly. However, there was not the cluster on topic cloud, and the following error message was shown.
+
+"No clusters found"
+
+The Application Builder documentation did not provide any answers. 
+
+ENVIRONMENT
+Our environment and configurations are as the following.
+[our environment]
+IDE: 8.2-3
+OS: Windows Server 2008 R2 (64bit)
+Web server: IIS
+
+[Engine]
+We indexed 'example-metadata'.
+
+[Application Builder]
+- Entity Model
+
+RESOLVING THE PROBLEM
+To enable the cluster, you need to add attribute cluster-weight to the field element in the entity, The value to this attribute is 1 to 3. If you set entity based on example-metadata collection, snippet field should have small value, it would be 1; hero and title would have high value, like 3. Please note, do not set higher than 3 for this attribute.
+
+Here is the example to set the attribute to snippet field.:
+<field cluster-weight="1" external-name="snippet" name="snippet"/> 
+
+
+You need to make sure clustering is enabled on both project and display levels.query-search API function doesn't use clustering by default. In order to enable it, you need to set "Cluster" to true. 
+
+
+Enable Clustering (variable boolean cluster, default: false) - 
+
+Enable clustering of the search results. Only the contents with weights greater than 0 and a default action or a "cluster" action will be taken into account. 
+
+You can also set "efficient-paging" to true. 
+Efficient Paging (variable boolean efficient-paging, default: false) - 
+Retrieves documents from sources in a more efficient manner, allowing a larger number of documents to be returned. This feature is incompatible with certain other Data Explorer features. 
+
+Number of Documents to Cluster for Efficient Paging (variable int efficient-paging-n-top-docs-to-cluster, default: 200) - 
+When efficient paging is enabled, not all documents will be retrieved up front and thus are not available for clustering. This option controls how many of the top-ranked documents will be retrieved and used for clustering. 
+
+To determine if any cluster is selected in the display, you can find some good information in function core-cluster, which renders the clusters. It finds selected clusters with tree//node[@active] 
+. 
+Or you could look at the v:state CGI parameter. Its value looks like 
+<cluster-tree-state>|<cluster-node-selected>-<start>-<per>|<?> 
+
+If you see anything other than 'root' for the 'cluster-node-selected', then a cluster is selected.

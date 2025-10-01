@@ -1,0 +1,26 @@
+Title: IBM IDM Web 3.2a - MTS server utilizing IDMDT for pooled logins generates max cached - United States
+
+Text:
+IDM DESKTOP, MTS MICROSOFT TRANSACTION SERVER, ERROR -2147214718, THE MAXIMUM CACHED DOCUMENTS LIMIT TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ IDM Web 3.2a - MTS server utilizing IDMDT for pooled logins generates max cached 
+
+RESOLVING THE PROBLEM
+IDM Web 3.2a - MTS server utilizing IDMDT for pooled logins generates max cached documents reached error and the MTS application server must be RE-BOOTED. Number of document in cache is less then number configured in IDMConfigure.
+Actual error:
+Err.number: -2147214718 
+Err.Description: The maximum cached documents limit has been reached, please see the administrator.
+
+Problem is happening because site had configured greater than 32 IS for one MTS servers. 
+In our code, we have a hard limit set for the maximum (32 IS / CS) number of IS servers. In other words, we only create a large enough cache table(FnCacheM - FileNET Cache Manager) for 32 IS (or CS) servers or less. 
+
+This problem is fixed in patch 22. See DTS #DTS 72942
+
+
+
+HISTORICAL NUMBER
+ 10007140 
+
+PRODUCT ALIAS/SYNONYM
+ IDM WEB/OPEN CLIENT

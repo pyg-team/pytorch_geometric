@@ -1,0 +1,130 @@
+Title: IBM ILMT の調査に必要なログファイル - United States
+
+Text:
+ 技術情報(FAQS)
+
+この文書は以下の言語にのみ有効な内容です
+ 日本語 
+
+質問
+ ILMT 環境で問題が発生し、サポートに調査を依頼する場合にどのような資料が必要か。 
+
+回答
+ILMT の問題調査には以下の資料が必要です。
+（発生している現象によって調査に必要なログは変わるため、追加で資料の取得が必要になる場合があります。）
+
+1. ILMT サーバーの資料
+
+Windows:
+- <Program Files>\IBM\tivoli\common\COD
+
+Unix:
+- <Tivoli Common Directory>/COD
+
+※Tivoli Common Directory は デフォルトで /var/ibm/tivoli/common です。
+但し、AIX の場合は次のいずれかです。
+
+/var/ibm/tivoli/common
+/usr/ibm/tivoli/common
+/opt/ibm/tivoli/common
+
+
+2. TIP、eWAS(WAS) の資料（ILMTサーバーの導入環境で取得）
+
+＜ILMT V7.5 の場合＞
+Windows:
+- <TIP>\profiles\TIPProfile\logs
+
+Unix:
+- <TIP>/profiles/TIPProfile/logs/
+
+＜ILMT V7.2.x の場合＞
+Windows:
+- eWas: <LMT/TAD4D>\eWAS\profiles\AppSrv01\logs\
+- WAS: <WebSphere>\AppServer\profiles\AppSrv01_node_name\logs\
+
+Unix:
+- eWAS: <LMT/TAD4D>/eWAS/profiles/AppSrv01/logs/
+- WAS: <WAS>/AppServer/profiles/AppSrv01_node_name/logs/
+
+
+3. DB2 の資料（ILMTサーバーの導入環境で取得）
+
+- db2diag.log
+
+※db2diag.log の場所は以下です。
+
+Windows XP / Windows 2003: 
+C:\Documents and Settings\All Users\Application Data\IBM\DB2\<DB2 copy name>\DB2
+
+Windows Vista 以降: 
+C:\ProgramData\IBM\DB2\<db2 copy name>\DB2 
+
+Unix:
+<instance_owner_home>/sqllib/db2dump
+
+
+4. ILMT エージェントの資料
+
+Windows:
+- <Program Files>\IBM\tivoli\common\COD
+- <Program Files>\IBM\tivoli\common\CIT
+- <Windows>\itlm\tlmagent.ini
+- <Windows>\itlm\scanner
+- <Windows>\itlm\upload
+- <Windows>\itlm\cache
+- <Windows>\cit\cit.ini
+
+Unix:
+- <Tivoli Common Directory>/COD 
+- <Tivoli Common Directory>/CIT
+- /etc/tlmagent.ini
+- /var/itlm/scanner
+- /var/itlm/upload
+- /var/itlm/cache
+- /etc/cit/cit.ini
+
+※Tivoli Common Directory は デフォルト /var/ibm/tivoli/common です。
+但し、AIX の場合は次のいずれかです。 
+
+/var/ibm/tivoli/common
+/usr/ibm/tivoli/common
+/opt/ibm/tivoli/common
+
+
+5. ILMT サーバーのインストール時の問題の場合（上記1～3の情報と共に以下の情報）
+
+※該当ファイルが存在しない場合はその旨お知らせください。
+
+Windows:
+- <Program Files>\IBM\tivoli\common\COD
+- <Program Files>\Zero G Registry\.com.zerog.registry.xml（隠しファイルになっています）
+- %TEMP%\lmt7* or %TEMP%\tad4d7*
+- C:\tmp\ia.log
+- <TIP>\logs.zip（ILMT 7.5 の場合のみ）
+- <TIP>\22_FP3_logs.zip（ILMT 7.5 の場合のみ）
+- %TEMP%\LMT7.5_*.zip（ILMT 7.5 の場合のみ）
+
+
+Unix:
+- <Tivoli Common Directory>/COD ディレクトリ
+- /var/.com.zerog.registry.xml
+- /tmp/lmt7* or /tmp/tad4d7*
+- /tmp/ia.log
+- <TIP>/logs.zip（ILMT 7.5 の場合のみ）
+- <TIP>/22_FP3_logs.zip（ILMT 7.5 の場合のみ）
+- /tmp/LMT7.5_*.zip （ILMT 7.5 の場合のみ）
+
+
+6. ILMT エージェントのインストール時の問題の場合（上記4.の情報と共に以下の情報）
+
+※該当ファイルが存在しない場合はその旨お知らせください。
+
+Windows:
+- %TEMP%\itlm
+- C:\swdis\5724-D33
+
+Unix:
+- /tmp/itlm
+- /.swdis/5724-D33
+- /root/.5724-D33

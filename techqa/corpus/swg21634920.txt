@@ -1,0 +1,65 @@
+Title: IBM Security Bulletin: IBM Tivoli Monitoring Portal Browser Client (CVE-2013-0576) - United States
+
+Text:
+ FLASH (ALERT)
+
+ABSTRACT
+ A potential cross site scripting (XSS) vulnerability was found using the IBM Tivoli Enterprise Portal browser client. 
+
+CONTENT
+VULNERABILITY DETAILS: 
+CVEID: CVE-2013-0576
+DESCRIPTION: Cross site scripting (XSS) vulnerability using Tivoli Enterprise Portal browser client.
+.
+CVSS:
+CVSS Base Score: 4.3
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/83328 [https://exchange.xforce.ibmcloud.com/vulnerabilities/83328] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:M/AU:N/C:N/I:P/A:N)
+
+
+AFFECTED PRODUCTS AND VERSIONS: 
+IBM Tivoli Monitoring version 6.2.3 through 6.2.3 Fix Pack 02
+IBM Tivoli Monitoring version 6.2.2 through 6.2.2 Fix Pack 09 
+IBM Tivoli Monitoring version 6.2.1 through 6.2.1 Fix Pack 04
+IBM Tivoli Monitoring version 6.2.0 through 6.2.0 Fix Pack 03
+
+
+REMEDIATION: 
+The recommended solution is to apply the fix for the version of IBM Tivoli Monitoring as listed below: 
+
+Fix* VRMF APAR How to acquire fix 6.2.2-TIV-ITM-FP0009-IV32812 6.2.2 IV32812 http://www-01.ibm.com/support/docview.wss?uid=swg24034859 [http://www-01.ibm.com/support/docview.wss?uid=swg24034859] 6.2.3-TIV-ITM-FP0003 6.2.3 IV32812 http://www-01.ibm.com/support/docview.wss?uid=swg24033803 [http://www-01.ibm.com/support/docview.wss?uid=swg24033803] ITM Version 6.30 6.3.0 IV32812 Available from Passport Advantage: 6.3.0-TIV-ITM-FP0001 6.3.0.1 IV32812 http://www-01.ibm.com/support/docview.wss?uid=swg24034843 [http://www-01.ibm.com/support/docview.wss?uid=swg24034843] 
+Note: Customers running on IBM Tivoli Monitoring version 6.2.0.x through 6.2.2.8 should either upgrade to 6.2.2 FP9 and install associated fix listed above to address the vulnerability, or upgrade to 6.2.3 FP3 or 6.3.0 (or later) which include the fixes for the vulnerabilities. 
+
+
+Workaround(s): 
+Use the Java Webstart client instead of the browser client. 
+
+Mitigation(s): 
+None. 
+
+
+REFERENCES: 
+[https://www-304.ibm.com/support/docview.wss?uid=swg21496117&wv=1] · Complete CVSS Guide [http://www.first.org/cvss/v2/guide] 
+· On-line Calculator V2 [http://nvd.nist.gov/cvss.cfm?calculator&adv&version=2] 
+· CVE-2013-0576 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2013-0576] 
+· X-Force Vulnerability Database https://exchange.xforce.ibmcloud.com/vulnerabilities/83328 [https://exchange.xforce.ibmcloud.com/vulnerabilities/83328] 
+
+
+RELATED INFORMATION: 
+IBM Secure Engineering Web Portal [https://www-304.ibm.com/jct03001c/security/secure-engineering/] 
+IBM Product Security Incident Response Blog [https://www.ibm.com/blogs/PSIRT] 
+
+
+ACKNOWLEDGEMENT 
+None. 
+
+CHANGE HISTORY 
+17 May 2013 Original Copy Published 
+23 Aug 2013 Changed "or upgrade to 6.2.2 FP3" to "or upgrade to 6.2.3 FP3" 
+
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Flash. 
+
+
+Note: According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.

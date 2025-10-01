@@ -1,0 +1,45 @@
+Title: IBM Collecting Data for: Omnibus Installation problems - United States
+
+Text:
+Omnibus; Collecting Data; Installation; problems; mustgather TECHNOTE (FAQ)
+
+QUESTION
+ What logs and information do I need to provide when submitting a PMR for a Omnibus installation problem? 
+
+ANSWER
+Provide below information to expedite the analysis and resolution of the problem. The location of the log files vary depending on the operating system and the user who performed the installation.
+
+[/support/docview.wss?uid=swg21500633&amp;aid=1]
+Provide output from the following commands and the logs files:
+
+Root user:
+/usr/ibm/common/acsi/bin/listIU.sh
+/usr/ibm/common/acsi/bin/de_version.sh
+/usr/ibm/common/acsi/bin/de_lsrootiu.sh
+
+
+IA Install log /IA-Netcool-OMNIbus-xx.log IA Un-install log You may not have this log file if you did not do any un-install.
+/IA-Netcool-OMNIbusUnInstall-xx.log Omnibus Install log $NCHOME/OMNIbus_InstallLog.log DE logs /usr/ibm/common/acsi/logs/root [/support/docview.wss?uid=swg21500633&amp;aid=2] Create a zip file with the contents of following dir.
+$NCHOME/_uninst* [/support/docview.wss?uid=swg21500633&amp;aid=2] /usr/ibm/common/acsi/setenv.sh [/support/docview.wss?uid=swg21500633&amp;aid=2] /usr/ibm/common/acsi/ACUApplication.properties Non-root user:
+$HOME/.acsi_<username>/bin/listIU.sh
+$HOME/.acsi_<username>/bin/de_version.sh
+$HOME/.acsi_<username>/bin/de_lsrootiu.sh
+
+
+
+IA Install log $HOME/IA-Netcool-OMNIbus-xx.log IA Un-install log You may not have this log file if you did not do any un-install.
+$HOME/IA-Netcool-OMNIbusUnInstall-xx.log Omnibus Install log $NCHOME/OMNIbus_InstallLog.log DE logs $HOME/.acsi_<username>/logs/<username>/*.log [/support/docview.wss?uid=swg21500633&amp;aid=2] Create a zip file with the contents of following dir.
+$NCHOME/_uninst* [/support/docview.wss?uid=swg21500633&amp;aid=2] $HOME/.acsi_<username>/setenv.sh [/support/docview.wss?uid=swg21500633&amp;aid=2] $HOME/.acsi_<username>/ACUApplication.properties 
+[/support/docview.wss?uid=swg21500633&amp;aid=3]
+Provide output from the following commands and the logs files:
+
+Administrative/Non-administrative user:
+%ProgramFiles%\IBM\Common\acsi\bin\listIU.cmd
+%ProgramFiles%\IBM\Common\acsi\bin\de_version.cmd
+%ProgramFiles%\IBM\Common\acsi\bin\de_lsrootiu.cmd
+
+
+
+[/support/docview.wss?uid=swg21500633&amp;aid=2] Administrator/ non administrator user (normal user) IA Install log %USERPROFILE%\IA-Netcool-OMNIbus-xx.log IA Un-install log You may not have this log file if you did not do any un-install.
+%USERPROFILE%\IA-Netcool-OMNIbusUnInstall-xx.log Omnibus Install log %NCHOME%\OMNIbus_InstallLog.log DE logs %ProgramFiles%\IBM\Common\acsi\logs\<username>\*.log [/support/docview.wss?uid=swg21500633&amp;aid=2] Create a zip file with the contents of following dir.
+%NCHOME%\_uninst\* [/support/docview.wss?uid=swg21500633&amp;aid=2] %ProgramFiles%\IBM\Common\acsi\setenv.cmd [/support/docview.wss?uid=swg21500633&amp;aid=2] %ProgramFiles%\IBM\Common\acsi\ACUApplication.properties

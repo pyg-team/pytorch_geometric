@@ -1,0 +1,13 @@
+Title: IBM Sametime Web AV: A browser-based user attending a meeting sees the "401 Unauthorized" message even after refreshing the browser. - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+The end user cannot start the call because the message continues to appear even after the browser has been refreshed.
+
+CAUSE
+This issue is caused by the Ltpa token used for Single Sign-on timing out, due to the system clocks on the Meeting Server and the Media Manager being out of sync. When the system clocks do not match, the server whose clock shows the earlier time may consider the Ltpa token to be expired even though the generating server's clock considers it fresh. Because the token has expired, the user cannot sign into the Meeting Server.
+
+RESOLVING THE PROBLEM
+To resolve the issue, the user can log out of the meeting, then log back into Sametime and enter the meeting room again. On the servers, the system clocks on the Meeting Servers and the Media Manager servers must be kept in sync.

@@ -1,0 +1,23 @@
+Title: IBM Java OOM condition using WTX/ITX node in IIB 9.0.0.6 along with calls to Java - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ A Java memory leak (leading to an out-of-memory condition) may be detected when using an IBM WebSphere Transformation Extender (WTX) / IBM Transformation Extender (ITX) node in IBM Integration Broker 9.0.0.6. The Java stack leak has been observed where there are calls to Java from within both a Compute Node and from within the WTX/ITX map using the JEXIT() function. 
+
+SYMPTOM
+The Java heap continues to grow, eventually being exhausted, causing a program crash.
+
+
+CAUSE
+Interactions with Java Virtual Machine from both the IIB and WTX/ITX products allow a small amount of Java heap memory to be leaked at each execution of the message flow.
+
+ENVIRONMENT
+ IBM WebSphere Transformation Extender (WTX) / IBM Transformation Extender (ITX) node in IBM Integration Broker 9.0.0.6 on any supported platform
+
+DIAGNOSING THE PROBLEM
+Use the Heap Analyser from IBM to review the heap stack at various points, to see the growth in heap usage.
+
+RESOLVING THE PROBLEM
+Obtain an apply the fix from APAR PI80153.

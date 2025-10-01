@@ -1,0 +1,125 @@
+Title: IBM Security Bulletin: Six (6) Vulnerabilities in Network Security Services (NSS) & Netscape Portable Runtime (NSPR) affect IBM FlashSystem and TMS RAMSAN 710, 720, 810, and 820 systems (CVE-2013-1740, CVE-2014-1490, CVE-2014-1491, CVE-2014-1492, CVE-2014-15 - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ NSS & NSPR vulnerabilities affect the IBM FlashSystem and TMS RAMSAN 710, 720, 810, and 820 products. These vulnerabilities could allow a remote attacker to execute arbitrary code, on the system, to obtain sensitive information, or cause Denial of Service. 
+
+VULNERABILITY DETAILS
+1. CVE-ID: CVE-2013-1740 [https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2013-1740]
+DESCRIPTION: Mozilla Network Security Services could allow a remote attacker to obtain sensitive information, caused by an error in the ssl_Do1stHandshake() function. An attacker could exploit this vulnerability to return unencrypted, unauthenticated data from PR_Recv.
+Affected Versions: Mozilla Network Security Services (NSS) before 3.15.4
+CVSS Base Score: 5.8 / 5
+CVSS Temporal Score: See http://xforce.iss.net/xforce/xfdb/90394 [http://xforce.iss.net/xforce/xfdb/90394] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:M/Au:N/C:P/I:P/A:N)
+
+--------------------------------------------------------------
+2. CVE-ID: CVE-2014-1490 [https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-1490]
+
+DESCRIPTION: Mozilla Firefox,Thunderbird and SeaMonkey, using the Mozilla Network Security Services (NSS) library, could allow a remote attacker to execute arbitrary code on the system, caused by a use-after-free in libssl's session ticket processing. An attacker could exploit this vulnerability to execute arbitrary code on the system with elevated privileges.
+Affected Versions: Mozilla Network Security Services (NSS) before 3.15.4
+CVSS Base Score: 5 / 9.3
+CVSS Temporal Score: See http://xforce.iss.net/xforce/xfdb/90885 [http://xforce.iss.net/xforce/xfdb/90885] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:L/Au:N/C:N/I:N/A:P) 
+
+--------------------------------------------------------------
+3. CVE-ID: CVE-2014-1491 [https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-1491]
+
+DESCRIPTION: An unspecified error in Mozilla Firefox,Thunderbird and SeaMonkey using the Mozilla Network Security Services (NSS) library has an unknown impact and attack vector.
+Affected Versions: Mozilla Network Security Services (NSS) before 3.15.4
+CVSS Base Score: 5 / 4.3
+CVSS Temporal Score: See http://xforce.iss.net/xforce/xfdb/90886 [http://xforce.iss.net/xforce/xfdb/90886] for the current score
+CVSS Environmental Score*: Undefined
+
+CVSS Vector: (AV:N/AC:L/Au:N/C:N/I:P/A:N) 
+
+--------------------------------------------------------------
+4. CVE-ID: CVE-2014-1492 [https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-1492]
+
+DESCRIPTION: An unspecified error in Mozilla Network Security Services (NSS) related to the processing of wildcard characters embedded within the U-label of an internationalized domain name in a wildcard certificate has an unknown impact and remote attack vector.
+CVSS Base Score: 4.3 / 4.3
+CVSS Temporal Score: See http://xforce.iss.net/xforce/xfdb/91988 [http://xforce.iss.net/xforce/xfdb/91988] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:M/Au:N/C:N/I:P/A:N) 
+
+--------------------------------------------------------------
+5. CVE-ID: CVE-2014-1544 [https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-1544]
+
+DESCRIPTION: Mozilla Firefox and Thunderbird could allow a remote attacker to execute arbitrary code on the system, caused by a use-after-free error in the PK11_ImportCert() function when adding NSSCertificate structures. By persuading a victim to visit a specially-crafted Web site, a remote attacker could exploit this vulnerability using unknown attack vectors to execute arbitrary code on the vulnerable system or cause a denial of service.
+Affected Versions: NSS 3.x used in Firefox before 31.0, and Firefox ESR 24.x before 24.7 
+CVSS Base Score: 10.0 / 9.3
+CVSS Temporal Score: See http://xforce.iss.net/xforce/xfdb/94775 [http://xforce.iss.net/xforce/xfdb/94775%20] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:L/Au:N/C:C/I:C/A:C)
+
+--------------------------------------------------------------
+6. CVE-ID: CVE-2014-1545 [https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-1545]
+
+DESCRIPTION: Mozilla Netscape Portable Runtime (NSPR) could allow a remote attacker to execute arbitrary code on the system, caused by an out-of-bounds write error in the sprintf and console functions. By persuading a victim to visit a specially-crafted Web site, a remote attacker could exploit this vulnerability using unknown attack vectors to execute arbitrary code on the vulnerable system or cause a denial of service.
+Affected Versions: Mozilla Netscape Portable Runtime (NSPR) before 4.10.6
+CVSS Base Score: 10.0 / 9.3
+CVSS Temporal Score: See http://xforce.iss.net/xforce/xfdb/93715 [http://xforce.iss.net/xforce/xfdb/93715] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:L/Au:N/C:C/I:C/A:C)
+
+AFFECTED PRODUCTS AND VERSIONS
+IBM FlashSystem 710 & 810, Machine Type 9830, models -AS1 & -AE1
+· all supported releases before 5.6.2
+
+TMS RAMSAN 710 & 810, Machine Type 9833, models -AS1 & -AE1
+· all supported releases before 5.6.2
+
+IBM FlashSystem 720 & 820, Machine Type 9831, models –AS2 & -AE2
+· all supported releases before 6.3.2
+
+TMS RAMSAN 710 & 810, Machine Type 9834, models -AS1 & -AE1
+· all supported releases before 6.3.2
+
+REMEDIATION/FIXES
+IBM recommends that you fix this vulnerability by promptly upgrading affected versions of IBM FlashSystem systems to the following code level or higher:
+
+for 710 and 810, machine type 9830, models –AS1 & -AE1: 5.6.2
+for 720 and 820, machine type 9831, models -AS2 & AE2: 6.3.2
+
+IBM recommends that you fix this vulnerability by promptly upgrading affected versions of TMS RAMSAN systems to the following code level or higher:
+
+for 710 and 810, machine type 9833, models –AS1 & -AE1: 5.6.2
+for 720 and 820, machine type 9834, models -AS2 & AE2: 6.3.2
+
+In addition, IBM recommends that you review your entire environment to identify vulnerable releases of NSS & NSPR in other (e.g. non-IBM products and versions) including in your Operating Systems and take appropriate mitigation and remediation actions. Please contact your Operating System provider for more information.
+
+WORKAROUNDS AND MITIGATIONS
+None known
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v2 Guide [http://www.first.org/cvss/v2/guide] 
+On-line Calculator v2 [http://nvd.nist.gov/CVSS-v2-Calculator] 
+
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] 
+IBM Secure Engineering Web Portal [https://www-304.ibm.com/jct03001c/security/secure-engineering/] 
+IBM Product Security Incident Response Blog [https://www.ibm.com/blogs/PSIRT] 
+Subscribe to Security Bulletins [http://www.ibm.com/support/mynotifications/] 
+ACKNOWLEDGEMENT
+None 
+
+CHANGE HISTORY
+ 14 Nov 2014: Original Version Published 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY. 
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Flash Storage IBM FlashSystem 720 Platform Independent Version Independent Flash Storage IBM FlashSystem 810 Platform Independent Version Independent Flash Storage IBM FlashSystem 820 Platform Independent Version Independent Flash Storage RamSan-710 Platform Independent Version Independent Flash Storage RamSan-720 Platform Independent Version Independent Flash Storage RamSan-810 Platform Independent Version Independent Flash Storage RamSan-820 Platform Independent Version Independent

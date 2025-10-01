@@ -1,0 +1,49 @@
+Title: IBM DASH fix pack installation failure with "serverindex.xml doesn't exist" - United States
+
+Text:
+DASHL2; DASHL2INST; serverindex.xml; tipWrapperInstall.xml; doesn't exist" installation failure TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ A fix pack for the Dashboard Application Service Hub component of Jazz for Service Management fails with the following message:
+
+<Jazz SM Home>\ui\temp\fixpack\dashRollback.xml:218: <Jazz SM Home>\profile\config\cells\${WAS_CELL_NAME}\nodes\${WAS_NODE_NAME}\serverindex.xml doesn't exist 
+
+CAUSE
+The file <Jazz Home>/ui/properties/.tipinfo.properties was mistakenly deleted by a server administrator. The file contains variables that are used by the DASH fix pack installer is missing. 
+
+DIAGNOSING THE PROBLEM
+Confirm the tipinfo.properties file is missing
+
+RESOLVING THE PROBLEM
+Create the tipinfo.properties file under the <Jazz Home>/ui/properties directory with the following contents:
+
+###
+#Tue May 07 11:31:40 PDT 2013
+WAS_CELL_NAME=JazzSMNode01Cell
+WAS_PROFILE_PATH=<JazzSM Home>\\profile
+TIP_BUILD_NUMBER=201302081853
+WAS_PROFILE_NAME=JazzSMProfile
+TIP_HOME=<JazzSM Home>\\ui
+WAS_HOME=<Websphere Install Home>\\AppServer
+WAS_EDITION=BASE
+WAS_SERVER_NAME=server1
+WAS_NODE_NAME=JazzSMNode01
+###
+
+Replace "<JazzSM Home>" with the literal path for the Jazz SM install. 
+Replace "<Websphere Install Home>" with the literal path for the Websphere install. For example:
+
+###
+#Tue May 07 11:31:40 PDT 2013
+WAS_CELL_NAME=JazzSMNode01Cell
+WAS_PROFILE_PATH=C:\\Program Files\\IBM\\JazzSM\\profile
+TIP_BUILD_NUMBER=201302081853
+WAS_PROFILE_NAME=JazzSMProfile
+TIP_HOME=C:\\Program Files\\IBM\\JazzSM\\ui
+WAS_HOME=C:\\Program Files (x86)\\IBM\\WebSphere\\AppServer
+WAS_EDITION=BASE
+WAS_SERVER_NAME=server1
+WAS_NODE_NAME=JazzSMNode01
+###
+
+Retry the DASH fix pack installation.

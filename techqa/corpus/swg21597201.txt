@@ -1,0 +1,29 @@
+Title: IBM DFHME0107 CJDMCT1E cannot be found in library during CICS TS startup - United States
+
+Text:
+CJDMCT1E CJDMCT1K CJDMCT1C migrates migration migrating upgrades upgrading MSGDFHME0107 DFHME0107 ; 5655S9700 R670 670 R700 700 HCI6700 5655-S97 5655S97 ; 5655Y0400 R680 680 R800 800 HCI6800 R690 690 R900 900 HCI6900 R700 700 R000 000 HCI7000 5655Y0401 5655-Y04 5655Y04 KIXINFO kixdcfcic670 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ You receive message DFHME0107 for module CJDMCT1x (where x is a NATLANG value from the SIT). This occurs when you start your CICS Transaction Server for z/OS (CICS TS) region for the first time. 
+
+SYMPTOM
+DFHME0107 [http://www.ibm.com/support/knowledgecenter/SSGMCP_5.3.0/com.ibm.cics.ts.messages.doc/DFHME/DFHME0107.html] applid Module CJDMCT1E cannot be found in the library.
+
+
+CAUSE
+Missing the SEYUAUTH dataset from the CICS TS region STEPLIB DD statement.
+
+RESOLVING THE PROBLEM
+Add SEYUAUTH to the STEPLIB DD. The SEYUAUTH data set is required in your CICS TS 4.2 (and higher) region if you are using CICSPlex SM or CICS Explorer. This is described in the CICS TS documentation in the topic Setting up the MVS environment for CICS in the section Authorizing the CICS and CICSPlex® SM libraries [http://www.ibm.com/support/knowledgecenter/SSGMCP_5.3.0/com.ibm.cics.ts.installation.doc/topics/dfha1l2.html] in item 4 where it states the following:
+
+When you prepare your startup job stream, provide a STEPLIB DD statement for the SDFHAUTH and SEYUAUTH libraries. The SEYUAUTH library loads the message files, therefore it is required for both basic CICS® functions and if you are using any CICSPlex® SM or CICS Explorer® functions. When you define your STEPLIB DD statement, remember that all other libraries concatenated with the SDFHAUTH and SEYUAUTH libraries must also be APF-authorized. If any of the libraries in a STEPLIB concatenation are not authorized, MVS regards all of them as unauthorized.
+
+RELATED INFORMATION
+ Setting up CMCI in a stand-alone CICS region [http://www.ibm.com/support/knowledgecenter/SSGMCP_5.3.0/com.ibm.cics.ts.clientapi.doc/topics/clientapi_setupcics.html]
+NATLANG SIT parameter [http://www.ibm.com/support/knowledgecenter/SSGMCP_5.3.0/com.ibm.cics.ts.sysdefinition.doc/parameters/dfha2_natlang.html]
+
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ CICS/TS CICS TS CICS Transaction Server

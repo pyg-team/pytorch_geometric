@@ -1,0 +1,26 @@
+Title: IBM Executing the steps in "IBM i2 Analyze: Configuring Secure Sockets Layer (SSL)" documentation does not explain in detail how to install an SSL certificate on Linux - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When working on Linux without a GUI--that is, command-line/shell access only--you cannot install an SSL certificate because the recommended tool, ikeyman, only works in a Graphical User Interface (GUI). Specifically, the instructions in "IBM i2 Analyze: Configuring Secure Sockets Layer (SSL)" simply say "For more information on the command line interface, see Key Management Utility command-line interface (gskcmd) syntax" and give no examples. 
+
+RESOLVING THE PROBLEM
+To resolve this problem, modify the following commands, which are aligned to the aforementioned documentation, to suit your environment. 
+
+"2. Create a keystore" 
+cd /opt/IBM/i2analyze/toolkit/
+/opt/IBM/HTTPServer/bin/gskcapicmd -keydb -create -db /opt/IBM/i2analyze/toolkit/i2_key.kdb -pw YourPassword -stash 
+
+ 
+
+3. Create a certificate
+/opt/IBM/HTTPServer/bin/gskcapicmd -cert -create -db /opt/IBM/i2analyze/toolkit/i2_key.kdb -stashed -dn "CN=analyzelinux.ibm.com,OU=mynetwork,O=mycompany,C=mycountry" -expire 7300 -label "MySelfSignedCert" -default_cert yes
+
+4. Extract the i2 Certificate
+/opt/IBM/HTTPServer/bin/gskcapicmd -cert -extract -db /opt/IBM/i2analyze/toolkit/i2_key.kdb -stashed -label "MySelfSignedCert" -format ascii -target myselfsignedcert.der
+cat myselfsignedcert.der 
+
+
+Copy and paste the resulting text contents into a new text file in a Windows client, using the .der extension, then right-click the resulting file and select Install. (Note: You may need to temporarily show file extensions in Windows).

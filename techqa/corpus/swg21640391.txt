@@ -1,0 +1,90 @@
+Title: IBM Known issues for the IBM Smart Analytics System 7710 Fix Pack 2.1.2.0 (Fix Pack 2) - United States
+
+Text:
+ NEWS
+
+ABSTRACT
+ This document contains the restrictions and known issues for the IBM Smart Analytics System 7710 version 2.1.2.0 (Fix Pack 2). 
+
+CONTENT
+
+Procedure to synchronize password of core warehouse instance owner and database administrator corresponds to old version of Optim Performance Manager 
+
+Problem: The IBM Smart Analytics System 7710 User Guide version -03 has an outdated procedure to synchronize the password of the core warehouse instance owner and the database administrator with the Optim Performance Manager connection to the core warehouse database. The password synchronization steps in the user guide correspond to navigation in the web console for Optim Performance Manager version 5.1. With the installation of Fix Pack 2.1.2.0, Optim Performance Manager was upgraded to version 5.2. The upgraded version of the Optim Performance Manager requires an update to the user interface navigation instructions in the password synchronization steps of the password change procedure. Resolution: Do not use the outdated password change procedure in the IBM Smart Analytics System 7710 User Guide version -03. Use the following procedure with an updated step 2 that corresponds to the web console for Optim Performance Manager version 5.2:
+
+1. The DB2 software authenticates users at the operating system level. Change the password for the core warehouse instance owner (bcuaix) by running the following command on every data, administration, and standby node as the core warehouse instance owner:
+
+passwd
+
+Note: If you created a separate user for the role of database administrator, repeat this command on every node for the database administrator.
+
+2. Synchronize the password change for the core warehouse instance owner with the Optim Performance Manager connection to the core warehouse database (BCUDB):  * 
+ * 
+ * bcupe
+ * 
+ * 
+ * 
+ * https://
+ * management_node
+ * :55001
+ * 
+ * 
+ * 
+ * management_node
+ * 
+ * 
+ * 
+ * 
+ * Task Launcher
+ * 
+ * Add and configure a database for monitoring
+ * 
+ * 
+ * 
+ * 
+ *  Edit a Database Connection
+ * 
+ * Test Connection
+ * 
+ * OK
+ * 
+
+
+
+JunOS 12.3 R1.7 firmware incorrectly reports " Power Supply Removed " errors and " Fan/Blower Removed " errors Problem: After installing JunOS 12.3 R1.7 as part of Fix Pack 2.1.2.0 (Fix Pack 2), the Juniper Ethernet switches incorrectly report "Power Supply Removed" errors and "Fan/Blower Removed" errors in the Juniper logs or as SNMP traps. The error messages are similar to the following output:
+
+Oct 22 17:12:08 st73edwdbsd2 chassisd[1234]: CHASSISD_SNMP_TRAP6: SNMP trap generated: Power Supply Removed(jnxContentsContainerIndex 2, jnxContentsL1Index 4, jnxContentsL2Index 2, jnxContentsL3Index 0, jnxContentsDescr Power Supply: Power Supply 1 @ 3/1/*, jnxOperatingState/Temp 1) 
+
+Oct 22 17:12:08 st73edwdbsd2 chassisd[1234]: CHASSISD_SNMP_TRAP6: SNMP trap generated: Fan/Blower Removed(jnxContentsContainerIndex 4, jnxContentsL1Index 2, jnxContentsL2Index 1, jnxContentsL3Index 1, jnxContentsDescr FAN: Fan 1 @ 1/0/0, jnxOperatingState/Temp 1) Resolution: Manually update the JunOS firmware to version 12.3 R3.4. The following document provides instructions for installing JunOS 12.3 R3.4 on your system:
+
+Juniper_Switch_Updates_v1.1.pdf [/support/docview.wss?uid=swg21640391&aid=2]Juniper_Switch_Updates_v1.1.pdf [/support/docview.wss?uid=swg21640391&aid=1]
+
+Important: Installing the JunOS firmware requires an outage of your system. 
+
+The " miinfo -d -c " command returns incorrect information when a component has been manually updated Problem: If you have updated a software or firmware component on your system without using the control console, the miinfo -d -c command returns incorrect version information. Resolution: The correct component version is displayed after the warning message.
+
+In the following sample output for the miinfo -d -c command, the version of Hardware Management Console firmware installed on the system is 7.7.6.0.2.
+
+WARNING: The following products are not at the correct level:
+Name Version
+Hardware Management Console firmware 7.7.6.0.2 
+
+The " miinfo -d " command returns the incorrect version for a component that is manually updated Problem: If you have updated a software or firmware component on your system without using the control console, the miinfo -d command does not return the version that is installed on your system. Resolution: Use the miinfo -d -c command. The version that is installed on your system is displayed after the warning message.
+
+In the following sample output for the miinfo -d -c command, the version of Hardware Management Console firmware installed on the system is 7.7.6.0.2.
+
+WARNING: The following products are not at the correct level:
+Name Version
+Hardware Management Console firmware 7.7.6.0.2 
+
+The " --trace " option for control console commands cannot interpret trace file paths that contain double slash characters Problem: If you specify the --trace option for any control console command (miauth, midownload, miinfo, or miupdate) using a trace file path that contains double slash characters (//), the double slash characters cannot be interpreted. The trace file will not be written to the expected directory. Resolution: Do not use file paths that contain double slash characters with the --trace option. 
+
+
+Document history 
+
+10-Apr-2014: Added entry: "Procedure to synchronize password of core warehouse instance owner and database administrator corresponds to old version of Optim Performance Manager" 
+
+28-Oct-2013: Added entry: "JunOS 12.3 R1.7 firmware incorrectly reports Power Supply Removed errors and Fan/Blower Removed errors" 
+
+13-Jun-2013: Original version published. RELATED INFORMATION
+ All IBM Smart Analytics System known issues documents [http://www.ibm.com/support/docview.wss?uid=swg21639707]

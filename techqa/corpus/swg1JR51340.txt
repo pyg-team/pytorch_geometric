@@ -1,0 +1,192 @@
+Title: IBM JR51340: DELETING A PROCESS APPLICATION OR TOOLKIT MIGHT CAUSE A SERVER THREAD TO HANG - United States
+
+Text:
+  A FIX IS AVAILABLE
+Version 8.5 Refresh Pack 6 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24039185]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  If you delete an archived process application or toolkit, a
+   server thread might hang. The sequence of nested transactions
+   could result in a deadlock when the data for runtime exposed
+   items data that are associated with the project is removed. As a
+    result of this deadlock, you see a report of a hung or
+   timed-out thread in the server logs coming from
+   com.lombardisoftware.server.ejb.persistence.dao.FavoriteDAO.remo
+   veByBranchId().
+   
+   Stack trace:
+   12:04:08:832 PDT] 0000008b TimeoutManage I   WTRN0006W:
+   Transaction
+   00000148224B89800000000108DACCD4EF556B43886BC3219C29ECF67F9694CA
+   6DDD584700000148224B89800000000108DACCD4EF556B43886BC3219C29ECF6
+   7F9694CA6DDD584700000001 has timed out after 14400 seconds.
+   [8/29/14 12:04:08:833 PDT] 0000008b TimeoutManage I   WTRN0124I:
+   When the timeout occurred the thread with which the transaction
+   is, or was most recently, associated was Thread[ORB.thread.pool:
+   1,5,main]. The stack trace of this thread when the timeout
+   occurred was:
+    java.net.SocketInputStream.socketRead0(Native Method)
+    java.net.SocketInputStream.read(SocketInputStream.java:140)
+    com.ibm.db2.jcc.t4.z.b(z.java:199)
+    com.ibm.db2.jcc.t4.z.c(z.java:259)
+    com.ibm.db2.jcc.t4.z.c(z.java:372)
+    com.ibm.db2.jcc.t4.z.v(z.java:1147)
+    com.ibm.db2.jcc.t4.eb.b(eb.java:140)
+    com.ibm.db2.jcc.t4.c.Xb(c.java:279)
+    com.ibm.db2.jcc.am.o.g(o.java:324)
+    com.ibm.db2.jcc.t4.a.g(a.java:626)
+    com.ibm.db2.jcc.am.o.a(o.java:206)
+    com.ibm.db2.jcc.am.kn.b(kn.java:3799)
+    com.ibm.db2.jcc.am.kn.gc(kn.java:743)
+    com.ibm.db2.jcc.am.kn.executeUpdate(kn.java:722)
+   com.ibm.ws.rsadapter.jdbc.WSJdbcPreparedStatement.pmiExecuteUpda
+   te(WSJdbcPreparedStatement.java:1185)
+   com.ibm.ws.rsadapter.jdbc.WSJdbcPreparedStatement.executeUpdate(
+   WSJdbcPreparedStatement.java:802)
+   org.springframework.jdbc.core.JdbcTemplate$2.doInPreparedStateme
+   nt(JdbcTemplate.java:798)
+    org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate
+   .java:591)
+    org.springframework.jdbc.core.JdbcTemplate.update(JdbcTemplate.
+   java:792)
+    org.springframework.jdbc.core.JdbcTemplate.update(JdbcTemplate.
+   java:850)
+    org.springframework.jdbc.core.JdbcTemplate.update(JdbcTemplate.
+   java:858)
+   org.springframework.jdbc.core.simple.SimpleJdbcTemplate.update(S
+   impleJdbcTemplate.java:237)
+   com.lombardisoftware.server.ejb.persistence.dao.FavoriteDAO.remo
+   veByBranchId(FavoriteDAO.java:198)
+   com.lombardisoftware.server.ejb.repositoryservices.BranchDeleteS
+   upport$1.call(BranchDeleteSupport.java:81)
+   com.lombardisoftware.server.ejb.repositoryservices.BranchDeleteS
+   upport$1.call(BranchDeleteSupport.java:76)
+   com.lombardisoftware.utility.spring.ProgrammaticTransactionSuppo
+   rt$1.doInTransaction(ProgrammaticTransactionSupport.java:409)
+   
+   PRODUCTS AFFECTED:
+   IBM Business Process Manager (BPM) Advanced
+   IBM BPM Standard
+   IBM BPM Express
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  No additional information is available.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A fix is available for IBM BPM V8.0.1.3 that orders the sequence
+    of the nested transactions to avoid a deadlock situation.
+   
+    On Fix Central (http://www.ibm.com/support/fixcentral), search
+   for JR51340:
+   
+   1. Select IBM Business Process Manager with your edition from
+   the product selector, the installed version to the fix pack
+   level, and your platform, and then click Continue.
+   2. Select APAR or SPR, enter JR51340, and click Continue.
+   
+   When you download fix packages, ensure that you also download
+   the readme file for each fix. Review each readme file for
+   additional installation instructions and information about the
+   fix.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR51340
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM STANDARD
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9500
+   
+   
+ * REPORTED RELEASE
+   801
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-09-24
+   
+   
+ * CLOSED DATE
+   2014-10-23
+   
+   
+ * LAST MODIFIED DATE
+   2014-10-23
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   BPM STANDARD
+   
+   
+ * FIXED COMPONENT ID
+   5725C9500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R801 PSY
+   UP

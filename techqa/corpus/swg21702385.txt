@@ -1,0 +1,44 @@
+Title: IBM How do I capture the environment information that my IBM Content Manager OnDemand for i Support Representative needs? - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ What is the process for capturing environment data that my Content Manager OnDemand for i Support personnel need to troubleshoot an issue I'm having? 
+
+CAUSE
+ARSSUPPORT is a tool available with server version 8.5.0.5 and higher that can be used to capture basic information to start work on a problem. It provides a great first step at providing Support and Development a foundation of information to begin troubleshooting various issues with Content Manager OnDemand for i. 
+
+ANSWER
+The IBM Support and Development teams for Content Manager OnDemand for i need the following information: 
+
+1) Output of the WRKPTFGRP command.
+2) Output of the ARSSUPPORT command, if the system is running server version 8.5.0.5 and higher. To find out how to check your server level, click here [http://www.ibm.com/support/docview.wss?uid=swg21633423].
+
+The ARSSUPPORT command is run from qsh as follows:
+
+java -cp /qibm/proddata/ondemand/support/arssupport.jar com/ibm/cm/od/arssupport -I QUSROND -o /home/myuserid
+
+where the -I parameter specifies the instance name, and the -o parameter specifies the path where the output file will be created. The ARSSUPPORT command creates a file named arssupport.zip, in the directory named odsupport, under the path specified with the -o parameter. Before exiting QSHELL, make sure you receive confirmation back from the command with a message similar to the following:
+The output file is: /home/myuserid/odsupport/arssupport.zip 
+
+
+You will send your support team the arssupport.zip file, which contains the following files: 
+File Description dspsfwrsc.txt Output of the Display Software Resources command odwekUserData.txt List of files in the path /QIBM/UserData/OnDemand/www odProcessStatus.txt List of all active CMOD processes at the time ARSSUPPORT was run. Includes servers, arsxxx, and xxxOND commands. odServerFileList.txt List of files in the path /qibm/proddata/ondemand qrlcinsfil.txt Contents of the qrlcinsfil data area for the instance qrlcptflvl.txt Contents of the CMOD PTF data area for the system qrlmdc1.txt Contents of the qrlmdc1 data area for the instance Instance_ONDENU.txt ars.ini stanza, summary of ars.cfg, ars.cache, and ars.dbfs for the instance SystemInfo.txt Host name, OS version, CMOD version SystemProperties.txt Java information 5770RD1_ptf.txt PTF listing for CMOD 5770SS1_ptf.txt PTF listing for IBM i 5770999_ptf.txt PTF listing for SLIC ars/ars.ini Complete ars.ini file ars/ARS.CACHE ars.cache file for the instance ars/ARS.CFG ars.cfg file for the instance ars/ARS.DBFS ars.dbfs file for the instance odSystemLogEntries.txt System log entries (optional) 
+Help for ARSSUPPORT is available by using the -h parameter on the command: 
+java -cp /qibm/proddata/ondemand/support/arssupport.jar com/ibm/cm/od/arssupport -h 
+
+Description of the syntax and parameters on the ARSSUPPORT command can be found at our InfoCenter for your release: 
+
+V7.1 [http://www-01.ibm.com/support/knowledgecenter/SSB2EG_7.1.0/com.ibm.ondemand.administeringi5os.doc/mustgather.htm?lang=en] 
+V7.2 [http://www-01.ibm.com/support/knowledgecenter/ssw_ibm_i_72/com.ibm.ondemand.administeringi5os.doc/mustgather.htm?lang=en] V7.3 [https://www.ibm.com/support/knowledgecenter/en/SSB2EG_7.3.0/com.ibm.ondemand.administeringi5os.doc/mustgather.htm] 
+Be aware that starting at server version 9.5.0.7, the arssupport operation will automatically be run when an instance is started and the output will be generated to the directory /QIBM/UserData/OnDemand/instance_name/odsupport. 
+If this information does not address your question, contact IBM software support for further assistance. 
+
+
+Stay Informed by Receiving Product and Lifecycle Notifications:
+Click here [http://www.ibm.com/support/docview.wss?uid=swg21674106]
+
+RELATED INFORMATION
+ Common Server Administration Guides in PDF format [http://www.ibm.com/support/docview.wss?uid=swg27041971#docs]
+2010 Newsletter describing ARSSUPPORT on p. 51 [http://www.ibm.com/support/docview.wss?uid=swg21461049]

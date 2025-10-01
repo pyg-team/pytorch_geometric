@@ -1,0 +1,25 @@
+Title: IBM Unable to connect to Chinese Database in SQL Server using the DataDirect ODBC Connector - United States
+
+Text:
+Chinese database; ODBC connectivity TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When trying to connect a Microsoft SQL Server database of Chinese name using DataDirect ODBC Connector, the connection returns error 
+
+SYMPTOM
+DataDirect ODBC connector reports below error when accessing a Chinese database defined in .odbc.ini file: 
+
+ODBC function "SQLConnect" reported: SQLSTATE = 14601:Native Error Code = 4,060: Msg = [IBM(DataDirect OEM)][ODBC SQL Server Legacy Driver][SQL Server]Cannot open database "***" requested by the login. The login failed.
+
+
+CAUSE
+ODBC connector uses .odbc.ini as configuration to access databases. And .odbc.ini can only use ASCII English characters so it cannot have Chinese character as database name in the defined DSN.
+
+
+
+RESOLVING THE PROBLEM
+The limitation for .odbc.ini file is imposed by DataDirect ODBC Driver Manager. Here is a work-around to connect to SQL Server database of Chinese name. 
+
+Leave the Database entry in .odbc.ini blank or put a valid English database name so that a DSN can be specified in job. In the properties tab of ODBC Connector stage write the fully qualified table name in below format: 
+
+[chinesename_db].[schema].[tablename]

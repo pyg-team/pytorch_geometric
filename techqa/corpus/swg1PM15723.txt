@@ -1,0 +1,240 @@
+Title: IBM PM15723: WEBSPHERE CONNECT JDBC DRIVER V3.7.0.65 MIGHT THROW SQLEXCEPTION"IO ERROR WRITING TEMP FILE: NEGATIVE SEEK OFFSET" - United States
+
+Text:
+  FIXES ARE AVAILABLE
+6.1.0.35: Java SDK 1.5 SR12 FP2 Cumulative Fix for WebSphere [http://www-01.ibm.com/support/docview.wss?uid=swg24028574]
+6.1.0.37: Java SDK 1.5 SR12 FP3 Cumulative Fix for WebSphere [http://www-01.ibm.com/support/docview.wss?uid=swg24029525]
+6.1.0.47: WebSphere Application Server V6.1 Fix Pack 47 [http://www-01.ibm.com/support/docview.wss?uid=swg24035508]
+6.1.0.39: Java SDK 1.5 SR12 FP4 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24030426]
+6.1.0.41: Java SDK 1.5 SR12 FP5 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24031035]
+6.1.0.43: Java SDK 1.5 SR13 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24031963]
+6.1.0.45: Java SDK 1.5 SR14 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24033270]
+6.1.0.47: Java SDK 1.5 SR16 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24035649]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The following exception might occur in applications that use
+   the WebSphere-embedded Connect JDBC driver V3.7.0.65 to
+   connect to SQL Server.
+   
+   java.sql.SQLException com.ibm.ws.rsadapter.jdbc.WSJdbcResult
+   Set.getString 1955
+   Exception = java.sql.SQLException
+   Source = com.ibm.ws.rsadapter.jdbc.WSJdbcResultSet.getString
+   probeid = 1955
+   Stack Dump = java.sql.SQLException: [IBM][SQLServer JDBC
+   Driver]IO
+   Error writing temp file: Negative seek offset
+   at
+   com.ibm.websphere.jdbc.base.BaseExceptions.createException
+   at
+   com.ibm.websphere.jdbc.base.BaseExceptions.getException
+   (Unknown Source)
+   at
+   com.ibm.websphere.jdbc.base.BaseData.getString(Unknown
+   Source)
+   at
+   com.ibm.websphere.jdbc.base.BaseResultSet.getString(Unknown
+   Source)
+   at
+   com.ibm.websphere.jdbc.base.BaseResultSet.getString(Unknown
+   Source)
+   at
+   com.ibm.websphere.jdbcx.base.BaseResultSetWrapper.getString
+   (Unknown Source)
+   at com.ibm.ws.rsadapter.jdbc.WSJdbcResultSet.getString
+   (WSJdbcResultSet.java(Compiled Code))
+   at ui.TreeSingleton.createTreeStructures(Unknown Source)
+   at ui.TreeSingleton.initTreeStructures(Unknown Source)
+   at ui.TreeSingleton.<init>(Unknown Source)
+   at ui.TreeSingleton.getInstanceWithoutCheck(Unknown
+   Source)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  All users of IBM WebSphere Application      *
+   *                  Server V6.0.2 and V6.1                      *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: WebSphere Connect JDBC driver           *
+   *                      V3.7.0.65 may throw exception           *
+   *                      "IO Error writing temp file: Negative   *
+   *                      seek offset"                            *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   After upgrading WebSphere Application Server environment from
+   V6.0.2.29 to V6.0.2.39, the following exception from
+   applications that use the WebSphere-embedded Connect JDBC
+   driver to connect to SQL Server might occur.
+   
+   java.sql.SQLException: [IBM][SQLServer JDBC Driver]IO Error
+   writing temp file: Negative seek offset
+   at
+   com.ibm.websphere.jdbc.base.BaseExceptions.createException(Unkno
+   wn Source)
+   
+   
+   WebSphere Application Server Version 6.0.2.39 ships with
+   Embedded connect JDBC driver V3.7.0.65 that was causing this
+   problem.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The problem has been fixed in the WebSphere Embedded connect
+   JDBC driver V3.7.0.68.
+   The fix for this APAR is currently targeted for inclusion in
+   fix packs 6.0.2.43 & 6.1.0.35.  Please refer to the Recommended
+   Updates page for delivery information:
+   http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM15723
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBS APP SERV N
+   
+   
+ * REPORTED COMPONENT ID
+   5724H8800
+   
+   
+ * REPORTED RELEASE
+   60I
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-06-02
+   
+   
+ * CLOSED DATE
+   2010-07-30
+   
+   
+ * LAST MODIFIED DATE
+   2010-07-30
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBS APP SERV N
+   
+   
+ * FIXED COMPONENT ID
+   5724H8800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R60A PSY
+   UP
+   
+   
+ * R60H PSY
+   UP
+   
+   
+ * R60I PSY
+   UP
+   
+   
+ * R60P PSY
+   UP
+   
+   
+ * R60S PSY
+   UP
+   
+   
+ * R60W PSY
+   UP
+   
+   
+ * R60Z PSY
+   UP
+   
+   
+ * R61A PSY
+   UP
+   
+   
+ * R61H PSY
+   UP
+   
+   
+ * R61I PSY
+   UP
+   
+   
+ * R61P PSY
+   UP
+   
+   
+ * R61S PSY
+   UP
+   
+   
+ * R61W PSY
+   UP
+   
+   
+ * R61Z PSY
+   UP

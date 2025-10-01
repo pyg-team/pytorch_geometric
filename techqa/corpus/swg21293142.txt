@@ -1,0 +1,212 @@
+Title: IBM Scanning WebSphere Portal Applications using AppScan Standard - United States
+
+Text:
+1293142; websphere; portal; appscan; 00003530 TECHNOTE (FAQ)
+
+QUESTION
+ What are the most commonly asked questions for scanning IBM WebSphere Portal sites with IBM Security AppScan Standard? 
+
+ANSWER
+FAQs for scanning WebSphere portal sites
+
+
+How do you know if an application is based on WebSphere Portal? 
+
+What is included in the encoded parts of the URL? 
+
+Is this a kind of "Session ID in path" case? 
+
+Can AppScan Standard scan this? 
+
+Why is Automatic Explore not possible? 
+
+What do you need to do to scan your WebSphere Portal application? 
+
+Is there anything special to note when recording a login? 
+
+How do you set up the In-Session Detection pattern? 
+
+Anything special about Session IDs? 
+
+Can all types of tests be executed on WebSphere? 
+
+Can you start scanning now? 
+
+During scanning, weird URLs appear in the tree. What are these? 
+
+
+
+
+Q: How do you know if an application is based on WebSphere Portal? A: Applications based on WebSphere Portal typically have very long URLs that begin with the /wps/ prefix and include encoded parts. 
+
+Here is a typical WebSphere Portal URL:
+
+http://websphere.watchfire.com:10038/wps/portal/!ut/p/c1/ 04_SB8K8xLLM9MSSzPy8xBz9QJ_89PTUFP_SEv0I_Siz- DA4cPJ2NjAy9LfwcvEKNHR3MQHKRyLJm4eFGIDlPS3Ngw 3cXYyJ0W2AAzgaENAdDnI4fttB8njM90N4tCAjx83SU9cRAJMO _DA!/dl2/d1/L0lDUWtpQ1NTUW9LVVFBISEvb0lvZ0FFQ1FRREdJ UXBURE9DNEpuQSEhL1lBeEpKNDUwLTRrc3V5bHcvN19WVlZ WVlZWVlZWQktDMDIxTzhKREpRMUdUMS93cHMucG9ydGxldHMubG9naW4! 
+
+
+
+ Back to top 
+
+
+
+
+Q: What is included in the encoded parts of the URL? 
+
+ 
+
+A: The encoded parts of the URL include what is called "Navigational State". This is similar to the VIEWSTATE in .NET. It includes information about what elements to show in the current page, navigation history (previous pages) and status of elements in the current page (expand/collapse, selection state etc). 
+
+
+
+ Back to top 
+
+
+
+
+Q: Is this a kind of "Session ID in path" case? 
+
+ 
+
+A: No, there is no session-related information in the URL. Session is maintained using cookies. 
+
+
+
+ Back to top 
+
+
+
+
+Q: Can AppScan Standard scan this? 
+
+ 
+
+A: Yes, but there are some limitations. The biggest limitation is that Automatic Explore is not possible, only Manual Explore. 
+
+
+
+ Back to top 
+
+
+
+
+Q: Why is Automatic Explore not possible? 
+
+ 
+
+A: The Navigational State includes information about navigation history, the same page could have two completely different URLs. If we tried Automatic Explore we'd end up crawling the same pages over and over again. 
+
+Note: As of AppScan Enterprise 8.5, and AppScan Standard 9.0.1 there is a function to access the WebSphere decoding service which allows the automatic exploration of WebSphere portals version 6.1 and above. This function helps the automatic explore, but in some cases the coverage still needs to be completed by manual explore. 
+
+
+
+ Back to top 
+
+
+
+
+Q: What do you need to do to scan your WebSphere Portal application? 
+
+ 
+
+A: Start off with using one of the following templates depending on your WebSphere configuration: 
+
+ *  WebSphere Commerce 
+ *  WebSphere Portal
+   
+   
+   After setting the Starting URL you need to: 1. Record a login 
+   
+   2. Set the In-Session detection pattern properly 
+   
+   3. Set the Session ID cookies properly 
+   
+   4. Perform Manual Explore 
+   
+   5. Start the Test stage
+   
+   
+
+
+ Back to top 
+
+
+
+
+Q: Is there anything special to note when recording a login? 
+
+ 
+
+A: After you record the login sequence you will get to the Session Information dialog. You will probably see many requests, but you will need to find one login request which is a POST request, with many other GET requests before and after it. 
+
+ 1. You may safely delete any GET requests to JavaScript pages (*.js). 
+ 2. Find the POST request (click "View" on the requests one by one and look for the POST request). You'll see the username and password as post body parameters of this request. It is also likely that the response of the POST login request is a "302" redirect. This is the real login request. 
+ 3. Mark all the GET requests that come BEFORE the POST request as "Regular" (as opposed to "Login"). 
+ 4. The request that comes AFTER the POST login request is your In-Session request, mark it as such (read below on how to set the In-Session Detection pattern). 
+ 5. Delete all the remaining requests after the POST login requests (except the In-Session one).
+
+
+ Back to top 
+
+
+
+
+Q: How do you set up the In-Session Detection pattern? 
+
+ 
+
+A: Most applications use the logout link as an indication that we're logged in. In WebSphere Portal the URL of the logout link itself keeps changing, so we can't use it, but we CAN use the TEXT of the logout link. Usually the logout link will have text that says "Logout" or "Log Out". Select the In-Session request and click "Show in Browser". Now look for the logout link and see how it is named. Write this text into the Response Pattern textbox. If there is any specific HTML code around this text that doesn't change, add this code around your pattern â€“ it will make your pattern more robust. 
+
+
+
+ Back to top 
+
+
+
+
+Q: Anything special about Session IDs? 
+
+ 
+
+A: Yes. You need to make sure there are TWO COOKIES defined as Session IDs, JSESSIONID and LtpaToken. Both must be tracked and updated in order to maintain session state. You may find that AppScan only added JSESSIONID automatically, and you'll need to manually add LtpaToken. 
+
+
+
+ Back to top 
+
+
+
+
+Q: Can all types of tests be executed on WebSphere? 
+
+ 
+
+A: Due to the special way of handling URLs, WebSphere will cause a lot of False Positives on Infrastructure tests like Hidden Directory Detected and some Application Tests like "Application test Script Detected". 
+
+For example:
+http://site.com//wps/portal/test.jsp will return a HTTP 200 OK status code with the content of the home page. Adding the home page to custom error pages is not recommended. If you notice this type of behavior, disable the problematic tests from Test Settings > Edit Test Policy. 
+
+
+
+ Back to top 
+
+
+
+
+Q: Can you start scanning now? 
+
+ 
+
+A: Take note, no Automatic Explore. Perform Manual Explore and then start the Test stage. When doing Manual Explore, look for forms to fill that include user input, search forms etc. These are where the interesting POST requests come from. 
+
+
+
+ Back to top 
+
+
+
+
+Q: During scanning, weird URLs appear in the tree. What are these? 
+
+ 
+
+A: In AppScan Standard, we currently do not decode the URLs in any way, so you end up seeing the odd-looking URLs in the Application Tree, with the encoded parts appearing as folders. Those are, of course, NOT real folders. To decode URLs, this option is now available in the 8.0 version of AppScan Enterprise / Policy Tester.

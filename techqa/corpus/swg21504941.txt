@@ -1,0 +1,120 @@
+Title: IBM Collecting Data for IBM Case Manager 5.1 Installation Programs - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ What information should be collected when I experience a problem with the IBM® Case Manager Platform Installation Tool or the IBM Case Manager installation program? 
+
+RESOLVING THE PROBLEM
+Collecting Data for the Case Manager Platform Installation Tool or Case Manager Installation Program 
+
+For every problem, collecting data can aid in problem determination and save time resolving Problem Management Records (PMRs). Gathering this data before you call IBM support can help you understand the problem and save time when you analyze the data.
+
+Collecting must gather data early, before opening the PMR, helps IBM® Support quickly determine if: 
+
+ * Symptoms match known problems (rediscovery). 
+ * There is a non-defect problem that can be identified and resolved. 
+ * There is a defect that identifies a work around to reduce severity.
+
+
+Locating the root cause of a problem can speed development of a code fix. 
+
+Gathering General Information 
+
+For IBM® Case Manager, gather the version of the software, the operating system versions, and settings for the pertinent servers and client machines. 
+
+Then, gather the information that is specific to the Case Manager Platform Installation Tool or Case Manager installation program issue. 
+
+Gather the following information:  * How often does this problem occur? 
+ * Can the problem be reproduced? 
+ * How many users are affected by this problem? 
+ * What is the business impact of this problem? 
+ * Is there a work around?
+
+
+Gathering Operating System Versions and Settings 
+
+These commands collect:  * OS Version 
+ * OS Environment Variables 
+ * OS Kernel parameters
+
+
+Run the following commands on the IBM Case Manager server and collect the output: 
+
+AIX users Command Collects uname -a or oslevel -q OS Version /usr/sbin/instfix -ivq OS Patches or Maintenance level env OS Environment Variable errpt OS Configuration and Error Reporting /usr/sbin/lsattr -E -l sys0 OS Kernel parameters 
+HP-UX users Command Collects uname -a OS Version /usr/sbin/swlist -l product OS Patches or Maintenance level env OS Environment Variable /usr/sbin/dmesg OS Configuration and Error Reporting /usr/sbin/sysdef OS Kernel parameters 
+Solaris users Command Collects uname -a OS Version /usr/bin/showrev -a OS Patches or Maintenance level env OS Environment Variable /usr/sbin/prtdiag -v OS Configuration and Error Reporting /usr/sbin/sysdef -D 
+/usr/bin/getconf -a OS Kernel parameters 
+Windows users Command Collects systeminfo
+inmsd 
+(and do a file -> “export” menu choice to create a text file) OS Version, Patches and Maintenance level set OS Environment Variables cscript C:\windows\system32\eventquery.vbs /L application /R 1000 /V 
+
+cscript C:\windows\system32\eventquery.vbs /L system /R 1000 /V 
+
+cscript C:\windows\system32\eventquery.vbs /L security /R 1000 /V OS Event Log Error Reporting Linux users 
+
+Command Collects uname -a OS Version /usr/bin/showrev -a OS Patches or Maintenance level env OS Environment Variable /usr/sbin/prtdiag -v OS Configuration and Error Reporting /usr/sbin/sysdef -D 
+/usr/bin/getconf -a OS Kernel parameters 
+Other Files to collect This section lists additional files to collect which are normally (or optimally) analyzed for this problem. 
+
+OS Platform File AIX /var/adm/syslog/syslog.log HP-UX /var/adm/syslog/syslog.log Solaris /var/adm/messages and /var/log/syslog Linux /var/log/messages.* Gathering Installation Program Version Information 
+
+Specify the name of the installation program. The installation program name identifies the version. 
+
+In addition, gather the version.txt file from the installation disks. In some cases, the version.txt file might also be found in the root installation directory. 
+
+Case Manager Installation Program Log Files
+
+Gather the following log files for the Case Manager installation program:
+
+
+ * Case Manager Installation Program Log File
+   The installation program log file is normally located in the logs subdirectory under the Case Manager root installation directory, but on cancelled installations it will be located in the user home or desktop.
+   IBM_Case_Manager_5.1.0_InstallLog.txt
+
+ * Debug Log Files for Installations
+   The debug log files (standard error and standard out) for installs will be located in the logs/InstallDebug subdirectory under the Case Manager root installation directory, but on cancelled installations they will be located in the system TEMP directory.
+   cm510_install_stderr.txt
+   cm510_install_stdout.txt
+   
+ * Debug Log Files for Uninstallations
+   The debug log files (standard error and standard out) for uninstalls will be located in the system TEMP directory.
+   cm510_uninstall_stderr.txt
+   cm510_uninstall_stdout.txt
+
+
+The default Case Manager installation directory is C:\Program Files (x86)\IBM\CaseManagement on Windows and /opt/IBM/CaseManagement on AIX, Linux, or Solaris. 
+
+On AIX, Linux, or Solaris, the system TEMP directory is normally /tmp or /var/tmp. On Windows, the system TEMP directory is specified by the TMP or TEMP environment variables. 
+
+Case Manager Platform Installation Tool Log Files 
+
+Gather the following log files for the Case Manager Platform Installation Tool: 
+ * Case Manager Platform Installation Tool Installation log file 
+   The installer log file is normally located in \Program Files\IBM\cmpit on Windows and in /opt/ibm/cmpit on AIX, Linux, or Solaris, but on cancelled installations it is located in the user home or desktop.
+   cmpit_install_log.txt
+
+ * Standard Error File
+   The standard error file is normally located in \Program Files\IBM\cmpit on Windows and in /opt/ibm/cmpit on AIX, Linux, or Solaris, but on cancelled installations it is located in the system TEMP directory.
+   cmpit_install_stderr.txt
+
+ * Standard Out File
+   The standard out file is normally located in \Program Files\IBM\cmpit on Windows and in /opt/ibm/cmpit on AIX, Linux, or Solaris, but on cancelled installations it is located in the system TEMP directory.
+   cmpit_install_stdout.txt
+
+
+On AIX, Linux, or Solaris, the system TEMP directory is normally /tmp or /var/tmp. On Windows, the system TEMP directory is specified by the TMP or TEMP environment variables. 
+
+Individual Component Log Files 
+
+If you detect failures in one or more of the individual product installation programs invoked by the Case Manager Platform Installation Tool, collect the log files generated by those installation programs. The installation includes the following products: 
+ * IBM Case Manager 
+ * IBM DB2 
+ * IBM FileNet Content Engine 
+ * IBM FileNet Content Engine Client 
+ * IBM FileNet Process Engine 
+ * IBM FileNet Process Engine Client 
+ * IBM FileNet Workplace XT 
+ * IBM Tivoli Directory Server 
+ * IBM WebSphere Application Server

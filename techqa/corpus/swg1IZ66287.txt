@@ -1,0 +1,186 @@
+Title: IBM IZ66287: WMQ V7.X JMS CLIENT IS UNABLE TO ACCESS MESSAGE CONTENTS SENT BY A WMQ V6.X CLIENT APPLICATION - United States
+
+Text:
+  FIXES ARE AVAILABLE
+WebSphere MQ V6, Fix Pack 6.0.2.9 [http://www-01.ibm.com/support/docview.wss?uid=swg24025669]
+WebSphere MQ V6.0 for iSeries Fix Pack 6.0.2.9 [http://www-01.ibm.com/support/docview.wss?uid=swg24025670]
+WebSphere MQ 6.0 for HP OpenVMS Alpha and Itanium - Fix Pack 6.0.2.10 (FP03) [http://www-01.ibm.com/support/docview.wss?uid=swg24029987]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  A Java Message Service (JMS) application using WebSphere MQ
+   (WMQ) v7.x client jars is unable to access the contents of a
+   message sent by a WMQ v6.x client application. This issue
+   happens only under the following scenarios:
+   1. A WMQ JMS application using either v6 or v7 client jars puts
+   a message to a queue without any RFH header.
+   2. A WMQ JMS application using v6 client jars picks up this
+   message and sends the same message to a different queue
+   3. Another WMQ JMS application using v7 client jars picks up
+   this message and the payload of the message is null. When
+   the application uses message.getText() this will return
+   null for the message.
+   
+   Additional Keywords: Java MQJAVA MQJMS nil xml broker pub/sub
+   pubsub publish pub subscribe sub MQRFH2 bad corrupt corrupted
+   incorrect output
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   This issue affects any application using the WebSphere MQ v7.x
+   classes for JMS that process messages sent by a application
+   using the WebSphere MQ v6.x classes for JMS.
+   
+   Platforms affected:
+   All Distributed (iSeries, all Unix and Windows) +Java
+   ****************************************************************
+   PROBLEM SUMMARY:
+   When an application using the WebSphere MQ v6.x classes for JMS
+   picks up a message without an RFH header and sends it to a
+   different queue, the JMS layer adds a special tag
+   (xsi:nil="true") to the header. Ideally this tag must be added
+   only if it is a null message.
+   
+   Because of this, when the JMS application using the WebSphere
+   MQ v7 classes for JMS picks up the message and calls
+   message.getText(), a null is returned for the message contents
+   (since the header has xsi:nil="true" tag).
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  When the message is constructed, a check is done to ensure if
+   the message data length is "0" or not. If it is "0" then it is
+   considered as a null message, otherwise it is not a null
+   message. When the message data length is not equal to zero, a
+   flag is reset to indicate it is not a null message so that the
+   xsi:nil="true" tag is not added to the RFH header.
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+                      v6.0
+   Platform           Fix Pack 6.0.2.9
+   --------           --------------------
+   Windows            U200313
+   AIX                U828012
+   HP-UX (PA-RISC)    U827381
+   HP-UX (Itanium)    U827383
+   Solaris (SPARC)    U827693
+   Solaris (x86-64)   U828055
+   iSeries            tbc_p600_0_2_9
+   Linux (x86)        U827380
+   Linux (x86-64)     U827694
+   Linux (zSeries)    U827590
+   Linux (Power)      U827382
+   Linux (s390x)      U827695
+   
+   The latest available maintenance can be obtained from
+   'WebSphere MQ Recommended Fixes'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037]
+   
+   If the maintenance level is not yet available, information on
+   its planned availability can be found in 'WebSphere MQ
+   Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ66287
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ SOL SPARC
+   
+   
+ * REPORTED COMPONENT ID
+   5724H7203
+   
+   
+ * REPORTED RELEASE
+   600
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-12-03
+   
+   
+ * CLOSED DATE
+   2009-12-31
+   
+   
+ * LAST MODIFIED DATE
+   2011-08-17
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ SOL SPARC
+   
+   
+ * FIXED COMPONENT ID
+   5724H7203
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R600 PSY
+   UP

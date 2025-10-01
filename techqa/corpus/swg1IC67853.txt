@@ -1,0 +1,275 @@
+Title: IBM IC67853: DB2 INSTANCE TRAPS IN CSMALLOCCCB OR CSMMORERESULTS. - United States
+
+Text:
+z/os  FIXES ARE AVAILABLE
+DB2 Version 9.7 Fix Pack 3 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24027906]
+DB2 Version 9.7 Fix Pack 3a for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24028306]
+DB2 Version 9.7 Fix Pack 4 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24029745]
+DB2 Version 9.7 Fix Pack 5 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24031181]
+DB2 Version 9.7 Fix Pack 6 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24032754]
+DB2 Version 9.7 Fix Pack 7 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24033685]
+DB2 Version 9.7 Fix Pack 8 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24034634]
+DB2 Version 9.7 Fix Pack 9 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24036646]
+DB2 Version 9.7 Fix Pack 9a for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24037559]
+DB2 Version 9.7 Fix Pack 10 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24038641]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The DB2 instance may intermittently trap when invoking SQL
+   procedures.   The call stack in the trap may change from trap to
+   trap.
+   
+   Here is one potential stack trace back:
+   
+   <StackTrace>
+   -------Frame------ ------Function + Offset------
+   0x09000000078EE638 csmAllocCCB__FP14db2UCinterface + 0x104
+   0x09000000078EDA7C
+   csmOpenReply__FP14db2UCinterfaceP8db2UCpidP15db2UCCursorInfoPc +
+   0x6C
+   0x09000000078ED178
+   csmOpenReplyTrusted__FP14db2UCinterfaceP8db2UCpidP15db2UCCursorI
+   nfoPc
+   + 0x5C
+   0x09000000078EF7D8
+   csmOpenReplyTrustedPsm__FP14db2UCinterfaceP8db2UCpidP15db2UCCurs
+   orInfoPc
+   + 0x54
+   0x0900000004975A60
+   sqlrr_open__FP14db2UCinterfaceP15db2UCCursorInfo + 0x8C0
+   0x09000000078B3C10 csmOpen__FP14db2UCinterfaceP15db2UCCursorInfo
+   + 0x9C
+   0x09000000078B077C openCursor__10pvmPackageFP14db2UCinterfaceCUi
+   + 0x198
+   0x09000000078ADC4C executeSection__10pvmPackageFP5sqlcaUi +
+   0x890
+   0x090000000789823C executeQuery__3PVMFUi + 0xE0
+   0x09000000078972D4 run__3PVMFv + 0xC00
+   0x0900000007894F30 pvm_entry + 0x460
+   0x09000000049A0E44 sqloInvokeFnArgs + 0xBC
+   0x090000000597CE24 sqloInvokeFnArgs@glue497 + 0x78
+   0x0900000004D2CA94
+   sqlriInvokerTrusted__FP10sqlri_ufobP21sqlriRoutineErrorIntf +
+   0x1D0
+   0x09000000049A59FC sqlriInvokeInvoker__FP10sqlri_ufobb + 0x6E4
+   0x0900000004BBE064 sqlricall__FP8sqlrr_cb + 0x94
+   0x0900000004922548 sqlriSectInvoke__FP8sqlrr_cbP12sqlri_opparm +
+   0x588
+   0x090000000493919C sqlrr_process_execute_request__FP8sqlrr_cbi +
+   0xC7C
+   0x09000000049684B4
+   .sqlrr_execute.fdpr.clone.2246__FP14db2UCinterfaceP9UCstpInfo +
+   0x84
+   0x090000000496820C
+   .sqljs_ddm_excsqlstt.fdpr.clone.111__FP14db2UCinterfaceP13sqljDD
+   MObject
+   + 0xB70
+   0x09000000049675BC
+   sqljsParseRdbAccessed__FP13sqljsDrdaAsCbP13sqljDDMObjectP14db2UC
+   interface
+   + 0x118
+   0x090000000496732C
+   .sqljsParse.fdpr.clone.624__FP13sqljsDrdaAsCbP14db2UCinterface +
+   0x330
+   0x0900000004963F48 @64@sqljsSqlam__FP14db2UCinterfaceP8sqeAgentb
+   + 0x3CC
+   0x0900000005430B6C
+   @64@sqljsDriveRequests__FP8sqeAgentP14db2UCconHandle + 0x74
+   0x0900000004B18F70
+   @64@sqljsDrdaAsInnerDriver__FP18SQLCC_INITSTRUCT_Tb + 0x2B0
+   0x0900000004B18604 sqljsDrdaAsDriver__FP18SQLCC_INITSTRUCT_T +
+   0xFC
+   0x0900000004ABBA10 RunEDU__8sqeAgentFv + 0x80
+   0x0900000004AC2AA0 EDUDriver__9sqzEDUObjFv + 0xE4
+   0x0900000004AB6474 sqloEDUEntry + 0x264
+   </StackTrace>
+   
+   
+   Here is another potential stack trace back:
+   
+   <StackTrace>
+   -------Frame------ ------Function + Offset------
+   0x09000000078B16CC csmMoreResults__FP14db2UCinterface + 0x9C
+   0x09000000078AF748
+   harvestResultSets__17pvmResultSetTableFP22pvmResultSetTableEntry
+   + 0x258
+   0x09000000078AF1B0 storeResultSets__17pvmResultSetTableFPcUi +
+   0xFC
+   0x09000000078ADBE4 executeSection__10pvmPackageFP5sqlcaUi +
+   0x828
+   0x090000000789823C executeQuery__3PVMFUi + 0xE0
+   0x09000000078973BC run__3PVMFv + 0xCE8
+   0x0900000007894F30 pvm_entry + 0x460
+   0x09000000049A0E44 sqloInvokeFnArgs + 0xBC
+   0x090000000597CE24 sqloInvokeFnArgs@glue497 + 0x78
+   0x0900000004D2CA94
+   sqlriInvokerTrusted__FP10sqlri_ufobP21sqlriRoutineErrorIntf +
+   0x1D0
+   0x09000000049A59FC sqlriInvokeInvoker__FP10sqlri_ufobb + 0x6E4
+   0x0900000004BBE064 sqlricall__FP8sqlrr_cb + 0x94
+   0x0900000004922548 sqlriSectInvoke__FP8sqlrr_cbP12sqlri_opparm +
+   0x588
+   0x090000000493919C sqlrr_process_execute_request__FP8sqlrr_cbi +
+   0xC7C
+   0x09000000049684B4
+   .sqlrr_execute.fdpr.clone.2246__FP14db2UCinterfaceP9UCstpInfo +
+   0x84
+   0x090000000496820C
+   .sqljs_ddm_excsqlstt.fdpr.clone.111__FP14db2UCinterfaceP13sqljDD
+   MObject
+   + 0xB70
+   0x09000000049675BC
+   sqljsParseRdbAccessed__FP13sqljsDrdaAsCbP13sqljDDMObjectP14db2UC
+   interface
+   + 0x118
+   0x090000000496732C
+   .sqljsParse.fdpr.clone.624__FP13sqljsDrdaAsCbP14db2UCinterface +
+   0x330
+   0x0900000004963F48 @64@sqljsSqlam__FP14db2UCinterfaceP8sqeAgentb
+   + 0x3CC
+   0x0900000005430B6C
+   @64@sqljsDriveRequests__FP8sqeAgentP14db2UCconHandle + 0x74
+   0x0900000004B18F70
+   @64@sqljsDrdaAsInnerDriver__FP18SQLCC_INITSTRUCT_Tb + 0x2B0
+   0x0900000004B18604 sqljsDrdaAsDriver__FP18SQLCC_INITSTRUCT_T +
+   0xFC
+   0x0900000004ABBA10 RunEDU__8sqeAgentFv + 0x80
+   0x0900000004AC2AA0 EDUDriver__9sqzEDUObjFv + 0xE4
+   0x0900000004AB6474 sqloEDUEntry + 0x264
+   </StackTrace>
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  It is possible that the DB2 Connection Concentrator can
+   influence this problem.   As a workaround try disabling the
+   Connection Concentrator by ensuring that MAX_COORDAGENTS is
+   equal to MAX_CONNECTIONS.   The DB2 Connection Concentrator is
+   enabled when MAX_CONNECTIONS is set to a value greater than
+   MAX_COORDAGENTS.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * ALL                                                          *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * The DB2 instance may intermittently trap when invoking       *
+   * SQLprocedures.   The call stack in the trap may change       *
+   * fromtrap to trap..The trap file may show either csmAllocCCB  *
+   * orcsmMoreResultsat the top of the stack trace back.          *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Upgrade to DB2 v9.7, Fixpak 3                                *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  First fixed in DB2 UDB Version 9.7, Fixpak 3
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  see LOCAL FIX
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC67853
+   
+   
+ * REPORTED COMPONENT NAME
+   DB2 FOR LUW
+   
+   
+ * REPORTED COMPONENT ID
+   DB2FORLUW
+   
+   
+ * REPORTED RELEASE
+   970
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-04-13
+   
+   
+ * CLOSED DATE
+   2010-10-07
+   
+   
+ * LAST MODIFIED DATE
+   2010-10-07
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   DB2 FOR LUW
+   
+   
+ * FIXED COMPONENT ID
+   DB2FORLUW
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R970 PSN
+   UP

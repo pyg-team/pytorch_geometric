@@ -1,0 +1,163 @@
+Title: IBM PM29433: AFTER SYNDICATION OF NAVIGATOR COMPONENTS THE RESULT DESIGNS ARE NOT IN CORRECT ORDER ON SUBSCRIBER MACHINE - United States
+
+Text:
+  FIXES ARE AVAILABLE
+7.0.0.2 Download: WebSphere Portal and WCM V7.0 fix pack 2 [http://www-01.ibm.com/support/docview.wss?uid=swg24031676]
+Fixes integrated in WebSphere Portal 7.0.0.1 & 7.0.0.2 Combined Cumulative Fixes [http://www-01.ibm.com/support/docview.wss?uid=swg24029452]
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  After syndication of navigator components the result designs
+   are
+   not in correct order on subscriber machine
+   
+   Steps to reproduce the issue
+   
+   1.Create a new navigator component on the syndicator
+   (Basic settings -> Start type: Current top level site area,
+   Include
+   start: true, Ancestor level: all, Descendent level: all,
+   Preceding
+   siblings level: none, Next siblings level: none, Show top
+   level site
+   area: false, Show content: true, Expand current navigator
+   branch one
+   level: false, Expand navigator to display current site area:
+   false,
+   
+   Results per page: 10, Start page: 1, Maximum pages to include:
+   10,
+   Pages to read ahead: 10, Distinguish items with no children
+   using the
+   final navigator design: false).
+   2.Add 10 result designs to the navigator (by adding the markup
+   to the
+   design, then click the button ?Add result design?). Include
+   the
+   correct level in the result design, for example use a design
+   like
+   ?<div>Result Design N</div>? where N is the current navigator
+   result
+   design level     (1-10).
+   3.Click save and close.
+   4.Wait a few seconds/minutes until the Navigator is visible on
+   the
+   subscriber. Open the navigator on the subscriber and on the
+   syndicator
+   and verify the result design. You will see the difference.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Problem Summary:
+    Navigator result designs do not syndicate in the correct order
+   
+   Detailed Problem Description:
+   The result design fields of a navigator component are not
+   syndicated in order.  They are in a random order when comparing
+   the syndicator and  the subscriber.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Problem Analysis:
+   The layer used to transport the node from syndicator to
+   subscriber used a HashMap.  HashMap returns the items in an
+   unspecified order.
+   
+   Problem Solution:
+   The code has been updated to use a LinkedHashMap resulting in
+   the items being in the same order as the original.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM29433
+   
+   
+ * REPORTED COMPONENT NAME
+   LOTUS WEB CONT
+   
+   
+ * REPORTED COMPONENT ID
+   5724I2900
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-12-28
+   
+   
+ * CLOSED DATE
+   2011-01-28
+   
+   
+ * LAST MODIFIED DATE
+   2011-01-28
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   LOTUS WEB CONT
+   
+   
+ * FIXED COMPONENT ID
+   5724I2900
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R700 PSY
+   UP

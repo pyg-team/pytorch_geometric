@@ -1,0 +1,150 @@
+Title: IBM HE11384: IBM CONTENT COLLECTOR SERVICES CANNOT BE STARTED BECAUSE OF A DEPRECATED MICROSOFT VISUAL C++ RUNTIME VERSION. - United States
+
+Text:
+  A FIX IS AVAILABLE
+IBM Content Collector V2.2 Fix Pack 2 [http://www-01.ibm.com/support/docview.wss?uid=swg24031075]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The IBM Content Collector services cannot be started. If you try
+   to start a service manually, the following error message is
+   displayed:
+   
+   Error 14001: This application has failed to start because the
+   application configuration is incorrect.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  IBM Content Collector v2.2.0.1 requires the Microsoft Visual C++
+   2005 Redistributable Package KB2467175 or later.  However, if
+   you install an outdated version of the Microsoft Visual C++ 2005
+   runtime, this older version might uninstall the version of the
+   Microsoft Visual C++ runtime that is installed with IBM Content
+   Collector.
+   
+   So if you install a product that includes an outdated
+   Redistributable Package, like for example the client components
+   of IBM InfoSphere Classification Module 8.7, Microsoft Visual
+   C++ 2005 Redistributable Package KB2467175 might be uninstalled
+   and IBM Content Collector stops working properly.
+   
+   Run Windows Update to install the current Microsoft Visual C++
+   runtime again.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  If you installed an outdated version of the Microsoft Visual C++
+   2005 runtime, this older version might have uninstalled the
+   version of the Microsoft Visual C++ runtime that was installed
+   with IBM Content Collector.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  IBM Content Collector now includes a later version of the
+   Microsoft Visual C++ 2005 runtime, that will not be uninstalled
+   by an outdated version.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   HE11384
+   
+   
+ * REPORTED COMPONENT NAME
+   ICC FOR EMAIL
+   
+   
+ * REPORTED COMPONENT ID
+   5724V5700
+   
+   
+ * REPORTED RELEASE
+   220
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-12-09
+   
+   
+ * CLOSED DATE
+   2012-06-19
+   
+   
+ * LAST MODIFIED DATE
+   2012-06-19
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ICC FOR EMAIL
+   
+   
+ * FIXED COMPONENT ID
+   5724V5700
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R220 PSY
+   UP
+   
+   
+ * R300 PSY
+   UP

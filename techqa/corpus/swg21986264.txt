@@ -1,0 +1,57 @@
+Title: IBM Counter Fraud Management 2.0.0.x installed products and versions - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ What products and versions are installed with the ICFM 2.0.0.x installation programs? If a product is for a specific version of ICFM 2.0.0.x, such as for 2.0.0.1 or 2.0.0.3, it is noted below. 
+
+ANSWER
+
+
+ICFM SERVER SOFTWARE:
+The following software is installed with the ICFM server installation program:
+
+ * IBM SPSS Modeler Desktop Client Gold Edition 18.0.0.0
+ * IBM SPSS Modeler Server Gold Edition 18.0.0.0 
+ * IBM SPSS Collaboration and Deployment Services 8.0.0.0 
+ * IBM SPSS Data Access Pack 7.1.1 
+ * IBM SPSS Statistics Desktop 24.0.0.0
+ * IBM SPSS Statistics Server 24.0.0.0 
+ * IBM DB2 Enterprise Server Edition V10.5.0.7 
+ * IBM DB2 Encryption V10.5.0.7 
+ * IBM WebSphere Application Server Network Deployment V8.5.5.9 
+ * IBM Integration Business V10.0.0.4
+ * IBM WebSphere MQ V8.0.0.4 
+ * IBM Operational Decision Manager Standard V8.8.0.1
+ * IBM Installation Manager V1.8.4.1
+
+
+ICFM TOOLS CLIENT SOFTWARE:
+The following software is installed with the ICFM tools client installation program: 
+
+ * IBM 64-bit SDK for Java 8.0
+ * IBM Installation Manager 1.8.4.1
+ * IBM Data Studio 4.1.2 APAR1
+ * IBM ODM Rules Designer 8.8 IF005
+ * IBM WebSphere MQ Explorer 8.0.0.4
+ * IBM Integration Toolkit 10.0.0.3
+ * IBM SPSS Statistics Client 24.0.0.0
+ * IBM SPSS Collaboration and Deployment Services Deployment Manager 8.0.0.0
+ * IBM SPSS Modeler Gold Client Keyless 18.0.0.0
+ * IBM SPSS Modeler Client Premium 18.0.0.0
+ * IBM DB2 Data Server Runtime Client 10.5.0.7
+
+Attention: You must also install IBM SPSS Data Access Pack V7.1.1 manually on the client system. 
+
+
+ICFM SUPPLEMENTAL SERVER SOFTWARE (OPTIONAL INSTALLATION):
+The following software can be installed with the ICFM supplemental server installation programs: 
+
+ * IBM InfoSphere Identity Insight V8.1.0.4 with IBM WebSphere MQ Client 8.0.0.5 - ISII only
+ * IBM i2 Analyze 4.1.1 (available starting with ICFM V2.0.0.1)
+ * IBM Installation Manager 1.8.4.1 (for both i2 Analyze and ISII)
+ * IBM DB2 Client V10.5.0.7 (for both i2 Analyze and ISII)
+
+RELATED INFORMATION
+ ICFM 2.0.0.x Download [http://www.ibm.com/support/docview.wss?uid=swg24042370]

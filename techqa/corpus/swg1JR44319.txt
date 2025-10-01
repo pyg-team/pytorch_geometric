@@ -1,0 +1,208 @@
+Title: IBM JR44319: PORTAL INBOX SEARCH FAILS TO DISPLAY RESULTS WHEN A DATE FIELD VALUE IS NULL - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Version 8.0 Refresh Pack 1 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24033777]
+Version 7.5.1 Fix Pack 2 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24036462]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  In the Process Portal Inbox, executing a saved search or quick
+   search fails to display process instances if a date field in the
+   instance data returned by the search (from the database)
+   contains a null value.
+   
+   With Internet Explorer as the browser, the following error
+   message is displayed in Process Portal (instead of the search
+   results):
+   
+   [object Error]
+   
+   With Firefox as the browser, an error message similar to the
+   following is displayed in Process Portal (instead of the search
+   results):
+   
+   Error: Unable to load
+   /portal/jsp/tiles/AdvancedSearchResultsContent.jsp?dojo.preventC
+   ache=134 9388168669 status: 500
+   
+   In addition (regardless of browser), an exception similar to the
+   following is written to SystemOut.log (on the server or cluster
+   where the Process Portal is deployed):
+   
+   00000036 servlet       E
+   com.ibm.ws.webcontainer.servlet.ServletWrapper service
+   SRVE0068E: Uncaught exception created in one of the service
+   methods of the servlet
+   /jsp/tiles/AdvancedSearchResultsContent.jsp in application
+   IBM_BPM_Portal_MyBPM_server1. Exception created :
+   com.ibm.websphere.servlet.error.ServletErrorReport:
+   javax.servlet.jsp.JspException: Cannot find bean searchError in
+   any scope
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  Users of BPM Express, BPM Standard and BPM  *
+   *                  Advanced.                                   *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: In the Process Portal Inbox,            *
+   *                      executing a saved search or quick       *
+   *                      search fails to display process         *
+   *                      instances if a date field in the        *
+   *                      instance data returned by the search    *
+   *                      (from the database) contains a null     *
+   *                      value.                                  *
+   *                      With Internet Explorer as the           *
+   *                      browser, the following error message    *
+   *                      is displayed in Process Portal          *
+   *                      (instead of the search results):        *
+   *                      [object Error]                          *
+   *                      With Firefox as the browser, an error   *
+   *                      message similar to the following is     *
+   *                      displayed in Process Portal (instead    *
+   *                      of the search results):                 *
+   *                      Error: Unable to load                   *
+   *                      /portal/jsp/tiles/AdvancedSearchResults *
+   *                      Content.jsp?dojo.preventCache=134       *
+   *                      9388168669 status: 500                  *
+   *                      In addition (regardless of browser),    *
+   *                      an exception similar to the following   *
+   *                      is written to SystemOut.log (on the     *
+   *                      server or cluster where the Process     *
+   *                      Portal is deployed):                    *
+   *                      00000036 servlet       E                *
+   *                      com.ibm.ws.webcontainer.servlet.Servlet *
+   *                      Wrapper service                         *
+   *                      SRVE0068E: Uncaught exception created   *
+   *                      in one of the service methods of the    *
+   *                      servlet                                 *
+   *                      /jsp/tiles/AdvancedSearchResultsContent *
+   *                      .jsp in application                     *
+   *                      IBM_BPM_Portal_MyBPM_server1.           *
+   *                      Exception created :                     *
+   *                      com.ibm.websphere.servlet.error.Servlet *
+   *                      ErrorReport:                            *
+   *                      javax.servlet.jsp.JspException:         *
+   *                      Cannot find bean searchError in         *
+   *                      any scope                               *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   Date fields in process instances returned by a saved search
+   were not being checked for null values by a method that was
+   sorting the set of instances by date field.  This resulted in
+   a NullPointerException that, in turn, was not being properly
+   caught in a calling method, resulting in the "masking" error
+   message reported in the error description.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Adding checking for null date fields in the sorting method
+   resolved the issue.  Instances with null values in the date
+   field are sorted to the end of the list of instances.
+   
+   Interim fixes for Business Process Manager Version 7.5.1.0 and
+   Version 7.5.1.1 have been published to Fix Central.  Please
+   refer to the separate file that is automatically downloaded
+   with the interim fix for prerequisite information and
+   installation/uninstallation instructions.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR44319
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM STANDARD
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9500
+   
+   
+ * REPORTED RELEASE
+   751
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-10-08
+   
+   
+ * CLOSED DATE
+   2012-12-21
+   
+   
+ * LAST MODIFIED DATE
+   2013-03-13
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   BPM STANDARD
+   
+   
+ * FIXED COMPONENT ID
+   5725C9500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R750 PSY
+   UP

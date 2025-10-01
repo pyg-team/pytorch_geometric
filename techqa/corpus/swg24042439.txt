@@ -1,0 +1,145 @@
+Title: IBM Security Privileged Identity Manager AccessProfile for Remote Desktop Connection - United States
+
+Text:
+ DOWNLOADABLE FILES
+
+ABSTRACT
+ Privileged identity management AccessProfile for Remote Desktop Connection. 
+
+DOWNLOAD DESCRIPTION
+This package contains the privileged identity management AccessProfile for Microsoft Remote Desktop. 
+
+ * New features or updates
+ * Known issues and limitations
+ * Compatibility matrix
+ * Supported languages
+ * Prerequisites
+ * Installation Instructions
+
+NEW FEATURES OR UPDATES
+The package lets you log in with shared privileged identities with Remote Desktop Connection on Windows 10. 
+
+Note: An earlier version of the Remote Desktop Connection AccessProfile is bundled in IBM Security Privileged Identity Manager, Version 2.0.0, 2.0.1, and 2.0.2. However, if you want support for the latest version, replace the bundled version with the one that you find on this page. Date Description 4 May 2018 AccessProfile version: 1.3
+- Updated AccessProfile widgets with backward compatibility support. 31 October 2017 AccessProfile version: 1.1
+- Updated AccessProfile widgets.
+- General fixes and enhancements.
+
+9 Feb 2018: Updated steps for editing the AccessProfile with reference to profile_RDP_main_win10. 31 July 2017 Support for Windows 10, Version 1607 or later.
+AccessProfile version updated to 1.0.3. 6 June 2017 Minor fixes. Supports Windows 10, version 1511 only.
+AccessProfile version updated to 1.0.2. 15 Dec 2016 Added support for version 2.1.0. 5 July 2016 Added support for the Windows 10 Remote Desktop Connection client.
+Update: This AccessProfile will not function as expected on Windows 10, version 1607. The AccessProfile continues to be fully compatible with Windows 10, version 1511.
+
+AccessProfile version updated to 1.0.1. 
+Back to top
+
+
+
+
+KNOWN ISSUES AND LIMITATIONS
+
+Date Description 5 July 2016 Only GUI based recording is supported. 
+Back to top
+
+ 
+
+COMPATIBILITY MATRIX
+Supported components 
+
+ * IBM Security Privileged Identity Manager  * Version 2.1.1 requires Privileged Access Agent 2.1.1. 
+    * Version 2.1.0 requires Privileged Access Agent 2.1.0 with fix pack 9 or later [http://www-01.ibm.com/support/docview.wss?uid=swg21995434]. 
+    * Version 2.0.2 requires AccessAgent 8.2.2 with fix pack 21 or later [http://www-01.ibm.com/support/docview.wss?uid=swg21971780]. 
+    * Version 2.0.1, 2.0.0, 1.0.1.1, 1.0.1 requires AccessAgent 8.2.1 with interim fix 20 [http://www-01.ibm.com/support/docview.wss?uid=swg21981734] only. 
+   
+   
+ * Remote Desktop Connection
+
+Back to top
+
+
+
+
+SUPPORTED LANGUAGES
+Adding support for additional languages on Windows 10 
+To support additional non-English platforms, you must edit and test the AccessProfile before you upload it. 
+Before you begin
+Connect to a remote host through Remote Desktop Protocol which prompts you with the localized version of the Windows Security dialog box on Windows 10. 
+
+For example: 
+[/support/docview.wss?uid=swg24042439&amp;aid=1]
+
+Follow the procedure below to edit the AccessProfile: 
+
+ 1. Open the AccessProfile. 
+ 2. In the AccessProfiles pane, open profile_credui_win10. 
+ 3. Make the following changes:
+
+a. In the States tab, look for the win10security dialog found state. 
+b. Select the Localization Support -Script action that is illustrated in the following image. 
+[/support/docview.wss?uid=swg24042439&amp;aid=2] 
+c. Open the VBScript in the Script Editor. 
+Note: Several arrays have been provided, each containing a list of translated strings for specific locales that are supported by the product. d. Identify the locale that must be changed and look for the corresponding VBScript array. 
+
+In the CurrentLocaleArray function, update the parameters, <parameter1> and <parameter2>, that are assigned for your required language. 
+
+
+<Language_Code>= Array("<parameter1>","<parameter2>") 
+
+"<parameter1>" refers to the strings containing IP Address for Internet Explorer, Windows Explorer and RDP. 
+
+"<parameter2>" refers to the strings containing the Name property. 
+
+For example, to modify strings for Chinese, look for zh_cn. 
+
+zh_cn = Array("<parameter1>","<parameter2>")
+
+The diagrams are provided only as an example. 
+
+The provided non-English language phrases that you find in the AccessProfile for <parameter1> and <parameter2> are only place holders and must be updated. 
+
+Windows Security Dialog Box in Windows 10 Parameter for identifying the Windows Security dialog box on Windows 10 [/support/docview.wss?uid=swg24042439&amp;aid=3] [/support/docview.wss?uid=swg24042439&aid=4] [/support/docview.wss?uid=swg24042439&aid=4] 
+Note: In the regular expression for English, en_us, in parameter1 you will notice the following phrase: 
+"|connect to: (.*)" 
+This regular expression is used only to match the label that is originally available in an earlier version of Windows 10, Version 1511. 
+
+Tip: If you want to match additional phrases that might be displayed, use the ' |' operator.  
+
+4. Repeat or copy the changes that you made in step 3 to profile_RDP_main_win10, in the AccessProfiles pane.
+
+
+
+
+Back to top
+
+
+
+
+PREREQUISITES
+ 
+
+ * IBM Security Privileged Identity Manager 1.0.1 or later is deployed. 
+ * If you have an existing Remote Desktop Connection profile, back up the existing AccessProfile. Delete the earlier version of the AccessProfile before you upload the new AccessProfile.
+
+
+For more information about AccessStudio or AccessProfiles, see the product documentation. 
+Back to top
+
+INSTALLATION INSTRUCTIONS
+ 
+
+ 1. Download the AccessProfile to a location on your computer. 
+ 2. Upload the AccessProfile.  1. Open the AccessProfile with AccessStudio. 
+     2. Select the AccessProfile from the Data type pane. 
+     3. From the toolbar, click Upload selected data to IMS.
+    
+    
+
+
+For more AccessProfiles, go to the AccessProfile Library [http://www-01.ibm.com/support/docview.wss?uid=swg21883991]. 
+
+Back to top
+
+DOWNLOAD PACKAGE
+ 
+
+Released Download Version 1.3
+4 May 2018 prf_RDP_1.3.eas [/support/docview.wss?uid=swg24042439&aid=6]prf_RDP_1.3.eas [/support/docview.wss?uid=swg24042439&aid=5]

@@ -1,0 +1,52 @@
+Title: IBM Damaged Internal Objects - United States
+
+Text:
+Internal; object TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ What do you do when you get a message indicating that internal objects are damaged? 
+
+RESOLVING THE PROBLEM
+ 
+
+What do you do when you get a message indicating that internal objects are damaged? The messages may 
+be:
+
+CPF8A46 - Internal system objects are damaged.
+CPF9032 - Document interchange session not started.
+
+Here are the steps:
+
+Step 1 - Run DMPDLO *INT
+
+This will create six spool files that can be analyzed by a specialist. Be sure to keep these files on the spool 
+queue, or to save the printouts. Some of the pages will need to be faxed into support.
+
+Step 2 - Run RCLDLO *INT (or IPL the system)
+
+This step is required to be able to use OV/400 or Client Access. It does not require a dedicated system, but 
+it will require that everyone be out of OV/400 and out of Client Access (subsystems QSERVER and 
+QSNADS will need to be ended). For most customers, this would be the definition of a dedicated system. 
+The IPL will run a RCLDLO *INT automatically, so it does not matter whether you run RCLDLO *INT or IPL.
+
+There are some damage conditions that may require a RCLDLO *ALL. This will take quite a bit longer than 
+RCLDLO *INT. It is difficult to estimate how long a RCLDLO *ALL will run, but we have found it can 
+process from 2,000 to 15,000 documents per hour (the faster the system, the more documents per hour).
+
+Step 3 - Run DSPPTF 5769SS1 OUTPUT(*PRINT) where 5716SS1 is the appropriate component ID.
+
+This will print a PTF listing that will tell which Cumulative Tape has been loaded, and will list any individual 
+PTFs that are already on the system. This will be necessary to determine which PTFs are already on the 
+system and to verify that they are applied correctly.
+
+Call Support Line (1-800-IBM-SERV and select the appropriate option), and ask for OS/400 support. One of
+the specialists will assist in determining if there is already a PTF to solve the problem. 
+
+The DMPDLO *INT reports will identify which internal object is damaged, and what job/program damaged it.
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Operating System IBM i 7.1 Operating System IBM i 6.1 
+HISTORICAL NUMBER
+ 15752343

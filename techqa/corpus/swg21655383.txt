@@ -1,0 +1,114 @@
+Title: IBM TCR preupgrade.sh script failure - United States
+
+Text:
+preupgrade.sh migration export TCR CTGWA2120E Fail exportLDAPConfig.sh OutOfMemoryError JVM heap TIP TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ preupgrade.sh script is launched to export current TCR configurations and definitions, but it does not
+generate the expected output file because it fails with error :
+CTGWA2120E Fail to export product TCR. Return code is 1 
+
+SYMPTOM
+The preupgrade.sh script is launched with this syntax : 
+
+/opt/IBM/tivoli/tipv2/profiles/TIPProfile/upgrade/bin/preupgrade.sh /opt/IBM/tivoli/tipv2/ --username tipadmin --password password --productId TCR --ignoreTipCharting true
+
+but it fails returning this error message :
+com.ibm.tivoli.tip.upgrade.exceptions.UpgradeException: CTGWA2120E Fail to export product TCR. Return code is 1.
+
+at com.ibm.tivoli.tip.upgrade.actions.PreUpgrade.runExportCMD(PreUpgrade.java:251)
+
+at com.ibm.tivoli.tip.upgrade.actions.PreUpgrade.doExport(PreUpgrade.java:144)
+
+at com.ibm.tivoli.tip.upgrade.actions.PreUpgrade.doPreUpgrade(PreUpgrade.java:112)
+
+at com.ibm.tivoli.tip.upgrade.actions.PreUpgrade.main(PreUpgrade.java:313)
+
+CTGWA2184E Preupgrade script failed. Please check /opt/IBM/tivoli/tipv2//profiles/TIPProfile/logs/preupgrade.log and /opt/IBM/tivoli/tipv2//profiles/TIPProfile/logs/tipcli.log for details
+
+Looking at the preupgrade.log, you can find the cause of the failure.
+If the amount of data that are going to be exported is high, you could face an OutOfMemory exception in the Java Virtual Machine used by the script exportLDAPconfig.sh.
+
+In this case, the preupgrade.log would show something like :
+
+-------------------------------
+INFO: SEVERE: ENTER An exception occurred when executing a remote binary. The executable /opt/IBM/tivoli/tipv2/profiles/TIPProfile/upgrade/bin/exportLDAPconfig.sh /opt/
+
+IBM/tivoli/tipv2 /opt/IBM/tivoli/tipv2/profiles/TIPProfile/output/ConfigData returned the following code 1.
+INFO: JVMDUMP006I Processing dump event "systhrow", detail "java/lang/OutOfMemoryError" - please wait.
+
+Oct 29, 2013 3:30:18 PM com.ibm.tivoli.tip.upgrade.utils.ExecCmd printVectorWithHeading(Vector v, String heading)
+
+INFO: JVMDUMP032I JVM requested Snap dump using '/opt/IBM/tivoli/tipv2/profiles/TIPProfile/bin/Snap.20131029.153017.17150.0001.trc' in response to an event
+
+Oct 29, 2013 3:30:18 PM com.ibm.tivoli.tip.upgrade.utils.ExecCmd printVectorWithHeading(Vector v, String heading)
+
+INFO: JVMDUMP010I Snap dump written to /opt/IBM/tivoli/tipv2/profiles/TIPProfile/bin/Snap.20131029.153017.17150.0001.trc
+
+Oct 29, 2013 3:30:18 PM com.ibm.tivoli.tip.upgrade.utils.ExecCmd printVectorWithHeading(Vector v, String heading)
+
+INFO: JVMDUMP032I JVM requested Heap dump using '/opt/IBM/tivoli/tipv2/profiles/TIPProfile/bin/heapdump.20131029.153017.17150.0002.phd' in response to an event
+
+Oct 29, 2013 3:30:18 PM com.ibm.tivoli.tip.upgrade.utils.ExecCmd printVectorWithHeading(Vector v, String heading)
+
+INFO: JVMDUMP010I Heap dump written to /opt/IBM/tivoli/tipv2/profiles/TIPProfile/bin/heapdump.20131029.153017.17150.0002.phd
+
+Oct 29, 2013 3:30:18 PM com.ibm.tivoli.tip.upgrade.utils.ExecCmd printVectorWithHeading(Vector v, String heading)
+
+INFO: JVMDUMP032I JVM requested Java dump using '/opt/IBM/tivoli/tipv2/profiles/TIPProfile/bin/javacore.20131029.153017.17150.0003.txt' in response to an event
+
+
+CAUSE
+The default heap size is not enough to process big amount of data
+
+
+
+RESOLVING THE PROBLEM
+In order to fix the problem, you need to increase the amount of max heap size used by the JVM, specified in some of the scripts involved with this process. 
+
+Specifically, you need to use -Xmx1536m in the Java execution within the following scripts: 
+
+Under <TIP_HOME>/profiles/TIPProfile/upgrade/bin : 
+
+- tipExport.sh 
+
+- preupgrade.sh 
+
+- tipcli.sh 
+
+- upgrade.sh 
+
+ 
+
+Under <TIP_HOME>/profiles/TIPProfile/bin : 
+
+- tipcli.sh 
+
+Basically you need to replace the keyword -Xmx1536m in place of the existing -Xmx current value in the last row of aforementioned scripts. 
+
+EG: 
+
+In preupgrade.sh : 
+
+
+${JAVA_CMD} -Xmx64m "${SYSPROP_MIGRATIONHOME}" "${SYSPROP_LOGCLASS}" "${SYSPROP_LOGNAME}" "${SYSPROP_PLUGINS_LIST}" "${SYSPROP_TIPHOME}" "${SYSPROP_TIPPROFILEHOME}" "${SYSPROP_TIPCELLNAME}" "${SYSPROP_TIPNODENAME}" "${SYSPROP_TIPVERSION}" "${SYSPROP_TIPCMD}" "${SYSPROP_PARANUM}" -cp "${JARS}" com.ibm.tivoli.nc.migration.MigrationExportTool "$@"
+exit $?
+
+becomes
+
+${JAVA_CMD} -Xmx1536m "${SYSPROP_MIGRATIONHOME}" "${SYSPROP_LOGCLASS}" "${SYSPROP_LOGNAME}" "${SYSPROP_PLUGINS_LIST}" "${SYSPROP_TIPHOME}" "${SYSPROP_TIPPROFILEHOME}" "${SYSPROP_TIPCELLNAME}" "${SYSPROP_TIPNODENAME}" "${SYSPROP_TIPVERSION}" "${SYSPROP_TIPCMD}" "${SYSPROP_PARANUM}" -cp "${JARS}" com.ibm.tivoli.nc.migration.MigrationExportTool "$@"
+exit $? 
+
+Into tipcli.sh : 
+
+
+$JAVA_HOME/bin/java "-DTIP_CMD=TIPCLI" "-DTIP_HOME=$TIP_HOME"...........................
+
+becomes
+
+$JAVA_HOME/bin/java "-Xmx1536m -DTIP_CMD=TIPCLI" "-DTIP_HOME=$TIP_HOME"...........................
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ Tivoli Common Reporter V2.x

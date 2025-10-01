@@ -1,0 +1,156 @@
+Title: IBM IC65836: AFTER A TAKEOVER, HADR MONITOR SCRIPT MAY SHOW AN ONLINE HADR   DATABASE ON THE OLD PRIMARY NODE. - United States
+
+Text:
+z/os  FIXES ARE AVAILABLE
+DB2 Version 9.5 Fix Pack 6a for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24027747]
+DB2 Version 9.5 Fix Pack 7 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24028731]
+DB2 Version 9.5 Fix Pack 8 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24030302]
+DB2 Version 9.5 Fix Pack 9 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24032087]
+DB2 Version 9.5 Fix Pack 10 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24033308]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  In an automated cluster controlled HADR environment, after a
+   primary node reboot, there is a small timing hole where HADR
+   monitor
+   script may show that the HADR database resource online.
+   
+   In the OS log, you will see an instance start message after
+   reboot of old primary node (amdha1). But before the instance
+   start, HADR monitor script may return a return code of 1 i.e.,
+   online for HADR database resource.
+   
+   Jan 20 11:43:30 amdha1 db2V95_start.ksh[5104]: Entered
+   /usr/sbin/rsct/sapolicies/db2/db2V95_start.ksh, db2inst5, 0
+   Jan 20 11:43:30 amdha1
+   /usr/sbin/rsct/sapolicies/db2/hadrV95_monitor.ksh[5123]:
+   Returning 1 : db2inst5 db2inst5 UC4G
+   Jan 20 11:43:39 amdha1 db2V95_start.ksh[5878]: Returning 0 from
+   /usr/sbin/rsct/sapolicies/db2/db2V95_start.ksh ( db2inst5, 0)
+   
+   Due to this timing issue, TSAMP will see the same HADR database
+   resource online on both servers. A resource cannot be online on
+   more than one node concurrently in a TSAMP managed environment.
+   So it will stop all instances of HADR database resource, and
+   start it up on the old primary due to the order of the
+   NodeNameList. This gives an appearance of an automatic failback
+   after the original primary node rejoins.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * Users with HADR on a cluster env                             *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * AFTER A TAKEOVER, HADR MONITOR SCRIPT MAY SHOW AN            *
+   * ONLINEHADRDATABASE ON THE OLD PRIMARY NODE.                  *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Upgrade to 9.5 FP6                                           *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  AFTER A TAKEOVER, HADR MONITOR SCRIPT MAY SHOW AN ONLINE HADR
+   
+   DATABASE ON THE OLD PRIMARY NODE.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC65836
+   
+   
+ * REPORTED COMPONENT NAME
+   DB2 FOR LUW
+   
+   
+ * REPORTED COMPONENT ID
+   DB2FORLUW
+   
+   
+ * REPORTED RELEASE
+   950
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-01-25
+   
+   
+ * CLOSED DATE
+   2010-05-31
+   
+   
+ * LAST MODIFIED DATE
+   2010-05-31
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    IC65837 [http://www-01.ibm.com/support/docview.wss?uid=swg1IC65837]
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   DB2 FOR LUW
+   
+   
+ * FIXED COMPONENT ID
+   DB2FORLUW
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R950 PSN
+   UP

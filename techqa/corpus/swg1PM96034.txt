@@ -1,0 +1,130 @@
+Title: IBM PM96034: AppScan Standard encounters exception on exporting results as XML - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  IBM Security AppScan Standard Edition 8.7.0.1 encounters an
+   exception when attempting to export the scan results to an XML
+   file (via File ? Export ? Results as XML...).
+   
+   This occurs because of the
+   MSIISMissingHostHeaderInformationLeakage (Microsoft IIS Missing
+   Host Header Information Leakage) vulnerability due to it not
+   containing any Request or Response in the vulnerability
+   information.  This causes the export to fail and the resulting
+   XML file will miss any vulnerabilities that follow the
+   MSIISMissingHostHeaderInformationLeakage vulnerability.
+   
+   The workaround to this is to mark the issue as Non-vulnerable or
+   Noise (in the right click menu) prior to exporting the results.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  AppScan Standard encounters an exception on exporting results as
+    XML.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fixed in 8.8
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM96034
+   
+   
+ * REPORTED COMPONENT NAME
+   SEC APPSCAN STD
+   
+   
+ * REPORTED COMPONENT ID
+   5724T5900
+   
+   
+ * REPORTED RELEASE
+   850
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-08-29
+   
+   
+ * CLOSED DATE
+   2013-11-07
+   
+   
+ * LAST MODIFIED DATE
+   2013-11-07
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   SEC APPSCAN STD
+   
+   
+ * FIXED COMPONENT ID
+   5724T5900
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R880 PSY
+   UP

@@ -1,0 +1,24 @@
+Title: IBM Getting the Java Software Development Kit mentioned in TRIRIGA's Compatibility Matrix - United States
+
+Text:
+TRIINSTALL; TRIUPGRADE; TRIWEBSPHERE ; #iotsupport ; #supiwms; #jalynch TECHNOTE (FAQ)
+
+QUESTION
+ Someone told me I need to download and install a Java Software Development Kit (SDK) if I am going to use TRIRIGA with the full version of WebSphere Application Server. How do I do this? 
+
+ANSWER
+Confirm through the TRIRIGA Compatibility Matrix for the version of Application Platform you are planning to install [https://www.ibm.com/developerworks/community/wikis/home?lang=en#!/wiki/16665262-0aef-427f-8fa8-dcfcc66a26ff/page/f04a1ea1-c5bd-4176-bde6-dee790ddfc92/attachments] [https://www.ibm.com/developerworks/community/wikis/home?lang=en#!/wiki/IBM%20TRIRIGA1/page/Archive%20of%20IBM%20TRIRIGA%20Support%20Matrices]what version of WebSphere is supported and what version of the IBM WebSphere SDK Java Technology Edition that version of WebSphere requires. 
+
+ * 
+ * 
+ *  Application Server and Database Options Supported Version Notes IBM WebSphere Application Server <a.b.c.d> Oracle Java SE <x> update <y> or IBM SDK Java <IBM SDK version> or higher is required. Future fix packs are also supported. Network Deployment is supported. 
+ * Within a web browser, bring up a search engine, and search for 'WebSphere Application Server <a.b.c.d> downloadable," where <a.b.c.d> is the Supported Version listed for IBM WebSphere Application Server in the TRIRIGA Compatibility Matrix. 
+ * Open the 'IBM <a.b.c.d>: WebSphere Application V<a.b.c> Fix Pack <d>' technote that comes back from your search, where <a.b.c> and <d> together represent the Supported Version listed for IBM WebSphere Application Server in the TRIRIGA Compatibility Matrix. 
+ * Within this technote, click on the link related to IBM WebSphere Java SDKs. The actual wording of the link may differ from technote to technote. The link you want to click is related to SDKs supported by version <a.b.c.d> of IBM WebSphere Application Server. 
+ * Find and click the line on the IBM WebSphere Application Server <a.b.c.d> SDK page that contains both of the following:  * The <IBM SDK version> listed for IBM WebSphere Application Server in the TRIRIGA Compatibility Matrix 
+    * An indication that this SDK is for the full profile or "traditional" version of WebSphere Application Server 
+   
+   
+ * Download the file or files needed to install the version of the IBM SDK that you need 
+ * On the machine where you will be installing the SDK extract the contents of the file (or files) you downloaded to a single folder 
+ * Use IBM Installation Manager to install the IBM SDK. Instructions for installing it are found on the page from which you downloaded the files.

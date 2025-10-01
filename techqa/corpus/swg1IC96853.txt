@@ -1,0 +1,180 @@
+Title: IBM IC96853: MQ V7.X MESSAGE AMQ9654 CONCERNING INVALID CERTIFICATES CAN BE CONFUSING, REQUIRING AN UPDATE TO MESSAGE TEXT AND EXPLANATION - United States
+
+Text:
+  FIXES ARE AVAILABLE
+WebSphere MQ V7.0 Fix Pack 7.0.1.12 [http://www-01.ibm.com/support/docview.wss?uid=swg24037169]
+Fix Pack 7.1.0.5 for WebSphere MQ V7.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24037553]
+WebSphere MQ V7.5 Fix Pack 7.5.0.4 [http://www-01.ibm.com/support/docview.wss?uid=swg24038252]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The error message reported by AMQ9654 is confusing and does
+   not reflect the SSL error.
+   
+   Currently, the error message text written to the queue manager
+   error log is:
+   
+   AMQ9654:An invalid SSL certificate was received from the
+   remote system.
+   EXPLANATION:
+   An SSL certificate received from the remote system was not
+   corrupt but failed validation checks on something other than its
+   ASN fields and date. It is possible that the certificate Subject
+   DN is more than 1024 characters long or contains unsupported
+   duplicate attribute values. The channel is ''; in some cases its
+   name cannot be determined and so is shown as '????'. The channel
+   did not start.
+   ACTION:
+   Ensure that the remote system has a valid SSL certificate.
+   Restart the channel.
+   
+   Message AMQ9654 needs to better reflect why the precise error is
+   generated and include all reasons for a missing certificate.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   Users who encounter the AMQ9654 error.
+   
+   
+   Platforms affected:
+   MultiPlatform
+   
+   ****************************************************************
+   PROBLEM SUMMARY:
+   The error message reported by AMQ9654 is confusing and does
+   not reflect the proper SSL error. The message and explanation
+   field needs to be updated to reflect more reasons why this error
+   can be generated.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The error returned from the AMQ.SSL.TRC reports:
+   
+   8(ssl_rc) - GSK_ERROR_CERT_VALIDATION i.e. Certificate
+   validation error
+   
+   In this case it means the certificate could not be validated
+   because the certificate chain could not be built as there is
+   no certificate in the key database.
+   
+   Message AMQ9654 needs to better reflect why the precise error is
+   generated and include all reasons for a missing a certificate.
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+   Version    Maintenance Level
+   v7.1       7.1.0.5
+   v7.5       7.5.0.4
+   v7.0       7.0.1.12
+   
+   The latest available maintenance can be obtained from
+   'WebSphere MQ Recommended Fixes'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037]
+   
+   If the maintenance level is not yet available information on
+   its planned availability can be found in 'WebSphere MQ
+   Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC96853
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ BASE MULTIP
+   
+   
+ * REPORTED COMPONENT ID
+   5724H7241
+   
+   
+ * REPORTED RELEASE
+   750
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-10-11
+   
+   
+ * CLOSED DATE
+   2013-11-29
+   
+   
+ * LAST MODIFIED DATE
+   2013-11-29
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ BASE MULTIP
+   
+   
+ * FIXED COMPONENT ID
+   5724H7241
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R750 PSY
+   UP

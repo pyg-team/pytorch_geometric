@@ -1,0 +1,39 @@
+Title: IBM You see LDAP error code10 when accessing FileNet Content Manager Workplace application - United States
+
+Text:
+Application Engine; Federation; failure TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When logging into Workplace, you receive the error 'LDAP error code 10' 
+
+SYMPTOM
+Below is the snippet of the Workplace stack trace during logon failure :
+
+
+Caused by: com.ibm.websphere.wim.exception.WIMSystemException: CWWIM4520E The 'javax.naming.PartialResultException: [LDAP: error code 10 - 0000202B: RefErr: DSID-0310063C, data 0, 1 access points ref 1: 'server1.se.root.ca.us']; remaining name 'CN=xxxx,OU=Users,OU=Administration,OU=xxxx,DC=xx,DC=root,DC=ca,DC=us'; resolved object com.sun.jndi.ldap.LdapCtx@23bc23bc' naming exception occurred during processing. Caused by: com.ibm.websphere.wim.exception.WIMSystemException: CWWIM4520E The 'javax.naming.PartialResultException: [LDAP: error code 10 - 0000202B: RefErr: DSID-0310063C, data 0, 1 access points ref 1: ''server1.xx.root.ca.us' 
+
+
+CAUSE
+This can happen in a Multiple Domain LDAP environment where a user account in DomainA contains referral data in DomainB, which is outside of the domain in which the account existed.
+In this case, the Authentication configuration within the WebSphere application server (WAS) failed to access a user that existed in DomainA, because that user belonged to a group association in DomainB, which was not accessible.
+
+
+DIAGNOSING THE PROBLEM
+Review the WebSphere and Content Engine, systemOut.log ,systemErr.log and P8_server_error.log logs for evidence of the following error: 
+
+Caused by: com.ibm.websphere.wim.exception.WIMSystemException: CWWIM4520E The 'javax.naming.PartialResultException: [LDAP: error code 10 - 0000202B: RefErr: DSID-0310063C, data 0, 1 access points
+
+
+RESOLVING THE PROBLEM
+To enable the LDAP referrals: 
+
+ 
+
+ 1. Open the WAS console 
+ 2. Go to Security 
+ 3. Select Secure administration, applications and infrastructure 
+ 4. Federated repositories 
+ 5. Manage repositories 
+ 6. Click on the Repository identifier (do this for both configured identifiers) 
+ 7. Under "Support referrals to other LDAP servers", change from ignore to follow. 
+ 8. Restart the Content Engine and Application Engine instances and test.

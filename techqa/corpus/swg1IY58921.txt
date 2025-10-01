@@ -1,0 +1,135 @@
+Title: IBM IY58921: AMQRRMFA PROCESS GETS XC130004 SIGSEGV IN RRMPCFFROMSSLPEERNAME - United States
+
+Text:
+AIX  FIXES ARE AVAILABLE
+WebSphere MQ V5.3 and WebSphere MQ Express V5.3 - Fix Pack 12 (CSD12) [http://www-01.ibm.com/support/docview.wss?uid=swg24011423]
+WebSphere MQ V5.3 & WebSphere MQ Express V5.3 - Fix Pack 10 (CSD10) [http://www-01.ibm.com/support/docview.wss?uid=swg24009688]
+WebSphere MQ V5.3 & WebSphere MQ Express V5.3 - Fix Pack 8 (CSD08) [http://www-01.ibm.com/support/docview.wss?uid=swg24007905]
+WebSphere MQ V5.3 for iSeries - Fix Pack 12 (CSD12) [http://www-01.ibm.com/support/docview.wss?uid=swg24011422]
+WebSphere MQ V5.3 and WebSphere MQ Express V5.3 - Fix Pack 13 (CSD13) [http://www-01.ibm.com/support/docview.wss?uid=swg24014128]
+WebSphere MQ V5.3 and WebSphere MQ Express V5.3 - Fix Pack 14 (CSD14) [http://www-01.ibm.com/support/docview.wss?uid=swg24017668]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  We have identified a discrepancy regarding the storing of
+   the repository information in its cache. The stored
+   information may contain a stale pointer to the SSLPeerName,
+   and this is something we need to fix. It is, however, not
+   clear why this would give rise to a SEGV when the SSLPeerName
+   is copied, since we would expect that even if the pointer is
+   stale, it is still a valid memory address for the purpose of
+   copying. But this is a complicated area.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   Users of SSL with WMQ clustering.
+   ****************************************************************
+   PROBLEM SUMMARY:
+   Code path existed that could result in non-refreshing of cache
+   information which holds a pointer to the SSL peer name.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Ensured the SSL peer name cache pointer is maintained correctly.
+   
+   The fix will be included in the following PTFs:
+   WebSphere MQ v5.3   CSD09
+   Windows             U200223
+   AIX                 U498401
+   HP-UX               U498684
+   Linux on Intel      U498687
+   Linux on zSeries    U498689
+   Sun Solaris         U498686
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IY58921
+   
+   
+ * REPORTED COMPONENT NAME
+   WEB MQ FOR AIX
+   
+   
+ * REPORTED COMPONENT ID
+   5724B4101
+   
+   
+ * REPORTED RELEASE
+   530
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2004-07-14
+   
+   
+ * CLOSED DATE
+   2004-07-27
+   
+   
+ * LAST MODIFIED DATE
+   2004-07-27
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R530 PSY
+   UP

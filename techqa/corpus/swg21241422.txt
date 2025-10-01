@@ -1,0 +1,20 @@
+Title: IBM Row Limit for WebGUI AEL - United States
+
+Text:
+limitation; recommendation; best practice; object server; records; events; alerts; active event list TECHNOTE (FAQ)
+
+QUESTION
+ WebGUI acts as a Desktop View to the ObjectServer event data. Due to WebGUI using a Browser and JRE/plugin, what are the limits in terms of the number of rows of data that the WebGUI Client can display? 
+
+ANSWER
+Below are the recommended limits for events displayed within the WebGUI AEL (Static html TableViews and LELs will be able to handle more events)
+AEL Limits for Rows in ObjectServer
+--------------------------------------------------------
+
+Webtop 2.0 and 2.1 have the same recommendation of less than 6,000 events. This is set by the server.init property ael.top-n.value.
+
+Webtop 2.2, WebGUI 7.3.0, WebGUI 7.3.1 and WebGUI 8.1 increased the recommended limit to less than 20,000 events. This is set by the server.init property ael.top-n.value.
+
+These are not hard limits. The actual achievable values vary with number of users and processor power. It may be found that in different configurations there is the ability for Webtop AELs to display many more event rows than the above, however performance may be impacted.
+
+The recommendation would be to test the numbers above within specific environments and then look to see is it possible to work effectively with higher row counts.

@@ -1,0 +1,140 @@
+Title: IBM PI46542: REPORT IS EXECUTED IN HTML INSTEAD OF OPENED WITH WORKSPACE ADVANCED FROM NAVIGATOR - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  User without Report Studio permission can not open the report in
+   Workspace Advanced by default action from Cognos Navigator. They
+   need to click the Workspace Advanced icon from the action menu.
+   Report is executed in HTML instead of opened with Workspace
+   Advanced
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * All Users                                                    *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * See error description.                                       *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Upgrade to IBM Cognos Business Intelligence 10.2.1 Fix Pack  *
+   * 10                                                           *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Code Fix
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+ *  A fix for this APAR is targeted for IBM COGNOS 10.2.1 BI Fix
+   Pack 10.
+   The Fix Pack Release Schedule can be found at
+   http://www.ibm.com/software/analytics/support/fixes/pbi_schedule [http://www.ibm.com/software/analytics/support/fixes/pbi_schedule]
+   .html.
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI46542
+   
+   
+ * REPORTED COMPONENT NAME
+   COG CONNECTION
+   
+   
+ * REPORTED COMPONENT ID
+   5724W12CC
+   
+   
+ * REPORTED RELEASE
+   A22
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2015-08-07
+   
+   
+ * CLOSED DATE
+   2016-02-16
+   
+   
+ * LAST MODIFIED DATE
+   2016-02-16
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    PI49637 [http://www-01.ibm.com/support/docview.wss?uid=swg1PI49637] PI49638
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   COG CONNECTION
+   
+   
+ * FIXED COMPONENT ID
+   5724W12CC
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * RA21 PSN
+   UP

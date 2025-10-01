@@ -1,0 +1,135 @@
+Title: IBM IC55468: BPC OVERLOADED MODELLED FAULTS CANNOT BE DISTINGUISED BY THE    MEDIATION FLOW COMPONENT - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS SUGGESTION FOR FUTURE RELEASE.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  BPC overloaded modelled faults are not distinguished by
+   the Mediation Flow Component. A BPC flow can set a Fault Name
+   field amongst other details for a thrown fault, however a
+   Mediation Flow Component is only able to distinguish between
+   modelled faults using their BO Type.
+   
+   If two different modelled faults have the same BO Type, the
+   modelled fault that is selected is not consistent, even if
+   the BPC module has given them different Fault Names.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  n/a
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *  If you experience this issue there is a workaround by using
+   different Business Objects for each of the modelled faults.
+   This allows the mediation to select the correct one. To
+   implement this workaround you should perform the following:
+   
+   1) Create new  Business Objects in the library for each
+   modelled fault. For example, Fault1 and Fault2 that both have
+   the same structure as the previous common BO.
+   
+   2) Change the 'Type' fields of the modelled faults in the
+   interface to use these new Business Objects instead of the
+   common Business Object.
+   
+   3)In the BPC flow replace the use of the common Business
+   Object with one of the new Business Objects as appropriate.
+   Every instance of the common Business Object will need be to
+   changed.
+   
+   When the flow is run, the BPC process will throw a different
+   Business Object for the different faults, which can then be
+   matched to the correct modelled fault flow in the mediation.
+   
+   NOTE: APAR JR28228 [http://www-01.ibm.com/support/docview.wss?uid=swg1JR28228] allows the BPC faults with common Business
+   Objects to be distinguished when using an SCA binding, however
+   the above workaround is still required when using a Mediation
+   Flow Component.
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC55468
+   
+   
+ * REPORTED COMPONENT NAME
+   WEB ESB FOR WIN
+   
+   
+ * REPORTED COMPONENT ID
+   5724I8200
+   
+   
+ * REPORTED RELEASE
+   200
+   
+   
+ * STATUS
+   CLOSED SUG
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-02-27
+   
+   
+ * CLOSED DATE
+   2008-07-10
+   
+   
+ * LAST MODIFIED DATE
+   2008-07-10
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

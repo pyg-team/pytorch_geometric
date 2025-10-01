@@ -1,0 +1,315 @@
+Title: IBM IT13226: AMQ4582 INCURRED USING WEBSPHERE MQ EXPLORER V7.5 CONFIGURED WITH A C BASED SECURITY EXIT. - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  You can successfully connect to remote queue managers using
+   your Windows MQ Explorer V7.1.0 configured with a C based
+   security exit.
+   However, after upgrading the MQ Explorer to V7.5, the following
+   error occurs:
+   
+   AMQ4582: Queue Manager <QMgrName> is not available for client
+   connection.
+   
+   If the MQ Explorer is started from the shell where the
+   environment is set using the setmqenv command, the MQ Explorer
+   connects successfully.
+   However, if the the installation is configured as the primary,
+   using the setmqinst command, the same error is incurred.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Set the java.library.path variable to the location of the java
+   libraries for the MQ Explorer.  For Example:
+   
+   1. From a command prompt start the MQ Explorer using the
+   following command:
+   
+   MQExplorer.exe -vmargs "-Djava.library.path="
+   
+   The "path name" is the install location of the MQ java/lib
+   directory, for example if the MQ Explorer was installed to the
+   "default" location run the following command:
+   
+   MQExplorer.exe -vmargs "C:\Program Files (x86)\IBM\WebSphere
+   MQ\java\lib"
+   
+   2. As an alternative, the WebSphere MQ Explorer shortcut can
+   also be updated to pass these arguments into the MQ Explorer
+   program.  In order to do this, implement the following steps:
+   
+   A. Right click on the WebSphere MQ Explorer shortcut in the
+   Windows Start
+      Menu, and select Properties from the pop up menu.
+   
+   B. When the WebSphere MQ Explorer properties window appears,
+   click on
+      the Shortcut tab.
+   
+   C. In the Target field, add the following arguments to the end:
+   
+      -vmargs "-Djava.library.path=C:\Program Files
+   (x86)\IBM\WebSphere MQ\java\lib"
+   
+   D  Click OK to apply the changes.
+   
+   NOTE:
+   The installation and uninstallation mechanism does not affect
+   the shortcut. This means that the additional arguments will not
+   be removed from the shortcut when Fix Packs are installed or
+   uninstalled.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   This issue affects two categories of users:
+   
+   Category 1:
+   ----------------
+   Users of:
+   
+   - The WebSphere MQ V7.5 Explorer
+   - The IBM MQ V8.0 Explorer
+   
+   on Linux who have installed a number of components that include:
+   
+   - MQSeriesExplorer
+   - MQSeriesJava
+   
+   and do not include:
+   
+   - MQSeriesServer
+   
+   and have configured their MQ Explorer to use a Client Channel
+   Definition Table (CCDT) when accessing remote queue managers,
+   where one or more entries in the CCDT uses a native exit written
+   in C.
+   
+   
+   Category 2:
+   ----------------
+   Users of:
+   
+   - The WebSphere MQ V7.5 Explorer
+   - The IBM MQ V8.0 Explorer
+   
+   on Windows who have installed a number of components that
+   include:
+   
+   - MQ Explorer
+   - Java and .Net Messaging and Web Services (also known as
+   JavaMsg)
+   
+   and do not include:
+   
+   - Server
+   
+   and have configured their MQ Explorer to use a Client Channel
+   Definition Table (CCDT) when accessing remote queue managers,
+   where one or more entries in the CCDT uses a native exit written
+   in C.
+   
+   
+   Platforms affected:
+   Windows, Linux on x86-64, Linux on x86
+   
+   ****************************************************************
+   PROBLEM DESCRIPTION:
+   In order to load a native exit, the MQ Explorer requires access
+   to the WebSphere MQ Java native library mqjexitstub02. This
+   native library is part of the MQSeriesJava component on Linux,
+   and the JavaMsg component on Windows. For 32-bit installations,
+   the library is installed into the directory:
+   
+     <MQ_Installation_Path>\java\lib
+   
+   while on 64-bit installations, the library is installed into:
+   
+     <MQ_Installation_Path>\java\lib64
+   
+   
+   When an MQ installation includes the following components:
+   
+   Linux
+   ---------------
+   - MQSeriesExplorer
+   - MQSeriesJava
+   - MQSeriesServer
+   
+   Windows
+   ---------------
+   - JavaMsg
+   - MQ Explorer
+   - Server
+   
+   then the MQ Explorer sets the Java system property
+   java.library.path to be:
+   
+   <MQ_Installation_Path>\java\lib;<MQ_Installation_Path>\bin
+   
+   for 32-bit installation, and:
+   
+   <MQ_Installation_Path>\java\lib64;<MQ_Installation_Path>\bin64
+   
+   for 64-bit installations. This allows the MQ Explorer to load
+   the Java native library mqjexitstub02, which means that it can
+   successfully use native exits.
+   
+   
+   However, if the MQ Explorer was installed as part of an MQ
+   installation which included the  JavaMsg component (on Windows)
+   or the MQSeriesJava component (on Linux) and did not include the
+   Server component, then the user interface did not modify the
+   java.library.path. As a result, whenever the user interface was
+   required to load and use a native exit, it was unable to find
+   the mqjexitstub02 native library and so reported the following
+   error:
+   
+   AMQ4582: Queue Manager <QMgrName> is not available for client
+   connection.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The MQ Explorer has been modified so that if it has been
+   installed as part of an installation which includes the JavaMsg
+   component (on Windows) or the MQSeriesJava component (on Linux),
+   and does not include the Server component, it will modify the
+   Java system property java.library.path and append the following
+   entries to the end:
+   
+   For 32-bit installations:
+   ------------------------------
+   <MQ_Installation_Path>\java\lib
+   <MQ_Installation_Path>\bin
+   
+   For 64-bit installations:
+   ------------------------------
+   <MQ_Installation_Path>\java\lib64
+   <MQ_Installation_Path>\bin64
+   
+   This ensures that the MQ Explorer can access the Java native
+   library mqjexitstub02, which is required when using native
+   exits.
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+   Version    Maintenance Level
+   v7.5       7.5.0.7
+   v8.0       8.0.0.5
+   
+   The latest available maintenance can be obtained from
+   'WebSphere MQ Recommended Fixes'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037]
+   
+   If the maintenance level is not yet available information on
+   its planned availability can be found in 'WebSphere MQ
+   Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT13226
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ BASE MULTIP
+   
+   
+ * REPORTED COMPONENT ID
+   5724H7241
+   
+   
+ * REPORTED RELEASE
+   750
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-01-18
+   
+   
+ * CLOSED DATE
+   2016-02-26
+   
+   
+ * LAST MODIFIED DATE
+   2016-02-26
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ BASE MULTIP
+   
+   
+ * FIXED COMPONENT ID
+   5724H7241
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R750 PSY
+   UP

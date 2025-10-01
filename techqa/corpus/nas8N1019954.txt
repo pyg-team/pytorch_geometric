@@ -1,0 +1,39 @@
+Title: IBM Partition fails to activate B2008151 or B2xx8151. - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This document gives detailed information on why partition activation would fail with B2008151. 
+
+SYMPTOM
+Partition activation gets error SRCB2008151.
+
+
+CAUSE
+A failure occurred trying to build internal data structures (PFDS) for IPL. The size of the memory region given to the VSP by Open Firmware is too small to contain the PFDS structure for the partition. The IPL will terminate. 
+
+ENVIRONMENT
+Power Systems
+
+RESOLVING THE PROBLEM
+There are number of user configurable partition values that can be modified to try get around this error:
+
+
+ * Decrease partition's maximum memory 
+ * Increase LMB (Logical Memory Block) size, also called Memory region size. 
+ * Decrease the partition's maximum number of virtual I/O slots 
+ * Decrease the partition's maximum number of processors 
+ * Remove unneeded slots from the partition's config 
+
+There is a fixed amount of space carved out in the Open Firmware Lids for PHYP to build the PFDS. This space is fixed in size and is independent of the amount of memory assigned to the partition. 
+
+Note: Changing the LMB size requires a shut down of the server and this is changed in ASMi. In ASMI you go under performance setup and then logical memory block size. Modifying the LMB size can have other impacts on the server. The system needs a certain amount of contiguous memory to activate. The larger the LMB size the more likely it will be able to get that contiguous memory. However, having a larger LMB size can make it more difficult to get unpinned pages of Memory to Dynamically move memory between LPARs. 
+
+Note: The maximum number of virtual adapters supported on the following is as such: 
+POWER6 - 1024 
+POWER7 - 1024 
+POWER8 - 2048 
+
+
+Cross reference information Segment Product Component Platform Version Edition Operating System IBM i 7.1 Operating System IBM i 6.1

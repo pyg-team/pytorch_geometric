@@ -1,0 +1,51 @@
+Title: IBM Access to updates for Daeja ViewONE within IBM Content Navigator - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How do customers of Daeja ViewONE within IBM Content Navigator get access to Daeja updates? 
+
+CAUSE
+Not all IBM Daeja ViewONE users have direct entitlement to directly download updated versions.
+
+ANSWER
+Customers with direct entitlement to Standalone IBM Daeja ViewONE 
+
+
+IBM Daeja ViewONE product updates are available via FixCentral [https://www-945.ibm.com/support/fixcentral/]. Customers with direct entitlement to Daeja can independently access those packages and proceed with in place upgrades.
+
+In place upgrade of the Daeja ViewONE product is not recommended to V.R.M. releases[1]. It should be limited to iFixes and FPs of the Daeja ViewONE product.
+V.R.M. updates of Daeja ViewONE have a minimum prerequisite of a V.R.M. version of IBM Content Navigator and should be provided by IBM: 
+
+
+ * When running Daeja ViewONE 4.1.x as a component inside IBM Content Navigator, the minimum supported version of IBM Content Navigator is 2.0.3 
+ * When running Daeja ViewONE 5.0.0.x as a component inside IBM Content Navigator, the minimum supported version of IBM Content Navigator is 3.0.0 
+
+
+Customers without direct entitlement to Standalone IBM Daeja ViewONE 
+
+IBM Daeja ViewONE product updates are available via FixCentral. [https://www-945.ibm.com/support/fixcentral/] Customers without direct entitlement to Daeja can not independently access those packages. They should contact the support team of the container product and request assistance in obtaining those packages. 
+
+The Daeja updates package they need might be available via an existing or upcoming Content Navigator update. If a Content Navigator update does not exist and can not be available on time to satisfy the customer's business needs, support could provide the Daeja updated package to the customer to proceed themselves with a manual in-place upgrade if they wish. 
+
+In place upgrade of the Daeja ViewONE product is not recommended to V.R.M. releases. It should be limited to iFixes and FPs of the Daeja ViewONE product. 
+V.R.M. updates of Daeja ViewONE have a minimum prerequisite of a V.R.M. version of IBM Content Navigator and should be provided by IBM: 
+ * When running Daeja ViewONE 4.1.x as a component inside IBM Content Navigator, the minimum supported version of IBM Content Navigator is 2.0.3 
+ * When running Daeja ViewONE 5.0.0.x as a component inside IBM Content Navigator, the minimum supported version of IBM Content Navigator is 3.0.0.
+
+IBM Daeja ViewONE 5.0.0.x release is supplied with an annot.xsl file that must be used when IBM Daeja ViewONE is part of an integrated document management system from IBM. 
+
+How to upgrade Daeja ViewONE within IBM Content Navigator
+
+Instructions on how to upgrade the IBM Daeja ViewONE component within an IBM Content Navigator Installation are available here: 
+
+ * Upgrading the Daeja ViewONE Virtual version on IBM Content Navigator V3.0 [http://www-01.ibm.com/support/docview.wss?uid=swg21997332] 
+ * Upgrading the Daeja ViewONE version on IBM Content Navigator V2.0.3 [http://www-01.ibm.com/support/docview.wss?uid=swg21685397]
+
+
+
+Related Information 
+
+[1] - IBM is using a standard version format for Maintenance Delivery Vehicle. The product numbering is based on the IBM Version, Release, Modification and Fix Level structure within the V.R.M.F format. For more information on this numbering system please refer to: [http://www-01.ibm.com/support/docview.wss?uid=swg27008656] 
+http://www-01.ibm.com/support/docview.wss?uid=swg27008656 [http://www-01.ibm.com/support/docview.wss?uid=swg27008656]

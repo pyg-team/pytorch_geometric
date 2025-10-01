@@ -1,0 +1,21 @@
+Title: IBM Cast Iron Lifecycle for Legacy Customers - United States
+
+Text:
+ PRODUCT LIFECYCLE
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ English 
+
+ABSTRACT
+ Statement of Lifecycle policy for IBM Cast Iron Legacy Customers 
+
+CONTENT
+
+Statement of lifecycle policy for IBM Cast Iron offerings:
+
+
+ * SaaS offerings -- IBM Cast Iron Cloud / IBM WebSphere Cast Iron Live is a software-as-a-service offering. All customers are upgraded with the release of each latest version. Only the current version is supported. Customers have received notice that all legacy subscription agreements will terminate at the end of their term, at which point no support will be provided for these legacy offerings. Customers may acquire currently available IBM WebSphere Cast Iron Cloud Integration offerings from IBM to continue support. Contact your IBM sales representative or certified IBM business partner for assistance. 
+ * Supported Cast Iron Operating System (CIOS) versions for IBM Cast Iron Appliance offerings -- CIOS V4.x and V5.x - V4.0 EoS date: 30-Nov-2010; V4.5 EoS date: 30-Sep-2011. After V4.5.x EoS, only V5.x versions will be supported with IBM Cast Iron Appliance offerings. V5.0.x will be supported until the expiration date of the customer's agreement contract. To access newer versions of CIOS, customers must acquire currently available IBM WebSphere Cast Iron Cloud Integration offerings from IBM. Contact your IBM sales representative or certified IBM business partner for assistance. 
+ * IBM Cast Iron Appliance offerings under fixed term license / subscription -- IBM Cast Iron Integration Appliance / IBM Cast Iron Virtual Appliance acquired under a subscription agreement. Customers have received notice that all legacy subscription agreements will terminate at the end of their term, at which point no support will be provided for the legacy Cast Iron Integration appliance, Cast Iron Virtual Appliance, and all compatible CIOS versions. Customers may acquire currently available IBM WebSphere Cast Iron Cloud Integration offerings from IBM to upgrade to a newer version and continue support. Contact your IBM sales representative or certified IBM business partner for assistance. 
+ * IBM Cast Iron Integration Appliance under one-time charge license / purchase -- Certain customer agreements specify that customers will receive a minimum of three (3) years support from the date of purchase, unless otherwise specified in writing. After this support period, no support will be provided for the legacy IBM Cast Iron Appliance offering. Customers must acquire currently available IBM WebSphere Cast Iron Cloud Integration offerings from IBM to upgrade to a newer version and continue support. Contact your IBM sales representative or certified IBM business partner for assistance. 
+ * IBM Cast Iron Virtual Appliance under one-time charge license / purchase -- Customers have received notice that maintenance and support will not be renewed after the support period specified in their legacy agreement, at which point no support will be provided for the legacy Cast Iron Appliance offering. After this support period, no support will be provided for the legacy Cast Iron Appliance offering. Customers must acquire currently available IBM WebSphere Cast Iron Cloud Integration offerings from IBM to upgrade to a newer version and continue support. Contact your IBM sales representative or certified IBM business partner for assistance.

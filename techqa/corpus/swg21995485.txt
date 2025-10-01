@@ -1,0 +1,51 @@
+Title: IBM Unable to login after password change on primary server - United States
+
+Text:
+DASHL2; WebGUI; password ; change; primary ; secondary ; server TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ In High-Availabilty set up, a password change does not work on the primary server, but secondary server gets updated. 
+
+SYMPTOM
+New password does not work on primary server, old password still works. 
+
+
+CAUSE
+Corrupted wimconfig.xml file
+
+ENVIRONMENT
+Two DASH/WebGUI servers in High Availability set up 
+
+DIAGNOSING THE PROBLEM
+Changed password in DASH Primary from Profile-> change password and logged out of the session. 
+Tried to login with new password and it throws error "Login failed, check user ID and password". 
+Tried with the Old password and login is successful. 
+Which shows the Primary DASH is not updated for new password.
+Tried to login Secondary DASH with new password, changed via Primary DASH. Login is successful.
+
+
+
+
+Check the diff of the wimconfig.xml files from both servers, it will show different order of hostname and corresponding port: 
+
+Primary server:
+<config:CustomProperties name="host1" value="<primary hostname>"/>
+<config:CustomProperties name="port1" value="4100"/>
+<config:CustomProperties name="host2" value="<secondary hostname>"/>
+<config:CustomProperties name="port2" value="4200"/>
+
+Secondary server:
+<config:CustomProperties name="host1" value="<primary hostname>"/>
+<config:CustomProperties name="port1" value="4100"/>
+<config:CustomProperties name="port2" value="4200"/>
+<config:CustomProperties name="host2" value="<secondary hostname>"/>
+
+
+
+RESOLVING THE PROBLEM
+Please follow the steps described in this document below. 
+
+By editing the OMNIbusWebGUI.properties file with the required properties and running the <JazzSM_profile>/bin/ws_ant.sh configureOS command, it will regenerate the wimconfig files. 
+which in turn fixes the password issue, 
+
+http://www.ibm.com/support/knowledgecenter/SSSHTQ_8.1.0/com.ibm.netcool_OMNIbus.doc_8.1.0/webtop/wip/task/web_con_silentmode.html [http://www.ibm.com/support/knowledgecenter/SSSHTQ_8.1.0/com.ibm.netcool_OMNIbus.doc_8.1.0/webtop/wip/task/web_con_silentmode.html]

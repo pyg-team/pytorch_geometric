@@ -1,0 +1,64 @@
+Title: IBM Can't logon to IBM FileNet Content Engine after upgrade - United States
+
+Text:
+logon; preferences TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ IBM FileNet WorkplaceXT fails logon (both SSO and non-SSO). Pop-up error is "A System Error has Occurred" 
+
+SYMPTOM
+With SSO configured, attempts to access WorkplaceXT generated the System Error pop-up. After clicking ok, the pop-up would just return. Without SSO configured, the WorkplaceXT logon page would display and after entering credentials and clicking ok, the pop-up error would return. 
+
+In the IBM FileNet Content Engine SystemOut.log there were only null pointer error and a few reads on user preferences. 
+
+[6/30/11 17:53:03:354 EDT] 00000013 SystemOut O 2011-06-30 17:53:03,354 ALL [WebContainer : 1] - Getting preference files from object store SITE_PREFS 
+
+... 
+
+[6/30/11 17:53:03:432 EDT] 00000013 SystemOut O 2011-06-30 17:53:03,432 INFO [WebContainer : 1] - [getter] thisBaseObject thisBaseObject:<[WCM: DocumentImpl with id /Preferences/User Preferences for S-1-97-23229505-3759212902-834736512-2197464588 on WorkplaceXT in lib SITE_PREFS]> 
+
+[6/30/11 17:53:03:447 EDT] 00000013 SystemOut O 2011-06-30 17:53:03,447 INFO [WebContainer : 1] - [enter] BaseObjectImpl 
+
+[6/30/11 17:53:03:447 EDT] 00000013 SystemOut O 2011-06-30 17:53:03,447 INFO [WebContainer : 1] - [getter] thisBaseObject thisBaseObject:<[WCM: BaseObjectImpl with id /Preferences/User Preferences for S-1-97-23229505-3759212902-834736512-2197464588 on WorkplaceXT in lib SITE_PREFS]> 
+
+In WorkplaceXT SystemOut.log there may be errors regarding missing items from the site preferences: 
+
+[6/30/11 17:53:03:447 EDT] 000001ce ServletWrappe E SRVE0068E: Uncaught exception thrown in one of the service methods of the servlet: /WcmDefault.jsp. Exception thrown : javax.servlet.ServletException: The element type "object" must be terminated by the matching end-tag "</object>". 
+
+ at org.apache.jasper.runtime.PageContextImpl.handlePageException(PageContextImpl.java:660) 
+
+ at com.ibm._jsp._WcmDefault._jspService(_WcmDefault.java:98) 
+
+ at com.ibm.ws.jsp.runtime.HttpJspBase.service(HttpJspBase.java:87) 
+
+ at javax.servlet.http.HttpServlet.service(HttpServlet.java:856) 
+
+...
+
+
+CAUSE
+Site preference file was corrupted during the upgrade from 3.5 to 4.5.1
+
+
+ENVIRONMENT
+WebSphere 7.0 
+
+Windows 2008 
+
+WorkplaceXT 1.1.4.9
+
+
+DIAGNOSING THE PROBLEM
+Tested with a second deployment where logon was successful, but was using a different site preferences file to the same Object Store.
+
+
+
+RESOLVING THE PROBLEM
+The steps below will have edit the bootstrap.properties file to cause WorkplaceXT to need to be 'rebootstrapped". This will create a new, unconfigured Site Preferences file. After you have the new Site Preferences, you'll need to recreate all previous preference settings. 
+
+ 1. Backup and edit the bootstrap.properties  * locate objectStoreID=<your object store> and remove <your object store>
+    
+    
+ 2. Restart WorkplaceXT and logon as a WorkplaceXT or Applicatione Engine (AE) administrator user 
+ 3. Complete the preferences settings as they were before. 
+ 4. Log off and back on to validate the new Site Preferences file is functional.

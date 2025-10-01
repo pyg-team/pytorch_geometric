@@ -1,0 +1,50 @@
+Title: IBM ITCAM Agents for WebSphere Messaging Version 7.3.0 Fix Pack 02 (7.3.0-TIV-XEforMsg-FP0002) - United States
+
+Text:
+ DOWNLOADABLE FILES
+
+ABSTRACT
+ This is the second fix pack after ITCAM Agents for WebSphere Messaging Version 7.3.0 GA 
+
+DOWNLOAD DESCRIPTION
+ This fix pack fixes the APARs of previous product versions.
+
+
+ This fix pack provides support for IBM MQ V9 and several other enhancements(See readme).
+
+PREREQUISITES
+The following software installed in your environment is compatible with this fix pack.
+Supported WebSphere MQ
+* WebSphere MQ 7.1
+* WebSphere MQ 7.5
+* IBM MQ 8.0
+* IBM MQ 9.0
+
+Supported IBM broker products:
+* WebSphere Message Broker 8.0
+* IBM Integration Bus 9.0
+* IBM Integration Bus 10.0
+
+Supported IBM Tivoli Monitoring
+* IBM Tivoli Monitoring 6.3.0 fix pack 2 or later 
+
+INSTALLATION INSTRUCTIONS
+Refer to the Readme file on Fix Central
+
+DOWNLOAD PACKAGE
+ 
+
+ * 1. For distributed systems, download the following installation images from Passport Advantage [http://www-306.ibm.com/software/howtobuy/passportadvantage/index.html]. 
+   Description Part number IBM Tivoli Composite Application Manager Agents for WebSphere Messaging V7.3.0 FP02 CNFL0EN 
+   
+ * 2. For z/OS systems, install the following PTFs to bring your system to an equivalent level to this fix pack: FMID Maintenance level HKCF730 UA83334 HKMC730 UA83330 HKMQ730 UA83394 HKQI730 UA83372 
+ * 3. For the z/OS customer who has no agents running on distributed systems, download IBM Tivoli OMEGAMON XE for Messaging V7.3.0 Application Support Files for z/OS from the following website: Platform File to download Linux or Unix LCD7-3513-08.tar [ftp://public.dhe.ibm.com/software/tivoli_support/misc/PandA/tools_agent/tools/appsupt/LCD7-3513-08.tar] Windows LCD7-3513-08.zip [ftp://public.dhe.ibm.com/software/tivoli_support/misc/PandA/tools_agent/tools/appsupt/LCD7-3513-08.zip] 
+
+
+
+
+
+Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options 
+What is Fix Central(FC)? [https://www.ibm.com/support/fixcentral/help?page=swfaqs] 7.3.0-TIV-XEforMsg-FP0002 9 Dec 2016 English 1 FC [http://www.ibm.com/support/fixcentral/swg/quickorder?parent=Tivoli%20Composite%20Application%20Manager&product=ibm/Tivoli/Tivoli+Composite+Application+Manager+for+Applications&release=All&platform=All&function=fixId&fixids=7.3.0-TIV-XEforMsg-FP0002&inclu] [ ] 
+ [/support/docview.wss?uid=swg24043057&aid=1]Problems (APARS) fixed [/support/docview.wss?uid=swg24043057&aid=2]Problems (APARS) fixed
+IV88312, IV83641, IV83002, IV82721, IV82535, IV80959, IV79995, IV79961, IV77813, IV77658, IV77411, IV88948, IV79978, IV90769, OA50555, OA51407, IV84483

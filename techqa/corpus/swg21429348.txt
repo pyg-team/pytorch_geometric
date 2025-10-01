@@ -1,0 +1,56 @@
+Title: IBM Location of TCR installation logfiles - United States
+
+Text:
+TCR; Tivoli Common Reporting; 5724T6900; common reporting installation config installer TECHNOTE (FAQ)
+
+QUESTION
+ This technote deals with the question of where the TCR installation logfiles are stored to allow for better troubleshooting of installation issues. 
+
+ANSWER
+The installation logs for TCR should be gathered into a single composite ZIP file that will be found in: 
+
+<$install>\logs.zip. 
+
+If the logs.zip file does not exist then manually gather the following:
+
+TCR 1.2/1.3 
+<TIP_HOME>/logs 
+<TIP_HOME>/_uninst/ 
+<TIP_HOME>/profiles/TIPProfile/logs 
+DE (Deployment Engine) logs 
+
+Windows: 
+Output of: %ProgramFiles%\IBM\Common\acsi\bin\listIU.cmd -v 
+Logs from: %ProgramFiles%\IBM\Common\acsi\logs 
+for Windows 64-bit - C:\Program Files (x86)\IBM\Common\acsi\logs\
+
+UNIX: 
+For root installation: 
+Output of: /usr/ibm/common/acsi/bin/listIU.sh -v 
+Logs from: /usr/ibm/common/acsi/logs
+For non-root installation 
+Output of: /home/.acsi_<username>/bin/listIU.sh 
+Logs from: /home/.acsi_<username>/logs 
+
+TCR 1.2: 
+%TEMP%\TCRInstallTrace00.log (Windows) 
+$TMP/TCRInstallTrace00.log (non-Windows) 
+
+TCR 1.3: 
+<user_home_dir>/IA-TIPInstall-XX.log 
+<user_home_dir>/TCR13InstallMessageXX.log 
+<user_home_dir>/TCR13InstallTraceXX.log 
+<TIP_HOME>/products/tcr/Cognos/logs/ 
+
+TCR 2.1/2.1.1: 
+<TIP_HOME>/tipv2/logs 
+<TIP_HOME>/tipv2/profiles/TIPProfile/logs 
+%ProgramFiles%\IBM\Common\acsi\logs (Windows) 
+Logs from: /usr/ibm/common/acsi/logs (root Unix) 
+Output of: /usr/ibm/common/acsi/bin/listIU.sh -v (root Unix) 
+Logs from: /home/.acsi_<username>/logs (non-root Unix) 
+Output of: /home/.acsi_<username>/bin/listIU.bat (non-root Unix) 
+
+<TIP_HOME>/tcr/_uninst 
+<TIP_HOME>/tipv2Components/TCRComponent/logs 
+TCR21InstallMessages00.log/TCR211InstallMessages00.log, TCR21InstallTraces00.log/TCR211InstallTraces00.log, and TIPInstaller-00.log from %HOMEDRIVE%\%HOMEPATH% (Windows) or $HOME (non-Windows)

@@ -1,0 +1,101 @@
+Title: IBM MQ support for SELinux on Red Hat Enterprise Linux - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ IBM MQ 7.5.0.4 and 8.0.0.2 (or later versions) can be run with SELinux enabled on Red Hat Enterprise Linux, subject to some restrictions. This document describes the requirements for running these MQ versions in an environment where SELinux is enabled. 
+
+ENVIRONMENT
+To run MQ in a supported configuration with SELinux enabled, the system must satisfy all of the following requirements. Any system that does not meet these requirements must have SELinux disabled. 
+
+Product Version 
+
+The MQ versions required for SELinux support are: 
+
+ *  Fix pack 7.5.0.4 (or later) Fix pack 8.0.0.2 (or later) MQ Version 9 (any CD or LTS version) 
+
+It is supported to install MQ 7.5.0.0 or 8.0.0.0 first as the base installation for these fix packs, provided that no MQ applications, control commands or queue managers are run until after the fix pack is installed. 
+
+ 
+
+Use of SELinux with MQ 7.1 or older MQ releases is not supported: SELinux must be disabled for those MQ versions. 
+
+ 
+
+Operating System Version 
+
+The operating system must be Red Hat Enterprise Linux version 6.5 or later. 
+
+ 
+
+There are no hardware architecture requirements: this support statement applies to all Red Hat Enterprise Linux hardware architectures supported by the stated MQ versions. 
+
+ 
+
+SELinux Configuration 
+
+SELinux must be configured as follows: 
+
+ 
+
+ * 
+ * 
+ *  
+ * 2) All MQ applications, control commands and queue managers must run in an unconfined SELinux security context (for example, SELinux user unconfined_u). 
+ *  
+ * 3) Do not alter the operating system SELinux security policy to impose additional restrictions on unconfined applications. 
+ *  
+ * 4) SELinux must not deny access to the /var/mqm and /etc/opt/mqm directories by MQ applications, control commands and queue managers. 
+ *  
+ * 5) Use of Multi-Level Security (MLS) with multiple sensitivity levels is not supported. All of the MQ applications, control commands and queue managers on the system must run at the same SELinux sensitivity level.
+
+
+You can use SELinux in either enforcing or permissive mode provided these requirements are satisfied. 
+
+ 
+
+Verifying the Configuration 
+
+To check the SELinux configuration, run the sestatus command. If SELinux is enabled, the output should be similar to the following: 
+
+ 
+
+ * SELinux status: enabled
+ * 
+ * SELinuxfs mount: /selinux
+ * 
+ * Current mode: enforcing
+ * 
+ * Mode from config file: enforcing
+ * 
+ * Policy version: 24
+ * 
+ * Policy from config file: targeted
+
+
+The policy should be "targeted" and the current mode should be either "enforcing" or "permissive". The mode from config file may differ from the current mode in some cases, but it is the current mode which is significant. Note that the values of the other fields may vary between systems and may differ from those shown here. 
+
+ 
+
+To check which SELinux security context your command shell is using, run the id -Z command. The output should be similar to the following: 
+
+ 
+
+ * unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023
+
+
+The security context should have an unconfined user (e.g. unconfined_u) running at a single sensitivity level (for example, s0). This example shows an unconfined security context suitable for running MQ applications, control commands and queue managers. Note that the security context may vary between systems and may differ from that shown here. 
+
+ 
+
+Refer to your Linux support vendor if you require assistance with SELinux configuration. 
+
+ 
+
+After SELinux is configured correctly, refer to the installation verification section of the IBM MQ Knowledge Center to verify that IBM MQ is operational.
+
+
+RELATED INFORMATION
+ MQ 8.0 - Verifying an IBM MQ installation [http://www.ibm.com/support/knowledgecenter/SSFKSJ_8.0.0/com.ibm.mq.ins.doc/q009210_.htm]
+MQ 7.5 - Verifying a WebSphere MQ installation [http://www.ibm.com/support/knowledgecenter/SSFKSJ_7.5.0/com.ibm.mq.ins.doc/q009210_.htm]

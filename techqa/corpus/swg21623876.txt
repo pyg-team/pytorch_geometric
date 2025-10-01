@@ -1,0 +1,87 @@
+Title: IBM Decision Center performance and Tomcat datasource - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ What can be the cause of poor performance of Decision Center when deployed on Tomcat?
+Taking thread dumps during long wait time while exploring rules shows that much time is spent creating database connections, how can performance be improved? 
+
+CAUSE
+Decision Center can issue many SQL requests to the database (hundreds or more) when exploring rules. For good performance it is important that the connectivity between the web application server and the database has low latency (check ping round trip times), sufficient bandwidth, and for the datasource to use connection pooling.
+
+ANSWER
+The document Improve Performance of Decision Center [http://www-01.ibm.com/support/docview.wss?uid=swg21584855] contains several suggestions to improve performance of Decision Center that apply to deployments on Tomcat . 
+
+When Decision Center is deployed on Tomcat it is important that the datasource be configured properly so that connection pooling is effectively used. The following configuration behaves properly with connection pooling effectively being used: 
+
+ 
+
+<Resource name="jdbc/ilogDataSource"
+auth="Container"
+type="javax.sql.DataSource" 
+driverClassName="oracle.jdbc.OracleDriver" 
+url="jdbc:oracle:thin:myuser/mypassword@myRtsServerUrl:1521:MYDB"
+maxActive="10"
+maxIdle="2" /> 
+
+
+
+
+Make sure that the datasource is setup properly in the Tomcat configuration as in the above example. 
+
+ 
+
+Erroneous configuration example 
+
+The following configuration in Tomcat server.xml produces poor performance: 
+
+ 
+
+<!-- example of configuration giving poor performance --> 
+
+<Resource name="jdbc/ilogDataSource"
+auth="Container"
+type="oracle.jdbc.pool.OracleConnectionPoolDataSource"
+driverClassName="oracle.jdbc.driver.OracleDriver"
+factory="oracle.jdbc.pool.OracleDataSourceFactory"
+url="jdbc:oracle:thin:myuser/mypassword@myRtsServerUrl:1521:MYDB"
+maxActive="10"
+maxIdle="2" /> 
+
+
+
+
+With the above configuration taking thread dumps shows that much time is spent creating connections to the database (including connect and logon calls) with stack traces such as: 
+
+
+"http-8081-14" J9VMThread:0x0000000115C01400, j9thread_t:0x0000000115103D00, 
+java/lang/Thread:0x0A0000000301F108, state:CW, prio=5
+(native thread ID:0xC70003, native priority:0x5, native policy:UNKNOWN)
+Java callstack:
+at java/net/SocketInputStream.socketRead0(Native Method)
+at java/net/SocketInputStream.read(SocketInputStream.java:140(Compiled Code))
+at oracle/net/ns/Packet.receive(Packet.java:283(Compiled Code))
+at oracle/net/ns/NSProtocol.connect(NSProtocol.java:287(Compiled Code))
+at oracle/jdbc/driver/T4CConnection.connect(T4CConnection.java:1054(Compiled Code))
+at oracle/jdbc/driver/T4CConnection.logon(T4CConnection.java:308(Compiled Code))
+at oracle/jdbc/driver/PhysicalConnection.<init>(PhysicalConnection.java:536(Compiled Code))
+at oracle/jdbc/driver/T4CConnection.<init>(T4CConnection.java:228(Compiled Code))
+at oracle/jdbc/driver/T4CDriverExtension.getConnection(T4CDriverExtension.java:32(Compiled Code))
+at oracle/jdbc/driver/OracleDriver.connect(OracleDriver.java:413(Compiled Code))
+at oracle/jdbc/pool/OracleDataSource.getPhysicalConnection(OracleDataSource.java:280(Compiled Code))
+at oracle/jdbc/pool/OracleDataSource.getConnection(OracleDataSource.java:207(Compiled Code))
+at oracle/jdbc/pool/OracleDataSource.getConnection(OracleDataSource.java:157(Compiled Code))
+at ilog/rules/teamserver/transaction/logger/IlrSQLLogger.getConnection(IlrSQLLogger.java:57(Compiled Code))
+
+
+Because new database connections are created instead of reused from a connection pool, performance of Decision Center can be very poor.
+
+RELATED INFORMATION
+#Tomcat Datasource How-To [http://tomcat.apache.org/tomcat-6.0-doc/jndi-datasource-examples-howto.html]
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration WebSphere ILOG Rule Team Server Performance Platform Independent 7.1.1, 7.1, 7.0.3, 7.0.2, 7.0.1, 7.0

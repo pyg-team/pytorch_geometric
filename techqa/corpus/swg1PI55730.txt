@@ -1,0 +1,190 @@
+Title: IBM PI55730: UNABLE TO SET LOCALE TO HEBREW ON MAC 10.10.5 WITH 23 FP 2 INSTALLED, RECEIVE WARNING 853 - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  You work with IBM SPSS Statistics 23 FP2 installed on Apple
+   Macintosh OSX 10.10.5 Yosemite. The program runs fine.
+   You click on Edit - Options menu, select Language tab. On
+   Character encoding for Data and Syntax select Locale's writing
+   system. From the dropdown select 'Hebrew' and click Apply or OK.
+   This is not working. On output viewer you see the message below:
+   
+   Warning # 853 in column 143.  Text: Hebrew
+   The LOCALE subcommand of the SET command specifies a locale
+   for which collation and translation are not available.
+   
+   You also tried to use syntax to change the locale with below
+   command, but receive the same error as above.
+   
+   Set locale = Hebrew.
+   Show locale.
+   
+   By default Hebrew language is included in locl.map file, so you
+   wonder why this is not working.
+   On Finder go to Applications/IBM/SPSS/Statistics/23/. Right
+   click on SPSSStatistics.app and select Show Package Content.
+   Then click on contents/bin folder. Locate the file loclmap.xml
+   and open it in  textedit.app.
+   By default this file already includes a lot of locales, also
+   Hebrew, scroll down the file to find the entries for Hebrew.
+   This issue was reported to IBM SPSS development.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  This issue will be addressed in the next Fix Pack. Please refer
+   to the Fix Pack schedule at
+   http://www-01.ibm.com/support/docview.wss?uid=swg21599157 for
+   information on upcoming Fix Packs.
+   Please see below information as workaround: The loclmap.xml
+   entries of IBM SPSS Statistics does not meet the Yosemite
+   operating system settings for Hebrew locale.
+   For example, when you open Terminal.app and type the below
+   command:
+   locale -a
+   then you will get a long list of all locale settings of this
+   Macintosh operating system.
+   To get the list for Hebrew only you can also run:
+   locale -a | grep he_
+   
+   You will get this output on 10.10 Yosemite OSX:
+   he_IL
+   he_IL.UTF-8
+   
+   When you compare the above parameters in loclmap.xml file of
+   Statistics 23 you will see that he_IL.UTF-8 is not included:
+       <client-locale name="Hebrew">
+           <server-locale name="iw_IL.cp1255"></server-locale>
+           <server-locale name="iw_IL.ISO8859-8"></server-locale>
+           <server-locale name="iw_IL.8859-8"></server-locale>
+           <server-locale name="iw_IL"></server-locale>
+           <server-locale name="he_IL"></server-locale>
+           <server-locale name="iw"></server-locale>
+           <server-locale
+   name="he_IL.windows-1255"></server-locale>
+           <server-locale name="iw_IL.utf8"></server-locale>
+           <server-locale name="iw_IL.UTF-8"></server-locale>
+           <server-locale
+   name="Hebrew_Israel.1255"></server-locale>
+       </client-locale>
+   
+   So, to change this you need to add below line to loclmap.xml
+   section for Hebrew:
+   <server-locale name="he_IL.UTF-8"></server-locale>
+   
+   To do this, log in as Administrator of the Macintosh. On Finder
+   locate the installtion path for Statistics 23, typically
+   installed to Applications/IBM/SPSS/Statistics/23. Right click on
+   SPSSStatistics.app and select 'Show package content'. After that
+   click Contents folder and then bin folder.
+   In bin folder you will find loclmap.xml file. Edit it and add
+   above line in an XML Editor or with TextEdit.app.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * see APAR text                                                *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * This issue has been addressed in IBM SPSS Statistics 24 Fix  *
+   * Pack 1. Please upgrade to this FixPack level.                *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * This issue has been addressed in IBM SPSS Statistics 24 Fix  *
+   * Pack 1. Please upgrade to this FixPack level.                *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI55730
+   
+   
+ * REPORTED COMPONENT NAME
+   SPSS STATISTICS
+   
+   
+ * REPORTED COMPONENT ID
+   5725A54ST
+   
+   
+ * REPORTED RELEASE
+   N00
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-01-20
+   
+   
+ * CLOSED DATE
+   2016-09-27
+   
+   
+ * LAST MODIFIED DATE
+   2016-09-27
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * RO00 PSN
+   UP
+   
+   
+ * RO00 PSY
+   UP

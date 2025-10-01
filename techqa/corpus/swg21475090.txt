@@ -1,0 +1,57 @@
+Title: IBM After restarting the C&DS server on the iSeries, all jobs go to a queued state - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ After restarting the C&DS server on the iSeries, all jobs go to a queued state.
+
+SystemOut.log contains the following regarding the SIB tables:
+
+These messages show the startup of the SPSSBus....
+
+[3/24/11 12:37:26:580 CDT] 00000011 SibMessage I [SPSSBus:SCOOBY_sjdcds4.sjdcds4-SPSSBus] CWSID0016I: Messaging engine SCOOBY_sjdcds4.sjdcds4-SPSSBus is in state Joined.
+[3/24/11 12:37:26:651 CDT] 00000014 SibMessage I [SPSSBus:SCOOBY_sjdcds4.sjdcds4-SPSSBus] CWSID0016I: Messaging engine SCOOBY_sjdcds4.sjdcds4-SPSSBus is in state Starting.
+
+Typically, when it starts successfully, you will see other messages indicating that it is trying to acquire a lock, and some other messages and then that the SPSSBus is started. But those don't appear in this log. Later on, it records the fact that its giving up trying to start the bus:
+
+[3/24/11 12:52:28:610 CDT] 00000014 SibMessage E [SPSSBus:SCOOBY_sjdcds4.sjdcds4-SPSSBus] CWSIS0002E: The messaging engine encountered an exception while starting. Exception: com.ibm.ws.sib.msgstore.PersistenceException: CWSIS1501E: The data source has produced an unexpected exception: com.ibm.websphere.ce.cm.StaleConnectionException: Failed to start database '/QIBM/UserData/WebSphere/AppServer/V61/Express/profiles/sjdcds4/databases/com.ibm.ws.sib/SCOOBY_sjdcds4.sjdcds4-SPSSBus100520125911852', see the next exception for details.DSRA0010E: SQL State = XJ040, Error Code = 40,000
+[3/24/11 12:52:28:787 CDT] 00000014 SibMessage E [SPSSBus:SCOOBY_sjdcds4.sjdcds4-SPSSBus] CWSID0035E: Messaging engine SCOOBY_sjdcds4.sjdcds4-SPSSBus cannot be started; detected error reported during com.ibm.ws.sib.msgstore.impl.MessageStoreImpl start()
+[3/24/11 12:52:28:803 CDT] 00000014 SibMessage E [SPSSBus:SCOOBY_sjdcds4.sjdcds4-SPSSBus] CWSID0027E: Messaging engine SCOOBY_sjdcds4.sjdcds4-SPSSBus cannot be restarted because a serious error has been reported.
+[3/24/11 12:52:28:819 CDT] 00000014 SibMessage I [SPSSBus:SCOOBY_sjdcds4.sjdcds4-SPSSBus] CWSID0016I: Messaging engine SCOOBY_sjdcds4.sjdcds4-SPSSBus is in state Stopped.
+[3/24/11 12:52:28:837 CDT] 00000014 SibMessage I [SPSSBus:SCOOBY_sjdcds4.sjdcds4-SPSSBus] CWSID0016I: Messaging engine SCOOBY_sjdcds4.sjdcds4-SPSSBus is in state Joined.
+[3/24/11 12:52:28:867 CDT] 00000014 SibMessage E [SPSSBus:SCOOBY_sjdcds4.sjdcds4-SPSSBus] CWSID0039E: HAManager-initiated activation has failed, messaging engine SCOOBY_sjdcds4.sjdcds4-SPSSBus will be disabled. Reason Refer to earlier error messages 
+[3/24/11 12:52:28:887 CDT] 00000014 HAGroupImpl I HMGR0124I: An activate or deactive request for the local member of group WSAF_SIB_BUS=SPSSBus,WSAF_SIB_MESSAGING_ENGINE=SCOOBY_sjdcds4.sjdcds4-SPSSBus,type=WSAF_SIB failed. The reason is < Messaging Engine SCOOBY_sjdcds4.sjdcds4-SPSSBus could not be activated: Refer to earlier error messages > and the data is <null>
+[3/24/11 12:52:28:903 CDT] 00000014 HAGroupImpl I HMGR0129I: The local member of group WSAF_SIB_BUS=SPSSBus,WSAF_SIB_MESSAGING_ENGINE=SCOOBY_sjdcds4.sjdcds4-SPSSBus,type=WSAF_SIB has been disabled. The reason is disable called internally, the reason is < Messaging Engine SCOOBY_sjdcds4.sjdcds4-SPSSBus could not be activated: Refer to earlier error messages >.
+
+
+Also review the log for references to the Derby Datbase such as: 
+ERROR XSDB6: Another instance of Derby may have already booted the database /QIBM/UserData/WebSphere/AppServer/V61/Express/profiles/CADS421/databases/EJBTimers/CADS421/EJBTimerDB. 
+
+RESOLVING THE PROBLEM
+1. Rename this object, restart the WAS instance, and try again:
+\\scooby\QROOT\QIBM\UserData\WebSphere\AppServer\V61\Express\profiles\<profile>\databases\com.ibm.ws.sib\HOST_PROFILE.PROFILE-SPSSBus100520125911852\db.lck
+
+
+Double-booting system behavior
+Derby prevents two instances of itself from booting the same database by using a file called db.lck inside the database directory.
+
+2. If a second instance of Derby attempts to boot an already running database, the following error messages appear:
+
+ERROR XJ040: Failed to start database 'firstdb', see the next exception for details.
+ERROR XSDB6: Another instance of Derby may have already booted the database /home/myself/DERBYTUTOR/firstdb. 
+
+Rename this object, restart the WAS instance and try again: /QIBM/UserData/WebSphere/AppServer/V61/Express/profiles/CADS421/databases/EJBTimers/<Server>/EJBTimerDB (Derby database) 
+
+In addition, a stack trace appears in the derby.log file. For help diagnosing a double boot problem, use the derby.stream.error.logBootTrace property to obtain information about both successful and unsuccessful boot attempts. The property is described in the Derby Reference Manual.
+
+If you need to access a single database from more than one Java Virtual Machine (JVM), you will need to put a server solution in place. You can allow applications from multiple JVMs that need to access that database to connect to the server. The Derby Network Server is provided as a server solution. For basic information on starting and using the Network Server, see Getting Started with Derby. See the Derby Server and Administration Guide for more information on the Network Server.
+
+RELATED INFORMATION
+ Need more help? Our C&DS forum is Live! [https://developer.ibm.com/answers/topics/collaboration.html?smartspace=predictive-analytics]
+
+
+ 
+
+HISTORICAL NUMBER
+ 93538

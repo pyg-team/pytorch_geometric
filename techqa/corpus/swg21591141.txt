@@ -1,0 +1,113 @@
+Title: IBM Why am I not seeing the latest Patch Fixlet updates in my TEM Console? - United States
+
+Text:
+Fixlets; content; patches; sites; cache; enable; Server; Patch; Console; Gathering; Missing Content; googlebigfix TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Missing the current patch Fixlets, I can see older patches in my TEM Console but not the latest ones. 
+
+CAUSE
+ 
+
+1. Not Gathering
+2. License Expired
+3. Stale console Cache
+4. Content is Not Relevant
+5. Firewall/Proxy change
+6. Service account issues
+
+
+RESOLVING THE PROBLEM
+From the TEM Server; 
+
+1. Run the Tivoli Endpoint Manager Diagnostics utility: 
+
+ a. Click the "Services" tab.
+[/support/docview.wss?uid=swg21591141&aid=1] [/support/docview.wss?uid=swg21591141&aid=1] 
+
+ b. Click the "View Server Diagnostics" button. 
+
+
+[/support/docview.wss?uid=swg21591141&aid=2] [/support/docview.wss?uid=swg21591141&aid=2] 
+
+ c. Click the "Gather Status Page" directly under "Site Gathering Information" text 
+
+
+[/support/docview.wss?uid=swg21591141&aid=3] [/support/docview.wss?uid=swg21591141&aid=3] 
+
+ d. Check the gather status of your site(s) for Failed:, Ready:, and Pending: sections 
+
+ e. Check the version of your site(s) for the missing Fixlets in question to see if the version is current. 
+
+ For Example: to check the bessuport site: 
+
+
+Id: 1 Date: Thu, 07 Mar 2013 10:22:19 +0000 Version: 1040
+Url: http://sync.bigfix.com/cgi-bin/bfgather/bessupport 
+
+ 
+
+ f. Try copying and pasting the above URL into an Internet Browser on your server, check to see what the reply is. 
+
+ 
+
+ 
+
+2. Check the License Overview Dashboard, from the TEM Console > Dashboards > BES Support > License Overview. If your license is expired please contact the license department at tem@dk.ibm.com and please provide them with your license Serial Number. 
+
+ 
+
+3. Clear your TEM Console Cache, by going to File > Preferences and click on the Clear Cache button. Exit the console and log back in. 
+
+ 
+
+4. Select the "Show Non-Relevant Content" button on the console to see if the missing Fixlets show up. 
+
+ 
+
+5. Look in the BESRelay.log file located in the, example default path: C:\Program Files (x86)\BigFix Enterprise\BES Server\BESRelay.log file. Are there any recorded errors? 
+
+ 
+
+6. Firewall/Proxy changes? in many cases using a protocol analyzer is required to troubleshoot issues to determine what is blocking the update. You will want to look for interactions with the following sites: http://sync.bigfix.com, http://esync.bigfix.com and http://gatherer.bigfix.com. 
+
+ 
+
+Please see the Proxy Technotes for further proxy setting configurations. 
+
+How do I use TEM with a proxy? [http://www-01.ibm.com/support/docview.wss?uid=swg21505994] 
+
+ 
+
+7. In one case, PCAP - Invalid checksum errors, were determined to be the cause from the Server's Network Interface Card (NIC). After disabling the checksum offloading the content was gathered. Please verify with your IT team for assistance and Policy. 
+
+See the following - Disable-NetAdapterChecksumOffload: http://technet.microsoft.com/en-us/library/jj130902.aspx [http://technet.microsoft.com/en-us/library/jj130902.aspx] 
+
+or 
+
+http://wiki.wireshark.org/CaptureSetup/Offloading [http://wiki.wireshark.org/CaptureSetup/Offloading]
+
+
+ 
+
+8. Verify that the user account of the services, BES Root Server and BES Gather, that the account's permissions have not changed or password expired? 
+
+ 
+
+ 
+
+Note: In some cases where all of the above has been performed and checked out OK, but you still do not see the latest content. Try removing the site, then re-Enable and subscribe computers to the site by; 
+
+ 
+
+ From the License Overview dashboard 
+
+ - Open the Site in question and select the Remove option 
+
+ - The site will reappear in the list of available sites with the Enable option in front of it. Click on Enable 
+
+ - Subscribe your computers to the site again. 
+
+ 
+
+If the problem still persists, please contact TEM Support team.

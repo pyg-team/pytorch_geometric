@@ -1,0 +1,55 @@
+Title: IBM Unable to send data to existing AS2 trading partner after trading partner has changed their IP Address - United States
+
+Text:
+STERLINGNFX TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Unable to send data to existing AS2 trading partner after trading partner has changed their IP Address 
+
+SYMPTOM
+
+
+Trading partner uses domain name in their end point URL and the IP Address for the domain name has changed.
+
+For example:
+
+domain name: www.sterlingcommerce.com
+
+Old IP Address associated with sterlingcommerce is 123.123.123.123
+
+After update, domain name remained the same and the new IP Address is now 234.234.234.234
+
+Due to the trading partner's IP Address change, AS2 outbound no longer works.
+
+Error Message NA
+
+Error message can be seen in the perimeter.log (Perimeter Services when it is enabled)
+
+
+RESOLVING THE PROBLEM
+
+
+In this case, GIS/SI uses the Java Virtual machine where it caches the old IP Address of the domain name and thus sending data to trading partner's old IP Address.
+
+The solution for immediate fix is to replace the domain name with the new IP Address in the trading partner's AS2 setup or restart GIS/SI in order for the Java virtual machine that GIS uses to clear its cache.
+
+See [http://www-01.ibm.com/support/docview.wss?uid=swg21558028]article 1558028 (NFX10058) for instructions on how to permanently reset the cache timeout for DNS lookups.
+
+ 
+
+HISTORICAL NUMBER
+ NFX9540 
+
+PRODUCT ALIAS/SYNONYM
+ 
+
+Severity
+
+
+Normal
+
+
+Type
+
+
+NormalFix

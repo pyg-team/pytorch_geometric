@@ -1,0 +1,139 @@
+Title: IBM Using network drives to serve static content on IBM HTTP Server - United States
+
+Text:
+Win32; windows; xp; NT; 2000; 2003; connection; failed; static pages TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ You can configure an IBM® HTTP Server to serve static content from a network drive. However, steps must be taken to ensure that the drive is referenced correctly by the configuration, and that permissions have been setup correctly to access the static content on the remote system. 
+
+RESOLVING THE PROBLEM
+ 
+
+Warning:
+Serving static content from a remote system might affect the performance and reliability of the web server. Performance depends on the bandwidth and speed of the network between the web server and the remote system. Also, the availability of the remote system affects the reliability of the content being served. If the remote drive is not available when IBM HTTP Server attempts to start, it will cause the server startup to fail. Due to these network issues, it is recommended that you serve static content from a local drive whenever possible.
+
+Process:
+Setting up the IBM HTTP Server to serve static content from a network drive requires the following: 
+
+ 1. Make sure Afpa is not enabled for the IBM HTTP Server since it is not supported for network attached drives (for example, do not load mod_afpa_cache.so within the server's configuration file).
+    {Afpa support has been deprecated since IHS 7.0 and is not recommended for use.}
+    
+    
+ 2. The user account used to start the IBM HTTP Server service must also exist on the remote system with the same password.
+    
+    
+ 3. The user account used to start the IBM HTTP Server service must have the Log On As A Service user right.
+    
+    
+ 4. A folder to hold the static content must be created on the remote system, and the folder must be shared.
+    
+    
+ 5. The user account on the remote system must have at least Read access to the shared folder containing the static content on the remote system 
+    
+    
+ 6. The server's configuration file (httpd.conf) must have the following:  * A Directory stanza for the network drive folder 
+     * An Alias directive to alias the shared network drive folder
+    
+    
+
+
+Note: If multiple Alias statements are used, the more specific Aliases should occur first. Refer to the Order of Processing section of the mod_alias [http://publib.boulder.ibm.com/httpserv/manual70/mod/mod_alias.html] documentation. 
+
+
+Example:  1. On the remote system:  1. Create a user ID called ihsadmin.
+        
+        Note: The actual user ID does not matter, but it must be consistent between the server system and the remote system.
+        
+        
+     2. Create a folder called test to hold the static content files.
+        
+        
+     3. Place a file called index.html into the test folder.
+        
+        
+     4. Share the test folder on this system.
+        
+        Note: Sharing the folder should by default automatically provide Read access rights to "Everyone" on this system, which includes the new ihsadmin user ID.
+        
+        
+    
+    
+ 2. Create a matching user ID (for example, ihsadmin) on the server system.
+    
+    Make sure this account has full permissions to the local IBM HTTP Server directories and port 80. The directory permissions can be set on the Security tab page of the directory's Properties page:  1. Right-click the IBM HTTP Server install directory in your Windows browser, then select Properties. 
+        
+        
+     2. Select the Security tab page
+        
+        
+     3. If the ihsadmin user ID used to start the service does not appear in the Group or user names list at top of the page, then add it using the Add... or Edit.../Add... buttons (depending on the Windows version).
+        
+        
+     4. Select the ihsadmin user ID in the top list.
+        
+        
+     5. Click the checkbox for Full Control in the Allow column of the Permissions for ihsadmin list.
+        
+        
+     6. Click OK.
+        
+        
+    
+    
+ 3. Configure the IBM HTTP Server service in the Windows services panel to use the ihsadmin account for its Logon. This can be done on the 'Log On' tab page of the Services' Properties page:  1. Right-click the IBM HTTP Server x.y service, and select Properties. 
+        
+        
+     2. Select the Log On tab page.
+        
+        
+     3. Select the This account radio button.
+        
+        
+     4. Enter ihsadmin for the user ID, then enter the password and its confirmation. 
+        
+        
+     5. Click OK. 
+        
+        Note: You might see the following message if the user ID had not previously been granted that right:
+        
+        The account .\ihsadmin has been granted the Log On As A Service right. 
+        
+    
+    
+ 4. Edit the httpd.conf file on the IBM HTTP Server system located in the install_root\conf directory. Add the following to properly alias the IBM HTTP Server to the test share:
+    
+    <Directory "//hostname/test"> 
+    Options Indexes MultiViews
+    AllowOverride None 
+    order allow,deny 
+    allow from all 
+    </Directory>
+    
+    Alias /test "//hostname/test" 
+    Notes:  * You should not use a drive letter for the mapped drive within the IBM HTTP Server configuration file, but instead use the UNC (Universal Naming Convention) path name. Windows services generally do not have access to mapped drive letters and the most common deployment for IBM HTTP Server on Windows is to run as a service.
+       
+       A drive letter would likely work in the Alias statement if IBM HTTP Server is started from the command-line and the remote drive has been mapped to a drive letter on the server system, but it is recommended to always use UNC syntax for mapped drives since that will work if started as a service or not. Using drive letters for local (non-remote) drives is not a problem.
+       
+       
+     * Make sure to use forward slashes in the UNC names 
+       
+       
+     * Quotes are not needed around the Alias statement parms unless there are spaces in the path 
+       
+       
+     * The two Alias parms can have a trailing slash ('/') or not as long as they both match (both with, or both without). 
+       
+       It is generally best practice to omit the trailing slash since this should allow both /test and /test/ to work in the url. 
+       
+       
+    
+    
+ 5. Start the IBM HTTP Server and attempt to access the index.html file within the /test shared folder on the network drive. For example:
+    
+    http://www.example.com/test/index.html 
+    
+
+
+If you are not able to access the index.html page, go back and check your steps carefully; contact your local system administrator to confirm that the user account has proper permissions to the share. Make sure the ihsadmin user ID has at least Read access to the shared ( \test) directory. 
+
+If you continue to experience problems and require additional assistance with the IBM HTTP Server configuration, call 1-800-IBM-SERV and open a problem record. Outside the United States, contact your local IBM Support Center.

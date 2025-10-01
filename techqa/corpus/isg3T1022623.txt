@@ -1,0 +1,14 @@
+Title: IBM LSF log files rotation - United States
+
+Text:
+log files rotation TECHNOTE (FAQ)
+
+QUESTION
+ Does LSF rotate log files? 
+
+ANSWER
+LSF does not rotate any log files automatically. However, you can write a simple script to rename log files in a period of time. The new log files will be created automatically. 
+
+ 
+
+Cross reference information Segment Product Component Platform Version Edition IBM Spectrum Computing IBM Spectrum LSF

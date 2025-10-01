@@ -1,0 +1,27 @@
+Title: IBM Authentication to Identity Insight fails after changing database password - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When logging into the Identity Insight's Visualizer or Console GUIs, authentication fails after changing the database password. 
+
+SYMPTOM
+Logging into the Console or Visualizer may fail with authentication errors after changing the database password.
+
+CAUSE
+Need to update WAS files with new authentication information.
+
+RESOLVING THE PROBLEM
+The problem is related to the WAS files not being updated with the new authentication information. Engineering has created a script to change the password throughout AR. The file can be provided by Support with a valid Support contract. Once downloaded, it should be edited with the updated/corrected database authentication information at the top of the file where indicated.
+
+
+The script should be run from the WAS profile bin directory: 
+
+ 
+
+ ./wsadmin.sh -conntype NONE -f <path to edited jacl script> 
+
+ 
+
+An alternative to this option, should customers not feel comfortable running the jacl script, is to uninstall and reinstall the Resolver.

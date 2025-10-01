@@ -1,0 +1,63 @@
+Title: IBM Fix list for IBM MQ for HPE NonStop Version 8.0.x - United States
+
+Text:
+FixListDocument PRODUCT DOCUMENTATION
+
+ABSTRACT
+ IBM MQ for HPE NonStop Version 8 uses the IBM continuous delivery model, so that Version 8.0.x can contain both new functionality and fixes. The following is a list of the APAR fixes for the versions, with the most recent versions at the top. 
+
+CONTENT
+ 
+
+HPE NonStop Version 8.0.3 
+GA: 14 May 2018
+
+The following is a list of APAR fixes that have been included in this release. With version V8.0.3, a single APAR was created for each issue, but fixes were implemented on both the X and i platforms. 
+
+APAR Description IT24345 RFC5280 support missing, but behaviour is not equivalent to CERTVPOL(ANY) IT24736 amqssmgr process throws an FFST with major error MQRC_OBJECT_IN_USE if MQGMO_SETSIGNAL is used on queues with attribute MQOO_INPUT_EXCLUSIVE,
+or MQQA_NOT_SHAREABLE (for example, model queues) IT24994 CVE-2018-0739 IT25000 Incorrectly invalidated MQMD structure if MQGET with option MQGMO_SET_SIGNAL is used and returns with reason code 2070 MQRC_SIGNAL_REQUEST_ACCEPTED or reason code 2069 MQRC_SIGNAL_OUTSTANDING IT25033 Incorrect MQ structure length handling for PMO, GMO, MD, and OD parameters for non-native applications 
+
+
+[/support/docview.wss?uid=swg27050724&amp;aid=1] 
+HPE NonStop Version 8.0.2 
+GA: 20 March 2018
+
+The following is a list of APAR fixes that have been included in this release. With version V8.0.2, separate APARs were created for the X and i platforms. The first APAR in the column is for the i platform, the second for the X platform:
+
+APAR Description IT24035 
+IT23903 Removed incorrect error message which appeared despite running entropy daemon IT24033 IT24034 CVE-2017-3735 IT24053 
+IT24054 Add support to optionally disable TLS 1.0 protocol IT24236 
+IT24415 Inoperable ssl channel is stuck in status RUNNING [/support/docview.wss?uid=swg27050724&amp;aid=1] 
+
+
+
+HPE NonStop Version 8.0.1 [/support/docview.wss?uid=swg27050724&amp;aid=1] [/support/docview.wss?uid=swg27050724&amp;aid=1] GA: 19 January 2018 
+
+The following is a list of the NonStop specific APAR fixes that have been included in this release: 
+
+APAR Description IT22348 Username mapping failing for group authorities when users with a user name longer than twelve characters is used IT22146 MQ5 Migration Utility fails stating that channels are running even though they are stopped IT21862 Notifications for MQGET SET_SIGNAL are delivered via a WRITEREAD call instead to a WRITEX call 
+
+IBM MQ for HPE NonStop V8.0.1 includes the following Security APARs in addition to those from IBM MQ V8:
+
+APAR Description IT15943 CVE-2017-1433 IT19970 CVE-2017-1341 IT20398 CVE-2017-1339 IT22526 CVE-2017-1612 IT18595 CVE-2017-1236 IT18912 CVE-2017-1235 IT19185 CVE-2017-1283 IT19218 CVE-2017-1145 IT19819 CVE-2017-1337 IT19861 CVE-2017-1285 IT20119 CVE-2017-1284 IT20614 CVE-2017-1318 
+
+
+
+
+
+HPE NonStop Version 8.0.0 [/support/docview.wss?uid=swg27050724&amp;aid=1] [/support/docview.wss?uid=swg27050724&amp;aid=1] GA: 23 June 2017
+ 
+
+IBM MQ for HPE NonStop V8 is based on a port of IBM MQ V8, and its releases include the Security APARS for IBM MQ V8 that are relevant to the IBM MQ NonStop platform.
+
+IBM MQ for HPE NonStop V8.0.0 includes the following Security APARs: 
+
+ 
+
+APAR Description IT05869 CVE-2015-0189 IT07224 CVE-2015-1957 IT14385 CVE-2016-0360 IT14407 CVE-2016-3013 IT14802 CVE-2016-3052 IT15735 CVE-2016-9009 IT11546 CVE-2016-0379 IT12266 CVE-2016-0260 IT12395 CVE-2016-0259 [/support/docview.wss?uid=swg27050724&amp;aid=1] 
+
+ORIGINAL PUBLICATION DATE
+ 2018/1/19 
+
+PRODUCT ALIAS/SYNONYM
+ MQ NonStop

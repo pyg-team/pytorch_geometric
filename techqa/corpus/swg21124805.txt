@@ -1,0 +1,97 @@
+Title: IBM Unable to connect to database server, Unable to start specified database - United States
+
+Text:
+1124805; TroubleshootingDocument; CQ; clearQuest; sql anywhere; connect; dbclient; broadcast; connect; "Unable to connect to database server"; subnet; invalid database; unable to start; server not found; error in determining system upgrade information; SQL_Anywhere; server; dial-up; connection; Sybase SQL Anywhere across subnets; across subnets TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This technote explains troubleshooting tips for "unable to connect to database" errors when using Sybase SQL Anywhere IBM® Rational® ClearQuest®. 
+
+SYMPTOM
+ 
+
+This error appears when attempting to connect to a ClearQuest client to a SQL Anywhere server that is on a different subnet from the server or when using a dial-up connection to the network.
+
+SQLDriverConnect : RETCODE= -1, State=08001, Native Error = 82
+SQL Anywhere - Unable to connect to database server: Unable to start specified database.
+
+
+
+CAUSE
+ 
+
+Both the SQL Anywhere server and the client send broadcast packets over the network by default when they are started. These packets either get lost or misdirected when they have to pass through a network router which is connecting one or more subnets. Since the client cannot receive the server's broadcast, the client thinks that server does not exist. 
+
+
+RESOLVING THE PROBLEM
+ 
+
+There are several levels of troubleshooting to correct this problem. 
+
+Test the connection after each step below and don't delete any settings during the process. Once a connection is established, there is no need to implement any further steps. 
+
+
+Level 1 - Add the IP adders or the hostname of the database server to the maintenance tool connection parameters. 
+
+Specifying the IP address of the SQL_Anywhere server in the Host entry field when you try to connect to the schema through the ClearQuest Maintenance Tool. 
+
+OR 
+
+Verify that the cqdbinfo.ini for each database (master and user), located in the directory on the database server where the physical database resides has the QDBConnectHosts= parameter set to the servers host name or IP address. If not add the SQL Anywhere server name or IP address and restart the server. 
+
+Level 2 - Turn off the broadcast on the Server 
+
+ 1. On the machine hosting SQL Anywhere, select:
+    Start > Programs > Sybase SQL Anywhere Database Server 5.5.05 > Sybase Centralthen Select the Services folder. 
+ 2. The Service name that was created to run with ClearQuest should appear in the right window. Right mouse click on the service and select STOP. 
+ 3. Right mouse click it again, and go into the properties of the service. 
+ 4. On the configuration tab, in the "parameters for executable" window, add the {dobroadcast=no;host=dbservermachinename} to the TCPIP parameter. 
+    For example, if the database server name is "george" then the full command line will look like this:
+    
+    -n cqsqlany -c 2040 -tl 0 -ti 7200 -x TCPIP{dobroadcast=no;host=george}
+    
+    
+    The IP address can also be applied instead of the hostname as long as the database server utilizes a static IP address and not DHCP. 
+ 5. Test the connection.
+    
+
+
+Level 3 - Turn off the broadcast on the client side 
+The server connection can be tested by using the Sybase dbclient program located in the rational/sqlany50/win32 directory. 
+If this connection fails, then a ClearQuest connection will also fail. 
+The client connection assumes the Sybase defaults so as to mimic what ClearQuest would be using by supplying the service name to the dbclient . This is illustrated in the following example where the Sql Anywhere service is called cqsqlany:
+
+C:\program files\rational\sqlany50\win32> dbclient cqsqlany
+
+If that fails, add the nobroadcast and as follows:
+
+...\win32> dbclient cqsqlany -x tcpip{dobroadcast=no;host=george}
+
+If the dbclientnow connects, try connecting using the ClearQuest client (leaving the dbclientwindow open).
+
+If this works, then the environment variable can be set on each client that includes the client connection parameters so that it isn't necessary to run the dbclient manually. The value of this environment variable is appended to the dbclientcommand for starting a client connection and overrides the protocols and hosts configuration set in CQ database properties.
+
+Specifically, to turn off broadcasting for TCPIP:
+
+set CQ_SA_OPTIONS=-x TCPIP{dobroadcast=no;host=<host_name>}
+
+Where <host-name>is the network host name of the machine where SQL Anywhere server is running; it can also be an IP address.
+
+Note: Turning off the Broadcast on the Sql Anywhere Server side (Level 2) can also help if the Sql Anywhere Service will not start. 
+
+ 
+
+Level 4 - Reset the connection information
+By deleting the asasrv.ini file, the SQL Anywhere Service will create a new asasrv.ini file containing the information you specify in the connection string. The asasrv.ini file is normally located in your SQL Anywhere executable directory. For example, the default directory for SQL Anywhere 8 is C:\Program Files\Rational\SqlAnywhere8\win32. This file may also exist in the Windows and Windows System directories as well. 
+
+ 
+
+
+
+
+BACKING UP FILES  Always make new database back-ups of your schema repository and user databases prior to making schema changes and performing database upgrades. Failure to create back-up copies can limit your ability to recover from a an upgrade failure, design change issues or other unforeseen failures.
+
+
+
+RELATED INFORMATION
+#Technote - Resolving Database Client Communication [http://www.sybase.com/detail?id=42396]
+Technote - "Unable to start server not found" [http://www.sybase.com/detail?id=47888]

@@ -1,0 +1,61 @@
+Title: IBM Error Page Exception SRVE0260E at first login to Workplace XT when showing object store used for bootstrap configuration - United States
+
+Text:
+wpxt workplace jndi Versionable db2 jdbc BadReferenceException login TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This is a first time login using Workplace XT after the initial bootstrap configuration. It shows the object store used in bootstrap configuration. After you click on OK button it shows the error com.filenet.wcm.api.BadReferenceException: E_OBJECT_NOT_FOUND 
+
+SYMPTOM
+The following error occurred during workplaceXT login. 
+"Error Page Exception SRVE0260E: The server cannot use the error page specified for your 
+application to handle the Original Exception printed below.
+
+Original Exception: 
+Error Message: com.filenet.wcm.api.BadReferenceException: com.filenet.
+api.exception.EngineRuntimeException;The requested item was not found.
+Object identity: /Preferences/Site Preferences for WorkplaceXT. Class 
+name: Versionable. [Code=null] ... Object Reference [DOCUMENT:1] ID 
+"/Preferences/Site Preferences for WorkplaceXT" in ObjectStore "OS1"; 
+OMFC/Document/GetProperties//E_OBJECT_NOT_FOUND 
+Error Code: 500 
+Target Servlet: 
+Error Stack:
+com.filenet.wcm.api.BadReferenceException: com.filenet.api.exception. 
+EngineRuntimeException;The requested item was not found. Object 
+identity: /Preferences/Site Preferences for WorkplaceXT. Class name:
+Versionable. [Code=null] ... Object Reference [DOCUMENT:1] ID 
+"/Preferences/Site Preferences for WorkplaceXT" in ObjectStore "OS1"; 
+OMFC/Document/GetProperties//E_OBJECT_NOT_FOUND " 
+
+After updating the Preferences document class with a default database Storage Policy and restarting the WPXT server, the customer is still getting the same login failure when logging into WPXT with this error seen in the SystemOut.log: 
+
+Caused by: com.filenet.wcm.api.BadReferenceException: 
+com.filenet.api.exception.EngineRuntimeException;The requested item was not found. Object identity: /Preferences/Site Preferences for 
+WorkplaceXT. Class name: Versionable. [Code=null] ... Object Reference [DOCUMENT:1] ID "/Preferences/Site Preferences for WorkplaceXT" in ObjectStore "OS1"; OMFC/Document/GetProperties//E_OBJECT_NOT_FOUND
+
+The Site Preference File is created in the unfiled documents folder. 
+
+
+
+CAUSE
+WP XT requires JDBC jar diver type 4 . 
+
+
+
+ENVIRONMENT
+IBM DB2 10.5 FP4
+
+
+
+DIAGNOSING THE PROBLEM
+When creating a new object store the below error message is reported: 
+
+ 
+com.filenet.api.exception.EngineRuntimeException;An unexpected error
+occured accessing JNDI. [Code=null];
+OMFC/TheNetwork/NoOp//API_UNEXPECTED_JNDI_ERROR
+
+
+RESOLVING THE PROBLEM
+Replace db2jcc.jar file with db2jcc4.jar file.

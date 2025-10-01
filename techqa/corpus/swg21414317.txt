@@ -1,0 +1,61 @@
+Title: IBM Export to relational database fails with SQL error: SQLCODE=-302, SQLSTATE=22001 - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When you export crawled, analyzed, or searched documents to a relational database, the export fails and the message “DB2 SQL error: SQLCODE=-302, SQLSTATE=22001” is written to the system log in the ES_NODE_ROOT/logs directory. 
+
+CAUSE
+The length of an exported field or facet value is longer than the length of the corresponding column in the database table.
+
+RESOLVING THE PROBLEM
+You can resolve this problem in one of the following ways: 
+
+ * Configure IBM Cognos Content Analytics to truncate any exported field or facet value that is longer than the length of the of the corresponding column in the database table. In your database mapping file, set the value of the policy property to truncate.
+
+ * Restriction
+ * 
+ *  
+ * Recreate the database table so that its columns are large enough to contain the exported field or facet values. 
+
+
+To recreate the database table:  1. Determine which table needs to be recreated by checking the SQL error message in the export audit log in the ES_NODE_ROOT/logs/audit directory. For example, the following message indicates that the DEVICEAVAILABILITY column from the ESADMIN.DEVICEAVAILABILITY table is not long enough to store the corresponding field values.
+    
+    11/27/09 06:05:06.922 GMT+09:00 [Error] [ES_INFO_GENERAL_AUDIT_INFO] [] []
+    serverx.ibm.com:4368:120:X'0':bd.java:com.ibm.db2.jcc.am.bd.a:668
+    FFQX0717I 251658517
+    com.ibm.db2.jcc.am.co: DB2 SQL Error: SQLCODE=-302, SQLSTATE=22001, SQLERRMC=null,
+    DRIVER=3.57.82
+    com.ibm.db2.jcc.am.co: DB2 SQL Error: SQLCODE=-302, SQLSTATE=22001, SQLERRMC=null,
+    DRIVER=3.57.82
+    at com.ibm.db2.jcc.am.bd.a(bd.java:668)
+    .......
+    at com.ibm.db2.jcc.am.lm.executeQuery(lm.java:628)
+    at com.ibm.es.oze.export.rdb.query.dml.Search.execute(Search.java:82)
+    at java.lang.Thread.run(Thread.java:736)
+    
+    11/27/09 06:05:06.922 GMT+09:00 [Warning] [ES_INFO_GENERAL_AUDIT_INFO] [] []
+    serverx.ibm.com:4368:120:X'0':DB2Utils.java:com.ibm.es.oze.export.rdb.utils.DB2Utils.d
+    LogSQLException:157
+    FFQX0717I SELECT "ID","DEVICEAVAILABILITY" FROM "ESADMIN"."DEVICEAVAILABILITY" WHERE
+    "DEVICEAVAILABILITY"=?
+    
+ 2. In your database mapping file, increase the length of the column in the appropriate table definition. In our example, the database mapping file contains the following definition for the DEVICEAVAILABILITY column in the ESADMIN.DEVICEAVAILABILITY table:
+    
+    <table schema="ESADMIN" name="DEVICEAVAILABILITY" type="document">
+    <column name="ID" key="true" function="id" type="INTEGER"/>
+    <column name="DEVICEAVAILABILITY" key="false" type="CHAR(4)">
+    <value source="field" name="deviceavailability"/>
+    </column>
+    </table>
+    
+    Increase the length of the DEVICEAVAILABILITY column by modifying the size that is specified for the type attribute. For example, change type="CHAR(4)" to type="CHAR(6)".
+    
+ 3. After you update the column definition, drop the table or recreate the database. 
+ 4. Reexport your documents.
+
+
+If you receive this error for a column that contains binary content, ensure that you specify a size for the BLOB column in its table definition. For example, change type=“BLOB" to type=“BLOB(10M)". If no size is specified, DB2 by default creates a column that can store 1 MB. 
+
+Also ensure that you specify a column size that is large enough to store your binary content data. For example, if you crawl files that are no more than 5 MB, set the BLOB column size to 5 MB. If you do not know the size of the data, you can ensure that the column is large enough by specifying 32 MB as the column size because the maximum page size that can be crawled is 32 MB. However, specifying 32 MB as the column size might unnecessarily consume database server resources if most of the crawled data is less than 32 MB.

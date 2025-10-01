@@ -1,0 +1,13 @@
+Title: IBM Rational DOORS Quality Center Integration logging error: The data provider failed to initialize - United States
+
+Text:
+QCI; QC; Quality Center; Integration; Data Provider; Initialize; DOORS TECHNOTE (FAQ)
+
+QUESTION
+ Where can I look to help troubleshoot issues for the IBM Rational DOORS Quality Center 3.4/3.5 integration if I am getting an error that says "The data provider failed to initialize, if this problem persists contact your administrator" when using the integration Admin Tool? 
+
+CAUSE
+This error typical results when the Admin Tool can not make a connection to either DOORS or Quality Center. 
+
+ANSWER
+On the integration server machine, look in the 'C:\Inetpub\wwwroot\DOORSTDIServices\Logs' directory for a 'TDIService.log' file. This log can give you more information on why the error is being thrown. If you are unable to understand it, submit it to support for analysis.

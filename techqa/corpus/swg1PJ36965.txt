@@ -1,0 +1,203 @@
+Title: IBM PJ36965: AFTER UPGRADE P8 EFORM TO 4.0.1-005, SAVE AND CLOSE BUTTON APPEAR IN EFORM TAB IN BPF. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Description of Problem (full details):
+   
+   After upgrading P8-eForms to 4.0.1-005, the Save and Close
+   buttons appear in eForm tab in BPF instead of being hidden
+   (since the BPF Save and Close buttons should be used instead in
+   this scenario).
+   
+   It is confirmed by the eForm L3 team that:
+   
+   1. When creating a form policy, if you don't click on the
+   "Advanced" button in "Define Step Map" section, then you get the
+   XML with no toolbar node.
+   2. When creating a form policy, if you click on the "Advanced"
+   button in the "Define Step Map" section you get the XML with
+   toolbar node.
+   
+   BPF needs to read the form policy file when trying to display
+   the case. It is likely that, after upgrading eForms, the
+   customer clicked on the "Advanced" button when editing the form
+   policy, and as a result, the eForms Save and Close buttons now
+   show up in the eForm tab in the BPF.
+   
+   How long has the problem been occurring (recent changes)? :
+   
+   After upgrading P8-eForms to 4.0.1-005.
+   
+   Does this occur on more than one station / server? :
+   
+   Yes
+   
+   Is there a workaround? :
+   
+   Yes, that is, to create a new form policy without clicking
+   "Advanced" button.
+   
+   What is the impact to the customer/system? :
+   
+   It affects the usability of the BPF.
+   
+   Can the problem be replicated on an internal system?
+   
+   Yes
+   
+   By Who (L3, Support, etc..)
+   L2, L3
+   
+   Steps to Reproduce:
+   1 Click the "Advanced" button when editing the form policy for
+   the eForm to be used with BPF
+   2 Create an eForm case in BPF
+   3 Open the case
+   
+   Actual Results:
+   
+   save and close buttons appear in the eForm tab in BPF.
+   
+   Expected Results:
+   
+   They should not show up in the BPF eForm tab interface.
+   
+   Configuration/Environment :
+   
+   1. BPF-4.1.0-002
+   2. P8PE-4.0.3.002
+   3. P8 Pe Client- 4.0.3-002
+   4. P8CE- 4.0.1-009 (4.0.1-004 dap435.086)
+   5. P8CE Client - P8CE-4.0.1-009
+   6. P8AE-4.0.2.2-P8AE-FP002
+   7. Application Serverweblogic 9.2
+   8. Database Serverms sql 2005
+   9. Operating Systemw2k3 sp2
+   10.Eform Desginer 5.0.2
+   11. P8 eForm 4.0.1-005
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Create a new form policy without clicking "Advanced" button
+   (see Description for details).
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * BPF Web Application users                                    *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * AFTER UPGRADE P8 EFORM TO 4.0.1-005, SAVE AND CLOSE BUTTON   *
+   * APPEAR IN EFORM TAB IN BPF.                                  *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Upgrade to BPF 4.1 FP04 or above.                            *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix for this APAR is contained in the following maintenance
+   packages:
+   BPF 4.1 FP04
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PJ36965
+   
+   
+ * REPORTED COMPONENT NAME
+   BUS PROC FRAMEW
+   
+   
+ * REPORTED COMPONENT ID
+   5724R7500
+   
+   
+ * REPORTED RELEASE
+   410
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-10-20
+   
+   
+ * CLOSED DATE
+   2010-06-02
+   
+   
+ * LAST MODIFIED DATE
+   2010-06-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   BUS PROC FRAMEW
+   
+   
+ * FIXED COMPONENT ID
+   5724R7500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R410 PSY
+   UP

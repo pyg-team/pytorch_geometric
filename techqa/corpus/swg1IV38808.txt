@@ -1,0 +1,234 @@
+Title: IBM IV38808: EXPORTBUNDLES SPD FILE MISSING LAP_LIC DIRECTORY - United States
+
+Text:
+  FIXES ARE AVAILABLE
+IBM Tivoli Monitoring 6.2.3 Fix Pack 5 (6.2.3-TIV-ITM-FP0005) [http://www-01.ibm.com/support/docview.wss?uid=swg24035801]
+IBM Tivoli Monitoring 6.2.3 Fix Pack 4 (6.2.3-TIV-ITM-FP0004) [http://www-01.ibm.com/support/docview.wss?uid=swg24034252]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  PROBLEM SUMMARY:
+   Using the images IBM Tivoli Monitoring V6.2.3 Fixpack 1 Agent ,
+   Multiplatform, English (CI62PEN)
+   and than the following command to install the KUM
+   
+   tacmd exportBundles -o SPD -t um -e D:\exportDIR -i
+   D:\ITM_6.2.3_FIXPACK_1_AGENT_MP_ENG\WINDOWS\Deploy
+   
+   instalation failed with the following message in the Abort file:
+   03-07-2013 05:44:49: License file D:\UM_062~1\LAP_LIC\LA_en does
+    not
+   exist, License program may fail.
+   03-07-2013 05:44:49: Directory
+   C:\Users\ADMINI~1\AppData\Local\Temp\1\{429573E2-270F-4E6C-81FD-
+   DB84D554
+   2106}\license deleted
+   03-07-2013 05:44:49: LIC_PATH=D:\UM_062~1\LAP_LIC
+   03-07-2013 05:44:49:
+   OutPath=C:\Users\ADMINI~1\AppData\Local\Temp\1\{429573E2-270F-4E
+   6C-81FD-
+   DB84D5542106}
+   03-07-2013 05:44:49: LapTool: language code 1033 - en
+   03-07-2013 05:44:49: readListFile: Cannot read from file
+   D:\UM_062~1\LAP_LIC\LA_en ERROR:
+   03-07-2013 05:45:11: Licensing initialization error, incorrect
+   initialization information found.
+   03-07-2013 05:45:11: SEVERE: ERROR - Install aborted.
+   03-07-2013 05:45:11: ITMISUtil.dll::DeleteFile - File
+   C:\Users\ADMINI~1\AppData\Local\Temp\1\ITMProtect.ini could not
+   be
+   deleted. ERROR: The system cannot find the file specified.
+   03-07-2013 05:45:11: ITMISUtil.dll::DeleteFile - File
+   C:\Users\ADMINI~1\AppData\Local\Temp\1\ITMRegSave.txt could not
+   be
+   deleted. ERROR: The system cannot find the file specified.
+   03-07-2013 05:45:11: RegistryGetKeyValue
+   Key(HKLM\SYSTEM\CurrentControlSet\Control\Terminal Server)
+   Value(TSEnabled) INFO:The system cannot find the file specified.
+   03-07-2013 05:45:11: RollbackClearData entry
+   
+   
+   
+   CAUSE:
+   The following list of files is missing from the KUMWINNT.dsc
+   file in the 6.2.3 FP1 distributed CD-ROM image:
+   <File>LAP_LIC\LA_cs</File>, <File>LAP_LIC\LA_de</File>,
+   <File>LAP_LIC\LA_en</File>, etc.
+   
+   
+   STEP TO RECREATE: see description in the summary
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Copy the ITM CD-ROM LAP_LIC directory to the target machine's
+   installation image directory, and retry the installation
+   locally.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Unable to install Universal Agent via Tivoli Configuration
+   Manager or Tivoli Provisioning Manager using exported custom
+   Software Package Definition (SPD) file.
+   
+   
+   When using tacmd exportBundles to create a custom Universal
+   Agent SPD file, the resultant Universal Agent SPD file fails to
+   install.  Specifying SPD exports a Software Package Definition
+   (SPD) file and other accompanying agent files so that Tivoli
+   Configuration Manager (TCM) or Tivoli Provisioning Manager (TPM)
+   can be used to remotely install the agent.
+   
+   For example, given a Universal Agent SPD file for Windows is
+   named UM_062301000_WINNT,
+   attempting to install from UM_062301000_WINNT produces the
+   following message dialog:
+   
+   "Licensing initialization error, incorrect initialization
+   information found."
+   
+   installation failed with the following messages in the Abort
+   file:
+   03-07-2013 05:44:49: License file D:\UM_062~1\LAP_LIC\LA_en does
+   not exist, License program may fail.
+   03-07-2013 05:44:49: Directory
+   C:\Users\ADMINI~1\AppData\Local\Temp\1\{429573E2-270F-4E6C-81FD-
+   DB84D5542106}\license deleted
+   03-07-2013 05:44:49: LIC_PATH=D:\UM_062~1\LAP_LIC
+   03-07-2013 05:44:49:
+   OutPath=C:\Users\ADMINI~1\AppData\Local\Temp\1\{429573E2-270F-4E
+   6C-81FD-DB84D5542106}
+   03-07-2013 05:44:49: LapTool: language code 1033 - en
+   03-07-2013 05:44:49: readListFile: Cannot read from file
+   D:\UM_062~1\LAP_LIC\LA_en ERROR:
+   03-07-2013 05:45:11: Licensing initialization error, incorrect
+   initialization information found.
+   03-07-2013 05:45:11: SEVERE: ERROR - Install aborted.
+   03-07-2013 05:45:11: ITMISUtil.dll::DeleteFile - File
+   C:\Users\ADMINI~1\AppData\Local\Temp\1\ITMProtect.ini could not
+   be deleted.
+                        ERROR: The system cannot find the file
+   specified.
+   03-07-2013 05:45:11: ITMISUtil.dll::DeleteFile - File
+   C:\Users\ADMINI~1\AppData\Local\Temp\1\ITMRegSave.txt could not
+   be deleted.
+                        ERROR: The system cannot find the file
+   specified.
+   
+   The installation failure is occurring because certain
+   accompanying files, namely LAP_LIC\LA_en, LAP_LIC\LA_cs,
+   LAP_LIC\LA_de,etc.  are missing from
+   KUM<interp>.dsc files and thus, these files are missing from
+   tacmd produced export bundle.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The Universal Agent specific 'packaging' files, used in process
+   of creating CD-ROM images, were updated to include the
+   collection of LAP_LIC/LA_* files.
+   
+   
+   The fix for this APAR is included in the following maintenance
+   vehicle:
+   
+      | fix pak | 6.2.3-TIV-ITM-FP0004
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV38808
+   
+   
+ * REPORTED COMPONENT NAME
+   UNIVERSAL AGENT
+   
+   
+ * REPORTED COMPONENT ID
+   5724K1000
+   
+   
+ * REPORTED RELEASE
+   623
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-03-29
+   
+   
+ * CLOSED DATE
+   2013-04-30
+   
+   
+ * LAST MODIFIED DATE
+   2013-10-15
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   UNIVERSAL AGENT
+   
+   
+ * FIXED COMPONENT ID
+   5724K1000
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R623 PSY
+   UP

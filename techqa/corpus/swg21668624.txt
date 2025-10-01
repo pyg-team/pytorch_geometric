@@ -1,0 +1,59 @@
+Title: IBM When updating the Security Settings change in Case Foundation Process Engine (PE) Process Task Manager, it fails with FNRPE2130200367E on both Apply and Test Connection button - United States
+
+Text:
+PE; PTM; security setting; fail; error TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The PE administrator tried to update the Security Settings change in PE Process Task Manager, it failed with FNRPE2130200367E when trying to click on both Apply and Test Connection button 
+
+SYMPTOM
+Here is the excerpt from the Process Task Manager Console : 
+
+[FNRPE2130200367E]Failed to initialize LDAP connection, see error log 
+for details. 
+
+at filenet.jpe.security.cemp.CEMPSecurityUtils. 
+validateIsMemberOfGroup(CEMPSecurityUtils.java:207) 
+at filenet.jpe.security.cemp.CEMPSecurityUtils.saveSecurityConfig 
+(CEMPSecurityUtils.java:84) 
+at filenet.jpe.ptm.VWCEMPPropertyPanel.testConnection 
+(VWCEMPPropertyPanel.java:420) 
+at filenet.jpe.ptm.VWCEMPPropertyPanel$1.actionPerformed 
+(VWCEMPPropertyPanel.java:404) 
+at javax.swing.AbstractButton.fireActionPerformed(AbstractButton. 
+java:1995) 
+at javax.swing.AbstractButton$Handler.actionPerformed 
+(AbstractButton.java:2318) 
+at javax.swing.DefaultButtonModel.fireActionPerformed 
+(DefaultButtonModel.java:387) 
+at javax.swing.DefaultButtonModel.setPressed(DefaultButtonModel. 
+java:242) 
+at javax.swing.plaf.basic.BasicButtonListener.mouseReleased 
+(BasicButtonListener.java:236) 
+at java.awt.Component.processMouseEvent(Component.java:6288) 
+at javax.swing.JComponent.processMouseEvent(JComponent.java:3267) 
+at java.awt.Component.processEvent(Component.java:6053) 
+at java.awt.Container.processEvent(Container.java:2041) 
+at java.awt.Component.dispatchEventImpl(Component.java:4651) 
+at java.awt.Container.dispatchEventImpl(Container.java:2099) 
+at java.awt.Component.dispatchEvent(Component.java:4481) 
+at java.awt.LightweightDispatcher.retargetMouseEvent(Container. 
+...
+... 
+
+
+CAUSE
+The Service Username was not a member of the PE administrator group. 
+
+
+RESOLVING THE PROBLEM
+The error indicates that the Service Username is not a member of the PE administrator. 
+
+ 1. Check the active directory to make sure that the supplied user in Service Username field is a member of the PE Administrator group. 
+ 2. If the Service Username is not a member of the PE administrator group, find out a user that is a member of the PE administrator group, and use that user to configure in Service Username field. See reference screen shot below. 
+
+
+[/support/docview.wss?uid=swg21668624&aid=1] [/support/docview.wss?uid=swg21668624&aid=1] Note that if the user is newly added to PE administrator group in the active directory, it may take up to 4 hours before the user group membership gets updated in PE database. If you need to get it to update right away to avoid the error, log onto vwtool as the PE administrator user and run flushusercache command follow by the environment i f m y command from within PE vwtool utility. See the reference link below.
+http://pic.dhe.ibm.com/infocenter/p8docs/v5r1m0/topic/com.ibm.p8.pe.vw.doc/bpfvl012.htm [http://pic.dhe.ibm.com/infocenter/p8docs/v5r1m0/topic/com.ibm.p8.pe.vw.doc/bpfvl012.htm]
+
+Other note - If you are seeing the similar failure after you have applied Filenet Content Engine 5.1.0.4 Fix Pack, you will need to apply 5.1.0.4-P8CE-IF001 Interim Fix.

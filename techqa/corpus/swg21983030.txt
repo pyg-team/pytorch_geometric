@@ -1,0 +1,25 @@
+Title: IBM Restore message:  Error: locations.txt not found on server - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Restore message: Error: locations.txt not found on server. Where and what is the locations.txt file? 
+
+CAUSE
+The locations.txt file is an integral part of backup and nzrestore command the restore command reads the locations.txt file first to understand what is in the backup you want to restore. Since in this case VERITAS is not delivering the file, netezza waits till a timeout and returns the error above which you see.
+
+ANSWER
+This is being done as nz so please look for the file it should be on there but the problem may be the permissions;
+
+Here is an example from a backup and we may have to touch base with Veritas on the location. However, ensure the permissions are as follows:
+
+nzbackup -db IKB2 -dir /tmp/IKB2 ;
+
+/tmp/IKB2/Netezza/NZ80254-H1/IKB2/20140806175451/1/FULL/md/loc1:
+
+total 4
+-rw------- 1 nz nz 69 Aug 6 18:54 locations.txt
+
+
+Once you find it ensure nz can access the file. If that is not it we many need to touch base with Netbackup

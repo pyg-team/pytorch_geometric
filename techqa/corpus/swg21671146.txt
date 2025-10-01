@@ -1,0 +1,34 @@
+Title: IBM DASH Widgets are not receiving data from the Widget Publishers - United States
+
+Text:
+DASHL2CONF; DASHL2; widget data; TDI TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The DASH widgets are not receiving data parameters from the widget publishers. Tivoli Directory Integrator TDI is used as a data provider and customer is not able to receive the publisher´s parameters in the OpEntry, regardless of which widget being used. 
+
+SYMPTOM
+DASH Widgets are not receiving data from the TDI data source
+
+
+CAUSE
+One step got omitted during the preparation of the Tivoli Directory Integrator environment. 
+
+ENVIRONMENT
+Jazz SM with Tivoli Directory Integrator
+
+RESOLVING THE PROBLEM
+In order to get TDI to talk to the DASH server, you need to copy two .jar files from DASH to the TDI server. 
+
+
+ 
+1. Copy the "com.ibm.di.api.bind.jar" and "com.ibm.di.api.rest.jar" files from the DASH server to the TDI server.
+
+DASH source directory: <JazzSM Install Dir>/JazzSM/ui/installableApps 
+TDI target directory: <TDI Install Dir>\TDI\V7.1.1\osgi\plugins 
+
+2. Restart TDI (close the configuration editor and restart). 
+
+3. Login to DASH and refresh the TDI connection. 
+
+
+This is documented in Chapter 3 of the JazzSM Integration Guide.

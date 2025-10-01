@@ -1,0 +1,332 @@
+Title: IBM PM08661: JVMSERVER ENHANCEMENTS - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS NEW FUNCTION.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  JVMSERVER enhancements
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All                                          *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: JVMSERVER Enhancements for the CICS     *
+   *                      Dynamic Scripting Feature Pack.         *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   JVMSERVER Enhancements for the CICS Dynamic Scripting Feature
+   Pack.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+ *  FIX AVAILABLE BY PTF ONLY
+   
+   
+    
+   
+   
+
+COMMENTS
+ *  JVMSERVER Enhancements for the CICS Dynamic Scripting Feature
+   Pack.
+   
+   The CICS Transaction Server for z/OS Version 4 release 1
+   Messages and Codes manual (GC34-7035-00) will have the
+   following messages added or replaced;
+   
+   
+   DFHCZ0400  DATE TIME APPLID USERID TERMID
+             TRANID PROGRAM NAME  JVMSERVER THREAD WAS
+             CANCELED IN  MODULE  BECAUSE THE JVMSERVER IS
+             DISABLING.
+   
+   EXPLANATION:  The current JVMSERVER thread has been
+   canceled because the JVMSERVER is disabling.
+   
+   SYSTEM ACTION:  CICS writes this message to the TD queue
+   CCZM.
+   
+   USER RESPONSE:  No action
+   
+   DESTINATION:  CCZM
+   
+   MODULE:  DFJCZDTC (DTCSupport.c)
+   
+   XMEOUT PARAMETERS: date, time, applid,
+   userid, termid, tranid, program
+   name, module
+   
+   ****************************************************************
+   
+   DFHSJ0206  DATE TIME APPLID  THE RUNTIME
+             OPTIONS SPECIFIED IN DFHJVMRO ARE TOO LONG. THE
+             LANGUAGE ENVIRONMENT ENCLAVE CANNOT BE
+             INITIALIZED.  THE JVM WAS NOT STARTED.
+   
+   EXPLANATION:  The Language Environment runtime options
+   specified in DFHJVMRO are too long. The options specified in
+   DFHJVMRO are concatenated with runtime options required by
+   CICS for use when initializing the Language Environment
+   enclave. The total length of the runtime options that may be
+   specified cannot exceed 255 characters.
+   
+   SYSTEM ACTION:  The JVM is not started. Exception trace
+   point SJ 0225 is issued.
+   
+   USER RESPONSE:  Data 1 in the exception trace shows the
+   Language Environment runtime options from DFHJVMRO. Data 2
+   shows the Language Environment runtime options provided by
+   CICS.
+   
+   Examine the options from DFHJVMRO. Remove any unnecessary
+   options and if possible abbreviate any Language Environment
+   runtime options in your source for DFHJVMRO. Assemble and
+   re-link DFHJVMRO after making your changes.
+   
+   If CICS has not been restarted since the failure you will
+   need to use CEMT SET PROGRAM(DFHJVMRO) NEWCOPY before
+   attempting to restart the JVM.
+   
+   DESTINATION:  CSMT
+   
+   MODULE:  DFHSJIN
+   
+   XMEOUT PARAMETERS: date, time, applid
+   
+   ****************************************************************
+   
+   DFHSJ0918  DATE TIME APPLID USERID  JVMSERVER
+              JVMSERVER  IS BEING DISABLED DUE TO A
+              {PHASEOUT |   PURGE |   FORCEPURGE |
+               KILL}  REQUEST.
+   
+   EXPLANATION:  A JVMSERVER resource is disabling but cannot
+   complete at this time as in-flight work is outstanding.
+   
+   SYSTEM ACTION:  CICS will disable the JVMSERVER resource
+   when the in-flight activity has completed.
+   
+   USER RESPONSE:  None.
+   
+   DESTINATION:  CSMT
+   
+   MODULE:  DFHSJJS
+   
+   XMEOUT PARAMETERS: date, time, applid,
+   userid, jvmserver, {1=PHASEOUT,
+   2=PURGE, 3=FORCEPURGE, 4=KILL}
+   
+   ****************************************************************
+   
+   DFHSJ1003  DATE TIME APPLID USERID  AN ATTEMPT
+             TO LOCATE THE  METHOD_NAME  METHOD WITH
+             SIGNATURE  SIGNATURE  IN CLASS  CLASSNAME
+             HAS FAILED, FOR JVMSERVER  JVMSERVER .
+   
+   EXPLANATION:  An attempt to locate the  method_name
+   method with signature  signature  within the the class
+    classname  has failed for JVMSERVER  jvmserver . An
+   exception is output to the standard error stream.
+   
+   SYSTEM ACTION:  CICS was unable to run the specified
+   method of the given class in the JVMSERVER and returns an
+   error to the calling module.
+   
+   USER RESPONSE:  Use the exception output from the standard
+   error stream to determine the cause of the problem.
+   
+   DESTINATION:  CSMT
+   
+   MODULE:  DFHSJTHN
+   
+   XMEOUT PARAMETERS: date, time, applid,
+   userid, method_name, signature,
+   classname, jvmserver
+   
+   ****************************************************************
+   
+   DFHSJ1006  E  DATE TIME APPLID USERID  AN
+             ATTEMPT TO ATTACH TO JVMSERVER  JVMSERVER  HAS
+             FAILED BECAUSE  {THE CHANNEL NAME USED IS
+             INVALID |   THE JVMSERVER NAME IS MISSING |
+               THE JVMSERVER NAME IS TOO LONG |   THE
+             USERCLASS NAME IS MISSING |   THE USER CHANNEL
+             IS INVALID |   THE XML IN THE PIPELINE
+             CONFIGURATION FILE IS INVALID |   THE
+             JVMSERVER DOES NOT EXIST |   THE JVMSERVER IS
+             NOT ENABLED |   THE WRAPPER CLASS CANNOT BE
+             FOUND |   THE TRANSACTION ABENDED |   THE
+             ATTACH OF THE THREAD FAILED |   THE WRAPPER
+             METHOD WAS NOT FOUND |   THE DETACH OF THE
+             THREAD FAILED |   THE JVM THREW AN EXCEPTION |
+               THE DFH-HANDLERPLIST CONTAINER IS MISSING |
+               THE THREAD WAS FORCED TO TERMINATE
+             ABNORMALLY |   THE THREAD COULD NOT BE
+             CREATED} .
+   
+   EXPLANATION:  An attempt to attach to a JVMSERVER failed.
+   
+   SYSTEM ACTION:  An error response is passed back to the
+   caller of DFHSJJI.
+   
+   USER RESPONSE:  Check that the paramters passed to DFHSJJI
+   were valid and that the target JVMSERVER is enabled. If an
+   application running within the JVMSERVER failed then locate
+   the diagnostics for that problem.
+   
+   If the problem persists you might need to use the trace
+   facility to determine the cause of the problem.
+   
+   DESTINATION:  CSMT
+   
+   MODULE:  DFHSJJI
+   
+   XMEOUT PARAMETERS: date, time, applid,
+   userid, jvmserver, {1=the channel name
+   used is invalid, 2=the JVMSERVER name is missing,
+   3=the JVMSERVER name is too long, 4=the
+   userclass name is missing, 5=the user channel is
+   invalid, 6=the XML in the PIPELINE configuration file
+   is invalid, 51=the JVMSERVER does not exist,
+   52=the JVMSERVER is not enabled, 53=the wrapper
+   class cannot be found, 54=the transaction abended,
+   55=the attach of the thread failed, 56=the
+   wrapper method was not found, 57=the detach of the
+   thread failed, 58=the JVM threw an exception,
+   59=the DFH-HANDLERPLIST container is missing,
+   60=the thread was forced to terminate abnormally,
+   61=the thread could not be created}
+   &#158;**** PE10/07/02 PTF IN ERROR. SEE APAR PM17757 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM17757]  FOR DESCRIPTION
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM08661
+   
+   
+ * REPORTED COMPONENT NAME
+   CICS TS Z/OS V4
+   
+   
+ * REPORTED COMPONENT ID
+   5655S9700
+   
+   
+ * REPORTED RELEASE
+   600
+   
+   
+ * STATUS
+   CLOSED UR1
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-02-26
+   
+   
+ * CLOSED DATE
+   2010-06-16
+   
+   
+ * LAST MODIFIED DATE
+   2010-07-08
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UK57700 UK57701 UK57702 UK57704 UK57730
+   
+   
+
+MODULES/MACROS
+ *  DESCZDES DESLEPT  DESLETRI DESPIPM  DESSJCC
+   DESSJCON DESSJCS  DESSJDM  DESSJDS  DESSJDUF DESSJGC  DESSJI
+   
+   ***This field was truncated.  To obtain the full apar record, please contact your local support center.***
+   
+   
+    
+   
+   
+
+Publications Referenced GC34703500 FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CICS TS Z/OS V4
+   
+   
+ * FIXED COMPONENT ID
+   5655S9700
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R60D PSY UK57701 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK57701]
+   UP10/06/23 P F006
+   
+   
+ * R600 PSY UK57700 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK57700]
+   UP10/06/23 P F006
+   
+   
+ * R601 PSY UK57702 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK57702]
+   UP10/06/23 P F006
+   
+   
+ * R602 PSY UK57704 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK57704]
+   UP10/06/23 P F006
+   
+   
+ * R603 PSY UK57730 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK57730]
+   UP10/06/23 P F006
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

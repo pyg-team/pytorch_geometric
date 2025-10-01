@@ -1,0 +1,23 @@
+Title: IBM Disposition of the Cipher.txt file in Connect:Direct for UNIX v4.2.x - United States
+
+Text:
+Cipher.txt TECHNOTE (FAQ)
+
+QUESTION
+ What happened to the Cipher.txt file in Connect:Direct for UNIX v4.2.x? 
+
+CAUSE
+With Connect:Direct for UNIX v4.1.x, you could use the Cipher.txt file in the /ndm/bin folder to exclude the cipher suites you did not want to appear in the selection field in Secure+. You could edit this file to show only your preferences.
+When you upgrade to Connect:Direct for UNIX v4.2.x, the Cipher.txt file is still in the /ndm/bin folder but your cipher suite selections in Secure+ are no longer agreeing with the contents of the file.
+Also, if you do a new install of Connect:Direct for UNIX v4.2.x, the Cipher.txt file is no longer present.
+
+
+ANSWER
+With the introduction of Connect:Direct for UNIX v4.2, Secure+ was redesigned - STS support was removed, new cipher suites were added, and a filter function was added to the cipher suite selection process in the Secure+ Admin tool.
+The function of the Cipher.txt file was removed from Connect:Direct for UNIX v4.2.x and is no longer used by Secure+ to limit the selection of cipher suites presented.
+
+ 
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Commerce Sterling Connect:Direct for UNIX

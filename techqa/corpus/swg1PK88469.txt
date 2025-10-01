@@ -1,0 +1,117 @@
+Title: IBM PK88469: TRACKING ESCALATION RATLC01480740: RSA-REQUISITEPRO PERFORMANCE ISSUE OPENING PROJECT - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DUPLICATE OF ANOTHER APAR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Open ReqPro Project from Within RSA takes too long.
+   Note: This APAR is about open ReqPro project Only. The Linking
+   Performance issues are handled in a different APAR
+   
+   Description of problem:
+   
+   The customer is having performance
+   delay when opening Requisite Pro Project within RSA Requirements
+   Perspective takes more than 20 minutes.
+   
+   When opening a Requisite Pro Project from Networkdrive.
+   In some cases the opening of the Project fails with a error
+   message saying 'a error occurred' in some cases it takes up to
+   30 Minutes to open it. The project has dependencies to dB2.
+   
+   This seems to happen to one particular project.
+   
+   After doing some db2 tuning, the time to open the requisitePro
+   project seems to have improved
+   
+   Our DB2 performance tuning efforts improved the situation
+   significantly.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *  This APAR is a duplicate of PK88471 [http://www-01.ibm.com/support/docview.wss?uid=swg1PK88471]
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK88469
+   
+   
+ * REPORTED COMPONENT NAME
+   REQUISITEPRO WI
+   
+   
+ * REPORTED COMPONENT ID
+   5724G3900
+   
+   
+ * REPORTED RELEASE
+   701
+   
+   
+ * STATUS
+   CLOSED DUB
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-06-10
+   
+   
+ * CLOSED DATE
+   2009-08-25
+   
+   
+ * LAST MODIFIED DATE
+   2010-10-28
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

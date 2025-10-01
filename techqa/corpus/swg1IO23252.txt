@@ -1,0 +1,158 @@
+Title: IBM IO23252: Library server monitor fails to update resource manager status after a quiesce of CM - United States
+
+Text:
+  DIRECT LINKS TO FIXES
+CM V8.5 FP4 for Linux zSeries [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FContent+Manager+Enterprise+Edition&fixids=8.5.0.400-ECM-CM-zLNX-fixpack4&source=SAR]
+CM V8.5 FP4 for Windows [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FContent+Manager+Enterprise+Edition&fixids=8.5.0.400-ECM-CM-WIN-fixpack4&source=SAR]
+CM V8.5 FP4 for Solaris 64-bit, SPARC [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FContent+Manager+Enterprise+Edition&fixids=8.5.0.400-ECM-CM-SOL-fixpack4&source=SAR]
+CM V8.5 FP4 for Linux [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FContent+Manager+Enterprise+Edition&fixids=8.5.0.400-ECM-CM-LNX-fixpack4&source=SAR]
+CM V8.5 FP4 for AIX [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FContent+Manager+Enterprise+Edition&fixids=8.5.0.400-ECM-CM-AIX-fixpack4&source=SAR]
+IBM Content Manager Enterprise Edition V8.5 Fix Pack 4 [http://www-01.ibm.com/support/docview.wss?uid=swg24041242]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Library server monitor returned error "GetDatabaseLock  Did not
+   get database lock".  The error message logged in library server
+   log is as below:
+   
+   "... GetDatabaseLock  Did not get database lock ..."
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Restart library server monitor.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * 999                                                          *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * When activating a quiesced Content Manager system, the       *
+   * library server monitor does not release the database lock    *
+   * flag as it should.  This prevents the library server monitor *
+   * from correctly monitoring the status of associated resource  *
+   * managers.                                                    *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * No                                                           *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fixed in IBM Content Manager 8.5 fix pack 4
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  Restarting Library Server Monitor
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IO23252
+   
+   
+ * REPORTED COMPONENT NAME
+   SYSTEM ADMIN CL
+   
+   
+ * REPORTED COMPONENT ID
+   5724B1900
+   
+   
+ * REPORTED RELEASE
+   850
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2015-05-18
+   
+   
+ * CLOSED DATE
+   2016-01-20
+   
+   
+ * LAST MODIFIED DATE
+   2016-01-20
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  999
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   SYSTEM ADMIN CL
+   
+   
+ * FIXED COMPONENT ID
+   5724B1900
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R850 PSY
+   UP

@@ -1,0 +1,164 @@
+Title: IBM IZ73090: OUTOFMEMORY ERRORS IN CUSTOMNODEFINDERIMPL AND SIMPLENODEFINDERIMPL - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Problem description;
+   OutOfMemory errors in CustomNodeFinderImpl and
+   SimpleNodeFinderImpl
+   in 72 GA.
+   
+   Errors like this appear in the log for either of the above find
+   methods;
+   
+   2010-03-15 08:56:51,720  [http-9430-Processor23]  ERROR
+   componenttypes.ProxyBeanComponentTypesDAO - Error during
+   fetching the
+   component types!
+   com.collation.proxy.common.exception.SystemException:
+   java.rmi.RemoteException: [ViewReader.E.2] Unable to load view:
+   [ViewReader.E.26] Unable to load vi
+   ew: [CustomNodeFinderImpl.E.7] A problem occurred when loading
+   view:
+   [TopologyManagerFactory.E.3] An unexpected error occurred.;
+   nested
+   exception is:
+           java.rmi.ServerError: Error occurred in server thread;
+   nested
+   exception is:
+           java.lang.OutOfMemoryError...
+   
+   
+   Issue occurs at the cusotmer site during a incremental sync!
+   Tunrned off the prebuilds as well as raised jvms
+   (awaiting customer feedback on how the sync ran now- will update
+   once I get feedback on possible work around)
+   
+   environemnt:
+   TADDM 7.2
+   
+   ecmdb/domain running on zLinux
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  try turning off the prebuilds on the ecmdb and raise jvm (it
+   sometimes works)
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  OutOfMemory errors in CustomNodeFinderImpl and
+   SimpleNodeFinderImpl in 7.2.0. This typically occurs during
+   view
+   builds and can effect any activity that drives view build(sync,
+   UI, post discovery, etc.). It is most likely to occur on systems
+   with more then 10k computer systems(select count(*) from
+   CompSys).
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix for this APAR is contained in the following
+   maintenance packages:
+   | Fix Pack | 7.2.0.0-TIV-ITADDM-FP0001
+   
+   Please check the TADDM Support Site for availability
+   of the above maintenance package.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ73090
+   
+   
+ * REPORTED COMPONENT NAME
+   APP DEPENDENCY
+   
+   
+ * REPORTED COMPONENT ID
+   5724N5500
+   
+   
+ * REPORTED RELEASE
+   720
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   YesHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-03-19
+   
+   
+ * CLOSED DATE
+   2010-03-28
+   
+   
+ * LAST MODIFIED DATE
+   2010-03-28
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   APP DEPENDENCY
+   
+   
+ * FIXED COMPONENT ID
+   5724N5500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R720 PSY
+   UP

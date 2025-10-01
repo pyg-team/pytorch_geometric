@@ -1,0 +1,44 @@
+Title: IBM FEM displays Unable to logon to the P8 Domain error instead of launching the Create P8 Domain wizard - United States
+
+Text:
+.NET WCF WSE FEM Create P8 Domain Connect Logon TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Attempting to connect to a P8 Domain Configuration in IBM FileNet Enterprise Manager (FEM) for the first time results in error 'Unable to logon to the P8 Domain'. 
+
+SYMPTOM
+Unable to logon to the P8 Domain. 
+
+Please ensure that the Server URL is correct and the Application Server is running. [Details*...] 
+
+*Enterprise Manager Error 
+
+Method not found: 'System.String 
+
+Microsoft.Web.Services3.Design.SecurityPolicyAssertion.get_ClientActor()'. 
+
+
+CAUSE
+A previous version of Windows component .NET API was installed instead of the referenced version mentioned in product documentation.
+
+
+ENVIRONMENT
+Microsoft Windows XP + Service Pack 3 
+
+.NET Framework 2.0 
+
+WSE 3.0
+
+
+DIAGNOSING THE PROBLEM
+The .NET Framework version can be verified in the Control Panel - Installed Programs - .NET Framework.
+
+
+
+RESOLVING THE PROBLEM
+Install the applicable version of Microsoft Windows component .NET API 3.0 as per IBM FileNet P8 Hardware and Software requirements guide and related product documentation (Installing Enterprise Manager).
+
+RELATED INFORMATION
+ Installing Enterprise Manager [http://www.ibm.com/support/knowledgecenter/SSNW2F_5.0.0/com.ibm.p8.install.doc/p8pin031.htm]
+Troubleshooting the FEM Installation [http://www.ibm.com/support/docview.wss?uid=swg21504731]
+CE introduces WCF support for .NET API [http://www.ibm.com/support/docview.wss?uid=swg21423925]

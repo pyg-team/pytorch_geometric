@@ -1,0 +1,73 @@
+Title: IBM Managing plug-in ESI static cache using the WebSphere Application Server application cache monitor - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How do I use the application cache monitor to display static content on the plug-in Edge Side Include (ESI) cache and clear the plug-in ESI cache without a restart of the web server? 
+
+CAUSE
+You have experienced difficulty setting up cache monitor to display and clear static content in the plug-in ESI cache.
+
+ANSWER
+The cache monitor application is located in the installableApps directory and is installed as "Dynamic Cache Monitor: The main functions of the "Dynamic Cache Monitor" (CacheMonitor) application as it relates to the static caching in the plug-in ESI cache are: 
+
+ * You can manually change the state of the cache without having to restart the web server 
+ * You can display what is being cached in the plug-in ESI Cache 
+
+
+These functions are only related to static caching in the plug-in ESI. There are additional function related to dynamic caching referenced in the information center topic Cache monitor [http://publib.boulder.ibm.com/infocenter/wasinfo/v7r0/index.jsp?topic=/com.ibm.websphere.nd.iseries.doc/info/iseriesnd/ae/cdyn_cachemonitor.html]. 
+
+To manage and monitor static caching in the plug-in ESI cache using the WebSphere Application Server application cache monitor:  1. Both the CacheMonitor.ear (Dynamic Cache Monitor ) and DyncCacheEsi.ear (DyncCacheEsi) applications must be installed. 
+    
+    
+ 2. Enable the esiEnable property in the plugin-cfg.xml. This is a reloadable property of the plugin-cfg.xml file and ESI cache can be enabled without restart of the web server. 
+    
+    
+ 3. Enable the esiInvalidationMonitor property in the plugin-cfg.xml file. This is a reloadable property of the plugin-cfg.xml file and ESI cache managing can be enabled without restart of the web server
+    
+    
+ 4. Generate and propagate the web server plugin-cfg.xml.
+
+
+Configuring and monitoring ESI caching: 
+The web server plug-in contains a built-in ESI processor. The ESI processor can cache whole pages, as well as fragments, providing a higher cache hit ratio. The cache implemented by the ESI processor is an in-memory cache, not a disk cache, therefore, the cache entries are not saved when the web server is restarted. When a request is received by the web server plug-in, it is sent to the ESI processor. ESI processor is enabled by default. 
+
+These are 3 critical values for management of the plug-in ESI cache and for monitoring using the cache monitor application in the plugin-cfg.xml file:  * Set esiEnable =true
+   esiEnable will enable or disable the ESI processor. ESI is enabled by default. If ESI is disabled, then the other ESI options are ignored.
+   
+   
+ * Set esiMaxCacheSize= 1024
+   esiMaxCacheSize is the maximum size of the cache in 1K byte units. The default maximum size of the cache is 1 megabyte. Each web server process will contain its own cache, so consideration should be given to the cache size as it related to the number of plug-in processes. If the response content has a content-length response header, the web server plug-in checks for the response content size. If the size of the response content body is larger than the available ESI caching space, the response is passed through without being handled by ESI.
+   
+   
+ * Set esiInvalidationMonitor =true
+   esiInvalidationMonitor, specifies if the ESI processor should receive invalidation from the application server. 
+
+
+There are 3 methods by which entries are removed or made invalid from the ESI cache:  * Expired timeout
+   The default Timeout values is set to 300 seconds. You can change the timeout value by adding the property com.ibm.servlet.file.esi.timeOut to the Java™ virtual machine (JVM) command line parameters. The following example shows how to set a one minute timeout on static data cached in the plug-in:
+   
+   -Dcom.ibm.servlet.file.esi.timeOut=60
+   
+   
+ * Purge entry to make room for newer entries:
+   When the plug-in ESI cache is filled, entries will be purged from the cache based on their pending expiration (those closest to expiration will be purged first).
+   
+   
+ * Explicit invalidation: 
+   The application server or cache monitor application sends an explicit invalidation for a group of entries. For this mechanism to be enabled, the esiInvalidationMonitor property must be set to true and the cache monitor DynaCacheEsi.ear applications must be installed on the application server. The DynaCacheEsi application is located in the installableApps directory and is named DynaCacheEsi.ear . 
+
+
+Note: cachespec.xml is not necessary for enabling of the monitoring and managing of static content in the plug-in ESI cache. 
+
+To display the static plug-in ESI cache: 
+
+http://<hostName>:port/cachemonitor/ 
+
+where  * hostname is the hostname of the application server or the web server (if the cache monitor application is mapped to a web server) 
+ * port is the port of the application sever or the web server.
+
+
+Notes:  * You must click Refresh from the Edge Statistics Panel to get updated statistical data. 
+ * You must click Contents from the Edge Statistics Panel to display cache content .

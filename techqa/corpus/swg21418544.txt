@@ -1,0 +1,18 @@
+Title: IBM StackOverflow and User Defined Functions - United States
+
+Text:
+nci; impact; netcool; policy; action node tree; impact policy language; stackoverflow; user; defined; function; functions; userdefined; custom; udf; userdefinedfunction; userdefinedfunctions; customfunction; customfunctions TECHNOTE (FAQ)
+
+QUESTION
+ ImpactServer suffers from OutOfMemory issues and StackOverflow 
+
+CAUSE
+Policy design incorporating multiple, nested User Defined Functions (Custom Functions) delves too deeply into the stack.
+
+ANSWER
+The use of User Defined Functions within a Policy are intended for sections of complex code that have a potential to be called more than once within the Policy. Additionally the use of a Function Library is intended for User Defined Functions that have the potential to be called by multiple Policies. The problem is that the excessive use of functions, and certainly nested function calls, have the potential to overflow the stack.
+
+
+
+
+This behaviour fist came to light following upgrades from Impact 2.3 to 3.0 or 3.1 where clients relied upon the simple best efforts of the upgrader to translate .ant Policies into .ipl, resulting in each ActionNode becoming a Custom Function and the "Flow Chart" style structure becoming function calls. The resulting multiple nested function calls would simply overload the ImpactServer. The solution to this was to rewrite the Policies in "pure" Impact Policy Language and taking advantage of the script style capabilities and the inherent efficiencies of this "fall through" approach.

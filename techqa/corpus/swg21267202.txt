@@ -1,0 +1,192 @@
+Title: IBM Configuring the Sametime Gateway to run as a Windows Service - United States
+
+Text:
+sametime gateway; rtc gateway; stgw; st gw; windows service; run as a service TECHNOTE (FAQ)
+
+QUESTION
+You would like to run the Sametime® Gateway as a Windows® service.
+
+ANSWER
+To set up and run this function on a Microsoft Windows operating system, the user must belong to the administrator group and have the following advanced user rights: 
+
+ * Act as part of the operating system 
+ * Log on as a service 
+
+
+
+
+
+
+Setting up the Gateway as a service on a stand-alone server 
+
+
+
+
+In order to do this, you must configure the WebSphere® component of the Sametime gateway. 
+ 1. Shut down the Sametime Gateway server.
+    
+ 2. Open a new command prompt and navigate to the \websphere\appserver\bin directory.
+    
+ 3. Run the following command:
+    
+    WASService -add "SametimeGateway" -serverName RTCGWServer -profilePath "[Path To Profile Directory]" -startType automatic
+    
+    Example:
+    WASService -add "SametimeGateway" -serverName RTCGWServer -profilePath "C:\WebSphere\AppServer\profiles\RTCGW_Profile" -startType automatic
+    
+    Note: Change the path to the appropriate profile directory as specified on your server. This command installs the service to run under the localsystem account. 
+
+
+Restriction: Do not use spaces in the service_name because the service will not be started correctly on Windows. 
+You should now see it installed and running as a service under the following name: IBM WebSphere Application Server V6.1 - SametimeGateway
+
+
+Setting the WAS Server so that user credentials do not have to be provided for shutdown (optional) 
+
+(on WebSphere Server)
+
+1. Navigate to \WebSphere\Appserver\profiles\<profilename>\properties. Open the soap.client.props file using a text editor.
+
+2. Set the LDAP username and password used in the configuration above in the following parameters:
+
+com.ibm.SOAP.securityEnabled=true
+
+# JMX SOAP connector identity
+com.ibm.SOAP.loginUserid=wasadmin
+com.ibm.SOAP.loginPassword=password
+
+3. Save and exit the text editor.
+
+4. At the db2cmd prompt, execute "stopServer.bat RTCGWServer" (case-sensitive command)
+
+5. Enter in the db2 username/password credentials.
+
+6. Wait until you receive the message "Server RTCGWServer stop completed"
+
+Now your server is set up so that you don't have to enter the username and password
+
+
+
+
+
+
+
+Setting up the clustered Gateway as a service on a single-server 
+
+
+
+
+
+The following instructions are for a single-server cluster of Sametime Gateway which means that the deployment manager, primary node, RTCGWServer and the SIP Proxy are all on the same box. 
+
+The following instructions assume that the Gateway installation directory is C:/IBM/Websphere. 
+
+1). From the command Prompt Browse to Websphere installation directory C:/IBM\WebSphere\AppServer\bin 
+
+2). Create the Service for the Deployment Manager by issuing this command 
+
+WASService -add "Deployment Manager" -servername "dmgr" -profilePath "C:\IBM\WebSphere\AppServer\profiles\RTCGW_Profile" -wasHome "C:\IBM\WebSphere\AppServer" -logFile "C:\IBM\WebSphere\AppServer\profiles\RTCGW_Profile\logs\DM_startServer.log" -logRoot "C:\IBM\WebSphere\AppServer\profiles\RTCGW_Profile\logs\dmgr" -restart true -startType automatic 
+
+3) Update the Deployment Manager 
+
+WASService -add "Deployment Manager" -servername "dmgr" -profilePath "C:\IBM\WebSphere\AppServer\profiles\RTCGW_Profile" -logRoot "C:\IBM\WebSphere\AppServer\profiles\logs\dmgr" -stopArgs "-username stgwadmin -password sametime" -encodeParams 
+
+4). Create the service for the Primary Node 
+
+WASService -add "Primary Node" -servername "nodeagent" -profilePath "C:\IBM\WebSphere\AppServer\profiles\RTCGW_Profile1" -wasHome "C:\IBM\WebSphere\AppServer" -logFile "C:\IBM\WebSphere\AppServer\profiles\RTCGW_Profile1\logs\nodeagent\PN_startServer.log" -logRoot "C:\IBM\WebSphere\AppServer\profiles\logs\nodeagent" -restart true -startType automatic 
+
+5).Update the Primary Node 
+
+WASService -add "Primary Node" -servername "nodeagent" -profilePath "C:\IBM\WebSphere\AppServer\profiles\RTCGW_Profile1" -logRoot "C:\IBM\WebSphere\AppServer\profiles\logs\nodeagent" -stopArgs "-username stgwadmin -password sametime" -encodeParams 
+
+6). Create the service for the RTCGWServer 
+
+WASService -add "RTCGWServer" -servername "RTCGWServer" -profilePath "C:\IBM\WebSphere\AppServer\profiles\RTCGW_Profile1" -wasHome "C:\IBM\WebSphere\AppServer" -logFile "C:\IBM\WebSphere\AppServer\profiles\RTCGW_Profile1\logs\RTCGWServer\RTCGW_startServer.log" -logRoot "C:\IBM\WebSphere\AppServer\profiles\logs\RTCGWServer" -restart true -startType automatic 
+
+7). Update the RTCGWServer 
+
+WASService -add "RTCGWServer" -servername "RTCGWServer" -profilePath "C:\IBM\WebSphere\AppServer\profiles\RTCGW_Profile1" -logRoot "C:\IBM\WebSphere\AppServer\profiles\logs\RTCGWServer" -stopArgs "-username stgwadmin -password sametime" -encodeParams 
+
+8). Create the service for the Proxy 
+
+WASService -add "SIPProxy" -servername "SIPProxy" -profilePath "C:\IBM\WebSphere\AppServer\profiles\RTCGW_Profile1" -wasHome "C:\IBM\WebSphere\AppServer" -logFile "C:\IBM\WebSphere\AppServer\profiles\RTCGW_Profile1\logs\SIPProxy\Proxy_startServer.log" -logRoot "C:\IBM\WebSphere\AppServer\profiles\logs\SIPProxy" -restart true -startType automatic 
+
+9) Update the SIPProxy 
+WASService -add "SIPProxy" -servername "SIPProxy" -profilePath "C:\IBM\WebSphere\AppServer\profiles\RTCGW_Profile1" -logRoot "C:\IBM\WebSphere\AppServer\profiles\logs\SIPProxy" -stopArgs "-username stgwadmin -password sametime" -encodeParams 
+
+10). You should now see four services under your windows Services 
+IBM WebSphere Application Server V6.1 - DB Manager 
+IBM WebSphere Application Server V6.1 - Primary Node 
+IBM WebSphere Application Server V6.1 - RTCGWServer 
+IBM WebSphere Application Server V6.1 - SIPProxy 
+
+11). Now you need to set dependencies so that the services start in order Deployment Manager then Primary Node then RTCGserver then SIPProxy. 
+
+In order do that you need to make changes to the registry 
+
+12). Start-> RUN -> Regedit 
+
+13). Go Under HKEY_LOCAL_MACHINE -> SYSTEM -> Current Control Set -> Services 
+
+14). Scroll down and you will see the 4 services 
+[/support/docview.wss?uid=swg21267202&amp;aid=1] 
+
+15). Right Click on the Primary Node Entry and Create a new Multi-String Value as follows 
+[/support/docview.wss?uid=swg21267202&amp;aid=2] 
+
+16). Name the Value DependOnService 
+
+17). Then right click on the new value created and click Modify 
+[/support/docview.wss?uid=swg21267202&amp;aid=3] 
+
+18). Add in the Value IBMWAS61Service - Deployment Manager 
+
+[/support/docview.wss?uid=swg21267202&amp;aid=4] 
+
+19). Create the same DependOnService for the RTCGWServer with the value 
+IBMWAS61Service - Primary Node 
+
+[/support/docview.wss?uid=swg21267202&aid=5] [/support/docview.wss?uid=swg21267202&aid=5] 
+20). Create the same DependOnService for the Proxy with the value 
+IBMWAS61Service - RTCGWServer 
+
+[/support/docview.wss?uid=swg21267202&aid=6] [/support/docview.wss?uid=swg21267202&aid=6] 
+
+21).They are all set to Automatic so they would come up when the OS is restarted. 
+
+
+
+
+
+Setting up the clustered Gateway as a service 
+
+
+
+You can use the instructions for each component listed above on each individual box that has the specific component installed. For example if a box has only deployment manager then you would 
+
+1). From the command Prompt Browse to Websphere installation directory C:/IBM\WebSphere\AppServer\bin
+
+2). Create the Service for the Deployment Manager by issuing this command
+
+WASService -add "Deployment Manager" -servername "dmgr" -profilePath "C:\IBM\WebSphere\AppServer\profiles\RTCGW_Profile" -wasHome "C:\IBM\WebSphere\AppServer" -logFile "C:\IBM\WebSphere\AppServer\profiles\RTCGW_Profile\logs\DM_startServer.log" -logRoot "C:\IBM\WebSphere\AppServer\profiles\RTCGW_Profile\logs\dmgr" -restart true -startType automatic
+
+3) Update the Deployment Manager
+
+WASService -add "Deployment Manager" -servername "dmgr" -profilePath "C:\IBM\WebSphere\AppServer\profiles\RTCGW_Profile" -logRoot "C:\IBM\WebSphere\AppServer\profiles\logs\dmgr" -stopArgs "-username stgwadmin -password sametime" -encodeParams
+
+
+
+
+
+
+
+Removing the Gateway services 
+
+
+
+
+
+To remove the service, run the following command: WASService -remove "service_name" 
+
+Example:
+WASService -remove "SametimeGateway"

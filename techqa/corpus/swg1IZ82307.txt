@@ -1,0 +1,188 @@
+Title: IBM IZ82307: SPACES IN DISPLAYITEM CAUSE SUF TO CREATE BOGUS FILES - United States
+
+Text:
+  FIXES ARE AVAILABLE
+IBM Tivoli Monitoring 6.2.2 Fix Pack 8 (6.2.2-TIV-ITM-FP0008) [http://www-01.ibm.com/support/docview.wss?uid=swg24031354]
+IBM Tivoli Monitoring 6.2.2 Fix Pack 9 (6.2.2-TIV-ITM-FP0009) [http://www-01.ibm.com/support/docview.wss?uid=swg24032067]
+IBM Tivoli Monitoring 6.2.2 Fix Pack 6 (6.2.2-TIV-ITM-FP0006) [http://www-01.ibm.com/support/docview.wss?uid=swg24030135]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Example of the unwanted files:
+   
+   root@netcool2:/opt/IBM/netcool/omnibus>ls -la
+   
+   total 152
+   drwxr-xr-x   17 netcool  ncoadmin       4096 Jun 18 14:59 .
+   drwxr-xr-x   11 netcool  ncoadmin       4096 Jun 18 11:11 ..
+   -rw-r--r--    1 root     system          178 Jun 18 14:59
+   ADAPTER
+   -rw-r--r--    1 root     system          166 Jun 18 14:59 ACCT
+   -rw-r--r--    1 root     system          174 Jun 18 14:59
+   Excessive
+   -r-xr-xr-x    1 netcool  ncoadmin        588 Dec 09 2009
+   RELEASE_ID
+   -rw-r--r--    1 root     system          178 Jun 21 09:49
+   RESERVATION
+   drwxr-xr-x    3 netcool  ncoadmin       4096 Jun 11 11:08 bin
+   drwxrwxrwx    3 netcool  ncoadmin        256 Dec 09 2009  db
+   drwxr-xr-x    7 netcool  ncoadmin        256 Dec 09 2009
+   desktop
+   (...)
+   The above files owned by root are the "problematic" ones.
+   
+   
+   Content of these files - for instance ACCT:
+   
+   op=c,sn=APP_ACCT_Invalid_Critical,sh=acct55:KUL,sv=htems:3661,et
+   =,di=***
+   op=c,sn=APP_ACCT_Invalid_Critical,sh=acct55:KUL,sv=htems:3661,et
+   =,di=***
+   
+   The di=*** belongs to the ITMDisplayItem data. In Webtop, for
+   the events with the AlertKey=APP_ACCT_Invalid_Critical, the
+   ITMDisplayItem field is:
+      *** ACCT Invalid Packets Available ( 28 ) ***
+   
+   .
+   .
+   
+   = L3 Approver: KB
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  An event that contains spaces in the situation display item
+   results in the creation of random files in $OMNIHOME.  When the
+   event with spaces in the display item is acknowledged, cleared
+   or deleted, files are created in $OMNIHOME due to the way
+   eventcmd.sh is being called from the OMNIbus external procedure.
+   The files contain what appeared to be SUF cache entries, and are
+   named based on the part of the situation display item that occur
+   before the first space.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The order of parameters passed to the eventcmd.sh is reversed so
+   that the filename, which will not have a space, occurs before
+   the cache entry.  This allows a cache entry containing a space
+   in the display item to be appropriately written to the
+   persistence directory.
+   
+   
+   The fix for this APAR is contained in the following maintenance
+   packages:
+   
+     | fix pack | 6.2.2-TIV-ITM-FP0004
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  A customer may apply the changes in itm_proc.sql and
+   writeevent.sh into their own environment, as they are not source
+   code changes.
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ82307
+   
+   
+ * REPORTED COMPONENT NAME
+   TEC GUI INTEGRA
+   
+   
+ * REPORTED COMPONENT ID
+   5724C04TG
+   
+   
+ * REPORTED RELEASE
+   622
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-08-10
+   
+   
+ * CLOSED DATE
+   2010-11-10
+   
+   
+ * LAST MODIFIED DATE
+   2011-04-06
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TEC GUI INTEGRA
+   
+   
+ * FIXED COMPONENT ID
+   5724C04TG
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R622 PSY
+   UP

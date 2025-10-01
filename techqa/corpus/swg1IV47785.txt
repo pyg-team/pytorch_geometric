@@ -1,0 +1,200 @@
+Title: IBM IV47785: WEBSPHERE MQ JAVA/JMS V7.0.1: FDC FILES WITH PROBLEM ID JO076001 AND JO205001 ARE GENERATED FOLLOWING A REMOTE CONNECTION - United States
+
+Text:
+  A FIX IS AVAILABLE
+WebSphere MQ V7.0 Fix Pack 7.0.1.12 [http://www-01.ibm.com/support/docview.wss?uid=swg24037169]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  WebSphere MQ Classes for Java/JMS V7.0.1.5 (or later): Failure
+   Data Capture (FDC) files
+   with Probe
+   ID JO076001 and JO205001 are generated following a remote
+   connection to a Queue Manager that has conversation sharing
+   disabled:
+   
+   | Probe Id     :- JO076001
+   | Component    :- RemoteFAP.MQOPEN(Hconn,MQOD,int,Phobj,Pi
+   | Probe Type   :- INCORROUT
+   | Comment1     :- MQOPEN reply expected
+   
+   | Probe Id     :- JO205001
+   | Component    :- RemoteConnection.removeHconn(RemoteTls,R
+   | Probe Type   :- INCORROUT
+   | Comment1     :- Hconn is not associated with this connection
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   This issue affects users of the WebSphere MQ V7.0.1.5 Classes
+   for Java/JMS (or later) who have established a remote connection
+   to a Queue Manager via a channel that has Conversation Sharing
+   disabled (SHARECNV=0 or SHARECNV=1).
+   
+   This includes users of:
+   
+   - The WebSphere MQ V7.0.1 Classes for JMS
+   - The WebSphere MQ V7.0.1 Resource Adapter.
+   - The WebSphere Application Server V7.0 and V8.0 WebSphere MQ
+   messaging provider.
+   - The WebSphere Application Server V6.1 WebSphere MQ messaging
+   provider who have configured the WebSphere variable
+   MQ_INSTALL_ROOT to point to a WebSphere MQ V7.0.1 installation.
+   
+   Platforms affected:
+   All Distributed (iSeries, all Unix and Windows)
+   ****************************************************************
+   PROBLEM SUMMARY:
+   By default in the WebSphere MQ Classes for Java/JMS,
+   conversation
+   sharing is enabled and set to 10 on the client side. The client
+   only discovers that Conversation Sharing is disabled following
+   negotiation with a Queue Manager on the completion of a
+   connection over a Channel that has SHARECNV=0 or SHARECNV=1.
+   
+   When a WebSphere MQ Classes for Java/JMS application requests a
+   remote connection to a Queue Manager the client first attempts
+   to find an already established TCP/IP connection which can be
+   shared. As part of this process the list of known TCP/IP
+   connections are matched for their suitability, this list
+   includes connections which are in the process of being
+   established (MQCONN reply not received from the Queue Manager).
+   
+   When a WebSphere MQ Classes for Java/JMS application requested a
+   remote connection it was matched for sharing with a connection
+   that was still in the process of being established. The
+   WebSphere MQ Client waited for the connection to complete and
+   due to a small timing window began incorrectly sharing the
+   connection without confirming the connection's suitability. If
+   the connection's suitability had been checked then the
+   connection
+   would have been marked unsuitable due to the Negotiated Channel
+   specifying that Conversation Sharing was disabled (SHARECNV=0 or
+   SHARECNV=1).
+   As the connection (which did not support conversation sharing)
+   was now shared by two threads, packets destined for one thread
+   were erroneously received by the other, this led to the client
+   being in an inconsistent state and the two FDCs being generated.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The WebSphere MQ Classes for Java/JMS have been modified to
+   correctly restrict conversation sharing when using a connection
+   that does not support conversation sharing (SHARECNV=0 or
+   SHARECNV=1).
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+   Version    Maintenance Level
+   v7.0       7.0.1.12
+   
+   The latest available maintenance can be obtained from
+   'WebSphere MQ Recommended Fixes'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037]
+   
+   If the maintenance level is not yet available information on
+   its planned availability can be found in 'WebSphere MQ
+   Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV47785
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ HP V7
+   
+   
+ * REPORTED COMPONENT ID
+   5724H7222
+   
+   
+ * REPORTED RELEASE
+   701
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-09-02
+   
+   
+ * CLOSED DATE
+   2013-09-26
+   
+   
+ * LAST MODIFIED DATE
+   2014-01-13
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ HP V7
+   
+   
+ * FIXED COMPONENT ID
+   5724H7222
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R701 PSY
+   UP

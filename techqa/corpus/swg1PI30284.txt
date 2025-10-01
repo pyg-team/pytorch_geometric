@@ -1,0 +1,166 @@
+Title: IBM PI30284: GEN ON DSNDB06 CATALOG COPY FAILS SQLCODEN204 FOR TS REF BY MQT. - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The DB2 Administration Tool for z/OS' GEN function when issued
+   against the DSNDB06 database creates DDL for a MQT which
+   referenced SYSIBM.SYSDUMMY1 however the DDL for the tablespace
+   used by the MQT is not created.
+   This causes the Catalog Copy function to fail
+   with a SQLCODEN204 / SQLCODE -204.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: Users of the DB2 Administration Tool for     *
+   *                 z/OS who use the Catalog Copy function to    *
+   *                 copy system objects in database DSNDB06      *
+   *                 and use the Generate (GEN) line command to   *
+   *                 generate DDL for system objects in           *
+   *                 database DSNDB06.                            *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: The GEN function when issued against    *
+   *                      database DSNDB06 creates DDL for a      *
+   *                      Materialized Query Table (MQT) which    *
+   *                      referenced SYSIBM.SYSDUMMY1, however    *
+   *                      the DDL for the tablespace used by      *
+   *                      the MQT is not created.  This causes    *
+   *                      the Catalog Copy function to fail       *
+   *                      with a SQLCODEN204 / SQLCODE= -204      *
+   *                                                              *
+   *                      DSNT408I SQLCODE = -204,                *
+   *                      ERROR: dbname.tsname IS AN              *
+   *                      UNDEFINED bNAME                         *
+   *                      DSNT418I SQLSTATE   = 42704             *
+   *                      SQLSTATE RETURN CODE                    *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   Program does not prevent the generation of DDL for non-system
+   objects in database DSNDB06.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Problem has been resolved so that Catalog Copy will prevent the
+   generation of non-system objects in database DSNDB06 e.g:
+   MQT's that rely on system objects in database DSNDB06.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI30284
+   
+   
+ * REPORTED COMPONENT NAME
+   DB2 ADMIN TOOL
+   
+   
+ * REPORTED COMPONENT ID
+   568851500
+   
+   
+ * REPORTED RELEASE
+   A20
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-11-24
+   
+   
+ * CLOSED DATE
+   2015-02-13
+   
+   
+ * LAST MODIFIED DATE
+   2015-03-03
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UI25165 UI25166
+   
+   
+
+MODULES/MACROS
+ *     ADB2GEN  ADB2REG  ADB2REM
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   DB2 ADMIN TOOL
+   
+   
+ * FIXED COMPONENT ID
+   568851500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * RA20 PSY UI25165 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI25165]
+   UP15/02/17 P F502
+   
+   
+ * RB10 PSY UI25166 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI25166]
+   UP15/02/17 P F502
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

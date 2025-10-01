@@ -1,0 +1,208 @@
+Title: IBM PK17023: BLANK USERID WHEN PUTTING THE MESSAGE TO THE CLUSTER QUEUE CAUSES RACF ERROR - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  I have two queue managers, RM2D and RM4D. They belong to a queue
+   sharing group QSG2.They also belong to a cluster named CLUSTER2.
+   There is one queue defined on QM2D named REQUESTQ. REQUESTQ
+   has been added to the CLUSTER2 and is therefore visible on queue
+   manager QM4D. There is one queue defined on RM4D named REPLYQ.ue
+    I have enabled intra-group queuing and specified IGQAUT as Q.
+   ONLYIGQ; the IGQ user id is blank.
+   
+   If I connect to RM4D and put a (small) message to queue
+   REQUESTQ, MQ  uses IGQ (rather than the cluster) to deliver the
+   message from RM4D to RM2D (as it is less than 63K). This is as
+   expected and works ok.
+   reply-to QM of RM4D and a reply-to Q of REPLYQ, I get ich408i
+   RACF error with the blank user id when MQ tries to generate the
+   report message when the message is put to REQUESTQ .
+   If I repeat the same test, but request an expired report message
+   instead, MQ uses the MQMD user id as expected to generate the
+   report message.
+   If I repeat the same tests and change the IGQAUT from ONLYIGQ
+   to DEF it works ok (it uses the RM4DMSTR address space user id)
+   or to ALTIGQ it works ok (it uses the MQMD user id).
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All users of Websphere MQ for z/OS Version   *
+   *                 6.                                           *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Security Violation message issued when  *
+   *                      putting a message to a Cluster Queue    *
+   *                      where the Confirm-On-Arrival report     *
+   *                      option has been used.                   *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   Customer has two Queue Managers A & B, both in the same SHARING
+   GROUP and CLUSTER. There exists a Cluster Queue hosted by Queue
+   Manager A and visibile to Queue Manager B.
+   .
+   When Queue Manager B attempts to put a message to this Cluster
+   Queue it determines that Intra-Group-Queuing can be used to
+   transmit te message. This is due to the fact that both Source
+   and Target Queue Managers are in the same Sharing Group.
+   .
+   When the message is put, one where the COA (Confirm On Arrival)
+   report option has been specified, a RACF message is issued;
+   .
+   ICH408I USER(        ) GROUP(        ) NAME(???)
+     LOGON/JOB INITIATION - USER AT TERMINAL          NOT RACF-D
+   IRR012I  VERIFICATION FAILED. USER PROFILE NOT FOUND.
+   .
+   This only occurs when using the COA report option and the
+   Intra-Group Queuing (IGQ) options have the authorization set to
+   ONLYIGQ and the IGQ userid is BLANK.
+   .
+   The cause of this security violation was traced to the open
+   processing performed by the Intra-Group-Queuing agent for the
+   Reply-To-Queue in order to delivery the COA message.
+   .
+   CSQMIGQA, the Intra Group Queuing Agent, reads messages from the
+   SYSTEM.QSG.TRANSMIT.QUEUE and puts the to their destination
+   queue using a call to CSQMPUT. CSQMPUT detects the need for a
+   report message and calls CSQMREPM handle the report message
+   processing.
+   .
+   From the options passed CSQMREPM determines the type of report
+   message required and builds the appropriate MQMD and message
+   content. For a COA report message is assumes that the correct
+   userid data has been setup by CSQMPUT. However this is not the
+   case when messages are put by the Intra Group Queuing Agent. It
+   used a special module CSQMSUID to analyse the userid options set
+   for IGQ and to set userid data direct in control blocks used for
+   the put. The result of this is that when security checks are
+   conducted for the opening of the Reply-To-Queue the userids
+   extract are blank which will led to the "Blank-Userid" security
+   violation.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  CSQMREPM processing for a Confirm-On-Arrival report message
+   request has been amended. The code will now establish the
+   identify of the process it is running under. If it is the
+   Intra-Group-Queuing Agent CSQMSUID is called to setup userids in
+   accordance with the IGQ setting of "Put authority" and "IGQ user
+   ID". This will ensure that when any security checks are
+   conducted the correct userid information will be available.
+   000Y
+   CSQMREPM
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK17023
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBS MQ FOR ZOS
+   
+   
+ * REPORTED COMPONENT ID
+   5655L8200
+   
+   
+ * REPORTED RELEASE
+   000
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2005-12-21
+   
+   
+ * CLOSED DATE
+   2006-01-13
+   
+   
+ * LAST MODIFIED DATE
+   2006-03-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    PK16109 [http://www-01.ibm.com/support/docview.wss?uid=swg1PK16109]
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UK10709
+   
+   
+
+MODULES/MACROS
+ *     CSQMREPM
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBS MQ FOR ZOS
+   
+   
+ * FIXED COMPONENT ID
+   5655L8200
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R000 PSY UK10709 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK10709]
+   UP06/02/03 P F602
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

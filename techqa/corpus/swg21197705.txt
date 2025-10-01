@@ -1,0 +1,26 @@
+Title: IBM Using Oracle JDBC driver specific properties through a datasource - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Properties directly supported by the Oracle JDBC driver that are not part of the JDBC specification cannot be used as a Custom Property in a datasource. 
+
+CAUSE
+The Oracle JDBC driver has added support for a new Custom Property under connectionProperties..
+
+RESOLVING THE PROBLEM
+The method used with datasources is to set a Custom Property in the datasource as follows: 
+
+Name: connectionProperties 
+Value: propertyA=valueA;propertyB=valueB
+
+
+For example, if you wish to set the property oracle.jdbc.V8Compatible=true, then you would specify the following. 
+Name: connectionProperties 
+Value: oracle.jdbc.V8Compatible=true
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Application Servers Runtimes for Java Technology Java SDK

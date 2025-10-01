@@ -1,0 +1,134 @@
+Title: IBM How to remove all Suspect Duplicate Tasks (SDP) from Infosphere MDM v11.4 Stewardship Center? - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ How to clear out a large volume of tasks that have been created for Suspect Duplicates in MDM ISC , removing all tasks at once? 
+
+ENVIRONMENT
+MDM v11.4 Stewardship Center
+
+RESOLVING THE PROBLEM
+We need to add a new service inside Physical SDP Process to remove all SDP tasks. 
+
+To do so, please follow the instructions below :
+
+1- Open Physical MDM Suspect Duplicate Process from BPM Process Designer. 
+
+2- Create a new “General System Service” from Implementation option in the left side pane. 
+
+3- Name the service as “Delete Process Instance” 
+
+4- Now go to Diagram tab inside the service. 
+
+5- Create a new Server Script by dragging Server Script box from right side pane and name it as “Get all active SDP tasks and terminate them”. 
+
+6- Inside the implementation section in properties tab add below code 
+
+ 
+
+ var processName = "Resolve Suspected Duplicate process"; 
+
+ // Set Search condition. 
+
+ var conProcessType = new TWSearchCondition(); 
+
+ conProcessType.column = new TWSearchColumn(); 
+
+ conProcessType.column.name = TWSearchColumn.ProcessColumns.Name; 
+
+ conProcessType.column.type = TWSearchColumn.Types.Process; 
+
+ conProcessType.operator = TWSearchCondition.Operations.Equals; 
+
+ conProcessType.value = processName; 
+
+ 
+
+ var conStatus = new TWSearchCondition(); 
+
+ conStatus.column = new TWSearchColumn(); 
+
+ conStatus.column.name = TWSearchColumn.ProcessInstanceColumns.Status; 
+
+ conStatus.column.type = TWSearchColumn.Types.ProcessInstance; 
+
+ conStatus.operator = TWSearchCondition.Operations.Equals; 
+
+ conStatus.value = "Active"; 
+
+ 
+
+ var search = new TWSearch(); 
+
+ search.conditions = new Array(conProcessType, conStatus); 
+
+ // Execute search 
+
+ var processInstances = search.executeForProcessInstances(); 
+
+ 
+
+ for (var i=0; i<processInstances.length; i++) { 
+
+ var instanceId = processInstances[i].id 
+
+ processInstances[i].abort(); 
+
+ }
+
+
+[/support/docview.wss?uid=swg22001480&aid=1] [/support/docview.wss?uid=swg22001480&aid=1] Snapshot : After adding code in implementation section 
+
+
+7- Create a “Heritage Human Service” from User Interface option in left side pane.  
+
+8- Name it as “Delete Admin Service”. 
+
+9- Inside the overview tab, we need to set Exposed to as “All Users” and Exposed As will be “Administration Service”. Refer below screenshot :
+
+
+[/support/docview.wss?uid=swg22001480&aid=2] [/support/docview.wss?uid=swg22001480&aid=2] Snapshot : Overview tab reference for Delete Admin Service
+
+
+10- Now in the diagram add a new Nested Service and name it as “Delete Process Instance”.  
+
+11- Inside implementation attached a nested service which is created in step 3 
+
+
+
+
+[/support/docview.wss?uid=swg22001480&aid=3] [/support/docview.wss?uid=swg22001480&aid=3] Snapshot : Reference for Diagram inside Heritage service
+
+
+12- Now go to Process Admin Console and expand “Physical MDM Suspected Duplicates” option on the left side pane Note : If using Process Server version then a new snapshot is to be created from the Process designer and installed on Process Server for the Process Admin console to have new administrative service available for users 
+
+
+13- Now click on the “Delete Admin Service” option. Which will take some time depending upon the number of task we need to terminate. 
+
+ 
+
+14- After step 13 once it finish will see below screen which means all the SDP tasks are terminated. 
+
+
+
+
+[/support/docview.wss?uid=swg22001480&aid=4] [/support/docview.wss?uid=swg22001480&aid=4] Snapshot : Screen after clicking on Delete Admin Service option
+
+
+15- Now go to the WAS profile path, something similar to this “C:\IBM\WebSphere\profiles\AppSrv01\bin”  
+
+16- Execute below command based on your configuration to clear all the deleted task from BPM 
+
+wsadmin -conntype SOAP -port <soap_port> -host <hostname> -user admin -password admin -lang jython
+
+AdminTask.BPMProcessInstancesCleanup('[-containerAcronym MDMSDP -containerSnapshotAcronym <acronym_snapshot_name> -instanceStatus ALL]') 
+
+
+References : BPMProcessInstancesCleanup command [https://www.ibm.com/support/knowledgecenter/en/SSFTBX_8.5.6/com.ibm.wbpm.ref.doc/topics/rref_BPMProcessInstancesCleanup.html] 
+
+17- After doing above step all the SDP processes will get removed. 
+
+RELATED INFORMATION
+ Knowledge Center: BPMProcessInstancesCleanup command [https://www.ibm.com/support/knowledgecenter/en/SSFTBX_8.5.6/com.ibm.wbpm.ref.doc/topics/rref_BPMProcessInstancesCleanup.html]

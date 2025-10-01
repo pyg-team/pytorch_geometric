@@ -1,0 +1,235 @@
+Title: IBM PI55507: CHIN ABEND 0C4-00000011 CSQXADPM+006BE WITH CSQSNAP WITH XFFSRSTMVSASYNCCONSUMERTHREAD - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  CHIN abends and goes down with the following error messages:
+   
+   ----------------------------------------------------------------
+   +CSQX053E +MQT2 CSQXFFST Error information recorded in CSQSNAP
+             data set
+   +CSQX112E +MQT2 CSQXDISP Dispatcher process error, TCB=009C46D8
+             reason=0C4000-00000011
+   CSQY291E CSQXDMPS SDUMPX FAILED, RC=00000208,MQT2,ABN=
+            5C6-00E70054, LOC=CSQXADPM.CSQXADPM+072A2
+   IEA794I SVC DUMP HAS CAPTURED:  680
+   DUMPID=059 REQUESTED BY JOB (MQT2CHIN)
+   +CSQX209E +MQT2 CSQXRESP Connection unexpectedly terminated,
+          DUMP TITLE=MQT2,ABN= 0C4-00000011,C=W9700.800.CHIN,
+          M=CSQXDISP,LOC=CSQXADPM.????????+006BE
+          channel UYG.ESB.TO.MQ
+          connection <connection> (<ipaddr>)
+    (queue manager MQT0)
+    TRPTYPE=TCP RC=00000000
+   ----------------------------------------------------------------
+   
+   CSQSNAP shows eyecatchers:
+   
+   ----------------------------------------------------------------
+   *X...XFFSrstMVSAsyncConsumerThrea*
+   *d.......MOVR.........$&#162;&X...XINS*
+   *................................*
+   
+   and
+   
+   *                        ....Inva*
+   *lid aCon state..ACNV............*
+   *......................K.........*
+   *................................*
+   *............... .. ........... .*
+   *.. ...{\............            *
+   ----------------------------------------------------------------
+   
+   The initial abend, the 0C4 in CSQXADPM, has occurred as the
+   cciCONV control block at 2B34FBD0 has been released by
+   ccxFreeAllMpxConvMem although it has subsequently been
+   referenced.
+   .
+   Additional keywords:
+   CSQX053E CSQX112E CSQX209E
+   rstMVSAsyncConsumerThread invalid acon state acnv
+   ABEND0C4 ABENDS0C4 S0C4 S00C4
+   CHIN hang
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  No Local Fix
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All users of WebSphere MQ for z/OS Version 8 *
+   *                 Release 0 Modification 0.                    *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: When using conversation sharing         *
+   *                      (SHARECNV>0) with svrconn channels,     *
+   *                      various errors and abends can occur     *
+   *                      including:                              *
+   *                                                              *
+   *                      "+CSQX112E +xxxx CSQXDISP Dispatcher    *
+   *                       process error, TCB=008CB510            *
+   *                       reason=5C6000-00E70056"                *
+   *                                                              *
+   *                      "+CSQX113E +xxxx CSQXDISP Dispatcher    *
+   *                       ended abnormally, TCB=008CB510         *
+   *                       reason=5C6000-00E70054"                *
+   *                                                              *
+   *                      CSQX053E reporting an FFST in the       *
+   *                      CSQSNAP DD. The FFST is written by      *
+   *                      rstMVSAsyncConsumerThread with reason   *
+   *                      "Invalid aCon state"                    *
+   *                                                              *
+   *                      Abends 0C4, 0C6, 102 or 202 in module   *
+   *                      CSQXACNO                                *
+   *                                                              *
+   *                      Abend 0C4 in module CSQXADPM            *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   When a conversation ends, any handles associated with the
+   conversation are deregistered with the queue manager, preventing
+   them being posted, and the handle storage and conversation
+   storage is freed.
+   In rare cases, the handle was already posted when the
+   conversation was ended, but the post had not yet been processed
+   by CSQXACNO.
+   Due to inadequate serialisation between CSQXACNO and the ending
+   conversation, this led to CSQXACNO referencing the handle at
+   unexpected times, or after the handle storage had been freed.
+   Depending on exactly when CSQXACNO processed the post, and the
+   state of the handle and conversation storage at that time, a
+   variety of abends can occur.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  CSQXACNO and CSQXRSTM are updated to serialise processing more
+   effectively when conversations end, preventing CSQXACNO
+   accessing handles that are no longer valid.
+   000Y
+   CSQXACNO
+   CSQXRSTM
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  *********
+   * HIPER *
+   *********
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI55507
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ Z/OS 8
+   
+   
+ * REPORTED COMPONENT ID
+   5655W9700
+   
+   
+ * REPORTED RELEASE
+   000
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   YesHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-01-18
+   
+   
+ * CLOSED DATE
+   2016-05-27
+   
+   
+ * LAST MODIFIED DATE
+   2017-05-04
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UI38237 PI68897 [http://www-01.ibm.com/support/docview.wss?uid=swg1PI68897]
+   
+   
+
+MODULES/MACROS
+ *  CSQXACNO CSQXRSTM
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ Z/OS 8
+   
+   
+ * FIXED COMPONENT ID
+   5655W9700
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R000 PSY UI38237 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI38237]
+   UP16/07/06 P F607 ¢
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

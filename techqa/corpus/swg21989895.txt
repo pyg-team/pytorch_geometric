@@ -1,0 +1,104 @@
+Title: IBM Understanding Timestamps in Guardium Reports - United States
+
+Text:
+Guardium; Timestamps; Query; report; attribute TECHNOTE (FAQ)
+
+QUESTION
+ What is the meaning of the most common timestamp attributes used in Guardium reports?
+What timestamp attribute is used in the runtime parameters of my report?
+What steps should I take if I think there is something wrong with the timestamp in my report? 
+
+CAUSE
+Different timestamps with different meanings are used widely in reporting and sometimes cause confusion. Use this technote as a guide to understand: 
+
+ * The meaning of commonly used timestamps 
+ * What timestamp is used in the run time parameters for commonly used main entities 
+ * What steps to go through if you see an unexpected timestamp in a report
+
+ANSWER
+Recommended Viewing 
+
+
+
+
+YouTube Video Understanding Timestamps in Guardium Reports (12.57) Overview of the most commonly used timestamps in Guardium reports . Watch the video on YouTube [https://www.youtube.com/watch?v=uY7pyUhvmjU&index=10&list=PLFip581NcL2WzC2LpTMT28rml3br5WO9V] (12.57)  
+
+1. Meaning of commonly used Timestamps 
+
+ 
+
+[/support/docview.wss?uid=swg21989895&amp;aid=1]
+Domain* - Entity [/support/docview.wss?uid=swg21989895&amp;aid=1]
+Attribute(s) [/support/docview.wss?uid=swg21989895&amp;aid=1]
+Meaning [/support/docview.wss?uid=swg21989895&amp;aid=1]
+Access - Client/Server [/support/docview.wss?uid=swg21989895&amp;aid=1]
+Timestamp [/support/docview.wss?uid=swg21989895&amp;aid=1]
+The time on the collector when the client first connected to the server. For example, if a client is connecting to the server in the same way many days in a row this timestamp will be the time of the first connection. This may even be before the purge days of the appliance. [/support/docview.wss?uid=swg21989895&amp;aid=1]
+Access - Session [/support/docview.wss?uid=swg21989895&amp;aid=1]
+Session Start, Session End [/support/docview.wss?uid=swg21989895&amp;aid=1]
+The time on the DB server when the session started and ended. [/support/docview.wss?uid=swg21989895&amp;aid=1]
+Access - Session [/support/docview.wss?uid=swg21989895&amp;aid=1]
+Timestamp [/support/docview.wss?uid=swg21989895&amp;aid=1]
+The time on the collector when the session information was most recently updated. If the session is closed it will be the same time as the Session End. [/support/docview.wss?uid=swg21989895&amp;aid=1]
+Access - Access Period [/support/docview.wss?uid=swg21989895&amp;aid=1]
+Period Start, Period End [/support/docview.wss?uid=swg21989895&amp;aid=1]
+The time on the collector when the period, as defined by the logging granularity on the appliance (default 1 hour), started and ended. [/support/docview.wss?uid=swg21989895&amp;aid=1]
+Access - Access Period [/support/docview.wss?uid=swg21989895&amp;aid=1]
+Timestamp [/support/docview.wss?uid=swg21989895&amp;aid=1]
+The time on the collector when an SQL construct was executed most recently within a session and within a time period.
+If the same SQL construct is run 10 times within the same session and time period, it will show the time of the most recent run for all 10 SQLs.
+This timestamp is the most appropriate to use along with the SQL attribute in reports. [/support/docview.wss?uid=swg21989895&amp;aid=1]
+Access - Full SQL [/support/docview.wss?uid=swg21989895&amp;aid=1]
+Timestamp [/support/docview.wss?uid=swg21989895&amp;aid=1]
+The time on the DB server that the SQL was executed. Traffic must be captured with log full details policy action to see this timestamp. [/support/docview.wss?uid=swg21989895&amp;aid=1]
+Policy Violations - Policy Rule Violation [/support/docview.wss?uid=swg21989895&amp;aid=1]
+Timestamp [/support/docview.wss?uid=swg21989895&amp;aid=1]
+The time on the DB Server that the SQL triggering a policy violation was executed. Traffic must be captured with an alerting policy action to see this timestamp. [/support/docview.wss?uid=swg21989895&amp;aid=1]
+Exceptions - Exception [/support/docview.wss?uid=swg21989895&amp;aid=1]
+Exception Timestamp [/support/docview.wss?uid=swg21989895&amp;aid=1]
+The time on the DB Server (if exception is from monitored traffic e.g. an SQL exception on the database) or Collector (if exception is related to the collector e.g. parser error) *Entities may be available in multiple domains. The timestamp definition above applies across all domains. For example Session entity is in 'Access' and 'Policy Violations' domains. The domain given in the table above is the most commonly used for the entity.  
+
+2. Timestamps used in the run time parameters of reports for common main entities. 
+
+The run time parameters of a report (Start date, End Date) do not always mean the same thing. The timestamp used depends on the main entity of the report. 
+
+ 
+
+Main Entity(s) of the report Entity - Timestamp(s) used in the run time parameters Client/Server Client/Server - Timestamp Session Session - Timestamp SQL Access Period - Period Start before End Date 
+and 
+Access Period - Period End after Start date. 
+
+Result is that any SQL in the same time period as the run time parameters will be shown in the report. Command, Object, Join, Field Access Period - Period Start before End Date 
+and 
+Access Period - Period End after Start date. 
+
+Result is that any SQL in the same time period as the run time parameters will be shown in the report. Full SQL Full SQL - Timestamp Policy Rule Violation Policy Rule Violation - Timestamp Exception Exception - Timestamp 3. Steps to confirm if a timestamp seen in a report is expected or not 
+
+Follow these steps if you find yourself confused about a timestamp seen in a report. For example if you see a timestamp in the report that is outside of the run time parameters. 
+
+If points 1 and 2 above do not contain details for the specific timestamp you are interested in, ask a question on the technote and it can be added to the list. 
+
+i) Find the main entity of the report. Check in the query builder if you are unsure e.g. 
+
+ 
+
+ * 
+
+
+ii) Use point 2 in this technote to find what timestamps are used in the run time parameters for a report with that main entity. 
+
+iii) Check what timestamp attribute you are looking at in the report. If you are unsure, check in the query builder for the entity. e.g. 
+
+ * 
+
+
+iv) Use point 1 in this technote to understand the meaning of the timestamps found in ii) and iii). 
+
+v) To make the situation more clear you could add the timestamp found in ii) to the report and compare that against the run time parameters. It now should match. 
+
+Following these steps should allow you to understand if there is a genuine problem with timestamps or just a misunderstanding with their definitions. If you need to open a PMR with Guardium support for a problem with timestamps in reports please attach:  * Support must_gather system_db_info 
+ * ".sql" Export of the query with the problem (from definitions export page in the CM GUI) 
+ * Screenshot or copy of the report highlighting the timestamps in question
+
+RELATED INFORMATION
+ Must Gather Information [http://www-01.ibm.com/support/docview.wss?uid=swg21971158]

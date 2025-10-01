@@ -1,0 +1,178 @@
+Title: IBM IX90158: NAMESERVER BIND FAILS ON AN IPV6 ENABLED ETHERNET INTERFACE - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Error Message: ORB server startup failure, when a SINOClient
+   bootstrapping is attempted
+   .
+   Stack Trace: org.omg.CORBA.ORBPackage.InvalidName:
+   NameService:org.omg.CORBA.BAD_PARAM: bad host '0:0:0:0:0:0:0:1'
+   vmcid: OMG  minor code: 9  completed: No    at
+   com.ibm.rmi.corba.InitialReferenceClient.resolve_initial_referen
+   ces(InitialReferenceClient.java:222)at
+   com.ibm.rmi.corba.InitialReferenceClient.resolve_initial_referen
+   ces(InitialReferenceClient.java:222)org.omg.CORBA.ORBPackage.Inv
+   alidName: NameService:org.omg.CORBA.BAD_PARAM: bad host
+   '0:0:0:0:0:0:0:1'  vmcid: OMG  minor code: 9  completed:
+   Noorg.omg.CORBA.ORBPackage.InvalidName:
+   NameService:org.omg.CORBA.BAD_PARAM: bad host '0:0:0:0:0:0:0:1'
+   vmcid: OMG  minor code: 9  completed: Noat
+   com.ibm.rmi.corba.InitialReferenceClient.resolve_initial_referen
+   ces(InitialReferenceClient.java:222)org.omg.CORBA.ORBPackage.Inv
+   alidName: NameService:org.omg.CORBA.BAD_PARAM: bad host
+   '0:0:0:0:0:0:0:1'  vmcid: OMG  minor code: 9  completed:
+   Noorg.omg.CORBA.ORBPackage.InvalidName:
+   NameService:org.omg.CORBA.BAD_PARAM: bad host '0:0:0:0:0:0:0:1'
+   vmcid: OMG  minor code: 9  completed:
+   Noorg.omg.CORBA.ORBPackage.InvalidName:
+   NameService:org.omg.CORBA.BAD_PARAM: bad host '0:0:0:0:0:0:0:1'
+   vmcid: OMG  minor code: 9  completed:
+   Noorg.omg.CORBA.ORBPackage.InvalidName:
+   NameService:org.omg.CORBA.BAD_PARAM: bad host '0:0:0:0:0:0:0:1'
+   vmcid: OMG  minor code: 9  completed: Noat
+   com.ibm.rmi.corba.ORB.resolve_initial_references(ORB.java:4283)
+     at
+   com.ibm.rmi.corba.ORB.resolve_initial_references(ORB.java:4283)a
+   t
+   com.ibm.rmi.corba.InitialReferenceClient.resolve_initial_referen
+   ces(InitialReferenceClient.java:222)at
+   com.ibm.rmi.iiop.ORB.resolve_initial_references(ORB.java:689)
+   at
+   com.ibm.rmi.corba.ORB.resolve_initial_references(ORB.java:4283)a
+   t
+   com.ibm.CORBA.iiop.ORB.resolve_initial_references(ORB.java:3222)
+   at com.ibm.rmi.iiop.ORB.resolve_initial_references(ORB.java:689)
+      at
+   com.ibm.rmi.corba.InitialReferenceClient.resolve_initial_referen
+   ces(InitialReferenceClient.java:222)at
+   com.ibm.CORBA.iiop.ORB.resolve_initial_references(ORB.java:3222)
+   at com.ibm.rmi.iiop.ORB.resolve_initial_references(ORB.java:689)
+      at
+   orbapp.util.NamingUtil.registerObject(NamingUtil.java:99)at
+   orbapp.poatest.InfoServerAdapterActivator.run(InfoServerAdapterA
+   ctivator.java:87)    at
+   orbapp.util.NamingUtil.registerObject(NamingUtil.java:99)at
+   com.ibm.rmi.corba.InitialReferenceClient.resolve_initial_referen
+   ces(InitialReferenceClient.java:222)    at
+   com.ibm.rmi.corba.ORB.resolve_initial_references(ORB.java:4283)
+   .
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Issue occurs during bootstrap due to IDR and CDR mismatch
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Bootstrap ORB calls are forced to use CDR to avoid mismatch
+   .
+   This APAR will be fixed in the following Java Releases:
+      7 R1 SR2 FP10  (7.1.2.10)
+   .
+   Contact your IBM Product's Service Team for these Service
+   Refreshes and Fix Packs.
+   For those running stand-alone, information about the Service
+   Refreshes and Fix Packs can be found at:
+              https://www.ibm.com/developerworks/java/jdk/ [https://www.ibm.com/developerworks/java/jdk/]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IX90158
+   
+   
+ * REPORTED COMPONENT NAME
+   ORB
+   
+   
+ * REPORTED COMPONENT ID
+   620700123
+   
+   
+ * REPORTED RELEASE
+   260
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-01-07
+   
+   
+ * CLOSED DATE
+   2015-01-07
+   
+   
+ * LAST MODIFIED DATE
+   2015-01-07
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ORB
+   
+   
+ * FIXED COMPONENT ID
+   620700123
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R260 PSY
+   UP

@@ -1,0 +1,29 @@
+Title: IBM Best practices for changing WebSphere DataPower appliance configuration - United States
+
+Text:
+402limitation 500limitation 600limitation 601limitation 700limitation xa xs xg xi xb xm ve change configuration drop messages TECHNOTE (FAQ)
+
+QUESTION
+ What are some of the best practices for operational procedures when changing the configuration of a DataPower appliance? 
+
+CAUSE
+Changes to DataPower appliance configuration while transactions are flowing might cause messages to be dropped.
+
+ANSWER
+The operational procedures for a WebSphere DataPower appliance environment depend on the complexity and nature of the topology and the various connected components. 
+
+This document suggests operational procedures for the typical WebSphere DataPower appliance deployment environment to help avoid unexpected results that might occur when configuration changes are made while transactions are flowing. These suggestions are intended as a starting point to develop procedures for your specific environment. It is important to thoroughly test any operational procedures before using them in production.
+
+The general best practice is to stop the inbound traffic to WebSphere DataPower appliance, domain, service, or handler prior to changing configuration that effects that appliance, domain, service, or handler. Then, monitor the DataPower latency logs to ensure that traffic is successfully drained before performing any DataPower configuration changes. This approach reduces the chance of potential errors.
+
+There are several ways to restrict inbound traffic. The following suggestions might be available depending on your topology.
+
+Quiesce the appliance, domain, service, or handler
+
+You can use the appliance quiesce and unquiesce feature to manage changes in a controlled manner. When you quiesce an appliance, domain, service, or handler, the operational state of the quiesced object is changed to down so that no new traffic is accepted. The granularity with which the quiesce feature can be applied can minimize the impact. Quiesce the object, such as a particular handler, before making configuration changes. After the configuration changes are complete, unquiesce the appliance, domain, service, or handler.
+
+Special consideration should be applied when making changes to shared objects such as front-side handlers, especially if they are polling front-side handlers, like JMS and MQ. You should then quiesce the domain to ensure services using shared objects are not impacted.
+
+External load balancer
+
+If your environment has an external load balancer that distributes load across multiple appliances, investigate the load balancer properties to temporarily remove an appliance from the load balancer group or otherwise route traffic away from the appliance.

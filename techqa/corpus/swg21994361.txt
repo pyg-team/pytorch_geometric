@@ -1,0 +1,60 @@
+Title: IBM System requirements for IBM TXSeries for Multiplatforms V9.1 on AIX - United States
+
+Text:
+ NEWS
+
+ABSTRACT
+The following tables provide you with a listing of supported IBM and vendor-acquired software for use with IBM TXSeries for Multiplatforms V9.1 on IBM AIX.
+
+CONTENT
+This document provides information on IBM and vendor-acquired software that is compatible with TXSeries for Multiplatforms V9.1. The minimum maintenance levels are listed. TXSeries is not tested with every maintenance level of every product. In general, you can install and run with updates to supported product levels, if those updates are forward compatible. If you use later maintenance levels and experience problems, test with the levels specified in this document before contacting your IBM support representative.
+
+For the supported software that is listed, refer to the respective product website for their system requirements and specifications.
+
+Note: 
+
+ * TXSeries is a 32-bit product. All libraries linked with TXSeries must be 32-bit libraries. Most vendors offering 64-bit versions of their products also provide 32-bit client libraries. On 64-bit operating systems, TXSeries runs in 32-bit compatibility mode.
+ * IBM recommends that you maintain your TXSeries system environments at the latest fix pack level. See TXSeries for Multiplatforms support policy statement [http://www.ibm.com/support/docview.wss?uid=swg21663762] for more details.
+
+Operating System 
+
+Software Version Notes IBM AIX 7.1 TL 4 
+7.2 Compilers 
+
+Software Version Notes IBM XL C/C++ 12.1 
+13.1.3 IBM COBOL 4.1.1.13 
+5.1 IBM PL/I 3.1 MicroFocus Visual COBOL 2.3 3.0 MicroFocus Server Express COBOL 5.1 WP8 IBM Java SDK 1.8 SR 2 
+Databases 
+
+Software Client Version Notes IBM DB2 UDB 10.1 
+10.5 
+11.1 Oracle 12.1 Informix Client SDK 3.7 Supported with Informix Dynamic Server Version 11.70 FC 7. Sybase 15.7 
+16.0 Note: All the databases listed above are tested and supported with the 32-bit client versions.
+
+Communication software 
+
+Software Version Notes IBM Communication Server 7.0.0.1 
+Monitoring tools 
+
+Software Version Notes IBM Tivoli Monitoring 6.2.1 
+Integration Middleware 
+
+Software Version Notes IBM MQ (formerly IBM WebSphere MQ) 8.0.0.6 
+9.0.0.1 
+IBM MQ Appliance Refer to WMQ System Requirements [http://www.ibm.com/support/docview.wss?uid=swg27006467] page for more details.
+Refer to this technote [http://www.ibm.com/support/docview.wss?uid=swg22010948] for more details on support for IBM MQ Appliance. Transaction Server 
+
+Software Version Notes CICS Transaction Server for z/OS (CICS TS) All supported versions of CICS TS Refer to CICS TS System Requirements [http://www.ibm.com/support/docview.wss?uid=swg27006382] page for more details. Clients 
+
+Software Version Notes IBM CICS Transaction Gateway (CICS TG) All supported versions of CICS TG  * Refer to CTG System Requirements [http://www-01.ibm.com/software/htp/cics/ctg/reqs/] page for more details.
+ * CICS TG V9.2 Fix Pack 1 is a pre-requisite for the following features provided by TXSeries V9.1:  * RESTful API support
+    * Bidirectional integration with WebSphere Application Server, with 2-phase commit
+   
+   
+
+
+API management solution 
+
+Software Version Notes IBM API Connect 5.0.4  * To use RESTful API support feature on AIX, install IBM API Connect on Linux x86 machine. Refer System Requirements [http://www.ibm.com/support/knowledgecenter/SSMNED_5.0.0/com.ibm.apic.install.doc/overview_apimgmt_requirements.html] page for more details.
+
+IBM SDK for Node.js 4.6.0  * To use RESTful API support feature on AIX, install Node.js on Linux x86 machine. Refer this page [https://developer.ibm.com/node/sdk/#v4] for download details.

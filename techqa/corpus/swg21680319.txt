@@ -1,0 +1,17 @@
+Title: IBM TEMA listening port value - United States
+
+Text:
+ITCAM; J2EE; default; connection; communication; ports; CAMJ2ALL; CAMJ2INST TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ After configuring ITCAM for J2EE 7.1.1 agent, both TEMA and DC, the monitored application server is not seen on TEP. A TEMA/DC connection issue is suspected, or supported by the investigation of TEMA/DC logs. 
+
+RESOLVING THE PROBLEM
+If J2EE Data Collector cannot connect to TEMA, make sure TEMA listening port defined in DC_HOME/runtime/<app server instance>/kwjdc.properties is the same as TEMA listening port configuration value:
+com.ibm.tivoli.kwj.agentport=63336
+
+
+It is always recommended to specify 63336 as J2EE agent Listening Port during TEMA configuration, if not already displayed as default value. 
+
+
+[/support/docview.wss?uid=swg21680319&aid=1] [/support/docview.wss?uid=swg21680319&aid=1]

@@ -1,0 +1,185 @@
+Title: IBM PK72278: Unable to launch Robot on Vista - United States
+
+Text:
+  A FIX IS AVAILABLE
+IBM Rational Robot Version 7.0.2 [http://www-01.ibm.com/support/docview.wss?uid=swg24021174]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Unable to launch Robot on Vista
+   Product: Robot v7.0.1 w/ ifix01
+   OS: Windows Vista Enterprise Edition
+   Browser: Internet Explorer 7
+   Issue:
+   Customer is unable to launch Robot from Vista.
+   Had customer set the following below but same result:
+   Run secpol.msc.
+   
+   Go to Local Policies ? Security Options.
+   
+   Disable User Account Control: Run all administrators in Admin Ap
+   proval
+   Mode.
+   
+   Reboot the computer.
+   
+   
+   
+   He is able to go as far as creating a project after selecting St
+   and Alone Mode for Robot from the splash screen and then select
+   project and click OK and then the window disappears along with t
+   he rtrobo.exe process that was running.
+   
+   
+   
+   I had him do the same process after right clicking and running a
+   s Administrator.
+   I attempted to reproduce this from my end but I am successfully
+   able to launch Robot.
+   He is able to launch TestManager just fine but not Robot.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Unable to launch Robot on Vista
+   
+   
+   Product: Robot v7.0.1 w/ ifix01
+   OS: Windows Vista Enterprise Edition
+   Browser: Internet Explorer 7
+   
+   Issue:
+   
+   Customer is unable to launch Robot from Vista.
+   
+   Had customer set the following below but same result:
+   Run secpol.msc.
+   
+   Go to Local Policies ? Security Options.
+   
+   Disable User Account Control: Run all administrators in
+   Admin Approval
+   Mode.
+   
+   Reboot the computer.
+   
+   
+   
+   He is able to go as far as creating a project after
+   selecting Stand Alone Mode for Robot from the splash screen
+   and then select project and click OK and then the window
+   disappears along with the rtrobo.exe process that was
+   running.
+   
+   
+   I had him do the same process after right clicking and
+   running as Administrator.
+   
+   
+   I attempted to reproduce this from my end but I am
+   successfully able to launch Robot.
+   
+   He is able to launch TestManager just fine but not Robot.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Found the root cause of the problem related to releasing
+   memory. Fixed that problem
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK72278
+   
+   
+ * REPORTED COMPONENT NAME
+   RATIONAL ROBOT
+   
+   
+ * REPORTED COMPONENT ID
+   5724G2400
+   
+   
+ * REPORTED RELEASE
+   701
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-09-17
+   
+   
+ * CLOSED DATE
+   2008-11-26
+   
+   
+ * LAST MODIFIED DATE
+   2008-11-26
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   RATIONAL ROBOT
+   
+   
+ * FIXED COMPONENT ID
+   5724G2400
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R701 PSN
+   UP

@@ -1,0 +1,163 @@
+Title: IBM HE12474: SCRIPT CONNECTOR ERROR WHEN TRYING TO ARCHIVE AN EMAIL ERROR IS: CUSTOM.IEMCUSTOME ID PACK FAILED OR ENTITY ID. - United States
+
+Text:
+  A FIX IS AVAILABLE
+IBM Content Collector V4.0.1 Fix Pack 2 [http://www-01.ibm.com/support/docview.wss?uid=swg24041245]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Using the ICC Interactive archiving feature, Outlook emails are
+   being archived into P8 and declared records into IER. During
+   some testing, we discovered if the same email is sent to
+   multiple people and each declares the email to a different
+   record category, only the first email archived is declared a
+   record. We are attempting to alleviate this records
+   shortcoming. Our goal is that one email sent to multiple people
+   should be declared to each record category chosen by the users.
+   When I opened a previous PMR on this issue (PMR 19801,756,000
+   with Tyler Sky), it was recommended we use the ICC Script
+   Connector feature and write code that modified the Hash so each
+   email would be considered unique and not deduped. If each email
+   was considered unique, it would be possible to declare the same
+   email to different record categories. 2015-06-01T16:49:03Z
+   Error An error occurred while evaluating the task route
+   'LC_Default Archiving Interactive CSS for IEMx': Task Method
+   'Custom.IEMCustomIdTask' failed for entity with id ICC
+   4.0.0.1-20140123-1414-EMRC-9.0.0-000.207 Operating system type
+   and version, including patches and service pack levels (ICC
+   server). Windows 2008 R2 Standard Service Pack 1 Source system
+   type and version (such as Domino 8.0 or Exchange 2007) and fix
+   pack level. Exchange 2010 Target repository type, platform, and
+   version (such as IBM Content Manager 8.4 on AIX, P8 FileNet
+   4.x.x, or File System), and fix pack level. FileNet P8 5.2.0.2
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  No
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  The P8 Find Duplicate Email and P8 Archive Email tasks use a
+   hash key to determine if an email has already been declared as a
+    record. The hash key is calculated from the message content and
+    headers and properties. Using the hash key ensures that an
+   email message is only declared as a record once, even if
+   multiple copies are processed. However, this means an email
+   message can only be assigned to one record category.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Starting with IBM Content Collector 4.0.1.2, the duplicate hash
+   key input expressions for the P8 Find Duplicate Email and P8
+   Archive Email tasks can now be edited using the key combination
+   Shift-Ctrl-H to launch the expression editor. When used in
+   conjunction with a custom Script Connector task that
+   recalculates the hash key, email messages can be declared as
+   records in multiple record categories.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  Fixed in 4.0.1.2-IBM-ICC-FP002
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   HE12474
+   
+   
+ * REPORTED COMPONENT NAME
+   ICC FOR EMAIL
+   
+   
+ * REPORTED COMPONENT ID
+   5724V5700
+   
+   
+ * REPORTED RELEASE
+   401
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-12-17
+   
+   
+ * CLOSED DATE
+   2015-12-18
+   
+   
+ * LAST MODIFIED DATE
+   2015-12-24
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    HE12394
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ICC FOR EMAIL
+   
+   
+ * FIXED COMPONENT ID
+   5724V5700
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R401 PSY
+   UP

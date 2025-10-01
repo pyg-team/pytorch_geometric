@@ -1,0 +1,25 @@
+Title: IBM Too many files are open - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Unable to open a shared catalog. 
+
+Error Message - 
+
+Too many files are open. 
+
+RESOLVING THE PROBLEM
+This will occur if you've exceeded the maximum number of connections to shared catalog. The maximum is twenty.
+
+Make the catalog read only to avoid this issue.
+
+See the section in the Impromptu Readme under Catalog Basics for more information.
+
+ 
+
+ 
+
+HISTORICAL NUMBER
+ 1006407

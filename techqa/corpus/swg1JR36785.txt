@@ -1,0 +1,115 @@
+Title: IBM JR36785: INFORMATION ANALYZER COLUMN ANALYSIS IS FILLING UP IADB'S       TRANSACTION LOG WHICH CAUSES ANALYSIS TO FAIL - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Running column analysis in Information Analyzer is aborting. The
+   cause is the iadb transaction log is full and cannot process
+   more transactions. The transaction log was empty before the
+   analysis started. This happens even running a single column.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   Users running Column Analysis jobs with "small" amount of
+   database transaction log space
+   ****************************************************************
+   PROBLEM DESCRIPTION:
+   Running column analysis in Information Analyzer is aborting. The
+   cause is the iadb transaction log is full and cannot process
+   more transactions. The transaction log was empty before the
+   analysis started. This happens even running a single column.
+   ****************************************************************
+   RECOMMENDATION:
+   Upgrade to Information Analyzer 8.1.2 Fix Pack 2.
+   
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR36785
+   
+   
+ * REPORTED COMPONENT NAME
+   WIS INFORM ANAL
+   
+   
+ * REPORTED COMPONENT ID
+   5724Q36IA
+   
+   
+ * REPORTED RELEASE
+   810
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-06-08
+   
+   
+ * CLOSED DATE
+   2010-06-16
+   
+   
+ * LAST MODIFIED DATE
+   2010-06-16
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R810 PSN
+   UP

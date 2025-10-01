@@ -1,0 +1,203 @@
+Title: IBM PK60031: REXEC TIMES OUT - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  REXEC client connects to a remote system that traverses a
+   firewall. The command executes for an extended period of
+   time.  Prior to the command output being returned, the
+   firewall terminates the connection.
+   
+   For long running jobs, a firewall might terminate this
+   connection resulting in the REXEC client hanging.
+   This REXEC client is waiting for the secondary
+   connection to become ready to read.  This does not occur
+   because the firewall has terminated the connection.
+   
+   The REXEC client must be cancelled.
+   
+   
+   DEBUG ANALYSIS:
+   
+   Obtain a packet trace filtered on the remote ip address.
+   
+   Review the packets for the primary connecton.
+   
+   The first 4 bytes of the first packet identify the
+   secondary port that the rexec client is setting up.
+   
+   The secondary connection will show something like
+   
+   syn from remote server
+   syn and ack from client to server
+   ack from remote server
+   
+   A keepalive may be seen on the primary connection but
+   no keepalive is seen on the secondary connection.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Do not run any commands that will run longer than the
+   dormant time interval that the firewall supports.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All users of the IBM Communications Server   *
+   *                 for z/OS Version 1 Release(s) 7, 8 and 9     *
+   *                 IP: TSO Rexec Client.                        *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: REXEC client is hung in a wait state    *
+   *                      waiting for data it will never receive  *
+   *                      because the tunnel the session was      *
+   *                      running over ended.                     *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   REXEC client establishes a session to a remote host that
+   traverses a firewall and invokes a long running command.
+   The session is established using the secondary socket.
+   Because the task runs for over 2 hours firewall drops the
+   tunnel and the sessions running over it.  When the command
+   finally finishes the data can't be returned to the clients
+   host because the session has been terminated.  Thus leaving
+   the client in a wait state waiting for data that will never
+   be returned to it.
+   +-------------------------------------------------------------+
+   + Please check our Communications Server for OS/390 homepages +
+   + for common networking tips and fixes.  The URL for these    +
+   + homepages can be found in Informational APAR II11334 [http://www-01.ibm.com/support/docview.wss?uid=isg1II11334].       +
+   +-------------------------------------------------------------+
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The TSO Rexec Client has been amended to enable the
+   SO_KEEPALIVE function on the secondary socket.
+   
+   * Cross Reference between External and Internal Names
+   EZATREXE (TSOREXEC)  EZATREXE (TSOREXEC)  EZATREXE (TSOREXEC)
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK60031
+   
+   
+ * REPORTED COMPONENT NAME
+   TCP/IP V3 MVS
+   
+   
+ * REPORTED COMPONENT ID
+   5655HAL00
+   
+   
+ * REPORTED RELEASE
+   170
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-01-28
+   
+   
+ * CLOSED DATE
+   2008-02-27
+   
+   
+ * LAST MODIFIED DATE
+   2008-04-01
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UK34080 UK34081 UK34082
+   
+   
+
+MODULES/MACROS
+ *  EZATREXE
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TCP/IP V3 MVS
+   
+   
+ * FIXED COMPONENT ID
+   5655HAL00
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R170 PSY UK34080 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK34080]
+   UP08/03/28 P F803
+   
+   
+ * R180 PSY UK34081 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK34081]
+   UP08/03/28 P F803
+   
+   
+ * R190 PSY UK34082 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK34082]
+   UP08/03/28 P F803
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

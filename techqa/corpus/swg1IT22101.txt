@@ -1,0 +1,219 @@
+Title: IBM IT22101: amqrmppa process crashes if SVRCONN channel is running with an exit, channel statistics and async consume - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  With channel statistics enabled on a SVRCONN channel with a
+   channel exit in place and using the
+   async consume feature (i.e. SHARECNV > 0 on MQ MQ 7.5 or
+   SHARECNV > 1 on MQ 8.0 and higher MQ versions),
+   the amqrmppa process crashes with a memory exception.
+   
+   The issue does not occur if a channel exit is not in place and
+   channel
+   statistics are enabled or if a channel exit is in place and
+   channel statistics are not enabled.
+   
+   FDC on UNIX/LINUX platform:
+   
+   Probe Id: XC130003
+   Component: xehExceptionHandler
+   Comment1: SIGSEGV: address not mapped(0x64)
+   
+   O/S Call Stack for current thread:
+   
+   /opt/mqm/lib64/libmqmcs_r.so(xcsPrintStackForCurrentThread+0x3e)
+   71b8bce]
+   /opt/mqm/lib64/libmqmcs_r.so(+0x11537a)
+   /opt/mqm/lib64/libmqmcs_r.so(PrepareDumpAreas+0xc07)
+   /opt/mqm/lib64/libmqmcs_r.so(xcsFFSTFn+0xb75)
+   /opt/mqm/lib64/libmqmcs_r.so(xehExceptionHandler+0x705)
+   /usr/lib64/libpthread.so.0(+0xf5e0)
+   /opt/mqm/lib64/libmqmr_r.so(rriCallSndExit+0xb9c
+   /opt/mqm/lib64/libmqmr_r.so(rstSendAsyncMessage+0x411)
+   /opt/mqm/lib64/libmqmr_r.so(rstConsumer+0xbe4)
+   /opt/mqm/lib64/libmqzi_r.so(zstUserCallback+0x23a)
+   /opt/mqm/lib64/libmqzi_r.so(zstAsyncConsume+0x1786)
+   /opt/mqm/lib64/libmqzi_r.so(zstAsyncConsumeThread+0x5ab)
+   /opt/mqm/lib64/libmqmcs_r.so(+0x16e93e)
+   /usr/lib64/libpthread.so.0(+0x7e25)
+   /usr/lib64/libc.so.6(clone+0x6d)
+   
+   MQM Function Stack
+   zstAsyncConsumeThread
+   zstAsyncConsume
+   zstUserCallback
+   zstConsumerFunction
+   rstConsumer
+   rstSendAsyncMessage
+   rriCallSndExit
+   xcsFFST
+   
+   ...
+   
+   Probe Id: RM052101
+   Component: rriCallSndExit
+   Probe Type: HALT6109
+   
+   Windows:
+   
+   The amqrmppa process might crash with no FDC or with FDC
+   XC130031.
+   
+   The stack trace extracted from the process dump file is likely
+   to show the following call stack.
+   
+   00 03f7f774 100f7d04 amqrdlla!rriCallSndExit+0xc6b
+   01 03f7f808 100f623a amqrdlla!rstSendAsyncMessage+0x894
+   02 03f7f888 00274447 amqrdlla!rstConsumer+0xc0a
+   03 03f7fab8 0027740e amqzi!zstUserCallback+0x537
+   04 03f7fe3c 00000000 amqzi!zstAsyncConsume+0x232e
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  If channel statistics are enabled, set the STATCHL to off on
+   the queue manager definition. Restart all channels which were
+   affected by the change.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   Users using SVRCONN channels with an exit, the async consume
+   feature and channel statistics.
+   
+   
+   Platforms affected:
+   MultiPlatform
+   
+   ****************************************************************
+   PROBLEM DESCRIPTION:
+   This problem occurred because the IBM MQ channel asynchronous
+   consumer thread was trying to reference the
+   channel status table with an invalid pointer.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The IBM MQ code has been modified to ensure the channel status
+   table access is available before attempting to reference the
+   channel status table.
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+   Version    Maintenance Level
+   v7.5       7.5.0.9
+   v8.0       8.0.0.10
+   v9.0 LTS   9.0.0.5
+   
+   The latest available maintenance can be obtained from
+   'WebSphere MQ Recommended Fixes'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037]
+   
+   If the maintenance level is not yet available information on
+   its planned availability can be found in 'WebSphere MQ
+   Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT22101
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ BASE MULTIP
+   
+   
+ * REPORTED COMPONENT ID
+   5724H7241
+   
+   
+ * REPORTED RELEASE
+   750
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-08-22
+   
+   
+ * CLOSED DATE
+   2018-05-29
+   
+   
+ * LAST MODIFIED DATE
+   2018-05-29
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ BASE MULTIP
+   
+   
+ * FIXED COMPONENT ID
+   5724H7241
+   
+   
+
+APPLICABLE COMPONENT LEVELS

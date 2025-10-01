@@ -1,0 +1,164 @@
+Title: IBM IC66611: PARSE CLAUSE WITH VALIDATION DOES NOT PROPERLY RESET MESSAGESET REFERENCES - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When using more than one messageset in a flow it is possible for
+   the XMLNSC parser associated with one messageset to be reused
+   without the messageset reference being cleared out from the
+   underlying parser. This can result in inappropriate validation
+   or parsing exceptions such as BIP5025E:
+   
+   XML schema validation error ''Unexpected root tag. Element
+   "ElementName" is not a global element.'' on line '2'
+   column '74' when parsing element ''/Root/XMLNSC''.  Internal
+   error codes: 5032, 2.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Not Applicable
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   All users of WebSphere Message Broker version 6.1 or higher
+   using the XMLNSC parser.
+   
+   Platforms Affected:
+   All Platforms
+   ****************************************************************
+   PROBLEM SUMMARY:
+   When an XMLNSC parser is reused the messageset associated with
+   the parser should be cleared before it is used in another
+   context. An invalid assumption was that the "standard non
+   validating" XMLNSC parser could never have a messageset
+   associated with it and would therefore never need its messageset
+   reset before the parser can be reused. This assumption is
+   invalid in the case that the parser is invoked from an ESQL
+   parse clause with a messageset.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  WebSphere Message Broker has been modified so that a new parser
+   is used for non validating parses which will never have a
+   messageset associated with it. When validation options specify
+   no validation this parser is used instead of the normal one
+   which may or may not have a messageset associated with it.
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+   V6.1 - Maintenance Level 6.1.0.9
+   
+   V7.0 - Maintenance Level 7.0.0.1
+   
+   The latest available maintenance can be obtained from
+   'WebSphere Message Broker Recommended Fixes'
+   http://www.ibm.com/support/docview.wss?rs=849&uid=swg27006041 [http://www.ibm.com/support/docview.wss?rs=849&uid=swg27006041]
+   
+   If the maintenance level is not yet available, information on
+   its planned availability can be found in 'WebSphere Message
+   Broker Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=849&uid=swg27006308 [http://www-1.ibm.com/support/docview.wss?rs=849&uid=swg27006308]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC66611
+   
+   
+ * REPORTED COMPONENT NAME
+   WMB WINDOWS V6
+   
+   
+ * REPORTED COMPONENT ID
+   5724J0500
+   
+   
+ * REPORTED RELEASE
+   610
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-02-24
+   
+   
+ * CLOSED DATE
+   2010-06-22
+   
+   
+ * LAST MODIFIED DATE
+   2010-06-22
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMB WINDOWS V6
+   
+   
+ * FIXED COMPONENT ID
+   5724J0500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R610 PSY
+   UP

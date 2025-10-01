@@ -1,0 +1,66 @@
+Title: IBM Smarter Care and Social Programs Policy for Backporting Fixes - United States
+
+Text:
+backport; MustGatherDocument TECHNOTE (FAQ)
+
+QUESTION
+ What is the policy for backporting fixes in IBM Cúram Social Program Management and IBM Smarter Care? 
+
+ANSWER
+Definition of a backport:
+A fix which has been released and delivered that is now being requested on an earlier version of the product.
+
+Note: Backporting of fixes should be avoided as best as possible to protect both IBM development and the customer.
+
+
+Supporting Information Required:
+Before a backport could be considered the following information should be provided to IBM Support:
+
+
+ * Business justification for why it is considered a critical business impact 
+ * Why an immediate solution is required 
+ * Information regarding why the customer has not been in a position to take on an upgrade that would have included the fix 
+ * Exact version of Cúram this is being requested on 
+ * Is this a production issue? 
+ * Does the project have a workaround for the issue? If so, details of the workaround should be provided 
+ * Project timelines  *   * Development phase complete date 
+       * User Acceptance Testing start and complete dates 
+       * System Testing start and complete dates 
+       * Production Roll-out date
+      
+      
+   
+   
+
+
+Criteria to be met:  * No viable work around is available 
+ * Critical business impact 
+ * Must be a Severity 1 or Severity 2 issue  *  Severity 3 or Severity 4 PMRs do not constitute a critical business impact 
+   
+   
+ * Immediate solution required 
+ * The official fix has only been available for a short period of time* and the customer has had insufficient time to upgrade to that version of the product.  * 
+    *  If the fix is available on my current product line <3 months If the fix is available in a later modification or release <12 months, e.g. v6.0.5 (see Decoding IBM's Release Terminology VRMF [https://www.ibm.com/developerworks/mydeveloperworks/blogs/nfrsblog/entry/decoding_ibm_s_release_terminology_v_r_m_f43?lang=en]) 
+   
+   
+
+
+
+Declined Backport: 
+If the above Criteria are not met, the expectation should be that your backport request will be declined and you will receive a PMR update similar to that below: 
+
+“A fix will not be provided as it does not meet the criteria per the IBM Smarter Care and Social Programs Policy for Backporting Fixes. It is not considered a critical business impact because it is a low priority fix that was provided <8 months> ago giving the project more than adequate time to apply it into production.” 
+
+
+Accepted Backport: 
+If the above Criteria are met, then we will require the customer to agree to the following: 
+
+The fix can be provided on the customer's version <X> provided that the project provide an update on the PMR containing the following information: 
+ * Commitment as to when they will move to the latest Fixpack release on their modification version or the next available release 
+ * Acceptance that a fully supported fix was pro-actively released by IBM <X> months ago 
+ * Acceptance that fixes replicated to prior versions in a test fix undergo limited testing. The project accepts the risk of putting it into production and to mitigate this should move to a fully supported version of IBM Cúram at the earliest opportunity 
+ * Acceptance that IBM recommends the installation of Preventive Service Packages to pro-actively avoid impacting problems caused by software defects already known and corrected by IBM 
+ * Acceptance that requesting the back porting of fixes which have already been released is not provided for in the IBM Software Support Handbook [http://www14.software.ibm.com/support/customercare/sas/f/handbook/overview.html]
+
+
+What happens when I request a fix? [http://www-01.ibm.com/support/docview.wss?uid=swg21986040]

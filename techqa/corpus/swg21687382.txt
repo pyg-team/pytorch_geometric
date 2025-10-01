@@ -1,0 +1,47 @@
+Title: IBM Identifying Windows 32-bit and 64-bit systems - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ How to determine whether a Windows system is 32-bit or 64-bit. 
+
+CAUSE
+The IBM MQ V8.0 server is a 64-bit product and cannot be installed on 32-bit Windows systems.
+
+RESOLVING THE PROBLEM
+Open a Windows Command Prompt and use one of the following two methods to determine whether the Windows installation is 32-bit or 64-bit. The first uses the Windows Management Instrumentation Command [http://msdn.microsoft.com/en-us/library/aa394531(v=vs.85).aspx] interface:
+
+
+
+ 1. Check Windows using WMIC
+ 2. 
+ 3. C:\> 
+ 4. WMIC OS GET OSArchitecture
+ 5. 
+ 6. OSArchitecture
+ 7. 
+ 8. 64-bit
+
+
+
+
+The second option examines the output of the systeminfo [http://technet.microsoft.com/en-us/library/bb491007.aspx] command to identify the system as 32-bit ("X86-based PC") or as 64-bit ("x64-based PC"). This command might take a minute or two to complete: 
+
+ 1. Check Windows using systeminfo
+ 2. 
+ 3. C:\> 
+ 4. SYSTEMINFO | FIND /I "System Type"
+ 5. 
+ 6.  System Type:                 x64-based PC
+    
+    
+
+
+
+
+
+IBM MQ V8.0 server cannot be installed on 32-bit Windows systems, but WebSphere MQ V7.5 and WebSphere MQ V7.1 servers can be installed on them. Although there is no 32-bit version of the MQ V8.0 server, IBM does provide a 32-bit version of the MQ V8.0 client for 32-bit Windows systems. Follow the link below to download the MQ V8.0 "Win32" client install image from Fix Central: 
+
+
+ * MQC8: IBM MQ V8.0 Clients [http://www.ibm.com/support/docview.wss?uid=swg24037500]

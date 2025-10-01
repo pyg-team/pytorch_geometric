@@ -1,0 +1,31 @@
+Title: IBM Dashboard Application Services Hub consolecli commands do not work - United States
+
+Text:
+jazzsm1120relnotes jazzsm1101relnotes jazzsm1102relnotes jazzsm1103relnotes jazzsm1110relnotes jazzsm1120relnotes DASH TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ After rolling back an upgrade installation, the Dashboard Application Services Hub consolecli.sh command does not work on UNIX-based systems. 
+
+CAUSE
+When you roll back a Jazz for Service Management upgrade installation, which includes Dashboard Application Service Hub, a path variable contained in consoleSetupEnv.sh is not updated with the actual path value. 
+
+ENVIRONMENT
+UNIX-based systems
+
+RESOLVING THE PROBLEM
+This issue will be resolved with the release of Dashboard Application Services Hub Version 3.1.2.1, which will be delivered in Jazz for Service Management 1.1.2.1. When rolling back from this release or later releases, the problem will not occur.
+
+
+
+
+If you roll back and then upgrade again, the problem is resolved. 
+
+Alternatively, if you do not want to upgrade again to the new version, then to resolve the problem, do the following: 
+
+ 1. Open consoleSetupEnv.sh in a text editor. 
+ 2. Locate the following line of code:
+    TIP_HOME=@TIP_HOME@ 
+ 3. Replace the @TIP_HOME@ string with the actual path to the Dashboard Application Services Hub. 
+ 4. When you have completed your edits, the updated line would look similar to the following:
+    TIP_HOME=/opt/IBM/JazzSM/ui 
+ 5. Save the updated consoleSetupEnv.sh.

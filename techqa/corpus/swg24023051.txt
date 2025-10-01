@@ -1,0 +1,72 @@
+Title: IBM Passport Advantage downloads for WebSphere MQ File Transfer Edition V7.0.1 - United States
+
+Text:
+V7.0.1 ; 7.0.1 ; 701 DOWNLOADABLE FILES
+
+ABSTRACT
+ This document describes how to download IBM WebSphere MQ File Transfer Edition Version 7.0.1 eAssembly images from the Passport Advantage website. 
+
+DOWNLOAD DESCRIPTION
+
+
+ 
+
+Terminology
+
+WebSphere MQ File Transfer Edition Version 7.0.1 is supplied in an eAssembly. Contents
+
+This document provides a list of the installation images available in the eAssembly, and describes how to download the eAssembly images from the Passport Advantage website. 
+
+Related product documentation 
+
+
+
+For information about the installation process, refer to the Planning for WebSphere MQ File Transfer Edition installation [http://www.ibm.com/support/knowledgecenter/SSEP7X_7.0.4/com.ibm.wmqfte.doc/installing_planning.htm] information supplied in the product documentation. [http://publib.boulder.ibm.com/infocenter/wmqfte/v7r0/topic/com.ibm.wmqfte.install.doc/installing_planning.htm] 
+
+Downloading the relevant eAssembly images from the Passport Advantage website
+
+ 1. Go to the Download package table below and follow the link to the Passport Advantage website. 
+ 2. Sign in to download all of the images that you need. 
+ 3. Unpack each of the parts onto your system. 
+    
+    
+    eAssembly images  
+    
+    Assembly Part Number Assembly Description Images Image Description CR8VGML WebSphere MQ File Transfer Edition V7.0.1 Multiplatform Multilingual eAssembly CZ28WML
+    WebSphere MQ File Transfer Edition V7.0.1 Quick Start Guide Multiplatform Multilingual CZ28XML
+    WebSphere MQ File Transfer Edition V7.0.1 Server for Multiplatform Multilingual CZ28YML
+    WebSphere MQ File Transfer Edition V7.0.1 Client for Multiplatform Multilingual CZ28ZML WebSphere MQ File Transfer Edition V7.0.1 Remote Tools and Documentation for Multiplatform Multilingual C19LIML WebSphere MQ V7.0 Quick Start Guide C19LJML WebSphere MQ V7.0 Documentation for Windows C19LKML WebSphere MQ V7.0 Documentation for Linux x86 C19LLML WebSphere MQ V7.0 for Windows Multilingual C19LMML WebSphere MQ V7.0 for AIX Multilingual C19LNML WebSphere MQ V7.0 for i5/OS Multilingual C19LPML WebSphere MQ V7.0 for Solaris SPARC Multilingual C19LQML WebSphere MQ V7.0 for Solaris x86-64 Multilingual C19LRML WebSphere MQ V7.0 for HP-UX on PA-RISC Multilingual C19LSML WebSphere MQ V7.0 for HP-UX on Itanium Multilingual C19LTML WebSphere MQ V7.0 for Linux (x86 platform) 32-bit Multilingual C19LUML WebSphere MQ V7.0 for Linux (x86-64 platform) Multilingual C19LVML WebSphere MQ V7.0 for Linux on POWER Multilingual C19LWML WebSphere MQ V7.0 for Linux on System z Multilingual C19LXML WebSphere MQ V7.0 client for Windows Multilingual C19LYML WebSphere MQ V7.0 client for AIX Multilingual C19LZML WebSphere MQ V7.0 client for i5/OS Multilingual C19M0ML WebSphere MQ V7.0 client for Solaris SPARC Multilingual C19M1ML WebSphere MQ V7.0 client for Solaris x86-64 Multilingual C19M2ML WebSphere MQ V7.0 client for HP-UX on PA-RISC Multilingual C19M3ML WebSphere MQ V7.0 client for HP-UX on Itanium Multilingual C19M4ML WebSphere MQ V7.0 client for Linux (x86 platform) 32-bit Multilingual C19M5ML WebSphere MQ V7.0 client for Linux (x86-64 platform) Multilingual C19M6ML WebSphere MQ V7.0 client for Linux on POWER Multilingual C19M7ML WebSphere MQ V7.0 client for Linux on System z Multilingual 
+
+PREREQUISITES
+Click the link below to view the detailed system requirements for WebSphere MQ File Transfer Edition:
+
+URL LANGUAGE SIZE(Bytes) WebSphere MQ File Transfer Edition System Requirements [http://www.ibm.com/software/integration/wmq/filetransfer/requirements/v701.html] US English 1 
+INSTALLATION INSTRUCTIONS
+The Quick Start Guide provides a brief introduction to WebSphere MQ File Transfer Edition. The US English language version is available below. Quick Start Guides for other languages are available from the download site as part no. CF21BML.
+
+
+
+
+CF21BML.pdf [/support/docview.wss?uid=swg24023051&aid=2] [/support/docview.wss?uid=swg24023051&aid=1]
+
+Full installation instructions are provided in the product documentation at:
+
+URL LANGUAGE SIZE(Bytes) WebSphere MQ File Transfer Edition documentation [http://www.ibm.com/support/knowledgecenter/SSEP7X_7.0.4/com.ibm.wmqfte.doc/installing_planning.htm] US English 1 
+DOWNLOAD PACKAGE
+
+
+
+
+Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options 
+What is Fix Central(FC)? [https://www.ibm.com/support/fixcentral/help?page=swfaqs] IBM Passport Advantage online 05/06/2009 US English 681846000 FC [http://www.ibm.com/software/howtobuy/passportadvantage/pao_customers.htm] [ ] 
+TECHNICAL SUPPORT
+ For Passport Advantage Online support, see:
+http://www.ibm.com/software/howtobuy/passportadvantage/paocustomer/docs/en_US/ecare.html [http://www.ibm.com/software/howtobuy/passportadvantage/paocustomer/docs/en_US/ecare.html]
+
+To access technical resources for this product, see the WebSphere MQ File Transfer Edition product home page at: http://www.ibm.com/software/integration/wmq/filetransfer/index.html [http://www.ibm.com/software/integration/wmq/filetransfer/index.html]
+
+To see latest information and technotes, go to the WebSphere MQ support website:
+http://www.ibm.com/software/integration/wmq/support/ [http://www.ibm.com/software/integration/wmq/support/] 
+
+PRODUCT ALIAS/SYNONYM
+ WMQ MQ FTE

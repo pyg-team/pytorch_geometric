@@ -1,0 +1,63 @@
+Title: IBM® Rational Developer for System z Version 8.0.1 release notes addendum - United States
+
+Text:
+ PREVENTIVE SERVICE PLANNING
+
+ABSTRACT
+ This document covers release-specific information on limitations, restrictions, and known problems that did not become available until after the product documentation and product release notes were finalized. 
+
+CONTENT
+This information is for developers using Rational® Developer for System z® Version 8.0.1 and Rational Developer for zEnterprise Version 8.0.1. 
+
+ 
+
+
+Version 8.0.1 limitations, restrictions, and known problems
+
+For information on limitations and known problems in the Rational Developer for System z and Rational Developer for zEnterprise, see the following summary:
+
+Limitation:Using the Rational Developer for System z Manage Licenses panel on the Rational Developer for System z Windows 7 client results in a JavaIOException error for the Simplified Chinese, Traditional Chinese, Japanese, Spanish, and French versions of Rational Developer for System z.
+
+Workaround:To update the license for Simplified Chinese, Traditional Chinese, Japanese, Spanish, and French versions of Rational Developer for System z, launch Installation Manager from the Installation Manager program shortcut and use Installation Manager to update your license.
+
+
+Limitation:When using the COBOL Extensions for UML, after running the transformation configuration for the Abstract UML to COBOL-oriented UML transformation, the “Main” freeform diagram is not created in the COBOL-oriented UML model.
+
+Workaround: To do further modeling at the COBOL-oriented level, you will need to create the diagram manually by following these steps:
+
+1. Right-click on the COBOL-oriented model name in the navigation tree and select Add Diagram -> Freeform Diagram.
+2. Rename the freeform diagram to Main.
+3. Populate the new freeform diagram by dragging the newly-created class objects from the COBOL-oriented model to the diagram canvas. Include all class objects stereotyped as DataObject and COBOL_Programs.
+4. Once you have completed these steps, you can proceed with your changes to the COBOL-oriented model.
+
+
+Limitation:If you have run the Rational Developer for System z beta in a shared installation for example, installed/run from a directory where the runtime user does not have write access), you may get the following error when attempting to start Rational Developer for System z 8.0.1 after installing the Rational Developer for System z v8.0.1:
+
+Eclipse Error Dialog: An error has occurred. See the log file C:\Users\userid\.eclipse\ibm.software.delivery.platform_8.0.0_1715897820\configuration\1287497510408.log
+
+The log file contains messages similar to the following:
+
+!SESSION Tue Oct 19 10:11:50 EDT 2010 ------------------------------------------ 
+!ENTRY org.eclipse.equinox.launcher 4 0 2010-10-19 10:11:50.562 
+!MESSAGE Exception launching the Eclipse Platform: 
+!STACK java.lang.ClassNotFoundException: 
+org.eclipse.core.runtime.adaptor.EclipseStarter at 
+java.net.URLClassLoader.findClass(Unknown Source) at 
+java.lang.ClassLoader.loadClass(Unknown Source) at 
+java.lang.ClassLoader.loadClass(Unknown Source) at 
+org.eclipse.equinox.launcher.Main.invokeFramework(Unknown Source) at 
+org.eclipse.equinox.launcher.Main.basicRun(Unknown Source) at 
+org.eclipse.equinox.launcher.Main.run(Unknown Source) at 
+org.eclipse.equinox.launcher.Main.main(Unknown Source)
+
+Workaround:Delete or rename the directory specified after the .eclipse directory. In the above example it is the ibm.software.delivery.platform_8.0.0_1715897820 directory. The first time you launch Rational Developer for System z v8.0.1 after deleting or renaming the directory, Rational Developer for System z will take longer to start as it creates a new local configuration.
+
+
+Limitation:When Rational Developer for zEnterprise and Rational Developer for Power Systems™ are installed in the same shell, two connection types are available (UNIX and AIX®).
+
+Workaround:If you are using Rational Developer for z Enterprise, use the AIX connection type.
+
+
+Limitation:Push-to-client update is only supported for remote system connections made using the Remote Systems view.
+
+Workaround:When connecting to a remote system that has been configured for push-to-client, connect by using the Remote Systems view instead of the SCLM perspective.

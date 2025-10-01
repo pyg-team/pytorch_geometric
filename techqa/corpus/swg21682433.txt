@@ -1,0 +1,24 @@
+Title: IBM Microsoft Access Database Engine 2007-2010: External table is not in the expected format. - United States
+
+Text:
+Office; OLEDB; i2 TECHNOTE (TROUBLESHOOTING)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ English 
+
+PROBLEM(ABSTRACT)
+ Microsoft Access Database Engine 2007-2010: External table is not in the expected format. 
+
+SYMPTOM
+When exporting data from IBM i2 iBase v8.x.x into a Microsoft Excel spreadsheet with Microsoft Office 2007 installed and then importing the Excel spreadsheet into i2 iBase v8.9.5 with Microsoft Office 2010 causes the following error to appear: 
+
+ 
+Microsoft Access Database Engine 2007-2010: External table is not in the expected format.
+
+
+CAUSE
+This issue is caused if there are different versions of Microsoft Office installed on the source and destination systems
+
+
+RESOLVING THE PROBLEM
+In order to get the import to work, the file that is attempting to be imported must be opened and resaved as a newer Excel file format - .XLSX This should then allow the user to select the file for import as normal.

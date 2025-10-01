@@ -1,0 +1,16 @@
+Title: IBM Monitoring tools may cause performance or out of memory issues for Content Engine. - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Customers have experienced Content Engine performance and out of memory issues due to monitoring tools running against the application server hosting Content Engine. Customers have encountered issues with Wily and HP monitoring tool. 
+
+CAUSE
+Monitoring tools.
+
+DIAGNOSING THE PROBLEM
+For out of memory issues, the issue can be isolated to the monitoring tool by gathering a heap dump and confirming the memory is consumed primarily by the monitoring tool objects. For performance issues, testing should be done with and without the monitoring tool enabled.
+
+RESOLVING THE PROBLEM
+Disable the monitoring tool.

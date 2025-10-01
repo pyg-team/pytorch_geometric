@@ -1,0 +1,43 @@
+Title: IBM CPLEX Performance Tuning for Linear Programs - United States
+
+Text:
+Linear Programming; Performance TECHNOTE (FAQ)
+
+QUESTION
+ How can I reduce CPLEX's run time on my linear programming models? 
+
+ANSWER
+CPLEX has internal logic that enables it to examine a linear program (LP) and typically make good decisions regarding the best way to solve it. As a result, CPLEX's default settings typically perform very well. However, if you do need to improve CPLEX's performance on a linear program, here are some suggestions. Refer to the CPLEX User Manual if you need additional information on any of the concepts mentioned, and refer to the CPLEX Parameters Reference Manual for more information on any of the individual parameters and their associated settings discussed below. 
+
+1. Try each linear programming algorithm. 
+2. Solving the dual problem may be faster. 
+3. Check if degeneracy hampers performance. 
+4. Check for numerical difficulties. 
+
+
+ 
+1. Try each linear programming algorithm. 
+While changing individual parameters rarely has a major impact on LP performance, CPLEX's algorithms can behave quite differently on a problem. CPLEX can solve a linear program using the primal simplex method, the dual simplex method, the barrier method, and, in some cases, the network simplex method. CPLEX also supports variants of these algorithms including sifting and concurrentopt. Sifting is a simple form of column generation well suited for models where the number of variables dramatically exceeds the number of constraints. Concurrentopt works with multiple processors, running a different algorithm on each processor and stopping as soon as one of them finds an optimal solution. Find out which algorithm works best on your particular problem if you need to improve performance. The barrier method tends to work well on problems where the product of the constraint matrix multiplied by its transpose is sparse. 
+
+ 
+2. Solving the dual problem may be faster. 
+You can obtain the solution to a linear program either by solving the primal linear program itself, or solving the dual of the linear program and using the dual's dual variables to obtain the solution to the linear program. If you set the presolve dual indicator on, CPLEX will do this for you by taking the dual problem, solving it, and returning solution values in the context of the primal problem. Since the computation time for the simplex method depends more on the number of constraints than the number of variables, this approach is most likely to help on problems where the primal has more constraints than variables. The dual will therefore have fewer constraints. CPLEX will probably solve it faster than the primal., especially if you try each linear programming algorithm as mentioned above. 
+
+ 
+3. Check if degeneracy hampers performance. 
+Degeneracy can dramatically slow down the simplex method. If a customer reports slow performance on a linear program, degeneracy is a likely cause. To verify this, check the CPLEX iteration log and look for long sequences of iterations where the objective value remains unchanged. Also, look for messages that indicate CPLEX has to perturb the problem. While perturbations help speed up performance on degenerate problems, using a different algorithm works better. If the problem is primal degenerate, the dual simplex method may still work well. If the problem is dual degenerate, the primal simplex may still work well. If the problem is both primal and dual degenerate, the barrier method may work well. 
+
+
+ 
+4. Check for numerical difficulties. 
+A computer is a finite precision machine. CPLEX's algorithms perform millions of floating point computations, and round off error can gradually accumulate. CPLEX uses numerically stable methods to perform its linear algebra, so round off error usually does not cause problems. However, if a problem is fundamentally ill conditioned, even the most stable methods may have trouble, either in terms of the accuracy of the final solution or simply the amount of time required to solve the problem. Make good use of CPLEX's solution quality routines to determine if this is a problem. From the Interactive CPLEX Optimizer, use the 'display solution quality' command. Also, 'display solution kappa' will give the condition number of the current basis. Condition numbers larger than 1e+10 suggest that the problem may be numerically unstable, and the potential for numerical difficulties increases as the condition number increases above this threshold. From the CPLEX Callable Library, use the CPXgetdblquality and CPXgetkappa routines to obtain the corresponding information. From Concert, use IloCplex::getQuality for solution quality. Concert doesn't currently support a function to obtain the basis condition number. 
+
+If you do find that numerical instability hampers performance, setting the Markowitz tolerance to a value of .9 (or in extreme cases to its maximum of .9999) may help. Also, try setting CPLEX's scaling parameter to 1. Users of CPLEX 10.0 and later can simply turn CPLEX's numerical caution emphasis parameter on to set these (and other) parameters all at once. Also, consider the feasibility and optimality tolerances. The default values are 1e-6. If your problem data is only accurate to a larger value (e.g. 1e-4), consider increasing the feasibility and optimality tolerance to the same level of accuracy as your data. 
+
+
+
+ 
+
+Cross reference information Segment Product Component Platform Version Edition Commerce IBM ILOG CPLEX Optimization Studio General AIX, HP-UX, Linux, Solaris, Windows, Mac OS 12.2 All Editions 
+HISTORICAL NUMBER
+ cplex/Document/117

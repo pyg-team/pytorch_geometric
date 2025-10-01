@@ -1,0 +1,32 @@
+Title: IBM Is there a way to limit the amount of (multi-part) form data that can be sent via HTTP? (SCI77223) - United States
+
+Text:
+STERLINGPRI TECHNOTE (FAQ)
+
+QUESTION
+ Is there a way to limit the amount of (multi-part) form data that can be sent via HTTP? (SCI77223) 
+
+ANSWER
+Limiting the size of data send to the HTTP Server Adapter would have to be done on the client side of the connection.
+
+ 
+
+HISTORICAL NUMBER
+ PRI26582 
+
+PRODUCT ALIAS/SYNONYM
+ 
+
+Fact
+
+
+Gentran Integration Suite 
+HTTP Server Adapter 
+SCI77223
+
+
+Goal
+
+
+FAQ:Is there a way to limit the amount of (multi-part) form data that can be 
+sent via HTTP?

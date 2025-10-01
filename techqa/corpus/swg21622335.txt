@@ -1,0 +1,27 @@
+Title: IBM Migrating Oracle Schema to AL32UTF8 Character Set - United States
+
+Text:
+TPAEORACLE; character set conversion; unicode TECHNOTE (FAQ)
+
+QUESTION
+ What do I need to when exporting from a single byte character set database and importing into a UTF-8 database? 
+
+ANSWER
+ 
+
+The Oracle export and import utilities (both data pump and old exp/imp) will handle the character translation from the single byte character set (usually WE8ISO8859P1 or P15) to AL32UTF8. The key to successful migration is to ensure that the tables are created with CHAR semantics in the target database. 
+
+ 1. Ensure that the target database has the parameter NLS_LENGTH_SEMANTICS set to CHAR
+
+
+2. Use Oracle Navigator or similar interactive tool to extract table create DDL into a file that you can use to pre create the tables in the target database. Only the CREATE TABLE statements are needed. The import process will create everything else. Only the Maximo tables are needed. The Oracle Text indexes are made up of tables named DR$xxxx, which should be excluded. 3. Edit the script and change all references to BYTE in varchar2 column definitions to CHAR. For example: 
+
+CREATE TABLE ABC (COL1 VARCHAR2(10 BYTE), COL2 NUMBER(10,2)... 
+
+Should be changed to: 
+
+CREATE TABLE ABC (COL1 VARCHAR2(10 CHAR), COL2 NUMBER(10,2)... 
+
+4. Run the script on the target database to create the tables before the import. 
+
+5. Now import the remaining objects and data.

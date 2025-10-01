@@ -1,0 +1,104 @@
+Title: IBM Database schema version (53) is not the expected one (54) - United States
+
+Text:
+reformatvob; error; schema; version; format; old; Database schema version (53) is not the expected one (54); 1122462 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This technote describes what happens when an IBM® Rational® ClearCase® VOB and its server (either Microsoft® Windows® or UNIX® or Linux®) are at different schema levels and how to resolve the problem. 
+
+CAUSE
+ 
+
+Some tell tale signs that your server and VOB are out of sync with regards to the schema level can be seen through a series of errors that occur during simple ClearCase commands, such as: 
+
+ 
+
+ * Attempts to cd into a mounted UNIX® or Linux® VOB from a Microsoft® Windows® client yields the following MVFS error:
+   
+   Windows - Fatal Application Exit
+   mvfs:ERROR: view=<view tag>=\<vob tag> - ClearCase vob error see view_log on host <view server> for more info
+   
+   
+ * The view server logs reveal the following errors:
+   
+   view_server.exe(1088): Warning: Unable to open vob 'host:/export/home/vobs/vob.vbs': unknown error in VOB
+   
+   view_server.exe(1088): Error: Unexpected error in VOB "host:/export/home/vobs/vob.vbs" op vob_ob_get_gen_num:error detected by ClearCase subsystem
+   See vobrpc_server_log on host host
+   
+   
+ * The VOB server logs reveal the following errors:
+   
+   Trouble opening VOB database: "/vobs/vob".
+   
+   Unable to access database (format too old): "/vobs/vob".
+   
+   Database schema version (53) is not the expected one (54)
+   
+   
+ * Attempts to determine which schema the VOB is set to using the cleartool describe command results in the following error:
+   
+   # cleartool describe -long vob:/vobs/vob
+   cleartool: Error: Unable to access database (format too old): "/vobs/vob".
+   cleartool: Error: Trouble opening VOB database: "/vobs/vob". 
+   
+   Note: The following examples were taken from an interop or heterogeneous environment (Windows and UNIX); however, the same problem and its resolution occur for homogeneous environments (Windows only or UNIX only) as well.
+
+
+Example Scenario:
+You have Schema 54 VOBs installed on the VOB server. Upon upgrading or patching, you accidentally install Schema 53. The above errors can occur.
+
+Note: In this case, you will need to uninstall ClearCase and re-install with the correct Schema version support.
+
+
+RESOLVING THE PROBLEM
+ 
+
+ 
+
+Based on the symptoms above, verify if in fact the VOBs are at an older schema level than that of the server they are installed on. 
+
+ 
+
+Check the version of the ClearCase install
+
+
+ 1. Verify the schema version on the server:
+    
+    # cleartool -ver
+    ClearCase version 4.1 (2000.02.10) (Fri Aug 04 11:59:22 EDT 2000)
+    @(#) MVFS version 4.1 (Wed Jul 26 20:42:31 EDT 2000)
+    cleartool V4.1 (Fri Jul 28 20:20:19 EDT 2000)
+    db_server V4.1 (Fri Jul 28 20:16:45 EDT 2000)
+    VOB database schema version: 54 
+    
+    
+ 2. Review the vob_db_schema_version file in the VOB storage database (db) directory to see what schema the VOB is at:
+    
+    UNIX example:
+    
+    # cd vob.vbs
+    
+    # ls
+    admin d replica_uuid vob_oid
+    c db s vob_server.conf
+    
+    # cd db
+    
+    # ls
+    logs vob_db.d01 vob_db.k01 vob_db.str_file
+    vista.taf vob_db.d02 vob_db.k02 vob_db_schema_version
+    vista.tcf vob_db.d03 vob_db.k03
+    vista.tjf vob_db.dbd vob_db.k04
+    
+    # cat vob_db_schema_version
+    53
+    
+    
+
+
+If you find there is a difference, than a reformatvob operation will need to be performed on the VOB. Reformatvob changes the format of a VOB database from a format used in a previous ClearCase release to the current format. 
+
+A new release may use a different database format to support new product features, to enhance storage efficiency, or to improve performance.
+
+Note: Reformatvob is a one-way command. The dump and load phases must be allowed to complete (although they can take place at different times). You cannot abort and undo a reformat operation after you have started it; you can only restart and complete the operation.

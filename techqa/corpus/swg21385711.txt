@@ -1,0 +1,55 @@
+Title: IBM CICS PA 3.1 compatibility with CICS TS and z/OS - United States
+
+Text:
+software and hardware requirements ; CICSPA ; CICS PA ; CICS Performance Analyzer release 3.1 ; support for CICS TS ; CICS Transaction Server ; z/OS compatibility supports ; 5655U8700 R310 5655-U87 5655U87 FMDI H24D310 kixdcfpa31 TECHNOTE (FAQ)
+
+QUESTION
+ What releases of z/OS and CICS Transaction Server for z/OS (CICS TS) are compatible with CICS Performance Analyzer for z/OS (CICS PA) V3.1? 
+
+ANSWER
+CICS PA V3.1 supports z/OS 1.6 or later, and the following releases of CICS: 
+
+ * CICS TS for z/OS V4.1 (5655-S97) 
+ * CICS TS for z/OS V3.2 and V3.1 (5655-M15) 
+ * CICS TS for z/OS V2.2 and V2.3 (5697-E93)
+
+
+CICS PA V3.1 drops support for SMF records created by CICS TS V1.3 and V2.1. 
+
+CICS PA V3.1 also supports CICS Transaction Gateway V7.1 statistics (SMF type 111 records). 
+
+Note: CICS PA V3.1 does not support CICS TS for z/OS V4.2 (5655-S97). CICS PA V3.2 is required to support CICS TS V4.2 with APAR PM30692 [http://www.ibm.com/support/docview.wss?uid=swg1PM30692]. 
+These and other operating environment specifications can be found under Technical information in the CICS PA V3.1 Announcement Letter 209-086 [http://www.ibm.com/common/ssi/cgi-bin/ssialias?infotype=an&subtype=ca&supplier=897&letternum=ENUS209-086]:
+
+Hardware requirements 
+
+CICS PA V3.1 runs on any S/390 or IBM eServer zSeries machine on which the applicable operating and software will run. 
+
+Software requirements 
+
+CICS PA V3.1 requires System Modification Program/Extended (SMP/E) of the supported z/OS or OS/390 system (5655-G44) for installation and maintenance. It operates with the following CICS configurations: 
+
+ * CICS TS for z/OS V4.1 (5655-S97), V3.1, and V3.2 (5655-M15) 
+ * CICS TS for z/OS V2.2 and V2.3 (5697-E93)
+
+
+Note : CICS TS for z/OS V4.1 requires APAR PK83926 [http://www.ibm.com/support/docview.wss?uid=swg1PK83926] to be applied. 
+
+The following products are also required:  * z/OS V1.6 or later (contains SMP/E) (5694-A01) 
+ * z/OS V1.6 DFSORT™ feature or later, or an equivalent sort product
+
+
+For the CICS PA OMEGAMON SMF 112 reports, IBM Tivoli OMEGAMON XE for CICS on z/OS V4.1 (5698-A58) is also required.
+
+You can find additional information regarding CICS PA at the following URL: http://www.ibm.com/software/htp/cics/panaly/ [http://www.ibm.com/software/htp/cics/panaly/] 
+RELATED INFORMATION
+#Announcement Letters for CICS Products [http://www.ibm.com/support/docview.wss?uid=swg21227090]
+
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Host Transaction Processing CICS Transaction Server Migration z/OS 4.1, 3.2, 3.1, 2.3, 2.2 
+PRODUCT ALIAS/SYNONYM
+ CICSPA CICS PA

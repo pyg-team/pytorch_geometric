@@ -1,0 +1,131 @@
+Title: IBM PI13627: HOW TO CONFIGURE SSL FOR TEXT ANALYTICS 16? - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  You first need to generate a keystore.
+   
+   To generate this keystore, run a gskit command with the key
+   database filename (.kdb file, certificate label and paswword
+   that was used to configure SSL for IBM SPSS Modeler, . For
+   example:
+   
+   gsk8apicmd.exe -cert -export -db <keystore_filename>.kdb -pw
+   <password> -label <certificate label>  -target
+   <keystore_filename>.p12 -target_type pkcs12 -target_pw
+   <target_password>
+   In this example,  <keystore_filename>.p12 is the name of the
+   PKCS-12 keystore to be used with IBM SPSS Modeler text Analytics
+   Server.
+   (see page 3 of the Modeler Admin Console Book here :
+   http://www-01.ibm.com/support/docview.wss?uid=swg27038316) [http://www-01.ibm.com/support/docview.wss?uid=swg27038316)]
+   Also: when you generate the certificate, you need to enter a
+   valid "fully qualified hostname" in the CN field"
+   You will need to connect to the TA server through the admin
+   console by using this fully qualified name otherwise connection
+   will fail.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * This affects all users of IBM SPSS Modeler.                  *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * HOW TO CONFIGURE SSL FOR TEXT ANALYTICS 16?                  *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Please upgrade to IBM SPSS Modeler 17.0.                     *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This issue is resolved in IBM SPSS Modeler 17.0.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI13627
+   
+   
+ * REPORTED COMPONENT NAME
+   SPSS MODELER
+   
+   
+ * REPORTED COMPONENT ID
+   5725A64MD
+   
+   
+ * REPORTED RELEASE
+   G00
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-03-12
+   
+   
+ * CLOSED DATE
+   2015-03-12
+   
+   
+ * LAST MODIFIED DATE
+   2015-03-12
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

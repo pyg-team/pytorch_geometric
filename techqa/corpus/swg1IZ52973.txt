@@ -1,0 +1,187 @@
+Title: IBM IZ52973: KUXAGENT ON SOLARIS UNEXPECTEDLY EXITS WHEN THE PROCESS ARGUMENT STRING IS VERY LONG. - United States
+
+Text:
+  A FIX IS AVAILABLE
+IBM Tivoli Monitoring: Unix(R) OS Agent 6.2.0.3-TIV-ITM_UNIX-IF0001 [http://www-01.ibm.com/support/docview.wss?uid=swg24025020]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Environment: ITM6.2 FP2 on Solaris 10
+   
+   Problem Description: Kuxagent on Solaris is not able to manage
+   metrics on processes with name+arguments that exceeds 2000, 4096
+   or 30000 chars depending on the agent level.
+   When metrics on these processes are collected the agent
+   unexpectedly exits.
+   
+   Detailed Recreation Procedure:
+   1- Create and run a process with name+arguments longer than
+   2000, 4096 or 30000 chars depending on the agent level.
+   
+   2- With this process running, refresh process attribute group to
+   force metric collection on it.
+   
+   3- The agent unexpectedly stops.
+   
+   
+   Related Files and Output:
+   UX logs show the following error:
+   
+   **** Fatal Error (11) Detected in kuxagent or a helper binary
+   ****
+   **** Stacktrace in standard logs. Enable KBB_SIG1=-dumpoff in
+   ini for core dumps ****
+   /opt/IBM/ITM/sol296/ux/bin/kuxagent:stacktrace_handler+0x58
+   /lib/sparcv9/libc.so.1:0xd3614
+   /lib/sparcv9/libc.so.1:0xc77cc
+   /opt/IBM/ITM/sol296/ux/bin/kuxagent:__1cKget_psinfo6FipnMps_raw
+   table_ipc_i_+0x994 [ Signal 11 (SEGV)]
+   /opt/IBM/ITM/sol296/ux/bin/kuxagent:__1cNget_processes6FpnMps_ra
+   w_table__i_+0x35c
+   /opt/IBM/ITM/sol296/ux/bin/kuxagent:__1cMget_ps_table6FpnIps_tab
+   le__i_+0x134
+   /opt/IBM/ITM/sol296/ux/bin/kuxagent:__1cSomunx_unixps_agentKTake
+   Sample6M_v_+0x288
+   /opt/IBM/ITM/tmaitm6/sol286/lib/libkra.so:__1cFctiraTDriveDataCo
+   llection6M_I_+0x3d0
+   /opt/IBM/ITM/tmaitm6/sol286/lib/libkra.so:__1cMTableManagerXchec
+   kForExpiredRequests6Ml_v_+0x538
+   /opt/IBM/ITM/tmaitm6/sol286/lib/libkra.so:__1cMTableManagerHtime
+   out6FpnPCTRA_Timerspec___v_+0x20
+   /opt/IBM/ITM/tmaitm6/sol286/lib/libkra.so:__1cPCTRA_timer_baseUT
+   imerCallbackHandler6M_v_+0x3b0
+   /opt/IBM/ITM/tmaitm6/sol286/lib/libkra.so:0x738b0
+   /opt/IBM/ITM/tmaitm6/sol286/lib/libkra.so:0x769e8
+   /lib/sparcv9/libc.so.1:0xd34e8
+   Fatal Error (11) Detected. Exiting
+   stat_daemon, Signal handler - Received Exit Notification.
+   Exiting
+   ****  stat_daemon terminated ****
+   kuxdstat, Signal handler - SIGTERM captured. Exiting.
+   **** UNIX Agent vmstat terminated ****
+   ****  UNIX Agent ifstat terminating ****
+   ***** nfs_stat terminating ****
+   **** UNIX Agent kuxdstat terminated ****
+   ****  kuxagent terminated ****
+   SIG SEGV always seem to fail on
+   __1cKget_psinfo6FipnMps_raw_table_ipc_i_+0x994
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Kuxagent on Solaris is not able to manage metrics on processes
+   with name+arguments that exceeds 2000, 4096 or 30000 chars
+   depending on the agent level.  When metrics on these processes
+   are collected the agent unexpectedly exits.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix for this APAR is included in the following maintenance
+   vehicle:
+   
+      | interim fix | 6.2.1.0-TIV-ITM_UNIX-IF0006
+   
+   Note: Search the IBM technical support web site for maintenance
+   package availability.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ52973
+   
+   
+ * REPORTED COMPONENT NAME
+   ITM AGENT UNIX
+   
+   
+ * REPORTED COMPONENT ID
+   5724C040U
+   
+   
+ * REPORTED RELEASE
+   620
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-06-10
+   
+   
+ * CLOSED DATE
+   2009-06-26
+   
+   
+ * LAST MODIFIED DATE
+   2009-06-26
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ITM AGENT UNIX
+   
+   
+ * FIXED COMPONENT ID
+   5724C040U
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R620 PSY
+   UP
+   
+   
+ * R621 PSY
+   UP

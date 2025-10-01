@@ -1,0 +1,18 @@
+Title: IBM Unable to Launch Cognos Administration - United States
+
+Text:
+TPAEREP; cognos; CAM_AAA TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Trying to Launch Cognos Administration from Report Administration, the error below occurs:
+
+"You can only access this namespace from a valid Maximo session" 
+
+DIAGNOSING THE PROBLEM
+The following error will appear in the JDBCSample.log created in c:\temp\log:
+
+[INFO] MXVisa SQL Exception: com.ibm.db2.jcc.am.SqlSyntaxErrorException: DB2 SQL Error: SQLCODE=-551, SQLSTATE=42501, SQLERRMC=MAXADMIN;SELECT;MAXIMO.PERSON, DRIVER=4.11.69
+[INFO] Error: com.cognos.CAM_AAA.authentication.UnrecoverableException
+
+RESOLVING THE PROBLEM
+Ensure the username within mxcognosdatasources.properties has sufficient database privileges.

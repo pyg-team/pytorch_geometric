@@ -1,0 +1,313 @@
+Title: IBM JR34084: SCADMGRCREATEALIAS SCRIPT FAILURE WHILE WBI AUGMENTING WAS DEPLOYMENT MANAGER - United States
+
+Text:
+  A FIX IS AVAILABLE
+WebSphere Enterprise Service Bus V6.2.0 Fix Pack 3 (6.2.0.3) [http://www-01.ibm.com/support/docview.wss?uid=swg24027123]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Environment :
+   
+   - WAS 6.1 Deployment Manager and  federated node with few server
+   - Installing WPS 6.1.2 and augment the deployment manage.
+   - Ref PMR 15008,004,000
+   ----------------
+   
+   Problem:
+   
+   - Customer was able successfully to install WPS6.1.2 binary
+   - Failed to augment WAS deployment manager
+   
+     Failed during scaDmgrCreateAlias
+   
+     apps/WebSphere/AppServer/profiles/Dmgr/bin/wsadmin.sh
+     -conntype NONE
+      -f
+   /apps/WebSphere/AppServer/profileTemplates/dmgr.wbicore/actions/
+     scripts/scaDmgrCreateAlias.
+   
+   WASX7017E: Exception received while running file
+   "/apps/WebSphere/AppServer/profileTemplates/dmgr.wbicore/actions
+   /scripts
+   /scaDmgrCreateAlias.jacl"; exception information:
+   com.ibm.ws.scripting.ScriptingException: WASX7025E: Error found
+   in
+   String
+   "{_Websphere_Config_Data_Display_Name=(cells/dawss01cell/nodes/i
+   nternaln
+   ode/servers/ECMA2|security.xml#Security_1243540770946)
+   
+   (cells/dawss01cell/nodes/internalnode/servers/GSD21|security.xml
+   #Securit
+   y_1243544256623)
+   
+   (cells/dawss01cell/nodes/internalnode/servers/JEMS|security.xml#
+   Security
+   _1243544285410)
+   
+   (cells/dawss01cell/nodes/internalnode/servers/MQWF-DAWSS01|secur
+   ity.xml#
+   Security_1243544316458)
+   
+   ,
+   _Websphere_Config_Data_Id=cells/dawss01cell|security.xml#Securit
+   y_1}";
+   cannot create ObjectName.
+   
+   Please see more failure information on Page15
+   
+   -------------------------------
+   
+   Analysis:
+   
+   - Experimenting with the scaDmgrCreateAlias to create
+     Authentication Alias
+   - The script fails to create object if the security is
+     configured at multiple SCOPE.
+   - This script only works if the security is configured at the
+     cell level
+   
+   -----------------
+   
+   How to recreate :
+   
+   - Use ND environment with Dmgr and a Node ( with minimum one
+   server)
+   - Enable the global security using the AdminConsole
+   - Enable the sever level security
+     server--> application server--><servername> --> server
+     security
+     click on "security setting for this server overrides the cell
+     setting"
+     Make sure "Enable application security" and  "use java 2
+     security to
+     restrict application access to local resources" is checked.
+   - Save and check <dmgr>Config to make sure you have security.xml
+     file at the cell level and another one created at the server
+     scope
+   - Sync the node
+   
+   - I have uploaded instrumented script saved under
+     Ecrup/"support" for testing purpose.  use the script to
+      create a new authentication alias.
+   
+   -  run the  CreateAliasTest1.jacl  script
+      wsadmin -conntype NONE  -trace -f CreateAliasTest1.jacl 1
+          <AnyName> <anyPassword> dummy_test_alias
+   
+     You will see the failure to create the object.
+   
+     --------Code snippet ----
+     ...
+     ...
+   
+    set jaasAttrs   [list $authenticationAlias $description $userid
+      $password]
+      $AdminConfig create JAASAuthData [$AdminConfig list Security]
+      $jaasAttrs
+   
+     ...
+     ...
+     --------------------------
+   
+   Probelm is that [$AdminConfig list Security] returns multiple
+   security file when security is configured at multiple scope.
+   
+   scaDmgrCreateAlias.jacl script has to be changed to list only
+   cell level Secirity.xml file so that the code will work when
+   security is configured at multiple level.
+   
+   Let me know if you have any questions
+   
+   -----------------------
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Work around:
+   - Susing AdminConsole disable application security from the
+     Application server level.
+   - Make sure security.xml file is deleted under
+    <DMgr>/config/<cells>/<nodes><appropriateServer>
+   - Complete the Sync operation
+   - Stop the deployment manager and all the other JVMs
+   - Start  PMT and augment the Deployment Manager
+   - After completing the augmentation , you can re-enable the
+     security for the Application server level as needed
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  WebSphere Process Server 6.1.x and 6.2.x    *
+   *                  users having Network Deployment topologies  *
+   *                  with security configuration at multiple     *
+   *                  scopes.                                     *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: If security is configured at multiple   *
+   *                      scopes then scaDmgrCreateAlias jacl     *
+   *                      script fails to create SCA_Auth_Alias.  *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   scaDmgrCreateAlias script fails to create
+   SCA_Auth_Alias if security is configured
+   at multiple scopes. User might see the
+   error error like "Cannot create
+   ObjectName".
+   
+   Failed during scaDmgrCreateAlias
+   
+   apps/WebSphere/AppServer/profiles/Dmgr/bin/w
+   sadmin.sh
+   -conntype NONE
+   -f
+   /apps/WebSphere/AppServer/profileTemplates/d
+   mgr.wbicore/actions/
+   scripts/scaDmgrCreateAlias.
+   
+   WASX7017E: Exception received while
+   running file
+   "/apps/WebSphere/AppServer/profileTemplates/
+   dmgr.wbicore/actions
+   /scripts
+   /scaDmgrCreateAlias.jacl"; exception
+   information:
+   com.ibm.ws.scripting.ScriptingException:
+   WASX7025E: Error found
+   in
+   String
+   "{_Websphere_Config_Data_Display_Name=(cells
+   /dawss01cell/nodes/i
+   nternaln
+   ode/servers/ECMA2|security.xml#Security_1243
+   540770946)
+   
+   (cells/dawss01cell/nodes/internalnode/server
+   s/GSD21|security.xml
+   #Securit
+   y_1243544256623)
+   
+   (cells/dawss01cell/nodes/internalnode/server
+   s/JEMS|security.xml#
+   Security
+   _1243544285410)
+   
+   (cells/dawss01cell/nodes/internalnode/server
+   s/MQWF-DAWSS01|secur
+   ity.xml#
+   Security_1243544316458)
+   
+   ,
+   _Websphere_Config_Data_Id=cells/dawss01cell|
+   security.xml#Securit
+   y_1}";
+   cannot create ObjectName.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Problem is fixed in the next fixpack of WebSphere Process
+   Server v6.1.2 and v6.2.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR34084
+   
+   
+ * REPORTED COMPONENT NAME
+   WEB PROC SERVER
+   
+   
+ * REPORTED COMPONENT ID
+   5724L0100
+   
+   
+ * REPORTED RELEASE
+   612
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-08-24
+   
+   
+ * CLOSED DATE
+   2009-10-23
+   
+   
+ * LAST MODIFIED DATE
+   2009-10-27
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEB PROC SERVER
+   
+   
+ * FIXED COMPONENT ID
+   5724L0100
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R612 PSY
+   UP
+   
+   
+ * R620 PSY
+   UP

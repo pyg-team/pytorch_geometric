@@ -1,0 +1,52 @@
+Title: IBM Parts required for WebSphere Portal Test Environment 6.1 install in Rational Application Developer 7.5.x - United States
+
+Text:
+portal install; portal 6.1 TECHNOTE (FAQ)
+
+QUESTION
+ What parts need to be downloaded to install IBM WebSphere Portal Test Environment 6.1 in Rational Application Developer for WebSphere Software 7.5.x? 
+
+ANSWER
+Note: If you will be installing Portal Server on an existing WebSphere Application Server installation you do not need to download and extract C1TQ5ML.zip (W-1) and C1TR1ML.zip (W-2). 
+
+ 1. Create the following directories under a common root folder:  * W-Setup 
+     * W-1 
+     * W-2 
+     * W-3 
+     * W-4 
+     * W-5 
+     * W-5a
+       
+       
+    
+    
+ 2. Download the following parts from IBM Passport Advantage and extract to the directories specified.
+    
+    C1TL1ML.zip --> W-Setup
+    C1TQ5ML.zip --> W-1
+    C1TR1ML.zip --> W-2
+    C1U2UML.zip --> W-3
+    C1U2XML.zip --> W-4
+    C1U30ML.zip --> W-5
+    C1U34ML,zip --> W-5a
+
+
+
+You have now successfully downloaded the required parts to begin your "WebSphere Portal V6.1 test environment" installation. 
+
+To begin the installation, run the RAD_SETUP/launchpad.exe and select the "WebSphere Portal V6.1 test environment" 
+
+[/support/docview.wss?uid=swg21330952&aid=1] [/support/docview.wss?uid=swg21330952&aid=1] 
+
+You will be prompted to insert the disk labeled "WebSphere Portal V6.1 Setup Disk1", at this point browse to the "W-Setup" directory created in Step 1 above.
+
+See Related URLs for additional information on Portal v6.1 installation. 
+
+ * You will have the option to install either the Full version or the Administration version. Administration is better suited for a test environment, see Related URL section for differences between Administration and Full installation. 
+ * The Rational Application Developer v7.5 Programming Guide has an entire section dedicated to "Installing the WebSphere Portal v6.1 test environment". 
+ * A link to the Passport Advantage website can be found through the Related URL section below.
+
+RELATED INFORMATION
+#Installing the WebSphere Portal Version 6.1 Test Enviro [http://publib.boulder.ibm.com/infocenter/radhelp/v7r5/index.jsp?topic=/com.ibm.rad.install.doc/topics/t_inportal61.html]
+RADv7.5 Programming Guide Redbook [http://www.redbooks.ibm.com/redbooks.nsf/RedpieceAbstracts/sg247672.html?Open]
+Passport Advantage [www.ibm.com/software/passportadvantage]

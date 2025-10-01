@@ -1,0 +1,154 @@
+Title: IBM PK87589: Document the need to use User Libraries or Java EE Module Depend encies when generating JAX-WS Web Services - United States
+
+Text:
+  A FIX IS AVAILABLE
+Rational Application Developer for WebSphere Software, Version 7.5.4 [http://www-01.ibm.com/support/docview.wss?uid=swg24024367]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The documentation should include the following information:
+   
+   When generating a JAX-WS Web Service from a class file that depe
+   nds on other classes contained in separate jar files, the projec
+   t needs to reference such external jar files either from the Jav
+   a EE Module Dependencies or from User Libraries.
+   
+   Using Java EE Module dependnecies is possible when the  jars are
+    contained in the EAR project.
+   
+   In the case where the jars are part of a Shared Library configur
+   ed on WebSphere Application Server,
+   then a User Library must be used to configure the project for de
+   velopment before generating the WebService.
+   
+   To add a user library to the project:
+   1. Go to the project properties ? Java Build Path ? Libraries
+   2. Click add Library ? User Library ? User Libraries
+   3. Create a user library, and add your utility jar to it.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  The customer may not know they need to use User Libraries or
+   Java EE Module Dependencies when generating JAX-WS Web
+   Services.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The JAX-WS bottom-up documentation has had the following
+   restriction added to it:
+   
+   When generating a JAX-WS Web service from a class file that
+   depends on other classes contained in separate jar files,
+   the project needs to reference such external jar files
+   either from the Java EE Module Dependencies or from User
+   Libraries. Using Java EE Module dependencies is possible
+   when the jars are contained in the EAR project.
+   
+   In the case where the jars are part of a Shared Library
+   configured on WebSphere Application Server, then a User
+   Library must be used to configure the project for
+   development before generating the Web service. To add a user
+   library to the project:
+   Right-click the project and click Properties ? Java Build
+   Path ? Libraries
+   Click Add Library ? User Library ? User Libraries
+   Create a user library, and add your utility jar to it.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK87589
+   
+   
+ * REPORTED COMPONENT NAME
+   RATL APP DEV WI
+   
+   
+ * REPORTED COMPONENT ID
+   5724J1901
+   
+   
+ * REPORTED RELEASE
+   752
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-05-29
+   
+   
+ * CLOSED DATE
+   2009-09-25
+   
+   
+ * LAST MODIFIED DATE
+   2009-09-25
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   RATL APP DEV WI
+   
+   
+ * FIXED COMPONENT ID
+   5724J1901
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R752 PSN
+   UP

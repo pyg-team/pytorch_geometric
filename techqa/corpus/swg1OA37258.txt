@@ -1,0 +1,168 @@
+Title: IBM OA37258: KMQMH111E ERROR MESSAGE - United States
+
+Text:
+z/os SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  KMQMH111E
+   
+   MQIMONITOR(addrspc) MQI REQUEST ABEND. CODE=xxxxx
+   
+   Explanation:
+   An abend occurred during WebSphere MQ processing of  MQI
+   request, with
+   abend code identified by xxxxx.  When the Websphere MQ
+   monitoring agent
+   address space is doing MQI monitoring, it will receive control
+   before
+   and after MQI calls so that it can maintain statistics.  This
+   message
+   will be written out if an abend occurs after we pass control to
+   WebSphere MQ to perform MQI request.
+   
+   System action:
+   The WebSphere MQ monitoring agent recovery routine percolates
+   error.
+   MQI monitoring continues.
+   
+   User response:
+   This message indicates that an error occurred during the
+   processing of a
+   WebSphere MQ call.  Please review logs for address space where
+   message
+   was issued and abend occurred to determine what the problem is.
+   
+   received note from WMQ L2 tech...
+   
+   One last follow-up regarding 02372,035,000 your spin-off PMR
+   66053,999,000 and doc APAR OA37258.... the customer reiterated:
+   "All I ask you make sure that the message KMQMH111E is the doc
+   and points
+   you to the MVS system Codes and the WebSphere MQ information
+   Center.
+   Would be nice to point the customer to the correct documentation
+   when he
+   looks up the message."
+   
+   We had chatted about that a while back, but I wanted to be sure
+   the System Codes references makes it in the update since OA37258
+   doesn't specifically say it.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  n/a
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  KMQMH111E
+   MQIMONITOR(addrspc) MQI REQUEST ABEND. CODE=xxxxx
+   
+   Explanation:
+   An abend occurred during WebSphere MQ processing of  MQI
+   request, with abend code identified by xxxxx.  When the
+   Websphere MQ monitoring agent address space is doing MQI
+   monitoring, it will receive control before and after MQI calls
+   so that it can maintain statistics.  This message will be
+   written out if an abend occurs after we pass control to
+   WebSphere MQ to perform MQI request.
+   System action:
+   The WebSphere MQ monitoring agent recovery routine percolates
+   error.  MQI monitoring continues.
+   User response:
+   This message indicates that an error occurred during the
+   processing of a WebSphere MQ call.  Please review logs for
+   address space where message was issued and abend occurred to
+   determine what the problem is.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Information center will get corrected.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   OA37258
+   
+   
+ * REPORTED COMPONENT NAME
+   OMEG XE WEBSPHM
+   
+   
+ * REPORTED COMPONENT ID
+   5608A1100
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-08-08
+   
+   
+ * CLOSED DATE
+   2011-10-11
+   
+   
+ * LAST MODIFIED DATE
+   2011-10-11
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

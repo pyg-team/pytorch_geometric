@@ -1,0 +1,81 @@
+Title: IBM 【セキュリティ情報】WebSphere Message Broker Toolkit と IBM Integration ToolkitにTLS準拠暗号の脆弱性 (CVE-2015-0118) - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ WebSphere Message Broker Toolkit と IBM Integration Toolkit が強力なTLS暗号スイートをサポートしていないため、リモートのWebSphere Message Broker もしくは IBM Integration Bus でTLSを有効にしたノードに接続できません。 
+
+VULNERABILITY DETAILS
+脆弱性の詳細
+CVEID: CVE-2015-0118 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-0118]
+DESCRIPTION: IBM Integration Toolkit cannot connect to a remote IBM Integration Bus node with a TLS-compliant cipher because the IBM MQ client JARs are back level. The connection fails because the IBM MQ client JAR files included with the toolkit do not support the stronger TLS cipher suites.
+CVSS Base Score: 1.5
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/100349 [https://exchange.xforce.ibmcloud.com/vulnerabilities/100349] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:L/AC:M/Au:S/C:P/I:N/A:N) 
+
+AFFECTED PRODUCTS AND VERSIONS
+影響のある製品・バージョン： 
+
+次の製品に影響があります。 
+
+・WebSphere Message Broker Toolkit V7 and V8 
+
+・IBM Integration Toolkit V9
+
+REMEDIATION/FIXES
+修正策：
+
+
+
+製品 バージョン APAR 修正ファイル IBM Integration Toolkit V9.0 IT05725 9003 Interim Fix 001 WebSphere Message Broker 
+Toolkit V8.0 IT05725 8005 Interim Fix 001 WebSphere Message Broker
+Toolkit V7.0 IT05725 7007 Interim Fix 002 
+ツールキットは、 IBM Installation Manager を使用して、Interim fix を導入します。IBM Installation Managerの 
+設定 > リポジトリー の インストール中および更新｢中にサービスリポジトリーの検索 オプションにチェックし、、更新 をクリックし、 interim fix を導入してください。 WORKAROUNDS AND MITIGATIONS
+回避策/軽減策： 
+
+なし
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+IMPORTANT NOTE
+ IBM strongly suggests that all System z customers be subscribed to the System z Security Portal to receive the latest critical System z security and integrity service. If you are not subscribed, see the instructions on the System z Security web site [http://www.ibm.com/systems/z/solutions/security_subintegrity.html]. Security and integrity APARs and associated fixes will be posted to this portal. IBM suggests reviewing the CVSS scores and applying all security or integrity fixes as soon as possible to minimize any potential risk. 
+
+REFERENCES
+Complete CVSS v2 Guide [http://www.first.org/cvss/v2/guide] 
+On-line Calculator v2 [http://nvd.nist.gov/CVSS-v2-Calculator] 
+. 
+参照情報： 
+[IBMサイト] 
+この文書は、米国 IBM 社の資料を翻訳した参考文書です。翻訳元の文書は、以下のリンクよりご参照ください。 
+Security Bulletin: WebSphere Message Broker Toolkit and IBM Integration Toolkit cannot connect to a remote WebSphere Message Broker broker or IBM Integration Bus node with a TLS-compliant cipher (CVE-2015-0118) [http://www.ibm.com/support/docview.wss?uid=swg21957998] 
+
+公開済みのフィックスパックについては、以下のサイトよりご利用いただけます。 
+Recommended fixes for IBM Integration Bus and WebSphere Message Broker [http://www-01.ibm.com/support/docview.wss?uid=swg27006041] 
+
+フィックス・パックの公開予定については、以下のサイトよりご確認いただけます。 
+IBM Integration Bus and WebSphere Message Broker planned maintenance release dates [http://www-01.ibm.com/support/docview.wss?uid=swg27006308] 
+
+[CVSS情報] 
+独立行政法人 情報処理推進機構: 共通脆弱性評価システムCVSS概説 [http://www.ipa.go.jp/security/vuln/CVSS.html] 
+JVN iPedia: CVSS計算ソフトウェア日本語版 [http://jvndb.jvn.jp/cvss/ja.html] 
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] 
+. 
+関連情報： 
+. 
+【お問合せ先】 
+技術的な内容に関して、サービス契約のあるお客様はIBMサービス・ラインにお問い合わせください。 
+IBM サービス・ライン [http://www.ibm.com/jp/news/20070420001.html] 
+. 
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY. 
+
+関連情報
+ An US English translation is available [http://www.ibm.com/support/docview.wss?uid=swg21957998 ]

@@ -1,0 +1,182 @@
+Title: IBM PM10006: FEATURE PACK 6.1.5 INSTALL FAILS - United States
+
+Text:
+  FIXES ARE AVAILABLE
+6.1.0.4 Download: WebSphere Portal and WCM V6.1.0 fix pack 4 & 6.1.5 fix pack 1 [http://www-01.ibm.com/support/docview.wss?uid=swg24026394]
+Recommended Updates for WebSphere Portal and Web Content Management V6.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24023835]
+6.1.0.5 Download: WebSphere Portal and WCM V6.1.0 fix pack 5 [http://www-01.ibm.com/support/docview.wss?uid=swg24027475]
+6.1.0.6 Download: WebSphere Portal and WCM V6.1.0 fix pack 6 [http://www-01.ibm.com/support/docview.wss?uid=swg24030970]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The installation
+   (<wp_profile_root>/PortalServer/bin/install615.sh) fails after
+   some time with the error:
+   ConfigTrace.log:
+   ...BUILD FAILED/opt/WebSphere/PortalServer/installer/featurepack
+   
+   615.config/config/includes/featurepack615.config_cfg.xml:15:
+   The following error occurred while executing this
+   line:/opt/WebSphere/PortalServer/base/wp.mmi
+   .deploy/config/includes/wp.mmi.deploy_cfg.xml:1061:The
+   following error occurred while executing this
+   line:/opt/mw/wps61-itssandbox/PortalServer/jcr/prereq
+   .jcr/config/includes/jcr_cfg.xml:6273: "Http Error, Response
+   code 500. Exception :com.ibm.ICM.command.CommandException:
+   Import of one or more files failed.Please check the server log
+   for details.
+   
+   This APAR adds a check to modify the .node files on the fly
+   with the correct DN.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  NA
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  The installation
+   (<wp_profile_root>/PortalServer/bin/install615.sh) fails after
+   some time with the error:
+   
+          ConfigTrace.log: ...BUILD
+   FAILED/opt/WebSphere/PortalServer/installer/featurepack615.confi
+   g/config/includes/featurepack615.config_cfg.xml:15: The
+   following error occurred while executing this
+   line:/opt/WebSphere/PortalServer/base/wp.mmi.deploy/config/inclu
+   des/wp.mmi.deploy_cfg.xml:1061:The following error occurred
+   while executing this
+   line:/opt/mw/wps61-itssandbox/PortalServer/jcr/prereq.jcr/config
+   /includes/jcr_cfg.xml:6273: "Http Error, Response code 500.
+   Exception :com.ibm.ICM.command.CommandException: Import of one
+   or more files failed. Please check the server log for details.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Added check to modify the .node files on the fly with the
+   right DN.
+   
+   Failing Module(s):
+      Configuration
+   
+   Affected Users:
+      All Users
+   
+   Version Information:
+      Portal Version(s): 6.1.0.3
+       Pre-Requisite(s): ---
+        Co-Requisite(s): ---
+   
+   Manuel Steps:
+      None
+   
+   Platform Specific:
+      This fix applies to all platforms.
+   
+   PM10006 is part of Cumulative Fix 03 for Portal 6.1.0.3.
+   
+   The Cumulative Fix is available on Fix Central:
+   
+   http://www.ibm.com/eserver/support/fixes/fixcentral/swgquickorde
+   r?apar=PM09968&productid=WebSphere%20Portal&brandid=5 [http://www.ibm.com/eserver/support/fixes/fixcentral/swgquickorder?apar=PM09968&productid=WebSphere%20Portal&brandid=5]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM10006
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSPHERE PORTA
+   
+   
+ * REPORTED COMPONENT ID
+   5724E7699
+   
+   
+ * REPORTED RELEASE
+   610
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-03-16
+   
+   
+ * CLOSED DATE
+   2010-04-08
+   
+   
+ * LAST MODIFIED DATE
+   2010-04-08
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBSPHERE PORTA
+   
+   
+ * FIXED COMPONENT ID
+   5724E7699
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R61C PSY
+   UP

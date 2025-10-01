@@ -1,0 +1,170 @@
+Title: IBM PM12391: DOCUMENTATION FOR DATATRIM.SH PROVIDES WRONG SYNTAX FOR RUNNING THE SCRIPT - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  ITCAM for WAS 6.1
+   
+   Problem Description:
+   
+   There are 2 sections in Appendix F which show two different
+   syntax for running datatrim.sh
+   
+   In the 'Executing the Data Trimmer' section it specifies:
+   
+   Start the Data Trimmer process on the Managing Server. (If you
+   have your Managing Server and Database Server on two different
+   servers, start the Data Trimmer on the Managing Server server.)
+   The syntax is as follows:
+   
+   $AM_HOME/bin/datatrim.sh
+   
+   ===
+   
+   In the same Appendix F, there is a section called "Data Trimming
+   Utilities" > "Activation"...the syntax is shown as the
+   following:
+   
+   MS_home/bin/datatrim.sh octigate amuser amuser_password
+   
+   ===============
+   
+   The first option is the correct one. The user does not have to
+   specify the clear text userid and password when running the
+   script.
+   
+   The information in the Appendix needs to be consistent.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  See problem description
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:
+   *
+   * ITCAM 6.1 Managing Server users who want to set up the
+   * datatrim process to prune the Octigate database regularly by
+   * followig the instructions in the ITCAM Info Center.
+   *
+   ****************************************************************
+   *
+   * PROBLEM DESCRIPTION:
+   *
+   * The ITCAM 6.1 Info Center provides two command line syntaxes
+   * in two different pages.
+   *
+   * 1. Appendix D: Data Trimmer
+   *
+   *    $AM_HOME/bin/datatrim.sh <dbname> <dbuser> <dbpassword>
+   *
+   * 2. Data Trimmer
+   *
+   *   $AM_HOME/bin/datatrim.sh
+   *
+   * There is an obvious confusion as to which command to use.
+   *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The correct command line syntax to run the datatrim process is:
+   
+     $AM_HOME/bin/datatrim.sh
+   
+   The documentation change for this APAR is viewable in DCF record
+   1432843, which can be found by going to
+   http://www.ibm.com/software/sysmgmt/products/support/ [http://www.ibm.com/software/sysmgmt/products/support/]
+   and entering the DCF record number in the search box and
+   clicking 'Search'.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM12391
+   
+   
+ * REPORTED COMPONENT NAME
+   ITCAM WAS MGING
+   
+   
+ * REPORTED COMPONENT ID
+   5724L62MS
+   
+   
+ * REPORTED RELEASE
+   610
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-04-15
+   
+   
+ * CLOSED DATE
+   2010-06-03
+   
+   
+ * LAST MODIFIED DATE
+   2010-06-03
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

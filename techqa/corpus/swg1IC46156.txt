@@ -1,0 +1,154 @@
+Title: IBM IC46156: HOD: HOD MACRO WITH WEB EXPRESS LOGON (WEL) SHOULD NOT CACHE USERID AND PASSWORD. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Host On-Demand V9
+   ___________________
+   Host On-Demand macros used with Web Express Logon cache the
+   stored userid and password.  Instead the macro should pull
+   from the html the userid and password from the parameter each
+   time it is loaded.
+   In this scenario, the HOD portlet using the Web Express Logon
+   for single signon causes the wrong userid to be loaded and
+   authenticated unless the browser is closed and restarted.
+   If the java process is killed and restarted then the name
+   credentials are reloaded and all works appropriately.
+   ____________________________
+   Keywords:  Web Express Logon, WEL, macro, authenticate, portlet
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Stop and restart all java processes.  Reload the browser page.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: HOD Portal Credential Vault support users    *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: The Host On-Demand macro did not        *
+   *                      pick up the changes in the Portal       *
+   *                      credential                              *
+   *                      vault, which were made after the HOD    *
+   *                      macro was initiated.                    *
+   *                      The Web Express Logon                   *
+   *                      macro is affected.                      *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   The Host On-Demand macro code's internal cache never updated the
+   credentials when the macro ran.  This update needed to be
+   dynamic, not a caching model.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Host On-Demand code was modified for the Portal Web Express
+   Logon.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC46156
+   
+   
+ * REPORTED COMPONENT NAME
+   HOD
+   
+   
+ * REPORTED COMPONENT ID
+   5733A5901
+   
+   
+ * REPORTED RELEASE
+   900
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2005-05-13
+   
+   
+ * CLOSED DATE
+   2005-05-23
+   
+   
+ * LAST MODIFIED DATE
+   2005-12-21
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  HOD
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   HOD
+   
+   
+ * FIXED COMPONENT ID
+   5733A5901
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R900 PSY IP22891
+   UP05/12/21 I 1000

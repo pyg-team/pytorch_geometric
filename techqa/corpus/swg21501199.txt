@@ -1,0 +1,58 @@
+Title: IBM AWSJDB802E -  Oracle 11g TWS - United States
+
+Text:
+connect; unable; can't; cannot; exception TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Exception error is received connecting Tivoli Workload Scheduler (TWS) embedded WebSphere Application Server (eWAS) to Oracle 11g database. 
+
+SYMPTOM
+After upgrading Oracle to 11g, eWAS will not connect to the data base. In the SystemOut.log file you see: 
+
+javax.naming.Reference object looked up from the context 
+"DefaultNode/nodes/DefaultNode/servers/server1/jdbc" with the name 
+"TWS_DB_NAME" was sent to the JNDI Naming Manager and an exception resulted. 
+Reference data follows: 
+Reference Factory Class Name: 
+com.ibm.ejs.j2c.ConnectionFactoryBuilderImpl 
+Reference Factory Class Location URLs: <null> 
+Reference Class Name: javax.resource.cci.ConnectionFactory 
+Type: connectorName 
+Content: Oracle JDBC Driver Type 4 DataSource 
+Type: classpath 
+Content: , 
+
+
+RESOLVING THE PROBLEM
+Search for "ojdbc5.zip" in the resources.xml file located in 
+
+<TWAHome>\eWAS\profiles\twaprofile\config\cells\DefaultNode\nodes\DefaultNode\servers\server1 
+
+ 
+
+For TWS v8.6 
+
+<TWAHome>\eWAS\profiles\TIPProfile\config\cells\DefaultNode\nodes\DefaultNode\servers\server1 
+
+Change: 
+
+
+<classpath>${ORACLE_JDBC_DRIVER_PATH}/ojdbc5.zip</classpath>
+
+to: 
+
+
+<classpath>${ORACLE_JDBC_DRIVER_PATH}/ojdbc5.jar</classpath>
+
+Also, see the link in the "Related information" section below for other information about issues after upgrading Oracle 10g.
+
+RELATED INFORMATION
+ Oracle Type 4 Connection [http://www-01.ibm.com/support/docview.wss?uid=swg21450492]
+
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ Maestro
+TWS
+TWA

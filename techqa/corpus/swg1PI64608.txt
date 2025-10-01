@@ -1,0 +1,158 @@
+Title: IBM PI64608: DOORS/CM: CHANGES TO OBJECT TEXT MAY NOT INITIALLY APPEAR IF CHANGES ARE ALSO MADE TO UNMANAGED ATTRIBUTE - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When submitting changes to an attribute managed by DOORS/CM as
+   well as an unmanaged attribute, after the save the change to the
+   managed attribute does not display. You have to re-open the
+   module and select the RCR again to see the change.
+   
+   Steps to reproduce:
+   1. Setup DOORS/CM via OSLC (It doesn't matter if you use RTC or
+   Change)
+   2. Create a module that contains an object with the Object
+   Heading value filled in u
+   3. Put this module under change control and have the Object Text
+   attribute managed and the Object Short Text unmanaged
+   4. Submit an RCR against this module and select it as the
+   default to open the module in exclusive edit mode
+   5. Modify the existing object from step 2 by adding text to both
+   the Object Text and Object Short Text attributes
+   6. Save the module
+   
+   Results:
+   You should then see the integration go through the recording
+   progress and when it is complete you will see a Recording
+   Report. Now if you look at the object you modified, you don't
+   see the change made to the Object Text. You should see these
+   changes. Once you close and re-open the module and re-select the
+   same RCR you will see the change that was made to the Object
+   Text appear.
+   
+   This seems to be introduced after 9.6.0.1 since I could not
+   reproduce it in that version. I saw the issue with both a 9.6.1
+   client and 9.6.1.6 client.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * All users/environments affected.                             *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * When submitting changes to an attribute managed by DOORS/CM  *
+   * as well as an unmanaged attribute, after the save the change *
+   * to the managed attribute does not display. You have to       *
+   * re-open the module and select the RCR again to see the       *
+   * change.                                                      *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   Client side fix.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This has been resolved in the DOORS 9.6.1.10 release.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI64608
+   
+   
+ * REPORTED COMPONENT NAME
+   TLOGIC DOORS
+   
+   
+ * REPORTED COMPONENT ID
+   5724V61DR
+   
+   
+ * REPORTED RELEASE
+   961
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-06-21
+   
+   
+ * CLOSED DATE
+   2018-01-05
+   
+   
+ * LAST MODIFIED DATE
+   2018-01-05
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TLOGIC DOORS
+   
+   
+ * FIXED COMPONENT ID
+   5724V61DR
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R961 PSY
+   UP

@@ -1,0 +1,34 @@
+Title: IBM Column width does not save in DASH/WebGUI 8.1 Table Widget - United States
+
+Text:
+DASHL2; DASHL2CONF; column width; WebGUI; table widget TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ In the Dashboard Application Service Hub (DASH) 3.1.0.3, the WebGUI 8.1 Table Widget does not save the column width after updating on wire event . 
+
+SYMPTOM
+When changing the width of one column in the Table widget e.g. Alert Group, close the page and open it again. The column Alert Group keeps the size. 
+
+After adding a wire to the page from List > NodeClickedOn to Table widget and clicking on one line in List widget, you will see that columns in Table widget are reorganizing. The column Alert Group has switched to its old width.
+
+
+ENVIRONMENT
+WAS v8.5.0.1 
+DASH v3.1.0.3 
+WebGUI 8.1.0.0 
+
+
+DIAGNOSING THE PROBLEM
+See this document for recreation steps:WebGUI_8.1_List_Widget_does_not_save_column_width_after_receiving_wire_event.docx [/support/docview.wss?uid=swg21959612&aid=2]WebGUI_8.1_List_Widget_does_not_save_column_width_after_receiving_wire_event.docx [/support/docview.wss?uid=swg21959612&aid=1]
+
+
+
+RESOLVING THE PROBLEM
+Upgrade to JazzSM 1.1.2 Refresh Pack from Fix Central:
+
+Download link 
+http://www.ibm.com/support/fixcentral/swg/quickorder?parent=ibm%2FTivoli&product=ibm/Tivoli/Jazz+for+Service+Management&release=All&platform=All&function=fixId&fixids=1.1.2.0-TIV-JazzSM-multi&includeSupersedes=0&source=fc [http://www.ibm.com/support/fixcentral/swg/quickorder?parent=ibm%2FTivoli&product=ibm/Tivoli/Jazz+for+Service+Management&release=All&platform=All&function=fixId&fixids=1.1.2.0-TIV-JazzSM-multi&includeSupersedes=0&source=fc] 
+
+
+Readme instructions: 
+http://www-01.ibm.com/support/docview.wss?uid=swg24039724 [http://www-01.ibm.com/support/docview.wss?uid=swg24039724]

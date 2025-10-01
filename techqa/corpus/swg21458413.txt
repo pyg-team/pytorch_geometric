@@ -1,0 +1,21 @@
+Title: IBM AIX 6.1 TL03 may cause the Process Engine vworbbroker process to abort abnormally. - United States
+
+Text:
+ FLASH (ALERT)
+
+ABSTRACT
+ AIX 6.1 TL03 (6100-03) may cause the Process Engine vworbbroker process to abort abnormally. 
+
+CONTENT
+The Process Engine (PE) vworbbroker process routes PE ORB client RPCs to the respective PE server processes to be executed. If the Process Engine is installed on AIX and the TL level TL03, the vworbbroker may abnormally terminate. This may result in ORB client abort or ORB timeout errors.
+Examples of the possible ORB errors on the client side are as follows:
+
+UNKNOWN, TRANSIENT, minorCode=0xe07 
+org.omg.CORBA.COMM_FAILURE: purge_calls:1988 Reason: CONN_ABORT (1), State: ABORT (5) vmcid: IBM minor code: 306 completed: Maybe.
+
+UNKNOWN, TRANSIENT, minorCode=0xe07 
+org.omg.CORBA.NO_RESPONSE: Request 436996 timed out vmcid: IBM minor code: B01 completed: Maybe.
+
+This is only an issue with AIX 6.1 TL03 (6100-03). This is not an issue with TL levels lower or greater than TL03, e.g. AIX 6.1 base or AIX 6.1 TL04-SP4.
+
+If you are currently running on AIX 6.1 TL03, it is strongly recommended that you upgrade to a newerTL level.

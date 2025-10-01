@@ -1,0 +1,39 @@
+Title: IBM Troubleshooting org.omg.CORBA.NO_MEMORY error or Memory Leaks - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ If you receive a CORBA.NO_MEMORY error, there may not be a memory leak at all, just Stateless Session beans in the pool that are holding onto "really big objects."
+
+If you suspect an enterprise bean is causing the CORBA.NO_MEMORY problem, perform an enterprise beans container trace to see how the EJB is behaving. 
+
+RESOLVING THE PROBLEM
+ 
+
+ 1. IBM WebSphere Application Server pools Stateless Session Beans (SLSB). The Application Server does not garbage collect them (even if memory becomes low) until a certain limit is hit. 
+    
+    The Application Server keeps a pool for each type of bean and the bounds on the pool are within the range <min> and <max> (below it will be noted how a user can set these values). Initially the number of instances in the pool starts at zero and as beans are created the number of instances in the pool grows to the minimum value (for example, WebSphere Application Server does not "pre-fill" the pool or pre-create <min> instances). 
+    
+    Once reaching the <min>, the pool size will never go below <min> but is range bound between <min> and <max>. The Application Server only removes beans when the pool has been inactive, at which time the Application Server slowly reduces the pool to the <min> size over time, unless it becomes active again. 
+    
+    When the pool reaches its maximum, the Application Server does not remove beans, but rather stops putting more beans into the pool. Once the pool is full (<max>), any further beans that are passivated are just discarded.
+    
+    One final thing to note about the pool, there is a common misconception that the pool <max> size limits the total number of beans that may exist concurrently in memory. This is not true. For example, if the <max> pool size for a bean is 100, then there could be 200 beans or more in memory at one time, but there would never be more than 100 in the pool, there could be other instances that are active. 
+    
+    The <min> and <max> values can be set by the user as explained in EJB Container system properties [http://www.ibm.com/support/knowledgecenter/SSAW57_8.5.5/com.ibm.websphere.nd.multiplatform.doc/ae/rejb_ecnt.html], a WebSphere Application Server Information Center topic.
+    
+    
+ 2. The Application Server only creates SLSB instances on an on-demand/as needed basis. In other words, if there are say 20 transactions that call a method a SLSB and each request is received serially, only one bean instance will be created on the first request and will be used to service all 20 requests. This bean would be taken from the pool (activated) on each request and put back into the pool (passivated) when the request finishes. If on the other hand all requests were received concurrently, create a separate SLSB instance for each request and put all 20 instances back into the pool (passivate) when the requests complete (assuming the pool size <max> is greater than 20).
+    
+ 3. Given #1 and #2, make sure to properly manage the SLSB instance variable. In other words, if a SLSB holds references to other objects, it is recommended that during the passivation of the bean that is cleaned up (sets to null) any instance variable that contains references to other objects. This will allow the objects to be garbage collected. 
+
+
+Furthermore, on activation of a SLSB, make sure to reinitialize any instance variables as necessary. By not cleaning up a SLSB instance variables, those instance variable will retain their values even while in the pool, thus taking up memory. 
+
+It should be noted though that there may be times when there is a need to use an instance variable within their SLSB to maintain some kind of state across invocations; for example a pointer to some kind of resource that they don't want to look up each time they run a method on that SLSB. 
+
+As long as that resource is not unique to a particular SLSB instance, this pattern is fine and even the enterprise beans specifications specifically mention that. Obviously if that pointer is maintained across invocations, the object that is pointed to will not be garbage collected, but again sometimes that is exactly the behavior that is wanted. 
+
+
+Cross reference information Segment Product Component Platform Version Edition Application Servers Runtimes for Java Technology Java SDK

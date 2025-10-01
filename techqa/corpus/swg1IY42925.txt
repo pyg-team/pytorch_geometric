@@ -1,0 +1,182 @@
+Title: IBM IY42925: SVRSSLCFG JAVA CLASS UNCONFIG NOT REMOVING LDAP USER - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS UNREPRODUCIBLE.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  the SvrSslCfg java class does nto correctly remove all pieces of
+   a registered application, it leaves behind the LDAP user info
+   so if trying to reconfig with same app name, will receiv the
+   failure the name already exists
+   .
+   this fails on both 3.9 and 4.1 on all platforms
+   .
+   When running the com.tivoli.pd.jcfg.SvrSslCfg utility to
+   unconfig a
+   remote mode application the user is not removed from ldap...
+   Here is the Command: /apps/WebSphere/AppServer/java/jre/bin/java
+   com.tivoli.pd.jcfg.SvrSslCfg -action unconfig -admin_id
+   sec_master
+   -admin_pwd admin -appsvr_id wpsnew -host tpddb2.troweprice.com
+   -policysvr tpdapp4.troweprice.com:7135:1 -cfg_file
+   "/apps/WebSphere/AppServer/java/jre/PdPerm.properties"
+   We have a very large ldap registry  - 1 million users plus
+   We did an ldap snoop and heres some of the output:
+   0.00000 port:  seq: 646 SearchRequest 0 seconds
+   base: "o=troweprice.com" scope: singleLevel derefAliases:
+   neverDerefAliases sizelimit: 1 timelimit: 0 typesOnly: false
+   filter:
+   "present: objectclass" attributes: <ALL>
+   0.00117 port:  seq: 646 SearchResponse 0.00117 seconds
+   objectName: "ou=people,o=troweprice.com"
+   objectclass=top
+   objectclass=organizationalUnit
+   ou=people
+   0.00140 port:  seq: 646 SearchResult 0.0014 seconds
+   resultCode: sizeLimitExceeded (4)
+   81.97483 port:seq: 2677 SearchRequest 81.9748 seconds
+   base: "O=TROWEPRICE.COM" scope: wholeSubtree derefAliases:
+   neverDerefAliases sizelimit: 2048 timelimit: 0 typesOnly: false
+   filter:
+   "(&(principalName=sec_master)(&(secAuthority=Default)(objectClas
+   s=secUse
+   r)))" attributes: <ALL>
+   81.98184 port:seq: 2677 SearchResult 81.9818 seconds
+   resultCode: success (0)
+   81.98250 port:seq: 2678 SearchRequest 81.9825 seconds
+   base: "SECAUTHORITY=DEFAULT" scope: wholeSubtree derefAliases:
+   neverDerefAliases sizelimit: 2048 timelimit: 0 typesOnly: false
+   filter:
+   "(&(principalName=sec_master)(&(secAuthority=Default)(objectClas
+   s=secUse
+   r)))" attributes: <ALL>
+   81.98948 port:seq: 2678 SearchResponse 81.9895 seconds
+   objectName:
+   "secAuthority=Default,cn=SecurityMaster,secAuthority=Default"
+   objectclass=secUser
+   objectclass=eUser
+   objectclass=cimManagedElement
+   objectclass=top
+   secauthority=Default
+   seclogintype=Default:LDAP
+   principalname=sec_master
+   secacctvalid=TRUE
+   secpwdvalid=TRUE
+   sechaspolicy=TRUE
+   secuuid=6cb2db4a-e5d9-11d6-a1b1-ac1373a7aa77
+   1373a7aa77
+   81.98959 port:seq: 2678 SearchResult 81.9896 seconds
+   resultCode: success (0)
+   81.99150 port:seq: 2679 SearchRequest 81.9915 seconds
+   base:
+   "secAuthority=Default,cn=SecurityMaster,secAuthority=Default"
+   scope: baseObject derefAliases: neverDerefAliases sizelimit:
+   2048
+   timelimit: 0 typesOnly: false filter: "(objectClass=secUser)"
+   attributes: <ALL>
+   81.99708 port:seq: 2679 SearchResponse 81.9971 seconds
+   objectName:
+   "secAuthority=Default,cn=SecurityMaster,secAuthority=Default"
+   objectclass=secUser
+   objectclass=eUser
+   objectclass=cimManagedElement
+   objectclass=top
+   secauthority=Default
+   seclogintype=Default:LDAP
+   principalname=sec_master
+   secacctvalid=TRUE
+   secpwdvalid=TRUE
+   sechaspolicy=TRUE
+   secuuid=6cb2db4a-e5d9-11d6-a1b1-ac1373a7aa77
+   1373a7aa77
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *   This issue described in the APAR has been unrep
+   roducible and is also no longer the specific issue the customeri
+   s having.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IY42925
+   
+   
+ * REPORTED COMPONENT NAME
+   ACCESS MGR BASE
+   
+   
+ * REPORTED COMPONENT ID
+   5724C0801
+   
+   
+ * REPORTED RELEASE
+   410
+   
+   
+ * STATUS
+   CLOSED UR5
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2003-04-07
+   
+   
+ * CLOSED DATE
+   2003-08-11
+   
+   
+ * LAST MODIFIED DATE
+   2003-08-11
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

@@ -1,0 +1,30 @@
+Title: IBM Using CCopy to move view to a new host reports error: Access denied: cannot access .pid. - United States
+
+Text:
+CC; Access denied; Moving a View; Access denied: cannot access .pid. Try stopping the view and try again TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This technote explains how to resolve an error, Access denied: cannot access .pid. Try stopping the view and try again, that can occur when using the IBM Rational ClearCase (CC) ccopy command to move a view to a new host. 
+
+SYMPTOM
+ 
+
+Attempting to move a view to a new host using ccopy reports the following error: 
+
+Access denied: cannot access .pid. Try stopping the view and try again.
+
+
+
+CAUSE
+ 
+
+The MVFS still holds references to the view needing to be copied.
+
+
+RESOLVING THE PROBLEM
+ 
+
+
+Run cleartool endview -server <viewtag> before attempting to copy the view storage.
+
+Refer to IBM Rational ClearCase Administrator's Guide, under the topic of Moving a View [http://publib.boulder.ibm.com/infocenter/cchelp/v7r0m1/index.jsp?topic=/com.ibm.rational.clearcase.cc_admin.doc/topics/t_viewadm_mv.htm]for details about the proper procedure to use when moving a view.

@@ -1,0 +1,66 @@
+Title: IBM How to recover when a space efficient storage controller runs out of space before Spectrum Virtualize (SVC) - United States
+
+Text:
+ QUESTION/ANSWER
+
+QUESTION
+I have a controller that does its own compression and/or deduplication virtualized under Spectrum Virtualize and this controller is out of space. What can be done to reclaim space on this controller in order to prevent it reaching 100% full and taking mdisks offline?
+
+CAUSE
+A Space Efficient controller virtualized under Spectrum Virtualize is out of physical space and Spectrum Virtualize does not have any indication the controller is in fact out of space. This can happen for a variety of reasons including:
+
+ * Poorer than expected capacity savings on the virtualized controller
+ * Under-sizing the capacity need for the solution
+ * The virtualized controller is presenting thin provisioned LUNs to the Spectrum Virtualize cluster as well as other hosts which result in space being consumed faster than expected
+
+ANSWER
+The approaches that can be taken to reclaim space on the virtualized controller in this scenario vary by the capabilities of the back end controller as well as system configuration and pre-planned capacity overhead needs. Generally speaking, the following options are available:
+
+ *  Add additional capacity to the controller. Customers should have a plan that allows them to add additional capacity to the controller when needed.
+   
+   
+ *  Reserve a set of space in the controller that makes it *seem* fuller than it really is, and that you can free up in an emergency situation.
+   
+    *  Some controllers will have the ability to create a volume which isn’t compressed, deduped or thin provisioned. If you can do this, then simply create some of these volumes to reserve an amount of physical space, you probably want to name them something like "emergency buffer space". Then if you are reaching the limits for physical capacity you can simply delete one or more of these volumes to give yourself a temporary reprieve.
+      
+      
+    *  If this not the case, then you need to create compressed and deduped volume and fill it with data that cannot be deduped or compressed to reserve the physical space. (Note: The FlashSystem 900 model AE3 storage enclosure does not allow you to create a uncompressed volumes)
+      
+       *  The simplest way of doing this is to create a volume on the back-end controller, present it to a host temporarily, and fill it with random data using something like dd or VDBench. If you are using VDBench make sure you configure it to write data with a compression/dedup ratio of 1 .
+         
+         
+      
+      
+   
+   
+ *  Assuming the Spectrum Virtualize Cluster is using this controller in a Data Reduction Pool (DRP), you should evaluate reclaimable capacity vs. the free capacity in the pool.
+   
+    *  If the free space is low then garbage collection in the DRP is freeing up space as fast as possible and you can simply wait for garbage collection to free up the needed space.
+      
+      
+    *  If the free space is high and the reclaimable space is high, the garbage collection in the DRP is likely being throttled to minimize impact to host i/o requests. Reducing host i/o may help to reclaim space on the back-end faster in this scenario.
+      
+      
+   
+   
+ *  Assuming Spectrum Virtualize is running a code version that supports trim (unmap), the feature is enabled, and the out of space controller in question supports these SCSI commands, a fully allocated volume can be created with the format enabled triggering unmaps for the regions claimed by the new fully allocated volume. (Note: Any FlashSystem 900 AE3 storage controller supports unmap.)
+   
+   
+ *  Assuming Spectrum Virtualize is running a code version that supports trim (unmap), the feature is enabled, and the out of space controller in question supports these SCSI commands, host initiated unmaps can be triggered against the existing data set to reclaim space in the existing volumes.
+   
+   
+ * Migrate data off of one of the mdisks that is being presented by the controller that is out of space using volume migration/mirroring, rmmdisk -force , or by using the migrateexts command (whichever is most appropriate in your particular case).  * Assuming the Spectrum Virtualize cluster is running a code version which will automatically send trim (unmap) commands when data is migrated off of it, this should be sufficient to free space as long as the controller in question is able to accept and process these commands. If they are NOT, the mdisk must be deleted from the Spectrum Virtualize pool and the owning controller.
+    * Assuming the Spectrum Virtualize cluster is running a code version which will NOT automatically send trim (unmap) commands when data is migrated off of it (or unmap is disabled), once said mdisk is vacant it can be deleted from its assigned storage pool and subsequently deleted off of the hosting controller. This will make enough space available on the controller that was once out of space.  * Sample migrateexts script assuming migrating from a single identified mdisk from the out of space controller to a single identified mdisk on some other storage device (note only 32 migrations can be queued at a time so may need to run multiple times):
+       *  lsmdiskextent -nohdr -delim " " <source mdisk> |while read vdisk count copy; do migrateexts -source <source mdisk> -target <target mdisk> -vdisk $vdisk -exts $count -copy$copy -threads 4; echo "Moving vdisk "$vdisk; sleep 60; done 
+         
+         
+      
+      
+   
+   
+
+RELATED INFORMATION
+FS900 Array storage is low on available physical space [http://dbluedst.pok.ibm.com/DCF/ssg/ssgintra.nsf/all/S1012158] 
+IBM FlashSystem A9000/R - Limitations with IBM SAN Volume Controller (SVC) [http://www-01.ibm.com/support/docview.wss?uid=ssg1S1010564] 
+
+Cross reference information Product Component Platform Version Edition SAN Volume Controller Platform Independent All Versions 8.1 and higher IBM FlashSystem 9100 family Platform Independent All Versions 8.1 and higher IBM Storwize V7000 (2076) Platform Independent All Versions 8.1 and higher

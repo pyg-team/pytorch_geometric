@@ -1,0 +1,127 @@
+Title: IBM SPSS Collaboration and Deployment Services 7.0 Fix Pack 1 - United States
+
+Text:
+ DOWNLOADABLE FILES
+
+ABSTRACT
+ This fix pack will upgrade SPSS Collaboration and Deployment Services 7.0 to 7.0 FP1 (7.0.0.1). 
+
+DOWNLOAD DESCRIPTION
+This fix pack provides important product corrections for IBM SPSS Collaboration and Deployment Services 7.0. 
+
+
+ 
+For the readme file, please refer to SPSS Collaboration and Deployment Services 7.0 Fix Pack 1 Readme [http://www.ibm.com/support/docview.wss?uid=swg27046261]. 
+
+
+Collaboration and Deployment Services (C&DS) 7.0 Issues corrected: Fix List [http://www.ibm.com/support/docview.wss?uid=swg27046326]
+
+INSTALLATION INSTRUCTIONS
+Use IBM Installation Manager to apply fix pack updates for SPSS Collaboration and Deployment Services components. For information about using IBM Installation Manager with IBM SPSS Collaboration and Deployment Services, see the IBM Knowledge Center [http://www-01.ibm.com/support/knowledgecenter/SS69YH_7.0.0/cads/knowledge_center/product_landing.dita].
+
+Important! If IBM Installation Manager cannot retrieve an update package automatically due to network connectivity or firewall settings, do the following: 
+1. Download the update package from IBM Fix Central. 
+2. Expand the archive to an arbitrary location on the IBM SPSS Collaboration and Deployment Services host file system, for example C:\CDS70FP1. 
+3. In the IBM Installation Manager Repository preferences, add the update repository using the location of the extracted update files, for example, C:\CDS70FP1\Repository_Server_Update_7.0.0.1\repository.config.
+
+Important! If you made any manual, custom configuration changes to the existing IBM SPSS Collaboration and Deployment Services application (EAR) file that is deployed on your application server, those changes may be lost when an update, such as a fix pack, is applied. Maintain a record of your manual customization changes and be prepared to apply them again after the updated application has been deployed. Examples of the kind of application changes that might be lost include: 
+
+ * Modification of the "session timeout" value for a web application (WAR). 
+ * Modification of the "connection pool" values for a resource adapter (RAR). 
+ * Modification of the "session pool" values for a Message Drive Bean (MDB) 
+ * Modification of the "trace" values in the installed "log4j.properties' file.
+
+
+Differences between application server products is also a consideration, as some application servers store these settings outside of the application (EAR) files, while other application servers store these settings inside the application (EAR) files. In general, J2EE application configuration changes that you have made should be reviewed and verified after the update has been applied. 
+
+[/support/docview.wss?uid=swg24040469&aid=1]SPSS Collaboration and Deployment Services Repository Server 7.0.0.1 [javascript:void(0);] [javascript:void(0);]  
+
+Prior to installation  * 
+ * 
+ * 
+ *   *  WebSphere standalone: The application server must be stopped. WebSphere managed: The application server(s) or cluster must be stopped; the Deployment Manager and Node Agent(s) must be running. JBoss: The application server must be stopped. WebLogic standalone: The application server must be stopped. WebLogic managed: The application server(s) or cluster must be stopped; WebLogic administration server must be running. 
+   
+   
+ * 
+
+
+Installing 
+To install the fix pack, perform the following steps:  * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+
+
+Notes:  *  You can install updates for IBM SPSS Collaboration and Deployment Services adapters, such as the IBM SPSS Collaboration and Deployment Services Scoring Adapter for PMML and the IBM SPSS Collaboration and Deployment Services Scoring Adapter for IBM SPSS Modeler, when you apply SPSS Collaboration and Deployment Services Repository updates. Select any returned adapter updates to apply in step 5. If IBM SPSS Collaboration and Deployment Services Repository 7.0 had been manually deployed (by using the "Manual deployment" option in the Configuration Utility), you must redeploy the application using the artifacts in <repository installation directory>/toDeploy/<timestamp>. For more information on manual deployment, see the IBM SPSS Collaboration and Deployment Services Repository Installation and Configuration Guide. If an error occurs while applying the fix pack, you may need to manually run the "patch" command after fixing the problem. However, due to the previous installation attempt, issuing this command can result in the message "No new patches found". To force the patch to be reapplied, run the patch command with the "-apply" parameter, followed by the patch folder name to be applied. For example: 
+   <repository installation directory>\bin\patch -apply 7.0.0.1 
+
+[/support/docview.wss?uid=swg24040469&aid=2]SPSS Collaboration and Deployment Services Remote Process Server 7.0.0.1 [javascript:void(0);] [javascript:void(0);]  
+
+Installing 
+To install the fix pack, perform the following steps:  * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+
+[/support/docview.wss?uid=swg24040469&aid=3]SPSS Collaboration and Deployment Services Remote Scoring Server 7.0.0.1 [javascript:void(0);] [javascript:void(0);]  
+
+Prior to installation  * 
+ *   *  WebSphere standalone: The application server must be stopped. WebSphere managed: The application server(s) or cluster must be stopped; the Deployment Manager and Node Agent(s) must be running. JBoss: The application server must be stopped. WebLogic standalone: The application server must be stopped. WebLogic managed: The application server(s) or cluster must be stopped; WebLogic administration server must be running. 
+   
+   
+
+
+Installing 
+To install the fix pack, perform the following steps:  * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * IBM Knowledge Center
+ * 
+ * 
+ * 
+ * Notes:
+ *  You can install updates for IBM SPSS Collaboration and Deployment Services adapters, such as the IBM SPSS Collaboration and Deployment Services Scoring Adapter for PMML and the IBM SPSS Collaboration and Deployment Services Scoring Adapter for IBM SPSS Modeler, when you apply SPSS Collaboration and Deployment Services Scoring Server updates. Select any returned adapter updates to apply in step 5. 
+
+Note: If a 7.0 component is not currently installed, you can automatically apply fix pack updates when you install the component. On the Install Packages screen of IBM Installation Manager, click "Check for Other Versions, Fixes, and Extensions" to search for package updates and select "Version 7.0.0.1" for any returned packages. DOWNLOAD PACKAGE
+
+
+
+
+Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options 
+What is Fix Central(FC)? [https://www.ibm.com/support/fixcentral/help?page=swfaqs] CDS - Repository Server 7.0 FP1 30 Sep 2015 Language Independent 450919104 FC [http://www.ibm.com/support/fixcentral/swg/quickorder?parent=ibm~Information+Management&product=ibm/Information+Management/SPSS+Collaboration+and+Deployment+Services&function=fixId&fixids=7.0-IM-SCaDSREPOSITORY-FP001&source=fc] [ ] CDS - Remote Process Server 7.0 FP1 30 Sep 2015 Language Independent 30068653 FC [http://www.ibm.com/support/fixcentral/swg/quickorder?parent=ibm~Information+Management&product=ibm/Information+Management/SPSS+Collaboration+and+Deployment+Services&function=fixId&fixids=7.0-IM-SCaDSRPS-FP001&source=fc] [ ] CDS - Remote Scoring Server 7.0 FP1 30 Sep 2015 Language Independent 281762604 FC [http://www.ibm.com/support/fixcentral/swg/quickorder?parent=ibm~Information+Management&product=ibm/Information+Management/SPSS+Collaboration+and+Deployment+Services&function=fixId&fixids=7.0-IM-SCaDSRSS-FP001&source=fc] [ ]

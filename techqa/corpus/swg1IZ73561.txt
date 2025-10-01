@@ -1,0 +1,341 @@
+Title: IBM IZ73561: BMXAA4198E - ORGANIZATION NEEDED FOR GL ATTRIBUTE GLACCOUNT ON OBJECT {1} - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  STEPS TO REPLICATE:
+   7.1.1.6 WITH THE latest hotfix
+   1. go to chart of accounts app, actions menu, organisation
+   defaults account, enter global
+   ticket account 6820-400-000
+   
+   2.create a new SR
+   3 enter a GL account or enter an asset / location (i.e.
+   location / asset should have GL fully specified)
+   4 get error: organization needed for GL attribute GLACCOUNT on
+   object  {1}
+   
+   query the database:
+   select * from chartofaccounts where GLACCOUNT='6820-400-400'
+   
+   this GL account does have orgid populated with EAGLENA
+   
+   
+   log file has this in it:
+   29 Mar 2010 11:32:59:762 [INFO] select seed, prefix from autokey
+   where autokeyname =  'SRID'   and orgid is null and siteid is
+   null
+   29 Mar 2010 11:32:59:762 [INFO] select seed, prefix from autokey
+   where autokeyname =  'SRID'   and orgid is null and siteid is
+   null
+   29 Mar 2010 11:32:59:762 [INFO] select ticketid from sr where
+   ticketid= ?
+   29 Mar 2010 11:32:59:762 [INFO] select ticketid from sr where
+   ticketid= ?
+   29 Mar 2010 11:32:59:762 [INFO] select ticketid from ticket
+   where ticketid= ?
+   29 Mar 2010 11:32:59:762 [INFO] select ticketid from ticket
+   where ticketid= ?
+   
+   
+   client has the NullPointerException in the log:
+   [3/29/10 11:30:08:136 EDT] 000000cb SystemErr     R Caused by:
+   java.lang.NullPointerException
+    at psdi.mbo.GLFormat.toString(GLFormat.java:367)
+    at psdi.mbo.GLFormat.toStorageString(GLFormat.java:404)
+    at
+   psdi.webclient.beans.common.GLNavigatorDialogBean.execute(GLNavi
+   gatorDialogBean.java:127)
+    at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+    at
+   sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessor
+   Impl.java:79)
+    at
+   sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethod
+   AccessorImpl.java:43)
+    at java.lang.reflect.Method.invoke(Method.java:618)
+    at
+   psdi.webclient.system.beans.DataBean.callBeanMethod(DataBean.jav
+   a:5995)
+    at
+   psdi.webclient.system.beans.DataBean.callMethod(DataBean.java:57
+   97)
+    at
+   psdi.webclient.system.beans.DataBean.callMethod(DataBean.java:57
+   73)
+    at
+   psdi.webclient.system.session.WebClientSession.handleDialogOK(We
+   bClientSession.java:3418)
+    at psdi.webclient.controls.Dialog.dialogok(Dialog.java:129)
+    at psdi.webclient.controls.Dialog.dialogok(Dialog.java:112)
+    at sun.reflect.GeneratedMethodAccessor881.invoke(Unknown
+   Source)
+    at
+   sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethod
+   AccessorImpl.java:43)
+    at java.lang.reflect.Method.invoke(Method.java:618)
+    at
+   psdi.webclient.system.controller.BaseInstance.handleEvent(BaseIn
+   stance.java:376)
+    at
+   psdi.webclient.system.controller.BaseInstance.handleEvent(BaseIn
+   stance.java:364)
+    at
+   psdi.webclient.system.controller.ControlInstance.handleEvent(Con
+   trolInstance.java:860)
+    at
+   psdi.webclient.system.session.WebClientSession.handleEvent(WebCl
+   ientSession.java:1006)
+    at
+   psdi.webclient.system.session.WebClientSession.handleRequest(Web
+   ClientSession.java:673)
+    at
+   psdi.webclient.system.controller.RequestManager.manageRequest(Re
+   questManager.java:101)
+    at
+   psdi.webclient.servlet.WebClientServlet.handleRequest(WebClientS
+   ervlet.java:96)
+    at
+   psdi.webclient.servlet.WebClientServlet.doPost(WebClientServlet.
+   java:45)
+    at javax.servlet.http.HttpServlet.service(HttpServlet.java:763)
+    at javax.servlet.http.HttpServlet.service(HttpServlet.java:856)
+    at
+   com.ibm.ws.webcontainer.servlet.ServletWrapper.service(ServletWr
+   apper.java:1095)
+    at
+   com.ibm.ws.webcontainer.servlet.ServletWrapper.service(ServletWr
+   apper.java:1036)
+    at
+   com.ibm.ws.webcontainer.filter.WebAppFilterChain.doFilter(WebApp
+   FilterChain.java:145)
+    at
+   psdi.webclient.system.filter.HttpCrossSiteScriptingSecurity.doFi
+   lter(HttpCrossSiteScriptingSecurity.java:64)
+    at
+   com.ibm.ws.webcontainer.filter.FilterInstanceWrapper.doFilter(Fi
+   lterInstanceWrapper.java:190)
+    at
+   com.ibm.ws.webcontainer.filter.WebAppFilterChain.doFilter(WebApp
+   FilterChain.java:130)
+    at
+   com.ibm.ws.webcontainer.filter.WebAppFilterChain._doFilter(WebAp
+   pFilterChain.java:87)
+    at
+   com.ibm.ws.webcontainer.filter.WebAppFilterManager.doFilter(WebA
+   ppFilterManager.java:832)
+    at
+   com.ibm.ws.webcontainer.filter.WebAppFilterManager.doFilter(WebA
+   ppFilterManager.java:679)
+    at
+   com.ibm.ws.webcontainer.servlet.ServletWrapper.handleRequest(Ser
+   vletWrapper.java:565)
+    at
+   com.ibm.ws.wswebcontainer.servlet.ServletWrapper.handleRequest(S
+   ervletWrapper.java:478)
+    at
+   com.ibm.ws.webcontainer.servlet.CacheServletWrapper.handleReques
+   t(CacheServletWrapper.java:90)
+    at
+   com.ibm.ws.webcontainer.WebContainer.handleRequest(WebContainer.
+   java:748)
+    at
+   com.ibm.ws.wswebcontainer.WebContainer.handleRequest(WebContaine
+   r.java:1461)
+    at
+   com.ibm.ws.webcontainer.channel.WCChannelLink.ready(WCChannelLin
+   k.java:118)
+    at
+   com.ibm.ws.http.channel.inbound.impl.HttpInboundLink.handleDiscr
+   imination(HttpInboundLink.java:458)
+    at
+   com.ibm.ws.http.channel.inbound.impl.HttpInboundLink.handleNewIn
+   formation(HttpInboundLink.java:387)
+    at
+   com.ibm.ws.http.channel.inbound.impl.HttpICLReadCallback.complet
+   e(HttpICLReadCallback.java:102)
+    at
+   com.ibm.ws.tcp.channel.impl.AioReadCompletionListener.futureComp
+   leted(AioReadCompletionListener.java:165)
+    at
+   com.ibm.io.async.AbstractAsyncFuture.invokeCallback(AbstractAsyn
+   cFuture.java:217)
+    at
+   com.ibm.io.async.AsyncChannelFuture.fireCompletionActions(AsyncC
+   hannelFuture.java:161)
+    at com.ibm.io.async.AsyncFuture.completed(AsyncFuture.java:136)
+    at
+   com.ibm.io.async.ResultHandler.complete(ResultHandler.java:195)
+    at
+   com.ibm.io.async.ResultHandler.runEventProcessingLoop(ResultHand
+   ler.java:743)
+    at com.ibm.io.async.ResultHandler$2.run(ResultHandler.java:873)
+    at com.ibm.ws.util.ThreadPool$Worker.run(ThreadPool.java:1473)
+   
+   [3/29/10 11:30:08:136 EDT] 000000cb SystemErr     R  at
+   psdi.mbo.GLFormat.toString(GLFormat.java:367)
+   [3/29/10 11:30:08:136 EDT] 000000cb SystemErr     R  at
+   psdi.mbo.GLFormat.toStorageString(GLFormat.java:404)
+   [3/29/10 11:30:08:136 EDT] 000000cb SystemErr     R  at
+   psdi.webclient.beans.common.GLNavigatorDialogBean.execute(GLNavi
+   gatorDialogBean.java:127)
+   [3/29/10 11:30:08:136 EDT] 000000cb SystemErr     R  ... 49 more
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  n/a
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: Maximo users of Service Requests application *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: BMXAA4198E - "Organization needed for   *
+   *                      GL attribute GLACCOUNT on object  1"    *
+   *                      encountered in Service Requests when    *
+   *                      trying to set the GLAccount before the  *
+   *                      AssetOrgId has been set.  This error    *
+   *                      would be expected if user tries to type *
+   *                      the GL Account directly into the ui     *
+   *                      without first setting the AssetSiteId   *
+   *                      (which in turn sets the AssetOrgId      *
+   *                      needed for the GL Account validation).  *
+   *                      However, this problem occurs when using *
+   *                      the GL Account Navigator (which         *
+   *                      requires the user to choose an OrgId).  *
+   *                      When the GL Account Navigator dialog is *
+   *                      used, the GL Account should be set      *
+   *                      without seeing this error.              *
+   *                                                              *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   *                                                              *
+   *                                                              *
+   *                                                              *
+   ****************************************************************
+   6238: IZ73561/10-12217: BMXAA4198E - "Organization needed for
+   GL attribute GLACCOUNT on object  1" encountered in Service
+   Requests when trying to set the GLAccount before the AssetOrgId
+   has been set.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  GL Account is successfully set when returning with value from
+   GL Account Navigator.
+   
+   
+   
+   
+   
+   The fix for this APAR is contained in the following maintenance
+   package:
+   
+     | release\fix pack | REL 7.1.1.7 - BS
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ73561
+   
+   
+ * REPORTED COMPONENT NAME
+   WORK ORDER TRAC
+   
+   
+ * REPORTED COMPONENT ID
+   5724R46WO
+   
+   
+ * REPORTED RELEASE
+   711
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-03-29
+   
+   
+ * CLOSED DATE
+   2010-04-28
+   
+   
+ * LAST MODIFIED DATE
+   2010-04-28
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  MAXIMO
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WORK ORDER TRAC
+   
+   
+ * FIXED COMPONENT ID
+   5724R46WO
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R711 PSY
+   UP

@@ -1,0 +1,63 @@
+Title: IBM Security Bulletin: Vulnerability in SSLv3 affects InfoSphere BigInsights
+ (CVE-2014-3566) - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ SSLv3 contains a vulnerability that has been referred to as the Padding Oracle On Downgraded Legacy Encryption (POODLE) attack. SSLv3 is enabled in BigInsights. 
+
+VULNERABILITY DETAILS
+CVE-ID: CVE-2014-3566 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-3566]
+
+DESCRIPTION: InfoSphere BigInsights could allow a remote attacker to obtain sensitive information, caused by a design error when using the SSLv3 protocol. A remote user with the ability to conduct a man-in-the-middle attack could exploit this vulnerability via a POODLE (Padding Oracle On Downgraded Legacy Encryption) attack to decrypt SSL sessions and access the plain text of encrypted connections.
+
+CVSS Base Score: 4.3
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/97013 [https://exchange.xforce.ibmcloud.com/vulnerabilities/97013] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:M/Au:N/C:P/I:N/A:N)
+
+
+AFFECTED PRODUCTS AND VERSIONS
+IBM InfoSphere BigInsights: 2.0-3.0.0.1
+
+REMEDIATION/FIXES
+For version 3.0, and 3.0.0.1: Upgrade to the fix pack version InfoSphere BigInsights 3.0.0.2 [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm%7EInformation%2BManagement&product=ibm/Information+Management/InfoSphere+BigInsights&release=3.0.0.0&platform=All&function=all]. 
+
+WORKAROUNDS AND MITIGATIONS
+For all affected versions of InfoSphere BigInsights, IBM recommends disabling SSLv3. The server SSL configuration should be modified to use SSL protocol TLS as shown below to disable SSLv3.
+
+The following steps should be performed to disable SSLv3 and enable TLS:
+
+
+ 1. Login as a BigInsights admin user. 
+ 2. Stop the console: $BIGINSIGHTS_HOME/bin/stop.sh console 
+ 3. Update the console configuration file:  1. Find ssl configuration element in $BIGINSIGHTS_HOME/console/wlp/usr/servers/waslp-server/server.xml. 
+     2. Add attribute sslProtocol="TLS". 
+        For example: <ssl clientAuthenticationSupported="true" id="defaultSSLSettings" keyStoreRef="defaultKeyStore" sslProtocol="TLS"/>
+    
+    
+ 4. Restart the console: $BIGINSIGHTS_HOME/bin/start.sh console
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v2 Guide [http://www.first.org/cvss/v2/guide] 
+On-line Calculator v2 [http://nvd.nist.gov/CVSS-v2-Calculator] 
+
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] 
+
+ACKNOWLEDGEMENT
+None 
+
+CHANGE HISTORY
+ 21 Oct 2014: Original Version Published
+29 Jan 2015: Added fix information for BigInsights 3.0, and 3.0.0.1. 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.

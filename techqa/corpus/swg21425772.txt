@@ -1,0 +1,32 @@
+Title: IBM "An invalid XML character" error is thrown when handling data originating from a WebSphere Adapter - United States
+
+Text:
+Unicode invalid character 0x0 xml serialize serialization XSLT XLS error TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ WeBSphere Adapter is unable to process data from a source containing unicode data due to a serialization error in the broker indicating that "An invalid XML character (Unicode: 0x0) was found in the element content". 
+
+SYMPTOM
+When processing data using a broker that originates from a WebSphere JCA Adapter, you encounter an exception of the following form: 
+
+Source = java.lang.RuntimeException caught trying to serialize BO BusinessObject: F4211BeginDoc@382a382a (F4211FSBeginDoc=F4211FSBeginDoc@67e667e6) probeid = 214 Stack Dump = java.lang.RuntimeException: An invalid XML character (Unicode: 0x0) was found in the element content:
+
+This error occurs while you are performing data transformations within your broker, either for an XSLT or to enable monitoring or tracing of the data stream, and results in a flow failure.
+
+
+CAUSE
+The problem occurs when the source data contains unicode data which is not allowed in XML. In the above example, this is the unicode character 0x0, but there are a number of other unicode characters that can cause the same result. The problem does not occur in the WebSphere Adapter itself because the WebSphere Adapters are entirely capable of handling full unicode data. Rather, the problem happens in some brokers which fail to properly serialize the incoming data into a valid XML object.
+
+
+RESOLVING THE PROBLEM
+The only complete solution at this time is to not process unicode characters that are not valid in XML. This can be done by not importing data fields that might contain such characters or by purging such characters from the incoming data source. It is not sufficient to do filtering in the BO maps since the broker can still run into problems prior to this Java™ mapping. 
+
+
+If handling of fields containing these unicode characters is essential to your use case, it will be necessary to open a PMR with your broker's support team (rather than the WebSphere Adapter team) to determine if there are any alternatives available.
+
+ 
+
+HISTORICAL NUMBER
+ 75349
+344
+000

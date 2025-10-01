@@ -1,0 +1,162 @@
+Title: IBM PJ42971: ACCE HANGS WHEN ACCESSING THE FIXED STORAGE AREA "RETENTION" TAB - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  If you click on the Fixed Storage Area "Retention" tab in ACCE
+   in CPE 5.2.1, then ACCE will hang.  This happens for the
+   following types of fixed storage areas:
+   IICE
+   Centera
+   OnDemand
+   Hitachi
+   
+   ACCE will display the Retention tab successfully for the
+   following types of fixed storage areas:
+   Atmos
+   IS
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  If you created the FCD/FSA in CPE 5.2, then the retention tab
+   isn't the correct way to define retention, and the retention tab
+   is not required. In this case, access the retention information
+   via the document classes.
+   
+   IBM introduced a new class-based scheme for defining retention
+   for fixed content in CPE 5.2.0, and this scheme supersedes the
+   old scheme which is tied to the fixed content area (i.e. the
+   Retention tab).
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * Administration Console for Content Platform Engine (ACCE)    *
+   * users using fixed storage device with retention on           *
+   * 5.2.1.0-P8CPE or prior                                       *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * Administration Console for Content Platform Engine (ACCE)    *
+   * users using fixed storage device with retention on the       *
+   * retention tab does not correctly display.                    *
+   *                                                              *
+   * The following types of fixed storage areas are affected:     *
+   * IICE                                                         *
+   * Centera                                                      *
+   * OnDemand                                                     *
+   * Hitachi                                                      *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Upgrade to 5.2.1.2-P8CPE-FP002 or higher.                    *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fixed in 5.2.1.2-P8CPE-FP002 and higher.
+   A check is now correctly made to include the affected storage
+   areas.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PJ42971
+   
+   
+ * REPORTED COMPONENT NAME
+   CONTENT ENGINE
+   
+   
+ * REPORTED COMPONENT ID
+   5724R8101
+   
+   
+ * REPORTED RELEASE
+   521
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-02-06
+   
+   
+ * CLOSED DATE
+   2015-07-01
+   
+   
+ * LAST MODIFIED DATE
+   2015-07-01
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CONTENT ENGINE
+   
+   
+ * FIXED COMPONENT ID
+   5724R8101
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R521 PSY
+   UP

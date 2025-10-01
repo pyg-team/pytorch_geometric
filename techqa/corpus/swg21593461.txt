@@ -1,0 +1,96 @@
+Title: IBM Collect troubleshooting data for web services problems in IBM Business Process Manager - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ You are having a web service problem with IBM Business Process Manager. You would like to know what documentation you must collect (MustGather) so that the IBM Business Process Manager Support team can diagnose your problem. If you gather this documentation before contacting support it will expedite the troubleshooting process, and save you time. 
+
+DIAGNOSING THE PROBLEM
+Collect the MustGather information for Web Services problems in IBM Business Process Manager. Gathering this information before calling IBM support helps in understanding the problem and saves time when analyzing the data.
+Business Process Manager has two different ways to use Web Services. Business Process Manager Standard and Express make use of Web Service Integration components, SOAP message connector components and Web Service components. These are created using the Process Designer tooling. These components will be referred to as Standard Web Services Components.
+
+Business Process Manager Advanced can also utilize those methods, but also allows for using Web Service Import and Export components, which are created using the Integration Designer tooling. These components will be referred to as Advanced Web Services Components.
+
+
+
+Setting the trace string 
+Web Services problems using Advanced Web Services Components: 
+Set the trace string to 
+*=info:SCA.*=all:com.ibm.ws.webservices.*=all:org.apache.*=all:com.ibm.ws.websvcs.*=all:com.ibm.ws.metadata.*=all 
+
+Web Services problems using Standard Web Services Components: 
+Set the trace string to ​*=info:WLE.*=all: com.ibm.ws.websvcs.*=all 
+
+If the Web Services issue is involving Web Services Security, please see the following Web Services Security Mustgather: 
+http://www.ibm.com/support/docview.wss?uid=swg21199335 [http://www.ibm.com/support/docview.wss?uid=swg21199335] 
+
+Note: Enabling the trace might slow down your system. This delay can lead to transaction time-outs and errors. 
+
+To set the tracing and generate a new set of logs and traces, complete the following steps:  1.  Under ​Troubleshooting​ ​>​ ​Log and Trace​, pick the server where you want to change the settings. ​
+    
+    
+ 2. Click Change Log Detail Levels​.
+    
+    
+ 3. Select the ​configuration tab to set the tracing. This change takes effect after the next server restart and a completely new set of log files can be collected. Optionally, select the runtime​ tab to dynamically set the tracing.
+    
+    
+ 4. Enter the trace string and click OK.
+    
+    
+ 5. If you selected the configuration tab, stop the server.
+    
+    
+ 6. Archive and delete the current logs/traces/ffdc from the following directories:  * <install​​_​​root>​​/​​profiles/<profile​​_​​name>​​/​​logs​​/<​​server​​_​​name> 
+     * <install​​_​​root>​​/​​profiles/<profile​​_​​name>​​/​​logs​​/ffdc
+       
+       
+    
+    
+ 7. Start the server and check the trace.log file to make sure that the correct tracing is set.
+    
+    
+ 8. Reproduce the problem and gather the complete server log files and ffdc directory.
+    
+    
+ 9. Delete the trace string from the Log Detail Level for your server.
+    
+    
+
+
+Note: Ensure that you have set the Maximum trace file size (recommendation: 20MB) as well as the number of historical trace files (recommendation: 10) to an appropriate value. You can find those values at Servers > Application Servers > server_name > Diagnostic Trace Service. 
+
+General diagnostic information 
+Collect the general MustGather information as described in Collect troubleshooting data for the IBM Business Process Manager products [http://www.ibm.com/support/docview.wss?uid=swg21569731]. 
+
+In addition, provide the following information for web services problems:  * An export of the project (either a .twx file or a Project Interchange file) 
+ * Sample SOAP request and response message 
+ * WSDL file for the web service being invoked, including any included WSDL and/or XSD files 
+ * Is this an inbound Web Service? 
+ * Is this an outbound Web Service?  * Check WSDL for WS-I compliance [http://www.ibm.com/support/docview.wss?uid=swg21439805] 
+    * If using Standard Web Services components, is the Web Service Integration or SOAP message connector being used? 
+    * Is Web Services security and/or SSL being used for this service?
+   
+   
+
+
+What to do next  1. Review the logs and traces at the time of the problem to try to determine the source of the problem.
+    
+    
+ 2. Use IBM Support Assistant [http://www.ibm.com/software/support/isa/] to search for known problems in the information center, forums, and technotes.
+    
+    
+ 3. If you cannot find related problems or cannot solve the problem, send the information you have collected to IBM by following the instructions in Exchanging Information with IBM Technical Support. [http://www.ibm.com/software/support/exchangeinfo.html]
+    
+    
+
+RELATED INFORMATION
+ A simplified Chinese translation is available [http://www.ibm.com/support/docview.wss?uid=swg21634608]
+
+
+ 
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Business Process Manager Express Web Services Linux, Windows 8.5.7, 8.5.6, 8.5.5, 8.5.0.2, 8.5.0.1, 8.5, 8.0.1.3, 8.0.1.2, 8.0.1.1, 8.0.1, 8.0, 7.5.1.2, 7.5.1.1, 7.5.1, 7.5.0.1, 7.5 Business Integration IBM Business Process Manager Standard Web Services AIX, Linux, Solaris, Windows 8.5.7, 8.5.6, 8.5.5, 8.5.0.2, 8.5.0.1, 8.5, 8.0.1.3, 8.0.1.2, 8.0.1.1, 8.0.1, 8.0, 7.5.1.2, 7.5.1.1, 7.5.1, 7.5.0.1, 7.5 Business Integration IBM BPM Advanced Pattern on Red Hat Enterprise Linux Server Web Services 8.5.0.1, 8.0.1, 8.0

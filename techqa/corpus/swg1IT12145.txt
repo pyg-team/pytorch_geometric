@@ -1,0 +1,220 @@
+Title: IBM IT12145: WEBSPHERE MQ MFT AGENT V7.5: NO MORE INFORMATION IS WRITTEN TO THE NEW OUTPUT0.LOG FILE AFTER IT IS ROTATED. - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  WebSphere MQ MFT Agent writes useful information to the Agent's
+   Event Log. When the initial Event Log:
+   
+     output0.log
+   
+   reaches it's maximum size, the Log is renamed to be called:
+   
+     output1.log
+   
+   and a new output0.log file is created. However, no more
+   information is written to the new file until the Agent is
+   stopped and restarted.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   This issue affects users of:
+   
+   - The WebSphere MQ V7.5 Managed File Transfer component.
+   - The IBM MQ V8 Managed File Transfer component.
+   
+   
+   Platforms affected:
+   MultiPlatform
+   
+   ****************************************************************
+   PROBLEM DESCRIPTION:
+   Every Managed File Transfer agent has it's own event log
+   (output.log), which it uses to store informational messages, as
+   well as details of any errors that the agent has encountered.
+   The number of files used to hold the event log, as well as the
+   size of each file, is controlled by the agent properties:
+   
+   - outputLogFiles
+   - outputLogSize
+   
+   The current event log file is called output0.log file. When this
+   file is full, the file is copied into a historical file called
+   output1.log and a new output0.log file is created.
+   
+   Details of the two properties mentioned above can be found in
+   the:
+   
+     The agent.properties file
+   
+   topic in the WebSphere MQ V7.5 and MQ V8 sections of IBM
+   Knowledge Center. The URI for these topics is shown below:
+   
+   WebSphere MQ V7.5:
+   http://www-01.ibm.com/support/knowledgecenter/SSFKSJ_7.5.0/com.i
+   bm.wmqfte.doc/properties.htm [http://www-01.ibm.com/support/knowledgecenter/SSFKSJ_7.5.0/com.ibm.wmqfte.doc/properties.htm]
+   
+   MQ V8.0
+   http://www-01.ibm.com/support/knowledgecenter/SSFKSJ_8.0.0/com.i
+   bm.wmqfte.doc/properties.htm [http://www-01.ibm.com/support/knowledgecenter/SSFKSJ_8.0.0/com.ibm.wmqfte.doc/properties.htm]
+   
+   
+   When an agent was started, a check was made to see if the
+   current event log file output0.log already existed. If it did,
+   then the file was opened - otherwise a new file was created.
+   
+   The agent then stored an internal reference to the output0.log
+   file, which it used whenever it needed to log something to it.
+   
+   When the output0.log file had reached it's maximum size (as
+   specified by the outputLogSize property). the agent:
+   
+   - Closed the existing output0.log file.
+   - Renamed the output0.log file so that it was called output1.log
+   (if the output1.log file already existed, it was renamed to
+   output2.log, and so on).
+   - Created and opened a new output0.log file.
+   
+   However, the internal reference to the original output0.log file
+   was not updated. This meant that whenever the agent needed to
+   log an informational or error message, it would try to write the
+   message to the original output0.log file which had now been
+   closed. This resulted in the message being lost and not being
+   written out to the event log.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Managed File Transfer agents have now been updated so that when
+   a new output0.log file is created and opened, the internal
+   reference to the original output0.log file is replaced and
+   updated with a reference to the new one.  This ensures that any
+   new informational or error messages are written to the event log
+   as expected.
+   
+   For more information about this APAR, please see the following
+   video : https://www.youtube.com/watch?v=HPBmo9wyU0E [https://www.youtube.com/watch?v=HPBmo9wyU0E]
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+   Version    Maintenance Level
+   v7.5       7.5.0.6
+   v8.0       8.0.0.5
+   
+   The latest available FTE maintenance can be obtained from
+   'Fix List for WebSphere MQ File Transfer Edition 7.0'
+   http://www-01.ibm.com/support/docview.wss?uid=swg27015313 [http://www-01.ibm.com/support/docview.wss?uid=swg27015313]
+   
+   The latest available MQ maintenance can be obtained from
+   'WebSphere MQ Recommended Fixes'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037]
+   
+   If the maintenance level is not yet available information on
+   its planned availability can be found in 'WebSphere MQ
+   Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT12145
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ MFT
+   
+   
+ * REPORTED COMPONENT ID
+   5724H7242
+   
+   
+ * REPORTED RELEASE
+   750
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2015-11-06
+   
+   
+ * CLOSED DATE
+   2015-11-22
+   
+   
+ * LAST MODIFIED DATE
+   2016-02-03
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ MFT
+   
+   
+ * FIXED COMPONENT ID
+   5724H7242
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R750 PSY
+   UP

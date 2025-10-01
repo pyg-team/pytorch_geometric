@@ -1,0 +1,30 @@
+Title: IBM What causes the DD R0000nnn output to fill up in the Connect:Direct for z/OS joblog? - United States
+
+Text:
+CDZ TECHNOTE (FAQ)
+
+QUESTION
+ DD outputs R0000nnn are filling up the spool file in the IBM Sterling Connect:Direct for z/OS joblog. 
+
+CAUSE
+DD outputs R0000nnn (where nnn is a number) are Connect:Direct trace files. How can I determine what set the trace and turn it off so the spool file does not use too much space?
+
+ANSWER
+Traces can be set in three ways:
+
+1) DEBUG= is set in the Init Parms. This causes all nodes to be traced. Normally this method is not used because of the potential for huge trace outputs.
+2) Traces can be set for individual nodes using IUI or Connect:Direct commands. This will only trace the nodes that are selected.
+3) Traces can also be set at the process level so that when a process runs, trace is enabled and then disabled when it is finished. It can be difficult to determine which processes are setting this type of trace.
+
+Here is how to check where the trace was enabled:
+
+In the IUI, enter ADMIN;INQ;IDBG. This shows the DEBUG setting along with each entry in the node table. If the DEBUG setting is something like a typical trace of 8C00006E, you should check to see what is coded in the Init Parms. Note that a setting of 00200000 is not a trace setting, so that is not causing the trace output.
+
+If the DEBUG setting displayed is different from the Init Parm, then a user has changed the value dynamically only for the duration of the started task.
+
+If a node shows traces enabled, review if that is still necessary. You can go into the ADMIN;MD screen to turn it off as needed. If you want to determine which user set traces on, look for messages STRA047I or STRA048I.
+
+If no traces are enabled and you still see increasing trace output, then you may have a process with DEBUG= coded inside. The only way to find that is to review the trace log itself. You should be able to determine the process name/number by searching for 'Starting Process'. Then you can determine if a trace is coded within the process.
+
+Tracing is documented under Sterling Connect:Direct Function Traces.
+https://www.ibm.com/support/knowledgecenter/SSFGBN_5.2.0/com.ibm.help.cdzos.admin.doc/ZOS_CD_Function_Traces.html [https://www.ibm.com/support/knowledgecenter/SSFGBN_5.2.0/com.ibm.help.cdzos.admin.doc/ZOS_CD_Function_Traces.html]

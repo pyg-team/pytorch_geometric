@@ -1,0 +1,103 @@
+Title: IBM Error # 2070. The license server is down. Specific symptom number: 3 - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ We have network installations of IBM SPSS Statistics/Modeler. When the application is launched, the following errors are reported:
+
+"The current license does not permit this job to continue."
+
+followed by...
+
+"Error # 2070
+The license server is down. Please check to see that the license server is running or ask your local SPSS coordinator to check the license server.
+This command is not executed.
+Specific symptom number: 3."
+
+The Safenet Sentinel License Manager has been licensed and confirmed to be running. 
+What is the problem? 
+
+CAUSE
+The above error can be caused by invalid values entered during the licensing phase of installing SPSS Statistics/Modeler or the client machine cannot reach the Sentinel License Manager host using the machine Hostname.
+
+ANSWER
+Please do the following to verify:
+
+1. Navigate to the IBM SPSS Statistics/Modeler directory and open "spssprod.inf", using any text editor. 
+
+ - By default, SPSS Statistics would store this file in: C:\Program Files\IBM\SPSS\Statistics\xx\ 
+
+ - By default, SPSS Modeler would store this file in: C:\Program Files\IBM\SPSS\Modeler\xx.x\bin\
+
+2. Verify the "DaemonHost" value matches the Hostname or IP Address of the machine where the Safenet Sentinel License Manager is installed. 
+
+ - E.g. DaemonHost=MyLicenseServer or DaemonHost=127.0.0.1
+
+If the DaemonHost value specifies redundant license servers, please do the following if you are using SPSS Statistics 22 (or earlier) or SPSS Modeler 16.0 (or earlier):
+
+
+ a). Remove all license servers from the "DaemonHost" line and save the file.
+
+b). Create a system environment variable, called LSHOST, on each SPSS client with your redundant license servers as its value. Separate each redundant license server with a colon, e.g.
+==========================
+Variable: LSHOST
+Value: server1:server2:server3
+========================== 
+
+
+
+If the "DaemonHost" value is accurate and you are using a Hostname value, you have a name resolution problem. Error # 2070, Symptom number 3 typically means the SPSS client cannot connect to the name resolution database or the name resolution database does not contain a record for the machine where the SPSS Sentinel License Manager resides. To verify, please do the following:
+
+1. Run lswhere.exe (which is located in the SPSS directory, see above) from the problematic SPSS Client machine and take note of the displayed output. The following is an example of the output: 
+
+
+==========================
+Sentinel LM 8.x.x Search Tool For License Servers
+Copyright (C) 20xx Rainbow Technologies, Inc.
+
+Server Address : xxx.xxx.xxx.xxx
+Server Name : Machine_A
+========================== 
+
+
+If the Safenet Sentinel License Manager machine is not listed or you encounter the error, "Error[17]: Probably no servers are running on this subnet.", please add the following system environment variable to the IBM SPSS Statistics/Modeler client and run lswhere.exe again: 
+
+
+==========================
+Variable: LSHOST
+Value: Name or IP address of the License Manager machine 
+========================== 
+
+
+For information about defining environment variables, see the Network License Administrator's Guide. If using the LSHOST environment variable does not render the Safenet Sentinel License Manager machine, try using LSFORCEHOST instead.
+
+2. When you see the Safenet Sentinel License Manager machine name and corresponding IP address listed in the lswhere output, ping the displayed Server Name from a command line, e.g.
+
+
+==========================
+ping Machine_A
+========================== 
+
+
+An example of the resulting output is as follows:
+==========================
+Unknown host Machine_A
+========================== 
+
+
+If the ping command is unable to resolve the Server Name, you have a name resolution problem and must address it (with help from your IT Administrator/Help Desk team) before IBM SPSS Statistics/Modeler can acquire a license from the Sentinel License Manager.
+
+RELATED INFORMATION
+ Need more help? Our Modeler forum is Live! [https://developer.ibm.com/answers/topics/modeler/?smartspace=predictive-analytics]
+Need more help? Our Licensing forum is Live! [https://developer.ibm.com/answers/topics/spsslicensing.html]
+A simplified Chinese translation is available [http://www.ibm.com/support/docview.wss?uid=swg21641554]
+
+
+ 
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Analytics SPSS Statistics Platform Independent Not Applicable Business Analytics SPSS Text Analytics for Surveys Platform Independent Not Applicable Business Analytics SPSS Amos Windows Not Applicable Business Analytics SPSS SamplePower Platform Independent Not Applicable 
+HISTORICAL NUMBER
+ 51910

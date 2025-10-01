@@ -1,0 +1,171 @@
+Title: IBM JR31940: COMPONENT LEVEL QUEUE DESTINATIONS ARE NOT CREATED FOR MODULES WITH EVENT SEQUENCING. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Component level Queue destinations are not created for modules
+   with Event sequencing. As a result During start up of
+   Cluster/server The following exception is thrown
+   ********
+   &#65517;1/30/09 13:32:36:078 PST&#65529; 0000000a WsServerImpl  A   WSVR0001I:
+   Server
+   
+   
+   com.ibm.wbiserver.sequencing.service.messaging.EsMeConnectionSer
+   vice
+   start() Failed to connect to the ME on the SCA system bus that
+   hosts
+   
+   
+   
+   Reason: com.ibm.websphere.sib.exception.SIResourceException:
+   CWSIT0086E:
+   Bus SCA.SYSTEM.SURYACell02.Bus not found
+   *****************
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  an iFix is available
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: WebSphere Process Server v6.1.0.x and        *
+   *                 v6.1.2.x users.                              *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: When deploying a service component      *
+   *                      architecture (SCA) module that          *
+   *                      contains Event Sequencing qualifiers    *
+   *                      to a deployment target that             *
+   *                      references remote Messaging Engines,    *
+   *                      the creation of system component        *
+   *                      queues fails to resolve and create      *
+   *                      the queues.                             *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   Event Sequencing system component queue creation fails.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Applying this interim fix will resolve the issue.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR31940
+   
+   
+ * REPORTED COMPONENT NAME
+   WEB PROC SERVER
+   
+   
+ * REPORTED COMPONENT ID
+   5724L0100
+   
+   
+ * REPORTED RELEASE
+   612
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-02-06
+   
+   
+ * CLOSED DATE
+   2009-02-17
+   
+   
+ * LAST MODIFIED DATE
+   2009-03-10
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEB PROC SERVER
+   
+   
+ * FIXED COMPONENT ID
+   5724L0100
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R600 PSN
+   UP
+   
+   
+ * R601 PSN
+   UP
+   
+   
+ * R602 PSN
+   UP
+   
+   
+ * R610 PSY
+   UP
+   
+   
+ * R612 PSY
+   UP
+   
+   
+ * R620 PSN
+   UP

@@ -1,0 +1,49 @@
+Title: IBM What is the expected default behaviour when sending Excel report emails in Cognos 10? - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ What is the expected behaviour for Excel output options when sent as email attachments for Cognos 10? 
+
+RESOLVING THE PROBLEM
+For Cognos 10: 
+
+
+There are multiple versions of Excel output for backwards compatibility reasons: 
+
+CSV - raw data, no formatting, only possible with single Query reports. Delivered in email as a .CSV file.
+Excel 2000 Single Sheet - all report pages rendered to one Excel 2000 worksheet. Usually delivered in email as a .HTML file.
+Excel 2002 - each report page is rendered to its own Excel 2002 worksheet, in a single Excel 2002 workbook. Usually delivered in email as a .MHT or HTML file.
+Excel 2007 - each report page is rendered to its own Excel 2007 worksheet, in a single Excel 2007 workbook. Usually delivered in email as a .MHT or HTML file. 
+
+NOTE: set RSVP.FILE.EXTENSION.XLS to TRUE on the Batch Report Service and Report Service as per the Cognos 8 Administration and Security guide in order to use XLS as the file extension on XLS output format email attachments instead of HTML. 
+
+The Excel types are often delivered via email as .HTML and .MHT files (supported Excel file types) instead of .XLS files for several reasons: 
+
+- .XLS files are prone to macro viruses and as such are blocked by many email servers. 
+
+- Using HTML/MHT files (supported Excel file types) permits users without Excel installed locally to view the files as well as those who have Excel available, thus potentially increasing a report's target audience. 
+
+Therefore, you should not be expecting .XLS files in the emails, instead you should be getting .HTML or .MHT files depending on which version of Excel you selected (HTML for Excel 2000 and MHT for Excel 2002). Cognos 8 uses a Microsoft-supplied open document standard that effectively embeds the Excel format into an HTML or MHT document. 
+
+For the .HTML email attachments, users can simply double-click the HTML and open it in Internet Explorer. Subsequently, they can go File --> Edit with Microsoft Office Excel. Alternatively, you can save the email attachment and give it an XLS extension. 
+
+For .MHT email attachments, users can open these directly in Excel. By default Windows may associate .MHT files with Internet Explorer, but you can change this: 
+
+1) Save the .MHT file locally to your machine. 
+
+2) Right-click on the file and ensure the you are on the General tab. 
+
+3) Where it says Opens With, click Change 
+
+4) Select Microsoft Office Excel from the list 
+
+By going through the above four steps users will then simply be able to double-click on the .MHT files to open these in Excel. 
+
+.
+
+1023454_1.zip [/support/docview.wss?uid=swg21340333&aid=2] - 1023454_1.zip [/support/docview.wss?uid=swg21340333&aid=1] 
+
+HISTORICAL NUMBER
+ 1023454

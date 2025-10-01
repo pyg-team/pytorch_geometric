@@ -1,0 +1,77 @@
+Title: IBM odq-001  Environment variable "ODQ_MSG" not set when running WebSphere MQ amqsdlq - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ You are trying to run the amqsdlq utility (Dead Letter Queue handler) in WebSphere MQ and you get the error:
+odq-001 Environment variable "ODQ_MSG" not set 
+
+ANSWER
+Prior to issuing amqsdlq, you need to define the environment variable ODQ_MSG to indicate where to find the file that has the information or error messages for amqsdlq that can be customized by the user:
+export ODQ_MSG=/opt/mqm/samp/dlq/amqsdlq.msg
+
+For more information on amqsdlq see the following 2 links from the MQ V7 Information Center:
+
+http://www.ibm.com/support/knowledgecenter/SSFKSJ_9.0.0/com.ibm.mq.adm.doc/q005650_.htm [http://www.ibm.com/support/knowledgecenter/SSFKSJ_9.0.0/com.ibm.mq.adm.doc/q005650_.htm]
+WebSphere MQ > WebSphere MQ 9.0.0 > IBM MQ > Administering > Administering local IBM MQ objects > Working with dead-letter queues > Processing messages on a dead-letter queue > Invoking the DLQ handler > 
+The sample DLQ handler, amqsdlq 
+
+http://www.ibm.com/support/knowledgecenter/en/SSFKSJ_9.0.0/com.ibm.mq.dev.doc/q024150_.htm [http://www.ibm.com/support/knowledgecenter/en/SSFKSJ_9.0.0/com.ibm.mq.dev.doc/q024150_.htm]
+WebSphere MQ > WebSphere MQ 9.0.0 > IBM MQ > Developing applications > Developing MQI applications with IBM MQ > Sample IBM MQ procedural programs > Sample procedural programs (platforms except z/OS) >
+Dead-letter queue handler sample
+
+WebSphere MQ > Application Programming Guide > Sample WebSphere MQ programs > Sample programs (platforms except z/OS)
+Dead-letter queue handler sample [http://publib.boulder.ibm.com/infocenter/wmqv7/v7r0/index.jsp?topic=%2Fcom.ibm.mq.csqzal.doc%2Ffg17920_.htm]
++ begin
+The sample is similar to the dead-letter handler provided within the product but trace and error reporting are different. There are two environment variables available to you: 
+ODQ_MSG
+Set to the name of the file containing error and information messages. The file provided is called amqsdlq.msg.
++ end
+
+In UNIX (other than AIX), the default location of the file that contains the message file for amqsdlq is:
+/opt/mqm/samp/dlq/amqsdlq.msg
+In AIX it is:
+/usr/mqm/samp/dlq/amqsdlq.msg
+In Windows it is:
+C:\Program Files\IBM\WebSphere MQ\tools\c\Samples\dlq\amqsdlq.msg
+
+Please see the following Presentation for the details on how to use the DLQ handler:
+How to Automate Handling of WebSphere MQ Dead Letter Messages [http://www.ibm.com/support/docview.wss?&uid=swg27008375]
+
+This WebSphere Support Technical Exchange is designed to discuss techniques provided in WebSphere MQ for automating the way you handle messages which arrive on your dead letter queue. The primary focus of this presentation is on the runmqdlq command and the rules table which is associated with that command. The discussions in this presentation are based upon WebSphere MQ v5.3 on the distributed platforms, but they are applicable to WebSphere MQ v6.0 as well.
+In particular, pages 22 thru 26. Those pages talk about runmqdlq, but the invocation is the same for amqsdlq.
+
+The comments in the header of the following file:
+/opt/mqm/samp/dlq/amqodqka.c
+... provide an explanation of the syntax for invoking amqsdlq and runmqdlq, and the options:
+/* runmqdlq <queue_name <queue_mgr_name> < <InputFile */ 
+
+++ Scenario
+
+This scenario shows how to create a rule that moves all the messages from the SYSTEM DLQ in QMGR-1 into the queue Q1 in QMGR-1 without the DLQ headers:
+
+a) Export the environment variable (as in UNIX):
+export ODQ_MSG=/opt/mqm/samp/dlq/amqsdlq.msg
+
+b) Create file "/tmp/dlq.rules"
+c) Add the line:
+ACTION(FWD) FWDQ(Q1) FWDQM('') HEADER(NO)
+
+d) Issue the command:
+$ amqsdlq SYSTEM.DEAD.LETTER.QUEUE QM_VER < /tmp/dlq.rules
+08/11/11 13:48:52 odq-8: Dead-letter queue handler started to process INPUTQ(SYSTEM.DEAD.LETTER.QUEUE).
+... (wait for processing to be done) ...
+Ctrl-C (to end amqsdlq)
+
+Notes:
+- The rules from /tmp/dlq.rules will be used and amqsdlq will not end, because it will keep monitoring the DLQ for incoming messages. You will need to manually terminate the program with Ctrl-C.
+- These are the details of the particular action listed in the rules file:
+ACTION(FWD) => Forward the message
+FWDQ(Q1) FWDQM('') => To Queue Q1 in the current queue manager (represented by single quote, single quote)
+HEADER(NO) => Do not include the DLQ Header. Whether the MQDLH should remain on a message for which ACTION (FWD) is requested. By default, the MQDLH remains on the message. The HEADER keyword is not valid for actions other than FWD.
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ WMQ MQ MQSeries

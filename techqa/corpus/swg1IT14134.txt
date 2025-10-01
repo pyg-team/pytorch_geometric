@@ -1,0 +1,211 @@
+Title: IBM IT14134: GREP ERROR REPORTED WHEN INSTALLING IBM MQ v8.0.0.4 ON SOLARIS - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When installing IBM MQ 8.0.0.4 on Solaris, the following output
+   is seen:
+   
+   ========================================================
+   Agreement accepted: Proceed with install.
+   Licensed Materials - Property of IBM
+    5724-H72
+    (C) Copyright IBM Corporation 1994, 2015
+   US Government Users Restricted Rights - Use, duplication or
+   disclosure
+   restricted by GSA ADP Schedule Contract with IBM Corp.
+   grep: illegal option -- F
+   grep: illegal option -- F
+   Usage: grep -hblcnsviw pattern file . . .
+   Usage: grep -hblcnsviw pattern file . . .
+   ### Installing runtime license
+   ========================================================
+   
+   The install then completes successfully despite the reported
+   error from the "grep" command
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   This issue affects users installing IBM MQ 8.0.0.4 packages on
+   the Solaris platform.
+   
+   
+   Platforms affected:
+   Solaris x86-64, Solaris SPARC
+   
+   ****************************************************************
+   PROBLEM DESCRIPTION:
+   APAR IT10662 [http://www-01.ibm.com/support/docview.wss?uid=swg1IT10662] introduced additional checks to determine if the
+   installation location for MQ was empty.  This check was
+   performed using the "grep" command in combination with the '-F'
+   argument:
+   
+     grep -F
+   
+   which is not a valid option on Solaris when using the default
+   the version of grep found in "/usr/bin".
+   
+   If the path was configured such that this version of grep
+   ("/usr/bin/grep") was invoked when performing this check during
+   installation, the following error messages were reported to
+   standard error:
+   
+   grep: illegal option -- F
+   grep: illegal option -- F
+   Usage: grep -hblcnsviw pattern file . . .
+   Usage: grep -hblcnsviw pattern file . . .
+   
+   and the installation proceeded.  The effect of this code defect
+   was that even if the directory was not empty, the installation
+   scripts would not abort the installation.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  While the Solaris binary "/usr/xpg4/bin/grep" does support the
+   '-F' option, this binary is not guaranteed to be available on
+   every Solaris system.  To resolve the problem therefore, the
+   Solaris installation scripts have been updated such that the
+   '-F' flag is not used.
+   
+   One consequence of this is that the optional environment
+   variable introduced by APAR IT10662 [http://www-01.ibm.com/support/docview.wss?uid=swg1IT10662]:
+   
+     AMQ_IGNORE_SNAPDIRNAME
+   
+   is now treated as a regular expression during installaton - ON
+   SOLARIS ONLY.
+   
+   For example, if the following commands are used prior to
+   installation:
+   
+   AMQ_IGNORE_SNAPDIRNAME=".*myfile"
+   export AMQ_IGNORE_SNAPDIRNAME
+   
+   any files located in the chosen installation directory which
+   match this as a regular expression will be ignored by the
+   installation scripts.  This means that if the following files
+   are present in the chosen installation directory of "/opt/mqm"
+   the installation will proceed regardless of the fact that the
+   installation directory is not empty:
+   
+     /opt/mqm/a_myfile
+     /opt/mqm/b_myfile
+     /opt/mqm/myfile_c
+   
+   
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+   Version    Maintenance Level
+   v8.0       8.0.0.5
+   
+   The latest available maintenance can be obtained from
+   'WebSphere MQ Recommended Fixes'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037]
+   
+   If the maintenance level is not yet available information on
+   its planned availability can be found in 'WebSphere MQ
+   Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT14134
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ BASE MULTIP
+   
+   
+ * REPORTED COMPONENT ID
+   5724H7251
+   
+   
+ * REPORTED RELEASE
+   800
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-03-04
+   
+   
+ * CLOSED DATE
+   2016-04-19
+   
+   
+ * LAST MODIFIED DATE
+   2016-05-04
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ BASE MULTIP
+   
+   
+ * FIXED COMPONENT ID
+   5724H7251
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R800 PSY
+   UP

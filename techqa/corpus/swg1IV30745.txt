@@ -1,0 +1,107 @@
+Title: IBM IV30745: WSN(SOA WEBSERVICES NAVIGATOR) SHOWS VERY LONG RESPONSE TIME. - United States
+
+Text:
+  READMES ARE AVAILABLE
+IBM Tivoli Composite Application Manager for SOA 7.2 Interim Fix 7 README 7.2.0.1-TIV-ITCAMSOA-IF0007 [http://www-01.ibm.com/support/docview.wss?uid=isg400002451]
+IBM Tivoli Composite Application Manager for SOA 7.2 Interim Fix 9 README 7.2.0.1-TIV-ITCAMSOA-IF0009 [http://www-01.ibm.com/support/docview.wss?uid=isg400002627]
+IBM Tivoli Composite Application Manager for SOA 7.2 Interim Fix 12 README 7.2.0.1-TIV-ITCAMSOA-IF0012 [http://www-01.ibm.com/support/docview.wss?uid=isg400003852]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Problem description :
+   The IBM SOA WebServices Navigator... Some services showing
+    response times in correctly and they are report very very long
+    time. (ex: 9,223,372,036,854.775 milli seconds)
+   
+   Approver : LL3 - PP
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Fixed by code change in 7.2 and 7.1.1 FP4 candidate
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV30745
+   
+   
+ * REPORTED COMPONENT NAME
+   ITCAM FOR SOA-D
+   
+   
+ * REPORTED COMPONENT ID
+   5724SOA00
+   
+   
+ * REPORTED RELEASE
+   711
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2012-10-24
+   
+   
+ * CLOSED DATE
+   2012-12-03
+   
+   
+ * LAST MODIFIED DATE
+   2012-12-03
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

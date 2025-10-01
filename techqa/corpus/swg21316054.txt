@@ -1,0 +1,34 @@
+Title: IBM 0C1 in DFHMCP1$ when upgrading to CICS TS 3.2 - United States
+
+Text:
+DFHMCP1$ FFFFFFFF ABENDS0C1 ABEND0C1 migration migrating ; PIE for CICS ; 5655M1500 R650 650 R500 500 HCI6500 5655-M15 5655M15 kixinfo kixdcfpi32c kixdcfcic650 retention32 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ After you upgrade your CICS Transaction Server for z/OS region from V2.2 to V3.2, you receive message DFHAP0001 An abend (code 0C1/AKEA) has occurred at offset X'FFFFFFFF' in module DFHMCP1$. You are using PIE/CICS from UNICOM Systems. 
+
+CAUSE
+Fix CS360020 needed for PIE/CICS. [http://unicomglobal.com/]
+
+DIAGNOSING THE PROBLEM
+Reviewing the dump, the kernel will indicate something like the following:
+
+
+Program DFHMCP1$ was in control, but the PSW was elsewhere. 
+Error happened under the CICS RB.
+CICS Registers and PSW.
+PSW: 078D0000 96248D24 Instruction Length: 2 Interrupt Code: 01
+Exception Address: 57CCF001 
+Execution key at Program Check/Abend: 8 
+
+If you go to where the PSW points, you will see the binary zeros that are causing the abend 0C1.
+
+
+RESOLVING THE PROBLEM
+Apply fix CS360020 for PIE/CICS from [/support/docview.wss?uid=swg21316054&amp;aid=1]UNICOM Systems [http://www.unicomsi.com/].
+
+
+
+
+
+PRODUCT ALIAS/SYNONYM
+ CICS/TS CICS TS CICS Transaction Server

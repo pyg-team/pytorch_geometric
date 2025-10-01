@@ -1,0 +1,58 @@
+Title: IBM 'Standard Error - COMException (0x80040E14): Incorrect syntax near 'l'' when trying to reverse journals - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ User is trying to enter a company journal. User enters some text into the 'Journal Text' screen, and saves the journal. Afterwards, the user tries to reverse the same journal. User receives error message. 
+
+SYMPTOM
+Screen: 
+
+Information
+Standard Error
+Source: ControllerProxyClient
+Description: System.Web.Services.Protocols.SoapException: Server was unable to process request. --->
+System.Runtime.InteropServices.COMException (0x800e0E14): Line 1: Incorrect syntax near 's'.
+at FrJournalsB.clsDataEJournalsBClass.ReverseJournal(String sGuid, String sUser, String perAkt, String comp,
+String btyp, Int16 vernr, ....
+[OK]
+
+Event Viewer (Application Log):
+Event Type: Warning 
+Event Source: Cognos Controller 
+Event Category: None 
+Event ID: 0 
+Date: 31/07/2009 
+Time: 8:07:08 AM 
+User: N/A 
+Computer: PCNAME 
+Description: 
+Standard Error 
+Source: ControllerProxyClient 
+Description: System.Web.Services.Protocols.SoapException: Server was unable to process request. ---> System.Runtime.InteropServices.COMException (0x80040E14): Incorrect syntax near 'l'. 
+at FrJournalsB.clsDataEJournalsBClass.ReverseJournal(String sGuid, String sUser, String perAkt, String comp, String btyp, Int16 vernr, Int32& lErr, String& sErr) 
+at Cognos.Controller.Proxy.CCRWS.clsDataEJournalsB_ReverseJournal(String sGuid, String sUser, String perAkt, String comp, String btyp, Int32 vernr, Int64& lErr, String& sErr) 
+--- End of inner exception stack trace --- 
+at Cognos.Controller.ControllerSoapHttpClientProtocol.Invoke(String methodname, Object[] parameters) 
+at Cognos.Controller.Proxy.FrJournalsB.WSFrJournalsB.clsDataEJournalsB_ReverseJournal(String sGuid, String sUser, String perAkt, String comp, String btyp, Int32 vernr, Int64& lErr, String& sErr) 
+at Cognos.Controller.Direct.clsDataEJournalsD.ReverseJournal(String perAkt, String comp, String btyp, Int32 vernr, Int64& lErr, String& sErr) 
+at Cognos.Controller.Forms.Form.clsDataEJournals.ReverseJournal(String perAkt, String comp, String btyp, Int32 vernr, Int64& lErr, String& sErr) 
+at Cognos.Controller.Forms.Form.frmDataEJournals.ReverseJournal()
+
+CAUSE
+Code production problem (APAR PK94094). 
+
+ 
+This prevents the use of an apostrophe (') inside the 'Journal Text' section of a company journal.
+
+
+RESOLVING THE PROBLEM
+Fix: 
+
+Upgrade to Controller 8.5.1 (also known as v8.5.1414 inside "Help - System Info") or later. 
+
+ 
+
+Workaround:
+Modify the 'Journal Text' by removing any apostrophes, and then save. Afterwards, you will find that you can now reverse the journal without any errors

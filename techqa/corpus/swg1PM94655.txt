@@ -1,0 +1,145 @@
+Title: IBM PM94655: Module prompts to save even when there are no modifications made to the module - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Rational DOORS and DOORS Web Access Fix Pack 1 (9.5.2.1) for 9.5.2 [http://www-01.ibm.com/support/docview.wss?uid=swg24036806]
+Rational DOORS Fix Pack 2 (9.5.2.2) for 9.5.2 [http://www-01.ibm.com/support/docview.wss?uid=swg24037496]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Module prompts to save even when there are no modifications made
+   to the module
+   
+   Steps to reproduce:
+   - Open module in Exclusive Edit
+   - Click on Edit -? Attributes
+   - Select an attribute and click on Edit
+   - Do not modify anything, just click on OK
+   - Close the module
+   
+   Current behavior:
+   User will be prompted to save the module.
+   Module level history entry is created for modification of
+   attribute
+   
+   Expected behavior:
+   No history entry should be created, and no prompt to save the
+   module should be shown.
+   
+   Other symptoms:
+   - If the module is opened in Read-only and performs the same set
+   of operations, clicking on OK in the Edit Attribute dialog will
+   throw the following message:
+   'No access to modify attribute ?attribute name?'
+   - The behavior is applicable for Attribute Types as well - but
+   limited to specific Types only.
+   Note - if these other symptoms needs considered as different
+   problem, please update this at the earliest so that I can raise
+   another APAR.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  The code has been changed so that this issue no longer occurs.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  There is no workaround for this issue
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM94655
+   
+   
+ * REPORTED COMPONENT NAME
+   TLOGIC DOORS
+   
+   
+ * REPORTED COMPONENT ID
+   5724V61DR
+   
+   
+ * REPORTED RELEASE
+   951
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-08-07
+   
+   
+ * CLOSED DATE
+   2014-03-24
+   
+   
+ * LAST MODIFIED DATE
+   2014-03-24
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TLOGIC DOORS
+   
+   
+ * FIXED COMPONENT ID
+   5724V61DR
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R952 PSY
+   UP

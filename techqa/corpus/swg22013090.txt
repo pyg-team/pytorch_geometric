@@ -1,0 +1,16 @@
+Title: IBM McAfee VSES Version 1.0 does not work with IBM Connections - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+After configuring McAfee VSES Version 1.0 with IBM Connections Files to scan uploaded files for virus, no one is able to upload files to the system. Why does this fail?
+
+CAUSE
+IBM Connections works with ICAP 1.0 protocol. McAfee VSES, however, does not currently support the ICAP 1.0 protocol, and will not currently work with IBM Connections
+
+ANSWER
+Select an ICAP 1.0 compliant anti virus solution. 
+
+Ensure that the virus detection product used in your enterprise supports the ICAP 1.0 protocol. 
+IBM Connections is currently certified to work with Symantec AntiVirus Scan Engine 5.1 and McAfee web Security Appliance (3400) and (3300).

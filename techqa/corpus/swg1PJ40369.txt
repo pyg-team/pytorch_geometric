@@ -1,0 +1,171 @@
+Title: IBM PJ40369: CONNECTION FAILURE TO ONE OBJECT STORE MAY PREVENT CONSISTENCY CHECK AGAINST A STORAGE AREA IN ANOTHER OBJECT STORE - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  If an object store is offline, it is not possible to access any
+   storage areas in object stores which were created after the
+   offline object store using Content Consistency Checker.
+   
+   So for example, given a domain which has 50 object stores os1,
+   os2, ... os50 and each object store has a file storage area. If
+   a problem prevents os1 from being accessed and it is offline,
+   then the storage areas in os2 through os50 also cannot be
+   accessed in Content Consistency Checker, even though those
+   object stores are currently online.
+   
+   Consistency Checker allows the storage area to be selected for
+   validation, but when you click Start to validate an error is
+   thrown:
+   
+   "Validation was stopped due to an error. Exception:
+   java.lang.Exception: Fatal Error - no Storage Areas were found
+   to work on."
+   
+   Logs show that a request for the table definition for os1 fails
+   because object store os1 cannot be accessed, although the system
+   was performing a consistency check on a storage area in os2.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Correcting the connectivity problem to the offline object store
+   allows the other storage storage areas to be accessed via
+   Consistency Checker.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * Users of the Consistency Checker in any version prior to     *
+   * 5.0.0.3-P8CE-FP003                                           *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * If an object store is offline, it is not possible to access  *
+   * any storage areas in other object stores (created after the  *
+   * offline object store) with the Consistency Checker tool      *
+   * which prevents running consistency checks on any of those    *
+   * storage areas even though they are online.  The Consistency  *
+   * Checker allows the storage area to be selected for           *
+   * validation, but when you click Start to validate the         *
+   * following error is displayed:                                *
+   * "Validation was stopped due to an error. Exception:          *
+   * java.lang.Exception: Fatal Error - no Storage Areas were     *
+   * found to work on."                                           *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Upgrade to 5.0.0.3-P8CE-FP003 or a later release to get the  *
+   * fix for this issue.                                          *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  If the object store is offline (unavailable) an exception was
+   being thrown (and not handled correctly) preventing the building
+   a the list of storage areas to process.  The list was empty and
+   therefore no check ran on selected storage area(s).  A fix has
+   been applied for this problem in the Content Platform Engine
+   Consistency Checker tool release 5.0.0.3-P8CE-FP003.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PJ40369
+   
+   
+ * REPORTED COMPONENT NAME
+   CONTENT ENGINE
+   
+   
+ * REPORTED COMPONENT ID
+   5724R8101
+   
+   
+ * REPORTED RELEASE
+   500
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-06-27
+   
+   
+ * CLOSED DATE
+   2015-05-20
+   
+   
+ * LAST MODIFIED DATE
+   2015-05-20
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    PJ40335 [http://www-01.ibm.com/support/docview.wss?uid=swg1PJ40335]
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CONTENT ENGINE
+   
+   
+ * FIXED COMPONENT ID
+   5724R8101
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R500 PSY
+   UP

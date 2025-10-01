@@ -1,0 +1,202 @@
+Title: IBM PN64174: ENTERING A WRONG PASSWORD IN THE TELNET SOLICITOR PANEL, 	R
+MESSAGE SHIFTED ON THE RIGHT. - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Entering an incorrect password in the TELNET solicitor panel
+   produces a error message that is skewed to the right.
+   ADDITIONAL SYMPTOMS :
+   This problem may also occur when the TCPIP Network
+   Solicitor Panel is redisplayed, not necessarily only when an
+   invalid password is sent.
+   %EZY1943I MVP Diag7C E4Msg 1 No LUs available
+   VERIFICATION STEPS :
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All telnet users who use the Telnet          *
+   *                  solicitor panel.                            *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Messages are skewed to the right        *
+   *                      when error detected on solicitor        *
+   *                      panel.                                  *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   MVPDG7C and MVPDG7D were updated to resolve skewed
+   messages.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Previously the message generated from the verification of
+    input entered on the Telnet Solicitor Panel was not being
+    passed correctly to the message handler routine, resulting in
+        1) the message being skewed and
+        2) Possible invalid messages outputted
+   
+    Checks were made to verify the output of various combinations
+    for if this panel is used for a restricted appl or a
+    non-restricted appl.
+   
+    Userid and Password, if specified, must be retyped if not
+    accepted by the authorization checks.  Otherwise, they will
+    be considered blank.
+   
+    If a non-restricted appl is specified using this screen, the
+    userid and password are not required. An initial check will be
+    done to determine if they are valid, if specified.
+   
+    The following are some of the various scenarios tested:
+   
+   
+    Screen input        Restricted Appl       Non-Restricted Appl
+   ================= ======================= ====================
+    > Userid,         > login                   > login
+      Password, Appl
+   
+    > Appl            > Userid reqd for this    > login
+                        application
+   
+    > No input        > Appl is required        > Appl is required
+                        No default installed      No default
+                                                  installed
+   
+    > Password only   > Valid Uid required      > Valid Uid rq'd
+                        before password           before password
+                           specified.                specified.
+   
+    > Userid only     > Appl is required        > Appl is required
+                      No default installed     No default installed
+   
+    > Userid, PW      > Appl is required        > Appl is required
+      No appl        No default installed      No default installed
+   
+    > Userid, Invalid > PW not authorized       > PW not authorized
+      Password, No Appl
+   
+    > Userid, Invalid > New PW invalid          > New PW invalid
+      new Password, Appl
+   
+    > Userid, Invalid > PW not authorized       > PW not
+      Password, Appl                               authorized
+       >>Reenter             >>Password required       >> login
+   
+    > Invalid Appl    > Connection terminated   > Connection
+                                                  terminated.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PN64174
+   
+   
+ * REPORTED COMPONENT NAME
+   TCP/IP V3 MVS
+   
+   
+ * REPORTED COMPONENT ID
+   5655HAL00
+   
+   
+ * REPORTED RELEASE
+   310
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   1994-10-27
+   
+   
+ * CLOSED DATE
+   1994-12-14
+   
+   
+ * LAST MODIFIED DATE
+   2000-08-16
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UN72082
+   
+   
+
+MODULES/MACROS
+ *  EZACA01D EZACA01E
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TCP/IP V3 MVS
+   
+   
+ * FIXED COMPONENT ID
+   5655HAL00
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R310 PSY UN76474 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UN76474]
+   UP95/05/30 P F505
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

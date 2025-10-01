@@ -1,0 +1,150 @@
+Title: IBM PM09648: SLOW RESPONSE OF ITCAM MANGAGING SERVER CONSOLE PAGES WITH SERVER GROUPS WHEN LARGE NUMBERS OF SERVER GROUPS DEFINED. - United States
+
+Text:
+  FIXES ARE AVAILABLE
+7.1.0-TIV-ITCAMAD-FP0001: ITCAM for Application Diagnostics V7.1 Fix Pack 1 [http://www-01.ibm.com/support/docview.wss?uid=swg24027199]
+7.1.0.1-TIV-ITCAMAD-IF0001 [http://www-01.ibm.com/support/docview.wss?uid=swg24027898]
+7.1.0-TIV-ITCAMAD-FP0003: ITCAM for Application Diagnostics V7.1 Fix Pack 3 [http://www-01.ibm.com/support/docview.wss?uid=swg24032604]
+7.1.0.3-TIV-ITCAMAD-IF0001: ITCAM for Application Diagnostics V7.1 FP3 IF1 [http://www-01.ibm.com/support/docview.wss?uid=swg24032985]
+7.1.0.3-TIV-ITCAMAD-IF0004: ITCAM for Application Diagnostics V7.1 FP3 IF4 [http://www-01.ibm.com/support/docview.wss?uid=swg24033735]
+7.1.0.3-TIV-ITCAMAD-IF0005: ITCAM for Application Diagnostics V7.1 FP3 IF5 [http://www-01.ibm.com/support/docview.wss?uid=swg24033938]
+7.1.0.3-TIV-ITCAMAD-IF0004: ITCAM for Application Diagnostics V7.1 FP3 IF6 [http://www-01.ibm.com/support/docview.wss?uid=swg24034668]
+7.1.0.3-TIV-ITCAMAD-IF0008: ITCAM for Application Diagnostics V7.1 FP3 IF8 [http://www-01.ibm.com/support/docview.wss?uid=swg24037994]
+7.1.0-TIV-ITCAMAD-FP0004: ITCAM for Application Diagnostics V7.1 Fix Pack 4 [http://www-01.ibm.com/support/docview.wss?uid=swg24041705]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  After defining a large number of server groups, e.g. more than
+   100, users will observe a slowness in all pages having server
+   group and server selection dropdown box. This is due to the VE
+   component having excessive calls to the Kernel component.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Minimize the number of server groups defined in the system.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:
+   *
+   * ITCAM Managing server console users who have defined a large
+   * number of server groups.
+   *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:
+   *
+   * The Managing server console web pages that contain "Server
+   * Group" and "Server" list box selections loads very slowly.
+   *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix for this APAR is contained in the following maintenance
+   packages:
+   
+     | interim fix | 6.1.0.5-TIV-ITCAMfWAS_SVR-IF0011
+   
+     | fix pack | 7.1.0-TIV-ITCAMAD-FP0001
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM09648
+   
+   
+ * REPORTED COMPONENT NAME
+   ITCAM WAS MGING
+   
+   
+ * REPORTED COMPONENT ID
+   5724L62MS
+   
+   
+ * REPORTED RELEASE
+   610
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-03-10
+   
+   
+ * CLOSED DATE
+   2010-12-10
+   
+   
+ * LAST MODIFIED DATE
+   2010-12-10
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ITCAM WAS MGING
+   
+   
+ * FIXED COMPONENT ID
+   5724L62MS
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R610 PSY
+   UP

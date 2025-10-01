@@ -1,0 +1,97 @@
+Title: IBM Guardium does not capture Informix shared memory sessions - United States
+
+Text:
+Informix; shared memory; capture TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ IBM InfoSphere Guardium does not capture Informix shared memory connection/session information. You can not see the session in the Guardium Session reports. Problem is only with shared memory connections, TCP/IP connections do not have the problem. 
+
+SYMPTOM
+You do not see the Informix shared memory sessions in the Guardium Session reports.
+
+
+CAUSE
+Informix NETTYPE parameter is configured with more than 50 shared memory connections per poll thread. Current STAPs only support a maximum of 50 shared memory connections per thread for Informix.
+
+ENVIRONMENT
+IBM InfoSphere Guardium v9.1 monitoring shared memory sessions on Informix database server.
+
+RESOLVING THE PROBLEM
+This limitation will be addressed by the architectural changes in upcoming Guardium STAP version 10.
+
+
+For previous versions of Guardium STAP, you can use the following workaround.
+
+Configure Informix NETTYPE to 50 or less shared memory connections per poll thread. For Example, change:
+NETTYPE ipcshm,4,500,CPU 
+to:
+NETTYPE ipcshm,40,50,CPU 
+
+Note: 
+
+If the database server does not have 40 CPU cores or more, making the above change contradicts with Informix Support recommendation of not having more pollthreads than CPU cores. Informix Support recommends this to avoid potential performance impact. 
+
+Considering this, below are some options based on the above example (initial setting: NETTYPE ipcshm,4,500,CPU) with details on how each option goes along with Informix and Guardium recommendations. 
+
+Options 1 and 2 are preferred. Options 3 and 4 are discouraged as they oppose either Guardium or Informix recommendations due to the consequences.
+
+Option 1 - 
+
+ * 
+ * 
+ * - Add more CPU cores to the Informix database to at least 40 
+ * - Change NETTYPE ipcshm,4,500,CPU to NETTYPE ipcshm,40,50,CPU
+   
+ * Results: 
+ * - Keeps 2000 shared memory connections in Informix NETTYPE configuration 
+ * - Follows Guardium Limitations 
+ * - Follows Informix Guidelines
+   
+   Consequence: 
+ * You need to add CPU cores to the database server.
+
+
+
+
+Option 2 -  * 
+ * 
+ * - Change NETTYPE ipcshm,4,500,CPU to NETTYPE ipcshm,4,50,CPU
+   
+ * Results: 
+ * - Decreases shared memory connections in Informix NETTYPE configuration 
+ * - Follows Guardium Limitations 
+ * - Follows Informix Guidelines
+   
+   Consequence: 
+ * Fewer simultaneous Informix shared memory connections.
+
+
+
+
+Option 3 -  * 
+ * 
+ * - Do not add more CPU cores to the Informix database. 
+ * - Change NETTYPE ipcshm,4,500,CPU to NETTYPE ipcshm,40,50,CPU
+   
+ * Results: 
+ * - Keeps 2000 shared memory connections in Informix NETTYPE configuration 
+ * - Follows Guardium Limitations 
+ * - Opposes Informix Guidelines
+   
+   Consequence: 
+ * Performance issues will likely ensue on the Informix database with overloading each cpu with too many shared memory threads.
+
+
+
+
+Option 4 -  * 
+ * 
+ * - Do not make any change but. Leave NETTYPE ipcshm,4,500,CPU 
+ *  
+ * Results: 
+ * - Keeps 2000 shared memory connections in Informix NETTYPE configuration 
+ * - Opposes Guardium Limitations 
+ * - Follows Informix Guidelines
+   
+   Consequence: 
+ * Guardium will not be able to capture ANY Informix shared memory traffic.

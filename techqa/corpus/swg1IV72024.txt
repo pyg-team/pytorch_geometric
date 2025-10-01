@@ -1,0 +1,172 @@
+Title: IBM IV72024: FAIL TO GET ALL INFORMATION FOR "DG_MANAGED_STANDBY_STAT" AND SQLINFO ID="DG_STATS" OF RAC. - United States
+
+Text:
+  FIXES ARE AVAILABLE
+ITCAM Extended Agent for Oracle Database: 6.3.1.2-TIV-ITM_KRZ-IF0003 [http://www-01.ibm.com/support/docview.wss?uid=swg24042039]
+ITCAM Extended Agent for Oracle Database: 6.3.1.2-TIV-ITM_KRZ-IF0004 [http://www-01.ibm.com/support/docview.wss?uid=swg24043445]
+ITCAM Extended Agent for Oracle Database: 6.3.1.2-TIV-ITM_KRZ-IF0005 [http://www-01.ibm.com/support/docview.wss?uid=swg24044064]
+ITCAM Extended Agent for Oracle Database: 6.3.1.2-TIV-ITM_KRZ-IF0006 [http://www-01.ibm.com/support/docview.wss?uid=swg24044606]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Environment: All Platforms
+   Query information from v$ view with "DG_Managed_Standby_Stat"
+   and
+   SQLInfo ID="DG_Stats".
+   It will get all information if the database is a single
+   instance.
+   It will not get all information if the DataBase struction
+   include RAC.
+   Detailed Reproducing Procedure:
+   1. Need to set up a Database Struction to include RAC and Data
+   Guard.
+   2. Configure a instance to monitor the RAC and Data Guard.
+   3. Start the agent.
+   4. Query attribute group "DG_Managed_Standby_Stat" and SQLInfo
+   ID="DG_Stats"
+   
+   Related Files and Output:
+   All information will be shown for RAC or cluster.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  1. Backup the original krzsql.xml on the agent side.
+   
+   2. Modify below 4 queries in krzsql.xml
+   DG_Stats
+   DG_Managed_Standby_Stat
+   DG_Managed_Standby
+   DG_Recovery_Progress
+   by changing:
+   v$dataguard_stats with gv$dataguard_stats
+   v$managed_standby with gv$managed_standby
+   v$recovery_progress with gv$recovery_progress
+   v$database with gv$database
+   
+   3. Grant select on gv$ permission to ITM user:
+   
+      grant select on gv$database to <ITM user>;
+      grant select on gv$managed_standby to <ITM user>;
+      grant select on gv$dataguard_stats to <ITM user>;
+      grant select on gv$recovery_progress to <ITM user>;
+   
+   4. Re-start Oracle agent.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  query some information from v$ view before for
+   "DG_Managed_Standby_Stat" and SQLInfo ID="DG_Stats".
+   It will get all information if the database is a single
+   instance.
+   It will not get all information if IT struction include RAC.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Problem Conclusion:
+   The fix for this APAR is contained in the following
+   packages:
+   IBM Tivoli Monitoring for Databases:
+      Extend Oracle Agent 6.3.1.2-TIV-ITM_KRZ-IF0003
+   IBM Tivoli Monitoring for Databases:
+      Extend Oracle Agent 6.3.1.2-TIV-ITM_KRZ-IF0003
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV72024
+   
+   
+ * REPORTED COMPONENT NAME
+   ITCAM EXT AGNT
+   
+   
+ * REPORTED COMPONENT ID
+   5724V09OR
+   
+   
+ * REPORTED RELEASE
+   631
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-04-10
+   
+   
+ * CLOSED DATE
+   2015-06-15
+   
+   
+ * LAST MODIFIED DATE
+   2015-08-06
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ITCAM EXT AGNT
+   
+   
+ * FIXED COMPONENT ID
+   5724V09OR
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R631 PSY
+   UP

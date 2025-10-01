@@ -1,0 +1,15 @@
+Title: IBM Domino.Doc Specific Lines in NOTES.INI - United States
+
+Text:
+ PRODUCT DOCUMENTATION
+
+ABSTRACT
+ Lotus Domino Document Manager or Lotus Domino.Doc adds items to the NOTES.INI file for the Lotus Domino server, used mostly for replication and archiving. 
+
+CONTENT
+Lotus Domino Document Manager or Lotus Domino.Doc adds the items in the table below to the NOTES.INI file for the Lotus Domino server, used mostly for replication and archiving. 
+
+DDMTransDB=\ddmtrans.nsf Sets the transaction database (DB) to be used relative to the data directory DDMTransPollingInterval=60 Sets the interval at which the DDMTRANS task polls the transaction DB for requests; default is 60 seconds DDMTransRetryInterval=60 Sets the interval at which the DDMTRANS task retries a failed action; default is 60 seconds DDMTransRetryFailCount=24 Sets the number of times the transaction manager attempts a transaction; default is 24 DDMTransSendMail=NO Enables/disables whether or not mail is sent to users for notification of failed request, etc. DDSiteAdminDB=\ddadmin.nsf Sets the site administration database DDSMTimeout=60 Specifies the amount of time the addin task waits before checking to see if it is time to do a scheduled run; default is 60 minutes DDSMDailySchedule=3 Time that DDSM runs. Limited to running on the hour, 0-23 DominoDisableFileUploadChecks=1 Turns on the ability of users to upload files to a Domino server. Necessary for users to check-in documents to Domino.Doc 
+Additionally, the DDMTRAN task is added to the ServerTasks line in the server's NOTES.INI file. 
+
+Additional information on these settings can be found in the Administrator's Guide Help file.

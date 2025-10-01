@@ -1,0 +1,133 @@
+Title: IBM PM36484: DOCUMENTATION: WP-UPDATE-STANDALONE-LDAP REMOVES ATTRIBUTE MAPPINGS - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  AFFECTED URLs:
+   V7
+   http://www-10.lotus.com/ldd/portalwiki.nsf/dx/Updating_the_stand [http://www-10.lotus.com/ldd/portalwiki.nsf/dx/Updating_the_stand]
+   alone_LDAP_user_registry_on_Windows_wp7
+   .
+   V6.1
+   http://publib.boulder.ibm.com/infocenter/wpdoc/v6r1/index.jsp?to
+   pic=/com.ibm.wp.ent.doc_v615/security/win_update_saldap.html [http://publib.boulder.ibm.com/infocenter/wpdoc/v6r1/index.jsp?topic=/com.ibm.wp.ent.doc_v615/security/win_update_saldap.html]
+   .
+   TEXT READS:
+   After configuring and using the standalone LDAP user registry,
+   you may find that your LDAP user registry is not working exactly
+   as you would like. You can easily update the LDAP user registry
+   and make the necessary changes. For example, you can change your
+   LDAP Bind password.
+   .
+   TEXT SHOULD READ:
+   After configuring and using the standalone LDAP user registry,
+   you may find that your LDAP user registry is not working exactly
+   as you would like. You can easily update the LDAP user registry
+   and make the necessary changes. For example, you can change your
+   LDAP Bind password. However, note that such a task will remove
+   any attribute mappings that you have added since you previously
+   enabled/updated the standalone LDAP user registry. Thus, you
+   will need to re-run the mapping steps as described on the <OS>:
+   Mapping attributes section.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Refer to the above
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  This is planned to be changed in the product documentation.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This is planned to be changed in the product documentation.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM36484
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSPHERE PORTA
+   
+   
+ * REPORTED COMPONENT ID
+   5724E7600
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-04-11
+   
+   
+ * CLOSED DATE
+   2011-11-03
+   
+   
+ * LAST MODIFIED DATE
+   2011-11-03
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

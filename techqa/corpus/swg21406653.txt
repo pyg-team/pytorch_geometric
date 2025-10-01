@@ -1,0 +1,33 @@
+Title: IBM Excel metadata and Framework Manager data types - United States
+
+Text:
+Excel; Framework Manager; data types; column types TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Mapping Excel column types to Framework Manager data types. 
+
+RESOLVING THE PROBLEM
+Excel does not have ‘data types’ as a RDBMS does. Excel has ‘column types’ which are defined automatically by Excel depending on the data which is stored within the column. The column data types that are returned from Excel for an Excel data source are not identical in all cases to the data types in most programming languages and applications – Framework Manager included. Below is a summary of Excel metadata ‘data types’ and what to expect in Framework Manager. 
+
+(Excel 2003 –> Framework Manager)
+Numeric -> Float64
+Currency -> Int16
+Date/Time -> Date Time
+Boolean -> Int16
+Text<255 -> Char length 16
+Memo -> Text Blob
+
+
+Please note that before you can import Excel metadata, you must define a table within Excel 
+
+Excel 2003:
+1. highlight the section of your Excel sheet that you want to import into Framework Manager
+2. in Excel, select INSERT > NAME > DEFINE….
+3. choose a name and OK
+
+
+
+
+
+
+Cross Reference information Segment Product Component Platform Version Edition Business Intelligence & Financial Performance Management Cognos Business Intelligence Framework Manager Windows 8.3, 8.4

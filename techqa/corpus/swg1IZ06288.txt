@@ -1,0 +1,142 @@
+Title: IBM IZ06288: KNOWN ISSUE INTRODUCED WITH NETCOOL/IMPACT 4.0.1 THAT "BREAKS" SELF MONITORING - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Self Monitoring synthetic events are not generated
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Fixed by Test Fix 0002
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All Netcool/Impact Users who are using       *
+   *                 SelfMonitoring Service                       *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: KNOWN ISSUE INTRODUCED WITH             *
+   *                      NETCOOL/IMPACT 4.0.1 THAT BREAKS SELF   *
+   *                      MONITORING                              *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   *                                                              *
+   ****************************************************************
+   Steps to replicate: 1) Configure Impact Server 2) Configure
+   SelfMonitoring Service 3) Run SelfMonitoring Service Observe
+   the Excpetion in netcoo.log file java.lang.NullPointerException
+   at
+   com.micromuse.reponse.common.SQLHandler.processBeforeInsert(SQL
+   Handler.java: 739)
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fixed in Impact 4.0.1  Interim Fix 1 4.0.1-TIV-NCI-IF0001
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ06288
+   
+   
+ * REPORTED COMPONENT NAME
+   NETCOOL/IMPACT
+   
+   
+ * REPORTED COMPONENT ID
+   5724O59IS
+   
+   
+ * REPORTED RELEASE
+   400
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2007-10-10
+   
+   
+ * CLOSED DATE
+   2007-10-30
+   
+   
+ * LAST MODIFIED DATE
+   2007-10-30
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *     NETCOOL
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   NETCOOL/IMPACT
+   
+   
+ * FIXED COMPONENT ID
+   5724O59IS
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R400 PSY
+   UP

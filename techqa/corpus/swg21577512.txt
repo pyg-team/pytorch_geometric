@@ -1,0 +1,116 @@
+Title: IBM Customer Communication Letter - United States
+
+Text:
+ NEWS
+
+ABSTRACT
+ This document is to inform you that Sterling Commerce customers will be moving to IBM Support for case management on 1 Februrary 2012. 
+
+CONTENT
+Important Support Announcement: 
+
+In February 2012, legacy Sterling Commerce customers will be moving to the IBM support system for case management. All open support cases will be moved to this system and accessed by using the IBM Support Portal. This includes all customers of the following applications: 
+
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+
+
+Note for all other products or services not included in the above list, it is business as usual for submitting your cases to support. Continue to go to customer.sterlingcommerce.com for all your support inquiries. 
+
+Critical information will be posted on Customer Center [http://cn.sterlingcommerce.com] [https://cn.sterlingcommerce.com/]; we will continue to provide support through that portal until 1 February. 
+
+The attached document has pointers to various information and tutorials on the portal which should help you understand the new environment. Recorded training sessions will be posted to the support portal [http://www.ibm.com/supportportal] [https://cn.sterlingcommerce.com/]for future reference as well. 
+
+Your account information has been loaded into IBM’s systems and you have been assigned an IBM Customer Number (ICN). Also, two key contacts have been identified for your account: a Primary Contact and a Site Technical Contact. 
+
+The Primary Contact is the main contact point for you company and all correspondence will be sent to his/her attention. The Site Technical Contact is responsible for ensuring that your company’s users and support personnel have access to the IBM Support Portal. 
+
+It is critical for you to know the information below before trying to open a support case. 
+
+The information below has been communicated to the Primary Contact via an IBM Welcome Letter (a sample letter follows). 
+
+Here are the details for your company: 
+
+ICN = XXXXXX 
+
+Primary Contact Name = xxxxxxx 
+Primary Contact Email = xxxxxxx 
+
+Site Technical Contact = xxxxxxx 
+Site Technical Email = xxxxxxx 
+
+
+If you believe we do not have the correct name/contact for the above roles, or have difficulties accessing the IBM Support portal, please email DSWSOFT@us.ibm.com [DSWSOFT@us.ibm.com]. 
+Regards, 
+
+Your IBM Support Team 
+
+ 
+
+
+International Business Machines Corporation 
+International Business Machines Corporation, PO Box 643600, Pittsburgh, PA 15264-3600 
+
+Welcome to IBM 
+
+Primary Contact: Date Here 
+
+Attn: <Name Here> 
+<Address Here> 
+
+Dear IBM software customer, 
+
+You are receiving this letter because you have been designated as the contact for your software purchase for your site/location. As the designated contact please complete the registration process below in order to begin using the available features of our Software and services tool where you can download software for which you are entitled and add additional users from your company who you want to grant access to. 
+
+We appreciate your decision to obtain IBM software. IBM facilitates the acquisition of new software licenses and subscription and support to help you and your colleagues stay current and up to date on new software releases. 
+
+We've assigned you a software site number and if applicable, an Agreement Number. Please make a record of this number(s) and reference it when you communicate with us or your business partner, whether to place an order, update your site information, or contact us regarding software subscription and support. 
+
+Software Site Number: ###### 
+IBM Customer Number: ####### 
+
+Software Site Number: The software site number is unique to your site and should be used to communicate with IBM and your business partner, whether to place an order, update your site information, or contact us regarding your relationship with IBM. 
+
+IBM Customer Number (ICN): The IBM customer number is unique to your site and should be used when contacting IBM Technical Support and when submitting Problem Management Records (PMR's) electronically via the IBM Software Support Site (ESR). 
+
+You will be provided with access to "Software downloads" and "Account management" via the "Software and services tool". 
+
+What tasks can you accomplish via the "Software and services tool"? 
+Software downloads: 24x7 access to "Software downloads" and the ability to set user preferences to see only those downloads of interest to you. 
+Account management: Manage access to the "Software and services tool". You now have the flexibility to give access to an unlimited number of users. 
+
+Instructions to access Software downloads & Account management via the Software and services tool 
+_________________________________________________________________________________ 
+
+(1) Access the "Software and services tool" at www.ibm.com/software/howtobuy/softwareandservices and select "Customer sign in". 
+
+(2) If you already have an IBM ID and password created elsewhere on ibm.com you may enter these into the fields for "IBM ID" and "Password". If you do not, please create them now by selecting the "register" link on the sign in page and completing the necessary information on the next page. 
+
+(3) You will be prompted to enter the following IBM Temporary passcode <their temporary passcode> 
+Full access to the "Software and services tool" requires an IBM Temporary passcode otherwise, limited access to Software download will be allowed. 
+
+If you need additional information, please refer to the link below to locate worldwide contact information for the IBM eCustomer Care Team: 
+www.ibm.com/software/howtobuy/softwareandservices/docs/en_US/ecare.html [http://www.ibm.com/software/howtobuy/softwareandservices/docs/en_US/ecare.html] 
+
+Yours Sincerely, 
+
+IBM eCustomer Care Team

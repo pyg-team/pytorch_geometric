@@ -1,0 +1,51 @@
+Title: IBM Database Error Code  shown in Guardium reports for failed logins in DB2 is different than output error shown in the DB2 client tool - United States
+
+Text:
+error code; Exception; different TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Your attempt to connect to a DB2 database failed. The error code shown in the Guardium report does not correspond to the error in the output on the DB2 client application. 
+
+SYMPTOM
+DB2 Error code shown on the DB2 client application such as the DB2 Command Line , is different than error code in the Guardium report. For example, below are 3 scenarios with 3 different errors reported trying to connect to a DB2 database from the DB2 Command Line: 
+
+
+$db2 connect to sample user user1 using xxxxxxxxx
+SQL20157N User with authorization ID "user1" failed to attach to a quiesced instance, or connect to a quiesced database or a database in a quiesced instance which is in the following quiesce mode : "QUIESCE DATABASE".
+SQLSTATE=08004
+
+
+$db2 connect to sample user user2 using xxxxxxxxx
+SQL1060N User "user2" does not have the CONNECT privilege. SQLSTATE=08004
+
+
+$db2 connect to sample user user3 using xxxxxxxx
+SQL30082N Security processing failed with reason "24" ("USERNAME AND/OR PASSWORD INVALID"). 
+SQLSTATE=08001
+
+
+
+Guardium report shows totally different error codes for each of the above scenarios. Guardium report shows error(-30082, rc 15) for the first two scenarios, and (-30082, rc 2) for the third one. Below is a sample Guardium report (ips have been intentionally digitally obscured or blurred for security). 
+
+
+[/support/docview.wss?uid=swg21673683&aid=1] [/support/docview.wss?uid=swg21673683&aid=1]
+
+
+CAUSE
+The Guardium error codes exposed in the Guardium Reports are correct. The difference comes because DB2 have an abstraction level before printing their Error codes which bundles few errors into a single number. But that abstraction is only shown to the DB2 client interface (DB2 Command Line in this example), Guardium still catches and prints the real low level error code DB2 sends in the tcp packet.
+
+Using the third example above for user3, where DB2 reported error SQL30082 with reason code 24: Guardium reported -30082 with reason code 2 instead of reason code 24 reported on the DB2 interface. Reason code 2 (which Guardium shows) is the correct one. But DB2 "translates" this to a more abstract reason code (24) to the client application.
+
+Using the third example above again:
+
+DB2 Client prints the error SQL30082 with reason code rc=24 which means "Invalid user or password"
+
+Guardium identified this error with reason code rc=2 which means "Invalid password"
+
+Guardium basically pinpoints the issue more accurately without abstracting it into the higher level messages.
+
+Since abstraction level might change between different DB2 versions, Guardium would not be able to accommodate all the translation exactly as it appear on the DB2 client interface, but the error messages in Guardium reports should be sufficient to identify the exceptions, sometimes in a way even more accurately than the DB2 client interface does.
+
+
+RESOLVING THE PROBLEM
+SQL30082N, rc=24 - unable to connect because userid or password is invalid

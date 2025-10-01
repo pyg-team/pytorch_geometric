@@ -1,0 +1,15 @@
+Title: IBM How to enable "Use Long Column Width" on a string property in IBM FileNet Content Engine - United States
+
+Text:
+string property use long column width TECHNOTE (FAQ)
+
+QUESTION
+ I have a long string property. I want to enable the “Use Long Column Width” option in FileNet Enterprise Manager (FEM), but it is grayed out. How do I enable it? 
+
+CAUSE
+"Use Long Column Width" is grayed out on existing properties.
+
+ANSWER
+When creating the string property in FEM, click the "More" button and select "Use Long Column Width" 
+
+Note: This option is only available on property creation.

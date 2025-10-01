@@ -1,0 +1,16 @@
+Title: IBM How do I find the differences of two tables using DB2 Table Editor? - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Does DB2® Table Editor have the functionality to compare two tables? 
+
+ANSWER
+DB2 Table Editor does not have an explicit compare function. However, its companion product DB2 Web Query Tool, does have a dedicated compare function. 
+
+You can use other DB2 Table Editor functions to achieve the same or similiar results. With DB2 Table Editor, you can: 
+
+ * Run SQL queries using UNION, INTERSECT, EXCEPT, and FULL OUTER JOIN to present results that compare contents of two tables. 
+ * Display multiple list controls to allow users to manually inspect table contents. 
+ * Display multiple list type controls to allow users to select records from one table and view corresponding records in a second table.

@@ -1,0 +1,98 @@
+Title: IBM PQ90816: MSGCSV002I REQUESTS FOR MODULE DSLNMQH EXCEED MAXIMUM USE COUNT. - United States
+
+Text:
+z/os SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DUPLICATE OF ANOTHER APAR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Customer received MSG :
+   CSV002I REQUESTS FOR MODULE DSLNMQH EXCEED MAXIMUM USE COUNT.
+   The APAR PQ81174 [http://www-01.ibm.com/support/docview.wss?uid=swg1PQ81174] / UQ85595 is installed on the system.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *  THIS PROBLEM IS SOLVED WITH PTF UQ90320 (PQ90872 [http://www-01.ibm.com/support/docview.wss?uid=swg1PQ90872]).
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   PQ90816
+   
+   
+ * REPORTED COMPONENT NAME
+   MERVA ESA 4.1.0
+   
+   
+ * REPORTED COMPONENT ID
+   5648B2900
+   
+   
+ * REPORTED RELEASE
+   410
+   
+   
+ * STATUS
+   CLOSED DUA
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2004-06-30
+   
+   
+ * CLOSED DATE
+   2004-08-27
+   
+   
+ * LAST MODIFIED DATE
+   2004-08-27
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

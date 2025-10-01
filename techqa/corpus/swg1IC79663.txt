@@ -1,0 +1,172 @@
+Title: IBM IC79663: AFTER RESTARTING THE PRIMARY CF, THE SECONDARY CF REMAINS IN CATCHUP STATE AND NEVER REACHES PEER STATE - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+DB2 Version 9.8 Fix Pack 5 for AIX and Linux [http://www-01.ibm.com/support/docview.wss?uid=swg24032798]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When you stop and start Primary CF as follows:
+   
+   db2stop cf 128 force
+   db2start cf 128
+   
+   both commands are completed successfully. However "db2instance
+   -list" shows the secondary CF remains in CATCHUP state for an
+   extended period of time and does not reach PEER state.
+   
+   The issue has been observed in CF configurations with relatively
+   large amounts of memory configured - approximately 64GB
+   
+   From db2diag.log, the following messages were recorded several
+   times on all members while the secondary CF remained in CATCHUP
+   state:
+   ----
+   2011-08-31-23.31.43.482183+540 I77904A387           LEVEL:
+   Warning
+   PID     : 16056388             TID  : 1             PROC :
+   db2start
+   INSTANCE: db2inst              NODE : 000
+   HOSTNAME: host1
+   EDUID   : 1
+   FUNCTION: DB2 UDB, base sys utilities, sqleReleaseStStLockFile,
+   probe:12340
+   MESSAGE : Released lock on the file:
+   DATA #1 : String, 38 bytes
+   /home/db2inst/sqllib/ctrl/db2strst.lck
+   
+   2011-08-31-23.37.09.427412+540 I78292A496           LEVEL: Error
+   PID     : 11075818             TID  : 1             PROC :
+   db2instance
+   INSTANCE: db2inst              NODE : 000
+   EDUID   : 1
+   FUNCTION: DB2 UDB, RAS/PD component, pdLogCaPrintf, probe:876
+   DATA #1 : <preformatted>
+   CA Smart Array RLSC command failed: mrb rc = (254)
+   DATA #1 : <preformatted>
+   If a CF return code is displayed above and you wish to get
+   more information then please run the following command:
+   
+   db2diag -cfrc <CF_errcode>
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Reduce memory at the CFs.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * DB2 UDB Version 9.8.                                         *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * See Error Description                                        *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Upgrade to Version 9.8 FixPack 5.                            *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Problem was first fixed in DB2 UDB Version 9.8 FixPack 5.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC79663
+   
+   
+ * REPORTED COMPONENT NAME
+   DB2 FOR LUW
+   
+   
+ * REPORTED COMPONENT ID
+   DB2FORLUW
+   
+   
+ * REPORTED RELEASE
+   980
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-11-07
+   
+   
+ * CLOSED DATE
+   2012-10-10
+   
+   
+ * LAST MODIFIED DATE
+   2012-10-10
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   DB2 FOR LUW
+   
+   
+ * FIXED COMPONENT ID
+   DB2FORLUW
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R980 PSN
+   UP

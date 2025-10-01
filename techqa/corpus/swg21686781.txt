@@ -1,0 +1,57 @@
+Title: IBM Security Bulletin: IBM Software Delivery and Lifecycle Patterns for the glibc vulnerabilities (CVE-2014-5119) - United States
+
+Text:
+CVE-2014-5119 SECURITY BULLETIN
+
+SUMMARY
+ IBM Software Delivery and Lifecycle Patterns requires client action for the glibc vulnerabilities.
+The GNU C Library (glibc) is vulnerable to a heap-based buffer overflow, a local attacker could exploit this vulnerability to overflow a buffer and execute arbitrary code on the system with root privileges. 
+
+VULNERABILITY DETAILS
+ 
+
+Subscribe to My Notifications to be notified of important product support alerts like this.  * Follow this link [https://www.ibm.com/systems/support/myview/subscription/css.wss/subscriptions?methodName=startSearchToSubscribe&uctug_rational_dcfsbblurb_2013-11-05_myn_adoption_promo] for more information (requires login with your IBM ID)
+
+IBM Software Delivery and Lifecycle Patterns ships with Red Hat Enterprise Linux 6.4 which is vulnerable to CVE-2014-5119.
+
+CVE ID: CVE-2014-5119
+
+Description: The GNU C Library (glibc) is vulnerable to a heap-based buffer overflow, caused by an off-by-one error in the __gconv_translit_find() function. By setting the CHARSET environment variable to a malicious value, a local attacker could exploit this vulnerability to overflow a buffer and execute arbitrary code on the system with root privileges.
+
+CVSS Base Score: 7.2
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/95044 [https://exchange.xforce.ibmcloud.com/vulnerabilities/95044] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:L/AC:L/Au:N/C:C/I:C/A:C)
+
+AFFECTED PRODUCTS AND VERSIONS
+IBM Software Delivery and Lifecycle Patterns 1.0 and 1.0.1
+
+REMEDIATION/FIXES
+IBM strongly recommends you should contact Red Hat to obtain and install fixes for Red Hat Enterprise Linux 6.4.
+
+Alternatively, if you have access to a Yum update repository, you may update the glibc library by using the command: yum update glibc
+
+WORKAROUNDS AND MITIGATIONS
+None
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v2 Guide [http://www.first.org/cvss/v2/guide] 
+On-line Calculator v2 [http://nvd.nist.gov/CVSS-v2-Calculator] 
+
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] 
+
+ACKNOWLEDGEMENT
+None 
+
+CHANGE HISTORY
+ * 22 October 2014: Original copy published 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.

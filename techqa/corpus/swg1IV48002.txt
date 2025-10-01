@@ -1,0 +1,164 @@
+Title: IBM IV48002: KLZAGENT PROCESS HIGH CPU WHEN KLZ_PROCESS_SAMPLE_SECS=0 - United States
+
+Text:
+  A FIX IS AVAILABLE
+IBM Tivoli Monitoring 6.3.0 Fix Pack 3 (6.3.0-TIV-ITM-FP0003) [http://www-01.ibm.com/support/docview.wss?uid=swg24036775]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  IBM Tivoli Monitoring 6.3.0 FixPack 2 Linux OS Agent can
+   generate high cpu usage when KLZ_PROCESS_SAMPLE_SECS=0 is set in
+   the lz.ini file.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  It is possible to workaround this issue restoring default value
+   KLZ_PROCESS_SAMPLE_SECS=60 (or any other value different by 0).
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Monitoring Agent for Linux OS process consumes high CPU when
+   configured with KLZ_PROCESS_SAMPLE_SECS=0.
+   
+   
+   Monitoring Agent for Linux OS process klzagent can generate high
+   CPU usage when KLZ_PROCESS_SAMPLE_SECS=0 is set in the lz.ini
+   file.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Code was update to correct the problem.
+   
+   The fix for this APAR will be contained in the following
+   maintenance package:
+   
+   | FixPack | 6.3.0-TIV-ITM-FP0003
+   | InterimFix | 6.3.0.2-TIV-ITM_LINUX-IF0001
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  Remove KLZ_PROCESS_SAMPLE_SECS=0 setting from the lz.ini file,
+   or assign a non-zero value.
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV48002
+   
+   
+ * REPORTED COMPONENT NAME
+   ITM AGENT LINUX
+   
+   
+ * REPORTED COMPONENT ID
+   5724C04LN
+   
+   
+ * REPORTED RELEASE
+   630
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-09-10
+   
+   
+ * CLOSED DATE
+   2013-09-24
+   
+   
+ * LAST MODIFIED DATE
+   2014-08-08
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ITM AGENT LINUX
+   
+   
+ * FIXED COMPONENT ID
+   5724C04LN
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R630 PSY
+   UP
+   
+   
+ * R610 PSN
+   UP
+   
+   
+ * R620 PSN
+   UP
+   
+   
+ * R621 PSN
+   UP
+   
+   
+ * R622 PSN
+   UP
+   
+   
+ * R623 PSN
+   UP

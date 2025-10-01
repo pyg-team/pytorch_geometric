@@ -1,0 +1,64 @@
+Title: IBM Blank spaces in the value of the default_charset_value parameter might cause unexpected errors - United States
+
+Text:
+Configuration TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When a properties file has an invalid default encoding character set, import jobs fail with exception. 
+
+SYMPTOM
+Import jobs fail with UnsupportedEncodingException exception.
+
+
+CAUSE
+The presence of blank spaces in the default_charset_value parameter value causes the parameter value to become invalid.
+
+DIAGNOSING THE PROBLEM
+Check the GUI and Logs for an UnsupportedEncodingException exception. 
+
+
+Sample error:
+2010-07-02 12:47:37,600 [sch_worker_0] ERROR com.ibm.ccd.common.error.AustinException JOB_ID:1824- CWPCM0002E:Generic error / Exception: Generic Error, Exception:Cp1252 java.io.UnsupportedEncodingException: Cp1252 
+at sun.io.Converters.getConverterClass(Converters.java:320) 
+at sun.io.Converters.newConverter(Converters.java:353) 
+at sun.io.CharToByteConverter.getConverter(CharToByteConverter.java:94)
+at sun.nio.cs.StreamEncoder$ConverterSE.<init>(StreamEncoder.java:238)
+at sun.nio.cs.StreamEncoder$ConverterSE.<init>(StreamEncoder.java:221)
+at sun.nio.cs.StreamEncoder.forOutputStreamWriter(StreamEncoder.java:115)
+at java.io.OutputStreamWriter.<init>(OutputStreamWriter.java:105)
+at com.ibm.ccd.common.util.AustinWriter.<init>(AustinWriter.java:42)
+at com.ibm.ccd.common.util.AustinWriter.<init>(AustinWriter.java:48)
+at com.ibm.ccd.common.util.TmpFileWriter.<init>(TmpFileWriter.java:28)
+at com.ibm.ccd.common.interpreter.util.ScriptFileTools.newScriptFile(Script FileTools.java:89) at com.ibm.ccd.common.interpreter.operation.generated.GenCreateOtherOutOperation.execute (GenCreateOtherOutOperation.java:90) 
+at WPCProductAttributesImportScript12780880470840.run(WPCProductAttributesImportScript12780880470840.java:41) 
+at com.ibm.ccd.common.interpreter.engine.Script.runFunction(Script.java:555) at com.ibm.ccd.common.interpreter.engine.Script.execute(Script.java:485) 
+at com.ibm.ccd.common.interpreter.engine.Script.run(Script.java:336) 
+at com.ibm.ccd.connectivity.common.DataImporter.importCatalog(DataImporter.java:385) at com.ibm.ccd.connectivity.common.CtgToDb.execute(CtgToDb.java:435) 
+at com.ibm.ccd.scheduler.threads.SchedulerThread.fuzaoRun(SchedulerThread.java:261) at com.ibm.ccd.common.util.FuzaoRunnableAdapter.run(FuzaoRunnableAdapter.java:52) at com.ibm.ccd.common.util.FuzaoThread.run(FuzaoThread.java:100)
+
+
+RESOLVING THE PROBLEM
+Check the syntax and value of the default_charset_value parameter in the $TOP/etc/default/common.properties file. 
+
+
+The syntax of a valid parameter value is "default_charset_value=Value". For example, "default_charset_value=Cp1252". 
+
+An example of an invalid syntax is "default_charset_value=<blankspace>Value" or "default_charset_value=value<blankspace>". For example, "default_charset_value=Cp1252 " or "default_charset_value= Cp1252". 
+
+Simply remove any blank spaces that might be present in the value of the default_charset_value parameter.
+
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Information Management InfoSphere Master Data Management Server for Product Information Management AIX, HP-UX, Linux, Solaris 9.1 Information Management InfoSphere Master Data Management Collaboration Server AIX, Linux, Solaris 10.0 
+PRODUCT ALIAS/SYNONYM
+ MDMCS
+Infosphere Master Data Management Collaboration Server
+WPC 
+WebSphere Product Center
+MDMPIM
+MDM Server for PIM
+InfoSphere MDM Server for PIM
+InfoSphere Master Data Management Server for Product Information Management

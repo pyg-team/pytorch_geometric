@@ -1,0 +1,17 @@
+Title: IBM Recommended fixes for WebSphere Business Compass Version 7.0 - United States
+
+Text:
+recommended fixes; recommended fixes; recommended fixes; recommendedfixes; recommended updates; recommended updates; recommended updates; service pack; fixpack; fixpak; cumulative fix; cum fix; interim fix; interim fixes; current fixes; current maintenance; ifix; configuration; efix; required; fixes; policy; list of defects; list of defects; list of defects; preferred; RecommendedFixesDocument PRODUCT DOCUMENTATION
+
+ABSTRACT
+ A comprehensive list of recommended fixes for WebSphere Business Compass. 
+
+CONTENT
+ 
+
+Version 7.0 Fix Level Released Comments Interim Fix 1 [http://www.ibm.com/support/docview.wss?rs=4186&uid=swg24034472] 7.0.0.4 1 March 2013 Installation instructions [http://www.ibm.com/support/docview.wss?rs=4186&uid=swg27038062] Fix Pack 4 [http://www.ibm.com/support/docview.wss?rs=4186&uid=swg24030063] 7.0.0.4 3 June 2011 Installation instructions [http://www.ibm.com/support/docview.wss?rs=4186&uid=swg27021772] Version 7.0 7.0.0.0 11 Dec 2009 For more details, see the Announcement letter [http://www.ibm.com/common/ssi/ShowDoc.wss?docURL=/common/ssi/rep_ca/4/649/ENUSA09-1104/index.html&lang=en&request_locale=en]
+
+You can download V7.0 from Passport Advantage [http://www-01.ibm.com/software/howtobuy/passportadvantage/index.html] . The V7.0 is updated to the latest Fix Pack. Additional information [/support/docview.wss?uid=swg27017433&amp;aid=1] Detailed system requirements [http://www-01.ibm.com/support/docview.wss?rs=2331&uid=swg27008946] for V7.0
+[/support/docview.wss?uid=swg27017433&amp;aid=2] Update strategy for Version 7.0 (Coming soon)
+[/support/docview.wss?uid=swg27017433&aid=3] Fix list for Version 7.0 [http://www-01.ibm.com/support/docview.wss?rs=4186&uid=swg27017730] 
+[/support/docview.wss?uid=swg27017433&amp;aid=4] Back to Top

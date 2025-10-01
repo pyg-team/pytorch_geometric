@@ -1,0 +1,32 @@
+Title: IBM Getting error logging onto FileNet Content Engine - FileNet Enterprise Manager - United States
+
+Text:
+FEM login; 0x80070005 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Getting error logging onto FileNet Content Engine - FileNet Enterprise Manager (FEM). 
+
+SYMPTOM
+Error message from FEM:
+
+Error 0x80070005 at System.Environment.GetStackTrace(Exception e, Boolean needFileInfo) at System.Environment.get_StackTrace() 
+at FileNet.Api.Compatibility.CompatibilityException..ctor(Int32 DmaRC) 
+at FileNet.Api.Compatibility.SecurityContext..ctor(String PrincipalName, String Password, String ServerURL, Boolean SetToThread) 
+at FileNet.Api.Compatibility.SecurityContext.LogonProcess(String PrincipalName, String Password, String ServerURL) 
+at FileNet. Api.EnterpriseManager.EntireNetwork.LogonProcess(String PrincipalName, String Password, Object& ServerURL) 
+at System.RuntimeMethodHandle. _InvokeMethodFast(Object target, Object[] arguments, SignatureStruct&sig, MethodAttributes methodAttributes, RuntimeTypeHandle typeOwner) 
+at System.RuntimeMethodHandle.InvokeMethodFast(Object target, Object[] arguments, Signature sig, MethodAttributes methodAttributes, RuntimeTypeHandle typeOwner) 
+at System.Reflection.RuntimeMethodInfo. Invoke(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture, Boolean skipVisibilityChecks) 
+at System.Reflection.RuntimeMethodInfo.Invoke(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+
+There is no error message logged in the p8_server_error.log relating to this issue.
+
+
+CAUSE
+The issue can be caused by having the WebSphere - Global Security - Authentication - Use Realm-qualified User Names check box enabled.
+
+ENVIRONMENT
+WebSphere
+
+RESOLVING THE PROBLEM
+Disable the setting, Use Realm-qualified User Names, from the WebSphere Administrative Console - Global Security - Authentication section then restart the WebSphere application server instance for the FileNet Content Engine.

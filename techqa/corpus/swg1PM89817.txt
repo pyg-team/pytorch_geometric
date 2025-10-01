@@ -1,0 +1,182 @@
+Title: IBM PM89817: SUPPORT FOR CUSTOM HASHING MECHANISM FOR HASHING THE PASSWORDS I N FILE REGISTRY - United States
+
+Text:
+  FIXES ARE AVAILABLE
+8.5.5.1: WebSphere Application Server V8.5.5 Fix Pack 1 [http://www-01.ibm.com/support/docview.wss?uid=swg24035935]
+8.5.5.2: WebSphere Application Server V8.5.5 Fix Pack 2 [http://www-01.ibm.com/support/docview.wss?uid=swg24037250]
+8.5.5.3: WebSphere Application Server V8.5.5 Fix Pack 3 [http://www-01.ibm.com/support/docview.wss?uid=swg24038133]
+8.5.5.4: WebSphere Application Server V8.5.5 Fix Pack 4 [http://www-01.ibm.com/support/docview.wss?uid=swg24038539]
+8.5.5.5: WebSphere Application Server V8.5.5 Fix Pack 5 [http://www-01.ibm.com/support/docview.wss?uid=swg24039425]
+8.5.5.6: WebSphere Application Server V8.5.5 Fix Pack 6 [http://www-01.ibm.com/support/docview.wss?uid=swg24040035]
+8.5.5.7: WebSphere Application Server V8.5.5 Fix Pack 7 [http://www-01.ibm.com/support/docview.wss?uid=swg24040533]
+8.5.5.8: WebSphere Application Server V8.5.5 Fix Pack 8 [http://www-01.ibm.com/support/docview.wss?uid=swg24041178]
+8.5.5.9: WebSphere Application Server V8.5.5 Fix Pack 9 [http://www-01.ibm.com/support/docview.wss?uid=swg24041819]
+8.5.5.10: WebSphere Application Server V8.5.5 Fix Pack 10 [http://www-01.ibm.com/support/docview.wss?uid=swg24042150]
+8.5.5.11: WebSphere Application Server V8.5.5 Fix Pack 11 [http://www-01.ibm.com/support/docview.wss?uid=swg24043005]
+8.5.5.12: WebSphere Application Server V8.5.5 Fix Pack 12 [http://www-01.ibm.com/support/docview.wss?uid=swg24043844]
+8.5.5.13: WebSphere Application Server V8.5.5 Fix Pack 13 [http://www-01.ibm.com/support/docview.wss?uid=swg24044479]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS NEW FUNCTION.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Currently VMM uses SHA-1 hashing mechanism to hash the
+   password while creating/login users in file registry. So if
+   some one wants to hash a password with its own hahsing
+   mechanism VMM doesnt allowed that.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  All users of IBM WebSphere Application      *
+   *                  Server V8.5 virtual member manager (VMM)    *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: File registry repository doesn't        *
+   *                      support any custom hashing mechanism    *
+   *                      for the passwords.                      *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   Currently VMM uses SHA-1 hashing mechanism to hash the
+   password while creating/login users in file registry. So if
+   someone wants to hash a password with their own hashing
+   mechanism VMM does not allow that.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  VMM now provides a mechanism through which custom hashing
+   algorithm can be used for hashing the password apart from the
+   default hashing mechanism.
+   
+   To use the custom hashing support these steps need to be
+   followed:
+   
+   1. To support custom hashing algorithm VMM provides an
+   interface named ICustomHashAlgo that you need to implement.
+   2. You have to set a new custom property
+   customHashImplClassName to provide the name of the
+   implementation class.
+   
+   This implementation class will then be used at runtime for
+   hashing the passwords of the user.
+   
+   $AdminTask setIdMgrCustomProperty {-id <repository_id>  -name
+   customHashImplClassName -value <full_impl_class_name>}
+   
+   Here "repository_id " is the id of the file registry
+   configured in VMM. "full_impl_class_name" is the name of the
+   implementation class.
+   Also save the configuration after running the previous command
+   using:
+   $AdminConfig save
+   
+   For example:
+   $AdminTask setIdMgrCustomProperty {-id fileRepo  -name
+   customHashImplClassName -value "com.ibm.custom.customImplClass"}
+   
+   3. The custom hashing algorithm implementation class will be
+   loaded at runtime from the jar under which your
+   implementation class is bundled which should be present under
+   the WAS_HOME/lib/ext folder.
+   
+   The fix for this APAR is currently targeted for inclusion in
+   fix pack 8.5.5.1.  Please refer to the Recommended Updates
+   page for delivery information:
+   http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM89817
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBS APP SERV N
+   
+   
+ * REPORTED COMPONENT ID
+   5724H8800
+   
+   
+ * REPORTED RELEASE
+   850
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-05-27
+   
+   
+ * CLOSED DATE
+   2013-08-14
+   
+   
+ * LAST MODIFIED DATE
+   2013-09-17
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBS APP SERV N
+   
+   
+ * FIXED COMPONENT ID
+   5724H8800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R850 PSY
+   UP

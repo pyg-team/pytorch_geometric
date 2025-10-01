@@ -1,0 +1,30 @@
+Title: IBM Load balancing between 2 HMC agents possible? - United States
+
+Text:
+load; split; balance; high CPU; chlparutil; sample interval TECHNOTE (FAQ)
+
+QUESTION
+ Is it possible to split the load between 2 HMC agent instances to monitor LPARs connected to a HMC? 
+
+CAUSE
+Heavy load on one agent can lead to high CPU and resource usage by the agent. Splitting the load between 2 HMC agents/instances can reduce the CPU usage by one agent.
+
+ANSWER
+There is not a way to split the load over the two HMC agent instances while monitoring LPARs connected to one HMC. In other words, it is not possible to configure one instance of the agent to monitor one subset of the LPARs to connected to a HMC and configure other instance to monitor other subset of LPARs connected to the same HMC. 
+
+One thing that might help is to change the sample rate. For example, if the sample rate set to 60, then change it to 300, and the requests to the HMC will be less often and should reduce the load.
+
+To see the current sample rate, on the HMC run:
+
+lslparutil -r config -m <managed system> -F sample_rate
+
+To change the sample rate, run:
+
+chlparutil -r config -m <managed system> -s 300
+
+If two agent instances connected to a HMC , both agents would show all the data for that HMC.
+
+
+
+PRODUCT ALIAS/SYNONYM
+ ITM System P HMC agent

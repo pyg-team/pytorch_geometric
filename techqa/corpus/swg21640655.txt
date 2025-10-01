@@ -1,0 +1,34 @@
+Title: IBM Why are native-encoded characters in project item name replaced by question marks in Decision Center? - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ I changed the display name of a rule by using percentage sign prefix in the name and defining the French translation of the display name in messages_<locale>.properties. When Rule Designer is opened in French locale, the rule name is displayed properly for characters with accent, such as "é". However, when the project is published to Decision Center and browser display language is set to French, French character with accent within the rule name is displayed as question mark in both Business Console and Enterprise Console. 
+
+SYMPTOM
+[/support/docview.wss?uid=swg21640655&amp;aid=1] 
+
+In Business Console, the character,"é", in French rule names I defined are displayed as question mark, although the same character displays correctly in the menu.
+
+
+CAUSE
+This is typically the case when a native-encoded character is copied and pasted directly into messages_<locale>.properties. It is standard Java requirement that these characters should be presented in ASCII code in order for java.util.Properties class to process them correctly. See here [http://docs.oracle.com/javase/1.5.0/docs/api/java/util/Properties.html] for more on Properties.store() API.
+
+
+RESOLVING THE PROBLEM
+Use the ASCII code for native-encoded characters in the messages_<locale>.properties file. For instance, "é" should be replaced by "\u00e9" where the backslash is the escape character. 
+
+JDK provides a tool to convert a file with native-encoded characters (characters which are non-Latin 1 and non-Unicode) to one with Unicode-encoded characters. See details here [http://docs.oracle.com/javase/6/docs/technotes/tools/windows/native2ascii.html].
+
+You can use the following command to rewrite the messages.properties file: 
+
+
+<ODMv8_installDir>\ODM\jdk\bin\native2ascii [path to original messages_fr.properties file] [path to output property file] 
+. 
+When rule project is published with the new .properties file, the characters will display properly in both Decision Center enterprise console and Decision Center business console. 
+
+RELATED INFORMATION
+#Translating rule project items [http://pic.dhe.ibm.com/infocenter/dmanager/v7r5/index.jsp?topic=%2Fcom.ibm.dserver.rulestudio%2FContent%2FBusiness_Rules%2F_pubskel%2FInfocenter_Primary%2Fps_DS_Rule_Designer971.html]
+Properties.store() API [http://docs.oracle.com/javase/1.5.0/docs/api/java/util/Properties.html]
+Native-to-ASCII Converter [http://docs.oracle.com/javase/6/docs/technotes/tools/windows/native2ascii.html]

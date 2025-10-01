@@ -1,0 +1,18 @@
+Title: IBM Content Navigator with IBM Docs Integration automatically updates the document title to include the file extension - United States
+
+Text:
+ PRODUCT DOCUMENTATION
+
+ABSTRACT
+ IBM Content Navigator adds the file extension to the document title property of a new document after you use IBM Docs to edit the document. 
+
+CONTENT
+When you create a document in IBM Content Navigator, you enter a document title. However, after you open the document in IBM Docs, the document title is updated to include the file extension. 
+
+The following example shows the sequence for changes to the document title property: 
+
+ *  In the IBM Content Navigator web client, click New Document > New Spreadsheet.
+   The file extension for an open document spreadsheet is .ods. Enter the document title, for example, MyDocument.
+   In IBM Content Navigator, the document title is set to MyDocument. Open the spreadsheet document in IBM Docs.
+   In IBM Content Navigator, the document title is still displayed as MyDocument. Switch to the IBM Content Navigator web client, and refresh or view the document properties.
+   In IBM Content Navigator, the document title changes to MyDocument.ods.

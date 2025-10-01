@@ -1,0 +1,54 @@
+Title: IBM ContentNavigatorPingPageStatus monitor does not work in ECM System Monitor 5.2 for the IBM Content Navigator 2.0.3.7 (or higher) Ping Page in SSO configurations - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When attempting to monitor the Ping Page status of IBM Content Navigator (ICN) 2.0.3.7 or higher in SSO configurations, an error will be returned for the ContentNavigatorPingPageStatus monitor. This is due to a change in ICN 2.0.3.7 with increased security on the Ping Page via credentials. In SSO environments, the same result can be achieved though via a generic WebStatusMonitor with appropriate credentials for the ICN Ping Page instead. 
+
+SYMPTOM
+ECM System Monitor 5.2 has been configured to monitor the Ping Page of an IBM Content Navigator (ICN) installation via the ContentNavigatorPingPageStatus monitor. The monitor returns the following error: 
+
+============== Event from datastream ContentNavigatorPingPageStatus ==============
+Timestamp: 12/11/17 8:07 AM
+Hostname: <hostname (IP: 10.1.2.3)
+Adapter Host: <hostname> (IP: 10.1.2.3)
+
+Class: ContentNavigator
+
+Source: Cenit Advanced Logfile Adapter (Name: ContentNavigatorPingPageStatus navigator, Type: monitor, Subsource: calamon)
+Application: ContentNavigatorPingPageStatus <name>
+Instance: ContentNavigatorPingPageStatus <name>
+Module: N/A
+
+Severity: CRITICAL
+
+Message: #*** Debug output redirected to <path> plusdebug/icnpingpage.sh
+#Successfully read URL <hostname>:9080/navigator/Ping
+#Reading from url <hostname>:9080/navigator/Ping returned no valid result
+
+
+CAUSE
+The ICN Ping Page is protected by a password in IBM Content Navigator 2.0.3.7 and higher. This prevents the monitor from being able to correctly read the site since it cannot authenticate in SSO-enabled environments.
+
+
+ENVIRONMENT
+ECM System Monitor 5.2 
+
+IBM Content Navigator 2.0.3.7 (or higher) 
+
+SSO-enabled environment
+
+
+RESOLVING THE PROBLEM
+Instead of the ContentNavigatorPingPageStatus, you can use a generic WebStatusMonitor with appropriate credentials for the ICN Ping Page instead to achieve the desired result.
+
+RELATED INFORMATION
+ Protection for ICN Ping Page in 2.0.3.7 or higher [http://www.ibm.com/support/docview.wss?uid=swg21982007]
+
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Enterprise Content Management Content Navigator 2.0.3.7, 2.0.3.8, 3.0.0, 3.0.1, 3.0.2, 3.0.3

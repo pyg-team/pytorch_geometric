@@ -1,0 +1,26 @@
+Title: IBM Install of RequisitePro on top of ClearCase, ClearQuest or Project Console fails - United States
+
+Text:
+ReqPro; Install; Requisite Pro; top; ClearCase; ClearQuest; ProjectConsole; Project Console; CQ; Failed; requisitepro.kdb; RATLC01296119; RN7.1; RN7.1.0.1; RN7.1.0.2; RN7.1.1C TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+A previous uninstall of IBM Rational RequisitePro preserved the specified file, and the install of IBM Rational ClearCase, IBM Rational ClearQuest or IBM Rational Project Console, incorrectly restored the file, causing a collision with the new install of IBM Rational RequisitePro causes the error: Failed to extract zip com.ibm.rational.reqpro.parent.content 7.1.2.0000-7-1-0-02-00-2009B-D090515. File C:\Program Files\IBM\RationalSDLC\common\requisitepro.kdb already exists.
+
+SYMPTOM
+Installation of IBM Rational Requisite Pro failed with the following error: 
+
+ 
+Failed to extract zip com.ibm.rational.reqpro.parent.content
+File C:\Program Files\IBM\RationalSDLC\common\requisitepro.kdb already exists
+
+
+
+RESOLVING THE PROBLEM
+This issue has been addressed in v7.1.1 
+
+Before attempting to install IBM Rational Requisite Pro on top of an existing installation of IBM Rational ClearCase, IBM Rational ClearQuest or IBM Rational Project Console, remove the following file:
+
+<installLocation>\common\requisitepro.kdb
+
+
+where installLocation default value is C:\Program Files\IBM\RationalSDLC

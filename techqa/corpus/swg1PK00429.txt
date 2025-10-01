@@ -1,0 +1,171 @@
+Title: IBM PK00429: ADD NEW FEATURE TO ALLOW ACCOUNT INFORMATION TO BE SPECIFIED IN THE NETRC FILE FOR THE FTP CLIENT - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Currently machine, logon, and password can be specifed in the
+   NETRC file for the FTP client.  This APAR  adds new function to
+   be able to specify account information.
+   .
+   KEYORDS: FTPC NETRC DATA ACCT
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All users of the IBM Communications Server   *
+   *                 for z/OS Version 1 Release 6 IP: FTP client  *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Currently machine, logon, and password  *
+   *                      can be specified in the NETRC file for  *
+   *                      the FTP client.  This APAR adds new     *
+   *                      function to support specifying account  *
+   *                      information in the netrc file.          *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   New function to support account information in the FTP client
+   netrc file is required.  This APAR will add that function.
+   The format of a entry in the client's netrc file will be:
+   machine host.name.com login user1 password 123456 account abcdef
+   +-------------------------------------------------------------+
+   + Please check our Communications Server for OS/390 homepages +
+   + for common networking tips and fixes.  The URL for these    +
+   + homepages can be found in Informational APAR II11334 [http://www-01.ibm.com/support/docview.wss?uid=isg1II11334].       +
+   +-------------------------------------------------------------+
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The FTP client has been enhanced to support the ACCOUNT keyword
+   in the netrc file.
+   
+   The following documentation changes are required.
+   =============================================================
+   z/OS Communications Server
+   IP User's Guide and Commands
+   Document Number SC31-8780
+   
+   In the Chapter File Transfer Protocol (FTP), section NETRC data
+   set, add the following line to the example of how to specify
+   the user_id.NETRC data set:
+   
+   MACHINE 9.67.112.25 LOGIN user28 PASSWORD 123456 ACCOUNT abcdef
+   
+   The keywords MACHINE, LOGIN, PASSWORD and ACCOUNT do not have
+   to be uppercase.
+   
+   * Cross Reference between External and Internal Names
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK00429
+   
+   
+ * REPORTED COMPONENT NAME
+   TCP/IP V3 MVS
+   
+   
+ * REPORTED COMPONENT ID
+   5655HAL00
+   
+   
+ * REPORTED RELEASE
+   160
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2005-02-02
+   
+   
+ * CLOSED DATE
+   2005-02-17
+   
+   
+ * LAST MODIFIED DATE
+   2005-05-16
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UK00674 PK05812
+   
+   
+
+MODULES/MACROS
+ *  EZAFTPCZ
+   
+   
+    
+   
+   
+
+Publications Referenced SC31878004 FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TCP/IP V3 MVS
+   
+   
+ * FIXED COMPONENT ID
+   5655HAL00
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R160 PSY UK00674 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK00674]
+   UP05/03/24 P F503
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

@@ -1,0 +1,184 @@
+Title: IBM IT17426: MAPPING NODE JAVA NULLPOINTER EXCEPTION WHEN SELECTING DEFAULT DATE VALUE FROM AN ISERIES (AS400) DATABASE - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  A JDBC SQL "SELECT" call from the Mapping node fails with a Java
+   NullPointer exception when it accesses a table in an iSeries
+   (AS400) database where a column with datatype "DATE"  contains a
+   default value "0001-01-01"
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Populate the DATE type column with a valid non default value.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   All users of the IBM Integration Bus Mapping Node making an SQL
+   Selection from an AS400 database table which has a column with
+   data type "DATE" that contains a default value.
+   
+   
+   Platforms affected:
+   z/OS, MultiPlatform
+   
+   ****************************************************************
+   PROBLEM DESCRIPTION:
+   A JDBC SQL "SELECT" call from the Mapping node fails with a Java
+   NullPointer exception when it accesses a table in an iSeries
+   (AS400) database where a column with datatype "DATE"  contains a
+   default value "0001-01-01"
+   
+   An error and Java stack trace similar to the following example
+   may appear in the system log:
+   
+   XProcessException java.lang.NullPointerException'
+   
+   {com.ibm.broker.ct.mapping.MappingNode@-f3afe52.getCurrentXQuery
+   Script
+    { MapResourceManager.getXQueryForMap , 'root map
+   identifier:{default}:AS400Connect_Mapping'
+    { MapResourceManager.getQName , 'supplied
+   string:{default}:AS400Connect_Mapping'
+    { MapResourceManager.getQName ,
+   'QName:{default}AS400Connect_Mapping'
+    } MapResourceManager.getQName
+    { MapResourceManager.getXQueryForMap , ': QName we're looking
+   for={default}AS400Connect_Mapping'
+    MapResourceManager.getXQueryForMap 'Not yet cached valid
+   XQuery, so invoke prepare for map {default}AS400Connect_Mapping'
+    { MapResourceManager.prepareMap ,
+   'Map:{default}:AS400Connect_Mapping Contxt: MAPPING_NODE_ERRHND'
+   
+   
+   There are a number of resource name changes between WebSphere
+   Message Broker and IBM Integration Bus Version 9.0.  For details
+   visit
+   http://pic.dhe.ibm.com/infocenter/wmbhelp/v9r0m0/topic/com.ibm.e
+   tools.mft.doc/bb23814_.htm [http://pic.dhe.ibm.com/infocenter/wmbhelp/v9r0m0/topic/com.ibm.etools.mft.doc/bb23814_.htm]
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The product no longer throws a Java NullPointerException when
+   retrieving a default date from a database table column of type
+   "DATE".
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+   Version    Maintenance Level
+   v10.0      10.0.0.8
+   
+   The latest available maintenance can be obtained from:
+   http://www-01.ibm.com/support/docview.wss?rs=849&uid=swg27006041 [http://www-01.ibm.com/support/docview.wss?rs=849&uid=swg27006041]
+   
+   If the maintenance level is not yet available,information on
+   its planned availability can be found on:
+   http://www-1.ibm.com/support/docview.wss?rs=849&uid=swg27006308 [http://www-1.ibm.com/support/docview.wss?rs=849&uid=swg27006308]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT17426
+   
+   
+ * REPORTED COMPONENT NAME
+   INTEGRATION BUS
+   
+   
+ * REPORTED COMPONENT ID
+   5724J0540
+   
+   
+ * REPORTED RELEASE
+   A00
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-10-10
+   
+   
+ * CLOSED DATE
+   2017-03-15
+   
+   
+ * LAST MODIFIED DATE
+   2017-03-15
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   INTEGRATION BUS
+   
+   
+ * FIXED COMPONENT ID
+   5724J0540
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * RA00 PSY
+   UP

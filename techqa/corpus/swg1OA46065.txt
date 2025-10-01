@@ -1,0 +1,174 @@
+Title: IBM OA46065: APPLICATION STATISTICS-QUEUE ACCESS STATISTICS BY APPLID NOT RETURNING - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Application Statistics-Queue Access Statistics by Applid not
+   returning
+   data -- then when you edit protperties of workspace returning
+   all rows,
+   data is returned but invalid.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  1. Issue the following command on the LPAR where the MQ agent
+      runs:
+   
+      F agentstc,KMQCMD SET APPL NAME(WP*) STATISTICS(ALL)
+   
+      where agentstc is the STC name of the MQ agent.
+   
+   2. Wait for about 5 to 10 minutes.
+   
+   3. Verity if they can get data when linking to the Queue Access
+      Statistics workspace for the WAS applications.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All IBM Tivoli OMEGAMON XE for Messaging:    *
+   *                 WebSphere MQ Monitoring 7.0.1 users.         *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: In the Application Statistics           *
+   *                      workspace, the Queue Access             *
+   *                      Statistics by Applid link returns       *
+   *                      no data for WebSphere Application       *
+   *                      Server applications.                    *
+   ****************************************************************
+   * RECOMMENDATION: Apply this PTF.                              *
+   ****************************************************************
+   When an MQOPEN MQI call is captured by the MQI intercepting
+   routine (ie, the MQI Hook), the code compares the object
+   name before and after the MQ processing; if they don't match
+   the queue is determined to be a temporary queue. However,
+   for WAS/MQ Java applications, the object name may be not set
+   before the MQ processing; this results in the queues
+   being mistakenly determined to be temporary though they
+   are actually not. Since STATISTICS(NODYNAMQ) is the default
+   for the default SET APPL command in KMQUSER, the application
+   statistics data is then not collected at the queue level for
+   the queues accessed by the WAS/MQ Java applications.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The MQI hook code is changed on the way to determine the
+   queue type. Instead of comparing before/after object name,
+   it checks the Object Handle Table data area based on the
+   object handle. This way works for all types of applications.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   OA46065
+   
+   
+ * REPORTED COMPONENT NAME
+   OMG XE MSG ZOS
+   
+   
+ * REPORTED COMPONENT ID
+   5608A1100
+   
+   
+ * REPORTED RELEASE
+   701
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-09-16
+   
+   
+ * CLOSED DATE
+   2014-09-24
+   
+   
+ * LAST MODIFIED DATE
+   2014-11-04
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    OA45865 [http://www-01.ibm.com/support/docview.wss?uid=swg1OA45865]
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  KMQAMHSY
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   OMG XE MSG ZOS
+   
+   
+ * FIXED COMPONENT ID
+   5608A1100
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R701 PSY UA75112 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UA75112]
+   UP14/10/15 P F410
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

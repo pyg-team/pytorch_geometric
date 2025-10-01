@@ -1,0 +1,28 @@
+Title: IBM Alcatel 5620 SAM probe : Keeps restarting unexpectedly - United States
+
+Text:
+RecoveryFile; $OMNIHOME/var/AlcatelSamRecovery; property; $NCHOME; $OMNIHOME; exits unexpectedly TECHNOTE (FAQ)
+
+QUESTION
+ Alcatel 5620 SAM probe : RecoveryFile property : Do environment variables get expanded? 
+
+CAUSE
+$NCHOME and $OMNIHOME environment variables should not be used for probe specific properties or generic properties specific to the probe type.
+
+ANSWER
+ 
+
+Check to see if $NCHOME or $OMNIHOME is being used to specify the RecoveryFile in the probes property file; 
+
+e.g.
+RecoveryFile: "$OMNIHOME/var/AlcatelSamRecovery"
+
+Although the default behaviour is to use the given file, if the property is explicitly set, the $OMNIHOME variable is not expanded and the probe is unable to write to the RecoveryFile.
+
+In general, only the common generic probe properties will expand environment variables such as $NCHOME and $OMNIHOME.
+
+The recommendation is to always use the specific full path to the file or directory given in a probes property definition;
+e.g.
+RecoveryFile: "/opt/IBM/tivoli/netcool/omnibus/var/AlcatelSamRecovery"
+
+Check that the file is recreated when the probe is running, and its permission's are correct for the probe user.

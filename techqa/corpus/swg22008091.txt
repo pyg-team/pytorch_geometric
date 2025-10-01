@@ -1,0 +1,64 @@
+Title: IBM MustGather: Tracing Health Management in Liberty Profile ND - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ What information, logs, and traces, should I gather and send to IBM Support to troubleshoot a problem with the Health Management feature for Liberty Profile ND? 
+
+CAUSE
+Liberty Profile ND has a feature called Health Management. This feature allows a user to configure health conditions that are monitored in an environment and the health actions to take if these conditions are met 
+
+If you are having problems with the Health Management feature, please gather this information and send it to IBM support.
+
+
+RESOLVING THE PROBLEM
+1) What is your exact level of IBM Liberty Profile ND? On what platform? 
+
+ 
+
+2) Please describe the health action or condition that is causing the problem and the name of the target resource. Also, what is the time frame that the problem occurred? 
+
+ 
+
+3) Enable tracing on the collective controller server. Add the following line to the server.xml of the controller: 
+
+
+<logging traceSpecification="*=info=enabled:HealthManager=all:
+HealthAction=all:TCPChannel=all:ChannelFramework=all:
+com.ibm.ws.logging.trace.specification=*=event=enabled:
+HealthManager=all:HealthAction=all:com.ibm.ws.health.internal.*=all:
+com.ibm.ws.collective.singleton.*=all:
+com.ibm.ws.collective.member.*=all=enabled:
+com.ibm.ws.collective.repository.*=all=enabled"/>
+
+
+
+4) Enable tracing on the member server. Add the following line to the server.xml of the member: 
+
+
+<logging traceSpecification="*=info=enabled:HealthAnalyzer=all:com.ibm.ws.health.*=all:
+com.ibm.ws.collective.repository.internal.*=all:com.ibm.ws.collective.singleton.*=all:
+com.ibm.ws.logging.trace.specification=*=event=enabled:
+HealthManager=all:HealthAction=all:com.ibm.ws.health.internal.*=all:
+com.ibm.ws.collective.singleton.*=all:com.ibm.ws.collective.member.*=all=enabled:
+com.ibm.ws.collective.repository.*=all=enabled"/> 
+
+ 
+
+ 
+
+5) Recreate the issue with the new traces enabled. While the issue is happening, take a server dump of both the controller server and member server.
+
+Generating a Liberty server dump from the command line
+http://www.ibm.com/support/knowledgecenter/SSEQTP_8.5.5/com.ibm.websphere.wlp.doc/ae/twlp_setup_dump_server.html [http://www.ibm.com/support/knowledgecenter/SSEQTP_8.5.5/com.ibm.websphere.wlp.doc/ae/twlp_setup_dump_server.html] 
+
+ 
+
+ 
+
+6) Once recreated, provide to IBM support the configuration and log files of the Liberty collective controller server and member server:
+
+-server.xml
+-a zip of the entire logs directory and subdirectories
+-the zip from the server dump

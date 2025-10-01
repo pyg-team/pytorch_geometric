@@ -1,0 +1,47 @@
+Title: IBM SDK - Supported IE Browsers with IBM Cognos Products - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Are Internet Explorer versions below IE 11 supported in IBM Cognos Products beyond 2016 ? 
+
+CAUSE
+Very limited support for previous versions of Internet Explorer for IBM Cognos Products.
+
+ANSWER
+Each IBM Cognos Product has a listing for Browsers in the IBM Products Software Compatibility Reports , and they should be consulted by everyone , even before contacting IBM for Support. 
+
+These reports are based on the Development Conformance Documents for our Products, and something not listed simply means , not supported for the product. 
+
+There is a quick link below which will get you to the start of the Cognos Product Compatibility Reports. 
+
+You can generate the report for your version of IBM Cognos Software , select "In Depth Reports" with "Detailed System Requirements" for your version, and set all options enabled. 
+
+Once the report has run, go to the "Supported Software" Tab, and select "Web Browsers" 
+
+Please always check in the Report listings the "Components" , the "OS Restrictions" , the "Notes" and the "Details" > "View" entries , as they contain crucial information on the particular item listing. 
+
+Here are the Internet Explorer examples for content , which is dynamic and can be changed by IBM since the Publication of this Technote : 
+
+For Cognos Analytics 11 and up, only IE 11 and up are supported for example, but not on Mobile. 
+
+For Cognos 10.2.x, you will find that there are restrictions on support in using IE 8 , IE 9 and IE 10 with IBM Cognos products. 
+
+For IE 8 and IE 9 , the notes state , that these are no longer supported based on Microsoft announcing the end of support in January 2016. 
+
+IBM Cognos Real Time Monitoring and Lifecycle Manager are the only C10.2.x products which still have a support entry for the IE8 / 9 browsers. 
+
+For the Microsoft end of support information , see the second quick link below for those details at Microsoft. 
+
+For questions and concerns on the 
+
+RELATED INFORMATION
+ IBM Product Software Compatibility Reports [http://www-969.ibm.com/software/reports/compatibility/clarity/index.jsp]
+(R) Microsoft Browser information [https://www.microsoft.com/en-us/WindowsForBusiness/End-of-IE-support ]
+
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Analytics Cognos Business Intelligence Windows 10.2.2, 10.2.1, 10.2, 10.1.1, 10.1, 8.4.1 Edition Independent

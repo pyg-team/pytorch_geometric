@@ -1,0 +1,55 @@
+Title: IBM Security Bulletin: Multiple security vulnerabilities have been identified in IBM DB2 shipped with IBM Predictive Maintenance and Quality (CVE-2016-9840, CVE-2016-9841, CVE-2017-1297, CVE-2017-1105) - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ IBM DB2 is shipped as components of IBM Predictive Maintenance and Quality. Information about some security vulnerability affecting IBM DB2 have been published their respective security bulletins. 
+
+VULNERABILITY DETAILS
+Please consult the security bulletin IBM® DB2® LUW on AIX and Linux Affected by vulnerabilities in zlib (CVE-2016-9840, CVE-2016-9841) [http://www-01.ibm.com/support/docview.wss?uid=swg22004735] for vulnerability details and information about fixes.
+Please consult the security bulletin IBM® DB2® LUW's Command Line Processor Contains Buffer Overflow Vulnerability (CVE-2017-1297) [http://www-01.ibm.com/support/docview.wss?uid=swg22004878] for vulnerability details and information about fixes.
+Please consult the security bulletin Buffer overflow vulnerability in IBM® DB2® LUW (CVE-2017-1105) [http://www-01.ibm.com/support/docview.wss?uid=swg22003877] for vulnerability details and information about fixes.
+
+AFFECTED PRODUCTS AND VERSIONS
+ 
+
+Principal Product and Version(s) Affected Supporting Product and Version IBM Predictive Maintenance and Quality 2.6.0
+IBM Predictive Maintenance and Quality 2.5.3
+IBM IoT Predictive Maintenance and Optimization 1.0.0 IBM DB2 Enterprise Server Edition V10.5 REMEDIATION/FIXES
+1. Stop COGNOS server, CNDS server, IIB server and DB2 server. 
+
+For details, refer https://www.ibm.com/support/knowledgecenter/en/SSTNNL_2.6.0/com.ibm.pmq.doc/c_inst_pmq_stopsolutionservices.html [https://www.ibm.com/support/knowledgecenter/en/SSTNNL_2.6.0/com.ibm.pmq.doc/c_inst_pmq_stopsolutionservices.html] 
+
+2. Get the v10.5fp8_linuxx64_nlpack.tar.gz from installation payload pm_q_svr_2.6_1_l86-64_en.tar.gz, pm_q_svr_2.5.3_1_l86-64_en.tar.gz or pmo_srv_1.0_1_l86-64_en.tar.gz , and unpack v10.5fp8_linuxx64_nlpack.tar.gz to a temp directory, for example: /home/user/tmp. 
+
+3. Download the fixpack mentioned in vulnerability details, unpack and install by below command provided in that pack 
+
+./installFixPack
+
+4. During the installation, need to input the db2 installtion directory, the default should be, /opt/ibm/db2/V10.5
+
+5. During the installation, need to input path for “Volume label DB2 National Language Package”, then input the temporary path created above, /home/user/tmp/nlpack/, for example 
+
+6. Start the servers being stopped. For details, refer 
+
+https://www.ibm.com/support/knowledgecenter/en/SSTNNL_2.6.0/com.ibm.pmq.doc/c_inst_pmq_startsolutionservices.html [https://www.ibm.com/support/knowledgecenter/en/SSTNNL_2.6.0/com.ibm.pmq.doc/c_inst_pmq_startsolutionservices.html]
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v2 Guide [http://www.first.org/cvss/v2/guide] 
+On-line Calculator v2 [http://nvd.nist.gov/CVSS-v2-Calculator] 
+
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] 
+
+CHANGE HISTORY
+ 03 August 2017: Original Version Published 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.

@@ -1,0 +1,137 @@
+Title: IBM PI14332: UXFM DIALOG CONTEXT MANAGER NULLPOINTER AVOIDANCE BACKPORT - United States
+
+Text:
+  A FIX IS AVAILABLE
+Fixes integrated in WebSphere Portal 8.0.0.1 Combined Cumulative Fixes [http://www-01.ibm.com/support/docview.wss?uid=swg24034497]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  In case the Java session cookie is lost on the browser side, a
+   running dialog can run into a stale state because reference to
+   the current dialog context is lost.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  There is no local workaround. Loosing the Java session cookie
+   should not occur in a normal usage scenario.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  In case the Java session cookie is lost on the browser side, a
+   running dialog can run into a stale state because reference to
+   the current dialog context is lost.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Dialog context manager double-checks whether there is a dialog
+   context available even if this should not happen at this point
+   in time.
+   .
+   A code fix for this issue is integrated into the WebSphere
+   Portal & WCM Combined Cumulative Fix 12 (PI14791 [http://www-01.ibm.com/support/docview.wss?uid=swg1PI14791]) for Portal
+   8.0.0.1 available from Fix Central:
+   
+   http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent
+   =ibm/WebSphere&product=ibm/WebSphere/WebSphere+Portal&release=Al [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm/WebSphere&product=ibm/WebSphere/WebSphere+Portal&release=Al]
+   l&platform=All&function=aparId&apars=PI14791
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI14332
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSPHERE PORTA
+   
+   
+ * REPORTED COMPONENT ID
+   5724E7600
+   
+   
+ * REPORTED RELEASE
+   800
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-03-24
+   
+   
+ * CLOSED DATE
+   2014-05-15
+   
+   
+ * LAST MODIFIED DATE
+   2014-05-15
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBSPHERE PORTA
+   
+   
+ * FIXED COMPONENT ID
+   5724E7600
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R800 PSY
+   UP

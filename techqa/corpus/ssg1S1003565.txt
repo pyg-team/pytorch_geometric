@@ -1,0 +1,54 @@
+Title: IBM Potential Data Error using Fast Reverse Restore following Establish FlashCopy without Change Recording - United States
+
+Text:
+ FLASH (ALERT)
+
+ABSTRACT
+ The purpose of this notification is to alert DS8000 clients of a potential data error that can occur under very specific conditions where the DS8000 Fast Reverse Restore feature is used to restore a primary volume from a FlashCopy or Space Efficient FlashCopy target volume without specifying Change Recording when the FlashCopy target is first established. 
+
+CONTENT
+There have been no reported incidents of this problem in a production DS8000 environment to date. However, if your use of the Fast Reverse Restore feature does not specify Change Recording, please contact your next level of support for further information.
+
+
+Any of the following customer uses of FlashCopy are not affected by this situation  * Customers that do not use Fast Reverse Restore 
+ * FlashCopy relations that are part of a Global Mirror session 
+ * Data set level FlashCopy relations and Incremental FlashCopy relations 
+ * Customers using FlashCopy Manager to manage FlashCopy relations 
+ * Customers using TPC-R to manage FlashCopy relations 
+ * Releases prior to Release 3.0 (which did not support Fast Reverse Restore without Change Recording)
+
+
+Details Fast Reverse Restore (FRR) from a FlashCopy (FLC) target established without Change Recording (CR) active was first supported on DS8000 microcode Release 3.0, bundle 63.0.x.x. The exposure to invalid data only exists on the source volume after it has been restored through the FRR process. The data on the FLC target is not exposed. DS8000 systems running releases prior to Release 3.0 do not support FRR without CR and, therefore, require no action.
+
+Only Full volume Flash Copy relations (Classic and Space Efficient) established without Change Recording are exposed if Fast Reverse Restore is used to restore the source volume from a target volume. ICKDSF and SDM software both support Fast Reverse Restore when FlashCopy relations are established without Change Recording.
+
+Method to prevent the exposure 
+
+The Use of the DS8000 Fast Reverse Restore feature must specify Change Recording when the FlashCopy target is first established to avoid the possibility of inconsistent data on the source volume after the restore. IBM software products including Global Mirror, Metro Global Mirror, TPC-R and FlashCopy Manager do specify Change Recording and are not exposed.
+
+Mitigation 
+
+For Customers who plan to use Fast Reverse Restore using a FlashCopy target without Change Recording
+
+Case 1: FLC is not yet established
+The risk can be eliminated by assuring that FLC is first established with Change Recording active which assures the bit map is correctly initialized. Once this process is followed to initialize the bit map, you may subsequently establish Incremental FLC without CR and utilize multiple FLC targets.
+
+Case 2: FLC is already established, FRR has not been performed
+If FLC was previously established without CR active (exposed condition) steps can be taken to force the initialization of the target bitmaps prior to using FRR and remove the exposure. The recommended recovery method is to read all the tracks on the FLC target volume to ensure all the bitmaps are initialized. Contact your IBM support representative for assistance with additional recovery options. 
+
+Case 3: FLC is already established, FRR has already been performed
+If FLC was previously established without CR active (exposed condition) and FRR has already been performed from an FLC target without CR, then some of the data restored to the source volume may be invalid. In this case, the source volume may need to be restored from another copy of the data.
+
+Problem Resolution 
+
+Update the DS8000 code to a level containing the fix, or utilize the appropriate work around for existing code levels. 
+Fix is available in code release R4.3 (bundle 64.30.87.0).
+Fix is available in code release R4.2 (bundle 64.21.21.0).
+Fix is available in code release R3.1 (bundle 63.1.69.0)
+
+Please refer back to this URL in the near future for information on how to obtain other code levels containing a fix for this issue.
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Disk Storage Systems TotalStorage DS8300 N/A Version Independent N/A

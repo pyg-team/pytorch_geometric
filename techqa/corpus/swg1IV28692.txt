@@ -1,0 +1,200 @@
+Title: IBM IV28692: INTRODUCE SWITCH FOR EXACT SEARCH TYPE CASE SENSITIVE OR EXACT SEARCH TYPE CASE INSENSITIVE - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Prior to APAR IV01664 [http://www-01.ibm.com/support/docview.wss?uid=swg1IV01664]  a search on a field defined as EXACT was
+   case insensitive
+   e.g. a search of appr would find APPR
+   
+   This was viewed as not working to design so IV01644 [http://www-01.ibm.com/support/docview.wss?uid=swg1IV01644] changed this
+   to be case sensitive
+   e.g.
+   a serch of appr will not find APPR
+   a serch of APPR will find APPR
+   
+   This APAR is opened to facilitate a swith (possibly a system
+   parameter) that will allow the client to choose which way they
+   prefer this to work.
+   
+   APAR open OK'd by Xinyu to introduce this feature.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: all                                          *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Prior to APAR IV01664 [http://www-01.ibm.com/support/docview.wss?uid=swg1IV01664]  a search on a    *
+   *                      field defined as EXACT was              *
+   *                                                              *
+   *                      case insensitive                        *
+   *                                                              *
+   *                      e.g. a search of appr would find APPR   *
+   *                                                              *
+   *                      This was viewed as not working to       *
+   *                      design so IV01644 [http://www-01.ibm.com/support/docview.wss?uid=swg1IV01644] changed this          *
+   *                                                              *
+   *                      to be case sensitive                    *
+   *                                                              *
+   *                      e.g.                                    *
+   *                                                              *
+   *                      a serch of appr will not find APPR      *
+   *                                                              *
+   *                      a serch of APPR will find APPR          *
+   *                                                              *
+   *                      This APAR is opened to facilitate a     *
+   *                      swith (possibly a system                *
+   *                                                              *
+   *                      parameter) that will allow the client   *
+   *                      to choose which way they                *
+   *                                                              *
+   *                      prefer this to work.                    *
+   *                                                              *
+   *                                                              *
+   *                                                              *
+   *                                                              *
+   *                                                              *
+   *                      LOCAL FIX:                              *
+   *                                                              *
+   *                      None                                    *
+   *                                                              *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   *                                                              *
+   *                                                              *
+   *                                                              *
+   ****************************************************************
+   INTRODUCE SWITCH FOR EXACT SEARCH TYPE CASE SENSITIVE OR EXACT
+   SEARCH TYPE CASE INSENSITIVE
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Introduce a system property mxe.caseInsensitiveExactSearch.
+   Default value is 0.  When set to 0, exact search on aln fields
+   are case sensitive.  When set to 1, exact search on aln fields
+   are case insensitive.  This is to accommodate the customer's
+   request to have pre- IV01644 [http://www-01.ibm.com/support/docview.wss?uid=swg1IV01644] behavior.  Customer who wish to
+   take advantage of this feature need to manually add this new
+   system property.
+   
+   
+   
+   
+   
+   Tests need to be done on a field that's ALN and search type is
+   EXACT.  If you don' have a field like that, use DB Config.
+   
+   
+   
+   
+   
+   The fix for this APAR is contained in the following maintenance
+   package:
+   
+     | release\fix pack | Release 7.1.1.12
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV28692
+   
+   
+ * REPORTED COMPONENT NAME
+   ADMINISTRATION
+   
+   
+ * REPORTED COMPONENT ID
+   5724R46A1
+   
+   
+ * REPORTED RELEASE
+   710
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-09-26
+   
+   
+ * CLOSED DATE
+   2012-10-02
+   
+   
+ * LAST MODIFIED DATE
+   2012-10-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  MAXIMO
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ADMINISTRATION
+   
+   
+ * FIXED COMPONENT ID
+   5724R46A1
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R710 PSY
+   UP

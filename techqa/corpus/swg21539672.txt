@@ -1,0 +1,42 @@
+Title: IBM Cipher suites 04, 05, 0A, 2F, and 35 are not available (SCI55212) - United States
+
+Text:
+STERLINGPRI TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Cipher suites 04, 05, 0A, 2F, and 35 are not available (SCI55212) 
+
+SYMPTOM
+Cipher suites 04, 05, 0A, 2F, and 35 are not available when defining node in Secure+ Parmfile
+
+
+CAUSE
+IBM Cryptographic Services Security Level 3 (FMID JCPTnnn) not installed on 
+mainframe.
+
+RESOLVING THE PROBLEM
+Install IBM Cryptographic Services Security Level 3 (FMID JCPTnnn)
+This is required if you wish to use cipher suites - 
+1) SSL V3.0 Triple DES SHA 
+2) SSL V3.0 RC4 SHA US 
+3) SSL V3.0 RC4 MD5 US 
+4) SSL_RSA_AES_128_SHA 
+5) SSL_RSA_AES_256_SHA
+
+ 
+
+HISTORICAL NUMBER
+ PRI3706 
+
+PRODUCT ALIAS/SYNONYM
+ 
+
+Fact
+
+
+CONNECT:Direct OS/390 Secure+ Option
+Release 3.0.00 
+CONNECT:Direct 
+OS/390 Secure+ Option
+Release 2.0.00 
+SCI55212

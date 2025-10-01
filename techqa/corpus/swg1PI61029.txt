@@ -1,0 +1,195 @@
+Title: IBM PI61029: NULLPOINTEREXCEPTION IN MULTIPLECRITERIAFILTER WHEN RETRIEVING LOGS WITH HPEL - United States
+
+Text:
+  FIXES ARE AVAILABLE
+8.5.5.10: WebSphere Application Server V8.5.5 Fix Pack 10 [http://www-01.ibm.com/support/docview.wss?uid=swg24042150]
+8.5.5.11: WebSphere Application Server V8.5.5 Fix Pack 11 [http://www-01.ibm.com/support/docview.wss?uid=swg24043005]
+8.5.5.12: WebSphere Application Server V8.5.5 Fix Pack 12 [http://www-01.ibm.com/support/docview.wss?uid=swg24043844]
+8.5.5.13: WebSphere Application Server V8.5.5 Fix Pack 13 [http://www-01.ibm.com/support/docview.wss?uid=swg24044479]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Running a query on HPEL logs using the HPELControlServiceMBean
+   may generate a NPE like the one below:
+   
+   
+   NPE:
+   
+   Caused by: java.lang.NullPointerException
+    at java.util.regex.Matcher.getTextLength(Matcher.java:1246)
+    at java.util.regex.Matcher.reset(Matcher.java:320)
+    at java.util.regex.Matcher.<init>(Matcher.java:240)
+    at java.util.regex.Pattern.matcher(Pattern.java:1100)
+    at
+   com.ibm.websphere.logging.hpel.reader.filters.MultipleCriteriaFi
+   lter
+    .accept(MultipleCriteriaFilter.java:107)
+    at
+   com.ibm.ws.logging.hpel.impl.LogRecordBrowser$FullFilterVerifier
+   .fil
+    terAccepts(LogRecordBrowser.java:250)
+    at
+   com.ibm.ws.logging.hpel.impl.OneLogFileRecordIterator.getNext(On
+   eLog
+    FileRecordIterator.java:546)
+    at
+   com.ibm.ws.logging.hpel.impl.OneLogFileRecordIterator.hasNext(On
+   eLog
+    FileRecordIterator.java:427)
+    at
+   com.ibm.ws.logging.hpel.impl.OneLogFileRecordIterator.next(OneLo
+   gFil
+    eRecordIterator.java:582)
+    at
+   com.ibm.ws.logging.hpel.impl.LogRecordBrowser$OnePidRecordListIm
+   pl.c
+    ountNow(LogRecordBrowser.java:859)
+    at
+   com.ibm.ws.logging.hpel.impl.LogRecordBrowser$OnePidRecordListIm
+   pl.g
+    etCache(LogRecordBrowser.java:610)
+    at
+   com.ibm.ws.logging.hpel.impl.ServerInstanceLogRecordListImpl.get
+   Cach
+    e(ServerInstanceLogRecordListImpl.java:89)
+    at
+   com.ibm.websphere.logging.hpel.reader.RemoteResultCollector.getL
+   ogLi
+    stForServerInstance(RemoteResultCollector.java:125)
+    at
+   com.ibm.ws.runtime.mbean.HPELControlServiceMBean.getLogListForSe
+   rver
+    Instance(HPELControlServiceMBean.java:408)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Disable HPEL
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  All users of IBM WebSphere Application      *
+   *                  Server                                      *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Running a query on HPEL logs using      *
+   *                      the HPELControlServiceMBean             *
+   *                      is generating a NullPointerException    *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   Running a query on HPEL logs using the HPELControlServiceMBean
+   is generating a java.lang.NullPointerException
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  We have added a null check to avoid the NullPointerException
+   
+   The fix for this APAR is currently targeted for inclusion in
+   fix pack 8.5.5.10.  Please refer to the Recommended Updates
+   page for delivery information:
+   http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI61029
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBS APP SERV N
+   
+   
+ * REPORTED COMPONENT ID
+   5724H8800
+   
+   
+ * REPORTED RELEASE
+   850
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-04-19
+   
+   
+ * CLOSED DATE
+   2016-06-28
+   
+   
+ * LAST MODIFIED DATE
+   2016-06-28
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBS APP SERV N
+   
+   
+ * FIXED COMPONENT ID
+   5724H8800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R850 PSY
+   UP
+   
+   
+ * R900 PSY
+   UP

@@ -1,0 +1,44 @@
+Title: IBM How can I find SmartSuite Fix Pack 6 on Passport Advantage? - United States
+
+Text:
+download; fix pack; fixpack; fix; fixes; update; passport advantage; cr7xcml; cz0g9ie TECHNOTE (FAQ)
+
+QUESTION
+How can I find SmartSuite Fix Pack 6 on Passport Advantage?
+
+ANSWER
+To download SmartSuite Fix Pack 6, on the Passport Advantage website, please follow these steps: 
+
+ * 
+ * 
+ * 2. Type cr7xcml 
+ * 3. Press the Search button and you will receive a categorized list by languages 
+ * 4. Scroll down and look for cz0g9ie (International English) 
+ * 5. Select the circle or square next to cz0g9ie
+
+
+Then you are ready to download. 
+
+ 
+
+If you encounter any issues with Download Director, please switch to HTTP transfer in order to download the file. 
+
+ 
+
+If any issues, or questions, please contact Passport Advantage. 
+
+ 
+
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+
+
+How to view the part numbers. 
+
+
+[/support/docview.wss?uid=swg21644756&aid=1] [/support/docview.wss?uid=swg21644756&aid=1]

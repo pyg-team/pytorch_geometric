@@ -1,0 +1,190 @@
+Title: IBM IZ07905: DELAYS IN GETTING MESSAGES WHEN USING THE WEBSPHERE MQ JMS CLIENT IN BINDINGS MODE. - United States
+
+Text:
+  FIXES ARE AVAILABLE
+WebSphere MQ V6.0 Fix Pack 6.0.2.4 [http://www-01.ibm.com/support/docview.wss?uid=swg24019276]
+WebSphere MQ 6.0 for HP OpenVMS Alpha and Itanium - Fix Pack 6.0.2.7 [http://www-01.ibm.com/support/docview.wss?uid=swg24027266]
+WebSphere MQ 6.0 for HP OpenVMS Alpha and Itanium - Fix Pack 6.0.2.10 (FP03) [http://www-01.ibm.com/support/docview.wss?uid=swg24029987]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When using the WebSphere MQ Version 6.x JMS Client with either
+   WebSphere Application Server Version 5.x or Version 6.x in
+   BINDINGS mode, the time taken to get messages from a queue slows
+   down considerably after a large message has been processed.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   This affects all customers who use the WebSphere MQ JMS Client
+   and connect to a queue manager using the BINDINGS transport
+   type.
+   
+   Platforms affected:
+   All Distributed (iSeries, all Unix and Windows) +Java
+   ****************************************************************
+   PROBLEM SUMMARY:
+   The first time the WebSphere MQ JMS Client detects a message in
+   BINDINGS mode, it tries to get it by passing a 4K buffer down
+   to the queue manager. If the message is less than 4K, then the
+   queue manager simply puts it into the buffer and returns it to
+   the Client. However, if the message is larger than 4K, then the
+   attempt to get the message fails, and the queue manager returns
+   the actual size of the message. The JMS Client increases the
+   size of the buffer, and passes this down to the queue manager,
+   which then uses it to return the message.
+   
+   In the current design, the size of the buffer used by the JMS
+   Client to get messages increases as the messages get larger,
+   but never decreases in size. This can lead to problems when
+   there are multiple JMS clients connecting to the same queue
+   manager in BINDINGS mode, and the messages being processed are
+   generally small but contain the occasional very large message.
+   Before the first large message is processed, the JMS Clients
+   will get messages from the queue very quickly. However, as soon
+   as the first large message has been handled, the time taken for
+   the JMS Clients to retrieve the messages from the queue will
+   increase significantly.
+   
+   This is due to shared memory contention on the queue manager.
+   If there are a large number of JMS Clients connecting in
+   BINDINGS mode, and all of the Clients are passing big buffers
+   to the queue manager to handle messages, the queue manager
+   spends a lot of time trying to allocate memory to handle the
+   requests.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The JMS Client has been changed so that it will reduce the size
+   of the buffer to 4K if it processes processes 10 consecutive
+   messages that are less than half the size of the current
+   buffer.
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+                      v6.0
+   Platform           Fix Pack 6.0.2.4
+   --------           --------------------
+   Windows            U200290
+   AIX                U814256
+   HP-UX (PA-RISC)    U814152
+   HP-UX (Itanium)    U814342
+   Solaris (SPARC)    U814337
+   Solaris (x86-64)   U814343
+   iSeries            SI31813
+   Linux (x86)        U814336
+   Linux (x86-64)     U814341
+   Linux (zSeries)    U814338
+   Linux (Power)      U814339
+   Linux (s390x)      U814340
+   
+   The latest available maintenance can be obtained from
+   'Websphere MQ Recommended Fixes'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037]
+   
+   If the maintenance level is not yet available, information on
+   its planned availability can be found in 'Websphere MQ
+   Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ07905
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ SOL SPARC
+   
+   
+ * REPORTED COMPONENT ID
+   5724H7203
+   
+   
+ * REPORTED RELEASE
+   600
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2007-11-06
+   
+   
+ * CLOSED DATE
+   2008-05-28
+   
+   
+ * LAST MODIFIED DATE
+   2009-01-20
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ SOL SPARC
+   
+   
+ * FIXED COMPONENT ID
+   5724H7203
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R600 PSY
+   UP

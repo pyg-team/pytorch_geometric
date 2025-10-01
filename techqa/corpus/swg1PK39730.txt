@@ -1,0 +1,132 @@
+Title: IBM PK39730: Build Forge start page makes it possible to run disabled steps - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  It is possible in Build Forge to start disabled steps.
+   Steps to reproduce:
+   1)  Create a project
+   2)  Disable a step
+   3)  Go to the Start tab in the Project Runs
+   4)  Use the top check box to deselect the steps, and then resele
+   ct the steps.  Notice that the step disable are now enabled.  It
+    does not appear to always start those steps, but occasionally i
+   t appears to start the step.
+   Build Forge should make it impossible to start disabled steps fr
+   om the Start menu.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  It is possible in Build Forge to start disabled steps.
+   Steps to reproduce:
+   1)  Create a project
+   2)  Disable a step
+   3)  Go to the Start tab in the Project Runs
+   4)  Use the top check box to deselect the steps, and then
+   reselect the steps.  Notice that the step disable are now
+   enabled.  It does not appear to always start those steps,
+   but occasionally it appears to start the step.
+   Build Forge should make it impossible to start disabled
+   steps from the Start menu.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fixed in version 7.0.1
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK39730
+   
+   
+ * REPORTED COMPONENT NAME
+   BUILD FORGE EE
+   
+   
+ * REPORTED COMPONENT ID
+   5724Q6101
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2007-02-20
+   
+   
+ * CLOSED DATE
+   2007-06-22
+   
+   
+ * LAST MODIFIED DATE
+   2007-06-22
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   BUILD FORGE EE
+   
+   
+ * FIXED COMPONENT ID
+   5724Q6101
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R700 PSN
+   UP

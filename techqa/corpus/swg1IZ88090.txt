@@ -1,0 +1,143 @@
+Title: IBM IZ88090: JEXTRACT FAILS ON AIX 6.1 TL4 - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Error Message: $ j9jextract core.20101028.183208.553004.0001.dmp
+   Loading dump file...
+   Read memory image from core.20101028.183208.553004.0001.dmp
+   Error. Internal failure detected during jextract
+   If jextract is run with the -v option, an additional line is
+   seen:
+   $ j9jextract -v core.20101028.183208.553004.0001.dmp
+   Loading dump file...
+   Read memory image from core.20101028.183208.553004.0001.dmp
+   Unable to find J9VMRAS eyecatcher
+   Error. Internal failure detected during jextract
+   .
+   Stack Trace: N/A
+   .
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Upgrade AIX to at least 6.1 TL4 SP6 or 6.1 TL5 and create a new
+   core file.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  An incompatible change in the AIX dump format meant jextract
+   cannot correctly process core files from certain AIX levels.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This defect will be fixed in:
+   6.0.0 SR8
+   1.4.2 SR13 FP7 (AIX PowerPC 64-bit)
+   5.0.0 SR12
+   .
+   The JVM has been updated to work around the problem in AIX, so
+   core files from all AIX levels can be processed by jextract.
+   Separately, AIX has been fixed under APARs IZ74700 [http://www-01.ibm.com/support/docview.wss?uid=isg1IZ74700] and IZ70805 [http://www-01.ibm.com/support/docview.wss?uid=isg1IZ70805].
+   .
+   To obtain the fix:
+   Install build 20100122 or later
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ88090
+   
+   
+ * REPORTED COMPONENT NAME
+   J9 COMMON CODE
+   
+   
+ * REPORTED COMPONENT ID
+   620700127
+   
+   
+ * REPORTED RELEASE
+   600
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-11-05
+   
+   
+ * CLOSED DATE
+   2010-11-05
+   
+   
+ * LAST MODIFIED DATE
+   2010-11-05
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    IZ88091 [http://www-01.ibm.com/support/docview.wss?uid=swg1IZ88091] IZ88097 [http://www-01.ibm.com/support/docview.wss?uid=swg1IZ88097]
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   J9 COMMON CODE
+   
+   
+ * FIXED COMPONENT ID
+   620700127
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R600 PSN
+   UP

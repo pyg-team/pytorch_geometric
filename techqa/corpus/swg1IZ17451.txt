@@ -1,0 +1,157 @@
+Title: IBM IZ17451: NEED TO HAVE THE ABILITY TO BE ABLE TO USE THE USER FROM THE EVENTREADER.PROPS FOR @JOURNALENTRY WITH A POLICY - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The @JournalEntry adds journal entry as 'root' user even if
+   the Impact server and event reader is connected as the 'impact'
+   user.
+   
+   We need the ability to track event updates by Impact.  When ever
+   our Impact policies change an event we add a journal entry to
+   that event describing the change. Using the @JournalEntry state
+   variable I would assume that Impact would add the journal entry
+   under the context of the user in which it is connected to the
+   object server as but this is not the case.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Suggested they create a data type which points to the
+   alerts.journal table. Then using the AddDataItem function,
+   you can specify the user of your choice by assigning it to the
+   UID field. You'll need to be mindful that you're properly
+   filling out the other alerts.journal fields, i.e. Serial. Be
+   sure to add, any of those users you've defined within your
+   policy, into the Object Server.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All Impact/Netcool who are using EventReader *
+   *                 to update Journal Entry                      *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: NEED TO HAVE THE ABILITY TO BE ABLE TO  *
+   *                      USE THE USER FROM THE EVENTREADER.PROPS *
+   *                      FOR @JOURNALENTRY WITH A POLICY         *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   *                                                              *
+   ****************************************************************
+   Steps to replicate: 1) Configure Impact Server 2) Create policy
+   to update Journal:    @JournalEnter=test;    @Location=test;
+   ReturnEvent(EventContainer); 3) Configure EventReader to use
+   the policy 4) Run the EventReader and observer the user who
+   updates the Journal Enter in Omnibus Event Viewer Default user
+   is root (uid is 0)
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fixed in 4.0.2.0-TIV-NCI-IF0001
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ17451
+   
+   
+ * REPORTED COMPONENT NAME
+   NETCOOL/IMPACT
+   
+   
+ * REPORTED COMPONENT ID
+   5724O59IS
+   
+   
+ * REPORTED RELEASE
+   400
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-03-11
+   
+   
+ * CLOSED DATE
+   2008-04-23
+   
+   
+ * LAST MODIFIED DATE
+   2008-04-23
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  NETCOOL
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   NETCOOL/IMPACT
+   
+   
+ * FIXED COMPONENT ID
+   5724O59IS
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R400 PSY
+   UP

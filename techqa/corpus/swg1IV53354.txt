@@ -1,0 +1,161 @@
+Title: IBM IV53354: GETTING DIVISOR IS EQUAL TO ZERO ERRORS FOR RDB_SEGMENT_ALLOCATION ATTRIBUTE - United States
+
+Text:
+  FIXES ARE AVAILABLE
+ITCAM Extended Agent for Oracle Database: 6.3.1.2-TIV-ITM_KRZ-IF0003 [http://www-01.ibm.com/support/docview.wss?uid=swg24042039]
+ITCAM Extended Agent for Oracle Database: 6.3.1.2-TIV-ITM_KRZ-IF0004 [http://www-01.ibm.com/support/docview.wss?uid=swg24043445]
+ITCAM Extended Agent for Oracle Database: 6.3.1.2-TIV-ITM_KRZ-IF0005 [http://www-01.ibm.com/support/docview.wss?uid=swg24044064]
+ITCAM Extended Agent for Oracle Database: 6.3.1.2-TIV-ITM_KRZ-IF0006 [http://www-01.ibm.com/support/docview.wss?uid=swg24044606]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Sometimes, when the database is created, a segment of type
+   'CACHE' is created.
+   
+   It is owned by 'SYS' and resides in the system tablespace.
+   It can been found by querying DBA_SEGMENTS or USER_SEGMENTS for
+   a segment_type of 'CACHE' and has one extent allocated but
+   MAX_EXTENTS = 0.
+   
+   So if a database has the segment with max_extents=0, it
+   causes the divisor is equal to zero error to occur when Oracle
+   Extended agent queries RDB_Segment_Allocation attribute group.
+   
+   Query attribute group 'RDB_Segment_Allocation'
+   ORA-01476 divisor is equal to zero
+   
+   Detailed Recreation Procedure:
+   1. Need a database that has a 'CACHE' segment and max_extents=0
+   2. Configure an instance to monitoring this database.
+   3. Start the agent.
+   4. Query attribute group 'RDB_Segment_Allocation'
+   
+   Related Files and Output:
+   
+   ORA-01476 divisor is equal to zero
+   
+   *************************** APAR Template
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Some time , When the database is created, a segment of type
+   'CACHE' is created.
+   It is owned by 'SYS' and resides in the system tablespace.
+    It can been found by querying DBA_SEGMENTS or USER_SEGMENTS for
+   a
+   segment_type of 'CACHE' and has one extent allocated but
+   MAX_EXTENTS = 0.
+   
+   So If a database have the segment that it's max_extents=0, it
+   was uncovered that the divisor is equal to zero
+   when oracle extend agent queries RDB_Segment_Allocation
+   attribute
+   
+   Query attribute group 'RDB_Segment_Allocation'
+   ORA-01476 divisor is equal to zero
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Problem Conclusion:
+   The fix for this APAR is contained in the following
+   packages:
+   IBM Tivoli Monitoring for Databases
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV53354
+   
+   
+ * REPORTED COMPONENT NAME
+   ITCAM EXT AGNT
+   
+   
+ * REPORTED COMPONENT ID
+   5724V09OR
+   
+   
+ * REPORTED RELEASE
+   631
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-12-16
+   
+   
+ * CLOSED DATE
+   2014-01-08
+   
+   
+ * LAST MODIFIED DATE
+   2014-01-08
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ITCAM EXT AGNT
+   
+   
+ * FIXED COMPONENT ID
+   5724V09OR
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R631 PSY
+   UP

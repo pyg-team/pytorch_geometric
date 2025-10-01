@@ -1,0 +1,76 @@
+Title: IBM Deployment Engine listIU.sh command fails with error ACUIR00003E - United States
+
+Text:
+TIPL2; TIPL2CONF; SQLException; DERBY SQL error; SQLSTATE XJ001 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The listIU.sh (listIU.cmd) command fails with below error message: 
+
+ACUIR00003E The query failed with return code, 2 
+
+SYMPTOM
+The de_trace shows below errors: 
+
+10:16:30.284+02:00 1 IUTypeDatabaseImpl 
+getSubstatesForAnIUInstance shob-p-tip-a.menora.co.il IP 
+SQLException: DERBY SQL error: SQLCODE: -1, SQLSTATE: XJ001, SQLERRMC: 
+java.lang.NullPointerException XJ001.U detected while reading IUSubState Table 
+
+
+DIAGNOSING THE PROBLEM
+1. Run Deployment engine health checker as follows and see if it display any errors. 
+
+<DEHOME>/bin/de_healthChecker.sh or de_healthChecker.cmd 
+
+2. Enabled derby trace by adding following properties in <DE_HOME>/repos/derby.properties/derby.properties file.
+
+derby.drda.traceAll=true
+derby.infolog.append=true 
+derby.stream.logSeverityLevel=0 
+derby.drda.logConnections=true
+derby.stream.error.logSeverityLevel=0
+derby.language.logStatementText=true 
+
+Run listIU.sh (or listIU.cmd in Windows) and check <DE_HOME>/repos/derby.log. 
+
+If <DE_HOME>/repos/derby.log shows below error then its highly likely that DE repository is corrupted beyond repair: 
+
+
+ERROR XSDB0: Unexpected exception on in-memory page Page(154,Container(0, 1152))
+at org_apache_derby_iapi_error_StandardException_newException(Unknown Source)
+at org_apache_derby_impl_store_raw_data_StoredPage_initSlotTable(Unknown Source)
+
+
+
+RESOLVING THE PROBLEM
+If above errors are found in derby.log then below are possible options to resolve this issue:
+
+1. Check if Deployment Engine backup is available and restore the DE repository from backup. Before restoring DE repository take a backup of current files and keep it in safe place. 
+
+/usr/ibm/common/acsi/repos
+2. If no backup is available then please open a PMR for support team to investigate this issue and try to fix or rebuild the derby database. 
+
+Please provide contents of DE repository and DE logs from below directories: 
+
+Unix: 
+
+root install:
+/usr/ibm/common/acsi/repos
+/usr/ibm/common/acsi/logs
+
+non-root user installation: 
+
+$HOME/<username>/.acsi_<username>/repos 
+$HOME/<username>/.acsi_<username>/logs 
+
+
+Windows: 
+
+Admin user:
+C:\Program Files\IBM\Common\acsi\repos 
+C:\Program Files\IBM\Common\acsi\logs 
+
+Non-Admin user: 
+
+C:\Documents and Settings\<username>\acsi_<username>\repos 
+C:\Documents and Settings\<username>\acsi_<username>\logs

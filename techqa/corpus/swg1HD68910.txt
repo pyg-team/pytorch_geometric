@@ -1,0 +1,139 @@
+Title: IBM HD68910: DMD ERROR WHEN RUNNING DMD 2 TIME AFTER MIGRATION R14 TO R17 - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  [Michael Mashiach 5-Nov-2007]
+   DMD Error when running DMD after installing FTS
+   commponents by mistake into SmarTeam Schema
+   instead of CTXSYS user:
+   DB Error:
+   #-2147217900 ORA-01795: maximum number of
+   expressions in a list is 1000 Source=OraOLEDB
+   SQLState= NativeError=1795.
+   Too many (more than 1000) expressions in
+   the "IN" list within the WHERE clause( i.e Select ...
+   From ... Where ... IN (1,...1740 expressions);)
+   .
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  DMD Error when running DMD 2  time after migration R14 to R17
+    Michael Mashiach 5-Nov-2007
+   DMD Error when running DMD after installing FTS
+   commponents by mistake into SmarTeam Schema
+   instead of CTXSYS user:
+   DB Error:
+   #-2147217900 ORA-01795: maximum number of
+   expressions in a list is 1000 Source=OraOLEDB
+   SQLState= NativeError=1795.
+   Too many (more than 1000) expressions in
+   the "IN" list within the WHERE clause( i.e Select ...
+   From ... Where ... IN (1,...1740 expressions);)
+   .
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  THIS PROBLEM WILL BE FIXED ON SMARTEAM VERSION 5
+   RELEASE 19 GA level.
+   NOTE THAT THIS PROBLEM WILL ALSO BE FIXED ON
+   V5R17SP08.
+   .
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   HD68910
+   
+   
+ * REPORTED COMPONENT NAME
+   SMARTEAM NT>XP
+   
+   
+ * REPORTED COMPONENT ID
+   569199970
+   
+   
+ * REPORTED RELEASE
+   517
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2007-11-03
+   
+   
+ * CLOSED DATE
+   2007-12-19
+   
+   
+ * LAST MODIFIED DATE
+   2007-12-19
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   SMARTEAM NT>XP
+   
+   
+ * FIXED COMPONENT ID
+   569199970
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R518 PSN
+   UP

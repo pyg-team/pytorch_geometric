@@ -1,0 +1,175 @@
+Title: IBM HD54808: PMG CPU LOOP WHEN ATTEMPT TO SWAP CATPRODUCT - United States
+
+Text:
+AIX SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PERMANENT RESTRICTION.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  PMG / CPU LOOP WHEN ATTEMPT TO SWAP
+   CATPRODUCT
+   .
+   1)Open CATIAV5
+   2)Open the provided process.
+   3)Double-pick on the Part Operation to open it
+   4)Attempt to swap the existing Product in the PO
+   edit panel with another one (it happens to be the
+   same name, but the Product may have already
+   been updated)
+   Note: Select the PRODUCT_ASSY.CATProduct from
+   the File Selection panel that is presented.
+   5)RESULT:  CATIA hangs.  This is the Error.
+   EXPECTED RESULT:  CATIA should swap the
+   existing Product with the one that has been
+   selected within a minute.
+   .
+   Note:  The original user left his workstation running
+   in this state overnight.  When he came back the
+   next morning, CATIA was still running, ie, it was
+   hung.  On the laptop that was used to write this
+   scenario, we killed CATIA after about 30 minutes.
+   We took a snapshot of Windows system activity
+   using the Windows Task Manager shortly before
+   killing CATIA:
+   .
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  PMG CPU LOOP WHEN ATTEMPT TO SWAP CATPRODUCT
+   PMG / CPU LOOP WHEN ATTEMPT TO SWAP
+   CATPRODUCT
+   .
+   1)Open CATIAV5
+   2)Open the provided process.
+   3)Double-pick on the Part Operation to open it
+   4)Attempt to swap the existing Product in the PO
+   edit panel with another one (it happens to be the
+   same name, but the Product may have already
+   been updated)
+   Note: Select the PRODUCT_ASSY.CATProduct from
+   the File Selection panel that is presented.
+   5)RESULT:  CATIA hangs.  This is the Error.
+   EXPECTED RESULT:  CATIA should swap the
+   existing Product with the one that has been
+   selected within a minute.
+   .
+   Note:  The original user left his workstation running
+   in this state overnight.  When he came back the
+   next morning, CATIA was still running, ie, it was
+   hung.  On the laptop that was used to write this
+   scenario, we killed CATIA after about 30 minutes.
+   We took a snapshot of Windows system activity
+   using the Windows Task Manager shortly before
+   killing CATIA:
+   .
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  THIS PROBLEM IS PERMANENT RESTRICTION IN
+   CATIA
+   .
+   Incident Diagnosis
+   This problem is due to the selection of
+   the Optimized detection of design changes in the
+   Machining-General-Design Changes tab of the
+   Options dialog. This causes a comparison of the
+   entire geometry of the old and the new products
+   thus taking a very long time for the product
+   replacement command to execute.
+   .
+   Restriction Explanation
+   The Optimized detection of design changes option
+   was provided mainly to allow replacement with a
+   part coming from CATIAV4, or with a product that
+   is New From the old one and not Save as.
+   .
+   By-Pass
+   Execute the product replacement command by
+   deselecting the Optimized detection of design
+   changes option.
+   .
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   HD54808
+   
+   
+ * REPORTED COMPONENT NAME
+   CATIA V5 NT>XP
+   
+   
+ * REPORTED COMPONENT ID
+   569151000
+   
+   
+ * REPORTED RELEASE
+   516
+   
+   
+ * STATUS
+   CLOSED PRS
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2006-07-11
+   
+   
+ * CLOSED DATE
+   2006-07-28
+   
+   
+ * LAST MODIFIED DATE
+   2006-07-28
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

@@ -1,0 +1,32 @@
+Title: IBM How to enable SSL communication between VMware vCenter Site Recovery Manager 5 and IBM N Series storage arrays - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This article describes the procedure that should be followed to enable SSL communication between the IBM Storage Replication Adapter (SRA) for VMware vCenter Site Recovery Manager 5 (SRM) and a IBM N Series storage controller.
+Secure communication using SSL is a global option set per SRA instance. Once enabled on the SRA, it must be enabled on each storage controller that the SRA communicates with. This procedure must be performed on each SRM server to which secure communication is desired. 
+
+SYMPTOM
+Procedure
+
+
+Perform the following steps:
+1. If not already configured, enable SSL on the IBM N Series storage controller:
+7-Mode:
+secureadmin setup ssl
+secureadmin enable ssl
+Clustered Data ONTAP:
+::*> security ssl modify -vserver <vserver_name> -ca <certificate issuing authority> -serial <serial number> -server-enabled true
+2. Verify that SSL is turned on:
+7-Mode:
+options ssl.enable
+Clustered Data ONTAP:
+::> security ssl show
+3. Using a text editor on the SRM server, edit the SRA configuration file and change the default option 'ssl = off' to 'ssl = on'.
+The default location for the SRA configuration file is:
+SRM5: <install drive>:\Program Files (x86)\VMware\VMware vCenter Site Recovery Manager\ storage\sra\ONTAP\ontap_config.txt
+SRM4: <install drive>:\Program Files\VMware\VMware vCenter Site Recovery Manager\ scripts\SAN\ONTAP\ontap_config.txt
+4. Verify that secure communication between the SRA and the storage controller works by refreshing the device list for the array pair within the SRM management interface. 
+
+To verify SSL is being used, see the Data ONTAP audit logs located at /etc/log/auditlog. API calls from the SRA is logged as using 'https'; whereas, non-SSL API calls use the 'http' protocol.

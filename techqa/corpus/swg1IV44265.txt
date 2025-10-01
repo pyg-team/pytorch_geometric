@@ -1,0 +1,183 @@
+Title: IBM IV44265: ON TIP CONSOLE - THE AGENT INFO ARE BEING SHOWN IN IPV6 FORMAT INSTEAD OF IPV4 FORMAT - United States
+
+Text:
+  DIRECT LINKS TO FIXES
+Tivoli Asset Discovery for Distributed Interim Fix 7.5.0-TIV-TAD4D-IF0027 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Asset+Discovery+for+Distributed&fixids=7.5.0-TIV-TAD4D-IF0027&source=SAR]
+IBM License Metric Tool Interim Fix 7.5.0-TIV-ILMT-IF0027 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FIBM+License+Metric+Tool&fixids=7.5.0-TIV-ILMT-IF0027&source=SAR]
+Tivoli Asset Discovery for Distributed Interim Fix 7.5.0-TIV-TAD4D-IF0026 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Asset+Discovery+for+Distributed&fixids=7.5.0-TIV-TAD4D-IF0026&source=SAR]
+IBM License Metric Tool Interim Fix 7.5.0-TIV-ILMT-IF0026 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FIBM+License+Metric+Tool&fixids=7.5.0-TIV-ILMT-IF0026&source=SAR]
+IBM License Metric Tool 7.2.2 Interim Fix, 7.2.2-TIV-ILMT-IF0011 [http://www-01.ibm.com/support/docview.wss?uid=swg24032962]
+IBM License Metric Tool Interim Fix 7.5.0-TIV-ILMT-IF0026 [http://www-01.ibm.com/support/docview.wss?uid=swg24032909]
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  On TIP console - the agent info are being shown in IPv6 format
+   instead of IPv4 format
+   
+   Example:
+   Host XXXXXX08
+   
+   LMT takes from the CIT output and returns for this
+   host IPV6 yyyy:0000:0000:0000:0000:yyyy:yyyy:yyyy instead of
+   IPv4 xx.xx.x.xx"
+   
+   In the results returned by CIT, the hostname values for
+   different
+   IPAddresses have different letter cases.
+   
+   <IPAddress version="1" timestamp="1367853829">
+     <Index>1</Index>
+     <Address IsKey="1">xx.xx.x.xx</Address>
+     <Hostname>xxxxxx08</Hostname>
+   
+    <IPv6Address version="1" timestamp="1367853829">
+     <Index>1</Index>
+     <Address
+   IsKey="1">yyyy:0000:0000:0000:0000:yyyy:yyyy:yyyy</Address>
+     <Hostname>XXXXXX08</Hostname>
+   
+   Since the hostname is defined as:
+   
+    <UNIXSystemParams version="1" timestamp="1367853836">
+    <ComputerAlias>XXXXXX08</ComputerAlias>
+   
+   The latter one matches.
+   
+   HostName in group IPAddress and ComputerAlias are received from
+   different WinAPI functions. HostName in group IPv6Address we get
+   from
+   WMI.
+   
+   The temporary workaround is to change to lowercase the host name
+   in the system.
+   In this case LMT will match with IPv4.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  The temporary workaround is to change to lowercase the host name
+   in the system.
+   
+   In this case LMT will match with IPv4.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * On the Tivoli Integrated Portal console, agent information is
+   * shown in IPv6 format instead of IPv4 format. It causes that
+   * host name IP addresses are displayed in a non-routable
+   hexadecimal
+   * format.
+   *
+   * Behaviour after applying the interim fix:
+   * Host names are displayed in the correct format.
+   ****************************************************************
+   * RECOMMENDATION: Apply appropriate interim fix when available.
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix for this APAR is contained in the following maintenance
+   packages:
+    | Interim Fix | 7.5.0-TIV-ILMT-TAD4D-IF0011
+    | Interim Fix | 7.2.2-TIV-ILMT-TAD4D-IF0011
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV44265
+   
+   
+ * REPORTED COMPONENT NAME
+   LICENSE METRIC
+   
+   
+ * REPORTED COMPONENT ID
+   5724LMT00
+   
+   
+ * REPORTED RELEASE
+   750
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2013-06-17
+   
+   
+ * CLOSED DATE
+   2013-07-15
+   
+   
+ * LAST MODIFIED DATE
+   2013-07-15
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   LICENSE METRIC
+   
+   
+ * FIXED COMPONENT ID
+   5724LMT00
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R722 PSY
+   UP
+   
+   
+ * R750 PSY
+   UP

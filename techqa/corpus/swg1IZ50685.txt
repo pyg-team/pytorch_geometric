@@ -1,0 +1,165 @@
+Title: IBM IZ50685: NOKIA MOBILITY CLIENT DOES NOT INSTALL CLEANLY WITH THE NOKIA 5800 DEVICE. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The existing Mobility Client for Nokia devices will not cleanly
+   install on the Nokia 5800 due to some installation checks which
+   fail with this device.  This problem is only present with the
+   Nokia 5800.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Obtain the temporary fix from Level 2 support once it becomes
+   available.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: Users installing Lotus Mobile Connect 6.1.3  *
+   *                 on Nokia S60 5th Edition devices.            *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: The existing Mobility Client for Nokia  *
+   *                      devices will not cleanly install on     *
+   *                      the Nokia 5th edition devices due to    *
+   *                      some installation checks which          *
+   *                      fail with these devices.                *
+   ****************************************************************
+   * RECOMMENDATION: Only install the version of LMC 6.1.3 with   *
+   *                 this fix on Nokia S60 5th Edition devices.   *
+   ****************************************************************
+   The CommsDat table definitions changed on the 5th edition
+   device (specifically the 5800) where the HomeIAP field of the
+   VPN_SERVICE record is no longer 0.  The LMC install program
+   had a sanity check on this field to ensure that it was always
+   zero, which is no longer the case.  This check was removed so
+   the install could complete cleanly.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A formal fix for this problem will be included in all product
+   releases AFTER 6.1.3.  Until that time a temporary fix may be
+   obtained from the IBM Lotus Mobile Connect Support Center.
+   To obtain this APAR fix or technical support for Lotus Mobile
+   Connect you may either visit the Lotus Mobile Connect On-line
+   Support Center at http://www.ibm.com/software/lotus/ [http://www.ibm.com/software/lotus/]
+   mobileconnect/support/ or open a Problem Management Record (PMR)
+   
+   by visiting our Electronic Service Request (ESR) page at
+   http://www-306.ibm.com/software/support/probsub.html.  If you
+   need to reach IBM Support in the U.S. call 1-800-IBM-SERV.  For
+   Support outside of the U.S. please visit the IBM Contacts page
+   at http://www.ibm.com/planetwide/ to find the direct dial
+   support number for your location.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ50685
+   
+   
+ * REPORTED COMPONENT NAME
+   LOTUS MOBILE CO
+   
+   
+ * REPORTED COMPONENT ID
+   5724R2000
+   
+   
+ * REPORTED RELEASE
+   613
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2009-05-04
+   
+   
+ * CLOSED DATE
+   2009-08-07
+   
+   
+ * LAST MODIFIED DATE
+   2009-08-07
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   LOTUS MOBILE CO
+   
+   
+ * FIXED COMPONENT ID
+   5724R2000
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R610 PSN
+   UP
+   
+   
+ * R611 PSN
+   UP
+   
+   
+ * R612 PSN
+   UP
+   
+   
+ * R613 PSY
+   UP

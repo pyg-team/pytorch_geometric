@@ -1,0 +1,18 @@
+Title: IBM What is the database function that is the equivalent of the Cognos _days_between function? - United States
+
+Text:
+Oracle DB2 SQL Server TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The _days_between function is a Cognos function and will therefore require local processing. Are there database functions that will accomplish the same thing? 
+
+RESOLVING THE PROBLEM
+For most databases, subtracting one date column from another date column will return the days between.
+
+ 
+
+
+
+Cross Reference information Segment Product Component Platform Version Edition Business Analytics Cognos Business Intelligence Report Studio Windows 8.3 
+HISTORICAL NUMBER
+ 1039549

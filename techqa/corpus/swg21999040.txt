@@ -1,0 +1,76 @@
+Title: IBM Security Bulletin: Pivotal Spring Framework vulnerabilities affect IBM Tivoli Application Dependency Discovery Manager (TADDM) - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ Multiple vulnerabilities have been identified in the OpenSource/Pivotal Spring Framework version that is embeddded in IBM Tivoli Application Dependency Discovery Manager (TADDM) thus requiring an upgrade to Spring Framework version 3.2.13. 
+
+VULNERABILITY DETAILS
+CVEID: CVE-2014-3578 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-3578]
+DESCRIPTION: Pivotal Spring Framework could allow a remote attacker to traverse directories on the system. An attacker could send a specially-crafted URL request to view arbitrary files on the system.
+CVSS Base Score: 5
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/93774 [https://exchange.xforce.ibmcloud.com/vulnerabilities/93774] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:L/Au:N/C:P/I:N/A:N)
+
+CVEID: CVE-2014-3625 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-3625]
+DESCRIPTION: Pivotal Spring Framework could allow a remote attacker to traverse directories on the system. An attacker could send a specially-crafted URL request containing "dot dot" sequences (/../) to view arbitrary files on the system.
+CVSS Base Score: 5
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/99872 [https://exchange.xforce.ibmcloud.com/vulnerabilities/99872] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:L/Au:N/C:P/I:N/A:N)
+
+CVEID: CVE-2013-7315 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2013-7315]
+DESCRIPTION: Pivotal Spring Framework could allow a remote attacker to obtain sensitive information, caused by an XML External Entity Injection (XXE) error when processing XML data. By sending a specially-crafted request, an attacker could exploit this vulnerability to read arbitrary files and obtain sensitive information.
+CVSS Base Score: 5
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/95219 [https://exchange.xforce.ibmcloud.com/vulnerabilities/95219] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:L/Au:N/C:P/I:N/A:N)
+
+CVEID: CVE-2013-4152 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2013-4152]
+DESCRIPTION: Pivotal Spring Framework could allow a remote attacker to obtain sensitive information, caused by an XML External Entity Injection (XXE) error when processing XML data. By sending a specially-crafted request, an attacker could exploit this vulnerability to read arbitrary files and obtain sensitive information.
+CVSS Base Score: 5
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/86589 [https://exchange.xforce.ibmcloud.com/vulnerabilities/86589] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:L/Au:N/C:P/I:N/A:N)
+
+CVEID: CVE-2014-0054 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-0054]
+DESCRIPTION: Pivotal Spring Framework could allow a remote attacker to obtain sensitive information, caused by an XML External Entity Injection (XXE) error in Jaxb2RootElementHttpMessageConverter when processing XML data. By sending specially-crafted XML data, an attacker could exploit this vulnerability to read arbitrary files and obtain sensitive information.
+CVSS Base Score: 5
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/91841 [https://exchange.xforce.ibmcloud.com/vulnerabilities/91841] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:L/Au:N/C:P/I:N/A:N)
+
+AFFECTED PRODUCTS AND VERSIONS
+TADDM 7.2.2
+
+REMEDIATION/FIXES
+There is an eFix containing an upgrade of the Spring Framework to version 3.2.13 prepared on top of TADDM 7.2.2 FixPack 5 
+
+ 
+
+Fix VRMF APAR How to acquire fix efix_spring3.2.13v1_FP520160209.zip 7.2.2.5 None Download eFix [ftp://ftp.ecurep.ibm.com/fromibm/tivoli/efix_spring3.2.13v1_FP520160209.zip] 
+Please get familiar with eFix readme in etc/<efix_name>_readme.txt 
+
+Please note that the eFix requires manual backup/removal of a named jar as per readme file. WORKAROUNDS AND MITIGATIONS
+None.
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v2 Guide [http://www.first.org/cvss/v2/guide] 
+On-line Calculator v2 [http://nvd.nist.gov/CVSS-v2-Calculator] 
+
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] 
+
+CHANGE HISTORY
+ 17 Feb 2017: original document published 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.

@@ -1,0 +1,14 @@
+Title: IBM KDPRT001E Wait for OMPE server - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ I am getting the message KDPRT001E Wait for OMPE server in my RKLVLOG but I cannot find this message in the Messages Manual. 
+
+RESOLVING THE PROBLEM
+The message in the Messages Manual contains message KDPRT01E Wait for OMPE server, it should state KDPRT001E Wait for OMPE server. 
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Systems and Asset Management Tivoli OMEGAMON XE for DB2 Performance Monitor on z/OS

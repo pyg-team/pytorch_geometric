@@ -1,0 +1,48 @@
+Title: IBM System resource exceeded or Out of memory error, when logging into ClearQuest or checking out schema - United States
+
+Text:
+1396466; CQ; ClearQuest; 7.1; designer; rcp; eclipse; client; microsoft; access; memory; system resources; xmx; heap size; System resource exceeded; Nicht genügend Arbeitsspeicher; login; check out; schema; clearquest.ini; cqdesigner.ini TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This technote explains how to resolve the errors "System resource exceeded" and "Out of memory." This can occur when logging into the IBM Rational ClearQuest Eclipse RCP client. It can also occur when checking out a schema in ClearQuest Designer. 
+
+SYMPTOM
+When logging into the ClearQuest Eclipse RCP client or checking out a schema with ClearQuest Designer, one of these errors occur: 
+
+
+System resource exceeded. 
+
+OR 
+
+Out of memory. 
+
+
+
+CAUSE
+If you are receiving the System resource exceeded error, the maximum Java heap size is too large. If you are receiving the Out of memory error, then the heap size is too small. Either error can also occur if the heap size value is not configured for the client that is producing the error.
+
+
+
+ENVIRONMENT
+This problem is observed the ClearQuest client or ClearQuest Designer for version 7.1.x.
+
+
+
+RESOLVING THE PROBLEM
+ 
+
+ 
+
+Refer to technote 1381316 [http://ibm.com/support/docview.wss?rs=988&uid=swg21381316] for more information on determining and setting the Java heap size for these tools. You will have to increase or lower the value depending on which error message you receive. If there is no heap size defined at all, you will need to define a heap size value. 
+
+Generally, a heap size value of 512 MB is acceptable for these tools. This would mean you set the value Xmx512m in the appropriate .ini file. Use the instructions in technote 1381316 to make this change and try again.
+
+
+
+
+
+
+
+
+
+Cross Reference information Segment Product Component Platform Version Edition Software Development Rational ClearQuest Designer

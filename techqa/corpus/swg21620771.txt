@@ -1,0 +1,46 @@
+Title: IBM The arsdb -uv command fails to update the Content Manager OnDemand database when upgrading from older versions to V9 - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The arsdb -uv command is used to update the IBM Content Manager OnDemand database for use with version 9. This update fails to create tables that were added in previous versions. 
+
+SYMPTOM
+The arsdb -uv command fails to update the Content Manager OnDemand database for use with version 9.
+
+
+CAUSE
+The ARSCFSODWORK table as well as some others have not been created yet, so the arsdb command will fail because it cannot alter a non-existent table.
+
+DIAGNOSING THE PROBLEM
+When you run arsdb -uv you will receive the following messages and the arsdb command will exit: 
+
+ARS4121I Altering table ARSCFSODWORK
+ARS4054E DB Error: [IBM][CLI Driver][DB2/AIX64] SQL0204N "ROOT.ARSCFSODWORK" is an undefined name. SQLSTATE=42704 -- SQLSTATE=42S02, SQLCODE=-204
+ARS4125I Failed while processing sql statement >ALTER TABLE root.ARSCFSODWORK ADD time_stamp_dt TIMESTAMP<
+arsdb: ARS4122E Unable to alter table ARSCFSODWORK
+
+
+RESOLVING THE PROBLEM
+To resolve the problem, perform the following: 
+
+ 
+
+ 1. Create the missing tables:
+    
+    arsdb -I instance -frtv
+    
+    
+ 2. Run the original arsdb command:
+    
+    arsdb -I instance -uv
+    
+
+
+This problem is only in the base 9.0 release of Content Manager OnDemand and will be addressed in Fix Pack 1. This fix will allow you to upgrade from older releases as far back as V8.4.0.  
+
+It is optional, but recommended when upgrading from V8.4.1 or V8.4.0 to V9.0.0, to also update the System Log application group for the new date support (arssyscr -l -u), create the System Load application group and folder (arssyscr -a), and update the System Load application group for the new date support (arssyscr -a -u). For more information, please refer to the V9.0.0 and V8.4.1 readmes and Related Information section.
+
+RELATED INFORMATION
+ Content Manager OnDemand V9.0 new date types [http://www.ibm.com/support/docview.wss?uid=swg27036188]

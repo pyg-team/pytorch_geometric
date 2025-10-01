@@ -1,0 +1,56 @@
+Title: IBM Configuring security in IBM Atlas Policy Suite - United States
+
+Text:
+ PRODUCT DOCUMENTATION
+
+ABSTRACT
+ To ensure that your IBM Atlas Policy Suite is secure and to prevent session hijacking, set the HttpOnly flag and the secure flag. 
+
+CONTENT
+ 
+
+The secure flag is an option that can be set by the application server when sending a new cookie to a user within an HTTP Response. This can be used only on HTTPS. The purpose of the secure flag is to prevent cookies from being observed by unauthorized parties due to the transmission of the cookie in clear text.
+
+If the HttpOnly flag (optional) is included in the HTTP response header, the cookie cannot be accessed through client side script. The HttpOnly flag must be supported by the browser. Most modern browsers support this feature.
+
+To set the HttpOnly flag and the secure flag, complete the following actions for your application server.
+
+WebLogic 
+In the $DOMAIN_HOME/servers/<APPSERVER NAME>/tmp/_WL_user/<APPLICATION NAME>/<random_string>/war/WEB-INF directory, open the Weblogic.xml file and add the following lines:
+
+<session-descriptor>
+<cookie-http-only>true</cookie-http-only>
+<cookie-secure>true</cookie-secure>
+<cookie-rewriting-enabled>false</cookie-rewriting-enabled>
+</session-descriptor
+
+Restart the application server for changes to take effect.
+
+JBoss
+To set cookies with the secure flag and HttpOnly on JBoss Version 5 and Version 6, 
+add the following lines to the context.xml file which comes with a deployed application:
+
+<SessionCookie secure="true" httpOnly="true" />
+
+JBoss EAP 6.x
+Update the web.xml file with the following lines: 
+
+<session-config>
+<cookie-config>
+<http-only>true</http-only>
+<secure>true</secure>
+</cookie-config>
+<tracking-mode>COOKIE</tracking-mode>
+</session-config>
+
+
+Restart the application server for changes to take effect.
+
+
+WebSphere Application Server
+To set the HttpOnly and the secure flags, open the Administration Console and then go to
+Servers -> Server Types -> WebSphere application servers -> {servername} -> Web Container Settings -> Web container -> Session Management -> Enable cookies -> check Restrict cookies to HTTPS sessions.
+
+In WebSphere Application Server Version 8.5.5, HttpOnly is set by default.
+
+Restart the application server for changes to take effect.

@@ -1,0 +1,140 @@
+Title: IBM RS02482: UPDATE RES_URL IN DECISION SERVER CLUSTER SCRIPTS - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  With current topology of the Decision Server cluster, RES
+   console is deployed outside of the cluster and SSP ear deployed
+   on each node. In order to run testing and simulation services,
+   users will have to manually edit RES_URL in the decision runner
+   war file as the RES console won't be on the same server and
+   port as the decision runner.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Manually edit RES_URL in the decision runner war file. For
+   WebSphere, this can be done from:
+   Enterprise Applications > jrules-ssp-WAS85 > Initialize
+   parameters for servlets
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  The scripts of Decision Server cluster should plan to update
+   automatically the RES_URL in Decision Server when running
+   testing and simulation services.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The code is fixed
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   RS02482
+   
+   
+ * REPORTED COMPONENT NAME
+   WDS FOR RULES
+   
+   
+ * REPORTED COMPONENT ID
+   5725B6903
+   
+   
+ * REPORTED RELEASE
+   880
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-08-31
+   
+   
+ * CLOSED DATE
+   2016-09-30
+   
+   
+ * LAST MODIFIED DATE
+   2016-09-30
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  999
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WDS FOR RULES
+   
+   
+ * FIXED COMPONENT ID
+   5725B6903
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R881 PSY
+   UP

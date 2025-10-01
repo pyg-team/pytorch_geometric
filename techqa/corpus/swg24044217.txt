@@ -1,0 +1,174 @@
+Title: IBM Download Information: Version 10.1.0.x IBM Spectrum Protect™ Plus - United States
+
+Text:
+IBM Spectrum Protect Plus; 10.1.0 DOWNLOADABLE FILES
+
+ABSTRACT
+ This document describes how to download installation images for IBM Spectrum Protect™ Plus Version 10.1.0. 
+
+DOWNLOAD DESCRIPTION
+This document is divided into linked sections for ease of navigation. You may use the links below to jump to the section of the document that you want. 
+
+
+Packages via Fix Central Online 
+
+Packages via Passport Advantage Online 
+
+Update History 
+
+Known Issues and Limitations 
+
+Compatibility Information 
+
+Documentation Updates 
+
+System requirements 
+
+Support Page 
+
+ 
+
+ 
+
+ 
+
+Images via Fix Central Online 
+
+To get the latest features and enhancements it is required to update IBM Spectrum Protect™ Plus from a previous version or release. Software patches and updates are delivered via Fix Central and installed by using the IBM Spectrum Protect Plus Administrative Console. 
+
+The Fix Central Online website contains update files for IBM Spectrum Protect Plus for download. The HTTP link in the section "Download package" directs to the Fix Central Online website. 
+
+The images available through Fix Central do not contain license enablement files. You must have a base level package installed to use these images.
+
+The following files are available for download of IBM Spectrum Protect Plus 10.1.0.1 (interim fix: spp_10.1.0_patch1): 
+
+Image Name Installation Environment Comment spp_10.1.0_patch1.iso VMware vSphere / Microsoft Hyper-V Update IBM Spectrum Protect Plus virtual appliance vsnap-dist-1.0.0-62.run Linux Update vSnap server on a physical or virtual machine For instructions for how to update IBM Spectrum Protect Plus see https://www.ibm.com/support/knowledgecenter/SSNQFQ_10.1.0/spp/c_spp_updating.html [https://www.ibm.com/support/knowledgecenter/SSNQFQ_10.1.0/spp/c_spp_updating.html].
+
+
+ 
+
+
+Images via Passport Advantage Online 
+
+The Passport Advantage Online website has complete images of IBM Spectrum Protect Plus 10.1.0 for download. The HTTP link in the section "Download package" directs to the Passport Advantage Online website. 
+
+The images available through Passport Advantage are the base level packages. For any software patches and updates, check Fix Central. 
+
+
+The following images are available for download of V10.1.0 release of IBM Spectrum Protect Plus: 
+
+ 
+
+ * IBM Spectrum Protect Plus virtual appliance This image contains all of the components required to host an IBM Spectrum Protect Plus data protection environment. 
+   
+   Image Name Passport Advantage 
+   Part Number Installation Environment Comment IBM Spectrum Protect Plus V10.1.0 for VMware, Multilingual
+   
+   SPP-10.1.0-315.ova CNMM0ML VMware vSphere Creates a virtual appliance containing the IBM Spectrum Protect Plus application. IBM Spectrum Protect Plus V10.1.0 for Hyper-V, Multilingual
+   
+   SPP-10.1.0-windows-installer.exe CNMM2ML Microsoft Hyper-V Creates a virtual appliance containing the IBM Spectrum Protect Plus application. You can optionally expand the environment with the images listed in the following sections. These images can be installed at any time after the IBM Spectrum Protect Plus virtual appliance is installed and deployed.  
+   
+   
+ * vSnap Server In larger backup enterprise environments, additional vSnap servers might be required. 
+   
+   Image Name Passport Advantage 
+   Part Number Installation Environment Comment IBM Spectrum Protect Plus V10.1.0 vSnap for VMware, Multilingual
+   
+   vSNAP-1.0.ova CNMM4ML VMware vSphere Creates a virtual appliance containing the vSnap server application. IBM Spectrum Protect Plus V10.1.0 vSnap for Hyper-V, Multilingual
+   
+   vsanp-1.0-windows-installer.exe CNMM5ML Microsoft Hyper-V Creates a virtual appliance containing the vSnap server application. IBM Spectrum Protect Plus V10.1.0 vSnap Installer, Multilingual
+   
+   vsnap-dist-1.0.0-61.run CNMM6ML Linux Installs a vSnap server on a physical or virtual machine.  
+   
+   
+ * VADP Proxy You can create proxies to run VMware backup jobs through vStorage API for Data Protection (VADP) in Linux environments. The proxies reduce demand on system resources by enabling load sharing and load balancing. 
+   
+   Image Name Passport Advantage 
+   Part Number Installation Environment Comment IBM Spectrum Protect Plus V10.1.0 VADP Proxy Installer, Multilingual
+   
+   vmdkbackup-2.1-installer.bin CNMM7ML Linux Installs a VADP proxy server on a physical or virtual machine.
+   
+   Note: there is no virtual appliance available for the VADP proxy.  
+   
+   
+ * Trial product A free trial version is available. You can get the trial version from Passport Advantage Online, or you can download the package from https://www.ibm.com/us-en/marketplace/ibm-spectrum-protect-plus [https://www.ibm.com/us-en/marketplace/ibm-spectrum-protect-plus]. 
+   
+   Image Name Passport Advantage 
+   Part Number Installation Environment Comment IBM Spectrum Protect Plus V10.1.0 for VMware Trial, Multilingual
+   
+   vSNAP-1.0.ova CNMM1ML VMware vSphere Creates a virtual appliance containing a trial version of the IBM Spectrum Protect Plus application. IBM Spectrum Protect Plus V10.1.0 for Hyper-V Trial, Multilingual
+   
+   SPP-10.1.0-windows-installer.exe CNMM3ML Microsoft Hyper-V Creates a virtual appliance containing a trial version of the IBM Spectrum Protect Plus application.  
+   
+   
+ * License  A license key is required to convert the trial version to a fully licensed version. 
+   
+   Image Name Passport Advantage 
+   Part Number Installation Environment Comment IBM Spectrum Protect Plus V10.1.0 License Key for Trial Upgrade, Multilingual
+   
+   SPP.lic CNMM8ML - The license key will convert the evaluation/trial version to the fully licensed version of the product. 
+
+ 
+
+ 
+
+Update History 
+
+V10.1.0 is the first release of this product. Currently there is no Update History document available. 
+
+ 
+
+Known Issues and Limitations 
+
+The Known Issues & Limitations document describes known issues and limitations in V10.1.0.x level of IBM Spectrum Protect Plus. See http://www.ibm.com/support/docview.wss?uid=swg22010356 [http://www.ibm.com/support/docview.wss?uid=swg22010356]. 
+
+ 
+
+Compatibility Information 
+
+V10.1.0 is the first release of this product. Currently there is no Compatibility Information document available. 
+
+ 
+
+Documentation Updates 
+
+V10.1.0 is the first release of this product. Currently there is no Documentation Updates document available. 
+
+ 
+
+System requirements 
+
+For system requirement information, see the Knowledge Base for IBM Spectrum ProtectTMPlus at: https://www.ibm.com/support/knowledgecenter/SSNQFQ_10.1.0/spp/c_spp_system_reqs.html [https://www.ibm.com/support/knowledgecenter/SSNQFQ_10.1.0/spp/c_spp_system_reqs.html].
+
+
+Support Page 
+
+See the support page for IBM Spectrum Protect Plus at https://www.ibm.com/support/home/product/10000875/IBM_Spectrum_Protect_Plus [https://www.ibm.com/support/home/product/10000875/IBM_Spectrum_Protect_Plus]. 
+
+
+
+PREREQUISITES
+Refer to the hardware and software requirements for all components and platforms supported by IBM Spectrum Protect Plus at https://www.ibm.com/support/knowledgecenter/SSNQFQ_10.1.0/spp/c_spp_system_reqs.html [https://www.ibm.com/support/knowledgecenter/SSNQFQ_10.1.0/spp/c_spp_system_reqs.html]. 
+
+
+
+INSTALLATION INSTRUCTIONS
+For detailed installation instructions, see https://www.ibm.com/support/knowledgecenter/SSNQFQ_10.1.0/spp/c_spp_installation.html [https://www.ibm.com/support/knowledgecenter/SSNQFQ_10.1.0/spp/c_spp_installation.html]
+
+DOWNLOAD PACKAGE
+The HTTP link in the Download Options column below directs you to the following sites: 
+
+ * Passport Advantage Online website. Passport Advantage is a secure website that requires an account ID and password. It has all of the component and platform images associated with IBM Spectrum Protect Plus 10.1.0 available for download. 
+   
+   You can locate images on the Passport Advantage Online website by using the part number as the search query. For example, to locate the IBM Spectrum Protect Plus for VMware virtual appliance, use the search query CNMM0ML, and for IBM Spectrum Protect Plus for Hyper-V virtual appliance, use CNMM2ML.
+   
+ * Fix Central Online website. Fix Central is a secure website that requires you to log in using your IBM ID. You can acquire an IBM ID for free at Sign up to IBMid [https://www.ibm.com/account/us-en/signup/register.html]. Fix Central allows you to search, select, order, and download fixes to your system with a choice of delivery options. 
+   
+   You can locate images on the Fix Central Online website by using the product name, version and platform as the search query. For example use the "IBM Spectrum Protect Plus". 
+
+
+Reminder: The images available through Fix Central do not contain license enablement files. You must have a base level package installed to use these packages. 
+
+
+
+Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options Passport Advantage 10.11.2017 US English 1 HTTP [http://www.ibm.com/software/howtobuy/passportadvantage/pao_customers.htm] Fix Central 10.11.2017 US English 1 HTTPS [https://www-945.ibm.com/support/fixcentral]

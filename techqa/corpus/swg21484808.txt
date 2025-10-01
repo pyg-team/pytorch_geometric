@@ -1,0 +1,28 @@
+Title: IBM ODBC Administrator dialog does not open within Database Wizard of Statistics 18 on Windows Vista and Windows 7 32 and 64 bit - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ I am working with PASW Statistics 18 and would like to add a new datasource with the Add Datasource button on the Statistics Database wizard. However, when I click on this button nothing happens, why is this? When I do the same on Win XP with Statistics 18 I do not encounter this problem. This does also not happen when I log in as local administrator.
+
+With the following steps you can reproduce the issue:
+
+1. Launch Statistics 18
+2. Go to File -> Open Database -> New Query
+3. Click "Add ODBC Data source"
+
+But, unfortunately nothing happens. 
+
+RESOLVING THE PROBLEM
+This problem has been reported to SPSS Development - Workaround Available. It is resolved with the PASW Statistics 18.0.3 Patch.
+As a workaround please perform the Add Datasource in the ODBC Database Administrator within the Control Panel of your computer. We apologize for the inconvenience.
+
+RELATED INFORMATION
+ Need more help? Our Statistics forum is Live! [https://developer.ibm.com/answers/topics/statistics.html?smartspace=predictive-analytics]
+
+
+ 
+
+HISTORICAL NUMBER
+ 86432

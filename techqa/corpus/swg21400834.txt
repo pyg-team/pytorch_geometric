@@ -1,0 +1,25 @@
+Title: IBM File name length limit for packages/rules in Rule Studio - United States
+
+Text:
+character; length; limit; maximum; name; number; package; rule; size TECHNOTE (FAQ)
+
+QUESTION
+ What is the limit on the number of characters that a package/rule name can have in Rule Studio? 
+
+ANSWER
+For Rule Studio, because projects are stored in file format, the file name length limit is defined by the operating system.
+For example, on Windows XP, the file name length is limited to 255 characters, but this applies to the entire file path, not just the file name. Therefore, you need to make sure that the entire path does not exceed 255 characters:
+
+<workspace_path>/<rule_project_name>/rules/<rule_package_name>/<rule_name> 
+
+RELATED INFORMATION
+ Package/rule name length limit in RTS [http://www.ibm.com/support/docview.wss?uid=swg21400835]
+Naming conventions for rule artifacts [http://www.ibm.com/support/docview.wss?uid=swg21400822]
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Operational Decision Manager Platform Independent 8.0, 7.5 
+HISTORICAL NUMBER
+ jrules/FAQ/389

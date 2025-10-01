@@ -1,0 +1,156 @@
+Title: IBM PJ33869: java.lang.IllegalArgument: BaseObject type exception occurs whe n saving a Workflow Definition - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  "java.lang.IllegalArgumentException: BaseObject type"
+   exception is thrown when Workplace operations or CE 3.5x Java
+   API methods retrieve Permissions which contain an unresolved
+   ACL.
+   Description:
+   If user/group security is added to a CE object (e.g.
+   ClassDescription) then, at a later time, the underlying Active
+   Directory user/group is deleted.  If the ACL is not removed from
+   the CE object's security a java.lang.IllegalArgumentException:
+   BaseObject type exception is thrown when retrieving the objects
+   Permissions.  This can occur in Workplace operations or when
+   making CE 3.5x Java API method calls that retrieve an objects
+   Permissions.  This was originally reported by a customer working
+   with a WorkflowDefinition in Workplace, however it can occur
+   any time an object is assigned a security ACL which at a later
+   time has its underlying Active Directory user/group deleted.
+   Content Engine 3.5x Java API methods that could potentially see
+   this are:
+   ?ClassDescription.getDefaultInstancePermissions()
+   ?Object.getPermissions()
+   ?Object.getUserAccess()
+   ?Event.getSourceObjectPermissions()
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  The "java.lang.IllegalArgumentException: BaseObject type"
+   exception is thrown because an unrecognized Permission
+   GranteeType value was received from the Content Engine.  The
+   reason for this is that an Active Directory (AD) entry (e.g.
+   user/group) has been deleted but the ACL for that user/group
+   still exists in an object's (in this case WorkflowDefinition)
+   security ACL.  Because the underlying AD entry is missing the CE
+   cannot determine if it is a user or group object.  The fix in
+   P8CE-4.0.1-005 is to ignore these deleted AD entries when
+   retrieving permissions. However the exception can also be
+   avoided by removing the deleted user/group from the object's
+   security ACL.  In the specific case outlined in this defect, it
+   would require removing the obsolete entry from the
+   WorkflowDefinition security ACL, however the exception will
+   occur for any CE object with a similar situation (security ACL
+   that has its underlying AD entry deleted).
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  P8 users using workflow in WorkplaceLogon to P8 Workplace and cr
+   When you add the Workflow to the object store, a "java.lang.Ille
+   Please upgrade CE and client jars  to P8CE-4.0.1-005
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  fixed in P8CE-4.0.1-005
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PJ33869
+   
+   
+ * REPORTED COMPONENT NAME
+   CONTENT ENGINE
+   
+   
+ * REPORTED COMPONENT ID
+   5724R8101
+   
+   
+ * REPORTED RELEASE
+   401
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-06-12
+   
+   
+ * CLOSED DATE
+   2008-08-29
+   
+   
+ * LAST MODIFIED DATE
+   2008-11-18
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CONTENT ENGINE
+   
+   
+ * FIXED COMPONENT ID
+   5724R8101
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R401 PSY
+   UP

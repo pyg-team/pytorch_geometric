@@ -1,0 +1,27 @@
+Title: IBM Cannot launch FileNet P8 Process Configuration Console (PCC) after successul installation.  Get NoClassDefFoundError - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Cannot launch FileNet P8 Process Configuration Console (PCC) via Workplace XT (XT). Getting java.lang.NoClassDefFoundError. 
+
+SYMPTOM
+Successfully install P8 4.5.1.x on Windows 2008 using WorkplaceXT. Attempt to launch FileNet P8 Process Configuration Console (PCC) and get java.lang.NoClassDefFoundError: Could not initialize class filenet.ws.listener.utils.WSListenerProperties
+
+
+CAUSE
+The FileNet P8 Content Engine (CE) and P8 WorkplaceXT (XT) were installed/deployed on the same java virtual machine; in other words the same application server instance.
+
+RESOLVING THE PROBLEM
+ 
+
+ 1. Uninstall XT from the JBoss application server hosting the CE. 
+ 2. Create new JBoss application server to host XT. 
+ 3. Use scripts under <XT_install_path>/deploy directory to recreate the WAR and EAR files. 
+ 4. Install/deploy newly created XT EAR file to newly created JBoss application server.
+
+You should now be able to successfully launch the PCC. 
+
+
+Cross reference information Segment Product Component Platform Version Edition Enterprise Content Management FileNet Content Manager Workplace XT AIX, HP-UX, Linux, Solaris, Windows 4.5.1

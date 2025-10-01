@@ -1,0 +1,143 @@
+Title: IBM IZ07607: WHEN HAVING EXCEL OR PDF OUTPUT, THE CUSTOMER IMAGE IS BROKEN - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When the customer creates a report with html and excel and pdf
+   output the image in the html is fine, but the links to either
+   excel or pdf show the image as broken
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  n/a
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: Users creating multi-format report output    *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: When the customer creates a report with *
+   *                      HTML and excel and pdf output the image *
+   *                      in the HTML is fine, but the links to   *
+   *                      either excel or pdf show the image as   *
+   *                      broken                                  *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   *                                                              *
+   ****************************************************************
+   The hyperlink in a HTML report output which when clicked
+   displays the report in either PDF format or Excel output is
+   missing the imsgaes which are in the HTML output
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The PDF and Excel format reports now display the same images as
+   in the HTML format report
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ07607
+   
+   
+ * REPORTED COMPONENT NAME
+   NC/REPORTER
+   
+   
+ * REPORTED COMPONENT ID
+   5724P9600
+   
+   
+ * REPORTED RELEASE
+   210
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2007-10-30
+   
+   
+ * CLOSED DATE
+   2007-11-19
+   
+   
+ * LAST MODIFIED DATE
+   2007-11-19
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *     NETCOOL
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   NC/REPORTER
+   
+   
+ * FIXED COMPONENT ID
+   5724P9600
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R210 PSY
+   UP

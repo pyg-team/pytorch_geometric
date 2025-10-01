@@ -1,0 +1,168 @@
+Title: IBM Ask the Experts session: Revisiting the Domino Attachment and Object Service (DAOS) and the DAOS Estimator Tool - 12 May 2015 (Q&A, Presentation, Audio, Video) - United States
+
+Text:
+lste_webcast STEwebcastDocument WEBCAST
+
+ABSTRACT
+ Already using DAOS successfully in your environment? Do you wonder if you could better leverage the DAOS feature? We'll take a brief look at the current DAOS estimator tool and how you can use it to analyze your current DAOS deployment. Then, you'll have plenty of time to ask our panel of experts about any DAOS issue or curiosity you may have. 
+
+CONTENT
+ 
+
+Audio Replay 
+DAOS_AskTheExperts_May2015.mp3 [/support/docview.wss?uid=swg27045390&aid=2]DAOS_AskTheExperts_May2015.mp3 [/support/docview.wss?uid=swg27045390&aid=1] 
+ * 48 minutes 26 seconds 
+ * Q&A begins at 22:45
+
+
+Video recording 
+A video was made from combining the presentation and recorded audio from the session. You can download that video from this FTP site: 
+ftp://public.dhe.ibm.com/software/lotus/info/Domino/ATE_DAOS_May2015.mp4 [ftp://public.dhe.ibm.com/software/lotus/info/Domino/ATE_DAOS_May2015.mp4] 
+
+
+Presentation ATE_DAOS_051215.pdf [/support/docview.wss?uid=swg27045390&aid=4]ATE_DAOS_051215.pdf [/support/docview.wss?uid=swg27045390&aid=3] 
+
+
+DAOS Estimator Tool TEST_DAOS_Estimator_V1.8.zip [/support/docview.wss?uid=swg27045390&aid=6]TEST_DAOS_Estimator_V1.8.zip [/support/docview.wss?uid=swg27045390&aid=5] 
+
+
+Feedback Requested 
+Excerpt from Amy Knox's forum post at the link below: 
+ * Forum post 
+ * 
+ *  
+ * Daos Estimator tool (daosest.exe) - Topic to gather feedback
+ * 
+
+
+"As a follow up to today's "Ask the Experts" session on DAOS, I am starting this topic so that we can gather feedback about the current version 1.8 of the DAOS Estimator tool. Please install it, use it, and share with us your experience with it. Tell us how it works in your environment, and if you can think of any other data/output you might like to see in it." 
+
+
+References 
+DAOS Deployment Guide 
+http://www.lotus.com/ldd/dominowiki.nsf/dx/DAOS_Deployment_Guide [http://www.lotus.com/ldd/dominowiki.nsf/dx/DAOS_Deployment_Guide] 
+
+Link to the technote where the current test version 1.8 is posted (for OS = AIX, Linux, w32, w64): 
+http://www-01.ibm.com/support/docview.wss?uid=swg27045390 [http://www-01.ibm.com/support/docview.wss?uid=swg27045390] 
+
+Link to version 1.7 for IBM i: 
+http://www.ibm.com/support/docview.wss?uid=swg21621041 [http://www.ibm.com/support/docview.wss?uid=swg21621041] 
+
+Installation steps can be found in this technote: 
+http://www-01.ibm.com/support/docview.wss?rs=463&uid=swg24021920 [http://www-01.ibm.com/support/docview.wss?rs=463&uid=swg24021920] 
+
+Installation instructions for the DAOS Estimator Tool for System i 
+http://www.ibm.com/support/docview.wss?uid=swg27015216 [http://www.ibm.com/support/docview.wss?uid=swg27015216] 
+
+Link to the installation guide for the DAOS estimator tool (all versions): 
+http://www-01.ibm.com/support/docview.wss?uid=swg27014980 [http://www-01.ibm.com/support/docview.wss?uid=swg27014980] 
+
+DAOS Notes Large Objects (NLO) Encryption 
+http://www.ibm.com/support/docview.wss?uid=swg21673931 [http://www.ibm.com/support/docview.wss?uid=swg21673931] 
+
+DAOSEST v1.7 for IBM i 
+http://www.ibm.com/support/docview.wss?uid=swg21621041 [http://www.ibm.com/support/docview.wss?uid=swg21621041] 
+
+How Can The DAOS Estimator Run When The Domino Server for IBM i Is Down? 
+http://www.ibm.com/support/docview.wss?uid=swg21392451 [http://www.ibm.com/support/docview.wss?uid=swg21392451] 
+
+Whitepaper on DAOS archiving 
+http://www-10.lotus.com/ldd/dominowiki.nsf/dx/Archiving_and_recovering_IBM_Lotus_DAOS-enabled_databases [http://www-10.lotus.com/ldd/dominowiki.nsf/dx/Archiving_and_recovering_IBM_Lotus_DAOS-enabled_databases] 
+
+Q&A 
+NOTE: Note that the data written to the NLO file is identical to what WOULD have been written to the NSF file. Any NSF-level encryption/compression/encoding choices are applied before it goes to the NLO. The NLO encryption is in ADDITION to any NSF-level encryption. 
+
+
+Q1. I already have the DAOS Estimator tool installed on IBM i but I was never able to get it to run. Do you have instructions on how to run it? 
+ * How Can The DAOS Estimator Run When The Domino Server for IBM i Is Down? 
+   http://www.ibm.com/support/docview.wss?uid=swg21392451 [http://www.ibm.com/support/docview.wss?uid=swg21392451] 
+ * DAOSEST v1.7 for IBM i 
+   http://www.ibm.com/support/docview.wss?uid=swg21621041 [http://www.ibm.com/support/docview.wss?uid=swg21621041] 
+
+
+
+Q2. If I need to move the DAOS folder, are there any technotes for this ? 
+ * 
+ * 
+ * http://www-01.ibm.com/support/docview.wss?uid=swg21415153
+
+
+
+Q3. Can I run the DAOS estimator tool while the IBM i Domino is running or do I have to stop the server? What parameters does it need to run with? 
+The server can be up. For example, you can use the command "load daosest -o filename.txt". See the Deployment Guide for more information. 
+ * 
+ * 
+ * http://www.lotus.com/ldd/dominowiki.nsf/dx/DAOS_Deployment_Guide
+
+
+
+Q4. To confirm - DAOS and Traveler are completely compatible? 
+Yes 
+
+
+Q5. With clustered servers, DAOS can be implemented independently - Correct?  * Yes. Each server has its own DAOS repository and is independent. 
+ * Yes. It is server specific. One server can be DAOS enabled and the other not. Or have different settings.
+
+
+
+Q6. I'm having trouble understanding how to restore data on DAOS enabled servers. Do all the NLO files have to be individually restored? Or, do backup softwares have the capability?  * At the simplest level, yes...the files need to be restored individually. There are some 3rd party apps that will automate that somewhat. 
+ * Depends on the backup software you use. Some like ArcServe and BackupExec understand DAOS and can restore NLOs automatically for you. IBM's TSM cannot so you'd have to restore them manually
+
+
+
+Q7. Will DAOS cause any problems with IMAP clients? 
+One thing to watch for, you will want to set.. 
+ * DAOS_AVOID_MIME=1
+ * 
+
+IMAP checks size (to report to client) by pre-formatting the messages and storing them temporarily in an attachment. If this attachment happens to be larger than the DAOS min size...it will get stored in daos and hang around for 30 days or whatever. That INI avoids the problem. 
+
+
+Q8. Anyone have a link for how to configure Arcserve / Backup exec to restore automatically? 
+I can't speak to specific 3rd party apps, you'd have to contact their tech support. One workaround is to have clustered Domino servers and to have one that does NOT have DAOS enabled. Then do normal backup/restore operations from there, and the data will replicate to the other servers. 
+
+
+Q9. Is it true that the whole DAOS feature makes a positive impact to the performance of the server if that very server has a lot of memory, thus most of the date is stored in DAOS but the rest (like structure of the DBs) is stored in memory? 
+Domino tends to be constrained by I/O rather than memory and DAOS certainly helps with I/O overhead. 
+
+
+Q10. How do set event handlers for DAOS? 
+ * 
+ * DAOS: How To Set Up Resynchronization Events With DDM
+
+
+
+Q11. What is the recommended configuration to obey the physical size of a database instead of its logical size? 
+As long as the db physical size is < 64GB, it's ok. 
+
+
+Q12. What tool did he just mention (on the call)? 
+I was referring to the command output "Load daosmgr status" - very useful output. For more information, see Using the Lotus Domino Attachment and Object Service Estimator too [http://www-01.ibm.com/support/docview.wss?uid=swg27014980]l. 
+
+
+Q13. If I archive a mail with an attachment stored in the DAOS repository, will the mail stored in the archive still reference the NLO in the DAOS repository? Or does the archive process copies the attachment to the archive?  * If the archive db has daos enabled it will reference the same nlo 
+ * If the archive db where the document is being moved to is not daos enabled then the document will contain the actual attachment 
+
+
+* * * 
+Q14. For those of you running DAOS already, how big is your DAOS repository on your largest server? We are hitting resync issues with around 4TB in DAOS - using default size of 64kb 
+You should consider increasing the minimum size of attachments to participate to DAOS 
+
+Agreed - if I do that, will it send attachments smaller than the participation size back into the individual mailfiles? 148 folders in the DAOS directory 
+You might want then change the participation size. What is the size that you have set for attachments to be in DAOS? 
+
+64KB is the size set for attachments in DAOS, which made sense when we first enabled it shortly after it became available. Understand from the presentation that this is no longer recommended so will revisit  * TOO SMALL!!! 
+ * I think that is a little bit low in your setup. I would suggest changing it to 1mb and do a offline resync followed with prune
+
+
+Agreed! Just checking number of NLOs on our primary mail cluster - over 5 million! Will discuss with our storage team and re-run the estimator tool 
+* * * 
+
+About Ask the Experts sessions IBM Collaboration Solutions (Lotus) Support wants to help you take full advantage of your products. "Ask the Experts Q&A" is a new program where the main focus of the sessions is having technical experts answer your questions. 
+
+Join us for our Open Mic Webcast series as technical experts share their knowledge and answer your questions. These webcasts are designed to address specific topics and provide an in-depth and focused technical exchange in a convenient online webcast format. For more information about our Open Mic webcasts, visit the IBM Collaboration Solutions Support Open Mics [http://www.ibm.com/software/lotus/support/lotus-open-mics/] page. 
+
+
+
+ORIGINAL PUBLICATION DATE
+ 2015/3/24

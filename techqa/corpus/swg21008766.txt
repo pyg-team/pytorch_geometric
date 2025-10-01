@@ -1,0 +1,39 @@
+Title: IBM What is causing hangs and deadlocking in STAH and STOR transactions? - United States
+
+Text:
+Hangs and Deadlocks; Object Store Problems TECHNOTE (FAQ)
+
+QUESTION
+ What causes a STAH transaction to be deadlocked with a STOR transaction? Eventually the store completes but the STAH transactions continue to deadlock with each other and I have about 400 queued up. One STAH transaction is holding an exclusive lock on an index page (SDSTCTIX) for no apparent reason. The index is unclustered, and writes are always at the end of the page. I have used the BMC (formerly Boole & Babbage) monitor, but I don't know what the STAH transaction is waiting for. I reorganize the index page weekly and 7,000 documents are scanned a day (in other words, I make 7000 inserts and deletes from IODM table SDSTCTTB). 
+
+I am using IODM 2.1.1, in a CICS® 3.3, DB2® 2.3 environment, and when this problem occurs, DSNT375I and DSNT501I appear in the SYSLOG and reason codes 00C9 0088 and 00C9 008E appear in DSNT501I (Type 301). The Put level is at 9308 for DB2 2.3, and PTF UN32130 is already on the system. Pool threads are being used for the STAH and STOR transactions. 
+
+ANSWER
+To solve the problem, take these preliminary steps: 
+
+ * Apply PTF UN59253, which appears to be related to this problem 
+ * Examine the thread utilization for the STAH transaction in the RCT. Change from pool to dedicated threads. 
+ * If the problem recurs, we need to take a console dump, and refer to Information APAR II06335 to determine what options to use on the dump.
+   
+
+
+Procedure for IODM STAH transactions:  1. A CICS EXTRACT is done on DSNCEXT1 to ensure that DB2 is up. 
+ 2. An entry is inserted into DB2 table SDSTCTTB. Index SDSTCTIX ensures that the inserted entry is unique (SDSTCTIX identifies a single 55-character field as the unique index for the table). 
+ 3. If a DB2 deadlock (-913) occurs, a syncpoint rollback is issued. After a user-specified delay period (CICS DELAY) is used, the insert will be retried. 
+ 4. Task terminates (implied syncpoint).  *  Set the delay interval (IODM parameter PUTOWAIT in IDPARMTB) to 10 seconds, and the retry count (PUTORTRY in IDPARMTB) to 1.
+       Two other IODM transactions also use the SDSTCTTB table: 
+    
+    
+ 5. TMPC, which does a SELECT against this table 
+ 6. STOR, which SELECTs and DELETEs from this table
+
+
+However, if neither of these transactions is running when the problem occurs, it is possible that STAH is deadlocking with another STAH transaction. 
+
+If the problem persists, consider taking the following actions, which were performed during a previous problem call:  * Compare the transaction counts for today against other days to see if the problem is related to volume. 
+ * Look at the DB2 tables and indexes to see if they need to be reorganized. 
+ * Set the PUTORTRY and PUTOWAIT parameters for IODM to 0 if the retries seem to be aggravating the problem. This is a dynamic change so if it causes any problems you will need to reset it. 
+ * Look at the timeout limit in DB2 to determine if it is too large. 
+ * Consider changing the RCT to only allow one STAH transaction at a time to talk to DB2. This would eliminate any STAH contention. 
+ * Review whether you are holding a large number of locks during a STAH transaction, and if so, for what reason. 
+ * Check in the commit frequencies for the two transaction types.

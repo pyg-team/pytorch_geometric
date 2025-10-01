@@ -1,0 +1,124 @@
+Title: IBM IV25438: COMPLEX, VERY DEEPLY NESTED BO STRUCTURES LEAD TO EXCEPTIONS IN BPC EXPLORER. - United States
+
+Text:
+  A FIX IS AVAILABLE
+Version 8.0 Refresh Pack 1 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24033777]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Complex, very deeply nested BO structures lead to
+   exceptions in BPC Explorer.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  This ifix increases the limit for the size of forms shown in BPC
+   Explorer.
+   Instead of a limit for the nesting of a message which was 15
+   levels, the form can now have 30 nesting levels.
+   Nevertheless it is not recommended to use processes or tasks
+   which have such a high nesting level at least
+   if human interaction is needed.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Problem fixed
+   iFix available on top of V700 FP5
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV25438
+   
+   
+ * REPORTED COMPONENT NAME
+   BUS PRC CHOREOG
+   
+   
+ * REPORTED COMPONENT ID
+   5655FLW11
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-07-31
+   
+   
+ * CLOSED DATE
+   2012-10-31
+   
+   
+ * LAST MODIFIED DATE
+   2012-10-31
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    IZ99405
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   BUS PRC CHOREOG
+   
+   
+ * FIXED COMPONENT ID
+   5655FLW11
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R700 PSY
+   UP

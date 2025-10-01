@@ -1,0 +1,178 @@
+Title: IBM LO41588: ENHANCEMENT TO ADD NATIVE SUPPORT IN THE NOTES CLIENT FOR PRE-ST ARTUP AND POST-SHUTDOWN CUSTOM ADDONS - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS REQUIREMENT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Need native support in the Notes Client for Pre-Startup and
+   Post-Shutdown custom addons, so that it is possible to execute a
+   program/script before Notes Database is accessed and another
+   program after Notes Databases are released during/on shutdown.
+   Some example of possible notes.ini settings to activate these
+   custom addons(s)
+   
+    PreStartupProgram=Wait "%WinDir%\system32\wscript.exe"
+   "%NotesProgram%\PrePostScript.js Startup"
+   
+    PostShutdownProgram=Wait "%WinDir%\system32\wscript.exe"
+   "%NotesProgram%\PrePostScript.js Shutdown"
+   
+   The UsePreStartupProgram & UsePostShutdownProgram could be set
+   to
+   1. object : Wait
+     Should Notes wait for program/script to terminate before
+   continuing normal startup (Values:  Wait / NoWait )
+   2. object : "%WinDir%\system32\wscript.exe"
+     Program/script to execute at PreStartup or PostShutdown.
+   %WinDir% can be a OS or Notes.ini variable.
+     If Program/script is in path then this could be just
+   "wscript.exe" or what Program/script that should be used.
+   3. object : "%NotesProgram%\PrePostScript.js Startup"
+     Parameters to the Program/script that should be passes
+   
+   The LAB Roaming Team has build some example hooks that give most
+   of these functions, and during our testing they have worked as
+   designed very well.
+   But we request these hooks should be built-in functions, so that
+   JAVA and C are not needed on the customer end, plus the Shutdown
+   hook only works if Standard Notes is launched not if Basic Notes
+   is used. Not that we will be using Basic Notes as we known for
+   now, but we still do not know if we will be using 'Notes -sa' on
+   some few workstation because of 3-part integration or
+   resources.
+   
+   If the Basic Notes was also enhanced with Post-Shutdown addon,
+   it would be nice if an extra parameter was passed to the
+   program/script, that stated what was happening like:   'Starting
+   Standard-Notes'  or 'Shutting-down Basic-Notes'.
+   
+   These program/script we will/could use for cleanup or pre-setup
+   of platform for the Notes Client, and a lot of other things.
+    Examples:
+    1.Before the Notes Client access the databases, we may want to
+   check that local databases are not to old to replicate, because
+   of deletion-stub cut-off date. (An old Laptop from the drawer)
+   
+   
+    2. Before the Notes Client access the databases, we check the
+   workstation has access to the company LAN/WAN, and that the
+   ConfigFile and ID-file is ready for First-Startup
+   
+    3. Before the Notes Client access the Roaming databases, we may
+   want to remove the databases, and set RoamingUpgrade flags in
+   Notes.ini, because old databases are from a different Notes
+   version and we want to insure that setup gets new versions from
+   the Roaming Server.
+   
+    4. After the Notes Client releases the databases and the
+   ID-file, we want to do some File-Syncronization to an other
+   location,
+   
+   The customer would like to use the custom scripts to access the
+   files needed before notes gets a lock on them and just after
+   notes releases the lock on them.
+   
+   There are a lot of new good features in 8.5 like the ID-Vault,
+   but during the upgrade face it can not be used because of old
+   Notes version do not support this new feature, therefore we need
+   to solve this an other way (the old way) while we still have old
+   version installed. And this we used to do by replacing the
+   standard notes.exe with our program/script.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Custom API
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *  This APAR is associated with SPR# DBRK7T5GV2.
+   Part of batch closures of low weight enhancement requests.  If
+    weight increases, this issue may be considered for a future
+    release.
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   LO41588
+   
+   
+ * REPORTED COMPONENT NAME
+   NOTES/DOMINO 7X
+   
+   
+ * REPORTED COMPONENT ID
+   5724E6200
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED REQ
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-06-18
+   
+   
+ * CLOSED DATE
+   2010-03-09
+   
+   
+ * LAST MODIFIED DATE
+   2010-03-09
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

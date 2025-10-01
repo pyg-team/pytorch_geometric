@@ -1,0 +1,79 @@
+Title: IBM Resolving TEPS eWAS memory issues by increasing the JVM heap size - United States
+
+Text:
+wsadmin.sh AdminConfig initialHeapSize maximumHeapSize TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ TEP client login failures and TEPS CPU spikes. Login failures will generate the error: 
+
+
+"KFWITM392E Internal error occurred during logon" 
+
+SYMPTOM
+The SystemOut.log will show a memory exception: 
+
+<log start>
+Exception in thread ...
+java.lang.OutOfMemoryError 
+at java.net.PlainSocketImpl.socketAccept(Native Method) 
+at java.net.PlainSocketImpl.accept(PlainSocketImpl.java:455) 
+at java.net.ServerSocket.implAccept(ServerSocket.java:462) 
+at java.net.ServerSocket.accept(ServerSocket.java:433) 
+at com.ibm.rmi.transport.ListenerThread.run(ListenerThread.java:166)
+<log end>
+
+Pop-up error shows:
+
+<log start>
+"KFWITM392E Internal error occurred during logon"
+<log end> 
+
+
+CAUSE
+The error is thrown by the JVM when it cannot allocate an object due to lack of memory. This is not related to system memory, but the heap size parameters. The default heap settings are insufficient when using additional ITM agents that utilize the TEPS eWAS component. 
+
+
+As of ITM 6.2 fixpack 1 part of user authentication is handled by the embedded WebSphere server. Out of memory conditions will eventually crash eWAS and prevent TEP user login.
+
+
+RESOLVING THE PROBLEM
+Alter the memory heap size allocated to Java using the wsadmin command line tool: 
+
+
+1) Stop the TEPS using the MTEMS GUI or command "itmcmd agent stop cq".
+
+2) Navigate to the TEPS eWAS home\bin directory. 
+
+Linux/Unix: $CANDLEHOME/<arch>/iw/bin
+Windows: <ITM_install_dir>\CNPSJ\bin
+
+3) Access the interactive jython prompt via wsadmin.sh. Once the tool is started the prompt will change to "wsadmin>":
+
+Linux/Unix: ./wsadmin.sh -conntype none -lang jython
+Windows: wsadmin.bat -conntype none -lang jython
+
+4) Set the JVM variable to the first Java returned by AdminConfig.list("JavaVirtualMachine") and verify what that the JVM variable got set correctly:
+
+wsadmin> jvm = AdminConfig.list("JavaVirtualMachine").split("\n")[0]
+wsadmin> print jvm
+
+The output should be similar to:
+
+(cells/ITMCell/nodes/ITMNode/servers/ITMServer|server.xml#JavaVirtualMachine_<epoch>)
+
+5) Increase the initial and maximum heap sizes size from the defaults of 50 and 256:
+
+wsadmin> AdminConfig.modify(jvm, [["initialHeapSize", 512]] )
+wsadmin> AdminConfig.modify(jvm, [["maximumHeapSize", 1024]] )
+
+6) Save the changes and exit:
+
+wsadmin> AdminConfig.save()
+wsadmin> exit
+
+
+7) Restart the TEPS.
+
+NOTE: On Linux/Unix, verify the changes by running "ps -ef | grep iw". Look for the following:
+
+-Dibm.websphere.internalClassAccessMode=allow -Xms512m -Xmx1024m

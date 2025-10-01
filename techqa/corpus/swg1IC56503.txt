@@ -1,0 +1,144 @@
+Title: IBM IC56503: MULTIPLE STOP CHANNEL MODE REQUESTS DEADLOCK CHANNEL SERVER / MCA - United States
+
+Text:
+  FIXES ARE AVAILABLE
+WebSphere MQ for HP NonStop Server v5.3.1, Fix Pack 5.3.1.3 [http://www-01.ibm.com/support/docview.wss?uid=swg24019778]
+WebSphere MQ for HP NonStop Server V5.3.1 fix pack 5.3.1.6 [http://www-01.ibm.com/support/docview.wss?uid=swg24025461]
+WebSphere MQ for HP NonStop Server V5.3.1 fix pack 5.3.1.7 [http://www-01.ibm.com/support/docview.wss?uid=swg24027369]
+WebSphere MQ for HP NonStop Server V5.3.1 fix pack 5.3.1.8 [http://www-01.ibm.com/support/docview.wss?uid=swg24030009]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  If a channel is configured with a invalid conname and is started
+   it enters a BINDING state. While in this state a STOP CHANNEL
+   MODE FORCE or TERMINATE is performed programatically multiple
+   times using MQAI. The Channel enters a STOPPING state but after
+   the 4th or 5th stop attempt the Channel Server process and MCA
+   deadlock. Stopping the MCA process resumes the channel server
+   and other processes waiting on the Channel Server (for example a
+   runmqsc DIS CHS request).
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Issue only one stop channel request. The channel will stop after
+   a communication error is returned.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Unthreaded channel agents block on network i/o when connecting
+   to the remote partner. The STOP CHANNEL request from the
+   Channel Server to the MCA are done on a admin socket and not
+   processed causing the deadlock.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Modified unthreaded channel agents to not block on network i/o
+   when connecting, and to service the incoming admin socket
+   requests from the channel server. This will prevent the channel
+   from getting stuck in binding state causing the channel server
+   to lockup waiting for a response from the channel agent.  As a
+   secondary effect, the channel agent processing of the admin
+   queue will result in the channel stopping when instructed,
+   rather than waiting for the network timeout.
+   Released in WMQ V53 HP NonStop V5313 fix pack.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC56503
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBS MQ NSS MIP
+   
+   
+ * REPORTED COMPONENT ID
+   5724A3901
+   
+   
+ * REPORTED RELEASE
+   531
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-05-13
+   
+   
+ * CLOSED DATE
+   2008-06-16
+   
+   
+ * LAST MODIFIED DATE
+   2010-12-07
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBS MQ NSS MIP
+   
+   
+ * FIXED COMPONENT ID
+   5724A3901
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R530 PSY
+   UP

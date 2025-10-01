@@ -1,0 +1,162 @@
+Title: IBM IZ39368: INTERIM PROCESSING FAILURES NOT REPORTED IN REMOTE DEPLOY. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Environment:
+   Unix / Windows executing ITM 6.2.1 TEMS.
+   
+   Problem Description:
+   Some remote user requests which are processed by Remote Deploy
+   consist of multiple subprocesses.  Specifically, when
+   configuring an Agent, or when installing an Agent for the first
+   time, there may be a failure in the configuration phase of the
+   remote processing. Rather than return the interim failure
+   results, the next phase of processing is initiated which is
+   starting the Agent.  If the starting of the Agent is
+   successful, that result is returned to the user, however the
+   interim configuration failure is not.
+   
+   Detailed Recreation Procedure:
+     1. TEMS running ITM 6.2.1
+     2. TEMA running ITM 6.2.1 Windows OS Agent
+     3. Add Microsoft SQL Server Agent to running TEMA by issuing
+        the following:
+        tacmd addsystem -t "oq" -n "Primary:ESMDVM4W1:NT" -p
+   DBSETTINGS.db_errorlog="C:\\ESMDVM4W1\\Data\\MSSQL.1\\MSSQL\\LOG
+   \\ERRORL
+   OG" DBSETTINGS.db_login="sa" DBSETTINGS.db_ver="9"
+   INSTANCE="ESMDVM4W1"
+   DBSETTINGS.db_home="C:\ESMDVM4W1\Base\MSSQL.1"
+   DBSETTINGS.db_password=toor
+     4. Observe that the invalid value for DBSETTINGS.db_ver=9
+   results in a configuration failure, yet the Agent is installed,
+   and started. But configured with it's default values.
+   
+   
+   Related Files and Output:
+     None.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  When configuring the MSSQL Server 6.1 GA Agent
+   specifying a db_ver=9 value for the SQL Server version, the
+   results is a failure in that configuation. However no error is
+   returned to the user regarding this failure. In some cases, no
+   completion notice is ever sent to the user.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The error message which is returned from a failed
+   attempt at configuring the Agent contains spurious single quote
+   marks (').
+   
+   When that error text is inserted into the TEMS' table to be
+   returned to the user, the INSERT fails because of those illegal
+   characters ('). The solution is to remove the single quote marks
+   to allow for a valid SQL statement.
+   
+   The fix for this APAR is included in the following maintenance
+   vehicle:
+       | interim fix | 6.2.1.0-TIV-ITM-IF0002
+   
+   Note: Search the IBM Technical support web site for maintenance
+   package availability
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ39368
+   
+   
+ * REPORTED COMPONENT NAME
+   TEMS
+   
+   
+ * REPORTED COMPONENT ID
+   5724C04MS
+   
+   
+ * REPORTED RELEASE
+   621
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-12-04
+   
+   
+ * CLOSED DATE
+   2009-02-09
+   
+   
+ * LAST MODIFIED DATE
+   2009-02-09
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TEMS
+   
+   
+ * FIXED COMPONENT ID
+   5724C04MS
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R621 PSY
+   UP

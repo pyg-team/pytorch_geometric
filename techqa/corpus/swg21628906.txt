@@ -1,0 +1,52 @@
+Title: IBM When to rerun the createGCD script be re-run to create P8 domain after it fails. - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+Running the createGCD script fails with an exception message stating that the GCD has already been created.
+
+RESOLVING THE PROBLEM
+When the createGCD script is run correctly the output will resemble the following:
+***********************************************************
+Directory service provider name : IBM Virtual Member Manager
+Domain name : ICDomain
+Content Platform Engine webservice : FileNetP8WSI
+File Storage Area root path : /opt/IBM/Connections/data/shared/ccm
+Object store admin user : wpsadmin
+Object store display name : ICObjectStore
+Object store name : ICObjectStore
+JNDI data source : FNOSDS
+JNDI XA data source : FNOSDSXA
+Domain admin user : wpsadmin
+Possible Content Platform Engine Connection URI:
+http://localhost:9081/wsi/FNCEWS40MTOM [http://localhost:9081/wsi/FNCEWS40MTOM]
+***********************************************************
+Geting connection to the Content Platform Engine URI : http://localhost:9081/wsi/FNCEWS40MTOM [http://localhost:9081/wsi/FNCEWS40MTOM] ...
+log4j:WARN No appenders could be found for logger (filenet_error.api.com.filenet.apiimpl.util.ConfigValueLookup).
+log4j:WARN Please initialize the log4j system properly.
+http://localhost:9081/wsi/FNCEWS40MTOM [http://localhost:9081/wsi/FNCEWS40MTOM]
+http://localhost:9081/wsi/FNCEWS40MTOM [http://localhost:9081/wsi/FNCEWS40MTOM]
+Creating Domain and GCD ...
+Setting Server Cache ...
+Finished.
+addon.sh ./../FNCS/CE_API http://localhost:9081/wsi/FNCEWS40MTOM [http://localhost:9081/wsi/FNCEWS40MTOM]
+Enter user name:
+wpsadmin
+Enter password:
+[INFO] You have successfully registered IBM FileNet Services for Lotus Quickr 1.1 Extensions in the P8 domain ICDomain.
+[INFO] You have successfully registered IBM FileNet Services for Lotus Quickr 1.1 Supplemental Metadata in the P8 domain ICDomain.
+[INFO] You have successfully registered IBM FileNet Services for Lotus Quickr 1.1 Publish Metadata in the P8 domain ICDomain.
+[INFO] All IBM FileNet Services for Lotus Quickr 1.1 Addons have previously been registered in the P8 domain ICDomain. No changes were made.
+
+
+
+If the script fails at the point of "Creating Domain and GCD ...", you may rerun the createGCD.bat script after fixing the error as stated in the message. 
+
+However, if the failure of the createGCD script is after the point of "Setting Server Cache ...", you cannot rerun createGCD.bat directly but must instead drop and recreate the Connections Content Manager databases using the DB Wizard.
+
+
+
+
+ * 
+ *

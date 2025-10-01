@@ -1,0 +1,294 @@
+Title: IBM HD51150: CNEXT REGSERVER CMD MODIFIES ACCESS TO REGISTRY - United States
+
+Text:
+AIX SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS UNREPRODUCIBLE IN NEXT RELEASE.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Scenario :
+   1) Login to a windows machine with a user ID wth
+      Administrator authorization
+   2) Launch cmd prompt
+   3) Change to the CATIA V5R14 bin folder
+   4) Execute cnext /unregserver
+   5) Execute cnext /regserver then logoff
+   6) Login with a different user ID with Administrator
+      authorization
+   7) Click the Start Windows button
+   8) Execute the regedt32 command
+   9) The Registry Editor appears
+   10) Select HKEY_CLASSES_ROOT
+       .CATDrawing/CATIA.Drawing/ShellNew
+       MB3 + Permissions
+   11) List of users is displayed and the result is
+       Administrator and Everyone
+       The same applies to CATPart and CATProduct
+   12) Click OK and close the window
+   13) Logoff and then login with a general user AAA
+   14) Click the Start Windows button
+   15) Execute the regedt32 command
+   16) The Registry Editor appears
+   17) Select HKEY_CLASSES_ROOT
+       .CATDrawing/CATIA.Drawing/ShellNew
+       MB3 + Permissions
+   18) List of users is displayed and the result is
+       Administrator and Everyone
+       The same applies to CATPart and CATProduct
+   19) Click OK and close the window
+   20) Files which have extension are displayed
+       correctly and they can be read in a CATIA session
+   21) Logoff
+   22) Logon with a user ID with Administrator
+       authorization
+   23) Change to the CATIA V5R15 bin folder
+   24) Execute cnext /regserver
+   25) Execute regedt32
+   26) Select KEY_CLASSES_ROOT
+       /.CATDrawing/CATIA.Drawing/ShellNew
+       MB3 + Permissions
+   27) List of users is displayed but
+       Everyone is replaced by SYSTEM
+   28) Logoff and logon with general user ID AAA
+   29) Launch cmd prompt
+   30) Change to the CATIA V5R14 bin folder
+   31) Execute cnext /regserver
+   32) Error occurs.
+   33) Click the Start Windows button
+   34) Execute the regedt32 command
+   35) The Registry Editor appears
+   36) Select lect HKEY_CLASSES_ROOT
+       /.CATDrawing/CATIA.Drawing/ShellNew
+   ->  Error occurs
+   37) Check access
+   ->  No user IDs have access authorization
+   38) Logoff and logon with a general user ID BBB
+   39) Launch cmd prompt
+   40) Change to the CATIA V5R14 bin folder
+   41) Execute cnext /regserver
+   42) The same error as for user AAA occurs
+   43) Select Windows Startr button
+   44) Execute regedt32
+   45) The Registry Editor appears
+   46) Select "HKEY_CLASSES_ROOT
+   /.CATDrawing/CATIA.Drawing/ShellNew
+   -> Error occurs
+   47) Check access
+   ->  No user IDs have access authorization
+   .
+   Additional Information :
+   This problem was not observed on V5R14 or
+   earlier CATIA releases.
+   .
+   On V5R15 and V5R16, this problem was observed
+   and was reproducible in the following conditions:
+   .
+   - Multiple users use the same machine
+   - Multiple CATIA environments were installed
+     on the same machine
+   .
+   Expected Result :
+   Access authorization should not modified by
+   execution of "REGSERVER" on R15 and R16.
+   (Behaviour should be the same with R14 and
+   earlier CATIA release levels)
+   .
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  CNEXT REGSERVER CMD MODIFIES ACCESS TO REGISTRY
+   FILES
+   Scenario :
+   1) Login to a windows machine with a user ID wth
+   Administrator authorization.
+   2) Launch cmd prompt
+   3) Change to the CATIA V5R14 bin folder
+   4) Execute cnext /unregserver
+   5) Execute cnext /regserver then logoff
+   6) Login with a different user ID with Administrator
+   authorization
+   7) Click the Start Windows button
+   8) Execute the regedt32 command
+   9) The Registry Editor appears
+   10) Select HKEY_CLASSES_ROOT
+   .CATDrawing/CATIA.Drawing/ShellNew
+   MB3 + Permissions
+   11) List of users is displayed and the result is
+   Administrator and Everyone
+   The same applies to CATPart and CATProduct
+   12) Click OK and close the window
+   13) Logoff and then login with a general user AAA
+   14) Click the Start Windows button
+   15) Execute the regedt32 command
+   16) The Registry Editor appears
+   17) Select HKEY_CLASSES_ROOT
+   .CATDrawing/CATIA.Drawing/ShellNew
+   MB3 + Permissions
+   18) List of users is displayed and the result is
+   Administrator and Everyone
+   The same applies to CATPart and CATProduct
+   19) Click OK and close the window
+   20) Files which have extension are displayed
+   correctly and they can be read in a CATIA session
+   21) Logoff
+   22) Logon with a user ID with Administrator
+   authorization
+   23) Change to the CATIA V5R15 bin folder
+   24) Execute cnext /regserver
+   25) Execute regedt32
+   26) Select KEY_CLASSES_ROOT
+   /.CATDrawing/CATIA.Drawing/ShellNew
+   MB3 + Permissions
+   27) List of users is displayed but
+   Everyone is replaced by SYSTEM
+   28) Logoff and logon with eneral user ID AAA
+   29) Launch cmd prompt
+   30)  Change to the CATIA V5R14 bin folder
+   31) Execute cnext /regserver
+   32) Error occurs.
+   33) Click the Start Windows button
+   34) Execute the regedt32 command
+   35) The Registry Editor appears
+   36) Select lect HKEY_CLASSES_ROOT
+   /.CATDrawing/CATIA.Drawing/ShellNew
+   -> Error occurs.
+   37) Check access
+   -> No user IDs have access authorization
+   38) Logoff and logon with a general user ID BBB
+   39) Launch cmd prompt
+   40) Change to the CATIA V5R14 bin folder
+   41) Execute cnext /regserver
+   42) The same error as for user AAA occurs
+   43) Select Windows Startr button
+   44) Execute regedt32
+   45) The Registry Editor appears
+   46) Select "HKEY_CLASSES_ROOT
+   /.CATDrawing/CATIA.Drawing/ShellNew
+   -> Error occurs
+   47) Check access
+   -> No user IDs have access authorization
+   .
+   Additional Information :
+   This problem was not observed on V5R14 or earlier
+   CATIA releases.
+   .
+   On V5R15 and V5R16, this problem was observed
+   and was
+   reproducible under the following condition :
+   - Multiple users use the same machine.
+   - Multiple CATIA environment were installed in the
+   same machine.
+   .
+   Expected Result :
+   Access authorization should not modified by
+   execution of "REGSERVER" on R15 and R16.
+   (Behaviour should be the same with R14 and
+   earlier CATIA release levels)
+   .
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *  This problem occurs with multiple users and
+   with more than one CATIA level installed on
+   the same machine.
+   It does not occur if any mix of the following
+   CATIA levels are installed:
+   .
+   V5R16SP4
+   V5R17GA
+   .
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   HD51150
+   
+   
+ * REPORTED COMPONENT NAME
+   CATIA V5 NT>XP
+   
+   
+ * REPORTED COMPONENT ID
+   569151000
+   
+   
+ * REPORTED RELEASE
+   515
+   
+   
+ * STATUS
+   CLOSED UR1
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2006-03-31
+   
+   
+ * CLOSED DATE
+   2007-01-31
+   
+   
+ * LAST MODIFIED DATE
+   2007-01-31
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CATIA V5 NT>XP
+   
+   
+ * FIXED COMPONENT ID
+   569151000
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R517 PSN
+   UP

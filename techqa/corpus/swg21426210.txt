@@ -1,0 +1,39 @@
+Title: IBM After installation of IBM FileNet P8 4.5.1, attempt to open an image or document via IBM FileNet Workplace or Workplace XT 1.1.4.x results in error “Annotation data is not in the required format” - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ After installation of IBM FileNet P8 4.5.1, attempt to open an image or document via IBM FileNet Workplace or Workplace XT 1.1.4.x results in error “Annotation data is not in the required format”. 
+
+SYMPTOM
+ 
+
+ 1. Log into Workplace or Workplace XT. 
+ 2. Attempt to view any image. 
+ 3. Get error pop-up with message “Annotation data is not in the required format”. 
+ 4. Attempt to access any other document. 
+ 5. Get login prompt and message stating that the session has expired.
+
+
+ENVIRONMENT
+Weblogic
+
+RESOLVING THE PROBLEM
+ 
+
+ 1. Stop the Workplace application within WebLogic. 
+ 2. Uninstall/undeploy Workplace. 
+ 3. Add the following section to the weblogic.xml under Workplace\WEB-INF\ : <session-descriptor> 
+    <cookie-http-only>false</cookie-http-only> 
+    </session-descriptor> 
+ 4. Rebuild the Workplace archive(s). 
+ 5. Deploy the Workplace application. 
+ 6. Start the Workplace application. 
+ 7. Test by attempting to open image via Workplace.
+
+
+Follow the same steps for WorkplaceXT. 
+
+
+Cross reference information Segment Product Component Platform Version Edition Enterprise Content Management FileNet Content Manager Workplace XT AIX, HP-UX, Linux, Solaris, Windows 4.5.0, 4.5.1

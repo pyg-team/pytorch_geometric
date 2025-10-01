@@ -1,0 +1,22 @@
+Title: IBM Threadsafe Analysis with the CICS Explorer and CICS Tools - United States
+
+Text:
+threadsafe analysis demo ; TCB switches ; CICS PA ; CICS IA ; CICS performance analyzer ; CICS interdependency analyzer ; TCB switching ; CICS Explorer ; threadsafety ; 5655M1500 R640 640 R400 400 HCI6400 R650 650 R500 500 HCI6500 5655-M15 5655M15 ; 5655S9700 R660 660 R600 600 HCI6600 R670 670 R700 700 HCI6700 5655-S97 5655S97 KIXINFO EDUCATION
+
+ABSTRACT
+ This short demo shows how to use the IBM CICS Explorer with CICS Tools to perform threadsafe analysis. CICS Performance Analyzer for z/OS (CICS PA) highlights optimization opportunities and shows the gains when changes have been made. CICS Interdependency Analyzer for z/OS (CICS IA) provides the deep insight into the program structure to identify obstacles to threadsafety. 
+
+CONTENT
+Playing time is 4 minutes 50 seconds. Click on view demo [http://www.youtube.com/watch?v=3srq6YW_lUw] (on YouTube) to see and listen to the demo.
+
+Note that since this demo was created in January 2010 the CICS tools plug-ins and the CICS Explorer have been updated. So, if using the latest version of the CICS Explorer and CICS Tools plug-ins [http://www.ibm.com/support/docview.wss?uid=swg21404312] your screens might look different.
+
+RELATED INFORMATION
+ CICS Performance Analyzer for z/OS [http://www.ibm.com/software/htp/cics/panaly/]
+CICS Interdependency Analyzer for z/OS [http://www.ibm.com/software/htp/cics/ianaly/]
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Host Transaction Processing CICS Performance Analyzer for z/OS CICS Explorer Plug-in Host Transaction Processing CICS Interdependency Analyzer for z/OS IA Explorer PRODUCT ALIAS/SYNONYM
+ CICS/TS CICS TS CICS Transaction Server

@@ -1,0 +1,30 @@
+Title: IBM Datacap Taskmaster Capture 7.6 application paths / connection strings checklist - United States
+
+Text:
+application path connection string TECHNOTE (FAQ)
+
+QUESTION
+ Checklist of application paths and connection strings for versions of Datacap Taskmaster 7.6 and older. 
+
+CAUSE
+This is an unofficial checklist of where application paths and connection strings may be stored in IBM Datacap Taskmaster 7.6 and earlier. Because of the highly customizable nature of Taskmaster, specific installations may differ.
+
+ANSWER
+Paths and connection strings may be located in the following locations: 
+
+ * Shortcut target properties - Database connection strings in all Taskmaster Client, AutoDelete, etc. shortcuts. 
+ * Windows DSNs - In Data Sources, any previously setup DSNs might point to old databases. Admin/Engine DSNs are only on Taskmaster Server (Not applicable if using OLE.). 
+ * App Libs Folder - Go to \\<new server>\Datacap\RRS\libs\<app>\collection.xml and check the path to the process folder and the connection strings to the admin/engine DBs. 
+ * Taskmaster Actions - Hardcoded paths in rules: e.g. LoadSettings, SetFingerprintDir, OpenConnection, etc. This is configurable in Datacap Studio or search and replace can be used on *.RUL files. 
+ * Admin Database - The DCO table will have a path to the setup DCO and the Taskmod table will have paths to BPPs. Modify these in Taskmaster Client's Settings > Modules. Batch Creation Tasks will have the batch directory path in Settings | Workflow | <Task> | Setup | File, Task Settings. 
+ * Engine Database - If using a new engine database there are no problems. Otherwise, batch directory paths in tmbatch table. 
+ * Fingerprint Database - DB connection string in setup DCO (FingerprintConn). Correct in Datacap Studio by selecting the blue gear icon under the Zones tab. Paths to TIFFs and CCOs in the Template table of the fingerprint database. 
+ * Taskmaster Client Service Settings - Go to Start > All Programs > Datacap > Taskmaster Client > Taskmaster Client Service. In the Admin/Engine tab there are connection strings to the admin/engine databases. These are machine specific and stored in the local system registry on the Rulerunner/client. 
+ * Taskmaster Web - Browse to \\<webserver>\Datacap\TMWeb.NET\apps.ini and correct connection strings to admin/engine databases and RptView DBs. 
+ * Process Files  * All BPPs, ICP and INI files in the directory. 
+    * DCO table's path must match BPP's path to setup DCO. 
+    * Settings.ini contains connection strings to the fingerprint database. 
+    * Paths.ini, if used by actions to obtain certain paths.
+   
+   
+ * System registry (client machine) - The RRS registry path under HKEY_LOCAL_MACHINE\SOFTWARE\Datacap\RRS\locations\RRS must be updated on any separate Taskmaster PC to the new server (on x64 operating systems the Datacap key is under Wow6432Node). Once done, run Setup on all tasks in Taskmaster Client's Workflow tab to ensure there are no visible errors.

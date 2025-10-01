@@ -1,0 +1,132 @@
+Title: IBM JR57670: Store locator REST call throws exception during BigDecimal conversion - United States
+
+Text:
+  A FIX IS AVAILABLE
+JR57861 - Mandatory cumulative Interim Fix 5 for WebSphere Commerce Version 7 Fix Pack 9 [http://www-01.ibm.com/support/docview.wss?uid=swg24043761]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When store locator REST call is invoked, the following exception
+   is thrown:
+   
+   Exception: com.ibm.db2.jcc.am.SqlDataException:
+   [jcc][t4][1037][11190][4.19.49] Exception occurred during
+   BigDecimal conversion.  See attached Throwable for details.
+   ERRORCODE=-4220, SQLSTATE=22003
+       at com.ibm.db2.jcc.am.kd.a(Unknown Source)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  USERS AFFECTED:
+   WebSphere Commerce Version 8.
+   
+   PROBLEM ABSTRACT:
+   Store locator REST call throws exception during BigDecimal
+   conversion
+   
+   BUSINESS IMPACT:
+   Store locator is not usable.
+   
+   RECOMMENDATION:
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Updated the SQL statement to support decimal with 5 digit
+   fractions.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR57670
+   
+   
+ * REPORTED COMPONENT NAME
+   WC BUS EDITION
+   
+   
+ * REPORTED COMPONENT ID
+   5724I3800
+   
+   
+ * REPORTED RELEASE
+   800
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-03-29
+   
+   
+ * CLOSED DATE
+   2018-05-10
+   
+   
+ * LAST MODIFIED DATE
+   2018-05-10
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WC BUS EDITION
+   
+   
+ * FIXED COMPONENT ID
+   5724I3800
+   
+   
+
+APPLICABLE COMPONENT LEVELS

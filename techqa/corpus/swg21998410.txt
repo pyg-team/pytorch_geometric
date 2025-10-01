@@ -1,0 +1,17 @@
+Title: IBM Temporary failure in name resolution error while running harvest in StoredIQ - United States
+
+Text:
+SIQ host harvesting TECHNOTE (FAQ)
+
+QUESTION
+ Why do we see Temporary failure in name resolution while running harvest in StoredIQ? 
+
+CAUSE
+This happens as a result of error in the hosts file 
+
+ANSWER
+ 
+
+ 1. Login and review the entries in /etc/hosts file on dataserver, application stack and Gateway server 
+ 2. Update and save the changes in the file 
+ 3. Restart services on all the servers

@@ -1,0 +1,34 @@
+Title: IBM Support Policy Change:  Announcing the new "5 plus 3" support policy - United States
+
+Text:
+lifecycle; lifecycle; lifecycle policy; eos; eos; eos; end of support; end of support; end of support; end of service; end of service; end of service; end of currency; eoc; end date; support extension; support extensions; length of service; length of support; standard support length; length of fee options; service extension; service extensions; terms of support; service length; length of service; length of support NEWS
+
+ABSTRACT
+ Beginning with IBM® WebSphere® Application Server version 6.0, and applying to later versions, IBM will now provide standard support for 5 years with an optional purchasable extension of service for 3 additional years, "5 plus 3". 
+
+CONTENT
+IBM is implementing a new support policy for WebSphere Application Server products. Starting with version 6.0 of Application Server Express, WebSphere Application Server, WebSphere Application Server for Developers, WebSphere Application Server Network Deployment and WebSphere Application Server for z/OS, IBM will now provide standard support for 5 years with an optional purchasable service extension for 3 additional years, so "5 plus 3". 
+This is a change from our current policy of 3 years plus a 2 year optional purchasable service extension for the WebSphere Application Server products. This extended "5 plus 3" support policy will be available on all supported IBM operating platforms for select WebSphere Application Server products. IBM is working toward collaborative agreements with the third party platform vendors to extend "5 plus 3" support for non-IBM platforms, however this will depend on those vendors' continued support of the key underlying technologies within their platforms. As these agreements become official, IBM will update this support statement.
+
+All statements regarding IBM's plans, directions, and intent are subject to change or withdrawal without notice.
+
+
+Questions and Answers:
+
+Q: Does this longer “5 plus 3” support policy apply to all IBM Software products?
+A: IBM announced a change to the life cycle policy on February 19, 2008 please refer to that announcement on the IBM Product Support IBM Software Support LifeCycle [http://www-306.ibm.com/software/support/lifecycle/] webpage for questions on product specific support policies.
+
+Q: What is being done to gain a full "5 plus 3" support for third party platforms?
+A: IBM currently provides "5 plus 3" support for WebSphere Application Server products on all platforms on which they are supported. This means that if there is a defect in the WebSphere Application Server product during the "5 plus 3" years, IBM will provide support. If the defect is found to be in the underlying technology of the platform, the support is dependent on the vendor's continued support of the key underlying technologies in their platforms. IBM is actively working toward collaborative agreements with the third party platform vendors to extend "5 plus 3" support for the underlying technologies on non-IBM platforms. As these agreements become official, IBM will update this support statement.
+
+On April 7, 2008, SUN announced that it will extend the support it provides for its underlying technology on the SUN platform. With this announcement by SUN, underlying SUN technology on the Solaris platform will now be supported across the full "5 plus 3" lifecycle policy already provided by WebSphere Application Server. There is no additional support cost for WebSphere Application Server as a result of this Sun announcement. The official Sun announcement can be found at the following url: http://www.sun.com/featured-articles/2008-0407/feature/index.jsp [http://www.sun.com/featured-articles/2008-0407/feature/index.jsp]
+
+Q: How will this new support policy apply to WebSphere Application Server Feature Packs [http://www-1.ibm.com/support/docview.wss?rs=180&context=SSEQTP&dc=DA490&dc=DA4A10&dc=DB520&dc=DA4A30&dc=DB530&dc=DA480&dc=D700&dc=DA4A20&dc=DB560&dc=DA440&dc=DA460&dc=DA430&dc=DA470&dc=DB550&dc=D600&dc=DB600&dc=DA420&dc=DA500&dc=DA410&dc=DB540&dc=DA400&dc=DB700&dc=DB510&q1=Feature+Packs&uid=swg27008534&loc=en_US&cs=utf-8&lang=en]? [https://www14.software.ibm.com/iwm/web/cc/earlyprograms/websphere.shtml]
+A: When they are made Generally Available, WebSphere Application Server Feature Packs [http://www-1.ibm.com/support/docview.wss?rs=180&context=SSEQTP&dc=DA490&dc=DA4A10&dc=DB520&dc=DA4A30&dc=DB530&dc=DA480&dc=D700&dc=DA4A20&dc=DB560&dc=DA440&dc=DA460&dc=DA430&dc=DA470&dc=DB550&dc=D600&dc=DB600&dc=DA420&dc=DA500&dc=DA410&dc=DB540&dc=DA400&dc=DB700&dc=DB510&q1=Feature+Packs&uid=swg27008534&loc=en_US&cs=utf-8&lang=en] will have the same end of support dates as the WebSphere Application Server Product version they are delivered to support (e.g. WebSphere Application Server V6.1 Feature Pack for Web Services [https://www14.software.ibm.com/iwm/web/cc/earlyprograms/websphere/wsvwas61/] will have the same end of support date as WebSphere Application Server V6.1).
+
+Further information regarding systems requirements [http://www-1.ibm.com/support/docview.wss?rs=180&uid=swg27006921] can be found at WebSphere Application Server detailed system requirements. [http://www-1.ibm.com/support/docview.wss?rs=180&uid=swg27006921] 
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Application Servers WebSphere Application Server - Express Not Applicable Application Servers WebSphere Application Server for z/OS Not Applicable Application Servers Runtimes for Java Technology Java SDK Application Servers WebSphere Application Server for z/OS z/OS 6.1, 6.0

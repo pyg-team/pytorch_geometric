@@ -1,0 +1,160 @@
+Title: IBM PJ39344: UNABLE TO USE ENTRY TEMPLATE VIA FOLDER ASSOCIATION AFTER THE FOLDER WAS EXPORT/IMPORT FROM DEPLOYMENT MANAGER TOOL. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Using Workplace XT, to add a document to a folder, the following
+   error occurs if the entry template is associated to the folder
+   and
+   the folder was exported and imported using Deployment Manager.
+   
+   
+   "The <template name> entry template is not available or no
+   longer applies to this object store."
+   
+   
+   Steps to Reproduce:
+   1. From Workplace XT, create a new document entry templates.
+   
+   2. From Workplace XT, create a folder.
+   
+   3. From Workplace XT, associate the new folder with the document
+   entry template.
+   
+   4. From Deployment Manager, export and import the folder
+   and entry template.
+   
+   5. From Workplace XT, selected the new folder at the destination
+   object store.
+   
+       Drag/drop a local document to and note the error.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Remove the entry template from the folder and re-add it using
+   Workplace XT.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * All who use entry templates associated with folders          *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * After deploying a folder with entry templates that           *
+   * associated by folder preferences, the entry templates did    *
+   * not work when invoked by adding documents to the folder.     *
+   * The folder preferences continues to reference the source     *
+   * object store.After deploying a folder with entry templates   *
+   * that associated by folder preferences, the entry templates   *
+   * did not work when invoked by adding documents to the folder. *
+   * The folder preferences continues to reference the source     *
+   * object store.                                                *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Upgrade P8 Content Engine to 5.0.0.1-P8CE-FP001 or later.    *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fixed by code change in 5.0.0.1-P8CE-FP001.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PJ39344
+   
+   
+ * REPORTED COMPONENT NAME
+   CONTENT ENGINE
+   
+   
+ * REPORTED COMPONENT ID
+   5724R8101
+   
+   
+ * REPORTED RELEASE
+   500
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-08-12
+   
+   
+ * CLOSED DATE
+   2012-07-30
+   
+   
+ * LAST MODIFIED DATE
+   2012-07-30
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    PJ39345 [http://www-01.ibm.com/support/docview.wss?uid=swg1PJ39345]
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CONTENT ENGINE
+   
+   
+ * FIXED COMPONENT ID
+   5724R8101
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R500 PSY
+   UP

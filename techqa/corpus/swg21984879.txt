@@ -1,0 +1,53 @@
+Title: IBM Warning indicating reserved heap size exceeded for Re-Sync Heap - United States
+
+Text:
+Reserved heap size exceeded for Re-Sync Heap db2 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Why do I see a warning in the diaglog indicating reserved heap size exceeded for Re-Sync Heap? 
+
+SYMPTOM
+You may encounter a similar message as the below in diaglog: 
+
+FUNCTION: DB2 UDB, config/install, sqlfLogUpdateCfgParam, probe:30 
+Reserved heap size exceeded for Re-Sync Heap, 
+Physical heap size : 3080192 bytes. 
+Configured heap size : 2752512 bytes. 
+Unreserved memory used by heap : 327680 bytes. 
+
+
+Example from diaglog: 
+
+ 
+2016-05-21-20.52.44.937626-240 E257223A673 LEVEL: Warning 
+PID : 3259 TID : 4395873855760 PROC : db2sysc 
+INSTANCE: mmyinst NODE : 000 
+HOSTNAME: host0001 
+EDUID : 1 EDUNAME: db2sysc 
+FUNCTION: DB2 UDB, SQO Memory Management, sqloMemLogPoolConditions, 
+probe:20 
+DATA #1 : <preformatted> 
+Reserved heap size exceeded for Re-Sync Heap, 
+allocating additional unreserved memory. 
+Requested block size : 3072040 bytes. 
+Physical heap size : 3080192 bytes. 
+Configured heap size : 2752512 bytes. 
+Unreserved memory used by heap : 327680 bytes. 
+Unreserved memory left in set : 10551296 bytes. 
+
+
+
+
+RESOLVING THE PROBLEM
+DB2 outputs this warning message in the db2diag.log to inform that 
+the resync size was too small for the workload and had to adjust the size of the Re-Sync heap
+
+
+This internal heap is able to adjust its size automatically allocating additional memory.
+
+In a DB2 environment, transactions which have been prepared but not yet 
+committed are kept in a linked resync list. This list is used to recover 
+from transaction commit or rollback failures due to network, hardware, or software failures. 
+
+
+The resync heap is a subset of the overall shared memory of the server and will not exceed the dbheap amount,.

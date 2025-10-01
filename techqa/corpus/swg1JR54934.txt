@@ -1,0 +1,142 @@
+Title: IBM JR54934: DOC - MICROSOFT DATABASE IDENTIFIERS LIMITATION REGARDING SQL FILE EXECUTION NOT DOCUMENTED AND NOT CHECKED - United States
+
+Text:
+  DIRECT LINKS TO FIXES
+bpm.8570.cf2016.06.delta.repository.2of2 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Standard&fixids=bpm.8570.cf2016.06.delta.repository.2of2&source=SAR]
+bpm.8570.cf2016.06.delta.repository.1of2 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Standard&fixids=bpm.8570.cf2016.06.delta.repository.1of2&source=SAR]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When you create an IBM Business Process Manager (BPM) deployment
+   environment (DE) by using a Microsoft SQL Server database and
+   the database user name or schema name is not a regular
+   identifier according to the Microsoft Database Identifiers page
+   (https://msdn.microsoft.com/en-us/library/ms175874.aspx), the
+   SQL file execution fails with an error like the following error
+   (the invalid character in this example is '-'):
+   
+   com.microsoft.sqlserver.jdbc.SQLServerException
+   Syntax error near '-'
+   
+   This limitation is not documented.
+   
+   PRODUCTS AFFECTED
+   IBM BPM Advanced
+   IBM BPM Standard
+   IBM BPM Express
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  use DB username without the '-'
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  The database user name and schema name are not quoted in the
+   generated SQL files for Microsoft SQL Server. Because IBM BPM
+   does not support database schema names that are not a regular
+   Microsoft Database Identifiers, running the SQL file fails when
+   the user name or schema name contains special characters like
+   the hyphen (-). This information is not documented.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The "Configuration properties for the BPMConfig command"
+   (http://www.ibm.com/support/knowledgecenter/SSFPJS_8.5.6/com.ibm
+   .wbpm.ref.doc/topics/samplecfgprops.html?lang=en) topic will be
+   updated the next time the documentation is refreshed.
+   
+   A fix will be available in a later release that ensures during
+   initial configuration properties file validation that database
+   schema names are valid, instead of failing later when the
+   generated SQL files run.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR54934
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM STANDARD
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9500
+   
+   
+ * REPORTED RELEASE
+   856
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2015-12-14
+   
+   
+ * CLOSED DATE
+   2016-02-18
+   
+   
+ * LAST MODIFIED DATE
+   2016-02-18
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

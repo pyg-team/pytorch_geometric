@@ -1,0 +1,81 @@
+Title: IBM Troubleshooting a silently failed installation of Rational Functional Tester .NET Scripting on Windows 7 64-bit - United States
+
+Text:
+RFT; Functional Tester; Integrations: 3rd Party; Rational Functional Tester; Visual Studio; Microsoft Visual Studio; 8.1.1; NET; .NET; scripting; IDE; failed install; silent; integration; broken; missing; configure menu; functional test project; Windows 7; Win7; Windows7; 64 bit; 64; 64-bit; x64 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This technote provides steps to resolve known issues which will cause the IBM Rational Functional Tester .NET Scripting features to be missing from Microsoft Visual Studio after you have successfully installed the Rational Functional Tester .NET Scripting using IBM Installation Manager. 
+
+SYMPTOM
+ 
+
+ 1. You have completed the installation of IBM Rational Functional Tester .NET Scripting. In IBM Installation Manager, File > View Installed Packages shows that the .NET Scripting feature is installed.
+    
+    [/support/docview.wss?uid=swg21424268&amp;aid=1] 
+ 2. When you launch Microsoft Visual Studio, the Rational Functional Tester features are not available. Examples:
+
+ * TheFunctional Test Projects category is missing from the New Project dialog box
+   
+   [/support/docview.wss?uid=swg21424268&amp;aid=2] 
+ * Help > About Microsoft Visual Studio does not list IBM Rational Functional Tester as an Installed product.
+   
+   [/support/docview.wss?uid=swg21424268&amp;aid=3]
+
+
+CAUSE
+Your machine is missing one or more Microsoft DLL files that are required by Rational Functional Tester .NET Scripting.
+
+
+
+ENVIRONMENT
+Microsoft Windows 7 64-bit
+
+
+
+DIAGNOSING THE PROBLEM
+In Windows Explorer, verify whether that one or both of the following files is missing: 
+
+ * C:\Windows\SysWOW64\msvcr71.dll 
+ * C:\Windows\SysWOW64\msvcp71.dll
+
+
+RESOLVING THE PROBLEM
+ 
+
+Notes: 
+
+ * For the purposes of this technote, we will focus on Rational Functional Tester 8.1.1 deployed on a Windows 7 Professional Edition 64-bit machine with Microsoft Visual Studio 2005 Standard Edition. The concepts described in this technote may also apply to other versions and editions. 
+ * Some parts of this technote may also apply if the Rational Functional Tester features are available but you are seeing severe problems with the Rational Functional Tester integration with Microsoft Visual Studio.
+
+
+To resolve this problem:  1. Verify that our system meets all of the system requirements of both Microsoft Visual Studio and of IBM Rational Functional Tester, and that you have properly installed Microsoft Visual Studio and Rational Functional Tester. For more information, reference technote 1424270: Installing IBM Rational Functional Tester .NET Scripting on Microsoft Windows 7 64-bit [http://www.ibm.com/support/docview.wss?uid=swg21424270].
+    
+ 2. Obtain a copy of the missing DLL file(s) from Microsoft, from another Windows 7 machine in your environment, or from a third party source such as dll-files.com:
+    http://www.dll-files.com/dllindex/dll-files.shtml?msvcr71 [http://www.dll-files.com/dllindex/dll-files.shtml?msvcr71]
+    http://www.dll-files.com/dllindex/dll-files.shtml?msvcp71 [http://www.dll-files.com/dllindex/dll-files.shtml?msvcp71]
+    
+ 3. Copy the DLL files into the "Windows on 64-bit Windows" folder for your system. This folder contains all 32-bit binary files required for compatibility, which run on top of 64-bit Windows. By default, the location of this folder is C:\Windows\SysWOW64. 
+ 4. Use IBM Installation Manager to modify your existing Rational Functional Tester install. Follow the wizard to remove the .NET Scripting feature.
+    
+    [/support/docview.wss?uid=swg21424268&amp;aid=4] 
+ 5. Restart your machine. 
+ 6. Use IBM Installation Manager to modify your existing Rational Functional Tester install. Follow the wizard to add the .NET Scripting feature.
+    
+    [/support/docview.wss?uid=swg21424268&amp;aid=5] 
+ 7. Configure Visual Studio to run with Administrator privileges.
+    
+    [/support/docview.wss?uid=swg21424268&amp;aid=6] 
+ 8. Launch Microsoft Visual Studio. 
+ 9. When you launch Microsoft Visual Studio, the Rational Functional Tester features are now available. Examples:
+
+ * The Functional Test Projects category is included in the New Project dialog box.
+   
+   [/support/docview.wss?uid=swg21424268&amp;aid=7] 
+ * Help > About Microsoft Visual Studio lists IBM Rational Functional Tester as an Installed product.
+   
+   [/support/docview.wss?uid=swg21424268&amp;aid=8]
+
+
+For additional information, see Installing and upgrading [http://publib.boulder.ibm.com/infocenter/rfthelp/v8r1/nav/4] in the Rational Functional Tester Information Center. 
+RELATED INFORMATION
+#Installing .NET Scripting on Windows 7 [http://www.ibm.com/support/docview.wss?uid=swg21424270]

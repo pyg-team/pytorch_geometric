@@ -1,0 +1,25 @@
+Title: IBM Error writing file /c:/Filepath/FileName.str (no further details) When using Automatic Data Prep - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When using PASW Modeler 13.0.x, I have noticed on occasions when there are Auto Data Prep nodes in a stream and many other things, when attempting to save the stream, a message will appear that says:
+
+Error writing file /c:/Filepath/FileName.str (no further details)
+
+This often happens when there are multiple ADP nodes in the stream. To fix this, I must click on the clear analysis button in the ADP dialog and save, which will force me to re-run it the next time I open the file. This is problematic when I need to run a different set of data though the same ADP node and so ADP might choose different things when I am forced to rerun it. This could cause problems in the model at the the end of a particular stream. A good work around, and perhaps a good feature in general, would be the ability to generate super nodes or something along those lines that would contain all of the transformations that ADP has made. 
+
+Another interesting thing is that when you then try and copy the ADP node after this error has occurred and paste it into another file, it will paste everything except the ADP node, as though you never copied it.
+
+I need to know what the limit size of data I can upload is, because I am having trouble recreating this on a small scale. It may also have to include sources that originate from sql tables because I do have sql optimization on. Please let me know what further materials you might need and what I may be able to upload. 
+
+RESOLVING THE PROBLEM
+This problem has been addressed with IBM SPSS Modeler version 14. If you are on a maintenance contract, please upgrade to the latest version of Modeler in order to resolve this problem.
+
+SPSS would like to apologize for the inconvenience caused
+
+
+
+HISTORICAL NUMBER
+ 88977

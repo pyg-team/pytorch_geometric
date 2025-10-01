@@ -1,0 +1,54 @@
+Title: IBM DataPower MQ Queue Manager cannot connect to MQ Server using SSL channel - United States
+
+Text:
+720limitation; MQ; CERTLABL; 2539; 0x000009eb; MQRC_CHANNEL_CONFIG_ERROR TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ After setting CERTLABL for an SSL channel on MQ Server, DataPower can no longer connect to that channel. 
+
+SYMPTOM
+When CERTLABL is configured on the channel that DataPower is using to connect to queue manager, the connection would fail and DataPower MQ Queue Manager object would be down. 
+
+The following errors will be seen in the DataPower logs: 
+
+ * [mq][error] mq-qm(mqqm): tid(238161): test connection failed (2539) 
+   [mq][error] mq-qm(mqqm): tid(238161): Queue Manager Error: 'mq-server.ibm.com:1111' ''. Reason code - 2539 
+   The reason code is: 2539 0x000009eb MQRC_CHANNEL_CONFIG_ERROR 
+   
+
+On MQ Server, there will be error logs explaining this connection failure:  * 
+ * 
+ * 
+
+ * 
+ * The SSL or TLS channel 'SSL.SVRCONN.2' is configured to use certificate label 
+   'SSL.SVRCONN.2'. However, the remote peer did not send the necessary 
+   information to allow the local channel to use the correct certificate. The 
+   remote host is 'datapower (xxx.xxx.xxx.xxx)'. 
+
+ * This error occurs when the local channel definition has a certificate label and 
+   the remote peer does not support selection of certificates. 
+   The channel did not start. 
+   
+ * 
+ * Ensure that the remote peer supports certificate label configuration. Refer to 
+   the Security section of the WebSphere MQ Information Center for details of 
+   certificate label requirements. Alternatively, alter the local channel 
+   definition so that it does not specify a certificate label. 
+
+
+CAUSE
+MQ version 8 and the later version provides a new parameter "CERTLABL" for administrators to specify a certificate to be used when making a SSL connection to a channel. This allows multiple certificates to be configured, one for each channel. All certificates are managed in the same queue manager on MQ Server. In order to utilize this function, both ends of the channel must be running MQ version 8 or the later version and must support Server Name Indication (SNI). 
+Although DataPower version 7.2.0 runs MQ version 8 client and also supports SNI for the rest of the services, it does not support SNI for MQ Queue Manager object.
+
+
+ENVIRONMENT
+MQ Server version 8, DataPower version 7.2.0
+
+
+
+RESOLVING THE PROBLEM
+In order for DataPower to connect to the queue manager, the CERTLABL must be removed from the channel, which means you must not configure the CERTLABL on the MQ Server. After removing the CERTLABL from the channel, the channel would use the default certificate as configured in queue manager's properties.
+
+RELATED INFORMATION
+ IBM MQ V8 Features and Enhancements [http://www.redbooks.ibm.com/redbooks/pdfs/sg248218.pdf]

@@ -1,0 +1,14 @@
+Title: IBM Can the hostname of an ICC server be changed post installation? - United States
+
+Text:
+hostname; url links; stubbing TECHNOTE (FAQ)
+
+QUESTION
+ Is it possible to change the hostname, or Fully Qualified Domain Name (FQDN), of an IBM Content Collector (ICC) server after installation? 
+
+ANSWER
+It is not recommended to change the hostname of an ICC server post installation. 
+
+The reason for this is that stubbed links in emails will fail to work once the hostname is changed. 
+
+If stubbing is not used, or if the system is not yet in production, then this may be done by changing the hostname details in the ICC Configuration Manager. Other tasks may need to be performed, for example if Lotus Domino is being used, the Domino template would have to be enabled.

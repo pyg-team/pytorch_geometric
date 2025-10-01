@@ -1,0 +1,30 @@
+Title: IBM Knowledge Collection:  DB2 JDBC driver issues - United States
+
+Text:
+KnowledgeCollection; knowledgecollection; Knowledge Collection TECHNOTE (FAQ)
+
+QUESTION
+ This Knowledge Collection is a focused compilation of links to documents for DB2 JDBC driver issues. 
+
+ANSWER
+IBM DB2 JDBC Driver Issues
+The following document links contain information concerning DB2 JDBC driver issues.
+
+
+
+1363866 [http://www.ibm.com/support/docview.wss?uid=swg21363866] DB2 Universal JDBC driver Versions tables. 1388639 [http://www.ibm.com/support/docview.wss?uid=swg21388639] Collecting Data: Read First for DB2 JDBC Issues 1388460 [http://www.ibm.com/support/docview.wss?uid=swg21388460] Collecting Data: Tracing for the DB2 JDBC Type 2 Driver 1196160 [https://www-304.ibm.com/support/docview.wss?uid=swg21196160] Collecting Data: Tracing with the IBM Data Server driver for JDBC and SQLJ 1419978 [http://www.ibm.com/support/docview.wss?rs=71&uid=swg21419978] UnsatisfiedLinkError: db2jcct2 no such file or directory. 1295583 [http://www.ibm.com/support/docview.wss?rs=71&uid=swg21295583] Reporting client with DB2 v9.1 FP0 cannot communicate through JDBC with an IMS Audit Management Expert server 1403703 [http://www-01.ibm.com/support/docview.wss?rs=71&uid=swg21403703] JCC Universal driver is not supported for databases using GB18030 code set 1238954 [http://www.ibm.com/support/docview.wss?rs=71&uid=swg21238954] Unsupported encoding Cp037 when using DB2© Universal JDBC Driver to connect to DB2 UDB for z/OS© 1386486 [http://www-01.ibm.com/support/docview.wss?rs=71&q1=1386486&uid=swg21386486] XA Connection Error: SQL OPEN for a held cursor was issued on a XA connection ERRORCODE=-4496, SQLSTATE=null 1432559 [https://www-304.ibm.com/support/docview.wss?uid=swg21432559] My java application is failing with the exception, "No Suitable Driver". 1461670 [https://www-304.ibm.com/support/docview.wss?uid=swg21461670] "Invalid operation: result set is closed" error with Data Server Driver for JDBC 1460406 [https://www-304.ibm.com/support/docview.wss?uid=swg21460406] Unexpected results returned with subsequent executions of the same prepared statement using IBM Data Server Driver for JDBC and SQLJ. 1412975 [https://www-304.ibm.com/support/docview.wss?uid=swg21412975] General questions for setting maxTransportObjects 1469908 [https://www-304.ibm.com/support/docview.wss?uid=swg21469908] "Error 500. Access denied" on file /tmp/jccdiag.log when running Java applications using the IBM Data Server Driver for JDBC 1443723 [https://www-304.ibm.com/support/docview.wss?uid=swg21443723] ERRORCODE=-4499, The application server rejected establishment of the connection. 1432891 [https://www-304.ibm.com/support/docview.wss?uid=swg21432891] Supported use of JCC Sysplex, Client Reroute and Connection Concentrator Features with DB2 Connect. 
+APAR Fix List 
+DB2 JDBC APARs v9.1 [http://www.ibm.com/support/docview.wss?rs=71&uid=swg21414941], v9.5 [http://www.ibm.com/support/docview.wss?rs=71&uid=swg21414955], v9.7 [http://www.ibm.com/support/docview.wss?rs=71&uid=swg21415236], v10.1 [http://www-01.ibm.com/support/docview.wss?uid=swg21613493], v10.5 [http://www-01.ibm.com/support/docview.wss?uid=swg21662460] 
+
+Download 
+Download latest DB2 JDBC driver for v9.1 [http://www.ibm.com/eserver/support/fixes/fixcentral/swg/quickorder?brandid=1&productid=IBM+Data+Server+Client+Packages&vrmf=9.1.*&searchtype=fix&fixes=*jdbc*], v9.5 [http://www.ibm.com/eserver/support/fixes/fixcentral/swg/quickorder?brandid=1&productid=IBM+Data+Server+Client+Packages&vrmf=9.5.*&searchtype=fix&fixes=*jdbc*], v9.7 [http://www.ibm.com/eserver/support/fixes/fixcentral/swg/quickorder?brandid=1&productid=IBM+Data+Server+Client+Packages&vrmf=9.7.*&searchtype=fix&fixes=*jdbc*], v10.1 [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm/Information+Management&product=ibm/Information+Management/IBM+Data+Server+Client+Packages&release=10.1.*&platform=All&function=fixId&fixids=*jdbc*&includeSupersedes=0], v10.5 [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm/Information+Management&product=ibm/Information+Management/IBM+Data+Server+Client+Packages&release=10.5.*&platform=All&function=fixId&fixids=*jdbc*&includeSupersedes=0] 
+
+The DB2 V8.2 JDBC driver is not delivered in a fix pack by itself. It is part of the DB2 Runtime Client. Download DB2 V8 [http://www.ibm.com/eserver/support/fixes/fixcentral/swg/quickorder?brandid=1&productid=DB2&vrmf=8.*&platform=Windows+32-bit,+x86&searchtype=fix&fixes=*RTCL*] 
+
+Definition of a Knowledge Collection
+A Knowledge Collection is a focused compilation of links to documents that share a common theme. Knowledge Collections are navigation aids that organize content to help users quickly find relevant information. Knowledge Collections are not designed to be an all-inclusive list of all documents dealing with the specific theme.
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ IBM Data Server Driver for JDBC and SQLJ

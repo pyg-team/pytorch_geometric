@@ -1,0 +1,263 @@
+Title: IBM Cannot create 2048-bit SSL key within IBM Key Management tool for IBM Configuration Management server - United States
+
+Text:
+1421977; CC; CQ; cmserver; CM Server; SSL; 2048 bit key; the IBM HTTP Server; Key Management; IBM Key Management; SSL certificate; 2048-bit; change management server; clearcase; clearquest; RATLC01310499 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ There are no options to create a 2048-bit SSL key with IBM HTTP Server 6.1 Key Management application for IBM Rational ClearCase. 
+
+SYMPTOM
+You try to setup 2048-bit SSL for IBM Rational Change Management (CM) Server authentication. However, the only options are 512 bit and 1024 bit, when you run the IBM HTTP Server 6.1 Key Management application.
+
+IBM Global Security Kit (GSKit) version 7.0.4.11, which you use for key generation, supports the generation of 2048-bit keys. Version 7.0.4.11 is installed with ClearCase and ClearQuest CM Server. Therefore, you expect that this option is available in the IBM HTTP Server (IHS) version 6.1 Key Management application.
+
+
+CAUSE
+The Java version that the IHS version 6.1 Key Management application is using is too old and does not show that a 2048-bit key is possible. 
+
+There are two versions of the Key Management utility that are installed with ClearCase and ClearQuest CM Server. 
+
+ 
+
+ * IHS version 7.0.3.22
+   
+   
+ * IHS version 7.0.3.28, installed with IBM WebSphere Application Server.
+
+
+The version number difference does not matter, however, the Java version that the files select are relevant .The Java version in the IHS installation area is older than the Websphere Application Server version. This version difference is where the problem exists. 
+
+The IBM HTTP Server does not use Java at runtime. The Java version installed with the IBM HTTP Server is used for the following purposes.
+
+
+
+ * a - To install and un-install the IBM HTTP Server. 
+   
+   
+ * b - For the JAVA_HOME for the IBM Key Management Tool. 
+   
+   For example, the ikeyman GUI and gsk7cmd commands from the Global Security Toolkit to manage keyfiles on a non GUI environment.
+
+RESOLVING THE PROBLEM
+There are three ways to resolve this problem.
+
+
+
+
+OPTION 1 (Recommended Method) 
+
+Execute the IBM Key Management utility from the command line:
+
+
+
+For version 7.0.x:
+
+
+
+ * Windows
+   %RATIONAL_COMMON%\rwp\EmbeddedExpress\profiles\profile1\bin\ikeyman.bat
+   
+   
+ * UNIX and /Linux
+   %RATIONAL_COMMON%/rwp/EmbeddedExpress/profiles/profile1/bin/ikeyman.sh, 
+   
+   
+
+
+For version 7.1.x:
+
+ * Windows
+   
+   %RATIONAL_COMMON%\eWAS\bin\ikeyman.bat
+   
+ * UNIX and Linux
+   
+   %RATIONAL_COMMON%/eWAS/bin/ikeyman.sh, 
+   
+   
+   
+   
+
+
+OPTION 2 Note: Using this option may result in all changes being lost when ClearCase or IHS is updated. 
+
+Modify the existing IHS ikeyman script to pick up a new version of Java: 
+
+Open the following file. 
+
+ * Windows 
+   
+   %RATIONAL_COMMON%\IHS\bin\ikeyman.bat 
+   
+ * UNIX and Linux
+   
+   %RATIONAL_COMMON%/IHS/bin/ikeyman.sh
+   
+
+
+Make the following modifications: Note: replace <RATIONAL_COMMON_DIR> with the appropriate local path. For example, on Windows [<code srctext="codesnippet">]<RATIONAL_COMMON_DIR> has usually the following values.
+
+C:\Program Files\Rational\Common for version 7.0.x.
+
+C:\Program Files\IBM\RationalSDLC\Common for version 7.1.x.
+
+
+
+
+For ClearCase and ClearQuest version 7.0.x
+
+
+
+ * Windows
+   
+   Change from:
+   
+   
+   set JAVA_HOME=<RATIONAL_COMMON_DIR>\IHS\java\jre
+   
+   
+   Change to:
+   
+   set JAVA_HOME=<RATIONAL_COMMON_DIR>\Java142_07\jre
+   
+   
+   Then run: 
+   
+   set JAVA_HOME=C:\PROGRA~1\Rational\common\Java142_07\jre
+   
+   
+   
+ * UNIX or Linux
+   
+   Disclaimer All source code and/or binaries attached to this document are referred to here as "the Program". IBM is not providing program services of any kind for the Program. IBM is providing the Program on an "AS IS" basis without warranty of any kind. IBM WILL NOT BE LIABLE FOR ANY ACTUAL, DIRECT, SPECIAL, INCIDENTAL, OR INDIRECT DAMAGES OR FOR ANY ECONOMIC CONSEQUENTIAL DAMAGES (INCLUDING LOST PROFITS OR SAVINGS), EVEN IF IBM, OR ITS RESELLER, HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
+   
+   
+   
+   Change from :
+   
+   # Set JAVA_HOME to installed jvm
+   if [ -d /opt/Rational/common/IHS/java/jre ]
+   then
+   JAVA_HOME=/opt/Rational/common/IHS/java/jre
+   export JAVA_HOME
+   fi
+   
+   
+   Change to:
+   
+   # Set JAVA_HOME to installed jvm
+   if [ -d /opt/Rational/common/Java142_07/jre ]
+   then
+   JAVA_HOME=/opt/Rational/common/Java142_07/jre
+   export JAVA_HOME
+   fi
+   
+   
+
+
+For ClearCase and ClearQuest version 7.1 or newer
+
+ * Windows
+   
+   Change from:
+   
+   set JAVA_HOME=<RATIONAL_COMMON_DIR>\IHS\java\jre
+   
+   
+   Change to:
+   
+   set JAVA_HOME=<RATIONAL_COMMON_DIR>\eWAS\java
+   
+   
+   
+ * Unix or Linux
+   
+   Change from :
+   
+   # Set JAVA_HOME to installed jvm
+   if [ -d /opt/ibm/RationalSDLC/common/IHS/java/jre ]
+   then
+   JAVA_HOME=/opt/ibm/RationalSDLC/common/IHS/java/jre
+   export JAVA_HOME
+   fi
+   
+   
+   Change to:
+   
+   # Set JAVA_HOME to installed jvm
+   if [ -d /opt/ibm/RationalSDLC/common/eWAS/java/ ]
+   then
+   JAVA_HOME=/opt/ibm/RationalSDLC/common/eWAS/java
+   export JAVA_HOME
+   fi
+   
+
+
+
+The reason that this option 2 might be preferable, is that this change would allow executions of IBM Key Management utility from any of the GUI selections. 
+
+Example: 
+Windows Start->All Programs->IBM HTTP Server v6.1->Start Key Management Utility .
+
+
+OPTION 3 
+
+
+Rename and move the <ihs_inst>/java/jre/lib/ext/gskikm.jar file to a directory that is not detectable to the JDK class path, extdirs, or bootclasspath.
+
+
+For example:
+
+From: 
+
+
+<ihs_inst>/java/jre/lib/ext/gskikm.jar
+
+
+
+
+To: 
+
+
+<ihs_inst>/java/jre/lib/ext/gskfiles/gskikm.jar.org 
+
+
+
+For version 7.0.x : 
+
+From:
+
+<RATIONAL_COMMON_DIR>\IHS\_jvm\jre\lib\ext\gskikm.jar 
+
+To:
+<RATIONAL_COMMON_DIR>\IHS\_jvm\jre\lib\ext\gskfiles\gskikm.jar.org
+
+
+
+For version 7.1.x: 
+
+From:
+
+<RATIONAL_COMMON_DIR>\IHS\java\jre\lib\ext\gskikm.jar
+
+
+
+To: 
+<RATIONAL_COMMON_DIR>\IHS\java\jre\lib\ext\gskfiles\gskikm.jar.org
+
+
+
+
+
+
+
+
+RELATED INFORMATION
+#Managing keys with KEYCMD ... Global Security Toolkit [http://www.ibm.com/support/docview.wss?uid=swg21444109]
+
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Software Development Rational ClearQuest CM Server AIX, HP-UX, Linux, Solaris, Windows, Multi-Platform 7.0.1, 7.0.1.1, 7.0.1.2, 7.0.1.3, 7.0.1.4, 7.0.1.5, 7.0.1.6, 7.0.1.7, 7.0.1.8, 7.1, 7.1.0.1, 7.1.0.2, 7.1.1 All Editions

@@ -1,0 +1,86 @@
+Title: IBM Mapping Underlying Java Thread Identifiers to those in Logging and Trace - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How do I map a thread identifier in a log or trace file (such as SystemOut.log) to an underlying Java thread identifier (found, for example, in a Javadump/Javacore)? 
+
+CAUSE
+Different thread identifiers are printed by design; thread identifiers may be aligned in future versions.
+
+ANSWER
+In a default configuration, WebSphere Application Server Logging (WAS) and Tracing both print out a "thread identifier" with each log entry. For example: 
+
+[1/21/10 13:54:28:281 PST] 00000021 SystemOut O Thread.getId()=0x67 
+
+The 8 characters following the timestamp represent a hexadecimal representation of the thread on which the message was produced. However, most administrators do not know that this identifier, although unique for each thread, has absolutely no relationship to the internal or native thread identifiers for that Java thread. Therefore, this identifier by itself is only useful to correlate messages on the same thread within logs and trace, but not to javadumps. 
+
+For example, a Javadump was taken for the example message above, and the matching thread is identified in the Javadump as: 
+
+3XMTHREADINFO "WebContainer : 0" TID:0x269EE300, j9thread_t:0x2523D4EC, state:CW, prio=5 (native thread ID:0x11BC, native priority:0x5, native policy:UNKNOWN) 
+
+This behavior is by design, but thread identifiers may be aligned in future versions. 
+
+This TechNote documents three methods of mapping across identifiers. 
+
+ 
+
+Method #1 
+
+Thread identifiers may be correlated at any one point in time using a system dump snapshot. For more information on system dumps and how to produce them, see: http://www.ibm.com/developerworks/websphere/techjournal/1103_supauth/1103_supauth.html [http://www.ibm.com/developerworks/websphere/techjournal/1103_supauth/1103_supauth.html] 
+
+Run the Memory Analyzer tool with the IBM Extensions for Memory Analyzer [http://www.ibm.com/developerworks/java/jdk/tools/iema/] (most often, through IBM Support Assistant) and load the system dump file. 
+
+Click Open Query Browser > Java Basics > Thread Overview 
+
+With the IBM Extensions for Memory Analyzer installed, an additional column, WAS Thread ID, will display each thread's WAS thread identifier. 
+
+ 
+
+Method #2 
+
+Configure a server's JVM Logs with the "Advanced" File Formatting option (requires a restart): http://www14.software.ibm.com/webapp/wsbroker/redirect?version=matt&product=was-nd-mp&topic=TraceService_description [http://www14.software.ibm.com/webapp/wsbroker/redirect?version=matt&product=was-nd-mp&topic=TraceService_description]
+
+Here is an example of the advanced format which prints the thread name with each log entry:
+
+[9/21/11 12:22:44:507 PDT] 00000022 I UOW=null source=com.ibm.ws.webcontainer.servlet class=com.ibm.ws.webcontainer.servlet.ServletWrapper method=init org=null prod=null component=null thread=[WebContainer : 0]
+SRVE0242I: [WasSwat] [/swat] [/index.jsp]: Initialization successful.
+
+
+Method #3
+
+WebSphere Application Server version 8 introduces a new, optional log & trace feature called High Performance Extensible Logging (HPEL): http://www14.software.ibm.com/webapp/wsbroker/redirect?version=matt&product=was-nd-mp&topic=ctrb_HPELOverview [http://www14.software.ibm.com/webapp/wsbroker/redirect?version=matt&product=was-nd-mp&topic=ctrb_HPELOverview]
+
+With HPEL enabled on a server (restart required to switch from basic mode to HPEL), the logViewer command can be used to print log & trace entries in the advanced format. In method #1, we had to explicitly change to advanced format. With HPEL, that information is always recorded, but we use different formatting options with the logViewer command to display the advanced format. For example:
+
+<WAS_PROFILE_ROOT>/bin/logViewer -format advanced
+
+Prints:
+
+[9/26/11 14:37:06:493 PDT] 00000026 I UOW= source=com.ibm.ws.webcontainer.servlet class=com.ibm.ws.webcontainer.servlet.ServletWrapper method=init org= prod= component= thread=[WebContainer : 0]
+SRVE0242I: [WasSwat] [/swat] [/index.jsp]: Initialization successful.
+
+For more information on logViewer, see http://www14.software.ibm.com/webapp/wsbroker/redirect?version=matt&product=was-nd-mp&topic=rtrb_logviewer [http://www14.software.ibm.com/webapp/wsbroker/redirect?version=matt&product=was-nd-mp&topic=rtrb_logviewer]
+
+Note: Methods 2 and 3 assume that thread names are unique and unchanging, which is not always the case. 
+
+Method #4 
+
+This method is similar to method #1 in that it needs a system dump; however, it is the least recommended method. 
+
+Run the IBM Monitoring and Diagnostic Tools for Java - Dump Analyzer tool in IBM Support Assistant. Provide the system dump file (may need to be jextracted), and choose WebSphere Application Server -> General -> WASThreadIDs as the processor module. 
+
+DumpAnalyzer will produce results of the form: 
+
+Thread name WAS thread ID System thread ID
+P=70250:O=0:CT 0x00000000 4272
+Deferrable Alarm : 0 0x00000002 3456
+...
+
+The middle column, "WAS thread ID," can then be used to map to the thread identifier in WAS Logging and Tracing output, and then the thread name is available to find in the Javadump.
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Application Servers WebSphere eXtreme Scale General AIX, HP-UX, Linux, Solaris, Windows 7.1, 7.0

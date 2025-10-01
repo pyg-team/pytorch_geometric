@@ -1,0 +1,93 @@
+Title: IBM Enhancements to ObjectServer LDAP authentication - United States
+
+Text:
+Netcool; Omnibus; LDAP; LDAPSearchBase; LDAPSearchFilter TECHNOTE (FAQ)
+
+QUESTION
+ What are the LDAPSearchBase and LDAPSearchFilter properties in the OMNIbus Object Server ldap.props file? 
+
+CAUSE
+Object Server LDAP authentication was enhanced in Omnibus 7.4.0 Fixpack 2 and later which includes new properties.
+
+ANSWER
+This content was written by Simon Knights in the Developerworks article Enhancements to ObjectServer LDAP authentication in 7.4 fixpack 2 [https://www.ibm.com/developerworks/community/blogs/cdd16df5-7bb8-4ef1-bcb9-cefb1dd40581/entry/enhancements_to_objectserver_ldap_authentication_in_7_4_fixpack_2] 
+
+
+Also see the related Developerworks article Worked example of a Netcool ObjectServer LDAP Configuration [https://www.ibm.com/developerworks/community/blogs/cdd16df5-7bb8-4ef1-bcb9-cefb1dd40581/entry/january_31_2014_8_53_am]
+
+Overview 
+
+Enhancements to the OMNIbus ObjectServer native LDAP support in version 7.4.0 fixpack 2 allows amongst other things: authentication with users in multiple OU's and use of sAMAccountName. 
+
+I will discuss the model currently used by the ObjectServer to authenticate with LDAP, restrictions with this and how they are addressed by the fixpack. I will also provide snippets of configuration, concentrating on the differences between the old and new models. Full details of how to configure can be found in the Netcool OMNIbus Information Centre (see references at the end of this technote). 
+
+First a whirlwind overview of the LDAP concepts relevant to this article. LDAP databases are hierarchical. They are typically used to store information about users. Individual users are represented by entries in the LDAP database. An entry is uniquely identified by a Distinguished Name (DN). DNs can be considered like fully qualified file paths and LDAP containers can be considered like directories. The Organisational Unit (OU) is a common container type. OU's are often used to represent departments or geographical regions within an organisation. 
+
+
+
+
+
+
+
+The existing model for ObjectServer authentication with LDAP. User details are stored the ObjectServer. If a user is flagged as 'external', the password is not stored in the ObjectServer and an external password manager is used to validate passwords. In our example the ObjectServer is configured to use LDAP as its external password manager. The ObjectServer configuration contains a mapping between ObjectServer UserNames and LDAP Distinguished Names (DN). 
+
+For example when 'Some Operator' logs in to an ObjectServer and the ldap.props file is configured to: 
+
+DistiguishedName = 'cn=%s,ou=Omibus,ou=Tivoli,ou=SWG,o=ibm' 
+
+the ObjectServer maps the user name to: 
+
+cn=Some Operator,ou=Omibus,ou=Tivoli,ou=SWG,o=ibm 
+
+The ObjectServer then binds to the LDAP server using this DN and the password supplied by the user . This validates the password. 
+
+image [/support/docview.wss?uid=swg21664240&aid=1] [https://www.ibm.com/developerworks/community/blogs/cdd16df5-7bb8-4ef1-bcb9-cefb1dd40581/resource/BLOGS_UPLOADED_IMAGES/binddirectauth.png] 
+
+This works well as a simple authentication method with a number of restrictions: 
+
+ * The ObjectServer can not be configured to deal with users in multiple 'directories' in the LDAP server. For example; it can not authenticate users in different OU's. 
+ * Attributes which can be mapped to UserNames are also restricted to attributes within the DN. For example 'sAMAccountName' is used in Microsoft Active Directory to represent user names and is typically not part of the LDAP distinguished name.
+
+
+
+
+
+LDAP search enhancement in version 7.4. fixpack 2 User details are still stored in the ObjectServer. However when configured for LDAP search , the ObjectServer builds a search query using a configured template and retrieves the DN. It then validates using the DN as before. This gives the additional flexibility of allowing searches in multiple OU's and the use of attributes not contained in the DN. 
+
+For example when 'Some Operator' logs in and the ObjectServer's ldap.props file is configured with 
+
+LDAPSearchFilter = '(cn=%s)'
+
+LDAPSearchBase = 'ou=Tivoli,ou=SWG,o=IBM' 
+
+The ObjectServer issues a query for all entries in the 'Tivoli' branch of the LDAP tree for which have the 'cn' attribute equal to 'Some Operator'. When it finds an entry, the LDAP server returns a DN of 'cn=Some Operator,ou=Omibus,ou=Tivoli,ou=SWG,o=ibm'. The ObjectServer binds to this DN to query the password. 
+
+image [/support/docview.wss?uid=swg21664240&aid=2] [https://www.ibm.com/developerworks/community/blogs/cdd16df5-7bb8-4ef1-bcb9-cefb1dd40581/resource/BLOGS_UPLOADED_IMAGES/searchauth.png] 
+
+
+
+
+
+
+
+Backwards compatibility and upgrade considerations The direct bind function is still available in the ObjectServer and no change will be seen to existing direct bind configurations. To make use of LDAP search, the DistinguishedName parameter should be removed (or commented out) and 'LDAPSearchFilter' and 'LDAPSearchBase' put in. 
+
+
+
+
+
+
+
+Summary We have discussed how the ObjectServer authenticates with LDAP and the new capabilities added in fixpack 2. We also looked at the configuration changes exploit the new function. If there any other topics you would are interested in, I'd like to hear from you and I can consider them for a future blog entry. One example being a walk-through of an end-to-end configuration with an LDAP server. 
+
+References 
+
+Configuring Tivoli Netcool/OMNIbus to use LDAP for external authentication [http://publib.boulder.ibm.com/infocenter/tivihelp/v8r1/topic/com.ibm.netcool_OMNIbus.doc_7.4.0/omnibus/wip/install/task/omn_con_sec_configureldap.html] 
+
+ObjectServer LDAP configuration examples [http://publib.boulder.ibm.com/infocenter/tivihelp/v8r1/topic/com.ibm.netcool_OMNIbus.doc_7.4.0/omnibus/wip/install/reference/omn_con_sec_ldap_examples.html] 
+
+Technote on using 'ldapsearch' to test and debug OMNIbus LDAP connections [http://www-01.ibm.com/support/docview.wss?uid=swg21579907]
+
+RELATED INFORMATION
+ Worked example of a Netcool ObjectServer LDAP configura [https://www.ibm.com/developerworks/community/blogs/cdd16df5-7bb8-4ef1-bcb9-cefb1dd40581/entry/january_31_2014_8_53_am]
+Enhancements to ObjectServer LDAP authentication in 7.4 [https://www.ibm.com/developerworks/community/blogs/cdd16df5-7bb8-4ef1-bcb9-cefb1dd40581/entry/enhancements_to_objectserver_ldap_authentication_in_7_4_fixpack_2]

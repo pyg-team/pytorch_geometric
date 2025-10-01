@@ -1,0 +1,21 @@
+Title: IBM Do I have to install the JDK or the JRE on my machine? - United States
+
+Text:
+jdk; jre; install; administrator; user TECHNOTE (FAQ)
+
+QUESTION
+ Do I have to install the JDK or the JRE on my machine? 
+
+ANSWER
+If you want to use Java to create the logic for the Document Connect templates, the Java Development Kit (JDK) 1.1.7b is required on the machine where the Administrator component of Document Connect for Lotus Notes Clients is installed. 
+
+Users creating documents from templates that contain Java must have the User component of Document Connect for Lotus Notes Clients and the Java Runtime Environment (JRE) 1.1.7b installed on their machines. The JRE is shipped with Document Connect for Lotus Notes Clients and can be installed as part of the Document Connect installation.
+
+Using Document Connect for Lotus Domino Servers the Java Runtime Environment (JRE) 1.1.7b must be installed on the server if Java logic is used for the composition- or micrologic. The JRE is shipped with Document Connect for Lotus Notes Servers and can be installed as part of the Document Connect installation.
+
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Groupware - Productivity and Lotus Document Connect

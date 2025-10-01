@@ -1,0 +1,33 @@
+Title: IBM CDC: After re-installing Management Console it fails with JVM error: exit code=1 - United States
+
+Text:
+exit code=1; JVM error TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ After re-installing Management Console, it throws an error when starting: 
+
+Java was started but returned exit code=1 
+
+SYMPTOM
+You are not able to start Management Console
+
+
+CAUSE
+There are some files from the old installation that are still being used for the new installation.
+
+DIAGNOSING THE PROBLEM
+Install Management Console and just after starting the managemnet console it throws an error:
+Java was started but returned exit code=1
+
+RESOLVING THE PROBLEM
+After uninstalling Management Console, manually delete the Management Console files from:
+
+1 - Make sure the Management Console was uninstalled.
+
+2 - Delete any files remaining in the Management Console installation folder.
+
+3 - Delete any Management Console configuration file. By default they are stored in C:\Users\<YOUR_USER>\appData\Roaming\IBM\Management Console - By default, these are hidden directories.
+
+4 - Make sure the Windows Virtual Directory is not activated. If this is activated, you should delete the Management Console old files from the folder C:\Users\<YOUR_USER>\AppData\Local\VirtualStore\Program Files (x86)\IBM\ - By default, these are hidden directories. 
+
+After following the steps above, try to install the Management Console again.

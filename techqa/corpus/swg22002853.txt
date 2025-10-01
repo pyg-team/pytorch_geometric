@@ -1,0 +1,83 @@
+Title: IBM Steps to compress heavily used ITCAM Managing Server Octigate tables. - United States
+
+Text:
+ITCAM tema octigate disk space compression tables db2 export import CAMADALL CAMADINST TECHNOTE (FAQ)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ US English 
+
+QUESTION
+ Steps to compress heavily used Octigate tables in ITCAM. 
+
+ANSWER
+There may be times when you will need to delete and recreate your octigate tables. One reason you might want to do this is to "compress" your data and get back any additional disk space on the file system. The amount of disk space retrieved depends on the DB2 High Water Mark. Consult the DB2 docs for more info on this. If you want to consider "compression" of your highly used tables, here are the steps you will do: 
+
+1. First make a backup of your octigate database, as you will be dropping and recreating some tables. So, if there is an issue, you can restore back from your backup copy. 
+
+2. First connect to the database and verify you have approx. 68 tables in the octigate database. 
+
+db2 connect to octigate user db2inst1 using <passwd> 
+
+db2 list tables 
+
+ - this should give you 68 tables 
+
+3. Now you will look at some heavily used tables. Typically, these are METHOD, REQUEST, SERVERS, PMISTATS, PMIJMXENGINESTATS, TRAP_CONFIG. So, ideally, you will want to "compress" these tables. If you are not sure which tables to compress, you can do a "select count(*) from <table_name>" and see which ones have the high counts. The goal/idea is to "compress" each heavily used tables one by one so as to eventually free up some disk space. In my example here, am using PMIJMXENGINESTATS table to demonstrate disk "compression". 
+
+4. First step is to extract out the schema and create the "ddl" file as follows: 
+
+db2look -d octigate -t PMIJMXENGINESTATS -z db2inst1 -e -o PMIJMXENGINESTATS.ddl 
+
+ 
+[/support/docview.wss?uid=swg22002853&aid=1] [/support/docview.wss?uid=swg22002853&aid=1]
+
+5. Now that you have the ddl file, next step is to export all the data from the table. First look at the table schema:
+
+db2 describe table PMIJMXENGINESTATS
+
+[/support/docview.wss?uid=swg22002853&aid=2] [/support/docview.wss?uid=swg22002853&aid=2]
+
+6. Next use the db2export command as follows:
+
+db2 export to PMIJMXENGINESTATS.del of del lobs to . select id, seq, probeid, creationtime, category, attributes from PMIJMXENGINESTATS
+
+This is how the output looks when you run the above command:
+[/support/docview.wss?uid=swg22002853&aid=3] [/support/docview.wss?uid=swg22002853&aid=3]
+You will see that the file PMIJMXENGINESTATS.del has been created with 123799 rows exported to it.
+
+7. Now that you have the data exported, you can create another test table like TEST and import the data into TEST first. After you have verified the TEST table has successfully imported the data, you can then drop the PMIJMXENGINESTATS table, recreate it again and import the data back in again. This is what the "compression" achieves for the PMJMXENGINESTATS. Here are the steps.
+
+First create another TEST table like PMIJMXENGINESTATS:
+[/support/docview.wss?uid=swg22002853&aid=4] [/support/docview.wss?uid=swg22002853&aid=4]
+
+Verify the schema, see that it matches the PMIJMXENGINESTATS table first.
+[/support/docview.wss?uid=swg22002853&aid=5] [/support/docview.wss?uid=swg22002853&aid=5]
+
+Now you can try importing the data you exported earlier into the TEST table and verify it works. You are just doing this as a precaution step to see if the data from PMIJMXENGINESTATS can be imported into TEST successfully. Use the db2 import command as follows:
+
+db2 import from PMIJMXENGINESTATS.del of del lobs from. insert into TEST
+
+[/support/docview.wss?uid=swg22002853&aid=6] [/support/docview.wss?uid=swg22002853&aid=6]
+
+[/support/docview.wss?uid=swg22002853&aid=7] [/support/docview.wss?uid=swg22002853&aid=7]
+
+Now that you know its imported successfully into TEST, you can drop TEST and PMIJMXENGINESTATS tables. Then recreate the table PMIJMXENGIENSTATS and import the data back again. Here are the steps.
+
+[/support/docview.wss?uid=swg22002853&aid=8] [/support/docview.wss?uid=swg22002853&aid=8]
+[/support/docview.wss?uid=swg22002853&aid=9] [/support/docview.wss?uid=swg22002853&aid=9]
+[/support/docview.wss?uid=swg22002853&aid=10] [/support/docview.wss?uid=swg22002853&aid=10]
+
+Now that the table has been re-created, you can import the data back into PMIJMXENGINESTATS back again.
+
+db2 import from PMIJMXENGINESTATS.del of del lobs from . insert into PMIJMXENGINESTATS
+
+[/support/docview.wss?uid=swg22002853&aid=11] [/support/docview.wss?uid=swg22002853&aid=11]
+
+The above steps demonstrated how you can export the schema/data from one of your heavily used tables (PMIJMXENGINESTATS) and then drop/recreate/import the data back again. Doing this for all your other tables one by one will eventually give you some disk space back as this will compress the data into contiguous disk space. (Note: On some systems, you may not get back additional disk space because of the DB2 High Water mark level. Please see this technote [http://www-01.ibm.com/support/docview.wss?uid=swg21006526] which offers hints and tips on lowering that value.)
+
+Please make sure you have a backup of your octigate database before attempting this procedure or do it on a Test database before doing it in Production. If for any reason you run into issues, you will just use your backup and copy the octigate database back again. Estimated time to do this will take few hours depending on the amount of tables and data being compressed.
+
+
+
+PRODUCT ALIAS/SYNONYM
+ ITCAMfAD ITCAM4AD ITCAM for App Diagnostics

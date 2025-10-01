@@ -1,0 +1,148 @@
+Title: IBM IT15708: THE MQ-QM OBJECT FAILS WHEN SSL CONNECTIONS ARE USED IN SLOW NETWORKS - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Fix packs for DataPower Service Gateway version 7.0 [http://www-01.ibm.com/support/docview.wss?uid=swg24037486]
+Fix packs for DataPower B2B Appliance version 7.0 [http://www-01.ibm.com/support/docview.wss?uid=swg24037487]
+Fix packs for DataPower Integration Appliance version 7.0 [http://www-01.ibm.com/support/docview.wss?uid=swg24037488]
+Fix packs for DataPower Gateway version 7.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24038524]
+Fix packs for DataPower Gateway version 7.2 [http://www-01.ibm.com/support/docview.wss?uid=swg24039783]
+Fix packs for DataPower Gateway version 7.5 [http://www-01.ibm.com/support/docview.wss?uid=swg24041543]
+Fix packs for DataPower Gateway version 7.5.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24042194]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The mq-qm object fails with MQ error of 2009/2059 when SSL
+   connections are used in the mq-qm configurations involving slow
+   networks between appliance and MQ server.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Disable SSL connections.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Affected is use of MQ Queue Manager object with SSL.
+   
+   MQ-QM may fail to work in slow networks.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fix is available in 7.0.0.14, 7.1.0.11, 7.2.0.8, 7.5.0.2 and
+   7.5.1.2
+   
+   For a list of the latest fix packs available, please see:
+   http://www-01.ibm.com/support/docview.wss?uid=swg21237631 [http://www-01.ibm.com/support/docview.wss?uid=swg21237631]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT15708
+   
+   
+ * REPORTED COMPONENT NAME
+   DTAPWR B2B APL
+   
+   
+ * REPORTED COMPONENT ID
+   DP905XB62
+   
+   
+ * REPORTED RELEASE
+   720
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-06-14
+   
+   
+ * CLOSED DATE
+   2016-07-26
+   
+   
+ * LAST MODIFIED DATE
+   2016-09-16
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   DTAPWR B2B APL
+   
+   
+ * FIXED COMPONENT ID
+   DP905XB62
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R700 PSY
+   UP
+   
+   
+ * R710 PSY
+   UP
+   
+   
+ * R720 PSY
+   UP
+   
+   
+ * R750 PSY
+   UP

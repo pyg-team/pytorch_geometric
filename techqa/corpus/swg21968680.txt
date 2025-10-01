@@ -1,0 +1,29 @@
+Title: IBM Letters (bottom) are cut off on some rows y, p, q, g - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When generating an MS-Excel table in MS-Word, some of the 'tails' of letters are cut off. 
+
+CAUSE
+The wrong 'option' (at least, exactly) is used for the MS-Word table.
+The rows in MS-Excel are showing the cutoff letters (requirement for a specific row height).
+
+ENVIRONMENT
+All Cognos Disclosure Management and Microsoft Office versions
+
+RESOLVING THE PROBLEM
+The row height in a MS-Word table has the following two options: "at least" and
+"exactly".
+
+This attribute can be controlled when generating Excel ranges in CDM:
+
+
+
+
+
+- when at least one cell of a row in an MS-Excel printable range has the Wrap Text attribute on, then the entire row will be generated with the MS-Word "at least" attribute. This means that whatever cuts you might have in MS-Excel due to the row height, won't be reflected in the generated Word 
+
+
+- when none of the cells that are part of an MS-Excel printable range have the Wrap Text attribute on, then the entire row will be generated with the MS-Word "exactly" attribute. This means that whatever cuts you might have in Excel due to the row height, will be reflected in the generated Word

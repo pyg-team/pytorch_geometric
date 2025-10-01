@@ -1,0 +1,52 @@
+Title: IBM Some file types might be rendered differently in IBM Content Manager V8.4.1 and later clients - United States
+
+Text:
+ RELEASE NOTES
+
+ABSTRACT
+ IBM® Content Manager V8.4.3 includes some enhancements and fixes related to the rendering of non-image file formats, such as Lotus® Word Pro and Microsoft® Word files. These changes improve the way the document is displayed and improve readability. However, these improvements can have unexpected side effects for users who are upgrading from previous versions of DB2 Content Manager. These kinds of changes also could be seen in IBM Content Manager V8.4.1 clients. 
+
+CONTENT
+The following file formats have been identified as having rendering changes: 
+
+ * Rich Text Format (.rtf) 
+ * HTML 
+ * Microsoft Excel (.xls) 
+ * Microsoft Word (.doc) 
+ * Lotus® Word Pro (.lwp) 
+ * Microsoft PowerPoint (.ppt)
+
+
+As an example of the kind of changes to expect, certain RTF files improved the way that lines wrap in paragraphs between IBM Content Manager 8.4.0 and IBM Content Manager 8.4.1. With previous releases, paragraphs sometimes would wrap by displaying a full line of text on the first line, then displaying a single word in the next line, followed by another full line of text. See the following paragraph for an example: 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+
+
+In DB2 Content Manager V8.4.1, the previous problem RTF paragraph now displays with more effective word wrapping, in a format that matches the following example: 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+
+
+The way that the second paragraph is displayed is preferable to the way that the first one is displayed. However, the problem described in this document is related to annotations that were placed on the document in a previous version. For example, if you had entered a yellow box over the text “IBM DB2” in the first paragraph, then after DB2 Content Manager V8.4.1 is installed, that yellow box would be displayed over different text. The box would display over the text that happens to be in the middle of the paragraph on the third line. In this example, the box would probably display over parts of “Edition” and “This” in two separate sentences. This effect can be even more dramatic in long documents with many examples of this kind of paragraph. In these cases, the annotations can even appear to be on the wrong page. 
+
+The differences between IBM Content Manager 8.4.2 and 8.4.3 relate to the spacing between paragraphs and the fonts used to render certain types of text. 
+
+The problems described in this document will be noticeable with the standard viewers of both the Client for Windows and the eClient, along with the Java Viewer. 
+
+If you are upgrading from previous versions of IBM Content Manager, and you either notice this problem or believe that this problem might affect you, then contact IBM Software Support.

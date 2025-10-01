@@ -1,0 +1,52 @@
+Title: IBM Can I import,export data between Secret Servers? - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Can I import,export data between Secret Servers? 
+
+ANSWER
+
+Yes. You can export your data out as XML by going toTools|Export(choose theXMLoption).
+
+This exported data can then be imported into another Secret Server by going toTools|Import Secrets(choose theUpload XML Fileunder the Additional Options).
+
+Note: Please do not edit the XML file with notepad.exe, use Notepad++, Visual Studio Code, or Atom to make your edits. There is a big chance your XML file fail import if you use Notepad.exe
+
+The XML export includes: 
+· Folder (and their permissions) 
+· Secret Templates 
+· Secrets (and their permissions) 
+The XML export does not include users, groups, launchers, configuration, etc.
+
+You will need to recreate your users and groups before importing so that permissions are applied correctly. 
+
+
+In regards to Secret templates, the following settings ARE transferred with the XML export/import: 
+
+· Expiration days 
+· Which field expiration applies to 
+· Name, display name & description 
+· Expose for display 
+· Field type 
+· Password requirements 
+· History length 
+· Whether a field is searchable 
+· Name pattern 
+
+And the following Secret template settings are NOT transferred: 
+
+· Launcher(s) settings 
+· Password Changing settings 
+· Is Required? 
+· Edit Requires 
+· Hide on View 
+· Default field values 
+· Secret template icon 
+· Keep Secret Name History 
+· Session recording enabled 
+· Associated Secrets 
+· Validate Password Requirements on Create/Edit
+
+You *can* use this XML import/export to go between Installed Edition and Online Edition and vice versa.

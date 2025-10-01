@@ -1,0 +1,28 @@
+Title: IBM Support for CICS TS Developer Trial 5.4, 5.3 and 5.2 - United States
+
+Text:
+cics transaction server for z/os developer trial ; 5655Y0400 R680 680 R800 800 HCI6800 R690 690 R900 900 HCI6900 R700 700 R000 000 HCI7000 R701 701 R100 100 HCI7100 5655Y0401 5655-Y04 5655Y04 KIXINFO TECHNOTE (FAQ)
+
+QUESTION
+ Can you open a Problem Management Report (PMR) or Service Request (SR) for the CICS Transaction Server for z/OS (CICS TS) Developer Trial? 
+
+ANSWER
+Yes, in addition to posting inquiries on dW Answers [https://developer.ibm.com/answers/smart-spaces/151/cics.html] for questions about the Developer Trial, existing CICS Transaction Server for z/OS clients can raise PMRs or Service Requests (SR) [https://www.ibm.com/support/servicerequest/Home.action] with IBM CICS Support. Since the Developer Trial is a non-production version of CICS Transaction Server, only Severity 3 (some business impact) or Severity 4 (minimal business impact) PMRs can be raised.
+
+CICS Transaction Server for z/OS Developer Trial [http://www.ibm.com/software/products/no/cics-ts-devtrial] V5.4, V5.3 and V5.2 are no cost "try-before-you-buy" versions of CICS Transaction Server for z/OS for evaluation use only. CICS TS Developer Trial can NOT be used in a production or business critical environment. CICS TS Developer Trial contains the same features and functions as CICS TS, however it is restricted in terms of performance and will operate only for a limited evaluation period. Authorized Program Analysis Report (APAR) fixes resulting from PMRs will only be provided against the main CICS TS product itself rather then the Developer Trial edition of this code. However, the Developer Trial will be updated periodically to include the latest service fixes.
+
+RELATED INFORMATION
+ Service request (SR) application [https://www.ibm.com/support/servicerequest/Home.action]
+Collect troubleshooting data (MustGather) for CICS [http://www.ibm.com/support/docview.wss?uid=swg21208053]
+IBM Support Portal for CICS TS [http://www.ibm.com/support/entry/portal/Overview/Software/Other_Software/CICS_Transaction_Server]
+Detailed system requirements for CICS TS [http://www.ibm.com/support/docview.wss?uid=swg27006382]
+Finding CICS PSP Buckets [http://www.ibm.com/support/docview.wss?uid=swg21231874]
+Upgrading information for CICS [http://www.ibm.com/support/docview.wss?uid=swg21207399]
+Software Support Handbook [http://www14.software.ibm.com/webapp/set2/sas/f/handbook/getsupport.html]
+Announcement Letters for CICS products [http://www.ibm.com/support/docview.wss?uid=swg21227090]
+
+
+
+
+PRODUCT ALIAS/SYNONYM
+ CICS/TS CICS TS CICS Transaction Server

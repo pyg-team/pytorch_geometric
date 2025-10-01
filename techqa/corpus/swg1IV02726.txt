@@ -1,0 +1,231 @@
+Title: IBM IV02726: ITM WINDOWS INSTALLER DOES NOT GIVE DETAILED ERROR INFORMATION WHEN INSTALLER IS CORRUPTED OR OTHER PACKAGE PROBLEM. - United States
+
+Text:
+  FIXES ARE AVAILABLE
+IBM Tivoli Monitoring 6.2.2 Fix Pack 8 (6.2.2-TIV-ITM-FP0008) [http://www-01.ibm.com/support/docview.wss?uid=swg24031354]
+IBM Tivoli Monitoring 6.2.2 Fix Pack 9 (6.2.2-TIV-ITM-FP0009) [http://www-01.ibm.com/support/docview.wss?uid=swg24032067]
+IBM Tivoli Monitoring 6.2.2 Fix Pack 6 (6.2.2-TIV-ITM-FP0006) [http://www-01.ibm.com/support/docview.wss?uid=swg24030135]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  During an install if a component fails to unpack, the error
+   message given states an error may have occurred but gives no
+   detail. The customer must call IBM to determine how to recover
+   from the error or if recovery is needed at all. We should
+   provide steps for recovery and how to determine if the error is
+   severe (unable to unpack a file) or just a warning (component
+   already installed).
+   
+   Recreate Instructions:
+     Unable to provide a detailed step-by-step recreation
+   procedure. A corrupt install package is needed.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  When the error is seen, open File Explorer and navigate to
+   ITM_HOME\InstallITM directory then open file MIAInstall.log.
+   
+   Navigate to the last lines of this file and review the error
+   message. If a file failed to unpack, note the component name
+   and after the install completes launch Windows "Add or Remove
+   Programs" and uninstall that component.
+   
+   Try a reinstall of that component , if it fails again, order new
+   media or copy the media locally and again uninstall and
+   reinstall the failing component. If this continues to fail,
+   download a fresh package and try again. If a fresh package
+   fails, contact IBM for support.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  When a component fails to install due to corruption, package
+   problem, etc.  the error message given states that an error may
+   have occurred, please check .
+   
+   During an install if a component fails to unpack, the error
+   message given states an error may have occurred please check.
+   It does not give any information about how to determine whether
+   the error was severe or just a warning.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The code has been updated to scan the MIAInstall.log and report
+   the last error found as MSG: under the please check message.
+   The message can be used to help the customer decide how to
+   recover.  If a failed extraction a new DVD image should be
+   requested from IBM or downloaded as the current image has become
+   corrupt or was corrupted during download or copy.  If the error
+   states already installed, the error can be ignored.  The install
+   will continue in either case and complete.  If an extraction
+   failed the install should be rerun.  If it fails again, refresh
+   the image and try again.  If it continues to fail contact IBM
+   for support or download the image again from IBM and proceed
+   based on the result of that install.  Sample popup message box:
+       Install for Feature[KNTWICMA/Monitoring Agent for Windows
+   OS] may have failed, please check!
+       MSG:File extraction failed (Input/output error) for
+   C:\IBM\ITM\TMAITM6\getstat.vbs
+       Press YES if the MSG text appears to be a warning.  For
+   example, "Already Installed."
+       Press NO if the MSG text appears to be an error.  For
+   example "extraction failed" or "Input/output error."
+       NO also unselects the component so it can be reinstalled
+   from a fresh image or DVD.
+       Install will continue after YES or NO is pressed.
+   Action by customer:
+   If the error seems severe press NO and the component upgrade or
+   install will be undone so the component can be reinstalled after
+   the media problem has been corrected.  The successfully
+   installed files cannot be removed so this may leave the
+   component in partial state (pristine install) or mixed state
+   (upgrade install).  If no is chosen and there is enough correct
+   information to configure and start the agent, for a pristine
+   install the agent will show version V610.  For an upgrade the
+   previous version will show in MTEMS.  If NO is chosen the
+   component should be reinstalled to insure that it will function
+   correctly.  If the error is a warning or seems benign, press YES
+   and accept the component even though there was an error.  If YES
+   is selected and the component does not function properly, it
+   will have to be uninstalled then reinstalled to correct the
+   malfunction.  The error may occur with either an pristine or
+   upgrade install.  If the error message is blank, it means that
+   no error was found.  In this case press YES to continue the
+   install and ignore the error.
+   
+   
+   
+   The fix for this APAR is contained in the following maintenance
+   packages:
+   
+     | fix pack | 6.2.2-TIV-ITM-FP0006
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  To check whether the error is a corrupt image or a warning open
+   the MIAInstall.log in the HOME\InstallITM directory with notepad
+   or other editor.  Navigate to the bottom of the file and search
+   up for string [S] [Error].  The message found is the last error
+   found during the install.  It will correspond to the please
+   check message.  If no error is found, the message can be
+   ignored.
+   
+   Note the name of the component that failed as it may need to be
+   reinstalled.  If the component needs to be reinstalled, the
+   component version file (ver file) will need to be removed
+   (pristine install) or back leveled (upgrade install).  To remove
+   the ver file, the name can be found in the message issued.  In
+   the example above KNTWICMA is the first part of the name and
+   .ver is the extension.  So for a pristine install delete file
+   KNTWICMA.ver from the HOME\InstallITM\ver directory.  To back
+   level the file, so the component can be upgraded, copy the
+   KNTWICMA.VER file from the
+   HOME\InstallITM\VerPrevInstall\YYYYMMDD HHSS directory where the
+   date time stamp is the latest date and time to
+   HOME\InstallITM\ver directory.  Try a reinstall of that
+   component.  If it fails again, order new media or copy the media
+   locally and again reinstall the failing component.  If this
+   continues to fail, download a fresh image and try again.  If a
+   fresh package fails, contact IBM for support.
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV02726
+   
+   
+ * REPORTED COMPONENT NAME
+   OMEG DIST INSTA
+   
+   
+ * REPORTED COMPONENT ID
+   5608A41CI
+   
+   
+ * REPORTED RELEASE
+   622
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-06-29
+   
+   
+ * CLOSED DATE
+   2011-07-29
+   
+   
+ * LAST MODIFIED DATE
+   2011-09-28
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   OMEG DIST INSTA
+   
+   
+ * FIXED COMPONENT ID
+   5608A41CI
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R622 PSY
+   UP

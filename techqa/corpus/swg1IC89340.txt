@@ -1,0 +1,222 @@
+Title: IBM IC89340: DYNAMIC DISKS DETACHED AFTER VM BACKUPS ON MICROSOFT WINDOWS 2008 AND MICROSOFT WINDOWS 2008 R2. - United States
+
+Text:
+AIX SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Backing up Windows 2008 and Windows 2008 R2 virtual machines
+   that contain dynamic disks can result in the dynamic disks
+   being detached from Windows at the end of the backup. The
+   dynamic disks are still intact and  can be reconnected to
+   Windows.
+   
+   This problem occurs because application-consistent quiescing
+   is performed when the snapshot is taken during the backup
+   process. For application-consistent quiescing to be available
+   on Windows 2008 and Windows 2008 R2, one of the conditions
+   that Windows  requires is that the virtual machine must not
+   use dynamic disks. This is because VMware uses a hardware
+   provider to perform the VSS  snapshot, and shadow copies
+   created by hardware providers of volumes that reside on
+   dynamic disks have a specific requirement that  they cannot
+   be imported onto the same system.
+   
+   See the following Microsoft VSS topic for more detailed
+   information:
+   
+     msdn.microsoft.com/en-us/library/aa384594
+   
+   This issue is also described in the release notes for Tivoli
+   Storage Manager:
+   
+     Version 6.3:
+       http://www.ibm.com/support/docview.wss?uid=swg21508259 [http://www.ibm.com/support/docview.wss?uid=swg21508259]
+   
+     Version 6.4:
+       http://www.ibm.com/support/docview.wss?uid=swg21608413 [http://www.ibm.com/support/docview.wss?uid=swg21608413]
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  You can prevent this behavior by modifying how part of the
+   virtual machine is quiesced. It is possible to configure the
+   virtual machine so that application data is not quiesced,
+   while still allowing the file system to be quiesced. The
+   implication is that application data might not be flushed to
+   disk before the snapshot is taken. File system data will still
+   be flushed, and the I/O held while the snapshot is being taken.
+   
+   See the following VMware KB article for more detailed
+   information about how to configure the virtual machine so that
+   application data is not quiesced:
+   
+     kb.vmware.com/kb/1031298
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: Backup-archive client 6.4                    *
+   *                 running on all Microsoft Windows and         *
+   *                 Linux x86 platforms.                         *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: See ERROR DESCRIPTION                   *
+   ****************************************************************
+   * RECOMMENDATION: Apply fixing level when available. This      *
+   *                 problem is projected to be fixed in          *
+   *                 level 6.4.1. Note that until the             *
+   *                 fixing level is available, this              *
+   *                 information is subject to change             *
+   *                 at the discretion of IBM.                    *
+   ****************************************************************
+   There are cases where invoking quiesced VMware VM snapshots
+   (VSS) of a Windows 2008 VM containing dynamic disks may cause
+   problems, and the VM, or some of its disks, may become unusable.
+   
+   Some of the symptoms are:
+   
+   - When you create an application-consistent quiescent
+   snapshot of a virtual machine running Windows 2008 with
+   dynamic disk, you see duplicate dynamic disks in the Windows
+   Disk Manager.
+   - When removing the virtual machine snapshot, the duplicate
+   dynamic disks appear as missing in the Windows Disk Manager.
+   - In some cases, after the virtual machine snapshot removal,
+   the drive letters previously assigned to the original
+   dynamic disk volumes become unassigned.
+   - The dynamic disks may become detached from the VM at the
+   end of the backup.
+   
+   The VMware API used to create snapshots allows a flag to
+   be specified to indicate whether or not the VM should be
+   quiesced before taking the snapshot. To allow customers
+   to work around this issue, the
+   testflag VM_DONT_QUIESCE_ON_SNAPSHOT
+   is being provided by this APAR. When specified,
+   the TSM backup will indicate on the VMware snapshot
+   API that application quiescing should not be performed.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  When the testflag VM_DONT_QUIESCE_ON_SNAPSHOT is specified,
+   it indicates that the VM should not be quiesced before
+   the snapshot is taken. This is specified on the VMware
+   API that is used to create the VM snapshot needed for
+   the VM backup operation.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  A fix for this problem is currently targeted for interim fix
+   package 6.4.0.1. Until the interim fix is actually available
+   this information is subject to change at the discretion of IBM.
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC89340
+   
+   
+ * REPORTED COMPONENT NAME
+   TSM CLIENT
+   
+   
+ * REPORTED COMPONENT ID
+   5698ISMCL
+   
+   
+ * REPORTED RELEASE
+   64W
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-01-02
+   
+   
+ * CLOSED DATE
+   2013-02-04
+   
+   
+ * LAST MODIFIED DATE
+   2013-02-04
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  DSMAGENT DSMC
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TSM CLIENT
+   
+   
+ * FIXED COMPONENT ID
+   5698ISMCL
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R64L PSY
+   UP
+   
+   
+ * R64W PSY
+   UP

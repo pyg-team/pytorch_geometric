@@ -1,0 +1,14 @@
+Title: IBM Autonaming and Duplicate Object Type Names - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ We have set up autonaming for our objects in the OpenPages application. However we are finding that some objects have duplicate names. Why is that and how can we prevent it? 
+
+ANSWER
+Autonaming is a feature that allows the system to auto-name or auto-number an object when it's created. However it DOES NOT prevent other objects from having the same name. 
+
+Duplicate names can occur. The following are sample situations: 
+
+ *  A parent object was copied. All associated child objects are copied and will retain the same name. Please see the OpenPages Administrator's Guide for additional details. An OpenPages user used ObjectManager or FastMap to load objects with a specific name (that overrode the auto-naming value. An OpenPages user used the 'Rename' button to change the name of an object.

@@ -1,0 +1,30 @@
+Title: IBM How to run jExtract on a core dump in AIX - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ When running Cognos Analytics on an AIX server, the processes are getting over-worked and Cognos is is logging the error DPR-ERR-2077 The request could not be redirected 
+
+CAUSE
+This can be caused by issues with the hardware
+
+ANSWER
+For a AIX Operating System, the process for core files is different, follow these steps to run jExtract on the core dump, the core has to be extracted from the machine having the issue.:
+
+
+- Open a command line and set JAVA_HOME to this for example : set JAVA_HOME=E:\Progra~1\cognos\10\bin\jre\1.7.0 [file:///E:/Progra%7E1/cognos/10/bin/jre/1.7.0] 
+
+- Then, from the c10/bin, run this command : %JAVA_HOME%\bin\jextract core.xxxxxxxx.xxxxxx.xxxx.xxxx.dmp
+(replace with the correct core*.dmp file name) 
+
+- This will create a ZIP in the current directory, example: core.core.xxxxxxxx.xxxxxx.xxxx.xxxx.dmp.zip 
+
+- Gather and send these files. (example below)
+1) core.xxxxxxxx.xxxxxx.xxxx.xxxx.dmp.zip
+2) core.xxxxxxxx.xxxxxx.xxxx.xxxx.dmp.xml
+3) Snap.xxxxxxxx.xxxxxx.xxxx.xxxx.trc
+4) javacore.xxxxxxxx.xxxxxx.xxxx.xxxx.txt
+5) heapdump.xxxxxxxx.xxxxxx.xxxx.xxxx.phd 
+
+6) zipped logs directory from all cognos installs No need to send the actual *.dmp as it's included in the .dmp.zip (resulting from jExtract)

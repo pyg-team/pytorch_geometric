@@ -1,0 +1,26 @@
+Title: IBM How to view Specification and Implementation files of external source code in Rational Rhapsody post Reverse Engineering - United States
+
+Text:
+Source artifacts; Rhapsody; reverse engineering TECHNOTE (FAQ)
+
+QUESTION
+ How do you view Specification and Implementation files of external source code in IBM Rational Rhapsody post Reverse Engineering? 
+
+CAUSE
+You have a Specification and Implementation file with the same name and after reverse engineering these files into Rational Rhapsody you would like to view both the files in the model
+
+ANSWER
+Reverse engineering process is capable of reverse engineering Specification and Implementation files with the same name into Rational Rhapsody but will display the file as a single element in the model
+
+However the Implementation and Specification files of the element can be viewed in the model as Source Artifacts
+
+To enable Source Artifacts view in the model:
+
+
+ 1. Open the model in Rational Rhapsody
+    
+    
+ 2. Select the package containing the reverse engineered files
+    
+    
+ 3. Navigate to View > Browser Display Options > Show Source Artifacts to display the source artifacts in the model

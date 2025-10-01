@@ -1,0 +1,170 @@
+Title: IBM IV59903: UNABLE TO UPDATE CICS AND Z/OS EXPLORERS INDEPENDENTLY WHEN BOTH ARE INSTALLED - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+ READMES ARE AVAILABLE
+IBM CICSEX-5.1.1-FP0005 [http://www-01.ibm.com/support/docview.wss?uid=isg400001813]
+IBM CICSEX-5.1.1-FP0006 [http://www-01.ibm.com/support/docview.wss?uid=isg400002004]
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Both CICS and z/OS Explorer have been installed into a common
+   environment using IBM Installation Manager. It is not possible
+   to apply an update to one without also applying a corresponding
+   update to the other.
+   If only one of the products is installed then it can be updated
+   successfully.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  When CICS Explorer has been installed (or the RCP downloaded) it
+   is not possible to then upgrade  IBM Explorer for z/OS (z/OS
+   Explorer), without upgrading CICS Explorer as well.
+   The situations that didn't allow you to upgrade z/OS Explorer
+   separately of CICS Explorer:
+   1) The CICS Explorer RCP
+   2) Installing CICS Explorer into Eclipse
+   3) Installing CICS Explorer into RAD
+   4) CICS Explorer pre-installed into RD/z
+   Attempts to perform these upgrade paths will produce an error
+   similar to the following:
+   CRIMA1069E: Updating IBM Explorer for z/OS to 2.1.0.y is not
+   allowed; the package is not compatible with IBM CICS Explorer
+   SDK 5.1.1.x
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This APAR alters the relationship between CICS and z/OS
+   Explorer.
+   After applying this CICS Explorer fix pack:
+   1) If you make a new install of the CICS Explorer RCP, it will
+   be possible to apply an update to z/OS Explorer independently of
+   updates to CICS Explorer.
+   2) If you have installed the CICS Explorer RCP, the z/OS
+   Explorer will need to be explicitly installed into the existing
+   package group before updates can be applied.
+   3) If CICS Explorer was installed into any Eclipse base (thereby
+   indirectly installing the z/OS Explorer) then the z/OS Explorer
+   will need to be explicitly installed into the existing package
+   group before updates can be applied.
+   4) All future attempts to install the CICS Explorer using IBM
+   Installation Manager will require that IBM Explorer for z/OS is
+   also explicitly selected for installation.
+   5) This CICS Explorer fix pack will be included in a future
+   release of Rational Developer for System z.
+   This fix will be made available in Version 5.1.1.5 of the CICS
+   Explorer.
+   For installation instructions please see:
+   Ordering maintenance for the IBM Explorer for z/OS, IBM CICS
+   Explorer and CICS Explorer plug-ins
+   http://www.ibm.com/support/docview.wss?uid=swg21380083 [http://www.ibm.com/support/docview.wss?uid=swg21380083]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV59903
+   
+   
+ * REPORTED COMPONENT NAME
+   CICS EXPLORER V
+   
+   
+ * REPORTED COMPONENT ID
+   5655Y0401
+   
+   
+ * REPORTED RELEASE
+   511
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-04-29
+   
+   
+ * CLOSED DATE
+   2014-05-28
+   
+   
+ * LAST MODIFIED DATE
+   2014-05-28
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *     EXPLORER
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CICS EXPLORER V
+   
+   
+ * FIXED COMPONENT ID
+   5655Y0401
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R511 PSY
+   UP

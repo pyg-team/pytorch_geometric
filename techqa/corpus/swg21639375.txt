@@ -1,0 +1,20 @@
+Title: IBM SCA destinations for IBM Business Process Manager (BPM), WebSphere Process Server (WPS) and WebSphere Enterprise Service Bus (WESB) are not preserved when uninstalling and reinstalling a service module - United States
+
+Text:
+SCA.RecycleDestinations; custom properties; SCA destinations; event sequencing; SCA modules; message queue TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When a Service Component Architecture (SCA) module is uninstalled, by default, its associated destinations are removed, even if there are still messages in the destination queue. In some situations, such as when Event Sequencing is used, messages on the destinations must be preserved.
+
+
+
+RESOLVING THE PROBLEM
+To resolve this issue, use the SCA.recycleDestinations custom Java™ virtual machine (JVM) property for the module. Set the property to false to preserve SCA destinations.
+
+ 
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration WebSphere Process Server AIX, HP-UX, Linux, Linux zSeries, Solaris, Windows, z/OS 7.0.0.5 Business Integration WebSphere Enterprise Service Bus SCA AIX, HP-UX, Linux, Linux zSeries, Solaris, Windows, z/OS 7.5, 7.0.0.5 
+PRODUCT ALIAS/SYNONYM
+ BPM
+WPS
+WESB

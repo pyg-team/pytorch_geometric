@@ -1,0 +1,335 @@
+Title: IBM IC86795: INTERNAL IMPROVEMENTS AND FIXES IN INFOSPHERE OPTIM PERFORMANCE MANAGER VERSION 5.1.1.1 - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The following internal improvements and fixes have been
+   implemented in InfoSphere Optim Performance Manager version
+   5.1.1.1:
+   .
+   .
+   17624 - CDPMA5120E error message pops up on open SQL Statements
+   dashboard for DB2 zOS on OPM installed on HP-UX and Sun Solaris
+   .
+   CDPMA5120E
+   .
+   The Extended Insight data for the database with ID 2 cannot be
+   loaded.
+   An internal error occurred while loading the Extended Insight
+   data.
+   Collect trace files and contact IBM Software Support. You can
+   also review the trace files to find the cause of the problem.
+   .
+   com.ibm.db2pm.end2end.exceptions.E2EModelUpdateException: no
+   JOIN path is existing from table <FACT_ROUTINE> to table:
+   <DIM_EXECUTION_CONTEXT>. Metrics that belong to the table
+   <DIM_EXECUTION_CONTEXT> cannot be loaded for routine aggregation
+   mode <ROUTINE>.
+   Affected requested metrics are: <"(SELECT COUNT(DISTINCT
+   DIM_EXECUTION_CONTEXT.EXECUTION_CONTEXT_ID)FROM
+   DB2PM_3.DIM_EXECUTION_CONTEXT AS DIM_EXECUTION_CONTEXT JOIN
+   DB2PM_3.FACT_EXECUTION_CONTEXT_1 AS FACT_EXECUTION_CONTEXT ON
+   DIM_EXECUTION_CONTEXT.EXECUTION_CONTEXT_ID =
+   FACT_EXECUTION_CONTEXT.EXECUTION_CONTEXT_ID WHERE
+   FACT_EXECUTION_CONTEXT.COLLECTION_TIMESTAMP >=
+   MIN(FACT_ROUTINE.COLLECTION_TIMESTAMP) AND
+   FACT_EXECUTION_CONTEXT.COLLECTION_TIMESTAMP <=
+   MAX(FACT_ROUTINE.COLLECTION_TIMESTAMP) AND ECINVDRID IS NOT NULL
+   AND ECINVDRID = R_RID GROUP BY ECINVDRID)"
+   .
+   --------------------
+   .
+   16457 - Other wait Time calculation not correct
+   .
+   On the Top Execution view the wait time calculation in the pie
+   charts is not correct.
+   .
+   --------------------
+   .
+   16103 - Auto-refresh needs to be disabled on SP drill-down
+   .
+   Automatic refresh needs to be disabled when any of the SP
+   drill-down actions is used. With automatic refresh, the content
+   of of a SP may change while the users inspects the details.
+   Likewise, the previously analyzed SP may disappear from the All
+   Statements view when the user navigates back from a drill-down.
+   .
+   --------------------
+   .
+   17428 - SQLQueryService.getRogueQueryAll() debug output left in
+   dsserver.log
+   .
+   The following debug output is written to dsserver.log in case
+   the SQL Dashboard is refreshed:
+   .
+   SQLQueryService.getRogueQueryAll(), mode = 1, num = 20,
+   isRealTime = false, isFirst = false
+   sqlId =
+   CollectMaxTime = 0
+   execSummaryID = -2147482752
+   execRoutineID = -2147482752
+   execUniqueID =
+   execUniqueGlobalID =
+   .
+   --------------------
+   .
+   17429 - Duplicate heading "Number of Executions" including wrong
+   formatting
+   .
+   There are two columns with header "Number of Executions" in the
+   Web UI.
+   The "left hand number" maps to the "Statement Executions"
+   general counter. The left hand side obviously is for the Number
+   of Stored Procedure Executions.
+   The "Number of Executions" for the Stored Procedures (right hand
+   side in picture) will be renamed to "Number of Stored Procedure
+   Executions".
+   .
+   --------------------
+   .
+   16814 - "Home" button needed which resets History Navigator
+   .
+   A button is added in front of the arrows (left/right) of the
+   History Navigator, which resets the History Navigator contents
+   except the "All Statements" entry.
+   .
+   --------------------
+   .
+   15910 - wrong container shown for a tablespace
+   .
+   On the BP IO Dashboard, Tablespace tab, selecting a tablespace,
+   the container value shown is incorrect.
+   .
+   --------------------
+   .
+   19272 - UPDATE statement executed too often
+   .
+   The frequency of the following update statement:
+   .
+   update db2pm.databases set d_profile_id = 0 where d_profile_id
+   in (select
+   d_profile_id from db2pm.connection_profile right outer join
+   db2pm.databases
+   on d_profile_id = profile_id where d_db_id <> 0 and
+   profile_id is null)
+   .
+   has been improved to lower the CPU consumption.
+   .
+   --------------------
+   .
+   17252 - remove unnecessary SQLException from OPM server trace
+   (ERRORCODE=-4470)
+   .
+   Unnecessary SQLExceptions from OPM server trace
+   (ERRORCODE=-4470) will be removed by checking if the connection
+   is closed before invoking the close() method.
+   This error message is misleading and can cause confusions.
+   .
+   --------------------
+   .
+   17695 - Exceptions -204 and -727 on Connection details report
+   .
+   The following exceptions on Connection details report may happen
+   in in-memory monitoring mode:
+   .
+     Data (id = 22718):
+      + Cannot get the result set metadata.
+       org.eclipse.birt.report.data.oda.jdbc.JDBCException: SQL
+   statement does not return a ResultSet object.
+   SQL error #1:DB2 SQL Error: SQLCODE=-204, SQLSTATE=42704,
+   SQLERRMC=SESSION.CONNDETAILCOM, DRIVER=3.63.138
+   SQL error #2:DB2 SQL Error: SQLCODE=-727, SQLSTATE=56098,
+   SQLERRMC=2;-204;42704;SESSION.CONNDETAILCOM, DRIVER=3.63.138
+   SQL error #3:DB2 SQL Error: SQLCODE=-727, SQLSTATE=56098,
+   SQLERRMC=2;-204;42704;SESSION.CONNDETAILCOM, DRIVER=3.63.138
+    ;
+       com.ibm.db2.jcc.am.SqlSyntaxErrorException: DB2 SQL Error:
+   SQLCODE=-204, SQLSTATE=42704, SQLERRMC=SESSION.CONNDETAILCOM,
+   DRIVER=3.63.138
+   .
+   --------------------
+   .
+   19529 - DB2 SQL Error: SQLCODE=-803, DB2PM_15.FACT_MEMORY_4 -
+   set aggregation rule to LAST for MEMORY_SET_TYPE
+   .
+   The following may happen in the OPM server trace:
+   .
+   SNAP   [2012-09-19 11:28:19.422] [OpmCubAg-15 ] [PETableAggr.]
+   PETableAggregator.aggregate: Exception:DB2 SQL Error:
+   SQLCODE=-803, SQLSTATE=23505, SQLERRMC=1;DB2PM_15.FACT_MEMORY_4,
+   DRIVER=3.63.138, SQLState=<23505>, ErrorCode=<-803>. SQLCA=<One
+   or more values in the INSERT statement, UPDATE statement, or
+   foreign key update caused by a DELETE statement are not valid
+   because the primary key, unique constraint or unique index
+   identified by "1" constrains table "DB2PM_15.FACT_MEMORY_4" from
+   having duplicate values for the index key.. SQLCODE=-803,
+   SQLSTATE=23505, DRIVER=3.63.138>.
+   SNAP   [2012-09-19 11:28:19.422] [OpmCubAg-15 ] [PETableAggr.]
+   PETableAggregator.aggregate statement:INSERT INTO
+   DB2PM_15.FACT_MEMORY_4
+   (COLLECTION_TIMESTAMP,DB_NAME,MEMBER,INTERVAL_LENGTH,POOL_CUR_SI
+   ZE,POOL_CONFIG_SIZE,POOL_WATERMARK,POOL_ID,POOL_SECONDARY_ID,MEM
+   ORY_SET_TYPE) SELECT CAST(? AS
+   TIMESTAMP),DB_NAME,MEMBER,SUM(INTERVAL_LENGTH),AVG(POOL_CUR_SIZE
+   ),MAX(POOL_CONFIG_SIZE),MAX(POOL_WATERMARK),POOL_ID,POOL_SECONDA
+   RY_ID,MEMORY_SET_TYPE FROM DB2PM_15.FACT_MEMORY_3 WHERE
+   COLLECTION_TIMESTAMP > ? AND COLLECTION_TIMESTAMP <= ? GROUP BY
+   DB_NAME,MEMBER,POOL_ID,POOL_SECONDARY_ID,MEMORY_SET_TYPE
+   .
+   Aggregation rules are corrected.
+   .
+   --------------------
+   .
+   16393 - Text of link for tuning/stopping/forcing SQL is changed
+   for zOS
+   .
+   When selecting a zOS database on the SQL dashboard, the link
+   'Learn about tuning SQL statemetns, stopping SQL statements, and
+   forcing applications'
+   is confusing since for zOS no stopping and forcing is available.
+   These parts are removed from the link.
+   .
+   --------------------
+   .
+   18711 - Aggregation to the level 4 fails and is being skipped
+   .
+   The following errors can happen in the server's log:
+   .
+   SNAP   [2012-10-07 12:00:25.971] [E2ECubAg-7  ] [PECubeAggre.] S
+   aggregation of  cube [E2E_HISTOGRAMBIN] due to SQL error: DB2 SQ
+   Error: SQLCODE=-20307, SQLSTATE=428GE, SQLERRMC=DB2PM_7.TMP_E2E
+   DRIVER=3.63.81, SQLState=<428GE>, ErrorCode=<-20307>. SQLCA=<Tab
+   "DB2PM_7.TMP_E2E_HISTOGRAMBIN_4" cannot be attached to table "DB
+   Reason code = "2".. SQLCODE=-20307, SQLSTATE=428GE, DRIVER=3.63
+   .
+   --------------------
+   .
+   20528 - Internal error while collecting real-time metrics
+   .
+   'CDPMA5127E error while real time collecting' may happen
+   Possible error in the datatools.log:
+   .
+   com.ibm.datatools.perf.console.uda.wrapper.rsapi.SQLSummaryMetri
+   Wrapper  - CDPMA5127E The real-time data collection for user ID
+   dashboard ID SQL_DASHBOARD_KEY and session ID <id> cannot be car
+   out.
+   ExplanationMessage = An internal error occurred while collecting
+   real-time metrics.
+   UserResponse = Collect trace files and contact IBM Software
+   Support. You can also review the trace files to find the cause
+   of the problem.
+   com.ibm.datatools.perf.repository.api.access.impl.E2ERealTimeHos
+   tConnectionMetricAccessDelegate.loadMetricsForDatabase(E2ERealTi
+   eHostConnectionMetricAccessDelegate.java:333)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Corrections of diverse internally found issues.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Install InfoSphere Optim Performance Manager version 5.2.0.0
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC86795
+   
+   
+ * REPORTED COMPONENT NAME
+   OPT PER MGR DB2
+   
+   
+ * REPORTED COMPONENT ID
+   5724Y9400
+   
+   
+ * REPORTED RELEASE
+   511
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-09-26
+   
+   
+ * CLOSED DATE
+   2012-12-11
+   
+   
+ * LAST MODIFIED DATE
+   2012-12-11
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   OPT PER MGR DB2
+   
+   
+ * FIXED COMPONENT ID
+   5724Y9400
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R520 PSY
+   UP

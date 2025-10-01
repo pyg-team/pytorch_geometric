@@ -1,0 +1,31 @@
+Title: IBM How do I change a remote node from receive only to send and receive? (SCI38311) - United States
+
+Text:
+STERLINGPRI TECHNOTE (FAQ)
+
+QUESTION
+ How do I change a remote node from receive only to send and receive? (SCI38311) 
+
+ANSWER
+Change the adjacent.node in your network map to indicate send and receive.
+ADJACENT.NODE=((nodename,1364,,TCP,INT,BOTH) This entry will allow both send and receives from the remote node.
+
+ 
+
+HISTORICAL NUMBER
+ PRI22424 
+
+PRODUCT ALIAS/SYNONYM
+ 
+
+Fact
+
+
+CONNECT:Direct OS/390, Release 4.3.00 
+SCI38311
+
+
+Goal
+
+
+FAQ:How do I change a remote node from receive only to send and receive?

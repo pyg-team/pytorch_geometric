@@ -1,0 +1,164 @@
+Title: IBM PK33560: THE WEBSPHERE MQ CICS BRIDGE SENDS SOME REPLY MESSAGES TO THE BRIDGE REQUEST QUEUE RATHER THAN TO THE SPECIFIED REPLYTOQ - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  If there are multiple reply messages from a request message, the
+   first reply is sent to the queue specified in the MQMD.ReplyToQ,
+   but subsequent replies are sent to the bridge request queue.
+   This problem occurs at WebSphere MQ for z/OS V6.0 but not at MQ
+   V5.3.1.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All users of Websphere MQ for z/OS Version 6 *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: A CICS transaction run through the      *
+   *                      bridge issues EXEC CICS SYNCPOINT,      *
+   *                      causing a reply message to be built and *
+   *                      put to the reply queue. After this any  *
+   *                      subsequent reply messages, including    *
+   *                      the end of task message, are sent to    *
+   *                      the request queue instead of the reply  *
+   *                      queue.                                  *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   When building the first reply message the ReplyToQ and
+   ReplyToQmgr in the message header are changed to the request
+   queue. This value is then incorrectly used when opening the
+   reply to queue for subsequent reply messages.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  cbpSendReplyMessage was changed to save the values of ReplyToQ
+   and ReplyToQmgr from the message header prior to building the
+   reply message. After the reply message has been sent, the saved
+   values are restored for use in subsequent messages.
+   000Y
+   CSQCBLK0
+   CSQCBLK1
+   CSQCBLK2
+   CSQCBP00
+   CSQCBP10
+   CSQCBP20
+   CSQCBR00
+   CSQCBR20
+   CSQCBR30
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK33560
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ Z/OS V6
+   
+   
+ * REPORTED COMPONENT ID
+   5655L8200
+   
+   
+ * REPORTED RELEASE
+   000
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2006-10-25
+   
+   
+ * CLOSED DATE
+   2006-11-16
+   
+   
+ * LAST MODIFIED DATE
+   2006-12-01
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UK19745
+   
+   
+
+MODULES/MACROS
+ *     CSQCBLK0 CSQCBLK1 CSQCBLK2 CSQCBP00 CSQCBP10
+   CSQCBP20 CSQCBR00 CSQCBR20 CSQCBR30
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ Z/OS V6
+   
+   
+ * FIXED COMPONENT ID
+   5655L8200
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R000 PSY UK19745 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK19745]
+   UP06/12/01 P F611
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

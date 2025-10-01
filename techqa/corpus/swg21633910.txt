@@ -1,0 +1,14 @@
+Title: IBM Rational Rhapsody Reporter Plus Strategic Direction - United States
+
+Text:
+publish; documentation; report; rpe NEWS
+
+ABSTRACT
+ This artcile explains the the strategic direction for IBM Rational Rhapsody documentation and report generation. 
+
+CONTENT
+IBM Rational Publishing Engine [http://www-01.ibm.com/software/awdtools/pubengine/] is the standard solution for documentation generation and reporting capabilities for IBM Rational products. Rational Publishing Engine is designed to be easy to use and automates document generation from IBM Rational solutions and third-party applications, including Rational Rhapsody. With Rational Publishing Engine you can create templates that can extract data from a single source (single tool product) or from multiple sources (multiple products), while Rational Publishing Engine ensures that you get compliant, high-quality documents in Microsoft™ Word, PDF, HTML, or XSL-FO with complete flexibility in document style. 
+
+The strategic direction for IBM Rational Rhapsody documentation and report generation follows the common IBM Rational vision based on Rational Publishing Engine. Rational Rhapsody already includes pre-built templates for report generation based on Rational Publishing Engine templates as part of its standard installation. Rhapsody users do not require a license of Rational Publishing Engine to generate documents based on the pre-built templates or other templates created using Rational Publishing Engine. Future investment for Rational Rhapsody is focused on improving the support for Rational Publishing Engine. The existing Rational Rhaposdy ReporterPlus feature will continue to be supported and defects addressed, however, development investment in new features is being curtailed. 
+
+Feedback from various clients using Rational Publishing Engine with Rational Rhapsody has been positive, with reports of improved scalability and performance. The Rational Rhapsody team encourages you to try Rational Publishing Engine for your reporting needs with Rational Rhapsody.

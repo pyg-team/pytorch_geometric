@@ -1,0 +1,148 @@
+Title: IBM PM48658: DOORS-Change Error Saving a Requirement with two modules opened in Shareable edit - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  An Error is seen when an object is modified and saved on a
+   module opened with a default RCR after changing to Shareable
+   eidt , if another module is kept open in shareable edit for
+   unmanaged changes.
+   
+   1. open one module in Exclusive edit mode with RCR
+   2. change mode to Shareable edit after its opened, then select
+   yes or no when saved changes dialog box appears
+   3. open another module in Shareable edit with Unmanaged changes
+   4. go back to the first module opened in step 1, unlock then
+   modify a requirement, then save it.
+   5. Error dialog box appears
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   An Error is seen when an object is modified and saved on a
+   module opened with a default RCR after changing to Shareable
+   eidt , if another module is kept open in shareable edit for
+   unmanaged changes.
+   
+   1. open one module in Exclusive edit mode with RCR
+   2. change mode to Shareable edit after its opened, then
+   select yes or no when saved changes dialog box appears
+   3. open another module in Shareable edit with Unmanaged
+   changes
+   4. go back to the first module opened in step 1, unlock then
+   modify a requirement, then save it.
+   5. Error dialog box appears
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  When changing from Exclusive Edit with a RCR then change
+   mode to Shareable Edit after its opened. Then opening
+   another module in Shareable edit with unmanaged changes,
+   going back to the first module and attempting to modify a
+   requirement, the user will be warned that with an
+   appropriate message and module will be downgraded to
+   read-only. No dxl error should occur.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM48658
+   
+   
+ * REPORTED COMPONENT NAME
+   TLOGIC DOORS
+   
+   
+ * REPORTED COMPONENT ID
+   5724V61DR
+   
+   
+ * REPORTED RELEASE
+   520
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-09-26
+   
+   
+ * CLOSED DATE
+   2011-11-08
+   
+   
+ * LAST MODIFIED DATE
+   2011-11-08
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TLOGIC CHANGE
+   
+   
+ * FIXED COMPONENT ID
+   5724V87CG
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R520 PSN
+   UP

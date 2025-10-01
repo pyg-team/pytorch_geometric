@@ -1,0 +1,79 @@
+Title: IBM Enabling Directory Assistance to an LDAP server that duplicates names in the primary Domino Directory - United States
+
+Text:
+ldap; directory assistance; duplicate; duplicate names; names.nsf; nab; address book TECHNOTE (FAQ)
+
+QUESTION
+In many cases, a central LDAP directory is used to provide user credentials in addition to the Domino Directory. When upgrading from Domino R5 to 6.x, however, you find that this configuration no longer allows authentication.
+
+ANSWER
+This issue was reported to Quality Engineering and has been addressed in Domino 6.5.1.
+Directory Services
+SPR# JCHN5P8F4C - The internet/web login code was changed to use the correct identity when attempting to resolve duplicate entries when the DN mapping feature was enabled for an LDAP directory and Directory Assistance was enabled. 
+
+ 
+
+Domino 6.x was designed so that name and password authentication does not stop on the first match found. It will check all available directories for matches and check whether the user-provided password works with any of the directory entries. If the password matches more than one entry, then it will fail unless the Distinguished Names (DN) shared the exact same hierarchy. 
+
+ 
+
+Supporting Information: 
+
+Here is an example of using Domino with a third-party LDAP server. The following two people entries allow the user to have the same password with no additional configuration. 
+
+
+LDAP Server
+
+uid=JDoe, dc=lotus
+mail=JDoe@ibm.com
+uid=JDoe
+givenName=John
+sn=Doe
+cn=John Doe
+
+Domino Directory
+
+Username: JDoe/Lotus
+Internet email: JDoe@ibm.com
+First Name: John
+Last Name: Doe
+Shortname: JohnDoe (This value cannot match the UID in the LDAP user id)
+
+Example of non-working user ID configuration:
+
+LDAP Server
+
+uid=John Doe, dc=IBM
+mail=JDoe@ibm.com
+uid=JDoe
+givenName=John
+sn=Doe
+cn=John Doe
+
+Domino Directory
+
+Username: John Doe/Lotus
+Internet email: JDoe@ibm.com
+First Name: John
+Last Name: Doe
+Shortname: JDoe
+
+In this scenario, if a user attempts to log in with their email address or shortname/uid, the server will find two names. Since the passwords match, each is considered a valid login. If they have different DNs, it is considered an ambiguous match and the login fails.
+
+This problem can be remedied using the NotesDN feature of directory assistance. This feature requires Domino 6.5.1/6.0.4 or later, to function properly. By enabling this feature and specifying an attribute that contains a value identical to the DN in the primary Domino directory, the user should be allowed to log in successfully.
+
+As a second example, we can add an attribute to the LDAP server entry that will allow the server to take advantage of this new feature. The new LDAP server user ID would look like the following:
+
+LDAP Server
+
+uid=John Doe, dc=IBM
+mail=JDoe@ibm.com
+uid=JDoe
+givenName=John
+sn=Doe
+cn=John Doe
+notesname=cn=John Doe,o=Lotus
+
+The directory assistance document would then need to be updated with the name of the new attribute. The "Attribute to be used as Notes Distinguished Name:" field should be populated with notesname.
+
+For more information see the Domino 6.5.1 Admin Help topic: "Using Notes distinguished names in a remote LDAP directory"

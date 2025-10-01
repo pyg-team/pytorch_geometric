@@ -1,0 +1,39 @@
+Title: IBM BPXF135E RC97 RSN02100000 when mounting file system using JCL - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ When running a JCL job to mount a file system, the following error message may be encountered: 
+BPXF135E RETURN CODE 00000097, REASON CODE 02100000 
+
+CAUSE
+Looking up the BPXF135E message in the MVS System Messages Manual, Vol 3 (ASB-BPX), we see: 
+http://publibz.boulder.ibm.com/cgi-bin/bookmgr_OS390/BOOKS/iea2m3c1/12.117 [http://publibz.boulder.ibm.com/cgi-bin/bookmgr_OS390/BOOKS/iea2m3c1/12.117] 
+Explanation: The system was unable to mount the file system because of 
+the condition indicated by the return code and reason code shown. 
+- -- 
+RC97 is indicative of a DYNALLOC error. 
+For these errors, the reason codes are documented in the MVS Authorized 
+Assembler Callable Services Guide, specifically under DYNALLOC: 
+. 
+http://publibz.boulder.ibm.com/cgi-bin/bookmgr_OS390/BOOKS/iea2a8c1/26.3.2?SHELF=all13be9.bks&DT=20120814062724 [http://publibz.boulder.ibm.com/cgi-bin/bookmgr_OS390/BOOKS/iea2a8c1/26.3.2?SHELF=all13be9.bks&DT=20120814062724] 
+. 
+The rsn0210 indicates: 
+Meaning: Requested data set unavailable. The data set is allocated 
+to another job and its usage attribute conflicts with this 
+request. (dsname allocation)(1) 
+Application Programmer Action: Change the allocation request and 
+resubmit the request. 
+Corresponding Message: IKJ56225I 
+
+
+ANSWER
+ 
+
+If this BPXF135E RC97 RSN02100000 error is encountered, the file system is most likely already 
+allocated to OMVS. If so, verify that you really want your job run. If 
+you do, you will need to UNMOUNT the file system. The most convenient 
+way to do that is to go into ISHELL (typically TSO ISH from an ISPF 
+command line), select File_systems , select 1 (Mount table), place a U 
+on the line with the file system you want to unmount, and hit ENTER.

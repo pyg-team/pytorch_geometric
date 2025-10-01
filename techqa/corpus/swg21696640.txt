@@ -1,0 +1,52 @@
+Title: IBM Security Bulletin: GNU C library (glibc) vulnerability affects IBM DataPower Gateway appliances (CVE-2015-0235) - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ GNU C library (glibc) vulnerability that has been referred to as GHOST affects IBM DataPower Gateway appliances. 
+
+VULNERABILITY DETAILS
+CVEID: [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-0235]CVE-2015-0235 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-0235]
+
+
+DESCRIPTION:The gethostbyname functions of the GNU C Library (glibc) are vulnerable to a buffer overflow. By sending a specially crafted, but valid hostname argument, a remote attacker could overflow a buffer and execute arbitrary code on the system with the privileges of the targeted process or cause the process to crash. This issue is being referred to as the "Ghost" vulnerability.
+
+
+CVSS Base Score: 7.6
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/100386 [https://exchange.xforce.ibmcloud.com/vulnerabilities/100386]for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:H/Au:N/C:C/I:C/A:C)
+
+AFFECTED PRODUCTS AND VERSIONS
+All DataPower versions through 6.0.0.11, 6.0.1.7, 7.0.0.4, 7.1.0.2
+
+REMEDIATION/FIXES
+Fix is available in versions 6.0.0.12, 6.0.1.8, 7.0.0.5, 7.1.0.3. Refer to APAR IT06941 [http://www-01.ibm.com/support/docview.wss?uid=swg1IT06941] for URLs to download the fix. Customers using DataPower firmware version 5.0.x, contact customer support.
+
+IBM recommends that you review your entire environment to identify vulnerable releases of glibc including your Operating Systems and take appropriate mitigation and remediation actions. Please contact your Operating System provider for more information.
+
+WORKAROUNDS AND MITIGATIONS
+None known
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v2 Guide [http://www.first.org/cvss/v2/guide] 
+On-line Calculator v2 [http://nvd.nist.gov/CVSS-v2-Calculator] 
+
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] 
+
+ACKNOWLEDGEMENT
+None 
+
+CHANGE HISTORY
+ 10 Feb 2015: Original Version Published 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.

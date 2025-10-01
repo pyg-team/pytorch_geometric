@@ -1,0 +1,40 @@
+Title: IBM Open Mic Webcast: Performance tuning in SDS 8.0.1 VA with a remote DB2 DB  - Tuesday, 18 Apr 2017 [presentation slides are attached; includes link to replay] - United States
+
+Text:
+peoplesec-open-mic; setup; set-up; STEwebcastDocument; ISS_OPEN_MIC WEBCAST
+
+ABSTRACT
+ Ram Reddy of the IBM Security Directory Support team discussed performance tuning in SDS 8.0.1 Virtual Appliance with a remote DB2 database. After the presentation, attendees were given an opportunity to ask the panel of experts questions. 
+
+CONTENT
+On April 18th, the Directory Support team hosted an ISDS Open Mic webcast to discuss performance tuning in SDS 8.0.1 Virtual Appliance with a remote DB2 database.
+
+Throughout the event, attendees were encouraged to comment or ask questions in the Q&A Panel within the WebEx Event Center. Join us for this interactive, educational, lively session. 
+
+
+ * Topic: Performance tuning in SDS 8.0.1 Virtual Appliance with a remote DB2 database 
+ * Date: Tuesday, 18 April 2017 
+ * Time: 11:00 AM EDT (15:00 UTC/GMT, UTC-4 hours) for 60 minutes 
+
+
+How to ask questions in advance We have set aside the following post in the ISDS customer forum within dWAnswers for you to ask questions about this Open Mic topic. We aim to address as many questions as possible during the Open Mic webcast. 
+
+https://developer.ibm.com/answers/questions/366306/ibm-announcement-performance-tuning-in-sds-801-va/ [https://developer.ibm.com/answers/questions/366306/ibm-announcement-performance-tuning-in-sds-801-va/] 
+
+
+Presentation OpenMic-ISDS801_RemoteDB2_PerfTune_18Apr2017-v1.pdf [/support/docview.wss?uid=swg27049257&aid=2]OpenMic-ISDS801_RemoteDB2_PerfTune_18Apr2017-v1.pdf [/support/docview.wss?uid=swg27049257&aid=1] 
+
+
+Audio Replay A recording session is located https://youtu.be/g70bKRhJaL0 [https://youtu.be/g70bKRhJaL0] on the IBM Security Support You Tube channel [https://www.youtube.com/IBMSecuritySupport]. 
+
+
+About Open Mic Webcasts IBM Security Systems Support wants to help you take full advantage of your products. Join us for our Open Mic Webcast series as technical experts share their knowledge and answer your questions. These webcasts are designed to address specific topics and provide an in-depth and focused technical exchange in a convenient online webcast format. 
+
+Visit the Support Technical Exchanges for IBM Security [https://www-947.ibm.com/support/entry/myportal/scheduled_tech_exchanges/ibm_security/ibm_security_support_%28general%29?productContext=-551864534] page to see lists of all scheduled and past Open Mic events 
+[https://www-947.ibm.com/support/entry/myportal/scheduled_tech_exchanges/security_systems/security_systems_support_%28general%29?productContext=-1089885148] 
+We welcome you to follow us on Twitter [http://bit.ly/1jZ80d3] @AskIBMSecurity [http://bit.ly/1jZ80d3]. 
+We welcome you to like us on Facebook [https://www.facebook.com/IBM-Security-Support-221766828033861]. 
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Security IBM Security Directory Suite General Appliance 8.0.1

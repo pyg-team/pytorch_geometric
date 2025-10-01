@@ -1,0 +1,38 @@
+Title: IBM The Statistics Output node in Modeler does not recognize weighting on weighted *.sav files - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ I am working in Modeler and I have added a weighted *.sav file to the sav source node. When I add a Statistics output node to the stream and try to run a Correspondence analysis (which requires the variable to be weighted) and execute the Statistics output node the results returned in the Statistics Output Viewer do not have the weighting applied. 
+
+However if I run the the same task in SPSS Statistics 17.0.1 the weighting is applied and I receive the expected results. However if remove the weighting by adding the syntax "WEIGHT OFF" and rerun the analysis in SPSS Statistics 17.0.1 I receive the same results returned by the process performed in Modeler.
+
+Why is Modeler not recognizing the weighting in the sav file?
+
+I could add the weighting via SPSS syntax by adding a Statistics transform node to get the same results as SPSS Statistics 17.0.1. However, it is a very tedious task to create the syntax from scratch. 
+
+RESOLVING THE PROBLEM
+This problem has been reported to SPSS Development. We apologize for any inconvenience this has caused. Please see the workaround described below.
+
+The workaround is to add the weighting via SPSS syntax in a Statistics Transform node in Modeler
+
+1. Open the sav file in SPSS Statistics and use the Data>>Weight Cases.. utility to create the weighted variable. 
+2. Click on "Paste" to paste the syntax into a syntax editor.
+3. Copy the "WEIGHT BY <Variable name>."
+4. In the Modeler stream add a Statistics Transform node to the stream between the sav data source node and Statistics Output node.
+5. Double click on the Statistics Transform node to edit the node.
+6. Check the Syntax Editor radio button to bring up the syntax editor section in the node.
+7. Paste the "WEIGHT BY <Variable name>." you copied from SPSS Statistics and OK.
+8. Run the Statistics Output node and the weight will be applied.
+
+Note: you can also create the syntax directly in the syntax window by using the WEIGHT BY <Variable name>. syntax if you are comfortable with SPSS syntax
+
+RELATED INFORMATION
+ Need more help? Our Modeler forum is Live! [https://developer.ibm.com/answers/topics/modeler/?smartspace=predictive-analytics]
+
+
+ 
+
+HISTORICAL NUMBER
+ 82129

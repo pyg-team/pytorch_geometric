@@ -1,0 +1,39 @@
+Title: IBM Unable to drag and drop documents to a folder using Workplace XT - United States
+
+Text:
+Document Entry Template; The file does not exist; drag and drop TECHNOTE (TROUBLESHOOTING)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ English 
+
+PROBLEM(ABSTRACT)
+ Error when adding content to a folder associated with a document entry template using 
+Workplace XT's drag-n-drop feature;
+
+
+
+
+SYMPTOM
+The file does not exist <path-to-disk- server>\<object store name>\content\FN17\FN17\FN{139BB040-8891-4911-A503-9D6DBA153E58} 
+{0BF63976-071B-4823-9AF6-1398D0F82B53}-0.xml." 
+
+
+CAUSE
+The xml file associated to the document entry template do not exist any longer.
+
+DIAGNOSING THE PROBLEM
+Using Workplace XT attempt to open the folder (right-click) -> Preference -> Associate Entry Templates and see if the document entry template GUID can be removed this way. Likely this will not work.
+
+RESOLVING THE PROBLEM
+When you search for the xml file reported in the error message, it does not exist in the object store anymore. Using FileNet Enterprise Manager (FEM), get the properties of the folder that the document entry template is associated with. Select the 'annotations' tab, there should be a GUID showing up, similar to this;
+
+
+
+
+
+[/support/docview.wss?uid=swg21662803&amp;aid=1]
+If the GUID for the missing document entry template xml file shows up like in the illustration above, delete it. Using Workplace XT attempt to open the folder (right-click) -> Preference -> Associate Entry Templates 
+
+You now should be also able to drag and drop documents into this folder, or associate a new document entry template to it. 
+
+*Note* only delete this GUID entry if the xml file in the error message cannot be found.

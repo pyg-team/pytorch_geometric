@@ -1,0 +1,63 @@
+Title: IBM WebSphere Message Broker support position regarding Solaris zones - United States
+
+Text:
+zones zone solaris sun TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This contains the WebSphere Message Broker support position regarding Solaris "zones". 
+
+RESOLVING THE PROBLEM
+WebSphere Message Broker is supported in zone environments as outlined below. These are built upon MQ when installed using their recommended procedure as mentioned in WebSphere MQ v6.0 support position regarding Solaris zones. [http://www-01.ibm.com/support/docview.wss?rs=171&uid=swg21233258]
+
+
+Approach: Installing into all Zones
+Overview
+On systems with multiple non-global zones, Solaris allows an install into all non-global 'whole root' zones at once.
+Work required
+Problem 1: This is not possible with WebSphere Message Broker. The Message Broker installer is not able to install into all zones automatically.
+Workaround: Install into each non-global zone manually – By default the installation directory points to a directory local to each non-global zone so the default install will suffice.
+
+
+Approach: Installing WebSphere Message Broker into the Global Zone
+Overview
+This is the closest approach to the existing install.
+Work required
+None - Follow the standard install.
+
+
+Approach: Installing WebSphere Message Broker into the Global Zone and using in non-global 'Sparse Root' zones
+Overview
+The principle here is to have one instance of your executables (/opt/IBM/mqsi/6.1/) which is visible to all non-global sparse root zones. Each non-global zone would have it's own /var/mqsi and so it's own brokers. With each zone having it's own IP address, it essentially gives you the appearance of multiple machines with MB, but all sharing the same installed executables.
+Work required
+Problem 1: Installing into the Global Zone does not provide the non-global zones with access to the product binaries.
+Workaround: Create a fileystem mount in each of the Zones pointing to the /opt/IBM/mqsi/6.1/ directory on the global zone.
+Problem 2: Installing into the Global Zone does not create the necessary /var/mqsi filesystem in non-global zones. 
+Workaround: The /var/mqsi directory structure can be copied from the global zone to a non-global zone. Note that the security permissions will need to be carefully checked to ensure that they are copied correctly. 
+Problem 3: The installer ensures that an 'mqbrkrs' group are created. As the installer is not being run in the non-global zones, these user and group ids are missing.
+Workaround: An ‘mqbrkrs’ group should be manually created in each non-global zone, and these used in security permission settings for /var/mqsi/ files and directories in the zone.
+
+
+Approach: Installing WebSphere Message Broker into a non-global 'Whole Root' or 'Sparse Root' zone
+Overview
+This is the simplest configuration. It allows WebSphere Message Broker to be used from within the zone, but puts nothing into the global zone that would cause it to visible outside of the zone in which it is installed. Installs in different zones would not share anything.
+Work required
+None - Follow the standard install.
+
+
+Approach: Installing WebSphere Message Broker into a custom zone configuration
+Overview
+Installing into a custom zone configuration - based on a Sparse Root approach but including a local copy of /usr.
+This is configured in zonecfg using: remove inherit-pkg-dir dir=/usr
+Work required
+As long as /var/mqsi is private to the zone you should be able to install as normal. Otherwise following the instructions for “Installing WebSphere Message Broker into the Global Zone and using in non-global 'Sparse Root' zones”
+
+
+Support for other zones configurations 
+We do not provide supported instructions for achieving an install into configurations other than those described here. 
+
+However, we do support a successfully installed WebSphere Message Broker into other zones configurations, provided that the configuration itself is not causing the problem for which support is requested.
+
+
+
+PRODUCT ALIAS/SYNONYM
+ WMB MB

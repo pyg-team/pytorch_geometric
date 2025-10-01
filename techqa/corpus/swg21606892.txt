@@ -1,0 +1,74 @@
+Title: IBM TWS master installation fails with some files "not found" error - United States
+
+Text:
+DISSE0082E; DISSE0005E; start; embedded; version TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ ERR [/usr/bin/sh: /opt/twsuser/wastools/startWas.sh: not found
+
+Re-installation of Tivoli Workload Scheduler (TWS) after a previous TWS instance's home directory has been removed can result in errors about files not found. 
+
+SYMPTOM
+Example - /tmp/tws84/summary.log shows the following: 
+
+********************************************
+Installation completed with errors
+
+The following item failed to install:
+Start the embedded version of WebSphere Application Server, version 6.1 (twsserver01)
+
+It failed for the following reason:
+OUT [null] 
+ERR [/usr/bin/sh: /opt/twsuser/wastools/startWas.sh: not found
+
+CMW3202E Command failed.]
+
+
+CAUSE
+Cause of the issue running the re-installation is due to:
+
+1. Manual cleanup of <TWS dir>, including removing the _uninstall directory
+2. The new TWS installation is started from the same root shell where the Software Distribution (SWD) environment had been previously sourced.
+
+Software Distribution commands that run in the re-installation do not work since the directory from where the SWD environment was sourced no longer exists. Since SWD environment variables are set within a non-existent path, it is not able to correctly install the SWD .SPB files.
+
+This is also mentioned in the TWS v8.6 Planning and Install Guide in the Troubleshooting section:
+"An agent installation fails if you launch it from a shell where you set the environment variables using the swd_env script:
+
+The following error occurs when you install an agent:
+AWSFAB035E The installation has failed.
+You can receive this error if you are running the installation from a shell script where you previously set up the Software Distribution environment variables using the swd_env.cmd or the . . /swd_env.sh."
+
+
+ENVIRONMENT
+This issue was observed on AIX 6.1, but the same conditions could be possible on other Unix platforms.
+
+
+
+DIAGNOSING THE PROBLEM
+Review the installation log files in /tmp/tws84, including summary.log, twsismp.log, and also *Out.xml files corresponding to the individual installation steps. 
+
+ 
+
+Example of errors related to "not found" files present in *Out.xml files: 
+
+
+- ItemConfigure_TWS_Prop_FilesOut.xml with: 
+move_libatrc: 
+[copy] Warning: Could not find file <TWS dir>/trace/libatrc.a to copy. 
+- ItemConfigureTWSInstanceOut.xml shows error (but didn't fail step): 
+<stderr><TWS dir>/_uninstall/ACTIONTOOLS/*.historyFile not found.
+- After a separate corrective step on /.swdis/work/epsp.cat, ItemAgentInstallOut.xml contained:
+DISSE0082E Error decoding software package object. It could be corrupted, or not a valid object, or a network error occurred. 
+DISSE0005E Operation unsuccessful.
+
+
+RESOLVING THE PROBLEM
+Close the existing shell where the Software Distribution (SWD) environment had been sourced. Resume the installation from a new shell where you did not set the SWD environment and complete the installation.
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ Maestro
+TWS
+TWA

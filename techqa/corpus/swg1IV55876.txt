@@ -1,0 +1,160 @@
+Title: IBM IV55876: Synchronization issues with xlsThreadTermination/xcsDecrementQuickCellUseCount - United States
+
+Text:
+  A FIX IS AVAILABLE
+WebSphere MQ V7.5 Fix Pack 7.5.0.4 [http://www-01.ibm.com/support/docview.wss?uid=swg24038252]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Synchronization issues may happen in systems with high MQ
+   connection/disconnections which leads to incorrect quickcell
+   usecount. FDCs will be generated indicating the corrupted
+   quickcells. Following FDCs with probe ids XC476004,XC034070,
+   XC302005, XC014030 may be generated. The FDCs will have the
+   function stack
+    MQM Function Stack
+   ExecCtrlrMain
+   zxcProcessMessage
+   zxcMQIRequest
+   zxcConnectAgent
+   xlsAbandonRecoveryToken
+   xcsDecrementQuickCellUseCount
+   xcsFFST
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   This issue may occur on machines which has high number MQ
+   connections and disconnections.
+   
+   
+   Platforms affected:
+   MultiPlatform
+   
+   ****************************************************************
+   PROBLEM SUMMARY:
+   The synchronizing problem occurred because the quickcell
+   usecount was not being calculated correctly.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The code changes have been made to include additional checks for
+   the PID and prevent a partially initialized data structure from
+   being used during MQCONN, thus eliminating the synchronization
+   issue.
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+   Version    Maintenance Level
+   v7.5       7.5.0.4
+   
+   The latest available maintenance can be obtained from
+   'WebSphere MQ Recommended Fixes'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037]
+   
+   If the maintenance level is not yet available information on
+   its planned availability can be found in 'WebSphere MQ
+   Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV55876
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ AIX V7
+   
+   
+ * REPORTED COMPONENT ID
+   5724H7221
+   
+   
+ * REPORTED RELEASE
+   701
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-02-25
+   
+   
+ * CLOSED DATE
+   2014-03-25
+   
+   
+ * LAST MODIFIED DATE
+   2014-04-23
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ AIX V7
+   
+   
+ * FIXED COMPONENT ID
+   5724H7221
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R701 PSY
+   UP

@@ -1,0 +1,236 @@
+Title: IBM IT02526: "OPTIMIZING PERFORMANCE" GUIDE DOESN'T PROVIDE INFORMATION ABOUT VIRTUAL MACHINES INSTRUMENTATION TRACE CATEGORIES - United States
+
+Text:
+AIX  A FIX IS AVAILABLE
+IBM Tivoli Storage Manager V7.1 Fix Pack 1 (7.1.1.000) Server Downloads [http://www-01.ibm.com/support/docview.wss?uid=swg24038353]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The Optimizing Performance guide shows the table that lists the
+   general API client instrumentation categories, but there is no
+   information about the virtual machines instrumentation trace
+   categories.
+   
+   The following API categories are included in the instrumentation
+   trace report (file named dsminstr.report.xxx), but are not
+   documented in case of performance analysis of virtual machine
+   backup using Tivoli Storage Manager client and Tivoli Data
+   Protection for Virtual Environments.
+   
+   VM Snapshot
+   - Represents time taken to generate and remove a VM guest
+   snapshot with VMware using the VI SDK.
+   - Some of this work is done asynchronously (for example:
+   snapshot delete).
+   
+   VM Send Data
+   - Represents time taken to send data to the Tivoli Storage
+   Manager server.
+   - Usually this activity is occurring in an interleaved fashion
+   with the "VM I/O" reads from VMware to fill the buffer we will
+   later send.
+   - Each call is a buffer send to the Tivoli Storage Manager
+   server. This category encapsulates the time for client-side
+   dedup processing/encryption as well as the network send.
+   - For FULL/IFFULL backups, the buffer is typically filled to 256
+   KB prior to send. With INCR/IFINCR backups, less data might be
+   in the buffer.
+   
+   VM Get Data
+   - Represents time taken to receive data from the Tivoli Storage
+   Manager server.
+   - This can involve fetching control files from the Tivoli
+   Storage Manager server during incremental backup.
+   - Can also involve buffer receives during VM guest restore which
+   will later be written out using "VM I/O" writes to VMware.
+   
+   VM Query
+   - Represents queries to the Tivoli Storage Manager server
+   regarding certain options.
+   - Queries conducted to determine if deduplication and/or
+   compression are used. Also node filespace queries (for virtual
+   machines).
+   
+   VM Query VE
+   - Represents query made to VMware to determine changed disk
+   areas (blocks) for VM guest disks. Uses the VMware VI SDK to
+   determine a set of changed blocks.
+   
+   VM Assign
+   - Represents Tivoli Storage Manager server group assignment
+   using the dsmGroupHandler.
+   
+   VM VCM Lock
+   - Represents semaphore locking which takes place during VCMLIB
+   (Volume Control Manager) API calls.
+   - Involves locking for volume control data reads/updates. Block
+   control data manipulation, finding megablocks in a volume, etc.
+   
+   VM Transaction
+   - Represents transaction processing conducted with the Tivoli
+   Storage Manager server (start/end).
+   
+   VM I/O
+   - Represents reading and writing activity done with VMware VM
+   guest disks using the Vix Disk Library for VDDK disks.
+   - This can involve any of the available transport paths (NBD,
+   NBDSSL, SAN, HOTADD) used by the client.
+   - Performance can vary depending on whether the disks being
+   interacted with were thin or thick provisioned - also: whether
+   they were/are lazy zeroed or not.
+   - Reading from VMware disks over SAN has proved somewhat slower
+   than direct reads from the disks using a raw volume I/O tool.
+   - During VM guest backup, reads from VMware (<=256 KB each) are
+   usually interleaved with sends to Tivoli Storage Manager from
+   the same thread (no double-buffering yet in the code).
+   - Represents time reading ctl file from local disk when sending
+   it to the Tivoli Storage Manager server during backup.
+   
+   VM Control File I/O
+   - Represents VM guest CTL file ("control file") I/O and
+   interaction.
+   - Writing control files during VM guest operations.
+   
+   Thread Wait
+   - For Tivoli Storage Manager for VE clients, this has been found
+   to represent the time it takes to open and close VDDK disks.
+   - When you see this category, this means that this thread is
+   waiting on the "utility thread" to open or close a VDDK (VM
+   guest) disk.
+   - With the Tivoli Storage Manager client during multi-session
+   backup, there can be multiple threads which are backing up VM
+   guests, but only 1 "utility thread" opening and closing guest
+   disks.
+   - This is a VMware limitation where the same thread that opens a
+   disk has to close it.
+   - In the General Availability code, disks are opened/closed one
+   at a time by the utility thread, increasing the possibility of
+   bottlenecks for a single client instance.
+   - The utility thread opens/closes the disks via API calls to the
+   VCenter/ESXi host.
+   - The open/close time can also include the time taken to mount
+   the disk on the client/proxy system.
+   
+   Tivoli Storage Manager Versions Affected:
+   Tivoli Storage Manager client 6.4.x. and 7.1.x on all supported
+   platforms
+   
+   Initial Impact:
+   Low
+   
+   Additional Keywords:
+   trace performances doc tuning vm vmware tdp tsm
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * All Tivoli Storage Manager server users.                     *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * See error description.                                       *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * None                                                         *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Information about the Tivoli Storage Manager virtual machine
+   instrumentation categories are available in Technote 1676872 at:
+   http://www.ibm.com/support/docview.wss?uid=swg21676872 [http://www.ibm.com/support/docview.wss?uid=swg21676872]
+   
+   The same information will be added to the Tivoli Storage Manager
+   Optimizing Performance Guide in the "Virtual machine
+   instrumentation categories" topic.
+   
+   Affected platforms: AIX, HP-UX, Solaris, Linux, and Windows.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT02526
+   
+   
+ * REPORTED COMPONENT NAME
+   TSM CLIENT
+   
+   
+ * REPORTED COMPONENT ID
+   5698ISMCL
+   
+   
+ * REPORTED RELEASE
+   71W
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-06-13
+   
+   
+ * CLOSED DATE
+   2014-07-16
+   
+   
+ * LAST MODIFIED DATE
+   2014-07-16
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

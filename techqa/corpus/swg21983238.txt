@@ -1,0 +1,86 @@
+Title: IBM No Scan File Report info but itsitsearch exist on BigFix sha1 dir - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ itsitsearch and delta itsitsearch files exist in BigFix servers 
+
+sha1 but they are NOT being imported. 
+
+The sha1 in the sam.scan_files database are the SAME as in the BigFix 
+
+sha1 folder. There no Scanned File Report information. 
+
+CAUSE
+The import failed with below error 
+
+
+2016-04-21 15:39:58 (+0:00:06.880) DEBUG: SAM::FileFactDelta: Updating
+versions: {256343=>{:version=>"17", :delta_epoch=>"1444872519", 
+:full_scan_file_id=>1511, :updated_at=>2016-04-21 02:20:59 UTC, 
+:computer_id=>256343}, 198644=>{:version=>"18", 
+:delta_epoch=>"1444893434", :full_scan_file_id=>460, 
+:updated_at=>2016-04-21 02:20:59 UTC, :computer_id=>198644}, 
+38879=>{:version=>"20", :delta_epoch=>"1444868706", 
+:full_scan_file_id=>300, :updated_at=>2016-04-21 02:20:59 UTC, 
+:computer_id=>38879}, 184426=>{:version=>"19", 
+:delta_epoch=>"1444877836", :full_scan_file_id=>1586, 
+:updated_at=>2016-04-21 02:20:59 UTC, :computer_id=>184426}, 
+131917=>{:version=>"23", :delta_epoch=>"1444881428", 
+:full_scan_file_id=>1849, :updated_at=>2016-04-21 02:20:59 UTC, 
+:computer_id=>131917}, 277353=>{:version=>"18", 
+:delta_epoch=>"1444867108", :full_scan_file_id=>37, 
+:updated_at=>2016-04-21 02:20:59 
+.... 
+******** 4,995,509 characters written to a single line *********
+.... 
+:computer_id=>558121}, 557764=>{:version=>"15", 
+:delta_epoch=>"1444867983", :full_scan_file_id=>1093890, 
+:updated_at=>2016-04-21 02:20:59 UTC, :computer_id=>557764}, 
+557181=>{:version=>"22", :delta_epoch=>"1444871362", 
+:full_scan_file_id=>1093912, :updated_at=>2016-04-21 02:20:59 UTC, 
+:computer_id=>557181}, 556461=>{:version=>"13", 
+:delta_epoch=>"1445001579", :full_scan_file_id=>1093909, 
+:updated_at=>2016-04-21 02:20:59 UTC, :computer_id=>556461}} 
+
+Note: this ONE line shown above is almost 5,000,000 characters long. 
+
+
+2016-04-21 15:40:03 (+0:00:04.477) ERROR: SQL: {call [dbo].[etl_sam__file_fact_delta](?,?,?,?,?)} 
+2016-04-21 15:40:03 (+0:00:00.000) ERROR: Batch execution error: 
+2016-04-21 15:40:03 (+0:00:00.000) INFO: ETL from Data Source - SAM:: FileFact (0x00000044C035FD8C - 0x00000044C7EA835D): Failed 
+
+2016-04-21 15:46:21 (+0:06:18.071) ERROR: Java::JavaSql:: 
+BatchUpdateException: Error converting data type nvarchar to bigint. 
+com.microsoft.sqlserver.jdbc.SQLServerPreparedStatement.executeBatch 
+(com/microsoft/sqlserver/jdbc/SQLServerPreparedStatement.java:1178) 
+java.lang.reflect.Method.invoke(java/lang/reflect/Method.java:507) 
+Sequel::JDBC::Dataset::PreparedStatementBatchMethods.execute_batch(C: 
+/Program Files/IBM/BFI/wlp/usr/servers/server1/apps/tema.war/WEB- 
+INF/lib/sequel/extensions/batch_execution.rb:23) 
+Sequel::JDBC::Dataset::PreparedStatementBatchMethods.execute_batch(C: 
+
+
+
+
+ENVIRONMENT
+IEM Version: 9.2.2 
+
+OS: Windows Server 2008 R2 
+Bigfix version: 9.2.5 
+
+
+RESOLVING THE PROBLEM
+Fixed under 
+
+internal defect 152876: ETL failed on FileFacts step 
+
+and the fix is in Version 9.2.3 release. 
+
+ 
+
+HISTORICAL NUMBER
+ 53827
+227
+000

@@ -1,0 +1,157 @@
+Title: IBM PK25903: NO DATA GETS INTO THE DATABASE - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  There is a problem with filtering/excluding classes.  Here is
+   a brief description (using an example) of the problem.
+   
+   - In the BCM xml file, all com.ibm.* methods have been enabled.
+   - In the DC configuration, com.ibm.* has been added into the
+     Exclude list, filtering these methods back out.
+   - In the DC configuration, we have put
+     com.ibm.cyns.connector.* into the Exclude overrid list, so
+     the net effect should be that you only see
+     com.ibm.cyns.connector.* methods at level 3.
+   
+   No data gets into the Database.  However, when Occurrence traps
+   are run that pick up methods matching "get", we see method
+   traces from classes in the com.ibm.cyns.connector.* package.
+   However, these traces are corrupted:
+   depths jump around, like from +2 to -1.  This happens for 100%
+   of the occurrences.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  n/a
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  There is a problem with filtering/excluding classes.  Here is
+   a brief description (using an example) of the problem.
+   
+   - In the BCM xml file, all com.ibm.* methods have been enabled.
+   - In the DC configuration, com.ibm.* has been added into the
+     Exclude list, filtering these methods back out.
+   - In the DC configuration, we have put
+     com.ibm.cyns.connector.* into the Exclude overrid list, so
+     the net effect should be that you only see
+     com.ibm.cyns.connector.* methods at level 3.
+   
+   No data gets into the Database.  However, when Occurrence traps
+   are run that pick up methods matching "get", we see method
+   traces from classes in the com.ibm.cyns.connector.* package.
+   However, these traces are corrupted:
+   depths jump around, like from +2 to -1.  This happens for 100%
+   of the occurrences.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Level 3 performed some code changes, that may resolve
+   the issue with negative depths for pmr 20047,724,724.
+   There are two attached files - archiveagent.jar
+   and octigate-was.ear
+   
+   To apply these changes you need to move 'archiveagent.jar'
+   into <MS>/lib folder and redeploy WAS ITCAM_Application
+   using 'octigate-was.ear'.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK25903
+   
+   
+ * REPORTED COMPONENT NAME
+   ITCAM WAS MGING
+   
+   
+ * REPORTED COMPONENT ID
+   5724L62MS
+   
+   
+ * REPORTED RELEASE
+   600
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2006-06-02
+   
+   
+ * CLOSED DATE
+   2006-08-23
+   
+   
+ * LAST MODIFIED DATE
+   2006-08-23
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ITCAM WAS MGING
+   
+   
+ * FIXED COMPONENT ID
+   5724L62MS
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R600 PSY
+   UP

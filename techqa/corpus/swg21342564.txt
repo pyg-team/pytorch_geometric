@@ -1,0 +1,26 @@
+Title: IBM Cascade prompts causing hidden data on drill down report - United States
+
+Text:
+[Enter additional search terms. Place a space between keywords.] TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ If we have prompts on 3 levels of a hierarchy, and on the report, define the top level field, and a measure, then it only returns the measure value if you enter parm values for the top level, or ONE MORE level down. If you enter a prompt value for the 3rd level of the hierarchy, then it shows nothing for the measure. 
+
+HOWEVER, if you drill to level 2, now you do see the correct data. 
+
+CAUSE
+This behavior is demonstrated in the attached "Detail Filter.txt" report (running against the Great Outdoors Company" cube. Because we're doing a detail filter on the "Product Line", "Product Type" and "Product Name" level, the report engine has to retrieve data from the cube based on the lowest level referenced (Product Name, in this case). To get the aggregates at the "Product Type" level, the MDX references the "Ancestor" of each product name. This works fine, but when it tries to get the aggregates at the "Product Line" level, it's trying to take the "Ancestor" of the "Ancestor". This isn't a valid use of the ancestor function, which is why we don't any values for that level.
+
+RESOLVING THE PROBLEM
+1) Use a tree prompt instead of cascading list prompts. The attached sample "Filter with Tree.txt" shows a simpler example that uses a tree prompt to accomplish the same thing that the original example did.
+
+2) If using cascading list prompts is needed, the attached sample "Filter with MDX Union.txt" demonstrates one approach to making this work. There are a couple of special tricks that we need to use to make this work correctly. If we look at the main query (query1), we use three dataitems to construct the "product" list. The first one ("Product Line" is just a standard data item (dragged from the model). The second one (Prompted Set) is effectively the "list" of items selected from the prompt, and uses prompt macros to supply a "default" (which allows the prompt to be optional). The third data item("Filtered Product Line") uses an intersect function to combine the first two, and only return data items that are in both. In principle, we could combine the second and third data items together, but we do need to have at least two in order for the drill up/drill down to work. That's because when we "drill", Cognos replaces the whole data-item expression, which would get rid of all our intersection/unions commands. We're able to get around that by setting up a "member Set" (that additional tab we see at the bottom of the query) and defining the advanced drill behavior. On the member tab we set up a hierarchy (with the 2nd and 3rd data items listed a "children" of the 1st data item), and then in Advanced Drill Properties, we tell it to "Preserve" the expression for the child members, and "Replace" the expression for the parent. This technique is documented in the Proven Practice document links below.
+
+RELATED INFORMATION
+# [\] Creating Dynamic Analysis Studio Type Reports in Report Studio Part-1 http://support.cognos.com/supported/tti/public/docs/cognos_pp_reporting_creating_dynamic_analysis_studio_type_reports_in_report_studio_part-1.pdf?lid=cognos_pp_reporting_creating_dynamic_analysis_studio_type_reports_in_report_studio_part-1 Creating Dynamic Analysis Studio Type Reports in Report Studio Part-2 http://support.cognos.com/supported/tti/public/docs/cognos_pp_reporting_creating_dynamic_analysis_studio_type_reports_in_report_studio_part-2.pdf?lid=cognos_pp_reporting_creating_dynamic_analysis_studio_type_reports_in_report_studio_part-2 
+
+
+1037400_1.zip [/support/docview.wss?uid=swg21342564&aid=2] - 1037400_1.zip [/support/docview.wss?uid=swg21342564&aid=1]
+
+HISTORICAL NUMBER
+ 1037400

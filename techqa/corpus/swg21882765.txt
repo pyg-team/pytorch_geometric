@@ -1,0 +1,61 @@
+Title: IBM Login attempt fails with SOAP fault "Cannot complete login due to an incorrect user name or password." - United States
+
+Text:
+fail; error; 1661; vmvisdk.cpp; 12; 115 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Data protection for Virtual Environments: VMware login attempts fail with an ANS9365E VMware vStorage API error. Details show and API error reporting SOAP fault. 
+
+SYMPTOM
+Users will be able to log into the OS with the domain account created to run backups as well as run the set password command on the datamover with the account and password. However when the datamover attempts to connect to vCenter it will report an error for the incorrect account or password being used.
+
+
+CAUSE
+Incorrect configuration of Vmware Vcenter Single Sign On (SSO) prevents the client from logging into Vcenter.
+
+ENVIRONMENT
+Vcenter 5.1 and higher with SSO.
+
+DIAGNOSING THE PROBLEM
+Checking the vCenter accounts and permissions shows that the account which is set for use with the VMCUSER option does have the correct rights (for example it is listed as an Admin). 
+
+
+Logging into the OS with the account is successful and the correct password has been set using dsmc set password command. 
+
+ 
+
+After doing this, error logs for scheduled backup or manual backup attempt of VMs on the datamover will still report the following messages, 
+
+
+04/05/2015 23:40:43 ANS9365E VMware vStorage API error for virtual 
+machine ''. 
+TSM function name : __ns2__Login 
+TSM file : vmvisdk.cpp (1661) 
+API return code : 12 
+API error message : SOAP 1.1 fault: "":ServerFaultCode[no subcode] 
+"Cannot complete login due to an incorrect user name or password." 
+Detail: 
+
+04/05/2015 23:40:43 ANS4152E Failure initializing VMware virtual 
+machine environment. RC=115. Refer to client dsmerror.log for detailed
+error messages. 
+
+04/05/2015 23:40:43 ANS1512E Scheduled event 'Daily-VM-Backup' failed. 
+Return code = 12. 
+
+
+
+
+RESOLVING THE PROBLEM
+Ensure that within vCenter SSO that an identity source has been created which contains the account being used for the VMCUSER option. Also ensure that the role this user is assigned to has the correct permissions associated with it for any VM that the this user will be expected to back up. 
+
+ 
+
+The permissions that the user needs to have are outlined in the Virtual Environments administration guide in the table at the following link for 7.X versions.
+http://www.ibm.com/support/knowledgecenter/SS8TDQ_7.1.2/com.ibm.itsm.ve.inst.doc/c_ve_reqt_install_permissions.html [http://www-01.ibm.com/support/knowledgecenter/SS8TDQ_7.1.2/com.ibm.itsm.ve.inst.doc/c_ve_reqt_install_permissions.html]
+
+For version 6.4 the required permissions are listed in the following document, 
+http://www-01.ibm.com/support/docview.wss?uid=swg21497028 [http://www-01.ibm.com/support/docview.wss?uid=swg21497028]
+
+RELATED INFORMATION
+#vCenter Single Sign-on guide [https://pubs.vmware.com/vsphere-55/index.jsp#com.vmware.vsphere.security.doc/GUID-75D4E587-3F9B-4B50-96DA-D6DB6D1781D7.html]

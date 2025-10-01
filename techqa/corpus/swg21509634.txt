@@ -1,0 +1,44 @@
+Title: IBM How to set an appropriate number of Portal Datasource connections in WebSphere Portal - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+For a given maximum number of Portal WebContainer threads set, what should I set my maximum Portal datasource connections to? 
+
+ANSWER
+When tuning WebSphere Portal at version 6.0 and beyond, one of the concerns that arises is how should one tune the maximum number of Portal datasources. Portal can and does make heavy internal use of datasources, so miscalculating this (maximum) value can have a significant impact on system behavior. Out of the box, the default maximum setting is 50. This may or may not be sufficient for any given system. 
+
+Each Portal request may make any number of database (DB) requests ranging for none to several.. Further, customized portlets and PPR (Parallel Portlet Rendering) may cause several concurrent DB requests. By default, the maximum number of WebContainer threads is also set to 50. Therefore the ratio between the maximum number of Portal datasource connections to the maximum number of Portal WebContainer threads is 1:1. Support has found that this ratio is often too low for the best performance. In the past, there have been recommendations of this ratio as high as of 2:1 or even 2.5:1. 
+
+However, these values caused concern in large deployments where the TOTAL number of maximum datasource connections might start to place a strain on backend resources. Recent analysis suggests that these ratio values may be safely reduced to 1.25: 1 for all Portal datasource, with the exception of the jcrDB when WCM is used extensively. In this case, we recommend a ratio of 1.5:1 
+
+----------------------------------------------------------------------------------------------------------------- 
+
+For example, if your system's 
+
+Maximum number of WebContainer threads is 100 
+
+then you should set your 
+
+Maximum number of Portal datasource connections to 125 
+
+for each Portal datasource. 
+
+----------------------------------------------------------------------------------------------------------------- 
+
+If during Runtime, you should find that your running out of Portal Datasource connections, you may go ahead and increase the ratio up to 2:1. Please be aware of how this might impact your backend resources and be sure to scale your database accordingly. 
+
+------------------------------------------------------------------------------------------------------------------ 
+
+To find the number of WebContainer threads that are running in any particular Portal server, use the WebSphere Application Server Admin Console and go to the following location: 
+
+Servers ---> Application Servers --> WebSphere_Portal (your server) --> Thread Pools --> WebContainer 
+
+ 
+
+To find the Data Source setting for your Portal datasources, use the WebSphere Application Server Admin Console to go to the following location: 
+
+Resources ---> Data Sources ---> wpdbDB (for example) --> Connection pools 
+
+--------------------------------------------------------------------------------------------------------------------

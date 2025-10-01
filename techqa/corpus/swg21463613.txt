@@ -1,0 +1,90 @@
+Title: IBM （参考）.ear ファイルのインストールが成功した後も EJB WIMServiceHome が見つからない - United States
+
+Text:
+ 技術情報(FAQS)
+
+質問
+ ConfigEngine の wp-add-property タスクが次のエラーメッセージを出力して失敗します。
+
+Cannot find EJB: ejb/com/ibm/websphere/wim/ejb/WIMServiceHome
+[wplc-add-property] javax.naming.ServiceUnavailableException: A communication 
+failure occurred while attempting to obtain an initial context with the 
+provider URL: "corbaloc:iiop:<host name>:<port number>". 
+
+回答
+原因：
+クラスター環境において、.ear ファイルは Deployment Manager (DMGR) 上にインストールされる必要があります。詳細な情報は以下の文書を参照してください。
+「（参考）正しくない providerURL が原因でクラスター環境で ConfigEngine の wp-add-property タスクが失敗する」(Technote #733070) [http://www.ibm.com/jp/domino04/lotus/support/faqs/faqs.nsf/all/733070]
+
+元々別の場所に .ear ファイルがインストールされていた環境の場合、DMGR にインストールしようとすると、インストールが成功したように見えますが、その後、属性を追加するために ConfigEngine の wp-add-property タスクを実行しても、上と同じ "Cannot find EJB" というエラーメッセージを出力され、失敗する状態になります。
+
+
+環境：
+クラスター環境の WebSphere Portal (WP)
+
+
+問題解析：
+-- URL の中のブートストラップ・アドレスの情報が正しいこと、対象とするサーバーが起動していることを確認します。ブートストラップ・アドレスにポート番号が指定されていない場合、デフォルトの 2809 に設定されます。ブートストラップ・アドレスが正しくない、DNS が正常に稼動していない以外の原因としては、ネットワーク環境やワークステーションのネットワーク環境が考えられます。
+
+[Root exception is org.omg.CORBA.TRANSIENT: java.net.UnknownHostException: <host name>:host=<host name>,port=9809 vmcid: IBM minor code: E02 completed: No] 
+
+-- .ear ファイルがすでにインストールされているかどうかを判断するため、ConfigTrace.log 内の wp-la-install-ear タスク実行時の結果を確認します。
+
+Command line arguments: ... wp-la-install-ear
+...
+Target started: wp-la-install-ear
+
+wp-la-install-ear:
+...
+[wplc-create-ear]
+earfile="/prod/sys/Portal61/WebSphere/AppServer/systemApps
+/wim.ear/wimejb.jar"
+[wplc-create-ear] null
+[wsadmin] WASX7209I: Connected to process "dmgr" on node <node name> using SOAP connector; The type of process is: DeploymentManager
+[wsadmin] 'dmgr(cells/<cell name>/nodes/<node name>/servers/dmgr|server.xml#Server_1)'
+[wsadmin] Enterprise application WIMSYSTEM already exists.
+...
+BUILD SUCCESSFUL
+
+-- クラスターの DMGR ではないサーバーに .ear ファイルがインストールされているかを確認するため、次の serverindex.xml を確認します。
+
+.../<セル名>/nodes/<DMGR ノード名>/serverindex.xml の場合:
+
+<serverEntries serverDisplayName="dmgr" serverName="dmgr" 
+serverType="DEPLOYMENT_MANAGER" xmi:id="ServerEntry_1">
+<deployedApplications>
+...
+(こちらには、WIMSYSTEM.ear が記述されません)
+
+.../<セル名>/nodes/<DMGR 以外のノード名>/serverindex.xml の場合:
+
+<serverEntries serverName="WebSphere_Portal" 
+serverType="APPLICATION_SERVER"
+...
+<deployedApplications>WIMSYSTEM.ear/deployments/WIMSYSTEM
+</deployedApplcations>
+
+
+解決策
+まず始めに、管理コンソールを使い WP サーバーからエンタープライズ・アプリケーションである WIMSYSTEM をアンインストールします。その後、DMGR 上に .ear ファイルをインストールするため、Technote #733070 [http://www.ibm.com/jp/domino04/lotus/support/faqs/faqs.nsf/all/733070] のステップを実行します。
+
+
+補足情報
+
+
+
+
+関連文書
+
+原文：
+(英文)「EJB WIMServiceHome cannot be found even after .ear file is installed successfully」(Technote #1365841) [http://www.ibm.com/support/docview.wss?rs=688&context=SSHRKX&dc=DB560&dc=DB520&uid=swg21365841&loc=en_US&cs=UTF-8&lang=en&rss=ct688websphere]
+
+「（参考）正しくない providerURL が原因でクラスター環境で ConfigEngine の wp-add-property タスクが失敗する」(Technote #733070) [http://www.ibm.com/jp/domino04/lotus/support/faqs/faqs.nsf/all/733070]
+
+
+この文書は、米国 IBM 社の資料を翻訳した参考文書です。日本語環境での検証は行っておりませんのでご注意ください。翻訳元の文書は、補足情報のリンクよりご参照ください。
+
+ 
+
+HISTORICAL NUMBER
+ 733072

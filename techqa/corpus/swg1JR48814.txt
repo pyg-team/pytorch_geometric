@@ -1,0 +1,194 @@
+Title: IBM JR48814: ACCESSIBILITY ISSUES IN PROCESS PORTAL - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Version 8.5 Refresh Pack 5 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24037683]
+Download Version 8.0.1 Fix Pack 3 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24037734]
+Version 8.5.0 Fix Pack 2 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24040683]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The following accessibility issues exist in Process Portal
+   (note that these issues were found using Version 14 of
+   JAWS (R) screen reading software from Freedom Scientific):
+   
+   1. If the user logs in with an incorrect ID/password, the
+   "Login failed" message is not spoken.  Subsequently when the
+   cursor is in the User ID field, it is not spoken.
+   
+   2. On the Work page, under the Following tab, the text "You
+   are not following any processes" (when displayed) is not spoken.
+   
+   3. After clicking on a process being followed, displaying the
+   Details page (with Stream on the right side of the page), the
+   user experiences the following issues:
+   
+   a. The drop-down button at the top next to the task name
+   and Follow icon/button is not spoken.
+   b. The due date is spoken, but with the wrong time of day.
+   c. The created and completed dates are not spoken.
+   d. The Stream label is not spoken (instead, "Main region
+   work post edit type of text" is spoken.
+   
+   4. On the Work page, under the @Mentions tab, the text "Your
+   name does not appear in any posts" (when displayed) is not
+   spoken.
+   
+   5. On the Unfollow dialog, the text "Are you sure you want to
+   stop following this process?" is not spoken; additionally
+   pressing Insert+Z may be needed to have the text "Don't show me
+   this message again" spoken.
+   
+   6. With a Coach form open, in the header, the "Task: Submit
+   requisition drop-down" speaks "Unlabeled 7 button".
+   
+   7. In Work > My Tasks, the "Expand all task rows" button text
+   is not spoken (although hover text is displayed).
+   
+   8. On the Claim task dialog, the text "This task is still
+   unclaimed. When you open this task, it will be assigned to you"
+   is not spoken.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  n/a
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  Users of BPM Advanced, BPM Standard, and    *
+   *                  BPM Express.                                *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: There are multiple accessibility        *
+   *                      issues in Process Portal, revealed      *
+   *                      with JAWS Version 14.                   *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   Multiple code changes to user interface related files in
+   Process Portal are required to address accessibility issues.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The required code changes were applied to Process Portal user
+   interface files, including the login page JSP and several
+   JavaScript and HTML files, to resolve the accessibility issues.
+   
+   An interim fix for Business Process Manager Version 8.0.1.2 has
+   been published to Fix Central.  Please refer to the separate
+   file that is automatically downloaded with the interim fix
+   for prerequisite information and installation/uninstallation
+   instructions.
+   
+   Note the following issues in the Error Description still exist
+   with Internet Explorer 8 as the browser:
+   
+   - On the Unfollow dialog, the text "Are you sure you want to
+   stop following this process?" is not spoken; additionally
+   pressing Insert+Z may be needed to have the text "Don't show me
+   this message again" spoken.
+   
+   - On the Claim task dialog, the text "This task is still
+   unclaimed. When you open this task, it will be assigned to you"
+   is not spoken.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR48814
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM EXPRESS
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9600
+   
+   
+ * REPORTED RELEASE
+   801
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-12-12
+   
+   
+ * CLOSED DATE
+   2014-02-07
+   
+   
+ * LAST MODIFIED DATE
+   2014-02-07
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   BPM EXPRESS
+   
+   
+ * FIXED COMPONENT ID
+   5725C9600
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R800 PSY
+   UP

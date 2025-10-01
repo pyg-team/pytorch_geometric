@@ -1,0 +1,134 @@
+Title: IBM SE48218: RDP 8 ERROR WHEN DOWNLOADING COPYBOOKS FOR EMBEDDED SQL SOURCE WITH .SQB EXTENSION - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  An error dialog with the message "'Downloding copybooks for
+   /directory/file.sqb' has encountered a problem."  The directory
+   and file names in the message will point to the file that
+   encountered the problem. The message details will conntain:
+   
+   An internal error occurred during:
+   "Downloading copybooks for /directory/file.sqb"
+   java.lang.NullPointerException
+   
+   After the AIX COBOL project is built for the first time the
+   problem will happen every time the .sqb file is parsed. The
+   .sqb file is parsed when the source file is opened and after
+   every change in the editor.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: RD Power users that use AIX COBOL projects.  *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Error occurs when editing source in     *
+   *                      AIX COBOL projects.                     *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   An error dialog with a message starting with 'Downloading
+   copybooks for' interrupts editing source in an AIX COBOL
+   project.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This problem is fixed in the RD Power 8.0.3 Refresh Pack.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   SE48218
+   
+   
+ * REPORTED COMPONENT NAME
+   RDP:COBOL DEV T
+   
+   
+ * REPORTED COMPONENT ID
+   5724Y9903
+   
+   
+ * REPORTED RELEASE
+   800
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-06-17
+   
+   
+ * CLOSED DATE
+   2011-10-31
+   
+   
+ * LAST MODIFIED DATE
+   2011-10-31
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   RDP:COBOL DEV T
+   
+   
+ * FIXED COMPONENT ID
+   5724Y9903
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R800 PSY
+   UP

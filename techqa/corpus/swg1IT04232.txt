@@ -1,0 +1,195 @@
+Title: IBM IT04232: WINDOWS CLUSTER FAILOVER HANGS AT 'OFFLINE PENDING' IF DSMAGENT IS RUNNING - United States
+
+Text:
+AIX  FIXES ARE AVAILABLE
+TSM Client 7.1.2 Downloads and READMEs [http://www-01.ibm.com/support/docview.wss?uid=swg24039740]
+TSM Client 6.4.3 Downloads and READMEs [http://www-01.ibm.com/support/docview.wss?uid=swg24040185]
+IBM Tivoli Storage Manager (TSM) client 6.3.2.x interim fix downloads - EOL [http://www-01.ibm.com/support/docview.wss?uid=swg24037930]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Microsoft Windows Cluster environments that use Client Acceptor
+   managed services for the cluster groups can encounter a hang
+   condition when trying to perform a failover of the Client
+   Acceptor's generic resource if the Remote Client Agent
+   (dsmagent.exe) is running. The failover stays in 'offline
+   pending' until the user manually stops the dsmagent service.  It
+    is important to note that the Client Acceptor service is
+   configured as a generic service. The Remote Client Agent is not
+   a generic service, but it is dependant on the Client Acceptor.
+   This behavior has not been seen with a Client Acceptor managed
+   scheduler service (dsmcsvc.exe).
+   
+   Versions Affected:
+   Tivoli Storage Manager Backup/Archive Client versions 6.2, 6.3,
+   6.4, and 7.1 on Microsoft Windows 2008 or 2012 (All editions)
+   
+   Customer/L2 Diagnostics (If Applicable)
+   Steps to recreate:
+   1) Open a browser and go to the URL of the Webclient.  The
+   Client Acceptor will then start the Remote Client Agent
+   (dsmagent)
+   2) Close the browser - dsmagent will stay running for 33 minutes
+   before timing out
+   3) Attempt a failover while dsmagent is running. The failover
+   attempt hangs at 'offline pending' until dsmagent is manually
+   stopped.
+   
+   Initial Impact:
+   Low
+   
+   Additional Keywords:
+   cad rca r2 webgui dsmcad mscs
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Manually stop the Remote Client Agent prior to performing a
+   failover, or add the option below to the cluster node's client
+   options file (dsm.opt) so that the Remote Client Agent times out
+   in 1 minute (instead of the default value of 33 minutes)
+   TESTFLAG AGENTTIMEOUT:1
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * Backup-archive client versions 5.5, 6.1, 6.2, 6.3 and 7.1 on *
+   * Microsoft Windows platforms.                                 *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * See ERROR DESCRIPTION                                        *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Apply fixing level when available. This problem is currently *
+   * projected to be fixed in levels 6.3.2.4, 6.4.3 and 7.1.2.    *
+   * Note that this is subject to change at the discretion of     *
+   * IBM.                                                         *
+   ****************************************************************
+   *
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The problem has been fixed and no longer occurs.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  6.3.2.4 interim fix
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT04232
+   
+   
+ * REPORTED COMPONENT NAME
+   TSM CLIENT
+   
+   
+ * REPORTED COMPONENT ID
+   5698ISMCL
+   
+   
+ * REPORTED RELEASE
+   71W
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2014-09-05
+   
+   
+ * CLOSED DATE
+   2015-01-23
+   
+   
+ * LAST MODIFIED DATE
+   2016-02-09
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  DSMCAD   DSMAGENT
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TSM CLIENT
+   
+   
+ * FIXED COMPONENT ID
+   5698ISMCL
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R63W PSY
+   UP
+   
+   
+ * R64W PSY
+   UP
+   
+   
+ * R71W PSY
+   UP

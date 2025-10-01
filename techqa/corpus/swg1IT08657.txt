@@ -1,0 +1,172 @@
+Title: IBM IT08657: LIMIT TEMPORARY *.RSP AND _DB2XXXX CREATED IN %TMP% TO PREVENT 1603 FROM INSTALLER - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+DB2 Version 10.1 Fix Pack 6 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24043366]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Installation  Windows fails with 1603 error when %TMP% or %TEMP%
+   exceeds 100 *.rsp files after multiple failed installations.
+   For example with IBM Data Server client installs, the *.rsp file
+   is called PROD_CLIENT.rsp.  After each failed installation the
+   file named PROD_CLIENTxx.rsp (where xx is a number from 00 to
+   99) will remain in %TMP% .
+   
+   Action start 12:00:00: InitSilentInstallCA.
+   1: ERROR:An error occurred while creating or generating a name
+   for a temporary file.  Ensure you have access to create
+   temporary files.
+   1: ERROR:Failed to setup the initial Windows Installer
+   properties for the response file installation.
+   1: Failed to initialize silent install.
+   CustomAction InitSilentInstallCA returned actual error code 1603
+   (note this may not be 100% accurate if translation happened
+   inside sandbox)
+   Action ended 12:00:00: InitSilentInstallCA. Return value 3.
+   
+   This APAR makes two changes to prevent %TMP% from being filled
+   up with temporary installation files upon a failed installation:
+   
+   1) Reuse %TMP%\PROD_*.rsp file instead of creating a new one
+   for each subsequent installation attempt.
+   
+   2) Limit number of %TMP%\_DB2xxxx directories created to 10.
+   
+   Upon successful installation, the temporary files and
+   directories listed above will be removed.
+   
+   Notes: Windows has two sets of %TEMP%, one is a User environment
+   variable, the other is the System environment variable.  The
+   System version usually points to c:\windows\temp.  Thus if using
+   LocalSystem for installation it would use the System environment
+   variable.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Delete PROD_*.rsp and _DB2xxxx files in the directory pointed to
+   by %TEMP% or %TMP%.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * ALL                                                          *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * See Error Description                                        *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Upgrade to DB2 10.1 Fix Pack 6                               *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  First fixed in DB2 10.1 Fix Pack 6
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  SEE LOCAL FIX.
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT08657
+   
+   
+ * REPORTED COMPONENT NAME
+   DB2 FOR LUW
+   
+   
+ * REPORTED COMPONENT ID
+   DB2FORLUW
+   
+   
+ * REPORTED RELEASE
+   A10
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2015-04-30
+   
+   
+ * CLOSED DATE
+   2017-03-02
+   
+   
+ * LAST MODIFIED DATE
+   2017-03-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    IT08142 [http://www-01.ibm.com/support/docview.wss?uid=swg1IT08142]
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   DB2 FOR LUW
+   
+   
+ * FIXED COMPONENT ID
+   DB2FORLUW
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * RA10 PSN
+   UP

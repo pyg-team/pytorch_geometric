@@ -1,0 +1,19 @@
+Title: IBM Unable to view any reports under StoredIQ for Legal Reports tab - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Why are we not able to view any reports under the StoredIQ for Legal Reports tab? 
+
+CAUSE
+Access to the cross matter reports are restricted by specific privileges
+
+ANSWER
+ 
+
+ 1. Login as ilgadmin 
+ 2. Click on Roles and Privileges under Users and Roles 
+ 3. Edit the role of the user who is unable to view the reports 
+ 4. Select view check box for limited-access reports privilege 
+ 5. Save the changes

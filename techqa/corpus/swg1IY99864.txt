@@ -1,0 +1,183 @@
+Title: IBM IY99864: UNABLE TO UPDATE/CREATE 'DATETIME YEAR TO SECONDS' DATATYPE IN INFORMIX DB BY IMPACT 3.1B550 POLICY - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Adding an event in to INFORMIX database using 'adddataitem'.
+   
+   The insert is failing since Impact is adding an extra single
+   quotes around
+   the datetime year to seconds value in their INSERT command in
+   the policy
+   logger. The exception caused is -
+   
+   Exception: Could not execute insert: INSERT INTO event_status
+   (event_status_id, event_node_name, event_sev_code,
+   event_summary_txt,
+   event_modifier_nm, event_object_name, last_update_ts) VALUES
+   (794941, 'tivgwy07.mgt.wal-mart.com', 3, 'Some or all Informix
+   updates
+   failed. Check /u/esmserv/log/wm_esm_hist_loader.log.',
+   'INFORMIX_ERROR',
+   'WM_ESM_HIST_LOADER', ''2007-06-01 09:17:17.''):
+   
+   The qoutes around ''2007-06-01 09:17:17.'' are two consecutive
+   single
+   quotes. The SQL command would work if the data is enclosed
+   'data' or "data"
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Convert date type to string
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All Netcool/Impact User who are using        *
+   *                 Informix DSA with Datetime field             *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: UNABLE TO UPDATE INSERT  'DATETIME YEAR *
+   *                      TO SECONDS' DATATYPE IN INFORMIX        *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   *                                                              *
+   ****************************************************************
+   
+   
+   Steps to replicate: 1) Create an Informix Data Source 2) Create
+   an Informix Data Type with a Datetime fields 3) Insert a new
+   row into the Informix table using a policy or Data Item viewer:
+   Example Policy: TestInformixDate Item=NewObject();
+     myDate=getDate();   Item.eventid=10;
+     Item.datetimeField=LocalTime(myDate, yyyy-MM-dd HH:mm:ss );
+     AddDataItem('informixType',Item);
+   
+   4) Impact will add an extra double  ' around the Datatime field
+   and throws an exception: An exception occurred while executing
+   Policy TestInformixDate. Please examine server.log for more
+   details or check the Policy. The exception was: Exception in
+   policy: TestInformixDate at line 5. Could not create OrgNode of
+   type InformixType: Exception occurred while inserting an
+   OrgNode into type: InformixType. Exception: Could not execute
+   insert: INSERT INTO events (eventid, datetimeField) VALUES (10,
+   ''2007-06-01 09:17:17.''): Exception while executing database
+   operation after trying twice. First exception: A syntax error
+   has occurred. Second exception: A syntax error has occurred.
+   This may be caused by an invalid schema or an inaccessible
+   database. Please verify the actual database schema.
+   
+   
+   
+   Note: The datatimeField value is around 2 double single quotes
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fixed In Impact FP 5
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IY99864
+   
+   
+ * REPORTED COMPONENT NAME
+   NETCOOL/IMPACT
+   
+   
+ * REPORTED COMPONENT ID
+   5724O59IS
+   
+   
+ * REPORTED RELEASE
+   310
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2007-06-13
+   
+   
+ * CLOSED DATE
+   2007-08-13
+   
+   
+ * LAST MODIFIED DATE
+   2007-10-16
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *     NETCOOL
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   NETCOOL/IMPACT
+   
+   
+ * FIXED COMPONENT ID
+   5724O59IS
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R310 PSY
+   UP

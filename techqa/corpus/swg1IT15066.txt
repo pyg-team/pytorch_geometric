@@ -1,0 +1,149 @@
+Title: IBM IT15066: PUREAPPLICATION SYSTEM: THE FIXPACK LIST FOR THE VIRTUAL SYSTEM PATTERN IS EMPTY - United States
+
+Text:
+  A FIX IS AVAILABLE
+IBM PureApplication System Version 2.2.1.0 [http://www-01.ibm.com/support/docview.wss?uid=swg24042382]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The system was upgraded to PureApplication System version
+   2.2.0.0 and the user noticed that there were no available
+   fixes listed for an MQ pattern upgrade.
+   
+   This issue would affect any virtual system pattern, but the
+   initial defect was opened using the IBM Pattern for MQ.
+   
+   The steps to reproduce the issue are:
+   1. Install IBM Pattern for MQ version 1.0.0.2
+   2. Deploy an instance of the pattern.
+   3. Install the IBM Pattern for MQ version 1.0.0.3
+   4. Click the "Check for updates" button on the running instance.
+   5. Click the "manage" button to open the Instance Console. On
+      the Operations tab, select Maintenance. There are no
+      available fixes listed.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  1. Create a virtual system pattern in the Pattern Builder.
+   2. From Images, drag a Core OS component onto the canvas.
+   3. On the Core OS component, use the "Add a Cmponent Policy" to
+      add a Base Scaling Policy to it.
+   4. On the Base Scaling Policy, enable a Memory-based rule (you
+      can use the default values).
+   5. Deploy the pattern.
+   
+   This instance can be deleted once the deployment is launched,
+   there is no need to wait for the deployment to complete.
+   
+   After these steps the fixpack issue should be resolved.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  The security token used to access the Instance Console
+   did not have access to the deployment information.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A code fix is being provided in PureApplication System
+   version 2.2.1.0.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT15066
+   
+   
+ * REPORTED COMPONENT NAME
+   PAPP SYS 8382 I
+   
+   
+ * REPORTED COMPONENT ID
+   5725G3200
+   
+   
+ * REPORTED RELEASE
+   220
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-05-03
+   
+   
+ * CLOSED DATE
+   2016-05-24
+   
+   
+ * LAST MODIFIED DATE
+   2016-05-24
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   PAPP SYS 8382 I
+   
+   
+ * FIXED COMPONENT ID
+   5725G3200
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R221 PSY
+   UP

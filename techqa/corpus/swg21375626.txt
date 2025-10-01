@@ -1,0 +1,106 @@
+Title: IBM Steps for setting up Trace Spooling for RSCT/TSAMP Daemons - United States
+
+Text:
+TSA: TSAMP; trace spooling; trace.conf; rsct; tsamp; samp; tsa; RecRM; trace summary; chkspool TECHNOTE (FAQ)
+
+QUESTION
+ How can I setup trace spooling for my RSCT and TSAMP Daemons so I can keep more historical information of the clusters trace, trace_pub and trace_summary logs? 
+
+ANSWER
+Trace spooling is now available in RSCT version 2.4.10.0 and 2.5.2.0 and above, to check your current RSCT level use the command "lsprdomain". 
+
+To enable trace spooling you need to configure the trace.conf file found in the /var/ct/cfg/ directory. If this file does not exist you can use the touch command to create it. Once created you can add stanza to define which daemons have spooling enabled and the behavior of the spool for each specific daemon, you can be very specific with regards to how each daemons spools are handled. However care must be taken due to limits of your storage space as on a large or busy cluster these trace spools can rapidly fill up vast amounts of disk space. Your "TraceLevel" setting will also affect how detailed the traces generated are, care must be taken when planning your spool settings, TraceLevel and your spool destination directory. 
+
+The default settings for the file are as follows: 
+
+ * # comment
+   section_name: 
+   pat = source directory pattern 
+   spooling = [OFF | ON] 
+   pages = number of files 
+   dest = destination directory
+   size = optional attribute that sets the file size, in bytes, of the individual trace pages. If unspecified, the size is determined automatically by the trace facility based upon the trace configuration of the client. 
+ * 
+ * 
+
+
+Note: 
+1. The section_name line is an arbitrary string indicating the start of a new stanza. It is not used to determine which daemon or process will have its trace files copied. That is determined solely by the regular expression in the "pat" line. 
+2. If there is more than one configuration stanza, the first matching one will be applied to any given trace file. This means that they should be listed in order from the most specific pattern to the least specific pattern.  
+
+Using the following example please note the following: 
+
+ * 
+ * # Trace spooling configuration file
+ * 
+ * 
+ * RecRM:
+ * 
+ * pat = /var/ct/
+ * domain_name
+ * /log/mc/IBM.RecoveryRM/*
+ * 
+ * spooling = ON
+ * 
+ * pages = 4
+ * 
+ * dest = /trace_spooling/
+ * 
+ * size = 4096000
+ * 
+ * 
+ * GblResRM:
+ * 
+ * pat = /var/ct/.*/log/mc/IBM.GblResRM/*
+ * 
+ * spooling = ON
+ * 
+ * pages = 4
+ * 
+ * dest = /trace_spooling/
+ * 
+ * size = 4096000
+ * 
+
+
+1. In the above example "RecRM:" is the section_name, the section_name is just a name for the stanza and in no way affects which daemons have trace spooling enabled, that is set in the "pat" line. 2. Do not specify the "dest" for your /var directory as that is where the original files will be stored as typically this folder is critical to cluster operation and filling it to capacity would most likely have unpredictable and negative results. You must create the directory targetted in the "dest" line on each server/node in the cluster. 
+
+3. "pages" are the number of rotating trace files that will be kept in the default trace location (/var/ct/domain_name/log/mc/IBM.daemon_name) and each of the files will be limited to value of the "size" entry. 
+
+4. "size" must be included in each stanza even though the RSCT diagnostic guide states otherwise. 
+
+ 
+
+Cleaning up, maintenance: 
+
+Now that you have setup trace spooling you have to ensure that you do not fill up your filesystems with the rapidly expanding trace data. To address this issue there is a tool provided that should be put into a cron job (crontab) and run every so often, how often is up to you but there are a few things to keep in mind when determine how often to run the jobs. 
+
+ 
+
+First off, here are the sample commands that we use to limit the collection to 2GB (first command) and limit the collection to 7 days old (second command): 
+
+
+/usr/bin/chkspool --spool_dir /trace_spooling --megabytes_limit 2000
+/usr/bin/chkspool --spool_dir /trace_spooling --days_limit 7 
+
+These commands are examples and you should adjust based on the needs of the data retention of your specific requirement. Tivoli Support recommends that you keep at least 5 days of data to ensure you maintain trace coverage over long weekends or missed alerts. 
+
+ 
+
+With the above commands an example of the crontab setup is as follows:
+# Run chkspool twice each hour to ensure that trace does not go above 2GB
+30,00 * * * * /usr/bin/chkspool --spool_dir /trace_spooling --megabytes_limit 2000
+# Run chkspool every hour at 15 past - Clean out trace files more then 7 days old
+15,45 * * * * /usr/bin/chkspool --spool_dir /trace_spooling --days_limit 7 
+
+ 
+
+In the above example the first command would be run on the hour and 30 minutes past the hour, the second command would run at 15 past the hour and 45 minutes past the hour. This may sound like a very aggressive cron schedule but depending on the size of the cluster, how many resources and of what type of resources, how often things are changed/moved/managed then its better to ensure that you are protected from a full filesystem rather then suffer the issues implicit with a file system filling up. 
+
+ 
+
+These cron jobs must be created on all nodes in the cluster where trace spooling is enabled (which should be all nodes in the cluster). 
+
+ 
+
+Everything in this technote is informational and all of it needs to be applied to the specific cluster that its being implemented for considering the specific needs of that cluster.

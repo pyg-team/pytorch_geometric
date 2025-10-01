@@ -1,0 +1,12 @@
+Title: IBM WebGUI Support for IE 11 in Enterprise Mode - United States
+
+Text:
+ie; internet explorer; enterprise mode; webgui; tip TECHNOTE (FAQ)
+
+QUESTION
+ Will the WebGUI work with the new operating mode in Internet Explorer 11 called Enterprise Mode? 
+
+ANSWER
+Internet Explorer Enterprise Mode only applies to Windows 7 and Windows 8.1, these operating system versions are not supported by TIP 2.2.
+
+This means that this mode is not supported by WebGUI and this is also not planned.

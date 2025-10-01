@@ -1,0 +1,152 @@
+Title: IBM PI48199: SEARCHING NEW GROUPS IN PORTAL WHILE IN PROJECT DOES NOT WORK - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Fixes integrated in WebSphere Portal 8.0.0.1 Combined Cumulative Fixes [http://www-01.ibm.com/support/docview.wss?uid=swg24034497]
+Fixes integrated in WebSphere Portal 8.5.0.0 Combined Cumulative Fixes [http://www-01.ibm.com/support/docview.wss?uid=swg24037786]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  If a a search for a group is triggered from within a project,
+   AND, that group has not been created directly through Portal OR
+   has never been accessed by Portal before, that search in the
+   project will not find the group.
+   Further, this set of actions will create an an invalid data
+   structure in the Portal database.  As a result, the group will
+   never again become visible in Portal, even outside a project
+   and after server restart.  If you can find the group in the
+   WAS/DMGR console but not in Portal - this is a sign this set of
+   conditions has been met.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  None available.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  A code fix for this issue is integrated into the WebSphere
+   Portal & WCM Combined Cumulative Fix 08 (PI45447 [http://www-01.ibm.com/support/docview.wss?uid=swg1PI45447]) for Portal
+   8.5.0.0 available from Fix Central:
+   
+   http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent
+   =ibm/WebSphere&product=ibm/WebSphere/WebSphere+Portal&release=Al [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm/WebSphere&product=ibm/WebSphere/WebSphere+Portal&release=Al]
+   l&platform=All&function=aparId&apars=PI45447
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  In case the problem already occurred, it is not sufficient to
+   install this APAR as there is invalid data in the Portal DB
+   already. In that case, please take a backup of the portal DB
+   tables (especially release.USER_DESC and release.PROT_RES_DRAFT
+   and then execute the following SQL statements to delete the
+   invalid data records from DB:
+   
+   DELETE FROM RELEASE.USER_DESC WHERE UNIQUE_ID IN (SELECT
+   EXTERNAL_UID FROM RELEASE.PROT_RES_DRAFT WHERE RES_TYPE=8)
+   
+   DELETE FROM RELEASE.PROT_RES_DRAFT WHERE RES_TYPE=8
+   
+   Afterwards, when searching for the groups again and with this
+   APAR installed, the group should be visible, both in project and
+   outside.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI48199
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSPHERE PORTA
+   
+   
+ * REPORTED COMPONENT ID
+   5724E7600
+   
+   
+ * REPORTED RELEASE
+   850
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-09-04
+   
+   
+ * CLOSED DATE
+   2015-10-29
+   
+   
+ * LAST MODIFIED DATE
+   2015-11-19
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBSPHERE PORTA
+   
+   
+ * FIXED COMPONENT ID
+   5724E7600
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R850 PSY
+   UP

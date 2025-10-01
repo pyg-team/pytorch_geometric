@@ -1,0 +1,33 @@
+Title: IBM Error when trying to import XML Schemas into the Map Editor. (SCI55009) - United States
+
+Text:
+Mapping; Translation; STERLINGPRI TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Error when trying to import XML Schemas into the Map Editor. (SCI55009) 
+
+SYMPTOM
+code = 80004005 Code meaning = Unspecified error Source = msxml4.dll Error Description = file:///G:/USERS/Kmv/Application [file:///G:/USERS/Kmv/Application] Integration/XML/ESB/Interface Architecture/Prining/XSD/ESBUnitCostAdjReq_1_0.xsd#/schema[1]/import[1] The value of the 'namespace' attribute on an import element was 'http://www.cvsesb.com/esb/1_0', matching the value of the enclosing schema's 'targetNamespace' attribute.
+
+
+CAUSE
+The schema is attempting to import another schema that has the same namespace.
+
+RESOLVING THE PROBLEM
+Schemas should only be imported into other schemas if they have different namespaces.
+
+ 
+
+HISTORICAL NUMBER
+ PRI28200 
+
+PRODUCT ALIAS/SYNONYM
+ 
+
+Fact
+
+
+Sterling Integrator
+All Releases 
+Map Editor 
+SCI55009

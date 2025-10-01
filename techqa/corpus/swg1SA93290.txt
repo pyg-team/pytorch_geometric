@@ -1,0 +1,136 @@
+Title: IBM SA93290: MQM400 MQV5 DEAD LETTER QUEUE HANDLER NOT PROCESSING MSGS - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  DLQ handler is not processing messages.  When original q gets
+   full, messages go to DLQ.  DLQ handler forwards messages to a
+   backup q and when it becomes full messages are left on DLQ.
+   DLQ handler ends with a 2035.  This is expected, however, when
+   backup q is cleared and DLQ handler is restarted, messages
+   on DLQ originally intended for backup q are left(ignored) on
+   DLQ.  Handler ends with no messages.  This is not expected.
+   This is only re-createable when DLQ handler is run inter-
+   actively.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  DLQ handler is not processing messages.  When original q gets
+   full, messages go to DLQ.  DLQ handler forwards messages to a
+   backup q and when it becomes full messages are left on DLQ.
+   DLQ handler ends with a 2035.  This is expected, however, when
+   backup q is cleared and DLQ handler is restarted, messages
+   on DLQ originally intended for backup q are left(ignored) on
+   DLQ.  Handler ends with no messages.  This is not expected.
+   This is only re-createable when DLQ handler is run inter-
+   actively.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  STRMQMDLQ will correctly process all messages on a second run.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   SA93290
+   
+   
+ * REPORTED COMPONENT NAME
+   MQSERIES FOR AS
+   
+   
+ * REPORTED COMPONENT ID
+   5733A3800
+   
+   
+ * REPORTED RELEASE
+   520
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2001-06-05
+   
+   
+ * CLOSED DATE
+   2001-06-05
+   
+   
+ * LAST MODIFIED DATE
+   2004-11-10
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    SF65939
+   
+   
+
+MODULES/MACROS
+ *  AMQSDLQ
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   MQSERIES FOR AS
+   
+   
+ * FIXED COMPONENT ID
+   5733A3800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R520 PSY SF65939
+   UP01/10/22 P 1296

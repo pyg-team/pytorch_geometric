@@ -1,0 +1,187 @@
+Title: IBM PI55003: EXCEPTION IN DFDL BASED MESSAGE FLOW (WTX NODE) WHEN AN ADDITIONAL TARGET NAMESPACE IS ADDED TO THE DFDL SCHEMA - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When using DFDL on a wired output card with XML as WTX output in
+   Integration/Message Broker getting error message 'CTDU4001E:
+   Root element '<element name>' in namespace '' does not exist.
+   
+   The WebSphere Transformation Extender map executes normally,
+   and on inspection of the input backup, the input DFDL(XML) is
+   fine (the map parses it successfully).
+   
+   The DFDL re-serializer fails to re-map the DFDL back to the XSV
+   format:
+   
+   "( WMB8BRKR.Default ) The DFDL serializer signalled that a
+   processing error occurred.
+    The message from the DFDL serializer is:
+    'CTDU4001E: Root element 'HL7' in namespace '' does not exist.'
+    The element being serialized was:
+    '/DFDL/HL7'
+   
+   Processing errors occurred during the serializing of a DFDL
+   message tree.
+   
+   Review and resolve the problems indicated in the message from
+   the DFDL serializer by modifying or deleting the specified
+   element from the DFDL message tree.  "
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  WTXCQ - WTX00048061
+   PB / PB
+   Circumvention: None
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Users Affected:
+   WebSphere Transformation Extender customers who use DFDL parser
+   on a WTX wired output in IIB
+   
+   Problem Description:
+   When using DFDL on a wired output card with XML as WTX output in
+   Integration/Message Broker getting error message  'CTDU4001E:
+   Root element '<element name>' in namespace '' does not exist.
+   
+   Platforms Affected:
+   All
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  When running Integration Broker and using DFDL in wired output,
+   correct processing to allow DFDL to correctly handle XML
+   namespaces. Previously would you would incorrectly get error
+   message 'CTDU4001E: Root element '<element name>' in namespace
+   '' does not exist.'
+   
+   Applies to:
+   8.4.0.5, 8.4.1.3
+   
+   Fixed in the next service packs and releases.
+   
+   To obtain the fix for this APAR:
+   
+   To see if the next service pack or product release is available,
+   check the WebSphere Transformation Extender Downloads page:
+   http://www.ibm.com/support/entry/portal/product/other_software/t [http://www.ibm.com/support/entry/portal/product/other_software/t]
+   ransformation_extender
+   
+   If the service pack or product release is available, download it
+   from PassportAdvantage:
+   http://www.ibm.com/software/howtobuy/passportadvantage/pao_custo
+   mers.htm [http://www.ibm.com/software/howtobuy/passportadvantage/pao_customers.htm]
+   
+   If the service pack or product release is not available and you
+   require the APAR fix immediately, request a Limited Availability
+   Interim Fix (LAIF) by opening a PMR:
+   https://www.ibm.com/support/servicerequest/Home.action [https://www.ibm.com/support/servicerequest/Home.action]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI55003
+   
+   
+ * REPORTED COMPONENT NAME
+   WTX FOR INT SER
+   
+   
+ * REPORTED COMPONENT ID
+   5724M4010
+   
+   
+ * REPORTED RELEASE
+   841
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-01-08
+   
+   
+ * CLOSED DATE
+   2016-01-25
+   
+   
+ * LAST MODIFIED DATE
+   2016-07-05
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WTX FOR INT SER
+   
+   
+ * FIXED COMPONENT ID
+   5724M4010
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R840 PSY
+   UP
+   
+   
+ * R841 PSY
+   UP

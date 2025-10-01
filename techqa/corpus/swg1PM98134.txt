@@ -1,0 +1,203 @@
+Title: IBM PM98134: ISRSUPC HIGH CPU CONSUMPTION AND HIGH EXCP'S WITH SPECIFIC DPLINE'S SPECIFIED - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The DPLINE statement does not perform the same padding with
+   trailing spaces as normal comparisons, so what is happening is
+   that the DPLINE statements with trailing blanks are failing to
+   match the shorter lines in one of the input files.  As this is
+   a frequently occurring line, SuperC needs to scan a long way
+   back and forwards during the matching process.  If it needs to
+   scan too far back, it may need to reposition to an earlier
+   record in the sequential file by record number.  As this
+   is not a function directly provided in MVS (unlike in CMS), this
+   is done by repositioning to the start and then skipping the
+   required number of records, which is obviously very
+   time-consuming.  It gets there eventually, but obviously with
+   unacceptable performance (it took two hours here instead of two
+   seconds in the case where the lines had been padded with
+   spaces).
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Problems with performance can be circumvented with either the
+   DPBLKCL
+   process option but the issue with the "LEGEND" data line can
+   only be
+   bypassed by converting to a RECFM=FB file.
+   Which seems at odds with the statement
+   
+   "For files with input line lengths <= 256, a LINE comparison is
+   performed after padding the lines to the longest line length.
+   Consequently two lines, originally of unequal length, compare
+   equally
+   only if the spaces at the end of the longer line coincide with
+   the
+   shorter line's space padding."
+   
+   from the Superc publication.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: Users of SuperC utility from HLASM Toolkit   *
+   *                 for z/OS, z/VM and z/VSE.                    *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: If the search string on a DPLINE        *
+   *                      statement contains trailing spaces,     *
+   *                      these only matched the input line if it *
+   *                      contained spaces in the corresponding   *
+   *                      positions.                              *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   When a DPLINE statement is used to exclude input lines
+   containing certain strings, trailing spaces in the search value
+   are matched against corresponding positions in the input record.
+   If the input record was too short to include the trailing
+   spaces (for example for variable length records where trailing
+   spaces had been removed) then the DPLINE search value would not
+   match.  This meant for example that when one of two similar
+   input files had trailing spaces removed, the DPLINE statements
+   would match on one but not the other, causing spurious
+   differences to be indicated.  The documentation says that during
+   comparison processing, the input line is assumed to be padded
+   with spaces if necessary, but DPLINE processing was not
+   consistent with this principle.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  SuperC processing of the DPLINE statement has been modified so
+   that trailing spaces on a search string are handled as if the
+   input record is padded with spaces if necessary.  If a search
+   string is entirely blank, it will be treated as matching even
+   when the start position is beyond the end of the input record.
+   This ensures consistency with the documented principle that
+   comparison processing is performed as if the input record were
+   padded with trailing spaces if necessary.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM98134
+   
+   
+ * REPORTED COMPONENT NAME
+   HLASM TOOLKIT
+   
+   
+ * REPORTED COMPONENT ID
+   569623401
+   
+   
+ * REPORTED RELEASE
+   16A
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2013-09-30
+   
+   
+ * CLOSED DATE
+   2013-10-09
+   
+   
+ * LAST MODIFIED DATE
+   2014-03-27
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UK98183 UK98258 UK98259 OA43579 [http://www-01.ibm.com/support/docview.wss?uid=isg1OA43579]
+   
+   
+
+MODULES/MACROS
+ *  ASMFPPRM ASMFRDLN ASMFRDWD
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   HLASM TOOLKIT
+   
+   
+ * FIXED COMPONENT ID
+   569623401
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R16A PSY UK98183 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK98183]
+   UP13/10/11 P F310
+   
+   
+ * R36A PSY UK98258 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK98258]
+   UP13/10/10 P 1310
+   
+   
+ * R6IM PSY UK98259 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK98259]
+   UP13/10/10 P E520
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

@@ -1,0 +1,171 @@
+Title: IBM HE12394: SCRIPT CONNECTOR ERROR WHEN TRYING TO ARCHIVE AN EMAIL ERROR IS: CUSTOM.IEMCUSTOME ID PACK FAILED OR ENTITY ID. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS UNREPRODUCIBLE.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Using the ICC Interactive archiving feature, Outlook emails are
+   being archived into P8 and declared records into IER. During
+   some testing, we discovered if the same email is sent to
+   multiple people and each declares the email to a different
+   record category, only the first email archived is declared a
+   record. We are attempting to alleviate this records
+   shortcoming. Our goal is that one email sent to multiple people
+   should be declared to each record category chosen by the users.
+   When I opened a previous PMR on this issue (PMR 19801,756,000
+   with Tyler Sky), it was recommended we use the ICC Script
+   Connector feature and write code that modified the Hash so each
+   email would be considered unique and not deduped. If each email
+   was considered unique, it would be possible to declare the same
+   email to different record categories. 2015-06-01T16:49:03Z
+   Error An error occurred while evaluating the task route
+   'LC_Default Archiving Interactive CSS for IEMx': Task Method
+   'Custom.IEMCustomIdTask' failed for entity with id ICC
+   4.0.0.1-20140123-1414-EMRC-9.0.0-000.207 Operating system type
+   and version, including patches and service pack levels (ICC
+   server). Windows 2008 R2 Standard Service Pack 1 Source system
+   type and version (such as Domino 8.0 or Exchange 2007) and fix
+   pack level. Exchange 2010 Target repository type, platform, and
+   version (such as IBM Content Manager 8.4 on AIX, P8 FileNet
+   4.x.x, or File System), and fix pack level. FileNet P8 5.2.0.2
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  No
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *     Using the ICC Interactive archiving feature, Outlook emails
+   are
+   being archived into P8 and declared records into IER. During
+   some testing, we discovered if the same email is sent to
+   multiple people and each declares the email to a different
+   record category, only the first email archived is declared a
+   record. We are attempting to alleviate this records
+   shortcoming. Our goal is that one email sent to multiple people
+   should be declared to each record category chosen by the users.
+   When I opened a previous PMR on this issue (PMR 19801,756,000
+   with Tyler Sky), it was recommended we use the ICC Script
+   Connector feature and write code that modified the Hash so each
+   email would be considered unique and not deduped. If each email
+   was considered unique, it would be possible to declare the same
+   email to different record categories. 2015-06-01T16:49:03Z
+   Error An error occurred while evaluating the task route
+   'LC_Default Archiving Interactive CSS for IEMx': Task Method
+   'Custom.IEMCustomIdTask' failed for entity with id ICC
+   4.0.0.1-20140123-1414-EMRC-9.0.0-000.207 Operating system type
+   and version, including patches and service pack levels (ICC
+   server). Windows 2008 R2 Standard Service Pack 1 Source system
+   type and version (such as Domino 8.0 or Exchange 2007) and fix
+   pack level. Exchange 2010 Target repository type, platform, and
+   version (such as IBM Content Manager 8.4 on AIX, P8 FileNet
+   4.x.x, or File System), and fix pack level. FileNet P8 5.2.0.2
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *      Starting with 4.0.1.2-IBM-ICC-FP002 this problem is fixed
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *             4.0.1.2-IBM-ICC-FP002
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   HE12394
+   
+   
+ * REPORTED COMPONENT NAME
+   ICC FOR EMAIL
+   
+   
+ * REPORTED COMPONENT ID
+   5724V5700
+   
+   
+ * REPORTED RELEASE
+   300
+   
+   
+ * STATUS
+   CLOSED UR3
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2015-08-26
+   
+   
+ * CLOSED DATE
+   2017-05-18
+   
+   
+ * LAST MODIFIED DATE
+   2017-05-18
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    HE12474 [http://www-01.ibm.com/support/docview.wss?uid=swg1HE12474]
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ICC FOR EMAIL
+   
+   
+ * FIXED COMPONENT ID
+   5724V5700
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R401 PSY
+   UP

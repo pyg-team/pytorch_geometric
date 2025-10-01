@@ -1,0 +1,246 @@
+Title: IBM JR44560: MULTIPLE ARCHIVE THREADS CAUSE DEADLOCK TO HAPPEN BECAUSE OF A SYNCHRONIZED BLOCK. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Whan we open the application in designer it takes a long time
+   to open, around 10 minutes.  In the logs it says about thread
+   is hung.
+   See the detailed error below:
+   WSVR0605W: Thread "WebContainer : 20" (00000caa) has been
+   active for 680003 milliseconds and may be hung.  There is/are
+   12 thread(s) in total  in the server that may be hung.
+    at
+   com.ibm.bpm.pal.action.BaseActionsImpl.executeAction(BaseActions
+   Impl.java:387)
+    at
+   com.ibm.bpm.pal.action.SnapshotActionsImpl.archive(SnapshotActio
+   nsImpl.java:132)
+    at
+   com.lombardisoftware.server.ejb.repositoryservices.ArchiveSuppor
+   t.toggle(ArchiveSupport.java:213)
+    at
+   com.lombardisoftware.server.ejb.repositoryservices.ArchiveSuppor
+   t.toggleChildren(ArchiveSupport.java:179)
+    at
+   com.lombardisoftware.server.ejb.repositoryservices.ArchiveSuppor
+   t.archive(ArchiveSupport.java:89)
+    at
+   com.lombardisoftware.server.ejb.repositoryservices.RepositorySer
+   vicesCore.archive(RepositoryServicesCore.java:496)
+    at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+    at
+   sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessor
+   Impl.java:60)
+    at
+   sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethod
+   AccessorImpl.java:37)
+    at java.lang.reflect.Method.invoke(Method.java:611)
+    at
+   org.springframework.aop.support.AopUtils.invokeJoinpointUsingRef
+   lection(AopUtils.java:310)
+   .-------------------------------------------------------------
+   Looking at the instrumentation logs, the following calls are
+   taking a  long amount of time:
+   
+   PersistenceServicesCore.findByFilter - multiple occurrences
+   PersistenceServicesCore.findByPrimaryKey - multiple occurrences
+   PersistenceServicesCore.findAll - multiple occurrences
+   PersistenceServicesCore.findQuietlyByPrimaryKey
+   ClientServicesCore.libraryDelete
+   RuntimeServicesCore.getActiveFavoriteOfServiceExposeType -
+   multiple
+   occurrences
+   UserStatusServicesCore.setClientActivityStatusAndPALUpdates -
+   multiple
+   occurrences
+   SecurityCore.getUserLocalePreferences
+   SecurityCore.updateGroupMembership
+   EnvironmentServicesCore.isRepository
+   RepositoryServicesCore.copyItemsToExistingProject
+   RepositoryServicesCore.copyItemsToTip
+   RepositoryServicesCore.getLastNSnapshots - multiple occurrences
+   RepositoryServicesCore.getLastModifiedBranches - multiple
+   occurrences
+   com.lombardisoftware.component.javaconnector.worker.JavaConnecto
+   rWorker
+   - multiple occurrences
+   com.lombardisoftware.component.coach.worker.CoachWorker
+   com.lombardisoftware.component.twscript.worker.ScriptWorker
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Need ifix.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  User who wants to open Process              *
+   *                  Applications in Process Designer.           *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Hung threads will be experienced in     *
+   *                      the Repository layer when two threads   *
+   *                      perform an archive operation on the     *
+   *                      same snapshot. The issue occurs         *
+   *                      because one thread acquires a DB lock   *
+   *                      and waits on a Java synchronized lock   *
+   *                      acquired by the second thread. This     *
+   *                      scenario causes a deadlock.             *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   There are quite a few hung threads can be seen in the java
+   core dump files, one surrounding the synchronized block of
+   ServerImpl.getContainerCapability() and the other surrounding
+   BaseActionsImpl.getRepositoryState().
+   The suspect in both cases being, Thread 1 is acquiring a db
+   lock and waiting on the java lock (owing to the synchronized)
+   acquired by Thread 2 which is waiting on a db lock. The
+   patterns can be identified with the following
+   Thread 1 waiting on java lock:
+   Thread "WebContainer : 6" (0000004a) has been active for
+   632672 milliseconds and may be hung.  There is/are 1 thread(s)
+   in total in the server that may be hung.
+   at
+   com.ibm.bpm.pal.capability.ServerImpl.getContainerCapability(Ser
+   verImpl.java:201)
+   at
+   com.ibm.bpm.pal.statemachine.StateMachine.getState(StateMachine.
+   java:299)
+   at
+   com.ibm.bpm.pal.statemachine.StateMachine.getPossibleActions(Sta
+   teMachine.java:807)
+   at
+   com.ibm.bpm.pal.action.BaseActionsImpl.getPossibleActions(BaseAc
+   tionsImpl.java:96)
+   at
+   com.ibm.bpm.pal.action.TipActionsImpl.getPossibleActions(TipActi
+   onsImpl.java:45)
+   at
+   com.lombardisoftware.repository.server.ObjectManagementServiceIm
+   pl.getPossibleTIPActions(Ob
+   Thread 2 Waiting on db lock:
+   Thread "WebContainer : 0" (0000003b) has been active for
+   632657 milliseconds and may be hung.  There is/are 2 thread(s)
+   in total in the server that may be hung.
+   at java.net.SocketInputStream.socketRead0(Native Method)
+   at java.net.SocketInputStream.read
+   (SocketInputStream.java:140)
+   at
+   com.microsoft.sqlserver.jdbc.TDSChannel.read(IOBuffer.java:1525)
+   at
+   com.microsoft.sqlserver.jdbc.TDSReader.readPacket(IOBuffer.java:
+   3317)
+   at
+   com.microsoft.sqlserver.jdbc.TDSCommand.startResponse(IOBuffer.j
+   ava:4437
+   Similar pattern is seen with few other hung threads.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The ifix implemented the mechanism to prevent the above
+   mentioned deadlock from happening.
+   
+   For install/uninstall instruction about ifix JR44560, please
+   download the README file along with the ifix file from Fix
+   Central.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR44560
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM STANDARD
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9500
+   
+   
+ * REPORTED RELEASE
+   800
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-10-26
+   
+   
+ * CLOSED DATE
+   2013-01-15
+   
+   
+ * LAST MODIFIED DATE
+   2014-03-21
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   BPM STANDARD
+   
+   
+ * FIXED COMPONENT ID
+   5725C9500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R800 PSY
+   UP

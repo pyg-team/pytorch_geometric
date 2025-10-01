@@ -1,0 +1,53 @@
+Title: IBM Cannot load assembly while executing RemoteSessionProvider in IIS - United States
+
+Text:
+IIS TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ System.BadImageFormatException is thrown when invoking rule execution server (RES) 
+
+SYMPTOM
+Attempts to run rules hosted in IIS result in assembly loading error when using IBM WebSphere ILOG Rules for .NET.
+
+
+CAUSE
+This issue comes from the IIS ASP.Net application pool which by default is set on .Net V2.0, Most assemblies are now produced for the .net 4.0 environment and this can lead to conflicts. It will work fine until versions get mixed or a 4.0 feature is requested.
+
+ENVIRONMENT
+IIS ASP.Net version while using .Net 4.0 assemblies
+
+DIAGNOSING THE PROBLEM
+In the log this kind of error is reported : 
+
+Message: Execution Service exception.Caused by : ILOG.Rules.ExecutionServer.Session.RuleSessionException: Caused by : Ruleset /RuleApp/1.0/Ruleset/1.0 parsing error Caused by :System.BadImageFormatException was caught
+
+Message="Could not load file or assembly 'file:///C:\Program Files\IBM\WebSphere\ILOG Rules for .NET\Rule Execution Server for .NET\Bin\Execution\ExecutionBaseDir\BusinessModel.dll'or one of its dependencies.This assembly is built by a runtime newer than the currently loaded runtime and cannot be loaded."
+Source="mscorlib"
+StackTrace:
+en System.Reflection.Assembly._nLoad(AssemblyName fileName, String codeBase, Evidence assemblySecurity, Assembly locationHint, StackCrawlMark&amp; stackMark, Boolean throwOnFileNotFound, Boolean forIntrospection)
+en System.Reflection.Assembly.InternalLoad(AssemblyName assemblyRef, Evidence assemblySecurity, StackCrawlMark&amp; stackMark, Boolean forIntrospection)
+en System.Reflection.Assembly.LoadFrom(String assemblyFile)
+en ILOG.Rules.ExecutionServer.Xu.RulesetExecution.LoadBOMDirs(DirectoryInfo dirInfos, DirectoryInfo dirStop)
+en ILOG.Rules.ExecutionServer.Xu.RulesetExecution.InitRuleset(String path, Byte[] data, String displayName, String description, Boolean debugEnabled)
+Category: ILOG Rule Execution Session Service
+
+Spanish message:
+Message="No se puede cargar el archivo o ensamblado 'file:///C:\Program Files\IBM\WebSphere\ILOG Rules for .NET\Rule Execution Server for .NET\Bin\Execution\ExecutionBaseDir\BusinessModel.dll' ni una de sus dependencias. Este ensamblado se creó con un tiempo de ejecución más reciente que el tiempo de ejecución cargado actualmente y no se puede cargar." 
+RESOLVING THE PROBLEM
+IIS7 
+
+ * 
+ * 
+ * 2. Select server then click on Application Pools. 
+ * 3. Locate the ILOG Rule application pool . Right click on the application pool and click on Basic Settings. 
+ * 4. From the drop down menu under .NET Framework Version choose the v4.0 version of asp.net.
+
+
+IIS 6  * 
+ * 
+ * 2. In Services and Applications select Internet Information Services 
+ * 3 . In Web sites, right click on the deployed ILOG Web Site, and select Properties 
+ * 4. From the ASP.NET tab, select the 4.0.xxxxx version available
+
+
+Restart the IIS session or the web site

@@ -1,0 +1,39 @@
+Title: IBM SQL0443E rc = 49 returned from DB2MQ function after migrating to DB2 v9 - United States
+
+Text:
+SQL0443E; DB2MQ; db2cmqm; amLoadLibrary TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ After migrating to DB2 v9 or above on Unix/Linux, running DB2MQ function may return SQL0443E rc = 49. 
+
+CAUSE
+The problem is caused by db2cmqm.so library having dependency on /usr/lib/libmqm_r.a. It will search library under /usr/lib and then the path set by LIBPATH or LD_LIBRARY_PATH. DB2 v9.1 or above are 64 bit and will be looking for a 64 bit libmqm_r.a library. By default, WebSphere MQ v6 symbolically links /usr/lib to 32 bit libraries under /usr/mqm/lib32. This causes library mismatch thus "invalid magic number" error is returned.
+
+ENVIRONMENT
+The problem occurs while 64 bit WebSphere MQ application is running and /usr/lib is specified as part of LIBPATH or LD_LIBRARY_PATH.
+
+DIAGNOSING THE PROBLEM
+From DB2M trace, function amLoadLibrary failed with rc = AM_ERR_LOAD_FAILED and the following library loading errors are logged.
+
+
+
+
+---------->amLoadLibrary 
+
+ ! amtxxdlx: load of [/home/lawson/sqllib/function/db2cmqm.so] failed errno[8] errorString[ 0509-022 Cannot load module /home/lawson/sqllib/function/db2cmqm.so. 
+0509-150 Dependent module /usr/lib/libmqm_r.a(libmqm_r.o) could not be loaded. 
+0509-103 The module has an invalid magic number. 
+0509-022 Cannot load module /home/lawson/sqllib/function/db2cmqm.so.
+0509-150 Dependent module /home/lawson/sqllib/function/db2cmqm.so could not be loaded.] 
+
+<----------amLoadLibrary (rc = AM_ERR_LOAD_FAILED)
+
+
+
+RESOLVING THE PROBLEM
+Manually linking 64 bit libraries to /usr/lib directory will resolve the problem. 
+
+>ln -s /usr/mqm/lib64/libmq* /usr/lib
+
+RELATED INFORMATION
+ DB2M trace [http://publib.boulder.ibm.com/infocenter/db2luw/v9/topic/com.ibm.websphere.ii.db2udb.foundation.appdev.fed.mq.doc/developing/iiynafmqtrace.html?resultof=%22%64%62%32%6d%22%20]

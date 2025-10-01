@@ -1,0 +1,62 @@
+Title: IBM Customize RTC theme to have custom logo - United States
+
+Text:
+theme; custom; image; icon; rtc TECHNOTE (FAQ)
+
+QUESTION
+ How do I change the Rational Team Concert Icon in the Web UI to a custom icon my company uses? 
+
+CAUSE
+The RTC deployment comes built in with themes created by the product developers. When deploying RTC in other environments, it may be preferable to utilize a custom logo instead of the default one.
+
+ANSWER
+There are two ways to edit the login image. 
+
+Hide details for Editing files contained in the application WAR [/support/docview.wss?uid=swg21634120&amp;aid=1]Editing files contained in the application WAR 
+
+NOTE: .war files and .jar files are simply zip files that contain special manifest files. To extract these archives, you can use any zip tool such as WinZip, 7-Zip, the zip command line tool in unix, or the built-in zip support in file systems explorers such as the Windows Explorer in Windows 7. You may need to temporarily rename the files and add a ".zip" extension in order for the file to be recognized as a zip, but remember to rename it back to the original name afterwards.
+
+When replacing the contents of zipped archives, make sure that the path inside the archive is correct. You can verify that an archive was correctly updated by viewing the archive with a tool and check that the timestamp of the update file is newer than the others, and that it contains the correct path.
+
+Part 1: Modify the WAR file 
+
+ * 
+ * 
+ *  Locate the jazz.war at <rtc_install_dir>/jazz/server/tomcat/webapps/jazz.war and copy it to a temporary working directory.
+   
+   Extract the /WEB-INF/eclipse/plugins/net.jazz.web.app_1.0.2.I200912031748.jar file from the WAR. The timestamp portion of the filename may be different depending on the exact version/ifix.
+   
+   Extract the following two files from the JAR file:
+   /resources/graphics/JazzUI/IBM-logo.png
+   /resources/graphics/LoginWidget/logo-ibm-sm.gif
+   
+   Update or replace the two image files with the desired content. The image dimensions (41 x 15px) must be maintained, as well as the formats (PNG, GIF). The images have transparency, so you should use image editing software that can edit and save transparent images.
+   
+   Replace the two images in the JAR with the modified images. Inspect the JAR to make sure the paths are correct (same as before) and the timestamp is newer on those two images.
+   
+   Replace the JAR file in the WAR file, and verify that the path is correct and the timestamp is newer.
+   
+   Replace the original jazz.war with this new modified one. 
+ * 
+ * 
+
+
+Part 2: Redeploy the WAR  * 
+ * 
+ * 
+ * 
+
+
+
+
+Hide details for Creating a Web UI Theme [/support/docview.wss?uid=swg21634120&amp;aid=1]Creating a Web UI Theme 
+For information on creating a theme for the web UI, review the following documentation as it will not be discussed here:  * Web UI Theming [https://jazz.net/wiki/bin/view/Main/WebUITheming] (Jazz.net wiki link)
+   
+   
+ * Configuring Themes [http://pic.dhe.ibm.com/infocenter/clmhelp/v4r0m1/index.jsp?topic=%2Fcom.ibm.jazz.repository.web.admin.doc%2Ftopics%2Fc_configuring_themes.html] (Information Center link)
+
+
+ 
+
+Leverage the Jazz Community The Jazz based products have an active community that can provide you with additional resources. Browse and contribute to the User forums, contribute to the Team Blog and review the Team wiki.
+Refer to technote 1319600 [http://ibm.com/support/docview.wss?uid=swg21319600] for details and links.

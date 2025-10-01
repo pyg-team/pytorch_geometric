@@ -1,0 +1,32 @@
+Title: IBM Batch Pilot task completes without processing any actions in IBM Datacap Taskmaster Capture - United States
+
+Text:
+Batch Pilot TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Batch Pilot task completes without processing any actions 
+
+SYMPTOM
+Taskmaster Client or Taskmaster Client Service task completes with "finished" status but no RRS log is created when task logging is properly configured. This may especially apply after using the Datacap Studio Application Wizard to create a new application based on a preexisting one.
+
+
+CAUSE
+Batch Pilot tasks run by Taskmaster Client or Taskmaster Client Service execute RRS or actions via a form. For background tasks, Batch Pilot uses \Datacap\BPilot\Rulerun\rrs_run.dcf, which must be assigned at the application (batch) level in the Batch Pilot Project setup. If the form is not attached at that level, then the task will complete without running any rules. 
+
+
+Note: In Verify the forms used are custom to the application and based on the document hierarchy. These forms are assigned at the page, not application (batch), level.
+
+
+RESOLVING THE PROBLEM
+To resolve this for a background task: 
+
+ 
+
+ 1. Open Batch Pilot stand-alone. Use \Datacap\BPilot\BPilot.exe or the Start Menu shortcut 
+ 2. Open the Batch Pilot Project (BPP) file for the affected task 
+ 3. Right-click the application/batch type, e.g. APT, and choose Pick Form 
+ 4. Navigate to and select rrs_run.dcf (This can be a local or UNC path to be run by all Rulerunners) 
+ 5. Exit Batch Pilot and choose Yes when promoted to save
+
+
+Note: This document is intended for background tasks only. If you are experiencing similar behavior in Verify where the form does not load, but the task finishes without error, ensure that the Batch Pilot Project has a Verify form assigned to each page type used by Verify. If this is not the issue, check the page file (e.g. Verify.xml) and ensure that all pages were assigned proper types during page identification.

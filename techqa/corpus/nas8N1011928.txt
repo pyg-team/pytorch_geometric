@@ -1,0 +1,100 @@
+Title: IBM How to Set up BRMS Software Encryption Environment Using iSeries Navigator - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This document explains how to set up a BRMS software encryption environment using iSeries Navigator. 
+
+RESOLVING THE PROBLEM
+This document explains how to set up a BRMS software encryption environment using iSeries Navigator. 
+
+Starting with V6R1, it is possible to use software encryption with BRMS as indicated in Rochester Support Center knowledge base document New, Using BRMS to Encrypt Data: Database 'DCF Technotes (IBM i)', View 'Products', Document 'Using BRMS to Encrypt Data' [http://www-01.ibm.com/support/icons/doclink.gif] [http://www-01.ibm.com/support/docview.wss?uid=nas8N1018803].
+
+To set up the environment, it is necessary to create master key, create keystore file, generate a keystore file entry, and then create a media policy that will use the environment created. This can be performed from the green screens by following Rochester Support Center knowledgebase document New, How to Set up Encryption Environment to Perform Software Encryption: Database 'DCF Technotes (IBM i)', View 'Products', Document 'How to Set up Encryption Environment to Perform Software Encryption' [http://www-01.ibm.com/support/icons/doclink.gif] [http://www-01.ibm.com/support/docview.wss?uid=nas8N1018617] or by following these steps with iSeries Navigator.
+
+The advantage of setting up the encryption environment using iSeries Navigator is that multiple systems can be set up with identical master keys, keystore file, and the same AES key for the keystore file entries. This allows encrypted data backed up on one of these systems to be restored on any system set up with the same master keys and AES key. If the AES key for the keystore file is different on each system, additional steps must be taken to restore encrypted data following Rochester Support Center Tech Note, Restoring Encrypted Data in a BRMS Network to a Different System [http://www.ibm.com/support/docview.wss?uid=nas8N1010573]
+
+Using iSeries Navigator:
+
+1. Select Security > Cryptographic Services Key Management and then double-click Master Keys. An Attention window will pop-up, click OK.
+
+System i Navigator screen. [/support/docview.wss?uid=nas8N1011928&aid=1] [/support/docview.wss?uid=nas8N1011928&aid=1]
+
+2a. Load the Master Key Part using the Manage Master Keys screen by highlight the Master Key that you want to load, then right-click and select Load Part.
+
+Manage Master Keys window. [/support/docview.wss?uid=nas8N1011928&aid=2] [/support/docview.wss?uid=nas8N1011928&aid=2]
+
+
+2b. Enter a Passphrase and then press OK. 
+
+Load Master Key Part window. [/support/docview.wss?uid=nas8N1011928&aid=3] [/support/docview.wss?uid=nas8N1011928&aid=3]
+
+Note: Document and securely save the Passphrase used, just in case the Master Key is lost or changed and needs to be re-created exactly the same. 
+
+
+3. Set the Master Key by highlighting the Master Key to be set and right-click and select Set.
+
+Set option on Manage Master Keys window. [/support/docview.wss?uid=nas8N1011928&aid=4] [/support/docview.wss?uid=nas8N1011928&aid=4]
+
+Note: The Current Key Verification Value can be compared between systems and will be the same if the identical Passphrase is used to create the Master Key.
+
+
+4a. Create Keystore File by selecting Keystores on the Cryptographic Services Key Management screen.
+
+Back to System i Navigator screen. [/support/docview.wss?uid=nas8N1011928&aid=5] [/support/docview.wss?uid=nas8N1011928&aid=5]
+
+4b. On the Manage Keystores window, select the Create New Keystore button.
+
+Manage Keystores window. [/support/docview.wss?uid=nas8N1011928&aid=6] [/support/docview.wss?uid=nas8N1011928&aid=6]
+
+4c. Fill in New Keystore window with Q1AKEYFILE/QUSRBRM, select the Master Key (1-8) , set the Public authority for the file, and click OK.
+
+New Keystore window. [/support/docview.wss?uid=nas8N1011928&amp;aid=7]
+
+
+5a. Generate a Keystore File Entry by highlighting the keystore file Q1AKEYFILE, right-click on it and select the New Key Record option to open the New Key Record Wizard.
+
+Open option on Manage Keystores window. [/support/docview.wss?uid=nas8N1011928&aid=8] [/support/docview.wss?uid=nas8N1011928&aid=8]
+
+5b. Enter a name for the New Key Record label (BRMS requires the new Key Record label to all be in CAPITAL LETTERS) and click Next:
+
+New Key Record wizard welcome window. [/support/docview.wss?uid=nas8N1011928&aid=9] [/support/docview.wss?uid=nas8N1011928&aid=9]
+
+5c. Click Next on the Functions not allowed screen:
+
+Functions not allowed window. [/support/docview.wss?uid=nas8N1011928&aid=10] [/support/docview.wss?uid=nas8N1011928&aid=10]
+
+5d. Select AES for the Key type and click Next:
+
+Key type window. [/support/docview.wss?uid=nas8N1011928&aid=11] [/support/docview.wss?uid=nas8N1011928&aid=11]
+
+5e. Select the Use a specified value option on the Key value generation window and click Next:
+
+Key value generation window. [/support/docview.wss?uid=nas8N1011928&aid=12] [/support/docview.wss?uid=nas8N1011928&aid=12]
+
+5f. Use the Generate button to generate a key on the first system being configured and document the key value before pressing Next. The AES Key value by default is 64 characters in length and can be copied and pasted to another file for documenting. 
+
+Note: Document and securely save this AES Key Value with the Master Key Passphrase created earlier just in case the Keystore File and this Keystore File Record is lost or destroyed and needs to be recreated. This key value can also be used to create a duplicate Key File label on other systems to allow restoring of data from one system to another that has been encrypted.
+
+Key value generate window. [/support/docview.wss?uid=nas8N1011928&aid=13] [/support/docview.wss?uid=nas8N1011928&aid=13]
+
+5g. Press Finished to complete creating the key record.
+
+Wizard Summary window. [/support/docview.wss?uid=nas8N1011928&aid=14] [/support/docview.wss?uid=nas8N1011928&aid=14]
+
+6. Create a BRMS media policy to use the Keystore File and Key record label to encrypt the backup (page down on the create or change media policy to enter the following data):
+
+Encrypt Data . . . . . . . . . . : *YES 
+Key store file . . . . . . . . : Q1AKEYFILE 
+Key store library. . . . . . . : QUSRBRM 
+Key record label . . . . . . . : BRMSKEYRECORD
+
+Note: If using a control group, specify that an encrypted save should be performed by using the media policy created above and setting the ENCRYPT column on any line item that can be encrypted. To set this parameter, edit the control group and press F11 two times to see the ENCRYPT parameter for each entry item specified and change the parameter from *NO to *MEDPCY.
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Operating System IBM i 7.2 Operating System IBM i 7.1 Operating System IBM i 6.1 Operating System IBM i 7.3 
+HISTORICAL NUMBER
+ 577266629

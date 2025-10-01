@@ -1,0 +1,33 @@
+Title: IBM Error KFWITM393E when logging onto TEP with LDAP authentication enabled - United States
+
+Text:
+ITM; 5724C04PS; IBM Tivoli Monitoring; ITM 6; TEPS; Character not mapped to negotiated transmission code set; LDAP portal user authentication login TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This Technote deals with an issue where a customer with LDAP authentication set up encounters errors when users attempt to logon to the TEP 
+
+SYMPTOM
+Users attempting to log into the TEP client receive the following error: 
+
+"KFWITM393E User ID or password is invalid."
+
+
+
+DIAGNOSING THE PROBLEM
+Customer should review the TEPS logs for the following error: 
+
+(4B5E276B.0006-1BE4:ctpropertysequence.cpp,661,"CTPropertySequence::Dump
+") -----> -2102 = "Character not mapped to negotiated transmission 
+code set - ASCII" 
+(4B5E276B.0007-1BE4:ctpropertysequence.cpp,661,"CTPropertySequence::Dump
+") -----> -2104 = "com.ibm.TEPS.CTQuery.CTQuerySecuredSimpleEvaluator"
+(4B5E276B.0008-1BE4:ctpropertysequence.cpp,661,"CTPropertySequence::Dump
+") -----> -2105 = "org.omg.CORBA.DATA_CONVERSION: Character not mapped
+to negotiated transmission code set - ASCII vmcid: OMG minor code: 1 
+completed: No 
+
+
+RESOLVING THE PROBLEM
+This issue is due to the customer using LDAP referrals in their configuration. 
+
+This is currently unsupported by ITM. All information must be contained in a single repository for LDAP to work correctly.

@@ -1,0 +1,189 @@
+Title: IBM Developer for z Systems Enterprise Edition 14.0 - United States
+
+Text:
+service release; modpack; mod pack; upgrade; refresh; refresh pack DOWNLOADABLE FILES
+
+ABSTRACT
+ IBM Developer for z Systems Enterprise Edition14.0 has been made generally available and contains new features as well as fixes for client-reported and internally found defects. 
+
+DOWNLOAD DESCRIPTION
+ 
+
+Table of Contents Sections Description  * What's new
+
+The Change history section provides an overview on what is new in this release with a description of any new functions or enhancements when applicable.
+
+ * Impact assessment
+
+The How critical is this fix section provides information related to the impact of this release to allow you to assess how your environment may be affected.
+
+ * Prerequisites
+
+The Prerequisites section provides important information to review prior to the installation of this release.
+
+ * Download package
+
+The Download package section provides the direct link to obtain the download package for installation in your environment.
+
+ * Installation instructions
+
+The Installation instructions section provides the installation instructions necessary to apply this release into your environment.
+
+ * Known problems
+
+The Known side effects section contains a link to the known problems (open defects) identified at the time of this release.
+
+Supporting Documentation Document Description  * Detailed System Requirements [http://www.ibm.com/software/products/en/developer-for-z-systems#othertab1]
+
+Click to review the detailed system requirements information for a complete list of hardware requirements, supported operating systems, prerequisites and optional supported software, with component-level details and operating system restrictions.
+
+ * IBM Knowledge Center [http://www.ibm.com/support/knowledgecenter/SSQ2R2/rdz_welcome.html]
+
+IBM Knowledge Center provides an entry point to product documentation. You can view, browse, and search online information related to the product.
+
+You can also visit the IBM Developer for z Systems Library [http://www.ibm.com/support/docview.wss?uid=swg27048563] to review additional documentation.
+
+ * Fix List [http://www.ibm.com/support/docview.wss?uid=swg27048755]
+
+Click to review a complete list of the defects (APARs) resolved in this release including a list of resolved defects for the entire version family.
+
+ * developerWorks [http://www.ibm.com/developerworks/rational/products/rdz]
+
+Find technical developer content and resources.
+
+PREREQUISITES
+ 
+
+Version of IBM Installation Manager required: IBM Installation Manager 1.8.3 [http://www.ibm.com/support/docview.wss?uid=swg24039631] or later.
+
+Back to top
+
+INSTALLATION INSTRUCTIONS
+ 
+
+Review the Installing [http://www.ibm.com/support/knowledgecenter/SSQ2R2_14.0.0/com.ibm.etools.rdz.installing.doc/topics/czdinstallintro.html] section in IBM Knowledge Center. Review the Client installation [http://www.ibm.com/support/knowledgecenter/SSQ2R2_14.0.0/com.ibm.etools.rdz.installing.doc/topics/install07.html] section in IBM Knowledge Center for client installations.
+
+Review the Host installation [http://www.ibm.com/support/knowledgecenter/SSQ2R2_14.0.0/com.ibm.etools.rdz.installing.doc/topics/c_server_installation.html] section in the knowledge center for host installations.
+
+Back to top
+
+DOWNLOAD PACKAGE
+ 
+
+Download options Access type Description  * Mainframe Development [https://developer.ibm.com/mainframe/products/downloads]
+
+For all editions of the client and host for IBM Developer for z Systems edition.
+
+ * Shopz [https://www-304.ibm.com/software/shopzseries/ShopzSeries_public.wss]
+
+For IBM Developer for z Systems Enterprise Edition V14.0.0, program number 5655-AC5, host only.
+
+ * Passport Advantage [https://www.ibm.com/software/howtobuy/softwareandservices/passportadvantage]
+
+For authorized user license for the IBM Developer for z Systems edition and the IBM Developer for z Systems Quick Start Guide.
+
+ * IBM OEM software [https://www.ibm.com/software/howtobuy/softwareandservices/oem]
+
+IBM Software Group OEM offerings are designed for partners who develop and sell business solutions with embedded or bundled IBM middleware software. Clients with Flexible Contract Type (FCT) license purchases and IBM Business Partners must sign in to download the software package.
+
+Back to top
+
+HOW CRITICAL IS THIS FIX?
+ 
+
+Impact Assessment Impact Description Corrective This is a maintenance release. It contains fixes for client-reported and internally found defects.
+
+Test Results
+
+Close [x]
+
+DEFINITIONS
+Regression: An error in the Maintenance Delivery Vehicle [http://www.ibm.com/support/docview.wss?uid=swg27008656] (MDV) that produces incorrect or unexpected behavior causing a supported feature to stop functioning as designed. 
+This includes: 
+
+ * Coding errors that cause a regression
+ * Documentation or packaging problems that cause a regression
+ * Errors reported in a new function delivered in a MDV that cause a regression
+
+Incomplete: An error in the MDV has not regressed, but does not work as designed. 
+This includes: 
+
+ * Fixed APARs which did not solve the original problem but did not break anything new
+ * APARs reporting documentation errors, such as readme errors, that cause problems applying an MDV but do not lead to a regression
+
+
+
+
+Notes:  * Regression and incomplete APARs are considered fix-in-error or MDV-in-error
+ * Definitions above apply only to valid APARs that result in product fixes (APARs returned as working-as-designed are not assessed for being fix-in-error)
+ * Issues in major releases due to new functionality do not apply in this definition
+
+There are no known regressions to report.
+
+Back to top
+
+PROBLEMS SOLVED
+ 
+
+Defects resolved Click the Fix List link in the table of contents above to review a list of the problems solved in this release.
+
+KNOWN SIDE EFFECTS
+ 
+
+Review the following list of known issues and open defects: There are no known issues report.
+
+OPEN DEFECTS
+Review the following list of open defects for IBM Developer for z Systems [http://www-947.ibm.com/support/entry/portal/search_results/rational/rational_developer_for_system_z?sn=spe&q=%22APAR%20status%22%20OPEN&prod=U995901O13071N99&filter=language:en&productContext=-280041287#q%3D%22APAR%20status%22%20OPEN%26filter%3DDC.Type%3ACT748%2Blanguage%3Aen%26prod%3DU995901O13071N99] on the IBM Support Portal.
+
+Review technote 1461170: Open APARs for Rational products available on the Web [http://www.ibm.com/support/docview.wss?uid=swg21461170] for information on how to configure your MyNotifications subscription account and subscribe to the APARs you are interested in following.
+
+Back to top
+
+CHANGE HISTORY
+ 
+
+What's new The IBM Developer for z Systems Knowledge Center [http://www.ibm.com/support/knowledgecenter/SSQ2R2_14.0.0/com.ibm.etools.getstart.wsentdev.doc/topics/whatsnew.html] contains a list of new features under the What's new topic.
+
+Back to top
+
+TECHNICAL SUPPORT
+ 
+
+TAB NAVIGATION
+ * General Support Information- selected tab,
+ * Support Resources [http://www.ibm.com/support/docview.wss?uid=swg27020747]- selected tab,
+
+
+
+
+IBM Software Support Communities 
+
+ * Visit the IBM Support Portal [http://www.ibm.com/support/entry/portal/Overview/Software/Rational/product] to configure your support portal experience and review FAQs, lists of known problems, fixes, and a wealth of important support information.
+   
+   
+ * Visit developerWorks [http://www.ibm.com/developerworks/rational/] to access an online collection of tutorials, sample code, standards, forums and other resources provided by experts at IBM to assist software developers using Rational tools including access to the IBM RFE Community [http://www.ibm.com/developerworks/rfe/].
+   
+   
+ * Visit the Jazz Community [http://jazz.net/] if you use a Rational product created using the Jazz platform to interact directly with the Jazz development team and other community members, download product trials and betas and track developement progress. 
+
+
+
+
+HELPFUL HINTS FOR OBTAINING TECHNICAL ASSISTANCE:
+Before you contact IBM Rational Software Support, gather the background information that you need to describe the problem. When you describe a problem to an IBM software support specialist, be as specific as possible and include all relevant background information so that the specialist can help you solve the problem efficiently. To save time, know the answers to these questions: 
+
+ * What software versions were you running when the problem occurred? 
+ * Do you have logs, traces, or messages that are related to the problem? 
+ * Can you reproduce the problem? If so, what steps do you take to reproduce it? 
+ * Is there a workaround for the problem? If so, be prepared to describe the workaround. 
+
+If you have helpful information to diagnose or identify the problem on your system, you can provide this data by following the instructions to exchange information with IBM Technical Support [http://www.ibm.com/software/support/exchangeinfo.html]. 
+
+ 
+
+Follow IBM Rational Client Support on Twitter [http://twitter.com/rationalsupport] | Facebook [http://facebook.com/rationalsupport] | YouTube [http://www.youtube.com/ibmrationalsupport] | devWorks Blog [https://www.ibm.com/developerworks/mydeveloperworks/blogs/nfrsblog/?lang=en]
+
+
+
+
+ Back to top

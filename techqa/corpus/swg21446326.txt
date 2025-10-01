@@ -1,0 +1,31 @@
+Title: IBM WSWS4004E WSDL for SCA module exports with JAX-WS bindings cannot be retrieved using the administrative console - United States
+
+Text:
+v70feprnote; esbv70feprnote; WSWS4004E; v70rnotes TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Retrieving the WSDL document in the administrative console does not support Service Component Architecture (SCA) modules for exports with JAX-WS bindings. 
+
+SYMPTOM
+After deploying an SCA module that contains an export with the JAX-WS binding, if you use the WebSphere Process Server V7.0.0.x or WebSphere Enterprise Service Bus V7.0.0.x administrative console to select Services > Service providers > Service provider name of your deployed module, and then click the WSDL document link under Additional Properties, you receive the following error message: 
+
+WSWS4004E: The wsdl-file for module <your Web module name> was not found in the module.
+
+
+CAUSE
+The web service endpoints of SCA module exports with JAX-WS bindings are registered in WebSphere Process Server V7.0.0.x or WebSphere ESB V7.0.0.x in a way that does not use JAX-WS annotations. However, the administrative console retrieves the WSDL document using JAX-WS annotated classes.
+
+
+ENVIRONMENT
+WebSphere Process Server V7.0.0.x, WebSphere ESB V7.0.0.x
+
+
+
+RESOLVING THE PROBLEM
+Get the WSDL description of an endpoint defined by a SCA module containing an export with a JAX-WS binding by sending an HTTP GET request to the endpoint URL with ?wsdl added to the end of the URL. For example, type the URL with ?wsdl added into the address field of a web browser. In order to retrieve the WSDL description, the SCA module must be deployed and in the started state.
+
+ 
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration WebSphere Enterprise Service Bus AIX, HP-UX, Linux, Linux zSeries, Solaris, Windows

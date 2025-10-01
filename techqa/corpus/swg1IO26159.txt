@@ -1,0 +1,132 @@
+Title: IBM IO26159: ENTRY TEMPLATE DATE FIELD VALUE IS NOT GRAYED OUT IN MICROSOFT INTERNET EXPLORER WITH THE DEFAULT THEME. - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+ DIRECT LINK TO FIX
+3.0.3-IBM_ECM_CMIS_FNCS-Windows-IFIX003.zip [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FOther+software%2FContent+Navigator&fixids=3.0.3-IBM_ECM_CMIS_FNCS-Windows-IFIX003.zip&source=SAR]
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  After upgrading to IBM Content Navigator V3.0.3.x, when using
+   the Default theme, the Entry Template date field values are
+   grayed out in Google Chrome and Mozilla Firefox but not in
+   Microsoft Internet Explorer. This does not happen with the
+   Classic theme.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Use Chrome or Firefox
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Using Microsoft Internet Explorer with the default theme
+   enabled in ICN, the placeholder example text that displays on
+   date properties displays in a dark color like property values,
+   instead of light gray.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  With this fix, Internet Explorer displays the date placeholder
+   text in gray.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IO26159
+   
+   
+ * REPORTED COMPONENT NAME
+   CONTENT NAVIGAT
+   
+   
+ * REPORTED COMPONENT ID
+   ISCONTNAV
+   
+   
+ * REPORTED RELEASE
+   303
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2018-03-23
+   
+   
+ * CLOSED DATE
+   2018-05-31
+   
+   
+ * LAST MODIFIED DATE
+   2018-05-31
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CONTENT NAVIGAT
+   
+   
+ * FIXED COMPONENT ID
+   ISCONTNAV
+   
+   
+
+APPLICABLE COMPONENT LEVELS

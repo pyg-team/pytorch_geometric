@@ -1,0 +1,29 @@
+Title: IBM Adding Greenplum ODBC database driver to available ODBC sources for SPSS products - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Currently the Greenplum database does not appear to be supported by SPSS.
+
+I have visited datadirect.com (your ODBC provider) and saw that they have the ODBC for the Greenplum database.
+
+Testing this on my system shows it can work with your products but I need to purchase my own license to continue using this ODBC driver (as the one on datadirect.com is a trial license).
+
+Can you include the Greenplum ODBC driver in future releases of your products? 
+
+RESOLVING THE PROBLEM
+An Enhancement Request has been submitted and will be considered for future releases of IBM SPSS Modeler. 
+
+Update: 
+
+Modeler supports Greenplum with Modeler 15; FP1. Please review the Modeler product's compatibility report available on the Support Portal for version and driver information. 
+
+RELATED INFORMATION
+ Need more help? Our Modeler forum is Live! [https://developer.ibm.com/answers/topics/modeler/?smartspace=predictive-analytics]
+
+
+ 
+
+HISTORICAL NUMBER
+ 85058

@@ -1,0 +1,207 @@
+Title: IBM JR48553: WHEN CONTROL FLOW IS BACK TO THE SAME COACH AND A VARIABLE IS CHANGED, THE BOUNDARY EVENT DOES NOT REFLECT THIS CHANGE. - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Version 8.5 Refresh Pack 5 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24037683]
+Download Version 8.0.1 Fix Pack 3 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24037734]
+Version 8.5.0 Fix Pack 2 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24040683]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When the flow control leads back to the same coach, the runtime
+   passes the list of changed variables to the coach processing.
+   However, the variable snapshot taken to compare the changes
+   against is taken after the post-assignments have been
+   processed.   This results in the message not appearing in the
+   list of changed variables.
+   
+   
+   
+   Server log after 'sample coach' is first loaded:
+   [9/25/13 12:39:24:577 EDT] 00000290 wle_servlet   I
+   CWLLG0006I:
+   Initializing a new session.
+   [9/25/13 12:39:24:588 EDT] 00000290 wle_security  I
+   CWLLG1088I:
+   Initializing session is done for user tw_admin
+   [9/25/13 12:39:24:598 EDT] 00000290 wle_javascrip I   sample
+   coach
+   pre-execution start, errorMessage=<div id="errorMessage2"
+   style="border:1px solid
+   #CD462F;background-color:#FFD9D1;padding:5px">This Excel file
+   has missing headers. Please check the file and try again</div>
+   
+   Server log after button 'Clear Message' is pressed:
+   [9/25/13 12:39:25:734 EDT] 00000290 wle_security  I
+   CWLLG1088I:
+   Initializing session is done for user tw_admin
+   [9/25/13 12:39:29:808 EDT] 000000c8 wle_javascrip I   sample
+   coach post-execution start, errorMessage=<div id="errorMessage2"
+   style="border:1px solid
+   #CD462F;background-color:#FFD9D1;padding:5px">This Excel file
+   has missing headers. Please check the file and try again</div>
+   [9/25/13 12:39:29:808 EDT] 000000c8 wle_javascrip I   sample
+   coach post-execution end,   errorMessage=from post
+   [9/25/13 12:39:29:811 EDT] 000000c8 wle_javascrip I   sample
+   coach pre-execution start, errorMessage=from post
+   
+   Hence, the value of errorMessage is updated to "from post" on
+   the server. Yet, the delta returned with the boundary event of
+   'Clear Message' does not reflect that update, which is the
+   reason the user's coach views are not notified of the change:
+   
+   This is the data sent with the POST to server:
+   {"boundaryEventInfo":{"boundaryEventId":"boundaryEvent_2","bound
+   aryEvent
+   EndStateId":"6135cc91-c33d-4c0a-9e53-ced2c36996f7","fireValidati
+   on":"0"}
+   ,"stateInfo":{"zComponentId":"3028.a2d31d42-cd85-4f83-ad47-65a87
+   636ae23"
+   ,"zComponentName":"CoachNG","zTaskId":"p1","zWorkflowState":"3",
+   "applicationId":"2","applicationInstanceId":"guid:6df52810907a6b
+   87:-7b76
+   6002:141328e00fe:-7ffe","zDbg":"0"},"data":{"local":{"coachHeade
+   r":"TestProcess1","errorMessage":"<div id=\"errorMessage2\"
+   style=\"border:1px
+   solid #CD462F;background-color:#FFD9D1;padding:5px\">This Excel
+   file has missing headers. Please check the file and try
+   again</div>"}}}
+   
+   This is the data sent back to the browser with the response
+   (Note: no
+   errorMessage in it):
+   {"delta":{"tw.local.coachHeaderUpdate":"Coach header
+   updated","tw.local.coachHeader":"Coach header
+    updated"},"event":"taskDataChanged"}
+   </update>
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ==>Variables that are changed in the post-assignment script are
+   ignored when the flow control returns to the same coach.
+   
+   EDITIONS AFFECTED:
+   ==>IBM Business Process Manager Advanced, Standard, and Express
+   
+   PROBLEM DETAILED DESCRIPTION:
+   ==>During the boundary event handling, a snapshot of the
+   variables that includes in the post-assignment script is taken
+   too late. As a result, when the flow controls returns to the
+   same coach the delta logic misses the changes in the
+   post-assignment script.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  ==>A fix is available for IBM BPM V8.0.1.1, V8.0.1.2 and
+   V8.5.0.1 that fix ensures that the post-assignment script runs
+   properly when the flow control leads back to the same coach.
+   
+   On Fix Central (http://www.ibm.com/support/fixcentral), search
+   for JR48553:
+   
+   1. Select the product group, product, installed version, and
+   platform and click Continue.
+   2. Select APAR or SPR, enter JR48553, and click Continue.
+   
+   When downloading fix packages, ensure that you also download the
+   readme file for each fix. Review each readme file for additional
+   installation instructions and information about the fix.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR48553
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM STANDARD
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9500
+   
+   
+ * REPORTED RELEASE
+   801
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-11-19
+   
+   
+ * CLOSED DATE
+   2013-12-19
+   
+   
+ * LAST MODIFIED DATE
+   2014-09-05
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   BPM STANDARD
+   
+   
+ * FIXED COMPONENT ID
+   5725C9500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R801 PSY
+   UP

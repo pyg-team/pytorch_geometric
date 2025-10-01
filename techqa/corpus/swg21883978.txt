@@ -1,0 +1,116 @@
+Title: IBM MustGather: Problems with WebSphere Plug-in Configuration Tool (PCT) - United States
+
+Text:
+Mustgather; MustGatherDocument; plugin; plug-in TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The WebSphere Plug-in Configuration Tool (PCT) is one of several tools in the WebSphere Customization Toolbox (WCT) that comes with WebSphere Application Server (WAS) version 8.0 and later.
+
+The Plug-in Configuration Tool (PCT) is used after installation of the web server Plug-in software, to configure the Plug-in to the web server, and create a web server defintion for WebSphere Application Server (WAS).
+
+The PCT graphical user interface can be used to create a local web server definition, or a remote web server definition. See the instructions on these pages in the IBM Knowledge Center:
+
+Configuring a web server and an application server profile on the same machine (local)
+http://www-01.ibm.com/support/knowledgecenter/SSEQTP_8.5.5/com.ibm.websphere.base.doc/ae/tins_webplugins_local.html [http://www-01.ibm.com/support/knowledgecenter/SSEQTP_8.5.5/com.ibm.websphere.base.doc/ae/tins_webplugins_local.html]
+
+Configuring a web server and an application server on separate machines (remote)
+http://www-01.ibm.com/support/knowledgecenter/SSAW57_8.5.5/com.ibm.websphere.nd.multiplatform.doc/ae/tins_webplugins_remotesa.html [http://www-01.ibm.com/support/knowledgecenter/SSAW57_8.5.5/com.ibm.websphere.nd.multiplatform.doc/ae/tins_webplugins_remotesa.html]
+
+Alternatively, PCT can be run silently from the command line using the wctcmd command with a response file. See those instructions here:
+
+Configuring a web server plug-in using the pct tool
+http://www-01.ibm.com/support/knowledgecenter/SSAW57_8.5.5/com.ibm.websphere.nd.multiplatform.doc/ae/tins_pctcl_using.html [http://www-01.ibm.com/support/knowledgecenter/SSAW57_8.5.5/com.ibm.websphere.nd.multiplatform.doc/ae/tins_pctcl_using.html]
+
+PCT uses ANT scripts to perform various configuration tasks. Consequently if PCT fails, it can be tricky to troubleshoot to determine which specific script, or which specific configuration task failed.
+
+The purpose of this mustgather technote is to provide you with a list of files and information that you will need to send to IBM Software Support to help you troubleshoot problems that you may encounter while using the Plug-in Configuration Tool (PCT). 
+
+RESOLVING THE PROBLEM
+Many problems have already been discovered and fixed by IBM in software fixpacks. Please install the latest fixpacks [http://www-01.ibm.com/support/docview.wss?rs=180&uid=swg27004980] on WebSphere Customization Toolbox (WCT) before you proceed to troubleshoot problems related to Plug-in Configuration Tool (PCT).
+
+
+When you open the Problem Management Record (PMR) with IBM Software Support, please be prepared to send the following information and files to IBM Support:
+
+
+
+1) What is your exact level of IBM WebSphere Application Server (WAS)?
+On what platform?
+.../IBM/WebSphere/AppServer/bin/versionInfo.bat(.sh)
+
+2) What type of web server are you using?
+What version of web server?
+On what platform?
+
+3) What is your exact level of IBM web server Plug-in?
+.../IBM/WebSphere/Plugins/bin/versionInfo.bat(.sh)
+
+4) Is the web server on the same system as WAS? Or on different systems?
+
+5) What is your exact level of IBM WebSphere Customization Toolbox (WCT)?
+.../IBM/WebSphere/Toolbox/bin/versionInfo.bat(.sh)
+
+6) <Plugins_home>/logs/WebServerPluginConfiguration.log
+
+7) wct.log
+
+PCT v8.0 on Windows
+<USER_HOME>/AppData/Local/IBM/WebSphere/workspaces/WCT8/.metadata/.plugins/com.ibm.ws.pmt.tools/wct.log
+
+PCT v8.5 on Windows
+<USER_HOME>/AppData/Local/IBM/WebSphere/workspaces/WCT85/.metadata/.plugins/com.ibm.ws.pmt.tools/wct.log
+
+PCT v8.0 on Unix
+<USER_HOME>/.ibm/WebSphere/workspaces/WCT8/.metadata/.plugins/com.ibm.ws.pmt.tools/wct.log
+
+PCT v8.5 on Unix
+<USER_HOME>/.ibm/WebSphere/workspaces/WCT85/.metadata/.plugins/com.ibm.ws.pmt.tools/wct.log
+
+For example, for the root user on AIX, the home directory is just / so the wct.log file will be located here:
+/.ibm/WebSphere/workspaces/WCT85/.metadata/.plugins/com.ibm.ws.pmt.tools/wct.log
+
+8) <Plugins_home>/logs/config/*.log
+
+9) If using IBM HTTP Server Administration include this log:
+<IHS_home>/logs/config/IHSAdminConfiguration.log
+
+10) Web server configuration files
+
+IBM HTTP Server (IHS) or Apache HTTP Server:
+httpd.conf
+admin.conf
+postinst.properties
+
+Internet Information Services (IIS)
+ApplicationHost.config (IISv7)
+Metabase.xml (IISv6)
+
+SunOne web server
+magnus.conf
+obj.conf
+
+Domino web server
+notes.ini
+
+11) Plug-in configuration files
+plugin-cfg.xml
+plugin-cfg.loc (IIS only)
+
+12) What is the name of your web server definition (ie. webserver1)
+
+13) <Plugins_home>/bin/configureWebServerName.sh(.bat)
+ie. <Plugins_home>/bin/configurewebserver1.sh
+
+14) <Plugin_home>/config/WebServerName/WebServerName.responseFile
+ie. <Plugins_home>/config/webserver1/webserver1.responseFile
+
+15) Along with all of the files listed above, please provide a detailed description of the exact steps that you followed to use PCT. If you used the gui PCT, which options did you select? If you used the command-line PCT what exact command did you use?
+
+After you have opened the PMR with IBM Software Support, please send the files to IBM using one of the methods described in this technote:
+
+Exchanging information with IBM Technical Support for problem determination
+http://www-01.ibm.com/support/docview.wss?uid=swg21153852 [http://www-01.ibm.com/support/docview.wss?uid=swg21153852]
+
+Thanks!
+
+RELATED INFORMATION
+ Recording your screen to share with IBM Support [https://www.ibm.com/developerworks/community/blogs/IBMElectronicSupport/entry/recording_your_screen_to_share_with_support?lang=en]

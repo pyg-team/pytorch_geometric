@@ -1,0 +1,50 @@
+Title: IBM An MQ Binding connection error occurs after inactivity with WebSphere Enterprise Service Bus - United States
+
+Text:
+MQJMS1107 J2CA0056I binding connection TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ After a long period of inactivity, such as overnight, the first attempt of the bindings to connect to MQ results in the following error: MQJMS1107: A problem with the connection has occurred. 
+
+SYMPTOM
+The first message sent by the bindings to MQ after a period of inactivity results in the following error: 
+
+MQJMS1107: A problem with the connection has occurred. 
+
+J2CA0056I: The Connection Manager received a fatal connection error from the Resource Adapter for resource 
+
+JMS$ModuleName.MQ_Import_Module_MQIMPORT_CF$JMSManagedConnection@1. 
+
+The exception is: javax.jms.JMSException: MQJMS2008: failed to open MQ queue 'QUEUENAME'. 
+
+Subsequent messages work correctly.
+
+
+CAUSE
+The cause of this issue is a stale connection.
+
+
+RESOLVING THE PROBLEM
+To resolve this issue, complete the following steps in the administrative console: 
+
+ 1. Navigate to Resources > JMS > Connection Factories > connection_ factory_name.
+    
+    
+    See Pic1.JPG at the bottom of this document for a visual representation of this administrative console panel.
+    
+    
+ 2. On the right side of the panel, click Connection pool.
+    
+    
+    See Pic2.JPG at the bottom of this document for a visual representation of this administrative console panel.
+    
+    
+ 3. Specify 0 in the Minimum connections field.
+    
+    
+ 4. Specify a value in the Unused timeout field to a value that is less than the values for the idle timeout or the network timeout.
+    
+    
+
+
+This action causes the system to purge the unused connections and create a new connection for the first request after the long delay instead of it trying to use a stale connection. Pic1.JPG [/support/docview.wss?uid=swg21501969&aid=2] [/support/docview.wss?uid=swg21501969&aid=1]Pic2.JPG [/support/docview.wss?uid=swg21501969&aid=4] [/support/docview.wss?uid=swg21501969&aid=3]

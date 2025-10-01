@@ -1,0 +1,64 @@
+Title: IBM ITM OS agent is not connected after remote deployment in cross domain environment - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When the IBM Tivoli Monitoring (ITM) OS agent is deployed remotely as part of ClearCase MultiSite Global Monitor installation, the agent does not report its status to the monitoring hub host (Tivoli Enterprise Monitoring Server) if the agent and hub hosts are in different network domains. 
+
+SYMPTOM
+When you type the following command to deploy OS agent remotely from monitoring hub host to ClearCase server machines : 
+
+C:\IBM\ITM\bin\tacmd createNode -h target_host -u user -w password 
+
+the command completes with a successful message. But OS agent does not report its status. Therefore, the following ITM command does not list your OS agent:
+
+C:\IBM\ITM\bin\tacmd listsystems -t NT UX LZ 
+
+CAUSE
+To deploy the OS agent remotely, the agent host must be configured with the hub host's domain suffix.
+TEMS hostname in the agent's configuration is set as the TEMS machine name without a fully qualified domain name while you deploy OS agent remotely.
+
+Here is an example case. Given those fully qualified names: 
+
+TEMS host : test-tems.domain1.com
+agent's host : test-target.domain2.com
+Agent's configuration points to 'test-tems' as opposed to 'test-tems.domain1.com', and then the agent failed to locate TEMS server to connect. to.
+
+
+DIAGNOSING THE PROBLEM
+See Symptom above
+
+
+
+RESOLVING THE PROBLEM
+If you have not yet deployed OS agent remotely, you can avoid the problem by adding the DNS suffix to the agent host machine's network setting. 
+
+ 1. Add a domain name of TEMS in DNS suffix on agent host machine 
+ 2. Deploy OS agent remotely from TEMS 
+ 3. Execute "tacmd listsystems" on TEMS and confirm the name of the agent host with "Y" status
+
+
+If you already have deployed the OS agent, you can reconfigure it to connect to TEMS host in a different domain. 
+To reconfigure the TEMS hostname of OS agent configuration on Linux or on Solaris, 
+(read $AGENT_CODE as 'lz' on Linux and as 'ux' on Solaris )  1. Stop the OS agent:
+    /opt/IBM/ITM/bin/itmcmd agent stop $AGENT_CODE 
+ 2. Reconfigure the agent:
+    /opt/IBM/ITM/bin/itmcmd config -A $AGENT_CODE 
+ 3. Set the TEMS hostname with a fully qualified domain name when asked to input TEMS hostname. 
+ 4. Restart the OS agent:
+    /opt/IBM/ITM/bin/itmcmd agent start $AGENT_CODE 
+ 5. Go to the TEMS host, execute "tacmd listsystems", and confirm the name of the agent host with "Y" status.
+
+
+To reconfigure the TEMS hostname of OS agent configuration on Windows,  1. Navigate to [IBM Tivoli Monitoring] -> [Manage Tivoli Monitoring Services] from the Start menu 
+ 2. Right-click Monitoring Agent for Windows OS and select Reconfigure menu. 
+ 3. Click OK to the first dialog. 
+ 4. Set the TEMS hostname with fully qualified domain name in Hostname of IP Address field in the second dialog. 
+ 5. Click OK. 
+ 6. In the [Manage Tivoli Enterprise Monitoring Services] window, right-click Monitoring Agent for Windows OS and select Start menu 
+ 7. Go back to the TEMS host, execute "tacmd listsystems", and confirm the name of the agent host with "Y" status.
+
+
+RELATED INFORMATION
+#Remotely deploying OS agents to Rational ClearCase [https://publib.boulder.ibm.com/infocenter/cchelp/v7r1m0/index.jsp?topic=/com.ibm.rational.clearcase.cc_ms_install.doc/topics/t_inst_planning_gmon_agent_deploy.htm]

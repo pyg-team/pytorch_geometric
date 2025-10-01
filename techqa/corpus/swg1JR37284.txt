@@ -1,0 +1,140 @@
+Title: IBM JR37284: MEMORY USAGE OF INTERNET EXPLORER GROWS CONTINUOUSLY WHILE WORKING WITH THE ITEM EDIT SCREENS AND USING NEW SIMPLIFIED UI - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When using the new simplified User interface (UI) a continuous
+   growth of Internet Explorers memory will be observed while
+   working with the item edit screens.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Logout and close Internet Explorer to free up memory once in a
+   while
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   All Master Data Management Server for Product Information
+   Management implementations are affected by this issue.
+   ****************************************************************
+   PROBLEM DESCRIPTION:
+   If "Single and multi-edit with rich search simplified" is
+   chosen for the setting "For editing and entering data, use:"
+   in My Settings, continuous memory growth for the internet
+   explorer browser process is seen while continuing to work with
+   items or categories using single edit screen.
+   ****************************************************************
+   RECOMMENDATION:
+   IBM recommends that customers facing the issue reported by this
+   APAR apply  Master Data Management Server for Product
+   Information Management version 9.1.0 and use Internet Explorer 8
+   to gain resolution to this problem.
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A fix for this problem has been included in Master Data
+   Management Server for Product Information Management version
+   9.1.0 when using Internet Explorer 8
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR37284
+   
+   
+ * REPORTED COMPONENT NAME
+   MDM SERVER FOR
+   
+   
+ * REPORTED COMPONENT ID
+   5724V5100
+   
+   
+ * REPORTED RELEASE
+   900
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-07-22
+   
+   
+ * CLOSED DATE
+   2011-04-15
+   
+   
+ * LAST MODIFIED DATE
+   2011-04-15
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   MDM SERVER FOR
+   
+   
+ * FIXED COMPONENT ID
+   5724V5100
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R910 PSY
+   UP

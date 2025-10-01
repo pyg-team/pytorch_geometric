@@ -1,0 +1,44 @@
+Title: IBM BMXAA1477E Connection failed to HTTP handler for endpoint. Unauthorized for url - United States
+
+Text:
+sccd7511defect; sccd751defect; SCCD 7.5.1.1; OSLC integration; Open Services for Lifecycle Collaboration; IM019; IM19; JazzSM; Jazz for Service Management; TADDM; ITM; Tivoli Application Dependency Discovery Manager; IBM Tivoli Monitoring; CI; BMXAA1477E the connection failed to the HTTP handler for the endpoint Response 401 Unauthorized for url; error 401; basic auth credentials; view ci details; view ci data; view data; view details; access; IM020; IM20; event detail; event data; metrics; change history; configuration; cpu utilization; memory utilization TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ An error occurs when you select View Federated Details in SmartCloud Control Desk 7.5.1.1 to view UI previews of configuration items or assets from an IT application such as TADDM or IBM Tivoli Monitoring, or to view Event details from Tivoli Netcool/OMNIbus. 
+
+SYMPTOM
+The following error will display: 
+
+BMXAA1477E: The connection failed to the HTTP handler for the endpoint. Response: '401' Unauthorized' for url
+
+
+CAUSE
+This error occurs if the provider is configured for basic authorization but the credentials for the provider endpoint are incorrect or empty in SmartCloud Control Desk.
+
+For example, if you are attempting to view UI previews from TADDM or Tivoli Monitoring, the credentials for the Resource Registry provider are incorrect or empty.
+
+Or if you are attempting to view Event details from Tivoli Netcool/OMNIbus, the credentials for the Tivoli Netcool/OMNIbus provider endpoint are incorrect or empty.
+
+
+RESOLVING THE PROBLEM
+Follow the appropriate procedure to check the credentials. 
+
+
+If you are attempting view UI previews of CI or asset data from TADDM or Tivoli Monitoring, follow these steps:
+
+1. Go to Integration > OSLC Providers
+2. Open RESOURCEREGISTRY, the Registry Services Resource Registry.
+3. Open the endpoint by clicking >> next to the End Point field, and selecting GoTo End Points.
+4. Make sure that the correct basic authorization credentials are entered in the USERNAME and PASSWORD fields.
+5. Save the endpoint.
+6. Click Return with value.
+
+
+If you are attempting view Event data from Tivoli Netcool/OMNIbus, , follow these steps:
+
+1. Go to Integration > OSLC Providers
+2. Open SCCDOMNIBUS, the Tivoli Netcool/OMNIbus provider.
+3. Open the endpoint by clicking >> next to the End Point field, and selecting GoTo End Points.
+4. Make sure that the correct basic authorization credentials are entered in the USERNAME and PASSWORD fields.
+5. Save the endpoint.
+6. Click Return with value.

@@ -1,0 +1,61 @@
+Title: IBM User account locked after a single failed attempt to login to IBM InfoSphere DataStage - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ A user attempts to login to DataStage with the wrong password, and then their account is locked even though they have only made one failed attempt to login.
+
+SECJ0369E: Authentication failed when using LTPA 
+
+SYMPTOM
+The SystemOut.log file will show sever error messages like: 
+
+SECJ0369E: Authentication failed when using LTPA. The exception is [LDAP: error code 49 - 80090308: LdapErr: 
+
+DSID-0C090334, comment: AcceptSecurityContext error, data 775, vece].
+
+CAUSE
+LDAP failover configuration causes WAS to issue several retries with the same credentials, causing the account to be locked even though the user only tried once.
+
+
+
+DIAGNOSING THE PROBLEM
+This can happen in environments using LDAP, where the WebSphere Application is configured to retry the login because of the LDAP failover settings. Look for several SECJ0369E messages in the SystemOut.log file at the time of the failed login attempt.
+
+
+
+RESOLVING THE PROBLEM
+ 
+
+ 1. If LDAP failover is configured by registering backend LDAP server hostnames using the wsadmin command, set the following property to true by going Security->User Registries -> LDAP -> Custom Properties in the administrative console:
+    
+    com.ibm.websphere.security.registry.ldap.singleLDAP
+    
+    If this property is set to true, the Application Server does not resolve an LDAP hostname to multiple IP addresses. The default value for this property is false. 
+    
+    
+ 2. If LDAP failover is configured by associating a hostname with mutlipe ip addresses using network configuration, set the following property to false by going Security-> User Registries -> LDAP -> Custom Properties in the administrative console:
+    
+    com.ibm.websphere.security.ldap.retryBind 
+    
+    If this property is set to false, Application Server does not retry LDAP bind calls. The default value for this property is true. 
+
+
+
+To access the administrative console's LDAP Custom Properties page, access the WebSphere Application Server's Administrative Console. The URL will look something like: 
+
+http://<host_name_or_ip>:9060/admin 
+
+(9060 is the default port for the WAS console) 
+
+Log in as the WebSphere administrator user and then: 
+
+click Security > Global security. Under User registries, click LDAP. Then you will see this: 
+
+[/support/docview.wss?uid=swg21454858&aid=1] [/support/docview.wss?uid=swg21454858&aid=1] 
+Click on custom properties: 
+
+Then add the named property here by clicking "New" and typing the name and its value: 
+
+[/support/docview.wss?uid=swg21454858&aid=2] [/support/docview.wss?uid=swg21454858&aid=2]

@@ -1,0 +1,231 @@
+Title: IBM PM16278: USER INFORMATION IS READ INCORRECTLY ON DB2 FOR Z/OS WHEN PADIX=YES - United States
+
+Text:
+  FIXES ARE AVAILABLE
+6.1.0.5 Download: WebSphere Portal and WCM V6.1.0 fix pack 5 [http://www-01.ibm.com/support/docview.wss?uid=swg24027475]
+6.1.0.6 Download: WebSphere Portal and WCM V6.1.0 fix pack 6 [http://www-01.ibm.com/support/docview.wss?uid=swg24030970]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  For performance reasons DB2 for z/OS pads varying-length index
+   columns (VARCHAR) with whitespace characters (blanks) if global
+   subsystem parameter PADIX is set to YES. This results in user
+   IDs read, which show trailing blanks in their IDs. Such IDs do
+   not match the expected IDs and thus entitlements are not
+   associated correctly.
+   Since resources stored in the database domain "jcr" are
+   identified by string values, such objects can be affected. An
+   example of such an error can be this message:
+   
+   [6/10/10 15:40:30:256 CEST] 00000012 StorageApi E
+   com.ibm.wps.policy.commands.StorageApi getPolicyRoot
+   EJQAB0067E:
+   An error occurred while getting the policy root.
+   com.ibm.portal.WpsException:
+   EJQAB0067E: An error occurred while getting the policy root.
+   
+   [...]
+   Caused by: com.ibm.icm.jcr.access.AccessDeniedException: The
+   requested
+   operation violates one or more access constraints.
+   [...]
+   
+   When tracing is enabled, the object ID of the corresponding
+   resource is displayed:
+   
+   [ExtIDImpl '6QReDe3BP4MIH6M1E03Q8C6JC4JS47P9EC6J56PHPAJGPCOPDC6J
+   
+   161JP02G0401802G0401802G0401802G0401802G0401802G0401802G0'
+   [cebe46804bf229999ff19f5af87ff0af
+   / ICM_CONTENT, Domain: [Domain: jcr]]
+   
+   Usually there should be only one (1) blank before the slash
+   character (/).
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  n/a
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  For performance reasons DB2 for z/OS pads varying-length
+   index columns (VARCHAR) with whitespace characters (blanks) if
+   global subsystem parameter PADIX is set to YES. This results in
+   user IDs read, which show trailing blanks in their IDs. Such IDs
+   do not match the expected IDs and thus entitlements are not
+   associated correctly.
+   
+   Since resources stored in the database domain "jcr" are
+   identified by string values, such objects can be affected. An
+   example of such an error can be this message:
+   
+      [6/10/10 15:40:30:256 CEST] 00000012 StorageApi E
+   com.ibm.wps.policy.commands.StorageApi getPolicyRoot EJQAB0067E:
+   An error occurred while getting the policy root.
+      com.ibm.portal.WpsException:
+         EJQAB0067E: An error occurred while getting the policy
+   root.
+         [...]
+      Caused by: com.ibm.icm.jcr.access.AccessDeniedException: The
+   requested
+         operation violates one or more access constraints.
+         [...]
+   
+   When tracing is enabled, the object ID of the corresponding
+   resource is displayed:
+   
+      [ExtIDImpl
+   '6QReDe3BP4MIH6M1E03Q8C6JC4JS47P9EC6J56PHPAJGPCOPDC6J161JP02G040
+   1802G0401802G0401802G0401802G0401802G0401802G0'
+   [cebe46804bf229999ff19f5af87ff0af
+   / ICM_CONTENT, Domain: [Domain: jcr]]
+   
+      Usually there should be only one (1) blank before the slash
+   character (/).
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Modify indexes on varying-length columns (VARCHAR) to explicitly
+   prohibit padding with blank characters by specifying clause NOT
+   PADDED.
+   
+   
+   Failing Module(s):
+      Database
+   
+   Affected Users:
+      All users
+   
+   Version Information:
+       Portal Version(s): 6.1.0.1
+        Pre-Requisite(s): PK88425 [http://www-01.ibm.com/support/docview.wss?uid=swg1PK88425]
+         Co-Requisite(s): ---
+   
+   PM16278 is also part of Cumulative Fix 06 for Portal
+   6.1.0.3/6.1.5.0.
+   
+   The fix is available from Fix Central:
+   
+   http://www.ibm.com/eserver/support/fixes/fixcentral/swgquickorde
+   r?apar=PM14900&productid=WebSphere%20Portal&brandid=5 [http://www.ibm.com/eserver/support/fixes/fixcentral/swgquickorder?apar=PM14900&productid=WebSphere%20Portal&brandid=5]
+   
+   You may need to type or paste the complete address into your Web
+   browser.
+   
+   Thanks and regards.
+   
+   Platform Specific:
+      This fix applies to all platforms.
+   
+   A fix is available from Fix Central:
+   
+   http://www.ibm.com/eserver/support/fixes/fixcentral/swgquickorde
+   r?apar=PM16278&productid=WebSphere%20Portal&brandid=5 [http://www.ibm.com/eserver/support/fixes/fixcentral/swgquickorder?apar=PM16278&productid=WebSphere%20Portal&brandid=5]
+   
+   You may need to type or paste the complete address into your Web
+   browser.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM16278
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSPHERE PORTA
+   
+   
+ * REPORTED COMPONENT ID
+   5724E7600
+   
+   
+ * REPORTED RELEASE
+   61A
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-06-10
+   
+   
+ * CLOSED DATE
+   2010-07-20
+   
+   
+ * LAST MODIFIED DATE
+   2010-07-20
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBSPHERE PORTA
+   
+   
+ * FIXED COMPONENT ID
+   5724E7600
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R61A PSY
+   UP
+   
+   
+ * R61C PSY
+   UP

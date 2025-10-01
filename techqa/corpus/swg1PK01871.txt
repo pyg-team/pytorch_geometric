@@ -1,0 +1,185 @@
+Title: IBM PK01871: STATEFUL SESSION FAILOVER DOES WORK IF SERVER ENDS BEFORE OTHERS IN REPLICATON DOMAIN HAVE ACCESSED THAT EJB TYPE. - United States
+
+Text:
+  FIXES ARE AVAILABLE
+6.0.2: WebSphere Application Server V6.0 Refresh Pack 2 for AIX platforms [http://www-01.ibm.com/support/docview.wss?uid=swg24010066]
+6.0.2: WebSphere Application Server V6.0 Refresh Pack 2 for HP-UX platforms [http://www-01.ibm.com/support/docview.wss?uid=swg24010067]
+6.0.2: WebSphere Application Server V6.0 Refresh Pack 2 for Solaris platforms [http://www-01.ibm.com/support/docview.wss?uid=swg24010069]
+6.0.2: WebSphere Application Server V6.0 Refresh Pack 2 for Windows platforms [http://www-01.ibm.com/support/docview.wss?uid=swg24009813]
+6.0.2: WebSphere Application Server V6.0 Refresh Pack 2 for Linux platforms [http://www-01.ibm.com/support/docview.wss?uid=swg24010068]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  NoSuchObjectException occurs in failover server, after the
+   primary server ends.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All WebSphere Application Server users of    *
+   *                 Stateful Session Bean Failover.              *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Stateful Session Bean failover does     *
+   *                      not work when a SFSB is failed over     *
+   *                      prior to an instance being created.     *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   The problem is when the bean initialization is deferred, the
+   wrong DRS instance id is used. So, when bean initalization is
+   deferred, we end up creating 2 DRS instances, one of which is
+   never used.
+   
+   Normally, this wouldn't be a problem, since the correct DRS
+   instance would be created as soon as the bean is intitialized,
+   but running in this zOS configuration, one of the SRs is
+   performing no work... and so the bean is not initialized, and
+   thus the  correct DRS instance is not created.
+   
+   The correct DRS Instance name/id needs to be used when ejb
+   initialization is deferred.
+   
+   This problem could potentially occur on platforms other than
+   zOS.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fixed per problem description so that the correct DRS instance
+   is used.
+   
+   The fix for this APAR is currently targeted for inclusion
+   in fixpack 6.0.0.3.
+   Please refer to the recommended updates page for delivery
+   information:
+   http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK01871
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSPH APP SERV
+   
+   
+ * REPORTED COMPONENT ID
+   5724J0800
+   
+   
+ * REPORTED RELEASE
+   60W
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2005-03-01
+   
+   
+ * CLOSED DATE
+   2005-03-31
+   
+   
+ * LAST MODIFIED DATE
+   2005-03-31
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  EJBCONTR
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBSPH APP SERV
+   
+   
+ * FIXED COMPONENT ID
+   5724J0800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R60A PSY
+   UP
+   
+   
+ * R60H PSY
+   UP
+   
+   
+ * R60I PSY
+   UP
+   
+   
+ * R60P PSY
+   UP
+   
+   
+ * R60S PSY
+   UP
+   
+   
+ * R60W PSY
+   UP
+   
+   
+ * R60Z PSY
+   UP

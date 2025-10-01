@@ -1,0 +1,25 @@
+Title: IBM Executing a step through Component Manager fails with error: Signers of 'com.filenet.wcm.toolkit.util.WcmException' do not match signers of other classes in package - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Execute an operation step using IBM FileNet Workplace XT Component Manager. This step could correspond to a custom operation queue or even the CE_Operations queue. After a while the execution fails, but usually it works again after a restart. 
+
+SYMPTOM
+The error below is reported: 
+
+Signers of 'com.filenet.wcm.toolkit.util.WcmException' do not match signers of other classes in package 
+
+
+CAUSE
+The Component Manager is using an unsigned ciops-1.1.5.jar file.
+
+
+ENVIRONMENT
+Workplace XT 1.1.5
+
+
+
+RESOLVING THE PROBLEM
+Use a signed version of ciops-1.1.5.jar. Please contact IBM Support to obtain a copy of this file.

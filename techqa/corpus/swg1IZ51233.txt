@@ -1,0 +1,160 @@
+Title: IBM IZ51233: ALLOW CREATION OF MORE THAN ONE SCHEMA IN THE SAME BPEDB FOR DIFFERENT CLUSTERED ENV. - United States
+
+Text:
+  A FIX IS AVAILABLE
+WebSphere Enterprise Service Bus V6.2.0 Fix Pack 2 (6.2.0.2) [http://www-01.ibm.com/support/docview.wss?uid=swg24024407]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  After migrating from Process Server 6.1.2.0 to 6.2.0.0, newly
+   created WPRCS cluster fail to update the WPRCS database when we
+   enable the "create table" checkbox in the BPC container setup.
+   this issue happens in the case of a new cluster setup and in the
+   migration case of existing clusters -- when the BPC container
+   configuration has the "create tables" checked.
+   Customer was using different schemas for different BPC clusters
+   in the same BPEDB.
+   So when the process server cluster starts for the first time,
+   following either the migration or the newly configured BPE
+   container, the server detects that the schema and tables need to
+   upgrade or created and so it tries to do so.
+   But it fails since create bufferpool gets called each time and
+   the WPS user does not have the all the permissions needed to
+   execute that previleged function.
+   
+   Customer thinks that the correct behavior should be for the
+   server to check if the global bufferpool already exists --
+   namely it was created by the very first server who came up or by
+   a sysadmin -- and not try to execute that step, thereby jumping
+   directly to the schema and tables steps.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Description/symptom of problem:
+   On DB2, automatic schema creation fails with SQLSTATE 42502
+   (authorization failure).
+   If you create the Business Process Choreographer database
+   objects with the 'create tables' option,
+   the system tries to create a bufferpool and two tablespaces.
+   These actions require database privileges
+   that are typically not granted to the database user in the
+   WebSphere Process Server configuration.
+   
+   Since bufferpoold and tablespaces are usually created by a
+   database administrator, these statements
+   need not be processed by the automatic schema creation.
+   
+   Solution: For the bufferpool and tablespace operations, SQL
+   exceptions  with SQLSTATE 42502 are
+   ignored as long as no other statement fails. If another
+   statement fails all failures including
+   the bufferpool and tablespace failures are reported to FFDC.
+   
+   NOTE: Update installer version 7.0.0.1 or later is required to
+   install this interim fix.
+   
+   NOTE: This interim fix is applicable to both a full WPS
+   installation as well as a WPS client installation
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  iFix available on top of V6201
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ51233
+   
+   
+ * REPORTED COMPONENT NAME
+   BUS PRC CHOREOG
+   
+   
+ * REPORTED COMPONENT ID
+   5655FLW11
+   
+   
+ * REPORTED RELEASE
+   620
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-05-14
+   
+   
+ * CLOSED DATE
+   2009-07-10
+   
+   
+ * LAST MODIFIED DATE
+   2009-07-10
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   BUS PRC CHOREOG
+   
+   
+ * FIXED COMPONENT ID
+   5655FLW11
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R620 PSY
+   UP

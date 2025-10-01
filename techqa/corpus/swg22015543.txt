@@ -1,0 +1,19 @@
+Title: IBM Pressing Page Down or Page Up key consistently changes focus - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When user opens a batch in verify, and keeps the focus on the batch structure panel or the thumbnail image, and presses Page Down or Page Up key, the focus changes to the first field in the field details. 
+
+RESOLVING THE PROBLEM
+To resolve the problem, a new option has been added in the Verify.set.xml file: 
+
+Added task setting on verify.js.set.xml in "PageNavDisplay" under "PageProcessing"
+<V label="Do not focus on any field when loading a page" n="NotFocusOnField" tip="" type="checkbox">0</V>
+
+Use the Page Up Page or Down key to navigate page on batch tree: 
+
+ 1. If this option is selected, the focus will not be changed to Field detail panel. 
+ 2. If this option is not selected, the focus will be changed to the first low confidence field or the first field. 
+ 3. If this option is missing, the focus will be changed to the first low confidence field or the first field.

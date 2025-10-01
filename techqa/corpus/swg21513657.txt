@@ -1,0 +1,39 @@
+Title: IBM OpenPages OP_PROCESSES Table with Code Description - United States
+
+Text:
+Infrastructure; 1138 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ What are the code numbers represent on the OP_PROCESSES table for the STATUS column for OpenPages? 
+
+RESOLVING THE PROBLEM
+The OP_PROCESSES table can be used for information gathering about backend processes that may have failed or are hindering attempts to start new backed processes (such as RPS or FastMap).
+
+The following SQL code should be run as the OPENPAGES database user and will dump out a listing of the OP_PROCESSES table with the codes translated into English.
+
+
+set linesize 100
+set wrap on
+column name format a20
+column created format a15
+column status format a20
+column last_modified format a15
+
+select PROCESS_ID, 
+NAME, 
+TO_CHAR(CREATED_ON, 'MM/dd/yy hh:mm') CREATED, 
+TO_CHAR(LAST_MODIFIED_ON, 'MM/dd/yy hh:mm') LAST_MODIFIED, 
+decode(status, -4, 'Update Error',
+0, 'Pending',
+4, 'Started',
+8, 'Running',
+12, 'Finished: Error',
+13, 'Terminated: system',
+14, 'Terminated: user',
+16, 'Finished',
+'Unknown status') Status
+from op_processes; 
+
+
+HISTORICAL NUMBER
+ 00001139

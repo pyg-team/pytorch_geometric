@@ -1,0 +1,21 @@
+Title: IBM Refresh of Jazz™ for Service Management 1.1.1 on Fix Central - United States
+
+Text:
+jazzsm1110relnotes; CVE-2014-3566; poodle; AIX FLASH (ALERT)
+
+ABSTRACT
+ This refresh fixes security vulnerability to a Padding Oracle On Downgraded Legacy Encryption (POODLE) attack. Support for AIX has been added and some minor fixes are included. 
+
+CONTENT
+Customers who have installed Jazz™ for Service Management Version 1.1.1, which was released on 10 September 2014 must update their environment with this refresh release that is available on Fix Central. 
+
+For information on downloading the refresh, see the Jazz™ for Service Management Version 1.1.1.0 Readme [http://www-01.ibm.com/support/docview.wss?uid=swg24038326]. 
+
+This refresh addresses a security vulnerability referred to as Padding Oracle On Downgraded Legacy Encryption (POODLE). Its CVE ID is CVE-2014-3566 [http://web.nvd.nist.gov/view/vuln/detail?vulnId=CVE-2014-3566]. 
+
+Support for AIX was added in this refresh and a number of minor issues in relation to dashboard widgets and console integration were also addressed. 
+
+RELATED INFORMATION
+#Jazz for Service Management Version 1.1.1.0 Readme [http://www-01.ibm.com/support/docview.wss?uid=swg24038326]
+SSLv3 vulnerability in IBM WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg21687173]
+Analog Gauge and Volume Bar visualizations incorrect [http://www-01.ibm.com/support/docview.wss?uid=swg21684918]

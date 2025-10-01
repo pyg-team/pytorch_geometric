@@ -1,0 +1,56 @@
+Title: IBM Security Bulletin: Multiple vulnerabilities in IBM Java SDK and IBM® Java Runtime affect IBM BigFix Compliance Analytics. (CVE-2015-4872, CVE-2015-4882) - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ There are multiple vulnerabilities in IBM® SDK Java™ Technology Edition, Version 8 Service Refresh 1 Fixpack 10 that is used by IBM BigFix Compliance Analytics. These issues were disclosed as part of the IBM Java SDK updates in October 2015. 
+
+VULNERABILITY DETAILS
+CVEID: CVE-2015-4872 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-4872]
+DESCRIPTION: An unspecified vulnerability in Oracle Java SE and JRockit related to the Security component has no confidentiality impact, partial integrity impact, and no availability impact.
+CVSS Base Score: 5
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/107361 [https://exchange.xforce.ibmcloud.com/vulnerabilities/107361] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:L/Au:N/C:N/I:P/A:N) 
+
+CVEID: CVE-2015-4882 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-4882]
+DESCRIPTION: An unspecified vulnerability in Oracle Java SE related to the CORBA component could allow a remote attacker to cause a denial of service.
+CVSS Base Score: 5
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/107354 [https://exchange.xforce.ibmcloud.com/vulnerabilities/107354] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:L/Au:N/C:N/I:N/A:P)
+
+AFFECTED PRODUCTS AND VERSIONS
+IBM BigFix Security Compliance Analytics 1.7
+
+REMEDIATION/FIXES
+ 
+
+Product VRMF APAR Remediation/First Fix IBM BigFix Compliance Analytics 1.7.55 IV83474 [https://www-304.ibm.com/support/docview.wss?uid=swg1IV83474] 
+Workaround noted below.
+Upgrade to IBM BigFix Compliance Analytics 1.8
+
+Updates to Compliance/Compliance Analytics are available via fixlets in the IEM Console.
+
+
+IBM BigFix Compliance Analytics 1.8 Fixlets was released 31st March 2016
+
+WORKAROUNDS AND MITIGATIONS
+None
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v2 Guide [http://www.first.org/cvss/v2/guide] 
+On-line Calculator v2 [http://nvd.nist.gov/CVSS-v2-Calculator] 
+IBM Java SDK Security Bulletin [http://www-01.ibm.com/support/docview.wss?uid=swg21969225] RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/PSIRT] CHANGE HISTORY
+ 7th April 2016 : Original version published 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.

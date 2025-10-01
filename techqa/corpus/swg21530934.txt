@@ -1,0 +1,10 @@
+Title: IBM What is the maximum number of characters in the area for the dataset name in DMNOTIFY? - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ What is the maximum number of characters in the area for the dataset name in DMNOTIFY? 
+
+RESOLVING THE PROBLEM
+The limitation is 44 characters unless the DMNOTIFY program from SAMPLIB is modified. In V5.1 and later the program is DGADTIFY in the SDGASAMP library.

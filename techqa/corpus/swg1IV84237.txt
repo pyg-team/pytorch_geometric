@@ -1,0 +1,127 @@
+Title: IBM IV84237: INTRODUCING SELF DESCRIBING AGENT SUPPORT IN OS AGENT INTERIM FIXES. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The current tool used to install server side updates of OS Agent
+   Interim Fixes (Application Support Installer) is no longer
+   officially supported and implies one or multiple recycles of the
+   server where the new supports are being installed (both TEMS
+   and TEPS). This can be avoided exploiting the agent SDA feature
+   (Self Describing Agents), but OS Agent Interim Fixes are not
+   yet capable to support it because they do not package all the
+   needed files.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Problem Description: Lack of documentation about OS agent
+    Interim Fixes Self Describing Agent support.
+   Problem/Problem Summary: The latest OS agent Interim Fixes have
+    recently introduced the self describing support and provide
+    this optional method for installing server side updates as an
+    alternative to the installation method based on the Application
+    Support Installer tool. So far this is only documented in the
+    Interim Fix readme file.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fix/Problem Conclusion: Technote published
+      Document type: (tech note, readme, info center) technote
+      Document location:
+   http://www.ibm.com/support/docview.wss?uid=swg21982510 [http://www.ibm.com/support/docview.wss?uid=swg21982510]
+      Document name:  Self describing support in OS agents Interim
+   Fixes
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV84237
+   
+   
+ * REPORTED COMPONENT NAME
+   ITM AGENT UNIX
+   
+   
+ * REPORTED COMPONENT ID
+   5724C040U
+   
+   
+ * REPORTED RELEASE
+   630
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-05-02
+   
+   
+ * CLOSED DATE
+   2016-05-11
+   
+   
+ * LAST MODIFIED DATE
+   2016-05-11
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

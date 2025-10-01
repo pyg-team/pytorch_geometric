@@ -1,0 +1,12 @@
+Title: IBM Netcool - Extra Leap Second Effects On The ObjectServer - United States
+
+Text:
+Leap second TECHNOTE (FAQ)
+
+QUESTION
+ Would the Object Server be affected by the extra leap second on June 30th, 2015? 
+
+ANSWER
+OMNIbus uses the gettimeofday() function call, however there have been no known issues caused by operating system time adjustments. 
+
+External programs that modify system time should use adjtime() or adjtimex() system calls. These calls adjust time gradually rather than a sudden change. If these calls are used there would be no chance of negative time increments.

@@ -1,0 +1,39 @@
+Title: IBM MTTrapd [SNMP] probe drops traps from specific devices - United States
+
+Text:
+nco_p_mttrapd; snmp; snmp traps; traps; dropped; drop; dropping; malformed; TCP TECHNOTE (FAQ)
+
+QUESTION
+ MMTrapd probe : Why are SNMP traps dropped from specific devices? 
+
+CAUSE
+SNMP packets can be dropped for a number of reasons, including overloading, malformed packets, malformed traps/informs and incorrectly configured/non-compliant MIBS.
+
+ANSWER
+Traps can be dropped during high loading, so ensure that the traps are being dropped from specific devices under normal load. 
+
+Use snoop, tcpdump or Wireshark to capture the traps that are being dropped on the probe servers port, as defined in the property file. 
+
+e.g.
+Port : 162
+
+
+Load the PCAP file into the Wireshark GUI and review the trap[s] visually. 
+
+
+For traps to be processed they must have enterprise-oid and uptime, otherwise they will be dropped during probe processing by the NET-SNMP libraries.
+
+Try setting Protocol to 'ALL' in case the trap is being sent as TCP|UDP.
+
+For SNMPv3 trap and inform processing please refer to the available online FAQ's and supplementary documentation [see related information].
+
+SNMPv3 traps require a unique creatruser entry for each device in the mttrapd.conf file, with the user definition including the devices unique engined-id. Whilst SNMPv3 INFORMs can be sent without an engine-id and a single createuser entry in the ConfPath's mttrapd.conf file.
+
+If the trap appears to be RFC compliant, and MTTrapd probe is correctly configured, please send the PCAP file of the trap along with the probes debug log and property file to IBM Tivoli Netcool support for further analysis.
+
+IMPORTANT: You should ensure that the latest MTTrapd probe and Netcool/OMNIbus fix pack is installed before contacting IBM Tivoli Netcool support, and that the problem persists with the latest product.
+
+RELATED INFORMATION
+#Capturing TCP data [http://www-01.ibm.com/support/docview.wss?uid=swg21569745]
+Support's Guide to the SNMP [MTTrapd] probe [http://www-01.ibm.com/support/docview.wss?uid=swg21607690]
+SNMPv3 trap reception [http://www-01.ibm.com/support/docview.wss?uid=swg21626348]

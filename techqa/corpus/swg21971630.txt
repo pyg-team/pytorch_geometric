@@ -1,0 +1,32 @@
+Title: IBM Attributes that can be inserted using adduser.bat or adduser.sh - United States
+
+Text:
+TPAEINST; TPAEADMIN TECHNOTE (FAQ)
+
+QUESTION
+ adduser.bat (Windows) or adduser.sh (Unix) is a command line utility located in (default) C:\IBM\SMP\maximo\tools\maximo\ (Windows) /opt/IBM/SMP/maximo/tools/maximo/ (Unix). It can be used to add users to the MAXUSER table from a formatted list saved as an xml file. The example attributes in AddUser.xml are just a few of the attributes that can be added. 
+
+ANSWER
+The syntax for adduser is
+
+
+adduser[.bat][.sh] [-d(logfile dir)] [-i(filename)] [-o(filename)] 
+-d(logfile dir) If using the -l parameter, will output log file to the specified directory. If not specified, outputs to the Maximo tools log directory, which normally is C:\IBM\SMP\maximo\tools\maximo\log\ (Windows) /opt/IBM/SMP/maximo/tools/maximo/log (Unix) . -i(filename) File name specifying the users to be added. If not specified, the file name is assumed to be AddUser.xml in the C:\IBM\SMP\maximo\tools\maximo directory (Windows) /opt/IBM/SMP/maximo/tools/maximo/ (Unix). -o(filename) If using the -l parameter, the file name for the log. If not specified, log file name is "ConfigDB" + timestamp + ".log". 
+Each line in the XML file users for input is formatted following the example below. 
+ * 
+ * <USER username="LIBERI" password="liberi" firstname="Diane" lastname="Liberi" pagepin="maximo57@hotmail.com" />
+
+
+
+You must specify all of the required attributes plus any optional attributes desired. 
+
+The passwordcheck attribute need not be specified; it will be set equal to the value of the password attribute 
+
+Attribute Name Database attribute Description address1 PERSON.ADDRESSLINE1 User's address line 1. address2 [/support/docview.wss?uid=swg21971630&amp;aid=1] User's address line 2. address3 [/support/docview.wss?uid=swg21971630&amp;aid=1] User's address line 3. birthdate PERSON.BIRTHDATE Birth date. defaultstoreloc [/support/docview.wss?uid=swg21971630&amp;aid=1] Default storeroom. With SiteID, composes the foreign key to Location. droppoint PERSON.DROPPOINT Delivery point. firstname PERSON.FIRSTNAME User's first name. lastname PERSON.LASTNAME User's last name. name PERSON.DISPLAYNAME User's full name. Required. orgid [/support/docview.wss?uid=swg21971630&amp;aid=1] Organization. Required, but defaults from the orgid of the selected site. This is not directly entered or viewed via the UI. pagepin PERSON.PRIMARYEMAIL Work email address. password MAXUSER.PASSWORD The user's password. Required. passwordcheck N/A The user's password (entered twice for verification). Required (but see above). pcardexpdate PERSON.PCARDEXPDATE PCard expiration date pcardnum PERSON.PCARDNUM PCard number. pcardtype PERSON.PCARDTYPE PCard type. pcardverification PERSON.PCARDVERIFICATION PCard verification code phonenum PERSON.PRIMARYPHONE Home phone number. With OrgID, composes the foreign key to Address. siteid PERSON.LOCATIONSITE The primary login site for the user. Required supervisor PERSON.SUPERVISOR Supervisor (supervisor's labor code). transemailelection [/support/docview.wss?uid=swg21971630&amp;aid=1] Transaction email notification. Required, but has a default value. username MAXUSER.USERID / PERSON.PERSONID The user name for login. Required. Also, the new user's laborcode will equal this value (if laborcode is not autokeyed). wfmailelection [/support/docview.wss?uid=swg21971630&amp;aid=1] Workflow email notification. Required, but has a default value. RELATED INFORMATION
+ IBM JavaDocs for Maximo Asset Management 7.1.1 and 7.5 [https://www.ibm.com/software/brandcatalog/ismlibrary/details?catalog.label=1TW10MA1Z]
+
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Systems and Asset Management Maximo Asset Management Users Platform Independent Version Independent

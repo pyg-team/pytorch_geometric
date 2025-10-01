@@ -1,0 +1,57 @@
+Title: IBM P8 Content Engine FNRCC0044E: CONTENT_FCA_FAILED_STAKEFILE_LOAD error after moving file storage area - United States
+
+Text:
+CPE file store FNRCC0142E CONTENT_SA_UNKNOWN_CLASS FNRCC0044E CONTENT_FCA_FAILED_STAKEFILE_LOAD TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ P8 Content Engine FNRCC0044E: CONTENT_FCA_FAILED_STAKEFILE_LOAD error after moving file storage area to new NFS location. 
+
+SYMPTOM
+After moving the entire file structure and files for a P8 file store to a new location on an NFS drive, the following error is returned when trying to access or add any files to the file store: 
+
+ * 
+ * 2016-07-13T14:32:59.408 C9FCA54A CSTG FNRCC0142E - ERROR method name: createContentArea principal name: [Server] Global Transaction: false 
+   User Transaction: false Exception Info: Unknown StorageArea class com.filenet.apiimpl.core.FileStorageAreaImpl. Failed to initialize Content Area with Storage Area Id: {12345678-90AB-CDEF-1234-567890ABCDEF} com.filenet.api.exception.EngineRuntimeException: FNRCC0142E: CONTENT_SA_UNKNOWN_CLASS: Unknown StorageArea class com.filenet.apiimpl.core.FileStorageAreaImpl. Failed to initialize Content Area with Storage Area Id: {12345678-90AB-CDEF-1234-567890ABCDEF}
+   at com.filenet.engine.content.StorageAreaCache.createContentArea (StorageAreaCache.java:287)
+   at com.filenet.engine.content.StorageAreaCache.rebuildStorageAreaData(StorageAreaCache.java:217)
+   at com.filenet.engine.content.StorageAreaCache.getStorageAreaCacheForObjectStore(StorageAreaCache.java:118)
+   at com.filenet.engine.content.replication.ConnectivityTask._refreshConnectorCache(ConnectivityTask.java:564)
+   at com.filenet.engine.content.replication.ConnectivityTask.refreshConnectorCache(ConnectivityTask.java:529)
+   at com.filenet.engine.content.replication.ConnectivityTask._unitOfWork(ConnectivityTask.java:359)
+   at com.filenet.engine.content.replication.ConnectivityTask.unitOfWork(ConnectivityTask.java:309)
+   at com.filenet.engine.tasks.ScheduledBackgroundTask.execute (ScheduledBackgroundTask.java:271)
+   at com.filenet.engine.tasks.BackgroundTask.safeExecute (BackgroundTask.java:258)
+   at com.filenet.engine.tasks.ScheduledObjectStoreTask.safeExecute (ScheduledObjectStoreTask.java:51)
+   at com.filenet.engine.tasks.BackgroundTask$BackgroundTaskPriviledgedExceptionAction.run (BackgroundTask.java:1090)
+   at com.filenet.engine.context.CallState.doAsSystem(CallState.java:549)
+   at com.filenet.engine.tasks.BackgroundTask.run(BackgroundTask.java:210)
+   at java.util.concurrent.ThreadPoolExecutor.runWorker (ThreadPoolExecutor.java:1157)
+   at java.util.concurrent.ThreadPoolExecutor$Worker.run (ThreadPoolExecutor.java:627)
+   at java.lang.Thread.run(Thread.java:798)
+   Caused by: com.filenet.api.exception.EngineRuntimeException: FNRCC0044E: CONTENT_FCA_FAILED_STAKEFILE_LOAD: The root directory containing stakefile /P8/file_stores/OS1/fn_stakefile.xml for the storage area, storage device, or fixed content device cannot be accessed. Message was: Invalid byte 1 of 1-byte UTF-8 sequence.
+   at com.filenet.engine.content.Stakefile.readStakefile(Stakefile.java:185)
+   at com.filenet.engine.content.FileContentArea.commonInit (FileContentArea.java:155)
+   at com.filenet.engine.content.FileContentArea.<init>(FileContentArea.java:135)
+
+
+CAUSE
+The error was caused by a corrupt fn_stakefile.xml file.
+
+
+ENVIRONMENT
+P8 CPE 5.2.1
+Linux
+NFS mounted file storage area
+
+
+
+DIAGNOSING THE PROBLEM
+The permissions for the directories and files were checked and had the correct settings for the CPE admin LDAP account access.
+However, when opening the fn_stakefile.xml file, garbage characters were displayed instead of xml tags and text.
+
+
+
+RESOLVING THE PROBLEM
+After finding that the fn_stakefile.xml file was not a valid xml file, further research found that data encryption was used on the files in the original file storage area. The files were not decrypted when copied causing the files to look corrupt.
+
+The files were re-copied to the new NFS location after correcting the issue with the encryption, and the fn_stakefile.xml file and content files were checked to confirm that the issue was resolved.

@@ -1,0 +1,199 @@
+Title: IBM How do I do code generation from scripts and execute scripts - United States
+
+Text:
+code; generation; script; execute; mnu; rose; 1124021 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ How do I do code generation from scripts and execute scripts 
+
+RESOLVING THE PROBLEM
+QUESTION: 
+How to do code generation from scripts and how to execute scripts
+
+ANSWER:
+I) Code generation from a script
+
+Code generation is expecting an OnActivate Event which is sent
+automatically by rose to all active addins. The following
+script will mimick rose.
+
+----- Rose 98 -----
+
+Sub Main
+'Script to forward engineer C++
+Dim CPPCodeGenObject As Object
+Set CPPCodeGenObject = CreateObject("Rose.CPPAddIn")
+CPPCodeGenObject.OnActivate RoseApp.GetObject
+CPPCodeGenObject.OnGenerateCode RoseApp.GetObject
+End Sub
+
+Sub Main
+'Script to FOWARD engineer Java
+Dim CPPCodeGenObject As Object
+Set CPPCodeGenObject = CreateObject("Rose.JavaAddIn")
+CPPCodeGenObject.OnGenerateCode RoseApp.GetObject 
+End Sub
+
+Sub Main
+'Script to REVERSE engineer Java
+Dim CPPCodeGenObject As Object
+Set CPPCodeGenObject = CreateObject("Rose.JavaAddIn")
+CPPCodeGenObject.AIRunAnalyzer RoseApp.GetObject
+End Sub
+
+Rose 98:
+
+Sub Main
+'Script to Forward engieer Visual Basic
+Dim VBCodeGenObject As Object
+Set VBCodeGenObject = CreateObject("vs.api")
+' "vs.api" does not work in rose 98i 
+' with 98i it should be "rvs.api"
+VBCodeGenObject.OnActivate RoseApp.GetObject
+VBCodeGenObject.OnGenerateCode RoseApp.GetObject
+End Sub
+
+Rose 98 ,98i,2000:
+
+Sub Main
+Dim VSCodeGenObject As Object
+On Error Go To Rose98
+Set VSCodeGenObject = CreateObject("rvs.api")
+GoTo Rest
+Rose98:
+Set VSCodeGenObject = CreateObject("vs.api")
+Rest:
+VSCodeGenObject.OnActivate RoseApp.GetObject
+End Sub
+
+NOTE: Above code will ONLY work in Rose 98, not 4.0.
+
+Please keep in mind that this script will not run interpreted
+since it works with the selected classes and nothing is selected
+if you're in the Rose script editor. Therefore this script must
+be run from a menu option. See #2 How to execute scripts below.
+
+----- Rose 4.0 -----
+
+Sub Main
+code generator
+End Sub
+
+Sub CodeGenerator
+Msg.Open "Generating Code. Please wait...",0,False,False
+sleep 1000
+SendKeys "^g", True, 1000 ''1000 is delay factor, 
+''necessary to get it to work 
+Msg.Close
+End Sub
+
+Please keep in mind that this script will not run interpreted
+since it works with the selected classes and nothing is selected
+if you're in the Rosescript editor. Therefore this script must
+be run from a menu option. See #2 How to execute scripts below.
+
+-------------------
+
+II) How to execute scripts
+
+1) Go to the Tools menu in Rose and select "Open Script", browse to 
+the script (.ebs file) you want to run and open it. You can 
+run the script by doing one of the following:
+
+A) Clicking on the green arrow (which shows up with a tool tip 
+of "Start").....
+B) Pressing F5
+C) Debugger:Go
+
+2) Call the program from the menu:
+
+To run your script from the menu:
+
+Compile your script (.ebs) to create a .ebx file
+Exit Rose (so changes to menu file are not overwritten when next
+you quit).
+Next, Find and open in an editor the menu file, <filename>.mnu 
+
+The default Rose 98 reference is:
+
+"C:\Program Files\Rational\Rational Rose 98 Enterprise Edition
+\rose.mnu"
+
+Note that versions of Rose later than 98 have split the menu file into
+several *.mnu files, eg., rosejava.mnu, etc.
+
+This file has details of the menus.
+
+Here's an example of a modified rose.mnu file which runs a ebx 
+file called my_app.ebx from the menu item "Run My Program" added 
+under the report menu as the last item. You'll need to add 
+something similar to call your script.
+
+Menu Report
+{
+option "Documentation Report..."
+{
+RoseScript $SCRIPT_PATH\ReportGen.ebx
+}
+option "Run My Program"
+{
+RoseScript $SCRIPT_PATH\my_app.ebx 
+}
+}
+
+NOTE: $SCRIPT_PATH by default is assigned to Rose's home 
+(location of exe) directory. Either copy the ebx file to this 
+location, use the complete path instead of using $SCRIPT_PATH 
+path map variable, or create a new path map variable and use 
+that (see Edit:Path Map).
+
+NOTE: In Rose 98,98i, and 2000 you can run .ebs files from menu commands too:
+
+option "Run My Program"
+{
+RoseScript $SCRIPT_PATH\my_app.ebs
+}
+
+For more information about the syntax in Roses menu files (*.mnu)
+check out the online help. see 'menus'
+
+~Procedure Customizing Menus
+~Specification a Menu specification File
+~Sample Menu Specification File
+~Menu Specification Keywords
+~Menu Specification Variables
+~Menu Specification Modifiers
+
+3) Compile it to an .ebx file and call it from inside another
+script using RoseApp.ExecuteBinaryScriptFile
+
+4) Call the exec.ebs program in your scripts subdirectory which automates
+#2 above.
+
+5) Call Rose with the ebx file as the argument - e.g. rose_cpp
+whatever.ebx
+
+6) Modify the rose.ini, Rose Script Event,
+OnAppInit=
+to point to your ebx file. Then Rose will execute that script 
+upon initialization.
+
+7) Use OLE Automation to start rose and run script from another
+application such as VB.
+
+Example:
+
+Private Sub Form_Load()
+Dim RoseApp As Object
+Set RoseApp = CreateObject("Rose.application")
+RoseApp.Visible = True 'set it to false if you don't need to see rose
+Set model = RoseApp.NewModel()
+Set model = RoseApp.OpenModel("c:\test\test.mdl")
+RoseApp.ExecuteBinaryScriptFile "c:\test\test.ebx"
+RoseApp.Exit
+End Sub
+
+ 
+
+HISTORICAL NUMBER
+ 4928

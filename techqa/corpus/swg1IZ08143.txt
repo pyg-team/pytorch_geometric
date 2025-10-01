@@ -1,0 +1,134 @@
+Title: IBM IZ08143: SAP AGENT USER IS LOCKED AFTER THE RECONFIGURE OR THE RESTART. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  After SAP Agent is reconfigured or restarted, the SAP user is
+   locked.
+   
+   The password is corruptted when the SAP Agent Reconfigure or
+   restart, so SAP locks the SAP Agent user.
+   
+   This problem is shown in Japanese environment only.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Using the password file in SAP agent Reconfigure.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  After  mySAP agent is reconfigured, the agent can no longer
+   connect to the mySAP system due to a corrupt password. This
+   problem occurs only on mySAP agents running on Windows systems
+   in a multi-byte language environment such as Japenese.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This APAR has been fixed and delivered in a limited availability
+   fix 6.1.0-TIV-ITM_SAP-LA0009. This maintenance delivery vehicle
+   is a limited availability patch and therefore is in a "hidden
+   directory." Level 2 Support can provide down load instructions
+   to you. Contact level 2 support at:
+   
+   http://www.ibm.com/software/sysmgmt/products/support/Contact_L2
+   Support.html [http://www.ibm.com/software/sysmgmt/products/support/Contact_L2Support.html]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ08143
+   
+   
+ * REPORTED COMPONENT NAME
+   ITMF APPL - SAP
+   
+   
+ * REPORTED COMPONENT ID
+   5724B97SO
+   
+   
+ * REPORTED RELEASE
+   610
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2007-11-06
+   
+   
+ * CLOSED DATE
+   2008-01-17
+   
+   
+ * LAST MODIFIED DATE
+   2008-01-17
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ITMF APPL - SAP
+   
+   
+ * FIXED COMPONENT ID
+   5724B97SO
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R610 PSY
+   UP

@@ -1,0 +1,28 @@
+Title: IBM How to change the limit of infinite loop iterations in Rational Rhapsody - United States
+
+Text:
+Rhapsody; statechart; infinite loop; NULL transition TECHNOTE (FAQ)
+
+QUESTION
+ How do you increase the number of iterations IBM Rational Rhapsody will take through an infinite loop of NULL transitions before terminating? 
+
+CAUSE
+The run-to-completion semantics of the Rational Rhapsody framework check for an infinite loop of NULL transitions. In general, you need to use an event, timeout, or guards in order to avoid continuous NULL transitions.
+
+ANSWER
+If you add a NULL trigger in a Statechart and put a blocking function in the Action section, then the statechart animation runs without a problem. However, if you have no condition to terminate the iterations, this will produce an Infinite Loop error and Rhapsody animation will come to a halt. 
+
+There are not any properties to change the number of iterations through an infinite loop of NULL transitions. You need to change the OXF framework source code to modify this behavior.
+
+
+ * In Rhapsody in C++, open omreactive.h in the OXF framework and change the value of DEFAULT_MAX_NULL_STEPS. Then rebuild the framework.
+   
+   
+ * In Rhapsody in C, open RiCReactive.c in the OXF framework and change the value of OMDEFAULT_MAX_NULL_STEPS. Then rebuild the framework.
+   
+   
+ * In Rhapsody in Java, open RiJStateReactive.java in the OXF framework and change the value of DEF_MAX_NULL_STEPS. Then rebuild the framework.
+
+
+
+The default number of iterations through an infinite loop of continuous NULL transitions is 100 for C++ and C, and 32 for Java.

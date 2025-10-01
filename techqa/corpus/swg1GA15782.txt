@@ -1,0 +1,151 @@
+Title: IBM GA15782: SECURITY GUARDIUM V10 CAN, IN SOME CASES, FAIL TO APPLY S-TAP PARAMETERS CONFIGURED FROM THE GUI OR CLI (USING GRDAPI) - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  After installing or upgrading the Security Guardium v10.
+   Modifying any S-TAP from the GUI interface can result in that
+   S-TAP showing a yellow 'sync' status. If the S-TAP is restarted
+   the parameters are not updated and the guard_tap.ini will
+   revert to the original state. Similarly. when issueing a grdapi
+   cli command, to modify the S-TAP parameters. It too can fail
+   with an 'ERR=1' or 'ERR=403'. As with the GUI update, the S-TAP
+   will remain in a yellow 'sync' status. Any restart of the S-TAP
+   will result in the S-TAP loosing all modifications
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Make any required S-TAP parameter changes directly to the
+   guard_tap.ini file (locally on the DB server) and restart the
+   S-TAP.
+   Note that this defect is fixed in patch v10.0p34 and later GPUs
+   (eg v10.0p100 and higher)
+   For the latest Fix Packs, GPUs, Sniffer, Security and Agent
+   patches from Fix Central be sure to cut and paste the complete
+   url given below :-
+   http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent
+   =ibm~Information+Management&product=ibm/Information+Management/I [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~Information+Management&product=ibm/Information+Management/I]
+   nfoSphere+Guardium&release=All&platform=All&function=all
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Description: When trying to update STAP parameters through GUI,
+   updates never go through and STAP stays in "sync" (yellow)
+   status and has to be restarted on the server.
+   
+   Solution: The issue is caused by snif patch added a column to
+   SOFTWARE_TAP_PROPERTY(_HISTORY) table, the Java class don't have
+    the corresponding method. The fix is to fix the Java class to
+   not include attribute for which it does not have get/set method
+   when build attribute list.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  For v9 customer, fix is availabe in v9p610 or higher patch
+   level.
+   For v10 customer, fix is available in v10p34 or higher patch
+   level.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   GA15782
+   
+   
+ * REPORTED COMPONENT NAME
+   SEC GUARD DAT S
+   
+   
+ * REPORTED COMPONENT ID
+   5725I1200
+   
+   
+ * REPORTED RELEASE
+   A00
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-05-09
+   
+   
+ * CLOSED DATE
+   2016-07-25
+   
+   
+ * LAST MODIFIED DATE
+   2016-07-25
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   SEC GUARD DAT S
+   
+   
+ * FIXED COMPONENT ID
+   5725I1200
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * RA00 PSY
+   UP

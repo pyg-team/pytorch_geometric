@@ -1,0 +1,123 @@
+Title: IBM How to create SSL certificates for the ClearCase integration with Rational Team Concert - United States
+
+Text:
+CMI; CC; 60; 35; gsk; SSL; self signed certificate TECHNOTE (FAQ)
+
+QUESTION
+ How do you create an SSL certificate for IBM Rational ClearCase and IBM Rational Team Concert integration? 
+
+CAUSE
+You can integrate ClearCase with Rational Team Concert (RTC).The integration uses CMI technology which is bundled with GSKit software on Microsoft Windows and OpenSSL on UNIX.
+
+Since version 8.0.1.11, ClearCase is more strict and rejects invalid certificates (ie: expired, no CN match) coming from the associated Change Request server (Jazz-RTC, ClearQuest, JIRA): Security Bulletin: Vulnerability in IBM Rational ClearCase with SSL/TLS communications (CVE-2015-5039) [http://www-01.ibm.com/support/docview.wss?uid=swg21976566] 
+
+By default the RTC server uses a self-signed certificate with 
+CN="localhost", which doesn't match the real hostname of the server. Users can still connect to the RTC server through a web browser or an RTC client by accepting a security exception. 
+
+
+However, attempts to access the RTC server fails with the ClearCase full client. 
+
+ 
+
+EXAMPLE:
+
+
+% cleartool lsact -find -provider JCRTC -in FP_Development@/vobs/RTCPVOB
+cleartool: Error: A Change Management provider "JCRTC" failed to initialize with an error :
+CURL returned status code, "60", and the following message: "SSL certificate problem: self signed certificate".
+
+>cleartool lsact -find -provider JCRTC -in FP_Development@\RTCPVOB
+cleartool: Error: A Change Management provider "JCRTC" failed to initialize with an error :
+CURL returned status code, "35", and the following message: "GSKIT_object_init,gsk_secure_soc_init fails with err=414, certificate expired".
+
+
+
+ANSWER
+See the following two examples of how to create a valid self-signed certificate. 
+
+
+A. Microsoft Windows RTC 6.0.x server (using Liberty profile) with UNIX CC 9.0.0.x client
+
+
+
+ 1. Locate the gskit utility on a ClearCase client.
+     * 
+     * /opt/ibm/gsk8/bin/gsk8capicmd (UNIX)
+     * 
+     * 
+     * C:\Program Files (x86)\IBM\gsk8\bin\gsk8capicmd.exe (Microsoft Windows)
+     * 
+     * 
+    
+    
+    For details: Managing certificates with IBM GSKit [https://www.ibm.com/developerworks/library/se-gskit/].
+    
+    
+ 2. Create a keystore in pkcs12 format. This keystore is needed by WAS Liberty.
+    gsk8capicmd -keydb -create -populate -db server.p12 -pw ibm-team -stash -type pkcs12
+    
+    
+    
+ 3. Create a certificate with exact CN.
+    gsk8capicmd -cert -create -db server.p12 -stashed -dn "CN=server_hostname,OU=Cloud,O=IBM,C=NL" -expire 7300 -label "My self-signed certificate" -default_cert yes -type pkcs12
+    
+    
+    
+ 4. Copy server.p12 and server.sth to the RTC server.
+    C:\Program Files\IBM\JazzTeamServer\server\liberty\servers\clm\resources\security
+    
+    
+    
+ 5. Open 
+    C:\ProgramFiles\IBM\JazzTeamServer\server\liberty\servers\clm\server.xml 
+    
+    
+ 6. Modify the following line.
+    <keyStore id="defaultKeyStore" password="ibm-team" type="PKCS12" location="server.p12"/>
+    
+    
+    For details: Liberty:Keystores [http://www.ibm.com/support/knowledgecenter/SSEQTP_8.5.5/com.ibm.websphere.wlp.doc/ae/rwlp_sec_keystores.html]
+    
+    
+ 7. Extract the certificate for UNIX ClearCase client. 
+    gsk8capicmd -cert -extract -db server.p12 -stashed -label "My self-signed certificate" -format ascii -target mycert.arm -type pem
+    
+    
+    
+ 8. Append the certificate to client keystore.
+    # cat mycert.arm >> /var/adm/rational/clearcase/config/cacert.pem
+    
+    For details: Configuring Secure Sockets Layer (SSL) [http://www.ibm.com/support/docview.wss?uid=swg21976656]
+    
+    
+ 9. Verify that the CMI connection to the RTC server works.
+    cleartool lsact -find -provider JCRTC -in FP_Development@/vobs/RTCPVOB
+    4@JCRTC : CC_RTC_VS00
+    
+    
+    
+    
+
+
+B. Microsoft Windows RTC 4.0.x server (using Tomcat) with Microsoft Windows ClearCase 8.0.1.x client 
+
+ 1. Create a certificate (matching hostname) with 
+    ikeyman on the RTC server. Refer to Create server-side certificates for Collaborative Lifecycle Management [https://www.ibm.com/developerworks/rational/library/create-server-side-certificates-collaborative-lifecycle-management/create-server-side-certificates-collaborative-lifecycle-management-pdf.pdf]
+    
+    
+ 2. Follow Installing certificates on the client machine section from the same PDF on the Microsoft Windows client.
+    
+    
+ 3. Verify that the CMI connection works without error.
+    
+    cleartool lsact -find -provider JCRTC -in FP_Development@\RTCPVOB
+    1@JCRTC : Define a new build
+    3@JCRTC : Define sprints/iterations
+    4@JCRTC : Define categories and releases for work items
+    5@JCRTC : Define team members
+    6@JCRTC : Define permissions
+    
+
+ 
+
+Cross reference information Segment Product Component Platform Version Edition Software Development Rational Team Concert

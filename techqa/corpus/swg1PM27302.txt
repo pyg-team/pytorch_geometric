@@ -1,0 +1,222 @@
+Title: IBM PM27302: DEADLOCK ON CATALOG SYSIBM.SYSTABLES DURING PARALLEL DDL OPERATIONS FOR RI RELATED TABLES - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Possibility of deadlocks on the DB2 catalog when running
+   parallel DDL when the objects worked on by the different
+   parallel jobs have RI relationships to common objects.
+   
+   The number of relationships in which a table is a parent is
+   tracked by the CHILDREN column in SYSIBM.SYSTABLES.
+   When parallel jobs have to modify this column at the same time
+   this can lead to deadlocks and timeout against this row (V10
+   NFM) in sysibm.systables.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: Users of DB2 10 for z/OS with foreign keys.  *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: A deadlock may occur on a               *
+   *                      SYSIBM.SYSTABLES row when concurrent    *
+   *                      DROP TABLE statements are running       *
+   *                      and the tables being dropped reference  *
+   *                      the same parent table.                  *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   A deadlock may occur on a SYSIBM.SYSTABLES row when
+   concurrent DROP TABLE or ALTER TABLE DROP FOREIGN KEY statements
+   are running which reference the same parent table.
+   
+   Users may encounter an SQLCODE -911 with REASON 00C9008E,
+   RESOURCE 00000304 for SYSIBM.SYTABLES similar to the following
+   examples:
+   
+   Example 1:
+    ALTER TABLE TEST02TB DROP FOREIGN KEY FK2;
+    TEP3E15   SQLERROR ON ALTER      COMMAND, EXECUTE  FUNCTION
+    TEP3I05   RESULT OF SQL STATEMENT:
+     DSNT408I SQLCODE = -911, ERROR:  THE CURRENT UNIT OF WORK HAS
+                        BEEN ROLLED BACK TO DEADLOCK OR TIMEOUT.
+                        REASON 00C90088, TYPE OF RESOURCE 00000304,
+                        AND RESOURCE NAME
+                        DSNDB06.SYSTSTAB.X'0000001A'.X'0B
+     DSNT418I SQLSTATE   = 40001 SQLSTATE RETURN CODE
+     DSNT415I SQLERRP    = DSNXIAB2 SQL PROCEDURE DETECTING ERROR
+     DSNT416I SQLERRD    = -190  0  0  -1  0  0 SQL DIAGNOSTIC
+                           INFORMATION
+     DSNT416I SQLERRD    = X'FFFFFF42'  X'00000000'  X'00000000'
+                           X'FFFFFFF SQL DIAGNOSTIC INFORMATION
+   
+   Example 2:
+    DROP TABLE TEST03TB;
+    TEP3E15   SQLERROR ON DROP       COMMAND, EXECUTE  FUNCTION
+    TEP3I05   RESULT OF SQL STATEMENT:
+    DSNT408I SQLCODE = -911, ERROR:  THE CURRENT UNIT OF WORK HAS
+                       BEEN ROLLED BACK DUE TO DEADLOCK OR TIMEOUT.
+                       REASON 00C90088, TYPE OF RESOURCE 00000304,
+                       AND RESOURCE NAME
+                       DSNDB06.SYSTSTAB.X'0000001A'.X'05'
+    DSNT418I SQLSTATE   = 40001 SQLSTATE RETURN CODE
+    DSNT415I SQLERRP    = DSNXIDTB SQL PROCEDURE DETECTING ERROR
+    DSNT416I SQLERRD    = -190  0  0  -1  0  0 SQL DIAGNOSTIC
+                          INFORMATION
+    DSNT416I SQLERRD    = X'FFFFFF42'  X'00000000'  X'00000000'
+                          X'FFFFFFFF   X'00000000'  X'00000000'
+                          SQL DIAGNOSTIC INFORMATION
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  DB2 has been modified to avoid deadlock situations when
+   concurrent DROP TABLE or ALTER TABLE DROP FOREIGN KEY
+   statements with the same parent table are running. DB2 may
+   issue an SQLCODE -911 with REASON 00C9008E to indicate a
+   timeout occured instead as shown in the example below.
+   
+   Example 3:
+   ALTER TABLE TEST02TB DROP FOREIGN KEY FK2;
+   TEP3E15   SQLERROR ON ALTER      COMMAND, EXECUTE  FUNCTION
+   TEP3I05   RESULT OF SQL STATEMENT:
+    DSNT408I SQLCODE = -911, ERROR:  THE CURRENT UNIT OF WORK HAS
+                       BEEN ROLLED BACK DUE TO DEADLOCK OR TIMEOUT.
+                       REASON 00C9008E, TYPE OF RESOURCE 00000304,
+                       AND RESOURCE NAME
+                       DSNDB06 .SYSTSTAB.X'0000001A'.X'05'
+    DSNT418I SQLSTATE   = 40001 SQLSTATE RETURN CODE
+    DSNT415I SQLERRP    = DSNXISB1 SQL PROCEDURE DETECTING ERROR
+    DSNT416I SQLERRD    = -190  0  0  -1  0  0 SQL DIAGNOSTIC
+                          INFORMATION
+    DSNT416I SQLERRD    = X'FFFFFF42'  X'00000000'  X'00000000'
+                          X'FFFFFFFF'  X'00000000'  X'00000000'
+                          SQL DIAGNOSTIC INFORMATION
+   
+   
+   ADDITIONAL KEYWORDS:
+   SQLCODE911
+   RC00C90088
+   RC00C9008E
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  *********
+   * HIPER *
+   *********
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM27302
+   
+   
+ * REPORTED COMPONENT NAME
+   DB2 OS/390 & Z/
+   
+   
+ * REPORTED COMPONENT ID
+   5740XYR00
+   
+   
+ * REPORTED RELEASE
+   A10
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   YesHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-11-22
+   
+   
+ * CLOSED DATE
+   2011-01-27
+   
+   
+ * LAST MODIFIED DATE
+   2011-03-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UK64323
+   
+   
+
+MODULES/MACROS
+ *  DSNXIAB2 DSNXIDTB
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   DB2 OS/390 & Z/
+   
+   
+ * FIXED COMPONENT ID
+   5740XYR00
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * RA10 PSY UK64323 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK64323]
+   UP11/02/12 P F102
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

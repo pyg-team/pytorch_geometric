@@ -1,0 +1,70 @@
+Title: IBM Apple设备更新 iOS 9 后访问已经启用 SSL 的 IBM Traveler 服务器遇到连接问题 - United States
+
+Text:
+TLS 1.2; iOS 9; 连接不上Traveler; 不支持MD5; Traveler 9.0.1.7 TECHNOTE (TROUBLESHOOTING)
+
+问题
+升级到 iOS 9之后，苹果设备无法连接到 IBM Traveler 服务器。受到这个问题影响大多是启用了 SSL 的环境，下面列出解决此问题的检查清单。
+
+环境
+IBM Domino Server 9.0.1 或更低 
+
+IBM Notes Traveler 9.0.1.x 或更低
+
+
+诊断问题
+苹果在 iOS 9 中默认使用 TLS 1.2 算法建立 SSL 连接。
+这意味着﹐Traveler 服务器或在前端负责接收外来连接的其他网络组件都必须支持 TLS 1.2 加密算法，密码，以便使设备顺利建立连接。
+
+
+
+解决问题
+ 
+
+1. 确保您的 IBM Traveler 服务器版本支持 iOS 9。IBM Traveler 服务器 9.0.1.7 及更高版本支持 iOS 9 [http://www-01.ibm.com/support/docview.wss?uid=swg21962180]，如果目前您的 IBM Traveler 服务器版本低于 9.0.1.7，必须升级到 9.0.1.7 或更高版本，有关 9.0.1.7 的更多信息，请点击此处 [http://www-01.ibm.com/support/docview.wss?uid=swg21965124]。 
+
+2. 您必须将 Domino 服务器升级到支持 TLS 1.2 连接的最新版本。
+Domino 9.0.1 FP3 IF2 或 FP4 以上版本开始支持 TLS 1.2，请参阅技术文档 #1697925 IBM Domino 9.x 对 TLS 1.2 提供支持的计划 [http://www.ibm.com/support/docview.wss?uid=swg21697925]。
+可选︰升级服务器之后，您可以添加以下参数来定义服务器支持哪些加密算法。
+注：如果 Domino 版本是 901 FP4 IF2 或更高版本，就不必再配置下列参数，使用缺省的加密算法即可。
+
+
+DISABLE_SSLV3=1
+禁用 SSL 3.0 ，避免服务器受到 POODLE 攻击影响。 
+
+
+SSLCipherSpec=9F9E6B39679D9C3D353C2F330A 
+
+SSLCipherSpec 参数中指定的加密算法将取代服务器缺省配置的加密算法。上述参数值包含 TLS 1.2 和 1.0 的所有的加密算法。您只需升级 Domino 到合适的版本，缺省就会启用 TLS 1.2。设置此参数意味着您希望指定服务器使用和支持哪些 TLS 1.2 的加密算法。
+
+参考文档: http://www-10.lotus.com/ldd/dominowiki.nsf/dx/TLS_Cipher_Configuration [http://www-10.lotus.com/ldd/dominowiki.nsf/dx/TLS_Cipher_Configuration]
+
+你也可以通过运行 "set config" 来设置这些参数，这样无需重启服务器即可生效。
+
+高可用性服务器的注意事项:
+
+如果在 HA 环境中配置 Traveler 服务器，面向客户的网络组件(例如：防火墙、负载均衡器、反向代理或IP分配器) 必须支持 TLS 1.2 的加密算法。 否则﹐客户将无法连接 Traveler 服务器。
+前端的这些网络组件和 Traveler 服务器之间的通讯也允许通过 HTTP 或 HTTPS 建立连接。如果通过 HTTPS 建立连接，那么你需要确保 Traveler 支持的加密算法与前端的网络组件支持的加密算法匹配。你可能希望升级 Traveler 服务器到指定的版本以支持 TLS 1.2。
+
+关于 SSL 证书的附加说明：
+
+如果您使用了 Domino CA 自签署的 SSL 证书（按照在“使用 Domino 作为 CA 快速配置 SSL [http://www-01.ibm.com/support/docview.wss?uid=swg21114148]”的步骤创建密钥文件），在升级到 9.0.1 FP4 之后，当iOS 设备无法连接到 Traveler 服务器时，您在 Domino 控制台日志中您将会看到以下错误消息:
+
+TLS/SSL connection x.x.x.x - x.x.x.x failed with server certificate chain signature algorithms NOT supported by client（TLS/SSL连接失败：客户端不支持服务器证书使用的签名算法）
+TLS/SSL connection x.x.x.x - x.x.x.x failed with server certificate chain requiring support for MD5 （TLS/SSL连接失败：服务器证书通过 MD5 签名，需要支持 MD5）
+
+
+要解决这些错误，请参考以下技术文档：
+标题： Domino Web 服务器仍然使用 MD5 证书可能会导致 TLS 1.2 握手失败
+编号: 1701159
+URL： https://www-304.ibm.com/support/docview.wss?uid=swg21701159 [https://www-304.ibm.com/support/docview.wss?uid=swg21701159]
+
+相关信息
+ iOS 9 support statement [http://www.ibm.com/support/docview.wss?uid=swg21962180]
+Detailed System Requirements for Traveler 9.0.1.7 [http://www.ibm.com/support/docview.wss?uid=swg27045363]
+IBM Traveler 9.0.1.7 Release Documentation [http://www-01.ibm.com/support/docview.wss?uid=swg21965124]
+IBM Notes and Domino Interim Fixes to support TLS 1.2 [http://www-10.lotus.com/ldd/dominowiki.nsf/dx/TLS_1.2]
+TLS Cipher Configuration [http://www-10.lotus.com/ldd/dominowiki.nsf/dx/TLS_Cipher_Configuration]
+TLS 1.2 deliveries for IBM Notes & Domino 9.x [http://www.ibm.com/support/docview.wss?uid=swg21697925]
+calendar issue on iOS 9 [http://www.ibm.com/support/docview.wss?uid=swg21966731]
+An US English translation is available [http://www.ibm.com/support/docview.wss?uid=swg21967350]

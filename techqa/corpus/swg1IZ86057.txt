@@ -1,0 +1,193 @@
+Title: IBM IZ86057: AN ITIM FIXPACK INSTALLATION WILL OVERWRITE THE DB2JCC.JAR AND THE DB2JCC_LICENSE_CU.JAR FILE. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  An ITIM fixpack installation will overwrite the
+   db2jcc.jar and the db2jcc_license_cu.jar file.
+   
+   In the initial release of ITIM 5.1 and following fixpacks the
+   db2 jar
+   files included:
+   
+   
+   09/30/2010  02:43 PM         2,833,724 db2jcc.jar
+   09/30/2010  02:43 PM         1,015 db2jcc_license_cu.jar
+   
+   When I issue the command to verify the version, I find this
+   version a
+   version that was compatable with  DB2 Version 9.5
+   
+   java -cp db2jcc.jar com.ibm.db2.jcc.DB2Jcc -version
+     >> IBM DB2 JDBC Universal Driver Architecture 3.50.152
+     >> v9.5 FP0 (GA) s071001 3.50.152 2833724 4.0.100 2939868
+   
+   ----------------------------------------------------------------
+   ----------------------------------------------------------------
+   
+   BUT, am using DB2 9.7 and had copied the db2jcc.jar file from
+   9.7 to the
+   lib directory.
+   
+   java -cp db2jcc.jar com.ibm.db2.jcc.DB2Jcc -version
+      >> IBM DB2 JDBC Universal Driver Architecture 3.58.82
+      >> v9.7 FP2 s100514 3.59.81 3295950 4.9.78 3472296
+   
+   
+   After I installed fixpack 4, the files in the <itim_home>\lib
+   were
+   replaced with the OLD drivers.
+   
+   The fixpack should not over write the file(s).
+   
+   
+   
+   Steps to Duplicate:  Install ITIM 5.1 and supported middleware
+   Get the latest driver for db2 9.7 and copy to the lib directory
+   run the java command and verify.
+   
+   For additional info, see the DB2 tech note.
+   http://www-01.ibm.com/support/docview.wss?rs=71&uid=swg21363866 [http://www-01.ibm.com/support/docview.wss?rs=71&uid=swg21363866]
+   
+   
+   Desired Behavior:  New files should not be over written.
+   When the jar files are inconsistent with the middleware version,
+   this
+   message is displayed in the WAS SystemOut.log
+   
+   7/7/10 15:38:08:009 PDT] 0000002e WSRdbDataSour W   DSRA9542W:
+   The JDBC
+   Driver that is configured with the data source for the
+   Application
+   
+   Server does not support the extending data source properties
+   feature.
+   The Application Server will not honor the extended data source
+   properties.
+   
+   
+   Environment:     ITIM 5.1 with DB2 9.7
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  n/a
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Users affected:
+   Customers who have upgraded or changed the DB JDBC drivers or
+   license jars.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This fix for this APAR is contained in the
+   following maintenance packages:
+   | Fixpack | 5.1.0.5-TIV-TIM-FP0005
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ86057
+   
+   
+ * REPORTED COMPONENT NAME
+   IBM TIV IDENT M
+   
+   
+ * REPORTED COMPONENT ID
+   5724C3405
+   
+   
+ * REPORTED RELEASE
+   510
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-10-01
+   
+   
+ * CLOSED DATE
+   2010-12-16
+   
+   
+ * LAST MODIFIED DATE
+   2010-12-16
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  UTIL
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   IBM TIV IDENT M
+   
+   
+ * FIXED COMPONENT ID
+   5724C3405
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R510 PSY
+   UP

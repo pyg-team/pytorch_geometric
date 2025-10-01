@@ -1,0 +1,35 @@
+Title: IBM Alcatel WMS probe : IBM Java ORB settings - United States
+
+Text:
+nco_p_alcatel_wnms; active; alarms; resynch; resync; missing; lost; get_subscription_status sucessfull; Checking subscriptionstatus; Communication is OK TECHNOTE (FAQ)
+
+QUESTION
+ Alcatel WMS probe : Why are the Active alarms missing? 
+
+CAUSE
+The default settings for the IBM Java ORB are incorrect for this probe
+
+ANSWER
+ 
+
+The IBM Java ORB requires two property settings to allow the ORB to work normally in most environments. 
+
+ 
+
+for the Alcatel WMS probe, set the following properties in the probes property file: 
+
+
+ORBCharEncoding : "ISO8859_1"
+ORBWCharDefault : "UTF16" 
+
+If you are using the probe in a firewall environment, then check that the probe has the ORBLocalHostName and OrbLocalPort properties and set these to suitable values.
+
+It is important that the hostname's used are visible to both servers.
+For example, the Alcatel WMS should be able to ping the host as specified in the ORBLocalHostName.
+
+If necessary add the other servers hostname to the servers /etc/host file to ensure name resolution between the servers is identical.
+
+
+RELATED INFORMATION
+ IBM Java ORB [http://www-01.ibm.com/support/docview.wss?uid=swg21596411]
+Support's Guide to IBM CORBA probes [http://www-01.ibm.com/support/docview.wss?uid=swg21614208]

@@ -1,0 +1,191 @@
+Title: IBM PK63780: THE EXPLAIN STORED PROCEDURE DOES NOT SUPPORT THE JOIN KEYWORD  WHERE INNER IS NOT SPECIFIED. - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Input sql:
+   SELECT *
+     FROM GP AS G
+     JOIN GP_FELD AS GP
+       ON GP.GP = G.GP
+     JOIN GF_FELDER AS GF
+       ON GF.FKZ = GP.FKZ
+      AND GF.FZ  = GP.FZ
+   we get the following error:
+   
+   The input SQL statement can not be explained : SQLCODE
+   = -204 SQLSTATE = 42704 DSNT408I SQLCODE = -204, ERROR:
+   DB2INST.GP_FELD IS AN UNDEFINED NAME DSNT418I SQLSTATE
+   = 42704 SQLSTATE RETURN CODE DSNT415I SQLERRP = DSNXOTL
+   SQL PROCEDURE DETECTING ERROR DSNT416I SQLERRD = -500
+   0 0 -1 0 0 SQL DIAGNOSTIC INFORMATION DSNT416I SQLERRD
+   = X'FFFFFE0C' X'00000000' X'00000000' X'FFFFFFFF' X'00000000'
+   X'00000000' SQL DIAGNOSTIC INFORMATION
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: Users of DB2 Explain stored procedure        *
+   *                 DSNAEXP.                                     *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: The Explain stored procedure DSNAEXP    *
+   *                      does not qualify objects properly       *
+   *                      for an explicit inner join using the    *
+   *                      JOIN keyword.                           *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   The Explain stored procedure does not qualify objects properly
+   for an explicit inner join using the JOIN keyword when the
+   stored procedure parameter PARSE equals 'Y'.  If INNER JOIN is
+   used, the object is properly qualified.
+   For example:
+   SELECT *
+     FROM GP AS G
+     JOIN GP_FD AS GP
+       ON GP.GP = G.GP
+     JOIN GF_FD AS GF
+       ON GF.FK = GP.FK
+      AND GF.FZ  = GP.FZ
+   
+   The objects GP_FD and GF_FD are not properly qualified with the
+   QUALIFIER stored procedure input parameter.
+   
+   Additional Keywords:
+   SQLEXPLAIN VISUAL EXPLAIN DSNAEXP DSN8EXP
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The code has been fixed to properly qualify objects for
+   an inner join using the JOIN keyword.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+ *  &#158;**** PE08/10/13 FIX IN ERROR. SEE APAR PK68998 [http://www-01.ibm.com/support/docview.wss?uid=swg1PK68998]  FOR DESCRIPTION
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK63780
+   
+   
+ * REPORTED COMPONENT NAME
+   DB2 OS/390 & Z/
+   
+   
+ * REPORTED COMPONENT ID
+   5740XYR00
+   
+   
+ * REPORTED RELEASE
+   810
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-04-03
+   
+   
+ * CLOSED DATE
+   2008-05-30
+   
+   
+ * LAST MODIFIED DATE
+   2008-10-14
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UK36952 UK36953
+   
+   
+
+MODULES/MACROS
+ *  DSN@EXPL DSNAEXPL
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   DB2 OS/390 & Z/
+   
+   
+ * FIXED COMPONENT ID
+   5740XYR00
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R810 PSY UK36952 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK36952]
+   UP08/06/18 P F806
+   
+   
+ * R910 PSY UK36953 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK36953]
+   UP08/06/18 P F806
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

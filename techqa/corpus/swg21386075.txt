@@ -1,0 +1,28 @@
+Title: IBM In Oracle Enterprise Edition operator, jobs using special characters for username or password fail - United States
+
+Text:
+conn81relnotes; Oracle EE operator; special characters for password quotes TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ IBM InfoSphere Information Server: In Oracle Enterprise Edition operator, jobs using special characters for the username or password properties fail. Special characters include any characters other than alphanumeric or underscore characters. 
+
+SYMPTOM
+The following error message is displayed: 
+
+Incorrect dboption list; it failed on expected "," or "}", got: "#" line 1
+
+
+RESOLVING THE PROBLEM
+Ensure that the values specified for the Username and Password properties conform to the following requirements:
+
+
+ * Values that contain special characters must be enclosed in double quotation marks. Each special character must be escaped with a back slash character. For example, if the Oracle user is defined in the database as user#1 with the password 1a\b, you specify the following values:
+   Username: "user\#1"
+   Password: "1a\\b" 
+ * Values cannot contain single or double quotation marks. 
+ * Values that begin with a numeric character must be enclosed in double quotation marks. For example:
+   "1password"
+
+
+These requirements also apply when the DB Options Mode property is set to User-defined, and you need to specify the DB Options property manually. For example, if the Oracle user is defined in the database as user$1 with the password 1test, you specify the following value for the DB Options property: 
+{user="user\$1",password="1test"}

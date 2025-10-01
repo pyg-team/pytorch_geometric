@@ -1,0 +1,84 @@
+Title: IBM SQL error in the logs when using the OFTP adapter - United States
+
+Text:
+STERLINGNFX TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ SQL error in the logs when using the OFTP adapter 
+
+SYMPTOM
+
+
+When using the Odette FTP (OFTP) adapter, the below error may appear in the logs when the adapter attempts to send data.
+
+This particular error is for Oracle, but other a similar error may be logged with other databases.
+
+Error Message [2010-05-25 01:52:54.871] ERROR 000000000000 GLOBAL_SCOPE OFTPSendFile.outbound.XXXXXX (01:52:54.871) An Exception occur ed in com.sterlingcommerce.woodstock.services.oftp.fsm.usermon.persistence.OFTPObjectT ableProxy.findSentFile. The reason is : java.sql.SQLException : ORA-00904: "T"."STATUS": invalid identifier
+, java.sql.SQLException: ORA-00904: "T"."STATUS": invalid identifier
+
+at oracle.jdbc.driver.DatabaseError.throwSqlException(DatabaseError.java:112)
+at oracle.jdbc.driver.T4CTTIoer.processError(T4CTTIoer.java:331)
+at oracle.jdbc.driver.T4CTTIoer.processError(T4CTTIoer.java:288)
+at oracle.jdbc.driver.T4C8Oall.receive(T4C8Oall.java:743)
+at oracle.jdbc.driver.T4CPreparedStatement.doOall8(T4CPreparedStatement.java:216)<b r /> at oracle.jdbc.driver.T4CPreparedStatement.executeForDescribe(T4CPreparedStatement. java:799)
+at oracle.jdbc.driver.OracleStatement.executeMaybeDescribe(OracleStatement.java:103 7)
+at oracle.jdbc.driver.T4CPreparedStatement.executeMaybeDescribe(T4CPreparedStatemen t.java:839)
+at oracle.jdbc.driver.OracleStatement.doExecuteWithTimeout(OracleStatement.java:113 2)
+at oracle.jdbc.driver.OraclePreparedStatement.executeInternal(OraclePreparedStateme nt.java:3316)
+at oracle.jdbc.driver.OraclePreparedStatement.executeQuery(OraclePreparedStatement. java:3361)
+at com.sterlingcommerce.woodstock.services.oftp.fsm.usermon.persistence.OFTPObjectT ableProxy.findSentFile(OFTPObjectTableProxy.java:2974)
+at com.sterlingcommerce.woodstock.services.oftp.fsm.usermon.AbstractDriver_UserMon. findFileAndCalculateNextStatus(AbstractDriver_UserMon.java:765)
+at com.sterlingcommerce.woodstock.services.oftp.fsm.usermon.AbstractDriver_UserMon. saveXERP(AbstractDriver_UserMon.java:426)
+at com.sterlingcommerce.woodstock.services.oftp.fsm.transitions.TransitionUM_A13.sw itchTransition(TransitionUM_A13.java:182)
+at com.sterlingcommerce.woodstock.services.oftp.protocolEngine.ProtocolEngineTask.r un(ProtocolEngineTask.java:139)
+at EDU.oswego.cs.dl.util.concurrent.PooledExecutor$Worker.run(Unknown Source)
+at java.lang.Thread.run(Thread.java:595)
+
+
+RESOLVING THE PROBLEM
+
+
+For Sterling Integrator Release 5.0, please apply Build 5008 or later to resolve this issue
+
+ 
+
+HISTORICAL NUMBER
+ NFX10830 
+
+PRODUCT ALIAS/SYNONYM
+ 
+
+Function Area
+
+
+Adapters - OFTP
+
+
+Escalation ID
+
+
+00181988
+
+
+Fix ID
+
+
+222432
+
+
+Severity
+
+
+Normal
+
+
+Type
+
+
+NormalFix
+
+
+Build
+
+
+5008

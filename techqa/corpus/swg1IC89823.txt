@@ -1,0 +1,129 @@
+Title: IBM IC89823: IBM PUREAPPLICATION SYSTEMS HIGH AVAILABILITY NEEDS TO IMPROVE SYSTEM HEALTH STATUS CHECKING - United States
+
+Text:
+  A FIX IS AVAILABLE
+IBM PureApplication System Version 1.0.0.4 [http://www-01.ibm.com/support/docview.wss?uid=swg24034400]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  During an IBM PureApplication Systems fixpack upgrade there are
+   system checks performed to verify the health of the system both
+   before and after the upgrade.
+   
+   One of these checks verifies the state of the high availability
+   system. There is an additional check that should be added to
+   this code.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  The code that was checking for the internal health of the
+   system network was not checking for the health of the workload
+   data synchronization network.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Corrected the code to check the workload data synchronization
+   network in addition to the other internal health checks.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC89823
+   
+   
+ * REPORTED COMPONENT NAME
+   PUREAPP SYS W15
+   
+   
+ * REPORTED COMPONENT ID
+   5725G3200
+   
+   
+ * REPORTED RELEASE
+   100
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-01-25
+   
+   
+ * CLOSED DATE
+   2013-02-13
+   
+   
+ * LAST MODIFIED DATE
+   2013-02-13
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   PUREAPP SYS W15
+   
+   
+ * FIXED COMPONENT ID
+   5725G3200
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R100 PSY
+   UP
+   
+   
+ * RESP PSN
+   UP

@@ -1,0 +1,189 @@
+Title: IBM PJ42232: USERS UNABLE TO CREATE CASE AND SEE CORRECT SEARCH PROPERTIES WHEN SECURITY HAS BEEN APPLIED - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+ DIRECT LINKS TO FIXES
+IBM Case Manager V5.2.0.2 Interim Fix 1 for Linux for System z [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FCase+Manager&fixids=5.2.0.2-ICM-ZLINUX-IF001&source=SAR]
+IBM Case Manager V5.2.0.2 Interim Fix 1 for Windows [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FCase+Manager&fixids=5.2.0.2-ICM-WIN-IF001&source=SAR]
+IBM Case Manager V5.2.0.2 Interim Fix 1 for Linux [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FCase+Manager&fixids=5.2.0.2-ICM-LINUX-IF001&source=SAR]
+IBM Case Manager V5.2.0.2 Interim Fix 1 for AIX [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FCase+Manager&fixids=5.2.0.2-ICM-AIX-IF001&source=SAR]
+IBM Case Manager V5.2.0 Fix Pack 2 for Windows [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FCase+Manager&fixids=5.2.0.2-ICM-WIN-FP002&source=SAR]
+IBM Case Manager V5.2.0 Fix Pack 2 for Linux [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FCase+Manager&fixids=5.2.0.2-ICM-LINUX-FP002&source=SAR]
+IBM Case Manager V5.2.0 Fix Pack 2 for AIX [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FCase+Manager&fixids=5.2.0.2-ICM-AIX-FP002&source=SAR]
+IBM Case Manager V5.2.0 Fix Pack 2 for Linux for System z [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FCase+Manager&fixids=5.2.0.2-ICM-ZLINUX-FP002&source=SAR]
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  For a solution that contains multiple case types and multiple
+   roles, where users who belong to these roles have access to only
+   some of the case types, the following issues might occur:
+   - When creating a case, a user might see some case types in an
+   option list that are not enabled for their current role.
+   However, the user cannot create cases for the case types they
+   are not configured for.
+   - When creating a case, a user might not see some case types in
+   an option list that are enabled for their current role. As a
+   result, the user might be unable to create the desired cases.
+   - When searching for case instances, a user might see some
+   search properties in an option list that are not enabled for
+   their current role. However, the user will not retrieve any
+   results for the search properties they are not enabled to
+   access.
+   - When searching for case instances, a user might not see some
+   search properties in an option list that are enabled for their
+   current role. As a result, the user might not be able to
+   retrieve results for the desired search.
+   
+   Steps to reproduce:
+   1) Create a solution with the following
+   - 4 properties, prop1,2,3,4
+   - 2 roles, role1 and role2
+   - 2 caseTypes, ct1 and ct2
+   - Associate prop1 and prop2 with ct1, and make both available in
+   Search
+   - Associate prop3 and prop4 with ct2, and make both available in
+   Search
+   2) Deploy the solution
+   3) Run the security wizard
+   - for ct1, give role1 - create, view, and update
+   - for ct2, give role2 - create, view, and update
+   - do not give any permissions to 'All Case Types' for any roles
+   - for role1, associate a non-admin user, ex. user1
+   - for role2, associate a non-admin user, ex. user2
+   4) After all of the changes have been applied, login as user1
+   5) user1 on the Cases page, should be able to create ct1, and in
+   the search drop down, should see prop1 and prop2
+   6) Log off user1, and close the browser
+   7) login as user2, and go to the Cases page
+   8) instead of being able to create ct2, the 'Add Cases' button
+   is disabled, and the search drop down only shows prop1 and prop2
+   
+   This behavior depends on who logs into Case Client to access the
+   Solution after the ICM server has been started.
+   To reverse the behavior, restart the ICM server, and login as
+   user2 first.
+   Then user2 will see the Add Case button, and can create ct2, and
+   the search drop downs will have prop3 and prop4
+   logoff user2, close browser, and login as user1.  User1 will not
+   be able to add a case, and the drop down for search will have
+   prop3 and prop4.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * IBM Case Manager environment with custom security for roles  *
+   * to specific case types                                       *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * See Error Description                                        *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Update to 5.2.0.1-ICM-IF002 or later.                        *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fixed in 5.2.0.1-ICM-IF002.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PJ42232
+   
+   
+ * REPORTED COMPONENT NAME
+   CASE MGR CLIENT
+   
+   
+ * REPORTED COMPONENT ID
+   5725A1501
+   
+   
+ * REPORTED RELEASE
+   520
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-05-05
+   
+   
+ * CLOSED DATE
+   2014-05-22
+   
+   
+ * LAST MODIFIED DATE
+   2014-05-22
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CASE MGR CLIENT
+   
+   
+ * FIXED COMPONENT ID
+   5725A1501
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R520 PSY
+   UP

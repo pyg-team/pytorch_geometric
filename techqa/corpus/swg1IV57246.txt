@@ -1,0 +1,148 @@
+Title: IBM IV57246: ITM WINDOWS AGENT INSTALL HANGS DUE TO AN ISSUE WITH READ/WRITE PIPES - United States
+
+Text:
+  A FIX IS AVAILABLE
+IBM Tivoli Monitoring 6.3.0 Fix Pack 3 (6.3.0-TIV-ITM-FP0003) [http://www-01.ibm.com/support/docview.wss?uid=swg24036775]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  This condition has only affected a small number of machines in a
+   specific customer environment.
+   
+   Our environ is running ITM 6.2.2, FP5. We are attempting to
+   install the
+   ITM OS agent (6.2.2, FP2) and are having problems with the
+   install
+   hanging on a pair of W2008, R2 servers. The problems seem
+   similar on
+   these machines, and the installer seems to stall after
+   displaying an
+   "Initializing Environment" message, where it hangs for hours.
+   The sw
+   was removed (add/remove programs), and server rebooted and then
+   install
+   reattempted several times. I am attaching the  "IBM Tivoli
+   Monitoring
+   <timestamp>.log" file for one of these servers.
+   
+   
+   
+   
+   
+   
+   An internal defect for 6.3.0 FP3 was created to fix the issue.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  On some Windows machines the install hangs while the popup
+   Initializing Environment is shown. The current Read/Write pipe
+   logic hangs while reading the output of the created process.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The STDIN and STDOUT read/write pipe logic was changed to use a
+   new method.
+   
+   The fix for this APAR is contained in the following maintenance
+   packages:
+   
+     | fix pack | 6.3.0-TIV-ITM-FP0003
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV57246
+   
+   
+ * REPORTED COMPONENT NAME
+   OMEG DIST INSTA
+   
+   
+ * REPORTED COMPONENT ID
+   5608A41CI
+   
+   
+ * REPORTED RELEASE
+   622
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-03-24
+   
+   
+ * CLOSED DATE
+   2014-05-29
+   
+   
+ * LAST MODIFIED DATE
+   2014-08-08
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   OMEG DIST INSTA
+   
+   
+ * FIXED COMPONENT ID
+   5608A41CI
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R630 PSY
+   UP

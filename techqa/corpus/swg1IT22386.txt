@@ -1,0 +1,160 @@
+Title: IBM IT22386: DB2 : IF ANY COMMAND WITH RECLAIM EXTENTS OPTION IS RUN ON AN MDC TABLE DURING A BACKUP, A ROLLFORWARD ON IT COULD FAIL - United States
+
+Text:
+z/os  FIXES ARE AVAILABLE
+Db2 Version 11.1 Mod2 Fix Pack2 iFix002 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24044392]
+Db2 Version 11.1 Mod 3 Fix Pack 3 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24044630]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  - When one or more commands like "TRUCATE TABLE with REUSE
+   STORAGE option" or "AUTO or MANUAL REORG TABLE with RECLAIM
+   EXTENTS option" i.e. commands which perform a "reclaim extents"
+   operation are executed on an MDC table while an online backup is
+   in progress,
+   DB2 frees those extents for the table, but the operation is not
+   logged correctly.
+   The backup completes successfully.
+   
+   - Restore of this backup is also successful.
+   
+   - When the Rollforward is executed, DB2 tries to replay a
+   "create new block" operation in logs for the table in question
+   and fails with following error as these extents are no more
+   available, they were already freed .
+   
+   db2diag.log will have LEVEL: Error message:
+   
+   FUNCTION: DB2 UDB, buffer pool services, sqlbExtendObject,
+   probe:650
+   MESSAGE : ZRC=0x8402001A=-2080243686=SQLB_EMP_MAP_INFO_END "EMP
+   MAP INFO END"
+   
+   The fix will ensure that the "reclaim extent" operations run
+   during backup are logged correctly so replay during rollforward
+   will not fail.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  As a workaround, please avoid running the following when there
+   is an online backup in progress:
+   
+   1) TRUCATE TABLE with the REUSE STORAGE option on an MDC table
+   2) REORG TABLE with the RECLAIM EXTENTS option (AUTO or MANUAL)
+   on an MDC table
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * ALL                                                          *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * See Error Description                                        *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Upgrade to Db2 11.1 Mod 2 Fix Pack 2 iFix002 or higher       *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  First fixed in Db2 11.1 Mod 2 Fix Pack 2 iFix002
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT22386
+   
+   
+ * REPORTED COMPONENT NAME
+   DB2 FOR LUW
+   
+   
+ * REPORTED COMPONENT ID
+   DB2FORLUW
+   
+   
+ * REPORTED RELEASE
+   B10
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   YesHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-09-13
+   
+   
+ * CLOSED DATE
+   2017-12-22
+   
+   
+ * LAST MODIFIED DATE
+   2017-12-22
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    IT22352 [http://www-01.ibm.com/support/docview.wss?uid=swg1IT22352]
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   DB2 FOR LUW
+   
+   
+ * FIXED COMPONENT ID
+   DB2FORLUW
+   
+   
+
+APPLICABLE COMPONENT LEVELS

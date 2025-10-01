@@ -1,0 +1,154 @@
+Title: IBM HE12228: Content Collector Search in the Lotus Notes search bar does not return results from the repository in non-English Notes versions - United States
+
+Text:
+  A FIX IS AVAILABLE
+IBM Content Collector V4.0.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24038842]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  If the language that is set on the Notes client is not English,
+   Content Collector Search in the Lotus Notes search bar does not
+   return any documents that were found in the repository that
+   match the search criteria. Only documents that were not archived
+    by Content Collector are returned.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  If the language that is set on the Notes client is not English,
+   the date of the documents that are found in the repository is
+   not in the English default date format (MMM dd, yyyy, hh:mm:ss
+   a) that Content Collector Search expects. As a result, no
+   documents in the repository match the search criteria and no
+   search results are displayed.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Starting with IBM Content Collector 4.0.0.3 LA003 and 4.0.1, the
+   date of documents returned from the repository will always use
+   the default English date format irrespective of the Notes client
+   language that was set.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  If the language that is set on the Notes client is not English,
+   the date of the documents that are found in the repository is
+   not in the English default date format (MMM dd, yyyy, hh:mm:ss
+   a) that Content Collector Search expects. As a result, no
+   documents in the repository match the search criteria and no
+   search results are displayed.
+   
+   Starting with IBM Content Collector 4.0.0.3 LA003, the date of
+   documents returned from the repository will always use the
+   default English date format irrespective of the Notes client
+   language that was set.
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   HE12228
+   
+   
+ * REPORTED COMPONENT NAME
+   ICC FOR EMAIL
+   
+   
+ * REPORTED COMPONENT ID
+   5724V5700
+   
+   
+ * REPORTED RELEASE
+   400
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-01-13
+   
+   
+ * CLOSED DATE
+   2015-03-12
+   
+   
+ * LAST MODIFIED DATE
+   2015-03-12
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ICC FOR EMAIL
+   
+   
+ * FIXED COMPONENT ID
+   5724V5700
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R400 PSY
+   UP
+   
+   
+ * R401 PSY
+   UP

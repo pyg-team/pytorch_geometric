@@ -1,0 +1,124 @@
+Title: IBM IT14851: PUREAPPLICATION SYSTEM: ERROR "CWZIP9602E SERVICE20 IS FAILED OFFLINE" - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  A call home event was generated:
+   CWZIP9602E Service20 is failed offline at node [node_id] and
+   cannot be restarted.
+   
+   When this issue occurs the System Console can also become
+   unavailable.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  The PureSystems Manager service20 process associated to the
+   system VMware vCenter server resource groups needed to be
+   assigned a higher process priority in recovery scenarios.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A code fix has been released in PureApplication System
+   version 2.0.0.1.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT14851
+   
+   
+ * REPORTED COMPONENT NAME
+   PAPP SYS 8382 I
+   
+   
+ * REPORTED COMPONENT ID
+   5725G3200
+   
+   
+ * REPORTED RELEASE
+   200
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-04-19
+   
+   
+ * CLOSED DATE
+   2016-04-19
+   
+   
+ * LAST MODIFIED DATE
+   2016-04-19
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   PAPP SYS 8382 I
+   
+   
+ * FIXED COMPONENT ID
+   5725G3200
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R200 PSY
+   UP

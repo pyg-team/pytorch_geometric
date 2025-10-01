@@ -1,0 +1,130 @@
+Title: IBM JR56981: TWADMINS AND TWAUTHORS GROUPS CONTAIN UNRESOLVED VARIABLES AFTERYOU UPGRADE AN IBM BPM ENVIRONMENT THAT HAS SECURITY DOMAINS - United States
+
+Text:
+  DIRECT LINKS TO FIXES
+bpm.8570.cf2016.12.delta.repository [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Standard&fixids=bpm.8570.cf2016.12.delta.repository&source=SAR]
+Downloading IBM Business Process Manager V8.5.7 Cumulative Fix 2016.12 [http://www-01.ibm.com/support/docview.wss?uid=swg24043062]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  After upgrading to BPM 8.5.7, a new User
+   ${process.server.securityAdminUser} could be seen in
+   ProcessAdmin Console in the groups TWAdmins and TWAuthors.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  When the CustomURisVMM property is set, the DBUpgrade command
+   does not recognize the correct security domain to load the user
+   name from for the TWAdmins and TWAuthors groups.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A fix will be included in IBM BPM V8.5.7 cumulative fix 2016.12
+   that correctly resolves the user name for the TWAdmins and
+   TWAuthors groups in an environment that has security domains and
+   a customer user registry that that acts like VMM.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR56981
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM STANDARD
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9500
+   
+   
+ * REPORTED RELEASE
+   857
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-11-11
+   
+   
+ * CLOSED DATE
+   2017-01-19
+   
+   
+ * LAST MODIFIED DATE
+   2017-01-19
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   BPM STANDARD
+   
+   
+ * FIXED COMPONENT ID
+   5725C9500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R857 PSY
+   UP

@@ -1,0 +1,31 @@
+Title: IBM Graphical Process Modeler fails to display the Basic Services icons in the Stencil pane - United States
+
+Text:
+STERLINGPRI TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Graphical Process Modeler fails to display the Basic Services icons in the Stencil pane 
+
+SYMPTOM
+Graphical Process Modeler fails to display the Basic Services icons in the Stencil pane.
+If web start logging is enabled an error is generated: 
+
+message:CmdLineInputMessage
+org.xml.sax.SAXParseException: The reference to entity "Input" must end with the '
+FatalError at line: 1
+
+
+CAUSE
+Service configuration contained an invalid character '&'
+
+
+RESOLVING THE PROBLEM
+Correct the Service to contain only valid characters. The error in the web start log can be found in the C:\Documents and Settings\<user>\.pmodeler\<server>\<port>\temp.wsdl. 
+
+Search for the invalid character, and check each line referenced with the information for correct syntax.
+
+ 
+
+HISTORICAL NUMBER
+ PRI15853
+SCI29060

@@ -1,0 +1,22 @@
+Title: IBM Additional properties for deployed decision service rulesets - United States
+
+Text:
+ NEWS
+
+ABSTRACT
+ The Business console uses a deployment configuration to deploy a decision service ruleset to the Rule Execution Server (RES). In the RES console, a user can now access more properties that contain information about the deployed ruleset. 
+
+CONTENT
+A new set of properties provides more information about deployed decision service rulesets in the RES console: 
+
+ * decisioncenter.url: The URL of the Decision Center server from which the deployment was performed. 
+ * decisionservice.name : The name of the decision service that was deployed, for example, loanvalidation-rules-service. 
+ * decisionservice.id: The ID of the root project of the decision service that was deployed, for example, brm.RuleProject:44:44. 
+ * decisionservice.branch.name: The name of the deployment snapshot if the user chose to create one, the branch, or the snapshot in the decision service that was deployed, for example, b or d-20150231-158621. 
+ * decisionservice.branch.id: The ID of the deployment snapshot, branch, or snapshot in the decision service that was deployed, for example, brm.Branch:224:224. 
+ * decisionservice.branch.url: A link to a page in the Business console that displays the deployed branch or snapshot. 
+ * decisionservice.deploymentConfiguration.name: The name of the deployment configuration that was deployed, for example, d. 
+ * decisionservice.deploymentConfiguration.id: The ID of the deployment configuration that was deployed, for example, dsm.Deployment:3:3. 
+ * decisionservice.deployer.name: The display name of the Decision Center user who performed the deployment. 
+ * decisionservice.deployer.id: The login name of the Decision Center user who performed the deployment. 
+ * ruleset.engine.version: The MMU version of the rule engine, for example, 1.20.0.

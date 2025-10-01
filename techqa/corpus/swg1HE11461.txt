@@ -1,0 +1,136 @@
+Title: IBM HE11461: IBM CONTENT COLLECTOR - SCROLL BAR ON THE SEARCH RESULTS PAGE IS NOT ALLOWING USER TO GO TO BOTTOM OF LIST - United States
+
+Text:
+  FIXES ARE AVAILABLE
+IBM Content Collector V3.0 [http://www-01.ibm.com/support/docview.wss?uid=swg24032268]
+IBM Content Collector V2.2 Fix Pack 3 [http://www-01.ibm.com/support/docview.wss?uid=swg24033009]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  After searching for documents using the IBM Content Collector
+   search application, the results are displayed on the search
+   results page. If there are more results than can be displayed
+   in the results frame, a scroll bar is shown. However, the
+   scroll bar appears to be at the end of the list even if there
+   are further documents. As a result, the user cannot
+   access the documents at the end of the list.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  The problem does not occur in Internet explorer versions 8 and 9
+   in native mode. The browser mode and document mode setting in
+   these versions of Internet Explorer should be set to native
+   mode.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  See Error Description.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Starting with this fix, the scroll bar is displayed correctly.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   HE11461
+   
+   
+ * REPORTED COMPONENT NAME
+   ICC FOR EMAIL
+   
+   
+ * REPORTED COMPONENT ID
+   5724V5700
+   
+   
+ * REPORTED RELEASE
+   220
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-03-15
+   
+   
+ * CLOSED DATE
+   2012-05-28
+   
+   
+ * LAST MODIFIED DATE
+   2012-05-28
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ICC FOR EMAIL
+   
+   
+ * FIXED COMPONENT ID
+   5724V5700
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R220 PSY
+   UP
+   
+   
+ * R300 PSY
+   UP

@@ -1,0 +1,158 @@
+Title: IBM PM17649: NO LASTKNOWN CLASS FOR JSP REQUEST WITH L3 FOR SJSAS - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Installed ITCAM for J2EE v6.1.0.4 DC and configured it on Sun
+   JES 9.1 server.
+   Enabled L3 etc in toolkit_custom.properties file
+   Restart server
+   Enabel L3 in MOD
+   
+   When running JSP requests from testware, there is no LastKnown
+   Class and LastKnown Method in Server Activity Display on VE.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   ***********************
+   * USERS AFFECTED: Customers using ITCAM for J2EE v6.1.0.4
+   ****************************************************************
+   ***********************
+   
+   ERROR DESCRIPTION:
+   Installed ITCAM for J2EE v6.1.0.4 DC and configured it on Sun
+   JES 9.1 server.
+   Enabled L3 etc in toolkit_custom.properties file
+   Restart server
+   Enabel L3 in MOD
+   
+   When running JSP requests from testware, there is no LastKnown
+   Class and LastKnown Method in Server Activity Display on VE.
+   
+   ****************************************************************
+   ***********************
+   * RECOMMENDATION: apply ITCAM for J2EE/WebSphere Managing Server
+   v6.1 fix pack 5 and IF11 when
+   * available
+   ****************************************************************
+   ***********************
+   
+   When using ITCAM for J2EE version 6.1 Sun Java System
+   Application Server (SJSAS) Data Collector, JSP Method Entry and
+   Exit data is not available when collection is set to MOD Level
+   3. The data is not available even after you have upgraded ITCAM
+   for J2EE/WebSphere Managing Server to version 6.1 Fix Pack 5 and
+   apply IFIX11. To resolve this problem, you need to follow the
+   instructions on the web page,
+   http://www-01.ibm.com/support/docview.wss?uid=swg21440033. [http://www-01.ibm.com/support/docview.wss?uid=swg21440033.]
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix for this APAR is contained in the following maintenance
+   packages:
+   | fix pack | 6.1.0-TIV-ITCAMfWAS_SVR-FP0005
+   | Interim fix | 6.1.0.5-TIV-ITCAMfWAS_SVR-IF0011
+   
+   After you have upgraded ITCAM for J2EE/WebSphere Managing Server
+   to version 6.1 Fix Pack 5 and apply IFIX11,
+   you need to follow the instructions on the web page,
+   http://www-01.ibm.com/support/docview.wss?uid=swg21440033. [http://www-01.ibm.com/support/docview.wss?uid=swg21440033.]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM17649
+   
+   
+ * REPORTED COMPONENT NAME
+   ITCAM WAS DIST
+   
+   
+ * REPORTED COMPONENT ID
+   5724L6200
+   
+   
+ * REPORTED RELEASE
+   610
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-06-30
+   
+   
+ * CLOSED DATE
+   2010-07-13
+   
+   
+ * LAST MODIFIED DATE
+   2010-07-13
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ITCAM WAS DIST
+   
+   
+ * FIXED COMPONENT ID
+   5724L6200
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R610 PSY
+   UP

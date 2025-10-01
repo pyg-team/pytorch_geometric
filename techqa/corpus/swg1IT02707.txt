@@ -1,0 +1,199 @@
+Title: IBM IT02707: Add support to disable Java client Advanced Message Security interception via the mqclient.ini configuration file - United States
+
+Text:
+  A FIX IS AVAILABLE
+Fix Pack 8.0.0.2 for WebSphere MQ V8.0 [http://www-01.ibm.com/support/docview.wss?uid=swg24039436]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Similar to APAR IC94205 [http://www-01.ibm.com/support/docview.wss?uid=swg1IC94205], this APAR provides an option to disable
+   Advanced Message Security (AMS) interception within the
+   WebSphere MQ classes for JMS and classes for Java clients.
+   
+   Disabling AMS client side can be used to prevent attempts to
+   open the AMS queue named SYSTEM.PROTECTION.POLICY.QUEUE and
+   causing back level (pre-V7.5) queue managers to report the
+   MQRC_UNKNOWN_OBJECT_NAME (2085) reason code.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   Users of applications which are utilising the WebSphere MQ
+   classes for Java/JMS APIs to communicate with WebSphere MQ.
+   
+   
+   Platforms affected:
+   MultiPlatform, AIX, HP-UX Itanium, Linux on Power, Linux on
+   S390, Linux on x86, Linux on x86-64, Linux on zSeries, Solaris
+   SPARC, Solaris x86-64, Windows
+   
+   ****************************************************************
+   PROBLEM DESCRIPTION:
+   APAR IC94205 [http://www-01.ibm.com/support/docview.wss?uid=swg1IC94205] added an environment property which controlled the
+   action of WebSphere MQ 7.5 and later client applications when
+   using the MQ APIs to communicate with a queue manager, with
+   respect to the looking up of policy queues to check for the use
+   of Advanced Message Security (AMS).
+   
+   This environment property for the JMS environment is:
+   
+       com.ibm.mq.cfg.AMQ_DISABLE_CLIENT_AMS
+   
+   and could be set to the value "true" to prevent the client
+   application from attempting to look up the:
+   
+     SYSTEM.PROTECTION.POLICY.QUEUE
+   
+   on the queue manager, which would result in a MQRC 2085
+   'MQRC_UNKNOWN_OBJECT_NAME' if the queue manager was not AMS
+   enabled.
+   
+   http://www-01.ibm.com/support/docview.wss?uid=swg1IC94205 [http://www-01.ibm.com/support/docview.wss?uid=swg1IC94205]
+   
+   
+   For example, if you are using a JMS application, you can disable
+   the AMS function from the application by using the syntax:
+   
+     java -Dcom.ibm.mq.cfg.AMQ_DISABLE_CLIENT_AMS=true
+   <myapplication>
+   
+     where <myapplication> is the name of the application class.
+   
+   APAR IC94205 [http://www-01.ibm.com/support/docview.wss?uid=swg1IC94205] did not permit the environment property to be
+   configured within the mqclient.ini file.
+   
+   The code change associated with this APAR (IT02707) adds the
+   ability to disable Java client side AMS interception within the
+   mqclient.ini used by the WebSphere MQ classes for Java/JMS
+   application.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The AMS behaviour can now be controlled using the mqclient.ini
+   file, using the property name "DisableClientAMS" under the
+   "Security" stanza.
+   
+   For example, to disable the AMS behaviour (and prevent the
+   client application attempting to open the
+   "SYSTEM.PROTECTION.POLICY.QUEUE" queue), you could add the
+   following text to the mqclient.ini file used by the Java
+   application:
+   
+   
+   Security:
+     DisableClientAMS = No|Yes
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+   Version    Maintenance Level
+   v7.5       7.5.0.5
+   v8.0       8.0.0.2
+   
+   The latest available maintenance can be obtained from
+   'WebSphere MQ Recommended Fixes'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037]
+   
+   If the maintenance level is not yet available information on
+   its planned availability can be found in 'WebSphere MQ
+   Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT02707
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ AMS
+   
+   
+ * REPORTED COMPONENT ID
+   5724H7243
+   
+   
+ * REPORTED RELEASE
+   750
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2014-06-20
+   
+   
+ * CLOSED DATE
+   2014-10-13
+   
+   
+ * LAST MODIFIED DATE
+   2018-02-06
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ AMS
+   
+   
+ * FIXED COMPONENT ID
+   5724H7243
+   
+   
+
+APPLICABLE COMPONENT LEVELS

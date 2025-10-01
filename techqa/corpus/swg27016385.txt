@@ -1,0 +1,48 @@
+Title: IBM Enabling Tivoli Storage Manager connection pooling for IBM Content Manager Version 8.4.1 or later - United States
+
+Text:
+ RELEASE NOTES
+
+ABSTRACT
+ You can enable Tivoli Storage Manager connection pooling for a non z/OS resource manager. 
+
+CONTENT
+To enable Tivoli Storage Manager connection pooling, you must create a device manager by using the IBM Content Manager system administration client. You cannot use tape or other sequentially accessed media with pooled sessions. For more information, see your Tivoli Storage Manager documentation. 
+
+
+To create a Tivoli Storage Manager connection pooling resource manager, complete the following steps: 
+
+ 
+
+ 1. Expand Resource Managers in the tree view. 
+ 2. Expand the resource manager that you want to work with. 
+ 3. Right-click Device Managers and click New to open the New Device Manager window. 
+ 4. In the Name field, type 1 to 32 alphanumeric characters as the name of the device manager. 
+ 5. In the Description field, type 1 to 80 alphanumeric characters as a description of the device manager. 
+ 6. In the Parameters field, type 1 to 254 alphanumeric characters as the parameters for the system to use when it initializes the device manager or when it stores objects on volumes. 
+    
+    Requirement: The following storage system requires the indicated value. Storage systems that are not listed do not have specific requirements.
+    Storage Type Operating System Value Tivoli® Storage Manager with retention protection any mode=retention or mode=retention_aggregate 
+ 7. In the Class field, type TSMPOOLED as the class to be used for this device manager. 
+ 8. Select Enable or Disable to enable or disable the device manager. You might want to disable a device manager if the storage system is unavailable. 
+ 9. Click OK to save the information and close the window. 
+
+
+To change the default pooling behavior, you can modify the following properties in the RMCONFIGURATION table. The settings apply equally to the servlet and the services that share a single pool. You can change the settings at any time, but your changes are not effective immediately. 
+
+Parameter Description [/support/docview.wss?uid=swg27016385&amp;aid=1] [/support/docview.wss?uid=swg27016385&amp;aid=1] TSM_MAX_POOLED_CONNECTIONS The default value is 50 Tivoli Storage Manager connections. The minimum value is 3. If the value exceeds 150, then a warning is logged to the resource manager log file. The maximum allowed value is 32767. If you set a value that exceeds 32767, then it is ignored and the default value of 50 is used instead. 
+
+This value should be set to a number high enough to support the concurrent worker threads in this resource manager including foreground (WebContainer) and background (WorkManager) threads that might require a Tivoli Storage Manager connection. The number need not exceed the number of foreground and background threads configured. You must set this value so that the number is less than the concurrent session limit that is set for the Tivoli Storage Manager server. Setting this value to a greater number than the concurrent session limit might result in errors in the clients for object storage and retrieval. 
+
+The Tivoli Storage Manager server concurrent session limit needs to be set to a high enough number to provide for connections for all resource managers and other clients that it services. 
+
+
+TSM_WAIT_FOR_FREE_CONNECTION The retry interval for getting Tivoli Storage Manager pooled connections. This value controls an internal wait time to ensure that a request does not remain on the queue indefinitely. This parameter enables the thread to check whether the value in TSM_MAX_WAIT_FOR_FREE_CONNECTION has been exceeded. The value is in milliseconds. The default value is 250 milliseconds. The maximum value is 32767. If you set a value that exceeds 32767, then it is ignored and the default value of 250 is used instead. TSM_MAX_WAIT_FOR_FREE_CONNECTION If this parameter is set to a positive value in milliseconds, then an error is shown if this value is exceeded while the resource manager is waiting for a connection. The default is -1 (no limit) and the maximum value allowed is 32767. If you set a value that exceeds 32767, then it is ignored and the default value of -1 is used instead. TSM_CONNECTION_TIMEOUT The maximum idle time, in seconds, for a connection. The default value is 180. A connection is closed if the idle time is exceeded.
+
+This value controls the reduction of the pool number when activity is slow. If this value is not configured correctly, an error is not shown. 
+
+It is recommended that you set the time to a smaller amount of time than the Tivoli Storage Manager server session timeout value. Important: If you have entity data on Tivoli Storage Manager and have systems that meet the requirements, you can change the class name on an existing Tivoli Storage Manager device manager, such as ICMADDM, to use the new pooling functionality.
+
+
+RELATED INFORMATION
+ Tivoli Storage Manager Information Center [http://publib.boulder.ibm.com/infocenter/tsminfo/v6/index.jsp]

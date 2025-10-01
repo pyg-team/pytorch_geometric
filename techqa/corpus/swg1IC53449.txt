@@ -1,0 +1,225 @@
+Title: IBM IC53449: Lack of migration documentation for MSCS configurations. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  There is no clear documentation of migration steps in the
+   WebSphere MQ Manuals.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  na
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   Anyone using MQ V5.3 in an MSCS environment wishing to migrate
+   to MQ V6.
+   
+   Platforms affected:
+   Windows
+   
+   ****************************************************************
+   PROBLEM SUMMARY:
+   N/A
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The WebSphere MQ Manuals should incorporate an additional
+   section detailing migration in an MSCS environment under:
+   WebSphere MQ -> Migration Information -> Migrating an MSCS
+   configuration.
+   
+   The section should include the following:
+   
+   MSCS Migration Steps V5.3 -> V6.0
+   
+   These steps are required for a rolling upgrade with a minimum
+   amount of down-time. Note that the upgrade should always occur
+   on a Passive node with no Active MQ resources. In an
+   Active/Active setup, the node being migrated should always be
+   converted to a Passive node with no running MQ resources under
+   MSCS control.
+   
+   1.) Modify the possible owners of the MQ resource to
+   encompass the Active node/s only. This is to prevent the MQ
+   resource from experiencing an unexpected failover to the node
+   currently being migrated.
+   2.) Ensure that the group containing the MQ resource is
+   currently on one of the nodes defined as a possible owner. This
+   should include any applications connecting to the queue manager
+   resource.
+   3.) Stop the cluster service on the node being migrated.
+   This step is necessary to clear the MSCS cache of any MQ DLLs
+   that have been registered.
+   4.) Migrate the Passive node by following the standard
+   instructions in the Quick Beginnings guide <link>. Apply the
+   required maintenance level.
+   5.) Start the cluster service on the Passive node.
+   6.) On the next node to be migrated, ensure that the MQ
+   resources are offline.
+   7.) Remove this node from the list of possible owners. For
+   clusters with more than 2 nodes, please refer to the additional
+   considerations below.
+   8.) Move the group containing the MQ resource to one of the
+   possible owners and bring it online.
+   9.) Repeat steps 3-8 as necessary for any remaining node/s.
+   
+   Additional considerations in an MSCS setup with more than 2
+   nodes:
+   
+   When modifying the list of possible owners for the MQ resources
+   in a poly-node setup, ensure that the list of possible owners
+   (at any given time) does not contain both migrated and non-
+   migrated nodes. As each node is migrated, modify the list of
+   possible owners to the remaining nodes that have not yet been
+   migrated. When half of the nodes have been migrated, the list
+   of possible owners should only include migrated nodes. Modify
+   the list of possible owners at this point.
+   
+   General MSCS Migration Issues:
+   
+   i.) SSL Keystore Migration:
+   
+   During the installation phase, the migration to WebSphere MQ V6
+   will attempt to migrate any SSL keystores (.sto) defined to MQ
+   V6 SSL key repositories (.kdb). However, in order for this to
+   succeed, the installation will need access to the queue manager
+   SSL keystore. A queue manager under MSCS control will have
+   their keystore defined on the shared drive which, at the time
+   of the installation, will not be accessible by the Passive
+   node. As such, it is not possible to automatically migrate any
+   WebSphere MQ V5.3 SSL keystores for queue managers under MSCS
+   control as part of the installation process. With this in mind,
+   it is recommended that any certificates are exported from the
+   keystore prior to migration. Once migration is complete, these
+   certificates can then be imported into the new MQ V6 key
+   repository.
+   
+   ii.) Command Server Issues - MSCS Registry Checkpointing:
+   
+   Due to alterations in the registry format between MQ V5.3 and
+   MQ V6 which occur during the MQ V6 installation phase,
+   additional complications can occur during MSCS migration. As a
+   direct consequence of the registry checkpointing behaviour
+   within MSCS, these changes will be overwritten when the newly
+   migrated node is brought online. MSCS will restore the registry
+   values to those present on the other node and so, the install
+   time modifications will be lost.The changes in registry
+   settings from MQ V5.3 to MQ V6 are as follows:
+   a.)
+   HKEY_LOCAL_MACHINE\SOFTWARE\IBM\MQSeries\CurrentVersion\
+   Configuration\Services\<qmname>\Channel Initiator
+   moves to:
+   HKEY_LOCAL_MACHINE\SOFTWARE\IBM\MQSeries\CurrentVersion\
+   Configuration\QueueManager\<qmname>\QueueManagerStartup
+   
+   b.)
+   HKEY_LOCAL_MACHINE\SOFTWARE\IBM\MQSeries\CurrentVersion\
+   Configuration\Services\<qmname>\Command Server
+   moves to:
+   HKEY_LOCAL_MACHINE\SOFTWARE\IBM\MQSeries\CurrentVersion\
+   Configuration\QueueManager\<qmname>\InstanceData
+   
+   In the above cases, the 'Chinit' and 'CmdServer' values post-
+   migration will be set to Yes/No depending on the Startup value
+   under the Services key pre-migration. As a result, these
+   changes will be lost and so any configured startup settings at
+   MQ V5.3 of the command server and channel initiator will be
+   lost after migration. In order to resolve this, please apply
+   APAR <IC54088 [http://www-01.ibm.com/support/docview.wss?uid=swg1IC54088]>. Please note that this will have to be applied
+   after installation and maintenance has been applied but prior
+   to starting the queue manager on that node. Alternatively, the
+   startup values can be altered using runmqsc <link> after
+   migration is complete.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC53449
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ WINDOWS V6
+   
+   
+ * REPORTED COMPONENT ID
+   5724H7200
+   
+   
+ * REPORTED RELEASE
+   602
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2007-08-08
+   
+   
+ * CLOSED DATE
+   2007-10-25
+   
+   
+ * LAST MODIFIED DATE
+   2007-10-25
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

@@ -1,0 +1,218 @@
+Title: IBM PJ36274: NEED TO CLARIFY COMPATIBILITY INFO OF IDM WS 4.0.1 OVER WIN 2K3 SP2 W/ OR W/O R2 - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  ***PLEASE PROVIDE THE FOLLOWING INFORMATION
+   THIS FIELD IS REQUIRED.***
+   
+   Description of Problem (full details)
+   
+   *** what is needed to be resolved ***
+   This time, what we would like to know explicitly is just a
+   compatibility information regarding to Windows Server 2003, w/
+   or w/o R2 (for SP2) to IDM WS 4.0.1 (HFP 5 or later, of course).
+   Please clarify this point. No fixpack of runnign test are
+   needed.
+   
+   *** background of this problem ***
+   Customer suffered non-effectivenes of IDM WS 4.0.1 related
+   session timeout configuration after applying SP2 over the
+   Windows Serer 2003 (not R2). In the compatibility matrix of IDM
+   WS, it is not clearly stated that Windows Server 2003. It worked
+   out before applicaiton of SP2.
+   
+   This verision of IDM WS 4.0.1 is described as supported by
+   Windows Server 2003 R2 SP2. It is also confusing, that IDM DT
+   4.0.1 is described as supported by Windows Server 2003 SP2 (w/o
+   R2!). We need to clarify this, because this is just the boundary
+   of what the support can do for the customer. (see the Revision
+   Log of below and check the date 2007/5/12: it says, IDM DT & WS
+   4.0.1 HFP5 had certified for Windows Server 2003 R2 SP2, but not
+   written as "... 2003 SP2")
+   ftp://ftp.software.ibm.com/software/data/cm/filenet/docs/wsopend
+   oc/40x/DT_WS_OC_CompatibilityMatrix.xls
+   
+   If Windows Server 2003 SP2 (w/o R2) is not a supported platform
+   for IDM WS 4.0.1, we may recommend to downgrade the server to
+   SP1. But if it is supported, we will have to check the session
+   configuration and see if it cannot be effective as the customer
+   stated in the PMR.
+   
+   
+   How long has the problem been occurring (recent changes)? :
+   Since the compatibility document information has written in the
+   excel sheet and shown onto the public.
+   As for the Since after their update from SP2 for Windows Server
+   2003
+   
+   
+   Does this occur on more than one station / server? :
+   n/a (probably only one server that runs IDM WS 4.0.1)
+   
+   
+   Is there a workaround? :
+   As for the compatibility matrix documentation, no workaround.
+   As for the problem they see, they said there exists some
+   workaorund, but not yet dislosed to us
+   
+   What is the impact to the customer/system? :
+   Just to clarify the compatibility matrix, so that it can let us
+   judge support customer or not (otherwise, this PMR is unsolved)
+   For the problem itself, dIfferent behavior than previous state
+   (before applying SP2), so the user session do not expires as
+   specified time, difficult to manage user logon behavior that was
+   possible before
+   
+   
+   Can the problem be replicated on an internal system?  Y or N -->
+   Y
+   By Who (L3, Support, etc..): anyone can see this uncertainty in
+   the compatibility matrix on the Web
+   
+   
+   Steps to Reproduce:
+   1 Check the "4.0.1" tab of this excel sheet and check if the IDM
+   WS is supported on the Windows Server 2003 SP2 (i.e. w/o R2)
+   2
+   3
+   
+   Actual Results:
+   No description for Revision Log 2007/5/12, only written as "...
+   2003 R2 SP2"
+   One can also see IDM DT 4.0.1 is suppoted by Windows Server 2003
+   SP2
+   You may conclude, uncertainty exists in the description of
+   Windows Server 2003 w/ or w/o R2 for SP2
+   L2 cannot respond to the customer's query clearly.
+   
+   Expected Results:
+   One shoudl have to clarify the compatibility information
+   regarding to the Windows Server 2003 w/ or w/o R2 (for SP2).
+   Because, w/ and w/o R2 is actually a different version of
+   Windows Server 2003 (w/o R2 cannot upgrade to w/ R2 by applying
+   any FPs).
+   
+   
+   
+   
+   Are there any similar or related Defects? If Y provide ECMDB #s
+   
+   What logs were collected and where are they located?
+   
+   Configuration/Environment : IDM WS HFP 4.0.1 HFP5
+   Server OS : Windows Server 2003 SP2
+   Client OS :
+   Database :
+   Network:
+   App Server :
+   Browser :
+   Note if non US Language:
+   Other Product Component Versions: IS 4.0 on AIX
+   
+   Non Web Environment  Y or N
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * compatibility matrix for WS 4.0.1 users                      *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * compatibility matrix is updated for WS 4.0.1                 *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * See compatibility matrix for WS 4.0.1                        *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  compatibility matrix is updated with Win 2003 for WS 4.0.1
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PJ36274
+   
+   
+ * REPORTED COMPONENT NAME
+   WEB SERVICES
+   
+   
+ * REPORTED COMPONENT ID
+   5724S0300
+   
+   
+ * REPORTED RELEASE
+   401
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-05-07
+   
+   
+ * CLOSED DATE
+   2009-05-07
+   
+   
+ * LAST MODIFIED DATE
+   2009-05-07
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

@@ -1,0 +1,53 @@
+Title: IBM WinCollect: The configuration server registration failed with response code 0x80000003 - United States
+
+Text:
+WinCollect certificate not validated TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This error relates to either a mismatch, or missing certificate issue between the Windows Server and the QRadar appliance. 
+
+SYMPTOM
+WinCollect Server system log will display this error: 
+
+The configuration server registration failed with response code 0x80000003 (The certificate presented by the configuration server was either missing or its chain was not validated/trusted); will try again later. 
+
+
+CAUSE
+This error relates to either a mismatch, or missing certificate issue between the Windows Server and the QRadar appliance.
+
+
+ENVIRONMENT
+Wincollect 7.2.2-2
+
+
+
+DIAGNOSING THE PROBLEM
+Option 1 - Rename ConfigurationServer.PEM 
+
+
+On the Windows host, the ConfigurationServer.PEM file is provided by the QRadar appliance and allows the WinCollect agent to talk to QRadar over port 8413. If you stop the WinCollect service, rename the existing ConfigurationServer.PEM file, and restart the service the QRadar appliance should immediately issue what it thinks the latest certificate is. 
+
+Procedure 
+1. Log in to the Windows host with WinCollect installed. 
+2. Stop the WinCollect service. 
+3. Navigate to C:\Program Files\IBM\WinCollect\config. 
+4. Locate the ConfigurationServer.PEM file. 
+5. Rename this file to ConfigurationServer.old. 
+6. Start the WinCollect service. 
+7. Watch the C:\Program Files\IBM\WinCollect\config directory as the QRadar appliance will issue a new ConfigurationServer.PEM file to the agent. 
+
+ What's the purpose of this test?
+This test validates that communication is established over port 8413. It also ensures that there is not a mismatch in PEM files, in case someone deleted or updated the QRadar appliance with new certificates without communicating the change.
+
+Option 2 - Verify the Configuration Server Protocol Version 
+
+If you are not on the latest version of the Configuration Server protocol, you might be hitting a known issue where some installs do not register properly APAR IV68848 [https://www.ibm.com/support/entdocview.wss?uid=swg1IV68848] or communicate with the Console. From the Console's command-line, you can type the following command to verify your config server protocol version: rpm -qa | grep -i configserver
+
+Please navigate to http://www-933.ibm.com/support/fixcentral/ [http://www-933.ibm.com/support/fixcentral/] and verify that you have the latest version of the Configuration Server Protocol installed. 
+
+What's the purpose of this test?
+This test validates that you are on the latest configuration server version on the QRadar appliance. If you are on an older version, the agents might not be able to register properly due to a previously known issue that is now resolved. 
+
+
+RESOLVING THE PROBLEM
+If the troubleshooting steps above do not resolve this issue, please open a PMR with Support.

@@ -1,0 +1,65 @@
+Title: IBM Dealing with invalid inputs to TO TIMESTAMP() - United States
+
+Text:
+to_datetime TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ 
+In NPS versions with defect 73794 fixed, passing a time like 29:15:00 to TO_TIMESTAMP 
+gets an error: "bad value 29 for hour". In prior versions NPS used to accept these values, 
+and some customer applications relied on it doing so.
+
+
+CAUSE
+
+The maximum permissible value for the hour part of a HH24MMSS formatted time is 
+23 (or 24 if enable_time24 is set), and 59 for the minutes and seconds parts. This is 
+well documented in places like the Database Users Guide (version 7.0.3), Table 3-27: 
+"Template for Date/Time Conversions" for example. 
+
+Prior to defect 73794 being fixed, NPS would accept larger values and convert them. 
+For example TO_TIMESTAMP('2014-04-07 29:15:00','YYYY-MM-DD HH24:MI:SS') 
+would return 2014-04-08 05:15:00. Note that 24 is taken off the hours value of 29 to 
+leave 5, and 1 is added to the day value. It would also accept values > 59 in the 
+minutes and seconds fields, reducing them by 60 and adding 1 to the next greater 
+time part. Months > 12 or days > 28/29/30/31 as appropriate were not accepted.
+
+Even obviously invalid datetimes like '2014-04-07 99:99:99' were accepted 
+and a datetime of 2014-04-11 04:40:39 returned. As 99 hours + 99 minutes + 99 
+seconds equates to 4 days, 4 hours, 40 minutes and 39 seconds the calculation 
+is not wrong, but it is unreasonable for 99:99:99 to be regarded as a valid input 
+where a HH:MI:SS time is expected.
+
+The fix for defect 73794 ("to_timestamp function accepts out-of-range values for 
+date/time") returned NPS to the correct behaviour of throwing an error for out of 
+range values.
+
+
+
+RESOLVING THE PROBLEM
+ 
+
+Customers who were relying on NPS to parse times with out of range values will 
+need to deal with those values in their application code after they upgrade to a 
+version with 73794 fixed.
+
+Here is some sample SQL that parses a datetime in a 14 digit integer using integer 
+division and modulus to split out the date, hour, minute and second values, and then 
+adds the later three back to the date as intervals:
+
+select to_timestamp((20140407297593 / 1000000), 'YYYYMMDD')
++ (mod(20140407297593, 1000000) / 10000 || ' hours')::interval
++ (mod(20140407297593 , 10000) / 100 || ' minutes')::interval
++ (mod(20140407297593 , 100) || ' seconds')::interval
+as date3int ;
+
+The hours, minutes and seconds above have to be implicitly cast into character strings 
+so that they can be concatenated with their time part label prior to casting them into 
+INTERVALs. It is probably more efficient to start with the input as a string. That also 
+permits delimiters in the input string, as this second example SQL shows:
+
+select to_timestamp(substr('2014-04-07 29:75:93', 1, 10), 'YYYY-MM-DD') + 
+(substr('2014-04-07 29:75:93', 12, 2) || ' hours ' ||
+substr('2014-04-07 29:75:93', 15, 2) || ' minutes ' ||
+substr('2014-04-07 29:75:93', 18, 2) || ' seconds')::interval
+as date1string ;

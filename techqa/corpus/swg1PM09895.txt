@@ -1,0 +1,188 @@
+Title: IBM PM09895: A CWSID0003E EXCEPTION IS RECORDED IN THE SYSTEMOUT.LOG FOR WEBSPHERE APPLICATION SERVER - United States
+
+Text:
+  FIXES ARE AVAILABLE
+6.1.0.33: Java SDK 1.5 SR12 FP1 Cumulative Fix for WebSphere [http://www-01.ibm.com/support/docview.wss?uid=swg24027786]
+6.1.0.35: Java SDK 1.5 SR12 FP2 Cumulative Fix for WebSphere [http://www-01.ibm.com/support/docview.wss?uid=swg24028574]
+6.1.0.37: Java SDK 1.5 SR12 FP3 Cumulative Fix for WebSphere [http://www-01.ibm.com/support/docview.wss?uid=swg24029525]
+6.1.0.47: WebSphere Application Server V6.1 Fix Pack 47 [http://www-01.ibm.com/support/docview.wss?uid=swg24035508]
+6.1.0.39: Java SDK 1.5 SR12 FP4 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24030426]
+6.1.0.41: Java SDK 1.5 SR12 FP5 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24031035]
+6.1.0.43: Java SDK 1.5 SR13 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24031963]
+6.1.0.45: Java SDK 1.5 SR14 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24033270]
+6.1.0.47: Java SDK 1.5 SR16 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24035649]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The problem is seen if an SIBus message engine is started on a
+   server which is not the preferred  server, then at some point
+   moves over to its preferred server when it becomes available.
+   This has no negative impact beyond the following exception
+   recorded in the SystemOut.log
+   CWSID0003E:An internal error occurred; reason:
+   com.ibm.ws.sib.admin.impl.JsLocalizer:
+   Unable to modify Message Point: uuid=<uuid>
+   targetUuid=<targetUuid>
+   Stack Dump =  com.ibm.websphere.sib.exception.SINotPossibleIn
+   CurrentConfigurationException:
+   CWSIP0211E: Messaging engine Messaging.000-SCA.SYSTEM.FooCell01.
+   Bus on bus SCA.SYSTEM.FooCell01.Bus is not started.
+   at com.ibm.ws.sib.processor.impl.AdministratorImpl.checkStarted
+   (AdministratorImpl.java:762)
+   at com.ibm.ws.sib.processor.impl.AdministratorImpl.
+   alterDestination   Localization(AdministratorImpl.java:501)
+   at com.ibm.ws.sib.admin.impl.JsLocalizer.addLocalizationPoint
+   (JsLocalizer.java:905)
+   at com.ibm.ws.sib.admin.impl.BaseMessagingEngineImpl.
+   addLocalizationPoint   (BaseMessagingEngineImpl.java:2283)
+   at com.ibm.ws.sib.admin.impl.JsMainImpl.reloadEngine
+   (JsMainImpl.java:2521)
+   at com.ibm.ws.sib.admin.impl.JsMainImpl.engineConfigChanged
+   (JsMainImpl.java
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  Users of the default messaging provider     *
+   *                  for IBM WebSphere Application Server        *
+   *                  Version 6.1                                 *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: If an SIBus messaging engine (ME) is    *
+   *                      started on a server that is not the     *
+   *                      preferred server and moves to the       *
+   *                      preferred server when that becomes      *
+   *                      available, dynamic config updates are   *
+   *                      attempted on the original server as     *
+   *                      well as the current server. The         *
+   *                      updates on the original server cause    *
+   *                      CWSID0003E messages in the              *
+   *                      SystemOut.log file.                     *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   This APAR applies when an ME has started on a non-preferred
+   server and then been stopped as the preferred server becomes
+   available.
+   When a dynamic configuration reload is attempted after a
+   change, a CWSID0003E error is seen in the SystemOut.log. For
+   example, after addition of a new queue, the SystemOut.log shows
+   CWSID0003E: An internal error occurred; reason:
+   com.ibm.ws.sib.admin.impl.JsLocalizer: Unable to modify
+   Message Point: uuid=<uuid> targetUuid=<targetUuid>
+   and the FFDC shows:
+   Stack Dump =
+   com.ibm.websphere.sib.exception.SINotPossibleInCurrentConfigurat
+   ionException: CWSIP0211E: Messaging engine <ME-Name> on bus
+   <Bus-Name> is not started.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix for this APAR changes the dynamic configuration code
+   of the SIB Service such that SIB does not attempt to
+   dynamically update the config for a messaging engine that
+   started and then stopped. The fix must be applied in
+   conjunction with PK84660 [http://www-01.ibm.com/support/docview.wss?uid=swg1PK84660].
+   
+   The fix for this APAR is currently targeted for inclusion in
+   fix pack 6.1.0.33.  Please refer to the Recommended Updates
+   page for delivery information:
+   http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM09895
+   
+   
+ * REPORTED COMPONENT NAME
+   PLAT MSG COM
+   
+   
+ * REPORTED COMPONENT ID
+   620600101
+   
+   
+ * REPORTED RELEASE
+   200
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-03-12
+   
+   
+ * CLOSED DATE
+   2010-03-25
+   
+   
+ * LAST MODIFIED DATE
+   2010-03-25
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   PLAT MSG COM
+   
+   
+ * FIXED COMPONENT ID
+   620600101
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R200 PSY
+   UP

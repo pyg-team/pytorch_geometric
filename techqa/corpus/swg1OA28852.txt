@@ -1,0 +1,175 @@
+Title: IBM OA28852: MQ AGENT STOPS MONITORING EVENTS WHEN AN EVENTOUT QUEUE IS FULL - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Problem Description:
+   
+   1. When an EVENTOUT queue is full, the MQ agent stops monitoring
+   events for this
+   specific event queue.
+   
+   2. The MQ agent doesn't resume processing MQ events even the
+   queue full condition
+   is subsequently relieved.
+   
+   3. When an EVENTOUT queue becomes full, the MQ agent produces a
+   KMQ107E error
+   message, which is not easy to understand for a queue full
+   condition.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All IBM Tivoli OMEGAMON XE for Messaging:    *
+   *                 WebSphere MQ Monitoring users.               *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: MQ Monitoring agent stops monitoring    *
+   *                      events when an EVENTQOUT queue is       *
+   *                      full.                                   *
+   ****************************************************************
+   * RECOMMENDATION: Apply the PTF.                               *
+   ****************************************************************
+   1. When an EVENTQOUT queue is full, the MQ Monitoring agent
+      stops monitoring events for the corresponding event queue.
+   2. The MQ Monitoring agent does not resume monitoring MQ
+      events when the queue full condition is subsequently
+      relieved.
+   3. When an EVENTQOUT queue becomes full, the MQ Monitoring
+      agent issues the KMQMQ107E error message. The message is
+      not easy to understand for a queue full condition.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  1. The program logic is modified to be able to continue
+      monitoring events when an EVENTQOUT queue is detected full.
+      In this case, the event will not be copied to the EVENTQOUT
+      queue.
+   2. The program logic is modified to resume monitoring MQ
+      events as soon as the EVENTQOUT queue is not full.
+   3. The new message KMQMQ423W is issued when an EVENTQOUT queue
+      is detected full, and the new message KMQMQ424I is issued
+      when the queue full condition is detected relieved.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   OA28852
+   
+   
+ * REPORTED COMPONENT NAME
+   OMEG XE WEBSPHM
+   
+   
+ * REPORTED COMPONENT ID
+   5608A1100
+   
+   
+ * REPORTED RELEASE
+   601
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-04-30
+   
+   
+ * CLOSED DATE
+   2009-05-20
+   
+   
+ * LAST MODIFIED DATE
+   2009-07-01
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UA47554 UA47555 UA47556
+   
+   
+
+MODULES/MACROS
+ *  KMQAMEMT KMQAMQS7
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   OMEG XE WEBSPHM
+   
+   
+ * FIXED COMPONENT ID
+   5608A1100
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R600 PSY UA47554 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UA47554]
+   UP09/06/15 P F906
+   
+   
+ * R601 PSY UA47555 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UA47555]
+   UP09/06/15 P F906
+   
+   
+ * R700 PSY UA47556 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UA47556]
+   UP09/06/15 P F906
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

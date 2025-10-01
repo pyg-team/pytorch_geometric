@@ -1,0 +1,34 @@
+Title: IBM Disable RC4 for DataPower MQ Queue Manager Object - United States
+
+Text:
+ FLASH (ALERT)
+
+ABSTRACT
+ With the recent attention to RC4 “Bar Mitzvah” Attack for SSL/TLS, IBM recommends to disable RC4 in DataPower MQ Queue Manager Object 
+
+CONTENT
+Disable RC4 ciphers in DataPower configuration referring to the steps below.
+
+If you have not already done so, follow the steps in the Knowledge Center to change the security settings [http://www-01.ibm.com/support/knowledgecenter/SS9H2Y_7.0.0/com.ibm.dp.xi.doc/mq_securingcommunicationwithremotequeuemanagers.html?lang=en] of the MQ Queue Manager Object.
+
+Determine which way to support secure communication with the remote queue manager.
+
+To secure with an SSL Proxy Profile:
+1.Next, select Connections --> SSL Proxy Profile --> Crypto Profile.
+2.Select the crypto profile objects that are used by the MQ Queue Manager Object.
+3.In the "Configure Crypto Profile" page, "Ciphers" parameter, suffix the existing string with a value ":!RC4". Click Apply. 
+
+For example, if you have a default configuration, the updates will appear as below:
+Default cipher string: HIGH:MEDIUM:!aNULL:!eNULL:@STRENGTH
+RC4 disabled cipher string: HIGH:MEDIUM:!aNULL:!eNULL:@STRENGTH:!RC4
+
+To secure with artifacts from GSKit:
+1.Next, select Connections --> SSL Cipher Specification.
+2.In the "SSL Cipher Specification" list, do not select any cipher with RC4 but select the others.
+
+For example, do not select RC4_56_SHA_EXPORT1024, RC4_MD5_EXPORT, RC4_MD5_US, RC4_SHA_US but select TLS_RSA_WITH_AES_256_CBC_SHA, RLS_RSA_WITH_AES_256_CBC_SHA256 and so on.
+
+You should verify applying this configuration change does not cause any compatibility issues. Not disabling the RC4 stream cipher will expose yourself to the attack described above. IBM recommends that you review your entire environment to identify other areas where you have enabled the RC4 stream cipher and take appropriate mitigation and remediation actions.
+
+RELATED INFORMATION
+#Vulnerability in RC4 impacts DataPower [http://www-01.ibm.com/support/docview.wss?uid=swg21702165]

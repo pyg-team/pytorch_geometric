@@ -1,0 +1,39 @@
+Title: IBM Everyplace screens not displaying correctly on higher pixel density devices. - United States
+
+Text:
+TPAEUI; TPAECUSTOMIZATION TECHNOTE (FAQ)
+
+QUESTION
+ Can the viewport be modified for Everyplace screens in Maximo? 
+
+ANSWER
+Starting in Maximo 7.608 IF006 it is possible to change the Viewport on a per application basis to modify the screen display for Everyplace mobile applications.
+A viewport controls how a webpage is displayed on a mobile device. Without a viewport, mobile devices will render the page at a typical desktop screen width, scaled to fit the screen. Setting a viewport gives control over the page's width and scaling on different devices. 
+
+Additional functionality has been added to allow administrators to set the viewport to match your mobile web content on Maximo Everyplace screens.
+The solution implemented in the IFIX allows this to be configured at the application level by modifying your viewport-meta information in the application xml via Application Designer. To accomplish this you would need to export your application xml and manually change the tag to include the appropriate viewport-meta parameters, and then import it back into Application Designer.
+
+Example change:
+<presentation id="asset" mboname="ASSET" resultstableid="results_showlist" viewport-meta="width=device-width height=device-height, initial-scale=.75, user-scalable=no" ...>
+
+The viewport-meta parameter is a string, and the attributes are comma delimited within, so you can enter whatever standard viewport parameters that you wish to apply.
+
+Please note that if you need to support different device sizes, you can clone apps to use a different application for each size and set the viewport-meta accordingly.
+In the example settings above, the width and height were set to match the device and the initial-scale was set to .75, which appeared to be a good level to show the fields on this device. The user-scalable was set to "no" so that the user was not allowed to zoom in and out which could cause distortions on some screens.
+You will be able to experiment with various settings to modify the viewport-meta values to suit the particular device your users are running at the application level.
+
+Some common Viewport parameters include:
+
+width: The width of the viewport in pixels. The default is 980. The range is from 200 to 10,000.
+You can also set this property to the constant device-width (width of the device in pixels).
+
+height: The height of the viewport in pixels. The default is calculated based on the value of the width property and the aspect ratio of the device. The range is from 223 to 10,000 pixels. You can also set this property to the constant device-height (height of the device pixels).
+
+initial-scale: The initial scale of the viewport as a multiplier. The default is calculated to fit the webpage in the visible area. The range is determined by the minimum-scale and maximum-scale properties.
+You can set only the initial scale of the viewport—the scale of the viewport the first time the webpage is displayed. Thereafter, the user can zoom in and out unless you set user-scalable to no. Zooming by the user is also limited by the minimum-scale and maximum-scale properties.
+
+minimum-scale: Specifies the minimum scale value of the viewport. The default is 0.25. The range is from >0 to 10.0.
+
+maximum-scale: Specifies the maximum scale value of the viewport. The default is 5.0. The range is from >0 to 10.0.
+
+user-scalable: Determines whether or not the user can zoom in and out—whether or not the user can change the scale of the viewport. Set to yes to allow scaling and no to disallow scaling. The default is yes. Setting user-scalable to no also prevents a webpage from scrolling when entering text in an input field.

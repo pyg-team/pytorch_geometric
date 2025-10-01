@@ -1,0 +1,28 @@
+Title: IBM Received mail with attachments are missing for all users in Notes - United States
+
+Text:
+mail; message; temp; temporary; missing attachment; working directory; system account; domino server; icon; body of message; no attachment; attachment; received; windows; .tmp; notes; client; service TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+In Lotus Notes, you receive mail that is missing an attachment, or the attachment icon is present with no attachment in the body of the message.
+
+DIAGNOSING THE PROBLEM
+Beginning with later versions of Domino R5 through the latest version of Domino, unique temporary working directories are used on the Windows server, and other platforms not discussed in this technote. This change was implemented so that the Domino server would use its own temporary working directory instead of sharing the same temporary directory. The directories are separated so that one partition or client will not delete the other servers' temporary files. Within this directory, there will be a .reg file. This file is used to keep track of data being written to this directory. It is not a registry file. 
+
+ When a message is received missing the attachment for any and all new messages, it is an indication that there is a problem with the temporary working directory/folder used by Domino. This directory is, by default, under the Windows temporary working directory. The temporary working directory is determined by the system environment variables (see below). Running the server as an application will not use the systems temp directory. Instead it will use the directory under the profile of which the server was started. 
+
+
+[/support/docview.wss?uid=swg21376934&amp;aid=1]
+
+
+ Within this directory w e create a unique working folder beginning with the name of Notes***** . There may be multiple folders beginning with Notes with a unique string following the folder name These folders would appear as notes2B54AA, notes4818D8, and these are just an example of the unique folder('s). The numbers and letters following notes would be unique to your server. This is an indication that there may be partitioned servers running on the server or the Notes client is installed on the server.
+
+
+RESOLVING THE PROBLEM
+Determine which temporary directory is being used. The Domino server service is typically used and will identify how Domino is started and by which account it starts. If the Domino server service is missing, it is most likely started as an application. The recommendation is to use the service and start the Domino server under the system account. The system account is the most robust account to run Domino. 
+
+Bring down the Domino server. This can be achieved by determining how Domino is started (see below), as a service or system account. Shut down the Domino server, move, remove, or delete the Notes***** folder and restart Domino. Domino will automatically rebuild a new temporary working directory when the server is started again. 
+
+[/support/docview.wss?uid=swg21376934&amp;aid=2] 
+
+Note: If Domino does not have permission's to create the temporary directory, it will use its own data directory as a last resort for processing temporary files.

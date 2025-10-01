@@ -1,0 +1,154 @@
+Title: IBM MustGather: Start or Stop failures from WebSphere Administration Console for IBM HTTP Server - United States
+
+Text:
+MustGather; MustGather; MustGather; MustGatherDocument; WASEMP TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Collecting data for connection problems with the IBM HTTP Server Administration Server. Gathering this information before calling IBM support will help familiarize you with the troubleshooting process and save you time. 
+
+DIAGNOSING THE PROBLEM
+1. Please verify that the STATUS is correct in the WebSphere Administration Console: 
+
+ * 
+ * 
+ * Stop IHS from Linux Machine CommandLine or Windows Services or Windows commandline. Is the Status properly reflected RED in the WebSphere Administration Console? 
+ * Status is accomplished by Java socket connect from DMGR to the Target Web Server. So DMGR is attempting to connect using Hostname and port as defined in Web Server definition. Please Confirm that Status is working correctly. 
+ * If status is not being reflected correctly, then gather this Doc: 
+ *  Issue nslookup of Web Server hostname from the DMGR machine  * 
+    * 
+   
+   Issue the following after Start of the Web Server on Web Server machine from CommandLine:  * 
+    * 
+    * Linux: ifconfig -a > ifconfig.out Windows: ipconfig /all > ipconfig.out
+   
+   
+
+2. Determine if the Web server is defined to a Managed node or an Unmanaged node.  * 
+ * a.)
+ * 
+ * If you do not see "Not Applicable" , but the actual "version" (i.e. 8.5.5.5) Info then the Node is Managed. 
+ * b.) For WebSphere is Base Application Server then Node is Unmanaged .
+
+
+3. Set Logging and traces:  * 
+ * a.) 
+ * 
+ *   * Set the Loglevel debug in the admin.conf 
+    * Stop and Start the IBM Administration Sever (./adminctl or Apache service) 
+    * Issue Command on Web Server machine: For UNIX: ps -ef | grep admin > admin.proc For Windows: tasklist | findstr "http" > admin.proc
+   
+   
+ * b.) 
+ * 
+ *  
+   Set the NodeAgent traces: System Administration -> NodeAgents -> Click <nodeagent name> 
+   
+   click "Change log detail levels" 
+   
+   Node agent 
+   
+   *=info: 
+   
+   com.ibm.ws.management.nodeagent.NodeAgent=all: 
+   
+   com.ibm.ws.management.metadata.NodeAgentCollector=all: 
+   
+   com.ibm.ws.management.tools.GenericServerProcHelper=all: 
+   
+   com.ibm.ws.console.core.*=all: 
+   
+   com.ibm.ws.process.*=all: 
+   
+   com.ibm.ws.management.launcher.*=all: 
+   
+   com.ibm.websphere.plugincfg.*=all: 
+   
+   com.ibm.ws.management.filetransfer.*=all: 
+   
+   com.ibm.ws.management.fileservice.*=all: 
+   
+   com.ibm.ws.management.webserver.*=all 
+   
+   Issue Command on Node agent machine: 
+   
+   ps -ef | grep java > was.proc
+   
+   
+ * 
+ * c.) 
+ * 
+ *  
+   *=info: com.ibm.ws.console.web.webserver.*=all: 
+   
+   com.ibm.ws.console.web.util.impl.ServerUtilImpl=all: 
+   
+   com.ibm.ws.console.web.webserver.ServerController=all: 
+   
+   com.ibm.ws.management.webserver.RemoteIhsWebServerControl=all: 
+   
+   com.ibm.ws.management.webserver.ManagedWebServerControl=all: 
+   
+   com.ibm.ws.management.webserver.WebServer=all: 
+   
+   com.ibm.ws.process.*=all: 
+   
+   com.ibm.websphere.plugincfg.*=all: 
+   
+   com.ibm.websphere.management.filetransfer.*=all: 
+   
+   com.ws.management.filetransfer.*=all: 
+   
+   com.ibm.ws.management.fileservice.*=all
+   
+   
+ * 
+ * d.)
+ * 
+
+
+4. Recreate the Failed Start and capture Screenshot  
+
+5. Please ZIP Contents of the DMGR repository or the Base WebSphere repository 
+
+ * 
+ * If Base Application Server:
+ *  
+   cd BaseApplication Server Profile/config/cells 
+ * 
+ * If DMGR
+ *  
+   cd DMGRProfile/config/cells 
+ * 
+ * 
+
+
+6 Please send in the following information and traces:  * 
+ * Unmanaged Node:
+ *  
+   admin.conf, admin_error.log, admin_access.log, admin.proc 
+ * 
+ * Managed Node:
+ *  
+   Nodeagent: trace.log, SystemOut.log, SystemErr.log all FFDC files Node Agent: was.proc
+   
+   
+ * 
+ * Both:
+ * httpd.conf, error.log 
+ * DMGR: trace.log, System Out.log, SystemErr.log all FFDC files 
+ * DMGR Repository ZIP 
+ * Screenshot of the failure
+
+
+RELATED INFORMATION
+ Submitting information to IBM support [http://www.ibm.com/support/docview.wss?rs=177&uid=swg21153852]
+Steps to getting support [http://www.ibm.com/developerworks/websphere/support/appserver_support.html]
+MustGather: Read first [http://www.ibm.com/support/docview.wss?rs=177&uid=swg21192683]
+Troubleshooting guide [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27005324]
+
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Application Servers WebSphere Application Server IBM HTTP Server AIX, HP-UX, Linux, Solaris, Windows 6.1, 6.0 Base, Express, Network Deployment

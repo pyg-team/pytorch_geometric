@@ -1,0 +1,51 @@
+Title: IBM After upgrade, the 1.9 ETL is sensitive to accidental duplication of applicability Fixlets within a custom site - United States
+
+Text:
+sentinel duplication; duplicate applicability Fixlets; sentinel Fixlets; scm_sentinels_persistent TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Import fails due to duplication of Applicability Fixlet after upgrading IBM BigFix Compliance 1.9.60.
+
+Background:
+Applicability Fixlets, also referred to as "sentinel Fixlets", are used by BigFix Compliance to determine whether check Fixlets have been properly subscribed. In BigFix Compliance 1.9, the storage of applicability Fixlets and their mappings to checks for compliance reports has changed. A known issue exists which causes import failure when an applicability Fixlet is either duplicated or deleted and then replaced within a content site. 
+
+SYMPTOM
+In BigFix Compliance 1.9, you might see the below error in the import log after modifying the content in your BigFix Console:
+
+ERROR: Sequel::DatabaseError: Java::ComMicrosoftSqlserverJdbc::SQLServerException: Cannot insert duplicate key row in object 'scm.sentinels_persistent' with unique index 'scm_sentinels_persistent_datasource_site_id_remote_id_index'. The duplicate key value is (278, e9a7aba5-2f93-5576-a9ae-248447e12e20).
+
+This is a known issue in Compliance 1.9 where it does not allow the importing of a sentinel that has previously existed.
+
+This error also occurs if 2 non-deleted copies of an applicability fixlet exist in the BigFix Console. Please ensure you have no duplicate applicability fixlets before attempting the steps indicated in the Resolving the Problem section.
+
+
+RESOLVING THE PROBLEM
+1. Backup the Compliance database. The default name is tem_analytics. Restore this backup if anything unexpected happens when doing the following steps, then contact support for further instructions.
+
+2. Note the duplicate key value from the import log error. 
+
+For example: (278, e9a7aba5-2f93-5576-a9ae-248447e12e20)
+The first value (278) is <site_id>, and the second value (e9a7aba5-2f93-5576-a9ae-248447e12e20) is <sentinel_id>, for the purposes of the below query. Make sure to keep the single quotes around <sentinel_id>.
+
+3. Run the following SQL:
+
+SELECT fixlets_scd.name AS fixlet_name, fixlets.remote_id AS fixlet_id, sites.name AS site_name, fixlets.id AS to_delete_id FROM scm.sentinels_persistent sentinels
+JOIN datasource_fixlets_persistent fixlets ON fixlets.id = sentinels.datasource_fixlet_id
+CROSS APPLY ( SELECT TOP 1 name FROM datasource_fixlets_scd WHERE id = fixlets.id ORDER BY valid_to DESC ) AS fixlets_scd
+JOIN datasource_sites sites ON sites.id = sentinels.datasource_site_id
+WHERE sentinels.datasource_site_id = <site_id> AND sentinels.remote_id = '<sentinel_id>'
+
+4. Using fixlet_name, fixlet_id, and site_name from the above query, go to the BigFix Console to locate and delete the old Fixlet, if you haven't already done so.
+
+5. Using to_delete_id from the above query, remove the deleted sentinel record from BigFix Compliance using the following SQL:
+
+DELETE FROM scm.sentinels_persistent WHERE datasource_fixlet_id = <to_delete_id>
+DELETE FROM datasource_fixlets_persistent WHERE id = <to_delete_id>
+
+NOTE: This permanently removes traces of the sentinel from BigFix Compliance. Ensure that you do not target the wrong sentinel.
+
+6. Import the updated sentinel Fixlet in the console, if you haven't already done so. This should be the only copy of this particular sentinel in the site.
+
+7. Run an import in BigFix Compliance. The import should succeed if you do not have any remaining sentinel issues to resolve.
+
+8. Repeat steps 2 to 7 as necessary.

@@ -1,0 +1,63 @@
+Title: IBM TroubleShooting: Web server Administration using WebSphere Administration console and the IBM HTTP Server Administrative Server - United States
+
+Text:
+troubleshooting; troubleshooting; troubleshooting; TroubleShootingDocument; TroubleShootingFlowDocument; WASEMP TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Troubleshooting for problems managing the IBM HTTP Server Web server with the WebSphere Application Server administrative console (V7.0, V8.0,V8.5 and V9.0) . This should help address common issues with this component before calling IBM support and save you time. 
+
+RESOLVING THE PROBLEM
+
+Troubleshooting steps:
+Starting with WebSphere Application Server V6.0, you can now manage IBM HTTP Server using the WebSphere Application Server administrative console. If you are having problems connecting to the administrative console, and receive an error such as this:
+
+Could not connect to IBM HTTP Server Administrative Server error
+
+OR
+
+Authentication failure on access to the IBM HTTP Administration server on node windows test. Check Remote Administration Server Username and Password Properties. 
+
+Try 1 of the following: 
+
+ * Verify that the IBM HTTP Server administration server process is running.
+   
+   
+ * Verify that the Web server hostname and port that is defined in the WebSphere Application Server administrative console matches the IBM HTTP Server administration host name and port.
+   
+   
+ * Verify that the firewall is not preventing you from accessing the IBM HTTP Server administration server from the WebSphere Application Server administrative console.
+   
+   
+ * Verify that the user ID and password that is specified in the WebSphere Application Server administrative console, under remote managed, is created in the admin.passwd file, using the htpasswd command.  * Check the IBM Administration Server Authentication User and Password. You can reset the User and Password by exec this command from IHSInstallRoot/bin:  *  htpasswd -c ../conf/admin.passwd <User> 
+       *  Enter -> password
+      
+      
+    * From the WebSphere Administration console set the User and Password to same User and Password you just set in the admin.passwd file  * Goto Servers -> Web Servers 
+       * Click "webserver1" 
+       * Click "Remote Web Server Management" 
+       * Enter <UserName> (same as htpasswd above) 
+       * Enter <Password> (same as htpasswd above)
+         
+      
+      
+   
+   
+ * Configure SSL between the IBM HTTP Server Administration Server and the deployment manager [http://publib.boulder.ibm.com/infocenter/wasinfo/v7r0/index.jsp?topic=/com.ibm.websphere.ihs.doc/info/ihs/ihs/tihs_setupsslwithwas.html].
+   
+   This link will explain how to export the Personal Certificate from the IBM Administration Server and add this Personal Certificate as a Signer Certificate to the WebSphere Application Server Administration console.
+
+
+Note: You will not be able to connect to the IBM HTTP Administrative Server directly from a Web browser to make any Administration requests. The WebSphere Application Server administration console includes header information and arguments when issuing HTTP requests to the IBM Administration Server. 
+
+If you do issue http://hostname:8008/wasadmin you will received an Authentication prompt but even if the user and password are correct the request will fail. 
+
+What to do next 
+If the preceding troubleshooting steps did not solve your problem, please see MustGather: Read first for IBM HTTP Server [http://www.ibm.com/support/docview.wss?rs=177&uid=swg21192683]. RELATED INFORMATION
+ MustGather: Connection problems with the IBM HTTP Serve [http://www.ibm.com/support/docview.wss?uid=swg21202150]
+IBM HTTP Server administrative control cannot be starte [http://www.ibm.com/support/docview.wss?uid=swg21318269]
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Application Servers WebSphere Application Server IBM HTTP Server AIX, HP-UX, Linux, Solaris, Windows 7.0, 6.1, 6.0

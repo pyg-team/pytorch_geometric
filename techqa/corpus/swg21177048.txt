@@ -1,0 +1,71 @@
+Title: IBM ODBC trace for WebSphere Message Broker or IBM Integration Bus - United States
+
+Text:
+odbc trace MustGather; MGDB ; MGOD; MustGatherDocument TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This procedure is typically run to track down problems in IBM Integration Bus (IIB) or Websphere Message Broker (WMB) with database connectivity such as user access and dropped database connections. Gathering this information before calling IBM Support will help familiarize you with the troubleshooting process and save you time. 
+
+RESOLVING THE PROBLEM
+ 
+
+
+TRACE INSTRUCTIONS FOR WINDOWS/UNIXES
+
+Windows 
+1) Use the Tracing tab of the ODBC function, as follows: 
+2) Click Start > Settings > Control Panel > Administrative Tools. 
+3) Double-click Data Sources. 
+4) Select the Tracing tab. The Log File Path displays the default path and file name (/sql.log) trace information is written to. 
+5) Click the Start Tracing Now button. 
+6) Click OK. 
+7) To stop ODBC tracing, go to the same panel and click the Stop Tracing Now button, then click OK. 
+
+UNIX 
+For WMB V7 
+1) Edit the odbc.ini (V7) file to initiate trace for ODBC activity (look for environment variable ODBCINI for V7): 
+2) Under the stanza entry [ODBC] change Trace=0 to Trace=1 
+3) Enable timestamp in the ODBC trace by setting TraceOptions=3 in the odbc.ini file 
+4) Optionally, modify the TraceFile file path value to a preferred value. 
+5) Restart the broker. 
+
+All trace records go to one file, which can be confusing with multiple flows or execution groups. 
+Disable the trace by changing Trace=0 to Trace=1 in the odbc.ini file and restart the broker 
+
+For WMB V8 and IIB V9 
+1) Edit the odbcinst.ini file to initiate trace for ODBC activity (look for environment variable ODBCINI and ODBSYSINI): 
+2) Under the stanza entry [ODBC] change Trace=no to Trace=yes 
+3) Enable timestamp in the ODBC trace by setting TraceOptions=3 in the odbc.ini file 
+4) Optionally, modify the TraceFile file path value to a preferred value. 
+5) Restart the broker. 
+
+All trace records go to one file, which can be confusing with multiple flows or execution groups. 
+Disable the trace by changing Trace=yes to Trace=no in the odbcinst.ini file and restart the broker 
+
+Note: 
+
+ * Please ensure the path of the trace file is not the IIB installation or working directory. 
+ * Please ensure that the trace file entry points to a file system that has enough disk space. 
+ * Please also ensure that the user running the trace has write permissions to the directory where trace file is written. 
+   
+   
+
+TRACE INSTRUCTIONS FOR Z/OS
+
+
+1) Edit the BIPDSNAO file in the component dataset and under the stanza entry [COMMON], change APPLTRACE=0 to APPLTRACE=1 
+2) Remove the comment from the COMPDIR variable declaration and the APPLTRC DD from the steps EGNOENV and EGENV, in the WebSphere Message Broker started task JCL. 
+3) Stop and restart the broker after you have made all the changes to the BIPDSNAO file and the started task JCL. By default, the trace output file is written to <component_HFS>/output/, into a file called db2appltrace.. Each address space has a unique number, and the eight character execution group label appended to the end of db2appltrace. 
+
+This unique number, appended to the ODBC file, is the SE number in the execution group address space JOBLOG. 
+
+If the eight character execution group label is not unique across multiple execution groups, look for the value of SE in the JOBLOG for which you want to view the ODBC trace, and find the file that specifies this value. 
+
+
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Integration Bus Database AIX, HP-UX, Linux, Solaris, Windows, z/OS 9.0 All Editions 
+PRODUCT ALIAS/SYNONYM
+ WMB MB Message Broker MQ Integrator WBIMB WBI-MB MQSI WMQI

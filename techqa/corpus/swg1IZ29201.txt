@@ -1,0 +1,117 @@
+Title: IBM IZ29201: LOGIN-REDIRECT-PAGE USED AFTER SUCCESSFUL SUBMISSION OF PKMSPASSWD.FORM - United States
+
+Text:
+AIX SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS RETURNED (APAR CANNOT BE RESOLVED WITHOUT ADDITIONAL INFO FROM IBM OR CUSTOMER.)
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Problem: The client has both local-response-redirect and
+   login-redirect-page enabled.
+   
+   If the login page is displayed after the user accesses a
+   challenged page, the user gets redirected to
+   login-redirect-page after user changes
+   password.
+   
+   If the user accesses an unchallenged login page (i.e., the login
+   page is obtained from a site other than WebSEAL) and then
+   changes password, user gets redirected to
+   local-response-redirect-uri with TAM_OP=password_rep_sucess.
+   
+   Per APAR IY51074, the login-redirect directive should only
+   redirect on login, not password changes.
+   Steps to Duplicate: See above.
+   
+   Desired Behavior: User is redirected to the
+   local-response-redirect-uri after password changes, not
+   login-redirect-page.
+   
+   Environment: Access Manager 6.0 WebSEAL, no fixpacks
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *  Awaiting customer to test config parameter.
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ29201
+   
+   
+ * REPORTED COMPONENT NAME
+   ACCESS MGR WEBS
+   
+   
+ * REPORTED COMPONENT ID
+   5724C0811
+   
+   
+ * REPORTED RELEASE
+   600
+   
+   
+ * STATUS
+   CLOSED RET
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-08-07
+   
+   
+ * CLOSED DATE
+   2008-10-31
+   
+   
+ * LAST MODIFIED DATE
+   2008-10-31
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

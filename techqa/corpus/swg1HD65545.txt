@@ -1,0 +1,233 @@
+Title: IBM HD65545: ERROR WHEN VIEWING AN OBJECT IN THE WEB VIEWER IN WEB EDITOR: STARTINDEX CANNOT BE LESS THAN ZERO - PARAMETER NAME: STARTINDEX - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PERMANENT RESTRICTION.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Error when viewing an object in the Web Viewer in Web Editor:
+   StartIndex cannot be less than zero Parameter name: startIndex
+   
+   Scenario:
+   ----------
+   Note: The Web Viewer (jVue) is used to view the documents.
+   Problem can be recreated from the SmDemo environment as follows.
+   
+   1. Using SmarTeam Form Designer - Add a TextEdit box on the
+      Document Profile Card and assign the CAD_REF_FILE_NAME column
+      to it.
+   2. Launch SmarTeam Editor and logon as joe.
+   3. Navigate to your favorite Project and display a list of
+      documents.
+   4. Add a new Document with file type of "Microsoft Word."
+   5. Create an MS Word document in the SMARTEAM Work folder -
+      12345.doc, and browse to this file from the new document
+      profile card.
+   6. Click OK to save the new document in SMARTEAM.
+      ==> The FILE_NAME and CAD_REF_FILE_NAME are the same as the
+      actual name of the file: 12345.doc
+   7. Perform a Lifecycle Check In of this new document.
+      ==> The vaulted file name will be shown like this -
+      12345_####_###.doc (12345__) Example: 12345_2369_258.doc
+      ==> The CAD_REF_FILE_NAME will still be 12345.doc which is
+      the original file name of the object.
+   8. Click on the Viewer tab to verify the document is displayed
+      correctly in the SmarTeam Viewer.
+   9. Perform an Update on this object and make the file name in
+      the CAD_REF_FILE_NAME box longer than the one in the
+      FILE_NAME box. Example: 12345A_2369_258.doc
+      - Click OK to complete the update.
+      - Click on the Viewer tab to verify the document is still
+        correctly displayed in the SmarTeam Viewer.
+   10. Logon to SMARTEAM Web Editor as joe.
+   11. Search for the new document you created above.
+   12. Click on the Viewer tab to open the Viewer for the object.
+      ==> The docuement is not displayed.
+      ==> The following error is displayed:
+          StartIndex cannot be less than zero. Parameter name:
+          startIndex
+   
+   Conclusion:
+   As long as the file name (without the extension) in the
+   CAD_REF_FILE_NAME field is longer than the file name (without
+   the extension) in the FILE_NAME field then this issue will
+   occur.
+   
+   Expectation:
+   It should not matter if the file name (without the extension)
+   in the FILE_NAME field is shorter than the file name (without
+   the extension) in CAD_REF_FILE_NAME field.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Error when viewing an object in the Web Viewer in Web Editor: S
+   tartIndex cannot be less than zero  Parameter name: startIndex
+   Error when viewing an object in the Web Viewer in
+   Web Editor: StartIndex cannot be less than zero
+   Parameter name: startIndex
+   Refer to the customer's problem description above
+   and associated HotLine
+   discussion thread: USA (HL) -0020655
+   The following scenario can be used to recreate the
+   problem starting with
+   the SmDemo environment:
+   Scenario:
+   ----------
+   Note: The Web Viewer (jVue) is used to view the
+   documents.
+   1. Using SmarTeam Form Designer - Add a
+   TextEdit box on the Document
+   Profile Card and assign the CAD_REF_FILE_NAME
+   column to it.
+   2. Launch SmarTeam Editor and logon as joe.
+   3. Navigate to your favorite Project and display a
+   list of documents.
+   4. Add a new Document with file type of "Microsoft
+   Word."
+   5. Create an MS Word document in the SMARTEAM
+   Work folder -
+   12345.doc
+   and browse to this file from the new document
+   profile card.
+   6. Click OK to save the new document in
+   SMARTEAM.
+   ==> The FILE_NAME and CAD_REF_FILE_NAME are
+   the same as the actual
+   name of the file: 12345.doc
+   7. Perform a Lifecycle Check In of this new
+   document.
+   ==> The vaulted file name will be shown like this -
+   12345_####_###.doc
+   (12345__) Example: 12345_2369_258.doc
+   ==> The CAD_REF_FILE_NAME will still be
+   12345.doc which is the
+   original file name of the object.
+   8. Click on the Viewer tab to verify the document is
+   displayed
+   correctly in the SmarTeam Viewer.
+   9. Perform an Update on this object and make the
+   file name in
+   the CAD_REF_FILE_NAME box longer than the one
+   in the
+   FILE_NAME box. Example: 12345A_2369_258.doc
+   Click OK to complete the update.
+   Click on the Viewer tab to verify the document is
+   still correctly
+   displayed in the SmarTeam Viewer.
+   10. Logon to SMARTEAM Web Editor as joe.
+   11. Search for the new document you created
+   above.
+   12. Click on the Viewer tab to open the Viewer for
+   the object.
+   ==> The docuement is not displayed.
+   ==> The following error is displayed:
+   StartIndex cannot be less than zero. Parameter
+   name: startIndex
+   Conclusion:
+   As long as the file name (without the extension) in
+   the
+   CAD_REF_FILE_NAME field is longer than the file
+   name (without
+   the extension) in the FILE_NAME field then this
+   issue will occur.
+   Expectation:
+   It should not matter if the file name (without the
+   extension) in the
+   FILE_NAME field is shorter than the file name
+   (without the extension)
+   in CAD_REF_FILE_NAME field.
+   .
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  THIS PROBLEM IS PERMANENT RESTRICTION IN
+   SMARTEAM
+   CAD_REF_FILE_NAME is system attribute. The user
+   should not modify it.
+   .
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   HD65545
+   
+   
+ * REPORTED COMPONENT NAME
+   SMARTEAM NT>XP
+   
+   
+ * REPORTED COMPONENT ID
+   569199970
+   
+   
+ * REPORTED RELEASE
+   517
+   
+   
+ * STATUS
+   CLOSED PRS
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2007-07-02
+   
+   
+ * CLOSED DATE
+   2007-09-26
+   
+   
+ * LAST MODIFIED DATE
+   2007-09-26
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

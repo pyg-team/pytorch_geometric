@@ -1,0 +1,38 @@
+Title: IBM Pdcollect tool for ITM IBM i OS agent - United States
+
+Text:
+ITM_TEMA_DIST_CONFIGURATION ITM_i5_Agent 5724C04 A4 OS/400 i5/OS IBMi IBM i pdcollect TECHNOTE (FAQ)
+
+QUESTION
+ How do I collect logs and files for the IBM i OS agent? 
+
+ANSWER
+The pdcollect tool for the IBM i OS agent allows you to easily and quickly collect the most commonly used information from an IBM i system for IBM Support to investigate a problem. The tool gathers log files, configuration information, version information, job information, message queue information, and basic system information. 
+
+Pdcollect is delivered in the IBM i OS agent beginning in ITM 6.23 FP5 and ITM 6.30 FP3. It is located in the following IFS directory: 
+
+
+/QIBM/ProdData/IBM/ITM/bin/pdcollect.sh
+
+
+Pdcollect is also available as a downloadable file which is stored in an IFS directory chosen by the user. Download the following zip file to a local workstation and extract its contents. Follow the instructions in readme.txt for further information on installing the tool. 
+
+ pdcollect_ibmi_1.4.zip [/support/docview.wss?uid=swg21657023&aid=2]pdcollect_ibmi_1.4.zip [/support/docview.wss?uid=swg21657023&aid=1] 
+
+ The tool is executed by issuing the following shell script command in Qshell:
+
+<directory>/pdcollect.sh 
+
+where <directory> is the IFS directory where the tool is stored. 
+
+You must execute pdcollect while running under a user profile that you use to run IBM Tivoli Monitoring to avoid problems with object authorities. 
+
+The output from the tool is a single compressed file that can be sent in binary form to IBM Support if requested. The output file is stored at the following location: 
+
+ /tmp/ITM/pdcollect_ibmi.tar.Z 
+
+The output file is overwritten each time the tool is run. Copy or rename the output file after each invocation if more than one data collection is needed. 
+
+Instructions to view the data that has been collected is displayed in a message at the end of pdcollect processing. 
+
+The pdcollect tool for the IBM i OS agent does not collect information from the Tivoli Enterprise Monitoring Server (TEMS) or Tivoli Enterprise Portal Server (TEPS) systems. You may be asked to collect additional information from your TEMS or TEPS systems separately.

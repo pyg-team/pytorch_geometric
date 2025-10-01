@@ -1,0 +1,110 @@
+Title: IBM Corrections to the information center for IBM Content Collector V3.0 - United States
+
+Text:
+ PRODUCT DOCUMENTATION
+
+ABSTRACT
+ This document contains corrections for misspellings, incorrect file names or file paths, and other mistakes in the information center for IBM Content Collector Version 3.0. 
+
+CONTENT
+You can view the information center for IBM Content Collector V3.0 on the web at http://pic.dhe.ibm.com/infocenter/email/v3r0m0/index.jsp [http://pic.dhe.ibm.com/infocenter/email/v3r0m0/index.jsp]. The information center was updated for IBM Content Collector V3.0 Fix Pack 2.
+
+This document contains the following corrections to the online version of the information center:
+
+DOCUMENTATION UPDATES
+ * Updates and additions [http://www.ibm.com/support/docview.wss?uid=swg27024857]
+ * Corrections
+
+ * Incorrect server name in installation instructions
+ * Incorrect information about upgrading the IBM Content Collector configuration database
+ * Missing information for silent installation of Content Collector Server
+ * Incorrect thread count default value for the task route service
+ * Incorrect information about Content Manager shortcut links
+ * Misleading description for findPST
+
+
+
+INCORRECT SERVER NAME IN INSTALLATION INSTRUCTIONS 
+Updated topic: Installing Content Collector Server in GUI mode [http://pic.dhe.ibm.com/infocenter/email/v3r0m0/topic/com.ibm.content.collector.doc/installing/t_afu_installing_server_gui.htm] 
+
+The instructions in step 2 of this topic incorrectly refer to the CommonStore server. The correct instruction is as follows:
+
+Run install.exe located in the \Server directory of the installation package on the Content Collector server. 
+
+Back to top
+
+
+
+
+
+
+INCORRECT INFORMATION ABOUT UPGRADING THE IBM CONTENT COLLECTOR CONFIGURATION DATABASE TO VERSION 3.0 
+Updated topic: Upgrading to version 3.0 of IBM Content Collector [http://pic.dhe.ibm.com/infocenter/email/v3r0m0/topic/com.ibm.content.collector.doc/migrating/t_afu_upgrading_icc_v3.htm]
+
+When you upgrade to IBM Content Collector 3.0, the configuration data of your current installation is upgraded to version 3.0. You should back up the configuration database before running the upgrade so that you can return to your existing configuration if an error occurs during the upgrade. Always use database backup methods to create a full backup of the database. Exporting the configuration database as XML file is not sufficient. 
+
+If an error occurs during the upgrade and you have only an XML file of the configuration database content but no full database backup, you must uninstall IBM Content Collector V3.0, install your old version of IBM Content Collector again, create a new configuration database, and import the data from the XML file to restore your configuration data. Create a full backup of the database before you upgrade to IBM Content Collector V3.0 again.
+
+
+Back to top
+
+
+
+
+
+
+MISSING INFORMATION FOR INSTALLING CONTENT COLLECTOR SERVER IN SILENT MODE 
+Updated topic: Installing Content Collector Server in silent mode [http://pic.dhe.ibm.com/infocenter/email/v3r0m0/topic/com.ibm.content.collector.doc/installing/t_afu_installing_server_silent.htm] 
+
+The response file in step 1 of this topic does not list all installation options for the deployment method. The correct set of options for the deployment method is as follows:
+
+
+USER_INPUT_USE_EWAS
+USER_INPUT_USE_EWAS_BASIC
+USER_INPUT_USE_DIFF_EWAS
+
+Set USER_INPUT_USE_EWAS_BASIC to 1 if your deployment method is "automatically to the embedded web application server" and you want to deploy only those web applications that are required for the archiving functions.
+
+When setting up a response file, you must specify at least a source system and a repository system. If you do not specify any other options, default values are used during installation.
+
+Back to top
+
+
+
+
+
+
+INCORRECT THREAD COUNT DEFAULT VALUE FOR THE TASK ROUTE SERVICE 
+Updated topic: Configuring the task route service [http://pic.dhe.ibm.com/infocenter/email/v3r0m0/index.jsp?topic=%2Fcom.ibm.content.collector.doc%2Ftask_route_service%2Ft_afu_troute_service_conf.htm] 
+
+The default setting for the task route service thread count is 32. It can be increased up to a maximum of 512 threads for high throughput collection and archiving scenarios on servers that have 8 or more CPU cores available.
+
+Back to top
+
+
+
+
+
+
+INCORRECT INFORMATION ABOUT CONTENT MANAGER SHORTCUT LINKS 
+Updated topics: CM 8.x Create Document, CM 8.x Store Version Series 
+
+The variables HOST and PORT in the examples for the shortcut URL must be replaced with the name and port number of the Content Collector Web Application service, not of the Content Manager application server.
+
+Back to top
+
+
+
+
+
+
+MISLEADING DESCRIPTION FOR FINDPST
+Updated topic: findPST [http://pic.dhe.ibm.com/infocenter/email/v3r0m0/topic/com.ibm.content.collector.doc/local_files/r_afu_listpsts.htm]
+
+The introductory text for the example command implies that the findPST program outputs email addresses. This is wrong. The example should read:
+
+The following command searches for PST files on the computer with the host name server1.company.com and writes the file names to a CSV file. The program will search three folder levels below the root folder. The output is written to a file named PSTscan.csv.
+
+findPst -computer server1.company.com -scanPublicShares YES -scanHiddenShares YES -depth 3 -output PSTScan.csv
+
+Back to top

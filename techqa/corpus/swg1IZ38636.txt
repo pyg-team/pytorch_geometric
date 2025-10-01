@@ -1,0 +1,144 @@
+Title: IBM IZ38636: USER NAME SERVER CHANGES ARE NOT PROPAGATED TO THE NON-DEFAULT  EXECUTION GROUPS - United States
+
+Text:
+  A FIX IS AVAILABLE
+WebSphere Message Broker V6.1 - Fix Pack 6.1.0.7 [http://www-01.ibm.com/support/docview.wss?uid=swg24026355]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Creating a new userid and adding it to the Broker results in a
+   BIP7017W unknown user error.  Restarting the Broker will allow
+   the new userid to be recognized.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All users of WebSphere Message Broker and    *
+   *                 the UserNameServer.                          *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: If a user was added to the              *
+   *                      UserNameServer, a subscription by       *
+   *                      that user would result in a BIP7017     *
+   *                      error message from the non-default      *
+   *                      execution groups.                       *
+   *                      If the execution groups are restarted,  *
+   *                      the subscription was processed without  *
+   *                      an error from the non-default execution *
+   *                      groups.                                 *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   The UserNameServer will forward new and deleted users and
+   groups to the default execution group and they should be
+   passed onto the non-default execution groups.
+   The messages were not being correctly passed on which meant
+   that the non-default execution groups did not know about
+   the new user.
+   If a subscription was issued for that user, the non-default
+   execution groups would reject the subscription where as the
+   default execution group would  accept the subscription.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The default execution group was changed to pass on the
+   the changes to the users to the non-default execution
+   groups.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ38636
+   
+   
+ * REPORTED COMPONENT NAME
+   WMB SOL SPARC
+   
+   
+ * REPORTED COMPONENT ID
+   5724J0502
+   
+   
+ * REPORTED RELEASE
+   100
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-11-25
+   
+   
+ * CLOSED DATE
+   2008-12-18
+   
+   
+ * LAST MODIFIED DATE
+   2009-01-22
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMB SOL SPARC
+   
+   
+ * FIXED COMPONENT ID
+   5724J0502
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R100 PSY
+   UP

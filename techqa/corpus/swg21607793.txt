@@ -1,0 +1,63 @@
+Title: IBM Change Data Capture DB2 LUW failing with SQL error code '-4476'  Invalid batch operation - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This issue occurs when a source char column is updated to a null value on a source table with DB2 LUW as the target database. Replication fails with following error,
+
+
+000601;0000011016e295a6;4f287dd30000000003de;03de0000011016e295a6|Journal name 991 Journal bookmark 000601;000000b276674c6e;4f287dd30000000003df;03df000000b276674c6e| 
+844 2012-02-01 03:56:40.316 CDC_TST0 Target Apply:0{1066} com.datamirror.ts.target.publication.TargetApplyJob execute() An error occurred during insert into audit table INFAIR.NED_CDC_IIR_YESH. SEQ_ID: [0.000000] SEGMENT_ID: [929042510] SEGMENT_TYPE_CD: [019] CARRIER_CD: [PT] DEPENDENT_FULL_NM: [MIGUEL MONTERO ] POLICY_NUM: [838042371 ] GROUP_NUM: [077634 ] DEPENDENT_FIRST_NM: [MIGUEL ] DEPENDENT_MIDDLE_INIT_NM: [ ] DEPENDENT_LAST_NM: [MONTERO ] DEPENDENT_BIRTH_DT: [] DEPENDENT_SEX_CD: [M] DEPENDENT_SSN_NUM: [ ] INSURED_STREET_ADDRESS_TXT: [2316 TERPING PL ] INSURED_CITY_TXT: [PLANO ] INSURED_STATE_CD: [TX] INSURED_ZIP_CD: [750252102] DELETE_IND: [ ] OPERATION_CD: [INSERT] NSA_UPD_IND: [] .|Database operation failed.|A SQL exception has occurred. The SQL error code is '-4476'. The SQL state is: null. The error message is: |[jcc][10523][13865][3.63.75] Invalid batch operation: mixture of set raw byte and set other type is not allowed. ERRORCODE=-4476, SQLSTATE=null com.datamirror.ts.target.publication.CriticalTargetReplicationException An error occurred during insert into audit table INFAIR.NED_CDC_IIR_YESH. SEQ_ID: [0.000000] SEGMENT_ID: [929042510] SEGMENT_TYPE_CD: [019] CARRIER_CD: [PT] DEPENDENT_FULL_NM: [MIGUEL MONTERO ] POLICY_NUM: [838042371 ] GROUP_NUM: [077634 ] DEPENDENT_FIRST_NM: [MIGUEL ] DEPENDENT_MIDDLE_INIT_NM: [ ] DEPENDENT_LAST_NM: [MONTERO ] DEPENDENT_BIRTH_DT: [] DEPENDENT_SEX_CD: [M] DEPENDENT_SSN_NUM: [ ] INSURED_STREET_ADDRESS_TXT: [2316 TERPING PL ] INSURED_CITY_TXT: [PLANO ] INSURED_STATE_CD: [TX] INSURED_ZIP_CD: [750252102] DELETE_IND: [ ] OPERATION_CD: [INSERT] NSA_UPD_IND: [] .|Database operation failed.|A SQL exception has occurred. The SQL error code is '-4476'. The SQL state is: null. The error message is: |[jcc][10523][13865][3.63.75] Invalid batch operation: mixture of set raw byte and set other type is not allowed. ERRORCODE=-4476, SQLSTATE=null| at com.datamirror.ts.target.publication.TargetReplicationException.createTargetReplicationException(TargetReplicationException.java:138)| at com.datamirror.ts.target.publication.TargetReplicationException.createTargetReplicationException(TargetReplicationException.java:171)| at com.datamirror.ts.target.publication.TargetApplyJob.performInsert(TargetApplyJob.java:907)| at com.datamirror.ts.target.publication.TargetOperation.applyInsertOperation(TargetOperation.java:2074)| at com.datamirror.ts.target.publication.TargetMirrorApplyJob.processOperation(TargetMirrorApplyJob.java:140)| at com.datamirror.ts.target.publication.TargetApplyJob.execute(TargetApplyJob.java:268)| at com.datamirror.ts.engine.component.PipelineThread.runThread(PipelineThread.java:205)| at com.datamirror.ts.util.TsThread.run(TsThread.java:81)|Caused by: com.datamirror.ts.target.apply.GenericDirectApplyException Database operation failed.|A SQL exception has occurred. The SQL error code is '-4476'. The SQL state is: null. The error message is: |[jcc][10523][13865][3.63.75] Invalid batch operation: mixture of set raw byte and set other type is not allowed. ERRORCODE=-4476, SQLSTATE=null| at com.datamirror.ts.target.apply.JdbcApply.executeStatement(JdbcApply.java:1660)| at com.datamirror.ts.target.apply.JdbcApply.insert(JdbcApply.java:1510)| at com.datamirror.ts.target.apply.JdbcApply.apply(JdbcApply.java:267)| at com.datamirror.ts.target.publication.TargetApplyJob.applyInsert(TargetApplyJob.java:1292)| at com.datamirror.ts.target.publication.TargetApplyJob.performInsert(TargetApplyJob.java:860)| at com.datamirror.ts.target.publication.TargetOperation.applyInsertOperation(TargetOperation.java:2074)| at com.datamirror.ts.target.publication.TargetMirrorApplyJob.processOperation(TargetMirrorApplyJob.java:140)| at com.datamirror.ts.target.publication.TargetApplyJob.execute(TargetApplyJob.java:268)| at com.datamirror.ts.engine.component.PipelineThread.runThread(PipelineThread.java:205)| at com.datamirror.ts.util.TsThread.run(TsThread.java:81)|Caused by: com.ibm.db2.jcc.am.SqlException [jcc][10523][13865][3.63.75] Invalid batch operation: mixture of set raw byte and set other type is not allowed. ERRORCODE=-4476, SQLSTATE=null| at com.ibm.db2.jcc.am.fd.a(fd.java:663)| at com.ibm.db2.jcc.am.fd.a(fd.java:60)| at com.ibm.db2.jcc.am.fd.a(fd.java:120)| at com.ibm.db2.jcc.am.zn.Ec(zn.java:5710)| at com.ibm.db2.jcc.am.zn.l(zn.java:2802)| at com.ibm.db2.jcc.am.zn.addBatch(zn.java:2686)| at com.datamirror.ts.jdbc.CdcPreparedStatement.addBatch(CdcPreparedStatement.java:68)| at com.datamirror.ts.jdbc.CdcJdbcPreparedStatement.addBatch(CdcJdbcPreparedStatement.java:68)| at com.datamirror.ts.target.apply.JdbcBatch.addBatch(JdbcBatch.java:72)| at com.datamirror.ts.target.apply.JdbcApply.executeStatement(JdbcApply.java:1656)| at com.datamirror.ts.target.apply.JdbcApply.insert(JdbcApply.java:1510)| at com.datamirror.ts.target.apply.JdbcApply.apply(JdbcApply.java:267)| at com.datamirror.ts.target.publication.TargetApplyJob.applyInsert(TargetApplyJob.java:1292)| at com.datamirror.ts.target.publication.TargetApplyJob.performInsert(TargetApplyJob.java:860)| at com.datamirror.ts.target.publication.TargetOperation.applyInsertOperation(TargetOperation.java:2074)| at com.datamirror.ts.target.publication.TargetMirrorApplyJob.processOperation(TargetMirrorApplyJob.java:140)| 
+
+
+
+ENVIRONMENT
+Linux DB2 UDB 6.5.2 - DB2 UDB 6.5.2 
+
+
+DIAGNOSING THE PROBLEM
+This problem is related to a DB2 JDBC driver issue. If for one row the value is set as NULL and for another row the value is set as some bytes, this would fail if both rows are in the same JDBC batch. This issue is with the DB2 9.7 FP5(JDBC driver vesion 3.63)
+
+
+
+
+
+
+
+.
+
+RESOLVING THE PROBLEM
+To resolve the issue, there are two options , 
+
+
+
+
+
+
+1.) You can apply DB2 9.7 Fix Pack 6 
+
+
+
+2.) Use DB2 9.7 FP4 JDBC driver with CDC. You can download 9.7 FP4 JDBC driver from
+
+
+
+https://www-304.ibm.com/support/docview.wss?uid=swg21363866 [https://www-304.ibm.com/support/docview.wss?uid=swg21363866]
+
+
+
+Get the JCC driver inside the zip file v9.7fp4_jdbc_sqlj.tar.gz -> db2_db2driver_for_jdbc_sqlj.zip -> db2jcc.jar
+
+Place the db2jcc.jar file inside CDC's installation directory/lib
+
+modify the file $installDir/instance/$instance/conf/system.cp
+
+
+ Replace the db2jcc.jar with the 9.7 FP's db2jcc.jar
+
+Restart CDC and verify the JDBC driver version in the trace file.
+
+
+
+com.datamirror.ts.util.TsUdbEnvironment loadCustomerDatabaseDrivers() JDBC Driver version: 3.62

@@ -1,0 +1,64 @@
+Title: IBM Map with ITX EMAIL target fails from SI / SPE with m4gskssl module loaded, but failed initialization and SSL library init failed from ITX Email adapter trace file. - United States
+
+Text:
+B2B; Sterling; ITX; email adapter; SSL; SSLINIT; GSK_ATTRIBUTE_INVALID_ID; m4gskssl; failed initialization TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Calling map with ITX EMAIL target fails from SI / SPE 
+
+SYMPTOM
+Following error seen from ITX Email adapter trace file:
+
+[WSAStart: SSL library load succeeded. Loaded library = m4gskssl] 
+
+The m4gskssl module loaded, but failed initialization. The m4gskssl
+module's log file, as set in the dtx.ini file, can be viewed for 
+further details. 
+
+[WSAStart: SSL library init failed. Loaded library = m4gskssl] 
+
+wtxsslclient.log file shows the following:
+
+SSLINIT Error: SSL library init failed.
+Reason: CVE settings were NOT properly set, check log for further 
+details: 701 (GSK_ATTRIBUTE_INVALID_ID). 
+
+
+CAUSE
+Certain GSKit environment variable needed to be in place to successfully be loaded.
+
+DIAGNOSING THE PROBLEM
+Enable ITX_SSL_TRACE_FILE in the problematic environment variable to produce a wtxsslclient.log file.
+Running ps ewwww <pid> with pid being noapp as that is the SI WTX map execution process, will show the environment variable that is being loaded by noapp.
+
+Enable -T+ in the problematic email rule to produce an ITX Email adapter trace file call m4email.mtr
+
+RESOLVING THE PROBLEM
+Add following environment variable to SI: 
+
+1. Change directory to <si_install_dir>/bin 
+2. Back up and Edit tmp.sh.in file 
+3. Add entry below to the end of file and save the file 
+... 
+fi 
+} 
+export GSK_STRICTCHECK_CBCPADBYTES=GSK_TRUE 
+export GSK_STRICTCHECK_CBCPADBYTES_SSL=GSK_TRUE 
+export GSK_VACCINATE=GSK_TRUE 
+~ 
+
+4. Run <si_install_dir>/bin/hardstop.sh 
+5. Run <si_install_dir>/bin/setupfiles.sh 
+6. Ensure that the following lines 
+
+GSK_STRICTCHECK_CBCPADBYTES=GSK_TRUE 
+GSK_STRICTCHECK_CBCPADBYTES_SSL=GSK_TRUE 
+GSK_VACCINATE=GSK_TRUE 
+
+are seen in the environment variable displayed from the following run: 
+
+Please run the ps ewwww <pid> 
+
+The pid should be for the 
+noapp.NoAppServer as that is the SI WTX 
+map execution process.

@@ -1,0 +1,35 @@
+Title: IBM How do I switch from a demo license to a permanent license? - United States
+
+Text:
+demo permanent license TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ How do I switch from a demo license to a permanent license? 
+
+RESOLVING THE PROBLEM
+How do I switch from a demo license to a permanent license?
+If you want to switch from a demo license to a permanent license, follow these instructions to set up the permanent license. 
+
+You can discard the old demo license. 
+
+1.Acquire your permanent license from Platform or your LSF vendor. 
+
+2.When you receive your license file, save it as license.dat. 
+
+3.Edit the DAEMON line in the license file to point to the LSF vendor license daemon lsf_ld. The LSF vendor license daemon is install in LSF_SERVERDIR(defined lsf.conf or set in your environment). 
+
+4.Verify that the LSF products enabled by the PRODUCTS line in LSF_CONFDIR/lsf.cluster.cluster_name are licensed by features in the license file. 
+
+5.Make sure the file is in a location where it can be accessed by the license server daemons. 
+
+6.Set the LSF_LICENSE_FILE parameter to point to your license file. 
+
+7.Start the license server daemon. 
+
+8.Reconfigure the cluster 
+
+9.Use LSF commands to test it whether run normally.
+
+ 
+
+Cross reference information Segment Product Component Platform Version Edition IBM Spectrum Computing IBM Spectrum LSF

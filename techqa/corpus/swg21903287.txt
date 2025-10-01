@@ -1,0 +1,99 @@
+Title: IBM 【セキュリティ情報】WebSphere Message Broker とIBM Integration Bus におけるDojo Toolkitのクロスサイトスクリプティング(XSS)脆弱性 (CVE-2014-8917) - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ WebSphere Message Broker とIBM Integration Busが使用している IBM Dojo Toolkitの下記のファイルにクロスサイトスクリプティング(XSS)の脆弱性があります。
+dojox/form/resources/fileuploader.swf
+dojox/form/resources/uploader.swf
+dojox/av/resources/audio.swf 
+dojox/av/resources/video.swf
+
+
+
+VULNERABILITY DETAILS
+脆弱性の詳細
+次の脆弱性の修正が含まれます。
+
+CVEID:CVE-2014-8917 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-8917]
+DESCRIPTION: IBM Dojo Toolkit is vulnerable to cross-site scripting, caused by improper validation of user-supplied input. A remote attacker could exploit this vulnerability using a specially-crafted URL to execute scripts in a victim's Web browser within the security context of the hosting Web site, when the URL is clicked. An attacker could use this vulnerability to steal the victim's cookie-based authentication credentials
+CVSS Base Score: 4.3
+CVSS Temporal Score: Seehttps://exchange.xforce.ibmcloud.com/vulnerabilities/99303 [https://exchange.xforce.ibmcloud.com/vulnerabilities/99303] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: AV:N/AC:M/Au:N/C:N/I:P/A:N 
+
+AFFECTED PRODUCTS AND VERSIONS
+影響のある製品・バージョン： 
+
+次の製品に影響があります。 
+
+・IBM WebSphere Message Broker V8 
+
+・IBM Integration Bus V9
+
+REMEDIATION/FIXES
+修正策： 
+
+Workaround and Mitigations (回避策/軽減策)に記載されている手順に従ってください。 
+
+
+WebSphere Message Broker V8.0.0.6 または、 IBM Integration Bus V9.0.0.4 に含まれる予定のAPAR IT06833 によって該当のファイルを削除される予定です。
+
+WORKAROUNDS AND MITIGATIONS
+回避策/軽減策： 
+
+
+この脆弱性の影響を受けるファイルは、WebSphere Message Broker もしくは IBM Integration Bus のWebユーザインターフェイス（Web UI）で使用されていないため削除することができます。
+
+この脆弱性に対処するために、以下のファイルを削除してください。
+
+<install>\webadmin\apps\ROOT\dojox\form\resources\fileuploader.swf
+<install>\webadmin\apps\ROOT\dojox\form\resources\uploader.swf
+<install>\webadmin\apps\ROOT\dojox\av\resources\audio.swf
+<install>\webadmin\apps\ROOT\dojox\av\resources\video.swf
+
+注：WebSphere Message BrokerのV8.0.0.0にファイルfileuploader.swfが含まれていません。
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+IMPORTANT NOTE
+ IBM strongly suggests that all System z customers be subscribed to the System z Security Portal to receive the latest critical System z security and integrity service. If you are not subscribed, see the instructions on the System z Security web site [http://www.ibm.com/systems/z/solutions/security_subintegrity.html]. Security and integrity APARs and associated fixes will be posted to this portal. IBM suggests reviewing the CVSS scores and applying all security or integrity fixes as soon as possible to minimize any potential risk. 
+
+REFERENCES
+Complete CVSS v2 Guide [http://www.first.org/cvss/v2/guide] 
+On-line Calculator v2 [http://nvd.nist.gov/CVSS-v2-Calculator] 
+. 参照情報：
+[IBMサイト]
+この文書は、米国 IBM 社の資料を翻訳した参考文書です。翻訳元の文書は、以下のリンクよりご参照ください。
+Security Bulletin: WebSphere Message Broker and IBM Integration Bus are affected by cross-site scripting (XSS) Vulnerabilities in Dojo Toolkit [http://www.ibm.com/support/docview.wss?uid=swg21902837]
+
+公開済みのフィックスパックについては、以下のサイトよりご利用いただけます。
+Recommended fixes for IBM Integration Bus and WebSphere Message Broker [http://www-01.ibm.com/support/docview.wss?uid=swg27006041]
+
+フィックス・パックの公開予定については、以下のサイトよりご確認いただけます。
+IBM Integration Bus and WebSphere Message Broker planned maintenance release dates [http://www-01.ibm.com/support/docview.wss?uid=swg27006308]
+
+[CVSS情報]
+独立行政法人 情報処理推進機構: 共通脆弱性評価システムCVSS概説 [http://www.ipa.go.jp/security/vuln/CVSS.html]
+JVN iPedia: CVSS計算ソフトウェア日本語版 [http://jvndb.jvn.jp/cvss/ja.html]
+
+
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] 
+. 
+関連情報： 
+. 
+【お問合せ先】 
+技術的な内容に関して、サービス契約のあるお客様はIBMサービス・ラインにお問い合わせください。 
+IBM サービス・ライン [http://www.ibm.com/jp/news/20070420001.html] 
+. 
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY. 
+
+関連情報
+ An US English translation is available [http://www.ibm.com/support/docview.wss?uid=swg21902837 ]

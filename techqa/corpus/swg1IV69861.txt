@@ -1,0 +1,155 @@
+Title: IBM IV69861: WATCHDOG CANNOT BE STOPPED DUE TO KCASC.EXE HANGING - United States
+
+Text:
+  A FIX IS AVAILABLE
+IBM Tivoli Monitoring 6.3.0 Fix Pack 7 (6.3.0-TIV-ITM-FP0007) [http://www-01.ibm.com/support/docview.wss?uid=swg24041633]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Severity:         2
+   Approver:         MK
+   Reported Release: 630 FP4
+   Compid:           5724C040W  Windows OS Agent
+   
+   Environment:      ITM 630
+   
+   Problem Description:   On some Windows systems running on
+   Citrix, the Monitoring Agent for Windows OS cannot be stopped
+   due to the executable kcasc.exe hanging periodically.  This
+   executable is called when Watchdog is being disarmed which
+   needs to occur before the OS Agent can be stopped.
+   
+   When the problem occurs, the following command will
+   hang periodically:
+   %CANDLE_HOME%\TMAITM6<_x64>\kcasc query KNTCMA_Primary
+   
+   Related Files and Output:
+   * The log Tivoli-KinConfg_nnnnnnnn_nnnnnn.trc ends with
+   02-03-2015 15:17:16 [LOG]: OS Agent Watchdog: trying to disarm
+   02-03-2015 15:17:16 [MIN]:
+   CWatchdogManager::RunDisramWatchdog(): Full
+   command to run: C:\IBM\ITM\\TMAITM6_x64\DisarmWatchdog.bat
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Stop the Watchdog process and OS Agent from the Windows Service
+   console or via the task manager.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  On some Windows systems, the Monitoring Agent for Windows OS
+   cannot be stopped due to the executable kcasc.exe hanging
+   periodically. This executable is called when Watchdog is being
+   disarmed which needs to occur before the OS Agent can be
+   stopped.  This was seen on a Citrix server.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Code has been updated to addresses the problem.
+   
+   The fix for this APAR is contained in the following maintenance
+   packages:
+   
+     | interim fix | 6.3.0.6-TIV-ITM_WIN-IF0001
+     | fix pack | 6.3.0-TIV-ITM-FP0007
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV69861
+   
+   
+ * REPORTED COMPONENT NAME
+   ITM AGENT WINDO
+   
+   
+ * REPORTED COMPONENT ID
+   5724C040W
+   
+   
+ * REPORTED RELEASE
+   630
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2015-02-24
+   
+   
+ * CLOSED DATE
+   2016-01-07
+   
+   
+ * LAST MODIFIED DATE
+   2017-01-06
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ITM AGENT WINDO
+   
+   
+ * FIXED COMPONENT ID
+   5724C040W
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R630 PSY
+   UP

@@ -1,0 +1,19 @@
+Title: IBM Where can I find the minimum versions of HPF and FDT required for a NPS upgrade? - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Wanting to upgrade NPS and want to find the minimum versions of HPF and FDT available in order to upgrade those as well. 
+
+ANSWER
+see "fixcentral" in the Related information section 
+
+ 1. In the Product Group: Select Information Management 
+ 2. Select from Information Management: IBM Netezza NPS Software and Clients 
+ 3. In the Install Version: Select desired NPS version 
+ 4. In Platform: Select all 
+ 5. From here you will need to download the file called nz-npsdoc-vVersion.tar.gz. The pdf with this information is titled "Netezza Software Upgrade."
+
+RELATED INFORMATION
+ Fixcentral [http://www-933.ibm.com/support/fixcentral/]

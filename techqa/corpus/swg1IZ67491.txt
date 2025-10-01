@@ -1,0 +1,139 @@
+Title: IBM IZ67491: THERE'S A NEED TO PROPERLY DOCUMENT THE USAGE OF THE EXIT() FUNCTION. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Policy Reference Manual states:
+   The Exit function causes a policy to stop running. You can use
+   the Exit function anywhere in a policy where you want to
+   terminate processing.
+   
+   However... after testing the Exit() function we found that it
+   doesn't necessarily exit the policy. If you're inside of a
+   "function ()" it'll just exit that function, and not the entire
+   policy.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  This is a documentation change, however if one wants to exit the
+   policy from within the function one can do the following:
+   
+   You can flag it: ie, if you are in a function()
+   
+   function test(){
+     if (exit){
+       exitNow=true;
+     }
+   }
+   
+   
+   and then later in the policy:
+   
+   if(existNow){
+   exit();
+   }
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Exit function is not properly documented
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Exit function example in the documentation is not clear to the
+   user. The function should be documented with proper example to
+   explain the usage and how to exit the policy and user defined
+   function.
+   A tech note is provided in the link:
+   http://www-01.ibm.com/support/docview.wss?uid=swg21418339 [http://www-01.ibm.com/support/docview.wss?uid=swg21418339]
+   The future release documentation will be updated with propery
+   usage
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ67491
+   
+   
+ * REPORTED COMPONENT NAME
+   NETCOOL/IMPACT
+   
+   
+ * REPORTED COMPONENT ID
+   5724O59IS
+   
+   
+ * REPORTED RELEASE
+   511
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-01-04
+   
+   
+ * CLOSED DATE
+   2010-02-15
+   
+   
+ * LAST MODIFIED DATE
+   2010-02-15
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

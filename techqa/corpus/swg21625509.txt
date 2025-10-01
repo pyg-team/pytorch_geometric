@@ -1,0 +1,30 @@
+Title: IBM Statement of Direction: CICS TS support for mobile and one time charge (OTC) pricing - United States
+
+Text:
+mobile; Value Unit Edition; zNALC; CICS Transaction Server; CICS TS; announcement ; SOD ; statement of direction ; 5655Y0400 R680 680 R800 800 HCI6800 5655-Y04 5655Y04 KIXINFO PRODUCT LIFECYCLE
+
+ABSTRACT
+ IBM CICS Transaction Server for z/OS (CICS TS) intends to deliver enhanced support for mobile applications, and support for deploying qualified new CICS TS workloads on IBM System z New Application License Charges (zNALC) Logical Partitions (LPARs). 
+
+CONTENT
+As documented in the IBM Worklight V5.0 and Mobile Foundation announcement [http://www.ibm.com/common/ssi/cgi-bin/ssialias?infotype=an&subtype=ca&supplier=897&letternum=ENUS213-093] (213-093), IBM makes the following statement of general direction (SOD) :
+
+
+ * IBM intends to deliver enhanced support for mobile applications interacting with IBM CICS Transaction Server for z/OS (CICS TS) services, using the lightweight data-interchange format JavaScript Object Notation (JSON)1. 
+ * In addition, IBM intends to introduce support for deploying qualified new CICS TS workloads on IBM System z New Application License Charges (zNALC) Logical Partitions (LPARs). Qualified new CICS TS applications, including approved mobile and service-enabled applications running in the CICS TS Java Virtual Machine (JVM) Server, will be eligible for CICS TS one-time-charge (OTC) pricing when deployed to a zNALC LPAR2.
+
+
+IBM's statements regarding its plans, directions, and intent are subject to change or withdrawal without notice at IBM's sole discretion. Information regarding potential future products is intended to outline our general product direction and it should not be relied on in making a purchasing decision. The information mentioned regarding potential future products is not a commitment, promise, or legal obligation to deliver any material, code, or functionality. Information about potential future products may not be incorporated into any contract. The development, release, and timing of any future features or functionality described for our products remains at our sole discretion. 
+
+A PDF of this statement of direction is available: CICS TS SoD 19022013.pdf [/support/docview.wss?uid=swg21625509&aid=2]CICS TS SoD 19022013.pdf [/support/docview.wss?uid=swg21625509&aid=1] 
+
+1This capability has been met with the introduction of the CICS TS Feature Pack for Mobile Extensions V1.0, announced in IBM Software Announcement 213-177, (RFA57942), dated April 23, 2013 [http://www.ibm.com/common/ssi/cgi-bin/ssialias?infotype=an&subtype=ca&supplier=897&letternum=ENUS213-177]. 
+
+2This capability has been met with the introduction of CICS TS Value Unit Edition (VUE) V5.1, announced in IBM Software Announcement 213-168, (RFA57898), dated April 23, 2013 [http://www.ibm.com/common/ssi/cgi-bin/ssialias?infotype=an&subtype=ca&supplier=897&letternum=ENUS213-168]. RELATED INFORMATION
+#Announcement Letters for CICS Products [http://www.ibm.com/support/docview.wss?uid=swg21227090]
+
+
+
+
+PRODUCT ALIAS/SYNONYM
+ CICS/TS CICS TS CICS Transaction Server

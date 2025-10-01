@@ -1,0 +1,32 @@
+Title: IBM Tivoli Common Reporting (TCR) v3.1.2/3.1.2.1: TCR (Reporting Services) install fails for lack of disk space - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Tivoli Common Reporting (TCR) v3.1.2/3.1.2.1: TCR Prerequisite scanner (PRS) has an outdated disk space requirements, Update the TCR Prerequisites Scanner config file to reflect accurate amount of disk space required on AIX and Linux platforms 
+
+RESOLVING THE PROBLEM
+TCR Fresh or Upgrade install scenario's using IBM Installation Manager (IIM) or manually on all supported Unix platforms 
+
+ 1. Copy attached TCR_03010200.cfg file to below location
+Unix : <JAZZSM_HOME>/PrereqScanner/UNIX_Linux/TCR_03010200.cfg
+
+NOTE : JAZZSM_HOME = JazzSM image extracted directory
+
+2. Go to <JAZZSM_HOME>/PrereqScanner to check the TCR disk space requirements manually
+
+Run the following command to check TCR disk space requirements for Fresh install Scenario 
+Unix : ./TCR.sh 
+Run the following command to check TCR disk space requirements for Upgrade install Scenario 
+Unix : ./TCR.sh update
+
+TCR Fresh or Upgrade install scenario's using Launchpad on all Unix platforms
+
+1. Copy attached TCR_03010200.cfg file to below locations
+Unix : <JAZZSM_HOME>/templates/prs/unix/TCR.cfg
+Unix : <JAZZSM_HOME>/PrereqScanner/UNIX_Linux/TCR_03010200.cfg
+
+2. Launch the launchpad and follow the steps to install or upgrade TCR
+
+TCR_03010200.cfg [/support/docview.wss?uid=swg21968763&aid=2]TCR_03010200.cfg [/support/docview.wss?uid=swg21968763&aid=1]

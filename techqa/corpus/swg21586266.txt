@@ -1,0 +1,31 @@
+Title: IBM The "Send E-mail via SMTP" integration service fails to handle Double Byte Character Set (DBCS) in the message body for IBM Business Process Manager (BPM) - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ If you are using the Business Process Manager "Send E-mail via SMTP" built-in integration Service in the business process definition (BPD), the message body contains a DBCS, and you are viewing the E-mail content using IBM Lotus Notes client or another mailbox client, the DBCS characters are shown as code. 
+
+CAUSE
+When you define the Data Mapping for "Send E-mail via SMTP" service, you set the content type as "text/plain" or "text/html", and the message texts contain DBCS, you see this problem.
+
+RESOLVING THE PROBLEM
+To resolve this problem, update the content type value of the "Send E-mail via SMTP" service by completing the following steps: 
+
+ 1. Select the service under the Properties tab. 
+ 2. In the Data Mapping field, change the input value for contentType (String) to "text/plain;charset=utf-8" or "text/html;charset=utf-8".
+
+RELATED INFORMATION
+#A simplified Chinese translation is available [http://www.ibm.com/support/docview.wss?uid=swg21659574]
+
+
+ 
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Business Process Manager Express General Linux, Windows 8.5, 8.0.1, 8.0, 7.5.1, 7.5 Business Integration IBM Business Process Manager Advanced General AIX, Linux, Windows 8.5, 8.0.1, 8.0, 7.5.1, 7.5 
+HISTORICAL NUMBER
+ 30888
+499
+000 
+
+PRODUCT ALIAS/SYNONYM
+ BPM

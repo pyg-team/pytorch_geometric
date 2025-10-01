@@ -1,0 +1,26 @@
+Title: IBM Case Manager client and admin client will not open, logon screen stays blank after installing IBM Content Navigator 2.0.3 FP7 and IBM Case Manager 5.2.1 FP4 - United States
+
+Text:
+hang; hangs TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Case Manager client and admin client will not open, logon screen stays blank after installing IBM Content Navigator 2.0.3 FP7 and IBM Case Manager 5.2.1 FP4 
+
+ENVIRONMENT
+ IBM Content Navigator 2.0.3 FP7 and IBM Case Manager 5.2.1 FP4
+
+RESOLVING THE PROBLEM
+Enable all the plug-ins to load with the Case Manager desktops. 
+
+ 1. Open the ICN Admin desktop. (e.g. http://[host]:[port]/navigator/?desktop=admin) 
+ 2. Go to Desktops -> choose Case Manager desktop. 
+ 3. On the General tab, scroll down to the Plug-ins section. 
+ 4. Choose the Enable all deployed plug-ins radio button. 
+ 5. Click Save and Close. 
+ 6. Refresh the ICM client page in the browser.
+
+. 
+Repeat the same steps for the Case Manager administration desktop as well. 
+
+For example: 
+ * [/support/docview.wss?uid=swg21984626&amp;aid=1]

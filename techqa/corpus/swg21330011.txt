@@ -1,0 +1,65 @@
+Title: IBM Non Administrator usage must be manually cleaned up - United States
+
+Text:
+RN1.2.1; SRX TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When a eclipse based package is installed by an administrator and used by a non-administrator, out of date eclipse configuration cruft is left behind in the user's .eclipse/ folder that may affects the correct functioning of the currently installed package(s). 
+
+SYMPTOM
+The p2 based eclipse package does not start up correctly for non-administrator or it takes abnormal amount of time (10 minutes) to start up. The log file in the user's .eclipse/ibm.software.delivery.platform_7.5.0_???? folder, for example: /home/joe/.eclipse/ibm.software.delivery.platform_7.5.0_1529064711/configuration/1225137678916.log, may contain an entry like: 
+
+!MESSAGE Exception launching the Eclipse Platform: 
+
+!STACK 
+
+java.lang.ClassNotFoundException: org.eclipse.core.runtime.adaptor.EclipseStarter 
+
+at java.net.URLClassLoader.findClass(Unknown Source) 
+
+at java.lang.ClassLoader.loadClass(Unknown Source) 
+
+at java.lang.ClassLoader.loadClass(Unknown Source) 
+
+at org.eclipse.equinox.launcher.Main.invokeFramework(Unknown Source) 
+
+at org.eclipse.equinox.launcher.Main.basicRun(Unknown Source) 
+
+at org.eclipse.equinox.launcher.Main.run(Unknown Source) 
+
+at org.eclipse.equinox.launcher.Main.main(Unknown Source)
+
+
+
+CAUSE
+This issue has been identified as Eclipse defect 255268 [https://bugs.eclipse.org/bugs/show_bug.cgi?id=255268]. Review the Bug report for more details.
+
+
+
+RESOLVING THE PROBLEM
+ 
+
+ 
+
+WORKAROUND: 
+
+Delete the user's .eclipse/ibm.software.delivery.platform_7.5.0_???? directory. 
+
+For example: 
+
+rm -rf /home/joe/.eclipse/ibm.software.delivery.platform_7.5.0_1529064711 
+
+ 
+
+Then relaunch the package. 
+
+
+
+
+
+
+
+
+
+
+Cross Reference information Segment Product Component Platform Version Edition Software Development Rational Application Developer for WebSphere Software Not Applicable 7.5.2 All Editions

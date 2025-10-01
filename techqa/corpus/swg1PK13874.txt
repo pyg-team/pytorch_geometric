@@ -1,0 +1,136 @@
+Title: IBM PK13874: STRUTSBUILDER CAUSES HANG OR OUT OF MEMEMORY TO OCCUR DUING BUILD - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  My customer is experiencing this issue all of a sudden. He did
+   not have this in the past. Recently, he is having this issue.
+   When he tries to build his web project on RAD v6001 ifix003.
+   The build gets stuck around 82-90% until he receives an Out of
+   Memory error after several hours.
+   
+   
+   I currently helped him workaround the build problem by turning
+   off the Struts Builder. By turning it off, it builds in seconds.
+   So the issue is isolated to the Struts builder.
+   
+   This issue happens on all of the customer's machines.
+   
+   
+   It seems to indicate a problem loading the Struts builder.
+   
+   This hang can be recognized by it runing the WebToolsSavePartici
+   pantJob task for a long time.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  disable struts builder
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  The build gets stuck around 82-90% until he receives an Out of
+   Memory error after several hours.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fix provided in Rational Application Developer, V6.0.1.1
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK13874
+   
+   
+ * REPORTED COMPONENT NAME
+   APP DEV V6 WIN
+   
+   
+ * REPORTED COMPONENT ID
+   5724J1901
+   
+   
+ * REPORTED RELEASE
+   601
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2005-10-21
+   
+   
+ * CLOSED DATE
+   2006-08-21
+   
+   
+ * LAST MODIFIED DATE
+   2006-08-21
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   APP DEV V6 WIN
+   
+   
+ * FIXED COMPONENT ID
+   5724J1901
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R601 PSY
+   UP

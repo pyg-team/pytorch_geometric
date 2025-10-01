@@ -1,0 +1,131 @@
+Title: IBM HD91034: UNUSED CLASSES CANNOT BE DELETED - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  In the Database Wizard, trying to delete a former SW class
+   that is unused today. When pressing the delete button, I get
+   the message:
+   Error No: 07018
+   You must delete reference(s) "SW Satellite Display
+   State(4).TDM_SATELLITE_HOST_REF" to "Verkstad SW Assembly"
+   before deleting the class.
+   The SW Satellite Display State(4) is not accessible from the
+   Datamodel designer
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  In the Database Wizard, trying to delete a former SW class
+   that is unused today. When pressing the delete button, I get
+   the message:
+   Error No: 07018
+   You must delete reference(s) "SW Satellite Display
+   State(4).TDM_SATELLITE_HOST_REF" to "Verkstad SW Assembly"
+   before deleting the class.
+   The SW Satellite Display State(4) is not accessible from the
+   Datamodel designer
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  NOTE THAT THIS PROBLEM WILL ALSO BE FIXED ON V5R19 SP7.
+   NOTE THAT THIS PROBLEM WILL ALSO BE FIXED ON V5R20 SP1.
+   Additional Closure Information:
+   N/A
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   HD91034
+   
+   
+ * REPORTED COMPONENT NAME
+   SMARTEAM NT>XP
+   
+   
+ * REPORTED COMPONENT ID
+   569199970
+   
+   
+ * REPORTED RELEASE
+   519
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-11-23
+   
+   
+ * CLOSED DATE
+   2010-03-07
+   
+   
+ * LAST MODIFIED DATE
+   2010-03-07
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   SMARTEAM NT>XP
+   
+   
+ * FIXED COMPONENT ID
+   569199970
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R519 PSN
+   UP

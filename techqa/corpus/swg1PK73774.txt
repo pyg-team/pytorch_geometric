@@ -1,0 +1,253 @@
+Title: IBM PK73774: ABN= 5C6 - 00C90300 ,U=XXXXCHIN,C=L8200.600.DMC -CSQILCUR,M=CSQGFRCV,LOC=CSQILPLM. CSQILCUR + 04AC - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  xxxxMSTR log:
+   00:00:00 ---- IAT6853 THE CURRENT DATE IS THURSDAY,  02 OCT 2008
+   ----
+   12:30:11  CSQ9022I xxxx CSQMDRTC ' DIS CHSTATUS' NORMAL
+   COMPLETION
+   12:31:21  IEA794I SVC DUMP HAS CAPTURED:
+   12:31:21  DUMPID=012 REQUESTED BY JOB (xxxxCHIN)
+   12:31:21  DUMP TITLE=xxxx,ABN=5C6-00C90300,U=xxxxCHIN,C=L8200.60
+   0.DMC -CSQILCUR,M=CSQGFRCV,LOC=CSQILPLM.CSQILCUR+04AC
+   .
+   .
+   xxxxCHIN log:
+   00:03:09 ---- IAT6853 THE CURRENT DATE IS THURSDAY,  02 OCT 2008
+   .
+   12:31:16  CSQY291E CSQXDMPS SDUMPX FAILED, RC=00000B08,F9D1,ABN=
+   5C6-00E7014F,LOC=*.CSQXADPM+01F28
+   12:31:21  CSQY291E CSQXDMPS SDUMPX FAILED, RC=00000208,F9D1,ABN=
+   5C6-00E7014F,LOC=*.CSQXADPM+01F28
+   12:31:51  CSQY291E CSQXDMPS SDUMPX FAILED, RC=00000B08,F9D1,ABN=
+   5C6-00E7014F,LOC=*.CSQXADPM+01F28
+   .
+   .
+   Dump Title: xxxx,ABN=5C6-00C90300,U=xxxxCHIN,C=L8200.600.DMC
+   -CSQILCUR,M=CSQGFRCV,LOC=CSQILPLM.CSQILCUR+04AC
+   .
+   Symptom             Description
+   -------             -----------
+   PIDS/5655L8200      Program id: 5655L8200
+   RIDS/CSQILPLM#L     Load module name: CSQILPLM
+   RIDS/CSQILCUR       Csect name: CSQILCUR
+   AB/S05C6            System abend code: 05C6
+   REGS/0E01C          Register/PSW difference for R0E: 01C
+   REGS/0C4AC          Register/PSW difference for R0C: 4AC
+   RIDS/CSQGFRCV#R     Recovery routine csect name: CSQGFRCV
+   .
+   Date Assembled:          20050509
+   Module Level:            14.56
+   Subfunction:             DMC  CSQILCURGetLogCurs
+   .
+   Time of Error Information
+     PSW: 07742000 80000000 00000000 21F8C2F4
+     Instruction length: 02   Interrupt code: 000D
+     Failing instruction text: 8910000C 0A0D5870 600C5880
+   .
+   Breaking event address: 00000000_0192F4B4
+   AR/GR 0-1    984810A4/0000037D_00D91041
+                00000000/00000000_005C6000
+   AR/GR 2-3    00000000/00000000_00000004
+                00000000/00000000_00D91041
+   AR/GR 4-5    00000000/00000000_00000048
+                00000000/00000000_17638E98
+   AR/GR 6-7    00000000/00000000_17650F38
+                00000000/00000000_17638EE4
+   AR/GR 8-9    00000000/00000000_17638EE4
+                00000000/00000000_00000000
+   AR/GR 10-11  00000000/00000000_17638EF0
+                00000000/00000000_3B116DE4
+   AR/GR 12-13  00000000/00000000_A1F8BE48
+                00000000/00000000_3B116D10
+   AR/GR 14-15  98E7359E/00000000_A1F8C2D8
+                17650F38/00000000_00C90300
+   .
+   00C90300
+   Explanation: MQ was unable to start a unit of recovery for this
+   execution unit.
+   .
+   The client has started an XA transaction and performed an MQPUT.
+   It then issues XA_END and XA_PREPARE.
+   However at this point it issues a further MQPUT. This cannot be
+   processed because the UR is indoubt, and so the put returns
+   MQRA_ALREADY_PREPARED. This is not expected by the chinit
+   adapter, which takes a dump with reason 00E7014F
+   (CSQX_ABEND_ADAP_UNEXERROR) and converts the reason to
+   MQRC_UNEXPECTED_ERROR.
+   This return code was returned to the client app, which then
+   issued two MQCLOSEs. The first succeeded, however the second was
+   for a temporary dynamic queue (AMQ.C3158DE3CEC31A64), and so
+   during the close this queue should be deleted. During this
+   delete, CSQIDELO calls CSQILCUR to get the log write cursor for
+   the UR. CSQILCUR tries to extract the log write
+   cursor for the UR, but fails because the UR is not in a suitable
+   state for logging to occur (it is indoubt). It then attempts to
+   start a UR for the EB - this again finds the existing UR, and
+   similarly returns an error code because the UR is indoubt. As a
+   result CSQILCUR then abends 5C6-00C90300. The chinit detects
+   this abend, and issues another 5C6-00E7014F.
+   .
+   Both of these errors are occurring because of operations taking
+   place while the UR is indoubt (between the prepare and a
+   commit). MQ should handle these situations and return an
+   appropriate error return code rather than abending.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All Users of WebSphere MQ for z/OS Version 6 *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: 5C6-00E7014F abends in CSQXADPM seen in *
+   *                      the chinit after an application issues  *
+   *                      XA_PREPARE.                             *
+   *                      If the application was using a          *
+   *                      temporary dynamic queue abend           *
+   *                      5C6-00C90300 may also be seen in        *
+   *                      CSQILCUR                                *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   An application issued XA_PREPARE and then attempted to put a
+   message to a queue. The put must fail because no logged
+   operations are allowed for an indoubt uow and so the qmgr
+   returned MQRA_ALREADY_PREPARED to CSQXADPM. This was not
+   expected and so the adapter was abended 5C6-00E7014F, and 2195
+   (MQRC_UNEXPECTED_ERROR) was returned to the application.The
+   application had a temporary dynamic queue open, and on receiving
+   the 2195 attempted to close the TDQ. This caused an attempt to
+   delete the TDQ and this abended 5C6-00C90300 in CSQILCUR when
+   trying to get a log cursor, again because the uow was indoubt.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Attempts to perform a logged operation to a queue while the uow
+   is indoubt (after xa_prepare) will now return
+   MQRC_SYNCPOINT_NOT_AVAILABLE. Additionally, closing a TDQ while
+   the uow is indoubt will result in the deletion of the queue
+   being deferred until the uow has been resolved.
+   
+   In the WebSphere MQ for z/OS version 6 Messages and Codes manual
+   the description of MQRC_SYNCPOINT_NOT_AVAILABLE (MQRC 2072) is
+   updated to remove the bulletpoint:
+   "On z/OS, this reason code does not occur."
+   000Y
+   CSQMCLS2
+   CSQXADPM
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK73774
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ Z/OS V6
+   
+   
+ * REPORTED COMPONENT ID
+   5655L8200
+   
+   
+ * REPORTED RELEASE
+   000
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-10-14
+   
+   
+ * CLOSED DATE
+   2009-01-14
+   
+   
+ * LAST MODIFIED DATE
+   2009-02-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    PK77568 [http://www-01.ibm.com/support/docview.wss?uid=swg1PK77568] UK43148
+   
+   
+
+MODULES/MACROS
+ *     CSQMCLS2 CSQXADPM
+   
+   
+    
+   
+   
+
+Publications Referenced GC34660200 FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ Z/OS V6
+   
+   
+ * FIXED COMPONENT ID
+   5655L8200
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R000 PSY UK43148 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK43148]
+   UP09/01/30 P F901
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

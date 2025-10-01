@@ -1,0 +1,205 @@
+Title: IBM PQ62628: SMTP GETS S0C1 ABEND PROCESSING EMPTY SPOOL FILE - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  SMTP server receives an S0C1 (U0001 if NOSPIE option removed)
+   ABEND while processing an empty spool file.  Preceding the ABEND
+   will be an IEC130I BUGFILE  DD STATEMENT MISSING message in the
+   SYSMSG output and the following messages in the SYSPRINT output:
+   
+   AMPX041I FILE COULD NOT BE OPENED: BUGFILE
+         TRACE BACK OF CALLED ROUTINES
+    ROUTINE                          STMT AT ADDRESS IN MODULE
+    MSG                                11    0006811A   CMMSG_COMMO
+                                                        HANDLER
+   
+    MSG3                                8    00068972   CMMSG_COMMO
+                                                        HANDLER
+   
+    SERVICEREADERMVS                    8    00016FC2   SMTPBTCH
+    SERVICEREADER                     163    0001A240   SMTPBTCH
+    MAINLOOP                           94    0003596A   SMTP
+    <MAIN-PROGRAM>                     20    000371C0   SMTP
+    VSPASCAL                                 000D2A96
+   
+   
+   AMPX059I TEXT EXCEEDS LOGICAL RECORD LENGTH IN FILE: BUGFILE
+       (same traceback)
+   
+   Exact addresses and statement numbers will vary by release and
+   service level.  PSW of the PGM 01 interrupt will be in the PSA,
+   R14 will point to a BALR in AMPZPUT.  R7%-1C% will be the
+   EZA5571E message that was being issued.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Enable DEBUG processing in SMTP.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All users of the IBM Communications Server   *
+   *                 for OS/390 Release 10 IP, z/OS Version 1     *
+   *                 Release 2 and Version 1 Release 4 IP: SMTP   *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: SMTP gets S0C1 ABEND processing spool   *
+   *                      file with a zero length and DEBUG not   *
+   *                      active in SMTP configuration file.      *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   SMTP gets S0C1 ABEND processing a JES spool file of zero length
+   when the DEBUG statement is missing from the SMTP configuration
+   file. When SMTP detects a zero length JES spool file it must
+   delete it from the JES spool to continue processing the mail.
+   A zero length spool file is a bad data set being placed on the
+   spool. When SMTP purges this data set it generates message
+   EZA5571E to alert the customer to the fact that bad data sets
+   are being sent to the spool for SMTP. That message was
+   originally sent to the BUGFILE (SYSDEBUG) which requires the
+   DEBUG statement to be coded in the SMTP configuration file for
+   the file to be setup.
+   +-------------------------------------------------------------+
+   + Please check our Communications Server for OS/390 homepages +
+   + for common networking tips and fixes.  The URL for these    +
+   + homepages can be found in Informational APAR II11334 [http://www-01.ibm.com/support/docview.wss?uid=isg1II11334].       +
+   +-------------------------------------------------------------+
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The module SMTPBTCH will be modified to send the message
+   EZA5571E to the OUTPUT file instead of the BUGFILE. So that the
+   message will be generated regardless of whether the DEBUG
+   statement is coded or not.
+   
+   * Cross Reference between External and Internal Names
+   EZAAA00H (MSSMTP  )  EZABB01Z (SMTPBTCH)  EZACA026 (MVPSSI  )
+   EZACA027 (MVPSSIW )  EZAAA00H (MSSMTP  )  EZABB01Z (SMTPBTCH)
+   EZACA026 (MVPSSI  )  EZACA027 (MVPSSIW )  EZAAA00H (MSSMTP  )
+   EZABB01Z (SMTPBTCH)  EZACA026 (MVPSSI  )  EZACA027 (MVPSSIW )
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PQ62628
+   
+   
+ * REPORTED COMPONENT NAME
+   TCP/IP V3 MVS
+   
+   
+ * REPORTED COMPONENT ID
+   5655HAL00
+   
+   
+ * REPORTED RELEASE
+   50A
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2002-06-26
+   
+   
+ * CLOSED DATE
+   2002-07-09
+   
+   
+ * LAST MODIFIED DATE
+   2002-08-04
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UQ67909 UQ67910 UQ67911
+   
+   
+
+MODULES/MACROS
+ *  EZAAA00H EZABB01Z EZACA026 EZACA027
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TCP/IP V3 MVS
+   
+   
+ * FIXED COMPONENT ID
+   5655HAL00
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R120 PSY UQ67909 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UQ67909]
+   UP02/07/24 P F207
+   
+   
+ * R140 PSY UQ67910 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UQ67910]
+   UP02/07/24 P F207
+   
+   
+ * R50A PSY UQ67911 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UQ67911]
+   UP02/07/24 P F207
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

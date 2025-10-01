@@ -1,0 +1,94 @@
+Title: IBM Unable to access IBM® FileNet® Business Process Framework (BPF) web site due to Application is unavailable error message. - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Users are not able to get to the login page for BPF, instead they are getting Application is unavailable error. Clicking on details button shows com.filenet.bp8.api.Bp8InvalidConfigurationError exception.
+
+
+SYMPTOM
+When users try to access BPF web site, they receive the following stack: 
+
+Error Message 
+Application is unavailable. Refer to your System Administrator or Help Desk for more details. 
+Hide Details 
+
+Error Message: 
+Cannot retrieve Metadata database type 
+
+Exception Class: 
+com.filenet.bp8.api.Bp8InvalidConfigurationError 
+
+Stack Trace: 
+com.filenet.bp8.api.Bp8InvalidConfigurationError: Cannot retrieve Metadata database type 
+at com.filenet.bp8.db.DataModuleImpl. (DataModuleImpl.java:44) 
+at com.filenet.bp8.db.DataModuleImpl.getInstance (DataModuleImpl.java:73) 
+at com.filenet.bp8.ObjectFactoryImpl.getDataModule (ObjectFactoryImpl.java:12) 
+at com.filenet.bp8.apps.server.servlet.WebAppInit.init (WebAppInit.java:98) 
+at javax.servlet.GenericServlet.init (GenericServlet.java:258) 
+at com.ibm.ws.webcontainer.servlet.StrictServletInstance.doInit (StrictServletInstance.java:82) 
+at com.ibm.ws.webcontainer.servlet.StrictLifecycleServlet._init (StrictLifecycleServlet.java:147) 
+at com.ibm.ws.webcontainer.servlet.PreInitializedServletState.init (StrictLifecycleServlet.java:270) 
+at com.ibm.ws.webcontainer.servlet.StrictLifecycleServlet.init (StrictLifecycleServlet.java:113) 
+at com.ibm.ws.webcontainer.servlet.ServletInstance.init (ServletInstance.java:189) 
+at javax.servlet.GenericServlet.init (GenericServlet.java:258) 
+...
+...
+
+The bp8.log shows the following error:
+
+2010-04-07 16:21:01,632 INFO [Thread-1] com.filenet.bp8.apps.server.servlet.WebAppInit (init:72) - Log4j initialization is successful 
+2010-04-07 16:21:01,664 INFO [Thread-1] com.filenet.bp8.apps.server.servlet.WebAppInit (init:78) - Application environment initialization is successful 
+2010-04-07 16:21:01,664 INFO [Thread-1] com.filenet.bp8.apps.server.servlet.WebAppInit (init:86) - MetaStore name initialization is successful 
+2010-04-07 16:21:01,679 INFO [Thread-1] com.filenet.bp8.apps.server.servlet.WebAppInit (init:94) - ProcessStore name initialization is successful 
+2010-04-07 16:21:01,679 DEBUG [Thread-1] com.filenet.bp8.FactoryMaker (<clinit>:26) - Using com.filenet.bp8.ObjectFactoryImpl as object factory 
+2010-04-07 16:21:03,054 FATAL [Thread-1] com.filenet.bp8.db.DataModuleImpl (<init>:42) - Cannot retrieve Metadata database type 
+java.sql.SQLException: Io exception: The Network Adapter could not establish the connectionDSRA0010E: SQL State = null, Error Code = 17,002DSRA0010E: SQL State = null, Error Code = 17,002 
+at sun.reflect.NativeConstructorAccessorImpl.newInstance0(Native Method) 
+at sun.reflect.NativeConstructorAccessorImpl.newInstance(NativeConstructorAccessorImpl.java:80) 
+at sun.reflect.DelegatingConstructorAccessorImpl.newInstance(DelegatingConstructorAccessorImpl.java:44) 
+at java.lang.reflect.Constructor.newInstance(Constructor.java:315) 
+at com.ibm.websphere.rsadapter.GenericDataStoreHelper.mapExceptionHelper(GenericDataStoreHelper.java:481) 
+at com.ibm.websphere.rsadapter.GenericDataStoreHelper.mapException(GenericDataStoreHelper.java:524) 
+...
+...
+[ftp://public.dhe.ibm.com/software/data/cm/filenet/docs/bpfdoc/36x/BPF_Installation_Guide.pdf]2010-04-07 16:21:03,070 ERROR [Thread-1] com.filenet.bp8.apps.server.servlet.WebAppInit (init:170) - Initialization is failed 
+
+
+CAUSE
+Application server can not contact the host database configured in the datasource.
+
+
+DIAGNOSING THE PROBLEM
+ 
+
+ 1. Test the JDBC Data Source in WebSphere for BPF Metastore using WebSphere Administrative Console.
+    a. Click on Resources > JDBC Providers. 
+    b. Click on the appropriate provider: {meta connection pool}. 
+    c. Click DataSources under Additional Properties. 
+    d. Select the checkbox for {meta datasource}, default name Bp8MetadataDS 
+    e. Click Test Connection. 
+    A success message should be displayed. If not, verify the settings are correct, see page 28 thru 30 of BPF 3.6 Installation Guide:
+    ftp://ftp.software.ibm.com/software/data/cm/filenet/docs/bpfdoc/36x/BPF_Installation_Guide.pdf [ftp://ftp.software.ibm.com/software/data/cm/filenet/docs/bpfdoc/36x/BPF_Installation_Guide.pdf]
+    
+ 2. Verify the The MetadataDS name referenced correctly in BPF application. The configuration is saved in the <bpf.war>/WEB-INF/web.xml on the app server: 
+    <init-param> 
+    <param-name>MetaStoreDSName</param-name> 
+    <param-value>Bp8MetadataDS</param-value> 
+    </init-param> 
+    
+ 3. Try pinging the name of the database server from the application server to see if the name can be resolved.
+    
+ 4. Enable BPF logging to get more details. See corresponding BPF Must Gather document for the steps required:
+    http://www.ibm.com/support/docview.wss?rs=3277&uid=swg21383850 [http://www.ibm.com/support/docview.wss?rs=3277&uid=swg21383850]
+
+
+RESOLVING THE PROBLEM
+The most common problems for "java.sql.SQLException: Io exception: The Network Adapter could not establish the connection" error are caused by: 
+
+ 
+
+ * The database host name or port number is wrong or can not be resolved by DNS. 
+ * Firewall is blocking access to the database port. 
+ * The database TNSListener has not been started. The TNSListener may be started with the lsnrctl utility.

@@ -1,0 +1,87 @@
+Title: IBM Web Query - Reference Material URLs - United States
+
+Text:
+WebQuery IBM_i TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This document lists the reference material for DB2 Web Query for i. 
+
+RESOLVING THE PROBLEM
+This document lists the reference material for DB2 Web Query for i. 
+
+I. The DB2 Web Query for i Wiki page contains much useful information. It is at:
+
+ibm.co/db2wqwiki 
+
+- or - 
+
+https://www.ibm.com/developerworks/mydeveloperworks/wikis/home/wiki/W516d8b60d32c_4fc5_a811_5f3d840bf524?lang=en_US [https://www.ibm.com/developerworks/mydeveloperworks/wikis/home/wiki/W516d8b60d32c_4fc5_a811_5f3d840bf524?lang=en_US]
+
+
+Also, Lab Services for IBM i has a blog on Web Query at this URL:
+
+http://db2webqueryi.blogspot.com [http://db2webqueryi.blogspot.com/] 
+
+You can find information on EZ-Install, etc.
+
+
+
+NOTE: Web Query is a product built on top of the IBM i, and as such, backup and recovery MAY NOT as simple as a complete system save and restore. This also affects migrating to a new IBM i box.
+Please review this URL and TechNote for more information.
+
+https://www.ibm.com/developerworks/community/wikis/home?lang=en#!/wiki/W516d8b60d32c_4fc5_a811_5f3d840bf524/page/Backup%20Guide [https://www.ibm.com/developerworks/community/wikis/home?lang=en#!/wiki/W516d8b60d32c_4fc5_a811_5f3d840bf524/page/Backup%20Guide] 
+
+http://www.ibm.com/support/docview.wss?uid=nas8N1020479 [http://www.ibm.com/support/docview.wss?uid=nas8N1020479] 
+
+
+
+II. The Web Query Redbooks can be found via links on all three URLs above, but for convenience here are direct URLs. The first two are Web Query 2.2.0 and above, reworked in April 2017. The third URL is for Web Query 2.1.
+
+
+IBM DB2 Web Query for i: The Nuts and Bolts 
+
+http://www.redbooks.ibm.com/abstracts/sg248379.html?Open [http://www.redbooks.ibm.com/abstracts/sg248379.html?Open] 
+
+IBM DB2 Web Query for i Tutorials
+
+[http://www.redbooks.ibm.com/abstracts/sg248378.html?Open]http://www.redbooks.ibm.com/abstracts/sg248378.html?Open [http://www.redbooks.ibm.com/abstracts/sg248378.html?Open] 
+
+
+
+IBM i DB2 Web Query for i Version 2.1 Implementation Guide
+
+http://www.redbooks.ibm.com/redpieces/abstracts/sg248063.html?Open [http://www.redbooks.ibm.com/redpieces/abstracts/sg248063.html?Open] 
+
+
+
+III. Web Query Group PTFs are announced via this URL
+
+http://ibm.biz/db2wqGroupPTFs [http://ibm.biz/db2wqGroupPTFs] 
+
+(as of January 2017 we are no longer using Informational APARs)
+
+
+
+IV. For each Web Query Group PTF, this URL can be used to find the "Summary of New Functions"
+
+https://www.ibm.com/developerworks/community/wikis/home?lang=en#!/wiki/96f36e44-b59d-40c8-8efb-e3267e86b310/page/4f71713c-3eed-4ab4-b997-48667abb1c78/attachments [https://www.ibm.com/developerworks/community/wikis/home?lang=en#!/wiki/96f36e44-b59d-40c8-8efb-e3267e86b310/page/4f71713c-3eed-4ab4-b997-48667abb1c78/attachments]
+
+
+V. Web Query video demos are available at this IBM DB2 Web Query for i URL
+
+http://www-03.ibm.com/systems/power/software/i/db2/webquery/index.html [http://www-03.ibm.com/systems/power/software/i/db2/webquery/index.html] 
+
+(See 'Additional information' on right hand side)
+
+VI. Finally, use this URL to search for the various Group PTF level information.
+- You may find dated information if you book mark the URL for SF99646 for example.
+
+http://www-912.ibm.com/s_dir/sline003.nsf/ALLPSPBYREL [http://www-912.ibm.com/s_dir/sline003.nsf/ALLPSPBYREL] 
+
+Use the "Search" to find SF99646 (V6R1 WebQuery 2.1.0), SF99647 (V7R1 WebQuery 2.1.0), SF99747 (V7R2 WebQuery 2.1.0) 
+
+
+
+
+HISTORICAL NUMBER
+ 460632357

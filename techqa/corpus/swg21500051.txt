@@ -1,0 +1,41 @@
+Title: IBM HibernatingPolicyActivator log Exceptions unrelated to Hibernate function - United States
+
+Text:
+nci; netcool; impact; hibernate; hibernation; wake up; error; waking up; HibernatingPolicyActivator; log; exception TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Exceptions reported in the HibernatingPolicyActivator log file are not relevant to the action of the Hibernate() function in the Policy 
+
+SYMPTOM
+Exceptions observed in the HibernatingPolicyActivator log file like: 
+
+ * 
+ * 
+
+
+seem to indicate a problem with the action of the Hibernate() function in the Policy when it has performed correctly. When comparing the exception with the netcool-errors.log and PolicyLogger log file the issue is found to be from some other part of the Policy subsequent to the Hibernation. 
+
+DIAGNOSING THE PROBLEM
+The HibernatingPolicyActivator log file shows the Hibernation occurring and waking up as expected and the PolicyLogger log file concurs with this and the netcool-errors.log provides further details of an unrelated issue. 
+
+
+
+
+
+RESOLVING THE PROBLEM
+The actual issue is known behaviour in the Policy configuration and variable handling with User Defined Functions as recorded in the TechNote "Unsolicited SQL updates from User Defined Function" [link below]. The use of such variables in a function call causes the issue: 
+
+
+
+
+ * 
+
+
+So, adapting the above function call per the TechNote it would read: 
+
+ * 
+ * 
+ * 
+
+RELATED INFORMATION
+ Unsolicited SQL updates from User Defined Function [http://www-01.ibm.com/support/docview.wss?uid=swg21421783]

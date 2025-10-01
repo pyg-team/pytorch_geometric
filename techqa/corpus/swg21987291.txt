@@ -1,0 +1,62 @@
+Title: IBM Security Bulletin: IBM Security Access Manager for Web is affected by vulnerabilities in nss, nss-util, and nspr (CVE-2016-1978, CVE-2016-1979) - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ Network Security Services (NSS) is a set of libraries designed to support the cross-platform development of security-enabled client and server applications. The nss-util packages provide utilities for use with the Network Security Services (NSS) libraries. Netscape Portable Runtime (NSPR) provides platform independence for non-GUI operating system facilities.
+
+IBM Security Access Manager for Web uses NSS and is affected by two use-after-free flaws that have been identified in the NSS libraries. 
+
+VULNERABILITY DETAILS
+CVEID:CVE-2016-1978 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2016-1978]
+DESCRIPTION:Mozilla Firefox could allow a remote attacker to execute arbitrary code on the system, caused by a use-after-free in ssl3_HandleECDHServerKeyExchange. By persuading a victim to visit a specially-crafted Web site, a remote attacker could exploit this vulnerability using unknown attack vectors to execute arbitrary code on the vulnerable system or cause a denial of service.
+CVSS Base Score: 8.8
+CVSS Temporal Score: Seehttps://exchange.xforce.ibmcloud.com/vulnerabilities/111321 [https://exchange.xforce.ibmcloud.com/vulnerabilities/111321]for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:N/AC:L/PR:N/UI:R/S:U/C:H/I:H/A:H) 
+
+CVEID:CVE-2016-1979 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2016-1979]
+DESCRIPTION:Mozilla Firefox could allow a remote attacker to execute arbitrary code on the system, caused by a use-after-free when processing DER encoded keys in the Network Security Services (NSS) libraries. By persuading a victim to visit a specially-crafted Web site, a remote attacker could exploit this vulnerability using unknown attack vectors to execute arbitrary code on the vulnerable system or cause a denial of service.
+CVSS Base Score: 8.8
+CVSS Temporal Score: Seehttps://exchange.xforce.ibmcloud.com/vulnerabilities/111365 [https://exchange.xforce.ibmcloud.com/vulnerabilities/111365]for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:N/AC:L/PR:N/UI:R/S:U/C:H/I:H/A:H)
+
+AFFECTED PRODUCTS AND VERSIONS
+IBM Security Access Manager for Web 7.0 appliances 
+
+IBM Security Access Manager for Web 8.0, all firmware versions 
+
+IBM Security Access Manager 9.0, all firmware versions
+
+REMEDIATION/FIXES
+IBM has provided patches for all affected versions. Follow the installation instructions in the README files included with the patch.
+
+
+
+Product VRMF APAR Remediation IBM Security Access Manager for Web 7.0 (appliance) IV86721 Apply Interim Fix 25: 
+7.0.0-ISS-WGA-IF0025 [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=Security%2BSystems&product=ibm/Tivoli/Tivoli+Access+Manager+for+e-business&release=7.0.0&platform=All&function=all] IBM Security Access Manager for Web 8.0.0.0 - 
+8.0.1.4 IV86700 1. For versions prior to 8.0.1.4, upgrade to 8.0.1.4: [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=Security%2BSystems&product=ibm/Tivoli/Tivoli+Access+Manager+for+e-business&release=8.0.1.3&platform=All&function=all]
+8.0.1-ISS-WGA-FP0004 [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=Security%2BSystems&product=ibm/Tivoli/Tivoli+Access+Manager+for+e-business&release=8.0.1.3&platform=All&function=all] 
+2. Apply 8.0.1.4 Interim Fix 1:
+8.0.1.4-ISS-WGA-IF0001 [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=Security%2BSystems&product=ibm/Tivoli/Tivoli+Access+Manager+for+e-business&release=8.0.1.3&platform=All&function=all] IBM Security Access Manager 9.0 IV86695 1. For versions prior to 9.0.1.0, upgrade to 9.0.1.0:
+IBM Security Access Manager V9.0.1 Multiplatform, Multilingual (CRW4EML) [http://www-01.ibm.com/software/passportadvantage/pacustomers.html]
+2. Apply 9.0.1.0 Interim Fix 2:
+9.0.1.0-ISS-ISAM-IF0002 [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=Security%2BSystems&product=ibm/Tivoli/Tivoli+Access+Manager+for+e-business&release=9.0.0.0&platform=All&function=all] WORKAROUNDS AND MITIGATIONS
+None.
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v3 Guide [http://www.first.org/cvss/user-guide] 
+On-line Calculator v3 [http://www.first.org/cvss/calculator/3.0] RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] CHANGE HISTORY
+ July 15, 2016: Original version published. 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.

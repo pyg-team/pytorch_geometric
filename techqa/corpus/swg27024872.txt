@@ -1,0 +1,66 @@
+Title: IBM Deprecated, removed, or stabilized functions in the 8.5 Rational Software Delivery Platform design, construction, and modeling products - United States
+
+Text:
+v8.5; v851; 855 PRODUCT DOCUMENTATION
+
+ABSTRACT
+ The following table lists the removed and deprecated function in the IBM Rational Application Developer for WebSphere Software, Rational Software Architect and Rational Software Architect for WebSphere Software 8.5 releases. 
+
+CONTENT
+ 
+
+Type of change Effective version Function Deprecated 8.5.5 Java Visual Editor 
+JVE only runs on Java 1.6 in Rational Application Developer 8.5.5. Deprecated 8.5.5 ClearCase SCM adapter Deprecated 8.5.1 SDO Mediator Tooling
+
+The following functions are deprecated:  * "JDBC Mediator" facet which configures a dynamic web project with Java libraries for the SDO-based JDBC Mediator. 
+ * Palette items "SDO Relational Record" and "SDO Relational Record List" in the "Data and Services" drawer. 
+ * "SDO Relational Records" category in the Page Data view. 
+
+
+Applications written using the SDO Mediator runtime provided by WebSphere will continue to function and can still be developed and maintained using source code editors in Rational Application Developer. Deprecated 8.5.1 iWidget Tooling
+
+Specialized tools for iWidget development are deprecated. These include a specific iWidget project type and wizard, a specialized editor for the iWidget XML specification, and a browser-based test client. 
+
+iWidgets can still be developed in Rational Application Developer using standard Web and XML source editors. Specialized iWidget development tools are available as part of Lotus Widget Factory that is included with Lotus Mashup Center. Deprecated 8.5.1 Eclipse Firebug Integration
+
+The following functions are deprecated:  * The ability to start an Eclipse debug session and connect to the Firebug JavaScript debugger. 
+ * Viewing the JavaScript debug stack, controlling breakpoints and stepping through JavaScript code from within Eclipse. 
+
+
+Users can continue to develop web applications using Rational Application Developer and debug them directly using Firebug in Firefox or other JavaScript debuggers. Deprecated 8.5.1 JSF Widget Library (JWL) and related tooling
+JWL and related tooling is deprecated. Deprecated 8.5 Communications Enabled Application (CEA) Dojo Widget Tooling
+
+The following functions are deprecated:  * "CEA Widgets" facet which configures a web project with CEA Dojo Widgets implementation resources. 
+ * Palette drawer containing the CEA Dojo Widgets. 
+
+
+Existing applications that use the CEA Dojo widgets will continue to work within Rational Application Developer. Removed 8.5 Support for WebSphere Application Server V6.0 Removed 8.5 Support for WebSphere Portal Server V6.1 Removed 8.5 Web Diagram Editor Removed 8.5 Java EE Security Editor Removed 8.5 Web Site Navigation (sometimes referred to as Web Site Designer) Removed 8.5 Test and profiling tools - Java Virtual Machine Profiler Interface (JVMPI)
+
+The JVMPI profiler was removed.
+
+Java Virtual Machine Profiler Interface (JVMPI) was the only profiler supported for "pre JRE 1.5" JVM, and is was required. Note that in WebSphere Application Server v6.0, only the JVMPI profiler is supported. In this case, you might consider migrating to a newer version of WebSphere Application server that supports the JVMTI profiler.
+Removed 8.5 J2C tools - some resource adapters
+
+The following resource adapters were removed:  * IBM WebSphere Adapter v6.2.0.x: 
+ * JD Edwards Enterprise One 6.2.0.3 
+ * Oracle 6.2.0.4 
+ * PeopleSoft Enterprise 6.2.0.3 iFix 1 
+ * SAP Software with transaction support 6.2.0.4 
+ * Siebel Business Applications 6.2.0.4 iFix 1 
+ * IBM WebSphere Adapter v7 
+ * JD Edwards Enterprise One 7.0.0.1 iFix 7 
+ * Oracle 7.0.0.3 
+ * PeopleSoft Enterprise 7.0.0.3 iFix 3 
+ * SAP Software with transaction support 7.0.0.3 iFix 14 
+ * Siebel Business Applications 7.0.0.3 iFix 8
+
+Removed 8.5 Obsolete project metadata migration
+This functionality is removed. Removed 8.5 Support for Mozilla Firefox V3.6 
+ Back to top 
+
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Software Development Rational Software Architect General Information Linux, Windows 8.5, 8.5.1 Software Development Rational Software Architect for WebSphere Software General Information Linux, Windows 8.5, 8.5.1

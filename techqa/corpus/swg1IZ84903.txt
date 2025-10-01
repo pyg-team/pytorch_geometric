@@ -1,0 +1,176 @@
+Title: IBM IZ84903: ITM RZ AGENT DOES NOT SUPPORT ORACLE 9I - United States
+
+Text:
+  A FIX IS AVAILABLE
+ITCAM Extended Agent for Oracle Database: 6.3.1-TIV-ITM_EXT-FP0002 [http://www-01.ibm.com/support/docview.wss?uid=swg24035571]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Attempting to configure or test connection of RZ agent to
+   Oracle 9i installation will fail with messages indicating the
+   OCI library failed to load:
+   krzdynamiclib.cpp,132,"krz00_DynamicLib::Load")
+    Fail to dynamically load library libclntsh.so,
+    return code 8
+   krzdynamiclib.cpp,218,"krz00_OCI_Lib::Init")
+    Try to load another possible Oracle OCI library
+   krzdynamiclib.cpp,132,"krz00_DynamicLib::Load")
+    Fail to dynamically load library libclntsh.so.10.1,
+    return code 2
+   krzdynamiclib.cpp,222,"krz00_OCI_Lib::Init")
+    Try to load another possible Oracle OCI library
+   krzdynamiclib.cpp,132,"krz00_DynamicLib::Load")
+    Fail to dynamically load library libclntsh.so.11.1,
+    return code 2
+   krzclient.cpp,333,"Main") Loading Oracle OCI library failed!
+   .
+    The RZ product documentation lists only Oracle 10 and 11
+    in the section titled:
+    Application versions monitored (compatible but not required)
+   .
+   http://publib.boulder.ibm.com/infocenter/tivihelp/v24r1/topic/co
+   m.ibm.itcama.doc_6.2.3/oracledatabaseextendedagent.html [http://publib.boulder.ibm.com/infocenter/tivihelp/v24r1/topic/com.ibm.itcama.doc_6.2.3/oracledatabaseextendedagent.html]
+   .
+    The section stating (compatible but not required) means the
+    RZ agent only supports the Oracle version in the list and the
+    compatible version.
+    For example, 10.2.0.4 is compatible to 10gR2,
+                 11.1.0.6 is compatible to 11gR1.
+   .
+    The RZ agent does NOT support Oracle 9i and cannot load
+    and OCI library from Oracle 9i files as the RZ agent
+    binary files are compiled and linked with OCI library
+    from Oracle 10gR1 level.
+   .
+    Oracle does not support loading a lower level OCI library,
+    so it's impossible to support Oracle 9i with the ITM RZ agent.
+   .
+    ITM product documentation should be clarified to indicate that
+    Oracle 9i is unsupported with RZ agent, and the failure message
+    attempting to load OCI library is a symptom of attempting to
+    connect to an unsupported release of Oracle.
+   .
+   Additional Keywords:
+   CMVC defect 113619.1 113619
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Configure RZ agent to connect to supported Oracle release.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  *************************************************************
+   * USERS AFFECTED:
+   ITCAM Extended Agent for Oracle Database 6.3.0
+   *************************************************************
+   * PROBLEM DESCRIPTION:
+   The prerequisites page of infocenter contains a desctription
+   of 'Compatible but not required' that confused the customer
+   and the prerequisites page didnot have a note for the mininum
+   support
+   level of Oracle Database Server.
+   
+   *************************************************************
+   * RECOMMENDATION:
+   Remove description of 'Compatible but not required' and add
+   a note to requires the mininum level of Oracle Database Server.
+   *************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The corrected prerequisite had been republished in the
+   infocenter, see section of "Application versions monitored"
+   
+   http://publib.boulder.ibm.com/infocenter/tivihelp/v24r1/topic/co
+   m.ibm.itcama.doc_6.2.3/oracledatabaseextendedagent.html [http://publib.boulder.ibm.com/infocenter/tivihelp/v24r1/topic/com.ibm.itcama.doc_6.2.3/oracledatabaseextendedagent.html]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ84903
+   
+   
+ * REPORTED COMPONENT NAME
+   ITCAM EXT AGNT
+   
+   
+ * REPORTED COMPONENT ID
+   5724V09OR
+   
+   
+ * REPORTED RELEASE
+   630
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-09-13
+   
+   
+ * CLOSED DATE
+   2010-10-04
+   
+   
+ * LAST MODIFIED DATE
+   2010-10-04
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

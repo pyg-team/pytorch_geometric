@@ -1,0 +1,140 @@
+Title: IBM IT21950: MQ NSS R531.10INCLUDED JAVA 7 SUPPORT BUT UPGRADING FROM EARLIERTHAN 531.10 DID NOT UPDATE TO INCLUDE THESE LIBRARIES - United States
+
+Text:
+  A FIX IS AVAILABLE
+WebSphere MQ for HP NonStop Server V5.3.1 fix pack 5.3.1.14 [http://www-01.ibm.com/support/docview.wss?uid=swg24044095]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The svcmqm' was not equipped with the necessary functionality
+   to install the upgraded Java libraries.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Manually move the contents of 'opt/java/' from the unpacked
+   FixPack's directory into your installation's /opt/mqm/java/
+   directory.  Then change the permissions by calling chmod -R 755
+   /opt/mqm/java in an oss session.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  'svcmqm' was not equipped with the necessary
+   functionality to install the upgraded Java libraries that
+   have been shipped with the FixPack.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  'svcmqm' now also moves the required Java
+   libraries into the installation to be upgraded.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  Manually move the content of the extracted
+   FixPack's 'opt/java/' directory into yourinstallation's
+   opt/mqm/java/ directory.
+   Then change the permissions by calling
+   > chmod -R 755 <installroot>/opt/mqm/java
+   from within an oss session.
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT21950
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBS MQ NSS ITA
+   
+   
+ * REPORTED COMPONENT ID
+   5724A3902
+   
+   
+ * REPORTED RELEASE
+   531
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-08-09
+   
+   
+ * CLOSED DATE
+   2017-08-10
+   
+   
+ * LAST MODIFIED DATE
+   2017-08-10
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBS MQ NSS ITA
+   
+   
+ * FIXED COMPONENT ID
+   5724A3902
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R531 PSY
+   UP

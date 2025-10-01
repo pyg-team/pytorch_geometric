@@ -1,0 +1,72 @@
+Title: IBM Various errors involving Content Store - United States
+
+Text:
+fails failed unable cannot can't FM frame work manager TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When attempting to perform certain task in Framework Manager, the following errors might happen even though reports run successfully in Cognos Connection. 
+
+SYMPTOM
+When attempting to test a query subject:
+
+>  QE-DEF-0312 An error occurred while calling the content store for identity information.
+CCL-RCI-0003 Content Manager returned a header fault.
+CAM-AAA-0055 User input is required.
+CM-REQ-4159 Content Manager has returned an error in the response header.
+
+
+When attempting to view any session parameters:
+
+>  QE-DEF-0315: An error occurred while calling the content store for parameter map information.
+CCL-RCI-0003 Content Manager returned a header fault.
+CAM-AAA-0055 User input is required.
+CM-REQ-4159 Content Manager has returned an error in the response header.
+
+
+When importing new metadata while attempting to create a new project: 
+
+>  QE-DEF-0314: An error occurred while calling the content store for Data source: <datasourceName>
+CCL-RCI-0003 Content Manager returned a header fault.
+CAM-AAA-0055 User input is required.
+CM-REQ-4159 Content Manager has returned an error in the response header.
+
+
+From Contributor: During the 'Generate Framework Manager Model' extension, the process fails with following errors in the BTMreportnet.log file:
+
+ * QE-DEF-0368 Unable to decrypt user name and password credentials from the content store. Review and save the Cognos Configuration settings to configure your reporting environment
+ * BME-SP-0023 Invalid property handle ID
+
+
+RESOLVING THE PROBLEM
+Recreate all encryption key pairs used by ReportNet. and re-create Cognos Configuration file (crnstartup.xml).
+
+Steps:1. Stop IBM Cognos 10 Services. 2. Open Cognos Configuration, and print out screen shots for all the options to ensure you have your exact settings as these will be required for reconfiguration.
+
+3. Form the File menu, click Export As. Name the file C10Settings and save it in a safe location.
+
+4. Close Cognos Configuration.
+
+5. Copy csk, encryptkeypair, and signkeypair from <C10_ROOT>/Configuration directory and save them in a safe location.
+
+6. Go to <C10_ROOT>/Configuration directory, locate an XML file of type:
+
+>  crn/cog startup_20050803154809.xml, however be sure the timestamp portion of the filename (i.e. "_20050803154809") is the oldest one.
+
+
+
+7. Backup existing <C10_ROOT>/Configuration/cogstartup.xml to a safe location, and rename the file located in Step 6 (the file with the timestamp in its file name) as "crn or cog startup.xml".
+
+8. Open Cognos Configuration, and ensure that you have all your settings as before.
+
+NOTE: It might be necessary to re-enter various Cognos Configuration information such as Content Store database information, authentication sources, Environment information, etc...
+
+9. In the File menu, click Save. Ensure that all sections of the saving process succeeed with a green checkmark beside them.
+
+10. Start Cognos 10 Services.
+
+11. Perform the steps that were previosuly causing problems: test of a query subject, view the session parameters, and attempt to create a new project.
+
+ 
+
+HISTORICAL NUMBER
+ 1029592

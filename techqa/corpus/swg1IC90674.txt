@@ -1,0 +1,184 @@
+Title: IBM IC90674: IIS APPLICATION FAILS TO REMOTELY CONNECT TO A QUEUE MANAGER AND REPORTS 'SYSTEM.COMPONENTMODEL.WIN32EXCEPTION' - United States
+
+Text:
+  FIXES ARE AVAILABLE
+WebSphere MQ V7.5 Fix Pack 7.5.0.2 [http://www-01.ibm.com/support/docview.wss?uid=swg24035286]
+Fix Pack 7.1.0.4 for WebSphere MQ V7.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24036454]
+WebSphere MQ v7.5.0.2 Hypervisor for RHEL [http://www-01.ibm.com/support/docview.wss?uid=swg24036533]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  IIS application fails to remotely connect to a queue manager
+   and throws Win32Exception with access denied error on an
+   OpenProcess call
+   
+   Exception Reported for the first time :
+   System.Reflection.TargetInvocationException: Exception has been
+   thrown by the target of an invocation. --->
+   System.Reflection.TargetInvocationException: Exception has been
+   thrown by the target of an invocation. --->
+   System.ComponentModel.Win32Exception: Access is denied at
+   System.Diagnostics.ProcessManager.OpenProcess(Int32 processId,
+   Int32 access, Boolean throwIfExited) at
+   System.Diagnostics.NtProcessManager.GetModuleInfos(Int32
+   processId, Boolean firstModuleOnly) at
+   System.Diagnostics.Process.get_Modules() at
+   IBM.WMQ.CommonServices.TraceEnvironment() at
+   IBM.WMQ.CommonServices.CreateCommonServices() at
+   IBM.WMQ.CommonServices.TraceEnabled() at IBM.WMQ.MQBase..ctor()
+   
+   This connection, however, works locally because
+   authentication/impersonation works differently when connection
+   is local vs when browsed from a client.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Granting "Query process information and read process virtual
+   memory" rights to the impersonated user so that OpenProcess
+   succeeds.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   Users of IIS applications that remotely connects to Queue
+   manager
+   
+   Platforms affected:
+   Windows
+   
+   ****************************************************************
+   PROBLEM SUMMARY:
+   WebSphere MQ client code issues an OpenProcess call on itself.
+   However, an IIS application with impersonation turned ON does
+   not have the required security privileges to issue OpenProcess
+   call on itself. Hence the application throws Win32Exception with
+   access denied error.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  WebSphere MQ client code has been modified such that the
+   Win32Exception is handled gracefully.
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following:
+   
+                      v7.1
+   Platform           Fix Pack 7.1.0.4
+   --------           --------------------
+   Windows            7.1.0.4
+   
+   Version            v7.5
+   --------           --------------------
+   Fix available in:  7.5.0.2
+   
+   The latest available maintenance can be obtained from
+   'WebSphere MQ Recommended Fixes'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037]
+   
+   If the maintenance level is not yet available information on
+   its planned availability can be found in 'WebSphere MQ
+   Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC90674
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ WINDOWS V7
+   
+   
+ * REPORTED COMPONENT ID
+   5724H7220
+   
+   
+ * REPORTED RELEASE
+   710
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-03-06
+   
+   
+ * CLOSED DATE
+   2013-04-17
+   
+   
+ * LAST MODIFIED DATE
+   2013-07-08
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ WINDOWS V7
+   
+   
+ * FIXED COMPONENT ID
+   5724H7220
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R710 PSY
+   UP

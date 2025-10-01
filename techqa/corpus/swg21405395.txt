@@ -1,0 +1,37 @@
+Title: IBM Accessing help topics from the IBM Rational Rhapsody help menu - United States
+
+Text:
+OMDOCROOT; Help; INI TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When accessing "Help Topics" from the Rhapsody Help menu, I am unable to view the help or any pdf documents that have been installed along with IBM Rational Rhapsody.
+
+
+SYMPTOM
+Unable to view the Help section of Rhapsody
+
+
+CAUSE
+This could be caused by 2 possible scenarios: 
+
+ * The OMHELPROOT and the OMDOCROOT paths specified in the rhapsody.ini located in the installation path might be wrong 
+ * The help document files have been deleted.
+
+
+RESOLVING THE PROBLEM
+To resolve this issue: 
+
+ 
+
+ * The OMHELPROOT and the OMDOCROOT paths given in the rhapsody.ini files might be wrong Under the [General] tag in the Rhapsody.ini file (found in the Rhapsody installation folder), there are values for OMHELPROOT and OMDOCROOT set. Please configure them according to your installation path. For example: If Rhapsody 7.5 has been installed in C:\Program Files\IBM\Rational\Rhapsody\7.5, then the values for the same in the INI file would look like: 
+   
+    * 
+    * 
+    * OMHELPROOT=C:\Program Files\IBM\Rational\Rhapsody\7.5\Doc 
+    * OMDOCROOT=C:\Program Files\IBM\Rational\Rhapsody\7.5Doc\pdf_docs
+   
+   
+   
+
+
+ * The help document files have been deleted. Rhapsody would need to be reinstalled to have them back in place. Alternatively, the Doc folder can be copied from another machine which has a working version of Rhapsody.

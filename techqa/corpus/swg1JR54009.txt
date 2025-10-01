@@ -1,0 +1,153 @@
+Title: IBM JR54009: OUTOFMEMORY ERRORS WHEN MIGRATING SEVERAL MILLION INSTANCES DURING SNAPSHOT MIGRATION. - United States
+
+Text:
+  A FIX IS AVAILABLE
+Version 8.5 Refresh Pack 7 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24041575]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  OutOfMemory errors when migrating several million instances
+   during snapshot migration.
+   
+   When migrating several million instances it may require
+   upwards of 3-4 GB of heap space leading to Out of Memory errors
+   if the JVM is not large enough.
+   
+   Part of this will be an instance ID array similar to this:
+   1,397,526,832 (24.56%) [24] 1 java/util/ArrayList 0x7003c0db8
+   |- 1,397,526,808 (24.56%) [38,780,464] 7,555,066 array of
+   java/lang/Object 0x74dd3b0f0
+      |- 256 (0%) [24] 1 java/lang/String 0x725169690
+      |- 240 (0%) [24] 1 java/lang/String 0x728b46340
+      |- 240 (0%) [24] 1 java/lang/String 0x72fda64d0
+      |- 240 (0%) [24] 1 java/lang/String 0x72a8db910
+      |- 240 (0%) [24] 1 java/lang/String 0x727abc780
+      |- 240 (0%) [24] 1 java/lang/String 0x729b87000
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Increase the heap size until the migration can succeed.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  When you migrate a large number of inflight process instances
+   between snapshots, you might receive an OutOfMemory error that
+   might cause the JVM to fail.
+   
+   
+   PRODUCTS AFFECTED
+   IBM Business Process Manager (BPM) Advanced
+   IBM BPM Standard
+   IBM BPM Express
+   
+   LOCAL FIX -
+   None
+   
+   
+   PROBLEM SUMMARY
+   No additional information is available.
+   
+   PROBLEM CONCLUSION ?
+   The fix is available for an IBM BPM V8.5.6.0 cumulative fix that
+   uses heap memory more efficiently and does not retain as much
+   memory at a time.
+   
+   To determine whether the cumulative fix is available and
+   download it if it is, complete the following steps on Fix
+   Central:
+   
+   1. Select IBM Business Process Manager with your edition from
+   the product selector, the installed version to the fix pack
+   level, and your platform, and then click Continue.
+   2. Select Text, enter ?cumulative fix?, and click Continue.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR54009
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM ADVANCED
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9400
+   
+   
+ * REPORTED RELEASE
+   855
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-08-10
+   
+   
+ * CLOSED DATE
+   2015-12-09
+   
+   
+ * LAST MODIFIED DATE
+   2015-12-09
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R856 PSY
+   UP

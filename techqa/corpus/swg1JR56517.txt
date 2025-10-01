@@ -1,0 +1,135 @@
+Title: IBM JR56517: Encounter 'ORA-01795: maximum number of expressions in a list is 1000' error when you run the di-calculateprice utility - United States
+
+Text:
+  DIRECT LINKS TO FIXES
+7.0.0.0-WS-WC70Fep8Developer-IFJR56517 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FWebSphere+Commerce&fixids=7.0.0.0-WS-WC70Fep8Developer-IFJR56517&source=SAR]
+7.0.0.0-WS-WC70Fep8Server-IFJR56517 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FWebSphere+Commerce&fixids=7.0.0.0-WS-WC70Fep8Server-IFJR56517&source=SAR]
+WebSphere Commerce Version 8.0 Fix Pack 16 [http://www-01.ibm.com/support/docview.wss?uid=swg24042863]
+JR57861 - Mandatory cumulative Interim Fix 5 for WebSphere Commerce Version 7 Feature Pack 8 [http://www-01.ibm.com/support/docview.wss?uid=swg24043760]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When there are more than 1000 contracts and you are using an
+   Oracle database, there is a limitation within Oracle that
+   prevents more than 1000 parameters. Therefore, you get a
+   'ORA-01795: maximum number of expressions in a list is 1000'
+   error.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  USERS AFFECTED:
+   WebSphere Commerce Version 7 Feature Pack 7 or later, and
+   Version 8.
+   
+   PROBLEM ABSTRACT:
+   Encounter 'ORA-01795: maximum number of expressions in a list is
+    1000' error when you run the di-calculateprice utility
+   
+   BUSINESS IMPACT:
+   Cannot successfully run the di-calculateprice utility.
+   
+   RECOMMENDATION:
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Updated logic to divide contracts into segments that are less
+   than 1000.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR56517
+   
+   
+ * REPORTED COMPONENT NAME
+   WC BUS EDITION
+   
+   
+ * REPORTED COMPONENT ID
+   5724I3800
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-08-18
+   
+   
+ * CLOSED DATE
+   2016-09-07
+   
+   
+ * LAST MODIFIED DATE
+   2016-09-07
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WC BUS EDITION
+   
+   
+ * FIXED COMPONENT ID
+   5724I3800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R700 PSY
+   UP

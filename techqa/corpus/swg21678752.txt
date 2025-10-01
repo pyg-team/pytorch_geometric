@@ -1,0 +1,28 @@
+Title: IBM Portal Installer throws message about not being able to run in graphical mode when attempting to install Portal - United States
+
+Text:
+iim; 64-bit; 32-bit; linux; libraries TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+When trying to install Portal the error, "The installer is unable to run in graphical mode. Try running the
+installer with the -console or -silent flag." appears when attempting to launch the installer
+
+SYMPTOM
+Portal Installer throws the following error message...
+The installer is unable to run in graphical mode. Try running the
+installer with the -console or -silent flag.
+
+
+CAUSE
+Portal Installer will throw this error when only the Linux 64-bit libraries are present.
+
+ENVIRONMENT
+Portal 7.0x
+Linux 64-bit
+
+RESOLVING THE PROBLEM
+Add the Linux 32-bit libraries to the Linux environment along with the 64-bit libraries.
+
+See link below...
+
+http://www-01.ibm.com/support/knowledgecenter/SSAW57_7.0.0/com.ibm.websphere.installation.nd.doc/info/ae/ae/tins_linuxsetup_rhel6.html?cp=SSAW57_7.0.0%2F1-5-0-4-2-1&lang=en [http://www-01.ibm.com/support/knowledgecenter/SSAW57_7.0.0/com.ibm.websphere.installation.nd.doc/info/ae/ae/tins_linuxsetup_rhel6.html?cp=SSAW57_7.0.0%2F1-5-0-4-2-1&lang=en]

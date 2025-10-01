@@ -1,0 +1,209 @@
+Title: IBM IC76599: CMP API DOES NOT SUPPORT FIPS CIPHERS IN V7 MESSAGE BROKER. - United States
+
+Text:
+  A FIX IS AVAILABLE
+WebSphere Message Broker V7.0 - Fix Pack 7.0.0.4 [http://www-01.ibm.com/support/docview.wss?uid=swg24032332]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When using FIPS ciphers to connect to the broker queue
+   manager using the CMP API the wrong security provider is used.
+   Additionally for some ciphers SSLv3 is used as the wire
+   protocol where TLS should be used instead.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  In order to enable the AES 256 cipher support the following
+   steps must be carried out:
+   
+   
+   1.) A key and trust store must be constructed conatining the
+   appropriate certificates of sufficient strength to support the
+   cipher required.
+   
+   2.) The MQExplorer JRE should be updated with the unlimited
+   strength policy jurasdiction files.
+   
+   
+   3.) The SERVERCONN being used on the queue manager needs to have
+   its SSL cipher set to:
+   TLS_RSA_WITH_AES_256_CBC_SHA
+   
+   4.) The "SSL Fips Required" property on the queue manager being
+   connected to needs to be set to "Yes".
+   
+   5.) In MQ Explorer Preferences the option WebSphere MQ
+   Explorer-> Client Connections -> SSL Options -> SSL FIPS
+   required must be set to "Yes"
+   
+   At this point the customer should be able to verify that the key
+   and trust stores work ok by creating a client connection to the
+   queue manager using the MQ Explorer facilities.
+   
+   The following additional changes were required in order to allow
+   Broker to correctly interoperate with the MQ client setup.
+   
+   
+    a) When using FIPS ciphers a Security environment needs to be
+   constructed which uses the IBM jsse2 and IBM JCP FIPS security
+   providers and this environemnt should be used to construct the
+   SocketFactory passed to MQ.
+   
+   
+    b) When using the FIPS ciphers the TLS protocol should be used
+   when making the connection rather than SSLv3.
+   
+   
+   Both of these changes are required in the CMP proxy jar, this
+   jar is shipped with the runtime, toolkit and MbExplorer.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   All users of WebSphere Message Broker v7 or higher using the
+   CMP API, MBX or the Message Broker Toolkit to connect to a
+   remote Broker queue manager using SSL.
+   
+   Platforms Affected:
+   All Platforms
+   ****************************************************************
+   PROBLEM SUMMARY:
+   When using SSL to make a connection via SSL to a remote
+   Broker queue manager it is possible to use stronger ciphers if
+   the Java Unlimited Policy Jurisdiction files are installed. In
+   order to enable this the MQ queue manager and the MQ client
+   must be running in "FIPS compliant" mode.
+   When the CMP API detects FIPS compliant mode it will allow the
+   use of unlimited strength ciphers if installed however it
+   internally used the wrong wire protocol for some ciphers and
+   additionally used the wrong Java Security Provider.
+   This results in failure to connect. The exact error message can
+   vary depending on the calling application however in MBX the
+   observed error message is:
+   "Could not connect to queue manager '<QM name>' (MQ Reason code
+   2397)".
+   MQRC 2397 corresponds to MQRC_JSSE_ERROR.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  WebSphere Message Broker has been modified so that the CMP API
+   uses the correct security provider when running in FIPS
+   compliant mode and uses the correct wire protocol for FIPS
+   ciphers.
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+   V7.0 - Maintenance Level 7.0.0.4
+   
+   The latest available maintenance can be obtained from
+   'WebSphere Message Broker Recommended Fixes'
+   http://www.ibm.com/support/docview.wss?rs=849&uid=swg27006041 [http://www.ibm.com/support/docview.wss?rs=849&uid=swg27006041]
+   
+   If the maintenance level is not yet available, information on
+   its planned availability can be found in 'WebSphere Message
+   Broker Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=849&uid=swg27006308 [http://www-1.ibm.com/support/docview.wss?rs=849&uid=swg27006308]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC76599
+   
+   
+ * REPORTED COMPONENT NAME
+   WEB MB TOOLKIT
+   
+   
+ * REPORTED COMPONENT ID
+   5724J0511
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-05-25
+   
+   
+ * CLOSED DATE
+   2011-07-28
+   
+   
+ * LAST MODIFIED DATE
+   2011-07-28
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEB MB TOOLKIT
+   
+   
+ * FIXED COMPONENT ID
+   5724J0511
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R700 PSY
+   UP

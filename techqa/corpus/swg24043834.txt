@@ -1,0 +1,71 @@
+Title: IBM Content Collector V4.0.1.5 Interim Fix 1 - United States
+
+Text:
+ DOWNLOADABLE FILES
+
+ABSTRACT
+ This document contains links to the download page for IBM Content Collector V4.0.1.5 Interim Fix 1. 
+
+DOWNLOAD DESCRIPTION
+ 
+
+IBM CONTENT COLLECTOR DOWNLOADS
+ *  All versions [http://www.ibm.com/support/docview.wss?uid=swg27040223] 
+ *  Version 4.0.1.5 Interim Fix 1- selected tab, 
+
+
+When you click the download link below, a sign-in page opens. Enter your IBM ID and password to proceed. If you have forgotten your IBM ID or have never registered, follow the instructions on the sign-in page.
+
+PREREQUISITES
+This interim fix requires one of the following IBM Content Collector products installed on a Windows 64-bit operating system:
+- IBM Content Collector V3.0.0.1
+- IBM Content Collector V3.0.0.2
+- IBM Content Collector V3.0.0.3
+- IBM Content Collector V3.0.0.4
+- IBM Content Collector V3.0.0.5
+- IBM Content Collector V3.0.0.6
+- IBM Content Collector V4.0.0.1
+- IBM Content Collector V4.0.0.2
+- IBM Content Collector V4.0.0.3
+- IBM Content Collector V4.0.1.0
+- IBM Content Collector V4.0.1.1
+- IBM Content Collector V4.0.1.2
+- IBM Content Collector V4.0.1.3
+- IBM Content Collector V4.0.1.4
+- IBM Content Collector V4.0.1.5
+For further information, view the IBM Content Collector system requirements documents at:
+
+URL LANGUAGE SIZE(Bytes) Prerequisites for IBM Content Collector V3.0 [http://www.ibm.com/support/docview.wss?uid=swg27024229] English 1 Prerequisites for IBM Content Collector V4.0 [http://www.ibm.com/support/docview.wss?uid=swg27039384] English 1 Prerequisites for IBM Content Collector V4.0.1 [http://www.ibm.com/support/docview.wss?uid=swg27042658] English 1 
+INSTALLATION INSTRUCTIONS
+Read the readme file for specific information about installing the interim fix. The readme file is part of the interim fix package.
+
+DOWNLOAD PACKAGE
+The IBM Content Collector V4.0.1.5 Interim Fix 1 download package consists of the following files:
+Readme file: 
+
+ * 4.0.1.5-IBM-ICC-IF001.txt
+
+Interim fix files:  * 4.0.1.5-IBM-ICC-WIN-IF001.zip (for Windows) 
+ * 4.0.1.5-IBM-ICC-AIX-IF001.tar.gz (for AIX) 
+ * 4.0.1.5-IBM-ICC-Linux32-IF001.tgz (for Linux) 
+ * 4.0.1.5-IBM-ICC-Linuxz-IF001.tgz (for Linux for zSeries) 
+ * 4.0.1.5-IBM-ICC-Solaris-IF001.tar.Z (for Sun Solaris)
+
+
+HOW CRITICAL IS THIS FIX?
+There are multiple vulnerabilities in IBM Runtime Environment Java Technology Edition, Version 6, that is used by IBM Content Collector. 
+
+
+This interim fix addresses the vulnerabilities CVE-2017-3252 (CVSS 5.8), CVE-2016-2183 (CVSS 3.1), CVE-2016-5548 (CVSS 6.5), CVE-2016-5549 (CVSS 6.5), CVE-2016-5547 (CVSS 5.3), and CVE-2017-3241 (CVSS 9). 
+
+ Security Bulletin : IBM Runtime Environment Java Technology Edition, Version 6, CVE-2017-3252, CVE-2016-2183, CVE-2016-5548, CVE-2016-5549, CVE-2016-5547, CVE-2017-3241 [http://www-01.ibm.com/support/docview.wss?uid=swg22001460] 
+
+This interim fix also addresses the following vulnerabilities in IBM WebSphere Application Server (Embedded) CVE-2016-0377, CVE-2016-1181, CVE-2016-1182, CVE-2015-0899, CVE-2016-9736, CVE-2016-8934, CVE-2017-1121, and CVE-2016-8919.
+
+ Security Bulletin : IBM WebSphere Application Server (Embedded) CVE-2016-0377, CVE-2016-1181, CVE-2016-1182, CVE-2015-0899, CVE-2016-9736, CVE-2016-8934, CVE-2017-1121, CVE-2016-8919 [http://www-01.ibm.com/support/docview.wss?uid=swg21998347] 
+
+
+
+
+Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options 
+What is Fix Central(FC)? [http://www.ibm.com/systems/support/fixes/en/fixcentral/help/faq_sw.html] Interim fix 30 Jun 2017 Language Independent 736150000 FC [http://www.ibm.com/support/fixcentral/swg/quickorder?parent=Enterprise%2BContent%2BManagement&product=ibm/Information+Management/Content+Collector&release=4.0.1.5&platform=ALL&function=fixId&fixids=4.0.1.5-IBM-ICC-IF001&includeRequisites=1&includeSuperse] [ ]

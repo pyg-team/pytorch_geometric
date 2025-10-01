@@ -1,0 +1,60 @@
+Title: IBM Error running the WCM task (update-wcm):  XmlCommandException EJPXA0091E: The servletref attribute is required to create a portlet clone. - United States
+
+Text:
+Error running the WCM task (update-wcm): XmlCommandException EJPXA0091E: The servletref attribute is required to create a portlet clone. TECHNOTE (FAQ)
+
+QUESTION
+ Why do I get the an EJPXA0091E error when I run the update-wcm task? 
+
+CAUSE
+It appears that the Blurb Portlet, or some part of it, has been improperly or manually deleted from the Portal environment.
+
+ANSWER
+The BlurbPortlet is also called the Information Portlet. It is used on the Welcome, Getting Started, and many administration pages. It is not recommended to delete this application. 
+
+To recover from this, we have 2 recommendations. Please work through these recommendations in order. If the first recommendation is successful, there is no need to implement the second.
+
+First Recommendation: Update the Blurb portlet - 
+
+We have written a custom .xml file that should allow you to update/reinstall this application on your server. It is attached here and called updateBlurb.xml. Please place it in a temp folder, and run the following command on your server. The basic syntax for the command is as follows: 
+
+xmlaccess -user user_ID-password password
+-url myhost:10040/wps/config
+-in input_file.xml -out result_file.xml
+
+The XMLAccess command line client can be invoked by using the following shell scripts in the directory PortalServer_root/bin/
+
+Please change the values in this example to match your environment. If you review the result_file.xml and observe that the update was 'result=ok', then attempt to run the ConfigEngine update-wcm task again.
+
+updateBlurb.xml [/support/docview.wss?uid=swg21430823&aid=2] [/support/docview.wss?uid=swg21430823&aid=1]
+
+NOTE: Please update the URL path in the updateBlurb.xml file before running it. as it needs to contain the path to your InstallableApps folder.
+
+<url>file://localhost/<Path to PortalServer folder>/installableApps/Blurb.war</url>
+
+Replace <Path to PortalServer> with your location:
+Windows: C:/IBM/PortalServer
+*nix: /opt/ibm/WebSphere/PortalServer
+
+eg. <url>file://localhost/ [file://localhost/]/opt/ibm/WebSphere/PortalServer/installableApps/Blurb.war</url>
+
+Second Recommendation - Skip update to the Blurb Portlet - 
+
+If you are not able to update the Blurb portlet, then please proceed with the following.
+
+1. Navigate to /PortalServer/wcm/prereq.wcm/wcm/deploy/ on the affected node.
+2. Make a backup of the existing DeployWcmAdminPortlets.xml file.
+3. Copy the attached version of DeployWcmAdminPortlets.xml into this location.
+4. Execute the ConfigEngine update-wcm task again.
+
+DeployWcmAdminPortlets.xml [/support/docview.wss?uid=swg21430823&aid=4] [/support/docview.wss?uid=swg21430823&aid=3]
+
+NOTE: Please update the multiple URL paths in the DeployWcmAdminPortlets.xml file before replacing the file on the server.
+
+This file has many paths to update, we recommend using a find/replace functionality of a text editor to make the changes to this file.
+
+Replace <Path to PortalServer> with your location:
+Windows: C:/IBM/PortalServer
+*nix: /opt/ibm/WebSphere/PortalServer
+
+eg. <url>file:////opt/ibm/WebSphere/PortalServer/installer/wp.config/config/templates/SetupPortal_ca.properties</url>

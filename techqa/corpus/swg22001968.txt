@@ -1,0 +1,93 @@
+Title: IBM SHC900 and SHC901 alerts appear in the System HealthCheck report - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ System health check report showed the following as critical alerts.
+
+
+
+SYMPTOM
+Rule : SHC900 
+
+Issue Detected : CPU temperature is too high
+Severity : High
+Components : rack1.host2.cpu (from ibm_host) - State is null
+
+Expert's Advice :
+
+Please check your environment status, including server room temperature.
+If server room temperature is correct, and the problem persists,
+please contact IBM Support.
+
+
+------------------------------------------------------------------------
+
+
+Rule : SHC901
+Issue Detected : DIMM's temperature's too high
+Severity : High
+Components : rack1.host2.dimm (from ibm_host) - State is null
+
+Expert's Advice :
+
+
+CAUSE
+This issue is related CPU temperature and dim temperature. For the most part such alerts are temporay. 
+
+
+DIAGNOSING THE PROBLEM
+To diagnose the alerts you can execute the following commands and check for errors at the CPU 
+
+component level. 
+
+1- impitool sel list 
+
+ 2- /nz/kit/bin/adm/ibm_host.pl --loc=rack1.host2 --status 
+
+ Disable the cluster and reboot the hosts.
+
+
+RESOLVING THE PROBLEM
+ 1 Disable the cluster and reboot the hosts. 
+
+ A- Stop the heartbeat (as root--assuming ha1 is primary) 
+
+ ssh ha2 service heartbeat stop 
+
+ ssh ha2 chkconfig heartbeat off 
+
+ service heartbeat stop 
+
+ chkconfig heartbeat off 
+
+ ssh ha2 reboot 
+
+ ping ha2 --> ping until aknowledge pings 
+
+ ssh ha2 
+
+ ssh ha1 reboot 
+
+ ping ha1 --> ping until aknowledge pings 
+
+ssh ha1 
+
+service heartbeat start 
+
+chkconfig heartbeat on 
+
+ssh ha2 service heartbeat start 
+
+ssh ha2 chkconfig heartbeat on 
+
+ 
+
+crm_mon -1 
+
+--> NPS will start automatically. 
+
+ 
+
+ 2- Upgrade NPS to 7.2.1.3-P1 [Build 48833] or higher

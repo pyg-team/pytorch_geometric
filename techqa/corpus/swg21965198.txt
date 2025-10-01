@@ -1,0 +1,21 @@
+Title: IBM ITCAM for J2EE 7.1.1 JBOSS: EJB - Web Applications Workspaces empty - United States
+
+Text:
+itcam j2ee jboss CAMJ2ALL CAMJ2TEPDATA CAMJ2AGENT TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Cannot see the 'EJB - Web Applications Workspace' in our TEPS after configuring the ITCAM J2EE 7.1.1 JBOSS Agent 
+
+RESOLVING THE PROBLEM
+1. In the JBOSS startup script if you find the following java property
+please remove it and then restart the JBOSS server. 
+-Dcom.sun.management.jmxremote 
+
+2. See if this property is there If not then add it. 
+
+-Djboss.platform.mbeanserver 
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ itcam

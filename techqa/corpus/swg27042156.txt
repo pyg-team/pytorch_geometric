@@ -1,0 +1,58 @@
+Title: IBM Ask the Experts Replay: Troubleshooting Web Services in IBM WebSphere Application Server - United States
+
+Text:
+wste_webcast; WSTE; Support Technical Exchange; education; presentation; webcast; STEwebcastDocument; jax-ws; web services; web service; timeouts; performance; jaxb WEBCAST
+
+ABSTRACT
+ This session will cover common Web Services problems and how to troubleshoot them in IBM WebSphere Application Server. 
+
+CONTENT
+Ask the Experts sessions are conducted in a question and answer format. The table below provides a time index (minutes:seconds) to the recording and describes the questions or topics discussed. You can fast forward to any question using the time index, a table containing the panel of experts is also included.
+
+To play or download the audio of this Ask the Experts session, see the Audio Section of this document.
+
+See the Related Information Section of this document for a list of documents referenced during the presentation.
+
+
+
+
+
+
+
+
+Ask the Experts session 
+27 August 2014 
+
+Time Questions asked 00:00 Silence 00:01 General introduction 02:48 Technical introduction 04:39 How to troubleshoot web services performance problems? 08:23 How to troubleshoot web services connectivity problems? 14:36 What is IP caching in web services? 18:09 How to troubleshoot JAXB Performance problems in your JAX-WS applications? 28:03 What is the purpose of com.ibm.websphere.webservices.WSDL_Generation_Extra_ClassPath custom property? 33:58 What are some of the tips to reduce/minimize connection latency in troubleshooting Web Services problems? 39:25 Using a third-party JAX-WS web service, how to configure for performance?
+
+See Third party WebService Engine links in Related Information section below 43:52 Is there a minimal tracestring to show the outbound/inbound connections? 
+
+Answer provided by the presenter: 
+com.ibm.ws.webservices.trace.*=allcom.ibm.ws.websvcs.trace.*=all 44:57 Slide 10 shows a trace view of the connection pooling. How do you enable that trace?
+
+See MustGather link in Related Information section below. To enable trace you can follow the steps under "collecting manually" Appendix A. 45:46 If a target web service has multiple methods, is it advisable to enable timeouts from the application, rather than use a WebsSphere timeout like "com.ibm.websphere.webservices.http.SocketTimeout"? 47:20 What is the concept of eclipse in WAS? 48:12 How do you configure the default WS-Security policy set, including service provider bindings, to perform request authentication using signed X509 certificates? Is there a decent tutorial/article on developer works perhaps? 
+
+See Configuring a policy set, Tutorial #1 and Tutorial #2 links in Related Information section below. 51:48 What is purpose of org.eclipse.* in plugin directory? 52:29 Is there a minimal trace string to turn on to find out what caused a timeout and 504 problem? Minimal trace to find the source IP address of a HTTP request? 55:11 Is there a default policy set and where can you define a new one? 57:09 If we increase the thread pools in WebSphere, does the response of the webservices increase? 58:29 How to do capacity plan for Async WebSphere in sense of thread pool vs connection pool ?
+
+See Capacity planning with respect to thread and connection pool links in Related Information section below. 1:00:46 If we have 50 webservices requests(REST or SOAP) in application, how do we find out which service is killing the performance of the application? If one service is creating a problem does it impact the remaining services response time as well? 1:07:42 For jax-ws, HTTP transport custom properties for web services applications,the following link http://www.ibm.com/support/knowledgecenter/api/content/SSD28V_8.5.5/com.ibm.websphere.base.doc/ae/rwbs_httptransportprop.html#http_field15 [http://www-01.ibm.com/support/knowledgecenter/api/content/SSD28V_8.5.5/com.ibm.websphere.base.doc/ae/rwbs_httptransportprop.html#http_field15]. talks about a read timeout property 'timeout' and its not qualified and this says that it can be set as JVM customer property and also talks about HTTP transport policy. I am interested in that one. 1:11:02 Summary 1:12:53 Closing remarks 1:13:10 End of Call 
+Panel of Experts: Michael McGuinness Support Engineer Krishna Jaladhi Support Engineer Allen Alarcon Support Engineer Hobert Bush Support Engineer 
+
+PRESENTATION
+[http://www.ibm.com/i/v16/icons/weblecture.gif]WSTE-08272014-AskTheExperts-Troubleshooting-Web-Services-in-IBM-WebSphere-Application-Server V2_final_V2.pdf [/support/docview.wss?uid=swg27042156&aid=2]WSTE-08272014-AskTheExperts-Troubleshooting-Web-Services-in-IBM-WebSphere-Application-Server V2_final_V2.pdf [/support/docview.wss?uid=swg27042156&aid=1]
+
+Get Adobe Reader [http://www.adobe.com/products/acrobat/readstep2.html] to view PDF
+
+AUDIO
+[http://www.ibm.com/i/v16/icons/aud.gif]To replay the recording of this conference call, click on Download Audio [ftp://ftp.software.ibm.com/software/websphere/techexchange/Aug-27-2014-ATE-Bush-Alarcon-Jaladhi-McGuinness.mp3] (audio in MP3 format). Right-click and select Save As to store the file on your local computer for later playback. Remember that you can fast forward to any question using the time index.
+
+RELATED INFORMATION
+ WebSphere Support Technical Exchange [http://www.ibm.com/software/websphere/webcast]
+Time Zone Converter [http://www.timeanddate.com/worldclock/converter.html]
+Third party WebService Engine link #1 [http://www.ibm.com/support/knowledgecenter/SSCKBL_8.5.5/com.ibm.websphere.nd.multiplatform.doc/ae/twbs_thirdparty.html]
+Third party WebService Engine link #2 [http://www.ibm.com/developerworks/websphere/library/techarticles/1001_thaker2/1001_thaker2.html]
+MustGather [http://www.ibm.com/support/docview.wss?uid=swg21198363#show-hide]
+Configuring a policy set [http://www14.software.ibm.com/webapp/wsbroker/redirect?version=phil&product=was-nd-iseries&topic=twbs_xmlds_policyset]
+Tutorial #1 [http://www.ibm.com/developerworks/websphere/tutorials/1109_nasser/]
+Tutorial #2 [http://www.ibm.com/developerworks/websphere/tutorials/0905_griffith/ ]
+Capacity planning with respect to thread and connection [http://www.ibm.com/support/knowledgecenter/SSAW57_8.5.5/com.ibm.websphere.nd.multiplatform.doc/ae/cwbs_jaxws.html?lang=en]
+Web services counters [http://www.ibm.com/support/knowledgecenter/SSAW57_8.5.5/com.ibm.websphere.nd.doc/ae/rprf_datacounter16.html ]

@@ -1,0 +1,40 @@
+Title: IBM  What is SSO implementation and its associated behaviour in Sterling MCF ? - United States
+
+Text:
+STERLINGFAQ TECHNOTE (FAQ)
+
+QUESTION
+ What is SSO implementation and its associated behaviour in Sterling MCF ? 
+
+ANSWER
+
+
+Single sign-on (SSO)
+It is a software driven feature of access control of multiple, related, but independent software systems. With this property a user logs in once and gains access to all systems without being prompted to log in again at each of them.
+
+Need for SSO:
+As different applications and resources support different authentication mechanisms, single sign-on has to internally translate to and store different credentials compared to what is used for initial authentication.
+
+Benefits of single sign-on include:
+1) Reducing password fatigue from different user name and password combinations.
+2) Reducing time spent re-entering passwords for the same identity.
+3) Can support conventional authentication such as Windows credentials (i.e., username/password)
+4) Reducing IT costs due to lower number of IT help desk calls about passwords
+5) Security on all levels of entry/exit/access to systems without the inconvenience of re-prompting users
+6) Centralized reporting for compliance adherence.
+
+How to make Sterling Application SSO enabled?
+Sterling Framework has provided an interface YCPSSOManager which needs to be implemented for adding SSO feature to the application.
+This User Exit can connect to external authentication systems to validate the existing session of users and thus providing Sterling systems with the authenticated user id.Following which the user will be granted a new session powered by SSO after the stipulated session time out period.
+Other required configuration that needs be changed
+
+Activate the following properties in yfs.properties 
+a) yfs.security.singlesignon.enabled=Y 
+b) yfs.login.singlesignon.class=<Your classname implementing YCPSSOManager>
+Currently whenever session time out happens within Sterling, users are redirected to Sterling home page in the new SSO granted session.
+
+
+
+
+HISTORICAL NUMBER
+ FAQ3278

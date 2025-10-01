@@ -1,0 +1,44 @@
+Title: IBM WebSphere ILOG JRules V7.1.1 Download Document - United States
+
+Text:
+ILOG JRules DOWNLOADABLE FILES
+
+ABSTRACT
+ This document describes how to download IBM WebSphere ILOG JRules V7.1.1 eAssembly images from the IBM Passport Advantage Online Web site. 
+
+DOWNLOAD DESCRIPTION
+
+
+WebSphere ILOG JRules is a Business Rule Management System (BRMS) that enables both business users and developers to manage the rules that drive their business. 
+
+Contents
+
+ This document provides a list of the eAssembly images available in the eAssembly, and describes how to download the eAssembly images from the IBM Passport Advantage Online Web site. 
+
+More information
+
+ For further information about this product, see the WebSphere ILOG JRules home page [http://www.ibm.com/software/integration/business-rule-management/jrules/support/index.html]. 
+
+Downloading and assembling the product
+
+ 1. Navigate your browser to the Find Downloads and Media [http://www.ibm.com/software/howtobuy/passportadvantage/paocustomer/sdma/SDMA?PO=DOWNLOAD_FIND_BY_PART_NUMBER] page on the IBM Passport Advantage Online Web site.
+ 2. Sign in using your IBM ID.
+ 3. Select the Find by part number search option under Download finder options.
+ 4. Search for each downloadable image by part number (parts are listed below).
+ 5. Download all of the parts you require.
+ 6. Unpack each of the parts into a separate directory on your system.
+ 7. Follow the instructions in the Quick Start Guide (CZLX4ML) to install the product.
+
+[http://www.ibm.com/i/c.gif] Assembly Part Number Assembly Description Images Image Description CRBC9ML IBM WebSphere ILOG JRules V7.1.1 for Multiplatform Multilingual eAssembly CZLX4ML IBM WebSphere ILOG JRules V7.1.1 Quick Start Guide for Multiplatform Multilingual CZLX5ML IBM WebSphere ILOG JRules V7.1.1 Trial Commercial Unlock Information English U.S. CZLX6ML IBM WebSphere ILOG JRules V7.1.1 for UNIX Multilingual CZLX7ML IBM WebSphere ILOG JRules V7.1.1 for Windows Multilingual CZLX8ML IBM WebSphere ILOG JRules V7.1.1 - Tomcat Bundle Multilingual CZLX9ML IBM WebSphere ILOG JRules V7.1.1 - SunAS Bundle Multilingual CZLY0ML IBM WebSphere ILOG JRules V7.1.1 - WebLogic Bundle Multilingual CZLY2ML IBM WebSphere ILOG JRules V7.1.1 - WebSphere Bundle Multilingual CZLY1ML IBM WebSphere ILOG JRules V7.1.1 - JBoss Bundle Multilingual CZM0UFR IBM WebSphere ILOG JRules V7.1.1 for Windows Documentation French CZM0VDE IBM WebSphere ILOG JRules V7.1.1 for Windows Documentation German CZM0WES IBM WebSphere ILOG JRules V7.1.1 for Windows Documentation Spanish CZM0XIT IBM WebSphere ILOG JRules V7.1.1 for Windows Documentation Italian CZM0YBP IBM WebSphere ILOG JRules V7.1.1 for Windows Documentation Brazilian Portuguese CZM0ZNL IBM WebSphere ILOG JRules V7.1.1 for Windows Documentation Dutch CZM10JA IBM WebSphere ILOG JRules V7.1.1 for Windows Documentation Japanese CZM11KO IBM WebSphere ILOG JRules V7.1.1 for Windows Documentation Korean CZM12SC IBM WebSphere ILOG JRules V7.1.1 for Windows Documentation Simplified Chinese CZM13TC IBM WebSphere ILOG JRules V7.1.1 for Windows Documentation Traditional Chinese CZM14RU IBM WebSphere ILOG JRules V7.1.1 for Windows Documentation Russian CZLY3FR IBM WebSphere ILOG JRules V7.1.1 for UNIX Documentation French CZLY4DE IBM WebSphere ILOG JRules V7.1.1 for UNIX Documentation German CZLY5ES IBM WebSphere ILOG JRules V7.1.1 for UNIX Documentation Spanish CZLY6IT IBM WebSphere ILOG JRules V7.1.1 for UNIX Documentation Italian CZLY7BP IBM WebSphere ILOG JRules V7.1.1 for UNIX Documentation Brazilian Portuguese CZLY8NL IBM WebSphere ILOG JRules V7.1.1 for UNIX Documentation Dutch CZLY9JA IBM WebSphere ILOG JRules V7.1.1 for UNIX Documentation Japanese CZLZ0KO IBM WebSphere ILOG JRules V7.1.1 for UNIX Documentation Korean CZLZ1SC IBM WebSphere ILOG JRules V7.1.1 for UNIX Documentation Simplified Chinese CZLZ2TC IBM WebSphere ILOG JRules V7.1.1 for UNIX Documentation Traditional Chinese CZLZ3RU IBM WebSphere ILOG JRules V7.1.1 for UNIX Documentation Russian PREREQUISITES
+For a complete list of prerequisites, see WebSphere ILOG JRules BRMS System Requirements: http://www.ibm.com/software/integration/business-rule-management/jrules-family/reqs/ [http://www.ibm.com/software/integration/business-rule-management/jrules-family/reqs/] [http://www.ibm.com/common/ssi/cgi-bin/ssialias?infotype=an&subtype=ca&supplier=897&letternum=ENUS209-111]
+
+INSTALLATION INSTRUCTIONS
+Full installation instructions are provided in the information center at: WebSphere ILOG JRules [http://www.ibm.com/support/entry/portal/Documentation/Software/WebSphere/WebSphere_ILOG_JRules]
+
+DOWNLOAD PACKAGE
+
+
+Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options IBM Passport Advantage Online 9/17/2010 US English 9202302976 HTTP [http://www.ibm.com/software/howtobuy/passportadvantage/pao_customers.htm] 
+TECHNICAL SUPPORT
+ For Passport Advantage Online support, see:
+http://www.ibm.com/software/howtobuy/passportadvantage/paocustomer/docs/en_US/ecare.html [http://www.ibm.com/software/howtobuy/passportadvantage/paocustomer/docs/en_US/ecare.html]

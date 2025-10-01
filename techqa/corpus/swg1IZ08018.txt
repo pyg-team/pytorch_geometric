@@ -1,0 +1,196 @@
+Title: IBM IZ08018: STRMQM FAILS FOR SINGLE THREADED MQ QUEUE MANAGER ON LINUX - United States
+
+Text:
+  A FIX IS AVAILABLE
+WebSphere MQ V6.0 Fix Pack 6.0.2.4 [http://www-01.ibm.com/support/docview.wss?uid=swg24019276]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  WebSphere MQ queue manager fails to start when using the
+   following tuning parameters in the qm.ini file
+   --------
+   TuningParameters:
+   AgentClassMap=(1,1,1)
+   AgentClassLimit1=(1,1,500)
+   --------
+   Several different processes failed and produced FDC's. The
+   probe id's are different depending on where the error is
+   encountered but there seems to be a common pattern that the
+   failures are related to a problem with broken connections.
+   Some information from the FDC's
+   ZX092016 zmuStatisticsCollector MQRC_CONNECTION_BROKEN
+   RM220005 rrmRepository          rrcE_MQGET_FAILED due to
+   zstMQGET rc=lrcE_CONNECTION_BROKEN
+   ZX005025 zxcProcessChildren     zrcX_PROCESS_MISSING where
+   the missing process was 3402 amqrrmfa
+   ZX103020 zmuHealthCheck         MQRC_CONNECTION_BROKEN
+   KN286001 kpiWaitForConfigChange lrcE_CONNECTION_BROKEN
+   
+   Traces show process making a call to ziiHealthCheck where they
+   check for a PID(0) and this results in a xcsCheckProcess
+   rc=xecP_E_INVALID_PID which then translates to a
+   MQRC_CONNECTION_BROKEN.
+   
+   The problem is only on Linux platform and only when Tuning
+   Parameters AgentClassMap and AgentClassLimit are set to cause
+   single threaded agents. This happens because of improper
+   checking of process information in function xcsCheckProcess
+   which is called by the function ziiHealthCheck looking for PID
+   zero (0) instead of the PID of the agent, amqzlaa0.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Do not set TuningParameters to force single threaded agents.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   The function ziiHealthCheck is invoked by different processes
+   to check the presence of EC or agent processes. This error
+   occurs only in case of single threaded agents on Linux platform
+   because uninitialized thread handle is used for checking in
+   this case. No other platform is affected by this error.
+   
+   Platforms affected:
+   Linux (s390x),Linux (x86),Linux (x86-64)
+   
+   ****************************************************************
+   PROBLEM SUMMARY:
+   Single threaded queue managers on Linux platform give FDCs on
+   startup. These FDCs are from different processes but are
+   triggered because a check for process with PID 0 is made
+   instead looking for the correct PID. This happens only in case
+   of single threaded agents because thread handles are not
+   initialized this case.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix initializes the thread handle when any application is
+   connected to the agent thereby ensuring that a correct PID is
+   looked up when the health check for the agent is made. This
+   ensures that no FDCs are reported during the startup of single
+   threaded queue managers on Linux and to be more specific, no
+   errors are seen with a message pointing to check for process wit
+   PID 0.
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+                      v6.0
+   Platform           Fix Pack 6.0.2.4
+   --------           --------------------
+   Linux (x86)        U814336
+   Linux (x86-64)     U814341
+   Linux (s390x)      U814340
+   
+   The latest available maintenance can be obtained from
+   'WebSphere MQ Recommended Fixes'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037]
+   
+   If the maintenance level is not yet available, information on
+   its planned availability can be found in 'WebSphere MQ
+   Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ08018
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ LIN PPC V6
+   
+   
+ * REPORTED COMPONENT ID
+   5724H7207
+   
+   
+ * REPORTED RELEASE
+   600
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2007-11-06
+   
+   
+ * CLOSED DATE
+   2007-11-30
+   
+   
+ * LAST MODIFIED DATE
+   2007-11-30
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ LIN PPC V6
+   
+   
+ * FIXED COMPONENT ID
+   5724H7207
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R600 PSY
+   UP

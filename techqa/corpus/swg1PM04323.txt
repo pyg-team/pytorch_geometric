@@ -1,0 +1,154 @@
+Title: IBM PM04323: ADD IMAGE TO LIBRARY WITH ANONYMOUS ACCESS CHECKBOX UNAVAILABLE - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Summary
+   1) Create two libraries called LibA and LibB
+   2) Create a user with Component access to LibA but no component
+   access to LibB
+   3) Create a authoring template with a rich text area in LibA
+   4) Create a content in LibA using the newly created authoring
+   template, save and read (keep this content open in the tab)
+   5) Go back to main repository browser, switch to LibB
+   6) Go back to the newly created content by click on the opened
+   tab
+   7) Click edit, click insert image in rich text area, the check
+   box for add image to library with anonymous access is not
+   available
+   
+   - the problem is because wcm uses the currently selected library
+   in the main repository browser instead of the library of the
+   currently opened item
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  make sure we use the currently opened item library instead of
+   the currently selected library in main repository browser if the
+   rich text area is embedded as an element
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Add image to library with anonymous access checkbox unavailable.
+   1) Create two libraries called LibA and LibB
+   2) Create a user with Component access to LibA but no component
+   access to LibB
+   3) Create a authoring template with a rich text area in LibA
+   4) Create a content in LibA using the newly created authoring
+   template, save and read (keep this content open in the tab)
+   5) Go back to main repository browser, switch to LibB
+   6) Go back to the newly created content by click on the opened
+   tab
+   7) Click edit, click insert image in rich text area, the check
+   box for add image to library with anonymous access is not
+   available
+   
+   - the problem is because wcm uses the currently selected library
+   in the main repository browser instead of the library of the
+   currently opened item
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  make sure we use the currently opened item library instead of
+   the currently selected library in main repository browser if the
+   rich text area is embedded as an element
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM04323
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSPHERE PORTA
+   
+   
+ * REPORTED COMPONENT ID
+   5724E7600
+   
+   
+ * REPORTED RELEASE
+   60G
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-01-03
+   
+   
+ * CLOSED DATE
+   2010-01-03
+   
+   
+ * LAST MODIFIED DATE
+   2010-01-03
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBSPHERE PORTA
+   
+   
+ * FIXED COMPONENT ID
+   5724E7600
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R60G PSY
+   UP

@@ -1,0 +1,72 @@
+Title: IBM Using SyncConfig to rebuild a corrupted TSAMP/RSCT node - United States
+
+Text:
+TSA; TSAMP; RSCT; ctsec.nodeinfo; ct_node_id; runact TECHNOTE (FAQ)
+
+QUESTION
+ A node in a TSAMP/RSCT domain will not come online due to some form of corruption. How can the domain & policy information be rebuilt on that node with minimal effort ? 
+
+ANSWER
+Consider a domain with two nodes, host01 and host02. The node host02 has some kind of problem preventing it from coming online in the domain, as seen from the output of 'lsrpdomain' when run on host02 or 'lsprnode' when run on host01 :
+host01:/var/ct/cfg # lsrpnode -i
+
+Name OpState RSCTVersion NodeNum NodeID
+host01 Online 3.1.1.2 1 47aee4c0a1dd9921
+host02 Offline 3.1.1.2 2 81ca8650df408744
+
+=> notice that host02 is Offline as seen from host01.
+
+The following steps will wipe the domain definition and automation policy from host02, essentially restoring it to a state similar to what you would have after just installing the TSAMP product. The steps include replicating the domain and policy definition stored on host01 to the recently wiped host02. All commands require root user authority and many of the commands must be run on a particular node as indicated by the hostname shown as part of the prompts below ...
+
+Step 1: Completely wipe the domain definition from host02 but save the nodeid (we need the nodeid to be the same as the value that host01 knows host02 to be):
+host02:/usr/sbin/rsct/install/bin/recfgct -s
+
+If for some reason the nodeid is different, for example if 'recfgct' was executed previously without the -s option, then you can use the following syntax to set the nodeid:
+host02:/usr/sbin/rsct/install/bin/recfgct -i 81ca8650df408744
+
+=> notice the nodeid value is taken from the output of 'lsrpnode -i' as executed on host01 (see above).
+
+Note: the nodeid of each node can also be found in the following configuration file:
+host01:/var/ct/cfg # more ctsec.nodeinfo
+NODE:
+NAME: host02 0x81ca8650df408744
+ADDRESS: 9.42.51.129 192.168.126.139 0x81ca8650df408744
+CLUSTER: my_domain
+
+NODE:
+NAME: LOCALHOST host01 0x47aee4c0a1dd9921
+ADDRESS: 9.42.51.128 192.168.126.138 0x47aee4c0a1dd9921
+CLUSTER: my_domain
+
+Or on each node, there should be a file that just contains its own nodeid, for example:
+host02:/var/ct/cfg # more ct_node_id
+81ca8650df408744
+
+
+Step 2: Run preprpnode on both host01 and host02 to ensure the RSCT Access Control List (ACL) is populated:
+host01:/ # preprpnode host01 host02
+host02:/ # preprpnode host01 host02
+
+Step 3: Replicate the domain information from host01 to host02:
+host01:/ # runact -c IBM.PeerDomain SyncConfig \ TargetNodes='{"host01","host02"}'
+
+Step 4: Finally, online the host02 node:
+The host02 node should now have the domain definition. You can check by running lsrpdomain on host02:
+host02:/ # lsrpdomain
+Name OpState RSCTActiveVersion MixedVersions TSPort GSPort
+my_domain Offline 3.1.1.2 No 12347 12348
+
+But host02 would likely still be in an Offline state, as shown by the OpState of the lsrpdomain command, so bring it online with the following:
+host01:/var/ct/cfg # startrpnode host02
+
+host01:/var/ct/cfg # lsrpnode
+Name OpState RSCTVersion
+host01 Online 3.1.1.2
+host02 Online 3.1.1.2
+
+host02:/var/ct/cfg # lsrpnode
+Name OpState RSCTVersion
+host01 Online 3.1.1.2
+host02 Online 3.1.1.2
+
+Step 5: Run 'lssam' to check the automation policy (resource and groups) are all present across the appropriate nodes.

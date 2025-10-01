@@ -1,0 +1,252 @@
+Title: IBM PK95934: PLUGIN ERROR WHEN RHAPSODY IS LAUNCHED VIA RHAPSODYAPPSERVER.CREATERHAPSODYAPPLICATION() - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Summary: Quintus : 226150
+   --------
+   Plugin error when Rhapsody is launched via
+   RhapsodyAppServer.createRhapsodyApplication()
+   
+   Description:
+   ------------
+   When Rhapsody is launched via the Start menu, Java-based
+   plugins are loaded normally. However, when Rhapsody is launched
+   via
+   RhapsodyAppServer.createRhapsodyApplication() or
+   RhapsodyAppServer.createRhapsodyApplicationDllServer(), problems
+   occur.
+   
+   When Rhapsody is launched via
+   RhapsodyAppServer.createRhapsodyApplicationDllServer(), the
+   following
+   exception message is displayed when Rhapsody is launched:
+   java.lang.ClassNotFoundException: SAIntegratorListenerPlugin
+   at java.net.URLClassLoader$1.run(Unknown Source)
+   at java.security.AccessController.doPrivileged(Native Method)
+   at java.net.URLClassLoader.findClass(Unknown Source)
+   at java.lang.ClassLoader.loadClass(Unknown Source)
+   at java.net.FactoryURLClassLoader.loadClass(Unknown Source)
+   at java.lang.ClassLoader.loadClass(Unknown Source)
+   at java.lang.ClassLoader.loadClassInternal(Unknown Source)
+   at java.lang.Class.forName0(Native Method)
+   at java.lang.Class.forName(Unknown Source)
+   at
+   com.telelogic.rhapsody.core.JavaPluginsManager.loadPlugin(Unknow
+   n
+   Source)
+   
+   The sample plugin contains a .zip archive that should be
+   extracted to
+   C:\Test\TestRhapsodyRunHelper\.
+   
+   The Simple Plug-in folder contains the Java simple-plugin, with
+   the .hep file changed to support a runHelper() call.  The plugin
+   has
+   also been packaged in a .jar file to be closer to a customer's
+   production plugin.
+   
+   The TestRunHelperProject contains the test Rhapsody project. The
+   project's 'General.Model.AdditionalHelperFiles' points to the
+   simple
+   plugin's .hep file. When you open the test project in Rhapsody,
+   you
+   should see the SimplePlugin dialogs when the plugin is loaded.
+   
+   The RunHelperDriver project connects with Rhapsody, opens the
+   test
+   project, and then calls IRPApplication.runHelper() to test the
+   connection. If Rhapsody is not running it will launch a new
+   instance
+   of Rhapsody.
+   
+   When Rhapsody is running before RunHelperDriver is started
+   everything
+   is ok. The driver connects with Rhapsody, ensures the test
+   project is
+   open, and calls runHelper(). The plugin shows a dialog proving
+   that
+   the runHelper() call was successful.
+   
+   When Rhapsody is not running before RunHelperDriver is started,
+   Rhapsody shows an error that the SimplePlugin plug-in cannot be
+   found
+   when the test project is opened. This is when Rhapsody is opened
+   via
+   the RhapsodyAppServer.createRhapsodyApplication() call. If
+   Rhapsody is
+   opened via the
+   RhapsodyAppServer.createRhapsodyApplicationDllServer()
+   call an exception is displayed on startup and the runHelper()
+   call
+   does not always succeed.
+   
+   Moving the plugin into the Share directory did not solve the
+   'Did not
+   find plugin: SimplePlugin' error when Rhapsdoy was opened via
+   RhapsodyAppServer.createRhapsodyApplication(). So the problem is
+   not
+   that the plugin is 'loose' in the filesystem.
+   
+   Note that RhapsodyAppServer is not documented in the Java API
+   javadocs. And the new
+   RhapsodyAppServer.createRhapsodyApplicationDllServer() call is
+   not
+   documented in the release notes or upgrade documentation.
+   
+   
+   Customer Comments:
+   -------------------
+   I had started noticing problems calling the
+   IRPApplication.runHelper()
+   method when Rhapsody was launched via
+   RhapsodyAppServer.createRhapsodyApplication().
+   So the test plugin is run-helper focused.
+   
+   Steps to Reproduce:
+   -------------------
+   1. Run the SimplePlugin using the hep file and the classpath
+   without or with jar - works fine
+   2. Use the RunHelperDriver.java with app =
+   RhapsodyAppServer.createRhapsodyApplicationDllServer(); and
+   app.runHelper('Element Name menu option');  - does not work
+   3. Follow step 2 but with app =
+   RhapsodyAppServer.createRhapsodyApplication(); - does not work
+   
+   Hence the plugin does not work/load when
+   createRhapsodyApplication is called and hep files are used to
+   load the plugins.
+   If the application is already open plugin loads fine.
+   Hence the behavior is errant when the
+   createRhapsodyApplicationDllServer() or
+   createRhapsodyApplication() calls are used when there are
+   plugins to be loaded at start up.
+   
+   Work around:
+   -------------
+   Launch Rhapsody via the command-line if it is not already
+   running, using Java's Runtime.exec() method.
+   
+   PMR: 52294,999,00
+   
+   
+   Files shared at: \\ilre-dc\TestCases\Rhapsody\226150
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Work around:
+   -------------
+   Launch Rhapsody via the command-line if it is not already
+   running, using Java's Runtime.exec() method.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Plugin error occurs if Rhapsody was launched via
+   RhapsodyAppServer.createRhapsodyApplication().
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  If you plan to run plugins,
+   createRhapsodyApplicationDllServer() should be used, not
+   createRhapsodyApplication(). Running plugins using runHelper
+   is supported since version 7.5.1.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK95934
+   
+   
+ * REPORTED COMPONENT NAME
+   TLOGIC RHAPSODY
+   
+   
+ * REPORTED COMPONENT ID
+   5724V74RP
+   
+   
+ * REPORTED RELEASE
+   750
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-09-10
+   
+   
+ * CLOSED DATE
+   2010-06-11
+   
+   
+ * LAST MODIFIED DATE
+   2010-06-11
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TLOGIC RHAPSODY
+   
+   
+ * FIXED COMPONENT ID
+   5724V74RP
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R750 PSN
+   UP

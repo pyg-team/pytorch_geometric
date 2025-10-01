@@ -1,0 +1,31 @@
+Title: IBM AMQ6174 MQRC 2119 putting a message to a remote queue - United States
+
+Text:
+AMQ6174 MQRC 2119 putting message remote queue MQMINFO TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ You are putting a message on a remote queue on AIX using WebSphere MQ (V5.3, V6 or V7). The channel is defined as CONVERT(YES). A message is put to the dead letter queue (DLQ) with RC 2119. The message uses the default CCSID of 819 and encoding 273, and the MD.FORMAT = MQSTR. 
+
+The error message in the error log is:
+
+AMQ6174 "The library /var/mqm/exits//MQSTR_r was not found." 
+WebSphere MQ should not be looking for a user exit. 
+A trace shows that MQ fails in 'vxtConvertCharsFn', 'vwb_string', 'vwaConvert' all with rc=00000847. 
+
+RESOLVING THE PROBLEM
+You are most likely missing your conversion tables in AIX. Make sure all conversion tables exist and if not you will need to add them. For more details consult: 
+
+ * AMQ6047 conversion not supported on AIX CCSID 1208 273 [http://www.ibm.com/support/docview.wss?rs=171&uid=swg21222078] 
+   This technote describes the need to install AIX fileset: bos.iconv.ucs.ebcdic 
+   
+ * Data Conversion under WebSphere MQ [http://www.ibm.com/support/docview.wss?rs=171&uid=swg27005729] 
+   >Where to Find the Conversion Tables >> On WebSphere MQ for AIX (Page 14) 
+   
+ * JMS application puts a message which is not converted when the getting application does MQGET with convert [http://www.ibm.com/support/docview.wss?uid=swg21212795] 
+ * WebSphere MQ writes AMQ6174 messages about unknown exits [http://www.ibm.com/support/docview.wss?uid=swg21165084] 
+
+ 
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM MQ 
+PRODUCT ALIAS/SYNONYM
+ WMQ MQ

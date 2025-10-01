@@ -1,0 +1,61 @@
+Title: IBM Error in the migrate.py script when putting on the IF8 fix on the DC. - United States
+
+Text:
+CAMADALL CAMADINST CFG1002E CFG1002E migrate.py IF8 fix DC main routine error TECHNOTE (TROUBLESHOOTING)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ US English 
+
+PROBLEM(ABSTRACT)
+ Error in the migrate.py script when putting on the IF8 fix on the DC. 
+
+SYMPTOM
+The DC migration utility fails with the following error: 
+
+[2014-07-01 15:57:21 DEBUG getmsg (resourcebundle:137)] CFG1002E 
+explanation: Explanation: The program has detected an unexpected and 
+unrecoverable error condition.
+
+[2014-07-01 15:57:21 DEBUG getmsg (resourcebundle:142)] CFG1002E 
+operator response: Operator Response: Gather the provider trace log for
+more information, and call IBM help desk. 
+
+[2014-07-01 15:57:21 EXCEPTION <module> (migrate:458)] Error in main 
+routine
+
+Traceback (most recent call last): 
+File "/usr/monitoring/Tivoli/ITM/dchome/7.2.0.0.8/bin/migrate.py", line 374, in <module> createDCInput.createManualInputFile(pdl) 
+File "/usr/monitoring/Tivoli/ITM/dchome/7.2.0.0.8/bin/lib/createDCInput.py", line 389, in createManualInputFile 
+createFile(pdl,runtime) 
+File "/usr/monitoring/Tivoli/ITM/dchome/7.2.0.0.8/bin/lib/createDCInput.py", line 93, in createFile 
+f.write("was.server.type="+ str(utils.getData(pdl," 
+SERVERTYPE")[serveri]) +"\n") 
+TypeError: 'NoneType' object is unsubscriptable
+
+
+CAUSE
+Caused due to incorrect syntax in the *.py files.
+
+
+ENVIRONMENT
+Distributed
+
+
+
+RESOLVING THE PROBLEM
+To resolve the problem, copy these files into the right directories listed below. 
+
+The attached ".py" files go into the bin/lib dir and the input.properties.template file goes into the itcamdc/etc dir. 
+
+Make a backup of the original files, then copy these attached files over. Change the permissions and re-run the migrate script again. 
+
+configUtils.py [/support/docview.wss?uid=swg21677963&aid=2]configUtils.py [/support/docview.wss?uid=swg21677963&aid=1] 
+
+findconfigservers.py [/support/docview.wss?uid=swg21677963&aid=4]findconfigservers.py [/support/docview.wss?uid=swg21677963&aid=3] 
+
+input.properties.template [/support/docview.wss?uid=swg21677963&aid=6]input.properties.template [/support/docview.wss?uid=swg21677963&aid=5]
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ ITCAM ITCAM for Applications

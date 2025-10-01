@@ -1,0 +1,258 @@
+Title: IBM z/OS Explorer, CICS Explorer, and CICS tools plug-ins release compatibility reference tables - United States
+
+Text:
+Explorer; CICS Explorer; plug-in; plugin; CICS tools; CICS Transaction Server; CICS TS; IBM Session Manager; IBM SM ; 5655-M15 5655M15 5655S9700 R660 660 R600 600 HCI6600 5655-S97 5655S97 5655S9700 R670 670 R700 700 HCI6700 ; 5655Y0400 R680 680 R800 800 R690 690 R900 900 HCI6800 5655-Y04 HCI6900 R700 700 R000 000 R350 530 HCI7000 5655Y04 ; KIXINFO TECHNOTE (FAQ)
+
+QUESTION
+ How do you find out which release of IBM Explorer for z/OS (z/OS Explorer) and CICS tools plug-ins for CICS Explorer are compatible with the different releases of CICS Explorer? How do you know what release of the Eclipse SDK is required for your release of z/OS Explorer and CICS Explorer? 
+
+CAUSE
+Certain releases of z/OS Explorer and CICS tools plug-ins for CICS Explorer will only work with certain releases of CICS Explorer.
+
+ANSWER
+Click a link below to be taken to the corresponding compatibility reference table. Use the table to determine the correct combination of 'Explorer' release and CICS tools plug-in release. 
+
+ * IBM Explorer for z/OS (z/OS Explorer)
+ * CICS Configuration Manager for z/OS (CICS CM)
+ * CICS Deployment Assistant for z/OS (CICS DA)
+ * CICS Interdependency Analyzer for z/OS (CICS IA)
+ * CICS Performance Analyzer for z/OS (CICS PA)
+ * CICS Transaction Gateway for z/OS and Multiplatforms (CICS TG)
+ * CICS VSAM Transparency for z/OS (CICS VT)
+ * IBM Session Manager for z/OS (ISM)
+
+
+Key: 
+
+ * N denotes No, not supported at this release. 
+ * Y denotes Yes, supported by this release and further fixpacks at this level. 
+ * Vv.r.m.f denotes version.release.modification-level.function-level. This refers to the release or fixpack that introduced support for this CICS Explorer release, and continued support by further fixpacks at this level.
+
+
+
+
+
+
+
+
+CICS Explorer is compatible with the operating environments described on the associated Detailed System Requirements for CICS Transaction Server [http://www.ibm.com/support/docview.wss?uid=swg27006382] web page. Click on your release of CICS Transaction Server, then on the next web page click on the link for CICS Explorer in the list of products. 
+Each new release of CICS Explorer and CICS tools plug-ins for CICS Explorer are hosted on the z/OS Explorer download page [https://developer.ibm.com/mainframe/] and also the existing CICS Explorer download page [http://www.ibm.com/support/docview.wss?rs=1083&uid=swg24033579]. For download packages for previous releases of CICS Explorer, see the Downloads for older releases of IBM Explorer for z/OS and IBM CICS Explorer [http://www.ibm.com/support/docview.wss?uid=swg24031508] web page.
+
+For information about getting maintenance for the CICS Explorer, see ordering maintenance for IBM CICS Explorer [http://www.ibm.com/support/docview.wss?uid=swg21380083].
+
+
+
+
+
+
+
+
+
+IBM Explorer for z/OS (z/OS Explorer) 
+
+Users of CICS Explorer V5.4 should use z/OS Explorer V3.1, available in the Mainframe Developer Center [https://developer.ibm.com/mainframe/]. [https://developer.ibm.com/mainframe/]
+
+Users of CICS Explorer V5.3 should use z/OS Explorer V3.0.
+Users of CICS Explorer V5.2 or V5.1.1 should use z/OS Explorer V2.1.0.5, or later fix packs.
+
+If Installation Manager was used to install both z/OS Explorer and CICS Explorer then install the corresponding fix packs for CICS Explorer and z/OS Explorer at the same time. For more details see the instructions in the associated APAR documentation. 
+Back to top
+
+
+
+
+
+
+
+
+CICS Configuration Manager for z/OS (CICS CM) Compatibility between CICS Explorer release and the plug-in CICS CM V5.1 
+plug-in CICS CM V5.1.1 
+plug-in CICS CM V5.2 
+plug-in CICS CM V5.3
+plug-in CICS CM V5.4
+plug-in CICS Explorer V5.1.0.x
+(Based on Eclipse 3.6.2) Y N N N N CICS Explorer V5.1.1.x
+(Based on Eclipse 4.2.2) N Y N N N CICS Explorer V5.2.0.x
+(Based on Eclipse 4.2.2) N N Y N N CICS Explorer V5.3.0.x
+(Based on Eclipse 4.4.2) N N N Y N CICS Explorer V5.4.0.x
+(Based on Eclipse 4.6.3) N N N Y Y 
+Compatibility between CICS CM 
+and the plug-in CICS CM V5.1 
+plug-in CICS CM V5.1.1 
+plug-in CICS CM V5.2 
+plug-in CICS CM V5.3
+plug-in CICS CM V5.4
+plug-in CICS CM V5.1 Y Y Y Y Y CICS CM V5.2 N N Y Y Y CICS CM V5.3 N N N Y Y CICS CM V5.4 N N N N Y 
+Back to top
+
+
+
+
+
+
+
+CICS Deployment Assistant for z/OS (CICS DA)
+
+
+Compatibility between CICS Explorer release and the plug-in CICS DA V5.1 
+plug-in CICS DA V5.1.1 
+plug-in CICS DA V5.2 
+plug-in CICS DA V5.3
+plug-in CICS Explorer V5.1.0.x
+(Based on Eclipse 3.6.2) Y N N N CICS Explorer V5.1.1.x
+(Based on Eclipse 4.2.2) N Y N N CICS Explorer V5.2.0.x
+(Based on Eclipse 4.2.2) N N Y N CICS Explorer V5.3.0.x
+(Based on Eclipse 4.4.2) N N N Y CICS Explorer V5.4.0.x
+(Based on Eclipse 4.6.3) N N N Y 
+Compatibility between CICS DA 
+and the plug-in CICS DA V5.1 
+plug-in CICS DA V5.1.1 
+plug-in CICS DA V5.2 
+plug-in CICS DA V5.3
+plug-in CICS DA V5.1 Y Y N N CICS DA V5.2 N N Y N CICS DA V5.3 N N N Y 
+Back to top
+
+
+
+
+
+
+
+CICS Interdependency Analyzer for z/OS (CICS IA)
+
+
+Compatibility between CICS Explorer release and the plug-in CICS IA V5.1 
+plug-in CICS IA V5.1.1 
+plug-in CICS IA V5.2 
+plug-in CICS IA V5.3 
+plug-in CICS Explorer V5.1.0.x
+(Based on Eclipse 3.6.2) Y N N N CICS Explorer V5.1.1.x
+(Based on Eclipse 4.2.2) N Y N N CICS Explorer V5.2.0.x
+(Based on Eclipse 4.2.2) N N Y N CICS Explorer V5.3.0.x
+(Based on Eclipse 4.4.2) N N N Y CICS Explorer V5.4.0.x
+(Based on Eclipse 4.6.3) N N N Y 
+Compatibility between CICS IA 
+and the plug-in CICS IA V5.1 
+plug-in CICS IA V5.1.1 
+plug-in CICS IA V5.2 
+plug-in CICS IA V5.3 
+plug-in CICS IA V5.1 Y Y Y Y CICS IA V5.2 N N Y Y CICS IA V5.3 N N N Y 
+
+Back to top
+
+
+
+
+
+
+
+CICS Performance Analyzer for z/OS (CICS PA)
+
+
+Compatibility between CICS Explorer 
+release and the plug-in CICS PA V5.1 
+plug-in CICS PA V5.1.1 
+plug-in CICS PA V5.2 
+plug-in CICS PA V5.3 
+plug-in CICS PA V5.4 
+plug-in CICS Explorer V5.1.0.x
+(Based on Eclipse 3.6.2) Y N N N N CICS Explorer V5.1.1.x
+(Based on Eclipse 4.2.2) N Y N N N CICS Explorer V5.2.0.x
+(Based on Eclipse 4.2.2) N N Y N N CICS Explorer V5.3.0.x
+(Based on Eclipse 4.4.2) N N N Y N CICS Explorer V5.4.0.x
+(Based on Eclipse 4.6.3) N N N N Y 
+Compatibility between CICS PA 
+and the plug-in CICS PA V5.1 
+plug-in CICS PA V5.1.1 
+plug-in CICS PA V5.2 
+plug-in CICS PA V5.3 
+plug-in CICS PA V5.4 
+plug-in CICS PA V5.1 Y Y Y Y Y CICS PA V5.2 N N Y Y Y CICS PA V5.3 N N N Y Y CICS PA V5.4 N N N N Y 
+Back to top
+
+
+
+
+
+
+
+CICS Transaction Gateway (CICS TG) for z/OS, CICS TG for Multiplatforms, and CICS TG Desktop Edition
+
+
+
+Compatibility between CICS Explorer 
+release and the plug-in CICS TG 
+plug-in V2.0 CICS TG 
+plug-in V2.0.1 CICS TG 
+plug-in V2.1.0 CICS TG 
+plug-in V3.0 CICS Explorer V5.1.0.x
+(Based on Eclipse 3.6.2) Y N N N CICS Explorer V5.1.1.x
+(Based on Eclipse 4.2.2) N Y N N CICS Explorer V5.2.0.x
+(Based on Eclipse 4.2.2) N N Y Y CICS Explorer V5.3.0.x
+(Based on Eclipse 4.4.2) N N N Y CICS Explorer V5.4.0.x
+(Based on Eclipse 4.6.3) N N N Y 
+Compatibility between CICS TG 
+and the plug-in CICS TG
+plug-in V2.0 CICS TG
+plug-in V2.0.1 CICS TG
+plug-in V2.1.0 CICS TG
+plug-in V3.0 CICS TG V8.1 Y Y Y Y CICS TG V9.0 Y Y Y Y CICS TG V9.1 Y Y Y Y CICS TG V9.2 Y Y Y Y 
+Back to top
+
+
+
+
+
+
+
+
+CICS VSAM Transparency for z/OS (CICS VT) 
+
+Compatibility between CICS Explorer 
+release and the plug-in CICS VT V2.1
+plug-in (SupportPac) CICS Explorer V5.1.0.x
+(Based on Eclipse 3.6.2) Y CICS Explorer V5.1.1.x
+(Based on Eclipse 4.2.2) Y CICS Explorer V5.2.0.x
+(Based on Eclipse 4.2.2) Y CICS Explorer V5.3.0.x
+(Based on Eclipse 4.4.2) Y CICS Explorer V5.4.0.x
+(Based on Eclipse 4.6.3) Y 
+Compatibility between CICS VT 
+and the plug-in CICS VT V2.1
+plug-in (SupportPac) CICS VT V2.1 Y 
+Back to top
+
+
+
+
+
+
+
+IBM Session Manager for z/OS (ISM)
+
+
+Compatibility between CICS Explorer 
+release and the plug-in ISM V3.1 
+plug-in ISM V3.2 
+plug-in CICS Explorer V5.1.0.x
+(Based on Eclipse 3.6.2) Y Y CICS Explorer V5.1.1.x
+(Based on Eclipse 4.2.2) N N CICS Explorer V5.2.0.x
+(Based on Eclipse 4.2.2) N N CICS Explorer V5.3.0.x
+(Based on Eclipse 4.4.2) N N CICS Explorer V5.4.0.x
+(Based on Eclipse 4.6.3) N N 
+Compatibility between ISM
+and the plug-in ISM V3.1 
+plug-in ISM V3.2 
+plug-in ISM V3.1 Y N ISM V3.2 N Y 
+Back to top
+
+
+
+
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Host Transaction Processing CICS Configuration Manager for z/OS CICS Explorer Plug-in z/OS 5.3, 5.2, 5.1 Host Transaction Processing CICS Deployment Assistant for z/OS Explorer Plug-in z/OS 5.3, 5.2, 5.1 Host Transaction Processing CICS Interdependency Analyzer for z/OS IA Explorer z/OS 5.3, 5.2, 5.1 Host Transaction Processing CICS Performance Analyzer for z/OS CICS Explorer Plug-in z/OS 5.4, 5.3, 5.2, 5.1 Host Transaction Processing IBM Session Manager CICS Explorer Plug-in z/OS 3.2, 3.1 Host Transaction Processing CICS VSAM Transparency for z/OS CICS Explorer plug-in z/OS 2.1 Host Transaction Processing CICS Transaction Gateway CICS Transaction Gateway plug-in for CICS Explorer 9.2, 9.1, 9.0, 8.1 
+PRODUCT ALIAS/SYNONYM
+ CICS/TS CICS TS CICS Transaction Server

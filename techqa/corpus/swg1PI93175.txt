@@ -1,0 +1,218 @@
+Title: IBM PI93175: WELL-KNOWN TYPES ARE GETTING MAPPED ACROSS COMPONENTS WHICH CORRUPTS THE WELL-KNOWN TYPE URI CACHE (WI 120387) - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS UNREPRODUCIBLE IN NEXT RELEASE.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Through currently unknown causes, behavior where the well-known
+   types cache cannot be loaded due to duplicate well-known types
+   existing in the same component is observed. Further
+   investigation shows that several well-known type resources are
+   referenced in multiple components but unused in any indexed
+   artifacts and also not mapped to any configurations in the
+   components in question. Because of this, this data is serving no
+   purpose but still renders affected components completely useless
+   due to broken well-known types caches.
+   
+   Steps to reproduce:
+   Unknown
+   
+   Relevant Stack Traces:
+   2017-12-14 17:55:23,908  ERROR
+   .services.types.internal.WellKnownTypesCacheLoader  - Component
+   URI = [componentURL]
+   com.ibm.rdm.fronting.server.exception.GoneException: Propagated
+   exception; original message [GoneException:
+   com.ibm.rdm.fronting.server.exception.GoneException]
+   at
+   com.ibm.rdm.fronting.server.exception.RRSException.newException(
+   RRSException.java:239)
+   at
+   com.ibm.rdm.fronting.server.exception.RRSException.newException(
+   RRSException.java:805)
+   at
+   com.ibm.rdm.fronting.server.exception.RRSException.capture(RRSEx
+   ception.java:809)
+   at
+   com.ibm.rdm.fronting.server.core.jpi.internal.InternalServiceExc
+   hange.checkError(InternalServiceExchange.java:54)
+   at
+   com.ibm.rdm.fronting.server.core.jpi.internal.InternalServiceExc
+   hange.getResponse(InternalServiceExchange.java:37)
+   at
+   com.ibm.rdm.fronting.server.services.types.internal.WellKnownTyp
+   esCacheLoader.load(WellKnownTypesCacheLoader.java:145)
+   at
+   com.ibm.rdm.fronting.server.services.types.internal.WellKnownTyp
+   esCacheLoader.load(WellKnownTypesCacheLoader.java:1)
+   ...
+   Caused by: com.ibm.rdm.fronting.server.exception.GoneException:
+   com.ibm.rdm.fronting.server.exception.GoneException
+   at
+   com.ibm.rdm.fronting.server.exception.RRSException.newException(
+   RRSException.java:239)
+   at
+   com.ibm.rdm.fronting.server.exception.RRSException.newGoneExcept
+   ion(RRSException.java:194)
+   at
+   com.ibm.rdm.fronting.server.services.types.isrs.RetrieveTypeJAF.
+   doUnRevisionedRetrieve(RetrieveTypeJAF.java:165)
+   at
+   com.ibm.rdm.fronting.server.services.types.isrs.RetrieveTypeJAF.
+   executeServiceRequest(RetrieveTypeJAF.java:69)
+   ...
+   
+   2017-12-14 17:55:37,716 ... ERROR
+   ibm.rdm.fronting.server.services.RMRestServiceBase  - CRRRS1007E
+   A problem occurred in the Requirements Management (RM) server:
+   Entry [...]
+   com.ibm.rdm.fronting.server.exception.InternalServerErrorExcepti
+   on: Propagated exception; original message
+   [NullPointerException: Could not find project specific Resource
+   for well-known attribute definition: CreatedOn]
+           ...
+   Caused by: java.lang.NullPointerException: Could not find
+   project specific Resource for well-known attribute definition:
+   CreatedOn
+       at
+   com.google.common.base.Preconditions.checkNotNull(Preconditions.
+   java:229)
+       at
+   com.ibm.rdm.fronting.server.services.types.internal.ProjectTypeS
+   ystem.getWellKnownAttributeDefinition(ProjectTypeSystem.java:784
+   )
+       at
+   com.ibm.rdm.fronting.server.core.artifacts.isrs.AbstractReadModu
+   leJAF.addSystemPropertiesToModule(AbstractReadModuleJAF.java:118
+   )
+       at
+   com.ibm.rdm.fronting.server.core.artifacts.isrs.ReadModuleJAF.bu
+   ildModuleResourceModel(ReadModuleJAF.java:197)
+       at
+   com.ibm.rdm.fronting.server.core.artifacts.isrs.ReadModuleJAF.ex
+   ecuteServiceRequest(ReadModuleJAF.java:88)
+       ...
+   
+   2017-12-14 17:55:53,106  ERROR
+   g.server.services.types.internal.ProjectTypeSystem  - Could not
+   retrieve well-known type from well-known URI.  Component:
+   <componentURL> URI: <http://purl.org/dc/terms/created>
+   
+   For more information, refer to the following workitem on
+   jazz.net:
+   https://jazz.net/jazz03/resource/itemName/com.ibm.team.workitem. [https://jazz.net/jazz03/resource/itemName/com.ibm.team.workitem.]
+   WorkItem/120387
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * Unknown                                                      *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * Through currently unknown causes, behavior where the         *
+   * well-known types cache cannot be loaded due to duplicate     *
+   * well-known types existing in the same component is observed. *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This issue is fixed in the DOORS Next Generation 6.0.5 iFix003
+   release.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI93175
+   
+   
+ * REPORTED COMPONENT NAME
+   RATL DOORS NG
+   
+   
+ * REPORTED COMPONENT ID
+   5724W87NG
+   
+   
+ * REPORTED RELEASE
+   604
+   
+   
+ * STATUS
+   CLOSED UR1
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2018-01-31
+   
+   
+ * CLOSED DATE
+   2018-03-06
+   
+   
+ * LAST MODIFIED DATE
+   2018-03-06
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   RATL DOORS NG
+   
+   
+ * FIXED COMPONENT ID
+   5724W87NG
+   
+   
+
+APPLICABLE COMPONENT LEVELS

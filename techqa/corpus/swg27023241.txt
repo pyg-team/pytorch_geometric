@@ -1,0 +1,39 @@
+Title: IBM Known Limitation: How to delete a case in IBM Case Manager 5.0.0.2 and 5.1.0 integrated with IBM FileNet P8 with IBM FileNet P8 Process Engine 5.0.0.2 and higher. - United States
+
+Text:
+ PRODUCT DOCUMENTATION
+
+ABSTRACT
+ This technote describes the steps for deleting a case by deleting the associated workflow by using FileNet P8 Process Administrator then delete the case by using FileNet Enterprise Manager. This procedure will result in any currently open work items being terminated, and tasks and comments associated with the case are also deleted. 
+
+CONTENT
+As an administrator, before deleting a case you must delete the workflow associated with the case by using FileNet P8 Process Administrator then delete the case by using P8 FileNet Enterprise Manager. 
+
+To delete the workflow: 
+
+1. Use P8 FileNet Enterprise Manager to locate the case. For example, navigate to Object Stores > case_manager_target_object_store_name > Root Folder > IBM Case Manager > Solution Deployments > my_solution > Case Types > Cases. 
+
+2. Locate the Year > Month > Day > Hour > Case_name folder. For example, navigate to 2011 > 01 > 15 > 09 > 100000100001. 
+
+3. Right-click Case_name and select Properties. Go to Properties tab, select All Properties. Scroll down to ID field, click on the … button on the right of the ID field. In the Display/Edit value dialog, highlight the ID right-click and select Copy. Save the Case Folder ID, it will be needed later in step 4. Close the Display/Edit value and the Properties dialogs. 
+
+4. Go to Process Engine server, log on to the vwtool and type convert at the vwtool prompt. Select option g (Convert guid string), enter the Case Folder ID obtained from step 3, and press Enter. Save the guid string returned by the vwtool. This is needed in step 6. 
+
+5. Use FileNet P8 Process Administrator to locate the workflow. In the Look for list box select Workflows. Select Workflow Roster in the In list box. In the Select one drop down, select the roster name, which is the same as the solution name. In the Search mode area, check Edit (all fields). 
+
+6. In the search area textbox enter F_CaseFolder=guid_string. However, the expression for the guid_string must be in the format appropriate to the database. On an Oracle database, put the single quotes around the guid_string. On a SQL Server database, you must precede the value with "0x". On a DB2 database, precede the value with "x" and put the single quotes surrounding the value. For example, to search for an F_ CaseFolder value of '1234567890', enter the following in the edit box: 
+
+Oracle: F_ CaseFolder ='1234567890' 
+
+SQL Server: F_ CaseFolder =0x1234567890 
+
+DB2: F_ CaseFolder =x'1234567890' 
+
+7. Click Find Now. 
+
+8. Right-click on the returned items, select Tasks > Delete Work. Click OK. 
+
+To delete the case folder: 
+
+ 1. Use FileNet Enterprise Manager, right-click Case_name folder and select Delete. 
+ 2. Select the delete option that maps to what you want to do. If you just want to delete the case and folders in the case, select 'Delete folders and containment relationships only'. If you want to delete the documents in the case as well, then select 'Delete content of contained versions' or 'Delete content of all versions and all contained objects'. Click Yes. Refer to the FileNet P8 help to select which delete option you may want to choose: http://publib.boulder.ibm.com/infocenter/p8docs/v5r0m0/topic/com.ibm.p8.ce.admin.doc/docsandfolders/df_about_folders.htm [http://publib.boulder.ibm.com/infocenter/p8docs/v5r0m0/topic/com.ibm.p8.ce.admin.doc/docsandfolders/df_about_folders.htm]

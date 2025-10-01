@@ -1,0 +1,171 @@
+Title: IBM IZ70085: RFC RETRY OPTION IS NOT RETRYING MORE THAN FIVE TIMES. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  RFC retry option is not retrying more than five times.
+   
+   Customer needs a way to manage RFC retry after the RFC has been
+   open and communication is lost while processing a job.
+   RFC retry option is not retrying more than five times although
+   it's been specified a value of 10.
+   
+   The counter in this scenario is not related to rfc connection,
+   like rfc_open_retry or retry, but it is the retry count for
+   status check, while waiting for job to complete.
+   
+   This counter has the default value set to 5 and is not possible
+   to be customized via option's file.
+   
+   Because of the RFC system exception, we do not take the options
+   file settings of RETRY into account. So the customers setting of
+   10 is ignored and the outer loop of fixed 5 retries is used.
+   
+   We can add a new options file keyword e.g. RETRY_GET_JOB_STATUS
+   to make the retry counter customizable.
+   Default = 5 or use other values as specified.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Work-arounds which could be helpful - solutions may not fit with
+   customers with high scheduling workload:
+   
+   * Increase the options keyword short_interval from 30 to 120 or
+   higher to come into the 10 Minutes retry window. 10 Min = 600
+   seconds. 600 / 5 = 120 seconds. So 5 retries fit into 10
+   Minutes. This has the side effect that all jobs are affected and
+   the job status is delayed to 2 minutes always.
+   
+   * Because of the limitation above, customers could create a copy
+   of the workstation definition which is affected and define the
+   short_interval to a higher value. The TWS jobs now have to use
+   that copy workstation definition and schedule the SAP jobs only
+   for the timeframe when the RFC connection is expected to be
+   down. Outside the expected RFC downtime window, the jobs are
+   scheduled using the original workstation definition.
+   
+   * If the RFC connection is down on a fixed timeframe, the
+   workstation limit can be set to 0 (zero) for that period of
+   time. This could be managed with a TWS job.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  See apar description.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This apar will be fixed into
+   TWS for APPS 8.5 FP1 and tws for APPS 8.4 fp3.
+   During monitoring of a SAP Job, Process Chain or Infopackage, we
+   had a fixed value of 5 retries if it fails to retrieve
+   the actual job status of an SAP Job. This fixed value together
+   with the long / short interval polling rate does not fit into
+   the customers scenario when e.g. network issues occur. Due
+   to this, the fixed retry value has been made customizable
+   via a new options file keyword GET_JOB_STATUS_RETRY. Allowed
+    values are 1 to 9999, default = 5. Additinally, a new retry
+   delay can be specified. By using the new options file keyword
+   GET_JOB_STATUS_RETRY_DELAY with a value
+   between 1 and 9999, the customer can specify a different sleep
+   period than using short / long interval. Default sleep value
+   is the actual value used between short and long interval.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ70085
+   
+   
+ * REPORTED COMPONENT NAME
+   TWS APP FOR R/3
+   
+   
+ * REPORTED COMPONENT ID
+   5698WSER3
+   
+   
+ * REPORTED RELEASE
+   840
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-02-10
+   
+   
+ * CLOSED DATE
+   2010-03-31
+   
+   
+ * LAST MODIFIED DATE
+   2010-10-08
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TWS APP FOR R/3
+   
+   
+ * FIXED COMPONENT ID
+   5698WSER3
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R850 PSY
+   UP

@@ -1,0 +1,145 @@
+Title: IBM JR46378: CONCURRENTMODIFICATIONEXCEPTION WHEN EXECUTING PROCESS AFTER PRODUCTMIGRATION - United States
+
+Text:
+  DIRECT LINKS TO FIXES
+7.5.1.2-WS-BPM-IFJR46378 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Standard&fixids=7.5.1.2-WS-BPM-IFJR46378&source=SAR]
+Version 8.0.1 Fix Pack 2 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24035701]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  If a BPD instance is persisted at an activity which has
+   multiple attached event handlers, and then a product
+   migration from a WebSphere Lombardi Edition version
+   happens, this BPD instance cannot continue navigation.
+   Instead, a ConcurrentModificationException is thrown.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  NA
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Problem Description:
+   If a BPD instance is persisted at an activity which has
+   multiple attached event handlers, and then a product
+   migration from a WebSphere Lombardi Edition version
+   happens, this BPD instance cannot continue navigation.
+   Instead, a ConcurrentModificationException is thrown.
+   
+   Problem Summary:
+   To support advanced scenarios, a thread safe list
+   implementation is used in BPM for storing attached event
+   handlers. This thread safe list implementation was not
+   necessary and therefore not in place in prior versions.
+   Therefore, BPD instances persisted with prior versions
+   are continued with the thread unsafe list implementation
+   that will throw the ConcurrentModificationException
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  After applying the interim fix, migrated BPD instances
+   will continue to work without the observed
+   ConcurrentModificationException.
+   
+   iFix available on to of V801 FP1
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR46378
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM STANDARD
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9500
+   
+   
+ * REPORTED RELEASE
+   801
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-04-16
+   
+   
+ * CLOSED DATE
+   2013-06-06
+   
+   
+ * LAST MODIFIED DATE
+   2013-06-06
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    JR46662 [http://www-01.ibm.com/support/docview.wss?uid=swg1JR46662]
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   BPM STANDARD
+   
+   
+ * FIXED COMPONENT ID
+   5725C9500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R801 PSY
+   UP

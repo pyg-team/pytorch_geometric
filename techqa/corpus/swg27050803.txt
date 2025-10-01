@@ -1,0 +1,88 @@
+Title: IBM Managing user settings administratively in IBM Datacap Navigator - United States
+
+Text:
+ PRODUCT DOCUMENTATION
+
+ABSTRACT
+ To manage the user settings administratively, as an administrator, you can add a "usersettings.json" file under the Datacap application directory on the server side. 
+
+CONTENT
+
+
+You can add the usersettings.json file at the following location: \configuration\usersettings.json For example, c:\Datacap\TravelDocs\configuration\usersettings.json 
+
+Note: The usersettings.json file is optional. If this file does not exist, is empty, or its format is not correct, the Datacap Navigator still works properly.
+
+The user settings are grouped into 10 tabs in the User Setting window. In the "usersettings.json" file, the settings in each tab corresponds to a json object as shown below:
+
+ [/support/docview.wss?uid=swg27050803&amp;aid=1] 
+
+Inside the tab json object, each user setting parameter is also a json object.
+
+ [/support/docview.wss?uid=swg27050803&amp;aid=2] 
+
+In above sample, “autoLaunchNextBatch” is a setting for classify page. For each setting, the administrator can specify 3 types of values:
+
+“defaultValue”: This is the default value of this setting, which is used if the users have not saved their own user settings in the configuration database. If the administrator user does not specify the default value for a setting, then its default value will be from the code (hard coded in Datacap Navigator). After the users save their own setting values, the default value will not take effect.
+
+“value”: If the administrator user specifies this "value" for a user setting, then it will take effect for all the end users, overriding the user's own settings. Also, in the User Setting window, this setting will be shown as read only, so the end user cannot change it.
+
+“resetValue”: This is used when the administrator wants to reset a user setting to some value for all the end users, but still allows the end user to change it later. When specifying the "resetValue", the administrator must specify "version". After a reset value is applied for a user, the user's settings saved in the configuration database will also have this version number. Next time, the code will compare the version number in the config DB and the one in the administrator "usersetting.json" file. If it finds the version in config DB is equal or larger than the one in this json file, it will not apply this value. Otherwise, it will apply this reset value and update the version number in the config DB. So when the administrator wants to reset the user setting value again, the administrator will increase this version number in this .json file. In summary, the version number is used to ensure the reset value will be applied to the user setting of a user only once.
+
+Limitation: The layout setting is not supported in this feature.
+
+ [/support/docview.wss?uid=swg27050803&aid=3] [/support/docview.wss?uid=swg27050803&aid=3] 
+
+ [/support/docview.wss?uid=swg27050803&amp;aid=4] 
+
+The value for the "viewMode" can be:
+
+ [/support/docview.wss?uid=swg27050803&amp;aid=5] 
+
+ [/support/docview.wss?uid=swg27050803&aid=6] [/support/docview.wss?uid=swg27050803&aid=6] 
+
+ [/support/docview.wss?uid=swg27050803&amp;aid=7] 
+
+ [/support/docview.wss?uid=swg27050803&aid=8] [/support/docview.wss?uid=swg27050803&aid=8] 
+
+ [/support/docview.wss?uid=swg27050803&amp;aid=9] 
+
+ [/support/docview.wss?uid=swg27050803&aid=10] [/support/docview.wss?uid=swg27050803&aid=10] 
+
+ [/support/docview.wss?uid=swg27050803&amp;aid=11] 
+
+ [/support/docview.wss?uid=swg27050803&aid=12] [/support/docview.wss?uid=swg27050803&aid=12] 
+
+ [/support/docview.wss?uid=swg27050803&amp;aid=13] 
+
+ [/support/docview.wss?uid=swg27050803&aid=14] [/support/docview.wss?uid=swg27050803&aid=14] 
+
+ [/support/docview.wss?uid=swg27050803&amp;aid=15] 
+
+ [/support/docview.wss?uid=swg27050803&aid=16] [/support/docview.wss?uid=swg27050803&aid=16] 
+
+ [/support/docview.wss?uid=swg27050803&amp;aid=17] 
+
+ [/support/docview.wss?uid=swg27050803&aid=18] [/support/docview.wss?uid=swg27050803&aid=18] 
+
+ [/support/docview.wss?uid=swg27050803&amp;aid=19] 
+
+ [/support/docview.wss?uid=swg27050803&aid=20] [/support/docview.wss?uid=swg27050803&aid=20] 
+
+ [/support/docview.wss?uid=swg27050803&amp;aid=21] 
+
+ [/support/docview.wss?uid=swg27050803&amp;aid=22] 
+
+Note The value for "SortByProp" must be in upper-case. For example, "NONE".
+
+ The following system column IDs can be added to "visibleAttrs". Besides, the custom column IDs can also be added to this setting: 
+
+ [/support/docview.wss?uid=swg27050803&amp;aid=23] 
+
+ [/support/docview.wss?uid=swg27050803&aid=24] [/support/docview.wss?uid=swg27050803&aid=24] 
+
+ [/support/docview.wss?uid=swg27050803&amp;aid=25] 
+
+ The list of IDs, which can be added to "visibleAttrs" is the same as the one for Job Monitor settings. 
+
+ [/support/docview.wss?uid=swg27050803&amp;aid=26]

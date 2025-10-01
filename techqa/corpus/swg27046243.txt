@@ -1,0 +1,69 @@
+Title: IBM Support Easy OnBoarding Knowledge Collection of Support Social Media Channels and Resources - United States
+
+Text:
+Easy OnBoarding; GO project; Support EDUCATION
+
+ABSTRACT
+ This is a collection of IBM Support Social Media Channels, Product Newsletters, Technical Exchanges, and IBM Education Assistant (IEA) modules that are included with the IBM Support Easy OnBoarding tool. 
+
+CONTENT
+This is a collection of IBM Support Social Media Channels, Product Newsletters, Technical Exchanges, and IBM Education Assistant (IEA) modules that are included with the IBM Support Easy OnBoarding [https://support-easy-onboarding.mybluemix.net] tool which helps our clients:
+
+
+
+
+ * Sign up for an IBM ID 
+ * Sign up for Product Notifications and Lifecycle Subscriptions 
+ * Access the IBM Support Portal 
+ * Register for Service Request (SR) 
+ * Register for Passport Advantage (PA)
+
+
+Join our social circuit! Become part of our growing community of users and engage with us on any of our social media channels! IBM Analytics 
+
+ 
+
+Platform Social Media Channels [http://www.ibm.com/support/docview.wss?uid=swg27036152] Solutions <coming soon> Enterprise Content Management Social Media Channels [http://www.ibm.com/support/docview.wss?uid=swg21673183] Enterprise Social Solutions Social Media Channels [http://www.ibm.com/support/docview.wss?uid=swg21675532] Internet of Things IoT Social Support [https://www.ibm.com/developerworks/community/blogs/iotsupport/entry/What_is_IBM_IoT_Support?lang=en] Safer Planet <coming soon> Smarter Workforce <coming soon> IBM Cloud
+
+
+
+Cloud Software IBM Cloud Support and Services [https://www.ibm.com/developerworks/community/blogs/ibmcloudsupport/entry/ibm_cloud_support_resources?lang=en] Bluemix  * https://developer.ibm.com/bluemix/blog/ [https://developer.ibm.com/bluemix/blog/]
+
+
+IBM Commerce 
+
+IBM Commerce Social Media Channels [http://www.ibm.com/support/docview.wss?uid=swg21655419] 
+IBM Healthcare 
+
+IBM Watson Health <coming soon> 
+IBM Security 
+
+IBM Security Social Media Channels [http://www.ibm.com/support/docview.wss?uid=swg27046881] 
+IBM Systems 
+
+Systems Middleware Social Media Channels [http://www.ibm.com/support/docview.wss?uid=swg21410956] Storage Systems <coming soon> z Systems Software Social Media Channels [http://www.ibm.com/support/docview.wss?uid=swg21971161] 
+IBM Watson 
+
+IBM Watson <coming soon> The following Product Newsletters are available to our clients: 
+
+ * ECM Product Newsletters Knowledge Collection [http://www.ibm.com/support/docview.wss?uid=swg27041952] 
+ * IBM Support Online Resources and Subscriptions [http://www.ibm.com/support/docview.wss?uid=swg27015896] 
+ * Tivoli Technical Support Information Newsletters [http://www.ibm.com/support/docview.wss?uid=swg27015896]
+
+
+The following Technical Exchanges are available to our clients: 
+
+ * ECM Technical Exchange Knowledge Collection [http://www.ibm.com/support/docview.wss?uid=swg21690159] 
+ * Security Systems Support (general) [https://www.ibm.com/support/entry/myportal/previous_tech_exchanges/security_systems/security_systems_support_%28general%29?productContext=-1089885148] 
+ * WebSphere brand Support Technical Exchanges  * Upcoming WebSphere brand Support Technical Exchanges
+   
+   
+
+The following IBM Education Assistant (IEA) modules are available to our clients: 
+
+ * ECM IEA Modules Knowledge Collection [http://www.ibm.com/support/docview.wss?uid=swg21690159]
+
+
+The following Education Modules are available to our clients: 
+
+ * IBM ECM Education - YouTube videos [https://www.youtube.com/channel/UCVMMftVJxhV2q_R2pnsEXAQ?cm_mc_uid=55662159851414441759745&cm_mc_sid_50200000=1444231231]

@@ -1,0 +1,202 @@
+Title: IBM PM66670: WHEN LOGIN ATTRIBUTE VALUE HAS "=" SIGN IN IT, INVALIDUNIQUENAME EXCEPTION IS THROWN. - United States
+
+Text:
+  FIXES ARE AVAILABLE
+8.0.0.4: WebSphere Application Server V8.0 Fix Pack 4 [http://www-01.ibm.com/support/docview.wss?uid=swg24033190]
+8.5.0.1: WebSphere Application Server V8.5 Fix Pack 1 [http://www-01.ibm.com/support/docview.wss?uid=swg24033606]
+8.0.0.5: WebSphere Application Server V8.0 Fix Pack 5 [http://www-01.ibm.com/support/docview.wss?uid=swg24033754]
+8.5.0.2: WebSphere Application Server V8.5 Fix Pack 2 [http://www-01.ibm.com/support/docview.wss?uid=swg24034672]
+8.0.0.6: WebSphere Application Server V8.0 Fix Pack 6 [http://www-01.ibm.com/support/docview.wss?uid=swg24034673]
+8.0.0.7: WebSphere Application Server V8.0 Fix Pack 7 [http://www-01.ibm.com/support/docview.wss?uid=swg24035457]
+8.0.0.8: WebSphere Application Server V8.0 Fix Pack 8 [http://www-01.ibm.com/support/docview.wss?uid=swg24036729]
+8.0.0.9: WebSphere Application Server V8.0 Fix Pack 9 [http://www-01.ibm.com/support/docview.wss?uid=swg24037574]
+8.0.0.10: WebSphere Application Server V8.0 Fix Pack 10 [http://www-01.ibm.com/support/docview.wss?uid=swg24039242]
+8.0.0.11: WebSphere Application Server V8.0 Fix Pack 11 [http://www-01.ibm.com/support/docview.wss?uid=swg24040425]
+8.0.0.12: WebSphere Application Server V8.0 Fix Pack 12 [http://www-01.ibm.com/support/docview.wss?uid=swg24041590]
+8.0.0.13: WebSphere Application Server V8.0 Fix Pack 13 [http://www-01.ibm.com/support/docview.wss?uid=swg24042746]
+8.0.0.14: WebSphere Application Server V8.0 Fix Pack 14 [http://www-01.ibm.com/support/docview.wss?uid=swg24044096]
+8.0.0.15: WebSphere Application Server V8.0 Fix Pack 15 [http://www-01.ibm.com/support/docview.wss?uid=swg24044734]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  UniqueName formation was incorrect which leads to login failure
+   with 6/5/12 9:53:35:968 EDT] 00000087 UserRegistryI E
+   SECJ0363E: Cannot create credential for the user tw=admin
+   because of the following exception
+   com.ibm.websphere.wim.exception.InvalidUniqueNameException:
+   CWWIM0515E  The 'tw=admin' entity is not in the scope of the
+   'defined' realm.
+    at
+   com.ibm.ws.wim.RepositoryManager.getRepositoryIndexByUniqueName(
+   RepositoryManager.java:333)
+    at
+   com.ibm.ws.wim.RepositoryManager.getRepositoryID(RepositoryManag
+   er.java:279)
+    at
+   com.ibm.ws.wim.ProfileManager.retrieveEntityFromRepository(Profi
+   leManager.java:2800)
+    at
+   com.ibm.ws.wim.ProfileManager.retrieveEntity(ProfileManager.java
+   :2916)
+    at
+   com.ibm.ws.wim.ProfileManager.getImpl(ProfileManager.java:1614)
+    at
+   com.ibm.ws.wim.ProfileManager.genericProfileManagerMethod(Profil
+   eManager.java:364)
+    at
+   com.ibm.ws.wim.ProfileManager.get(ProfileManager.java:417)
+    at
+   com.ibm.websphere.wim.ServiceProvider.get(ServiceProvider.java:3
+   66)
+    at
+   com.ibm.ws.wim.registry.util.BridgeUtils.getEntityByIdentifier(B
+   ridgeUtils.java:622)
+    at
+   com.ibm.ws.wim.registry.util.UniqueIdBridge.getUniqueUserId(Uniq
+   ueIdBridge.java:202)
+    at
+   com.ibm.ws.wim.registry.WIMUserRegistry$6.run(WIMUserRegistry.ja
+   va:568)
+    at
+   com.ibm.ws.security.auth.ContextManagerImpl.runAs(ContextManager
+   Impl.java:5445)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  All users of IBM WebSphere Application      *
+   *                  Server                                      *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Virtual member manager (VMM) throws     *
+   *                      InvalidUniqueNameException when the     *
+   *                      login attribute value contains an       *
+   *                      equal sign "=".                         *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   VMM throws InvalidUniqueNameException when the login attribute
+   value contains a "=". When an equal sign "=" is encountered in
+   the login name for example 'tw=admin', VMM treats this as a
+   distinguished name (DN) and hence the login fails.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  You need to set a custom property using the following
+   command
+   
+   $AdminTask configureAdminWIMUserRegistry {-customProperties
+   {"com.ibm.ws.wim.registry.allowDNPrincipalNameAsLiteral
+   =true"} }
+   
+   When this property is set, VMM determines whether the login
+   name ends with a baseEntry. If the login name does not end
+   with a baseEntry it is not treated as a DN and the login is
+   successful.
+   
+   The fix for this APAR is currently targeted for inclusion in
+   fix packs 8.0.0.4 and 8.5.0.1.  Please refer to the
+   Recommended Updates page for delivery information:
+   http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM66670
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBS APP SERV N
+   
+   
+ * REPORTED COMPONENT ID
+   5724H8800
+   
+   
+ * REPORTED RELEASE
+   800
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-06-13
+   
+   
+ * CLOSED DATE
+   2012-07-13
+   
+   
+ * LAST MODIFIED DATE
+   2012-07-13
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBS APP SERV N
+   
+   
+ * FIXED COMPONENT ID
+   5724H8800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R800 PSY
+   UP
+   
+   
+ * R850 PSY
+   UP

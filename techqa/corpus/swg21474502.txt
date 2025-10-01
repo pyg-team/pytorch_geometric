@@ -1,0 +1,69 @@
+Title: IBM AIDSC0042E: Could not retrieve policies assigned to the user - United States
+
+Text:
+policy SSC DB2 connection TECHNOTE (FAQ)
+
+QUESTION
+Unable to display the instant message policy from the Sametime System Console and you get the error message "AIDSC0042E: Could not retrieve policies assigned to the user". If you log out and log back in, the error message disappears and you can see the policy. 
+
+CAUSE
+This is caused by a stale connection exception, described below and resolution given.
+
+ANSWER
+Explanation 
+
+After an extended idle period, the firewall (FW) or Load Balancer (LB) times out the DB2 connections, without informing the Sametime products code and thereby leaving the dead connection still in the pool.
+
+When the user first hits the page, the Sametime code uses the existing connection and generates the exception and reports the error. 
+
+The server is then able to tear down and remove that connection from the pool, and recreate them. 
+
+Upon restarting the client, it works successfully because of a fresh connection. 
+
+
+Resolution
+To resolve this issue, you need to tune the JDBC connection pool settings - You'll want these set consistently across all of the connection pools. 
+
+[/support/docview.wss?uid=swg21474502&amp;aid=1]
+
+Set the "Minimum Connections" to 0 (zero) - this will allow the system to close/recreate all the connections and will not force system to try and hang on to a timed out connection. 
+
+Set the "Aged timeout" to something other than zero - should be slightly less than the FW/LB idle time-out setting.
+
+Definitions 
+
+Minimum Connections - 
+
+Specifies the minimum number of physical connections to maintain. 
+
+If the size of the connection pool is at or below the minimum connection pool size, the Unused timeout thread does not discard physical connections. However, the pool does not create connections solely to ensure that the minimum connection pool size is maintained. Also, if you set a value for Aged timeout, connections with an expired age are discarded, regardless of the minimum pool size setting. 
+
+For example, if the Minimum Connections value is set to 3, and one physical connection is created, the Unused timeout thread does not discard that connection. By the same token, the thread does not automatically create two additional physical connections to reach the Minimum Connections setting. 
+
+Aged timeout - 
+Specifies the interval in seconds before a physical connection is discarded. 
+
+Setting Aged timeout to 0 supports active physical connections remaining in the pool indefinitely. Set the Aged timeout value higher than the Reap timeout value for optimal performance. 
+
+For example, if the Aged timeout value is set to 1200, and the Reap Time value is not 0, any physical connection that remains in existence for 1200 seconds (20 minutes) is discarded from the pool. The only exception is if the connection is involved in a transaction when the Aged timeout is reached, the application server will not discard the connection until after the transaction is completed and the connection is closed. 
+
+ 
+
+ 
+
+Unused timeout - 
+Specifies the interval in seconds after which an unused or idle connection is discarded. 
+
+Set the Unused timeout value higher than the Reap timeout value for optimal performance. Unused physical connections are only discarded if the current number of connections exceeds the Minimum Connections setting. For example, if the Unused timeout value is set to 120, and the pool maintenance thread is enabled (Reap Time is not 0), any physical connection that remains unused for two minutes is discarded. 
+
+
+
+Reap Time - 
+
+Specifies the interval, in seconds, between runs of the pool maintenance thread. 
+
+For example, if Reap Time is set to 60, the pool maintenance thread runs every 60 seconds. The Reap Time interval affects the accuracy of the Unused timeout and Aged timeout settings. The smaller the interval, the greater the accuracy. If the pool maintenance thread is enabled, set the Reap Time value less than the values of Unused Timeout and Aged Timeout. When the pool maintenance thread runs, it discards any connections remaining unused for longer than the time value specified in Unused timeout, until it reaches the number of connections specified in Minimum Connections. The pool maintenance thread also discards any connections that remain active longer than the time value specified in Aged timeout. 
+
+The Reap Time interval also affects performance. Smaller intervals mean that the pool maintenance thread runs more often and degrades performance. 
+
+To disable the pool maintenance thread set Reap Time to 0, or set both Unused timeout and Aged timeout to 0. The recommended way to disable the pool maintenance thread is to set Reap Time to 0, in which case Unused timeout and Aged timeout are ignored. However, if Unused timeout and Aged timeout are set to 0, the pool maintenance thread runs, but only physical connections which time-out due to non-zero time-out values are discarded.

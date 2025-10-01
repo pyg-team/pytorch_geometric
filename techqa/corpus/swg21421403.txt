@@ -1,0 +1,57 @@
+Title: IBM ORA-02049 occurs at high load on WebSphere Process Server - United States
+
+Text:
+ORA-02049; BPC; WPS; BPEDB; deadlock; timeout TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ At high load on a WebSphere Process Server configured with a Business Process Choreographer database on Oracle®, ORA-02049 may occur. ORA-02049 states a timeout waiting for a lock or a deadlock problem. While deadlocks occur in rare cases only, timeouts waiting for a lock may occur due to massively parallel navigation of long-running business processes. 
+
+RESOLVING THE PROBLEM
+On a WebSphere Process Server with the Business Process Choreographer database configured on Oracle, the navigation transactions of a long-running process instance are serialized. This is to ensure integrity of a long-running process instance. Note that service implementations triggered by an instance can still be executed in parallel - this serialization is only about the navigation of the process instance itself. To serialize navigation transactions of a particular process instance, upon each navigation transaction a lock is obtained on the process instance before performing the actual navigation. 
+
+
+A timeout occurring during process navigation most likely has one of the following reasons:
+a) parallel navigation of a single process instance, this may happen, e.g., if a flow activity contains asynchronous two-way service invocations that are called in parallel, or the process has event handlers or a parallel for-each that in turn called asynchronous two-way service invocations.
+b) process instances waiting for a lock which is not under control of WebSphere Process Server, such as waiting for a lock in an external service
+
+
+If (a) is the reason for timeouts, you may consider changing the business process to reduce massively parallel navigation paths.
+If (b) is the reason for timeouts, the application should be changed in order to avoid locking on resources.
+
+
+For both reasons (a) and (b), the following actions can be taken to reduce the likelihood of timeouts:
+I) reduce the number of parallel threads working on business processes
+II) tune the Business Process Choreographer database
+III) tune WebSphere Process Server
+
+
+I) The number of parallel threads working on business processes is determined by the size of the various thread pools and application design. The parallelism can be reduced by:
+- reducing the size of the Web container thread pool if business processes are accessed by web applications or web services
+- reducing the size of the ORB thread pool if business processes are accessed by remote EJB applications
+- reducing the size of message listener threads if persistent messages trigger work on business processes
+- reducing the parallelism of JDBC adapter threads if they trigger work on business processes
+- reducing the parallel threads configured for the activation specification of the BPEInternalActivationSpec, which is used in each navigation step if JMS based navigation is configured (default until WPS 6.2)
+- reducing the maximum number of threads of the BPENavigationWorkManager if work-manager based navigation is used for business process navigation
+- reducing the size of the Default thread pool: this limits the number of threads that are used in a WebSphere Process Server for message processing if the messaging thread pools have not been customized
+
+
+II) See [OperatingWPS] for tuning of the Business Process Choreographer database. Tuning of the Business Process Choreographer database can prevent timeouts and deadlocks.
+
+
+III) In rare cases, insufficient tuning of the WebSphere Process Server environment may be the cause for timeouts. Make sure that the WebSphere Process Server is configured and tuned to be able to process the amount of work that is expected. See [TuneWPS] for more information; [OperatingWPS] also has a number of links to tuning documentation.
+
+
+Note: For (I) and (III) a restart of the WebSphere Process Server(s) is required. For (II), a restart of the database might be required if system level configuration settings are changed.
+
+RELATED INFORMATION
+ OperatingWPS [http://www.ibm.com/developerworks/websphere/library/techarticles/0912_grundler/0912_grundler.html ]
+TuneWPS [http://publib.boulder.ibm.com/infocenter/dmndhelp/v7r0mx/topic/com.ibm.websphere.wps.doc/doc/welcome_wps_tun.html]
+
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ WPS
+BPC
+BFM
+HTM

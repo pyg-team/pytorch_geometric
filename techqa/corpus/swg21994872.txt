@@ -1,0 +1,83 @@
+Title: IBM Known Issues and Usage Tips for IBM Case Manager Box Collaboration - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ What known issues and usage tips do I need to know when using the Box collaboration feature in IBM Case Manager? 
+
+ANSWER
+IBM Case Manager Box collaboration
+Known Limitation: Creating a Box Collaboration folder in IBM Case Manager will fail if Box metadata feature is not enabled on the Box account.
+
+The following error will be returned from Box during the creation of the Collaboration folder: The API returned an error code: 403.
+
+To use the Box Collaboration feature in IBM Case Manager, the Box account configured with IBM Case Manager must have metadata enabled on the account.
+
+Metadata is supported only for the following Box account types: Business Plus, Enterprise, Elite. Collaborators with a Personal, Personal Pro, Starter, or Business account type cannot use a metadata template.
+
+For more information about metadata in Box, see Metadata Tutorial [https://community.box.com/t5/How-to-Guides-for-Managing/Metadata-Tutorial/ta-p/352]. 
+
+Known Issue: A document that is uploaded to a Box Collaboration folder that is associated with a Case to complete a task must have the same name as the document that is associated with the task
+
+When you create a Box Collaboration folder for a case in IBM Case Manager, a user can create a Box task that is associated with a document or a folder in the Box Collaboration folder.
+
+Typically, adding a Box task to a folder or document is done in tandem with enabling a Box Event Listener, the Box Document Copy handler, to automatically copy the document that is uploaded for the Box task into the case. The Box Document Copy handler listens for events on the Box document, with which the Box task is associated. When a new revision of the document is uploaded and the Box task is completed, the handler copies the new revision of the document to the case.
+
+Users uploading a new revision of a document for a Box task, the name of the document must match the name of the document against which the Box task is created. If the name is different, the handler uploads the document as a new document that is not associated with the Box task or Box rejects the upload.
+
+This is due to requirements set by Box for a Box Collaboration folder for users with viewer-uploader permission, where the user cannot rename the document that the user is uploading into.
+https://community.box.com/t5/How-To-Guides-for-Sharing/The-Different-Access-Levels-for-Collaborators/ta-p/144 [https://community.box.com/t5/How-To-Guides-for-Sharing/The-Different-Access-Levels-for-Collaborators/ta-p/144]
+
+"Note: Viewer Uploaders cannot modify file names nor delete files." 
+
+Accessibility in IBM Case Manager Box collaboration windows 
+
+You use the Manage Collaborators window to grant users access to a Box collaboration folder for a case. This window uses some keyboard shortcuts that differ from other IBM Case Manager windows: 
+
+ * To open the Permission drop-down list in the collaborators table, navigate to the Permission column and then press F2 + Enter to open the drop-down list. Use the Arrow keys to move through the choices. Press Esc to exit the list without changing the selection. (If the Permission drop-down list is not open and you have unsaved changes, pressing Esc prompts you to save your changes.) 
+ * To remove a name from the collaborators table, navigate to the Remove column and then press F2 + Enter.
+
+In addition, there are the following known issues with this window:  * You cannot use the Tab key to navigate to the help for the Permissions drop-down list. Instead, you must click the Help icon. 
+ * You cannot use a screen reader to read the help for the Permissions drop-down list.
+
+
+Known Issue: "CJK Unified Ideographs Extension B" characters do not display and cannot be used in features that are related to Box collaboration. "CJK Unified Ideographs Extension B" characters are not supported for Box collaboration folders and user interfaces in the following situations:
+
+
+ * If you assign a Box task and use "CJK Unified Ideographs Extension B" characters in the task description, the characters do not display in the Box e-mail notification that is sent after the task is assigned. The message is blank in the Box user interface and appears to be missing in the title of the instruction file under the Box collaboration folder in Case Manager Client. 
+ * If you add a document or folder in Box with a name that contains "CJK Unified Ideographs Extension B" characters, the add operation fails with an error. 
+ * If you copy documents from a Case folder to a Box folder, any documents with titles that contain "CJK Unified Ideographs Extension B" characters are not copied. No error is displayed to say that the documents were not copied.
+
+There are currently no known workarounds for these issues. 
+
+
+Known Issue: Users will see a Box folder as a potential folder to 'Save in' when trying to add a local document or when trying to copy a document from Box into the case 
+
+In the following scenarios, the Box collaboration folder that is associated with the case will be available to be selected as a 'Save in' location in the 'Add Document' screen, but will not be a valid target location to save the file. 
+
+ * Selecting 'Add document from local' in a case folder, and trying to select a target for 'Save in'. 
+ * Selecting 'Box > Copy' on a document in Box, trying to copy a document from Box into the case.
+
+The Box folder is displayed, but cannot be selected, as it is not a valid target folder for the above actions. 
+
+
+Known Issue: Users with Viewer Uploader or Previewer Uploader rights cannot edit template metadata 
+
+A user with Viewer Uploader or Previewer Uploader permission on a document that has an associated metadata template is not permitted to edit the template metadata. The document metadata template values remain read only. 
+
+ 
+
+IBM Case Manager Box event listener 
+
+Known Issue: Duplicate work items might be created 
+
+Duplicate work items might be created if multiple IBM Case Manager Box event listeners are running with overlapping parameters. For example, event listener A includes all document types and event listener B includes a specific document type. A duplicate work item is created if both event listeners are running when a document of the specific type is added to the Box collaboration folder. 
+
+To reduce the chance of duplicate work items being created, limit the number of users who can manage and administer the event listeners in Task Manager. For example, consider defining a specific Task Manager or Box event listener administrator to avoid having a number of users configure the event listener. 
+
+Known Issue: Case Manager Box Event Listener continues to execute event handlers after the task is removed in Task Manager 
+
+Task Manager does not support shutting down a task that is running. Therefore, if you remove a Case Manager Box Event Listener task in Task Manager, event handlers that are currently running are not stopped. 
+
+No action is needed. When the Case Manager Box event listener duration elapses, the event listener stops listening. Because you deleted the scheduled task, the event listener does not restart.

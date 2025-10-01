@@ -1,0 +1,175 @@
+Title: IBM HD51457: CASE SENSITIVE/INSENSITIVE BY DEFAULT IN SEARCH - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  CASE SENSITIVE/INSENSITIVE BY DEFAULT IN
+   SEARCH
+   In Enovia Documentation following information is
+   given for the search -
+   When Performing an Advanced Search ,You can
+   check how large the search will be before you
+   actually run the search. Click the button located on
+   the vertical toolbar to find out how many items
+   currently saved to the database match your search
+   criteria. You can also regulate the performance of
+   Advanced Search by modifying the default settings.
+   The default settings are available in the Settings
+   Search window. You can access the Settings
+   Search window by clicking the Properties button on
+   the horizontal toolbar.
+   The Case Sensitive check box is used to control
+   your query results. This enables you to reduce the
+   number of items displayed in search results. In
+   order to change the default behavior of the Case
+   Sensitive check box, the properties file must be
+   modified before you log onto ENOVIA V5.
+   When the property is set to FALSE, the Case
+   Sensitive check box is checked by default and your
+   query will be case sensitive.
+   When the property is set to TRUE, the Case
+   Sensitive check box is not checked by default and
+   your query will not be case sensitive.
+   Problem- It is not mentioned in Doc, by which
+   properties file change,the default behaviour of the
+   case sensitive check box is change.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  CASE SENSITIVE/INSENSITIVE BY DEFAULT IN SEARCH
+   CASE SENSITIVE/INSENSITIVE BY DEFAULT IN
+   SEARCH
+   In Enovia Documentation following information is
+   given for the search -
+   When Performing an Advanced Search ,You can
+   check how large the search will be before you
+   actually run the search. Click the button located on
+   the vertical toolbar to find out how many items
+   currently saved to the database match your search
+   criteria. You can also regulate the performance of
+   Advanced Search by modifying the default settings.
+   The default settings are available in the Settings
+   Search window. You can access the Settings
+   Search window by clicking the Properties button on
+   the horizontal toolbar.
+   The Case Sensitive check box is used to control
+   your query results. This enables you to reduce the
+   number of items displayed in search results. In
+   order to change the default behavior of the Case
+   Sensitive check box, the properties file must be
+   modified before you log onto ENOVIA V5.
+   When the property is set to FALSE, the Case
+   Sensitive check box is checked by default and your
+   query will be case sensitive.
+   When the property is set to TRUE, the Case
+   Sensitive check box is not checked by default and
+   your query will not be case sensitive.
+   Problem- It  is not mentioned in Doc, by which
+   properties file change,the default behaviour of the
+   case sensitive check box is change.
+   .
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  THIS MODIFICATION WILL BE INCLUDED IN
+   DOCUMENTATION DELIVERED WITH ENOVIA
+   VERSION 5 RELEASE 17 GA.
+   NOTE-The documentation has been
+   modified and
+   notification of the affected properties file is
+   included
+   in it in the fllowing path.
+   Application Desktop ---- User Tasks ----
+   Search ---
+   Perform Searches ----- Performing an
+   Advanced
+   Search
+   .
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   HD51457
+   
+   
+ * REPORTED COMPONENT NAME
+   ENOVIA LCA AIX
+   
+   
+ * REPORTED COMPONENT ID
+   569101700
+   
+   
+ * REPORTED RELEASE
+   516
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2006-04-07
+   
+   
+ * CLOSED DATE
+   2006-04-19
+   
+   
+ * LAST MODIFIED DATE
+   2006-04-19
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

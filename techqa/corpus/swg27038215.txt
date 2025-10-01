@@ -1,0 +1,66 @@
+Title: IBM Installing Worklight Server into WebSphere Application Server Network Deployment - United States
+
+Text:
+IMF50 PRODUCT DOCUMENTATION
+
+ABSTRACT
+ This document explains how to install Worklight Server 5.0.6 into a set of WebSphere Application Server Network Deployment (WAS ND) servers. 
+
+CONTENT
+For a general description of the installation process, see the documentation chapter at http://pic.dhe.ibm.com/infocenter/wrklight/v5r0m6/index.jsp?topic=%2Fcom.ibm.worklight.help.doc%2Fadmin%2Fc_installation.html [http://pic.dhe.ibm.com/infocenter/wrklight/v5r0m6/index.jsp?topic=%2Fcom.ibm.worklight.help.doc%2Fadmin%2Fc_installation.html]. 
+
+Installation into an unmanaged server (that is, a server which is not under the control of a Deployment Manager) works exactly like in version 5.0.5: In Installation Manager, in the panel where you specify the WAS installation directory, you select the “application server” profile and then the specific server. When Installation Manager is done, you need to restart the WAS server.
+
+The rest of this document deals with installing into a set of managed servers, that is, servers that are under the control of a Deployment Manager. Before version 5.0.6, this case was only supported through manual installation steps. Starting with version 5.0.6, a large part of the installation can be performed through Installation Manager. 
+
+How does it work?
+
+
+You have to run the Worklight Server installer, through Installation Manager, on the machine where the Deployment Manager is running. Note the following points.
+
+
+ 1. In the installer panel where you specify the database type, don't select Apache Derby. Worklight supports Apache Derby only in “embedded” mode, and this choice is incompatible with deployment through WAS ND. 
+ 2. In the installer panel where you specify the WAS installation directory, select the Deployment Manager profile. 
+ 3. Warning! If you run the installer on the machine where the Deployment Manager is running and select an application server profile and then a single managed server, you will get a warning and at the end things will not work, because the Deployment Manager overwrites the configuration of that server. 
+ 4. Warning! If you run the installer on a different machine and select an application server profile and then a single managed server, you will not get a warning but nevertheless things will not work, for the same reason. 
+ 5. After selecting the profile, pick a scope, that is, the type of set of target servers. The available scopes are:  * Cell: This will install Worklight Server into all application servers of the cell. 
+     * Cluster: You specify the name of a cluster, and this will install Worklight Server into all application server of the cluster. 
+     * Node (excluding clusters): You specify the name of a node, and this will install Worklight Server into all application servers of the node that are not in some cluster. 
+     * Server: You specify the name of a server (not in a cluster), and this will install Worklight Server into the specified server.
+    
+    
+ 6. After running the installer, you have to restart those target servers that were running. This is documented in the documentation section “Completing the installation”, at http://pic.dhe.ibm.com/infocenter/wrklight/v5r0m6/index.jsp?topic=%2Fcom.ibm.worklight.help.doc%2Fadmin%2Fc_completing_the_installation.html [http://pic.dhe.ibm.com/infocenter/wrklight/v5r0m6/index.jsp?topic=%2Fcom.ibm.worklight.help.doc%2Fadmin%2Fc_completing_the_installation.html].
+
+
+The installation will not affect servers outside the specified set of servers. The JDBC providers, JDBC datasources, and shared libraries are defined with the specified scope. The entities which have a cell-wide scope (the applications and, for DB2, the authentication alias) have a suffix in their name that makes them unique. So, you can install Worklight Server in different configurations, or even different versions of Worklight Server, in different clusters of the same cell. 
+
+Note: The “Test connection” button for the JDBC datasources in the WAS administration console of the Deployment Manager may not work. This is normal, since the JDBC driver is installed only in the specified set of application servers. 
+
+Additional Configuration Needed 
+
+Configuration of the data sources 
+
+You need to turn off transactions on the Worklight data source, otherwise you may see non-fatal exceptions in the WAS SystemOut.log, such as:  * 
+ * 
+
+
+You do this in the WAS administration console, Resources > JDBC > Data sources > Worklight database > WebSphere Application Server data source properties, by enabling the “Non-transactional data source” checkbox. Configuration of the public URL 
+
+When you use a HTTP server in the front end, there is a single public URL for the entire set of servers. Customization is needed: 
+
+ * For the Worklight console, in the worklight.properties file in the worklight.war file. See documentation section “Configuring the IBM Worklight Server location” at http://pic.dhe.ibm.com/infocenter/wrklight/v5r0m6/index.jsp?topic=%2Fcom.ibm.worklight.help.doc%2Fadmin%2Fr_configuring_the_ibm_worklight_server_location.html [http://pic.dhe.ibm.com/infocenter/wrklight/v5r0m6/index.jsp?topic=%2Fcom.ibm.worklight.help.doc%2Fadmin%2Fr_configuring_the_ibm_worklight_server_location.html], 
+ * In the application-descriptor.xml file of each app, set the <worklightServerRootURL> element, and redeploy the app. 
+ * For Application Center, set the JVM system properties ibm.appcenter.proxy.host, ibm.appcenter.proxy.port, ibm.appcenter.proxy.protocol. See documentation section “Configuring the endpoint of the application resources (JVM server custom properties)” at http://pic.dhe.ibm.com/infocenter/wrklight/v5r0m6/index.jsp?topic=%2Fcom.ibm.worklight.help.doc%2Fappcenter%2Ft_ac_endpoint_wasfull.html [http://pic.dhe.ibm.com/infocenter/wrklight/v5r0m6/index.jsp?topic=%2Fcom.ibm.worklight.help.doc%2Fappcenter%2Ft_ac_endpoint_wasfull.html]. In the WAS administration console, you find these JVM system properties settings at Server > Server Types > Websphere application servers > server name > Java and Process Management > Process definition > Java Virtual Machine > Custom Properties.
+
+
+Adding Another Server 
+
+When you add another server to a cluster with Worklight server installed, you need to manually repeat the configuration of the following:  * JVM system properties worklight.home, android.aapt.dir, ibm.appcenter.proxy.host, ibm.appcenter.proxy.port, ibm.appcenter.proxy.protocol, 
+ * Web container custom property com.ibm.ws.webcontainer.invokeflushafterservice.
+
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Mobile- Speech and Enterprise Access IBM Mobile Foundation Installation AIX, HP-UX, Linux, Solaris, Windows 5.0.6 Consumer, Enterprise

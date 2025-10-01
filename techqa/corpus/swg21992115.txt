@@ -1,0 +1,24 @@
+Title: IBM Does Bigfix use DES-CBC3-SHA which has key length less than 128 bit - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ The cipher DES-CBC3-SHA, in the past information, was said to be a 168bit cipher, but recently, even though it is a 168bit cipher, it is said that in actual fact, it only has the strength of about 112bit. In addition, with the latest SSL vulnerability investigation tool, it is treated as a 112bit cipher.
+Q1) Does he connection to the BigFix Relay use the DES-CBC3-SHA?
+Q2) Is the cipher algorithm that is being used in between the relays of the BigFix, a cipher of key length under 128bit?
+Q3) Is it possible to perform changes to the settings of the Relay Server, to stop taking in cipher communications of key length under 128bit? 
+
+ANSWER
+Q1) Does the connection to the BigFix Relay use the DES-CBC3-SHA?
+Answer:
+Until a recent release of OpenSSL last week, this cipher DES-CBC3-SHA was included in the "high" encryption cipher suite set, which is the cipher suite set that platform components choose from. So a client that specifies they can only use DES-CBC3-SHA as in the example in the following screenshot should be able to negotiate successfully using that cipher. A regular client would also support other ciphers that would be typically negotiated instead.
+[/support/docview.wss?uid=swg21992115&aid=1] [/support/docview.wss?uid=swg21992115&aid=1]
+
+Q2) Is the cipher algorithm that is being used in between the relays of the BigFix, a cipher of key length under 128bit?
+Answer:
+The cipher that ends up being used is negotiated from the ciphers the client can use and the ciphers the server can use. In the case of connections between platform components of BigFix, the components only have 'high' encryption cypher suites available to choose from. Even if DES-CBC3-SHA is included in that list, in practice a better cipher would be negotiated. If you repeat the test with openssl s_client but using "-cipher HIGH" instead of "-cipher DES-CBC3-SHA", you'll see that something like AES256 ends up being the negotiated cipher, which is what would happen in connections between platform components as well.
+
+Q3) Is it possible to perform changes to the settings of the Relay Server, to stop taking in cipher communications of key length under 128bit?
+Answer:
+It's not possible currently to change the cipher list directly on bigfix side. The newly released version of OpenSSL removes DES-CBC3-SHA from the 'high' list of ciphers that platform uses, and this new version will be picked up by new platform patch releases.

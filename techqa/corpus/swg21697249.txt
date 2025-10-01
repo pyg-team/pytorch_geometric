@@ -1,0 +1,67 @@
+Title: IBM Security Bulletin: AppScan Enterprise can be affected by multiple vulnerabilities (CVE-2014-6136, CVE-2014-8918) - United States
+
+Text:
+PSIRT SECURITY BULLETIN
+
+SUMMARY
+ Multiple vulnerabilities such as encryption not enforced and incorrect handling of SSL exist in IBM Security AppScan Enterprise Glassbox component. 
+
+VULNERABILITY DETAILS
+
+CVEID: CVE-2014-6136 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-6136]
+
+DESCRIPTION: 
+IBM Security AppScan Enterprise could allow a remote attacker to obtain sensitive information due to encryption not being enforced. An attacker could exploit this vulnerability to obtain cleartext data.
+
+CVSS Base Score: 2.6
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/96816 [https://exchange.xforce.ibmcloud.com/vulnerabilities/96816] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:H/Au:N/C:P/I:N/A:N)
+
+
+
+CVEID: CVE-2014-8918 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-8918]
+
+DESCRIPTION: 
+
+IBM Security AppScan Enterprise could allow a remote attacker to bypass security restrictions, caused by the improper validation of SSL certificates. By persuading a victim to visit a Web site containing a specially-crafted certificate, a remote attacker could exploit this vulnerability using man-in-the-middle techniques to cause the victim to impersonate trusted servers
+
+CVSS Base Score: 4.0
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/99304 [https://exchange.xforce.ibmcloud.com/vulnerabilities/99304] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:H/Au:N/C:P/I:P/A:N)
+
+AFFECTED PRODUCTS AND VERSIONS
+ 
+
+ * IBM Security AppScan Enterprise – 9.0.1 
+ * IBM Security AppScan Enterprise – 9.0 
+ * IBM Security AppScan Enterprise – 8.8 
+ * IBM Security AppScan Enterprise – 8.7 
+ * IBM Security AppScan Enterprise – 8.6
+
+REMEDIATION/FIXES
+ 
+
+Product VRMF Remediation/First Fix IBM Security AppScan Enterprise 9.0.1.1 AppScanEnterprise-9.0.1.1-iFix-001-Windows [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=Security%2BSystems&product=ibm/Rational/Rational+AppScan+Enterprise+Edition&release=9.0.1.1&platform=All&function=all] 
+*for product levels not listed here contact IBM Technical Support WORKAROUNDS AND MITIGATIONS
+Disable AppScan Enterprise Glassbox component.
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v2 Guide [http://www.first.org/cvss/v2/guide] 
+On-line Calculator v2 [http://nvd.nist.gov/CVSS-v2-Calculator] 
+
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] 
+
+ACKNOWLEDGEMENT
+IBM Security Ethical Hacking Team: Paul Ionescu, Brennan Brazeau, John Zuccato, Jonathan Fitz-Gerald, Warren Moynihan 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.

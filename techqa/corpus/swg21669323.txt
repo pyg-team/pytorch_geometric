@@ -1,0 +1,46 @@
+Title: IBM Announcement letter for CICS Tools for z/OS 5.2 - United States
+
+Text:
+announcement letter ; announcments letters ; general availablity ; ga ; CICS CM 5.2 ; CICS Configuration Manager ; cicscm ; retention52 ; 5697-CIC ; 5697CIC ; 5697CIC00 ; CICS DA 5.2 ; CICS Deployment Assistant ; cicsda ; retentionDA52 ; 5655-Y29 ; 5655Y29 ; 5655Y2900 ; CICS IA 5.2 ; CICS Interdependency Analyzer ; cicsia ; retentionIA52 ; 5655-Y22 ; 5655Y22 ; 5655Y2200 ; CICS PA 5.2 ; CICS Performance Analyzer ; cicspa ; retentionPA52 ; 5655-Y23 ; 5655Y23 ; 5655Y2300 ; CICS VR 5.2 ; CICS VSAM Recovery ; cicsvr ; retentionVR52 ; 5655-Y24 ; 5655Y24 ; 5655Y2400 CICS Optimization Solution Pack 5.2 ; 5655-CD1 ; 5655CD1 ; 5655CD100 PRODUCT LIFECYCLE
+
+ABSTRACT
+ CICS Configuration Manager for z/OS (CICS CM) V5.2, CICS Deployment Assistant for z/OS (CICS DA) V5.2, CICS Interdependency Analyzer for z/OS (CICS IA) V5.2, CICS Performance Analyzer for z/OS (CICS PA) V5.2, CICS VSAM Recovery for z/OS (CICS VR) V5.2, and CICS Optimization Solution Pack for z/OS V5.2 general availability (GA) date was 13 June 2014. This document contains a list of the key enhancements, a link to the announcement letter, and additional ways that you can become familiar with the capabilities of the new version of these tools. 
+
+CONTENT
+These five updated products in the IBM CICS Tools V5.2 family combine together to increase the value of CICS Transaction Server for z/OS (CICS TS) V5.2. CICS Tools V5.2 support the new features, resources, options, and metrics in CICS TS V5.2. They improve the operational efficiency and service agility of systems that power much of modern business. CICS Tools enable development, systems, and operational teams to adopt a collaborative, DevOps approach, by working together to plan, design, build, test, deploy, manage, and optimize CICS applications and infrastructure. With the CICS V5.2 family, it is now quicker and easier to build mobile-enabled applications and deploy them in a CICS cloud. 
+CICS Tools V5.2 satisfies many user requirements. See customer requirements answered in CICS 5.2 Tools [http://www.ibm.com/support/docview.wss?uid=swg27041591] to learn about each user requirement that will be delivered in CICS Tools V5.2.
+
+Key enhancements delivered by products in the CICS Tools V5.2 portfolio:
+
+
+ * CICS IA V5.2 collects more information about applications and platforms, to help clients create a more dynamic CICS cloud environment. The new Command Flow visualization provides yet more insight into program behavior. A new variable sampling technique is introduced to help reduce the CPU overhead by up to 75% while collecting data. This technique can be applied to production regions to balance the impact of collection, the fidelity of the data collected, and production throughput. 
+ * CICS DA V5.2 introduces a new RESTful API that allows the deep insight captured in the discovered model to be shared with other management tools, or viewed from mobile devices and browsers. New cloning options deliver value to a wider range of client environments. A new compare option highlights key differences in region configuration and helps to ensure standards conformance and system reliability. 
+ * CICS PA V5.2 supports the CICS cloud with new Performance Summary reports for platforms and applications, while multi-version application support enables fine-grained analysis of ever-changing mobile applications. New, simply configured, batch reporting of CICS TS and CICS Transaction Gateway (CICS TG) statistics provides a wealth of valuable diagnostic and planning information. Plug-in enhancements, that include new Performance Alerts, and more advanced visualization and analysis, help development and systems staff to identify and resolve performance issues quickly. 
+ * CICS CM V5.2 improves DevOps collaboration with new plug-in support for Migration Schemes and Deployment Analysis. New support to manage CICSPlex SM (CPSM) Topology and Workload Management definitions allows dynamic mobile workloads to be quickly reconfigured. 
+ * CICS VR V5.2 adds new support for extended address volumes (EAVs), and delivers usability, installation, coexistence, and customization enhancements. CICS VR provides Disaster Recovery support for online data and operation support for batch to minimize the batch window. CICS also supports the replication of VSAM data for IBM GDPS Active-Active continuous availability, enabling cross-site workload balancing, continuous availability, and disaster recovery. 
+
+
+CICS Optimization Solution Pack for z/OS V5.2 is updated to include the new releases of CICS IA, CICS DA, CICS PA, and CICS CM. 
+
+For more information on these five core tools, see the US Announcement Letter for CICS Tools V5.2 [http://www.ibm.com/common/ssi/cgi-bin/ssialias?infotype=an&subtype=ca&supplier=897&letternum=ENUS214-153] (214-153). Information for other country announcements is available on the IBM Offering Information page [http://www.ibm.com/common/ssi/index.wss]. 
+
+For more information on CICS TS V5.2, see the document entitled Announcement letter for CICS Transaction Server for z/OS 5.2 [http://www.ibm.com/support/docview.wss?uid=swg21669322]. 
+
+See the IBM Software Support Lifecycle Page [http://www.ibm.com/software/support/lifecycle/index_c.html] to determine if the release of the CICS Tool you are running is still supported or if there is a newer release. 
+
+See Looking up prices for CICS Transaction Server for z/OS and CICS Tools [http://www.ibm.com/support/docview.wss?uid=swg21220237] if you would like to use IBMLink to check for the price or cost of the product. 
+RELATED INFORMATION
+#Announcement letters for CICS products [http://www.ibm.com/support/docview.wss?uid=swg21227090]
+CICS Configuration Manager for z/OS web page [http://www.ibm.com/software/htp/cics/cm/]
+CICS Deployment Assistant for z/OS web page [http://www.ibm.com/software/htp/cics/deployment/]
+CICS Interdependency Analyzer for z/OS web page [http://www.ibm.com/software/htp/cics/ianaly/]
+CICS Performance Analyzer for z/OS web page [http://www.ibm.com/software/htp/cics/panaly/]
+CICS VSAM Recovery for z/OS web page [http://www.ibm.com/software/htp/cics/vr/]
+
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Host Transaction Processing CICS Configuration Manager for z/OS Availability z/OS 5.2 Host Transaction Processing CICS Deployment Assistant for z/OS Availability z/OS 5.2 Host Transaction Processing CICS Interdependency Analyzer for z/OS Availability z/OS 5.2 Host Transaction Processing CICS Performance Analyzer for z/OS Availability z/OS 5.2 Host Transaction Processing CICS VSAM Recovery for z/OS Availability z/OS 5.2 Host Transaction Processing CICS Transaction Server Explorer z/OS, Linux, Windows 5.2 
+PRODUCT ALIAS/SYNONYM
+ CICSCM CICS CM CICSDA CICS DA CICSIA CICS IA CICSPA CICS PA CICSVR CICS VR

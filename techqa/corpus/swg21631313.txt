@@ -1,0 +1,22 @@
+Title: IBM Information Server running correctly but receiving exceptions in SystemOut.log - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ SystemOut.log has the following exceptions:
+[3/12/13 15:50:27:242 EDT] 00000074 RemoteExcepti E CNTR0020E: EJB 
+threw an unexpected (non-declared) exception during invocation of method 
+"isRCSession" on bean "BeanId(rcservice.ear#rcservice-server.jar#Login, 
+null)". Exception data: javax.jdo.JDOException: Exception thrown when 
+
+and
+NestedThrowablesStackTrace: 
+com.ibm.db2.jcc.am.xo: DB2 SQL Error: SQLCODE=-204, SQLSTATE=42704, 
+SQLERRMC=QSDSBRD.USER_SESSION, DRIVER=3.58.135 
+at com.ibm.db2.jcc.am.ed.a(ed.java:676) 
+at com.ibm.db2.jcc.am.ed.a(ed.java:60) 
+
+
+RESOLVING THE PROBLEM
+This issue is caused when the SRD schema is missing and/or the USER_SESSIONS table in the SRD schema is missing. Run the appropriate scripts that ship with Information Server to create the schmea.

@@ -1,0 +1,161 @@
+Title: IBM IC75996: OPTIMIZER: INSTANCE DURATION TREND DIAGRAM IS BLANK - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  In WLE 7.2 when running optimizer/simulation 'Instance Duration
+   Trend' diagram is blank and is not reflecting any data. It works
+   just fine for the same simple process in WLE 7.1.
+   
+   
+   I have used the export of the process that was provided by the
+   customer, running many (around 40) instances, completing them,
+   sending definitions etc. Nothing helps and no error, the same
+   way 'Instance Duration Histogram' is reflecting data just fine.
+   
+   The issue easily reproduces with simple BPD running an 'Ad-hoc
+   simulation' via 'Start new simulation for the current process
+   only' button.
+   
+   The screenshots can be found here:
+   
+   
+   https://ecurep.mainz.de.ibm.com/aexfiles/pmr/4/4/44072%2C600%2C7 [https://ecurep.mainz.de.ibm.com/aexfiles/pmr/4/4/44072%2C600%2C7]
+   60/support_files/opt_1.jpg
+   
+   
+   https://ecurep.mainz.de.ibm.com/aexfiles/pmr/4/4/44072%2C600%2C7 [https://ecurep.mainz.de.ibm.com/aexfiles/pmr/4/4/44072%2C600%2C7]
+   60/support_files/opt_2.jpg
+   
+   To compare, the same process running in WLE 7.1:
+   
+   
+   https://ecurep.mainz.de.ibm.com/aexfiles/pmr/4/4/44072%2C600%2C7 [https://ecurep.mainz.de.ibm.com/aexfiles/pmr/4/4/44072%2C600%2C7]
+   60/support_files/opt_7.1.jpg
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Currently, there is no fix
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  In WLE 7.2 when running optimizer/simulation
+   'Instance Duration
+   Trend' diagram is blank and is not reflecting any data. It works
+   just fine for the same simple process in WLE 7.1.
+   
+   
+   I have used the export of the process that was provided by the
+   customer, running many (around 40) instances, completing them,
+   sending definitions etc. Nothing helps and no error, the same
+   way 'Instance Duration Histogram' is reflecting data just fine.
+   
+   The issue easily reproduces with simple BPD running an 'Ad-hoc
+   simulation' via 'Start new simulation for the current process
+   only' button.
+   
+   The screenshots can be found here:
+   
+   
+   https://ecurep.mainz.de.ibm.com/aexfiles/pmr/4/4/44072%2C600%2C7 [https://ecurep.mainz.de.ibm.com/aexfiles/pmr/4/4/44072%2C600%2C7]
+   60/support_files/opt_1.jpg
+   
+   
+   https://ecurep.mainz.de.ibm.com/aexfiles/pmr/4/4/44072%2C600%2C7 [https://ecurep.mainz.de.ibm.com/aexfiles/pmr/4/4/44072%2C600%2C7]
+   60/support_files/opt_2.jpg
+   
+   To compare, the same process running in WLE 7.1:
+   
+   
+   https://ecurep.mainz.de.ibm.com/aexfiles/pmr/4/4/44072%2C600%2C7 [https://ecurep.mainz.de.ibm.com/aexfiles/pmr/4/4/44072%2C600%2C7]
+   60/support_files/opt_7.1.jpg
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC75996
+   
+   
+ * REPORTED COMPONENT NAME
+   WS LOMBARDI EDI
+   
+   
+ * REPORTED COMPONENT ID
+   5725A0900
+   
+   
+ * REPORTED RELEASE
+   720
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-04-27
+   
+   
+ * CLOSED DATE
+   2011-07-13
+   
+   
+ * LAST MODIFIED DATE
+   2011-07-13
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R720 PSY
+   UP

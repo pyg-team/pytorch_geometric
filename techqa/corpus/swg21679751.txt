@@ -1,0 +1,41 @@
+Title: IBM Security Bulletin:  IBM Tivoli Common Reporting (TCR) interim fixes address Security Vulnerability and Exposure CVE-2014-0224 - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ IBM Tivoli Common Reporting (TCR) interim fixes address Security Vulnerability and Exposure CVE-2014-0224 
+
+VULNERABILITY DETAILS
+ Security Vulnerability and Exposure CVE-2014-0224: OpenSSL before 0.9.8za, 1.0.0 before 1.0.0m, and 1.0.1 before 1.0.1h does not properly restrict processing of ChangeCipherSpec messages, which allows man-in-the-middle attackers to trigger use of a zero-length master key in certain OpenSSL-to-OpenSSL communications, and consequently hijack sessions or obtain sensitive information, via a crafted TLS handshake, aka the "CCS Injection" vulnerability. 
+
+AFFECTED PRODUCTS AND VERSIONS
+TCR 2.1 / 2.1.1 / 2.1.1.2 (32 bit) 
+
+TCR 3.1.0.0 / 3.1.0.1 / 3.1.0.2 (64 bit)
+
+REMEDIATION/FIXES
+In order to address the security vulnerability, TCR Customers are advised to apply the relevant interim fixes on all their TCR environments. The table below provides the interim fix details for different releases of TCR along with the FixCentral links for download.
+
+
+
+
+TCR Version Interim Fix (IF) Name Download Options 
+What is Fix Central (FC) ? [http://www-947.ibm.com/systems/support/fixes/en/fixcentral/help/faq_sw.html] TCR 2.1 2.1.0.0-TIV-TCR-<OS>-IF9 FC [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~Tivoli&product=ibm/Tivoli/IBM+Tivoli+Common+Reporting&release=2.1.0.0&platform=All&function=all] TCR 2.1.1 2.1.1.0-TIV-TCR-<OS>-IF16 FC [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~Tivoli&product=ibm/Tivoli/IBM+Tivoli+Common+Reporting&release=2.1.1.0&platform=All&function=all] TCR 2.1.1.2 2.1.1.2-TIV-TCR-<OS>-IF2 FC [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~Tivoli&product=ibm/Tivoli/IBM+Tivoli+Common+Reporting&release=2.1.1.2&platform=All&function=all] TCR 3.1.0.0 1.1.0.0-Tivoli-JazzSM-TCR-<OS>-IF0002 FC [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~Tivoli&product=ibm/Tivoli/Jazz+for+Service+Management&release=1.1&platform=All&function=all] TCR 3.1.0.1 1.1.0.0-Tivoli-JazzSM-TCR-<OS>-IF0002 FC [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~Tivoli&product=ibm/Tivoli/Jazz+for+Service+Management&release=1.1&platform=All&function=all] TCR 3.1.0.2 1.1.0.0-Tivoli-JazzSM-TCR-<OS>-IF0002 FC [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~Tivoli&product=ibm/Tivoli/Jazz+for+Service+Management&release=1.1&platform=All&function=all] 
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+IMPORTANT NOTE
+ IBM strongly suggests that all System z customers be subscribed to the System z Security Portal to receive the latest critical System z security and integrity service. If you are not subscribed, see the instructions on the System z Security web site [http://www-03.ibm.com/systems/z/solutions/security_subintegrity.html]. Security and integrity APARs and associated fixes will be posted to this portal. IBM suggests reviewing the CVSS scores and applying all security or integrity fixes as soon as possible to minimize any potential risk. 
+
+REFERENCES
+Complete CVSS Guide [http://www.first.org/cvss/cvss-guide.html] 
+On-line Calculator V2 [http://nvd.nist.gov/cvss.cfm?calculator&adv&version=2] RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/PSIRT] CHANGE HISTORY
+ 25-Jul-2014: Original Copy published 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.

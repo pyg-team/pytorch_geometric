@@ -1,0 +1,45 @@
+Title: IBM Open Mic Replay: Non-SSL Security in WebSphere MQ - United States
+
+Text:
+wste_webcast; WSTE; Support Technical Exchange; education; presentation; webcast; STEwebcastDocument; OAM; authorization; permission st14dcf WEBCAST
+
+ABSTRACT
+ WebSphere MQ has a number of security configurations such as SSL, OAM, and exits, and for these to be effective it is important to understand how they interact. This Open Mic is intended to help users connect the dots so they know which combinations are effective because SSL alone is not enough. 
+
+CONTENT
+Open Mic sessions are conducted in a question and answer format. The table below provides a time index (minutes:seconds) to the recording and describes the questions or topics discussed. You can fast forward to any question using the time index, a table containing the panel of experts is also included.
+
+
+To play or download the audio of this Open Mic session, see the Audio Section of this document.
+
+See the Related Information Section of this document for a list of documents referenced during the presentation.
+
+
+
+
+
+
+
+
+Open Mic session 
+16 September 2010 - 11:00 a.m. - 12:00 p.m. EDT 
+
+Time Questions asked 00:00 Silence 00:00 General introduction 01:52 Technical introduction 02:57 I put SSL on my application channels, is there anything else I need to do? 04:20 How do I apply authorization to a topic? 06:41 What security considerations exist for WebSphere MQ File Transfer Edition (WMQ FTE)? 08:17 How can I find the cause of a not authorized error on z/OS? 10:15 How can I list security profiles used by WebSphere MQ on z/OS? 11:41 Our customers are planning to move from 1024 bit certificates to 2048 bit certificates. Please let us know what is the required MQ ver/rel Fix pack level to satisfy this requirement. This is the platform information - Z/OS, Unix, Windows (RACF, gsk7cmd and IKEYman). 13:05 How does MQ Security differentiate between administrative actions on MQ resources and MQ Application use of MQ resources? Is there any sandbox-type of security scheme that can be employed to protect MQ internal objects vs. application specific objects? 16:27 Since security is such a hot topic, why are the MQ Clients and the new MQ Explorer support pack MS0T freely available to the public? Should these be locked down so only IBM customers licensed for WebSphere MQ can obtain them? Our research with the MQ Explorer indicates it opens additional security risks. 19:28 On the MQ Explorer part, can we lock down the MQ Explorer reply queue, so people who are not authorized to use MQ Explorer could not get a reply queue response back? 23:24 Can you give us any updates on news regarding releases of the WebSphere MQ Extended Security Edition? 24:56 On question #6, you discussed about 2048 bit keys and the versions of MQ that would support it. When I look at the SSL CipherSpecs that are available on the channel, I don't see anything that is 2048 bit, could you please explain this? 28:08 In question #4 you talked about tracking not authorized errors in z/OS, could you also touch on doing that for distributed MQ? 30:14 Is there any timetable to be able to use Elliptic curve cryptography with MQ? 32:28 We have a lot of difficulties in debugging SSL related errors (i.e. when a given password is wrong or when the keystore itself is missing). MQ doesn't seem to give out any error related details so we have to go through a lot of steps to verify what went wrong. Could you please explain this? 32:28 Open lines for live question and answer period 35:56 It looks like one queue manager is able to use only one certificate. We use internal certificates for queue managers but what if we want to connect to an external queue manager or a queue manager in another region, using a different certificate? 38:03 With the broker toolkit connecting to MQ broker V7, are there any changes in how the the authentication and authorization take place? 40:30 I have a need to encrypt data at rest, what's a good way to do that? 44:37 Is there a way to monitor certificate expirations? 46:55 Closing remarks 47:58 End of Call 
+Panel of Experts: T-Rob Wyatt Senior Managing Consultant Tom Schneider Advisory IT Architect Morag Hughson WebSphere MQ Development Product Architect Paul O'Donnell Senior Software Engineer 
+
+PRESENTATION
+[http://www.ibm.com/i/v16/icons/weblecture.gif]WSTE-09162010-OpenMic-NonSSLSecurityWebSphereMQ-Donnell.pdf [/support/docview.wss?uid=swg27019525&aid=2] WSTE-09162010-OpenMic-NonSSLSecurityWebSphereMQ-Donnell.pdf [/support/docview.wss?uid=swg27019525&aid=1]
+
+Get Adobe Reader [http://www.adobe.com/products/acrobat/readstep2.html] to view PDF
+
+AUDIO
+[http://www.ibm.com/i/v16/icons/aud.gif]Click on Download Audio [ftp://public.dhe.ibm.com/software/websphere/techexchange/Sep-16-2010-ODonnell.mp3] to play the recording of this 47 minutes conference call (5.0MB - MP3 format). Right-click and select Save As to store the file on your local computer for later playback. Remember that you can fast forward to any question using the time index.
+
+RELATED INFORMATION
+ WebSphere Support Technical Exchange [http://www.ibm.com/software/websphere/webcast]
+
+
+
+
+PRODUCT ALIAS/SYNONYM
+ WebSphere MQ WMQ

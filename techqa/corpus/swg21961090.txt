@@ -1,0 +1,60 @@
+Title: IBM EXTEND DBSPACE operation fails - United States
+
+Text:
+ANR9999D_3831306406 ANR9999D 3831306406 SQL1763 table space TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Attempts to add additional database directories via the EXTEND DBSPACE command fail. 
+
+SYMPTOM
+The activity log may contain the following errors: 
+
+ * 
+ * ANR9999D_3831306406 ReportSQLDiagInfo(dbieval.c:1572) Thread<178>: Missing sqlState=429BC, sqlCode=-1763 from table. Returning rc = 9994.
+ * 
+ * ANR9999D Thread<178> issued message 9999 from:
+ * 
+ * ANR9999D Thread<178> 0x000000010001cc50 StdPutText
+ * 
+ * ANR9999D Thread<178> 0x000000010001d690 OutDiagToCons
+ * 
+ * ANR9999D Thread<178> 0x00000001000098c8 outDiagfExt
+ * 
+ * ANR9999D Thread<178> 0x000000010008919c ReportSQLDiagInfo
+ * 
+ * ANR9999D Thread<178> 0x0000000100088158 DbiEvalSQLOutcomeX
+ * 
+ * ANR9999D Thread<178> 0x0000000100d75988 DbiExecuteOnConn
+ * 
+ * ANR9999D Thread<178> 0x0000000100d753bc dbiExecuteStmt
+ * 
+ * ANR9999D Thread<178> 0x0000000100ed3420 ReclaimSpaceOneTbls
+ * 
+ * ANR9999D Thread<178> 0x0000000100ed2060 TblsReclaimThread
+ * 
+ * ANR9999D Thread<178> 0x000000010000cae0 StartThread
+ * 
+ * ANR0162W Supplemental database diagnostic information: -1:429BC:-1763 ([IBM][CLI Driver][DB2/AIX64] SQL1763N Invalid ALTER TABLESPACE statement for table space "SYSCATSPACE" due to reason "11" SQLSTATE=429BC
+
+
+CAUSE
+By default, when issuing the EXTEND DBSPACE command an attempt is made to perform the following operations: 
+
+ * rebalance each of the tablespace containers across the existing database directories and the newly-defined directory 
+ * reclaim unused storage space within each of the tablespaces and release this space back to the operating system
+
+
+It's possible that the rebalance operation can complete successfully, while the subsequent attempt to reclaim the unused storage space within the tablespace may fail. 
+DIAGNOSING THE PROBLEM
+The SQL1763N error indicates a problem with the ALTER TABLESPACE command that is issued to reclaim storage space. The corresponding reason code of 11 indicates that the tablespace cannot be reclaimed because it does not support the reclaimable storage feature. Per the documentation, the ability to reclaim storage space is only supported with tablespaces that were created by DB2 version 9.7 or higher: 
+
+ 
+
+ * 
+
+
+If the tablespaces were created prior to the 6.2 version of the Tivoli Storage Manager server code, specify RECLAIMSTORAGE=NO when issuing the EXTEND DBSPACE command to prevent the errors seen above. 
+ 
+
+PRODUCT ALIAS/SYNONYM
+ TSM

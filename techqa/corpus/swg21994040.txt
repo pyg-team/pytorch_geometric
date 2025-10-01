@@ -1,0 +1,50 @@
+Title: IBM Edge Components java upgrade - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ IBM WebSphere Edge components java version is going out of support. What are my options? 
+
+CAUSE
+IBM WebSphere Edge Components Load Balancers use Java 6 which is going out of support. The upgrade path is Java 8 which has different minimum operating system requirements. Please review the details provided before applying fix pack 8.5.5.11 or higher to ensure your system continues to function properly.
+
+ANSWER
+Java 8 provides enhanced security libraries for the advisors which use Java Security functions such as the ldaps and https advisor. As such, the default cipher set has changed to use more secure ciphers. If the backend webservers are not configured to use any of the available ciphers, they will need to be reconfigured or a different advisor should be used for the web servers. 
+
+In the following list, the string "SSL" is interchangeable with "TLS" and vice versa.
+Java 6 ciphers: 
+[/support/docview.wss?uid=swg21994040&amp;aid=1]
+
+Java 8 ciphers:
+[/support/docview.wss?uid=swg21994040&aid=2] [/support/docview.wss?uid=swg21994040&aid=2]
+
+RFC 5246 TLS 1.2 forbids the use of TLS_RSA_WITH_DES_CBC_SHA, TLS_DHE_RSA_WITH_DES_CBC_SHA and TLS_DHE_DSS_WITH_DES_CBC_SHA. 
+
+RFC 4346 TLS 1.1 forbids the use of SSL_RSA_FIPS_WITH_3DES_EDE_CBC_SHA and SSL_RSA_FIPS_WITH_DES_CBC_SHA. 
+
+ 
+
+Components upgraded : 
+
+If you are using the deprecated Load Balancer for IPv4 component, the java release is updated on AIX with fixpack 8.5.5.12 and higher. All other operating systems retain use of Java6. Load Balancer for IPv4 users are encouraged to move to the Load Balancer for IPv4 and IPv6 since the Load Balancer for IPv4 is no longer provided with WebSphere Application Server version 9. Support for newer operating system levels is not provided with the deprecated load balancer. 
+
+The Site Selector and Content Based Router features (which are optional, stabilized features available with the Load Balancer for IPv4 and IPv6 component) will not have java updated at this time. 
+
+If you are using the Load Balancer for IPv4 and IPv6, please refer to the following chart before installing maintenance level 8.5.5.11 or higher:
+
+
+
+AIX Java is upgraded to version 8. 
+
+If you are running on an older unsupported level (anything earlier than 6.1), the component will no longer function if you install 8.5.5.11 or later. Linux Java is upgraded to version 8.
+
+If you are running with Red Hat EL 5 or SLES 10, do not install 8.5.5.11 or higher. You need to upgrade your operating system before you can install further maintenance. (see note 1) Windows Java is upgraded to version 8.
+
+If you are using Window 2008, do not install 8.5.5.11. You need to upgrade your operating system before you can install further maintenance. (see note 1) 
+Note 1 - If you are using an operating system which is not supported by Java8 and can not upgrade to a supported version of the operating system, you can continue to use Java6 with the load balancer until Java6 is officially out of support. To continue to use Java6, you must save the java directory under the load balancer installation tree before applying a fixpack and then restore it after the fixpack installation. 
+
+The load balancer java directory is typically found at /opt/IBM/WebSphere/Edge/ULB/java or c:\program files\IBM\WebSphere\Edge\ULB\java. You should save the entire java directory (and subdirectories) using zip, cp, windows file explorer, etc. When you restore the directory, it must be restored with the same directory and naming structure previous used (that is, it must be named java and found under the ULB directory). The java directory will contain subdirectories of jre, lib, bin along with other subdirectories). This entire structure must be preserved and restored in order to have a functioning load balancer. Failure to save and restore the directory structure properly will cause dsserver, dscontrol and lbadmin to fail to start. The server.log created by the load balancer will indicate the java version used as the sixth (6th) entry in the log when dsserver is started. 
+RELATED INFORMATION
+ IBM WebSphere SDK Java 8.0 Minimum Operating System Sup [http://www-01.ibm.com/support/docview.wss?rs=180&uid=swg27045339 ]
+IBM SDK Java Cipher Suites [http://www.ibm.com/support/knowledgecenter/SSYKE2_7.1.0/com.ibm.java.security.component.71.doc/security-component/jsse2Docs/ciphersuites.html]

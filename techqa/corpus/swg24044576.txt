@@ -1,0 +1,53 @@
+Title: IBM PI93094: Ship Java 8 SR5 FP10 for WebSphere Application Server traditional bundled Java 8 - United States
+
+Text:
+ DOWNLOADABLE FILES
+
+ABSTRACT
+ Ship Java 8 SR5 FP10 for WebSphere Application Server traditional bundled Java 8 
+
+DOWNLOAD DESCRIPTION
+ERROR DESCRIPTION: 
+
+
+Ship Java 8 SR5 FP10 for WebSphere Application Server traditional bundled Java 8 
+
+LOCAL FIX: 
+None
+
+PROBLEM SUMMARY: 
+Ship Java 8 SR5 FP10 for WebSphere Application Server traditional bundled Java 8 .
+
+USERS AFFECTED:
+Ship Java 8 SR5 FP10 for WebSphere Application Server traditional bundled Java 8 
+This combination of WebSphere Application Server and Java is available with fix pack 855.11 and later.
+
+Linux PPC64 LE does not support embedded Java 8 at this time, since the existing embedded Java on that platform is Java 7.1, and it is not going out of service yet. Please continue to use the Java 8 extension offering for your Java 8 needs on this platform.
+
+PROBLEM DESCRIPTION: 
+Ship Java 8 SR5 FP10 for WebSphere Application Server traditional bundled Java 8 
+
+RECOMMENDATION:
+Apply this i-fix to your SDK to upgrade your SDK 8 to SDK8 SR5 FP10.
+NOTE:
+This iFix can ONLY be applied on:
+a) WebSphere Application Server traditional bundled Java 8 V855.11 and above with bundled Java 8 installed
+
+
+PROBLEM CONCLUSION: 
+Applying this apar will upgrade your SDK 8 to SDK8 SR5 FP10 (Oracle 1.8.0_u161 ).
+
+The fixes in this Java SDK are found here:
+https://www.ibm.com/developerworks/java/jdk/fixes/8/#SR5FP10 [https://www.ibm.com/developerworks/java/jdk/fixes/8/#SR5FP10]
+
+When downloading the fix from fix central, please also download the readme.txt with instructions for installation.
+
+DOWNLOAD PACKAGE
+
+
+
+
+Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options 
+What is Fix Central(FC)? [https://www.ibm.com/support/fixcentral/help?page=swfaqs] AIX 32-bit Power PC Java SDK 19 Feb 2018 English 144842120 FC [http://www.ibm.com/support/fixcentral/quickorder?fixids=8.5.5.11-WS-WASBundledSDK8-AixPPC32-IFPI93094&product=ibm%2FWebSphere%2FWebSphere%20Application%20Server&source=dbluesearch] [ ] AIX 64-bit Power PC Java SDK 19 Feb 2018 English 159743263 FC [http://www.ibm.com/support/fixcentral/quickorder?fixids=8.5.5.11-WS-WASBundledSDK8-AixPPC64-IFPI93094&product=ibm%2FWebSphere%2FWebSphere%20Application%20Server&source=dbluesearch] [ ] Linux 32-bit i/p Series Java SDK 19 Feb 2018 English 142816434 FC [http://www.ibm.com/support/fixcentral/quickorder?fixids=8.5.5.11-WS-WASBundledSDK8-LinuxPPC32-IFPI93094&product=ibm%2FWebSphere%2FWebSphere%20Application%20Server&source=dbluesearch] [ ] Linux 64-bit i/p Series Java SDK 19 Feb 2018 English 160903485 FC [http://www.ibm.com/support/fixcentral/quickorder?fixids=8.5.5.11-WS-WASBundledSDK8-LinuxPPC64-IFPI93094&product=ibm%2FWebSphere%2FWebSphere%20Application%20Server&source=dbluesearch] [ ] Linux 31-bit S/390 Java SDK 19 Feb 2018 English 133564206 FC [http://www.ibm.com/support/fixcentral/quickorder?fixids=8.5.5.11-WS-WASBundledSDK8-LinuxS39031-IFPI93094&product=ibm%2FWebSphere%2FWebSphere%20Application%20Server&source=dbluesearch] [ ] Linux 64-bit S/390 Java SDK 19 Feb 2018 English 147033157 FC [http://www.ibm.com/support/fixcentral/quickorder?fixids=8.5.5.11-WS-WASBundledSDK8-LinuxS39064-IFPI93094&product=ibm%2FWebSphere%2FWebSphere%20Application%20Server&source=dbluesearch] [ ] Linux 32-bit x86 AMD/Intel Java SDK 19 Feb 2018 English 136066661 FC [http://www.ibm.com/support/fixcentral/quickorder?fixids=8.5.5.11-WS-WASBundledSDK8-LinuxX32-IFPI93094&product=ibm%2FWebSphere%2FWebSphere%20Application%20Server&source=dbluesearch] [ ] Linux 64-bit x86 AMD/Intel Java SDK 19 Feb 2018 English 147399450 FC [http://www.ibm.com/support/fixcentral/quickorder?fixids=8.5.5.11-WS-WASBundledSDK8-LinuxX64-IFPI93094&product=ibm%2FWebSphere%2FWebSphere%20Application%20Server&source=dbluesearch] [ ] Solaris 64-bit SPARC Java SDK 19 Feb 2018 English 98578489 FC [http://www.ibm.com/support/fixcentral/quickorder?fixids=8.5.5.11-WS-WASBundledSDK8-SolarisSparc64-IFPI93094&product=ibm%2FWebSphere%2FWebSphere%20Application%20Server&source=dbluesearch] [ ] Solaris 64-bit x86 AMD/Intel Java SDK 19 Feb 2018 English 96044369 FC [http://www.ibm.com/support/fixcentral/quickorder?fixids=8.5.5.11-WS-WASBundledSDK8-SolarisX64-IFPI93094&product=ibm%2FWebSphere%2FWebSphere%20Application%20Server&source=dbluesearch] [ ] Win 32-bit x86 AMD/Intel Java SDK 19 Feb 2018 English 164860755 FC [http://www.ibm.com/support/fixcentral/quickorder?fixids=8.5.5.11-WS-WASBundledSDK8-WinX32-IFPI93094&product=ibm%2FWebSphere%2FWebSphere%20Application%20Server&source=dbluesearch] [ ] Win 64-bit x86 AMD/Intel Java SDK 19 Feb 2018 English 192241154 FC [http://www.ibm.com/support/fixcentral/quickorder?fixids=8.5.5.11-WS-WASBundledSDK8-WinX64-IFPI93094&product=ibm%2FWebSphere%2FWebSphere%20Application%20Server&source=dbluesearch] [ ] z/OS 31-bit and 64-bit Java SDK 19 Feb 2018 English 843399750 FC [http://www.ibm.com/support/fixcentral/quickorder?fixids=8.5.5.11-WS-WASBundledSDK8-OS390-IFPI93094&product=ibm%2FWebSphere%2FWebSphere%20Application%20Server&source=dbluesearch] [ ] HPUX 64-bit Itanium SDK 12 Jun 2018 English 141068099 FC [http://www.ibm.com/support/fixcentral/quickorder?fixids=8.5.5.11-WS-WASBundledSDK8-HpuxIA64-IFPI93094&product=ibm%2FWebSphere%2FWebSphere%20Application%20Server&source=dbluesearch] [ ] 
+ [/support/docview.wss?uid=swg24044576&aid=1]Problems (APARS) fixed [/support/docview.wss?uid=swg24044576&aid=2]Problems (APARS) fixed
+PI93094

@@ -1,0 +1,100 @@
+Title: IBM Avoiding unwanted event reprocessing - United States
+
+Text:
+netcool; impact; netcool/impact; nci; event; reader; eventreader; omnibus; omnibuseventreader; multiple; repeat; repeated; capture; process; processing; reprocessing; recapture; flag; flagging; eventflag; impactflag TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ A discussion on avoiding undesirable multiple reprocessing of events by Impact. 
+
+RESOLVING THE PROBLEM
+Preventing multiple recapture of events and avoiding unnecessary reprocessing is mostly achieved by event flagging - my preferred and most basic approach is a three level flag field "ImpactFlag": 
+
+Value: Conversion: 0 Don't Impact 1 Impact 2 Impacted 
+The EventReader Filter is then simply: 
+
+ * 
+
+
+So, I tend to create a new integer field in the alerts.status table of the ObjectServer called ImpactFlag - or I occasionally use an alternate, existing integer field that is not being used otherwise (such as Grade). Where I do use ImpactFlag as a specifically created field I then tend to use Conversions to display a human readable interpretation of the value in the EventList. 
+
+The reason for using 0 (zero) to indicate that an event should not be processed by Impact is that this is the default value for an ObjectServer integer field and this then makes the decision to have Impact process an event an active decision. The setting of the field value is then performed through the decision making process of a Probe Rules file or an ObjectServer Trigger or Automation or Tool or an external update or, even, another Impact process. 
+
+This means that only events that are suitable for processing by Impact are placed in a state for Impact to process them. At the end of processing the Impact Policy marks the event as Impacted by setting the ImpactFlag value to 2. 
+
+A more advanced version of this that I commonly use in my test scenarios is to have an interim step of Impacting: 
+ * 
+ *  Value: Conversion: 0 Don't Impact 1 Impact 2 Impacting 3 Impacted 
+
+This value is set and returned as the first action the Impact Policy performs so that any lag during processing the event through the Policy does not lead to the event being recaptured by the EventReader following a DeDuplication or update (other than resetting the ImpactFlag back to 1) in the ObjectServer before the original copy of the event has been processed. 
+
+Since the majority of my testing involves only one Policy per PMR I only need these four values; however, the capability to expand upon these gives one the ability to define which Policy or series of Policies act upon an event determined by the value of this field. One also then has the ability to use this field to mark off the completion of each of a series of Policies - for example: 
+ * 
+ *  Value: Conversion: 0 Don't Impact 1 Impact by Policy A 2 Impacting by Policy A 3 Impacted by Policy A 4 Impact by Policy B 5 Impacting by Policy B 6 Impacted by Policy B 7 Impact by Policy A & B 8 Impacting by Policy A (then B) 9 Impacted by Policy A (then B) 10 Impacting by Policy B (done A) 11 Impacted by Policy B (done A) 
+
+or something more eloquent. The EventReader Filters would be something like: 
+
+ * 
+ * 
+ * 
+
+
+The reason for the “Impacting” value is that this helps to prevent the event from being unnecessarily multiply reprocessed by being picked up by the EventReader due to any DeDuplication or update (other than resetting the ImpactFlag back to 1). So, the start of Policy A might read: 
+
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+
+
+I have encountered clients using a combination of fields to both indicate the suitability of an event for processing and its processing status and determine which Policies should work on the event - for example: 
+ * 
+ *  ImpactFlag: PolicyPath: 0 1 1 2 2 3 3 4 
+
+The PolicyPath being a basic predetermined series of Policies to process the event and then the EventReaders Filters are like: 
+
+ * 
+ * 
+ * 
+ * 
+ * 
+
+
+From the EventReaders with Filters such as above the eventual flow of the event through subsequent Policies, if more than one, is determined by If() and Activate() functions and/or Policy Chaining. This allows a reduced complexity to the multi-state flag value but drops the inherent “tracking” capability therein. Though one could always use yet another field for undertaking this specific task or just enhance the number of states of each flag to reflect way-points in the process. 
+
+Please see the TechNote "Removing duplicate event records from EventQueue with UpdateEventQueue" [ link below] for further details on dealing with duplicate records of events in the EventReader EventQueue. 
+
+Please see the TechNote "Deviant Field checking in EventReaders" [ link below] for further details on how the EventReader operates with regard to determining if a captured event is to be put forward for processing or not. 
+
+Please also see the TechNotes "Event flagging", "Using EventLocking to help prevent multiple event reprocessing" and "Event Flagging with Go_NoGo checking" [ links below]. 
+RELATED INFORMATION
+ Deviant Field checking in EventReaders [http://www-01.ibm.com/support/docview.wss?uid=swg21592308]
+Removing duplicate event records from EventQueue with U [http://www-01.ibm.com/support/docview.wss?uid=swg21675016]
+Event flagging [http://www-01.ibm.com/support/docview.wss?uid=swg21626633]
+Using EventLocking to help prevent multiple event repro [http://www-01.ibm.com/support/docview.wss?uid=swg21675051]
+Event Flagging with Go_NoGo checking [http://www-01.ibm.com/support/docview.wss?uid=swg21675015]

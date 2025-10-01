@@ -1,0 +1,179 @@
+Title: IBM IV68116: PING FAIL EVENTS GET FALSE CLEAR - United States
+
+Text:
+  DIRECT LINKS TO FIXES
+3.9.0-TIV-ITNMIP-Solaris-FP0005 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Network+Manager+IP+Edition&fixids=3.9.0-TIV-ITNMIP-Solaris-FP0005&source=SAR]
+3.9.0_INSTALL_NLS_FP0005 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Network+Manager+IP+Edition&fixids=3.9.0_INSTALL_NLS_FP0005&source=SAR]
+3.9.0_INSTALL_FP0005 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Network+Manager+IP+Edition&fixids=3.9.0_INSTALL_FP0005&source=SAR]
+3.9.0-TIV-ITNMIP-Windows-FP0005 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Network+Manager+IP+Edition&fixids=3.9.0-TIV-ITNMIP-Windows-FP0005&source=SAR]
+3.9.0-TIV-ITNMIP-zLinux-FP0005 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Network+Manager+IP+Edition&fixids=3.9.0-TIV-ITNMIP-zLinux-FP0005&source=SAR]
+3.9.0-TIV-ITNMIP-Linux-FP0005 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Network+Manager+IP+Edition&fixids=3.9.0-TIV-ITNMIP-Linux-FP0005&source=SAR]
+3.9.0-TIV-ITNMIP-AIX-FP0005 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Network+Manager+IP+Edition&fixids=3.9.0-TIV-ITNMIP-AIX-FP0005&source=SAR]
+IBM Tivoli Network Manager IP Edition 3.9.0 Fix Pack 5, 3.9.0-TIV-ITNMIP-FP0005 [http://www-01.ibm.com/support/docview.wss?uid=swg24037809]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  ITNM 3.9 FP4
+   
+   Ping Fail events receive false Clear events as the devices are
+   treated as oout of scope. After a while the devices are treated
+   as in scope again and anothe Ping Fail event is generated.
+   The process repeats.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * ITNM, ncp_poller, all platforms.                             *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * A change in the handling of clear events for Ping Poll       *
+   * failures introduced in ITNM 3.9 FP3 IF0001 and FP4 onward    *
+   * has resulted in                                              *
+   * ncp_poller clearing ping failure events for devices that are *
+   * still in failed state.                                       *
+   *                                                              *
+   * A clear event (ping restore) is seen in the AEL for devices  *
+   * who are still not responding to pings even though they are   *
+   * still being monitored as required by user.                   *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Upgrade product and following additional readme instructions *
+   * for enabling new flag in the NcPollerSchema.cfg              *
+   *                                                              *
+   * 3.9.0-ITNMIP-FP0005                                          *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Before restarting ITNM following the fix application update
+   $NCHOME/etc/precision/NcPollerSchema.cfg
+     update config.properties set
+   ClearPingFailAlertsDeletedEntities = 0;
+   
+   This will avoid the issue from re-occuring.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV68116
+   
+   
+ * REPORTED COMPONENT NAME
+   TIV NETWK MGR I
+   
+   
+ * REPORTED COMPONENT ID
+   5724S4500
+   
+   
+ * REPORTED RELEASE
+   390
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2014-12-22
+   
+   
+ * CLOSED DATE
+   2015-02-28
+   
+   
+ * LAST MODIFIED DATE
+   2015-02-28
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TIV NETWK MGR I
+   
+   
+ * FIXED COMPONENT ID
+   5724S4500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R390 PSN
+   UP
+   
+   
+ * R390 PSY
+   UP
+   
+   
+ * R410 PSN
+   UP
+   
+   
+ * R410 PSY
+   UP
+   
+   
+ * R411 PSN
+   UP
+   
+   
+ * R411 PSY
+   UP

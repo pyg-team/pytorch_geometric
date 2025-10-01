@@ -1,0 +1,45 @@
+Title: IBM Roadmap to IBM i Preventive Service Planning Documentation - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ How to navigate to the Preventive Service Planning (PSP) documents for the IBM i 
+
+RESOLVING THE PROBLEM
+Here are the current links to gain access to the Preventive Service Planning documents for the currently supported releases for the IBM i: 
+
+IBM i 730 PSPs [http://www.ibm.com/support/search.wss?tc=SG15L&hpp=50&sortby=desc&atrn=SWVersion&atrv=V7R3M0&dc=DB540&dtm] 
+
+IBM i 720 PSPs [http://www.ibm.com/support/search.wss?tc=SG15L&hpp=50&sortby=desc&atrn=SWVersion&atrv=V7R2M0&dc=DB540&dtm]
+
+IBM i 710 PSPs [http://www.ibm.com/support/search.wss?tc=SG15L&hpp=50&sortby=desc&atrn=SWVersion&atrv=V7R1M0&dc=DB540&dtm]
+
+IBM i 610 PSPs [http://www.ibm.com/support/search.wss?tc=SG15L&hpp=50&sortby=desc&atrn=SWVersion&atrv=V6R1M0&dc=DB540&dtm] 
+
+NOTE: The PDF and CSV versions of the PSP documents are attached to the HTML document. The attachments are listed at the end of the HTML document.
+
+
+
+The following link will give you an unformatted view of the group PTFs by release:
+http://www.ibm.com/support/docview.wss?uid=nas4PSPbyNum [http://www.ibm.com/support/docview.wss?uid=nas4PSPbyNum] 
+
+
+Here is a link to the iSeries Recommended Fixes:
+http://www-01.ibm.com/support/docview.wss?uid=nas8N1021480 [http://www-01.ibm.com/support/docview.wss?uid=nas8N1021480]
+
+
+The IBM i development team has provided these "as-is" tools to help determine if your system is current with PTF's. 
+
+For information on using the IBM i System tools PTF currency see the IBM Developer works pages 
+SYSTOOLS.GROUP_PTF_Currency [https://www.ibm.com/developerworks/community/wikis/home?lang=en#!/wiki/IBM%20i%20Technology%20Updates/page/SYSTOOLS.GROUP_PTF_CURRENCY%20view]
+and
+SYSTOOLS.GROUP_PTF_DETAILS [https://www.ibm.com/developerworks/community/wikis/home?lang=en#!/wiki/IBM%20i%20Technology%20Updates/page/SYSTOOLS.GROUP_PTF_DETAILS]
+
+To be able to subscribe to receive notification of updates to IBM i Preventative Service Planning documents see 
+My Notifications [http://www.ibm.com/support/mynotifications] [/support/docview.wss?uid=nas8N1021657&amp;aid=1] Enter IBM i in the Product field and you will find the 4 currently supported releases for IBMi. You can then pick and choose what updates you want to receive.
+
+[/support/docview.wss?uid=nas8N1021657&amp;aid=1] 10:30:29 AM 
+
+
+Cross reference information Segment Product Component Platform Version Edition Operating System IBM i 7.3 Operating System IBM i 7.2 Operating System IBM i 7.1 Operating System IBM i 6.1

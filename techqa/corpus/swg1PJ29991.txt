@@ -1,0 +1,217 @@
+Title: IBM PJ29991: WITH PJ30423 APPLIED ZDTCP DNS GIVES UNEXPECTED RESULT - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  PJ30423 [http://www-01.ibm.com/support/docview.wss?uid=swg1PJ30423] fixed a problem with inet_ntoa where there was a
+   possible memory leak if the function was issued enough by one
+   ECB.   The change re-uses the old storage associated with the
+   last call issued.  The logic within the ZDTCP DNS display code
+   does not account for this.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  n/a
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  APAR NUMBER:  PJ29991
+   PRODUCT:  z/TPF
+   FUNCTIONAL AREA:  TCP/IP APPLICATION LAYER
+   SHIPPED IN PUT:  2
+   
+   ABSTRACT:
+   With APAR PJ30423 [http://www-01.ibm.com/support/docview.wss?uid=swg1PJ30423] applied, unexpected results are returned from
+   the
+   ZDTCP DNS command.
+   
+   PACKAGE CONTENTS:
+   Source Segments:
+   (C) base/rt/cltu.c
+   
+   Object Only Binaries:
+   None.
+   
+   Configuration Independent Binaries:
+   (C) base/obj/cltu.o
+   (C) base/load/CLTN.so
+   
+   Support Files:
+   base/lst/cltu.lst
+   base/lst/CLTN.map
+   
+   OTHER BINARIES TO BUILD:
+   None.
+   
+   PREREQUISITE APARS IN APPLICATION ORDER:
+   
+   
+   COMMENTS:
+   APAR PJ30423 [http://www-01.ibm.com/support/docview.wss?uid=swg1PJ30423] was a performance enhancement to the standard
+   TCP/IP
+   inet_ntoa() function. This was done to assist applications that
+   use
+   this function for every transaction because the function has an
+   increased path length. In addition to this change, the APAR also
+   eliminated a possible memory leak, which was caused by the
+   function not
+   reusing the MALOC storage that was needed to return the
+   converted IP
+   address. If an ECB issues this function enough, it can run out
+   of MALOC
+   storage. A change was made to reuse the MALOC storage for all
+   subsequent calls by this ECB to eliminate the possibility of
+   running
+   out of MALOC storage.
+   
+   These changes caused the ZDTCP DNS command that displays your
+   Domain
+   Name System (DNS) servers to return unexpected results. The
+   ZDTCP DNS
+   display code issues an inet_ntoa() function for the primary DNS
+   IP
+   address and saves the pointer with the response into a variable.
+   Before
+   WTOPCing the primary DNS server IP address, the code issues
+   another
+   inet_ntoa() for the secondary DNS server IP address, saving that
+   return
+   pointer into a different variable. This causes the first primary
+   DNS
+   server IP address that was converted to be overlaid with the
+   secondary
+   DNS server IP address.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  SOLUTION:
+   ZDTCP DNS display processing, segment cltu.c, has been updated
+   to WTOPC
+   the primary DNS server IP address first before trying to convert
+   and
+   display the secondary DNS server IP address.
+   
+   COREQS:
+   None.
+   
+   MIGRATION CONSIDERATIONS:
+   None.
+   
+   BUILD COMMANDS AND INSTRUCTIONS:
+   #maketpf commands for linux
+   maketpf -f CLTN cltu.o
+   maketpf CLTN link
+   
+   
+   
+   
+   UPDATED INFORMATION UNITS:
+   None.
+   
+   See your IBM representative if you need additional information.
+   
+   DOWNLOAD INSTRUCTIONS:
+   http://www.ibm.com/software/htp/tpf/pages/maint.htm [http://www.ibm.com/software/htp/tpf/pages/maint.htm]
+   
+   APAR URL:
+   http://www.ibm.com/software/htp/tpf/ztpfmaint/put2/PJ29991.htm [http://www.ibm.com/software/htp/tpf/ztpfmaint/put2/PJ29991.htm]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PJ29991
+   
+   
+ * REPORTED COMPONENT NAME
+   Z/TPF
+   
+   
+ * REPORTED COMPONENT ID
+   5748T1501
+   
+   
+ * REPORTED RELEASE
+   110
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2005-08-16
+   
+   
+ * CLOSED DATE
+   2005-11-07
+   
+   
+ * LAST MODIFIED DATE
+   2005-11-07
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   Z/TPF
+   
+   
+ * FIXED COMPONENT ID
+   5748T1501
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R110 PSY
+   UP

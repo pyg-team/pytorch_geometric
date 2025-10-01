@@ -1,0 +1,116 @@
+Title: IBM NullPointerException when web publishing a model with a URL that has no documentation - United States
+
+Text:
+NPE; URL; IRJH0012E; PK66612; RATLC01167841; 1305855 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ In IBM® Rational® Software Architect, when web publishing a model that contains a URL with a blank Properties>Documentation tab, a NullPointerException, StringIndexOutOfBoundsException, TransformException, or PublishRuntimeException will result. 
+
+SYMPTOM
+During the web publishing process, the following error message will appear: 
+
+
+
+========================================
+Error
+========================================
+An unexpected error occurred during publish operation. Details are in
+"Error Log" view. What would you like to do?
+========================================
+Ignore | Ignore All | Abort
+========================================
+
+
+
+and the following error will be written to the .log file:
+
+
+
+!ENTRY com.ibm.xtools.transform.core 4 12 2008-04-18 09:31:05.593
+!MESSAGE IRJH0012E Transformation "UML2 Publisher Transform" aborted during its execution; descriptor id="com.ibm.xtools.publish.uml2.PublishTransform"
+!STACK 0
+java.lang.NullPointerException
+at com.ibm.xtools.publish.uml2.internal.traversal.UML2CommentRule.makeRelativeFileURL(UML2CommentRule.java:193)
+at com.ibm.xtools.publish.uml2.internal.traversal.UML2CommentRule.addAttributes(UML2CommentRule.java:78)
+at com.ibm.xtools.publish.uml2.rules.UML2AbstractPublishRule.createTarget(UML2AbstractPublishRule.java:158)
+at com.ibm.xtools.transform.core.AbstractRule.execute(AbstractRule.java:91)
+at com.ibm.xtools.publish.uml2.rules.UML2AbstractPublishRule.execute(UML2AbstractPublishRule.java:242)
+at com.ibm.xtools.transform.core.Transform.execute(Transform.java:310)
+at com.ibm.xtools.transform.core.Transform.internalExecute(Transform.java:611)
+at com.ibm.xtools.transform.core.Transform$1.run(Transform.java:204)
+at 
+...
+
+!SUBENTRY 2 com.ibm.xtools.transform.core 4 12 2008-04-18 09:31:05.593
+!MESSAGE Transform UML2 Publisher Transform: Element "1017789610" was executing source "org.eclipse.uml2.uml.internal.impl.CommentImpl@4a484a48 (body: null)"
+
+
+
+Depending on how the documentation became empty, you may get a StringIndexOutOfBoundsException, TransformException, or PublishRuntimeException instead of a NullPointerException. The resolution, however, will be the same.
+
+
+
+CAUSE
+Defect APAR PK66612 has been submitted to address this issue.
+
+
+
+DIAGNOSING THE PROBLEM
+The following steps reproduce the problem: 
+
+ 
+
+ 1. Create a UML project and model 
+ 2. Add a URL to the model. In the URL Input Dialog, you will have to add text to the textbox before clicking OK 
+ 3. Go to the URL's Properties>Documentation tab and delete all information inside of it, so that the URL now has no label in the Project Explorer 
+ 4. Save the changes and web publish the model
+    
+
+Expected Result: The web publish finishes successfully without errors. 
+Actual Result: The above-mentioned errors occur. 
+RESOLVING THE PROBLEM
+WORKAROUNDS: 
+
+
+To prevent the error:
+
+
+ * Add a comment to the URLs whose Properties>Documentation tab is empty, save the changes and then perform the web publish
+   
+   OR
+   
+   
+ * Remove the URLs whose Properties>Documentation tab is empty if they are not needed, save the changes and then perform the web publish
+
+
+
+
+
+
+The following pluglet enables you to find comments in the model that are empty: 
+
+Disclaimer All source code and/or binaries attached to this document are referred to here as "the Program". IBM is not providing program services of any kind for the Program. IBM is providing the Program on an "AS IS" basis without warranty of any kind. IBM WILL NOT BE LIABLE FOR ANY ACTUAL, DIRECT, SPECIAL, INCIDENTAL, OR INDIRECT DAMAGES OR FOR ANY ECONOMIC CONSEQUENTIAL DAMAGES (INCLUDING LOST PROFITS OR SAVINGS), EVEN IF IBM, OR ITS RESELLER, HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
+
+
+EmptyURLLister.zip [/support/docview.wss?uid=swg21305855&aid=2] [/support/docview.wss?uid=swg21305855&aid=1] 
+
+To use this pluglet, follow these instructions: 
+ 1. Import the attached zip file into your current workspace from File > Import... > Project Interchange
+    
+    
+ 2. Create the pluglet configuration by right clicking on the file EmptyURLLister.java, selecting Run As... and choosing Pluglet
+    
+    
+ 3. Select a UML element or model from the Project Explorer and launch EmptyURLLister from the menu Run > Internal tools
+    
+    
+ 4. The output of the pluglet will be written in the Console view
+
+
+
+
+
+
+
+
+Cross Reference information Segment Product Component Platform Version Edition Software Development Rational Systems Developer Web Publisher Windows 7.0.0.4 Software Development Rational Software Modeler Web Publisher Windows 7.0.0.4

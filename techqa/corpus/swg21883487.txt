@@ -1,0 +1,19 @@
+Title: IBM How to resolve the error "Arguments to COR procedure are incorrect" when trying to create a Fixed Content Device for FileNet P8 Content Federation Services for Image Services - United States
+
+Text:
+CFS; Fixed Content Device; Connect; IS; Federation Services for Image Services; CONTENT_FCP_CONNECTION_FAILED; FNRCC0074E TECHNOTE (FAQ)
+
+QUESTION
+ When I try to create a Fixed Content Device for Image Services, in the Administration Console for Content Platform Engine (ACCE) or FileNET Enterprise Manager (FEM), the Fixed Content Device fails to get created. The following error will show in the FileNet Content Platform Engine p8_server_error.log.
+
+FNRCC0074E: CONTENT_FCP_CONNECTION_FAILED: The fixed content provider could not establish a connection to the fixed content device.". Caused by: IS_SSI_5113: : Arguments to COR procedure are incorrect.
+
+Why does the creation of the Fixed Content Device for Image Services fail? 
+
+CAUSE
+The password of the IS user, on the Image Services server, is more than 8 characters.
+
+ANSWER
+Please download and review the FileNet Image Services System Administrator's Handbook, for more information on the Image Services IS user password requirements. 
+
+Use 8 or less characters for the IS user password, then try to create the Fixed Content Device again.

@@ -1,0 +1,20 @@
+Title: IBM Will IBM Content Integrator honor the folder sort options within Content Manager OnDemand? - United States
+
+Text:
+IICE; ODWEK TECHNOTE (FAQ)
+
+QUESTION
+ I am using IBM Content Integrator (ICI) to query documents in IBM Content Manager OnDemand (CMOD). And I have set folder sort options within CMOD.
+
+Will ICI use the folder sort options I have set on CMOD in the same way that the CMOD API does? 
+
+ANSWER
+No, ICI does not adhere to the CMOD sorting options. 
+
+If you need results back in sorted order, please use the ICI orderBy functionality. 
+
+See the Related information below for more details. 
+
+RELATED INFORMATION
+ Sort Specification [http://pic.dhe.ibm.com/infocenter/ce/v8r6/topic/com.ibm.discovery.ci.nav.doc/javadoc/integrate/api/com/venetica/vbr/client/SortSpecification.html]
+Working with examples [http://pic.dhe.ibm.com/infocenter/ce/v8r6/topic/com.ibm.discovery.ci.appdev.doc/cdnap006.htm]

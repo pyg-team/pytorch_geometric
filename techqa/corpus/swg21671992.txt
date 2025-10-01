@@ -1,0 +1,22 @@
+Title: IBM No Information In View Related Records - United States
+
+Text:
+View; related; record; poline; po; purchase; order; invoice; invoiceline; line; select; action; TPAEUI; TPAEPURCHASE TECHNOTE (FAQ)
+
+QUESTION
+ Why do I not see my PO information? 
+
+CAUSE
+In the PO and Invoice application there is an available option of View Related Records, available both from the select action and from the po/invoice line. Depending on where the option is accessed from there will be different results. If trying to view the related record from the poline or invoice line nothing will be shown under the Invoice Transactions tab. The reason for that is that anything in the Invoice Transactions tab is created at the Invoice header level and is of type TOTAL. The TOTAL type lines do not contain an invoice lines reference so will not be seen. To view them one would have to use the View Related Records option from the select action menu. Please note If there are any variance transaction created they will be shown at the line level as they are invoice line specific. This mean they will be visible in the View Related Records when using it from the poline or invoiceline.
+Example of what is seen when using the poline to view related record when type is Total.
+
+[/support/docview.wss?uid=swg21671992&aid=1] [/support/docview.wss?uid=swg21671992&aid=1]
+
+
+An example of what is seen when type is not Total, in this example it will be Tax 1.
+
+[/support/docview.wss?uid=swg21671992&aid=2] [/support/docview.wss?uid=swg21671992&aid=2]
+
+
+
+ANSWER

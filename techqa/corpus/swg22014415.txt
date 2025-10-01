@@ -1,0 +1,37 @@
+Title: IBM WebSphere Commerce v7 is adding support for Java Version 8 - United States
+
+Text:
+ NEWS
+
+ABSTRACT
+ WebSphere Commerce v7 is adding support for Java Version 8 
+
+CONTENT
+In January 2018, it was announced that support for WebSphere Commerce V7 would be ending [http://www-01.ibm.com/common/ssi/ShowDoc.wss?docURL=/common/ssi/rep_ca/2/897/ENUS918-012/index.html&lang=en&request_locale=en] on April 30, 2019. WebSphere Application Server (WAS) previously announced support for WAS V7 will end [http://www-01.ibm.com/common/ssi/ShowDoc.wss?docURL=/common/ssi/rep_ca/3/897/ENUS916-143/index.html&lang=en&request_locale=en] on April 30 2018 and Oracle will be ending support for Java 6 [http://www.oracle.com/technetwork/java/eol-135779.html] on December 31, 2018 
+
+IBM extends the value of your investment in IBM WebSphere Commerce V7 by adding support for Java version 8 [https://www.ibm.com/support/knowledgecenter/SSZLC2_7.0.0/com.ibm.commerce.admin.doc/concepts/cwnjdk.htm]through an upgrade package delivered in April 2018. Java 8 support is accomplished by adding WAS V8.5.5 as a supported application server version. This upgrade package includes support for WAS V8.5.5, Rational Application Developer (RAD) V9.5 and Java 8. It does require WCS to be on V7 FP9/FEP8. 
+
+This upgrade package is recommended by IBM for all current WCS v7 installations and is required to get continuous WAS and Java support later in the WCS V7 support life cycle. See below for your current options:
+
+
+Option 1:
+
+Upgrade WebSphere Commerce to FP9/FEP8 on WAS V 8.5.5 with Java 8 and you will receive Standard support for WCS, WAS and Java until April 30, 2019.
+
+Option 2:
+
+Continue running WCS V7 on WAS v7 and you will receive Standard support with WAS and Java 6 until April 30, 2018. After April 30 2018, IBM will continue to provide WAS and Java 6 compatible fixes for this configuration but note the following restrictions:
+
+Up until Apr30, 2018
+Standard support of WAS V7 with Java 6
+
+From May 1, 2018 through December 31, 2018:
+WAS V7 - must be on last WAS fix pack. IBM will provide a WAS interim fix that might contain one and/or multiple fixes.
+Java 6 support - Java 6 support is limited to Usage and Known Defect ONLY. No new defects or APARs will be accepted.
+Java 6 CPU fixes - Oracle no longer offer full support and will only deliver Critical Patch Updates (CPUs) which will be security fixes during this timeframe.
+Note: Clients who wish to continue receiving Security fixes must update to WAS V8.5.5 and Java 8 prior to January 1, 2019.
+
+From January 1, 2019 through April 30, 2021:
+WAS V7 - must be on last WAS fix pack. IBM will provide a WAS interim fix that might contain one and/or multiple fixes.
+Java 6 support - Java 6 support is limited to Usage and Known Defect ONLY. No new defects or APARs will be accepted.
+Java 6 - Oracle is no longer providing CPUs or fixes of any other kind (no security fixes) therefore IBM can no longer provide fixes either.

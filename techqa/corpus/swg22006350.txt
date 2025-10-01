@@ -1,0 +1,40 @@
+Title: IBM FileNet Collaboration Services (FNCS) Installation error SRVE0293E - United States
+
+Text:
+FNCS; connections TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ After installing Filenet Collaboration Services, an error occurs when accesing url http://<hostname>/dm. After a login http error 500 occurs (SRVE0293E occurs in the SystemOut.log). 
+
+SYMPTOM
+Error in the systemout log: 
+
+000000d2 webapp E
+com.ibm.ws.webcontainer.webapp.WebApp logServletError
+SRVE0293E: [Servlet
+Error]-[com.ibm.ws.webcontainer.extension.DefaultExtensionProcessor]:
+java.lang.NoClassDefFoundError:
+com.filenet.api.exception.EngineRuntimeException
+at java.lang.J9VMInternals.verifyImpl(Native Method)
+at java.lang.J9VMInternals.verify(J9VMInternals.java:94)
+at java.lang.J9VMInternals.initialize(J9VMInternals.java:169)ICN
+at java.lang.Class.forNameImpl(Native Method)
+at java.lang.Class.forName(Class.java:288)
+at java.beans.Beans.instantiate(Beans.java:189)
+at java.beans.Beans.instantiate(Beans.java:80)
+
+
+CAUSE
+FNCS is now included as part of IBM Content Navigator(ICN) since version 2.0.3 and should not be installed as standalone software. When FNCS is installed outside of ICN, no jace.jar file appears in the WEB-INF/lib directory. 
+
+
+
+
+
+ENVIRONMENT
+ICN 3.0.1
+
+
+
+RESOLVING THE PROBLEM
+During the ICN deployment, when given the option to choose a client, click the FNCS checkbox. The jace.jar file should now appear in the WEB-INF/lib directory for FNCS.

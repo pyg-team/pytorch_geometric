@@ -1,0 +1,147 @@
+Title: IBM Sterling B2B Integrator MustGather: Troubleshooting HTTP/HTTPS issues - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Mustgather: What information is required by the support team to investigate HTTP/HTTPs related problems in IBM Sterling B2B Integrator (SBI) 
+
+ANSWER
+ 
+
+Collecting troubleshooting data for problems with IBM Sterling B2B Integrator (SI) before calling IBM Support will help familiarize you with the troubleshooting process and save you time. 
+
+ 
+
+IBM support would need the following data to troubleshoot HTTP/HTTPS issues. If you encounter HTTP/HTTPS related issue then collect the data as listed below and share with the IBM support team. 
+
+ 
+
+1. Troubleshooting HTTP issue when Sterling Integrator (SI) is HTTP Client. 
+
+DEBUG Logs needed:
+1. httpclient.log
+2. perimeter.log
+3. system.log
+4. noapp.log
+5. wf.log 
+
+To enable DEBUG mode logging navigate to dashboard > Operations > System > Logs page. In the logs window in the UI, click on the icon next to the log. This should display a small window where you can set the debug logging. The log files are located in the <SI_INSTALL>/logs directory. 
+
+If external perimeter server is involved then enable DEBUG mode for PSLogger.log. This log resides on the external perimeter server. 
+
+In addition, share all the other logs in NON-DEBUG mode. 
+
+Business process details:
+1. The HTTP Client Business process
+2. The HTTP Client business process execution details Screen-shot.
+3. Screen-shot of status report from failure step.
+4. Process Data details from failure step. 
+
+ 
+
+If HTTP server is other than Sterling Integrator then,
+1. What is the name of the HTTP server?
+2. What is the version of the HTTP server? 
+
+Note: IBM support might ask for server side logs if needed for further troubleshooting. 
+
+If SSL is involved then provide the following.
+1. The certificates involved in the client side
+2. The certificates involved in the server side
+3. SSL DEBUG logs. 
+
+Click here for STEPS TO TURN ON SSL LOGS: 
+
+Also gather dump_info and packet trace. Click here to capture these details. 
+
+ 
+
+2. Troubleshooting HTTP issue when Sterling Integrator (SI) is HTTP server. 
+
+DEBUG logs needed:
+1. http.log
+2. perimeter.log
+3. system.log
+4. noapp.log
+5. wf.log 
+
+If external perimeter server is involved then enable DEBUG mode for PSLogger.log. This log resides on the external perimeter server. 
+
+To enable DEBUG mode logging navigate to dashboard > Operations > System > Logs page. In the logs window in the UI, click on the icon next to the log. This should display a small window where you can set the debug logging. The log files are located in the <SI_INSTALL>/logs directory. 
+
+In addition, share all the other logs in NON-DEBUG mode. 
+
+Business process details:
+1. HTTP server adapter configuration Screen-shot.
+2. The BP bootstraped by the HTTP Adapter.
+3. Screen-shot of the bootstraped BP execution that failed. 
+
+ 
+
+If HTTP client is other than Sterling Integrator then,
+1. What is the name of the HTTP client?
+2. What is the version of the HTTP client? 
+
+Note: Support might ask for client side logs if needed for further troubleshooting. 
+
+If SSL is involved then provide us the following.
+1. The certificates involved in the client side
+2. The certificates involved in the server side
+3. SSL DEBUG logs 
+
+Click here for STEPS TO TURN ON SSL LOGS: 
+
+Also gather dump_info and packet trace. Click here to capture these details. 
+
+ 
+
+Enabling DEBUG mode for SSL logs: 
+
+ 
+
+STEPS TO TURN ON SSL LOGS: 
+
+ 
+1) Stop the server 
+
+2) Add the following option to security.properties.in in <SI_INSTALL_DIR>/properties, TurnOnSSLRecordLog=true 
+
+3) Make backup of following files: 
+tmp.sh 
+
+4) Add the following flags <SI_INSTALL_DIR>/bin/tmp.sh_asset_ext.in
+
+SERVER_FLAGS="${SERVER_FLAGS} -Dcom.maverick.ssh.components.ComponentManager.tryStandaloneCryptographyBeforeJCE=true -Dcom.certicom.tls.record.maximumPaddingLength=0 -Dcom.certicom.tls.util.sslLog.default.verboseLevel=3 -Dcom.certicom.tls.util.sslLog.default.output=<SI_INSTALL_DIR>/logs/ssl.txt"
+JAVA_FLAGS="${JAVA_FLAGS} -Dcom.maverick.ssh.components.ComponentManager.tryStandaloneCryptographyBeforeJCE=true -Dcom.certicom.tls.record.maximumPaddingLength=0 -Dcom.certicom.tls.util.sslLog.default.verboseLevel=3 -Dcom.certicom.tls.util.sslLog.default.output=<SI_INSTALL_DIR>/logs/ssl.txt"
+
+Note: Here replace the SI_INSTALL_DIR with the actual path to the INSTALL DIRECTORY.
+
+5) run setupfiles.sh
+
+6) Check security.properties to ensure you see the string: 
+TurnOnSSLRecordLog=true
+
+7) Start the server
+
+8) Enable DEBUG logging for perimeter.log and noapp.log using the User Interface
+
+9) When problem occurs capture the noapp.log.Dyyyymmdd.Thhmmss and perimeter.log.Dyyyymmdd.Thhmmss. The SSL logs will be printed in the noapp.log.Dyyyymmdd.Thhmmss 
+
+ 
+
+Gathering Dump_Info and Packet Trace: 
+
+ 
+
+Gather DUMP_INFO (Refer link below): 
+
+http://www-01.ibm.com/support/docview.wss?uid=swg21562125 [http://www-01.ibm.com/support/docview.wss?uid=swg21562125] 
+
+ 
+
+Capture Packet Trace (Refer link below) 
+
+IBM Support would need packet sniffer output during the issue time frame for different kind of issues. If requested, follow the steps below to capture the network packets and share with IBM support. 
+
+http://www-01.ibm.com/support/docview.wss?uid=swg21175744 [http://www-01.ibm.com/support/docview.wss?uid=swg21175744]

@@ -1,0 +1,24 @@
+Title: IBM Why is the VI400.log file for Content Manager Client for iSeries not in the root of the client installation directory as expected? - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ My IBM Support rep has asked me to capture a VI400.LOG in order to analyze a problem I am having in the Content Manager Client for Windows. I've followed the directions in the Technote "How do I enable logging in the Content Manager Client for Windows Version 5 Release 1 when connected to Content Manager for iSeries?" (see Related information below) but no log is generated in the root of the client installation directory as defined by the variable %FRNROOT%. Why might this be? 
+
+CAUSE
+It could be that the variable Vi400_config_path is defined and is pointing to another location. 
+
+ANSWER
+Check the Windows Control Panel for the environment variable VI400_config_path. By default, the VI400.log is placed in the root of the Content Manager Client for iSeries installation directory (e.g., C:\Program Files\IBM\CM for iSeries) unless this variable points to another location. If you find that this variable is defined, you can remove the variable or change the settings to point to the desired location for saving the VI400.log file. 
+
+ 
+
+If this information does not address your question, please contact IBM software support for further assistance. 
+
+
+Stay Informed by Receiving Product and Lifecycle Notifications:
+Click here [http://www.ibm.com/support/docview.wss?uid=swg21674106]
+
+RELATED INFORMATION
+ How do I enable logging for CM Client? [http://www.ibm.com/support/docview.wss?uid=swg21411981]

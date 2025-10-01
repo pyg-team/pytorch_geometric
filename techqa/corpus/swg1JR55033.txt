@@ -1,0 +1,129 @@
+Title: IBM JR55033: WHEN YOU TRY TO OPEN THE PROCESS ADMIN CONSOLE FROM THE CONFIGURE LINK,A NEW WINDOW WITH THE POTENTIALLY WRONG URL OPENS - United States
+
+Text:
+  A FIX IS AVAILABLE
+Version 8.5 Refresh Pack 7 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24041575]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When you cannot resolve the configure server link, you try to
+   open the Process Admin Console anyway by using a default URL
+   (the Configure link under the Server tab) instead. As a result,
+   a new window with the potentially wrong URL opens.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  LOCAL FIX:Ø
+   N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  When you try to reach the Process Admin Console by using a
+   default URL, the URL cannot be resolved.
+   
+   PRODUCTS AFFECTED
+   IBM Business Process Manager (BPM) Advanced
+   IBM BPM Standard
+   IBM BPM Express
+   
+   LOCAL FIX -
+   None
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A fix is integrated into IBM BPM V8.5.7.0. On IBM BPM V8.5.7,
+   you receive an exception message instead of a preset static URL
+   when you click the server link and the URL cannot be resolved.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR55033
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM ADVANCED
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9400
+   
+   
+ * REPORTED RELEASE
+   856
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2015-12-24
+   
+   
+ * CLOSED DATE
+   2016-02-12
+   
+   
+ * LAST MODIFIED DATE
+   2016-05-01
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R857 PSY
+   UP

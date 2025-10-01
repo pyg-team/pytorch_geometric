@@ -1,0 +1,20 @@
+Title: IBM An exported, deployed SCA module application archive for IBM Business Process Manager (BPM) Advanced might fail to install - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ You export a deployed SCA module application archive, such as an enterprise archive (EAR) file, from one server. You then attempt to install the application archive onto another server. However, the file fails to install. 
+
+CAUSE
+During the installation process for an SCA module, installation tasks are executed to generate the required run-time resources. When a deployed SCA module application gets exported and used for installation, those run-time resources are exported and it causes duplicate issues.
+The installation tasks assume that the SCA module application archive was produced by IBM Integration Designer or by the serviceDeploy command.
+
+
+RESOLVING THE PROBLEM
+The Export action is a WebSphere feature that is used mainly to back up a deployed application and to preserve its binding information. Do not use it to deploy, redeploy, or install an SCA module application.
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ BPM

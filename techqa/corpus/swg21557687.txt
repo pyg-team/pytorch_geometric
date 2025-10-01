@@ -1,0 +1,101 @@
+Title: IBM Installation failed, ORA-00942: table or view does not exist - United States
+
+Text:
+Installation; STERLINGNFX TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Installation failed, ORA-00942: table or view does not exist 
+
+SYMPTOM
+
+
+During Installation of SI 5005 build, the install failed with the error message indicated in the Error Message below:
+
+Error Message ORA-00942: table or view does not exist
+
+===============================
+
+DynamicClassLoader.appendToSearchPath(X:\SterlingCommerce\SI5005\install\ant\xmlParserAPIs.jar) [file:///D:/SterlingCommerce/SCI5005/install/ant/xmlParserAPIs.jar%29] returned: true
+processed 1 tasks
+adding generic version information
+java.lang.ClassNotFoundException: com.sterlingcommerce.woodstock.install.versions.GenericServiceVersions
+at java.net [http://java.net/].URLClassLoader$1.run(URLClassLoader.java:200)
+at java.security.AccessController.doPrivileged(Native Method)
+at java.net [http://java.net/].URLClassLoader.findClass(URLClassLoader.java:188)<b r /> at java.lang.ClassLoader.loadClass(ClassLoader.java:307)
+at java.lang.ClassLoader.loadClass(ClassLoader.java:252)
+at java.lang.ClassLoader.loadClassInternal(ClassLoader.java:320)
+at java.lang.Class.forName0(Native Method)
+at java.lang.Class.forName(Class.java:169)
+at com.sterlingcommerce.woodstock.install.module_loader.ServiceInstall.addVersionIn fo(ServiceInstall.java:2869)
+at com.sterlingcommerce.woodstock.install.module_loader.ServiceInstall.install(Serv iceInstall.java:459)
+at com.sterlingcommerce.woodstock.install.module_loader.ServiceInstall.install(Serv iceInstall.java:240)
+at com.sterlingcommerce.woodstock.install.InstallSI.ModuleLoader(InstallSI.java:139 9)
+at com.sterlingcommerce.woodstock.install.InstallSI.PerformInstall(InstallSI.java:6 14)
+at com.sterlingcommerce.woodstock.install.InstallSI.main(InstallSI.java:124)
+at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)<br /> at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.jav a:25)
+at java.lang.reflect.Method.invoke(Method.java:597)
+at com.sterlingcommerce.woodstock.install.InstallSIBootstrapper.instanciateAndRun(I nstallSIBootstrapper.java:350)
+at com.sterlingcommerce.woodstock.install.InstallSIBootstrapper.instanciateAndRun(I nstallSIBootstrapper.java:354)
+at com.sterlingcommerce.woodstock.install.InstallSIBootstrapper.doIt(InstallSIBoots trapper.java:188)
+at com.sterlingcommerce.woodstock.install.InstallSIBootstrapper.main(InstallSIBoots trapper.java:81)
+No version info to add
+versions added to sandbox.cfg only.
+...DONE
+
+Service X:\SterlingCommerce\SI5005 [file:///D:/SterlingCommerce/SCI5005/install/ant/xmlParserAPIs.jar%29]\install\packages\install_core_3205.jar [file:///D:/SterlingCommerce/SCI5005/install/packages/install_core_3205.jar ] installed
+
+Mon Aug 30 18:52:23 CDT 2010 : Service install complete.
+Service install took 8422 milli seconds.
+FileOutputString opened for: .\properties\sandbox.cfg
+sandboxProp stored to: .\properties\sandbox.cfg
+FileOutputStream closed for: .\properties\sandbox.cfg
+[TIMING] - Installing: X:\SterlingCommerce\SI5005 [file:///D:/SterlingCommerce/SCI5005/install/ant/xmlParserAPIs.jar%29]\install\packages\install_core_3205.jar [file:///D:/SterlingCommerce/SCI5005/install/packages/install_core_3205.jar ] completed in: 8 seconds.
+Attempting to extract serviceinstallbootstrapper.jar
+ORA-00942: table or view does not exist
+
+java.lang.NullPointerException
+at java.util.StringTokenizer.<init>(StringTokenizer.java:182)
+at java.util.StringTokenizer.<init>(StringTokenizer.java:204)
+at com.sterlingcommerce.woodstock.install.utils.FormerUpgrade.check42orEarlier(Form erUpgrade.java:350)
+at com.sterlingcommerce.woodstock.install.utils.FormerUpgrade.is42orEarlier(FormerU pgrade.java:386)
+at com.sterlingcommerce.woodstock.install.InstallSI.PerformInstall(InstallSI.java:6 47)
+at com.sterlingcommerce.woodstock.install.InstallSI.main(InstallSI.java:124)
+at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)<br /> at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.jav a:25)
+at java.lang.reflect.Method.invoke(Method.java:597)
+at com.sterlingcommerce.woodstock.install.InstallSIBootstrapper.instanciateAndRun(I nstallSIBootstrapper.java:350)
+at com.sterlingcommerce.woodstock.install.InstallSIBootstrapper.instanciateAndRun(I nstallSIBootstrapper.java:354)
+at com.sterlingcommerce.woodstock.install.InstallSIBootstrapper.doIt(InstallSIBoots trapper.java:188)
+at com.sterlingcommerce.woodstock.install.InstallSIBootstrapper.main(InstallSIBoots trapper.java:81)
+EXIT_VALUE=-1
+ERROR: Installation failed '0'
+-1
+Install Complete
+
+
+RESOLVING THE PROBLEM
+
+
+Please verify and correct the permission settings for the database / user setup. (see Using an Oracle Database section of the Installation Guide)
+
+ 
+
+ 
+
+HISTORICAL NUMBER
+ NFX9820 
+
+PRODUCT ALIAS/SYNONYM
+ 
+
+Severity
+
+
+Normal
+
+
+Type
+
+
+NormalFix

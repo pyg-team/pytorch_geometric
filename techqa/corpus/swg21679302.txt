@@ -1,0 +1,92 @@
+Title: IBM How much memory do I need on my IBM Content Navigator server? - United States
+
+Text:
+memory; content navigator; heap TECHNOTE (FAQ)
+
+QUESTION
+ What steps should I follow to estimate the JVM heap space I need to allocate to my IBM Content Navigator server? 
+How do I measure the application memory footprint over time under simulated user load to estimate memory requirements of typical transactions in my environment? 
+How can I calculate the amount of JVM heap space used by the application based on the number of users, data model and user activity?
+
+
+CAUSE
+IBM Content Navigator enables users to work with content that is stored on multiple content repositories and manage large amounts of data. If you do not tune your IBM Content Navigator system to support your data models or your business needs, your users might not be able to use IBM Content Navigator to accomplish tasks in a timely manner. 
+
+ANSWER
+This document includes information that enables you to: 
+
+- Monitor Java heap usage over time to analyze the application memory footprint. This procedure can be used in a pre-production environment using a simulated load to evaluate the memory requirements of the data model and anticipated transaction volume. It can also continue to be used in production to monitor the memory usage of the system.
+
+- Calculate the amount of JVM heap space used by the application based on the number of users, data model and user activity in your environment. This procedure uses heap dumps captured from specific transactions to extrapolate memory requirements for larger user and transaction volumes.
+
+For best performance, Java heap usage should be between 40% and 70%. Heap usage below 40% results in longer garbage collection cycles, whereas heap usage over 70% causes frequent garbage collection. 
+
+When running 64-bit Java, the memory space provided by the operating system to the Java process is very large. You can therefore assume that no limit is imposed on the maximum size of the Java heap due to any memory contention between the Java heap and the native heap.
+
+It is important to have more physical memory than is required by the sum of all processes on the machine in order to prevent paging or swapping. Paging reduces the performance of the system and affects the performance of the Java memory management system. When increasing the Java heap size, ensure that sufficient unused physical memory is available on the machine to cover the increase. If sufficient physical memory is not available, either install additional memory or take into account the effect on overall performance that occurs.
+
+
+Factors that affect memory usage
+
+Factors which influence the memory required by the application will vary depending upon the types of transactions performed by users in a particular environment. Ideally, the test environment used to perform memory estimates would reproduce the planned production data model as well as simulating anticipated user load. 
+
+For many operations, the number of users concurrently performing transactions will affect memory consumption. Transactions involving documents, such as viewing, downloading and thumbnail generation will be impacted by the size and type of the documents. Memory requirements for transactions such as search and folder browsing will depend upon the number of objects returned, as well as the number of classes and the quantity and size of properties in the data model associated with those objects.
+
+
+Procedure
+
+Monitor Java heap memory usage over time under simulated or actual load to compare the Used Heap (after collection) with the Heap Size. If the application footprint is close to the limit of the available Java heap, a temporary increase in application load might cause the Java heap to be exhausted. The JVM should be sized to keep heap usage within the 40% to 70% range. Example 1 below illustrates the steps involved in measuring the application footprint.
+
+To calculate how much memory you need for particular transactions in your specific environment, you must perform transactions in your IBM Content Navigator system to capture and analyze heap usage data. After obtaining heap usage measurements for several different transaction volumes, you can then extrapolate memory requirements for larger data and user volumes. Example 2 below illustrates this procedure.
+
+
+Example 1
+
+The following example uses the 'Garbage Collector and Memory Visualizer' (GCMV) tool to analyze the application memory footprint.
+
+IBM Support Assistant provides tools to capture and analyze heap memory usage, including the GCMV tool. The GCMV requires that verbose garbage collection be enabled on the WebSphere Application Server hosting Content Navigator.
+
+Steps:
+1. From the IBM Support Assistant, launch the Garbage Collector and Memory Visualizer tool. 
+2. Open the log file containing the garbage collection data. 
+3. Select the Line plot tab at the bottom of the window.
+4. Select VGC Heap Data > Heap Size from the menu.
+5. Select VGC Heap Data > Used Heap (after collection) from the menu.
+6. Clear any other options listed in the VGC Heap Data menu
+
+The line plot displayed by GCMV contains two lines comparing the Used Heap (after collection) and the Heap Size. 
+
+If the Used Heap (after collection) line is consistently close to the Heap Size line, is largely flat, and shows variation in the level of the line, then a temporary increase in application load might cause the Java heap to be exhausted. In this case, the maximum Java heap should be increased such that Java heap usage is below 70%. Values for Heap Size and Used Heap provided in the Report tab can be used to more easily calculate the required increase.
+
+Another useful counter which can be obtained from the GCMV is the garbage collection pause time. On a system where the JVM heap is sized correctly, garbage collection pauses should be short and the proportion of time spent unpaused should be high. On the Line plot tab, the VGC Pause > Pause Time menu will add a line to the graph illustrating time spent in garbage collection pauses. On the Report tab, the 'Proportion of time spent in garbage collection pauses (%)' should be low, and the 'Proportion of time spent unpaused (%)' should be high.
+
+
+Example 2
+
+The following example uses the 'Heap Analyzer' tool to capture the heap memory used by multiple concurrent logins. 
+
+Steps to generate a heap dump are available in the Must Gather [http://www-01.ibm.com/support/docview.wss?uid=swg21145599] document.
+
+1. Configure IBM Content Navigator to display Favorites as the initial login view. This is the default setting. This ensures that there are no calls made to a repository during login which would consume additional memory.
+2. Restart the application server
+3. Clear the browser cache
+4. Login to IBM Content Navigator
+5. Capture a heap dump
+6. Repeat steps 3-5 using a separate browser instance for each login.
+7. From the IBM Support Assistant, launch the Heap Analyzer tool. 
+8. Open the heap dump and display it in Tree View. 
+9. In the list of objects locate the login object
+10. Right-click the login object and select List same type.
+11. In a spreadsheet, record the number of logins used in this test and the heap size that is given for the first column heading in the heap analyzer tool.
+12. Repeat steps 2-9 for each of the dumps 
+
+Once the dumps have been analyzed, sort the spreadsheet by the number of logins and calculate the heap difference between adjacent rows. Then calculate the average memory used and divide by the number of logins to estimate the heap memory used per login.
+
+
+Additional Resources
+
+IBM SDK for Java - Java Troubleshooting [http://publib.boulder.ibm.com/infocenter/javasdk/tools/index.jsp]
+Monitoring and Diagnostic Tools for Java [http://www.ibm.com/developerworks/java/jdk/tools/]
+Enabling Verbose Garbage Collection in WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg21114927]
+IBM Support Assistant Team Server [http://www-01.ibm.com/software/support/isa/teamserver.html]
+WebSphere 8.5 Design Guide [http://www.redbooks.ibm.com/abstracts/sg248022.html?Open]

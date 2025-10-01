@@ -1,0 +1,54 @@
+Title: IBM Dashboard Services Hub (DASH) fails to display the Reporting option after the DASH and TCR services are installed from the Jazz for Service Management (JazzSM) bundle - United States
+
+Text:
+JazzSM Install TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ After DASH and TCR services are installed from the JazzSM bundle, the Reporting service option fails to be displayed in DASH. The TCR service can be run independently but cannot be enabled in DASH. 
+
+SYMPTOM
+The Reporting option is unavailable in DASH. The icon highlighted below does not show up. 
+
+[$5055996FD769C36.jpg] [/support/docview.wss?uid=swg21963295&aid=1] [/support/docview.wss?uid=swg21963295&aid=1] 
+CAUSE
+The integration script to integrate DASH and TCR fails to execute after install. After, JazzSM services are installed the WebSphere Application Sever (WAS) may take a long time to come back up and this can prevent the integration script from being executed.
+
+
+ENVIRONMENT
+This affects all the versions of JazzSM post 1.1. These scripts were introduced 1.1.0.1 onwards but were not present in 1.1 release.
+
+
+
+DIAGNOSING THE PROBLEM
+1) Confirm the Reporting services are installed properly and accessible directly. Open a web browser and enter the following URL for the reporting interface (this link should be used in the local environment): 
+
+http://host.domain:port/tarf/servlet/dispatch 
+
+NOTE: host.domain is the fully qualified IP address or hostname which hosts the reporting server (localhost). The default port number is 16310.
+
+2) Enter the user name <was_admin> and password <was_admin_password> to log on.
+
+A successful log on implies the reporting service has been properly installed. However, the integration script for DASH failed to execute.
+
+3) The "cognosPortlet.war" file should be missing in the following directory:
+Windows: JazzSM_Install_Home\profile\installedApps\JazzSMNode01Cell\isc.ear
+Linux/UNIX: JazzSM_Install_Home/profile/installedApps/JazzSMNode01Cell/isc.ear
+
+
+RESOLVING THE PROBLEM
+In order to get the above directory in the folders mentioned above execute the integration files under: 
+
+Windows: JazzSM_Install_Home\reporting\integration\dash\integrateDASH <was_admin> <was_admin_password> 
+Linux/UNIX: JazzSM_Install_Home/reporting/integration/dash/integrateDASH.sh <was_admin> <was_admin_password>
+
+Once the above scripts are executed the "cognosPortlet.war" file should be populated under:
+Windows: JazzSM_Install_Home\profile\installedApps\JazzSMNode01Cell\isc.ear
+Linux/UNIX: JazzSM_Install_Home/profile/installedApps/JazzSMNode01Cell/isc.ear
+
+For more details on the integration scrip please refer to the following link:
+http://www-01.ibm.com/support/knowledgecenter/SSEKCU_1.1.2.0/com.ibm.psc.doc_1.1.2.0/tcr_original/ttcr_install_post_dash_link.html?lang=en [http://www-01.ibm.com/support/knowledgecenter/SSEKCU_1.1.2.0/com.ibm.psc.doc_1.1.2.0/tcr_original/ttcr_install_post_dash_link.html?lang=en]
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Systems and Asset Management Tivoli Components

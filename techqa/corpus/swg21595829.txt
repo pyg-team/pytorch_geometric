@@ -1,0 +1,76 @@
+Title: IBM UpdateInstaller for WebSphere Application Server fails to upgrade to fix pack 15 - United States
+
+Text:
+update installer; updateinstaller; WAS; upgrading; FP15; fix pack 15; Previous Update Failure Detected TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+While upgrading Sametime components, the Installation Manager appears to be successful. Upon reviewing the configuration, however, you find that the fix pack level is still reported to be 7.0.0.3 instead of the expected 7.0.0.15.
+
+CAUSE
+This behavior is caused by the WebSphere Application Server Update Installer failing to complete the installation process, which can happen for multiple reasons including the following: 
+
+ * Additional iFixes have been installed that need to be removed first. 
+ * On the Windows OS, Windows has a lock on certain *.dll files preventing their replacement.
+
+DIAGNOSING THE PROBLEM
+For details on problem determination and prevention, refer to technote "WebSphere Application Server Update Installer fails to install a fix pack due to a "mkdirs failed for", "failed to delete", "text file busy", or "Error 79 -- Unable to open destination file" error on Windows" (1457152) [http://www.ibm.com/support/docview.wss?uid=swg21457152]. 
+
+One of the primary ways to prevent problems from the Sametime upgrade perspective is ensuring that the WebSphere related tasks and services are stopped and performing an operating system reboot before starting. 
+
+Reviewing the Update Installer logs show an error message ending with INSTCONFFAILED. This example means the Windows OS maintained a file lock and prevented the install. 
+
+Log excerpt:
+(Feb 4 10:05:53 AM), Install, com.ibm.ws.install.ismp.actions.InstallListOfMaintenances, msg1, Finished executing 7.0.0-WS-WAS-WinX32-FP0000015.pak.
+(Feb 4 10:05:53 AM), Install, com.ibm.ws.install.ismp.actions.InstallListOfMaintenances, err, Failed to delete: file:/F:/IBM/WebSphere/AppServer/bin/WASServiceMsg.dll
+(Feb 4 10:05:53 AM), Install, com.ibm.ws.install.ismp.actions.InstallListOfMaintenances, err, The file bin/WASServiceMsg.dll could not be replaced.
+(Feb 4 10:05:53 AM), Install, com.ibm.ws.install.ismp.actions.InstallListOfMaintenances, err, com.ibm.ws.install.ni.framework.fileactions.NIFFileActionIOException: The file bin/WASServiceMsg.dll could not be replaced.
+at com.ibm.ws.install.ni.framework.fileactions.ReplaceFileActionPlugin.execute(ReplaceFileActionPlugin.java:109)
+at com.ibm.ws.install.ni.framework.fileactions.FileActionPlugin.executeFileAction(FileActionPlugin.java:54)
+
+(Feb 4 10:05:54 AM), Install, com.ibm.ws.install.ni.ismp.actions.SettleNIFRegistryAction, msg1, Current install/uninstall process failed.
+
+
+RESOLVING THE PROBLEM
+In most cases, it is not necessary to re-install the Sametime components to upgrade WebSphere Application Server (WAS) to the appropriate levels and iFixes. This task can be completed using the WAS Update Installer manually. 
+
+If the WAS Update Installer presents with the "Previous Update Failure Detected" dialogue and the automated recovery fails, you can use the following procedure to recover the Update Installer so that the manual application of the fix pack and iFixes can continue: 
+
+Screen capture of Update Installer dialog:
+[/support/docview.wss?uid=swg21595829&aid=1] [/support/docview.wss?uid=swg21595829&aid=1]
+
+
+1. Reboot the OS if on Windows, and ensure that there are no process started.
+
+2. Remove the file <was home> /properties/version/nif/backup/updatestatus.xml. This file will be rebuilt the next time you run the Update Installer.
+
+3. Uninstall the failed WebSphere fix pack 15 installation. 
+
+4. Review the updatelog.txt to show that it was a successful uninstall. 
+
+The log is in the websphere_home/logs/update directory possibly under "uninstall" or under 7.0.0-WS-WAS-WIN-FP000015.uninstall/updatelog.txt. 
+
+5. Once you have a successful uninstall, then reinstall WebSphere fix pack 15. 
+
+6. Again review the updatelog.txt to show that it was a successful install. Scroll to the bottom of the file and verify that you see "INSTCONFSUCCESS. 
+
+The log is in the websphere_home/logs/update directory possibly under "install" or under the 7.0.0-WS-WAS-WIN-FP000015.install/updatelog.txt.
+
+7. After a successful install of fix pack 15, then install the remaining ifix(s). If this installation is successful, then you can restart WebSphere. Set the services back to start automatically or as you had them. 
+
+
+
+
+
+For Sametime 8.5.2 and 8.5.2 IFR 1 installations, you can retrieve Fix Pack 15 and the required iFixes from the zip files: wasFixesPackage_8.5.2.zip and wasFPWin32_7.0.0.15.zip. 
+
+wsupdWin32_7.0.0.15.zip is the full 7.0.0.15 Update Installer Package should it be needed. 
+
+ 
+
+8.5.2: The following screen capture shows these zip files -- fix pack 15, the 8.5.2 iFixes, and full Update Installer package -- in the 8.5.2 Installation Media:
+[/support/docview.wss?uid=swg21595829&aid=2] [/support/docview.wss?uid=swg21595829&aid=2]
+
+
+
+8.5.2 IFR 1: The following screen capture shows the iFixes, wasFixesPackage_8.5.2.201111105_1553.zip, in the 8.5.2 IFR 1 Installation Media:
+[/support/docview.wss?uid=swg21595829&aid=3] [/support/docview.wss?uid=swg21595829&aid=3]

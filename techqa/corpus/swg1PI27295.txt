@@ -1,0 +1,193 @@
+Title: IBM PI27295: RATIONAL DEVELOPER FOR SYSTEM Z 9.0.1 CARMA ENDEVOR 'PREVIEW JCL' ON BATCH ACTION RETURNS "JOB SUBMIT ERROR: UNABLE TO .." - United States
+
+Text:
+z/os  FIXES ARE AVAILABLE
+9.0.1.3: UI24427 PTF for Rational Developer for System z Host Options [http://www-01.ibm.com/support/docview.wss?uid=swg24039178]
+9.0.1.4: UI28242 PTF for Rational Developer for System z Host Options [http://www-01.ibm.com/support/docview.wss?uid=swg24040123]
+UI37287 PTF for Rational Developer for System z Host Options [http://www-01.ibm.com/support/docview.wss?uid=swg24042108]
+9.0.1.5: UI37834 PTF for Rational Developer for System z Host Options [http://www-01.ibm.com/support/docview.wss?uid=swg24042258]
+9.0.1.6: UI47123 PTF for Rational Developer for System z Host [http://www-01.ibm.com/support/docview.wss?uid=swg24043645]
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Rational Developer for System z 9.0.1 - RDz - CARMA Endevor
+   'Preview JCL' on batch action returns 'Job Submit error: Unable
+   to access JCL Template on the host' .
+   
+   When CARMA Endevor user selects 'Preview JCL' for 'Submit as
+   batch job' option on CARMA User Interface screen, the following
+   error is returned to client:
+   'Job Submit error: Unable to access JCL Template on the host'.
+   The following errors are seen in the host log indicating that
+   CARMA server holds an exclusive lock on
+   "CRABJCLO" file:
+   
+   MIM1038I RDZRSE5 contention with CRA19559 OWNS EXCL on PROD
+   MIM1039I RDZRSE5 needs SHR SYSDSN
+   xxxx.xxxx.PROD.CRA$NDVR.CRABJCLO
+   
+   In the above messages, RDZRSE5 is the threadpool that CARMA user
+   is connected to and CRA19559 is the user's CARMA server that
+   continues to hold an exclusive lock on CRABJCLO file after
+   Endevor host has completed writing JCL to file and has closed
+   file.  If MIM is not installed, this contention can be seen by
+   using F1 to gather Data Set Contention information.  In this
+   scenario, the "CRABJCLO" file contains the JCL to be "previewed"
+   at the client.  The allocation request to download CRABJCLO file
+   to client fails and the client is presented
+   "Job Submit error".  This problem does not occur at most CARMA
+   Endevor customer sites.
+   
+   A simular problem has periodically been seen with the "SPCLLIST"
+   file.  When this EXCL lock exists with the "SPCLLIST" file, the
+   drop-down lists (Environment, System, Subsystem...) are "empty"
+   on the CARMA Endevor UI screens.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Preview JCL problem: Select 'Submit on host' or 'Run in
+   foreground' on 'Submit as batch job' option.
+   
+   Empty drop-down lists problem: N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: 01.RDz users who access the Endevor          *
+   *                    repository using the IBM supplied RDz     *
+   *                    Endevor RAM.                              *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: 01.For some users, the IBM Rational     *
+   *                         Developer for System z (RDz) is not  *
+   *                         able to access some of the           *
+   *                         temporary datasets that are          *
+   *                         allocated by the host IBM RDz        *
+   *                         Endevor RAM because those datasets   *
+   *                         are not released after being         *
+   *                         updated by the IBM RDz Endevor RAM.  *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   01.The RDz Endevor RAM needs to release and reallocate the
+      datasets that are locked.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  01.The RDz Endevor RAM is being enhanced to provide a new
+      option to explicitly request that the datasets be freed and
+      re-allocated.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI27295
+   
+   
+ * REPORTED COMPONENT NAME
+   RD/Z HOST
+   
+   
+ * REPORTED COMPONENT ID
+   5724T0723
+   
+   
+ * REPORTED RELEASE
+   900
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-10-08
+   
+   
+ * CLOSED DATE
+   2015-01-15
+   
+   
+ * LAST MODIFIED DATE
+   2015-01-18
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  CRACFG   CRAFREED CRAREXX  CRARNDVR CRARPKGS
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   RD/Z HOST
+   
+   
+ * FIXED COMPONENT ID
+   5724T0723
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R900 PSY UI24427 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI24427]
+   UP15/01/18 I 1000
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

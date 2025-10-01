@@ -1,0 +1,95 @@
+Title: IBM Searching with wildcards in the standalone mode of Rational Directory Server 5.2 (Tivoli) takes a long time - United States
+
+Text:
+RDS 5.2; SRX TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When IBM Rational Directory Server is configured in Standalone Mode with more than 2500 users, search operations using wild cards (* or <User>*) through IBM Rational DOORS or IBM Rational Directory Administrator takes a long time to complete. 
+
+SYMPTOM
+Search operations using a wild card (* or <User>*) on IBM Rational DOORS or IBM Rational Directory Administration takes a long time to complete.
+
+CAUSE
+When IBM DB2 is running for long durations or when the frequency of table updates is high, there might be problems in the indexing of attributes and tables used in IBM Rational Directory Server (Tivoli). For DB2 to perform optimally, it is important that the attributes used in search filters or search sort keys be indexed and tuned (runstats [http://publib.boulder.ibm.com/infocenter/db2luw/v9/index.jsp?topic=/com.ibm.db2.udb.admin.doc/doc/r0001980.htm]) so that the database statistics and organization of DB2 remains updated. 
+
+This issue has been observed in IBM Rational Directory Server v5.2 with IBM Tivoli Directory Server v6.3 and IBM DB2 v9.7 along with IBM Rational DOORS v9.3.0.1.
+
+
+ENVIRONMENT
+ 
+
+ * All operating systems supported by IBM Rational Directory Server 
+ * IBM Rational Directory Administration installed on the client system 
+ * IBM Rational Directory Server configured in Standalone mode containing more than 2500 users 
+ * IBM Rational DOORS integrated with IBM Rational Directory Server on the client system
+
+
+RESOLVING THE PROBLEM
+A workaround to resolve this issue is to do a reorganization and tuning of DB2.
+
+
+NOTE: The tuning steps must be done periodically so that optimal performance of the setup is maintained.
+Prerequisites: For UNIX systems only 
+
+From the UNIX console, set the environment by running the following commands. 
+
+ --> .<RDS Install Location>/Instance/sqllib/db2profile
+--> .<RDS Install Location>/Instance/idsslapd-tdsadmin/idsprofile
+
+Steps to reorganize and tune DB2
+1. Make sure the RDS Server is running.
+
+2. Go to sbin location. 
+
+ * Windows: <Tivoli Install Location>\LDAP\V6.3\sbin 
+   UNIX: <Tivoli Install Location>/ldap/V6.3/sbin 
+   
+
+3. Execute the following command.  * UNIX: ./idsrunstats -I tdsadmin 
+   Windows: idsrunstats.cmd -I tdsadmin 
+
+The idsrunstats tool is used for updating the DB2 system catalog statistics about the physical characteristics of tables and associated indexes in the database of a directory server instance. For information on 'idsrunstats' and DB2 tuning, see http://publib.boulder.ibm.com/infocenter/tivihelp/v2r1/topic/com.ibm.IBMDS.doc/tuning.pdf [http://publib.boulder.ibm.com/infocenter/tivihelp/v2r1/topic/com.ibm.IBMDS.doc/tuning.pdf], the "DB2 tuning overview" section. 
+
+4. Run the DB2 commands.  * 
+ * 
+ * 
+ * Unix: /opt/ibm/tdsV6.3db2/adm/db2set DB2INSTDEF=tdsadmin 
+   Windows: db2set DB2INSTDEF=tdsadmin 
+ * 
+ * Unix: export DB2INSTANCE=tdsadmin 
+   Windows: set DB2INSTANCE=tdsadmin 
+ * 
+ * 
+ * 
+ * 
+ * 
+
+
+5. To disconnect all external programs using DB2, stop DB2. Then, start DB2 locally for tuning by running the following commands. 
+db2 connect reset 
+db2 terminate 
+db2 force application all 
+db2stop 
+
+6. Connect back to database instance 
+db2start 
+db2 connect to rdsdb 
+where rdsdb os the database of the tdsadmin instance. 
+
+7. Run the "runstats" commands for LDAP_DESC and LDAP_ENTRY tables, which are needed for updating the entries so that queries are resolved faster. 
+db2 "runstats on table TDSADMIN.LDAP_DESC with distribution and detailed indexes all" 
+db2 "runstats on table TDSADMIN.LDAP_ENTRY with distribution and detailed indexes all" 
+
+8. The filters used by the Rational DOORS client during search operations towards LDAP server are 'cn', 'uid' and 'objectclass'. Therefore, execute the runstats for the corresponding tables in DB2 so that performance is improved. 
+db2 "runstats on table TDSADMIN.OBJECTCLASS with distribution and detailed indexes all" 
+db2 "runstats on table TDSADMIN.UID with distribution and detailed indexes all" 
+db2 "runstats on table TDSADMIN.CN with distribution and detailed indexes all" 
+
+9. Restart Rational Directory Server. 
+
+10. Check the wild card search performance in Rational DOORS. For details, see chapters 7 and 8 of the Tivoli Directory Server Performance Tuning Redpaper [http://www.redbooks.ibm.com/abstracts/redp4258.html?Open]. 
+
+
+
+
+Cross Reference information Segment Product Component Platform Version Edition Software Development Rational DOORS Linux, Solaris, Windows 9.3, 9.3.0.1, 9.3.0.2, 9.3.0.3

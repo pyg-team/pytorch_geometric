@@ -1,0 +1,141 @@
+Title: IBM PI53225: SPSS MODELER CLIENT TRIAL 17.1 ON WIN SERVER 2012R2 WILL FAIL TO LAUNCH - MODELERCLIENT.EXE STARTS THEN ENDS ABRUPTLY. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Customer has downloaded and installed Modeler Client Trial 17.1
+   on their Windows Server 2012R2 machine. Installation is
+   successful (ran as Admin) and no errors appear in the logs.
+   
+   When starting Modeler Client, we can see the modelerclient.exe
+   process in Task Manager for a few seconds and then it
+   disappears/crashes.
+   
+   Modeler Client logs do not show any errors.
+   MS Win Event Viewer logs do not show any errors.
+   There are no dump/core/trace files placed in Modeler\bin or
+   %temp% directories during the crash.
+   
+   Even though installing Modeler Client Trial 17.1 on a Windows
+   Server 2012 R2 is not supported (single license used instead of
+   a concurrent license), the Modeler Client UI should appear and
+   an error message is expected.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * This affects all SPSS Modeler Trial 17.1 users installing on *
+   * a Windows Server Operating System.                           *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * SPSS MODELER CLIENT TRIAL 17.1 ON WIN SERVER 2012R2 WILL     *
+   * FAIL TO LAUNCH - MODELERCLIENT.EXE STARTS THEN ENDS          *
+   * ABRUPTLY.                                                    *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Upgrade to IBM SPSS Modeler Trial 18.0 in order to resolve   *
+   * this issue.                                                  *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This issue has been resolved in IBM SPSS Modeler Trial 18.0.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI53225
+   
+   
+ * REPORTED COMPONENT NAME
+   SPSS MODELER
+   
+   
+ * REPORTED COMPONENT ID
+   5725A64MD
+   
+   
+ * REPORTED RELEASE
+   H10
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2015-11-27
+   
+   
+ * CLOSED DATE
+   2016-03-20
+   
+   
+ * LAST MODIFIED DATE
+   2016-03-20
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   SPSS MODELER
+   
+   
+ * FIXED COMPONENT ID
+   5725A64MD
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * RH10 PSY
+   UP

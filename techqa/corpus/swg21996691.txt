@@ -1,0 +1,31 @@
+Title: IBM Send full AVP data with LEEF syslog event forwarding on Security Network IPS sensors - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Is it possible to send more than the default data when using LEEF syslog forwarding on the Security Network IPS (GX) sensor? 
+
+CAUSE
+By default, LEEF syslog forwarding does not include all event details when forwarding individual events, but rather only sends along those fields that are common to all event types.
+
+ANSWER
+You can add the following parameter to the Tuning Parameters [http://www.ibm.com/support/knowledgecenter/SSB2MG_4.6.2/com.ibm.ips.doc/tasks/configuring_global_tuning_parameters.htm] policy on the GX to include all details in forwarded events to the target system, including AVP data that might be unique to specific event types. 
+
+Name: crm.leef.fullavp
+Type: Boolean
+Value: True
+
+Notes: 
+
+ * This parameter only works on GX appliances running firmware 4.6.2. 
+ * When using this parameter, you must also use TCP for LEEF log forwarding since UDP truncates messages, which would cause some of the AVP data to be lost.
+
+For additional information, see the Configuring LEEF log forwarding (syslog) [http://www.ibm.com/support/knowledgecenter/en/SSB2MG_4.6.2/com.ibm.ips.doc/tasks/configuring_leef.htm] documentation in the IBM Knowledge Center. 
+
+
+
+
+[/support/docview.wss?uid=swg21996691&aid=1] [http://ibm.biz/KC-SNIPS] [/support/docview.wss?uid=swg21996691&aid=2] [http://ibm.biz/InfraSecForumTechnote] [/support/docview.wss?uid=swg21996691&aid=3] [http://ibm.biz/SecSuptUTube] [/support/docview.wss?uid=swg21996691&aid=4] [http://ibm.biz/InfraSecFixes] [/support/docview.wss?uid=swg21996691&aid=5] [http://ibm.biz/FlexLicLogin] [/support/docview.wss?uid=swg21996691&aid=6] [http://ibm.biz/MyNotification] [/support/docview.wss?uid=swg21996691&aid=7] [http://ibm.biz/ContactSecSupport] 
+RELATED INFORMATION
+#

@@ -1,0 +1,42 @@
+Title: IBM Using Windows Scheduled Tasks to schedule scans - United States
+
+Text:
+1302500; appscan standard; schedule; batch file; appscancmd; windows scheduled task TECHNOTE (FAQ)
+
+QUESTION
+ How do you schedule IBM Rational Appscan Standard scans using the Windows task scheduler? 
+
+ANSWER
+ 
+
+You need to create a batch file utilizing the Rational AppScan Standard Exe command, which you then attach to your Windows Task scheduler (see example below for details on when this should be entered into the batch file): 
+
+AppScanCMD exec /b "C:\Documents and Settings\<your profile>\My Documents\AppScan\Acme - SP1.scan" /d "C:\Documents and Settings\<your profile>\My Documents\AppScan\Acme - SP2.scan"
+
+
+
+The exec command AppScanCMD creates a new scan with the same configuration as the specified base scan, executes the scan (Explore and Test stages), and then saves the scan to the specified directory. 
+
+
+To run this batch file, you will first need to have a saved scan file that contains the scan configuration you wish to use during the scheduled scan.
+
+In the above example, Acme - SP1.scan is the base scan and the scan file that gets saved once the scan is complete is Acme - SP2.scan.
+
+Once this script has been created, save it as a batch file, with .bat extension.
+
+Now go to the Control Panel > Scheduled Tasks > Add Scheduled Task and go through the wizard. 
+
+
+When asked to specify the program you want Windows to run, perform these steps: 
+
+ 1. Browse to the location of the batch file 
+ 2. Type the name of the task and specify when you want this task to be performed 
+ 3. Select the start time and start date of when you want this task to start 
+ 4. Enter the credentials of a user (as it states, the task will run as if it were started by that user)
+    
+
+
+Barring any unexpected problems, you will now see the scheduled task that you created. 
+
+HISTORICAL NUMBER
+ 00003594

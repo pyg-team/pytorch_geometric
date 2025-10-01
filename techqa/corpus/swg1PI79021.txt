@@ -1,0 +1,184 @@
+Title: IBM PI79021: POLICY VIEWER - TABLE ALIGNMENT IN RICH TEXT FIELD - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PERMANENT RESTRICTION.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Description:
+   
+   If a user specifies table alignment on a table in a rich text
+   field that appears on the viewer, when they view the policy the
+   next section header floats to the side of the table.
+   
+   It can be reproduced using any of the two major browsers: IE,
+   Chrome
+   
+   Prerequisites:
+   
+   OpenPages 7.1.0.1 with Solutions
+   
+   Assign profile
+   1.	Log into the OpenPages UI as OpenPagesAdministrator
+   2.	Navigate to Administration -> Profiles and click the
+   OpenPages Modules 7.1.0 Master profile
+   3.	Scroll down to the bottom and click on the Associate button
+   for Associated Users heading
+   4.	Tick OpenPagesAdministrator, then click Associate.
+   5.	Log out and log back in as OpenPagesAdministrator
+   
+   Create basic entity structure and objects
+   1.	Navigate to Organization -> Business Entities
+   2.	Click on the Add New button
+   3.	Enter Entity01 as the name and click Save
+   4.	On the top right, click on the Add New button and select
+   Policy
+   5.	In the Parents tab, click on Search and enter Entity01 in
+   the search field and click on Ent1 from the search results
+   6.	In the General tab, enter Policy01 as the name (if not
+   auto-named) and enter any mandatory fields, then click Save
+   
+   Steps to Reproduce:
+   
+   1.	Log into the OpenPages application server as
+   OpenPagesAdministrator
+   2.	Navigate to Policy Management -> Policies
+   3.	In the simple filter, enter Policy01 and press enter.
+   4.	Navigate to the detail page of  Policy01
+   5.	Click on Actions-> Edit this Policy button.
+   6.	Edit any of the Rich Text properties in the Policy Details:
+   group, say Purpose: (click on the edit  button) .
+   7.	Click on the Insert Table button   in the Rich Edit control
+   toolbar.  Accept the defaults for all the properties.
+   8.	Right click on the table, choose Table Properties, flip
+   Align: to Left, click OK.
+   9.	Enter some values in the 6 table cells, click Apply.
+   10.	Click on the Save button.
+   11.	Click on the View Policy hyperlink
+   12.	Note the misalignment if the fields
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * OpenPages Users                                              *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * POLICY VIEWER - TABLE ALIGNMENT IN RICH TEXT FIELD           *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Although we acknowledge this is a real APAR Defect in the    *
+   * OpenPages product, we do not think we will be able to fix    *
+   * this within the next 18-24 months. At this time, we are      *
+   * closing this APAR Defect as No Plan To Fix due to that       *
+   * reason.                                                      *
+   *                                                              *
+   * Note:  We recommend that OpenPages users do not end their    *
+   * rich text field with a table.  Simply hit enter after the    *
+   * table and the wrap will happen correctly.                    *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Although we acknowledge this is a real APAR Defect in the
+   OpenPages product, we do not think we will be able to fix this
+   within the next 18-24 months. At this time, we are closing this
+   APAR Defect as No Plan To Fix due to that reason.
+   
+   Note:  We recommend that OpenPages users do not end their rich
+   text field with a table.  Simply hit enter after the table and
+   the wrap will happen correctly.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI79021
+   
+   
+ * REPORTED COMPONENT NAME
+   OPENPAGES GRC
+   
+   
+ * REPORTED COMPONENT ID
+   5725D5100
+   
+   
+ * REPORTED RELEASE
+   710
+   
+   
+ * STATUS
+   CLOSED PRS
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-03-29
+   
+   
+ * CLOSED DATE
+   2017-04-06
+   
+   
+ * LAST MODIFIED DATE
+   2017-04-06
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  999
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

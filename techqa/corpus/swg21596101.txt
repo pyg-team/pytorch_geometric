@@ -1,0 +1,85 @@
+Title: IBM Cluster-node-config-cluster-setup-additional fails with ADMG9249E error - United States
+
+Text:
+cluster node config setup additional cluster-node-config-cluster-setup-additional Portal 7 7.0 second secondary node add fails fail failure action member action-cluster-add-cluster-member com.ibm.websphere.management.exception.ConfigServiceException com.ibm.websphere.management.cmdframework.CommandValidationException ADMG9249E Exception caught validating the memberConfig step of createClusterMember task command com.ibm.ws.management.commands.cluster.ClusterConfigException wp_cluster_cfg.xml BUILD FAILED TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+When following the Portal 7 clustering guide, under the section "Federate and Cluster an additional Portal node" the ConfigEngine task cluster-node-config-cluster-setup-additional may fail. This task calls the action-cluster-add-cluster-member script which fails with the below error.
+
+SYMPTOM
+Full error in ConfigTrace.log:
+========================================= 
+
+Target started: action-cluster-add-cluster-member
+
+action-cluster-add-cluster-member:
+[wplc-add-cluster-member] Task parameters:
+[wplc-add-cluster-member] Global attributes:
+[wplc-add-cluster-member] server="WebSphere_Portal_2"
+[wplc-add-cluster-member] osarch="amd64"
+[wplc-add-cluster-member] node="wp7node2"
+[wplc-add-cluster-member] pathseparator=";"
+[wplc-add-cluster-member] engineinstalllocation="C:/IBM/WebSphere/AppServer/profiles/wp_profile/ConfigEngine"
+[wplc-add-cluster-member] cell="DmgrCell01"
+
+[wplc-add-cluster-member] Instance attributes (Set 1 of 1):
+[wplc-add-cluster-member] clusterMemberName="WebSphere_Portal_2"
+[wplc-add-cluster-member] clusterName="PortalCluster"
+[wplc-add-cluster-member] Cluster exists: PortalCluster
+[wplc-add-cluster-member] Cluster Member Name WebSphere_Portal_2 create fail.
+[wplc-add-cluster-member] com.ibm.websphere.management.exception.ConfigServiceException: com.ibm.websphere.management.cmdframework.CommandValidationException: ADMG9249E: Exception caught validating the memberConfig step of the createClusterMember task command: com.ibm.ws.management.commands.cluster.ClusterConfigException
+[wplc-add-cluster-member] at com.ibm.websphere.management.configservice.tasks.ServerClusterTasks.createClusterMember(ServerClusterTasks.java:349)
+
+...
+
+Target finished: action-cluster-add-cluster-member
+Target finished: cluster-node-config-cluster-setup
+Target finished: cluster-node-config-cluster-setup-additional
+isIseries currently set to: null
+uploading registry
+Target started: update-registry-sync-property
+update-registry-sync-property:
+[echo] updated RegistrySynchronized in file wkplc.properties with value: true
+Target finished: update-registry-sync-property
+BUILD FAILED
+C:\IBM\WebSphere\PortalServer\installer\wp.config\config\includes\wp_cluster_cfg.xml:343: The following error occurred while executing this line:
+C:\IBM\WebSphere\PortalServer\installer\wp.config\config\includes\wp_cluster_cfg.xml:400: The following error occurred while executing this line:
+C:\IBM\WebSphere\PortalServer\installer\wp.config\config\includes\wp_cluster_cfg.xml:1522: com.ibm.websphere.management.exception.ConfigServiceException: com.ibm.websphere.management.cmdframework.CommandValidationException: ADMG9249E: Exception caught validating the memberConfig step of the createClusterMember task command: com.ibm.ws.management.commands.cluster.ClusterConfigException
+Total time: 1 minute 4 seconds
+
+========================================= 
+
+
+
+CAUSE
+There's two reason why the above failure could occur: 
+
+ 
+
+1. The values for the WasRemoteHostName and/or WasSoapPort are incorrect in the wkplc.properties file. 
+
+ 
+
+2. The Dmgr was down
+
+
+ENVIRONMENT
+Correct the WasRemoteHostName and/or WasSoapPort in the wkplc.properties file found here: 
+
+ 
+
+<wp_profile root>/ConfigEngine/properties/wkplc.properties 
+
+ 
+
+Be sure the Dmgr is up and running.
+
+
+
+
+
+
+
+
+ * 
+ *

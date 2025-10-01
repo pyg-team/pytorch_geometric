@@ -1,0 +1,172 @@
+Title: IBM PM36305: NO GC DATA MONITORING WHEN VERBOSE GC FILE NAME CONTAINS JAVA DUMP PARAMETERS %Y,%M, %H, ETC IN IBM JVM 5.0 AND ABOVE - United States
+
+Text:
+  FIXES ARE AVAILABLE
+7.1.0.2-TIV-ITCAMAD-IF0004: ITCAM for Application Diagnostics V7.1 FP2 IF4 [http://www-01.ibm.com/support/docview.wss?uid=swg24030518]
+7.1.0.2-TIV-ITCAMAD-IF0006: ITCAM for Application Diagnostics V7.1 FP2 IF6 [http://www-01.ibm.com/support/docview.wss?uid=swg24031010]
+7.1.0.2-TIV-ITCAMAD-IF0007: ITCAM for Application Diagnostics V7.1 FP2 IF7 [http://www-01.ibm.com/support/docview.wss?uid=swg24031710]
+7.1.0.2-TIV-ITCAMAD-IF0010: ITCAM for Application Diagnostics V7.1 FP2 IF10 [http://www-01.ibm.com/support/docview.wss?uid=swg24032110]
+7.1.0-TIV-ITCAMAD-FP0003: ITCAM for Application Diagnostics V7.1 Fix Pack 3 [http://www-01.ibm.com/support/docview.wss?uid=swg24032604]
+7.1.0.3-TIV-ITCAMAD-IF0001: ITCAM for Application Diagnostics V7.1 FP3 IF1 [http://www-01.ibm.com/support/docview.wss?uid=swg24032985]
+7.1.0.3-TIV-ITCAMAD-IF0004: ITCAM for Application Diagnostics V7.1 FP3 IF4 [http://www-01.ibm.com/support/docview.wss?uid=swg24033735]
+7.1.0.3-TIV-ITCAMAD-IF0005: ITCAM for Application Diagnostics V7.1 FP3 IF5 [http://www-01.ibm.com/support/docview.wss?uid=swg24033938]
+7.1.0.3-TIV-ITCAMAD-IF0004: ITCAM for Application Diagnostics V7.1 FP3 IF6 [http://www-01.ibm.com/support/docview.wss?uid=swg24034668]
+7.1.0.3-TIV-ITCAMAD-IF0008: ITCAM for Application Diagnostics V7.1 FP3 IF8 [http://www-01.ibm.com/support/docview.wss?uid=swg24037994]
+7.1.0-TIV-ITCAMAD-FP0004: ITCAM for Application Diagnostics V7.1 Fix Pack 4 [http://www-01.ibm.com/support/docview.wss?uid=swg24041705]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  In IBM JVMs v5.0 and above, the verbose GC log file names can
+   contain Java dump parameters like %Y, %m, %h, etc.  (for
+   example,
+   -Xverbosegclog:verbosegc.%Y%m%d.%H%M%S.%pid.txt,10,1000) when
+   used with log file rotation.   When file names are created using
+   these placeholders, ITCAM GC parser does not recognize these
+   formats and is not able to open the files for parsing.
+   
+   Users Affected
+   
+   Application servers like WebSphere monitored by ITCAM that use
+   Java dump parameters like %Y,%m, etc. in the verbose GC file
+   name.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Do not use the Java dump parameters like %Y,%m%d,%H,%M,%S,^pid,
+   etc.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:
+   *
+   * ITCAM for WebSphere/J2EE and AD 7.1 systems that use Java
+   * dump parameters like %Y,%m, etc. in the verbose GC name
+   * parameter.
+   *
+   ****************************************************************
+   *
+   * PROBLEM DESCRIPTION:
+   *
+   * In IBM JVMs v5.0 and above, the verbose GC log file names
+   * can contain Java dump parameters like %Y,%m,%h, etc.
+   * For example:
+   *   -Xverbosegclog:verbosegc.%Y%m%d.%H%M%S.%pid.txt,10,100
+   *
+   * When file names are created using these variables, ITCAM's
+   * GC parser does not recognize these formats and is not able
+   * to open the files for parsing and collecting the GC data.
+   * Hence, there is no GC data available in both the TEP and
+   * the ITCAM Managing Server VE.
+   *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix for this APAR is contained in the following maintenance
+   packages:
+   
+     | interim fix | 7.1.0.2-TIV-ITCAMAD-IF0003
+     | fix pack | 6.1.0-TIV-ITCAM_WAS_MP-FP0006
+     | fix pack | 6.1.0-TIV-ITCAM_J2EE_MP-FP0006
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM36305
+   
+   
+ * REPORTED COMPONENT NAME
+   TCAM AD WAS DC
+   
+   
+ * REPORTED COMPONENT ID
+   5724Y92DC
+   
+   
+ * REPORTED RELEASE
+   710
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-04-05
+   
+   
+ * CLOSED DATE
+   2011-06-17
+   
+   
+ * LAST MODIFIED DATE
+   2011-06-17
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TCAM AD WAS DC
+   
+   
+ * FIXED COMPONENT ID
+   5724Y92DC
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R710 PSY
+   UP

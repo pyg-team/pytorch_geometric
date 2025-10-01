@@ -1,0 +1,129 @@
+Title: IBM HE04013: Restoring documents archived with CommonStore for Lotus Domino using the Content Collector legacy restore operations fails - United States
+
+Text:
+  A FIX IS AVAILABLE
+IBM Content Collector V2.2 Fix Pack 1 [http://www-01.ibm.com/support/docview.wss?uid=swg24029455]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When restoring a legacy document using the ICC legacy restore
+   component the webapplication will crash and cannot restore the
+   document to the target database
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  n/a
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  When the IBM Content Collector legacy restore operations were
+   used to restore documents that were archived with CommonStore
+   for Lotus Domino, the Web Application crashed and did not
+   restore the legacy document correctly
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Starting with this fix, documents archived with CommonStore for
+   Lotus Domino can be restored successfully in IBM Content
+   Collector, using the legacy restore operations.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   HE04013
+   
+   
+ * REPORTED COMPONENT NAME
+   ICC FOR EMAIL
+   
+   
+ * REPORTED COMPONENT ID
+   5724V5700
+   
+   
+ * REPORTED RELEASE
+   220
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-02-16
+   
+   
+ * CLOSED DATE
+   2011-05-25
+   
+   
+ * LAST MODIFIED DATE
+   2011-05-25
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ICC FOR EMAIL
+   
+   
+ * FIXED COMPONENT ID
+   5724V5700
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R220 PSN
+   UP

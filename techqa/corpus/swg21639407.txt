@@ -1,0 +1,78 @@
+Title: IBM Best Practices for Integrating Open Source Software Frameworks with WebSphere Application Server - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Unexpected classloading errors when using Open Source Software (OSS) framework that is also packaged within WebSphere Application Server. 
+
+SYMPTOM
+Exceptions at run time related to ClassNotFoundExceptions, ClassCastExceptions, NoClassDefFoundError
+
+
+CAUSE
+A classloader can not resolve to the correct class
+
+DIAGNOSING THE PROBLEM
+WebSphere Application Server bundles many of the Open Source Software (OSS) frameworks as part of it's core product install. The portions of frameworks, or packages of the .jar files, packaged within WebSphere Application Server may not be shipped in entirety. User applications may also use their own versions of such OSS frameworks which may conflict with those packaged within WebSphere Application Server. Therein lies the problem as conflicts arise if an user application packages a class that is also available as part of WebSphere Application Server OSS framework. 
+
+WebSphere Application Server, packages many OSS frameworks such as org.apache.commons, org.apache.myfaces, org.apache.xmlbeans, org.apache.xml, org.jaxen etc. Classloader conflicts arise if the same packages are used within customer applications. 
+
+Reference link for OSS Frameworks packaged by WebSphere Application Server:
+http://www.ibm.com/support/docview.wss?uid=swg21625541 [http://www.ibm.com/support/docview.wss?uid=swg21625541] 
+
+Reference link for OSS Frameworks Support Statement by WebSphere Application Server:
+http://www-01.ibm.com/support/docview.wss?uid=swg21626304 [http://www-01.ibm.com/support/docview.wss?uid=swg21626304]
+
+
+Currently, a tool does not exist to check for such problems ahead of time and as a result they are mostly discovered during test and run time. Setting the JVM classpath variable to point to such OSS framework classes is not recommended and will cause problems as it affects all applications running in the JVM including WebSphere Application Server. 
+
+Recommended approaches for resolving classloader conflicts:
+
+
+The versions of OSS framework packages shipped with WebSphere Application Server is subject to change and thus any application dependency on such classes can cause problems. It is best to isolate and package these classes with applications as it provides reliability for your specific environment. 
+
+ 
+
+ 1. For WebSphere Application Server version 7 and above the best approach is to deploy open source packages as isolated shared libraries. Isolated shared libraries can be associated with applications or web modules. It is best to associate isolated shared library to an application. The isolated shared libraries have their own separate classloader and thus open source packages deployed in these libraries cannot conflict with the same packages provided by WebSphere Application Server. 
+    
+ 2. For WebSphere Application Server version 6.1 and lower, one of the following options can be used:
+     1. Deploying open source packages as shared libraries and associating the shared library with the application or a web module. It is necessary to set the delegation mode for the application to PARENT_LAST so that the open source packages provided by the shared library are preferred over those provided by the application server.
+        
+     2. Deploy open source packages as part of the application or web module and then change the class loader delegation mode to PARENT_LAST. This will allow open source packages provided by the application over those provided by the application server. This approach is desirable to maintain application portability. 
+    
+    
+
+
+Isolated Shared Library: 
+
+The isolated shared library option was introduced starting WebSphere Application Server V7 and the default setting is false - not to isolate the shared library. An isolated shared library enables one instance of the library classes to be shared among associated applications and web modules (isolated shared library cannot be associated with a server). 
+Classloader order when using isolated shared library: 
+
+
+ 1. When delegation mode is set to "Classes loaded with the parent class loader first (Parent first)":  1. Checks whether the associated library class loaders can load the class. 
+     2. Checks whether its parent class loader can load the class. 
+     3. Checks whether it (application or WAR module class loader) can load the class.
+    
+    
+ 2. When delegation mode is set to "Classes loaded with the parent class loader last (Parent last)":  1. Checks whether it (application or WAR module class loader) can load the class. 
+     2. Checks whether the associated library class loaders can load the class. 
+     3. Checks whether its parent class loader can load the class.
+    
+    
+
+
+How to create shared libraries and associate it to a server, application or a web module [http://pic.dhe.ibm.com/infocenter/wasinfo/v8r5/index.jsp?topic=%2Fcom.ibm.websphere.base.doc%2Fae%2Ftcws_sharedlib.html] 
+
+Commonly encountered scenarios: 
+ * Using classes in an application that are also packaged within WSAS
+   http://www.ibm.com/support/docview.wss?uid=swg27006159 [http://www.ibm.com/support/docview.wss?uid=swg27006159] 
+ * Using Jakarta Commons Logging with WSAS:
+   http://www.ibm.com/developerworks/websphere/techjournal/0901_supauth/0901_supauth.html [http://www.ibm.com/developerworks/websphere/techjournal/0901_supauth/0901_supauth.html] 
+ * Using third-party JAX-WS application in WSAS
+   http://public.dhe.ibm.com/software/dw/wes/1001_thaker/1001_thaker.pdf [http://public.dhe.ibm.com/software/dw/wes/1001_thaker/1001_thaker.pdf] 
+ * Using third-party JSF implementations
+   http://www14.software.ibm.com/webapp/wsbroker/redirect?version=phil&product=was-nd-zos&topic=twebjsf [http://www14.software.ibm.com/webapp/wsbroker/redirect?version=phil&product=was-nd-zos&topic=twebjsf]
+
+RELATED INFORMATION
+ WebSphere Application Server OSS Framework Support Stat [http://www-01.ibm.com/support/docview.wss?uid=swg21626304]

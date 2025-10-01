@@ -1,0 +1,39 @@
+Title: IBM How can the CMOD Trace Level  be configured? - United States
+
+Text:
+cmod trace level; cfs-cmod; arswww.trace TECHNOTE (FAQ)
+
+QUESTION
+ How can the CMOD Trace Level be configured for FileNet Content Federation Services for CMOD ? 
+
+CAUSE
+In FileNet Enterprise Manager, the Fixed Content Device properties for an IBM Content Manager OnDemand ( CMOD ) repository includes a setting for CMOD Trace Level. What values can be configured for this setting and where is the output generated? 
+
+ANSWER
+ 
+
+The CMOD Trace Level setting should only be altered when advised to do so by IBM Support. 
+
+The following values may be set : 
+
+
+0 Tracing disabled
+1 ERROR tracing. Only errors are reported. 
+2 WARNING and ERROR messages are reported. 
+3 INFO messages are captured along with the ERROR and WARNING. 
+4 FULL TRACE. All messages are captured, including function trace. 
+
+The trace files will be named arswww.trace and will be located in the J2EE application server directory structure as follows: 
+
+
+ * IBM Websphere
+   <WebSphere_home>\IBM\WebSphere\AppServer\profiles\<profilename>\FileNet\<app_server>\content\{GUID}
+   
+ * Oracle Weblogic
+   <WebLogic_home>bea\user_projects\domains\<domainname>\FileNet\<app_server>\content\{GUID}
+   
+ * JBoss
+
+<Jboss_home>\bin\FileNet\<app_server>\content\{GUID} 
+
+where {GUID} is the ID of the Fixed Content Device ( as displayed in the Fixed Content Device properties in FEM).

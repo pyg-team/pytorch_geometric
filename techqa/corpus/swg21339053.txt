@@ -1,0 +1,23 @@
+Title: IBM Can you force Cognos 8 / Cognos ReportNet to open a new window when running a report? - United States
+
+Text:
+internet explorer browser new window open TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Can you force Cognos 8 / IBM Cognos ReportNet to open a new window when running a report? 
+
+RESOLVING THE PROBLEM
+This can be set in two places in Cognos ReportNet and chosen as an option when clicking on a link in Internet Explorer:
+
+In Report Studio, go to Tools, Options, and clear the Reuse Report Viewer checkbox.
+
+In the Drill-Throughs properties window in Report Studio, select the Open in new window option to have the child report open in a new window when running a child report from a parent report. This can be set for each Drillthrough.
+
+In Cognos Connection, if you want Report Viewer to open in a new browser window when you click on a Report link, right-click the link and select Open in new window from the popup menu. This is Internet Explorer functionality. Cognos ReportNet does not have a way to force a new
+window when a report is opened.
+
+
+
+Cross Reference information Segment Product Component Platform Version Edition Business Analytics Cognos 8 Business Intelligence Cognos Viewer Business Analytics Cognos 8 Business Intelligence Framework Manager Business Analytics Cognos 8 Business Intelligence Install and Config Business Analytics Cognos 8 Business Intelligence Report Studio Business Analytics Cognos ReportNet ReportNet 
+HISTORICAL NUMBER
+ 1014957

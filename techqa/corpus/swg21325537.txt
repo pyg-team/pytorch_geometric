@@ -1,0 +1,25 @@
+Title: IBM How do I find out if there are newer or parallel versions of the files in my project, and what are they? - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How do I find out if there are newer or parallel versions of the files in my project, and what are they? 
+
+ANSWER
+
+
+ The Synergy GUI does not offer a convenient way to identify project members that have newer or parallel versions. Short of examining the History View on each member of the project, the way to determine newer and parallel versions of project members would be to script a solution that queried for all members and then determine which versions of each member are history leafs (i.e. versions at the end of a history branch). 
+
+ Technical Bulletin 106 (in the associated documents section below) contains a Bourne shell script that can be used to find parallel versions of any object returned by a user-specified query. 
+
+ Another alternative is to take advantage of the 'ccm family' command, which is available in the hlquery package that is provided in the extras folder on the CM Synergy Docs CD/DVD. This package is provided as 'contrib' code that is not supported by Telelogic. 
+
+To use the 'ccm family' command, the hlquery package has an Accent library that needs to be loaded in a CM Synergy session, and then the 'family' command needs to be defined: >  % ccm load -a /<path>/hlquery.a 
+% ccm define family hlquery family_cmd 
+To find out if any project members have newer versions, and what they are, run the command >  % ccm family -descendents -p project_spec 
+To report the parallel versions of all members of a project, use the command >  % ccm family -cousins -p project_spec 
+When the -p project_spec option is used, the ccm family command will recurse into subprojects. For further details on the ccm family command, see the README.txt file in the hlquery directory on the CM Synergy docs CD/DVD. 6.3, 6.4, 6.5NACM00459AnswerProduct versionPartner ContentInternal ContentCategoryReference IDAuthor 
+
+HISTORICAL NUMBER
+ KB7501

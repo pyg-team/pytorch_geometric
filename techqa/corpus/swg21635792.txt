@@ -1,0 +1,21 @@
+Title: IBM Generating a report to show the "up time" of the Managed Systems - United States
+
+Text:
+up time; node; GBLTMSTAMP; ITM_TEMS_PERFORMANCE; ITM_TEMS_CONFIG; query TECHNOTE (FAQ)
+
+QUESTION
+ How do you generate a report to show the "up time" (how long the agent is up and running since it was started) of the Managed Systems in IBM Tivoli Monitoring (ITM) environment? 
+
+ANSWER
+There is no direct command, however, there is a work around but one needs some scripting skills (any language and any OS). 
+
+The GBLTMSTAMP value on the below query, gives the Start time of the managed system 
+
+You could write a script to execute a query and take the GBLTMSTAMP value and subtract the current timestamp to get the up time for the managed system 
+
+SELECT GBLTMSTMP, NODE, ORIGINNODE, O4ONLINE, PRODUCT, THRUNODE, VERSION 
+FROM O4SRV.INODESTS; 
+
+Where NODE is the managed system name. 
+
+Note : How to execute a query is not within the scope of this technote

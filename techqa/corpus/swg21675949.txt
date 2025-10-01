@@ -1,0 +1,35 @@
+Title: IBM Cannot change the layout for Business Space in IBM Business Monitor when editing with Microsoft Internet Explorer 10 or Microsoft Internet Explorer 11 - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ In IBM Business Monitor, if you are using Microsoft Internet Explorer 10 or Microsoft Internet Explorer 11 and you want to edit the widget layout in Business Space, clicking the Change Layout icon does not show you a list of layout options that you can select. The Change Layout icon is visible after you click Edit Page. 
+
+SYMPTOM
+In Microsoft Internet Explorer 10, click the Tools icon and then select F12 developer tools. In the developer tools, check for the following items: 
+
+ * Browser Mode: IE10 
+ * Document Mode: Standards 
+ * In the Console after you click the Change Layout icon: TypeError: Object doesn't support property or method 'setProperty'
+
+
+In Microsoft Internet Explorer 11, press F12 to select developer tools. Click the Emulation icon (Ctrl 8) tab, check for the following items: 
+ * Document Mode: 10
+
+ * In the Console after you click the Change Layout icon: TypeError: Object doesn't support property or method 'setProperty'
+
+
+CAUSE
+The layout-template URIs for web dav are not being loaded because the Standards document mode uses a DOMParser that does not support XPath. This is a browser defect that Microsoft Internet Explorer 11 addresses.
+
+RESOLVING THE PROBLEM
+In Microsoft Internet Explorer 10, in the developer tools, change Document Mode to Internet Explorer 9 standards (IE9 standards). 
+
+
+In Microsoft Internet Explorer 11, in the developer tools, change Document Mode to 9.
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ Monitor

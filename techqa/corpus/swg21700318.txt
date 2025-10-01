@@ -1,0 +1,15 @@
+Title: IBM Cognos Disclosure Management 10.2.4 now available - United States
+
+Text:
+ NEWS
+
+ABSTRACT
+ Cognos Disclosure Management 10.2.4 is now available to customers. 
+
+CONTENT
+Information and download instructions are available on the Downloading IBM Cognos Disclosure Management 10.2.4 page [http://www.ibm.com/support/docview.wss?uid=swg24039191].
+
+
+
+RELATED INFORMATION
+#Cognos Disclosure Management 10.2.4 Fix List [http://www.ibm.com/support/docview.wss?uid=swg27045158]

@@ -1,0 +1,31 @@
+Title: IBM When using a web client with Internet Explorer 8 to log into IBM FileNet IDM Web Services receives error, Objects doesn't support this property or method FNRS.HTM - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The login dialog box is not prompted when trying to log in using IBM FileNet IDM Web Services. 
+
+SYMPTOM
+Internet Explorer (IE) does not load the log in page. Instead, the pop up window displays the error message: 
+
+ * 
+ * 
+ * 
+ * 
+
+
+CAUSE
+The workstation which is being used to access the Web Server does not have a version of Java Runtime Environment (JRE) that is compatible with Internet Explorer 8.
+
+RESOLVING THE PROBLEM
+IE 8 requires at least JRE version 6 with update 14 to be installed. Removing the existing version of JRE and installing the latest from java.com will ensure that this requirement is met. This also ensures that any possible corruption with JRE is removed. 
+
+ 
+
+ 1. Remove JRE via Add/Remove Programs (if any updates exist, they will need to be removed first) 
+ 2. Go to java.com and click on Downloads 
+ 3. Download and install the latest JRE version 
+ 4. In IE, go to Tools -> Internet Options -> Advanced tab 
+ 5. Verify that Java is enabled 
+ 6. Test logging in to Web Services again

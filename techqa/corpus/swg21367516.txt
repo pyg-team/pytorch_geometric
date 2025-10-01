@@ -1,0 +1,99 @@
+Title: IBM Running wp-change-portal-admin-user task fails with "group does not exist" message - United States
+
+Text:
+searchbases; searchfilter; wp-change-portal-admin-user; group; ConfigEngine; change admin group TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ 
+When you run the wp-change-portal-admin-user task in IBM WebSphere Portal, the task fails with a message that the group does not exist. 
+
+SYMPTOM
+ 
+
+The ConfigTrace.log contains the following:
+
+
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * [echo] Validating if group 'cn=groupname,ou=orgunit1,dc=yourcompany,dc=com' exists. 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * Given user group 'cn=groupname,ou=orgunit1,dc=yourcompany,dc=com' does not exist.
+
+
+CAUSE
+The Virtual Member Manager (VMM) is not correctly configured to find the new administrative group. This can occur if the LDAP structure changes between when you set up the WebSphere Portal security configuration and when you run wp-change-portal-admin-user.
+
+RESOLVING THE PROBLEM
+ 
+
+Verify the VMM configuration. Specifically, confirm that the newAdminGroupId can be found given the searchFilter and searchBases in the wimconfig.xml file (<wp_profile>/config/cells/<cellname>/wim/config/):
+
+
+ * 
+ * <config:objectClasses>groupOfUniqueNames</config:objectClasses> 
+ * 
+ * 
+ * 
+
+
+LDAPsearch can be used to validate these settings as follows: 
+ * 
+ * password
+ * 
+ * LDAP port
+ * 
+ * yourcompany
+ * 
+ * groupOfUniqueNames
+ * 
+ * 
+ * 
+ * 
+
+For the task to run successfully, the newAdminGroupId should be contained in the LDAPsearch results. If it is not, your LDAP administrator should advise you on determining the correct settings for searchFilter and searchBases. 
+
+In this example, the searchBases do not allow VMM to find the group and must be corrected. To change these settings: 
+ * 
+ * 
+ * 
+ * searchFilter
+ * 
+ * searchBases
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ *  standalone.ldap.et.group.searchFilter / standalone.ldap.et.group.searchBases 
+   - o r- 
+   federated.ldap.et.group.searchFilter / federated.ldap.et.group.searchBases 
+ * If you later run a task that updates the security configuration, the changes you made in Step 2 above will not be overwritten.

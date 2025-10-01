@@ -1,0 +1,44 @@
+Title: IBM Sametime 9.0 to 901 upgrade fails due to lower Websphere Fix Pack level of Sametime System Console Deployment Manager than the server or node being upgraded - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+Sametime 9.0 to 901 upgrade fails due to lower Websphere Fix Pack level of Sametime System Console Deployment Manager than the server or node being upgraded
+
+SYMPTOM
+Installation Manager may show something similar to this: 
+
+1301 ERROR CRIMA1217E 25:24.57 A problem occurred during the execution of the d:\IBM\WebSphere\STAdvServerPN\build_advanced.xml file. ERROR: exec returned: -1 [d:\IBM\WebSphere\STAdvServerPN\build_advanced.xml:4687] A package has an issue that cannot be resolved by Installation Manager. Identify the package that has the issue by looking at the installation history. In Installation Manager, click File > Installation History. In console mode, enter S: View Installation History. Contact IBM customer support. 1302 ERROR [/support/docview.wss?uid=swg21983360&amp;aid=1] 25:24.57 Invoking antfile "d:/IBM/WebSphere/STAdvServerPN/build_advanced.xml". 
+The Log file in the ant folder shows the following: 
+[exec] ADMU0116I: Tool information is being logged in file
+[exec] d:\IBM\WebSphere\AppServer\profiles\cobstadvSTADVPNProfile1\logs\nodeagent\stopServer.log
+[exec] ADMU0128I: Starting tool with the cobstadvSTADVPNProfile1 profile
+[exec] ADMU3100I: Reading configuration for server: nodeagent
+[exec] ADMU3201I: Server stop request issued. Waiting for stop status.
+[exec] ADMU4000I: Server nodeagent stop completed.
+[exec] 
+[exec] ADMU0116I: Tool information is being logged in file
+[exec] d:\IBM\WebSphere\AppServer\profiles\cobstadvSTADVPNProfile1\logs\syncNode.log
+[exec] ADMU0128I: Starting tool with the cobstadvSTADVPNProfile1 profile
+[exec] ADMU0401I: Begin syncNode operation for node cobstadvSTADVNode1 with Deployment
+[exec] Manager cobstconsole.hfc.ad: 8703
+[exec] ADMU0127E: The version of the Deployment Manager (8.5.5.8) is earlier than that
+[exec] of this node (8.5.5.9). 
+
+CAUSE
+The reason for the upgrade failure is that the SSC (Deployment Manager) is at a lower Fix Pack level then the node you are upgrading. 
+
+This caused the node synchronization (syncNode) process to fail. 
+The deployment manager must always be the same or newer than any federated node.
+
+
+RESOLVING THE PROBLEM
+Insure that the Deployment Manager (Sametime System Console) is at the same or higher Websphere Fix Pack level than the component being updated 
+
+
+You can either upgrade the SystemConsole/Deployment manager to 8.5.5.9 or downgrade the Sametime Server (Advanced, Meetings, Media or Proxy) Node to 8.5.5.8. (as shown in this example)
+
+Then re-run the Installation Manger and apply the update. 
+
+If re-running the update should fail because the Installation Manger thinks it is already updated, collect a new set of Installation Manger logs and open a pmr with IBM Technical Support.

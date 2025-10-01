@@ -1,0 +1,97 @@
+Title: IBM Registry Services database installation fails because the JazzSM installation user lacks a required permission - United States
+
+Text:
+jazzsm1102relnotes TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ 
+Registry Services database installation fails because Jazz for Service Management installation user does not have the required permission to read log records.
+
+
+SYMPTOM
+ 
+
+When you try to install Registry Services database as part of Jazz for Service Management installation, this process fails and you receive an error message such as the following message: 
+
+
+SEVERE: chmod: /tmp/dis_install/db_install_1379029766192/frsDb2Setup/
+./logs: Permission denied 
+Sep 12, 2013 11:50:47 PM com.ibm.frs.cli.DisCli doIt 
+SEVERE: CTJFO0008E The Registry Services CLI command has failed due to an internal error. The specific error message is: null 
+Throwable occurred: java.lang.NullPointerException 
+at com.ibm.frs.install.db.BundleMgr.delete(BundleMgr.java:224) 
+at com.ibm.frs.install.db.BundleMgr.delete(BundleMgr.java:225) 
+at com.ibm.frs.install.db.BundleMgr.delete(BundleMgr.java:225) 
+at com.ibm.frs.install.db.BundleMgr.disposeBundle(BundleMgr.java:155) 
+at com.ibm.frs.install.db.DatabaseMgr.install(DatabaseMgr.java:172)
+at com.ibm.frs.install.cli.InstallCli.installDb(InstallCli.java: 314) 
+at com.ibm.frs.install.cli.InstallCli.run(InstallCli.java:174) 
+at com.ibm.frs.cli.DisCli.doIt(DisCli.java:185) 
+at com.ibm.frs.cli.DisCli.main(DisCli.java:85) 
+
+This error means that you cannot install Registry Services database because of an access permission denied to log records.
+
+
+CAUSE
+ 
+
+During JazzSM installation process, the DB2 user creates some log records that the Jazz for Service Management installation user must manipulate.
+
+This problem takes place when the user that is installing Jazz for Service Management does not have permission to read these log records that are created by the DB2 user.
+
+
+
+ENVIRONMENT
+ 
+
+All supported Jazz for Service Management middleware on Linux and AIX platforms.
+
+
+
+DIAGNOSING THE PROBLEM
+ 
+
+Run Registry Services database installation as part of Jazz for Service Management installation. 
+
+If the database installation fails, open the DB2 log files and look for an error message that is similar to: 
+
+
+SEVERE: chmod: /tmp/dis_install/db_install_1379029766192/frsDb2Setup/
+./logs: Permission denied 
+Sep 12, 2013 11:50:47 PM com.ibm.frs.cli.DisCli doIt 
+SEVERE: CTJFO0008E The Registry Services CLI command has failed due to an internal error. The specific error message is: null 
+Throwable occurred: java.lang.NullPointerException 
+at com.ibm.frs.install.db.BundleMgr.delete(BundleMgr.java:224) 
+at com.ibm.frs.install.db.BundleMgr.delete(BundleMgr.java:225) 
+at com.ibm.frs.install.db.BundleMgr.delete(BundleMgr.java:225) 
+at com.ibm.frs.install.db.BundleMgr.disposeBundle(BundleMgr.java:155) 
+at com.ibm.frs.install.db.DatabaseMgr.install(DatabaseMgr.java:172)
+at com.ibm.frs.install.cli.InstallCli.installDb(InstallCli.java: 314) 
+at com.ibm.frs.install.cli.InstallCli.run(InstallCli.java:174) 
+at com.ibm.frs.cli.DisCli.doIt(DisCli.java:185) 
+at com.ibm.frs.cli.DisCli.main(DisCli.java:85) 
+
+If you find this error message, then the problem exists and you need to use the provided solution to fix the problem.
+
+
+
+RESOLVING THE PROBLEM
+ 
+
+The permanent fix for this defect to prevent the problem is available in the 1.1.0-TIV-JazzSM-Registry-multi-FP002 package. 
+
+ 
+
+However, if the problem was identified before the application of Jazz for Service Management FP2, you can change the umask of the DB2 user to grant the Jazz for Service Management installation user with access permission to the log files that are created during the installation process. 
+
+For example, run the following command: 
+
+umask 022 
+
+With this configuration, the default directory permissions are 775 and the default file permissions are 664. 
+
+After completing the database installation process, set the umask of the DB2 user to its default value.
+
+RELATED INFORMATION
+#Installing Registry Services database and application [http://pic.dhe.ibm.com/infocenter/tivihelp/v3r1/index.jsp?topic=%2Fcom.ibm.psc.doc_1.1.0.2%2Finstall%2Fpsc_t_install_adv_rs.html]
+Installation command [http://pic.dhe.ibm.com/infocenter/tivihelp/v3r1/index.jsp?topic=%2Fcom.ibm.psc.doc_1.1.0.2%2Frs_original%2Fcli%2Frs_r_install_command.html]

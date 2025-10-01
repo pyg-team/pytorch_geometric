@@ -1,0 +1,31 @@
+Title: IBM Images are not displayed when report run in Cognos Analytics as PDF using SSL webserver - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ In a multi-tier environment with SSL enabled on the webserver, images are not being displayed when report run as PDF. Images are being shown as just a blank box in PDF. Running the report in HTML displays the images. 
+
+CAUSE
+Incomplete or missing Chain of Trust for SSL within the Cognos Analytics Keystore
+
+RESOLVING THE PROBLEM
+There are two options available: 
+
+1. Place the images on the application tier in the Cognos installation directory in the same path they exist on the gateway server. This way the Application Tier can access the image on disk, removing the need to connect to HTTPS
+
+Example: <cognos install>/webcontent/samples/images/pic.jpg 
+
+2. Import the SSL certificate Chain of Trust on the Application Tier.
+
+Steps to import the SSL Chain of Trust: 
+
+1. Obtain the CA certificate and any Intermediate certificates which is in the chain of the trust that has signed the Web site certificate.
+
+2. Import the certificate(s) in the IBM Cognos CA keystore by typing the following command (from a command window in the <install dir>/bin directory) where ca.cer is the name of the certificate file:
+ThirdPartyCertificateTool.bat -T -i -r ca.cer -k ../configuration/signkeypair/jCAKeystore -p <keystore_password> 
+
+The default password for the KeyStore is NoPassWordSet. For example: 
+ThirdPartyCertificateTool.bat -T -i -r ca.cer -k ../configuration/signkeypair/jCAKeystore -p NoPassWordSet 
+
+Note: Ensure that the correct gateway URL with "https" at the beginning has been saved in Cognos Configuration for all dispatchers.

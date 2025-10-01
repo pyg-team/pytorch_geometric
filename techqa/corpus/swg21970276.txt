@@ -1,0 +1,53 @@
+Title: IBM Accessing AppScan Enterprise REST API from Linux - United States
+
+Text:
+REST; API; Web; Services; Linux; Command; Line; Script; AppScan; Enterprise; login TECHNOTE (FAQ)
+
+QUESTION
+ How do you access IBM Security AppScan Enterprise REST API services from Linux command line in AppScan Enterprise version 9.0.2 and later? 
+
+ANSWER
+The following commands provide the required access: 
+
+
+ * 
+ * curl -i -X POST -d 'userid=hostname\useridpassword=yourpasswordHere'
+ * 
+ * -k 
+
+
+
+An response similar to the following will be returned: 
+ * HTTP/1.1 200 OK
+ * 
+ * Cache-Control: private
+ * 
+ * Content-Length: 384
+ * 
+ * Content-Type: text/xml
+ * 
+ * Server: Microsoft-IIS/8.5
+ * 
+ * X-AspNet-Version: 4.0.30319
+ * 
+ * x-frame-options: SAMEORIGIN
+ * 
+ * Set-Cookie: 
+ * asc_session_id=a475c121-c8bf-4000-a9db-e275964d29a5; 
+ * path=/; secure; HttpOnly;
+ * 
+ * Set-Cookie: 
+ * ASP.NET_SessionId=hvetamfiqnx3os3xj0hd2ido;
+ * path=/; secure; HttpOnly
+ * 
+ * X-Powered-By: ASP.NET 
+   
+ * 
+ * 
+
+At this point, it is required to include the cookies received above, for example:  * 
+   curl -i -H 'Content-Type: application/json' -b '
+ * asc_session_id=a475c121-c8bf-4000-a9db-e275964d29a5;ASP.NET_SessionId=hvetamfiqnx3os3xj0hd2ido
+ * ' -X GET 
+ * 
+ * -k

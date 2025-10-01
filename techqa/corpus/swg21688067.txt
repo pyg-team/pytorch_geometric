@@ -1,0 +1,21 @@
+Title: IBM Product updates not found when using IBM Installation Manager 1.7.3.1 or older - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When using IBM Installation Manager to search for product updates, latest updates may not be detected. You may get errors related to some repositories under https://www.ibm.com/ [https://www.ibm.com/] not connected 
+
+CAUSE
+The IBM Update Site currently requires the use of the TLS protocol but the TLS protocol is not supported by IBM Installation Manager 1.7.3.1 or older.
+
+RESOLVING THE PROBLEM
+IBM Installation Manager has added support for the TLS protocol in versions 1.8 and 1.7.4. Versions of the Installation Manager that are 1.7.3.1 or older, require SSL security protocol to connect to a HTTPS server. To resolve the issue, update IBM Installation Manager to version 1.7.4, 1.8 or newer. 
+
+Most users will want to update to version 1.8. Users on platforms that are not supported by Installation Manager 1.8 must update to version 1.7.4. The key platforms not supported by 1.8 are: 
+
+ * RHEL 4 
+ * Ubuntu 8.04 
+ * Solaris 9 
+ * AIX 5.3 
+ * iSeries 6.1

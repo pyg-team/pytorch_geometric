@@ -1,0 +1,219 @@
+Title: IBM PM43823: BBOT0004E: RRS SERVICE ATREND FAILED WITH RETURN CODE=931 ALSO, BBO0006E, REASON=C9C2120C WEBSPHERE Z/OS 6.1.0.33 - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Reported on 6.1.0.33 (AM34450)
+   
+   Failure would resemble this:
+    Trace: 2011/04/18 06:06:01.913 01 t=nnnnnn c=UNK key=P8
+   (13007002)
+      ThreadId: 00000058
+      FunctionName: com.ibm.ws390.tx.NativeTransactionContext
+      SourceId: com.ibm.ws390.tx.NativeTransactionContext
+      Category: AUDIT
+      Extended Message: BBOT0004E: RRS SERVICE ATREND FAILED WITH
+   RETURN CODE=931.
+    Trace: 2011/04/18 06:06:05.649 01 t=nnnnnn c=UNK key=P8
+   (0000000A)
+      Description: Log Boss/390 Error
+      from filename: ./bbooboai.cpp
+      at line: 5731
+      error message: BBOO0006E WEBSPHERE FOR Z/OS PROCESS servant
+   ENDED ABNORMALLY, REASON=C9C2120C.
+   
+   Additionally, protocol_http_timeout_output_recovery=SESSION
+   
+   There should also be HTTP REQUEST TIMEOUTs.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  As a workaround, investigate why the HTTP requests are timing
+   out and consider changing the current HTTP timeout value.
+   Because the timeouts occur, having then
+   protocol_http_timeout_output_recovery=SESSION causes this abend.
+   
+   This setting is documented in the Info Center and does note:
+   "Using the session setting might result in a loss of resources
+   if the dispatched HTTP request loops or becomes inactive."
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  All users of IBM WebSphere Application      *
+   *                  Server V7.0                                 *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Servant region terminates after         *
+   *                      receiving a 931 return code from        *
+   *                      RRS' ATREND service call.               *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   The servant region terminates after having received a 931
+   invalid return code from RRS' ATREND service call.
+   The invalid return is triggered by the WebSphere Application
+   Server transaction manager's attempt to end the Unit
+   of Recovery (UR) a second time. This condition is prompted
+   by the following: High HTTP workload,
+   protocol_http_timeout_output_recovery setting set
+   to SESSION, and an insufficient HTTP timeout value for
+   high volume workloads such that numerous HTTP
+   timeouts are encountered prior to the termination
+   of the servant region.
+   The following output can be seen in the controller region's
+   sysprint log immediately prior to the time of the
+   servant region failure.
+   Trace: xxxx/xx/xx xx:xx:xx.xxx xx t=xxxxxx c=UNK key=xx
+   Description: Throw CORBA system exception
+   exception id: CORBA::INTERNAL
+   minor code: c9c21210
+   from filename: ./bbooboat.cpp
+   at line: 911
+   Trace: xxxx/xx/xx xx:xx:xx.xxx xx t=xxxxxx c=UNK key=xx
+   Description: Java exception created
+   from filename: ./bboocjex.cpp
+   Method Name: createExceptionForJava(...)
+   org.omg.CORBA.INTERNAL: Exception occured during native
+   method call from JAVA  vmcid: 0xc9c21000  minor code: 210
+   completed: No
+   at com.ibm.ws390.tx.ControllerTransactionManagerImpl.
+   contextToGtidRow(Native Method)
+   at com.ibm.ws390.tx.ControllerTransactionManagerImpl.
+   begin(ControllerTransactionManagerImpl.java:1588)
+   at com.ibm.ws390.tx.ControllerTransactionManagerImpl.
+   getControl(ControllerTransactionManagerImpl.java:1967)
+   at com.ibm.ws390.tx.ControllerTransactionManagerImpl.
+   enlistXaResources(ControllerTransactionManagerImpl.java:2827)
+   at
+   com.ibm.ws390.tx.ControllerTransactionManagerImpl.
+   commit(ControllerTransactionManagerImpl.java:2316)
+   The following can be seen in the servant region sysprint log
+   at the time of the failure:
+   Trace: xxxx/xx/xx xx:xx:xx.xxx xx t=xxxxxx c=UNK key=xx
+   ThreadId: xxxxxxxx
+   FunctionName: com.ibm.ws390.tx.NativeTransactionContext
+   SourceId: com.ibm.ws390.tx.NativeTransactionContext
+   Category: AUDIT
+   ExtendedMessage: BBOT0004E: RRS SERVICE ATREND FAILED WITH
+   RETURN CODE=931.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Code was added to prevent a second attempt to end the
+   unit of recovery under the stated conditions.
+   
+   APAR PM43823 is currently targeted for inclusion in Service
+   Level (Fix Pack) 7.0.0.21 of WebSphere Application Server V7.0.
+   
+   Please refer to URL:
+   //www.ibm.com/support/docview.wss?rs=404&uid=swg27006970
+   for Fix Pack availability.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM43823
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSPHERE FOR Z
+   
+   
+ * REPORTED COMPONENT ID
+   5655I3500
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-07-15
+   
+   
+ * CLOSED DATE
+   2011-09-21
+   
+   
+ * LAST MODIFIED DATE
+   2012-02-03
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    PM40551 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM40551]
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBSPHERE FOR Z
+   
+   
+ * FIXED COMPONENT ID
+   5655I3500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R700 PSY UK74996 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK74996]
+   UP12/01/18 P 1201
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

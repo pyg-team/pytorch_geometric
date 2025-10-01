@@ -1,0 +1,97 @@
+Title: IBM Where can I find the text of APAR PK74000 for running Enterprise COBOL and COBOL II combined? - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ I still have some programs that were compiled with COBOL II and understand that I may need the PTF for PN74000 included in the IGZEBST module if I want to use any COBOL II routines with Enterprise COBOL programs. Is that information available? 
+
+ENVIRONMENT
+Enterprise COBOL application with Statically called COBOL II subroutine.
+
+RESOLVING THE PROBLEM
+APAR PN74000 is a COBOL II Release 1.4.0 Runtime APAR. 
+
+You can see the complete APAR text through IBMLINK if you subscribe. 
+We are also including it here (slightly edited and with some additional information): 
+
+APAR Identifier ...... PN74000 Last Changed ........ 07/05/10 
+TO ENABLE STATIC CALLS FROM IBM COBOL FOR MVS & VM V1R2 (or later). REG9 POINTS TO JUNK, IT SHOULD POINT TO A COBOL TGT 
+
+Symptom ...... NF ABEND Status ........... CLOSED UR1 
+Severity ................... 4 Date Closed ......... 95/08/17 
+Component .......... 566894001 
+Reported Release ......... 140 
+Component Name VS COBOL II LIB 
+
+PTF List: 
+Release 400 : UN80822 available 95/08/29 (F508 ) Batch 
+Release 403 : UN80823 available 95/08/29 (F508 ) CICS 
+Release 140 : UN80824 available 95/08/29 (1000 ) VM Batch 
+Release 143 : UN80825 available 95/08/29 (1000 ) VM CICS 
+
+Parent APAR: 
+Child APAR list: PN74011 
+
+ERROR DESCRIPTION: 
+A COBOL program called from a higher level COBOL program expects 
+the caller's TGT address to be in R13. However, for cases where 
+the caller is compiled with COBOL for MVS & VM V1R2, the TGT 
+address is in R9 instead of R13 which will result in a program 
+check or abend during initialization of the called program. 
+Possible symptom is ABENDU4083 RC02 REG13 REG9 CICS 
+* 
+ADDITIONAL SYMPTOMS: 
+In CICS, abend0C4 in IGZEBST offset x'19C' 19C . 
+IN BATCH, abend0C4 in IGZEBST offset x'164' 164 . 
+In CICS, ABEND0C4 in CEECREIN 
+or 
+Abend0C4 IGZETCL offset x'18A' or 150 or 152 
+**** 
+Added April 2005: 
+IGZ0013S An error return code 16 came from a CICS command 
+POP issued by library subroutine IGZETRM. 
+Added May 10, 2007 
+Abend0C4 in IGZEINI X'746' or similar address. 
+
+LOCAL FIX: 
+Relink COBOL II programs with LE/MVS 1.5 or higher. 
+By the way, that's the old LE/MVS 1.5 that became unsupported in 2001 not to be confused with LE for z/OS 1.5. LE for z/OS 1.5 is much newer than LE for MVS 1.5. Any LE for z/OS is good.
+
+PROBLEM SUMMARY: 
+**************************************************************** 
+* USERS AFFECTED: Users coding static calls from COBOL for 
+* MVS and VM V1.2 to VS COBOL II. 
+* 
+**************************************************************** 
+* PROBLEM DESCRIPTION: The application will terminate with 
+* an ABENDU4083 RC=2. The orginal 
+* error is an ABEND0C4 in IGZEBST. 
+* 
+**************************************************************** 
+* RECOMMENDATION: 
+**************************************************************** 
+A COBOL program called from a higher level COBOL program expects 
+the caller's TGT address to be in R13. However, for cases where 
+the caller is compiled with COBOL for MVS & VM V1R2, the TGT 
+address is in R9 instead of R13 which will result in a program 
+check or abend during initialization of the called program. 
+
+COMMENTS: 
+Abend0c4 can also occur at x'8c' in IGZEBST under CICS. 
+
+MODULES/MACROS: IGZEBST IGZ9BST 
+
+================================================================= 
+ADDITIONAL INFORMATION, not included in the APAR text.
+If your program is using a COBOL II 1.4 IGZEBST, you will see the following timestamp in the program load module or in a dump:
+IGZEBST â.C24.008/18/95 11.08 O....DUN80822 (PTF installed)
+IGZEBST â.C24.008/18/95 11.17 C.....UN80823 (PTF installed)
+If you see 0000000 (no PTF install)
+or C23. you are using an older COBOL II bootstrap.
+
+If you see a time stamp in this format:
+IGZEBST â.C339020070322 
+r yyyymmdd (r is the zOS release number 
+or the year is later than 1995)
+that would be a later IGZEBST and would contain the upgrade.

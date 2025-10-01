@@ -1,0 +1,214 @@
+Title: IBM PQ50714: FTP JESPUTGET FAILS WITH JESINTERFACELEVEL=2 - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  FTP JES PUTGET processing fails with JES3 and JESLEVEL=2.
+   'GET file' submits the job but the output is not transferred
+   to the client. Tested several times trying to create
+   the problem with TRACE, JTRACE and JDUMP running.
+   
+   With TRACE active, the problem does not occur.
+   With NOTRACE active, the problem occurs.
+   So, only JTRACE and JDUMP traces provided.
+   Client trace shows job being submitted and FTP is
+   waiting for its output.
+   The SYSLOG trace shows a job being submitted for CLASS=K.
+   Server seems to be in a loop. At 11:27:56 we have submitted the
+   and then until 11:33:57 it appears the Server is in a loop.
+   .
+   Increased DATACTTIME and all other timers to 600 except
+   DATATIMEOUT at 1800.
+   The job takes about 1 sec to run.  The transfer fails after 10
+   minutes with the server JESPUTGETTO of 600.
+   -10 minutes later.
+        Connection to server interrupted or timed out.
+        Connection with vf1a.plexife.dresdner.net terminated
+        Transfer aborted due to receive error (-2)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All users of the IBM Communications Server   *
+   *                 for z/OS Version 1 Release 2 IP: FTP Server  *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: When submitting a job to JES using the  *
+   *                      FTP Server and JESINTERFACELEVEL is 2,  *
+   *                      the FTP Server or Client may time out   *
+   *                      instead of retrieving the output from   *
+   *                      the completed job.                      *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   If JESINTERFACELEVEL is 2, a job submitted via the FTP put/get
+   JES interface may not be retrieved from the spool.  The Server
+   may time out as JESPUTGETTO expires, or the Client may abort
+   the connection if DATACTTIME is shorter than JESPUTGETTO.
+   
+   Typically, this error is seen when TRACE is not active, though
+   JTRACE may be running.  It can occur on either JES2 or JES3
+   systems.  JESINTERFACELEVEL must be 2, and the job must be
+   eligible for retrieval and have completed.  The GET command
+   will return with a Server timeout (described above) or a Client
+   timeout:
+   
+    get 'userxx.jcl.cntl(pq47198j)' myjob.jeso (re
+   
+    EZA1701I >>> RETR 'userxx.jcl.cntl(pq47198j)'
+    125-Submitting job 'userxx.jcl.cntl(pq47198j)' FIXrecfm 80
+    125 When JOB00062 is done, will retrieve its output
+    17.06.48 JOB00062 $HASP165 USER177X ENDED AT xxxxxx  MAXCC=0
+    < ----- interval of DATACTTIME ----- >
+    EZA2589E Connection to server interrupted or timed out.
+    EZA2590E receive_data error from recv = (120.76650291)
+             - EDC5120I Interrupted function call.
+    EZA1475I Connection with 127.0.0.1 terminated
+    EZA2607W Transfer aborted due to receive error (-2)
+   
+   The error is caused by an unset return code value upon
+   a successful exit from jesJobStatus2.  Sometimes the return
+   code value contains residual data and the search for the job
+   on the output queue appears to be unsuccessful.  FTP will retry
+   the request until one of the timers terminates the connection.
+   
+   Additionally, the FTP Server may fail to detect a job's output
+   on the spool (again using JES put/get and JESINTERFACELEVEL 2)
+   if there is a slight delay in the output's reaching the spool
+   after the job finishes.  This will be seen via the following
+   reply to the Client:
+   
+    550 No spool files available for JOBxxxxx, JesPutGet aborted
+   +-------------------------------------------------------------+
+   + Please check our Communications Server for OS/390 homepages +
+   + for common networking tips and fixes.  The URL for these    +
+   + homepages can be found in Informational APAR II11334 [http://www-01.ibm.com/support/docview.wss?uid=isg1II11334].       +
+   +-------------------------------------------------------------+
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The FTP Server has been updated to return a value of 0 for a
+   successful pass in jesJobStatus2.  It will now also return a
+   value of -1 (to abort the process) if it exits from the bottom
+   of the routine (which is an unexpected condition).
+   
+   The jesGet2 routine in the FTP Server has been changed to retry
+   the request for job output to account for a delay between job
+   termination and writing of the output to the JES spool.
+   
+   * Cross Reference between External and Internal Names
+   PREFTPLS (EZAFTPLS)
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PQ50714
+   
+   
+ * REPORTED COMPONENT NAME
+   TCP/IP V3 MVS
+   
+   
+ * REPORTED COMPONENT ID
+   5655HAL00
+   
+   
+ * REPORTED RELEASE
+   120
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2001-07-18
+   
+   
+ * CLOSED DATE
+   2001-08-01
+   
+   
+ * LAST MODIFIED DATE
+   2001-09-05
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    PQ47198
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UQ56717
+   
+   
+
+MODULES/MACROS
+ *  EZAFTPJG EZAFTPLS
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TCP/IP V3 MVS
+   
+   
+ * FIXED COMPONENT ID
+   5655HAL00
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R120 PSY UQ56717 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UQ56717]
+   UP01/08/30 P F108
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

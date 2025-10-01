@@ -1,0 +1,158 @@
+Title: IBM JR40226: ODBC CONNECTOR JOBS USING PARTITIONED READS ARE FAILING WHEN THE USER-DEFINED SQL HAS NESTED SELECT STATEMENTS AND TABLE ALIASES. - United States
+
+Text:
+  A FIX IS AVAILABLE
+IBM InfoSphere Information Server, Version 8.5 Fix Pack 3 [http://www-01.ibm.com/support/docview.wss?uid=swg24033513]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When the partitioned reads are enabled in the ODBC Connector job
+   and the user is using user defined SQL with nested select
+   statement and aliases are used for the table name and the query
+   has some where clauses, then the jobs are failing with errors
+   such as the following.
+   
+   ODBC function "SQLExecute" reported:  SQLSTATE = HY000: Native
+   Error Code = 156: Msg = [IBM(DataDirect OEM)][ODBC SQL Server
+   Native Wire Protocol driver][Microsoft SQL Server]Incorrect
+   syntax near the keyword 'as'.
+   (CC_OdbcDBStatement::executeSelect, file CC_OdbcDBStatement.cpp,
+   line 1,422)
+   
+   For example, with the user defined query below:
+     SELECT C1 FROM (SELECT C1 FROM TC_CRM25322_2 WHERE C2 = 1) AS
+     T1_C1
+   Partitioning for ODBC may require inserting a partitioning
+   clause such as "(C1 % 4 = 1)", but the way it was inserted
+   could result in invalid syntax such as:
+     SELECT C1 FROM (SELECT C1 FROM TC_CRM25322_2 WHERE (C1 % 4 =
+     1) AND ( C2 = 1) AS T1_C1)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  When the partitioned reads are enabled in the ODBC Connector job
+   and the user is using user defined SQL with nested select
+   statement and aliases are used for the table name and the query
+   has some where clauses, then the jobs are failing with errors
+   such as the following.
+   
+   ODBC function "SQLExecute" reported:  SQLSTATE = HY000: Native
+   Error Code = 156: Msg = [IBM(DataDirect OEM)] [ODBC SQL Server
+   Native Wire Protocol driver] [Microsoft SQL Server]Incorrect
+   syntax near the keyword 'as'.
+   (CC_OdbcDBStatement::executeSelect, file CC_OdbcDBStatement.cpp,
+   line 1,422)
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The problem is seen because while inserting the partitioning
+   where clause, we search if there is already a where clause
+   present in the SQL Query and then enclose that complete
+   statement after the where keyword within parenthesis. There
+   could be cases such as these where the SQL statement might be
+   having aliases or nested statements after the where keyword, in
+   which case, the SQL syntax can get changed if we insert whole of
+   the statement after the Where keyword within parenthesis.
+   
+   Corrected the code to enclose only the condition that we are
+   inserting in the parenthesis and leave the rest of the SQL
+   statement as-is.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR40226
+   
+   
+ * REPORTED COMPONENT NAME
+   WIS DATASTAGE
+   
+   
+ * REPORTED COMPONENT ID
+   5724Q36DS
+   
+   
+ * REPORTED RELEASE
+   850
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-07-28
+   
+   
+ * CLOSED DATE
+   2011-08-05
+   
+   
+ * LAST MODIFIED DATE
+   2014-07-25
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WIS DATASTAGE
+   
+   
+ * FIXED COMPONENT ID
+   5724Q36DS
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R850 PSY
+   UP

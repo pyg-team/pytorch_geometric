@@ -1,0 +1,33 @@
+Title: IBM Specifying userid/password for database access on a WebSphere Application Server version 5 DataSource - United States
+
+Text:
+WSAD; RAD; v5; v6; WTE; WAS; websphere; datasource; database; version; security; password; jaas; authentication; user id; userid; 1080400 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This technote explains how to specify userid and password for database access (db) on a WebSphere® Application Server (WAS) version 5 DataSource in a WebSphere Test Environment (WTE) version 5.x server configuration in WebSphere Studio Application Developer (WSAD) version 5.0. 
+
+CAUSE
+In an earlier versions, user and password resource properties that you could set to the appropriate values were provided for the datasource, for example, if you were trying to specify userid/password to access a remote Oracle db from a WAS V5 datasource. The datasource then used these properties for authentication.
+
+RESOLVING THE PROBLEM
+In WSAD 5.x, the user and password resource properties are no longer explicitly included in the V5 datasource definition. You can now manually add these values to the datasource by using JAAS authentication from the Security page of the server configuration to define user/password properties. The figure below shows how to add these properties: 
+
+[/support/docview.wss?uid=swg21080400&amp;aid=1]
+
+Next, specify the newly created alias on the Data Source definition:
+[/support/docview.wss?uid=swg21080400&aid=2] [/support/docview.wss?uid=swg21080400&aid=2]
+
+
+
+When you are using the JAAS alias, the explicit user & password resource properties are no longer needed.
+
+This also applies to a WAS version 5 DataSource in a WTE version 5.x server configuration in Rational® Application Developer version 6.x.
+
+
+
+
+
+
+
+
+Cross Reference information Segment Product Component Platform Version Edition Software Development WebSphere Studio Site Developer Relational database tools Linux, Windows 5.0, 5.0.1, 5.1, 5.1.1, 5.1.2 Software Development Rational Application Developer for WebSphere Software Integrated WebSphere Test Environment RedHat Enterprise Linux WS, SuSe Enterprise Server, Windows 6.0, 6.0.0.1, 6.0.1.0, 6.0.1.1

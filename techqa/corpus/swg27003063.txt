@@ -1,0 +1,80 @@
+Title: IBM Hints and Tips for Troubleshooting Single Sign-on and Authentication Issues with Domino and WebSphere - United States
+
+Text:
+Domino Server; WebSphere Application Server; Domino/WebSphere Integration; Troubleshooting Script; Internet; Web Server PRODUCT DOCUMENTATION
+
+ABSTRACT
+ This document serves as a guide to troubleshoot issues that may arise when Domino is configured to be used with IBM's WebSphere Application Server for single sign-on (SSO) or LDAP authentication. This information can also be found in the Notes/Domino R5 Release Notes. 
+
+CONTENT
+Problem: Configuring the Web SSO document fails (document introduced in Domino 5.0.5) 
+
+To successfully configure the Web SSO document, the Notes or Domino Administrator client's home server must be in the same domain as the participating Single Sign-on servers.
+
+
+ * When you save the Web SSO document, the entry in the Home Server field of your client's Location document must be pointing to a server in the same domain as the other servers participating in single sign-on. If you see a message box indicating that one or more of the participating servers cannot be found, then those servers will not be able to decrypt the Web SSO document and will not perform Single Sign-On.
+
+ * When the Web SSO document is saved, the status bar indicates how many public keys were used to encrypt the document. The client finds the Administrator and Server documents in the Domino Directory and uses the public key stored on the Administration tab.
+
+
+
+Problem: Error on server console; Web SSO document fails to load on HTTP startup 
+
+If the Server document is configured for Multi-Server in the Session Authentication field, then the Web SSO Configuration document is initialized and loaded during HTTP startup. The server console reports the following message if that Server's ID, which holds the public key, decrypts the Web SSO Configuration document successfully: 
+
+"HTTP: Successfully loaded Web SSO Configuration." 
+
+If the participating SSO server reports the following error, then SSO will not work: 
+
+"HTTP: Error Loading Web SSO configuration. Reverting to single-server session authentication." 
+
+Use the following information to troubleshoot this situation: 
+ * Make sure that there is only one Web SSO document in the Web Configurations view of the Domino Directory and in the $WebSSOConfigs hidden view. You cannot create more than one Web SSO document, but another one could be replicated over from another server. This issue has been reported to Lotus Quality Engineering.
+
+
+If you have more than one, delete them all and recreate the document. 
+
+To access the hidden view, open the Domino Directory, hold down the CTRL + SHIFT keys and select View, Go To, from the menu. This key sequence displays the hidden views in the database. 
+ * Verify that the Server document's public key matches the public key in the SERVER.ID file. If the keys do not match,then the decrypting of the Web SSO document could fail, resulting in the error above.
+
+
+While this is a rare situation, it can happen if the ID file was created multiple times and the Server document was not updated correctly. Usually, you see an error on the server console that states that the public key does not match the Server ID. If this happens, SSO will not work because the document encrypted with the public key in the Server document cannot be decrypted by a different private/public key pair in the Server ID. To correct this situation, copy the public key from the Server ID and paste it into the Server document. After that, recreate the Web SSO document. 
+
+
+Problem: Authentication fails 
+ * WebSphere and Domino should both be configured to use the same LDAP directory.
+
+
+The cookie used for Single Sign-On stores the full Distinguished Name (DN) of the user, as in the following example: 
+
+cn=john smith,ou=sales, o=ibm, c=us. 
+
+In a situation where WebSphere uses the IBM SecureWay LDAP directory with this user in it and Domino uses its native directory, if the user is added to Domino as a flat name ("john smith"), Single Sign-on will not work. The name stored in the cookie is not considered the same name stored in the Domino Directory in this case, even if they have the same password. 
+
+To correctly configure Single Sign-on, set up Directory Assistance in Domino and configure it for a server using the same IBM SecureWay LDAP directory. Or, you can load the LDAP task on Domino, enter the user's hierarchical name in the Domino Directory, then configure WebSphere to use Domino as its LDAP directory. 
+ * Use hierarchical names; this is strongly recommended.
+
+
+If Single Sign-on participating servers include WebSphere servers, using a Domino LDAP directory, then users with flat names will not work. This issue has been reported to Lotus Quality Engineering as SPR#SONL4P3JQE. If the participating servers are all Domino, then Single Sign-on will work with flat user names. 
+ * URLs issued to servers configured for Single Sign-on must specify the full DNS server name, not the host name or IP address. For browsers to be able to send cookies to a group of servers, the DNS domain must be included in the cookie. The DNS domain in the cookie must match the URL. This is why cookies cannot be used across TCP/IP domains. 
+
+ * Clustered Servers must have the host name populated with the full DNS server name in the server document for ICM to redirect to cluster members using Single Sign-on. If this field is not populated ICM (the Internet Cluster Manager) will redirect URLs to clustered web servers with only the TCP/IP host name, by default, and will not be able to send the cookie because the DNS domain is not included in the URL. Edit the Server document, go to the Internet Protocols tab -> HTTP tab -> host names field and add the server's full DNS name.
+
+ * If WebSphere's LDAP server is configured with a port, the Domino Web SSO configuration document must be edited and a slash (\) must be added to the LDAP realm field for WebSphere servers. For example, replace r5qmr.iris.com:389 with r5qmr.iris.com\:389.
+
+
+This issue has been reported to Lotus Quality Engineering as SPR #SONL4P56XS. This issue has been fixed in Domino 6.0. There are currently no plans to address this issue in Notes/Domino R5. 
+
+
+Tracking Sessions 
+
+The console command "Tell HTTP Show Users" may be used for tracking user sessions. 
+
+Servers participating in single sign-on, configured for multi-server session-based authentication may not report sessions accurately using this command. If a browser's cookie was created on a server, this command will display the user name, IP address, and cookie expiration time for that web server. However, if a user transfers over to a second server through session authentication, this command will not display the user on the second server or other servers where the cookie was not created. After a user performs a logout, this command will display the cookie as valid on the server, when in fact, it no longer exists in the browser. This issue was reported to Lotus Quality Engineering and has been addressed in Domino 5.0.6. 
+
+Excerpt from the Lotus Notes and Lotus Domino Release 5.0.6 QMR Fix List (available at http://www.notes.net [http://www.notes.net] ): 
+
+Web Server - Sessions  * SPR# SONL4M8QJV, SONL4N3NGW - Fixes Domino Web Single Sign-on to properly use the session authentication cache so that the command "tell http show users" functions as it did for non-SSO session authentication. Also should enhance performance, as caching has been improved.
+
+RELATED INFORMATION
+ Enabling Single Sign-on for Domino and WebSphere [http://www.ibm.com/support/docview.wss?uid=swg21098010]

@@ -1,0 +1,173 @@
+Title: IBM IY91001: UNABLE TO RESTORE ACCOUNT WITHOUT PASSWORD WRITE ACCESS - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  ************************************************************
+   ************************************************************
+   ITIM Server Release: 4.6-FP21
+   
+   Title: Unable to restore account without password write access
+   
+   Problem Description: Fix for S11795 is incomplete.  In the
+   current code,
+   we check if a user has write access on erpassword before
+   granting access
+   to a restore operation.  However, if the restore operation
+   doesn't need
+   a password on restore, and the customer doesn't want to provide
+   write
+   access to erpassword, they're still forced to grant access to
+   erpassword
+   for restore to work.  This should not be the case.
+   
+   Can the customer reproduce the problem? Yes, support too.
+   
+   Desired Behavior (BE specific): Users should not need write
+   access to
+   erpassword to restore accounts that do not require a password on
+   restore, or accounts that can pull the password from
+   ersynchpassword on
+   the person record.
+   
+   Steps to Duplicate (if any): Create an ITIM group.  Create an
+   ITIM user
+   in that ITIM group.  Create another ITIM account.  Create an ACI
+   that
+   grants search/restore/suspend on ITIM Accounts to the ITIM
+   group.
+   Restart ITIM.  Suspend the second ITIM account.  Attempt to
+   restore that
+   account with the first ITIM account (the one in the ITIM group).
+   A
+   popup will appear stating that you do not have the rights to
+   perform
+   this operation.  A check of the logs with
+   authorization=DEBUG_MAX will
+   show that the request was denied due to lack of write access to
+   erpassword.  The code in question is in AccountManagerBean.
+   ************************************************************
+   ************************************************************
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Unable to restore account without password write access
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *   Users affected:
+   Customers restoring accounts without READACCESS to Passwords.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *   This fix for this APAR is contained in the
+   following maintenance packages:
+   | Interim Fix | 4.6.0-TIV-TIM-IF0030
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IY91001
+   
+   
+ * REPORTED COMPONENT NAME
+   IBM TIV ID MGR
+   
+   
+ * REPORTED COMPONENT ID
+   5724C3403
+   
+   
+ * REPORTED RELEASE
+   460
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2006-10-24
+   
+   
+ * CLOSED DATE
+   2006-11-10
+   
+   
+ * LAST MODIFIED DATE
+   2006-11-10
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *     SERVER
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   IBM TIV ID MGR
+   
+   
+ * FIXED COMPONENT ID
+   5724C3403
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R460 PSY
+   UP

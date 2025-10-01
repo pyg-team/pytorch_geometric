@@ -1,0 +1,62 @@
+Title: IBM ITCAM agent workspaces do not show in TEP navigator - United States
+
+Text:
+5724C71AOTR; 5724C0BIZTR; 5724M94MCTR; 5724B98EOTR; 5724C04HITR; 5724C04HVTR; 5724C0FWATR; 5724C04OCTR; 5724C0SPATR; 5724B96MOTR; 5724L92COTR; 5724L92VITR; 5724B98ISTR; 5724B97ISTR; 5724B97SOTR; 5724V09ORTR; 5724B96OOTR; 5724B96DOTR; 5724B96SOTR; 5724B98D0TR; 5724V09STTR; missing; ITM; IBM; tivoli TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ ITCAM agent is connected to TEMS, but navigation tree for the agent is not displayed in Tivoli Enterprise Portal (TEP). 
+
+SYMPTOM
+The following screen print shows the problem for ITCAM for Microsoft Active Directory agent. Only the "Active Directory" item appears under Windows->Hostname in the TEP navigator physical view of TEP. The list of Active Directory agent workspaces is not listed. 
+
+[/support/docview.wss?uid=swg21633187&amp;aid=1]
+
+
+
+DIAGNOSING THE PROBLEM
+Check that agent support files are applied to the TEPS, TEMS and also to the Remote TEMS if the agent is connecting to a Remote TEMS. 
+
+The following example shows the command to check Active Directory agent (3z) support files. 
+
+If you are using the desktop or browser TEP client, make sure that the agent support for TEP client is also installed. 
+
+Use following commands to confirm agent support: 
+
+
+Windows: <ITM_HOME>/InstallITM/kincinfo -t 3z
+Unix: <ITM_HOME>/bin/cinfo -t 3z
+
+
+RESOLVING THE PROBLEM
+The following resolution steps refer to ITCAM for Microsoft Active Directory agent. The same steps apply to this issue with all agents that connect to Tivoli Enterprise Monitoring Server (TEMS). 
+
+Step 1) If TEMS or TEPS support is not installed, install it using the agent support CD or image.
+If you are using the desktop or browser client to launch the TEP portal, then make sure that the Active Directory agent support files are also installed for the desktop or browser clients. Restart TEMS, TEPS and Desktop client after support is applied. 
+
+
+Step 2) If step 1 does not resolve the problem or if all ITM components already have the correct level of Active Directory agent support, then perform the following steps: 
+a) Reconfigure TEPS as follows. 
+On Windows use MTEMS GUI to reconfigure TEPS.
+On Unix, use following command:
+<ITM_HOME>/bin/itmcmd config -A cq
+
+Accept all defaults to keep existing configuration. 
+
+b) Clear browser and java cache. 
+
+Close TEP client. Below are steps for clearing browser cache and java cache. If you are using different browser and java, use applicable procedure for the browser and platform you are using: 
+
+Clearing the Internet Explorer Temporary Internet Files 
+1. From Internet Explorer, go to Tool, then select Internet Options. 
+2. Under the Browsing History section, under the General tab, hit the delete key. 
+3. Select Temporary Internet Files, then hit the delete key. 
+
+Clearing the Java 5.0 plug-in cache on Windows 
+
+1. Open Control Panel and click IBM Control Panel for Java to launch the Java Control Panel program. 
+2. On the General tab, click Delete Files in the Temporary Internet Files section at the bottom of the panel. 
+
+Step 3) Restart TEP client. 
+
+The agent navigation tree should display in TEP navigator. The following screen print shows the Active Directory agent tree displayed after the problem is resolved.
+[/support/docview.wss?uid=swg21633187&amp;aid=2]

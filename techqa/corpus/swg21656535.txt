@@ -1,0 +1,96 @@
+Title: IBM Security Directory Integrator 7.2 Known Issues - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This technical note lists the known issues with IBM Security Directory Integrator Version 7.2. 
+
+SYMPTOM
+
+
+Parameter of type Static Text does not display correctly in Form Editor
+
+In IBM Security Directory Integrator Configuration Editor (CE), the following issue occurs if you are using the Form Editor and have added static text to the form. If the label of the parameter of the static text is too long in the Form Editor, then it is not displayed correctly. Even if it is shorter, a disabled text input field appears next to it, which should actually appear as an informational message. This is a known issue with the graphical user interface of Configuration Editor. To avoid this issue, do not use the static text type in a form.
+
+Error occurs when the mirror hierarchy option is selected for non-LDAP endpoints in Federated Directory Server
+
+In Federated Directory Server, the option to mirror hierarchy is allowed only for LDAP endpoints. For other non-LDAP endpoint types, such as, File or JDBC, the mirroring option is not allowed. However, the console provides an option for mirroring hierarchy in non-LDAP endpoints. If this option is selected, the following error occurs:
+
+[Flow_CSVFlow_LDAPMigrate/callWriteToLDAP/On Failure] - java.lang.Exception: java.lang.Exception:
+[ConstructContainerDN] CTGDIS183E Error while mapping attribute 'targetLDAPDN' in the Input Attribute 
+Map of Component 'ConstructContainerDN' (ConstructContainerDN.Input.targetLDAPDN).
+
+This is a known issue with Federated Directory Server console. To work around this problem, on the flow configuration page, click General Settings and then clear the Mirror the source hierarchy into Directory Server check box.
+
+Logout reports exception in log file
+
+In the Federated Directory Server console, when you click on Logout, the following exception is reported in the ibmdi.log file that is located in the TDI\logs directory:
+
+2013-11-21 13:56:35.050:WARN:oejs.Response:Committed before 404 ProxyServlet: /fds/static/logout.html
+2013-11-21 13:56:35.050:WARN:oejs.ServletHandler:ERROR: /fds/static/logout.html
+java.lang.IllegalStateException: Committed
+at org.eclipse.jetty.server.Response.resetBuffer(Response.java:1090)
+at org.eclipse.jetty.server.Response.sendError(Response.java:298)
+at org.eclipse.equinox.http.servlet.internal.ResourceServlet.service(ResourceServlet.java:52)
+at javax.servlet.http.HttpServlet.service(HttpServlet.java:848)
+at org.eclipse.equinox.http.servlet.internal.ServletRegistration.service(ServletRegistration.java:61)
+at org.eclipse.equinox.http.servlet.internal.ProxyServlet.processAlias(ProxyServlet.java:128)
+at org.eclipse.equinox.http.servlet.internal.ProxyServlet.service(ProxyServlet.java:68)
+at javax.servlet.http.HttpServlet.service(HttpServlet.java:848)
+at org.eclipse.equinox.http.jetty.internal.HttpServerManager$InternalHttpServiceServlet.service(HttpServerManager.java:386)
+at org.eclipse.jetty.servlet.ServletHolder.handle(ServletHolder.java:598)
+at org.eclipse.jetty.servlet.ServletHandler.doHandle(ServletHandler.java:486)
+at org.eclipse.jetty.server.session.SessionHandler.doHandle(SessionHandler.java:231)
+at org.eclipse.jetty.server.handler.ContextHandler.doHandle(ContextHandler.java:1065)
+at org.eclipse.jetty.servlet.ServletHandler.doScope(ServletHandler.java:413)
+at org.eclipse.jetty.server.session.SessionHandler.doScope(SessionHandler.java:192)
+at org.eclipse.jetty.server.handler.ContextHandler.doScope(ContextHandler.java:999)
+at org.eclipse.jetty.server.handler.ScopedHandler.handle(ScopedHandler.java:117)
+at org.eclipse.jetty.server.handler.HandlerWrapper.handle(HandlerWrapper.java:111)
+at org.eclipse.jetty.server.Server.handle(Server.java:350)
+at org.eclipse.jetty.server.AbstractHttpConnection.handleRequest(AbstractHttpConnection.java:454)
+at org.eclipse.jetty.server.BlockingHttpConnection.handleRequest(BlockingHttpConnection.java:47)
+at org.eclipse.jetty.server.AbstractHttpConnection.headerComplete(AbstractHttpConnection.java:890)
+at org.eclipse.jetty.server.AbstractHttpConnection$RequestHandler.headerComplete(AbstractHttpConnection.java:944)
+at org.eclipse.jetty.http.HttpParser.parseNext(HttpParser.java:630)
+at org.eclipse.jetty.http.HttpParser.parseAvailable(HttpParser.java:230)
+at org.eclipse.jetty.server.BlockingHttpConnection.handle(BlockingHttpConnection.java:66)
+at org.eclipse.jetty.server.bio.SocketConnector$ConnectorEndPoint.run(SocketConnector.java:254)
+at org.eclipse.jetty.server.ssl.SslSocketConnector$SslConnectorEndPoint.run(SslSocketConnector.java:665)
+at org.eclipse.jetty.util.thread.QueuedThreadPool.runJob(QueuedThreadPool.java:603)
+at org.eclipse.jetty.util.thread.QueuedThreadPool$3.run(QueuedThreadPool.java:538)
+at java.lang.Thread.run(Thread.java:780) 
+
+These errors can safely be ignored. This is a known cosmetic issue with Federated Directory Server console in IBM Security Directory Integrator V7.2 and has no practical impact on the solution.
+
+Federated Directory Server console and Dashboard of a remote machine do not load in a browser where IE ESC is enabled
+
+When you try to load Federated Directory Server console or Dashboard of a remote machine in Internet Explorer which has Internet Explorer Enhanced Security Configuration (IE ESC) enabled, you will see a blank page. This is a known issue with IBM Security Directory Integrator V7.2. You can work around this issue by turning off IE ESC. For steps about how to do this, go to support.microsoft.com [http://support.microsoft.com] and search for Internet Explorer Enhanced Security Configuration.
+
+4-byte characters in Simplified Chinese, Traditional Chinese, and Japanese appear corrupted in the log file
+
+4-byte characters appear as question marks (?) in the ibmdi.log file that is located in the TDI\logs directory. This issue is specific to the Simplified Chinese, Traditional Chinese, and Japanese locales and is a know issue with IBM Security Directory Integrator V7.2.
+
+The Parser page in Federated Directory Server console is displayed in an incorrect language
+
+This problem occurs if you have installed IBM Security Directory Integrator V7.2 in a language other than English. If your system locale is set to a language other than English, but you change your browser locale to English, the labels are still displayed in the system locale language in the Parser page of Federated Directory Server console. This issue is seen in Microsoft Windows 2008, but may be encountered on other Windows and non-Windows operating systems. This problem is not specific to any browser.
+
+Check box is misaligned in the Attribute Map table when an attribute is clicked
+
+In the Federated Directory Server console, on the Attribute Map table provided in various pages (for example, in the Write-back page), there is a check box beside each attribute. When you click on an attribute, the row is enlarged and the attribute mapping options are displayed. However, the vertical position of the check boxes are misaligned in the column. This is a known issue with IBM Security Directory Integrator and is a display problem with the graphical user interface only.
+
+32-bit version cannot be installed on AIX 6.x and 7.x from Launchpad using .ISO
+
+On AIX version 6.x and 7.x operating systems, you cannot install the 32-bit version of IBM Security Directory Integrator from the Launchpad by using the .ISO file. This is because AIX 6.x and 7.x are 64-bit, so when the Launchpad is used to start the installation from the .ISO file, it will install the 64-bit version of IBM Security Directory Integrator. To work around this issue, do not start installation with Launchpad from .ISO files. Instead, manually start the installer from the ISO/aix_ppc directory.
+
+Configuration Editor crashes on SUSE Linux Enterprise Server (SLES) 10 x64 with Service Pack 3
+
+When you launch IBM Security Directory Integrator Configuration Editor on a system with SLES10 SP3 x64, the splash screen and Eclipse window are displayed, but it crashes before the Welcome page is displayed. To resolve this problem, you must edit the theme preferences of Eclipse to specify the Classic theme. Follow these steps:
+
+ 1. vi workspace/.metadata/.plugins/org.eclipse.core.runtime/.settings/org.eclipse.e4.ui.css.swt.theme.prefs
+ 2. Add the following lines:
+    eclipse.preferences.version=1
+    themeid=org.eclipse.e4.ui.css.theme.e4_classic
+ 3. Save and quit.
+ 4. Launch ibmditk.

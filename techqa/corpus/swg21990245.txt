@@ -1,0 +1,26 @@
+Title: IBM How to disable Case Foundation Case Analyzer on a particular node when the Content Platform Engine is in a WebSphere® cluster? - United States
+
+Text:
+disabling; activate TECHNOTE (FAQ)
+
+QUESTION
+ How to disable Case Foundation Case Analyzer on a particular node when the Content Platform Engine is in a WebSphere® cluster? 
+
+CAUSE
+This configuration should be only temporary to reduce the chances of database contention in the Case Analyzer store database when you run one-time tasks that work with a large amount of data. For example: 
+
+ *  Removing dimensions with a very large number of members from the Case Analyzer configuration Compressing the Case Analyzer data for a very long time period 
+
+ANSWER
+ 
+
+ 1. Log into Administration Console for the Content Platform Engine (ACCE), and navigate down to Global Configuration -> Administration -> Sites -> Initial Site -> Virtual Servers -> (WAS nodes) -> [server name]. 
+ 2. Double-click [server name] and then go to the Workflow Subsystem tab. 
+ 3. Change the Configuration source to "this object". 
+ 4. Uncheck the Case Analyzer enabled button. 
+ 5. Click Save.
+
+
+You can do this with all [server name] nodes except one in the cluster. Do not disable Case Analyzer on the top domain level. Then restart the Content Platform Engine cluster, so only one node is left with running Case Analyzer threads. 
+
+Then in the Case Analyzer PTM, you have to connect to the specific Content Platform Engine node on which you left Case Analyzer running.

@@ -1,0 +1,51 @@
+Title: IBM WTX 8.4.0.0 Launcher encounters exception on startup when using a port number - United States
+
+Text:
+launcher ; launcher start; com.ibm.websphere.dtx.dtxpi.tools.commandline; exception ; adminpropfile.xml ; command line tool TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Starting the WebSphere® Transformation Extender (WTX) 8.4.0.0 Launcher with a port number specified results in an exception. 
+
+SYMPTOM
+The WTX 8.4.0.0 Launcher encounters an exception when started using a port number. 
+
+Example: 
+
+ launcher.sh -start 5555 
+
+ 
+Successfully started Launcher 
+launcher 
+Exception in thread "main" java.lang. 
+NoClassDefFoundError: com.ibm.websphere.dtx.dtxpi.tools.commandline. 
+MMissingCommandOptionArgumentException 
+at java.lang.J9VMInternals.verifyImpl(Native Method) 
+at java.lang.J9VMInternals.verify(J9VMInternals.java:72) 
+at java.lang.J9VMInternals.initialize(J9VMInternals.java:134) 
+at com.ibm.websphere.dtx.launcher.core.EventServerImpl.<init> 
+(Unknown Source) 
+at com.ibm.websphere.dtx.launcher.core.EventServerManager.main 
+(Unknown Source) 
+Caused by: java.lang.ClassNotFoundException: com.ibm.websphere.dtx. 
+dtxpi.tools.commandline.MMissingCommandOptionArgumentException 
+at java.net.URLClassLoader.findClass(URLClassLoader.java:434) 
+at java.lang.ClassLoader.loadClass(ClassLoader.java:660) 
+at sun.misc.Launcher$AppClassLoader.loadClass(Launcher.java:358) 
+at java.lang.ClassLoader.loadClass(ClassLoader.java:626) 
+... 5 more 
+
+
+CAUSE
+A port number is not required to be specified during a Launcher start command. In versions prior to WTX 8.4.0.0 , if a port number was specified, this would be ignored. But in WTX 8.4.0.0, the third parameter for the launcher start command is considered to be for a adminpropfile.xml file which is a launcheradmin properties file. Specifying a port number for this option results in an exception. Removing the port number during a launcher start command resolves the issue. 
+
+
+Please note, there are new command line tools available in WTX 8.4.0.0 that support all of the configuration options available through the Management Console and Launcher Administration. A property file can be generated using the -export command line option of the launcheradmin command line tool. Please refer to the WTX Launcher documentation for more information.
+
+
+RESOLVING THE PROBLEM
+Removing the port number specified during the Launcher start command resolves the issue.
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ Ascential DataStage TX Mercator

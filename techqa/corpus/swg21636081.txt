@@ -1,0 +1,38 @@
+Title: IBM Content Engine Daylight Savings Time issue - United States
+
+Text:
+AE FEM DST daylight savings time DateTime property TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ IBM ECM FileNet Content Engine (CE) objects with DateTime values saved using a Java client may show incorrect daylight savings time values if retrieved using a non-Java Microsoft Windows (Windows) client. 
+
+SYMPTOM
+When a document or other object is stored in the CE using a Java based client, such as IBM FileNet Application Engine (AE), it converts the DateTime property to UTC time for storage in the CE database. 
+
+When the same document is retrieved using a non-Java client, such as IBM FileNet Enterprise Manager (FEM), DateTime values can be incorrect by one hour.
+
+
+CAUSE
+This issue is caused by a difference in the way that Java and non-Java Windows based clients handle historic DST data.
+
+Java uses the "Olson Timezone Database" which has extensive historical data including changes to DST rules since they were introduced. However, non-Java Windows based clients usually rely on the Windows Dynamic Registry Key of timezone information. These keys may not contain accurate DST information for years prior to 2007. DST calculations on dates before 2007 may therefore be prone to error.
+
+The following example covers Poland where DST was last introduced in 1977. 
+
+
+ 1. Define a document class with two DateTime properties. 
+ 2. Using AE, create a document of this class and provide the following two DateTime values:
+    Property1: 1957-09-23 00:00
+    Property2: 1980-07-02 00:00 
+    (The value for Property1 represents a DateTime before DST was introduced and the value for Property2 is a DateTime after DST). 
+ 3. If these values are reviewed in the DocVersion table in the object store database the correct conversion to UTC results in the following being stored:
+    Property1: 1957-09-22 23:00 <--Time Shifted back 1 hour (stored correctly)
+    Property2: 1980-07-02 22:00 <--Time Shifted back 2 hour (stored correctly) 
+ 4. Next retrieve this document using a non-Java client such as FEM and review the property values. The following would be seen:
+    Property1: 1957-09-23 01:00 <--Time Shifted forward 2 hour (retrieved incorrectly)
+    Property2: 1980-07-03 00:00 <--Time Shifted forward 2 hour (retrieved correctly)
+
+
+The incorrect conversion from UTC for Property1 is caused by the non-Java client applying incorrect historical data from the Windows timezone information. As it is not aware that DST did not apply in 1957, an extra hour for DST is added, resulting in the wrong time being returned. 
+RESOLVING THE PROBLEM
+This is a limitation with the Windows operating system. To avoid this issue please use Java based clients for viewing document properties and reserve the usage of FEM solely for administration purposes, as is recommended by IBM.

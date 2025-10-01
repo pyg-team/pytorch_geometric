@@ -1,0 +1,33 @@
+Title: IBM Situation MQSeries_MQ_Channel_Stopped not closed/deleted when false - United States
+
+Text:
+channel stop receiver situation event TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ ENVIRONMENT: 
+
+We frequently have MQSeries_MQ_Channel_Stopped situations not going away on the Situations Event Console when the channel is started and running again. This Always occurs on RECEIVER channels after there was a connection drop with the remote queue manager, or the decentral queue manager was stopped. We do not have OMEGAMON MQ agents on the decentral side, only OMEGAMON MQ on the mainframe.
+
+PROBLEM: 
+
+I have an issue, the Channel Stopped event situation went true at 11:19:18 but if you look at the log of the MQ Channel Initiator you see the channel started at 11:19:47, the problem lies in the fact that they failed-over (and back), the remote queue manager. To the user, the channel is started and up and running, but as the connection name is different in the events, the event is not cleared. 
+
+QUESTION: 
+
+Can these situations be adapted to not include the ConnectionName and only react on QmgrName and ChannelName? 
+
+ENVIRONMENT
+zOS
+
+RESOLVING THE PROBLEM
+1) Alternative situation to using "Current Events" attribute group 
+
+Instead of using current events, situations against the "MQSeries Events" attribute group can be created, with an UNTIL specification that indicates to clear the alert when the channel starts, based on Resource Name (channel name). 
+
+Situation 1 (Channel Stopped): Against "MQSeries Events" attribute group instead of "current events". It is a pure event table. Event EQ Channel_Stopped AND Event Qualifier NE Channel_Stopped_OK. Add Resource Name attribute as the display item (Formula tab, Advanced button, Display Item). For Until tab, check "Another Situation is TRUE" and specify name of SItuation 2 (Channel Started). 
+
+Situation 2 (Channel Started): Against "MQSeries Events" attribute group. Event EQ_Channel_Started. Add Resource Name attribute as the display item. For Until tab, set interval expires to small amount. 
+
+2) Research in Current Events area ongoing
+
+An RFE can be open to research items related to Current Events to allow a configuration option to reset current events after a certain amount of time or provide some type of reset current event action, but this is not currently in the plan.

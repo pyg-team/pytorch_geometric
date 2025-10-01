@@ -1,0 +1,29 @@
+Title: IBM How to overwrite property definition properties in a class via IBM Administration Console for Content Platform Engine (ACCE)? - United States
+
+Text:
+ACCE; CE; Property; FEM TECHNOTE (FAQ)
+
+QUESTION
+ With IBM FileNet Enterprise Manager (FEM), we can follow the steps below to overwrite the property definition in a document class
+
+1. Launch FEM
+2. Expand the object store and document class tree. Right click on the document class and select "Properties"
+3. Go to "Properties Definitions" tab, highlight the property definition and click "Edit"
+4. Make the modification and click OK
+5. Click OK again to save the change
+
+How to perform the same operation with FileNet Content Engine - ACCE? 
+
+ANSWER
+Follow the below steps to update the property definition properties on ACCE: 
+
+
+
+
+ 1. Launch ACCE 
+ 2. Expand the object stores folder and click the object store to open the Object store tab 
+ 3. Expand the Data Design folder and Classes folder. Click the document class to open Document Class tab 
+ 4. From Properties tab, open Property Definitions drop down and select the property definition you want to modify 
+ 5. ACCE will open that property definition in a new Properties tab 
+ 6. Modify the property definition as required 
+ 7. Go back to the Class Definition tab and click Save

@@ -1,0 +1,36 @@
+Title: IBM TCR report not sent when HTML output is selected. - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Scheduled report with HTML format not sent by email. 
+
+SYMPTOM
+Impossible to send a HTML output by mail for a scheduled TCR report . 
+
+
+CAUSE
+The report was not sent because it contained an image and copy of the image is only contained the TIPHOME directory.
+
+ENVIRONMENT
+ITM 6.2.1
+TCR 1.3.1
+Cognos 
+
+DIAGNOSING THE PROBLEM
+Check that the report does not contain any images
+
+RESOLVING THE PROBLEM
+However, for reports containing images TCR has to store the image in two locations.
+
+
+
+
+
+ 
+1. <TIP_HOME>\profiles\TIPProfile\installedApps\TIPCell\IBM Cognos8.ear\p2pd.war\tivoli\<product>\images\ 
+
+2.<TIPComponents>\TCRComponent\cognos\webcontent\tivoli\<product>\images \ 
+
+The first directory listed above is used for HTML reports displayed within TCR. The second directory is used for Excel, PDF, and emailed HTML

@@ -1,0 +1,114 @@
+Title: IBM PureData Systems for Analytics - Resolving CVE-2014-6271 - United States
+
+Text:
+pda; security; bash; cve; shellshock; netezza TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ On 24 Sept. 2014 a vulnerability bulletin was issued against Redhat Enterprise Linux.
+
+This vulnerability resolves around the bash package, which is used to pass environmental variables in programs and write functions. 
+
+CAUSE
+This vulnerability allows for malicious code to be injected on the end of bash functions. 
+
+ENVIRONMENT
+All version of Redhat from 4.X onward are vulnerable.
+
+DIAGNOSING THE PROBLEM
+Please follow instructions outlined below to download the bundle. 
+
+Run the check script included in this bundle to confirm patching success. 
+
+This can be run before, after, or independent of the patching.
+
+Example:
+# sh bash-test.sh
+Vulnerable to CVE-2014-6271 (original shellshock)
+Vulnerable to CVE-2014-7169 (taviso bug)
+bash-test.sh: line 21: 6282 Segmentation fault (core dumped) bash -c "true $(printf '<<EOF %.0s' {1..79})" 2> /dev/null
+Vulnerable to CVE-2014-7186 (redir_stack bug)
+Test for CVE-2014-7187 not reliable without address sanitizer
+Variable function parser still active, likely vulnerable to yet unknown parser bugs like CVE-2014-6277 (lcamtuf bug)
+
+
+RESOLVING THE PROBLEM
+Non-PureData System for Analytics clients can install the patch sourced from their traditional package sources and install via the recommended method. 
+
+
+For PureData System for Analytics appliances, download and copy the appropriate file for your version of RHEL.
+
+To identify the version of RHEL, run the following command as root:
+
+# cat /etc/redhat-release
+Red Hat Enterprise Linux Server release 6.2 (Santiago)
+
+In this example the version is RHEL 6.
+
+To download, go to http://www-933.ibm.com/support/fixcentral/ [http://www-933.ibm.com/support/fixcentral/]
+
+Product group > Information Management
+select from Information Management > IBM Netezza Platform
+Install version > HOSTMGMT_5
+Platform > Linux
+5.3.1.0-IM-Netezza-HOSTMGMT-fp89859 
+
+For RHEL 5.X download:
+
+nz-hostmgmt-v5.3.1.0_Disk2.iso
+
+For RHEL 6.X download:
+
+nz-hostmgmt-v5.3.1.0_Disk3.iso
+
+Once the file has been downloaded and transferred to the appliance (under /tmp as space permits) perform the following:
+
+Note: These steps will need to be performed on both HA1/HA2 of the cluster.
+Note: These steps may be completed with the database online and no outage is required to perform this patching.
+
+# mount -o loop /tmp/nz-hostmgmt-v5.3.1.0_DiskX.iso /mnt
+
+# cd /mnt/RHX_update_bash/
+
+Where X is the RedHat version identified above.
+
+# rpm -Uvh bash-<version>.rpm --test
+
+If no dependency issues are revealed, remove --test to apply the fix.
+
+# rpm -Uvh bash-<version>.rpm
+
+The following is an example of a successful patching, however package version will differ based on RHEL version:
+
+# mount -o loop /tmp/nz-hostmgmt-v5.3.1.0_Disk3.iso /mnt
+
+# cd /mnt/RH6_update_bash
+
+# sh bash-test.sh
+Vulnerable to CVE-2014-6271 (original shellshock)
+Vulnerable to CVE-2014-7169 (taviso bug)
+bash-test.sh: line 21: 6282 Segmentation fault (core dumped) bash -c "true $(printf '<<EOF %.0s' {1..79})" 2> /dev/null
+Vulnerable to CVE-2014-7186 (redir_stack bug)
+Test for CVE-2014-7187 not reliable without address sanitizer
+Variable function parser still active, likely vulnerable to yet unknown parser bugs like CVE-2014-6277 (lcamtuf bug)
+
+# rpm -Uvh bash-4.1.2-15.el6_5.1.x86_64.rpm --test
+warning: bash-4.1.2-15.el6_5.1.x86_64.rpm: Header V3 RSA/SHA1 Signature, key ID c105b9de: NOKEY
+Preparing... ########################################### [100%]
+
+# rpm -Uvh bash-4.1.2-15.el6_5.1.x86_64.rpm
+warning: bash-4.1.2-15.el6_5.1.x86_64.rpm: Header V3 RSA/SHA1 Signature, key ID c105b9de: NOKEY
+Preparing... ########################################### [100%]
+1:bash ########################################### [100%]
+
+# sh bash-test.sh
+Not vulnerable to CVE-2014-6271 (original shellshock)
+Not vulnerable to CVE-2014-7169 (taviso bug)
+Not vulnerable to CVE-2014-7186 (redir_stack bug)
+Test for CVE-2014-7187 not reliable without address sanitizer
+Variable function parser inactive, likely safe from unknown parser bugs
+
+At this point, the ISO should be un-mounted and may be discarded.
+
+#cd /tmp
+# umount /mnt
+# rm nz-hostmgmt-v5.3.1.0_Disk3.iso

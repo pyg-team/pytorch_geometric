@@ -1,0 +1,170 @@
+Title: IBM PQ45522: IF USING THE OPC DB2 HISTORY DATABASE, DB2 MUST BE STOPPED WITH "FORCE" OPTION. THE "QUIESCE" OPTION CAUSES A HANG. - United States
+
+Text:
+AIX z/os SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  If the OPC DB2 history database is used, and DB2 is stopped with
+   the QUIESCE option, any attempt to use the OPC dialog will hang
+   until DB2 termination is complete.  To avoid this problem, use
+   the FORCE option (STOP DB2,FORCE) when stopping DB2.
+   The TME10 OPC Installation Guide, chapter 4, section "Creating
+   the DB2 Database" should be amended as follows:
+   Before the sentence "Edit and run the supplied sample job
+   EQQINIDB." add:
+   WARNING: Do NOT stop DB2 with the QUIESCE option if the OPC
+   history function is implemented.  A QUIESCE of DB2 will cause
+   any OPC dialog user to hang until DB2 termination is completed.
+   Use +STOP DB2,FORCE command instead.
+   
+   NOTE: The QUIESCE of DB2 only causes
+   problems with OPC if there are some
+   DB2 threads still active at the time
+   of DB2 shutdown, for example TSO users
+   executing SPUFI, or tasks like RMDS
+   that use a DB2 thread.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All OPC users.                               *
+   *                 FUNCTION=HIST,History function (DB2)         *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: The QUIESCE mode is not allowed for DB2 *
+   *                      shutdown if  the  OPC  history  file is *
+   *                      active.                                 *
+   ****************************************************************
+   * RECOMMENDATION: APPLY THE PTF FIXING THIS APAR               *
+   ****************************************************************
+   Stopping the DB2 using the QUIESCE mode, while the
+   OPC  history  function  is active, could cause the
+   OPC dialog users to hang until  DB2 termination is
+   completed.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  - - -
+    THE FOLLOWING TME 10 OPC PUBLICATIONS WILL BE UPDATED:
+                            - - -
+   +--------------------------------------------------------------+
+   |                                                              |
+   |TITLE:  TME 10 Installation Guide SH19-4379-00                |
+   |CHAPTER: 4          TOPIC: "Creating the DB2 Database"        |
+   |Before the sentence "Edit and run the supplied sample job     |
+   |EQQINIDB."ADD:                                                |
+   |Do NOT stop DB2 with the QUIESCE option if the OPC            |
+   |history function is implemented.  A QUIESCE of DB2 could      |
+   |cause any OPC dialog user to hang until DB2 termination is    |
+   |completed. Use +STOP DB2,FORCE command instead.               |
+   +--------------------------------------------------------------+
+                            - - -
+   +--------------------------------------------------------------+
+   |                                                              |
+   |TITLE:  TME 10 Installation Guide SH19-4379-01                |
+   |CHAPTER: 4          TOPIC: "Creating the DB2 Database"        |
+   |Before the sentence "Edit and run the supplied sample job     |
+   |EQQINIDB."ADD:                                                |
+   |Do NOT stop DB2 with the QUIESCE option if the OPC            |
+   |history function is implemented.  A QUIESCE of DB2 could      |
+   |cause any OPC dialog user to hang until DB2 termination is    |
+   |completed. Use +STOP DB2,FORCE command instead.               |
+   +--------------------------------------------------------------+
+                            - - -
+   +--------------------------------------------------------------+
+   |                                                              |
+   |TITLE:  TME 10 Installation Guide SH19-4379-02                |
+   |CHAPTER: 4          TOPIC: "Creating the DB2 Database"        |
+   |Before the sentence "Edit and run the supplied sample job     |
+   |EQQINIDB."ADD:                                                |
+   |Do NOT stop DB2 with the QUIESCE option if the OPC            |
+   |history function is implemented.  A QUIESCE of DB2 could      |
+   |cause any OPC dialog user to hang until DB2 termination is    |
+   |completed. Use +STOP DB2,FORCE command instead.               |
+   +--------------------------------------------------------------+
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PQ45522
+   
+   
+ * REPORTED COMPONENT NAME
+   TME 10 OPC V2 R
+   
+   
+ * REPORTED COMPONENT ID
+   5697OPC01
+   
+   
+ * REPORTED RELEASE
+   202
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2001-01-25
+   
+   
+ * CLOSED DATE
+   2001-01-26
+   
+   
+ * LAST MODIFIED DATE
+   2001-01-26
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+Publications Referenced SH19437900 SH19437901 SH19437902 FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

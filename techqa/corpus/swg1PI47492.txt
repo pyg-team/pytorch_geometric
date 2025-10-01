@@ -1,0 +1,275 @@
+Title: IBM PI47492: A domain of 3 or more catalog servers fail initial start up - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  During the start of three or more catalog servers, the
+   start sequence does not complete. Hung threads are logged in
+   one more catalog servers from the ServerAgent class. FFDC is
+   logged with an IllegalStateException from SyncMessage.
+   
+   In a standalone eXtreme Scale environment, the start up sequence
+   
+   The xscmd command showPrimaryCatalogServer lists the warning mes
+   
+   Example hung thread:
+   
+   ThreadMonitor W   WSVR0605W: Thread "HAManager.thread.pool : 1"
+   at
+   com.ibm.ws.objectgrid.server.container.ServerAgent.membershipCha
+   at
+   com.ibm.ws.objectgrid.server.leader.PeerManager.membershipChange
+   at
+   com.ibm.ws.hamanager.impl.HAGroupImpl.doMembershipChanged(HAGrou
+   at
+   com.ibm.ws.hamanager.impl.HAGroupImpl$HAGroupUserCallback.doCall
+   at com.ibm.ws.hamanager.impl.Worker.run(Worker.java:64)
+   at com.ibm.ws.util.ThreadPool$Worker.run(ThreadPool.java:1865)
+   
+   A javacore reveals this hung thread in combination with the logg
+   Thread 0x43321ec0
+   at java.lang.Thread.sleep(JI)V (Native Method)
+   at java.lang.Thread.sleep(J)V (Thread.java:919(Compiled Code))
+   at com.ibm.ws.objectgrid.server.naming.CommonLocationService.get
+   at com.ibm.ws.objectgrid.server.naming.XIOLocationService.getPla
+   at com.ibm.ws.objectgrid.catalog.wrapper.LocationServiceWrapper.
+   at com.ibm.ws.objectgrid.catalog.wrapper.PlacementServiceClientP
+   at com.ibm.ws.objectgrid.catalog.wrapper.PlacementServiceClientP
+   at com.ibm.ws.objectgrid.catalog.wrapper.PlacementServiceClientP
+   at java.security.AccessController.doPrivileged(Ljava/security/Pr
+   at com.ibm.ws.objectgrid.catalog.wrapper.PlacementServiceClientP
+   at com.sun.proxy.$Proxy30.getVersion()Ljava/lang/String; (null)
+   at com.ibm.ws.objectgrid.catalog.wrapper.PlacementServiceWrapper
+   at com.ibm.ws.objectgrid.server.container.ServerAgent$LeaderView
+   at com.ibm.ws.objectgrid.util.security.SecurityContextRunnable$2
+   at com.ibm.ws.security.auth.ContextManagerImpl.runAs(Ljavax/secu
+   at com.ibm.ws.security.auth.ContextManagerImpl.runAsSystem(Ljava
+   at com.ibm.ws.objectgrid.util.security.SecurityContextRunnable.r
+   at com.ibm.ws.objectgrid.util.security.SecurityContextRunnable.r
+   at java.lang.Thread.run()V (Thread.java:795)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  WebSphere eXtreme Scale users starting      *
+   *                  three                                       *
+   *                  or more catalog servers in parallel and     *
+   *                  experiencing hung threads or the start      *
+   *                  process                                     *
+   *                  times                                       *
+   *                  out.                                        *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: A domain of three or more catalog       *
+   *                      servers                                 *
+   *                      fail at initial start up.               *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   During the start of three or more catalog servers, the
+   start sequence does not complete if a deadlock between start
+   threads occur.
+   Hung threads are logged in
+   one more catalog servers from the ServerAgent class. FFDC is
+   logged with an IllegalStateException from SyncMessage.
+   In a standalone eXtreme Scale environment, the start up sequence
+   times out and the start script ends. In an embedded environment
+   such as WebSphere Application server, the application server
+   starts, but the catalog service component does not.
+   The xscmd command showPrimaryCatalogServer lists the warning
+   message, CWXSI0128W: No catalog servers reported as the primary
+   catalog server. The catalog service domain is in transition.
+   Example hung thread:
+   ThreadMonitor W   WSVR0605W: Thread "HAManager.thread.pool : 1"
+   (00000001) has been active for 600000 milliseconds and may be
+   hung.  There is/are 1 thread(s) in total in the server that may
+   be hung.
+   at
+   com.ibm.ws.objectgrid.server.container.ServerAgent.membershipCha
+   nged(ServerAgent.java:625)
+   at
+   com.ibm.ws.objectgrid.server.leader.PeerManager.membershipChange
+   d(PeerManager.java:135)
+   at
+   com.ibm.ws.hamanager.impl.HAGroupImpl.doMembershipChanged(HAGrou
+   pImpl.java:817)
+   at
+   com.ibm.ws.hamanager.impl.HAGroupImpl$HAGroupUserCallback.doCall
+   back(HAGroupImpl.java:1385)
+   at com.ibm.ws.hamanager.impl.Worker.run(Worker.java:64)
+   at com.ibm.ws.util.ThreadPool$Worker.run(ThreadPool.java:1865)
+   A javacore reveals this hung thread in combination with the
+   logged WSVR0605W thread:
+   Thread 0x43321ec0
+   at java.lang.Thread.sleep(JI)V (Native Method)
+   at java.lang.Thread.sleep(J)V (Thread.java:919(Compiled Code))
+   at
+   com.ibm.ws.objectgrid.server.naming.CommonLocationService.getPla
+   cementService()Lcom/ibm/ws/objectgrid/catalog/IPlacementService;
+   (CommonLocationService.java:988(Compiled Code))
+   at
+   com.ibm.ws.objectgrid.server.naming.XIOLocationService.getPlacem
+   entService()Lcom/ibm/ws/objectgrid/catalog/IPlacementService;
+   (XIOLocationService.java:298)
+   at
+   com.ibm.ws.objectgrid.catalog.wrapper.LocationServiceWrapper.get
+   PlacementServiceStub()Lcom/ibm/ws/objectgrid/catalog/IPlacementS
+   ervice; (LocationServiceWrapper.java:716)
+   at
+   com.ibm.ws.objectgrid.catalog.wrapper.PlacementServiceClientProx
+   y.getAvailableService()Lcom/ibm/ws/objectgrid/catalog/IPlacement
+   Service; (PlacementServiceClientProxy.java:156)
+   at
+   com.ibm.ws.objectgrid.catalog.wrapper.PlacementServiceClientProx
+   y.access$100(Lcom/ibm/ws/objectgrid/catalog/wrapper/PlacementSer
+   viceClientProxy;)Lcom/ibm/ws/objectgrid/catalog/IPlacementServic
+   e; (PlacementServiceClientProxy.java:41)
+   at
+   com.ibm.ws.objectgrid.catalog.wrapper.PlacementServiceClientProx
+   y$1.run()Ljava/lang/Object;
+   (PlacementServiceClientProxy.java:90)
+   at
+   java.security.AccessController.doPrivileged(Ljava/security/Privi
+   legedExceptionAction;)Ljava/lang/Object;
+   (AccessController.java:333)
+   at
+   com.ibm.ws.objectgrid.catalog.wrapper.PlacementServiceClientProx
+   y.invoke(Ljava/lang/Object;Ljava/lang/reflect/Method;
+   [Ljava/lang/Object;)Ljava/lang/Object;
+   (PlacementServiceClientProxy.java:82)
+   at com.sun.proxy.$Proxy30.getVersion()Ljava/lang/String; (null)
+   at
+   com.ibm.ws.objectgrid.catalog.wrapper.PlacementServiceWrapper.ge
+   tVersion()Ljava/lang/String; (PlacementServiceWrapper.java:674)
+   at
+   com.ibm.ws.objectgrid.server.container.ServerAgent$LeaderViewThr
+   ead.run()V (ServerAgent.java:866)
+   at
+   com.ibm.ws.objectgrid.util.security.SecurityContextRunnable$2.ru
+   n()Ljava/lang/Object; (SecurityContextRunnable.java:111)
+   at
+   com.ibm.ws.security.auth.ContextManagerImpl.runAs(Ljavax/securit
+   y/auth/Subject;Ljava/security/PrivilegedExceptionAction;Ljava/la
+   ng/String;)Ljava/lang/Object; (ContextManagerImpl.java:5477)
+   at
+   com.ibm.ws.security.auth.ContextManagerImpl.runAsSystem(Ljava/se
+   curity/PrivilegedExceptionAction;)Ljava/lang/Object;
+   (ContextManagerImpl.java:5603)
+   at
+   com.ibm.ws.objectgrid.util.security.SecurityContextRunnable.runW
+   ithServerContext()V (SecurityContextRunnable.java:109)
+   at
+   com.ibm.ws.objectgrid.util.security.SecurityContextRunnable.run(
+   )V (SecurityContextRunnable.java:68)
+   at java.lang.Thread.run()V (Thread.java:795)
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The deadlock was resolved.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI47492
+   
+   
+ * REPORTED COMPONENT NAME
+   WS EXTREME SCAL
+   
+   
+ * REPORTED COMPONENT ID
+   5724X6702
+   
+   
+ * REPORTED RELEASE
+   860
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-08-24
+   
+   
+ * CLOSED DATE
+   2015-09-29
+   
+   
+ * LAST MODIFIED DATE
+   2015-09-29
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WS EXTREME SCAL
+   
+   
+ * FIXED COMPONENT ID
+   5724X6702
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R860 PSY
+   UP

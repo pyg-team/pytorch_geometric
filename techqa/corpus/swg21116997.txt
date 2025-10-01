@@ -1,0 +1,73 @@
+Title: IBM Is there a way to reduce the number of catalog getpages performed for authorization checking? - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ We are seeing an average of almost 100 catalog getpages for only 4 data getpages for authorization checking. Authorization checking should stop as soon as DB2® finds the execute authority granted to PUBLIC in SYSPACKAUTH. So, why are we seeing SYSRESAUTH and SYSUSERAUTH being accessed after SYSPACKAUTH? 
+
+CAUSE
+Here's the scenario: 
+
+We are seeing an average of almost 100 catalog getpages for only 4 data getpages for authorization checking. 
+
+The objects that are being accessed are: 
+SYSIBM DSNKAX02 index on SYSPACKAUTH 
+SYSIBM DSNKKX02 index on SYSPACKAGE 
+SYSIBM DSNAGH01 index on SYSRESAUTH 
+SYSIBM DSNAUH01 index on SYSUSERAUTH 
+SYSIBM SYSUSERAUTH 
+
+
+The application executes package ALL_ONL_Q_DB2.TC163920 (owned by TPTAAPP) out of plan PENTRAN (owned by H249ALL). 
+
+EXECUTE has been granted to PUBLIC on ALL_ONL_Q_DB2.* 
+Our CACHEPAC ZPARM is set to 1.5M, and according to statistics, we are not seeing package overwrites. So, after this first auth check, this info should be cached. 
+
+Authorization checking should stop as soon as DB2 finds the execute authority granted to PUBLIC in SYSPACKAUTH. So, why are we seeing SYSRESAUTH and SYSUSERAUTH being accessed after SYSPACKAUTH?
+
+
+ANSWER
+EXECUTE on the plan has been granted to PUBLIC. The SELECT statement that is executed comes from a package. 
+
+Here's the BIND statement for the plan: 
+
+
+
+BIND PLAN (PENTRAN)         OWNER(H249ALL)        QUALIFIER(H249ALL)+ 
+      VALIDATE(BIND)         FLAG(I)               ISOLATION(CS)+  
+      CACHESIZE(4096)        CURRENTDATA(NO)       DEGREE(1)+  
+      SQLRULES(DB2)          ACQUIRE(USE)          RELEASE(DEALLOCATE)+ 
+      EXPLAIN(NO)            CURRENTSERVER(LOCTSTA)+                            
+      DBPROTOCOL(PRIVATE)    DISCONNECT(EXPLICIT)+                              
+      PKLIST(*.H249ALL_O.*, +                                                   
+             *.H249ALL.*,+                                                      
+             *.PEN_ONL_J_DB2.*,+                                                
+             *.PEN_ONL_T_DB2.*,+                                                
+             *.PEN_ONL_Q_DB2.*,+                                                
+             *.ALL_ONL_J_DB2.*,+                                                
+             *.ALL_ONL_T_DB2.*,+                                                
+             *.ALL_ONL_Q_DB2.*,+                                                
+             *.COMMOD.*)+                                                       
+      ENABLE(CICS)+                                                             
+      ACTION(REPLACE)       RETAIN     
+
+
+
+Using the PKLIST with wildcard characters (*) for LOCATION and PACKAGE name, forces package EXECUTE authority to be checked at runtime. The check is performed starting with the fully qualified package name using the first entry in the PKLIST. Processing continues down the PKLIST until a package is found for which the authorization check is allowed or until the list is exhausted. 
+
+So, in this case, the processing proceed with the following logic:  1. EXECUTE is checked on LOCN1.H24ALL_O.TC163920 
+ 2. EXECUTE is checked on LOCN1.H249ALL.TC163920 
+ 3. EXECUTE is checked on LOCN1.PEN_ONLJ_DB2.TC163920 
+ 4. .... 
+ 5. ....
+
+
+The process continues until it is determined that PENTRAN has EXECUTE on LOCN1.ALL_ONL_Q_DB2.TC163920, because EXECUTE on that package has been granted to PUBLIC. At this point the package's authorization is cached.  If this processing is considered excessive at runtime, complete one of the following options: 
+
+ * If possible, fully qualify the packages in the PKLIST and BIND with VALIDATE(BIND) so that EXECUTE authority will be checked at BIND time. 
+ * Move the most frequently used collections to the beginning of the PKLIST, so that their checking will be done earlier in the processing. 
+ * GRANT the plan owner EXECUTE authority on all the packages in the collections in the PKLIST. 
+
+
+Attention: Changing the PKLIST to have the location name specified (but not the package) would not avoid these catalog accesses. Specifying the location name would not help much (This action is not enough to fully qualify the package name). DB2 will still start searching from the first entry in the PKLIST and your package is almost at the bottom of the PKLIST. It would be better to move the *.ALL_ONL_Q_DB2.* entry to the beginning of the PKLIST.

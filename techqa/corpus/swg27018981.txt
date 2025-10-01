@@ -1,0 +1,107 @@
+Title: IBM Performance tuning for IBM FileNet Services for Lotus Quickr Version 1.1 - United States
+
+Text:
+ RELEASE NOTES
+
+ABSTRACT
+ This document contains information that you might need to improve the performance of IBM FileNet Services for Lotus Quickr Version 1.1. 
+
+CONTENT
+You might have to complete all of the following steps or some steps depending on the workload of your system to tune for an optimal performance.
+
+
+
+
+ 1. Complete IBM FileNet P8 Content Engine tuning tasks. 
+ 2. Enable tracing and tuning Object Request Broker for FileNet P8. 
+ 3. Configure content streaming chunk size if required. 
+ 4. Configure database indices. 
+ 5. Adjust the DB2 registry variables. 
+ 6. Configure log levels. 
+ 7. Configure garbage collection for JVM tuning. 
+ 8. Configure the heap size for JVM tuning.
+
+
+Tuning IBM FileNet P8 Content Engine You must complete all IBM FileNet P8 Content Engine tuning procedures for Content Engine and database, which is recommended in the IBM FileNet P8 Performance Tuning Guide [ftp://public.dhe.ibm.com/software/data/cm/filenet/docs/p8doc/40x/p8_400_performance_tuning.pdf]. 
+
+See Troubleshooting Content Engine Performance [http://www-01.ibm.com/support/docview.wss?uid=swg21314054] for more information. 
+
+
+Tracing and tuning Object Request Broker(ORB) for FileNet P8 
+
+Enable the ORB tracing in WebSphere for performance-critical deployments and compute an optimal value for your environment based on the typical workload. See Tune ORB in WebSphere to boost FileNet P8 performance [http://www.ibm.com/developerworks/data/library/techarticle/dm-1004tuneorbperformance/index.html?ca=drs-.] document for more information on how to tune ORB and enable tracing and tuning. 
+
+Example: 
+
+Based on the sample environment that starts common operations in Lotus Quickr custom library, an optimal size of 160 KB was computed. This single tuning improved the response times by 25%. 
+
+ Configuring content streaming chunk size 
+
+The P8 Content Engine streams content in chunks. The files that are larger than the chunk size are streamed in multiple requests. This method prevents large files from consuming too much memory on the servers, but increases the response time for upload and download operations. This chunk size can be tuned to provide optimum performance for any production systems. 
+
+You can configure the upload chunk size on the Content Engine API client, which means FileNet Services for Lotus Quickr in this case. The default value for upload file size is 10MB for FileNet Services for Lotus Quickr ships. The default value should work well for most environments. In high-capacity systems that handle many large (> 10 MB) files, it might be better to increase the upload chunk size. 
+
+To configure the upload the chunk size:
+1. Create a simple text file called ceapi.properties (the file must have this name). Use the following text for a template. 
+
+# constants for CE API configuration
+# default is 10 MB. override here if necessary. units are KB
+#FileNet.Content.PutBlockSizeKB=10000
+# default is 10 MB. override here if necessary. units are KB
+#FileNet.Content.GetBlockSizeKB=10000
+
+2. Remove the comment symbol before Get/PutBlockSizeKB setting and enter the value that you want. 
+
+For example, to use a value of 30MB for uploads, add 
+FileNet.Content.PutBlockSizeKB=30000
+
+3. Create a zip or new Java JAR file with the ceapi.properties text file. For example: 
+
+jar cf fnqs-ceapi.jar ./ceapi.properties 
+
+Use any convenient name for the JAR file. 
+
+
+4. Insert the JAR file into the deployed FileNet Services for Lotus Quickr enterprise application in such a way that it is first in the WebSphere classpath. For instance, you can add it as a WebSphere shared library.
+
+5. Confirm that the new setting is active by temporarily turning on debug logging, restarting the application, and connecting to a library by using any method.
+
+You must verify that you do not see any of the following messages logged: 
+
+
+ * key FileNet.Content.PutBlockSizeKB not configured, using default: You get this error message when your file was not first in the classpath or the setting was commented out or missing in the ceapi.properties file. 
+ * CE API was already initialized by another application: You get this error message when another application, such as WorkplaceXT, running in the same WebSphere profile, has already configured the Content Engine API. 
+ * CE API initialization error: Contact IBM Software Support with the error message and log contents. 
+ * ceapi.properties not found: Contact IBM Software Support with the log contents.
+
+
+If you change the GetBlockSizeKB setting, you must also change the "Inline content retrieval limit" setting on the Content Engine to match. You can find this setting, in FileNet Enterprise Manager, on the Content tab of a server, cluster, or site node under the "Sites" tree in the left panel. Configuring database indices 
+
+ * The Publish addon adds a new object valued property (OVP), QkrPropertySheetSet, to the Document class. This property has a corresponding column, called xy_QkrPropertySheetSet, in the DocVersion table of the object store database. If you have installed the Publish Addon, or if you upgraded your object store from the FileNet Services for Lotus Quickr 1.0 level, consider adding a single value index on this column. See the "Indexing object valued properties" topic in the IBM FileNet P8 Performance Tuning Guide [ftp://public.dhe.ibm.com/software/data/cm/filenet/docs/p8doc/40x/p8_400_performance_tuning.pdf] for more information. 
+ * The Supplemental Quickr Addon adds a OVP, QkrFolderData, to the Folder class. This property has a corresponding column, called xy_QkrFolderdata, in the Container table of the object store database. If you have installed the Supplemental Addon, or if you upgraded your object store from the FileNet Services for Lotus Quickr 1.0 level, consider adding a single value index on this column. This tuning is particularly useful if your object store has a large number of folders. See the "Indexing object valued properties" topic in the IBM FileNet P8 Performance Tuning Guide [ftp://public.dhe.ibm.com/software/data/cm/filenet/docs/p8doc/40x/p8_400_performance_tuning.pdf] for more information.
+
+
+Adjusting DB2 parameters to reducing deadlock and improve application concurrency The IBM FileNet P8 Performance Tuning Guide [ftp://public.dhe.ibm.com/software/data/cm/filenet/docs/p8doc/40x/p8_400_performance_tuning.pdf] recommends making the following configuration changes to DB2 to prevent deadlocking and lock escalation issues. These errors affect the performance only and does not cause any application errors. 
+
+To avoid the deadlocking and lock issues, adjust the DB2_EVALUNCOMMITTED and DB2_SKIPINSERTED registry variables by entering the following commands in the DB2 command-line processor: 
+
+db2set DB2_EVALUNCOMMITTED=ON
+db2set DB2_SKIPINSERTED=ON 
+
+These parameters are set at the instance level and apply to all databases that belong to the instance. However, these changes do not go into effect until the database instance is restarted. See the DB2 section of the IBM FileNet P8 Performance Tuning Guide [ftp://public.dhe.ibm.com/software/data/cm/filenet/docs/p8doc/40x/p8_400_performance_tuning.pdf] for more information on this settings. 
+
+Configuring log levels 
+
+The recommended log level for FileNet Services for Lotus Quickr messages is INFO. See Configuring log levels [http://publib.boulder.ibm.com/infocenter/p8docs/v4r5m1/topic/com.ibm.installingp8qkr.doc/p8qav025.htm] in the information center for more information. More verbose log levels, such as TRACE or DEBUG, should only be enabled temporarily when troubleshooting a problem. The DEBUG logging is quite verbose and can adversely affect performance, as well as rapidly consume disk space. 
+
+FileNet Services for Lotus Quickr logs a short, single-line entry per request at INFO level. These request log entries are important for troubleshooting, assessing performance, and auditing usage. Their performance cost is minimal, and disabling them by running at WARN or ERROR level is not recommended. 
+
+FileNet Services for Lotus Quickr log entries are written to the default Java console log for WebSphere, usually SystemOut.log or trace.log file. Other logs generated by WebSphere, such as the service log, are not important to FileNet Services for Lotus Quickr and can be disabled if recommended. 
+
+Configuring JVM Tuning: Garbage Collection 
+
+The IBM FileNet P8 Performance Tuning Guide [ftp://public.dhe.ibm.com/software/data/cm/filenet/docs/p8doc/40x/p8_400_performance_tuning.pdf] recommends that JVMs use generational garbage collection when the workloads involve large numbers of short-lived objects or are transaction-based. FileNet Services for Lotus Quickr is stateless and heavily uses EJB-based transactions through the Content Engine API. Therefore, it satisfies both criteria and might benefit from generation garbage collection. See the JVM Tuning section of the IBM FileNet P8 Performance Tuning Guide [ftp://public.dhe.ibm.com/software/data/cm/filenet/docs/p8doc/40x/p8_400_performance_tuning.pdf] for instructions. 
+
+Configuring JVM Tuning: Heap Size 
+
+A maximum Java heap size of at least 1GB is recommended for any production system running FileNet Services for Lotus Quickr. Increasing the Java heap size to 2GB might improve the performance, particularly on systems where other applications are also located in the same WebSphere instance. If additional free memory is available on the system, it might be better to run two separate WebSphere Application Server instances, each with 2GB, rather than a single instance with over 3GB. See the JVM Tuning section of the IBM FileNet P8 Performance Tuning Guide [ftp://public.dhe.ibm.com/software/data/cm/filenet/docs/p8doc/40x/p8_400_performance_tuning.pdf] for more information.

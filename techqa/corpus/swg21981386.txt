@@ -1,0 +1,13 @@
+Title: IBM Troubleshooting installation failure in OMNIbus 7.x - United States
+
+Text:
+de_trace.log DE deployment engine omnibus install upgrade TECHNOTE (FAQ)
+
+QUESTION
+ How to troubleshoot installation and upgrade on OMNIbus 7.x? 
+
+ANSWER
+Fix the cause of the errors, e.g. increase disk space in file system, install required prerequisite components, and then attempt the installation/upgrade again.
+
+
+If error message is not indicative of the cause then contact your local support center to raise a PMR with the product support team for further assistance.

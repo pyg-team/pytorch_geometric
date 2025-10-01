@@ -1,0 +1,112 @@
+Title: IBM Collecting Data for IBM InfoSphere Content Collector product problems. - United States
+
+Text:
+CollectingData; icc; ICC; CollectingDataDocument; collectingdata; mustgather; MustGather; MustGatherDocument TECHNOTE (FAQ)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ US English 
+
+QUESTION
+ What initial information should be collected when I experience a problem with my software? Collecting data for IBM InfoSphere Content Collector product issues. 
+
+ANSWER
+The information that you send, detailed below, helps IBM Software Support understand your environment and type of problem. Because the support team usually needs this information anyway, sending the information with your request expedites the problem analysis and resolution process. Even if you have already contacted support, continue to collect the data. 
+
+First describe the problem and your system environment, then collect the data appropriate to your problem.
+
+General Information
+
+Problem Description  *  What messages do you see and where do they occur? Is the problem reproducible? If it is reproducible, describe in detail the steps you have taken to reproduce the problem. When did you start seeing this problem? How frequently does the problem occur? What type of system is the product running on (such as production, development, test or QA, staging)? Have you made any recent changes to the system? Is any other software running on the same computer as Content Collector and its prerequisite products? How does the problem impact your business? 
+ * 
+
+Environment  * Provide the following system details: Operating system type and version, including patches and service pack levels. Content Collector version, fix pack level, and any test fixes. Source system type and version (such as Domino 8.0, Exchange 2007, or File System) Target repository type, platform, and version (such as Content Manager 8.4 on AIX, P8 FileNet 4.0, or File System) Is Content Collector installed on a single node or multiple node environment? 
+
+
+Problem-Specific Information
+Under the heading that best matches the type of problem you are experiencing, collect the specified files and other data. In some cases, you need to run your system to collect data after changing your log settings.
+ * Installation/Upgrade  * IBMAFUROOT\IBM_Content_Collector_InstallLog*.log 
+    * IBMAFUROOT\msi\*.log
+   
+   
+
+ * Initial Configuration  * IBMAFUROOT\Configuration\initialConfig\log\*.log
+   
+   
+
+ * Configuration Manager  * Set the environment variable AFU_ADVANCEDEMAILCONFIG=1 
+    * Restart Configuration Manager, then collect the following files:  * TEMP\AdvancedEmailConfig.component_name.log 
+       * TEMP\AdvancedEmailConfig.component_name.xml
+         For example, AdvancedEmailConfig.connector.xml 
+      
+      
+   
+   
+
+ * Search Application, Retrieval, Configuration Web Service  * In the file IBMAFUROOT\WebApplication\afu\config\afu-logging.properties, set trace level to ALL:  * com.ibm.afu.level = ALL
+       * 
+       * com.ibm.afu.util.level = ALL
+       * 
+       * com.ibm.afu.edc.level = ALL
+       * 
+       * com.ibm.afu.webapp.level = ALL
+       * 
+       * com.ibm.afu.database.level = ALL
+       * 
+       * com.ibm.afu.configuration.client.level = ALL
+       * 
+       * com.ibm.afu.logging.cbe.level = ALL
+       * 
+       * com.ibm.afu.mailinterface.util.level = ALL
+       * 
+       * com.ibm.afu.mailinterface.pack.level = ALL
+       * 
+       * com.ibm.afu.mailinterface.search.level = ALL
+       * 
+       * com.ibm.afu.mailinterface.level = ALL
+       * 
+       * com.ibm.afu.mailinterface.mapi.level = ALL
+       * 
+       * com.ibm.afu.mailinterface.mapi.ldap.level = ALL
+       * 
+       * com.ibm.afu.nls.catalog.level = ALL
+       * 
+       * com.ibm.afu.stub.builder.level = ALL
+      
+      
+    * Then collect the following logs and other data:  * IBMAFUROOT\WebApplication\afu\logs\* 
+       * IBMAFUROOT\WebApplication\profiles\AFUWebApplication\logs\server1 
+       * For a search application problem, go to Configuration Manager > Email Services > Search Application and export a search mapping and search configuration. Collect the XML files in your selected directory.
+      
+      
+   
+   
+
+ * Archiving  * On the primary Content Collector server, go to Configuration Manager > Tools > Task Route Service Configuration > Log level and select "Trace 2 (verbose logging)". 
+    * From Configuration Manager > Connectors, select your source connector and set Log level to "Trace" or "Trace 2 (verbose logging)" if available. 
+    * Repeat the previous step for your target repository connector, then collect the following logs and screen shots:  * IBMAFUROOT\ctms\log\* 
+       * IBMAFUROOT\ctms\log\SUPPORT\* (if it exists) 
+       * IBMAFUROOT\audit\* 
+       * Screen shots of the task route configuration from Configuration Manager
+      
+      
+   
+   
+ * Outlook web access  * Outlook Web Access Extension:  * Outlook-Web-Access-install-dir\AFUOWAExtension\configOWA.trc 
+      
+      
+    * Outlook Web Access Services:  * Outlook-Web-Access-install-dir\logs\afuowa.trc 
+       * Outlook-Web-Access-install-dir\logs\afuowaconfigs.trc 
+       * C:\Inetpub\wwwroot\afuowa\owaapp.log 
+      
+      
+   
+   
+
+
+What to do next
+After you have collected the information, simply submit it to IBM support using one of the following methods:  *  IBM Support Assistant (ISA) Service Request (SR) FTP to the Enhanced Customer Data Repository (ECuRep) 
+
+
+For more information, read the article Submitting Diagnostic Information to IBM Technical Support for Problem Determination [http://www-01.ibm.com/support/docview.wss?uid=swg21229653]. [/support/docview.wss?uid=swg21402300&amp;aid=1] RELATED INFORMATION
+ Submitting Diagnostic Information to IBM Technical Supp [http://www.ibm.com/support/docview.wss?rs=0&uid=swg21153852]
+Logs to track in IBM Content Collector [http://www.ibm.com/support/docview.wss?uid=swg27015410]

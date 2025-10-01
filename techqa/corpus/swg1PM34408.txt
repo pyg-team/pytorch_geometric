@@ -1,0 +1,164 @@
+Title: IBM PM34408: AN SQLERROR -302 OCCURS IF A TABLE COLUMN'S COMMENT EXCEEDS 49 CHARACTERS AND THE TABLE IS BEING ADDED TO A SUBSCRIPTION. - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  An SQLERROR -302 naming variable/parameter 16 is issued if a
+   table being added to a subscription contains a column comment
+   that exceeds 49 characters in length.  The attempt to map the
+   subscription fails.  Diagnostic information accompanying the
+   message is "paaAddTableToCatalog; 13269".
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Change the column comment(s) to be less than 50 characters in
+   length.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: Users with tables that have column comments  *
+   *                 containing 50 or more characters.            *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: When attempting to truncate and store   *
+   *                      the first 50 characters of a table's    *
+   *                      column comments, the comment C-string   *
+   *                      is improperly terminated.  DB2 issues   *
+   *                      an SQLERROR -302 as a result.           *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   When importing a table into the catalogue, the table's column
+   comments are improperly processed.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Logic to properly nul-terminate the C-string has been added.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  Change the column comment(s) to be less than 50 characters in
+   length.
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM34408
+   
+   
+ * REPORTED COMPONENT NAME
+   INFO SRVR CDC Z
+   
+   
+ * REPORTED COMPONENT ID
+   5655U7600
+   
+   
+ * REPORTED RELEASE
+   620
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-03-09
+   
+   
+ * CLOSED DATE
+   2011-03-10
+   
+   
+ * LAST MODIFIED DATE
+   2011-04-04
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UK65665 UK65666
+   
+   
+
+MODULES/MACROS
+ *  CHCMDCDL
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   INFO SRVR CDC Z
+   
+   
+ * FIXED COMPONENT ID
+   5655U7600
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R620 PSY UK65665 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK65665]
+   UP11/04/03 P F103
+   
+   
+ * R650 PSY UK65666 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK65666]
+   UP11/04/03 P F103
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

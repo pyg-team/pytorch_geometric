@@ -1,0 +1,188 @@
+Title: IBM PK31288: CUMULATIVE MAINTENANCE FIXPACK 6.0.2.0 FOR THE JMS FEATURE OF WEBSPHERE MQ FOR Z/OS VERSION 6. - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Fixpack 6.0.2.0 for WebSphere MQ for z/OS Version 6
+   provides fixes for the problems described in this APAR.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All users of WebSphere MQ for z/OS Version   *
+   *                 6 with the MQ Java Feature.                  *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Service offering 6.0.2.0 for WebSphere  *
+   *                      MQ for z/OS V6 provides fixes for the   *
+   *                      problems described in this APAR.        *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   IC48241
+   Messages received using messagelistener with durable
+   subscribers are getting backed out once the application ends.
+   .
+   IC48478
+   MQJMS3023 in pub sub application after quiescing and restarting
+   the queue manager.
+   .
+   IC48555
+   JMS pub/sub cleanup utility fails with 2009 in SSL environment.
+   .
+   IC48775
+   MQ Java classes when run as a client fail to negotiate to an MQ
+   server running pre-fap 4 level, and incorrectly use hbint
+   value.
+   .
+   IC49093
+   WMQ Java client change in the response expected from a
+   negotiation call which occurred around fap 4.
+   .
+   IY80410
+   MQJMS2013 error when connecting to WebSphere MQ in bindings
+   mode.
+   .
+   IY81628
+   MQJMS2005 reason code 2102 when 2035 mqrc_not_authorized
+   occurred.
+   .
+   IY81774
+   WebSphere MQ as JMS provider not adhering to JMS specifications
+   as per section "4.3.8 exceptionlistener".
+   .
+   IY82241
+   If a correlid has been set as text, retrieving it as bytes
+   returns null.
+   .
+   IY82889
+   When using cross domain connection factory definitions in was
+   V6 the tcpip connection is not released during the cleanup.
+   .
+   IY83778 [http://www-01.ibm.com/support/docview.wss?uid=swg1IY83778]
+   Messages do not get rolled back in point to point domain when
+   exceptions occurs in mdb.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Level info:
+   Name:        WebSphere MQ classes for Java
+   Version:     6.0.2.0
+   CMVC Level:  j600-200-060921
+   Build Type:  Production
+   008Y
+   CSQ8JTR1
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK31288
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ Z/OS V6
+   
+   
+ * REPORTED COMPONENT ID
+   5655L8200
+   
+   
+ * REPORTED RELEASE
+   008
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2006-09-12
+   
+   
+ * CLOSED DATE
+   2007-03-09
+   
+   
+ * LAST MODIFIED DATE
+   2007-04-01
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UK22808
+   
+   
+
+MODULES/MACROS
+ *     CSQ8JTR1
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ Z/OS V6
+   
+   
+ * FIXED COMPONENT ID
+   5655L8200
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R008 PSY UK22808 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK22808]
+   UP07/03/10 P F703
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

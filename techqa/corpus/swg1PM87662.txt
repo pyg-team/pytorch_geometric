@@ -1,0 +1,245 @@
+Title: IBM PM87662: ABEND 0C4 RSN=00000011 IN BBOASDEG LOADING ECESPRMT FROM IMS RESOURCE ROUTE TABLE DFSRRT - United States
+
+Text:
+z/os  FIXES ARE AVAILABLE
+8.0.0.7: WebSphere Application Server V8.0 Fix Pack 7 [http://www-01.ibm.com/support/docview.wss?uid=swg24035457]
+8.5.5.1: WebSphere Application Server V8.5.5 Fix Pack 1 [http://www-01.ibm.com/support/docview.wss?uid=swg24035935]
+8.0.0.8: WebSphere Application Server V8.0 Fix Pack 8 [http://www-01.ibm.com/support/docview.wss?uid=swg24036729]
+7.0.0.31: WebSphere Application Server V7.0 Fix Pack 31 [http://www-01.ibm.com/support/docview.wss?uid=swg24036768]
+8.5.5.2: WebSphere Application Server V8.5.5 Fix Pack 2 [http://www-01.ibm.com/support/docview.wss?uid=swg24037250]
+7.0.0.33: WebSphere Application Server V7.0 Fix Pack 33 [http://www-01.ibm.com/support/docview.wss?uid=swg24037573]
+8.0.0.9: WebSphere Application Server V8.0 Fix Pack 9 [http://www-01.ibm.com/support/docview.wss?uid=swg24037574]
+8.5.5.3: WebSphere Application Server V8.5.5 Fix Pack 3 [http://www-01.ibm.com/support/docview.wss?uid=swg24038133]
+7.0.0.35: WebSphere Application Server V7.0 Fix Pack 35 [http://www-01.ibm.com/support/docview.wss?uid=swg24038310]
+8.5.5.4: WebSphere Application Server V8.5.5 Fix Pack 4 [http://www-01.ibm.com/support/docview.wss?uid=swg24038539]
+8.0.0.10: WebSphere Application Server V8.0 Fix Pack 10 [http://www-01.ibm.com/support/docview.wss?uid=swg24039242]
+7.0.0.37: WebSphere Application Server V7.0 Fix Pack 37 [http://www-01.ibm.com/support/docview.wss?uid=swg24039338]
+8.5.5.5: WebSphere Application Server V8.5.5 Fix Pack 5 [http://www-01.ibm.com/support/docview.wss?uid=swg24039425]
+8.5.5.6: WebSphere Application Server V8.5.5 Fix Pack 6 [http://www-01.ibm.com/support/docview.wss?uid=swg24040035]
+8.0.0.11: WebSphere Application Server V8.0 Fix Pack 11 [http://www-01.ibm.com/support/docview.wss?uid=swg24040425]
+8.5.5.7: WebSphere Application Server V8.5.5 Fix Pack 7 [http://www-01.ibm.com/support/docview.wss?uid=swg24040533]
+7.0.0.39: WebSphere Application Server V7.0 Fix Pack 39 [http://www-01.ibm.com/support/docview.wss?uid=swg24041013]
+8.5.5.8: WebSphere Application Server V8.5.5 Fix Pack 8 [http://www-01.ibm.com/support/docview.wss?uid=swg24041178]
+8.0.0.12: WebSphere Application Server V8.0 Fix Pack 12 [http://www-01.ibm.com/support/docview.wss?uid=swg24041590]
+8.5.5.9: WebSphere Application Server V8.5.5 Fix Pack 9 [http://www-01.ibm.com/support/docview.wss?uid=swg24041819]
+7.0.0.41: WebSphere Application Server V7.0 Fix Pack 41 [http://www-01.ibm.com/support/docview.wss?uid=swg24041931]
+8.5.5.10: WebSphere Application Server V8.5.5 Fix Pack 10 [http://www-01.ibm.com/support/docview.wss?uid=swg24042150]
+8.5.5.11: WebSphere Application Server V8.5.5 Fix Pack 11 [http://www-01.ibm.com/support/docview.wss?uid=swg24043005]
+8.0.0.13: WebSphere Application Server V8.0 Fix Pack 13 [http://www-01.ibm.com/support/docview.wss?uid=swg24042746]
+7.0.0.43: WebSphere Application Server V7.0 Fix Pack 43 [http://www-01.ibm.com/support/docview.wss?uid=swg24043400]
+8.5.5.12: WebSphere Application Server V8.5.5 Fix Pack 12 [http://www-01.ibm.com/support/docview.wss?uid=swg24043844]
+8.0.0.14: WebSphere Application Server V8.0 Fix Pack 14 [http://www-01.ibm.com/support/docview.wss?uid=swg24044096]
+8.5.5.13: WebSphere Application Server V8.5.5 Fix Pack 13 [http://www-01.ibm.com/support/docview.wss?uid=swg24044479]
+7.0.0.45: WebSphere Application Server V7.0 Fix Pack 45 [http://www-01.ibm.com/support/docview.wss?uid=swg24044551]
+8.0.0.15: WebSphere Application Server V8.0 Fix Pack 15 [http://www-01.ibm.com/support/docview.wss?uid=swg24044734]
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Once we are in BBOASREG, we try to load ECESPRHT,
+   which is an IMS resource route table (DFSRRT). This is the
+   specific pointer which is null, and results in an eventual
+   branch to an invalid address. Because the dependant region is
+   not finished initialization. This causes the abend 0C4.
+    This is a WOLA client routine that performs a WOLA
+   registration.  In this case it is running in an IMS dependent
+   region, during an IMS pre-initialization exit.
+   The call to BBOA1REG is successful if it driven after
+   dependent region has finished initialization.
+   
+   The IMS documentation for pre-initialization exits declares
+   that DL/I calls are not available in these routines.  WOLA is
+   attempting to make a DL/I call inside of BBOA1REG, and this is
+   the code that is in error.
+   
+   The WOLA exit should be modified to check for the presence of
+   ECESPRHT, and if it is not set, the WOLA registration routine
+   can be called without using the IMS DL/I call.  For all other
+   WOLA services, an error return and reason code should be
+   returned to the caller, stating that this service is not
+   supported during pre-initialization.  This will avoid the
+   ABENDS0C4 that is being reported here.
+   
+     CPU STATUS:
+     PSW=070C1000 85D049BC
+         (Running in PRIMARY, key 0, AMODE 31, DAT ON)
+         DISABLED FOR PER
+        ASID(X'01F8') 05D049BC. IGC0101C+C9BC IN EXTENDED PLPA
+       ASCB504 at F85400, JOB(IM2AMSG1), for the home ASID
+       ASXB504 at 9FDB70 and TCB504F at 9B3B00 for the home ASID
+       HOME ASID: 01F8 PRIMARY ASID: 01F8 SECONDARY ASID: 01F8
+       General purpose register values
+         Left halves of all registers contain zeros
+          0-3  7F587F70  00000006  0000008D  00000000
+          4-7  00000006  00000000  85D047FC  009FD6B0
+          8-11 7F587E10  00000BE0  000A0000  0009FFFA
+         12-15 7F588210  7F588044  85CF9DB4  00000000
+   
+    Slip was collected using abend 0C4 on IMS region to investigate
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  none...
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  All users of IBM WebSphere Application      *
+   *                  Server V7.0, V8.0, and V8.5                 *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: An ABENDS0C4 occurs when calling WOLA   *
+   *                      service BBOA1REG during IMS pre-init    *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   During an IMS pre-initialization exit, an ABENDS0C4 occurs
+   when WebSphere Optimized Local Adapters service BBOA1REG is
+   invoked.  The IMS environment is not fully initialized at this
+   time and a required control block had not been created yet.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Code was added to allow BBOA1REG to be called during an IMS
+   pre-initialization exit.
+   
+   APAR PM87662 requires changes to documentation.
+   
+   NOTE: Periodically, we refresh the documentation on our Web
+   site, so the changes might have been made before you read this
+   text. To access the latest on-line documentation, go to the
+   product library page at:
+   
+   http://www.ibm.com/software/webservers/appserv/library [http://www.ibm.com/software/webservers/appserv/library]
+   
+   The following update to the WebSphere Application Server
+   Version 7.0 Information Center will be made available in
+   December 2013.
+   
+   Tables 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, and 26, in the
+   topic "Optimized local adapters for z/OS APIs" will be updated
+   to include the he following reason code information for Return
+   Code 8:
+   
+   Reason Code
+   96
+   
+   Description
+   This API cannot be driven during Information Management System
+   (IMS) initialization or during an IMS pre-initialization exit.
+   
+   Action
+   Call this API after IMS initialization is complete.
+   
+   APAR PM87662 is currently targeted for inclusion in WebSphere
+   Application Server Fix Packs 7.0.0.31, 8.0.0.7, and 8.5.5.1
+   of WebSphere Application Server.
+   
+   Please refer to URL:
+   //www.ibm.com/support/docview.wss?rs=404&uid=swg27006970
+   for Fix Pack availability.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM87662
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSPHERE FOR Z
+   
+   
+ * REPORTED COMPONENT ID
+   5655I3500
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-04-23
+   
+   
+ * CLOSED DATE
+   2013-05-31
+   
+   
+ * LAST MODIFIED DATE
+   2014-02-05
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBSPHERE FOR Z
+   
+   
+ * FIXED COMPONENT ID
+   5655I3500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R700 PSY UI13725 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI13725]
+   UP14/01/11 P F401
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

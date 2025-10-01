@@ -1,0 +1,46 @@
+Title: IBM FTPS connections to SIB mailslots fail after upgrade to 5020402 - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ After an upgrade to version 5020402, FTPS connections to IBM Sterling Information Broker fail. 
+
+SYMPTOM
+ 
+
+The business process fails with an error in the FTP Client Begin Session Service. 
+
+The error message reads "Control connection has been closed unexpectedly" 
+
+The Service Transcript shows the below messages, then disconnects
+220 <Server identification followed by "Server ready" message, date/time stamp> 
+> AUTH TLS
+234 AUTH: command accepted. Securing command channel ...
+> PBSZ 0 
+
+The below errors appear in the perimeter.log file
+ERROR Connection data[/<IP address 1:port#>=>/<IP address 2:port #>] closed due to CloseCode.READ_FAILURE
+ERROR FtpClient<variable>com.sterlingcommerce.perimeter.api.conduit.SSLByteConduit@<variable>.sendToConduit() - conduit closed, reset, and getout.
+ERROR [1393848601408] Conduit is closed : CloseCode.READ_FAILURE
+ERRORDTL [1393848601408]com.sterlingcommerce.perimeter.api.ClosedConduitException: Conduit is closed : CloseCode.READ_FAILURE
+
+
+
+CAUSE
+The connection attempts are made to various mailslots, but each of those mailslots will only accept a TLS connection in TLS version 1.0. However, the software is configured to only allow connections at TLS versions higher than that. As necessary, please check with IBM Sterling Information Broker Support to find out the TLS version supported by FTP mailslots on IBM Sterling Information Broker. 
+
+
+ENVIRONMENT
+This occurred with IBM Sterling B2B Integrator 5020402 on a Linux operating system with an Oracle database, but could theoretically occur in any supported environment. 
+
+
+
+
+DIAGNOSING THE PROBLEM
+The "SSLHelloProtocol" parameter in the security.properties file has a setting that will not permit TLS version 1.0 to be used for connections by FTPS. [Note: On other systems, this setting could be in the customer_overrides.properties file rather than the security.properties file. ]
+
+
+
+RESOLVING THE PROBLEM
+Change the setting for the "SSLHelloProtocol" parameter in the security.properties.in file or in the customer_overrides.properties file to a value that will permit connections using TLS version 1.0 (examples are in the security.properties.in file). After that, stop Sterling Integrator. If making the change security.properties.in rather than customer_overrides.properties, run setupfiles. Finally, restart Sterling Integrator.

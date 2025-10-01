@@ -1,0 +1,70 @@
+Title: IBM J2CA0081E and DSRA0080E received during WebSphere Process Server (WPS) deployment manager startup - United States
+
+Text:
+oracle database; J2CA0081E; DSRA0080E; jdbc driver; ojdbc14.jar; v612rnotes; v62rnotes TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Exception and error messages are returned during WebSphere Process Server startup when older versions of Oracle9i JDBC drivers are used. 
+
+SYMPTOM
+The following exception is returned when you start the deployment manager: 
+
+[10/14/08 9:31:02:008 EDT] 0000000a MCWrapper E J2CA0081E: Method cleanup failed while trying to execute method cleanup on ManagedConnection WSRdbManagedConnectionImpl@fae0fae from resource jdbc/WPSDB. Caught exception: com.ibm.ws.exception.WsException:
+DSRA0080E: An exception was received by the Data Store Adapter. See original exception message: Cannot call 'cleanup' on a ManagedConnection while it is still in a transaction.
+at
+com.ibm.ws.rsadapter.exceptions.DataStoreAdapterException.<init>(DataStoreAdapterException.java:241)
+at
+com.ibm.ws.rsadapter.exceptions.DataStoreAdapterException.<init>(DataStoreAdapterException.java:190)
+at
+com.ibm.ws.rsadapter.AdapterUtil.createDataStoreAdapterException(AdapterUtil.java:353)
+at
+com.ibm.ws.rsadapter.spi.WSRdbManagedConnectionImpl.cleanupTransactions(WSRdbManagedConnectionImpl.java:3702)
+at
+com.ibm.ws.rsadapter.spi.WSRdbManagedConnectionImpl.cleanup(WSRdbManagedConnectionImpl.java:3298)
+at com.ibm.ejs.j2c.MCWrapper.cleanup(MCWrapper.java:1441)
+at com.ibm.ejs.j2c.FreePool.returnToFreePool(FreePool.java:485)
+at com.ibm.ejs.j2c.PoolManager.release(PoolManager.java:1731)
+at com.ibm.ejs.j2c.MCWrapper.releaseToPoolManager(MCWrapper.java:2273)
+at
+com.ibm.ejs.j2c.ConnectionEventListener.connectionClosed(ConnectionEventListener.java:324)
+at
+com.ibm.ws.rsadapter.spi.WSRdbManagedConnectionImpl.processConnectionClosedEvent(WSRdbManagedConnectionImpl.java:1570) 
+at
+com.ibm.ws.rsadapter.jdbc.WSJdbcConnection.closeWrapper(WSJdbcConnection.java:816)
+at com.ibm.ws.rsadapter.jdbc.WSJdbcObject.close(WSJdbcObject.java:181) 
+at com.ibm.ws.rsadapter.jdbc.WSJdbcObject.close(WSJdbcObject.java:140) 
+at
+com.ibm.wbiserver.commondb.migration.CommonDBMigrationHelper.updateSchema(CommonDBMigrationHelper.java:159)
+at
+com.ibm.wbiserver.commondb.admin.CommonDBComponentImpl.start(CommonDBComponentImpl.java:111)
+at
+com.ibm.ws.runtime.component.ContainerImpl.startComponents(ContainerImpl.java:977) 
+at
+com.ibm.ws.runtime.component.ContainerImpl.start(ContainerImpl.java:673)
+at
+com.ibm.ws.runtime.component.ApplicationServerImpl.start(ApplicationServerImpl.java:191)
+at
+com.ibm.ws.runtime.component.ContainerImpl.startComponents(ContainerImpl.java:977)
+at
+com.ibm.ws.runtime.component.ContainerImpl.start(ContainerImpl.java:673)
+at com.ibm.ws.runtime.component.ServerImpl.start(ServerImpl.java:526)
+at
+com.ibm.ws.runtime.WsServerImpl.bootServerContainer(WsServerImpl.java:192)
+at com.ibm.ws.runtime.WsServerImpl.start(WsServerImpl.java:140)
+
+
+ENVIRONMENT
+This issue applies to WebSphere Process Server V6.1.2 with the Oracle 9i database.
+
+
+RESOLVING THE PROBLEM
+To resolve the problem, upgrade the Oracle JDBC driver from version 9.2.0.1 to 9.2.0.8: 
+
+ 1. Download the 9.2.0.8 Oracle JDBC driver from the Oracle9i JDBC Drivers Web site (a link to that site is in the "Related information" section). 
+ 2. Find the Oracle JDBC driver location using the Administrative console. Click Resources > JDBC provider. Select the appropriate database provider and note the Oracle JDBC driver location. 
+ 3. Replace the ojdbc14.jar file with the latest JDBC driver. 
+ 4. Restart the deployment manager and all of the servers in the topology.
+
+RELATED INFORMATION
+#Oracle9i JDBC Drivers [http://www.oracle.com/technology/software/tech/java/sqlj_jdbc/htdocs/jdbc9201.html]
+WebSphere Process Server detailed system requirements [http://www.ibm.com/support/docview.wss?uid=swg27006205]

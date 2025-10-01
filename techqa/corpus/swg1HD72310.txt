@@ -1,0 +1,235 @@
+Title: IBM HD72310: SMARTEAM COULD NOT INSTALL INTO "C:¾PROGRAM FILES¾SMARTEAM"     FOLDER - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  SmarTeam could not install into "C:\Program
+   Files\SMARTEAM" folder
+   HI
+   Problem:
+   SmarTeam could not install into "C:\Program
+   Files\SMARTEAM" folder.
+   Environment :
+   SmarTeam V5R18GA with Standalone.
+   Windows XP 64bit Edition.
+   .
+   file with the step by step installation will be also
+   attach to the BID
+   Prerequisite:
+   1. Install Microsoft .NET Framework 2.0 (x64).
+   2. Reboot OS.
+   3. Install Microsoft SQL Server 2005 Express
+   Edition by SmarTeam CD 4.
+   4. Reboot OS.
+   5. Create new Windows account as "setup" to
+   manage core service.
+   5-1. Add "administrator" right.
+   5-2. Add local security policy as follows.
+   - Part of Operating system
+   - Logon Services
+   Note: step 5 ? 5-1, 5-2 not must it can reproduce
+   with administrator also
+   . Installation scenario.
+   6. Select "SmarTeam ? Editor".
+   7. Click "Next" button.
+   8. Click "Next" button.
+   9. Activate "Standalone" and click "Next" button.
+   10. Activate "Custom installation" and click "Next"
+   button.
+   11. Installation folder to Activate "C:\Program
+   Files\SMARTEAM?.
+   12. Change default installation module as following.
+   (see the attach PPT file)
+   13. Activate "Use a specific user name as
+   password" and click "Next" button.
+   14. Click "Yes".
+   15. Input windows account and password which
+   was created by prereq.
+   16. Activate "Network" and click "Next" button.
+   17. Input IP address which is Lum server.
+   18. Select "Japanese" and click "Next" button.
+   19. Click "Install" button.
+   20. Several error messages were displayed. This is
+   problem.
+   >>> Installing SmarTeam Session Management
+   service has
+   failed.
+   >>> Installing SmarTeam Configuration service
+   has
+   failed.
+   >>> Starting SMARTEAM Foundation - Core
+   Service has
+   failed.
+   .
+   More information .
+   If we indicate "C:\SmarTeam" instead
+   of "C:\Program Files\SMARTEAM"
+   problem was no more reproduced.
+   Baruch
+   .
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  SmarTeam could not install into "C: Program Files SMARTEAM"
+   folder
+   SmarTeam could not install into "C:\Program
+   Files\SMARTEAM" folder
+   HI
+   Problem:
+   SmarTeam could not install into "C:\Program
+   Files\SMARTEAM" folder.
+   Environment :
+   SmarTeam V5R18GA with Standalone.
+   Windows XP 64bit Edition.
+   .
+   file with the step by step installation will be also
+   attach to the BID
+   Prerequisite:
+   1. Install Microsoft .NET Framework 2.0 (x64).
+   2. Reboot OS.
+   3. Install Microsoft SQL Server 2005 Express
+   Edition by SmarTeam CD 4.
+   4. Reboot OS.
+   5. Create new Windows account as "setup" to
+   manage core service.
+   5-1. Add "administrator" right.
+   5-2. Add local security policy as follows.
+   - Part of Operating system
+   - Logon Services
+   Note: step 5 ? 5-1, 5-2 not must it can reproduce
+   with administrator also
+   . Installation scenario.
+   6. Select "SmarTeam ? Editor".
+   7. Click "Next" button.
+   8. Click "Next" button.
+   9. Activate "Standalone" and click "Next" button.
+   10. Activate "Custom installation" and click "Next"
+   button.
+   11. Installation folder to Activate "C:\Program
+   Files\SMARTEAM?.
+   12. Change default installation module as following.
+   (see the attach PPT file)
+   13. Activate "Use a specific user name as
+   password" and click "Next" button.
+   14. Click "Yes".
+   15. Input windows account and password which
+   was created by prereq.
+   16. Activate "Network" and click "Next" button.
+   17. Input IP address which is Lum server.
+   18. Select "Japanese" and click "Next" button.
+   19. Click "Install" button.
+   20. Several error messages were displayed. This is
+   problem.
+   >>> Installing SmarTeam Session Management
+   service has
+   failed.
+   >>> Installing SmarTeam Configuration service
+   has
+   failed.
+   >>> Starting SMARTEAM Foundation - Core
+   Service has
+   failed.
+   .
+   More information .
+   If we indicate "C:\SmarTeam" instead
+   of "C:\Program Files\SMARTEAM"
+   problem was no more reproduced.
+   Baruch
+   .
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  THIS MODIFICATION WILL BE INCLUDED IN THE
+   DOCUMENTATION DELIVERED WITH SMARTEAM
+   VERSION 5 RELEASE 19 GA LEVEL.
+   NOTE THAT DOCUMENTATION WILL ALSO BE
+   INCLUDED IN V5R18SP05
+   .
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   HD72310
+   
+   
+ * REPORTED COMPONENT NAME
+   SMARTEAM NT>XP
+   
+   
+ * REPORTED COMPONENT ID
+   569199970
+   
+   
+ * REPORTED RELEASE
+   518
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-03-11
+   
+   
+ * CLOSED DATE
+   2008-03-31
+   
+   
+ * LAST MODIFIED DATE
+   2008-03-31
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

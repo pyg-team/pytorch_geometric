@@ -1,0 +1,251 @@
+Title: IBM PK77094: THE STEPS IN CSQ45ATB NEED TO BE CLARIFIED. - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The V7.0 SCSQPROC(CSQ45ATB) contains incomplete SYSIN statements
+   for step1 and step6. Step 7 is set to comments.
+   .
+   It is correct, although confusing, that steps 1 and 6 do not
+   actually do anything at version 7. Step 7 is not necessary
+   since it is the same BIND as performed by the co-existence PTFs.
+   .
+   The steps in CSQ45ATB should be clarified to avoid further
+   confusion.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All users of WebSphere MQ for z/OS Version 7 *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Dataset SCSQPROC, member CSQ45ATB       *
+   *                      contains unnecessary null steps.        *
+   *                      Additionally, the BIND and GRANT steps  *
+   *                      include an incorrect plan name, causing *
+   *                      step MIGRDSG to fail with               *
+   *                      CSQU514E  RRSAF function CREATE THREAD  *
+   *                      failed, RC=xxxxxxxx                     *
+   *                      CSQU147I CSQ5PQSG Utility terminated,   *
+   *                      return code=8.                          *
+   *                      Possible return codes are               *
+   *                      RC=00F30034 or RC=00F30040              *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   The Migration of Queue Managers to Version 7 includes tasks to
+   migrate the DB2 tables. The jcl for this in dataset SCSQPROC,
+   member CSQ45ATB contains unnecessary null steps. Additionally,
+   the BIND and GRANT steps include an incorrect plan name, causing
+   step MIGRDSG to fail with
+   CSQU514E  RRSAF function CREATE THREAD
+   failed, RC=xxxxxxxx
+   CSQU147I CSQ5PQSG Utility terminated,
+   return code=8
+   RC=00F30034 or RC=00F30040 are returned.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The unnecessary null steps have been removed from the job
+   CSQ45ATB in datasets SCSQPROC, and where appropriate the
+   documentation has been updated.
+   The BIND and GRANT steps have been altered to include the
+   correct plan name , CSQ5B7A0.
+   .
+   The following Documentation changes should also be considered
+   implemented.
+   All changes affect
+   WebSphere MQ, Migration Information, Version 7.0 SC34-6948
+   Chapter 4. Platform-specific information
+   .
+   The first changes affect the following sections, subs-sections
+   and paragraphs.
+   Migrating to WebSphere MQ for z/OS Version 7.0
+   Migrating from Version 6.0
+   Migrating queue-sharing groups to Version 7.0
+   Migrating DB2 tables:
+   .
+   The section entitled
+   'To migrate the tables and all queue-sharing groups:'
+   .
+   This will be changed to:
+   1. Customize and run the CSQ45ATB sample JCL in thlqual.SCSQPROC
+   supplied with WebSphere MQ for z/OS Version 7.0. This performs
+   the following steps:
+   a. Bind the new DB2 plan for the CSQ5PQSG utility.
+   b. Grant execute authority to the DB2 plan.
+   c. Check that the data-sharing group is in a state suitable for
+   migration, using the MIGRATE DSG function.
+   d. Modify the existing tables, and create the new tables
+   required for WebSphere MQ for z/OS Version 7.0.
+   .
+   The section entitled
+   'To migrate one queue-sharing group at a time:'
+   .
+   This will be changed to:
+   1. Customize the CSQ45ATB sample JCL in thlqual.SCSQPROC
+   supplied with WebSphere MQ for z/OS Version 7.0, editing the
+   step that executes the MIGRATE QSG function and specifying the
+   name of the first queue-sharing group that is to be migrated.
+   Run the job. This performs the following steps:
+   a. Bind the new DB2 plan for the CSQ5PQSG utility.
+   b. Grant execute authority to the DB2 plan.
+   c. Check that the queue-sharing group is in a state suitable for
+   migration, using the MIGRATE QSG function.
+   d. Modify the existing tables, and create the new tables
+   required for WebSphere MQ for z/OS Version 7.0.
+   .
+   The next changes affect the following sections, subs-sections
+   and paragraphs.
+   Migrating from an earlier unsupported release of WebSphere MQ or
+   MQSeries
+   Additional steps when migrating from Version 5.3.1 and
+   Version 5.3
+   Migrating queue-sharing groups to Version 7.0:
+   Migrating DB2 tables:
+   .
+   The section entitled
+   'To migrate the tables and all queue-sharing groups:'
+   .
+   This will be changed to
+   1. Customize and run the CSQ45ATB sample JCL in thlqual.SCSQPROC
+   supplied with WebSphere MQ for z/OS Version 7.0. This performs
+   the following steps:
+   a. Bind the new DB2 plan for the CSQ5PQSG utility.
+   b. Grant execute authority to the DB2 plan.
+   c. Check that the data-sharing group is in a state suitable for
+   migration, using the MIGRATE DSG function.
+   d. Modify the existing tables, and create the new tables
+   required for WebSphere MQ for z/OS Version 7.0.
+   .
+   The section entitled
+   'To migrate one queue-sharing group at a time:'
+   .
+   This will be changed to:
+   1. Customize the CSQ45ATB sample JCL in thlqual.SCSQPROC
+   supplied with WebSphere MQ for z/OS Version 7.0, editing the
+   step that executes the MIGRATE QSG function and specifying the
+   name of the first queue-sharing group that is to be migrated.
+   Run the job. This performs the following steps:
+   a. Bind the new DB2 plan for the CSQ5PQSG utility.
+   b. Grant execute authority to the DB2 plan.
+   c. Check that the queue-sharing group is in a state suitable for
+   migration, using the MIGRATE QSG function.
+   d. Modify the existing tables, and create the new tables
+   required for WebSphere MQ for z/OS Version 7.0.
+   000Y
+   CSQ45ATB
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK77094
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ Z/OS V7
+   
+   
+ * REPORTED COMPONENT ID
+   5655R3600
+   
+   
+ * REPORTED RELEASE
+   000
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-12-08
+   
+   
+ * CLOSED DATE
+   2009-01-27
+   
+   
+ * LAST MODIFIED DATE
+   2009-03-03
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UK43487
+   
+   
+
+MODULES/MACROS
+ *  CSQ45ATB
+   
+   
+    
+   
+   
+
+Publications Referenced SC34694800 FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ Z/OS V7
+   
+   
+ * FIXED COMPONENT ID
+   5655R3600
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R000 PSY UK43487 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK43487]
+   UP09/02/13 P F902
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

@@ -1,0 +1,144 @@
+Title: IBM PI69971: ESSENTIALS FOR R INSTALLATION FAILS ON LINUX POWER LE - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS USER ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  I have installed Modeler Server on Linux Power LE and made sure
+   I have installed libxlc and libxlsmp.
+   I have installed R 3.2.2.
+   When I run ./SPSS_Modeler_REssentials_18.0_Power_LE.bin I get:
+   The installation of IBM SPSS Modeler Essentials for R is
+   finished, but some
+   serious errors occurred during the installation.  Please see the
+   installation
+   log for details.
+   The logs show:
+   g++: error: argument to '-G' should be a non-negative integer
+   make: *** [ibmspsscf83.so] Error 1
+   ERROR: compilation failed for package 'ibmspsscf83'
+   * removing '/usr/local/lib/R/library/ibmspsscf83'
+   
+   and
+   
+   Custom Action:            com.ibm.spss.ia.MakeFailure_IA
+                             Status: FATAL ERROR
+                             Additional Notes: FATAL ERROR -
+   class com.ibm.spss.ia.MakeFailure_IA FatalInstallException:
+   Error: Failed to install R plugin
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Install the IBM XL C/C++ and IBM XL Fortran compilers, then
+   install R from
+   source and configure it like this:
+   
+   export CC="<XLC_PATH>/bin/xlc_r -q64"
+   export CFLAGS="-g -O2 -qstrict -qfloat=nomaf:fenv"
+   export F77="<XLF_PATH>/xlf_r -q64"
+   export FFLAGS="-g -O3 -qstrict -qfloat=nomaf:fenv -qextname"
+   export CXX="<XLC_PATH>/bin/xlC_r -q64"
+   export CPICFLAGS=-qpic
+   export CXXPICFLAGS=-qpic
+   export FPICFLAGS=-qpic
+   export SHLIB_LDFLAGS=-qmkshrobj
+   export SHLIB_CXXLDFLAGS=-G
+   export FC="<XLF_PATH>/xlf95_r -q64"
+   export FCFLAGS="-g -O3 -qstrict -qfloat=nomaf:fenv -qextname"
+   export FCPICFLAGS=-qpic
+   export CXX1XSTD=-qlanglvl=extended0x
+   
+   Where <XLC_PATH> and <XLF_PATH> are the locations of IBM XL
+   C/C++ for Linux and IBM XL Fortran for Linux respectively.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *  This issue was caused by the target OS not having the IBM XL
+   C/C++ and IBM XL Fortran compilers.
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI69971
+   
+   
+ * REPORTED COMPONENT NAME
+   SPSS MODELER SV
+   
+   
+ * REPORTED COMPONENT ID
+   5725A65MS
+   
+   
+ * REPORTED RELEASE
+   I00
+   
+   
+ * STATUS
+   CLOSED USE
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-09-29
+   
+   
+ * CLOSED DATE
+   2017-06-21
+   
+   
+ * LAST MODIFIED DATE
+   2017-06-21
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

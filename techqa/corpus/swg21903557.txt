@@ -1,0 +1,70 @@
+Title: IBM Trouble Shooting Security Environment Configuration issues for Cognos Disclosure Management - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ There are many issues with security environment settings that can lead CDM users not able to acccess the CDM database. 
+
+SYMPTOM
+Unable to access the Cognos Disclosure Management (CDM) database
+
+
+ENVIRONMENT
+Microsoft Windows
+
+RESOLVING THE PROBLEM
+Here are the areas to focus on trouble shooting security environment for Cognos Disclosure Management (CDM)
+
+
+Validate CDM applications server configuration:
+Pre-requisites: 
+
+ * .Net Framework (on Windows Server 2012 make sure that the .net framework feature is properly installed) 
+ * Visual C++ 2008/2010 Redistributable x64 
+ * Windows Server roles and features
+
+
+IIS Configuration:  * HTTPS protocol and SSL certificate. For additional information on SSL Certificates please refer to the following link: http://www-01.ibm.com/support/knowledgecenter/SSQK59_10.2.3/com.ibm.swg.ba.cognos.cdm_ig.10.2.3.doc/c_cdm_ig_ssl_certificates.html [http://www-01.ibm.com/support/knowledgecenter/SSQK59_10.2.3/com.ibm.swg.ba.cognos.cdm_ig.10.2.3.doc/c_cdm_ig_ssl_certificates.html] or http://www-01.ibm.com/support/docview.wss?uid=swg21695463 [http://www-01.ibm.com/support/docview.wss?uid=swg21695463] 
+ * Feature specific configuration (for example: Windows authentication)
+
+
+Optional configurations:  * net.tcp protocol must be enabled on the parent website and added to the CDM server web application (required for integrated windows auth.) 
+ * net.pipes protocol must be enabled on the parent website and added to HFMx86 web application (required for HFM 11.1.2.2 or higher versions of HFM client) 
+
+*** CDM users should refer to the installation and configuration guide for CDM, especially to ensure the required settings are matched with the correct versions. 
+
+The following areas can be trouble shooting as part resolving security issues with Cognos Disclosure Management: 
+
+Troubleshooting CDM application deployment related issues:  * Open CDM URL in Internet Explorer on CDM Server and Client machines 
+ * Ping CDM Server FQDN (that the SSL certificate was issued to) from the CDM Client 
+ * Check CDM Server and Client logs 
+ * Check EventViewer logs on CDM Application Server machine 
+ * Check CDM Server IIS CGI and ISAPI restrictions (the used version of .net Framework should be allowed ) 
+ * Check that the used .net Framework is properly registered to IIS.
+
+
+Troubleshooting CDM Active Directory or CAM Security Configuration: 
+Generic:  * Check CDM Server and Client logs
+
+
+Active Directory Source:  * Check domain name of the CDM Client and Server machines 
+ * Many issues are specific to customer environment (AD configuration/structure) 
+
+
+CAM Source:  * Make sure CAM pre-requisites are installed 
+ * Check C8ITK logs (they have a different location than CDM logs) 
+ * Validate the URLs as well as other settings within the IBM Cognos Configuration File - 
+ * Check your security directory server connection and confirm the credentials entered at login. http://www-01.ibm.com/support/docview.wss?uid=swg21624618 [http://www-01.ibm.com/support/docview.wss?uid=swg21624618] 
+
+
+Other Areas  * Configuring TM1 and Cognos Disclosure Management - http://www-01.ibm.com/support/docview.wss?uid=swg27036748&aid=1 [http://www-01.ibm.com/support/docview.wss?uid=swg27036748&aid=1] 
+
+
+Sample of Scenarios for Security 
+
+Scenario 1 - Users leaves company and then returns
+When creating users in CDM, we import the account from AD. Company have a situation where a CDM user let the company - the account was disabled in CDM. They were rehired, an their AD account was recreated (having a different SID then their original AD account). When we re-enabled the account in CDM, the user receives an authentication error. We tried re- importing the account from AD, but are getting a message that the user ID already exists. 
+
+Solution:
+The externalID is the AD ObjectGUID, they can just replace the value of the new user in the cdm core.Users table.

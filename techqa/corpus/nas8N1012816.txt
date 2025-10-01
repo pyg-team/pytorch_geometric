@@ -1,0 +1,54 @@
+Title: IBM DBMON FAQ - United States
+
+Text:
+DBMON; QUERY; PERFM TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The DBMON is one of our most useful query performance tools as it spans both query engines (called SQE and CQE) and helps to narrow down what we are chasing; always start with a DBMON for query performance issues. 
+
+RESOLVING THE PROBLEM
+This document includes frequently asked questions on DBMON: 
+
+Q1. What are you chasing? A1. Try to narrow down the scope of the problem first. Are the QZDA* jobs affected? Is just one COBOL/SQL or RPG/SQL program involved? Just one batch job? and so on. Q2. Can I start a DBMON after the query started running? A2. A DBMON has to be started before the query starts; starting the DBMON after a query has been running (even if just for a few milliseconds) usually yields few results. Q3. How do I start the DBMON? A3. For interactive jobs or prestart jobs:
+
+To trace generic job names
+STRDBMON OUTFILE(QGPL/DBMON1) OUTMBR(*FIRST) JOB(QZDA*) TYPE(*DETAIL)
+
+Run the queries in question and issue the ENDDBMON JOB(QZDA*) command.
+
+Note: This option is not available until R540.
+
+To trace all jobs
+STRDBMON OUTFILE(QGPL/DBMON1) OUTMBR(*FIRST) JOB(*ALL) TYPE(*DETAIL)
+
+Run the queries in question and then ENDDBMON JOB(*ALL)
+
+To trace the same job that is doing the STRDBMON command
+STRDBMON OUTFILE(QGPL/DBMON1) OUTMBR(*FIRST) JOB(*) TYPE(*DETAIL)
+
+Run the queries in question and issue the ENDDBMON JOB(*) command.
+
+To trace a specific job
+STRDBMON OUTFILE(QGPL/DBMON1) OUTMBR(*FIRST) JOB(QPADEV00FB/USER/123456) TYPE(*DETAIL)
+
+Run the queries in question and issue the ENDDBMON JOB(QPADEV00FB/USER/123456) command. DBMON ends when the job ends or when the ENDDBMON command is issued.
+
+For batch jobs:
+
+You have to do some special steps as the job has to be active on the system before you can start DBMON against it. Try using a generic batch job name if you can and follow the first example in A3. If there are several batch jobs with the same name and you can not use a generic job name, follow these steps:
+
+a. Submit the batch job as HELD on the job queue (for example, SBMJOB HOLD(*YES) ) or hold the job queue and submit the job.
+b. To locate the job just submitted, run the following command: WRKSBMJOB *JOB
+c. Run the command STRSRVJOB jobnumber/jobuser/BatchJobname on the job found
+d. Run the following command: STRDBG UPDPROD(*YES)
+e. Release the job. 
+f. Press F10.
+g. Run the following command, replacing the JOB parameter value with the job found:
+STRDBMON OUTFILE(LIBRARY/DBMONFILE) JOB(111111/JOBUSER/BatchJOBNAME) TYPE(*DETAIL)
+h. Press F3/Exit; make sure you are out of debug mode and that the job is actually running. DBMON ends when the job ends; no need to do ENDDBMON JOB(111111/JOBUSER/BatchJOBNAME) (unless you want to end the DBMON early). Q4. How long should you let the DBMON run for? A4. The answer depends; however, it is an important answer as a runaway DBMON will cause performance issues. If you are tracing one job, you can let it run until the job completes (within reason; a 24-hour long running job is probably too long). If you are tracing generic jobs/generic problems, start with 30-60 minutes between STRDBMON and ENDDBMON. Some heavy SQL users, however, can create very large DBMON files in five minutes, so 30-60 minutes is for an average amount of SQL queries being executed and traced. If you are running numerous SQL queries (and tracing many jobs), start with 5-10 minutes. The better gauge is how large the outfile is. We can generally handle an OUTFILE of 6-8 GB in size (DSPOBJD on the OUTFILE and ENDDBMON after it reaches 6-8 GB). On very busy systems though, DBMON can cause performance issues when it reaches approximately 3-5 GB. Again, if you are running many queries and tracing many jobs, end the DBMON after about 3-5 GB in size. Use both the time and size gauges combined to know when to end your DBMON (in other words, if your DBMON is approaching 7 GB after 25 minutes, prepare to end the DBMON; however, if your DBMON is 2 GB after 45 minutes, go ahead and let it run for the full 60 minutes). Q5. What if ENDDBMON JOB (the JobName you used in the STRDBMON command) says the job is not being monitored? A5. The job either ended on its own or there is a typographical error in the ENDDBMON JOB(x)command (the exact same JOB parameter value that was used on STRDBMON needs to be used on ENDDBMON). In rare cases, sometimes things get out of sync, and you would need to contact your IBM Service Representative to pursue further. Q6. How do you save the data? A6. SAVOBJ against the OUTFILE name to a SAVF. 
+SAVOBJ OBJ(DBMON1) LIB(QGPL) DEV(*SAVF) SAVF(THELIB/THESAVF) DTACPR(*YES) Q7. Can I start a DBMON from iSeries Navigator? A7. Yes, in iSeries Navigator, expand the system, expand database, expand the system, right click on SQL Performance Monitors, and say New -> SQL Performance Monitor. Make sure your performance monitor type is set to *DETAILED. The wizard will walk you through the rest of the steps Q8. How do I analyze the data I collected? A8. There are several ways to analyze the data. Typically, the data is manually queried out or iSeries Navigator/Visual Explain is used. For more information on the DBMON, refer to the Database Performance and Query Optimization manual in the Information Center http://publib.boulder.ibm.com/infocenter/iseries/v5r4/topic/rzajq/rzajq.pdf [http://publib.boulder.ibm.com/infocenter/iseries/v5r4/topic/rzajq/rzajq.pdf] or refer to the OnDemand SQL Performance Analysis Simplified on DB2 for i5/OS in V5R4 Redbook at http://www.redbooks.ibm.com/abstracts/sg247326.html?Open [http://www.redbooks.ibm.com/abstracts/sg247326.html?Open]  
+
+
+Cross reference information Segment Product Component Platform Version Edition Operating System IBM i 7.2 Operating System IBM i 7.1 Operating System IBM i 6.1 
+HISTORICAL NUMBER
+ 531191241

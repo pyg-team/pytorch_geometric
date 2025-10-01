@@ -1,0 +1,95 @@
+Title: IBM FAQ on the My Data Sets capability of IBM Cognos BI v10.2.2 - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ This document provides answers to frequently asked questions related to the My Data Sets capability introduced in IBM Cognos Business Intelligence v10.2.2 
+
+ANSWER
+User Questions
+Q: What was this feature designed to do?
+A: The feature's mission is to empower users to create and share business intelligence on their personal sources of data, without any assistance from IT. Users upload personal data files to create a Cognos BI package that can be used for report authoring and interactive analysis. 
+
+Q: How is this feature different from the External Data feature?
+A: In Cognos BI v10.2.2 the My Data Sets feature differs from the External Data feature in the following fundamental ways: 
+
+ * Higher volumes of Excel and delimited text data can be imported 
+ * Imported data persists in a repository database for as long as you want 
+ * Stand-alone packages are created, as opposed to appending to existing packages
+
+
+Q: What types of files can I upload? 
+A: Users can import the following file types:  * Microsoft Excel files, with either .xls or .xlsx extensions 
+ * Delimited text files, containing either comma-, tab-, semi colon-, or pipe separated values 
+ * Compressed versions of any of the supported file types. For example, you may choose to compress your delimited text files as a .zip to improve upload time.
+
+
+Q: Are there limits to the sizes of files that I can import? 
+A: To maintain system performance, there are limits to the size of files that you can upload. The administrator can modify the default values of the maximum file sizes, if required. The following table lists the default maximum values. Description Default value (KB) Maximum file size of a non-.xlsx imported file 100,000 Maximum file size of a .xlsx imported file 3,000 Maximum total size of imported files per user 100,000 Q: Why is the default file size limit of .xlsx files lower than non-.xlsx files? 
+A: A .xlsx file is compressed such that it can contain much more data than an equivalent .xls file of the same file size. The .xlsx decompression operations employed by the Cognos BI v10.2.2 server is significantly more memory intensive than the operations required for other file types, therefore the default file size limit for .xlsx is significantly lower. Q: Do the files need to be in any special format?
+A: For Excel files, the data must be located on the first worksheet and in a tabular format. Data from Excel pivot tables and charts are not supported. 
+
+Q: I have accidentally uploaded a file I should not have, what do I need to do to remove it?
+A: You have an opportunity to cancel while the file is being uploaded. If the import has completed, you will see the data set on your My Data Sets page and can delete it from there. 
+
+Q: What modeling options do I have?
+A: The modeling experience of My Data Sets is very simple. Users can deselect columns so that the corresponding data items are not included in the generated package. Users can also change the default summary of numeric columns - note that changing the default summary to none will cause the data item to be treated as an attribute instead of a fact when authoring a report. 
+
+Q: Can I update a data set?
+A: Yes, you do this via the Edit Data Set button on the My Data Sets page. 
+
+Q: Can I share my data set with colleagues?
+A: Yes, you do this by saving the associated package to a location within Public Folders that is accessible to whoever needs access. To be able to run their own reports against your data set, your colleagues will need Read, Execute and Traverse permissions on the package and the repository database. 
+
+Q: Can I recover a data set that I deleted accidentally?
+A: No. Hopefully you can still find the source file for that data set in which case you can upload it again. 
+
+Administrator Questions:
+Q: Where can I find documentation on this capability?
+A: Chapter 25 of the IBM Cognos Business Intelligence Administration and Security Guide v10.2.2. 
+
+Q: Can the governors available in Framework Manager be set on packages generated from My Data Sets?
+A: All packages generated via My Data Sets have default package governor settings. 
+
+Q: My environment employs advanced dispatcher routing rules, what strategy do I put in place to ensure My Data Sets packages are routed properly? 
+A: My Data Sets can be used from any Cognos BI application tier server that can successfully connect to the data set repository database(s). Advanced dispatcher routing rules can be configured by package or by user/group/role, rules applied to other packages have no affect on My Data Sets generated packages, and rules applied for a user/group/role are equally applicable to My Data Sets generated packages as other packages. 
+
+Q: What strategy should I use to clean up old data sets, when removing a dataset, does it delete the table in the database?
+A: When a user from their My Data Sets page, or an administrator deletes a data set from the Data Sets administration page, the associated table in the repository will be deleted as well. There should not be any orphaned tables in the repository under normal Cognos BI usage. 
+
+Q: During a full content store deployment export, what My Data Sets content be exported? 
+A: The Cognos BI content including the data set references, packages and reports will be exported, however the underlying data that is stored in the repository will not be included in the deployment. Refer to your database documentation to migrate the data from one database to another if needed. 
+
+
+Data Set Repository Questions:
+Q: What are the details on setting up the My Data Sets repository database, like recommended tables space size, buffer pool size and encoding?
+A: The workloads of different environments will have different optimal settings for these parameters. As a rule of thumb you should create a DB2 on Linux, UNIX or Windows database with default settings except that the transaction log file size (LOGFILSIZ) should be changed from its default value of 1024 to 4096. The quick setup option during the Cognos BI v10.2.2 installation process invokes a script that creates My Data Sets repository with recommended settings for the expected workload of a 40 user environment (4 concurrent data upload assumed for this user base) with default settings. More techical details about the repository can be found in Techdoc 7044243 [http://www-01.ibm.com/support/docview.wss?uid=swg27044243]. 
+
+Q: What are the minimum permission I need to setup for the user being used to populate the tables.
+A: Use the same permissions as you'd use for a content store database. 
+
+Q: How many database users should I create for this?
+A: A single My Data Sets repository must have a single data source connection object and a single data source signon object. You can create multiple data set repositories to maximize security or
+distribute the repository workload among multiple servers. One repository can store each Cognos BI user's personal data sets while allowing them to secure their data set from other users' access within the Cognos BI web interfaces. However, users with access to Framework Manager, Cube Designer or the Cognos BI SDK will be able to see the data sets that other users have imported into a shared repository. If your users will be importing highly sensitive data into their data sets, then you can maximize security by configuring separate repositories for various groups of users. 
+
+Q: For database maintenance how do I identify which table belongs to what BI users? 
+A: Each user's data set tables are stored in a schema that is based on that user's unique ID. One table per data set under this schema. All the schemas reside in the table space that you have configured for the repository. The properties page of any data set object in Cognos Connection provides the associated data source and table name. 
+
+Q: Are indexes created on the data set tables?
+A: No. 
+
+
+Serviceability Questions:
+Q: What is the architecture for this feature, including the request flow?
+A: Data import is primarily handled by the metadata service. 
+
+Q: What are the logging points, how do I enable these logs and where do they write to?
+A: Important messages are written to the cogserver.log file. For more detailed information, enable IPF tracing on the metadata service.
+
+Auditing Questions
+Q: Can I get a list data sets defined in my Environment along with who owns them and their size?
+A: Yes, this information is readily available in Cognos Administration on the Data Sets page of the Status tab. 
+
+Q: Can I audit users' My Data Sets activity?
+A: Yes, this can be accomplished using the Audit database. Data set operations can be identified by the value "DATASET" in the column associated with [Audit].[Actions by Object].[Target type] in the default Audit package. The deployment of the Audit package reports for v10.2.2 includes an active report called "Weekly action details by user" that allows you to filter on DATASET to highlight all operations on users' data sets - you can use this example to author a report that returns the specific information you require.

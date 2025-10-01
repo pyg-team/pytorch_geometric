@@ -1,0 +1,181 @@
+Title: IBM IC98481: WMQ 7.5: CHANNEL AUTHENTICATION FAILS WHEN CLNTUSER ID IS GREATER THEN 12 CHARACTERS. - United States
+
+Text:
+  A FIX IS AVAILABLE
+WebSphere MQ V7.5 Fix Pack 7.5.0.4 [http://www-01.ibm.com/support/docview.wss?uid=swg24038252]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Channel Authentication fails with various errors when CLNTUSER
+   id is greater then 12 characters.
+   The following errors will be seen:
+   AMQ9557: Queue Manager User ID initialization failed.
+   EXPLANATION:
+   The call to initialize the User ID failed with CompCode 2 and
+   Reason 2035.
+   
+   AMQ5653: The user 'xxxxxxx' is not defined.
+   EXPLANATION:
+   The system call getpwnam("xxxxxxx") failed with errno -1.
+   
+   AMQ9777: Channel was blocked
+   EXPLANATION:
+   The inbound channel 'QM1.SVRCONN' was blocked from address
+   'xxx.xx.xx.xxx' because the active values of the channel
+   matched a record configured with USERSRC(NOACCESS). The active
+   values of the channel were 'CLNTUSER(xxxxxxx.xxxxxxx)'.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Use a userid less then 12 characters in length.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   All users using channel authentication who wish to configure and
+   use rules for client names longer than 12 characters on
+   non-Windows platforms.
+   
+   
+   Platforms affected:
+   Solaris x86-64, Solaris SPARC, Linux on zSeries, Linux on
+   x86-64, Linux on x86, Linux on Power, HP-UX Itanium, AIX
+   
+   ****************************************************************
+   PROBLEM SUMMARY:
+   On Unix platforms, the maximum length of the CLNTUSER field when
+   adding a channel authentication (CHLAUTH) record was 12
+   characters. However incoming clients were matched against
+   their long user ID, not the short user ID. This meant it was not
+   possible to correctly map clients which reported usernames of
+   longer than 12 characters as it was simply not possible to
+   configure this within the queue manager on Unix platforms.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The maximum length for the CLNTUSER field has been increased
+   on Unix platforms to 64 characters. This is the same length
+   Windows users, and is the maximum length of the long user ID
+   field of an MQMD.
+   
+   This makes it possible to configure the queue manager such
+   that clients reporting user names of longer than 12 characters
+   will be correctly mapped.
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+   Version    Maintenance Level
+   v7.5       7.5.0.4
+   
+   The latest available maintenance can be obtained from
+   'WebSphere MQ Recommended Fixes'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037]
+   
+   If the maintenance level is not yet available information on
+   its planned availability can be found in 'WebSphere MQ
+   Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC98481
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ BASE MULTIP
+   
+   
+ * REPORTED COMPONENT ID
+   5724H7241
+   
+   
+ * REPORTED RELEASE
+   750
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-12-23
+   
+   
+ * CLOSED DATE
+   2014-01-24
+   
+   
+ * LAST MODIFIED DATE
+   2014-01-24
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    PI10276
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ BASE MULTIP
+   
+   
+ * FIXED COMPONENT ID
+   5724H7241
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R750 PSY
+   UP

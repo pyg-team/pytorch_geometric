@@ -1,0 +1,140 @@
+Title: IBM PI49478: CANNOT COPY ACTIVITY DIAGRAM CONTENTS IN BROWSER - United States
+
+Text:
+  A FIX IS AVAILABLE
+IBM Rational Rhapsody 8.2 [http://www-01.ibm.com/support/docview.wss?uid=swg24042928]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  It is possible to cut, copy, and paste actions from one activity
+   diagram to another in the diagrams.
+   
+   These options are available in the browser, but they don't do
+   anything.  As an example, one can select an action, right click,
+   and Cut or Copy are available options.  Go to another diagram in
+   the Browser, right click, Paste is an available option.  Doing
+   this results in nothing happening.
+   
+   If you right-click in a diagram, after using Cut or Copy on an
+   action in the Browser, the option to Paste is grayed out.
+   
+   Either the edit functions should work, or they should not be
+   available
+   for selection.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * Rhapsody users                                               *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * Copy and Cut manus available on statechart, states and       *
+   * actions. But they can't be paste.                            *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fixed in Rhapsody 8.2 - The Copy and Cut manues are now disabled
+   for statechart, states and actions.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI49478
+   
+   
+ * REPORTED COMPONENT NAME
+   TLOGIC RHAPSODY
+   
+   
+ * REPORTED COMPONENT ID
+   5724V74RP
+   
+   
+ * REPORTED RELEASE
+   811
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2015-09-28
+   
+   
+ * CLOSED DATE
+   2016-12-05
+   
+   
+ * LAST MODIFIED DATE
+   2016-12-05
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TLOGIC RHAPSODY
+   
+   
+ * FIXED COMPONENT ID
+   5724V74RP
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R811 PSN
+   UP

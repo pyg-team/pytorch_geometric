@@ -1,0 +1,16 @@
+Title: IBM LDAP salt and seed of the ISDM installation - United States
+
+Text:
+LDAP; salt; seed; ISDM TECHNOTE (FAQ)
+
+QUESTION
+ How to know which are the LDAP salt and the seed of ISDM installation? 
+
+ANSWER
+You can find the needed information as follows:
+- LDAP seed is the password that was set during the IDS configuration in the idsxinst tool (and it is already preconfigured in ISDM 7.2.2). It could be required for export data to an LDIF file (the idsdb2ldif command) or regeneration of the key stash file (the idsgendirksf command). There is no way to recover the encryption seed if it is lost.
+
+- LDAP salt can be taken from the output of the idsldapsearch command. In my example the command syntax looks like:
+# /opt/IBM/ldap/V6.2/bin/idsldapsearch -D cn=root -w password -b "cn=crypto,cn=localhost" objectclass=*
+
+and the output is: ibm-slapdCryptoSalt=8R{!jm%jXalM which gives the salt value e.g.: 8R{!jm%jXalM

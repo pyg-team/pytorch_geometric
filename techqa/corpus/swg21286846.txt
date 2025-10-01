@@ -1,0 +1,110 @@
+Title: IBM Resolving common problems with Installation Manager and its remote repository feature - United States
+
+Text:
+1286846; 1265620; 1272430; 1255981; 1257348; 1282374; RAD; RAM; RBDe; RBD; extension; RFT; RMT; RMC; RME; RME .NET; RPT; RSA; RSD; RSM; RDA; SDP TECHNOTE (FAQ)
+
+QUESTION
+ How can you resolve common problems with IBM Installation Manager and its remote repository feature? 
+
+CAUSE
+IBM Installation Manager (IM) has a feature that allows it to search for updates packages from IBM update sites. The feature is called "Search service repositories during installation and updates" and it is enabled by default. Even though the feature is useful, some Rational Software Development Platform (SDP) desktop product users might find that it does not fit with their network settings or system environments.
+
+ANSWER
+A service repository is a storage location for data that is required for installing or updating packages. By default, Installation Manager uses an embedded URL in each product package to connect to a repository server through the Internet and searches for available install packages as well as new features.
+
+
+This technote provides the solution for the seven known scenarios in which there are problems using the Search service repositories during installation and updates feature. 
+
+
+1. How to disable and enable Search service repositories during installation and updates feature
+By default, Installation Manager is set up such that it will automatically search the online IBM download Internet sites for updates. 
+
+ * Methods
+ * 
+ * A. Disable and enable Search service repositories during installation and updates by using the GUI;
+   in IM go to File > Preferences > Repositories and uncheck (or check) Search service repositories during installation and updates
+   
+ * B. When using the GUI is not an option, you need to modify com.ibm.cic.agent.core.prefs file in order to disable or enable Search service repositories during installation and updates: 
+ * Location of com.ibm.cic.agent.core.prefs in Windows 2000, XP, 2003
+   C:\Documents and Settings\All Users\Application Data\IBM\Installation Manager\.settings\ 
+ * Location of com.ibm.cic.agent.core.prefs in Windows Vista
+   C:\ProgramData\IBM\Installation Manager\logs\.settings\ 
+ * Location of com.ibm.cic.agent.core.prefs in Linux
+   /var/ibm/InstallationManager/.settings 
+ *  Open com.ibm.cic.agent.core.prefs with a text editor Find offering.service.repositories.areUsed= string If you want to disable the feature, set offering.service.repositories.areUsed to false, otherwise set it to true. 
+
+Warning: Users who do not use the Passport Advantage feature need to ensure that their response file does not contain PassportAdvantageIsEnabled=true or that the "Connect to Passport Advantage" in IM's preferences is not checked . 2. When network has a firewall and you would like IM to search only for update packages locally 
+
+ * 
+ * 
+ * Search service repositories during installation and updates
+ * 
+ * see methods in #1
+ * 
+ * 
+
+
+3. When IM cannot find the latest update package and your network does not use firewall or proxy  * 
+ * 
+ * Search service repositories during installation and updates 
+ * 
+ * see methods in #1
+ * 
+ * http://download.boulder.ibm.com/ibmdl/pub/software/rationalsdp/v7/im/updates/
+ * 
+ * 
+
+
+4. When IM performs slowly while you are applying SDP patches locally  * 
+ * 
+ * Search service repositories during installation and updates 
+ * 
+ * see methods in #1
+ * 
+
+
+5. When you do not want IM to search for update packages while you are installing SDP products in silent mode 
+
+ * 
+ * 
+ * Search service repositories during installation and updates 
+ * 
+ * see methods in #1
+ * 
+
+
+6. When you use a proxy and IM cannot find the latest update packages from the IBM remote updates site 
+
+ * 
+ * 
+ * Search service repositories during installation and updates 
+ * 
+ * see methods in #1
+ * 
+ * IM > File > Preferences > Repositories > HTTP proxy or FTP proxy
+
+
+7. When you install SDP products in silent mode, IM keeps searching for IBM update sites and sometimes you receive the following exception
+
+#Running Installation Manager version 1.0.0.I20061116_2314 
+#Found Installation Manager version 1.0.4.I20070606_1027c 
+#[09/Jul/2007:16:41:27 -0400] 
+#java.lang.NullPointerException 
+# at com.ibm.cic.agent.core.Agent.prepare(Agent.java:1663) 
+# at com.ibm.cic.agent.internal.core.InstallRegistry$ContextInstallRegistry.convertFormat(InstallRegistry.java:563) 
+
+The problem occurs because when you create a response file the Search service repositories during installation and updates feature is enabled (see methods in #1). To resolve the problem, you can add <preference value='false' name='offering.service.repositories.areUsed'/> to your response file. 
+
+
+
+
+
+
+
+
+
+
+
+
+
+Cross Reference information Segment Product Component Platform Version Edition Software Development Rational Application Developer for WebSphere Software Installation Manager Linux, Windows 7.0 Software Development Rational Asset Manager Installation Manager Linux, Windows 7.0 Software Development Rational Business Developer Extension Installation Manager Linux, Windows 7.0 Software Development Rational Functional Tester Installation Manager Linux, Windows 7.0 Software Development Rational Manual Tester Installation Manager Linux, Windows 7.0 Software Development Rational Modeling Extension for Microsoft .NET Installation Manager Linux, Windows 7.0 Software Development Rational Performance Tester Installation Manager Linux, Windows 7.0 Software Development Rational Software Architect Installation Manager Linux, Windows 7.0 Software Development Rational Software Modeler Installation Manager Linux, Windows 7.0 Software Development Rational Systems Developer Installation Manager Linux, Windows 7.0 Software Development Rational Method Composer Windows, Linux 7.2 Data & Information Management Rational Data Architect Linux, Windows 7.0

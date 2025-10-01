@@ -1,0 +1,32 @@
+Title: IBM Service Flow Feature of CICS TS V3.1 End of Marketing announcement - United States
+
+Text:
+CICS TS 3.1 ; end of marketing; withdrawal from marketing; withdrawn from marketing ; product lifecycle; end of lifecycle; withdrawal announcement letter 907-207 ; 907207 ; 907 207 ; 5697E9300 R200 200 R620 620 R300 300 R630 630 HCI6300 HCI6200 5697-E93 5697E93 KIXINFO retention31 PRODUCT LIFECYCLE
+
+ABSTRACT
+The End of Marketing (EOM) date for the Service Flow Feature (SFF) of CICS Transaction Server for z/OS (CICS TS) V3.1 was 30 June 2008. This document provides link to the Software withdrawal announcement letter and product replacement information.
+
+CONTENT
+The IBM United States Withdrawal announcement letter indicating that the Service Flow Feature of CICS TS V3.1 will be withdrawn from marketing 30 June 2008 is 907-245 [http://www.ibm.com/common/ssi/cgi-bin/ssialias?subtype=ca&infotype=an&appname=iSource&supplier=897&letternum=ENUS907-245] [http://www.ibm.com/common/ssi/cgi-bin/ssialias?infotype=an&subtype=ca&supplier=897&appname=IBMLinkRedirect&letternum=ENUS908-016]. The following product replacement information is included in this announcement: 
+
+ * 
+ * 5655-M15, Service Flow Feature of CICS Transaction Server for z/OS V3.1 feature number 5862, is replaced by 5655-M15, Service Flow Feature of CICS Transaction Server for z/OS V3.2 feature number 5852, announced in Software Announcement 
+ * 207-051
+ *  , dated March 27, 2007
+
+
+Note that CICS SFF at the V3.2 level does not include the tooling element of IBM Rational Developer for System z V7.1 (RDz). Also note that tooling obtained with CICS SFF at the V3.1 level is not licensed for use with CICS SFF at the V3.2 level. An entitlement for RDZ V7.1 is required to use CICS SFF at the V3.2 level. 
+
+The CICS Service Flow Runtime V3.2 can run on CICS TS V3.2 or V4.1. 
+
+For more information see CICS Service Flow Feature - ordering and usage information [http://www.ibm.com/support/docview.wss?uid=swg21286558]. 
+RELATED INFORMATION
+#CICS Transaction Servers [http://www.ibm.com/software/htp/cics/tserver/]
+Announcement letters for CICS products [http://www.ibm.com/support/docview.wss?uid=swg21227090]
+End of Support dates for CICS products [http://www.ibm.com/support/docview.wss?uid=swg21154953]
+
+
+
+
+PRODUCT ALIAS/SYNONYM
+CICS/TS CICS TS CICS Transaction Server

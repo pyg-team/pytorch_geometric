@@ -1,0 +1,149 @@
+Title: IBM JR47761: MULTIPART REQUEST CODE DOES NOT CLEAN UP TEMP FILES AS EXPECTED (PROCESS CENTER PART) - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Version 7.5.1 Fix Pack 2 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24036462]
+Version 8.5 Refresh Pack 5 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24037683]
+Download Version 8.0.1 Fix Pack 3 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24037734]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  MultipartRequest.java creates temp files in method
+   processFile(). These temp files are not properly cleaned up when
+    they are needed no longer. Therefore they can accumulate in the
+    OS temp directory and cause performance issues over time.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  manually delete OS temp file directory
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  In the temp folder of the operating system the number of temp
+   files are increasing over time, which causes performance issues
+   with coaches.
+   
+   PROBLEM DETAILED DESCRIPTION:
+   When processing HTTP requests coming from coaches the
+   processing of the HTTP request results in temp files in the temp
+   folder of the operating system, which are not cleaned up
+   properly in call situations. So the number of temp files in the
+   temp folder are increasing over time.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  With this interim fix all temp files that are created in the
+   context of processing HTTP requests are cleaned up when the
+   HTTP request is processed and the garbage collector is cleaning
+   up the corresponding Java object instances.
+   
+   FIX AVAILABILITY:
+   iFix for 7.5.1.1 is available on Fix Central, search for APAR
+   JR47761 at http://www.ibm.com/support/fixcentral/ [http://www.ibm.com/support/fixcentral/]
+   Fix is also targetted for inclusion in next fixpack for BPM
+   V7.5.1, BPM 8.0.1
+   
+   When obtaining any of the above fixes, be sure to download the
+   accompanying readme, for itself, and any prerequisite fixes, and
+   review them thorougly.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR47761
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM STANDARD
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9500
+   
+   
+ * REPORTED RELEASE
+   751
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-09-12
+   
+   
+ * CLOSED DATE
+   2013-12-05
+   
+   
+ * LAST MODIFIED DATE
+   2013-12-05
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   BPM STANDARD
+   
+   
+ * FIXED COMPONENT ID
+   5725C9500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R751 PSY
+   UP

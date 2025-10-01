@@ -1,0 +1,210 @@
+Title: IBM SA94822: MQM400 MQV5 AMQZLAA0 AGENT TERMINATE - THREAD LOCK CONFLICT - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Reference PMR 51521, B300, C624 A a client application is
+   running on Win NT and connecting to OS/400 via an MQ server
+   channel.  This application is written in VB and uses MQAX 200.
+   Sometimes ( 6 times/10) they receive MQRC_Q_MGR_NOT_AVAILABLE,
+   RC=2059, but the qmgr is still available.  An MQ trace of the
+   AMQCRSTA job shows a perfectly normal shutdown of the client
+   connection, in response to MQDISC from the client application.
+   But the agent logs FDC:  ! Probe Id :-ZL000028 ! Component :-
+   zlaMain ! Build Date :-Sep 7 2001 ! UserID :-00000897 (QMQM) !
+   Job Name :-617061/QMQM/AMQZLAA0 ! Process :-00032139 ! Thread :-
+   00000001 ! QueueManager :-MQ_DLINK ! Major Errorcode :-
+   xecF_E_UNEXPECTED_RC ! Minor Errorcode :-OK ! Probe Type :-
+   MSGAMQ6118 ! Probe Description :-AMQ6118:  An internal MQSeries
+   error has ! (X'00000000') Probe 28 = Agent thread without a
+   valid/connected application Invalid PID = 32162 Control Block
+   ACD2 = thread exists with resources initialised Control Block
+   ACD3 = thread exists (not ended) Reference PMR 93862, B300, C781
+   Queue Manager agent job (AMQZLAA0) crashes intermittently when
+   MQ being used under stress (large numbers of channel and MQ
+   application connected jobs).  Typical FDCs are:  Probe Id :-
+   XY353001 Component :-xehAS400ConditionHandler Program Name :-
+   AMQZLAA0 QMQM Job Name :-298608/QMQM/AMQZLAA0 Probe Type :-
+   HALT6109 Probe Description :-Arith1 :-19311 4b6f Comment1 :-
+   MCH0601 Probe Id :-XC032030 Component :-xcsPostEventSem Program
+   Name :-AMQCRSTA QMQM Job Name :-298967/QMQM/AMQCRSTA Probe Type
+   :-MSGAMQ6119 Probe Description :-AMQ6119:  Se ha producido un
+   error interno
+                        MQSeries()
+   Arith1 :-3021 bcd Probe Id :-XC031011 Component :-
+   xcsCloseEventSem Program Name :-AMQZXMA0 QMQM Major Errorcode :-
+   xecF_E_UNEXPECTED_SYSTEM_RC Minor Errorcode :-OK Probe Type :-
+   MSGAMQ6119 Probe Severity :-2 Probe Description :-AMQ6119:  Se
+   ha producido un error interno
+                        MQSeries ()
+   Arith1 :-3021 bcd Probe Id :-XC033010 Component :-
+   xcsResetEventSem Job Name :-982439/QMQM/AMQZLAA0 Major Errorcode
+   :-xecF_E_UNEXPECTED_SYSTEM_RC Probe Description :-AMQ6119:  An
+   internal MQSeries error has Arith1 :-3021 bcd
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Reference PMR 51521, B300, C624 A a client application is
+   running on Win NT and connecting to OS/400 via an MQ server
+   channel.  This application is written in VB and uses MQAX 200.
+   Sometimes ( 6 times/10) they receive MQRC_Q_MGR_NOT_AVAILABLE,
+   RC=2059, but the qmgr is still available.  An MQ trace of the
+   AMQCRSTA job shows a perfectly normal shutdown of the client
+   connection, in response to MQDISC from the client application.
+   But the agent logs FDC:  ! Probe Id :-ZL000028 ! Component :-
+   zlaMain ! Build Date :-Sep 7 2001 ! UserID :-00000897 (QMQM) !
+   Job Name :-617061/QMQM/AMQZLAA0 ! Process :-00032139 ! Thread :-
+   00000001 ! QueueManager :-MQ_DLINK ! Major Errorcode :-
+   xecF_E_UNEXPECTED_RC ! Minor Errorcode :-OK ! Probe Type :-
+   MSGAMQ6118 ! Probe Description :-AMQ6118:  An internal MQSeries
+   error has ! (X'00000000') Probe 28 = Agent thread without a
+   valid/connected application Invalid PID = 32162 Control Block
+   ACD2 = thread exists with resources initialised Control Block
+   ACD3 = thread exists (not ended) Reference PMR 93862, B300, C781
+   Queue Manager agent job (AMQZLAA0) crashes intermittently when
+   MQ being used under stress (large numbers of channel and MQ
+   application connected jobs).  Typical FDCs are:  Probe Id :-
+   XY353001 Component :-xehAS400ConditionHandler Program Name :-
+   AMQZLAA0 QMQM Job Name :-298608/QMQM/AMQZLAA0 Probe Type :-
+   HALT6109 Probe Description :-Arith1 :-19311 4b6f Comment1 :-
+   MCH0601 Probe Id :-XC032030 Component :-xcsPostEventSem Program
+   Name :-AMQCRSTA QMQM Job Name :-298967/QMQM/AMQCRSTA Probe Type
+   :-MSGAMQ6119 Probe Description :-AMQ6119:  Se ha producido un
+   error interno
+   
+                        MQSeries()
+   Arith1 :-3021 bcd Probe Id :-XC031011 Component :-
+   xcsCloseEventSem Program Name :-AMQZXMA0 QMQM Major Errorcode :-
+   xecF_E_UNEXPECTED_SYSTEM_RC Minor Errorcode :-OK Probe Type :-
+   MSGAMQ6119 Probe Severity :-2 Probe Description :-AMQ6119:  Se
+   ha producido un error interno
+                        MQSeries ()
+   Arith1 :-3021 bcd Probe Id :-XC033010 Component :-
+   xcsResetEventSem Job Name :-982439/QMQM/AMQZLAA0 Major Errorcode
+   :-xecF_E_UNEXPECTED_SYSTEM_RC Probe Description :-AMQ6119:  An
+   internal MQSeries error has Arith1 :-3021 bcd
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The MQSeries agent process (AMQZLAA0) has been made more
+   reliable when handling multiple threads under stress.
+   Additional fixes included for the defects listed below :-
+   --------------------------------------------------------- 61714
+   MQM400 - MQCONN MCH3601 GetSubPoolLock after SysREQ2 61775
+   xcsAssertion wrong in amqxiinx.c 61920 iSeries:  Relax profile
+   swapping restrictions 62098 Correct locking (MCH0601 in
+   xcsWaitEventSem) IC30335 MEMORY LEAK USING THE MQ C++ BINDING
+   (MULTITHREADED) IC31814 HANDLE COUNT & PAGE FILE BYTES LEAK
+   (AMQMSRVN.EXE) IY21665 MQ RUNNING OUT OF SHARED MEMORY EXTENTS.
+   IY23957 MQSERIES USES THE REAL UID TO DETERMINE PERMISSIONS
+   IY24753 MQSERIES MEMORY LEAK SA94414 [http://www-01.ibm.com/support/docview.wss?uid=swg1SA94414].1 MQM400 CHANGE TO ONE
+   MQPID PER PROCESS SUBPOOL  4  IY21665 will log new FDC's for
+   functions xcsCheckExtendMemory and xstAllocBlockInSharedMemSet
+   with probe 005, which will indicate that Extent List Highwater
+   threshold has been exceeded.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   SA94822
+   
+   
+ * REPORTED COMPONENT NAME
+   MQSERIES FOR AS
+   
+   
+ * REPORTED COMPONENT ID
+   5733A3800
+   
+   
+ * REPORTED RELEASE
+   520
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2002-01-09
+   
+   
+ * CLOSED DATE
+   2002-01-09
+   
+   
+ * LAST MODIFIED DATE
+   2004-11-10
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  LMQMCS   LMQMCSR
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   MQSERIES FOR AS
+   
+   
+ * FIXED COMPONENT ID
+   5733A3800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R520 PSY SF66796
+   UP02/09/23 P 2260

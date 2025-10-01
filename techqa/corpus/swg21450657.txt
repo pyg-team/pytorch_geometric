@@ -1,0 +1,35 @@
+Title: IBM Unable to create reference with automatic data correlation disabled - United States
+
+Text:
+rpt; data; correlation; test; response TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When you try to create a manual correlation, the IBM Rational Performance Tester (RPT) Test Editor does not recognize that you disabled automatic data correlation. 
+
+SYMPTOM
+ 
+
+Steps to reproduce
+
+
+
+ 1. Click Window> Preferences > Test > Test Generation. Then clear the check box Enable automatic data correlation.
+    
+    
+ 2. Try to create the reference.
+
+
+CAUSE
+The problem is in the Test Editor. RPT does create the manually added reference actually, but the Editor does not highlight the reference. That is why you cannot see the reference. The Editor also does not mark the test as changed , "dirty".
+
+
+
+RESOLVING THE PROBLEM
+Upgrade to the newest version of Rational Performance Tester. 
+
+
+
+WORKAROUND
+Change something else in the text and save the test. 
+
+For example change a character in the response and put the response back to its original value. RPT will then highlight the added reference properly.

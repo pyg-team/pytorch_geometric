@@ -1,0 +1,94 @@
+Title: IBM SPSS Statistics Diagnostics Tool - United States
+
+Text:
+spss statistics diagnostic tool utility PRODUCT DOCUMENTATION
+
+ABSTRACT
+ A tool for reporting environment, product configuration, and licensing detail, and assembling the results into a single zip file for delivery to an IBM SPSS Support Analyst. 
+
+CONTENT
+This tool is useful in the context of an open Service Request (PMR) involving IBM SPSS Statistics and may speed troubleshooting and time-to-resolution of the problem.
+
+
+Running the tool from anywhere on a user's Windows system assembles the following files: 
+
+ 
+
+1) A System Overview, containing machine environment information: O/S version, processor and system type, physical and available memory, etc. 
+
+ 
+
+2) A list of installed Network Adapters and IP configuration, which is often useful for troubleshooting problems with concurrent licensing (i.e.. when the Statistics application is relying on a network license) 
+
+ 
+
+3) A list of all current user and system environment variables 
+
+ 
+
+For each installed version of SPSS Statistics present (stored in separate subfolders by version): 
+
+ 
+
+4) A file-level directory list of the installation folder and all subfolders 
+
+ 
+
+5) A list of the Sentinel license locking codes available on the machine (i.e., the results of running "echoid.exe -a" in the install directory) 
+
+ 
+
+6) A list of the presently installed local licenses and what they contain (i.e., the results of lsdecode.exe) 
+
+ 
+
+7) A copy of the lservrc file 
+
+ 
+
+8) A copy of the spssprod.inf file 
+
+ 
+
+When complete, the Diagnostic Tool assembles the files listed above into a zip file called "SPSS_Diagnostic.zip" and places it into the local %temp% directory. All information is the result of separate utilities already found on the user's machine, and can be viewed by the user before sending the final package to the Support Analyst. 
+
+ 
+
+The main advantage is that the Tool provides a "one-stop-shopping" method of assembling and communicating the results of several different environment and configuration reporting utilities in one single step. 
+
+ 
+
+Installation Instructions 
+
+
+1) Download the "SPSS_Statistics_Diagnostics.exe [https://www14.software.ibm.com/webapp/iwm/web/reg/download.do?source=swg-tspssp&lang=en_US&S_PKG=dl4&cp=UTF-8]" file to your machine.
+
+You may be prompted to enter your IBM ID and password. Do so, and click Sign In.
+
+If you are presented with a license approval screen, make your desired Privacy elections, examine the license, check "I Agree", and click "I confirm".
+
+Choose the appropriate tab for whether you wish to download using the Download Director or using http. Then select the SPSS Statistics Diagnostic Tool and click Download Now. The file should download to your local default "downloads" folder.
+
+2) Navigate to the downloaded file and run it:
+
+For Windows XP, double-click on the file (you may need Administrative privileges if you are working in a high-security environment). 
+
+For Windows Vista and later versions, right-click on the file and select Run As Administrator.
+
+3) An installer dialog will open -- proceed through the dialog to completion. 
+
+NOTE: The InstallAnywhere installer "wrapper" is being used to gather some of the information to be reported, but nothing is actually being "installed". The Diagnostic Tool can be run as many times as desired, and the "installer" will launch each time. This is expected behavior.
+
+4) When the Tool execution is complete, navigate to the the default temp folder for the machine. This is most easily accomplished by entering '%temp%' in any suitable file browser - My Computer, Windows Explorer, or simply Start->Run (or Start->Applications->Run on Windows Vista or later).
+
+5) In the %temp% folder, locate the SPSS_Diagnostics.zip file and either send it to the Support Analyst via email or upload it to the active PMR.
+
+
+RELATED INFORMATION
+ Tools for SPSS Products [https://www14.software.ibm.com/webapp/iwm/web/reg/download.do?source=swg-tspssp&lang=en_US&S_PKG=dl4&cp=UTF-8]
+
+
+
+
+ORIGINAL PUBLICATION DATE
+ 2012/11/12

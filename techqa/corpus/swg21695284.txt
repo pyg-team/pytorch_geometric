@@ -1,0 +1,37 @@
+Title: IBM Can you hide or change the Name field in Workplace XT search results? - United States
+
+Text:
+Workplace XT Name column search TECHNOTE (FAQ)
+
+QUESTION
+ In FileNet Workplace XT, is it possible to hide or change the Name field that shows up as the left most column in the display? This column is displayed when browsing folders in Workplace XT and in the results from a search. Is it possible to create a search where the results do not display the Name column? 
+
+CAUSE
+The Name column is a default system column and cannot be removed or hidden. Also, the column will always be the left most column in the results output for the search.
+
+ANSWER
+Although the Name column cannot be removed or hidden, it is possible to replace the value in the Name column with a different property. However, the change would affect not only the search results but also the display of the objects in the object store when browsing in Workplace XT. This change can be made in the XT Site Preferences but only allows the Document Name setting to be changed to another system property, not a custom property. This setting can be changed in the Workplace XT Site Preferences as follows: 
+
+
+
+ 1. WorkplaceXT Tools menu
+    
+    
+ 2. Administration
+    
+    
+ 3. Site Preferences
+    
+    
+ 4. Object Stores
+    
+    
+ 5. Select the Object Store name 
+    
+    
+ 6. In the Names section, there is a "Document name" option.
+    
+    
+ 7. Select the displayed value (default is "Document Title") 
+    
+    You can change the value displayed in the Name column, but the column will still have the "Name" header and will be the left most column.

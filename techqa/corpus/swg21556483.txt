@@ -1,0 +1,67 @@
+Title: IBM Rules are not applying properly. Too many rules files. - United States
+
+Text:
+STERLINGNFX TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Rules are not applying properly. Too many rules files. 
+
+SYMPTOM
+
+
+The problem can manifest itself that during model configuration rules are not firing.
+Log file have the following entries:
+
+2008.10.20 08:14:06:726 Env/TP-Processor11:ERROR:CONFIGURATOR Rule Compilation Error : renUSFullServiceBuffet_613201_1224284217000 details :
+
+The system is out of resources.
+Consult the following stack trace for details.
+java.lang.OutOfMemoryError
+
+The system is out of resources.
+Consult the following stack trace for details.
+java.lang.OutOfMemoryError
+
+2008.10.20 08:14:06:728 Env/TP-Processor11:ERROR:CONFIGURATOR Error loading rules renUSFullServiceBuffet_613201_1224284217000
+
+ 
+
+
+1) The number of files that the rules folder can contain is probably a limitation of the java class loader. 
+2) Currently when the rules folder at JCP contains about 40000 files there doesn't seem to be any issue 
+3) The suspected limit where we may encounter out of memory errors is 66000 files, as per the old support force case 020260 
+4) We have tried to replicate the issue locally to see where the breaking point would be, here is what we did 
+a. Executed compile all on visual modeler and tried to configure each model, thus increasing the number of files in the rules folder. 
+b. We have been able to get to 32000 files in the rules folder. 
+c. As the number of files in the rules folder has increased, the time to compile models has increased and now we are at a point where it just doesn't seem practical to continue this experiment
+
+Currently each rule is a Java file with many inner classes this results in too many files in the rules folder. One way to decrease the number of files in the rules folder is to not have inner classes
+
+There were too many rules in the rules folder and the CLASSPATH was not getting set correctly, hence rules were not getting compiled. del ren*.* did the trick and rules started to get compiled
+
+Error Message Log file:
+
+ 
+
+2008.10.20 08:14:06:726 Env/TP-Processor11:ERROR:CONFIGURATOR Rule Compilation Error : renUSFullServiceBuffet_613201_1224284217000 details :
+
+The system is out of resources.
+Consult the following stack trace for details.
+java.lang.OutOfMemoryError
+
+The system is out of resources.
+Consult the following stack trace for details.
+java.lang.OutOfMemoryError
+
+2008.10.20 08:14:06:728 Env/TP-Processor11:ERROR:CONFIGURATOR Error loading rules renUSFullServiceBuffet_613201_1224284217000
+
+
+RESOLVING THE PROBLEM
+
+
+del ren*.* in ..\WEB-INF\classes\com\comergent\apps\configurator\rules did the trick and rules started to get compiled
+
+
+
+HISTORICAL NUMBER
+ NFX4016

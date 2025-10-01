@@ -1,0 +1,39 @@
+Title: IBM ITCAM for MQ Agent Queue Manager Status - United States
+
+Text:
+mq agent kmq queue manager status itcam TECHNOTE (FAQ)
+
+QUESTION
+ How does the MQ Agent obtain the Queue Manager status? 
+
+ANSWER
+There are two attribute groups (workspaces) that provide the queue manager status and the method for collecting the information is different. Here is a summary of each one: 
+
+* Current Queue Manager Status Attribute Group (attribute "Qmgr Status")
+
+This is an on-demand table, so when a workspace or situation request comes in the data is collected at that time. The data for "Qmgr Status" is obtained by issuing "dis qmstatus" and if the queue manager is not up the qmgr status value is set based upon the return code from WMQ when attempting to issue a command. Possible values for this status are: 
+
+n/a=-1 
+Starting=1 
+Running=2 
+Quiescing=3 
+Stopping=4 
+Standby=5 
+Stopped=0 
+
+* Managers Attribute Group (attribute "Qmgr Status") 
+
+This is a sampled table, so when a workspace or situation request comes in, the data that is returned is from the last sample collection. However, for the "Qmgr Status" attribute, if the agent is performing some other work and determines a change in the queue manager status, it will be updated at that time before the next "sample" collection. For example, if an on-demand request comes in and the agent determines that the queue manager is down it will update the status at that time. The data for "Qmgr Status" for Managers attribute group is obtained by issuing "dspmq" along with other checks for some addition status values.
+
+Possible values for this status are: 
+
+Inactive=0 
+Active=1 
+No_Agent=2 
+Unknown=3 
+QueueManager_Not_Available=4 
+CommandServer_Not_Responding=5 
+Dynamic_Queue_Allocation_Error=6 
+Cluster_Repository_Unavailable=7 
+Standby=8 
+Running_Elsewhere=9

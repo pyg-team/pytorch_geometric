@@ -1,0 +1,172 @@
+Title: IBM PI64638: LAUNCHER CRASH ON WINDOWS 64 BIT IN RMADDRUNENTRY FUNCTION CALL WHILE EXECUTING RUN() MAP - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  A Launcher crash is repeatedly occurring on Windows 64 bit in
+   RMAddRunEntry function call while executing RUN() map.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  WTXCQ - WTX00048877
+   GM / GM
+   Circumvention: None
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Users Affected:
+   IBM Transformation Extender 64 bits Launcher customers on
+   Windows platform
+   
+   Problem Description:
+   ITX Launcher 64 bits version abends on Windows when RUN maps
+   need file related resource management. This is a memory
+   corruption problem. Stack trace most likely to point to
+   resmgr64!RMAddRunEntry, malloc/free heap allocation functions or
+   any other function from resmgr64.dll module.
+   
+   Platforms Affected:
+   Windows 64 bits
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A buffer that stores pointers to pending structures was not
+   large enough resulting with bad memory write when RUN map has
+   multiple cards that require resource management. The code was
+   corrected to allocate a sufficient buffer.
+   
+   Applies to:
+   8.4.0.5, 8.4.1.4, 9.0.0.0
+   
+   Fixed in the next service packs and releases.
+   
+   To obtain the fix for this APAR:
+   
+   To see if the next service pack or product release is available,
+   check the IBM Transformation Extender Downloads page:
+   http://www.ibm.com/support/entry/portal/product/other_software/t [http://www.ibm.com/support/entry/portal/product/other_software/t]
+   ransformation_extender
+   
+   If the service pack or product release is available, download it
+   from Fix Central:
+   http://www.ibm.com/support/fixcentral/ [http://www.ibm.com/support/fixcentral/]
+   
+   If the service pack or product release is not available and you
+   require the APAR fix immediately, request a Limited Availability
+   Interim Fix (LAIF) by opening a PMR:
+   http://www.ibm.com/support/servicerequest/Home.action [http://www.ibm.com/support/servicerequest/Home.action]
+   
+   Prior to version 9.0.0, IBM Transformation Extender was called
+   IBM WebSphere Transformation Extender.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI64638
+   
+   
+ * REPORTED COMPONENT NAME
+   ITX LAUNCHER
+   
+   
+ * REPORTED COMPONENT ID
+   5724M4011
+   
+   
+ * REPORTED RELEASE
+   841
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-06-21
+   
+   
+ * CLOSED DATE
+   2016-07-28
+   
+   
+ * LAST MODIFIED DATE
+   2016-09-08
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ITX LAUNCHER
+   
+   
+ * FIXED COMPONENT ID
+   5724M4011
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R840 PSY
+   UP
+   
+   
+ * R841 PSY
+   UP
+   
+   
+ * R900 PSY
+   UP

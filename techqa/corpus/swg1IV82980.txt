@@ -1,0 +1,201 @@
+Title: IBM IV82980: NT AGENT WON'T START AFTER REMOTE DEPLOY UPDATEAGENT. - United States
+
+Text:
+  A FIX IS AVAILABLE
+IBM Tivoli Monitoring 6.3.0 Fix Pack 7 (6.3.0-TIV-ITM-FP0007) [http://www-01.ibm.com/support/docview.wss?uid=swg24041633]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  APAR Type:            Field
+   Approver Initials:    TR
+   Severity:             2
+   Reported Release:     630
+   Compid:               5608A41CI Distributed Installer
+   ABSTRACT:             NT agent won't start after remote deploy
+                         updateagent
+   PROBLEM DESCRIPTION:
+   For some systems, the NT agent won't restart after update via
+   remote deploy (tacmd updateagent). It also sill not restart
+   manually after the update. If the agent is uninstalled and
+   reinstalled, it starts normally.
+   
+   When the problem happens, the install log shows this message:
+   
+      The service did not respond to the start or control request
+      in a timely fashion.
+   
+   That same service message results regardless of whether the
+   start attempt was made via the MTEMS or "kinconfg -sKNT -L".
+   
+   If the start attempt is made with "net start net start
+   kntcma_primary", this message results:
+   
+      The Service is not responding to the control function.
+   
+   If "<CANDLEHOME>\TMAITM6\kntcma.exe TEST" is used to launch
+   the agent in test mode, this message results:
+   
+      kntcma.exe - Entry Point Not Found
+      The procedure entry point GetProcessImageFileNameA could
+      not be located in the dynamic link library PSAPI.DLL.
+   
+   The key is "<CANDLEHOME>\TMAITM6\PSAPI.DLL". If this file
+   exists (normally with 28944 bytes), the agent does not
+   start as described above. If the file is removed (or hidden
+   by rename), the agent starts normally.
+   
+   The problem systems are Windows 2003 and started with ITM
+   at version 6.20.00.00. However, the former is not a
+   prerequisite. ITM 6.20.00.00 (and possibly earlier) appears to
+   set up the problem condition on any level of Windows.
+   
+   RECREATE INSTRUCTIONS:
+   1. Install NT agent 6.20.00.00 on Windows 2003.
+   2. Upgrade the agent to 6.30.05.00.
+   3. Observe the failure.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Rename or remove "<CANDLEHOME>\TMAITM6\PSAPI.DLL", then start
+   the agent.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Windows OS Agent (KNT) does not start after upgrade to
+   6.3.0 FP5. File PSAPI.DLL in the Windows directory, the
+   ITMHOME\InstallITM, ITMHOME\CMS, and ITMHOME\TMAITM6 directories
+   is not compatible with Windows 2008 and above.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Delete PSAPI.DLL from the directories where it was installed and
+    place the appropriate 32-bit version of the file in the
+   ITMHOME\InstallITM directory. Also place the ITMHOME\InstallITM
+   directory as the first directory in the System PATH and remove
+   any other occurrences of ITMHOME\InstallITM directory that
+   appears in the System PATH.
+   
+   The fix for this APAR is contained in the following maintenance
+   packages:
+   
+     | fix pack | 6.3.0-TIV-ITM-FP0007
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  On 32-bit Systems, delete PSAPI.DLL from the following
+   directories: Windows, ITMHOME\InstallITM, ITMHOME\CMS, and
+   ITMHOME\TMAITM6.  Copy the PSAPI.DLL from the
+   c:\Windows\System32 directory to the ITMHOME\InstallITM
+   directory.  Finally, update the System Path variable to remove
+   ITMHOME\InstallITM and add it to the beginning of the System
+   Path variable.
+   On 64-bit systems, delete PSAPI.DLL from the following
+   directories: Windows, ITMHOME\InstallITM, ITMHOME\CMS, and
+   ITMHOME\TMAITM6.  Copy the PSAPI.DLL from the
+   c:\Windows\SysWOW64 directory to the ITMHOME\InstallITM
+   directory.  Finally, update the System Path variable to remove
+   ITMHOME\InstallITM and add it to the beginning of the System
+   Path variable.
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV82980
+   
+   
+ * REPORTED COMPONENT NAME
+   OMEG DIST INSTA
+   
+   
+ * REPORTED COMPONENT ID
+   5608A41CI
+   
+   
+ * REPORTED RELEASE
+   630
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-03-29
+   
+   
+ * CLOSED DATE
+   2016-06-27
+   
+   
+ * LAST MODIFIED DATE
+   2017-01-06
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   OMEG DIST INSTA
+   
+   
+ * FIXED COMPONENT ID
+   5608A41CI
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R630 PSY
+   UP

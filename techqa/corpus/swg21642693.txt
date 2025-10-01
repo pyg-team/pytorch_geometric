@@ -1,0 +1,33 @@
+Title: IBM 0C1 in DFHZNEP during CICS start up running with Debug Tool - United States
+
+Text:
+GLUE ZNEP NEP startup initialization progarm check 0C4 abends0c1 abend0c15655S9700 R660 660 R600 600 HCI6600 5655-S97 5655S97 5655S9700 R670 670 R700 700 HCI6700 5655-S97 5655S97 5655Y0400 R680 680 R800 800 HCI6800 5655-Y04 5655Y04 kixinfo TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ On startup of your CICS Transaction Server for z/OS (CICS TS) region, you receive DFHAP0001 An abend (code 0C1/AKEA) has occurred at offset x'0216' in module DFHZNEP. You are running with global user exit XEIIN active with exit program EQANCXIN for Debug Tool for z/OS. 
+
+SYMPTOM
+DFHAP0001 [http://www.ibm.com/support/knowledgecenter/SSGMCP_5.1.0/com.ibm.cics.ts.messages.doc/DFHAP/DFHAP0001.html] An abend (code 0C1 [http://www.ibm.com/support/knowledgecenter/SSLTBW_2.2.0/com.ibm.zos.v2r2.ieah700/m014954.htm]/AKEA [http://www.ibm.com/support/knowledgecenter/SSGMCP_5.1.0/com.ibm.cics.ts.messages.doc/AKxx_abend_codes/AKEA.html]) has occurred at offset x'0216' in module DFHZNEP.
+
+
+CAUSE
+Debug Tool's program is active at global user exit XEIIN, but not yet active at XEIOUT. This causes control to be passed to the next sequential instruction after the EXEC CICS RETURN command in DFHZNEP.
+
+DIAGNOSING THE PROBLEM
+You look at a dump at the time of the program check and see the failing transaction is CSNE. The last trace entry prior to the program check is an incorrect EXIT from a RETURN:
+
+EIP EXIT RETURN OK
+
+Control was given back to DFHZNEP when it should not have been. When DFHZNEP issues the EXEC CICS RETURN command, control was given to Debug exit program EQANCXIN that passed back a return code 4 or UERCBYP, indicating to CICS that it should bypass this command. This was due to Debug Tool's program for exit point XEIOUT not yet being active, so it could not simulate the correct handling of the RETURN command. This caused control to be passed back to DFHZNEP when it does not expect to get control back and this leads to the abend0C1 program check.
+
+RESOLVING THE PROBLEM
+Make sure the Debug Tool's exits are fully active before the CICS CSNE task starts:
+
+
+ * Remove the DTCPO\ and DTCXXO\ entries from the sequential terminal 
+ * Add EQA0CPLT [http://www.ibm.com/support/knowledgecenter/en/SSQ2R2_14.0.0/com.ibm.debugtool.doc/cgdita/tcuscic.html] to the PLTPI
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ CICS/TS CICS TS CICS Transaction Server

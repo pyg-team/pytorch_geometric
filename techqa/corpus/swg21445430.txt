@@ -1,0 +1,46 @@
+Title: IBM Automated data collection capability provided by wpcollector tool - United States
+
+Text:
+wpcollector isalite isa lite data collection collector diagnostics TECHNOTE (FAQ)
+
+QUESTION
+ What are the benefits of the wpcollector tool? How do I use this tool? 
+
+ANSWER
+Wpcollector is a command line tool that automates the collection of portal logs and configuration files. Using automated log collection early in the Case life cycle can greatly reduce the number of doc requests that are made by Support. 
+
+Wpcollector is delivered with WebSphere Portal beginning with the 7.0 release. If tracing is required for the problem scenario, you must manually enable traceStrings and recreate the problem PRIOR to running wpcollector. 
+
+To run wpcollector, please follow the steps, below:
+
+
+
+ * If IBM Support has requested tracing, enable it as instructed by the L2 Support Engineer and then recreate the problem. If no tracing is requested, proceed to the step, below: 
+   
+
+
+ * If using Microsoft Windows, Unix/Linux, or IBM i, run the following script from the <wp_profile_root> [http://www-01.ibm.com/support/knowledgecenter/SSHRKX_8.5.0/mp/reference/wpsdirstr.dita]/PortalServer/bin/ directory to begin the collection:  * 
+    * 
+    *  Unix/Linux: wpcollector.sh 
+    *  i: wpcollector.sh 
+    *  
+    * Tip: To specify the option for collecting files for the Deployment Manager profile, use the "dmgr.root" parameter. For example: 
+    *  wpcollector.bat -Ddmgr.root=/opt/IBM/WebSphere/profiles/dmgr_profile
+   
+   
+ * If using IBM z/OS, proceed as follows [../reference/wpsdirstr.html%5C]:  * 
+    * 
+    *  In the Portal configuration panel, select Collect Diagnostics. 
+    *  Follow the Customization Dialog instructions for submitting the Collect Diagnostics job (EJPSLOGS). 
+    *  
+    * Tip: To collect data from the Deployment Manager, the only requirement is to submit the job from the system where the Deployment Manager is installed (i.e. so it can access the files). There is no prompt in the ISPF panel for this.
+   
+   
+ * Locate the wp.mustgather-<timestamp>.zip file in the <wp_profile_root> [http://www-01.ibm.com/support/knowledgecenter/SSHRKX_8.5.0/mp/reference/wpsdirstr.dita]/filesForAutoPD/ directory and follow the instructions in "Exchanging information with IBM Technical Support for problem determination" [http://www-01.ibm.com/support/docview.wss?uid=swg21153852] to manually FTP the collection to IBM. If using z/OS, there may be additional z/OS-specific files required, such as WebSphere Portal servant region or controller region joblogs. Wpcollector currently does not collect these files. Your L2 Support Engineer will inform you in the event these files are needed and provide instructions for collecting them. 
+   
+
+
+ * If tracing was requested and enabled, please follow the instructions provided by the L2 Support Engineer to disable tracing from the environment
+
+RELATED INFORMATION
+ Data Collection and Symptom Analysis [http://www-01.ibm.com/support/knowledgecenter/SSHRKX_8.5.0/mp/trouble/tbl_apdt_over.dita?lang=en]

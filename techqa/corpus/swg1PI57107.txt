@@ -1,0 +1,213 @@
+Title: IBM PI57107: CSQ1,ABN=0C4-0000003B,U=SYSOPR ,C=W9700.800.BUFF-CSQP1CON,M= CSQGFRCV,LOC=CSQPLPLM.CSQP1CON+000004F6 - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The customer is running WebSphere MQ for z/OS V8.0 and at start
+   up they received:
+   .
+   CSQ1,ABN=0C4-0000003B,U=SYSOPR  ,C=W9700.800.BUFF-CSQP1CON,M=
+   CSQGFRCV,LOC=CSQPLPLM.CSQP1CON+000004F6
+   .
+   MSTR log:
+   12.25.08 IEA794I SVC DUMP HAS CAPTURED:
+            DUMPID=002 REQUESTED BY JOB (CSQ1MSTR)
+            DUMP TITLE=CSQ1,ABN=0C4-0000003B,U=SYSOPR  ,C=
+            W9700.800.BUFF-CSQP1CON,M=CSQGFRCV,LOC=
+            CSQPLPLM.CSQP1CON+000004F6
+   12.25.08 *CSQV086E !CSQ1    QUEUE MANAGER ABNORMAL TERMINATION
+            REASON=00D96001
+   12.25.08 IXL016I CONNECTOR CSQEQSGLCSQ103 TO STRUCTURE
+            QSGLCSQ_ADMIN TERMINATING: JOB CSQ1MSTR ASID 008B
+            CONNECT PROCESSING FAILED.
+   12.25.21 IEF450I CSQ1MSTR MQM CSQ1MSTR - ABEND=S6C6 U0000
+            REASON=00D96001
+   .
+   Dump showed:
+   PSW: 07741001 80000000 00000000 18E06D16
+   Instruction length: 04   Interrupt code: 003B
+   Failing instruction text: 001058F0 E14858F0 F01058F0
+   Translation exception address: 00000004_00FDE800
+   .
+   Breaking event address: 00000000_18E06C9A
+   AR/GR 0-1    00000000/00000000_00000000
+                00000002/00000000_7DE009A0
+   AR/GR 2-3    00000000/00000000_7DE007F0
+                00000000/00000000_00000000
+   AR/GR 4-5    00000000/00000000_12E42080
+                00000000/FFFFFFFF_98DFE460
+   AR/GR 6-7    00000000/00000000_122C6040
+                00000000/00000000_7DE009A0
+   AR/GR 8-9    00000000/00000000_00008000
+                00000000/00000000_00000000
+   AR/GR 10-11  00000000/00000000_12E42080
+                00000000/00000000_7EE3D988
+   AR/GR 12-13  00000000/00000000_18E0A860
+                00000000/00000000_7DE00248
+   AR/GR 14-15  00000000/00000000_00FDE040
+                00000000/00000004_00FDE5A0
+   .
+   EB 10A85A10 ACE 10A859B0 CCB 003.RCRSC 02   Active in MQ
+     ***Abend and reason code  0C4-00000000
+   .
+   The abend occurs when CSQP1CON is running in amode 64 and is
+   using R15 to invoke media manager to connect to a page set. In
+   this case the Page set was 0. However, the high half of GR15
+   (00000004) has a residual value, so the 0C4 occurs.
+   .
+   Additional symptoms:
+   ABEND0C4 ABENDS0C4 S0C4 S00C4 0C4
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All users of WebSphere MQ for z/OS Version 8 *
+   *                 Release 0 Modification 0.                    *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Abend 0C4 occurs in CSQP1CON when the   *
+   *                      queue manager attempts to connect to a  *
+   *                      pageset. If the pageset connection      *
+   *                      occurred during queue manager startup,  *
+   *                      the queue manager terminates abnormally *
+   *                      S6C6 REASON=00D96001 with message       *
+   *                      'CSQV086E QUEUE MANAGER ABNORMAL        *
+   *                      TERMINATION REASON 00D96001'            *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   When connecting to a pageset, CSQP1CON locates the address of
+   the required routine via several control blocks. The address of
+   these control blocks is loaded using a 31bit load instruction.
+   If the registers used contain residual values in the high half
+   of the register, this leads to an invalid address being
+   addressed, and results in the reported abend.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  CSQP1CON is changed to use LLGT to load the addresses, to ensure
+   the high half of the register is set correctly.
+   000Y
+   CSQP1CON
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  *********
+   * HIPER *
+   *********
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI57107
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ Z/OS 8
+   
+   
+ * REPORTED COMPONENT ID
+   5655W9700
+   
+   
+ * REPORTED RELEASE
+   000
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   YesHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-02-12
+   
+   
+ * CLOSED DATE
+   2016-03-02
+   
+   
+ * LAST MODIFIED DATE
+   2016-05-21
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UI35939
+   
+   
+
+MODULES/MACROS
+ *  CSQP1CON
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ Z/OS 8
+   
+   
+ * FIXED COMPONENT ID
+   5655W9700
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R000 PSY UI35939 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI35939]
+   UP16/04/12 P F604 ¢
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

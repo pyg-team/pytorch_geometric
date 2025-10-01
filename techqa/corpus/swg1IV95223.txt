@@ -1,0 +1,124 @@
+Title: IBM IV95223: ITNM 4.2 CANNOT PLACE LABELS ON MAP BACKGROUND - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Environment:
+   NOI 1.4.0.4
+   ITNM 4.2 FP2
+   Background maps in previous versions allowed admins to fix
+   placement of device icons over an image to provide some context.
+   This capability is not available in ITNM 4.2 FP2.
+   Need the ability to create an image (NOT GIS) and place text
+   information in labels in this image.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * Potentially all 4.2 users                                    *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * Background images would not scale on Network Views.          *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * The change in visualisation software added new default       *
+   * settings not present in 3.9 and 4.1; these were catered for  *
+   * in code but not documented as no issue with the defaults was *
+   * detected in test.                                            *
+   *                                                              *
+   * The customer should change their configuration as described  *
+   * in the amended documentation.                                *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This issue was documented under RTC Maintenance Task 49887.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV95223
+   
+   
+ * REPORTED COMPONENT NAME
+   TIV NETWK MGR I
+   
+   
+ * REPORTED COMPONENT ID
+   5724S4500
+   
+   
+ * REPORTED RELEASE
+   420
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-04-18
+   
+   
+ * CLOSED DATE
+   2017-05-30
+   
+   
+ * LAST MODIFIED DATE
+   2017-05-30
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

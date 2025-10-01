@@ -1,0 +1,162 @@
+Title: IBM PI82574: WHEN USING FILE MANAGER WITH A COPYBOOK AND COBOL VERSION 6.1 ISUSED FILE MANAGER FAILS. - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When using File Manager with a copybook and COBOL Version 6.1 is
+   used File Manager fails.
+   File Manager will not process copybooks correctly if the STGOPT
+   compiler option is in effect.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  To resolve the problem simply provide FM with an IGYCDOPT COBOL
+   options with NOSTGOPT coded. This can also be coded for
+   individual users via the COBOL settings.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All users of File Manager COBOL copybooks.   *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: When creating templates from COBOL      *
+   *                      copybooks and Enterprise COBOL 5.1 and  *
+   *                      above is being used,                    *
+   *                      incorrect Start positions are           *
+   *                      displayed on the resulting template.    *
+   *                      The customer has specified STGOPT       *
+   *                      compiler option.                        *
+   ****************************************************************
+   * RECOMMENDATION: Apply the provided PTF.                      *
+   ****************************************************************
+   When compiler option STGOPT is used by the compiler to create FM
+   templates , incorrect ADATA is created and passed to FM
+   resulting in an invalid template.
+   File Manager does not support the STGOPT compiler option.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  File Manager has been changed to override the compiler option
+   STGOPT with NOSTGOPT for the duration of the copybook compile.
+   
+   For the documentation changes associated with this APAR,
+   please refer to the 'What's New' section in the
+   File Manager V13 Knowledge Center:
+   https://ibm.biz/Bdi3zy [https://ibm.biz/Bdi3zy]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI82574
+   
+   
+ * REPORTED COMPONENT NAME
+   FILE MANAGER Z/
+   
+   
+ * REPORTED COMPONENT ID
+   5655Q1200
+   
+   
+ * REPORTED RELEASE
+   D10
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-06-06
+   
+   
+ * CLOSED DATE
+   2017-10-13
+   
+   
+ * LAST MODIFIED DATE
+   2017-11-01
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *     FMN0LVL
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   FILE MANAGER Z/
+   
+   
+ * FIXED COMPONENT ID
+   5655Q1200
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * RD10 PSY UI51072 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI51072]
+   UP17/10/23 P F710
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

@@ -1,0 +1,48 @@
+Title: IBM CHLAUTH Made Simple: Common Scenarios and Examples and How to Verify them with RUNCHECK (rev3) - United States
+
+Text:
+MQ CHLAUTH 2035 channel authentication WHITE PAPER
+
+ABSTRACT
+ The objective of this technical document is to provide examples how to use CHLAUTH rules to better control access to your WebSphere MQ queue managers. Common problems caused by CHLAUTH rules are noted, along with examples of CHLAUTH rules to control access. 
+
+CONTENT
+Table of Contents: 
+
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * Scenario 1: Control access for specific MQ-admin users 
+   Scenario 2: Control access for specific MQ client application 
+   Scenario 3: Control access for specific user via the user's certificate distinguished name (DN) 
+   Scenario 4: Mapping a particular user to the mqm user (extension of scenario 1) 
+   Scenario 5: Only allow access to a particular channel from a specific IP address range. 
+   Scenario 6: For a specific channel, Block all users, but allow specific users to connect. 
+   Scenario 7: Using CHLAUTH for RCVR (Receiver/Sender) channels 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+
+
+Techdoc-7041997-3-CHLAUTH .pdf [/support/docview.wss?uid=swg27041997&aid=2]Techdoc-7041997-3-CHLAUTH .pdf [/support/docview.wss?uid=swg27041997&aid=1]

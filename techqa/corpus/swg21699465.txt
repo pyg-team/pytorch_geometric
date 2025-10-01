@@ -1,0 +1,50 @@
+Title: IBM DASH SSO session invalidated when  WebGUI java applet is loaded - United States
+
+Text:
+DASHL2; DASHL2SSO; security warning; certificate; invalidated; session; SSO; untrusted; identity; website TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ SSO session between Jazz for Service Management's (JazzSM) Dashboard Application Services Hub (DASH) component and Netcool Omnibus WebGUI becomes invalid when a WebGUI Java applet is loaded. 
+
+SYMPTOM
+SSO works between DASH and WebGUI when logging into DASH first and then loading WebGUI content. The user is not required to enter login credentials again to load the WebGUI content. However, when a WebGUI java applet is loaded, a certificate error is presented. If "cancel" is selected the map doesn't load, but navigation in WebGUI and DASH browser tabs is still possible without being directed back to the login page. If "continue" is clicked then the map fails to load, and the session is directed to the WebGUI/TIP login page with a message that the session as become invalidated. The DASH browser tab also is directed to the DASH login page.
+
+
+CAUSE
+The behavior is a result of security restrictions that are controlled by Java on the workstation where the browser is running. The detail of the restriction is covered in the following technical note from Oracle:
+
+https://www.java.com/en/download/help/jcp_security.xml [https://www.java.com/en/download/help/jcp_security.xml]
+
+DIAGNOSING THE PROBLEM
+No specific diagnosis steps are required beyond matching the issue to what is described in the "Symptom" section of this technical note. The full pop-up reads:
+"Security Warning
+Do you want to continue
+The connection to this website is untrusted.
+Note: The certificate is not valid and cannot be used to verify the identity of this website"
+
+
+RESOLVING THE PROBLEM
+To address the issue, add the WebGUI server's connection URL to the exceptions list in the java console. The procedure to do that is included in the following Oracle technical note:
+
+
+
+
+
+https://www.java.com/en/download/faq/exception_sitelist.xml [https://www.java.com/en/download/faq/exception_sitelist.xml] 
+
+ 
+
+Additionally, it may be necessary to add the signer for the default certificate of the WebGUI WAS instance into the client side java keystore: 
+
+Extract the signer from the WebGUI admin console as follows: 
+
+ 1.  Log into the WebGUI WAS Admin Console 
+ 2.  Go to Security > SSL Certificate and Key Management. 
+ 3.  Click on Key stores and certificates. 
+ 4.  Click on NodeDefaultTrustStore. 
+ 5.  Click on Signer Certificates 
+ 6.  Click the check mark next to the "Root" certificate, and then click the "Extract" option. Type the path and file name you'd like the signer written to, and then click "Apply". 
+ 7.  Copy the resulting file to your workstation. 
+ 8.  Open the Java console on your workstation. 
+ 9.  Go to the Security tab, and click on the "Manage Certificates" option. 
+ 10. Click "Import" and select the certificate file you copied over in step 7.

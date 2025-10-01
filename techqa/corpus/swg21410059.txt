@@ -1,0 +1,56 @@
+Title: IBM Error executing wsadmin.bat operation, when installing or uninstalling CM Server components - United States
+
+Text:
+1410059; CQ; ClearQuest; CC; ClearCase; CCRC; CQWEB; ClearQuest Web; CQ Web; 7.1; installation manager; installation; install; Change management; CM Server; Error during "install" phase; Error executing; wsadmin.bat; operation; status=105; See agent output log for more information; failed to installed Websphere Application server version 6.1.0.25; WASX7017E; Exception received while running file "installAll.jacl"; exception information; com.ibm.websphere.management.exception.ConfigServiceException; com.ibm.websphere.management.exception.ConnectorNotAvailableException; org.apache.soap.SOAPException; SOAPException; faultCode=SOAP-ENV:Client; msg=Read timed out; targetException=java.net.SocketTimeoutException; Read timed out TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This technote explains how to resolve an error, "Error executing ... wsadmin.bat operation". This can occur when installing or uninstalling Change Management (CM) Server components for IBM Rational ClearQuest or Rational ClearCase. 
+
+SYMPTOM
+ 
+
+You are installing ClearQuest or ClearCase, including server components. This error occurs in IBM Installation Manager:
+
+Error during "install" phase: Error executing "C:\Program Files\ibm\RationalSDLC/common/eWAS/bin/wsadmin.bat" operation (status=105).
+See agent output log for more information: C:\Documents and Settings\All Users
+\Application Data\IBM\Installation Manager\logs\native\yyyymmdd_xxxx.log 
+
+ 
+
+Alternatively, this error message occurs:
+
+Error during "install" phase:
+failed to installed Websphere Application server version 6.1.0.25
+
+
+CAUSE
+
+There are two known causes for this problem:
+
+
+ 1. You are trying to install ClearQuest Web components on a Web server that already has CM Server for ClearCase.
+    
+    
+ 2. This occurs when trying to install or uninstall on a server with insufficient memory. It has been observed on servers with less than 4 GB RAM. The error occurs because the IBM WebSphere Application Server service cannot run. The install launches WebSphere commands as part of the installation.
+
+DIAGNOSING THE PROBLEM
+ 
+
+The agent output log has this error: 
+
+WASX7017E: Exception received while running file "installAll.jacl"; exception information: com.ibm.websphere.management.exception.ConfigServiceException com.ibm.websphere.management.exception.ConnectorNotAvailableException org.apache.soap.SOAPException: [SOAPException: faultCode=SOAP-ENV:Client; msg=Read timed out;targetException=java.net.SocketTimeoutException: Read timed out]
+
+
+RESOLVING THE PROBLEM
+ 
+
+ 
+
+ 1. Verify if you have IBM Installation Manager 1.3.1 or later installed. If you do, check the installed packages by accessing the File > View Installed Packages. If CM Server is installed for ClearCase, and you are trying to install ClearQuest Web, update Installation Manager to the latest version. You should also update to Rational Products 7.1.1.x when possible.
+    
+    
+ 2. Increase the RAM on the server to resolve the error. The minimum RAM is 8 GB when Rational ClearCase or ClearQuest is installed with Change Management (CM) Server.
+
+ 
+
+Cross reference information Segment Product Component Platform Version Edition Software Development Rational ClearCase Installation

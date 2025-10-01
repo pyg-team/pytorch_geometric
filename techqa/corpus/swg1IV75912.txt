@@ -1,0 +1,124 @@
+Title: IBM IV75912: PDJRTE 8.0.1.0 USING INTERACTIVE OPTION NOT DETECTING WAS VERSION CORRECTLY - United States
+
+Text:
+AIX SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When attempting to configure 8.0.1.0 PDJRTE with WAS 8.5 using
+   pdjrtecfg -action config -interactive
+   Creates PD.Properties file in
+   /opt/IBM/WebSphere/AppServer/java/jre/PolicyDirector
+   and not
+   /opt/IBM/Websphere/AppServer/tivoli/tam
+   as per IBM Documentation.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  run the command with the following parameters
+   ./pdjrtecfg -action config -interactive -alt_config
+   -cfgfiles_path /opt/IBM/WebSphere/AppServer/tivoli/tam
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  PDJRTE fro 8010 version with interactive option fails to
+   detect correct WAS version.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The following IBM TechNote has been published to correct and
+   rectify the issue reported in by this APAR -
+   
+   http://www-01.ibm.com/support/docview.wss?uid=swg21964960 [http://www-01.ibm.com/support/docview.wss?uid=swg21964960]
+   
+   This TechNote will be reviewed for the next release of ISAM
+   and will be integrated into the official documentation if
+   needed.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV75912
+   
+   
+ * REPORTED COMPONENT NAME
+   ACCESS MGR WEBS
+   
+   
+ * REPORTED COMPONENT ID
+   5724C0811
+   
+   
+ * REPORTED RELEASE
+   801
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-08-10
+   
+   
+ * CLOSED DATE
+   2015-08-27
+   
+   
+ * LAST MODIFIED DATE
+   2015-08-27
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

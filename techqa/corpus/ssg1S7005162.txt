@@ -1,0 +1,137 @@
+Title: IBM System Storage N series Service Image 30602728 (BIOS 8.3) for N3150 / N3220 / N3240 Download and Installation Instructions - United States
+
+Text:
+DoNotDisplayThisDocInPortal PRODUCT DOCUMENTATION
+
+ABSTRACT
+ These instructions describe how to locate, download, and install the Service Image that contain BIOS 8.3 for the IBM® System Storage™ N series N3150, N3220, and N3240 storage systems. 
+
+CONTENT
+ 
+
+Installation prerequisites:
+
+To install the firmware image, you need to have access to the following set of devices. 
+
+ * A Web server and a serial console connected to the storage controller.
+
+
+Downloading the firmware: 
+
+To download the firmware files to your storage controller, complete the following steps using a Web server. 
+
+[/support/docview.wss?uid=ssg1S7005162&amp;aid=1]
+Steps [/support/docview.wss?uid=ssg1S7005162&amp;aid=1]
+Download Actions when using a Web server [/support/docview.wss?uid=ssg1S7005162&amp;aid=1]
+1 [/support/docview.wss?uid=ssg1S7005162&amp;aid=1]
+The Service Image's 30602728.zip file for installation with a Web server is available for download using the "Software Packages ...." link from the Download page of the N series support website [http://www.ibm.com/storage/support/nseries]. Refer to the important information for N series support [http://www.ibm.com/support/docview.wss?uid=ssg1S1003659] for step-by-step instructions explaining how to access software packages as part of the complete instructions for entitlement and registration. When following the step-by-step instructions, select the System Firmware and Diagnostics software package from the N series and related Host Software Downloads - Pick page and open it by pressing the "Continue" button at the bottom of the page. [/support/docview.wss?uid=ssg1S7005162&amp;aid=1]
+2 [/support/docview.wss?uid=ssg1S7005162&amp;aid=1]
+When the N series and related Host Software Downloads - Download page is displayed for the System Firmware and Diagnostics software package, the "Download using Download Director" view will be preselected. IBM recommends using the Download Director [http://www6.software.ibm.com/dldirector/doc/DDfaq_en.html] as this method will ensure easy recovery in the event the download is interrupted. If necessary, you may also choose the "Download using http" view to download files via HTTP. [/support/docview.wss?uid=ssg1S7005162&amp;aid=1]
+3 [/support/docview.wss?uid=ssg1S7005162&amp;aid=1]
+Find the Service Image 30602728 for N3150, N3220, N3240 section on the N series and related Host Software Downloads - Download page and select the 30602728.zip file to be downloaded.
+ * When using the "Download using Download Director" view, select the radio button next to the file and press the "Download now" button at the bottom of the page. If the download begins without allowing you to specify the location to save the file, press the "Cancel" button, press "Yes" to delete the partially downloaded file, then press the "Setup" button, select the "Always ask for download location" option, press the "OK" button, close the window and restart the download. You will now be requested to specify the location to save the file. 
+ * When using the "Download using http" view, select the "Download now" button to the right of the file. You will now be requested to specify the location to save the file.
+
+
+Follow the prompts in the download process to save the 30602728.zip file to your Web server so that it can be accessed later using the following convention.
+ * http://
+ * web_server_name
+ * /
+ * path
+ * /30602728.zip
+ * 
+ * 
+ * 
+ *  web_server_name is the name of the Web server on a network accessible to your storage controller. 
+   path is the directory path on the Web server specified to store the file. 
+
+
+Downloading and Installing the BIOS service image for Clustered Data ONTAP: 
+
+To download and install the bios service image on your storage controller, complete the following steps. 
+
+Steps Install Actions on storage controller 1 At the storage system prompt, enter the following command to list the contents of the boot device: run local version -b
+
+2 If the BIOS version identified in Step 1 is... Then... 8.3 Your storage controller has the current version of BIOS. You do not need to proceed any further. Earlier than 8.3 Go to Step 3. 3 At the storage system prompt, enter the following command to determine the BIOS version on your storage controller: run local sysconfig -a 
+
+Make a note of the BIOS version from the resulting output.
+
+4 At the storage system prompt, enter the following command to set your privilege level to diagnostic: set -privilege diagnostic
+
+5 At the storage system prompt, enter the following command to update the boot device: system firmware download -package http://web_server/path/30602728.zip 
+
+where web_server is the name or IP address of your Web server, and path is location of the file on your Web server. 
+
+The following prompts appear, allowing you to supply a user name and password to access your Web server (if applicable): 
+
+Enter User:
+Enter Password: 
+
+The following messages appear: 
+
+Firmware download started.
+Unpacking package contents.
+Firmware downloaded
+A reboot followed by an 'update_flash' command at the firmware prompt is required for the downloaded firmware to take effect.
+
+Note: The update process can take a few minutes. 
+
+Verify that the output includes Firmware 8.3.
+
+6 At the storage system prompt, enter the following command to list the updated contents of the boot device: run local version -b 
+
+7 At the storage system prompt, enter the following command to reboot your storage controller: reboot local 
+
+8 The BIOS performs an auto firmware update if the bootarg AUTO_FW_UPDATE is set to true. Verify the BIOS revision by entering the following ONTAP command to verify the current running BIOS revision: run local sysconfig -a 
+
+Note: If the BIOS update did not occur, then a halt followed by entering the update_flash command at the LOADER> prompt is required to update the BIOS firmware.
+
+
+Downloading and Installing the BIOS service image for Data ONTAP 7-Mode 
+
+To download and install the bios service image on your storage controller, complete the following steps. 
+
+Steps Install Actions on storage controller 1 At the storage system prompt, enter the following command to list the contents of the boot device: run local version -b
+
+2 If the BIOS version identified in Step 1 is... Then... 8.3 Your storage controller has the current version of BIOS. You do not need to proceed any further. Earlier than 8.3 Go to Step 3. 3 At the storage system prompt, enter the following command to determine the BIOS version on your storage controller: run local sysconfig -a 
+
+Make a note of the BIOS version from the resulting output.
+
+4 At the storage system prompt, enter the following command to set your privilege level to advanced: priv set advanced 
+
+5 At the storage system prompt, enter the following command to download the file from your Web server to your storage controller: software install http://web_server/path/30602728.zip 
+
+where web_server is the name or IP address of your Web server, and path is location of the file on your Web server. 
+
+The following messages appear: 
+
+software: copying to 30602728.zip
+software: 100% file read from location.
+software: /etc/software/30602728.zip has been copied.
+software: installing software, this could take a few minutes...
+software: installation of 30602728.zip completed.
+
+6 At the storage system prompt, enter the following command to update the boot device: download -d 
+
+The following message appears upon completion of the update: 
+
+[download.requestDone:notice]: Operator requested download completed 
+
+Note: The update process can take a few minutes.
+
+7 At the storage system prompt, enter the following command to list the updated contents of the boot device: version -b 
+
+Verify that the output includes Firmware 8.3.
+
+8 At the storage system prompt, enter the following command to reboot your storage controller: reboot 
+
+9 The BIOS performs an auto firmware update if the bootarg AUTO_FW_UPDATE is set to true. Verify the BIOS revision by entering the following ONTAP command to verify the current running BIOS revision: sysconfig -a 
+
+Note: If the BIOS update did not occur, then a halt followed by entering the update_flash command at the LOADER> prompt is required to update the BIOS firmware.
+
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Network Attached Storage (NAS) System Storage N3150 M/T 2857-A15- A25 Firmware Network Attached Storage (NAS) System Storage N3220 M/T 2857-A12- A22 Firmware Network Attached Storage (NAS) System Storage N3240 M/T 2857-A14- A24 Firmware

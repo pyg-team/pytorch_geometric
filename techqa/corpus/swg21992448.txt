@@ -1,0 +1,123 @@
+Title: IBM db2icrt fails with DB21016E - United States
+
+Text:
+db2icrt; DB21016E; DB21018E; DBI1281E; ipc; message; queue; kernel TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ db2icrt fails with DB21016E, DB21018E and DBI1281E when trying to update DBM CFG 
+
+SYMPTOM
+ 
+
+~/sqllib/db2dump/db2diag.log will report message about db2bp process not being able to find a message queue identifier. 
+
+ 
+
+db2icrt will fail and return the errors below: 
+
+
+DB21016E The Command Line Processor encountered a system error while 
+sending the command to the backend process. 
+
+DB21018E A system error occurred. The command line processor could no
+continue processing. 
+
+Update DBM cfg SYSADM_GROUP errcode = 8 
+
+DBI1281E The database manager configuration file could not be 
+initialized. 
+
+Explanation: 
+
+An error occurred when attempting to initialize the database manager 
+configuration file. A DB2 instance could not be created or upgraded. 
+
+User response: 
+
+Refer to the log file for troubleshooting. Resolve the problem and try
+the command again. If the problem persists, contact your IBM service 
+representative. 
+
+
+Related information: 
+Gathering diagnostic information for instance creation problems 
+
+
+
+CAUSE
+The operating system's kernel parameters related to message queues are insufficient.
+
+
+
+ENVIRONMENT
+Applies only to operating systems which use kernel parameters to control IPC (inter process communications) resources.
+
+
+
+DIAGNOSING THE PROBLEM
+ 
+
+Run the command below to view kernel parameters 
+
+ /home/db2inst1: ipcs -l
+
+------ Shared Memory Limits --------
+max number of segments = 4096
+max seg size (kbytes) = 67108864
+max total shared memory (kbytes) = 17179869184
+min seg size (bytes) = 1
+
+------ Semaphore Limits --------
+max number of arrays = 1024
+max semaphores per array = 250
+max semaphores system wide = 256000
+max ops per semop call = 32
+semaphore max value = 32767
+
+------ Messages: Limits --------
+max queues system wide = 3839
+max size of message (bytes) = 65536
+default max size of queue (bytes) = 65536
+
+
+ 
+
+
+
+
+
+
+RESOLVING THE PROBLEM
+Increase kernel parameters below as per docs: 
+
+Modifying kernel parameters (Linux) [http://www.ibm.com/support/knowledgecenter/en/SSEPGG_10.5.0/com.ibm.db2.luw.qb.server.doc/doc/t0008238.html] 
+
+Modifying kernel parameters (HP-UX) [http://www.ibm.com/support/knowledgecenter/en/SSEPGG_10.5.0/com.ibm.db2.luw.qb.server.doc/doc/t0006477.html] 
+
+Modifying kernel parameters (Solaris) [http://www.ibm.com/support/knowledgecenter/en/SSEPGG_10.5.0/com.ibm.db2.luw.qb.server.doc/doc/t0006476.html]
+
+This example assumes it is Linux so we increase the parameters below, see links above on how to change for each operating system.
+
+kernel.msgmni=16384
+kernel.msgmax=65536
+kernel.msgmnb=65536
+
+Note: There may be other kernel parameters which are sized too small and may also need to be increased. db2osconf [http://www.ibm.com/support/knowledgecenter/en/SSEPGG_10.5.0/com.ibm.db2.luw.admin.cmd.doc/doc/r0008113.html] utility can be used to suggest kernel parameters for Solaris and HP-UX. On Linux kernel parameters automatically increased with exception of DB2 client installs like IBM Data Server Client.
+
+
+After changing the kernel parameters. Drop the DB2 instances which were partially created when db2icrt failed.
+
+1) List DB2 instances 
+# /opt/IBM/db2/v105/instance/db2ilist
+
+2) Drop DB2 instance
+# /opt/IBM/db2/v105/instance/db2idrop <DB2 instance from step 1>
+
+This should remove <DB2 instance home>/sqllib, if this was deleted then the DB2 instance record may need to be manually deleted by referring to "How can I manually drop an instance" in the Related URL section.
+
+3) Ensure DB2 instance was removed 
+# /opt/IBM/db2/v105/instance/db2ilist
+
+
+RELATED INFORMATION
+ How can I manually drop an instance [http://www.ibm.com/support/docview.wss?uid=swg21673848]

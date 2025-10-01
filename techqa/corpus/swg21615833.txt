@@ -1,0 +1,33 @@
+Title: IBM With WebSphere Process Server (WPS), in a mediation flow that is configured with "store and forward" QoS, the message store is not initiated when the web service becomes unavailable - United States
+
+Text:
+Store and Forward; ServiceRuntimeException; ServiceUnavailableException; mediation component; v70rnotes TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ In a mediation flow component, a web service is invoked using the ServiceInvoke primitive. The "store and forward" qualifier is set on the mediation flow component. When the web service becomes unavailable, the message store is not initiated, which means the "Store and forward" quality of service (QoS) does not work. However, if you use this "store and forward" qualifier within a Java component, it works. 
+
+SYMPTOM
+The log files might contain the following exceptions when the web service is off-line: 
+
+com.ibm.ws.sibx.scax.mediation.engine.FailFlowException: CWSXM3300E: Fail primitive 'Fail', component “Component1”、module “TestStoreAndForward”、interface“{http://TestStoreAndForward_Lib/SayHello}SayHello” operation “operation1” raised a FailFlowException。The user-supplied error message is “12-11-1 3:04 PM, BAC8E9F1-013A-4000-E000-186CC0A84E01, Fail1, TestStoreAndForward, <failInfo xsi:type="Se:FailInfoType" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:Se="http://www.ibm.com/websphere/sibx/smo/v6.0.1"><failureString>javax.xml.ws.WebServiceException: java.net.ConnectException: HTTP ( 404 ) Not Found address : http://localhost:9080/TestServiceProviderWeb/sca/Export1</failureString><origin>ServiceInvoke1</origin><invocationPath><primitive inTerminal="in" name="ServiceInvoke1" outTerminal="fail"/></invocationPath></failInfo>
+, 7”
+at com.ibm.ws.sibx.mediation.primitives.fail.FailMediation.mediate(FailMediation.java:198)
+at 
+......
+SCA context: 
+Interaction: [invoke,operation1] {TestStoreAndForward}sca.default.component#sca/dynamic/reference => {TestStoreAndForward}Component1.component
+Handler: com/ibm/ws/sibx/scax/runtime/handler/NativeMFCImplementationHandler (com.ibm.ws.sibx.scax.runtime.handler.NativeMFCImplementationHandler,com/ibm/wsspi/sca/extensions/NativeImplementationGroup2)
+
+Wrapped by:
+com.ibm.ws.sibx.scax.mediation.engine.FailFlowException: CWSXM3300E: Fail primitive 'Fail', component “Component1”、module “TestStoreAndForward”、interface“{http://TestStoreAndForward_Lib/SayHello}SayHello” operation “operation1” raised a FailFlowException。
+......
+
+A failed event is generated. However, you can see from the Failed Event Manager that the message store is not initiated.
+
+
+CAUSE
+In a mediation flow component, the exception, which is thrown due to web service unavailability, is a "ServiceRuntimeException" exception. It does not match the "ServiceUnavailableException," which is why the "store and forward" QoS qualifier is not triggered. However, in a Java™ component, Java code is used to invoke the web service. If the web service is unavailable, a "ServiceUnavaibleException" exception is returned and the "store and forward" QoS function is triggered.
+
+
+RESOLVING THE PROBLEM
+To solve the problem, add the ServiceRuntimeException exception to the Properties of the Store and Forward in WebSphere Integration Developer.

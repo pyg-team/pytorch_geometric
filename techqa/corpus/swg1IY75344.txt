@@ -1,0 +1,132 @@
+Title: IBM IY75344: SITUATION NOT FIRING IB REQUEST ERRORS ATTRIBUTE STRING NOT ENCLOSED IN SINGLE QUOTES CNP DISPLAY SHOWS QUOTES - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Situations with string type attributes are not enclosed in
+   single quotes.  The display may show single quotes, but the
+   situation predicate values within the CMS may not have single
+   quotes.  This can cause problems with how the situation fires
+   and when specifying multiple attributes can cause IB request
+   errors 1203 rule syntax error and 1131 Bad lodge request.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Add single quotes around string values, but there must be a
+   change to the string itself for the situation predicate to get
+   updated.  Single quotes added without a change to string are
+   determined to be "no change" by the CNP and will cause the
+   update to not be sent to the CMS.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  If a situation is defined based on a String attribute and the
+   test value
+       contains embedded spaces, the saved situation will be
+   reported as
+       'Problem' by the server.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix for this APAR is included in the following maintenance
+   vehicle(s): interim fix pack 1.9.6-TIV-MgtPortal-IF0004
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IY75344
+   
+   
+ * REPORTED COMPONENT NAME
+   TIV MGMT PORTAL
+   
+   
+ * REPORTED COMPONENT ID
+   5724K6500
+   
+   
+ * REPORTED RELEASE
+   196
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2005-08-17
+   
+   
+ * CLOSED DATE
+   2006-02-22
+   
+   
+ * LAST MODIFIED DATE
+   2006-02-22
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TIV MGMT PORTAL
+   
+   
+ * FIXED COMPONENT ID
+   5724K6500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R196 PSY
+   UP

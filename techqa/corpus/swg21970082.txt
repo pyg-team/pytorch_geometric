@@ -1,0 +1,50 @@
+Title: IBM 'Ontology Query' cannot process a remote API Error FFQEY0523E for Watson Explorer (WEX) Studio 10.0 - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ We are currently having issues with Studio 10.0.0.2 uploading an RDF file and executing an Ontology query to a WEX analytics collection. The issue that keeps popping up is 'Ontology Query' cannot process a remote API Error FFQEY0523E. I have already checked the communication between Studio and WEX analytics components to make sure that there is no interference but it is still unclear what is causing the constant remote API problems. Why am I receiving this error? 
+
+CAUSE
+This is a problem of the back-end RDF database as the RDF database (Apache Jena TDB) was corrupted.
+[/support/docview.wss?uid=swg21970082&aid=1] [/support/docview.wss?uid=swg21970082&aid=1]
+
+
+RESOLVING THE PROBLEM
+Multi-process RDF update operations may corrupt the TDB, such as RDF updates from document processing and Studio RDF import.
+
+Workaround: deleting journal files of TDB (*.jrnl) under the $ES_NODE_ROOT/data/<collection ID>/rdf/tdb
+
+Note: After deleting the journal files, it should work, but the data will be incomplete, so you will need to rebuild the RDF database.
+
+
+If you need the RDF from both document processing and Studio import, do not run both types of operations at the same time.
+
+If using the "search index from RDF" function, you will need to specify different collections to store search index of RDF.
+
+
+ * e.g. 
+   create two collections, 
+   Collection A (RDF store) and 
+   Collection B (search index of RDF), 
+   then configure Collection A to use Collection B as RDF search index collection. 
+   
+
+
+Case 1. RDF from document processing first 
+Before you run the index service (of collection A) to create an RDF from document processing, make sure the process for Studio RDF Import is stopped (<collection A>.exporter process) with the command line (since there is no UI to do this) esadmin <collection A>.exporter stop 
+
+Then start crawlers and indexing. After finishing indexing, stop the index service (of collection A) from Admin UI. 
+
+After stopping index service, start importing RDF from Studio. 
+
+Case 2. RDF from Studio import first 
+Stop index service from Admin UI then start importing from Studio. 
+After finishing Studio import, stop the exporter process by esadmin <collection A>.exporter stop 
+then start crawlers and index service. 
+
+In both cases, index service of collection B must be working during RDF creation of collection A .  
+
+
+Cross reference information Segment Product Component Platform Version Edition Watson Group Watson Content Analytics Linux, Windows 3.5 Advanced

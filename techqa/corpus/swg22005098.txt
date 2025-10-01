@@ -1,0 +1,29 @@
+Title: IBM "Java exception occured - Native function: MjpiCheckJavaException" error using ITX JALE adapter with large IDocs - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When using the IBM Transformation Extender (ITX) JALE adapter (from the ITX Pack for SAP R/3) it may be noted that transferring large IDocs to SAP fail with this error message - "Java exception occured - Native function: MjpiCheckJavaException". 
+
+SYMPTOM
+Audit log shows:
+
+<Message>Java exception occured - Native function: MjpiCheckJavaException</Message>
+
+
+CAUSE
+The JVM heap (altered with the Xmx/Xms parameters) is too small. The IDoc typically require 4 to 5 times more memory than the size of the IDoc itself. So a 400MB IDoc for example may require an Xmx value of 2048MB or greater
+
+ENVIRONMENT
+Any executing environment using the JALE adapter in an ITX map
+
+DIAGNOSING THE PROBLEM
+Review audit log for the error message above. Additional information can be found in the JNI Layer Trace (if activated in the dtx.ini file).
+
+RESOLVING THE PROBLEM
+Add the following in the appropriate section of the dtx.ini file:
+
+[JVM Options]
+option1=-Xmx2048m 
+option2=-Xms1024m

@@ -1,0 +1,60 @@
+Title: IBM Unable to setup syndication when SPNEGO is enabled - United States
+
+Text:
+Syndication; SPNEGO; credential vault; credential slot TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+Unable to setup syndication when SPNEGO is enabled. 
+
+You have SPNEGO enabled. You are trying to setup the syndication between 2 servers, but you get the following error and cannot setup syndication:
+
+"Could not use the selected credential vault to authenticate against the target URL. Ensure the server details are entered correctly, and the credential slot user exists in the target server".
+
+
+
+CAUSE
+This happens because the host gets intercepted when SPNEGO is enabled. 
+
+ 
+
+Following can be seen in the logs collected after enabling SPNEGO debug:- 
+
+
+[19/09/11 18:26:41:430 CEST] 00000045 ServerCredent < 
+com.ibm.ws.security.spnego.ServerCredentialsFactory hasServerCredentialsFor RETURN true [19/09/11 18:26:41:430 CEST] 00000045 AllServerConf 2 
+com.ibm.ws.security.spnego.AllServerConfigs getServerConfig server = <<hostname of the server>> [19/09/11 18:26:41:446 CEST] 00000045 TrustAssociat 2 
+com.ibm.ws.security.spnego.TrustAssociationInterceptorImpl isTargetInterceptor Got a match for the server config
+[19/09/11 18:26:41:446 CEST] 00000045 HTTPHeaderFil > 
+com.ibm.ws.security.spnego.HTTPHeaderFilter isAccepted ENTRY 
+[19/09/11 18:26:41:446 CEST] 00000045 HTTPHeaderFil < 
+com.ibm.ws.security.spnego.HTTPHeaderFilter isAccepted RETURN true processAll is true, therefore we always intercept.
+[19/09/11 18:26:41:446 CEST] 00000045 TrustAssociat < 
+com.ibm.ws.security.spnego.TrustAssociationInterceptorImpl isTargetInterceptor: true RETURN [19/09/11 18:26:41:446 CEST] 00000045 TrustAssociat > 
+com.ibm.ws.security.spnego.TrustAssociationInterceptorImpl negotiateValidateandEstablishTrust ENTRY 
+[19/09/11 18:26:41:446 CEST] 00000045 SpnegoHandler > 
+com.ibm.ws.security.spnego.SpnegoHandler handleRequest ENTRY 
+[19/09/11 18:26:41:446 CEST] 00000045 AllServerConf 2 
+com.ibm.ws.security.spnego.AllServerConfigs getCanonicalHostname CanonicalSupport has converted xxxxx to xxxxx
+[19/09/11 18:26:41:446 CEST] 00000045 SpnegoHandler > 
+com.ibm.ws.security.spnego.SpnegoHandler isAuthHeaderNotSPNEGO ENTRY Basic cG9ydGFkbXdwczI6cG9ydGFkbXdwczI=
+[19/09/11 18:26:41:446 CEST] 00000045 SpnegoHandler 2 
+com.ibm.ws.security.spnego.SpnegoHandler isAuthHeaderNotSPNEGO Client sent back a non-SPNEGO authentication header: 0000: 61646d77 7073323a
+
+This says that the host xxxxx is seen, it will be intercepted.
+
+
+RESOLVING THE PROBLEM
+ To address this issue, you will need to add SPNEGO web authentication filter criteria with instruction from: 
+
+
+http://publib.boulder.ibm.com/infocenter/wasinfo/v7r0/index.jsp?topic=%2Fcom.ibm.websphere.base.doc%2Finfo%2Faes%2Fae%2Fusec_kerb_SPNEGO_edit.html [http://publib.boulder.ibm.com/infocenter/wasinfo/v7r0/index.jsp?topic=%2Fcom.ibm.websphere.base.doc%2Finfo%2Faes%2Fae%2Fusec_kerb_SPNEGO_edit.html]
+
+
+
+
+
+
+ * 
+ *  Cross reference information Segment Product Component Platform Version Edition Enterprise Content Management Workplace Web Content Management Replication & Syndication Linux 
+ * 
+ *

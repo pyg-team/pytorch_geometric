@@ -1,0 +1,150 @@
+Title: IBM PI18576: SESSIONLISTENER DOES NOT EXECUTE SAME SESSIONTIMEOUTFILTER FOR MULTIPLE PARALLEL SESSIONS OF A USER - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Fixes integrated in WebSphere Portal 8.0.0.1 Combined Cumulative Fixes [http://www-01.ibm.com/support/docview.wss?uid=swg24034497]
+Fixes integrated in WebSphere Portal 7.0.0.1 & 7.0.0.2 Combined Cumulative Fixes [http://www-01.ibm.com/support/docview.wss?uid=swg24029452]
+Fixes integrated in WebSphere Portal 8.5.0.0 Combined Cumulative Fixes [http://www-01.ibm.com/support/docview.wss?uid=swg24037786]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  SessionListener does not execute same SessionTimeOutFilter for
+   multiple parallel sessions of a user.
+   SessionTimeoutFilter will not be triggered normally when using
+   the same user login to two different browsers and get two
+   different sessions. One login first and another one login
+   later. When the later one login, the session of first one in
+   portal was not timeout yet. Then wait a moment until both of
+   their session are timeout. Only the first one's session
+   triggered SessionTimeoutFilter but not the second one.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  None available.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  SessionListener does not execute same SessionTimeOutFilter for
+   multiple parallel sessions of a user.
+   SessionTimeoutFilter will not be triggered normally when using
+   the same user login to two different browsers and get two
+   different sessions. One login first and another one login
+   later. When the later one login, the session of first one in
+   portal was not timeout yet. Then wait a moment until both of
+   their session are timeout. Only the first one's session
+   triggered SessionTimeoutFilter but not the second one.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A code fix for this issue is integrated into the WebSphere
+   Portal & WCM Combined Cumulative Fix 01 (PI17736 [http://www-01.ibm.com/support/docview.wss?uid=swg1PI17736]) for
+   Portal 8.5.0.0 available from Fix Central:
+   
+   http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent
+   =ibm/WebSphere&product=ibm/WebSphere/WebSphere [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm/WebSphere&product=ibm/WebSphere/WebSphere]
+   +Portal&release=All&platform=All&function=aparId&apars=PI17736
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI18576
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSPHERE PORTA
+   
+   
+ * REPORTED COMPONENT ID
+   5724E7600
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-05-23
+   
+   
+ * CLOSED DATE
+   2014-07-22
+   
+   
+ * LAST MODIFIED DATE
+   2014-07-22
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBSPHERE PORTA
+   
+   
+ * FIXED COMPONENT ID
+   5724E7600
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R700 PSY
+   UP
+   
+   
+ * R850 PSY
+   UP

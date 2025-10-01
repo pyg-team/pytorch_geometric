@@ -1,0 +1,57 @@
+Title: IBM Can't login on Anywhere, BMXAA7901E error - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Seeing error while trying to login into Anywhere apps:
+
+BMXAA7901E - You cannot log in at this time. Contact the system administrator. 
+
+CAUSE
+The user may be blocked and other security measures may be preventing user to login.
+
+DIAGNOSING THE PROBLEM
+The following error appear on MXServer systemOut: 
+
+---------------------------
+BMXAA7901E - You cannot log in at this time. Contact the system administrator.
+psdi.util.MXAccessException: BMXAA7901E - You cannot log in at this time. Contact the system administrator.
+at psdi.security.SecurityService.commonUserValidation(SecurityService.java:1010)
+at psdi.security.SecurityService.authenticateUserM(SecurityService.java:603)
+at psdi.security.SecurityService.authenticateUserM(SecurityService.java:379)
+at psdi.security.SecurityService.authenticateUserM(SecurityService.java:357)
+at psdi.util.RMISession.authenticateUser(RMISession.java:329)
+at psdi.util.RMISession.loadUserInfo(RMISession.java:206)
+at psdi.util.RMISession.connect(RMISession.java:62)
+at psdi.webclient.system.websession.SimpleWebAppSession.connect(SimpleWebAppSession.java:175)
+at com.ibm.tivoli.maximo.oslc.provider.MaximoAuthenticatorImpl.authenticateRequest(MaximoAuthenticatorImpl.java:239)
+at com.ibm.tivoli.maximo.oslc.provider.MaximoOslcProviderServlet.authenticateRequest(MaximoOslcProviderServlet.java:652)
+at com.ibm.tivoli.maximo.oslc.provider.MaximoOslcProviderServlet.doGet(MaximoOslcProviderServlet.java:444)
+---------------------------
+
+
+And this is what you will see on Mobile First systemOut:
+---------------------------
+[9/18/17 15:40:37:138 PDT] 000001ae TpaeCustomAut I processRequest() - Request URI=/MaximoAnywhere/apps/services/api/WorkExecution/iphone/init
+[9/18/17 15:40:37:186 PDT] 000001ae TpaeCustomAut I processRequest() - Request URI=/MaximoAnywhere/apps/services/api/WorkExecution/iphone/my_custom_auth_request_url
+[9/18/17 15:40:37:187 PDT] 000001ae TpaeCustomAut I getAuthenticationData() ... Entering
+[9/18/17 15:40:37:238 PDT] 000001ae TpaeCustomLog W Bad HTTP response code: 401 returned from this URL: http://hostname:80/maximo/oslc/login [http://uscavtpw76du.vsolvit.com/maximo/oslc/login]message: Unauthorized
+[9/18/17 15:40:37:239 PDT] 000001ae TpaeCustomLog W maxAuthLogin() jsonResponse {"oslc:Error":{"oslc:message":"BMXAA7901E - You cannot log in at this time. Contact the system administrator.","oslc:statusCode":"401","oslc:extendedError":{"oslc:moreInfo":{"rdf:resource":"http:\/\/hostname\/maximo\/oslc\/error\/messages\/BMXAA7901E [http:////uscavtpw76du.vsolvit.com//maximo//oslc//error//messages//BMXAA7901E]"}},"spi:reasonCode":"BMXAA7901E"}}
+[9/18/17 15:40:37:240 PDT] 000001ae TpaeCustomLog W maxAuthLogin() no spi:user
+[9/18/17 15:40:37:240 PDT] 000001ae TpaeCustomLog W maxAuthLogin() oslc error status code 401
+[9/18/17 15:40:37:241 PDT] 000001ae SystemOut O authLogout() entering...
+[9/18/17 15:40:37:241 PDT] 000001ae SystemOut O authLogout() no session token to communicate with, null
+[9/18/17 15:40:37:241 PDT] 000001ae TpaeCustomAut I processAuthenticationFailure
+[9/18/17 15:40:37:241 PDT] 000001ae TpaeCustomAut I oslcError: 401
+[9/18/17 15:40:37:241 PDT] 000001ae TpaeCustomAut I oslcMaxUserURL: null
+---------------------------
+
+
+RESOLVING THE PROBLEM
+Check the following on Maximo database: 
+
+1 Check for entries in the LOGINBLOCK table and see if there is an entry (or multiple entries) for the user. If there are, delete them. 
+2 Clear entries in the LOGINTRACKING table for this user where the ATTEMPTRESULT is either FAILED or FORGOTPSWD 
+
+You may need to restart Maximo and reopen the app on your device. After that you should be able to login on Anywhere apps.

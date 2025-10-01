@@ -1,0 +1,87 @@
+Title: IBM Passport Advantage download for IBM WebSphere Lombardi Edition V7.2 for AIX - United States
+
+Text:
+PAODownloadDocument; Passport advantage; 7.2.0; AIX DOWNLOADABLE FILES
+
+ABSTRACT
+ This document explains how to download IBM WebSphere Lombardi Edition version 7.2 installation files from the IBM Passport Advantage Web site. 
+
+DOWNLOAD DESCRIPTION
+WebSphere Lombardi Edition provides a unified business process management (BPM) environment for collaborative process improvement. 
+
+This document provides the eAssembly part numbers required for downloading WebSphere Lombardi Edition V7.2 for AIX from the Passport Advantage Web site [http://www.ibm.com/software/howtobuy/passportadvantage/pao_customers.htm]. 
+
+ 
+
+More information 
+
+For information about new and changed features in version 7.2, see the release notes [ftp://public.dhe.ibm.com/software/integration/lombardi-edition/WebSphere_Lombardi_Edition-7.2.0-Release_Notes.pdf]. 
+
+ 
+
+Hardware and software requirements 
+
+For information about hardware and software requirements, see Hardware and software requirements for AIX on Power [http://www.ibm.com/support/docview.wss?uid=swg27019762]. 
+
+ 
+
+Downloading and assembling the product 
+
+ 1. Locate the WebSphere Lombardi Edition eAssembly part numbers for your platform. The eAssembly part numbers are listed by platform in the tabbed sections of this document.
+    
+    
+ 2. Navigate to the Passport Advantage Web site [http://www.ibm.com/software/howtobuy/passportadvantage/pao_customers.htm] and download the parts. (For information about how to access Passport Advantage, see the Passport Advantage Quick Reference Guide in the Learn more section on the Passport Advantage Web site [http://www.ibm.com/software/howtobuy/passportadvantage/pao_customers.htm].) 
+    
+    
+ 3. Unpack the parts onto your system. 
+    
+    
+ 4. Follow the installation instructions listed below.
+
+
+
+
+TAB NAVIGATION
+ * AIX [http://www.ibm.com/support/docview.wss?uid=swg24028645]- selected tab,
+ * Linux [http://www.ibm.com/support/docview.wss?uid=swg24027951]
+ * Solaris [http://www.ibm.com/support/docview.wss?uid=swg24028665]
+ * Windows [http://www.ibm.com/support/docview.wss?uid=swg24027952]
+
+
+ 
+
+Supported platforms 
+
+For supported platforms, including required version levels, see Hardware and software requirements for AIX on Power [http://www.ibm.com/support/docview.wss?uid=swg27019762]. 
+
+ 
+
+Downloadable parts 
+
+The following table lists the parts in the eAssembly for IBM WebSphere Lombardi Edition V7.2 for AIX . 
+
+Part number Description CZVD5ML WebSphere Lombardi Edition V7.2 for AIX on Power 32-bit  
+
+Change history 
+
+ * 14 January 2011 
+ * 10 December 2010 
+
+
+INSTALLATION INSTRUCTIONS
+The following table describes Lombardi installation options. Navigate to the WebSphere Lombardi Edition library page [http://www.ibm.com/software/integration/lombardi-edition/library/documentation/], download the PDF you need, and follow the installation instructions.
+
+
+
+If you want to ... You should install ... For instructions, see ... Provide a central repository and shared development environment for process authors. Lombardi Process Center (includes Process Center Server and Performance Data Warehouse). Lombardi Process Center Installation and Configuration Guide for UNIX Automate installation of Lombardi Process Center. Lombardi Process Center using the Automated Installer. Lombardi Automated Process Center Installation and Configuration Guide for UNIX Install Lombardi servers in a runtime environment, such as staging, test, or production. Lombardi runtime environment (includes Process Server and Performance Data Warehouse). Lombardi Runtime Environment Installation and Configuration Guide for UNIX Automate installation of Lombardi servers in a runtime environment such as staging, test, or production Lombardi runtime environment using the Automated Installer. Lombardi Automated Runtime Environment Installation and Configuration Guide for UNIX 
+DOWNLOAD PACKAGE
+N/A
+
+
+
+TECHNICAL SUPPORT
+ Passport Advantage Online support at:
+http://www.ibm.com/software/howtobuy/passportadvantage/paocustomer/docs/en_US/ecare.html [http://www.ibm.com/software/howtobuy/passportadvantage/paocustomer/docs/en_US/ecare.html]
+
+WebSphere Lombardi Edition support at:
+http://www.ibm.com/support/entry/portal/Overview/Software/WebSphere/WebSphere_Lombardi_Edition [http://www.ibm.com/support/entry/portal/Overview/Software/WebSphere/WebSphere_Lombardi_Edition]

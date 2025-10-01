@@ -1,0 +1,211 @@
+Title: IBM PI57272: A WARNING MESSAGE SHOULD BE PRINTED WHEN SUBSCRIBERONLY SET TO T RUE FOR A SYNDICATOR - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Fixes integrated in WebSphere Portal 7.0.0.1 & 7.0.0.2 Combined Cumulative Fixes [http://www-01.ibm.com/support/docview.wss?uid=swg24029452]
+Fixes integrated in WebSphere Portal 8.0.0.1 Combined Cumulative Fixes [http://www-01.ibm.com/support/docview.wss?uid=swg24034497]
+Fixes integrated in WebSphere Portal 8.5.0.0 Combined Cumulative Fixes [http://www-01.ibm.com/support/docview.wss?uid=swg24037786]
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When deployment.subscriberOnly set to true on a server or node
+   of cluster, it can't work as a syndicator. If syndication pair
+   created with the server or node being the syndicator,
+   syndication update won't do anything. The status of the
+   syndicator will stuck in queued after syndication pair is
+   created for automatic syndication case.
+   
+   
+   [2/14/16 20:28:37:380 CST] 00002beb SyndicatorTas 3   run() -
+   Calling SyndicatorTaskManager.getInstance()
+   .startUpdateTask(m_updateId)
+   [2/14/16 20:28:37:380 CST] 00002beb SyndicatorTas 3   run() -
+   Returned from call to SyndicatorTaskManager.getInstance()
+   .startUpdateTask(m_updateId)
+   
+   
+   Analysis: a warning message should remind that
+   deployment.subscriberOnly should set to false for a syndicator
+   Solution: a warning message will show up for the case.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  When deployment.subscriberOnly set to true on a server or node
+   
+   of cluster, it can't work as a syndicator. If syndication pair
+   
+   created with the server or node being the syndicator,
+   
+   syndication update won't do anything. The status of the
+   
+   syndicator will stuck in queued after syndication pair is
+   
+   created for automatic syndication case.
+   
+   
+   
+   [2/14/16 20:28:37:380 CST] 00002beb SyndicatorTas 3   run() -
+   
+   Calling SyndicatorTaskManager.getInstance()
+   
+   .startUpdateTask(m_updateId)
+   
+   [2/14/16 20:28:37:380 CST] 00002beb SyndicatorTas 3   run() -
+   
+   Returned from call to SyndicatorTaskManager.getInstance()
+   
+   .startUpdateTask(m_updateId)
+   
+   
+   
+   Analysis: a warning message should remind that
+   
+   deployment.subscriberOnly should set to false for a syndicator
+   
+   Solution: a warning message will show up for the case.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A code fix for this issue is integrated into the WebSphere
+   
+   Portal & WCM Combined Cumulative Fix 30 (PI30168 [http://www-01.ibm.com/support/docview.wss?uid=swg1PI30168]) for Portal
+   
+   7.0.0.2 available from Fix Central:
+   
+   
+   
+   http://www-933.ibm.com/support/fixcentral/swg/selectFixes?
+   
+    [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?
+   ]parent=ibm/WebSphere&product=ibm/WebSphere/WebSphere+Portal&r
+   
+   elease=All&platform=All&function=aparId&apars=PI30168
+   
+   
+   
+   
+   
+   and into the WebSphere Portal & WCM Combined Cumulative Fix
+   
+   21 (PI57698 [http://www-01.ibm.com/support/docview.wss?uid=swg1PI57698]) for Portal 8.0.0.1 available from Fix Central:
+   
+   
+   
+   http://www-933.ibm.com/support/fixcentral/swg/selectFixes?
+   
+    [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?
+   ]parent=ibm/WebSphere&product=ibm/WebSphere/WebSphere+Portal&r
+   
+   elease=All&platform=All&function=aparId&apars=PI57698
+   
+   
+   
+   
+   
+   and into the WebSphere Portal & WCM Combined Cumulative Fix
+   
+   10 (PI55632 [http://www-01.ibm.com/support/docview.wss?uid=swg1PI55632]) for Portal 8.5.0.0 available from Fix Central:
+   
+   
+   
+   http://www-933.ibm.com/support/fixcentral/swg/selectFixes?
+   
+    [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?
+   ]parent=ibm/WebSphere&product=ibm/WebSphere/WebSphere+Portal&r
+   
+   elease=All&platform=All&function=aparId&apars=PI55632
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI57272
+   
+   
+ * REPORTED COMPONENT NAME
+   LOTUS WEB CONT
+   
+   
+ * REPORTED COMPONENT ID
+   5724I2900
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-02-15
+   
+   
+ * CLOSED DATE
+   2016-07-26
+   
+   
+ * LAST MODIFIED DATE
+   2016-07-26
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   LOTUS WEB CONT
+   
+   
+ * FIXED COMPONENT ID
+   5724I2900
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R700 PSY
+   UP

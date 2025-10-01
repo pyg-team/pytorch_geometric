@@ -1,0 +1,40 @@
+Title: IBM Netcool/OMNIbus WebGUI FP3 upgrade failure after hostname change - United States
+
+Text:
+de; two; instances; host; name; change TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Attempt to upgrade an instance of IBM Tivoli Netcool/OMNIbus WebGUI version 7.3.1 FixPack 3 (FP3) that was installed using IBM Tivoli Deployment Engine (DE) failed after hostname change. 
+
+SYMPTOM
+Change hostname of IBM Tivoli Deployment Engine (DE) and attempt IBM Tivoli Netcool/OMNIbus FixPack 3 (FP3) installation
+
+
+ENVIRONMENT
+IBM Tivoli Netcool/OMNIbus WebGUI version 7.3.1.x with IBM Tivoli Deployment Engine (DE), non-root instance
+
+DIAGNOSING THE PROBLEM
+Review the installation (IA) logs and you'll noticed that there are two DE instances were created using a single user, as a result of hostname change: 
+
+Example:
+1. /home/<username>/.acsi_hostname1 (the new/working copy)
+2. /home/<username>/.acsi_hostname2 (the old copy, prior to hostname change)
+
+Unfortunately, we should have only one instance of DE for a single user.
+
+RESOLVING THE PROBLEM
+Follow the steps noted below to resolve this issue:
+
+1. Rename .acsi_<hostname2> directory to .acsi_<hostname2>_OLD located at /home/<username>/.acsi_<hostname2> 
+
+2. Create a softlink to .acsi_<hostname1> with hostname '<hostname2>' using below command : 
+
+# ln -s /home/<username>/.acsi_<hostname1> /home/ncoadmin/.acsi_<hostname2> 
+
+3. Re-attempt FP3 installation. Now, it should re-use the existing DE instead of creating new instance again. 
+
+ 
+
+Cross reference information Segment Product Component Platform Version Edition Systems and Asset Management Tivoli Netcool/OMNIbus Web GUI AIX, Linux, Solaris 7.3.1, 7.3.0 
+PRODUCT ALIAS/SYNONYM
+ DE

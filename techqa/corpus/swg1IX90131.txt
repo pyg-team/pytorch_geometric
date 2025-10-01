@@ -1,0 +1,149 @@
+Title: IBM IX90131: ORB THREADS MAY HANG WHILE CONNECTING TO AN INVALID HOSTNAME AFTER APPLYING APAR IX90122 - United States
+
+Text:
+  FIXES ARE AVAILABLE
+PM98578: SHIP SDK 6 SR15 FOR WSAS V7.0.0.X [http://www-01.ibm.com/support/docview.wss?uid=swg24036504]
+PM98576: SHIP SDK 626 SR7 FOR WSAS V8.0.0.X [http://www-01.ibm.com/support/docview.wss?uid=swg24036505]
+PM98574: SHIP SDK 626 SR7 FOR WSAS V8.5.0.X AND V8.5.5.X [http://www-01.ibm.com/support/docview.wss?uid=swg24036506]
+PM98572: SHIP SDK 7 SR6 FOR WSAS V8.5.0.X AND V8.5.5.X [http://www-01.ibm.com/support/docview.wss?uid=swg24036508]
+PI29575: Ship JAVA apar IV66110 for WAS V8008 using Java 626 [http://www-01.ibm.com/support/docview.wss?uid=swg24038841]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Error Message: ORB threads may hang when trying to connect to an
+   invalid hostname.
+   .
+   Stack Trace: <OSB>10/24/13 23:35:48:349 EDT<CSB> 000000b1
+   ThreadMonitor W   WSVR0605W: Thread "WebContainer : 1"
+   (000000b5) has been active for 660077 milliseconds and may be
+   hung.  There is/are 1 thread(s) in total in the server that may
+   be hung.
+    at java.lang.Object.wait(Native Method)
+    at java.lang.Object.wait(Object.java:167)
+    at
+   com.ibm.rmi.iiop.Connection.waitForStateChange(Connection.java:7
+   40)
+    at
+   com.ibm.rmi.iiop.Connection.checkEstablished(Connection.java:336
+   1)
+    at com.ibm.rmi.iiop.Connection.send(Connection.java:2313)
+   .
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  The ORB thread failed to exit when trying to connect to an
+   invalid host name.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This defect will be fixed in:
+   7.0.0 SR6 FP1
+   6.0.1 SR7 FP1
+   6.0.0 SR15 FP1
+   5.0.0 SR16 FP5
+   .
+   The ORB code has been fixed to ensure that the ORB thread exits
+   gracefully while trying to connect to an invalid host name.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IX90131
+   
+   
+ * REPORTED COMPONENT NAME
+   ORB
+   
+   
+ * REPORTED COMPONENT ID
+   620700123
+   
+   
+ * REPORTED RELEASE
+   260
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-10-30
+   
+   
+ * CLOSED DATE
+   2013-11-01
+   
+   
+ * LAST MODIFIED DATE
+   2014-01-09
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    IV51449 [http://www-01.ibm.com/support/docview.wss?uid=swg1IV51449]
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ORB
+   
+   
+ * FIXED COMPONENT ID
+   620700123
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R260 PSY
+   UP
+   
+   
+ * R600 PSY
+   UP

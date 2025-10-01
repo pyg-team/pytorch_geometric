@@ -1,0 +1,109 @@
+Title: IBM MustGather:  Collecting data on IBM WebSphere DataPower SOA Appliance for networking and connectivity problems - United States
+
+Text:
+MustGatherDocument; mustgather; WebSphere DataPower SOA Appliance; XA35; XS40; XI50; XB60; XM70; networking ; TCP/IP; ethernet connection Backside header failed to parse due to: Failed to establish a backside connection TECHNOTE (FAQ)
+
+QUESTION
+ Collect the following MustGather information to help IBM Support troubleshoot networking and connectivity problems on IBM WebSphere DataPower SOA Appliances. 
+
+ANSWER
+The following information describes the documentation needed by IBM support to investigate this problem scenario. Gather as much information listed in this document as possible. Gathering all this information places IBM Support in a much better position with a higher probability of debugging the problem in less time. 
+Section 1. Resolving or Collecting information on this problem:
+
+Follow all safety precautions listed in the documents linked from: 
+Removing and Replacing Parts provided by IBM Level 2 for IBM WebSphere DataPower SOA Appliances: 9003/7993 and 9004/9235. [http://www.ibm.com/support/docview.wss?rs=2362&uid=swg21313112]
+
+
+1.1. Describing the Problem: 
+
+ 
+
+ 1. Document the current symptoms including messages, error codes or unexpected results. 
+ 2. Document the steps leading up to the problem. [/support/docview.wss?uid=swg21407324&amp;aid=1] 
+
+ 1. Collect all IP addresses and ports involved in the transaction. This will include the client IP address, the IP address and port that the Front Side Handler is listening on, and the IP address and port that DataPower connects to on the Backside. 
+ 2. Document any changes made to DataPower, the network, and other equipment involved in the transaction. 
+ 3. If the problem involves SSL/TLS encrypted traffic, review the following MustGather:
+    Debugging SSL handshake failures with WebSphere DataPower SOA Appliance [http://www.ibm.com/support/docview.wss?uid=swg21390809] 
+ 4. If the problem involves complete network connectivity failure, review the following MustGather:
+    MustGather Collecting data: WebSphere DataPower SOA Appliances: Ethernet port test [http://www.ibm.com/support/docview.wss?uid=swg21307258] 
+ 5. If the problem involves the message "Backside header failed to parse due to: Failed to establish a backside connection", please review the following technote:
+    How to troubleshoot the error "Failed to process response headers" [http://www.ibm.com/support/docview.wss?uid=swg21292808]
+
+
+1.2. Collecting information on the Problem: You will need: 
+
+ * Use of the "admin" password and id. 
+ * Access to the CLI command interface via serial or SSH. 
+ * Access to the WebGui
+
+
+1.3. Set the following trace and logging settings: 
+
+ 1. Access the DataPower SOA Appliance by using the WebGUI interface through your browser. 
+ 2. From the Control Panel in the WebGUI, select the Troubleshooting icon. 
+ 3. On the Troubleshooting Panel, under Logging, set the Log Level to "debug" by using the selection box. Click Set Log Level. 
+ 4. Start a packet capture from the same Troubleshooting Panel. Select the pulldown for Interface Type and select 'All Interfaces' or if you already know which interface is used for the affected connection, select the pulldown for Ethernet Interface and select the specific interface. 
+ 5. Set the Maximum Duration for however long you expect it will take to complete your recreate. Optionally, you can also select Continuous. NOTE: Please use caution with regard to memory storage limits. 
+ 6. Click Start Packet Capture
+    
+
+
+1.4. Recreate the Problem:  1. Recreate the problem writing down the steps. If the problem has just occurred and you are collecting data, proceed to 1.5 Collecting information on the Problem. 
+ 2. Let us know what specific steps/tools are used to recreate.
+
+
+1.5 Collecting information on the Problem 
+ 1.  From the Control Panel in the WebGUI, select the Troubleshooting icon. 
+ 2.  On the Troubleshooting Panel, under Reporting, click the Generate Error Report button. 
+ 3.  Once the Error Report is generated, right click on the View Error Report and select Save Target As ... to save the Error Report to a local file. 
+ 4.  Export your configuration to a file by opening the ADMINISTRATION menu from the left hand navigation list. 
+ 5.  Click Export Config to display the initial Export Configuration screen. 
+ 6.  Click the Create a backup of the entire system radio button and click Next. 
+ 7.  Enter a comment noting the problem and click Build Export button. 
+ 8.  The configuration of the entire system is backed up to a file named export.zip. An opportunity to download the zip is automatically presented on the next page. 
+ 9.  Click the Download button to down load the file to your workstation. 
+ 10. If you started a continuous packet capture, under the Stop Packet Capture heading, select the interface and click Stop Packet Capture. 
+ 11. Download the packet capture by selecting the Download Packet Capture link under the Start Packet Capture heading. 
+ 12. From the CLI (logged in as admin), issue the following commands. Make sure to log the entire CLI session to a file as the last command output is very large.
+     show version
+     show int
+     show int mode
+     show network
+     show route
+     show netarp
+     show dns
+     show load
+     show throughput
+     show tcp
+     show ethernet-mii
+     show ethernet-mau
+
+diag; show task sysrecord ***(Firmware versions 4.0.2.x and below) 
+
+*** For firmware versions 5.0.0.x, the sysrecord command has been replaced with: 
+config 
+dir audit:// 
+show file audit:///sysrecord 
+show file audit:///sysrecord.1 
+show file audit:///sysrecord.2 
+
+(Make sure to execute the show file command for each sysrecord file seen under the audit directory listing) 
+
+Section 2. Preparing to contact IBM Support 
+ 1. Obtain the serial number of the appliance which experienced the problem. This is need for IBM entitlement processing, before a PMR can be created. Use the WebGUI, select Status > System > Version Information, locate tag on the case of the appliance, or from the CLI use Show System 
+ 2. Locate the firmware version of the appliance. Use the WebGUI, select Status > System > Version Information or from the CLI use Show Version 
+ 3. Have your IBM customer number ready. 
+ 4. Determine a time for IBM remote support to call you to walk through these steps. 
+ 5. Determine the severity of your problem based on the Severity Levels table found in the following technote: "WebSphere DataPower Extended Maintenance and Support Services". [http://www.ibm.com/support/docview.wss?rs=2362&uid=swg21254180#severity.] 
+ 6. Prepare to describe how the problem affects your business operations. 
+ 7. Determine which telephone number IBM should use to contact you concerning this problem report.
+
+
+
+Section 3. Contacting IBM Support and sending your MustGather information to IBM support 
+ 1. Reference our technote for information on Contacting IBM WebSphere DataPower SOA Appliance Support [http://www.ibm.com/support/docview.wss?rs=2362&uid=swg21236322]. 
+ 2. After you have contacted IBM Support, a PMR number will be assigned. 
+
+ * Reply to the email, or attach to the PMR via the SR, tool the information in the preceding sections. 
+ * Do not send any proprietary or confidential information from your company.

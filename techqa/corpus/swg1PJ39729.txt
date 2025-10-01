@@ -1,0 +1,131 @@
+Title: IBM PJ39729: When more than 150 access roles exist, only the first 150 can be seen in site preferences. - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Once more than 150 access roles have been created, Workplace XT
+   administrators cannot see newly created Access Roles displayed
+   in Site Preferences.
+   
+   Steps to reproduce:
+   1. log in as an Admin to a system that has 150 access roles
+   2. navigate to Tools/Administration/Site Preferences/Access
+   Roles
+   3. add a new Access Role, click apply
+   4.  Click OK and log out of Workplace XT
+   5.  Logs back in as an Admin and look at the existing access
+   roles in Site preferece.
+   Result: The new Access Role does not show up in Site Preferences
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  "When more than 150 access roles exist, only the first 150 can
+   be
+   seen in site preferences."
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  resolved in 1.1.5.2-WPXT-FP002 and
+   1.1.4.13-WPXT-FP013
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PJ39729
+   
+   
+ * REPORTED COMPONENT NAME
+   WORKPLACE XT
+   
+   
+ * REPORTED COMPONENT ID
+   5724R7611
+   
+   
+ * REPORTED RELEASE
+   114
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-12-05
+   
+   
+ * CLOSED DATE
+   2014-08-28
+   
+   
+ * LAST MODIFIED DATE
+   2014-08-28
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WORKPLACE XT
+   
+   
+ * FIXED COMPONENT ID
+   5724R7611
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R114 PSY
+   UP

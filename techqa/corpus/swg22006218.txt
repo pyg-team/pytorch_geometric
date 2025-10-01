@@ -1,0 +1,37 @@
+Title: IBM Replacing the default Websphere Application Server certificates for IBM Counter Fraud Management results in GSK_ERROR_BAD_CERT - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ If your certificate sets Criticality=false, Websphere Application Server 8.5.5.7 and higher calls IBM Global Security Kit (GSKit) to check the certificate, but the check fails because GSKit expects Criticality=true, due to RFC 5280. The error contains this message: GSK_ERROR_BAD_CERT(gsk rc = 414) PARTNER CERTIFICATE 
+
+CAUSE
+IBM updated GSKit code to adhere to RFC 5280 which states that “Section 4.2.1.11 requires marking the policy constraints extension as critical. RFC 3280 permitted the policy constraints extension to be marked as critical or non-critical.”
+
+DIAGNOSING THE PROBLEM
+On the IBM Counter Fraud Management (ICFM) Core VM, do the following:
+
+
+1. Open /opt/IBM/WebSphere/Plugins/config/CoreWebServer/plugin-cfg.xml 
+
+2. Find the log directory under the element <Log 
+
+3. Open the IHS log seen in Step 2 and verify the GSK_ERROR_BAD_CERT error (e.g., /icfmlog/Plugin/CoreWebServer/http_plugin.2017-07-13-23_51_08.log) 
+
+4. On the same Core VM, check for Criticality=false by opening examining your certificate. For example:
+export LD_LIBRARY_PATH=/opt/IBM/HTTPServer/gsk8/lib64/ 
+
+/opt/IBM/HTTPServer/gsk8/bin/gsk8capicmd_64 -cert -details -db /opt/IBM/WebSphere/Plugins/config/CoreWebServer/plugin-key.kdb -stashed -label "Cell_Root" 
+
+5. Look for an entry similar to this: CRLDistributionPoints: ObjectId: 2.5.29.31 Criticality=false 
+
+
+
+RESOLVING THE PROBLEM
+Issue a new certificate that contains something that sets Criticality=true. 
+
+RELATED INFORMATION
+ RFC 5280 [https://www.ietf.org/rfc/rfc5280.txt?cm_mc_uid=51061263692915003289354&cm_mc_sid_50200000=1500399862]
+GSK_ERROR_BAD_CERT(gsk rc = 414) in web server Plug-in [https://developer.ibm.com/answers/questions/258474/gsk-error-bad-certgsk-rc-414-in-web-server-plug-in/]
+PI49893: Allow certificate validation to be disabled [http://www-01.ibm.com/support/docview.wss?uid=swg1PI49893]

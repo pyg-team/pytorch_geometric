@@ -1,0 +1,15 @@
+Title: IBM The ibm.ctms.lotusconnector entries in log files for a Microsoft Exchange environment. - United States
+
+Text:
+icc exchange lotus domino lotusconnector email TECHNOTE (FAQ)
+
+QUESTION
+ When archiving e-mail from Microsoft Exchange with IBM Content Collector for E-Mail, why do I see "ibm.ctms.lotusconnector" references in the log files and Windows Services? 
+
+ANSWER
+IBM Content Collector connectors communicate with the task-routing engine using named pipes. In this case, the named pipes for the e-mail connectors are called "ibm.ctms.lotusconnector". They are used for both Lotus Domino and Microsoft Exchange environments, so this behavior is normal.
+
+
+
+PRODUCT ALIAS/SYNONYM
+ icc iccex

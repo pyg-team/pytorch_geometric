@@ -1,0 +1,82 @@
+Title: IBM Preparing to upgrade an IBM WebSphere DataPower SOA 9235 appliance to the 6.0.0 firmware - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ What should be done to prepare for upgrading an IBM WebSphere DataPower SOA 9235/9004 appliance to the 6.0.0 firmware?
+
+
+CAUSE
+The DataPower 6.0.0 firmware requires more space then earlier firmware versions.
+Some generalizations say two or 2.5 times the firmware file size is needed to perform the upgrade. This is not true.
+
+Many factors impact firmware upgrade capability and many are noted in other technical documents such as the Firmware upgrade fails with 'incompatible platform flash capacity' error [http://www-01.ibm.com/support/docview.wss?uid=swg21506678] document.
+
+The appliance has three basic file systems:
+
+
+ *  Encrypted Temporary Internal space. 
+
+All three are used during a firmware upgrade. 
+Note: The 6.0.1 firmware is not supported on an 9235/9004 appliance as noted in the 6.0.1 firmware release information [http://www-01.ibm.com/common/ssi/cgi-bin/ssialias?infotype=AN&subtype=CA&htmlfid=897/ENUS213-584&appname=lenovous&language=en].
+
+
+ANSWER
+ 
+
+Before taking any steps, free up as much file system space as possible. 
+
+1. Check the available file system free space using one of the methods below:  *  Use the following CLI commands:
+   top;co;show filesystem Via the WebGUI, in the Default domain, go to Status > System > Filesystem Information. Deleting unused or unneeded files, configuration objects and domains frees Encrypted space. Rebooting frees Temporary space. 
+
+2. Set up a custom log target to monitor upgrade actions:  *  If there are concerns about possible configuration loss, issues, or there is a need to track the uprade actions should anything go wrong, a "management" type of log target saved to logstore://<RaidVolume> or even to a remote syslog/UDP may help. Configure this log target in the default domain. This management log target should not be saved to logtemp:// as files in this directory are deleted on each reboot. The following technote [http://www-01.ibm.com/support/docview.wss?uid=swg21497973]helps give suggestions on how the log target should be configured. 
+
+3. After freeing up as much space as possible, the general steps for upgrading are:  *  Stop all traffic to the appliance (such as removing from an load balancer, disable domains, etc.). Reboot the appliance to free all available resources. Take a backup of the appliance, see this technote [http://www.ibm.com/support/docview.wss?uid=swg21416135] for additional information Check for expired keys and certificates as expired ones are deleted automatically at upgrade time. Note: If any expired certificates are in use, the objects or services that use the expired certificates are in the down state after the upgrade. Upload the new firmware image. Perform the “boot image”. 
+
+4. Failed upgrades:  *  NOTE: After any failed upgrade attempt, immediately reboot the appliance to free resources taken by the upgrade attempt. 
+
+ *  Failure update due to not enough space for the upgrade  1. If errors like the following are seen, there is not enough space available for the upgrade:  1. Insufficient flash space - not enough space for the upgrade to complete 
+        2. Failed to preserve user data - not enough space to create the “rollback image”
+       
+       
+    2. If there is not enough space for the upgrade, consider the following steps based on your scenario:  1. Upgrade skips major releases:  * Major releases are identified by the first three numbers of the image name such as 4.0.1, 4.0.2, 5.0.0 etc. If the current firmware is 4.0.1.x, trying to upgrade directly to 6.0.0.x which skips major releases requires additional space to create the rollback image. This is explained in the File System technote [http://www.ibm.com/support/docview.wss?uid=swg21496334], 
+            * To use less space while upgrading several major releases, perform a “stepped” upgrade by upgrading to each major release between the current level and the 6.0.0.x firmware. For example, upgrade from the:  1. 4.0.1.x firmware to 4.0.2.x 
+               2. 4.0.2.x firmware to 5.0.0.x 
+               3. 5.0.0.x firmware to 6.0.0.x.
+              
+              
+           
+           
+        2. Upgrading only one major release such as 5.0.0.x to 6.0.0.x and not enough space:  * Upgrade using a “base” (no licenses/features) level of the target firmware such as xi6004.scrypt2. If the upgrade is successful, perform an “in place” upgrade to a level with the required features. For example, if upgrading to the 6.0.0.4 firmware on an appliance that uses thee ODBC and TIBCO licenses, use the xi6004.scrypt2 to upgrade. After that upgrade completes, upgrade again using the xi6004.odbc.tibco.scrypt2 image. 
+            * To check your licenses/features from the:  1. CLI issue, the “show license” command. 
+               2. WebGUI, go to Status-> System -> Device Features.
+              
+               * Note: If the upgrade is done using a “base” level and the appliance has additional features, the features are shown as “Enabled” but not “Available”. After the “in place” upgrade,the features show as both “Enabled” and “Available”.
+              
+              
+           
+           
+        3. If still not enough space, consider doing one or more of the following:  * Delete additional application domains and once the upgrade is complete, restore the domains from the backup taken at the start. Note: There is no guarantee there is enough space after the upgrade to restore all the application domains. 
+            * Delete the rollback image. When an upgrade is done, a rollback image is created that allows you to rollback to the last firmware you upgraded from. If you delete the rollback image, it is not possible to rollback to the earlier firmware. 
+            * Reinitialize the appliance to the 6.0.0.x firmware then restore from you backup.
+              See this technote [http://www.ibm.com/support/docview.wss?uid=swg21244384&loc=en_US&cs=utf-8&lang=en] for details on the reinitialize to factory settings.
+           
+           
+       
+       
+   
+   
+
+ *   * 
+   
+   
+
+If you are still having issues please Contact IBM Support [http://www.ibm.com/support/docview.wss?uid=swg21236322]. 
+
+Additional information: 
+Connecting to the serial console [http://www.ibm.com/support/docview.wss?uid=swg21663613] 
+Secure backup/restore [http://www.ibm.com/developerworks/websphere/library/techarticles/1009_furbee/1009_furbee.html] 
+Secure restore [http://www.ibm.com/developerworks/websphere/library/techarticles/1006_majikes/1006_majikes.html] 
+Fix Central download site [http://www.ibm.com/support/fixcentral/] 
+WebGUI fails after upgrade [http://www.ibm.com/support/docview.wss?uid=swg21498634]

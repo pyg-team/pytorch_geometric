@@ -1,0 +1,139 @@
+Title: IBM How to add the "Custom" tab with FIELD 1 through 5 when working with Management Center for WebSphere Commerce to edit a catalog entry - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ English 
+
+QUESTION
+ When working with WebSphere Commerce Accelerator to edit a product you can select the "Custom" tab to modify Field 1 through 5. However, with Management Center, these fields do not appear. 
+
+CAUSE
+By default, when working with a catalog entry, Management Center does not have Field 1 through 5 of the "Custom" tab which appears in WebSphere Commerce Accelerator. The editable fields in WebSphere Commerce Accelerator appear as follows: 
+
+[/support/docview.wss?uid=swg21409355&aid=1] [/support/docview.wss?uid=swg21409355&aid=1]
+
+
+ANSWER
+To add this in Management Center perform the following customization: 
+
+
+1)
+[/support/docview.wss?uid=swg21409355&aid=2] [/support/docview.wss?uid=swg21409355&aid=2]
+
+
+To enable Field 1 to Field 5 in the Publishing section of a catalog entry, you need to edit the file: 
+
+ * /LOBTools/WebContent/WEB-INF/src/lzx/commerce/catalog/propertiesViews/CatalogPropertyPane.lzx
+
+
+Uncomment the code in this section of the code: 
+
+<!-- Property: Field 1. An input box for the field 1 property. --> 
+<!-- This tag is disabled by default. To enable it, uncomment the tag below --> 
+<wcfPropertyInputText 
+extendedHelpText="${catalogResources.extendedHelpText_field1.string}" 
+objectPath="CatalogEntryExtraProperties" 
+promptText="${catalogResources.field1Prompt.string}" propertyName="xprop_field1"/> 
+<!-- Property: Field 2. An input box for the field 2 property. --> 
+<!-- This tag is disabled by default. To enable it, uncomment the tag below --> 
+<wcfPropertyInputText 
+extendedHelpText="${catalogResources.extendedHelpText_field2.string}" 
+objectPath="CatalogEntryExtraProperties" 
+promptText="${catalogResources.field2Prompt.string}" propertyName="xprop_field2"/> 
+<!-- Property: Field 3. An input box for the field 3 property. --> 
+<!-- This tag is disabled by default. To enable it, uncomment the tag below --> 
+<wcfPropertyInputText 
+extendedHelpText="${catalogResources.extendedHelpText_field3.string}" 
+objectPath="CatalogEntryExtraProperties" 
+promptText="${catalogResources.field3Prompt.string}" propertyName="xprop_field3"/> 
+<!-- Property: Field 4. An input box for the field 4 property. --> 
+<!-- This tag is disabled by default. To enable it, uncomment the tag below --> 
+<wcfPropertyInputText 
+extendedHelpText="${catalogResources.extendedHelpText_field4.string}" 
+objectPath="CatalogEntryExtraProperties" 
+promptText="${catalogResources.field4Prompt.string}" propertyName="xprop_field4"/> 
+<!-- Property: Field 5. An input box for the field 5 property. --> 
+<!-- This tag is disabled by default. To enable it, uncomment the tag below --> 
+<wcfPropertyInputText 
+extendedHelpText="${catalogResources.extendedHelpText_field5.string}" 
+objectPath="CatalogEntryExtraProperties" 
+promptText="${catalogResources.field5Prompt.string}" propertyName="xprop_field5"/> 
+
+2) 
+[/support/docview.wss?uid=swg21409355&aid=3] [/support/docview.wss?uid=swg21409355&aid=3] 
+
+
+To enable Field 1 to Field 5 in the grids, update the file: 
+/LOBTools/WebContent/WEB-INF/src/lzx/commerce/catalog/listViewDefinitions/CatalogEntryGrid.lzx 
+
+Comment out the code in three places: 
+
+Location 1: 
+<!-- This tag is disabled by default. To enable it, uncomment the tag below --> 
+<wcfGridText name="xprop_field1" 
+objectPath="CatalogEntry/CatalogEntryExtraProperties" 
+propertyName="xprop_field1" 
+text="${catalogResources.productField1_ColumnHeader.string}" 
+visible="false" width="200"/> 
+<wcfGridText name="xprop_field2" 
+objectPath="CatalogEntry/CatalogEntryExtraProperties" 
+propertyName="xprop_field2" 
+text="${catalogResources.productField2_ColumnHeader.string}" 
+visible="false" width="200"/> 
+<wcfGridText name="xprop_field3" 
+objectPath="CatalogEntry/CatalogEntryExtraProperties" 
+propertyName="xprop_field3" 
+text="${catalogResources.productField3_ColumnHeader.string}" 
+visible="false" width="200"/> 
+<wcfGridText name="xprop_field4" 
+objectPath="CatalogEntry/CatalogEntryExtraProperties" 
+propertyName="xprop_field4" 
+text="${catalogResources.productField4_ColumnHeader.string}" 
+visible="false" width="200"/> 
+<wcfGridText name="xprop_field5" 
+objectPath="CatalogEntry/CatalogEntryExtraProperties" 
+propertyName="xprop_field5" 
+text="${catalogResources.productField5_ColumnHeader.string}" 
+visible="false" width="200"/> 
+
+Location 2: 
+
+<!-- This tag is disabled by default. To enable it, uncomment the tag below --> 
+<wcfGridText name="xprop_field1" 
+objectPath="CatalogEntryExtraProperties" 
+propertyName="xprop_field1" 
+text="${catalogResources.productField1_ColumnHeader.string}" 
+visible="false" width="200"/> 
+<wcfGridText name="xprop_field2" 
+objectPath="CatalogEntryExtraProperties" 
+propertyName="xprop_field2" 
+text="${catalogResources.productField2_ColumnHeader.string}" 
+visible="false" width="200"/> 
+<wcfGridText name="xprop_field3" 
+objectPath="CatalogEntryExtraProperties" 
+propertyName="xprop_field3" 
+text="${catalogResources.productField3_ColumnHeader.string}" 
+visible="false" width="200"/> 
+<wcfGridText name="xprop_field4" 
+objectPath="CatalogEntryExtraProperties" 
+propertyName="xprop_field4" 
+text="${catalogResources.productField4_ColumnHeader.string}" 
+visible="false" width="200"/> 
+<wcfGridText name="xprop_field5" 
+objectPath="CatalogEntryExtraProperties" 
+propertyName="xprop_field5" 
+text="${catalogResources.productField5_ColumnHeader.string}" 
+visible="false" width="200"/> 
+
+Location 3: 
+<!-- This tag is disabled by default. To enable it, uncomment the tag below --> 
+
+<wcfGridText name="xprop_field1" objectPath="CatalogEntry/CatalogEntryExtraProperties" propertyName="xprop_field1" text="${catalogResources.productField1_ColumnHeader.string}" visible="false" width="200"/> 
+<wcfGridText name="xprop_field2" objectPath="CatalogEntry/CatalogEntryExtraProperties" propertyName="xprop_field2" text="${catalogResources.productField2_ColumnHeader.string}" visible="false" width="200"/> 
+<wcfGridText name="xprop_field3" objectPath="CatalogEntry/CatalogEntryExtraProperties" propertyName="xprop_field3" text="${catalogResources.productField3_ColumnHeader.string}" visible="false" width="200"/> 
+<wcfGridText name="xprop_field4" objectPath="CatalogEntry/CatalogEntryExtraProperties" propertyName="xprop_field4" text="${catalogResources.productField4_ColumnHeader.string}" visible="false" width="200"/> 
+<wcfGridText name="xprop_field5" objectPath="CatalogEntry/CatalogEntryExtraProperties" propertyName="xprop_field5" text="${catalogResources.productField5_ColumnHeader.string}" visible="false" width="200"/> 
+
+After you have updated the files, recompile the OpenLaszlo project. Rght-click an OpenLaszlo file and select Build Open:Laszlo Project. After the changes are tested and working, deploy the LOBTools WAR file to the staging and production servers.

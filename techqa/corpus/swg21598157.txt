@@ -1,0 +1,49 @@
+Title: IBM ITCAMfTx - WRT 7202 - Meaning of threshold "Percent Slow" with value > 0,000 - United States
+
+Text:
+Minimum Response Time Threshold Percent Slow value situation 71WRT-CONF; 71WRT-WV TECHNOTE (FAQ)
+
+QUESTION
+ Explain what does it mean if within the TEP WRT workspace view : "Application Current Status Details", the "Percent Slow" threshold is marked as warning (colour: yellow) and the value is " > 0,00" (default)? 
+
+CAUSE
+According to ITCAMfTx v73 infocenter chapter: 
+Response Time - Attributes listed alphabetically 
+http://publib.boulder.ibm.com/infocenter/tivihelp/v24r1/topic/com.ibm.itcamt.doc_7.3/rt/Attributes/all_alpha.html [http://publib.boulder.ibm.com/infocenter/tivihelp/v24r1/topic/com.ibm.itcamt.doc_7.3/rt/Attributes/all_alpha.html] 
+We have following definition for "Minimum Response Time Threshold" >> 
+The maximum acceptable response time, in seconds, for a transaction to complete before it is marked as Slow. If the response time is also greater than the Maximum Response Time Threshold, it is marked as Failed. This attribute is an optional value that you can use when defining a new transaction pattern. Setting this value determines how the monitoring agent classifies and reports transaction response time data. All transactions with a response time greater than this value are marked as Slow in reports. For example, if this value is set to 8, then all transactions with a response time greater than 8 seconds (and less than the Maximum Response Time Threshold) are Slow transactions. 
+This value is displayed as a decimal formatted to 3 decimal places. 
+
+And for "Percent Slow" >> 
+The percentage of transactions whose requests were marked as Slow. This value is calculated by dividing Slow Requests by Total Requests and multiplying by 100%. The sum of this attribute value and the value of the Percent Good attribute should equal the value of the Percent Available attribute. Any value for this attribute that is greater than 0 percent is displayed with a yellow background in the TEP. 
+
+ANSWER
+There is a warning situation as soon as there is at least one slow request (e.g. one request is higher than the minimum response time threshold) 
+
+Example:
+The "Application Current Status Details" view shows: 
+Total Requests: 6133 
+Slow Requests: 85 
+
+As properties, we have: 
+- Minimum Response Time Threshold: 10,000 
+- and of course as "Thresholds" condition for the warning situation (yellow background) there is
+Percent Slow: > 0,000. 
+
+That means: 85 requests take more than 10 secs 
+i.e. Percent Slow = 85/6133 * 100 = 1,386 %. > 0,000 % 
+
+
+ 
+Due to condition "> 0,000" that there are slow requests, a warning situation fires. 
+
+
+
+
+HISTORICAL NUMBER
+ 08168
+SGC
+724 
+
+PRODUCT ALIAS/SYNONYM
+ ITCAMfT TCAMfT CAMfT ITCAMfTRANSACTIONS ITCAM4TRANSACTIONS

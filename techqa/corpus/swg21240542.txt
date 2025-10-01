@@ -1,0 +1,38 @@
+Title: IBM DB2 Tools Compatibility, Toleration, Exploit with DB2 V8 - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How do I determine whether a given release of any of the DB2® Tools
+is compatible with DB2 V8? 
+
+ANSWER
+ 
+For the following products and versions can you tell me if they will 
+work with DB2 V8 in either toleration or exploitive status? If not what 
+version would I need? 
+DB2 High Performance Unload 2.1 
+DB2 Performance Expert 1.1 
+DB2 DataPropagator 8.1 
+
+
+ANSWER: 
+
+The DB2 and IMS Tools website has these details 
+
+for the entire Tools set of products: 
+
+. 
+http://www-306.ibm.com/software/data/db2imstools/ [http://www-306.ibm.com/software/data/db2imstools/] 
+From the "IBM IMS and DB2 Tools" page scan down the right margin 
+to a choice under RESOURCES called "DETAILS on DB2 Tools V8 
+Support". Click this button and you'll have a table that gives you 
+the full details. 
+1) HPU R210 Exploits DB2 V8 so long as you have the fix for apar 
+PQ84688 applied. 
+
+2) Performance Expert R110 DOES NOT run with V8, but PE R210 Exploits 
+V8 with the fix for APAR PQ81857 applied. 
+3) Data Propogator R810 Exploits V8 so long as you have the fix for 
+APAR PQ74674 applied.

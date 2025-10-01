@@ -1,0 +1,59 @@
+Title: IBM Upgrading Portal fails with a 'SRVE0255E: A WebGroup/Virtual Host to handle localhost:XmlAccessPort has not been defined.' exception - United States
+
+Text:
+upgrade failed; install failed; SRVE0255E exception; A WebGroup/Virtual Host to handle {} has not been defined; host aliases issue; xmlaccess exception TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+ 
+
+Reviewing the ConfigTrace.log we see the following exception: 
+
+action-deploy-portlets-admin-wp.webdav.portaladmin:
+[xmlaccess] EJPXB0006I: Connecting to URL
+"http localhost : <XmlAccessPort>/wps/config/"
+[xmlaccess] EJPXB0002I: Reading input file
+/usr/WebSphere/PortalServer/base/wp.webdav.portaladmin/config/template
+s/setup.xml
+[xmlaccess] <H1>SRVE0255E: A WebGroup/Virtual Host to handle
+/wps/config/ has not been defined.</H1><BR><H3>SRVE0255E: A
+WebGroup/Virtual Host to handle localhost:XmlAccessPort has not been
+defined.</H3><BR><I>IBM WebSphere Application Server</I>
+[xmlaccess] EJPXB0015E: Server response indicates an error.
+[xmlaccess] EJPXB0015E: Server response indicates an error.
+Target finished: action-deploy-portlets-admin-wp.webdav.portaladmin
+
+SystemOut.log:
+
+[2/10/11 16:40:03:447 EST] 0000000a WsServerImpl A WSVR0001I: Server
+WebSphere_Portal open for e-business
+[2/10/11 16:42:00:225 EST] 0000003e WebContainer E SRVE0255E: A
+WebGroup/Virtual Host to handle /wps/config/ has not been defined.
+
+Reviewing the wkplc_comp.properties file:
+
+# XmlAccessHost: The name of the local WebSphere Portal host
+# Note: Should not be necessary to modify
+XmlAccessHost=localhost
+# XmlAccessPort: The port used by the XMLAccess configuration task to
+connect the XMLAccess server
+# Note: This property may not be used to reconfigure the XmlAccessPort
+port.
+# The value is set by the basic configuration task of WebSphere
+Portal .
+XmlAccessPort=10040
+
+
+CAUSE
+When reviewing the Virtual Hosts > default host > Host Aliases in the WAS admin console, the XmlAccessPort defined in the error message was not mapped to the appropriate host name value defined in XmlAccessHost.
+
+
+
+RESOLVING THE PROBLEM
+To resolve this problem, you can either: 
+
+1. Modify the Host Aliases so that the Host Name uses the value '*'. 
+
+2. Update the XmlAccessHost attribute in wkplc_comp.properties so that it uses the same Host Name already defined for the XmlAccessPort under WAS' Host Aliases.
+
+RELATED INFORMATION
+ IBM Portal Wiki [http://www-10.lotus.com/ldd/portalwiki.nsf/xpViewCategories.xsp?lookupName=IBM%20WebSphere%20Portal%207%20Product%20Documentation]

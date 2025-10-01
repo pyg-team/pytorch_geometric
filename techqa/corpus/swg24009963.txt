@@ -1,0 +1,113 @@
+Title: IBM Security Scanner for WebSphere Application Server - United States
+
+Text:
+wsst DOWNLOADABLE FILES
+
+ABSTRACT
+ This command-line Java™ tool checks for potential security vulnerabilities that are caused by improper or incorrect IBM WebSphere Application Server security configuration 
+
+DOWNLOAD DESCRIPTION
+The tool scans static security configuration files for WebSphere Application Server, WebSphere Application Server Express, and WebSphere Application Server Network Deployment Versions 7.0, 6.1, 6.0, 5.1 and 5.0 to look for potential vulnerabilities. This tool is not available for Version 8.0 and beyond.
+
+The tool produces an HTML report that contains the following information: 
+
+ * The security configuration checks that were performed
+   
+   
+ * The status of each check
+   
+   
+ * A corrective action, if necessary
+   
+   
+ * A link to the information center task that is related to the corrective action
+
+
+The IBM WebSphere Developer Technical Journal article entitled, WebSphere Application Server V5.0 Advanced Security and System Hardening [http://www.ibm.com/developerworks/websphere/techjournal/0406_botzum/0406_botzum.html], identifies many of the security checks that are performed and explains why the checks are important. Although the article refers to WebSphere Application Server Version 5.0 and V5.1, the information applies to V6.0 as well. 
+
+The article entitled, WebSphere Application Server V6.1: What's new in security? [http://www.ibm.com/developerworks/websphere/library/techarticles/0606_botzum/0606_botzum.html], discusses the security features that are introduced and how security hardening has been addressed in V6.1. 
+
+What the tool does not do:  * Does not check for runtime penetration vulnerabilities
+   
+   
+ * Is not a general purpose configuration diagnostic tool for WebSphere Application Server that is intended to aid in problem determination for configuration problems
+   
+   
+ * Is not a fail safe guarantee that the system is totally secure
+   
+   
+ * Does not do network, host, physical, or operating system security vulnerability analysis
+
+
+Important note: This tool only can point out WebSphere Application Server configuration items which, if corrective action is taken, might improve the overall security of the WebSphere Application server. IBM does not make a claim or guarantee that the tool detects all of the possible security configuration issues. IBM also does not make a claim or guarantee that, if corrective action is taken for the items it does detect, the WebSphere Application Server system is completely secure from any or all possible threats. Consider network security, operating system security, and physical security in addition to WebSphere Application Server security. 
+
+Related information: 
+Use the ACert tool [http://www.ibm.com/support/docview.wss?rs=180&uid=swg24006797] to check for out-of-date Secure Sockets Layer (SSL) certificates that are used by WebSphere Application Server. PREREQUISITES
+The tool runs on the same system that is used to install WebSphere Application Server for versions 7.0, 6.1, 6.0, 5.1 and 5.0 only.
+
+INSTALLATION INSTRUCTIONS
+Complete the following steps to install the tool: 
+
+ 1. Place the wsst.zip file for WebSphere Application Server Version 5.x. and 6.0.x,wsst61.zip file for Version 6.1 or wsst70.zip file for Version 7.0 in any directory on the machine that has the WebSphere Application Server installation to be scanned. For example, you might create a security_scanner directory under the /usr/IBM/WebSphere/AppServer or C:\Program Files\WebSphere\AppServer directory and place the compressed file in the directory. 
+    
+    
+ 2. Extract the wsst.zip, wsst61.zip, or wsst70.zip file. After extracting the file, a wsst, wsst61, or wsst70 directory is created.
+    
+    
+ 3. Change the current directory to the wsst, wsst61, or wsst70 directory that is created after extracting the respective compressed file. 
+    
+    
+ 4. Edit the appropriate script file to replace the WAS_HOME variable with the path to your WebSphere Application Server installation. For example, you might change this variable to the C:\WebSphere\AppServer or /usr/IBM/WebSphere/AppServer directory on the same machine. 
+    
+    The following list provides the script file names to run the tool on WebSphere Application Server Version 5.x and 6.0.x on different operating systems:  * The Microsoft® Windows® operating systems: wsst.bat 
+     * The AIX, HP-UX, Linux®, Solaris, and z/OS operating systems: wsst.sh 
+     * The OS/400 operating system: wsstxx.qsh
+    
+    
+
+ * 
+ * 
+ *  The Microsoft Windows operating systems: wsst61.bat The AIX, HP-UX, Linux, Solaris, and z/OS operating systems: wsst61.sh The i5/OS operating system: wsst61.qsh 
+ * 
+ * 
+ *  The Microsoft Windows operating system: wsst70.bat The AIX, HP-UX, Linux and Solaris operating systems: wsst70.sh The z/OS operating system: wsst70z.sh The IBM i operating system: wsst70.qsh 
+
+
+Notes:  * The following different scripts are provided for the i5/OS operating system in the wsst.zip file:  * wsst50.qsh 
+    * wsst.51.qsh 
+    * wsst60.qsh
+   
+   
+   The numbers in the script file names refer to the version number of WebSphere Application Server against which you are running the tool. For example, on the OS/400 operating system, edit the wsst50.qsh file to change the WAS_HOME variable to point to the /QIBM/ProdData/WebAS5/Base directory and run the tool against a WebSphere Application Server Version 5.0 installation.
+   
+   
+ * On the z/OS operating system, you might have to convert the wsst.sh file from the ASCII format to the EBCDIC format and change the permission bits of the wsst.sh file to 755 to run the tool. 
+   
+   
+ * On the AIX, HP-UX, Linux, and Solaris operating systems after unzipping wsst.zip, run the chmod +x command to grant execute permission to the wsst.sh file.
+   
+
+Use the tool 
+For WebSphere Application Server Versions 5.x and 6.0.x, run the appropriate script file on the command line from the same wsst directory that was created when you extracted the wsst.zip file. 
+
+For WebSphere Application Server version 6.1.x, run the appropriate script file on the command line from the same wsst61 directory that was created when you extracted the wsst61.zip file. 
+
+For WebSphere Application Server version 7.0.x, run the appropriate script file on the command line from the same wsst70 directory that was created when you extracted the wsst70.zip file. 
+
+On all operating systems, except on the OS/400 and i5/OS operating systems for WebSphere Application Server 5.x and 6.x respectively, the tool prompts for the WebSphere Application Server installation that you want to scan. Press Enter to scan the WebSphere Application Server installation that is referenced by the script or enter the path to another WebSphere Application Server installation on the same machine that you want to scan. 
+
+Monitor and view the result 
+The tool displays the name of the WebSphere Application Server installation for V5.x or the WebSphere Application Server profile name for V6.x and V7.0.x that is scanned. The tool also displays the name of each security check that is running along with its status. For V5.x on the OS/400 operating system, the tool displays the WebSphere Application Server instance name. 
+
+When the scans are completed, the tool generates a report in the host_name_ report_ date_ time.html format. Open the report in a browser window to view the result of the scan. DOWNLOAD PACKAGE
+
+
+
+
+
+Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options 
+What is DD? [http://www6.software.ibm.com/dldirector/doc/DDfaq_en.html] Scan tool for WAS v5.x.x and v6.0.x 6/29/2005 US English 152830 FTP [ftp://public.dhe.ibm.com/software/websphere/appserv/support/tools/SecurityScanner/wsst.zip] DD Scan tool for WAS v6.1.x 8/29/2006 US English 158087 FTP [ftp://public.dhe.ibm.com/software/websphere/appserv/support/tools/SecurityScanner/wsst61.zip] DD Scan tool for WAS V7.0.x 6/30/2009 US English 1299420 FTP [ftp://public.dhe.ibm.com/software/websphere/appserv/support/tools/SecurityScanner/wsst70.zip] DD 
+TECHNICAL SUPPORT
+ This tool is provided "as-is". However, if you have questions about any WebSphere Application Server issues identified by this tool, you can contact IBM Support at 1-800-IBM-SERV (US calls only). 
+
+Cross reference information Segment Product Component Platform Version Edition Application Servers WebSphere Application Server for z/OS Security z/OS 7.0, 6.1, 6.0, 5.1 Application Servers Runtimes for Java Technology Java SDK Application Servers WebSphere Application Server - Express Security

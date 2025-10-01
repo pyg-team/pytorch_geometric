@@ -1,0 +1,33 @@
+Title: IBM Knowledge Collection: Common issues when setting up IBM Content Collector for Email using Exchange Server. - United States
+
+Text:
+ICC; OWA; AFU; exchange; P8 PRODUCT DOCUMENTATION
+
+ABSTRACT
+ This Knowledge Collection is a focused compilation of links to documents for common errors when setting up Content Collector for Email using Exchange Server with DB2 Content Manager or Filenet P8 as repositories. 
+
+CONTENT
+
+
+
+Technotes:
+How to configure the Active Directory User ID by using one of the supported configuration formats. [http://www.ibm.com/support/docview.wss?rs=3613&uid=swg21376263] (#1376263)
+You might not be able to connect to the Active Directory server unless you use the proper format to configure the user ID in the User ID field. You can find the field on the Active Directory tab of the Content Collector for Email.
+
+MAPI profile creation fails with error message:AFUM0009E. [http://www.ibm.com/support/docview.wss?rs=3613&uid=swg21328553] (#1328553)
+The Content Collector for Email Connector service and the Content Collector for Email Web Application services fail when they try to create a MAPI profile, which is needed to connect to a Microsoft® Exchange server. 
+
+ 
+
+Definition of a Knowledge Collection
+A Knowledge Collection is a focused compilation of links to documents that share a common theme. Knowledge Collections are navigation aids that organize content to help users quickly find relevant information. Knowledge Collections are not designed to be an all-inclusive list of all documents dealing with the specific theme.
+
+
+
+
+ORIGINAL PUBLICATION DATE
+ 2009/6/18 
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Enterprise Content Management Content Collector Content Collector for Email Windows 2003 server, Windows 2008 server 2.1, 2.1.1, 2.2 All Editions

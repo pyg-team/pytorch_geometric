@@ -1,0 +1,25 @@
+Title: IBM Determine DE Database version installed with listIU - United States
+
+Text:
+listIU; install; installer; deployment engine TECHNOTE (TROUBLESHOOTING)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ English 
+
+PROBLEM(ABSTRACT)
+ Locate the installed version of the DE and other Installer component versions in 3.8 
+
+SYMPTOM
+3.8 Installer versions
+
+
+RESOLVING THE PROBLEM
+root install source, then get output commands 
+
+$ . /var/ibm/common/acsi/setenv.sh
+$ /usr/ibm/common/acsi/bin/listIU.sh
+
+for non root install source, then get output commands
+
+$ . ~/acsi_{installingUserID}/setenv.sh
+$ ~/acsi_{installingUserID}/bin/listIU.sh

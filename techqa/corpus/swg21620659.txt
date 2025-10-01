@@ -1,0 +1,28 @@
+Title: IBM How can I install the IBM Information Analyzer database (IADB) in a different location than where the XMETA database exists? - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How can I install the IBM Information Analyzer database (IADB) in a different location than where the XMETA database exists? 
+
+CAUSE
+You would like to install Information Analyzer on top of an existing Information Server installation. For example, the XMETA database is on DB2, but you would like IADB to be on Oracle. The Installation wizard only allows you to select DB2 for IADB. 
+
+ANSWER
+The XMETA and IADB repositories can be on separate servers and even separate DB types (eg. XMETA on DB2 and IADB on Oracle). It would be necessary for you to create the IADB manually on the Oracle database using the scripts that are provided with the Information Server installation.
+
+Here is some direction on doing it:
+
+Creation of the analysis database (IADB)
+By default, the installation program can create this database in a new DB2® database system. The default installation creates the analysis database on the same computer that the metadata repository tier is installed on.
+
+Microsoft® SQL Server, Oracle, or remote DB2 database
+If you want to use the Microsoft SQL Server or Oracle databases, you must install and configure them before you install IBM Information Server. 
+
+Similarly, if you want to create the analysis database on a different computer from the metadata repository tier, you also install it before IBM Information Server. For these configurations, you must manually create the analysis database by using the scripts in the DatabaseSupport directory in the installation image. For usage details, see the readme files in the same directory.
+
+The analysis database is empty upon creation; no tables are created in it by the installation process. All the tables, indexes, and stored procedures in the analysis database are dynamically created at runtime during analysis processing.
+
+By default, the analysis database is accessible to all authorized IBM WebSphere Information Analyzer users. The default name of the analysis database is IADB.
+After IBM Information Server is installed, an administrator configures the analysis settings for the engine and the analysis database.

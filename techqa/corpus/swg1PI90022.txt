@@ -1,0 +1,11 @@
+Title: IBM PI90022: RATIONAL DEVELOPER FOR SYSTEM Z (RDZ): USING RDZ HOST 9.1.1.3, THE CICS REGION ABEND WHEN DEBUGGING A TRANSACTION - United States
+
+Text:
+What is this document:
+This document has the abstract of a technical article that is available to authorized users after you have logged on. Please use the link to actual document below to access the full document. You will be asked to log on if you are not already logged in. After log in, if you do not have the right authorization for this document, there will be instructions on what to do next.
+
+abstract text
+Using Rational Developer for System z (RDz) host version 9.1.1.3 and running the integrated debugger, the CICS region crashes
+
+link to actual document
+http://www.ibm.com/support/docview.wss?uid=swg1PI90022 [http://www.ibm.com/support/docview.wss?uid=swg1PI90022]

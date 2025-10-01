@@ -1,0 +1,206 @@
+Title: IBM PI28633: RDZ GETS ERROR SERVERTHREAD: EXCEPTION WHEN THE HOSTNAME AND THE SYSTEM NAME ARE NOT THE SAME - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+8.5.1.6: UI24911 PTF for Rational Developer for System z Host Options [http://www-01.ibm.com/support/docview.wss?uid=swg24039252]
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Rational Developer for System z gets ERROR ServerThread:
+   Exception when the hostname and the system name are not the
+   same.
+   
+   This error is not informative about the cause.
+   
+   The root cause is a TCP/IP DNS setup error
+   
+   rseserver.log shows
+   ERROR: java.lang.NullPointerException
+   ERROR: java.util.Hashtable.put(Hashtable.java:567)
+   ERROR: java.util.Properties.setProperty(Properties.java:175)
+   ERROR: java.lang.System.setProperty(System.java:496)
+   ERROR:
+   org.eclipse.dstore.internal.core.server.ServerAttributes.getHost
+   Name(ServerAttributes.java:97)
+   ERROR:
+   org.eclipse.dstore.internal.core.server.ServerAttributes.<init>(
+   ServerAttributes.java:67)
+   
+   Additional Keywords:
+   TCPIP
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Add the following line to rsed.envvars where <hostname> is just
+   the system name, so no .dsname,com, that part is specified in
+   another TCPIP field. (DOMAINORIGIN is
+   yourhostname.yourcompany.com)
+   _RSE_JAVAOPTS="$_RSE_JAVAOPTS -Dhostname=<hostname>"
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: 01.RDz server administrators who have DNS    *
+   *                    issues on their servers and RDz users     *
+   *                    who are concerned with too many           *
+   *                    unnecessary log files.                    *
+   *                 02.RDz Users who use USS symbolic links      *
+   *                 03.z/OS system administrator                 *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: 01.When DNS settings are messed up, an  *
+   *                         NPE can occur with the server        *
+   *                         without a useful error message and   *
+   *                         .dstoreHashmap log entries can take  *
+   *                         up a lot of space.                   *
+   *                      02.Deleting a symbolic link for a       *
+   *                         folder from RSE deletes the folder   *
+   *                         contents.                            *
+   *                      03.RDz enhancement to allow TLS v1.2    *
+   *                         usage                                *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   01.If a z/OS machine hasn't properly configured their DNS
+      settings, an NPE can occur with the server. While there is
+      already a workaround for this scenario, there is no message
+      indicating to the administrator what might have gone wrong.
+      The second issue is that .dstoreHashmap files can get
+      frequently created in some scenarios and these files aren't
+      very useful to users.
+   02.Deleting a symbolic link for a folder from RSE deletes the
+      folder contents.
+   03.Rational Developer for System z enhancement to allow TLS
+      v1.2 usage. To use TLS v1.2, define
+      _RSE_JAVAOPTS="$_RSE_JAVAOPTS
+      -DDSTORE_SSL_ALGORITHM=TLSv1.2" in rsed.envvars (host), and
+      -DDSTORE_SSL_ALGORITHM=TLSv1.2 in eclipse.ini (client).
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  01.The RSE server will attempt to fall back to reading the
+      hostname via a shell command. If that fails then, a error
+      message will indicate a problem and suggest the workaround.
+      For .dstoreHashmap log entries will not get created by
+      default and older ones will be deleted after a two days.
+   02.When a user deletes a symbolic link for a folder, the
+      contents are not deleted.
+   03.Rational Developer for System z enhancement to allow TLS
+      v1.2 usage. To use TLS v1.2, define
+      _RSE_JAVAOPTS="$_RSE_JAVAOPTS
+      -DDSTORE_SSL_ALGORITHM=TLSv1.2" in rsed.envvars (host), and
+      -DDSTORE_SSL_ALGORITHM=TLSv1.2 in eclipse.ini (client).
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI28633
+   
+   
+ * REPORTED COMPONENT NAME
+   RD/Z HOST
+   
+   
+ * REPORTED COMPONENT ID
+   5724T0723
+   
+   
+ * REPORTED RELEASE
+   850
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-10-29
+   
+   
+ * CLOSED DATE
+   2015-01-20
+   
+   
+ * LAST MODIFIED DATE
+   2015-02-05
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  FEKFDST0 FEKFDST2
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   RD/Z HOST
+   
+   
+ * FIXED COMPONENT ID
+   5724T0723
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R850 PSY UI24911 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI24911]
+   UP15/02/05 I 1000
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

@@ -1,0 +1,97 @@
+Title: IBM User Management in MDS and considerations during Upgrade - United States
+
+Text:
+memory heap installation TECHNOTE (FAQ)
+
+QUESTION
+ We are planning to upgrade our MDS instance to a new version/patch level. We have diligently configured the users and groups with appropriate permissions as per our business need and want to preserve that configuration on the upgraded instance.
+
+How can we ensure that our present LDAP structure will be preserved in our upgraded instance? 
+
+CAUSE
+User management takes place in MDS with a combination of the following tools:
+1. Internal LDAP (stand alone or embedded):
+The MDS application requires some key default user accounts to function properly. To ensure they are created and stored correctly, an internal LDAP server (internal to MDS) is created and maintained by the MDS engine. It can either be an embedded LDAP (runs within the MDS engine JVM) or a stand alone LDAP (created by MDS engine but runs as an independent JVM).
+
+Upon creation, it only stores the key account information which is essential for MDS, but MDS administrators may leverage it to store all their users and groups (optional). 
+
+2. External Corporate LDAP:
+MDS allows for seamless integration between the MDS engine and any external LDAP (external implies independent of MDS) to manager users and groups. The external LDAP configuration used for communication with the engineis stored in the following file: $MAD_HOMEDIR/inst/mpinet_<Instance_Name>/conf/com.initiate.server.ldap.cfg file. Once we specify the hostname, port number, and other essential information of the external LDAP server, the system will be able to detect, update, and work with all users and groups. Refer to the information center for details on how to configure this external LDAP.
+
+3. Database:
+The database stores user and group references to maintain audit trail of user activity. It is important to note that these are just references and the database does not store any run time parameters or participate in user management.
+
+4. Dictionary:
+The hub configuration stored in Initiate Member Model file (.imm) in workbench is known as data dictionary in IBM. LDAP stores user and group names while the database stored references to these objects. But the permissions granted to these users and groups is configured in the workbench hub and stored in the data dictionary. This dictionary is then loaded up in memory every time we start the instance.
+
+
+ANSWER
+During an upgrade, we only have to be concerned about the users and groups in internal LDAP and the other three factors are not usually an issue. Following is an explanation for why that is so:
+
+
+1. External LDAP:
+Since this is external, so the MDS upgrade will not affect it. As long as we ensure that the configuration is done correctly in com.initiate.server.ldap.cfg file, all the external LDAP configuration will be preserved. 
+
+ 
+
+2. Database:
+We only stores references for users and groups in database tables and since our goal is to keep the user and groups configuration the same after the upgrade, so no work is needed in the database. 
+
+ 
+
+3. Dictionary:
+When we load a project in workbench which was created in older MDS version, we are prompted for an upgrade. To initiate it manually go to the menu, select Initiate > Upgrade Initiate Project. The Upgrade Project wizard will open and workbench will be upgraded. 
+
+So once we deploy this upgraded hub configuration to the engine, the upgraded version of the data dictionary (including permissions) will loaded upon the next engine restart.
+
+
+The upgrade of internal LDAP has more nuances because with a normal install, all the customization will be removed and a default LDAP with key users will be created. If you are only using the default users in the internal LDAP, then you do not have to worry about this either. But if you leverage the internal LDAP, then we have the following possibilities to retain previous configuration: 
+
+
+1. Upgrading to a new MDS version (not a patch): 
+
+1.1. Internal embedded LDAP:
+When we upgrade the engine using "$MAD_ROOTDIR/scripts/madconfig.sh upgrade_instance" command, the internal embedded LDAP will also be upgraded. 
+
+1.2. Internal stand-alone LDAP:
+The "madconfig.sh upgrade_instance" command will not upgrade the stand-alone because it is a separate JVM. To upgrade this, we should use the following command "madconfig.sh upgrade_ldap". 
+
+Both these script will prompt you for the previous LDAP configuration directory and all the migration work will be done by the script. The LDAP configuration directory is located at $MAD_HOMEDIR/inst/mpinet_<Instance_Name>/ldap 
+
+ 
+
+2. Upgrading to a higher patch level (not a new version): 
+
+In this case, the scripts will not prompt you for the previous LDAP configuration directory. This is because the script checks the major version that the database (previous version) has and one that the current MDS binaries are on. If they are at the same level (as in case of a patch install), it will not prompt for the LDAP configuration directory; if they are on different versions, it will. 
+
+ 
+
+In this scenario, we have two further options: 
+
+2.1. Complete the patch install using the same $MAD_ROOTDIR. This will overwrite the previous binaries but retain all the configuration files. Before doing so, please make a backup of your previous $MAD_ROOTDIR and $MAD_HOMEDIR. 
+
+ 
+
+2.2. If you must use a different $MAD_ROOTDIR, then we will have to migrate the users and groups manually. For manual migration, the steps are: 
+
+2.2.1. Set the MAD_ROOTDIR environment variable to your old root directory. 
+
+2.2.2. Go to the bin directory within old instance LDAP directory, and run the following script:
+"export-ldif --backendID userRoot --ldifFile myldifExportFile"
+This script will export the LDAP configuration to the myldifExportFile file. The LDAP directory being referred to is $MAD_HOMEDIR/inst/mpinet_<Instance_Name>/ldap.
+2.2.3. Set the MAD_ROOTDIR environment variable to your new root directory 
+
+2.2.4. Go to the bin directory of the new instance LDAP directory and run the following command:
+"import-ldif --backendID userRoot --ldifFile Location_of_myldifExportFile"
+
+Leverage the file created in step 2.2.2 in step 2.2.4. This will import the LDAP data in your new LDAP and the migration is complete.
+
+
+
+PRODUCT ALIAS/SYNONYM
+ MDM
+MDS
+IBM InfoSphere Master Data Service
+Virtual MDM
+Hubrid MDM
+IBM InfoSphere Master Data Management Advanced Edition

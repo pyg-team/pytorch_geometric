@@ -1,0 +1,63 @@
+Title: IBM TM1Web session is terminated after (x) minutes - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ A problem occurs when TM1Web session is terminated after (x) minutes and user must login repeatedly.
+TM1Web session is terminated after 20 minutes with message “Session timed out. Please login again".
+TM1Web keeps timing out despite increasing TM1 Web Session Timeout. 
+
+SYMPTOM
+ERROR Applix.TM1.Web.Page.TM1WebPageUtils - <Your Web session has timed out. Please login again.> 
+
+
+CAUSE
+Timeout parameter in web.config and IIS worker process are defined with Default Parameter. 
+
+(Web Session Timeout=20 min, IdleConnectionTimeOutSeconds=120 sec, IdleTimeout=20 min).
+
+Timeouts can be configured at three different “levels” (TM1Web & TM1 Server & MS IIS):
+1. TM1Web timeout settings – web.config, tm1web web app
+2. TM1 Server timeout settings – tm1s.cfg
+3. MS IIS settings for timeout of worker processes – IIS w3wp.exe + DefaultAppPool + machine.cfg
+
+The setting in the tm1s.cfg file applies at the server level, while the web.config applies to accessing the virtual directory for TM1Web. 
+The IdleConnectionTimeOutSeconds will disconnect a user's TM1 session, while the timeout parameter in the web.config only applies to a user's connection to the TM1Web website.
+
+Problem could also be caused as a result of having the Application pool that TM1Web is using setup to utilize Multiple Worker Processes. 
+
+
+ENVIRONMENT
+TM1 9.4 or 9.4.1 on MS Server 2003 with IIS6, 9.5 or 9.5.1 on MS Server 2003 with IIS6 or MS Server 2008 with IIS7
+
+
+
+DIAGNOSING THE PROBLEM
+Unexpected timeouts may occur when Default Parameter is changed or "Precedence of settings" is causing unexpected behaviour. The setting in the web.config file takes precedence over idle timeout in IIS and machine.config. When timeout is missing in the web.config then the setting from machine.config takes precedence. 
+
+
+In Task Manager, if you see multiple w3wp.exe processes listed, this is an indication that the Application Pool being used by IIS is setup to use multiple worker processes (which is another possible cause of this problem, as there should only ever be one).
+
+
+RESOLVING THE PROBLEM
+To prevent a TM1Web session from timing out configure your Timeout Parameter according to business requirements and “precedence of timeout settings” (best practice is not to change the default parameters). 
+
+
+Check web.config and tm1s.cfg file timeout parameter information. Check if you have a setting in your tm1s.cfg as it could be impacting your timeout if you do (note that no entry = never timeout). IdleConnectionTimeOut Seconds specifies a timeout limit for idle client connections, in seconds. For example, if you include the line IdleConnectionTimeOutSeconds=900 in tm1s.cfg, the server disconnects idle client connections after 900 seconds.
+
+Timeout Parameter in TM1 & Microsoft IIS & TM1Web
+1. Increase timeout IdleConnectionTimeOutSeconds (tm1s.cfg) from 900 sec to 7200 sec (= 120 min)
+2. Increase timeout of IIS worker process from sec (=20 min) to 7200 sec (= 120 min)
+cscript %SystemDrive%\Inetpub\AdminScripts\adsutil.vbs set W3SVC/AppPools/ApplicationPoolName n
+3. Increase timeout DefaultAppPool from default 20 min to 120 min 
+4. Increase timeout TM1 Web Session (web.config) from default 20 min to 120 min
+5. Restart IIS after changing timeout settings and restart the TM1 server if you modify the IdleConnectionTimeOutSeconds parameter. 
+
+Another category of Session Timeouts, the ones where immediately after logon (or a short time later) the Session Timeout hits the user, is due to the default setting in IIS Version 6 webserver of MS Windows Server 2003 and IIS Version 7 webserver of MS Windows Server 2008: 
+Go to Control Panel -> Administrative Tools ->IIS Manager -> Application Pool -> Default Application Pool (DefaultAppPool) [or whichever Application pool TM1Web is setup to use] -> right mouse click to open context menu, select Properties -> click the "Performance" tab -> Web Garden: Maximum number of worker processes -> Change from default value of 4 to 1.
+
+Note: The execution timeout in the web.config is not responsible for closing idle user sessions, it only controls how long IIS will wait to allow a large sheet/view to open. After this time there will be a message that the view timed out but this will not stop the user session. So this value only needs to be as long as the majority of views may take to render:
+httpRuntime executionTimeout="180" 
+
+If it is set too high it could hold up the system for a long time if a view is created that is simply too large to open. If it is set to something like 7200 it will hang up the user for 2 hours trying to open a view that may not ever open. Most customers prefer to only wait a few minutes for a view to open, so 120 - 300 is probably as high as it should be set. If working over a WAN where it is expected that the views will open slower, then it can be set to whatever setting works with the particular customer model (maybe 500 or 600). Use the parameter based on what works best for the model.

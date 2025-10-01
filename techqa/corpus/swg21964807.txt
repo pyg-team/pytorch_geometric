@@ -1,0 +1,205 @@
+Title: IBM Running the post-migration task, deploy-wcm-mls results in a Build Failed with the error, "Internal server error" - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Portal 7.0x has been successfully migrated to Portal 8.5. However, the post-migration task deploy-wcm-mls fails when trying to configure multi-language support. 
+
+SYMPTOM
+The ConfigTrace.log shows the following.... 
+
+start-portal-server:
+Target started: start-portal-server
+Target finished: start-portal-server
+[echo] VirtualPortalContext = , VirtualPortalHost =
+[echo] Initialized: host acme.com vpContext
+[echo] To call ConfigModuleClient: host acme.com
+vpContext
+[ConfigModuleClient] Connecting to login address:
+<url here>
+
+
+[ConfigModuleClient] Connecting to task address:
+<url here>
+
+with
+user name: admin
+[ConfigModuleClient] No output will be shown while this task is
+running. Check the SystemOut.log for progress information, or the z/OS
+Portal Job log.
+[ConfigModuleClient] <html><head><title>IBM Web Content Manager
+Utility: DataModule</title></head><body><h2>Log for Utility:
+DataModule</h2><p></p>Starting utility: DataModule<br/>
+[ConfigModuleClient] <font color=red>Check PortalServer log files for
+the detailed log of the module from 7/31/15 9:18 AM</font><br/>Preserve
+dates option: False<br/>
+[ConfigModuleClient] Report only mode <br/>
+[ConfigModuleClient] Force unlock option: True<br/>
+[ConfigModuleClient] Failed to complete:
+com.aptrix.pluto.util.RepositoryException: Message: Failed to import
+the directory
+"C:/IBM/WebSphere/wp_profile/paa/wcm_mls/components/wcm_mls/content/wcm/
+libraries". Error message: Message:
+com.ibm.icm.jcr.command.CommandException: SER3009E: Import of one or
+more files failed., Cause: com.ibm.icm.jcr.command.CommandException:
+SER3009E: Import of one or more files failed., Cause:
+java.lang.Exception: Failed to import the directory
+"C:/IBM/WebSphere/wp_profile/paa/wcm_mls/components/wcm_mls/content/wcm/
+libraries". Error message: Message:
+com.ibm.icm.jcr.command.CommandException: SER3009E: Import of one or
+more files failed., Cause: com.ibm.icm.jcr.command.CommandException:
+SER3009E: Import of one or more files failed.<br/>
+</body>
+--- Exception Thrown ---
+C:\IBM\WebSphere\PortalServer\wcm\prereq.wcm\config\includes\prereq.wcm_
+cfg.xml:4034: An exception occurred while executing the task: Status
+returned 500: Internal server error
+at
+com.ibm.workplace.wcm.maintenance.module.ConfigModuleClient.execute(Conf
+igModuleClient.java:103)
+at
+org.apache.tools.ant.UnknownElement.execute(UnknownElement.java:275)
+at org.apache.tools.ant.Task.perform(Task.java:364)
+at org.apache.tools.ant.Target.execute(Target.java:341)
+at org.apache.tools.ant.Target.performTasks(Target.java:369)
+
+...
+
+Caused by: Status returned 500: Internal server error
+at
+com.ibm.workplace.wcm.maintenance.module.ConfigModuleClient.checkRespons
+e(ConfigModuleClient.java:276)
+at
+com.ibm.workplace.wcm.maintenance.module.ConfigModuleClient.runModule(Co
+nfigModuleClient.java:224)
+at
+com.ibm.workplace.wcm.maintenance.module.ConfigModuleClient.runPlutoModu
+le(ConfigModuleClient.java:116)
+at
+com.ibm.workplace.wcm.maintenance.module.ConfigModuleClient.execute(Conf
+igModuleClient.java:94)
+... 150 more
+--- Nested Exception ---
+Status returned 500: Internal server error
+
+
+Review of the SystemOut.log at the same timestamp shows the following:
+
+[7/31/15 9:18:43:757 EDT] 000001ba PumaEngineHel I
+com.ibm.wps.um.PumaEngineHelper getRegisterProfile regProfile from
+ThreadLocale
+[7/31/15 9:18:43:757 EDT] 000001ba PlutoUtilityM I Starting utility:
+DataModule
+[7/31/15 9:18:43:772 EDT] 000001ba PlutoUtilityM I Preserve dates
+option: False
+[7/31/15 9:18:43:772 EDT] 000001ba PlutoUtilityM I Report only mode
+[7/31/15 9:18:43:772 EDT] 000001ba PlutoUtilityM I Force unlock
+option: True
+[7/31/15 9:18:43:772 EDT] 000001ba PumaEngineHel I
+com.ibm.wps.um.PumaEngineHelper getRegisterProfile regProfile from
+ThreadLocale
+[7/31/15 9:18:44:725 EDT] 000001ba ImportStatusC I RT7547E:
+[07/31/2015 09:18:44 EDT] Counting the number of files to import.
+[7/31/15 9:18:44:757 EDT] 000001ba ImportStatusC I RT7560E: Total
+files for
+C:\IBM\WebSphere\wp_profile\paa\wcm_mls\components\wcm_mls\content\wcm\l
+ibraries : 99.
+[7/31/15 9:18:44:757 EDT] 000001ba ImportStatusC I RT7548E:
+[07/31/2015 09:18:44 EDT] Importing 99 files.
+[7/31/15 9:18:44:757 EDT] 000001ba AbstractImpor I RT7561E: Importing
+from directory:
+C:\IBM\WebSphere\wp_profile\paa\wcm_mls\components\wcm_mls\content\wcm\l
+ibraries.
+[7/31/15 9:18:45:210 EDT] 000001ba JTAHelper E
+com.ibm.ws.wim.tx.JTAHelper handleException
+[7/31/15 9:18:54:835 EDT] 000001ba AbstractSysVi E SER3032E: Invalid
+XML.
+javax.jcr.ItemNotFoundException:
+RT7503E: EJPSB0061E: Resource not found error occurred.
+at
+com.ibm.icm.jcr.service.access.WPSAccessManagerServiceImpl.move(WPSAcces
+sManagerServiceImpl.java:655)
+at com.ibm.icm.jcr.WorkspaceImpl.replaceUUID(WorkspaceImpl.java:747)
+at
+com.ibm.workplace.wcm.services.repository.serialization.ImportItemConfli
+ctVisitor.importNodeStarted(ImportItemConflictVisitor.java:159)
+at
+com.ibm.icm.jcr.serialization.visitor.ChainableItemVisitor.fireImportNod
+eStarted(ChainableItemVisitor.java:256)
+at
+com.ibm.icm.jcr.serialization.handler.AbstractSysViewContentHandler.fire
+ImportNodeStartedEvent(AbstractSysViewContentHandler.java:677)
+at
+com.ibm.icm.jcr.serialization.handler.AbstractSysViewContentHandler.endE
+lement(AbstractSysViewContentHandler.java:438)
+at
+com.ibm.icm.jcr.serialization.handler.ext.AbstractNodeContentHandler$Sys
+ViewContentHandler.endSysViewElement(AbstractNodeContentHandler.java:700
+)
+at
+com.ibm.icm.jcr.serialization.handler.ext.AbstractNodeContentHandler$Sys
+ViewContentHandler.endElement(AbstractNodeContentHandler.java:707)
+at org.apache.xerces.parsers.AbstractSAXParser.endElement(Unknown
+Source)
+
+...
+
+Caused by:
+com.ibm.wps.command.ac.exception.ACResourceNotFoundException:
+EJPSB0061E: Resource not found error occurred.
+WrappedException is: com.ibm.wps.ac.ResourceNotFoundException:
+EJPSB0153E: The resource with ObjectID [ExtIDImpl
+'Z6QReDeNPOC6QG6H9C4MMCCKHP2JMG66BPIJM8CM9EGJMOCO9D8MS47PHCIJQ47K1',
+ICM_CONTENT, 7cf4411b-c4f1-4fe9-b698-f85d99929594, [Domain: jcr]] was
+not found since it is either registered as dependent resource or not
+registered at all.
+at
+com.ibm.wps.command.ac.MoveProtectedResourceCommand.execute(MoveProtecte
+dResourceCommand.java:109)
+at
+com.ibm.icm.jcr.service.access.WPSAccessManagerServiceImpl.move(WPSAcces
+sManagerServiceImpl.java:636)
+... 81 more
+Caused by: com.ibm.wps.ac.ResourceNotFoundException: EJPSB0153E: The
+resource with ObjectID [ExtIDImpl
+'Z6QReDeNPOC6QG6H9C4MMCCKHP2JMG66BPIJM8CM9EGJMOCO9D8MS47PHCIJQ47K1',
+ICM_CONTENT, 7cf4411b-c4f1-4fe9-b698-f85d99929594, [Domain: jcr]] was
+not found since it is either registered as dependent resource or not
+registered at all.
+at
+com.ibm.wps.ac.impl.ResourceManagerDataAccess.loadResourceByExternalID(R
+esourceManagerDataAccess.java:337)
+at
+com.ibm.wps.ac.impl.ResourceManagerDataAccess.loadResourceByExternalIDFo
+rModification(ResourceManagerDataAccess.java:290)
+at
+com.ibm.wps.ac.impl.ResourceManager.moveResource(ResourceManager.java:88
+4)
+at
+com.ibm.wps.ac.impl.AccessControlConfigImpl.moveResource(AccessControlCo
+nfigImpl.java:1617)
+at
+com.ibm.wps.ac.impl.AccessControlConfigFederator.moveResource(AccessCont
+rolConfigFederator.java:409)
+at
+com.ibm.wps.command.ac.MoveProtectedResourceCommand.execute(MoveProtecte
+dResourceCommand.java:101)
+... 82 more
+
+
+CAUSE
+In this case the problem was determined to be a known defect. At the time of this writing the defect had not been completed...but a workaround is available.
+
+
+ENVIRONMENT
+Portal 8.5 
+
+Windows
+
+
+RESOLVING THE PROBLEM
+Run the deploy-wcm-mls task again with the -DrenameConflict=true parameter...see below... 
+
+
+ConfigEngine.bat deploy-wcm-mls -DrenameConflict=true

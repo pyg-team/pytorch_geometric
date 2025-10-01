@@ -1,0 +1,48 @@
+Title: IBM CWSIS1579E error is thrown while starting Messaging Engine - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ While starting the WebSphere Application Server (WAS) Messaging Engine you see CWSIS1579E in the SystemOut.log 
+
+SYMPTOM
+You are unable to start the Messaging Engine and in the SystemOut.log you see the following errors: 
+
+SibMessage E [testBus:<ME_name>] CWSIS1579E: The file stores log file is locked by another process.
+
+SibMessage I [testBus:<ME_name>] CWSIS1582I: The file store had a problem initialising its log file but will attempt to retry.
+
+XARecoveryDat W WTRN0005W: The XAResource for a transaction participant could not be recreated and transaction recovery may not be able to complete properly. The resource was [com.ibm.ws.sib.ra.recovery.impl.SibRaXaResourceInfo@***** <busName=testBus> <meName> <meUuid> <userName> <password> <useServerSubject=false> <providerEndpoints>]. The exception stack trace follows: com.ibm.ws.Transaction.XAResourceNotAvailableException: com.ibm.websphere.sib.exception.SIResourceException: CWSIT0088E: There are currently no messaging engines in bus testBus running. Additional failure information: CWSIT0103E: No messaging engine was found that matched the following parameters: bus=testBus, targetGroup=*******, targetType=MEUuid, targetSignificance=Required, transportChain=InboundBasicMessaging, proximity=Bus.
+at com.ibm.ws.sib.ra.recovery.impl.SibRaXaResourceFactory.getXAResource(SibRaXaResourceFactory.java:99)
+at com.ibm.ws.Transaction.JTA.XARecoveryData.getXARminst(XARecoveryData.java:441)
+at com.ibm.ws.Transaction.JTA.XARecoveryData.recover(XARecoveryData.java:568)
+at com.ibm.tx.jta.PartnerLogTable.recover(PartnerLogTable.java:389)
+at com.ibm.tx.jta.RecoveryManager.resync(RecoveryManager.java:1530)
+at com.ibm.tx.jta.RecoveryManager.performResync(RecoveryManager.java:2265)
+at com.ibm.ws.tx.jta.RecoveryManager.performResync(RecoveryManager.java:114)
+at com.ibm.tx.jta.RecoveryManager.run(RecoveryManager.java:2218)
+at java.lang.Thread.run(Thread.java:662)
+Caused by: com.ibm.websphere.sib.exception.SIResourceException: CWSIT0088E: There are currently no messaging engines in bus testBus running. Additional failure information: CWSIT0103E: No messaging engine was found that matched the following parameters: bus=testBus, targetGroup=***********, targetType=MEUuid, targetSignificance=Required, transportChain=InboundBasicMessaging, proximity=Bus.
+at com.ibm.ws.sib.trm.client.TrmSICoreConnectionFactoryImpl.localBootstrap(TrmSICoreConnectionFactoryImpl.java:363)
+at com.ibm.ws.sib.trm.client.TrmSICoreConnectionFactoryImpl.createConnection(TrmSICoreConnectionFactoryImpl.java:304)
+at com.ibm.ws.sib.trm.client.TrmSICoreConnectionFactoryImpl.createConnection(TrmSICoreConnectionFactoryImpl.java:222)
+at com.ibm.ws.sib.ra.recovery.impl.SibRaXaResourceInfo.createConnection(SibRaXaResourceInfo.java:554)
+at com.ibm.ws.sib.ra.recovery.impl.SibRaXaResourceInfo.createXaResource(SibRaXaResourceInfo.java:328)
+at com.ibm.ws.sib.ra.recovery.impl.SibRaXaResourceFactory.getXAResource(SibRaXaResourceFactory.java:88)
+
+
+RESOLVING THE PROBLEM
+This problem occurs because of a corrupted SIB xml configuration file. This could have happened because something went wrong during backup or restore of the file. In this case, the sib-engines.xml file has messaging engines, but there are no bus members in sib-bus.xml. 
+
+To resolve this issue delete the sib-engines.xml file and add the server or cluster to the bus and redo the configuration and start the messaging engine.
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration WebSphere Enterprise Service Bus Business Integration WebSphere Partner Gateway Advanced Edition Business Integration WebSphere Partner Gateway Enterprise Edition Business Integration WebSphere Process Server Business Integration WebSphere Service Registry and Repository 
+HISTORICAL NUMBER
+ 49072 379 000 
+
+PRODUCT ALIAS/SYNONYM
+ WebSphere Application Server WAS SIB SIBUS SI BUS

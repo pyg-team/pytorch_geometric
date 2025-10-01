@@ -1,0 +1,103 @@
+Title: IBM MustGather:  Collecting IBM WebSphere DataPower SOA Appliance Security and AAA Information - United States
+
+Text:
+MustGatherDocument; mustgather TECHNOTE (FAQ)
+
+QUESTION
+ Collect the following MustGather information to help IBM Support troubleshoot problems when an IBM WebSphere DataPower SOA Appliance issue arises with Security and AAA 
+
+ANSWER
+The following information describes the documentation needed by IBM support to investigate this problem scenario. Gather as much information listed in this document as possible. 
+
+
+
+Section 1. Resolving or Collecting information on this problem:
+Gathering all this information and following these suggested steps can dramatically reduce the time to resolution of the problem. 
+
+
+1.1. Describing the Problem: 
+
+ 
+
+ 1. Document the current symptoms including messages, error codes, or unexpected results.  1. Is this an existing environment or a new setup? 
+     2. Are there any recent changes that may have caused the problem to occur? 
+     3. List all the software, software version/release, with operating systems in the use case. 
+    
+    
+ 2.  Provide a clear overview of your use case and describe in detail what the existing configuration is designed to accomplish in terms of input to and output from DataPower.  1. Document the steps leading up to the problem. 
+     2. If possible, provide a simple use case which shows the question or problem. 
+     3. Capture images of the screen to help describe the steps and events. 
+    
+    
+
+1.2. Prerequisites to Troubleshooting: 
+
+You may need use of the "admin" password and id; access to the CLI command interface via serial or SSH; and access to the WebGUI. 
+
+ 
+
+1.3. Set the following trace and logging settings: 
+
+
+ 1. Set the debug level tracing and logging settings:  1. Access the DataPower SOA Appliance by using the WebGUI interface through your browser. 
+     2. From the Control Panel in the WebGUI, select the Troubleshooting icon. 
+     3. On the Troubleshooting Panel, under Logging, set the Log Level to debug from the pull down menu. Click Set Logging Level. Click Confirm at the confirmation pop-up window.
+    
+    
+ 2. Enable the Probe:  1. Select the Debug Probe tab near the top of the Troubleshooting Panel. 
+     2. Look for the service you are using. 
+     3. From the pull down select the service you configured for the simple use case. 
+     4. Click on the Add Probe button.
+    
+    
+
+1.4. Recreate the Problem: 
+
+ 1. Recreate the problem writing down the steps. If the problem has just occurred and you are collecting data, proceed to section 1.5 Collecting information on the Problem. Attempt the problem recreation again and make a note if the problem is always repeatable. 
+ 2. Using the simple use case, with sample data (such as an XML file and a CURL command), recreate the problem using 2 or 3 transactions. 
+ 3. Document the recreate steps. 
+ 4. Capture screen images from the WebGUI or do a "File / Save As ..." to save the file to a local file, if it has error messages or other information that might be helpful to IBM support. 
+ 5. Turn off traces. 
+
+1.5 Collecting information on the Problem
+
+
+ 1.  From the Control Panel in the WebGUI, select the Troubleshooting icon. 
+ 2.  On the Troubleshooting Panel, under Reporting, click the Generate Error Report button. 
+ 3.  Once the Error Report is generated, right click on the View Error Report and select Save Target As ... to save the Error Report to a local file. 
+ 4.  Export your configuration to a file by opening the ADMINISTRATION menu from the left hand navigation list. 
+ 5.  Click Export Config to display the initial Export Configuration screen. 
+ 6.  Click the Create a backup of one or more application domains radio button and click Next. 
+ 7.  Enter a comment noting the problem and click Build Export button. 
+ 8.  Check any applicable application domains. Make sure to select the default domain if the issue is related to a global configuration object. 
+ 9.  The configuration of the selected domains are backed up to a file named export.zip. An opportunity to download the zip is automatically presented on the next page. 
+ 10. Click the Download button to down load the file to your workstation. 
+ 11. Verify that all relevant files are included in the export.zip file. 
+ 12. Collect any remote files or configuration bundles referenced in your domain. 
+ 13. Gather any sample request/response messages that are required to recreate the issue. 
+ 14. Generate an export of the probe if it was enabled during the recreate tests in section 1.4. This must be done before disabling the probe.
+     
+     
+     
+
+Section 2. Preparing to contact IBM Support 
+ 1. Obtain the serial number of the appliance which experienced the problem. This is needed for IBM entitlement processing, before a PMR can be created. Using the WebGUI, select Status > System > Version Information, locate tag on the case of the appliance, or from the CLI use Show System 
+ 2. Locate the firmware version of the appliance. Use the WebGUI, select Status > System > Version Information or from the CLI use Show Version 
+ 3. Have your IBM customer number ready. 
+ 4. Determine a time for IBM remote support to call you to walk through these steps. 
+ 5. Determine the severity of your problem based on the Severity Levels table found in the following technote: "WebSphere DataPower Extended Maintenance and Support Services". [http://www.ibm.com/support/docview.wss?rs=2362&uid=swg21254180#severity.] 
+ 6. Prepare to describe the business impact (how the problem affects your business operations). 
+ 7. Determine which telephone number IBM should use to contact you concerning this problem report.
+
+
+Section 3. Contacting IBM Support and sending your MustGather information to IBM support
+
+
+ 1. Reference our technote for information on Contacting IBM WebSphere DataPower SOA Appliance Support [http://www.ibm.com/support/docview.wss?rs=2362&uid=swg21236322]. 
+ 2. After you have contacted IBM Support, a PMR number will be assigned. 
+
+ * Reply to the email, or attach to the PMR via the SR tool, the information in the preceding sections. 
+ * Do not send any proprietary or confidential information from your company.
+
+RELATED INFORMATION
+#MustGather: Read first [http://www.ibm.com/support/docview.wss?rs=2362&uid=swg21269260]

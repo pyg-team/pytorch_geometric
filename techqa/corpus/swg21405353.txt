@@ -1,0 +1,78 @@
+Title: IBM MustGather: Native Memory Issues on AIX - United States
+
+Text:
+NOOM AIX MustGather MustGatherDocument psscript TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ MustGather for native memory problems with the WebSphere Application Server on AIX. 
+
+CAUSE
+A native OutOfMemoryError condition occurs when the Java™ Virtual Machine is unable to allocate native memory.
+
+RESOLVING THE PROBLEM
+If you have already contacted IBM WebSphere technical support, continue to the component-specific MustGather information recommended by that analyst. Otherwise, click: MustGather: Read first for all WebSphere Application Server products [http://www.ibm.com/support/docview.wss?uid=swg21145599]. 
+
+ 
+Out of Memory (native) specific MustGather information 
+
+ 1. Enable verbosegc. For more details, see Enabling verbosegc in WebSphere Application Server. [http://www.ibm.com/support/docview.wss?uid=swg21114927]
+    
+ 2. Stop the WebSphere Application Server.
+    
+ 3. Clear all Application Server log files.
+    
+ 4. Restart the Application Server.
+    
+ 5. Recreate the Out of Memory condition, or wait for the condition to reoccur.
+    
+ 6. Collect the following logs:  * All files located in the following directory:
+       profile_root/logs/server_name
+       
+     * heapdump*.* and javacore*.* for the affected server
+       
+     * The server.xml for the affected server
+       
+    
+    
+ 7. Generate ulimit output for the environment with the userid used to run WebSphere, probably root (ulimit -a > ulimit.out)
+    
+ 8. Generate a system core and collect the system libraries. 
+    For more details, see Getting a system core and the system libraries for AIX [http://www.ibm.com/support/docview.wss?uid=swg21253915].
+    
+ 9. Package and compress these logs into a single file. Follow the instructions for Submitting data to IBM Support [http://www.ibm.com/support/docview.wss?uid=swg21153852] to send in the preceding diagnostic information. 
+
+
+
+
+Monitoring Memory Usage For All Processes 
+If requested by IBM support, run the ibm-psscript.sh script while recreating the issue. The ibm-psscript.sh script is located at the bottom of this page. 
+
+Run as follows: 
+ibm-psscript.sh [-f filename] [-i interval] 
+
+Where: 
+<filename> is the output filename file. The default value is ibm-psscript.log 
+<interval> is the time in seconds between each iteration. the default value is 1800 seconds (30 minutes). 
+
+The default values for these options are usually sufficient. IBM Support will direct you if parameters are required. 
+
+
+Monitoring Memory Usage For a Single Process 
+If requested by IBM support, please run the AIX_memory_leak.sh script while recreating the issue. The AIX_memory_leak.sh script is located at the bottom of this page. 
+
+Run as follows: 
+AIX_memory_leak.sh -p pid -f filename -i interval 
+
+Where the following parameters are required: 
+<pid> is the process id to be profiled. 
+<filename> is the 'base' output filename file. 
+<interval> is the time in seconds between each iteration. 
+
+IBM Support will direct you if specific parameters are required. RELATED INFORMATION
+ Recording your screen to share with IBM Support [https://www.ibm.com/developerworks/community/blogs/IBMElectronicSupport/entry/recording_your_screen_to_share_with_support?lang=en]
+
+
+ibm-psscript.sh [/support/docview.wss?uid=swg21405353&aid=2] [/support/docview.wss?uid=swg21405353&aid=1]AIX_memory_leak.sh [/support/docview.wss?uid=swg21405353&aid=4] [/support/docview.wss?uid=swg21405353&aid=3] 
+
+
+Cross reference information Segment Product Component Platform Version Edition Application Servers WebSphere Application Server - Express General AIX 8.5, 7.0, 6.1, 6.0.2

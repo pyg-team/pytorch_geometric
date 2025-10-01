@@ -1,0 +1,20 @@
+Title: IBM Operational Decision Manager (ODM) and Oracle Transparent Application Failover (TAF) - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Does ODM Decision Center or Rule Execution Server support Oracle TAF configuration for the datasource? 
+
+CAUSE
+Oracle TAF is a technology that is designed to help applications preserve transactions in the event of a RAC node failure. To realize full benefits of TAF, the application must handle Oracle exceptions and use the Oracle OCI API to restart transactions from point of failure. 
+
+ANSWER
+ODM application data access code is database-neutral, and it does not use specific API provided by Oracle TAF. Consequently, ODM applications (Decision Center or Rule Execution Server) can use an Oracle TAF database, however it will not take advantage of this database specific service in the event of node failure. 
+
+In this sense, ODM does not specifically support Oracle TAF.
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration WebSphere ILOG JRules General 7.1, 7.0.3, 7.0.2, 7.0.1, 7.0

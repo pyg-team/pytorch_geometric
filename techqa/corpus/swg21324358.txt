@@ -1,0 +1,44 @@
+Title: IBM The error "ORA-00942: table or view does not exist" appears when installing DOORS XT. What is the problem? - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ The error "ORA-00942: table or view does not exist" appears when installing DOORS XT. What is the problem? 
+
+ANSWER
+I am in the process of installing DOORS XT 2.1, following the instructions found in the manual "Installing and Setting Up DOORS XT" . When running the command: 
+
+
+@?\rdbms\admin\xaview.sql 
+
+as instructed in the section "Changing the database using SQL", I get the error message: 
+
+DROP VIEW v$xatrans$ 
+* 
+ERROR at line 1: 
+ORA-00942: table or view does not exist 
+
+DROP VIEW v$pending_xatrans$ 
+* 
+ERROR at line 1: 
+ORA-00942: table or view does not exist 
+
+View created. 
+
+View created. 
+
+
+
+
+This message is not an error message as such. Most SQL will try and first drop a table / view before subsequently trying to create a new one, as indicated in this message. You should then be able to carry on your installation of DOORS XT. 
+
+
+
+
+
+
+
+
+HISTORICAL NUMBER
+ KB10905

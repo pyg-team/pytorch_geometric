@@ -1,0 +1,27 @@
+Title: IBM How might I improve performance of my Common Server jobs in Content Manager OnDemand for i? - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ My users are complaining that the performance of the search operation in the Content Manager OnDemand Client is slower now that Common Server is being used, as compared to Spool File Archive when I was running V5R4. Is there any setting I can change that might improve performance of my Common Server jobs in OnDemand for i? 
+
+ANSWER
+If you're trying to improve search and archive performance, you might change the ARS_NUM_DBSRVR value in the /QIBM/UserData/OnDemand/QUSROND/ARS.CFG file (where QUSROND is the name of the instance you are using) to a value higher than the default of 5. We suggest you not take this value higher than 15. This change will not take effect until the OnDemand instance server is restarted using ENDTCPSVR *ONDMD and STRTCPSVR *ONDMD. This ARS_NUM_DBSRVR value controls how many SQL Server Mode (QSQSRVR) jobs are started to do work for the server. These jobs have the purpose of handling client/server database operations and are spawned automatically by the OnDemand instance server job. If you have multiple instances in OnDemand for i, you would need to make this change in each desired instance's ARS.CFG.
+
+Another idea is to change the run priority of the SQL Server Mode (QSQSRVR) jobs. The default priority is 50, which is lower in priority than interactive jobs. An alternative solution would be to set up a new routing entry for these jobs so that they will run at a higher priority. An example is below:
+
+ADDRTGE SBSD(QSYSWRK) SEQNBR(1841) CMPVAL(QRLMSERVER) PGM(QSYS/QCMD) CLS(QSYS/QSYSCLS40) 
+
+You would need to pick a SEQNBR not already in use. This change can be done while QSYSWRK is running but will not take effect until the instance(s) is restarted. Once the change takes effect, all the spawned QSQSRVR jobs for every OnDemand instance will run at the same PTY, and the example above changes the priority to 40. The IBM i also provides several other QSYSCLSxx classes in library QSYS that specify run priorities of 7, 10, 20, 25, 35 and 50. You might experiment and choose an existing class that works for you or create one of your own (in your own library). All attributes other than priority should be similar to the current QSQSRVR job attributes. For more information on SQL Server Mode, please see http://www.redbooks.ibm.com/abstracts/tips0658.html?Open [http://www.redbooks.ibm.com/abstracts/tips0658.html?Open].
+
+
+
+If this information does not address your question, contact IBM software support for further assistance. 
+
+
+Stay Informed by Receiving Product and Lifecycle Notifications:
+Click here [http://www.ibm.com/support/docview.wss?uid=swg21674106]
+
+RELATED INFORMATION
+ Controlling the run priority of instance server jobs [http://www.ibm.com/support/docview.wss?uid=swg21153375]

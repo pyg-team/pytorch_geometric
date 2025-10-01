@@ -1,0 +1,288 @@
+Title: IBM IV55720: JSSE CONNECTION FAILED WHEN USING HASHDRBG IN FIPS MODE. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Error Message, as reported by customer:
+   The customer is testing TLSv1.2 connections to his server and
+   keeps seeing "RSA premaster secret error" exception.
+   They have com.ibm.jsse2.usefipsprovider set to true and are
+   using the HASHDRBG random number generator.
+   They are using this RNG because they are trying to be NIST
+   compliant.
+   
+   Stack Trace, if applicable:
+   javax.net.ssl.SSLKeyException: RSA premaster secret error
+           at com.ibm.jsse2.z.<init>(z.java:102)
+           at com.ibm.jsse2.bb.a(bb.java:292)
+           at com.ibm.jsse2.bb.a(bb.java:273)
+           at com.ibm.jsse2.ab.r(ab.java:554)
+           at com.ibm.jsse2.ab.a(ab.java:325)
+           at com.ibm.jsse2.qc.a(qc.java:617)
+           at com.ibm.jsse2.qc.h(qc.java:103)
+           at com.ibm.jsse2.qc.a(qc.java:166)
+           at com.ibm.jsse2.qc.startHandshake(qc.java:649)
+           at
+   com.ibm.net.ssl.www2.protocol.https.c.afterConnect(c.java:62)
+           at
+   com.ibm.net.ssl.www2.protocol.https.d.connect(d.java:22)
+           at
+   com.ibm.net.ssl.www2.protocol.https.b.connect(b.java:37)
+           at ConnectionTest.doHandshake(ConnectionTest.java:30)
+           at RunMe.main(RunMe.java:112)
+   Caused by: java.lang.IndexOutOfBoundsException
+           at java.nio.ByteBuffer.wrap(ByteBuffer.java:371)
+           at com.ibm.crypto.fips.provider.HASHDRBG.b(Unknown
+   Source)
+           at
+   com.ibm.crypto.fips.provider.HASHDRBG.engineSetSeed(Unknown
+   Source)
+           at
+   java.security.SecureRandom.setSeed(SecureRandom.java:418)
+           at com.ibm.crypto.fips.provider.RSA.a(Unknown Source)
+           at com.ibm.crypto.fips.provider.RSA.b(Unknown Source)
+           at
+   com.ibm.crypto.fips.provider.RSA.engineDoFinal(Unknown Source)
+           at com.ibm.crypto.fips.provider.RSA.b(Unknown Source)
+           at com.ibm.crypto.fips.provider.RSA.engineWrap(Unknown
+   Source)
+           at
+   com.ibm.crypto.fips.provider.RSASSL.engineWrap(Unknown Source)
+           at javax.crypto.Cipher.wrap(Unknown Source)
+           at com.ibm.jsse2.z.<init>(z.java:57)
+           ... 13 more
+   
+   Other Error Information, as reported by customer:
+   N/A
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  The customer needs NIST compliance for their application, and
+   this problem only happens with RSA cipher suites.
+   There are 2 options for the customer -
+   
+   1, Use the default secure random generator, IBMSecureRandom.
+   Currently the FIPS default secure random generator,
+   IBMSecureRandom, can be considered as NIST compliant until Dec
+   31, 2015.
+   http://csrc.nist.gov/publications/nistpubs/800-131A/sp800-131A.p [http://csrc.nist.gov/publications/nistpubs/800-131A/sp800-131A.p]
+   df
+    4 Random Number Generation
+    The use of the RNGs specified in FIPS 186-2, [X9.31] and
+   ANS [X9.62] is deprecated from 2011 through December 31, 2015,
+   and disallowed after 2015.
+   http://csrc.nist.gov/groups/STM/cavp/documents/rng/rngval.html [http://csrc.nist.gov/groups/STM/cavp/documents/rng/rngval.html]
+    Validation No. 1082.
+   So the customer can use default secure random generator in
+   their application.
+   Their application will be NIST compliant until Dec 31, 2015 if
+   both FIPS and SP800-131A flags are set.
+   
+   2, Use DSA cipher suites instead of RSA.
+   
+   We will open another APAR to fix this issue when FIPS provider
+   is re-certified.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  JSSE connection failed when using HASHDRBG in FIPS mode.
+   ERROR DESCRIPTION:
+   The customer is testing TLSv1.2 connections to his server and
+   keeps seeing "RSA premaster secret error" exception.
+   javax.net.ssl.SSLKeyException: RSA premaster secret error
+           at com.ibm.jsse2.z.<init>(z.java:102)
+           at com.ibm.jsse2.bb.a(bb.java:292)
+           at com.ibm.jsse2.bb.a(bb.java:273)
+           at com.ibm.jsse2.ab.r(ab.java:554)
+           at com.ibm.jsse2.ab.a(ab.java:325)
+           at com.ibm.jsse2.qc.a(qc.java:617)
+           at com.ibm.jsse2.qc.h(qc.java:103)
+           at com.ibm.jsse2.qc.a(qc.java:166)
+           at com.ibm.jsse2.qc.startHandshake(qc.java:649)
+           at
+   com.ibm.net.ssl.www2.protocol.https.c.afterConnect(c.java:62)
+           at
+   com.ibm.net.ssl.www2.protocol.https.d.connect(d.java:22)
+           at
+   com.ibm.net.ssl.www2.protocol.https.b.connect(b.java:37)
+           at ConnectionTest.doHandshake(ConnectionTest.java:30)
+           at RunMe.main(RunMe.java:112)
+   Caused by: java.lang.IndexOutOfBoundsException
+           at java.nio.ByteBuffer.wrap(ByteBuffer.java:371)
+           at com.ibm.crypto.fips.provider.HASHDRBG.b(Unknown
+   Source)
+           at
+   com.ibm.crypto.fips.provider.HASHDRBG.engineSetSeed(Unknown
+   Source)
+           at
+   java.security.SecureRandom.setSeed(SecureRandom.java:418)
+           at com.ibm.crypto.fips.provider.RSA.a(Unknown Source)
+           at com.ibm.crypto.fips.provider.RSA.b(Unknown Source)
+           at
+   com.ibm.crypto.fips.provider.RSA.engineDoFinal(Unknown Source)
+           at com.ibm.crypto.fips.provider.RSA.b(Unknown Source)
+           at com.ibm.crypto.fips.provider.RSA.engineWrap(Unknown
+   Source)
+           at
+   com.ibm.crypto.fips.provider.RSASSL.engineWrap(Unknown Source)
+           at javax.crypto.Cipher.wrap(Unknown Source)
+           at com.ibm.jsse2.z.<init>(z.java:57)
+           ... 13 more
+   They have com.ibm.jsse2.usefipsprovider set to true and are
+   using the HASHDRBG random number generator.
+   They are using this RNG because they are trying to be NIST
+   compliant.
+   *************************
+   *** UPDATE 05/11/2015
+   The current IBMJCEFIPS, Version 1.7,  has two random number
+   generators: IBMSecureRandom and HASHDRBG and its
+   variants(SHA2DRBG, SHA5DRBG). By the end of 2015, due to
+   changes in NIST rules, the use of IBMSecureRandom will result
+   in non-compliance with FIPS140-2 random number rules.
+   In the current certified jar, HASHDRBG is not being re-seeded
+   properly by the RSA algorithm and IBMSecureRandom goes out of
+   NIST compliance at the end of 2015. FIPS 140-2 certified fix to
+   the re-seeding of HASHDRBG will fix those calling applications
+   using HASHDRBG. Calling applications using IBMSecureRandom will
+   have to pick up the updated jars and also make a small code
+   change to call HASHDRBG.
+   ERROR DESCRIPTION:
+   In the current certified ibmjcefips.jar, HASHDRBG is being
+   re-seeded improperly  by the RSA algorithm. The shorter seed
+   provided by RSA results in applications calling HASHDRBG via
+   RSA to encounter an exception. Some calling applications use
+   the alternate Random Number Generator(RNG), IBMSecureRandom,
+   available in the current version, to maintain FIPS 140-2
+   compliance. Futhermore, Java Secure Socket Extension (JSSE)
+   provider, when in FIPS 140-2 compliance mode, has explicitly
+   been calling the IBMSecureRandom to avoid the defect when
+   utilizing HASHDRBG via RSA.
+   REQUIRED CODE CHANGE
+   Modify the existing code to the required code to maintain FIPS
+   140-2 compliance after 2015.
+    Existing code:
+    IBM JCEFIPS is explicitly specified as the provider:
+     SecureRandom.getInstance("IBMSecureRandom",
+   "IBMJCEFIPS")
+     SecureRandom.getInstance("FIPSPRNG", "IBMJCEFIPS")
+    or if IBMJCEFIPS is first in the provider list:
+     new SecureRandom()
+     SecureRandom.getInstance("IBMSecureRandom")
+     SecureRandom.getInstance("FIPSPRNG")
+    Required code:
+    IBM JCEFIPS is explicitly specified as the provider:
+     SecureRandom.getInstance("SHA2DRBG", "IBMJCEFIPS");
+     SecureRandom.getInstance("HASHDRBG", "IBMJCEFIPS");
+     SecureRandom.getInstance("SHA5DRBG", "IBMJCEFIPS");
+    or if IBMJCEFIPS is first in the provider list:
+     SecureRandom.getInstance("SHA2DRBG");
+     SecureRandom.getInstance("HASHDRBG");
+     SecureRandom.getInstance("SHA5DRBG");
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  *************************
+   *** UPDATE 05/11/2015
+   A fix is made to IBMJCEFIPS and IBMJSSE2 provider. When in FIPS
+   140-2 compliance mode, IBMJSSE2 was changed to use SHA2DRBG as
+   default secure random generator.
+   The associated Hursley RTC Problem Report is 91195
+   The associated Austin CMVC defects are 116495, 116497, 116585
+   and 116617
+   JVMs affected: Java 6.0, Java 626, Java 7.0, Java 727 and Java 8
+   The fix was delivered for Java 6 SR16FP5, Java 626 SR8FP5, Java
+   7 SR9FP10, Java 727 SR3FP10 and Java 8 SR1FP10.
+   The level for fixed ibmjcefips.jar is 20150505 (version 1.71).
+   The level for fixed ibmjsseprovider2.jar is 20150506.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV55720
+   
+   
+ * REPORTED COMPONENT NAME
+   TIV JAVA CRYPTO
+   
+   
+ * REPORTED COMPONENT ID
+   TIVSECJCE
+   
+   
+ * REPORTED RELEASE
+   100
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-02-20
+   
+   
+ * CLOSED DATE
+   2014-03-05
+   
+   
+ * LAST MODIFIED DATE
+   2015-05-11
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R100 PSY
+   UP

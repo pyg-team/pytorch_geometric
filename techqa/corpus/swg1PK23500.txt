@@ -1,0 +1,139 @@
+Title: IBM PK23500: "XI or XI R2 External Designer's reports (with TEXT field) start from the second page . Embedded Designer reports work fine" - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS USER ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  customer has a simple report that's based on SQL Server
+   Database's Table that has one column as "TEXT" and contains
+   large amounts of data ( like 2-3 pages each in one column)
+   When she displays this report at runtime , the data starts
+   showing up from the 2nd page instead of 1st page (1st page of
+   the report is blank). The same behaviour occurs when this report
+   is run in Crystal Reports XI standalone product. Customer
+   figured (hit and trial) by right clicking on the specific column
+   in the report details section > format field > Uncheck "Keep
+   Object Together" > Save the changes.
+   Next time the report is run on the server, the Data starts
+   showing up from the first page , But this workaround only works
+   in the standalone CR XI product. This design time feature ("Keep
+   object together")is available in RAD CR design time as well, and
+   is checked ON by default(same as CR XI standalone product) but
+   the workaround ( Unchecking this checkbox) does not work for RAD
+   .
+   AT runtime, the data starts displaying from the 2nd page only
+   and not from the 1st page , whether the checkbox is selected or
+   not.. I think there's some patch in CR XI runtime that's missing
+   RAD CR XI runtime, which is causing this issue.
+   I worked with BusinessObjects support and we were able to
+   reproduce this issue (*even after applying the latest embedded
+   designer and JRC XI runtime patches applied on RAD)
+   The BusinessObjects CASE # for this issue is # 302655585
+   The defect number from BusinessObjects side for this issue is
+   ADAPT00585858
+   
+   
+   BusinessObjects support provided me instructions to force RAD
+   Crystal reports tooling to use the latest XI Jars (*which were
+   not getting picked otherwise) and also the instructions to use
+   XI R2 jars. Reports that are made from scratch in the ActiveX
+   designer work fine now (*aftera applying XI latest patches or
+   while using XI R2 jars) . But the issue still occurs when the
+   reports are designed from scratch in the external XI or XI R2
+   designer and then made to run in RAD web projects. So Changing
+   the heading of this RATLC to
+   "XI or XI R2 External Designer's reports (with TEXT field) start
+   from the second page . Embedded Designer reports work fine"
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *  No appropriate documentation was available from
+   BusinessObjects about this specific case.. which could have
+   avoided this CR and/or this lengthy CritSit. Will soon put
+   up a technote on RAD/RSA product support site for this issue
+   for other customers.
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK23500
+   
+   
+ * REPORTED COMPONENT NAME
+   SW ARCHITECT V6
+   
+   
+ * REPORTED COMPONENT ID
+   5724I7001
+   
+   
+ * REPORTED RELEASE
+   600
+   
+   
+ * STATUS
+   CLOSED USE
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2006-04-17
+   
+   
+ * CLOSED DATE
+   2006-10-20
+   
+   
+ * LAST MODIFIED DATE
+   2006-10-20
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

@@ -1,0 +1,178 @@
+Title: IBM PK40644: SQLCODE -312 WITH MSGCKP214I EXPLAIN FAILED FOR STATEMENT - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  SQLCODE -312 with MSGCKP214I EXPLAIN FAILED FOR STATEMENT
+   DSNT408I SQLCODE = -312, ERROR:  H IS AN UNDEFINED OR UNUSABLE
+   HOST VARIABLE or IS USED IN A DYNAMIC SQL STATEMENT OR A TRIGGER
+   definition.
+   DSNT418I SQLSTATE   = 42618 SQLSTATE RETURN CODE
+   DSNT415I SQLERRP    = DSNHSM2V SQL PROCEDURE DETECTING ERROR
+   DSNT416I SQLERRD    = 2502  0  0  -1  102  0 SQL DIAGNOSTIC
+   INFORMATION
+   DSNT416I SQLERRD    = X'000009C6'  X'00000000'  X'00000000'
+   X'FFFFFFFF'
+            X'00000066'  X'00000000' SQL DIAGNOSTIC INFORMATION
+   ADDITIONAL SYMPTOM:
+   1) A new Message CKP031I is added which will identify the
+      release and apar level Path Checker code is running at.
+      For example, for this apar level at R310 it would read:
+      CKP031I EXECUTING LICENSED PATH CHECKER V3R1 PK40644
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: Users of DB2 Path Checker.                   *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: SQLCODE -312 with MSGCKP214I EXPLAIN    *
+   *                       FAILED FOR STATEMENT                   *
+   *                      DSNT408I SQLCODE = -312, ERROR:  H IS   *
+   *                       AN UNDEFINED OR UNUSABLE HOST VARIABLE *
+   *                       or IS USED IN A DYNAMIC SQL STATEMENT  *
+   *                       OR A TRIGGER  definition.              *
+   *                      DSNT418I SQLSTATE   = 42618 SQLSTATE    *
+   *                       RETURN CODE                            *
+   *                      DSNT415I SQLERRP    = DSNHSM2V SQL      *
+   *                       PROCEDURE DETECTING ERROR              *
+   *                      DSNT416I SQLERRD    = 2502  0  0  -1    *
+   *                        102  0 SQL DIAGNOSTIC INFORMATION     *
+   *                      DSNT416I SQLERRD    = X'000009C6'       *
+   *                        X'00000000'  X'00000000' X'FFFFFFFF'  *
+   *                        X'00000066'  X'00000000' SQL          *
+   *                       DIAGNOSTIC INFORMATION                 *
+   *                      ADDITIONAL SYMPTOM:                     *
+   *                      1. A new Message CKP031I is added       *
+   *                      which will identify the release and     *
+   *                      apar level Path Checker code is running *
+   *                      at. For example, for this apar level    *
+   *                      at R310 it would read:                  *
+   *                       CKP031I EXECUTING LICENSED PATH        *
+   *                       CHECKER V3R1 PK40644                   *
+   ****************************************************************
+   * RECOMMENDATION: APPLY the PTF.                               *
+   ****************************************************************
+   Code has been changed to correct this condition.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  APPLY the PTF.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK40644
+   
+   
+ * REPORTED COMPONENT NAME
+   DB2 PATH CHECKE
+   
+   
+ * REPORTED COMPONENT ID
+   5655E3901
+   
+   
+ * REPORTED RELEASE
+   220
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2007-03-06
+   
+   
+ * CLOSED DATE
+   2007-03-09
+   
+   
+ * LAST MODIFIED DATE
+   2007-04-01
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UK22880 UK22881
+   
+   
+
+MODULES/MACROS
+ *     CKPPTHCK
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   DB2 PATH CHECKE
+   
+   
+ * FIXED COMPONENT ID
+   5655E3901
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R220 PSY UK22880 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK22880]
+   UP07/03/13 P F703
+   
+   
+ * R310 PSY UK22881 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK22881]
+   UP07/03/13 P F703
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

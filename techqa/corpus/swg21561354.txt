@@ -1,0 +1,133 @@
+Title: IBM Getting CMB2181E - C:E TCP TCP/IP REQUEST BIND     FAILED WITH RC=045B, RS=7247. - United States
+
+Text:
+STERLINGTRB TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Getting CMB2181E - C:E TCP TCP/IP REQUEST BIND FAILED WITH RC=045B, RS=7247. 
+
+SYMPTOM
+
+
+Using ODF parm ,FTP_DEFAULT_SERVER_DATA_PORT_RANGE=L-1 (only using DP 20)
+
+Server Data Port 20 (due to customer using L-1) is enqueued from a prior connection and never de-enqueued.
+
+
+There are no FTP A/Cs, only SSL remote connects into C:E z/OS.
+
+C:E FTP server Dialog trace post 'Port Range None Available', followed by message '425 PASV failed. Session continuing.' At this same time the C:E console log posted CMB2181E - C:E TCP TCP/IP REQUEST BIND FAILED WITH RC=045B, RS=7247.
+
+Running at V01.R02.M05 POST-P042805
+
+Error Message Definition on Unix system Services errors posted in CMB2181E found in IBM manual:
+CMB2181E - C:E TCP TCP/IP REQUEST BIND FAILED WITH RC=045B, RS=7247.
+IBM manual
+Title: OS/390 V2R7.0 UNIX System Services Messages and Codes
+Document Number: SC28-1908-06
+RC=045B, 1115 (dec) EADDRINUSE The address is already in use.‚
+RS=7247 JRPortBusy - Specified port is in use.
+
+Action: Specify a port that is not in use or try again later.
+
+
+
+
+
+
+RESOLVING THE PROBLEM
+Solution 
+
+The C:E Dialog trace is for user XXX on thread FTPC0002, who issues a PASV command. Next the server post 'Port Range None Available', followed by message '425 PASV failed. Session continuing.' At this same time the C:E console log posted a TCP bind failure (below) and the following $$LIST FTP command specified that thread FTPC0001 was still in use which I suspect it's in use because the server Data Port 20 (due to customer using L-1) is enqueued from a prior connection and never de-enqueued. 
+CMB2181E,- C:E TCP TCP/IP REQUEST BIND FAILED WITH RC=045B, RS=7247.
+CMB2129I - C:E TCPS FTP SERVER SESSION END ON THREAD=FTPS0002, RMT=MZPALUAC,
+
+Recommendation: Upgrade to the latest 1.2.00 maintenance which is CUM1207 + P022807, or upgrade to the latest release 1.3.00 which is CUM1302 + P092007.
+
+
+In CUM1206 there were multiple FTP fixes created to correct the problem of a port getting enqueued, but not de-enqueue so the port could be re-used on a new connection. Also there were some fixes related to using Port Range L-1, and other fixes when you are the server and using PASV. 
+Specifically, the customer needs to be running with the following fixes, below is a portion of the fix description, see full fix description in the CUM or package readme doc:
+
+Fixes in CUM1206:
+
+FIX 35880 SR 1354833
+FTP Client does not set failure code in AC Log record for connection
+failures due Port Range is not available. Failure codes 183, 184, 197
+will now be set where appropriate.
+
+FTP Client obtains ENQ with invalid RNAME and does not release it.
+Occurs only when FTP_DATA_PORT_RANGE=U is in use.
+
+FTP Client sessions that fail due to no port available in FTP Control
+Port Range (FTP_CONTROL_PORT_RANGE=nnnnn-nnnnn) set invalid FC of 152
+in AC Log record when FC=198 should be set. Also text of Dialog 600
+message will change from "600 OPEN rejected. No connection to server."
+to "600 OPEN rejected. No usable port in CP Port Range."
+
+When FTP Client or FTP Server BIND or Connections fail when using
+Ephemeral ports (i.e Port Ranges not in use), don't put
+"PORT RANGE NONE AVAILABLE" in Dialog Trace. Instead write
+"PORT STATUS: BIND OR CONNECT FAILED FOR EPHEMERAL PORT" if PORT
+or "PORT STATUS: BIND OR LISTEN FAILED FOR EPHEMERAL PORT" if PASV
+
+
+FIX 35862 SR 1351801
+When FTP Server session uses PASV and Port Ranges, PASV Port,Enqueue,
+is released after data connection established instead of being
+released when data connection ends. Also change ENQ/DEQ tracing from
+DBUG to TCPSCH.
+
+MODULES UPDATED: STFTPS40 STFTPS41 STFTPC05 STFTPC15 STFTPC20
+STFTPC35 STFTPC42 STFTPC44 STFTPC45 STFTPS20
+STFTPS30 STTCPL00
+LOAD MODULES AFFECTED: STFTPS40 STFTPS41 STFTPC05 STFTPC15
+STFTPC20 STFTPC35 STFTPC42 STFTPC44
+STFTPC45 STFTPS20 STFTPS30 STTCPL00
+
+
+FIX 35587 SR,1351801,1351684,1343142,1342540,1344583,1343471,
+If there is a problem with the TCPIP stack and a FTP thead does not
+get posted during an attempt to establish a connection, the thread
+can hang holding the port Enqueue. On C:E systems running with
+FTP_DEFAULT_SERVER_DATA_PORT_RANGE=L-1, this will results in getting
+550 reply failures during data transfer functions.
+
+This fix introduces the use of a timer to detect connection hangs.
+This timer will be set to the value of the DISCINTV set for the
+session. If C:E is configured to run with DISCINTV=0, this timer
+will be set to 45 seconds just for the connection phase of the session.
+
+
+Fix in Post CUM1207 P022807:
+
+FIX 36845 SR,1362507,
+If a FTP Server session has sent a PASV reply and data connection has
+been established but the DISCINTV timer pops before the server
+recieves a data transmission command, the timer is ignored. If
+the FTP Client does not have a timer and does not send any commands but
+keeps the session open, the FTP Server will be hung (since FTP Server
+ignores its DISCINTV timer under this condition) until the Client
+either ends the session or continues with the transmission. If the
+FTP Server session is configured to use Port Range L-1, that one
+port will be ENQed in use and unavailable for other L-1 remotes.
+
+After this fix, when using PASV, if the DISCINTV timer pops before the
+FTP Client sends a data transmission command, the session will end with
+Failure Code 146.
+
+If no DISCINTV value is set for the FTP Server remote, this fix will
+have no affect. That is, if the FTP Server remote uses L-1 and
+DISCINTV=0, and a FTP Client sends a PASV command but no data
+transmission command, the L-1 port will be held in use and unavailable
+until the FTP Client ends the session (or sends the data transmission
+command).
+
+MODULES UPDATED: STFTPS30
+LOAD MODULES AFFECTED: STFTPS30
+
+
+
+ 
+
+HISTORICAL NUMBER
+ TRB1705

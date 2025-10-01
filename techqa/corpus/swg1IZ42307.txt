@@ -1,0 +1,162 @@
+Title: IBM IZ42307: NCO_CONFPACK'S WRAPPER SCRIPT BREAKS UP ARGUMENTS THAT CONTAIN S PACES(ONLY WINDOWS) - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Tivoli Netcool/OMNIbus 7.2.0 InterimFix 4, 7.2.0-TIV-NCOMNIbus-IF0004 [http://www-01.ibm.com/support/docview.wss?uid=swg24024892]
+Tivoli Netcool/OMNIbus 7.2.1 Fix Pack 7, 7.2.1-TIV-NCOMNIbus-FP0007 [http://www-01.ibm.com/support/docview.wss?uid=swg24025507]
+Tivoli Netcool/OMNIbus 7.2.1 Fix Pack 15, 7.2.1-TIV-NCOMNIbus-FP0015 [http://www-01.ibm.com/support/docview.wss?uid=swg24036693]
+Tivoli Netcool/OMNIbus 7.2.1 Fix Pack 13, 7.2.1-TIV-NCOMNIbus-FP0013 [http://www-01.ibm.com/support/docview.wss?uid=swg24031554]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Platform : WINDOWS SERVER 2003.
+   
+   Test Steps:
+   
+   1.Start an Object server.
+   
+   2.Run the following command:
+   
+   %OMNIHOME%\bin>nco_confpack -list -server TEST1 -user root -file
+   "C:\Program Files\testfile"
+   
+   Expected Result: The command must be executed succesfully
+   without giving any message like
+   "Unknown argument:      Files\testfile" and it should create
+   "C:\Program Files\testfile".
+   
+   Actual Result:   nco_confpack gives a message  as follows:
+    "Unknown argument:     Files\testfile"  and does not create
+   "C:\Program Files\testfile" .
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Use the short name of any paths that contain spaces, e.g.
+   C:\Progra~1\testfile
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   Users of nco_confpack and nco_config on Windows.
+   ****************************************************************
+   PROBLEM DESCRIPTION:
+   The commands nco_confpack and nco_config do not work properly on
+   Windows when specifying a parameter that contains a space (i.e.
+   a file path such as "c:\program files").
+   ****************************************************************
+   RECOMMENDATION:
+   Apply the maintenance vehicles listed in the Problem Conclusion.
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Spaces are now allowed in path parameters for nco_confpack and
+   nco_config on Windows.
+   
+   The fix for this APAR is contained in the following maintenance
+   packages:
+        | fix pack | 7.1.0-TIV-NCOMNIbus-FP0010
+        | fix pack | 7.2.0-TIV-NCOMNIbus-FP0005
+        | fix pack | 7.2.1-TIV-NCOMNIbus-FP0003
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ42307
+   
+   
+ * REPORTED COMPONENT NAME
+   NETCOOL/OMNIBUS
+   
+   
+ * REPORTED COMPONENT ID
+   5724O4800
+   
+   
+ * REPORTED RELEASE
+   710
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-01-21
+   
+   
+ * CLOSED DATE
+   2009-03-16
+   
+   
+ * LAST MODIFIED DATE
+   2009-03-16
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   NETCOOL/OMNIBUS
+   
+   
+ * FIXED COMPONENT ID
+   5724O4800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R710 PSN
+   UP

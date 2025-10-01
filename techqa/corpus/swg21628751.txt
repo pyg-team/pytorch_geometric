@@ -1,0 +1,93 @@
+Title: IBM SQL1131N on a  java udf - sqlj.install_jar stored procedure call - United States
+
+Text:
+SQL1131N; java udf; sqloJVMstart TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ SQL1131N received during an sqlj.install_jar stored procedure call, the diag.log may contain routine termination error 
+
+SYMPTOM
+db2 "call sqlj.install_jar('file:/~/xxxxjar)"
+"SQL1131N Stored procedure process has been terminated abnormally.
+SQLSTATE=38503"
+
+
+CAUSE
+The issue is that we can't start the JVM, so this usually means that there
+is something wrong with the JVM. JVM is of the causes for this error, JDK comes with JVM. 
+
+DIAGNOSING THE PROBLEM
+Ensure that DB2 instance library path is properly set
+Ensure that the CLASSPATH contains the jar file used in the Stored Procedure call.
+
+
+
+You might see routine termination error in the db2diag.log and a similar stack as seen below in the trap file generated with fmpid: 
+
+
+*******************************************
+* 
+* DB2 USERS : 
+* ----------- 
+* A db2fmp process terminated abnormally. 
+* This may have been caused by a prog- 
+* ramming error in the routine. 
+* A stack trace-back follows. 
+* 
+*******************************************
+
+
+<StackTrace>
+-------Frame------ ------Function + Offset------
+0x09000000045F4820 sqloJVMstart__FP15sqlo_jvm_commonPi + 0x1D8
+0x09000000045F017C sqloJAttach + 0x70
+0x090000000DC0357C sqlejAttach + 0x9C
+0x0900000004A7B960 sqlerFmpOneTimeInit + 0x130
+0x00000001000011B4 main + 0x894
+</StackTrace>
+
+See below trace snippets:
+
+101531 115.096011775 | | | | sqloJVMstart entry
+101532 115.096012244 | | | | | sqlerGetJavaLatch entry
+101533 115.096013244 | | | | | | sqloxltc_app entry
+101534 115.096014931 | | | | | | sqloxltc_app exit
+101535 115.096015150 | | | | | sqlerGetJavaLatch exit
+101536 115.096016025 | | | | | sqloInstancePath entry
+101537 115.096016494 | | | | | sqloInstancePath exit
+:
+106441 118.820077181 | | | | | sqloJVMabort entry
+:
+106457 118.820277986 | | | | | | | | sqloGetInstanceOwnerName entry
+106458 118.820278761 | | | | | | | | sqloGetInstanceOwnerName exit
+106459 118.820279431 | | | | | | | | sqloGetProgramName entry
+:
+106486 118.820469400 | | | | | sqloJVMabort data [probe 10]
+106487 118.820470978 | | | | | | | | sqloclose entry
+106488 118.820478244 | | | | | | | | sqloclose exit 
+
+:
+106495 118.820489841 | | | | | | sqloGetBlocks entry
+106496 118.820498667 | | | | | | sqloGetBlocks exit
+106497 118.820499009 | | | | | sqloJVMabort exit
+:
+107195 118.837546289 | | | | | | | | | | | | | | | sqlerInvokeFencedRoutine data [probe 99]
+107196 118.837547482 | | | | | | | | | | | | | | | | | | sqloclose entry
+eduid 4371 eduname db2agent]
+:
+107204 118.837560642 | | | | | | | | | | | | | | |
+sqlerInvokeFencedRoutine exit [rc = 0xFFFFFB95 = -1131]
+
+Check JDK level from the db2support file or java -fullversion, note the date of JDK
+
+
+RESOLVING THE PROBLEM
+Please try the latest JDK and point JDK_PATH to that new location.
+
+Latest JDK's can be found at: http://www.ibm.com/developerworks/java/jdk/ [http://www.ibm.com/developerworks/java/jdk/] 
+
+ * Recycle DB2 once you change JDK_PATH.
+   
+
+RELATED INFORMATION
+ JDK_PATH [http://www-01.ibm.com/support/knowledgecenter/SSEPGG_9.7.0/com.ibm.db2.luw.admin.config.doc/doc/r0000138.html?cp=SSEPGG_9.7.0%2F2-2-6-6-37]

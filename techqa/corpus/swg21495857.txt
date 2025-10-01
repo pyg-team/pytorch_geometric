@@ -1,0 +1,14 @@
+Title: IBM Export keys and certificates from EKM to TKLM with different OS - United States
+
+Text:
+Migrate key keys certificate exporting importing exported imported TECHNOTE (FAQ)
+
+QUESTION
+ Can I just export the keystores/certificates from the OS/400 EKM and they will be compatible (in format) with Windows Server when importing them to a windowsTKLM ? 
+
+ANSWER
+Keystores/certificates created by java should be platform independent. 
+
+You can use keytool to export/import. 
+
+It has been verified that the certificates generated on OS/400 system can be imported to Windows without any problem.

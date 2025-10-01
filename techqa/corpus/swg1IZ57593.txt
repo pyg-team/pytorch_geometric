@@ -1,0 +1,136 @@
+Title: IBM IZ57593: SESSION INACTIVITY TIMEOUT: SESSION TIMEOUT RESULTS IN A FEEDBACK SCREEN BEING SHOWN WHEN CLICKING ANY LINK. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Environment:
+   TAM ESSO 8.0.1 / Windows Server 2003 SE SP2
+   
+   Problem Description:
+   In the screen of AccessAdmin, If the link of a left-hand side
+   pane (1) is clicked after the time of "session time out" passes,
+   a menu will be displayed on a right-hand side pane (2).
+   Then, if the menu of a right-hand side pane (2) is clicked, a
+   feedback screen will appear. * Please see "12333, 69C, 760,
+   20090629.xls" for detailed contents. Uploaded the file here.
+   
+   Frequency:
+   Always.
+   
+   Reproducibility:
+   Yes.
+   
+   Recreation Scenario:
+   In the screen of AccessAdmin, If the link of a left-hand side
+   pane (1) is clicked after the time of "session time out" passes,
+   a menu will be displayed on a right-hand side pane (2).
+   Then, if the menu of a right-hand side pane (2) is clicked, a
+   feedback screen will appear.
+   
+   TestFix: Provided Testfix to Customer and it worked.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  IFIX provided to customer.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fix will be included in ESSO 8.0.1 Fixpack 1.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ57593
+   
+   
+ * REPORTED COMPONENT NAME
+   TAM ESSO IM SVR
+   
+   
+ * REPORTED COMPONENT ID
+   5724V6700
+   
+   
+ * REPORTED RELEASE
+   800
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-08-10
+   
+   
+ * CLOSED DATE
+   2009-09-19
+   
+   
+ * LAST MODIFIED DATE
+   2009-09-19
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TAM ESSO IM SVR
+   
+   
+ * FIXED COMPONENT ID
+   5724V6700
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R801 PSY
+   UP

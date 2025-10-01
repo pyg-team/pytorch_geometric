@@ -1,0 +1,18 @@
+Title: IBM Is RHEL7 64-bit supported with the new ITCAM for J2EE v7.1.1.0.2 agent? - United States
+
+Text:
+CAMJ2INST CAMJ2ALL RHEL7 J2EE TECHNOTE (FAQ)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ US English 
+
+QUESTION
+ Is RHEL7 64-bit supported with the new ITCAM for J2EE v7.1.1.0.2 agent? 
+
+ANSWER
+No sorry, RHEL 7 64-bit is not supported with J2EE v7.1.1.0.2 at this time (2H2015) although this may change in future as soon as Testing is complete.
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ ITCAM ITCAM for J2EE

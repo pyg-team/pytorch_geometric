@@ -1,0 +1,48 @@
+Title: IBM ReleaseBuilder quits abruptly without errors - United States
+
+Text:
+release; builder; releasebuilder; oom; out; of; memory; blank; content; null; heap; core; javacore TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ IBM® WebSphere® Portal is successfully installed and configured. In preparation for staging a release to a production server, the ReleaseBuilder administration tool is utilized to compare different releases of the Portal server. While running the ReleaseBuilder tool, the tools quits unexpectedly, and the output xml file generated does not contain any content. This Technote will explain how to diagnose and resolve this error so the Portal ReleaseBuilder tool runs successfully. 
+
+SYMPTOM
+No error messages or logs were produced when the error occurred. The observed output xml file was successfully created, but did not contain any content. The expected output xml file should contain the difference between the REV1 and REV2 releases.
+
+
+CAUSE
+The releasebuilder(.sh|.bat) file invokes a separate Java Virtual Machine (JVM). When invoked, the following two JVM parameters are passed automatically via the releasebuilder(.sh|.bat) file: 
+
+-ms128M 
+-mx512M
+
+The -ms128M parameter indicates the minimum amount of memory (128MB) for the ReleaseBuilder JVM to utilize, while the -mx512M parameter indicates the maximum amount of memory (512MB) for the ReleaserBuilder to utilize.
+
+In this instance, the separate JVM utilized by ReleaseBuilder was experiencing an Out-of-Memory (OOM) condition when comparing the REV1 and REV2 releases.
+
+
+DIAGNOSING THE PROBLEM
+Depending on the specific operating system and system configured, heapdumps and coredumps may be produced as a result of the ReleaseBuilder OOM condition. By default, these heapdumps and coredumps will be generated in the same directory as the releasebuilder(.sh|.bat) file; however, the location may change based on operating system specific configurations. In this instance, IBM Support was able to recreate the issue and observed several heapdump and coredump files produced after running ReleaseBuilder.
+
+
+
+RESOLVING THE PROBLEM
+1) Backup the existing releasebuilder(.sh|.bat) file. 
+
+2) Open the releasebuilder(.sh|.bat) file in a text editor (e.g. gedit or Notepad).
+3) Locate the following parameters:
+${JAVA} -Xms128M -Xmx512M 
+
+4) Modify this line to reflect the following:
+${JAVA} -ms128M -Xmx1512M 
+*Note the extra "1" before the "512". 
+*Note: Please verify there is enough free memory on the system to handle the new maximum value.
+
+
+5) Save the modified releasebuilder(.sh|.bat) file.
+6) Rerun the same ReleaseBuilder command. The command should now complete successfully.
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Organizational Productivity- Portals & Collaboration WebSphere Portal End of Support Products AIX, HP-UX, Linux, Solaris, Windows, z/OS, IBM i 6.1, 6.0

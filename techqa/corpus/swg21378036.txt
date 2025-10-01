@@ -1,0 +1,41 @@
+Title: IBM Date keywords in Synergy & Change - United States
+
+Text:
+query; report; date; keyword; SC; CS; Synergy Change; CMSynergy 
+
+Technote (FAQ) This document applies only to the following language version(s):
+English Question What date keywords are available in Change and Synergy Queries? Answer When running queries in Synergy and Change you can use date attributes in your query by using the time() operator. Within this operator you can use the following date keywords.
+You should be aware that for Change and Synergy, all relative times and all date keywords are interpreted on the server where the query is executed. This means that they use the time zone of the server, not the time zone of the client or the machine where the web browser is running. When the client machine and server machine are in different time zones, this can give rise to unexpected results. The following keywords are implemented for Synergy GUI. This was intended to make the Developer/Java client compatible with Change where the following keywords are implemented.
+
+
+Keyword Description See Note %today_begin Beginning of today, 00:00:00 [/support/docview.wss?uid=swg21378036&amp;aid=1] %today_end End of today, 23:59:59 [/support/docview.wss?uid=swg21378036&amp;aid=1] %this_week_begin Beginning of this week , 00:00:00 1 %this_week_end End of this week , 23:59:59 1 %last_week_begin Beginning of last week , 00:00:00 1 %last_week_end End of last week , 23:59:59 1 %this_month_begin Beginning of this month, 00:00:00 [/support/docview.wss?uid=swg21378036&amp;aid=1] %this_month_end End of this month, 23:59:59 [/support/docview.wss?uid=swg21378036&amp;aid=1] %last_month_begin Beginning of last month, 00:00:00 [/support/docview.wss?uid=swg21378036&amp;aid=1] %last_month_end End of last month, 23:59:59 [/support/docview.wss?uid=swg21378036&amp;aid=1] %this_year_begin 1st Jan this year, 00:0:00 [/support/docview.wss?uid=swg21378036&amp;aid=1] %this_year_end 31st Dec this year, 23:59:59 [/support/docview.wss?uid=swg21378036&amp;aid=1] %today_minus<N>days Today minus <N> days, 00:00:00 [/support/docview.wss?uid=swg21378036&amp;aid=1] %today_plus<N>days Today plus <N> days, 00:00:00 [/support/docview.wss?uid=swg21378036&amp;aid=1] %today_minus<N>weeks Today minus <N> weeks, 00:00:00 [/support/docview.wss?uid=swg21378036&amp;aid=1] %today_plus<N>weeks Today plus <N> weeks, 00:00:00 [/support/docview.wss?uid=swg21378036&amp;aid=1] %today_minus<N>months Today minus <N> months , 00:0:00 2 %today_plus<N>months Today plus <N> months , 00:00:00 2 %today_minus<N>years Today minus <N> years , 00:00:00 3 %today_plus<N>years Today plus <N> years , 00:00:00 3 
+Note 1: The first day of the week is Sunday by default. The model attribute start_day_of_week can be set to change this default. A value of 1 means Monday, 2 Tuesday and so on. There is currently a CR recorded which reports a problem with this in Synergy 6.5 and Synergy 7.0
+
+Note 2: When subtracting or adding months, if the current day of the month is greater than the number of days in the resultant month, the effective date is the last day of that month. In both cases, time is 00:00:00. For example, if today was 30th January 2003, then today_plus1month would be 28th February 2003, 00:00:00.
+
+Note 3: When subtracting or adding years, if the current day of the month is greater than the number of days in that month in the resultant year, the effective date is the last day of the month in that month. For example, if today was 29th February 2004, then %today_plus1years gives 28th February 2005, 00:00:00.
+
+In Change a pt.cfg system setting specifies the first day of the week.
+
+[CCM_SYSTEM][BEGIN_DAY_OF_WEEK]MONDAY[/BEGIN_DAY_OF_WEEK][/CCM_SYSTEM]
+[CCM_SYSTEM][END_DAY_OF_WEEK]SUNDAY[/END_DAY_OF_WEEK][/CCM_SYSTEM]
+
+The user_framework.cfg specifies the valid keywords...
+
+[CCM_VALUELISTBOX]
+[NAME]date_keywords[/NAME]
+[LABELS]
+Any|Now|Today Begin|Today End|Today Minus N Days|Today Plus N Days|Today Minus N Weeks|Today Plus N Weeks|Today Minus N Months|Today Plus N Months|Today Minus N Years|Today Plus N Years|This Week Begin|This Week End|This Month Begin|This Month End|This Year Begin|This Year End
+[/LABELS]
+[VALUES]Any|%now|%today_begin|%today_end|%today_minus1days|%today_plus1days|%today_minus1weeks|%today_plus1weeks|%today_minus1months|%today_plus1months|%today_minus1years|%today_plus1years|%this_week_begin|%this_week_end|%this_month_begin|%this_month_end|%this_year_begin|%this_year_end
+[/VALUES]
+[/CCM_VALUELISTBOX] 
+
+ 
+
+ 
+
+Do you need more help? For additional assistance, contact IBM Rational Client Support:
+Submit a Service Request (SR) [http://www.ibm.com/software/support/probsub.html?ratlid=srnewfooter]
+
+Cross Reference information Segment Product Component Platform Version Edition Software Development Rational Synergy General Information AIX, Linux, Solaris, Windows 7.0, 6.6a, 6.5, 6.4, 6.3

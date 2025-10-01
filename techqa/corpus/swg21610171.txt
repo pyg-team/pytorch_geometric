@@ -1,0 +1,24 @@
+Title: IBM TCR 2.1.1 installation fails - United States
+
+Text:
+installation directory not valid; TCR installation fails; error message; provided location; invalid; bitness; TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Installing TCR 2.1.1 64bit on an existing TIP immediately fails with error message
+
+"The installation directory you specified is not valid"
+"The provided location contains Tivoli Integrated Portal instance with incompatible bit support level" 
+
+CAUSE
+If the reused TIP is the one delivered with Tivoli Netcool OMNIbus V7.3.1 Web GUI, it is a 32bit application, so you cannot install TCR 2.1.1 64bit on it.
+
+RESOLVING THE PROBLEM
+You have two possible options to solve the issue:
+
+A) if you want to reuse the existing TIP, install the 32bit version of TCR 2.1.1
+B) if you want to leverage on 64bit architecture, perform a standalone TCR 2.1.1 installation on another machine.
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ Tivoli Common Reporting 2.1.1

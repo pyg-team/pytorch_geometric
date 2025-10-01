@@ -1,0 +1,263 @@
+Title: IBM IV82934: IMPORT FAILED FOR ME-3600 DEVICE - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Import for ME-3600 devices fails by throwing following error
+   messages:
+   
+   
+   (16) Could not get actual model
+   XMLResource failed to parse XML String into a Document object.
+   (17) Operation failed with failure category [Device Error]
+   (18) [Caused by: Error getting actual model and os from
+   10.177.171.80
+   (OperationFailedException)]
+   (19) [Caused by: Could not get actual model
+   Unable to set username/password information.
+   (CommsDriverException)]
+   (20) [Caused by: Unable to set username/password information.
+   (PhysicalDeviceException)]
+   (21) Task End Time: 2016/02/25 23:14:05.814 GMT+00:00
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Chuck could reproduced the  issues.
+   
+   Found a couple of things. I was able to duplicate the issue on
+   my test servers. Below is what I did to fix the issue.
+   
+   1st - Need to add the following line to the rad right below
+   "default.errorResponse=Error sending command" in the device
+   script in the RAD.
+   default.errorResponse=Error sending command
+   default.excludedErrors=Incomplete or Invalid Xconnect config
+   or remove "Invalid" from the default errors.
+   
+   2nd - I also changed the config.running section back to what we
+   originally had. This part might take some more work as I was
+   using an emulator so I could use the data from the ME3600
+   device. I tested all three of the FIND-BEGIN FIND-END commands
+   that are shown in the config.running section.
+   # Running config
+   config.running.send=show running-config\r
+   config.running.end=\nend
+   config.running.FIND-BEGIN.=version
+   config.running.FIND-END.=end
+   #config.running.FIND-BEGIN.=\nversion
+   #config.running.FIND-END.=\nend
+   #config.running.FIND-BEGIN.=version
+   #config.running.FIND-END.=\nend\r
+   
+   
+   3rd - I think we should upgrade the driver. When I put the
+   config on my server I was able to find the issue right away
+   because the error message was in the UOW. Tomorrow I would like
+   to go back and look at the last UOWs that we ran and make sure
+   it does not have the info. See below the UOW from my server.
+   
+   ************** Operation Summary **********************
+   
+   Task Start Time: 2016/03/23 02:18:04.3 GMT+00:00
+   *******************************************************
+   Task: Import Configuration
+   Device: 2800-test
+   Description: test
+   *******************************************************
+   (1) Allocating 20MB of task memory (100% of the default task
+   memory)...
+   (2) >>> Operation Started on Worker Server 'ncm63cw'...
+   (constants): 2016/03/23 02:18:04.034 GMT+00:00
+   (3) <<< Operation Finished in 0 seconds (constants): 2016/03/23
+   02:18:04.034 GMT+00:00
+   (4) >>> Operation Started on Worker Server 'ncm63cw'...
+   (radCheck): 2016/03/23 02:18:04.035 GMT+00:00
+   (5) <<< Operation Finished in 0 seconds (radCheck): 2016/03/23
+   02:18:04.054 GMT+00:00
+   (6) >>> Operation Started on Worker Server 'ncm63cw'...
+   (getConfig): 2016/03/23 02:18:04.055 GMT+00:00
+   (7) Importing configuration for device
+   (8) Using custom ResourceAccDoc for atomic resource '2800-test'
+   (9) Using default DeviceScript for atomic resource '2800-test'
+   (10) Using default FileTransfer for atomic resource '2800-test'
+   (11) Using default NCGD for atomic resource '2800-test'
+   (12) Using Authentication resource 'ITNCM/DevicePasswords' for
+   atomic resource '2800-test' (**** match: */*/*/*)
+   (13) Using driver: cisco_router_28xx_15.1-x_v20151217.132001
+   (IBM-68889fb3-7ec7-49ff-b00b-b8120a5ac7f5)
+   (14) Actual Model: 2851
+   (15) Actual OS   : C2800NM-ADVIPSERVICESK9-M-15.3(11)T10
+   (16) Device script used: Resource Access Type: telnet
+   (17) Normalised Model: 28xx
+   (18) PreWrite requested : running config copied to startup
+   config
+   (19) Error getting config
+   (20)  IO Exception encountered. Configuration data from device:
+   (21)  Error message found in the Response String
+   (22) Error token: Invalid
+   (23) Complete info from device is:
+   (24) show running-config
+   (25) Building Configuration...
+   (26) Current configuration : 20097 bytes
+   (27) !
+   (28) ! Last configuration change at 12:07:55 EDT Tue Mar 22 2016
+   (29) All resource access types defined in the RAD have been
+   tried. Cannot initialize driver.
+   (30) IO Exception encountered. Configuration data from device:
+   
+   (31) Operation failed with failure category [Device Error]
+   (32) [Caused by: Error getting config from address: 2800-test
+   (OperationFailedException)]
+   (33) [Caused by: Unable to retrieve physical devices
+   running-config. (CommsDriverException)]
+   (34) [Caused by: Unable to retrieve physical devices
+   running-config. (PhysicalDeviceException)]
+   (35) Task End Time: 2016/03/23 02:18:33.15 GMT+00:00
+   *******************************************************
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * ITNCM users using the Cisco Switch MExx 15.x driver          *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * IMPORT FAILED FOR ME-3600 DEVICE                             *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * The Interim FixId is IV82934_20160328                        *
+   * 1. Go to FixCentral ITNCM "Identify Fixes" at URL -          *
+   * http://www-933.ibm.com/support/fixcentral/swg/identifyFixes? *
+   * query.parent=ibm~Tivoli&query.product=ibm~Tivoli~Tivoli%20Ne *
+   * tcool%20Configuration%20Manager&query.release=All&query.plat *
+   * form=All                                                     *
+   * 2. Select the "Individual fix IDs" radio button and search   *
+   * for "IV82934_20160328 :Access key" (without the quotes)      *
+   * 3. Select Continue                                           *
+   *                                                              *
+   * File details:                                                *
+   * CiscoSwitchMExx15x.bin                    Actual Size =      *
+   * 53,673,076 bytes    TML Size = 53,673,076 bytes              *
+   * Readme_Cisco_Switch_MExx_15.x.html        Actual Size =      *
+   * 47,692 bytes    TML Size =     47,692 bytes                  *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  created fixpack with latest driver
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV82934
+   
+   
+ * REPORTED COMPONENT NAME
+   N/C CONFIG MGR(
+   
+   
+ * REPORTED COMPONENT ID
+   5724Z3100
+   
+   
+ * REPORTED RELEASE
+   641
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-03-23
+   
+   
+ * CLOSED DATE
+   2016-03-28
+   
+   
+ * LAST MODIFIED DATE
+   2016-03-28
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   N/C CONFIG MGR(
+   
+   
+ * FIXED COMPONENT ID
+   5724Z3100
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R630 PSY
+   UP
+   
+   
+ * R640 PSY
+   UP
+   
+   
+ * R641 PSY
+   UP
+   
+   
+ * R642 PSY
+   UP

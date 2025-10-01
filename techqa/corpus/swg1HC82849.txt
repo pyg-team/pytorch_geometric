@@ -1,0 +1,265 @@
+Title: IBM HC82849: SKETCHER - WHEN OPENING PART FROM V5R4 IN V5R6 , UPDATE REQUESTED GENERATES ERRORS ON SKETCHS CONSTRAINTS. - United States
+
+Text:
+AIX SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PERMANENT RESTRICTION.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  SKETCHER - WHEN OPENING PART FROM V5R4 IN V5R6 , UPDATE
+   REQUESTED GENERATES ERRORS ON SKETCHS CONSTRAINTS.
+   
+   sCENARIO.
+   1 - open shassis.Catpart in V5R6
+    => part is red displayed, an update is needed
+   2 - click update button
+    => update error is displayed on sketch.
+   
+   On most of them I had to recreate coincidence constrainst. On
+   sketch
+   where error on a face was detected I have edited the face and I
+   have
+   reselected the face.
+   On sketch 340 and 341, I have deleted your sketch and I used
+   elongated
+   hole to create the same hole.
+   I have performed these modifications on V5R6 BSF but I think
+   that a
+   user can correct this part. I have just edited each update
+   error,
+   deleted and recreated the coincidence constraints or reselected
+   the
+   faces.
+   I do not know which modifications have been performed on the
+   part
+   before the update so I do not known if it is a user operation
+   error. On
+   sketchs 340 and 341, the sketch done was not optimized.
+   The size of the part decreases because the useless historical
+   designs
+   are now deleted and not saved as in older versions.
+   Only new and unmodified design is saved. Old version of a sketch
+   is now
+   deleted from saving operation. There is no impact of this on the
+   use of
+   the part.
+   I hope you will find here answers requested.
+   Thanks for your cooperation.
+   Best Regards, Cyrille LE LANN.
+   
+   UPDT : I informed above to SS Ishizuki.
+       He requests us to keep open this for a while, since he
+   verifies
+       your reply.
+   DISP : Wait for his feedback.                          ukkey0717
+   
+   FROM : SS Ishizuki
+   UPDT : Hello Cyrille,
+   Thank you so much for your support.
+   He verified your reply and had a few questions.
+   This problem was not occurred on V5R4, but this problem
+   was occurred on V5R6.
+   He would like to know the cause of update error.
+   Since the specification on V5R6 was change, was the update
+   error occurred ?
+   In other word, since V5R6 looks into the model in
+   more detail than V5R4, was the update error occurred ?
+   Or was the update error occurred by a showstopper on V5R4 ?
+   He desperately wants to get detail information.
+   The reason is as following;
+   Since the customer has many sheetmetal models which were created
+   on
+   V5R4, he thinks that the same problem will happen to other
+   models.
+   If the problem may be occurred on the other models, he has to
+   create
+   a guide to the customer.
+   .
+     Thank you very much and best regards,   UKKEY   ukkey0718
+   
+   Update From LE LANN Cyrille                       ==>
+   $$RSPMNT=CEJ$$ <=
+   Hello Level1,
+   As you have requested on 01/07/03, the PMR request was only to
+   correct
+   this model and the customer thinks that it is a model specific
+   issue.
+   So I have corrected this part by removing and recreating the
+   constraints on sketch shown in the update error window.
+   Now you request from me a methodology to provide to customer in
+   order
+   ti create a guide. It seems to be model specific so the only
+   methodology is to edit each sketch shown in update error and to
+   edit
+   each error shown in the window. I think that user, as I did ,
+   just have
+   to check each error that can be edited and have firstly to
+   recreate all
+   coindcidence constraints or other if needed.
+   Thanks for your cooperation.
+   Best Regards, Cyrille LE LANN
+   
+   Hello
+     Thank you for your update.
+     Now, SE.Ishizuki san found that there are so many models which
+     have same problem.
+     (Problem means :  no problem occurred on V5R4,
+                       and UPDATE error occurs on V5R6.)
+   .
+   So, here we would like to know what is the real cause of this
+   error.
+   Is there any possibility that 'some checking mechanism becomes
+   severe'??
+   You told that following elements are invalid,
+        .........More than  sketch 291. There was update error on
+   sketch
+        291,292,293,294,295, 340 and 341.
+         On most of them I had to recreate coincidence constrainst.
+   .......
+   .
+   Why these elements cause no error by V5R4 but cause error by
+   V5R6??
+   Thanks and regards     Yoko Yuharagi
+   
+   Update From LE LANN Cyrille                       ==>
+   $$RSPMNT=CEJ$$ <=
+   Hello Level1,
+   Some improvement have been done in sketcher between V5R4 and
+   V5R6
+   levels.
+   The way to have this bad behaviour explained is to have part
+   analyzed
+   by dev tem through an APAR.
+   Do you agree with an APAR opening on this issue ?
+   Thanks for your cooperation.
+   Best Regards, Cyrille LE LANN.
+   
+   Hello
+     Thank you for your update.
+     Please submit an APAR for this problem.
+   Customer has a plan to release up all systems to V5R6 in this
+   month,
+   so they need the solution of this problem in this month.
+   Would you please answer of this problem by 07/26??
+   Thanks and regards    Yoko Yuharagi
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *   INCIDENT DIAGNOSIS:
+   Problem with projections inside a sketch if projections were
+   created prior to V5R6 and updated for the first time on V5R6
+   or higher level.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  THIS PROBLEM IS PERMANENT RESTRICTION IN CATIA
+   
+    TECHNICAL EXPLANATION FOR THE RESTRICTION:
+   The problem comes from the fact that projection operator was not
+   versionned prior to V5R6GA.
+   Inside sketch, projections or constraints based on a projection
+   can be reversed during first update on V5R6 or higher level.
+   
+   The problem was corrected with versionning on R6 and higher.
+   
+    BY-PASS / METHODOLOGY :
+   It is needed to regenerate projections or constraints as follow:
+   
+   1- In case of constraints based on 3D geometry :
+     a- Before updating CATPart, unfold sketch in the tree.
+     b- Deactivate all constraints
+     c- Edit sketch
+     d- Delete previously deactivated constraints.
+     e- Recreate constraints.
+   
+   2- In case of projections :
+     a- Before updating CATPart, unfold sketch in the tree.
+     b- Isolate projections
+     c- Create new projections
+     d- Create constraints between new projections and
+        previously isolated geometry.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   HC82849
+   
+   
+ * REPORTED COMPONENT NAME
+   CATIA V5 NT_INT
+   
+   
+ * REPORTED COMPONENT ID
+   569151000
+   
+   
+ * REPORTED RELEASE
+   506
+   
+   
+ * STATUS
+   CLOSED PRS
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2001-07-23
+   
+   
+ * CLOSED DATE
+   2001-08-16
+   
+   
+ * LAST MODIFIED DATE
+   2001-08-16
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

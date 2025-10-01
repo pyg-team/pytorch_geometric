@@ -1,0 +1,231 @@
+Title: IBM PK34624: IMPROVE LOGGING OF CONCURRENTMODIFICATIONEXCEPTIONS IN LOGIN/LOGOUT AREA - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Too much information is written to the log file for
+   concurrent logins to WebSphere Portal w/ the same userID:
+   
+   
+   com.ibm.wps.util.ConcurrentModificationException:
+   
+   2006.10.25 01:39:22.293 E
+   com.ibm.wps.datastore.impl.DataStoreContext
+   handleException
+     com.ibm.wps.util.ConcurrentModificationException: EJPDB0030E:
+   Database
+   has been changed since creation of data object [ObjectID =
+   9_0_12D
+   USER:1101].
+       at
+   com.ibm.wps.datastore.impl.ResourcePersister.storeExisting(Resou
+   rcePersi
+   ster.java(Compiled
+    Code))
+       at
+   com.ibm.wps.datastore.impl.ResourcePersister.store(ResourcePersi
+   ster.jav
+   a(Compiled
+    Code))
+   
+   
+   CannotSuspendUserSessionException:
+   
+   2006.10.25 08:41:58.072 E
+   com.ibm.wps.state.services.SessionSuspendResumeServiceImpl
+   onSessionEnd()
+     EJPEI0096E: The user session could not be suspended. Reason:
+   com.ibm.wps.state.services.exceptions.CannotSuspendUserSessionEx
+   ception:
+   EJPEI0082E: The user session of user frnoack for markup html
+   could not
+   be
+   suspended. The value to be suspended is:
+   04_Sj9SPykssy0xPLMnMz0vMAfIjzeON402cA_WjclLTE5Mr9UPz9MPy8otygbIB
+   -gU5WeUA
+   -5sF9A!!.
+    Reason: com.ibm.wps.util.ConcurrentModificationException:
+   EJPDB0030E:
+   Database has been changed since creation of data object
+   [ObjectID =
+   9_0_2K0B USER:86027]...
+   
+   This APAR is designed to improve the logging by reducing the
+   information printed to the log file for this particular use
+   case.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Apply this fix if the Portal log file shows a lot of stack
+   traces related to exceptions like
+   com.ibm.wps.util.ConcurrentModificationException: EJPDB0030E:
+   Database has been changed since creation of data object
+   [ObjectID = 9_0_1XXX [USER:12345]].
+   As this exception is expected in certain scenarios under
+   load, the fix changes the logging behavior to only log the
+   message to make the Portal log file more readable.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Problem Solution:
+   
+   By multiple logins of the same user there is a high risk of
+   ConcurrentModificationExceptions on the datastore layer, and
+   these cause that the stack trace is written to the System.out
+   log several times. This causes a log pollution that can be
+   provoked by many logins. To fix this, the Datastore team added a
+   new method to store data objects without logging the complete
+   stack trace in case of ConcurrentModificationExceptions. The
+   code for login, session timeout and session suspend handling was
+   changed to use this new method and not to log the stacktrace a
+   second time, but only log the message for this case.
+   
+    A fix is available from Fix Central:
+   http://www.ibm.com/eserver/support/fixes/fixcentral/swg/quickord
+   er?apar=PK34624&productid=WebSphere%20Portal&brandid=5 [http://www.ibm.com/eserver/support/fixes/fixcentral/swg/quickorder?apar=PK34624&productid=WebSphere%20Portal&brandid=5]
+    You may need to type or paste the complete address into your
+    Web browser.
+   
+   Failing Module(s):
+      Database
+   
+   Affected Users:
+      All users
+   
+   Version Information:
+       Portal Version(s): 5.1.0.2
+        Pre-Requisite(s): PK26497 [http://www-01.ibm.com/support/docview.wss?uid=swg1PK26497] PK21161 [http://www-01.ibm.com/support/docview.wss?uid=swg1PK21161] PK12142 [http://www-01.ibm.com/support/docview.wss?uid=swg1PK12142] PK25871 [http://www-01.ibm.com/support/docview.wss?uid=swg1PK25871]
+         Co-Requisite(s): ---
+   
+       Portal Version(s): 5.1.0.3
+        Pre-Requisite(s): PK26497 [http://www-01.ibm.com/support/docview.wss?uid=swg1PK26497] PK21072 [http://www-01.ibm.com/support/docview.wss?uid=swg1PK21072] PK25871 [http://www-01.ibm.com/support/docview.wss?uid=swg1PK25871]
+         Co-Requisite(s): ---
+   
+       Portal Version(s): 5.1.0.4
+        Pre-Requisite(s):
+         Co-Requisite(s): ---
+   
+       Portal Version(s): 6.0.0.0
+        Pre-Requisite(s): PK30923
+         Co-Requisite(s): ---
+   
+       Portal Version(s): 6.0.0.1
+        Pre-Requisite(s):
+         Co-Requisite(s): ---
+   
+   Platform Specific:
+      This fix applies to all platforms.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK34624
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSPHERE PORTA
+   
+   
+ * REPORTED COMPONENT ID
+   5724E7600
+   
+   
+ * REPORTED RELEASE
+   51B
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2006-11-14
+   
+   
+ * CLOSED DATE
+   2007-01-17
+   
+   
+ * LAST MODIFIED DATE
+   2008-04-23
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBSPHERE PORTA
+   
+   
+ * FIXED COMPONENT ID
+   5724E7600
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R51B PSY
+   UP
+   
+   
+ * R51C PSY
+   UP
+   
+   
+ * R51D PSY
+   UP
+   
+   
+ * R600 PSY
+   UP
+   
+   
+ * R60A PSY
+   UP

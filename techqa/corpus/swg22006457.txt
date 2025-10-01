@@ -1,0 +1,49 @@
+Title: IBM Security Bulletin: IBM Development Package for Apache Spark is affected by an Eclipse Jetty vulnerability - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ IBM Development Package for Apache Spark addresses the following vulnerability by updating the affected component.
+
+The primary role of Jetty within Apache Spark is to provide the Web UI via http, or optionally via https. This https communication channel is encrypted using a server-side keystore, which should be protected with a password. The Jetty vulnerability is an algorithm that exposes a tractable brute force attack against this password. 
+
+VULNERABILITY DETAILS
+CVEID: CVE-2017-9735 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2017-9735]
+DESCRIPTION: Jetty could allow a remote attacker to obtain sensitive information, caused by a timing channel flaw in util/security/Password.java. By observing elapsed times before rejection of incorrect passwords, an attacker could exploit this vulnerability to obtain access information.
+CVSS Base Score: 7.5
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/127842 [https://exchange.xforce.ibmcloud.com/vulnerabilities/127842] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:N/A:N) 
+
+AFFECTED PRODUCTS AND VERSIONS
+ 
+
+Affected IBM Development Package for Apache Spark Affected Versions IBM Development Package for Apache Spark v2.x Version 2.0.0.0 - 2.1.1.0 IBM Development Package for Apache Spark v1.x All versions REMEDIATION/FIXES
+ 
+
+IBM Development Package for Apache Spark Remediation / Fix IBM Development Package for Apache Spark [https://www.ibm.com/developerworks/java/jdk/spark/] v2.x Version 2.1.1.1, and later 
+For IBM Development Package for Apache Spark, v1.6.3.1 and earlier versions, IBM recommends upgrading to a fixed, supported version of the product. WORKAROUNDS AND MITIGATIONS
+Do not use the Apache Spark Web UI features (off by default) via https. 
+
+
+Recommendation is to upgrade to a supported release delivering the fixed code.
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v3 Guide [http://www.first.org/cvss/user-guide] 
+On-line Calculator v3 [http://www.first.org/cvss/calculator/3.0] 
+
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] 
+
+CHANGE HISTORY
+ 3 August 2017: Original version published 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.

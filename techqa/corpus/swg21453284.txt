@@ -1,0 +1,29 @@
+Title: IBM How to check whether a particular port is being blocked by the firewall for either Management IP address or Data IP address or for an Endpoint? - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How to check whether a particular port is being blocked by the firewall for either Management IP address or Data IP address or for an Endpoint? 
+
+ANSWER
+To check whether a particular port is been blocked or not, perform the following steps:
+
+1. From the command line, issue the command:
+telnet <ipaddress> <portnumber>
+
+Result: If the port is blocked then it will show "Connection refused" error message. If it shows a cursor blinking and waiting for input, it means the port is open.
+
+2. Login into the appliance and perform the following:
+netspect connect host <ipaddress> tcp portnumber <portnumber>
+> This command will let you know whether a particular port is filtered/closed or open.
+
+ 
+
+HISTORICAL NUMBER
+ 00000684 
+
+PRODUCT ALIAS/SYNONYM
+ Cast Iron Solution
+Cast Iron Operating System
+Cast Iron Studio

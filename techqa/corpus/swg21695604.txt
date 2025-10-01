@@ -1,0 +1,39 @@
+Title: IBM Records Manager receives error com.ibm.ejs.container.SessionBeanTimeoutException - United States
+
+Text:
+IRM timedout com.ibm.websphere.ejbcontainer.defaultSessionAccess TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ IBM Records Manager fails to connect to Content Manger server 
+
+SYMPTOM
+ERROR; [13/01/2015 08:49:19]; BLL; 
+com.ibm.gre.engine.ejb.business.util.RecordHostCallAdapter.onUpdate(Reco 
+rdHostCallAdapter.java:200); 
+
+Host exception: 
+java.rmi.NoSuchObjectException: CORBA OBJECT_NOT_EXIST 0x0 No; nested 
+exception is: org.omg.CORBA.OBJECT_NOT_EXIST: java.rmi.NoSuchObjectException: 
+Stateful bean BeanId(rmecmhost.RMECMRemoteHost#RemoteHostEJB.jar#MyRemoteHost, 
+E3EE523F-014A-4000-E000-2120AC110170) was removed or timed out. vmcid: 
+0x0 minor code: 0 completed: No 
+
+
+CAUSE
+Session access timed out 
+
+
+ENVIRONMENT
+IBM Records Manager 8.5
+Windows 2008 R2
+
+
+
+RESOLVING THE PROBLEM
+Set this by selecting 
+- Application servers > {servername} > Process definition > Java Virtual Machine > Custom properties 
+There should be defaulted entries, such as UseEJB61FEPScanPolicy. 
+Select "New" then add the property name 
+com.ibm.websphere.ejbcontainer.defaultSessionAccessTimeout and the desired value, 30000 and save the property. 
+A JVM restart will be required in order to pick up the new property and value. 
+com.ibm.websphere.ejbcontainer.defaultSessionAccessTimeout = 30000

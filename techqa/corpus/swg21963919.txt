@@ -1,0 +1,31 @@
+Title: IBM Accessing one DASH/JazzSM server from an other JazzSM server - United States
+
+Text:
+DASHL2; DASHL2CONF; integrating; jazzsm ; DASH ; SSO; single sign on TECHNOTE (FAQ)
+
+QUESTION
+ How can I open a page from one DASH/JazzSM server on an other DASH server? 
+
+CAUSE
+Suppose you have a Server A with DASH and WebGUI 8.1 installed on it, you have another Server B with DASH and TCR installed. The users will be accessing Server A. How can users access the TCR system from within DASH on Server A. They both use the same LDAP server for authentication.
+
+ANSWER
+1. Create a new page on DASH/WebGUI (Server A): 
+
+Click on Settings --> Pages. 
+
+Set the location of the page (using the "Location" button in the page settings). In the optional settings section, add the roles that should have access to the new page. Click OK to save the settings. That will take you to the page edit mode. 
+
+ 
+2. Add a Web Widget to the new page. Click the down arrow on the upper right side of the widget and choose "Edit shared settings". Set the desired URL in the "Home page" field. include "http://" in the URL. Click "Save" 
+
+
+3. Click the down arrow again on the upper right corner of the widget and chose the "Fill work area" option. 
+
+ 
+4. Save the page. 
+
+
+This way you can launch TCR on Server B from Server A. It will require user id and password to login to Server B. To avoid re-logging in, you can setup SSO between these two servers. See below URL for instructions. It shows how to setup SSO between TIP and DASH servers. Same procedure can be used for DASH servers. 
+
+http://www-01.ibm.com/support/knowledgecenter/SSTPTP_1.3.0/com.ibm.netcool_ops.doc_1.3.0/omn_nmip/task/nnm_noi_configuresinglesignon.html?cp=SSTPTP_1.3.0%2F2-1-7-7 [http://www-01.ibm.com/support/knowledgecenter/SSTPTP_1.3.0/com.ibm.netcool_ops.doc_1.3.0/omn_nmip/task/nnm_noi_configuresinglesignon.html?cp=SSTPTP_1.3.0%2F2-1-7-7]

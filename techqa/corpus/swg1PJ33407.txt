@@ -1,0 +1,163 @@
+Title: IBM PJ33407: MANIFEST IMPORT DOES NOT INCLUDE PICK LIST ICON CONFIGURATION - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  ***PLEASE PROVIDE THE FOLLOWING INFORMATION
+   THIS FIELD IS REQUIRED.***
+   Description of Problem (full details)
+   If you have a pick list with icons associated with it, and you
+   export the configuration, you can see in the exported xml file
+   that the icon information is there, however, when you import
+   that xml file, the icon information is not imported.
+   How long has the problem been occurring (recent changes)? :
+   Since testing
+   Does this occur on more than one station / server? :
+   Yes, occurs on all stations
+   Is there a workaround? :
+   Modify Bp8Conf.ExpImp.xml and add the following entry under the
+   <Import Table="PICK_LISTS_ITEMS" mssql="1" oracle="1">
+   section:
+   <Icon Name="ICON" Null="1"/>
+   What is the impact to the customer/system? :
+   Some items are not imported as expected.
+   Can the problem be replicated on an internal system?  Y or N
+   By Who (L3, Support, etc..)
+   Yes, it can be replicated on multiple systems within CSS
+   Steps to Reproduce:
+   1 Go into BPF explorer and modify the properties of a picklist
+   2 Add icons to one or more pick list items
+   3 Export the configuration
+   4 Look at the exported xml file and see that icon information
+   is included in the xml file
+   5 Import that same xml file and look at the pick list items in
+   BPF Explorer and notice that the icon information was not
+   imported
+   Actual Results:
+   Icon properties are blank when imported
+   Expected Results:
+   icon properties should be imported
+   Are there any similar or related Defects? If Y provide ECMDB #s
+   ecmdb369572 documents a problem when the icon information was
+   not exported in the first place, which was fixed.  This defect
+   is for the case where that same information is not imported.
+   What logs were collected and where are they located?
+   Configuration/Environment :
+   Server OS :Windows 2003
+   Client OS :
+   Database : SQL
+   Network:
+   App Server :
+   Browser :
+   Note if non US Language:
+   Other Product Component Versions:
+   Non Web Environment  N
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  BPF Web Application users
+   MANIFEST IMPORT DOES NOT INCLUDE PICK LIST ICON CONFIGURATIONUpg
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix for this APAR is contained in the following maintenance
+   packages:
+   BPF-3.6.0-003
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PJ33407
+   
+   
+ * REPORTED COMPONENT NAME
+   BUS PROC FRAMEW
+   
+   
+ * REPORTED COMPONENT ID
+   5724R7500
+   
+   
+ * REPORTED RELEASE
+   360
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-04-16
+   
+   
+ * CLOSED DATE
+   2008-04-16
+   
+   
+ * LAST MODIFIED DATE
+   2008-04-16
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   BUS PROC FRAMEW
+   
+   
+ * FIXED COMPONENT ID
+   5724R7500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R360 PSY
+   UP

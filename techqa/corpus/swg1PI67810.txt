@@ -1,0 +1,150 @@
+Title: IBM PI67810: REQUEST FOR MASTERSHIP TO A CLEARCASE 9 VOB SERVER GENERATES A FEATURE LEVEL 9 OPLOG IN A FEATURE LEVEL 8 VOB - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  After upgrading a ClearCase MultiSite VOB server to version
+   9.0.0.x
+   Requests for Mastership directed to the replica on the upgraded
+   server
+   produce oplogs that cannot be imported into other replicas.
+   
+   On ClearCase 8.0 VOB servers they generate the error
+   multitool: Error: Operation not supported: **unknown oplog op
+   value (217)**.
+   
+   On ClearCase 9.0 VOB servers they generate the error
+   multitool: Error: Operation "v4 chmaster" not valid while VOB
+   feature level is less than 9.
+   
+   
+   The VOB family feature level cannot be raised to 9 until all
+   replica VOB servers have been upgraded to 9.0
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Upgrade all VOB servers to version 9.0
+   Then raise the replica and VOB family feature levels to 9
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * Users of SRFM to a ClearCase 9.0.x VOB server.               *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * Request for Mastership or SRFM to a ClearCase 9.0.x VOB      *
+   * server generates a Feature Level 9 chmaster oplog in a       *
+   * Feature Level 8 VOB family, which cannot be imported at the  *
+   * requesting site or other siblings.                           *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A fix is available in ClearCase 9.0.0.2
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI67810
+   
+   
+ * REPORTED COMPONENT NAME
+   CC&CC MSITE WIN
+   
+   
+ * REPORTED COMPONENT ID
+   5724G3300
+   
+   
+ * REPORTED RELEASE
+   900
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-08-19
+   
+   
+ * CLOSED DATE
+   2016-09-16
+   
+   
+ * LAST MODIFIED DATE
+   2016-09-16
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CC&CC MSITE WIN
+   
+   
+ * FIXED COMPONENT ID
+   5724G3300
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R900 PSY
+   UP

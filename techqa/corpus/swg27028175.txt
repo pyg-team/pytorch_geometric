@@ -1,0 +1,36 @@
+Title: IBM System Requirements for WebSphere Application Server v8.5 - Liberty - United States
+
+Text:
+ PRODUCT DOCUMENTATION
+
+ABSTRACT
+ The data below lists the supported software and operating system options for IBM WebSphere Application Server (WAS) 8.5 - Liberty. 
+
+This document describes the minimum product levels that need to be installed before opening a problem report with the WebSphere Application Server Support team. Because other products frequently ship fixes, updates and new releases, testing every configuration is not possible. In general, you can install and run with updates to supported products if those updates are forward compatible.
+
+Note: The Liberty profile is only available with the license agreement for the full version of WebSphere Application Server Base, ND, Express or Developer editions.
+
+
+CONTENT
+ 
+
+WebSphere Application Server Liberty is a highly composable and dynamic runtime with multiple purposes: 
+
+ * to improve the out-of-the-box experience for developers 
+ * to provide an embeddable kernel (an optional features) to other users in IBM 
+ * to ease delivery of programming models beyond Java EE in WebSphere 
+ * to run WAS components in a much more composable and dynamic way than the traditional WAS (tWAS) runtime.
+
+
+
+Along with all of the Operating systems that the full WebSphere Application Server profile supports, WAS Liberty offers support for: 
+ * Mac OS X Snow Leopad 10.6 x86-64 
+   Mac OS X Lion 10.7 x86-64 
+   Mac OS X Mountain Lion 10.8 x86-64 
+
+
+Additionally, Liberty profile servers are supported running on the Java minimum versions listed here. [http://pic.dhe.ibm.com/infocenter/wasinfo/v8r5/topic/com.ibm.websphere.wlp.nd.doc/ae/rwlp_restrict.html] 
+
+Additional information on the WebSphere Application Server Liberty [https://www.ibm.com/developerworks/mydeveloperworks/blogs/wasdev/entry/home?lang=en] profile. 
+
+<- Back to all WebSphere Application Server detailed system requirements. [http://www-01.ibm.com/support/docview.wss?rs=180&uid=swg27006921]

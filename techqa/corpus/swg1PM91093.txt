@@ -1,0 +1,181 @@
+Title: IBM PM91093: INVALID URLS ARE NOT HANDLED NICELY BY SYSTEM WITH SOME EXCEPTIO NS IN THE LOG - United States
+
+Text:
+  A FIX IS AVAILABLE
+Fixes integrated in WebSphere Portal 8.0.0.1 Combined Cumulative Fixes [http://www-01.ibm.com/support/docview.wss?uid=swg24034497]
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+
+LOCAL FIX
+ *  Handle the invalid url nicely and return http 404 error instead
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Invalid urls are not handled nicely by system with some
+   exceptions in the log
+   
+   An invalid url is not handled nicely by system with some
+   exceptions in the log
+   
+   http://www.yourcompany.com/wps/wcm/connect/e95424004cc08f288f34f
+   f0e57cceb49/Pension_440x271.png?MOD='+having+1=1--+&CACHEID=e954 [http://www.yourcompany.com/wps/wcm/connect/e95424004cc08f288f34ff0e57cceb49/Pension_440x271.png?MOD=]
+   24004cc08f288f34ff0e57cceb49
+   
+   Exception in SystemOut.log shows as follow:
+   
+   [5/3/13 12:32:47:200 EDT] 000002cf ModuleManager E   IWKCT1382X:
+   Major
+   exception caught: com.presence.connect.business.module.
+   ModuleUndefinedException: IWKCT1381X: ' having 1=1-- does not
+   have a
+   CLASS configured.
+   [5/3/13 12:32:47:203 EDT] 000002cf WebApp        E   [Servlet
+   Error]-
+   [WCM Framework]: com.ibm.ws.webcontainer.webapp
+   .WebAppErrorReport:
+   Error reported: 500
+           at com.ibm.ws.webcontainer.webapp
+   .WebAppDispatcherContext.
+   sendError(WebAppDispatcherContext.java:554)
+           at com.ibm.ws.webcontainer.srt.SRTServletResponse
+   .sendError
+   (SRTServletResponse.java:1004)
+           at com.ibm.ws.webcontainer.srt.SRTServletResponse
+   .sendError
+   (SRTServletResponse.java:987)
+           at com.presence.connect.ServletClient.sendResponse
+   (ServletClient.java:391)
+           at com.presence.connect.ConnectServlet
+   .process(ConnectServlet.
+   java:314)
+           at com.presence.connect.ConnectServlet
+   .doGet(ConnectServlet.
+   java:119)
+           at javax.servlet.http.HttpServlet.service(HttpServlet
+   .java:743)
+           at javax.servlet.http.HttpServlet.service(HttpServlet
+   .java:856)
+           at com.ibm.ws.webcontainer.servlet.ServletWrapper
+   .service
+   (ServletWrapper.java:1146)
+           at com.ibm.ws.webcontainer.servlet.ServletWrapper
+   .service
+   (ServletWrapper.java:1087)
+           at com.ibm.ws.webcontainer.filter.WebAppFilterChain
+   .doFilter
+   (WebAppFilterChain.java:145)
+           at com.ibm.wps.engine.ExtendedLocaleFilter.doFilter
+   (ExtendedLocaleFilter.java:113)
+           at com.ibm.ws.webcontainer.filter.FilterInstanceWrapper
+   .doFilter
+   (FilterInstanceWrapper.java:190)
+           at com.ibm.ws.webcontainer.filter.WebAppFilterChain
+   .doFilter
+   (WebAppFilterChain.java:130)
+           at com.ibm.ws.webcontainer.filter.WebAppFilterChain
+   ._doFilter
+   (WebAppFilterChain.java:87)
+           at com.ibm.ws.webcontainer.filter.WebAppFilterManager
+   .doFilter
+   (WebAppFilterManager.java:837)
+           at com.ibm.ws.webcontainer.filter.WebAppFilterManager
+   .doFilter
+   (WebAppFilterManager.java:680)
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Handle the invalid url nicely and return http 404 error instead
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM91093
+   
+   
+ * REPORTED COMPONENT NAME
+   LOTUS WEB CONT
+   
+   
+ * REPORTED COMPONENT ID
+   5724I2900
+   
+   
+ * REPORTED RELEASE
+   615
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-06-14
+   
+   
+ * CLOSED DATE
+   2013-06-14
+   
+   
+ * LAST MODIFIED DATE
+   2013-06-14
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   LOTUS WEB CONT
+   
+   
+ * FIXED COMPONENT ID
+   5724I2900
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R615 PSY
+   UP

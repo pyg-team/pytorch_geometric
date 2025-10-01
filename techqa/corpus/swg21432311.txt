@@ -1,0 +1,25 @@
+Title: IBM Cannot augment the Deployment Manager profile with the dmgr.bspace profile template - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When attempting to augment the deployment manager profile for the cell with the dmgr.bspace profile template as documented, you receive a message similar to the following:
+INSTCONFFAILED: Profile augmentation failed. For more information, consult D:\We 
+bSphere70\AppServer\logs\manageprofiles\Dmgr01_augment.log.
+
+This might occur if the deployment manager profile was initially created in WebSphere Application Server using the Cell profile template instead of using the Management profile template. The deployment manager profiles created from these profile templates have some differences. 
+
+SYMPTOM
+While reviewing the log as directed after the augmentation failure you might see the following error message: 
+
+[..\profileTemplates\BusinessSpace\dmgr.bspace] is not a valid profile template.
+
+
+RESOLVING THE PROBLEM
+You must have a deployment manager profile created from a WebSphere Application Server Management profile template to augment with the dmgr.bspace profile template.
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration WebSphere Business Compass Business Space Linux, Windows, Linux zSeries 7.0.0.2, 7.0.0.1, 7.0 Business Integration WebSphere Business Events AIX, HP-UX, Linux, Solaris, Windows, z/OS 7.0.1, 7.0 Business Integration WebSphere Enterprise Service Bus Business space AIX, HP-UX, Linux, Linux iSeries, Linux zSeries, Solaris, Windows, z/OS 7.0.0.2, 7.0.0.1, 7.0 Business Integration WebSphere Process Server Business Space AIX, HP-UX, Linux, Solaris, Windows, z/OS, Linux zSeries 7.0.0.2, 7.0.0.1, 7.0 Business Integration WebSphere Service Registry and Repository Business Space AIX, HP-UX, Linux, Linux zSeries, Linux/x86, Solaris, Windows, z/OS 7.0.0.1, 7.0 Enterprise Content Management Case Foundation ECM Widgets AIX, HP-UX, Solaris, Windows, Linux 4.5.2

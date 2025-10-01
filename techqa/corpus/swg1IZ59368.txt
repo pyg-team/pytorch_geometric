@@ -1,0 +1,192 @@
+Title: IBM IZ59368: BMXAA4195E - REQUIRED FIELD STORAGE PARTITION IS BLANK WHEN CREATING INTERFACE TABLES. DB2 ONLY AND 2+ TABLESPACES - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  To reproduce:
+   
+   1.  Install Maximo any 7.1.x version on DB2 using two
+   tablespaces - one for tables and one for indexes.
+   
+   2.  Tablespaces must both be datatype=A (regular tablespace)
+   
+    and defined to use a bufferpoolid OTHER than 1 (do not
+   use default bufferpool).
+   
+   3.  Go To Integration Object Structures and query MXWO.
+   Set it to support flat format and set an interface table and
+   name (e.g. MXWO_IFACE) and save.
+   
+   4.  Go To External Systems, create a new external system,
+   
+   add MXWOInterface as an Enterprise Service.  Save.
+   
+   5.  Select Action, Create Interface Tables.  Check the
+   MXWO_IFACE.
+   
+   6.  Error occurs.
+   
+   Probable root cause:
+   
+   IF calls maxobjectcfg.add to add the object definition.
+   Since storagepartition attribute is null, maxobjectcfg.add
+   calls util.getDefaultStoragePartition() which executes
+   
+   select tbspace from syscat.tablespaces where datatype = 'A' and
+   bufferpoolid != 1
+   
+   If the select returns anything other than one tablespace name,
+   getDefaultStoragePartition returns a null.  (If there are
+   two or more datatype=A (standard) tablespaces, or if all the
+   tablespaces are datatype=L (large), then it will return null.)
+   The null return causes the STORAGEPARTITION attribute to
+   fail it's validation (it's REQUIRED) and thows the exception.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  1.  Shutdown application server.
+   
+   2.  Run the following updates to set a default, non-null, value
+   for the storagepartition attributes.  Replace XXX with one:
+   of your valid Maximo tablespace names:
+   
+   update maxattributecfg set defaultvalue = 'XXX' where
+   objectname = 'MAXOBJECTCFG' and attributename
+   ='STORAGEPARTITION'
+   
+   update maxattribute set defaultvalue = 'XXX' where
+   objectname = 'MAXOBJECTCFG' and attributename
+   ='STORAGEPARTITION'
+   
+   3.  Start application server and create the interface tables.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: Database Configuration with multiple storage *
+   *                 partitions                                   *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: See summary                             *
+   *                                                              *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   *                                                              *
+   *                                                              *
+   *                                                              *
+   ****************************************************************
+   If a default storage partition cannot be identified, then MEA
+   generates an error
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fixed the business object so that if is default storage
+   partition can be identified for an object, then use maxvar
+   MAXINSTTABLEPART.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ59368
+   
+   
+ * REPORTED COMPONENT NAME
+   MAXIMO INTEGRAT
+   
+   
+ * REPORTED COMPONENT ID
+   5724R46I1
+   
+   
+ * REPORTED RELEASE
+   711
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-08-26
+   
+   
+ * CLOSED DATE
+   2009-09-17
+   
+   
+ * LAST MODIFIED DATE
+   2009-09-17
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  MAXIMO
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   MAXIMO INTEGRAT
+   
+   
+ * FIXED COMPONENT ID
+   5724R46I1
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R711 PSY
+   UP

@@ -1,0 +1,84 @@
+Title: IBM The configuration task database-transfer failed with DB2 SQL Error: SQLCODE=-1585, SQLSTATE=54048 - United States
+
+Text:
+database-transfer; DB2; SQLCODE=-1585; SQLSTATE=54048 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+While attempting to run the database-transfer task the customer gets the following error:
+
+action-process-constraints:
+Fri Oct 10 13:20:34 CDT 2014
+Target started: action-process-constraints
+[java] Executing java with empty input string
+[java] [10/10/14 13:20:35.877 CDT] Attempting to create a new
+Instance of com.ibm.db2.jcc.DB2Driver
+[java] [10/10/14 13:20:36.016 CDT] Instance of
+com.ibm.db2.jcc.DB2Driver created successfully
+[java] [10/10/14 13:20:36.016 CDT] Attempting to make connection
+using: jdbc:db2://<hostname>:60500/<database_name>:returnAlias=0; ::
+d2svc :: PASSWORD_REMOVED
+[java] [10/10/14 13:20:36.954 CDT] Connection successfully made
+[java] [10/10/14 13:20:37.073 CDT] ERROR: Error occurred gathering data
+from the source database
+[java] com.ibm.db2.jcc.am.SqlException: DB2 SQL Error: SQLCODE=-1585,
+SQLSTATE=54048, SQLERRMC=null, DRIVER=4.18.60
+[java] at com.ibm.db2.jcc.am.kd.a(kd.java:752)
+
+
+SYMPTOM
+The ConfigTrace.log shows the following error:
+
+action-process-constraints:
+Fri Oct 10 13:20:34 CDT 2014
+Target started: action-process-constraints
+[java] Executing java with empty input string
+[java] [10/10/14 13:20:35.877 CDT] Attempting to create a new
+Instance of com.ibm.db2.jcc.DB2Driver
+[java] [10/10/14 13:20:36.016 CDT] Instance of
+com.ibm.db2.jcc.DB2Driver created successfully
+[java] [10/10/14 13:20:36.016 CDT] Attempting to make connection
+using: jdbc:db2://<hostname>:60500/<database_name>:returnAlias=0; ::
+d2svc :: PASSWORD_REMOVED
+[java] [10/10/14 13:20:36.954 CDT] Connection successfully made
+[java] [10/10/14 13:20:37.073 CDT] ERROR: Error occurred gathering data
+from the source database
+[java] com.ibm.db2.jcc.am.SqlException: DB2 SQL Error: SQLCODE=-1585,
+SQLSTATE=54048, SQLERRMC=null, DRIVER=4.18.60
+[java] at com.ibm.db2.jcc.am.kd.a(kd.java:752)
+
+
+CAUSE
+This condition typically means that the Portal code has been able to
+successfully connect to the DB2 database but once it begins to attempt
+to move the data from the Derby database to DB2 it encounters a DB2
+error. As you can see the DB2 error begin thrown is...
+
+DB2 SQL Error: SQLCODE=-1585, SQLSTATE=54048, SQLERRMC=null,
+DRIVER=4.18.60
+
+Research of this DB2 error indicates a problem with the DB2 database
+system temporary tablespaces....
+
+http://www-01.ibm.com/support/docview.wss?uid=swg21529563 [http://www-01.ibm.com/support/docview.wss?uid=swg21529563]
+
+and
+
+http://www-01.ibm.com/support/knowledgecenter/SSEPGG_9.7.0/com.ibm.db2.luw.messages.sql.doc/doc/msql01585n.html?cp=SSEPGG_9.7.0%2F2-6-27-3-37 [http://www-01.ibm.com/support/knowledgecenter/SSEPGG_9.7.0/com.ibm.db2.luw.messages.sql.doc/doc/msql01585n.html?cp=SSEPGG_9.7.0%2F2-6-27-3-37]
+
+ENVIRONMENT
+Portal 8.5
+AIX
+DB2
+
+DIAGNOSING THE PROBLEM
+Review the ConfigTrace.log 
+
+RESOLVING THE PROBLEM
+Have the DBA review the database's system temporary tablespace specifications and ensure they meet the Portal specifications below...
+
+db2 "CREATE SYSTEM TEMPORARY TABLESPACE ICMLSSYSTSPACE32 PAGESIZE 32K
+BUFFERPOOL ICMLSMAINBP32"
+db2 "CREATE SYSTEM TEMPORARY TABLESPACE ICMLSSYSTSPACE4 PAGESIZE 4K
+BUFFERPOOL ICMLSVOLATILEBP4"
+
+After correcting the tablespaces, simply re-run the database-transfer task.

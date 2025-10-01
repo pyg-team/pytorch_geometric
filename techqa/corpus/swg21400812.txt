@@ -1,0 +1,29 @@
+Title: IBM Clustering Rule Team Server/Decision Center - United States
+
+Text:
+RTS; cluster; teamserver; WODM; Decision Center TECHNOTE (FAQ)
+
+QUESTION
+ Can I deploy Rule Team Server/Decision Center to a cluster and how should I proceed? 
+
+ANSWER
+Rule Team Server (RTS)/Decision Center (DC) can be deployed on a cluster configuration as any Java EE application.
+Refer to the WebSphere ILOG JRules BRMS Version 7.1: Java EE add-ons [http://publib.boulder.ibm.com/infocenter/brjrules/v7r1/topic/com.ibm.websphere.ilog.jrules.install.doc/Content/Business_Rules/Documentation/_pubskel/JRules_Application_Servers/ps_Installing_JRules_IC.html] or Decision Center V8.0 > Configuring Decision Center [http://pic.dhe.ibm.com/infocenter/dmanager/v8r0/topic/com.ibm.wodm.dcenter.config/topics/wodm_dcenter_config.html] for topology and configuration details on each supported application server.
+
+
+Note: 
+
+ * Prior to JRules V7.0, the only limitation is that fail-over is not supported : the session is not restored, so the user needs to log-in again. 
+ * Starting in V7.0 fail-over is working as expected.
+
+RELATED INFORMATION
+ Clustering Decision Validation Services [http://www.ibm.com/support/docview.wss?rs=0&uid=swg21425487]
+Clustering the Rule Execution Server console [http://www.ibm.com/support/docview.wss?rs=0&uid=swg21426014]
+Clustering a transparent decision service [http://www.ibm.com/support/docview.wss?rs=0&uid=swg21473114]
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Operational Decision Manager Platform Independent 8.5, 8.0, 7.5 
+HISTORICAL NUMBER
+ jrules/FAQ/367

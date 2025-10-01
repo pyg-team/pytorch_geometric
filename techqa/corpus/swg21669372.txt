@@ -1,0 +1,41 @@
+Title: IBM WebSphere Application Server (WAS) profile creation hangs when installing Jazz for Service Management on AIX - United States
+
+Text:
+jazzsm1103relnotes TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ WebSphere Application Server (WAS) profile creation hangs when installing Jazz for Service Management on AIX 
+
+CAUSE
+The $WAS_HOME/bin/clearClassCache.sh command, which is ultimately invoked during WebSphere Application Server (WAS) profile creation while Jazz for Service Management (JazzSM) is installing, executes a java command line to clear the shared java class cache. This java command can hang if there are other Java Virtual Machines with locks on the cache. 
+
+ENVIRONMENT
+AIX
+
+RESOLVING THE PROBLEM
+Before starting the installation, complete the following steps:
+
+1. If the Installation Manager is hung, stop the java -Xshareclasses:destroyAll process. This unlocks the Installation Manager.
+
+
+2. Run the following commands to shutdown the System Director console and common
+agent.
+stopsrc -s pconsole
+stopsrc -s cas_agent 
+
+3. To ensure there are no java processes running use ps -ef|grep java
+
+4. Rename the java default shared resource directory 
+mv /tmp/javasharedresources /tmp/javasharedresources.old
+
+5. Reboot the machine using the command shutdown -Fr
+
+When the server restarts, ensure the java does not hang and returns within seconds.
+/usr/IBM/WebSphere/AppServer/bin/clearClassCache.sh
+
+a. Delete the partially installed JazzSM directory and clean up the WAS
+profile registry by using the following commands:
+rm -rf /opt/IBM/JazzSM
+/usr/IBM/WebSphere/AppServer/bin/manageprofiles.sh -validateAndUpdateRegistry 
+
+b. Restart the JazzSM installation. You can skip the WAS installation.

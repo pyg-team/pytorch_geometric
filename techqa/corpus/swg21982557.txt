@@ -1,0 +1,23 @@
+Title: IBM Unable to install Jazz for Service Management (JazzSM) successfully when DB2 client exists on same machine and Cognos content store db created on remote machine. - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Reporting Services installation fails, provided DB2 Client on same machine and Cognos content store created on remote machine
+Note: This issue is specific to JazzSM v1.1.2 and JazzSM v1.1.2.1 only 
+
+DIAGNOSING THE PROBLEM
+Installation fails, because IBM Installation Manager (IIM) tries to create Cognos content store (TCRDB) on same machine.
+
+RESOLVING THE PROBLEM
+1. Invoke IIM installer and navigate to panel "Install Packages"
+
+
+2. Expand "Reporting Services" entry 
+
+3. Unselect "Configuration" under Reporting Services->Schema and navigate to further panels 
+
+4. When panel asks for Remote machine Cognos content store connection, provide TCRDB connection details 
+
+5. Move further for successful installation of JazzSM

@@ -1,0 +1,156 @@
+Title: IBM IT07386: SECURITY APAR CVE-2014-6953/2015-0410 - MULTIPLE VULNERABILITIES IN IBM SDK FOR JAVA SHIPPED WITH PROCESS DESIGNER - United States
+
+Text:
+  DIRECT LINKS TO FIXES
+bpm.8560.cf1.delta.repository.2 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Standard&fixids=bpm.8560.cf1.delta.repository.2&source=SAR]
+bpm.8560.cf1.delta.repository.1 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Standard&fixids=bpm.8560.cf1.delta.repository.1&source=SAR]
+8.5.6.0-WS-BPMPCPD-IFIT07386 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Standard&fixids=8.5.6.0-WS-BPMPCPD-IFIT07386&source=SAR]
+8.5.5.0-WS-BPMPCPD-IFIT07386 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Standard&fixids=8.5.5.0-WS-BPMPCPD-IFIT07386&source=SAR]
+8.5.0.1-WS-BPMPCPD-IFIT07386 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Standard&fixids=8.5.0.1-WS-BPMPCPD-IFIT07386&source=SAR]
+8.0.1.3-WS-BPMPC-IFIT07386 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Standard&fixids=8.0.1.3-WS-BPMPC-IFIT07386&source=SAR]
+7.5.1.2-WS-BPMPC-IFIT07386 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Standard&fixids=7.5.1.2-WS-BPMPC-IFIT07386&source=SAR]
+WLE-7.2.0.5-HotFix-IT07386 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FWebSphere+Lombardi+Edition&fixids=WLE-7.2.0.5-HotFix-IT07386&source=SAR]
+Version 8.5.0 Fix Pack 2 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24040683]
+Version 8.5 Refresh Pack 7 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24041575]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  There are multiple vulnerabilities in IBM (R) SDK Java (TM)
+   Technology Edition that is used by WebSphere Application Server
+   underneath IBM Business Process Manager (BPM) and WebSphere
+   Lombardi Edition.  These issues were disclosed as part of the
+   IBM SDK Java? Technology Edition updates in January 2015. This
+   bulletin also addresses the ?FREAK: Factoring Attack on
+   RSA-EXPORT keys" TLS/SSL client and server vulnerability.
+   
+   PRODUCTS AFFECTED
+   IBM BPM Advanced
+   IBM BPM Standard
+   IBM BPM Express
+   WebSphere Lombardi Editon
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  No additional information is available.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A fix is available for the latest fix pack of all supported
+   releases of IBM BPM and WebSphere Lombardi Edition.
+   
+   On Fix Central (http://www.ibm.com/support/fixcentral), search
+   for IT07386:
+   
+       1. Select IBM Business Process Manager with your edition
+   or WebSphere Lombardi Edition from the product selector, the
+   installed version to the fix pack level, and your platform, and
+   then click Continue.
+       2. Select APAR or SPR, enter IT07386, and click Continue.
+   
+   When you download fix packages, ensure that you also download
+   the readme file for each fix. Review each readme file for
+   additional installation instructions and information about the
+   fix.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT07386
+   
+   
+ * REPORTED COMPONENT NAME
+   PROCESS DESIGNE
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9701
+   
+   
+ * REPORTED RELEASE
+   751
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-03-03
+   
+   
+ * CLOSED DATE
+   2015-04-03
+   
+   
+ * LAST MODIFIED DATE
+   2015-04-03
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   PROCESS DESIGNE
+   
+   
+ * FIXED COMPONENT ID
+   5725C9701
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R751 PSY
+   UP
+   
+   
+ * R750 PSN
+   UP

@@ -1,0 +1,58 @@
+Title: IBM Sametime STLinks service fails to start with error 'Logged out, Reason 0x80000207' - United States
+
+Text:
+Logged out; Reason 0x80000207; STLinks; service; fails to start; will not start; Host unreachable TECHNOTE (FAQ)
+
+QUESTION
+You have installed Lotus® Sametime® on a Windows® based Server. When the Sametime server starts, all of the services start except STLinks. If you open sametime.log, you see that the STLinks service continues to restart itself: 
+
+I STLinks 22/May/06, 10:15:15 Started, Version 7.0.1
+I STLinks 22/May/06, 10:15:28 Logged out, Reason 0x80000207
+I STLinks 22/May/06, 10:15:33 Terminated
+I STLinks 22/May/06, 10:16:34 Started, Version 7.0.1
+I STLinks 22/May/06, 10:16:47 Logged out, Reason 0x80000207
+I STLinks 22/May/06, 10:16:52 Terminated
+I STLinks 22/May/06, 10:17:54 Started, Version 7.0.1
+I STLinks 22/May/06, 10:18:08 Logged out, Reason 0x80000207
+I STLinks 22/May/06, 10:18:13 Terminated
+I STLinks 22/May/06, 10:19:12 Started, Version 7.0.1
+I STLinks 22/May/06, 10:19:25 Logged out, Reason 0x80000207
+I STLinks 22/May/06, 10:19:30 Terminated
+
+
+ANSWER
+Reason code 0x80000207 means Host unreachable. 
+
+
+This issue can occur with a bad installation of Microsoft DirectX on the Sametime server. You may also see the following error on the server console every time the STLinks service starts:
+
+"You must be running in 256 color mode or higher. You can change the color depth from the control panel display icon."
+
+To avoid this problem, reinstall the Microsoft DirectX drivers. 
+
+
+Additional Information:
+
+1. Verify that the server is listening/accepting connections on the port that the STLinks service uses (port 1516). This can be done from the server directly or from a workstation with access to the server:
+
+From a DOS prompt> 
+
+Telnet servername 1516
+If you do not see a "Connect Failed" error, the server is listening and accepting connections.
+
+2. Populate the [Connectivity] section of the sametime.ini with the following parameter and restart Sametime (if your sametime.ini does not have a [Connectivity] section, you should create it):
+STLINKS_HOST=<servername> 
+(where the servername is the fully qualified internet hostname of the Sametime server)
+
+
+3. Try to start STLinks from the command line by running the following case-sensitive command from the \lotus\domino directory:
+
+ibm-jre\jre\bin\java -cp STLinksSA.jar com.lotus.sametime.stlinks.sa.Launcher
+
+In this case, STLinks would start from the command line and not as a service. As a workaround, the STLinks service properties were modified with an administrative account instead of the Windows System account. The STLinks service would start as the Administrative account but would not start with the system account due to a conflict with the DirectX drivers.
+
+
+
+
+ * 
+ *

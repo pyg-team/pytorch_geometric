@@ -1,0 +1,146 @@
+Title: IBM IC64130: SYBASE ODBC V5.3 DRIVER RETURNS INCORRECT SQLSTATE HY000 FOR CONSTRAINT VIOLATION - United States
+
+Text:
+  A FIX IS AVAILABLE
+WebSphere Message Broker V6.1 - Fix Pack 6.1.0.7 [http://www-01.ibm.com/support/docview.wss?uid=swg24026355]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  You connect to a Sybase Database through the DataDirect v5.3
+   ODBC Driver. You may receive an error stating that the
+   connection to the database has been terminated, or "socket
+   closed". The SQLSTATE listed in the error message will be
+   'HY000', although the database reports 'SQLSTATE=23000'.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  There is no work around to prevent this error, though Message
+   Broker will reconnect to the database automatically, after it
+   has occurred.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All users of WebSphere Message Broker v6.1   *
+   *                 using Sybase ASE as a user database.         *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: The Sybase ODBC V5.3 driver returns     *
+   *                      an SQLSTATE code of "HY000" for a       *
+   *                      table "check" constraint violation      *
+   *                      instead of the expected "23000".        *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   Integrity constraint violations occur when an insert, update,
+   or delete statement violates a primary key, foreign key,
+   check, or unique constraint or a  unique index.
+   When a "check" constraint is violated, the Sybase ASE database
+   returns an SQLSTATE code of "23000" to the ODBC driver, but
+   the driver returns an SQLSTATE of  "HY000" (general error)
+   back to the Message Broker.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  WebSphere Message Broker has been modified to include an new
+   ODBC driver which wil now pass on the SQLSTATE code of "23000".
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC64130
+   
+   
+ * REPORTED COMPONENT NAME
+   WMB WINDOWS V6
+   
+   
+ * REPORTED COMPONENT ID
+   5724J0500
+   
+   
+ * REPORTED RELEASE
+   610
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-10-26
+   
+   
+ * CLOSED DATE
+   2009-11-12
+   
+   
+ * LAST MODIFIED DATE
+   2010-01-27
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMB WINDOWS V6
+   
+   
+ * FIXED COMPONENT ID
+   5724J0500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R610 PSY
+   UP

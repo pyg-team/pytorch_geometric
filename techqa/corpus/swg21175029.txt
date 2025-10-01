@@ -1,0 +1,45 @@
+Title: IBM AMQ9637 Secure Socket Layer (SSL) enabled Channels are not starting - United States
+
+Text:
+SSL Channel mqminfo SNDR SDR RCVR AMQ9209 AMQ9637 AMQ9228 AMQ9999 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ You have enabled a WebSphere MQ sender/receiver pair channel with SSL.. The Sender Channel on one Queue Manager is attempting to communicate with the Receiver Channel on the remote Queue Manager, but the channel will not go into a running state.. 
+
+SYMPTOM
+The Receiver Channel generates:
+AMQ9637: Channel is lacking a certificate. 
+
+While both Sender and Receiver are getting 
+AMQ9209: Connection to host closed. 
+
+The Receiver channel is specified as SSLCAUTH(REQUIRED)
+
+The MQ error logs are showing errors - 
+AMQ9209: Connection to host closed. 
+AMQ9637: Channel is lacking a certificate. 
+AMQ9228: The TCP/IP responder program could not be started. 
+AMQ9999: Channel program ended abnormally.
+
+
+CAUSE
+Incorrect format of the personal certificate label.
+
+RESOLVING THE PROBLEM
+The personal certificate label name must be folded to lower case including the queue manager name. 
+
+ For example: 
+
+ * 
+ * queuemanagername
+
+and not  * 
+ * queuemanagername
+
+ 
+
+HISTORICAL NUMBER
+ 61623 B4GV 
+
+PRODUCT ALIAS/SYNONYM
+ WMQ WebSphere MQ MQSeries

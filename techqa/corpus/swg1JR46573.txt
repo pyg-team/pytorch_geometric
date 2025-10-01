@@ -1,0 +1,145 @@
+Title: IBM JR46573: SELECTION MADE IN A CAOCH WITH MULTIPLE SELECT CONTROLS FIRES INCORRECT NUMBER OF CHANGE EVENTS. - United States
+
+Text:
+  A FIX IS AVAILABLE
+Version 8.0.1 Fix Pack 2 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24035701]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Per customer and L2,
+   
+   When we have changed current item in one of Selects, we can
+   observe change event fired once for each Select coach view + one
+   more event. So, if we have 2 Selects within coach, we have 3
+   events. All Selects bound to different variables, so only one
+   variable was really changed. Both binding variable and
+   selectedItems configuration options are different. So, per our
+   understanding, we have false change events fired.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Coach views may not update properly when the name of one Coach
+   variable (defined in human service) is part of the name of
+   another variable. e.g. Coach has 2 variables, var_abcedf and
+   var_abc.
+   
+   USER AFFECTED:
+   Business Process Manager Advanced, Standard and Express users of
+   New Generation Coaches that have multiple variables defined, and
+   the names of those variables are similar.
+   
+   
+   PROBLEM DETAILED DESCRIPTION:
+   When the value of some coach variable changes, coach framework
+   needs to find out the set of coach view instances that might be
+   affected. For example, if variable local.abc is changed, the
+   view that binds (through data binding or configuration options)
+   with local.abc.def should be refreshed. The old logic does not
+   handle the comparison properly, which made the view bound with
+   local.abcdef also refreshed. This is the root cause of the
+   issue.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fix for 8.0.1.1 available on Fix Central as part of fix
+   for JR47062 [http://www-01.ibm.com/support/docview.wss?uid=swg1JR47062], http://www.ibm.com/support/fixcentral/ . Search for
+   JR47062 [http://www-01.ibm.com/support/docview.wss?uid=swg1JR47062].
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR46573
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM ADVANCED
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9400
+   
+   
+ * REPORTED RELEASE
+   801
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-05-07
+   
+   
+ * CLOSED DATE
+   2013-08-30
+   
+   
+ * LAST MODIFIED DATE
+   2013-08-30
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   BPM ADVANCED
+   
+   
+ * FIXED COMPONENT ID
+   5725C9400
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R801 PSY
+   UP

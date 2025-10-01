@@ -1,0 +1,36 @@
+Title: IBM There is a possibility of undesired expiration events occurring in CMOD when running both the OnDemand library server and IBM DB2 on Windows. This can occur with Content Manager OnDemand for Multiplatforms versions 8.5.0.0 through 8.5.0.3 on Windows. - United States
+
+Text:
+ FLASH (ALERT)
+
+ABSTRACT
+ When running "arsmaint" against a CMOD library server running on Windows and using IBM DB2 on Windows, there is the possibility that an undesired expiration event could occur which would expire database information and document data not eligible for expiration. 
+
+CONTENT
+Problem Description: 
+When running "arsmaint," with the "-d" setting to expire database information, against a CMOD library server running on Windows and using IBM DB2 on Windows, it is possible for the expiration to "runaway" and expire database information and data not eligible for expiration. This effect may appear randomly or not at all. It is also possible expiration may be skipped in cases where it should have indeed expired relevant data. This is due to uninitialized data in memory being used instead of a valid expiration date.
+
+Problem Identification: 
+
+This problem occurs only if all of the conditions below are met: 
+
+1. Running a CMOD version between 8.5.0.0 and 8.5.0.3 on Windows. 
+
+2. Running both CMOD and IBM DB2 on Windows. 
+
+3. Applications exist which were defined before CMOD version 7.1.2.8. 
+
+4. The preexisting applications have not been updated by the customer since the columns were added by the upgrade (i.e they have NULL values for their DB_EXP_DATE)
+
+
+Remediation: 
+
+ 
+
+Product VRMF APAR Remediation/Fix Link Content Manager OnDemand for Multiplatforms (Windows only) 8.5.0.0 - 8.5.0.3 PM48739 Fixed in 8.5.0.4 or later fixpacks. Other supporting information: 
+
+Please follow the standard procedure to download and apply the latest fixpack for Content Manager OnDemand for Windows. 
+
+ 
+
+Fix Central can be found at: http://www.ibm.com/support/fixcentral/ [http://www.ibm.com/support/fixcentral/]

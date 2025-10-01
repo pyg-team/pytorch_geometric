@@ -1,0 +1,188 @@
+Title: IBM PM63322: MYFACES HANGS IN DEFAULTRESTOREVIEWSUPPORT - United States
+
+Text:
+  FIXES ARE AVAILABLE
+8.5.0.1: WebSphere Application Server V8.5 Fix Pack 1 [http://www-01.ibm.com/support/docview.wss?uid=swg24033606]
+8.0.0.5: WebSphere Application Server V8.0 Fix Pack 5 [http://www-01.ibm.com/support/docview.wss?uid=swg24033754]
+8.5.0.2: WebSphere Application Server V8.5 Fix Pack 2 [http://www-01.ibm.com/support/docview.wss?uid=swg24034672]
+8.0.0.6: WebSphere Application Server V8.0 Fix Pack 6 [http://www-01.ibm.com/support/docview.wss?uid=swg24034673]
+8.0.0.7: WebSphere Application Server V8.0 Fix Pack 7 [http://www-01.ibm.com/support/docview.wss?uid=swg24035457]
+8.0.0.8: WebSphere Application Server V8.0 Fix Pack 8 [http://www-01.ibm.com/support/docview.wss?uid=swg24036729]
+8.0.0.9: WebSphere Application Server V8.0 Fix Pack 9 [http://www-01.ibm.com/support/docview.wss?uid=swg24037574]
+8.0.0.10: WebSphere Application Server V8.0 Fix Pack 10 [http://www-01.ibm.com/support/docview.wss?uid=swg24039242]
+8.0.0.11: WebSphere Application Server V8.0 Fix Pack 11 [http://www-01.ibm.com/support/docview.wss?uid=swg24040425]
+8.0.0.12: WebSphere Application Server V8.0 Fix Pack 12 [http://www-01.ibm.com/support/docview.wss?uid=swg24041590]
+8.0.0.13: WebSphere Application Server V8.0 Fix Pack 13 [http://www-01.ibm.com/support/docview.wss?uid=swg24042746]
+8.0.0.14: WebSphere Application Server V8.0 Fix Pack 14 [http://www-01.ibm.com/support/docview.wss?uid=swg24044096]
+8.0.0.15: WebSphere Application Server V8.0 Fix Pack 15 [http://www-01.ibm.com/support/docview.wss?uid=swg24044734]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  MyFaces hangs in DefaultRestoreViewSupport.handlePrefixMapping
+   while executing thread in a portlet environment:
+   
+   Stack trace :
+   ----------------------------------------------------------------
+   at java/lang/String.substring(String.java:1105(Compiled Code))
+   at org/apache/myfaces/lifecycle/DefaultRestoreViewSupport
+   
+   .handlePrefixMapping(DefaultRestoreViewSupport.java:290(Compiled
+   Code))
+   at org/apache/myfaces/lifecycle/DefaultRestoreViewSupport
+        .deriveViewId(DefaultRestoreViewSupport.java:222)
+   at org/apache/myfaces/lifecycle/RestoreViewExecutor
+        .execute(RestoreViewExecutor.java:150)
+   at org/apache/myfaces/lifecycle/LifecycleImpl
+        .executePhase(LifecycleImpl.java:171)
+   at org/apache/myfaces/lifecycle/LifecycleImpl
+        .execute(LifecycleImpl.java:118)
+   at org/portletfaces/bridge/BridgeImpl
+        .doFacesRequest(BridgeImpl.java:402)
+   at org/portletfaces/bridge/GenericFacesPortlet
+        .doView(GenericFacesPortlet.java:181)
+   at javax/portlet/GenericPortlet
+        .doDispatch(GenericPortlet.java:328)
+   ----------------------------------------------------------------
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  IBM WebSphere Application Server Versions   *
+   *                  8.0 and 8.5 users of JavaServer Faces(JSF)  *
+   *                  MyFaces.                                    *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: A Thread hang occurs in the MyFaces     *
+   *                      DefaultRestoreViewSupport.handlePrefixM *
+   *                      apping method.                          *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   A Thread hang, caused by an infinite loop, can be seen in the
+   WebSphere Application Server logs.  Here is an example of a
+   similar message:
+   3/14/12 11:34:12:953 EDT] 00000024 ThreadMonitor W
+   WSVR0605W: Thread
+   "WebContainer : 0" (00000022) has been active for 749937
+   milliseconds
+   and may be hung.  There is/are 1 thread(s) in total in the
+   server that
+   may be hung.
+   at java.lang.String.substring(String.java:1105)
+   at
+   org.apache.myfaces.lifecycle.DefaultRestoreViewSupport.handlePre
+   fixMapping(DefaultRestoreViewSupport.java:290)
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The following fix was pulled into WebSphere Application Server
+   from the Apache MyFaces Open Source Community to resolve this
+   problem:
+   https://issues.apache.org/jira/browse/MYFACES-3531 [https://issues.apache.org/jira/browse/MYFACES-3531]
+   
+   The fix for this APAR is currently targeted for inclusion in
+   fix pack 8.0.0.5 and 8.5.0.1.  Please refer to the Recommended
+   Updates page for delivery information:
+   http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM63322
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSPHERE APP S
+   
+   
+ * REPORTED COMPONENT ID
+   5724J0800
+   
+   
+ * REPORTED RELEASE
+   800
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-04-25
+   
+   
+ * CLOSED DATE
+   2012-06-07
+   
+   
+ * LAST MODIFIED DATE
+   2012-07-17
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    PM80277 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM80277]
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBSPHERE APP S
+   
+   
+ * FIXED COMPONENT ID
+   5724J0800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R800 PSY
+   UP
+   
+   
+ * R850 PSY
+   UP

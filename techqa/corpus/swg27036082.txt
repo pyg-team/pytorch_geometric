@@ -1,0 +1,88 @@
+Title: IBM Open Mic Webcast: IBM Connections 4 Mobile - 23 October 2012 [slide presentation + audio replay attached] - United States
+
+Text:
+STEwebcastDocument; lste_webcast; Tech Exchange; openmic call; open microphone call; discussion; conference call; customer call; submit; ask the experts; discuss; open mic; questions; answers; questions and answers; q&a; replay; recording; webcast; FAQ; best practice; transcript; ipad; iphone; android; blackberry; rim; apple; app WEBCAST
+
+ABSTRACT
+ IBM hosted an Open Mic webcast with Lotus Development and Support Engineers on Tuesday, October 23, 2012. The topic was "IBM Connections 4 Mobile." 
+
+CONTENT
+You may post questions in advance of the event as responses to this forum entry [http://www.lotus.com/ldd/lcforum.nsf/d6091795dfaa5b1185256a7a0048a2d0/3f90da59b27748ea85257a6c00549979?OpenDocument]. 
+
+Date and time 
+Date: 23 October 2012 
+
+Time: 11:00 AM EDT (15:00 UTC, or GMT -4) for 60 minutes 
+
+
+Presentation 
+Link to download slide presentation: 
+
+ftp://public.dhe.ibm.com/software/lotus/info/connections/ConnectionsMobile4.0Update.pdf [ftp://public.dhe.ibm.com/software/lotus/info/connections/ConnectionsMobile4.0Update.pdf] 
+
+
+Audio recording (5.8MB, 33min long) 
+
+Connections 4 Mobile Open Mic Oct 23 2012 (edited).mp3 [/support/docview.wss?uid=swg27036082&aid=2] Connections 4 Mobile Open Mic Oct 23 2012 (edited).mp3 [/support/docview.wss?uid=swg27036082&aid=1] 
+
+
+Q&A transcript 
+Three questions were asked verbally during the presentation -- beginning at the 30:40 mark in the attached MP3 file: 
+
+Q. What is the version of the mobile application for iOS currently on the Apple store? 
+A. The current Connections mobile application version for iOS is 4.0. 
+
+Q. I am new to Connections, SmartCloud and Traveler, can you explain how these fit together? 
+A. When we refer to Connections, normally we mean the on-premise version of the product. Smartcloud is the version available on the cloud. 
+Notes Traveler is a component of Notes and is a way to access your Notes email from your mobile device. Notes is not part of Connections. 
+
+Q. Are the features explained today available on the SmartCloud version of Connections? 
+A. Not all of them. SmartCloud is not currently at the Connections 4.0 level. Currently today the applications only support Files for SmartCloud. 
+
+Questions from the web chat transcript: 
+
+Q. When will these application updates be available on the Apple App Store? 
+A. They are already available. 
+
+Q. How do I know the version number of the iPad mobile application for Connections? 
+A. Tap My Account and you'll see the build information in the format 4.0.xxxxx. 
+
+Q. Since Connections is available on BlackBerry, will it work on the Playbook as well? 
+A. We do not have an application for the PlayBook or QNX but you could access Connections via a browser from the Playbook. 
+
+Q. Do you have plans for Connections to run on the Microsoft Surface? 
+A. For Surface running Windows 8 Pro, you can use Internet Explorer and the Connections desktop browser interface. 
+
+Q. Is this for organizations that do not use Traveler and/or a mobile device management tool? 
+A. No, Traveler is a mobile connect client for Notes. Connections mobile allows mobile users access to their corporate Connections data on-the-go via a mobile application. 
+
+Q. Does version 4 support double authentication (+ use RSA key?) 
+A. Double authentication is not supported at this time. 
+
+Q. What about companies that use TAM in front of Connections? 
+A. TAM is supported as an authentication provider on all platforms. 
+
+Q. Does Connections support SAML? 
+A. SAML is not currently supported. 
+
+Q. Any plan to support SAML in future releases? 
+A. SAML is on the list of items to be added. 
+
+Q. Are the Connections 4.0 APIs abstracted such that new Connections 4.0 applications, iWidgets etc can be made mobile without additional mobile coding? Like, slide into the existing menu structure on the devices? 
+A. The mobile applications are native apps. You can extend the launcher to add a link to your service if interested. An example of doing that is here: http://www-10.lotus.com/ldd/insidelotusblog.nsf/ [http://www-10.lotus.com/ldd/insidelotusblog.nsf/] Also, the gadget provider needs to do a mobile rendering. 
+
+Q. Will these applications work with IBM Smart Cloud? 
+A. Yes, these are supported for SmartCloud, but for SmartCloud files only currently. 
+
+Q. I assume there are plans for further support of the SmartCloud, correct? 
+A. We plan to continue to support additional applications on SmartCloud. 
+
+Q. Does ibmscp:// work on all platforms? 
+A. Yes. 
+
+Q. What does ibmscp stand for? 
+A. IBM Session Control Protocol. 
+
+Q. Where we can find instructions on how to install the part of Connections that is entitled with Domino? 
+A. The Connections Wiki documents the installation: 
+http://www-10.lotus.com/ldd/lcwiki.nsf/xpDocViewer.xsp?lookupName=IBM+Connections+4.0+documentation#action=openDocument&res_title=The_installation_process_ic40&content=pdcontent [http://www-10.lotus.com/ldd/lcwiki.nsf/xpDocViewer.xsp?lookupName=IBM+Connections+4.0+documentation#action=openDocument&res_title=The_installation_process_ic40&content=pdcontent]

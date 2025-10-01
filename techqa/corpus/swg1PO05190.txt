@@ -1,0 +1,124 @@
+Title: IBM PO05190: FIELDS ON TASK SEARCH PAGE NEED MORE DETAILED INSTRUCTIONS - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The fields on the task search page are missing detailed
+   instructions resulting in a Web Content Accessibility
+   Guidelines (WCAG) violation (3.3.2).  There should be more
+   information given to the user on how to use these fields.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  FIELDS ON TASK SEARCH PAGE NEED MORE DETAILED INSTRUCTIONS
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This issue has been resolved in 6.2.0.2:
+   http://www-01.ibm.com/support/docview.wss?uid=swg27048751 [http://www-01.ibm.com/support/docview.wss?uid=swg27048751]
+   PO05190, WorkItem:107741 - Form instructions for multiple
+   pop-up search widget is insufficient for screen reader users.
+   Previously the form instructions for multiple pop-up search
+   widgets was insufficient for screen reader users. This meant
+   that it was unclear to a screen reader user that selecting a
+   value in the associated dropdown field was mandatory in order
+   to successfully complete a search. This has been resolved by
+   adding sufficient form instructions to the widget.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PO05190
+   
+   
+ * REPORTED COMPONENT NAME
+   CURAM SOCIAL PG
+   
+   
+ * REPORTED COMPONENT ID
+   5725H2600
+   
+   
+ * REPORTED RELEASE
+   605
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2015-07-07
+   
+   
+ * CLOSED DATE
+   2016-09-16
+   
+   
+ * LAST MODIFIED DATE
+   2016-09-16
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  TEC
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R620 PSY
+   UP

@@ -1,0 +1,170 @@
+Title: IBM IZ74744: OQ COLLECTOR DOES NOT START WITH SQL SERVER 2008 - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  ITM OQ agent fails to start when the value of
+   SQL Path in two separate registry keys are not
+   the same case:
+   
+   HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\MSSQLServer\
+    Setup\SQLPath
+    and
+   HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\
+    Microsoft SQL Server\MSSQL.1\Setup\SQLPath
+   
+   Detailed Recreation Procedure:
+   1. While configuring the OQ agent for SQL Server 2008,
+      change the case of the home directory value
+      manually.
+   2. Start the ITM OQ agent.
+   3. No data will be seen in the TEP portal workspace
+      views for the agent because the ITM agent collector
+      is not gathering attribute data.
+   
+   In the ITM OQ agent collector log, following errors
+   may be seen:
+   CML1526I (095309) Checking 'xxxx' service status.
+   CML1525I (095309) Error in check_service_status:
+    OpenServiceA()
+    Error Code: 1060
+   
+   The SQL service is not found because ITM OQ agent is
+   incorrectly looking for a named instance based on
+   the registry key:
+   HKEY_LOCAL_MACHINE\SOFTWARE\Candle\KOQ\610\xxxx\Environment
+   .
+   The value of KOQ_NAMED_INSTANCE will be "1" instead of
+   "0", indicating that ITM is configured to look for
+   a NAMED instance instead of a Default instance.
+   
+   Related Files and Output:
+    1.See the registry for the key KOQ_NAMED_INSTANCE in the path
+      HKEY_LOCAL_MACHINE\SOFTWARE\Candle\KOQ\610\(machine name)\
+      Environment\KOQ_NAMED_INSTANCE
+    2.Also you can see the MSMSQL_(instance name).bat file in
+      the path CANDLE_HOME\TMAITM6  for KOQ_NAMED_INSTANCE
+   variable.
+    3.Also you can see koqcma_machinename.ini for
+      KOQ_NAMED_INSTANCE  variable
+   
+   Affected Platforms: All Windows and all SQL versions
+   Affected ITM levels: 6.2.1
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Edit the "KOQ_NAMED_INSTANCE" registry value and set it
+   to 0 to manually so ITM OQ agent will look for the
+   default SQL instance.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  OQ COLLECTOR DOES NOT START WITH SQL SERVER 2008
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix for this APAR was included in SQL 621 IF05 using other
+   cmvc defect IZ54337 [http://www-01.ibm.com/support/docview.wss?uid=swg1IZ54337].1.
+   The fix for this APAR is contained in the following maintenance
+   packages:
+      | interim fix | 6.2.1-TIV-ITM_SQL-IF0005
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ74744
+   
+   
+ * REPORTED COMPONENT NAME
+   TIV MON MS SQL
+   
+   
+ * REPORTED COMPONENT ID
+   5724B96MO
+   
+   
+ * REPORTED RELEASE
+   621
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-04-16
+   
+   
+ * CLOSED DATE
+   2010-06-22
+   
+   
+ * LAST MODIFIED DATE
+   2010-06-22
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TIV MON MS SQL
+   
+   
+ * FIXED COMPONENT ID
+   5724B96MO
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R621 PSY
+   UP

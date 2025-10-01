@@ -1,0 +1,31 @@
+Title: IBM SQLO_BUSY (device busy) causes database to be marked damaged. - United States
+
+Text:
+SQLO_BUSY; sqloseekwrite64; sqlpgWriteToDisk; EBUSY; database; marked; bad; marked bad TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ DB2 Logger process receives SQLO_BUSY error when trying to write a log record from memory buffer to the disk. Writing a log record is a critical task for DB2. Any error received during such operation will cause database manger to mark the database as bad and force a crash recovery. 
+
+SYMPTOM
+User may see following error messages in the db2diag.log: 
+
+FUNCTION: DB2 UDB, oper system services, sqloseekwrite64, probe:40
+MESSAGE : ZRC=0x840F007C=-2079391620=SQLO_BUSY "device busy"
+CALLED : OS, -, unspecified_system_function
+OSERR : EBUSY (16) "Device busy"
+..........
+.....
+FUNCTION: DB2 UDB, data protection, sqlpgWriteToDisk, probe:1370
+RETCODE : ZRC=0x840F007C=-2079391620=SQLO_BUSY "device busy"
+
+The function sqlpgWriteToDisk() writes a log record to the disk. From the entry with sqloseekwrite64(), it is obvious that we are getting EBUSY error from the operating system during a seek() system call. There may be variation in these error messages depending on the version of db2 and the platform. The messages shown in this document are from version 9.1 running on AIX 5.3.
+
+Please note that the subsequent crash recovery may also fail with these same error messages if the underlying cause for EBUSY error is not resolved. 
+
+
+CAUSE
+The error EBUSY implies that the target device/disk where DB2 is trying to write the log record is busy. There is a possibility that it may be the path/directory or the transaction log file that itself may be busy.
+
+
+RESOLVING THE PROBLEM
+DBA should contact their system administrator to determine the cause why the device/disk is busy. Creating a test file in that device or path might provide more insight about the cause. In one specific situation, PowerPath (from EMC) was locking up the target location for the transaction logs. There was a defect in PowerPath that caused this EBUSY error. Once the PowerPath was upgraded to the latest level, the EBUSY error was resolved. Please note that this is just one case. There may be other reasons for a device to be busy.

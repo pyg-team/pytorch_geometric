@@ -1,0 +1,171 @@
+Title: IBM IC91726: The appliance allows unauthenticated access to administrative operations because security vulnerabilities exist. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  A security vulnerability in the WebSphere DataPower XC10
+   Appliance allows unauthenticated access to administrative
+   operations, and security vulnerabilities in Java transport
+   layer security (TLS) might allow attackers access.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  Users of IBM WebSphere DataPower XC10       *
+   *                  Appliance v2.0 and higher.                  *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Attackers can have unauthenticated      *
+   *                      access to administrative operations     *
+   *                      because of security vulnerabilities     *
+   *                      in Java TLS.                            *
+   ****************************************************************
+   * RECOMMENDATION:  Install a firmware version that contains    *
+   *                  this APAR.                                  *
+   ****************************************************************
+   CVE-2013-0600 - A knowledgeable user may submit administrative
+   commands to the WebSphere DataPower XC10 Appliance without
+   authentication.
+   CVSS Base Score: 9.3
+   CVSS Temporal Score: See http://xforce.iss.net/xforce/xfdb/83617 [http://xforce.iss.net/xforce/xfdb/83617]
+   for the current score
+   CVSS Environmental Score*: Undefined
+   CVSS Vector: (AV:N/AC:M/AU:N/C:C/I:C/A:C)
+   CVE-2013-0440 - Unspecified vulnerability in Java Runtime
+   Environment allows remote attackers to affect availability via
+   vectors related to JSSE.
+   CVSS Base Score: 5
+   CVSS Temporal Score: See
+   http://xforce.iss.net/xforce/xfdb/81799 [http://xforce.iss.net/xforce/xfdb/81799]
+   CVSS Environmental Score*: Undefined
+   CVSS Vector: (AV:N/AC:L/Au:N/C:N/I:N/A:P)
+   CVE-2013-0443 - Unspecified vulnerability in Java Runtime
+   Environment allows remote attackers to affect confidentiality
+   and integrity via vectors related to JSSE.
+   CVSS Base Score: 4
+   CVSS Temporal Score: See
+   http://xforce.iss.net/xforce/xfdb/81801 [http://xforce.iss.net/xforce/xfdb/81801]
+   CVSS Environmental Score*: Undefined
+   CVSS Vector: (AV:N/AC:H/Au:N/C:P/I:P/A:N)
+   CVE-2013-0169 - The TLS protocol does not properly consider
+   timing side-channel attacks, which allows remote attackers to
+   conduct distinguishing attacks and plain-text recovery attacks
+   via statistical analysis of timing data for crafted packets, aka
+   the "Lucky Thirteen" issue.
+   CVSS Base Score: 4.3
+   CVSS Temporal Score: See
+   http://xforce.iss.net/xforce/xfdb/81902 [http://xforce.iss.net/xforce/xfdb/81902]
+   CVSS Environmental Score*: Undefined
+   CVSS Vector: (AV:N/AC:M/Au:N/C:P/I:N/A:N)
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The vulnerabilities were found and corrected in the appropriate
+   code in the runtime environment. Download a version of the
+   firmware for either V2.0.0.3 or V2.1.0.3 that
+   contains this APAR
+   (http://www-01.ibm.com/support/docview.wss?uid=swg27019704).
+   For more information about this security vulnerability, see
+   the following web page:
+   http://www-01.ibm.com/support/docview.wss?uid=swg21636324 [http://www-01.ibm.com/support/docview.wss?uid=swg21636324]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC91726
+   
+   
+ * REPORTED COMPONENT NAME
+   WSDATAPOWER XC1
+   
+   
+ * REPORTED COMPONENT ID
+   5765H4200
+   
+   
+ * REPORTED RELEASE
+   200
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-04-22
+   
+   
+ * CLOSED DATE
+   2013-06-18
+   
+   
+ * LAST MODIFIED DATE
+   2013-06-18
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WSDATAPOWER XC1
+   
+   
+ * FIXED COMPONENT ID
+   5765H4200
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R200 PSY
+   UP
+   
+   
+ * R210 PSY
+   UP

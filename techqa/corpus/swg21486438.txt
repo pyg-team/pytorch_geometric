@@ -1,0 +1,40 @@
+Title: IBM Data is not scored by model with Solution Publisher when executing from outside the Modeler Solution Publisher installation directory on a non-Windows environment. - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ I have installed Modeler Server and Solution Publisher in a non-windows environment and generated a Solution Publisher parameter (.par) and image file (.pim).
+
+When I open a Terminal and navigate to the installation directory of Solution Publisher (/SPSSInc/PASWModelerSolutionPublisher13), executing my .par and .pim stored in another directory (using the Solution Publisher executable: 'modelerrun') does not cause me any problems. A table is produced and I have a score for one of my fields.
+
+If, however, I run modelerrun from outside of it's installation directory I either get the error:
+
+E3207: ESmartScoreInitialization (Could not open model names file, 2)
+
+or I get an output file produced with empty score fields from the model
+
+Why is this? 
+
+RESOLVING THE PROBLEM
+This issue is fixed in Modeler 14.0.2.
+
+This issue occurs with Solution Publisher runtime non-Windows platforms when scoring certain model types when the modelerrun command is invoked from outside of the Solution Publisher installation directory. The default configuration of Modeler Runtime on non-Windows does not contain the definition of the MODELERRUNTIME environment variable that is required to score some model types if the modelerrun binary is run from outside of it's installation directory. Because of this you get errors when you try to execute a published image file containing such a model if you execute it this way on these platforms.
+
+To work around this issue, please follow the steps below:
+* Log onto the server with root permissions
+* Open a Terminal window and edit the 'modelerrun' script in a text editor (such as VI)
+* Add the following line IMMEDIATELY AFTER the line "export CLEMRUNTIME":
+
+MODELERRUNTIME=$CLEMRUNTIME; export MODELERRUNTIME
+
+* Save your changes and re-run your image file using Modeler Solution Publisher. You should now see the full table generated including your score.
+
+RELATED INFORMATION
+ Need more help? Our Modeler forum is Live! [https://developer.ibm.com/answers/topics/modeler/?smartspace=predictive-analytics]
+
+
+ 
+
+HISTORICAL NUMBER
+ 88475

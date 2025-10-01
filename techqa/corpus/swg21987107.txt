@@ -1,0 +1,55 @@
+Title: IBM Issues with the shortcut link in Sharepoint. - United States
+
+Text:
+icc TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ I have installed IBM Content Collector (ICC) and archived Sharepoint documents with replacement link. But when I click on the shortcut link to view the archived document why I am receiving the following error ?
+
+
+
+Error 404 : The Page that you requested is not available. 
+
+SYMPTOM
+Not able to view the archived document with ICC created shortcut link.
+
+
+CAUSE
+If the ICC Configuration Web Service is not configured properly will cause these issues.
+
+ENVIRONMENT
+IBM Content Collector 4.0.1
+
+DIAGNOSING THE PROBLEM
+Collect the ICC Web Application logs and the logs might have very similar error like below.
+---------------------------------------
+[2016-07-05]T[14:29:42.080]Z 9 server.startup : 0 SEVERE java.lang.NoClassDefFoundError: com.filenet.api.exception.EngineRuntimeException [com.ibm.afu.startup.StartupPlugin: init(111)]
+java.lang.Exception: java.lang.NoClassDefFoundError: com.filenet.api.exception.EngineRuntimeException
+at com.ibm.afu.configuration.BaseContextContainer.init(BaseContextContainer.java:181)
+at com.ibm.afu.session.AFUContextContainer.init(AFUContextContainer.java:180)
+-----------------------
+
+RESOLVING THE PROBLEM
+
+
+
+
+
+
+ * Make sure you installed FileNet java component installation on the ICC server. Please follow the below technote to complete the installation of missing component.
+   
+   http://www-01.ibm.com/support/docview.wss?uid=swg27042658#P8 [http://www-01.ibm.com/support/docview.wss?uid=swg27042658#P8] 
+ * If the above is already being installed , please proceed with reinstall of ICC Embedded Web Application Server. 1. Set the FNCEPATH to your CE Client install directory in afuEnv.bat under <ICC_Install_DIR\AFUWeb 
+   
+   2. Uninstall eWAS using <ICC_Install_DIR\AFUWeb\afu_ewas_uninstall.bat. 
+   
+   3. Install eWAS using <ICC_Install_DIR\AFUWeb\afu_ewas_install.bat make sure there is no failure. 
+   
+   4. Launch ICC Configuration Manager 
+   
+   5. Go to "General Settings" and "Configuration Web Service" 
+   
+   6. Update the description to something like "Reconfigure". This step might take some time , please wait for it to be completed. 
+   
+   7. Once it is done with reconfiguring , please click "validate" and confirm it can successfully validated
+   View the archived document using shortcut link.

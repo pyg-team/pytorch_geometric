@@ -1,0 +1,57 @@
+Title: IBM AMQ9662 error when starting SSL enabled channel - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ You enable SSL on a channel that has been working without SSL. After that change you receive the following error when you start the channel.
+
+AMQ9662: SSL has encountered something it does not support. 
+
+SYMPTOM
+In the QMgr error logs you see the following 
+
+.........................................
+------------------------------------------
+10/22/09 13:55:18 - Process(11111.1) User(mqm) Program(runmqchl)
+AMQ9002: Channel 'SSL.ENABLED.CHANNEL' is starting.
+EXPLANATION: Channel 'SSL.ENABLED.CHANNEL' is starting.
+ACTION: None.
+------------------------------------------
+10/22/09 13:55:19 - Process(11111.1) User(mqm) Program(runmqchl)
+AMQ9662: SSL has encountered something it does not support.
+EXPLANATION: This error can arise for a number of reasons: 1) The platform does not support a given type of cryptographic hardware, e.g. Ncipher and Rainbow are/were not supported on the Linux/390 platform. 2) The cryptographic hardware cryptography has returned an error. 3) Unsupported X509 General Name format when checking the remote certificate. The GSKit SSL provider incorporated in MQ only supports formats rfc822, DNSName, directoryname, uniformResourceID, and IPAddress. The channel is 'SSL.ENABLED.CHANNEL'; in some cases its name cannot be determined and so is shown as '????'. The channel did not start.
+ACTION: Check that your cryptographic hardware is supported on your platform and test it to see that it is working correctly. Check that the remote certificates you are using conform to the X509 General Name formats listed. Fix the problem and restart the channel.
+----- amqccisa.c : 1312 ------------------
+10/22/09 13:55:19 - Process(11111.1) User(mqm) Program(runmqchl)
+AMQ9999: Channel program ended abnormally.
+EXPLANATION: Channel program 'SSL.ENABLED.CHANNEL' ended abnormally.
+ACTION: Look at previous error messages for channel program 'SSL.ENABLED.CHANNEL' in the error files to determine the cause of the failure.
+----- amqrccca.c : 777 ---------------
+.....
+
+
+CAUSE
+In this case the gskit that was installed on the sender channel side was back level. 
+
+
+DIAGNOSING THE PROBLEM
+Check the gskit level using the gsk7ver command. 
+
+
+
+RESOLVING THE PROBLEM
+Determine the correct level of gskit, then Install the correct level of gskit. 
+
+ * Note: Refer to the Readme to determine the supported level of gskit. 
+ * Note: Follow the installation instructions in the Quick Beginnings Guide to install the correct level of gskit.
+
+RELATED INFORMATION
+ Fixes by version(ReadMe) [http://www.ibm.com/support/docview.wss?rs=171&uid=swg21254675]
+MQ Library [http://www.ibm.com/software/integration/wmq/library/]
+
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ WMQ MQ

@@ -1,0 +1,66 @@
+Title: IBM Chart editor is located off screen or disappears when trying to open up the Chart Editor to modify the chart - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When I try to edit a chart by double-clicking on it, choosing "SPSS Chart Object" -> "Open" from the menu options, or right clicking on the chart and choosing "Edit Content" then "In Separate Window", the Chart Editor window is not on the screen. I can see an entry for it on the taskbar, and when I click on said entry, I can see the Chart Editor minimize and maximize itself, so I know it's there, but it's offscreen so I can't see or touch it. I have recently changed my monitor configuration, so the window is probably placing itself where the old monitor was. 
+
+RESOLVING THE PROBLEM
+Run the registry editor in Windows by choosing "Run..." from the start menu, typing "regedit" (minus the quotation marks), and then hitting Enter or clicking OK. Navigate to, and delete the following registry keys:
+
+
+
+Statistics 19.0 (and later) Keys that control the windows position of the Statistics 19.0 (and later) Chart Editor
+================================================================
+HKEY_CURRENT_USER\Software\JavaSoft\Prefs\com\ibm\/S/P/S/S\/Statistics\nn.0\charteditor\user\editorwin\xlocation
+HKEY_CURRENT_USER\Software\JavaSoft\Prefs\com\ibm\/S/P/S/S\/Statistics\nn.0\charteditor\user\editorwin\ylocation 
+
+where "nn.0" ==> 19.0, 20.0, etc.
+
+
+Statistics 18.0 Keys that control the windows position of the Statistics 18.0 Chart Editor
+================================================================
+HKEY_CURRENT_USER\Software\JavaSoft\Prefs\com\spss\/P/A/S/W /Statistics\18.0\charteditor\user\editorwin\xlocation
+HKEY_CURRENT_USER\Software\JavaSoft\Prefs\com\spss\/P/A/S/W /Statistics\18.0\charteditor\user\editorwin\ylocation
+
+
+Statistics 17.0 Keys that control the windows position of the Statistics 17.0 Chart Editor
+================================================================
+HKEY_CURRENT_USER\Software\JavaSoft\Prefs\com\spss\/P/A/S/W /Statistics\17.0\charteditor\user\editorwin\xlocation
+HKEY_CURRENT_USER\Software\JavaSoft\Prefs\com\spss\/P/A/S/W /Statistics\17.0\charteditor\user\editorwin\ylocation
+
+
+SPSS 16.0 Keys that control the windows position of the SPSS 16.0 Chart Editor
+==========================================================
+HKEY_CURRENT_USER\Software\JavaSoft\Prefs\com\spss\/S/P/S/S for /Windows\16.0\en\charteditor\user\editorwin\xlocation
+HKEY_CURRENT_USER\Software\JavaSoft\Prefs\com\spss\/S/P/S/S for /Windows\16.0\en\charteditor\user\editorwin\ylocation
+
+
+SPSS (15.0 and below) Keys that control the windows position of the SPSS (15.0 and below) Chart Editor
+===========================================================================
+HKEY_CURRENT_USER\Software\JavaSoft\Prefs\com\spss\charteditor\user\editorwin\xlocation
+HKEY_CURRENT_USER\Software\JavaSoft\Prefs\com\spss\charteditor\user\editorwin\ylocation
+
+That will reset the Chart Editor window position to the defaults 
+
+ 
+
+As an alternative if you do not have access to edit the registry (or don't wish to) you can elect to move the window to a visible area of the desktop using the following steps: 
+
+1. Locate the Chart Editor on the task bar (it may be grouped with other IBM SPSS Statistics windows depending on your settings within Windows). 
+
+2. Right click the item in the Task Bar and select 'move' 
+
+3. Press one of the four arrow keys on the keyboard (eg: right arrow key next to the numeric pad '0' on a standard keyboard). 
+
+4. Move the mouse. 
+
+ 
+
+After step 4 the Window should be visible and just left click the mouse to detach the mouse pointer from the Chart Editor window.
+
+ 
+
+HISTORICAL NUMBER
+ 65313

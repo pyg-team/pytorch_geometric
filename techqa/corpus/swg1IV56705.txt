@@ -1,0 +1,206 @@
+Title: IBM IV56705: THE LINUX OS AGENT MAY CRASH WHEN KLZ_PROCESS_CMD_SAMPLE_SECS=0 IS SET - United States
+
+Text:
+  A FIX IS AVAILABLE
+IBM Tivoli Monitoring 6.3.0 Fix Pack 3 (6.3.0-TIV-ITM-FP0003) [http://www-01.ibm.com/support/docview.wss?uid=swg24036775]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Abstract:
+   The Linux OS agent may crash when KLZ_PROCESS_CMD_SAMPLE_SECS=0
+   is set
+   
+   Problem:
+    When KLZ_PROCESS_CMD_SAMPLE_SECS=0 is set in lz.ini the
+   initialization
+    of an internal variable gets skipped and this may lead to an
+   incorrect
+    memory free at object destructor time.
+   
+   Affected Platforms / Versions:
+    This issue affects only the Linux OS agent at 6.30 FP2 IF2
+   level.
+   
+   Diagnostics:
+    KBB_RAS1=ERROR
+   
+   Example:
+   /opt/IBM/ITM/lx8266/lz/bin/klzagent: free(): invalid pointer:
+   0x00007f6c8800a840 ***
+   ======= Backtrace: =========
+   /lib64/libc.so.6(+0x76126)[0x7f6cae1ee126]
+   /opt/IBM/ITM/lx8266/lz/bin/klzagent(_ZN8ProcListD1Ev+0x147)[0x50
+   dea9]
+   /opt/IBM/ITM/lx8266/lz/bin/klzagent(_ZN9ProcUsage6sampleEPSt3map
+   Ix14Proc
+   essCpuInfoSt4lessIxESaISt4pairIKxS1_EEE+0xc76)[0x517c30]
+   /opt/IBM/ITM/lx8266/lz/bin/klzagent(_ZN25ProcessStatisticsTempla
+   te6updat
+   eESs+0x2e3)[0x52c40f]
+   /opt/IBM/ITM/lx8266/lz/bin/klzagent(_Z10updateProcPv+0x139)[0x50
+   d2b1]
+   /lib64/libpthread.so.0(+0x7851)[0x7f6caf2f5851]
+   /lib64/libc.so.6(clone+0x6d)[0x7f6cae26094d]
+   
+   
+   Initial Impact:
+    High, the agent does not start
+   
+   Additional Keywords:
+    KLZPROC
+    6.3.0.2-TIV-ITM_LINUX-IF0002
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Do not set KLZ_PROCESS_CMD_SAMPLE_SECS in lz.ini file or set it
+   to a non zero value.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Monitoring Agent for Linux OS may crash when
+   KLZ_PROCESS_CMD_SAMPLE_SECS=0 is configured.
+   
+   
+   When the environment variable KLZ_PROCESS_CMD_SAMPLE_SECS=0 is
+   set in the lz.ini configuration file the Monitoring Agent for
+   Linux OS may crash immediately at startup with a 'free():
+   invalid pointer' message in standard error.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Corrected the missing initialization of an internal variable
+   that led to an improper memory free and produced the crash.
+   
+   
+   The fix for this APAR will be contained in the following
+   maintenance packages:
+   
+   | FixPack | 6.3.0-TIV-ITM-FP0003
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  Do not set KLZ_PROCESS_CMD_SAMPLE_SECS in lz.ini file, or set it
+    to a non zero value.
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV56705
+   
+   
+ * REPORTED COMPONENT NAME
+   ITM AGENT LINUX
+   
+   
+ * REPORTED COMPONENT ID
+   5724C04LN
+   
+   
+ * REPORTED RELEASE
+   630
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-03-14
+   
+   
+ * CLOSED DATE
+   2014-03-21
+   
+   
+ * LAST MODIFIED DATE
+   2014-08-08
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ITM AGENT LINUX
+   
+   
+ * FIXED COMPONENT ID
+   5724C04LN
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R630 PSY
+   UP
+   
+   
+ * R610 PSN
+   UP
+   
+   
+ * R620 PSN
+   UP
+   
+   
+ * R621 PSN
+   UP
+   
+   
+ * R622 PSN
+   UP
+   
+   
+ * R623 PSN
+   UP

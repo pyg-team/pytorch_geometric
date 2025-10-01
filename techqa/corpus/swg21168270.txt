@@ -1,0 +1,50 @@
+Title: IBM DB2 Distributed end of support (EOS) dates - United States
+
+Text:
+EOS; life cycle; end of support; end of support dates; support dates PRODUCT LIFECYCLE
+
+ABSTRACT
+ The following table lists end of basic support (EOS) dates as well as the earliest end of extended service dates for various versions and editions of DB2® Universal Database™ (DB2 UDB) and DB2 Connect™ for Windows®, Linux® and UNIX®. 
+
+CONTENT
+For customers who have purchased their DB2 licences from IBM, the "End of (base) support" indicates the last date on which you are entitled to base support for your DB2 product (also known as the EOS date). You can extend the support period beyond the end of (base) support date for an additional fee. To arrange for a DB2 support extension, contact your local IBM® representative.
+Support terms and conditions may differ for the use of DB2 with certain applications. Customers should check directly with their application vendor for the terms and duration of their support for DB2. Read TechNote 1051638 [http://www.ibm.com/support/docview.wss?uid=swg21051638] for more information as it relates to SAP.
+
+"End of extended support" indicates the earliest date in which IBM would end the extended support for your DB2 product (that is to say, the latest stop date in a DB2 support extension). 
+
+Please note that the announced dates are also available on the IBM Product Lifecycle Page [http://www.ibm.com/software/support/lifecycle/]
+
+
+
+DB2 Version Product Editions End of Support Date (base) End of Support Date (Extended) DB2 Version 11 Version 11.1 DB2 v11.1 for Linux, Unix, and Windows, and DB2 Connect All editions Not Yet Announced
+IBM Will provide a minimum of 
+12 months notice before EOS Minimum 3 years after End of Support DB2 Version 10 Version 10.5 DB2 v10.5 for Linux, Unix, and Windows, and DB2 Connect All editions Not Yet Announced
+IBM Will provide a minimum of 
+12 months notice before EOS Minimum 3 years after End of Support Version 10.1 DB2 v10.1 for Linux, Unix, and Windows, and DB2 Connect All editions September 30, 2017
+Withdrawal Announcement 916-003 [http://www-01.ibm.com/common/ssi/ShowDoc.wss?docURL=/common/ssi/rep_ca/3/897/ENUS916-003/index.html&lang=en&request_locale=en] September 30, 2020 DB2 Version 9 Version 9.8 DB2 pureScale Feature 9.8 for Enterprise Server Edition DB2 pureScale Feature for Enterprise Server Edition April 30, 2016
+Withdrawal Announcement 915-117 [http://www-01.ibm.com/common/ssi/ShowDoc.wss?docURL=/common/ssi/rep_ca/7/897/ENUS915-117/index.html&lang=en&request_locale=en] April 30, 2019 Version 9.7 DB2 9.7 for Linux, UNIX and Windows and DB2 Connect All editions September 30, 2017
+Withdrawal Announcement 916-003 [http://www-01.ibm.com/common/ssi/ShowDoc.wss?docURL=/common/ssi/rep_ca/3/897/ENUS916-003/index.html&lang=en&request_locale=en] September 30, 2020 Version 9.5 DB2 9.5 for Linux, UNIX and Windows and DB2 Connect All editions April 30, 2015
+Withdrawal Announcement 913-220 [http://www-01.ibm.com/common/ssi/ShowDoc.wss?docURL=/common/ssi/rep_ca/0/897/ENUS913-220/index.html&lang=en&request_locale=en] April 30, 2018 Version 9.1 DB2 9.1 for Linux, UNIX and Windows and DB2 Connect All editions April 30, 2012
+Withdrawal Announcement 910-286 [http://www.ibm.com/common/ssi/ShowDoc.jsp?docURL=/common/ssi/rep_ca/6/897/ENUS910-286/index.html&breadCrum=DET001PT022&url=buttonpressed=DET002PT005&specific_index=DET001PEF502&DET015PGL002=DET001PEF011&submit.x=7&submit.y=8&lang=en_US] April 30, 2015 DB2 Version 8 Version 8.1 and 8.2 DB2 Universal Database and DB2 Connect All editions April 30, 2009
+Withdrawal Announcement 907-125 [http://www.ibm.com/common/ssi/cgi-bin/ssialias?subtype=ca&infotype=an&appname=iSource&supplier=897&letternum=ENUS907-125] April 30, 2012 There is no support for older versions of DB2 on Windows®, Linux® and UNIX® operating systems * Indicates projected date. Actual end of support (EOS) date has not yet been announced.
+
+ Note that any fix packs applied to DB2 fall within the same product support Lifecycle, and do not affect the end of support date. 
+
+Additional information is available in this document: 
+Support policy statement for DB2 for Linux, UNIX and Windows fix packs, special builds,Total Content Ownership agreements and IBM Software Accelerated Value Program Technote 1180416 [http://www.ibm.com/support/docview.wss?uid=swg21180416]
+
+Please note that any older version, not mentioned above, does not have current support available. 
+For more information on the IBM Software Support Lifecycle for DB2 [http://www.ibm.com/software/support/lifecycleapp/PLCDetail.wss?psynkey=J038363J86299A04&synkey=I620046H68814U13&synkey=L960784Z04598L21&synkey=P067787Y85362R93&synkey=P900278P43044U41&synkey=S008045U16263E24&synkey=N239086S25668H41&synkey=W262516S50243Z66&synkey=A856900X58200W70&synkey=Z983319R13364R33&synkey=F704494M84899F15&synkey=D053518M30225P30&synkey=I566976Z51402P30&synkey=I920653T72786O66&synkey=S783362T53571C40&synkey=U928161K96774J29&synkey=B195126Q42337H56&synkey=F067639I27128O83&synkey=K332662H42516S34&synkey=K303492C29829C42&synkey=C085867V89032N86&from=spf], see the links in the Related Information section below.
+
+Back to top
+
+RELATED INFORMATION
+ IBM Software Support Lifecycle [http://www.ibm.com/software/support/lifecycle/]
+Support policy statement for DB2 for Linux UNIX Windows [http://www.ibm.com/support/docview.wss?uid=swg21180416]
+
+
+ 
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Information Management DB2 Connect 9.7, 9.5, 9.1, 10.1

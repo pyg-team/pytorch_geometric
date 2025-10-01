@@ -1,0 +1,64 @@
+Title: IBM Collaboration and Deployment Services jobs remain in a queued status - United States
+
+Text:
+queue jobs TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Attempts to run jobs using IBM SPSS Collaboration and Deployment Services results in queued jobs. 
+
+SYMPTOM
+In Deployment Manger Client, view Job History, shows jobs in queued status. 
+
+
+
+
+
+ENVIRONMENT
+C&DS 5.0 FP3 
+Suse Linux 11 
+Websphere 7.0.0.29 
+Non-clutered environment 
+
+DIAGNOSING THE PROBLEM
+The systemout.log does reference threads that may be hung but do eventually resolve. 
+
+[5/8/14 13:21:47:955 GMT] 0000001c ThreadMonitor W WSVR0605W: Thread
+"SIBJMSRAThreadPool : 2" (00000026) has been active for 695287
+milliseconds and may be hung. There is/are 1 thread(s) in total in the
+server that may be hung.
+at java.lang.Object.wait(Native Method)
+at java.lang.Object.wait(Object.java:167)
+at
+com.spss.process.internal.execution.RemoteProcessWork.execute(RemoteProc
+essWork.java:73)
+at
+com.spss.process.internal.execution.WorkEvent.execute(WorkEvent.java:167
+)
+at com.spss.process.internal.execution.Event.run(Event.java:249)
+
+but then later, we see the following:
+
+[5/8/14 14:13:33:003 GMT] 00000026 ThreadMonitor W WSVR0606W: Thread
+"SIBJMSRAThreadPool : 2" (00000026) was previously reported to be hung
+but has completed. It was active for approximately 3800335
+milliseconds. There is/are 0 thread(s) in total in the server that
+still may be hung.
+
+RESOLVING THE PROBLEM
+Change the following settings in the WebSphere Admin Console
+
+
+Expand on Resources
+Expand on JMS
+Click on Activation specifications
+Click on CDSProcessEventActivationSpec
+Increase Maximum batch size - the default is 1
+Increase Maximum concurrent MDB invocations per endpoint - the default is 5
+
+For more information on these settings please work with your WebSphere administrator or contact WebSphere support. 
+
+
+
+
+RELATED INFORMATION
+ Need more help? Our C&DS forum is Live! [https://developer.ibm.com/answers/topics/collaboration.html?smartspace=predictive-analytics]

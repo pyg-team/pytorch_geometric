@@ -1,0 +1,191 @@
+Title: IBM IZ63946: QUEUE MANAGER WILL NOT START AND FDC WITH PROBE ZS142006 OR     XY077003 GENERATED AFTER APPLYING WMQ 7.0.1.0 FOR LINUX - United States
+
+Text:
+  FIXES ARE AVAILABLE
+WebSphere MQ V7.0 Fix Pack 7.0.1.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24024528]
+WebSphere MQ V7.0 Fix Pack 7.0.1.2 [http://www-01.ibm.com/support/docview.wss?uid=swg24026518]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  After applying WMQ 7.0.1.0 for Linux and restarting the
+   server, the queue manager does not start and one of the
+   following FDCs are generated:
+   
+   Probe Id        :- ZS142006
+   Component       :- zslEnqueue
+   Program Name    :- strmqm
+   Arith1          :- 43 (0x2b)
+   Comment1        :- /var/mqm/sockets/@SYSTEM/qmgrlocl/
+   <machinename>/Enqueue.lck
+   -----------------------------------------------------
+   MQM Function Stack
+   zslEnqueue
+   xcsFFST
+   
+   or:
+   
+   Probe Id          :-  XY077003
+   Component         :-  xtrGetTraceLock
+   Program Name      :-  amqrmppa
+   Arith1            :-  43 (0x2b)
+   Comment1          :-  '43 - Identifier removed' from semop.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   WebSphere MQ v7.0.1.0 users on Linux.
+   
+   Platforms affected:
+   Linux (Power),Linux (x86),Linux (x86-64),Linux (zSeries)
+   
+   ****************************************************************
+   PROBLEM SUMMARY:
+   A problem has been discovered whereby on Linux, after upgrading
+   to 7.0.1.0 queue managers fail to start and FDCs with probe ID
+   ZS142006 or XY077003 are raised.
+   
+   WebSphere MQ writes SemId's to disk to files in the
+   /var/mqm/sockets directory. A restart of the operating
+   system causes these semaphores to be removed but references are
+   kept on disk.
+   
+   When WebSphere MQ attempts to start a queue manager it
+   will look up these previously used references to SemId's.
+   Operations performing look up on these semaphores, such as
+   semctl(), are sometimes returning EIDRM where EINVAL was
+   expected.
+   
+   The MQ code currently treats these 2 return codes differently
+   when, for semaphores, they should be treated the same.
+   There is no current work around for this problem.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The WebSphere MQ Code has been updated to handle an EIDRM
+   response from semctl() correctly.
+   
+   | MDVREGR 7.0-WS-MQ-LinuxX64-RP0001   |
+   | MDVREGR 7.0-WS-MQ-LinuxPPC64-RP0001 |
+   | MDVREGR 7.0-WS-MQ-LinuxIA32-RP0001  |
+   | MDVREGR 7.0-WS-MQ-LinuxS390X-RP0001 |
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+                      v7.0
+   Platform           Fix Pack 7.0.1.1
+   --------           --------------------
+   Linux (x86)        U826321
+   Linux (x86-64)     U827231
+   Linux (zSeries)    U827105
+   Linux (Power)      U826779
+   
+   The latest available maintenance can be obtained from
+   'WebSphere MQ Recommended Fixes'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037]
+   
+   If the maintenance level is not yet available, information on
+   its planned availability can be found in 'WebSphere MQ
+   Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ63946
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ LIN X86 V7
+   
+   
+ * REPORTED COMPONENT ID
+   5724H7224
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   YesHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-10-28
+   
+   
+ * CLOSED DATE
+   2009-10-31
+   
+   
+ * LAST MODIFIED DATE
+   2010-04-08
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ LIN X86 V7
+   
+   
+ * FIXED COMPONENT ID
+   5724H7224
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R700 PSY
+   UP

@@ -1,0 +1,234 @@
+Title: IBM PK23969: 6.0.2 CLIENT FAILS TO 6.1 CLUSTER 6.0.2/6.1 INTEROP, NOAVAILABLETARGET AND EOFEXCEPTION - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  With 6.0.2 and 6.1 Interop there are two issues that have
+   been found:
+   
+   [4/14/06 15:11:29:125 CDT] 0000002b ExceptionUtil E
+   CNTR0020E: EJB threw an
+   unexpected (non-declared) exception during invocation of
+   method "initEntityBeans"
+   on bean "BeanId(IOPEAR#IOPEJB.jar#IOPBMTTestSession,
+   9A04C0DC-010A-4000-E000-07CC0905F818)". Exception data:
+   javax.ejb.EJBException:
+   Exception in initEntityBeans:
+   com.ibm.iop.helpers.EJBFinderException:
+   Looking for: ejb/IOPBMPEntityHome at host:
+   brady.rchland.ibm.com with corbaname,
+   GIOP ver: 1.2
+   ORB referenced
+   url ==> corbaname:iiop:1.2@brady.rchland.ibm.com:9810/
+   NameServiceServerRoot#ejb/IOPBM
+   PEntityHome
+   looking up object
+   Runtime Exception
+   org.omg.CORBA.NO_IMPLEMENT: No available target  vmcid:
+   0x49421000  minor code: 40
+   completed: No
+   
+   and
+   
+   Exception = java.io.IOException
+   Source = com.ibm.ws.cluster.topography.DescriptionManagerA.
+   update
+   probeid = 362
+   Stack Dump = java.io.IOException
+          at com.ibm.ws.cluster.topography.ClusterDescriptionImpl.
+   importFromStream(ClusterDescriptionImpl.java:916)
+          at com.ibm.ws.cluster.topography.DescriptionManagerA.
+   update(DescriptionManagerA.java:360)
+   Caused by: java.io.EOFException
+          at java.io.DataInputStream.readFully(DataInputStream.
+   java(Compiled Code))
+          at java.io.DataInputStream.readUTF(DataInputStream.
+   java(Compiled Code))
+          at com.ibm.ws.cluster.topography.KeyRepositoryImpl.
+   importFromStream(KeyRepositoryImpl.java:193)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: Websphere Application Server users with a    *
+   *                 version 6.0.2 client to a version 6.1        *
+   *                 cluster.                                     *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: The version 6.0.2 client incorrectly    *
+   *                      handles version 6.1 cluster             *
+   *                      information.                            *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   The version 6.0.2 code was unable to handle the information
+   being propagated from the version 6.1 code.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The version 6.0.2 and 6.1 level of the code was changed to
+   handle the differences between each other to allow for
+   interopability.
+   
+   The fix for this APAR is currently targeted for inclusion
+   in fixpack 6.0.2.11.
+   Please refer to the recommended updates page for delivery
+   information:
+   http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK23969
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBS APP SERV N
+   
+   
+ * REPORTED COMPONENT ID
+   5724H8800
+   
+   
+ * REPORTED RELEASE
+   60W
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2006-04-25
+   
+   
+ * CLOSED DATE
+   2006-06-08
+   
+   
+ * LAST MODIFIED DATE
+   2006-06-08
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  WLM
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBS APP SERV N
+   
+   
+ * FIXED COMPONENT ID
+   5724H8800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R60A PSY
+   UP
+   
+   
+ * R60H PSY
+   UP
+   
+   
+ * R60I PSY
+   UP
+   
+   
+ * R60P PSY
+   UP
+   
+   
+ * R60S PSY
+   UP
+   
+   
+ * R60W PSY
+   UP
+   
+   
+ * R60Z PSY
+   UP
+   
+   
+ * R61A PSY
+   UP
+   
+   
+ * R61H PSY
+   UP
+   
+   
+ * R61I PSY
+   UP
+   
+   
+ * R61P PSY
+   UP
+   
+   
+ * R61S PSY
+   UP
+   
+   
+ * R61W PSY
+   UP
+   
+   
+ * R61Z PSY
+   UP

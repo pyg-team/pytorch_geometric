@@ -1,0 +1,25 @@
+Title: IBM Which configuration can make all users have the same priority in FAIRSHARE? - United States
+
+Text:
+same priority FAIRSHARE TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Which configuration can make all users have the same priority in FAIRSHARE? 
+
+RESOLVING THE PROBLEM
+
+
+How do I make all users have the same priority and their priority decreases as they keep submitting jobs? Or do I need to specify each user. I have tried several combinations but not able to find one in which all users get same priority and priority of each user should decreases upon usage/job submission
+
+To give all users the same fairshare for a specific queue you'd define the FAIRSHARE parameter as follows:
+FAIRSHARE = USER_SHARES[[default,1]]
+
+Run 'badmin reconfig' after you've made this change and look at the output of 'bqueues -l ' to make sure this change has taken affect. You check this by looking for the following entries in the output: 
+SCHEDULING POLICIES: FAIRSHARE 
+USER_SHARES: [default, 1] 
+
+ 
+
+ 
+
+Cross reference information Segment Product Component Platform Version Edition IBM Spectrum Computing IBM Spectrum LSF

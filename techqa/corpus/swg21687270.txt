@@ -1,0 +1,46 @@
+Title: IBM DATE FORMAT CONVERSION ON MS SQL 2008 - United States
+
+Text:
+MDM SE; ODBC; JDBC; MS SQL SERVER; DATE FORMAT; ERROR=242 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ On Master Data Management standard Edition (MDM SE), customers might have errors when executing tasks such as MEMPUT as follows:
+
+"The data conversion from varchar to datetime has created an outbounded 
+value." 
+
+SYMPTOM
+Customers will see DBError=242
+
+[InitiateSystems][ODBC SQL Server Wire Protocol driver][Microsoft SQL
+Server]La conversion d'un type de données varchar en type de données
+datetime a créé une valeur hors limites. (DBError=242)
+
+
+CAUSE
+Microsoft's data type "datetime" ignores the ISO standard YYYY-MM-DD hh:mm:ss[.mmm] format that all other database servers honor. In fact, this was brought up to Microsoft and they introduced the datetime2 data type that does honor the ISO formatting. However, the original datetime data type as is to maintain compatibility with older applications is still in use. The core of the MDM SE product is over 10 years old and the data model utilizes the older datetime data type. Since changing a column data type in MDMSE database model would have a large impact on our currently installed customer base the datetime data type has continued to be used, and, up until now there were not issues reported.
+
+For SQL Server, modifying the language or installing a regionalized version of SQL Server on a regionalized operating system has the effect of also modifying the formatting of dates to conform to that region. Unfortunately this turns out to be an issue for many software vendor's applications and is well documented. When working with dates from the database most applications assume an ISO format which means month/day will be parsed incorrectly.
+
+ENVIRONMENT
+MDM SE v11
+Windows Server 2012
+Windows MS SQL 2008 (French version)
+
+RESOLVING THE PROBLEM
+ In order to solve this problem the following options can be used:
+
+1. set language 'language with YMD format'
+2. set dateformat YMD
+
+The more desirable option here would be to set the "language" so that the log file is entirely in English and will help support team to do diagnostic analysis in English. This has no effect on the language of the data being stored in the database.
+
+In order to change the date format you will need to add an initialization string that the ODBC/JDBC drivers will send to the server. This string will tell the server what format we plan to send dates in and receive dates from the server. In the case of language it will also tell the server we expect error text to be in that specified language.
+
+On the application server (not the database server) the following changes will need to be made...
+
+ODBC:
+On a Windows platform the configuration of ODBC drivers is managed under the ODBC Administrator in the Administrator section of the Control panel. To add the initialization string open up the ODBC Administrator and go to the "System DSN" tab. Click on the driver configured for MDM and then click the configure button. This will bring up another panel. Go to the "Advanced" tab on this panel and there will be an edit box for the entry of "Initialization String". In this box add the following text "set language us_english". This will modify both the error text language and the date format to be ISO compliant.
+
+JDBC:
+There is no configuration options for JDBC within Windows. Instead, the options are sent in by the application when the connection is established. MDM SE reads these properties for configuration file. This configuration file is located under the mds/conf directory under the root of where the application was installed and expanded under Websphere. This is variable based on the installation but should be fairly easy to locate under the WAS profiles directory. The name of the file is "com.ibm.mdm.mds.jdbc.cfg". The property "InitializationString=(set language us_english)" should be added to this file

@@ -1,0 +1,52 @@
+Title: IBM E_OBJECT_NOT_FOUND error when trying to login to FileNet Workplace XT - United States
+
+Text:
+E_OBJECT_NOT_FOUND Site Preferences TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ An error message indicating that The requested item was not found for the Site Preferences for WorkplaceXT object was returned with an E_OBJECT_NOT_FOUND error when trying to login to Workplace XT. 
+
+SYMPTOM
+When trying to login to Workplace XT, the following error is logged in the WebSphere SystemOut.log file:
+
+[6/10/14 11:52:52:850 MDT] 0000001d SystemOut O 2014-06-10 11:52:52,847 ERROR [WebContainer : 0] - [throw] com.filenet.api.exception.EngineRuntimeException;The requested item was not found. Object identity: /Preferences/Site Preferences for WorkplaceXT. Class name: Versionable. [Code=null] ... Object Reference [DOCUMENT:1] ID "/Preferences/Site Preferences for WorkplaceXT" in ObjectStore "OS2"; OMFC/Document/GetProperties//E_OBJECT_NOT_FOUND
+
+
+CAUSE
+The Site Preferences for WorkplaceXT object was not found in the object store OS2 in the Root Folder - Preferences folder.
+
+ENVIRONMENT
+Workplace XT 1.1.5
+FileNet P8 Content Engine 5.x
+
+
+DIAGNOSING THE PROBLEM
+The object store OS2 did not contain the Site Preferences for WorkplaceXT object anywhere in the object store. However, there was a Site Preferences for WorkplaceXT object found in a different object store, OS1, in the Root Folder - Preferences folder.
+
+RESOLVING THE PROBLEM
+
+
+
+
+
+
+Checked the bootstrap.properties file and found it was pointing to the wrong object store (OS2) for the Preferences Setting / Object Store name. The following entry in the bootstrap.properties file (usually found in \IBM\FileNet\Config\WebClient) was changed as follows:
+
+
+
+ 1. First make a backup copy of the bootstrap.properties file
+    
+    
+ 2. Edit the following line:
+    
+    
+    objectStoreId=OS2
+    
+    
+    Change to:
+    
+    
+    objectStoreId=OS1
+    
+    
+ 3. After restarting Workplace XT in WebSphere, test to confirm the login to Workplace XT is successful.

@@ -1,0 +1,77 @@
+Title: IBM Content Collector V3.0 Fix Pack 1 - United States
+
+Text:
+ DOWNLOADABLE FILES
+
+ABSTRACT
+ This document contains links to the download page for IBM Content Collector V3.0 Fix Pack 1. 
+
+DOWNLOAD DESCRIPTION
+This fix pack includes the following components:
+
+
+ * Text Search Support for IBM Content Manager V8 
+ * P8 Content Search Services Support.
+
+It does not include the server component. 
+IBM CONTENT COLLECTOR DOWNLOADS
+ *  All versions [http://www.ibm.com/support/docview.wss?uid=swg27040223] 
+ *  Version 3.0.0 Fix Pack 1- selected tab, 
+
+Apply IBM Content Collector V3.0 Fix Pack 1 to upgrade the Text Search Support of the following products to Text Search Support for IBM Content Manager V3.0.0.1: 
+
+ * IBM Content Collector 2.1.1, 2.2, or 3.0 
+ * IBM CommonStore for Lotus Domino V8.4 
+ * IBM CommonStore for Exchange Server V8.4
+
+Apply IBM Content Collector V3.0 Fix Pack 1 to upgrade the P8 Content Search Services Support component of IBM Content Collector 2.2 or 3.0 to IBM Content Collector P8 Content Search Services Support 3.0.0.1. 
+
+Below is a list of the problems that were fixed in this fix pack. APAR number Component APAR title HE11479 [http://www.ibm.com/support/docview.wss?uid=swg1HE11479] P8 Content Search Services Support IBM Content Collector does not always index embedded messages with IBM Content Search Services HE11489 [http://www.ibm.com/support/docview.wss?uid=swg1HE11489] P8 Content Search Services Support IBM Content Collector does not always index the correct ICCMailboxId attribute value with IBM Content Search Services HE11555 [http://www.ibm.com/support/docview.wss?uid=swg1HE11555] P8 Content Search Services Support IBM Content Search Services Support does not extract archive attributes for documents in derived document classes correctly HE11490 [http://www.ibm.com/support/docview.wss?uid=swg1HE11490] Text Search Support for IBM Content Manager afuIndexTool does not repair the TIEREF of items if the TIEREF values is NULL HE11510 [http://www.ibm.com/support/docview.wss?uid=swg1HE11510] Text Search Support for IBM Content Manager The IBM Content Collector indexer for text search does not update the TIEFLAG value of items with a severe error (IDXRC 200) (If an APAR link does not work, the detailed information for that APAR is not yet available from the Support page. Try again in a day or two.) 
+
+PREREQUISITES
+IBM Content Collector Text Search Support for Content Manager V3.0 Fix Pack 1 can be used with one of these products: 
+
+ * IBM Content Collector V2.1, V2.2, or V3.0 
+ * IBM CommonStore for Lotus Domino V8.4 
+ * IBM CommonStore for Exchange Server V8.4
+
+
+IBM Content Collector P8 Content Search Services Support V3.0 Fix Pack 1 can be used with the following IBM Content Collector versions:  * IBM Content Collector V2.2.0.3 
+ * IBM Content Collector V3.0
+
+URL LANGUAGE SIZE(Bytes) IBM Content Collector 2.2 prerequisites [http://www.ibm.com/support/docview.wss?uid=swg27019702] English 1 IBM Content Collector 3.0 prerequisites [http://www.ibm.com/support/docview.wss?uid=swg27024229] English 1 
+INSTALLATION INSTRUCTIONS
+Read the fix pack readme files for specific information about installing the fix pack packages. The readme files are part of the fix pack packages.
+
+URL LANGUAGE SIZE(Bytes) Readme files for IBM Content Collector 3.0 FP1 [http://www.ibm.com/support/docview.wss?uid=swg27035818] English 1 
+DOWNLOAD PACKAGE
+There are two download packages for IBM Content Collector V3.0 Fix Pack 1.
+
+The IBM Content Collector Text Search Support for IBM Content Manager V3.0 Fix Pack 1 download package consists of the following files: 
+
+ * 3.0.0.1-IBM-ICC-CM8Text-FP001.pdf: Readme file 
+ * 3.0.0.1-IBM-ICC-CM8Text-AIX-FP001.tar.gz: Text Search Support for Content Manager 8 on AIX 
+ * 3.0.0.1 IBM-ICC-CM8Text-Linux32-FP001.tar.gz: Text Search Support for Content Manager 8 on Linux 
+ * 3.0.0.1-IBM-ICC-CM8Text-Linuxz-FP001.tar.gz: Text Search Support for Content Manager 8 on Linux for zSeries 
+ * 3.0.0.1-IBM-ICC-CM8Text-Solaris-FP001.tar.gz: Text Search Support for Content Manager 8 on Solaris 
+ * 3.0.0.1-IBM-ICC-CM8Text-WIN-FP001.zip: Text Search Support for Content Manager 8 on Windows
+
+
+The IBM Content Collector P8 Content Search Services Support V3.0 Fix Pack 1 download package consists of the following files:  * 3.0.0.1-IBM-ICC-P8CSS-FP001.pdf: Readme file 
+ * 3.0.0.1-IBM-ICC-P8CSS-AIX-FP001.tar.gz: IBM Content Collector P8 Content Search Services Support on AIX 
+ * 3.0.0.1-IBM-ICC-P8CSS-Linux-FP001.tar.gz: IBM Content Collector P8 Content Search Services Support on Linux 
+ * 3.0.0.1-IBM-ICC-P8CSS-Linuxz-FP001.tar.gz : IBM Content Collector P8 Content Search Services Support on Linux for zSeries 
+ * 3.0.0.1-IBM-ICC-P8CSS-WIN-FP001.zip: IBM Content Collector P8 Content Search Services Support on Windows
+
+
+DOWNLOADING THE FIX PACK
+When you click the download links below, a sign-in page opens. Enter your IBM ID and password to proceed. If you have forgotten your IBM ID or have never registered, follow the instructions on the sign-in page.
+
+Download the readme files and the fix pack deliverables that are required for your environment.
+
+
+
+Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options 
+What is Fix Central(FC)? [https://www.ibm.com/support/fixcentral/help?page=swfaqs] Text Search Support for Content Manager 3.0 FP1 3 Aug 2012 Language Independent 180829073 FC [http://www-933.ibm.com/support/fixcentral/swg/quickorder?parent=ibm~Information+Management&product=ibm/Information+Management/Content+Collector&release=All&platform=All&function=fixId&fixids=3.0.0.1-IBM-ICC-CM8Text-FP001&includeRequisites=1&includeSupers] [ ] Content Search Services Support 3.0 FP1 3 Aug 2012 Language Independent 89454343 FC [http://www-933.ibm.com/support/fixcentral/swg/quickorder?parent=ibm~Information+Management&product=ibm/Information+Management/Content+Collector&release=All&platform=All&function=fixId&fixids=3.0.0.1-IBM-ICC-P8CSS-FP001&includeRequisites=1&includeSupersed] [ ] 
+ [/support/docview.wss?uid=swg24033169&aid=1]Problems (APARS) fixed [/support/docview.wss?uid=swg24033169&aid=2]Problems (APARS) fixed
+HE11479, HE11489, HE11555, HE11490, HE11510

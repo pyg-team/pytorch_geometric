@@ -1,0 +1,144 @@
+Title: IBM IY99386: DISCREPANCY IN DSC FILES WHEN APPLYING 6.1.0-TIV-ITM_SYB-LA0002 - United States
+
+Text:
+  FIXES ARE AVAILABLE
+IBM Tivoli Monitoring for Databases: DB2 6.1.0.1-TIV-ITM_DB2-LA0008 [http://www-01.ibm.com/support/docview.wss?uid=swg24020966]
+IBM Tivoli Monitoring for Databases:Sybase Server Agent 6.1.0-TIV-ITM_SYB-LA0006 [http://www-01.ibm.com/support/docview.wss?uid=swg24021335]
+IBM Tivoli Monitoring for Databases:Sybase Server Agent 6.1.0-TIV-ITM_SYB-IF0008 [http://www-01.ibm.com/support/docview.wss?uid=swg24029755]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  ITM 6.1 LA02 OY It appears the ITM 6.1 LA Patch 02 for OY is
+   backleveled. If you look at the LA Readme
+   4.1 Prerequisites for this fix pack:
+    Appears this was built for FP1 of ITM 6 and we are on FP03 of
+   ITM and
+    moving to FP05.
+     ------------------------------------
+     IBM Tivoli Monitoring 6.1.0 Fixpack 1 (6.1.0-TIV-ITM-FP0001)
+     IBM Tivoli Monitoring for Databases, version 6.1.0: Sybase
+   Agent
+   down graded the UI: dependecy from ui:061002000 to
+   ui:061001000.
+   
+   DSC files for the OY agent are not current.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  NA
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Descriptor file does not have correct system support list.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This APAR has been fixed and delivered in a limited availability
+   fix 6.1.0-TIV-ITM_SYB-LA0003. This maintenance delivery
+   vehicle is a limited availability patch and therefore is in a
+   "hidden directory." Level 2 Support can provide down load
+   instructions to you. Contact level 2 support at:
+   
+   http://www.ibm.com/software/sysmgmt/products/support/Contact_L2
+   Support.html [http://www.ibm.com/software/sysmgmt/products/support/Contact_L2Support.html]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IY99386
+   
+   
+ * REPORTED COMPONENT NAME
+   TEMA
+   
+   
+ * REPORTED COMPONENT ID
+   5724C04TE
+   
+   
+ * REPORTED RELEASE
+   610
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2007-05-31
+   
+   
+ * CLOSED DATE
+   2007-08-01
+   
+   
+ * LAST MODIFIED DATE
+   2007-08-01
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TIV MON SYBASE
+   
+   
+ * FIXED COMPONENT ID
+   5724B96SO
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R610 PSY
+   UP

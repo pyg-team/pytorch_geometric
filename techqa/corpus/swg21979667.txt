@@ -1,0 +1,83 @@
+Title: IBM The off-line backup command could fail even when the database is quiesced on DB2  V10.1 and later. - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Offline-backup against the quiesced database failed with the error, SQL1035N.
+It did not occur with V9.7. And it came to happen after migrating to V10.1 or later from V9.7. 
+
+SYMPTOM
+ 
+
+The following example shows this situation.
+
+1) In CLP 1 under the user having DBADM authority, execute quiesce database command on the database, sample.
+
+$ db2 connect to sample
+
+Database Connection Information
+
+Database server = DB2/AIX64 10.5.7
+SQL authorization ID = E105Q7A
+Local database alias = SAMPLE
+
+
+$ db2 quiesce database immediate force connections
+DB20000I The QUIESCE DATABASE command completed successfully.
+$ db2 terminate
+DB20000I The TERMINATE command completed successfully.
+
+2) In CL 2 under the user having only connect privilege on sample database. 
+Run the following shell repeating connect to sample.. 
+
+$ cat connect.sh
+#!/bin/sh
+count=0
+while [ $count -lt 1000 ]; do
+db2 connect to $db
+count=`expr $count + 1`
+done 
+
+db2insth $ sh -x loop.sh
++ count=0
++ [ 0 -lt 1000 ]
++ db2 connect to sample
+SQL20157N User with authorization ID "USER1" failed to attach to a
+quiesced instance, or connect to a quiesced database or a database in a
+quiesced instance which is in the following quiesce mode: "QUIESCE DATABASE"
+SQLSTATE=08004
++ + expr 0 + 1
+count=1
++ [ 1 -lt 1000 ]
++ db2 connect to sample
+<snippet>
+
+* connect to sample continues to fail with the error, SQL20157N because the database, sample is quiesced.
+
+3) In CLP 1, execute the off-line backup command while executing the shell script under CLP2.
+
+$ db2 backup db sample
+SQL1035N The operation failed because the specified database cannot be
+connected to in the mode requested. SQLSTATE=57019
+
+* The backup command failed. But this error does not happen on V9.7. 
+
+For avoiding the error in offline-backup, use quiesce instance command with restricted access option.
+
+
+
+CAUSE
+Because of the code change in V10.1 GA, the off-line backup command could be blocked for short period of time while connect database command is executed.
+
+
+
+RESOLVING THE PROBLEM
+ 
+
+Please use quiesce instance command with the "restricted access" option instead of the quiesce database command. 
+
+Or please retry off-line backup command after getting SQL1035N error.
+
+RELATED INFORMATION
+ A Japanese translation is available [http://www.ibm.com/support/docview.wss?uid=swg21980030]

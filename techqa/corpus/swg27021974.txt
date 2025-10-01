@@ -1,0 +1,24 @@
+Title: IBM FileNet Rendition Engine uninstallation procedure must specify Show Rendering - United States
+
+Text:
+ RELEASE NOTES
+
+ABSTRACT
+ Before uninstalling the Rendition Engine software from a server, in the Domain Manager you must specify Show rendering applications. You must take this action before you remove the Rendition Engine from a Liquent Vista domain. 
+
+CONTENT
+Under Installing additional IBM FileNet P8 products > IBM FileNet Rendition Engine installation and upgrade > Removing software, the procedure in the "Removing Rendition Engine from a Liquent Vista domain" topic needs a new step. Namely, you must select Show rendering applications before you remove Rendition Engine from the Liquent Vista domain.
+
+
+The following procedure is updated with a new step 3 inserted: 
+
+To remove Rendition Engine from a Liquent Vista domain: 
+
+ 1. Log on to the Rendition Engine server as FNRE_Admin. 
+ 2. Start the Domain Manager application. 
+ 3. Select File > Show/Hide Rendering, select Show rendering applications, and click OK. 
+ 4. Select the Configuration tab in the left navigation pane. 
+ 5. Expand Domain and Repositories to view the server and client machines in the domain. 
+ 6. Click the machine name to be removed from the Liquent Vista domain. 
+ 7. Select Delete from the Edit menu. 
+ 8. Confirm the deletion and select Save from the File menu.

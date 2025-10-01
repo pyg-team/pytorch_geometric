@@ -1,0 +1,274 @@
+Title: IBM PJ36351: FEM CRASHES WHEN CLEARING THE DEFAULT VALUE OF A BOOLEAN PROPERTY - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  MMC/FEM throws an error and closes FEM ...when.
+   
+   You have a DocClass with an associated property template and
+   this property is of type boolean ..and a default value has been
+   set to either true or false.
+   
+   When you want to change this back to no value by clicking on the
+   'Clear Default Value' button in the properties of the associated
+   template ...MMC/FEM throws an error and crashes.
+   
+   Event Type: Error
+   
+   Event Source: Microsoft Management Console
+   
+   Event Category: None
+   
+   Event ID: 1000
+   
+   Date:  4/13/2009
+   
+   Time:  9:16:05 AM
+   
+   User:  N/A
+   
+   Computer: RAINIER
+   
+   Description:
+   
+   The description for Event ID ( 1000 ) in Source ( Microsoft
+   Management
+   Console ) cannot be found. The local computer may not have the
+   necessary
+   registry information or message DLL files to display messages
+   from a
+   remote computer. You may be able to use the /AUXSOURCE= flag to
+   retrieve
+   this description; see Help and Support for details. The
+   following
+   information is part of the event: mmc.exe, 5.2.3790.3959,
+   
+   fnk_enterprisemanager.dll, 3.5.2016.132, 00038e18.
+   
+   Data:
+   
+   0000: 41 70 70 6c 69 63 61 74   Applicat
+   
+   0008: 69 6f 6e 20 46 61 69 6c   ion Fail
+   
+   0010: 75 72 65 20 20 6d 6d 63   ure  mmc
+   
+   0018: 2e 65 78 65 20 35 2e 32   .exe 5.2
+   
+   0020: 2e 33 37 39 30 2e 33 39   .3790.39
+   
+   0028: 35 39 20 69 6e 20 66 6e   59 in fn
+   
+   0030: 6b 5f 65 6e 74 65 72 70   k_enterp
+   
+   0038: 72 69 73 65 6d 61 6e 61   risemana
+   
+   0040: 67 65 72 2e 64 6c 6c 20   ger.dll
+   
+   0048: 33 2e 35 2e 32 30 31 36   3.5.2016
+   
+   0050: 2e 31 33 32 20 61 74 20   .132 at
+   
+   0058: 6f 66 66 73 65 74 20 30   offset 0
+   
+   0060: 30 30 33 38 65 31 38 0d   0038e18.
+   
+   0068: 0a                        .
+   
+   
+   
+   How long has the problem been occurring (recent changes)? :
+   Unknown
+   
+   Does this occur on more than one station / server? : Yes
+   
+   Is there a workaround? : Yes
+   
+   Work around:
+   1_. Check the Property Template Node still has the original
+   BLANK value
+   setting - once that is then we proceed with the following.
+   2_.Create a new DocClass.
+   3_. Associate the errant property template with the new
+   DocClass.
+   4_. Refresh the Object Store.
+   5_. Add a dec document object with your new DocClass
+   6_. Check that property value is not set.
+   7_. Once that is good then we move on to the DocClass with the
+   issue.
+   
+   *NOTE* Each Property Template associated with a Document Class,
+   gets a
+   column in the table DocVersion to it.
+   If you only have this one DocClass associated with this property
+   template and remove the association from the doc class, then the
+   column
+   and any values it may of had get deleted.
+   By creating a dummy docclass and associating the same property
+   with
+   dummy DocClass, we prevent the removal of the column from the
+   database.
+   
+   8_. Expand the Node Document Class in FEM.
+   9_. Locate your DocClass, go => Properties => Property
+   Definitions.
+   10_. Remove the errant property and apply.
+   11_. Re-associate the property back to the DocClass (pulls this
+   information from the data you see in the Property Templates
+   node).
+   12_. Apply and test.
+   
+   What is the impact to the customer/system? : Minimal
+   
+   Can the problem be replicated on an internal system?  Y
+   By Who - Fred Dunne
+   
+   Steps to Reproduce:
+   1_. Open FEM and go to the Doc Class you will use for this test.
+   2_. Select your DocClass and right click, selecting 'Add
+   Properties to Class'
+   3_. Create a single property class of type boolean and complete
+   the wizard.
+   4_. Once the property is created, right click on the Doc Class
+   and select Properties.
+   5_. Go to the properties tab 'Property Definitions'.
+   6_. Select your new property and click on edit.
+   7_. On the properties tabs of the property ...select 'More'
+   8_. Under 'Default Value' click on either one of the two values,
+   so that the other value is now unchecked.
+   9_. Click OK then click Apply and lastly Ok to close.
+   10_.Repeate the steps 4 to 7.
+   11_. You should be on the More tab of the properties for you
+   boolean property - Click on  'Clear Default Value' then click on
+   ok.
+   
+   Actual Results: FEM closes.
+   
+   
+   Expected Results: FEM to stay open and the value to be set so
+   that there is no default value.
+   
+   
+   
+   Are there any similar or related Defects? If Y provide ECMDB #s
+   360020
+   
+   CE 3.5.2-017
+   W2k3sp1
+   Oracle 9.2.0.8
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * P8 FEM users                                                 *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * UNABLE TO CLEAR THE DEFAULT  VALUE OF A BOOLEAN PROPERTY     *
+   * FROM CLASS' PROPERTY DEFINITION                              *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Upgrade CE server and FEM to the P8CE-4.0.1-010              *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This issue is fixed P8CE-4..0.1-010 FEM
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PJ36351
+   
+   
+ * REPORTED COMPONENT NAME
+   CONTENT ENGINE
+   
+   
+ * REPORTED COMPONENT ID
+   5724R8101
+   
+   
+ * REPORTED RELEASE
+   401
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-05-22
+   
+   
+ * CLOSED DATE
+   2009-07-31
+   
+   
+ * LAST MODIFIED DATE
+   2009-07-31
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    PJ36271 [http://www-01.ibm.com/support/docview.wss?uid=swg1PJ36271]
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CONTENT ENGINE
+   
+   
+ * FIXED COMPONENT ID
+   5724R8101
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R401 PSY
+   UP

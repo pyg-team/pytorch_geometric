@@ -1,0 +1,25 @@
+Title: IBM What is the meaning of the exclamation mark found in functions - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ What is the meaning of the &quot;!&quot; character before some functions displayed in the expression editor ? 
+
+RESOLVING THE PROBLEM
+Not all data sources support functions in the same way. The data modeler can set a quality of service indicator on functions to give a visual clue about the behaviour of the functions. Report authors can use the quality of service indicators to determine which functions to use in a report.
+The quality of service indicators are:
+
+not available: (X)
+This function is not available for any data sources in the package
+
+limited availability (!!)
+The function is not available for some data sources in the package
+
+poor performance (!)
+The function is available for all data sources in the package but may have poor performance in some data sources
+
+The function is available for all data sources 
+
+HISTORICAL NUMBER
+ 1029280

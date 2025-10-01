@@ -1,0 +1,64 @@
+Title: IBM 5733-OPS Open Source software support statement - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ This document serves to provide a software support statement on 5733-OPS Open Source for IBM i. 
+
+ANSWER
+
+The world of Open Source continues to rapidly evolve and change. This is also very much the case for the IBM i. Over the past few years, we have seen an increased number of Open Source Technologies added to the IBM i. 
+
+Many of the open source technologies for IBM i are created and delivered through a partnership with our solution providers and business partners. Recently, the IBM i development team has taken a more active role in compiling open source products exclusively to run in the PASE environment for IBM i. In order deliver these new technologies in a safe manner we have created a new license program option - 5733OPS - Open Source for IBM i. 
+
+This document serves to provide a software support statement on 5733-OPS Open Source for IBM i.
+
+The IBM i support organization will assist in how to obtain and install the new Open Source for IBM i Product - 5733OPS, and assist with troubleshooting and basic problem analysis. 
+
+The primary resource when seeking assistance for usage problems are online user forums - not IBM support -
+For usage issues, IBM recommends customers post questions to community forums like http://archive.midrange.com/opensource/ [http://archive.midrange.com/opensource/] . 
+
+Generally, IBM subject matter experts are responsive to community finds of Open Source issues across many forums. Open Source projects are often receptive of input from user communities. However, we do not plan to produce a PTF for every little thing found, aka, missing a piece for some new attempt to compile a build. Those missing pieces can be found in online Open Source projects that have been updated based on user input. 
+
+Another important link for Open Source for IBM i is
+http://www.ibm.com/developerworks/ibmi/techupdates/opensource [http://www.ibm.com/developerworks/ibmi/techupdates/opensource]
+This link contains many associated resources and links for 
+
+Node.js V1 and V4
+Python2 and Python3
+GCC &CHROOT
+Git
+Orion
+Tools
+cloud-init
+TBA - other products will be added to 5733-OPS over time. 
+
+
+The following is a more complete formal statement on support
+
+The IBM i Open Source Solutions product is governed by an IBM Agreement for Non-warranted license which states "IBM DOES NOT PROVIDE SUPPORT OF ANY KIND, UNLESS IBM SPECIFIES OTHERWISE. " IBM does not provide support. Some of the open source delivered with Open Source Solutions is delivered under its own open source license (e.g. GPL or LGPL),. All in all, not covered via IBM support. 
+
+For open source delivered with IBM products, there are two major categories: 
+a. "third party code": this is either open source or other acquired code and the default terms in the IBM agreements is that it's licensed under the IBM agreement: Here are the terms for third party code: 
+"12. Third Party Notices
+
+The Program may include third party code that IBM, not the third party, licenses to Licensee under this Agreement. Notices, if any, for the third party code ("Third Party Notices") are included for Licensee's information only. These notices can be found in the Program's NOTICES file(s). Information on how to obtain source code for certain third party code can be found in the Third Party Notices. If in the Third Party Notices IBM identifies third party code as "Modifiable Third Party Code," IBM authorizes Licensee to 1) modify the Modifiable Third Party Code and 2) reverse engineer the Program modules that directly interface with the Modifiable Third Party Code provided that it is only for the purpose of debugging Licensee's modifications to such third party code. IBM's service and support obligations, if any, apply only to the unmodified Program."
+
+Support: For third party code included in an IBM agreement, if the IBM product is fully warranted and supported, the third party code is supported, unless the specific product license specifies otherwise. Products like IBM i Open Source Solutions are provided under a non-warranted license: no warranty, and no support. 
+
+b. "Separately Licensed Code": this is open source or other acquired code where the code is licensed to the end user under the open source license or third party license, not licensed by IBM. 
+
+Refer to the attachment for the Separately Licensed Code terms. Basically IBM is not licensing, providing warranty, anything. Also: 
+"Note: IBM may provide limited support for some Separately Licensed Code. If such support is available, the details and any additional terms related to such support will be set forth in the License Information document."
+
+In the case of IBM i Open Source Solutions, the Separately Licensed Code does not have support. 
+
+Here is the latest Open Source Solutions license: 
+The base IBM Agreement for Non-warranted Programs, where you'll see section 12 Third Party Notices:
+LA_en.txt [/support/docview.wss?uid=nas8N1021450&aid=2]LA_en.txt [/support/docview.wss?uid=nas8N1021450&aid=1]
+The IBM i Open Source Solutions program-specific License Information, where you'll see the Separately Licensed Code provisions:
+LI_en_IBM i Open Source Solutions.txt [/support/docview.wss?uid=nas8N1021450&aid=4]LI_en_IBM i Open Source Solutions.txt [/support/docview.wss?uid=nas8N1021450&aid=3]
+
+The notices file referenced by "Third Party Notices." As mentioned, this code is under the IBM Agreement for Non-warranted Programs:
+notices.txt [/support/docview.wss?uid=nas8N1021450&aid=6]notices.txt [/support/docview.wss?uid=nas8N1021450&aid=5]

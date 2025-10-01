@@ -1,0 +1,172 @@
+Title: IBM JR45548: CANNOT RESET TABLE IN COACH - United States
+
+Text:
+  A FIX IS AVAILABLE
+Version 8.0.1 Fix Pack 1 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24034495]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  There is an error in the coach framework when user designs the
+   coach to reset the value in a table within a coach via boundary
+   event.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  n/a
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Non-existing data binding (for configuration option) occurs when
+   coach framework tries to refresh existing view instances with
+   new data from server side.
+   
+   USER AFFECTED:
+   Business Process Manager Advanced, Standard and Express users
+   who have this kind a Coach with,
+   -Table containing view that has variable as configuration option
+   (e.g. Select control)
+   -Uses server script to set/reset table data.
+   
+   PROBLEM DETAILED DESCRIPTION:
+   When coach framework receives new data from server side, it
+   tries to refresh the existing coach view instances. One of the
+   step during the refresh is to update the data binding of
+   configuration option. But some binding don't exist as the result
+   of new data from server side.
+   
+   Reproduction,
+   1. Originating customer provided a process application, with
+   sample human service, containing a prepopulated table and
+   ability to delete rows.
+   2. Run the human service.
+   3. Delete the first row.
+   
+   Result, error null will display. There is no error in the log
+   file.
+   
+   Expected, the row will be deleted.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Problem has been fixed by enhancing coach framework logic, now
+   it can tolerate the non-existing data binding.
+   
+   FIX AVAILABILITY:
+   Fix for 8.0.0 is available  on Fix Central, search for APAR
+   JR45548 at http://www.ibm.com/support/fixcentral/ [http://www.ibm.com/support/fixcentral/]
+   
+   Fix for 8.0.1 is available through superseding APAR fix for
+   JR45962 [http://www-01.ibm.com/support/docview.wss?uid=swg1JR45962], http://www.ibm.com/support/docview.wss?uid=swg1JR45962 [http://www.ibm.com/support/docview.wss?uid=swg1JR45962]
+   . Fix for JR45962 [http://www-01.ibm.com/support/docview.wss?uid=swg1JR45962] is available on Fix Central, search
+   for APAR JR45962 [http://www-01.ibm.com/support/docview.wss?uid=swg1JR45962] at http://www.ibm.com/support/fixcentral/ [http://www.ibm.com/support/fixcentral/]
+   
+   Fix for 8.0.1 also available in 8.0.1 Fixpack 1 (8.0.1.1)
+   
+   IMPORTANT: When obtaining any of the above fixes, be sure to
+   download the accompanying readme, for itself and any
+   prerequisite fixes, and review them thorougly.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR45548
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM ADVANCED
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9400
+   
+   
+ * REPORTED RELEASE
+   800
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-01-28
+   
+   
+ * CLOSED DATE
+   2013-03-27
+   
+   
+ * LAST MODIFIED DATE
+   2013-03-27
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   BPM ADVANCED
+   
+   
+ * FIXED COMPONENT ID
+   5725C9400
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R800 PSY
+   UP
+   
+   
+ * R801 PSY
+   UP

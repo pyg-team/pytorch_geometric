@@ -1,0 +1,29 @@
+Title: IBM Cannot configure IER Disposition Sweep to use SSL - United States
+
+Text:
+SSL; Disposition Sweep Configure; JRE; path; CA certificate TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ 
+Configure an IBM ECM FileNet P8 (P8) environment to run under SSL. When saving the IBM Enterprise Records (IER) Disposition Sweep configuration, an error appears indicating that it cannot find the CA certificates located in the Java keystore on the IBM ECM FileNet Content Engine (CE). 
+
+SYMPTOM
+ 
+
+The following error appears in the command shell after clicking Apply in the IER Disposition Sweep Configuration Console:
+
+2013-03-08 13:45:42,238, Got exception in BDP WSIProxyFactory getObjects : javax.net.ssl.SSLHandshakeException: com.ibm.jsse2.util.h: PKIX path building failed: java.security.cert.CertPathBuilderException: PKIXCertPathBuilderImpl could not build a valid CertPath.; internal cause is: 
+java.security.cert.CertPathValidatorException: The certificate issued by <CA Issuer> is not trusted; internal cause is: 
+java.security.cert.CertPathValidatorException: Certificate chaining error
+2013-03-08 13:45:42,240, EXCEPTION - javax.net.ssl.SSLHandshakeException: com.ibm.jsse2.util.h: PKIX path building failed: java.security.cert.CertPathBuilderException: PKIXCertPathBuilderImpl could not build a valid CertPath.
+
+
+CAUSE
+
+Disposition Sweep is pointing to another version of java installed on the system that doesn't contain the CA certificates. 
+
+
+RESOLVING THE PROBLEM
+ 
+
+Point the Disposition Sweep to the correct java version installed on system, which does contain the CA Certificates. This is located in the Java keystore on the IBM ECM FileNet Content Engine (CE).

@@ -1,0 +1,201 @@
+Title: IBM IV70656: LDAP DSA POLICY RETURN NULL VALUES. - United States
+
+Text:
+  DIRECT LINKS TO FIXES
+7.1.0-TIV-NCI-ZLINUX-FP0006 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=7.1.0-TIV-NCI-ZLINUX-FP0006&source=SAR]
+7.1.0-TIV-NCI-WINDOWS-FP0006 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=7.1.0-TIV-NCI-WINDOWS-FP0006&source=SAR]
+7.1.0-TIV-NCI-SOLARIS-FP0006 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=7.1.0-TIV-NCI-SOLARIS-FP0006&source=SAR]
+7.1.0-TIV-NCI-LINUX-FP0006 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=7.1.0-TIV-NCI-LINUX-FP0006&source=SAR]
+7.1.0-TIV-NCI-AIX-FP0006 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=7.1.0-TIV-NCI-AIX-FP0006&source=SAR]
+7.1.0-TIV-NCI-ZLINUX-FP0005 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=7.1.0-TIV-NCI-ZLINUX-FP0005&source=SAR]
+7.1.0-TIV-NCI-LINUX-FP0005 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=7.1.0-TIV-NCI-LINUX-FP0005&source=SAR]
+7.1.0-TIV-NCI-WINDOWS-FP0005 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=7.1.0-TIV-NCI-WINDOWS-FP0005&source=SAR]
+7.1.0-TIV-NCI-SOLARIS-FP0005 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=7.1.0-TIV-NCI-SOLARIS-FP0005&source=SAR]
+7.1.0-TIV-NCI-AIX-FP0005 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=7.1.0-TIV-NCI-AIX-FP0005&source=SAR]
+IBM Tivoli Netcool/Impact V7.1.0 Fix Pack 3(7.1.0-TIV-NCI-FP0003) [http://www-01.ibm.com/support/docview.wss?uid=swg24040149]
+IBM Tivoli Netcool/Impact V7.1.0 Fix Pack 5(7.1.0-TIV-NCI-FP0005) [http://www-01.ibm.com/support/docview.wss?uid=swg24041270]
+IBM Tivoli Netcool/Impact V7.1.0 Fix Pack 6(7.1.0-TIV-NCI-FP0006) [http://www-01.ibm.com/support/docview.wss?uid=swg24042426]
+IBM Tivoli Netcool/Impact V7.1.0 Fix Pack 7(7.1.0-TIV-NCI-FP0007) [http://www-01.ibm.com/support/docview.wss?uid=swg24042688]
+IBM Tivoli Netcool/Impact V7.1.0 Fix Pack 8(7.1.0-TIV-NCI-FP0008) [http://www-01.ibm.com/support/docview.wss?uid=swg24042885]
+IBM Tivoli Netcool/Impact V7.1.0 Fix Pack 9(7.1.0-TIV-NCI-FP0009) [http://www-01.ibm.com/support/docview.wss?uid=swg24043378]
+IBM Tivoli Netcool/Impact V7.1.0 Fix Pack 10(7.1.0-TIV-NCI-FP0010) [http://www-01.ibm.com/support/docview.wss?uid=swg24043588]
+IBM Tivoli Netcool/Impact V7.1.0 Fix Pack 11(7.1.0-TIV-NCI-FP0011) [http://www-01.ibm.com/support/docview.wss?uid=swg24043858]
+IBM Tivoli Netcool/Impact V7.1.0 Fix Pack 12 (7.1.0-TIV-NCI-FP0012) [http://www-01.ibm.com/support/docview.wss?uid=swg24044312]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  A working ipl that accesses the LDAP no longer works in v 7.1.
+   I have
+   pared it down to the failing code and it appears to be here...
+   
+   FilterC ="";
+   ldap_grp_map = GetByFilter("LDAP_TCR_USERS", FilterC, false);
+   ldap_grp_map_len = length(ldap_grp_map);
+   if (debug) { log(1,logkey+"- "+Time+"- "+policyName+" ----
+   ldap_grp_map
+   =  "+ldap_grp_map_len+"."); }
+   if (ldap_grp_map_len >0) {
+      i=0;
+      if (debug) { log(1, logkey+" found "+ldap_grp_map_len+" LDAP
+   records."); }
+      while (i < ldap_grp_map_len) {
+           ldap_grp_rec=ldap_grp_map[i];
+           if (debug) { log(1, logkey+" found "+ldap_grp_map[i].
+   Cust_codes+" " +ldap_grp_rec.TCR_Group+" LDAP- 0.01 record"); }
+        i=i+1;
+     }
+   }
+   
+   
+   on Impact 5 I get:
+   
+   
+   02 Feb 2015 23:36:52,407:
+   [tod_GRPtest][pool-1-thread-62752]Parser log:
+   NULL found 8 LDAP records.
+   02 Feb 2015 23:36:52,408:
+   [tod_GRPtest][pool-1-thread-62752]Parser log:
+   NULL found admin ToD_TCRAdmin LDAP - 0.01 record
+   
+   on impact 7.1 I get
+   02 Feb 2015 23:39:03,662:
+   [tod_grptest][pool-10-thread-16491]Parser
+   log: NULL found 8 LDS records.
+   02 Feb 2015 23:39:03,663:
+   [tod_grptest][pool-10-thread-16491]Parser
+   log: NULL found NULL NULL LDAP - 0.01 record
+   
+   
+   Impact 7 returns NULL NULL not the values from
+   the LDAP
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * All Impact Users                                             *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * Cannot access mapped attribute fields with LDAP data source, *
+   * from a policy. UI works ok.  Policy logs show that the       *
+   * connection is made successfully to LDAP, and records are     *
+   * returned. But the data within the records is being returned  *
+   * as NULL.                                                     *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   As a workaround, before APAR release, use the original field
+   names. Do not use field mappings.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix for this APAR is contained in the following
+   maintenance packages:
+   |Fix Pack | 7.1.0-TIV-NCI-FP0003
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV70656
+   
+   
+ * REPORTED COMPONENT NAME
+   NETCOOL/IMPACT
+   
+   
+ * REPORTED COMPONENT ID
+   5724O59IS
+   
+   
+ * REPORTED RELEASE
+   710
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2015-03-09
+   
+   
+ * CLOSED DATE
+   2015-05-29
+   
+   
+ * LAST MODIFIED DATE
+   2015-05-29
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  UNKNOWN
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   NETCOOL/IMPACT
+   
+   
+ * FIXED COMPONENT ID
+   5724O59IS
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R710 PSY
+   UP

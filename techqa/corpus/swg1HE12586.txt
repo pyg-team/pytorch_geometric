@@ -1,0 +1,175 @@
+Title: IBM HE12586: SOME SMTP EMAILS WITH LONG HEADER FAIL TO BE INDEXED. - United States
+
+Text:
+  DIRECT LINKS TO FIXES
+4.0.1.5-IBM-ICC-FP005 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FContent+Collector&fixids=4.0.1.5-IBM-ICC-FP005&source=SAR]
+4.0.1.5-IBM-ICC-FP005.xml.fo.xml [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FContent+Collector&fixids=4.0.1.5-IBM-ICC-FP005.xml.fo.xml&source=SAR]
+IBM Content Collector V4.0.1 Fix Pack 5 [http://www-01.ibm.com/support/docview.wss?uid=swg24043720]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Some SMTP emails have exceptionally long header fail to be
+   indexed by IBM Content Collector Content Search Searches
+   Support.
+   
+   The following error will be thrown when these emails are
+   encountered:
+   
+   AFUI0043E The document '{D564090C-AFDA-5F29-48F1-70E88EF8FACE}'
+   (AFU7869508892813764958.eml) could not be processed as a
+   regular email. Contact IBM Software Support.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  n/a
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Some SMTP emails have exceptionally long header fail to be
+   indexed by IBM Content Collector Content Search Searches
+   Support.
+   
+   The following error will be thrown when these emails are
+   encountered:
+   
+   AFUI0043E The document '{D564090C-AFDA-5F29-48F1-70E88EF8FACE}'
+   (AFU7869508892813764958.eml) could not be processed as a
+   regular email. Contact IBM Software Support.
+   
+   The issue is usually observed with auto-generated emails by some
+   applications.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Starting with IBM Content Collector 4.0.1 FP5 release, internal
+   SMTP header buffer length parameter has been made configurable.
+   
+   The internal default size is 2000. User can increase this value
+   through Configuration Manager to 4000 or 6000 based on the
+   requirement.
+   
+   Steps to change the SMTP header buffer size to other than
+   default:
+   1. On IBM Content Collector Server, Open Configuration Manager.
+   2. Navigate to General Settings > Content Search Service
+        Support > Support for Email > Custom Settings and custom
+   attribute.
+   
+   3. Add the attribute as below.
+   
+        [Settings]
+        *SMTPHeaderLen=<set the value to 4000 or 6000 here>
+   
+        For example,
+    [Settings]
+    *SMTPHeaderLen=4000
+   
+   4. On IBM Content Search Services server, restart the CSS
+   service.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  4.0.1.3-IBM-ICC-P8CSS-WIN-LA005
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   HE12586
+   
+   
+ * REPORTED COMPONENT NAME
+   ICC FOR EMAIL
+   
+   
+ * REPORTED COMPONENT ID
+   5724V5700
+   
+   
+ * REPORTED RELEASE
+   401
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-09-29
+   
+   
+ * CLOSED DATE
+   2017-06-05
+   
+   
+ * LAST MODIFIED DATE
+   2017-06-05
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ICC FOR EMAIL
+   
+   
+ * FIXED COMPONENT ID
+   5724V5700
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R401 PSY
+   UP

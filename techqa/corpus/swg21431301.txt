@@ -1,0 +1,21 @@
+Title: IBM WebSphere DataPower spikes with high CPU when WebSphere MQ connection is unavailable - United States
+
+Text:
+retries; high CPU; MQ queue manager; Retry Interval; Retry Attempts; Long Retry Interval TECHNOTE (FAQ)
+
+QUESTION
+ Why does WebSphere DataPower spike with a high CPU rate when a WebSphere MQ connection is unavailable? Is there a solution to this issue? 
+
+CAUSE
+If the value of Retry Attempts is set to 0 on the DataPower MQ Queue Manager object, this negates the benefits of the Long Retry Interval since it will not be used. DataPower will retry forever using the specified Retry Interval. The default setting of Retry Attempts as 0 and Retry Interval as 1 second is provided to preserve backward compatibility. However, these default values should be changed to take advantage of Long Retry Interval feature available in firmware.
+
+ANSWER
+The solution to the issue of having DataPower vulnerable to the MQ Queue Manager being inaccessible is to change the Retry Attempts parameter on the Configure MQ Queue Manager window from 0 to some number. As an example, change the parameters as follows: 
+
+ *  Retry Attempts - change the default of 0 to 6 Retry Interval - change the default of 1 to 10 seconds Long Retry Interval - change the default of 1800 to 600 seconds (10 minutes) 
+
+
+In the event that the Queue Manager is down or a connection is not established, the above example configuration will allow the MQ QM Object to retry 6 times with 10 second intervals. After 6 attempts, the MQ QM object will retry every 10 minutes.  
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration WebSphere DataPower Integration Appliance XI50 Firmware 3.8 Business Integration WebSphere DataPower Low Latency Appliance XM70 Firmware 3.8

@@ -1,0 +1,219 @@
+Title: IBM IV86495: MQRC 2013 DURING BACKOUT REQUEUE OF A POSION MESSAGE DUE TO INCORRECT MESSAGE EXPIRY TIME - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When using the MQ classes for JMS to consume a message, if the
+   message is deemed to be a poison message (because the backout
+   count on the message is greater than the backout threshold
+   defined on the queue from which it was consumed) the MQ classes
+   for JMS will attempt to perform backout requeue processing of
+   that message and put it to the defined backout requeue queue.
+   When the message was requeued to the defined backout requeue
+   queue, the expiry time on the message increased and was set to a
+   larger value compared to when the message was consumed. If the
+   value of the message expiry was set to a value greater than 999
+   999 999, the queue manager can reject the MQPUT call with the
+   reason code MQRC_EXPIRY_ERROR (2013).
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   This issue affects users of the:
+   
+     - WebSphere MQ V7.1 classes for JMS
+     - WebSphere MQ V7.5 classes for JMS
+     - IBM MQ V8 classes for JMS
+     - IBM MQ V9 classes for JMS
+   
+     - WebSphere MQ V7.1 JCA Resource Adapter
+     - WebSphere MQ V7.5 JCA Resource Adapter
+     - IBM MQ V8 JCA Resource Adapter
+     - IBM MQ V9 JCA Resource Adapter
+   
+     - WebSphere Application Server V7 WebSphere MQ messaging
+   provider
+     - WebSphere Application Server V8 and V8.5 WebSphere MQ
+   messaging provider
+     - WebSphere Application Server V9 IBM MQ messaging provider.
+   
+   who are attempting to consume poison messages that do not
+   contain an RFH2 header.
+   
+   
+   Platforms affected:
+   MultiPlatform
+   
+   ****************************************************************
+   PROBLEM DESCRIPTION:
+   When the MQ classes for JMS consumes a message from an MQ queue
+   that does not contain an RFH2 header, the queue manager updates
+   Expiry field in the MQMD of the message to represent the expiry
+   time that still remains for the message.  It is therefore a
+   calculation of the expiry time when the message was put minus
+   how long the message was on the queue before it was consumed.
+   
+   The consumed MQ message is then transformed into a JMS message
+   that can be provided to a JMS application or message-driven bean
+   (MDB) application.  The JMSExpiration JMS message property set
+   on the consumed message was calculated as:
+   
+     The current time in milliseconds +
+       (the value of the MQMD Expiry field * 100)
+   
+   The multiplication by 100 is required to convert the Expiry
+   value from the MQMD (expressed in tenths of a second - and
+   therefore a countdown to when the message will expire) to the
+   form used by JMS, which is an absolute Epoch timestamp for the
+   point at which the message will expire. The JMSTimestamp
+   property for the JMS message is calculated from the MQMD PutDate
+   and PutTime fields.
+   
+   If that JMS message is then deemed to be a poison message, then
+   the MQ classes for JMS will attempt to requeue that message to
+   the specified MQ backout queue.  The JMS Message, therefore,
+   needs to be transformed back into an MQ message.
+   
+   When sending a message to MQ using the MQ classes for JMS the
+   MQMD Expiry time is calculated using the formula:
+   
+     (JMSExpiration - JMSTimestamp) / 100
+   
+   These two calculations when used in combination for poison
+   messages, can lead to the problem addressed by this APAR.  The
+   MQ classes for JMS could have increased the expiry on a
+   backed-out message by the amount equal to the difference in time
+   between when the input MQ message was consumed and transformed
+   into a JMS message and the point when the MQGET request was
+   processed by the queue manager.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The MQ classes for JMS have been updated such that when an MQ
+   message is consumed, which has a message expiry set but does not
+   contain an RFH2 header, the JMSExpiration value is calculated
+   using the the MQMD fields PutTime and PutDate and not the
+   current time as reported by the JVM when the JMS message is
+   constructed.
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+   Version    Maintenance Level
+   v7.5       7.5.0.8
+   v8.0       8.0.0.7
+   v9.0 CD    9.0.2
+   v9.0 LTS   9.0.0.2
+   
+   The latest available maintenance can be obtained from
+   'WebSphere MQ Recommended Fixes'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037]
+   
+   If the maintenance level is not yet available information on
+   its planned availability can be found in 'WebSphere MQ
+   Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV86495
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ AIX V7
+   
+   
+ * REPORTED COMPONENT ID
+   5724H7221
+   
+   
+ * REPORTED RELEASE
+   710
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-07-01
+   
+   
+ * CLOSED DATE
+   2017-01-30
+   
+   
+ * LAST MODIFIED DATE
+   2017-03-10
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ AIX V7
+   
+   
+ * FIXED COMPONENT ID
+   5724H7221
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R710 PSY
+   UP

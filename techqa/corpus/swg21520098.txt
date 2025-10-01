@@ -1,0 +1,66 @@
+Title: IBM PLAT: Details on Pagination functionality introduced in Sterling 8.0 HF 45. System behavior ,probable issues and troubleshooting explained. - United States
+
+Text:
+Enhancement Request; STERLINGFAQ TECHNOTE (FAQ)
+
+QUESTION
+ PLAT: Details on Pagination functionality introduced in Sterling 8.0 HF 45. System behavior ,probable issues and troubleshooting explained. 
+
+ANSWER
+
+
+ 1. 
+ 2. What is pagination?
+
+ Pagination is a concept where instead of showing general results on screens, system uses predefined algorithm to determine the data to be fetched and displayed in the UI in a particular manner. Data displayed in the UI is also dependant on the way data is fetched.
+
+ 2. 
+ 3. What was the earlier system behavior before introducing pagination? Were there any drawbacks?
+
+Before pagination, system retrieved the data and directly populate it to the front end depending upon the number of results required to be shown on screen and without any strategy. There was no handle available to control this display.
+
+For example: 
+If in the database we had 1000 records, clicking on a particular search, system would fetch the first 30 records(depending upon the configuration). There was no option to navigate to remaining results without carrying out a modified search(using proper filters in the search screen and increasing the total retrieved record number). Even if only first 30 records are required to be viewed, system would still fetch all the records from database and hence not giving any control to the user to define how the records are to be fetched from the database.
+
+Drawback: Depending upon the size of data, search queries would take longer time fetching every unwanted record. Navigation feasibility from first set of records to next in the same screen was not easily achievable.
+
+ 3. 
+ 4. What is the new system behavior after introducing pagination?
+
+Pagination feature is introduced in Sterling Multi-Channel Fulfillment Solution (SMCFS) 8.0 HF 45. Though APIs had option to select pagination strategy from before, UI did not have any handle to display the paginated data. User can now control the way the data is fetched from DB and has more control on the UI screen to navigate between the search results.
+
+ 4. 
+ 5. What is the internal logic? How is pagination achieved in the Sterling application?
+
+Pagination breaks the fetched records into different pages with prefixed page size(user controlled) . User can navigate between different pages.
+Note: Pagination displays results only in Search and List composite screens.
+
+ 5. 
+ 6. What are the changes in HF 45? 
+
+In HF 45, number of .js,JSP and .htc files are modified and enhanced to allow pagination in list screens.
+
+ 6. 
+ 7. Do we have any known / probable issues to consider after applying HF 45?
+
+Since the fix contains .js,jsp and htc files, it very important to ensure that all cache is deleted / dropped after hotfix installation.
+Jsp and .js files are stored in server cache and even after hotfix installation and application/server restart there ia a possibility of caching issues. System might still be picking old files(stored in cache).
+
+ 7. 
+ 8. How to identify if there are caching issues?
+
+If system picks all the older versions of file,user will not see any pagination and may not come across any issue either. But if system references some of the new files, then we can observe the change in behavior. This is because some of the new files now have new variables and functions, while other files might not be in synch with them, leading to errors like, javaScript errors,UI failing etc.
+
+ 8. 
+ 9. Any specific mode in which the caching issue happens? 
+
+This problem needs extra attention if Deployment is in EAR mode because caching is dominant in EAR mode.
+Incase of JBOSS application server, extra efforts might be required to clear any possible server and IE cache.
+
+Note: There are no issues with Sterling provided hotfix 45. Since the fix contains new and modified UI components it is recommended that user ensures every possibility of stored cache removed to avoid any unknown errors and erratic behavior.
+
+
+
+
+HISTORICAL NUMBER
+ FAQ3032

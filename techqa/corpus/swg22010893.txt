@@ -1,0 +1,31 @@
+Title: IBM Cross-Site Request Forgery vulnerability identified with Jazz for Service Management(JazzSM) v1.1.3 - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Cross-Site Request Forgery vulnerability identified with Jazz for Service Management(JazzSM) v1.1.3
+
+Impacted URLs:
+https://<hostname>:<port>/ibm/console/contentRender.do
+https://<hostname>:<port>/ibm/console/login.do
+https://<hostname>:<port>/ibm/console/navigation.do
+https://<hostname>:<port>/ibm/console/pa.do
+https://<hostname>:<port>/ibm/console/xLaunch.do 
+
+ENVIRONMENT
+Apply fix on JazzSM 1.1.3/DASH 3.1.3, Cumulative Patch-4 level.
+
+RESOLVING THE PROBLEM
+Follow below steps to replace isclite.jar 
+
+1. Stop Jazz for Service Management(JazzSM) profile
+ex: <JazzSM_HOME>/profile/bin/stopServer.sh server1
+2. Move below file in safe location 
+<JazzSM_HOME>/profile/installedApps/JazzSMNode01Cell/isc.ear/isclite.jar
+3. Download attached isclite.jar file and copy in below path
+<JazzSM_HOME>/profile/installedApps/JazzSMNode01Cell/isc.ear/
+4. Start JazzSM profile
+ex: <JazzSM_HOME>/profile/bin/startServer.sh server1
+
+isclite.jar [/support/docview.wss?uid=swg22010893&aid=2]isclite.jar [/support/docview.wss?uid=swg22010893&aid=1]

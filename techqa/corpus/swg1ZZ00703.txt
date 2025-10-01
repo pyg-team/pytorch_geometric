@@ -1,0 +1,218 @@
+Title: IBM ZZ00703: DOC - KEYSTORE NOT UPDATED ALTHOUGH INSTALL LOG SHOWS THAT CERTIFICATE WAS IMPORTED - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  ICO 2.5.0.6 HA with keystone topology
+   
+   After login to ICO, following errors are thrown:
+   
+   Screenshot of the ICO UI shows:
+   CTJCP0020E: It was not possible to load the menu bar content.
+   CTJCP0027E: An internal error occurred. The requested page
+   cannot be displayed. Please contact your administrator.
+   
+   
+   scoui.log:
+   n3.app.handler.util.UncaughtErrorHandler An error occurred
+   while
+   processing the request:
+   java.lang.RuntimeException: Failed to authenticate with
+   OpenStack
+   ...
+   Caused by: javax.net.ssl.SSLHandshakeException:
+   java.security.cert.CertificateException: unable to find valid
+   certification path to requested target
+   ...
+   
+   
+   scoui.trc file:
+   CWPKI0022E: SSL HANDSHAKE FAILURE:  A signer with SubjectDN
+   CN=<ip_address>, OU=<any value>, O=, L=<any value>, ST=<any
+   value>,
+   C=<any value> was sent from the target host.  The signer might
+   need to be  added to local trust store
+   /opt/ibm/ico/wlp/usr/servers/scui/resources/security/keystore,
+   located in SSL configuration alias defaultSSLConfig.  The
+   extended error message from the SSL handshake exception is:
+   PKIX
+   path building failed:
+   java.security.cert.CertPathBuilderException: unable to find
+   valid certification path to requested target
+   
+   
+   Root cause of this issue:
+   The scui keystore was not updated with the new byoos
+   certificate
+   on both nodes during the ICO upgrade although the upgrade log
+   shows that the according  certificate was deleted and
+   reimported (as expected).  Therefore, the byoos certificate
+   still contains the real hostname of the server instead of the
+   virtual HA hostname/IP address.
+   We used the command from the ico_install.log to import the
+   openstack.crt on both nodes, restarted the services and the ICO
+   UI was accessible.
+   The logs show nothing that might be related and the issue could
+   not be reproduced in the lab.
+   
+   
+   ICO L3 would like to document this issue in the Knowledge
+   Center.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  We used the command from the ico_install.log to import the
+   openstack.crt on both nodes and restarted the services.
+   Then the ICO UI was accessible again.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ICO 2.5.0.6 HA with keystone topology
+   
+   After login to ICO, following errors are thrown:
+   
+   Screenshot of the ICO UI shows:
+   CTJCP0020E: It was not possible to load the menu bar content.
+   CTJCP0027E: An internal error occurred. The requested page
+   cannot be displayed. Please contact your administrator.
+   
+   
+   scoui.log:
+   n3.app.handler.util.UncaughtErrorHandler An error occurred
+   while
+   processing the request:
+   java.lang.RuntimeException: Failed to authenticate with
+   OpenStack
+   ...
+   Caused by: javax.net.ssl.SSLHandshakeException:
+   java.security.cert.CertificateException: unable to find valid
+   certification path to requested target
+   ...
+   
+   
+   scoui.trc file:
+   CWPKI0022E: SSL HANDSHAKE FAILURE:  A signer with SubjectDN
+   CN=<ip_address>, OU=<any value>, O=, L=<any value>, ST=<any
+   value>,
+   C=<any value> was sent from the target host.  The signer might
+   need to be  added to local trust store
+   /opt/ibm/ico/wlp/usr/servers/scui/resources/security/keystore,
+   located in SSL configuration alias defaultSSLConfig.  The
+   extended error message from the SSL handshake exception is:
+   PKIX
+   path building failed:
+   java.security.cert.CertPathBuilderException: unable to find
+   valid certification path to requested target
+   
+   
+   Root cause of this issue:
+   The scui keystore was not updated with the new byoos
+   certificate
+   on both nodes during the ICO upgrade although the upgrade log
+   shows that the according  certificate was deleted and
+   reimported (as expected).  Therefore, the byoos certificate
+   still contains the real hostname of the server instead of the
+   virtual HA hostname/IP address.
+   We used the command from the ico_install.log to import the
+   openstack.crt on both nodes, restarted the services and the ICO
+   UI was accessible.
+   The logs show nothing that might be related and the issue could
+   not be reproduced in the lab.
+   
+   
+   ICO L3 would like to document this issue in the Knowledge
+   Center.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Infocenter of future release will be updated.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   ZZ00703
+   
+   
+ * REPORTED COMPONENT NAME
+   SMRTCLOUD ORCHS
+   
+   
+ * REPORTED COMPONENT ID
+   5725H2800
+   
+   
+ * REPORTED RELEASE
+   250
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2018-05-17
+   
+   
+ * CLOSED DATE
+   2018-05-24
+   
+   
+ * LAST MODIFIED DATE
+   2018-05-24
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

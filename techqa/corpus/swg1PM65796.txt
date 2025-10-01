@@ -1,0 +1,167 @@
+Title: IBM PM65796: THE COMMAND "DEPLOYEVENTSERVICEMDB" FAILS WITH "ADMA5026E: NO VA LID TARGET IS SPECIFIED IN OBJECTNAME" - United States
+
+Text:
+  FIXES ARE AVAILABLE
+8.5.0.1: WebSphere Application Server V8.5 Fix Pack 1 [http://www-01.ibm.com/support/docview.wss?uid=swg24033606]
+8.0.0.5: WebSphere Application Server V8.0 Fix Pack 5 [http://www-01.ibm.com/support/docview.wss?uid=swg24033754]
+8.5.0.2: WebSphere Application Server V8.5 Fix Pack 2 [http://www-01.ibm.com/support/docview.wss?uid=swg24034672]
+8.0.0.6: WebSphere Application Server V8.0 Fix Pack 6 [http://www-01.ibm.com/support/docview.wss?uid=swg24034673]
+8.0.0.7: WebSphere Application Server V8.0 Fix Pack 7 [http://www-01.ibm.com/support/docview.wss?uid=swg24035457]
+8.0.0.8: WebSphere Application Server V8.0 Fix Pack 8 [http://www-01.ibm.com/support/docview.wss?uid=swg24036729]
+8.0.0.9: WebSphere Application Server V8.0 Fix Pack 9 [http://www-01.ibm.com/support/docview.wss?uid=swg24037574]
+8.0.0.10: WebSphere Application Server V8.0 Fix Pack 10 [http://www-01.ibm.com/support/docview.wss?uid=swg24039242]
+8.0.0.11: WebSphere Application Server V8.0 Fix Pack 11 [http://www-01.ibm.com/support/docview.wss?uid=swg24040425]
+8.0.0.12: WebSphere Application Server V8.0 Fix Pack 12 [http://www-01.ibm.com/support/docview.wss?uid=swg24041590]
+8.0.0.13: WebSphere Application Server V8.0 Fix Pack 13 [http://www-01.ibm.com/support/docview.wss?uid=swg24042746]
+8.0.0.14: WebSphere Application Server V8.0 Fix Pack 14 [http://www-01.ibm.com/support/docview.wss?uid=swg24044096]
+8.0.0.15: WebSphere Application Server V8.0 Fix Pack 15 [http://www-01.ibm.com/support/docview.wss?uid=swg24044734]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The CEI (Common Event Infrastructure) administrative command
+   "deployEventServiceMdb" fails with the following error:
+   WASX7015E: Exception running command: "$AdminTask
+   deployEventServiceMdb [...]"; exception information:
+   com.ibm.events.admintask.EventAdminTaskException:
+   com.ibm.events.admintask.EventAdminTaskException: CEIAT0046E
+   An error occurred while saving task data information for task
+   BindJndiForEJBMessageBinding. : ADMA0014E: Validation failed.
+   com.ibm.websphere.management.exception.AdminException:
+   ADMA5026E: No valid target is specified in ObjectName [...]
+   for module EventServerMdb.jar+META-INF/ejb-jar.xml.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  All users of IBM WebSphere Application      *
+   *                  Server using Common Event Infrastructure    *
+   *                  (CEI) and running the                       *
+   *                  "deployEventServiceMdb" command.            *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: An EventAdminTask Exception is thrown   *
+   *                      when running the command                *
+   *                      "deployEventServiceMdb"                 *
+   *                      .                                       *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   Before the installation of the CEI message driven bean the
+   task BindJndiForEJBMessageBinding, required by the
+   installation, has to be updated with the parameters received
+   in the "deployEventServiceMdb". The validation of this task
+   fails because the current deployment target was not specified
+   in the AppDeploymentController options.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The target information was added to AppDeploymentController
+   options before updating the BindJndiForEJBMessageBinding task
+   with the current parameters.
+   The fix for this APAR is currently targeted for inclusion in
+   fix packs 8.0.0.5 and 8.5.0.1.
+   Please refer to the Recommended Updates page for delivery
+   information:
+   http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM65796
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSPHERE APP S
+   
+   
+ * REPORTED COMPONENT ID
+   5724J0800
+   
+   
+ * REPORTED RELEASE
+   800
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-05-30
+   
+   
+ * CLOSED DATE
+   2012-07-10
+   
+   
+ * LAST MODIFIED DATE
+   2012-07-10
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBSPHERE APP S
+   
+   
+ * FIXED COMPONENT ID
+   5724J0800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R800 PSY
+   UP
+   
+   
+ * R850 PSY
+   UP

@@ -1,0 +1,30 @@
+Title: IBM DB2ADUTL DELETE for backups fails with an authorization error. - United States
+
+Text:
+db2adutl delete authorization transaction failed TECHNOTE (FAQ)
+
+QUESTION
+ Why do I receive the following message when I try to delete a backup image from TSM using db2adutl:
+
+"The current delete transaction failed. You do not have sufficient authorization. Attempting to deactivate backup image(s) instead...Success." 
+
+ANSWER
+Check to see if the owner of the backup image is the same as the user executing the db2adutl command. If the owner is different, then you cannot delete the backup image. Try issuing the command with the same owner as the backup image.
+
+Also, this warning can occur if you do not have authority to delete the object in TSM. The TSM parameter backdel must be set to "YES" for DB2 to be able to delete backup images. 
+
+
+If backdel is not set to "YES", then DB2 can only deactivate it. And a deactivated backup image might not be deleted by TSM depending on the TSM rules that are setup. 
+
+From the TSM Information Center (more detail can be found here [ http://publib.boulder.ibm.com/infocenter/tivihelp/v12r1/index.jsp?topic=/com.ibm.itcdpf.doc/31/help/PD/cdp_PD_TSM_DelAuth.html]) :
+
+
+Example:
+- Enable permission to delete backup copies for Tivoli Storage Manager Enterprise server as below. 
+- This example assumes node name of TSMclientnode1; replace the node name appropriately when you enter the command:
+
+1) Log into the Tivoli Storage Manager server and bring up the Tivoli Storage Manager administrative command line.
+
+2) Enter this command to the Tivoli Storage Manager server: 
+
+ * update node TSMclientnode1 backdel=y.

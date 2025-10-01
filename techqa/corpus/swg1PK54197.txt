@@ -1,0 +1,156 @@
+Title: IBM PK54197: JAVADISPATCHER$ASYNCINVOCATIONWORKER APPEARS IN SYSTEMOUT.LOG - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The following error appears in the systemout.log:
+   
+   SystemOut.log:
+   [9/26/07 14:44:45:044 CDT] 00000030 JavaDispatche E
+   org.apache.axis2.jaxws.server.dispatcher
+   .JavaDispatcher$AsyncInvocationWorker call AN UNEXPECTED ERROR
+   OCCURRED IN THE ASYNC WORKER THREAD
+   [9/26/07 14:44:45:045 CDT] 00000030 JavaDispatche E
+   org.apache.axis2.jaxws.server.dispatcher
+   .JavaDispatcher$AsyncInvocationWorker call Exception
+   is:java.lang.UnsupportedOperationException: An access occurred
+   that is not valid.
+   [9/26/07 14:44:46:545 CDT] 00000028 SystemOut     O >>
+   SERVLET: Request count = 1
+   [9/26/07 14:44:46:545 CDT] 00000028 SystemOut     O >>
+   SERVLET: Request index: 1
+   [9/26/07 14:44:46:567 CDT] 00000028 SystemOut     O >> CLIENT:
+   SEI Echo to http;//localhost:9080/WSSampleSei/EchoService
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: IBM WebSphere Application Server users of    *
+   *                 the web services feature pack                *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: This is an issue with some cleanup      *
+   *                      happening after one way invocations     *
+   *                      are complete.  The error message that   *
+   *                      appears only shows up after "ping"      *
+   *                      invocations, which are all one way.     *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   The problem was that a return from a one way invocation was
+   nested incorrectly inside of a log statement.  When debug was
+   enabled, this would work correctly, but not under normal
+   circumstances.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The return has been corrected.
+   This fix is targeted for fixpack 6.1.0.13.
+   Please refer to the recommended updates page for delivery
+   information:
+   http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK54197
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSERVIC FEATU
+   
+   
+ * REPORTED COMPONENT ID
+   5724J0850
+   
+   
+ * REPORTED RELEASE
+   610
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2007-10-05
+   
+   
+ * CLOSED DATE
+   2007-10-08
+   
+   
+ * LAST MODIFIED DATE
+   2009-04-06
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  WEBSRVC
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBSERVIC FEATU
+   
+   
+ * FIXED COMPONENT ID
+   5724J0850
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R610 PSY
+   UP

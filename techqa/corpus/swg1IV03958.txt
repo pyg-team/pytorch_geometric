@@ -1,0 +1,132 @@
+Title: IBM IV03958: EIF PROBE DOESN'T STRIP OUT THE SECOND SINGLE QUOTE ADDED BY LFA AGENT - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  OMNIbus: 7.3.1
+   OMNIbus Log File Agent: 6.2.2. FP4
+   Probe: nco_p_eif_probe 10.0.10
+   
+   Log file ----> Log file Agent 6.6.2 FP4 -----> EIF probe ----->
+   ObjectServer
+   
+   Log File Agent read event from log file. The events that contain
+   single quotations become double quotations in ObjectServer.
+   
+   LFA agent that escapes the single quote with a second single
+   quote, because it is required  by the EIF protocol when sending
+   messages to the EIF probe which contain quotes. When events such
+   as these are sent to TEC, the second quote is restored to a
+   single quote. However, when these events are sent to
+   ObjectServer via the EIF probe, the double quote is not
+   converted back to a single quote.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  No Local Fix
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * All user of nco_p_tivoli_eif probe.                          *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * TEC protocol require all single quote (') in the             *
+   * transmitting message to be escaped with another single       *
+   * quote. Thus probe need to handle the escape single quote to  *
+   * convert back the receiving message to its original.          *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Upgrade to nco_p_tivoli_eif probe version 10_4.              *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV03958
+   
+   
+ * REPORTED COMPONENT NAME
+   TIV TEC ADPTR P
+   
+   
+ * REPORTED COMPONENT ID
+   5724P09TE
+   
+   
+ * REPORTED RELEASE
+   100
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-07-29
+   
+   
+ * CLOSED DATE
+   2011-08-22
+   
+   
+ * LAST MODIFIED DATE
+   2011-08-22
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R100 PSY
+   UP

@@ -1,0 +1,37 @@
+Title: IBM CWPZI8951 CWPZI8965 and CWPZO8974 with RC 610 while initializing Dynamic Scripting Feature Pack 1.1 - United States
+
+Text:
+MSGCWPZI8951 MSGCWPZI8965 MSGCWPZO8974 5655S9700 R670 670 R700 700 HCI6700 5655-S97 5655S97 KIXINFO TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ You are trying to install the CICS Transaction Server for z/OS (CICS TS) V4.2 Feature Pack for Dynamic Scripting. You are running the install script in the ZERO_HOME directory when you receive messages CWPZI8951, CWPZI8965, and CWPZO8974 with RC 610 (RC=610). You are following the steps in the CICS information center under "Installing the feature pack". 
+
+SYMPTOM
+Here are the detailed messages that you are receiving:
+
+CWPZI8951E [http://pic.dhe.ibm.com/infocenter/cicsts/v4r2/topic/com.ibm.cics.ts.smash.doc/messages/CWPZI8951E.html]: An exception is caught, java.io.IOException: EDC5124I Too many open files 
+CWPZI8965E [http://pic.dhe.ibm.com/infocenter/cicsts/v4r2/topic/com.ibm.cics.ts.smash.doc/messages/CWPZI8965E.html]: The update failed. RC:610. 
+CWPZO8974E: update or install of zero natives failed, RC: 610. initializing the zero.cics.cli.failed.
+
+
+CAUSE
+According to the error messages, an IO exception happened when Dynamic Scripting v1.1 copied files into the z/OS UNIX System Services directories during installation. The return code of 610 (RC610) indicates "Failed to copy files". 
+
+The failure is occurring because there are two system-wide and processing-level limits that contain values that are too low. The two limits are MAXFILEPROC and MAXMMAPAREA. 
+
+MAXFILEPROC [http://publib.boulder.ibm.com/infocenter/zos/v1r13/topic/com.ibm.zos.r13.bpxb200/mxflprc.htm?]is used to set the maximum number of file descriptors that a single process can have open concurrently, such as all open files, directories, sockets, and pipes. 
+
+MAXMMAPAREA [http://publib.boulder.ibm.com/infocenter/zos/v1r13/topic/com.ibm.zos.r13.bpxb200/maxmm.htm#maxmm]specifies the maximum number of data space pages that can be allocated for memory mapping of z/OS UNIX files. Storage is not allocated until memory mappings are active.
+
+RESOLVING THE PROBLEM
+If the current values for MAXFILEPROC and MAXMMAPAREA are set too low, you can use the MVS system command SETOMVS [http://publib.boulder.ibm.com/infocenter/zos/v1r13/topic/com.ibm.zos.r13.ieag100/setom.htm#setom] to increase the values. These options are originally set in [http://publib.boulder.ibm.com/infocenter/zos/v1r13/topic/com.ibm.zos.r13.ieae200/iea2e2c159.htm#wq237]the by the SYS1.PARMLIB member BPXPRMxx during initial program load (IPL).
+
+In order to view the current limit values for MAXFILEPROC and MAXMMAPAREA on your systems enter the following command from the console: 
+
+/d omvs,options
+
+
+
+
+PRODUCT ALIAS/SYNONYM
+ CICS/TS CICS TS CICS Transaction Server

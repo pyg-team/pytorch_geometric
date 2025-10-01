@@ -1,0 +1,127 @@
+Title: IBM IC58525: UNABLE TO FORMAT WMQ TRACE BECAUSE DSPMQTRC HANGS - United States
+
+Text:
+  FIXES ARE AVAILABLE
+WebSphere MQ 6.0 for HP OpenVMS Alpha and Itanium - Fix Pack 6.0.1.2 [http://www-01.ibm.com/support/docview.wss?uid=swg24022202]
+WebSphere MQ 6.0 for HP OpenVMS Alpha and Itanium - Fix Pack 6.0.2.7 [http://www-01.ibm.com/support/docview.wss?uid=swg24027266]
+WebSphere MQ 6.0 for HP OpenVMS Alpha and Itanium - Fix Pack 6.0.2.10 (FP03) [http://www-01.ibm.com/support/docview.wss?uid=swg24029987]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  dspmqtrc hangs
+   $ dspmqtrc -t sys$library:amqtrc.fmt
+   MQS_ROOT:[MQM.TRACE]AMQ637535371_0.TRC;1 > AMQ637535371_0.TXT
+   If the unformatted trace and sys$library:amqtrc.fmt are
+   copied to a WMQ v5 server, the trace can be formatted.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  On WMQ V6.0 OpenVMS the dspmqtrc command hangs while trying
+   to format the trace  files.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The problem has been rectified so that the formatting of the
+   trace files is done without any issues.
+   The fix for this APAR will be available through WMQ6.0 FP1
+   IBM WebSphere MQ for HP OPENVMS Alpha V6.0 IC58895 [http://www-01.ibm.com/support/docview.wss?uid=swg1IC58895]
+   IBM WebSphere MQ for HP OPENVMS Itanium V6.0 IC58896 [http://www-01.ibm.com/support/docview.wss?uid=swg1IC58896]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC58525
+   
+   
+ * REPORTED COMPONENT NAME
+   MQSERIES OVMS I
+   
+   
+ * REPORTED COMPONENT ID
+   5724A3802
+   
+   
+ * REPORTED RELEASE
+   600
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-10-17
+   
+   
+ * CLOSED DATE
+   2008-11-27
+   
+   
+ * LAST MODIFIED DATE
+   2008-11-27
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   MQSERIES OVMS I
+   
+   
+ * FIXED COMPONENT ID
+   5724A3802
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R600 PSY
+   UP

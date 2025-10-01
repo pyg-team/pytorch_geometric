@@ -1,0 +1,268 @@
+Title: IBM PK73643: FIX REQUIRED FOR MIGRATION DIRECTLY FROM VERSION 531 TO 700 - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  CSQ5005E is issued when trying to migrate a 531 qmgr in a
+   qsg directly to 700.
+   
+   When using clustering, the following errors may occur when
+   starting the channel initiator:
+   
+   CSQX054E CSQXPRCR Repository manager ended abnormally, due to
+   abend 878 with reason code 14, or
+   CSQX027E CSQXREPO Unable to get storage, RC=00000004
+   
+   Additional keywords:
+   S878 abend878
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All users of WebSphere MQ for z/OS Version 7 *
+   *                 Release 0 Modification 0 migrating DIRECTLY  *
+   *                 from WebSphere MQ version 5 Release 3        *
+   *                 Modification 1.                              *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Users cannot migrate directly from      *
+   *                      MQ version 5.3.1 to MQ version 7.       *
+   ****************************************************************
+   * RECOMMENDATION: Apply this fix.                              *
+   ****************************************************************
+   Without this fix, it is impossible for users to DIRECTLY
+   migrate from MQ version 5.3.1 to MQ version 7.0.
+   
+   If users wanted to migrate to version 7.0 from 5.3.1
+   they would have to first migrate to, and install, MQ
+   version 6.0, and then migrate to version 7.0.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This fix allows users to now migrate directly to MQ version
+   7.0 from MQ version 5.3.1, but the following actions
+   are first required:-
+   
+   1. Modify sample JCL (CSQ45MTB) which will add all the DB/2
+      table changes that are necessary for MQ V600
+      and MQ V700 - primarily for BLOB support (V600), and
+      TOPICs (V700).
+   
+   2. Run the modified sample program CSQ45MTB.
+   
+   3. Change the Qmgr JCL to use V700 and re-start the QMgr
+      at version 7.0.
+   
+   4. Repeat step 3 for each version 5.3.1 Queue Manager in
+      the Queue Sharing group.
+   
+   The sample program CSQ45MTB will do the following....
+   
+   a. Add DB/2 tables for EXTEND_QMGR (referenced in the batch
+      plan (CSQ5PLNB))
+   b. Bind the new B plan (CSQ5B7B0)
+   c. Grant execute authority to the B plan.
+   d. Run the FORCEMIG700 option in the csq5pqsg utility.
+   e. Add new DB/2 tables and tablespaces (BLOBs and TOPICs).
+   f. Add new attributes to existing DB/2 tables.
+   g. Bind new plan CSQ5R7A0.
+   
+   The following Documentation changes should also be considered
+   implemented in the referenced publication.
+   WebSphere MQ, Migration Information, Version 7.0 SC34-6948
+   Chapter 4. Platform-specific information
+   Section 'Migrating to WebSphere MQ for z/OS Version 7.0'
+   Subsection 'Migrating from earlier unsupported releases of
+    MQSeries'
+   The following extra topic is included in the subsection.
+    Direct migration from MQSeries  version 5.3.1 to MQSeries
+    Version 7.0
+     It is possible to directly migrate from WebSphere MQ version
+     5.3.1 to WebSphere version 7.0 without having to go through
+     the intermediate step of migrating to, and installing,
+     WebSphere MQ Version 6. However, if users elect to forwards
+     migrate in this way, then there is no safe reversion path back
+     to WebSphere MQ Version 5.3.1. Backwards migration is not
+     supported if users choose this direct form of forward
+     migration to WebSphere MQ Version 7.0
+   
+     In addition to this restriction, coexistence support of Queue
+     Managers within a Queue Sharing Group at different version
+     levels is also restricted. After the first version 5.3.1 Queue
+     Manager within a Queue Sharing Group has been successfully
+     migrated to version 7.0, all the remaining version 5.3.1 Queue
+     Managers must also be migrated to version 7.0. The remaining
+     Queue Managers in the Queue Sharing Group must not be
+     restarted at version 5.3.1. Otherwise a restart of the version
+     7.0 Queue Manager in the Queue Sharing Group will fail the
+     DB2 consistency check at startup.
+   
+     Migrating a Queue Manager or a Queue Sharing Group
+   
+       1. Customize and run the CSQ45MTB sample JCL in
+          thlqual.SCSQPROC supplied with PK73843 [http://www-01.ibm.com/support/docview.wss?uid=swg1PK73843] for WebSphere MQ
+          for z/OS Version 7. This performs the following steps:
+         a. Add the new DB2 tables for CSQ.EXTEND_B_QMGR.
+         b. Bind the new DB2 batch plan (CSQ5B7B0) for the CSQ5PQSG
+            utility
+         c. Grant execute authority to the DB2 plan
+         d. Run the FORCEMIG700 function of CSQ5PQSG utility which
+            will update the DB2 tables to allow version 5.3.1 Queue
+            Managers in a Queue Sharing Group to start at MQ
+            version 7.0.
+         e. Create the new tables required for Websphere MQ for
+            z/OS Version 6.0 (large message support), and z/OS
+            WebSphere MQ Version 7.0 (topics).
+         f. Modify the existing tables for WebSphere MQ Version
+            6.0.
+         g. Bind the new DB2 read plan (CSQ5R7A0).
+       2. Change the JCL for the first version 5.3.1 Queue Manager
+          to use the version 7.0 libraries and restart the Queue
+          Manager.
+       3. Repeat the previous step for the remaining Queue Managers
+          in the Queue Sharing Group.
+       If any version 5.3.1 Queue Manager within the Queue Sharing
+       Group is inadvertently restarted at version 5.3.1, then
+       rerun step 1.d of the CSQ45MTB sample above before
+       proceeding with the migration.
+   000Y
+   CSQUDB2A
+   CSQUTIL
+   CSQU5ZAP
+   CSQXRFIC
+   CSQ45BPL
+   CSQ45GEX
+   CSQ45MTB
+   CSQ5AROB
+   CSQ5AUTL
+   CSQ5BPRM
+   CSQ5B700
+   CSQ5PCOM
+   CSQ5PLNB
+   CSQ5PLNR
+   CSQ5PQSG
+   CSQ5PVER
+   CSQ5QSG1
+   CSQ5R700
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+ *  &#158;**** PE09/07/29 FIX IN ERROR. SEE APAR PK92281 [http://www-01.ibm.com/support/docview.wss?uid=swg1PK92281]  FOR DESCRIPTION
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK73643
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ Z/OS V7
+   
+   
+ * REPORTED COMPONENT ID
+   5655R3600
+   
+   
+ * REPORTED RELEASE
+   000
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-10-13
+   
+   
+ * CLOSED DATE
+   2009-06-30
+   
+   
+ * LAST MODIFIED DATE
+   2009-08-04
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  CSQUDB2A CSQUTIL  CSQU5ZAP CSQXRFIC CSQ45BPL
+   CSQ45GEX CSQ45MTB CSQ5AROB CSQ5AUTL CSQ5BPRM CSQ5B700 CSQ5PCOM
+   CSQ5PLNB CSQ5PLNR CSQ5PQSG CSQ5PVER CSQ5QSG1 CSQ5R700
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ Z/OS V7
+   
+   
+ * FIXED COMPONENT ID
+   5655R3600
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R000 PSY UK47861 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK47861]
+   UP09/07/14 P F907
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

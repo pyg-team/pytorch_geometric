@@ -1,0 +1,14 @@
+Title: IBM Support's Guide to the Alcatel 5529 OAD Probe - United States
+
+Text:
+nco_p_alcatel_5529_oad_v6 TECHNOTE (FAQ)
+
+QUESTION
+ Alcatel 5529 OAD Probe : Is there any configuration guidance? 
+
+ANSWER
+ 
+
+There is a Support's Guide to the Alcatel 5529 OAD Probe that discusses how the probe works, as well as connections to multiple versions of the Alcatel 5529 OAD, and SSL connectivity examples [see the attached document].
+
+AlcatelOADprobe_SupportsGuide_20.pdf [/support/docview.wss?uid=swg21987068&aid=2]AlcatelOADprobe_SupportsGuide_20.pdf [/support/docview.wss?uid=swg21987068&aid=1]

@@ -1,0 +1,133 @@
+Title: IBM IO25094: BOOKMARK URL DOES NOT WORK UNLESS THE REPOSITORY ID PARAMETER IS SPECIFIED - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+ DIRECT LINKS TO FIXES
+3.0.1-ICN-WIN [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FOther+software%2FContent+Navigator&fixids=3.0.1-ICN-WIN&source=SAR]
+3.0.1-ICN-zLINUX [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FOther+software%2FContent+Navigator&fixids=3.0.1-ICN-zLINUX&source=SAR]
+3.0.1-ICN-LINUX [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FOther+software%2FContent+Navigator&fixids=3.0.1-ICN-LINUX&source=SAR]
+3.0.1-ICN-AIX [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FOther+software%2FContent+Navigator&fixids=3.0.1-ICN-AIX&source=SAR]
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  After upgrading to IBM Content Navigator V2.0.3 Fix Pack 8
+   LA002 from V2.0.3 Fix Pack 7, the bookmark URL does not work
+   unless the repositoryId parameter is included.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Specify repositoryId parameter in URL.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  When the repositoryId parameter is not specified in the
+   bookmark URL, the URL is not opened.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This issue has been addressed in IBM Content Navigator V2.0.3
+   Fix Pack 8 LA006.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IO25094
+   
+   
+ * REPORTED COMPONENT NAME
+   CONTENT NAVIGAT
+   
+   
+ * REPORTED COMPONENT ID
+   ISCONTNAV
+   
+   
+ * REPORTED RELEASE
+   203
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-01-17
+   
+   
+ * CLOSED DATE
+   2017-04-26
+   
+   
+ * LAST MODIFIED DATE
+   2017-04-26
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CONTENT NAVIGAT
+   
+   
+ * FIXED COMPONENT ID
+   ISCONTNAV
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R203 PSY
+   UP

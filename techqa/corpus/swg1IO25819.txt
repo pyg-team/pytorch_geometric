@@ -1,0 +1,129 @@
+Title: IBM IO25819: "ALLOWED" USERS CANNOT SAVE CHANGES TO ICN DESKTOP IF "LIMIT ACCESS TO SPECIFIC USERS AND GROUPS" IS ENABLED - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  In IBM Content Navigator (ICN), if the currently logged in user
+   is added to the 'Allowed' list of the "Limit access to specific
+   users and groups" configuration, the user will not be able to
+   save any further changes to the desktop.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  When modifying a desktop with a CM8, CMIS, CMOD, or plugin
+   authenticating repository, the Save and Save and Close buttons
+   are not enabled and the changes can not be saved.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  With this fix, the Save and Save and Close buttons are enabled
+   after changing the desktop configuration.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IO25819
+   
+   
+ * REPORTED COMPONENT NAME
+   CONTENT NAVIGAT
+   
+   
+ * REPORTED COMPONENT ID
+   ISCONTNAV
+   
+   
+ * REPORTED RELEASE
+   203
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-11-15
+   
+   
+ * CLOSED DATE
+   2018-01-24
+   
+   
+ * LAST MODIFIED DATE
+   2018-01-24
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *     None
+   None
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CONTENT NAVIGAT
+   
+   
+ * FIXED COMPONENT ID
+   ISCONTNAV
+   
+   
+
+APPLICABLE COMPONENT LEVELS

@@ -1,0 +1,160 @@
+Title: IBM PI26058: RESOURCE INSERTHTML.XML COULD NOT BE FOUND EXCEPTION WITHIN SYST EMOUT LOG WHEN EDITLIVE EDITOR IS LOADED - United States
+
+Text:
+  A FIX IS AVAILABLE
+Fixes integrated in WebSphere Portal 8.5.0.0 Combined Cumulative Fixes [http://www-01.ibm.com/support/docview.wss?uid=swg24037786]
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When loading the EditLive editor for the first time on any rich
+   text element or component field (ie: switch to the Design or
+   Code view), the following exception is thrown
+   within the SystemOut log:
+   
+   ExceptionLogg W com.ibm.wps.logging.ExceptionLogger
+   logThrowable(th)
+   An exception occurred: [EJCBD0021E: The URI
+   [spa:Z6_00000000000000A0BR2B300EO0/html/inserthtml.xml] and
+   parameters [['pragma'=['cache']]] could not be processed:
+   [EJPEI0088E: The resource [inserthtml.xml] could not be
+   found.]].
+   Enable traces for [com.ibm.wps.logging.ExceptionLogger=all] to
+   see the exception stack trace.
+   
+   Other than the exception message itself, the editor still
+   functions correctly without any issues.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Modify the EditLive editor configuration file (config.xml.jsp)
+   and remove references to the inserthtml plugin.
+   
+   ie: remove the following line from the config file
+   <plugin name="insertHTML" />
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  When loading the EditLive editor for the first time on any rich
+   text element or component field (ie: switch to the Design or
+   Code view), the following exception is thrown within the
+   SystemOut log:
+   
+   ExceptionLogg W com.ibm.wps.logging.ExceptionLogger
+   logThrowable(th)
+   An exception occurred: [EJCBD0021E: The URI
+   [spa:Z6_00000000000000A0BR2B300EO0/html/inserthtml.xml] and
+   parameters [['pragma'=['cache']]] could not be processed:
+   [EJPEI0088E: The resource [inserthtml.xml] could not be
+   found.]].
+   Enable traces for [com.ibm.wps.logging.ExceptionLogger=all] to
+   see the exception stack trace.
+   
+   Other than the exception message itself, the editor still
+   functions correctly without any issues.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The insertHTML plugin no longer exists in the recent editor
+   update and Ephox has removed the plugin and integrated this to
+   the core editor. References to the invalid plugin has been
+   removed from the default editor config file.
+   
+   For customers using a custom editor configuration, references to
+   the inserthtml plugin needs to be manually removed.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI26058
+   
+   
+ * REPORTED COMPONENT NAME
+   LOTUS WEB CONT
+   
+   
+ * REPORTED COMPONENT ID
+   5724I2900
+   
+   
+ * REPORTED RELEASE
+   850
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-09-18
+   
+   
+ * CLOSED DATE
+   2014-09-18
+   
+   
+ * LAST MODIFIED DATE
+   2014-09-18
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   LOTUS WEB CONT
+   
+   
+ * FIXED COMPONENT ID
+   5724I2900
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R850 PSY
+   UP

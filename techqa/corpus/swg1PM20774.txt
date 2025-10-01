@@ -1,0 +1,171 @@
+Title: IBM PM20774: REMOVE THE INSTRUCTION TO ISSUE ITMCMD CONFIG -A CW FROM INSTALLING APPLICATION SUPPORT ON TEPS - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  In the Installing and configuring ITCAM Agent for WebSphere
+   Applications on Linux and UNIX systems chapter there is a
+   section Installing application support on Unux and Linux
+   systems.
+   
+   In step 18.
+   # The installation program will complete the installation and
+   exit. After this, re-configure the portal server and browser
+   client by running:
+   
+   itmcmd config -A cq
+   itmcmd config -A cw
+   
+   At any prompts, press Enter to accept the default values.
+   
+   The command itmcmd config -A cw needs to be removed as this
+   command is invalid and not required.  If customer does issue
+   this comamnd they will receive an error message:
+   
+   KCI0770E could not determine the lib arch
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Do not issue ./itmcmd config -A CW during the installation of
+   TEPS application support as this is not needed and invalid.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:
+   *
+   * ITCAM for Application Diagnostics users v7.1 (GA version) who
+   * are configuring TEPS (Portal Server) after installing
+   * the application support files.
+   *
+   ****************************************************************
+   *
+   * PROBLEM DESCRIPTION:
+   *
+   * The AD 7.1 Info center incorrectly documents to configure the
+   * Browser client (cw) component also.  When attempting this, the
+   * user will get the following error:
+   *
+   * KCI0770E could not determine the lib arch
+   *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The documentation for the current release of ITCAM for
+   Application Diagnostics Websphre agent (7.1 fixpack 1) has been
+   corrected to remove the command to configure the TEP browser
+   client.
+   
+   
+   The fix for this APAR is contained in the following maintenance
+   packages:
+   
+     | fix pack | 7.1.0-TIV-ITCAMAD_WAS-FP0001
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  Do not issue ./itmcmd config -A CW during the installation of
+   TEPS application support as this is not needed and invalid.
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM20774
+   
+   
+ * REPORTED COMPONENT NAME
+   TCAM AD WAS TEM
+   
+   
+ * REPORTED COMPONENT ID
+   5724Y92WD
+   
+   
+ * REPORTED RELEASE
+   710
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-08-18
+   
+   
+ * CLOSED DATE
+   2010-11-01
+   
+   
+ * LAST MODIFIED DATE
+   2010-11-01
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TCAM AD WAS TEM
+   
+   
+ * FIXED COMPONENT ID
+   5724Y92WD
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R710 PSY
+   UP

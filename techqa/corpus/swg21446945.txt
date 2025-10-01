@@ -1,0 +1,79 @@
+Title: IBM Getting Credentials Error: 0x80040794 when trying to login to FileNet Content Manager  Workplace using Application Integration from Microsoft Office applications and from eForms Designer. - United States
+
+Text:
+encryption problem Encryption Exception App Int TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Trying to login to Workplace thru Application Integration, produced Credentials Error: 0x80040794.
+
+
+SYMPTOM
+ 
+
+The Application Integration dialog box showed the following error:
+
+Credentials Error: 0x80040794 - User Login Failed!
+
+The Application Integration log showed the following error:
+
+ERROR http-8080-Processor22 com.filenet.wcm.api.EncryptionException - [throw] Problem initializing encryption/decryption with keyId c708ec77, size 448 bits. java.home=C:\Program Files\Java\j2re1.4.2_08. Cause: java.lang.SecurityException: Unsupported keysize or algorithm parameters 
+com.filenet.wcm.api.EncryptionException: Problem initializing encryption/decryption with keyId c708ec77, size 448 bits. java.home=C:\Program Files\Java\j2re1.4.2_08. Cause: java.lang.SecurityException: Unsupported keysize or algorithm parameters 
+at com.filenet.wcm.api.impl.CryptoHelper.getCipher(CryptoHelper.java:77) 
+at com.filenet.wcm.api.impl.CryptoHelper.doEncryptOrDecrypt(CryptoHelper.java:88) 
+at com.filenet.wcm.api.impl.SessionImpl.getTokenSymmetric(SessionImpl.java:759) 
+at com.filenet.wcm.api.impl.SessionImpl.getToken(SessionImpl.java:729) 
+at com.filenet.wcm.toolkit.server.util.WcmServerCredentials.getSessionToken(WcmServerCredentials.java:804) 
+at com.filenet.wcm.toolkit.server.base.UserTokenPolicy.getUserToken(UserTokenPolicy.java:127) FilterChain.doFilter(ApplicationFilterChain.java:157) 
+...
+...
+...
+org.apache.coyote.http11.Http11Protocol$Http11ConnectionHandler.processConnection(Http11Protocol.java:705) 
+at org.apache.tomcat.util.net.TcpWorkerThread.runIt(PoolTcpEndpoint.java:577) 
+at org.apache.tomcat.util.threads.ThreadPool$ControlRunnable.run(ThreadPool.java:683) 
+at java.lang.Thread.run(Unknown Source) 
+
+
+CAUSE
+
+The Application Engine (AE) can send or receive encrypted user credentials to or from other applications, such as Application Integration. Encrypted credentials are passed between applications in the form of a user token. The use of user tokens is dependent on the existence of a crypto key file. 
+
+When installing the Application Engine software, the administrator can specify how many keys are created in this crypto key file and whether the keys are limited strength (128-bit) or maximum strength (448-bit). 
+http://publib.boulder.ibm.com/infocenter/p8docs/v4r5m1/topic/com.ibm.p8.doc/ae_help/ae_admin/aeadm_about_security.htm [http://publib.boulder.ibm.com/infocenter/p8docs/v4r5m1/topic/com.ibm.p8.doc/ae_help/ae_admin/aeadm_about_security.htm]
+
+Specially during AE installation at the "User Token and Java API Security" screen, if the "Create maximum strength keys " checkbox is unchecked, limited strength (128-bit) keys are generated; if checked, 448-bit keys are generated. 
+
+In this particular situation, the Workplace was deployed on Tomcat Application Server which uses JVM 1.6. However due to US export restriction , Sun JVMs only includes the Java Cryptography Extension (JCE) with "strong" but limited cryptography jurisdiction policy files, which limit key length. 
+
+
+DIAGNOSING THE PROBLEM
+ 
+
+Enable the Application Integration log to get additional information about the error.
+
+
+ 1. On the client Windows PC, click on Start -> Run, type regedit and press enter. 
+ 2. Navigate to HKEY_LOCAL_MACHINE\SOFTWARE\FileNet\AppInt\3.5.X\Logging 
+ 3. Change the Enabled from 0 to 1. 
+ 4. The output file is specified in the FilePathName and by default it is pointing to C:\Documents and Settings\username\Local Settings\Temp\FileNet\\FileNetLog.txt 
+ 5. Reproduce the problem. 
+ 6. Review the resulting log file, 
+
+
+RESOLVING THE PROBLEM
+ 
+
+There are three options available:
+
+
+ * Recreate new UTCryptoKeyFile.properties file. Available for Application Engine 4.0.2
+   http://publib.boulder.ibm.com/infocenter/p8docs/v4r5m1/index.jsp?topic=/com.ibm.p8.doc/ae_help/ae_admin/change_ae_encryption_strength.htm [http://publib.boulder.ibm.com/infocenter/p8docs/v4r5m1/index.jsp?topic=/com.ibm.p8.doc/ae_help/ae_admin/change_ae_encryption_strength.htm]
+   
+ * Re-install AE and leave the "Create maximum strength keys " checkbox unchecked at . You will need to redeploy Workplace afterward.
+
+ * Use the 'Unlimited Strength' Jurisdiction Policy Files" in the Java Cryptography Extension (JCE) topic at java.sun.com for the specific JRE / JDK version used by the Application Server.
+
+ *  Download the java cryptography extension file from the appropriate web page for your version of Sun Java VM. For JVM 1.6 go to http://www.oracle.com/technetwork/java/javase/downloads/index.html [http://www.oracle.com/technetwork/java/javase/downloads/index.html] Click on "Java Cryptography Extension (JCE) Unlimited Strength Jurisdiction Policy Files 6" link For older JVM go to http://www.oracle.com/technetwork/java/archive-139210.html [http://www.oracle.com/technetwork/java/archive-139210.html]. On the Archive Page select "Java Cryptography Extension" and click Go. Click Download JCE 1.4.X or 1.5.X Software which will bring you to another screen. Depending on the JVM version download the jce_policy-1_4_X.zip, jce_policy-1_5_X.zip file or jce_policy-1_6_X.zip. Unzip the file. The file should contain the following jar files: 
+   - local_policy.jar 
+   - US_export_policy.jar Replace the following files on the JVM used by the Application Server
+   - <path>/Java/j2re1.<version>/lib/local_policy.jar and 
+   - <path>/Java/j2re1.<version>/lib/US_export_policy.jar with the unlimited strength versions.

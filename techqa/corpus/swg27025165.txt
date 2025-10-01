@@ -1,0 +1,49 @@
+Title: IBM Webcast replay: IBM Business Process Manager and WebSphere Lombardi Edition - Understanding the Effects of Migrating Snapshots with In-Flight Instances - United States
+
+Text:
+wste_webcast; WSTE; Support Technical Exchange; education; presentation; webcast; STEwebcastDocument; lombardi; snapshot; inflight instances; migration WEBCAST
+
+ABSTRACT
+ This presentation covers migrating instances in IBM Business Process Manager V7.5.1 and WebSphere Lombardi Edition V7.2. The session examines several scenarios and outlines best practices for migrating and testing snapshots and in-flight instances. 
+
+Level of Difficulty: Advanced 
+
+Presenter(s): Mark Filley
+
+Date: 24 May 2012 
+
+CONTENT
+This presentation discusses migrating instances with the BPM 7.5.1.0 product. This covers some of the ways instances may fail after migrating to a new snapshot. These details are in the linked presentation. After migrating instances some may fail or become stuck. The best way to solve this is to use the MoveToken REST API command. [https://www.ibm.com/developerworks/community/blogs/WebSphere_Process_Server/entry/bpm_stuck_tokens?lang=en]
+
+
+See this blog entry about moving tokens [https://www.ibm.com/developerworks/community/blogs/WebSphere_Process_Server/entry/bpm_stuck_tokens?lang=en].
+
+
+PRESENTATION
+[http://www.ibm.com/i/v16/icons/weblecture.gif]Migrating Snapshots and inflight instances - May 24 - WSTE.pdf [/support/docview.wss?uid=swg27025165&aid=2]Migrating Snapshots and inflight instances - May 24 - WSTE.pdf [/support/docview.wss?uid=swg27025165&aid=1] 
+
+Click the PDF file above to play the slide presentation for this Webcast. Right-click and select Save As to store the file on your local computer for later review.
+
+Get Adobe Reader [http://www.adobe.com/products/acrobat/readstep2.html] to view PDF
+
+
+AUDIO
+[http://www.ibm.com/i/v16/icons/aud.gif]To replay the recording of this Webcast, click on Download Audio [http://public.dhe.ibm.com/software/websphere/techexchange/May-24-2012-Filley.mp3] (audio in MP3 format) then open the PDF file above.
+
+Right-click and select Save As to store the file on your local computer for later playback.
+
+Problem listening to the audio replay?
+If you are having a problem listening to the audio when you use a left-click on the audio link above, you need to download the MP3 file to your local computer before playback by doing a right-click and Save As.
+
+
+
+RELATED INFORMATION
+ WebSphere Support Technical Exchange [http://www.ibm.com/software/websphere/webcast]
+Time Zone Converter [http://www.timeanddate.com/worldclock/converter.html]
+
+
+The following two files provide a working example that the audience can test on their own after listening to this webcast. TWX files are application exports from Business Process Manager. These files were created using WebSphere Lombardi Edition V7.1, which can be imported by versions up to and including Business Process Manager V8.0. 
+
+
+WSTE - Instance Migation - main bpd - half done.twx [/support/docview.wss?uid=swg27025165&aid=4]WSTE - Instance Migation - main bpd - half done.twx [/support/docview.wss?uid=swg27025165&aid=3]
+WSTE - Instance Migation - almost done.twx [/support/docview.wss?uid=swg27025165&aid=6]WSTE - Instance Migation - almost done.twx [/support/docview.wss?uid=swg27025165&aid=5]

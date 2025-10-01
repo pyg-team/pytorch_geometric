@@ -1,0 +1,101 @@
+Title: IBM WSDL configuration in High Availability environment - United States
+
+Text:
+WSDL, HA, SOAP TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ WSDL configuration in High Availability environment 
+
+RESOLVING THE PROBLEM
+Configuring JBOSS cluster
+
+1) different physical machinesÂ¿ simply install the software on each machine Â¿ as long as you keep the same JBOSS domain name for both, they automatically recognize each other
+
+Â¿ORÂ¿
+
+2) two (or more) instances on the SAME machineÂ¿
+2a) install AE and patches
+2b) install jboss once for each instance you want to run (if you want 3 instances, you have to install it 3 times Â¿ each with itÂ¿s own directory of course)
+2c) for JBOSS 4.x (possibly others, but youÂ¿ll have to try it out yourself) you need to change the port number in the following files so that each JBOSS instance uses itÂ¿s own set of ports:
+deploy\jbossweb-tomcat55.sar\server.xml, or deploy\jbossweb-tomcat50.sar\server.xml
+search for: Connector port="8080" 
+(NOTE: also AJP is 8009 and SSL/TLS is 8443)
+
+deploy\jms\jms-ds.xml
+search for: java.naming.provider.url=localhost:1100 (if uncommented)
+
+deploy\jms\uil2-service.xml
+search for: <attribute name="ServerBindPort">8093</attribute> 
+
+conf/jboss-service.xml
+search for: 
+<attribute name="Port">8083</attribute> 
+<attribute name="Port">1099</attribute> 
+<attribute name="RmiPort">1098</attribute> 
+<attribute name="RMIObjectPort">4444</attribute> 
+<attribute name="ServerBindPort">4445</attribute> 
+
+deploy/jmx-rmi-adaptor.sar/META-INF/jboss-service.xml
+search for: 19001
+(NOTE: I could not find this one)
+
+deploy/snmp-adaptor.sar/META-INF/jboss-service.xml
+search for: <attribute name="Port">1162</attribute> 
+(NOTE: there was a second entry for port 1161Â¿ I changed both for my second instance)
+
+conf/jacorb.properties file:
+search for: 
+ORBInitRef.NameService=corbaloc::localhost:3528/JBoss/Naming/root
+OAPort=3528
+
+NOTE: The only other place I had to modify wasÂ¿
+Default\deploy\cluster-service.xml file:
+Search for Â¿ 1100, 1101, 4447, 4446 and 1102
+
+(3) Configuring the apache load balancer (using apache on CE in this caseÂ¿ note the http port for the CEÂ¿s apache is modified from 80 to 8008)
+I cannot improve on JBOSSÂ¿s documentation on this (http://wiki.jboss.org/wiki/Wiki.jsp?page=UsingMod_jk1.2WithJBoss [http://wiki.jboss.org/wiki/Wiki.jsp?page=UsingMod_jk1.2WithJBoss])Â¿ very simple if you remember the http port in the httpd.conf file (see Step #3 in the UsingMod_jk1.2WithJBoss guide)
+
+(3a) Install P8 AE on the load balancer so that it configures the Process Application Engine Services Manager and all required JAR files for the router and AE Â¿ a side benefit is that it will be easy to apply patches this way. NOTE: all you have to do is install the software (plus patches) Â¿ no deployment is necessary.
+
+4) On ALL machines that have the AE installed (including the load balancer), you must edit the P8BPMWSBroker.properties files:
+#P8BPM WS Listener/WS Request Properties
+#Thu Mar 22 15:16:37 PDT 2007
+filenet.ws.request.tracefile=c\:\\wsinvoke.log
+cm.truststore.uid=mh0Fnl9Jr7bTnkGFaxeTc38\=
+filenet.ws.listener.tracing=false
+cm.router=localhost\:32771/vwrouter 
+filenet.ws.request.cache.timeout=4
+cm.certificates.autoaccept=false
+last.updated=2007.03.22 15\:16\:37
+filenet.ws.listener.tracefile=c\:\\wsinvoke.log
+listener.base.url=http\://cmp8tempest\:8008/Workplace/P8BPMWSBroker
+router.path=C\:\\Program Files//FileNet//Workplace//WEB-INF
+cm.keystore=C\:\\Program Files\\FileNet\\Router\\JRE/lib/security/cacerts
+cm.uid=ah4L+ObMhkXKr3vvnB9Dr6LNnkzIpAjDr6PyegGMchmTaK\=\=
+att.handler=filenet.vw.idm.trident.WSSession
+filenet.ws.request.tracefilesize=5000000
+cm.keystore.uid=mh0Fnl9Jr7bTnkGHaxiOchm\=
+filenet.ws.listener.cache.timeout=4
+filenet.ws.request.tracing=false
+cm.name=-1
+filenet.ws.listener.tracefilesize=5000000
+cm.truststore=C\:\\Program Files\\FileNet\\Router\\JRE/lib/security/cacerts
+
+NOTE 1: for the cm.router entry Â¿ this will be the same on all AEÂ¿s and the load balancer (localhost\:<port>/<router_name> - I kept it simple and used the same router name on all machines.
+
+NOTE 2: for the listener.base.url entry Â¿ this machine and port must be the LOCAL machine name and port. For this example, I have 2 AEÂ¿s and 1 load balancer as follows:
+AE 1 Â¿ machine name = firestormone using Jboss on port 8080
+AE 2 Â¿ machine name = firestormtwo using Jboss on port 8080
+Load balancer Â¿ machine name = cmp8tempest using Apache on port 8008
+Â¿the entries would be as follows (in same order):
+Listener.base.url=http\://firestormone\:8080/Workplace/P8BPMWSBroker
+Listener.base.url=http\://firestormtwo\:8080/Workplace/P8BPMWSBroker
+Listener.base.url=http\://cmp8tempest\:8008/Workplace/P8BPMWSBrokerrl=http\://cmp8tempest\:8008/Workplace/P8BPMWSBroker
+
+
+
+HISTORICAL NUMBER
+ 20007117 
+
+PRODUCT ALIAS/SYNONYM
+ P8 APPLICATION ENGINE

@@ -1,0 +1,158 @@
+Title: IBM PM43360: AFTER JMS V7.0.1.4, MDB DOES NOT CORRECTLY HANDLE A POISON NON-PERSISTENT MESSAGE - United States
+
+Text:
+z/os SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DUPLICATE OF ANOTHER APAR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The customer recently applied WebSphere MQ for z/OS V7.0.1
+   RSU1103 maintenance. This was an upgrade from RSU0912.
+   .
+   After application of the maintenance we are experiencing the
+   following problem:
+   .
+   - The system is configured to run an MDB which produces the
+   RuntimeException with a container managed transaction.
+   .
+   - The listener port for the MDB is configured with a bindings
+   mode JMS connection.
+   .
+   - The JMS connection is using "MQ messaging provider migration
+   mode" (in this case this is because the customer has explicitly
+   set ProviderVersion=6, but it could also be caused by the
+   target queue manager being at MQ V6).
+   .
+   - A non-persistent message (posion or invalid one) is put to
+   the queue.
+   .
+   The listener port browses the message in the control region,
+   and passes a reference to a ServerSession running in the
+   servant region to get the message and drive the MDB.
+   .
+   IZ78032 [http://www-01.ibm.com/support/docview.wss?uid=swg1IZ78032] (part of fixpack 7.0.1.4) altered the way
+   ServerSessions in migration mode get the messages for MDB
+   listeners. The changes made do not correctly take into account
+   the RRS transaction coordination used by WAS for bindings-mode
+   JMS. This results in the MQGET being done with
+   MQGMO_SYNCPOINT_IF_PERSISTENT. Since the message is non-
+   persistent, it is got outside of the MQ unit of recovery.
+   .
+   When the MDB fails, WAS rolls back the RRS transaction, which
+   backs out the MQ UR. Since the message was got out-of-
+   syncpoint, it is not backed out.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *  Problem summary:
+   
+   A WebSphere Application Server on z/OS is configured to use the
+   MQ classes for JMS at fixpack 7.0.1.4 or higher.
+   
+   An MDB listener is configured to use a bindings mode connection
+   to MQ version 6, or a bindings mode connection with
+   ProviderVersion=6.
+   
+   If the MDB uses container managed transactions, the MQ JMS
+   Session incorrectly determines that no transaction is
+   active. As a result it will get messages to process using
+   the MQGMO_SYNCPOINT_IF_PERSISTENT option. If a non-persistent
+   message is got for processing, it will be got out of syncpoint
+   and will not form part of the MDB's transaction.
+   
+   Should the MDB fail with an exception, the WAS transaction will
+   be rolled back, but the message will not be returned to the
+   queue.
+   
+   
+   Problem resolution:
+   The MQ JMS classes have been updated to correctly detect the
+   transactional state of bindings mode connections while consuming
+   messages for an MDB.
+   
+   
+   This fix changes the Java component of MQ, and will be
+   included in FixPack 7.0.1.7 (PM42759 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM42759]).
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM43360
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ Z/OS V7
+   
+   
+ * REPORTED COMPONENT ID
+   5655R3600
+   
+   
+ * REPORTED RELEASE
+   018
+   
+   
+ * STATUS
+   CLOSED DUB
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-07-08
+   
+   
+ * CLOSED DATE
+   2011-07-26
+   
+   
+ * LAST MODIFIED DATE
+   2011-11-25
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

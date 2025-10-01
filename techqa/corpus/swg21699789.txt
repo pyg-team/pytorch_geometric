@@ -1,0 +1,40 @@
+Title: IBM How can I change the date format of a prompt? - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How can I change the date format of a prompt in a prompt page? 
+
+CAUSE
+In French, there is confusion with year format with some prompt, year "99" could be "1999" or "2999".
+Update files and change number of digit for year format : YY -> YYYY
+
+
+ANSWER
+You need to modify the promptLocale files relevant to your 'Content Language' setting in your Cognos user preferences. 
+
+ 
+
+Steps: 
+
+1. Visit the following locations:
+<cognos-location>\webcontent\prompting\res\ 
+<cognos-location>\webcontent\pat\cchl\res 
+<cognos-location>\webcontent\cchl\res 
+
+2. Edit any files within these locations named 'promptLocale_<content-lanuage>.js' or 'promptLocale_<content-lanuage>.xml'.
+For example, Ireland would be: promptLocale_en-ie.js and promptLocale_en-ie.xml
+
+3. Replace the values with your preferred date pattern e.g. d/M/yy h:mm a. Please do this for all components which have these files installed.
+XML:
+<property name="shortFormat">d/M/yy h:mm a</property>
+<property name="shortFormatDateOrder">DMY</property>
+
+Javascript:
+g_shortFormat ="dd/MM/yyyy HH:mm";
+g_shortFormatDateOrder ="DMY";
+
+4. Save the files and restart the Cognos service.
+
+Note: This file can also be edited to modify a variety of other prompt properties. For example currency symbols.

@@ -1,0 +1,60 @@
+Title: IBM Using the IBM Verse search bar - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+Matching: 
+
+When performing a search in IBM Verse, the text you enter needs to be an exact match of the term for which you are looking. If you want to perform a search of a partial term or a fuzzy search of that term, you need to use a wildcard in your string. 
+
+For example, if you are looking to find all emails that contain the term 1234567, you cannot search for 1234. You can search for 1234*. 
+
+
+When entering search terms into the search bar, users should be aware of the use of AND, OR and parenthesis to avoid misinterpreting the results. The default operand is AND. The AND and OR need to be upper case.
+
+Examples:
+
+
+ * IBM Verse -> searches for messages that contain the term IBM and the term Verse in any order and do not need to be adjacent 
+ * "IBM Verse" -> searches for messages that contain the exact term IBM Verse. 
+ * IBM OR Verse -> searches for messages that contain the term IBM or the term Verse 
+ * [Person objectized name] book -> searches for messages from the person that contain the term book 
+ * [Folder objectized name] (book OR sport) -> searches for messages in the folder that contain the term book or the term sport 
+ * ( [person objectized name] OR [person objectized name] ) AND tools -> searches for messages from person1 or from person2 that contain the term tools
+
+
+Using a Colon in Search 
+Care needs to be taken when using the colon character (:) in a search. If a user searches for the terms: 
+
+First: step one 
+
+the search can fail because the colon is a special character. In order to get the search to execute correctly, users can use quotes around their search term: 
+
+"First: step one". 
+
+Searching in Different Languages 
+The search component of IBM Verse handles all supported languages reasonably well, but does have some language specific limitations that we are working to address. This is not an exhaustive list, but covers many of the known issues. 
+
+Quoting search terms 
+It may be necessary to put double quotes around search terms, so that they they only return an exact match. Search query terms are split into individual tokens or words, and documents will be returned with these words in any order. An English example. If a search is done on: 
+John Smith 
+Then documents that contain "John" and "Smith" will be returned, whether the words are in that order, or scattered throughout the document. If a search must only return the exact match "John Smith", then the query must be quoted 
+"John Smith" 
+
+In Japanese and Korean, certain assumptions about word ordering may not be maintained by the search component, and it may be necessary to surround the search with double quotes, to ensure an exact match is returned. 
+
+Equivalent characters 
+The Turkish characters i and ı are equivalent and can be used interchangeably in text. When searching for the character i only documents containing that specific character will be returned. Documents containing the character ı will not be returned, unless a search is done specifically for ı. 
+
+Half-width Katakana in Japanese 
+Searching for combined half-width Katakana characters will fail to find documents containing those combined characters. 
+
+Searching for Special Characters 
+Most special characters are not supported when doing a search in IBM Verse. The characters will not produce an error, but will return All Documents. Special characters in any language may be affected by this limitation. 
+RESOLVING THE PROBLEM
+Be aware of these conditions when searching. 
+
+ 
+
+Additional documentation may be found here: How do I search more effectively with Verse? [https://apps.na.collabserv.com/help/topic/com.ibm.cloud.verse.doc/faq_searchsyntax.html]

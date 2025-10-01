@@ -1,0 +1,48 @@
+Title: IBM Is it possible to license multiple versions of IBM SPSS Statistics with the same License Manager installed? - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Is it possible to license multiple versions of IBM SPSS Statistics with the same License Manager installed? 
+
+ANSWER
+You can license multiple versions of Statistics on the same Sentinel RMS License Manager. 
+If you want to license a network license for IBM SPSS Statistics 20 you will need to use the Sentinel License Manager for IBM SPSS Statistics 20 (version 8.3.0.900 for Windows), but previous IBM SPSS Statistics network licenses can be included in this version too.
+So you don't need to use 2 License Manager versions installed (actually, they won't work together, as they will be using the same ports/install folders/etc) .
+. 
+Please follow the steps to activate the network license of version 20 and to keep licences for previous versions.
+. 
+About the server: 
+1. First, you need to test the steps below: 
+a) whether you could start the current License Manager successfully 
+b) whether the end user could launch the IBM SPSS Statistics previous version successfully when connect to the License server for previous versions. 
+
+2. If this is successful proceed with the following steps.
+
+3. Go to the directory in which you installed the previous License Manager. 
+Note that this is the directory in which you installed the License Manager, not the directory in which you installed IBM SPSS Statistics (the default directory of License Manager is 'C:\Program Files\Common Files\SafeNet Sentinel\Sentinel RMS License Manager). 
+
+4. Copy the lservrc file. On Windows, look in the winnt subdirectory \WinNT. 
+5. Save the lservrc file to a safe location. 
+6. Shutdown the older version of the License Manager and deinstall it with Remove Programs.
+7. Install the new version of License Manager required for IBM SPSS Statistics 20 in the default directory.
+8. Copy the saved lservrc file back to the directory in which you installed the new version of License Manager (On Windows this is the WinNT subdirectory of the installation directory of Sentinel). 
+9. Restart the License Manager Service.
+
+10. Now, you need to test 
+a) whether you could start the new version of license manager successfully 
+b) whether the end user could launch the previous IBM SPSS Statistics version successfully when connect to the server. 
+
+11. Log in as the user who installed the License Manager. 
+12. Install the new License from the Command Prompt with the new authorization code (for version 20). 
+. 
+About the clients: 
+Note 1: Install the IBM SPSS Statistics 20 client version on the desktop computer. 
+Note 2: Note to select the 'Network license' as the license type during the installation.
+Note 3 : The technote is related to version 20 and below Note that for versions higher than SPSS Statistics 20, IBM License Manager has been renamed to Concurrent Licensing Tools 
+
+RELATED INFORMATION
+ Need more help? Our Statistics forum is Live! [https://developer.ibm.com/answers/topics/statistics.html?smartspace=predictive-analytics]
+Need more help? Our Licensing forum is Live! [https://developer.ibm.com/answers/topics/spsslicensing.html]
+URL to download SPSS product [https://www-112.ibm.com/software/howtobuy/softwareandservices/]

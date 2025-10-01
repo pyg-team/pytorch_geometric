@@ -1,0 +1,102 @@
+Title: IBM Readme for Initiate Master Data Service 10.1 - United States
+
+Text:
+ FIX README
+
+ABSTRACT
+ This readme describes the above referenced Refresh Pack, including installation-related instructions, prerequisites and co-requisites, and a description of the enhancements. 
+
+
+Readme file for: Initiate Master Data Service
+Product/Component Releases: 10.1
+
+
+CONTENT
+This fix contains updated data direct drivers, java as well as security fixes for Inspector and Web Reports. Details about the security fixes are available in the security bulletins below. 
+
+Download location: 
+
+Download location fixes from Fix Central http://www.ibm.com/support/fixcentral/ [http://www.ibm.com/support/fixcentral/] 
+
+
+For Initiate Master Data Service choose:
+Select Information Management -> Initiate Master Data Service-> 
+
+
+
+Product/Component Name: File Name: Initiate Master Data Service 10.1.031518_IM_Initiate_MasterDataService_ALL_Refresh Pack 
+Prerequisites: 
+
+To ensure that all components in an IBM Initiate Master Data Service installations are synchronized, you must install the latest fixes on each component. IBM Support supports only installations whose components are all at the same release level. 
+Installation information: 
+
+See the Maintenance release installation guide for versions: 
+
+9.5 -11 
+
+http://www-01.ibm.com/support/knowledgecenter/SSLVY3_9.7.0/com.ibm.patchinstall_bluewashed.doc/topics/c_patchinstall_bluewashed_introduction.html [http://www-01.ibm.com/support/knowledgecenter/SSLVY3_9.7.0/com.ibm.patchinstall_bluewashed.doc/topics/c_patchinstall_bluewashed_introduction.html]
+
+This fix pack addresses security vulnerabilities as documented in the security bulletins below: 
+
+Security Bulletin: Mulitiple security vulnerabilities in Apache CXF affects IBM InfoSphere Master Data Management (CVE-2016-6812 CVE-2016-8739 CVE-2017-5653 CVE-2017-5656 CVE-2017-3156 [https://www-01.ibm.com/support/docview.wss?uid=swg22011984]) 
+
+Security Bulletin: Security vulnerability in Apache affects IBM InfoSphere Master Data Management (CVE-2016-1000031) [https://www-01.ibm.com/support/docview.wss?uid=swg22011981] 
+
+Security Bulletin: IBM InfoSphere Master Data Management is vulnerable to OpenSSLvulnerability (CVE-2017-3735) [https://www-01.ibm.com/support/docview.wss?uid=swg22014665]
+
+
+
+Contacting IBM Software support 
+
+IBM Software Support provides assistance with product defects.
+
+Before you submit your problem to IBM Software Support, ensure that your company has an active IBM software maintenance contract, and that you are authorized to submit problems to IBM. The type of software maintenance contract that you need depends on the type of product you have. 
+
+Product support can be obtained through the following methods. 
+
+ 
+
+ * 
+ * http://www-03.ibm.com/software/products/en/infosphere-master-data-management
+ * 
+ * 
+
+ * 
+ * If you are outside of North America, check the Web page http://www.ibm.com/planetwide/ [http://www.ibm.com/planetwide/] for contact information for your area. 
+
+ 
+
+Copyright and trademark information 
+
+http://www.ibm.com/legal/copytrade.shtml [http://www.ibm.com/legal/copytrade.shtml] 
+
+Notices
+
+INTERNATIONAL BUSINESS MACHINES CORPORATION PROVIDES THIS PUBLICATION "AS IS" WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF NON-INFRINGEMENT, MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE. Some jurisdictions do not allow disclaimer of express or implied warranties in certain transactions, therefore, this statement may not apply to you. 
+
+This information could include technical inaccuracies or typographical errors. Changes are periodically made to the information herein; these changes will be incorporated in new editions of the publication. IBM may make improvements and/or changes in the product(s) and/or the program(s) described in this publication at any time without notice. 
+
+Microsoft, Windows, and Windows Server are trademarks of Microsoft Corporation in the United States , other countries, or both. 
+
+Intel, Intel logo, Intel Inside, Intel Inside logo, Intel Centrino, Intel Centrino logo, Celeron, Intel Xeon, Intel SpeedStep, Itanium, and Pentium are trademarks or registered trademarks of Intel Corporation or its subsidiaries in the United States and other countries. 
+
+Other company, product, or service names may be trademarks or service marks of others. 
+
+THIRD-PARTY LICENSE TERMS AND CONDITIONS, NOTICES AND INFORMATION 
+
+
+The license agreement for this product refers you to this file for details concerning terms and conditions applicable to third party software code included in this product, and for certain notices and other information IBM must provide to you under its license to certain software code. The relevant terms and conditions, notices and other information are provided or referenced below. Please note that any non-English version of the licenses below is unofficial and is provided to you for your convenience only. The English version of the licenses below, provided as part of the English version of this file, is the official version. 
+
+Notwithstanding the terms and conditions of any other agreement you may have with IBM or any of its related or affiliated entities (collectively "IBM"), the third party software code identified below are "Excluded Components" and are subject to the following terms and conditions: 
+
+· the Excluded Components are provided on an "AS IS" basis 
+
+· IBM DISCLAIMS ANY AND ALL EXPRESS AND IMPLIED WARRANTIES AND CONDITIONS WITH RESPECT TO THE EXCLUDED COMPONENTS, INCLUDING, BUT NOT LIMITED TO, THE WARRANTY OF NON-INFRINGEMENT OR INTERFERENCE AND THE IMPLIED WARRANTIES AND CONDITIONS OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE 
+
+· IBM will not be liable to you or indemnify you for any claims related to the Excluded Components 
+
+· IBM will not be liable for any direct, indirect, incidental, special, exemplary, punitive or consequential damages with respect to the Excluded Components. 
+
+
+
+© Copyright IBM Corporation 2018. All Rights Reserved.

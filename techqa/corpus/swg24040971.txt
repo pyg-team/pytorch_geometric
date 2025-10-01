@@ -1,0 +1,110 @@
+Title: IBM PI34088: Error in SAML Web SSO TAI with custom SP-initiated SSO - United States
+
+Text:
+PI34088; PI34088; PI34088 DOWNLOADABLE FILES
+
+ABSTRACT
+ An error occurs in the SAML Web SSO TAI with custom SP-initiated SSO 
+
+DOWNLOAD DESCRIPTION
+PI34088 resolves the following problem:
+
+ERROR DESCRIPTION: 
+With the SAML Web SSO TAI, when custom code is used to simulate SP-initiated SSO, the TAI will fail to validate the SAMLResponse with the following error:
+
+CWWSS8006E: InResponseTo must not be present for IdP-Initiated unsolicited responses. 
+
+LOCAL FIX: 
+N/A 
+
+PROBLEM SUMMARY
+
+USERS AFFECTED:
+IBM WebSphere Application Server users of SAML web single sign-on (SSO)
+
+PROBLEM DESCRIPTION:
+An error occurs in the SAML Web SSO TAI with custom SP-initiated SSO
+
+The SAML web single sign-on (SSO) Trust Association Interceptor (TAI) supports identity provider (IdP)-initiated SSO only. If a service provider (SP) attempts to do SP-initiated SSO by including a SAMLRequest in the request to the IdP, the SP cannot process the SAMLResponse and will emit the following error:
+
+
+
+
+CWWSS8006E: InResponseTo must not be present for IdP-Initiated unsolicited responses.
+
+PROBLEM CONCLUSION: 
+The SAML TAI is updated to provide an option to include a SAMLRequest in the request to the IdP by using a plug point, and process solicited SAMLResponses corresponding to the SAMLRequest. To use this feature, set the following custom property to your custom class that implements the com.ibm.wsspi.security.web.saml.AuthnRequestProvider SPI:
+
+sso_<id>.sp.login.error.page
+
+Following is the interface for 
+com.ibm.wsspi.security.web.saml.AuthnRequestProvider: 
+
+public interface AuthnRequestProvider extends 
+IdentityProviderMapping { 
+public static final String AUTHN_REQUEST="authnRequest"; 
+public static final String REQUEST_ID = "requestId"; 
+public static final String RELAY_STATE="relayState"; 
+public static final String SSO_URL="ssoUrl"; 
+
+/** 
+* Maps a HttpServletRequest to a valid URL. 
+* This is used to map the HttpServletRequest to a valid URL, 
+* so that WebSphere can redirect user to the URL for 
+* re-login or receiving error message 
+* 
+* @para req the HttpServletRequest 
+* @param errorMsg the String 
+* @param acsUrl the String of AssertionConsumerService URL 
+* @param ssoUrl the ArrayList of Single-SignOn service URLs
+* @return the URL String of the user which should be 
+* redirected to 
+* @exception NotImplementedException if this implementation 
+* is not supported. 
+**/ 
+public HashMap <String, String> getAuthnRequest( 
+HttpServletRequest req, 
+String errorMsg, 
+String acsUrl, 
+ArrayList<String> ssoUrls) 
+throws NotImplementedException; 
+} 
+
+
+The getAuthnRequest method must return a map that includes four entries with the following keys: 
+
+
+
+Key Description AuthnRequestProvider.REQUEST_ID The value for this key must match the ID attribute's value in AuthnRequest message. AuthnRequestProvider.SSO_URL The SAML identity provider's Single-Sign-On URL. AuthnRequestProvider.RELAY_STATE The relayState as defined by SAML Web Browser single-sign-on profile. AuthnRequestProvider.AUTHN_REQUEST A Base64 encoded AuthnRequest message as defined in spec. Your code is responsible for generating the AuthnRequest message. 
+7.0.0.37-WS-WAS-IFPI34088.pak applies to 7.0.0.37.
+8.0.0.10-WS-WASProd-IFPI34088.zip applies to 8.0.0.10.
+8.5.5.4-WS-WASProd-IFPI34088.zip applies to 8.5.5.4 through 8.5.5.5.
+8.5.5.6-WS-WASProd-IFPI34088.zip applies to 8.5.5.6. 
+
+ 
+The fix for this APAR is currently targeted for inclusion in fix pack 7.0.0.39, 8.0.0.11 and 8.5.5.7. 
+
+Please refer to the Recommended Updates page for delivery information: 
+http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980] 
+
+Keywords: IBMWL3WSS, SAMLWSSO, INTERIMFIX
+
+PREREQUISITES
+None
+
+INSTALLATION INSTRUCTIONS
+Please review the readme.txt for detailed installation instructions.
+
+URL LANGUAGE SIZE(Bytes) Readme v8.5.5 [ftp://public.dhe.ibm.com/software/websphere/appserv/support/fixes/PI34088/8.5.5.6/readme.txt] US English 6303 Readme v8.0 [ftp://public.dhe.ibm.com/software/websphere/appserv/support/fixes/PI34088/8.0.0.10/readme.txt] US English 6271 Readme v7.0 [ftp://public.dhe.ibm.com/software/websphere/appserv/support/fixes/PI34088/7.0.0.37/readme.txt] US English 8956 
+DOWNLOAD PACKAGE
+
+
+
+
+Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options 
+What is Fix Central(FC)? [https://www.ibm.com/support/fixcentral/help?page=swfaqs] 7.0.0.37-WS-WAS-IFPI34088 22 Sep 2015 US English 189931 FC [http://www-933.ibm.com/eserver/support/fixes/fixcentral/swgquickorder?fixes=7.0.0.37-WS-WAS-IFPI34088&productid=WebSphere Application Server&brandid=5] [ ] 8.0.0.10-WS-WASProd-IFPI34088 18 Sep 2015 US English 414177 FC [http://www-933.ibm.com/eserver/support/fixes/fixcentral/swgquickorder?fixes=8.0.0.10-WS-WASProd-IFPI34088&productid=WebSphere Application Server&brandid=5] [ ] 8.5.5.4-WS-WASProd-IFPI34088 09-18-2015 US English 417763 FC [http://www-933.ibm.com/eserver/support/fixes/fixcentral/swgquickorder?fixes=8.5.5.4-WS-WASProd-IFPI34088&productid=WebSphere Application Server&brandid=5] [ ] 8.5.5.6-WS-WASProd-IFPI34088 09-18-2015 US English 335466 FC [http://www-933.ibm.com/eserver/support/fixes/fixcentral/swgquickorder?fixes=8.5.5.6-WS-WASProd-IFPI34088&productid=WebSphere Application Server&brandid=5] [ ] 
+TECHNICAL SUPPORT
+ Contact IBM Support using SR (http://www.ibm.com/software/support/probsub.html [http://www.ibm.com/software/support/probsub.html]), visit the WebSphere Application Server support web site (http://www.ibm.com/software/webservers/appserv/was/support/ [http://www.ibm.com/software/webservers/appserv/was/support/]), or contact 1-800-IBM-SERV (U.S. only). 
+
+ [/support/docview.wss?uid=swg24040971&aid=1]Problems (APARS) fixed [/support/docview.wss?uid=swg24040971&aid=2]Problems (APARS) fixed
+PI34088, PI30212, PI32293, PI34548, PI47842

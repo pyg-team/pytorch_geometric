@@ -1,0 +1,59 @@
+Title: IBM How to hide "Email Report" option from the Cognos Viewer ONLY for selected roles and show for Administrators and CUSTOM created roles - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The "Email Report" option from the Cognos Viewer needs to be hidden from Consumers and a few other custom created roles. 
+
+RESOLVING THE PROBLEM
+ 
+
+ID for predefined Cognos namespace groups:
+
+Anonymous: Anonymous (Users who can access IBM Cognos software without being prompted for authentication)
+Administrators: Administrators (Users who have the administration capability)
+Consumers: Consumers (All authenticated users, which includes Administrators, Query Studio Users, and Report Studio Users)
+Query Studio Users: QSUsers (Users who have the Query Studio capability)
+Report Studio Users: RSUsers (Users who have the Report Studio capability)
+
+ID For custom:
+
+For custom created roles, we would need to create a unique id attribute for each role. For this:
+
+1. Stop the IBM Cognos service.
+2. Open the c10_location/templates/ps/portal/system.xml file in an XML or text editor. (Ensure you have a backup the current system.xml)
+3. Add a parameter named ui_groups and then do the following:
+● Add the group element for each group or role you want.
+● Specify a unique id attribute for each group or role.
+
+The IDs are case sensitive.
+For the custom groups or roles, the IDs cannot contain more than two characters, and
+cannot contain spaces. For example, the following IDs can be used: a1, b2, Ab, AB. The
+following IDs cannot be used: abc, A 1, a bc.
+
+For the IBM Cognos predefined groups, use the associated IDs as documented the table
+above.
+● Specify a value for the id attribute for each group element.
+Tip: To find the ID in IBM Cognos Connection, open the group or role properties page
+and, on the General tab, click the View the search path, ID and URL link.
+The following example shows the syntax of the ui_groups parameter.
+
+The "_" needs to be included as well.
+
+Tip: Separate IDs using spaces.
+
+<param name="ui_groups">
+<group id="q1">xOmpua2o_</group>
+</param>
+
+<param name="ui_hide">
+<RV_TOOLBAR_BUTTONS_SEND show="Administrators QSUsers RSUsers q1"/>
+</param>
+
+This means only the users from Administrators, Query Studio Users, Report Studio Users and role with id attribute "q1" (i.e. id from View Search Path and URL link for the role is "xOmpua2o_") will see the "Email Report" options whereas Consumers will not.
+
+4. Save the system.xml file.
+5. Restart the IBM Cognos service.
+
+For information about all the user interface elements that you can hide and other customization options, see "Elements You Can Hide" in the Cognos Administration and Security guide located in each Cognos Installation Directory at ...\webcontent\documentation\en called ug_cra.pdf

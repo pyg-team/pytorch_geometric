@@ -1,0 +1,336 @@
+Title: IBM IZ80800: DOCUMENT WHEN AND HOW TO CHANGE ENCRYPTION KEYS ON - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  ********************** START OF APAR OPEN TEMPLATE
+   *********************
+   
+   * Please open an apar with the following severity and
+   information:     *
+   *
+   *
+   APAR Type:            Field
+   Approver Initials:    mw
+   Severity:             3
+   Reported Release:     622
+   Compid:               5724C04VP VIOS Premium Agent
+   ABSTRACT:             Document when and how to change encryption
+   keys on
+   VIOS
+   
+   PROBLEM DESCRIPTION:
+   
+   There is no documentation describing when and how to change the
+   encryption key values for the VIOS Premium and CEC Base agents
+   after the agents have been installed in a VIOS environment.
+   
+   RECREATE INSTRUCTIONS: None.
+   
+   
+   LOCAL FIX:
+   
+   If the encryption key must be set to a non-default value for
+   the VIOS Premium or CEC Base agent on VIOS, follow these
+   instructions:
+   
+   Enter "oem_setup_env" to go to the Unix shell on the VIOS
+   system.
+   
+   Remove the current "keyfiles" directory from the ITM install
+   location:
+      # cd /opt/IBM/ITM
+      # rm -R keyfiles
+   
+   Issue "find /usr/lpp -name install.sh"
+      find /usr/lpp -name install.sh
+   
+   This will show the location of the ITM install.sh for System P
+   agents
+   that come pre-installed on VIOS.
+   
+   Running this install.sh should go through the installation
+   process
+   for CEC and VIOS agents, prompting for the encryption key to
+   set.
+      # /usr/lpp/itm.premium/itm_agent/install.sh
+   
+   Example output from running the install.sh:
+   ***
+   INSTALL
+   
+   Enter the name of the IBM Tivoli Monitoring directory
+   [ default = /opt/IBM/ITM ]:
+   
+   ITM home directory "/opt/IBM/ITM" already exists.
+   OK to use it [ 1-yes, 2-no; "1" is default ]? 1
+   
+   The following processes are currently running:
+   
+   Product = Base Monitoring Agent for CEC PID = 618672
+   Product = Premium Monitoring Agent for VIOS PID = 209100
+   install.sh warning: Existing products found to be running will
+   be
+   restarted during installation., continuing ...
+   
+   Continue with this installation [ 1-yes, 2-no; "1" is default ]?
+   1
+   Stopping Base Monitoring Agent for CEC ...
+   Product Base Monitoring Agent for CEC was stopped gracefully.
+   Agent stopped...
+   Stopping Premium Monitoring Agent for VIOS ...
+   Product Premium Monitoring Agent for VIOS was stopped
+   gracefully.
+   Agent stopped...
+   /opt/IBM/ITM
+   
+   
+   Select one of the following:
+   
+   1) Install products to the local host.
+   2) Install products to depot for remote deployment (requires
+   TEMS).
+   3) Install TEMS support for remote seeding
+   4) Exit install.
+   
+   Please enter a valid number: 1
+   
+   Initializing ...
+   International Program License Agreement
+   
+   Part 1 - General Terms
+   
+   BY DOWNLOADING, INSTALLING, COPYING, ACCESSING, OR USING
+   THE PROGRAM YOU AGREE TO THE TERMS OF THIS AGREEMENT. IF
+   YOU ARE ACCEPTING THESE TERMS ON BEHALF OF ANOTHER PERSON
+   OR A COMPANY OR OTHER LEGAL ENTITY, YOU REPRESENT AND
+   WARRANT THAT YOU HAVE FULL AUTHORITY TO BIND THAT PERSON,
+   COMPANY, OR LEGAL ENTITY TO THESE TERMS. IF YOU DO NOT
+   AGREE TO THESE TERMS,
+   
+   - DO NOT DOWNLOAD, INSTALL, COPY, ACCESS, OR USE THE
+   PROGRAM; AND
+   
+   
+   Press Enter to continue viewing the license agreement, or
+   enter "1" to accept the agreement, "2" to decline it, "3"
+   to print it, "4" to read non-IBM terms, or "99" to go back
+   to the previous screen.
+   1
+   
+   Enter a 32-character encryption key, or just press Enter to use
+   the
+   default
+   Default = IBMTivoliMonitoringEncryptionKey
+   ....+....1....+....2....+....3..
+   
+   GSkit encryption key has been set.
+   Key File directory: /opt/IBM/ITM/keyfiles
+   ***
+   
+   Respond to prompts and complete the installation.
+   
+   
+   *********************** END OF APAR OPEN TEMPLATE
+   **********************
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  If the encryption key must be set to a non-default value for
+   the VIOS Premium or CEC Base agent on VIOS, follow these
+   instructions:
+   
+   Enter "oem_setup_env" to go to the Unix shell on the VIOS
+   system.
+   
+   Remove the current "keyfiles" directory from the ITM install
+   location:
+      # cd /opt/IBM/ITM
+      # rm -R keyfiles
+   
+   Issue "find /usr/lpp -name install.sh"
+      find /usr/lpp -name install.sh
+   
+   This will show the location of the ITM install.sh for System P
+   agents
+   that come pre-installed on VIOS.
+   
+   Running this install.sh should go through the installation
+   process
+   for CEC and VIOS agents, prompting for the encryption key to
+   set.
+      # /usr/lpp/itm.premium/itm_agent/install.sh
+   
+   Example output from running the install.sh:
+   ***
+   INSTALL
+   
+   Enter the name of the IBM Tivoli Monitoring directory
+   [ default = /opt/IBM/ITM ]:
+   
+   ITM home directory "/opt/IBM/ITM" already exists.
+   OK to use it [ 1-yes, 2-no; "1" is default ]? 1
+   
+   The following processes are currently running:
+   
+   Product = Base Monitoring Agent for CEC PID = 618672
+   Product = Premium Monitoring Agent for VIOS PID = 209100
+   install.sh warning: Existing products found to be running will
+   be
+   restarted during installation., continuing ...
+   
+   Continue with this installation [ 1-yes, 2-no; "1" is default ]?
+   1
+   Stopping Base Monitoring Agent for CEC ...
+   Product Base Monitoring Agent for CEC was stopped gracefully.
+   Agent stopped...
+   Stopping Premium Monitoring Agent for VIOS ...
+   Product Premium Monitoring Agent for VIOS was stopped
+   gracefully.
+   Agent stopped...
+   /opt/IBM/ITM
+   
+   
+   Select one of the following:
+   
+   1) Install products to the local host.
+   2) Install products to depot for remote deployment (requires
+   TEMS).
+   3) Install TEMS support for remote seeding
+   4) Exit install.
+   
+   Please enter a valid number: 1
+   
+   Initializing ...
+   International Program License Agreement
+   
+   Part 1 - General Terms
+   
+   BY DOWNLOADING, INSTALLING, COPYING, ACCESSING, OR USING
+   THE PROGRAM YOU AGREE TO THE TERMS OF THIS AGREEMENT. IF
+   YOU ARE ACCEPTING THESE TERMS ON BEHALF OF ANOTHER PERSON
+   OR A COMPANY OR OTHER LEGAL ENTITY, YOU REPRESENT AND
+   WARRANT THAT YOU HAVE FULL AUTHORITY TO BIND THAT PERSON,
+   COMPANY, OR LEGAL ENTITY TO THESE TERMS. IF YOU DO NOT
+   AGREE TO THESE TERMS,
+   
+   - DO NOT DOWNLOAD, INSTALL, COPY, ACCESS, OR USE THE
+   PROGRAM; AND
+   
+   
+   Press Enter to continue viewing the license agreement, or
+   enter "1" to accept the agreement, "2" to decline it, "3"
+   to print it, "4" to read non-IBM terms, or "99" to go back
+   to the previous screen.
+   1
+   
+   Enter a 32-character encryption key, or just press Enter to use
+   the
+   default
+   Default = IBMTivoliMonitoringEncryptionKey
+   ....+....1....+....2....+....3..
+   
+   GSkit encryption key has been set.
+   Key File directory: /opt/IBM/ITM/keyfiles
+   ***
+   
+   Respond to prompts and complete the installation.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  The documentation was missing.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The documentation will be added in the next release of the
+   agents User's Guides, v6.2.2.1.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ80800
+   
+   
+ * REPORTED COMPONENT NAME
+   ITM SE SYSP VIO
+   
+   
+ * REPORTED COMPONENT ID
+   5724C04VP
+   
+   
+ * REPORTED RELEASE
+   610
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-07-21
+   
+   
+ * CLOSED DATE
+   2010-08-09
+   
+   
+ * LAST MODIFIED DATE
+   2010-08-09
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

@@ -1,0 +1,159 @@
+Title: IBM IY99419: LDAP FILTER FOR OBJECTCLASS ATTRIBUTE CASE SENSITIVE IN ITIM UI - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  TITLE: LDAP filter for objectclass attribute is case sensitive
+   in ITIM UI
+   COMPONENT: General UI
+   .
+   PROBLEM DESCRIPTION:
+   .
+   Generally, for "objectclass" attribute, the LDAP filter is case
+   sensitive in ITIM UI (for example in ACI filters) although
+   "objectclass" is a case insensitive attribute in
+   LDAP by default. This is confusing and can cause unpredictable
+   results during system configuration.
+   .
+   CUSTOMER RECREATE: YES, L2 as well
+   .
+   DESIRED BEHAVIOR: Handle LDAP filter for "objectclass" attribute
+   case insenstive in ITIM UI.
+   .
+   STEPS TO DUPLICATE:
+   .
+   Have a custom person objectclass "customPerson" which is derived
+   from inetOrgPerson (incl. custom person entity).
+   Create Person ACI for default ITIM person with "Deny" for
+   "Search".
+   In this ACI use the filter "(|(objectclass=customperson))" (use
+   "customperson" instead of customPerson).Create Person ACI for
+   custom person with "Grant" for "search".
+   Althoug the first ACI should be filtered out for custom person
+   it is valid for them so they won't see persons in OrgTree.
+   .
+   ENVIRONMENT: ITIM 4.6 FP40
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Use the correct case for objectclass attribute used in ldap
+   filters in ITIM UI.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *   Users affected:
+   Customers using LDAP filters for "objectclass" attribute.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *   This fix for this APAR is contained in the
+   following maintenance packages:
+   | fix pack | 4.6.0-TIV-TIM-FP0048
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IY99419
+   
+   
+ * REPORTED COMPONENT NAME
+   IBM TIV ID MGR
+   
+   
+ * REPORTED COMPONENT ID
+   5724C3403
+   
+   
+ * REPORTED RELEASE
+   460
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2007-06-01
+   
+   
+ * CLOSED DATE
+   2007-06-27
+   
+   
+ * LAST MODIFIED DATE
+   2007-06-27
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *     SERVER
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   IBM TIV ID MGR
+   
+   
+ * FIXED COMPONENT ID
+   5724C3403
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R460 PSY
+   UP

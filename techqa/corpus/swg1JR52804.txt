@@ -1,0 +1,155 @@
+Title: IBM JR52804: YOU CANNOT START BUSINESS PROCESS RULES MANAGER FROM THE SERVER TAB IN IBM INTEGRATION DESIGNER - United States
+
+Text:
+  DIRECT LINKS TO FIXES
+8.5.6.0-WS-IID-IFJR52804 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Integration+Designer&fixids=8.5.6.0-WS-IID-IFJR52804&source=SAR]
+8.5.5.0-WS-IID-IFJR52804 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Integration+Designer&fixids=8.5.5.0-WS-IID-IFJR52804&source=SAR]
+8.5.7.0: IBM Integration Designer V8.5 Refresh Pack 7 for Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24041577]
+8.5.7.0: IBM Integration Designer V8.5 Refresh Pack 7 for Linux [http://www-01.ibm.com/support/docview.wss?uid=swg24041578]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When you select Business Process Rules Manager on the Server
+   launch menu in the Servers tab, a message appears saying that
+   the application is not installed on the server.
+   
+   PRODUCTS AFFECTED:
+   IBM Integration Designer
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Open the Business Process Rules Manager in a browser by using
+   the URL http://<hostname>[:<port>]/br [http://<hostname>[:<port>]/br]
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  No additional information is available.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A fix is available for IBM Integration Designer V8.5.5 that
+   enables the Business Process Rules Manager menu item.
+   
+   On Fix Central (http://www.ibm.com/support/fixcentral), search
+   for JR52804:
+   1. Select IBM Integration Designer with your edition from the
+   product selector, the installed version to the fix pack level,
+   and your platform, and then click Continue.
+   2. Select APAR or SPR, enter JR52804, and click Continue.
+   
+   When you download fix packages, ensure that you also download
+   the readme file for each fix. Review each readme file for
+   additional installation instructions and information about the
+   fix.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  Open the Business Process Rules Manager in a browser by using
+   the URL http://<hostname>[:<port>]/br [http://<hostname>[:<port>]/br]
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR52804
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM ADVANCED
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9400
+   
+   
+ * REPORTED RELEASE
+   855
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-03-13
+   
+   
+ * CLOSED DATE
+   2015-05-21
+   
+   
+ * LAST MODIFIED DATE
+   2015-05-21
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   BPM ADVANCED
+   
+   
+ * FIXED COMPONENT ID
+   5725C9400
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R855 PSY
+   UP
+   
+   
+ * R856 PSY
+   UP

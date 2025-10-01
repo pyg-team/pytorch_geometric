@@ -1,0 +1,46 @@
+Title: IBM How do I obtain the Content Manager OnDemand for i (5770-RD1) product software for Version 7.1? - United States
+
+Text:
+ FLASH (ALERT)
+
+ABSTRACT
+ IBM® Content Manager OnDemand for i, product number 5770-RD1, is not sent on the stacked media (CDs) that you receive with operating system upgrades but rather must be downloaded from the Passport Advantage web site. You must be Passport Advantage-entitled (with your software subscription) to the 5770-RD1 product before you can download it. 
+
+CONTENT
+You should verify with your IBM marketing representative or IBM business partner that you are Passport Advantage-entitled. If you are, you can go to the Passport Advantage Web site and download the Content Manager OnDemand for i software. 
+
+To download the software: 
+
+1. Go to http://www.ibm.com/software/howtobuy/passportadvantage [http://www.ibm.com/software/howtobuy/passportadvantage] and click the tab labeled Passport Advantage Online. That will bring you to http://www.ibm.com/software/howtobuy/passportadvantage/pao_customers.htm [http://www.ibm.com/software/howtobuy/passportadvantage/pao_customers.htm], where you can click Customer sign-in.
+
+2. Enter your registration ID or site number. If you do not know what this is or you do not have a registration ID, contact the Passport Advantage group at 1-800-978-2246. Their hours of operation are Monday through Friday, 8 a.m. to 8 p.m. eastern time (EDT (summer) or EST (winter)), excluding U.S. legal holidays. For customers outside the U.S. or Canada, please see https://www-112.ibm.com/software/howtobuy/passportadvantage/paocustomer/docs/en_US/ecare.html [https://www-112.ibm.com/software/howtobuy/passportadvantage/paocustomer/docs/en_US/ecare.html] . 
+
+3. Click on Software Download & Media Access on the left. On the Software Download tab, click on Download Finder. All entitled downloads should be listed. Select IBM Content Manager OnDemand for i and then Continue. On the next panel, select the platform IBM i (formerly i7) and then click Continue. One the screen that follows, look for the eAssembly named “IBM Content Manager OnDemand for i V7.1 Multilingual eAssembly (CRB1AML)”.
+
+4. If you click on the plus sign to expand the offering, you will see that underneath the CRB1AML entry, "IBM Content Manager OnDemand V7.1 for i Multilingual (CZDQ8ML)" contains the base Server code (*BASE of 5770-RD1) as well as Options 10 (Common Server) and 11 (ODWEK). Part number CZDQ7ML is the Quick Start Guide and Part number CZG3FML contains the OnDemand 8.4 administrator and end-user client code. If you are using the IBM Web Interface for Content Manager (WEBi), you should download "IBM Content Manager OnDemand V8.4.1 Web Enablement Kit for Windows Multilingual (CZG3QML)" and "IBM Web Interface for Content Manager V1.0.4 Windows Multilingual (CZC9AML)". Select the check boxes next to the items you want and then click I agree and Download now at the bottom of the page. 
+
+5. The code might get placed in c:\DownloadDirector, unless you are able to override this. The CZDQ8ML.exe extracts into two files. These are the RD1 code in a file named rd1srvr and a PDF file that has the instructions for uploading this code to the IBM i server and loading the Licensed Program Product, 5770-RD1. This PDF instruction file is also provided in this technote. 
+
+CZDQ8ML.pdf [/support/docview.wss?uid=swg21404514&aid=2] [/support/docview.wss?uid=swg21404514&aid=1] 
+
+6. If you are downloading the PDF Indexer, then click on the radio button "IBM Content Manager OnDemand for i PDF Indexer" while on the "Find downloads & media" screen as in step 3 above. If you click on the plus sign to expand the the eAssembly named "IBM Content Manager OnDemand PDF Indexer for i V7.1 Multilingual eAssembly (CRB1BML)" you will see "IBM Content Manager OnDemand PDF Indexer V7.1 for i Multilingual (CZDQ9ML)", which contains the PDF Indexer code (Option 12 of 5770-RD1). Select the check boxes next to the items you want and then click I agree and Download now at the bottom of the page. 
+
+7. The code might get placed in c:\DownloadDirector, unless you are able to override this. The CZDQ9MLexe extracts into two files. These are the code itself in a file named rd1pdf and a PDF file that has the instructions for uploading the code to the IBM i server and loading this option of the Licensed Program Product. This PDF instruction file is also provided in this technote. 
+
+CZDQ9ML.pdf [/support/docview.wss?uid=swg21404514&aid=4] [/support/docview.wss?uid=swg21404514&aid=3] 
+
+8. If you are downloading the AFP2WEB Transforms, then under the major heading of "Information Management," look for the eAssembly named "IBM Content Manager OnDemand AFP2WEB Transform for i 7.1 Multilingual eAssembly (CRB1CML)". Expand the CRB1CML entry, "IBM Content Manager OnDemand AFP2WEB Transform V7.1 for i Multilingual (CZDR0ML)" contains the AFP2PDF Transforms code. Select the check boxes next to the items you want and then click I agree and Download now at the bottom of the page. 
+
+9. The code might get placed in c:\DownloadDirector, unless you are able to override this. The CZDR0ML.exe extracts into five files. These are the save files for the AFP2HTML and AFP2PDF transforms and a PDF file that has the instructions for uploading the code to the IBM i server and loading this option of the Licensed Program Product. This PDF instruction file is also provided in this technote. 
+
+CZDR0ML.pdf [/support/docview.wss?uid=swg21404514&aid=6] [/support/docview.wss?uid=swg21404514&aid=5] 
+
+
+If these steps do not answer your questions, please contact IBM software support for further assistance. 
+
+
+Stay Informed by Receiving Product and Lifecycle Notifications:
+Click here [http://www.ibm.com/support/docview.wss?uid=swg21674106]
+
+RELATED INFORMATION
+ Obtaining OnDemand for i V7.2 [http://www.ibm.com/support/docview.wss?uid=swg21671807]

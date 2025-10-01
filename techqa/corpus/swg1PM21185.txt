@@ -1,0 +1,160 @@
+Title: IBM PM21185: DFHDS0001 ABEND (CODE 0C4/AKEA) HAS OCCURRED AT OFFSET X'23E2'  IN MODULE DFHDSAT. - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  You are getting a message of DFHDS0001 Abend (code 0C4/AKEA) has
+   occurred at offset X'23E2' in module DFHDSAT.  The program check
+   abend0C4 is a PIC10 segment translation exception.  The failing
+   instruction is a CLC ( D507 A008 32CC ) with R10 containing
+   ebcidic.  R10 was loaded from R12 ( 58A0 C068 ) attmepting to
+   load the DSAT_TCB_TOKEN_P.  R12 area appears to be overlaid.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All users of CICS TS 4.1                     *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: "DFHDS0001 ABEND (code 0C4/AKEA) has    *
+   *                      occurred at offset X'23E2' in module    *
+   *                      DFHDSAT" is received during a warm      *
+   *                      start of CICS when running DFHW2RP.     *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   When CICS performs a warm or emergency restart it calls DFHW2RP
+   to restore resource definitions from the CATALOG in routine
+   RECOVER_DEFINITIONS. DFHW2RP makes a CHANGE_MODE call onto
+   the QR TCB. Its initial TCB_TOKEN is not saved and on the way
+   out of RECOVER_DEFINITIONS it attempts to return to an initial
+   TCB_TOKEN that has not been set and most likely points to an
+   invalid TCB_TOKEN or unreadable storage, resulting in CICS
+   reporting either the INVALID_TCB_TOKEN or an 0C4 ABEND.
+   Additional keywords: msgDFHDS0001 DS0001
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  DFHW2RP recover_definitions routine has been changed so that it
+   stores the initial TCB_TOKEN. This allows the CHANGE_MODE on
+   exit to work correctly.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  FIX AVAILABLE BY PTF ONLY
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM21185
+   
+   
+ * REPORTED COMPONENT NAME
+   CICS TS Z/OS V4
+   
+   
+ * REPORTED COMPONENT ID
+   5655S9700
+   
+   
+ * REPORTED RELEASE
+   600
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-08-24
+   
+   
+ * CLOSED DATE
+   2010-09-29
+   
+   
+ * LAST MODIFIED DATE
+   2010-11-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UK60981
+   
+   
+
+MODULES/MACROS
+ *     DESW2RP  DFHW2RP
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CICS TS Z/OS V4
+   
+   
+ * FIXED COMPONENT ID
+   5655S9700
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R600 PSY UK60981 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK60981]
+   UP10/10/06 P F010
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

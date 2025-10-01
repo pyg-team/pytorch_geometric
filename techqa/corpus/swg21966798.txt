@@ -1,0 +1,13 @@
+Title: IBM Why is the Datacap Navigator 9.0 Scan button disabled after I upgraded IBM Content Navigator 2.0.3? - United States
+
+Text:
+ICN; scan.js; Datacap; Content Navigator TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ After upgrading to ICN Feature Pack 3, the Datacap Navigator Scan button was disabled. How do I fix that? 
+
+CAUSE
+The objects were cached on the client machine.
+
+RESOLVING THE PROBLEM
+Clearing the Java applet cache on the workstation, and clearing Websphere temp directory fixed the issue.

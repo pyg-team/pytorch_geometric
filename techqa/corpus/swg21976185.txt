@@ -1,0 +1,94 @@
+Title: IBM Security Bulletin: Vulnerability in IBM Java SDK affects Rational Lifecycle Integration Adapter for HP ALM (CVE-2015-7575) - United States
+
+Text:
+security; vulnerability; psirt; CVE-2015-7575 SECURITY BULLETIN
+
+SUMMARY
+ There is a vulnerability in IBM® SDK Java™ Technology Edition, Version 6.0.16.2 that is used by Rational Lifecycle Integration Adapter for HP ALM. This vulnerability, commonly referred to as “SLOTH”, was disclosed as part of the IBM Java SDK updates in January 2016. 
+
+VULNERABILITY DETAILS
+
+CVEID: CVE-2015-7575 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-7575]
+DESCRIPTION: The TLS protocol could allow weaker than expected security caused by a collision attack when using the MD5 hash function for signing a ServerKeyExchange message during a TLS handshake. An attacker could exploit this vulnerability using man-in-the-middle techniques to impersonate a TLS server and obtain credentials. This vulnerability is commonly referred to as “SLOTH”. 
+CVSS Base Score: 7.1
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/109415 [https://exchange.xforce.ibmcloud.com/vulnerabilities/109415] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:N/AC:L/PR:N/UI:R/S:U/C:H/I:L/A:N)
+
+
+AFFECTED PRODUCTS AND VERSIONS
+IBM Rational Lifecycle Integration Adapter for HP ALM 1.1.2 and later versions
+
+REMEDIATION/FIXES
+
+The fix is available on Fix Central [http://www.ibm.com/support/fixcentral/swg/quickorder?parent=ibm%7ERational&product=ibm/Rational/Rational+Lifecycle+Integration+Adapters+Standard+Edition&release=All&platform=All&function=fixId&fixids=Rational-RLIA_Standard-JavaPatch-Java601620&includeSupersedes=0&source=fc]
+
+You should verify applying this fix does not cause any compatibility issues. The fix disables MD5 signature hash by default. If you change the default setting after applying the fix, you will expose yourself to the attack described above. IBM recommends that you review your entire environment to identify other areas where you have enabled the MD5 signature hash and take appropriate mitigation and remediation actions. 
+
+To update IBM Rational Lifecycle Integration Adapter with a corrected JRE, follow the instructions below. Depending on how you deployed the products, and depending on your usage scenarios, you might need to upgrade the IBM SDK, Java Technology Edition in IBM WebSphere Application Server and Apache Tomcat. Be sure to upgrade all the components that you use in your deployment uses.
+
+NOTE: IBM SDK, Java Technology Edition is only included in IBM Rational Lifecycle Integration Adapter version 1.1.2 or later. Previous versions of the Rational Lifecycle Integration Adapter Standard Edition HP Adapter were released as WAR files only. Please consult with the application server documentation for updating the IBM SDK, Java Technology Edition.
+
+Upgrading the JRE for a WebSphere Application Server installation
+
+If your products are deployed on WebSphere Application Server, Java SDK Upgrade Policy for the IBM WebSphere Application Server [http://www.ibm.com/support/docview.wss?uid=swg21138332] lists IBM SDK, Java Technology Edition upgrades that are available. Also check the Product Security Incident Response Blog [https://www.ibm.com/blogs/psirt/] for any recent security bulletins for WebSphere Application Server that may have fixpacks or interim fixes for the JRE.
+
+Upgrading the IBM SDK, Java Technology Edition for a Tomcat installations 
+
+1. Stop the Rational Lifecycle Integration Adapter server.
+
+Note: The applications may be running in different application server instances or using a delegated converter. 
+
+2. Go to the original installation directory, and rename the /jre folder
+
+<InstallDir>/server/jre
+
+to
+
+<InstallDir>/server/jre-Original
+
+This ensures that the original JRE is kept as a backup in the event a restore is required.
+
+Example (Linux):
+mv <OrigInstallDir>/server/jre <OrigInstallDir>/server/jre-Original 
+
+3. Extract the new JRE archive provided by support to the Installation directory. 
+
+Example (Linux): 
+unzip <newInsallZip> -d <InstallDir>/server/ 
+
+4. Remove the Apache Tomcat temporary files in the following directories:
+
+<OrigInstallDir>/server/tomcat/temp
+<OrigInstallDir>/server/tomcat/work/Catalina/localhost 
+
+5. Restart the Rational Lifecycle Integration Adapter server
+
+WORKAROUNDS AND MITIGATIONS
+For CVE-2015-7575: 
+
+Users of Java 7 and later can address the issue by updating the /jre/lib/security/java.security file as follows (both steps are required): 
+
+· Add MD5 to the jdk.certpath.disabledAlgorithms property - e.g. jdk.certpath.disabledAlgorithms=MD2, RSA keySize < 1024, MD5 
+
+· Add MD5withRSA to the jdk.tls.disabledAlgorithms property - e.g. jdk.tls.disabledAlgorithms=SSLv3, RC4, DH keySize < 768, MD5withRSA 
+
+Java 6 requires code changes in the JSSE component in addition to the java.security file modifications, so upgrading the JDK is the only solution.
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v3 Guide [http://www.first.org/cvss/user-guide] 
+On-line Calculator v3 [http://www.first.org/cvss/calculator/3.0] RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] ACKNOWLEDGEMENT
+Reported to IBM by Karthikeyan Bhargavan at INRIA in Paris, France 
+
+CHANGE HISTORY
+ * 19 February 2016 - Original version published 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.

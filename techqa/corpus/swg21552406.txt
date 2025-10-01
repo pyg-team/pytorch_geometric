@@ -1,0 +1,90 @@
+Title: IBM Users Unable to Log on to Mailboxes Blocking on Correlation_Set java.sql.SQLException: OALL8 is in an inconsistent state - United States
+
+Text:
+STERLINGNFX TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Users Unable to Log on to Mailboxes Blocking on Correlation_Set java.sql.SQLException: OALL8 is in an inconsistent state 
+
+SYMPTOM
+
+
+Users unable to log into FTP mailboxes, system is running slow. DBA advised there is blocking on the CORRELATION_SET table causing the number of Oracle processes to be exceeded.
+
+Error Message Mailbox.log
+
+[2009-10-20 07:44:04.679] ERROR SQL Error Code: 0
+[2009-10-20 07:44:04.679] ERROR SQL State: 
+java.sql.SQLException: OALL8 is in an inconsistent state.
+at oracle.jdbc.driver.DatabaseError.throwSqlException(DatabaseError.java:125)
+at oracle.jdbc.driver.T4C8Oall.init(T4C8Oall.java:325)
+at oracle.jdbc.driver.T4CPreparedStatement.doOall8(T4CPreparedStatement.java:170)
+at oracle.jdbc.driver.T4CPreparedStatement.execute_for_describe(T4CPreparedStatement.java:503)
+at oracle.jdbc.driver.OracleStatement.execute_maybe_describe(OracleStatement.java:965)
+at oracle.jdbc.driver.T4CPreparedStatement.execute_maybe_describe(T4CPreparedStatement.java:535)
+at oracle.jdbc.driver.OracleStatement.doExecuteWithTimeout(OracleStatement.java:1051)
+at oracle.jdbc.driver.OraclePreparedStatement.executeInternal(OraclePreparedStatement.java:2984)
+at oracle.jdbc.driver.OraclePreparedStatement.executeQuery(OraclePreparedStatement.java:3026)
+at sun.reflect.GeneratedMethodAccessor144.invoke(Unknown Source)
+at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+at java.lang.reflect.Method.invoke(Method.java:324)
+at com.sterlingcommerce.woodstock.mailbox.db.SQLWrapper.forwardMethod(SQLWrapper.java:65)
+at com.sterlingcommerce.woodstock.mailbox.db.StatementWrapper.invoke(StatementWrapper.java:144)
+at $Proxy1.executeQuery(Unknown Source)
+
+
+
+System.log
+
+[2009-10-16 09:51:02.903] ERROR 000310100002 UTIL.FRAME_JDBC.ERR_ConnectionFactory_create [ConnectionFactory].create() 
+[2009-10-16 09:51:02.903] ERROR SQL Error Code: 20
+[2009-10-16 09:51:02.903] ERROR SQL State: 61000
+java.sql.SQLException: ORA-00020: maximum number of processes (500) exceeded
+
+at oracle.jdbc.driver.DatabaseError.throwSqlException(DatabaseError.java:125)
+at oracle.jdbc.driver.T4CTTIoer.processError(T4CTTIoer.java:316)
+at oracle.jdbc.driver.T4CTTIoer.processError(T4CTTIoer.java:277)
+at oracle.jdbc.driver.T4CTTIoer.processError(T4CTTIoer.java:272)
+at oracle.jdbc.driver.T4CTTIoauthenticate.receiveOsesskey(T4CTTIoauthenticate.java:243)
+at oracle.jdbc.driver.T4CConnection.logon(T4CConnection.java:304)
+at oracle.jdbc.driver.PhysicalConnection.<init>(PhysicalConnection.java:361)
+at oracle.jdbc.driver.T4CConnection.<init>(T4CConnection.java:151)
+at oracle.jdbc.driver.T4CDriverExtension.getConnection(T4CDriverExtension.java:32)
+at oracle.jdbc.driver.OracleDriver.connect(OracleDriver.java:595)
+at java.sql.DriverManager.getConnection(DriverManager.java:512)
+at java.sql.DriverManager.getConnection(DriverManager.java:140)
+at com.sterlingcommerce.woodstock.util.frame.jdbc.ConnectionFactory.create(ConnectionFactory.java:98)
+at com.sterlingcommerce.woodstock.util.frame.pool.Pool.getItem(Pool.java:268)
+at com.sterlingcommerce.woodstock.util.frame.pool.Pool.getItem(Pool.java:189)
+at com.sterlingcommerce.woodstock.util.frame.pool.PoolManager.getItem(PoolManager.java:107)
+at com.sterlingcommerce.woodstock.util.frame.jdbc.JDBCService.testOnReserve(JDBCService.java:855)
+at com.sterlingcommerce.woodstock.util.frame.jdbc.JDBCService.getNoAppConnection(JDBCService.java:3222)
+at com.sterlingcommerce.woodstock.util.frame.jdbc.JDBCService.getConnection(JDBCService.java:499)
+at com.sterlingcommerce.woodstock.util.frame.jdbc.JDBCService.getConnection(JDBCService.java:428)
+at com.sterlingcommerce.woodstock.ui.servlet.WFCTracker.doPost(WFCTracker.java:205)
+at javax.servlet.http.HttpServlet.service(HttpServlet.java:760)
+at javax.servlet.http.HttpServlet.service(HttpServlet.java:853)
+at org.mortbay.jetty.servlet.ServletHolder.handle(ServletHolder.java:358)
+at org.mortbay.jetty.servlet.WebApplicationHandler.dispatch(WebApplicationHandler.java:294)
+at org.mortbay.jetty.servlet.ServletHandler.handle(ServletHandler.java:567)
+at org.mortbay.http.HttpContext.handle(HttpContext.java:1807)
+at org.mortbay.jetty.servlet.WebApplicationContext.handle(WebApplicationContext.java:525)
+at org.mortbay.http.HttpContext.handle(HttpContext.java:1757)
+at org.mortbay.http.HttpServer.service(HttpServer.java:879)
+at org.mortbay.http.HttpConnection.service(HttpConnection.java:789)
+at org.mortbay.http.HttpConnection.handleNext(HttpConnection.java:960)
+at org.mortbay.http.HttpConnection.handle(HttpConnection.java:806)
+at org.mortbay.http.SocketListener.handleConnection(SocketListener.java:218)
+at org.mortbay.util.ThreadedServer.handle(ThreadedServer.java:331)
+at org.mortbay.util.ThreadPool$PoolThread.run(ThreadPool.java:520)
+
+
+RESOLVING THE PROBLEM
+
+
+Changed the JDBC driver to a supported version. The "OALL8 is in an inconsistent state" error is a known issue reported from Oracle which cemented the fact that the JDBC driver must match the system requirements EXACTLY.
+
+ 
+
+HISTORICAL NUMBER
+ NFX7481

@@ -1,0 +1,26 @@
+Title: IBM BMXAA6421E The system could not connect to the JDBC source - United States
+
+Text:
+TPAESCCD; Cannot; start; maximo; sccd; BMXAA6421E TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Encounter error BMXAA6421E when starting Maximo/SCCD. 
+
+SYMPTOM
+Receive following error in SystemOut.log :-
+[ERROR] [] [] BMXAA6421E - The system could not connect to the JDBC source:
+jdbc:db2://DB2_hostname:50005/maxdb75[jcc][t4][2043][11550][4.11.69] Exception java.net.ConnectException: Error opening socket to server DB2_hostname/192.168.1.1 on port 50,005 with message:
+Connection refused: connect. ERRORCODE=-4499, SQLSTATE=08001
+
+
+CAUSE
+DB2 services are not started.
+
+RESOLVING THE PROBLEM
+In Window Service, make sure DB2 services are started e.g. 
+
+DB2 - DB2COPY - CTGINST1-0
+DB2 - DB2COPY - DB2-0
+
+RELATED INFORMATION
+ A Japanese translation is available [http://www.ibm.com/support/docview.wss?uid=swg21995351]

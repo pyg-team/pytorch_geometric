@@ -1,0 +1,35 @@
+Title: IBM How do I periodically purge items from a recover bin after they have been there for a certain amount of time. - United States
+
+Text:
+FileNet; disposal; sweep; filter expression; CPE TECHNOTE (FAQ)
+
+QUESTION
+ How do I periodically purge items from a recover bin after they have been there for a certain amount of time. 
+
+CAUSE
+I need to purge items from recovery bins that are in the bins longer then 3 months.
+
+ANSWER
+1. Log into IBM FileNet Application Console for Content Platform Engine (ACCE).
+2. Go to your object store => Sweep Management => Sweep Policies => Disposal Policies.
+3. Create a new disposal policy with the following criteria.
+- Sweep mode = normal
+- Target class = Recovery Item
+Go to Data Design => Other Classes => Recover Item, right click and 'Copy object reference'.
+- Filter expression = Now() > DateCreated + TimeSpan(90, 'days')
+TimeSpan can use the following units: seconds, minutes, hours & days.
+- Effective start date and Effective end date
+Type in the fields something like 'July 1 2016' and hit the tab key. It will put in the value as something like 'July 1, 2016 at 12:00:00 AM Pacific Standard Time' 
+
+[/support/docview.wss?uid=swg21987866&aid=1] [/support/docview.wss?uid=swg21987866&aid=1]
+
+4. Complete your disposal sweep creation. 
+
+ 
+
+Note: If you do not want to have the sweep running continuously, in ACCE go to object store => Sweep Management => Policy-Controlled Sweeps and edit the 'Recovery Item' sweep to set a schedule.
+
+RELATED INFORMATION
+ Relational Queries [https://www.ibm.com/support/knowledgecenter/SSGLW6_5.2.1/com.ibm.p8.ce.dev.ce.doc/query_sql_syntax_rel_queries.htm]
+Opening a sweep policy [https://www.ibm.com/support/knowledgecenter/SSNW2F_5.2.1/com.ibm.p8.ce.admin.tasks.doc/p8pcc206.htm]
+Sweep policies [https://www.ibm.com/support/knowledgecenter/SSNW2F_5.2.1/com.ibm.p8.ce.admin.tasks.doc/p8pcc432.htm]

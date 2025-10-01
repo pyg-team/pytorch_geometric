@@ -1,0 +1,68 @@
+Title: IBM What to do if Guardium inspection engine status is fail - United States
+
+Text:
+Guardium. STAP; S-TAP; verification; verify; advanced verification; traffic; inspection engine; inspection engine verification TECHNOTE (FAQ)
+
+QUESTION
+ "Inspection Engine Status" in GUI-> System View-> S-TAP Status Monitor is fail and red. "S-TAP Status" is active and green.
+
+What does it mean if inspection engine status is fail?
+What should I do if inspection engine status is fail? 
+
+ANSWER
+
+
+
+YouTube Video Troubleshooting the Guardium S-TAP Verification Process (20.49) This video comprehensively examines the design of both standard and advanced S-TAP verification processes, including common reasons for failure and how to troubleshoot when the process fails. Watch the video on YouTube [https://www.youtube.com/watch?v=ggFFzFzRbyQ&index=1&list=PLFip581NcL2WzC2LpTMT28rml3br5WO9V] (20.49) 
+Background 
+
+Inspection engine verification is feature in Guardium v9.1 and above. Its purpose is to determine if inspection engines configured on the S-TAP are collecting data. There are two methods: 
+
+ * 
+ * 
+ * Standard Verification
+ * 
+ * 2. "Advanced Verification" - A user configured datasource is used to login to the database. The advanced verification runs a select on a table that does not exist. If the inspection engine is configured and working correctly the S-TAP will send an exception to the collector with database error.Verification process looks for this error, if it finds it then we know that the S-TAP can capture data from this inspection engine. 
+
+
+The results of these processes are shown in "inspection engine status" column. For more detail on the verification mechanisms see How to resolve S-TAP verification failure with 0 failed checks [http://www-01.ibm.com/support/docview.wss?uid=swg21690135].  
+
+What does it mean if inspection engine status is fail? 
+
+If inspection engine status is fail, it means the chosen verification method has not succeeded. It does not necessarily mean data is missing. It is possible for verification to fail for other reasons, for example: 
+
+ * Incorrect datasource configuration 
+ * Real DB port in inspection engine configuration can not be reached 
+ * Network problems or latency 
+ * Network address translation (NAT) is used between network locations of S-TAP and collector [http://www.ibm.com/support/docview.wss?uid=swg22000145] 
+ * Internal Guardium table corruption 
+
+
+What should I do if inspection engine status is fail?  
+
+ 1. Check if the inspection engine is collecting data. 
+
+
+In your usual report for tracking access is new data coming in? If you are unsure what report to check you can use the guidelines here - How can I check if the correct data is being logged on my Guardium appliance? [http://www-01.ibm.com/support/docview.wss?uid=swg21699711]  *  If there is new data in reports from the inspection engine, the problem is only with the verification process. Data is being captured and this does not meet the requirements for a severity 1 PMR - What type of Guardium problem can I consider to be a severity 1 PMR [http://www-01.ibm.com/support/docview.wss?uid=swg21587895]. Proceed with the steps below. If there is no data coming from the inspection engine the configuration may be incorrect. Use the diagnostics in step 2 and check the full inspection engine configuration from S-TAP control, see step 3. This technote may help - No traffic is being captured in Guardium reports [http://www-01.ibm.com/support/docview.wss?uid=swg21684016]. If you are in a production environment and can not resolve the problem you can open a severity 1 PMR as per the requirements above. 
+
+
+2. Use "Run Diagnostics" 
+
+This will give actions to resolve the issue. If you click the "fail" icon you will get this option. Note - How to resolve S-TAP verification failure with 0 failed checks [http://www-01.ibm.com/support/docview.wss?uid=swg21690135] 
+[/support/docview.wss?uid=swg21959830&amp;aid=1] 
+
+3. Check KTAP DB real port (UNIX) or Port range start (Windows) 
+
+Check the inspection engine configuration in Administration Console-> Local Taps-> S-TAP Control. Standard verification will use this port to attempt connection to the database. Ensure connection can be made over this port. Inspection engine may be collecting data from connections over other ports in the range, but standard verification will fail if this port can not accept connection. If you can not ensure this, advanced verification must be used. 
+
+4. Must Gather for verification failed issues. 
+
+If you are unable to resolve the problem and wish to open a PMR, please attach the following: 
+ *  Support must_gather app_issues. Run the debugger for a number of minutes and "Run Diagnostics" on the failed inspection engine while debugger is on. 
+ *  Slon capture for 30s. While slon is running "Run Diagnostics" on the failed inspection engine. 
+ *  If advanced verification is used, datasource definitions and output of "test connection" for the datasource. 
+ * 
+
+RELATED INFORMATION
+ MustGather: Collecting data for Guardium Appliance [http://www.ibm.com/support/docview.wss?uid=swg21624567]
+How can a 'slon' capture be created in Guardium [http://www.ibm.com/support/docview.wss?uid=swg21508960]

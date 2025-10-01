@@ -1,0 +1,158 @@
+Title: IBM PI30974: CSV002I REQUESTS FOR MODULE IEANTRT EXCEED MAXIMUM USE COUNT WHEN RUNNING MASSIVE COBOL COMPILES WITH SQL COPROCESSOR - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Running many many COBOL compiles which use the SQL option, user
+   received CSV002I MSGCSV002I for IEANTRT.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Split up the number of compiles into a smaller batch.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All users of DB2 10 and DB2 11 for z/OS who  *
+   *                 use the DB2 coprocessor                      *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Thousands of calls to the DB2           *
+   *                      coprocessor from a single job           *
+   *                      may cause the use count of requests     *
+   *                      for module IEANTRT to exceed the        *
+   *                      maximum limit                           *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   Thousands of calls to the DB2 coprocessor from a single job
+   can cause the use count of requests for module IEANTRT to
+   exceed the maximum limit.  A message similar to the following
+   may be issued, and processing will halt:
+   
+     CSV002I REQUESTS FOR MODULE IEANTRT EXCEED MAXIMUM USE COUNT
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Code is updated to better manage the usage of IEANTRT and
+   other MVS name/token service routines.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI30974
+   
+   
+ * REPORTED COMPONENT NAME
+   DB2 OS/390 & Z/
+   
+   
+ * REPORTED COMPONENT ID
+   5740XYR00
+   
+   
+ * REPORTED RELEASE
+   A10
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-12-04
+   
+   
+ * CLOSED DATE
+   2015-08-03
+   
+   
+ * LAST MODIFIED DATE
+   2015-09-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UI29942 UI29943
+   
+   
+
+MODULES/MACROS
+ *  DSNHPSRV
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   DB2 OS/390 & Z/
+   
+   
+ * FIXED COMPONENT ID
+   5740XYR00
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * RA10 PSY UI29942 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI29942]
+   UP15/08/18 P F508
+   
+   
+ * RB10 PSY UI29943 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI29943]
+   UP15/08/18 P F508
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

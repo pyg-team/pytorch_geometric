@@ -1,0 +1,152 @@
+Title: IBM IC90426: MQ 7.1, 7.5: WHEN CHANNEL AUTHENTICATION RECORD HAS WARN(YES), NO MESSAGES ARE GENERATED IN THE QUEUE MANAGER ERROR LOG - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The WebSphere MQ 7.1 and MQ 7.5 Information Centers say in topic
+   "sc14440_.htm":
+   WebSphere MQ >
+   Reference >
+   Administration reference >
+   MQSC Reference >
+   The MQSC commands >
+   SET CHLAUTH
+   + begin quote +
+   WARN = YES
+   This record operates in warning mode. Any inbound connection
+   that matches this record and would therefore be blocked is
+   allowed access.
+   An error message is written and, if channel events are
+   configured, a channel event message is created showing the
+   details of what would have been blocked, see Channel Blocked.
+   + end quote
+   .
+   However, there are no error messages written into the MQ queue
+   manager log, but a channel event is generated.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   Users who are testing their channel authentication definitions
+   by using the WARN administrative option may encounter this
+   problem.
+   
+   
+   Platforms affected:
+   MultiPlatform
+   
+   ****************************************************************
+   PROBLEM SUMMARY:
+   The documentation for the WARN attribute of the CHLAUTH
+   command says that if WARN is set to YES then a message is
+   written to the MQ error logs when a connection would otherwise
+   have failed because of the CHLAUTH settings. The code does not
+   behave in this way and no error is written.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A design decision was made during the development of the CHLAUTH
+   command not to write to the error log if WARN is set to YES as
+   the intention was that users would enable event messages in
+   order to test their security configuration. Unfortunately the
+   design documentation did not reflect this change in approach and
+   so the published documentation did not correctly reflect the
+   behaviour of the code. The documentation will be changed to
+   remove mention of the MQ error log being updated when a
+   connection attempt matches a CHLAUTH rule and WARN is set to
+   YES.
+   
+   Technote
+   http://www-01.ibm.com/support/docview.wss?uid=swg21626496 [http://www-01.ibm.com/support/docview.wss?uid=swg21626496]
+   documents this problem and includes a workaround for the case
+   where users would prefer the error log to be updated when WARN
+   is set to YES and a connection attempt matches a CHLAUTH rule.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC90426
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ BASE MULTIP
+   
+   
+ * REPORTED COMPONENT ID
+   5724H7241
+   
+   
+ * REPORTED RELEASE
+   750
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-02-22
+   
+   
+ * CLOSED DATE
+   2013-04-17
+   
+   
+ * LAST MODIFIED DATE
+   2013-04-17
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

@@ -1,0 +1,37 @@
+Title: IBM ClearCase MultiSite synchronization gets blocked for Feature Level 6 VOB families if one site upgrades to 8.0 (versions 8.0 through 8.0.0.3). - United States
+
+Text:
+multisite; import; alert; flash; Cannot read header of packet; syncreplica; sync; feature level 6; fl6; RATLC01540827; PM71680 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Attempts to synchronize a packet between a 8.0.0.x VOB server and a 7.1.2.x VOB server (either direction) where the VOB family feature level is 6 results in the warning "Cannot read header of packet" and the import fails. 
+
+SYMPTOM
+A ClearCase 8.0.0 VOB server that is hosting a Feature Level 6 VOB replica is unable to import packets for that replica generated on a 7.1.2 VOB server, and generates export packets from that replica that are not readable (can not be imported) by a 7.1.2 VOB server. 
+
+Packet imports fail with warning message:
+
+multitool: Warning: Cannot read header of packet
+/opt/rational/clearcase/shipping/ms_ship/incoming/sync_abc_2012-08-
+23T095226+0200_2316: Invalid argument
+multitool: Error: File
+/opt/rational/clearcase/shipping/ms_ship/incoming/sync_abc_2012-08-
+23T095228+0200_8428 is not a sync. packet
+
+CAUSE
+Defect APAR PM71680 [www.ibm.com/support/docview.wss?uid=swg1PM71680] has been opened to address this issue.
+
+
+
+RESOLVING THE PROBLEM
+This defect is resolved in Rational ClearCase version 8.0.0.4 [http://www.ibm.com/support/docview.wss?uid=swg24033363]. 
+
+Notes: 
+
+ * VOB Feature Level 6 was introduced with IBM Rational ClearCase 7.1.2.2. See About feature levels and ClearCase [http://www.ibm.com/support/docview.wss?uid=swg21119269] for further details. 
+ * If you have your VOBs at Feature Level 6 and are considering an upgrade to ClearCase 8.0 on a server, you should install at least version 8.0.0.4.
+
+
+RELATED INFORMATION
+#Fix list for Rational ClearCase [http://www.ibm.com/support/docview.wss?uid=swg27023148]
+A Japanese translation is available [http://www.ibm.com/support/docview.wss?uid=swg21610052]

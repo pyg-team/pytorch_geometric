@@ -1,0 +1,151 @@
+Title: IBM JR50808: DE CREATION FAILS IF BPM INSTALL PATH CONTAINS THE DE NAME - United States
+
+Text:
+  DIRECT LINKS TO FIXES
+8.5.5.0-WS-BPM-IFJR50808 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Standard&fixids=8.5.5.0-WS-BPM-IFJR50808&source=SAR]
+Version 8.5 Refresh Pack 6 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24039185]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  If the BPM install path, e.g. /opt/IBM/BPM/v85, contains the DE
+   name, e.g. "BPM", the "BPMConfig -create -de xxx" command will
+   fail when generating the DB upgrade sql files.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  use a different Deployment Environment name
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  IBM BPM Advanced                            *
+   *                  IBM BPM Standard                            *
+   *                  IBM BPM Express                             *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: If the BPM install path, e.g.           *
+   *                      /opt/IBM/BPM/v85, contains the DE       *
+   *                      name, e.g. "BPM", the "BPMConfig        *
+   *                      -create -de xxx" command will           *
+   *                      fail when generating the DB upgrade     *
+   *                      sql files.                              *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   No more additional information
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A fix is available for IBM BPM V8.5.5.0 that fix the issue.
+   
+   On Fix Central (http://www.ibm.com/support/fixcentral), search
+   for JR50808:
+   
+   1. Select IBM Business Process Manager with your edition from
+   the product selector, the installed version to the fix pack
+   level, and your platform, and then click Continue
+   2. Select APAR or SPR, enter JR50808, and click Continue.
+   
+   When you download fix packages, also download the readme file
+   for each fix. Review each readme file for additional
+   installation instructions and information about the fix.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR50808
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM ADVANCED
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9400
+   
+   
+ * REPORTED RELEASE
+   855
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-07-18
+   
+   
+ * CLOSED DATE
+   2014-12-22
+   
+   
+ * LAST MODIFIED DATE
+   2014-12-22
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   BPM ADVANCED
+   
+   
+ * FIXED COMPONENT ID
+   5725C9400
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R800 PSY
+   UP

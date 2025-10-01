@@ -1,0 +1,21 @@
+Title: IBM Content Collector Configuration Manager started in read-only mode - United States
+
+Text:
+ICC; config manager TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Attempts to start the IBM Content Collector configuration manager but it is started in read-only mode. 
+
+SYMPTOM
+After launching the IBM Content Collector configuration manager, you cannot edit any configuration data because it is operated in read-only mode. 
+
+
+ENVIRONMENT
+IBM Content Collector is installed as primary node on the server.
+
+RESOLVING THE PROBLEM
+
+
+
+ * From Windows Task Manager, select the checkbox "Show processes from all users" and ensure there is only one "ConfigMgr.exe" running. 
+ * In Windows Services, ensure that "ICC GUI Component" service is started. This service is only available if you are using IBM Content Collector version 2.1.1.

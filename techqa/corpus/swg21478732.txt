@@ -1,0 +1,33 @@
+Title: IBM LM sentinel feature name = 0 instead of SPSS - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When using the WlmAdmin application, I see the feature name (under feature information) is displayed as 0 instead of SPSS. 
+How can I change this to read SPSS?
+
+Also the version number is set at 140 instead of 14.0 
+How do I change this to read 14.0? 
+
+RESOLVING THE PROBLEM
+WlmAdmin is a 3rd party application over which we have no control
+
+To find the corresponding product name and feature code, please make sure you have Sentinel License Manager 7.3.0.9 installed.
+
+There is a separate application, "lmshowlic.exe", in the SPSSSentinel directory that displays the mapping between the feature code and the actual product name and version. Command line usage for this utility is 
+
+lmshowlic server_name
+
+This is documented on p. 9 of the Network License Administrator's Guide. 
+
+We apologize for any inconvenienc
+
+RELATED INFORMATION
+ Need more help? Our Statistics forum is Live! [https://developer.ibm.com/answers/topics/statistics.html?smartspace=predictive-analytics]
+
+
+ 
+
+HISTORICAL NUMBER
+ 61244

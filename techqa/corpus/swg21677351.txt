@@ -1,0 +1,17 @@
+Title: IBM Connections Content Manager (Windows server) Library and File names garbled in  Homepage Updates (ActivityStream) page - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+Connections Content Manager (CCM 5.0) Library and File with special language characters appear garbled/corrupted in the ActivityStream. Happens with FileNet P8 Content Platform Engine 5.2.0.3 on Windows
+
+SYMPTOM
+CCM Library and File names with special language characters are garbled/corrupted in the Homepage Updates (ActivityStream) page
+
+
+CAUSE
+FileNet P8 Content Platform Engine 5.2.0.3 introduced a problem in the character encoding when posting to the Connections ActivityStream.
+
+RESOLVING THE PROBLEM
+Apply the iFix from FileNet Content Engine 5.2.0.3 IF002 fixpack.

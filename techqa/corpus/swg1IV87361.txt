@@ -1,0 +1,283 @@
+Title: IBM IV87361: PM FORECAST CALCULATION FOR MILEAGE BASED PMS REPORT INCORRECTLYWHEN NEW VALUES ARE ENTERED IN ACM ASSETS. - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  PROBLEM DESCRIPTION
+   PM Forecast calculation for mileage based PMs report incorrectly
+   when new values are entered in ACM assets.
+   
+   Maximo devides the Units to Go by the average value
+   to calculate next due date. This is OK. But the problem
+   is that maximo uses the same calculated value
+   to forecast all maintenance intervalls.
+   Instead the meter freqeuency devided  by average
+   should be used
+   Consequently, forecasted dates for the complete
+   planning period change every time when new mileage
+   is reported.
+   
+   STEPS TO REPRODUCE
+   1. Go to "CM Item Master(CM)" application
+   2. Create a new CM Item
+    CM Item: CM01
+    Description: CM Item 01
+   3. Save
+   4. Go to "Model(CM)" application
+   5. Create a new Model
+    Model: M01
+    Description: Model 01
+    Label System: ATA
+    On "Labels for M01":
+     Label system: ATA
+   6. Click New Row at "Build Items for M01"
+    Build Item: B1
+    On "Labels for M01":
+     Label: 000000
+    On "CM Item for M01":
+     CM Item: CM01
+   7. Save
+   8. Go to "Configurations" tab
+    On "Configurations":
+    8.1 Uncheck the "Abstract" flag
+    8.2. Change Status to Active
+   9. Go to "Build Hierarchy and Position Rules" tab, "Hierarchy
+   Tree" subtab
+    On "Build Hierarchy":
+    9.1. Rigth click on Build Item M01
+    9.2. Select "New Child"
+     Build Item: B1
+    9.3. Click OK
+   10. Go to "New Asset Assemblies(CM)"
+   11. Create a new Asset
+    New Asset: NAA01
+    CM Item: M01
+    Model: M01
+    Asset Status: OPERATING
+    Registration: 123
+    Asset Prefix: A
+    Asset Suffix: 01
+    Serial Prefix: AS
+    Serial Suffix: 01
+   12. Click New Row On "Meters" subtab
+    Meter: ODOM-KM
+    Force Copy to Sub Assemblies?: True
+    Average Calculation Method: STATIC
+    Average Units/Day: 1000
+   13. Save
+   14. Select Action > Create Sub Assemblies from CM Build
+   15. Change status to Active
+   16. Select Action > Create Asset
+   17. Go to "Preventive Maintenance(CM)" application
+   18. Create a new PM
+    PM: PM01
+    Description: Preventive Maintenance 01
+    Asset: A01
+   19. Go to "Frequency" tab
+   20. Click New Row on "Meter Based Frequency" subtab
+    Meter: ODOM-KM
+    Frquency: 10000
+    Alert Interval: 8000
+    Warning Interval: 9000
+   21. Change status to Active
+   22. Select Action > Generate Forecast
+    Forecast For (Days): 60
+   23. Go to "Forecast" tab
+   24. You can see that the first forecast date is 10 days from now
+   and the difference between the forecast dates is every 10 days.
+   This is because the forecast has used the static average of 1000
+   km per day and the PM frequency of 10000 KM to estimate the
+   dates at which it will fall due. This is correct.
+   25. Select Action > Delete Forecast
+   26. Go to "Assets(CM)" application
+   27. Find A01 and go to "View" tab
+   28. Click New Row on "Direct" subtab
+    Meter: ODOM-KM
+    Count Date: current system date and time
+    Delta Count: 6000
+   29. Go to "Preventive Maintenance(CM)" application and find PM01
+   30. Go to "Frequency" tab
+   31. Notice on "Meter Based Frequency" subtab, that the "Units to
+   Go" field has been updated to 4000 (6000km has been entered
+   against the Asset and the frequency is every 10000km; 10000 -
+   6000 = 4000)
+   32. Select action > Generate Forecast
+    Forecast For (Days): 60
+   33. Go to "Forecast" tab
+    Only the first forecast date should be 4 days after the current
+   system date as 4000 KM / 1000 KM per day = 4 days from now.
+    All of the other forecast dates should have a difference of 10
+   days between the prior date as the frequency is every 10000 KM
+   with an average of 1000 per day = 10 days.
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   CURRENT ERRONEOUS RESULT
+   Maximo uses the calculated days to go till
+   next maintenance even for the calculation of all
+   maintenance events, instead only for the first one.
+   The forecasted dates depend on the Value of Units
+   To Go. This means that every day the forecast will
+   deliver different result.
+   
+   
+   
+   
+   
+   
+   
+   EXPECTED RESULT
+   On the following example we see that as every day the
+   Units go Go Value changes the forecasted dates also
+   change when forecast is generated again (WRONG),
+   Forecast from 07.07.16 has 26 days between maintenance
+   intervalls and on  the forecast from
+   08.07.2016 has 25 days between the intervalls
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * All the users that use Maximo with ACM 7.5.1.1               *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * PM FORECAST CALCULATION FOR MILEAGE BASED PMS REPORT         *
+   * INCORRECTLYWHEN NEW VALUES ARE ENTERED IN ACM ASSETS.        *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * N/A                                                          *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  change the function for forecast calculation for mileage bases
+   pm report correct when there is a new values entered
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV87361
+   
+   
+ * REPORTED COMPONENT NAME
+   MX ASSET CONFIG
+   
+   
+ * REPORTED COMPONENT ID
+   5724R4500
+   
+   
+ * REPORTED RELEASE
+   751
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-07-29
+   
+   
+ * CLOSED DATE
+   2016-10-28
+   
+   
+ * LAST MODIFIED DATE
+   2017-01-26
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  ACM
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   MX ASSET CONFIG
+   
+   
+ * FIXED COMPONENT ID
+   5724R4500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R751 PSY
+   UP

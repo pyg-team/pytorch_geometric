@@ -1,0 +1,155 @@
+Title: IBM Installing WebSphere Application Server 8.5 Express from 5722-WE2 - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This document describes how to install WebSphere Application Server 8.5 Express if you have the 5722-WE2 DVD or an image of the DVD. 
+
+RESOLVING THE PROBLEM
+This document describes how to install WebSphere Application Server 8.5 Express if you have the 5722-WE2 DVD or an image of the DVD. 
+
+This document does not cover every installation scenario. It provides sample commands for doing a full installation (without samples) of the WebSphere Application Server 8.5 Express edition. As you read through these instructions, it may be helpful and necessary to also refer to the Installation instructions found in the Information Center at the following URL:
+[http://pic.dhe.ibm.com/infocenter/wasinfo/v8r5/index.jsp?topic=%2Fcom.ibm.websphere.installation.express.iseries.doc%2Fae%2Fwelcome_installing.html]
+http://pic.dhe.ibm.com/infocenter/wasinfo/v8r5/index.jsp?topic=%2Fcom.ibm.websphere.installation.express.iseries.doc%2Fae%2Fwelcome_installing.html [http://pic.dhe.ibm.com/infocenter/wasinfo/v8r5/index.jsp?topic=%2Fcom.ibm.websphere.installation.express.iseries.doc%2Fae%2Fwelcome_installing.html]
+
+Installing the IBM Installation Manager (IM):
+
+All editions of WebSphere Application Server 8.5 use the IBM Installation Manager (IM) product to perform the installation; therefore, you must install IBM Installation Manager before you can install WebSphere Application Server 8.5. 
+
+If IM is currently installed, you can check the version by running the following command:
+
+o STRQSH
+o cd /QIBM/ProdData/InstallationManager/eclipse/tools
+o umask 022
+imcl listInstalledPackages -long
+
+Example output.
+/QIBM/ProdData/InstallationManager/eclipse : com.ibm.cic.agent_1.5.2000.20120223_0907 : IBM® Installation Manager : 1.5.2
+
+Upgrade Installation Manager instructions can be found in the following document. 
+
+
+IBM Software Technical Document: "How to Download and Install/Upgrade the IBM Installation Manager (IM) product for the IBM i" [http://www-01.ibm.com/support/docview.wss?uid=nas8N1010434]
+
+
+
+
+The Installation Manager can be installed using one of the following methods:
+
+
+HTTP Web Administration Installation:
+
+Installation Manager can be installed either from the disc that came with V7R1 WE2 (web enablement), or it can be downloaded by following this document.. 
+IBM Software Technical Document: "How to Download and Install/Upgrade the IBM Installation Manager (IM) product for the IBM i" [http://www-01.ibm.com/support/docview.wss?uid=nas8N1010434]
+NOTE: For this method to work properly the HTTP group PTF (V7R1 - SF99368, V6R1- SF99115) needs to be at the most current level. See the following URL for the current levels available:
+
+http://www-912.ibm.com/s_dir/sline003.nsf/GroupPTFs?OpenView&view=GroupPTFs [http://www-912.ibm.com/s_dir/sline003.nsf/GroupPTFs?OpenView&view=GroupPTFs]
+
+A) Open a web browser and go to the following URL (replace systemname with your IBM i system name or IP address):
+http://systemname:2001/HTTPAdmin 
+
+
+B) Click on the 'Manage' Tab at the top and then click on the 'Installations' tab underneath.
+
+C) You should see a screen that looks similar to the following:
+
+This image shows the manage installations screen and highlights the install button. [/support/docview.wss?uid=nas8N1010876&aid=1] [/support/docview.wss?uid=nas8N1010876&aid=1]
+
+D) Click the 'Install' button.
+
+E) You then should see a screen similar to the following that prompts for the Installation Manager package location:
+
+This image shows how to specify the location of the IM install media. [/support/docview.wss?uid=nas8N1010876&aid=2] [/support/docview.wss?uid=nas8N1010876&aid=2]
+F) Type the location where the installation manager zip file was expanded and click Next.
+
+G) You should see a screen similar to the following (NOTE: In the screen below the location where Installation Manager was expanded was '/home/rklarsen/im'
+
+
+This image shows the installing icon that is displayed while the install process is running. [/support/docview.wss?uid=nas8N1010876&aid=3] [/support/docview.wss?uid=nas8N1010876&aid=3]
+
+Additional recommended documentation
+
+How To Install the IBM WebSphere Application Server (WAS) v8.0 and Later Product Using the IBM Web Administration for i Console [http://www-01.ibm.com/support/docview.wss?uid=nas8N1020070]
+
+IBM i Command Line installation:
+
+To install Installation Manager from the disc that came with V7R1 WE2 (web enablement), use the following sample commands:
+The following sample commands will install IM. 
+
+o STRQSH
+o cd /QOPT/IM_152_IBMI/IM_152_OS400.motif.ppc/
+o umask 022
+o installc -acceptLicense -log /home/imlog.log
+
+If you cannot locate the IM discs that came with your IBM Web Enablement package, you can follow the steps outlined in the IBM Software Technical Document: "How to Download and Install/Upgrade the IBM Installation Manager (IM) product for the IBM i" [http://www-01.ibm.com/support/docview.wss?uid=nas8N1010434] to complete the installation.
+
+Now that IBM Installation Manager is installed on your IBM i system, you can proceed with the installation of WebSphere Application Server 8.5 Express.
+
+If you have the DVD in hand, you can place that in the IBM i optical drive. If you do not have access to the machine, you can create an image catalog and use a virtual optical device. The following commands should help create and load the image catalog:
+
+
+
+ *  - [http://www.ibm.com/i/c.gif] Use an image catalog 
+   CHGOPTA EXTMEDFMT(*YES)
+   
+   
+   
+   Important Note: The CHGOPTA command must be issued before the LODIMGCLG shown below. If it is issued after the LODIMGCLG, you will re-load the catalog. 
+   CRTIMGCLG IMGCLG(WAS85) DIR('/WAS85/IMAGE') CRTDIR(*YES) 
+   
+   ADDIMGCLGE IMGCLG(WAS85) FROMFILE('/WAS85/ LCD8_1915_00_WebSphere_Appl_Server_Express_V8.5.iso ') TOFILE(*fromfile) 
+   
+   CRTDEVOPT DEVD(OPTVRT11) RSRCNAME(*VRT) Note: this may already exist, that is ok. 
+   
+   VRYCFG CFGOBJ(OPTVRT11) CFGTYPE(*DEV) STATUS(*ON) 
+   
+   LODIMGCLG IMGCLG(WAS85) DEV(OPTVRT11) 
+   
+
+
+
+Enable the handling of mixed case on your IBM i operating system with the following command: 
+
+CHGOPTA EXTMEDFMT(*YES) 
+
+Important Note: The CHGOPTA command must be issued before placing the DVD in the optical drive. If it is issued after placing the DVD in the optical drive, you will need to eject the disk and re-insert. If you only have the .iso image the command must also be run. 
+
+Once the media is loaded, there are two unique installation methods as follows: 
+
+1. Use the IBM Web Administration for i GUI. For detailed steps of this GUI method, you should refer to the following IBM developerWorks article: 
+
+http://www.ibm.com/developerworks/ibmi/library/i-webSphere_spplication_server_installation/index.html [http://www.ibm.com/developerworks/ibmi/library/i-webSphere_spplication_server_installation/index.html] 
+
+or 
+
+2. Launch the installation from within Qshell ( STRQSH): 
+
+
+/QIBM/ProdData/InstallationManager/eclipse/tools/imcl install com.ibm.websphere.WEBENAB.v85 
+-repositories /QOPT/WASV85_WEBENAB/was -installationDirectory /QIBM/ProdData/WebSphere/AppServer/V85/Express 
+-properties was.install.os400.profile.location=/QIBM/UserData/Websphere/Appserver/V85/Express -sharedResourcesDirectory /QIBM/UserData/IMShared -acceptLicense -showProgress 
+
+
+Note: The commands above should be a single command (one string) with a single space between parameters and values. 
+
+Inspect the following file to check for a successful installation: 
+
+/QIBM/UserData/InstallationManager/histories/IBM WebSphere Application Server Express V8.5/history.xml 
+
+Create the default profile 
+
+o STRQSH 
+o cd /QIBM/ProdData/WebSphere/AppServer/V85/Express/bin 
+o manageprofiles -create -profileName default -serverName server1 -defaultPorts -isDefault 
+
+Download and install the latest PTFs (fix fixpack) for WebSphere Application Server 8.5 
+
+You should visit the following product page to check for the latest PTFs: 
+
+http://www-03.ibm.com/systems/i/software/websphere/indexb85.html [http://www-03.ibm.com/systems/i/software/websphere/indexb80.html] 
+
+
+Cross reference information Segment Product Component Platform Version Edition Operating System IBM i 6.1 Operating System IBM i 7.1 Operating System IBM i 7.3 Operating System IBM i 7.2 
+HISTORICAL NUMBER
+ 639753399

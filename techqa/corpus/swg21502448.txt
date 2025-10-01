@@ -1,0 +1,51 @@
+Title: IBM How is the license validity for Rational DOORS licenses determined - United States
+
+Text:
+DOORS license TECHNOTE (FAQ)
+
+QUESTION
+ Is there a matrix available to identify license validity for IBM Rational DOORS? 
+
+ANSWER
+The license key validity for Rational DOORS is basically aligned with the maintenance end date reflected from the respective license key. 
+
+ 
+For example, if current license has a maintenance end date as follows reflected from the FEATURE/INCREMENT line:
+
+
+FEATURE DOORS telelogic 2008.1231 permanent 1
+
+
+ 
+
+This means that the key will work only for the DOORS releases available till '2008.1231' as reflected on the key. Hence if there is a later version of DOORS to be used , then this date should be greater than the release date of the respective version. This is accomplished when a new RENEWAL is purchased and the order will be reflected from the license key center. 
+
+There will be two orders listed from LKC as follows: 
+
+
+IBM RATIONAL DOORS FLOATING LIC 
+
+IBM RATIONAL DOORS FLOATING S&S RENEWAL
+
+
+
+
+ 
+
+The above orders depict the 'LIC' (actual license order, which has older maintenance date and used to generate a key by providing the host details), and 'S&S RENEWAL' order keys (for the latest renewal date). Go into 'LIC order first to generate the keys with the expired maintenance order and later go into 'S&S RENEWAL' order to update the maintenance on the already generated keys. 
+
+So the above license feature can look like as follows, after upgrade:
+
+
+FEATURE DOORS telelogic 2009.1231 permanent 1
+
+
+ 
+
+Review the DOORS release dates from the following link: 
+
+For IBM Rational releases: 
+http://www.ibm.com/software/support/lifecycle/index_r.html [http://www.ibm.com/software/support/lifecycle/index_r.html] 
+
+For Telelogic releases: 
+http://www.ibm.com/software/support/lifecycle/index_t.html [http://www.ibm.com/software/support/lifecycle/index_t.html]

@@ -1,0 +1,24 @@
+Title: IBM "Password Authentication failed. Enter a valid password." error message - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ I am trying to connect to a server using SSH. Why do I see the "Password Authentication failed. Enter a valid password." message? 
+
+CAUSE
+This error message is generated for either of the following reasons: 
+
+ * You entered an invalid password. 
+ * Password authentication is not enabled for SSH on your Linux® for zSeries® or z/OS® system. 
+
+ANSWER
+If you determine that your password is valid, you can resolve this error by enabling password authentication for SSH on your Linux for zSeries or z/OS system: 
+
+ 
+
+ 1. On your Linux for zSeries or z/OS system, locate the SSH server configuration in the sshd_config file. The SSH server configuration file is usually located in /etc/ssh/sshd_config. 
+ 2. Stop the SSH server. 
+ 3. Open the sshd_config file and change the PasswordAuthentication keyword to yes. 
+ 4. Save and close the sshd_config file. 
+ 5. Restart the SSH server.

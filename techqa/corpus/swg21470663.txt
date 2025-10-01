@@ -1,0 +1,39 @@
+Title: IBM SAP Adapter throws SelectorException during migration from WBIA to JCA - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ After migrating the artifacts from WBI mySAP Adapter on ICS to JCA SAP Adapter on WebSphere Process Server V7.0, the SAP Adapter throws an exception during runtime. 
+
+SYMPTOM
+The following exception is thrown during runtime:
+
+Caused by: com.ibm.websphere.sca.ServiceRuntimeException: 
+commonj.connector.runtime.SelectorException: Business object 
+definition 
+for 'sap_xyz' in namespace 
+'http://www.ibm.com/websphere/crossworlds/2002/BOSchema/sap_xyz'
+not found.. The adapter has not been configured for the IDoc Type... 
+
+
+CAUSE
+ WBI mySAP Adapter business objects did not contain the prefix "sap_", which is set by default when creating business object definitions with SAPODA. Thus it causes the JCA aAapter to throw a SelectorException during runtime as it expects "sap_" as the prefix of the business objects. 
+
+RESOLVING THE PROBLEM
+A new property "Default BO Prefix" has been introduced in the SAP JCA Adapter .
+
+
+If you do not have any prefix or custom prefix set during discovery using SAPODA for the bo names, you can change this value as desired. 
+The property is listed under the Advanced section with Group name Properties for migrated artifacts.
+
+The allowed values are:
+1. sap_ is the default value.
+2. You can edit the field and provide your own prefix.
+3. If the prefix needs to be empty or blank, Select "No Prefix" from the drop down.
+
+Here is a screen shot of the property from the Properties tab:
+DefaultBoPrefix.jpg [/support/docview.wss?uid=swg21470663&aid=2]DefaultBoPrefix.jpg [/support/docview.wss?uid=swg21470663&aid=1]
+- Adapter will use the changed prefix/no-prefix for business objects from the new property and use it during runtime to find the business object definitions. 
+
+NOTE: This property only appears if the artifacts are imported using the migration tool. As of now this property is introduced only for an ALE interface.

@@ -1,0 +1,135 @@
+Title: IBM Collecting Data (MustGather) for IBM i2 Intelligence Analysis Platform 3.0.9 - United States
+
+Text:
+MustGather; Gather Doc; IAP; i2; error logging PREVENTIVE SERVICE PLANNING
+
+ABSTRACT
+ There are a number of files and which need to be submitted alongside any service request for IBM i2 Intelligence Analysis Platform 3.0.9 
+
+CONTENT
+Before raising a service request please make sure that the relevant Software prerequisites from the appropriate Deployment Guide have been installed following the instructions shown in the relevant guide.
+Locating system log files
+
+WebSphere Deployments:
+
+System log files are located within the WebSphere Application Server Profiles for the IBM i2 Intelligence Analysis Platforms (IAP) Read and Write Servers.
+
+The IBM i2 IAP writes log data to the following locations:
+
+
+ * 
+ *  Write Server(s) 
+   \\<path to WebSphere installation location>\IBM\WebSphere\AppServer\profiles\write\logs
+ * 
+ *  Read Server(s) 
+   \\<path to WebSphere installation location>\IBM\WebSphere\AppServer\profiles\read\logs
+ * 
+
+
+
+There are a number of log files in each location. Select all the files, zip them, label the zip file to correspond to the source server and attach them to the PMR 
+
+The names could be different if the user has specified them to be different to the ones above. Or the user could have other profiles for data access on demand, for example. 
+
+Architecture Overview 
+
+If you need help from IBM to troubleshoot an IBM i2 Intelligence Analysis Platform deployment please provide the following information. 
+
+The IBM i2 IAP consists of a Write side server and Read side server(s) that communicate with each other on a publisher subscriber model. The Write server publishes information that the Read side servers subscribe to. When troubleshooting it is useful to have an overview of the system architecture 
+
+Gather the following information and ensure it is added to the PMR. 
+ * 
+ * Relational Database management system:
+ *  Database Type and version 
+ * 
+ * 
+ * 
+ * 
+ *  db2level 
+ * 
+ * 
+ * 
+ * 
+ *  Number of Database Servers 
+ * 
+ * Web server / Application server:
+ *  IBM WebSphere Application Server Type and version 
+ * 
+ * 
+ * 
+ * 
+ *  .\AppServer\bin\versionInfo.bat 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * Message-oriented middleware:
+ *  IBM WebSphere MQ version: 
+ * 
+ * 
+ * 
+ * 
+ *  dspmqver -a 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * Operating Systems:
+ *  List the Operating Systems running on the database hosts List the Operating Systems running on the Write Side Application Server hosts List the Operating Systems running on the Read Side Application Server hosts 
+ * 
+ * 
+ * 
+ * 
+ * 
+ *  winver 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * HTTP Reverse Proxy:
+ *  HTTP Server Type and Version 
+ * 
+ * 
+ * 
+ * 
+ *  .\HttpServer\bin\versionInfo.bat 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ *  .\HTTPServer\logs 
+ * 
+ * 
+ * Python version
+ *  Python version 
+ * 
+ * 
+ * 
+ * 
+ *  python -V 
+ * 
+ * 
+ * 
+ * 
+ * Location Diagram
+ *  A diagram or description of how the deployment is configured 
+ * 
+ * Things to describe, or show on the diagram:
+ *  Are all the machines on the same subnet? Are any machines virtualized? Where is the HTTP Server? 
+
+
+
+Configuration Folder 
+ * 
+ * Version 3.0.5 includes a python deployment script that uses 'user supplied' configuration folder to create, deploy and management of the Intelligence Analysis Platform.
+ * 
+ * To simplify this further, we ship a folder which contains all the configuration files, parameters, etc ready for the user to fill in. The file is located in IAP-Deployment-Toolkit/configuration/ and it will be named configuration.<date/time stamp of deployment>.zip and that contains all the necessary files. Please make sure that the relevant zip file is obtained as there might be a number of those files in the folder.
+ * 
+ * Alongside the files above there is also the deployment toolkit logs and the topology file from the deployment toolkit. Please make sure these files are also included in the service request:
+ *  <IAPinstalldir>\IAP-Deployment-Toolkit\configuration\logs <IAPinstalldir>\IAP-Deployment-Toolkit\configuration\environment\topology.xml

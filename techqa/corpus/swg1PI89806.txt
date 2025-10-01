@@ -1,0 +1,167 @@
+Title: IBM PI89806: NULLPOINTEREXCEPTION GENERATED WHEN USING ASYNC SERVLET AND PMI ON WEBSPHERE APPLICATION SERVER V9 - United States
+
+Text:
+  A FIX IS AVAILABLE
+9.0.0.7: WebSphere Application Server traditional V9.0 Fix Pack 7 [http://www-01.ibm.com/support/docview.wss?uid=swg24044620]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  If PMI is enabled and the application is using Asyncservlet
+   request, the following NullPointerException is generated in the
+   SystemOut.log:
+   
+   webapp        E
+   com.ibm.ws.webcontainer.webapp.WebApp logServletError SRVE0293E:
+   [Servlet Error]-[ServletNameNotFound]:
+   java.lang.NullPointerException
+   at com.ibm.ws.webcontainer.WebAppPmiListener
+         .onStartAsync(WebAppPmi Listener.java:407)
+   at com.ibm.ws.webcontainer.srt.SRTServletRequest
+         .startAsync(SRTServletRequest.java:3603)
+   at za.co.sepia.v4.cobrowse.async.AsyncWorkUtil
+         .waitForContent(AsyncWorkUtil.java:68)
+   at za.co.sepia.v4.cobrowse.CoBrowseFilter
+         .doFilter(CoBrowseFilter.java:326)
+   at com.ibm.ws.webcontainer.filter.FilterInstanceWrapper
+         .doFilter(FilterInstanceWrapper.java:197)
+   at com.ibm.ws.webcontainer.filter.WebAppFilterChain
+         .doFilter(WebAppFilterChain.java:90)
+   at com.ibm.ws.webcontainer.filter.WebAppFilterManager
+         .doFilter(WebA ppFilterManager.java:969)
+   at com.ibm.ws.webcontainer.filter.WebAppFilterManager
+         .invokeFilters(WebAppFilterManager.java:1109)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Disable PMI on the server
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  IBM WebSphere Application Server            *
+   *                  traditional version 9.0 users of            *
+   *                  WebContainer.                               *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: A java.lang.NullPointerException        *
+   *                      might be thrown when using async        *
+   *                      servlets and Performance Monitoring     *
+   *                      Infrastructure (PMI)                    *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   When an application uses async requests, PMI is enabled, and
+   there is an async filter, a java.lang.NullPointerException
+   might thrown if there is no target servlet mapped to the
+   request URI.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The WebContainer code has been modified to avoid the
+   NullPointerException.
+   
+   The fix for this APAR is currently targeted for inclusion in
+   fixpack 9.0.0.7. Please refer to the recommended updates page
+   for delivery information:
+   
+   http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI89806
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBS APP SERV N
+   
+   
+ * REPORTED COMPONENT ID
+   5724H8800
+   
+   
+ * REPORTED RELEASE
+   900
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-11-03
+   
+   
+ * CLOSED DATE
+   2018-03-05
+   
+   
+ * LAST MODIFIED DATE
+   2018-03-05
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBS APP SERV N
+   
+   
+ * FIXED COMPONENT ID
+   5724H8800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R900 PSY
+   UP

@@ -1,0 +1,30 @@
+Title: IBM How to get earlier releases of IBM JDK to test with your J2EE application or ITCAM software. - United States
+
+Text:
+JRE 1.4.2 1.5 IBM SUN Java 142 15 CAMADINST CAMADALL TECHNOTE (TROUBLESHOOTING)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ US English 
+
+PROBLEM(ABSTRACT)
+ Sometimes its useful to get an earlier release of the IBM JDK such as 1.4.2 or 1.5 to test your application with an older compatible release of Java. This technote describes how to do that. 
+
+RESOLVING THE PROBLEM
+Some commands in ITM or ITCAM for SOA don't always work with the latest and greatest Java. The supported levels are usually JRE 1.4.2. or 1.5 and higher for some ITM 6.2.x versions. Just in case you want to use a lower level of JRE that's still compatible and supported, this is how you can get it. 
+
+http://www.ibm.com/developerworks/java/jdk/ [http://www.ibm.com/developerworks/java/jdk/]
+- pick your OS
+- login if needed
+- download the file, unzip/untar
+- change permissions if needed
+- install it to a temp directory
+
+
+If you prefer you can add this JRE to your PATH variable for it to be picked up when you start your application.
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Systems and Asset Management Tivoli Composite Application Manager for Application Diagnostics ITCAM for APPLICATION DIAGNOSTICS Agent for WebSphere AIX, AIX 64bit, HP-UX, Linux, Solaris, Windows 7.1 
+PRODUCT ALIAS/SYNONYM
+ ITCAM for WebSphere ITCAM for SOA ITCAM for App Diagnostics

@@ -1,0 +1,22 @@
+Title: IBM Sterling Connect:Direct for Windows Secure+ configuration move - United States
+
+Text:
+Sterling move migrate Secure+ SPE TECHNOTE (FAQ)
+
+QUESTION
+ How to move the IBM Sterling Connect:Direct for Windows version 4.6. Secure+ configuration to a new server ? 
+
+ANSWER
+1. Disable Strong Password Encryption (SPE) on the new server. Restart IBM Sterling Connect:Direct for Windows once.
+2. Stop the new IBM Sterling Connect:Direct for Windows .
+3. Clear the Server\Secure+\Nodes folder on the new server.
+4. Disable SPE on the old server. Restart IBM Sterling Connect:Direct for Windows once.
+5. Stop the old IBM Sterling Connect:Direct for Windows .
+6. Copy the contents of the Server\Secure+\Nodes from the old to the new server. Also copy any certificate files.
+7. Open C:D Secure+ Admin Tool on the new server and perform a Validate. If you wish to, you can enable SPE again now.
+8. Start the new IBM Sterling Connect:Direct for Windows and verify it is working properly.
+
+To disable SPE:
+
+1. Open the Secure + Admin tool > Edit > Password Encryption
+2. Click "No" on Enable Strong Password Encryption

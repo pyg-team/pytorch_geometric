@@ -1,0 +1,22 @@
+Title: IBM Rational Rhapsody tool for capturing requirements - United States
+
+Text:
+Requirements; Capture; Gateway TECHNOTE (FAQ)
+
+QUESTION
+ What tools within IBM Rational Rhapsody can be used to capture requirements? 
+
+ANSWER
+You can use the Rational Rhapsody Gateway product to define specific requirements to support your analysis. This add-on product allows Rational Rhapsody to hook up seamlessly with third-party requirements and authoring tools for complete requirements traceability. The Rational Rhapsody Gateway includes the following features: 
+
+ 
+
+ * Traceability of requirements workflow on all levels, in real-time. 
+ * Automatic management of complex requirements scenarios for intuitive and understandable views of upstream and downstream impacts. 
+ * Creates impact reports and requirements traceability matrices to meet industry safety standards. 
+ * Connects to common requirements management/authoring tools including DOORS, Requisite Pro®, Word®, Excel® Powerpoint PDF®, ASCII, FrameMaker, Code and Test files. 
+ * A bidirectional interface with the third-party requirements management and authoring tools. 
+ * Monitoring of all levels of the workflow, for better project management and efficiency. 
+
+
+You can find detailed user/customization guides (Rational Rhapsody Gateway User's Manual & Rational Rhapsody Gateway Customization Guide) on Gateway in the Rational Rhapsody installation folder (/Docs/pdf_docs/).

@@ -1,0 +1,196 @@
+Title: IBM The import task failed with "DBDefaultPoolerManager::getConnection:The             
+datasource is not available" error after a new ILMT/SUA database recreated. - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ The import task failed with "DBDefaultPoolerManager::getConnection:The 
+datasource is not available" error after a new ILMT/SUA database recreated. 
+
+CAUSE
+After recreating a new database for ILMT/SUA, the import task continues to fail with these errors:
+
+tema.log 
+
+[7/29/15 17:23:30:420 UTC] 00000036 SystemOut 
+O 2015-07-29 17:23:30 LMT [DEBUG] (Default Executor-thread-6) ENTER: 
+com.ibm.license.mgmt.etl.facade.impl.EtlService::initialize() 
+[7/29/15 17:23:30:475 UTC] 00000036 SystemOut 
+O 2015-07-29 17:23:30 LMT [DEBUG] (Default Executor-thread-6) ENTER: 
+com.ibm.license.mgmt.dao.util.DBDefaultPoolerManager::init jndiName is 
+jdbc/ilmtDatabaseConnection 
+[7/29/15 17:23:30:484 UTC] 00000036 SystemOut 
+O 2015-07-29 17:23:30 LMT [DEBUG] (Default Executor-thread-6) 
+com.ibm.license.mgmt.dao.util.DatabaseJndiLookup::getService::Looking up 
+data source jdbc/ilmtDatabaseConnection 
+[7/29/15 17:23:30:542 UTC] 00000036 com.ibm.ws.jca.cm.ConnectorService 
+I J2CA8050I: An authentication alias should be used instead of defining 
+a user name and password on 
+com.ibm.ws.jdbc.dataSource-DB2Connection/properties.db2.jcc-0. 
+[7/29/15 17:23:31:084 UTC] 00000036 
+com.ibm.ws.recoverylog.spi.RecoveryDirectorImpl I 
+CWRLS0010I: Performing recovery processing for local WebSphere server 
+(Cell\Node\Server). 
+[7/29/15 17:23:31:144 UTC] 00000032 com.ibm.ws.webcontainer.webapp 
+I SRVE0292I: Servlet Message - [tema]:.[INFO] Started GET 
+"/import_status?background_poll=true" for 10.215.35.17 at 2015-07-29 
+17:23:31 +0000 
+. 
+. 
+. 
+
+[7/29/15 17:23:31:218 UTC] 00000036 SystemOut 
+O 2015-07-29 17:23:31 LMT [DEBUG] (Default Executor-thread-6) 
+com.ibm.license.mgmt.dao.util.DatabaseJndiLookup::getService::Datasource 
+found com.ibm.ws.rsadapter.jdbc.WSJdbcDataSource 
+[7/29/15 17:23:32:214 UTC] 00000036 
+com.ibm.ws.logging.internal.impl.IncidentImpl I 
+FFDC1015I: An FFDC Incident has been created: 
+"com.ibm.db2.jcc.am.DisconnectNonTransientConnectionException: 
+[jcc][t4][2057][11264][3.64.104] The application server rejected 
+establishment of the connection. 
+An attempt was made to access a database, SUADB, which was either not 
+found or does not support transactions. ERRORCODE=-4499, SQLSTATE=08004 
+com.ibm.ws.rsadapter.spi.InternalGenericDataStoreHelper.getPooledCon 
+1298" at ffdc_15.07.29_17.23.31.0.log 
+[7/29/15 17:23:32:383 UTC] 00000036 
+com.ibm.ws.logging.internal.impl.IncidentImpl I 
+FFDC1015I: An FFDC Incident has been created: 
+"com.ibm.ws.rsadapter.exceptions.DataStoreAdapterException: DSRA8100E: 
+Unable to get a PooledConnection from the DataSource. 
+com.ibm.ejs.j2c.poolmanager.FreePool.createManagedConnectionWithMCWrappe 
+r 199" at ffdc_15.07.29_17.23.32.0.log 
+[7/29/15 17:23:32:413 UTC] 00000036 
+com.ibm.ws.logging.internal.impl.IncidentImpl I 
+FFDC1015I: An FFDC Incident has been created: 
+"javax.resource.spi.ResourceAllocationException: DSRA8100E: Unable to 
+get a PooledConnection from the DataSource. 
+com.ibm.ws.rsadapter.jdbc.WSJdbcDataSource.getConnection 299" at 
+ffdc_15.07.29_17.23.32.1.log 
+[7/29/15 17:23:32:417 UTC] 00000036 SystemOut 
+O 2015-07-29 17:23:32 LMT [ERROR] (Default Executor-thread-6) 
+com.ibm.license.mgmt.dao.util.DBDefaultPoolerManager::init:Unable to 
+initialize datasource jdbc/ilmtDatabaseConnection 
+[7/29/15 17:23:32:419 UTC] 00000036 SystemOut 
+O 2015-07-29 17:23:32 LMT [DEBUG] (Default Executor-thread-6) 
+com.ibm.license.mgmt.dao.util.DBResourceManager::registerPooler()::Poole 
+r with JNDI: jdbc/ilmtDatabaseConnection is already registered. Skipping 
+registration. 
+
+
+
+
+
+=========================================================
+
+
+Import log: 
+
+2015-07-29 17:23:32 (+0:00:00.000) DEBUG: 
+EXIT::com.ibm.license.mgmt.etl.facade.impl.EtlService::initiateEtl() 
+2015-07-29 17:23:32 (+0:00:00.001) DEBUG: Enter: 
+com.ibm.license.mgmt.etl.facade.impl.EtlService::run 
+2015-07-29 17:23:32 (+0:00:00.000) INFO: (ImportThread) 
+com.ibm.license.mgmt.etl.core.actions.AbstractEtlAction::process()::Star 
+ting execution of step: MergeComputersAction 
+2015-07-29 17:23:32 (+0:00:00.002) ERROR: (ImportThread) 
+com.ibm.license.mgmt.dao.util.DBDefaultPoolerManager::getConnection:The 
+datasource is not available 
+2015-07-29 17:23:32 (+0:00:00.014) ERROR: (ImportThread) execute failed 
+com.ibm.license.mgmt.util.exceptions.TransactionException 
+at com.ibm.license.mgmt.dao.util.DBDefaultPoolerManager.getConne 
+ction(DBDef aultPoolerManager.java:98) 
+at com.ibm.license.mgmt.dao.util.DBResourceManager.getConnection 
+(DBResource Manager.java:72) 
+at com.ibm.license.mgmt.dao.util.DatabaseTransaction.<init>(Data 
+baseTransac tion.java:42) 
+at com.ibm.license.mgmt.dao.util.DatabaseTransactionManager.begi 
+n(DatabaseT ransactionManager.java:38) 
+at com.ibm.license.mgmt.etl.core.actions.AbstractAction.execute( 
+AbstractAct ion.java:57) 
+at com.ibm.license.mgmt.etl.core.actions.AbstractEtlAction.proce 
+ss(Abstract EtlAction.java:37) 
+at com.ibm.license.mgmt.etl.facade.impl.EtlService.processIEtlSt 
+eps(EtlServ ice.java:302) 
+
+
+The above errors indicated problems connecting to a database name called SUADB due to db connection rejected or the database does not exist.
+
+SQLSTATE=08004 means that the application server rejected establishment of the connection. 
+
+Check the following items:
+
+1) Does SUADB database even exist (run "db2 list db directory" command to verify the name of the database)? 
+
+2) Is port 50000 listening (check netstat -an outputs) on the DB2 server?
+
+3) Is the firewall enabled blocking connection to that port 50000? If it is, try disable the firewall and run the import task again. 
+
+If everything looks fine, proceed steps below to resolve the issue.
+
+
+ANSWER
+This is a common problem depending which version of ILMT/SUA was initially installed before any upgrade was done afterward. The initial ILMT/SUA v9.0 release is using SUADB database name. Starting later release after v9.0, the database name has changed to TEMADB. 
+
+ 
+
+For example, if a ILMT v9.0 was installed using SUADB database name before and then upgraded to v9.2.x, this problem will most likely occur after dropping SUADB and recreating with TEMADB by removing the database.yml file. This causes the datasource setting defined inside server.xml file out of sync. 
+
+ 
+
+Example for ILMT:
+
+The /opt/ibm/LMT/wlp/usr/servers/server1/config/database.yml is referencing a database name called TEMADB. See below.
+
+
+
+production: 
+host: localhost 
+database: TEMADB 
+username: db2inst1 
+database_type: db2 
+port: '50000' 
+encrypted_password: '{xor}O2tvbTNvPDQqLw=='
+
+
+The /opt/ibm/LMT/wlp/usr/servers/server1/server.xml is still referencing the old database name SUADB. See below.
+
+
+
+<dataSource id="DB2Connection" 
+jndiName="jdbc/ilmtDatabaseConnection"> 
+<jdbcDriver libraryRef="DB2JCC4Lib"/> 
+<properties.db2.jcc databaseName="SUADB" driverType="4" 
+enableExtendedIndicators="2" 
+password="{xor}O2tvbTNvPDQqLw==" portNumber="50000" 
+serverName="localhost" user="db2inst1"/> 
+</dataSource> 
+
+
+
+To resolve this:
+
+- Stop the ILMT server service.
+
+- Edit /opt/ibm/LMT/wlp/usr/servers/server1/server.xml and change the datasource setting with a correct database name called TEMADB. 
+
+<dataSource id="DB2Connection" 
+jndiName="jdbc/ilmtDatabaseConnection"> 
+<jdbcDriver libraryRef="DB2JCC4Lib"/> 
+<properties.db2.jcc databaseName="TEMADB" driverType="4" 
+enableExtendedIndicators="2" 
+password="{xor}O2tvbTNvPDQqLw==" portNumber="50000" 
+serverName="localhost" user="db2inst1"/> 
+</dataSource> 
+
+
+This will sync up with the database.yml file.
+
+Important Note: Make a backup copy of the server.xml file to some place else before making any changes to this file as it could have a potential bringing down the ILMT server service if a mistake is made or the file becomes corrupted. 
+
+- Restart the ILMT server service. This should resolve the datasource error in the import log.
+
+
+
+If it does not resolve the issue, please contact the IBM Support Team for further assistance.

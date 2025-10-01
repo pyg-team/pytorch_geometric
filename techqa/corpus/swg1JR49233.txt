@@ -1,0 +1,284 @@
+Title: IBM JR49233: CMVC 234152 - This fix is to address transaction timeouts when running the SitemapGenerate job - United States
+
+Text:
+  DIRECT LINKS TO FIXES
+7.0.0.9 for Developer Express [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FWebSphere+Commerce&fixids=7.0.0-WS-WCDeveloperExpress-FP009&source=SAR]
+7.0.0.9 for Developer Professional [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FWebSphere+Commerce&fixids=7.0.0-WS-WCDeveloperProfessional-FP009&source=SAR]
+7.0.0.9 for Developer Enterprise [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FWebSphere+Commerce&fixids=7.0.0-WS-WCDeveloperEnterprise-FP009&source=SAR]
+7.0.0-WS-WCServer-FP009 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FWebSphere+Commerce&fixids=7.0.0-WS-WCServer-FP009&source=SAR]
+WebSphere Commerce Version 7.0.0.9 Fix Pack [http://www-01.ibm.com/support/docview.wss?uid=swg24038826]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When running the SitemapGenerate scheduler job a transaction
+   time out may be seen if there are a large number of products
+   under one specific category.  You may see something like the
+   following in the SystemOut log files:
+   
+    [10/23/13 22:05:48:408 CDT] 00000008 TimeoutManage I
+   WTRN0124I: When the timeout occurred the thread with which the
+   transaction is, or was most recently, associated was
+   Thread[WorkManager.default : 28,5,reserved: WC_WC_QA_Inst]. The
+   stack trace of this thread when the timeout occurred was:
+      java.net.SocketInputStream.socketRead0(Native Method)
+      java.net.SocketInputStream.read(SocketInputStream.java:129)
+      oracle.net.ns.Packet.receive(Packet.java:282)
+      oracle.net.ns.DataPacket.receive(DataPacket.java:103)
+   
+   oracle.net.ns.NetInputStream.getNextPacket(NetInputStream.java:2
+   30)
+      oracle.net.ns.NetInputStream.read(NetInputStream.java:175)
+      oracle.net.ns.NetInputStream.read(NetInputStream.java:100)
+      oracle.net.ns.NetInputStream.read(NetInputStream.java:85)
+   
+   oracle.jdbc.driver.T4CSocketInputStreamWrapper.readNextPacket(T4
+   CSocketInputStreamWrapper.java:122)
+   
+   oracle.jdbc.driver.T4CSocketInputStreamWrapper.read(T4CSocketInp
+   utStreamWrapper.java:78)
+   
+   oracle.jdbc.driver.T4CMAREngine.unmarshalUB1(T4CMAREngine.java:1
+   179)
+   
+   oracle.jdbc.driver.T4CMAREngine.unmarshalSB1(T4CMAREngine.java:1
+   155)
+      oracle.jdbc.driver.T4CTTIfun.receive(T4CTTIfun.java:279)
+      oracle.jdbc.driver.T4CTTIfun.doRPC(T4CTTIfun.java:186)
+      oracle.jdbc.driver.T4C8Oall.doOALL(T4C8Oall.java:521)
+   
+   oracle.jdbc.driver.T4CPreparedStatement.doOall8(T4CPreparedState
+   ment.java:205)
+   
+   oracle.jdbc.driver.T4CPreparedStatement.fetch(T4CPreparedStateme
+   nt.java:1082)
+   
+   oracle.jdbc.driver.OracleResultSetImpl.close_or_fetch_from_next(
+   OracleResultSetImpl.java:369)
+   
+   oracle.jdbc.driver.OracleResultSetImpl.next(OracleResultSetImpl.
+   java:273)
+   
+   com.ibm.ws.rsadapter.jdbc.WSJdbcResultSet.next(WSJdbcResultSet.j
+   ava:3120)
+   
+   com.ibm.commerce.base.objects.ServerJDBCHelperBean$MyResultSet.n
+   ext(ServerJDBCHelperBean.java:263)
+   
+   com.ibm.commerce.base.objects.ServerJDBCHelperBean$MyResultSet.a
+   ccess$1(ServerJDBCHelperBean.java:261)
+   
+   com.ibm.commerce.base.objects.ServerJDBCHelperBean.myConvertResu
+   ltSetToTable(ServerJDBCHelperBean.java:304)
+   
+   com.ibm.commerce.base.objects.ServerJDBCHelperBean.executeParame
+   terizedQueryNoCache(ServerJDBCHelperBean.java:498)
+   
+   com.ibm.commerce.base.objects.ServerJDBCHelperBean.executeParame
+   terizedQuery(ServerJDBCHelperBean.java:447)
+   
+   com.ibm.commerce.base.objects.ServerJDBCHelperBean.executeQuery(
+   ServerJDBCHelperBean.java:574)
+   
+   com.ibm.commerce.base.objects.EJSRemoteStatelessServerJDBCHelper
+   _1e86a748.executeQuery(EJSRemoteStatelessServerJDBCHelper_1e86a7
+   48.java:893)
+   
+   com.ibm.commerce.base.objects._ServerJDBCHelper_Stub.executeQuer
+   y(_ServerJDBCHelper_Stub.java:506)
+   
+   com.ibm.commerce.base.objects.ServerJDBCHelperAccessBean.execute
+   Query(ServerJDBCHelperAccessBean.java:198)
+      com.ibm.commerce.search.base.Query.execute(Query.java:188)
+   
+   com.ibm.commerce.search.rulequery.RuleQuery.execute(RuleQuery.ja
+   va:3127)
+   
+   com.ibm.commerce.search.beans.CatEntrySearchListDataBean.execute
+   (CatEntrySearchListDataBean.java:1248)
+   
+   com.ibm.commerce.search.beans.CatEntrySearchListDataBean.populat
+   e(CatEntrySearchListDataBean.java:2543)
+   
+   com.ibm.commerce.beans.DataBeanManager.directActivate(DataBeanMa
+   nager.java:551)
+   
+   com.ibm.commerce.beans.DataBeanManager.activate(DataBeanManager.
+   java:206)
+   
+   com.ibm.commerce.beans.DataBeanManager.activate(DataBeanManager.
+   java:174)
+   
+   com.ibm.commerce.seo.beans.CatalogNodeListDataBean.getCatEntries
+   (CatalogNodeListDataBean.java:716)
+   
+   com.ibm.commerce.seo.beans.CatalogNodeListDataBean.access$8(Cata
+   logNodeListDataBean.java:686)
+   
+   com.ibm.commerce.seo.beans.CatalogNodeListDataBean$CatalogTreeIt
+   erator.next(CatalogNodeListDataBean.java:561)
+   
+   com.ibm.commerce.seo.sitemap.commands.AbstractCatalogTreeSiteMap
+   GenerateCmdImpl.performExecute(AbstractCatalogTreeSiteMapGenerat
+   eCmdImpl.java:312)
+   
+   com.ibm.commerce.command.ECCommandTarget.executeCommand(ECComman
+   dTarget.java:157)
+   
+   com.ibm.ws.cache.command.CommandCache.executeCommand(CommandCach
+   e.java:332)
+   
+   com.ibm.websphere.command.CacheableCommandImpl.execute(Cacheable
+   CommandImpl.java:166)
+   
+   com.ibm.commerce.command.AbstractECTargetableCommand.execute(Abs
+   tractECTargetableCommand.java:217)
+   
+   com.ibm.commerce.seo.commands.SitemapGenerateCmdImpl.createSiteM
+   apForCatalog(SitemapGenerateCmdImpl.java:1572)
+   
+   com.ibm.commerce.seo.commands.SitemapGenerateCmdImpl.createRawSi
+   temapForSEO(SitemapGenerateCmdImpl.java:1359)
+   
+   
+    The job will run to completion, but the sitemap.xml files will
+   be missing expected URLs.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Redistribute your products under multiple categories
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  USERS AFFECTED:
+    WebSphere Commerce users on v7.0 running the SitemapGenerate
+   job with a large number of products under one category
+   
+    PROBLEM ABSTRACT:
+    Transactions time out while running the SitemapGenerate
+   scheduler job
+   
+    BUSINESS IMPACT:
+    The SitemapGenerate job will not create product URLs in the
+   sitemap.xml file for the products under the category
+   
+    RECOMMENDATION:
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The SitemapGenerate scheduler job uses the
+   CatalogNodeListDataBean to to query information about products
+   in each category.  When the query returns more than 1000 rows,
+   the query is executed multiple times, once for each 1000 rows.
+   When the query returns many rows, the query is executed many
+   times, which can lead to poor performance.  However, it is not
+   necessary to execute the query multiple times.
+   
+    This iFix changes the processing logic so that the query is
+   only executed once for each category.  It also changes the query
+   to use parameter markers, which can improve performance.
+   
+    -------------------------------------------------------------
+    The latest available maintenance information can be obtained
+   from the Recommended Fixes for WebSphere Commerce technote:
+    http://www.ibm.com/support/docview.wss?rs=3046&uid=swg21261296 [http://www.ibm.com/support/docview.wss?rs=3046&uid=swg21261296]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR49233
+   
+   
+ * REPORTED COMPONENT NAME
+   WC BUS EDITION
+   
+   
+ * REPORTED COMPONENT ID
+   5724I3800
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-02-02
+   
+   
+ * CLOSED DATE
+   2014-06-23
+   
+   
+ * LAST MODIFIED DATE
+   2014-06-23
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WC BUS EDITION
+   
+   
+ * FIXED COMPONENT ID
+   5724I3800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R700 PSY
+   UP

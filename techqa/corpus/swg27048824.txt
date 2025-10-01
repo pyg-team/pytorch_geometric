@@ -1,0 +1,43 @@
+Title: IBM Open Mic Webcast: Configuring SDS 8.0.1 Virtual Appliance with a remote DB2 database  - Tuesday, 17 Jan 2017 [presentation slides are attached; includes link to replay] - United States
+
+Text:
+peoplesec-open-mic; setup; set-up; ISS_OPEN_MIC WEBCAST
+
+ABSTRACT
+ Ram Reddy of the IBM Security Directory Support team discussed configuring the SDS 8.0.1 Virtual Appliance with a remote DB2 database. After the presentation, attendees were given an opportunity to ask the panel of experts questions. 
+
+CONTENT
+On January 17th, the Directory Support team hosted an ISDS Open Mic webcast and discussed configuring SDS 8.0.1 Virtual Appliance with a remote DB2 database.
+
+Throughout the event, attendees were encouraged to comment or ask questions in the Q&A Panel within the WebEx Event Center. 
+
+ * Topic: Configuring SDS 8.0.1 Virtual Appliance with a remote DB2 database 
+ * Date: Tuesday, 17 January 2017 
+ * Time: 11:00 AM EST (15:00 UTC/GMT, UTC-4 hours) for 60 minutes 
+
+
+How to ask questions in advance We have set aside the following post in the ISDS customer forum within dWAnswers for you to ask questions about this Open Mic topic. We aim to address as many questions as possible during the Open Mic webcast. 
+
+https://developer.ibm.com/answers/questions/334259/ibm-announcement-configuring-sds-801-virtual-appli/ [https://developer.ibm.com/answers/questions/334259/ibm-announcement-configuring-sds-801-virtual-appli/] 
+
+
+Presentation OpenMic-ISDS801_RemoteDB2Config-presentation-17Jan2017-v1.pdf [/support/docview.wss?uid=swg27048824&aid=2]OpenMic-ISDS801_RemoteDB2Config-presentation-17Jan2017-v1.pdf [/support/docview.wss?uid=swg27048824&aid=1] 
+
+
+Additional Documentation ISDS801_RemoteDB2Config_DetailedSteps_17Jan2017-v1.pdf [/support/docview.wss?uid=swg27048824&aid=4]ISDS801_RemoteDB2Config_DetailedSteps_17Jan2017-v1.pdf [/support/docview.wss?uid=swg27048824&aid=3] 
+
+
+Audio Replay The recorded session is at https://www.youtube.com/watch?v=CQbQT11GwTU [https://www.youtube.com/watch?v=CQbQT11GwTU] on the IBM Security Support You Tube channel [https://www.youtube.com/IBMSecuritySupport]. 
+
+
+About Open Mic Webcasts IBM Security Systems Support wants to help you take full advantage of your products. Join us for our Open Mic Webcast series as technical experts share their knowledge and answer your questions. These webcasts are designed to address specific topics and provide an in-depth and focused technical exchange in a convenient online webcast format. 
+
+Visit the Support Technical Exchanges for IBM [https://support.podc.sl.edst.ibm.com/support/home/exchanges-listing/K527788Q35237V48/IBM_Security_support_%28general%29/product] Security page to see lists of all scheduled and past Open Mic events 
+
+We welcome you to follow us on Twitter [http://bit.ly/1jZ80d3] @AskIBMSecurity [http://bit.ly/1jZ80d3]. 
+We welcome you to like us on Facebook. [https://www.facebook.com/IBMSecuritySupport] 
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Security IBM Security Directory Suite General Appliance 8.0.1

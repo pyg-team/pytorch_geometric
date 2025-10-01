@@ -1,0 +1,30 @@
+Title: IBM Supported Java and Browser versions for Cast Iron Live v7.5.* web start studio - United States
+
+Text:
+castiron:live:webstart:studio:java:browser:jnlp TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ What are the browsers and Java versions Cast Iron Live 7.5.* supports? 
+
+SYMPTOM
+Cast Iron Live web start studio has Java and browser dependencies
+
+
+RESOLVING THE PROBLEM
+ 
+
+Following table display the supported Browser and Java version matrix for Cast Iron Live 7.5.* web start studio. 
+
+ 
+
+Browser Browser Versions OS Java Versions Internet Explorer (32bit and 64 bit) IE 11.0.9600.17937 and above Windows Oracle Java 8.0.11 and above
+Oracle Java 7.0.71 and above Mozilla Firefox (32 bit) 40.0.2 and above Windows, Mac & Linux Oracle Java 8.0.11 and above
+Oracle Java 7.0.71 and above 
+Cast Iron Live 7.5.* supports the latest Java versions with a fixed dependency.  * When downloading Web Start Studio, the JRE required depends on the JRE of the Browser. 
+ * For starting the Web Start Studio, the JRE required is the System level JRE, i.e. the value set in the system’s PATH variable. The bit level of endpoint application libraries in the Web Management Console (WMC) should match the JRE level of the system PATH for Web Start Studio to work with endpoint applications.
+
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ Cast Iron Live

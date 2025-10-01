@@ -1,0 +1,197 @@
+Title: IBM IO06827: Various problems with DM integration and Microsoft Word when the DOC does not use Normal.DOT - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  DM buttons sometimes do not appear in Word (related to PMR
+   06870
+   999 806).
+   After opening word with a document containing macros and then
+   closing
+   the document the DM buttons disappear. When opening a new
+   document
+   after this there is no question to start DM and no DM buttons
+   appear.
+   This has been demonstrated to Patrick Dias in a sametime meeting
+   2006-
+   11-10.
+   Steps to reproduce issue, all are done with DM already open and
+   a user
+   logged inn, all other programs (including Word) are closed. Most
+   of the
+   issues are recreated with the document testDato.doc. The issues
+   are
+   however not solely related to this document.
+   1a) Start->Run, <path>\testDato.doc
+   1b) Answer disable macros, and Yes to start DM - Buttons now
+   show up
+   1c) File-Close, press leave local, and no to save the template
+   1d) Start->Run, <path>\testDato.doc
+   1e) disable macros this time as well
+   1f) Now there is no question to start DM, and no buttons appear
+   
+   Part II
+   Word asks if users want to save the template when closing a
+   document that is based on a template.
+   It seems from http://support.microsoft.com/kb/291352 that this
+   is
+   because of the addin misbehaving.
+   Steps to reproduce the issue. Done with DM already open and a
+   user
+   logged inn, all other programs (including Word) are closed. Done
+   using
+   the attached document testDato.doc and template TINE Brevmal
+   bokmaal.
+   dot. The issues are however not solely related to these
+   documents.
+   3a) Start->Run, <path>\testDato.doc
+   3b) Answer disable macros, and Yes to start DM
+   3c) File-Close, press leave local
+   3d) The user is now asked to save the template. This does not
+   happend
+   if you answer No to integrate with DM
+   
+   
+   Part III
+   The question "Would you like Word to use DM?" is not consistent.
+   This is asked if execute a document or template, but not if you
+   start
+   winword.exe directly. (this is related to PMR 15056 999 806)
+   There is also issues with this question often not appearing when
+   the
+   document is opened, but first appearing when the document is
+   closed.
+   This causes the DM buttons to not be available when needed.
+   4a) Start->Run, Winword.exe
+   4b) The question is not asked, but buttons still show up in Word
+   4c) Close Word
+   4d) Start->Run, <path>\testDato.doc
+   4e) Now the question comes up
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Several problems existed with DB2 Document Manager and
+   Microsoft Word integration:
+   
+    - If a user started the DB2 Document Manager Desktop and logged
+      into a library before the user started Microsoft Word,
+      integration between the two applications was not
+      automatically enabled, as it should have been. When this
+      happened, DB2 Document Manager commands were not visible in
+      Microsoft Word.
+   
+    - When a user closed a document that was created from a
+      template, the user was prompted to save the document changes
+      to the template. Also, after the document and the associated
+      template were closed, the DB2 Document Manager toolbars that
+      were  associated with the template were removed.
+   
+    - When a user double-clicked a Microsoft Word document or a
+      template, the user was not prompted to use DB2 Document
+      Manager with Microsoft Word and integration between the two
+      applications was not automatically enabled, as it should
+      have been. When this happened, DB2 Document Manager commands
+      were not visible in Microsoft Word.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix is available in DB2 Document Manager v8.3 Fix Pack 7
+   and v8.4.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IO06827
+   
+   
+ * REPORTED COMPONENT NAME
+   DOCMGR DESKTOP
+   
+   
+ * REPORTED COMPONENT ID
+   5724H9000
+   
+   
+ * REPORTED RELEASE
+   830
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2007-06-06
+   
+   
+ * CLOSED DATE
+   2007-12-27
+   
+   
+ * LAST MODIFIED DATE
+   2007-12-27
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   DOCMGR DESKTOP
+   
+   
+ * FIXED COMPONENT ID
+   5724H9000
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R830 PSY
+   UP

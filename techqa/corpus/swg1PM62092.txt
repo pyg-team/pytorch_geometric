@@ -1,0 +1,187 @@
+Title: IBM PM62092: MEMORY LEAK IN METHOD INT EXECUTEDLICALL(INT NUMOFARGS,...) - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  AbendU0101 received reading/writing GSAM files. The SLIP dump
+   shows that all the memory is fullfilled with HANC blocks.
+   The memory leak is in method  int executeDLICall(int
+   numOfArgs,...) . Function malloc() was called twice but does not
+   call free() to free up memory.
+   This is a forward fit of APAR PM33918 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM33918].
+   In this case the customer received abendU0101 , abendu4094 and
+   abend878.
+   ..
+   This APAR will also contain the code that is a forward fit of
+   APAR PM24922 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM24922].
+   The error description for this fix is as follows:
+   Websphere/ODBA threads are hanging and do not complete after
+   a close connection is done by the application.  Further researc
+   showed that IMS is not getting driven for DPSB after the close
+   connection.  The application is set for 'rollback only' and
+   that exposes a problem where the libraries aren't deallocating
+   the PSB in the 'rollback only' situation.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Regarding the Websphere hung threads fix:
+   The threads can be terminated with an IMS /STOP THREAD xx
+   command.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All users of V12 IMS Classic Drivers.        *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: This APAR contains fixes for the        *
+   *                      following issues:                       *
+   *                      The IBM IMS Classic Drivers cause a     *
+   *                      memory leak when reading or writing     *
+   *                      GSAM files that results in an Abend     *
+   *                      U0101.                                  *
+   *                                                              *
+   *                      The IBM IMS Classic Drivers are not     *
+   *                      properly driving IMS through DPSB       *
+   *                      processing when the application is set  *
+   *                      to "Rollback Only", resulting in hung   *
+   *                      ODBA Threads.                           *
+   ****************************************************************
+   * RECOMMENDATION: INSTALL CORRECTIVE SERVICE FOR APAR/PTF      *
+   ****************************************************************
+   This APAR contains fixes for the
+   following issues:
+   The IBM IMS Classic Drivers cause a memory leak when reading or
+   writing GSAM files that results in an ABENDU0101.
+   
+   IBM IMS Classic Drivers are not properly driving IMS through
+   DPSB processing when an application is set to "Rollback Only",
+   resulting in hung ODBA threads.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  GEN:
+   KEYWORDS:
+   
+   *** END IMS KEYWORDS ***
+   The IBM IMS Classic Drivers will now properly free allocated
+   memory.
+   
+   The IBM IMS Classic Drivers has enhanced DPSB processing to
+   ensure that threads are properly terminated.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM62092
+   
+   
+ * REPORTED COMPONENT NAME
+   IMS V12
+   
+   
+ * REPORTED COMPONENT ID
+   5635A0300
+   
+   
+ * REPORTED RELEASE
+   206
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2012-04-09
+   
+   
+ * CLOSED DATE
+   2013-10-24
+   
+   
+ * LAST MODIFIED DATE
+   2013-12-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UI11666
+   
+   
+
+MODULES/MACROS
+ *  DFSCLIB  DFSJDLI
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   IMS V12
+   
+   
+ * FIXED COMPONENT ID
+   5635A0300
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R206 PSY UI11666 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI11666]
+   UP13/11/02 P F311
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

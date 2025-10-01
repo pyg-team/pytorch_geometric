@@ -1,0 +1,55 @@
+Title: IBM E-mail not received when running a WebSphere Transformation Extender map that uses the INET protocol - United States
+
+Text:
+e-mail email inet protocol send recipient TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Recipients do not receive an e-mail when using the INET protocol from a WebSphere Transformation Extender (WTX) map or Trading Manager. 
+
+CAUSE
+The -FROM adapter option for a email target is missing from the adapter command line or map rule when using the INET protocol.
+
+DIAGNOSING THE PROBLEM
+For user designed maps, review the target e-mail adapter command or output card rule to determine if the -FROM <e-mail address> syntax is missing when using the INET protocol ( -PROTO INET) 
+
+
+
+
+For Trading Manager configured to send e-mail alerts, review the Resource Registry entry for mmgr_e-mail_setting to determine if the -FROM <e-mail address> syntax is missing when using the INET protocol ( -PROTO INET) 
+
+ 
+
+If the e-mail adapter trace feature is enabled, the resulting trace will file display an error of:
+No valid From or Sender headers found (must be exactly one originator). 
+SMTPSendMessage: Error Processing File. 
+Attempt #1 failed, no more retries allowed. 
+
+
+
+RESOLVING THE PROBLEM
+For user designed maps, when -PROTO is set to INET 
+
+a) Add the -FROM option to the e-mail adapter command in the map output card's PUT > Target > Command field. 
+
+For example: 
+-PROTO INET -SUBJECT 'WTX Email Message' -FROM fromaddress@yoursite.com -TO validaddress@yoursite.com 
+
+
+b) Add the -FROM option to an output rule using the e-mail adapter. For Example: =VALID(PUT("EMAIL", "-proto INET -FROM fromaddress@yoursite.com -tv -SUBJECT 'WTX Email Message' -TO validaddress@yoursite.com " , PACKAGE(DataToSend)),"ERROR") 
+
+
+
+For Trading Manager, when -PROTO is set to INETuse the Resource Registry utility to edit the value of mmgr_e-mail_settings. Ensure the -FROM option is added to the value of this Resource Registry setting. Do not set the -TO option as this is already configured within the Trading Manager maps. For example: 
+
+ -PROTO INET -FROM fromaddress@yoursite.com
+
+
+
+ 
+
+Note: The 'From' email address does not need to be a valid address.
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ Ascential DataStage TX Mercator WTX Trading Manager

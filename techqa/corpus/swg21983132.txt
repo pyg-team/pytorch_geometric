@@ -1,0 +1,33 @@
+Title: IBM Configure TM1Web to redirect http to https - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ By default the Tomcat instance that runs TM1Web and TM1 Application will only support either HTTP or HTTPS. If TM1Web is configured to use HTTP and a user browses to the TM1Web URL with HTTP they will see a blank webpage. 
+
+It's possible to modify the configuration to allow both HTTP andd HTTPS. Different port numbers need to be configured for HTTP and HTTPS. This document assumes that port 443 is being used for HTTPS and port 80 for HTTP instead of the default port 9510.
+
+It's also possible to have the HTTP port redirect to HTTPS and force TM1Web to only accept HTTPS traffic.
+
+
+
+ANSWER
+To configure TM1Web to allow HTTP traffic on port 80 and redirect to port 443 update the ..\tm1_64\tomcat\conf\server.xml file to include the following entry. Do not modify the existing connector entry.
+<Connector port="80" protocol="HTTP/1.1" redirectPort="443"/>
+
+Note that saving in Cognos Configuration will remove the above connector line. Avoid saving or restarting the IBM Cognos TM1 Applications service from Cognos Configuration to prevent this problem.
+
+To force TM1Web and TM1 Applications to only support HTTPS trace update the ..\tm1_64\webapps\tm1web\WEB-INF\web.xml file to include the following content before the closing </web-app> XML tag.
+
+<security-constraint>
+<web-resource-collection>
+<web-resource-name>HTTPSOnly</web-resource-name>
+<url-pattern>/*</url-pattern>
+</web-resource-collection>
+<user-data-constraint>
+<transport-guarantee>CONFIDENTIAL</transport-guarantee>
+</user-data-constraint>
+</security-constraint>
+
+Repeat the above change in the ..\tm1_64\webapps\pmpsvc\WEB-INF\web.xml file.

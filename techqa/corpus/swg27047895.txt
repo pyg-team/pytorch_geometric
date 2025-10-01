@@ -1,0 +1,161 @@
+Title: IBM Datacap 9.0.1 FP1 - Readme doc - United States
+
+Text:
+ PRODUCT README
+
+ABSTRACT
+ IBM Datacap 9.0.1 FP1 - Readme doc 
+
+CONTENT
+About IBM Datacap 9.0.1 Feature Pack 1 
+
+Review this document for installation instructions and other important information before you install IBM® Datacap 9.0.1 Feature Pack 1, which cumulatively contains all feature pack updates since IBM Datacap Version 9.0.1 was released. 
+
+ 
+
+Upgrading to IBM Datacap 9.0.1 Feature Pack 1
+
+
+From v9.0.1: use the Patch Installer from Fix Central 
+
+Installation Steps 
+
+Prerequisite: 
+
+· 1) Microsoft .NET Framework 4.6.1 
+
+· Run: NDP461-KB3102436-x86-x64-AllOS-ENU.exe 
+
+ 
+
+· 2) Microsoft Visual C++ Redistributable Packages for Visual Studio 2013 
+
+· Run: vcredist_x86.exe 
+
+ 
+
+Install: 
+
+· 3) IBM Datacap 9.0.1.1 
+
+· Run: Update.exe
+
+
+From v9.0.0.0, 9.0.0.1, 9.0.0.2 & 9.0.0.3: use the Full Installer from Passport Advantage 
+
+Installation Steps 
+
+Prerequisite: 
+
+· 1) Microsoft .NET Framework 4.6.1 
+
+· Run: NDP461-KB3102436-x86-x64-AllOS-ENU.exe 
+
+ 
+
+· 2) Microsoft Visual C++ Redistributable Packages for Visual Studio 2013 
+
+· Run: vcredist_x86.exe 
+
+ 
+
+Install: 
+
+· 3) IBM Datacap 9.0.1.1 
+
+· Run: Setup.exe 
+
+ 
+
+Important 
+
+Updates are required only on Servers and thick client computers. No update is required for "thin client" computers. You must upgrade all thick clients and servers to the same IBM Datacap version and feature pack. Different versions of IBM Datacap are not compatible; therefore, you cannot connect an IBM Datacap client with a server that has a different IBM Datacap server version or feature pack installed. Operating Datacap Client or Datacap Web with an incompatible version of Datacap Server, or allowing different versions to access one database, can result in loss of data. 
+
+Once installed, this feature pack cannot be uninstalled. However, you can use "Uninstall or change a program" in Control Panel to uninstall the entire Datacap product. 
+
+The language you selected when installing Datacap 9.0.1 determined the language displayed in the InstallShield panels at that time, and also controls the language in which the InstallShield panels for this feature pack are displayed. 
+
+ 
+
+Alerts! 
+
+1) When running an update, the global ruleset DLLs are updated but the copies in each application are not updated. 
+
+As a result, new features and fixes are not applied to applications and customers might experience defects that have been fixed. 
+
+The global ruleset DLLs are in the Datacap\RRS folder. The application copies are in the application DCO rules folder. 
+
+Customers must manually update the ruleset DLLs in each application where they are installed. 
+
+2) When running an update, the master task configuration files are updated (Datacap\ProgramSet) but the setting in applications are not updated (in application DCO folder). 
+
+As a result, new features and fixes are not applied to applications and customers might experience problems that have been fixed. 
+
+The master task configuration is located in Datacap\ProgramSet. The application settings are in the application DCO folder. 
+
+Customers must manually update the task setting in each application where they are installed. 
+
+
+System requirements 
+
+Select the following link to see the hardware and software requirements for IBM Datacap. 
+
+http://www.ibm.com/software/reports/compatibility/clarity/softwareReqsForProduct.html [http://www.ibm.com/software/reports/compatibility/clarity/softwareReqsForProduct.html] 
+
+
+Search for ‘Datacap’, then select "Datacap " 
+
+Check the box ‘Show feature packs’ and select 9.0.1 for Feature Pack 1*. 
+
+New features added to IBM Datacap 9.0.1 Feature Pack 1 
+
+For a list of new features that were added to Datacap 9.0.1 in Feature Pack 1, see:
+Highlights of IBM Datacap 9.0.1 Feature Pack 1 [http://www.ibm.com/support/knowledgecenter/SSZRWV_9.0.1/com.ibm.datacaptoc.doc/dc_highlights_9011.htm].
+
+http://www.ibm.com/support/knowledgecenter/SSZRWV_9.0.1/com.ibm.datacaptoc.doc/dc_highlights_9011.htm [http://www.ibm.com/support/knowledgecenter/SSZRWV_9.0.1/com.ibm.datacaptoc.doc/dc_highlights_9011.htm]
+
+
+New Qualifications 
+
+ 
+
+IBM Datacap 9.0.1 Feature Pack 1 is qualified for use with: 
+
+ 
+
+· Microsoft Windows 10 (except for TMWeb Scanning with Twain drivers; 
+
+See “Known Limitations” below for details) 
+
+ 
+
+· Oracle 12c (12.1.0.2.0) 
+
+ 
+
+· IBM Content Navigator 2.0.3 FP7 
+
+ 
+
+Issues fixed in IBM Datacap 9.0.1 Feature Pack 1 
+
+ 
+
+APAR Number Summary IO23893 Clicking on QA link in tmweb - Administrator fails with error "column named name already belongs to this datatable" if using admin database on SQL server IO24025 Can not import file which name contains '0x905C' such as "保険申告Updated.tif" IO24067 When customer use https + non-activeX to upload, some images will be corrupted frequently IO24082 Lineitem does not show up in Datacap Desktop Verify panel IO24102 Enhance IMail actions to use standard naming convention for ID's of pages created. IO24104 Using LLLDAP certain users are not able to login even when they are in the same group. LDAP is across multiple domains. IO24138 Couldn't create DC_P8 FileNet object error; action FNP8_SetURL () on 9.0 FP 3 and 9.0.1 IO24140 aindex.aspx does not update DATAFILE variable when a page is moved in batch view IO24141 DCDesktop Exception when performing a lookup query against an Oracle database IO24144 Batch aborts during ExcelWorkbookToImage with specific XLSX file IO24168 Page data is not generated when the page type is changed through batch structure in verify client of Datacap Navigator IO24169 when task has "-" and then change the batch status from hold to pending in edit job dialog, it will fail. IO24181 Unable to edit and enter values in multiple line edit box in tmweb Verifine panel IO24185 OCR_SR.RotateImageOCR_S () no longer compresses the TIFF image since applying 9.0 FP#2 was deployed IO24186 Thumbnail view of images is not activated in DcDesktop app until an image in batch tree view is clicked on IO24196 Setting a value to a custom column by main profile rule does not work. IO24199 Verify shortcut fails to show the batch list when the job name contains '( )' IO24205 System.OutOfMemory error returned by Datacap.Libraries.Convert.Outlook->OutlookMessageToImageAndAttachment () IO24213 Start bach panel non-overrideable validation not handled gracefully the second time around; Dc Desktop crashes IO24215 FNP8_CreateFolder () does not support / handle error in Italian IO24226 Page data failed to be shown in field details panel after running validation with some empty C nodes IO24227 CCO was not reloaded after running the rule so the re-OCR rule cannot take effect until relaunching the batch. IO24232 Main_Page no longer synch's up with custom data panel after switching from main_page to trailing page to main_page IO24249 Imprint.RedactParameters () converting color images to bitonal IO24249 Imprint.RedactByRegEx () only runs at Field level not at Page level but action help is slightly misleading IO24259 DcDesktop - certain columns in Job Monitor ONLY sort by Queue ID column IO24260 DSTUDIO: selecting ruleset "import files - all : Scan", returns message "The Document Hierarchy refers to some nonexistent Rules.". IO24282 MatchBarcodeBP throws an error in the rrs.log when processing non-barcode type pages. IO24289 tmweb fails to create setup file for a task if the app name begins with "AP" IO24381 SetNamePattern () with Convert.Unzip () is unable to resolve the naming pattern of the extracted image IO24384 Format and formatDescription are not supported in EDS IO24386 when the auto launch next batch is enabled, the page of the next verify page is not loaded. IO24387 Rescan status cannot be persisted after submitting if it is the only page in the batch IO24388 Split should not enabled on the page which is the only one in its parent document. IO24418 Images id are not numbered sequentially after fault with scanner occurs IO24427 Clicking on "Build Doc" button on custom panel generates exception error in DcDesktop App IO24439 Convert.ExcelWorkbookToImage () distorts the extracted tiff preventing GetBarcodeBP () from reading the barcode from the tiff image IO24447 rescanned page lost "ScanSrcPath" variable IO24461 Cannot paste value to a field if disable readonly on batch tree IO24470 After a job which jumped several tasks is edited via 'Edit Job' button, it could not be shown in Job Monitor IO24473 Batch is still in hold status even submitting it if session ever timeout. IO24475 Some Datacap css styles override ICN original ones, so impact ICN and other plugins. IO24477 image viewer error message does not conforming within image viewer. IO24486 Daeja ViewOne functionality of virtual as compared to Professional with DataCap 
+Known limitations in IBM Datacap 9.0.1 Feature Pack 1 
+
+Read this information to learn about known limitations in IBM Datacap 9.0.1 Feature Pack 1. 
+
+ 
+
+ 
+
+Component Summary TMWeb Scan Windows 10 supported with IBM Datacap 9.0.1 FP1 with the following known limitations:
+
+1. TMweb's "IE Test" page may result in a dialog box titled “Accusoft Twain Pro7 common 9.0.013” with the message "picdll Load Library failed.”
+2. When trying to perform a Web scan with a Physical Scanner connected (via twain drivers) , ie using Web Vscan configured with scancl.aspx, the message "picdll Load Library failed" may be displayed. 
+
+If any of these messages appear, TMWeb scanning will not be possible. Medical Claims When in MClaims Prof Red/Black FixupScan, clicking "Next LC" button will advance to the next page and display the data for it (Type and Status), but will keep the previous page selected as well, and changes to Status (from "Invalid Claim Type" to "New Claim") will not be saved.
+
+Suggested workaround: 
+After clicking "Next LC" button, which will show previous page and current page selected in the Batch View display, then click the current page node in the Batch View display to properly select only the current page. After this one can continue to change the page Status and click "Next LC" button and repeat workaround for the next page. [/support/docview.wss?uid=swg27047895&amp;aid=1] [/support/docview.wss?uid=swg27047895&amp;aid=1]

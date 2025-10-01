@@ -1,0 +1,64 @@
+Title: IBM Setting up TLS 1.2 support between IBM Security Identity Manager virtual appliance and middleware servers such as the Identity data store and the directory server - United States
+
+Text:
+ FIX README
+
+ABSTRACT
+ TLSv1.2 is now supported between the IBM Security Identity Manager virtual appliance and middleware servers such as the Identity data store and the directory server. The protocol is used to establish communication between IBM Security Identity Manager Server and the middleware servers. 
+
+CONTENT
+You must set the same TLS protocol version on the middleware servers and as a local management interface protocol (LMI). The LMI protocol must be set from virtual appliance dashboard using Advanced tuning parameters panel. The supported TLS protocol versions are: TLS, TLSv1, TLSv1.1, and TLSv1.2. 
+
+
+Note: The TLS protocol version specified from VA dashboard will be applicable to both middleware servers (Identity Data Store and Directory server). We cannot specify different TLS protocol version for each middleware servers.
+
+
+ * To set the TLS protocol for IBM Security Identity Manager Server (ISIM) see Managing server settings [https://www.ibm.com/support/knowledgecenter/en/SSRMWJ_7.0.1.7/com.ibm.isim.doc/configuring/tsk/t_va_custom_server_settings.htm]. 
+ * To set the TLS protocol for local management interface (LMI), see Advanced tuning parameters for the virtual appliance [https://www.ibm.com/support/knowledgecenter/en/SSRMWJ_7.0.1.7/com.ibm.isim.doc/admin/ref/r_adv_tuning.htm]
+
+
+Consider the following scenarios as you configure the TLS protocol. Note: For every scenario, after completing each step, check the IBM Security Identity Manager virtual appliance dashboard for any notifications and take the appropriate action. 
+
+Scenario #1
+New installation of the IBM Security Identity Manager virtual appliance and you want to enable the TLS protocol
+
+
+ 1. When you configure IBM Security Identity Manager by using the initial configuration wizard [https://www.ibm.com/support/knowledgecenter/en/SSRMWJ_7.0.1.7/com.ibm.isim.doc/installing/tsk/t_using_activation_wizard.htm], use either SSL or Non-SSL mode for directory and database server configuration. Use of the TLS protocol on directory and database server during initial configuration is not supported. 
+ 2. Once the ISIM VA system is ready, refer to the applicable scenarios for enabling the TLS protocol.
+
+
+Scenario #2
+ISIM VA working environment: The SSL connection exists between ISIM and middleware servers before upgrading to 7.0.1.7 or later.  1. Upgrade the existing ISIM VA version to 7.0.1.7 version or later. 
+ 2. Set the required TLS protocol version for middleware servers. 
+ 3. Set the same TLS protocol version for ISIM Server. 
+ 4. Set the same TLS protocol version for LMI.
+
+
+Scenario #3
+ISIM VA working environment: The SSL connection does not exist between ISIM and middleware servers before upgrading to 7.0.1.7 or later.  1. Upgrade the existing ISIM VA version to 7.0.1.7 version or later. 
+ 2. Set the required TLS protocol version for ISIM Server 
+ 3. Set the same TLS protocol version for LMI. 
+ 4. Set the same TLS protocol version for middleware servers. 
+ 5. Reconfigure the database server, directory server and select the SSL check box to enable the secure connection.
+
+
+Scenario #4
+ISIM VA working cluster environment (primary node and member nodes exist).  1. Set the required TLS protocol version on primary node using applicable scenario #2 or #3. 
+ 2. Setting the TLS protocol version for ISIM Server on member nodes is not required. This will be handled as part of cluster nodes synchronization. 
+ 3. Set the same TLS protocol version for LMI on member nodes individually. 
+ 4. Synchronize the member nodes in the cluster for TLS protocol configuration changes that performed on the primary node.
+
+
+Scenario #5
+ISIM VA working cluster environment (primary node and member nodes exist) and you are adding new member nodes.  1. Set the TLS protocol version (same as of exiting members) for LMI on newly created member nodes. Do this step before connecting to primary node. 
+ 2. Complete the additional steps to add the newly created member node into the cluster.
+
+
+Scenario #6
+ISIM VA working environment and backing up the primary node where TLS protocol is enabled.  1. Set the TLS protocol version (same as of primary node) for LMI of backup node. This should be done before connecting to primary node. 
+ 2. Execute the additional steps to set up a backup of the primary node.
+
+
+Scenario #7
+ISIM VA working environment and upgrading it to 7.0.1.7 version or later.  1. Upgrade the ISIM VA to 7.0.1.7 version or later. 
+ 2. If TLS protocol must be set after upgrade then refer the applicable scenarios and execute steps, otherwise no other actions required.

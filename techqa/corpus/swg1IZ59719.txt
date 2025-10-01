@@ -1,0 +1,139 @@
+Title: IBM IZ59719: BPC EXPLORER DOES NOT SHOW PART NAMES OF WSDL MESSAGES PROPERLY. - United States
+
+Text:
+  A FIX IS AVAILABLE
+WebSphere Enterprise Service Bus V6.2.0 Fix Pack 3 (6.2.0.3) [http://www-01.ibm.com/support/docview.wss?uid=swg24027123]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The BPC Explorer always shows the element name of a message
+   part. In case of a WSDL message that is based on a multipart
+   WSDL message, this is not wanted because the names of the parts
+   of the message are different but may reference the same element.
+   Therefore the same name is shown in the BPC Explorer although
+   the part names are different. This fix will make sure that the
+   part names are shown instead of the element names of a WSDL
+   message. The rendering of elements in subordinate structures is
+   not changed with this fix.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  The BPC Explorer always shows the element name of a message
+   
+   part. In case of a WSDL message that is based on a multipart
+   WSDL message, this is not wanted because the names of the parts
+   of the message are different but may reference the same element.
+   Therefore the same name is shown in the BPC Explorer although
+   the part names are different. This fix will make sure that the
+   part names are shown instead of the element names referenced by
+   a WSDL message part. The rendering of elements in subordinate
+   structures is not changed with this fix.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix will be included in 6.2.0.3
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ59719
+   
+   
+ * REPORTED COMPONENT NAME
+   BUS PRC CHOREOG
+   
+   
+ * REPORTED COMPONENT ID
+   5655FLW11
+   
+   
+ * REPORTED RELEASE
+   620
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-09-01
+   
+   
+ * CLOSED DATE
+   2009-10-22
+   
+   
+ * LAST MODIFIED DATE
+   2009-10-22
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    IZ59716
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   BUS PRC CHOREOG
+   
+   
+ * FIXED COMPONENT ID
+   5655FLW11
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R620 PSY
+   UP

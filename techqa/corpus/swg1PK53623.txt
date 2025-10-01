@@ -1,0 +1,169 @@
+Title: IBM PK53623: PLOCK NEGOTIATION IS NOT COMPLETED - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  If Plock negotiation is canceled by Rebuild, IRLM  doesn't retry
+   after Rebuild is completed. It cause Plock negotiation is
+   pending status.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All HIR2101 (IRLM210) and HIR2220 (IRLM220)  *
+   *                 users DATASHARING, SYSPLEXDS.                *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: 1. Jobs timing out waiting for a Plock  *
+   *                       which could not be obtained as Plock   *
+   *                       negotiation was cancelled during lock  *
+   *                       structure rebuild.                     *
+   *                      2. IRLM console hung, Modify commands   *
+   *                       rejected-task-busy.                    *
+   ****************************************************************
+   * RECOMMENDATION: INSTALL CORRECTIVE SERVICE FOR APAR/PTF      *
+   ****************************************************************
+   1. A Plock negotiation may get cancelled during a Lock structure
+     Rebuild but the SCA may not get terminated in certain cases.
+     This Plock negotiation was not retried later after the rebuild
+     was over and was left around undetected for long. It can cause
+     hung Plock request resulting in threads getting timed out
+     waiting for this lock.
+   
+   2. In an IMS environment, a hung child lock propagation
+     detection process may result in leaving a Childprop SCA behind
+     on the RLMRBCHN in IRLM. If any IRLM Modify command is issued
+     after that, it can cause the console to be hung/unresponsive.
+     It happened because IRLM could not issue QEDIT macro as it
+     thinking that there is a ongoing Childprop which should finish
+     first.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  AIDS: RIDS/IRLM RIDS/REQ IRLM IRLM/REQ
+     GEN:
+   SYSPLEXDS
+   
+   *** END IMS KEYWORDS ***
+   1. IRLM will retry a Plock negotiation request that could
+     have been cancelled during a lock structure rebuild.
+   2. IRLM health checking process will not leave any hung child
+     propagation SCAa around and let them get cleaned up when the
+     cause of delay is over. This affects IMS environment only.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK53623
+   
+   
+ * REPORTED COMPONENT NAME
+   IRLM V2
+   
+   
+ * REPORTED COMPONENT ID
+   569516401
+   
+   
+ * REPORTED RELEASE
+   220
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   YesSpecatt / CST
+   
+   
+ * SUBMITTED DATE
+   2007-09-26
+   
+   
+ * CLOSED DATE
+   2008-01-02
+   
+   
+ * LAST MODIFIED DATE
+   2008-07-11
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UK32700 UK32701
+   
+   
+
+MODULES/MACROS
+ *  DXRRC732 DXRRLSCA DXRRL732 DXRRS732
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   IRLM V2
+   
+   
+ * FIXED COMPONENT ID
+   569516401
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R101 PSY UK32700 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK32700]
+   UP08/01/18 P F801
+   
+   
+ * R220 PSY UK32701 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK32701]
+   UP08/01/18 P F801
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

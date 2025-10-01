@@ -1,0 +1,189 @@
+Title: IBM HE08161: The IBM Content Collector P8 4.x Confirm Document task cannot be used for Microsoft Exchange email documents - United States
+
+Text:
+  A FIX IS AVAILABLE
+IBM Content Collector V2.2 Fix Pack 2 [http://www-01.ibm.com/support/docview.wss?uid=swg24031075]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Starting with this fix, ICC is able to derive the P8 Object Id
+   from the document hash and thus the P8 Lookup task can process
+   non archived emails correctly.
+   This can be achieved by setting the environment variable
+   AFU_PRODUCE_P8_OBJECT_ID=<SymbolicClassName>,<SymbolicObjectStor
+   eName>,<ConnectionName>.
+   Error Description:
+   If the P8 4.x Confirm Document task is used in an IBM Content
+   Collector task route to check if email documents have been
+   archived and mark those documents that have been archived as
+   processed, the P8 4.x Confirm Document task fails because of
+   missing parameters.
+   
+   Problem summary:
+   The P8 4.x Confirm Document requires email metadata information
+   to work with email documents. However, this metadata is not
+   available in the P8 4.x Confirm Document task, so that the
+   result is incorrect.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Problem solution:
+   Starting with this fix, if the environment variable
+   AFU_PRODUCE_P8_OBJECT_ID is set, the EC Extract Metadata task
+   produces the email metadata that is required for the P8 4.x
+   Confirm Document task to work correctly.
+   
+   Make sure that the Content Collector SharePoint Connector is
+   installed. Set the environment variable in the following way:
+   AFU_PRODUCE_P8_OBJECT_ID=<SymbolicClassName>,<SymbolicObjectStor
+   eName>,<ConnectionName>
+   where:
+   - <SymbolicClassName> is the symbolic name of the FileNet P8
+   document class that is used for archiving (default: ICCMAIL2)
+   - <SymbolicObjectStoreName> is the symbolic name of the FileNet
+   P8 object store
+   - <ConnectionName> is the display name of the FileNet P8
+   connection in IBM Content Collector that is used to interact
+   with FileNet P8
+   If unsure, check the values in FileNet Enterprise Manager or the
+   Content Collector Configuration Manager.
+   
+   Restart the IBM Content Collector Server machine after you set
+   the environment variable
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  If the P8 4.x Confirm Document task is used in an IBM Content
+   Collector task route to check if Microsoft Exchange email
+   documents have been archived and mark those documents that have
+   been archived as processed, the P8 4.x Confirm Document task
+   failed because of missing parameters. The P8 4.x Confirm
+   Document requires email metadata information to work with email
+   documents. However, this metadata is not available in the P8
+   4.x Confirm Document task, so that the result is incorrect.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Starting with this fix, if the environment variable
+   AFU_PRODUCE_P8_OBJECT_ID is set, the EC Extract Metadata task
+   produces the email metadata that is required for the P8 4.x
+   Confirm Document task to work correctly. Make sure that the
+   Content Collector SharePoint Connector is installed. Set the
+   environment variable in the following way:
+   
+   AFU_PRODUCE_P8_OBJECT_ID=<SymbolicClassName>,<SymbolicObjectStor
+   eName>,<ConnectionName>
+   
+   where:
+   *  <SymbolicClassName> is the symbolic name of the FileNet P8
+     document class that is used for archiving (default: ICCMAIL2).
+   *  <SymbolicObjectStoreName> is the symbolic name of the FileNet
+     P8 object store.
+   *  <ConnectionName> is the display name of the FileNet P8
+     connection in IBM Content Collector that is used to interact
+     with FileNet P8.
+   
+   If unsure, check the values in FileNet Enterprise Manager or the
+   Content Collector Configuration Manager. Restart the IBM Content
+   Collector Server machine after you set the environment variable.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   HE08161
+   
+   
+ * REPORTED COMPONENT NAME
+   ICC FOR FILES
+   
+   
+ * REPORTED COMPONENT ID
+   5724V5701
+   
+   
+ * REPORTED RELEASE
+   220
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-07-12
+   
+   
+ * CLOSED DATE
+   2011-11-25
+   
+   
+ * LAST MODIFIED DATE
+   2011-11-25
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ICC FOR FILES
+   
+   
+ * FIXED COMPONENT ID
+   5724V5701
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R220 PSN
+   UP

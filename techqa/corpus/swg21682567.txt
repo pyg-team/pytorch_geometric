@@ -1,0 +1,86 @@
+Title: IBM Security Bulletin for IBM Integration Bus and WebSphere Message Broker: Multiple security vulnerabilities in IBM JREs 6 & 7 - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ Multiple security vulnerabilities exist in the IBM Java™ Runtime Environment component of WebSphere Message Broker for IBM JRE 6 SR16 (and earlier) and the IBM Java Runtime Environment component of IBM Integration Bus for JRE 7.0 SR7 (and earlier). These issues were disclosed as part of the IBM Java SDK updates in July 2014.
+
+
+VULNERABILITY DETAILS
+The IBM Integration Bus and WebSphere Message Broker are shipped with an IBM SDK for Java that is based on the Oracle JDK. Oracle has released critical patch updates which contain security vulnerability fixes and the IBM SDK for Java has been updated to incorporate those updates.
+
+Vulnerabilities affecting WebSphere Message Broker/IBM Integration Bus
+The vulnerability that is affecting IBM Integration Bus and WebSphere Message Broker is CVE-2014-4263 
+
+CVEID: CVE-2014-4263 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-4263]
+DESCRIPTION: An unspecified vulnerability related to the Security component has partial confidentiality impact, partial integrity impact, and no availability impact.
+CVSS Base Score: 4
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/94606 [https://exchange.xforce.ibmcloud.com/vulnerabilities/94606] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:H/Au:N/C:P/I:P/A:N) 
+
+
+Vulnerabilities included in the IBM SDK
+The following are the full list of vulnerabilities included in IBM SDK. You will need to evaluate your own code to determine if you are vulnerable. Please refer to the Reference section for more information on these advisories
+
+CVE IDs:
+The vulnerabilities that are applicable to both IBM JRE 6.0 and IBM JRE 7.0 are
+CVE-2014-4227, CVE-2014-4262, CVE-2014-4219, CVE-2014-4209, CVE-2014-4268, CVE-2014-4218, CVE-2014-4252, CVE-2014-4265, CVE-2014-4263, CVE-2014-4244, CVE-2014-3086 
+The vulnerabilities that are applicable only to IBM JRE 7.0 are 
+CVE-2014-4220, CVE-2014-4266, CVE-2014-4221, CVE-2014-4208 
+[http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-0448] [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-0454] [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-2402] [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-0459]
+
+AFFECTED PRODUCTS AND VERSIONS
+WebSphere Message Broker V7.0 and V8.0 & IBM Integration Bus V9.0 are affected on all platforms except IBM z/OS. 
+
+REMEDIATION/FIXES
+For WebSphere Message Broker V7.0 and V8.0 an interim fix for APAR IT03753 is available from IBM Fix Central:
+http://www.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~WebSphere&product=ibm/WebSphere/WebSphere+Message+Broker&release=All&platform=All&function=aparId&apars=IT03753 [http://www.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~WebSphere&product=ibm/WebSphere/WebSphere+Message+Broker&release=All&platform=All&function=aparId&apars=IT03753]
+
+APAR IT03753 is targeted for availability in WebSphere Message Broker V7.0.0.8 and V8.0.0.6
+
+For IBM Integration Bus V9.0 an interim fix for APAR IT03751 is available from IBM Fix Central:
+http://www.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~WebSphere&product=ibm/WebSphere/Integration+Bus&release=All&platform=All&function=aparId&apars=IT03751 [http://www.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~WebSphere&product=ibm/WebSphere/Integration+Bus&release=All&platform=All&function=aparId&apars=IT03751]
+
+APAR IT03751 is targeted for availability in IBM Integration Bus V 9.0.0.3 for all platforms except HP. The fix for HP Platform is targeted for availability in IBM Integration Bus V 9.0.0.4
+
+WORKAROUNDS AND MITIGATIONS
+None known 
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+IMPORTANT NOTE
+ IBM strongly suggests that all System z customers be subscribed to the System z Security Portal to receive the latest critical System z security and integrity service. If you are not subscribed, see the instructions on the System z Security web site [http://www.ibm.com/systems/z/solutions/security_subintegrity.html]. Security and integrity APARs and associated fixes will be posted to this portal. IBM suggests reviewing the CVSS scores and applying all security or integrity fixes as soon as possible to minimize any potential risk. 
+
+REFERENCES
+Complete CVSS v2 Guide [http://www.first.org/cvss/v2/guide] 
+On-line Calculator v2 [http://nvd.nist.gov/CVSS-v2-Calculator] 
+IBM Java SDK Security Bulletin [http://www-01.ibm.com/support/docview.wss?uid=swg21680334] 
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] 
+
+CHANGE HISTORY
+ 23 September 2014: Original Copy Published
+15 October 2014 : Information on CVEs that impact WMB/IIB
+24 July 2015 : Revised expiration date 
+
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY. 
+
+RELATED INFORMATION
+ A Japanese translation is available [http://www.ibm.com/support/docview.wss?uid=swg21685643]
+
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Integration Bus Security AIX, HP-UX, Linux, Solaris, Windows 9.0 
+PRODUCT ALIAS/SYNONYM
+ WMB IIB

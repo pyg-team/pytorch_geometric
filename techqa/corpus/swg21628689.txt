@@ -1,0 +1,80 @@
+Title: IBM Log File agent crashes, cores or goes offline - United States
+
+Text:
+log monitor; dump TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The Tivoli Log File agent crashes, cores or goes offline because there is data in the cache file and no ServerLocation specified. This problem has been seen mainly on AIX but is platform independent. The crash may occur when the agent is starting up. 
+
+
+SYMPTOM
+$ ./cinfo -r 
+
+ 
+*********** Wed Feb 20 12:07:45 PST 2013 ****************** 
+User: itmadmin Groups: tivmngrp staff ibmgroup 
+Host name : ibmhost Installer Lvl:06.23.01.00 
+CandleHome: /opt/IBM/ITM 
+*********************************************************** 
+Host Prod PID Owner Start ID ..Status 
+...
+ibmhost lo 9961582 myinst2 ...process not running 
+
+The stack trace may look similar to:
+(dbx) where
+.() at 0xf5a8
+cache_convert_file(0x110b03578) at 0x900000003903154 [untrusted: /opt/IBM/ITM/tmaitm6/aix526/lib/libkef.a]
+send_event_packet(0x110b079d0, 0x110cd4680, 0x0, 0x100000001, 0x110cd46bc) at 0x9000000038bb0f0 [untrusted: /opt/IBM/ITM/tmaitm6/aix526/lib/libkef.a]
+cc_create() at 0x9000000038bb8ac [untrusted: /opt/IBM/ITM/tmaitm6/aix526/lib/libkef.a]
+releaseLock(0x110b2b350) at 0x9000000038dcbe0 [untrusted: /opt/IBM/ITM/tmaitm6/aix526/lib/libkef.a] 
+
+On Windows systems, the dump may show:
+check_for_new_events [e:\ctms\kef\evt_cache.c @ 1652]
+
+
+CAUSE
+If there is a cache file specified by BufEvtPath or the default cache file (/etc/Tivoli/tec/cache) exists, but you are not sending events to Event Integration Facility (EIF) so there is no ServerLocation specified in the conf file, the EIF library sees the data in the cache file and tries to send it. Since there is no EIF server location configured, it causes the agent to crash.
+
+
+
+DIAGNOSING THE PROBLEM
+1. Check the agent's conf file for ServerLocation and BufEvtPath options: 
+
+
+BufEvtPath= <a file> 
+No ServerLocation specified, that is no EIF server is configured.
+
+2. Check if the default cache file (/etc/Tivoli/tec/cache) exists.
+Note: The default cache file is in the same location on Windows systems.
+
+3. Check the <hostname_lo_<instance>.cfg to see if events are being sent to EIF : 
+{ KLO_SEND_EIF_EVENTS=Yes } 
+Note: The problem may still occur if KLO_SEND_EIF_EVENTS is set to No and the above items are true.
+
+
+
+RESOLVING THE PROBLEM
+ 
+
+A. If not sending events to EIF and only to IBM Tivoli Monitoring, 
+
+ 1. Set the following options in the conf file:  * BufferEvents=NO 
+     * Delete or comment out the BufEvtPath option
+    
+    
+ 2. Delete the actual cache file specified by BufEvtPath option. 
+ 3. Reconfigure the agent to set Send Events to EIF to No.
+
+
+B. If sending events to EIF 
+
+1. Set the following options in the conf file,:
+BufEvtPath - set to path name of the agent cache file 
+
+ ServerLocation - specify a valid EIF server 
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ LFA
+KLO

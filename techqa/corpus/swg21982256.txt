@@ -1,0 +1,47 @@
+Title: IBM Information Server login problems after upgrading to WebSphere 8.5.5.9 -8.5.5.11 - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Information Server login problems after upgrading to WebSphere 8.5.5.9 - 8.5.5.11 
+
+SYMPTOM
+Websphere was upgraded to 8.5.5.9 -8.5.5.11, then began experiencing the following problems when logging in using any DataStage client. 
+
+Error message that will be seen from Designer:
+Failed to authenticate the current user against the selected Services Tier
+.ServletException: SRVE0207E: Uncaught initialization exception created by servlet
+
+In SystemOut.log:
+[3/15/16 21:41:34:974 CDT] 000000bb ServletWrappe E com.ibm.ws.webcontainer.servlet.ServletWrapper init Uncaught.init.exception.thrown.by.servlet
+[3/15/16 21:41:35:024 CDT] 000000bb ServletWrappe E com.ibm.ws.webcontainer.servlet.ServletWrapper init Uncaught.init.exception.thrown.by.servlet
+[3/15/16 21:41:35:025 CDT] 000000bb webapp E com.ibm.ws.webcontainer.webapp.WebApp logServletError SRVE0293E: [Servlet Error]-[REST2]: java.lang.NoClassDefFoundError: org.apache.http.impl.client.DefaultHttpClient
+
+Customer may also experience this error
+
+CDIIN2107E: Unable to validate the IBM InfoSphere Information Server user name isadmin and password for host <host name> at port 9445. The returned message is:
+null. 
+
+
+CAUSE
+This is a known issue after upgrading to WebSphere Version 8.5.5.9.
+
+
+RESOLVING THE PROBLEM
+An official patch fix is available via below technote: 
+
+
+http://www-01.ibm.com/support/docview.wss?uid=swg21982420 [http://www-01.ibm.com/support/docview.wss?uid=swg21982420]
+
+Or a manual work-around below is available. If you do the manual work-around and then later install the official patch fix, you would need to first reverse the manual work-around before installing the official fix.
+
+The manual work around is:
+
+Copy the http*.jar files
+from C:\IBM\WebSphere\AppServer\profiles\InfoSphere\lib\iis\20thirdparty
+to C:\IBM\WebSphere\AppServer\profiles\InfoSphere\classes 
+-and-
+<IIS Install>/ASBServer/apps/lib/iis/classes 
+
+ Restart Websphere

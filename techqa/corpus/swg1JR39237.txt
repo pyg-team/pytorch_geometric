@@ -1,0 +1,138 @@
+Title: IBM JR39237: SIEBEL ADAPTER IGNORES FIELD VALUE WITH SBL-DAT. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Siebel Adapter ignores field value with
+   SBL-DAT.
+   
+   - Problem observed with Siebel Adapter 7.0.0.3
+   and WMB 7.0.0.2, AIX
+   
+   - When a request fails through Siebel Request node,
+   then Siebel system can returns an error with tag "Description"
+   and the field value <SBL-DAT..>.
+   
+   - On the Siebel system side, the error message is complete,
+   on Siebel Adapter side, the error message does not contain
+   any content in the description field, "SBL-DAT" is being
+   ignored.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  - no local fix or workaround
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  - When a request fails through Siebel Request node, then Siebel
+   system returns an error with tag "Description" and the field
+   value <SBL-DAT..>.
+   
+   - On the Siebel system side, the error message is complete, on
+   Siebel Adapter side, the error message does not contain any
+   content in the description field, "SBL-DAT" is being ignored.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This has been fixed in 7.0.0.3_IF04. Please contact IBM Customer
+   Support for the fix.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR39237
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBS ADAPT SIEB
+   
+   
+ * REPORTED COMPONENT ID
+   5724L8000
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-03-25
+   
+   
+ * CLOSED DATE
+   2011-11-08
+   
+   
+ * LAST MODIFIED DATE
+   2011-11-08
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBS ADAPT SIEB
+   
+   
+ * FIXED COMPONENT ID
+   5724L8000
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R700 PSY
+   UP

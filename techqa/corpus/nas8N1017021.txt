@@ -1,0 +1,39 @@
+Title: IBM Uploading Date Columns from Excel - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This document discusses problems encountered when using the Data Transfer Excel plug-in to upload a Microsoft Excel spreadsheet that includes dates. 
+
+RESOLVING THE PROBLEM
+IBM i Access for Windows Data Transfer includes an Excel plug-in that can be used to transfer data directly from or to a Microsoft Excel spreadsheet. If the spreadsheet includes dates, there are special considerations. 
+
+Note: An option was added in V5R3 iSeries Access to Convert Excel date and time cells to iSeries date or time. This option can be found when clicking on the Properties button when going through the wizard. The help text for this option is as follows:
+
+This image shows the iSeries Access User's Guide help text for Excel data and time formats. [/support/docview.wss?uid=nas8N1017021&amp;aid=1]
+
+Excel does not store dates as a Date data type but rather uses a numeric value with the date implied by the format option selected. The numeric value is used in the same way as the variant date data type. This data type is actually a timestamp. It is implemented as a floating point value (double) that measures the days from Midnight, December 30, 1899. The fractional part of the value represents a time. For example, .25 is 6AM, .5 is 12 noon, and so on. By convention, Microsoft Office, Microsoft Visual Basic, and most other tools use a date of 0 (1899-12-30) to represent a time-only value. A time of 0 (midnight) is used to represent a date-only value. 
+
+IBM i Access for Windows data transfer does not currently parse all the possible format options (and user-defined format options) to try to identify a date (or time) column. Date or time cells must be formatted as text, and the character data must be in the same format as specified in the data transfer format options. An enhancement to parse Excel format options is being considered for a future release.
+
+Creating a New File Based on a Spreadsheet
+
+If the data transfer Create new file based on spreadsheet option is used, the data transfer scan of the spreadsheet will identify the date column as zoned 5,0. Note that the data type of the IBM OS/400 or IBM i5/OS field cannot be changed from zoned to date. 
+
+To work with the data in a date format, do one of the following: 
+
+o Convert the data after it has been transferred. The numeric value can be converted to a date value using the function date( F1 + days('1899-12-30')). The table can be remapped by creating a duplicate, altering the numeric date field to a date data type, and running an IBM SQL/400 statement similar to the following to copy the data:
+
+insert into excelout select date( F1 + days('1899-12-30')) from exelin o Format the column as character. Another option is to format the column in the spreadsheet as character. The IBM i Access data transfer table scan will identify the column as character of length 8. After the scan completes, select details and change the data type to date as shown below: 
+This image shows the option that can be used to change the field type. [/support/docview.wss?uid=nas8N1017021&aid=2] [/support/docview.wss?uid=nas8N1017021&aid=2] 
+
+[/support/docview.wss?uid=nas8N1017021&amp;aid=3] Note that the Data transfer format options must match the character formatted date column. For example, if the data transfer format is MDY with a separator of /, the cells must contain a character date value in format of mm/dd/yy. Data transfer will then upload the spreadsheet data successfully. o Export the data as CSV(comma-separated variable) file, and run data transfer against the CSV file. 
+Uploads to Existing Files 
+
+In the case of an existing OS/400 or i5/OS file, data transfer detects that the IBM Power Systems data type is a Date. The cell data, however, must still be formatted as character or a conversion error will occur. 
+
+
+Cross reference information Segment Product Component Platform Version Edition Operating System IBM i 6.1 Operating System IBM i 7.1 
+HISTORICAL NUMBER
+ 26590752

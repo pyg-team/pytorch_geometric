@@ -1,0 +1,125 @@
+Title: IBM HE12023: INTERVIEW QUESTIONNAIRE AUTOMATICALLY BEING SET TO "COMPLETED" STATUS AFTER CUSTODIAN RESPONDS TO AN INTERVIEW REMINDER - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Interview questionnaires are automatically being set to
+   "Completed" status when one of the custodians responds to an
+   interview reminder even though there are still other custodians
+   who have not responded.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  No workaround
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  In certain circumstances, standard Virtual Interviews are
+   automatically closed before all of the matter targets responded.
+    When the status of the interview is changed during the process
+   of sending notices, IBM Atlas Suite incorrectly interprets the
+   interview as completed.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix is available now from FixCentral in fixpack 6.0.1.6.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   HE12023
+   
+   
+ * REPORTED COMPONENT NAME
+   ATLAS EDISCOVER
+   
+   
+ * REPORTED COMPONENT ID
+   5725D7500
+   
+   
+ * REPORTED RELEASE
+   601
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-02-11
+   
+   
+ * CLOSED DATE
+   2014-04-02
+   
+   
+ * LAST MODIFIED DATE
+   2014-04-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ATLAS EDISCOVER
+   
+   
+ * FIXED COMPONENT ID
+   5725D7500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R601 PSY
+   UP

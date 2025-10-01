@@ -1,0 +1,195 @@
+Title: IBM PM42382: WEBSPHERE PORTAL SERVER V7.0 SUPPORT FOR THE ITCAM FOR AD 7.1 AGENT - United States
+
+Text:
+  A FIX IS AVAILABLE
+7.1.0.2-TIV-ITCAMAD-IF0004: ITCAM for Application Diagnostics V7.1 FP2 IF4 [http://www-01.ibm.com/support/docview.wss?uid=swg24030518]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  WebSphere Portals Server V7.0 support.  See defect 211853.1
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  The support for WPS7.0 was supposed to be in FP1, but there were
+   some issues. I sent the customer 8 xml files needed for the
+   agent to be configured on WPS7.0 from defect 211853.
+   
+   Put the following 5 files in DC_HOME/itcamdc/etc/cfg
+   
+   cfg_aix_wps_7.xml
+   cfg_hp-ux_wps_7.xml
+   cfg_linux_wps_7.xml
+   cfg_sunos_wps_7.xml
+   cfg_windows_wps_7.xml
+   
+   Next, have the customer create a directory called 'wps7' in
+   
+   DC_HOME/itcamdc/etc/was
+   
+   Put the following files in the newly created wps7 directory
+   
+   reqaggr_config_wps7.xml
+   toolkit_config_wps7.xml
+   toolkit_wps7.properties
+   
+   **Note: The directory and file permissions need to be set
+   correctly after moving the files as stated above.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  =====================
+   Problem Description
+   =====================
+   
+   Data Collector configuration fails for WebSphere Portal V7.
+   
+   ****************
+   *USERS AFFECTED:
+   ****************
+   
+   Customers that want to monitor WebSphere Portal V7 on
+   distributed platforms.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix for this APAR is contained in the following maintenance
+   packages:
+   
+   | interim fix | 7.1.0.2-TIV-ITCAMAD-IF0004
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  Send customer 8 xml files needed for the Data Collector to work
+   for WPS7.0:
+   
+   [1] Put the following 5 files in DC_HOME/itcamdc/etc/cfg
+   
+   cfg_aix_wps_7.xml
+   cfg_hp-ux_wps_7.xml
+   cfg_linux_wps_7.xml
+   cfg_sunos_wps_7.xml
+   cfg_windows_wps_7.xml
+   
+   [2] Ask customer to create a directory called 'wps7' in
+   
+   DC_HOME/itcamdc/etc/was
+   
+   Put the following files in the newly created wps7 directory
+   
+   reqaggr_config_wps7.xml
+   toolkit_config_wps7.xml
+   toolkit_wps7.properties
+   
+   **Note: The directory and file permissions need to be set
+   correctly after moving the files as stated above.
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM42382
+   
+   
+ * REPORTED COMPONENT NAME
+   ITCAM APPL DIAG
+   
+   
+ * REPORTED COMPONENT ID
+   5724Y9200
+   
+   
+ * REPORTED RELEASE
+   710
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-06-24
+   
+   
+ * CLOSED DATE
+   2011-08-05
+   
+   
+ * LAST MODIFIED DATE
+   2011-08-05
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  Configur None
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ITCAM APPL DIAG
+   
+   
+ * FIXED COMPONENT ID
+   5724Y9200
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R710 PSY
+   UP

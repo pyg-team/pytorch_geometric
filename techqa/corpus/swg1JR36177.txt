@@ -1,0 +1,193 @@
+Title: IBM JR36177: NABLE TO UPDATE J2EE APPLICTION FOR WAS PROFILE CREATED UNDER WPS INSTALLATION - United States
+
+Text:
+  FIXES ARE AVAILABLE
+WebSphere Enterprise Service Bus V6.2.0 Fix Pack 3 (6.2.0.3) [http://www-01.ibm.com/support/docview.wss?uid=swg24027123]
+WebSphere Enterprise Service Bus V7.0.0 Fix Pack 3 (7.0.0.3) [http://www-01.ibm.com/support/docview.wss?uid=swg24027661]
+WebSphere Enterprise Service Bus V7.0.0 Fix Pack 4 (7.0.0.4) [http://www-01.ibm.com/support/docview.wss?uid=swg24030312]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Unable to update an appliction installed in WAS profile whichis
+   created under WPS6.1.0.1 binay installation.
+   
+   Recreation Steps:
+   
+   
+   1. Create WAS profile nder WPS insallation
+   2. Upgrade an installed Application
+   
+   Problem
+   
+   
+   SCAUpdate Tasks are executed for a non-SCA module resulting in
+   following ffdcs.
+   
+   Stack Dump = java.lang.NullPointerException
+   
+    at
+   com.ibm.ws.sca.internal.admin.SCACommandHelper.getAppBusName(SCA
+   CommandH
+   elper.java:171)
+    at
+   com.ibm.ws.sca.internal.deployment.management.EISAdmin.<init>(EI
+   SAdmin.j
+   ava:107)
+    at
+   com.ibm.ws.sca.internal.deployment.eis.EISArchiveTask.update(EIS
+   ArchiveT
+   ask.java:714)
+    at
+   com.ibm.ws.sca.internal.deployment.SCAUpdateTask.performTask(SCA
+   UpdateTa
+   sk.java:232)
+   
+   
+    Stack Dump = com.ibm.websphere.sca.ServiceRuntimeException: SCA
+   
+   Container is disabled because WPS profile is not set
+    at
+   com.ibm.ws.sca.internal.container.impl.ContainerImpl.start(Conta
+   inerImpl
+   .java:381)
+   
+    at
+   com.ibm.ws.sca.internal.deployment.SCATaskProvider.<init>(SCATas
+   kProvide
+   r.java:62)
+    at java.lang.Class.newInstanceImpl(Native Method)
+    at java.lang.Class.newInstance(Class.java:1328)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  Users operating in a mixed cell             *
+   *                  i.e., WebSphere Application Server(WAS)     *
+   *                  and WebSphere Process                       *
+   *                  Server(WPS) environment.                    *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: J2EE application update on WAS          *
+   *                      profile is invoking SCA Update tasks    *
+   *                      and resulting in ffdcs and exceptions.  *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   Service Component Architecture(SCA) Update task needs to be
+   executed only for SCA modules.  A check to validate the
+   SCA module is missing in the code.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A Check has been added to validate the SCA module before
+   executing the update task.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR36177
+   
+   
+ * REPORTED COMPONENT NAME
+   WEB PROC SERVER
+   
+   
+ * REPORTED COMPONENT ID
+   5724L0100
+   
+   
+ * REPORTED RELEASE
+   610
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-04-07
+   
+   
+ * CLOSED DATE
+   2010-05-11
+   
+   
+ * LAST MODIFIED DATE
+   2010-05-11
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEB PROC SERVER
+   
+   
+ * FIXED COMPONENT ID
+   5724L0100
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R610 PSY
+   UP
+   
+   
+ * R612 PSY
+   UP
+   
+   
+ * R620 PSY
+   UP
+   
+   
+ * R700 PSY
+   UP

@@ -1,0 +1,134 @@
+Title: IBM IZ17024: WINDOWS AGENT CAUSES MEMORY LEAK. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The problem has been isolated to the W3SVC perfmon counters
+   being incorrectly setup, which caused the agent to think
+   that a new instance of the 'Default Web Site' needed to be
+   created every polling cycle.  The agent should be able to
+   handle invalid counters and not leak memory.  The fix will
+   be to not collect data from counters that are in a 'failed'
+   state on the machine and to log those counters that have
+   been excluded.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Disable the W3SVC counters.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Corrupt perfmon counters caused memory leaks in the agent
+   because new instances for the corrupt counters were created each
+   cycle.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This APAR has been fixed and delivered in a limited availability
+   fix 6.1.0.6-TIV-ITM_WIN-LA0050. This maintenance delivery
+   vehicle is a limited availability patch and therefore is in a
+   "hidden directory." Level 2 Support can provide down load
+   instructions to you. Contact level 2 support at:
+   
+   http://www.ibm.com/software/sysmgmt/products/support/Contact_L2
+   Support.html [http://www.ibm.com/software/sysmgmt/products/support/Contact_L2Support.html]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ17024
+   
+   
+ * REPORTED COMPONENT NAME
+   ITM AGENT WINDO
+   
+   
+ * REPORTED COMPONENT ID
+   5724C040W
+   
+   
+ * REPORTED RELEASE
+   610
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-03-05
+   
+   
+ * CLOSED DATE
+   2008-04-30
+   
+   
+ * LAST MODIFIED DATE
+   2008-04-30
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ITM AGENT WINDO
+   
+   
+ * FIXED COMPONENT ID
+   5724C040W
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R610 PSY
+   UP

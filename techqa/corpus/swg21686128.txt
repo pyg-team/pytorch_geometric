@@ -1,0 +1,98 @@
+Title: IBM Configuring access for HTTP and HTTPS - United States
+
+Text:
+HTTPS TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Documentation for Configuring access for HTTP and HTTPS in Tivoli® Integrated Portal is incorrect. 
+
+SYMPTOM
+The document Setting the HTTP session cookie to secure mode [http://www-01.ibm.com/support/docview.wss?uid=swg21684549] , refers to the following Tivoli Integrated Portal Knowledge Center topic: 
+
+http://www-01.ibm.com/support/knowledgecenter/SS5PMD_2.2.0/com.ibm.tip.doc/ttip_admin_https.html [http://www-01.ibm.com/support/knowledgecenter/SS5PMD_2.2.0/com.ibm.tip.doc/ttip_admin_https.html] 
+
+The information provided in this topic is outdated and incomplete.
+
+
+RESOLVING THE PROBLEM
+The following content supersedes the content available in the Tivoli Integrated Portal Knowledge Center at: http://www-01.ibm.com/support/knowledgecenter/SS5PMD_2.2.0/com.ibm.tip.doc/ttip_admin_https.html [http://www-01.ibm.com/support/knowledgecenter/SS5PMD_2.2.0/com.ibm.tip.doc/ttip_admin_https.html]
+
+Configuring access for HTTP and HTTPS 
+
+By default, the application server requires HTTPS (Hypertext Transfer Protocol Secure) access. If you want some users to be able to log in and use the console with no encryption of transferred data, including user ID and password, configure the environment to support both HTTP and HTTPS modes. 
+
+Before you begin
+After installing Tivoli Integrated Portal and before beginning this procedure, log in to the portal to ensure that it has connectivity and can start successfully.
+
+About this task
+Configuring for HTTP and HTTPS console access involves editing the web.xml file of Web components. Use this procedure to identify and edit the appropriate Web XML files.
+
+Procedure 
+
+ 1.  Change to the following directory: tip_home_dir/profiles/TIPProfile/config/cells/TIPCell/applications. 
+ 2.  From this location, locate the web.xml files in the following directories:  * For the Integrated Solutions Console web application archive: isc.ear/deployments/isc/isclite.war/WEB-INF 
+      * For the Tivoli Integrated Portal Charts web application archive: isc.ear/deployments/isc/TIPChartPortlet.war/WEB-INF 
+      * For the Tivoli Integrated Portal Change Password web application archive: isc.ear/deployments/isc/TIPChangePasswd.war/WEB-INF
+     
+     
+ 3.  Open one of the web.xml files using a text editor. 
+ 4.  Find the <transport-guarantee> element. The initial value of all <transport-guarantee> elements is CONFIDENTIAL, meaning that secure access is always required. 
+ 5.  Change the setting to NONE to enable both HTTP and HTTPS requests. The element now reads: <transport-guarantee>NONE</transport-guarantee>. 
+ 6.  Save the file, and then repeat these steps for the other web.xml deployment files. 
+ 7.  Log in to Tivoli Integrated Portal, as an administrator. 
+ 8.  In the navigation pane, click Settings > WebSphere Administrative Console and click Launch WebSphere Administrative Console. 
+ 9.  In the WebSphere Application Server administrative console, select Security > Global security and click the External authorization providers link. 
+ 10. In the External authorization providers page, select the Update with application names listed option. 
+ 11. In the text pane, type isc and click Apply. 
+ 12. In the messages area at the top of the page, click the Save link to commit your changes to the master configuration. 
+ 13. Stop and restart the Tivoli Integrated Portal Server:
+
+ * 
+ * tip_home_dir
+ * /profiles/TIPProfile/bin
+ * 
+ *   * Windows operating system [/support/docview.wss?uid=swg21686128&amp;aid=1]stopServer.bat server1 
+    * Operating systems such as UNIX [/support/docview.wss?uid=swg21686128&amp;aid=2]Linux operating system [/support/docview.wss?uid=swg21686128&amp;aid=3]stopServer.sh server1
+      Note: On UNIX and Linux systems, you are prompted to provide an administrator user name and password.
+   
+   
+ * 
+ * tip_home_dir
+ * /profiles/TIPProfile/bin
+ * 
+ *   * Windows operating system [/support/docview.wss?uid=swg21686128&amp;aid=4]startServer.bat server1 
+    * Operating systems such as UNIX [/support/docview.wss?uid=swg21686128&amp;aid=5]Linux operating system [/support/docview.wss?uid=swg21686128&amp;aid=6]startServer.sh server1
+   
+   
+
+Example 
+The following example is a section of the web.xml file for TIPChangePasswd where the transport-guarantee parameter is set to NONE: 
+<security-constraint>
+<display-name>
+ChangePasswdControllerServletConstraint</display-name>
+<web-resource-collection>
+<web-resource-name>ChangePasswdControllerServlet</web-resource-name>
+<url-pattern>/*</url-pattern>
+</web-resource-collection>
+<auth-constraint>
+<description>Roles</description>
+<role-name>administrator</role-name>
+<role-name>operator</role-name>
+<role-name>configurator</role-name>
+<role-name>monitor</role-name>
+<role-name>iscadmins</role-name>
+</auth-constraint>
+<user-data-constraint>
+<transport-guarantee>NONE</transport-guarantee>
+</user-data-constraint>
+</security-constraint> 
+
+What to do next 
+Users must now specify a different port, depending on the mode of access. The default port numbers are as follows: 
+http:// <host_name> :16310/ibm/console 
+Use the HTTP port for logging in to the Tivoli Integrated Portal on the HTTP port . 
+https:// <host_name> :16311/ibm/console 
+Use the HTTPS secure port for logging in to the Tivoli Integrated Portal. 
+Note: If you want to use single sign-on (SSO) then you must use the fully qualified domain name of the Tivoli Integrated Portal host. RELATED INFORMATION
+#Superseded Tivoli Integrated Portal topic [http://www-01.ibm.com/support/knowledgecenter/SS5PMD_2.2.0/com.ibm.tip.doc/ttip_admin_https.html]
+Setting the HTTP session cookie to secure mode [http://www-01.ibm.com/support/docview.wss?uid=swg21684549]

@@ -1,0 +1,23 @@
+Title: IBM Sterling Commerce Support Addendum for using Oracle 12c with Sterling Selling and Fulfillment Suite 9.3 - United States
+
+Text:
+Oracle 12c SSFS 9.2 9.2.1 9.3 OMS compatibility TECHNOTE (FAQ)
+
+QUESTION
+ Does IBM support the use of Oracle 12c with Sterling Selling and Fulfillment Suite 9.2 and 9.3? 
+
+CAUSE
+We have received requests from our customers asking to confirm if Oracle 12c is supported with Sterling Selling and Fulfillment Suite 9.2, 9.2.1, and 9.3.
+
+ANSWER
+As per IBM's published system requirements guide, currently Sterling Selling and Fulfillment Suite (SSFS) 9.2, 9.2.1, and 9.3 are not supported with Oracle 12c.
+
+We understand that the user community desires to upgrade to a higher version of Oracle for various reasons. As an attempt to support our customers in the best way we can, the IBM SSFS team will support Oracle 12c with SSFS 9.2, 9.2.1, and 9.3. Please note that this configuration has not been through IBM's Quality Assurance testing. 
+
+
+
+NOTE: During problem analysis, it may be found that an issue is due to an untested scenario when using Oracle 12c on SSFS 9.2, 9.2.1, or 9.3. In this case, IBM Support will try to find a resolution or work around for your specific problem. However, there may be limitations that are found that cannot be addressed in the current SSFS 9.2, 9.2.1, and 9.3 releases.
+
+It is the customer's responsibility to test their solution end-to-end with all system functionality, including a full performance test, before rolling into production. These combinations of application and database software have not been through IBM's Quality Assurance testing. 
+
+Note that SSFS 9.4 has been certified with Oracle 12c, and is fully supported. Please reference that documentation for specific minimum patch levels needed.

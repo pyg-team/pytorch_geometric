@@ -1,0 +1,131 @@
+Title: IBM PI70058: UNINSTANTIATED NUMBERS GET TRUNCATED WHEN EXPORTING TO ORACLE - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  I have a stream that reads from a table and exports to another.
+   In version 16 it works fine; in version 18 they are truncated -
+   the decimals are gone. If I instantiate the values in a type
+   node, it works fine.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * This issue affects SPSS Modeler users who connect to an      *
+   * Oracle 12c database source.                                  *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * UNINSTANTIATED NUMBERS GET TRUNCATED WHEN EXPORTING TO       *
+   * ORACLE.                                                      *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Please upgrade to IBM SPSS Modeler 18.1 to resolve this      *
+   * issue.                                                       *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This issue has been resolved in IBM SPSS Modeler 18.1.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI70058
+   
+   
+ * REPORTED COMPONENT NAME
+   SPSS MODELER
+   
+   
+ * REPORTED COMPONENT ID
+   5725A64MD
+   
+   
+ * REPORTED RELEASE
+   I00
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-10-03
+   
+   
+ * CLOSED DATE
+   2017-06-21
+   
+   
+ * LAST MODIFIED DATE
+   2017-06-21
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   SPSS MODELER
+   
+   
+ * FIXED COMPONENT ID
+   5725A64MD
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * RI00 PSY
+   UP

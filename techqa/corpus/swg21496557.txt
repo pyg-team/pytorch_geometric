@@ -1,0 +1,35 @@
+Title: IBM Using the HTTP and/or EMAIL adapter with the Launcher on Unix 64 bit platforms may result in a crash. - United States
+
+Text:
+mpiSemDestroy(); crash; email; http; launcher TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Launcher crash on production machine - #0 0xc000000013a8d490:0 in mpiSemDestroy () at mpi_sem.cpp:87 
+
+SYMPTOM
+A system running WebSphere Transformation Extender (WTX) EMAIL and HTTP adapters at the same time may crash in the HTTP adapter module with the following stack trace: 
+
+Signal 11 (SIGSEGV) delivered
+mpiSemDestroy [libs/libdstxpi.so]
+termlib + 0x140 at m4email.c:410
+StandardTerm + 0x30 at adptglue.c:641
+SSDestroyLibrary + 0x20 at adptglue.c:707
+m4http_DestroyLibrary + 0x30 at m4http.c:760 
+_AdapterDestroy + 0x1c0 at rmadpt.c:650
+
+
+CAUSE
+The similar crash in mpiSemDestroy is possible if only email adapter is used.
+The crash happens during launcher shutdown procedure.
+
+
+RESOLVING THE PROBLEM
+Refer to APAR PM36157
+
+ 
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration WebSphere Transformation Extender E-Mail Adapter AIX, HP-UX, Linux, Solaris 8.3.0.3, 8.2.0.5 US 
+PRODUCT ALIAS/SYNONYM
+ Ascential DataStage TX Mercator

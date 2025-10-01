@@ -1,0 +1,30 @@
+Title: IBM No impact of CVE-2014-0160 ("HeartBleed") on MyISS portal and the IBM Security License Key and Download Center - United States
+
+Text:
+heartbleed; HeartBleed; CVE-2014-0160; OpenSSL; flaw; 1669815; XPU 30.040; xpu 30.040; password; passwords; user name; username; vulnerability; Flexera; DLC; LKC; download center; Download Center; License Key Center; license key center; myiss; MyISS; Myiss; 1.0.1; ssl; SSL; Flexera; flexera; IBM Security TECHNOTE (FAQ)
+
+QUESTION
+ Do you need to change your password for the MyISS portal and/or the IBM Security License Key and Download Center for protection from CVE-2014-0160 ("Heartbleed")? 
+
+CAUSE
+See http://web.nvd.nist.gov/view/vuln/detail?vulnId=CVE-2014-0160 [http://web.nvd.nist.gov/view/vuln/detail?vulnId=CVE-2014-0160] for specifics regarding this flaw. 
+
+ANSWER
+Confidential information such as user names and passwords on the MyISS portal or the IBM Security License Key and Download Center (also knows as LKC or DLC) were not affected by this OpenSSL vulnerability. As such there is not need to change the password unless the password is going to expire or has already expired. The password expiration is a system requirement and not related to this vulnerability. 
+
+For detailed information on product coverage, please see related Technote 1669815 [http://www-01.ibm.com/support/docview.wss?uid=swg21669815] - SiteProtector and related products vulnerability status for CVE-2014-0160 "HeartBleed" OpenSSL flaw.
+
+
+
+
+
+
+[/support/docview.wss?uid=swg21670031&aid=1] [https://ibm.biz/BdHdjw] [/support/docview.wss?uid=swg21670031&aid=2] [http://ibm.biz/InfraSecForumTechnote] [/support/docview.wss?uid=swg21670031&aid=3] [http://ibm.biz/SecSuptUTube] [/support/docview.wss?uid=swg21670031&aid=4] [http://ibm.biz/InfraSecFixes] [/support/docview.wss?uid=swg21670031&aid=5] [http://ibm.biz/FlexLicLogin] [/support/docview.wss?uid=swg21670031&aid=6] [http://ibm.biz/MyNotification] [/support/docview.wss?uid=swg21670031&aid=7] [http://ibm.biz/ContactSecSupport] 
+RELATED INFORMATION
+ http://www-01.ibm.com/support/docview.wss?uid=swg216698 [http://www-01.ibm.com/support/docview.wss?uid=swg21669815]
+
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Security IBM RealSecure Server Sensor for Windows Platform Independent Version Independent Security IBM Security Host Protection Not Applicable Security IBM Security Identity and Access Manager Not Applicable Security IBM Security Network Intrusion Prevention System Not Applicable Security IBM Security Network Protection Not Applicable Security IBM Security Network Controller Not Applicable Security IBM Security Virtual Server Protection for VMware Not Applicable Security Internet Scanner Software Not Applicable Security Proventia Network Intrusion Prevention System for Crossbeam Not Applicable Security Proventia Network Intrusion Detection System Not Applicable Security Proventia Endpoint Secure Control Not Applicable Security Proventia Network Enterprise Scanner Not Applicable Security Proventia Network Multi-Function Security Not Applicable Security Proventia Network Security Controller Not Applicable Security Proventia Virtualized Network Security Platform Not Applicable Security IBM Security SiteProtector System Not Applicable Windows 2.0 SP 7.0, 2.0 SP 8.0, 2.0 SP 8.1, 2.9, 3.0 All Editions

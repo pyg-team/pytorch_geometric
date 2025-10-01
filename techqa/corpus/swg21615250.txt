@@ -1,0 +1,66 @@
+Title: IBM "Invalid cardinality" errors in rules after migrating to V7 - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Some rules show "Invalid cardinality" errors after being migrated to JRules V7.X. 
+
+SYMPTOM
+The following error is shown in the rules after migrating from JRules V6 to V7:
+
+Invalid cardinality 'SINGLE', it is incompatible with 'MULTIPLE' 
+or
+Invalid variable 'object [MULTIPLE]' for expected type 'java.util.Collection [SINGLE]'.
+
+
+CAUSE
+This error is the result of a change in the BAL between V6.7 and V7.X. This change is explained in the documentation, see WebSphere ILOG JRules BRMS V7.1 > Migrating > Migrating from JRules 6.x > Migrating rule projects for rule authors > Business Action Language (BAL) changes > New semantic for Collection ruleset parameters [http://pic.dhe.ibm.com/infocenter/brjrules/v7r1/topic/com.ibm.websphere.ilog.jrules.doc/Content/Business_Rules/Documentation/_pubskel/JRules/ps_JRules_Global99.html].
+
+RESOLVING THE PROBLEM
+Follow the instructions described in the documentation indicated above.
+
+
+You can perform one of the following actions: 
+
+ * Change the type of your java.util.Collection variable/parameter to java.lang.Object.
+
+
+or  * Revert to the previous behavior by setting the ilog.rules.brl.collectionVarAsMultiple property to false.
+   
+   The property is specified in the preferences.properties file packaged under the folder ilog/rules/brl of the product library <InstallDir>\teamserver\lib\jrules-language-<version>.jar.
+   
+   For Rule Studio/Rule Designer, you must perform this change in the brldf.jar found under ilog.rules.brl.brldf_<lastestVersion> in the plugins folder of your Eclipse instance. By default:  * <JRulesInstallDir>\studio\eclipse\plugins
+   
+   
+   or
+
+ *  <ODMInstallDir>\WAS\AppServer-Shared\plugins 
+
+ * 
+ * 
+ * Rule Team Server/Decision Center
+ * 
+ * jrules-language-<version>.jar
+ * 
+ * teamserver.war\WEB-INF/lib/
+ * 
+ * If the EAR for the version you are using does not include a jrules-language-<version>.jar, you can simply add a preferences.properties file under teamserver.war\WEB-INF/classes with the following property: 
+ *  
+   ilog.rules.brl.collectionVarAsMultiple=false 
+   
+   
+ * 
+ * 
+ * repackage-ear
+ * 
+ * Decision Center V7.5 > Configuring Decision Center > Configuring the Decision Center console on WebSphere Application Server 7.0 > Step 6: Completing the Decision Center console configuration > Completing the configuration using Ant tasks > Repackaging the Decision Center archive
+ * 
+
+
+ 
+
+Note: as explained in the below link. you will first need to migrate to V7.1.1. when coming from V6.X.
+
+RELATED INFORMATION
+#Migrating from JRules to WODM [http://www.ibm.com/support/docview.wss?uid=swg21589725]

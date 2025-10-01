@@ -1,0 +1,83 @@
+Title: IBM Conditional logic in triggers - United States
+
+Text:
+triggers; conditional logic; case statement; rds db2 for os390 for zos db2 for z/os db2 udb universal database version v TECHNOTE (FAQ)
+
+QUESTION
+ A trigger with a case statement in it cannot be parsed. Attempting to use this trigger results in SQLCODE104 :
+
+--#SET TERMINATOR # 
+***INPUT STATEMENT: 
+CREATE TRIGGER TAXIEADD 
+NO CASCADE BEFORE INSERT 
+ON TAX_EMPLOYER_ADDR 
+REFERENCING NEW AS N 
+FOR EACH ROW MODE DB2SQL 
+WHEN (N.FIPS_SUBDIVISION > ' ') 
+BEGIN ATOMIC 
+CASE 
+WHEN (N.STATE > ' ' AND 
+N.ZIP_CODE = ' ') 
+OR (N.STATE = ' ' AND 
+N.ZIP_CODE > ' ') 
+THEN 
+SIGNAL SQLSTATE 'TI001' ('STATE AND ZIP CODE'); 
+END # 
+SQLERROR ON CREATE COMMAND, EXECUTE FUNCTION 
+RESULT OF SQL STATEMENT: 
+DSNT408I SQLCODE = -20100, ERROR: AN ERROR OCCURRED WHEN BINDING A TRIGGERED SQL STATEMENT. INFORMATION RETURNED: SECTION 
+NUMBER : 2 SQLCODE -104, SQLSTATE 42601, AND MESSAGE TOKENS (,IS 
+<HEXSTRING> <CHARSTRING> <GRAPHSTRING> 
+DSNT418I SQLSTATE = 56059 SQLSTATE RETURN CODE 
+DSNT415I SQLERRP = DSNHPARS SQL PROCEDURE DETECTING ERROR 
+DSNT416I SQLERRD = 0 0 0 -1 0 0 SQL DIAGNOSTIC INFORMATION 
+DSNT416I SQLERRD = X'00000000' X'00000000' X'00000000' X'FFFFFFFF' 
+X'00000000' X'00000000' SQL DIAGNOSTIC 
+INFORMATION 
+
+How can I use the power of triggers to perform different actions based on the SQLSTATE without using a CASE statement? 
+
+CAUSE
+In the DB2 SQL Reference (which you can view at the DB2 for z/OS™ and OS/390® library [http://www.ibm.com/software/data/db2/os390/library.html] Web page), under the information for CREATE TRIGGER, the CASE statement is not listed as being allowed in the trigger body. Unfortunately, only a limited subset of SQL statements are allowed in a trigger body and not much room exists for conditional logic except through a CASE statement in a full select or in the subselect part of an INSERT with subselect. 
+
+ANSWER
+Add the WHEN conditions of the CASE statement to the WHEN clause of the trigger. For example, rewrite your statement to resemble the following statement:
+
+
+ --#SET TERMINATOR #     
+
+   CREATE TRIGGER TAXIEADD         
+
+   NO CASCADE BEFORE INSERT  
+
+        ON TAX_EMPLOYER_ADDR  
+
+        REFERENCING NEW AS N      
+
+        FOR EACH ROW MODE DB2SQL   
+
+            WHEN ((N.FIPS_SUBDIVISION > ' ')   
+
+                AND  (N.STATE > ' ' AND     
+
+                      N.ZIP_CODE = ' ')   
+
+                  OR (N.STATE = ' ' AND      
+
+                      N.ZIP_CODE > ' '))   
+
+           BEGIN ATOMIC  
+
+                   SIGNAL SQLSTATE 'TI001' ('STATE AND ZIP CODE');  
+
+   END #       
+
+ ------   
+
+
+Hint: You might need more parentheses in the WHEN clause to make the logic work the way you want it to. 
+
+
+Follow-up question: In the original trigger logic, I wanted to set different SQLSTATEs depending on the conditions. How can I do this?
+
+Follow-up answer: You need to create one trigger for each SQLSTATE that you want to issue and put the conditional logic in the WHEN clause of the trigger.

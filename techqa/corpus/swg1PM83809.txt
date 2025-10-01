@@ -1,0 +1,131 @@
+Title: IBM PM83809: State edit windows grayed out in statecharts/flowcharts - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Rational Rhapsody Fix Pack 2 (8.0.2) for 8.0 [http://www-01.ibm.com/support/docview.wss?uid=swg24034499]
+Rational Rhapsody 8.0.6 [http://www-01.ibm.com/support/docview.wss?uid=swg24037021]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  In Rational Rhapsody when a unit is read only because of config
+   management or referenced unit, in a statechart and flowchart in
+   the feature dialog the action on entry and action on exit are
+   grayed out.
+   Also the scroll bars are grayed out, so it is not possible to
+   see the entire contents if the action consists of many lines. It
+   is also not possible to mark the contents and copy it to another
+   element.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   State edit windows grayed out in statecharts/flowcharts
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fixed in 8.0.2
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM83809
+   
+   
+ * REPORTED COMPONENT NAME
+   TLOGIC RHAPSODY
+   
+   
+ * REPORTED COMPONENT ID
+   5724V74RP
+   
+   
+ * REPORTED RELEASE
+   801
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-02-28
+   
+   
+ * CLOSED DATE
+   2013-03-21
+   
+   
+ * LAST MODIFIED DATE
+   2013-03-21
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TLOGIC RHAPSODY
+   
+   
+ * FIXED COMPONENT ID
+   5724V74RP
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R801 PSN
+   UP

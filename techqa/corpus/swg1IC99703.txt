@@ -1,0 +1,215 @@
+Title: IBM IC99703: THE SQL0437W MIGHT BE INDUCED BY RUNSTATS RESULTING IN INCORRECT COLCARD VALUE - United States
+
+Text:
+z/os  FIXES ARE AVAILABLE
+DB2 Cancun Release 10.5.0.4 (also known as Fix Pack 4) for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24038261]
+DB2 Version 10.5 Fix Pack 9 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24044110]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The problem occurs once you execute RUNSTATS with column details
+   like below:
+   RUNSTATS ON TABLE DB2INST1.TESTTABLE ON ALL COLUMNS WITH
+   DISTRIBUTION ON ALL COLUMNS AND DETAILED INDEXES ALL
+   
+   Afterwards the select statements might return warning:
+   SQL0437W  Performance of this complex query might be
+   sub-optimal. Reason code: "6".  SQLSTATE=01602
+   
+   The warning is caused by inconsistency between values in
+   SYSSTAT.COLUMNS and SYSSTAT.COLDIST tables, where the COLCARD
+   value of SYSSTAT.COLUMNS is the incorrect one.
+   You can check the conditions by obtaining db2look with mimic
+   option for the database, and comparing UPDATE statements for
+   SYSSTAT.COLUMNS and SYSSTAT.COLDIST tables:
+   
+   1. The UPDATE for SYSSTAT.COLUMNS table sets incorrect COLCARD
+   value 3:
+   
+   UPDATE SYSSTAT.COLUMNS
+   SET COLCARD=3,
+       NUMNULLS=0,
+       SUB_COUNT=-1,
+       SUB_DELIM_LENGTH=-1,
+       AVGCOLLENCHAR=-1,
+       AVGCOLLEN=16
+   WHERE COLNAME = 'C1' AND TABNAME = 'TESTTABLE' AND
+   TABSCHEMA = 'DB2INST1';
+   
+   
+   2. The correct cardinality is stored in SYSSTAT.COLDIST table
+   (note 4 different COLVALUE contents):
+   
+   UPDATE SYSSTAT.COLDIST
+   SET COLVALUE='VAL1            ',
+       VALCOUNT=92041
+   WHERE COLNAME = 'C1' AND TABNAME = 'TESTTABLE'
+         AND TABSCHEMA = 'DB2INST1'
+         AND TYPE      = 'F'
+         AND SEQNO     =  1;
+   
+   UPDATE SYSSTAT.COLDIST
+   SET COLVALUE='VAL2            ',
+       VALCOUNT=1602
+   WHERE COLNAME = 'C1' AND TABNAME = 'TESTTABLE'
+         AND TABSCHEMA = 'DB2INST1'
+         AND TYPE      = 'F'
+         AND SEQNO     =  2;
+   
+   UPDATE SYSSTAT.COLDIST
+   SET COLVALUE='VAL3            ',
+       VALCOUNT=26
+   WHERE COLNAME = 'C1' AND TABNAME = 'TESTTABLE'
+         AND TABSCHEMA = 'DB2INST1'
+         AND TYPE      = 'F'
+         AND SEQNO     =  3;
+   
+   UPDATE SYSSTAT.COLDIST
+   SET COLVALUE='VAL4             ',
+       VALCOUNT=9
+   WHERE COLNAME = 'C1' AND TABNAME = 'TESTTABLE'
+         AND TABSCHEMA = 'DB2INST1'
+         AND TYPE      = 'F'
+         AND SEQNO     =  4;
+   
+   
+   
+   The incorrect RUNSTATS results as above might occur when
+   following conditions are true:
+   (1) The table has compressed index,
+   (2) The index has pseudo deleted keys.
+   
+   The problem is more likely to occur in an index where there is a
+   high degree of commonality in the index keys.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  To workaround the SQL0437W warning you might consider:
+   1. Running RUNSTATS without column details.
+   2. Update SYSSTAT.COLUMNS COLCARD value manually to reflect the
+   number of distinct values in SYSSTAT.COLDIST table.
+   3. REORG problematic table and indexes for the table to get rid
+   of pseudo deleted keys, followed by a new RUNSTATS with all
+   desired column options.
+   
+   Note that problem might reoccur again after introduction of new
+   pseudo deleted keys in the index and subsequent RUNSTATS
+   operation.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * ALL                                                          *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * See Error Description                                        *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Upgrade to DB2 version 10.5 fixpack 4                        *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Problem was first fixed in DB2 version 10.5 fixpack 4
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC99703
+   
+   
+ * REPORTED COMPONENT NAME
+   DB2 FOR LUW
+   
+   
+ * REPORTED COMPONENT ID
+   DB2FORLUW
+   
+   
+ * REPORTED RELEASE
+   A50
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-02-27
+   
+   
+ * CLOSED DATE
+   2014-09-08
+   
+   
+ * LAST MODIFIED DATE
+   2014-09-08
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    IC99408 [http://www-01.ibm.com/support/docview.wss?uid=swg1IC99408]
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   DB2 FOR LUW
+   
+   
+ * FIXED COMPONENT ID
+   DB2FORLUW
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * RA50 PSN
+   UP

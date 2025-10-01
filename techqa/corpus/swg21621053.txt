@@ -1,0 +1,82 @@
+Title: IBM Collecting Troubleshooting Information for Tivoli Common Reporting - Cognos issues - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This technote is to be used as guide for capturing Cognos specific troubleshooting information for resolving Tivoli Common Reporting (TCR) issues. Please capture the specified data before engaging IBM Support.
+
+
+RESOLVING THE PROBLEM
+Before engaging the IBM Support team please capture the following Cognos specific troubleshooting data. 
+
+For All Issues: 
+
+1. A Problem Description. Please provide a detailed description of your problem and details on how to recreate the issue.
+
+How often does the problem occur? Include details about any recent problem occurrences including timestamps.
+
+Are there any workarounds in use for the issue?
+
+Supply the Business Impact, including:
+
+- Any upcoming deadlines and dates.
+- If the problem is seen in production, development, or testing. 
+
+
+2. The Cognos cmplst.txt file. This is stored in the root of the Cognos directory:
+
+TCR 1.3:
+- <TIP_HOME>/products/tcr/Cognos/c8/cmplst.txt
+
+TCR 2.1/2.1.1:
+<TIP_HOME>/tipv2Components/TCRComponent/cognos/cmplst.txt
+
+TCR 3.1:
+<Install Location>/JazzSM/Reporting/cognos/cmplst.txt
+
+
+3. The Cognos log files. 
+
+TCR 1.3:
+- <TIP_HOME>/products/tcr/Cognos/c8/logs/
+
+TCR 2.1/2.1.1:
+<TIP_HOME>/tipv2Components/TCRComponent/cognos/logs
+
+TCR 3.1:
+<Install Location>/JazzSM/Reporting/cognos/logs
+
+Please zip up the entire logs folder and provide time stamps of when the problem or error occurred. If not provide the cogserver.log stored in this directory.
+
+4. A description of the Server Environment. Include the the Operating System, the number of servers and the exact datasource type and version.
+
+5. Please include any Print Screens illustrating the issue.
+
+For Configuration and Security Issues:
+
+1. Provide the Cognos Configuration file: 
+
+TCR 1.3:
+- <TIP_HOME>/products/tcr/Cognos/c8/configuration/cogstartup.xml
+
+TCR 2.1/2.1.1:
+<TIP_HOME>/tipv2Components/TCRComponent/cognos/configuration/cogstartup.xml
+
+TCR 3.1:
+<Install Location>/JazzSM/Reporting/cognos/configuration/cogstartup.xml
+
+For all Report Specific issues:
+
+If the issue is related to Cognos Report Studio then the following is required:
+
+1. The Report Specification. Open Report Studio Go to Tools>Copy Report to Clipboard. Paste into a text file and attach to the PMR.
+
+2. Specify if the report is custom written or supplied by IBM. 
+
+3. Test the problem in both HTML and PDF outputs. 
+
+4. Check that the report validates successfully . In Report Studio, Go to Tools>Validate Report. If the report does not validate successfully please provide the errors.
+
+RELATED INFORMATION
+ Collect troubleshooting data: TCR [http://www.ibm.com/support/docview.wss?uid=swg21422663]

@@ -1,0 +1,166 @@
+Title: IBM IC56649: INSTALLING THE MQ CLIENT CAUSES THE JAVAWEBSTART REGISTRATION INFORMATION TO BE OVERRIDDEN. - United States
+
+Text:
+  A FIX IS AVAILABLE
+WebSphere MQ V6.0 Fix Pack 6.0.2.5 [http://www-01.ibm.com/support/docview.wss?uid=swg24020658]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Installation of the MQ Client causes the JavaWebStart
+   registration information to be overridden, which can cause
+   existing customer applications to fail if they require JAVA
+   features only available at a higher JVM level than provided by
+   the MQ JRE installed for GSKit (1.4.2 at present).
+   *
+   Additional keywords:
+   ...\gskit\jre\javaws\JavaWebStart.dll
+   gskit jre javaws javawebstart dll
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Re-register the JavaWebStart.dll to the initial value.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   All windows users of JavaWebStart who install the MQ Client
+   
+   Platforms affected:
+   Windows
+   
+   ****************************************************************
+   PROBLEM SUMMARY:
+   During the MQ Client install, a JRE is installed for use with
+   GSKit. The install of this JRE registers unconditionally the
+   JavaWebStart dll, which will overwrite any previous
+   installation of it. In the case where an application used
+   JavaWebStart and relied on functionality in the JVM which is
+   only available at a higher level than that provided by the
+   GSKit JRE, applications may cease to work after installing the
+   MQ Client.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  MQ has been modified to not register the JavaWebStart during
+   the GSKit JRE install, as it is not required for MQ
+   functionality.
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+                      v6.0
+   Platform           Fix Pack 6.0.2.5
+   --------           --------------------
+   Windows            U200292
+   
+   The latest available maintenance can be obtained from
+   'Websphere MQ Recommended Fixes'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037]
+   
+   If the maintenance level is not yet available, information on
+   its planned availability can be found in 'Websphere MQ
+   Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC56649
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ WINDOWS V6
+   
+   
+ * REPORTED COMPONENT ID
+   5724H7200
+   
+   
+ * REPORTED RELEASE
+   600
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-05-23
+   
+   
+ * CLOSED DATE
+   2008-06-24
+   
+   
+ * LAST MODIFIED DATE
+   2008-09-04
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ WINDOWS V6
+   
+   
+ * FIXED COMPONENT ID
+   5724H7200
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R600 PSY
+   UP

@@ -1,0 +1,25 @@
+Title: IBM What files needs to be updated within the Initiate product when the database hostname is changed? - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Our DBA recently changed the hostname to our database and now our Brokers and Engine will not stay up and running. What files do we need to update so that the Engine Instance picks up the new correct database hostname? 
+
+RESOLVING THE PROBLEM
+Both the Engine and WebReports are directly dependant on a database connection. If you have changed or are planning on changing the database hostname you should update the following files: 
+
+ 1. Engine ODBC connection: Within Windows so that our data source would point to the new Database hostname. Click Start ->Administrative Tools - > Data Sources (ODBC) - >System DSN tab. Choose the desired data source and click configure. Now you can update the "Server:" to the new hostname. Within AIX, Linux, or Solaris the data source name is found in the ODBC.ini file. 
+ 2. Engine config file: You will need to update the "serverName" variable in the com.initiate.server.jdbc.cfg file (located in: %MAD_HOMEDIR%/inst/mpinet_<instance>/conf) with the new hostname value. 
+ 3. Outbound Broker ODBC Connection: The Outbound Broker also requires an ODBC connection to the database. Therefore, just as in the Engine (number 1 above) you will need to re-configure the data source for the Outbound Broker with the new hostname if it resides in a different machine other than the Engine. The other configuration to update is in the Broker configuration file - open a shell prompt and go to the scripts directory where you installed the Message Broker Suite. Type madconfig create_datasource and answer the prompts. 
+ 4. WebReports property file: Lastly, you will need to modify/update the server name in the Webreports.properties file (%TOMCAT_HOME%/shared/classes/).
+
+
+Once the above mentioned files have been updated you should start the services in the proper sequence: 
+
+ 1. Start the Engine Instance 
+ 2. After the Engine Instance has completed started, you may start any/all client applications (this includes Brokers).
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Information Management Initiate Master Data Service Windows, AIX, Solaris, Linux 10.0.0, 10.1.0, 7.5.0, 9.0.0, 9.2.0, 9.5.0, 9.7.0

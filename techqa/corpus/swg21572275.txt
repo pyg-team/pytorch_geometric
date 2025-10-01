@@ -1,0 +1,15 @@
+Title: IBM How can I decide the actual effect or result of each report object property options ? - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Every report object has several design properties which may affect to report rendering results and behavior. For example, any text object have the option for "Enforce stricter line-breaking rules for Japanese Text". What does this "strict line-breaking rules" actually means ? 
+
+ANSWER
+These properties are compliant with CSS3 standards. So you may run the report with HTML output then see CSS tags where you have applied the option. Web browser, PDF viewer, or Excel viewer etc. will render the report under CSS defined rules. 
+
+In this case, if you enable "Enforce stricter line-breaking rules" option, you may find CSS tag like "line-break: strict". So, you can find detailed line-breaking rules for Japanese text described in CSS3 definition of line-break: strict section.
+
+RELATED INFORMATION
+ CSS3 line-break tag [http://www.w3.org/TR/css3-text/#line-break]

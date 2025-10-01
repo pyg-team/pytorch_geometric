@@ -1,0 +1,95 @@
+Title: IBM 【セキュリティ情報】 IBM WebSphere MQ Internet Pass-ThruへのRC4アルゴリズムの脆弱性の影響　(CVE-2015-2808) - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ SSL/TLS通信で使用される RC4 アルゴリズムの脆弱性 ("Bar Mitzvah"攻撃と呼ばれる) はIBM WebSphere MQ Internet Pass-Thruへ影響があります。
+
+
+VULNERABILITY DETAILS
+脆弱性の詳細： 
+
+CVEID: CVE-2015-2808 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-2808]
+DESCRIPTION: The RC4 algorithm, as used in the TLS protocol and SSL protocol, could allow a remote attacker to obtain sensitive information. An attacker could exploit this vulnerability to remotely expose account credentials without requiring an active man-in-the-middle session. Successful exploitation could allow an attacker to retrieve credit card data or other sensitive information. This vulnerability is commonly referred to as "Bar Mitzvah Attack".
+CVSS Base Score: 5
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/101851 [https://exchange.xforce.ibmcloud.com/vulnerabilities/101851] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:L/Au:N/C:P/I:N/A:N)
+
+AFFECTED PRODUCTS AND VERSIONS
+影響のある製品・バージョン： 
+
+次の製品に影響があります。 
+
+IBM WebSphere MQ Internet Pass-Thru - Support Pac MS81
+
+REMEDIATION/FIXES
+修正策：
+なし
+
+WORKAROUNDS AND MITIGATIONS
+次のMQの RC4 CipherSpecのいずれかを使用するすべてのチャネル定義をより強力な暗号化アルゴリズムを使用するように変更されることをおすすめします。 
+
+ * SSL_DH_anon_EXPORT_WITH_RC4_40_MD5 
+ * SSL_DH_anon_WITH_RC4_128_MD5 
+ * SSL_DHE_DSS_WITH_RC4_128_SHA 
+ * SSL_ECDH_anon_WITH_RC4_128_SHA 
+ * SSL_ECDH_ECDSA_WITH_RC4_128_SHA 
+ * SSL_ECDH_RSA_WITH_RC4_128_SHA 
+ * SSL_ECDHE_ECDSA_WITH_RC4_128_SHA 
+ * SSL_ECDHE_RSA_WITH_RC4_128_SHA 
+ * SSL_KRB5_EXPORT_WITH_RC4_40_MD5 
+ * SSL_KRB5_EXPORT_WITH_RC4_40_SHA 
+ * SSL_KRB5_WITH_RC4_128_MD5 
+ * SSL_KRB5_WITH_RC4_128_SHA 
+ * SSL_RSA_EXPORT_WITH_RC4_40_MD5 
+ * SSL_RSA_WITH_RC4_128_MD5 
+ * SSL_RSA_WITH_RC4_128_SHA 
+
+セキュリティ上の脆弱性に対応して、より弱いアルゴリズムの使用を廃止する可能性があることにご注意ください。
+
+この構成変更により、互換性の問題が発生しないことをご確認お願いします。RC4アルゴリズムの無効化しない場合上記の攻撃に晒される可能性があります。また、お客様の環境全体を精査いただき、RC4アルゴリズムが有効になっている領域を特定いただき、適切な緩和や修復アクションを実行されることを推奨いたします。
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v2 Guide [http://www.first.org/cvss/v2/guide] 
+On-line Calculator v2 [http://nvd.nist.gov/CVSS-v2-Calculator] 
+. 
+参照情報： 
+
+[IBMサイト] 
+【セキュリティ情報】IBM WebSphere MQ, IBM WebSphere MQ Internet Pass-Thru, IBM Mobile Messaging and M2M Client Pack SSL 3.0 の脆弱性 (CVE-2014-3566) [http://www.ibm.com/support/docview.wss?uid=swg21687573] 
+
+
+この文書は、米国 IBM 社の資料を翻訳した参考文書です。翻訳元の文書は、以下のリンクよりご参照ください。 
+Security Bulletin: Vulnerability in RC4 stream cipher affects IBM WebSphere MQ Internet Pass-Thru (CVE-2015-2808) [http://www.ibm.com/support/docview.wss?uid=swg21883553] 
+
+公開済みのフィックスパックについては、以下のサイトよりご利用いただけます。 
+Recommended fixes for WebSphere MQ [http://www-01.ibm.com/support/docview.wss?rs=171&uid=swg27006037] 
+
+フィックス・パックの公開予定については、以下のサイトよりご確認いただけます。 
+WebSphere MQ planned maintenance release dates [http://www-01.ibm.com/support/docview.wss?rs=171&uid=swg27006309] 
+
+
+[CVSS情報] 
+独立行政法人 情報処理推進機構: 共通脆弱性評価システムCVSS概説 [http://www.ipa.go.jp/security/vuln/CVSS.html] 
+JVN iPedia: CVSS計算ソフトウェア日本語版 [http://jvndb.jvn.jp/cvss/ja.html] 
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] 
+. 
+関連情報： 
+. 
+[お問合せ先] 
+技術的な内容に関して、サービス契約のあるお客様はIBMサービス・ラインにお問い合わせください。 
+IBM サービス・ライン [http://www.ibm.com/jp/news/20070420001.html] 
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY. 
+
+関連情報
+ An US English translation is available [http://www.ibm.com/support/docview.wss?uid=swg21883553 ]

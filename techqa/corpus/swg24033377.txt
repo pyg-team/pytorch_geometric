@@ -1,0 +1,50 @@
+Title: IBM Downloading IBM Cognos Disclosure Management 10.2.0.0 - United States
+
+Text:
+ DOWNLOADABLE FILES
+
+ABSTRACT
+ This page describes how to download IBM® Cognos® Disclosure Management. 
+
+DOWNLOAD DESCRIPTION
+IBM Cognos Disclosure Management is a unified financial governance solution that focuses on improving financial processes and controls, particularly in the final stages before disclosure. 
+
+
+To download a product, go to the IBM Passport Advantage® Web Site [http://www.ibm.com/software/howtobuy/passportadvantage/paocustomer/sdma/SDMA?PO=DOWNLOAD_FIND_BY_PART_NUMBER] and then:
+
+
+ 1.  Do one of the following:
+     If you are a returning customer, sign in.
+     If you are a new customer, register. 
+ 2.  Under Find it fast, click Download software. 
+ 3.  If the Software download & media access window appears, click I agree. 
+ 4.  In the Find downloads & media window, select the download you want and click Continue. 
+ 5.  Under Select criteria, select a language and one or more platforms. 
+ 6.  Under Download options, select the options you want, and click Continue. 
+ 7.  Under Review “Current version” downloads, expand Current version and under Description, select the download you want, expand it and select the items you want. 
+ 8.  If applicable, under Select optional downloads, expand and select the items you want. 
+ 9.  Under Review downloading specifics, update the Download method or the Download location, if you want, and then click I agree, and click Download now. 
+ 10. In the Initial Setup window, change the Default download location, if you want. 
+ 11. If you are prompted, click OK to create the directory where you want the downloaded items to be stored. 
+ 12. Click OK to begin the download.
+
+When the download has finished, Download complete appears in the Download Director window. The required and optional parts for each product are listed and described in detail. There is an option to download each licensed eAssembly. Each eAssembly contains all of the required and optional downloads needed for a particular product and platform combination. 
+
+ 
+
+Downloading and assembling the product  * 
+
+1. Download all of the parts that you need, both required and optional.
+2. Unpack each of the parts into a single temporary directory on your system. 
+3. Follow the instructions in the Quick Start Guide to install the product. [/support/docview.wss?uid=swg24033377&amp;aid=1] [/support/docview.wss?uid=swg24033377&amp;aid=1] The following tables list all parts available for IBM Cognos Disclosure Management 10.2.0.0.
+
+The following parts are applicable to IBM Cognos Disclosure Management 10.2.0 Microsoft Windows Multilingual: Parts and Platforms Details eImage IBM Cognos Disclosure Management 10.2.0 Microsoft Windows Multilingual Required CIC75ML 
+The following parts are applicable to IBM Cognos Disclosure Management Advanced 10.2.0 Microsoft Windows Multilingual: 
+
+Parts and Platforms Details eImage IBM Cognos Disclosure Management Quick Start Guide 10.2.0 Multilingual Required CIC74ML IBM Cognos Disclosure Management 10.2.0 Microsoft Windows Multilingual Required CIC75ML IBM Cognos TM1 32-bit 10.1.0 Microsoft Windows Multilingual Required CI5TAML IBM Cognos TM1 64-bit 10.1.0 Microsoft Windows Multilingual Required CI5TBML IBM Cognos TM1 Client 10.1.0 Microsoft Windows Multilingual Required CI5TCML IBM Cognos TM1 64-bit 10.1.0 AIX Multilingual Required CI5T7ML IBM Cognos TM1 64-bit 10.1.0 Linux x86 Multilingual Required CI5T8ML 
+The following parts are applicable to IBM Cognos Financial Statement Reporting (FSR) EDGAR Engine for IBM Cognos Disclosure Management 10.2.0 Microsoft Windows Multilingual: 
+
+Parts and Platforms Details eImage IBM Cognos Financial Statement Reporting (FSR) 6.6.1 for IBM Cognos Disclosure Management 10.2.0 Microsoft Windows Multilingual Required CIC76ML IBM Cognos Financial Statement Reporting (FSR) EDGAR Enablement Script 6.6.1 Microsoft Windows English Required CI8PXEN 
+The following parts are applicable to IBM Cognos Financial Statement Reporting (FSR) XBRL User for IBM Cognos Disclosure Management 10.2.0 Microsoft Windows English: 
+
+Parts and Platforms Details eImage IBM Cognos Financial Statement Reporting (FSR) 6.6.1 for IBM Cognos Disclosure Management 10.2.0 Microsoft Windows Multilingual Required CIC76ML IBM Cognos Financial Statement Reporting (FSR) XBRL Enablement Script 6.6.1 Microsoft Windows English Required CI8PWEN

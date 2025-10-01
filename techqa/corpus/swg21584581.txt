@@ -1,0 +1,86 @@
+Title: IBM EnablePassword ignored on remote agent during SAP test execution - United States
+
+Text:
+SAP Shortcut; password; prompt; EnablePassword; RPT; agent; remote TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ IBM Rational Performance Tester (RPT) playback on a remote agent is requesting the SAP user and password. 
+
+SYMPTOM
+For SAP Shortcut to not prompt the user for the password during execution, you need to set the EnablePassword registry key. For that, you would do the following steps.
+
+
+
+Disclaimer This solution contains information about modifying the system registry. Before making any modifications to the Microsoft Registry Editor, it is strongly recommended that you make a backup of the existing registry. For more information describing how to back up the registry, refer to Microsoft Knowledge Base article 256986 [http://support.microsoft.com/kb/256986]
+
+
+
+ 1. Open the registry.
+    
+    
+ 2. Go toHKEY-local-user\software\sap\sapshortcut\security.
+    
+    
+ 3. Set variable EnablePassword to 1.
+
+
+
+
+You have to do that configuration step, even if RPT SAP extension has the credentials information as part of the test, 
+
+You started the IBM Rational Performance Tester Agent on your remote agent under the Local System Account. 
+It can happen that RPT playback requests the SAP credentials, even though you have done the above registry settings on the agent.
+
+CAUSE
+ 
+
+When appending the registry change for the SAP shortcut password prompt, possibly only your Windows account can *see* that registry change.
+
+
+RESOLVING THE PROBLEM
+You could decide to start the agent manually as a process under the same windows account where the PasswordEnable change is appended.
+
+
+How to start the agent manually on the remote agent depends on the RPT versions.
+
+
+
+
+From versions 8.2 to 8.2.1.5 (including)
+
+
+ 1. Stop the IBM Rational Performance Tester Agent service with
+    
+    Control Panel > Administrative Tools > Services.
+    
+    
+ 2. Start a command prompt window.
+    
+    
+ 3. Change directory to the Agent Controller bin folder, for example, 
+    
+    C:\Program Files\IBM\SDP\AgentController\bin.
+    
+    
+ 4. Start ACServer.exe. This starts both ACServer.exe and TPTPProcessController.exe.
+    
+    
+
+
+Versions 8.3 and newer
+
+
+ 1. Stop the Majordomo service with
+    
+    Control Panel > Administrative Tools > Services.
+    
+    
+ 2. Start a command prompt window.
+    
+    
+ 3. Change directory to the Majordomo installation folder, for example,
+    
+    C:\Program Files\IBM\SDP\Majordomo.
+    
+    
+ 4. Start Majordomo.bat.

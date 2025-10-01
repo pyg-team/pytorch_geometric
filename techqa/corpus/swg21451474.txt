@@ -1,0 +1,53 @@
+Title: IBM How do I turn on Information Services Director (ISD) tracing? - United States
+
+Text:
+WISD ISD tracing TECHNOTE (FAQ)
+
+QUESTION
+ How do I turn on WISD/ISD tracing and view the data? 
+
+ANSWER
+The following steps show how to configure tracing for the agent and ISD. After the tracing is complete make sure to
+
+Agent: 
+
+ 1.  Log into the Web Console. 
+ 2.  Go to the Administration tab. 
+ 3.  Click on Log Management. 
+ 4.  Click on Logging Components. 
+ 5.  Click the radio button to the left of ISF Agent, then click on Manage Configurations. 
+ 6.  If there is an existing ISFAgent.TRACE configuration, then select it and click on Set as Active and continue to step 14. 
+ 7.  To create an ISFAgent.TRACE configuration: click on New Logging Configuration, 
+ 8.  Set the name to ISFAgent.TRACE 
+ 9.  Change Threshold to All 
+ 10. Click Browse and select ISF-AGENT, ISF-AGENT-APP and ISF-AGENT-HANDLER, then click Ok. 
+ 11. Change the severity level to All. 
+ 12. Click Save and Close 
+ 13. Click Set as Active. 
+ 14. Go back to the Logging components list.
+
+
+ISD: 
+ 1.  Log into the Web Console. 
+ 2.  Go to the Administration tab 
+ 3.  Click on Log Management 
+ 4.  Click on Logging Components 
+ 5.  Click the radio button to the left of WISD. 
+ 6.  If there is an existing WISD.TRACE configuration, then select it and click on Set as Active and continue to step 24. 
+ 7.  To create a WISD.TRACE configuration: click on New Logging Configuration, 
+ 8.  Set the name to WISD.TRACE 
+ 9.  Change Threshold to All 
+ 10. Click Browse and select WISD-HANDLER-DS, then click Ok. 
+ 11. Change the severity level to All. 
+ 12. Click Save and Close 
+ 13. Click Set as Active. 
+ 14. Go back to the Logging components list.
+
+
+View and Print log: 
+ 1. Click Logging View 
+ 2. Create new logging view 
+ 3. For Severity Levels select "All" 
+ 4. For categories select: WISD-HANDLER-DS, ISF-AGENT, ISF-AGENT-APP, ISF-AGENT-HANDLER. 
+ 5. For Timestamp set to a desired timeframe. 
+ 6. Click View Log.

@@ -1,0 +1,97 @@
+Title: IBM Integrating Corporate LDAP with IBM InfoSphere MDM - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ We have set up our MDM instance to use our corporate LDAP for user management and we are running into several strange issues like not being able to log into web applications like inspector or perform certain workflow within workbench like importing hub configuration, rescoring members, etc (deploying hub configuration and certain jobs work fine), or run command line utilities like mpimcomp.
+
+Error in object 'loginBean': codes [error.unable.authenticate.loginBean,error.unable.authenticate];arguments []; default message [usr 'MXMDMADM', cannot execute interaction 'USRGETINFO'.]
+
+Why are we getting these errors and how can we circumvent them? 
+
+CAUSE
+From v11 onwards, all aspects of user management and LDAP integration are handled by LDAP and these errors merely indicate the integration has not been done correctly. For details on WebSphere, you may refer to the following links:
+
+User management within WebSphere: http://www-01.ibm.com/support/knowledgecenter/SSAW57_8.5.5/com.ibm.websphere.nd.doc/ae/tsec_authusers.html [http://www-01.ibm.com/support/knowledgecenter/SSAW57_8.5.5/com.ibm.websphere.nd.doc/ae/tsec_authusers.html]
+
+Integrating LDAP with WebSphere: http://www.ibm.com/developerworks/websphere/techjournal/0701_ilechko/0701_ilechko.html [http://www.ibm.com/developerworks/websphere/techjournal/0701_ilechko/0701_ilechko.html]
+
+If your deployment uses external LDAP, then at a minimum you must complete the following steps in the external LDAP to enable at least the administrative user (create or add other users/groups as needed):
+
+1. Create the mdmadmin LDAP user.
+2. Create the following default virtual MDM LDAP user groups: 
+
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+
+
+3. Add the mdmadmin user to the mdm_admin user group. 
+ANSWER
+Log into the WAS Admin console and follow these steps to get to LDAP configuration screen: 
+
+ 
+
+ 1. Click Security > Global security. 
+ 2. Under User account repository, click the Available realm definitions drop-down list, select Standalone LDAP registry (or Federated repositories depending on your set-up), and click Configure. 
+ 3. Under Additional properties, click Advanced Lightweight Directory Access Protocol (LDAP) user registry settings. 
+
+
+On the resultant screen, you will find the following options: 
+
+1. User filter 
+Specifies the LDAP user filter that searches the user registry for users. This option is typically used for security role-to-user assignments and specifies the property by which to look up users in the directory service. For example, to look up users based on their user IDs, specify (&(uid=%v)(objectclass=inetOrgPerson)). 
+
+2. Group filter 
+Specifies the LDAP group filter that searches the user registry for groups. This option is typically used for security role-to-group assignments and specifies the property by which to look up groups in the directory service. 
+
+3. User ID map 
+Specifies the LDAP filter that maps the short name of a user to an LDAP entry.. 
+
+4. Group ID map 
+Specifies the LDAP filter that maps the short name of a group to an LDAP entry. 
+
+5. Group member ID map 
+Specifies the LDAP filter that identifies user-to-group relationships. 
+
+6. Perform a nested group search 
+
+Specifies a recursive nested group search. 
+
+7.Kerberos user filter 
+Specifies the Kerberos user filter value. This value can be modified when Kerberos is configured and is active as one of the preferred authentication mechanisms. 
+
+8. Certificate map mode 
+Specifies whether to map X.509 certificates into an LDAP directory by EXACT_DN or CERTIFICATE_FILTER. Specify CERTIFICATE_FILTER to use the specified certificate filter for the mapping. 
+
+9. Certificate filter 
+Specifies the filter certificate mapping property for the LDAP filter. The filter is used to map attributes in the client certificate to entries in the LDAP registry. 
+
+Review all of the above settings with your LDAP administrator. Having any of the above parameters incorrectly set-up may result in the behavior discussed above. 
+
+PRODUCT ALIAS/SYNONYM
+ MDS
+Master Data Service
+MDM
+MDM SE
+MDMSE
+Master Data Management
+IBM Infosphere Master Data Service
+MDM Standard Edition
+MDM Hybrid Edition
+Initiate
+Hybrid
+Physical MDM
+Virtual MDM
+Hybrid MDM

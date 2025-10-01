@@ -1,0 +1,48 @@
+Title: IBM In Data ONTAP 8.0 (prior to 8.0.5) and 8.1 (prior to 8.1.3), a Head Swap cannot handle more than 1 reassign from one node - United States
+
+Text:
+ FLASH (ALERT)
+
+ABSTRACT
+ There is a known limitation with the head swap procedure for Data ONTAP 8.0 (prior to 8.0.5) and 8.1 (prior to 8.1.3). 
+
+CONTENT
+Summary
+
+There is a known limitation with the head swap procedure for Data ONTAP 8.0 (prior to 8.0.5) and 8.1 (prior to 8.1.3). Due to the way data is stored within RAID and HA, these systems cannot accommodate two headswaps if performing a ‘disk reassign’ while in takeover mode. While RAID and HA will retain the previous partner NVRAM identification, when a situation such as may be experienced in a large customer environment (TakeOver, Disk Reassign, GiveBack, TakeOver, Disk Reassign, GiveBack) is encountered, the value stored by RAID in memory is incorrect. 
+
+Update: If you are running a Data ONTAP release equal to or later than 8.0.5, or 8.1.3 in the 8.1.x family, a resolution is in place that eliminates the need to perform the additional TakeOver/GiveBack step delineated in the Workaround section below. 
+
+Issue Description 
+
+There is a known limitation with the head swap procedure for Data ONTAP 8.0 (prior to 8.0.5) and 8.1 (prior to 8.1.3) in an HA configuration. This limitation does not exist if the head swap is being initiated from Maintenance mode. A headswap might be the entire storage system or its major components, such as a motherboard, NVRAM, or a combination of the two. Due to the way data is stored with RAID and HA, these systems cannot accommodate two concurrent headswaps. RAID and HA will retain the previous NVRAM identification, when a situation such as one that might be experienced in a large customer environment (TakeOver, Disk reassign, GiveBack, TakeOver, Disk reassign, GiveBack) is encountered, the value stored by RAID in memory is incorrect. 
+
+There is also a known workaround to this issue – please see the ‘Workaround’ Section below. 
+
+In addition, there are other limitations that currently exist, such as: 
+
+ * A GiveBack should be performed immediately after a disk reassign to minimize a subsequent aggregate change that might bring down the system. 
+ * No aggregate configuration changes should be done after the disk reassign is completed. 
+ * In addition, failed disks might not be assigned to the head being swapped, (see BUG 419821 [http://mysupport.netapp.com/NOW/cgi-bin/bol?Type=Detail&Display=419821]). Any failed disks must be removed before the disk reassign is performed. In Data ONTAP 8.1 a check will be added for this limitation.
+
+
+Update: If the customer is running a Data ONTAP release equal to or later than 8.0.5, or 8.1.3, in the 8.1.x family, a resolution is in place that eliminates the need to perform the additional TakeOver/GiveBack step delineated in the Workaround section below. 
+Workaround 
+
+If the customer is running one of the affected releases, there is a known workaround to this issue: 
+
+First TakeOver/Giveback:
+1. Node A (properly functioning node) performs a TakeOver of Node B (node that needs a head swap)
+2. Head Swap performed on Node B
+3. Disk reassign of Node B's disks on Node A
+4. GiveBack to Node B 
+
+Second TakeOver/Giveback:
+1. TakeOver of Node A by Node B (negotiated)
+2. GiveBack to Node A 
+
+Note: Performing the additional TakeOver/GiveBack sequence from the 'head-swapped' node will clear out the cached values. 
+
+Solution 
+
+When available, upgrade to a version of Data ONTAP (release equal to or later than 8.0.5 or 8.1.3 in the 8.1.x family) that has a resolution for this issue.

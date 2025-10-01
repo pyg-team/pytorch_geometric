@@ -1,0 +1,189 @@
+Title: IBM IT15978: AMQ9642 error reported during SSL/TLS two-way authentication - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  MQ v8 client fails with the following error  when default
+   certificate being set by the client.
+   
+   AMQ9642: MESSAGE:
+   No SSL or TLS certificate for channel '<insert one>'.
+   EXPLANATION:
+   The channel '<insert one>' did not supply a certificate to use
+   during SSL or TLS handshaking, but a certificate is required by
+   the remote queue manager.
+   The remote host is '<insert two>'.
+   The channel did not start.
+   
+   And the Queue Manager error log reports
+   
+   AMQ9637: Channel is lacking a certificate.
+   
+   EXPLANATION:
+   The channel is lacking a certificate to use for the SSL
+   handshake. The channel name is 'CHANNEL.NAME' (if '????' it is
+    unknown at this stage in the SSL processing).
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  If  " CertificateLabel=<certname> " is specified in ssl stanza
+   of mqclient.ini , then channel will use this certificate as
+   default.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   All users of MQ V8 and V9,using applications that connect to the
+   Queue Manager using default certificate .
+   
+   
+   Platforms affected:
+   MultiPlatform
+   
+   ****************************************************************
+   PROBLEM DESCRIPTION:
+   When there is no  personal certificate in the client key store
+   with the label name of ibmwebspheremq<userid> ,the application
+   can be configure to connect to the Queue Manager using the
+   default certificate present in the keystore. This is possible
+   by setting  the environment variable AMQ_SSL_ALLOW_DEFAULT_CERT.
+   
+   This variable was not honored by MQ v8. The client trace showed
+   that the variable was not checked even if it was set correctly
+   as an environment variable. Accordingly, applications which were
+   configured to use the default certificate failed to connect to
+   the queue manager, as the certificate was not used.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The MQ v8 client code has been modified to flow the default
+   certificate from the keystore (if one exists) to the queue
+   manager if AMQ_SSL_ALLOW_DEFAULT_CERT is set in the client's
+   environment.
+   
+   If AMQ_SSL_ALLOW_DEFAULT_CERT is set and there is both default
+   cert and ibmwebpsheremq<userid> cert then,
+   ibmwebpsheremq<userid> will be used.
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+   Version    Maintenance Level
+   v8.0       8.0.0.7
+   v9.0 CD    9.0.2
+   v9.0 LTS   9.0.0.1
+   
+   The latest available maintenance can be obtained from
+   'WebSphere MQ Recommended Fixes'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037]
+   
+   If the maintenance level is not yet available information on
+   its planned availability can be found in 'WebSphere MQ
+   Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT15978
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ BASE MULTIP
+   
+   
+ * REPORTED COMPONENT ID
+   5724H7251
+   
+   
+ * REPORTED RELEASE
+   800
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-07-01
+   
+   
+ * CLOSED DATE
+   2017-01-06
+   
+   
+ * LAST MODIFIED DATE
+   2017-10-16
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ BASE MULTIP
+   
+   
+ * FIXED COMPONENT ID
+   5724H7251
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R800 PSY
+   UP

@@ -1,0 +1,168 @@
+Title: IBM IZ91282: UNABLE TO APPLY SLA IF THE SERVER TIME IS DIFFERENT FROM CLIENT TIME - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS USER ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  steps to replicate in 7114 with SRM:
+   Calendar Timezone issue:
+   Maximo Application Server and Database server time is in GMT
+   timezone
+   1. log in as Wilson, go to the default profile, set the timezone
+   to US/Eastern for my profile
+   2. Create a calendar called TESTSLAC in the calendar app with
+   shift pattern as below:
+   Shift = 8-5 EAST
+   Start time = 8:00
+   End time = 17:00
+   Work hours =9:00
+   
+   3. create a new SLA
+   applies to = INCIDENT
+   offering = CUSTOMER
+   Apply this calendar to an SLA
+   i.e. in the Applies to Calendar section
+   enter TESTSLAC
+   shift = 8-5 EAST
+   then in the Calculation Calendar
+   enter TESTSLAC
+   shift = 8-5 EAST
+   
+   commitment = 1005
+   type = resolution
+   value = 3.00
+   unit of measure = DAYS
+   
+   set the status of this SLA to ACTIVE
+   
+   When I try to apply this SLA to an incident created at 1:05 pm
+   eastern time, the SLA does not get applied. Get error message
+   "BMXAA3946E - No Applicable SLA(s) found for this record."
+   
+   The reason being our server time is in GMT and it will be 6 PM
+   according to server time. Since the SLA is defined until 5PM, it
+   does not apply.
+   
+   We expect the SLA to be applied since the calendar was created
+   in eastern timezone and the ticket was created at 1 PM which
+   falls in the calendar.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  We currently have a workaround in place now. Offset the time by
+   5 hours
+   in calendar.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *  The Calendar and Shift tables do not contain a Time Zone.
+   
+   The Maximo framework has a feature that will translate any
+   DATETIME field that is stored in the Maximo Server into the
+   time zone of the Client PC that is displaying the data. It will
+   also translate a DATETIME field that is entered on the Client
+   PC into the Server's time zone when that record is stored in
+   Maximo.  That explains why the Report Date, for example, on the
+   Service Request is shown on the PC in Local Time, and is stored
+   in the Maximo Database in Server time.
+   
+   Care must be taken, however, with calendars, as they are stored
+   only in Server Time.  This is because the calendar and shift
+   are a collection of work periods, and the work period table is
+   defined using a DATE field, not a DATETIME field for each of
+   the days in the work period.  Therefore, in order for a
+   calendar to reflect local time, the user must use some
+   arithmetic (or, in my case, a calculator).  Let's take the
+   example of a user in Boston and a Server in London.  I am the
+   user in Boston, and I want to create a calendar that represents
+   daily work periods of 07:00 to 16:00.  I must enter these start
+   and end times as 13:00 (8 + 5) and 21:00 (16 + 5), in order for
+   them to be used to calculate targets for SR's in Boston (or NY,
+   or Washington, or Miami).
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ91282
+   
+   
+ * REPORTED COMPONENT NAME
+   SERVICE PROVIDE
+   
+   
+ * REPORTED COMPONENT ID
+   5724R46SV
+   
+   
+ * REPORTED RELEASE
+   711
+   
+   
+ * STATUS
+   CLOSED USE
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-12-21
+   
+   
+ * CLOSED DATE
+   2011-02-07
+   
+   
+ * LAST MODIFIED DATE
+   2011-02-07
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

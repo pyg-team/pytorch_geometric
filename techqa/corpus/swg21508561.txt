@@ -1,0 +1,25 @@
+Title: IBM Stepwise logistic regression model taking a long time to build - United States
+
+Text:
+modeler performance slow logistic regression datasource Conditional removal TECHNOTE (FAQ)
+
+QUESTION
+ Building a stepwise logistic regression model taking a long time to build when using a large number of fields.
+
+
+
+ANSWER
+The default removal method in stepwise binary logistic regression in Modeler is "Likelihood Ratio". This is the most intensive computationally and can result in a model build taking significant amounts of time. 
+
+
+There are alternative removal methods available for stepwise logistic regression that can be used if the user is not willing to wait for the likelihood ratio method build to complete. The Conditional removal method is an approximation of the Likelihood Ratio method and using this should result in a model being generated more quickly.
+
+To change this setting in the model builder node select the expert tab and then click on the "stepping" button, in the dialogue that appears select "Conditional" as the removal method. 
+
+
+
+
+.
+
+RELATED INFORMATION
+ Need more help? Our Modeler forum is Live! [https://developer.ibm.com/answers/topics/modeler/?smartspace=predictive-analytics]

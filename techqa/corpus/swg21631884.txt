@@ -1,0 +1,22 @@
+Title: IBM What is the Start Batch Panel in IBM Datacap Taskmaster Capture? - United States
+
+Text:
+startbatch panel TECHNOTE (FAQ)
+
+QUESTION
+ What is the Start Batch Panel and what is it used for? 
+
+ANSWER
+Taskmaster Web, DotScan, and FastDoc all have a Start Batch Panel, but the exact usage depends on which client is being run. 
+
+ * Taskmaster Web - The Start Batch Panel is a window that prompts the user to enter values for batch level variables when a new batch is started. Documentation for configuring it can be found at Implementing a Start Panel [http://pic.dhe.ibm.com/infocenter/datacap/v8r1m0/topic/com.ibm.dc.develop.doc/dcadg288.htm?resultof=%22%73%74%61%72%74%22%20%22%62%61%74%63%68%22%20%22%70%61%6e%65%6c%22%20].
+   
+   [/support/docview.wss?uid=swg21631884&aid=1] [/support/docview.wss?uid=swg21631884&aid=1]
+   
+ * DotScan - Functionality and configuration of the Start Batch Panel is the same as with Taskmaster Web.
+   
+   [/support/docview.wss?uid=swg21631884&aid=2] [/support/docview.wss?uid=swg21631884&aid=2]
+   
+ * FastDoc - The Start Batch Panel represents the window within FastDoc used to specify configuration information for starting a new batch. FastDoc does not support entry of batch level variables through a pop up window at the start of the batch.
+   
+   [/support/docview.wss?uid=swg21631884&aid=3] [/support/docview.wss?uid=swg21631884&aid=3]

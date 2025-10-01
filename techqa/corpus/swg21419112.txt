@@ -1,0 +1,56 @@
+Title: IBM Installer will fail to execute, MTEMS agent start/stop/reconfigure will fail on RHEL5 z/Linux (or systems with SELinux enabled) - United States
+
+Text:
+72TT-PLAN; 72TT-INS; 72TT-CONF; 72TT-GEN; 72TT-TS; 72INS-TT TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Installer for "ITCAM for Transactions - Transactions Tracking (TT)" bundles an embedded Java Runtime Environment (JRE) which is used for the installation process. ITM agent start/stop/reconfigure commands also uses a JRE that ITM installs.
+
+Security-Enhanced Linux (SELinux), which is enabled by default on RHEL 5 on z/Linux, enforces polices which might prevent unregistered JREs from executing. This will cause our installer/MTEMs to fail. 
+
+SYMPTOM
+When executing the installer (install.sh) or agent commands (/opt/IBM/ITM/bin/itmcmd [start| stop| config]) you see the following message(s) - 
+
+Initializing ...
+Failed to find VM - aborting
+install.sh failure: KCI1235E terminating ... problem with starting Java Virtual Machine.
+
+
+CAUSE
+SELinux is enforcing policies that is prevent unregistered JRE binaries from executing. 
+
+
+See technote #1266729 for more details - "If running Security-Enhanced Linux (SELinux), you must identify the Java shared libraries to the system [http://www-01.ibm.com/support/docview.wss?uid=swg21266729]"
+
+Note: This issue has been verified to exist on ITCAM for Transactions 7.2 with RHEL 5. However the issue will exist on any system running SELinux with restrictive settings and ITCAM for Transactions.
+
+
+ENVIRONMENT
+Linux systems where SELinux facility is enabled.
+
+
+
+RESOLVING THE PROBLEM
+Consult your local security policies regarding the process for disabling and/or adding binaries to the SELinux approved list. 
+
+There are two related issues - 
+
+ 1. The installer usage of the embedded JRE is an once off process; it is recommended that you temporary disable SELinux during the installation procedure. 
+ 2. Starting/ stopping /reconfiguring the agents (eg via /opt/IBM/ITM/bin/itmcmd manage) uses ITM's JRE, thus should be added to the SELinux exception list.
+
+
+Installation 
+Temporarily disable SELinux during installation process:  * echo 0 > /selinux/enforce
+ * 
+
+Once you have completed installation, It's not advisable to keep SELinux turned off; re-enable it after installation using the following command:  * echo 1 > /selinux/enforce
+
+
+ITM Configuration/MTEMS 
+Post installation, you won't be able to start/stop/configure transactions since MTEMS/agent reconfiguration needs a JRE. To enable the bundled JRE to run, you must identify the JRE shared libraries to the system. This is done with the following command:  * chcon -R -t texrel_shlib_t <path_to_JRE>
+ * 
+
+The JRE that is bundled with ITM is by default installed at $(ITM_HOME)/JRE/$(Platform_Code). For example:  * chcon -R -t texrel_shlib_t /opt/IBM/ITM/JRE/ls3263 
+
+RELATED INFORMATION
+ Identifying Java shared libraries to SELinux [http://www.ibm.com/support/docview.wss?uid=swg21266729]

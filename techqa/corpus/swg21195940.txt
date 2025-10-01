@@ -1,0 +1,49 @@
+Title: IBM Using WebSphere MQ Internet Pass-thru (MQIPT) between two SSL enabled WebSphere MQ servers - United States
+
+Text:
+ssl ssl v5.3.1 v5.3 v5 5.3.1.1 5.3.1.2 5.3.1.3 5.3.1.4 5.3.1.5 5.3.1.6 5.3.1.7 5.3.1.8 5.3.1.9 secure socket layer sockets MQIPT SSL mqseries mq series wmq websphere mqseries ssl ssl ssl TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ You need information to clarify the configuration of WebSphere MQ Internet Pass-Thru (MQIPT) in a Secure Socket Layer (SSL) enabled environment. This technote is designed to clarify the configuration of MQIPT in an SSL enabled environment. 
+
+CAUSE
+Unclear information on MQIPT in an SSL enabled environment. 
+
+RESOLVING THE PROBLEM
+The WMQ1(ssl)-->MQIPT(SSLProxyMode)-->(ssl)WMQ2 configuration allows the MQIPT instance to listen on a different port and, or server to WMQ2. Otherwise the connection is the same as WMQ1(ssl)-->(ssl)WMQ2. 
+
+Example: MQ is performing the SSL connection end-to-end. WMQ1 must be able to connect to the hostname and port of the listening MQIPT instance, and similarly the MQIPT instance to the WMQ2 listener. 
+
+The following in an example route configuration for an MQIPT instance running in SSLProxyMode: 
+
+[route]
+Name=SSL Proxy 1
+Active=true
+ListenerPort=9001
+Destination=destination.queuemanager.hostname
+DestinationPort=1414
+SSLProxyMode=true 
+
+An MQ SSL channel should then be configured between the two queue managers, but the client/sender/requester side of the channel, which will initiate the connection should have the hostname & port of the MQIPT instance configured in the connection name of the channel. 
+
+For example:
+
+ALTER CHANNEL(123) CHLTYPE(SDR) CONNAME('SSL Proxy 1(9001)') SSLCIPH(string) 
+
+where string is the type of CipherSpec used on the channel. 
+
+
+MS81: WebSphere MQ internet pass-thru (MQIPT) [http://www-1.ibm.com/support/docview.wss?uid=swg24006386]
+
+WebSphere MQ Internet pass-thru is a WebSphere MQ base product extension that can be used to implement messaging solutions between remote sites across the internet.
+
+
+Additional keywords
+ssl secure sockets layer
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration WebSphere MQ Documentation Business Integration WebSphere MQ Configuration 
+PRODUCT ALIAS/SYNONYM
+ IBMMQ WMQ MQ

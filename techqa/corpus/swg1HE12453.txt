@@ -1,0 +1,150 @@
+Title: IBM HE12453: Content Collector Configuration Manager cannot be started on a secondary node that was restarted when the primary node was down - United States
+
+Text:
+  A FIX IS AVAILABLE
+IBM Content Collector V4.0.1 Fix Pack 2 [http://www-01.ibm.com/support/docview.wss?uid=swg24041245]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  If the IBM Content Collector configuration backup host was
+   restarted (full machine restart) while the primary Content
+   Collector node was down, neither Configuration Manager nor
+   the Task Routing Engine service could  be started on the
+   secondary node. Configuration Manager tried to connect to the
+   primary configuration host in an endless loop, which failed
+   because the primary node was down. The following error
+   message was displayed:
+   
+        Unable to contact the Configuration Access service at:
+   
+        Ensure that the following Windows services are running:
+        - IBM Content Collector Configuration Access
+        - IBM Content Collector Configuration Store
+        - IBM Content Collector Configuration Store Manager
+   
+        Waiting for the configuration store to be accessible...
+   
+   When you try to restart the Task Routing Engine service, the
+   following error message is displayed:
+   
+       The IBM Content Collector Task Routing Engine service on
+       Local Computer started and then stopped. Some services stop
+       automatically if they are not in use by other services or
+       programs.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  After the secondary server is restarted, the user can use
+   the cluster tool to reconfigure the secondary (and make it
+   primary since the other primary is down).
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+
+PROBLEM CONCLUSION
+ *  Starting with this fix, Configuration Manager as well as the
+   Task Routing Engine service work as expected on the
+   configuration   backup host.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  Fixed in 4.0.1.2-IBM-ICC-FP002
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   HE12453
+   
+   
+ * REPORTED COMPONENT NAME
+   ICC FOR FILES
+   
+   
+ * REPORTED COMPONENT ID
+   5724V5701
+   
+   
+ * REPORTED RELEASE
+   401
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-12-17
+   
+   
+ * CLOSED DATE
+   2015-12-18
+   
+   
+ * LAST MODIFIED DATE
+   2015-12-27
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    HE12262
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ICC FOR FILES
+   
+   
+ * FIXED COMPONENT ID
+   5724V5701
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R401 PSY
+   UP

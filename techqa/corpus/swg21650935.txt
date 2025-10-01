@@ -1,0 +1,48 @@
+Title: IBM The single server Composite Platform Installation Tool (CPIT) 5.2 install fails while configuring the Proces Engine (PE) region. - United States
+
+Text:
+fail; outofmemory; SocketTimeoutException; peinit TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ CPIT 5.2 fails at step 23/28 while running the configPE.bat file. 
+
+CAUSE
+The CPIT installer does not allocate enough JVM heap memory to WebSphere application server running the installed applications.
+
+ENVIRONMENT
+Windows 2008 R2 x64
+
+DIAGNOSING THE PROBLEM
+Open the cpit_install_stdout in C:\Program Files (x86)\IBM\cpit\cpit_install_stdout.txt and look for the following errors.
+Error: [FNRPE2131090482E]Server is being initialized. Retry the operation.
+OUTPUT>ERROR: Failed to initialize the PE region.
+
+RESOLVING THE PROBLEM
+Increase the maximum and minimum JVM heap size for the WebSphere application server.
+
+
+
+
+ 1. Login to the WebSphere Integrated Solutions Console. 
+ 2. Navigate to Servers > Server Types > WebSphere application servers > server1 
+ 3. Under Server Infrastructure expand Java and Process Management and click Process Definition.  1. Under Additional Properties click Java Virtual Machine. 
+     2. In the Initial heap size and Maximum heap size boxes specify 512 and 1024.[/support/docview.wss?uid=swg21650935&aid=1] [/support/docview.wss?uid=swg21650935&aid=1] 
+     3. Click Apply and then save your changes. 
+     4. Stop and start the WebSphere server.
+    
+    
+ 4. Delete decompressed software folders to make room for re-running the install.  1. Under C:\Program Files (x86)\IBM\cpit\decompressed delete the TDS, CE, WAS, WPXT folders. 
+     2. Empty the Windows Recycle Bin.
+    
+    
+ 5.  
+ 6. Replace cpit.properties file in CPIT folder.  1. Remove the cpit.properties file from the CPIT folder where you ran the 5.2.0-CPIT-WIN.exe. 
+     2. Replace it with the cpit.properties from C:\Program Files (x86)\IBM\cpit\install-scripts. This will cause the installer to start at step 23. 
+     3. Run 5.2.0-CPIT-WIN and specify the software directory and password you used during the initial install.
+    
+    
+
+
+The install should start at step 23 and complete successfully. See the reference screen shot below. 
+[/support/docview.wss?uid=swg21650935&aid=2] [/support/docview.wss?uid=swg21650935&aid=2] RELATED INFORMATION
+ Downloading software packages for a single-server insta [http://www-01.ibm.com/support/docview.wss?uid=swg24034504]

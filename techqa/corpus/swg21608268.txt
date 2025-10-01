@@ -1,0 +1,39 @@
+Title: IBM "New" button not displayed in the authoring portlet for Web Content Manager - United States
+
+Text:
+wcm; new button; authoring portlet TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ After installing the product and accessing the authoring portlet for Web Content Manager, the "New" button is not displayed. 
+
+SYMPTOM
+In the authoring portlet, the New button provides access to many of the authoring features in Web Content Manager. For example, in the Library Explorer: 
+
+A screen capture of the Library Explorer in the authoring portlet, showing the New button. [/support/docview.wss?uid=swg21608268&amp;aid=1]
+
+However, when this problem occurs, the New button is not displayed as expected.
+
+
+CAUSE
+This problem is a result of installing the WebSphere Portal Server offering. The WebSphere Portal Server offering does not provide all features of Web Content Manager.
+
+
+
+RESOLVING THE PROBLEM
+To get complete web content management capabilities, you can perform either of the following steps: 
+
+ 
+
+ * Uninstall WebSphere Portal Server, and then install either WebSphere Portal Enable or WebSphere Portal Extend.
+   
+ * Add Web Content Manager to your existing WebSphere Portal Server installation. For instructions, see the product documentation for your operating system:  * AIX: Installing Web Content Manager into an existing Server installation on AIX [https://www.ibm.com/support/knowledgecenter/SSHRKX_8.0.0/install/aix_inst_upsell.html] 
+    * IBM i: Installing Web Content Manager into an existing Server installation on IBM i [https://www.ibm.com/support/knowledgecenter/SSHRKX_8.0.0/install/i5os_inst_upsell.dita] 
+    * Linux: Installing Web Content Manager into an existing Server installation on Linux [https://www.ibm.com/support/knowledgecenter/SSHRKX_8.0.0/install/linux_inst_upsell.html] 
+    * Solaris: Installing Web Content Manager into an existing Server installation on Solaris [https://www.ibm.com/support/knowledgecenter/SSHRKX_8.0.0/install/sol_inst_upsell.dita] 
+    * Windows: Installing Web Content Manager into an existing Server installation on Windows [http://www.ibm.com/support/knowledgecenter/SSHRKX_8.0.0/install/win_inst_upsell.dita]
+   
+   
+
+ 
+
+Cross reference information Segment Product Component Platform Version Edition Enterprise Content Management IBM Web Content Manager General AIX, i5/OS, IBM i, Linux, Solaris, Windows 8.0.0.0, 8.0

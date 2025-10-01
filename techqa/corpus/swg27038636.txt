@@ -1,0 +1,64 @@
+Title: IBM Ask the Experts Replay: CICS TS Feature Pack for Mobile Extensions - United States
+
+Text:
+Mobile Extensions for CICS TS Feture Pack FP wste_webcast; WSTE; Support Technical Exchange; education; presentation; webcast; STEwebcastDocument; 5655S9700 R670 670 R700 700 HCI6700 5655-S97 5655S97 ; 5655Y0400 R680 680 R800 800 HCI6800 5655-Y04 5655Y04 KIXINFO WEBCAST
+
+ABSTRACT
+ 17 July 2013 at 11:00 AM EDT.
+
+This session discusses the new capabilities introduced by the CICS Transaction Server for z/OS (CICS TS) Feature Pack for Mobile Extensions V1.0 and explains how you can use it to expose business data in CICS to mobile applications. It includes the deployment patterns available for RESTful web services with JavaScript™ Object Notation (JSON) and describes the approach for building service provider applications. 
+
+CONTENT
+
+
+Ask the Experts sessions are conducted in a question and answer format. The table below provides a time index (minutes:seconds) for the recording and describes the questions or topics that were discussed. You can fast forward to any question using the time index, a table containing the panel of experts is also included.
+
+
+
+
+To play or download the audio of this Ask the Experts session, see the Audio Section of this document.
+
+
+
+
+See the Related Information Section of this document for a list of documents referenced during the presentation.
+
+
+
+
+
+
+
+
+
+
+Ask the Experts session 
+17 July 2013 - 11:00 a.m. - 12:00 p.m. EDT 
+
+Time Questions asked 00:00 General introduction 02:26 Technical introduction 03:49 What are the capabilities introduced by CICS TS for z/OS Mobile Extensions Feature Pack V1.0? 06:46 How do I expose my existing CICS applications through the feature pack? 09:41 How do I write my applications so that they can be called as RESTful services using the feature pack? 14:19 How do I use the feature pack to call external JSON services? 16:26 Can the feature pack be utilized using products such as IBM Worklight? 19:10 Open lines for live question and answer period 24:11 Closing remarks 25:20 End of Call 
+Panel of Experts: Scott McClure Senior Software Engineer, CICS Transaction Server Level 2 Service Matthew Wilson Lead Developer, CICS TS Feature Pack for Mobile Extensions Inderpal Singh Software Engineer, Developer for CICS TS Feature Pack for Mobile Extensions Mark Woolley Software Engineer, CICS Transaction Server for z/OS Level 3 Service 
+
+
+PRESENTATION
+[http://www.ibm.com/i/v16/icons/weblecture.gif]WSTE-07172013-AskTheExperts-CICS_TS_Feature_Pack_for_Mobile Extensions Update Final.pdf [/support/docview.wss?uid=swg27038636&aid=2]WSTE-07172013-AskTheExperts-CICS_TS_Feature_Pack_for_Mobile Extensions Update Final.pdf [/support/docview.wss?uid=swg27038636&aid=1] 
+
+
+
+Get Adobe Reader [http://www.adobe.com/products/acrobat/readstep2.html] to view PDF
+
+
+AUDIO
+[http://www.ibm.com/i/v16/icons/aud.gif]To replay the recording of this conference call, click on Download Audio [http://public.dhe.ibm.com/software/websphere/techexchange/July-17-2013-McClure-Wilson-Singh-Woolley.mp3] (audio in MP3 format). Right-click and select Save As to store the file on your local computer for later playback. Remember that you can fast forward to any question using the time index.
+
+
+
+RELATED INFORMATION
+ Announcement for CICS TS FP for Mobile Extentions [http://www.ibm.com/support/docview.wss?uid=swg21634685]
+Other CICS Technical Exchanges [http://www.ibm.com/support/docview.wss?uid=swg27007244]
+Support Technical Exchange Web page [http://www.ibm.com/software/websphere/webcast]
+
+
+
+
+PRODUCT ALIAS/SYNONYM
+ CICS/TS CICS TS CICS Transaction Server

@@ -1,0 +1,163 @@
+Title: IBM IT01580: EXTRACT XML SCHEMA FILES FROM DECISION SERVICE DOES NOTHING - United States
+
+Text:
+  FIXES ARE AVAILABLE
+IBM Integration Toolkit Version 9.0 Fix Pack 2 [http://www-01.ibm.com/support/docview.wss?uid=swg24037415]
+IBM Integration Toolkit Version 9.0 Fix Pack 3 [http://www-01.ibm.com/support/docview.wss?uid=swg24038557]
+IBM Integration Toolkit version 9.0 Fix Pack 4 [http://www-01.ibm.com/support/docview.wss?uid=swg24040553]
+IBM Integration Toolkit version 9.0 Fix Pack 6 [http://www-01.ibm.com/support/docview.wss?uid=swg24042446]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  You have imported a rule application archive file into the
+   toolkit, and as a result, a decision service is created.
+   
+   You right click the decision service, and select
+   Extact XSD Files... The wizard opens, you choose a
+   ruleset with XSD files, presses Finish, but no XSD files are
+   extracted.
+   
+   There is an exception in the error log about a
+   MalformedUrlException.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   All users of IBM Integration Toolkit V9.0 who create a decision
+   service file by importing a rule application archive file, and
+   then attempt to extract XSD files from the decision service
+   where the XSD files have a namespace which does not start with
+   http://. [http://.]
+   
+   
+   Platforms affected:
+   MultiPlatform
+   
+   ****************************************************************
+   PROBLEM DESCRIPTION:
+   Extracting XML schemas from a decision service (created by
+   importing an ODM rule application archive file) where the XML
+   schemas have a namespace which lacks a prefix of http:// results
+   in java.net.MalformedURLException
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Extracting XML schema files from a decision service (created by
+   importing an ODM rule application archive file) now works when
+   XML schema namespaces do not start with http:// .
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+   Version    Maintenance Level
+   v9.0       9.0.0.2
+   
+   The latest available maintenance can be obtained from:
+   'Recommended fixes for WebSphere Message Broker Toolkit'
+   http://www-1.ibm.com/support/docview.wss?rs=849&uid=swg27009742 [http://www-1.ibm.com/support/docview.wss?rs=849&uid=swg27009742]
+   
+   If the maintenance level is not yet available, information on
+   its planned availability can be found in 'WebSphere Message
+   Broker Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=849&uid=swg27006308 [http://www-1.ibm.com/support/docview.wss?rs=849&uid=swg27006308]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT01580
+   
+   
+ * REPORTED COMPONENT NAME
+   IB TOOLKIT
+   
+   
+ * REPORTED COMPONENT ID
+   5724J0531
+   
+   
+ * REPORTED RELEASE
+   900
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-05-06
+   
+   
+ * CLOSED DATE
+   2014-05-30
+   
+   
+ * LAST MODIFIED DATE
+   2014-05-30
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   IB TOOLKIT
+   
+   
+ * FIXED COMPONENT ID
+   5724J0531
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R900 PSY
+   UP

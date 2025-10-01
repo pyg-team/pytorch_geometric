@@ -1,0 +1,25 @@
+Title: IBM Some compiled Printer Definition Files (PDF) do not appear in the Printer Definition Table (PDT) with IBM Host On-Demand - United States
+
+Text:
+pdt; VT BIDI; arabic; hebrew; 1196969 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When compiling printer definition files shipped with IBM Host On-Demand that contain Arabic or Hebrew markers, the resulting PDT does not appear in the Print Definition Table drop-down list in the printer properties on non-Hebrew or non-Arabic machines. 
+
+RESOLVING THE PROBLEM
+If any of the printer definition files that Host On-Demand provides in the hostondemand/HOD/pdfpdt directory are compiled and added to the INDEX.ndx, but do not appear in the printer properties Printer Definition Table, the reason might be a language marker in the printer definition file. For example, vtbidi_epson_ar.pdf contains a marker for Arabic which indicates you must run this printer definition on an Arabic machine. 
+The following printer definition files were created for VT BiDi print only. These should not be used for 3270 Host print, or by non-BiDi VT users. They have language markers which indicate the compiled printer definition table needs to be used on a language-specific machine such as Arabic or Hebrew.
+
+vtbidi_epson_ar.pdf 
+vtbidi_hp_ar.pdf
+vtbidi_hp_heb7.pdf
+vtbidi_hp_heb8.pdf
+vtbidi_ppds_ar.pdf 
+
+When modifying a printer definition file shipped with Host On-Demand, review the printer documentation for macro definitions, session parameters, formatting controls, and character definitions.
+
+
+ 
+
+HISTORICAL NUMBER
+ 95838

@@ -1,0 +1,208 @@
+Title: IBM IT19286: Memory exceptions seen from amqrmppa process when using SVRCONN channel with SHARECNV(1) - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  MQ channel process amqrmppa or amqcrsta randomly failing with
+   one or more of the following Failure data capture (FDC) records.
+   The
+   FDCs generated might be full or partial.
+   
+   FDC with Probe Id CO000002 and error rrcE_BAD_PARAMETER from
+   ccxAllocMem
+   FDC with Probe Id CO383000 and error rrcE_BAD_PARAMETER from
+   ccxPoolFree
+   
+   Probe Id          :- CO000002
+   Component         :- ccxAllocMem
+   Program Name      :- amqrmppa
+   Thread            :- 9    RemoteResponder
+   Major Errorcode   :- rrcE_BAD_PARAMETER
+   ...
+   MQM Function Stack
+   ccxResponder
+   rrxResponder
+   ccxReceiveThreadFn
+   cciProcessOne
+   cciReceiveOne
+   ccxReceive
+   cciTcpReceive
+   ccxAllocMem
+   xcsFFST
+   
+   Probe Id          :- CO383000
+   Component         :- ccxPoolFree
+   Program Name      :- amqrmppa
+   Thread            :- 196    RemoteResponder
+   Major Errorcode   :- rrcE_BAD_PARAMETER
+   ...
+   MQM Function Stack
+   ccxResponder
+   rrxResponder
+   ccxReceiveThreadFn
+   cciProcessOne
+   cciReceiveOne
+   ccxPoolFree
+   xcsFFST
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Alter the value of the SHARECNV attribute from 1, to 2, greater
+   than 2, or 0.
+   For example, the following statement changes the value to 2:
+     ALTER CHANNEL(ChannelName) CHLTYPE(SVRCONN) SHARECNV(2)
+   .
+   Please check the following URL for details on impact of
+   different values in SHARECNV.
+   .
+   https://www.ibm.com/support/knowledgecenter/SSFKSJ_9.0.0/com.ibm
+   .mq.mig.doc/q001660_.htm [https://www.ibm.com/support/knowledgecenter/SSFKSJ_9.0.0/com.ibm.mq.mig.doc/q001660_.htm]
+   IBM MQ > IBM MQ 9.0.x > IBM MQ > Maintenance and migration >
+   IBM MQ migration > Coexistence, compatibility, and
+   interoperability > Compatibility between different versions of
+   an IBM MQ MQI client and a queue manager >
+   MQI client: Default behavior of client-connection and
+   server-connection channels
+   .
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   Users using SVRCONN channel with SHARECNV(1) are mostly affected
+   by this problem.
+   
+   
+   Platforms affected:
+   MultiPlatform
+   
+   ****************************************************************
+   PROBLEM DESCRIPTION:
+   This problem occurred because of a logic error in the internal
+   channel buffer management with the queue manager.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The IBM MQ queue manager logic has been modified to correct this
+   issue  within  internal channel buffer management.
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+   Version    Maintenance Level
+   v9.0 CD    9.0.2
+   v9.0 LTS   9.0.0.2
+   
+   The latest available maintenance can be obtained from
+   'WebSphere MQ Recommended Fixes'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037]
+   
+   If the maintenance level is not yet available information on
+   its planned availability can be found in 'WebSphere MQ
+   Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT19286
+   
+   
+ * REPORTED COMPONENT NAME
+   IBM MQ BASE M/P
+   
+   
+ * REPORTED COMPONENT ID
+   5724H7261
+   
+   
+ * REPORTED RELEASE
+   900
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-02-16
+   
+   
+ * CLOSED DATE
+   2017-05-19
+   
+   
+ * LAST MODIFIED DATE
+   2017-06-29
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   IBM MQ BASE M/P
+   
+   
+ * FIXED COMPONENT ID
+   5724H7261
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R900 PSY
+   UP

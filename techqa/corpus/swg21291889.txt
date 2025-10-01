@@ -1,0 +1,111 @@
+Title: IBM Guidelines for installing WebSphere Application Server into an AIX Version 6.1 or 7.1 system WPAR from the global environment - United States
+
+Text:
+AIX 6.1; AIX61Cert; WPAR; AIX71Cert TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When you install IBM WebSphere Application Server Version 7.0 or 6.1 into an IBM AIX system workload partition (WPAR) from the global environment, you might encounter problems. 
+
+If you create any profiles when you install WebSphere Application Server Version 7.0 or 6.1 from the global environment into a WPAR, for example, the default host name that is associated with these profiles is the host name that is associated with the global environment rather than the WPAR host name. When you start or stop the application server profiles from within the WPAR, therefore, this scenario might create issues that are associated with using an incorrect host name. 
+
+CAUSE
+AIX WPAR virtualization technology introduces installation possibilities for WebSphere Application Server Version 7.0 or 6.1. These installation possibilities require you to follow appropriate guidelines during the installation process to avoid encountering problems. 
+
+
+Before WPAR virtualization technology, the installation of WebSphere Application Server to a regular AIX system image or to a logical partition (LPAR) involved a single-system environment rather than a global environment with associated WPARs; therefore, these issues did not previously exist.
+
+
+RESOLVING THE PROBLEM
+To install WebSphere Application Server Version 7.0 or 6.1 from the global environment to a system WPAR that has private, writable /usr and /opt directories, complete the following steps: 
+
+ 1. As the root user, create a system WPAR with private /usr and /opt directories using the following command from the global environment:
+    
+    mkwpar -r -l -n your_wpar_name
+    
+    Important:  * When you use the -r parameter, make sure that the WPAR name resolves on your network before issuing the mkwpar command. 
+     * When you use the -l option, all of the data in the /usr and /opt directories from the global environment is copied into the new /usr and /opt directories within the WPAR. If a WebSphere Application Server installation already exists in the /usr directory within the global environment, you now have another copy of the installation residing within the WPAR. Do not use that new WebSphere Application Server installation, however, because it was not installed through the standard installation process. Host name settings and other information will not be correct. Use the uninstall command to uninstall this new copy of WebSphere Application Server, which is located in the WPAR. 
+       
+       
+    
+    
+ 2. As the root user, start the new WPAR using the following command from the global environment:
+    
+    startwpar your_wpar_name
+    
+    
+ 3. Because you might need more than the default size for the /wpars/your_wpar_name/usr file system to install WebSphere Application Server successfully into that directory, enlarge the WPAR using the following commands:
+    
+    smitty manfs > Enhanced Journaled File Systems > Change / Show Characteristics of an Enhanced Journaled File System > /wpars/your_wpar_name/usr
+    
+    Increase the number of units for the SIZE parameter so that you have at least several gigabytes of disk space allocated for that file system.
+    
+    
+ 4. Perform one of the following actions:  * If you do not plan to create profiles during the installation process, use the following install command for each component. 
+       
+       ./install 
+       
+       Important:  * For WebSphere Application Server Version 7.0, you can use the original version 7.0 and its later service releases. 
+        * For WebSphere Application Server Version 6.1, the minimum supported WebSphere Application Server service pack level is Version 6.1.0.13 when you run on the AIX Version 6.1 operating system. To install service pack 13 or later, use the Update Installer for WebSphere Application Server Version 6.1 [http://www-01.ibm.com/support/docview.wss?rs=180&uid=swg24012718]. 
+        * Because other users do not have write authority to the WPAR file systems, you must use the actual root user account in the global environment to install the WebSphere Application Server components from the global environment into a WPAR. Note: Changing permissions on directories so that other user accounts might be able to install WebSphere Application Server into a WPAR from the global environment is not supported.
+          
+          
+       
+       
+       When you get to the panel that allows you to change the installation directory path for the product, make sure that you enter a path to the WPAR file system. The following examples illustrate appropriate paths for the various components:  * /wpars/your_wpar_name/usr/IBM/WebSphere/AppServer 
+        * /wpars/your_wpar_name/usr/IBM/HTTPServer 
+        * /wpars/your_wpar_name/usr/IBM/HTTPServer/Plugins 
+        * /wpars/your_wpar_name/usr/IBM/AppClient 
+        * /wpars/your_wpar_name/usr/IBM/UpdateInstaller
+       
+       
+       Note: For the Application Client for WebSphere Application Server, enter your WPAR name for the host name. 
+       
+       
+     * If you plan to create profiles during the installation process, perform a silent installation for the WebSphere Application Server component using a responsefile.txt file so that the WPAR address or host name can be specified. Otherwise, the wrong host name is associated with the profile and this scenario causes problems with starting and stopping the profile. 
+       
+       Use the following properties in the responsefile.txt file:
+       
+       -OPT silentInstallLicenseAcceptance="true"
+       -OPT disableOSPrereqChecking="true"
+       -OPT installType="installNew"
+       -OPT installLocation="/wpars/your_wpar_name/usr/IBM/WebSphere/AppServer"
+       -OPT PROF_hostName=your_wpar_host_name
+       
+       You can then invoke the silent installation of the WebSphere Application Server component in the following way:
+       
+       ./install -options /tmp/WAS/your_options_file.txt -silent
+       
+       For additional information about performing a silent installation, read the Installing silently [http://www14.software.ibm.com/webapp/wsbroker/redirect?version=pix&product=was-base-dist&topic=tins_runsilent] topic in the Information Center for WebSphere Application Server Version 6.1.
+    
+    
+
+Note: If you plan to create profiles during the WebSphere Application Server installation process, you must perform the silent installation as described in the previous steps. If you do not plan to create profiles during the installation process, however, you can use the launchpad to install WebSphere Application Server Version 7.0 or 6.1 into a WPAR from the global environment. For information on how to enable the launchpad command to work properly with WebSphere Application Server Version 6.1 on AIX Version 6.1 or 7.1, read the Launchpad console might not open when you try to install WebSphere Application Server on the AIX operating system [http://www-1.ibm.com/support/docview.wss?rs=0&q1=AIX+6.1&q2=launchpad&uid=swg21288640&loc=en_US&cs=utf-8&cc=us&lang=en] technote on the support Web site. 
+Restrictions: 
+
+ * If you install WebSphere Application Server Version 7.0 or 6.1 from the global environment into a WPAR and then want to continue to perform WebSphere Application Server administration or profile-management activities when you are logged into the global environment, you must be careful when you perform operations from within the WPAR.  * If you create a profile from within a WPAR using the following manageprofiles command, for example, WebSphere Application Server cannot find that profile when you are logged into the global environment: 
+      
+      ./manageprofiles.sh -create -profileName AppSrv02 
+      -templatePath 
+      /usr/WebSphere/AppServer/profileTemplates/default 
+      -profilePath 
+      /usr/WebSphere/AppServer/profiles/AppSrv02 
+      –hostName your_wpar_name
+      
+      WebSphere Application Server cannot find that profile because the /usr directory in the WPAR is the root location for the template and profile paths instead of /wpars/your_wpar_name/usr, which is accessible from the global environment or from within the WPAR.
+      
+      This type of configuration is not supported, therefore, because WebSphere Application Server administrative operations from the global environment that require access to profile directories do not work properly in this configuration. 
+      
+      
+    * You can only start and stop an application-server profile on the system that has the host name that is associated with the profile. When you log into the global environment, therefore, you cannot start or stop the application-server profile that was created in the previous example because the host name associated with that profile is the host name of the WPAR. This also means that you must use the First Steps console options for a profile, such as starting or stopping a profile, from the system that has the host name that is associated with the profile. In other words, you must log into the WPAR if you want to successfully run the First Steps options for the profile created in the previous example. 
+      
+      
+   
+   
+ * Installing WebSphere Application Server Version 6.0 (any modification) into a WPAR is not supported. 
+ * Using a shared system WPAR to host WebSphere Application Server Version 7.0 or 6.1 is not supported.
+
+
+RELATED INFORMATION
+#Version 7.0 Information Center [http://www14.software.ibm.com/webapp/wsbroker/redirect?version=compass&product=was-base-dist]
+Version 6.1 Information Center [http://www14.software.ibm.com/webapp/wsbroker/redirect?version=pix&product=was-base-dist]
+Installing Version 6.1 from within a system WPAR [http://www.ibm.com/support/docview.wss?uid=swg21293695]

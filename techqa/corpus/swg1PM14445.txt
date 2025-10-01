@@ -1,0 +1,134 @@
+Title: IBM PM14445: THE COPY OPERATION REMOVES THE CONTENT OF RTE AND HTML COMPONENTS AFTER APPLYING 6.1.0.3 + CF29 - United States
+
+Text:
+  FIXES ARE AVAILABLE
+6.1.0.5 Download: WebSphere Portal and WCM V6.1.0 fix pack 5 [http://www-01.ibm.com/support/docview.wss?uid=swg24027475]
+6.1.0.6 Download: WebSphere Portal and WCM V6.1.0 fix pack 6 [http://www-01.ibm.com/support/docview.wss?uid=swg24030970]
+7.0.0.2 Download: WebSphere Portal and WCM V7.0 fix pack 2 [http://www-01.ibm.com/support/docview.wss?uid=swg24031676]
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The copy operation removes the content of RTE and HTML
+   components After applying 6.1.0.3 + CF29
+   
+   Steps to reproduce the issue.
+   
+   (1) Create two sites and other artifacts.
+   (2) Copy a content from one sitearea which has some RTE element
+   with some text into it to another site.
+   (3) The newly created content is without any text.
+   (4) Similar is for HTML element.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  The copy operation removes the content of RTE and HTML
+   components After applying 6.1.0.3 + CF29
+   
+   Steps to reproduce the issue.
+   
+   (1) Create two sites and other artifacts.
+   (2) Copy a content from one sitearea which has some RTE element
+   
+   with some text into it to another site.
+   (3) The newly created content is without any text.
+   (4) Similar is for HTML element.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The copied item's content was cached incorrectly.  A change was
+   done to correct the item in the cache.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM14445
+   
+   
+ * REPORTED COMPONENT NAME
+   LOTUS WEB CONT
+   
+   
+ * REPORTED COMPONENT ID
+   5724I2900
+   
+   
+ * REPORTED RELEASE
+   61C
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-05-14
+   
+   
+ * CLOSED DATE
+   2010-05-18
+   
+   
+ * LAST MODIFIED DATE
+   2010-05-18
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   LOTUS WEB CONT
+   
+   
+ * FIXED COMPONENT ID
+   5724I2900
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R61C PSY
+   UP

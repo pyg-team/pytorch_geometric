@@ -1,0 +1,122 @@
+Title: IBM PM71289: FAILED TO INSTALL LICENSE MANAGER ON 64 BIT OPERATING SYSTEM - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When I attempt to install License Manager on Windows 2008 R2 64
+   bit into a custom location , I get the following error message:
+   
+   Some required properties are missing in the file spssprod.inf in
+   this
+   folder.  Please correct to Proceed.
+   The missing properties are:
+   FeatureCode
+   VersionMajor
+   VersionMinor
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Please install in the default location - C:\Program Files
+   (x86)\IBM\SPSS\Concurrent Licensing Tools\9.5.0\License Manager
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * All                                                          *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Please upgrade to IBM SPSS Modeler 16.0                      *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM71289
+   
+   
+ * REPORTED COMPONENT NAME
+   SPSS MODELER
+   
+   
+ * REPORTED COMPONENT ID
+   5725A64MD
+   
+   
+ * REPORTED RELEASE
+   F00
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-08-21
+   
+   
+ * CLOSED DATE
+   2013-12-10
+   
+   
+ * LAST MODIFIED DATE
+   2013-12-10
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * RF00 PSN
+   UP

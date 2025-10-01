@@ -1,0 +1,176 @@
+Title: IBM ibmslapd fails to start after idsdbrestore - United States
+
+Text:
+IO11520; GLPRDB001E; idsdbrestore; dbrestore; idsdbback; dbback TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ How to get the database properly restored after running into problem with idsdbrestore? 
+
+SYMPTOM
+ibmslapd start up (and ibmslapd.log) will show the following after a successful idsdbrestore operation:
+GLPSRV200I Initializing primary database and its connections. 
+
+GLPRDB001E Error code -1 from function:" SQLConnect " ldapdb2b .
+GLPSRV064E Failed to initialize be_config.
+GLPSRV040E Server starting in configuration only mode due to errors.
+
+db2cli.log shows the following:
+03/08/2010 01:04:18 PM native retcode = -1031; state = "58031"; message = "[IBM][CLI Driver] SQL1031N The database directory cannot be found on the indicated file system. SQLSTATE=58031"
+
+
+CAUSE
+Tivoli Directory Server V6.2 (pre 6.2.0.7 levels) provided idsdbrestore may restore the database into the db2 instance home folder incorrectly when the database location is different than the home folder.
+
+The database directory before idsdbrestore:
+# su - tdsadmin # tdsadmin is the db2 instance name
+$ db2 list db directory 
+
+System Database Directory
+
+Number of entries in the directory = 2
+
+Database 1 entry:
+
+Database alias = LDAPDB2B
+Database name = RDSDB
+Local database directory = /var/IBM/Rational/RDS_5.1/Instance
+Database release level = b.00
+Comment =
+Directory entry type = Indirect
+Catalog database partition number = 0
+Alternate server hostname =
+Alternate server port number =
+
+Database 2 entry:
+
+Database alias = RDSDB
+Database name = RDSDB
+Local database directory = /var/IBM/Rational/RDS_5.1/Instance
+Database release level = b.00
+Comment =
+Directory entry type = Indirect
+Catalog database partition number = 0
+Alternate server hostname =
+Alternate server port number =
+
+The database directory after idsdbrestore:
+# su - tdsadmin # tdsadmin is the db2 instance name
+$ db2 list db directory 
+
+System Database Directory
+
+Number of entries in the directory = 2
+
+Database 1 entry:
+
+Database alias = LDAPDB2B
+Database name = RDSDB
+Local database directory = /var/IBM/Rational/RDS_5.1/Instance
+Database release level = b.00
+Comment =
+Directory entry type = Indirect
+Catalog database partition number = 0
+Alternate server hostname =
+Alternate server port number =
+
+Database 2 entry:
+
+Database alias = RDSDB
+Database name = RDSDB
+Local database directory = /opt/ibm/ldap/V6.2/Instance # instance's home folder
+Database release level = b.00
+Comment =
+Directory entry type = Indirect
+Catalog database partition number = 0
+Alternate server hostname =
+Alternate server port number =
+
+If you try to restore again - you will see the following from idsdbrestore:
+GLPCTL101I Restoring backup database rdsdb to configured database rdsdb.
+GLPCTL103E Failed to restore backup database rdsdb to configured database rdsdb.
+GLPDBR004E Failed to restore directory server instance 'tdsadmin'.
+
+From db2cli.log:
+2010-03-08-15:05:44.native retcode = -1013; state = "42705"; message = "SQL1013N The database alias name or database name "RDSDB " could not be found. SQLSTATE=42705"
+
+Now the database directory listing will show just the alias only:
+# su - tdsadmin
+$ db2 list db directory
+
+System Database Directory
+
+Number of entries in the directory = 1
+
+Database 1 entry:
+
+Database alias = LDAPDB2B
+Database name = RDSDB
+Local database directory = /var/IBM/Rational/RDS_5.1/Instance
+Database release level = b.00
+Comment =
+Directory entry type = Indirect
+Catalog database partition number = 0
+Alternate server hostname =
+Alternate server port number =
+
+
+DIAGNOSING THE PROBLEM
+This problem will only be seen where the db2 instance user's home folder is different than the database location. 
+
+To find the db2 instance user's home folder grep on /etc/passwd file: 
+
+# grep tdsadmin /etc/passwd
+tdsadmin:x:1017:1000::/opt/ibm/ldap/V6.2/Instance:/bin/ksh 
+
+To find the configured database location grep on the ibmslapd.conf in the back up folder (/temp/rdsbackup) which is populated by idsdbback command: 
+
+# grep -i dblocation /temp/rdsbackup/BACKUP_FILES/ibmslapd.conf 
+ibm-slapdDbLocation: /var/IBM/Rational/RDS_5.1/Instance
+
+
+RESOLVING THE PROBLEM
+APAR IO11520 (provided first time by 6.2.0.7 level) fix addresses this issue and provides a fix to restore the database into the correct location as configured in ibmslapd.conf. 
+
+
+1. Download and Install ITDS 6.2.0.1-TIV-ITDS-IF0004 (6.2.0.7) or later fix level.
+Refer: Recommended fixes for 6.2
+URL: http://www-01.ibm.com/support/docview.wss?rs=767&uid=swg27009778#ver62 [http://www-01.ibm.com/support/docview.wss?rs=767&uid=swg27009778#ver62] 
+
+2. Unconfigure the current database using idsucfgdb as below:
+# /opt/ibm/ldap/V6.2/sbin/idsucfgdb -I tdsadmin -r -n 
+
+3. Clean up any remaining database folders:
+# cd ~tdsadmin # home folder of db2 instance:
+# ls tdsadmin/ # if you see instance named folder remove or rename it
+# mv tdsadmin tdsadmin.old
+# cd /var/IBM/Rational/RDS_5.1/Instance # database location as in ibmslapd.conf
+# ls # look for ldap32kcont_* folder then remove or rename it
+# mv ldap32kcont_rdsdb ldap32kcont_rdsdb.old 
+
+4. Configure a new blank database using the parameters from backup copy of ibmslapd.conf:
+Find dbuser, dbname and dblocation:
+# egrep -i "dbuser|dbname|dblocation" /temp/rdsbackup/BACKUP_FILES/ibmslapd.conf 
+
+ibm-slapdDbLocation: /var/IBM/Rational/RDS_5.1/Instance
+ibm-slapdDbName: rdsdb
+ibm-slapdDbUserID: tdsadmin
+ibm-slapdDbUserPW: {AES256}bPoGYJHIDWpNLokQzPDT4w== 
+
+# idscfgdb -I tdsadmin -a tdsadmin -w password -t rdsdb -l /var/IBM/Rational/RDS_5.1/Instance -n 
+
+5. Restore from the backup copy using idsdbrestore - with a fix level of 6.2.0.7 or later this restore will be successful. 
+
+6. Start ibmslapd after restore.
+
+RELATED INFORMATION
+ APAR IO11520 [http://www.ibm.com/support/docview.wss?uid=swg1IO11520]
+
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ ITDS
+TDS
+IBM Tivoli Directory Server
+Tivoli Directory Server
+Directory Server

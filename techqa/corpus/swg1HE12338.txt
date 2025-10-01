@@ -1,0 +1,136 @@
+Title: IBM HE12338: IBM Content Collector Outlook Web App Email Search window cannot be resized in Internet Explorer - United States
+
+Text:
+  A FIX IS AVAILABLE
+IBM Content Collector V4.0.1 Fix Pack 2 [http://www-01.ibm.com/support/docview.wss?uid=swg24041245]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When you select "Search","Help", "View", or "Specify additional
+   archiving information" from the IBM Content Collector Outlook
+   Web App  functions, a separate window opens.
+   In Internet Explorer, this window was too small, but could not
+   be resized. Thus, users could not read and interpret the
+   search results properly. In addition, no scroll bars
+   and no status bar were available in the new window.
+   
+   The issue occurred only with IBM Content Collector OWA support
+   in Exchange 2013.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+
+PROBLEM CONCLUSION
+ *  Starting with this fix, new windows for Content Collector
+   functions in OWA in Exchange 2013 can be resized. Also, scroll
+   bars and the status bar are available in the new window.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  Starting with 4.0.1.0-IBM-ICC-OWA-LA010, new windows for
+   Content Collector functions in OWA in   Exchange 2013 can be
+   resized. Also, scroll bars and the status bar are available in
+   the new window.
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   HE12338
+   
+   
+ * REPORTED COMPONENT NAME
+   ICC FOR EMAIL
+   
+   
+ * REPORTED COMPONENT ID
+   5724V5700
+   
+   
+ * REPORTED RELEASE
+   401
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-06-09
+   
+   
+ * CLOSED DATE
+   2015-12-18
+   
+   
+ * LAST MODIFIED DATE
+   2015-12-23
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ICC FOR EMAIL
+   
+   
+ * FIXED COMPONENT ID
+   5724V5700
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R401 PSY
+   UP

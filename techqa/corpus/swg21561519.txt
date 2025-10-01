@@ -1,0 +1,74 @@
+Title: IBM CSPA003E  / STCO999E FUNCTION=RECEIVE  TEXT=Timeout after 00:0n:nn - United States
+
+Text:
+Communication; STERLINGTRB TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ I am transferring from Sterling Connect:Direct for z/OS to Sterling Connect:Direct for UNIX but the transfers are failing with CSPA003E / STCO999E FUNCTION=RECEIVE TEXT=Timeout after 00:0n:nn 
+
+SYMPTOM
+HH.MM.SS STCnnnnnCSPA003E Security Violation - SNODE authentication error
+
+
+CAUSE
+“Do not Fragment” bit set on (in a firewall). 
+
+The PNODE side has MTU of 1500. 
+The SNODE side has MTU of 1496. 
+
+The problem is caused when the PNODE uses a packet greater than 1496 i.e. 1497 - 1500. The packet cannot be delivered to the SNODE as fragmentation is not allowed and the packet is larger than the MTU size.
+
+
+ENVIRONMENT
+Sterling Connect:Direct for z/OS and Sterling Connect:Direct for UNIX
+
+
+
+DIAGNOSING THE PROBLEM
+JESMSGLG 
+
+
+HH.MM.SS STCnnnnn SVTM055I SESSION (002) ESTABLISHED WITH SNODE=remotenode 
+HH.MM.SS STCnnnnn CSPA003E Security Violation - SNODE authentication error
+HH.MM.SS STCnnnnn SVTM105I PNAME=process1, PNUM= nn,nnn MOVED TO Q=HOLD , QSTATUS=HE 
+HH.MM.SS STCnnnnn SVTM056I SESSION (002) TERMINATED WITH SNODE=remotenode 
+
+
+RPLERRCK 
+
+Pnnnn HH:MM:SS:mm STCO999E FUNCTION=RECEIVE RETURN_CODE=00000000 REASON_CODE=00000000 TEXT=Timeout after hh:mm:ss 
+Pnnnn HH:MM:SS:mm AIORC=0000044F AIORSN=00000000 AIORV=00000000 
+Pnnnn HH:MM:SS:mm TAPNODE: localnode TASNODE: remotenode TASLU: 1364 
+Pnnnn HH:MM:SS:mm TAPROCNO: 0 SOCKET: 00000003 
+Pnnnn HH:MM:SS:mm -- SDIP_CALL: SEND FMH68 FAILURE 
+Pnnnn HH:MM:SS:mm STCO999E FUNCTION=RECEIVE RETURN_CODE=00000461 REASON_CODE=00000000 TEXT=Connection reset by peer 
+Pnnnn HH:MM:SS:mm AIORC=00000461 AIORSN=00000000 AIORV=FFFFFFFF 
+Pnnnn HH:MM:SS:mm TAPNODE: localnode TASNODE: remotenode TASLU: 1364 
+Pnnnn HH:MM:SS:mm TAPROCNO: 0 SOCKET: 00000003 
+
+
+Sterling Connect:Direct for z/OS TRACE 
+
+Pnnnn HH:MM:SS:mm SSL BufferMax=8192 BufferLen=0 BufferUsed=47 Residual=0. 
+Pnnnn HH:MM:SS:mm Returning 0 bytes of handshake data. 
+Pnnnn HH:MM:SS:mm SSL data returned is 0 
+Pnnnn HH:MM:SS:mm Socket Init Error. 
+Pnnnn HH:MM:SS:mm REQ=SSLSOINI RC=420 RS=GSK_ERR_SOCKET_CLOSED 
+Pnnnn HH:MM:SS:mm ENDING TLS/SSL HANDSHAKE, RC=420 
+Pnnnn HH:MM:SS:mm REQ=SSLSOINI RC=420 RS=GSK_ERR_SOCKET_CLOSED 
+Pnnnn HH:MM:SS:mm SSLH FUNCTION ERROR: SEC#FUNC=11 SEC#CFUN=00 SEC#MSG=CSPA003E SEC#RC=00000008 SEC#SC=00000523 
+Pnnnn HH:MM:SS:mm {ERROR.EN} - SENDING SENSE CODE 0523 
+Pnnnn HH:MM:SS:mm TAMSGID1= CSPA003E 
+
+
+
+RESOLVING THE PROBLEM
+Change the MTU size on the SNODE to match the MTU size used on the PNODE (if possible) or allow fragmentation.
+
+ 
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Commerce Sterling Connect:Direct for z/OS Not Applicable 
+HISTORICAL NUMBER
+ TRB1028

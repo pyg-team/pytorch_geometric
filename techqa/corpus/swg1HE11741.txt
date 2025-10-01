@@ -1,0 +1,134 @@
+Title: IBM HE11741: If the IBM Content Collector P8 Find Duplicate Email task is not associated with a valid P8 connection, it causes an exception - United States
+
+Text:
+  A FIX IS AVAILABLE
+IBM Content Collector V3.0 Fix Pack 3 [http://www-01.ibm.com/support/docview.wss?uid=swg24034628]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  If a P8 Find Duplicate Email task is added to an IBM Content
+   Collector task route but there is no valid FileNet P8 connection
+   associated with the task, there will be an error. The task and
+   task route can be saved, but cannot be loaded again. Also, the
+   task route cannot be deleted.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  If there is no valid FileNet P8 connection associated with the
+   P8 Find Duplicate Email task, the task cannot be loaded. Before
+   deleting a task route, all tasks must be loaded, because some
+   connectors must be notified if tasks or collectors are not used
+   anymore. As a result, task routes that use a P8 Find Duplicate
+   Email task without valid P8 connection cannot be deleted.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Starting with IBM Content Collector 3.0.0 Fix Pack 3, the P8
+   Find Duplicate Email task has been updated to check for a valid
+   P8 connection and not cause an exception if there is no valid P8
+   connection.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   HE11741
+   
+   
+ * REPORTED COMPONENT NAME
+   ICC FOR CONNECT
+   
+   
+ * REPORTED COMPONENT ID
+   5724V5703
+   
+   
+ * REPORTED RELEASE
+   300
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-03-25
+   
+   
+ * CLOSED DATE
+   2013-07-30
+   
+   
+ * LAST MODIFIED DATE
+   2013-07-30
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ICC FOR CONNECT
+   
+   
+ * FIXED COMPONENT ID
+   5724V5703
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R300 PSY
+   UP

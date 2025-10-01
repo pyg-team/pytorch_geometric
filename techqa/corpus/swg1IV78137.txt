@@ -1,0 +1,162 @@
+Title: IBM IV78137: PERFORMANCE ISSUE WHILE CLICKING THE DEPLOYED SOFTWARE TAB ON SOFTWARE CATALOG APPLICATION - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  This is a performance issue.
+   
+   ENVIRONMENT:
+   IBM WebSphere Application Server 7.0.0.17
+   Tivoli's process automation engine 7.5.0.4 Build 20130129
+   ICD/SCCD 7510
+   Server OS   Windows Server 2008 R2 6.1 build 7601 Service Pack 1
+   Server DB   Microsoft SQL Server 10.50 (10.50.4000)
+   
+   
+   PROBLEM:
+   Deployed Software tab in Software Catalog application works
+   very slow, sometime takes 25 seconds  to load sometimes even
+   longer.
+   
+   HISTORY OF ISSUE: See PMR
+   
+   LOGS REQUESTED: No error in logs
+   
+   LOCATION OF LOGS: N/A
+   
+   STEPS TO RECREATE:
+   First  Import data on one of our test machines (eg we used
+   orangevm2).
+   1 login to orangevm2  as maxadmin, password is maxadmin
+   2 Go to Administration -> Deployed Assets -> Software Catalog
+   3 Hit Enter to list softwares
+   4 Click on a software (for example on this test machine acl)
+   5 Now click on Deployed Software Tab
+   It will take 25 seconds or more to load data (notice in this
+   example it returned only 36 rows)
+   
+   
+   L2 RECREATE NOTES:
+   L2 able to reproduce the issue on lab machine orangevm2
+   
+   L2 ANALYSIS:
+   We also noticed that performance does not change even if
+   "deployed
+   Software" tab has more or less data in it.
+   When we directly ran the SQL in database client it runs very
+   quickly (1
+   sec or less).
+   
+   QUESTIONS/REQUESTS FOR L3:
+   Why ICD/SCCD is taking 25 seconds to load data ?
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  No Local fix
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  PERFORMANCE ISSUE WHILE CLICKING THE DEPLOYED SOFTWARE TAB ON
+   SOFTWARE CATALOG APPLICATION
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix for this APAR will be available in the next fixpacks.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV78137
+   
+   
+ * REPORTED COMPONENT NAME
+   CONTROL DESK/SC
+   
+   
+ * REPORTED COMPONENT ID
+   5725E2400
+   
+   
+ * REPORTED RELEASE
+   751
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2015-10-16
+   
+   
+ * CLOSED DATE
+   2015-10-29
+   
+   
+ * LAST MODIFIED DATE
+   2015-10-29
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CONTROL DESK/SC
+   
+   
+ * FIXED COMPONENT ID
+   5725E2400
+   
+   
+
+APPLICABLE COMPONENT LEVELS

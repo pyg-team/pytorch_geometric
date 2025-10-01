@@ -1,0 +1,46 @@
+Title: IBM Issue with numerical values in IBM Navigator for Microsoft Office (NMO) and External Data Services (EDS) choicelists - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Numerical values from a choicelist in NMO with EDS are not selectable. 
+
+SYMPTOM
+After selecting a numerical value in an EDS choicelist, the field is not populated by the selected value.
+
+
+CAUSE
+Numerical values in NMO EDS should be enclosed with double quotes.
+
+DIAGNOSING THE PROBLEM
+Check if the JSON choicelists used by NMO in EDS have double quotes for the numerical values. For example:
+"choiceList": {
+
+"displayName": "numbers",
+
+"choices": [{
+"displayName": "One",
+"value": 1 },
+{
+"displayName": "Two",
+"value": 2
+}]
+
+}}
+
+RESOLVING THE PROBLEM
+This issue can be resolved by adding double quotes for the numerical values in the following way:
+"choiceList": {
+
+"displayName": "numbers",
+
+"choices": [{
+"displayName": "One",
+"value": "1" },
+{
+"displayName": "Two",
+"value": "2"
+}]
+
+}}

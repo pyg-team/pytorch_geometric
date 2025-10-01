@@ -1,0 +1,86 @@
+Title: IBM Semaphores on Sun Solaris, truss Utility - United States
+
+Text:
+STERLINGPRI TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Semaphores on Sun Solaris, truss Utility 
+
+SYMPTOM
+PART: Manifest 6.2 SP2 DCS
+OS: HP-UX - 10.2
+DATABASE: Oracle - 7.3.2
+
+Additional information on diagnosis/correcting problems with DCS background programs that use semaphores. 
+These commands may apply to other Unix platforms, but Solaris is the only one these specifics have been tried on.. (Please refer notes at the end for a brief explanation of semaphores and related kernel parameters for solaris.)
+
+Semaphores on Sun Solaris, truss Utility
+
+
+RESOLVING THE PROBLEM
+Additional information on diagnosis/correcting problems with DCS background programs that use semaphores. 
+These commands may apply to other Unix platforms, but Solaris is the only one these specifics have been tried on.. (Please refer notes at the end for a brief explanation of semaphores and related kernel parameters for solaris.)
+
+If errors "Failed to acquire semaphore" or "Another Copy Of program already running" occur, try the following:
+
+1. Verify that DCS jobs are not running under the given user name.
+
+2. Use the following command to see what semaphores or shared memory queues are in use by that user name:
+
+ipcs | grep <username>
+
+This will give information such as: s 21 0x00a037fd
+
+The 's' indicates a semaphore (q would be a shared memory queue); 21 is the semaphore ID.
+
+3. Release the semaphore with the following command (based on the example above):
+
+ipcrm -s 21
+
+4. Try running the program again.
+
+If a Solaris background job is failing, you can use the utility truss to try and diagnose what is wrong. Truss will show all the system services that are being used as a result of the calls made in the application program. 
+
+To use truss you issue the command as follows:
+
+truss -f -o <outputfile name> WMSYantrabg <warehouse name> <program name>
+
+e.g. truss -f -o wh132.out WMSYantrabg WH15 wh132
+
+The "-f" means to follow any child processes that are spawned. The "-o" directs the output to a file that you can examine (a customer can perform the command and send the output). By reviewing the output, you can sometimes see where the problem is. For example, not being able to open/find a necessary file, or in my case, the fact that the semaphore calls were failing.
+
+Semaphores in solaris 
+--------------------------------------
+Semaphores are a shareable resource that take on a non-negative integer value. They are manipulted by the P (wait) and V (signal) functions, which decrement and increment the semaphore, respectively. When a process needs a resource, a "wait" is issued and the semaphore is decremented. When the semaphore contains a value of zero, the resources are not available and the calling process spins or blocks (as appropriate) until resources are available. When a process releases a resource controlled by a semaphore, it increments the semaphore and the waiting processes are notified. 
+
+semmap: This sets the number of entries in the semaphore map. This should never be greater than semmni. If the number of semaphores per semaphore set used by the application is "n" then set
+semmap = ((semmni + n - 1)/n)+1
+or more. Alternatively, we can set semmap to semmni x semmsl. An undersized semmap leads to "WARNING: rmfree map overflow" errors. The default setting is 10; the maximum for Solaris 2.6 is 2GB. 
+
+semmni: Maximum number of systemwide semaphore sets. Each control structure consumes 84 bytes. The default setting is 10, the maximum is 65536 (64 KB). 
+
+semmns: Maximum number of semaphores in the system. Each structure uses 16 bytes. This parameter should be set to semmni x semmsl. The default is 60; the maximum is 2GB. 
+
+semmnu: Maximum number of undo structures in the system. This should be set to semmni so that each control structure has an undo structure. The default is 30, the maximum is 2 GB. 
+
+semmsl: Maximum number of semaphores per semaphore set. The default is 25, the maximum is 65535. 
+
+semopm: Maximum number of semaphore operations that can be performed in each semop call. The default is 10, the maximum is 2 GB. 
+
+semume: Maximum number of undo structures per process. This should be set to semopm times the number of processes that will be using semaphores at any one time. The default is 10; the maximum is 2 GB. 
+
+semusz: Number of bytes required for semume undo structures. This should not be tuned; it is set to semume x (1 + sizeof(undo)). The default is 96; the maximum is 2 GB. 
+
+semvmx: Maximum value of a semaphore. This should never exceed 32767 (default value) unless SEM_UNDO is never used. The default is 32767; the maximum is 65535. 
+
+semaem: Maximum adjust-on-exit value. This should almost always be left alone. The default is 16384; the maximum is 32767.
+
+
+
+HISTORICAL NUMBER
+ PRI47824 
+
+PRODUCT ALIAS/SYNONYM
+ 
+
+Fact

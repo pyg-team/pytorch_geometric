@@ -1,0 +1,136 @@
+Title: IBM i Access for Windows Toolkit - Visual Basic - United States
+
+Text:
+ 
+ 
+
+The following sample programs are available to help develop IBM i Access for Windows applications using Visual Basic:
+
+
+
+
+ActiveX automation objects
+
+ * dqrmtcm2.exe – Sample using ActiveX controls and automation objects for data queues and remote command. This Visual Basic sample uses the IBM i Access for Windows ActiveX custom controls and automation objects to retrieve a list of IBM i systems (which have been previously connected), create and delete libraries, create and delete data queues, and send and receive data using data queues.
+   
+    * Download dqrmtcm2.exe (EXE, 20KB) [ftp://public.dhe.ibm.com/as400/products/clientaccess/win32/files/toolkit/dqrmtcm2.exe]
+   
+   
+ * vballobj.exe – Visual Basic sample using the IBM i Access for Windows automation objects. This Visual Basic sample uses the IBM i Access for Windows automation objects to perform the following:
+   
+    * Retrieve the list of System is which have previously been connected
+    * Specify a new System i to access
+    * Retrieve information about an System i, such as the: IP address, host version and release levels, password expiration date, number of active connections, etc.
+    * Call an System i API to retrieve a list of user libraries on the system
+    * Call an System i API to retrieve a list of data queues in a library
+    * Create and delete libraries
+    * Create and delete data queues
+    * Query the attributes of data queues
+    * Send and receive data using data queues
+    * Convert strings and numeric data between host and PC formats
+    * Retrieve information about the IBM i Access for Windows code installed on the PC
+   
+    * Download vballobj.exe (EXE, 34.2KB) [ftp://public.dhe.ibm.com/as400/products/clientaccess/win32/files/toolkit/vballobj.exe]
+   
+   
+ * vbdbauto.exe – Visual Basic sample using the database automation objects. This Visual Basic samples uses the database automation objects to:
+   
+    * Download an IBM i database file to an ASCII text file or to the display
+    * Upload an ASCII text file to an existing database file, by appending to the file or by replacing the contents of the file.
+   
+   The IBM i Access for Windows conversion objects are also used to convert the data between IBM i and PC formats.
+   
+   ** Note: This samples requires service pack [/systems/power/software/i/access/windows_sp.html] SF57098 or later in order to run.
+   
+    * Download vbdbauto.exe (EXE, 84KB) [ftp://public.dhe.ibm.com/as400/products/clientaccess/win32/files/toolkit/vbdbauto.exe]
+   
+   
+ * vbdtasyn.exe – Visual Basic sample using low-level Data Transfer download automation objects for asynchronous transfers. This Visual Basic sample uses the low-level Data Transfer automation objects to perform the following:
+   
+    * Asynchronously download data from an IBM i database file
+    * Asynchronously upload data to an IBM i database file
+    * Display the status of an active asynchronous upload or download request
+    * Cancel an active asynchronous upload or download request
+   
+   After an asynchronous request is submitted, control is immediately returned to the application without waiting for the transfer to complete. To verify this, you can clear the status list while the request is running.
+   
+   For additional sample code that demonstrates how to use the low-level Data Transfer automation objects, see the examples in the online help. To access this file, go to the Start menu and choose Programs -> IBM AS/400 IBM i Access for Windows -> IBM i Access for Windows Toolkit -> IBM i Access for Windows Toolkit -> Database -> ActiveX -> IBM i Access for Windows ActiveX Automation Objects - data transfer.
+   
+   This function is initially available in IBM i Access for Windows V5R1M0.
+   
+    * Download vbdtasyn.exe (EXE, 20.5KB) [ftp://public.dhe.ibm.com/systems/i/access/vbdtasyn.exe]
+   
+   
+ * vbdtdlr.exe – Visual Basic sample using low-level Data Transfer download automation object. This Visual Basic sample uses the low-level Data Transfer download automation object to perform the following:
+   
+    * Download data from an IBM i database file
+    * Customize how the data will be returned, through the setting of PC file type-specific properties
+    * Customize the query to be performed using either Data Transfer or SQL syntax
+    * Specify which user ID and password should be used for the transfer
+    * Save a download transfer request which can be used from the high-level automation object, the low-level automation object, the batch Data Transfer application or the interactive Data Transfer application.
+    * Load a previously saved Data Transfer download request and use its settings to transfer data using the low-level download automation object. The request could have been created using an ActiveX automation object or the Data Transfer application.
+   
+   For addition sample code, demonstrating how to use the low-level Data Transfer download automation object, see the examples in the online help. To access this file, go to the Start menu and choose Programs -> IBM AS/400 IBM i Access for Windows -> IBM i Access for Windows Toolkit -> IBM i Access for Windows Toolkit -> Database -> ActiveX -> IBM i Access for Windows ActiveX Automation Objects - data transfer.
+   
+   This function is initially available in IBM i Access for Windows V5R1M0.
+   
+    * Download vbdtdlr.exe (EXE, 27KB) [ftp://public.dhe.ibm.com/systems/i/access/vbdtdlr.exe]
+   
+   
+ * vbdtdxfr.exe – Visual Basic sample using high-level Data Transfer download automation object. This Visual Basic sample uses the high-level Data Transfer automation object to perform the following:
+   
+    * Download data from an IBM i database file, using one line of code
+    * Upload data to an IBM i database file, using one line of code
+    * Run an existing Data Transfer request file
+    * Specify user ID and password values to override the default security values when performing a database transfer
+   
+   For additional sample code that demonstrates how to use the high-level Data Transfer automation object, see the examples in the online help. To access this file, go to the Start menu and choose Programs -> IBM AS/400 iSeries Access for Windows -> iSeries Access for Windows Toolkit -> iSeries Access for Windows Toolkit -> Database -> ActiveX -> iSeries Access for Windows ActiveX Automation Objects - data transfer.
+   
+   This function is initially available in IBM i Access for Windows V5R1M0.
+   
+    * Download vbdtdxfr.exe (EXE, 21.8KB) [ftp://public.dhe.ibm.com/systems/i/access/vbdtdxfr.exe]
+   
+   
+ * vbdtulr.exe – Visual Basic sample using low-level Data Transfer upload automation object. This Visual Basic sample uses the low-level Data Transfer upload automation object to perform the following:
+   
+    * Create a data file or a source file on an IBM i system
+    * Append data to an existing IBM i data or source file
+    * Save an upload transfer request which can be used from the high-level automation object, the low-level automation object, the batch Data Transfer application or the interactive Data Transfer application.
+   
+   For additional sample code that demonstrates how to use the low-level Data Transfer upload automation object, see the examples in the online help. To access this file, go to the Start menu and choose Programs -> IBM AS/400 iSeries Access for Windows -> iSeries Access for Windows Toolkit -> iSeries Access for Windows Toolkit -> Database -> ActiveX -> iSeries Access for Windows ActiveX Automation Objects - data transfer.
+   
+   This function is initially available in IBM i Access for Windows V5R1M0.
+   
+    * Download vbdtulr.exe (EXE, 21.5KB) [ftp://public.dhe.ibm.com/systems/i/access/vbdtulr.exe]
+   
+   
+
+
+
+
+ActiveX custom controls
+
+ * ActiveX custom controls
+ * dqrmtcm2.exe – Sample using ActiveX controls and automation objects for data queues and remote command. This Visual Basic sample uses the IBM i Access for Windows ActiveX custom controls and automation objects to retrieve a list of IBM i systems (which have been previously connected), create and delete libraries, create and delete data queues, and send and receive data using data queues.
+   
+    * Download dqrmtcm2.exe (EXE, 20KB) [ftp://public.dhe.ibm.com/as400/products/clientaccess/win32/files/toolkit/dqrmtcm2.exe]
+   
+   
+
+
+
+
+C/C++ APIs
+
+ * vbhllapi.exe – Visual Basic sample using the PC5250 Emulation EHLLAPI interface. This is a Visual Basic sample dialog that shows how the various EHLLAPI APIs work and the output that is generated by them. EHLLAPI APIs allow you to perform communication management, send keystrokes to a session, query information about the session and/or the presentation space, write to the presentation space, as well as many other functions.
+   
+    * Download vbhllapisamp.exe (EXE, 283KB) [ftp://public.dhe.ibm.com/systems/i/access/systems_i_software_access_windows_toolkit_vbhllapisamp.exe]
+   
+   
+ * vbpcsapi.exe – Visual Basic sample using the PC5250 Emulation PCSAPI interface. This Visual Basic sample program shows how to:
+   
+    * start and stop sessions
+    * perform a query to determine the session status
+    * determine which .ws file is associated with a session
+   
+    * Download vbpcsapi.exe (EXE, 68KB) [ftp://public.dhe.ibm.com/as400/products/clientaccess/win32/files/toolkit/vbpcsapi.exe]

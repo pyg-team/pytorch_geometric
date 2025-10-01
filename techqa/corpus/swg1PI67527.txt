@@ -1,0 +1,177 @@
+Title: IBM PI67527: CANCELLED INTEGRATION NODE RESTART LOGS BIP2112E DURING INTEGRATION SERVER RESTART. - United States
+
+Text:
+z/os SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  If the integration node is cancelled, the integration servers
+   will remain active. When the integration node is then restarted,
+   the admin agent will stop the integration servers before
+   restarting them.  There is a small timing window that can result
+   in the admin agent attempting to restart the integration servers
+   before they have finished shutting down, resulting in the
+   following BIP2112E message:
+   
+   +BIP2112E (Msg 1/1) MQ10BRK EG01 0 INTEGRATION NODE
+    INTERNAL ERROR: DIAGNOSTIC INFORMATION 'Failed to
+    acquire execution group lock - duplicate execution
+    group processes?', 'ImbFile::WriteLock::WriteLock()
+    reported 'Failed to acquire write lock on file'
+    with values... ''Failed to acquire write lock on
+    file'' ''/u/wmqi10/broker/MQ10BRK/components/MQ10BRK
+    /12a345a6-7fe8-9d0d-1234-a5cd678f9e1f/.lock'''112''.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   All users of IBM Integration Bus v10.
+   
+   
+   Platforms affected:
+   z/OS, MultiPlatform
+   
+   ****************************************************************
+   PROBLEM DESCRIPTION:
+   If an integration node is cancelled, the integration servers
+   will remain active. When the integration node is then restarted,
+   the administrative agent will stop the integration servers
+   before restarting them.  There is a small timing window that can
+   result in the administrative agent attempting to restart the
+   integration servers before they have finished shutting down,
+   resulting in the following BIP2112E message:
+   
+   +BIP2112E (Msg 1/1) MQ10BRK EG01 0 INTEGRATION NODE INTERNAL
+   ERROR: DIAGNOSTIC INFORMATION 'Failed to acquire execution group
+   lock - duplicate execution group processes?',
+   ImbFile::WriteLock::WriteLock()
+    reported 'Failed to acquire write lock on file' with values...
+   ''Failed to acquire write lock on file''
+   ''/u/wmqi10/broker/MQ10BRK/components/MQ10BRK/12a345a6-7fe8-9d0d
+   -1234-a5cd678f9e1f/.lock'''112''.
+   
+   There are a number of resource name changes between WebSphere
+   Message Broker and IBM Integration Bus Version 9.0.  For details
+   visit
+   http://pic.dhe.ibm.com/infocenter/wmbhelp/v9r0m0/topic/com.ibm.e
+   tools.mft.doc/bb23814_.htm [http://pic.dhe.ibm.com/infocenter/wmbhelp/v9r0m0/topic/com.ibm.etools.mft.doc/bb23814_.htm]
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The product has been modified so that the integration servers
+   will not restart before they are completely stopped.
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+   Version    Maintenance Level
+   v10.0      10.0.0.7
+   
+   The latest available maintenance can be obtained from:
+   http://www-01.ibm.com/support/docview.wss?rs=849&uid=swg27006041 [http://www-01.ibm.com/support/docview.wss?rs=849&uid=swg27006041]
+   
+   If the maintenance level is not yet available,information on
+   its planned availability can be found on:
+   http://www-1.ibm.com/support/docview.wss?rs=849&uid=swg27006308 [http://www-1.ibm.com/support/docview.wss?rs=849&uid=swg27006308]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI67527
+   
+   
+ * REPORTED COMPONENT NAME
+   IIB Z/OS
+   
+   
+ * REPORTED COMPONENT ID
+   5655AB100
+   
+   
+ * REPORTED RELEASE
+   A00
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-08-12
+   
+   
+ * CLOSED DATE
+   2016-11-23
+   
+   
+ * LAST MODIFIED DATE
+   2016-11-23
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   IIB Z/OS
+   
+   
+ * FIXED COMPONENT ID
+   5655AB100
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * RA00 PSY
+   UP

@@ -1,0 +1,86 @@
+Title: IBM The log files contain many entries with the "...item ID could not be looked up" error message - United States
+
+Text:
+RTC; CCM; jts_user sync; item ID; CondributorHandle; primary ContributorHandle; java.lang.IllegalArgumentException; IllegalArgumentException TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ IBM Rational Team Concert (RTC) log files contain many "The primary ContributorHandle for the ContributorHandle with the '[UUID _...]' item ID could not be looked up" error messages and it is not clear why these messages are present. 
+
+SYMPTOM
+The following is the full message you will see in the RTC log files (
+ccm.log):
+
+
+2014-01-09 09:47:00,533 [ WebContainer : 5] ERROR com.ibm.team.workitem.service 
+
+- Failed to serve the request - 'oslc/context/_sYwMwX9GEeKKq8UCfsNqEg/shapes/workitems/task'. Reason - 'An error response was received from the Jazz Team Server. Status=400. Message: The primary ContributorHandle for the ContributorHandle with the "[UUID _gHcZALLSEeCv6rR2D5CWGA]" item ID could not be looked up.'.
+
+
+java.lang.IllegalArgumentException: An error response was received from the Jazz Team Server. Status=400. Message: The primary ContributorHandle for the ContributorHandle with the "[UUID _gHcZALLSEeCv6rR2D5CWGA]" item ID could not be looked up.
+at com.ibm.team.repository.service.internal.license.LicenseService.convertToPrimaryHandleHide Exception(LicenseService.java:2007)
+at com.ibm.team.repository.service.internal.license.LicenseService.assertLicenseAndAssignFor Contributor(LicenseService.java:2729)
+at sun.reflect.GeneratedMethodAccessor328.invoke(null)
+at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:37)
+at java.lang.reflect.Method.invoke(Method.java:611)
+...
+at com.ibm.ws.util.ThreadPool$Worker.run(ThreadPool.java:1604)
+
+
+
+
+
+CAUSE
+The jts_user account is not synchronized with other IBM Collaborative Lifecycle Management (CLM) applications.
+
+
+RESOLVING THE PROBLEM
+SOLUTION 
+
+To synchronize the jts_user with all the CLM applications follow the steps:
+
+NOTE: These steps to modify the jts_user account are for IBM Rational Change and Configuration Management (CCM) only. 
+
+ 
+
+ 1.  Go to Advanced Configuration page in the web user interface within the Jazz Team Server (JTS):
+     
+     
+     https:// :9443/jts/admin#action=com.ibm.team.repository.admin.configureAdvanced 
+     
+     
+     
+ 2.  Change property User Registry Type from LDAP to UNSUPPORTED
+     
+     
+ 3.  Change property Ability to Modify User IDs from false to true
+     
+     
+ 4.  Save the changes within the JTS Advanced configuration page
+     
+     
+ 5.  Open a new browser page to the following CCM User Administration Page:
+     
+     
+     https:// :9443/ccm/admin#action=jazz.viewPage&id=com.ibm.team.repository.users 
+     
+     
+     
+ 6.  Modify the CCM user named jts_user within the web session URL from Step 5. (Make sure you are within the CCM admin page for users). Make note of the present settings for the name, display name and email address. Then, change some of the attributes for the jts_user, in order to force a change in the database record status. For instance, change the user jts_user to JTS_User.
+     
+     
+ 7.  Reset the jts_user account’s user, display name and email address to what the saved values were prior to making the temporary modifications, as soon as you have saved that information within CCM. The goal is to correctly set the user to what was saved prior to the changes.
+     
+     
+ 8.  Close the CCM browser session out
+     
+     
+ 9.  Change the property Ability to Modify User IDs back to false at the JTS admin page setup within Step 1
+     
+     
+ 10. Change property User Registry Type back to LDAP
+     
+     
+ 11. Save the changes within the JTS Advanced configuration page. At this point, the jts_user should have been synchronized. (The task runs once a minute. You might have to wait at least 5 minutes to verify that the task has completed).
+     
+     
+ 12. Check the ccm.log file. If the error messages still appear, contact with IBM Rational Client Support

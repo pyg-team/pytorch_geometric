@@ -1,0 +1,143 @@
+Title: IBM Estimating and viewing space usage for large objects (LOBs) - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ This document provides some details and methodology for looking at the space usage that LOBs require within a long table space. Specifically, it answers the question, "How can I estimate how much free space is in my long table space?". 
+
+ANSWER
+First of all, it is necessary to explain a bit about the LOB space management in DB2® Universal Database™ (DB2 UDB). The space itself is organized into "buddy spaces". In DB2 UDB Version 8, each buddy space has a size of 256 K. The LOB manager in DB2 UDB works on buddy spaces rather than on pages. There is a special type of page called an allocation page that keeps track of information about free space in the buddy spaces.
+When there are no more free buddy segments to insert LOB data into, the LOB manager expands the LOB object by adding multiples of 256K buddy space(s) to satisfy the space request. Thus there might be pre-allocated unused space due to how the LOB object is extended.
+
+There are actually three ways that you can see what the space usage is like, however each method will only give you certain bits of information. This is best explained by way of an example:
+
+
+ 1. Create table spaces and a table as per below:  1. db2 "create tablespace dmstbs managed by database using (file 'container0.dms' 1000)" 
+     2. db2 "create long tablespace longtbs managed by database using (file 'container0.long' 10000)" 
+     3. db2 "create table t1 (c1 int, c2 clob(1k)) in dmstbs long in longtbs"
+        
+        
+    
+    
+ 2. The following methods will be used to collect space usage on the LOB during this example:
+    Method A:
+    db2 "select sum( cast( length(c2) AS bigint) ) from t1"
+    Method B:
+    db2 list tablespaces show detail
+    Method C:
+    db2 "inspect check tablespace tbspaceid 3 results keep insp.out"
+    
+    
+ 3. After creating the table space, the list tablespaces command will show 96 pages in this particular example for the various table space control information.
+    
+    
+    Testing the three methods for collecting space usage information: 
+ 4. After creating the table t1, insert one row, as (1,'aaaaaaaaaa'). 
+    Collect space usage information now as follows:  * Method (A) result:
+       10 <-- this is the number of bytes of LOB being inserted.
+       
+     * Method (B) result:
+       ...
+       Useable pages = 9952
+       Used pages = 256 <-- this is the number of pages being allocated, it includes table space and table meta data and pre-allocated LOB space.
+       Free pages = 9696
+       
+       
+     * Method (C) result:
+       ...
+       LOB phase start. Object: 4 Tablespace: 6
+       Traversing LOB extent map, anchor 96.
+       Extent map traversal complete.
+       Traversing LBA extent map, anchor 160.
+       Extent map traversal complete.
+       LOB Object Summary: Total Pages 64 - Used Pages 1 <-- number of pre-allocated LOB pages and used pages.
+       LBA Object Summary: Total Pages 2 - Used Pages 2
+       LOB phase end.
+       
+       
+    
+    
+ 5. Update the table t1 a few times. For each update, the LOB manager will delete the old row, and insert the new row. Note that DB2 UDB will not reclaim the space owned by the old rows until a reorg table command is performed.  * Method (A) result:
+       10
+       Although the result is still 10 bytes, it doesn't mean space used by the LOB is only 10 bytes at this moment.
+       
+     * Method (B) result:
+       ...
+       Useable pages = 9952
+       Used pages = 256
+       Free pages = 9696
+       This is the same as the previous result.
+       Since the list tablespaces command contains LOB spaces being pre-allocated, and the space is enough to hold the inserted row, the results will remain the same after the updates.
+       
+     * Method (C) result:
+       ...
+       LOB phase start. Object: 4 Tablespace: 4
+       Traversing LOB extent map, anchor 96.
+       Extent map traversal complete.
+       Traversing LBA extent map, anchor 160.
+       Extent map traversal complete.
+       LOB Object Summary: Total Pages 64 - Used Pages 13 <-- Used pages being increased to 13, as the previous pages owned by deleted rows haven't been reclaimed yet.
+       LBA Object Summary: Total Pages 2 - Used Pages 2 
+       LOB phase end.
+       
+       
+    
+    
+ 6. Issue a reorg table command on t1 to claim space.  * Method (A) result:
+       10
+       
+     * Method (B) result:
+       ...
+       Useable pages = 9952
+       Used pages = 256
+       Free pages = 9696 
+       This is the same as the previous result.
+       A reorg doesn't change the number of used pages, as space reclaim is done within the pre-allocated space.
+       
+     * Method (C) result:
+       ...
+       LOB phase start. Object: 4 Tablespace: 4
+       Traversing LOB extent map, anchor 320.
+       Extent map traversal complete.
+       Traversing LBA extent map, anchor 256.
+       Extent map traversal complete.
+       LOB Object Summary: Total Pages 64 - Used Pages 1 <-- Used pages back to 1 after space reclaim.
+       LBA Object Summary: Total Pages 2 - Used Pages 2
+       LOB phase end.
+       
+       
+    
+    
+ 7. Insert another 20 rows.  * Method (A) result:
+       210
+       
+     * Method (B) result:
+       ...
+       Useable pages = 9952
+       Used pages = 256
+       Free pages = 9696 
+       This is the same as the previous result. New rows fit in the pre-allocated space.
+       
+     * Method (C) result:
+       ...
+       LOB phase start. Object: 4 Tablespace: 4
+       Traversing LOB extent map, anchor 320.
+       Extent map traversal complete.
+       Traversing LBA extent map, anchor 256.
+       Extent map traversal complete.
+       LOB Object Summary: Total Pages 64 - Used Pages 6 <-- Used pages increases as new rows are inserted.
+       LBA Object Summary: Total Pages 2 - Used Pages 2
+       LOB phase end.
+    
+    
+
+
+
+In conclusion, the three methods can be compared as follows: 
+
+Method A does not count the storage space held by updated or deleted rows, and it depends on the workload so the result can be misleading. 
+
+Method B includes table space and the table metadata size, as well as pre-allocated LOB space. The LOB manager allocates multiples of 256K space to cover each insert, so the pre-allocated unused space should be less than 256K. Therefore if the table space is big, then this method should be able to represent the free space in the table space with a good degree of accuracy. 
+
+Method C is the most accurate as shown above in the example. Be advised though that running the inspect is time consuming and it will require doing I/O while it is inspecting the object. So, although it is the most accurate, it is also the slowest (especially for a large table) and uses the most system resources to run compared to the other two faster methods.

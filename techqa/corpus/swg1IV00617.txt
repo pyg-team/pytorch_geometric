@@ -1,0 +1,233 @@
+Title: IBM IV00617: DOC APAR - CLARIFICATION OF EXCHANGING OF CA-SIGNED CERTIFICATES WITH PARTNERS. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Customer is unable to start the SSL receiver channel after
+   installing a new certificate and partner sending channel is
+   receiving:
+   
+   AMQ9633: Bad SSL certificate for channel 'channelname'.
+   
+   EXPLANATION:
+   A certificate encountered during SSL handshaking is regarded as
+   bad for one of the following reasons:
+   (a) it was formatted incorrectly and could not be validated, or
+   (b) it was formatted correctly but failed validation against
+   the Certification Authority (CA) root and other certificates
+   held on the local system, or
+   (c) it was found in a Certification Revocation List (CRL) on an
+   LDAP server.
+   (d) a CRL was specified but the CRL could not be found on the
+   LDAP server.
+   
+   The channel is 'channelname'; in some cases its name cannot be
+   determined and so is shown as '????'. The channel did not
+   start.
+   ACTION:
+   Check which of the four possible causes applies on your system.
+   Correct the error, and restart the channel.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   Users of WebSphere MQ SSL or TLS channels who use more than one
+   Certificate Authority in their MQ topology.
+   
+   Platforms affected:
+   All Distributed (iSeries, all Unix and Windows)
+   ****************************************************************
+   PROBLEM SUMMARY:
+   When configuring a channel between two queue managers whose
+   queue manager certificates were issued by different Certificate
+   Authorities then both CA certificates must be added to each
+   queue manager. If this not done then the channel fails to start.
+   The examples in the WebSphere MQ Security Manual do not cover
+   using different Certificate Authorities.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  In the topic "Using CA-signed certificates for mutual
+   authentication on UNIX systems or Windows"
+   (http://publib.boulder.ibm.com/infocenter/wmqv7/v7r0/topic
+   /com.ibm.mq.csqzas.doc/sy11713_.htm)
+   
+   Under the diagram there is the following description:
+   In Figure 1, the key repository for QMA contains QMA's
+   certificate and the CA certificate. The key repository for QMB
+   contains QMB's certificate and the CA certificate.
+   
+   Will be changed to:
+   In Figure 1, the key repository for QMA contains QMA's
+   certificate and the CA certificate. The key repository for QMB
+   contains QMB's certificate and the CA certificate.
+   In this example both QMA's certificate and QMB's certificate
+   were issued by the same CA. If QMA's certificate and QMB's
+   certificate were issued by different CAs then the key
+   repositories for QMA and QMB must contain both CA certificates.
+   
+   The 3rd bullet currently reads:
+   - Add the Certificate Authority certificate to the key
+   repository, as described in Adding a CA certificate (or the
+   public part of a self-signed certificate) into a key
+   repository, on UNIX systems or Windows.
+   
+   Will be changed to:
+   
+   - Add the Certificate Authority certificate to the key
+   repository on each queue manager, as described in Adding a CA
+   certificate (or the public part of a self-signed certificate)
+   into a key repository, on UNIX systems or Windows. If the Queue
+   managers are using different Certificate Authorities then the CA
+   certificate for each Certificate Authority must be added to both
+   queue managers.
+   
+   
+   In the topic "Using CA-signed certificates for mutual
+   authentication on i5/OS"
+   (http://publib.boulder.ibm.com/infocenter/wmqv7/v7r0/topic
+   /com.ibm.mq.csqzas.doc/sy13270_.htm)
+   
+   Under the diagram there is the following description:
+   In Figure 1, the key repository for QMA contains QMA's
+   certificate and the CA certificate. The key repository for QMB
+   contains QMB's certificate and the CA certificate.
+   
+   Will be changed to:
+   In Figure 1, the key repository for QMA contains QMA's
+   certificate and the CA certificate. The key repository for QMB
+   contains QMB's certificate and the CA certificate.
+   In this example both QMA's certificate and QMB's certificate
+   were issued by the same CA. If QMA's certificate and QMB's
+   certificate were issued by different CAs then the key
+   repositories for QMA and QMB must contain both CA certificates.
+   
+   
+   In the topic "Using CA-signed certificates for mutual
+   authentication on z/OS?"
+   (http://publib.boulder.ibm.com/infocenter/wmqv7/v7r0/topic
+   /com.ibm.mq.csqzas.doc/sy13220_.htm)
+   
+   Under the diagram there is the following description:
+   In Figure 1, the key repository for QMA contains QMA's
+   certificate and the CA certificate. The key repository for QMB
+   contains QMB's certificate and the CA certificate.
+   
+   Will be changed to:
+   In Figure 1, the key repository for QMA contains QMA's
+   certificate and the CA certificate. The key repository for QMB
+   contains QMB's certificate and the CA certificate.
+   In this example both QMA's certificate and QMB's certificate
+   were issued by the same CA. If QMA's certificate and QMB's
+   certificate were issued by different CAs then the key
+   repositories for QMA and QMB must contain both CA certificates.
+   
+   
+   And in the topics "Extensions to the task of using CA-signed
+   certificates"
+   (http://publib.boulder.ibm.com/infocenter/wmqv7/v7r0/topic
+   /com.ibm.mq.csqzas.doc/sy11820_1.htm)
+   (http://publib.boulder.ibm.com/infocenter/wmqv7/v7r0/topic
+   /com.ibm.mq.csqzas.doc/sy11820_.htm)
+   
+   The following paragraph is to be added after the second
+   paragraph
+   
+   >> repository to be able to communicate with all the other
+   queue managers, when using self-signed
+   >> certificates and when using CA-signed certificates.
+   In this example all queue managers are using the same
+   Certificate Authority for their certificates. If queue managers
+   use different Certificate Authorities then each manager wishing
+   to communicate with another must have its own CA certificate
+   and the CA certificate for the partner queue manager.
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV00617
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ LIN X86 V7
+   
+   
+ * REPORTED COMPONENT ID
+   5724H7224
+   
+   
+ * REPORTED RELEASE
+   701
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-05-17
+   
+   
+ * CLOSED DATE
+   2011-06-13
+   
+   
+ * LAST MODIFIED DATE
+   2011-06-13
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

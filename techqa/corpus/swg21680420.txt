@@ -1,0 +1,67 @@
+Title: IBM A "404 Not Found" error occurs when starting the server with the IBM Worklight command-line interface (CLI) and IPv6 addressing is set - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When you work with the IBM Worklight command-line interface, you might experience problems deploying the Worklight Server. These problems might occur if your environment has IPv6 addressing enabled and set or if the Worklight Server starts with IPv6 when it should start, by default, with IPv4. 
+
+SYMPTOM
+Note: This document has been integrated in the product documentation at this location [http://www.ibm.com/support/knowledgecenter/SSZH4A_6.2.0/com.ibm.worklight.getstart.doc/start/c_known_limitations.html]. Please update your bookmarks to this new location. 
+
+When you deploy the Worklight Server with the Worklight command-line interface and the IPv6 address is both enabled and set, you receive error messages. The following message is an example of these error messages:
+
+[wladm] Error accessing http://10.0.0.1:10080/worklightadmin/management-apis/1.0/runtimes/wlproject/applications?locale=en_US:HTTP/1.1 404 Not Found
+
+When you run the Worklight Server using the Worklight command-line interface and the IPv6 address is both enabled and set, the server starts with IPv6 instead of IPv4. The following messages are examples of the message that you might receive:
+
+[AUDIT] CWWKT0016I: Web application available (default_host):http://[a000:b000:c000:d000:a000:b000:c000:d000]:10080/IBMJMXConnectorREST/ 
+
+[AUDIT] CWWKT0016I: Web application available (default_host):http://[a000:b000:c000:d000:a000:b000:c000:d000]:10080/worklightadmin/ 
+
+[AUDIT] CWWKZ0001I: Application worklightadmin started in 12.274 seconds.
+[AUDIT] CWWKT0016I: Web application available (default_host):http://[a000:b000:c000:d000:a000:b000:c000:d000]:10080/wlproject/ 
+
+[AUDIT] CWWKZ0001I: Application wlproject started in 28.558 seconds.
+[AUDIT] CWWKT0016I: Web application available (default_host):http://[a000:b000:c000:d000:a000:b000:c000:d000]:10080/worklightconsole/ 
+
+[AUDIT] CWWKZ0001I: Application worklightconsole started in 13.893 seconds.
+[AUDIT] CWWKF0011I: The server worklight is ready to run a smarter planet.
+[AUDIT] CWWKT0016I: Web application available (default_host):http://[a000:b000:c000:d000:a000:b000:c000:d000]:10080/_analytics/ 
+
+[AUDIT] CWWKZ0001I: Application _analytics started in 4.236 seconds.
+[AUDIT] CWWKT0016I: Web application available (default_host):http://[a000:b000:c000:d000:a000:b000:c000:d000]:10080/_MobileBrowserSimulator/ 
+
+[AUDIT] CWWKZ0001I: Application _MobileBrowserSimulator started in 0.042 seconds.
+[AUDIT] CWWKT0016I: Web application available (default_host):http://[a000:b000:c000:d000:a000:b000:c000:d000]:10080/wlproject/
+
+
+CAUSE
+This problem is caused by the Worklight Server starting with IPv6, and the Worklight command-line interface attempts to deploy against an IPv4 server.
+
+
+
+RESOLVING THE PROBLEM
+You can fix the problem by completing the following steps: 
+
+ 
+
+ 1. Open the directory for the Worklight Server, which is/[USER_HOME]/.worklight/.For example: C:/Users/Administrator/.worklight/.
+    
+    
+ 2. Move to the directory for the default server, which is /6.2.0/server/wlp/usr/servers/worklight/
+    
+    
+ 3. Edit the jvm.options file located inside the opened directory.
+    
+    
+ 4. At the end of the file, add the following option: -Djava.net.preferIPv4Stack=true
+    
+    
+ 5. Save and close the file.
+    
+    
+ 6. Start or run the Worklight Server to verify that the changes fixed the problem.
+
+RELATED INFORMATION
+ Topic in IBM Worklight Foundation V6.2 documentation [http://www.ibm.com/support/knowledgecenter/SSZH4A_6.2.0/com.ibm.worklight.getstart.doc/start/c_known_limitations.html]

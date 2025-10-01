@@ -1,0 +1,184 @@
+Title: IBM IV44123: MSSQL SERVER AGENT DOES NOT CONNECT TO TEMS - United States
+
+Text:
+  A FIX IS AVAILABLE
+IBM Tivoli Monitoring 6.2.3 Fix Pack 5 (6.2.3-TIV-ITM-FP0005) [http://www-01.ibm.com/support/docview.wss?uid=swg24035801]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Product/VRM: MSSQL agent 06.23.00.00 64bit
+   Operating System/VRM: Windows 2008R2 64bit
+   Monitoring Env: ITM 6.23 fp02
+   Monitored application/VRM/OS: MSSQL 2008R2
+   ----------------------------------------------------------------
+   The problem is caused by inproper setting of PATH environment
+   variable.
+   Detailed Recreation Procedure:
+   1. Install the Monitoring SQL Agent 6.23 (64 bit ) (Before
+   installing, uninstall the previously installed SQL agent if any
+   and restart machine).
+   2. Reconfigure the SQL monitoring agent and use the protocol
+   IP.SPIPE.
+   Default is IP.PIPE.
+   (For detail attached the screen shot 1).
+   https://ecurep.mainz.de.ibm.com/aexfiles/pmr/2/6/26876%2C999%2C7 [https://ecurep.mainz.de.ibm.com/aexfiles/pmr/2/6/26876%2C999%2C7]
+           06/mail20110705-092259-Harshad_Kachi/ScreenShot1.jpg
+   3. Same way reconfigure the TEMS ,TEPS and use protocol
+   IP.SPIPE.
+   (For details attached screen shot 2 and screen shot 3).
+   https://ecurep.mainz.de.ibm.com/aexfiles/pmr/2/6/26876%2C999%2C7 [https://ecurep.mainz.de.ibm.com/aexfiles/pmr/2/6/26876%2C999%2C7]
+           06/mail20110705-092259-Harshad_Kachi/ScreenShot2.jpg
+   https://ecurep.mainz.de.ibm.com/aexfiles/pmr/2/6/26876%2C999%2C7 [https://ecurep.mainz.de.ibm.com/aexfiles/pmr/2/6/26876%2C999%2C7]
+           06/mail20110705-092259-Harshad_Kachi/ScreenShot3.jpg
+   4. Start monitoring SQL Agent , TEMS and TEPS.
+   5. Please verify the data on portal ( you will not able to see
+   any data on portal)
+   It failed with following errormessage:
+   (4DCCF38F.0009-F60:kraarreg.cpp,1905,"FindProxyUsingLocalLookup"
+   ) Unable to create socket to host IP.SPIPE:tsalpar6, status =
+   1002000a
+   (4DCCF38F.000A-F60:kraarreg.cpp,1918,"FindProxyUsingLocalLookup"
+   ) Unable to find running CMS on CT_CMSLIST <IP.SPIPE:tsalpar6>
+   In the header of the MSSQL agent log this can be found:
+   (4DCCEC87.0129-55C:kdebprc.c,1105,"static_constructor") SSL
+   interface module kdebe unavailable
+   (4DCCEC87.012A-55C:kde1lsd.c,693,"bind_setup") Transport not
+   found: IP.SPIPE
+   Higher tracelevel then showed this:
+   (4DD281A0.0090-EF4:kbbcs1l.c,43,"load_module")
+   LoadLibraryEx(C:&#65415;IBM&#65415;ITM&#65415;GSK7_x64&#65415;lib64&#65415;kdebe.dll) returned
+   error 0x7E
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  In the agent env file add the TMAITM6_x64 (for example,
+   C:&#65415;IBM&#65415;ITM&#65415;TMAITM6_x64) directory to the PATH.
+   The issue was fixed in ITM622 fp8 as IV08547 [http://www-01.ibm.com/support/docview.wss?uid=swg1IV08547].  The same fix need
+   to goto the ITM 623 and ITM 630 releases.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Microsoft SQL Server Agent on 64-bit Windows does not connect to
+    the monitoring server using IP.SPIPE.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  HOME\TMAITM6_x64 was placed in the PATH variable to replace
+   HOME\TMAITM6. The GSKit 64-bit library directory was added to
+   the PATH variable for 64-bit agents, and the PATH variable was
+   placed in the ENV file in front of the PATH! variable.
+   
+   The fix for this APAR is contained in the following maintenance
+   packages:
+   | fix pack | 6.2.3-TIV-ITM-FP0005
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  Edit the KOQENV file and replace HOME\TMAITM6 with
+   HOME\TMAITM6_x64 in the PATH variable. Also replace
+   HOME\GSK7\lib with HOME\GSK7_x64\lib64. Move the PATH variable
+   before the PATH! variable in the file. Stop and restart the
+   agent to activate the changes.
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV44123
+   
+   
+ * REPORTED COMPONENT NAME
+   OMEG DIST INSTA
+   
+   
+ * REPORTED COMPONENT ID
+   5608A41CI
+   
+   
+ * REPORTED RELEASE
+   623
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-06-12
+   
+   
+ * CLOSED DATE
+   2013-09-03
+   
+   
+ * LAST MODIFIED DATE
+   2014-05-05
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   OMEG DIST INSTA
+   
+   
+ * FIXED COMPONENT ID
+   5608A41CI
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R623 PSY
+   UP

@@ -1,0 +1,51 @@
+Title: IBM Announcement letter for CICS TS and WebSphere Application Server Feature Packs for Dynamic Scripting - United States
+
+Text:
+CICS TS 4.1 Dynamic Scripting Feature pack ; WebSphere Application Server Dynamic Scripting Feature Pack ; announcement Letter ; CICS Transaction Server for z/OS 4.1 ; announcements ; letters ; general availability ; GA 5655S9700 R660 660 R600 600 HCI6600 5655-S97 5655S97 KIXINFO retention41 PRODUCT LIFECYCLE
+
+ABSTRACT
+ General Availability (GA) of the CICS Transaction Server for z/OS (CICS TS) Feature Pack for Dynamic Scripting was 22 June 2010. The GA of the WebSphere Application Server Feature Pack for Dynamic Scripting was 18 June 2010. These free Feature Packs promote efficient development and application innovation by enabling enterprise application developers with an agile dynamic scripting programming model. This document contains highlights from the announcement letter and a link to the announcement letter. 
+
+CONTENT
+The Feature Packs for Dynamic Scripting can be used to: 
+
+ * Rapidly develop, evolve, and deploy rich Web applications, using dynamic scripting languages 
+ * Expose RESTful Web services and widgets for use in mashups and consoles 
+ * Compose composite services, widgets, and applications that combine Web 2.0-style public and enterprise data feeds
+
+
+The Feature Packs for Dynamic Scripting are optional product extensions for IBM CICS Transaction Server for z/OS V4.1, and IBM WebSphere Application Server V6.1 and V7.0. 
+
+Based on technology from WebSphere sMash V1.1.1, CICS TS and WebSphere Application Server Feature Packs for Dynamic Scripting provide support for dynamic scripting languages: PHP, Hypertext Preprocessor (PHP), and Groovy. The Feature Packs can enable developers to exploit the programming languages and leverage Web 2.0 technologies, such as Asynchronous JavaScript™ and XML (AJAX), representational state transfer (REST), Atom, JavaScript object notation (JSON), and Really Simple Syndication (RSS) to unleash and reuse enterprise content. The built-in Zero Resource Model (ZRM) provides a simplified way to create RESTful resource handlers with a data store that can be mapped to both IBM DB2 for z/OS and Multiplatforms for improved resilience, security, and performance. 
+
+For more information, see the US Announcement Letter for IBM CICS Transaction Server and WebSphere Application Server Feature Packs for Dynamic Scripting [http://www.ibm.com/common/ssi/cgi-bin/ssialias?subtype=ca&infotype=an&appname=iSource&supplier=897&letternum=ENUS210-144] (ENUS210-144). Information for other country announcement letters is located here [http://www.ibm.com/common/ssi/index.wss]. 
+
+To use the CICS Transaction Server Feature Pack for Dynamic Scripting, you must apply the PTFs for the following APARs:  *  PM08649 [http://www.ibm.com/support/docview.wss?uid=swg1PM08649] - CICS JVMSERVER enhancements 
+ *  PM11157 [http://www.ibm.com/support/docview.wss?uid=swg1PM11157] - CICSPlex SM (CPSM) enhancements 
+ *  PM11791 [http://www.ibm.com/support/docview.wss?uid=swg1PM11791] - CICS JVMSERVER enhancements (web and PI domain changes) 
+ *  PM08661 [http://www.ibm.com/support/docview.wss?uid=swg1PM08661] - CICS JVMSERVER enhancements and other Java™ related changes
+   
+
+
+Java 6 service release 8 or higher is also required. If your Dynamic Scripting applications need to connect to DB2, then DB2 V9.1 for z/OS with the PTF for APAR PK71020 [http://www.ibm.com/support/docview.wss?uid=swg1PK71020] is required. Additional notes on the installation are included in the readme.html with the download. 
+
+The Feature Packs described in this announcement are available for free download:  * WebSphere Application Server Feature Pack for Dynamic Scripting information and download site [http://www.ibm.com/websphere/was/featurepacks].
+   
+ * CICS Transaction Server Feature Pack for Dynamic Scripting information and download site [http://www.ibm.com/cics/scripting].
+   
+   
+
+See the CICS Transaction Server Feature Pack for Dynamic Scripting V1.0 [http://publib.boulder.ibm.com/infocenter/cicsts/v4r1/index.jsp?topic=/com.ibm.cics.ts.smash.doc/welcome/WelcomePage.html] section in the CICS TS information center to learn how to use the CICS Dynamic Scripting Feature Pack to create agile Web 2.0 applications that run in CICS TS. 
+
+See WebSphere sMash [http://www.ibm.com/websphere/smash] for more information on WebSphere sMash. 
+RELATED INFORMATION
+#IBM WebSphere sMash Developer's Guide from ProjectZero [http://www.ibm.com/support/docview.wss?uid=swg21620199]
+
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Application Servers WebSphere Application Server General 7.0, 6.1 Application Servers WebSphere Application Server Hypervisor Edition General 7.0, 6.1 Application Servers WebSphere Application Server - Express General 7.0, 6.1 
+PRODUCT ALIAS/SYNONYM
+ CICS/TS CICS TS CICS Transaction Server

@@ -1,0 +1,143 @@
+Title: IBM Troubleshooting Self Describing Agent (SDA) IBM Tivoli Monitoring (ITM) zOS environment - United States
+
+Text:
+ TROUBLESHOOTING
+
+PROBLEM
+I have SDA turned on but I am not getting any application data on my TEP or my enhanced 3270ui screen.
+
+ENVIRONMENT
+Terms used in this document: 
+
+TEMS - Tivoli Enterprise Management System
+
+Agent/TEMA - Any IBM Tivoli Monitor (ITM) agent
+
+TEP - Tivoli Enterprise Portal
+
+TEPS - Tivoli Enterprise Portal Server
+
+SDA - Self Describing Agent
+
+DIAGNOSING THE PROBLEM
+PROCESS OVERVIEW: 
+
+ 1. Agent connects to TEMS, agent contains the application support files for the TEP, TEMS and TEPS 
+ 2. SDA process starts, FTPs the application support files to the TEMS, stored as JAR files in &rhilev.&rte.RKANDATV. 
+ 3. If remote TEMS, the SDA process FTPs the application support files to the hub TEMS, stores as JAR files in &rhilev.&rte.RKANDATV. 
+ 4. Installs the application support files in the hub TEMS, jar files copied to the USS manifest directory. Manifest directory can be found in KDSENV in &rhilev.&rte.RKANPARU. 
+ 5. Installs the application support files in the remote TEMS 
+ 6. If TEPS is connected to the hub TEMS, installs the application support in the TEPS 
+ 7. If non-Desktop TEP, installs the application support in the TEP. Note: if Desktop TEP, DVD is needed to install application support. 
+
+
+SDA ADMINISTRATION: 
+
+ 1. ITM 630 SDA is turned on by default in most components, except the hub TEMS. This is so when you are ready to implement SDA all you need to do is turn it on at the hub TEMS and recycle the hub TEMS. 
+ 2. View monitoring server SDA enablement status:  * tacmd listsdastatus 
+    
+    
+ 3. View SDA product install status  * tacmd listappinstallrecs 
+     * 
+    
+    
+
+SDA Table TAPPLPROPS 
+
+//QA1CAPPL &rvhilev.&rte.RKDSAPPL contains the products SDA statuses. 
+
+DIAGNOSING SDA ISSUE: 
+
+ 1. Add KBB_RAS1=ERROR (UNIT:KFASD ALL) (UNIT:KT1 ALL) in both the requester (TEMS or TEPS) and the target (agent or hub TEMS) -- KFASD will trace the Self Describing Agent and KT1 will trace the File Transfer process.
+ 2. Remove the entry in the SDA table, O4SRV.TAPPLPROPS, ddname QA1DAPPL either by:  *   * Scratching and reallocating &rvhilev.&rte.RKDSAPPL, this can be done by re-executing KCIJPALO from WKANSAMU after deleting &rhilev.&rte.RKDSAPPL. OR 
+        * Executing SQL: F CANSDSST, CTDS START SPUFIL, KDSSQL1 OR 
+        * Issuing the tacmd deleteappinstallrecs -- You will need to issue the listapplinstallrecs command to see the entries with non-zero statuses. The non-zero statuses will need to be deleted.
+       
+       
+    
+    
+ 3. Wait for SDA process to fail.
+ 4. Examine the log for error messages.
+
+RESOLVING THE PROBLEM
+
+
+ * In the TEMS, -- Verify the directory specified in the TEMS_MANIFEST_PATH:  1. Contains the proper authorizations (Read and Write)
+    2. Verify there is ample amount of disk space available
+    3. Verify the started task has the proper authorization to make updates into this directory
+    4. On zOS, verify the PARMGEN KCIJPUSP and KCIJPUSS executed and completed with cond code of 0000.
+   
+   
+ * In the TEPS, -- Verify the directory specified in the TEMS_MANIFEST_PATH:  1. Contains the proper authorizations (Read and Write)
+    2. Verify there is ample amount of disk space available
+    3. Verify the TEPS has the proper authorization to make updates into this directory
+   
+   
+
+
+Verify SDA is configured correctly and enabled, and that communications are functioning properly.
+
+1. Verify that all appropriate self-describing environment variables are enabled.
+
+2. Verify that the remote monitoring server is started and connected to the hub monitoring server.
+
+3. The agent must also be enabled for self-description by packaging application support as part of the agent installation.
+
+4. The agent must use the IBM Tivoli Monitoring V6.2.3 or later agent framework or be installed on a system where the V6.2.3 or later agent framework is already installed. You can tell if an agent is enabled for self-description before installation or after installation. See “Determining if agents are enabled for self-description” in the IBM Tivoli Monitoring Administrator's Guide.
+
+5. Run the following tacmd commands and review the results:
+
+tacmd listappinstallrecs -- the STATE column displays the state of the self-describing installation for each product package on each monitoring server. A STATE value of ME indicates a terminal error and that the installation is not automatically tried again.
+
+tacmd deleteappinstallrecs -- is used to restart a previously failed installation by deleting the application support record on the server. You may be asked to delete a record after the trace has been turned on so we can see the actual reason for the failed installation.
+
+ * tacmd deleteappinstallrecs -t type -v version -n tems-name 
+
+
+tacmd listSdaInstallOptions -- Reports what versions of each product are allowed to perform self-describing installations and what the default setting is. Check the allowed versions.
+
+tacmd listSdaStatus -- Reports the STATE and STATUS of self-describing enablement at each online monitoring server and reports whether self-describing is suspended.
+
+tacmd listSdaOptions -- Check the self-describing product seed definitions. For detailed steps, see “Self-describing agent installation” in the IBM Tivoli Monitoring Administrator's Guide. For a detailed description of the tacmd commands and options, see the IBM Tivoli Monitoring Command Reference (
+https://www.ibm.com/support/knowledgecenter/SSTFXA_6.3.0.2/com.ibm.itm.doc_6.3fp2/ic/landing_cmdref.htm [https://www.ibm.com/support/knowledgecenter/SSTFXA_6.3.0.2/com.ibm.itm.doc_6.3fp2/ic/landing_cmdref.htm]
+).
+
+6. Review the appropriate monitoring component audit log:
+
+Tivoli Enterprise Monitoring Server -- Look at the monitoring server audit log to determine whether self-description is enabled at the monitoring server that the agent connects to.
+
+The monitoring server audit log can inform you if self-description is disabled because of the KMS_SDA setting at the local monitoring server or hub monitoring server. There might also be other configuration errors at the local monitoring server or hub monitoring server that are causing a problem.
+
+Tivoli Enterprise Portal Server -- Look at the portal server audit log to verify that the agent's self-describing files were processed successfully at the portal server. Chapter 13. Monitoring agent troubleshooting 219 Install successes or errors are displayed for the application support for the Tivoli Enterprise Portal Server (TPS) and the Tivoli Enterprise Portal browser client (TPW).
+
+Tivoli Enterprise Monitoring Agent -- Look at the monitoring agent audit log for any installation errors. Look for messages:
+
+KRAA0008 Validation failed for Self-Describing Agent manifest file variable PRODUCT variable. This message indicates that a validation error occurred and that the agent is not able to provide SDA support. See the Audit log and RAS1 for other similar messages that indicate the specific SDA manifest file validation error. After correcting the error, recycle the agent to participate in SDA processing.
+
+KRAA0015 Self-Describing Agent function disabled for PRODUCT variable due to local SDA file validation error. This message indicates that agent SDA status is disabled due to manifest file validation error. This condition can occur at agent startup time, or while the agent is running and asked to provide SDA support. After the error condition is corrected, the agent must be recycled to enable its SDA function.
+
+KRAA0016 Ignoring TEMA_SDA Configuration! Agent SDA package not found for PRODUCT variable. This message indicates that the TEMA_SDA=Y setting is ignored because the agent SDA package was not found. Set the variable only when an agent is packaged with SDA support files.
+
+KRAA0017 Self-Describing Agent function disabled, expected TEMA_SDA configuration not found for PRODUCT variable. This message indicates that SDA is disabled because TEMA_SDA configuration was not set (although the SDA package exists). This variable is required for the agent to provide its SDA support. See the IBM Tivoli Monitoring Messages.
+
+Some Troubleshooting Issues and Resolutions: 
+
+ * Verify UID(0) 
+ * Receive CHMOD error -  * TSO OMVS 
+    * su 
+    * cd /directory-name 
+    * chown -R userid /directory-name 
+   
+   
+
+ * Manifest errors  * su 
+    * cd /directory-name 
+    * chown -R /directory-name 
+   
+   
+ * If you have a distributed hub TEMS, verify the following is defaulted to ON:  * tacmd editSdaInstallOptions -t DEFAULT -i on
+   
+   
+
+
+Cross reference information Product Component Platform Version Edition Tivoli OMEGAMON XE for CICS on z/OS Tivoli OMEGAMON XE for CICS Transaction Gateway on z/OS Tivoli OMEGAMON XE for DB2 Performance Expert on z/OS Tivoli OMEGAMON XE for DB2 Performance Monitor on z/OS Tivoli OMEGAMON XE for IMS on z/OS Tivoli OMEGAMON XE for Mainframe Networks Tivoli OMEGAMON XE for Messaging for z/OS Tivoli OMEGAMON XE on z/OS Tivoli OMEGAMON XE on z/OS Monitoring Feature for JVM

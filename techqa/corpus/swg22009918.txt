@@ -1,0 +1,46 @@
+Title: IBM Security Bulletin: IBM WebSphere MQ is affected by a privilege escalation vulnerability (CVE-2017-1612) - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ IBM WebSphere MQ has addressed the following vulnerability.
+
+An undocumented environment variable intended for use by IBM support could be used to execute untrusted code using the 'mqm' user. 
+
+VULNERABILITY DETAILS
+CVEID: CVE-2017-1612 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2017-1612]
+DESCRIPTION: IBM WebSphere MQ service trace module could be used to execute untrusted code under 'mqm' user
+CVSS Base Score: 7.4
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/132953 [https://exchange.xforce.ibmcloud.com/vulnerabilities/132953] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:L/AC:H/PR:N/UI:N/S:U/C:H/I:H/A:H) 
+
+AFFECTED PRODUCTS AND VERSIONS
+ 
+
+Product Affected Versions IBM WebSphere MQ 7.0.1.0 - 7.0.1.14 IBM WebSphere MQ 7.1.0.0 - 7.1.0.8 IBM WebSphere MQ 7.5.0.0 - 7.5.0.8 IBM MQ 8.0.0.0 - 8.0.0.7 IBM MQ (LTS) 9.0.0.0 - 9.0.0.1 IBM MQ (CD) 9.0.1.0 - 9.0.3.0 REMEDIATION/FIXES
+ 
+
+Product VRMF APAR Remediation / First Fix IBM WebSphere MQ 7.0.1 IT22526 Customers on extended support should contact IBM support to acquire a fix. IBM WebSphere MQ 7.1 IT22526 IBM WebSphere MQ V7.1.0.9 [http://www-01.ibm.com/support/docview.wss?uid=swg22010694] IBM WebSphere MQ 7.5 IT22526 Interim Fix IT22526 [https://www-945.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~WebSphere&product=ibm/WebSphere/WebSphere+MQ&release=7.5.0.8&platform=All&function=all] IBM MQ 8.0 IT22526 IBM MQ V8.0.0.8 [http://www-01.ibm.com/support/docview.wss?uid=swg24044322] IBM MQ (LTS) 9.0 IT22526 IBM MQ V9.0.0.2 [http://www-01.ibm.com/support/docview.wss?uid=swg24044038] IBM MQ (CD) 9.0.x IT22526 IBM MQ V9.0.4 [http://www-01.ibm.com/support/docview.wss?uid=swg24043348] WORKAROUNDS AND MITIGATIONS
+None.
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v3 Guide [http://www.first.org/cvss/user-guide] 
+On-line Calculator v3 [http://www.first.org/cvss/calculator/3.0] 
+
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] 
+
+CHANGE HISTORY
+ 03 Jan 2018: Original version published.
+12 Jan 2018: Specify platform applicability. 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.

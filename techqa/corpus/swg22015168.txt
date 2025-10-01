@@ -1,0 +1,78 @@
+Title: IBM Is Office 365 supported for IBM Cognos Analysis for Microsoft Excel, IBM Planning Analytics for Microsoft Excel, or TM1 Perspectives? - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Does IBM Cognos Analysis for Microsoft Excel, Planning Analytics for Microsoft Excel, or TM1 Perspectives support Microsoft Office 365? 
+
+CAUSE
+You can check the supported environments for all versions of Cognos Analysis for Microsoft Excel, Planning Analytics for Microsoft Excel, or Perspectives on the IBM website:
+https://www.ibm.com/software/reports/compatibility/clarity/index.html [https://www.ibm.com/software/reports/compatibility/clarity/index.html]
+
+However, MS Office 365 is not a 'traditional' single product. Instead, it is a subscription plan which allows users to download/run the very latest version of Office. In other words, customers who own Office 365 licenses will probably be upgrading their Excel versions (over time) as new MS Excel versions are released.
+=> This makes it impossible to give a simple 'yes/no' answer to the question to whether Cognos Analysis for Microsoft Excel or Planning Analytics for Microsoft Excel supports MS Office 365.
+
+
+ANSWER
+Microsoft Office 365 is supported so long as all of the following are true: 
+
+ * The version of Office installed (for example Office 2016) as part of Office 365, is supported by that version of Cognos Analysis for Microsoft Excel or Planning Analytics for Microsoft Excel. For example:  * Cognos Analysis for Microsoft Excel 10.2.2 FP6 is the first release in that line that supports Excel 2016. All earlier versions of CAFE 10.2.2 (FP5 and earlier) support a maximum of Office 2013. 
+    * Planning Analytics for Microsoft Excel has supported Excel 2016 since its release.
+   
+   
+ * Using desktop-installed (downloaded) Office 365 (not the cloud version of Office 365), which has been installed via the traditional installation method or if you have installed via click to run.
+
+
+======================================== 
+
+For the avoidance of doubt, Office 365 is not supported when running directly in the Cloud (instead of running on the desktop/laptop directly). 
+
+======================================== 
+
+ 
+Q1 - What are the different methods to install Microsoft Office 365?
+Microsoft Office 365 can be installed in two different ways:
+
+(1) Traditional method 
+
+ * This is sometimes called the 'MSI' or 'Windows Installer' method 
+ * It is also sometimes known as the 'Volume License' method 
+ * The application is installed (and runs) natively/directly on the users client device
+
+
+(2) Click-to-run  * The user "streams" the portion of Office that they need (downloading extra portions as and when they need it). The software is running in an isolated 'Sandbox' environment ('virtual bubble') on the computer.
+
+
+Q2 - What is 'Click to Run' ? 
+Click-to-Run is a streaming and virtualization technology that is designed to significantly reduce the time that is required to download and use Office client products. Streaming allows users to begin to use a Click-to-Run product before the complete product is downloaded. 
+
+Click-to-Run for Office 365 products are based on core virtualization and streaming Microsoft Application Virtualization ( App-V) technologies. Click-to-Run resources run in an isolated virtual environment on the local operating system. 
+
+Q3 - How can I check if my installation is 'traditional' or 'click to run'? 
+ * Method #1 (recommended)
+
+1. Launch Excel (or Outlook or Word). 
+2. Click "File - Account" (or Office Account). 
+[/support/docview.wss?uid=swg22015168&aid=1] [/support/docview.wss?uid=swg22015168&aid=1] 
+- If you see an " Update Options" item, you have a Click-to-Run installation 
+- If you don't see the "Update Options" item, you have an MSI-based install. 
+
+ * Method #2 (alternative)
+
+See where EXCEL.EXE is installed/run from: 
+
+(1) Traditional (MSI): 
+By default, EXCEL.EXE is located in the following locations:  * Office 2013 (32-bit): C:\Program Files (x86)\Microsoft Office\Office15\ 
+ * Office 2016 (32-bit): C:\Program Files (x86)\Microsoft Office\root\Office16\
+
+
+(2) Click to Run: 
+By default, EXCEL.EXE is located in the following locations:  * Office 2013 (32-bit): C:\Program Files (x86)\Microsoft Office 15\ClientX64\Root\Office15\ 
+ * Office 2016 (32-bit): C:\Program Files (x86)\Microsoft Office 16\ClientX64\Root\Office16\
+
+
+Q4 - What should I do if I have already installed MS Office 365 as 'click to run', and it is unsupported in my version of Cognos Analysis for Microsoft Excel or Planning Analytics for Microsoft Excel ? 
+Either: 
+(a) Remove the Click-To-Run installed Office. Then install MS Office via the traditional (MSI) method instead 
+or (b) Upgrade to a later version of Cognos Analysis for Microsoft Excel or Planning Analytics for Microsoft Excel which supports click to run (see above for caveats).

@@ -1,0 +1,201 @@
+Title: IBM IC64965: SERVICE INVOKE FAIL TERMINAL NOT FIRED FOR SERVICE RUNTIME      EXCEPTION - United States
+
+Text:
+  A FIX IS AVAILABLE
+WebSphere Enterprise Service Bus V6.2.0 Fix Pack 3 (6.2.0.3) [http://www-01.ibm.com/support/docview.wss?uid=swg24027123]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The fail terminal of the Service Invoke primitive may not be
+   fired in some cases If there is a Service Runtime Exception in
+   the module which is being invoked across SCA bindings. This
+   results in an Exception for example:
+   
+   [12/3/09 18:43:41:381 EST] 0000009b ExceptionUtil E   CNTR0020E:
+   EJB
+   threw an unexpected (non-declared) exception during invocation
+   of method
+   "transactionRequiredActivitySessionNotSupported" on bean
+   "BeanId(Test_ModuleApp#Test_ModuleEJB.jar#Module, null)".
+   Exception
+   data:
+   com.ibm.wsspi.sibx.mediation.flow.MediationRuntimeException:
+   CWSXM1025E:  An unexpected exception occurred when the flow was
+   called:
+   null...
+   
+   Caused by: java.lang.NullPointerException
+    at
+   com.ibm.ws.sibx.mediation.primitives.serviceinvoke.ServiceInvoke
+   Mediatio
+   n.handleUnmodeledFault(ServiceInvokeMediation.java:649)
+    at
+   com.ibm.ws.sibx.mediation.primitives.serviceinvoke.ServiceInvoke
+   Mediatio
+   n.handleResponse(ServiceInvokeMediation.java:601)
+    at
+   com.ibm.ws.sibx.mediation.primitives.serviceinvoke.ServiceInvoke
+   Mediatio
+   n.invokeFlowAction(ServiceInvokeMediation.java:547)
+    at
+   com.ibm.ws.sibx.mediation.primitives.serviceinvoke.ServiceInvoke
+   Mediatio
+   n.mediate(ServiceInvokeMediation.java:446)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: Users of WebSphere Enterprise Service Bus    *
+   *                 and WebSphere Process Server v6.2 who use    *
+   *                 Service Invoke primitives to call services   *
+   *                 that may return Service Runtime Exceptions.  *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: When a service invoked through a        *
+   *                      Service Invoke primitive throws a       *
+   *                      Service Runtime Exception this can      *
+   *                      result in a NullPointerException and    *
+   *                      the failure information is not passed   *
+   *                      back to the calling module.             *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   If a Service Runtime Exception is returned from a service
+   invoked through a Service Invoke primitive and using an SCA
+   binding layer, then the failure information will not be
+   complete and this will result in a NullPointerException being
+   throw and the failure information not being passed back to the
+   calling node.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The code was modified to prevent the NullPointerException
+   being thrown and allowing the failure information to be passed
+   back to the calling node
+   
+   There are no known side effects associated with this fix.
+   There is no known alternative workaround should you encounter
+   this problem.
+   
+   This code fix was targeted to be included in the following fix
+   packs:
+   
+        6.2.0 Fix Pack 3 (v6.2.0.3)
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC64965
+   
+   
+ * REPORTED COMPONENT NAME
+   WEB ESB FOR WIN
+   
+   
+ * REPORTED COMPONENT ID
+   5724I8200
+   
+   
+ * REPORTED RELEASE
+   620
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-12-07
+   
+   
+ * CLOSED DATE
+   2010-01-26
+   
+   
+ * LAST MODIFIED DATE
+   2010-01-26
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEB ESB FOR WIN
+   
+   
+ * FIXED COMPONENT ID
+   5724I8200
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R100 PSN
+   UP
+   
+   
+ * R200 PSN
+   UP
+   
+   
+ * R300 PSN
+   UP
+   
+   
+ * R612 PSN
+   UP
+   
+   
+ * R620 PSY
+   UP
+   
+   
+ * R700 PSN
+   UP

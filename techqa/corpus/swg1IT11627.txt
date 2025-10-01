@@ -1,0 +1,151 @@
+Title: IBM IT11627: PRIVATE MEMORY LEAK DUE TO AUDIT FOR EXECUTE CATEGORY. - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+DB2 Version 10.5 Fix Pack 9 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24044110]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The private memory for db2sysc process keeps growing if audit
+   facility is enabled for EXECUTE or CONTEXT category.
+   The db2pd command shows the following memory allocations consume
+   large amount of private memory.
+   
+   $ db2pd -memblock pid=<db2sysc_pid> sort
+   Memory blocks sorted by size:
+   PoolID     PoolName   TotalSize(Bytes)     TotalCount LOC   File
+   0                     217391816            961525     1428
+   133962229
+   0                     133844419            195608     1065
+   133962229
+   
+   note: LOC (1428 and/or 1065) can slightly vary depending on the
+   platform and
+   versions.
+   
+   This leak issue is only applicable to DB2 V10.5 FP6, V10.1 FP5
+   and V9.7 FP11.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Please turn off database audit which captures EXECUTE and
+   CONTEXT events.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * Users who use audit facility with EXECUTE or CONTEXT         *
+   * category.                                                    *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * See Error Description                                        *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Please upgrade to DB2 V10.5 FixPack 7 or later.              *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This problem was first fixed in DB2 V10.5 FixPack 7.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT11627
+   
+   
+ * REPORTED COMPONENT NAME
+   DB2 FOR LUW
+   
+   
+ * REPORTED COMPONENT ID
+   DB2FORLUW
+   
+   
+ * REPORTED RELEASE
+   A50
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2015-10-07
+   
+   
+ * CLOSED DATE
+   2016-01-19
+   
+   
+ * LAST MODIFIED DATE
+   2016-01-19
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    IT11692 [http://www-01.ibm.com/support/docview.wss?uid=swg1IT11692] IT11693 IT11725 [http://www-01.ibm.com/support/docview.wss?uid=swg1IT11725]
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   DB2 FOR LUW
+   
+   
+ * FIXED COMPONENT ID
+   DB2FORLUW
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * RA50 PSN
+   UP

@@ -1,0 +1,113 @@
+Title: IBM TroubleShooting: WebSphere Edge Components, Load Balancer, "dsserver" fails to start errors - United States
+
+Text:
+TroubleShootingDocument; troubleshooting; troubleshooting; troubleshooting; Edge; Edge Server; Load Balancer; dsserver; component; "does not start"; WASEMP; TroubleShootingFlowDocument TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Troubleshooting problems with the WebSphere® Edge Components. This should help address common issues with this component before calling IBM support and save you time. 
+
+SYMPTOM
+When trying to start the "dsserver" using the command line, an error is received that the server was not started. 
+
+The "dsserver" command is merely a script that is used to create the java Load Balancer server component which interacts with the packet forwarding executor component and the Load Balancer user command line interface(dscontrol) or graphical interface (lbadmin). The Load Balancer server process is required to be running to configure the product and to have expected behavior of the product. You can edit the dsserver script file to change certain default values and for troubleshooting as outlined in this technote. 
+
+Load Balancer's file locations depend on the release and version of the load balancer as well as the operating system.
+
+Default installation path: 
+
+ * Windows  * Version 7:  * Load Balancer for IPv4
+      
+      C:\Program Files\ibm\edge\lb  * Load Balancer for IPv4 and IPv6
+      
+      C:\Program Files\ibm\edge\ulb 
+    * Version 8 and higher:  * Load Balancer for IPv4 (32 bit)
+      
+      C:\Program Files\loadbalancer\IBM\Edge\lb  * Load Balancer for IPv4 (64 bit)
+      
+      C:\Program Files (x86)\loadbalancer\IBM\Edge\lb  * Load Balancer for IPv4 and IPv6
+      
+      C:\Program Files\IBM\WebSphere\Edge\ULB
+   
+   
+ * Unix (regardless of WebSphere release)  * Load Balancer for IPv4
+   
+   /opt/ibm/edge/lb  * Load Balancer for IPv4 and IPv6
+   
+   /opt/ibm/edge/ulb
+
+
+Script file location (regardless of WebSphere release):  * Windows (script files have .cmd file extension)  * Load Balancer for IPv4 - windows system root directory 
+    * Load Balancer for IPv4 and IPv6 - <load balancer installation directory>\bin
+   
+   
+ * Unix  * Load Balancer for IPv4 - /usr/bin 
+    * Load Balancer for IPv4 and IPv6 - <load balancer installation directory>/bin
+   
+   
+
+
+Script files located in the load balancer script file directory include dsserver, lbadmin and dscontrol. When dsserver is started, output is written to the server.log file which is located in the <load balancer installation directory>/servers/logs directory. 
+
+Sometimes the server.log file will provide a lot of insight, but many times the default loglevel is set to 1 and there might not be much useful information. 
+CAUSE
+There are a number of possible causes for this failure: 
+
+ * The product is installed on an unsupported level of the operation system 
+ * The Java process has already been started 
+ * The RMI port is already in use 
+ * An environment variable is set incorrectly 
+ * The hostname or IP address resolved by Java is incorrect (usually experienced with a multi-NIC machine) 
+ * The admin keys used by Load Balancer are corrupted 
+ * A java exception occurred
+
+RESOLVING THE PROBLEM
+Follow these steps to eliminate the preceding mentioned causes. Should an error continue after attempting these corrections, a MustGather list has been provided: 
+
+ 
+
+ 1. Confirm that the installation meets the criteria specified in the detailed system requirements [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27006921]. 
+ 2. Check to see if the Java process has already been started  * For Windows, check the task manager for javaw andjava, if it exists, "End Task" and try again. Under the Process tab of the task manager, you can modify the information displayed to include "command line" to isolation the load balancer process if multiple java instances are running. The load balancer java instance will include the load balancer installation path. 
+     * For UNIX:
+       ps -ef|grep -i java 
+       If the output indicates the RMI port of 10099, then that is the Java process in question. Then issue kill <pid> on that process. 
+     * Try dsserver again. If the process is not listed, then it has not been started.
+    
+    
+ 3. Check to see if the RMI port is already in use (usually this means that the process is already started as not many programs use this port):  * For Windows:
+       netstat -an
+       Then, search for 10099. 
+     * For UNIX:
+       netstat -an|grep 10099
+       
+       If the port is in use by another program then you must either stop that process, or change the default RMI Port in the dsserver script by changing this variable:
+       
+       set LB_RMIPORT=10099
+       See the Symptom above for the dsserver script location.
+    
+    
+ 4. Confirm that environment variables and paths used by the script are set correctly.  * Issue the "set" command from the command line to view environment variables. If running on the Windows operating system, you may need a reboot for the environment variable to take effect. 
+    
+    
+ 5. It is quite possible that the hostname that is resolved by Java is incorrect for whatever reason.  * Ensure that the first entry in the /etc/hosts file is for this machines hostname to IP address mapping. For Windows, the hosts file is located in the <windows system>\drivers\etc directory 
+     * To force the RMI server to use the correct IP address, you can edit the following lines in the dsserver script file to include the "-Djava.rmi.server.hostname=w.x.y.z" where "w.x.y.z" is the IP address of the Load Balancer machine.
+       javaw %LB_ENCODING% -Djava.rmi.server.hostname=w.x.y.z-Xrs -cp %LB_CLASSPATH% %LB_INSTALL_PATH% %LB_CLIENT_KEYS% %LB_SERVER_KEYS% -Djava.protocol.handler.pkgs=com.ibm.net.ssl.internal.www.protocol com.ibm.internet.nd.server.SRV_KNDConfigServer %LB_RMIPORT% %LB_LOGDIR% %LB_SAVEDIR% %LB_BINDIR% %LB_CONFIGFILE% %LB_RMISERVERPORT% & 
+     * java %LB_ENCODING% -Djava.rmi.server.hostname=w.x.y.z-cp %LB_CLASSPATH% %LB_INSTALL_PATH% %LB_CLIENT_KEYS% %LB_SERVER_KEYS% com.ibm.internet.nd.server.SRV_KillServer KNDServer
+       
+       Note: Even though the variable uses the term hostname, you should specify the IP address. Save the changes and start dsserver again
+    
+    
+ 6. The admin keys may be corrupt.  * The admin keys are created when dsserver is run for the first time. Sometimes these files are corrupted or resolve the wrong hostname or IP and need to be deleted after the preceding steps have been finished. Go to the <load balancer installation>/admin/keys directory and delete the keys and try dsserver again.
+    
+    
+ 7. A java exception may be occurring.  * If the java process is started using javaw or as a detached process, exceptions may not be displayed. You need to edit the script file and run it again to see the failure reason. 
+     * Change javaw to java and remove any "&" signs from the end of java statements. When you run dsserver, the process will not return to the command prompt until dsserver fails and it should show the reason for the failure. 
+     * If using Windows, you can also change the first line from @echo off to @echo on to view more detailed information and if using unix, you can start the process using bash -x dsserver to view more detailed information.
+    
+    
+
+
+What to do next 
+If the preceding steps did not solve your problem, see MustGather: Load Balancer "dsserver" fails to start [http://www.ibm.com/support/docview.wss?rs=180&uid=swg21255901]. 
+
+
+Cross reference information Segment Product Component Platform Version Edition Application Servers WebSphere Application Server Edge Component AIX, HPUX, Linux, Solaris, Windows 6.0 Base, Network Deployment

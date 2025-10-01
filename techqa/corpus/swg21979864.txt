@@ -1,0 +1,65 @@
+Title: IBM How do I view my Connect:Direct for z/OS Init Parms? - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How can I view all of my IBM Sterling Connect:Direct for z/OS Initialization Parameters, including the default values? 
+
+CAUSE
+In many cases, viewing the Connect:Direct for z/OS Init Parms that are coded is sufficient. But there are times when you may wish to see the default values for Init Parms that are not coded to fully understand their impact.
+
+Note that MCS.SIGNON values are suppressed to mask the coded password. The only way to determine this value is to view the contents of the Init Parms member.
+
+
+ANSWER
+You can use any of the following interfaces to view your entire set of Init Parms, including the default values. These examples assume you are running a Stand-alone server. If you are running a CDPlex, you may need to specify 'WHERE (SERVER=server name)'. 
+
+
+Method 1 – The Interactive User Interface (IUI):
+
+ADMIN;INQ;IPRM – This command will take you directly to the 'IPRM ==> Inquire about C:D Initialization parameters' display.
+
+The Administrative Options Menu for release 5.2 is documented here [https://www.ibm.com/support/knowledgecenter/SSFGBN_5.2.0/com.ibm.help.cdzos.admin.doc/ZOS_Admin_Options_Menu.html?cp=SSFGBN_5.2.0%2F9&lang=en]: 
+
+
+Method 2 – Using the Operator Interface (Console MODIFY command):
+
+If you use the sample CLIST library SDGAOPLS (OPLIST before release 5.1) either of these commands will display the Init Parms to the started task joblog. This is good if you want a record of the output saved in the joblog.
+
+/F jobname,CMD,INQ,INIT
+OR
+/F jobname,CMD,IPRM
+
+Where 'jobname' is the name of the DTF started task.
+
+The Operator Interface documentation for release 5.2 is here [https://www.ibm.com/support/knowledgecenter/SSFGBN_5.2.0/com.ibm.help.cdzos.facilities.doc/ZOS_Operator_Interface.html?lang=en]: [https://www.ibm.com/support/knowledgecenter/SSFGBN_5.2.0/com.ibm.help.cdzos.facilities.doc/ZOS_Operator_Interface.html?lang=en]
+
+
+Method 3 – Submit a batch interface job using DGADBATC (DMBATCH):
+
+Use the following for the SYSIN DD statement. This will write the output to the batch job's sysout.
+
+//SYSIN DD *
+SIGNON USERID=(userid,password)
+INQ INIT
+SIGNOFF
+/*
+
+Note: You must set the fifth character of the DGADBATC output parameter specification to Y to print the result of the command that is in the temporary data set.
+
+Release 5.2 Sample job stream to run the batch interface is documented here [https://www.ibm.com/support/knowledgecenter/SSFGBN_5.2.0/com.ibm.help.cdzos.user.doc/ZOS_Sample_Job_Stream.html?lang=en]:
+
+
+Ways to see the Init Parms as coded without displaying default values:
+
+These two locations will show which Init Parms are actually coded. Be aware that uncoded Init Parms will have default values not shown by these methods.
+
+Method 4 (no defaults shown) – View NDMLOG sysout from the DTF started task. 
+This is convenient because it is automatically generated. 
+
+Method 5 (no defaults shown) – Examine the coded Init Parms. 
+This method will include lines that are commented out, so you need to fully understand how to code Init Parms. Keep in mind that multiple entries for the same keyword will always use the last value coded. Your Init Parm location is the value from 'PARM=' in the EXEC statement of your DTF started task. 
+
+EXEC PGM=DGADINIT,PARM='init parms member'
+(DMINIT is the pre-5.1 program name and an alias for DGADINIT)

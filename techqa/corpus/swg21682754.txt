@@ -1,0 +1,43 @@
+Title: IBM What is the difference between "L2+MP" and Method data in the MS GUI? - United States
+
+Text:
+CAMADALL CAMADINST Method data L2+MP octigate MS TECHNOTE (FAQ)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ US English 
+
+QUESTION
+ What is the difference between setting "L2+MP" (Method Profiling) and Method data obtained from the PAR report? 
+
+ANSWER
+
+There are two ways to pull Method data in the Managing Server GUI:
+
+1. If you set the "L2+MP" option in the Administration / Monitoring On Demand MS GUI, this will write aggregated data into its own tables, not METHOD table. If you use L2+MP in a Schedule, this goes into a different table, and not into the METHOD table. You will not see this aggregated data in the "Top Methods" report under "Performance Analysis."
+
+2. You can also pull Method Data from a "Top Report" under the "Performance Analysis" menu on the MS GUI. When you go to Performance Analysis / Create Application Reports / Top Reports menu in 
+the MS GUI, you can pull a "Top Methods Used" report as one of the Report options. To generate this Report, the METHOD table needs to have some data first, otherwise your Report will come up blank. 
+
+The METHOD table only gets populated with L3 data as described here with instance level of Method data for a Request/transaction.
+
+1. first set MOD level to L3. To do that, you have to do these steps: 
+- login to your MS console, and go to the Monitoring on Demand menu. 
+- pick a DC which has good volume and change the MOD level to L3. 
+- for the same DC, make sure the Samp Rate is high, say 50% or 70%. 
+
+2. Next logon to the DC system where you changed the MOD level to L3. 
+cd $DC_HOME/wasdc/<maint>/runtime/<server>/custom 
+cp toolkit_custom.properties toolkit_custom.properties.original 
+vi toolkit_custom.properties 
+- uncomment this line: 
+am.camtoolkit.gpe.customxml.L3=/<path-to-method_entry_exit.xml> 
+- set this line to true: 
+com.ibm.tivoli.itcam.toolkit.ai.methodentryexittrace=true 
+save file, restart the DC/server, and put some load on the server 
+
+This should begin to allow METHOD records into the METHOD table with the above settings, and populate the METHOD table. Note that this should only be done for a short while, as MOD L3 introduces performance impacts. So run it for few hours, then switch back to L2 (or L1) in your Monitoring on Demand menu.
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ ITCAM ITCAMfAD ITCAM4AD ITCAM for App Diagnostics

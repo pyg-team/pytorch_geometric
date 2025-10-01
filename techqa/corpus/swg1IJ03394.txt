@@ -1,0 +1,155 @@
+Title: IBM IJ03394: NETCOOL/IMPACT 7.1.0 UPDATE METHOD OF GETTING RBA CONNECTION PARAMETERS - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+ DIRECT LINKS TO FIXES
+7.1.0-TIV-NCI-SOLARIS-FP0013 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=7.1.0-TIV-NCI-SOLARIS-FP0013&source=SAR]
+7.1.0-TIV-NCI-WINDOWS-FP0013 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=7.1.0-TIV-NCI-WINDOWS-FP0013&source=SAR]
+7.1.0-TIV-NCI-ZLINUX-FP0013 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=7.1.0-TIV-NCI-ZLINUX-FP0013&source=SAR]
+7.1.0-TIV-NCI-LINUX-FP0013 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=7.1.0-TIV-NCI-LINUX-FP0013&source=SAR]
+7.1.0-TIV-NCI-AIX-FP0013 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=7.1.0-TIV-NCI-AIX-FP0013&source=SAR]
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Product: Tivoli Netcool/Impact 7.1.0
+   Release: 7.1.0.11
+   Severity: 2
+   
+   Problem: Tivoli Netcool/Impact 7.1.0
+   
+   Fail-over no longer working after RBA intigration.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * All Impact Users                                             *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * Following the installation of the Runbook Automation add-on  *
+   * in an Impact cluster , when a user edits the default values  *
+   * of the Netcool/Impact derby                                  *
+   * database to configure launch-in-context support and          *
+   * integration with IBM Runbook Automation, failover to the     *
+   * secondary cluster member no longer                           *
+   * occurs successfully as RBA can't connect to the secondary    *
+   * Impact cluster.                                              *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * 1. create a text file in the impact install containing the   *
+   * encrypted RBAAPIKeyPassword.                                 *
+   * 2.  edit rba policy code ,  to retrieve the encrypted        *
+   * RBAAPIKeyPassword from the text file.                        *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix for this APAR is contained in the following
+   maintenance packages:
+   |Fix Pack | 7.1.0-TIV-NCI-FP0013
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IJ03394
+   
+   
+ * REPORTED COMPONENT NAME
+   NETCOOL/IMPACT
+   
+   
+ * REPORTED COMPONENT ID
+   5724O59IS
+   
+   
+ * REPORTED RELEASE
+   710
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2018-01-18
+   
+   
+ * CLOSED DATE
+   2018-05-04
+   
+   
+ * LAST MODIFIED DATE
+   2018-05-04
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   NETCOOL/IMPACT
+   
+   
+ * FIXED COMPONENT ID
+   5724O59IS
+   
+   
+
+APPLICABLE COMPONENT LEVELS

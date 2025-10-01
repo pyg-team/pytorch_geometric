@@ -1,0 +1,180 @@
+Title: IBM IT10548: PUREAPPLICATION SYSTEM: USERS MAY NOT BE ABLE TO DEPLOY A PATTERN WHICH HAS MORE THAN 4 CLIENTS CONNECTED TO GPFS - United States
+
+Text:
+  A FIX IS AVAILABLE
+IBM PureApplication System Version 2.1.2.0 [http://www-01.ibm.com/support/docview.wss?uid=swg24041499]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  While trying to deploy the following pattern that contains 10
+   virtual machines (VMs) :
+   
+   MQ Gateway = Primary GWQM1 + Standby GWQM1 and Primary GWQM2 +
+   Standby GWQM2
+   MQ Application = Primary APPQM1 + Standby APPQM1 and Primary
+   APPQM2 + Standby APPQM2
+   IIB integration = Two IIB v10 Nodes client connected.
+   
+   The pattern failed to initiate once we moved beyond 4 VMs (MQ
+   Gateway layer) leveraging the GPFS layer, this pattern requires
+   that 8 MQ Queue Managers ( each in an individual VM ) access
+   the same GPFS share.
+   
+   The problem is that the fifth VM to startup would fail
+   due to GPFS locks on resources for certain command execution.
+   The locks are not released in time for the multiple clients to
+   call these commands in parallel. The GPFS command wait time
+   is too low.
+   
+   The pattern code must change to retry the commands if they fail
+   due to a lock being held.
+   
+   In the log on the client node
+   
+   /IWDAgent/opt/IBM/maestro/agent/usr/servers/xxxNode.nnnn/logs/in
+   stall/trace.log
+   
+   the following messages can be seen:
+   
+   Enter AuthorizeClientCluster ----->
+   /usr/lpp/mmfs/bin/mmauth add gpfs.xxxNode.nnnn -k
+   /var/mmfs/ssl/gpfs.xxx.nnnn_id_rsa.pub
+   RC is: 16
+   Message(1) is:
+   Message(2) is: mmauth: The main GPFS cluster configuration file
+   is locked.  Retrying ...
+   mmauth: Timed out waiting for lock.  Try again later.
+   mmauth: GPFS was unable to obtain a lock from node
+   aaaa.bbb.ccc.com.
+   mmauth: Command failed. Examine previous error messages to
+   determine cause.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Instead of using the GPFS Client Policy to install GPFS on the
+   client nodes, use the GPFS Client Script Packages.
+   
+   Why GPFS Client Script Packages can help in this situation :
+   
+   The GPFS Client Scripts are setup to be executed by the user
+   manually; they are set to be run 'When I initiate it'.
+   
+   Because of this, the GPFS will not be installed automatically
+   at pattern deployment - as it is the case when using the GPFS
+   Client Policy.
+   
+   The user can deploy the pattern then run the GPFS Client
+   install on each node, one at the time, using the script
+   packages. This will fix the issue with the concurrent command
+   calls.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  There was an implementation problem in the way locks were
+   managed for GPFS client command execution.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The code has been updated in GPFS Pattern Type version
+   1.2.3.2 provided in PureApplication System version 2.1.2.0.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT10548
+   
+   
+ * REPORTED COMPONENT NAME
+   PAPP SYS 8382 I
+   
+   
+ * REPORTED COMPONENT ID
+   5725G3200
+   
+   
+ * REPORTED RELEASE
+   210
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-08-06
+   
+   
+ * CLOSED DATE
+   2015-10-29
+   
+   
+ * LAST MODIFIED DATE
+   2015-10-29
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   PAPP SYS 8382 I
+   
+   
+ * FIXED COMPONENT ID
+   5725G3200
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R212 PSY
+   UP

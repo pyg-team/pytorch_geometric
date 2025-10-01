@@ -1,0 +1,89 @@
+Title: IBM ISAM reauthentication prompt before WebSEAL timeout reached (SMS involved) - United States
+
+Text:
+SMS DSess TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Users are unexpectedly asked to login again to WebSEAL (in Session Management Server setup) 
+
+SYMPTOM
+The WebSEAL session time out is set to 1 hour ([session] timeout= 7200, but users are asked to authenticate again before this timeout is reached. 
+
+
+CAUSE
+The Session Management Server also has a setting that controls how long user sessions remain active. When WebSEAL contacts SMS, which no longer has a reference to the user session, WebSEAL will ask the user to reauthenticate
+
+ENVIRONMENT
+WebSEAL connected to a Session Management Server
+
+DIAGNOSING THE PROBLEM
+WebSEAL traces (server task <webseal> trace set pdweb.dsess.client 9 file path=dsesstrace.txt) are reporting following messages: "DPWDS0318I The session does not exist."
+
+
+
+
+
+For example: 
+
+ * 
+ * 
+ * 
+ * 
+ * http://sms1.be.ibm.com:9081/Dsess/services/DSess 
+ * 
+   getSession failed: int ID DjddkTFD44nqnskdCQSDFdklqutgDQckfjlc/gkdiuctQCtldds=, result DPWDS0318I The session does not exist. (0x38a0a13e) 
+ * ------------------
+
+
+
+On the SMS side, within the WebSphere SystemOut.log and/or trace.log (with trace specification *=info: com.tivoli.am.sms.*=all) stack traces like contain entries like: 
+
+ * 
+ * 
+ * 
+ * 
+ * ------------------
+   
+
+RESOLVING THE PROBLEM
+Make sure that SMS instance property "Maximum session lifetime" is configured to a larger value than the webseal timeout setting (In WebSEAL config file [session] timeout= xxx). Re-run the SMS configuration (either using ISC or smscfg -action config) to increase this value. During the smscfg -action config configuration you can give this value when the following prompt appears: 
+
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * Maximum session lifetime (seconds): 8000
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+
+RELATED INFORMATION
+ reauthentication prompt before inactive-timeout reached [http://www-01.ibm.com/support/docview.wss?uid=swg21498058]
+
+
+
+
+PRODUCT ALIAS/SYNONYM
+ TAMeB ISAM

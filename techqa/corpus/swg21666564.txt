@@ -1,0 +1,37 @@
+Title: IBM "The cell or chart you are trying to change is protected..." after creating new free form - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Customer creates a new free form has been set up. User amends a new account and updates the system via "Maintain - Account Structure - Movement Accounts - Generate". User updates the form via "Maintain - Form Structure - Define - DEFI".
+
+User tries to use the form, but receives an error. 
+
+User tries to 'update' the form, but since it has been set up a "free" form, the user does not have the 
+'update button' available (which is there for standard forms only). 
+
+SYMPTOM
+The cell or chart you are trying to change is protected and therefore read-only.
+
+
+CAUSE
+There are many potential causes for the same/similar errors. 
+
+ * TIP: For more examples, see separate IBM Technote #1666512.
+
+
+This Technote specifically relates to the scenario where the cause is that the customer has forgotten to optimise the database after making structure changes.  * Optimising the database is a required step after making many changes to the Controller system's structures.
+
+RESOLVING THE PROBLEM
+Perform a database optimise. 
+
+ 
+Steps:
+1. Obtain a short period of downtime (no users on the system)
+2. Click "Maintain - Database - Optimise"
+3. Tick/select all available options
+4. Click 'Run'.
+
+RELATED INFORMATION
+#1666512 - ** Troubleshooting ** "The cell or chart you' [http://www.ibm.com/support/docview.wss?uid=swg21666512]

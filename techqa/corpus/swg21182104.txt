@@ -1,0 +1,19 @@
+Title: IBM Where can I find information about the utilities for cmbicmenv.ini, cmbicmsrvs.ini, cmbds.ini and cmbfedenv.ini files? - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Information is available about the utilities for .ini files used by various connectors such as the federated connector (cmbfedenv.ini, cmbds.ini) and the Content Manager connector (cmbicmenv.ini, cmbicmsrvs.ini). 
+
+ANSWER
+These utilities for the various ini files allow a user to add, delete, and add entries into the files. For information about the utilities, see the Enterprise Information Portal Information Center.
+To start the information center, click Start > Programs > Enterprise Information Portal for Multiplatforms 8.2 > Information Center. 
+
+In the information center, click Enterprise Information Portal > Planning and Install > Generating configuration files. The following topics provide the information about the utilities: 
+
+ * cmbcmenv.properties 
+ * INI configuration files  * cmbicmenv.ini 
+    * cmbicmsrvs.ini 
+    * cmbfedenv.ini 
+    * cmbds.ini

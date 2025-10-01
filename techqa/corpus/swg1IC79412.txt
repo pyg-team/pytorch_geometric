@@ -1,0 +1,216 @@
+Title: IBM IC79412: V6 TIVOLI STORAGE MANAGER SERVER INSTALLER DEPLOYMENT ENGINE SEC URITY REQUIRES DOCUMENTATION. - United States
+
+Text:
+AIX SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The Deployment Engine (DE) installed with the Tivoli Storage
+   Manager server is installed globally as a root user.  A
+   globally installed DE allows for non-root users to be able to
+   upgrade/install components installed by the DE and requires
+   some files to be accessible by all system users.  Certain
+   environments may require tighter restrictions on what users
+   can access files.
+   
+   The DE provides the capability of controlling DE file
+   permissions at 3 levels using the following command:
+   
+     /usr/ibm/common/acsi/bin/de_security.sh
+   
+     Usage: de_security (-singleUser | -group (groupname) |
+            -global | -refreshDB )
+   
+     Single User - Only the user who installed DE will be allowed
+                   write access
+     Group - Only the current user and members of the specified
+             group will be allowed write access to the DE.
+     Global - All users will be allowed write access to DE
+   
+   Tivoli Storage Manager by default uses the Global DE.  It
+   is possible for Tivoli Storage Manager users to change the
+   DE access to single user or group after installation.  If
+   the DE is changed to single user mode, it is important to
+   note that installing the Administration Center component
+   with a non-root user ID on the same system is not possible.
+   
+   The above information should be included in the installation
+   documentation for Tivoli Storage Manager.
+   
+   Customer/L2 Diagnostics:
+   None.
+   
+   Initial Impact:
+   Low
+   
+   Tivoli Storage Manager Versions Affected:
+   V6 Tivoli Storage Manager server/admin center on all UNIX platfo
+   rms.
+   
+   Additional Keywords:
+   ZZ62 TSM INSTALL INSTALLER DE WORLD WRITABLE WWF
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All Tivoli Storage Manager server users.     *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: See error description.                  *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   *
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  In the Tivoli Storage Manager server installation guides for
+   AIX, HP-UX, Linux, and Solaris, the following topic was added:
+   
+   "Configuring access rights to Deployment Engine files
+   
+   When you install the Tivoli Storage Manager server, the
+   Deployment Engine is installed automatically on the same
+   system. The Deployment Engine is used to install Tivoli
+   Storage Manager components.
+   
+   The Deployment Engine is installed globally as a root user.
+   The globally installed Deployment Engine makes it possible for
+   non-root users to upgrade and install the components that were
+   installed by the Deployment Engine. The Deployment Engine also
+   makes some files accessible to all system users.
+   
+   You can configure access rights to the files that are
+   controlled by the Deployment Engine. The following table
+   describes the access levels and the related commands. To view,
+   set, or refresh the access level, issue the specified command
+   on one line.
+   
+   Table 1. Commands for viewing and setting access rights to
+   files controlled by the Deployment Engine
+   
+   Action: View
+   Description: Displays the current access level.
+   Command: /usr/ibm/common/acsi/bin/de_security.sh
+   
+   Action: Set access to single user
+   Description: Only the user who installed the Deployment Engine
+   has write access to the Deployment Engine files.
+   Command: /usr/ibm/common/acsi/bin/de_security.sh -singleUser
+   
+   Action: Set access to group
+   Description: Only the current user and members of the
+   specified group have write access to the Deployment Engine
+   files.
+   Command: /usr/ibm/common/acsi/bin/de_security.sh -group
+   groupname
+   
+   Action: Set access to global
+   Description: All users have write access to the Deployment
+   Engine files.
+   Command: /usr/ibm/common/acsi/bin/de_security.sh -global
+   
+   Action: Refresh
+   Description: After you change the access level, use this
+   command to display the change.
+   Command: /usr/ibm/common/acsi/bin/de_security.sh -refreshDB"
+   
+   In the topic "Installing the Administration Center," the
+   following note was added:
+   
+   "<AIX, Linux, Solaris> Restriction: If access rights for
+   Deployment Engine files are set to single user mode, you
+   cannot install the Administration Center on the same system by
+   using a non-root user ID. If single user mode is specified,
+   install the Administration Center by logging in as the root
+   user or modify the access rights for Deployment Engine files.
+   For details, see Configuring access rights to Deployment
+   Engine files."
+   
+   
+   Affected platforms:  AIX, HP-UX, Solaris, and Linux.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC79412
+   
+   
+ * REPORTED COMPONENT NAME
+   TSM SERVER
+   
+   
+ * REPORTED COMPONENT ID
+   5698ISMSV
+   
+   
+ * REPORTED RELEASE
+   62A
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-10-24
+   
+   
+ * CLOSED DATE
+   2011-12-06
+   
+   
+ * LAST MODIFIED DATE
+   2011-12-06
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+Publications Referenced GC23978202 GC23978302 GC23978402 GC23978502 FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

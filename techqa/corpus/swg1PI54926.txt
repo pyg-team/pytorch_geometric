@@ -1,0 +1,222 @@
+Title: IBM PI54926: EXTERNALISE WHICH CIPHERS WERE REMOVED FROM THE CIPHER LIST - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Externalise which ciphers were removed from the cipher list
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * All.                                                         *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * When a CICS resource is installed with                       *
+   * a reduced set of cipher codes there is                       *
+   * no easy way to see which ciphers have                        *
+   * been removed when using a ciphers list.                      *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * .                                                            *
+   ****************************************************************
+   When a CICS resource definition for IPCONN, TCPIPSERVICE
+   or URIMAP is installed, it is possible that the resource
+   is installed with a reduced set of cipher codes.
+   
+   When the ciphers are specified by a cipher suite
+   specification file then message DFHSO0145 is issued when
+   a reduced set of cipher codes are installed. This message
+   states the number of ciphers that have been removed from
+   the cipher list. This is then followed by DFHSO0146 which
+   details which specific ciphers have been removed.
+   
+   
+   When the ciphers are specified by a list of 2-digit cipher
+   suite codes then message DFHSO0145 and DFHSO0146 are not
+   issued, so there is no easy way to know how many or which
+   ciphers were removed.
+   
+   It is possible to take a CICS system dump and then review the
+   SO domain to see which ciphers have been successfully
+   installed. The user could then compare this installed
+   list with the list they provided to the relevant resource
+   definition.
+   
+   Messages SO0145 and SO0146 should be issued whenever a
+   resourse is installed with a reduced set of cipher codes
+   no matter what the cipher source is.
+   
+   Additional Keywords: SO0146 msgDFHSO0146 msgDFHSO0145
+   D90449
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  DFHSOIS has been altered to issue messages DFHSO0145 and
+   DFHSO0146 when ciphers are removed for both cipher lists
+   and cipher files.
+   
+   DFHMESOE, DFHMESOC and DFHMESOK have been altered to update
+   both messages DFHSO0145 and DFHSO0146.
+   
+   The CICS Transaction Server for z/OS Version 5 Release 3, CICS
+   Messages and Codes Vol 2, GC34-7419-00, Chapter 4. DFH messages
+   - DFHN to DFHZ, section DFHSOnnnn messages has been altered in
+   two places.
+   1. Message DFHSO0145 has been updated and will now read as
+   follows:-
+   DFHSO0145 W DATE TIME APPLID An installation using ciphers
+   ciphersourcetype ciphersource has resulted in number ciphers
+   being removed from the cipher list.
+   Explanation: Whilst installing a resource using a ciphers list
+   or file to specify the ciphers to use, a number of the ciphers
+   have been removed because they are not supported by system SSL
+   in the security environment requested for this CICS region.
+   This message will be followed by one or more DFHSO0146 messages
+   listing the ciphers.
+   System action: As long as one cipher in the list is valid, the
+   install proceeds successfully.
+   User response: Ensure that the ciphers list or file only
+   specifies valid ciphers.
+   Module: DFHSOIS
+   Message inserts:
+   1. DATE
+   2. TIME
+   3. APPLID
+   4. ciphersourcetype
+   5. ciphersource
+   6. number
+   Destination: CSOO
+   
+   2. Message DFHSO0146 has been updated and will now read as
+   follows:-
+   DFHSO0146 I DATE TIME APPLID Ciphers removed: cipherlist.
+   Explanation: This message follows message DFHSO0145 listing the
+   ciphers that are not supported.
+   System action: As long as one cipher in the list is valid, the
+   install proceeds successfully.
+   User response: Ensure that the ciphers list or file only
+   specifies valid ciphers.
+   Module: DFHSOIS
+   Message inserts:
+   1. DATE
+   2. TIME
+   3. APPLID
+   4. cipherlist
+   
+   Destination: CSOO
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI54926
+   
+   
+ * REPORTED COMPONENT NAME
+   CICS TS Z/OS V5
+   
+   
+ * REPORTED COMPONENT ID
+   5655Y0400
+   
+   
+ * REPORTED RELEASE
+   000
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-01-06
+   
+   
+ * CLOSED DATE
+   2016-02-18
+   
+   
+ * LAST MODIFIED DATE
+   2016-04-05
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    PI41275 [http://www-01.ibm.com/support/docview.wss?uid=swg1PI41275]
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UI35477
+   
+   
+
+MODULES/MACROS
+ *  DFHMESOC DFHMESOE DFHMESOK DFHSOIS
+   
+   
+    
+   
+   
+
+Publications Referenced GC34741900 FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CICS TS Z/OS V5
+   
+   
+ * FIXED COMPONENT ID
+   5655Y0400
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R000 PSY UI35477 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI35477]
+   UP16/03/11 P F603
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

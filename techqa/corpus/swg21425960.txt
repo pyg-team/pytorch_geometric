@@ -1,0 +1,87 @@
+Title: IBM How do I configure ClearQuest Web 7.0.1.X for SSL - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ What are the exact steps to configure SSL in ClearQuest Web 7.0.1.X? 
+
+RESOLVING THE PROBLEM
+1. Stop the IBM HTTP server if it is currently running.
+
+2. Start the IBM HTTP server Key Management Utility tool by doing the
+following:
+- On Windows, Click Start > Programs > IBM HTTP Server 6.0.2 > Start Key
+Management Utility. - On UNIX systems and Linux, Navigate to the
+/opt/rational/common/rwp/IHS/bin directory and enter the command:
+./ikeyman.
+
+3. Ensure you have the location of the keystore file you created, such
+as C:\Program Files\Rational\common\rwp\IHS\key.kdb , before performing
+this step. Click Key Database File > New and enter the following
+information, and then click OK:
+- For Key Database Type, enter CMS key database file
+- For Location, on Windows, enter drive letter:\Program
+Files\Rational\Common\rwp\IHS\. On UNIX systems and Linux, enter
+/opt/rational/common/rwp/IHS/.
+
+4. Enter key.kdb as the new keystore file name.
+
+5. At the password prompt, enter a password, and then confirm it. This
+password protects the key file you are creating.
+Note: You can optionally set a password expiration time in days. If you
+enter 365 days, a new password must be created after 365 days.
+
+6. Ensure Stash the password to a file is checked. When you check this
+option, the HTTP Server is allowed access to the certificates contained
+in the keystore file by using the password.
+
+7. Click OK
+
+8. Restart the IBM HTTP server.
+
+Creating a self-signed certificate for the HTTP server:
+
+1. Start the IBM HTTP server Key Management Utility tool (if it is not
+already running).
+2. Click Key Database File > Open > Select Key database type CMS and
+click browse to navigate to your key store file (key.kdb).
+3. Enter the keystore password and click OK
+4. In Key database content, click the drop down menu and select Personal
+Certificates (if you are creating a self-signed certificate) or Personal
+Certificate Requests (if you are creating a certificate request to be
+sent to an Independent certificate authority (CA)).
+5. If you are creating a self signed certificate, click New Self-Signed.
+The Create a New Self-Signed Certificate window opens.
+6. Enter a key label for this certificate by filling in the following
+fields, and then click OK. Do not use spaces in the key label.
+- For the Version field, select X509 V3.
+- For the Key Size field, select 1024.
+- For the Common Name field, enter the fully qualified address of the
+HTTP Server, for example Servername.ibm.com.
+- For the Organization field, enter the name of your company or area.
+The Common Name and Organization are required fields of the
+Distinguished Name. The Organization Unit, Locality, State/Province, and
+other fields are optional.
+- Select the appropriate value for the Country field.
+- For the Validity Period field, enter 365.
+Forcing an SSL connection using RWP:
+To force processing of non-SSL requests as SSL requests, using RWP, do
+the following:
+1. Add or modify the virtualhost settings in httpd.conf to include the
+following commands: <VirtualHost *:80>
+ServerName yourservername
+RewriteEngine on RewriteCond %{SERVER_PORT} !^443$
+RewriteRule ^(.*)$ //yourservername$1 [R]
+RewriteLogLevel 0
+RewriteLog "C:/Program Files/Rational/common/rwp/IHS/logs/rewrite.log"
+</VirtualHost>
+Note: Ensure these commands are placed appropriately in the httpd.conf
+file, to execute before the load of the WebSphere Application module and
+before the load of the WebSphere Plug-in module.
+2. Include the ssl.conf file by adding the following commands:
+#
+# include ssl information
+# Include conf/ssl.conf
+3. Edit the ssl.conf file, providing the correct SSL certificate path
+information.

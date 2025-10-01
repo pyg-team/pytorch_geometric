@@ -1,0 +1,128 @@
+Title: IBM HD92522: IBM InfoSphere Content Collector (ICC) cannot evaluate the private flag of an e-mail document - United States
+
+Text:
+  A FIX IS AVAILABLE
+IBM InfoSphere Content Collector V2.1.1 Fix Pack 2 [http://www-01.ibm.com/support/docview.wss?rs=0&uid=swg24026228]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  ICC does not support private-delegate access once an email is
+   archived into FileNet P8 4.5.1
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  In Microsoft Outlook, e-mail documents can be flagged as
+   private.
+   Content Collector could not read this information. Therefore,
+   you could not use this e-mail property for configuring decision
+   points in task routes if, for example, you did not want to
+   archive private e-mail or if you wanted to archive it into a
+   different repository location.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Starting with Fix Pack 2, you can define a the private flag as a
+   custom metadata field that can be used for configuring decision
+   points in task routes. For details, see the techdoc on using
+   message properties in IBM InfoSphere Content Collector when
+   archiving from Microsoft Exchange at
+   http://www.ibm.com/support/docview.wss?uid=swg27018322 [http://www.ibm.com/support/docview.wss?uid=swg27018322]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   HD92522
+   
+   
+ * REPORTED COMPONENT NAME
+   ICC FOR EMAIL
+   
+   
+ * REPORTED COMPONENT ID
+   5724V5700
+   
+   
+ * REPORTED RELEASE
+   210
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-01-19
+   
+   
+ * CLOSED DATE
+   2010-05-20
+   
+   
+ * LAST MODIFIED DATE
+   2011-03-22
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ICC FOR EMAIL
+   
+   
+ * FIXED COMPONENT ID
+   5724V5700
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R211 PSY
+   UP

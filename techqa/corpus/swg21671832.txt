@@ -1,0 +1,32 @@
+Title: IBM Data Protection for MS SQL Alternate Restore of a VSS backup - United States
+
+Text:
+tdp Data Protection for MS SQL VSS alternative TECHNOTE (FAQ)
+
+QUESTION
+ Is it possible to perform an alternate VSS restore of an SQL database backup to an different database or SQL Server instance?
+
+
+CAUSE
+In the Data Protection for Microsoft SQL Server User's guide, it states:
+Because of a SQL Server limitation, you cannot restore a VSS backup to an alternative SQL server instance. Therefore, VSS backups must be restored to the same SQL server instance where the snapshot was taken. 
+
+
+ANSWER
+A VSS SQL backup cannot be restored to an alternate machine, this is a Microsoft restriction. However, it is possible to do a Restore with a Database Rename or Move, as long as the database remains within the original SQL instance (where the backup was taken). 
+
+
+The SQL database may need to be restored with a new name, especially if the database is to be restored side by side with the original database. For example, restoring a database to a different name to access an individual item; restoring to the same name would overwrite all data. 
+
+To restore to a different database name, select the "Restore to Alternate Location" within the Data Protection SQL GUI; then enter the new database name and directory for the new files to be placed. Note that if a new name and location are not specified for the VSS restore, SQL will restore the database with its original (component) name, which will overwrite the original database. 
+
+
+Setting the name within the alternate location is equivalent to setting the “New Component Name” value for an SQL Server restore option. The following Microsoft document has more information on Setting VSS Restore Options:  * https://msdn.microsoft.com/en-us/library/aa384610(v=vs.85).aspx
+ * 
+
+
+NOTE : The SQL VSS writer currently does not support “Rename across Instances”, so it is not possible to move a database to a new instance during the VSS restore. However, the data could be moved to a different SQL Server instance with a detach, move to new machine, and attach of the database after the alternate (rename) restore is complete. 
+ 
+
+PRODUCT ALIAS/SYNONYM
+ TSM FCM

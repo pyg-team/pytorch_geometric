@@ -1,0 +1,176 @@
+Title: IBM PI20489: RATIONAL DEVELOPER FOR SYSTEM Z V9.0.0: MISLEADING ERROR MESSAGE WHEN LOGIN FAILS - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+9.0.1.3: UI20613 PTF for Rational Developer for System z Host Options [http://www-01.ibm.com/support/docview.wss?uid=swg24038203]
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  In this scenario the userid attempting to login to RDZ server
+   from RDZ
+   client did not have access to the FEKAPPL RACF class. However
+   the error
+   message provided to the client was misleading.
+   
+   If the authentication is by userid and password, the message
+   indicates that the
+   password is revoked.
+   
+   If the authentication is by certificate, the message indicates
+   that the certificate is revoked.
+   
+   Example message when authentication is by userid and password:
+   "Failed to connect to the daemon with an unexpected exception:
+   server failure: server failure:
+   password revoked. Make sure the daemon is running on port xxxx"
+   
+   
+   A proper error message in this case would be:
+   "Failed to connect to the daemon with an unexpected exception:
+   server failure: User xxxxxx
+   has insufficient permission to profile FEKAPPL in the APPL
+   class. RACROUTE AUTH
+   returned SAF return code 8 - RACF return code =16 RACF reason
+   code =8 "
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: 01.All RDz users                             *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: 01.When RDz user does not have RACF     *
+   *                         access to the APPL class, the        *
+   *                         response said "USERID is revoked"    *
+   *                         when using a password, and "Invalid  *
+   *                         Certificate" in using a              *
+   *                         certificate. The error message in    *
+   *                         the client dialog is quite           *
+   *                         misleading.                          *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   01.When RDz user does not have RACF access to the APPL class,
+      the response said "USERID is revoked" when using a password,
+      and "Invalid Certificate" in using a certificate. The error
+      message in the client dialog is quite misleading.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  01.Now, the following message will be shown when RDz user does
+      not have RACF access to the APPL class: "server failure:
+      User, userid has insufficient permission to profile FEKAPPL
+      in the APPL class. RACROUTE AUTH returned SAF return code =
+      nn - RACF return code = nn RACF reason code = nn"
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI20489
+   
+   
+ * REPORTED COMPONENT NAME
+   RATL DEV FOR SY
+   
+   
+ * REPORTED COMPONENT ID
+   5724T0700
+   
+   
+ * REPORTED RELEASE
+   900
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-06-20
+   
+   
+ * CLOSED DATE
+   2014-08-16
+   
+   
+ * LAST MODIFIED DATE
+   2014-08-25
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *     FEKFENVR FEKFOMVS FEKFZOS
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   RD/Z HOST
+   
+   
+ * FIXED COMPONENT ID
+   5724T0723
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R900 PSY UI20613 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI20613]
+   UP14/08/25 I 1000
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

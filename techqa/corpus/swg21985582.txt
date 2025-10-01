@@ -1,0 +1,45 @@
+Title: IBM DSN name not found in DataStage .odbc.ini file when there is a "[" in a password field in a preceding DSN - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ A DataStage job on Unix using any of the ODBC stages fails with a "DSN name not found" error. Examination of .odbc.ini file shows the DSN name to be present and defined. 
+
+SYMPTOM
+Messages such as 
+
+Message: ss_PROS_CNTL: 
+The connector could not establish a connection to data source UAT using user dsadmuat.
+
+Message: ss_PROS_CNTL: ODBC function "SQLConnect" reported: SQLSTATE = IM002: Native Error Code = 0: 
+Msg = [DataDirect][ODBC lib] Data source name not found and no default driver specified (CC_OdbcConnection::connect, file CC_OdbcConnection.cpp, line 578)
+
+
+CAUSE
+There is a "[" in a preceding DSN Password field
+
+[MYDB]
+Driver=/opt/IBM/InformationServer/Server/branded_odbc/lib/VMmsss00.so
+Description=DataDirect SQL Server Wire Protocol driver
+Database=MYDB
+LogonID=xyz
+Password=abc[def
+Address=nn.nn.nnn.nn,1433
+QuotedId=No
+AnsiNPW=No
+EncryptionMethod=1
+
+
+ENVIRONMENT
+Unix with Progress Data Direct driver manager
+
+
+
+DIAGNOSING THE PROBLEM
+Temporarily remove the offending DSN and re test
+
+
+
+RESOLVING THE PROBLEM
+There is no need to hard code the user LogonID and Password entries, they can always be specified in your DataStage job. Having passwords hard coded in the .odbc.ini may also be against in house security policies.

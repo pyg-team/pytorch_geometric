@@ -1,0 +1,59 @@
+Title: IBM Problem installing WebSphere Adapter for SAP V7.5 in IBM Integration Designer V8.0.1 - United States
+
+Text:
+adapter; iid; integration designer; sap; installation TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ You installed IBM Integration Designer V8.0.1 using launchpad64.exe, and chose SAP Adapter V7.5. Using the Adapter wizard, you chose the 32-bit SAP JCo files. When you deploy an application with the embedded SAP Adapter V7.5 to the test server, which is 64-bit, the SAP adapter would not start. 
+
+CAUSE
+The runtime JRE was 64 bit: 
+
+C:\WAS80\AppServer\java\jre\bin>java -version 
+
+java version "1.6.0" 
+
+Java(TM) SE Runtime Environment (build 
+
+pwa6460_26sr3ifix-20121005_02(SR3+IV27268+IV27928+IV28217+IV25699)) 
+
+IBM J9 VM (build 2.6, JRE 1.6.0 Windows XP amd64-64 20120919_122629 (JIT 
+
+enabled, AOT enabled) 
+
+J9VM - R26_Java626_SR3_iFix_1_20120919_1316_B122629 
+
+JIT - r11.b01_20120808_24925ifx1 
+
+GC - R26_Java626_SR3_iFix_1_20120919_1316_B122629 
+
+J9CL - 20120919_122629) 
+
+JCL - 20120713_01 
+
+
+This means that the 64 bit SAP JCo files should be installed on the server.
+
+
+ENVIRONMENT
+Windows XP x64
+IBM Integration Designer version: 8.0.1 
+SAP Adapter version: 7.5.0.3 
+
+
+
+RESOLVING THE PROBLEM
+Creating module on IBM Integration Designer that have a 32-bit JRE, and deploying on a runtime having a 64-bit JRE is compatible. The SAP JCo is used during EMD, as well as during runtime, but the SAP JCo library does not go with the module. You will need to put the SAP JCo library in the runtime directory manually. The bitness of the SAPJCo is decided by the JRE being used in the environment. 
+
+IBM Integration Designer has a 32-bit JRE. While running EMD, you will need the 32-bit JCo library. 
+If the server has 64-bit JRE, you will need to put the 64-bit SAP JCo library in the server directory: 
+
+ 
+Copy sapjco3.dll to <Server_Installation_Dir>\AppServer\bin, and copy sapjco3.jar and sapidoc3.jar to <Server_Installation_Dir>\AppServer\lib.
+
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Integration Designer Not Applicable Windows, Linux 8.0.1

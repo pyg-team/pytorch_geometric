@@ -1,0 +1,213 @@
+Title: IBM IC77116: UPGRADING FIRMWARE FAILS WITH ILLEGAL CHARACTERS IN URL - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When upgrading the firmware for the IBM WebSphere CloudBurst
+   Appliance, loading the firmware fails validating the URL.
+   
+   The following is an example of the message associated with this
+   failure:
+   
+     Loading firmware failed:  Validate firmware URL failed:
+     Illegal characters in
+     'C:\DownloadDirector\cloudburst.2.0.0.3\WebSphere_CloudBurst_A
+     ppliance-2.0.0.3.scrypt2'
+   
+   This problem occurs when the file is uploaded using Microsoft
+   Internet Explorer and the filename in the multipart request
+   contains the full path of the file.  For example, the filename
+   is:
+   
+     C:\DownloadDirector\cloudburst.2.0.0.3\WebSphere_CloudBurst_Ap
+     pliance-2.0.0.3.scrypt2
+   
+   instead of:
+   
+     WebSphere_CloudBurst_Appliance-2.0.0.3.scrypt2.
+   
+   There is a setting in Microsoft Internet Explorer that controls
+   whether the full directory path is included in file uploads.
+   When the setting is enabled, the browser passes the server a
+   filename like C:\some\path\file.ext during the HTTP upload
+   request.
+   
+   When the setting is disabled, the browser only gives the server
+   the name of the file like file.ext.
+   
+   By default, Microsoft  Internet Explorer's security level is set
+   to medium-high, which means the setting is disabled, the
+   directory paths are not included in the filename, and the
+   firmware upgrade is successful.
+   
+   If the security level is changed to the lowest setting, medium,
+   or a custom level is defined, where the setting is explicitly
+   enabled, the directory paths are included in the filename, and
+   the firmware upgrade fails.
+   
+   To summarize, by default, firmware upgrades work fine using
+   Microsoft Internet Explorer.  If the security settings are
+   lowered or a custom level is used, the upgrade fails.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  The following are the possible workarounds for this problem:
+   
+     - Use the default security level.  For example, using
+       Microsoft Internet Explorer V8:
+   
+         1) Select Tools > Internet Options > Security.
+         2) If the security setting is medium, increase the
+            security level.
+         3) If a custom level is used, use the default security
+            level.
+   
+     - Use Mozilla Firefox.
+   
+     - Use the command-line interface to do the upgrade.  See the
+       information center at the following URL for information on
+       how to do this:
+   
+       http://publib.boulder.ibm.com/infocenter/wscloudb/v2r0/index [http://publib.boulder.ibm.com/infocenter/wscloudb/v2r0/index]
+       .jsp?topic=/com.ibm.websphere.cloudburst.doc/aa/aar_cli_firm
+       ware.html
+   
+       Note:  The above URL is split across lines so be sure to
+              concatenate the lines before pasting the URL to a
+              browser.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  WebSphere CloudBurst Appliance users can get an error
+   "Loading firmware failed: Validate firmware URL failed:
+    Illegal characters in URL"
+   when upgrading the firware using Internet Explorer and
+   the browser administrative interface.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  There is a setting in Microsoft Internet Explorer that controls
+   whether the full directory path is included in file uploads.
+   It is disabled when Internet Explorer's security level is set
+   to medium-high.
+   
+   When the security level is lowered, or the setting is explicitly
+   enabled via a custom level, the upload will fail with this
+   error. Code was added to throw away the path and bypass the
+   error.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC77116
+   
+   
+ * REPORTED COMPONENT NAME
+   CLOUDBURST APPL
+   
+   
+ * REPORTED COMPONENT ID
+   5765H1600
+   
+   
+ * REPORTED RELEASE
+   200
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-06-23
+   
+   
+ * CLOSED DATE
+   2011-08-30
+   
+   
+ * LAST MODIFIED DATE
+   2011-08-30
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CLOUDBURST APPL
+   
+   
+ * FIXED COMPONENT ID
+   5765H1600
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R200 PSY
+   UP
+   
+   
+ * R100 PSN
+   UP
+   
+   
+ * R110 PSN
+   UP
+   
+   
+ * R111 PSN
+   UP

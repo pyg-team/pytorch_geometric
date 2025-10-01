@@ -1,0 +1,74 @@
+Title: IBM WebSphere Transformation Extender: How to enable Java Native Interface layer trace - United States
+
+Text:
+java java mime adapter class jca turn on jni layer trace mustgather jni jni trace trace trace TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When using any of the WebSphere® Transformation Extender (WTX) Java™ based adapters, you can better troubleshoot problems by turning on the Java Native Interface layer (JNI) trace. 
+
+RESOLVING THE PROBLEM
+The JNI layer trace can be turned on in the configuration file found in the WTX installation directory. The configuration file name differs by version. 
+
+Version File Name 8.1, 8.2, 8.3 dtx.ini 
+The configuration file contains a section named [JNI Layer Trace]. 
+
+[JNI Layer Trace]
+;switch=off
+;file= 
+
+These instructions will assist you in changing the configuration file so that a trace file is created. 
+ 1. Find the [JNI Layer Trace] section in the configuration file. 
+ 2. Uncomment (delete the semicolon [ ; ] from the front of the line) the switch option. 
+ 3. Change the switch option from "off" to "on". 
+ 4. Uncomment the file option. 
+ 5. Add a complete path and file name to the file option. 
+
+Note: The user running the map or system must have the correct permissions to write to the directory and file specified in the file option. 
+
+An example of the modified options is listed below. 
+
+[JNI Layer Trace]
+switch=on
+file=c:\temp\jnitrace.txt 
+
+After completing these instructions, your configuration file is ready to create a JNI layer trace. Run the map or system that contains the map using a Java based adapter. The trace file will appear in the file you indicated. 
+
+
+Additional settings for JNI layer trace 
+
+There are three additional options that can be set to make the trace file display more, or verbose, information. These are set in the [JVM Options] section of the configuration file. 
+
+[JVM Options]
+;option1=
+;option2=
+;...
+
+The three options are for verbose class loading, verbose garbage collection, and verbose JNI. Each is described in the table below. 
+
+Option Description -verbose:class Specifies whether to use verbose debug output for class loading. -verbose:gc Specifies whether to use verbose debug output for garbage collection. -verbose:jni Specifies whether to use verbose debug output for native method invocation. 
+These instructions will assist you in changing the configuration file so that a verbose JNI trace file is created. 
+ 1. Find the [JVM Options] section in the configuration file. 
+ 2. Uncomment (delete the semicolon [ ; ] from the front of the line) for option1. 
+ 3. Add one of the options listed in the table above. 
+ 4. Repeat steps 2 and 3 for each option you would like added. Add optionN=, where N is the next number and N <= 128.
+
+
+An example of the modified options is listed below. 
+
+[JVM Options]
+option1=-verbose:jni
+option2=-verbose:gc
+option3=-verbose:class 
+
+Note: Tracing creates very large files and should only be used for debugging purposes. When not in use, each option can be turned off by commenting (adding a semi-colon to the front of) the line in the configuration file. 
+RELATED INFORMATION
+#How to enable Java Native Interface layer trace [http://www.ibm.com/support/docview.wss?rs=0&uid=swg21244512]
+
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Data & Information Management WebSphere Transformation Extender Java Adapter AIX, HP-UX, Linux, Solaris, Windows 8.1, 8.0.1, 8.0 International, US Data & Information Management WebSphere Transformation Extender JMS Adapter AIX, HP-UX, Linux, Solaris, Windows 8.1, 8.0.1, 8.0 International, US Data & Information Management WebSphere Transformation Extender JNDI Adapter AIX, HP-UX, Linux, Solaris, Windows 8.1, 8.0.1, 8.0 International, US Data & Information Management WebSphere Transformation Extender MIME Adapter AIX, HP-UX, Linux, Solaris, Windows 8.1, 8.0.1, 8.0 International, US Data & Information Management WebSphere Transformation Extender SDK AIX, HP-UX, Linux, Solaris, Windows 8.1, 8.0.1, 8.0 International, US 
+PRODUCT ALIAS/SYNONYM
+ Ascential DataStage TX Mercator

@@ -1,0 +1,136 @@
+Title: IBM PM33018: Update the EJBDeploy code - United States
+
+Text:
+  FIXES ARE AVAILABLE
+7.0.0.17: Java SDK 1.6 SR9 FP1 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24029894]
+7.0.0.27: Java SDK 1.6 SR13 FP2 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24035324]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  This APAR will provide an update to the EJBDeploy code.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  All users of IBM WebSphere Application      *
+   *                  Server V7.0                                 *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: EJBDeploy is updated to include         *
+   *                      PM30024 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM30024] and PM29763 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM29763]                     *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   Update the EJBDeploy in WebSphere Application Server V7.0 to
+   included the following fixes:
+   PM30024 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM30024] - Prepare for deployment fails in presence of a Custom
+   Converter
+   PM29763 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM29763] - Prepare for deployment on EJB with blob in RDB
+   mapping fails with RuntimeException: unknown data type
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The EJBDeploy code has been updated.
+   
+   The fix for this APAR is currently targeted for inclusion in
+   fix pack 7.0.0.17.  Please refer to the Recommended Updates
+   page for delivery information:
+   http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM33018
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBS APP SERV N
+   
+   
+ * REPORTED COMPONENT ID
+   5724H8800
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-02-17
+   
+   
+ * CLOSED DATE
+   2011-04-29
+   
+   
+ * LAST MODIFIED DATE
+   2011-04-29
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBS APP SERV N
+   
+   
+ * FIXED COMPONENT ID
+   5724H8800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R700 PSY
+   UP

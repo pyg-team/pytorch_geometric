@@ -1,0 +1,43 @@
+Title: IBM How do I know if a tablespace is enabled for reclaimable storage or not ? - United States
+
+Text:
+reclaimable storage; mon_get_tablespace TECHNOTE (FAQ)
+
+QUESTION
+ How do I know if a tablespace is enabled for reclaimable storage or not ? 
+
+ANSWER
+To know if a tablespace is enabled for reclaimable storage or not, connect to the database and run:
+db2 "select substr(TBSP_NAME,1,20) TBSP_NAME,RECLAIMABLE_SPACE_ENABLED from table(mon_get_tablespace('',-1))" 
+
+A value of 1 indicates that the tablespace is enabled for reclaimable storage and a value of 0 indicates that the tablespace is not enabled for reclaimable storage. 
+
+Eg:
+
+$ db2 connect to sample
+
+Database Connection Information
+
+Database server = DB2/LINUXX8664 10.1.4
+SQL authorization ID = DB2INST1
+Local database alias = SAMPLE
+
+$ db2 "select substr(TBSP_NAME,1,20) TBSP_NAME,RECLAIMABLE_SPACE_ENABLED from table(mon_get_tablespace('',-1))"
+
+TBSP_NAME RECLAIMABLE_SPACE_ENABLED
+-------------------- -------------------------
+SYSCATSPACE 1
+TEMPSPACE1 0
+USERSPACE1 1
+IBMDB2SAMPLEREL 1
+IBMDB2SAMPLEXML 1
+SYSTOOLSPACE 1
+
+6 record(s) selected.
+
+
+
+
+RELATED INFORMATION
+ Reclaimable storage [http://www-01.ibm.com/support/knowledgecenter/SSEPGG_9.7.0/com.ibm.db2.luw.admin.dbobj.doc/doc/c0055392.html?lang=en]
+MON_GET_TABLESPACE table function [http://www-01.ibm.com/support/knowledgecenter/SSEPGG_9.7.0/com.ibm.db2.luw.sql.rtn.doc/doc/r0053943.html?cp=SSEPGG_9.7.0%2F3-6-1-3-9-30&lang=en]

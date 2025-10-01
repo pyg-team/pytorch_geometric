@@ -1,0 +1,229 @@
+Title: IBM IZ53565: CANNOT DELETE A BOOKMARK WHEN THE USERID AND LOGINID VALUES ARE DIFFERENT FOR A USER - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Cannot delete a bookmark when the user has a different
+   MAXUSER.USERID than the MAXUSER.LOGINID.
+   
+   Steps:
+   Go To Security / Users application
+   Enter a new record.
+   Enter TEST55 for User value.
+   Enter MRSMITH for User Name field value (LOGINID)
+   Enter TEST1 for Person value
+   Select Set Password button and enter maximo for password.
+   Uncheck Email password and Expire on first login options.
+   Hit OK
+   Select Group tab, select New Row and select MAXADMIN group.
+   Save
+   Sign Out
+   Login as MRSMITH and go to Wotrack
+   Select a record.
+   Select Action / Add to Bookmarks
+   Select List tab and select bookmark link
+   You will see the bookmark created in previous steps
+   Select the Red X to delete the bookmark
+   nothing happens and bookmark is not deleted
+   This has to do with the userid being different from the loginid
+   If you repeat the steps as wilson, the bookmark can be deleted.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: Maximo 7.1.x users                           *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Cannot delete a bookmark when the user  *
+   *                      has a different                         *
+   *                                                              *
+   *                      MAXUSER.USERID than the                 *
+   *                      MAXUSER.LOGINID.                        *
+   *                                                              *
+   *                      Steps:                                  *
+   *                                                              *
+   *                      Go To Security / Users application      *
+   *                                                              *
+   *                      Enter a new record.                     *
+   *                                                              *
+   *                      Enter TEST55 for User value.            *
+   *                                                              *
+   *                      Enter MRSMITH for User Name field value *
+   *                      (LOGINID)                               *
+   *                                                              *
+   *                      Enter TEST1 for Person value            *
+   *                                                              *
+   *                      Select Set Password button and enter    *
+   *                      maximo for password.                    *
+   *                                                              *
+   *                      Uncheck Email password and Expire on    *
+   *                      first login options.                    *
+   *                                                              *
+   *                      Hit OK                                  *
+   *                                                              *
+   *                      Select Group tab, select New Row and    *
+   *                      select MAXADMIN group.                  *
+   *                                                              *
+   *                      Save                                    *
+   *                                                              *
+   *                      Sign Out                                *
+   *                                                              *
+   *                      Login as MRSMITH and go to Wotrack      *
+   *                                                              *
+   *                      Select a record.                        *
+   *                                                              *
+   *                      Select Action / Add to Bookmarks        *
+   *                                                              *
+   *                      Select List tab and select bookmark     *
+   *                      link                                    *
+   *                                                              *
+   *                      You will see the bookmark created in    *
+   *                      previous steps                          *
+   *                                                              *
+   *                      Select the Red X to delete the bookmark *
+   *                                                              *
+   *                      nothing happens and bookmark is not     *
+   *                      deleted                                 *
+   *                                                              *
+   *                      This has to do with the userid being    *
+   *                      different from the loginid              *
+   *                                                              *
+   *                      If you repeat the steps as wilson, the  *
+   *                      bookmark can be deleted.                *
+   *                                                              *
+   *                      LOCAL FIX:                              *
+   *                                                              *
+   *                      N/A                                     *
+   *                                                              *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   *                                                              *
+   *                                                              *
+   *                                                              *
+   ****************************************************************
+   CANNOT DELETE A BOOKMARK WHEN THE USERID AND LOGINID VALUES ARE
+   DIFFERENT FOR A USER
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The problem is fixed.
+   
+   
+   
+   
+   
+   The fix for this APAR is contained in the following maintenance
+   package:
+   
+     | release\fix pack | REL 7.1.1.6
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ53565
+   
+   
+ * REPORTED COMPONENT NAME
+   MAXIMO ADMIN
+   
+   
+ * REPORTED COMPONENT ID
+   5724R46A1
+   
+   
+ * REPORTED RELEASE
+   711
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-06-18
+   
+   
+ * CLOSED DATE
+   2009-06-19
+   
+   
+ * LAST MODIFIED DATE
+   2009-07-24
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  MAXIMO
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   MAXIMO ADMIN
+   
+   
+ * FIXED COMPONENT ID
+   5724R46A1
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R711 PSY
+   UP

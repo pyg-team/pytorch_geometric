@@ -1,0 +1,163 @@
+Title: IBM PI33397: IMPROVE CORRELATION OF DELIVERY NOTIFICATIONS IN MSIF FILEACT - United States
+
+Text:
+  A FIX IS AVAILABLE
+Download PTFs for WBIFN for Multiplatforms V3.1.1- MSIF [http://www-01.ibm.com/support/docview.wss?uid=swg24030341]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  If the correlation of received delivery notifications in MSIF
+   fails in MSIF due to the fact, that the transfer reference for
+   the related SendFile Transfer is not known, Error events are
+   created currently and the Delivery Notification is put to the
+   backout queue.
+   This causes unnecessary actions for the customer, as
+   - the error events may cause callouts
+   - there is no meaningful actions to handle the backed-out
+   delivery notification rather then just deleting the messages.
+   
+   Therefore, handling of errors when correlating delivery
+   notifications should be changed in a way that
+   - the events are changed to informational
+   - backout of the delivery notifications is omitted
+   - when correlation via transfer reference is not possible,
+   correlation should be tried via the logical filename, if this is
+   included in the delivery notification, and new informational
+   events should be written, if this correlation is successful.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  ignore events DNFO2057E and DNFO1017E, and delete the backed-out
+   delivery notifications from the backout queue
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  If in an MSIF SendFile scenario for Realtime the
+   delivery notification is received from the
+   correspondent, then MSIF tries to correlate the
+   delivery notification with the SendFile scenario using
+   the SWIFT transfer reference. In error situations this
+   correlation can fail, for example if the
+   Sw:ExchangeFileResponse was lost or is received after
+   the delivery notification.
+   Formerly, in such error situations MSIF issued one of
+   the events DNFO2056E or DNFO2057E and put the delivery
+   notification into a backout queue, even if the
+   recovery mechanism of the SendFile transfer
+   automatically resolved the error situation later on.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Now, the correlation has been improved and the
+   delivery notification is not put into the backout
+   queue anymore. In a first step it is tried to
+   correlate the delivery notification using the SWIFT
+   transfer reference as before. If the first correlation
+   fails, then it is tried to correlate the delivery
+   notification using the logical file name. If the
+   second correlation fails too, then one of the modified
+   events DNFO2056I or DNFO2057I is issued. If the second
+   correlation succeeds, then one of the new events
+   DNFO2060I or DNFO2061I is issued that contain
+   additional hints about the SendFile scenario.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI33397
+   
+   
+ * REPORTED COMPONENT NAME
+   MS FOR SW IA AN
+   
+   
+ * REPORTED COMPONENT ID
+   5724D9633
+   
+   
+ * REPORTED RELEASE
+   311
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-01-26
+   
+   
+ * CLOSED DATE
+   2015-03-27
+   
+   
+ * LAST MODIFIED DATE
+   2015-03-27
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    PI33254 [http://www-01.ibm.com/support/docview.wss?uid=swg1PI33254]
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   MS FOR SW IA AN
+   
+   
+ * FIXED COMPONENT ID
+   5724D9633
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R311 PSY
+   UP

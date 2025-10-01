@@ -1,0 +1,179 @@
+Title: IBM IV90578: NEW REQUIREMENT FOR IKEYMAN ADD/RECEIVE COMMAND, FIX A REGRESSION IN PKCS12/JKS KEYSTORE - United States
+
+Text:
+  A FIX IS AVAILABLE
+PI76220: SHIP JDK IX90179 AS AN IFIX FOR WAS 8.0.0 [http://www-01.ibm.com/support/docview.wss?uid=swg24043347]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Error Message: 1. New requirement for iKeyman add/receive
+   command
+      In iKeyman, if "-cert -add" is done by accident before
+   "-cert -receive", a misleading error message "The certificate
+   request created for the certificate is not in the key database"
+   is displayed
+   2. Fix a regression in PKCS12/JKS keystore:
+      1) In some cases, list certificates in PKCS12/JKS keystore,
+   displays an error message - such as:
+          "The key for label 'XXXX' could not be recovered."
+      2) Also, convert JKS/PKCS keystore to any keystore type
+   throws an exception.
+   .
+   Stack Trace: N/A
+   .
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Work around for issue 2:
+     1) For PKCS12 keystore change file extension from .p12 to .pfx
+     2) For JKS keystore:
+        We need to export each certificate (key entry) to a
+   different keystore. The Cert list error should be solved.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  1. New requirement for iKeyman add/receive command:
+      If the user accidentally adds the "-cert -add" signer
+   certificate received from a CA that was requested to sign a
+   certificate request using "-cert -add" command, then user will
+   never be able to receive the certificate "-cert -receive" that
+   replaces Certificate Request key entry to Certificate key entry.
+   In the above case iKeyman rejects the request and throws an
+   error message.
+   
+   2. Fix a regression in PKCS12/JKS keystore:
+       This problem was introduced due to the fix in previous
+   release 8.0.412 where iKeyman reconstructs the keystore list for
+   JKS and PKCS12 as in JDK 7 for PKCS12 keystore. This problem
+   will occur in JKS and PKCS12 keysore.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  1. New requirement for iKeyman add/receive command:
+      Rather than just fixing the error message iKeyman intend to
+   address the usage scenario (-add to do -receive) and make it
+   work as the user assumed it would.
+   2. Fix a regression in PKCS12/JKS keystore:
+      The bug introduced in 8.0.412 is fixed in this release.
+   .
+   This APAR will be fixed in the following Java Releases:
+      7    SR10      (7.0.10.0)
+      6 R1 SR8 FP40  (6.1.8.40)
+      7 R1 SR4       (7.1.4.0)
+      6    SR16 FP40 (6.0.16.40)
+      8    SR3 FP21  (8.0.3.21)
+   .
+   Contact your IBM Product's Service Team for these Service
+   Refreshes and Fix Packs.
+   For those running stand-alone, information about the available
+   Service Refreshes and Fix Packs can be found at:
+              https://www.ibm.com/developerworks/java/jdk/ [https://www.ibm.com/developerworks/java/jdk/]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV90578
+   
+   
+ * REPORTED COMPONENT NAME
+   SECURITY
+   
+   
+ * REPORTED COMPONENT ID
+   620700125
+   
+   
+ * REPORTED RELEASE
+   260
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-11-08
+   
+   
+ * CLOSED DATE
+   2016-11-28
+   
+   
+ * LAST MODIFIED DATE
+   2016-11-28
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   SECURITY
+   
+   
+ * FIXED COMPONENT ID
+   620700125
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R260 PSY
+   UP
+   
+   
+ * R600 PSY
+   UP
+   
+   
+ * R270 PSY
+   UP

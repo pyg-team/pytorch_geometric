@@ -1,0 +1,39 @@
+Title: IBM Upgrade 9.5.x BigFix agents to version 9.5.7 to avoid operational and performance issues due to lines of file inspector (APARs: IV94334 and IV93412) - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ APARs IV94334 and IV93412 represent two code changes that allow the BigFix client to handle unicode conversions more efficiently during evaluation of the lines of file inspector 
+
+SYMPTOM
+APAR IV93412 - Client will take a long time evaluating the lines of files inspector during which the client will not report and will appear to be unreceptive to actions taken for longer than normal periods of time. AIX and Linux endpoint machines are primarily impacted by this inefficiency. 
+
+APAR IV94334 - Client processes may hang while evaluating the lines of file inspector which will cause the client to stop reporting and stop responding to actions. The BESClient service will need to be restarted to get the client to become operational again.
+
+
+CAUSE
+See Full Changelist: https://support.bigfix.com/bes/changes/fullchangelist-95.txt [https://support.bigfix.com/bes/changes/fullchangelist-95.txt]
+
+===========================================
+= Changes between 9.5.6.63 and 9.5.7.90 =
+===========================================
+Issue 138234 - APAR IV93412 - SLOW EVALUATION CYCLE FOR CLIENTS 9.5.X WHEN USING "LINES OF FILE" INSPECTOR
+
+===========================================
+= Changes between 9.5.5.193 and 9.5.6.63 =
+===========================================
+Issue 140291 - APAR IV94334 - 9.5 ENDPOINTS MAY HANG WHEN USING "LINES OF FILE" INSPECTOR TO SCAN A FILE THAT IS CONTINUOUSLY UPDATED 
+
+
+
+ENVIRONMENT
+These issues impact all agent OS types. However since much of the external content BigFix provides containing the calls to the lines of file inspector are for AIX and Linux systems, these symptoms have been primarily observed in the field on AIX and Linux OS endpoints.
+
+
+
+RESOLVING THE PROBLEM
+Upgrade the BigFix deployment to at least version 9.5.7. See the following documentation for upgrade procedures and best practices: 
+
+ * Upgrading BigFix [https://www.ibm.com/developerworks/community/wikis/home?lang=en#!/wiki/Tivoli%20Endpoint%20Manager/page/Upgrading] 
+ * Upgrading Best Practices [https://www.ibm.com/developerworks/community/wikis/home?lang=en#!/wiki/Tivoli%20Endpoint%20Manager/page/Upgrading%20Best%20Practices]

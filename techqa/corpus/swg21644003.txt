@@ -1,0 +1,10 @@
+Title: IBM Is there a way within Connect:Enterprise to limit the number of sessions a remote client can login with? - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Is there a way within Connect:Enterprise to limit the number of sessions a remote client can login with? 
+
+ANSWER
+Connect:Enterprise does not have a way to limit the number of times a client can login or try to connect causing the use of a session. If it is a persistent problem with one of the clients, you can block their IP address at the firewall.

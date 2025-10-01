@@ -1,0 +1,46 @@
+Title: IBM Getting License Key Assistance for IBM i Software - United States
+
+Text:
+LIC; LICENSE; LICKEY; LICMGMT TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This document describes where to obtain help for different IBM i software license key needs. 
+
+RESOLVING THE PROBLEM
+This document describes where to obtain help for different IBM i software license key needs. 
+
+Where to Obtain Assistance Type of Assistance How to Contact 
+(US Customers) How to Contact 
+(International Customers) IBM Business Partner o Determine which license keys are needed.
+o Check license key prices.
+o Purchase/order license keys.
+o Transfer license keys. o Call the phone number your Business Partner provided to you.
+o Locate a Business Partner in your area:
+https://www-304.ibm.com/partnerworld/wps/bplocator/search.jsp [https://www-304.ibm.com/partnerworld/wps/bplocator/search.jsp] o Call the phone number your Business Partner provided to you.
+o Locate a Business Partner in your area:
+https://www-304.ibm.com/partnerworld/wps/bplocator/search.jsp [https://www-304.ibm.com/partnerworld/wps/bplocator/search.jsp] IBM Marketing Representative o Determine which license keys are needed.
+o Check license key prices.
+o Purchase/order license keys. o Call 1-800-426-2255. o Call the number indicated for General Inquiries for your country on the IBM Planetwide Web site:
+http://www.ibm.com/planetwide/ [http://www.ibm.com/planetwide/] IBM License Key Center o Look up existing license keys for a system.
+o Download license keys.
+o Grant temporary license keys.
+o Look up license key order history.
+o Address license key Web site problems.
+o Transfer license keys. o Call 1-800-446-8989. o Browse to https://www-05.ibm.com/servers/eserver/ess/OpenServlet.wss [https://www-05.ibm.com/servers/eserver/ess/OpenServlet.wss], sign in with IBM Web ID, then select "Contacts" from the panel on the right. Use the phone number or email address for the appropriate country. 
+(Assistance is available in several major languages; for an unsupported language, call your Business Partner to have them work with the IBM License Key Center on your behalf). Entitled Software Support (ESS) Web Site o Retrieve existing license keys for a system.
+o Download license keys.
+o Transfer license keys. http://www-304.ibm.com/servers/eserver/ess/index.wss [http://www-304.ibm.com/servers/eserver/ess/index.wss]
+(Sign in with IBM Web ID.) http://www-304.ibm.com/servers/eserver/ess/index.wss [http://www-304.ibm.com/servers/eserver/ess/index.wss]
+(Sign in with IBM Web ID.) IBM i Global Support Center o Install/add/change software license keys.
+o Resolve license key errors. o Call 1-800-426-7378.
+o Open an electronic service request:
+http://www.ibm.com/support/servicerequest [http://www.ibm.com/support/servicerequest] o Call the number indicated for Software Support for your country on the IBM Planetwide Web site:
+http://www.ibm.com/planetwide/ [http://www.ibm.com/planetwide/]
+o Open an electronic service request:
+http://www.ibm.com/support/servicerequest [http://www.ibm.com/support/servicerequest] 
+Notes: 1. License Keys for Third-Party Software: In general, assistance with planning, ordering, and retrieving these keys should be pursued directly with the third party or an IBM Business Partner. 2. Showcase product license keys: Generating license keys for Showcase products is not handled by the IBM Global Support Center or the License Key Center. Showcase uses its own license key generator. PMRs that come in requesting license keys for Showcase products should be routed to the Showcase Client Care team at BACSR,19F. The Client Care team does not operate 24 hours a day. If the customer has Showcase v8 or above, they will need to provide their authorization code to Client Care. If the version is 7 or below, they will need to provide the model number, serial number, and user count. 3. Temporary License Keys: A temporary set of license keys may be issued in emergency circumstances. This service is limited to one time per serial number per year. If a second set of temporary license keys is needed, the customer will need to send an e-mail to RCHALPR@us.ibm.com stating the reason why a second temporary key should be granted as well as the customer's contact information, contract number (if known), company name, customer number, system serial number, processor group, product(s), and operating system release. It is possible that the temporary license key request may not be approved.  
+
+
+Cross reference information Segment Product Component Platform Version Edition Operating System IBM i 7.1 Operating System IBM i 6.1 Operating System IBM i 7.3 Operating System IBM i 7.2 
+HISTORICAL NUMBER
+ 609210056

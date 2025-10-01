@@ -1,0 +1,68 @@
+Title: IBM Document extraction map is not correctly splitting documents for JD Edwards data (SCI62982) - United States
+
+Text:
+Mapping; Translation; STERLINGPRI TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Document extraction map is not correctly splitting documents for JD Edwards data (SCI62982) 
+
+SYMPTOM
+Map for the Document Extraction Service is not properly splitting the input file. 
+Document extraction only splits the first document. then appends subsequent splits onto first split.
+
+
+CAUSE
+The extended rule did not properly account for the quotes around the data fields for JD Edwards data
+
+RESOLVING THE PROBLEM
+
+
+Modified the extended rule to account for the quoted data. To validate when to split the documents, the extended rule looks at the left-most two characters which equate to "1. It then looks at the right-most character within that selection which is 1.
+
+
+
+string[1024] buffer;
+string[1] match;
+integer match_len;
+
+// set these next two variables as desired
+match = "1"; // header tag
+match_len = 1; // the length of the tag
+
+// read the block we're on and write it
+readblock(buffer);
+writeblock(buffer);
+
+// keep reading and writing records until the end of the document
+while readblock(buffer) do
+begin
+if right(left(buffer, 2),match_len) = match | buffer = "" then
+begin
+unreadblock();
+break;
+end
+writeblock(buffer);
+end
+
+ 
+
+HISTORICAL NUMBER
+ PRI32578 
+
+PRODUCT ALIAS/SYNONYM
+ 
+
+Fact
+
+
+Gentran Integration Suite
+All Releases 
+Sterling Integrator
+All Releases 
+
+Document Extraction Service 
+Map Editor 
+JD Edwards data 
+
+Individual data fields are quoted 
+SCI62982

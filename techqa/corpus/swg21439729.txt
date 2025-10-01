@@ -1,0 +1,27 @@
+Title: IBM DBA reporting locks on LSW_BPD_INSTANCE and my system is slow - what does this mean - United States
+
+Text:
+Lombardi; Teamworks; DBA LSW_BPD_INSTANCE TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Are the locks my DBA is reporting a problem? 
+
+RESOLVING THE PROBLEM
+My DBA is reporting locks on LSW_BPD_INSTANCE and my system is slow. What' the problem? 
+
+
+Let's start by discussing the BPD Engine. The BPD engine is a highly parallel engine that can work on multiple instances at the same time. When working on a particular instance the engine works on one token at a time per instance. Let's say you have 2 instances of a BPD (instance A and instance B). The BPD engine can work on A and B at the same time but within one instance it can only work on one token of that instance at a time. If instance A has 3 tokens that can advance and instance B has 2, it will work on one token from A and one token from B at the same time, but will not work on two tokens within the same instance at the same time. 
+
+
+While doing this work, the BPD Engine has to make sure that no other threads or BPD Engines (running on other process server nodes) will be working on the same instance at the same time. To do that, the BPD Engine puts an update lock on the row in the LSW_BPD_INSTANCE table that corresponds to the bpd instance it is working on. This lock is highly granular and is fully indexed. It is very much by design and Lombardi has done extensive throughput testing and found that it absolutely is not a barrier to scaling. In fact the BPD Engine scales very linearly as you add more nodes to a process server cluster.
+
+
+Most customers have a performance problem and call their DBA for assistance. The first thing the DBA notices is the locks on the LSW_BPD_INSTANCE table. The thought is that the locks are causing the performance problem. This couldn't be further from the truth. The length of the lock is because it is taking a long time for the BPD Engine to advance tokens. So the lock is not causing the performance problem, it is a symptom of it. Focusing your efforts on the locks will prevent you from solving the problem. 
+
+ 
+
+HISTORICAL NUMBER
+ 354 
+
+PRODUCT ALIAS/SYNONYM
+ Teamworks TW Lombardi

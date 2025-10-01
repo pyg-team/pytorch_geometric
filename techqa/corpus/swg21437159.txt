@@ -1,0 +1,24 @@
+Title: IBM Cannot Access Web Interface After Upgrading Mail Security Product to Firmware 2.5, I - United States
+
+Text:
+iss5679; 5679; LPMS; Proventia; PNMS TECHNOTE (FAQ)
+
+QUESTION
+Why are you unable to access the web interface after upgrading your mail security product to firmware 2.5?
+
+Related Articles: 
+http://www-01.ibm.com/support/docview.wss?uid=swg21436450 [http://www-01.ibm.com/support/docview.wss?uid=swg21436450] - Tips and Known Issues for Proventia Network Mail Security System and Lotus Protector for Mail Security
+
+ANSWER
+After upgrading to firmware 2.5, the LMI stops loading at "Waiting for the Java detector to start" and access to the administration web interface is prohibited. The problem occurs since Java 1.5 is running on your workstation. The web interface of firmware 2.5 is no longer compatible with Java 1.5. 
+
+To resolve this issue, update your Java Runtime to the current version 1.6.
+
+
+
+HISTORICAL NUMBER
+ 5679 
+
+PRODUCT ALIAS/SYNONYM
+ Proventia Network Mail Security
+Lotus Protector for Mail Security

@@ -1,0 +1,76 @@
+Title: IBM Informix Dynamic Server (IDS) version 11.10 Upgrade Quick Reference - United States
+
+Text:
+Cheetah; 11.10; conversion; converting; upgrade; upgrading; 10; 7; 9; install; installation; migrate; migration; migrating; installing; upgrading; ids; online TECHNOTE (FAQ)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ English 
+
+QUESTION
+ What is the process for upgrading to IBM Informix Dynamic Server (IDS) version 11.10? 
+
+ANSWER
+
+INTRODUCTION
+
+To upgrade to IBM IDS version 11.10, keep in mind the steps in this section. Please refer to the IBM Informix Migration Guide [http://publib.boulder.ibm.com/infocenter/idshelp/v111/topic/com.ibm.mig.doc/mig.htm] for detailed instructions.
+
+Recommendation: Install a new version of the database server in a new directory and then perform data migration and verification. If you do not have space on your machine to accommodate the new Informix Dynamic Server (IDS) installation, back up your old directory and then remove it.
+
+
+PREREQUISITES 
+
+
+ * Read the release notes and the machine notes for any late-breaking information. 
+ * See “Diagnostic Information That You Need Before Upgrading” and “Migration Guidelines” of the IBM Informix Migration Guide. [http://publib.boulder.ibm.com/infocenter/idshelp/v111/topic/com.ibm.mig.doc/mig.htm] 
+ * If you are upgrading from IDS Version 9.2x and you have Smart large objects (BLOB data types) columns defined with a default value of an empty string, then you must redefine the columns to have NULL as the default value. 
+ * If you are upgrading from IDS Version 7.3, you must drop all stored procedures. After migrating to the current database server, you must recreate all stored procedures.
+
+
+
+STEPS 
+
+1. If necessary, perform Enterprise Replication pre-conversion tasks. For more information see Chapter 4, “Migrating to Dynamic Server 11.10 with Enterprise Replication,” of the IBM Informix Migration Guide. [http://publib.boulder.ibm.com/infocenter/idshelp/v111/topic/com.ibm.mig.doc/mig.htm] 
+2. Check and configure available space. 
+3. Save copies of the current configuration files. 
+4. Close all transactions and shut down the source database server 
+5. Check for any open transactions 
+6. Verify the integrity of the data (onchecks) 
+7. Verify the database server mode is quiescent (onstat -) 
+8. If necessary, disable High-Availability Data Replication (onmode -d standard) 
+9. Make a final level 0 backup of the source database server (ON–Bar or ontape) 
+10. Verify that the source database server is offline (onstat -) 
+11. On UNIX or Linux, modify kernel parameters 
+12. Install IDS version 11.10, according to instructions in your IBM Informix Installation Guide [http://publib.boulder.ibm.com/infocenter/idshelp/v111/topic/com.ibm.instids.doc/instids.htm] . Do not install the new database server over the old database server. 
+ * 
+
+
+13. Monitor the message log during the conversion for any error messages. 
+14. Set Environment Variables 
+
+Note: Before you start the IDS version 11.10 database server, you must set the environment variable DBONPLOAD to the name of the pload database if the name is not onpload, the default name. 
+
+15. Adjust configuration files as necessary. Disable the IFX_EXTEND_ROLE configuration parameter by setting it to 0 (off). 
+16. If the ALARMPROGRAM configuration parameter is set to the script alarmprogram.sh, you must set the value of BACKUPLOGS in alarmprogram.sh to N. 
+17. Add any Communications Support Modules. 
+18. Install any new DataBlade modules. 
+19. Initialize IDS to trigger the conversion. 
+20. Monitor for the conversion complete status. 
+
+Caution: Do not connect to the database server until conversion has successfully completed. 
+
+21. Upgrade the High-Performance Loader onpload database for the current version of Dynamic Server if necessary, for example if onpload failed during server conversion. 
+22. For ON–Bar, rename and/or edit the sm_versions.std file accordingly. 
+23. Run UPDATE STATISTICS. 
+24. Verify the integrity of the data. 
+25. Make an initial level 0 backup of IDS version 11.10. 
+26. Tune IDS version 11.10 for performance. 
+27. If necessary, perform Enterprise Replication conversion tasks. For more information, see “Converting to Dynamic Server 11.10 with Enterprise Replication” on page 4-1. 
+28. If necessary, reestablish HDR with the primary backup. 
+29. Register any DataBlade modules that you installed. 
+
+Repeat this procedure for each instance of IDS version 11.10 that you plan to run on the computer. 
+
+Warning: If a serious error occurs during the conversion, it might be necessary to return to the previous version, restore from a backup, and then correct the problem prior to restarting the conversion tasks. 
+
+Do not connect to the database server until conversion has successfully completed. After successful conversion to IDS version 11.10 you should modify configuration files and environment variables to take advantage of IDS version 11.10 features. For more information, see the IBM Informix Dynamic Server Getting Started Guide [http://publib.boulder.ibm.com/infocenter/idshelp/v111/topic/com.ibm.gsg.doc/gsg.htm]and your IBM Informix Dynamic Server Administrator's Guide [http://publib.boulder.ibm.com/infocenter/idshelp/v111/topic/com.ibm.admin.doc/admin.htm] .

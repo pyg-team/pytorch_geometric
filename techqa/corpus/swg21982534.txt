@@ -1,0 +1,23 @@
+Title: IBM When attempting to access a IBM Enterprise Records desktop, this error appears "java.lang.NumberFormatException: For input string: "" " - United States
+
+Text:
+27046119 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When using the IBM Enterprise Records plugin with IBM Content Navigator ,users are unable to access IBM Enterprise Records desktops.This error appears in the Websphere system out log.
+
+000000b2 SystemOut O CIWEB Error: [unknown(unknown) @] [REQUEST 94] com.ibm.ecm.mediator.DesktopMediator.writeJSONResponse()
+
+java.lang.NumberFormatException: For input string: ""
+
+at java.lang.NumberFormatException.forInputString(NumberFormatException.java:59)
+
+at java.lang.Integer.parseInt(Integer.java:481) 
+
+RESOLVING THE PROBLEM
+1. In the IBM Content Navigator web application > Admin desktop, go to the IBM Enterprise Records desktop application. 
+
+2. On the General tab, scroll down and expand Office Configuration.
+3. In the "Add options in the Edit group" field, make sure that a value is selected (for example, Show all Add options (default) ).
+4. Save and Close the IBM Enterprise Records desktop definition.
+5. Refresh any open IBM Enterprise Records desktops in your browser.

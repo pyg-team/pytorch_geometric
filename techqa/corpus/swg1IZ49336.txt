@@ -1,0 +1,255 @@
+Title: IBM IZ49336: TEMS LDAP CONFIG CREATES BAD KSHXHUBS.XML - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  *************************** APAR Template
+   *****************************
+   
+   Please open an apar with the following severity and information:
+   Severity:    3
+   Approver:   TR
+   Enter the L2 engineer who did the recreate or "None":
+   L2 engineer:SJ (but recreate below by L3)
+   Compid:     5608A41CI Distributed Installer
+   Abstract:   TEMS LDAP CONFIG CREATES BAD KSHXHUBS.XML
+   
+   Environment:
+      6.2 FP02
+   AIX
+   
+   
+   Problem Description:
+    "tacmd login -s <TEMS host> -u <ITM 6 ID>" fails with following
+   message
+   KUIC00006E: The specified user name or password is incorrect.
+   You are not logged in because you specified an incorrect user
+   name or
+   password or you do not have permission to log in.
+   Verify the correct user name and password and that you have
+   permission
+   to log in.
+   .
+   When LDAP is used for authentication.
+   Unable to log on using tacmd login while logging on through TEP
+   succeeds
+   for same account with same password
+   Logging on through tacmd login without LDAP is successful. After
+   enabling LDAP tacmd login fails, but TEP login succeeds
+   
+   Detailed Recreation Procedure:
+   1. Install ITM 6.2.0 TEMS
+   
+   2. Configure simple TEMS without security validation enabled.
+   
+   3. Invoke "itmcmd manage"
+      a. Select the TEMS
+      b. Select Actions->Configure
+      c. Select "Advanced Settings" tab
+      d. Select "Security: Validate User"
+      e. Click "Save"
+      f. Add a user to the SOAP Server Hubs Configuration
+      g. Click "OK"
+      h. Actions->Exit
+   
+   4. From a terminal window, look for kshxhubs.xml:
+      a. cd /opt/IBM/ITM (CANDLEHOME)
+      b. find . -name kshxhubs.xml -print -exec cat {} \;
+      *: There should be only one file in the correct location:
+         ./tables/TEMS/HTML/kshxhubs.xml
+   
+   5. Invoke "itmcmd manage" again.
+   
+      a. Select the TEMS
+      b. Select Actions->Configure
+      c. Select "Advanced Settings" tab
+      d. Select "Security: Validate User" *AND* "LDAP user
+   authentication"
+      e. Click "Save"
+      f. Supply LDAP settings and click "OK".
+      *: Note that the resulting window does not have the user
+   added in
+         step 3f
+      g. Add a different user to the SOAP Server Hubs Configuration
+      h. Click "OK"
+      i. Actions->Exit
+   
+   6. From a terminal window, look for kshxhubs.xml again:
+      a. cd /opt/IBM/ITM (CANDLEHOME)
+      b. find . -name kshxhubs.xml -print -exec cat {} \;
+      *: There will be two files:
+         ./tables/<temsname>/HTML/kshxhubs.xml
+         ---> with content from step 3f
+         ./tmaitm6/<architecture>/ms/bin/HTML/kshxhubs.xml
+         ---> with content from step 5g
+   
+   Be aware that this is limited to the GUI path (itmcmd manager).
+   The
+   console path (itmcmd config) does not produce the above
+   behavior. To
+   work around the problem, delete the file from the tmaitm6 path
+   and use
+   "itmcmd config -S -t <temsname>" to configure LDAP and SOAP
+   security.
+   As an alternative, one could replace the file in the tamitm6
+   path
+   with a link to the one in the tables path.
+   
+   
+   
+   Related Files and Output:
+      tems logs in /ecurep/2/2/22016,211,788
+   Previous internal defect looked at the creation of both files
+   APAR
+   IY97997 and stops two file being created until LDAP
+   authentication. is
+   used.
+   
+   
+   ************************ End of APAR Template
+   *************************
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Be aware that this is limited to the GUI path (itmcmd manager).
+   The
+   console path (itmcmd config) does not produce the above
+   behavior. To
+   work around the problem, delete the file from the tmaitm6 path
+   and use
+   "itmcmd config -S -t <temsname>" to configure LDAP and SOAP
+   security.
+   As an alternative, one could replace the file in the tamitm6
+   path
+   with a link to the one in the tables path.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  After using 'itmcmd manage' to configure the monitoring server,
+   attempts to connect to the monitoring server with tacmd or SOAP
+   fail because of user permissions. This only happens when the
+   configuration specifies LDAP for the security mechanism, and
+   then only when using 'itmcmd manage'. The underlying cause is
+   that this path through the code creates the kshxhubs.xml file in
+   the wrong directory. The broken code places the file in
+   $CANDLEHOME/<libarch>/<product>/bin/HTML. It should create the
+   file in $CANDLEHOME/tables/<TEMS_name>/HTML.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The code was changed to create the file in the correct
+   directory.
+   
+   
+   The fix for this APAR is contained in the following maintenance
+   packages:
+   
+      | interim fix | 6.2.0.3-TIV-ITM-IF0001
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  Use 'itmcmd config' to configure the monitoring server with LDAP
+   security. This path does not suffer from the same problem as
+   'itmcmd manage'.
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ49336
+   
+   
+ * REPORTED COMPONENT NAME
+   OMEG DIST INSTA
+   
+   
+ * REPORTED COMPONENT ID
+   5608A41CI
+   
+   
+ * REPORTED RELEASE
+   620
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-04-15
+   
+   
+ * CLOSED DATE
+   2009-06-29
+   
+   
+ * LAST MODIFIED DATE
+   2009-07-21
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   OMEG DIST INSTA
+   
+   
+ * FIXED COMPONENT ID
+   5608A41CI
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R620 PSY
+   UP

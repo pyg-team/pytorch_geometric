@@ -1,0 +1,117 @@
+Title: IBM Collect troubleshooting data for Process Center connection problems with the IBM Business Process Manager (BPM) products - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ You are having a problem connecting Process Designer, Process Server, or IBM Integration Designer to Process Center for the IBM Business Process Manager products. You would like to know what documentation you must collect (MustGather) so that the IBM Business Process Manager Support team can diagnose your problem. If you gather this documentation before contacting support it will expedite the troubleshooting process, and save you time. 
+
+RESOLVING THE PROBLEM
+
+
+OVERVIEW OF PROCESS CENTER COMMUNICATIONS DIAGNOSTIC INFORMATION
+Gather the following information and files: 
+
+General diagnostic information 
+
+ * Problem description 
+ * Environment description 
+ * Server log files - All of the files from the following directories:  * <profile_root>/logs 
+    * profile /config directory from Process Center
+   
+   
+
+
+As needed diagnostic information  * Process Designer MustGather information [http://www.ibm.com/support/docview.wss?uid=swg21611598] 
+ * Process Server configuration and log files 
+ * The webserver access.log file 
+ * LSW_SERVER table
+
+
+SETTING THE TRACE STRING
+Set the applicable trace string in the following table and then reproduce the problem. For instructions, see "Enabling trace on a running server" [http://pic.dhe.ibm.com/infocenter/wasinfo/v8r5/topic/com.ibm.websphere.nd.multiplatform.doc/ae/ttrb_entrrs.html]. 
+
+
+
+Description Trace string General trace string
+
+Note: Add additional trace to this trace string depending on the symptoms *=info:WLE.*=all:
+WAS.clientinfopluslogging=all SSL related problems Process Center or Process Server side: 
+SSL=all 
+
+Process Designer side (See the Process Designer Mustgather information [http://www.ibm.com/support/docview.wss?uid=swg21611598]): 
+-Djavax.net.debug=true User authorization issues com.ibm.ws.security.*=all BPM endpoint lookup issues (8.5 and above) com.ibm.bpm.endpoint.*=all HTTP connection issues involving the web container com.ibm.ws.webcontainer*=all:
+HTTPChannel=all HTTP connection issues involving the apache http client org.apache.commons.httpclient.*=all Note: Enabling trace might slow down your system. Thus, enable it only for the necessary timeframe. This delay can lead to transaction time-outs and errors. 
+
+GATHER THE DIAGNOSTIC INFORMATION
+Collect the following diagnostic information:
+
+
+
+ * Problem and environment description
+   Provide a detailed description of the problem that you are having. Try to be detailed about the steps that lead up to the issue and include screen shots whenever possible. Include any error messages that you think are related. For example, include the answers to the following questions.  * Is this a new environment? 
+    * Was there any changes prior to the issue occurring? 
+    * Is the issue intermittent or re-creatable? If intermittent, how often does it occur? 
+    * How does the issue impact your business? 
+    * Are there any deadlines that are affected by this issue that we should be aware of? 
+    * Is the related Process Center or Process Server clustered? 
+    * Is the connection made through a web server or another proxy server? 
+      
+      
+   
+   
+ * Configuration files
+   Provide the configuration files from the involved profiles:  * Process Center deployment manager
+      Process_Center_Deloyment_Manager_profile_root/config 
+    * If involved, Process Server deployment manager
+      Process_Server_Deloyment_Manager_profile_root/config 
+    * If the issue is specific to the servers for a particular node, then provide the /config directory for that profile.
+      
+      
+   
+   
+ * Process Center and Process Server log files
+   The log files need to be gathered from the Process Center and the client that is connecting to it  1. Set the needed trace string on the Process Center application cluster member. 
+    2. Enable tracing on the application cluster member for the target Process Server if it is involved. 
+    3. Recreate the issue. 
+    4. Turn off each of the enabled trace strings. 
+    5. Compress the profile_root/logs directory from each involved server. The directory contains the log, trace, and ffdc files.
+       Note: If you have logs/trace going to custom locations then provide those locations in addition. 
+       
+       
+   
+   
+ * Process Designer log and config data
+   When you are dealing with a connection issue between Process Center and IBM Process Designer, gather the logs, trace and configuration data for IBM Process Designer. To gather this data, complete steps 2 to 4 in the Process Designer tracing section of the Collect troubleshooting data for IBM Process Designer problems [http://www.ibm.com/support/docview.wss?uid=swg21611598] document. Ensure that this data is gathered at the same time as the Process Center log data. 
+   
+   
+ * Database table exports
+   If the issue involves connections to a Process Server, then provide the Select * output in the CSV format of the tables:  * LSW_SERVER in the Process Center database 
+    * LSW_SYSTEM in the Process Server database
+      
+      
+   
+   
+ * Web server log files
+   If a web server is involved, review the log information for it to rule out issue there. Provide the access.log file, which shows all of the URL requests and the back-end HTTP return codes. For IBM HTTP server issues, you can also refer to the MustGather: Read first for IBM HTTP Server [http://www.ibm.com/support/docview.wss?uid=swg21192683] for more complex issues. 
+
+
+WHAT TO DO NEXT
+
+
+
+ 1. Review the log files and traces at the time of the problem to try to determine the source of the problem.
+    
+    
+ 2. Use IBM Support Assistant [http://www.ibm.com/software/support/isa/] to search for known problems in the product documents, forums, and support content.
+    
+    
+ 3. If you cannot find related problems or cannot solve the problem, send the information you have collected to IBM by following the instructions in Exchanging Information with IBM Technical Support.
+    
+    
+
+ 
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Business Process Manager Standard Process Center AIX, Linux, Linux zSeries, Solaris, Windows 8.5, 8.0.1, 8.0, 7.5.1, 7.5 Business Integration IBM Business Process Manager Express Process Center Linux, Linux zSeries, Windows 8.5, 8.0.1, 8.0, 7.5.1, 7.5 
+PRODUCT ALIAS/SYNONYM
+ BPM

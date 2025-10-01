@@ -1,0 +1,37 @@
+Title: IBM Error: The log file for database 'GIS_Database' is full. €š   Back up the transaction log for the database to free up some log space. (SCI58719) - United States
+
+Text:
+STERLINGPRI TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Error: The log file for database 'GIS_Database' is full. €š Back up the transaction log for the database to free up some log space. (SCI58719) 
+
+SYMPTOM
+Business processes are not running 
+Inbound AS2 communications stopped working 
+
+
+Jboss.log file contains database errors:
+
+
+Error: The log file for database 'GIS_Database' is full.? Back up the transaction log for the database to free up some log space.
+
+
+RESOLVING THE PROBLEM
+Please contact your database administrator to address the issue with the transaction logs.? GIS should be stopped until the database issue is resolved.
+
+ 
+
+HISTORICAL NUMBER
+ PRI5158 
+
+PRODUCT ALIAS/SYNONYM
+ 
+
+Fact
+
+
+Gentran Integration Suite, Release 3.0 
+Microsoft SQL Server 
+
+SCI58719

@@ -1,0 +1,43 @@
+Title: IBM 'Failed to load listener' exception thrown during initialization of Portlet Factory application created with an earlier version of Portlet Factory - United States
+
+Text:
+factory.jar; WebApp E SRVE0026E: [Servlet Error]-[Failed to load listener: com.bowstreet.servlet.ObjectLifeCycleHandler]: java.lang.ClassNotFoundException: com.bowstreet.servlet.ObjectLifeCycleHandler at java.net.URLClassLoader.findClass(URLClassLoader.java(Compiled Code)) TECHNOTE (TROUBLESHOOTING)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ English 
+
+PROBLEM
+The following exception is thrown during initialization of a Portlet Factory application which was created with an earlier version of Portlet Factory i.e. 6.0.1 and then deployed with a later version of Portlet Factory i.e. 6.1.5.
+
+WebApp E SRVE0026E: [Servlet Error]-[Failed to load listener: com.bowstreet.servlet.ObjectLifeCycleHandler]: 
+java.lang.ClassNotFoundException:com.bowstreet.servlet.ObjectLifeCycleHandler 
+at java.net.URLClassLoader.findClass(URLClassLoader.java(Compiled Code)) 
+
+Earlier versions of Portlet Factory's "factory.jar" file do not load the listener while later versions do. 
+
+After reviewing the web.xml in the WAR it is evident where the listener is being registered: 
+<listener> 
+<listener-class>com.bowstreet.servlet.ObjectLifeCycleHandler</listener-class> </listener> 
+
+However, this class is not in any of the JARs in the provided WAR. 
+
+
+SYMPTOM
+In SystemOut.log during Portal Server startup the follwing error is thrown during initialization of a Portlet Factory application:
+
+ 
+WebApp E SRVE0026E: [Servlet Error]-[Failed to load listener: 
+com.bowstreet.servlet.ObjectLifeCycleHandler]: 
+java.lang.ClassNotFoundException:com.bowstreet.servlet.ObjectLifeCycleHandler 
+at java.net.URLClassLoader.findClass(URLClassLoader.java(Compiled Code)) 
+
+Portal Server does eventually start and the user does not see any consequence of this error when navigating the Portal Server so it is merely the exception that is thrown in SystemOut.log that is the issue.
+
+
+RESOLVING THE PROBLEM
+This mismatch and resulting exception can occur if you have ported their old project to a newer WPF version, and overwrote the old web.xml file.
+
+If you are still working with the war file in the Portlet Factory designer, then you will need to import the project, and perform an "upgrade," however, if you are not working with the war file in the designer then they can simply remove the offending entry from the web.xml file in your project. 
+
+<listener> 
+<listener-class>com.bowstreet.servlet.ObjectLifeCycleHandler</listener-class> </listener>

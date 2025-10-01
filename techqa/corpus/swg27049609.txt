@@ -1,0 +1,45 @@
+Title: IBM Open Mic Webcast: Interpreting relevance conditions in commonly used ILMT/BFI fixlets - Tuesday, 25 April 2017 (Includes link to replay. Presentation is attached.) - United States
+
+Text:
+Endpoint-open-mic; ilmt-open-mic bigfix-inventory; BFI; STEwebcastDocument; ISS_OPEN_MIC WEBCAST
+
+ABSTRACT
+ Members of the IBM License Metric Tool (ILMT) Support team shared information on relevance conditions in fixlets in ILMT and IBM BigFix Inventory (BFI). Attendees asked questions of the presenter and panelists. 
+
+CONTENT
+For this third ILMT-BFI Open Mic session of 2017, Michal Zalas told how to interpret why a particular ILMTor BFI related fixlet is not relevant for actioning in the BigFix console. He also elaborated on the most common fixlets used in ILMT and explained their relevance points. We then opened the call to take questions from the audience. Throughout the event, attendees asked questions in the Q and A panel of the online meeting.
+
+
+ * Topic: The meaning of relevance conditions in commonly used ILMT and BFI fixlets 
+ * Date: Tuesday, 25 April 2017 
+ * Time: 11:00 AM EDT (15:00 UTC/GMT, UTC-4 hours)
+
+
+How to ask questions To ask a question in advance, please use the " Community questions and discussion" option near the bottom of this page. 
+By participating in this call, you give your irrevocable consent to IBM to record any statements that you may make during the call, as well as to IBM's use of such recording in any and all media, including for video postings on YouTube. If you object, please do not connect to this call. 
+
+
+Presentation ILMT-BFI-OpenMic-Fixlet-Relevance.pdf [/support/docview.wss?uid=swg27049609&aid=2]ILMT-BFI-OpenMic-Fixlet-Relevance.pdf [/support/docview.wss?uid=swg27049609&aid=1] 
+
+
+Audio Replay A recording of the session is on the IBM Security Support YouTube channel [https://www.youtube.com/IBMSecuritySupport] at 
+https://youtu.be/ti7KTAYgteM [https://youtu.be/ti7KTAYgteM] 
+
+
+About Open Mic Webcasts Our goal is to provide insight on how ILMT and BigFix Inventory work, and to teach on-going sessions that help users and administrators understand, maintain, troubleshoot, and resolve issues with their software license monitoring. 
+IBM Security Support wants to help you take full advantage of your products. Join us for our Open Mic Webcast series as technical experts share their knowledge and answer your questions. These webcasts are designed to address specific topics and provide an in-depth and focused technical exchange in a convenient online webcast format. 
+Visit the Support technical exchanges for IBM Security [https://support.podc.sl.edst.ibm.com/support/home/exchanges-listing/K527788Q35237V48/IBM_Security_support_(general)/product] page to see lists of all scheduled and past Open Mic events.
+[https://www-947.ibm.com/support/entry/myportal/scheduled_tech_exchanges/security_systems/security_systems_support_%28general%29?productContext=-1089885148]
+To be on the mailing list that gets notified about Security Support's Open Mic webcasts, send an e-mail to isssprt@us.ibm.com [isssprt@us.ibm.com?subject=ste%20subscribe%20Endpoint%20And%20Mobility%20Management] with the subject line: 
+ste subscribe Endpoint And Mobility Management
+
+
+We welcome you to follow us on Twitter [http://bit.ly/1jZ80d3]@AskIBMSecurity [http://bit.ly/1jZ80d3].
+We welcome you to like us on Facebook [https://www.facebook.com/IBMSecuritySupport].
+
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Security IBM BigFix Inventory

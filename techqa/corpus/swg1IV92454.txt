@@ -1,0 +1,164 @@
+Title: IBM IV92454: CREATING A PRIVATE KEY - DOCUMENT TO BE UPDATE WITH CORRECT STEPS - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Bigfix Inventory 9.2.6.  I am trying to add a certificate and
+   private
+   keyfile, and I keep getting a message that the certificate does
+   not
+   match the key file.  I have an external certificate.  I am
+   trying to
+   use the same certificate files I used for Bigfix Web Reports.
+   
+   As per customer, the steps outlined in the document link below
+   are not correct
+   Even though the document says BFI 9.5 version....it should work
+   for BFI
+   9.2.6 version.
+   
+   https://www.ibm.com/support/knowledgecenter/SSKLLW_9.5.0/com.ibm [https://www.ibm.com/support/knowledgecenter/SSKLLW_9.5.0/com.ibm]
+   .bigfix.
+   inventory.doc/Inventory/security/t_ssl_creating_certs.html
+   
+   update from customer
+   ====================
+   I was able to get the certificates working.  I will tell you
+   how, but
+   first I want to say that the documentation needs a lot of
+   improvement.
+   
+   It turns out that the same certificate and private key created
+   for
+   Bigfix Web Reports can be used for Bigfix Inventory.   I had to
+   use the
+   external certificate in pem format with a private key in pem
+   format with
+   no password.
+   
+   In the console for the two fields, I used the following.
+   
+   Certificate - externalCAroot.pem
+   Private key - nopwdkey.pem
+   
+   Someone should take the certificate documentation from Web
+   Reports,
+   Bigfix Inventory, and Bigfix Self-Service portal, and put them
+   into one
+   very clear document rather than three unclear documents that are
+   each
+   written completely differently.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Document needs to be updated
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * ERROR DESCRIPTION:
+   * A key pair generated for BigFix Inventory cannot be used for
+   * Web Reports when the private key is password-protected.
+   * EXPECTED RESULTS:
+   * Documentation is updated to contain information that the
+   * key pair generated for BigFix Inventory can be used for Web
+   * Reports only if the private key is not password-protected.
+   ****************************************************************
+   * RECOMMENDATION: Refer to updated product documentation for
+   * the corrected statement when available.
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix for this APAR is contained in the product on-line
+   documentation (Knowledge Center).
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV92454
+   
+   
+ * REPORTED COMPONENT NAME
+   IEM SW USE ANL
+   
+   
+ * REPORTED COMPONENT ID
+   5725F57MT
+   
+   
+ * REPORTED RELEASE
+   926
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-01-24
+   
+   
+ * CLOSED DATE
+   2017-04-04
+   
+   
+ * LAST MODIFIED DATE
+   2017-04-04
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

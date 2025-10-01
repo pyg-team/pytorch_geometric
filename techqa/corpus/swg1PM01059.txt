@@ -1,0 +1,170 @@
+Title: IBM PM01059: WAIT WORKSTATIONS DO NOT WAIT FOR THE SPECIFIED INTERVAL ON SYSTEMS CONFIGURED WITH NON ZERO LEAP SECONDS - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Workstations defined as WAIT do not honour the time
+   interval specified in the operation definition, if the system is
+   configured with non zero leap seconds.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All TWS for z/OS users                       *
+   *                 using the WAIT WORKSTATIONS                  *
+   *                 FUNCTION=WA                                  *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: An operation running on a wait          *
+   *                      workstation is waiting for a time       *
+   *                      different from the duration time        *
+   *                      defined.                                *
+   ****************************************************************
+   * RECOMMENDATION: APPLY THE PTF FIXING THIS APAR               *
+   ****************************************************************
+   An operation running on a wait workstation is waiting for a
+   time different from the duration time defined. This new wait
+   time depends on the value of CVTLSO value (Leap Second Offset)
+   contained in system vector table (CVT).
+   Local time is obtained by acquiring the TOD clock value and
+   making adjustments for both leap second offsets and local time
+   offsets (timezone and daylight saving time).
+   UTC (GMT) is obtained by acquiring the TOD clock value and
+   making an adjustment for the leap second offset.
+   Then if we get the value for the local time offsets (CVTLDTO)
+   the rules will be:
+   UtcTime = TODTime - CVTLSO
+   LocalTime = TODTime + CVTLDTO - CVTLSO
+   On the wait workstation the Leap Seconds Offset wasn't
+   considered.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Now the interval time for a wait workstation is taking in
+   consideration the leap seconds too.
+   302Y
+   502Y
+   512Y
+   EQQXT45X
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM01059
+   
+   
+ * REPORTED COMPONENT NAME
+   TIV WRKLD SCHD
+   
+   
+ * REPORTED COMPONENT ID
+   5697WSZ01
+   
+   
+ * REPORTED RELEASE
+   302
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2009-11-12
+   
+   
+ * CLOSED DATE
+   2010-01-28
+   
+   
+ * LAST MODIFIED DATE
+   2010-05-04
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UK54130 UK54131 UK54132
+   
+   
+
+MODULES/MACROS
+ *  EQQXT45X
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TIV WRKLD SCHD
+   
+   
+ * FIXED COMPONENT ID
+   5697WSZ01
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R302 PSY UK54130 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK54130]
+   UP10/05/01 P F004
+   
+   
+ * R502 PSY UK54131 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK54131]
+   UP10/05/01 P F004
+   
+   
+ * R512 PSY UK54132 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK54132]
+   UP10/05/01 P F004
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

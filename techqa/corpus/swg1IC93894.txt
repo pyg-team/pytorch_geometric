@@ -1,0 +1,155 @@
+Title: IBM IC93894: Certificate key length greater than 1024 bites not correctly read when using SOA Outbound Security service - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The certificate extension for SubjectKeyIdentifier is not
+   correctly read from the certificate if the certificate key
+   length is greater than 1024 bites.
+   
+   Simulation Steps
+   To reproduce this bug:
+   - import the certificate(s) into the trusted store
+   - import the BPML
+   - update the ENCRYPTION_CERTIFICATE parameter* to use one of
+   these certificates
+   - find the base64 encoded Subject Key Identifier value in the
+   service  (example
+   X509SubjectKeyIdentifier">ncOh1UEPEHr6JFG25VMhQlDOkiw=</wsse:Key
+   Identifier>) and decode it by using an online tool such as
+   http://tomeko.net/online_tools/base64.php [http://tomeko.net/online_tools/base64.php]
+   - compare this decoded value to that in the actual certificate.
+   You will see that the certificate with 1024 bits is correct but
+   2048 and 4096 are not correct.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  STRRTC 375742
+   JdH/JdH
+   Circumvention:
+   None
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Users Affected:
+   All
+   
+   Problem Description:
+   The X509 certificate extension is not read correctly from the
+   certificate in Sterling B2B Integrator if the certificate
+   key length is greater than 1024 bits.
+   
+   Platforms Affected:
+   All
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Resoltuion Summary:
+   A code fix has been provided.
+   
+   Delivered In:
+   5020500_2
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC93894
+   
+   
+ * REPORTED COMPONENT NAME
+   STR B2B INTEGRA
+   
+   
+ * REPORTED COMPONENT ID
+   5725D0600
+   
+   
+ * REPORTED RELEASE
+   523
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-07-03
+   
+   
+ * CLOSED DATE
+   2015-02-13
+   
+   
+ * LAST MODIFIED DATE
+   2015-02-24
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   STR B2B INTEGRA
+   
+   
+ * FIXED COMPONENT ID
+   5725D0600
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R525 PSY
+   UP

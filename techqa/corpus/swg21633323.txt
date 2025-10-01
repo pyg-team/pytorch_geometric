@@ -1,0 +1,22 @@
+Title: IBM Cannot activate new TSAMP code level with mixed AIX levels - United States
+
+Text:
+tsa; tsamp; IVN; AVN; samctrl; AIX; mixed TECHNOTE (FAQ)
+
+QUESTION
+ For a single cluster with AIX 5.3 nodes and AIX 6.1 nodes, I cannot activate the newer code level after upgrading TSAMP from 3.2.1.2 to 
+3.2.2.3. No errors from 'samctrl -m' but AVN remains 3.2.1.2 even though IVN is 3.2.2.3
+
+
+CAUSE
+The TSAMP binaries are actually different from AIX 5.3 to AIX 6.1, so running 'samctrl -m' on the AIX 6.1 server looks like the AIX 5.3 servers have not yet been upgraded to the same level.
+# lssrc -ls IBM.RecoveryRM | grep VN
+Our IVN : 3.2.2.3
+Our AVN : 3.2.1.2
+
+
+ANSWER
+The trick is to force the "master" IBM.RecoveryRM to be hosted on one of the AIX 5.3 boxes, and then run the 'samctrl -m' command to complete the migration. 
+
+ 
+You can try to kill the current master IBM.RecoveryRM process and see if one of the AIX 5.3 boxes end up hosting the new master. If it doesn't, you would likely need to use stoprpdomain to offline each of the AIX 6.1 servers to force the master to end up on one of the AIX 5.3 boxes. Then bring each of the offlined nodes back online using startrpnode from one of the online nodes or startrpdomain from each of the offline nodes. Once all nodes are back online, then run 'samctrl -m' to complete the migration.

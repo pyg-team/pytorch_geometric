@@ -1,0 +1,60 @@
+Title: IBM WebSphere Business Monitor V7.0 Fix Pack 3 (7.0.0.3) - United States
+
+Text:
+ DOWNLOADABLE FILES
+
+ABSTRACT
+ Fix Pack 3 is now available for WebSphere Business Monitor V7.0. 
+
+DOWNLOAD DESCRIPTION
+V7.0 Fix Pack 3 is a cumulative fix for IBM WebSphere Business Monitor V7.0, first shipped in December 2009.
+
+
+The links in the download section below link to the download packages for V7.0 Fix Pack 3 on all applicable platforms.
+
+
+For a list of fixes included in this Fix Pack, please refer to Fix/Update list for WebSphere Business Monitor V7.0 [http://www.ibm.com/support/docview.wss?rs=802&uid=swg27019404]. Fixes for Business Space are also included; please refer to Fix/Update list for Business Space powered by WebSphere: Version 7.0 [http://www.ibm.com/support/docview.wss?rs=802&uid=swg27019647] (fixes in all releases prior to and including V7.0 Fix Pack 3 for Business Space are included in this Fix Pack).
+
+In addition to fixes, the following features are included in V7.0 Fix Pack 3.
+
+
+
+Feature Description Updated Information Center The IBM WebSphere Business Monitor 7.0 Information Center [http://publib.boulder.ibm.com/infocenter/dmndhelp/v7r0mx/topic/com.ibm.btools.help.monitor.doc/home/home.html] has been updated for V7.0.0.3.
+
+If you have a locally installed version of the documentation, see Updating the local information center [http://publib.boulder.ibm.com/infocenter/dmndhelp/v7r0mx/topic/com.ibm.btools.help.monitor.inst.doc/inst/ic_update.html]. Alphablox 9.5.7 build 55 WebSphere Business Monitor V7.0.0.3 updates Alphablox 9.5.7 to build 55. This addresses the following issues in Alphablox:
+ * The duration format mask does not handle an Arabic locale number. 
+ * The Alphablox BloxBuilder service causes log4j plug-in collisions with other applications that use log4j.
+
+Windows 7 support WebSphere Business Monitor V7.0.0.3 includes support for the Windows 7 operating system. (Note: This support was originally included in V7.0.0.2.) Microsoft SQL Server support SQL Server is supported as a database for WebSphere Business Monitor in V7.0.0.3. See MSDN Library: Microsoft SQL Server [http://msdn.microsoft.com/en-us/library/bb545450.aspx] for details.
+
+Also refer to this technote [http://www.ibm.com/support/docview.wss?uid=swg21445276] which describes a solution for an issue with service integration buses failing to start with SQL Server. WebSphere Portal Version 7 support for portlet-based dashboards The portlet-based dashboards in WebSphere Business Monitor V7.0.0.3 support WebSphere Portal V7. 
+
+Business Object Runtime Framework Version 7 partially available for production use in Version 7.0.0.3 The version 7.0.0.3 Fix Pack for WebSphere Process Server and WebSphere Enterprise Service Bus provides partial support for the business object runtime framework version 7. A terminology change has also been introduced: the business object runtime framework is now known as the business object parsing mode. There are two business object parsing modes: 
+
+ * The eager parsing mode, which corresponds to the business object runtime framework for all previous version 6.x releases. 
+ * The lazy parsing mode which corresponds to the business object runtime framework for version 7 and later releases.
+
+
+The eager parsing mode continues to be the default. After applying the version 7.0.0.3 Fix Pack, the lazy business object parsing mode is also available. The lazy parsing mode is partially supported for production use in WebSphere Process Server version 7.0.0.3 and WebSphere Enterprise Service Bus version 7.0.0.3. Before you use the lazy business parsing mode in a production application, read the details of the support statement here [http://www.ibm.com/support/docview.wss?rs=2307&uid=swg21445191]. Feedback and questions regarding the lazy business object parsing mode can be directed to the WebSphere Process Server forum [http://www.ibm.com/developerworks/forums/forum.jspa?forumID=820]. 
+
+PREREQUISITES
+ 
+
+ * Please ensure that your WebSphere Business Monitor environment meets the system requirements documented at: http://www.ibm.com/support/docview.wss?uid=swg27008414 [http://www-01.ibm.com/support/docview.wss?uid=swg27008414] 
+ * This Fix Pack can only be installed on top of IBM WebSphere Business Monitor V7.0.0.0, including any maintenance deliverables prior to this one. 
+ * Important: WebSphere Business Monitor V7.0 Fix Pack 3 includes an update for Business Space. If you have installed Business Space V7.0 Interim Fix 1 for WebSphere Business Monitor V7.0, you must install Business Space V7.0 Interim Fix JR36142 [http://www.ibm.com/support/docview.wss?rs=802&uid=swg24026356] prior to installing V7.0 Fix Pack 3. 
+ * WebSphere Application Server (the instance on which Business Space is installed) must be at Version 7.0.0.11 or higher. (Note: The installation instructions linked below provide steps for upgrading WebSphere Application Server to Version 7.0.0.11.) 
+ * The WebSphere Application Server V7.0 Feature Pack for XML must be at Version 1.0.0.7 or higher. (Note: The installation instructions linked below provide steps for upgrading the WebSphere Application Server V7.0 Feature Pack for XML to Version 1.0.0.7.)
+
+INSTALLATION INSTRUCTIONS
+Below is a link to the Fix Pack's installation and upgrade instructions. You are strongly encouraged to read this document prior to installing the Fix Pack.
+
+URL LANGUAGE SIZE(Bytes) Installing WebSphere Business Monitor V7.0 Fix Pack 3 [http://www.ibm.com/support/docview.wss?rs=802&uid=swg27019400] English 2222 
+DOWNLOAD PACKAGE
+
+
+
+Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options 
+What is Fix Central(FC)? [https://www.ibm.com/support/fixcentral/help?page=swfaqs] WebSphere Business Monitor V7.0.0.3 9/3/2010 English 276514168 FC [http://www.ibm.com/support/fixcentral/quickorder?fixids=7.0.0-WS-WBM-FP0000003&product=ibm%2FWebSphere%2FWebSphere+Business+Monitor&source=dbluesearch] [ ] Portal Update 9/3/2010 English 657766893 FC [http://www.ibm.com/support/fixcentral/quickorder?fixids=7.0.0-WS-WBM-FP0000003_Portal&product=ibm%2FWebSphere%2FWebSphere+Business+Monitor&source=dbluesearch] [ ] Desktop Components 9/3/2010 English 14021759 FC [http://www.ibm.com/support/fixcentral/quickorder?fixids=7.0.0-WS-WBM-FP0000003_Desktop&product=ibm%2FWebSphere%2FWebSphere+Business+Monitor&source=dbluesearch] [ ] 
+ [/support/docview.wss?uid=swg24027529&aid=1]Problems (APARS) fixed [/support/docview.wss?uid=swg24027529&aid=2]Problems (APARS) fixed
+JR34783 JR34980 JR34992 JR35001 JR35017 JR35073 JR35077 JR35114 JR35121 JR35142 JR35147 JR35195 JR35218 JR35235 JR35256 JR35273 JR35278 JR35309 JR35313 JR35444 JR35452 JR35504 JR35547 JR35563 JR35575 JR35592 JR35598 JR35602 JR35659 JR35707 JR35708 JR35737 JR35792 JR35885 JR35938 JR36063 JR36106 JR36120 JR36306 JR36323 JR36435 JR36507 JR36513 JR36556 JR36571 JR36588 JR36712 JR36771 JR36925 JR36962 JR36978 JR37001 JR37010 JR37179 JR37269 JR37276 JR37287 JR37326 JR37436 JR37519

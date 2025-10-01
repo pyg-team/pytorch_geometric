@@ -1,0 +1,63 @@
+Title: IBM Deciding what type of IBM Rational Developer for i License to purchase - United States
+
+Text:
+RDi; licenses; activation kit; floating; permanent; authorized user TECHNOTE (FAQ)
+
+QUESTION
+ What type of licenses are avalable for IBM Rational Developer for i (RDi) and why to choose each? 
+
+CAUSE
+Often when looking to buy a product, the license types and prerequisites are not explained. This document should give insight into those questions for IBM Rational Developer for i (RDi). 
+
+ANSWER
+When looking to purchase IBM Rational Developer for i (RDi), there are two options for licensing: activation kit (also known as a permanent, authorized user license) or floating license (also known as a permanent floating license).
+
+
+Activation Kit 
+
+The activation kit is a permanent, version-based jar file that is packaged as a zip file with the product and downloaded from either AAS/ESS or Passport Advantage. 
+
+If using the permanent license/activation kit, a license is required for each version of the product. For example, an RDi 9.5 permanent, authorized user license (activation kit) will not work for an RDi 9.6 client. 
+
+This license is installed on the client. The license can be saved remotely, for instance, on a network, but installed locally. 
+
+Details on the permanent, authorized user license or activation kit can be found here:
+https://www.ibm.com/support/knowledgecenter/en/SSSTWP_8.1.4/com.ibm.rational.license.doc/topics/r_lic_type_definition.html [https://www.ibm.com/support/knowledgecenter/en/SSSTWP_8.1.4/com.ibm.rational.license.doc/topics/r_lic_type_definition.html] 
+
+The cost for the permanent license is slightly more than the floating licenses, but the application is quick and uncomplicated; however, each machine must be manipulated to install the license either programmatically with a silent install or manually. 
+
+
+Floating License 
+
+A floating license is permanent, time-limited license that is downloaded to the client from a dedicated Rational License Key Server. 
+
+Floating licenses are associated with the host name of the Rational License Key Server (also know as a floating license server). The newer floating licenses are not version specific. For example, a floating license that works with RDi 9.0 should continue to work with RDi 9.6 if used on the same Rational License Key Server. A new RDi 9.6 license is not required.
+
+Floating licenses are downloaded from the Rational License Key Center at:
+https://www-01.ibm.com/software/rational/support/licensing/tointraware.html [https://www-01.ibm.com/software/rational/support/licensing/tointraware.html] 
+
+Floating licenses are installed on a Rational License Key Server and the RDi client connects to the designated floating license server to acquire a license for a time-limited period. Once that time expires, the license will need to be acquired again. If the floating license connections exceed the number of floating licenses available, the newest user will not be able to access RDi until a license is released.
+
+Information on installing and configuring the floating license server can be found here: https://www.ibm.com/support/knowledgecenter/en/SSSTWP_8.1.4/com.ibm.rational.license.doc/topics/r_plotcourse.html [https://www.ibm.com/support/knowledgecenter/en/SSSTWP_8.1.4/com.ibm.rational.license.doc/topics/r_plotcourse.html]
+
+Using a floating license server may be problematic if network connectivity is not stable or all systems are required to be included in disaster recovery models. The fewer floating licenses are used, the more efficient activation kits may be. 
+
+The cost for floating licenses are slightly less than activation kits, but be aware of the additional work required to use floating licenses. 
+
+ 
+
+Temporary License 
+
+As a side note, there are also two types of temporary licenses that are used with RDi. 
+
+The first is a 60-day temporary, trial license that is included with all new client installs for RDi. All versions of RDi will expire within 60 days of install if a permanent license is not applied.
+
+Additionally, a temporary, term license can be generated and applied as an evaluation extension. These only extend the temporary license to a specific time and will expire at the end of that designated period. After that point, the product must be uninstalled or a permanent license installed. IBM support or development would have to be consulted and justification made to provide this type of license. 
+
+ 
+
+Related links: [https://www.ibm.com/support/knowledgecenter/en/SSSTWP_8.1.5/com.ibm.rational.license.doc/helpindex_RCL.html]
+How to obtain a license/activation kit for RDi from AAS/ESS [http://www-01.ibm.com/support/docview.wss?uid=swg21669384]
+How to get the license kit to activate RDi [http://www-01.ibm.com/support/docview.wss?uid=swg21669384]
+Rational License Key Center [https://www-01.ibm.com/software/rational/support/licensing/tointraware.html]
+Rational License Key Server Knowledge Center [https://www.ibm.com/support/knowledgecenter/en/SSSTWP_8.1.5/com.ibm.rational.license.doc/helpindex_RCL.html]

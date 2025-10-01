@@ -1,0 +1,80 @@
+Title: IBM Enabling Logging and Appenders To Log Application Events - United States
+
+Text:
+TPAELOGGING; Log; Logging; Logger; Appender; Append; Log4J; Name; -Dmxe.name; Parameter; properties; file path; filename; logname; Debug property; Oracle; BEA; WebLogic; WebSphere TECHNOTE (FAQ)
+
+QUESTION
+ The application can provide critical information about what it is doing and any warnings or errors that occur through the Log4j logging facility. The Logging application is used to configure this functionality. 
+
+ANSWER
+In release 7.x, logging is controlled by the logging application. This is accessed by selecting Go To > System Configuration > Platform Configuration > Logging
+[/support/docview.wss?uid=swg21446599&aid=1] [/support/docview.wss?uid=swg21446599&aid=1]
+
+Manage Maximo Root Logger
+
+The root logger is what determines the base logging priority or “log level” for the application. There are 4 levels: ERROR, INFO, WARN and DEBUG. Each level provides progressively more information in the log. The recommended setting for the application root logger is INFO. To access the root logger setting in the logging application and add or remove appenders (critical to WebLogic logging) choose “Select Action/Manage Maximo Root Logger” 
+
+[/support/docview.wss?uid=swg21446599&amp;aid=2]
+
+[/support/docview.wss?uid=swg21446599&aid=3] [/support/docview.wss?uid=swg21446599&aid=3]
+
+The above configuration sets the root logger to INFO and writes log entries to the console (SystemOut.log in WebSphere) and to the Rolling appender which is set to the maximo.log files by default.
+
+Manage Appenders
+
+A log file or any location where log information can be written to is also called an “Appender”. The application is shipped with three pre defined appenders. 
+
+Console – Writes to the console or StdOut
+Rolling – Writes to the configured file name and rolls to a new file when size is reached
+Daily Rolling - Writes to the configured file name and rolls to a new file when day ends
+
+By default, the logging application is configured to write logs to the console appender but not to the Rolling or Daily Rolling appenders.
+
+The console appender is configured to write log entries to StdOut. WebSphere captures this data and writes it to the SystemOut log of the JVM. WebLogic does not capture this information by default and a file based appender must be configured and enabled to capture logging information in a file. 
+
+To specify a file name or modify size, format and number of rolled logs to keep, from the logging application choose “Select Action / Manage Appenders”
+
+[/support/docview.wss?uid=swg21446599&amp;aid=4]
+
+[/support/docview.wss?uid=swg21446599&aid=5] [/support/docview.wss?uid=swg21446599&aid=5]
+
+List Logging Properties
+
+In the logging application from the Select Action menu, choose List Logging Properties” to see a list of all configured log properties (formatted like a v6.x logging.properties file).
+
+[/support/docview.wss?uid=swg21446599&amp;aid=6]
+
+Apply Settings
+
+In the logging application , from Select Action, choose Apply Settings to apply changes to the logging properties. This will cause the changes to take effect immediately without an application restart.
+
+[/support/docview.wss?uid=swg21446599&amp;aid=7]
+
+Set Logging Root Folder
+
+Set Logging Root Folder specified the folder or directory path where the log file specified by the appender will be written.
+
+[/support/docview.wss?uid=swg21446599&amp;aid=8]
+
+[/support/docview.wss?uid=swg21446599&amp;aid=9]
+
+Notes
+
+1. WebLogic users should configure an appender and attach it to the Maximo Root Logger during initial setup.
+
+2. IBM has determined that application performance is not substantially impacted by the default logging that is shipped with the application. Problems resolution time can be substantially improved by maintaining up to 24 hours of logs at all times at the default settings. It should be noted that maximizing logging by selecting WARN and DEBUG levels CAN impact performance and should be used only for problem determination or in non-production environments.
+
+3. Setting the root logger to ERROR will decrease logging to levels that will not likely be usable in any type of problem determination and will extend problem discovery times while logging is enabled and issues recreated. 
+
+See more information on log naming and concatenating at the following links
+
+Using the –Dmxe.name parameter [http://www.ibm.com/support/docview.wss?uid=swg21446387]
+
+Concatenating logs for better analysis [http://www.ibm.com/support/docview.wss?uid=swg21433258]
+
+Using system debug properties to maintain critical system information [http://www.ibm.com/support/docview.wss?uid=swg21291250]
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Systems and Asset Management Tivoli Asset Management Systems and Asset Management Tivoli Asset Management for IT Systems and Asset Management Tivoli Change and Configuration Management Database Systems and Asset Management Maximo Asset Management Essentials Systems and Asset Management Tivoli Service Request Manager Systems and Asset Management Control Desk

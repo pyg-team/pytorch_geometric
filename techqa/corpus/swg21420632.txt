@@ -1,0 +1,84 @@
+Title: IBM Sametime 8.5 IBM i: Installing System Console using non-system host name - United States
+
+Text:
+iseries; as400; as/400; os/400; os400 PREVENTIVE SERVICE PLANNING
+
+ABSTRACT
+ For Sametime 8.5 on IBM i, there are special considerations for System Console installation and server registration if you choose to use a host name for the System Console that is different from the system host name. 
+
+CONTENT
+Note: The special considerations documented here do not apply to Sametime 8.5.1 and later releases. Use the instructions as documented in the Sametime 8.5.1 Information Center. 
+There are special considerations for Sametime 8.5.0 on IBM i if you choose to use a host name for the System Console that is different from the system host name. This document provides details for the additional steps required when: 
+
+ * Installing the Sametime System Console 
+ * Registering Sametime servers (for example, the Meeting Server or Community Server) with the System Console 
+
+
+Installing the System Console 
+
+It is best to specify the system host name for the "stwas.was.hostname" setting in the System Console response file when installing the system console on IBM i. 
+
+If you use a host name that is different from the system host name, then the server and database registration phase of the System Console server installation will not complete successfully. 
+
+When the installation finishes, you must complete the following steps to correct the System Console configuration before you can proceed with your Sametime deployment: 
+
+1. Log in to the System Console Integrated Solutions Console. 
+
+2. Expand the "Environment" section and select "Virtual hosts" 
+
+3. Select "default_host" 
+
+4. Select "Host Aliases" under Additional Properties. 
+
+You will see a list for Host Aliases defined for both "*" and the system host name. Update all of the entries that show the system host name by changing them to the host name that was specified for the "stwas.was.hostname" property in the installation response file. 
+
+5. After the Host Aliases are all updated, be sure to save the changes to the server. 
+
+6. Under "System Administration -- Nodes" make sure that the application server node is synchronized. 
+
+7. Under "Servers -- Server Types -- Websphere application servers", stop and then start STConsoleServer. 
+
+8. Verify that you can log in to the System Console application. 
+
+ * Open the /tmp/SSCLogs/ConsoleUtility0.log file and look for an error message similar to the following (the hostname and port may be different): AIDSC0884E: Failed to do IO operation with file.http://non-system.hostname.com:9129/console/deployment/login 
+   
+   
+ * From a browser, try to access the URL shown in the error message and log in with the WAS admin id and password, that is: http://non-system.hostname.com: [http://non-system.hostname.com:]<webcontainer_http_port>/console/deployment/login 
+   
+   If a success message is displayed, then proceed to the next step. 
+   
+   
+
+
+9. Edit the console.properties file located in the following directory:  * 
+ * /qibm/userdata/lotus/stii/STCONSOLE/<deployment_id>/console
+ * Fill in the value for the "SSCPassword=" using the WAS admin password. All the other properties should already be set correctly for connecting to the System Console.
+
+
+10. Edit the productConfig.properties file which is located in the same directory as the previous step. Fill in the following values:  *  "WASPassword=" This to the WAS admin password. "DBAppPassword=" This is the password for the userprofile specified by "DBAppID=". Make sure the last instance of the "DBAppPassword=" property in the file is set; it may be in the file twice. 
+
+11. Register the System Console server with itself:  * 
+ * 
+ * b. Run the "cd" shell command, specifying this directory: 
+ * /qibm/userdata/lotus/stii/STCONSOLE/<deployment_id>/console 
+ * c. Run the registerProduct.sh script. 
+ * If the registration is successful, you will see the following messages when the script completes: 
+ * PID File created successfully:true
+   Registration done successfully -false 
+ * Note: Even though the message says "Registration done successfully -false", the registration completed successfully as long as the PID file was created. Because this script is not normally used for the System Console, the status of the task isn't properly updated and the message is incorrect. 
+ * d. Press F3 to exit QSH. 
+
+
+12. Log in to the System Console Integrated Solutions Console again. In the database prerequisite section, the database "STSC" should now be listed. The System Console registration is complete. Continue with the next steps in the Sametime 8.5 Information Center to complete the System Console configuration steps, such as connecting to an LDAP server. 
+
+ 
+
+Registering Sametime Servers with the System Console 
+
+If the host name for the System Console is different from the system host name, you must specify "false" for the SSCSSLEnabled setting in the console.properties file when running the script to register a Sametime server with the System Console after installation. 
+
+If you specify "true" for SSCSSLEnabled, the registration will fail with the following error: 
+
+AIDSC0884E: Failed to do IO operation with file. HTTPS hostname wrong: should be <system_console_shortname.domain.com>
+
+Note: For the Community Server, the script is called "registerSTServerNode.sh". For the Meeting, Proxy and Gateway servers, the registration script is called "registerProduct.sh". The Media Manager is supported on Windows or Linux and is typically installed using the Sametime System Console so the server is registered during installation. In this situation there is no need to run a post-install registration script.

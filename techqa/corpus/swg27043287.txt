@@ -1,0 +1,16 @@
+Title: IBM Recipients are not added to a bulk collection notice from the People in Scope page - United States
+
+Text:
+ PRODUCT DOCUMENTATION
+
+ABSTRACT
+ IBM Atlas Policy Suite does not include custodians added from the Request > People in Scope page as default recipients for bulk collection notices. 
+
+CONTENT
+This is working as designed. 
+
+Bulk collection notices are sent to persons with the IT Staff role, and are
+precursors to individual collection or preservation plans.
+
+
+For bulk collection notices, users must be manually added to the notice.

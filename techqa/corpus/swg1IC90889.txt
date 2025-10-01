@@ -1,0 +1,171 @@
+Title: IBM IC90889: ADDITION OF SHARED MEMORY SEGMENTS USING LARGE PAGES CAN BE SLOW AND MAY BLOCK USER ACTIVITY - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When the environment variable IFX_LARGE_PAGES is defined
+   together with the RESIDENT onconfig parameter to enable the
+   large memory pages feature, the creation of shared memory
+   segments is generally a fast activity due to the lower OS
+   resource overhead. When additional segments are required,
+   following startup of the IDS server, they should also be added
+   using the large pages feature. However the ability to use large
+   pages is dependent both on the OS platform and the method by
+   which the new segment is added. When using the onmode -a command
+   to manually add a segment the operation should be fast. When the
+   segment is added automatically due to the memory requirements of
+   a thread then there may be problems:
+   
+   - On Linux it may not be possible to add the new segment.
+   Versions of IDS with a fix for APAR IC86077 [http://www-01.ibm.com/support/docview.wss?uid=swg1IC86077] will fallback to
+   using normal pages.
+   - On AIX the request to create the new segment will not use
+   large pages due to insufficient privileges of the oninit
+   process. The OS will allocate the shared memory using a standard
+   page size which for large segment sizes can take some time. For
+   example:
+   
+   14:42:45  Requested shared memory segment size rounded from
+   30000000KB to 30146560KB
+   14:42:45  Shared memory segment will use large pages if
+   available.
+   14:43:39  Dynamically allocated new virtual shared memory
+   segment (size 30146560KB)
+   14:43:39  Memory sizes:resident:67108864 KB, virtual:214172736
+   KB, no SHMTOTAL limit
+   
+   The operation to create the new segment took 54 seconds during
+   which time requests to allocate or release memory may be
+   blocked. This can delay user activity.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  On AIX the delay of adding new segments may be reduced by using
+   a 64 KB page size for shared memory pages instead of the default
+   4 KB. This may be achieved by setting the environment variable
+   LDR_CNTRL="SHMPSIZE=64K" prior to starting oninit.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * All Users,                                                   *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * See Error Description                                        *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Update to IDS-11.70.xC8                                      *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Problem Fixed In IDS-11.70.xC8
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC90889
+   
+   
+ * REPORTED COMPONENT NAME
+   INFORMIX SERVER
+   
+   
+ * REPORTED COMPONENT ID
+   5725A3900
+   
+   
+ * REPORTED RELEASE
+   B70
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-03-15
+   
+   
+ * CLOSED DATE
+   2014-02-26
+   
+   
+ * LAST MODIFIED DATE
+   2014-02-26
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   INFORMIX SERVER
+   
+   
+ * FIXED COMPONENT ID
+   5725A3900
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * RB70 PSY
+   UP
+   
+   
+ * RC10 PSY
+   UP

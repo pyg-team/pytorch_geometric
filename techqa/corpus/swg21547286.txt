@@ -1,0 +1,47 @@
+Title: IBM Maintenance tasks for Gentran:Server for Windows for places where the need for cleanup is not obvious - Sterling Gentran:Server for Microsoft Windows - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ There are cleanup tasks that must be performed weekly. This technote addresses areas that are not frequently reviewed and are acceptable to be monitored 2-3 times a year. This includes areas in the operating system and not just the product. 
+
+RESOLVING THE PROBLEM
+Temporary files
+The Winnt\Temp directory may contain temporary files with a naming convention of CTT***.TMP. These files are a by-product of ODBC connections to the database.
+The Winnt\Temp directory should be monitored regularly as the amount of disk space required for these files can become quite large. These files can be removed without causing problems to the software, however removal should only be attempted when Gentran services are stopped. 
+The Gensrvnt\temp directory should also be monitored and periodically cleared. These files are temporary files created by the Translator, Commpost, and other components as they work. 
+
+Archiving
+This functionality will save data to the \gensrvnt\archive data store and its associated database table records and save it in a compressed archive form. Archives can be created to archive data for specific partners and directions as required. 
+Archive session definitions are created in the UI tool - Archive Manager. 
+Click Tools > Archive
+Archive sessions are launched with Process Control to automate this process. 
+Archives can be viewed for their contents and restored when required via the Archive manager display.
+
+Files in TransIn
+During the inbound processing of files that are received into the mailbox and that will have an GDW_MBImport executed against them, translator will create copies of files in the \gensrvnt\Transin directory. These files are not referred to or traced by translation and therefore will not be removed\restored by the Archive process. These files should be removed manually or with a script executed by the Process Control or other scheduler. This directory should only be cleaned when no data is being processed.
+
+Mailbox Entries
+During normal processing, translation steps create .atm - Attachment files - as it passes data from one location to another. The files will remain in the Mailboxes (Inbox or Outbox) until removed . Do not delete the entry from the Gensrvnt\Store folder directly. 
+Mailbox purge will remove items older than xx days as set in the configuration, once a day.
+Mailbox archive will remove items, save them or archive files (.arv) based on mailbox name and retention days. For more information on removing these entries see Technote: How to purge the Gentran:Server Mailbox Store (GENSRVNT\STORE\ directory) of files [http://www.ibm.com/support/docview.wss?uid=swg21530538]
+
+Communications Logs
+Communications logs can be removed from the communications gateway as and when required. 
+They can be manually deleted via the UI or deleted on a scheduled basis (GIcheck.exe). 
+Data stored in directories \gensrvnt\INTIN or \gensrvnt\INTOUT or \gensrvnt\store should not be removed or modified by means other than those described in this document.
+
+Database
+Ensure that an adequate maintenance plan for the database is performed. The plan might include things like backups of the database, re-indexing the tables periodically, and transaction log size monitoring.
+Contact the Database Administrator for assistance with this plan.
+
+Operating System Maintenance
+Contact the Windows system administrator for assistance in determining what other scheduled maintenance should be performed on the server. 
+
+See also: Maintenance steps for best performance for Sterling Gentran:Server for Microsoft Windows [http://www.ibm.com/support/docview.wss?uid=swg27048333]
+
+ 
+
+HISTORICAL NUMBER
+ PRI43064

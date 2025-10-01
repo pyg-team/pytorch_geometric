@@ -1,0 +1,29 @@
+Title: IBM Support's Guide to the Ping Probe - United States
+
+Text:
+nco_p_ping; Poll; Interval; MaxPingBurst; trip; Trip; response time; timeout; ping; icmp TECHNOTE (FAQ)
+
+QUESTION
+ Ping Probe : How is the Ping Probe configured? 
+
+ANSWER
+ 
+
+The Ping Probe uses a file containing a list of hosts to be pinged. 
+
+Please refer to the attached Support's guide to the Ping Probe to best understand its configuration. 
+
+Basic Ping Probe property file settings are:
+NoNameResolution : 1
+Poll : 600
+PingFileCheck : 60
+Interval : 100
+MaxPingBurst : 1
+MultipleUnreachable : 1
+PacketSize : 64
+Retry : 1
+TimeOut : 2500
+Trip : 2500
+#EOF
+
+PingProbe_SupportsGuide_21.pdf [/support/docview.wss?uid=swg21682130&aid=2]PingProbe_SupportsGuide_21.pdf [/support/docview.wss?uid=swg21682130&aid=1]

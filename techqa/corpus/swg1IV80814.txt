@@ -1,0 +1,172 @@
+Title: IBM IV80814: ORACLE DATABASE EXTENDED AGENT COLLECTOR HANGS AT OCI API OCIRESET() - United States
+
+Text:
+  FIXES ARE AVAILABLE
+ITCAM Extended Agent for Oracle Database: 6.3.1.2-TIV-ITM_KRZ-IF0004 [http://www-01.ibm.com/support/docview.wss?uid=swg24043445]
+ITCAM Extended Agent for Oracle Database: 6.3.1.2-TIV-ITM_KRZ-IF0005 [http://www-01.ibm.com/support/docview.wss?uid=swg24044064]
+ITCAM Extended Agent for Oracle Database: 6.3.1.2-TIV-ITM_KRZ-IF0006 [http://www-01.ibm.com/support/docview.wss?uid=swg24044606]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Environment: Extended Oracle Database agent v6.3*
+   OS: any
+   
+   Problem Description:
+   Oracle Database Extended agent collector hangs at OCI API
+   OCIReset()
+   after calling OCIBreak() to abort time-out query.
+   
+   OEM (Oracle Enterprise Manager) :
+   "SQL*Net break/reset to client" 100% activity for long time,
+   which is
+   executed by krzclient.
+   
+   Oracle agent:
+   no data returned for all attribute groups.
+   
+   Oracle agent Event:
+   Error at appending request for handle is: <attributeGroupName>,
+   request
+   id is: <requestID>, because the number of current pending
+   request
+   exceeds the maximum queue length: 50
+   
+   Oracle agent krzclient log file:
+   krzlistrequest.cpp,355,"Krz_ListRequest::appendRequest") Error
+   at
+   appending request, current list length is:51, which exceed the
+   max list
+   length:50
+   krzreqprocess.cpp,999,"DispatchRequest") Error at appending
+   request for
+   handle is: <attributeGroupName>, request id is: <requestID>,
+   because the
+   number of current pending request exceeds the maximum queue
+   length: 50
+   krzreqprocess.cpp,1000,"DispatchRequest") Action suggestion is
+   Extend
+   the default timeout value (60 seconds) by using the
+   CDP_CONNECTION_TIMEOUT environment variable and restart the
+   agent
+   instance.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  The data collector hangs when calling the OCI API function
+   OCIReset() after calling the OCIBreak() function in order to
+   abort the query because of a time-out.  This can be seen in
+   Oracle Enterprise Manager (OEM) where "SQL*Net break/reset to
+   client" shows as 100% of the activity for a long time. Also, the
+    Oracle agent event log displays: "Error at appending request
+   for handle is: <attributeGroupName>, request id is: <requestID>,
+    because the number of current pending request exceeds the
+   maximum queue length: 50"
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix for this APAR is included in the following maintenance
+   vehicle:
+   
+      | interim fix | 6.3.1.2-TIV-ITM_KRZ-IF0003
+   
+   Note: Search the IBM technical support web site for maintenance
+   package availability.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV80814
+   
+   
+ * REPORTED COMPONENT NAME
+   ITCAM EXT AGNT
+   
+   
+ * REPORTED COMPONENT ID
+   5724V09OR
+   
+   
+ * REPORTED RELEASE
+   631
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-01-26
+   
+   
+ * CLOSED DATE
+   2017-04-07
+   
+   
+ * LAST MODIFIED DATE
+   2017-04-07
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ITCAM EXT AGNT
+   
+   
+ * FIXED COMPONENT ID
+   5724V09OR
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R631 PSY
+   UP

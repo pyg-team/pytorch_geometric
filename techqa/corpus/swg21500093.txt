@@ -1,0 +1,27 @@
+Title: IBM Commonly used FMIDs for ITCAM for Application Diagnostics on z/OS. - United States
+
+Text:
+z/OS FMID part numbers ITCAM for Application Diagnostics TECHNOTE (FAQ)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ US English 
+
+QUESTION
+ I need to download the ITCAM for AD v7.1 z/OS images. Where do I find the FMIDs for this product? 
+
+ANSWER
+
+Here are the commonly used "part numbers" or FMIDs for ITCAM for Application Diagnostics on z/OS. 
+
+HAAD710 - ITCAM for Application Diagnostics z/OS WAS DC
+HAAD71C - ITCAM for Application Diagnostics z/OS Common Services
+HKYN710 - ITCAM for Application Diagnostics z/OS TEMA
+
+ITCAM for AD v7.1 z/OS images can be ordered via Shopz [https://www14.software.ibm.com/webapp/ShopzSeries/ShopzSeries.jsp].
+
+Looking for Distributed part numbers? Click here. [https://www-304.ibm.com/support/docview.wss?uid=swg21417959]
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ ITCAM ITCAM for Application Diagnostics ITCAM4AD ITCAMfAD

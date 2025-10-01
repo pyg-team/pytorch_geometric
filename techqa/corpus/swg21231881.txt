@@ -1,0 +1,45 @@
+Title: IBM PLGC0022W: No definition is found for the specified server. Deployment of resource manager fails on WebSphere Application Server V6 Network Deployment (ND) when one or multiple web servers are defined in the deployment manager. - United States
+
+Text:
+Content Resource Manager WebSphere Application Server ND network deployment HTTP Server TECHNOTE (FAQ)
+
+QUESTION
+ Deployment of the resource manager fails when one or multiple web servers are defined in the deployment manager.
+
+The log file for installation (cminstall.log) shows this information: 
+
+2006/02/28 11:13:55 cmcfgrmas: DEBUG: generatePlugin_V6: configRoot: /opt/IBM/WebSphere/AppServer/profiles/AppSrv01/config
+2006/02/28 11:13:56 cmcfgrmas: DEBUG: generatePlugin_V6: plugin generator: WebSphere:platform=common,cell=cms56Cell01,version=6.0.0.
+1,name=PluginCfgGenerator,mbeanIdentifier=PluginCfgGenerator,type=PluginCfgGenerator,node=cms56CellManager01,process=dmgr
+2006/02/28 11:13:56 cmcfgrmas: DEBUG: WASX7017E: Exception received while running file "/opt/IBM/db2cmv8/config/icmrm.jacl"; excepti
+on information: javax.management.MBeanException
+2006/02/28 11:13:56 cmcfgrmas: DEBUG: com.ibm.websphere.plugincfg.exception.PluginConfigException: com.ibm.websphere.plugincfg.excep
+tion.PluginConfigException: PLGC0022W: No definition is found for the specified server cms56Cell01.cms13Node01.webserver1.
+2006/02/28 11:13:56 cmcfgrmas: DEBUG:
+2006/02/28 11:13:56 cmcfgrmas: DEBUG:
+2006/02/28 11:13:56 cmcfgrmas: DEBUG: execCommand(): rc= 105
+2006/02/28 11:13:56 cmcfgrmas: DEBUG: WAS50DeployRM.executeInstall(): wsadmin rc= 105 
+
+CAUSE
+The plugin generation for the web servers defined in the WebSphere® Application Server fails due to an invalid configuration directory path used in calling the plugin generator.
+
+ANSWER
+There are two workarounds possible after applying the patch for DB2® Content Manager installation on WebSphere Application Server Network Deployment (see the link in the Related information section for more information about the patch): 
+
+A) Remove the web server definitions from the dmgr and add them back later after running the DB2 Content Manager V8.3 installation program.
+
+After the resource manager application is deployed, you need to remap the web modules of each application to the appropriate web servers and regenerate the plugin information for HTTP Server using the GenPluginCfg.sh utility in the "bin" directory of WebSphere Application Server.
+
+B) Edit in the DB2 Content Manager installation patched files "icmrm.jacl" under <CM_Install_Files>/CM83/db2cmv8/config/icmrm.jacl
+
+Search for the plugin generation line generation:
+
+$AdminControl invoke $pluginCfg generate "{$configRoot} $cellName $nodeName $serverName true"
+
+Comment out the line by adding a number sign (#) at the beginning.
+Run the DB2 Content Manager installation again.
+
+After the resource manager application is deployed, regenerate the plugin information for HTTP Server using the administration console or using the GenPluginCfg.sh/bat utility in the "bin" directory of WebSphere Application Server.
+
+RELATED INFORMATION
+ CM Installation on WebSphere ND [http://www.ibm.com/support/docview.wss?rs=0&uid=swg21219794]

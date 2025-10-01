@@ -1,0 +1,162 @@
+Title: IBM IZ29692: HIDDEN EVENTS ARE STILL VISIBLE IN SOME VIEWS - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  OMNIBUS 7.2 User Guide:
+   Chapter 3 page 40;
+   
+   "You can hide events that you no longer want to view in the
+   event list. Hidden events do not appear in any monitor boxes or
+   event lists, except for those using the All Events filter. You
+   can hide events only if you have permission to do so. When you
+   hide an event, it is hidden in all operator event lists."
+   
+   
+   The expectation is that once an event is marked as "hidden"
+   that the event is suppressed in all event lists.  This is not
+   the case.  Using the -> Prioritize -> Suppress/Escalate ->
+   Hidden tool sets the SuppressEscl field value to 5.  The event
+   will still appear in ANY event list where the filter allows for
+   a match of SuppressEscl=5.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  None applicable
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All users                                    *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: IBM Tivoli Netcool/OMNIbus V7.2 IBM     *
+   *                      Tivoli Netcool/OMNIbus User's Guide     *
+   *                                                              *
+   *                      On page 40 of Chapter 3, the following  *
+   *                      statement is only partially correct:    *
+   *                                                              *
+   *                      "You can hide events that you no longer *
+   *                      want to view in the event list. Hidden  *
+   *                      events do not appear in any monitor     *
+   *                      boxes or event lists, except for those  *
+   *                      using the All Events filter. You can    *
+   *                      hide events only if you have permission *
+   *                      to do so. When you hide an event, it is *
+   *                      hidden in all operator event lists. To  *
+   *                      hide selected events in the event list, *
+   *                      click Alerts > Prioritize >             *
+   *                      Suppress/Escalate > Hidden."            *
+   *                                                              *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   *                                                              *
+   ****************************************************************
+   The revised text should read:
+   
+   You can hide events that you no longer want to view in the
+   event list. Hidden events typically do not appear in any
+   monitor boxes or event lists, except for those using the All
+   Events filter. You can hide events only if you have permission
+   to do so.
+   
+   To hide selected events in the event list, click Alerts >
+   Prioritize > Suppress/Escalate > Hidden. This sets the value of
+   the SuppressEscl field to 5 in the alerts.status table. When
+   you hide an event, it is hidden in all operator event lists
+   except those where the filter allows for a match of
+   SuppressEscl=5.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The product documentation will be updated with the release of
+   IBM Tivoli Netcool/OMNIbus V7.3.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ29692
+   
+   
+ * REPORTED COMPONENT NAME
+   NETCOOL/OMNIBUS
+   
+   
+ * REPORTED COMPONENT ID
+   5724O4800
+   
+   
+ * REPORTED RELEASE
+   720
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-08-13
+   
+   
+ * CLOSED DATE
+   2008-10-23
+   
+   
+ * LAST MODIFIED DATE
+   2008-10-23
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+Publications Referenced SC23637200 FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

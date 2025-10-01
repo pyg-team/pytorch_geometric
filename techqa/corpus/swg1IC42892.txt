@@ -1,0 +1,155 @@
+Title: IBM IC42892: IBM Rational ClearQuest: Connect options cannot be updated for U ser dbs in Designer if the clien_ver original is equal 8.0 - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  RATLC00731381
+   Environment:
+    - OS : windows 2000, english
+    - Database: Oracle, client_ver= 8.0
+    - Product name ClearQuest 2003.06.13, Build:
+   MCK_PATCH_2004C.D040830
+   Reproducible Y/N: yes
+   Description of problem:
+   Would like to upgrade from 2002 to 2003.06.13.
+   In the connect options is  client_ver = 8.0 in both
+   Schema Repository and User database. An upgrade of the
+   connection to client_ver 8.1 is working properly in the
+   Maintenance Tool.
+   The upgrade of the User Datbase Properties in ClearQuest
+   Desinger however always results in error: Client_ver 8.0 not
+   supported.
+   Step to reproduce: Open CQ Desinger where a Oracle database with
+   client_ver= 8.0 is associated. Go to menu Database - Update Use
+   database Properties
+   Click on Properties and change the client_ver to client_ver=8.1
+   Error occurs
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Make an update of the connect options to client_ver=8.1 with an
+   earlier version of ClearQuest
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Oracle clients are no longer used with ClearQuest as of
+   2003.06.
+   13. A change to the list of supported version
+   numbers and to the
+    way in which Oracle property changes were
+   handled produced this
+    problem.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fixed in ClearQuest 7.0.0.0.  CQ code needed to be modified
+   in order to allow a dbset's connect options to be modified
+   even if the original connect options were no longer valid.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC42892
+   
+   
+ * REPORTED COMPONENT NAME
+   RATL CQ MSITE V
+   
+   
+ * REPORTED COMPONENT ID
+   5724F2100
+   
+   
+ * REPORTED RELEASE
+   ALL
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2004-09-28
+   
+   
+ * CLOSED DATE
+   2006-06-07
+   
+   
+ * LAST MODIFIED DATE
+   2006-06-07
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  na
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   RATL CQ MSITE V
+   
+   
+ * FIXED COMPONENT ID
+   5724F2100
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * RALL PSN
+   UP

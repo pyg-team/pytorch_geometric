@@ -1,0 +1,185 @@
+Title: IBM PK90068: USING RMI SERVER TO CALL MAP VIA API RAISE AN UNEXPECTED PARSER ERROR , WHILE THE MAP WORKS WELL IN COMMAND SERVER . - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  . RMI server must be installed
+   and running .
+   Using WSTX 8.2.0.4 (116) .
+   testcase :
+   Extract the zip file attached
+   myjar.jar contain the class WTXException.class & WTXFacade.class
+   need to run the class Test.class
+   edit test.java and change the path to the one on your system
+   
+   in command line
+   
+   @set CLASSPATH=.;C:\IBM\WebSphere Transformation Extender
+   8.2\dtxpi.jar;C:\IBM\WebSphere Transformation Extender
+   8.2\m4java.jar;C:\IBM\WebSphere Transformation Extender
+   8.2\java\core.jar;c:\yourpath\myfile.jar
+   
+   javac Test.java
+   
+   Start the RMI server
+   
+   java Test
+   You should get this result
+   ru.cbr.swr.jcomp.wtx.WTXException: Input valid but unknown data
+   found. Error cod
+   e: 21
+           at
+   ru.cbr.swr.jcomp.wtx.WTXFacade.handleTXException(WTXFacade.java:
+   85)
+           at
+   ru.cbr.swr.jcomp.wtx.WTXFacade.runMap(WTXFacade.java:66)
+           at Test.main(Test.java:14)
+   
+   Trace file just show on top :
+   External Parser returned Error
+   
+      End of Validation messages for INPUT CARD 1.
+   ..
+   ..then
+   
+      OUTPUT 1 was built successfully.
+   
+      End of Mapping messages for OUTPUT CARD 1.
+      End of Execution messages.
+   
+   This map execute well in the designer and in command server
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  WTX00031098
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Problem Description:
+   Certain map runs from the Windows RMI Server fail.  The map
+   failures occur whenever using cards that include XML based type
+   trees.  These same map executions run fine when run from the
+   command server.
+   
+   Users Affected:
+   RMI users that are running on Windows.  The only change needed
+   is for the double quotes to be removed from the
+   startRMIServer.bat and startDebugServer.bat files, which are
+   located in the WTX installation directory.
+   
+   Platforms Affected:
+   Windows
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The WTX RMI server starts up properly on Windows platforms.
+   Before this fix, the PATH was not properly set to include the
+   WTX installation directory.  This prevented proper execution of
+   maps that made use of XML based type trees.
+   
+   Delivered in:
+   8.1.0.6, 8.2.0.5, 8.3.0.0
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK90068
+   
+   
+ * REPORTED COMPONENT NAME
+   WSTX
+   
+   
+ * REPORTED COMPONENT ID
+   5724M4000
+   
+   
+ * REPORTED RELEASE
+   800
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2009-06-29
+   
+   
+ * CLOSED DATE
+   2009-07-02
+   
+   
+ * LAST MODIFIED DATE
+   2009-07-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WSTX
+   
+   
+ * FIXED COMPONENT ID
+   5724M4000
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R810 PSY
+   UP
+   
+   
+ * R820 PSY
+   UP

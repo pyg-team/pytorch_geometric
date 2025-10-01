@@ -1,0 +1,158 @@
+Title: IBM WebSphere Application Server starts from Rational Application Developer with "Usage" or "NoClassDefFoundError" - United States
+
+Text:
+quickServerStart.bat; quickServerStart.sh; path; environment variable; websphere application server; rational application developer; fail start TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Attempts to start the IBM WebSphere Test Environment (WTE) through IBM Rational Application Developer for WebSphere Software (RAD) result in console errors like "Usage: java ... " or "Exception in thread "main". 
+
+SYMPTOM
+A more complete error message reads as follows. 
+
+
+
+"Usage: java [-options] class [args...]
+
+(to execute a class)
+
+or java [-jar] [-options] jarfile [args...]
+
+(to execute a jar file)
+
+where options include:
+
+-cp -classpath <directories and zip/jar files separated by ;>
+
+more..."
+
+
+Another possible error is:
+
+
+"Exception in thread "main" java.lang.NoClassDefFoundError: Files\bin\;C:\Program
+Caused by: java.lang.ClassNotFoundException: Files\bin\;C:\Program
+at java.net.URLClassLoader.findClass(URLClassLoader.java:434)
+at java.lang.ClassLoader.loadClassHelper(ClassLoader.java:703)
+at java.lang.ClassLoader.loadClass(ClassLoader.java:682)
+at sun.misc.Launcher$AppClassLoader.loadClass(Launcher.java:358)
+at java.lang.ClassLoader.loadClass(ClassLoader.java:665)
+Could not find the main class: Files\bin\;C:\Program. Program will exit."
+
+
+
+ 
+
+You can reproduce the error as follows.
+
+
+
+Make a change in the Windows PATH environment variable to include an entry similar to:
+
+C:\MyPath\bin";C:\Program Files\etc...
+
+
+
+Note: The unmatched double-quote violates Windows path entry rules. 
+
+
+RAD uses a quick server startup mechanism for the embedded WebSphere Test Environment (WTE) in which it runs a batch file located in the workspace.
+
+
+<workspace>\.metadata\.plugins\org.eclipse.wst.server.core\tmp0\quickServerStart.bat
+
+
+RAD starts this batch file only if you select checkbox Start server with a generated script.
+
+
+[/support/docview.wss?uid=swg21675482&aid=1] [/support/docview.wss?uid=swg21675482&aid=1]
+
+
+
+The content of the Windows PATH environment variable is incorporated into the quickServerStart.bat 
+
+If this batch file contains invalid path entries, the WTE fails to start, and produces the errors such as those below. An example is the aforementioned double-quote symbol in the java.library.path setting, 
+
+ 
+
+Example
+
+
+"-Djava.library.path=C:\IBM;C:\jdk\db\bin";...."
+
+
+leads to:
+
+
+"Usage: java [-options] class [args...]
+(to execute a class)
+or java [-jar] [-options] jarfile [args...]
+(to execute a jar file)
+
+where options include:
+-cp -classpath <directories and zip/jar files separated by ;>
+set search path for application classes and resources
+-D<name>=<value>
+etc..."
+
+
+
+OR 
+
+
+
+"Exception in thread "main" java.lang.NoClassDefFoundError: Files\bin\;C:\Program
+Caused by: java.lang.ClassNotFoundException: Files\bin\;C:\Program
+at java.net.URLClassLoader.findClass(URLClassLoader.java:434)"
+
+
+
+CAUSE
+A Windows PATH environment variable was defined before you start RAD. This variable contains an invalid path entry. RAD will pass this PATH entry to the quickServerStart.bat. You can see the path under the -Djava.library.path parameter in quickServerStart.bat.
+
+
+DIAGNOSING THE PROBLEM
+ 
+
+ 1. Verify the console for errors similar to that given under the Symptom section.
+    
+    
+ 2. Verify whether you can start WAS with the following command. 
+    
+    External startup of WAS through the WAS startServer.bat command 
+    
+    For example, <WAS_profile_path>\bin\startServer server1 -profileName <profileName> 
+    
+    
+ 3. Clear the Start server with a generated script command to see if the WTE starts.
+    
+    
+    
+
+
+A successful start is an indication that a problem exists with the quickServerStart.bat 
+
+RESOLVING THE PROBLEM
+If you see errors similar to those above, consider the following steps. 
+
+ 
+
+ 
+
+ 1. Open quickServerStart.bat.
+    
+    Count the number of quotes to make sure it is an even number;
+    An odd number will quickly suggest an unmatched quote.
+    
+    
+ 2. Check also for any characters that would be invalid for batch files or scripts in the operating system
+    
+    
+ 3. Check your Windows PATH entries as defined in the environment variables.
+    
+    
+ 4. Delete the existing quickServerStart.bat from the workspace location given above and restart RAD and the WTE. This will generate a batch file with correct environment variables. 
+    
+    
+
+
+Note: Restarting the WTE alone, whilst leaving RAD running, does not correct the issue. The reason is that RAD provides the environment variables, rather than the WTE.

@@ -1,0 +1,253 @@
+Title: IBM Diagnosing a java.lang.StackOverflowError - United States
+
+Text:
+StackOverflow; overflowing; recursion; recursively; jit; JustInTime; Hot; Spot; WebSphere; Just-In-Time TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Stack Overflow exceptions can occur when a thread stack continues to grow in size until reaching the maximum limit. 
+
+SYMPTOM
+ A stack overflow can result from: 
+
+ * A deeply nested application 
+ * An infinite loop within an application 
+ * A problem in just-in-time (JIT) compiled code 
+ * Applications requiring a larger stack size, especially ones relying on XML, GUI, or java2D classes. 
+ * Native method calls
+
+
+Stack overflow issues are frequently masked by Out of Memory exceptions. By resolving the memory constraints, the stack overflow can be resolved. 
+CAUSE
+When a stack overflow occurs, the amount of stack space required by the program exceeds what is configured for the stack in the Java™ Virtual Machine (JVM) process, or the native stack size configured by the operating system. 
+Some applications require stacks that are larger than the default size; for example, a graphics-intensive Java program can require a larger stack, which may require an increase in the stack size to avoid StackOverflow.
+
+
+DIAGNOSING THE PROBLEM
+Look for either Out of Memory messages or java.lang.StackOverflow in the server logs. The process may continue to run after either of these messages are seen. 
+
+
+If a crash did occur, a javacore should have generated on IBM SDK. You will either see the signal as SIGSEGV, SIGILL, SIGABRT, or SIGBUS. Usually the current thread will indicate the following
+
+
+
+
+pending=java.lang.StackOverflowError 
+RESOLVING THE PROBLEM
+ 
+
+
+
+
+[/support/docview.wss?uid=swg21162896&aid=1]Explanations and Solutions
+[/support/docview.wss?uid=swg21162896&amp;aid=2]Detailed Configuration Options 
+
+
+
+
+
+
+ 
+
+Explanations and Solutions 
+
+Infinite Recursion 
+If an application is performing recursion, the maximum stack size can easily be reached and a Stack Overflow exception is thrown. The thread stack has a limited size and eventually its space will run out as the thread stack grows without bounds. 
+
+Some traits of recursion: 
+- Large thread stacks that appear to repeat 
+- An infinite loop that continuously spawns off threads 
+- Very large XML documents loaded into the Document Object Model (DOM) 
+- JSP or servlets calling itself (usually by executing forward or include to itself) 
+- Repeated calls in native functions 
+
+Increasing the thread stack size allows for larger thread stacks. However if the recursion continues to trigger a stack overflow, the next step is to identify what code is causing the recursion from javacores, thread dumps, or even system core files. 
+
+A thread stack that indicates it's too large to display can be an indicator of stack overflow. This is especially true if the stack appears to repeat (such as recursive method calls). 
+
+JIT/HotSpot Compiled Code 
+
+The JIT/HotSpot compiler (JIT) is designed to speed up the JVM execution times by compiling method calls. This can speed up execution time, but as more aggressive optimizations are used, this can inadvertently cause recursion, resulting in stack overflow or crash. The documents linked below explain how to debug JIT and HotSpot compiler issues:  * JIT Problem Determination for IBM SDK 5.0 and 6.0 using -Xjit [http://www.ibm.com/support/docview.wss?rs=0&uid=swg21294023] 
+ * Debugging HotSpot failures on the Solaris and HP-UX operating environment [http://www.ibm.com/support/docview.wss?rs=0&uid=swg21081179]
+
+
+
+Depleted Native Stack 
+It is almost guaranteed that a crash will occur if the native stack runs out of space. System cores can be used to identify long and possibly recursively looping native thread stacks. 
+
+To resolve, increase the native stack size (usually by adjusting the operating system limit for stack size) to accommodate the recursive native calls; however, identifying the recursive native calls will help determine the root cause of the stack overflow. 
+
+
+
+
+[/support/docview.wss?uid=swg21162896&amp;aid=3] Back to top 
+
+[http://www.ibm.com/i/v14/rules/dotted_blue_rule_443.gif] 
+
+ 
+
+Detailed Configuration Options 
+
+Adjusting the Stack Sizes (Xss and Xmso) options 
+If this does not work, you can adjust the stack sizes. Doubling the stack size is suggested as a first step; however, every thread that the JVM creates will consume memory. Be careful to not exhaust your physical and heap memory resources. 
+
+For every Java thread, there are two stacks that are utilized. One is for Java code for method calls, and the other is for native C code (on Solaris and HP-UX, only the native stack is utilized). These are adjustable and can be raised to provide more room on the stacks to prevent an overflow. 
+
+ * Maximum Thread Stack Size (-Xss)
+ * 
+ * 
+ * 
+ * 
+ *  -Xss<size> 
+ * 
+ * <size>
+ * 
+ * nn[k|m|g|K|M|G]
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * there is no distinction between native and thread stack sizes
+ * 
+ * only 
+ * 
+ * HP-UX
+ * 
+ * 
+ * 
+ *  -XX:MainThreadStackSize=<size> 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * Initial Thread Stack Size (-Xiss)
+ * 
+ * This is only for distributed platforms (AIX, Linux, Windows)
+ * 
+ * 
+ * 
+ * 
+ * 
+ *  -Xiss<size> 
+ * 
+ * <size>
+ * 
+ * nn[k|m|g|K|M|G]
+ * 
+ * 
+ * 
+ * 
+ * Initial Native Stack Size (-Xmso)
+ * 
+ * This is only for distributed platforms (AIX, Linux, Windows)
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ *  -Xmso<size> 
+ * 
+ * <size>
+ * 
+ * nn[k|m|g|K|M|G]
+ * 
+ * 
+ * 
+ * 
+
+
+
+Default Values 
+This is a chart of default sizes for the various stack size arguments. This is subject to change due to upgrades of the SDK. 
+
+[/support/docview.wss?uid=swg21162896&amp;aid=4]
+Value [/support/docview.wss?uid=swg21162896&amp;aid=4]
+AIX [/support/docview.wss?uid=swg21162896&amp;aid=4]
+Linux [/support/docview.wss?uid=swg21162896&amp;aid=4]
+Windows [/support/docview.wss?uid=swg21162896&amp;aid=4]
+Solaris [/support/docview.wss?uid=swg21162896&amp;aid=4]
+HP-UX [/support/docview.wss?uid=swg21162896&amp;aid=4]
+Initial Thread Stack Size [/support/docview.wss?uid=swg21162896&amp;aid=4]
+2KB [/support/docview.wss?uid=swg21162896&amp;aid=4]
+2KB [/support/docview.wss?uid=swg21162896&amp;aid=4]
+2KB [/support/docview.wss?uid=swg21162896&amp;aid=4]
+Not Adjustable [/support/docview.wss?uid=swg21162896&amp;aid=4]
+Not Adjustable [/support/docview.wss?uid=swg21162896&amp;aid=4]
+Maximum Thread Stack Size [/support/docview.wss?uid=swg21162896&amp;aid=4]
+256KB (32-bit)
+512KB (64-bit) [/support/docview.wss?uid=swg21162896&amp;aid=4]
+256KB (32-bit)
+512KB (64-bit) [/support/docview.wss?uid=swg21162896&amp;aid=4]
+256KB (32-bit)
+512KB (64-bit) [/support/docview.wss?uid=swg21162896&amp;aid=4]
+Not Adjustable [/support/docview.wss?uid=swg21162896&amp;aid=4]
+Not Adjustable [/support/docview.wss?uid=swg21162896&amp;aid=4]
+Native Stack Size [/support/docview.wss?uid=swg21162896&amp;aid=4]
+256KB [/support/docview.wss?uid=swg21162896&amp;aid=4]
+256KB [/support/docview.wss?uid=swg21162896&amp;aid=4]
+32KB (32-bit)
+256KB (64-bit) [/support/docview.wss?uid=swg21162896&amp;aid=4]
+512KB (32-bit)
+1024KB (64-bit) [/support/docview.wss?uid=swg21162896&amp;aid=4]
+64KB (PA-RISC)
+1024KB (Itanium) [/support/docview.wss?uid=swg21162896&amp;aid=4]
+[/support/docview.wss?uid=swg21162896&amp;aid=4]
+[/support/docview.wss?uid=swg21162896&amp;aid=4]
+[/support/docview.wss?uid=swg21162896&amp;aid=4]
+[/support/docview.wss?uid=swg21162896&amp;aid=4]
+[/support/docview.wss?uid=swg21162896&amp;aid=4]
+[/support/docview.wss?uid=swg21162896&amp;aid=5] Back to top 
+
+
+
+Examples of Stack Overflow 
+
+Server Logs 
+These logs may contain references to StackOverflow, alongside other messages. Thread stacks may accompany these messages, indicating if there is a recursive call. 
+ * SystemOut.log example
+   
+ * [3/14/15 3:14:15:926 CST] 31415926 BaseMap W CWOBJ0006W: An exception occurred:
+ * 
+ * com.ibm.websphere.objectgrid.ObjectGridRuntimeException: java.lang.StackOverflowError
+ * 
+ * <<Thread stack may follow this message>>
+ * 
+   
+ * 
+ * 
+ * 
+ * SystemErr.log example
+   
+ * [3/14/15 3:14:15:926 PST] 31415926 SystemErr R Caused by: java.lang.StackOverflowError
+ * 
+ *  at java.util.Hashtable.get(Hashtable.java:461)
+ * 
+ *  at com.ibm.ws.webcontainer.srt.SRTServletRequest.getParameter(SRTServletRequest.java:1257)
+ * 
+ *  at psdi.webclient.system.session.WebClientSession.applySkin(WebClientSession.java:295)
+ * 
+ *  at psdi.webclient.system.controller.AppInstance.render(AppInstance.java:1177)
+ * 
+ *  at psdi.webclient.system.controller.AppInstance.render(AppInstance.java:1213)
+ * 
+ *  at psdi.webclient.system.controller.AppInstance.render(AppInstance.java:1213)
+ * 
+ * ...
+ * 
+   
+ * 
+
+Javacore 
+
+In javacores, look for "StackOverflowError" in the thread name entry: 3XMTHREADINFO "ORB.thread.pool : 19" (TID:10167F78, sys_thread_t:E072BCE0, state:R, native ID:E06BEBA0) prio=5: pending=java.lang.StackOverflowError 
+System Dump (processed with jextract and DTFJ Dump Analyzer) 
+
+Look for this message near the end of a very large stack. This particular example had 1000 recursively called entries. Java stack frames dump is too long: <analyzererror> 
+
+
+Cross reference information Segment Product Component Platform Version Edition Application Servers Runtimes for Java Technology Java SDK

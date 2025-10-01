@@ -1,0 +1,161 @@
+Title: IBM IT22689: UPGRADING BOTH CLIENT AND SERVER TO EITHER 718 OR 812 MAY RESULTIN SSL INITIALIZATION FAILURE WHEN USING MD5 TYPE CERTIFICATES - United States
+
+Text:
+AIX  FIXES ARE AVAILABLE
+IBM Spectrum Protect Client 8.1.4 Downloads and READMEs [http://www-01.ibm.com/support/docview.wss?uid=swg24044364]
+IBM Spectrum Protect client 7.1.8.x interim fix downloads [http://www-01.ibm.com/support/docview.wss?uid=swg24044550]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The scenario can happen as follows: the user is using old MD5
+   certificates and they upgrade both the client and Server
+   to either 7.1.8 or 8.1.2. Since 7.1.8 and 8.1.2 Server now
+   require TLS 1.2 or later, but client still has the MD5
+   certificate,
+   the client will initialize a TLS connection using TLS 1.1
+   protocol, thus TLS handshake fails. Then a very generic
+   error message is given that SSL could not be initialized.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * Backup-archive client version 7.1.8 and 8.1.2 running on all *
+   * platforms and trying to establish an SSL connection to a     *
+   * newly upgraded Spectrum Protect Server 7.1.8 or 8.1.2        *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * The problem is that we don't have a good error message       *
+   * explaining a TLS protocol mismatch between the client and    *
+   * the Server.                                                  *
+   * Currently we only display and log the following error        *
+   * message:                                                     *
+   * ANS1592E Failed to initialize SSL protocol.                  *
+   *                                                              *
+   * If the Backup-archive is already setup to use SSL            *
+   * communication with the Spectrum Protect Server using MD5     *
+   * type certificates, and both the Backup-archive client and    *
+   * Server are upgraded to either 7.1.8 or 8.1.2, the connection *
+   * will failed with the error indicated above. Instead it       *
+   * should fail with a better message explaining  the error.     *
+   * Something like:                                              *
+   * ANS2027E GSKit function gsk_secure_soc_init failed with 410: *
+   * During the SSL/TLS handshake, the client could not agree on  *
+   * a supported SSL/TLS protocol version to use with server.     *
+   * GSK_ERROR_BAD_MESSAGE                                        *
+   *                                                              *
+   * This new error message will provide better indication that   *
+   * the client and server could not establish agreement on an    *
+   * SSL/TLS protocol, Thus indicating to the user that they need *
+   * to update their certificates.                                *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Apply fixing level when available. This problem is currently *
+   * projected to be fixed in 8.1.4.                              *
+   * Note that this is subject to change at the discretion of     *
+   * IBM.                                                         *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A better message will be displayed if client and server cannot
+   agree on SSL/TLS protocol.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT22689
+   
+   
+ * REPORTED COMPONENT NAME
+   TSM FOR VE DP V
+   
+   
+ * REPORTED COMPONENT ID
+   5725TVEVM
+   
+   
+ * REPORTED RELEASE
+   71W
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-10-05
+   
+   
+ * CLOSED DATE
+   2017-10-23
+   
+   
+ * LAST MODIFIED DATE
+   2017-10-23
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TSM CLIENT
+   
+   
+ * FIXED COMPONENT ID
+   5698ISMCL
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R71W PSY
+   UP

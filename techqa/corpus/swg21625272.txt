@@ -1,0 +1,19 @@
+Title: IBM ITCAM WebSphere Agent Request Analysis Workspace data not captured - United States
+
+Text:
+itcam tema 7.2 request data CAMADRM CAMADALL CAMADAGENT CAMADRF TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Utilizing the ITCAM 7.2 Data Collector with the ITCAM 7.1.0.3.3 TEMA, the Request Analysis Workspace does not show any data even though the ITCAM 7.1.0.3.3 Managing Server does show the request data. 
+
+CAUSE
+The ITCAM 7.1.0.3.3 TEMA does not show certain types of Request data in the Request Analysis Workspace, such as SCA, Web Services, and so on.
+
+RESOLVING THE PROBLEM
+The ITCAM 7.2 Data Collector should be paired with the ITCAM 7.2 TEMA in order to get the following type of request data to show in the Request Analysis Workspace:
+
+Valid values are Servlet, EJB_Method, Custom, All_Workloads, Unknown, Portlet, SCA, web service provider, and web service client.
+
+
+The Part Number for the ITCAM 7.2 agent can be found at this location:
+http://www-01.ibm.com/support/docview.wss?uid=swg21625036 [http://www-01.ibm.com/support/docview.wss?uid=swg21625036]

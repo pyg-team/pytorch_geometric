@@ -1,0 +1,141 @@
+Title: IBM PI43774: UNABLE TO OPEN EXCEL XLS FILES ON MAC OSX 10.10 YOSEMITE WITH IBM SPSS STATISTICS 23 - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  You work with IBM SPSS Statistics 23 release installed on a
+   Apple Macintosh 10.10 OSX Yosemite.
+   You click File - Open - Data and select Excel file type XLS
+   You either browse to demo.xls on
+   /Applications/IBM/SPSS/Statistics/23/Samples/English folder or
+   use an own XLS Excel file for import.
+   However, the file is not opened.
+   You get below error:
+   
+   (2068) Excel file version (Microsoft Excel 5.0/95 Workbook) is
+   currently not supported by the Excel DAC (or)
+   Out of Memory error occurred. Please convert to Excel 97/2003
+   format (or) increase java heap size in jvmcfg.ini and try again.
+   
+   When you use an Excel XLSX file for import it works, so as a
+   workaround open the XLS file in Microsoft Excel first and save
+   it as XLSX file (or CSV file format).
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  This is a third party issue caused by Apache POI.
+   Unix and Mac use a different code path to read XLS file formats
+   than Windows.  Unix/Mac relies on Apache POI to read XLS files.
+   Statistics 23 use POI version 3.10.  There are differences in
+   the classes included in Apache v3.10 compared to POI v3.0.1 used
+   in prior releases.
+   The workaround to be used is to save the XLS format in XLSX
+   format in Excel and then import in release 23 on Macintosh
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * see APAR text                                                *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * see APAR text                                                *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * This issue has been addressed in IBM SPSS Statistics 24      *
+   * release. Please upgrade to latest version.                   *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI43774
+   
+   
+ * REPORTED COMPONENT NAME
+   SPSS STATISTICS
+   
+   
+ * REPORTED COMPONENT ID
+   5725A54ST
+   
+   
+ * REPORTED RELEASE
+   N00
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2015-06-25
+   
+   
+ * CLOSED DATE
+   2016-03-22
+   
+   
+ * LAST MODIFIED DATE
+   2016-03-22
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * RO00 PSN
+   UP
+   
+   
+ * RO00 PSY
+   UP

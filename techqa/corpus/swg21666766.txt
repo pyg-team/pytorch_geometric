@@ -1,0 +1,56 @@
+Title: IBM Performance issue occurs when a business process instance is deleted in IBM Business Process Manager (BPM) - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When a business process instance is deleted, the associated service tasks are also deleted including dynamic ad hoc groups. The deletion of these ad hoc groups is a database intensive task. The deletion procedure can be performance-optimized by avoiding the repeated deletion of ad hoc groups. 
+
+CAUSE
+The performance issue is caused by the stored procedures in the database that are used to delete business process definition (BPD) process instances. When a BPD process instance is deleted, all task instances that belong to this process have to be deleted as well. In order to delete them, it is first necessary to delete all dynamic ad hoc groups that are associated with these task instances. Determining the groups and group memberships that have to be deleted is an expensive database query, and this query should therefore only be executed once. However, the query is repeated several times in the course of deleting all tasks and the process instance itself. This process causes a severe performance impact on environments where many groups exist.
+
+RESOLVING THE PROBLEM
+To enable the BPD instance deletion performance improvements of APAR JR46456, complete the following steps to update the stored procedures in your Process Server database depending on your environment: 
+
+Upgrading a stand-alone environment (profile) 
+
+ 1. Find the fileupgradeSchema_ProcessServer.sql in the following directory:
+    
+     * On Microsoft Windows operating systems: install_root\dbscripts\ProcessServer\db_type 
+     * On UNIX-based and Linux operating systems: install_root /dbscripts/ProcessServer/db_type
+       
+       
+    
+    
+ 2. Run the SQL statements between /* START of phase ProcUpgradeTo8012 */ and/* END of phase ProcUpgradeTo8012 */ to update the stored procedures. 
+    Note: The statement termination character is GO in the upgrade SQL file; replace it as needed.
+    
+    
+
+Upgrading non-clustered managed servers  1. Find the fileupgradeSchema_ProcessServer.sql in the following directory:
+    
+     * On Microsoft Windows operating systems: was_home\dbscripts\ProcessServer\db_type 
+     * On UNIX-based and Linux operating systems: was_home/dbscripts/ProcessServer/db_type
+       
+       
+    
+    
+ 2. Run the SQL statements between /* START of phase ProcUpgradeTo8012 */ and/* END of phase ProcUpgradeTo8012 */ to update the stored procedures. 
+    Note: The statement termination character is GO in the upgrade SQL file; replace it as needed.
+    
+    
+
+
+Upgrading clusters 
+Optional: To enable the BPD instance deletion performance improvements of APAR JR46456, run one of the following commands to update the stored procedures in the Process Server database:  * On Windows operating systems: install_root\BPM\Lombardi\tools\upgrade\UpgradeProcessData\upgradeProcessData.bat -profileName profile_name-nodeName node_name-serverName server_name 
+ * On UNIX-based and Linux operating systems:
+   install_root/BPM/Lombardi/tools/upgrade/UpgradeProcessData/upgradeProcessData.sh -profileName profile_name-nodeName node_name-serverName server_name 
+
+where profile_name is the deployment manager profile that you are upgrading, server_name is the name of any application cluster member, and node_name is the name of the corresponding node. 
+
+If Performance Data Warehouse is configured on a different cluster, you must also specify the -perfNodeName and -perfServerName command line options. See upgradeProcessData command-line utility [http://pic.dhe.ibm.com/infocenter/dmndhelp/v8r0m1/topic/com.ibm.wbpm.ref.doc/topics/rmig_vtv_upgradeprocessdata.html]. 
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ BPM

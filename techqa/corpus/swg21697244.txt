@@ -1,0 +1,26 @@
+Title: IBM WTX XPATH() function not working under SI - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ IBM WebSphere Transformation Extender (WTX) maps executed on the Sterling Integrator B2B platform using the XPATH() function will return no result and a -1 to the LASTERRORCODE() function. 
+
+SYMPTOM
+The expected result is not returned from the function, and a call to the LASTERRORCODE() function returns -1.
+
+
+CAUSE
+This has been identified as a product defect under APAR PI35144
+
+ENVIRONMENT
+IBM WebSphere Transformation Extender (WTX) maps executed on Sterling Integrator B2B.
+
+DIAGNOSING THE PROBLEM
+Examination of the JNI Layer trace, might show 'ERROR: XPATH exception encountered: Unable to find class com.ibm.websphere.dtx.xml.functions.MXMLBridge' and '*ERR: Exception occurred (-2) in XPATH()'
+
+RESOLVING THE PROBLEM
+The user can either use the workaround of the xmllib->XPATH() function, or obtain and apply fix for APAR PI35144
+
+RELATED INFORMATION
+ A simplified Chinese translation is available [http://www.ibm.com/support/docview.wss?uid=swg21700077]

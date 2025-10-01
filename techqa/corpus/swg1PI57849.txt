@@ -1,0 +1,108 @@
+Title: IBM PI57849: VALUES NOT INSERTED AT CURSOR LOCATION IN REPORT STUDIO - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS VENDOR SOLUTION.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Values from the 'Select value' dialog in a filter expression or
+   data item expression are not inserted at the cursors location.
+   This happens when the expression has more than one line. This is
+   reproducible in Internet Explorer, but not Mozilla Firefox.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *  This behavior has been changed in Cognos Anaytics 11.
+   To reproduce the issue, the cursor is placed between two
+   "carriage return/line feed' pairs.  The problem with the
+   implementation provided by IE is that trailing "carriage
+   return/line feeds" are removed by the range object.  Because of
+   this, the information required to properly position the inserted
+   data is not available.  In IE "Standards mode" there is another
+   way to get the data (textArea selectionStart and selectionEnd).
+   Cognos Analytics use IE Standards mode. We have no plans on
+   using standards mode for releases prior to CA11.
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI57849
+   
+   
+ * REPORTED COMPONENT NAME
+   COG REPORT STUD
+   
+   
+ * REPORTED COMPONENT ID
+   5724W12RS
+   
+   
+ * REPORTED RELEASE
+   A22
+   
+   
+ * STATUS
+   CLOSED ISV
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-02-23
+   
+   
+ * CLOSED DATE
+   2016-09-09
+   
+   
+ * LAST MODIFIED DATE
+   2016-09-09
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

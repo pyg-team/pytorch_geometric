@@ -1,0 +1,30 @@
+Title: IBM Support Resources for Tivoli Netcool OMNIbus (Probes) - United States
+
+Text:
+support landing page; Probes; Support resources; OMNIbus Probes RECOMMENDED RESOURCES
+
+ABSTRACT
+ Consider this the home page for the support of the OMNIbus product. Each button below will take you to a collection of information, documents, or links that have been identified as most relevant to the given category. 
+
+CONTENT
+ 
+
+TAB NAVIGATION
+ * Hot Links [http://www.ibm.com/support/docview.wss?uid=swg27039575]
+ * OMNIbus Core [http://www.ibm.com/support/docview.wss?uid=swg27042320]
+ * Web GUI [http://www.ibm.com/support/docview.wss?uid=swg27042323]
+ * Gateways [http://www.ibm.com/support/docview.wss?uid=swg27042352]
+ * Probes
+ * More [http://www.ibm.com/support/docview.wss?uid=swg27042386]
+
+
+PLANNING
+IBM Education Assistant video giving an overview for probes OMNIbus 8.1 Sizing Guide with recommendations on CPU Cores and RAM for Probe Servers List of Available Universal Tivoli Netcool OMNIbus Probe Integrations on Developerworks Wiki List of Available Device Tivoli Netcool OMNIbus Probe Integrations and the device versions supported in IBM Knowledge Center List of additional OMNIbus Integration Modules on IBM Integrated Service Management Library 
+INSTALLATION AND MIGRATION
+Best Practices document for a new OMNIbus probe deployment on IBM Integrated Service Management Library Installing a Probe or Gateway on OMNIbus 7.3.0, 7.3.1, 7.4.0 or 8.1 in IBM Knowledge Center OMNIbus v7.3.0-v7.4.0 Deployment Engine installer Backup and Restore IBM Education Assistant video 
+CONFIGURATION AND ADMINISTRATION
+OMNIbus 8.1 Common Features available for all Probes in IBM Knowledge Center Individual Probe Guides detail properties and functionality for each individual probe in IBM Knowledge Center Support's Guide white paper to the SNMP [MTTrapd] Probe Support's Guide white paper to IBM CORBA probes Support's guide white paper to the JDBC Probe Support's Guide white paper to the Tivoli EIF Probe Additional Support Guide white papers including the MessageBus Integration (XML Probe), Nortel IEMS Probe, and Alcatel 5620 SAM Probe 
+PROBE RULES
+Recipe to Setup the Mttrapd Probe with the Netcool Knowledge Library technote Probe Rules File examples in IBM Knowledge Center OMNIbus 8.1 Probe Rules File Development in IBM Knowledge Center Beginner's Guide to Writing Rules Files on Developerworks Wiki Probe presentation and recorded training on Rules File Development 
+TROUBLESHOOTING
+IBM Education Assistant video on Probe and Gateway Key Performance Indicators IBM Education Assistant video on Enabling Probe Self-Monitoring and Flood Detection Support's Guide white paper to Probe Event Replication Post questions to the OMNIbus User's Forum Information to collect when opening a problem ticket with IBM Support for Probes on UNIX. Information to collect when opening a problem ticket with IBM Support for Probes on Windows.

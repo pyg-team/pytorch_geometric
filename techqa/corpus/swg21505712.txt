@@ -1,0 +1,98 @@
+Title: IBM Uploadmanager.exe usage to automate the import and upload of software distribution packages. - United States
+
+Text:
+1743; Uploadmanager.exe upload deploy software distribution dashboard; googlebigfix TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Uploading software packages outside the BigFix Console. 
+
+RESOLVING THE PROBLEM
+
+
+Before BigFix can deploy software packages, it must analyze, archive, and upload them to the BigFix server. While the BigFix console can be used to import and upload packages through the software distribution dashboard, many customers would like to avoid manually importing individual packages during an initial deployment. In order to do so, an administrator may use uploadmanager.exe from outside of the BigFix console. The command line switches are grouped below.
+
+First, the tool will need access to the BigFix server and database.
+
+-hostname <hostname>
+This is the hostname of the BigFix server which the packages will be uploaded to. This can also be an IP address. This switch is required.
+
+-port <port number> 
+This is the TCP port number of the BigFix server that is being uploaded to. The default value is 52311, which is the standard BigFix port.
+
+-dsn <dsn>
+This is an ODBC DSN which configures access to the SQL Server that the BigFix Server database is located on. If omitted, the default will be bes_EnterpriseServer.
+
+-besusername <name> This is a SQL user name for the DSN being logged into. This switch is required.
+
+- bespassword <pass>
+This is the SQL password for the DSN user name specified above. This switch is required.
+Example:
+Uploadmanager.exe -hostname BigFixSERVER -port 11325 -dsn TEMDATA -besusername autoimportuser -bespassword S3kr1T!
+
+Second, the tool will need to know what to upload. A single package can be uploaded by specifying the directory name that the package is in, or multiple packages can be uploaded by providing a file listing each of the directories that the packages are in.
+
+-inputdir <directory>
+This is the directory that will have a package generated and uploaded. If the directory has spaces in it quotes must be used. This switch is required unless -inputdirslist is used instead.
+Example:
+-inputdir "Z:\SWREPO\Windows\Adobe Acrobat 9"
+
+-inputdirslist <listtextfile>
+This is a list of one or more directories that will each have a package generated and uploaded. The list is just the directory names on separate lines of a text file. If any directory name has spaces in it, quotes must be used. This switch is required unless -inputdir is used instead.
+Example: -inputdirslist "c:\temp\all-my-adobe-products.txt"
+
+-excludefolders <excludestring>
+This excludes folders from the input directory specified by -inputdir or -inputdirslist from the package. Multiple values should be separated by semi colons or commas. For example, if the input directory is "c:\temp" and it has subfolders "sub1" and "sub1\sub1part2" and "sub2", the excludestring "sub1\sup1part;sub2" would cause only "sub1" to be uploaded. You can use quotes inside the quotes as well.
+Examples:
+-excludefolders a;b;c\d
+-excludefolders " 'j\smith x\y' , a\b\c; "apples\oranges " "
+
+-compresslevel <level>
+If compresslevel is set, all folders below the level specified will be compressed into a single archive file. If this is set to 0 all files in the package are compressed. If this is 1, all levels one subdirectory down from the root are compressed, and so forth. If this switch is omitted there is no compression applied to the package and each individual file will be uploaded. Usage of compresslevel is recommended to improve bandwidth and storage efficiency.
+
+The tool may be tuned further using the following advanced usage switches.
+
+-help
+This switch displays a listing of all possible command line switches. Note that some switches are specifically intended for use by BigFix dashboards and will not be applicable to the standalone mode.
+
+-chunksize <size in bytes>
+This specifies the size of each upload chunk (in bytes) for the PostFile protocol. Each chunk is a separate HTTP post. The value can be set from 1 byte to 10 megabytes, however chunk sizes below 4 MB are recommended for performance reasons.
+
+-tempdir <somedir>
+The default temp directory is the current working directory which the upload tool executable is located in, override the value with this switch. Note that the temp directory must be writeable by the user account that the uploadmanager.exe tool is running as. This switch is not required.
+Example:
+-tempdir "%TEMP%"
+
+-tempfilename <newname>
+The default temp file is ~bfarchivetempcompressedfile.bftemp in the temp folder and in the uploads folder it will be ~bfarchivetempcompressedfile.bftemp. . However the file is always referred to as "compressed_data_for_package" in the JSON package. This switch is not required. 
+
+-dashboardid <dashboardid>
+This is the dashboard ID that the dashboard datastore variables will be created for. The default if omitted is "SoftwareDistribution.ojo".
+
+-uploadsuffix <suffix>
+When files are uploaded via this tool through PostFile protocol, a suffix is attached to the file. For example if the file is abc.txt, the file on the server uploads folder will be abc.txt.<suffix>. If omitted the default is bfswd.
+
+-fpprefix <prefix>
+This is the prefix for the dashboard variables associate with each file in the datastore. The default if omitted is SWD for Software Distribution making variables that look like SWD_FilePointer_<sha1 of file>
+
+-uploadfileslist <istfile>
+This is for a standalone upload mode without dashboard datastore manipulation. This mode only requires the hostname, and the listfile; database login information may be omitted. The format of the list file is a standard text file with each line containing the following format for 1 file.
+<fullpath to file> , <sha1 of that file> , <name you want on server, OPTIONAL>
+Examples of a line:
+C:\temp\abc.txt , 129381290381, xyz.txt
+C:\program files\stuff.exe, 1231238aff932
+Files will be uploaded to the server with no check if a given file already exists in the database, so you may get duplicate files by doing this. They will be given the default suffix <bfswd> unless another is specified.
+
+-httpgetfilecheck
+This is an extra switch that is only useable with servers running 8.0.584 build of the BigFix server. If specified, the switch turns on functionality that will cause an HTTP GET to be performed on each file that is uploaded to confirm that it is available on the web server. This switch does nothing on builds higher than 8.0.584.
+
+-log <location>
+Enter the location to write the logs to.
+
+
+Note: Uploadmanager.exe only supports SQL Authentication and does not support NT Authentication.  
+
+HISTORICAL NUMBER
+ 1743 
+
+PRODUCT ALIAS/SYNONYM
+ TEM bigfix

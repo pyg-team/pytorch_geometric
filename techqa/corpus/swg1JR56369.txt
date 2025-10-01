@@ -1,0 +1,162 @@
+Title: IBM JR56369: YOU SEE A NULLPOINTEREXCEPTION ON THE RUNCHANGELOGOPERATION FROM THE IBM PROCESS FEDERATION SERVER BPEL INDEXER - United States
+
+Text:
+  DIRECT LINKS TO FIXES
+pfs.8570.delta.cf2016.12.repository [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Standard&fixids=pfs.8570.delta.cf2016.12.repository&source=SAR]
+bpm.8570.cf2016.12.delta.repository [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Standard&fixids=bpm.8570.cf2016.12.delta.repository&source=SAR]
+IBM Business Process Manager - Process Federation Server 8.5.7 Cumulative Fix 2016.12 (8.5.7 CF2016.12) [http://www-01.ibm.com/support/docview.wss?uid=swg24043116]
+Downloading IBM Business Process Manager V8.5.7 Cumulative Fix 2016.12 [http://www-01.ibm.com/support/docview.wss?uid=swg24043062]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  An FFDC incident "java.lang.NullPointerException
+   runChangeLogOperation 0002" is created for the IBM Process
+   Federation Server BPEL indexer.
+   
+   You see the following log entries in the Process Federation
+   Server server logs:
+   
+   [5/17/16 8:57:03:393 CEST] 000003b5
+   com.ibm.ws.logging.internal.impl.IncidentImpl
+   I FFDC1015I: An FFDC Incident has been
+   created: "java.lang.NullPointerException runChangeLogOperation
+   0002" at
+   ffdc_16.05.17_08.57.03.0.log
+   [5/17/16 8:57:03:416 CEST] 000003b5
+   com.ibm.ws.logging.internal.impl.
+   IncidentImpl                I FFDC1015I: An FFDC Incident has
+   been
+   created: "com.ibm.wsspi.uow.UOWActionException:
+   java.util.concurrent.
+   ExecutionException: java.lang.NullPointerException
+   runChangeLogOperation 0002" at ffdc_16.05.17_08.57.03.1.log
+   [5/17/16 8:57:03:418 CEST] 000003b5
+   com.ibm.ws.logging.internal.impl.
+   IncidentImpl                I FFDC1015I: An FFDC Incident has
+   been
+   created: "java.util.concurrent.ExecutionException:
+   com.ibm.wsspi.uow.
+   UOWActionException: java.util.concurrent.ExecutionException:
+   java.lang.
+   NullPointerException com.ibm.bpm.federated.indexer.bpel.impl.
+   BpelIndexerDaemon run" at ffdc_16.05.17_08.57.03.2.log
+   [5/17/16 8:57:03:419 CEST] 000003b5
+   com.ibm.bpm.federated.indexer.bpel.
+   impl.BpelIndexerDaemon    E CWMFS3007E: An error has occurred
+   with BPEL
+   Indexer: federatedSystem: wmt-bpel, caused by com.ibm.wsspi.uow.
+   UOWActionException: java.util.concurrent.ExecutionException:
+   java.lang.
+   NullPointerException.
+   [5/17/16 8:57:09:383 CEST] 000003b5
+   com.ibm.bpm.federated.indexer.bpel.
+   impl.BpelIndexerDaemon    E CWMFS3007E: An error has occurred
+   with BPEL
+   Indexer: federatedSystem: wmt-bpel, caused by com.ibm.wsspi.uow.
+   UOWActionException: java.util.concurrent.ExecutionException:
+   java.lang.
+   NullPointerException.
+   
+   PRODUCTS AFFECTED
+   IBM Business Process Manager (BPM) Advanced
+   IBM BPM Standard
+   IBM BPM Express
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  No additional information is available.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+ *  Not applicable.
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR56369
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM ADVANCED
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9400
+   
+   
+ * REPORTED RELEASE
+   857
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-07-22
+   
+   
+ * CLOSED DATE
+   2016-12-02
+   
+   
+ * LAST MODIFIED DATE
+   2016-12-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R857 PSY
+   UP

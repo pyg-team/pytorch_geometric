@@ -1,0 +1,38 @@
+Title: IBM Using EventLocking to help prevent multiple event reprocessing - United States
+
+Text:
+netcool; impact; netcool/impact; nci; event; locking; eventlocking; expression; filter; process; processing; reprocess; reprocessing; unwanted; unnecessary; undesirable; serial; identifier; flag; flagging; reader; omnibus; eventreader; omnibuseventreader TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Event Locking can be used as part of a configuration to avoid unwanted reprocessing of events 
+
+RESOLVING THE PROBLEM
+This TechNote is related to the series of TechNotes revolving around the subject of "Avoiding unwanted event reprocessing" - please see the TechNote of that title [link below]. 
+
+As part of an Event Flagging*, Go_NoGo Checking**, UpdateEventQueue() function*** configuration the application of EventLocking can assist in preventing the unwanted multiple reprocessing of events. By setting EventLocking against a suitable field (for example: Identifier) to single thread processing of events with the same field value, we can ensure that only one copy of an event gets processed at a time.
+
+The advantage of doing so is in preventing thread race conditions (where two or more threads are processing the same event simultaneously). This enables the UpdateEventQueue configuration to remove extra copies of the event from the EventReader EventQueue and the Event Flagging configuration to flag the event as being processed. If a copy of the event is the waiting in the EventProcessor EventQueue the Go_NoGo Checking will then find the flag value updated in the ObjectServer to show that the event has already been processed and the Go_NoGo Checking will then exit attempting to process the event again.
+
+The configuration is achieved in the Event Mapping tab of the EventReader configuration editor pane by ticking the selection:
+
+
+
+ * 
+
+
+and providing a valid field or field combination in the associated Expression space - for example: 
+
+ * [/support/docview.wss?uid=swg21675051&amp;aid=1]
+
+
+Please note that failing to provide a Expression value will result in processing failure - please see the TechNote "Events captured, but not processed by EventReader" [ link below]. Please also note that using EventLocking also restricts the processing to the Primary ImpactServer and can impinge upon the ability to process events efficiently. 
+
+* - See TechNote "Event flagging" [ link below]. 
+** - See TechNote "Event Flagging with Go_NoGo checking" [ link below]. 
+*** - See TechNote "Removing duplicate event records from EventQueue with UpdateEventQueue" [ link below]. 
+RELATED INFORMATION
+ Avoiding unwanted event reprocessing [http://www-01.ibm.com/support/docview.wss?uid=swg21386538]
+Event flagging [http://www-01.ibm.com/support/docview.wss?uid=swg21626633]
+Events captured but not processed by EventReader [http://www-01.ibm.com/support/docview.wss?uid=swg21575086]
+Event Flagging with Go_NoGo checking [http://www-01.ibm.com/support/docview.wss?uid=swg21675015]
+Removing duplicate event records from EventQueue with U [http://www-01.ibm.com/support/docview.wss?uid=swg21675016]

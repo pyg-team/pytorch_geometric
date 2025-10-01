@@ -1,0 +1,152 @@
+Title: IBM ISAM Runtime for Java configuration fails with "Access Manager License Fileset not correct" error message - United States
+
+Text:
+isam java runtime; TAM java runtime; TAM java runtime; TAM runtime for java; pdjrtecfg; pdjrtecfg -action config -interactive TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ You are unable to configure ISAM Runtime for Java because of the incorrect license file. Message shown on the console is "Access Manager License Fileset not correct". The problem persists even after checking the correct license file is in the right location. 
+
+SYMPTOM
+Running the configuration command "PDJrteCfg -action config": 
+
+Example 1. ( TDI 7.1.1 ):
+/opt/IBM/TDI/V7.1.1/jvm/jre/bin/java
+-Dpd.home=/opt/isam8/pdjrte -classpath 
+/opt/isam8/pdjrte/java/export/pdjrte/PD.jar com.tivoli.pd.jcfg.PDJrteCfg
+-action config -java_home /opt/IBM/TDI/V7.1.1/jvm/jre -host <Policy Server host name> 
+-port 7135 -config_type full
+
+Example 2. ( WAS 8.5.5 ):
+export PATH=/opt/IBM/WebSphere/AppServer/java/jre/bin:$PATH
+export JAVA_HOME=/opt/IBM/WebSphere/AppServer/java
+java -Dpd.home=/opt/PolicyDirector/ -cp /opt/PolicyDirector/java/export/pdjrte/PD.jar com.tivoli.pd.jcfg.PDJrteCfg -action config -java_home /opt/IBM/WebSphere/AppServer/java/jre -host <Policy Server host name> -port 7135 -domain Default -config_type full -cfgfiles_path /opt/IBM/WebSphere/AppServer/tivoli/tam -alt_config
+
+
+
+Both examples fail with the output:
+Security Access Manager License fileset not correct.
+
+
+CAUSE
+The version of the PD.jar does not match the license file.
+
+
+
+ENVIRONMENT
+The issue was reported in following environment: 
+
+Solaris 10
+TDI 7.1.1
+pdjrte-8.0.1-3.zip
+
+The problem was recreated by support using components and versions mentioned below:
+
+RHEL 6.0
+WAS 8.5.5
+PDJrte-PD-7.0.0-0.x86_64.rpm
+
+
+DIAGNOSING THE PROBLEM
+Notice! This document assumes that all prequisites of an operating system and the Java runtime environment are correctly implemented and are at the correct level in relation to the ISAM Runtime for Java version. 
+
+ 
+
+1) Verify the license file. 
+
+Example command:
+cat /opt/PolicyDirector/.configure/PDlic.txt
+
+
+Example output:
+Access Manager License fileset version 7.0.0.0
+
+
+2) Verify the version of the PD.jar used in the configuration command. 
+
+Example command:
+unzip -p /opt/PolicyDirector/java/export/pdjrte/PD.jar META-INF/MANIFEST.MF |grep "Implementation-Version" 
+
+Example output:
+Implementation-Version: 7.0.0.0
+
+
+3) Verify from which location the PD.jar is loaded. 
+
+Use Java command option -verbose:class with the "PDJrteCfg -action config" command. 
+
+Example command:
+/opt/IBM/WebSphere/AppServer/java/jre/bin/java -verbose:class-Dpd.home=/opt/PolicyDirector/ -cp /opt/PolicyDirector/java/export/pdjrte/PD.jar com.tivoli.pd.jcfg.PDJrteCfg -action config -java_home /opt/IBM/WebSphere/AppServer/java/jre -host <Policy Server host name> -port 7135 -domain Default -config_type full -cfgfiles_path /opt/IBM/WebSphere/AppServer/tivoli/tam -alt_config
+
+
+Example output ( exerpt of the output ):
+...
+class load: com.tivoli.pd.jcfg.IPDJrteCfg from: file:/opt/IBM/WebSphere/AppServer/java/jre/lib/ext/PD.jar
+class load: com.tivoli.pd.jutil.IPDPathConstants from: file:/opt/IBM/WebSphere/AppServer/java/jre/lib/ext/PD.jar
+class load: com.tivoli.pd.jcfg.IPDJrteCfgConstants from: file:/opt/IBM/WebSphere/AppServer/java/jre/lib/ext/PD.jar
+class load: com.tivoli.pd.jcfg.PDJrteCfg from: file:/opt/IBM/WebSphere/AppServer/java/jre/lib/ext/PD.jar
+class load: com.tivoli.pd.jutil.PDPrintStream from: file:/opt/IBM/WebSphere/AppServer/java/jre/lib/ext/PD.jar
+...
+
+
+4) Compare the location of the PD.jar defined versus what has been used. 
+
+The Java command option -cp defines the classpath used with the "PDJrteCfg -action config" command: 
+
+-cp /opt/PolicyDirector/java/export/pdjrte/PD.jar. 
+
+As per the output above classes are loaded from different location than what was defined by the classpath option: 
+
+/opt/IBM/WebSphere/AppServer/java/jre/lib/ext/PD.jar 
+
+ 
+
+5) Check the PD.jar version that was used while running the "PDJrteCfg -action config" command. 
+
+Example:
+unzip -p /opt/IBM/WebSphere/AppServer/java/jre/lib/ext/PD.jar META-INF/MANIFEST.MF |grep "Implementation-Version" 
+
+Output:
+Implementation-Version: 6.1.0.7
+
+
+A mismatch between the PD.jar file ( 6.1.0.7 ) and the license file ( 7.0.0.0 ) versions is causing the "Access Manager License Fileset not correct" error message.
+
+
+RESOLVING THE PROBLEM
+In this case it is important to understand in which order class files are loaded by the class loaders when a java application is executed. The Java classes are loaded in the following order: 
+
+1. Bootstrap class loader ( $JAVAHOME/jre/lib/rt.jar ) 
+
+2. Extension class loader ( $JAVAHOME/jre/lib/ext/*.jar ) 
+
+3. System class loader ( $CLASSPATH ) 
+
+ 
+
+In effect, these three search paths are joined to form a simple class path. In the example of "PDJrteCfg -action config" command above the Java command line option -cp was given. Intention was to override the "full classpath" and use the correct version of the PD.jar file. Based on the Java rules -cp option does override the CLASSPATH environment variable but -cp option does not affect the bootstrap or extension class loaders. The classpath ( defined either by the CLASSPATH environment variable or by the -cp option ) is searched only if a class to be loaded hasn't been found by the bootstrap or extension class loaders. In the example case classes were loaded by the extension class loader and therefore an old version of the PD.jar file was used. See the links in the Related information section for more details about the Java class loading. 
+
+ 
+
+Fixing the problem: 
+
+1. Remove any PD.jar files from the extension directory ( $JAVAHOME/jre/lib/ext/ ). 
+
+Example
+rm /opt/IBM/WebSphere/AppServer/java/jre/lib/ext/PD.jar
+
+2. Run the ISAM Runtime for Java configuation command again.
+
+RELATED INFORMATION
+ Syntax of the PDJrteCfg command [http://www-01.ibm.com/support/knowledgecenter/SSPREK_8.0.1.3/com.ibm.isamw.doc/cmdref/reference/ref_pdjrtecfg.html?lang=en]
+Installing IBM Security Access Manager Runtime for Java [http://www-01.ibm.com/support/knowledgecenter/SSPREK_8.0.1.3/com.ibm.isamw.doc/adk/task/tsk_jrtepgk_install.html?lang=en]
+Demystifying class loading problems [http://www.ibm.com/developerworks/library/j-dclp1/]
+How Classes are Found [http://docs.oracle.com/javase/7/docs/technotes/tools/findingclasses.html]
+Understanding Extension Class Loading [https://docs.oracle.com/javase/tutorial/ext/basics/load.html]
+
+
+
+
+PRODUCT ALIAS/SYNONYM
+ ITAM
+TAM
+Tivoli Access Manager

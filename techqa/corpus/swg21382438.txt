@@ -1,0 +1,85 @@
+Title: IBM Error connecting to server EXAMPLE/IBM/US: Remote system no longer responding at Server Startup - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+Upon server startup, the server console displays the following kind of error:
+
+"Error connecting to server EXAMPLE/IBM/US: Remote system no longer responding"
+
+for 20-30 seconds or so and then it would go away and the server will become responsive and run as expected. This error message only occurs during server startup.
+
+SYMPTOM
+The server cannot connect to itself for 20-30 seconds during the server startup. This server was recently down-graded from Domino 8.5 to 8.0.2.
+
+
+DIAGNOSING THE PROBLEM
+Initial troubleshooting steps:
+1. Removed all extraneous notes.ini parameters.
+
+2. Changed the value of TCPIP from TCPIP=TCP, 0, 15, 0,,32 to TCPIP=TCP,0,15,0,,12320 via technote number 1279547.
+
+3. Changed the netaddress field of the TCPIP port to be the FQDN.
+
+4. Confirmed that the Port tab in the server document matched up with the ports parameter in the notes.ini.
+
+5. Confirmed that this server was not clustered.
+
+6. Confirmed that the there was only one TCPIP entry in the ports tab of the server document.
+
+7. Increased the paging file size of the server to 1.5 times the amount of physical ram.
+
+8. Used NSlookup to confirm the DNS configuration.
+
+9. Issued "restart port tcpip" without any problems.
+
+10. Trace from the notes client via Files>>Preferences>>User Preferences>>Ports>>Trace by ip address, FQDN, fully hierarchical name, and short name was successful.
+
+11. Confirmed that there is no third party software running.
+
+12. Confirmed that this is not a resource limitation due to VMWare.
+
+13. Confirmed server name field matches Mail Server field found in Server Document --> Basics panel --> Server Location Information Section.
+
+14. Verified that a server can connect to itself by issuing a trace command with the FQDN on the server console.
+
+15. Used the PING executable to verify IP-level connectivity.
+
+16. Updated the local host file with its own IP or local host address and then pinged the server by DNS alias name from the server itself to verify it was added correctly.
+
+17. Executed a file -> database -> open with no problems.
+
+18. Used nconnect to make sure that none of the ports that Domino uses such as 1352 is blocked.
+
+After all these steps were completed, we were quite certain that this was not a problem with the network so we looked at the server document again and noticed that it still referenced Domino 8.5 although the customer was on Domino 8.0.2. Due to this, we suspected corruption to the server document and possibly the NAB as well. 
+
+The next set of steps included:
+
+1. Run maintenance on the address book using these switches while the server is down:
+
+nfixup -F (-J with transaction logging) 
+ncompact -d -c -i 
+nupdall -R -X 
+
+2. Recreate the server document.
+
+3. Recreate the notes.ini. 
+
+
+RESOLVING THE PROBLEM
+It turned out that the cause of the crash was due to corruption to the address book. We ran maintenance on the address book while the server was down using the following switches: 
+
+
+nfixup -F (-J with transaction logging) 
+ncompact -d -c -i 
+nupdall -R -X 
+
+After this was completed, the server no longer exhibited the startup error messages.
+
+Side-note:
+
+One possible work-around may be to create a connection document for the server to connect to itself. 
+
+RELATED INFORMATION
+#A simplified Chinese translation is available [http://www.ibm.com/support/docview.wss?uid=swg21664408]

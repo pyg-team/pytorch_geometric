@@ -1,0 +1,19 @@
+Title: IBM Can OMEGAMON XE for DB2 Performance Monitor and DB2 reside on separate LPARs? - United States
+
+Text:
+Classic; DB2; LPAR; Agent; connectivity TECHNOTE (FAQ)
+
+QUESTION
+ Can OMEGAMON XE for DB2 Performance Monitor / OMEGAMON XE for DB2 Performance Expert and DB2 reside on separate LPARs? What products are needed? 
+
+ANSWER
+The agent and Classic are using Cross Memory Services to communicate with the monitored DB2; therefore they must reside in the same LPAR. CUA can be on any LPAR, that has VTAM connection to the system classic is running on. The agent communicates with TEMS through TCP/IP; therefore TEMS can reside on any system, that has TCP/IP connectivity with the agent's LPAR. TOM communicates with TEMS through TCP/IP; therefore TOM can reside on any LPAR, that has TCP/IP connectivity with the TEMS' LPAR. 
+
+There is no product that could help to overcome these restrictions.
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Systems and Asset Management Tivoli OMEGAMON XE for DB2 Performance Expert on z/OS z/OS 5.1.0, 5.1.1, 5.2.0, 5.3.0, 5.4.0 Systems and Asset Management Tivoli OMEGAMON XE for DB2 on z/OS All Versions 
+HISTORICAL NUMBER
+ 1-58991669

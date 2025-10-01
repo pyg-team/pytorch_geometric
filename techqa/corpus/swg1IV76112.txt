@@ -1,0 +1,134 @@
+Title: IBM IV76112: MISSING AGENT SCHEMA CAUSES TEMS TO CRASH - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  PROBLEM DESCRIPTION:
+   Using the Tivoli Enterprise Portal Desktop selection Add Managed
+   System to remotely install an Agent on a target system will
+   result in the Monitoring Server abnormally terminating if the
+   Application Support Schema file for the Agent is missing from
+   the Tivoli Enterprise Portal Desktop's configuration (config)
+   directory.
+   
+   RECREATE INSTRUCTIONS:
+   
+   Install ITM 630 FP5 TEMS/TEPS/TEP Desktop
+   
+   Install ITM 630 FP5 OS Agent
+   
+   Add 3z (Active Directory) Agent to TEMS Depot
+   
+   Add Agent Support Files for Agent
+   
+   Locate the 3z_dd_063002000.xml file in the
+   
+   C:\IBM\ITM\CNB\classes\candle\k3z\resources\config directory.
+   
+   Rename the directory to config_x
+   
+   Select Add Managed System from the TEP Console
+   
+   Select Monitoring Agent for Active Directory
+   
+   Observe the TEMS abnormally terminating.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Install the monitoring agent locally, or reinstall the
+   Application Support Files for the Agent that is causing the
+   Monitoring Server failure.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  To be fixed in next release.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV76112
+   
+   
+ * REPORTED COMPONENT NAME
+   TEMS
+   
+   
+ * REPORTED COMPONENT ID
+   5724C04MS
+   
+   
+ * REPORTED RELEASE
+   630
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2015-08-18
+   
+   
+ * CLOSED DATE
+   2016-06-29
+   
+   
+ * LAST MODIFIED DATE
+   2016-06-29
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R630 PSY
+   UP

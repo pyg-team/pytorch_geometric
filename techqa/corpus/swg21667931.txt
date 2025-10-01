@@ -1,0 +1,88 @@
+Title: IBM Sentinel RMS Development Kit: Error[88] and/or Error[131] - United States
+
+Text:
+Sentinel RMS Development Kit: Error[88] and/or Error[131]; installation; Modeler; Statistics; Sentinel License Manager; RAA; LSHOST; system environment variable TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The following two errors have been reported by customers to show up in three different scenarios.
+
+[1]
+"Sentinel RMS Development Kit: Error [88]: Operating in stand-alone mode using terminal client. This is not allowed by the vendor"
+
+[2]
+"Sentinel RMS Development Kit : Error[131] : Client library not in initialized state."
+
+
+[SCENARIO 1]
+When the Modeler 16.0 client is launched.
+
+
+[SCENARIO 2]
+This message appears when 'Sentinel RMS Server Administration' (WlmAdmin) is launched and the plus sign next to 'Subnet Servers' is clicked.
+
+Note: The icon that appears under 'Subnet Server' after the plus sign is clicked is named ‘no-net’.
+LM version 9.5.0.1 for sure.
+
+
+[SCENARIO 3]
+When the Statistics 22.0 client is launched.
+
+NOTE: If customers are getting the additional error of "Error #2084." tacked on the error message, for example: “Error #2084. The license for IBM SPSS Statistics is not valid on a computer running NT Terminal Server. Execution of this command stops. Specific symptom number: 88”.
+
+That would indicate that Terminal Services is turned on for this server. 
+Verify with the customer that they are actually using a concurrent license and that MS Terminal Services is not running on the machine. 
+
+CAUSE
+My most recent discover is when the LM has been functioning correctly and then MS Windows Updates were done on the Microsoft Server where the license manager was installed and the LSHOST system environment variable was changed from the systems IP Address or Hostname to 'no-net'. 
+
+Cause: The LSHOST Environment Variable being changed on either the Client computer or the computer where the license manager is installed. In some cases they are one in the same.
+
+Possible causes of change:
+1) MS Windows Updates where done on the MS Server and the LSHOST system environment variable got changed from the systems IP Address or Hostname to 'no-net'.
+PMR 02098,082,000 closed on 9/5/2014 was this exact reason. Customer was to send MS update logs but never were sent. 
+2) Resent Group Policy that was pushed out to users and possibly changed permissions?
+3) Third party software or the operating systems software that could change environment variables.
+
+
+ENVIRONMENT
+ (1) Client software was installed on a Microsoft Windows Server 2008 R2 64-bit with Sentinel License Manager 9.5.0.1.
+NOTE: Had separate clients on both a physical and virtual Microsoft Windows Server 2008 R2 64-bit. 
+
+(2) Remote Desktop Protocol (RDP) to access the physical or virtual machine where the client software and the Sentinel License Manger were both installed.
+
+
+
+RESOLVING THE PROBLEM
+We have come up with three solutions that have worked for different customers. Generally in my experience the first one resolves most of our customers. 
+
+
+(1) One or both of the following may need to be performed to resolve the error, depending on where the LSHOST System Environment Variable exists: 
+
+ * (a) Changing the LSHOST System Environment Variable value from "no-net" to the IP Address or Hostname on the machine housing the Sentinel License Manager. 
+   (b) Changing the LSHOST System Environment Variable value from "no-net" to the IP Address or Hostname on the machine housing the Client software. 
+
+
+(2) When activating the authorization code and you get the above errors, try the following:  * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+
+(3) Verify that the System Administrator credentials were used on all computer machines involved. For example logging into the Client used to RDP into the server where the license manager is installed as well as the server itself. 
+Verify both the client and license manger software was installed by right clicking on the executable and choosing 'Run as Administrator' (RAA). RELATED INFORMATION
+ Need more help? Our Modeler forum is Live! [https://developer.ibm.com/answers/topics/modeler/?smartspace=predictive-analytics]
+
+
+[/support/docview.wss?uid=swg21667931&aid=2]TN-1667931-Add Feature to license file.png [/support/docview.wss?uid=swg21667931&aid=1] 
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Analytics SPSS Statistics Windows 22.0

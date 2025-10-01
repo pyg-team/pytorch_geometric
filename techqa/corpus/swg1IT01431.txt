@@ -1,0 +1,145 @@
+Title: IBM IT01431: ADDING INTERVALS OF YEARS OR MONTHS SHOULD NOT GENERATE INVALID DATETIME ERRORS AT END OF MONTH - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  You execute the following select:
+   
+   select ('02/28/2000'::date+3 units year) from systables where
+   tabid=1;
+   
+   and it succeeds. However, because 2000 is a leap year, adding
+   three years to Feb. 29 creates an invalid date and the same
+   select now fails:
+   
+   select ('02/29/2000'::date+3 units year) from systables where
+   tabid=1;
+   
+    1267: The result of a datetime computation is out of range.
+   Error in line 1
+   Near character position 68
+   
+   
+   The second query should succeed, returning 02/28/2003 because
+   that is the last day of February in 2003.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * All                                                          *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * See Error Description                                        *
+   * Changed the behavior so that if subtracting a YEAR/MONTH     *
+   * interval from a DATETIME YEAR TO DAY (or other DATETIME      *
+   * variant involving DAY as MONTH) generates a day number after *
+   * the last day of the month (eg 29th, 30th or 31st February in *
+   * non-leap year, 30th or 31st February in a leap year, 31st    *
+   * April, 31st June, 31st September, 31st November), then the   *
+   * date is 'rounded down' to the last actual day of the month.  *
+   * (Weirdness: if using a DATETIME MONTH TO DAY, the answer     *
+   * will be 29th February regardless of the current year.        *
+   * Anything else leads to data being valid some years and       *
+   * invalid in other years, which is worse than the problem we   *
+   * started with.  It is also the pre-existing behavior.)        *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Upgrade to a version that includes the fix.  This would be   *
+   * IDS 11.70.xC5.                                               *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *  For download information, go to:
+   http://www.ibm.com/support/fixcentral [http://www.ibm.com/support/fixcentral]
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT01431
+   
+   
+ * REPORTED COMPONENT NAME
+   IBM IDS ENTRP E
+   
+   
+ * REPORTED COMPONENT ID
+   5724L2304
+   
+   
+ * REPORTED RELEASE
+   B15
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-04-30
+   
+   
+ * CLOSED DATE
+   2014-05-13
+   
+   
+ * LAST MODIFIED DATE
+   2014-05-13
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    IC81557 [http://www-01.ibm.com/support/docview.wss?uid=swg1IC81557]
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * RB15 PSN
+   UP

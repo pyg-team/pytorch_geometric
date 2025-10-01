@@ -1,0 +1,32 @@
+Title: IBM Print an LPAR Configuration (Pre V7 HMC) - United States
+
+Text:
+CONFIG; HMC; LPAR; PRINT TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This document provides a process to print the partition profile configurations of a partitioned system. 
+
+RESOLVING THE PROBLEM
+Use the following process to print the partition profile configurations of a partitioned system. 
+
+Requirements 
+
+o HMC level 5.2.0 or newer o WebSM loaded on a network PC that also has access to a printer 
+The first thing that you need is a system plan entry. If one does not already exist or if you do not know if it is current, use either Task I or Task IA to 
+generate a system plan. If you have a current existing system plan, skip to Task II. 
+
+[/support/docview.wss?uid=nas8N1014746&amp;aid=1] Task I: Generating a current system plan (command line) 1 On the HMC bring up the restricted shell.
+
+N.B. If you're connecting to the HMC with an SSH client like Putty, proceed to step 5. 2 Right-click on the desk top. 3 Select Terminals. 4 Select rshterm. 5 In the restricted shell, type the following command:
+
+mksysplan -f <some filename>.sysplan -m <managed system’s name> -d <a description>
+
+Examples: 
+
+mksysplan -f sampletestplan.sysplan -m samplesystem -d plan to print
+
+mksysplan -f sysplan.sysplan -m 9406-570*3413556 -d "New 570 system plan for 11/4/05" [/support/docview.wss?uid=nas8N1014746&amp;aid=1] Task IA: Generating a current system plan (GUI) 1 From either the local HMC or a WebSM session, 2 In the Navigation Area, expand the managed system and select System Plans. 3 Select Manage Syststem Plans in the task area. 4 From the button row along the bottom of the dialog, select Create. 5 Verify that the selected managed system is correct and change if required. Give the system plan a name and description.
+Click Create. 6 When the completion dialog is posted, click OK. 7 Click Cancel to close the Manage System Plans dialog. [/support/docview.wss?uid=nas8N1014746&amp;aid=1] [/support/docview.wss?uid=nas8N1014746&amp;aid=1] [/support/docview.wss?uid=nas8N1014746&amp;aid=1] Task II: Displaying the system plan 1 Bring up a WebSM session on the network PC. 2 On the Navigation side, go to System Plans. 3 On the context side, select Manage System Plans. 4 Right-click on the current existing plan or the one created in Step 5. 5 Select the view button. 6 A Web browser window will open with a System Plan Viewer screen that requires you to log in. Use the same login ID and password that were used to log on the HMC. 7 A screen that has the configuration will be displayed. To print the system plan, select Print from the upper right or select File > Print from the browser menu. 
+
+HISTORICAL NUMBER
+ 428344602

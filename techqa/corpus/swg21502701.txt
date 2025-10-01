@@ -1,0 +1,32 @@
+Title: IBM Opening web pages that contain JavaScript causes Rational Application Developer to crash with the "... exit code=8096" error - United States
+
+Text:
+Bit; 64; Windows; 64-bit; Mode; jscript.dll; RN8.0.3; SRX; 75261; RAD64bit; JVM terminated. Exit code=8096; JVM terminated; 8096; Exit Code; 1XHEXCPMODULE; Java started; exited return exit code=8096 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ If you try to open certain web pages that have JavaScript in IBM Rational Application Developer (RAD), RAD will crash with an "... exit code=8096" error message. 
+
+SYMPTOM
+Open a web page that leverage the default Microsoft Internet Explorer v8.x browser, such as Technology Quickstarts or any of the Welcome pages. 
+
+Before RAD crashes it will become unresponsive and an Eclipse window will appear with the first line Java started but exited return exit code=8096. 
+
+
+A javacore file will be created as <Install_Path>\javacore.20110407.013615.5880.0002.txt, which indicates that the jscript.dll was the Microsft Windows Module that caused the crash: 1XHEXCPMODULE Module: C:\Windows\system32\jscript.dll. The problem can also occur with other libraries such as ntdll.dll.
+
+CAUSE
+RAD was installed on Microsoft Windows with the 64 bit Bit Mode option on the Installation Manager Install Packages page. However, the default system web browser is Microsoft Internet Explorer v8; Microsoft Internet Explorer v9 is required if product is installed using the 64 bit Bit Mode option.
+
+
+
+RESOLVING THE PROBLEM
+Use Microsoft Internet Explorer v9 or higher, if you intend to install RAD with the 64 Bit Mode option. 
+
+ Refer to the Web Browsers [http://www-01.ibm.com/support/docview.wss?rs=2042&uid=swg27019500&wv=1#Browsers] section of the RAD System Requirements [http://www-01.ibm.com/support/docview.wss?rs=2042&uid=swg27019500] for more information.
+
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Software Development Rational Software Architect General Information Windows 8.0.3

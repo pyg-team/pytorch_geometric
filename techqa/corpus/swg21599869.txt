@@ -1,0 +1,79 @@
+Title: IBM Upgrade of IBM Content Engine components from version 4.5.1.7 to 5.1 fail to upgrade properly. - United States
+
+Text:
+Upgrade; 5.1 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Upgrade of IBM FileNet Enterprise Manager from CE 4.5.17 to 5.1 fails to upgrade the .Net Client and FileNet Enterprise Manager correctly. 
+
+SYMPTOM
+Logging into P8 via IBM FileNet Enterprise Manager does not show the Content Engine 5.1 elements.
+
+
+CAUSE
+This has been identified as a product defect under APAR PJ40302
+
+ENVIRONMENT
+Windows only.
+
+DIAGNOSING THE PROBLEM
+After upgrade of P8 Content Engine from version 4.5.1.7 to 5.1, logging into P8 via FEM does not display any of the 5.1 elements.
+
+RESOLVING THE PROBLEM
+Standalone IBM FileNet Enterprise Manager
+
+
+
+
+
+ 1. Go to windows Control Panel and Add/Remove programs. 
+
+ 2. Uninstall the two following components. 
+
+ - IBM FileNet Content Engine .NET API 
+
+ - IBM FIleNet Content Engine 
+
+ 3. Reinstall IBM FileNet Content Engine version 5.1 components. 
+
+ 4. At the install dialog window 'IBM FileNet Content Engine Installer' 'Choose Components' select the following components: 
+
+ - '.NET Clients' and 'FileNet Enterprise Manager'. 
+
+ 5. Complete the install wizard. 
+
+ 
+
+ 
+
+Content Engine Server with IBM FileNet Enterprise Manager 
+
+ 1. Backup the IBM FileNet "ContentEngine" directory. 
+
+ 2. Go to windows Control Panel and Add/Remove programs. 
+
+ 3. Uninstall the two following components. 
+
+ - IBM FileNet Content Engine .NET API 
+
+ 4. Complete the 'IBM FileNet Content Engine .NET API' uninstall. 
+
+ 5. Still in the Windows Add/Remove programs window select 'IBM FIleNet Content Engine'. 
+
+ * Only remove certain components 
+
+ 6. At the 'Uninstall IBM FileNet Content Engine' dialog window, select next at the 'Introduction' step. 
+
+ 7. Select 'Uninstall Specific Components'. 
+
+ * Only select the following components. 
+
+ 8. '.NET Clients' and 'FileNet Enterprise Manager'. 
+
+ 9. Reinstall IBM FileNet Content Engine version 5.1 components. 
+
+ 10. At the install dialog window 'IBM FileNet Content Engine Installer' 'Choose Components' select the following components: 
+
+ - '.NET Clients' and 'FileNet Enterprise Manager'. 
+
+ 11. Complete the install wizard.

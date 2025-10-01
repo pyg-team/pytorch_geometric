@@ -1,0 +1,21 @@
+Title: IBM Fixed: Some permission-related requirements for IBM FileNet Process Engine Client are missing in the IBM FileNet Application Engine installation documentation - United States
+
+Text:
+ RELEASE NOTES
+
+ABSTRACT
+ The topics that describe the required permissions for the Application Engine and Workplace XT installer accounts (ae_install_user and wpxt_install_user) are missing some additional requirements in order to run the Process Engine Client installation program. 
+
+A fix for this issue was applied to the IBM FileNet P8 Version 5.0 information center (http://publib.boulder.ibm.com/infocenter/p8docs/v5r0m0/index.jsp [http://publib.boulder.ibm.com/infocenter/p8docs/v5r0m0/index.jsp]) on www.ibm.com as of April 25, 2011. 
+
+CONTENT
+To update Application Engine or Workplace XT with the Process Engine client installation program, the logon accounts ae_install_user or wpxt_install_usermust have read and write permission to the location where the Process Engine Client will be installed and also to where the Common Files directory will be installed. 
+
+ 
+If the P8TASKMAN_HOME environment variable exists, you must grant read and write permission to the ../Common Files/taskmaninstances.xml file.
+
+Default location for Common Files for Windows: 
+C:\Program Files\IBM\FileNet\Common Files 
+
+Default location for Common Files for UNIX: 
+/opt/IBM/FileNet/CommonFiles

@@ -1,0 +1,51 @@
+Title: IBM Creating JMS-administered objects using the WAS Administrative console - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Creating JMS administered objects using the WebSphere Application Server Administrative console and reuse objects for various modules if required. 
+
+RESOLVING THE PROBLEM
+JMS administered objects required by sample
+This sample uses SCA JMS Export and Import bindings. SCA JMS Export and Import bindings requires following JMS administered objects: 
+i) Queue connection factory: JMS Outbound scenario requires this for configuring SCA JMS import binding.
+ii) Activation Spec: JMS Inbound scenario requires this for configuring SCA JMS export binding.
+iii) Queues
+
+WebSphere Integration Developer will automatically generate JMS-administered objects according to what is configured in the bindings tab for the Import or Export. However, object names are module specific, and (typically) one administered object cannot be reused for two modules. The better practice is to create JMS-administered objects using the WAS Administrative console and reuse objects for various modules if required.
+
+If you want to create JMS administered objects using WAS Administrative console you can follow these instructions:
+
+JMS Inbound scenario:
+----------------------------------
+For JMS inbound scenario, JMS Export binding requires activation specification. You can create activation specification using WebSphere Process Server admin console. To create activation spec:
+
+Bring up the console via a web browser and open the following URL: http://<HOST_NAME>:9060/ibm/console.
+
+
+ 1. In the Navigation Menu on the left, select the Resources->JMS Providers->Default messaging.
+    
+ 2. Accept the Node scope. On the right, under Activation Specifications, click JMS activation specification and then click New
+    
+ 3. In the General Properties window the Scope should already be set. Enter MyAS as the Name, jms/MyAS as the JNDI name. The Destination type should be set to Queue and the Destination JNDI name to RequestQ/JMSTarget appropriately one created in the previous Queue object JNDI value. Finally select WPGBUS as the Bus name.
+    
+ 4. Select OK at the bottom.
+    
+ 5. Save the changes to the master configuration and confirm the save.
+
+
+You have created activation specification. Now you need to configure JMS Export binding of JMSInbound module to use the activation specification. If activation specification is specified in Export binding connection information, JMSInbound module will use the activation specification. Further you can reuse your administered JMS objects across multiple modules. 
+
+Go to your WID. Open assembly editor for JMSInbound module. Right click on the JMS Export. Choose option show in properties to view the property sheet. 
+ 1. In JMS Export Binding tab we specify the Activation Spec (replaced Listener of WAS 5) for the JMS Export that receives the JMS messages. Set the Connection JNDI Lookup Name to jms/MyAS. Since we used the JNDI Lookup name we do need to fill the Connection tab.
+    
+ 2. In Resource Adapter tab set Resource Adapter Name to SIB JMS Resource Adapter. In the case of the JMS Import / Export, filling out the Resource Adapter Name is not required and is used for the purpose of documentation. This field is required for other EIS Import/Exports.
+    
+ 3. In JMS Destination tab under Receive Destination Properties set the JNDI Lookup Name to Queue JNDI name RequestQ/JMSTarget (the JNDI name you specified while creating your JMS queue object). The setting overrides the destination in Activation Spec defined previously and allows the reuse of activation spec. Since receive is a one-way operation, there is no Send Destination Properties which overrides the replyTo properties of the incoming message.
+
+
+Now you can save your project and redeploy JMSInbound module.  
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration WebSphere Partner Gateway Enterprise Edition Not Applicable Multi-Platform 6.0 Advanced, Enterprise

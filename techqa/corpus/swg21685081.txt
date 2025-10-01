@@ -1,0 +1,226 @@
+Title: IBM Updating the IBM UpdateXpress System Pack Installer, Advanced Settings Utility, and Dynamic System Analysis in an IBM Smart Analytics System 5600 environment - United States
+
+Text:
+ NEWS
+
+ABSTRACT
+ This document contains the installation procedure to update the IBM UpdateXpress System Pack Installer, IBM Advanced Settings Utility, and IBM Dynamic System Analysis in an IBM Smart Analytics System 5600 V1 or 5600 V2 environment. 
+
+CONTENT
+
+A. Updating the IBM UpdateXpress System Pack Installer
+
+1. Download the IBM UpdateXpress System Pack Installer update using the link provided in the Download Link column of the security bulletin.
+
+
+2. For each node, create a temporary directory using the following command: 
+
+ * 
+ * mkdir -p /opt/ibm/toolscenter/uxspi
+
+
+
+3. Copy the ibm_utl_uxspi_<version>.bin file into the /opt/ibm/toolscenter/uxspi temporary directory. 
+
+
+4. Change the file permission so that the update is executable:  * 
+ * chmod +x /opt/ibm/toolscenter/uxspi/ibm_utl_uxspi_9.61_sles11_32-64.bin
+
+
+
+5. Verify the updated IBM UpdateXpress System Pack Installer version:  * 
+ * /opt/ibm/toolscenter/uxspi/ibm_utl_uxspi_9.61_sles11_32-64.bin --version
+ * 
+ * 
+ * Sample output:
+ * 
+ * Extracting...
+ * 
+ * Executing...
+ * 
+ * 
+ * This Program is licensed under the terms of the agreement available by invoking this utility with the --license option. By extracting, copying, accessing, or using the Program, you agree to the terms of this agreement. If you do not agree to the terms, please uninstall the software and return it to IBM or the reseller from whom you acquired the software for a refund, if any.
+ * 
+ * 
+ * Initializing, Please wait...
+ * 
+ * 
+ * UpdateXpress System Pack Installer Version 9.61.06
+ * 
+ * (C) Copyright IBM Corp. 2004-2014. All Rights Reserved.
+ * 
+ * 
+   
+
+
+B. Updating the IBM Advanced Settings Utility 
+
+1. Download the IBM Advanced Settings Utility update using the link provided in the Download Link column of the security bulletin. 
+
+
+2. Copy the ibm_utl_asu_<version>.rpm file into the /tmp temporary directory. 
+
+
+3. Update the IBM Advanced Settings Utility by running the following command:  * 
+ * rpm -Uvh /tmp/ibm_utl_asu_asut85b-9.61_linux_x86-64.rpm
+ * 
+ * 
+ * Sample output:
+ * 
+ * 
+ * Preparing... ########################################### [100%]
+ * 
+ * 1:ibm_utl_asu ########################################### [100%]
+ * 
+ * 
+ * IBM Advanced Settings Utility
+ * 
+ * (C) Copyright IBM Corp. 2007-2012. All Rights Reserved.
+ * 
+ * This Program is licensed under the terms of the agreement available by invoking this utility with the --license option. By installing, copying, accessing, or using the Program, you agree to the terms of this agreement. If you do not agree to the terms, please remove the software and return it to IBM or the reseller from whom you acquired the software for a refund, if any.
+
+
+4. Verify the updated IBM Advanced Settings Utility version:  * 
+ * /opt/ibm/toolscenter/asu/asu64 show
+ * 
+ * 
+ * Sample output:
+ * 
+ * 
+ * IBM Advanced Settings Utility version 9.61.85B
+ * 
+ * Licensed Materials - Property of IBM
+ * 
+ * (C) Copyright IBM Corp. 2007-2014 All Rights Reserved
+ * 
+ * Successfully discovered the IMM via SLP.
+ * 
+ * Discovered IMM at IP address 169.254.95.118
+ * 
+ * Connected to IMM at IP address 169.254.95.118
+ * 
+ * IMM.SSH_SERVER_KEY=Installed
+ * 
+ * IMM.SSL_HTTPS_SERVER_CERT=Private Key and Cert/CSR not available.
+ * 
+ * IMM.SSL_HTTPS_SERVER_CSR=Private Key and Cert/CSR not available.
+ * 
+ * IMM.SSL_LDAP_CLIENT_CERT=Private Key and Cert/CSR not available.
+ * 
+ * IMM.SSL_LDAP_CLIENT_CSR=Private Key and Cert/CSR not available.
+ * 
+
+
+
+C. Updating IBM Dynamic System Analysis 
+
+
+Uninstalling the IBM Systems Director LSI plug-in 
+
+There is an incompatibility between the newer releases of IBM Dynamic System Analysis and IBM Systems Director LSI plug-in because both products use the same LD_LIBRARY_PATH environment variable. Because the LSI plug-in is no longer supported on IBM Systems Director version 6.3.2 or later, the product can be removed from the system. 
+
+
+1. Determine if the LSI plug-in is installed on the node by running the following command:  * 
+ * rpm -qa | grep lsi_mr_hhr
+ * 
+ * 
+ * 
+ * lsi_mr_hhr-00.32.0503-sles...
+ * 
+ * 
+ * 
+ * 
+ * lsi_mr_hhr-00.32.0503-sles
+ * 
+ * Updating Dynamic System Analysis
+ * 
+
+
+
+2. Run the following command to remove the LSI plug-in from the node:  * 
+ * rpm -e lsi_mr_hhr
+
+
+
+3. Verify that the LSI plug-in was removed from the node by running the command:  * 
+ * rpm -qa | grep lsi_mr_hhr
+
+
+
+4. Remove all LSI Pegasus environment variables from /etc/environment with the command: 
+ * sed -i '/pegasus/d' /etc/environment
+
+
+
+5. Clear the LD_LIBRARY_PATH environment variable by running the following command:  * 
+ * export LD_LIBRARY_PATH=""
+
+
+
+Updating Dynamic System Analysis 
+
+1. Download the IBM Dynamic System Analysis update using the link provided in the Download Link column of the security bulletin. 
+
+
+2. On each node, create a temporary directory using the following command:  * 
+ * mkdir -p /opt/ibm/toolscenter/dsa
+
+
+
+3. Copy the ibm_utl_dsa_<version>.bin file into the /opt/ibm/toolscenter/dsa temporary directory. 
+
+
+4. Change the file permission so that the update is executable using the command:  * 
+ * chmod +x /opt/ibm/toolscenter/dsa/ibm_utl_dsa_dsyte1d-9.61_portable_sles11_x86-64.bin
+
+
+
+5. Run a test to collect data from the node:  * 
+ * /opt/ibm/toolscenter/dsa/ibm_utl_dsa_dsyte1d-9.61_portable_sles11_x86-64.bin -b -text -x -c -d /tmp/DSA/
+ * 
+ * 
+ * Note
+ * 
+ * 26837 Segmentation fault
+ * 
+ * LD_LIBRARY_PATH
+ * 
+ * Uninstalling the IBM Systems Director LSI plug-in
+ * 
+ * 
+ * 
+ * Sample output
+ * 
+ * 
+ * 
+ * IBM Dynamic System Analysis
+ * 
+ * (C) Copyright IBM Corp. 2004-2014. All Rights Reserved.
+ * 
+ * This Program is licensed under the terms of the agreement available by invoking
+ * 
+ * this utility with the -l option. By extracting, copying, accessing, or using
+ * 
+ * the Program, you agree to the terms of this agreement. If you do not agree to
+ * 
+ * the terms, please remove the software and return it to IBM or the reseller
+ * 
+ * from whom you acquired the software for a refund, if any.
+ * 
+ * Extracting...
+ * 
+ * Executing...
+ * 
+ * CmpiInit pathName is NULL
+ * 
+ * Logging level set to Status
+ * 
+ * Copying Schema...
+ * 
+ * Dynamic System Analysis Version 9.61.E1D
+ * 
+ * (C) Copyright IBM Corp. 2004-2014. All Rights Reserved.
+
+
+
+6. Verify the IBM Dynamic System Analysis version using the output generated by the previous command. For example, Dynamic System Analysis Version 9.61.E1D.

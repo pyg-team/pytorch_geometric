@@ -1,0 +1,47 @@
+Title: IBM Security Bulletin: Security vulnerability in IBM Business Process Manager shipped with IBM SmartCloud Orchestrator and IBM Cloud Orchestrator (CVE-2014-8730) - United States
+
+Text:
+Security; orchestrator; cloud; tls SECURITY BULLETIN
+
+SUMMARY
+ IBM Business Process Manager and DB2 Enterprise Server Edition are shipped as components of IBM SmartCloud Orchestrator and IBM Cloud Orchestrator. Information about a security vulnerability (CVE-2014-8730) affecting both IBM Business Process Manager and IBM DB2 has been published in a security bulletin. 
+
+VULNERABILITY DETAILS
+For IBM Business Process Manager, consult the security bulletin entitled, TLS padding vulnerability affects IBM HTTP Server shipped with IBM Business Process Manager (CVE-2014-8730) [http://www.ibm.com/support/docview.wss?uid=swg21692582] for vulnerability details and information about fixes.
+For IBM DB2 Enterprise Server Edition, consult the security bulletin entitled, TLS padding vulnerability affects IBM DB2 LUW (CVE-2014-8730) [http://www.ibm.com/support/docview.wss?uid=swg21671732] for vulnerability details and information about fixes. 
+
+AFFECTED PRODUCTS AND VERSIONS
+ 
+
+Principal Product and Version Affected Supporting Product and Version IBM Cloud Orchestrator 2.4 IBM Business Process Manager 8.5.0.1 [https://clearinghouse.raleigh.ibm.com/wps/myportal/Deliverable?ProductID=1344950553051] IBM DB2 Server Enterprise Edition 10.5 IBM HTTP Server 8.5 [https://clearinghouse.raleigh.ibm.com/wps/myportal/Deliverable?ProductID=1344950553051] IBM Cloud Manager with OpenStack 4.1 IBM SmartCloud Orchestrator 2.2, 2.2.0.1, 2.3, and 2.3.0.1 Business Process Manager Standard 8.0.1 DB2 Enterprise Server Edition 10.1 REMEDIATION/FIXES
+None
+
+WORKAROUNDS AND MITIGATIONS
+As for IBM Business Process Manager, follow the TLS padding vulnerability affects IBM HTTP Server shipped with IBM Business Process Manager (CVE-2014-8730) [http://www.ibm.com/support/docview.wss?uid=swg21692582] security bulletin. 
+
+ 
+
+As for IBM DB2 Server Enterprise Edition, follow the TLS padding vulnerability affects IBM DB2 LUW (CVE-2014-8730) [http://www.ibm.com/support/docview.wss?uid=swg21692618] security bulletin. 
+
+ 
+
+As for IBM Cloud Orchestrator 2.4, if you install IBM Cloud Orchestrator 2.4.0 Fix Pack 1 after following the TLS padding vulnerability affects IBM HTTP Server shipped with IBM Business Process Manager (CVE-2014-8730) [http://www.ibm.com/support/docview.wss?uid=swg21692582] security bulletin, you need to re-execute the steps under "Workarounds and Mitigations," which are described in the TLS padding vulnerability affects IBM HTTP Server shipped with IBM Business Process Manager (CVE-2014-8730) [http://www.ibm.com/support/docview.wss?uid=swg21692582] security bulletin. These steps are necessary because the httpd.conf configuration file is overwritten when installing IBM Cloud Orchestrator 2.4.0 Fix Pack 1.
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+IMPORTANT NOTE
+ IBM strongly suggests that all System z customers be subscribed to the System z Security Portal to receive the latest critical System z security and integrity service. If you are not subscribed, see the instructions on the System z Security web site [http://www.ibm.com/systems/z/solutions/security_subintegrity.html]. Security and integrity APARs and associated fixes will be posted to this portal. IBM suggests reviewing the CVSS scores and applying all security or integrity fixes as soon as possible to minimize any potential risk. 
+
+REFERENCES
+Complete CVSS v2 Guide [http://www.first.org/cvss/v2/guide] 
+On-line Calculator v2 [http://nvd.nist.gov/CVSS-v2-Calculator] 
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] CHANGE HISTORY
+ * January 10, 2015: Original copy published 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.

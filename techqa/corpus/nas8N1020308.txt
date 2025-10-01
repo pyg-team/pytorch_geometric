@@ -1,0 +1,30 @@
+Title: IBM How Do I Schedule a Job to Run on the First Day of Each Month? - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Using the Advanced Job Scheduler, how can a job be scheduled to run the first day of each month regardless of the day of the week? 
+
+ANSWER
+The schedule code for the job can be set to *DAY. Then, the first parameter value for Day of the month can be set to 01. The user can make the change to an existing job by selecting Option 2 to change the required job on a Work with Jobs screen produced by using the Work with Jobs JS (WRKJOBJS) command.
+Using IBM i Navigator, you should do the following:
+
+1. In IBM i Navigator, select Work Management 'Advanced Job Scheduler' Scheduled Jobs.
+2. Right-click the job and select Properties.
+3. Select Schedule tab.
+4. Select Monthly from within Dates to run.
+5. Select a month that has at least the first day of the month available. Days that are not available are shown as dark gray.
+6. Select the day one of the month. This will cause the day to become green.
+7. Select Specified days of each month under Details from within Dates to run.
+8. Click OK when finished.
+[http://www-03.ibm.com/systems/power/software/i/jscheduler/faq/index.html#ibm-content]
+
+RELATED INFORMATION
+ Refer to this link: [http://www-03.ibm.com/systems/power/software/i/jscheduler/faq/index.html#faq2]
+
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Operating System IBM i 7.3 Operating System IBM i 7.2 Operating System IBM i 7.1 Operating System IBM i 6.1

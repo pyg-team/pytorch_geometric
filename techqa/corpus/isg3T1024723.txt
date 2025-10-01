@@ -1,0 +1,67 @@
+Title: IBM Security Bulletin: A vulnerability in OpenSSL affects IBM Flex System Manager (FSM) Storage Manager Install Anywhere (SMIA) configuration tool (CVE-2016-8610) - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ An OpenSSL vulnerability was disclosed on Sep 22, 2016 by the OpenSSL Project. OpenSSL is used by IBM FSM SMIA configuration tool (commonly known as Network Advisor). This bulletin addresses this CVE. 
+
+VULNERABILITY DETAILS
+CVEID: CVE-2016-8610 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2016-8610]
+DESCRIPTION: SSL/TLS protocol is vulnerable to a denial of service, caused by an error when processing ALERT packets during a SSL handshake. By sending specially-crafted packets, a remote attacker could exploit this vulnerability to cause the application to stop responding.
+CVSS Base Score: 7.5
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/118296 [https://exchange.xforce.ibmcloud.com/vulnerabilities/118296] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H)
+
+AFFECTED PRODUCTS AND VERSIONS
+Flex System Manager 1.3.4.x
+Flex System Manager 1.3.3.x
+Flex System Manager 1.3.2.x
+
+REMEDIATION/FIXES
+IBM recommends updating the FSM SMIA configuration tool using the instructions referenced in this table. 
+
+IMPORTANT: Before installing a SMIA iFix you need to determine the version that is currently installed. To determine the SMIA version level installed on the FSM log into your FSM Web-based UI and navigate to the Home page and Applications tab. The version is listed next to the "SMIA Configuration Tool" link. 
+
+ * If your SMIA version is less than 12.3.4, update your FSM using the instructions listed in this Security Bulletin [https://www-947.ibm.com/support/entry/portal/docdisplay?lndocid=migr-5098656] (https://www-947.ibm.com/support/entry/portal/docdisplay?lndocid=migr-5098656 [https://www-947.ibm.com/support/entry/portal/docdisplay?lndocid=migr-5098656]), restart the FSM and then install the iFix listed in this table. 
+ * If your version is 12.3.4 or greater, then install the iFix listed in this table.
+
+ * Product 
+
+ * VRMF 
+
+ * APAR 
+
+ * SMIA Remediation 
+
+Flex System Manager  * 1.3.4.x 
+
+IT17778 Install fsmfix1.3.4.0_IT12600_IT17778 [https://www-945.ibm.com/support/fixcentral/systemx/selectFixes?product=ibm%2Fsystemx%2F8731&fixids=fsmfix1.3.4.0_IT12600_IT17778&function=fixId&parent=Flex%20System%20Manager%20Node] Flex System Manager  * 1.3.3.x 
+
+IT17778 Install fsmfix1.3.3.0_IT12600_IT17778 [https://www-945.ibm.com/support/fixcentral/systemx/selectFixes?product=ibm%2Fsystemx%2F8731&fixids=fsmfix1.3.3.0_IT12600_IT17778&function=fixId&parent=Flex%20System%20Manager%20Node] Flex System Manager  * 1.3.2.x 
+
+IT17778 Install fsmfix1.3.2.0_IT12600_IT17778 [https://www-945.ibm.com/support/fixcentral/systemx/selectFixes?product=ibm%2Fsystemx%2F8731&fixids=fsmfix1.3.2.0_IT12600_IT17778&function=fixId&parent=Flex%20System%20Manager%20Node] 
+For a complete list of FSM security bulletins refer to this technote: http://www-01.ibm.com/support/docview.wss?uid=nas7797054ebc3d9857486258027006ce4a0&myns=purflex&mync=E&cm_sp=purflex-_-NULL-_-E [http://www-01.ibm.com/support/docview.wss?uid=nas7797054ebc3d9857486258027006ce4a0&myns=purflex&mync=E&cm_sp=purflex-_-NULL-_-E] 
+
+For 1.1.x.x, 1.2.x.x, 1.3.0.x and 1.3.1.x IBM recommends upgrading to a fixed, supported version/release of the product. WORKAROUNDS AND MITIGATIONS
+None
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v3 Guide [http://www.first.org/cvss/user-guide] 
+On-line Calculator v3 [http://www.first.org/cvss/calculator/3.0] 
+
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] 
+
+CHANGE HISTORY
+ 21 December 2016 : Original version published 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.

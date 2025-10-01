@@ -1,0 +1,77 @@
+Title: IBM Using domain certificate objects for Outbound SSL Inspection Policy on IBM Qradar Network Security - United States
+
+Text:
+classifications; certification authority; CA; customize; general; inspection rules; Network Access Policy; XGS TECHNOTE (FAQ)
+
+QUESTION
+ How can you use domain certificate categories and lists objects in the IBM QRadar Network Security (IQNS) Outbound SSL Inspection Policy? 
+
+ANSWER
+In the Outbound SSL Inspection Policy, there are two domain certificate object types that allow you to customize inspection rules.
+
+The domain certificate category objects allow users to select pre-defined categories as determined by X-Force.
+
+The domain certificate list objects allow users to specify individual domains. 
+
+Note: The domain certificate category objects and domain certificate list objects can reside within the same Outbound SSL Inspection Policy rule.
+
+To assist you in the configuration of the domain certificate, see the IBM knowledge Center: Configuring custom domain certificate category objects [http://www.ibm.com/support/knowledgecenter/SSHLHV_5.3.3/com.ibm.alps.doc/tasks/alps_configuring_custom_domain_certificate_category_objects.htm] and IBM Knowledge Center: Configuring custom domain certificate list objects [http://www.ibm.com/support/knowledgecenter/SSHLHV_5.3.3/com.ibm.alps.doc/tasks/alps_configuring_custom_domain_certificate_objects.htm].
+
+Definitions of Domain Certificate:
+
+
+ * A domain certificate is the SSL certificate that is presented by a web server to secure communication and includes the site domain name. It does not have to be issued by an external certificate authority (CA). 
+ * A domain certificate category is an X-Force predetermined category that you can use to restrict the types of domain certificates that users can access on your network.
+   
+   Example: When a user tries to access a banking website, we will access certain domain certificates issued by the banks in order to have a secure transaction.
+   
+ * A domain certificate list can be used to allow or deny access to a list of specific URL domains independent of a domain certificate category.
+
+
+Conditions for a successful deployment : 
+ 1. The XGS appliance is deployed in front of the client segment. 
+    
+ 2. IP routing is enabled on the appliance because the inspection port pair requires an IP address and default gateway. 
+    
+ 3. The appliance signing CA is trusted by clients.
+    
+    Notes: 
+
+ * The static Routes page provides support for intermediate routes between the ISNP and the client subnet. 
+ * For XGS firmware version 5.2, the Outbound SSL Inspection requires an IP address on the inspection port. This is not required in XGS versions 5.3 and up. 
+   
+   
+
+As a best practice : 
+
+Limit the traffic being inspected by adding the external facing adapters to the External_Networks subnet object when used as the destination in a Outbound SSL Inspection rule. 
+ 1. In SiteProtector, open the Outbound SSL Inspection Policy.
+    
+ 2. Expand the left panel Network Object (drag and drop on Rules).
+    
+ 3. Under the Subnet folder, find the External_Network. Right click and select Edit.
+    
+    Note: This is a shared object and if you have several XGS appliances in your site, you may want to create separate External_Networks_<XGSName> objects instead of editing the default one.
+    
+    [/support/docview.wss?uid=swg21972184&amp;aid=1]
+    
+    
+ 4. The Edit Subnet Address window will open. Here you will add the Name, Subnet Address, and Comments. 
+    
+    [/support/docview.wss?uid=swg21972184&amp;aid=2]
+    
+ 5. Select the Adaptor tab and check the outbound or external interface(s).
+    
+    [/support/docview.wss?uid=swg21972184&amp;aid=3]
+    
+ 6. Select the Save Configuration and deploy the Outbound SSL Inspection Policy.
+
+
+
+
+
+[/support/docview.wss?uid=swg21972184&aid=4] [https://ibm.biz/BdHdZx] [/support/docview.wss?uid=swg21972184&aid=5] [http://ibm.biz/InfraSecForumTechnote] [/support/docview.wss?uid=swg21972184&aid=6] [http://ibm.biz/SecSuptUTube] [/support/docview.wss?uid=swg21972184&aid=7] [http://ibm.biz/InfraSecFixes] [/support/docview.wss?uid=swg21972184&aid=8] [http://ibm.biz/FlexLicLogin] [/support/docview.wss?uid=swg21972184&aid=9] [http://ibm.biz/MyNotification] [/support/docview.wss?uid=swg21972184&aid=10] [http://ibm.biz/ContactSecSupport] 
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Security IBM Security Network Protection SSL Inspection Firmware 5.3.1, 5.3.2, 5.3.3

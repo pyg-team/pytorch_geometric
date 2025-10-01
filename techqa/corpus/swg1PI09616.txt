@@ -1,0 +1,179 @@
+Title: IBM PI09616: ATTEMPTS TO RUN AN APPLICATION THAT CONTAINS "DOWNLOAD ARTIFACTS" STEP RESULT IN "BLOB NOT FOUND FOR HASH SHA-XXXXXXXXXXXXX" - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Attempts to run an application or component process that
+   contains "Download Artifacts" step using uDeploy version 4.8.5
+   result in "Blob not found for hash SHA-xxxxxxxxxxxxx"
+   Downloading file '<file_location>'
+   Error Trying to download files : Blob not found for hash SHA-256
+   {xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+   x}
+   Caught: java.io.IOException: Blob not found for hash SHA-256
+   {xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+   x}
+   java.io.IOException: Blob not found for hash SHA-256
+   {xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+   x}
+   at
+   com.urbancode.vfs.client.Client.copyFileFromDownload(Client.java
+   : 1282)
+   at com.urbancode.vfs.client.Client.access$200(Client.java:61)
+   at
+   com.urbancode.vfs.client.Client$DirectDownloadHandler.download
+   (Client.java:1259)
+   at
+   com.urbancode.vfs.client.Client.downloadFiles(Client.java:1185)
+   at
+   com.urbancode.vfs.client.Client.transferFiles(Client.java:1091)
+   at
+   com.urbancode.vfs.client.Client.downloadFilesInternalRemovingPat
+   hPrefix(Client.java:1017)
+   at
+   com.urbancode.vfs.client.Client.downloadChangeSetDeltaRemovingPa
+   thPrefix(Client.java:973)
+   at
+   com.urbancode.vfs.client.Client$downloadChangeSetDeltaRemovingPa
+   thPrefix.call(Unknown Source)
+   at downloadByLabel.run(downloadByLabel.groovy:501)
+   
+   We think this is related to version cleanup, when hash files are
+   deleted but the server still believes the version still exists.
+   This may happen when using uDeploy V4.8.4 or onwards, and think
+   this is a different issue from a known version cleanup issue
+   identified by APAR PI05165 [http://www-01.ibm.com/support/docview.wss?uid=swg1PI05165].
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Import the missing files again as new component versions and use
+   that for deployments.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * Any users with version cleanup enabled                       *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * Attempts to run an application or component process that     *
+   * contains "Download Artifacts" step using uDeploy version     *
+   * 4.8.5                                                        *
+   * result in "Blob not found for hash SHA-xxxxxxxxxxxxx"        *
+   * Downloading file '<file_location>'                           *
+   * Error Trying to download files : Blob not found for hash     *
+   * SHA-256                                                      *
+   * {xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx *
+   * xxxx                                                         *
+   * x}                                                           *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fixed in IBM UrbanCode Deploy 6.0.1.4
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI09616
+   
+   
+ * REPORTED COMPONENT NAME
+   UDEPLOY
+   
+   
+ * REPORTED COMPONENT ID
+   5725M7700
+   
+   
+ * REPORTED RELEASE
+   500
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-01-15
+   
+   
+ * CLOSED DATE
+   2014-03-24
+   
+   
+ * LAST MODIFIED DATE
+   2014-03-24
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   UDEPLOY
+   
+   
+ * FIXED COMPONENT ID
+   5725M7700
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R500 PSN
+   UP
+   
+   
+ * R500 PSY
+   UP

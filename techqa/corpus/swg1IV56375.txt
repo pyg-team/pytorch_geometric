@@ -1,0 +1,255 @@
+Title: IBM IV56375: APPLICATION IMPORT DIALOG GETS HUNG. - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  On importing Assets using Application Import function,
+   Applicatoin Import dialog gets hung with
+   Internal Server Error.
+   
+   This always happens if it takes more than the
+   ServerIOTimeout value. Once it happens,
+   "Application Import" dialog just gets hung
+   until hitting F5 button.
+   
+   Even after the error, Assets are actually imported.
+   
+   This is recreatable in MAM 7.5.0.5 environment with the
+   following steps.
+   
+   STEPS TO REPRODUCE:
+   
+   1) Sign into Maximo with maxadmin.
+   
+   2) From "Object Structures" application open MXASSET
+   object and verify Support Flat Structure? check box is
+   checked.
+   
+   3) From "Select Action" menu, select "Add/Modify
+   Application Support Import" and specify the following
+   values.
+   
+   Application      : ASSET
+   Flat File        : checked
+   Maximum Count    : 1000
+   
+   4) From "Security Groups" application, open maxadmin.
+   
+   5) On "Applications" tab, select "Assets" application
+   and check "Grant Access?" check box for "Application
+   Import".
+   
+   6) Sign out from Maximo and sign in to it with maxadmin
+   again.
+   
+   7) From "Assets" application, click "Application Import"
+   button and specify the following values.
+   
+   Object Structure : MXASSET
+   Import Preview?  : checked
+   Specify Import File Name : <import csv file name>
+   
+   Then click OK.
+   
+   8) In case that the import takes more than the
+   ServerIOTimeout value, "Internal Server Error" happens
+   and "Application Import" dialog just gets hung until
+   hitting F5 button.
+   
+   CURRENT ERRONEOUS RESULT:
+   "Application Import" dialog gets hung if the nimport takes
+   more than the value of ServerIOTimeout
+   (Default value is 60 seconds.)
+   
+   EXPECTED RESULT:
+   "Application Import" should not gets hung even when
+   the import takes more than the ServerIOTimeout value.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Increase ServerIOTimeout.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * All Maximo Users                                             *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * Application import dialog gets hung.                         *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Upgrade to latest release                                    *
+   ****************************************************************
+   On importing Assets using Application Import function,
+   Applicatoin Import dialog gets hung with Internal Server Error.
+   This always happens if it takes more than the ServerIOTimeout
+   value. Once it happens, "Application Import" dialog just gets
+   hung until hitting F5 button. Even after the error, Assets are
+   actually imported. This is recreatable in MAM 7.5.0.5
+   environment with the following steps.
+   
+   STEPS TO REPRODUCE:
+   1) Sign into Maximo with maxadmin.
+   2) From "Object Structures" application open MXASSET object and
+   verify Support Flat Structure? check box is checked.
+   3) From "Select Action" menu, select "Add/Modify Application
+   Support Import" and specify the following values.
+   Application      : ASSET
+   Flat File        : checked
+   Maximum Count    : 1000
+   
+   4) From "Security Groups" application, open maxadmin.
+   5) On "Applications" tab, select "Assets" application and check
+   "Grant Access?" check box for "Application Import".
+   6) Sign out from Maximo and sign in to it with maxadmin again.
+   7) From "Assets" application, click "Application Import" button
+   and specify the following values.
+   Object Structure : MXASSET
+   Import Preview?  : checked
+   Specify Import File Name : <import csv file name>
+   
+   Then click OK.
+   
+   8) In case that the import takes more than the ServerIOTimeout
+   value, "Internal Server Error" happens and "Application Import"
+   dialog just gets hung until hitting F5 button.
+   
+   CURRENT ERRONEOUS RESULT:
+   "Application Import" dialog gets hung if the import takes more
+   than the value of ServerIOTimeout (Default value is 60 seconds.)
+   
+   EXPECTED RESULT:
+   "Application Import" should not gets hung even when the import
+   takes more than the ServerIOTimeout value.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  To avoid application import hang, activate long operation dialog
+   on the uploadfile control by changing the event from "loadData"
+   to "dolongop".
+   1) In Application Designer, select Action Export System XML.
+   2) Export LIBRARY to library.xml.
+   3) Edit library.xml with text editor.
+   4) Locate uploadfile control inside dialog "ifimport".
+   5) Modify event from "loadData" to "dolongop".
+   6) Save changes to library.xml.
+   7) In Application Designer, use Import Application Definition
+   toolbar button to import library.xml.
+   
+   The fix for this APAR is contained in the following maintenance
+   package:
+     | release\fix pack | Fix Pack Release 7.5.1.2 TPAE Integration
+   Framework
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV56375
+   
+   
+ * REPORTED COMPONENT NAME
+   INTEGRATION
+   
+   
+ * REPORTED COMPONENT ID
+   5724R46I1
+   
+   
+ * REPORTED RELEASE
+   750
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-03-06
+   
+   
+ * CLOSED DATE
+   2014-08-05
+   
+   
+ * LAST MODIFIED DATE
+   2014-08-05
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  MAXIMO
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   INTEGRATION
+   
+   
+ * FIXED COMPONENT ID
+   5724R46I1
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R750 PSY
+   UP

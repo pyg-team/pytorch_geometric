@@ -1,0 +1,67 @@
+Title: IBM Error javax.naming.NameNotFoundException - United States
+
+Text:
+STERLINGNFX TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ JBoss 4.3: Agent server does not connect to JBoss JMS queue and throws javax.naming.NameNotFoundException error. 
+
+SYMPTOM
+Customer gets javax.naming.NameNotFoundException for a queue as soon as the agent starts up.
+
+Error Message
+
+<Errors> 
+<Error ErrorCode="JMSProducer1"> 
+<ErrorDescription="Error_description_not_available" ErrorRelatedMoreInfo="">
+<Attribute Name="ErrorCode" Value="JMSProducer1"/> 
+<Attribute Name="ErrorDescription" Value="Error_description_not_available"/> 
+<Error ErrorCode="javax.naming.NameNotFoundException" /> ErrorDescription="" ErrorRelatedMoreInfo=" SCHEDULEORDER.1.QUEUE not bound"> 
+
+<Stack>javax.naming.NameNotFoundException: SCHEDULEORDER.1.QUEUE not bound 
+at org.jnp.server.NamingServer.getBinding(NamingServer.java:581) 
+at org.jnp.server.NamingServer.getBinding(NamingServer.java:589) 
+at org.jnp.server.NamingServer.getObject(NamingServer.java:595) 
+at org.jnp.server.NamingServer.lookup(NamingServer.java:342) 
+at org.jnp.server.NamingServer.lookup(NamingServer.java:316) 
+at sun.reflect.GeneratedMethodAccessor145.invoke(Unknown Source) 
+at sun.reflect.DelegatingMethodAccessorImpl.invoke(Unknown Source)
+
+
+RESOLVING THE PROBLEM
+Usually the external application throws javax.naming.NameNotFoundException when the name (it could be queue name or QCF name, and so on) passed does not match that configured in JBoss JMS. 
+
+To resolve the error: 
+
+ 1. Ensure that the agent Provider URL (yfs.yfs.agent.override.provider.url in customer_overrides.properties) points to the proper JBoss URL.
+    
+ 2. Verify that the queue exists. Queue definitions are in destinations-service.xml under <JBOSS_HOME>/server/<server_name>/deploy/jboss-messaging.sar folder. Check if the queue name seen in the error stack (case-sensitive) is in this file. Alternatively, login to JMX console (online) and verify that the queue exists.
+
+
+Restart the agent after verification. If after the restart, you see an InvocationTargetException error caused by ClassNotFoundException for the class org/jnp/server/NamingBean class, refer to the document 1552553 [http://www.ibm.com/support/docview.wss?uid=swg21552553].
+
+
+
+HISTORICAL NUMBER
+ NFX8493 
+
+PRODUCT ALIAS/SYNONYM
+ 
+
+Function Area
+
+
+Agent Server
+JBoss
+
+
+Escalation ID
+
+
+136869
+
+
+Severity
+
+
+Normal

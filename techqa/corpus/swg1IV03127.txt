@@ -1,0 +1,233 @@
+Title: IBM IV03127: CSQX053E WITH XFFSCCIFINDCONV WHEN CLOSING A CHANNEL - United States
+
+Text:
+  FIXES ARE AVAILABLE
+WebSphere MQ V7.0 Fix Pack 7.0.1.7 [http://www-01.ibm.com/support/docview.wss?uid=swg24030911]
+WebSphere MQ V7.0.1 for i5/OS Fix Pack 7.0.1.7 [http://www-01.ibm.com/support/docview.wss?uid=swg24030912]
+WebSphere MQ v7.0.1.7 Hypervisor for AIX [http://www-01.ibm.com/support/docview.wss?uid=swg24031715]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The customer stopped the channel connection by a receive exit
+   with MQXCC_CLOSE_CHANNEL . The application now gets a reason
+   2009. This is OK but on the z/OS QMGR a snap dump is produced.
+   
+   +CSQX053E CSQ1 CSQXFFST Error information recorded in
+   CSQSNAP data set
+   +CSQX536I CSQ1 CSQXRESP Channel MY.CHANNEL.NAME
+   stopping because of request by exit SSMQXRJT
+   ...
+   *                        X...XFFS*
+   *cciFindConv.....................*
+   *MOVR......n.....X...XINS........*
+   *MY.CHANNEL.NAME  ...............*
+   ...
+   *....Primary ConversationCONV....*
+   *.wK\..".9.999.99.99             *
+   ...
+   *        ...mPrimary Session.RSES*
+   *.....1.}.........."6.....@.@....*
+   
+   All flows are for the same ConversationId, the sequence is as
+   follows:
+   
+   1)  Client sends SPI request to server.
+   Channel receive exit requests that the
+   conversation be ended.
+   
+   2) Server sends socket_action flow for end_conv,
+   requesting confirmation.
+   
+   3)  Client sends confirmation socket_action.
+   
+   4) Some time later, the cleanup routine sends an MQDISC request
+   for the conversation
+   
+   The MQDISC request is not expected, as the conversation has
+   already been ended. The CHINIT captures a snap dump to report
+   the invalid flow.
+   
+   A distributed queue manager will write a protocol error to the
+   logs if a flow is received for a closed conversation.
+   
+   From the client trace, it looks like the conversation is marked
+   as invalid, but during clean-up of the JMS Session the client
+   issues an MQDISC. The RemoteConnection allows the MQDISC
+   request to be sent, but then fails the subsequent receive with
+   a 2009
+   exception.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   This issue affects users of:
+   
+   - The WebSphere MQ v7 Classes for Java
+   - The WebSphere MQ v7 Classes for JMS
+   - The WebSphere MQ v7 Messaging provider supplied with
+   WebSphere Application Server
+   - The WebSphere MQ v7 Resource Adapter
+   
+   Who are using conversation sharing (SHARECNV > 1) on the
+   channel being used to connect to the queue manager, and have
+   caused a conversation to be ended when multiple conversations
+   are in progress on the channel.
+   
+   Platforms affected:
+   All Distributed (iSeries, all Unix and Windows) +Java
+   ****************************************************************
+   PROBLEM SUMMARY:
+   The WMQ client was correctly acknowledging the
+   rfpSAT_END_CONV
+   TSH, ending the conversation and removing the connection handle
+   (hConn) from the
+   RemoteConnection. The client then used the AsyncFailureNotify
+   mechanism to register that this connection had been broken, and
+   as a result the connection pool manager cleaned up the
+   managed
+   connection.  As part of this cleanup, the client attempted
+   to
+   flow an MQDISC to the queue manager, without checking the state
+   of the hConn it was using.  In this case,
+   as the hConn
+   corresponds to the ended conversation, the hConn's status
+   should have
+   been checked to prevent sending an MQDISC for this conversation.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The classes in the com.ibm.mq.jmqi.jar files have been modified
+   so that after an rfpSAT_END_CONV
+   flow is received for an hConn, and an appropriate response has
+   been sent to the server if requested, any further attempts to
+   send TSHs on that hConn will return MQRC_CONNECTION_BROKEN
+   (2009), causing any remainig resources associated with the hConn
+   to be cleaned up.
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+                      v7.0
+   Platform           Fix Pack 7.0.1.7
+   --------           --------------------
+   Windows            U200333
+   AIX                U843721
+   HP-UX (PA-RISC)    U844089
+   HP-UX (Itanium)    U844094
+   Solaris (SPARC)    U844090
+   Solaris (x86-64)   U844096
+   iSeries            tbc_p700_0_1_7
+   Linux (x86)        U844091
+   Linux (x86-64)     U844095
+   Linux (zSeries)    U844092
+   Linux (Power)      U844093
+   
+   The latest available maintenance can be obtained from
+   'WebSphere MQ Recommended Fixes'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037]
+   
+   If the maintenance level is not yet available, information on
+   its planned availability can be found in 'WebSphere MQ
+   Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV03127
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ AIX V7
+   
+   
+ * REPORTED COMPONENT ID
+   5724H7221
+   
+   
+ * REPORTED RELEASE
+   701
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-07-08
+   
+   
+ * CLOSED DATE
+   2011-07-20
+   
+   
+ * LAST MODIFIED DATE
+   2011-07-20
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ AIX V7
+   
+   
+ * FIXED COMPONENT ID
+   5724H7221
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R701 PSY
+   UP

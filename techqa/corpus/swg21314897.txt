@@ -1,0 +1,54 @@
+Title: IBM Install of WebSphere Transformation Extender v8.2 for Integration Servers with previously installed WebSphere Enterprise Service Bus fails - United States
+
+Text:
+DTXINST; Integration Server; WESB; Install; prerequiste TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When attempting to install WebSphere® Transformation Extender for Integration Server version 8.2.0.x, to a server on which WebSphere Enterprise Service Bus has already been successfully installed, the Integration Server install fails with a "Setup has detected that you are trying to install a product that requires an IBM WebSphere Integration Server as a prerequisite." error message 
+
+CAUSE
+The WebSphere Transformation Extender for Integration Servers install process cannot locate a keyword in the .nifregistry file
+
+ENVIRONMENT
+During the installation of WebSphere Transformation Extender for Integration Servers v8.2.0.x
+
+DIAGNOSING THE PROBLEM
+An error message, "Setup has detected that you are trying to install a product that requires an IBM WebSphere Integration Server as a prerequisite." will be displayed.
+
+RESOLVING THE PROBLEM
+The following steps can be taken to edit the .nifregistry file to resolve this installation issue: 
+
+Operating System root installed .nifregistry location Windows %SystemRoot% AIX /usr/.ibm/.nif Solaris, Linux, HP-UX /opt/.ibm/.nif Operating System non-root installed .nifregistry location AIX, Solaris, Linux, HP-UX ~/.nif 
+
+1) Open the .nifregistry file with a file editor of your choice. The .nifregistry file is located in the directory depicted in the table listed above. 
+
+
+2) Look for a line similar to the following that contains "WebSphere/ESB/": 
+
+<product installrooturi=" file:///C:/Program%20Files/IBM/WebSphere/ESB/ [file:///C:/Program%20Files/IBM/WebSphere/ESB/]" 
+lastvisited="2008-07-16 14:17:00-0400" productid="ND" version="6.1.0.17"/> 
+
+
+3) Change the productid to be WBI. 
+
+
+4) After editing the .nifregistry file, the line should now look like: 
+<product installrooturi=" file:///C:/Program%20Files/IBM/WebSphere/ESB/ [file:///C:/Program%20Files/IBM/WebSphere/ESB/]" 
+lastvisited="2008-07-16 14:17:00-0400" productid="WBI" version="6.1.0.17"/> 
+
+Your version of WBI may be different, but as long as it is a 6.1.0.x release, it is relative to this Technote. 
+
+
+5) Install the WebSphere Transformation Extender for Integration Server software. 
+
+
+6) After the install is complete, restore the productid to "ND" in the .nifregistry file. 
+
+
+The .nifregistry file may have slightly different values in it, the key is to modify just the productid. 
+
+
+
+PRODUCT ALIAS/SYNONYM
+ WTX Integration Server
+Ascential DataStage TX

@@ -1,0 +1,117 @@
+Title: IBM Running bosboot fails with error code 0301-152 "not enough file space" - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ English 
+
+PROBLEM(ABSTRACT)
+ When a customer tries to run a bosboot command, he gets the errors below:
+
+# bosboot -ad /dev/hdisk11 
+
+0301-152 bosboot: not enough file space to create:
+bootimage
+375764 has 54320 free KB.
+dspmsg: 1312-042 Invalid argument index in message. May need
+more arguments on the command line.
+
+
+CAUSE
+The reason the bosboot command fails is because the df command is reporting an extra field (Ifree); therefore; so instead of coming back with the /tmp filesystem, it returns a numeric value of 375764.
+
+DIAGNOSING THE PROBLEM
+As initial steps to diagnose the issue, we should run the commands below: 
+
+Run the df -k /tmp command to check the Ifree field:
+
+
+ 
+
+# df -k /tmp
+ 
+
+Filesystem    1024-blocks    Free      %Used    Iused        Ifree    %Iused   Mounted on
+
+/dev/hd3        2097152     1688308     20%     1719      375764     1%       /tmp
+ 
+
+
+
+Diagnosis Analysis: 
+
+We can see that the output of the "df" command is showing 8 fields, not 7 fields like a normal test machine. 
+
+ 
+
+# df -k /tmp
+ 
+
+Filesystem    1024-blocks    Free       %Used    Iused   %Iused Mounted on
+
+/dev/hd3        2097152     1688308     20%     1719     3%     /tmp
+ 
+
+
+
+Also notice that the error "0301-152" is mentioning the numeric value of " 375764" instead of the name of the filesystem that has the space concerns "/tmp". 
+
+
+0301-152 bosboot: not enough file space to create:                                                       
+
+         bootimage
+
+         375764 has 54320 free KB.
+
+
+
+Therefore, it seems that the bosboot script is naming the filesystem that has the space concerns "/tmp" after the value of the " Ifree" field that is coming from the "df" command output. 
+
+RESOLVING THE PROBLEM
+ 
+
+The df command checks for the existence of the environment variable XPG_SUS_ENV and if it is set to ON it displays the Ifree field. This will cause the bosboot command to misinterpret the output and give the error. 
+
+An example that has been done on our lab LPAR: 
+
+
+
+
+# export XPG_SUS_ENV=ON 
+ 
+
+# df
+ 
+
+Filesystem    512-blocks   Free %Used    Iused    Ifree    %Iused   Mounted on
+
+...
+ 
+
+# unset XPG_SUS_ENV
+ 
+
+# df
+ 
+
+Filesystem    512-blocks   Free %Used    Iused    %Iused   Mounted on      
+ 
+
+
+
+We have found other cases where various commands fail or do not work "correctly" when this environment variable is set. 
+
+The default AIX environment is one that maintains compatibility with previous AIX releases. To obtain an environment designed to conform to the UNIX95 specification, the environment variable XPG_SUS_ENV must be assigned the value ON. If XPG_SUS_ENV is set to any other value, or is unset, the default AIX behavior will be used. 
+
+When XPG_SUS_ENV is set, every program in that environment will operate in the UNIX95-specified operating system environment. It is possible that some applications compiled for the AIX environment (perhaps for an earlier version of AIX) will not operate correctly when XPG_SUS_ENV is set. 
+
+So the recommendation is to do the following: 
+
+We can "unset" the "XPG_SUS_ENV" as follows: 
+
+# unset XPG_SUS_ENV 
+
+Then, run the bosboot command again and it should work at this point. 
+
+If the above did not fix the issue, please contact IBM Software Support and they will be more than happy to assist.

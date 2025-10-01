@@ -1,0 +1,162 @@
+Title: IBM PI60855: ABENDS878 S878-10 WHEN GENERATING MULTIPLE REPORTS FROM LOGSTMVS LOGSTREAM DATA - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Customer is doing a TAKEUP diectly from the MVS Logstream
+   and attempting to generate their daily CICS Reports for each
+   region with a single pass of the MVS LogStream.  This
+   eliminates the need to run a Record Selection Extract
+   Jobs to build a separate extract file for each region.  In order
+   to accomplish this, all JCL Statements and related CICS PA
+   PARMs have to be included in a single job.  With a large number
+   of regions, and 4 reports per region, the job has become
+   excessive in size, not just in the number of statements (over
+   3,000), but in terms of memory usage, causing the job
+   to abend with a S878-10 (SOS below the line).
+   Additional Symptom(s) Search Keyword(s): KIXREVWJB
+   SOS Below the line ABEND878 878 S878 CICS Performance Analyzer
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * All users of CICS PA V5.3                                    *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * AbendS878-10 when running multiple                           *
+   * performance summary reports, indicating                      *
+   * that below the line storage has been                         *
+   * exhausted.                                                   *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * .                                                            *
+   ****************************************************************
+   CPASUMMF (Summary Performance) is running a 24-bit version of
+   the SORT interface, as well as allocating work and I/O buffers
+   from 24-bit storage, resulting in a below the line storage
+   shortage.
+   Keywords: S878 10 abendS878 abend878
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This APAR provides below-the-line storage constraint relief by
+   implementing the following changes:-
+   1. External sorting for CPASUMMF will run above the bar.
+   2. Most buffers requested by CPASUMMF will be in 31-bit storage.
+   3. I/O buffers for CPASUMMF will be in 31-bit storage.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI60855
+   
+   
+ * REPORTED COMPONENT NAME
+   CICS PERF ANALY
+   
+   
+ * REPORTED COMPONENT ID
+   5655Y2300
+   
+   
+ * REPORTED RELEASE
+   530
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-04-15
+   
+   
+ * CLOSED DATE
+   2016-05-24
+   
+   
+ * LAST MODIFIED DATE
+   2016-07-04
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    PI60833 [http://www-01.ibm.com/support/docview.wss?uid=swg1PI60833]
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UI38107
+   
+   
+
+MODULES/MACROS
+ *  CPADISPC CPAERLST CPAGSORT CPAGSRT  CPASUMMF
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CICS PERF ANALY
+   
+   
+ * FIXED COMPONENT ID
+   5655Y2300
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R530 PSY UI38107 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI38107]
+   UP16/06/03 P F606
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

@@ -1,0 +1,25 @@
+Title: IBM Installing IBM Security AppScan Source Eclipse plugin results in a modified ant runtime classpath - United States
+
+Text:
+ant runtime classpath; ant; classpath TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ After installing the AppScan Source Developer Plugin For Eclipse/RAD, the value of the Ant Runtime Classpath is changed. 
+
+CAUSE
+The installation of the AppScan Source developer plugin caused the value of the ANT_HOME variable to be changed, resulting in a modified Ant Runtime Classpath.
+
+ENVIRONMENT
+This problem has only been seen with RAD 7.5.x and Eclipse 3.4.
+
+RESOLVING THE PROBLEM
+To resolve the problem, set the ANT_HOME variable back to it's original value. To do so:
+
+
+
+
+ 1. In Eclipse/RAD, go to Window -> Preferences. 
+ 2. Go to Ant -> Runtime. 
+ 3. Click the Ant Home button. 
+ 4. Browse to the correct ANT_HOME (e.g. C:\Program Files (x86)\IBM\SDP70Shared\plugins\org.apache.ant_1.7.0.v200803061910). 
+ 5. Click Apply and then click OK.

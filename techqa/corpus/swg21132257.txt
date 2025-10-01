@@ -1,0 +1,43 @@
+Title: IBM License types for Rational Test Real Time - United States
+
+Text:
+license; floating; named-user; 1132257; 155655023 TECHNOTE (FAQ)
+
+QUESTION
+ What are the types of licenses for IBM Rational Test Real Time? 
+
+ANSWER
+The IBM Rational Test RealTime uses Rational Common Licensing concepts. 
+
+There are two types of licenses that you can get for the Test Real Time product: 
+
+ * Floating 
+ * Named-User
+
+
+
+
+
+ 
+
+Floating
+A license administrator installs the Rational License Key Server on single, multiple, or redundant servers. The administrator then installs the floating licenses on the license servers. These floating licenses are created for the specific license server. Client users obtain licenses from the license server when they start the license server. One license is granted per client per product, except performance testing products. Performance testing products can check out multiple licenses. 
+
+Floating licenses allow anyone on your network to use Rational products while a license is available. The number of licenses that you purchase and register in License Key Center determines the maximum number of users who can use Rational products concurrently.
+
+Please see below how a Floating License looks like, It will have a sever line with a VENDOR DEMON ( shown in RED BOX ).
+
+
+image [/support/docview.wss?uid=swg21132257&aid=1] [https://www.ibm.com/developerworks/mydeveloperworks/blogs/nfrsblog/resource/BLOGS_UPLOADED_IMAGES/floating.jpg] 
+
+
+
+
+ Back to top 
+
+
+
+Named-User Floating
+Similar to a floating license, except the license administrator assigns licenses to specific users. Only specific users can request floating license keys from the license server. A named-user floating license requires a license administrator to create a list of authorized users. 
+
+Named-user license keys act as floating license keys, except during the import process. IBM Rational® License Key Administrator (LKAD) gives you the opportunity to specify a user for each license key. You assign a user to a key by editing the options file ibmratl.opt. The options file locks the floating license key to the user; allowing the user to use IBM Rational products on multiple clients.

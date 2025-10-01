@@ -1,0 +1,20 @@
+Title: IBM Input data missing from native XML schema type tree Choice group structure in WTX 8.4.0.x and above - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Using IBM WebSphere Transformation Extender (WTX) / IBM Transformation Extender (ITX) with a native XML schema (.xsd) as a Type Tree, input data may be 'lost' if it is part of a Choice group. 
+
+SYMPTOM
+A simple map rule to map the input to the output will result in an empty entry.
+
+
+CAUSE
+This has been identified as a product defect under APAR PI68148
+
+DIAGNOSING THE PROBLEM
+Known 'good' XML values from the input cannot be retrieved with map rules that work correctly in prior version of WTX / ITX.
+
+RESOLVING THE PROBLEM
+Obtain and apply the Core Engine / XML Parser fix for APAR PI68148

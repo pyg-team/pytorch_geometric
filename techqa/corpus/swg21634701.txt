@@ -1,0 +1,47 @@
+Title: IBM Change the default schema for the Decision Center tables - United States
+
+Text:
+database DB customization TECHNOTE (FAQ)
+
+QUESTION
+ How can I have Decision Center tables in a schema other than the default schema associated with its datasource user? 
+
+CAUSE
+By default, the Decision Center database tables are created and found in a schema whose name is the name of the database user specified in the datasource to access the Decision Center data.
+Based on your needs and internal processes, you may want the tables of Decision Center to be created in another schema.
+
+
+ANSWER
+Some database drivers support custom properties to specify a schema name in the datasource (such as DB2 with currentSchema), but, for those that do not have such a feature, Decision Center has a property that can do the same.
+
+
+It requires you to modify a preferences.properties file packaged in the Decision Center EAR under 
+
+ * 
+ * teamserver.war\WEB-INF/lib/teamserver-model-<version>.jar\ilog/rules/teamserver
+
+
+and  * 
+ * decisioncenter.war\WEB-INF/lib/teamserver-model-<version>.jar\ilog/rules/teamserver
+ * 
+
+
+The preferences.properties files show the following property and corresponding comments explaining how to set the value based on your configuration:  * 
+ * 
+ * ## Database schema to use. Not specified by default ==> database user default schema is used.
+   ## Specify the needed value for each datasource.
+   ## Format is : <datasourceName>;<schemaName>
+   ## Several entries may be specified for different datasources using a space to separate each entry.
+   dbSchemaName =
+ * 
+
+
+Once the value of dbSchemaName is set, and the Decision Center EAR repackaged and redeployed, the tables will be found in the specified schema for the corresponding datasource, using the credentials of the user specified in that datasource at the application server level. 
+
+
+Note: Regardless of the schema used (default or not), the database user set in the datasource to access the Decision Center tables must have the required permissions to do so in the schema where the tables will be found. Those permissions are listed in the documentation at Operational Decision Manager V8.0.1 > Configuring > Configuring Operational Decision Manager on distributed platforms > Configuring Operational Decision Manager on <application server> > Configuring the Decision Center consoles on <application server> > Step 1: Restricting database user permissions [http://pic.dhe.ibm.com/infocenter/dmanager/v8r0m1/topic/com.ibm.wodm.family.config.was/shared_config_topics/tpc_rts_db_permissions.html].
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration WebSphere ILOG JRules Platform Independent 7.1, 7.0

@@ -1,0 +1,46 @@
+Title: IBM Messages in the HoldQueue cannot be resubmitted and corresponding process instances cannot be deleted in WebSphere Process Server (WPS) - United States
+
+Text:
+process instance; delete; EntityNotFoundException; CEI TECHNOTE (TROUBLESHOOTING)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ English 
+
+PROBLEM(ABSTRACT)
+ Usually you can resubmit messages in the HoldQueue or, in some cases, some manual actions are needed to get the process flow to complete. However, as an administrator, you might find that you cannot resubmit messages in the HoldQueue nor delete the corresponding process instances. 
+
+SYMPTOM
+When the message is being resubmitted or the process instance is being deleted, the following exception is thrown and the operation fails: 
+
+[8/7/13 6:31:36:076 EEST] 0000003d LTPAServerObj E SECJ5016E: The LTPA TokenFactory com.ibm.ws.security.ltpa.LTPATokenFactory could not create a new LTPA token. The exception is 
+com.ibm.websphere.wim.exception.EntityNotFoundException: CWWIM4001E The 'C935156' entity was not found. 
+at com.ibm.ws.wim.registry.util.UniqueIdBridge.getUniqueUserId(UniqueIdBrid ge.java:248) 
+at com.ibm.ws.wim.registry.WIMUserRegistry$6.run(WIMUserRegistry.java:561)
+at com.ibm.ws.security.auth.ContextManagerImpl.runAs(ContextManagerImpl.java:5365)
+at com.ibm.ws.security.auth.ContextManagerImpl.runAsSystem(ContextManagerImpl.java:5453)
+at com.ibm.ws.wim.security.authz.jacc.JACCSecurityManager.runAsSuperUser(JACCSecurityManager.java:432)
+at com.ibm.ws.wim.security.authz.ProfileSecurityManager.runAsSuperUser(ProfileSecurityManager.java:981) 
+at com.ibm.ws.wim.registry.WIMUserRegistry.getUniqueUserId(WIMUserRegistry.java:546)
+.....
+
+
+CAUSE
+The issue occurs when the process instance owner is deleted in the people directory or registry, but the process instance remains. A user must exist in the people directory or registry for the entire lifecycle of a process instance. If you delete a regular user, make sure that the process instances for the user finish first. This situation occurs because a token for the respective user is kept in a serialized form in the database. The process instances fails to deserialize and continues to navigate, in certain situations, if the starting user no longer exists.
+
+
+RESOLVING THE PROBLEM
+To resolve this issue, you an use the deleteCompletedProcessInstances script [http://pic.dhe.ibm.com/infocenter/dmndhelp/v7r0mx/index.jsp?topic=/com.ibm.websphere.bpc.doc/doc/bpc/rscript_deletecompletedprocessinstances.html] to delete these process instances. 
+
+
+If the process instance emits CEI events then during the course of deletion process, the CEI event emitter (BpelStateObserver) fails to restore the serialized subject from the observer context for the instance. The deletion process fails. To resolve the issue, turn off state observers for the Business Flow Manager and Human Task Manager applications. For more information on how to turn off the CEI Event Emitter, see the Changing the configured logging infrastructure, using the administrative console [http://pic.dhe.ibm.com/infocenter/dmndhelp/v7r0mx/index.jsp?topic=/com.ibm.websphere.bpc.doc/doc/bpc/t4admin_change_configured_infastructure.html] topic.
+
+Note: Disable state observers during a maintenance window when process instances are not being processed. Make the changed during a maintenance window because CEI events cannot be emitted when the observers are turned off.
+
+RELATED INFORMATION
+ A simplified Chinese translation is available [http://www.ibm.com/support/docview.wss?uid=swg21655620]
+
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ WPS

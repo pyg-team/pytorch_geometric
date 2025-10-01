@@ -1,0 +1,178 @@
+Title: IBM JR53803: WRONG TRUSTSTORE USED FOR ONLINE DEPLOYMENT - United States
+
+Text:
+  DIRECT LINKS TO FIXES
+8.0.1.3-WS-BPM-IFJR53803 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Standard&fixids=8.0.1.3-WS-BPM-IFJR53803&source=SAR]
+Version 8.5 Refresh Pack 7 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24041575]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When you configure HTTPS to be used between IBM Process Center
+   and IBM Process Server for online deployment, you receive an SSL
+    Handshake exception because the cacerts truststore is used to
+   establish the SSL connection instead of the
+   CellDefaultTrustStore.
+   
+   ProcessApplic 1   PAL: Snapshot deployToPS failed.
+   
+   com.lombardisoftware.client.delegate.BusinessDelegateException:
+   CWLLG0152E:The install failed. Could not connect to wps.
+    at
+   com.lombardisoftware.client.delegate.BusinessDelegateException.a
+   sBusinessDelegateException(BusinessDelegateException.java:41)
+    at
+   com.lombardisoftware.client.delegate.RepositoryServicesDelegateD
+   efault.deploySnapshot(RepositoryServicesDelegateDefault.java:283
+   )
+    at
+   com.ibm.bpm.pal.provider.impl.StandardTransitionProvider.deployT
+   oPS(StandardTransitionProvider.java:134)
+    at
+   com.ibm.bpm.pal.action.BaseActionsImpl.invokeStandardTransition(
+   BaseActionsImpl.java:418)
+    at
+   com.ibm.bpm.pal.action.BaseActionsImpl.executeAction(BaseActions
+   Impl.java:325)
+    at
+   com.ibm.bpm.pal.action.SnapshotActionsImpl.deployToProcessServer
+   (SnapshotActionsImpl.java:170)
+    at
+   com.ibm.bpm.pal.action.SnapshotActionsImpl.deployToPS(SnapshotAc
+   tionsImpl.java:149)
+   
+   
+   PRODUCTS AFFECTED
+   IBM Business Process Manager (BPM) Advanced
+   IBM BPM Standard
+   IBM BPM Express
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Copy the Process Server certificate to the truststore that is
+   being used (which you can determine by enabling deployment
+   tracing).
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  When you configuring HTTPS to be used between Process Center and
+    Process Server for online deployment, the wrong truststore
+   might be used, which causes the  deployment to fail.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A fix is available that ensures the correct truststore is
+   selected.
+   
+   On Fix Central (http://www.ibm.com/support/fixcentral), search
+   for JR53803:
+   
+   1. Select IBM Business Process Manager with your edition from
+   the product selector, the installed version to the fix pack
+   level, and your platform, and then click Continue.
+   2. Select APAR or SPR, enter JR53803, and click Continue.
+   
+   When you download fix packages, ensure that you also download
+   the readme file for each fix. Review each readme file for
+   additional installation instructions and information about the
+   fix.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR53803
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM ADVANCED
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9400
+   
+   
+ * REPORTED RELEASE
+   801
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-07-13
+   
+   
+ * CLOSED DATE
+   2015-07-20
+   
+   
+ * LAST MODIFIED DATE
+   2015-07-20
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   BPM ADVANCED
+   
+   
+ * FIXED COMPONENT ID
+   5725C9400
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R801 PSY
+   UP

@@ -1,0 +1,178 @@
+Title: IBM IC53593: NEW PREFERRED ISC START AND STOP INSTRUCTIONS FOR WINDOWS SHOULD BE UPDATED IN TSM SERVER INSTALLATION GUIDE FOR WINDOWS - United States
+
+Text:
+AIX SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The Windows Installation Guide states the following to
+   start/stop the ISC in Chapter 2 Starting and Stopping the
+   Console Server and Console Help:
+   .
+   To start Integrated Solutions Console system servers, enter:
+   <isc_home>\PortalServer\bin\startISC.bat ISC_Portal <iscadmin>
+   <iscpass>
+   To stop Integrated Solutions Console system servers, enter:
+   <isc_home>\PortalServer\bin\stopISC.bat ISC_Portal <iscadmin>
+   <iscpass>
+   .
+   This method can be used to start/stop the ISC, however if
+   Terminal Service (Remote Desktop) is being used to connect to
+   the Windows machine, and if the ISC is started via the command
+   line with the startISC.bat command, the ISC process will end
+   when the Terminal Service session is logged off.
+   .
+   Initial Impact: Low
+   TSM Versions Affected: All ISC/Admin Center users on Windows
+   Additional Keywords: halts crashes stops stopped ends ended
+                        not running
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Start the following two ISC services via the Windows Services
+   menu (Settings > Control Panel > Administrative Tools >
+   Services):
+   .
+   IBM WebSphere Application Server V6 - ISC 6.0.1 Runtime Service
+   ISC 6.0.1 Help Service
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All Tivoli Storage Manager ISC/Admin Center  *
+   *                                                              *
+   *                 users on Windows                             *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: The method described in the Windows     *
+   *                      Installation Guide to start and stop    *
+   *                      the ISC using startISC.bat works, but   *
+   *                      if Terminal Service (Remote Desktop)    *
+   *                      is being used to connect to the         *
+   *                      Windows machine, and if the ISC is      *
+   *                      started via the command line with the   *
+   *                      startISC.bat command, the ISC process   *
+   *                      will end when the Terminal Service      *
+   *                      session is logged off.                  *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   Need to add preferred instructions in the Windows installation
+   guide for starting and stopping the ISC if connecting to the
+   production environment through Terminal Services.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The following publication will be updated:
+   
+   IBM Tivoli Storage Manager for Windows Installation Guide,
+   GC23-5973-00
+   
+   The following text will be added to Chapter 2. Installing the
+   Integrated Solutions Console and the Administration Center,
+   "Starting and stopping the console server and console help
+   server":
+   
+   Note: It is recommended that you start and stop the Integrated
+   Solutions Console server by using the Windows Services utility
+   if you are connecting to the production environment through
+   Terminal Services. If you start the Integrated Solutions
+   Console server from the command line, the Integrated Solutions
+   Console server stops when you log off the Terminal Services
+   session.
+   
+   To start or stop Integrated Solutions Console system servers
+   using the Windows Services utility, go to Settings -->
+   Control Panel --> Administrative Tools --> Services. Select
+   the following two Integrated Solutions Console services:
+   
+   IBM WebSphere Application Server V6 - ISC 6.0.1 Runtime
+   Service
+   ISC 6.0.1 Help Service
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC53593
+   
+   
+ * REPORTED COMPONENT NAME
+   TSM SERVER
+   
+   
+ * REPORTED COMPONENT ID
+   5698ISMSV
+   
+   
+ * REPORTED RELEASE
+   54W
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2007-08-24
+   
+   
+ * CLOSED DATE
+   2007-09-28
+   
+   
+ * LAST MODIFIED DATE
+   2007-09-28
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+Publications Referenced GC23597300 FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

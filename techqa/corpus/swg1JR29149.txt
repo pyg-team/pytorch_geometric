@@ -1,0 +1,139 @@
+Title: IBM JR29149: FF ADAPTER V6.0.2.3 DOES NOT STOP POLLING ON ERROR - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Environment
+   -----------
+   AIX 5.3
+   WEBSPHERE ADAPTER FLAT FILES ADAPTER V6.0.2.3
+   
+   Testing inbound process of WebSphere Adapters for FlatFiles.
+   Option setting for inbound process.
+   
+   - transmit: once and only at once delivery
+   - Archive process: active
+   
+   Customer is preparing error recovery procedure. For this reason,
+   he renamed a archive directry name to force error of archive
+   process after starting an application using the adapter.
+   
+   Archive process fail after send a event to endpoint.
+   No event record is remains in event store.
+   But the original file is remains in event folder.
+   Then the remaining file was processed at next poling cycle.
+   Hence same file will be processed repeatedly forever.
+   He feels option 'once and only at once delivery' is not
+   effective at this case.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  No workaround available.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Now adapter staops polling after the fix
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Adapter stops polling after the fix
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR29149
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBS ADPT FLAT
+   
+   
+ * REPORTED COMPONENT ID
+   5724L7800
+   
+   
+ * REPORTED RELEASE
+   602
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-04-29
+   
+   
+ * CLOSED DATE
+   2009-01-21
+   
+   
+ * LAST MODIFIED DATE
+   2009-01-21
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBS ADPT FLAT
+   
+   
+ * FIXED COMPONENT ID
+   5724L7800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R610 PSY
+   UP

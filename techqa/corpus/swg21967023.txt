@@ -1,0 +1,184 @@
+Title: IBM Server Sizing and Architecture for Cognos Disclosure Managment - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ Language Independent 
+
+PROBLEM(ABSTRACT)
+ This document will provide guidelines to server sizing of the Cognos Disclosure Management application 
+
+SYMPTOM
+Poor performance
+
+
+ENVIRONMENT
+Windows
+
+RESOLVING THE PROBLEM
+This document is intended to provide insight and best practices on server sizing when deploying IBM Cognos Disclosure Management. It will outline all necessary hardware considerations required by both the application and the database server based on active user connections and the size of the environment required. 
+
+IBM Cognos Disclosure Management is scalable solution: The underlying three tier architecture allows further customization based on the type of environment required. The following table summarizes the different types of environments available, along with the hardware requirements for the application server. 
+
+Figure 1 - shows the # of users based on the environment including application and database servers. 
+
+[/support/docview.wss?uid=swg21967023&aid=1] [/support/docview.wss?uid=swg21967023&aid=1]
+
+Notes: 
+
+ * Testing Metrics has been conducted using VMware machines 
+ * Testing Metrics are developed based on a single application server deployment. 
+
+
+Testing Metrics are based on the following operation types:  * 80% Report Object Management/Generation Tasks which include and are not limited to: 
+
+
+Working with Report Objects  * Generate multiple objects/Entire Report 
+ * Viewing Various Report Screens 
+
+
+20% XBRL Related Tasks  * Tagging Objects 
+ * Generating Tagging Reports/Instance Documents 
+ * Taxonomy Mapping 
+
+
+The following section illustrates mock up examples of each of the mentioned environments above. These diagrams are not to be taken as recommendations of ideal setups but are merely for illustration purpose. 
+
+Small Deployment 
+
+Figure 2 - Small Network Environment 
+
+[/support/docview.wss?uid=swg21967023&aid=2] [/support/docview.wss?uid=swg21967023&aid=2] 
+
+Cognos Disclosure Management (CDM) Client  * Windows Version 
+ * Microsoft Office 
+ * Microsoft .NET Framework 
+ * Adobe Reader 
+
+
+Cognos Disclosure Management (CDM) Application Server and Database  * Windows Server 
+ * MS SQL Server or DB2 Server 
+ * IIS 
+ * .NET Framework 
+ * Microsoft Visual 
+ * 4 CPU @ 2.4 GHZ 
+ * 8 Gb RAM 
+ * 500 GB of free space 
+
+
+
+*** Please refer to the supported environment for IBM Cognos Disclosure Management - https://www-947.ibm.com/support/entry/portal/product/cognos/cognos_disclosure_management?productContext=-825397088 [https://www-947.ibm.com/support/entry/portal/product/cognos/cognos_disclosure_management?productContext=-825397088] 
+
+Medium Deployment 
+
+Figure 2 - shows the Medium Network Environment 
+
+[/support/docview.wss?uid=swg21967023&aid=3] [/support/docview.wss?uid=swg21967023&aid=3] 
+Cognos Disclosure Management (CDM) Client  * Windows 
+ * Microsoft Office 
+ * Microsoft .NET Framework 
+ * Adobe Reader 
+
+Cognos Disclosure Management (CDM) Application Server  * Windows Server 
+ * IIS 7.5 
+ * .NET Framework 4.0 
+ * Microsoft Visual C++ 
+ * Native SQL Client or DB2 SQL Client 
+ * 8 CPU @ 2.4 GHZ 
+ * 16 Gb RAM 
+ * 500 GB of free space 
+
+Cognos Disclosure Management (CDM) Data Base Server  * Windows Server 
+ * MS SQL Server or DB2 Server 
+ * .NET Framework 
+ * Microsoft Visual 
+ * 8 CPU @ 2.4 GHZ 
+ * 16 Gb RAM 
+ * 500 GB of free space 
+
+*** Please refer to the supported environment for IBM Cognos Disclosure Management - https://www-947.ibm.com/support/entry/portal/product/cognos/cognos_disclosure_management?productContext=-825397088 [https://www-947.ibm.com/support/entry/portal/product/cognos/cognos_disclosure_management?productContext=-825397088] 
+
+Large Deployment 
+
+Figure 3 - shows a Large Network Environment 
+
+[/support/docview.wss?uid=swg21967023&aid=4] [/support/docview.wss?uid=swg21967023&aid=4] 
+
+Cognos Disclosure Management (CDM) Client  * Windows 
+ * Microsoft Office 
+ * Microsoft .NET Framework 
+ * Adobe Reader
+
+Cognos Disclosure Management (CDM) Application Server  * Windows Server 
+ * IIS 
+ * .NET Framework 
+ * Microsoft Visual C++ 
+ * Native SQL Client or DB2 Client 
+ * 16 CPU @ 2.4 GHZ 
+ * 32 Gb RAM 
+ * 500 GB of free space 
+
+Cognos Disclosure Management (CDM) Data Base Server  * Windows Server 
+ * MS SQL Server or DB2 Server 
+ * .NET Framework 4.0 Update 1 
+ * Microsoft Visual C++ 
+ * 16 CPU @ 2.4 GHZ 
+ * 32 Gb RAM 
+ * 500 GB of free space 
+
+*** Please refer to the supported environment for IBM Cognos Disclosure Management - https://www-947.ibm.com/support/entry/portal/product/cognos/cognos_disclosure_management?productContext=-825397088 [https://www-947.ibm.com/support/entry/portal/product/cognos/cognos_disclosure_management?productContext=-825397088] 
+Enterprise Deployment 
+Larger Client implementations involving 100+ active users have to be evaluated by an IBM Services Consultant in order to provide accurate estimates and recommendations based on the environment in place. 
+
+The following examples will illustrate a mockup network topology for common environments 
+
+High Availability/Load Balancing 
+This environment will likely resemble a multi-instance application server deployment with a hardware load balancer 
+
+Figure 4 - shows an Enterprise Deployment 
+[/support/docview.wss?uid=swg21967023&aid=5] [/support/docview.wss?uid=swg21967023&aid=5] 
+
+Cognos Disclosure Management (CDM) Client  * Windows 
+ * Microsoft Office 
+ * Microsoft .NET Framework 
+ * Adobe Reader
+
+Cognos Disclosure Management (CDM) Application Server  * Windows Server 
+ * IIS 
+ * .NET Framework 
+ * Microsoft Visual C++ 
+ * Native SQL Client or DB2 Client 
+ * 16 CPU @ 2.4 GHZ 
+ * 32 Gb RAM 
+ * 500 GB of free space 
+
+Cognos Disclosure Management (CDM) Data Base Server  * Windows Server 
+ * MS SQL Server or DB2 Server 
+ * .NET Framework 4.0 Update 1 
+ * Microsoft Visual C++ 
+ * 16 CPU @ 2.4 GHZ 
+ * 32 Gb RAM 
+ * 500 GB of free space 
+
+
+*** Please refer to the supported environment for IBM Cognos Disclosure Management - https://www-947.ibm.com/support/entry/portal/product/cognos/cognos_disclosure_management?productContext=-825397088 [https://www-947.ibm.com/support/entry/portal/product/cognos/cognos_disclosure_management?productContext=-825397088] 
+
+
+Disaster Recovery/Failover 
+This environment will likely resemble a multi-instance application server deployment with database fail over 
+
+Figure 5 - Large Network Deployment 
+
+[/support/docview.wss?uid=swg21967023&aid=6] [/support/docview.wss?uid=swg21967023&aid=6] 
+
+
+Citrix Deployment 
+This environment will likely resemble a single-instance application server deployment with Citrix Server hosting the CDM Client 
+
+Figure 6 - Citrix Network 
+
+[/support/docview.wss?uid=swg21967023&aid=7] [/support/docview.wss?uid=swg21967023&aid=7] 
+
+Overall recommendation  * This document is provide overall guidance on hardware, software, etc. to run Cognos Disclosure Management. It is still strongly recommended that customers consult with IBM or accredited Business Partner as part of review your Cognos Disclosure Management installation and configuration process. 
+ * Users should reach out to customer support portal for additional information that relates to Cognos Disclosure Management.

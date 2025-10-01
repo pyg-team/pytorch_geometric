@@ -1,0 +1,44 @@
+Title: IBM Why am I seeing "SA1" extension for my transaction log file(s)? - United States
+
+Text:
+db2; transaction; log; sa1; retrieval; db2cklog TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ A log file extension "SA1" was found in the transaction log directory. This document is to describe what it is and if it is safe do delete. 
+
+SYMPTOM
+You may see errors in db2diag.log with the message "The bad log file was saved in. File:"
+
+
+ *  yyyy-mm-dd-23.23.22.216000-360 E36479216F463 LEVEL: Error 
+   PID : 3248 TID : 2928 PROC : db2syscs.exe 
+   INSTANCE: DB2 NODE : 000 
+   EDUID : 2928 EDUNAME: db2logmgr (XXXXXX) 
+   FUNCTION: DB2 UDB, data protection services, sqlpgRetrieveLogVendor, probe:2541 
+   DATA #1 : String, 37 bytes 
+   The bad log file was saved in. File: 
+   DATA #2 : String, 46 bytes 
+   D:\DB2\NODE0000\SQL00001\SQLOGDIR\S0099798.SA1 
+   
+
+
+CAUSE
+ 
+
+
+The "*.SA1" files were "bad log" files retrieved from TSM (or another vendor used for log archiving) where the retrieval attempt occurred but there was a validation issue (log file size not expected or some other issue). Another attempt will be made to bring the same log file, if successful, the bad log file will be renamed to have the "SA1" extension in it.
+
+
+
+
+RESOLVING THE PROBLEM
+ 
+
+If you confirm that the transaction log file "*.LOG" related to this "*.SA1" file is actually healthy then you can safely remove the bad one (that ends with "*.SA1). 
+
+To check if a transaction log file is healthy (not corrupted and useable by DB2 if needed) you can run the utility "db2cklog". Please check the related URL. 
+
+
+
+RELATED INFORMATION
+ db2cklog - Check archive log files command [https://www-01.ibm.com/support/knowledgecenter/SSEPGG_9.7.0/com.ibm.db2.luw.admin.cmd.doc/doc/r0058520.html]

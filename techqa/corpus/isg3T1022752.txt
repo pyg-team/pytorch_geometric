@@ -1,0 +1,54 @@
+Title: IBM Security Bulletin: Logjam
+vulnerability affect IBM Cloud Manager with Openstack (CVE-2015-4000) - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ IBM Cloud Manager with Openstack is vulnerable to Logjam vulnerability, attackers could exploit them to obtain sensitive information 
+
+VULNERABILITY DETAILS
+CVEID: CVE-2015-4000 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-4000]
+DESCRIPTION: The TLS protocol could allow a remote attacker to obtain sensitive information, caused by the failure to properly convey a DHE_EXPORT ciphersuite choice. An attacker could exploit this vulnerability using man-in-the-middle techniques to force a downgrade to 512-bit export-grade cipher. Successful exploitation could allow an attacker to recover the session key as well as modify the contents of the traffic. This vulnerability is commonly referred to as "Logjam".
+CVSS Base Score: 4.3
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/103294 [https://exchange.xforce.ibmcloud.com/vulnerabilities/103294] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:M/Au:N/C:P/I:N/A:N) 
+
+AFFECTED PRODUCTS AND VERSIONS
+IBM Cloud Manager with OpenStack 4.1.0 through 4.1.0.4 
+
+IBM Cloud Manager with OpenStack 4.2.0 through 4.2.0.3
+IBM Cloud Manager with OpenStack 4.3.0 through 4.3.0.3
+
+REMEDIATION/FIXES
+ 
+
+Product VRMF APAR Remediation/First Fix IBM Cloud Manager with Openstack 4.3.0 None IBM Cloud Manager with Openstack 4.3 interim fix 1 for fix pack 3:
+http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm%3FOther%2Bsoftware&product=ibm/Other+software/Cloud+Manager+with+Openstack&release=All&platform=All&function=fixId&fixids=4.3.0.3-IBM-CMWO-IF001&includeSupersedes=0 [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm%3FOther%2Bsoftware&product=ibm/Other+software/Cloud+Manager+with+Openstack&release=All&platform=All&function=fixId&fixids=4.3.0.3-IBM-CMWO-IF001&includeSupersedes=0] IBM Cloud Manager with Openstack 4.2.0 None IBM Cloud Manager with Openstack 4.2 interim fix 1 for fix pack 3:
+http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm%3FOther%2Bsoftware&product=ibm/Other+software/Cloud+Manager+with+Openstack&release=All&platform=All&function=fixId&fixids=4.2.0.3-IBM-CMWO-IF001&includeSupersedes=0 [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm%3FOther%2Bsoftware&product=ibm/Other+software/Cloud+Manager+with+Openstack&release=All&platform=All&function=fixId&fixids=4.2.0.3-IBM-CMWO-IF001&includeSupersedes=0] IBM Cloud Manager with Openstack 4.1.0 None IBM Cloud Manager with Openstack 4.1 interim fix 5 for fix pack 4:
+http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm%3FOther%2Bsoftware&product=ibm/Other+software/Cloud+Manager+with+Openstack&release=All&platform=All&function=fixId&fixids=4.1.0.4-IBM-CMWO-IF005&includeSupersedes=0 [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm%3FOther%2Bsoftware&product=ibm/Other+software/Cloud+Manager+with+Openstack&release=All&platform=All&function=fixId&fixids=4.1.0.4-IBM-CMWO-IF005&includeSupersedes=0] WORKAROUNDS AND MITIGATIONS
+
+For the OpenStack Dashboard: 
+
+ * Edit the OpenStack Dashboard Apache Httpd configuration file, /etc/httpd/sites-enabled/openstack-dashboard.conf, and disable the DH or DHE ciphers by adding the following line after to the "SSLProtocol" option: SSLCipherSuite ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES256-GCM-SHA384:DHE-RSA-AES128-GCM-SHA256:DHE-DSS-AES128-GCM-SHA256:kEDH+AESGCM:ECDHE-RSA-AES128-SHA256:ECDHE-ECDSA-AES128-SHA256:ECDHE-RSA-AES128-SHA:ECDHE-ECDSA-AES128-SHA:ECDHE-RSA-AES256-SHA384:ECDHE-ECDSA-AES256-SHA384:ECDHE-RSA-AES256-SHA:ECDHE-ECDSA-AES256-SHA:DHE-RSA-AES128-SHA256:DHE-RSA-AES128-SHA:DHE-DSS-AES128-SHA256:DHE-RSA-AES256-SHA256:DHE-DSS-AES256-SHA:DHE-RSA-AES256-SHA:AES128-GCM-SHA256:AES256-GCM-SHA384:AES128-SHA256:AES256-SHA256:AES128-SHA:AES256-SHA:AES:CAMELLIA:DES-CBC3-SHA:!aNULL:!eNULL:!EXPORT:!DES:!RC4:!MD5:!PSK:!aECDH:!EDH-DSS-DES-CBC3-SHA:!EDH-RSA-DES-CBC3-SHA:!KRB5-DES-CBC3-SHA:!EDH
+
+
+For the Self Service portal user interface:  * Edit the Self-Service portal JRE security configuration file, /opt/ibm/$SCE_version/jre/lib/security/java.security, and disable the DH ciphers with key size less than 768 by changing: jdk.tls.disabledAlgorithms=SSLv3, RC4, DH keySize < 768 
+ * For ICM 4.3 release and above, you also need to configure the Self Service Portal user interface Apache Httpd configuration file /etc/httpd/sites-enabled/ibm-self-service-ui.conf, disable the DH or DHE ciphers by adding the following line after to the "SSLProtocol" option: SSLCipherSuite ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES256-GCM-SHA384:DHE-RSA-AES128-GCM-SHA256:DHE-DSS-AES128-GCM-SHA256:kEDH+AESGCM:ECDHE-RSA-AES128-SHA256:ECDHE-ECDSA-AES128-SHA256:ECDHE-RSA-AES128-SHA:ECDHE-ECDSA-AES128-SHA:ECDHE-RSA-AES256-SHA384:ECDHE-ECDSA-AES256-SHA384:ECDHE-RSA-AES256-SHA:ECDHE-ECDSA-AES256-SHA:DHE-RSA-AES128-SHA256:DHE-RSA-AES128-SHA:DHE-DSS-AES128-SHA256:DHE-RSA-AES256-SHA256:DHE-DSS-AES256-SHA:DHE-RSA-AES256-SHA:AES128-GCM-SHA256:AES256-GCM-SHA384:AES128-SHA256:AES256-SHA256:AES128-SHA:AES256-SHA:AES:CAMELLIA:DES-CBC3-SHA:!aNULL:!eNULL:!EXPORT:!DES:!RC4:!MD5:!PSK:!aECDH:!EDH-DSS-DES-CBC3-SHA:!EDH-RSA-DES-CBC3-SHA:!KRB5-DES-CBC3-SHA:!EDH 
+
+You should verify applying this configuration change does not cause any compatibility issues. Not disabling the DH or DHE cipher with key size < 768 will expose yourself to the attack described above. IBM recommends that you review your entire environment to identify other areas where you have disable the DH or DHE cipher with key size < 768 and take appropriate mitigation and remediation actions. GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+IMPORTANT NOTE
+ IBM strongly suggests that all System z customers be subscribed to the System z Security Portal to receive the latest critical System z security and integrity service. If you are not subscribed, see the instructions on the System z Security web site [http://www.ibm.com/systems/z/solutions/security_subintegrity.html]. Security and integrity APARs and associated fixes will be posted to this portal. IBM suggests reviewing the CVSS scores and applying all security or integrity fixes as soon as possible to minimize any potential risk. 
+
+REFERENCES
+Complete CVSS v2 Guide [http://www.first.org/cvss/v2/guide] 
+On-line Calculator v2 [http://nvd.nist.gov/CVSS-v2-Calculator] 
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] *The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.

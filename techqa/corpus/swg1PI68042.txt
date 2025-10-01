@@ -1,0 +1,123 @@
+Title: IBM PI68042: ADD TIMEOUT OPTION ON RULE EXECUTION TO AVOID HUNG SERVER SITUATION - United States
+
+Text:
+z/os SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS UNREPRODUCIBLE.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Currently the API will block if the server is still running but
+   has entered into a "sick but not dead" state.
+   This APAR adds an option to timeout the rule execution request
+   if it exceeds a value and move on to the next server in the
+   HBRSSIDLIST
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: ODM users where zRES server hangs            *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   If the zRES server hangs for any reason during rule
+   execution then clients waiting for reply will also hang.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *  HBRTIMEOUT variable introduced to set maximum number of
+   second to wait before returning timeout error.
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI68042
+   
+   
+ * REPORTED COMPONENT NAME
+   WS ODM FOR Z/OS
+   
+   
+ * REPORTED COMPONENT ID
+   5655Y1700
+   
+   
+ * REPORTED RELEASE
+   801
+   
+   
+ * STATUS
+   CLOSED UR3
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-08-24
+   
+   
+ * CLOSED DATE
+   2017-01-13
+   
+   
+ * LAST MODIFIED DATE
+   2017-01-13
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WS ODM FOR Z/OS
+   
+   
+ * FIXED COMPONENT ID
+   5655Y1700
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R801 PSN
+   UP

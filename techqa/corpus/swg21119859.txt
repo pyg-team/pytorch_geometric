@@ -1,0 +1,129 @@
+Title: IBM Setting into a view from a shell script does not process the remaining commands in the script - United States
+
+Text:
+view; process; script; setview; shell; 1119859 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Attempts to set into an IBM Rational ClearCase view from within a UNIX or Linux shell script does not process the remaining commands in that script. 
+
+SYMPTOM
+When running the sample script below, all commands executed after the cleartool setview command are not processed. 
+
+
+
+Disclaimer All source code and/or binaries attached to this document are referred to here as "the Program". IBM is not providing program services of any kind for the Program. IBM is providing the Program on an "AS IS" basis without warranty of any kind. IBM WILL NOT BE LIABLE FOR ANY ACTUAL, DIRECT, SPECIAL, INCIDENTAL, OR INDIRECT DAMAGES OR FOR ANY ECONOMIC CONSEQUENTIAL DAMAGES (INCLUDING LOST PROFITS OR SAVINGS), EVEN IF IBM, OR ITS RESELLER, HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
+
+
+#!/bin/sh
+/usr/atria/bin/cleartool setview cmview
+/usr/atria/bin/cleartool pwv
+/usr/atria/bin/cleartool lsview
+cd /vob/transition/Admin_transition
+/usr/atria/bin/cleartool mkbrtype -global -nc 02b456
+
+CAUSE
+In the above script, any commands that appear after the execution of cleartool setview cmview are not processed because a shell is spawned with exec(), which replaces the current program with a new program. 
+
+This means current process text and code segments, which in this case is the script that contains all the commands, is replaced by the program getting executed, which is the shell invoked by running cleartool setview cmview. Hence, none of the commands are processed beyond the point of invocation of the setview. 
+
+
+RESOLVING THE PROBLEM
+This is the expected behavior. 
+
+ 
+
+WORKAROUNDS: 
+
+ 
+
+ * Run cleartool setview prior to calling the script:
+   
+   Example:
+   
+   $ cat /tmp/script.sh
+   #!/bin/sh
+   /usr/atria/bin/cleartool pwv
+   
+   $ cleartool setview new_view
+   [new_view]$ /tmp/script.sh
+   Working directory view: new_view
+   Set view: new_view
+   
+   
+ * Run the cleartool setview command and exec into the script:
+   
+   Example:
+   
+   $ cleartool setview -exec /tmp/script.sh new_view
+   Working directory view: new_view
+   Set view: new_view
+
+
+
+
+
+
+
+FAQ: 
+Q: How does setview select the subshell (csh, sh, ksh, bash ...) to spawn? 
+
+When cleartool setview is run, a new shell will be spawned. The shell chosen will depend on your default shell as defined in your NIS maps or your local /etc/passwd file.
+
+You can verify your default shell as follows.
+
+For NIS:
+ypcat passwd | grep <username>
+
+For local passwd file:
+grep <username> /etc/passwd
+
+The default shell is the last entry on the line. 
+
+For example:
+$ ypcat passwd | grep jdoe
+jdoe:sbe.p46JQm9kE:20147:5089:John Doe:/people/jdoe:/bin/bash
+
+This example shows that the Bash Shell is the default shell (/bin/bash).
+
+
+
+
+
+
+
+Q: How do you override the default shell? One way of overriding the default shell chosen by cleartool is to use the $SHELL environment variable.
+
+Using the above example, even though the default shell is /bin/bash, you can change the shell that cleartool uses by running:
+
+$ setenv SHELL /bin/ksh
+$ setenv | grep SHELL
+SHELL=/bin/ksh
+
+Now when cleartool is run, the Korn Shell (ksh) will be spawned, and not bash. 
+
+
+
+
+
+
+
+Q: How can you avoid losing your shell environment after setting into a view? 
+
+When running cleartool setview while logged in as a user whose default shell is ksh, the ksh environment is not picked up. Why?
+
+In this setup, spawning a shell executes .profile but does not execute .kshrc. To be able to use the environment you have setup in .kshrc, add the following lines to your .profile:
+
+
+ENV=$HOME/.kshrc
+export ENV 
+
+
+The ENV command forces it to run .kshrc as well. 
+
+The export command forces the shell to pass that value onto the setview subshell, thereby setting up the environment. 
+
+Note: Review the man pages for the other shells to determine the files to edit following the concepts above.
+
+
+RELATED INFORMATION
+#Support Policy for Shell Access and ClearCase [http://www.ibm.com/support/docview.wss?uid=swg21246768]

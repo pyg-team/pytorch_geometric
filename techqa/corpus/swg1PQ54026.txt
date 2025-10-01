@@ -1,0 +1,181 @@
+Title: IBM PQ54026: RXUEXIT EXAMPLE DOES NOT ADD CLASS PARAMETER TO JOBCARD - United States
+
+Text:
+z/os SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The sample RSH user exit (RXUEXIT w/SMP/E Distribution Name
+   EZAEBRXU) is supposed to show how to add a ,CLASS=A parameter
+   to the job card. This is not occurring.
+   .
+   If PURGE=Y is used when the REXEC server is started with the
+   user exit option, the output will show that the class parameter
+   is not being detected.
+   .
+   In an excerpt from the sample code below, at the completion
+   of the SCANLOOP, reg 5 points to the null byte (x'00') at the
+   end of the job card parameters passed to the RXUEXIT routing.
+   The statement following the label GOTEND then increments
+   reg 5 to point to the byte following the null byte.
+   When the MVC after LENOK is issued, it will move the
+   class paramter to the job card buffer - AFTER the null byte.
+   When control is returned to the REXEC server, the server will
+   take the updated string up to the 1st null byte and build the
+   job card that is used. The ,CLASS=A will not be picked up
+   because we did not overlay the null byte (x'00') following the
+   job card. The LA 5,1(5) causes us to skip over this byte.
+   .
+   SCANLOOP EQU   *
+            CLI   0(5),0              *Is this string termination ?
+            BE    GOTEND              *- Yes
+            BXLE  5,6,SCANLOOP        *Continue scan for term
+   * --------------------------------------------------------------
+   * If string is not null terminated, return without altering
+   * --------------------------------------------------------------
+            B     RETURN              *Should not happen.
+   GOTEND   EQU   *
+            LA    5,1(5)              *incl. x'00' terminator
+            LR    6,5                 *address of null byte
+            SR    5,4                 *L'job parameter statements
+            LA    5,L'CLASS(5)        *New parameter length
+            CH    5,=AL2(BUFSIZE)     *Do we exceed buffer size?
+            BNH   LENOK               *- No, there is room enough
+   * --------------------------------------------------------------
+   * String length would exceed buf size so return without altering
+   * --------------------------------------------------------------
+            B     RETURN              *Return without modification
+   *
+   LENOK    EQU   *
+            MVC   0(L_CLASS,6),CLASS  *Move class statement to buff
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  The LA 5,1(5) statement should be deleted.
+   .
+   GOTEND   EQU   *
+   *        LA    5,1(5)              *incl. x'00' terminator
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All users of the IBM Communications Server   *
+   *                 for OS/390 Release 10 IP: RXUEXIT sample.    *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: The RXUEXIT Sample does not add the     *
+   *                      CLASS Parameter to the JOB card.        *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   There is a logic error in the RXUEXIT sample that causes a
+   terminator byte hex 00 to be placed in front of the CLASS
+   parameter that is to be added to the job card. The result is
+   that when the server encounters the null terminator it stops
+   processing the string.
+   +-------------------------------------------------------------+
+   + Please check our Communications Server for OS/390 homepages +
+   + for common networking tips and fixes.  The URL for these    +
+   + homepages can be found in Informational APAR II11334 [http://www-01.ibm.com/support/docview.wss?uid=isg1II11334].       +
+   +-------------------------------------------------------------+
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *  This APAR is being closed FIN (Fixed If Next) with concurrence
+   from the submitting customer. This means that a fix to this
+   APAR is expected to be delivered from IBM in a release (if any)
+   to be available within the next 18 months.
+   
+   This problem will be tracked as PTR MV24816 by Communications
+   Server for z/OS Development.
+   
+   PTR24816   PTR MV24816
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   PQ54026
+   
+   
+ * REPORTED COMPONENT NAME
+   TCP/IP V3 MVS
+   
+   
+ * REPORTED COMPONENT ID
+   5655HAL00
+   
+   
+ * REPORTED RELEASE
+   50A
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2001-10-26
+   
+   
+ * CLOSED DATE
+   2001-11-14
+   
+   
+ * LAST MODIFIED DATE
+   2001-11-14
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R50A PSN
+   UP

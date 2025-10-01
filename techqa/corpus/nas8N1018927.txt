@@ -1,0 +1,106 @@
+Title: IBM Frequently Asked Questions about WRKTIMZON and QTIMZON - United States
+
+Text:
+SYSTEMVALUES TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This document provides information about the WRKTIMZON command and the QTIMZON system value. 
+
+RESOLVING THE PROBLEM
+The following are frequently asked questions about the WRKTIMZON command, the QTIMZON system value, and the Daylight Savings Time changes for 2007. 
+
+Question 1: What is the purpose of QTIMZON?
+Answer 1: QTIMZON is a system value that adjusts both the date/time and the UTC Offset. It is designed to work with time zones, particularly Daylight Savings Time.
+
+Question 2: What is the difference between the WRKTIMZON command and the QTIMZON system value?
+Answer 2: QTIMZON is a system value, which shows what you are currently set to. The output from the WRKTIMZON command is a table that shows the possible time zone values. An Option 8 from WRKTIMZON does the same thing as using the CHGSYSVAL QTIMZON command to change that system value. WRKTIMZON also allows you to look at and change the details of a time zone value, so it is more useful than the system value.
+
+Question 3: How do I determine the current value from WRKTIMZON?
+Answer 3: There is a > symbol between the Offset and the Time Zone columns that indicates the current value.
+
+Question 4: Is there a reason why I should not adjust the time for Daylight Savings Time?
+Answer 4: Most servers base their time stamp on the Coordinated Universal Time Offset, which is recorded in the QUTCOFFSET system value. If you adjust the time ahead by an hour but leave the QUTCOFFSET value unchanged, you will probably find that incoming mail shows it was sent an hour earlier than it actually was, and outgoing mail shows it was sent an hour later. The mail servers compare the offset, not the time, to adjust for the time zone difference.
+
+Question 5: I cannot adjust just the system value QUTCOFFSET. Why?
+Answer 5: That is correct. When you adjust QTIMZON (directly or through WRKTIMZON), it adjusts the QUTCOFFSET for you. The system will not allow you to adjust QUTCOFFSET directly. Note that when you change the time zone to one with a different offset, it will also adjust the time; so, you must adjust the QDATETIME or QHOUR system value. We suggest doing this only when the system is in a restricted state.
+
+Question 6: Are there any issues with Job Scheduler or Advanced Job Scheduler and the time change?
+Answer 6: For Job Scheduler, it is possible for jobs to run out of order in the Spring. For example, suppose you have three jobs set to run at 2:30, 2:35, and 2:40 in the morning. When the time shifts from 2:00 AM to 3:00 AM, all three jobs will try to run immediately, and in a random order. If it is important that the 2:30 job starts first, you might want to change when the time shifts, hold the second and third jobs, or change the second and third jobs to run at 3:05 and 3:10 AM for just that one day.
+
+For Advanced Job Scheduler, jobs that are designed to run more often than once a day might run one time more or less than you would expect. If you have a job designed to run once an hour at the half hour (12:30, 1:30, 2:30, 3:30, and so on), in the Spring it will run at 12:30, 1:30, 3:00 (because of the jump ahead), 3:30, 4:30, and so on. In the Fall, it will run at 12:30, 1:30, skip the second 1:30, 2:30, 3:30, and so on. If this is a problem for your system, you might have to hold or reschedule these jobs. Jobs designed to run once a day will always run exactly once.
+
+Question 7: What about other applications?
+Answer 7: We strongly encourage contacting your vendor about other applications for what they want you to do during the time change, including IBM Domino and IBM MQSeries. If for some reason you are unable to contact your vendor, you can end the application just before the time shift in the Spring and then restart it after the shift; in the Fall, you should end it just before the shift, wait an hour, and then restart it so no time gets recorded twice. Again, whenever possible, talk to your vendor.
+
+Question 8: How do I change what time Daylight Savings Time occurs?
+Answer 8: Use WRKTIMZON and select Option 2 to change. For additional information, refer to the following Rochester Support Center knowledgebase document:
+
+New, Time and Time Zones for V5R3M0 and Later: 
+
+Question 9: What if I want to do the Daylight Savings Time change manually?
+Answer 9: Use the QN0x00UTCS values. For example, for Eastern Time Zone, change to QN0500UTCS in the Fall and QN0400UTCS in the Spring. Document New (above) has a table for which values to use for each time zone.
+
+Daylight Savings Time Changes for 2007
+
+Question 10: What is this about Congress?
+Answer 10: In 2005, Congress declared that starting in 2007 the dates for starting and ending Daylight Savings Time would be modified, with the new values being the second Sunday in March and the first Sunday in November. We have PTFs SI24906 for R530 and R535 and SI24908 for R540 to make this change.
+
+Question 11: My prerequisite chain shows a R530 PTF for my R535 system (or vice versa).
+Answer 11: There is an MF PTF that is required, which is different depending upon whether you have a R530 or R535 system. When you order SI24906, it will get you both prerequisites. When you apply it, it will apply only the prerequisite that you need, and the other will be discarded. It is all done automatically; just apply the PTF like you would any other PTF.
+
+Question 12: Should I apply it immediate or delayed?
+Answer 12: The PTF, and all of its closely related PTFs, are immediate PTFs. However, a number of the co-requisites are Java™ PTFs, and the instructions state that you must have no Java applications running on your system when these are applied. The difficulty is that many applications use Java “under the covers,” so to speak. For this reason, unless you already have all of the co-requisites applied, I would suggest applying the PTFs delayed or in a restricted state.
+
+Question 13: So what do these PTFs do?
+Answer 13: The first thing the PTF does is add some new values to your WRKTIMZON list:
+
+QN0330NST3 The new Newfoundland Standard Time
+QN0400AST2 The new Atlantic Standard Time
+QN0500EST3 The new Eastern Standard Time
+QN0600CST2 The new Central Standard Time
+QN0700MST3 The new Mountain Standard Time
+QN0800PST2 The new Pacific Standard Time
+QN0900AST2 The new Alaska Standard Time
+QN1000HAS2 The new Hawaii/Aleutian Standard Time
+
+The second thing it does is automatically shift some time zones to the new ones:
+
+QN0400AST updates to QN0400AST2.
+QN0500EST updates to QN0500EST3.
+QN0600CST updates to QN0600CST2.
+QN0700MST updates to QN0700MST3.
+QN0800PST updates to QN0800PST2.
+QN0900AST updates to QN0900AST2.
+QN1000HAST updates to QN1000HAS2.
+
+Question 14: I had already created a QN0500EST3 for something else. What will happen?
+Answer 14: The PTF’s new entry will overwrite the old one.
+
+Question 15: I had customized QN0500EST. What will happen?
+Answer 15: The new version will have the defaults. If you were previously set to QN0500EST and you had the time set to run at 4:00 AM, the PTF adds QN0500EST3 and changes your system value to point to EST3. Unless you modify EST3, it will run at 2:00 AM.
+
+Question 16: My system is set to use QN0600S or QN0600UTCS. What will happen?
+Answer 16: Any time zone that does not use automatic daylight savings time (such as QN0600EST2 or any QN0x00UTCS) is unaffected; the new value is added to the list but will not be used unless you choose to make that change. In addition, the following time zones are designed to automatically adjust Daylight Savings Time, but they will not use the new values and dates unless you change the system value to point to the new one.
+
+QN0330NST (point to QN0330NST3 if you want to use the new dates)
+QN0600S (point to QN0600CST2 if you want to use the new dates)
+QN0700T (point to QN0700MST3 if you want to use the new dates)
+QN0800U (point to QN0800PST2 if you want to use the new dates)
+
+Note that Newfoundland will not automatically change the dates; as of the manufacture of the PTF, Newfoundland was still intending to use the old dates.
+
+Question 17: Will changing from QN0600S to QN0600CST2 change my time?
+Answer 17: If it is done between the following periods, yes: 
+
+o Between the Second Sunday in March and the First Sunday in April. o Between the Last Sunday in October and the first Sunday in November. 
+During all other times, you can safely adjust from one auto-adjusting system value to the other. 
+
+For non-adjusting time zone values, care has to be taken. If the actual offset is changed, it will change the time. For example, changing the time zone value from QN0500UTCS to QN0500EST2 will not change the time in the winter because the two offsets are the same. But in the summer time, when QN0500EST2 is adjusted by one hour for Daylight Savings Time and QN05000UTCS is not, the time will be shifted by an hour. 
+
+Question 18: If the system is in a restricted state (such as performing a full system backup) when the system has to change the time to implement DST, what will happen? Will the time change happen during resticted state at the scheduled time, or will this change happen after system comes out of resctricted state? 
+Answer 18: System job QSYSARB is responsible to implementing time change for DST. Since system jobs are not ended when ENDSBS *ALL is issued to reach a restricted state, QSYSARB will be active and will change the system time for DST at the scheduled time for your time zone. 
+
+
+Cross reference information Segment Product Component Platform Version Edition Operating System IBM i 6.1 Operating System IBM i 7.1 Operating System IBM i 7.3 Operating System IBM i 7.2 
+HISTORICAL NUMBER
+ 440140368

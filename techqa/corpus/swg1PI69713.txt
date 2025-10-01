@@ -1,0 +1,117 @@
+Title: IBM PI69713: BI 10.2.0 AFTER UPGRADE TO FP5 AGENTS FAIL WITH CM-SYS-5092 AGAINST DB2 CONTENT STORE - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  BI 10.2.0 - After Upgrade to 10.2.0 FP5, Agents fail to run with
+   CM-SYS-5092 Content Manager failed while returning the query
+   results.  [jcc][t4][<JDBCDriverVersion>] Invalid operation:
+   result set is closed. ERRORCODE=-4470, SQLSTATE=null
+   against a DB2 9.7 Content Store
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  n/a
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * All Users                                                    *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * See Error Description                                        *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Upgrade to IBM Cognos Analytic 11.0.5.0                      *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI69713
+   
+   
+ * REPORTED COMPONENT NAME
+   COG EVENT STUDI
+   
+   
+ * REPORTED COMPONENT ID
+   5724W12ES
+   
+   
+ * REPORTED RELEASE
+   A20
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-09-23
+   
+   
+ * CLOSED DATE
+   2016-11-22
+   
+   
+ * LAST MODIFIED DATE
+   2016-11-22
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    PI69245 [http://www-01.ibm.com/support/docview.wss?uid=swg1PI69245]
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * RA20 PSN
+   UP

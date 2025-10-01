@@ -1,0 +1,37 @@
+Title: IBM How to secure a Jazz server with trusted certificate for secure communication - United States
+
+Text:
+1386734; RTC; Rational Team Concert; secure communication; secure; this connection is untrusted; https TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When using IBM Rational Team Concert, how do I secure the Jazz server on Tomcat with HTTPS so the web client do not get an error message stating the certificate is not trusted? 
+
+SYMPTOM
+The web client states the certificate returned by the server is not trusted:
+
+
+[/support/docview.wss?uid=swg21386734&aid=1] [/support/docview.wss?uid=swg21386734&aid=1]
+
+
+RESOLVING THE PROBLEM
+To secure the Apache Tomcat application server with HTTPS, you need to install a signer certificate into the Tomcat keystore. 
+
+
+In order for the browser to trust the certificate, you have three solutions, only the first solution is recommended by IBM. 
+
+ 1. Create a certificate for your organization and have it signed by a trusted certificate Authority. Refer to the link specified under the related URLs. 
+ 2. Create a self signed certificate and explain to the user how to install the certificate when they connect to the server. Refer to the browser documentation to learn how to install a certificate when we connect to a secure site. 
+ 3. Create a self signed certificate. Export the public key of the certificate following the instruction in the link. Send this client certificate to all user and explain how they can install it in their browser. Refer to the browser documentation to learn how to install a certificate sent as a file.
+
+
+
+
+
+Leverage the Jazz Community Jazz and Rational Team Concert have an active community that can provide you with additional resources. Browse and contribute to the User forums, contribute to the Team Blog and review the Team wiki.
+Refer to technote 1319600 [http://www-01.ibm.com/support/docview.wss?uid=swg21319600] for details and links.
+
+
+
+
+RELATED INFORMATION
+#SSL Configuration [http://tomcat.apache.org/tomcat-5.5-doc/ssl-howto.html]

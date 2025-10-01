@@ -1,0 +1,114 @@
+Title: IBM How-to setup Distributed Systems Management, (DSM) with NIM - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ I have a NIM Master but I've never setup CEC or VIO's objects to use with NIM. How do I do that? 
+
+ANSWER
+Environment tested on:
+AIX: 7200-01-03 & AIX 7100-04-04
+HMC: 7.7.9.0 SP3 & 8.8.6.0 SP2
+VIO: 2.2.3.50 & 2.2.2.2
+
+Here are the requisite filesets needed for DSM.
+expect.base
+Java6.sdk, (On 7100-04-04)
+Java7_64.jre (On 7200-01-03)
+tcl.base
+tk.base
+
+
+Configuring DSM:
+In my example, I have created the following filesystems on my NIM Master.
+
+/export/spot
+/export/lpp_source
+/export/mksysb
+
+
+I created a directory called passwd_file under /export and then ran the following command to create my encrypted password file.
+
+dpasswd -f /export/passwd_file/<file name> -U <hmc User ID>
+>>you will get prompted for the hmc password and once you enter that, it will create the encrypted password in /export/passwd_file.
+
+Now, we can start defining the management resources. We'll need to start with the hmc first.
+
+From command line:
+nim -o define -t hmc -a passwd_file=/export/passwd_file/<file name> -a if1="master_net hmc hostname 0" <resource name>
+
+From smitty:
+smitty nim_mkmgmt_obj
+>>pick hmc
+>>enter your hmc hostname
+>>* Management Object Name [resource name]
+* Password File [/export/passwd/<file name>]
+Primary Network Install Interface
+* NIM Network [master_net]
+* Host Name hmc hostname
+Hit enter and it should come back to ok status
+
+Next we need to start getting the names to the managed systems on the hmc. You get that information by logging onto the hmc gui and copying the Systems Managment --> Servers --> <Server information>.
+
+Once you get that information, run the smitty nim_mkmgmt_obj command again to define those managed machine.
+
+From command line:
+nim -o define -t cec -a hw_type=<4 digit machine type> -a hw_model=<3 digit model type> -a hw_serial=<HW serial number> -a mgmt_source=<hmc resource name> <resource name>
+
+From smitty:
+smitty nim_mkmgmt_obj
+>>pick cec
+>>* Management Object Name [resource name]
+* Hardware Type [Enter the 4 digits of the type]
+* Hardware Model [Enter the 3 digits of the model]
+* Hardware Serial [Enter the Serial Number, (do not enter 
+the SN; just the numbers and letters)]
+* Management Source [Hit F4 and select you HMC]
+Hit enter and it should come back to ok status
+
+
+Next, define your VIO server as a managed object.
+
+From command line:
+nim -o define -t vios -a if1="master_net VIO hostname 0 ent0" -a mgmt_source=<CEC resource name> -a identity=<Partition ID> <resource name>
+
+From smitty:
+smitty nim_mkmgmt_obj
+>>pick vios
+>>enter your hostname
+>>* Management Object Name [enter your resource name]
+* Management Source [Hit F4 and select your cec or 
+managed system]
+* Identity [This will be the number of the 
+partition ID on the hmc]
+Primary Network Install Interface
+* NIM Network [master_net]
+* Host Name hostname
+Hit enter and you should get the ok status.
+
+
+After we've done all this, now you should be able to create a backupios image on your NIM master.
+
+From command line:
+nim -o define -t ios_mksysb -a server=master -a location=/export/mksysb/<file name> -a mk_image=yes -a source=<VIO resource name> <resource name>
+
+smitty nim_mkres
+>>pick ios_mksysb
+>>* Resource Name [resoure name]
+* Resource Type ios_mksysb
+* Server of Resource [master]
+* Location of Resource [/path where we want the backupios
+image resides]
+CREATE system backup image? yes
+NIM CLIENT to backup [vio name]
+
+If you get a connection failed message, you will need to run the remote_management command on the VIO server to establish a NIM connection between the NIM master and NIM client.
+
+On the VIO server:
+remote_management -interface <en#> <NIM Master name>
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Operating System (AIX) AIX 7.1 Enterprise Edition Operating System (AIX) AIX 7.2 Enterprise Edition

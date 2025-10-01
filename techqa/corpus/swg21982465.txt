@@ -1,0 +1,38 @@
+Title: IBM Why am I receiving a message from 'LaunchAnywhere' indicating 'Error: Windows error 2 occured while loading the Java VM'? - United States
+
+Text:
+launchanywhere; error2; java vm; install TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ You are attempting to install or license a SPSS product or License Manager on a version of Windows Server and receiving a message from LaunchAnywhere' indicating 'Error: Windows error 2 occured while loading the Java VM'. 
+
+SYMPTOM
+'LaunchAnywhere' presenting 'Error: Windows error 2 occured while loading the Java VM' during product installation.
+
+
+CAUSE
+Multiple causes.
+
+ENVIRONMENT
+Windows.
+
+DIAGNOSING THE PROBLEM
+'LaunchAnywhere' presenting 'Error: Windows error 2 occurred while loading the Java VM' during product installation or licensing on a Windows operating system
+
+RESOLVING THE PROBLEM
+There are multiple causes for this behavior. The resolution depends on the action taken when the error presents.
+
+
+
+
+
+IF you are installing a SPSS product (including the License Manager) and receiving this error, THEN the most common cause is that Java Virtual Machine (JVM) is not installed. If JVM is not installed, install the JVM and attempt installation. 
+
+IF you are licensing a SPSS product (including the License Manager) and receiving this error, THEN confirm the JVM is installed. If JVM is installed, see additional resolution options below. 
+
+IF you are licensing a SPSS product (including the License Manager) using the License Authorization Wizard graphical user interface and receiving this error, THEN try using the 'licenseactivator' program executable (licenseactivator.exe) located in the product installation directory. The 'licenseactivator' program must be executed from an Administrator Command Prompt. The command argument for use of the 'licenseactivator' executable is (replacing '<authcode>' with an actual SPSS product authorization code or license code): licenseactivator <authcode> 
+
+IF you are licensing a SPSS product (including the License Manager) using 'licenseactivator', THEN try using the License Authorization Wizard graphical user interface by locating the 'law' program executable (law.exe) located in the product installation directory. The 'law' executable must be executed by right-clicking on the 'law' icon and selecting the 'Run as administrator' option (if available).
+
+RELATED INFORMATION
+ Need more help? Our Statistics forum is Live! [https://developer.ibm.com/answers/topics/statistics.html?smartspace=predictive-analytics]

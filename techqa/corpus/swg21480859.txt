@@ -1,0 +1,32 @@
+Title: IBM Upgrade patch cannot be installed by the Windows Installer service - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ I have downloaded an incremental patch for SPSS for Windows. When I attempt to install it, I encounter the following error:
+
+The upgrade patch cannot be installed by the Windows Installer service because the program to be upgraded may be missing, or the upgrade patch may update a different version of the program. Verify that the program to be upgraded exists on your computer and that you have the correct upgrade patch.
+
+What is the problem? 
+
+RESOLVING THE PROBLEM
+The following will render the above error:
+
+1. You do not have the appropriate major dot release of SPSS for Windows installed on your system.
+
+2. You already have the current version of SPSS for Windows installed on your system. 
+
+The following no longer apply starting with version 17.
+3. If you have the SPSS Graduate Pack or Career Starter versions, you need to download and install the patch that corresponds to your flavor of SPSS. 
+
+4. You have a non-English release of SPSS for Windows which is already based on the current version
+
+RELATED INFORMATION
+ Need more help? Our Statistics forum is Live! [https://developer.ibm.com/answers/topics/statistics.html?smartspace=predictive-analytics]
+
+
+ 
+
+HISTORICAL NUMBER
+ 54055

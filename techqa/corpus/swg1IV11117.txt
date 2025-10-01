@@ -1,0 +1,129 @@
+Title: IBM IV11117: ALCATEL 5620 SAM V9 PROBE LOOKUP INCORRECT - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The values for alarmName 2122-2839 are incorrect as they are
+   resolved to an index key ("IKxxxxxxx") instead of the proper
+   alarm name.
+   
+   The alarm values for alarmName 2920 and 2921 are incorrect. The
+   value for 2920 should be FRUDown and 2921 should be
+   FRUNotAvailable.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  NA
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * All users of the probe nco-p-alcatel-5620-sam-v9             *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * ALCATEL 5620 SAM V9 PROBE LOOKUP- INCORRECT                  *
+   *                                                              *
+   * The values for alarmName 2122-2839 are incorrect as they are *
+   * resolved to an index key ("IKxxxxxxx") instead of the proper *
+   * alarm name.                                                  *
+   *                                                              *
+   * The alarm values for alarmName 2920 and 2921 are incorrect.  *
+   * The value for 2920 should be FRUDown and 2921 should be      *
+   * FRUNotAvailable.                                             *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Customer was provided the following test fix which customer  *
+   * provided a feedback saying the issue is resolved.            *
+   * Fixed in nco-p-alcatel-5620-sam-v9 version 9_1_1?            *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV11117
+   
+   
+ * REPORTED COMPONENT NAME
+   ALCATEL 5620 LO
+   
+   
+ * REPORTED COMPONENT ID
+   5724P17AL
+   
+   
+ * REPORTED RELEASE
+   100
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-11-21
+   
+   
+ * CLOSED DATE
+   2012-02-01
+   
+   
+ * LAST MODIFIED DATE
+   2012-02-01
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R100 PSY
+   UP

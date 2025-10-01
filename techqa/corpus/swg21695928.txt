@@ -1,0 +1,71 @@
+Title: IBM Security Bulletin: Two vulnerabilities in IBM® SDK Java™ Technology Edition affect WebSphere DataPower XC10 Appliance:CVE-2014-3566,CVE-2014-6457 - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ Two vulnerabilities are present in IBM® SDK Java™ Technology Edition as embedded in the WebSphere DataPower XC10 Appliance. This issue was disclosed as part of the IBM SDK Java updates in October 2014. 
+
+VULNERABILITY DETAILS
+CVE-ID: CVE-2014-3566 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-3566] 
+
+DESCRIPTION: Product could allow a remote attacker to obtain sensitive information, caused by a design error when using the SSLv3 protocol. A remote user with the ability to conduct a man-in-the-middle attack could exploit this vulnerability via a POODLE (Padding Oracle On Downgraded Legacy Encryption) attack to decrypt SSL sessions and access the plain text of encrypted connections.
+
+
+
+
+CVSS Base Score: 4.3
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/97013 [https://exchange.xforce.ibmcloud.com/vulnerabilities/97013] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:M/Au:N/C:P/I:N/A:N)
+
+
+
+
+
+CVEID: CVE-2014-6457 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-6457]
+
+
+
+
+DESCRIPTION: An unspecified vulnerability related to the JSSE component has partial confidentiality impact, partial integrity impact, and no availability impact.
+
+
+
+
+CVSS Base Score: 4
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/97148 [https://exchange.xforce.ibmcloud.com/vulnerabilities/97148] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:H/Au:N/C:P/I:P/A:N)
+
+AFFECTED PRODUCTS AND VERSIONS
+WebSphere DataPower XC10 Appliance Version 2.1 
+
+WebSphere DataPower XC10 Appliance Version 2.5
+
+REMEDIATION/FIXES
+The only remediation is to apply the following fix:
+
+
+
+Product VRMF APAR Remediation/First Fix WebSphere DataPower XC10 Appliance Version 2.1 IT06459 http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~WebSphere&product=ibm/WebSphere/WebSphere+DataPower+XC10+Appliance&release=2.1.0.3&platform=All&function=all [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~WebSphere&product=ibm/WebSphere/WebSphere+DataPower+XC10+Appliance&release=2.1.0.3&platform=All&function=all] WebSphere DataPower XC10 Appliance Version 2.5 IT06459 http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~WebSphere&product=ibm/WebSphere/WebSphere+DataPower+XC10+Appliance&release=2.5.0.4&platform=All&function=all [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~WebSphere&product=ibm/WebSphere/WebSphere+DataPower+XC10+Appliance&release=2.5.0.4&platform=All&function=all] WebSphere DataPower XC10 Virtual Appliance Version 2.5 IT06459 http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~WebSphere&product=ibm/WebSphere/WebSphere+DataPower+XC10+Appliance&release=2.5.0.4&platform=All&function=all [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~WebSphere&product=ibm/WebSphere/WebSphere+DataPower+XC10+Appliance&release=2.5.0.4&platform=All&function=all] 
+A previous fix for the IBM DataPower XC10 Appliance versions 2.1 and 2.5 provided protection from CVE-2014-3566, by making it possible to disable SSLv3 on the appliance. With that fix, it was still possible, although not recommended, to configure the appliance to use the SSLv3 protocol. 
+
+Once the fix from the previous table is applied, the appliance can no longer be configured to support SSLv3 at all. IBM recommends that you review your entire environment to identify areas that enable the SSLv3 protocol, and take appropriate mitigation and remediation actions. The most immediate mitigation action that can be taken is to disable SSLv3. Verify that disabling SSLv3 does not cause any compatibility issues. WORKAROUNDS AND MITIGATIONS
+None 
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v2 Guide [http://www.first.org/cvss/v2/guide] 
+On-line Calculator v2 [http://nvd.nist.gov/CVSS-v2-Calculator] 
+IBM Java SDK Security Bulletin [http://www-01.ibm.com/support/docview.wss?uid=swg21688283] 
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.

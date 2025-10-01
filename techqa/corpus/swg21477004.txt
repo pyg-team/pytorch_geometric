@@ -1,0 +1,83 @@
+Title: IBM Script for changing color and font of pivot table in SPSS - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ I am using SPSS for Windows and want to change the font color of the data cells, row labels, column labels, footnotes, and title for my pivot table. I would also like to change the font type for the aforementioned values. How can I this using scripting? 
+
+RESOLVING THE PROBLEM
+The following script is an example that changes the font color of the for data cells, row labels, column labels, footnotes, and title of a Chi-Square Tests table to magenta. It also changes the font type of the table to Lucida Sans Unicode. 
+
+To use the script, click on File->New->Script, and then click Cancel. Next, highlight everything below and click Edit->Copy. In the Script window, delete whatever text is visible and click Edit->Paste. Next, click on File->Save As and type a name for the script such as ChangeColorFontTable.sbs. Click Save. 
+
+To run the script, have the Crosstabs output open and select the Chi-Square Tests table. Click on Utilities->Run Script. Locate the script that you saved and then click on it so that it appears in the File Name box. Click Run. You will notice the color and font type of the table have changed to magenta and Lucida Sans Unicode, respectively. 
+
+Read through the script comments for details on how to apply this script to other pivot tables and how to change the color and font type to something other than that of the example.
+___________________________________________________________________
+
+'Begin Description
+'This script shows how to change the text color of the data
+'cells, column labels, and row labels of a pivot table.
+'It uses a Chi-Square Tests table as an example.
+'It changes the color of the data, column labels, and row
+'labels to magenta. It changes the font to Lucida Sans Unicode.
+'End Description
+
+Sub Main
+Dim objOutputDoc As ISpssOutputDoc
+Dim objOutputItems As ISpssItems
+Set objOutputDoc = objSpssApp.GetDesignatedOutputDoc
+Set objOutputItems = objOutputDoc.Items
+Dim objChiSquareTable As PivotTable
+Dim objOutputItem As ISpssItem
+Dim intCount As Integer, I As Integer
+intCount = objOutputItems.Count
+
+For I = 0 To intCount - 1
+Set objOutputItem = objOutputItems.GetItem (I)
+'Here we get the Chi-Square Test table. If you want to get
+'a different table, type in the name of the table in place
+'of Chi-Square Tests in the parentheses of the next line.
+If objOutputItem.SPSSType = SPSSPivot And objOutputItem.Label = "Chi-Square Tests" Then
+Set objChiSquareTable = objOutputItem.ActivateTable
+'Here we select the footnotes. 
+objChiSquareTable.SelectAllFootnotes
+'If you only want to change the color and font type of the footnotes, 
+'place a single quote in the
+'next line before the word objChiSquareTable .Select Table to comment it out. 
+'The next line is to select the table which will select the values of the data, row labels, 
+'and column labels to change the text and font type
+objChiSquareTable.SelectTable
+'Here we apply the color code for magenta. If you
+'want to apply a different color, use the code guide
+'below and type in the code in parentheses in place of the code
+'for magenta below.
+objChiSquareTable.TextColor= RGB(255,0,255)
+
+'Color code below
+'RGB values follow the color name
+'Black 0, 0, 0
+'Blue 0, 0, 255
+'Cyan 0, 255, 255
+'Green 0, 255, 0
+'Magenta 255, 0, 255
+'Red 255, 0, 0
+'White 255, 255, 255
+'Yellow 255, 255, 0
+'Here we change the font type to Lucida Sans Unicode
+'If you want a different font type, type in a different font
+'type in place of Lucida Sans Unicode in the next line
+objChiSquareTable.TextFont= "Lucida Sans Unicode"
+End If
+Next
+End Sub
+
+RELATED INFORMATION
+ Need more help? Our Statistics forum is Live! [https://developer.ibm.com/answers/topics/statistics.html?smartspace=predictive-analytics]
+
+
+ 
+
+HISTORICAL NUMBER
+ 22255

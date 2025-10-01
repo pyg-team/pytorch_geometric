@@ -1,0 +1,49 @@
+Title: IBM WebSphere Operational Decision Management V8.0 Technotes - United States
+
+Text:
+ NEWS
+
+ABSTRACT
+ This page provides links to technotes with information on WebSphere Operational Decision Management V8.0. These technotes can cover known limitations, FAQs, and missing documentation.
+
+Note: Due to a product name change, the Related Information section contains links to Operational Decision Manager. 
+
+CONTENT
+The following technotes provide additional information for WebSphere Operational Decision Management V8.0. These technotes cover changes to the product, problems found in different versions, and information missing from documentation.
+Known Limitations 
+
+ *  Operational Decision Manager Known Limitations, Version 8.0 [http://www.ibm.com/support/docview.wss?uid=swg21689570]
+   Lists known problems, solutions and possible workarounds. (Updated 29 Jan. 2016)
+
+
+What's new  * What's new in IBM Operational Decision Manager [http://www.ibm.com/support/docview.wss?uid=swg21992623]
+   Find out what's new in different releases.
+
+
+WebSphere Operational Decision Management V8.0.0.1 (Product Release Date: 30 Aug. 2012)  * WebSphere Operational Decision Management V8.0.0.1 Fix Pack [http://www-01.ibm.com/support/docview.wss?uid=swg24032942] 
+   Provides instructions for downloading and installing the fix pack.
+
+. 
+WebSphere Operational Decision Management V8.0 (Product Release Date: 8 June 2012)  * WebSphere Operational Decision Management V8.0 Download Document [http://www-01.ibm.com/support/docview.wss?uid=swg24032433]Includes download and installation instructions. 
+ * WebSphere Operational Decision Management for z/OS: Migrating from V7.5 to V8.0
+   Provides additional information for migrating from V7.5 to V8.0.
+
+
+Flash demos  * Decision Center Business console [http://public.dhe.ibm.com/software/websphere/techexchange/WODM/sunshine_tour_viewlet_swf.html]Demonstrates features in the Decision Center Business console. 
+ * Decision Center rule editor [http://public.dhe.ibm.com/software/websphere/techexchange/WODM/intellirule_viewlet_swf.html]
+   Demonstrates how to use the rule editor in the Decision Center Business console.
+
+RELATED INFORMATION
+ Support Portal [http://www.ibm.com/support/entry/portal/product/websphere/ibm_operational_decision_manager?productContext=1239599141]
+Passport Advantage Online [https://www.ibm.com/software/howtobuy/passportadvantage/pao_customers.htm]
+Public home page [http://www.ibm.com/software/products/en/odm]
+User communities [http://www.ibm.com/support/entry/portal/forums_communities/websphere/ibm_operational_decision_manager?productContext=1239599141]
+Knowledge Center [https://www.ibm.com/support/knowledgecenter/SSQP76_8.0.0]
+Product system requirements [http://www.ibm.com/support/docview.wss?uid=swg27023067]
+Fix list [http://www.ibm.com/support/docview.wss?uid=swg27023767]
+Featured documents [http://www.ibm.com/support/docview.wss?uid=swg27018066]
+Decision Server Rules FAQs [http://www.ibm.com/support/docview.wss?uid=swg27023696]
+Decision Server Events FAQs [http://www.ibm.com/support/docview.wss?uid=swg27023697]
+Decision Center FAQs [http://www.ibm.com/support/docview.wss?uid=swg27023698]
+Decision Validation Services FAQs [http://www.ibm.com/support/docview.wss?uid=swg27023725]
+Migrating from JRules to ODM [http://www.ibm.com/support/docview.wss?uid=swg21589725]

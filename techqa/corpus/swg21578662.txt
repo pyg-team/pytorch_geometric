@@ -1,0 +1,36 @@
+Title: IBM Portal 7.0 Fixpack 2 installs successfully but server fails to start up with NoClassDefFoundError exception - United States
+
+Text:
+wps.properties incomplete; migration failed; portal fails to start TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+Portal 7.0 fixpack 2 installs successfully but server fails to start up with the following exception:
+
+[1/12/12 14:28:41:555 EST] 0000001f Servlet E 
+
+com.ibm.wps.engine.Servlet init EJPFD0016E: Initialization of service failed.
+java.lang.NoClassDefFoundError:
+com.ibm.portal.devicesupport.DeviceClassHome
+at
+com.ibm.wps.spa.service.PortalStaticPageServiceHomeDefaultParameters.<in
+it>(PortalStaticPageServiceHomeDefaultParameters.java:352)
+at
+com.ibm.wps.spa.service.PortalStaticPageServiceHomeImpl.<init>(PortalSta
+ticPageServiceHomeImpl.java:309)
+
+
+CAUSE
+This exception is caused when the PortalServer's wps.properties file is not updated with the profile details either with a binary install and creating the profile later or when migrating a profile.
+
+
+RESOLVING THE PROBLEM
+ 
+
+1. Remove the fixpack that was applied after the profile was created or migrated. 
+
+2. Update the wps.properties file under WebSphere/PortalServer folder:
+
+ProfileName=<your profile name, e.g. wp_profile>
+ProfileDirectory=<your profile directory, e.g. /opt/IBM/WebSphere/wp_profile>
+
+3. Reinstall fixpack

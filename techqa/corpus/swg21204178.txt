@@ -1,0 +1,32 @@
+Title: IBM DST considerations on i5/OS and Domino for Nordic countries - United States
+
+Text:
+DST TECHNOTE (FAQ)
+
+QUESTION
+In the Nordic countries it is not sufficient to change the systemvalues Qhour and Qutcoffset; the time is still one hour ahead. How can the Domino server be set up for Daylight Saving Time (DST) 
+
+ANSWER
+Note: Relative to the new DST rules for 2007, it is suggested that any relative i5/OS updates be installed to ensure that the operating system and other applications function as expected. For additional information on the required PTFs, refer to the following document: System i Daylight saving time (DST) Information [http://www.ibm.com/servers/eserver/iseries/software/globalization/dst.html].
+When configuring or changing your Domino server using CHGDOMSVR choose a time zone (CET in Europe) and select *yes for Daylight Saving. This will set the following notes.ini parameters:
+
+
+ * 
+ * 
+ * 
+
+
+In the Server document, verify that the server uses OS time. When the time is changed to summer time (last Sunday in March), you need to change the following system values: 
+ * 
+ * 
+ * 
+
+
+You will observe that the time is still one hour off, but if you wait one week it will be correct again. Therefore, Domino i5/OS must be using U.S. settings when changing to summer time. There is no problem when returning to winter time. 
+
+If you add DSTLaw to your notes.ini it works: DSTLaw=3,-1,1,10,-1,1 
+
+When you go back to winter time, you only need to change QHour and Quctoffset. 
+
+Supporting Information 
+With the exception of i5/OS systems, the notes.ini parameter DSTLaw cannot be used to control the DST rules Domino 6.0 and later obeys. Note: Future Notes/Domino releases may be revised such that they rely directly on the operating system.

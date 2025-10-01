@@ -1,0 +1,39 @@
+Title: IBM How to determine the version of the MS SQL Server JDBC Drivers for WebSphere Application Server - United States
+
+Text:
+WAS; JDBC drivers; provider; db drivers; MS SQL Server; SQL Server; DataDirect; SequeLink; deprecated versions of jdbc drivers; deprecated drivers; JDBC connections; 1236898 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This technote provides information on how to determine the version of the DataDirect Connect or SequeLink JDBC Driver for WebSphere® Application Server (WAS) you have. It also lists which Microsoft® SQL Server drivers are deprecated for WAS version 5.1 in Rational® Application Developer (RAD) version 6.0.x and explains why they are deprecated. 
+
+RESOLVING THE PROBLEM
+There is a command you can use to check the version of the embedded driver that you currently have. See the WebSphere® Application Server (WAS) technote on "How to determine the version of the DataDirect Connect or SequeLink JDBC Driver for WebSphere Application Server", linked in the Related Information section of this technote. 
+
+In applying this technote to RAD version 6.0.x, the root directory for WAS v5.1, for example, is:
+<RAD Install Directory>\runtimes\base_v51\....
+(Similarly, the root directory for versions 6 and 5.0 would be found under base_v6 or base_v5).
+
+Consult the Related Information item below for WAS version 6, "Vendor-specific data sources minimum requirements", for the JDBC drivers supported and deprecated. An identical Information Center item exists for WAS version 5.1.x.
+
+Deprecated JDBC drivers
+The following JDBC drivers are deprecated in WAS 5.1: 
+
+ * MS SQL Server 2000 Driver for JDBC 
+ * SequeLink JDBC driver for MS SQL Server 
+
+
+Deprecated means that in a future release of WAS, these drivers will no longer be supported. The reason is two-fold:  * These are somewhat out-of-date drivers. 
+ * Moreover, Microsoft is now using a different driver with their SQL Server 2005. The SequeLink driver is the 2.2 DataDirect JDBC driver and the Microsoft SQL Server 2000 Driver for JDBC is based on this as well. 
+
+
+RELATED INFORMATION
+#WAS v6 IC - Vendor-specific data sources minimum requir [http://publib.boulder.ibm.com/infocenter/wasinfo/v6r0/index.jsp?topic=/com.ibm.websphere.base.doc/info/aes/ae/rdat_minreq.html]
+
+
+ 
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Software Development WebSphere Studio Application Developer Server Linux, Windows 5.1.2 Software Development Rational Software Architect Integrated WebSphere Test Environment Windows, Linux 6.0, 6.0.0.1, 6.0.1.0, 6.0.1.1 
+HISTORICAL NUMBER
+ 44390 122 000

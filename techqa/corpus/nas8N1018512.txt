@@ -1,0 +1,143 @@
+Title: IBM Instructions for Capturing TRCCNNs for Remote Journaling (RJ) and NETSTAT - United States
+
+Text:
+JRN; NETSTAT; trace; RemoteJournal TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This document provides instructions for capturing TRCCNNs for remote journaling (RJ) and NETSTAT. 
+
+RESOLVING THE PROBLEM
+This document provides instructions for capturing TRCCNNs for remote journaling (RJ) and NETSTAT . 
+
+If running IBM i 7.1 or 7.2, verify that you have the following PTF for formatting to a .pcap file. 
+Product 5770999 - If you do not have them or cannot put them on, please follow the instructions for ending the trace if running 6.1 or earlier. 
+
+ * For 7.1, PTF MF59955 
+ * For 7.2, PTF MF59962
+
+
+It is important that everything is started and ended at the same time so we can match packets. 
+
+Also, it is very helpful to have matching Sniffer traces. 
+Have your network people start two sniffer traces. 
+( One that Mirrors the IBM i port for source system and the other that Mirrors the IBM i port for target system.) 
+To capture a TRCCNN for Remote Journaling on both the source and remote systems, you should use the following commands: 
+
+Start the traces:  * 
+ *  remote
+ * 
+ * 
+ * TRCCNN SET(*ON) TRCTYPE(*IP) TRCTBL(TRCCNN) SIZE(300000) TCPDTA(*TCP () (3777)) 
+ * 
+ * 
+ * 
+ * local
+ * 
+ * 
+ * TRCCNN SET(*ON) TRCTYPE(*IP) TRCTBL(TRCCNN) SIZE(300000) TCPDTA(*TCP (3777) ())
+ * 
+ * 
+ * 
+ * 
+ * 
+ * Note
+ * 
+ * 
+ * 
+ * 
+ *  NETSTAT *CNN
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+
+Stop the traces on both systems.  * 
+ * Note that the first commands are for R710 and later)
+ * 
+ * 
+ * 
+ * 
+ * SBMJOB CMD(TRCCNN SET(*OFF) TRCTBL(TRCCNN) OUTPUT(*STMF) 
+ * 
+ *  TOSTMF('/trccnnsrc.pcap' *YES)) JOB(TRCCNN) JOBQ(QSYSNOMAX)
+ * 
+ * 
+ * 
+ * 
+ * SBMJOB CMD(TRCCNN SET(*OFF) TRCTBL(TRCCNN) OUTPUT(*STMF) 
+ * 
+ *  TOSTMF('/trccnntgt.pcap' *YES)) JOB(TRCCNN) JOBQ(QSYSNOMAX)
+ * 
+
+----------------------------------------------------------------  * If running 6.1 or earlier:
+ * 
+ * 
+ *  ONLY SEND IN THE QSYSPRT.
+ * 
+ * 
+ * 
+ * 
+ * SBMJOB CMD(TRCCNN SET(*OFF) TRCTBL(TRCCNN)) JOB(TRCCNN) JOBQ(QSYSNOMAX)
+ * 
+ * 
+ * 
+ * 
+ * SBMJOB CMD(TRCCNN SET(*OFF) TRCTBL(TRCCNN)) JOB(TRCCNN) JOBQ(QSYSNOMAX)
+
+----------------------------------------------------------------- 
+
+TRCCNN will create a .PCAP file on the IFS, using the specified path and 
+file name. 
+
+Use System i Navigator to find this file by doing the 
+following: 
+
+1. Start iNavigator and click the plus sign (expand) next to 
+your system in the left-most pane of the window to expand. 
+
+2. Expand the File Systems, then expand Integrated File 
+System, then expand Root, then expand the path where you directed that 
+the TRCCNN data (.pcap file) be stored. 
+
+3. Use Windows Copy and Paste functions to copy the file to your 
+desktop. (Any folder in Windows Explorer can be substituted for the 
+desktop.) 
+
+-------------------------------------------------------------------------------------------------------- 
+
+To send data and files to IBM, go to a web browser and navigate to: 
+
+http://www.ecurep.ibm.com [http://www.ecurep.ibm.com/] 
+
+Put in your full PMR number: xxxxx,xxx,xxx 
+Upload is for: OS400 
+Email Address: enter your email address 
+
+Then press the Continue button and you can either drag and drop the file or click to browse and attach the file, then click the upload button. 
+
+
+
+
+HISTORICAL NUMBER
+ 547918685

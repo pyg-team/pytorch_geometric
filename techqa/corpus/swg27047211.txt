@@ -1,0 +1,44 @@
+Title: IBM StoredIQ for Legal 2.0.1 Release Notes - United States
+
+Text:
+ RELEASE NOTES
+
+ABSTRACT
+ IBM StoredIQ for Legal Version 2.0.1 is available. Compatibility, installation, and other getting-started issues are addressed in these release notes. 
+
+CONTENT
+Description
+
+
+IBM StoredIQ for Legal enables you to automate your legal hold notification and compliance process, and to optimize your preservation and collection process.
+
+
+Announcement 
+
+The IBM StoredIQ for Legal Version V2.0 announcement is available here [http://www.ibm.com/common/ssi/ShowDoc.wss?docURL=/common/ssi/rep_ca/1/897/ENUS215-241/index.html] [http://www.ibm.com/common/ssi/rep_ca/7/649/ENUSA13-0107/index.html]. See the announcement for the following information: 
+
+ * Detailed product description 
+ * Product-positioning statement 
+ * Packaging and ordering details
+
+
+For information about V2.0.1, see What's new in StoredIQ for Legal V2.0.1 [http://www.ibm.com/support/knowledgecenter/SSZL2P_2.0.1/KC_ditamaps/whatsnew.dita] and Download IBM StoredIQ for Legal V2.0.1 [http://www.ibm.com/support/docview.wss?uid=swg24041437].  
+
+System requirements 
+
+For information about hardware and software requirements, see system requirements [http://www.ibm.com/support/knowledgecenter/SSZL2P_2.0.1/com.ibm.biq.install.doc/sw_comp_reports.dita].
+
+
+Known issues 
+
+Known issues are documented in separate technotes in the Support knowledge base at the [https://www.ibm.com/support/entry/portal/support?brandind=enterprise%20content%20management]IBM Support Portal [https://www.ibm.com/support/entry/portal/support?brandind=enterprise]. The following known issues were discovered in the product before its release. 
+
+ 
+
+ * Known issue: Scroll bar not displayed properly for lists when using Mozilla Firefox web browser on Apple Mac OS [http://www.ibm.com/support/docview.wss?uid=swg27047282] 
+ * Known issue: Notice and interview editor problems and workarounds [http://www.ibm.com/support/docview.wss?uid=swg27047283] 
+ * Known issue: Message schedule dates displayed when adding a custodian to a hold notice can be off by up to one day [http://www.ibm.com/support/docview.wss?uid=swg27047362] 
+ * Known issue: Cannot restrict request scope when you refine a data box request that was created without custodians [http://www.ibm.com/support/docview.wss?uid=swg27047364] 
+
+
+Documentation updates To view updates to the IBM StoredIQ for Legal V2.0.1 documentation, see the IBM StoredIQ for Legal in IBM Knowledge Center [http://www.ibm.com/support/knowledgecenter/SSZL2P_2.0.1].

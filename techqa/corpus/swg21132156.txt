@@ -1,0 +1,35 @@
+Title: IBM Configuring Rational Web Platform to coexist with Microsoft Internet Information Server (IIS) - United States
+
+Text:
+requisiteweb; iis; rwp; port; change; default; listen; configure; redirect; 1132156 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This technote provides instruction on how to configure the IBM® Rational® Web Platform (RWP) so that it will coexist with Microsoft® Internet Information Server (IIS). 
+
+RESOLVING THE PROBLEM
+To allow RWP and IIS to coexist on the same system, you need to use the IIS redirection facility to redirect specific URLs to RWP. 
+
+As an example for this technote, we will use port 85 and IBM® Rational® Requisite® Web. 
+
+ 1. Configure RWP to listen on a port other than 80.
+    For instructions on how to change the RWP default port please, see Technote 1143025 located in the related information section of this technote. 
+ 2. After changing the port, you will then be able to access RequisiteWeb which is hosted through RWP on port 85 using the following URL:
+    http://hostname:85/ReqWeb 
+ 3. Start IIS. 
+ 4. Create an IIS virtual directory named ReqWeb and point it to a temp directory. 
+ 5. Update the properties of the ReqWeb virtual directory and configure it as "A redirection to a URL" and enter 'http://hostname:85/ReqWeb' as the URL 
+ 6. You will then be able to launch ReqWeb using the URL ' http://hostname/ReqWeb '. IIS will redirect to port 85. The address in the address bar does show port 85, but users can access ReqWeb (or ProjectConsole, ccweb.. etc.) without entering a port number.
+
+
+
+
+
+
+RELATED INFORMATION
+#1143025: How to change the default Rational Web Platfor [http://www.ibm.com/support/docview.wss?uid=swg21143025]
+
+
+
+
+HISTORICAL NUMBER
+ 154891233

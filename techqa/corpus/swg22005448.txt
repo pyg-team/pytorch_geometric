@@ -1,0 +1,24 @@
+Title: IBM LTPA token cookie name is case sensitive - United States
+
+Text:
+webseal ltpa portal SSO TECHNOTE (FAQ)
+
+QUESTION
+ I configure LTPA2 authentication between webseal and websphere. When I login to webspere then access to webseal, I am successfully authenticated. However, when I login to webseal then access to websphere, I can not log in.
+
+
+CAUSE
+The LTPA token cookie name is different.
+
+ANSWER
+The LTPA token cookie name is case insensitive on websphere. However, webseal handle it case sensitive. 
+
+For example, subject problem is observed with following combination. 
+
+ LTPA token cookie name on websphere: LtpaToken2 
+
+ LTPA token cookie name on webseal ([ltpa] cookie-name) : Ltpatoken2 
+
+ 
+
+In webseal-instance.conf, you must set exact cookie name into [ltpa] cookie-name parameter.

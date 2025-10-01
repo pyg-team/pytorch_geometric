@@ -1,0 +1,177 @@
+Title: IBM PM19286: DB2 DATABASE ADAPTER TRACE CONTAINS REDUNDANT INFORMATION WHEN USING WTX 8.3 DB2 DATABASE ADAPTER - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The WTX version 8.3 DB2 Database Adapter trace file (.dbl)
+   contains entries for each insert that was performed. This is
+   different from the DB2 Database Adapter trace entries in
+   previous releases of WTX.
+   
+   Sample output:
+   
+   <1234-7890>: The columns are of the following types:
+   <1234-7890>: Column 1 (FIELD1) type is VARCHAR, precision is 5.
+   <1234-7890>: Column 2 (FIELD2) type is VARCHAR, precision is 5.
+   <1234-7890>: Column 3 (FIELD3) type is VARCHAR, precision is 5.
+   <1234-7890>: Column 4 (FIELD4) type is VARCHAR, precision is 5.
+   <1234-7890>: Column 5 (FIELD5) type is VARCHAR, precision is 5.
+   <1234-7890>: The insert statement to be executed is:
+   <1234-7890>: INSERT INTO test_table  VALUES (?,?,?,?,?)
+   <1234-7890>: INSERT INTO test_table  VALUES (?,?,?,?,?)
+   <1234-7890>: Column: FIELD1
+   <1234-7890>: Column: FIELD2
+   <1234-7890>: Column: FIELD3
+   <1234-7890>: Column: FIELD4
+   <1234-7890>: Column: FIELD5
+   <1234-7890>: Inserted 1 rows.
+   <1234-7890>: Column: FIELD1
+   <1234-7890>: Column: FIELD2
+   <1234-7890>: Column: FIELD3
+   <1234-7890>: Column: FIELD4
+   <1234-7890>: Column: FIELD5
+   <1234-7890>: Inserted 2 rows.
+   <1234-7890>: Column: FIELD1
+   <1234-7890>: Column: FIELD2
+   <1234-7890>: Column: FIELD3
+   <1234-7890>: Column: FIELD4
+   <1234-7890>: Column: FIELD5
+   <1234-7890>: Inserted 3 rows.
+   <1234-7890>: Column: FIELD1
+   <1234-7890>: Column: FIELD2
+   <1234-7890>: Column: FIELD3
+   <1234-7890>: Column: FIELD4
+   <1234-7890>: Column: FIELD5
+   <1234-7890>: Inserted 4 rows.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  WTXCQ - WTX00035134
+   CH / CH
+   Circumvention: None
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  WebSphere Transformation Extender DB2 adapter customers that are
+   submitting multiple data rows for table or stored procedure
+   insertion will notice extraneous trace file information for each
+   successful insert operation.
+   
+   Problem Description:
+   Redundant trace information appears in the WTX database adapter
+   trace file.
+   
+   Platforms Affected:
+   All
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Redundant column information was removed from the trace file,
+   especially during multiple executions of the same stored
+   procedure.  Also, completion results for each individual row
+   that was successfully inserted has been removed, which is all
+   consistent with prior releases of the WTX database adapter trace
+   file.
+   
+   Delivered in:
+   8.3.0.3
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM19286
+   
+   
+ * REPORTED COMPONENT NAME
+   WTX FOR INT SER
+   
+   
+ * REPORTED COMPONENT ID
+   5724M4010
+   
+   
+ * REPORTED RELEASE
+   820
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2010-07-27
+   
+   
+ * CLOSED DATE
+   2010-08-06
+   
+   
+ * LAST MODIFIED DATE
+   2010-09-15
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WTX FOR INT SER
+   
+   
+ * FIXED COMPONENT ID
+   5724M4010
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R830 PSY
+   UP

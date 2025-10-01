@@ -1,0 +1,212 @@
+Title: IBM TNPM wireless 1.4 upgrade TDS user idsinst authentication - United States
+
+Text:
+TNPM Wireless 1.4 Upgrade TDS user idsinst authentication issue PRODUCT DOCUMENTATION
+
+ABSTRACT
+ This technote Provides resolution steps to be followed during the installation of TNPM 1.4 for Wireless Component installation fails with the error TDS ldap error , LDAP user cannot sync - UPG06_sync_tnpm_ldap_admin: INFO: syncing tnpm and ldap users 
+
+CONTENT
+ 
+
+Symptom
+
+TDS ldap error , LDAP user cannot sync - UPG06_sync_tnpm_ldap_admin: INFO: syncing tnpm and ldap users 
+Enter administrator password: [Sysadm01]
+---->Sysadm01
+Password incorrect. Please try again
+
+Cause
+
+
+TDS Ldap error –Although the instance owner of LDPA and DB2 is idsinst , PMW_install script uses sysadm user to login to DB2. The authentication for sysadm is done by idsinst.It appears that the pass word for sysadm is incorrect but the issue is with user idsinst , password of which is not set correctly.
+The password and the username are stored in a ibmslapd.conf file and the password is not encrypted, it is likely that after the upgradation / installation of a db2 instance
+the encrypted password somehow does not get updated and hence we face the username / password combination error.
+
+
+Resolution
+
+
+1.4 TDS not able to start properly
+
+Customer is getting below error message for while TDS upgrade :
+
+ksh pmw_install -wmcr /appl/virtuo -upgrade
+
+
+[root@m4bnhpsrl140 ~]# cd /appl
+[root@m4bnhpsrl140 appl]# ksh pmw_install -wmcr /appl/virtuo -upgrade
+Making PMW top-level directory: /appl/virtuo
+Making software archive directories: under /appl/virtuo/admin/software
+Restarting Cron ...
+Stopping crond: [ OK ]
+.... cron daemon stopped
+Starting crond: [ OK ]
+.... cron daemon started
+Starting application server...
+
+Licensed Materials - Property of IBM
+
+5724W86
+
+(C) Copyright IBM Corp. 2005, 2009 All Rights Reserved.
+
+Waiting for appserver...
+Fri Jun 20 11:22:55 CEST 2014: as is at state exec. Waiting for state STARTED
+Fri Jun 20 11:23:07 CEST 2014: as is at state exec. Waiting for state STARTED
+Fri Jun 20 11:23:19 CEST 2014: as is at state exec. Waiting for state STARTED
+Fri Jun 20 11:23:40 CEST 2014 as now up, clock started 112242000, now 112340000
+Appserver ready.
+Executing /appl/virtuo/admin/common/install/upgrade/scripts/UPG01_loader_migrate...
+UPG01_loader_migrate: INFO: Loaders not installed on this server - exiting
+/appl/virtuo/admin/common/install/upgrade/scripts/UPG01_loader_migrate complete.
+Executing /appl/virtuo/admin/common/install/upgrade/scripts/UPG06_sync_tnpm_ldap_admin...
+UPG06_sync_tnpm_ldap_admin: INFO: syncing tnpm and ldap users
+Enter administrator username: : [sysadm]
+---->sysadm
+Enter administrator password: [Sysadm01]
+---->Sysadm01
+Password incorrect. Please try again
+
+Enter administrator password: [Sysadm01]
+----> 
+
+Check if idsinst user is valid.
+Also verify Customer can su (swicth ) to idsinst form root.
+Customer should able to login to OS (linux) with idsinst
+If Custoemr is not able to switch to idsinst or not able to login to OS with idsinst, create the user or reset the password on OS for idsinst.
+
+Verify the gskit version against TDS version as per the technote http://www-01.ibm.com/support/docview.wss?uid=swg21574787 [http://www-01.ibm.com/support/docview.wss?uid=swg21574787].
+
+
+WHen we checked our TNPM script "pmw_install" calls "UPG06_sync_tnpm_ldap_admin" script which is throwing error.
+In this script below command is throwing error.
+
+As per Technote http://www-01.ibm.com/support/docview.wss?uid=swg21293030 [http://www-01.ibm.com/support/docview.wss?uid=swg21293030] , the user ID and service name (idsinst ) should match in /etc/services with 'db2 list node directory' .
+
+
+Thus we need to update the user as idsinst.
+
+Please run below commands : 
+
+1. RUn below command as root :
+ibmslapd -I idsinst -k
+This command you have to run from location where script ibmslapd is present .
+Usually it is /opt/ibm/ldap/V6.3/sbin/ibmslapd
+RUn as below after checking the location :
+
+/opt/ibm/ldap/V6.3/sbin/ibmslapd -I idsinst -k
+
+2. switch user to idsinst (su - idsinst)
+
+db2stop (or 'db2stop force' if the previous one fails) 
+This command you have to run from location where script db2stop is present .
+
+in our location 
+cd /opt/ibm/tdsdb2V9.7/adm 
+your location should be 
+"/data/opt/ibm/tdsdb2V9.7/adm" 
+
+
+3. As root, cd to the 'instance' directory in the DB2 install directories. 
+
+For example: in our location 
+cd /opt/ibm/tdsdb2V9.1/instance 
+your location should be 
+"/data/opt/ibm/tdsdb2V9.7/instance" 
+
+4. As root user , , Run the db2iupdt command to update the instance: 
+
+./db2iupdt -u idsinst idsinst
+
+
+
+5. switch user to idsinst and then run the command to Start DB2 :
+location : cd /opt/ibm/tdsdb2V9.7/adm/
+
+db2start
+
+
+6. Switch User to root Start the TDS server .
+
+ibmslapd -I idsinst
+This command you have to run from location where script ibmslapd is present .
+Usually it is /opt/ibm/ldap/V6.3/sbin/ibmslapd
+RUn as below after checking the location :
+
+/opt/ibm/ldap/V6.3/sbin/ibmslapd -I idsinst
+
+
+7. Check the status of TDS and DB2.
+
+service tdsna status
+
+8. RUn below commands :
+
+/opt/IBM/ldap/V6.3/bin/idsldapsearch -h m4bnhpsrl140.bn.dcn.detemobil.de -p 1389 -D "cn=Directory Manager" -w Dirmgr01 -s base "objectClass=*" ibm-slapdisconfigurationmode
+
+/opt/IBM/ldap/V6.3/sbin/idsdb2ldif -o tree.ldif
+
+
+THe below serach command returned TRUE .
+
+/opt/IBM/ldap/V6.3/bin/idsldapsearch -h m4bnhpsrl140.bn.dcn.detemobil.de -p 1389 -D "cn=Directory Manager" -w Dirmgr01 -s base "objectClass=*" ibm-slapdisconfigurationmode
+
+
+We found below error in the log ibmslapd.log and db2cli.log . :
+
+2014-07-08-14.05.17.980536+120 I2410190E1363 LEVEL: Error
+PID : 26260 TID : 47352839394352PROC : ibmslapd
+INSTANCE: idsinst NODE : 000
+FUNCTION: DB2 Common, Cryptography, cryptContextRealInit, probe:40
+MESSAGE : ECF=0x90000403=-1879047165=ECF_CRYPT_UNEXPECTED_ERROR
+Unexpected cryptographic error
+DATA #1 : Hex integer, 4 bytes
+0x00000004
+DATA #2 : Hex integer, 4 bytes
+0x00000000
+DATA #3 : Hex integer, 4 bytes
+0x00000000
+DATA #4 : String, 124 bytes
+/data/opt/ibm/ldap/V6.3/lib64/ICCLIB/N/icc/icclib/libicclib081.so: cannot open shared object file: No such file or directory
+CALLSTCK: (Static functions may not be resolved correctly, as they are resolved to the nearest symbol)
+[0] 0x00002B1135663940 pdOSSeLoggingCallback + 0x100
+[1] 0x00002B11382ADE66 /data/appl/ldap/idsslapd-idsinst/db2instance/lib/libdb2osse.so.1 + 0x1D5E66
+[2] 0x00002B11382AF682 ossLog + 0xA6
+[3] 0x00002B113578200A cryptLogICCErrorWithStatus + 0xB2
+[4] 0x00002B113578177B cryptContextRealInit + 0x1F3
+[5] 0x00002B1135782102 cryptContextCheckAndInit + 0x4A
+[6] 0x00002B11357830B4 cryptDHInit + 0x82
+[7] 0x00002B1135D9FE56 sqlexSlcServerEncryptAccsec + 0x118
+[8] 0x00002B1135DA19E1 _Z33sqlexSlcServerEncryptAuthenticateP14db2UCinterfacelPj + 0x53
+[9] 0x00002B1135D79801 _Z20sqlexAppAuthenticateP14db2UCinterface + 0x557
+
+
+
+There's actually multiple versions of this error for different commands.
+
+Below errors were observed in ibmslapd.log :
+
+2014-07-10T11:46:41.880739+2:00 GLPCOM003I Non-SSL port initialized to 1389.
+2014-07-10T11:46:41.922737+2:00 GLPSRV009I 6.3.0.31 server started.
+2014-07-10T11:46:41.923086+2:00 GLPSRV036E Errors were encountered while starting the server; started in configuration only mode.
+.
+.
+2014-07-10T12:06:42.041955+2:00 GLPSRV200I Initializing primary database and its connections.
+2014-07-10T12:06:42.591775+2:00 GLPRDB111E The server is unable to use the username and password combination for the DB2 instance owner in the configuration file to establish a connection to the database.
+
+The server started and went into configuration mode which means authentication did not happen.
+Although the pmw-Install script is using sysadm as user to run the command , DB2 will use idsinst to login to DB2.
+This login is having problems, the issue is not related to sysadm as it appears.
+
+
+THe issue was related to instance owner of DB2 - idsinst.
+Need to reset the OS password for idsinst (when you were not able to logon to OS) with new password.
+But this password will not updated in the DB2 conf file ibmslapd.conf.
+
+Thus ,ldap sync script was using incorrect password and the error "GLPRDB111E The server is unable to use the username and password combination " was encountered.
+We took back of ibmslapd.conf changed the password in that , restarted TDS and moved towards loader components successfully.
+
+In such case the ibmslapd.conf file needs to be corrected, the password for the idinst user as seen in the conf file would be an encrypted one.
+This password needs to be changed to a plain text password, it gets auto encrypted once we save the file
+and start the TDS again.

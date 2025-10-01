@@ -1,0 +1,10 @@
+Title: IBM Connections 6.0 with OrientMe: Is Internet Explorer 11 supported? - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+Is Microsoft Internet Explorer 11 a supported Web browser for use with the OrientMe service that is part of the Component Pack for IBM Connections 6.0?
+
+ANSWER
+No, IE 11 is not a supported browser for use with the Orient Me service. Refer to the system requirements for the Component Pack [https://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=803F23A0D9E111E7AD0EC24C9513D95F&osPlatforms=Linux&duComponentIds=D000%7CS000%7CM000&mandatoryCapIds=30%7C7%7C13&optionalCapIds=7%7C12%7C9%7C63%7C35%7C20%7C101%7C46%7C140%7C19%7C27%7C26%7C40] for a list of supported web browsers. Microsoft Edge is recommended, per the topic Optional: Installing the Component Pack for IBM Connections [https://www.ibm.com/support/knowledgecenter/SSYGQH_6.0.0/admin/install/c_install_orient_me_homepage.html] in the IBM Knowledge Center.

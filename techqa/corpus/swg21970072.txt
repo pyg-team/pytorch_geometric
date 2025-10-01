@@ -1,0 +1,59 @@
+Title: IBM SIGNOFF(NO) affect on CICS session TIMOEOUT value - United States
+
+Text:
+CICS RACF segment default user dfltuser dfltusr timeout signoff logoff typeterm ; 5655S9700 R660 660 R600 600 HCI6600 R670 670 R700 700 HCI6700 5655-S97 5655S97 ; 5655Y0400 R680 680 R800 800 HCI6800 R690 690 R900 900 HCI6900 R700 700 R000 000 HCI7000 5655Y0401 5655-Y04 5655Y04 KIXINFO TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ If SIGNOFF(NO) is in the TYPETERM definitions in RACF or CA TPX, will the session ever time out? Is there any concern if sessions never time out? 
+
+CAUSE
+I do not specify TIMEOUT limit in the RACF segment. The timeout limit is set at in the 3270 session manager (CA/TPX) and the value is 60 minutes. Since we specify SIGNOFF(LOGOFF) in the TYPETERM definitions, we expect that the session be signed off and logged off when TPX timeout expires. However, my business users would like to either extend the timeout value or not sign off the user.
+
+RESOLVING THE PROBLEM
+IBM has no way of knowing what CA TPX does or how it works with a TIMEOUT feature, but TPX might emulate what happens if the TIMEOUT parameter is on the RACF CICS segment of the user 
+profile. However, CA Technologies would have to confirm this.
+
+
+The way CICS works if the TIMEOUT parameter is on the RACF CICS segment of the user profile is as follows: 
+
+
+If RACF does not return the CICS segment data for a user, in other words there is no CICS segment for the user, then CICS uses the user attributes of the CICS default user, and if RACF does not return a CICS segment for the default user, then a TIMEOUT=0 is used.
+
+Since CICS assigns the operator data from the CICS segment of the default user to signed-on users who do not have their own CICS segment data, all you need is a CICS segment for the default userid with an appropriate TIMEOUT value specified. 
+
+
+At the CICS region level the SIGNOFF parameter in the TYPETERM definitions is used with your terminals. If you want the terminal to be logged off CICS when the timeout occurs it should specify SIGNOFF(LOGOFF). The CICS TS 5.2 documentation in section Automatic sign-off, logoff, and TCTTE deletion [http://www-01.ibm.com/support/knowledgecenter/SSGMCP_5.2.0/com.ibm.cics.ts.resourcedefinition.doc/topics/dfha45r.html] gives a step by step breakdown of what happens in Figure 1: 
+
+When a session is timed out because there is no terminal activity, CICS uses these steps to determine whether to delete an autoinstalled terminal definition:
+1. If no timeout is specified in the RACF segment, the user is not automatically signed off or logged off.
+
+
+2. If SIGNOFF(NO) is specified in the TYPETERM definition, the user is not automatically signed off or logged off.
+
+
+3. If SIGNOFF(YES) is specified in the TYPETERM definition, and a timeout is specified in the RACF segment, the user is signed off when the timeout period has expired.
+
+Before the timeout period has expired, the user can resume terminal activity.
+
+
+4. If SIGNOFF(LOGOFF) is specified in the TYPETERM definition, and a timeout is specified in the RACF segment, the user is signed off and the terminal is logged off. The terminal definition is deleted after a further interval, which is specified in the AILDELAY attribute of the TYPETERM definition. 
+
+Before the timeout period has expired, the user can resume terminal activity. After the timeout has expired, but before the terminal definition is deleted, the user can log on again without the overhead of the autoinstall process.
+
+
+
+There are three options: 
+
+ * SIGNOFF(NO)
+   The terminal is not timed out. 
+ * SIGNOFF(YES) 
+   CICS signs off the operator from CICS, but the terminal remains connected. 
+ * SIGNOFF(LOGOFF)
+   CICS signs off the operator from CICS and logs off the terminal from z/OS Communications Server.
+   
+
+
+So if you specify SIGNOFF(NO) CICS leaves the user signed on and the terminal remains logged on, effectively overriding the time-out period. With such a setting the storage of course is never freed until a actual signoff is performed.  
+
+PRODUCT ALIAS/SYNONYM
+ CICS/TS CICS TS CICS Transaction Server

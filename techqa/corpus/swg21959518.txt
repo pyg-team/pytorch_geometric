@@ -1,0 +1,103 @@
+Title: IBM Security Bulletin: Vulnerabilities in OpenSSL including Logjam affect IBM® SDK for Node.js™ - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ OpenSSL vulnerabilities were disclosed on June 11, 2015 by the OpenSSL Project. This includes the Logjam Attack on TLS connections using the Diffie-Hellman (DH) key exchange protocol (CVE-2015-4000). OpenSSL is used by IBM SDK for Node.js. IBM SDK for Node.js has addressed the applicable CVEs. 
+
+VULNERABILITY DETAILS
+CVEID: CVE-2015-4000 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-4000]
+DESCRIPTION: The TLS protocol could allow a remote attacker to obtain sensitive information, caused by the failure to properly convey a DHE_EXPORT ciphersuite choice. An attacker could exploit this vulnerability using man-in-the-middle techniques to force a downgrade to 512-bit export-grade cipher. Successful exploitation could allow an attacker to recover the session key as well as modify the contents of the traffic. This vulnerability is commonly referred to as "Logjam".
+CVSS Base Score: 4.3
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/103294 [https://exchange.xforce.ibmcloud.com/vulnerabilities/103294] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:M/Au:N/C:P/I:N/A:N) 
+
+CVEID: CVE-2014-8176 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-8176]
+DESCRIPTION: OpenSSL could allow a remote attacker to execute arbitrary code on the system, caused by an invalid free error when application data between the ChangeCipherSpec and Finished messages is received by the DTLS peer. An attacker could exploit this vulnerability to trigger a segmentation fault or possibly corrupt memory and execute arbitrary 
+CVSS Base Score: 6.5
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/103782 [https://exchange.xforce.ibmcloud.com/vulnerabilities/103782] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:L/Au:S/C:P/I:P/A:P) 
+
+CVEID: CVE-2015-1788 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-1788]
+DESCRIPTION: OpenSSL is vulnerable to a denial of service, caused by an error when processing an ECParameters structure over a specially crafted binary polynomial field. A remote attacker could exploit this vulnerability to cause the application to enter into an infinite loop.
+CVSS Base Score: 5
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/103778 [https://exchange.xforce.ibmcloud.com/vulnerabilities/103778] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:L/Au:N/C:N/I:N/A:P) 
+
+CVEID: CVE-2015-1789 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-1789]
+DESCRIPTION: OpenSSL is vulnerable to a denial of service, caused by an out-of-bounds read in X509_cmp_time. An attacker could exploit this vulnerability using a specially crafted certificate or CRL to trigger a segmentation fault.
+CVSS Base Score: 5
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/103779 [https://exchange.xforce.ibmcloud.com/vulnerabilities/103779] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:L/Au:N/C:N/I:N/A:P) 
+
+CVEID: CVE-2015-1790 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-1790]
+DESCRIPTION: OpenSSL is vulnerable to a denial of service, caused by the improper handling of missing inner EncryptedContent by the PKCS#7 parsing code. An attacker could exploit this vulnerability using specially crafted ASN.1-encoded PKCS#7 blobs with missing content to trigger a NULL pointer dereference.
+CVSS Base Score: 5
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/103780 [https://exchange.xforce.ibmcloud.com/vulnerabilities/103780] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:L/Au:N/C:N/I:N/A:P) 
+
+CVEID: CVE-2015-1791 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-1791]
+DESCRIPTION: A double-free memory error in OpenSSL in the ssl3_get_new_session_ticket() function has an unknown impact. By returning a specially crafted NewSessionTicket message, an attacker could cause the client to reuse a previous ticket resulting in a race condition.
+CVSS Base Score: 5
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/103609 [https://exchange.xforce.ibmcloud.com/vulnerabilities/103609] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:L/Au:N/C:N/I:P/A:N) 
+
+CVEID: CVE-2015-1792 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-1792]
+DESCRIPTION: OpenSSL is vulnerable to a denial of service, caused by an error when verifying a signedData message. An attacker could exploit this vulnerability using an unknown hash function OID to cause the application to enter into an infinite loop.
+CVSS Base Score: 5
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/103781 [https://exchange.xforce.ibmcloud.com/vulnerabilities/103781] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:L/Au:N/C:N/I:N/A:P)
+
+AFFECTED PRODUCTS AND VERSIONS
+These vulnerabilities affect IBM SDK for Node.js v1.1.0.14 and previous releases.
+These vulnerabilities affect IBM SDK for Node.js v1.2.0.2 and previous releases.
+
+REMEDIATION/FIXES
+The fixes for these vulnerabilities are included in IBM SDK for Node.js v1.1.0.15 and subsequent releases.
+The fixes for these vulnerabilities are included in IBM SDK for Node.js v1.2.0.3 and subsequent releases.
+
+For CVE-2015-4000: Further information on the changes associated with this vulnerability can be found here [https://developer.ibm.com/node/sdk/].
+
+IBM SDK for Node.js can be downloaded, subject to the terms of the developerWorks license, from here [https://developer.ibm.com/node/sdk/].
+
+IBM customers requiring an update for an SDK shipped with an IBM product should contact IBM support [http://www.ibm.com/support/], and/or refer to the appropriate product security bulletin.
+
+WORKAROUNDS AND MITIGATIONS
+For CVE-2015-4000 on v1.2.0.6 or earlier, documentation for ensuring that secure key sizes are deployed on the server side can be found here [https://developer.ibm.com/node/sdk/]. For v1.2.0.7 and later, the IBM SDK for Node.js enforces a lower limit of 768-bits for DHE keys for server applications.
+
+As the length of the server key size are increased, the amount of CPU required for full TLS/SSL handshake can significantly increase. Please carefully test and assess the impact to your CPU requirements to ensure sufficient CPU resources, otherwise the system availability may be impacted. You should verify applying this configuration change does not cause any compatibility issues. IBM recommends that you review your entire environment to identify other areas where you have enabled the Diffie-Hellman key-exchange protocol used in TLS and take appropriate mitigation and remediation actions.
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v2 Guide [http://www.first.org/cvss/v2/guide] 
+On-line Calculator v2 [http://nvd.nist.gov/CVSS-v2-Calculator] 
+
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] 
+Node.js 0.10.39 [http://blog.nodejs.org/2015/06/22/node-v0-10-39-maintenance/] 
+Node.js 0.12.5 [http://blog.nodejs.org/2015/06/22/node-v0-12-5-stable/] 
+OpenSSL Security Advisory [11 Jun 2015] [https://www.openssl.org/news/secadv_20150611.txt] 
+Node.js 0.12.8 [https://nodejs.org/en/blog/release/v0.12.8/] 
+ACKNOWLEDGEMENT
+CVE-2015-4000 was reported to IBM by The WeakDH team athttps://weakdh.org [https://weakdh.org] 
+
+CHANGE HISTORY
+ 3 April 2017: Removed broken link
+30 November 2015: Updated to describe the new lower limit of 768-bit for DHE keys in v1.2.0.7
+3 July 2015: Original version published 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.

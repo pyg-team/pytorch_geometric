@@ -1,0 +1,193 @@
+Title: IBM IT18481: PACKET TRACE COMMANDS ARE NOT AVAILABLE ON THE IBM MQ APPLIANCE - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The packet-trace command 'packet-capture-advanced' is not
+   available
+   on the IBM MQ Appliance and so packet trace cannot be taken via
+   the
+   command line interface.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  The workaround involves copying scripts which contain the
+   commands, to the IBM MQ appliance:
+   
+   Creates 2 files on a local machine.
+   
+   - The first file named "start_ip_trace.txt", which contains the
+   following single line:
+   
+   packet-capture-advanced eth0 temporary:eth0-trace 600 10000 1000
+   
+   - The second file named "stop_ip_trace.txt", with the following
+   single line:
+   
+   no packet-capture-advanced eth0 temporary:eth0-trace
+   
+   - Copy the files to an IBM MQ Appliance using the CLI:
+   
+     mqa(config)# copy scp://myuser@myipaddr/start_ip_trace.txt
+   temporary:
+     mqa(config)# copy scp://myuser@myipaddr/stop_ip_trace.txt
+   temporary:
+   
+   Alternatively, the File Management tab in the
+   Web UI can be used to upload the files.
+   
+   The scripts can be executed from the CLI are as follows:
+   
+   - To start the trace:
+   mqa(config)# exec temporary:start_ip_trace.txt
+   
+   - To stop the trace:
+   mqa(config)# exec temporary:stop_ip_trace.txt
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   Users of the IBM MQ Appliance who have a need to take a network
+   packet trace will be affected by this problem.
+   
+   
+   Platforms affected:
+   MultiPlatform
+   
+   ****************************************************************
+   PROBLEM DESCRIPTION:
+   There was no way of starting and stopping packet trace via the
+   IBM MQ Appliance command line interface.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The "packet-capture-advanced" and "no packet-capture-advanced"
+   commands have been made available on the IBM MQ command line
+   interface.  These commands are standard DataPower commands which
+   should have been made available on the IBM MQ Appliance but had
+   been disabled.
+   
+   The IBM MQ Appliance documentation will also be updated to add
+   these two new commands.
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+   Version    Maintenance Level
+   v8.0       8.0.0.7
+   v9.0 CD    9.0.3
+   
+   The latest available maintenance can be obtained from
+   'WebSphere MQ Recommended Fixes'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037]
+   
+   If the maintenance level is not yet available information on
+   its planned availability can be found in 'WebSphere MQ
+   Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT18481
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ BASE MULTIP
+   
+   
+ * REPORTED COMPONENT ID
+   5724H7251
+   
+   
+ * REPORTED RELEASE
+   800
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-12-19
+   
+   
+ * CLOSED DATE
+   2017-02-27
+   
+   
+ * LAST MODIFIED DATE
+   2017-02-27
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ BASE MULTIP
+   
+   
+ * FIXED COMPONENT ID
+   5724H7251
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R800 PSY
+   UP

@@ -1,0 +1,62 @@
+Title: IBM Error: A timeout occurred while waiting for a response - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ PowerPlay Enterprise Server 7.0 - single server installation 
+PowerPlay Client 7.0 
+Windows - all (server and client machines)
+
+Description: 
+
+When trying to connect to a remote cube from PowerPlay Client, the following error message is displayed after clicking on a cube from the list: 
+
+A timeout occurred while waiting for a response
+
+
+Solution: 
+
+Check to see if there is firewall software installed on the client machine. If yes, disable the software. 
+
+In this case, after the firewall software was disabled, another error message was returned when trying to access a remote cube from PowerPlay Client: 
+
+Access Manager: 
+The Access Manager configuration information is incomplete or missing. You can complete the configuration of Access Manager using the Configuration Manager. 
+
+Here are the steps to set the Directory Server information: 
+
+1. Launch Configuration Manager and open current configuration.
+2. Go to Computer name > 
+Services > Access Manager Runtime > Authentication Source > Directory Server 
+3. In the righthand pane change the settings to suit the environment (must match the settings as on the PPES machine).
+4. Click on the computer name in the left pane 
+5. From the Actions menu, click Apply selection 
+6. If the settings are correct, you should get a confirmation &#34;Successfully applied all properties&#34;. 
+
+Remote cubes will now open successfully in PowerPlay Client. 
+
+RESOLVING THE PROBLEM
+Check to see if there is firewall software installed on the client machine. If yes, disable the software. 
+
+In this case, after the firewall software was disabled, another error message was returned when trying to access a remote cube from PowerPlay Client: 
+
+Access Manager: 
+The Access Manager configuration information is incomplete or missing. You can complete the configuration of Access Manager using the Configuration Manager. 
+
+Here are the steps to set the Directory Server information: 
+
+1. Launch Configuration Manager and open current configuration.
+2. Go to Computer name > Services > Access Manager Runtime > Authentication Source > Directory Server 
+3. In the righthand pane change the settings to suit the environment (must match the settings as on the PPES machine).
+4. Click on the computer name in the left pane 
+5. From the Actions menu, click Apply selection 
+6. If the settings are correct, you should get a confirmation "Successfully applied all properties". 
+
+Remote cubes will now open successfully in PowerPlay Client.
+
+ 
+
+Cross reference information Segment Product Component Platform Version Edition Business Analytics Cognos 8 Business Intelligence Transformer Business Analytics Cognos Series 7 PowerPlay Business Analytics Cognos Series 7 PowerPlay Enterprise Server 
+HISTORICAL NUMBER
+ 123365

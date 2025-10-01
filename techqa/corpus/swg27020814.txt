@@ -1,0 +1,79 @@
+Title: IBM Download IBM WebSphere Virtual Enterprise Version 7.0 for Microsoft Windows operating systems - United States
+
+Text:
+ PRODUCT DOCUMENTATION
+
+ABSTRACT
+ This document describes how to download IBM® WebSphere® Virtual Enterprise Version 7.0 for Microsoft® Windows® installation images from the IBM Passport Advantage Online web site. 
+
+CONTENT
+WebSphere Virtual Enterprise Version 7.0 provides application infrastructure virtualization capabilities that lower operational and energy costs to create, run, and manage your enterprise applications and service oriented architecture (SOA) environment. 
+
+WebSphere Virtual Enterprise provides features that help lower your total cost of ownership while increasing your quality of service by providing value in the areas of high availability, performance management, application infrastructure virtualization, and the management of cloud environments.
+
+More information
+To access a wide variety of technical resources for this product, see the WebSphere Virtual Enterprise Version 7.0 Information Center [http://publib.boulder.ibm.com/infocenter/wveinfo/v7r0/index.jsp]. 
+
+Software requirements 
+
+ * WebSphere Application Server Version 7.0.0.17 or higher 
+ * Windows operating systems supported with 32-bit WebSphere Virtual Enterprise  * Microsoft Vista Business 
+    * Microsoft Vista Enterprise 
+    * Microsoft Vista Ultimate 
+    * Microsoft Vista Ultimate SP1 (supported for application design, development, and testing; no support for production use) 
+    * Microsoft Windows 7 Professional (32-bit and 64-bit editions) 
+    * Microsoft Windows 7 Enterprise (32-bit and 64-bit editions) 
+    * Microsoft Windows 7 Ultimate (32-bit and 64-bit editions) 
+    * Microsoft Windows XP Professional with SP2 
+    * Microsoft Windows Server 2003, DataCenter with SP2 (32-bit and 64-bit editions) 
+    * Microsoft Windows Server 2003, Enterprise with SP2 (32-bit and 64-bit editions) 
+    * Microsoft Windows Server 2003, Standard with SP2 (32-bit and 64-bit editions) 
+    * Microsoft Windows Server 2003 R2 (32-bit and 64-bit editions) 
+    * Microsoft Windows Server 2008, DataCenter with SP1 (32-bit and 64-bit editions) 
+    * Microsoft Windows Server 2008, Enterprise with SP1 (32-bit and 64-bit editions) 
+    * Microsoft Windows Server 2008. Standard with SP1 (32-bit and 64-bit editions)
+   
+   
+
+
+Space requirements  * For Windows (32-bit WebSphere Virtual Enterprise)  * Intel® Pentium® processor at 500 MHZ or faster 
+    * Intel EM64T or AMD Opteron 
+    * Minimum 1 GB of available disk space 
+    * Minimum 512 MB of physical memory; 1 GB recommended 
+   
+   
+
+ * For Windows (64-bit WebSphere Virtual Enterprise)  * Intel EM64T or AMD Opteron 
+    * Minimum 1.5 GB (web installation) to 5 GB (local installation) of available disk space 
+    * Minimum 1 GB of physical memory recommended 
+   
+   
+
+
+For more detailed information, see the System requirements [http://www.ibm.com/support/docview.wss?rs=3023&uid=swg27021454] document. 
+
+Downloading and assembling the product  1. Navigate your browser to the Find Downloads and Media [http://www-112.ibm.com/software/howtobuy/passportadvantage/paocustomer/sdma/SDMA?PO=DOWNLOAD_FIND_BY_PART_NUMBER] web page on the IBM Passport Advantage Online web site. 
+ 2. Select the Find by part number search option from Download finder options. 
+ 3. Search for each downloadable image by part number. 
+ 4. Download all of the required parts. 
+ 5. Use a file extracting utility that supports large file extractions to unpack each of the parts into a single, temporary directory on your system. 
+
+
+TAB NAVIGATION
+ * AIX [http://www.ibm.com/support/docview.wss?uid=swg27020810]
+ * HP-UX [http://www.ibm.com/support/docview.wss?uid=swg27020811]
+ * Linux [http://www.ibm.com/support/docview.wss?uid=swg27020812]
+ * Solaris [http://www.ibm.com/support/docview.wss?uid=swg27020813]
+ * Windows- selected tab,
+
+ 
+
+Downloadable parts 
+There are three downloadable parts for Windows operating systems. Refer to the following table for details about what each part contains.
+
+Required parts 
+To install WebSphere Virtual Enterprise Version 7.0 on Windows operating systems, download the following parts:
+
+
+
+Part Description File name (part number.extension) Download 1 of 3 WebSphere Virtual Enterprise Version 7.0 Quick Start Guide CZYY2ML.zip Download 2 of 3 WebSphere Virtual Enterprise Version 7.0 controller CZYY3ML.zip Download 3 of 3 WebSphere Virtual Enterprise Version 7.0 node CZYY5ML.zip

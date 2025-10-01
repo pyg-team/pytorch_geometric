@@ -1,0 +1,62 @@
+Title: IBM Interim Fix 4 Notification for Multi-Enterprise Integration Gateway 1.0 Fixpack 1 - United States
+
+Text:
+ DOWNLOADABLE FILES
+
+ABSTRACT
+ This is an IBM Service Advisory for customers using Multi-Enterprise Integration Gateway. 
+September 2014: Interim Fix 4 has been released for V1.0, Fix Pack 1. 
+
+DOWNLOAD DESCRIPTION
+Multi-Enterprise Integration Gateway 1.0 Fixpack 1 Interim Fix 4
+
+PREREQUISITES
+Multi-Enterprise Integration Gateway 1.0 Fixpack 1
+
+INSTALLATION INSTRUCTIONS
+Remediation Steps: Apply this interim fix to your environment.
+
+
+IBM has released a generally available interim fix to resolve several issues in Multi-Enterprise Integration Gateway. We recommend that all Multi-Enterprise Integration Gateway customers download this interim fix and apply it to their environments immediately.
+
+• If you are not running a customer specific interim fix, you must apply this interim fix to resolve these issues. 
+
+Note: You must already have V1.0, Fix Pack 1 installed, prior to applying Interim Fix 4. Interim fixes are cumulative, Interim Fix 4 includes the fixes for Interim Fixes 1, 2, and 3.
+
+Follow the instructions below:
+
+1) Download the interim fix (filename: IBM_Multi-Enterprise_Integration_Gateway_V1.0.0.1_4_iFix_Media.zip) containing the resolutions for these issues from Fix Central. 
+
+2) Install the interim fix on each node in your environment. Remember that applying this interim fix will require a node outage. IBM recommends that you apply the interim fix to your test environment first and run your regression tests against it before applying it to production.
+
+For instructions on installing an interim fix, see the following link to the Multi-Enterprise Integration Gateway Knowledge Center:
+http://www.ibm.com/support/knowledgecenter/SSYJCD_1.0.0/com.ibm.help.meigV100.doc/com.ibm.help.meg.install.doc/meg_install_overview.html [http://www.ibm.com/support/knowledgecenter/SSYJCD_1.0.0/com.ibm.help.meigV100.doc/com.ibm.help.meg.install.doc/meg_install_overview.html]
+
+• If you are currently running a customer-specific interim fix, contact your local IBM Customer Support immediately to receive an updated interim fix for your specific implementation. DO NOT install the generally available interim fix from Fix Central as it may remove any individual fixes that have been provided for your implementation. 
+
+DOWNLOAD PACKAGE
+http://www.ibm.com/support/fixcentral/swg/selectFixes?product=ibm/Other+software/Multi-Enterprise+Integration+Gateway&release=1.0.0.1&platform=All&function=fixId&fixids=IBM_Multi-Enterprise_Integration_Gateway_V1.0.0.1_4_iFix_Media&includeSupersedes=0 [http://www.ibm.com/support/fixcentral/swg/selectFixes?product=ibm/Other+software/Multi-Enterprise+Integration+Gateway&release=1.0.0.1&platform=All&function=fixId&fixids=IBM_Multi-Enterprise_Integration_Gateway_V1.0.0.1_4_iFix_Media&includeSupersedes=0]
+
+
+HOW CRITICAL IS THIS FIX?
+Recommended
+
+
+
+PROBLEMS SOLVED
+This interim fix addresses the following issues: 
+
+• IT04040 An error is encountered when upgrading to Multi-Enterprise Integration Gateway 1.0 Fix Pack 1 through the IBM Installation Manager.
+• IT04172 Unable to configure or modify exchange profiles and conformance policies, and an Object Grid exception is observed in informational member logs.
+• IT03978 MEIG receipts contain the Action tag. The Action tag is not required as per the AS4 specification.
+• IT04212 Not able to start Multi-Enterprise Integration Gateway on less powerful systems (for example, on a single CPU system), and an error is encountered when trying to start all services by using the start_services all command.
+• IT04123 XML canonicalization fails when a SAML token is taken out of BDO SAML.
+• IT04385 Unable to access Multi-Enterprise Integration Gateway dashboard due to low container memory notifications.
+• IT04495 Multi-Enterprise Integration Gateway does not provide a valid and appropriate error message for an expired client certificate.
+• IT02550 Extensive memory consumption by Internet Explorer is observed when Multi-Enterprise Integration Gateway client is running.
+• IT04568 Signature verification fails for outbound messages with one client.
+
+
+
+ [/support/docview.wss?uid=swg24038306&aid=1]Problems (APARS) fixed [/support/docview.wss?uid=swg24038306&aid=2]Problems (APARS) fixed
+IT03978, IT04040, IT04172, IT04212, IT04123, IT04385, IT04495, IT02550, IT04568

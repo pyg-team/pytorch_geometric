@@ -1,0 +1,137 @@
+Title: IBM Slow BPC processing - a PD story using DB analysis - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ A customer's WPS seemed to become a bit sluggish and all the usual tuning efforts hadn't helped 
+a lot. One of the things that still could be done was to look into the BPEDB itself to see, whether there are unexpected amount of data and/or relations.
+
+
+SYMPTOM
+BPEDB "slow" and growing
+
+
+RESOLVING THE PROBLEM
+One of the educational principles and an essential base of what is called “experience” is to learn from errors made. Second best is to learn from errors made by others – which is still better than not learning at all. Maybe this story helps a bit. 
+
+A customer's WPS seemed to become a bit sluggish and all the usual tuning efforts hadn't helped 
+a lot. One of the things that still could be done was to look into the BPEDB itself to see, 
+whether there are unexpected amount of data and/or relations.
+
+
+
+Finally, the investigations revealed an unhandled condition in a process model, that lead to a
+undesirable loop.
+
+
+
+We started with a 
+
+
+
+select count(*) from process_instance_b_t with ur
+
+to get the number of rows in the process instance table - which represents the number of process instances WPS knows about. 
+
+
+We include the "with UR" clause in all these selects to avoid, that the database sets any locks that would interfere even more with 
+other users (applications) of the database. Or - to phrase it differently - to be as least intrusive as possible. 
+
+Maybe you're interested in a few more details, then you can ask for the amount of instances in a certain state. 
+select count(*) from process_instance_b_t where state = 2 with ur
+
+would yield all running instances. These states include DELETED=0, READY=1, RUNNING=2, FINISHED=3, COMPENSATING=4, FAILED=5, 
+TERMINATED=6, COMPENSATED=7, TERMINATING=8, FAILING=9, INDOUBT=10, SUSPENDED=11, COMPENSATION_FAILED=12 
+
+Similarly you can collect some statistics on activities: 
+select count(*) from activity_instance_b_t with ur
+select count(*) from activity_instance_b_t where state = 5 with ur
+Valid states are: INACTIVE=1, READY=2, RUNNING=3, SKIPPED=4, FINISHED=5, FAILED=6, TERMINATED=7, CLAIMED=8, TERMINATING=9, 
+FAILING=10, WAITING=11, EXPIRED=12, STOPPED=13, PROCESSING_UNDO=14. 
+
+
+When your typical (or average) process model executes e.g. 30 activities, then the amount of rows in the activity_instance_b_t 
+
+table should roughly be in the order of magnitude of up to 30 times the amount of rows in the process_instance_b_t table. 
+
+
+In this cases we found over 39M activity instances for about 50k process instances, where we only expected 
+up to 1M activity instances. 
+
+That justified some deeper investigation - we wanted to find out, which instances had the most activities. 
+SELECT 
+ * PI.PIID, PT.NAME, PI.STATE, 
+ * 
+ * COUNT(AI.AIID) AS NUMBER_OF_ACTIVITIES
+
+FROM 
+ * ACTIVITY_INSTANCE_B_T AS AI,
+   
+ * 
+ * PROCESS_INSTANCE_B_T AS PI,
+   
+ * 
+ * PROCESS_TEMPLATE_B_T AS PT
+   
+
+WHERE 
+ * PI.PTID = PT.PTID AND 
+   
+ * 
+ * AI.PIID = PI.PIID
+   
+
+GROUP BY 
+ * PI.PIID, PT.NAME, PI.STATE
+   
+
+ORDER BY 
+ * NUMBER_OF_ACTIVITIES DESC
+
+FETCH FIRST 20 ROWS ONLY
+WITH UR Some explanations: 
+ * PI.PIID is the process instance ID from the process_instance_b_t table
+   
+ * To see a bit more than just a hex ID, the name of the related process template (PT.NAME) is included.
+   
+ * And as we're interested in the amount of activities for these process instances, we'd need to include something from the activity_instance_b_t table and do the necessary grouping.
+   
+
+
+In our specific case this resulted in: 
+PIID NAME STATE NUMBER_OF_ACTIVITIES ----------------------------------- ------------ ------ -------------------- x'9003011CE5DED75B3EFDEB538C02DAE4' LGClaimEH 6 147047 x'9003011E841DE9AF3EFDEB53045C4103' LGClaimEH 6 96609 x'9003011E841DDEF13EFDEB53045C3DD9' LGClaimEH 6 96462 . . . . [/support/docview.wss?uid=swg21381220&amp;aid=1] [/support/docview.wss?uid=swg21381220&amp;aid=1] [/support/docview.wss?uid=swg21381220&amp;aid=1] LGClaimEH was expected to have 20-30 activities at most. Position 100 in that ordered list had about 57k and position 1000 had 7k activities. Furthermore state=6 indicated that these instances were no longer running (6=terminated). From their name, the customer could tell, that they're no longer relevant and should have been cleaned up automatically. 
+A lookup of select auto_delete from process_template_b_t where name = 'LGClaimEH' proved, that when modelling the process the “delete instance when finished” flag was not set (auto_delete=0), which was the reason, why all these instances still existed. 
+However, why there were so many activities in these instances needed further investigation. We tried to get a list of the most recently executed activities in some of the topmost cases in the above list. 
+
+(N.B. only activities with the “business relevance” flag set are persisted in the activity instance table) 
+
+SELECT
+ * AI.LAST_STATE_CHANGE, ATP.NAME, AI.STATE
+
+FROM 
+ * ACTIVITY_INSTANCE_B_T AI, 
+   
+ * 
+ * ACTIVITY_TEMPLATE_B_T ATP
+   
+
+WHERE 
+ * AI.ATID = ATP.ATID and 
+   
+ * 
+ * AI.PIID = '9003011CE5DED75B3EFDEB538C02DAE4'
+   
+
+ORDER BY  * AI.LAST_STATE_CHANGE DESC
+
+FETCH FIRST 40 ROWS ONLY
+WITH UR resulted in something like LAST_STATE_CHANGE NAME STATE ----------------------- ------------------- --------- 2009-03-22-16.24.17.964333 Activity_17 7 2009-03-22-16.23.55.925757 Activity_14 5 2009-03-22-16.23.32.528576 Activity_14 5 2009-03-22-16.23.11.976875 Activity_14 5 2009-03-22-16.22.49.582347 Activity_14 5 2009-03-22-16.22.24.257894 Activity_14 5 2009-03-22-16.22.01.723894 Activity_14 5 . . . [/support/docview.wss?uid=swg21381220&amp;aid=1] [/support/docview.wss?uid=swg21381220&amp;aid=1] which continued on and on with “Activity_16” in State finished(=5) in roughly 20 seconds difference in the timestamps for thousands of rows. 
+After the application developer saw this, it didn't take long to find out, what to correct. 
+In this case 
+• the “delete when finished” flag was activated 
+• the (not shown here) business rule, that determined the 20 seconds interval got adapted 
+• and most important the business logic, that lead to the undesired loop, was corrected. 
+At least this case could be used as a demonstration of robustness as the oldest of these instances dated over 9 moths ago. The server performed this “nonsense” in the application code for quite a long time before it's slowness in processing (most obvious in deleting instances) was noticed. And even then – it didn't break. 
+
+The final cleanup in the database was done in small chunks using the deleteCompletedProcessInstances.py script in the {install_root}/runtimes/bi_v6/ProcessChoreographer/admin directory.

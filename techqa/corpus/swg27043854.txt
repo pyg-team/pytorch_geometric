@@ -1,0 +1,60 @@
+Title: IBM Atlas Policy Suite V6.0.3 Fix Pack 2 Release Notes - United States
+
+Text:
+ RELEASE NOTES
+
+ABSTRACT
+ IBM Atlas Policy Suite Version V6.0.3 Fix Pack 2 is available. Compatibility, installation, and other getting-started issues are addressed in these release notes. 
+
+CONTENT
+IBM Atlas Policy Suite is part of IBM Information Lifecycle Governance solutions, which enable you to efficiently retain and archive information of value and effectively meet eDiscovery obligations across both structured and unstructured data. With other IBM Information Lifecycle Governance products, IBM Atlas Policy Suite enables the systematic and defensible disposal of unnecessary data, which reduces storage growth, reduces IT and legal costs, and lowers legal risk for organizations.
+
+
+For brief descriptions of new features, see the topic "What's new in IBM Atlas Policy Suite V6.0.3 Fix Pack 2?" in Planning, Installing, and Upgrading IBM Atlas Policy Suite(Planning_Installing_and_Upgrading_IBM_Atlas_Policy_Suite.pdf) 
+
+For brief descriptions of the APARs fixed in this fix pack, see the attached PDF file (V6.0.3.2 APAR Descriptions.pdf). 
+
+ 
+
+System requirements 
+
+For information about hardware and software requirements, see the technote, IBM Atlas Policy Suite V6.0.3 detailed system requirements, and select V6.0.3.2 from the drop-down list in the Available Reports section. [http://www.ibm.com/support/docview.wss?uid=swg27039430] 
+
+ 
+
+Installing IBM Atlas Policy Suite Version 6.0.3 Fix Pack 2 
+
+For information about installing version 6.0.3 Fix Pack 2 of IBM Atlas Policy Suite, see the following guides in the techdoc IBM Policy Atlas Suite V6.0.3 Fix Pack 2 documentation library [http://www.ibm.com/support/docview.wss?uid=swg27043614]: 
+
+ * IBM Atlas Policy Suite Version 6.0.3, Quick Start Guide 
+ * Planning, Installing, and Upgrading IBM Atlas Policy Suite 
+
+Known issues 
+
+Known issues are documented in separate technotes in the Support knowledge base at http://www.ibm.com/support/entry/portal/overview/software/enterprise_content_management/altas_ediscovery/atlas_ediscovery_support_(general) [http://www.ibm.com/support/entry/portal/overview/software/enterprise_content_management/altas_ediscovery/atlas_ediscovery_support_(general)]. The following known issues were discovered in the product before its release: 
+
+ * Known issue: Uninstalling IBM Atlas Policy Suite V6.0.3 requires manual file deletion [http://www.ibm.com/support/docview.wss?uid=swg27043716] 
+ * Known issue: Uninstalling the IBM Policy Atlas V6.0.3.2 fix pack also uninstalls any previously installed fix packs [http://www.ibm.com/support/docview.wss?uid=swg27044002] 
+ * Known issue: Information for running the script to associate orgnames with person records in a DB2 environment is missing [http://www.ibm.com/support/docview.wss?uid=swg27044134] 
+ * Known issue: In Internet Explorer, when adding recipients to a matter, the X icon next to the ninth recipient is not shown [http://www.ibm.com/support/docview.wss?uid=swg27044460] 
+ * Known issue: Matters > List tab # Custodians on Hold value differs from the Who Is On Hold report Total Number of Records value for the same matter [http://www.ibm.com/support/docview.wss?uid=swg27044186] 
+ * Preventing "unresponsive script" warnings and system errors that can occur when you view a large number of notes on the collection plan or preservation plan Notes tab [http://www.ibm.com/support/docview.wss?uid=swg27044173]
+
+As issues are discovered and resolved throughout the product's lifecycle, the knowledge base is updated. By searching the knowledge base, you can quickly find workarounds or solutions to problems. The following links launch customized, dynamic queries of the Support knowledge base: 
+
+ * View all IBM Atlas Policy Suite, Version 6.0.3 technotes [http://www.ibm.com/support/search.wss?tc=SSLPDV+SS5JWB+SS5JP8+SS5JRU&atrn1=SWVersion&atrv1=6.0.3&rankprofile=8] 
+ * Search for known issues in IBM Atlas Policy Suite, Version 6.0.3 [http://www.ibm.com/support/search.wss?q=known+issue&tc=SSLPDV+SS5JWB+SS5JP8+SS5JRU&atrn1=SWVersion&atrv1=6.0.3&rankprofile=8]
+
+
+
+Documentation updates To view updates to the IBM Atlas Policy Suite V6.0.3 Fix Pack 2 documentation, see the technote, IBM Atlas Policy Suite V6.0.3 Fix Pack 2 documentation updates [http://www.ibm.com/support/docview.wss?uid=swg27044359]. 
+
+
+See the following link for installation program file names that are specific to V6.0.3 Fix Pack 2: IBM Atlas Policy Suite, IBM Atlas eDiscovery Policy Syndication Framework and SDK, and IBM Retention Policy Syndication Framework and SDK Version 6.0.3 Fix Pack 2 installation program file names [http://www.ibm.com/support/docview.wss?uid=swg27044185]
+
+For important updates about IBM Atlas eDiscovery Policy Syndication for IBM eDiscovery Manager, see the readme: IBM Atlas eDiscovery Policy Syndication for IBM eDiscovery Manager readme [http://www.ibm.com/support/docview.wss?uid=swg27044097] 
+
+As issues are identified throughout the lifecycle of the product, the documentation updates technote is updated accordingly. 
+
+
+V6.0.3.2 APAR Descriptions.pdf [/support/docview.wss?uid=swg27043854&aid=2]V6.0.3.2 APAR Descriptions.pdf [/support/docview.wss?uid=swg27043854&aid=1]

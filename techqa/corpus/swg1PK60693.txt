@@ -1,0 +1,216 @@
+Title: IBM PK60693: PRIOR TO V6.1, MANAGEMENT PROCESSES DID NOT HONOR SSL CONFIGURAT IONS THAT ARE SET BY SYSTEM PROPERTIES - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The following information needs to be included in the
+   Information Center for WebSphere Application Server Version 6.1:
+   
+   Prior to WebSphere Application Server V6.1, the
+   management processes did not honor Secure Sockets Layer (SSL)
+   configurations that were set by system properties.
+   
+   Starting with WebSphere Application Server V6.1, the method to
+   manage SSL configurations changed. Prior to V6.1, you could
+   not centrally-manage SSL settings, which caused various
+   conflicts. Having centrally-managed SSL settings removes the
+   ability for applications to use their own configuration code.
+   Centrally-managing these configurations improves application
+   portablitiy.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  This APAR affects users of WebSphere        *
+   *                  Application Server Version 6.1, who have    *
+   *                  applications that rely on Secure Sockets    *
+   *                  Layer (SSL) configurations that existed with*
+   *                  a previous release of WebSphere Application *
+   *                  Server.                                     *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Handshake errors can occur if your      *
+   *                      applications rely on                    *
+   *                      individually-managed SSL                *
+   *                      configurations that were set in a       *
+   *                      release of WebSphere Application Server *
+   *                      prior to Version 6.1.                   *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   In WebSphere Application Server V6.1, application servers
+   inherit the SSL configuration as deployed from the cell level
+   down to the endpoint level. If your applications rely on
+   individually-managed SSL configurations from a previous version
+   of WebSphere Application Server, communication errors, such as
+   handshake errors, might occur among the servers. Ensure that
+   your applications are using the central management features of
+   WebSphere Application Server Version 6.1 for SSL configurations.
+   
+   The documentation needs to warn as well as explain why
+   "handshake errors" are occurring under these conditions.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Two information center topics have been updated to explain this
+   issue.
+   
+   In the "Secure communications using Secure Sockets Layer,"
+   topic, the following note has been added to the"Scope Selection"
+   section:
+   
+   Note: If your applications are relying on SSL configurations
+   that were set as individual settings for each SSL configuration
+   in the topology, but your application servers have inherited the
+   SSL configuration as deployed from the cell level down to the
+   endpoint level, then there is the possibility of communication
+   errors occurring among servers (for example, handshake errors).
+   You need to ensure that your applications are operating
+   consistent with the central management of SSL configurations.
+   --------------------------
+   In the "Errors configuring Secure Sockets Layer encrypted
+   access" topic, the following note has been added to  "SSL
+   handshake failure error when no trusted
+    certificate is found" section:
+   
+   Note: As default, Websphere Application Server uses the key.p12
+   and trust.p12 files for any communication between WebSphere
+   Application Servers (for example between node agent and
+   the application server or vice versa). If WebSphere Application
+   Server is looking for a certificate in some file other than
+   these, then it is possible that your application establishes the
+   secure socket layer (SSL) configuration by using system
+   properties, established with the System.setProperty() method.
+   That is, SSL configurations are managed for each of your
+   processes, and you have had to maintain individual settings for
+   each SSL configuration in the topology.
+   
+   Prior to WebSphere Application Server Version 6.1, the WebSphere
+   Application Server management processes allowed the
+   individually-managed SSL configurations which were set by system
+   properties. Your pre-Version 6.1 system properties settings were
+   processed successfully.
+   
+   With WebSphere Application Server Version 6.1, central
+   management of Secure Sockets Layer (SSL) configuration occurs.
+   Applications that use SSL connections based on values set for
+   system properties instead of using the centrally managed default
+   dynamic SSL configuration can experience handshake failures.
+   Node agent to application server communications is being
+   governed by the default dynamic SSL configuration in WebSphere
+   Application Server Version 6.1 and not through the system
+   properties you set. You may need to adjust your application to
+   use the centrally-managed SSL configuration of WebSphere
+   Application Server Version 6.1.
+   --------------------------
+   Date that the information will be available externally to
+   customers:
+   Periodically, we update the documentation in our information
+   centers. Thus, the changes might have been made before you read
+   this text. To access the latest on-line documentation, complete
+   the following steps:
+   1. Go to the product library page at the following Web site:
+   http://www.ibm.com/software/webservers/appserv/library [http://www.ibm.com/software/webservers/appserv/library]
+   2. Locate the appropriate version and product.
+   3. Under "Documentation - Information center format", click the
+   appropriate link. In most cases, the WebSphere Application
+   Server documentation is available in both an online version and
+   in an IBM Eclipse Help System version. For more information on
+   the IBM Eclipse Help system, see the following Web site:
+   http://www.alphaworks.ibm.com/tech/iehs [http://www.alphaworks.ibm.com/tech/iehs]
+   
+   If you install the IBM Eclipse Help System, you must also
+   install the appropriate help system plug-in for the WebSphere
+   Application Server documentation in its eclipse/plugins
+   directory. The plug-in is available from our product library
+   page.
+   
+   The modified documentation will be available in the March 2008
+   update to the information center.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK60693
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBS APP SERV N
+   
+   
+ * REPORTED COMPONENT ID
+   5724H8800
+   
+   
+ * REPORTED RELEASE
+   60W
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-02-07
+   
+   
+ * CLOSED DATE
+   2008-02-29
+   
+   
+ * LAST MODIFIED DATE
+   2008-02-29
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

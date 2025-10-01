@@ -1,0 +1,67 @@
+Title: IBM tacmd tepsLogin command fails. - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ tacmd tepsLogin command fails with error messages KUICTL001I and KUICTL099E.
+TEPS login using TEPS client successfully complete with the same user name and password. 
+
+SYMPTOM
+The following output appears for tacmd tepsLogin command 
+
+--------------------------------------------------------------------
+KUICTL001I Validating user credentials... 
+KUICTL099E The tepsLogin command failed because an unexpected error occurred. Please consult the /opt/IBM/ITM/logs/TepsLoginCLI_0.log log file to determine the cause of the error. An unexpected system error occurred while executing the tepsLogin command. 
+
+-------------------------------------------------------------------- 
+
+ 
+
+The /opt/IBM/ITM/logs/TepsLoginCLI_0.log log file contains the following logs: 
+
+--------------------------------------------------------------------
+Jun 30, 2017 3:06:23 PM com.ibm.tivoli.itm.login.TepsLogin init
+INFO: classpath = [/opt/IBM/ITM/<architecture>/ue/jars/:/opt/IBM/ITM/<architecture>/ue/jars/LoginCLI.jar:/opt/IBM/ITM/classes/cnp.jar:/opt/IBM/ITM/classes/util.jar:/opt/IBM/ITM/classes/kjrall.jar:/opt/IBM/ITM/classes/cnp_vbjorball.jar:]
+Jun 30, 2017 3:06:23 PM TepsLogin validateTepsUserCredentials
+FINER: ENTRY
+Jun 30, 2017 3:06:24 PM com.ibm.tivoli.itm.login.TepsLogin validateTepsUserCredentials
+SEVERE: Credentials authorization request failed with error code -103
+Jun 30, 2017 3:06:24 PM com.ibm.tivoli.itm.login.TepsLogin main
+SEVERE: Exception caught:
+KFWITM220E Request failed during execution.
+at com.ibm.TEPS.REST.Client.RestDataBus.execute(RestDataBus.java:1017)
+at com.ibm.TEPS.REST.Client.RestDataBus.executeRequest(RestDataBus.java:401)
+at com.ibm.TEPS.REST.Client.RestDataBus.executeRequest(RestDataBus.java:282)
+at com.ibm.TEPS.REST.Client.QueryModelRestMgr.executeRequest(QueryModelRestMgr.java:238)
+at candle.fw.model.PBasedRequest.execute(PBasedRequest.java:894)
+at candle.fw.model.PBasedRequest.execute(PBasedRequest.java:869)
+at candle.fw.util.TepDataProvider.authorizeUser(TepDataProvider.java:451)
+at candle.fw.util.TepDataProvider.authorizeUser(TepDataProvider.java:311)
+at com.ibm.tivoli.itm.login.TepsLogin.validateTepsUserCredentials(TepsLogin.java:771)
+at com.ibm.tivoli.itm.login.TepsLogin.run(TepsLogin.java:370)
+at com.ibm.tivoli.itm.login.TepsLogin.main(TepsLogin.java:141)
+
+Jun 30, 2017 3:06:24 PM com.ibm.tivoli.itm.login.TepsLogin main
+SEVERE: KUICTL099E The tepsLogin command failed because an unexpected error occurred. Please consult the /opt/IBM/ITM/logs/TepsLoginCLI_0.log log file to determine the cause of the error. An unexpected system error occurred while executing the tepsLogin command. 
+
+--------------------------------------------------------------------
+
+
+The following messages logged in /opt/IBM/ITM/<architecture>/iu/ihs/Plugins/logs/ITMWebServer/http_plugin.log when the server started:
+------------------------------------------------------------------------
+[25/Oct/2016:14:35:48.35601] 00003678 07975700 - ERROR: ws_transport: transportSetServerAddress: Failed to resolve address and port [15210], error -2 
+[25/Oct/2016:14:35:48.35610] 00003678 07975700 - ERROR: ws_server: serverAddTransport: Failed to initialize server address 
+[25/Oct/2016:14:35:48.35612] 00003678 07975700 - ERROR: lib_sxp: sxpParse: End element returned FALSE for Transport. line 15 of /opt/IBM/ITM/<architecture>/iu/ihs/Plugins/config/ITMWebServer/plugin-cfg.xml 
+------------------------------------------------------------------------ 
+
+
+RESOLVING THE PROBLEM
+Check the file described in the ITMWebServer/http_plugin.log file. 
+
+Correct definition at the described line and restart the TEPS.
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Systems and Asset Management IBM Tivoli Monitoring V6

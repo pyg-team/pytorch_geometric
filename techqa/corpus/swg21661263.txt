@@ -1,0 +1,110 @@
+Title: IBM Install DB2 agent 7.1 into ITM 6.3 FP2 installation failed. KCIIN2559E A problem occurred during Local GSKit configuration changes. - United States
+
+Text:
+IV59268:5724B96DOTR TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ *Local install the DB2 agent 7.1 into a 6.30.02.00 Tivoli Monitoring installation fails with this error:
+
+... installing "IBM Tivoli Composite Application Manager Agent for DB2 V07.10.00.00 for AIX R6.1, R7.1 (64 bit)"; please wait.
+
+=> installed "IBM Tivoli Composite Application Manager Agent for DB2 V07.10.00.00 for AIX R6.1, R7.1 (64 bit)".
+... Initializing component IBM Tivoli Composite Application Manager Agent for DB2 V07.10.00.00 for AIX R6.1, R7.1 (64 bit).
+KCIIN2559E A problem occurred during Local GSKit configuration changes, please refer to log file for more details
+... IBM Tivoli Composite Application Manager Agent for DB2 V07.10.00.00 for AIX R6.1, R7.1 (64 bit) initialized.
+
+
+
+Do you want to install additional products or product support packages [ 1=Yes, 2=No ; default is "2" ] ? 
+... postprocessing; please wait.
+KCIIN2559E A problem occured during Local GSKit configuration changes, please refer to log file for more details
+... finished postprocessing.
+Installation step complete.
+
+*Remote deploy DB2 agent 7.1 with ITM 6.3 FP2 OS agent, the itm_install.trc log file on the endpoint contains entries like the following: 
+
+2014-09-16 14:06:00.642-06:00 ITMinstall.GlobalToLocal replaceForInstance [LOG_ERR]
+Unable to set variable ICCRTE_DIR, value is null
+
+2014-09-16 14:06:00.643-06:00 ITMinstall.CandleInstall main __ERROR__ (traceKey:1410894360643)
+Exceptions.ITMException: Exceptions.ITMException
+at ITMinstall.GlobalToLocal.replaceForInstance(GlobalToLocal.java:83)
+at ITMinstall.GlobalToLocal.changeEnvEntry(GlobalToLocal.java:139)
+at ITMinstall.GlobalToLocal.updateConfigurationFiles(GlobalToLocal.java:345)
+at ITMinstall.GlobalToLocal.updateConfigurationFiles(GlobalToLocal.java:367)
+at ITMinstall.GlobalToLocal.updateConfigurationFiles(GlobalToLocal.java:266)
+at ITMinstall.CandleInstall.main(CandleInstall.java:16415) 
+
+
+CAUSE
+This problem is related to the known problem for GSKit 8 in ITM 630 TEMA releases and GSKit 7 in pre ITM 630 TEMA releases.
+The OS agent installs only 64 bit binaries on AIX.
+The DB2 agent installs both 32 bit and 64 bit binaries on AIX.
+
+Looking at the cinfo -i information for ax and gs, we can see that the OS agent installed 64 bit GSkit 8.00.50.05 and 64 bit AX 6.30.02.
+The DB2 agent installed 32 bit AX 6.22.02 and no GSKit 7x because GSKit 8 (64) is already installed. 
+
+bash-3.2# ./cinfo -i
+
+*********** Tue Dec 17 04:03:08 CST 2013 ******************
+User: root Groups: system staff bin sys security cron audit lp root dasadm1 mqm db2iadm1 db2fadm1 mqbrkrs
+Host name : tivp059 Installer Lvl:06.30.02.00
+CandleHome: /opt/IBM/quchl/OSFP2_DB2Re
+***********************************************************
+...Product inventory
+
+ax IBM Tivoli Monitoring Shared Libraries
+aix523 Version: 06.22.02.00
+aix526 Version: 06.30.02.00
+
+gs IBM GSKit Security Interface
+aix526 Version: 08.00.50.05
+
+jr Tivoli Enterprise-supplied JRE
+aix523 Version: 05.12.01.00
+aix526 Version: 07.04.02.00
+
+ud IBM Tivoli Composite Application Manager Agent for DB2
+aix523 Version: 07.10.00.00
+aix526 Version: 07.10.00.00
+
+ue Tivoli Enterprise Services User Interface Extensions
+aix526 Version: 06.22.02.00
+
+ui Tivoli Enterprise Services User Interface
+aix523 Version: 06.22.02.00
+aix526 Version: 06.30.02.00
+
+ux Monitoring Agent for UNIX OS
+aix526 Version: 06.30.02.00 
+
+
+RESOLVING THE PROBLEM
+Above issue can be resolved by performing local installation of UX (64bit) and UD component with Tivoli Framework installation using below steps 
+
+1. Install UX agent
+# ./install.sh 
+
+ 
+
+2. Then perform installation of Tivoli Framework as 
+<MEDIA>./install.sh -q -p <MEDIA>/unix/tfaix536.txt -h <ITMHOME> 
+
+ 
+
+3. Lastly, install UD agent
+# ./install.sh 
+
+ 
+
+Where 
+
+<MEDIA> is Tivoli Monitoring Agents installation media 
+
+And 
+
+<ITMHOME> is the Tivoli Monitoring installation directory to be updated. 
+
+ 
+
+ Check the itm_install.trc log file for any failure.

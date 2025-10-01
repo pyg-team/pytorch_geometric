@@ -1,0 +1,17 @@
+Title: IBM Content Engine migration of content from one Centera device to another - United States
+
+Text:
+CE Centera TECHNOTE (FAQ)
+
+QUESTION
+ Is it possible to move P8 Content Engine (CE) content from one Centera Fixed Content Device to another Centera device? 
+
+CAUSE
+Replacing a Centera device with a new Centera device. 
+
+ANSWER
+The CE stores the Centera clip-id for a document in the DocVersion table row. However, the clip-id is not accessible via the CE API. Each CE Document normally has a single clip-id, and each content element of the document is stored as a tag within the clip (a document can have multiple clip-ids if retention on the content stored on Centera has been extended [feature added in P8 CPE 5.2 and does not apply to 4.5]).
+
+Use the CE moveContent API for each document stored on Centera 
+
+Note: The CE will not allow you to move content that is under fixed device retention, so this will not work if the Centera content is under retention.

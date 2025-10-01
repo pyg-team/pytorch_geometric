@@ -1,0 +1,92 @@
+Title: IBM "Error communicating with server" when accessing Process Inspector from Process Admin console in IBM Business Process Manager (BPM) with load balancer in front of web server - United States
+
+Text:
+Process Inspector; load balancer; trust store; SSL Handshake; CWPKI0022E; certificate TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ You access the Process Admin console with a load balancer and a web server in front of IBM Business Process Manager. You then switch to the Process Inspector view and the following error is displayed: "Error communicating with server." 
+
+SYMPTOM
+The SystemOut.log contains the following Secure Sockets Layer (SSL) exception messages: 
+
+WSX509TrustMa E CWPKI0022E: SSL HANDSHAKE FAILURE: A signer with SubjectDN "CN=xxx, OU=xxx, O=xxx, C=xxx" was sent from target host:port "<loadbalancer_hostname>:<port>". The signer may need to be added to local trust store "<profile_name>/config/cells/<cell_name>/trust.p12" located in SSL configuration alias "NodeDefaultSSLSettings" loaded from SSL configuration file "security.xml". The extended error message from the SSL handshake exception is: "PKIX path building failed: java.security.cert.CertPathBuilderException: PKIXCertPathBuilderImpl could not build a valid CertPath.; internal cause is: 
+java.security.cert.CertPathValidatorException: The certificate issued by CN=xxx Root CA, OU=xxx, O=xxx, C=xxx is not trusted; internal cause is: 
+java.security.cert.CertPathValidatorException: Certificate chaining error".
+
+
+BPMInspectorR E Error communicating with server
+com.ibm.processinspector.rest.ProcessAdminRestException: Error communicating with server
+at com.ibm.processinspector.rest.ProcessAdminRestClient.doPostQuery(ProcessAdminRestClient.java:201)
+at com.ibm.processinspector.rest.ProcessAdminRestClient.doQuery(ProcessAdminRestClient.java:303)
+at com.ibm.processinspector.rest.ProcessInstanceSearchAPIImpl.submitProcessInspectorSaveQueries(ProcessInstanceSearchAPIImpl.java:52)
+at com.ibm.processinspector.server.handlers.BPMInspectorRestRequestHandler.createProcessInstanceSearchAPI(BPMInspectorRestRequestHandler.java:54)
+at com.ibm.processinspector.server.handlers.ProcessInstanceStatusOverviewHandler.handleRequest(ProcessInstanceStatusOverviewHandler.java:84)
+at com.ibm.processinspector.server.BPMInspectorRestFacade.doGet(BPMInspectorRestFacade.java:113)
+at javax.servlet.http.HttpServlet.service(HttpServlet.java:575)
+at javax.servlet.http.HttpServlet.service(HttpServlet.java:668)
+…
+Caused by: javax.net.ssl.SSLPeerUnverifiedException: peer not authenticated
+at com.ibm.jsse2.SSLSessionImpl.getPeerCertificates(SSLSessionImpl.java:79)
+at org.apache.commons.httpclient.protocol.AbstractVerifier.verify(Unknown Source)
+at org.apache.commons.httpclient.protocol.SSLProtocolSocketFactory.createSocket(Unknown Source)
+at org.apache.commons.httpclient.protocol.SSLProtocolSocketFactory.createSocket(Unknown Source)
+at org.apache.commons.httpclient.HttpConnection.open(HttpConnection.java:707)
+at org.apache.commons.httpclient.HttpMethodDirector.executeWithRetry(HttpMethodDirector.java:387)
+at org.apache.commons.httpclient.HttpMethodDirector.executeMethod(HttpMethodDirector.java:171)
+at org.apache.commons.httpclient.HttpClient.executeMethod(HttpClient.java:397)
+at org.apache.commons.httpclient.HttpClient.executeMethod(HttpClient.java:323)
+at com.ibm.processinspector.rest.ProcessAdminRestClient.doPostQuery(ProcessAdminRestClient.java:172)
+... 38 more
+
+
+CAUSE
+The load balancer certificate is missing in the trust store of the local IBM Business Process Manager installation.
+
+
+
+RESOLVING THE PROBLEM
+Apply the recommended fix for JR46822 [http://www.ibm.com/support/docview.wss?uid=swg1JR46822]. The fix is included in IBM Business Process Manager V8.0.1 Fix Pack 2 [http://www.ibm.com/support/docview.wss?uid=swg24035701] and V8.5.0 Fix Pack 1 [http://www.ibm.com/support/docview.wss?uid=swg24035702] and is available as an interim fix for all other versions on Fix Central [http://www.ibm.com/support/fixcentral/swg/selectFixes?product=ibm/WebSphere/IBM+Business+Process+Manager+Advanced&release=All&platform=All&function=aparId&apars=JR46822]. 
+
+If that approach does not solve the problem, check your SystemOut.log file. If you see the following message logged after the SSL Handshake Failure, then add the load balancer certificate to the trust store: 
+
+
+CWPKI0428I: The signer might need to be added to the local trust store.
+
+You can use the Retrieve from port option in the administrative console to retrieve the certificate and resolve the problem. If you determine that the request is trusted, complete the following steps: 
+
+ 1.  Log into the administrative console. 
+     
+     
+ 2.  Expand Security and click SSL certificate and key management. 
+     
+     
+ 3.  Under Configuration settings, click Manage endpoint security configurations. 
+     
+     
+ 4.  Select the appropriate outbound configuration to get to the (cell):cell_name management scope. 
+     
+     
+ 5.  Under Related Items, click Key stores and certificates and click the CellDefaultTrustStore key store. 
+     
+     
+ 6.  Under Additional Properties, click Signer certificates and Retrieve From Port. 
+     
+     
+ 7.  In the Host field, enter <loadbalancer_hostname> in the host name field, enter the <port_number> in the Port field, and <loadbalancer_hostname>_cert in the Alias field. 
+     
+     
+ 8.  Click Retrieve Signer Information. 
+     
+     
+ 9.  Verify that the certificate information is for a certificate that you can trust. 
+     
+     
+ 10. Click Apply and Save.
+
+RELATED INFORMATION
+#"Error communicating with server" without a load balanc [http://www.ibm.com/support/docview.wss?uid=swg21664837]
+
+
+ 
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Business Process Manager Standard Security AIX, Linux, Solaris, Windows 8.5, 8.0.1, 8.0, 7.5.1, 7.5 Business Integration IBM Business Process Manager Express Security Linux, Windows 8.5, 8.0.1, 8.0, 7.5.1, 7.5 Business Integration IBM BPM Advanced Pattern on Red Hat Enterprise Linux Server Security Linux Red Hat - xSeries 8.0.1, 8.0 Business Integration IBM Business Process Manager Advanced Pattern on AIX Security AIX 8.0.1

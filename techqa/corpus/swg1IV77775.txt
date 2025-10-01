@@ -1,0 +1,149 @@
+Title: IBM IV77775: ITMCANDLEDATA.SH DOES NOT HANDLE CANDLEHOME/AUDITLOGS - United States
+
+Text:
+  A FIX IS AVAILABLE
+IBM Tivoli Monitoring 6.3.0 Fix Pack 6 (6.3.0-TIV-ITM-FP0006) [http://www-01.ibm.com/support/docview.wss?uid=swg24040390]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The new itmCANDLEDATA.sh utility implemented in 6.30.05.00 does
+   not link the CANDLEHOME/auditlogs directory to the CANDLEDATA
+   location.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  After implementing CANDLEDATA, manually create the link as
+   follows:
+   
+   1. Create CANDLEDATA/auditlogs.
+   2. Move everything from CANDLEHOME/auditlogs to
+      CANDLEDATA/auditlogs.
+   3. Link CANDLEHOME/auditlogs to CANDLEDATA/auditlogs.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  The new itmCANDLEDATA.sh utility implemented in 6.30.05.00 does
+   not link the CANDLEHOME/auditlogs directory to the CANDLEDATA
+   directory.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The code was changed to move data from CANDLEHOME/auditlogs to
+   the newly linked CANDLEDATA/auditlogs.
+   
+   The fix for this APAR is contained in the following maintenance
+   packages:
+   
+     | fix pack | 6.3.0-TIV-ITM-FP0006
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  After implementing CANDLEDATA, manually create the link as
+   follows:
+   1.  Create CANDLEDATA/auditlogs.
+   2.  Move all files from from CANDLEHOME/auditlogs to
+   CANDLEDATA/auditlogs.
+   3.  Link CANDLEHOME/auditlogs to CANDLEDATA/auditlogs.
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV77775
+   
+   
+ * REPORTED COMPONENT NAME
+   OMEG DIST INSTA
+   
+   
+ * REPORTED COMPONENT ID
+   5608A41CI
+   
+   
+ * REPORTED RELEASE
+   630
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-10-07
+   
+   
+ * CLOSED DATE
+   2015-12-08
+   
+   
+ * LAST MODIFIED DATE
+   2015-12-08
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   OMEG DIST INSTA
+   
+   
+ * FIXED COMPONENT ID
+   5608A41CI
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R630 PSY
+   UP

@@ -1,0 +1,41 @@
+Title: IBM Loging into AppScan Enterprise Console results in "CRWAS2123E User does not have permissions" - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Loging into AppScan Enterprise Console with a newly created account results in "CRWAS2123E User does not have permissions to login to AppScan Server.” 
+
+SYMPTOM
+Newly added user receive the following error when trying to login to AppScan Enterprise Console: 
+
+An error occurred while logging in: CRWAS2123E User 'username' does not have permissions to login to AppScan Server. 
+
+Existing users are not affected, only new users are affected. 
+
+
+CAUSE
+This may be caused by AppScan having been configured to use Windows Integrated authentication instead of the intended LDAP Authentication.
+
+
+DIAGNOSING THE PROBLEM
+To check what Authentication type is in use in the AppScan Enterprise Console, go to the following registry key: 
+
+HLKM\SOFTWARE\Wow6432Node\IBM\AppScan Enterprise\Config\ASE\CCAuthType
+It is set to: 
+1 - when Windows Integrated Authentication is in use
+2 - when LDAP Authentication is in use
+
+
+
+RESOLVING THE PROBLEM
+Re-run the Configuration Wizard and ensure that: 
+
+ * Check the following options at the Server Components" page: 
+   - User Administration
+   - Enterprise Console 
+ * At the Authentication Mechanism page, select LDAP authentication and configure correctly all the remaining fields at the page. 
+ * Leave the default values on the other pages as they are. 
+
+
+Note: At the last step of the Configuration Wizard (after clicking the Finish button) the AppScan services will be stopped, making AppScan Enterprise inaccessible to users until the Configuration Wizard completes.

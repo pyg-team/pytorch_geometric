@@ -1,0 +1,37 @@
+Title: IBM Content Manager prerequisite support policy - United States
+
+Text:
+ PRODUCT DOCUMENTATION
+
+ABSTRACT
+ IBM Content Manager supports many prerequisite platforms and applications. It is sometimes hard to tell if a particular prerequisite release is supported for a specific Content Manager release. This document is meant to show you how to tell which prerequisites are supported and which are not. 
+
+CONTENT
+Content Manager maintains a list of all of the operating systems and prerequisite software that are supported by specific releases. These lists are updated with each release and fix pack, so that you can be sure you know what is required, and what prerequisite changes have occurred between releases. Links to these pages are available on the IBM Content Manager Information Center Welcome page. 
+
+The prerequisite Web pages do not list every supported service release. The Content Manager general policy on service releases is to automatically support any new service releases for versions of prerequisites that are already supported with some exceptions noted in the table below. For example, because Content Manager 8.4.3 supports AIX 5.3 Technology Level 7, all service releases on AIX 5.3 Technology Level 7 are automatically supported.
+
+The Content Manager development team always tests each Content Manager release using the latest available service release for all supported prerequisites at the time that testing begins. If any issues are found by using a new service release of a prerequisite product, the development team investigates them thoroughly. When possible, Content Manager will be modified to resolve the problem. The group or company that owns the prerequisite software will be contacted when possible, and Content Manager development will work with the group or company to resolve the issue. In some cases the issue cannot be fixed in Content Manager and will instead be documented in release notes or technical documents such as this one. When available, specific APAR numbers or other defect identification information for the prerequisite software will be provided along with a description of the issue.
+
+Important: This policy does not extend to major or minor releases (non-service releases) of prerequisite software and operating systems. When a new major or minor release of a software prerequisite is released, there will be a specific Content Manager release or fix pack that will be required before Content Manager supports it. When that Content Manager release or fix pack is available, the release notes and prerequisite Web pages will clearly state that the new version of the prerequisite software is supported. Any information that is required to safely upgrade, like the minimum service release of the prerequisite software that is required, will also be provided in the release notes and prerequisite software Web pages.
+
+Information concerning non-IBM products is obtained from the suppliers of those products, their published announcements, or other publicly available sources. You should visit the vendors' Web sites and follow recommendations in order to stay current with available updates. 
+
+
+Details regarding what Content Manager considers the service release for different prerequisite software is available in the following table. 
+
+ 
+
+Prereq What is a service release? Example Operating Systems AIX Technology Level (TL) and Service Packs on a TL are both considered service releases
+http://www-933.ibm.com/eserver/support/fixes/fixcentral/pfixpacks/ [http://www-933.ibm.com/eserver/support/fixes/fixcentral/pfixpacks/] 6.1 TL2, 6.1 TL3 Red Hat Enterprise Linux Minor version is considered a service release 5.0, 5.1 SUSE Linux Enterprise Server Service Pack (SP) is considered a service release 11 SP1, 11 SP2 Solaris Update release, designated by the month that it was released, is considered a service release 10 10/08, 10 5/09 Windows Service Packs (SP) and monthly security patches are considered service releases. Minor releases, such as Windows 2008 R2, are not considered service releases XP SP2, XP SP3 Database DB2 Fix Pack (FP) is considered a service release 9.7 FP1, 9.7 FP2 Oracle Fourth digit minor release number is considered a service release.
+The service release automatic support policy is not applicable to Oracle. Content Manager will explicitly list all supported Oracle versions in software requirements. 11.2.0.3 Web Application Server WebSphere Application Server Fix Pack (FP) is considered a service release 7.0 FP8, 7.0 FP9 Lightweight Directory Access Protocol (LDAP) Tivoli Directory Server Fix Pack (FP) is considered a service release 6.2 FP1, 6.2 FP2 Novel eDirectory Support Pack (SP) is considered a service release 8.8.1 SP2, 8.8.1 SP3 Lotus Domino Directory Third digit minor release is considered a service release 8.0.1, 8.0.2 Active Directory Service Packs (SP) and monthly security patches are considered service releases 2003 SP1, 2003 SP2 Long Term Storage Tivoli Storage Manager Fix packs (FP) is considered service releases. Tivoli Storage Manager sometimes is written as 6.1.1, 6.1.2 6.1 FP1, 6.1 FP2 
+RELATED INFORMATION
+ Content Manager Information Center Welcome page [http://pic.dhe.ibm.com/infocenter/cmgmt/v8r4m0/index.jsp]
+Content Manager software prerequisites [http://www.ibm.com/support/docview.wss?rs=86&uid=swg21260205]
+IBM Software Compatible Report [http://publib.boulder.ibm.com/infocenter/prodguid/v1r0/clarity/softwareReqsForProduct.html]
+
+
+
+
+ORIGINAL PUBLICATION DATE
+ 2011/3/4

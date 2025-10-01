@@ -1,0 +1,147 @@
+Title: IBM PM93015: MS INSTALLATION HANGS ON A WINDOWS 2008 SERVER WHERE ITM 6.3 IS INSTALLED. - United States
+
+Text:
+  FIXES ARE AVAILABLE
+7.1.0.3-TIV-ITCAMAD-IF0007: ITCAM for Application Diagnostics V7.1 FP3 IF7 [http://www-01.ibm.com/support/docview.wss?uid=swg24034668]
+7.1.0.3-TIV-ITCAMAD-IF0008: ITCAM for Application Diagnostics V7.1 FP3 IF8 [http://www-01.ibm.com/support/docview.wss?uid=swg24037994]
+7.1.0-TIV-ITCAMAD-FP0004: ITCAM for Application Diagnostics V7.1 Fix Pack 4 [http://www-01.ibm.com/support/docview.wss?uid=swg24041705]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  ---------------------------------------------
+   Users Affected:
+   
+   Users trying to install ITCAM MS on a Windows 2008 Server where
+   ITM 6.3 is already installed
+   
+   ---------------------------------------------
+   Problem Description:
+   
+   Can't install ITCAM for Application Diagnostics V7.1 Managing
+   Server (CZE39EN) on Windows Server 2008 R2 64-bit if ITM 6.3 is
+   on the same box.
+   The installer hangs at 'Your system in being analyzed' panel -->
+   'Checking ITM TEPS
+   
+   This is caused on some machines by a problem with
+   registryUtil.exe, which is not returning registry entries in a
+   box where ITM 6.3 is installed, but still creating an empty file
+   which is causing the hang.
+   
+   On other machines registryUtil.exe is not creating any file at
+   all on a box where ITM 6.3 is installed, which is causing no
+   discovery for TEPS but installation can go on.
+   
+   The MS installation works fine on servers where ITM 6.2.3.x is
+   installed.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  MS installer was hanging when trying to get the TEPS home from
+   windows registry during TEPS validation. This was because
+   windows regsitry was not returning the values properly and there
+   was no checking for null values.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Added the checking for null values. Also added another mechanism
+   to get TEPShome (using regedit instead of registryutil.exe).
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM93015
+   
+   
+ * REPORTED COMPONENT NAME
+   TCAM AD MAN SER
+   
+   
+ * REPORTED COMPONENT ID
+   5724Y92MS
+   
+   
+ * REPORTED RELEASE
+   710
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-07-16
+   
+   
+ * CLOSED DATE
+   2013-08-06
+   
+   
+ * LAST MODIFIED DATE
+   2013-08-06
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TCAM AD MAN SER
+   
+   
+ * FIXED COMPONENT ID
+   5724Y92MS
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R710 PSY
+   UP

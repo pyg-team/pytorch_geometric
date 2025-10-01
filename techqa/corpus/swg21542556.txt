@@ -1,0 +1,40 @@
+Title: IBM What versions of Connect:Direct are supported on Solaris 9? (SCI65880) - United States
+
+Text:
+STERLINGPRI TECHNOTE (FAQ)
+
+QUESTION
+ What versions of Connect:Direct are supported on Solaris 9? (SCI65880) 
+
+ANSWER
+
+
+Connect:Direct UNIX, Release 3.6.00 is supported on Solaris 8 or 9.
+
+
+
+Connect:Direct UNIX, Release 3.6.01 is supported on Solaris 9 or 10.
+
+ 
+
+HISTORICAL NUMBER
+ PRI1918 
+
+PRODUCT ALIAS/SYNONYM
+ 
+
+Fact
+
+
+Connect:Direct UNIX
+Release 3.6.00 
+Connect:Direct UNIX
+Release 3.6.01 
+
+SCI65880
+
+
+Goal
+
+
+FAQ: What versions of Connect:Direct are supported on Solaris 9?

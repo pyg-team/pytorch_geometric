@@ -1,0 +1,101 @@
+Title: IBM LO32572: ENHANCEMENT REQUEST FOR ABILITY TO DISABLE A ROOM/RESOURCE BASED ON A START AND STOP DATE - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS SUGGESTION FOR FUTURE RELEASE.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Customer request for the Resource Reservation database to have
+   the ability to disable a room/resource based on a start and stop
+   date.  This way users can reserve the room on the dates when it
+   will be available, and likewise, not be able to reserve the room
+   on the dates that it's not available.  For example.  Today is
+   8/15.  I like to disable a room from 9/8 - 9/12.  So clients can
+   make reservation for before 9/8 and after 9/12 today.
+   
+   Secondly, if I need to disable a room but the rooms have already
+   been scheduled then I need to be able to send an email
+   notification to these people notifying them to change their
+   reservation.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   LO32572
+   
+   
+ * REPORTED COMPONENT NAME
+   NOTES/DOMINO 7X
+   
+   
+ * REPORTED COMPONENT ID
+   5724E6200
+   
+   
+ * REPORTED RELEASE
+   702
+   
+   
+ * STATUS
+   CLOSED SUG
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-08-15
+   
+   
+ * CLOSED DATE
+   2015-05-12
+   
+   
+ * LAST MODIFIED DATE
+   2015-06-18
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

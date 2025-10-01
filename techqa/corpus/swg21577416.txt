@@ -1,0 +1,164 @@
+Title: IBM Silent Install of ClearCase 7.1.2.5 on RHEL 6.1 64-Bit by example - United States
+
+Text:
+CC; silent; installation; install; RHEL 6.1; RHEL 6; 1; 64-Bit; Red Hat Enterprise Linux TECHNOTE (FAQ)
+
+QUESTION
+ How can you proceed with a Silent Installation of IBM Rational ClearCase 7.1.2.5 on Red Hat Enterprise Linux (RHEL) 6.1 64-Bit? 
+
+CAUSE
+ 
+
+Need an step-by-step example.
+
+
+ANSWER
+ 
+
+IMPORTANT: Perform the steps below as root user. 
+
+ 
+
+ 1. First you should have the 32 libraries.
+    
+    References:
+    http://www.ibm.com/support/docview.wss?uid=swg21470870 [http://www.ibm.com/support/docview.wss?uid=swg21470870]
+    http://www.ibm.com/support/docview.wss?uid=swg21470870#X86_64 [http://www.ibm.com/support/docview.wss?uid=swg21470870#X86_64]
+    
+    Note 1: 64 bit packages of openmotif and gtk2-engines must be installed as well.
+    Note 2: Be sure SELinux is disabled or in Permissive mode
+    Run getenforce
+    and the result must be: 
+    
+    Disabled 
+    
+    or
+    
+    Permissive
+    
+ 2. Since 7.1.2.5 will require at least the IBM Installation Manager 1.4.4, download a more recent Installation Manager Version.
+    
+    For instance the 1.5.1 (agent.installer.linux.gtk.x86) is available at: https://www.ibm.com/support/docview.wss?uid=swg24031048 [https://www.ibm.com/support/docview.wss?uid=swg24031048]
+    
+    Extract the file:
+    mkdir <path>/im151
+    unzip agent.installer.linux.gtk.x86_1.5.1000.20111128_0824.zip -d <path>/im151/
+    
+    then run
+    cd /im151 
+    ./install -acceptLicense --launcher.ini silent-install.ini -log /tmp/imloginstall.log
+    
+    Note: If you have problems with the Installation Manager installation such as:
+    "bash: ./install: /lib/ld-linux.so.2: bad ELF interpreter: No such file or directory"
+    
+    Install glibc for 32 Bit 
+    
+    For instance for Red Hat:
+    
+    ###
+    # yum whatprovides /lib/ld-linux.so.2 
+    
+    The command above will show what package provides this file, for instance, the result could be: 
+    
+    glibc-2.12-1.7.el6.i686 : The GNU libc libraries
+    
+    Matched from:
+    Other : Provides-match: /lib/ld-linux.so.2
+    
+    Then install the package that you have as result:
+    
+    
+    # yum install glibc-2.12-1.7.el6.i686
+    
+    ####
+    
+    Then follow the instructions in technote 1459143 [http://www.ibm.com/support/docview.wss?uid=swg21459143]to install any other missing libraries. 
+    
+ 3. Extract the media:
+    
+    IBM Rational ClearCase V7.1.2 Linux_x86 Multilingual (CZJH1ML)
+    on (for example):
+    /mnt/UNIX/Linux/Rational_ClearCase/7.1.2/disk1
+    
+    and
+    
+    7.1.2.5-RATL-RCC.linux_x86.zip
+    on
+    /home/medias/ibm-images/7.1.2.5/7.1.2.5-RATL-RCC.linux_x86/
+    
+ 4. Download the Response file clearcase_response_7.1.2.X.zip
+    from technote 1351501 [http://www.ibm.com/support/docview.wss?uid=swg21351501]:
+    
+    Extract the file and make a copy from "clearcase_response_linux_x86_7.1.2.X.xml"
+    to "my_response.xml"
+    Edit the file to fit your case. For this example the file is placed at:
+    /home/medias/ibm-images/response/my_response.xml 
+    
+    For this example the machine is set to have:
+     1. 7.1.2 and 7.1.2.5
+        
+        Near line 15:
+        <server>
+        <repository location='/mnt/UNIX/Linux/Rational_ClearCase/7.1.2/disk1/diskTag.inf'/>
+        <repository location='/home/medias/ibm-images/7.1.2.5/7.1.2.5-RATL-RCC.linux_x86/repository.config' />
+        </server> 
+     2. Set the Registry Server, Region and SMTP Server name
+        Near line 102:
+        <data
+        key='user.CC_RegSvrHostName,com.ibm.rational.clearcase.linux_x86'
+        value='my-machine.xyz' />
+        
+        <!-- Data Key: user.CC_RegUNIXRegionName,com.ibm.rational.clearcase.linux_x86
+        This key is used to specify the IBM Rational ClearCase Unix Region Name.
+        -->
+        <data
+        key='user.CC_RegUNIXRegionName,com.ibm.rational.clearcase.linux_x86'
+        value='unix_region' />
+        
+        <!-- Data Key: user.CC_RegSMTPHostName,com.ibm.rational.clearcase.linux_x86
+        This key is used to specify the mail server.
+        -->
+        <data
+        key='user.CC_RegSMTPHostName,com.ibm.rational.clearcase.linux_x86'
+        value='my-machine.xyz' />
+        
+     3. Use IBM Rational Common Licensing instead ClearCase Licensing:
+        Near line 123:
+        key='user.CC_LICENSE_MANAGER,com.ibm.rational.clearcase.linux_x86'
+        value='IBMRCL' />
+        
+        Near line 153:
+        <data key='user.RCL_PortAtHost' value='27000@192.168.10.1' />
+        
+     4. Use prebuilt multiversion file system (MVFS) instead of compiling the MVFS
+        
+        Near line 183:
+        <data key='user.CC_MVFSModuleRebuild,com.ibm.rational.clearcase.linux_x86' value='0' />
+        
+     5. Delete the lines that refer to Tivoli if you do not have this installed. 
+        
+     6. Select features:
+        Near the end of file
+        <install>
+        <offering profile='IBM Rational SDLC'
+        id='com.ibm.rational.clearcase.linux_x86'
+        features='com.ibm.rational.clearcaseunix.core,
+        com.ibm.rational.clearcaseunix.CC_FULL,
+        com.ibm.rational.clearcaseunix.MS_FULL'/>
+        </install>
+        
+    
+    
+ 5. Run the installation
+    Change to InstallerImage_linux inside the disk1 folder
+    /mnt/UNIX/Linux/Rational_ClearCase/7.1.2/disk1/InstallerImage_linux
+    
+    
+ 6. The next step would be to run the following (be sure to see step5 before you run it):
+    ./install --launcher.ini silent-install.ini -silent -input 
+    home/medias/ibm-images/response/my_response.xml -log /tmp/loginstall.log 
+    showVerboseProgress
+    
+ 7. After Installation Manager is installed do the following:
+    cd /opt/IBM/InstallationManager/eclipse/
+    ./IBMIM -acceptLicense --launcher.ini silent-install.ini -input /home/medias/ibm-images/response/my_response.xml -log /tmp/loginstall.log -showVerboseProgress

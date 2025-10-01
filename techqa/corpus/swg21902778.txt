@@ -1,0 +1,59 @@
+Title: IBM Security Network Protection firmware 5.3.1 release notes - United States
+
+Text:
+release notes; readme; firmware; xgs FIX README
+
+ABSTRACT
+ IBM Security Network Protection Firmware Version 5.3.1 is a firmware update for the XGS NGIPS network protection platform. This release provides the following updates to IBM Security Network Protection Firmware Version 5.3.1. 
+
+CONTENT
+Serviceability and support enhancements: 
+
+ * You can now get additional information about your system through the command line within your "Tools" directory. We have added the Sysinfo command that will display system CPU, memory, and storage information in command line interface (CLI).
+   Note: A complete list of CLI commands are located in the Command-line interface [http://www.ibm.com/support/knowledgecenter/SSHLHV_5.3.1/com.ibm.alps.doc/references/alps_command_line_interface.htm] section in the Knowledge Center.
+   
+ * New to this release we have added a services mode within CLI. These commands will allow you to restart key services within the appliance. These services are listed below:  * Packet processing 
+    * Packet Capture 
+    * Local Management Interface (LMI) 
+    * License and Update (LUM) 
+    * SiteProtector Communication
+      
+   
+   
+ * You can now view and search logs from the command line using the "less" and "tail" commands from within logs mode. Log files found using the less command are System, Webserver, Updates and Analysis logs. 
+   
+ * With the admin-sftp account you can now retrieve Snapshots, Packet Captures, and support files. This account uses the same password as the admin account. 
+   Note: More details on admin-sftp can be found in the Downloading files with an SFTP client [http://www.ibm.com/support/knowledgecenter/SSHLHV_5.3.1/com.ibm.alps.doc/tasks/alps_downloading_sftp.htm]documentation on the Knowledge Center. [http://www.ibm.com/support/knowledgecenter/SSHLHV_5.3.1/com.ibm.alps.doc/tasks/alps_downloading_sftp.htm]
+
+
+Response enhancement:  * Forwarded events (Remote Syslog Alert Responses) will show the same details as the content sent to SiteProtector. 
+ * Support for using the TCP protocol when creating Remote Syslog Alert Responses to prevent messages being truncated and improve delivery reliability over using UDP.
+
+
+Network Access Policy enhancement:  * You can now use the network access policy to control network access when the HTTP X-Forward-For (XFF) header is enabled. The network policy can use the XFF header along with the packet source to control network traffic.
+
+
+IPS Policy enhancements:  * You can now derive a new IPS object from an existing IPS object by right-clicking on an IPS object and left-clicking on Clone.
+   
+ * When enabling network, transport-layer, and status events in a non-default IPS object, a warning message is shown. This will help to minimize what may be seen as a false negative.
+
+
+Performance:  * Inspection throughput increase for XGS 7100 up to 25Gbps, FPL5 (25Gbps) added.
+
+
+Miscellaneous updates and implementation changes:  * Top 10 URLs and URL categories widget in the Local Management Interface have been disabled by default. Given the limited popularity of this feature, coupled with the performance impact in certain situations, we disabled the feature by default. You can re-enable it by using the advanced parameter tune.url.topten.tracking=true. 
+   
+ *  We have removed the MultiCast Domain Name System (mDNS), under some configurations it caused security risks within the appliance.
+   
+ * Support for mutual certificate authentication for communication between the Network Security appliance and SiteProtector.
+
+
+Known issues: 
+You can find a list of known issues for IBM Security Network Protection 5.3.1 in Technote 1715537: Known issues for IBM Security Network Protection version 5.3.1 [http://www.ibm.com/support/docview.wss?uid=swg21715537]. 
+
+
+
+
+[/support/docview.wss?uid=swg21902778&aid=1] [https://ibm.biz/BdHdZx] [/support/docview.wss?uid=swg21902778&aid=2] [http://ibm.biz/InfraSecForumTechnote] [/support/docview.wss?uid=swg21902778&aid=3] [http://ibm.biz/SecSuptUTube] [/support/docview.wss?uid=swg21902778&aid=4] [http://ibm.biz/InfraSecFixes] [/support/docview.wss?uid=swg21902778&aid=5] [http://ibm.biz/FlexLicLogin] [/support/docview.wss?uid=swg21902778&aid=6] [http://ibm.biz/MyNotification] [/support/docview.wss?uid=swg21902778&aid=7] [http://ibm.biz/ContactSecSupport] 
+RELATED INFORMATION
+ A Japanese translation is available [http://www.ibm.com/support/docview.wss?uid=swg21903740]

@@ -1,0 +1,100 @@
+Title: IBM No data collected for the Client Missed Files and Activity Log workspaces - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ English 
+
+PROBLEM(ABSTRACT)
+ No data is being collected for the Client Missed Files and Activity Log workspaces in the Tivoli Enterprise Portal. All of the other workspaces are gathering data correctly. 
+
+SYMPTOM
+No data is being gathered for the client missed files or activity log workspace.
+
+
+CAUSE
+This is caused by the time difference between the IBM Tivoli Monitoring (ITM) server and the Tivoli Storage Manager (TSM) server. If the system time is off by one or more hours between the ITM server and the TSM server, then no data will be gathered for the Client Missed Files and Activity Log workspaces
+
+ENVIRONMENT
+Reporting and Monitoring version 6.3
+
+DIAGNOSING THE PROBLEM
+ If you put the TSM agent instance into trace mode (see instructions below), you will see the query that is run on the TSM server is using a date field which is in the future for that TSM server. 
+
+
+2012-03-01 16:23:30.000000 ActivityLog: TSM Login Succeeded
+2012-03-01 16:23:30.000000 ActivityLog: Length of Message String is:1
+2012-03-01 16:23:30.000000 ActivityLog: Querying Activity log for defined Entries
+2012-03-01 16:23:30.000000 ActivityLog: SQL Query to execute: select count(*) from actlog where ( SEVERITY = 'S' or SEVERITY = 'E') and DATE_TIME > '2012-03-01 15:23:30:00000'
+2012-03-01 16:23:30.000000 DSMServer: TSM Server Details
+2012-03-01 16:23:30.000000 DSMServer: Server name: SS2_ADSM_GROUP_SERVER
+2012-03-01 16:23:30.000000 DSMServer: Level: 0
+2012-03-01 16:23:30.000000 DSMServer: Platform: AIX
+2012-03-01 16:23:30.000000 DSMServer: Release: 3
+2012-03-01 16:23:30.000000 DSMServer: SubLevel: 0
+2012-03-01 16:23:30.000000 DSMServer: Version: 6
+2012-03-01 16:23:30.000000 ActivityLog: Total Activity Log count query to execute: select count(*) from actlog where ( SEVERITY = 'S' or SEVERITY = 'E') and DATE_TIME > '2012-03-01 15:23:30:00000'
+2012-03-01 16:23:30.000000 ActivityLog: Total Activity Log count rows returned: 2
+2012-03-01 16:23:30.000000 ActivityLog: Total Activity Log count = 0
+
+
+
+How to put the agent into trace mode
+-------------------------------------
+
+1. Stop the TSM Agent Instances
+A. Windows
+-- Open up the Manage Tivoli Monitoring Services (MTEMS)
+-- Select each of the Monitoring Agent for Tivoli Storage Manager and stop the agent
+
+B. AIX/Linux
+-- itmcmd agent -o instance_name stop sk (command line)
+-- Open up the CandleManage (GUI)
+Select each of the Monitoring Agent for Tivoli Storage Manager and Stop the agent
+
+
+2. Modify the config file to turn on tracing for the TSM Agent
+
+A. Location
+a. Windows: <install_dir>\itm\TMAITM6
+Example: C:\IBM\itm\TMAITM6
+
+b. AIX/Linux: <install_dir>/itm/config
+Example: /opt/Tivoli/TSM/Reporting/itm/config
+B. Name
+a. Windows: kskenv_xxx (xxx = name of the agent instance)
+Example: kskenv_myinstance
+
+b. AIX/Linux: sk.ini
+
+C. How to activate/Parameters
+a. WINDOWS, LINUX and AIX: KSK_TRACE=1
+
+This will turn on the trace log resulting in a file:
+-- Windows: \ibm\itm\TMAITM6\logs\xxxyyyzzz.log
+
+-- AIX/Linux: /install_dir/itm/logs/xxxyyyzzz.log
+
+Where: xxx = Agent instance name, yyy = TSM server port number, zzz = timestamp"
+
+
+3. Start the TSM Agent Instances
+A. Windows
+-- Open up the Manage Tivoli Monitoring Services (TEMS)
+-- Select each Monitoring Agent for Tivoli Storage Manager and start the agent
+
+B. AIX/Linux
+-- itmcmd agent -o instance_name start sk (command line)
+-- Open up the CandleManage (GUI)
+Select each of the Monitoring Agents for Tivoli Storage Manager and start the agent
+
+
+RESOLVING THE PROBLEM
+1. If the date/time on the ITM server or the TSM server is invalid, then reset that date/time to the correct date/time. 
+
+
+2. If the date/time on the ITM server or the TSM server is valid, but the ITM and TSM servers are in a different time zones, then modify the variable KSK_APIHRLIMIT=1 to be something like KSK_APIHRLIMIT=2 or larger.
+The KSK_APIHRLIMIT tells the Client Missed Files and Activity Log queries how many hours to set the query back run on the TSM server.
+
+Use the instructions "How to put the agent into trace mode" to modify the KSK_APIHRLIMIT variable.

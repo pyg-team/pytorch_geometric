@@ -1,0 +1,87 @@
+Title: IBM i Access - Client Solutions - United States
+
+Text:
+ 
+ 
+
+ * Overview [http://www.ibm.com/support/docview.wss?uid=isg3T1026775]
+ * Client Solutions [http://www.ibm.com/support/docview.wss?uid=isg3T1026805]
+ * Web [http://www.ibm.com/support/docview.wss?uid=isg3T1026808]
+ * Windows [http://www.ibm.com/support/docview.wss?uid=isg3T1026807]
+
+
+
+IBM i Access Client Solutions provides a Java based, platform-independent interface that runs on most operating systems that support Java, including Linux, Mac, and Windows™. IBM i Access Client Solutions consolidates the most commonly used tasks for managing your IBM i into one simplified location. The latest version of IBM i Access Client Solutions is available to customers with an IBM i software maintenance contract.
+
+ * Download IBM i Access Client Solutions base package [https://www.ibm.com/services/forms/preLogin.do?source=swg-ia]
+ * QuickStartGuide [ftp://ftp.software.ibm.com/as400/products/clientaccess/solutions/QuickStartGuide_en.html]
+ * GettingStarted [ftp://ftp.software.ibm.com/as400/products/clientaccess/solutions/GettingStarted_en.html]
+
+
+
+FEATURES
+ * 5250 display and printer emulation based on IBM's Host-on-Demand
+ * 5250 Session Manager support modeled after IBM Personal Communications Session Manager
+ * Multiple language support for concurrent 5250 emulation sessions on the same client
+ * Data Transfer similar to IBM i Access for Windows Data Transfer plus support for OpenDocument spreadsheet (*.ods), Excel Workbook (*.xlsx), and other file formats
+
+ * Data Transfer integration with Excel and OpenOffice
+ * Simplified SSL Configuration
+ * Download and viewing of spool files
+ * IBM i Virtual Control Panel for LAN and HMC consoles
+ * 5250 emulation for LAN and HMC consoles
+ * Consolidation of hardware management interface configurations, including ASMI, IVM, and HMC
+
+IBM i Access Client Solutions uses the same IBM i host servers as the other IBM i Access Family products and requires the same IBM i Access Family license (XW1) in order to use the 5250 emulation and Data Transfer features.
+
+An IBM i Access Family license [https://www.ibm.com/support/knowledgecenter/ssw_ibm_i_73/rzajr/rzajrlicenseinfo.htm] is required to use 5250 and Data Transfer.
+
+UPDATES
+The latest updates are available at IBM i Access Client Solutions base package. [https://www.ibm.com/services/forms/preLogin.do?source=swg-ia]
+
+ * Additional information for IBM i Access Client Solutions [https://www.ibm.com/developerworks/community/wikis/home?lang=en#!/wiki/IBM%20i%20Technology%20Updates/page/IBM%20i%20Access%20Client%20Solutions%20(5733XJ1)]
+ * Readme (TXT, 43KB) [ftp://ftp.software.ibm.com/as400/products/clientaccess/solutions/readmespacs.txt]
+ * To report a problem to IBM [https://www.ibm.com/developerworks/community/wikis/home?lang=en#!/wiki/IBM%20i%20Technology%20Updates/page/IBM%20i%20Access%20Support]
+
+
+OPTIONAL PLATFORM-SPECIFIC PACKAGES
+IBM i Access Client Solutions - Windows Application Package for Windows operating systems. 
+>> Readme (TXT, 24KB) [ftp://ftp.software.ibm.com/as400/products/clientaccess/solutions/readmeacs.txt]
+
+ * Connectivity to DB2® for i using ODBC, .Net, OLE DB and XDA
+ * Programming Toolkit for accessing IBM i system objects
+ * Support for TLS/SSL connections
+
+IBM i Access Client Solutions - Linux Application Package for Linux operating systems. 
+>> Readme (TXT, 2KB) [ftp://ftp.software.ibm.com/as400/products/clientaccess/solutions/readme.txt]
+
+ * Connectivity to DB2® for i using ODBC
+ * Full support for 64-bit ODBC data types
+ * TCP/IP connectivity
+ * Installation and usage guide [ftp://ftp.software.ibm.com/as400/products/clientaccess/solutions/IBMiACS_LinuxAppPkg_Install_Usage_Guide.pdf]
+
+These optional packages are only available for download on the Entitled Systems Support (ESS). [https://www.ibm.com/servers/eserver/ess] Additional information on downloading these packages from ESS is available in developerWorks. [https://www.ibm.com/developerworks/community/wikis/home?lang=en#!/wiki/IBM%20i%20Technology%20Updates/page/IBM%20i%20Access%20Client%20Solutions%20(5733XJ1)]
+
+GET INSIGHTS AND SUPPORT
+SUPPORT
+Get help today and learn more about product support options.
+
+ * Learn more [https://www.ibm.com/developerworks/community/wikis/home?lang=en#!/wiki/IBM%20i%20Technology%20Updates/page/IBM%20i%20Access%20Support]
+
+RESOURCES
+Explore technical topics and join the community.
+
+ * Learn more [https://www.ibm.com/developerworks/community/wikis/home?lang=en#!/wiki/IBM%20i%20Technology%20Updates/page/IBM%20i%20Access%20Resources]
+
+THE KNOWLEDGE CENTER
+Find answers quickly in official IBM product documentation.
+
+ * Learn more [https://www.ibm.com/support/knowledgecenter/ssw_ibm_i]
+
+QUICK LINKS
+ * Ordering/upgrading [https://www.ibm.com/developerworks/community/wikis/home?lang=en#!/wiki/IBM%20i%20Technology%20Updates/page/IBM%20i%20Access%20Ordering%20and%20Upgrading]
+ * Connection releases [https://www.ibm.com/developerworks/community/wikis/home?lang=en#!/wiki/IBM%20i%20Technology%20Updates/page/IBM%20i%20Access%20Connections]
+ * Request a design change [https://www-912.ibm.com/r_dir/ReqDesChange.nsf/Request_for_Design_Change?OpenForm]
+
+RELATED PRODUCTS
+ * Navigator for i [http://www.ibm.com/support/docview.wss?uid=isg3T1026869]

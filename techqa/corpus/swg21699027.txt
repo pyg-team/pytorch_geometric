@@ -1,0 +1,32 @@
+Title: IBM Export / Import of Widgets that Contain ConnectionIDs - United States
+
+Text:
+DASHL2; DASHL2CONF; widget; data source; datasource; Connection ID; fail; import TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ In JazzSM Dashboard Application Services Hub (DASH) , imported widgets do not work correctly, 
+because the widgets on the page refer still to the Connection ID of the source server. 
+
+SYMPTOM
+Widgets inside the imported page refer still to the Connection ID of the source server and hence fail to connect to the data source. 
+
+
+CAUSE
+Export/import transfers all the configuration of the page being handled, which includes the settings of each widget, which includes which data source is selected.
+
+RESOLVING THE PROBLEM
+This behavior is expected with Export/Import -- there's nothing to automatically change the configuration of each widget to replace the original Connection ID when importing them. 
+
+
+You will need to edit the widgets in question manually to correct the Connection information. 
+
+Possible workarounds are: 
+
+1) When doing the import, you can use the parameter --includeConnections false if you want to avoid overwriting the connection details. 
+
+The includeConnections flag when specified as false will skip importing data provider Connections, default is true. 
+
+ 
+2) To work in one step, you need to have the same data provider defined on both systems. For this reason, it's a good idea not to define data provider IDs by the hostname of the system if it's expected to be different between instances and you want to be able to export import. 
+
+A better Connection ID for the data provider might be something generic like "TBSM Server" on DASH A, that data provider can point to <Server 1>, and on DASH B the data provider with that same "TBSM Server" ID can point to <Server 2>.

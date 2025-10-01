@@ -1,0 +1,31 @@
+Title: IBM Security Access Manager 9.0 System Requirements - United States
+
+Text:
+ISAM System Requirements; SysReqs; SPCR reports PRODUCT LIFECYCLE
+
+ABSTRACT
+ Software Product Compatability Reports (SPCR) that contain the system requirements for IBM Security Access Manager version 9.0. 
+
+CONTENT
+To get the most updated software product compatibility report, use the Software Product Compatibility Reports (SPCR) tool [http://www.ibm.com/software/reports/compatibility/clarity/index.html]. 
+
+For your convenience, the sections below offer detailed system requirement reports for different contexts. Note that clicking a link will always generate a new, up-to-date report. 
+
+
+
+
+
+
+
+Requirements by appliance  * Virtual appliance [http://pic.dhe.ibm.com/infocenter/prodguid/v1r0/clarity-reports/report/html/softwareReqsForProduct?deliverableId=A0D5E890C81111E4A93F4F818B63D91A&osPlatforms=&duComponentIds=S002%7CA001&mandatoryCapIds=9%7C35%7C26&optionalCapIds=12%7C27] 
+ * Hardware appliance [http://pic.dhe.ibm.com/infocenter/prodguid/v1r0/clarity-reports/report/html/softwareReqsForProduct?deliverableId=A0D5E890C81111E4A93F4F818B63D91A&osPlatforms=&duComponentIds=S003%7CA001&mandatoryCapIds=9%7C35%7C26&optionalCapIds=12%7C27]
+
+
+
+
+
+Related requirements  * Supported hypervisors for virtual appliance [http://pic.dhe.ibm.com/infocenter/prodguid/v1r0/clarity-reports/report/html/vesForProduct?deliverableId=A0D5E890C81111E4A93F4F818B63D91A&osPlatforms=&duComponentIds=S002%7CA001] 
+ * Supported hypervisors for hardware appliance [http://pic.dhe.ibm.com/infocenter/prodguid/v1r0/clarity-reports/report/html/vesForProduct?deliverableId=A0D5E890C81111E4A93F4F818B63D91A&osPlatforms=&duComponentIds=S003%7CA001] 
+ * Hardware requirements for virtual appliance [http://www-969.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=A0D5E890C81111E4A93F4F818B63D91A&osPlatforms=&duComponentIds=S002%7CA001&mandatoryCapIds=9%7C35%7C25%7C26&optionalCapIds=12%7C27] 
+ * Hardware requirements for physical appliance [http://www-969.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=A0D5E890C81111E4A93F4F818B63D91A&osPlatforms=&duComponentIds=S003%7CA001&mandatoryCapIds=9%7C35%7C25%7C26&optionalCapIds=12%7C27] 
+ * Related Software [http://pic.dhe.ibm.com/infocenter/prodguid/v1r0/clarity-reports/report/html/prereqsForProduct?deliverableId=A0D5E890C81111E4A93F4F818B63D91A&osPlatforms=&duComponentIds=S003%7CS002%7CA001&mandatoryCapIds=9%7C35%7C26&optionalCapIds=12%7C27]

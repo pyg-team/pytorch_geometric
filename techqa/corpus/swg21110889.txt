@@ -1,0 +1,26 @@
+Title: IBM DFHAP1203I followed by DFHSR0601 and 0C4 in CEEZLOD - United States
+
+Text:
+LE CEEPLPKA CEEZLOD RPL ABEND0C4 ABENDS0C4 0C4 S0C4 DFHAP1203I DFHSR0601 MSGDFHAP1203I MSGDFHSR0601 MAINTENANCE startup initialization 5655M1500 R640 640 R400 400 HCI6400 R650 650 R500 500 HCI6500 5655-M15 5655M15 5655S9700 R660 660 R600 600 HCI6600 5655-S97 5655S97 kixinfo TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Your CICS region fails with the following messages at start up after you apply CICS maintenance:
+
+DFHAP1203I Language Environment is being initialized. 
+DFHSR0601 Program interrupt occurred with system task III in control.
+
+A system dump shows that an abend 0C4 occurred in Language Environment (LE) module CEEZLOD. 
+
+SYMPTOM
+DFHAP1203I and DFHSR0601
+
+CAUSE
+There were two libraries in the RPL concatenation containing LE module CEEPLPKA. 
+
+RESOLVING THE PROBLEM
+Remove LE module CEEPLPKA from all but the CEE.SCEERUN library. 
+
+
+
+PRODUCT ALIAS/SYNONYM
+ CICS/TS CICS TS CICS Transaction Server

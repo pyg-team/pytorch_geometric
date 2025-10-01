@@ -1,0 +1,26 @@
+Title: IBM About the IBM PureData System for Analytics NPS Software Packages - United States
+
+Text:
+ PRODUCT DOCUMENTATION
+
+ABSTRACT
+ This topic describes the host and client software packages for the IBM PureData System for Analytics appliances on Fix Central. 
+
+CONTENT
+Users who have permission to access IBM PureData System for Analytics software can download Netezza Platform Software (NPS) clients and patches from IBM Fix Central (www.ibm.com/support/fixcentral [http://www.ibm.com/support/fixcentral]). Fix Central allows you to search, select, order, and download fixes to your system with a choice of delivery options. Fixes provide changes to your software, Licensed Internal Code, or machine code that fix known problems, add new function, and keep your appliance and its software operating efficiently. 
+
+TIP: To quickly review and link to the Netezza software kits, see the quick list of downloads available at http://www-01.ibm.com/support/docview.wss?uid=swg27024235 [http://www-01.ibm.com/support/docview.wss?uid=swg27024235]. 
+
+To download the PureData System for Analytics software, after authenticating, select the following menu choices on the Fix Central page:
+
+Product Group: Information Management 
+Select from Information Management: IBM Netezza NPS Software and Clients 
+Installed Version: <select appropriate version> 
+Platform: <select appropriate OS platform, or select All> 
+
+Each Netezza release typically includes all or a subset of the following kits. The <version> string is an NPS release number. For more information about the supported operating systems and versions, see the IBM Knowledge Center [https://www-304.ibm.com/support/knowledgecenter/SSULQD/SSULQD_welcome.html] for the PureData System for Analytics topics for your NPS release, or the IBM Netezza System Administrator's Guide for your release. 
+
+
+
+File Name Description nz-aixclient-<version>.tar.Z Netezza client for IBM AIX including ODBC/JDBC drivers and command line utilities nz-hpitclient-<version>.tar.gz Netezza client for HP Itanium including ODBC/JDBC drivers and command line utilities nz-linuxclient-<version>.tar.gz Netezza client for Linux including ODBC/JDBC drivers and command line utilities nz-npsdoc-<version>.tar.gz Netezza documentation package, includes PDFs of the common user guides and a searchable index file. nz-nps-<version>.tar.gz Netezza server software nz-powerpcclient-<version>.tar.gz Netezza client for IBM Power (pSeries) systems that run Red Hat Enterprise Linux 6.1 including ODBC/JDBC drivers and command line utilities nz-sol10client-<version>.tar.gz Netezza client for Solaris v10 including ODBC/JDBC drivers and command line utilities nz-sol10x86client-<version>.tar.gz Netezza client for Solaris v10 running on x86 including ODBC/JDBC drivers and command line utilities nz-solclient-<version>.tar.Z Netezza client for Solaris v8, v9 including ODBC/JDBC drivers and command line utilities nz-winclient-<version>.zip Netezza client for Windows including NzAdmin, the ODBC/JDBC drivers, the OLE DB provider, and command line utilities nz-zlinuxclient-<version>.tar.gz Netezza client for IBM System z clients that run SUSE Linux or Red Hat Enterprise Linux, including ODBC/JDBC drivers and command line utilities nz-sw-support-tools-<version>.tar.gz Netezza Software Support tools, which include Support scripts and other general purpose scripts for the appliance. (Starting in January 2014, NPS releases automatically install the software support tools.) 
+To download kits for Netezza applications such as IBM Netezza Analytics, Netezza Performance Portal, or the SQL Extensions Toolkit, go to the Fix Central page and in the Select from Information Management list, select IBM Netezza Applications.

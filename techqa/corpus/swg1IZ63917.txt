@@ -1,0 +1,142 @@
+Title: IBM IZ63917: BUG IN TREESIMPLIFICATION OPTIMIZATION - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Error Message: JdbcSQLException: General error:
+   java.lang.RuntimeException: try to add a record twice pos:0 i:0
+   Calculation involving addition, multiple right shifts and
+   multiplication results in 0 always.
+   .
+   
+   This problem may manifest itself as an infinite loop while
+   matching a Pattern. A common traceback would look like:
+   
+   java/util/regex/Pattern$BnM.match   Pattern.java:4974
+   java/util/regex/Matcher.search      Matcher.java:1116
+   java/util/regex/Matcher.find        Matcher.java:546
+   java/util/regex/Matcher.replaceAll  Matcher.java:825
+   java/lang/String.replaceAll         String.java:1572
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  -Xjit:disableTreeSimplification
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Calculation involving addition, multiple right shifts and
+   multiplication results in 0 always because of a bug in
+   TreeSimplification optimization.
+   This can result in incorrect results or unexpected exceptions.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This defect will be fixed in:
+   6.0.0 SR7
+   5.0.0 SR12
+   .
+   JIT has been updated to handle the scenario correctly and ensure
+   right shift is done by correct number of bits.
+   .
+   To obtain the fix:
+   Install build 20091117 or later
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ63917
+   
+   
+ * REPORTED COMPONENT NAME
+   JIT
+   
+   
+ * REPORTED COMPONENT ID
+   620700124
+   
+   
+ * REPORTED RELEASE
+   600
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-10-28
+   
+   
+ * CLOSED DATE
+   2009-11-27
+   
+   
+ * LAST MODIFIED DATE
+   2010-03-17
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    IZ63919 [http://www-01.ibm.com/support/docview.wss?uid=swg1IZ63919]
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   JIT
+   
+   
+ * FIXED COMPONENT ID
+   620700124
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R600 PSN
+   UP

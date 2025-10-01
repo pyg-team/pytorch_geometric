@@ -1,0 +1,193 @@
+Title: IBM PQ03199: LPR FAILS WITH ABEND0D6 REASON CODE 22 WHEN TSO PREFIX OR BATCH JOB USERID STARTS WITH CHARACTERS 'JOB' - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  LPR fails with abendS00D6 rsn00000022 when invoked from a batch
+   job with a userid starting with 'JOB'.  The same error occurs
+   if LPR is invoked under interactive TSO with a TSO PREFIX that
+   starts with 'JOB'.  LPR sets the TSO PREFIX or batch job userid
+   in the filespec.owner field prior to calling MVDYNALL for
+   allocation of the data set to send.  The allocation routine in
+   MVDYNALL passes the filespec as block to the issue_dynalloc
+   routine.  The issue_dynalloc routine checks the block.owner
+   field (specoffiletype) to see if the first 3 characters are
+   equal to 'JOB'.  If they are equal, the code issues a call to
+   Utility_Routine(Utility_Dynalloc,...) which generates into a PC
+   call.  The Utility_Routine expansion uses the PAPCOMM pointer
+   for the address of MVPCOMM, but the PAPCOMM pointer has not
+   been set.  The invokation of MVDYNALL from the LPR environment
+   should always branch around the Utility_Routine to the SVC99
+   allocation request.
+   VERIFICATION STEPS:
+   The LPR command must be invoked under interactive TSO with a
+   TSO PREFIX that starts with the characters 'JOB', or a batch
+   job with a userid that starts with 'JOB'.  The abend occurs in
+   MVDYNALL + 18DC at the PN85009 [http://www-01.ibm.com/support/docview.wss?uid=isg1PN85009].  This abend can occur in 310
+   and 320.
+   KEYWORDS:
+   MVDYNALL ALLOCATE ISSUE_DYNALLOC LPR LPRSET AB/S00D6
+   PRCS/00000022
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Change the TSO PREFIX or batch job userid to something other
+   than JOBxxxxx.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: MVS TCP/IP Customers who print using LPR or  *
+   *                 NPF.                                         *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: LPR fails with ABEND0D6 RC0022 when     *
+   *                      jobs are submitted by or for TSO users  *
+   *                      with IDs beginning with 'JOB'.          *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   LPR fails when the TSO or RACF user id begins with 'JOB', for
+   example JOB78, JOB, JOBBLE, JOB1, or JOB00001.
+   Instead of correctly printing the requested dataset, LPR
+   ABENDs with ABEND0D6 during dynamic allocation of the dataset.
+   LPR can also abend on these IDs when either a printer or host
+   is not specified on the LPR command, but was saved by a previous
+   LPRSET command in userid.LASTING.GLOBALV.
+   
+   The problem is caused by special code for the FTP FILETYPE=JES
+   functions which need JES spool files instead of normal files.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Modified code to correctly allocate and deallocate the file when
+   the TSO or RACF User ID begins with 'JOB'.   FTP is unaffected.
+   
+   Modules affected:
+   EZACA006 (MVDYNALL), EZACA007 (MVDYNUN), EZACA04Q (MVSTATE),
+   and EZABB01Q (LPR)
+   
+   * Cross Reference between External and Internal Names
+   EZABB01Q (LPR     )  EZACA006 (MVDYNALL)  EZACA007 (MVDYNUN )
+   EZACA04Q (MVSTATE )  EZABB01Q (LPR     )  EZACA006 (MVDYNALL)
+   EZACA007 (MVDYNUN )  EZACA04Q (MVSTATE )
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PQ03199
+   
+   
+ * REPORTED COMPONENT NAME
+   TCP/IP V3 MVS
+   
+   
+ * REPORTED COMPONENT ID
+   5655HAL00
+   
+   
+ * REPORTED RELEASE
+   310
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   1997-04-08
+   
+   
+ * CLOSED DATE
+   1997-05-20
+   
+   
+ * LAST MODIFIED DATE
+   1997-06-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UQ05241 UQ05242
+   
+   
+
+MODULES/MACROS
+ *  EZABB01Q EZACA006 EZACA007 EZACA04Q
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TCP/IP V3 MVS
+   
+   
+ * FIXED COMPONENT ID
+   5655HAL00
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R310 PSY UQ05241 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UQ05241]
+   UP97/05/30 P F705
+   
+   
+ * R320 PSY UQ05242 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UQ05242]
+   UP97/05/30 P F705
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

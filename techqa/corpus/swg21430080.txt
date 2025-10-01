@@ -1,0 +1,78 @@
+Title: IBM MQRC_SOURCE_CCSID_ERROR, Probe Id: VP029005,  Major Errorcode: vrcE_BAD_CCSID_0, AMQ7935: Bad CCSID in message header (CCSID = 37) and AMQ6174: The dynamically loadable shared library was not found. - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ You have a WebSphere MQ application that receives the following error message during an MQGET:
+MQRC_SOURCE_CCSID_ERROR Reason Code 2111
+
+The error log of the MQ queue manager shows the following error:
+
+AMQ6174: The dynamically loadable shared library '/var/mqm/exits64/MQHRF2_r' was not found. The system returned error number '2' and error message 'No such file or directory'. The queue manager will continue without this module. 
+
+SYMPTOM
+The general MQ error log for the queue managers shows: 
+
+
+AMQ7935: Bad CCSID in message header (CCSID = 37).
+EXPLANATION:
+Message data conversion could not convert a message because the Message
+Descriptor of the message contained an incorrect CodedCharSetId field.
+ACTION:
+Use the standard facilities supplied with your system to record the problem
+identifier, and to save the generated output files. Do not discard these files
+until the problem has been resolved. Use the file containing the Message
+Descriptor of the message to determine the source of the message and to see how
+data that is not valid became included in the message. 
+
+ 
+
+An FDC file is generated with the following: 
+
+
+| Probe Id :- VP029005 
+| Component :- vwb_rf_header_2 
+| Major Errorcode :- vrcE_BAD_CCSID_0 
+| Probe Type :- MSGAMQ7935 
+| Probe Description :- AMQ7935: Bad CCSID in message header (CCSID = 37). 
+| Arith1 :- 37 (0x25) 
++-----------------------------------------------------------------------------+
+MQM Function Stack
+ccxResponder
+rrxResponder
+ccxReceiveThreadFn
+cciProcessUserData
+cciProcessAsyncRcv
+rriServerAsyncRcv
+rstReceiveMessageRequest
+rstCheckForOneMessage
+MQGET
+zstMQGET
+vpiConvertData
+vwaConvert
+vwb_rf_header_2
+xcsFFST
+
+
+RESOLVING THE PROBLEM
+If the NameValueCCSID is not one of the supported CCSIDs for MQRFH2, then MQGET returns MQRC_SOURCE_CCSID_ERROR with FDC VP029005 and the message is returned without being converted.
+
+You need to use one of the supported CCSIDs for MQRFH2. Refer to the section "NameValueCCSID [http://www.ibm.com/support/knowledgecenter/SSFKSJ_8.0.0/com.ibm.mq.ref.dev.doc/q099310_.htm?lang=en]" in MQ documentation for more details:
+
+
+
+An excerpt is shown below:
+
+NameValueCCSID must have one of the following values:
+
+CCSID Meaning 
+1200 UCS-2 open-ended 
+13488 UCS-2 2.0 subset 
+17584 UCS-2 2.1 subset (includes the Euro symbol) 
+1208 UTF-8
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ WebSphere MQ WMQ

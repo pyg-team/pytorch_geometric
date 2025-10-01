@@ -1,0 +1,323 @@
+Title: IBM IT21169: Message loss when the MQ resource adapter connects to a z/OS queue manager using the BINDINGS transport and RRS transactions - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The MQ V8 resource adapter has been deployed into a WebSphere
+   Liberty Profile for z/OS server. A JMS connection factory had
+   been defined in the WebSphere Liberty Profile server
+   configuration, which contains information about how to connect
+   to an MQ for z/OS V8 queue manager using the BINDINGS transport.
+   A queue destination has also been defined, which contained
+   information on how to access a queue on the queue manager.
+   
+   An enterprise application containing a servlet is then deployed
+   into the WebSphere Liberty Profile server. The servlet contains
+   the logic shown below:
+   
+   - Lookup the JMS connection factory from the WebSphere Liberty
+   server's JNDI repository.
+   - Lookup the JMS queue destination from the application server's
+   JNDI repository.
+   - Start a user transaction.
+   - Create a JMS context from the connection factory.
+   - Use the JMS context to send a message to the queue
+   destination, using the method call:
+   
+           context.createProducer().send(queue, "This is a Text
+   Message");
+   
+   - Commit the user transaction.
+   - Start a second user transaction.
+   - Create a new JMS context from the connection factory.
+   - Use the JMS context to get a message to the queue destination,
+   using the method call:
+   
+           context1.createConsumer(queue).receiveBody(String.class,
+   500);
+   
+   - Rollback the user transaction.
+   - Start a third user transaction.
+   - Create a new JMS context from the connection factory.
+   - Use the JMS context to get a message to the queue destination,
+   using the method call:
+   
+           context1.createConsumer(queue).receiveBody(String.class,
+   500);
+   
+   - Commit the user transaction.
+   
+   When the servlet is invoked, the message is successfully put to
+   the queue destination, delivered to the servlet and then rolled
+   back. However, when the servlet tries to get the message again
+   within the third user transaction, the call to:
+   
+     context1.createConsumer(queue).receiveBody(String.class, 500);
+   
+   fails with a JMSException containing MQ reason code 2033
+   (MQRC_NO_MSG_AVAILABLE).
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   This issue affects two categories of user:
+   
+   Category 1:
+   ---------------
+   Users of:
+   
+   - The IBM MQ V8 resource adapter.
+   - The IBM MQ V9 resource adapter.
+   
+   who have:
+   
+   - Deployed the resource adapter into WebSphere Liberty Profile
+   on z/OS.
+   - And defined a connection factory within WebSphere Liberty
+   Profile that contains information on how to connect to an IBM MQ
+   queue manager using the BINDINGS transport.
+   - And have enterprise applications that use the connection
+   factory to create a connection to a queue manager, and calls one
+   of the following methods:
+   
+       - JMSConsumer.receiveBody(Class<T>)
+       - JMSConsumer.receiveBody(Class<T>, long)
+       - JMSConsumer.receiveBodyNoWait(Class<T>)
+   
+   to get messages from a destination hosted on that queue manager
+   inside a user transaction.
+   
+   Category 2:
+   ---------------
+   Users of:
+   
+   - The WebSphere Application Server for z/OS V9 IBM MQ messaging
+   provider.
+   
+   who have:
+   
+   - Defined a connection factory within WebSphere Application
+   Server that contains information on how to connect to an IBM MQ
+   queue manager using the BINDINGS transport.
+   - And have enterprise applications that use the connection
+   factory to create a connection to a queue manager, and call one
+   of the following methods:
+   
+       - JMSConsumer.receiveBody(Class<T>)
+       - JMSConsumer.receiveBody(Class<T>, long)
+       - JMSConsumer.receiveBodyNoWait(Class<T>)
+   
+   to get messages from a destination hosted on that queue manager
+   inside a user transaction (also known as an RRS transaction)
+   
+   
+   Platforms affected:
+   z/OS
+   
+   ****************************************************************
+   PROBLEM DESCRIPTION:
+   When an enterprise application running inside of either
+   WebSphere Application Server V9 or WebSphere Liberty Profile
+   calls one of the following methods:
+   
+       - JMSConsumer.receiveBody(Class<T>)
+       - JMSConsumer.receiveBody(Class<T>, long)
+       - JMSConsumer.receiveBodyNoWait(Class<T>)
+   
+   the MQ resource adapter will perform the following steps:
+   
+   - Issue an MQGET API call, with the option MQGMO_BROWSE
+   specified, to get a copy of the message.
+   - Get the body of the message, and turn it into an Object of the
+   type requested by the application.
+   - If the body of the message can be turned into an Object of the
+   specified type, then:
+       - Issue a second MQGET API call, to destructively get the
+   message.
+       - Return the Object back to the application.
+   - Else:
+       - Throw an Exception.
+   - End if.
+   
+   Now, if the MQ resource adapter detects that the methods:
+   
+       - JMSConsumer.receiveBody(Class<T>)
+       - JMSConsumer.receiveBody(Class<T>, long)
+       - JMSConsumer.receiveBodyNoWait(Class<T>)
+   
+   are being called inside of a transaction, then when the first
+   MQGET call is made, the queue manager will associate the message
+   with that transaction and hide it from other applications. If
+   the message body can be turned into an Object of the specified
+   type and the second MQGET call works, then the transaction
+   completes successfully and the message will no longer be on the
+   queue. If the transaction is rolled back, then the message will
+   be put back to the queue so that it can be picked up again.
+   
+   If the MQ resource adapter detect that the method is being
+   called to get a message outside of a transaction, then it will
+   issue the MQGET API call with the additional option MQGMO_LOCK
+   set. This effectively hides the message from other applications.
+   If the attempt to get the message body subsequently fails, then
+   the message is unlocked so that it can be reprocessed.
+   
+   Unfortunately, the MQ resource adapter did not handle user
+   transactions created by enterprise applications running in
+   either WebSphere Liberty Profile on z/OS or WebSphere
+   Application Server for z/OS V9 correctly. When the methods:
+   
+       - JMSConsumer.receiveBody(Class<T>)
+       - JMSConsumer.receiveBody(Class<T>, long)
+       - JMSConsumer.receiveBodyNoWait(Class<T>)
+   
+   were called as part of a user transaction managed by RRS, the MQ
+   resource adapter incorrectly assumed that the methods were being
+   called from a non-transacted JMS session. As a result, the MQGET
+   calls made to browse and subsequently get the message were
+   performed outside of the user transaction. This meant that when
+   the user transaction was rolled back, the message was lost.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The MQ resource adapter has been updated to correctly handle
+   user transactions created by enterprise applications running in
+   either WebSphere Liberty Profile on z/OS or WebSphere
+   Application Server for z/OS V9. Now, when the methods:
+   
+       - JMSConsumer.receiveBody(Class<T>)
+       - JMSConsumer.receiveBody(Class<T>, long)
+       - JMSConsumer.receiveBodyNoWait(Class<T>)
+   
+   are called as part of a user transaction, the MQ resource
+   adapter associates the MQGET calls used to browse and
+   destructively get the message with the user transaction. This
+   means that if the user transaction is subsequently rolled back,
+   the message that was removed from the JMS destination as part of
+   the:
+   
+       - JMSConsumer.receiveBody(Class<T>)
+       - JMSConsumer.receiveBody(Class<T>, long)
+       - JMSConsumer.receiveBodyNoWait(Class<T>)
+   
+   methods is rolled back.
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+   Version    Maintenance Level
+   v8.0       8.0.0.8
+   v9.0 CD    9.0.4
+   v9.0 LTS   9.0.0.2
+   
+   The latest available maintenance can be obtained from
+   'WebSphere MQ Recommended Fixes'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037]
+   
+   If the maintenance level is not yet available information on
+   its planned availability can be found in 'WebSphere MQ
+   Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT21169
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ BASE MULTIP
+   
+   
+ * REPORTED COMPONENT ID
+   5724H7251
+   
+   
+ * REPORTED RELEASE
+   800
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   YesHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-06-24
+   
+   
+ * CLOSED DATE
+   2017-09-01
+   
+   
+ * LAST MODIFIED DATE
+   2017-09-05
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ BASE MULTIP
+   
+   
+ * FIXED COMPONENT ID
+   5724H7251
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R800 PSY
+   UP

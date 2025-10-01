@@ -1,0 +1,29 @@
+Title: IBM How to configure the database end point for SQL Server named instance? - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How to configure the database end point for SQL Server named instance? 
+
+ANSWER
+For the Database end point configuration, the server name should be used as "server_name\instance_name" and the port number should be the port number of SQL server installation (default is 1433).
+
+Every named instance of a SQL server works as a normal SQL server instance however the port number of every named instance is different.
+
+The alternative way to connect to the particular named instance is to connect directly at the particular port number on which the named instance is running. To know the details to know the particular port number you can refer to an Microsoft article at:
+http://support.microsoft.com/kb/265808 [http://support.microsoft.com/kb/265808]
+
+One point to note is that in some cases the port number can change when the named instance database restart. This totally depends on the way SQL server installation has been done. If you have installed the SQLServerBrowser Service then you don't need to give the new port after every restart of DB server. Since SQLServerBrowser is responsible for resolving the named instance port. All you need to give is the port which you give during installation or startup of the SQLServer in Studio configuration.
+
+If you don't have SQLServerBrowser service installed then it depends how you have done the configuration. If you have allocated the fixed port for the Named Instance then you are good but if you have not done that then after every restart you have to change the port. This is irrespective to Cast Iron only, for other DB clients also you will then need the new port number to make the successful connection every time the SQL server is restarted.
+
+
+
+HISTORICAL NUMBER
+ 00000602 
+
+PRODUCT ALIAS/SYNONYM
+ Cast Iron Solution
+Cast Iron Operating System
+Cast Iron Studio

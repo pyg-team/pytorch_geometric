@@ -1,0 +1,22 @@
+Title: IBM Integrated authentication set up with IBM Business Process Manager (BPM) Version 7.5.x - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How do you setup integrated authentication with Process Portal, Process Admin, Microsoft Office Add-On and Microsoft Sharepoint Add-On for IBM Business Process Manager 7.5.x ? 
+
+ANSWER
+Refer to the How to setup Single Sign-On (Kerberos) on WebSphere Lombardi Edition 7.1 on Windows [http://www.ibm.com/support/docview.wss?uid=swg21448203] document to set up integrated authentication.
+
+
+Although the previous technote references WebSphere Lombardi Edition, the information is valid for the IBM Business Process Manager Version 7.5 products. However, in step 6c of the document you need to add different information for the SPNEGO filter criteria. Add the string "webapi" to use single sign-on (SSO) with web services and add "teamworks", which is used by Process Portal, Process Admin, Microsoft Office Add-On and Microsoft Sharepoint Add-On, to the SPNEGO filter criteria in step 6c. The following code shows the new filter criteria: 
+
+request-url^=ProcessCenter|ProcessAdmin|portal|webapi|teamworks
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Business Process Manager Advanced Security Windows 7.5.1, 7.5.0.1, 7.5 Business Integration IBM Business Process Manager Standard Security Windows 7.5.1, 7.5.0.1, 7.5 
+PRODUCT ALIAS/SYNONYM
+ BPM

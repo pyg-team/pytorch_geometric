@@ -1,0 +1,59 @@
+Title: IBM Rapid TSAMP configuration backup for fast redeployment in HADR, DPF & single 
+partition environment - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ What are the steps to replicate or redeploy an existing TSAMP configuration in HADR, DPF, or single partition environment? 
+
+CAUSE
+Today, you can use the -f input-file-name parameter with the db2haicu command to run Db2® high availability instance configuration utility (db2haicu) with an XML input file specifying your configuration details. Running db2haicu with an XML input file is useful when you must perform configuration tasks multiple times, such as when you have multiple database partitions to be configured for high availability.
+However, the creation of such XML input file is a manual process. Even if the intent is to replicate an existing configuration for backup or redeployment, the file must be constructed from scratch. It is a time-consuming process and is error-prone.
+
+
+ANSWER
+Starting from Db2 V11.1.3.3, the db2haicu command has been enhanced with an option, “-o”, to export an existing configuration into an XML file for backup purpose. This can be fed into the db2haicu -f command for redeployment on the existing cluster or can be replicated on a new cluster. 
+
+Below is comparison of steps of two frequent use cases before and after this new feature:
+
+Use case #1: Rebuild an existing HADR setup:
+
+Prior to Db2 V11.1.3.3:
+1. Obtain a lssam listing from the primary and standby host
+2. Delete the current setup from both hosts
+3. Use the interactive db2haicu prompt to setup the standby using the lssam listing (time consuming)
+4. Follow the same steps on the primary host
+
+Number of steps required is proportioned to the number of databases. For one database, this will require going through at least 7+ steps in the maintenance menu for db2haicu.
+
+With the new “-o” export option in Db2 V11.1.3.3:
+1. Run db2haicu –o on primary and standby host
+2. Delete the current setup
+3. Run db2haicu –f using the above file on both primary and standby hosts to import the configuration 
+
+Improvement with the new feature: Regardless of the number of databases, the configuration can be restored in a fixed number of steps.
+
+Use case #2: Replicate an existing HADR setup on a different host pairs. 
+
+Prior to Db2 V11.1.3.3:
+1. Obtain a lssam listing from the primary and standby host
+2. On the new host pair, use the interactive db2haicu prompt to setup the standby using the lssam listing (time consuming)
+3. Follow the same steps on the primary host
+
+With the new “-o” export option in Db2 V11.1.3.3:
+1. Run db2haicu –o on primary and standby host
+2. In the case of re-deployment on a new cluster, there might be differences in the various XML elements and attributes (ie. fields such as nodenames, interface names). Depending on what fields differ, change the associated attributes in the exported file to the expected values. 
+3. Run db2haicu –f using the above file on both primary and standby hosts to import the configuration 
+
+Notes:
+1. The resource model must be in an appropriate state to be exported.
+
+2. The XML elements and attributes that are applicable and will be exported for the various db2haicu deployments are listed below. A description of these fields can be found here:
+https://www.ibm.com/support/knowledgecenter/en/SSEPGG_11.1.0/com.ibm.db2.luw.admin.ha.doc/doc/r0052515.html [https://www.ibm.com/support/knowledgecenter/en/SSEPGG_11.1.0/com.ibm.db2.luw.admin.ha.doc/doc/r0052515.html]
+
+
+
+Element Type Attributes HADR DPF Single-partitioned Cluster Domain Type Quorum Device ✓ ✓ ✓ [/support/docview.wss?uid=swg22014559&amp;aid=1] Network Interfaces ✓ ✓ ✓ [/support/docview.wss?uid=swg22014559&amp;aid=1] Cluster Nodenames ✓ ✓ ✓ FailoverPolicy Type Round Robin [/support/docview.wss?uid=swg22014559&amp;aid=1] ✓ ✓ [/support/docview.wss?uid=swg22014559&amp;aid=1] Mutual [/support/docview.wss?uid=swg22014559&amp;aid=1] ✓ [/support/docview.wss?uid=swg22014559&amp;aid=1] [/support/docview.wss?uid=swg22014559&amp;aid=1] Active-Passive [/support/docview.wss?uid=swg22014559&amp;aid=1] [/support/docview.wss?uid=swg22014559&amp;aid=1] ✓ [/support/docview.wss?uid=swg22014559&amp;aid=1] NPlusM [/support/docview.wss?uid=swg22014559&amp;aid=1] ✓ ✓ [/support/docview.wss?uid=swg22014559&amp;aid=1] LocalRestart [/support/docview.wss?uid=swg22014559&amp;aid=1] ✓ ✓ [/support/docview.wss?uid=swg22014559&amp;aid=1] HADR Failover ✓ [/support/docview.wss?uid=swg22014559&amp;aid=1] [/support/docview.wss?uid=swg22014559&amp;aid=1] [/support/docview.wss?uid=swg22014559&amp;aid=1] Custom [/support/docview.wss?uid=swg22014559&amp;aid=1] ✓ ✓ DB2PartitionType Failover Policy [/support/docview.wss?uid=swg22014559&amp;aid=1] ✓ ✓ [/support/docview.wss?uid=swg22014559&amp;aid=1] Mount details [/support/docview.wss?uid=swg22014559&amp;aid=1] ✓ ✓ [/support/docview.wss?uid=swg22014559&amp;aid=1] Virtual IP's for nodes [/support/docview.wss?uid=swg22014559&amp;aid=1] ✓ ✓ HADRDB Type HADR db ✓ [/support/docview.wss?uid=swg22014559&amp;aid=1] [/support/docview.wss?uid=swg22014559&amp;aid=1] [/support/docview.wss?uid=swg22014559&amp;aid=1] Virtual IP's for HADR db ✓ [/support/docview.wss?uid=swg22014559&amp;aid=1] [/support/docview.wss?uid=swg22014559&amp;aid=1] HADB Type HA Database [/support/docview.wss?uid=swg22014559&amp;aid=1] ✓ ✓ 
+3. More details on the db2haicu command: 
+https://www.ibm.com/support/knowledgecenter/en/SSEPGG_11.1.0/com.ibm.db2.luw.admin.ha.doc/doc/c0051371.html [https://www.ibm.com/support/knowledgecenter/en/SSEPGG_11.1.0/com.ibm.db2.luw.admin.ha.doc/doc/c0051371.html]

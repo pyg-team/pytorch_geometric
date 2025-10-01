@@ -1,0 +1,39 @@
+Title: IBM DoDAF Report Generator does not work properly - United States
+
+Text:
+reporterPLUS; DODAF; DOD; rhapsody; telelogic; HKLM TECHNOTE (FAQ)
+
+QUESTION
+Why am I unable to run the DoDAF Report Generator in IBM Rational Rhapsody?
+
+ANSWER
+When a user installs Rhapsody v7.5.2.1 onto a 64-bit Windows 7 system, the registry will need to be populated with the appropriate registry entries. 
+
+If the registry entry for ReporterPLUS is not assigned, the user receives the following error when right-clicking and trying to generate a document using the DoDAF Report Generator project in Rhapsody:
+
+
+Rhapsody DoDAF Pack 
+
+Registry ReporterPLUS is not installed on this system - Exiting. 
+
+
+
+The fix for this issue is to create the following Registry entry:
+
+
+HKEY_LOCAL_MACHINE\SOFTWARE\Telelogic\Telelogic Rhapsody ReporterPLUS 
+
+7.5.2\Settings
+
+
+
+Its value should be the reporter plus exe path, such as;
+
+
+c:\Program Files\IBM\Rational\Rhapsody\7.5.2\reporterplus
+
+
+
+
+
+REGISTRY EDITS: This solution contains information about modifying the system registry. Before making any modifications to the Microsoft Registry Editor, it is strongly recommended that you make a backup of the existing registry. For more information describing how to back up the registry, refer to Microsoft Knowledge Base article 256986 [http://support.microsoft.com/kb/256986]

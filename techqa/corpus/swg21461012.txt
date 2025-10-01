@@ -1,0 +1,122 @@
+Title: IBM About tracking user login events within ClearQuest clients - United States
+
+Text:
+audit; auditability; traceability; login; events; event; checkout; master_users; DBA; access.log; SystemOut.log; authenticate; authentication; LDAP; RATLC00997425 TECHNOTE (FAQ)
+
+QUESTION
+ Does IBM Rational ClearQuest (CQ) track login events? 
+
+CAUSE
+ 
+
+You need to understand what options exist to track user login events within ClearQuest clients.
+
+
+ANSWER
+ 
+
+No, it is not part of the current CQ architecture, but may be investigated for a future release. File a new Request for Enhancement (RFE) if interested. Previous RFE history for this issue can be found on developerWorks here [http://www.ibm.com/developerworks/rfe/execute?use_case=viewRfe&CR_ID=1537]. 
+
+ 
+
+What gets logged? 
+
+ 
+
+ * CQ thick clients have no facility to determine when a login takes place, or a schema revision or User Administrator change made by a CQ administrator.
+   
+   
+ * Any action performed and committed to the database will show up in a History record.
+   
+   
+ * Login, record retrieval, search-by-ID, CQ Full-Text Search string, from the ClearQuest Web client (CQ Web); some examples illustrated below:
+    * See the IBM HTTP Server (IHS) access.log:
+      
+      If CQ Web was used to access records in CQ, all logins are tracked by IP address, Time, and the login event here:
+      
+      7.0.1:
+      C:\Program Files\Rational\Common\rwp\IHS\logs\access.log
+      7.1:
+      C:\Program Files\IBM\RationalSDLC\common\IHS\logs\access.log
+      8.0:
+      <IHS home>\logs\access.log
+   
+   
+   
+    * See the IBM Rational ClearQuest Change Management (CM) Server SystemOut.log:
+      
+      Numerous events are tracked in the SystemOut.log with default and full logging levels such as login, record retrieval, search-by-ID, and others.
+      
+      7.1:
+      C:\Program Files (x86)\IBM\RationalSDLC\common\CM\profiles\cmprofile\logs\server1\SystemOut.log
+      8.0:
+      <cqwebprofile>\logs\server1\SystemOut.log
+      
+      
+    * Here is an example of a user logging into the CQ Web client, then retrieving a record as seen from the IHS access.log:
+      
+      7.1/8.0:
+      Login event:
+      IHS access.log:
+      127.0.0.1 - - [05/Mar/2013:18:59:00 -0500] "GET /cqweb/cqlogin.cq?action=CheckAuthenticated&cquid=0000qnz_HeRyzWEAslv7azfd8la%3A-1&dojo.preventCache=1362527940072 HTTP/1.1" 200 41
+      ...
+      127.0.0.1 - - [05/Mar/2013:18:59:13 -0500] "GET /cqweb/cqlogin.cq?action=DoGetDbSets&dojo.preventCache=1362527948925&cquid=0000qnz_HeRyzWEAslv7azfd8la%3A-1 HTTP/1.1" 200 732
+      127.0.0.1 - - [05/Mar/2013:18:59:30 -0500] "POST /cqweb/cqlogin.cq?action=DoLogin HTTP/1.1" 200 1686
+      127.0.0.1 - - [05/Mar/2013:18:59:36 -0500] "POST /cqweb/cqlogin.cq?action=DoConnect HTTP/1.1" 200 2640
+      127.0.0.1 - - [05/Mar/2013:18:59:51 -0500] "GET /cqweb/cqnav.cq?action=getRootNodes&refresh=&dojo.preventCache=1362527935013&cquid=0000_WFEqVJ_wh8ci0MGWaJiZvc%3A-1 HTTP/1.1" 200 697
+      
+      
+    * Corresponding information for the above login event as seen from 
+      
+      <cmprofile>/logs/server1/SystemOut.log:
+      [3/5/13 18:59:30:101 EST] 00000027 CQWeb I CQWeb doLogin Loginrequest for id : admin
+      ...
+      [3/5/13 18:59:50:094 EST] 00000027CMLogger I com.ibm.rational.stp.server.cq.CqSessionManager createSession CRVSV0901I ClearQuest login of user: admin -- 7.0.0/SAMPL on server 'ClearQuest - 0.11296' 
+      
+      
+    * Retrieving a specific record:
+      
+      IHS access.log:
+      127.0.0.1 - - [05/Mar/2013:19:00:00 -0500] "GET /cqweb/cqartifactdetails.cq?action=GetCQRecordDetails&resourceId=cq.repo.cq-record%3A16777224%2F33554433%407.0.0%2FSAMPL&state=VIEW&tabIndex=0&acceptAllTabsData=true&cquid=0000_WFEqVJ_wh8ci0MGWaJiZvc%3A-1&dojo.preventCache=1362528000051 HTTP/1.1" 200 661458
+      
+      [In this case, stateful record DBID 33554433 of record type with DBID 16777224 (Defect), of database set 7.0.0, user database SAMPL.]
+      
+      
+    * Corresponding information for the record retrieval event as seen from:
+      
+      <cmprofile>/logs/server1/SystemOut.log:
+      
+      [3/5/13 19:00:00:158 EST] 0000002b CQWeb I CQWeb Records admin: GetCQRecordDetails : cq.repo.cq-record:16777224/33554433@7.0.0/SAMPL
+      
+      
+    * 7.0.1 example:
+      
+      IHS access.log:
+      
+      Login event:
+      192.168.0.2 - - [27/Jan/2011:00:38:37 -0500] "POST /cqweb/login HTTP/1.1" 302 - 
+      192.168.0.2 - - [27/Jan/2011:00:38:44 -0500] "GET /cqweb/main?command=GenerateMainFrame&rmsessionid=1b6d476b-f708-47c3-8a5b-094c809f0179 HTTP/1.1" 200 6770
+      
+      [All login events will appear with the POST to login followed by the GET of GenerateMainFrame.
+      It is a possibility to check if a known IP address was used to login at a particular time. By default these logs are never purged, only rotated.]
+   
+   
+
+ 
+
+3rd party / unsupported possibilities beyond the scope of Support offerings 
+
+
+Consult your IBM Field representative for any assistance exploring these options:
+
+
+ * A database administrator may be able to capture statistics on specific SQL selects against the Schema Repository (MASTR) master_users table to determine if a login event occurs.
+   
+   
+ * Consider using LDAP authentication and 3rd party logging for LDAP that would show authentication attempts from LDAP.
+   
+   
+ * Consider using 3rd party tools to track license usage by user from FlexLM floating or token licensing.
+   
+   
+ * Consider a new RFE similar to this one on developerWorks here [http://www.ibm.com/developerworks/rfe/execute?use_case=viewRfe&CR_ID=1537].

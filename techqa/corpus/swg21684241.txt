@@ -1,0 +1,54 @@
+Title: IBM Deadlocks in Initiate Master Data Service for SQLServer - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ We set up our IBM Initiate Master Data Service environment with SQL Server and are seeing deadlocks on the mpi_memhead table during heavy load. Why are we getting them and how can we prevent them?
+
+OR
+
+We set up our IBM Initiate Master Data Service environment with SQL Server and are seeing slow memput performance with occasional deadlocks being reported in the engine logs while the memgets are running fast. Why are we getting them and how can we prevent them? 
+
+CAUSE
+In MEMPUT interactions, if the memidnum column in mpi_memhead table is not empty, the UPDLOCK is added to prevent concurrent updates and hence data corruption. SQLServer uses UPDLOCK which specifies that update locks are to be taken and held until the transaction completes. UPDLOCK takes update locks for read operations only at the row-level or page-level. If UPDLOCK is combined with TABLOCK, or a table-level lock is taken for some other reason, an exclusive (X) lock will be taken instead. When UPDLOCK is specified, the READCOMMITTED and READCOMMITTEDLOCK isolation level hints are ignored. For example, if the isolation level of the session is set to SERIALIZABLE and a query specifies (UPDLOCK, READCOMMITTED), the READCOMMITTED hint is ignored and the transaction is run using the SERIALIZABLE isolation level.
+
+MEMGET interactions do not have these locks because they do not update data and can run in parallel. Under heavy load, we may get deadlocks being encountered and following exceptions raised in the engine logs:
+
+ERROR atesystems.hub.logging.NativeLog: ODBC [40001] [InitiateSystems][ODBC SQL Server Wire Protocol driver][Microsoft SQL Server]Transaction (Process ID 114) was deadlocked on lock resources with another process and has been chosen as the deadlock victim. Rerun the transaction. (DBError=1205)
+ERROR atesystems.hub.logging.NativeLog: MAD_PkgSelAcbByStmt: MAD_OdbcExecDirect(mpi_reclist) failed, stmt=' select DISTINCT H.memrecno from mpi_memhead H, mpi_entxeia_id F where F.memrecno = H.memrecno and F.eiatypeno=13 and F.eiastatno2=1 order by H.memrecno'.
+ERROR atesystems.hub.logging.NativeLog: MPI_CtxDbxGetRecnoList: MAD_PkgSelAcbByStmt() failed.
+ERROR atesystems.hub.logging.NativeLog: UID=1, IXN=EIASEARCH, ERR=EODBC, SMT=6509
+ERROR atesystems.hub.logging.NativeLog: MPI_IxnExec_ODBC: ixn failed due to ODBC error.
+ERROR engine.logic.AbstractEngineLogic: Error encountered during native interaction execution.
+com.initiatesystems.hub.engine.logic.EngineLogicException: Error encountered during native interaction execution.
+...
+
+ANSWER
+Try the following as circumvention to prevent deadlock and get better performance:
+
+
+1. Set the memidnum column of mpi_memhead table from varchar(60) to nvarchar(60). By default this value is defined in $MAD_ROOTDIR/sql/mpihub.ddl file as shown below and created during database bootstrapping but it can be updated directly from the database any time:
+C|MEM|mpi_memhead|memidnum|varchar|60|N|source member identification number|
+
+2. ALTER DATABASE MyDatabase SET ALLOW_SNAPSHOT_ISOLATION ON
+
+3. ALTER DATABASE MyDatabase SET READ_COMMITTED_SNAPSHOT ON
+
+
+
+PRODUCT ALIAS/SYNONYM
+ MDS
+Master Data Service
+MDM
+MDM SE
+MDMSE
+Master Data Management
+IBM Infosphere Master Data Service
+MDM Standard Edition
+MDM Hybrid Edition
+Initiate
+Hybrid
+Physical MDM
+Virtual MDM
+Hybrid MDM

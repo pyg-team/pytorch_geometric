@@ -1,0 +1,24 @@
+Title: IBM UDA-SQL-0023 The connection to the "XXXX" database has been terminated due to an unrecoverable error.  {DB2 FOR OS/390}{ODBC DRIVER}{DSN08015} ? - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ On Cognos 8.4.1 on z/OS, if a report (such as Report Studio Report) is cancelled and it is in the middle of executing a query against a DB2 z/OS server, the cancel will succeed, but the report cannot be re-run in the same browser session. 
+
+SYMPTOM
+UDA-SQL-0023 The connection to the "XXXX" database has been terminated due to an unrecoverable error.{DB2 FOR OS/390}{ODBC DRIVER}{DSN08015}  DSNT408I SQLCODE = -981, ERROR: THE SQL STATEMENT FAILED BECAUSE THE RRSAF  CONNECTION IS NOT IN A STATE THAT ALLOWS SQL OPERATIONS, REASON  00C12219  DSNT418I SQLSTATE = 57015 SQLSTATE RETURN CODE  DSNT415I SQLERRP = DSNARA00 SQL PROCEDURE DETECTING ERROR  DSNT416I SQLERRD = 0 0 0 -1 0 0 SQL DIAGNOSTIC INFORMATION  DSNT416I SQLERRD = X'00000000' X'00000000' X'00000000' X'FFFFFFFF'  X'00000000' X'00000000' SQL DIAGNOSTIC INFORMATION  ERRLOC=1:13: 
+
+A CEEDUMP may also be created
+
+
+RESOLVING THE PROBLEM
+Apply PTFs UK71561 and UK71562 and ensure that MULTICONTEXT=2 within the file that is specified in the DSNAOINI environment variable
+
+
+
+
+
+
+
+Cross Reference information Segment Product Component Platform Version Edition Information Management DB2 for z/OS z/OS 8.0, 9.1, 10.0

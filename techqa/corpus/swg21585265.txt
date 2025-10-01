@@ -1,0 +1,73 @@
+Title: IBM Portal v7002 fixpack installation fails with "Target `check-portal-level-CF' does not exist in this project" - United States
+
+Text:
+secondary node; cluster TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+When installing the Portal v7002 fixpack on a binary Portal installation after installing any cumulative fix, the 7002 fixpack installation may fail with "Target `check-portal-level-CF' does not exist in this
+project"
+
+SYMPTOM
+In the console output at the time of the failure, you see the following exception:
+=============================
+Result: StdErr: BUILD FAILED
+Result: StdErr: Target `check-portal-level-CF' does not exist in this project. It is used from target `action-validate-portal-version-for-multProfile-CF'.
+Result: StdErr:
+Result: StdErr: Total time: 4 seconds
+Log: ExecCmd::launch returns 1
+Task 2 out of 630; End Uninstalling fix ' PM49013', component 'wp.ptf.config'.
+Task 3 out of 630; Begin Completing fix ' PM49013' subTmpDir to be cleaned up: /tmp/ptfs
+The directory does not exist, or is not a directory, continue to run: /tmp/ptfs
+Fix pack installation has failed. Consult
+/usr/WebSphere7/PortalServer/version/log/20120217_085936_PM49013_uninsta
+ll.log for error details.
+chmod -R 550 /usr/WebSphere7/PortalServer done!
+UpdateInstaller.puiReturnCode is 9
+End of [ ./updatePortal.sh ]
+=============================
+
+A similar error can be seen in the ConfigTrace.log as well.
+
+CAUSE
+This issue occurs when the user has done the following: 
+
+ 
+
+- Installed Portal as a binary installation 
+
+- Upgraded Portal to v7001 + any CF 
+
+- Created a profile (or migrated) 
+
+- Updated the wps.properties with the new profile information 
+
+- Attempted to upgrade to v7002 
+
+ 
+
+The first step for any fixpack installation is to remove all fixes and cumulative fixes. The CF uninstall fails in this case and that is why the fixpack fails. 
+
+ 
+
+The CF uninstall fails because of a defect in the Portal Update Installer that prevents any fix or CF from uninstalling cleanly when it was originally installed on a binary install. This will be fixed in a later version of the Portal Update Installer.
+
+
+RESOLVING THE PROBLEM
+If you encounter this exception, you must take the following steps to resolve it: 
+
+
+1. Edit the PortalServer/wps.properties file
+2. Remove the ProfileName and ProfilePath parameters from it.
+3. Manually uninstall the cumulative fix(es) you have applied
+4. If the following file still exists after the CF uninstall, manually remove it:
+
+PortalServer/installer/wp.config/config/includes/preconfig_cumulative_fix.xml
+
+5. Edit the PortalServer/wps.properties file again and add ProfileName and ProfilePath back to the file.
+6. Reattempt the 7002 fixpack installation.
+
+
+
+
+ * 
+ *

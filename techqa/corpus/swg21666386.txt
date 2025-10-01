@@ -1,0 +1,26 @@
+Title: IBM InternalKeyManagerException received from WebSphere MQ v7.5 iKeyman. - United States
+
+Text:
+iKeyman; MQ; gskit; SSL; deleted; keystore TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ InternalKeyManagerException received from iKeyman (included with WebSphere MQ v7.5.0.1/7.5.0.2) when performing save-as and overwriting an existing keystore. 
+
+SYMPTOM
+When opening an existing keystore database with iKeyman v8.0.373 and then using save-as to overwrite the existing keystore database, an exception occurs and the keystore database file is deleted.
+
+
+CAUSE
+There is a defect in iKeyman v8.0.373 which causes this issue. 
+iKeyman v8.0.373 is shipped with the JRE component of WebSphere MQ v7.5.0.1 and v7.5.0.2.
+
+ENVIRONMENT
+WebSphere MQ v7.5.0.1 and v7.5.0.2.
+
+DIAGNOSING THE PROBLEM
+Check in the iKeyman Help -> About to verify if you have the affected version of iKeyman. Versions newer than iKeyman v8.0.373 are fixed.
+
+
+RESOLVING THE PROBLEM
+To work around the issue you can save-as a non-existing file, or use the runmqckm commands.
+Install Websphere MQ fixpack 7.5.0.3 to receive the fixed version of iKeyman.

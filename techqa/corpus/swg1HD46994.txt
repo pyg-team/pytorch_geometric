@@ -1,0 +1,185 @@
+Title: IBM HD46994: VPM-CV5 INTEROP: EACH TIME THE GEOMETRY IS OPENED AND SWICTHED TO DESIGN MODE ALL THE FILES ARE COPIED TO A LOCAL DIRECTORY UN - United States
+
+Text:
+AIX SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PERMANENT RESTRICTION.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Description:
+   .
+   Abstract: VPM-CV5 INTEROP: EACH TIME THE
+   GEOMETRY IS OPENED AND SWICTHED TO
+   DESIGN MODE ALL THE FILES ARE COPIED TO A
+   LOCAL DIRECTORY UNDER CATTemp
+   .
+   Scenario:
+   1) Open a PSN graph
+   2) Select some CATParts and load them into CV5
+   3) If the work with cache system is checked the
+   cgrs are created
+   4) Switch to design mode
+   5) The files loaded are copied to
+   $CATTEMP/SelectiveLoadingCache
+   6) Close the window
+   7) All the files under
+   $CATTEMP/SelectiveLoadingCache are deleted, the
+   cgrs remain
+   8) If the same Parts are again loaded into CV5 the
+   cgrs are used from the cache
+   .
+   Result:
+   But when are switched to design mode the files are
+   copied again into local directory.
+   With CV4 and the cgr files, the timestamp is used
+   to check if it is necesary to reload the files into the
+   local directory. Why not with CV5 files?
+   .
+   .
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  VPM-CV5 INTEROP: EACH TIME THE GEOMETRY IS OPENED AND SWICTHED
+   TO DESIGN MODE ALL THE FILES ARE COPIED TO A LOCAL DIRECTORY UN
+   D
+   Description:
+   .
+   Abstract: VPM-CV5 INTEROP: EACH TIME THE
+   GEOMETRY IS OPENED AND SWICTHED TO
+   DESIGN MODE ALL THE FILES ARE COPIED TO A
+   LOCAL DIRECTORY UNDER CATTemp
+   .
+   Scenario:
+   1) Open a PSN graph
+   2) Select some CATParts and load them into CV5
+   3) If the work with cache system is checked the
+   cgrs are created
+   4) Switch to design mode
+   5) The files loaded are copied to
+   $CATTEMP/SelectiveLoadingCache
+   6) Close the window
+   7) All the files under
+   $CATTEMP/SelectiveLoadingCache are deleted, the
+   cgrs remain
+   8) If the same Parts are again loaded into CV5 the
+   cgrs are used from the cache
+   .
+   Result:
+   But when are switched to design mode the files are
+   copied again into local directory.
+   With CV4 and the cgr files, the timestamp is used
+   to check if it is necesary to reload the files into the
+   local directory. Why not with CV5 files?
+   .
+   .
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  THIS PROBLEM IS PERMANENT RESTRICTION IN
+   CATIA.
+   .
+   Incident Diagnosis
+   VPM-CV5 INTEROP: EACH TIME THE GEOMETRY IS
+   OPENED AND SWICTHED TO DESIGN MODE ALL
+   THE FILES ARE COPIED TO A LOCAL DIRECTORY
+   UNDER CATTemp
+   .
+   Restriction Explanation
+   The SelectiveLoadingCache is an internal cache
+   used to support the selective loading of V5 design
+   documents such as CATParts, CATDrawing...
+   This means that when you open this document, you
+   can load its contained data progessively when the
+   data is needed by an application.
+   This is the purpose of this cache. It is not meant to
+   be a persistent cache, keeping the data after
+   document closing.
+   .
+   By-Pass
+   None
+   .
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   HD46994
+   
+   
+ * REPORTED COMPONENT NAME
+   CATIA V5 NT>XP
+   
+   
+ * REPORTED COMPONENT ID
+   569151000
+   
+   
+ * REPORTED RELEASE
+   515
+   
+   
+ * STATUS
+   CLOSED PRS
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2005-11-24
+   
+   
+ * CLOSED DATE
+   2005-12-15
+   
+   
+ * LAST MODIFIED DATE
+   2005-12-15
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

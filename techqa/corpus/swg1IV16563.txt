@@ -1,0 +1,212 @@
+Title: IBM IV16563: DOCS FOR SAM 5620 ARE LACKING SSL CONNECTION INFORMATION - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The documentation for setting up ssl with the SAM 5620 probe is
+   lacking.  The email probe should be used as a guideline as to
+   what this doc should look like for setting up ssl
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Use the doc for the email probe as it has more complete
+   information on setting up ssl.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * All users of the Probe for Alcatel-Lucent 5620 SAM JMS       *
+   * wishing to connect to the server using SSL.                  *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * There is currently insufficent information regarding         *
+   * connecting to the Alcatel-Lucent 5620 SAM server using SSL.  *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * The existing *Configuring SSL* topic Will be replaced with   *
+   * the following topic:                                         *
+   *                                                              *
+   *                                                              *
+   * *Configuring the SSL connection*                             *
+   * ================================                             *
+   * The Probe for Alcatel-Lucent 5620 SAM can use SSL to secure  *
+   * a remote connection                                          *
+   * to the 5620 SAM server.                                      *
+   * For general details of JMS connections over SSL guidelines,  *
+   * see                                                          *
+   * https://community.jboss.org/wiki/JMSOverSSL?_sscc=t.         *
+   *                                                              *
+   * *Creating the keystore file*                                 *
+   * -----------------------------                                *
+   * A Java keystore file is required for this HTTPS connection,  *
+   * access to which is                                           *
+   * specified using the CertificateStore and                     *
+   * CertificateStorePassword properties. The                     *
+   * keystore file can be created using the Java keytool command. *
+   * The following                                                *
+   * example keytool commands create a suitable keystore file and *
+   * lists the trusted CA                                         *
+   * certificates it contains:                                    *
+   *                                                              *
+   * keytool -genkey -alias sslclientcert -keyalg RSA -keystore   *
+   * alcatelsam.jks -keysize 2048                                 *
+   * keytool -import -trustcacerts -alias sslclientcert -file     *
+   * alcatelclient.cert -keystore alcatelsam.jks                  *
+   * keytool -list -v -keystore alcateload.jks                    *
+   *                                                              *
+   * These commands perform the following operations:             *
+   * 1. Extracts the root CA and provider certificate from the    *
+   * EMS server's Java                                            *
+   * keystore to create the client Java keystore.                 *
+   *                                                              *
+   * 2. Imports the required root CA and Issuing CA certificates  *
+   * into the probe's Java                                        *
+   * keystore alcatelsam.jks to ensure the certificate is         *
+   * trusted.                                                     *
+   *                                                              *
+   * 3. Lists the trusted CA certificates in the probe's Java     *
+   * keystore.                                                    *
+   *                                                              *
+   * To set a password for the probe's Java keystore, use the     *
+   * following command:                                           *
+   * keytool -storepasswd -new new_storepass -keystore            *
+   * alcatelsam.jks                                               *
+   * Setting the probe properties for SSL connections             *
+   *                                                              *
+   * To enable the probe to use the SSL connection, you must set  *
+   * the UseSSL property                                          *
+   * to true and you must configure the HTTPPort property to use  *
+   * the Alcatel SAM                                              *
+   * HTTPS port. The default Alcatel SAM HTTPS port is 8443.      *
+   *                                                              *
+   * You must also configure the following probe properties:      *
+   * - CertificateStoreType - this property specifies the type of *
+   * certificate obtained from the keystore; in this example, it  *
+   * is JKS.                                                      *
+   * - CertificateStore - this property specifies the path of the *
+   * probe's Java keystore that you created.                      *
+   * - CertificateStorePassword - this property specifies the     *
+   * password that you set for the Java keystore.                 *
+   * - TrustStore - this should be the same value as that set for *
+   * the CertificateStore property.                               *
+   * - TrustStorePassword - this should be the same value as that *
+   * set for the CertificateStorePassword property.               *
+   *                                                              *
+   * For full details of these properties, see Properties and     *
+   * command line options.                                        *
+   *                                                              *
+   *                                                              *
+   * *Example SSL configuration property settings*                *
+   * ---------------------------------------------                *
+   * The following example shows SSL configuration settings from  *
+   * the properties file of                                       *
+   * an example Probe for Alcatel-Lucent 5620 SAM:                *
+   * Host : "198.162.20.21"                                       *
+   * HTTPPort : 8443                                              *
+   * UseSSL : "true"                                              *
+   * CertificateStoreType : "JKS"                                 *
+   * CertificateStore :                                           *
+   * "/opt/IBM/tivoli/netcool/omnibus/probes/keystore/alcatelsam. *
+   * jks"                                                         *
+   * CertificateStorePassword : "ECEDBJAGBJFHGD"                  *
+   * TrustStore :                                                 *
+   * "/opt/IBM/tivoli/netcool/omnibus/probes/keystore/alcatelsam. *
+   * jks"                                                         *
+   * TrustStorePassword : "ECEDBJAGBJFHGD"                        *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The Probe for Alcatel-Lucent 5620 SAM JMS Reference Guide will
+   be updated and uploaded during Release Cycle 2, 2012.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV16563
+   
+   
+ * REPORTED COMPONENT NAME
+   ALCATEL 5620 SA
+   
+   
+ * REPORTED COMPONENT ID
+   5724P17AS
+   
+   
+ * REPORTED RELEASE
+   100
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-03-01
+   
+   
+ * CLOSED DATE
+   2012-03-15
+   
+   
+ * LAST MODIFIED DATE
+   2012-03-15
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+Publications Referenced SC23766308 FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

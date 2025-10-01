@@ -1,0 +1,42 @@
+Title: IBM BMT-IMP-0002 Failed to execute metadata request insufficient
+capabilities" - United States
+
+Text:
+DQM; Import relational metadata capability TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ User is unable to perform one or more of the following tasks:
+1. Run Metadata Wizard
+2. Import new metadata
+3. Modify Query Mode to Dynamic Query Mode for an existing package in Framework Manager project.
+
+
+SYMPTOM
+User receives one of the following error messages: 
+
+1. BMT-IMP-0002 Failed to execute metadata request insufficient capabilities 
+
+2 BMT-IMP-0002 Failed to execute metadata request. insufficentCapabilities DPR-ERR-2082 An error has occurred. Please contact your administrator. The complete error has been logged by CAF with SecureErrorID... 
+
+3. BMT-IMP-0002 Execution of task for metadata failed. InsufficientCapabilities...
+
+
+CAUSE
+One possible reason is that the user does not have the required "Import relational metadata" capability.
+
+
+RESOLVING THE PROBLEM
+Grant user the required "Import relational metadata" capability. 
+
+
+Steps:
+1. In Cognos Connection choose menu 'Launch > IBM Cognos Administration'.
+2. Select tab 'Security'
+3. Select 'Capabilities' on the left side.
+4. Click "Actions" > Set Properties beside "'Import relational metadata'.
+5. Select the 'Permissions' tab.
+6. Add the required user, group or role to the capability granting them Read, Execute and Traverse permissions.
+
+
+RELATED INFORMATION
+ Importing relational metadata to Framework Manager [http://ibmurl.hursley.ibm.com/3PJO]

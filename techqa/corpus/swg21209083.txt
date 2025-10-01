@@ -1,0 +1,61 @@
+Title: IBM Why can open transactions exist when IDS is restarted? - United States
+
+Text:
+open transaction; xa global transaction TECHNOTE (FAQ)
+
+QUESTION
+ Why is there an open transaction after a restart of the database server ? 
+
+ANSWER
+ 
+
+When the IBM® Informix® Dynamic Server™ is restarted, there should not be any open transactions. However, as outlined in the example below, there are some cases when the Database Administrator can see that one or more transactions are still open.
+
+
+Example:
+
+Excerpt from the "online.log" file:
+
+
+ * 13:47:51 Event alarms enabled. ALARMPROG = '/usr2/support/products/IDS940HC2/etc/alarmprogram.sh'
+ * 
+ * 13:47:51 Booting Language <c> from module <>
+ * 
+ * 13:47:51 Loading Module <CNULL>
+ * 
+ * 13:47:51 Booting Language <builtin> from module <>
+ * 
+ * 13:47:51 Loading Module <BUILTINNULL>
+ * 
+ * 13:47:56 Dynamically allocated new virtual shared memory segment (size 8192KB)
+ * 
+ * 13:47:56 Dynamically allocated new message shared memory segment (size 648KB)
+ * 
+ * 13:47:56 IBM Informix Dynamic Server Version 9.40.HC2 Software Serial Number AAA#B000000
+ * 
+ * 13:47:57 IBM Informix Dynamic Server Initialized -- Shared Memory Initialized.
+
+ * 13:47:57 Physical Recovery Started at Page (1:358).
+ * 
+ * 13:47:57 Physical Recovery Complete: 8 Pages Examined, 8 Pages Restored.
+ * 
+ * 13:47:57 Logical Recovery Started.
+ * 
+ * 13:47:57 10 recovery worker threads will be started.
+ * 
+ * 13:48:00 Logical Recovery has reached the transaction cleanup phase.
+ * 
+ * 13:48:00 Logical Recovery Complete.
+
+2 Committed, 1 Rolled Back, 1 Open , 0 Bad Locks 
+
+
+This is expected behaviour for global transactions. 
+
+Global transactions are ruled by the two phases commit protocol as specified in the X/Open Distributed Transaction Processing (DTP). 
+
+Thus, once prepared, the transaction is stable on the database server and is not affected by a database server restart. 
+
+The transaction is replayed during the rollforward of IDS and all the locks for this transaction are re-acquired. 
+
+The transaction will stay in this state until it is either aborted or committed.

@@ -1,0 +1,39 @@
+Title: IBM Operational Decision Manager Interim Fixes for V7.5 releases - United States
+
+Text:
+ PREVENTIVE SERVICE PLANNING
+
+ABSTRACT
+Use interim fixes to address issues found in the releases in Operational Decision Manager V7.5 series. 
+
+CONTENT
+
+
+The following table lists the interim fixes by version. Find your Operational Decision Manager release in the table, and use the links to get interim fix packs.
+
+ABOUT THE INTERIM FIXES 
+ * Existing interim fixes are included in the fix packs for the releases.
+ * Each interim fix addresses one or more issues.
+ * Multiple interim fixes can be installed for the same release.
+ * Check the associated installation readme to determine whether an interim fix is incompatible with another fix or supersedes another fix.
+ * Each interim fix gets a number in a sequence of numbers for a release. The sequence usually starts with IF001 .
+ * The naming convention for the interim fixes is V.R.M.F -WS -<Component >-<os >-IF nnn <revision >:  * V.R.M.F : The product number showing the version, release, mod, and fix pack.
+    * WS : WebSphere
+    * <Component >: The targeted component:  * ODM_DS: Decision Server
+       * ODM_DC: Decision Center
+       * ODM_DSI: Decision Server Insights
+       * ODM_DSE: Decision Server Events
+       * ODM_DSR: Decision Server Rules
+       * ODM_ER: Embedded Rules (Business Rules Embedded)
+       * ODM_JDK: JDK updates
+       * ODM: Decision Server and Decision Center
+      
+      
+    * <os >: Multi for all the operating systems, or AI X , HPUX , Linux , or Win for dedicated fixes.
+    * IFnnn : IF for interim fix, and nnn for the sequence number.
+    * <revision >: A letter (A-Z) that indicates an update in the interim fix.
+   
+   
+
+INTERIM FIXES FOR VERSIONS 7.5, 7.5.0.1, 7.5.0.2, 7.5.0.3, AND 7.5.0.4 
+Number Name Rule Designer Rule Execution Server Event Designer Event Runtime Decision Center Rules SDK Rule Solutions for Office IF026 7.5.0.3-WS-ODM_DC-IF026 [http://www.ibm.com/support/docview.wss?uid=swg24035031] - - - - + - - IF030 7.5.0.3-WS-ODM_DS-IF030 [http://www.ibm.com/support/docview.wss?uid=swg24035133] - - + - - - - IF031 7.5.0.4-WS-ODM_JDK-IF031 [http://www.ibm.com/support/docview.wss?uid=swg21647384] + - + - - - - IF032 7.5.0.3-WS-ODM_DC-WIN-IF032 [http://www.ibm.com/support/docview.wss?uid=swg24035675] - - - - - - + IF033 7.5.0.3-WS-ODM-IF033 [http://www.ibm.com/support/docview.wss?uid=swg24035928] + - - - + - - IF034 7.5.0.3-WS-ODM_DC-IF034 [http://www.ibm.com/support/docview.wss?uid=swg24036511] - - - - + - - IF037 7.5.0.3-WS-ODM_DS-IF037 [http://www.ibm.com/support/docview.wss?uid=swg24039927] - + - - - - - IF038 7.5.0.3-WS-ODM-IF038 [http://www.ibm.com/support/docview.wss?uid=swg24039926] + + - - + - - IF048 7.5.0.0-WS-ODM-IF048 [http://www.ibm.com/support/docview.wss?uid=swg24041476] + + - - + + - IF049 7.5.0.4-WS-ODM_JDK-LINUX-IF049 [http://www.ibm.com/support/docview.wss?uid=swg24041635] + - + - - - - IF050 7.5.0.4-WS-ODM_JDK-LINUX-IF050 [http://www.ibm.com/support/docview.wss?uid=swg24041972] + - + - - - - IF051 7.5.0.0-WS-ODM_JDK-AIX-IF051 [http://www.ibm.com/support/docview.wss?uid=swg24043307] + - + - - - - IF052 7.5.0.4-WS-ODM_JDK-WIN-IF052 [http://www.ibm.com/support/docview.wss?uid=swg24043759] + - + - - - -

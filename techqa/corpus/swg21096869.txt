@@ -1,0 +1,124 @@
+Title: IBM What is failover and when does it happen in a clustered Domino server environment? - United States
+
+Text:
+fail over; cluster; group TECHNOTE (FAQ)
+
+QUESTION
+What is failover and under what circumstances does failover occur in a clustered Domino® server environment?
+
+ANSWER
+What is failover?
+A cluster's ability to redirect requests from one server to another is called failover. When a user tries to access a database on a server that is unavailable or in heavy use, the user connects to a replica of the database on another server in the cluster. When users open a database, the switch is transparent even though they have been switched to a different server.
+
+When does failover occur?
+
+Failover occurs when a user cannot access a database in a cluster. This happens either because they cannot access the database server or they cannot access the database itself.
+
+The following user activities trigger failover:
+
+
+ * A user tries to open a database on a server that is unavailable in the following situations:
+   
+   
+ * User double-clicks a database icon on the workspace.
+   
+   
+ * User selects a database icon on the workspace and selects File, Open.
+   
+   
+ * User selects a database icon on the workspace and selects View - <database view> or Create - <form name>.
+   
+   
+ * A user tries to open a database that is unavailable in the following situations:
+   
+   
+ * Database is marked out of service.
+   
+   
+ * Database is marked pending delete.
+   
+   
+ * A user tries to access their home server and the server is unavailable.
+   
+   
+ * A user tries to open their mail file and the server is unavailable.
+   
+   
+ * A mail router request to transfer and deposit mail to a user's mail file cannot complete because the server is unavailable.
+   
+   
+ * A user tries to access a Web Navigator server and the server is unavailable in the following situations:
+   
+   
+ * User selects the Open URL icon.
+   
+   
+ * User double-clicks a URL hotspot (HTTP address).
+   
+   
+ * A user replicates a local database with a database in the cluster and the server is unavailable.
+   
+   
+ * A user activates any field, action, or button that contains an @Command (FileOpenDatabase) and either the server or the database is unavailable.
+   
+   
+ * A user tries to launch a doclink, view link, or database link that is connected to a database or server that is unavailable.
+   
+   
+ * Running a LotusScript routine that includes the DB.OPENWITHFAILOVER call which opens a database with failover if either the database or server are unavailable.
+
+
+
+
+NOTE: Failover does not happen on File, Database, Open. 
+
+
+The following server conditions trigger failover:
+
+
+ * A server is down or unreachable by the user.
+   
+   
+ * The server is BUSY. Workload balancing is enabled on a server using the NOTES.INI setting Server_Availability_Threshold and the resources available on the server drop below the specified threshold.
+   
+   
+ * The server is MAXUSERS. The server reaches the maximum number of sessions allowed, as specified by the Server_MaxUsers setting.
+   
+   
+ * The server is RESTRICTED. The Server_Restricted setting enables the server to deny new open database requests.
+   
+   
+
+
+Supporting Information:
+
+The following except is from the Domino Administrator Help, and can also be found in the Administering a Domino Cluster yellow book on pages 7 - 9:
+
+
+When failover does not occur 
+
+Failover does not occur in the following cases: 
+
+ * When a server becomes unavailable while a user has a database open
+
+
+Note The user can open the database again, which causes failover to a different replica, if one exists in the cluster. If the user was editing a document when the server became unavailable, the user can copy the document to the replica.  * When a user chooses File - Database - Properties or File - Database - Open
+   
+   
+ * When the router attempts to deliver mail while MailClusterFailover is set to 0
+   
+   
+ * When the template server is unavailable while creating a new database
+   
+   
+ * When running agents, other than the mail pre-delivery agent
+   
+   
+ * When replicating with a server that is restricted by the administrator or has reached the maximum number of users or the maximum usage level set by the administrator. Also, when replicating with a database marked "Out of Service." Replication occurs regardless of such restrictions, so there is no need for failover to occur.
+   
+
+
+Does the cluster replicator, clrepl, needs to be running for failover to occur? No, but you will only have what was last replicated in the database through scheduled replication and not as fast as cluster replication. 
+
+HISTORICAL NUMBER
+ 158544

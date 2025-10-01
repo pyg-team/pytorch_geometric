@@ -1,0 +1,33 @@
+Title: IBM Determining whether to use Common Criteria Mode at initialization - United States
+
+Text:
+EAL4 common criteria cc-mode cc normal mode TECHNOTE (FAQ)
+
+QUESTION
+ What is Common Criteria Mode and under which scenarios would I want to choose it? 
+
+ANSWER
+Definition: Common Criteria (CC mode) mode puts the IBM WebSphere DataPower appliance in a mode that enforces a set of policies required to pass the Common Criteria security testing criteria (EAL4). 
+
+
+
+
+What it covers: Common Criteria mode forces several settings to specific values. These values are required by CC mode and will be enforced at reboot if changed. It also affects audit log policies and includes a group of default rules and actions. In addition, a DataPower appliance in CC mode is only certified for EAL4 with the HTTP over an XML Firewall. Any other uses, including even WebGUI and SSH access, are not EAL4 certified. Please note, although this option exists in all versions listed on this page, it is only officially certified for the versions listed at the link found in the More Information section. 
+
+When it should be used: If you are unsure whether you should use Common Criteria mode, then you most likely should not. In general, it is only used when a specific authority requires the appliance to be EAL4 certified. If this is not a specific requirement for your use of the appliance, normal mode should be used. You should not use CC mode to simply be 'more secure' as it enforces far reaching limitations on the appliance. 
+
+How it is turned on/off: Because of the secure nature of CC mode, it can only be turned on or off at initialization of the appliance. This means that changing the value requires a complete re-initialization of the appliance. At initialization, you will be prompted to use either Normal Mode or Common Criteria Mode. 
+
+If you have already defined your mode on a running system and would like to change it and keep your configuration, the best method is to make a complete export of the appliance before re-initializing the appliance. Then, you will have to configure your network interfaces manually, import the backup, and then manually re-add your encryption keys.
+
+How to determine if it is on/off:
+To determine if it's on or off, navigate to Administration -> Device (Heading) -> System Settings in the left hand navigation panel. If it's on, the value for "Product Mode" will be Common Criteria. If it's off, the value will be Normal.
+
+
+More Information: More information regarding the IBM WebSphere DataPower Appliances Common Criteria certification can be found at the following web link:
+Validated Product - DataPower XS40 XML Security Gateway and X150 Appliance on Firewall v3.6 [http://www.niap-ccevs.org/cc-scheme/st/vid10020/].
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration WebSphere DataPower XML Security Gateway XS40 Not Applicable Firmware 3.7.3, 3.7.2, 3.7.1, 3.6.1 Edition Independent Business Integration WebSphere DataPower SOA Appliances General Firmware 3.7.3, 3.7.2, 3.7.1, 3.6.1, 3.6 Edition Independent

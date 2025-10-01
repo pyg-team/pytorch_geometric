@@ -1,0 +1,45 @@
+Title: IBM Error SQL30082N Reason Code 24 creating users for IBM Pure Data Systems for Transactions - United States
+
+Text:
+LDAP Purescale DB2 user TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When trying to connect with a newly created LDAP user to Purescale on my IBM Pure Data Systems for Transactions I get Error SQL30082N Reason Code 24 
+
+SYMPTOM
+This problem only applies to users created not with the workload console. 
+
+SQL30082N Security processing failed with Reason Code 24
+"USERNAME AND/OR PASSWORD INVALID " 
+
+In the db2diag.log file the following message may be seen
+
+2014-07-21-22.14.42.248900+000 I3863974E490 LEVEL: Warning
+PID : 25448 TID : 139734907086592 PROC : db2sysc 0
+INSTANCE: pdiap201 NODE : 000 DB : DP201A01
+APPHDL : 0-59514
+HOSTNAME: anhbxpdt201-01.landg.net
+EDUID : 15599 EDUNAME: db2agent (DP201A01) 0
+FUNCTION: DB2 UDB, bsu security, sqlexLogPluginMessage, probe:20
+DATA #1 : String with size, 66 bytes
+Password validation for user aa53468 failed with rc = -2146500502
+
+
+
+CAUSE
+LDAP allows user names to consist of uppercase and lowercase characters.
+
+So even if the newly created LDAP user is working on OS level you get an error from DB2 if the username contains uppercase characters.
+
+For DB2 there is a restriction for LINUX that usernames must be lowercase.
+
+
+
+
+RESOLVING THE PROBLEM
+Only use lowercase characters when creating users for Purescale on your IBM Pure Data Systems for Transactions. 
+
+ 
+
+For additional hints an tipps see
+http://www-01.ibm.com/support/docview.wss?uid=swg21416382 [http://www-01.ibm.com/support/docview.wss?uid=swg21416382]

@@ -1,0 +1,100 @@
+Title: IBM Exit() action within User Defined Function in Impact Policy Language - United States
+
+Text:
+netcool; impact; netcool/impact; nci; ipl; policy; language; exit; exit(); function; user; defined; custom; udf; parser; action; set; global; variable; var; get; setglobalvar; getglobalvar; globalvar TECHNOTE (FAQ)
+
+QUESTION
+ and how to exit the Policy process from within a Custom Function 
+
+CAUSE
+Using the Exit() parser function within a User Defined (or Custom) Function in Impact Policy Language (IPL) will not exit the Policy process, it will only exit the User Defined Function.
+
+ANSWER
+This is because the Exit() parser function in IPL is designed to exit the immediate scope. To carry the action outside of the User Defined Function to the Policy level one would have to set a variable that is then tested immediately after the User Defined Function call - for example: 
+
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * SetGlobalVar("ExitNow", 1);
+ * 
+ * Exit();
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * SetGlobalVar("ExitNow", 1);
+ * 
+ * Exit();
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * If(GetGlobalVar("ExitNow") == 1)
+ * 
+ * {
+   Log(ID+WP+": Existing policy...");
+   
+ * Exit
+ * ();
+   }
+
+
+The above example ties in somewhat with the exampled configuration from the TechNote "Event Flagging with Go_NoGo checking" [ link below] and uses structured logging as covered in the TechNote "Structured logging in Policies" [ link below]. 
+
+If the User Defined Function was nested within another User Defined Function one would have to exit each layer to return the Policy layer before the Exit() action would exit the Policy. 
+RELATED INFORMATION
+ Event Flagging with Go_NoGo checking [http://www-01.ibm.com/support/docview.wss?uid=swg21675015]
+Structured Logging in Policies [http://www-01.ibm.com/support/docview.wss?uid=swg21596180]

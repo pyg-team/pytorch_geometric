@@ -1,0 +1,31 @@
+Title: IBM ITCAM Agent for WebSphere DataPower Appliance v6.3 displays incorrect "Log Time" value in the "System Log" workspace - United States
+
+Text:
+ITCAM DataPower TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Time stamp does not show up correctly in the Log Time field of System Log workspace. 
+
+CAUSE
+The agent assumes that the "day" field in the monitored log contains two digits, for example "09". If the "day" field in the log message is one digit, for example "9", then the agent parse the value incorrectly.
+
+RESOLVING THE PROBLEM
+1. Stop the agent. 
+
+2. Locate the kbn.ref file in the agent installation folder. 
+
+3. Back up the kbn.ref file.
+
+4. On Windows, copy the attached kbn_Win.ref file to the directory where the kbn.ref file is located. Remove kbn.ref, then rename kbn_Win.ref to kbn.ref.
+kbn_Win.ref [/support/docview.wss?uid=swg21614606&aid=2]kbn_Win.ref [/support/docview.wss?uid=swg21614606&aid=1]
+
+5. On UNIX or Linux, copy the attached kbn_Linux_UNIX.ref file to the directory where the kbn.ref file is located. Remove kbn.ref, then rename kbn_Linux_UNIX.ref to kbn.ref.
+kbn_Linux_UNIX.ref [/support/docview.wss?uid=swg21614606&aid=4]kbn_Linux_UNIX.ref [/support/docview.wss?uid=swg21614606&aid=3]
+
+6. Start the agent.
+
+
+
+
+PRODUCT ALIAS/SYNONYM
+ ITCAM for WDP

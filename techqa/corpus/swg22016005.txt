@@ -1,0 +1,34 @@
+Title: IBM get_mrb timed out messages in pureScale environment when CF_NUM_WORKERS value too low - United States
+
+Text:
+CF_NUM_WORKERS puerscale get_mrb timed out TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ get_mrb timed out messages in pureScale environment when CF_NUM_WORKERS value too low 
+
+SYMPTOM
+You may notice messages such as these in the db2diag.log:
+
+2018-03-10-03.44.59.637905-300 I947663163A644 LEVEL: Severe
+PID : 14876910 TID : 71479 PROC : db2sysc 0
+INSTANCE: myinst NODE : 000 DB : mydb
+APPHDL : xxxx APPID: x.x.x.x.x.
+AUTHID : myauth HOSTNAME: myhost
+EDUID : 71479 EDUNAME: db2agent (LP0) 0
+FUNCTION: DB2 UDB, RAS/PD component, pdLogCaPrintf, probe:876
+DATA #1 : <preformatted>
+get_mrb timed out
+DATA #1 : <preformatted>
+If a CF return code is displayed above and you wish to get
+more information then please run the following command:
+db2diag -cfrc <CF_errcode>
+
+
+CAUSE
+These are expected in cases where the CF_NUM_WORKERS value is either set too low or not set to Automatic (default). When there are less workers servicing those connections, it is possible to get a timeout on the connection. Retry logic will work when a worker becomes available to minimize the impact, it will only cause an FODC failure if it retries for more than 6 minutes and get no response.
+
+ENVIRONMENT
+pureScale
+
+RESOLVING THE PROBLEM
+Set CF_NUM_WORKERS value to Automatic

@@ -1,0 +1,149 @@
+Title: IBM Application Server JVMs in clustered environment fail to start with CORBA.NO_RESPONSE request timed out - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Attempts to start Application server JVMs in a clustered environment result in startup delay followed by a org.omg.CORBA.NO_RESPONSE: Request timed out exception 
+
+SYMPTOM
+The following exception is seen in the JVM logs on startup: 
+
+[11/16/14 18:51:31:553 CST] 0000000a WsServerImpl E WSVR0009E: Error occurred during startup 
+
+com.ibm.ws.exception.RuntimeError: com.ibm.ws.exception.RuntimeError: com.ibm.ejs.EJSException: Could not register with Location Service Daemon, which could only reside in the NodeAgent. Make sure the NodeAgent for this node is up an running.; nested exception is: 
+
+ org.omg.CORBA.ORBPackage.InvalidName: LocationService:org.omg.CORBA.NO_RESPONSE: Request 5 timed out vmcid: IBM minor code: B01 completed: Maybe 
+
+ at com.ibm.ws.runtime.WsServerImpl.bootServerContainer(WsServerImpl.java:199) 
+
+ at com.ibm.ws.runtime.WsServerImpl.start(WsServerImpl.java:140) 
+
+Caused by: org.omg.CORBA.NO_RESPONSE: Request 5 timed out vmcid: IBM minor code: B01 completed: Maybe 
+
+ at com.ibm.rmi.iiop.Connection.send(Connection.java:2164) 
+
+ at com.ibm.rmi.iiop.Connection._locate(Connection.java:452) 
+
+ at com.ibm.rmi.iiop.Connection.locate(Connection.java:428) 
+
+ at com.ibm.rmi.iiop.GIOPImpl.locate(GIOPImpl.java:203) 
+
+ at com.ibm.rmi.corba.Corbaloc.locateUsingINS(Corbaloc.java:307) 
+
+ at com.ibm.rmi.corba.Corbaloc.resolve(Corbaloc.java:378) 
+
+ at com.ibm.rmi.corba.ORB.objectURLToObject(ORB.java:3699) 
+
+ at com.ibm.CORBA.iiop.ORB.objectURLToObject(ORB.java:3256) 
+
+ at com.ibm.rmi.corba.InitialReferenceClient.resolve_initial_references(InitialReferenceClient.java:159) 
+
+
+Javacores show the JVM current thread is in this state: 
+================= 
+2XMFULLTHDDUMP Full thread dump J9 VM (jre_version_here, native threads): 
+3XMTHREADINFO "P=403238:O=0:CT" (TID:0x00000000021B6D00, 
+sys_thread_t:0x00000000021A4090, state:CW, native ID:0x00000000000070AE) 
+prio=5 
+4XESTACKTRACE at java/lang/Object.wait(Native Method) 
+4XESTACKTRACE at java/lang/Object.wait(Object.java:231) 
+4XESTACKTRACE at 
+com/ibm/rmi/iiop/OutCallDesc.waitForResponse(OutCallDesc.java:66) 
+4XESTACKTRACE at 
+com/ibm/rmi/iiop/Connection.send(Connection.java:2169) 
+4XESTACKTRACE at 
+com/ibm/rmi/iiop/Connection._locate(Connection.java:452) 
+4XESTACKTRACE at 
+com/ibm/rmi/iiop/Connection.locate(Connection.java:428) 
+4XESTACKTRACE at 
+com/ibm/rmi/iiop/GIOPImpl.locate(GIOPImpl.java:203) 
+4XESTACKTRACE at 
+com/ibm/rmi/corba/Corbaloc.locateUsingINS(Corbaloc.java:307) 
+4XESTACKTRACE at 
+com/ibm/rmi/corba/Corbaloc.resolve(Corbaloc.java:378) 
+4XESTACKTRACE at 
+com/ibm/rmi/corba/ORB.objectURLToObject(ORB.java:3699) 
+4XESTACKTRACE at 
+com/ibm/CORBA/iiop/ORB.objectURLToObject(ORB.java:3256) 
+4XESTACKTRACE at 
+com/ibm/rmi/corba/InitialReferenceClient.resolve_initial_references(Init 
+ialReferenceClient.java:159) 
+4XESTACKTRACE at 
+com/ibm/rmi/corba/ORB.resolve_initial_references(ORB.java:4169) 
+4XESTACKTRACE at 
+com/ibm/rmi/iiop/ORB.resolve_initial_references(ORB.java:670) 
+4XESTACKTRACE at 
+com/ibm/CORBA/iiop/ORB.resolve_initial_references(ORB.java:3213) 
+4XESTACKTRACE at 
+com/ibm/ejs/oa/LocationService.register(LocationService.java:108) 
+================= 
+The above stack indicates that the JVM is trying to register with the nodeagent, and waiting for response, but does not get response back within the timeout period
+. 
+Nodeagent javacores, would show the ORB reader threads in this state: 
+================= 
+3XMTHREADINFO 
+"RT=13:P=676613:O=0:WSTCPTransportConnection[addr=10.83.0.93,port=34872, 
+local=9099]" (TID:0x00002AAAC8394500, sys_thread_t:0x00002AAAC8390450, 
+state:B, native ID:0x0000000000005782) prio=5 
+4XESTACKTRACE at java/lang/Object.wait(Native Method) 
+4XESTACKTRACE at java/lang/Object.wait(Object.java:231(Compiled Code)) 4XESTACKTRACE at 
+com/ibm/ws/util/BoundedBuffer.waitPut_(BoundedBuffer.java:213(Compiled Code)) 4XESTACKTRACE at 
+com/ibm/ws/util/BoundedBuffer.put(BoundedBuffer.java:293(Compiled Code)) 
+4XESTACKTRACE at 
+com/ibm/ws/util/ThreadPool.execute(ThreadPool.java:1166(Compiled Code)) 
+4XESTACKTRACE at 
+com/ibm/ws/util/ThreadPool.execute(ThreadPool.java:1035(Compiled Code)) 
+4XESTACKTRACE at 
+com/ibm/ejs/oa/pool/ThreadPool.startWorkerThread(ThreadPool.java:78(Compiled Code)) 4XESTACKTRACE at 
+com/ibm/rmi/iiop/Connection.processInput(Connection.java:1674(Compiled Code)) ================= 
+The reader thread received the request from the JVM and is trying to assign it to a worker 
+thread. All available worker threads in the nodeagent are in this state: 
+================= 
+3XMTHREADINFO "ORB.thread.pool : 39" (TID:0x000000000D8AF300, 
+sys_thread_t:0x00002AAAC8390920, state:CW, native ID:0x0000000000005783) 
+prio=5 
+4XESTACKTRACE at java/lang/Object.wait(Native Method) 
+4XESTACKTRACE at java/lang/Object.wait(Object.java:231(Compiled Code)) 4XESTACKTRACE at 
+com/ibm/ws/cluster/router/selection/WLMLSDRouter.select(WLMLSDRouter.java:234(Compiled Code)) 4XESTACKTRACE at 
+com/ibm/ws/cluster/propagation/ServerClusterContextListenerImpl.forwardRequest(ServerClusterContetListenerImpl.java:625) 
+4XESTACKTRACE at 
+com/ibm/ws/cluster/propagation/ServerClusterContextListenerImpl.validateRequest(ServerClusterContextListenerImpl.java:669) 
+4XESTACKTRACE at 
+com/ibm/ws/wlm/server/WLMServerRequestInterceptor.notifyValidationListeners(WLMServerRequestInterceptor.java:317(Compiled Code)) 
+4XESTACKTRACE at 
+com/ibm/ws/wlm/server/WLMServerRequestInterceptor.receive_request_service_contexts(WLMServerRequestInterceptor.java:206) 
+4XESTACKTRACE at 
+com/ibm/rmi/pi/InterceptorManager.invokeInterceptor(InterceptorManager.java:589(Compiled Code)) 4XESTACKTRACE at 
+com/ibm/rmi/pi/InterceptorManager.iterateServerInterceptors(InterceptorManager.java:465(Compiled Code)) 
+4XESTACKTRACE at 
+com/ibm/rmi/pi/InterceptorManager.iterateReceiveContext(InterceptorManager.java:714) 4XESTACKTRACE at 
+com/ibm/rmi/iiop/ServerRequestImpl.runInterceptors(ServerRequestImpl.java:169) 4XESTACKTRACE at 
+com/ibm/rmi/iiop/Connection.respondTo(Connection.java:2648(Compiled Code)) ================= 
+
+
+CAUSE
+Application server JVMs which are part of a cluster have to register with the Location Service Daemon which resides on the nodeagent to successfully startup. For this registration to be successful, the nodeagent should receive this registration request and be able to assign an ORB worker thread to process the request. 
+
+
+If there is a constant flow of EJB requests to the target EJB cluster which is down, all these requests get queued up at the nodeagent taking up all available ORB worker threads. When a cluster member registration request comes in, it cannot get an available thread from the thread pool as all the available ORB threads are tied up trying to route requests to the target cluster which is down.
+
+Given enough requests and enough threads created on the nodeagent the cluster members may have problems communicating with the nodeagent upon startup, which in turn can prevent the cluster members from starting up again.
+
+
+RESOLVING THE PROBLEM
+These symptoms might look similar to the behavior described in APAR PM08450, but the problem symptoms described in this article can still be seen on systems where the APAR is installed. 
+
+
+There are three possible ways to mitigate/solve the problem:
+
+
+ 1. Stop all EJB clients from sending requests to target EJB cluster and then recycle the nodeagent and application servers.
+    
+ 2. Create cell level custom property IBM_CLUSTER_CALLBACK_TIMEOUTthrough the admin console from System Administration -> Cell -> Custom Properties and define a new custom property with 
+    Name: IBM_CLUSTER_CALLBACK_TIMEOUT
+    Value: 5000 (or perhaps less). 
+    
+    Save and synchronize the nodes and restart the cell. This will reduce the amount of time any of those queued requests on the nodeagent wait before WLM returns an exception back to the client. So this does not actually solve the issue outright, but might help reduce enough of the concurrent requests on the nodeagent so the register call could get through.
+    
+ 3. If there is no control over the EJB clients and all requests cannot be stopped, then consider increasing the ORB thread pool size on the nodeagent and then recycle the nodeagent. Tail the SystemOut.log to monitor when the nodeagent has completed startup. Immediately startup one cluster member. By starting up the application server JVM as soon as the nodeagent is started will allow the JVM registration to complete by getting an available ORB worker thread before EJB requests queue up at nodeagent.

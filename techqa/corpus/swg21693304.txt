@@ -1,0 +1,97 @@
+Title: IBM Security Bulletin: Vulnerability in SSLv3 affects Tivoli Storage Manager Administration Center (CVE-2014-3566) - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ SSLv3 contains a vulnerability that has been referred to as the Padding Oracle On Downgraded Legacy Encryption (POODLE) attack. SSLv3 is enabled in Tivoli Storage Manager Administration Center. 
+
+VULNERABILITY DETAILS
+CVE-ID: [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-3566]CVE-2014-3566 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-3566]
+
+DESCRIPTION: Product could allow a remote attacker to obtain sensitive information, caused by a design error when using the SSLv3 protocol. A remote user with the ability to conduct a man-in-the-middle attack could exploit this vulnerability via a POODLE (Padding Oracle On Downgraded Legacy Encryption) attack to decrypt SSL sessions and access the plaintext of encrypted connections.
+
+CVSS Base Score: 4.3
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/97013 [https://exchange.xforce.ibmcloud.com/vulnerabilities/97013] [https://exchange.xforce.ibmcloud.com/vulnerabilities/97013] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:M/Au:N/C:P/I:N/A:N)
+
+
+AFFECTED PRODUCTS AND VERSIONS
+Tivoli Storage Manager Administration Center 6.1, 6.2, and 6.3
+
+REMEDIATION/FIXES
+The recommended solution for Administration Center V6.3 is to apply the WAS fix pack. See the instructions below to obtain and install the fix pack.
+
+The recommended solution for Administration Center V6.1 or V6.2 is to upgrade to V6.3 ( Download Tivoli Storage Manager Administration Center V6.3) [ftp://public.dhe.ibm.com/storage/tivoli-storage-management/maintenance/admincenter/v6r3/] and apply the WAS fix pack. If customers are unable to do this they should contact support. 
+
+The V6.3 Administration Center can manage servers running Tivoli Storage Manager V6.1, V6.2, and V6.3. As an alternative, you can use the administrative command-line client instead of the Administration Center.
+
+Installation Instructions
+
+1. Stop the TIP/WAS server. This server cannot be running while you apply the fix pack. (Starting and Stopping TIP [http://www-01.ibm.com/support/knowledgecenter/SSGSG7_6.3.4/com.ibm.itsm.srv.install.doc/t_ac_start_stop.html%23t_ac_start_stop])
+2. Ensure that the IBM Update Installer is installed. The Update Installer is required to apply the fix pack. (IBM Update Installer [http://www-01.ibm.com/support/docview.wss?uid=swg24020212])
+3. Download the appropriate WAS Embedded fix pack package from the Downloads section of this page.
+4. Run the IBM Update Installer to install the fix pack.
+5. Start the TIP/WAS server.
+
+Downloads
+For V6.3, download WAS Fix Pack 37 (7.0.0.37)
+AIX:
+7.0.0-WS-WASEmbeded-AixPPC32-FP0000037.pak [ftp://public.dhe.ibm.com/storage/tivoli-storage-management/e-fix/WAS/7.0.0.37/7.0.0-WS-WASEmbeded-AixPPC32-FP0000037.pak]
+Linux:
+7.0.0-WS-WASEmbeded-LinuxX32-FP0000037.pak [ftp://public.dhe.ibm.com/storage/tivoli-storage-management/e-fix/WAS/7.0.0.37/7.0.0-WS-WASEmbeded-LinuxX32-FP0000037.pak]
+Solaris:
+7.0.0-WS-WASEmbeded-SolarisSparc-FP0000037.pak [ftp://public.dhe.ibm.com/storage/tivoli-storage-management/e-fix/WAS/7.0.0.37/7.0.0-WS-WASEmbeded-SolarisSparc-FP0000037.pak]
+Windows:
+7.0.0-WS-WASEmbeded-WinX32-FP0000037.pak [ftp://public.dhe.ibm.com/storage/tivoli-storage-management/e-fix/WAS/7.0.0.37/7.0.0-WS-WASEmbeded-WinX32-FP0000037.pak]
+
+WORKAROUNDS AND MITIGATIONS
+For WebSphere Application Server Full Profile, modifying the server's SSL configuration to disable SSLv3 can be done from either the Admin console or with an Admin task from wsadmin. 
+
+
+On the Admin Console
+
+
+ 1. Go to Security > SSL certificate and key management > SSL configurations 
+ 2. The collection of all SSL configurations is listed. For each SSL configuration in the list the SSL protocol will need to be modified to use TLS. 
+ 3. Select an SSL Configuration then click Quality of protection (QoP) settings under Additional Properties on the right. 
+ 4. On the Quality of protection (QoP) settings panel select TLS form the pull down list in the box labeled Protocol. 
+ 5. Apply/Save.
+
+
+Using wsadmin (does not apply to WebSphere Application Server 6.0.2) 
+If using wsadmin for each SSL Configuration the modifySSLConfig task will need to be called. 
+
+To get the list of SSL Configuration in wsadmin call 
+
+wsadmin> AdminTask.listSSLConfigs('[-all true]') 
+
+To modify a SSL configuration from wsadmin call 
+
+wsadmin>AdminTask.modifySSLConfig('[-alias <fill in the SSL Configuration alias> -scopeName <fill in the SSL Configuration management scope> -sslProtocol TLS]') 
+
+wsadmin>AdminConfig.save() 
+
+The following is an example of what a modifySSLConfig command looks like with an alias and scope provided. 
+
+wsadmin>AdminTask.modifySSLConfig('[-alias CellDefaultSSLSettings -scopeName (cell):ndcell -sslProtocol TLS ]') GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v2 Guide [http://www.first.org/cvss/v2/guide] 
+On-line Calculator v2 [http://nvd.nist.gov/CVSS-v2-Calculator] 
+
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] 
+
+CHANGE HISTORY
+ Dec 19, 2014: Original document published
+Apr 8, 2015: Provide Remediation/Fixes
+Dec 01, 2015: Changed to never expire 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.

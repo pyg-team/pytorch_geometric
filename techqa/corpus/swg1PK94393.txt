@@ -1,0 +1,187 @@
+Title: IBM PK94393: FATAL ERROR OCCURS ON GENERATING MODEL. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  PMR: 26706,999,760
+   Quintus: 226065
+   
+   Whilst generating source code using customer's model, Rhapsody
+   causes a Fatal Error.
+   This symptom has been reproduced with Rhapsody 7.4, 7.5, and
+   7.5.0.1(Build1160126).
+   I have sent the customer's model to Dudu.
+   
+   Followings are the steps to reproduce:
+   
+   (1) Unzip the material (p1_ptimer.zip) to a working folder.
+   
+   (2) Copy 'TestingProfile.sbs' into:
+          '?work? \p_timer\p_timer_rpy\Test'.
+   
+       TestingProfile is in:
+   
+   '?rhapdody?\Share\Profiles\TestingProfile\TestingProfile_rpy'
+   
+       This is a file copied from Rhapsody Share directory,
+       no modification applied.
+   
+   (3) Start Rhapsody and open the model 'p_timer.rpy'
+       Whilst opening the model, you will be prompted to specify
+       'TestingProfile.sbs'.  Specify the folder you copied on (2).
+       Update the unit path in model, too.
+   
+   (4) In the Rhapsody Model Browser, expand and right-click
+       'p_timer ? Components ? sim ? Configurations ? Animation',
+       and select 'Generate Configuration Main and Make Files'.
+   
+   (5) After the Gen ends, select menu 'Code ? Re Generate ?
+       Animation'.
+   
+   (6) After the previous Gen ends, select menu 'Code ? Re Generate
+       ? Entire Project'.
+       Rhapsody will prompt you to reply if you want to roundtrip.
+       Reply [Yes to All].
+       Rhapsody will also reports parsing error.  Reply [Yes].
+   
+   (7) After the previous Gen ends, select menu 'Code ? Re Generate
+       ? Animation'.
+   
+       You will be prompted if you want round trip.  Reply [Yes to
+       All].   Rhapsody will also prompt reverting change.  Reply
+       [Yes].  Reply [Yes], for parsing error, too.
+   
+   (8) After the Gen ends, select menu 'Code ? Re Generate ?
+       Animation', again.
+   
+   (9) Repeat operation (8) multiple times.
+   
+   
+   After you repeat the gen (8), you will encounter a Fatal Error,
+   asking 'Save As' the model.  On my environment, I had to repeat
+   (8) 3 to 10 times before encountering the symptom.
+   
+   Click [OK] to close the Fatal Error message.
+   
+   After the Fatal error, I encountered two types of symptoms:.
+   
+   - Symptom (a)
+   Rhapsody shows Report Error message while creating RER file.
+   
+   - Symptom (b)
+   Rhapsody continue working and you can 'Save As' the model.
+   However, the Save As operation errors creating insufficient
+   model file (*.rpy).
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Unknown
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Fatal error during code generation (PMR: 26706999760 APAR:
+   PK94393)
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fixed in 7.5.1
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK94393
+   
+   
+ * REPORTED COMPONENT NAME
+   TLOGIC RHAPSODY
+   
+   
+ * REPORTED COMPONENT ID
+   5724V74RP
+   
+   
+ * REPORTED RELEASE
+   730
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-08-21
+   
+   
+ * CLOSED DATE
+   2009-12-03
+   
+   
+ * LAST MODIFIED DATE
+   2009-12-03
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TLOGIC RHAPSODY
+   
+   
+ * FIXED COMPONENT ID
+   5724V74RP
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R730 PSN
+   UP

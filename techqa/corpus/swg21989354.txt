@@ -1,0 +1,52 @@
+Title: IBM Selecting supported Citrix client - United States
+
+Text:
+Citrix Receiver 4.1; XenApp 6.5; RPT 8.6; RPT 9; Citrix support policy; Citrix support matrix; supported Citrix clients; Citrix client support; 71RRT-RPTPLAN; 71RRT-RPTINS; 71RRT-RPTCONF; 71RRT-RPTREC; 71RRT-RPTPLAY; 71RRT-RPTTS TECHNOTE (FAQ)
+
+QUESTION
+ 
+How do you select a supported Citrix client?
+
+
+ANSWER
+
+Once you have installed the Citrix server, you need to install a Citrix client that is compatible with the Citrix server, the Rational Performance Tester (RPT) version, the ITCAM for Transactions version, and the T6 agent's host operating system.
+
+You install the Citrix client on the RPT workbench where you record and maintain your Citrix RPT scripts, and you install the same version of the Citrix client on the T6 agents where you playback the RPT Citrix scripts.
+
+Over time, Citrix has changed the name of its components. For example, Citrix Receiver, Citrix on-line plugin, and Citrix Client are all different names for the Citrix client application. Years ago it was called Citrix Client. Later versions were called Citrix online plugin. More recently, the latest versions are called Citrix Receiver. This is all Citrix terminology, and you can find more information on the Citrix web site at citrix.com. 
+
+Note that Citrix XenApp and Citrix XenDesktop are for the Citrix server side. More information can be found on the Citrix web site. 
+
+For example, suppose that the T6 agent runs on Microsoft Windows Server 2008 R2 64-bit. For an environment with XenApp 6.5, RPT 9.0.1, and ITCAMfT 7.4.0.1, the supported Citrix client is Citrix Receiver 4.1. 
+
+For an environment with XenApp 6.5, RPT 8.6.0.2, and ITCAMfT 7.4.0.1 on the same operating system platform, Citrix Receiver 4.1 is the recommended Citrix client. 
+
+Important: The T6 agent needs to run as a process instead of a service.
+Set the T6 startup to "Disabled." Run the following command manually 
+from a command prompt or Start -> Run. 
+
+ITM_HOME\TMAITM6\kt6agent.exe test 
+
+The "test" parameter is a required parameter. The string is "test". 
+
+Note: To download Citrix Receiver 4.1, you must use a third-party site. There are several third-party sites on Google.
+
+
+RELATED INFORMATION
+ CITRIX support poilicy for RPT [http://www.ibm.com/support/docview.wss?uid=swg21459253]
+Response Time and Availability Monitoring of CITRIX Ser [http://ibm.co/1dv12eE]
+Difference Between Citrix Receiver and Online Plug-in [http://www.ehow.com/info_12329356_difference-between-citrix-receiver-online-plugin.html]
+Supported ITCAMfT Platforms [http://www-969.ibm.com/software/reports/compatibility/clarity-reports/report/html/osForProduct?deliverableId=1364203661236#! ]
+RPT/RFT Support Matrix [https://www.ibm.com/developerworks/community/wikis/home?lang=en#!/wiki/Tivoli%20Composite%20Application%20Manager/page/ITCAM%20RPT%20RFT%20Robot%20Support%20Matrix]
+
+
+
+
+HISTORICAL NUMBER
+ 94590.L6Q.000
+02179.124.848 
+
+PRODUCT ALIAS/SYNONYM
+ ITCAMfT
+T7.4

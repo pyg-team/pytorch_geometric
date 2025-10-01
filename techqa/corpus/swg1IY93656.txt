@@ -1,0 +1,174 @@
+Title: IBM IY93656: GUI INSTALLER DOES NOT WORK ON AIX - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  On certain version of AIX that we support you get this
+   error when
+   you run our installer (for either fp1 or the base install):
+   (Jan 9, 2007 6:01:21 PM), Install,
+   com.ibm.cdb.install.ismp.utils.Utils,
+   dbg, Copy file from /tmp/ismp001/6833764.tmp to
+   /tmp/cdb_common.size
+   (Jan 9, 2007 6:01:21 PM), Install,
+   com.ibm.cdb.install.ismp.utils.Utils,
+   dbg, Exit: copySupportFiles
+   JVMDG217: Dump Handler is Processing Signal 11 - Please Wait.
+   JVMDG303: JVM Requesting Java core file
+   JVMDG304: Java core file written to
+   /opt/downloads/1.1.1.0-TIV-CCMDB-FP0001/disk1/CMDB/javacore76611
+   2.116836
+   2082.txt
+   JVMDG215: Dump Handler has Processed Exception Signal 11.
+   Segmentation fault(coredump)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Contact support for an efix for the installer.
+   
+   Copy libaixppk.so to /tmp directory:
+   # cp /path/to/libaixppk.so /tmp
+   Export the environment variable AIX_LIB_LOC to point to the
+   InstallShield library:
+   # export AIX_LIB_LOC=/tmp/libaixppk.so
+   In the same shell where you have exported the AIX_LIB_LOC
+   environment
+   variable, re-run the InstallShield installer."
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: CDT 1.1.1/TADDM 5.1.1 Users.                 *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: The GUI installer does not always       *
+   *                      work on AIX.                            *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   On certain version of AIX that we support you get this
+   error when
+   you run our installer (for either fp1 or the base install):
+   (Jan 9, 2007 6:01:21 PM), Install,
+   com.ibm.cdb.install.ismp.utils.Utils,
+   dbg, Copy file from /tmp/ismp001/6833764.tmp to
+   /tmp/cdb_common.size
+   (Jan 9, 2007 6:01:21 PM), Install,
+   com.ibm.cdb.install.ismp.utils.Utils,
+   dbg, Exit: copySupportFiles
+   JVMDG217: Dump Handler is Processing Signal 11 - Please Wait.
+   JVMDG303: JVM Requesting Java core file
+   JVMDG304: Java core file written to
+   /opt/downloads/1.1.1.0-TIV-CCMDB-FP0001/disk1/CMDB/javacore76611
+   
+   2.116836
+   2082.txt
+   JVMDG215: Dump Handler has Processed Exception Signal 11.
+   Segmentation fault(coredump)
+   Local Fix:
+   Contact support for an efix for the installer.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix for this APAR is contained in the following
+   maintenance packages:
+   | fix pack | 1.1.1.0-TIV-CCMDB-FP0002
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IY93656
+   
+   
+ * REPORTED COMPONENT NAME
+   APP DEPENDENCY
+   
+   
+ * REPORTED COMPONENT ID
+   5724N5500
+   
+   
+ * REPORTED RELEASE
+   510
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2007-01-16
+   
+   
+ * CLOSED DATE
+   2007-03-27
+   
+   
+ * LAST MODIFIED DATE
+   2007-03-27
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   APP DEPENDENCY
+   
+   
+ * FIXED COMPONENT ID
+   5724N5500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R511 PSY
+   UP

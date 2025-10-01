@@ -1,0 +1,25 @@
+Title: IBM Oracle database version that are compatible with Gentran:Server for Microsoft Windows - United States
+
+Text:
+Oracle compatible TECHNOTE (FAQ)
+
+QUESTION
+ What versions of Oracle are compatible with Gentran:Server for Microsoft Windows? 
+
+ANSWER
+Version 5.3.1 is compatible with 11g, 10g r2. Light testing completed with 12c 3/15/2016. "Best Effort" support 
+
+Version 5.3 is compatible with 11g, 10g r2, 9i r2. 12c is considered "Best Effort" support 
+
+Version 5.2 is compatible with 11g, 10g r2, 9i r2. 12c is considered "Best Effort" support 
+
+ 
+
+
+For reference, here is the major version and patch set numbering scheme 3/15/2016
+Oracle 9i (Release 2): 9.2.0.1 - 9.2.0.8
+Oracle 10g (Release 1): 10.1.0.2 - 10.1.0.5
+Oracle 10g (Release 2): 10.2.0.1 - 10.2.0.5
+Oracle 11g (Release 1): 11.1.0.6 - 11.1.0.7
+Oracle 11g (Release 2): 11.2.0.1 - 11.2.0.4
+Oracle 12c (Release 1): 12.1.0.1 - 12.1.0.2.0

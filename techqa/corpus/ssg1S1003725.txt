@@ -1,0 +1,21 @@
+Title: IBM Intrasystem Global Mirror Not Supported With v6.x or v7.x or v8.x - United States
+
+Text:
+ FLASH (ALERT)
+
+ABSTRACT
+ SAN Volume Controller and Storwize systems running v6.x or v7.x or v8.x do not support the use of intrasystem Global Mirror. 
+
+CONTENT
+An intrasystem Global Mirror relationship is defined as having both source and target volumes in the same system. Any intrasystem Global Mirror relationships on systems running v6.x or v7.x or v8.x may result in those relationships experiencing link tolerance (1920) error events, causing replication operations to be stopped. 
+
+This restriction does not affect intersystem Global Mirror configurations, where the source and target volumes are on different systems. Intersystem Global Mirror functionality is fully supported on v6.x, v7.x and v8.x. 
+
+ 
+
+This restriction also does not affect intrasystem or intersystem Metro Mirror configurations, which are fully supported on v6.x, v7.x and v8.x
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Storage Virtualization SAN Volume Controller Not Applicable SAN Volume Controller 6.1, 6.2, 6.3, 6.4, 7.1, 7.2, 7.3, 7.4, 7.5, 7.6, 7.7, 7.8, 8.1 Disk Storage Systems IBM Storwize V7000 Unified (2073) Not Applicable Platform Independent 1.3, 1.4, 1.5 Disk Storage Systems Flex System V7000 Not Applicable Platform Independent 6.4, 7.1, 7.2 Disk Storage Systems IBM Storwize V3700 (2072) Not Applicable Platform Independent 6.4, 7.1, 7.2, 7.3, 7.4, 7.5, 7.6, 7.7, 7.8 Disk Storage Systems IBM Storwize V5000 Not Applicable Platform Independent 7.1, 7.2, 7.3, 7.4, 7.5, 7.6, 7.7, 7.8, 8.1

@@ -1,0 +1,44 @@
+Title: IBM An attempt to upgrade Portal 8001 to CF14 fails with the following error...Caused by: java.lang.NoClassDefFoundError:
+com.ibm.wps.wcm.access.draft.DependenciesImpl - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+An attempt to upgrade Portal 8001 to CF14 fails
+
+SYMPTOM
+The ConfigTrace.log shows the following...
+iseries-switch-to-was-user:
+Target finished: iseries-switch-to-was-user
+[xmlaccess] EJPXB0006I: Connecting to URL
+"hxxp://localhost:10067/wps/config/"
+
+
+[xmlaccess] EJPXB0002I: Reading input file
+/opt/IBM/WebSphere/wp_profile/ConfigEngine/config/work/HideAppsOnMobile.
+xml
+[xmlaccess] ?xml version="1.0" encoding="UTF-8"?
+[xmlaccess] <!-- IBM WebSphere Portal/8.0.0.1 build wp8001CF14_001_24
+exported on Fri Jan 23 10:36:23 CST 2015 from
+n1xporintt01.bmi.org/10.60.2.73 -->
+[xmlaccess]
+[xmlaccess]
+[xmlaccess] EJPXA0001E: An error occurred while processing the XML
+configuration request.
+[xmlaccess] com.ibm.wps.wcm.access.draft.DependenciesImpl
+(initialization failure)
+[xmlaccess] [CDATA
+
+
+CAUSE
+In this case, the problem was determined to be occurring because the Portal environment had an incorrect/incomplete /WebSphere/wp_profile/PortalServer/config/config/services.properties file. Review of the services.properties file revealed they were missing several entries that pointed to WCM services....for example... com.ibm.workplace.wcm.api.ProjectService=com.ibm.workplace.wcm.api.ProjectServiceImpl
+
+ENVIRONMENT
+Portal 8001 CF14 Linux
+
+DIAGNOSING THE PROBLEM
+You can see if the error stack above that the error is complaining about WCM code that throws an error that mentions 'Project Service"... [xmlaccess] Caused by: java.lang.NoClassDefFoundError: com.ibm.wps.wcm.access.draft.DependenciesImpl (initialization failure) [xmlaccess] at java.lang.J9VMInternals.initialize(J9VMInternals.java:176) [xmlaccess] at com.ibm.wps.wcm.access.draft.WCMProjectHelperImpl.(WCMProjectHelperImpl. java:105) .... [xmlaccess] Caused by: java.lang.IllegalStateException: Required service ProjectService is not available
+
+RESOLVING THE PROBLEM
+In this case, we compared the current services.properties file that was incomplete to another services.properties that they had in their backup and added the missing entries. After adding the entries then re-run the upgrade.

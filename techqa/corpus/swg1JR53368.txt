@@ -1,0 +1,161 @@
+Title: IBM JR53368: YOU RECEIVE AN ERROR IN IBM PROCESS PORTAL V8.5.6 WHEN LOADING A COACH CONTAINING THE V8.5.5 STREAM COACH VIEW - United States
+
+Text:
+  DIRECT LINKS TO FIXES
+bpm.8560.cf1.delta.repository.2 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Standard&fixids=bpm.8560.cf1.delta.repository.2&source=SAR]
+bpm.8560.cf1.delta.repository.1 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Standard&fixids=bpm.8560.cf1.delta.repository.1&source=SAR]
+8.5.6.0-WS-BPM-IFJR53368 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Standard&fixids=8.5.6.0-WS-BPM-IFJR53368&source=SAR]
+Version 8.5 Refresh Pack 7 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24041575]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  In IBM Process Portal V8.5.6.0, when you load a coach that
+   contains the Stream coach view from the V8.5.5 Dashboards
+   toolkit, the coach does not load and you  see the following
+   entry in the SystemOut.log file:
+   
+   [5/4/15 4:58:02:605 EDT] 00000182 ServletWrappe E
+   com.ibm.ws.webcontainer.servlet.ServletWrapper service
+   SRVE0014E:
+   Uncaught service() exception root cause AssetDownload:
+   javax.servlet.ServletException: Couldn't retrieve the requested
+   asset:
+   dashboards_artifacts.zip/com/ibm/bpm/dashboards/dashboards.js
+   
+   PRODUCTS AFFECTED
+   IBM Business Process Manager (BPM) Advanced
+   IBM BPM Standard
+   IBM BPM Express
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  In Process Portal V8.5.6.0, how a missing file is handled when
+   loading a coach view was changed.  You now receive an error that
+   indicates the file that is missing.  In Process Portal V8.5.5.,
+   there is an incorrect reference in the Stream coach view file
+   in the Dashboards toolkit that triggers the error when running
+   the V8.5.5 Dashboards toolkit in Process Portal V8.5.6.0.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A fix for IBM BPM V8.5.6.0 is available that adds an additional
+   check for the file that uses the same pattern that is in the
+   V8.5.5.0 Stream coach view.
+   
+   On Fix Central (http://www.ibm.com/support/fixcentral), search
+   for JR53368:
+   
+   1. Select IBM Business Process Manager with your edition from
+   the product selector, the installed version to the fix pack
+   level, and your platform, and then click Continue.
+   2. Select APAR or SPR, enter JR53368, and click Continue.
+   
+   When you download fix packages, ensure that you also download
+   the readme file for each fix. Review each readme file for
+   additional installation instructions and information about the
+   fix.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  Not applicable
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR53368
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM STANDARD
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9500
+   
+   
+ * REPORTED RELEASE
+   856
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-05-18
+   
+   
+ * CLOSED DATE
+   2015-06-10
+   
+   
+ * LAST MODIFIED DATE
+   2015-06-10
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   BPM STANDARD
+   
+   
+ * FIXED COMPONENT ID
+   5725C9500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R856 PSY
+   UP

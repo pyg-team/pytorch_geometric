@@ -1,0 +1,93 @@
+Title: IBM Collecting Data: Virtual Portal for WebSphere Portal 7.0 - United States
+
+Text:
+Collecting Data; Collecting Data; Collecting Data; MustGather; MustGather; MustGather; MustGatherDocument; PORTSE; Virtual Portal RECOMMENDED RESOURCES
+
+ABSTRACT
+ Collecting troubleshooting data for Virtual Portal issues with IBM WebSphere Portal 7.0 expedites time to resolution by enabling IBM Support to provide informed problem analysis. 
+
+CONTENT
+If you have already contacted IBM Support and must collect data to determine the nature of a problem in WebSphere Portal, review the information below for the available methods of data collection. Otherwise, review Collecting Data: Read first for WebSphere Portal 7.0. [http://www.ibm.com/support/docview.wss?rs=688&uid=swg21444911] 
+
+Virtual Portal Problem Information
+Virtual Portal issues include: cannot create, modify or delete a virtual portal, XMLAccess export, import, or update, access control problems, user or group search, administration portlets in virtual portals, virtual portal login, and so on. 
+
+Collection of troubleshooting data Use the following instructions for collecting the necessary information.
+
+Enabling traces
+Enable Virtual Portal trace from the WebSphere Administrative Console: Troubleshooting -> Logs and Trace -> WebSphere_Portal -> Diagnostic Trace. We recommend to increase the log file size to 20 MB or more and the historical copies to 20 or more. Keep trace format as Basic. Click "Change Log Detail Levels" and then enter trace strings according to the nature of the problem as follows: 
+
+ * Use the following trace strings at a minimum:  * com.ibm.wps.engine.Servlet=all:
+    * 
+    * com.ibm.wps.services.vpmapping.*=all:
+    * 
+    * com.ibm.wps.command.vp.*=all:
+    * 
+    * com.ibm.wps.portlets.managevirtualportals.*=all
+    * 
+   
+   
+ * If the problem is related to login or user and group management in a virtual portal, add  * com.ibm.wps.engine.commands.*=all:
+    * 
+    * com.ibm.wps.services.authentication.*=all:
+    * 
+    * com.ibm.wps.services.puma.*=all:
+    * 
+    * com.ibm.wps.puma.*=all:com.ibm.wps.um.*=all:
+    * 
+    * com.ibm.ws.wim.*=all:com.ibm.websphere.wim.*=all:
+    * 
+    * com.ibm.wsspi.wim.*=all
+   
+   
+
+ * If the problem is related to permissions or access control, add:  * com.ibm.wps.ac.impl.AccessControlConfigFederator=all:
+    * 
+    * com.ibm.wps.ac.impl.AccessControlFederator=all
+   
+   
+
+ * If the problem is related to XML access or Release Builder, add:  * com.ibm.wps.command.xml.*=all
+   
+   
+
+
+If you want to set logging options for the current session only, use the Enable Tracing in the WebSphere Portal Administration pages for dynamic tracing. (Be advised, however, that the potential exists for dynamic tracing to impact the performance of the system as it uses the Java Virtual Machine's (JVM) memory to fill the buffer before writing the data to the log.) 
+
+For further information regarding logging and tracing in the portal, refer to the article "WebSphere Portal run-time logs" in the WebSphere Portal InfoCenter [http://publib.boulder.ibm.com/infocenter/wpdoc/v6r1m0/index.jsp?topic=/com.ibm.wp.ent.doc/trouble/run_logs.html]. 
+
+Collecting trace logs and configuration data 1. Reproduce the problem. Collect screenshots, user ID, and timestamp information as appropriate. 
+
+2. Run the following script from <wp_profile>/PortalServer/bin to collect the data: 
+
+ *  Windows:wpcollector.bat Linux/Unix/i: wpcollector.sh 
+ * 
+ * NOTE: 
+ * 
+ * wpcollector.bat -Dpmr=22222,111,000.
+
+
+Additional Data 
+1. Run the configuration task, " list-all-virtual-portals", to show currently configured virtual portals. 
+
+2. Specify how the virtual portals were created: through the ConfigEngine task "create-virtual-portal" or through the Manage Virtual Portals portlet. 
+
+3. HTTP server configuration: type, version: httpd.conf, plugin-cfg.xml, access.log, error.log, and http_plugin.log. 
+
+4. Take screenshots from the following three portlets: 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+
+5. If the problem is related to virtual portal initialization, get the value of the SCRIPT_INIT_VP paramater of the Virtual Portal Manager portlet (from Portlets, find Virtual Portal Manager and click the Configure icon). 
+
+If you did not FTP your files via WPCollector, locate the "wp.mustgather.zip" file or the "<pmr #>-wp.mustgather-timestamp.zip" file in <wp_profile_root> [https://idoc2.swg.usma.ibm.com/portal/topic/com.ibm.wp.ent.doc_v70/reference/wpsdirstr.html#wpsdirstr__wp_profile_root]/filesForAutoPD/. Send all the files to IBM Support by using the instructions outlined in Exchanging information with IBM Technical Support for problem determination [http://www.ibm.com/support/docview.wss?rs=688&uid=swg21201571]. NOTE: When sending logs for review, include any relevant screenshots, timestamps, user IDs, and so on, in order to expedite analysis of the issue. 
+
+ 
+
+Related Information  * IBM Support Portal: WebSphere Portal Troubleshooting [http://www.ibm.com/support/entry/portal/Troubleshooting/Software/WebSphere/WebSphere_Portal] [http://www.ibm.com/support/docview.wss?rs=688&uid=swg21201571] 
+ * WebSphere Portal Family wiki: Troubleshooting [http://www-10.lotus.com/ldd/portalwiki.nsf/dx/Troubleshooting_wp7] 
+ * Collecting Data: Read first for WebSphere Portal 7.0 [http://www.ibm.com/support/docview.wss?rs=688&uid=swg21444911]

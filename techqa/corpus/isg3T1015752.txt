@@ -1,0 +1,83 @@
+Title: IBM Run the MySQL database on a separate server - United States
+
+Text:
+remote MySQL RTM TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Run the MySQL database on a separate server 
+
+RESOLVING THE PROBLEM
+
+
+You want to run the database on a dedicated host instead of on the RTM host to secure data. 
+
+1.CLOSE THE LOCAL DATABASE
+A. Stop all essential services 
+
+>   # service lsfpollerd stop 
+# service crond stop 
+# chkconfig mysqld off 
+
+
+B. Create a database dump 
+
+>   # mysqldump cacti > cactidump.sql 
+# mysqldump mysql time_zone_name > timezone.sql 
+
+
+* Note that this process may take a long time for large deployments. 
+
+C. Stop the mysqld service 
+
+>   # service mysqld stop 
+
+
+D. Make changes to the configuration files on the RTM host machine. Locate the line where the database hostname is defined and change "localhost" or "127.0.0.1" to the hostname or IP of the database server in the following files: 
+
+>   # vim /opt/cacti/include/global.php 
+# vim /opt/cacti/include/config.php 
+# vim /opt/rtm/lsf/bin/grid.conf 
+# vim /opt/rtm/etc/lsfpollerd.conf 
+# vim /etc/rsyslog.conf 
+# vim /opt/cacti/plugins/syslog/config.php 
+
+
+ 
+2.SET UP THE REMOTE DATABASE HOST SERVER
+(Do the following on the remote Database host Server)
+
+A. Set up the MySQL database server 
+
+>   # yum install mysql-server mysql 
+# chkconfig mysqld on 
+# /etc/init.d/mysqld start 
+
+
+(Skip the step above if you already have it configured on the remote server.) 
+
+B. Configure firewall to allow port 3306 C. Create the database 
+# mysqladmin -u root create cacti D. Run the following commands 
+
+>   # mysql -u root mysql -e "GRANT ALL ON cacti.* TO cacti@ IDENTIFIED BY 'admin';" 
+# mysql -u root mysql -e "GRANT SELECT ON mysql.time_zone_name TO cacti@ IDENTIFIED BY 'admin';" 
+
+
+E. Backup original my.cnf and copy my.cnf.*.innodb from the RTM host machine (/opt/rtm/share) to the Database host machine (/etc) Use a my.cnf that uses less memory than the max available memory on the database host server. 
+
+# cp my.cnf my.cnf.original 
+# scp root@:/opt/rtm/share/my.cnf.*.innodb /etc/my.cnf 
+
+F. Copy the sql dump file to the remote database host 
+
+>   # scp root@ :/cactidump.sql /tmp/ 
+# scp root@< Original_RTM_Running_Machine>: /timezone.sql /tmp/ 
+
+
+G. Import the SQL dump into the new database 
+# mysql cacti # mysql mysql H. Restart mysqld 
+# service mysqld restart  
+
+
+ 
+
+Cross reference information Segment Product Component Platform Version Edition IBM Spectrum Computing IBM Spectrum LSF RTM Data Collectors

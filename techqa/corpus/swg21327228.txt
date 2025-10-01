@@ -1,0 +1,21 @@
+Title: IBM Seperate ClearQuest Web login screen for each database set - United States
+
+Text:
+1327228; RATLC00748956; CQ; ClearQuest; CQ Web; ClearQuest Web; login; page; site; connection; schema repository; dbset; db set; separate; split TECHNOTE (FAQ)
+
+QUESTION
+ If there are multiple database sets (dbsets) established on the IBM Rational ClearQuest Web server, is there a way to have a unique login screen and web page for each dbset in Rational ClearQuest Web client? 
+
+ANSWER
+This functionality is not available. The list of dbsets (Database Connections or Schema Repositories) displayed on Rational ClearQuest Web is controlled by the ClearQuest Maintenance Tool on the server where the Rational ClearQuest Web Server component exists. 
+
+To have multiple login screens, one for each dbset, there must be separate Rational Web Platform (RWP) and Rational ClearQuest Web servers, with each one having a separate dbset in its ClearQuest Maintenance Tool. 
+
+A request for enhancement, RFE RATLC00748956 [http://www.ibm.com/developerworks/support/rational/rfe/execute?use_case=viewChangeRequest&CR_ID=1529], exists for the ability to have separate login pages for each Rational ClearQuest dbset. It is available for viewing on the RFE Community Web site [http://www.ibm.com/developerworks/support/rational/rfe/].
+
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Software Development Rational ClearQuest Maintenance tool

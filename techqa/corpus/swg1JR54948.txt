@@ -1,0 +1,139 @@
+Title: IBM JR54948: TW.SYSTEM.MODEL.FINDPROCESS INCORRECTLY USES THE TIP SNAPSHOT CONTEXT ON PROCESS SERVER - United States
+
+Text:
+  DIRECT LINKS TO FIXES
+bpm.8570.cf2016.06.delta.repository.2of2 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Standard&fixids=bpm.8570.cf2016.06.delta.repository.2of2&source=SAR]
+bpm.8570.cf2016.06.delta.repository.1of2 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Standard&fixids=bpm.8570.cf2016.06.delta.repository.1of2&source=SAR]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  tw.system.model.findProcess incorrectly uses the TIP snapshot
+   context on Process Server. This would be the expected behavior
+   on Process Center but for process server it should use the
+   default snapshot's context.
+   
+   If you then use methods like startNew it can create an instance
+   in the wrong snapshot context. The instances will show up as the
+   TIP snapshot in the Process Inspector.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Use the findProcessByName method of a TWProcessAppSnapshot
+   object to lookup the BPD.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ERROR DESCRIPTION -
+   Using the Javascript API TWProcess.startNew() will create a
+   process instance with the flag TIP set to ?T? in the database.
+   
+   
+   PRODUCTS AFFECTED
+   IBM Business Process Manager (BPM) Advanced
+   IBM BPM Standard
+   IBM BPM Express
+   
+   LOCAL FIX -
+   None
+   
+   
+   PROBLEM SUMMARY
+   The following is an example of the effected Javascript API:
+   tw.system.model.findProcess("25.31bde955-a01a-41e7-9f44-f4ce9e99
+   0426","2066.be55f902-d944-40b0-a264-94fb6b15cade").startNew(null
+   );
+   
+   The instances created will have the TIP flag set to ?T?(true)
+   even when the BPD context used to start the instance is from a
+   named snapshot.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR54948
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM ADVANCED
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9400
+   
+   
+ * REPORTED RELEASE
+   856
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2015-12-09
+   
+   
+ * CLOSED DATE
+   2016-02-01
+   
+   
+ * LAST MODIFIED DATE
+   2016-02-01
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R856 PSY
+   UP

@@ -1,0 +1,42 @@
+Title: IBM Using Internet Explorer 8 and 9 for Remote HMC Access - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ If Internet Explorer 8 or 9 is used for remote HMC access, the Hardware Management Console may not function correctly. To resolve the issue, enable the IE "Compatibility View" option. 
+
+RESOLVING THE PROBLEM
+ 
+
+Internet Explorer 8 and 9 (IE 8 and IE 9) are supported in HMC Version 7.7.6 and later. Internet Explorer 8 and 9 are not supported for use with remote access to HMC Version 7.7.5 and earlier. Although not supported, a circumvention is to run in compatibility mode as described below. For further information on HMC remote access browser requirements, refer to the HMC Readme:
+
+7.7.6: http://www-933.ibm.com/support/fixcentral/firmware/readme?fixid=MH01326#browser [http://www-933.ibm.com/support/fixcentral/firmware/readme?fixid=MH01326#browser]
+7.7.5: http://www-933.ibm.com/support/fixcentral/firmware/readme?fixid=MH01311#browser [http://www-933.ibm.com/support/fixcentral/firmware/readme?fixid=MH01311#browser]
+7.7.4: http://www-933.ibm.com/support/fixcentral/firmware/readme?fixid=MH01273#browser7740 [http://www-933.ibm.com/support/fixcentral/firmware/readme?fixid=MH01273#browser7740]
+7.3.5: http://www-933.ibm.com/support/fixcentral/firmware/readme?fixid=MH01194#browser35 [http://www-933.ibm.com/support/fixcentral/firmware/readme?fixid=MH01194#browser35]
+
+
+Compatibility mode for HMC Version 7.7.5 and earlier
+If IE is not set for compatibility mode, potential problems include screen refresh issues such as a blank navigation panel as shown below. To resolve the issue enable compatibility mode. This can be enabled by clicking on the "torn page" Compatibility icon circled in yellow.
+
+Internet Explorer 8 (IE 8) 
+IE 8 refresh issue without compatibility. [/support/docview.wss?uid=nas8N1012898&aid=1] [/support/docview.wss?uid=nas8N1012898&aid=1]
+
+To permanently run the HMC in compatibility mode, click the IE menu option for Tools, Compatibility View Settings. Enter the HMC hostname/ipaddress and click Add. If the HMC falls under the intranet zone rules, the "Display Intranet sites in compatibility view" can be also used.
+
+Compatibility View [/support/docview.wss?uid=nas8N1012898&amp;aid=2]
+
+Internet Explorer 9 (IE 9)
+The browser may auto-detect compatibility view. If it does, the compatibility view icon (the torn page) will be displayed. Click the compatibility view icon to enable it.
+IE 9 [/support/docview.wss?uid=nas8N1012898&aid=3] [/support/docview.wss?uid=nas8N1012898&aid=3]
+Compatibility mode can also be enabled using the the IE menu options. To display the menu bar, click the "Alt" key, then select Tools, Compatibility View Settings. Enter the HMC hostname/ipaddress and click Add. If the HMC falls under the intranet zone rules, the "Display Intranet sites in compatibility view" can be also used. Click the "Alt" key again to hide the menu bar.
+
+To verify the browser Compatibility View setting press F12 (developer tools). Verify the browser mode shows compatibility. Click on the menu to set it, if needed.
+F12 developer tools view [/support/docview.wss?uid=nas8N1012898&aid=4] [/support/docview.wss?uid=nas8N1012898&aid=4]
+
+
+
+
+HISTORICAL NUMBER
+ 526371038

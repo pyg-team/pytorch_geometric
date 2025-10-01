@@ -1,0 +1,21 @@
+Title: IBM Resetting the xmeta password in InfoSphere Information Server - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ My xmeta password expired and needed to be changed. I now see errors in SystemOut.log that my xmeta password is wrong. How can I tell WebSphere what my new xmeta password is? 
+
+ANSWER
+As an admin user, you will need to run: 
+
+On Unix/Linux: 
+
+IBM/InformationServer/ASBServer/bin/AppServerAdmin.sh -db -user xmeta -password <your password> 
+
+On Windows: 
+
+IBM\InformationServer\ASBServer\bin\AppServerAdmin -db -user xmeta -password <your password>
+
+RELATED INFORMATION
+ IBM Information Server Information Center [http://publib.boulder.ibm.com/infocenter/iisinfsv/v8r1/topic/com.ibm.swg.im.iis.found.admin.common.doc/topics/admin_runappserver_cmd.html]

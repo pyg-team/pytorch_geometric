@@ -1,0 +1,130 @@
+Title: IBM Deploying the CGI program (arswww.cgi) from OnDemand Web Enablement Kit (ODWEK) on Linux/Unix environments - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How do I deploy the CGI program (arswww.cgi) from OnDemand Web Enablement Kit (ODWEK) on Linux/Unix environments ? 
+
+CAUSE
+Needs of a cookbook to easily deploy the CGI program from ODWEK.
+
+ANSWER
+ 
+
+To deploy the CGI program in Windows environment you may be based in this documentation but also refer to details steps in this document:
+
+Implementing Web Applications with CM Information Integrator for Content and OnDemand Web Enablement Kit
+http://www.redbooks.ibm.com/abstracts/sg246338.html?Open [http://www.redbooks.ibm.com/abstracts/sg246338.html?Open]
+
+
+Important:
+Beginning in v9.0 the CGI program and servlet are deprecated. They continue to be provided and supported; however, the code is stabilized. If you are developing new ODWEK applications or rewriting existing ODWEK applications, use the Java API.
+
+
+Before you begin
+
+Before you deploy the CGI program:
+
+- Make sure that you have completed the ODWEK software installation. Refer the related URL
+- Make sure that you have the current version of the IBM HTTP server installed, configured, and operating on the system. Refer the related URL
+
+
+Deploying the CGI program:
+
+Depending on the IBM HTTP Server (IHS) version you are using its installation path may differ. In this case, the IHS is installed in: /usr/IBM/HTTPServer 
+
+- Create the following directories:
+
+/usr/IBM/HTTPServer/htdocs/en_US/od
+/usr/IBM/HTTPServer/htdocs/en_US/od/images
+/usr/IBM/HTTPServer/htdocs/en_US/od/temp
+/usr/IBM/HTTPServer/htdocs/en_US/od/temp/cache
+/usr/IBM/HTTPServer/htdocs/en_US/od/temp/cache
+usr/IBM/HTTPServer /htdocs/en_US/temp
+
+
+- Give all permissions (777) to the following directories::
+
+/usr/IBM/HTTPServer/htdocs/en_US/temp
+/usr/IBM/HTTPServer/htdocs/en_US/od/temp/cache
+
+
+- Copy the following files (from ODWEK) to: /usr/IBM/HTTPServer/htdocs/en_US/od:
+
+/usr/lpp/ars/www/samples/logon.htm
+/usr/lpp/ars/www/samples/template.htm
+
+- Copy all images from /usr/lpp/ars/www/images to /usr/IBM/HTTPServer/htdocs/en_US/od/images
+
+
+- Copy these 2 files to /usr/IBM/HTTPServer/cgi-bin
+
+/usr/lpp/ars/www/arswww.cgi
+/usr/lpp/ars/www/arswww.ini
+
+
+- Edit the files logon.htm and template.htm from /usr/IBM/HTTPServer/htdocs/en_US/od replacing /images/<image> by /od/images/<image>
+
+
+- Edit the file arswww.ini with the OnDemand Server information. For example:
+
+[@SRV@_archive] //"archive" is the default OnDemand instance
+HOST=<OnDemand Server hostname> //add the OnDemand Server hostname here
+PROTOCOL=0
+PORT=1445 //this is the default OnDemand server communication port
+
+
+[configuration] //configure the following parameter according to the paths created in the steps above
+TemplateDir=/usr/IBM/HTTPServer /htdocs/en_US/od
+TempDir=/usr/IBM/HTTPServer /htdocs/en_US/od/temp
+CacheDir=/usr/IBM/HTTPServer /htdocs/en_US/od/temp/cache
+ImageDir=/usr/IBM/HTTPServer /htdocs/en_US/od/images
+AppletDir=/usr/lpp/ars/www/applets //keep this as default
+
+
+Accessing the CGI application via a web browser 
+
+The address to the CGI will depends on the parameter DocumentRoot from file /usr/IBM/HTTPServer/conf/httpd.conf .
+
+
+
+For example: If I have the following in file /usr/IBM/HTTPServer/conf/httpd.conf :
+
+DocumentRoot "/usr/IBM/HTTPServer/htdocs/en_US" 
+
+The address used in the web browser will be the IP from the ODWEK Server plus the path including logon.htm from there. Like: 
+
+http://<ODWEK Server IP>/od/logon.htm
+
+
+
+
+
+If I have the following in file /usr/IBM/HTTPServer/conf/httpd.conf :
+
+DocumentRoot "/usr/IBM/HTTPServer/htdocs" 
+
+The address used in the web browser will be the IP from the ODWEK Server plus the path including logon.htm from there. Like: 
+
+http://<ODWEK Server IP>/en_US/od/logon.htm
+
+
+
+Possible error you may receive:
+
+
+"
+[/support/docview.wss?uid=swg21678549&aid=1] [/support/docview.wss?uid=swg21678549&aid=1]
+"
+
+If you received that error then copy all the icu* files from <ODWEK_installation_directory>/lib64 (or /lib32 depends on the system) to the same directory where the arswww.cgi resides in your HTTP Server
+
+
+
+RELATED INFORMATION
+ Installing ODWEK [http://pic.dhe.ibm.com/infocenter/cmod/v8r5m0/topic/com.ibm.ondemand.odwekmp.doc/ars1y37132.htm#inst1]
+Installing IBM HTTP Server [http://www-01.ibm.com/support/knowledgecenter/api/content/SSEQTJ_8.5.5/com.ibm.websphere.ihs.doc/ihs/welc6miginstallihsdist.html]
+Appendix A. Deploying the CGI program [http://pic.dhe.ibm.com/infocenter/cmod/v8r5m0/topic/com.ibm.ondemand.odwekmp.doc/ars1y37199.htm#apiref]
+ODWEK Product overview - CGI Deprecated [http://pic.dhe.ibm.com/infocenter/cmod/v9r0m0/topic/com.ibm.ondemand.odwek.doc/ars5y00007.htm?resultof=%22%64%65%70%72%65%63%61%74%65%64%22%20%22%64%65%70%72%65%63%22%20%22%63%67%69%22%20]
+Implementing Web Applications with CM Information Integ [http://www.redbooks.ibm.com/abstracts/sg246338.html?Open]

@@ -1,0 +1,32 @@
+Title: IBM Message in Rational Software Architect on Linux platforms says Internal Error: An SWT error has occurred - United States
+
+Text:
+RAD; RSA; RATLC00547533; PK30899; Linux; Internal Error; standard; widget; toolkit; SWT; An SWT error has occurred; You are recommended to exit the workbench; code review; Window; Preferences; Java; Code Review; v6.0.1.1 with iFix 1; 6.0.1.1 with iFix2; 1246771 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ In IBM® Rational® Software Architect (RSA) v6.0.1.1 on Linux®, the following error message appears when you select Window > Preferences > Java > Code Review.
+Internal Error: An SWT Error has occurred. You are recommended to exit the workbench. Subsequent errors may happen and may terminate the workbench without warning. See .log file for more details. Do you want to exit the workbench? 
+
+RESOLVING THE PROBLEM
+The following is a screen capture of the error message: 
+
+[/support/docview.wss?uid=swg21246771&aid=1] [/support/docview.wss?uid=swg21246771&aid=1] 
+
+
+This issue has been identified as a product defect and has been logged under APAR PK30899. 
+
+There is no workaround at this time. 
+
+ 
+
+(SWT, or Standard Widget Toolkit, is an Eclipse toolkit for Java™ developers that defines a common, portable, user interface API that uses the native widgets of the underlying operating system.) 
+
+
+
+
+
+
+
+
+
+Cross Reference information Segment Product Component Platform Version Edition Software Development Rational Application Developer for WebSphere Software Code Review Linux 6.0.1.1

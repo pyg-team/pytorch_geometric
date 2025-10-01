@@ -1,0 +1,31 @@
+Title: IBM External search services cannot search WebSphere Portal authenticated pages - United States
+
+Text:
+external search; search; external; Google; authenticated pages; password; user ID; userid; public pages; public; omnifind TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ You would like details about why external search services (for example, Google Search) cannot search IBM WebSphere Portal authenticated pages. 
+
+SYMPTOM
+A search on your Portal site by external search services works only for public Portal pages, that is, for pages that users can access without a user ID and password.
+
+
+RESOLVING THE PROBLEM
+Some technical details about this limitation are as follows: 
+
+WebSphere Portal URLs:
+WebSphere Portal URLs typically must contain more information than the name of the server and a reference to a specific Portal page. For example, navigational state information is also encoded into the URL. This means that URLs that point to the same Portal page from other Portal pages (for example, through the navigation bar) need not be and typically are not identical. The same WebSphere Portal authenticated page may have multiple URLs based on how you click to arrive there. This can cause duplicate search results in an external search service. 
+
+This behavior is not a problem for WebSphere Portal public (unauthenticated) pages using URL normalization.
+
+Portlet-level authorization versus page-level authorization checks of the search result set:
+One WebSphere Portal authenticated page may contain multiple portlets. Different views of the page are presented to different users depending on what their access permissions are on a per-portlet basis. Many external search services just have page-level authorization checks of the search result set, which is not granular enough. This can cause a security exposure that allows users to see a portlet in search results that they should not access.
+
+Possible automated crawling of WebSphere Portal administration portlets:
+WebSphere Portal provides a set of portlets for administrative tasks. Having an external search service recursively crawl through all the links in the administrative portlets could cause unexpected behavior. The problem could be as mild as confusing error messages in the logs or could be as serious as an unintentional reconfiguration of a WebSphere Portal function.
+
+NOTE: IBM OmniFind Enterprise Edition [http://www.ibm.com/software/data/enterprise-search/omnifind-enterprise] can be used to search WebSphere Portal authenticated pages.
+
+RELATED INFORMATION
+ Help Web crawlers efficiently crawl your portal/Web sit [http://www.ibm.com/developerworks/xml/library/x-sitemaps]
+Configuring your portal site for search by internet sea [http://www.ibm.com/support/knowledgecenter/SSHRKX_8.5.0/mp/admin-system/srccfgextsrch.html]

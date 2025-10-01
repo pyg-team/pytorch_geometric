@@ -1,0 +1,253 @@
+Title: IBM PK88224: EDM POOL FULL ABEND04E RC00C90089 OR FILLING UP WITH PT PAGES WHEN CALLING NESTED STORED PROCEDURES - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  EDM Pool Full RC00C90089 DSNGEPLC or EDM pool filling up
+   with PT pages due to duplicate stored proc instances
+   created when calling nested stored procedures
+   .
+   In addition, PK88224 includes a fix to prevent a potential
+   1 bit overlay as a result of many repeated invocations of same
+   stored procedure (under one DB2 connection / thread ) that
+   returns result sets, the calling app accesses the result sets
+   using the ALLOCATE CURSOR statement, AND the calling app does
+   not close the result sets between the re-invocations of that
+   stored proc. This type of scenario creates multiple active
+   instances of the stored proc under this single DB2 connection
+   or thread, and if there is an excessive amount of these
+   instances, a 1 bit overlay could potentially occur in
+   internal DB2 control blocks in the Agent Local ( AGL ) pool.
+   This 1 / one bit overlay would not occur in customer data.
+   
+   DB2STGLK/K    DB2OVRLAY/K
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  To avoid the secondary problem mentioned re: one bit overlay for
+   the scenario previously described using ALLOCATE CURSOR, change
+   the calling application to close the stored procedure result
+   sets after the calling app is done with them, 'before' that
+   stored proc is invoked again by that DB2 connection / thread.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All DB2 users of stored procedures on        *
+   *                 on DB2 for z/OS v8 NFM or DB2 9 (for z/OS).  *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: An EDM  POOL FULL condition occurred    *
+   *                      with the following console message:     *
+   *                           DSNT500I DSNGEPLC RESOURCE         *
+   *                           UNAVAILABLE                        *
+   *                             REASON 00C90089                  *
+   *                             TYPE 00000600                    *
+   *                             NAME EDM POOL SPACE              *
+   *                      and                                     *
+   *                          SQLCODE904 returned to application  *
+   *                      .                                       *
+   *                                     OR                       *
+   *                      DBM1 storage shortage related abends    *
+   *                      possible. Common out of storage abend   *
+   *                      and reason codes are:                   *
+   *                      ABEND04E / AB04E  with                  *
+   *                      RC00E20003  RC00E20004  RC00E2000B      *
+   *                      RC00E2000C                              *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   
+   Each stored procedure program in DB2 is represented by
+   internal control structures allocated in DBM1 thread
+   storage. In addition, each SQL statement inside the stored
+   procedure is represented by structures in the EDM pool
+   storage.
+   .
+   With v8 NFM, repeated invocations of the same stored
+   procedure creates a copy ("instance") of SQL statement
+   in the EDM pool as well as a copy ("instance") of
+   supporting structures in DBM1 thread storage. This behavior
+   is commonly referred to as the stored procedure
+   multiple instance behavior, which was designed to allow
+   callers of stored procedures to access result sets from
+   a previous invocation of the stored procedure.
+   .
+   In order to relieve EDM pool and thread storage during
+   repeated invocations of the same stored procedure with
+   multiple instance behavior, several optimizations were
+   added to proactively free up/reuse storage at CLOSE of
+   result sets and COMMIT time if all result sets
+   associated with the stored procedure have been closed.
+   .
+   In the reported case, customer had nested stored
+   procedure scenario (one stored procedure calling
+   another stored procedure) as shown below:
+   .
+   Main program {
+       EXEC SQL CALL stored procedure SP1
+      }
+   
+      SP1{
+       OPEN result set cursor
+       loop many times:
+            EXEC SQL CALL stored procedure SP2
+            ASSOCIATE/ALLOCATE/FETCH/CLOSE
+            COMMIT
+        }
+   
+      SP2{
+        OPEN result set cursor
+        }
+   .
+    Both SP1 and SP2 return result sets. SP1 closes the
+    result sets returned by SP2 and issues frequent
+    COMMITs. Visual examination of the dump storage
+    mapping of the AGL ( Agent Local ) pool showed excessive
+    number of blocks with eyecatcher SLT .
+    It was determined that in spite of the CLOSE of
+    result sets and COMMITs, DB2 unnecessarily replicates SP2
+    related storage, leading up to EDM POOL FULL and DBM1
+    storage shortage condition. DB2 does not optimally reuse a
+    nested stored procedure storage if COMMIT is issued from caller
+    who is also a stored procedure.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  DB2 code has been optimized to avoid unnecessary replication
+   of nested stored procedure storage if there are no outstanding
+   result sets and COMMIT is issued in the calling stored
+   procedure.
+   
+   RELATED KEYWORDS: SQLSP SQLSTOREDPROC SQLSTORAGE NFM
+                     RC00C90089 ABEND04E AB04E
+                     00E20003 00E20004 00E2000B 00E2000C
+                     GROWTH LEAK EXCESSIVE SMCOVERLAY
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  *********
+   * HIPER *
+   *********
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK88224
+   
+   
+ * REPORTED COMPONENT NAME
+   DB2 OS/390 & Z/
+   
+   
+ * REPORTED COMPONENT ID
+   5740XYR00
+   
+   
+ * REPORTED RELEASE
+   910
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   YesHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-06-08
+   
+   
+ * CLOSED DATE
+   2009-08-18
+   
+   
+ * LAST MODIFIED DATE
+   2011-05-06
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UK49337 UK49338
+   
+   
+
+MODULES/MACROS
+ *  DSNXECW  DSNXECWA DSNXECWC DSNXECWU
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   DB2 OS/390 & Z/
+   
+   
+ * FIXED COMPONENT ID
+   5740XYR00
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R810 PSY UK49337 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK49337]
+   UP09/09/03 P F909
+   
+   
+ * R910 PSY UK49338 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK49338]
+   UP09/09/03 P F909
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

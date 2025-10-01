@@ -1,0 +1,14 @@
+Title: IBM Completely stopping DB2 / TSAMP / RSCT for maintenance reasons - United States
+
+Text:
+tsa; tsamp; shutdown; maintenance; upgrade; CritRsrcProtMethod TECHNOTE (FAQ)
+
+QUESTION
+ To perform maintenance on the servers of a cluster containing DB2 HADR (v9.7, 10.1, 10.5 or v11.1), what steps should I take to prevent unpredictable or undesirable behavior by the automation engine or cluster services ? 
+
+ANSWER
+The attached document assumes a scheduled maintenance period with a DB2 outage.
+For a more general TSAMP related shutdown/startup procedure, refer to the following technote:
+http://www.ibm.com/support/docview.wss?uid=swg21686172 [http://www-01.ibm.com/support/docview.wss?uid=swg21686172]
+
+Shutdown Procedure for an Automated HADR Environment - Sept 2014.pdf [/support/docview.wss?uid=swg21394466&aid=2]Shutdown Procedure for an Automated HADR Environment - Sept 2014.pdf [/support/docview.wss?uid=swg21394466&aid=1]

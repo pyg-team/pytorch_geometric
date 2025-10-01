@@ -1,0 +1,116 @@
+Title: IBM SQL1768N  Unable to start HADR. Reason code = "5" while initializing high availability disaster recovery (HADR) - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ SQL1768N Unable to start HADR. Reason code = "5" while initializing high availability disaster recovery (HADR) 
+
+CAUSE
+The error might come while starting HADR for ex. db2 start hadr on database <db_name> as primary, when service port/socket is already used for other service.
+
+DIAGNOSING THE PROBLEM
+Socket allocated for HADR - 
+
+$ cat /etc/services | grep -i 60070
+db2_hadr_1 60070/tcp
+
+db2 get db cfg for sample | grep -i HADR_LOCAL
+HADR local host name (HADR_LOCAL_HOST) = 9.182.192.146
+HADR local service name (HADR_LOCAL_SVC) = 60070
+
+Check the db2diag.log file for errors. When it is socket in use problem, you should see message similar to following -
+
+2016-09-17-03.17.58.515457+330 I99076A572 LEVEL: Warning
+PID : 27066368 TID : 6027 PROC : db2sysc 0
+INSTANCE: XXXXXXX NODE : 000 DB : SAMPLE
+HOSTNAME: ihubaix1.in.ibm.com
+EDUID : 6027 EDUNAME: db2hadrp.0.1 (SAMPLE) 0
+FUNCTION: DB2 UDB, High Availability Disaster Recovery, hdrBindAndListen, probe:20310
+MESSAGE : ZRC=0x810F001B=-2129723365=SQLO_ADDR_IN_USE "Address already in use"
+DATA #1 : String, 45 bytes
+Retrying bind, socket is in use. Retry count:
+DATA #2 : unsigned integer, 8 bytes
+5
+
+2016-09-17-03.17.58.513634+330 E98071A520 LEVEL: Error (OS)
+PID : 27066368 TID : 6027 PROC : db2sysc 0
+INSTANCE: XXXXXXX NODE : 000 DB : SAMPLE
+HOSTNAME: ihubaix1.in.ibm.com
+EDUID : 6027 EDUNAME: db2hadrp.0.1 (SAMPLE) 0
+FUNCTION: DB2 UDB, oper system services, sqloPdbBindSocket, probe:20
+MESSAGE : ZRC=0x810F001B=-2129723365=SQLO_ADDR_IN_USE "Address already in use"
+CALLED : OS, -, bind
+OSERR : EADDRINUSE (67) "Address already in use"
+
+2016-09-17-03.17.58.514530+330 E98592A483 LEVEL: Severe
+PID : 27066368 TID : 6027 PROC : db2sysc 0
+INSTANCE: XXXXXXX NODE : 000 DB : SAMPLE
+HOSTNAME: ihubaix1.in.ibm.com
+EDUID : 6027 EDUNAME: db2hadrp.0.1 (SAMPLE) 0
+FUNCTION: DB2 UDB, oper system services, sqloPdbBindSocket, probe:1131
+MESSAGE : ZRC=0x810F001B=-2129723365=SQLO_ADDR_IN_USE "Address already in use"
+DATA #1 : <preformatted>
+Port=[60070]
+
+2016-09-17-03.17.59.016412+330 I99649A459 LEVEL: Error
+PID : 27066368 TID : 6027 PROC : db2sysc 0
+INSTANCE: XXXXXXX NODE : 000 DB : SAMPLE
+HOSTNAME: ihubaix1.in.ibm.com
+EDUID : 6027 EDUNAME: db2hadrp.0.1 (SAMPLE) 0
+FUNCTION: DB2 UDB, High Availability Disaster Recovery, hdrBindAndListen, probe:20320
+MESSAGE : ZRC=0x810F001B=-2129723365=SQLO_ADDR_IN_USE "Address already in use"
+
+2016-09-17-03.17.59.017161+330 I100109A553 LEVEL: Error
+PID : 27066368 TID : 6027 PROC : db2sysc 0
+INSTANCE: XXXXXXX NODE : 000 DB : SAMPLE
+HOSTNAME: ihubaix1.in.ibm.com
+EDUID : 6027 EDUNAME: db2hadrp.0.1 (SAMPLE) 0
+FUNCTION: DB2 UDB, High Availability Disaster Recovery, hdrSetupListenerSocket, probe:22030
+MESSAGE : ZRC=0x810F001B=-2129723365=SQLO_ADDR_IN_USE "Address already in use"
+DATA #1 : <preformatted>
+Failed to setup listener socket on address=9.182.192.146:60070
+
+..
+
+2016-09-17-03.17.59.053310+330 I109827A890 LEVEL: Severe
+PID : 27066368 TID : 8140 PROC : db2sysc 0
+INSTANCE: XXXXXXX NODE : 000 DB : SAMPLE
+APPHDL : 0-12174 APPID: *LOCAL.milindt.160916214757
+AUTHID : MILINDT HOSTNAME: ihubaix1.in.ibm.com
+EDUID : 8140 EDUNAME: db2agent (SAMPLE) 0
+FUNCTION: DB2 UDB, base sys utilities, sqeLocalDatabase::FirstConnect, probe:8777
+DATA #1 : SQLCA, PD_DB2_TYPE_SQLCA, 136 bytes
+sqlcaid : SQLCA sqlcabc: 136 sqlcode: -1768 sqlerrml: 1
+sqlerrmc: 5
+sqlerrp : SQL10012
+sqlerrd : (1) 0x00000000 (2) 0x00000005 (3) 0x00000000
+(4) 0x00000000 (5) 0x00000000 (6) 0x00000000
+sqlwarn : (1) (2) (3) (4) (5) (6)
+(7) (8) (9) (10) (11)
+sqlstate:
+
+
+
+RESOLVING THE PROBLEM
+Check if the socket listed in db2diag.log is already in use using netstat and lsof commands. 
+
+$ netstat -an | grep -i 60070
+tcp4 0 0 9.182.192.146.60070 9.182.192.147.41473 ESTABLISHED
+tcp4 0 0 9.182.192.146.60070 9.182.192.147.41474 ESTABLISHED
+tcp4 0 0 9.182.192.146.60070 *.* LISTEN
+
+# lsof -i :60070
+lsof: WARNING: compiled for AIX version 5.3.0.0; this is 7.1.0.0.
+COMMAND PID USER FD TYPE DEVICE SIZE/OFF NODE NAME
+db2sysc 27066368 xxxxxxx 48u IPv4 0xf1000e0004ac33b8 0t0 TCP ihubaix1.in.ibm.com:db2_hadr_1 (LISTEN)
+db2sysc 27066368 xxxxxxx 49u IPv4 0xf1000e00108ad3b8 0t0 TCP ihubaix1.in.ibm.com:db2_hadr_1->ihubaix2.in.ibm.com:41473 (ESTABLISHED)
+db2sysc 27066368 xxxxxxx 50u IPv4 0xf1000e0005c7d3b8 0t0 TCP ihubaix1.in.ibm.com:db2_hadr_1->ihubaix2.in.ibm.com:41474 (ESTABLISHED)
+
+Either allocate new port for HADR_LOCAL_SVC or deallocate port 60070 from the existing service and re-issue the start hadr command.
+
+http://www.ibm.com/support/knowledgecenter/SSEPGG_10.1.0/com.ibm.db2.luw.messages.sql.doc/doc/msql01768n.html [http://www.ibm.com/support/knowledgecenter/SSEPGG_10.1.0/com.ibm.db2.luw.messages.sql.doc/doc/msql01768n.html] 
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Information Management DB2 for Linux- UNIX and Windows

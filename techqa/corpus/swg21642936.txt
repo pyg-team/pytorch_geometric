@@ -1,0 +1,37 @@
+Title: IBM Supported Versions of RSA Authentication Agent with WebSEAL - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ When configuring WebSEAL to perform RSA Token authentication, WebSEAL requires you to have the RSA ACE/Agent client installed on the system.
+
+Which client versions are supported by WebSEAL? 
+
+ANSWER
+The WebSEAL documentation for the different versions shows the "minimum" levels supported. For example... 
+
+6.0 and 6.1: 
+
+ * 
+ *  5.6 (Windows) 5.2 (UNIX and Linux) 
+ * 
+
+
+6.1.1:  * 
+ *  6.1 (Windows®) 5.2 (UNIX®) 
+ * 
+ * NOTE:
+ * 
+ *  Sun Solaris 8 and 9 on UltraSPARC processors IBM® AIX 5L™ v5.1 and 5.2 on PowerPC® and RISC System/6000 processors HP-UX 11i on PA-RISC 2.x processors 
+
+
+7.0:  * 
+ *  RSA ACE/Agent 6.1 (Windows) RSA ACE/Agent 5.2 for UNIX or RSA Authentication Agent 6.0 for PAM toolkit (UNIX) 
+
+
+
+Here are a few clarifications on this documentation to help in figuring out which versions of the client to use. 
+ * First, when the documentation states that these are the "minimum" supported versions, this means that we will support all newer versions (not just fix levels) of the clients. So for example, if we state support for version 6.1 of the RSA ACE/Agent for Windows, we will also support the user of versions 7.x, 8,x, etc. 
+ * It is important to confirm with RSA which client versions are supported on your particular operating system and version. The versions we state are minimum versions, so while they may be supported with TAM, they may not be supported by RSA on the newer versions of the OS you're using. Or it's possible that RSA may no longer support your particular OS at all. IBM cannot support a combination which is not supported by RSA. 
+ * The ISAM 7.0 documentation states that this is the first version to support the use of the RSA Authentication Agent for PAM for UNIX systems instead of the old RSA ACE/Agent for UNIX. Because of this, if you are planning to use any operating system for which RSA only supports the use of the Authentication Agent for PAM instead of the Agent for UNIX, you must be running ISAM 7.0.

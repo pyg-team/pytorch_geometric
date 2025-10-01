@@ -1,0 +1,28 @@
+Title: IBM JITOC (IMS Connector for Java) recovery - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ JITOC (IMS Connector for Java) recovery. 
+
+CAUSE
+The user tries two JITOC recovery scenarios and would like to know why the servlet has to be executed twice from the Web server. 
+
+Q1) We successfully run an IMS transaction from a servlet via ITOC. Then we cancel ITOC and bring it back up. When we try to execute the servlet, we get an HWSJ005E error. The second time we try the servlet, it works. 
+
+Q2) In the second scenario, we successfully run an IMS transaction from a servlet via ITOC. Then we cancel IMS and bring it back up. From ITOC we issue an OPENDS command. Then we try the servlet from the Web and get an HWSJ029E error. The second time we try the servlet, it works. 
+
+
+ANSWER
+A1) The result of the first scenario is normal. The IMS Connector for Java uses a connection pool to connect. When you cancel ITOC, the connection to the host is reset. When you run a transaction from the servlet, it tries to use the same connection that has been reset, so the result is an HWSJ005E error. When you run the transaction a second time, it starts a new connection which works. 
+
+A2) The outcome of the second scenario depends the timeout setting in ITOC. Currently, your timeout value in the ITOC configuration file must not be set at 0. If the timeout value is reached after cancelling IMS and before it comes back up, ITOC closes the client. You receive an HWSJ029E error, when you try to run a transaction from the servlet. When you run the transaction the second time, a new connection is created and therefore it works. If you specify TIMEOUT=0, then your connection will never drop.
+
+
+
+
+HISTORICAL NUMBER
+ 29611
+442
+000

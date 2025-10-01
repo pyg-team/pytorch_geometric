@@ -1,0 +1,42 @@
+Title: IBM TM1 ConsolidatedAvg function (rule/TI) - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ TM1 ConsolidatedAvg not taking into account zero values 
+
+SYMPTOM
+Incorrect result
+
+
+CAUSE
+TM1 contains 'Sparse' data and is not considered 'real' data; therefore, not used in the Average function
+
+ENVIRONMENT
+9.5.X 10.X
+
+RESOLVING THE PROBLEM
+The ConsolidatedAvg function requires 'real' data values and does not consider 'Sparse" data. 
+
+
+While the view as presented may show zero values, these values are not actually present as either real leaf data points nor as calculated values. They are simply ‘sparse’ data points, with no real data. When a consolidation is calculated, the whole premise of TM1 is that non-existent nodes do not affect the sum or performance of the consolidation calculation. Since there is nothing in the cube for these points they are skipped and never looked at.
+
+The rules have “SKIPCHECK” in place, which is the normal default for a sparse data cube. If one removes SKIPCHECK from the rule file, this means ‘look at every possible data point when doing 
+a consolidation. In this case all of the non-existent data points will be looked at, and will affect the consolidation. In this case changing the first parameter to the ConsolidatedAvg() 
+function will have an effect.
+
+The same type of thing can be seen by creating ‘real’ data points that happen to have zero values. 
+Add a feeder rule so that the ‘Product A’ cells (the data cells which have values) feed “Product B’ cells:
+['Product A']=>['Product B'];
+This will mean that when the consolidation is evaluated, a feeder bit will be found for a ‘Product B’ cell, and a rule will be searched for and run if it applies. 
+Creates a rule which returns a zero for a ‘Product B’ cell:
+['Product B'] = 0;
+Now the consolidation for ‘Product B’ will still show as a zero, but it is now composed of ‘real’ zeros. In this case again, the setting of the first parameter to ConsolidatedAvg() will 
+have the expected effect.
+
+ 
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Analytics Cognos TM1

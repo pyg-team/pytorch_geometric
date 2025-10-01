@@ -1,0 +1,66 @@
+Title: IBM HTTP Server Adapter returning 404 responses and throwing exceptions when processing incoming requests. - United States
+
+Text:
+STERLINGNFX TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ HTTP Server Adapter returning 404 responses and throwing exceptions when processing incoming requests. 
+
+SYMPTOM
+
+
+HTTP Server Adapter returning 404 responses and throwing exceptions when processing incoming requests.
+
+Symptom: Incoming HTTP requests my results in errors such as the following in the wf.log file: [2007-06-25 17:04:43.84] ERROR Chained Exception: [2007-06-25 17:04:43.84] ERROR SQL Error Code: 1 [2007-06-25 17:04:43.84] ERROR SQL State: 23000 java.sql.SQLException: ORA-00001: unique constraint (APPGIS.SCI_PK_26) violated at oracle.jdbc.driver.DatabaseError.throwSqlException(DatabaseError.java(Compiled Code)) at oracle.jdbc.driver.T4CTTIoer.processError(T4CTTIoer.java(Compiled Code)) at oracle.jdbc.driver.T4CTTIoer.processError(T4CTTIoer.java(Inlined Compiled Code)) at oracle.jdbc.driver.T4C8Oall.receive(T4C8Oall.java(Compiled Code)) at oracle.jdbc.driver.T4CPreparedStatement.doOall8(T4CPreparedStatement.java(Compiled Code)) at oracle.jdbc.driver.T4CPreparedStatement.executeForRows(T4CPreparedStatement.java(Compiled Code)) at oracle.jdbc.driver.OracleStatement.doExecuteWithTimeout(OracleStatement.java(Compiled Code)) at oracle.jdbc.driver.OraclePreparedStatement.executeInternal(OraclePreparedStatement.java(Compiled Code)) at oracle.jdbc.driver.OraclePreparedStatement.executeUpdate(OraclePreparedStatement.java(Compiled Code)) at com.sterlingcommerce.woodstock.util.frame.jdbc.JDBCService.executeUpdate(JDBCService.java(Compiled Code)) at com.sterlingcommerce.woodstock.workflow.Document.saveExtensions(Document.java(Compiled Code)) at com.sterlingcommerce.woodstock.workflow.Document.saveExtensions(Document.java(Inlined Compiled Code)) at com.sterlingcommerce.woodstock.workflow.Document.persist(Document.java(Compiled Code)) at com.sterlingcommerce.woodstock.workflow.WorkFlowContext.persist(WorkFlowContext.java(Compiled Code)) at com.sterlingcommerce.woodstock.workflow.WorkFlowContext.persist(WorkFlowContext.java(Inlined Compiled Code)) at com.sterlingcommerce.woodstock.workflow.engine.WEHelper.dispatch(WEHelper.java(Compiled Code)) at com.sterlingcommerce.woodstock.workflow.engine.WorkFlowEngineRMIImpl.dispatch(WorkFlowEngineRMIImpl.java(Compiled Code)) at com.sterlingcommerce.woodstock.workflow.Dispatcher.run(Dispatcher.java(Compiled Code)) at java.lang.Thread.run(Thread.java(Compiled Code)) 
+RESOLVING THE PROBLEM
+
+
+Document persistence code was modified within the HTTP Server Adapter to correct a persistence timing issue.
+
+For Gentran Integration Suite Release 4.2: Please apply Gentran Integration Suite, Release 4.2 Build 4206 or higher.
+
+For Gentran Integration Suite Release 4.1.1: Please apply Gentran Integration Suite, Release 4.1.1 Build 1982 or higher.
+
+ 
+
+HISTORICAL NUMBER
+ NFX1161 
+
+PRODUCT ALIAS/SYNONYM
+ 
+
+Function Area
+
+
+Adapters - HTTP
+
+
+Escalation ID
+
+
+1365813
+
+
+Fix ID
+
+
+37318
+
+
+Severity
+
+
+Critical
+
+
+Type
+
+
+NormalFix
+
+
+Build
+
+
+4206
+1982

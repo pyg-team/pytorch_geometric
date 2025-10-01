@@ -1,0 +1,44 @@
+Title: IBM Instance upgrade hangs - United States
+
+Text:
+Instance upgrade; hang TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Why does my Instance upgrade command hang? 
+
+DIAGNOSING THE PROBLEM
+To diagnose the hang run:
+export setopts=-x; ./db2iupgrade -d <instname> >/tmp/upg.trace 2>&1
+
+
+
+
+RESOLVING THE PROBLEM
+In the trace collected using the -d option we see "port is busy" message. 
+
+
+
+21078 ||||||||||||||/ 2898997440 iIsPortOpened ENTRY Tue Mar 21 06:55:44 2017 -- ,
+21079 |||||||||||||||/ 2898997440 iGetHostName ENTRY Tue Mar 21 06:55:44 2017 -- ,
+21080 |||||||||||||||| 2898997440 iGetHostName 50 -DATA- , STRING =HDQTSTDLSDBS002
+21081 |||||||||||||||\ 2898997440 iGetHostName EXIT Tue Mar 21 06:55:44 2017 -- , INT = 0
+21082 ||||||||||||||| 2898997440 iIsPortOpened 120 -DATA- , STRING = 60000
+21083 ||||||||||||||| 2898997440 iIsPortOpened 132 -DATA- , STRING = IPv4 detected
+21084 ||||||||||||||| 2898997440 iIsPortOpened 150 -DATA- , INT = 2
+21085 ||||||||||||||| 2898997440 iIsPortOpened 160 -DATA- , INT = 1
+21086 ||||||||||||||| 2898997440 iIsPortOpened 180 -DATA- , INT = 9
+21087 ||||||||||||||| 2898997440 iIsPortOpened 199 -DATA- , INT = 99
+21088 ||||||||||||||| 2898997440 iIsPortOpened 200 -ERROR- , STRING = Cannot assign requested address
+21089 ||||||||||||||\ 2898997440 iIsPortOpened EXIT Tue Mar 21 06:55:44 2017 -- , INT = 1
+21090 |||||||||||||| 2898997440 IServiceFile::checkPortStatus 30 -ERROR- , STRING = port is busy
+21091 |||||||||||||\ 2898997440 IServiceFile::checkPortStatus EXIT Tue Mar 21 06:55:44 2017 -- , INT = 5196
+21092 ||||||||||||\ 2898997440 IServiceFile::validate EXIT Tue Mar 21 06:55:44 2017 -- , INT = 5196
+21093 |||||||||||| 2898997440 IServiceFile::generatePort 60 -DATA- , INT = 5196
+21094 ||||||||||||/ 2898997440 IServiceFile::isPortReserved ENTRY Tue Mar 21 06:55:44 2017 -- ,
+21095 ||||||||||||\ 2898997440 IServiceFile::isPortReserved EXIT Tue Mar 21 06:55:44 2017 -- , UINT = 0
+21096 ||||||||||||/ 2898997440 IServiceFile::validate ENTRY Tue Mar 21 06:55:44 2017 -- ,
+21097 ||||||||||||| 2898997440 IServiceFile::validate 3 -DATA- , STRING = DB2_instdldv
+21098 ||||||||||||| 2898997440 IServiceFile::validate 5 -DATA- , INT64 = 60001
+21099 |||||||||||||/ 2898997440 IServiceFile::getServiceEntry1 ENTRY Tue Mar 21 06:55:44 2017 -- ,
+
+To resolve the issue, make sure needed ports are still available and can be used by DB2.

@@ -1,0 +1,159 @@
+Title: IBM IZ39370: UNI-GATEWAY: GATEWAY CORES IF CONFIGURED NOT TO PASS DELETES AND THE SOURCE AND DESTINATION TABLE HAVE DIFFERENT PRIMARY KEYS - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Tivoli Netcool/OMNIbus 7.2.0 InterimFix 4, 7.2.0-TIV-NCOMNIbus-IF0004 [http://www-01.ibm.com/support/docview.wss?uid=swg24024892]
+Tivoli Netcool/OMNIbus 7.2.1 Fix Pack 7, 7.2.1-TIV-NCOMNIbus-FP0007 [http://www-01.ibm.com/support/docview.wss?uid=swg24025507]
+Tivoli Netcool/OMNIbus 7.2.1 Fix Pack 15, 7.2.1-TIV-NCOMNIbus-FP0015 [http://www-01.ibm.com/support/docview.wss?uid=swg24036693]
+Tivoli Netcool/OMNIbus 7.2.1 Fix Pack 13, 7.2.1-TIV-NCOMNIbus-FP0013 [http://www-01.ibm.com/support/docview.wss?uid=swg24031554]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  If the source table does not have the same Primary Key defined
+   then the gateway will core if DELETES are not also replicated.
+   e.g.
+   
+   REPLICATE INSERTS FROM TABLE 'custom.status'
+   USING MAP 'CustomStatus'
+   INTO 'alerts.status;
+   
+   Where custom.status uses ServerName+ServerSerial as the Primary
+   Key rather than Identifier
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Include DELETES in the replication statement;
+   
+   REPLICATE INSERTS,DELETES FROM TABLE 'custom.status'
+   USING MAP 'CustomStatus'
+   INTO 'alerts.status;
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   Users using ObjectServer gateway configured to transfer table
+   across with different primary key in source and destination
+   table and configured not to pass DELETES.
+   ****************************************************************
+   PROBLEM DESCRIPTION:
+   ObjectServer gateway can terminate abruptly when source and
+   destination table have different primary keys and gateway is
+   configured not to pass deletes.
+   ****************************************************************
+   RECOMMENDATION:
+   None
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The ObjectServer gateway would terminate unexpectedly if the
+   source and destination tables had different keys, and the
+   gateway was configured not to pass deletes.This is now fixed.
+   The fix for this APAR is contained in the following maintenance
+   packages:
+   | Interim Fix | 7.0.1.13 Interim Fix 4
+   | fix pack | 7.1.0-TIV-NCOMNIbus-FP0010
+   | fix pack | 7.2.0-TIV-NCOMNIbus-FP0005
+   | fix pack | 7.2.1-TIV-NCOMNIbus-FP0003
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ39370
+   
+   
+ * REPORTED COMPONENT NAME
+   OBJTSVR UNIDIRC
+   
+   
+ * REPORTED COMPONENT ID
+   5724O71UG
+   
+   
+ * REPORTED RELEASE
+   707
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-12-10
+   
+   
+ * CLOSED DATE
+   2009-02-13
+   
+   
+ * LAST MODIFIED DATE
+   2009-02-13
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   NETCOOL/OMNIBUS
+   
+   
+ * FIXED COMPONENT ID
+   5724O4800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R707 PSN
+   UP

@@ -1,0 +1,29 @@
+Title: IBM Starting Host On-Demand service manager results in 'RDR0008: Native library failed to load' error - United States
+
+Text:
+RDR0008; redirector; HOD; Host On-Demand TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Attempts to start the IBM Rational Host On-Demand service manage results in the error "RDR0008: Native library failed to load". 
+
+SYMPTOM
+During the start of the Host On-Demand service manager, all messages are logged in the NcoDServices.RAS.txt file found in the Host On-Demand private directory. 
+
+For z/OS and i5OS servers, the Host On-Demand administrator will find this message: 
+
+RDR0008: Native library failed to load, indicating this Redirector does not support SSL.
+
+
+CAUSE
+The message indicates that the redirector does not support SSL. This does not mean that SSL is not supported on the Service Manager, only the Host On-Demand redirector does not support SSL. The redirector on AIX, Microsoft Windows, and Linux platforms provides support for Transport Layer Security (TLS) or Secure Sockets Layer (SSL) security between clients and the server. For all other platforms, the redirector can only be used in Passthru mode. 
+
+
+RESOLVING THE PROBLEM
+This message can be ignored and has no affect on the operation of the Service Manager. 
+
+Refer to the Planning, Installing, and Configuring Guide in the Host On-Demand InfoCenter [http://publib.boulder.ibm.com/infocenter/hodhelp/v11r0/index.jsp] for further information using the redirector.
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Networking WebSphere Host On-Demand General AIX, HP-UX, Linux, NetWare, OS/2, OS/390, OS/400, Solaris, Windows, z/OS 10.0

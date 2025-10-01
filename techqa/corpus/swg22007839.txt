@@ -1,0 +1,32 @@
+Title: IBM Imported mails from outlook pst files can't be found in the archive - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ After archiving PST mails in P8 repository. Using ICN/ACCE mails can be seen but in the OE search option, these mails are not found. 
+
+SYMPTOM
+afuReindex fails with error: 
+
+afuReindex: Unrecoverable error:
+The mailbox ID ('%mailboxname%') is not specified in the valid format.
+
+
+ENVIRONMENT
+ICC4Mail 4.0.1 FP2
+Filenet P8 5.1 FP6
+Exchange 2010
+Outlook 2010
+Outlook Web Extension is 4.0.1.2
+
+
+RESOLVING THE PROBLEM
+To resolve this issue, please apply interim fix IF001 over this ICC version 4.0.1 FP2. 
+
+https://www-945.ibm.com/support/fixcentral/swg/selectFixes?product=ibm%2FInformation+Management%2FContent+Collector&fixids=4.0.1.2-IBM-ICC-Server-IF001&source=dbluesearch&function=fixId&parent=Enterprise%20Content%20Management [https://www-945.ibm.com/support/fixcentral/swg/selectFixes?product=ibm%2FInformation+Management%2FContent+Collector&fixids=4.0.1.2-IBM-ICC-Server-IF001&source=dbluesearch&function=fixId&parent=Enterprise%20Content%20Management]
+
+Once you apply IF001,
+- Clear old logs.
+- Perform test and check test result.
+- Confirm if everything is working fine after applying IF001.

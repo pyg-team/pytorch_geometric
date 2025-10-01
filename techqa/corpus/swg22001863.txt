@@ -1,0 +1,14 @@
+Title: IBM Is Domino Vulnerable To CVE-2017-5638 - United States
+
+Text:
+"Domino"; "Xpages"; " CVE-2017-5638" TECHNOTE (FAQ)
+
+QUESTION
+Is Domino vulnerable to CVE-2017-5638
+"The Jakarta Multipart parser in Apache Struts 2 2.3.x before 2.3.32 and 2.5.x before 2.5.10.1 mishandles file upload, which allows remote attackers to execute arbitrary commands via a #cmd= string in a crafted Content-Type HTTP header"
+
+ANSWER
+IBM Domino development have confirmed that Domino and XPages does not use Apache Structs and is not vulnerable to CVE-2017-5638
+
+However a customer can create custom applications that use Apache Struts and host these on their Domino server. 
+In this case IBM cannot review the code and the customer must complete a review to confirm if it leaves them vulnerable to CVE-2017-5638.

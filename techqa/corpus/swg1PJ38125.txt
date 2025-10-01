@@ -1,0 +1,181 @@
+Title: IBM PJ38125: EVENT FROM CONTENT LIST DOES NOT SHOW UP DURING THE WIRING PROCESS. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When the Content list widget is placed on a step processor page,
+   custom
+   context menu events are not always available.  Specifically, the
+   event
+   exits for the first time the step processor is opened, but
+   subsequent
+   viewings show that the custom event is not published.  the entry
+   in the
+   context menu still exists, but the associated event does not,
+   and thus
+   no wiring can take place, and no widget can listen for the
+   custom
+   context menu entry being clicked.
+   
+   
+   To recreate you need two business space pages.  One for finding
+   work and
+   another for doing work (the step processor).  In the find work
+   page, add
+   an inbasket widget that contains a work item that is configured
+   to us
+   the do work page as the step processor.  on the do work page,
+   add the
+   step completion widget and the content list widget.  For the
+   content
+   list widget configured it to do a search that always gives some
+   results
+   (the results don't matter, and it doesn't matter if you wire
+   anything to
+   the content list widget).  Add a custom menu item (the name and
+   label
+   don't matter).  Now do the following things:
+   
+   1. Go to the find work page and double click a work item to open
+   the
+   step processor for the first time
+   
+   2. in the step processor page use page edit to observe that
+   event is
+   there by attempting to wire it.
+   
+   3. Cancel out of edit mode
+   
+   4. Click close on the step completion widget to return to the
+   find work
+   page
+   
+   5. Double click a work item again (need not be the same, just
+   must go to
+   same step processor page)
+   
+   6. Use page edit to verify the event no longer exists by
+   attempting to
+   wire it.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * 4.5.2 or 4.5.2.1                                             *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * The event that is associated with a custom action on the     *
+   * Content List widget menu is available only the first time    *
+   * you access the page that contains the widget. When you       *
+   * access the page again, the action is still present, but the  *
+   * event is not. Therefore, nothing occurs if you select the    *
+   * custom action.                                               *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * upgrade to 4.5.2.2                                           *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  In IBM ECM Widgets V4.5.2.2, the event that is associated with a
+   custom action on the Content List widget remains available after
+   the first time the page that contains the widget is accessed.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PJ38125
+   
+   
+ * REPORTED COMPONENT NAME
+   IBM ECM WIDGETS
+   
+   
+ * REPORTED COMPONENT ID
+   5724R7612
+   
+   
+ * REPORTED RELEASE
+   452
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-09-02
+   
+   
+ * CLOSED DATE
+   2012-03-30
+   
+   
+ * LAST MODIFIED DATE
+   2012-03-30
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   IBM ECM WIDGETS
+   
+   
+ * FIXED COMPONENT ID
+   5724R7612
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R452 PSY
+   UP

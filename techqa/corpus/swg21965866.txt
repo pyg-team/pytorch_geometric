@@ -1,0 +1,55 @@
+Title: IBM Pre-process job fails with  SQLCODE=-104, SQLSTATE=42601, - United States
+
+Text:
+setupSearchIndex; preprocess; fails TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The pre-process job fails with SQLCODE=-104, SQLSTATE=42601 when it starts to process a pre-process file 
+
+SYMPTOM
+In the logs you can see a stack trace similar to the following:
+
+0 Aug 12, 2015 3:52:01 PM com.ibm.commerce.foundation.dataimport.preprocess.DataImportPreProcessorMain handleExecutionException
+SEVERE: Exception message: CWFDIH0002: An SQL exception was caught. The following error occurred: DB2 SQL Error: SQLCODE=-104, SQLSTATE=42601, SQLERRMC=language_id;D CD.LANGUAGE_ID = ?;CONCAT, DRIVER=4.16.53., stack trace: com.ibm.commerce.foundation.dataimport.exception.DataImportSystemException: CWFDIH0002: An SQL exception was caught. The following error occurred: DB2 SQL Error: SQLCODE=-104, SQLSTATE=42601, SQLERRMC=language_id;D CD.LANGUAGE_ID = ?;CONCAT, DRIVER=4.16.53.
+at com.ibm.commerce.foundation.dataimport.preprocess.DataImportPreProcessorMain.processDataConfig(DataImportPreProcessorMain.java:950)
+at com.ibm.commerce.foundation.dataimport.preprocess.DataImportPreProcessorMain.execute(DataImportPreProcessorMain.java:802)
+at com.ibm.commerce.foundation.dataimport.preprocess.DataImportPreProcessorMain.main(DataImportPreProcessorMain.java:289)
+at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:60)
+at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:37)
+at java.lang.reflect.Method.invoke(Method.java:611)
+
+It maybe for a different table or a different field. Also, earlier in the log, when the problematic pre-process file is being executed, one can see an error executing one of the SQL statements like so:
+
+0 Aug 12, 2015 3:52:01 PM com.ibm.commerce.foundation.dataimport.preprocess.AbstractDataPreProcessor constructInsertStatement(String, String, List)
+FINER: ENTRY TI_CATALOG_0 CATENTRY_ID [CATALOG]
+0 Aug 12, 2015 3:52:01 PM com.ibm.commerce.foundation.dataimport.preprocess.AbstractDataPreProcessor constructInsertStatement(String, String, List)
+FINE: insert SQL: INSERT INTO TI_CATALOG_0 (CATENTRY_ID,CATALOG) VALUES (?,?)
+0 Aug 12, 2015 3:52:01 PM com.ibm.commerce.foundation.dataimport.preprocess.AbstractDataPreProcessor constructInsertStatement(String, String, List)
+FINER: RETURN INSERT INTO TI_CATALOG_0 (CATENTRY_ID,CATALOG) VALUES (?,?)
+0 Aug 12, 2015 3:52:01 PM com.ibm.commerce.foundation.dataimport.preprocess.DataImportPreProcessorMain processDataConfig(DataProcessingConfig, String)
+INFO: DB2 SQL Error: SQLCODE=-727, SQLSTATE=56098, SQLERRMC=2;-104;42601;language_id|D CD.LANGUAGE_ID = ?|CONCAT, DRIVER=4.16.53
+
+
+CAUSE
+The users current code base is not at the same level as the pre-process files on the system. The user may have applied an APAR/Fixpack which updated the processor Java code. For example in the above scenario the issue pertains to the TI_CATALOG table. This means that the specific processor code "com.ibm.commerce.foundation.dataimport.preprocess.StaticAttributeDataPreProcessor" has been updated, however the pre-process file was not updated to match the code base. The processor is unable to resolve all the tokens defined in the SQL which is why executing the query throws an error. In this scenario it doesn't have the logic to replace the Language_id token. 
+
+ENVIRONMENT
+version 7 FEP 2+
+
+DIAGNOSING THE PROBLEM
+ In the trace, one will see the following error: DB2 SQL Error: SQLCODE=-104, SQLSTATE=42601, SQLERRMC=language_id;D CD.LANGUAGE_ID = ?;CONCAT, DRIVER=4.16.53.
+This SQL code indicates the SQL statement is incorrect, and hints that the issue pertains specifically to the Language_id token. 
+
+One can also check the Nifstack.xml against other working environments to see if the code level is the same as expected. 
+
+RESOLVING THE PROBLEM
+After applying an APAR/fixpack which changes the pre-process files, re-run the setupSearchIndex utility to regenerate the pre-process files as per the updated code level. Information on how to run the utility can be found using the following link:
+
+http://www-01.ibm.com/support/knowledgecenter/SSZLC2_7.0.0/com.ibm.commerce.admin.doc/refs/rsdsearchindexsetup.htm?lang=en [http://www-01.ibm.com/support/knowledgecenter/SSZLC2_7.0.0/com.ibm.commerce.admin.doc/refs/rsdsearchindexsetup.htm?lang=en]
+
+
+
+
+
+This step should be part of the readme file which comes as part of the APAR.

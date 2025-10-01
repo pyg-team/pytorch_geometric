@@ -1,0 +1,24 @@
+Title: IBM Start Message Event in a Toolkit - United States
+
+Text:
+Lombardi WLE Start ; Message Event; Toolkit TECHNOTE (FAQ)
+
+QUESTION
+ How does Start Message Event behave in a Toolkit? 
+
+CAUSE
+If you run a process with Start Message Event from within the Toolkit then any Process App that subscribes to that version of the Toolkit gets the process instance and the Toolkit gets no process instances 
+
+ANSWER
+Toolkits cannot exist on runtime servers on their own. Toolkits cannot be installed on their own. Toolkits only really exist on runtime servers within the context of a Process App that is using the Toolkit. To that end you cannot start a process instance within a Toolkit. Instances are always associated with Process Applications. (The only exception to this is in the Process Center where you can start instances in the context of the Toolkit for development and troubleshooting purposes.)
+
+If you have a BPD that is started using a start message event and put it in a Tookit and then put that Toolkit in multiple Process Applications, this will start one instance in each of the Process Applications. This is because the Process Applications have no awareness of each other. TW/WLE does not know what was intended by the end user if the same exact message is being used in each Process App. This is the same as if a single Process App used the same event as a start message event in two BPDs. If the event triggers, one instance of each BPD would be started. 
+
+You could see where this would be useful if a certain event (say, official end of the financial quarter) needed to be used to fire off a large number of un-related processes. There could be a Toolkit called "Financial Events" that every Process App that needed this functionality could use, and each of these Process App could start one or more processes, as appropriate, when the end of financial quarter event is triggered.
+
+An alternate design is to have the BPD itself in the Toolkit, and use the BPD as a sub-process within a BPD that lives in the Process App. The BPD in the Process App would have its own Start Message Event to start its process. Doing this will result in however many Process Apps you want to see, each having their own start message, but each one using the shared process once started.
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ Lombardi WLE

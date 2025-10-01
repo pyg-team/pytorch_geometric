@@ -1,0 +1,282 @@
+Title: IBM IV16486: "OUR CVN" ATTRIBUTE NEEDS EXPLANATION IN DOCUMENTATION. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Error Description&#65496;
+   BE Support Engineer:       CJ
+   Change Team Engineer:   EJ
+   
+   SAMP: All Versions
+   
+   Problem Description:  Issuing command 'lssrc -ls
+   IBM.RecoveryRM' returns a value for the attribute 'Our CVN'
+   which is not documented.
+   
+   Developer explanation:
+   whenever someone changes the configuration (addrgmbr, chrg -o
+   online ...) the RecRMs keep track that its configuration has
+   changed in the CVN. If a RecRM instance has been down (for
+   example because its node has been down) during the
+   configuration change, its local registry is backlevel. The CVN
+   allows to find the RecRM instances with up to date registries,
+   the comparison happens as part of JOIN processing, i.e. when
+   the RecRM instances form a group, so that RecRMs with a
+   backlevel registry have a chance to update.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Local Fix&#65496;
+   N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: Tivoli System Automation for Multiplatforms
+   * (SA MP) users
+   ****************************************************************
+   * PROBLEM DESCRIPTION:
+   * The SA MP Administrators and Users guide does not document
+   * the information displayed as 'Daemon State' when listing the
+   * IBM.RecoveryRM resource manager (lssrc -ls IBM.RecoveryRM):
+   *
+   * # lssrc -ls IBM.RecoveryRM
+   * Subsystem         : IBM.RecoveryRM
+   * PID               : 11010084
+   * Cluster Name      : ts
+   * Node Number       : 1
+   * Daemon start time : 01/27/12 16:48:02
+   *
+   * Daemon State:
+   *   My Node Name         : p6sa52
+   *   Master Node Name     : p6sa52 (node number =  1)
+   *   Our IVN              : 3.2.1.2
+   *   Our AVN              : 3.2.1.2
+   *   Our CVN              : c3f4f2907f9 (4f2907f9)
+   *   Total Node Count     : 2
+   *   Joined Member Count  : 2
+   *   Config Quorum Count  : 2
+   *   Startup Quorum Count : 1
+   *   Operational Quorum State: HAS_QUORUM
+   *   In Config Quorum     : TRUE
+   *   In Config State      : TRUE
+   *   In Jeopardy          : FALSE
+   *   Replication valid    : TRUE
+   *   Disconnect           : FALSE
+   *   AsyncError           : FALSE
+   ****************************************************************
+   * RECOMMENDATION:
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The Tivoli System Automation for Multiplatforms Administrators
+   and Users guide will be updated to address this issue.
+   The following information will be added to
+   
+   Chapter 2. Getting started
+     Step 1: Defining and administering a cluster
+       Administering the recovery resource manager
+   
+   Further details of the recovery resource manager can be listed
+   using the command 'lssrc -ls IBM.RecoveryRM', you will get the
+   output like this:
+   
+    Subsystem         : IBM.RecoveryRM
+    PID               : 11010084
+    Cluster Name      : domain1
+    Node Number       : 1
+    Daemon start time : 01/27/12 16:48:02
+   
+    Daemon State:
+      My Node Name         : node1
+      Master Node Name     : node1 (node number =  1)
+      Our IVN              : 3.2.1.2
+      Our AVN              : 3.2.1.2
+      Our CVN              : c3f4f2907f9 (4f2907f9)
+      Total Node Count     : 2
+      Joined Member Count  : 2
+      Config Quorum Count  : 2
+      Startup Quorum Count : 1
+      Operational Quorum State: HAS_QUORUM
+      In Config Quorum     : TRUE
+      In Config State      : TRUE
+      In Jeopardy          : FALSE
+      Replication valid    : TRUE
+      Disconnect           : FALSE
+      AsyncError           : FALSE
+   
+   The first five lines show information about the name of the
+   subsystem, its process id, the name of the cluster, the node
+   number within the cluster, and the time, when the subsystem
+   had been started. The details of the 'Daemon State' have the
+   following meaning:
+   
+   My Node Name
+      name of node the subsystem is running on
+   
+   Master Node Name
+      name of the node that runs the recovery resource manager
+      master daemon
+   
+   Our IVN
+      The 'installed version number' - the version of the product
+      that is currently installed on this node
+   
+   Our AVN
+      The 'active version number' - the version of the product
+      that is currently active. Usually the AVN matches the IVN,
+      but when upgrading the nodes of the cluster, the AVN is
+      always lower or equal to the lowest IVN in the cluster.
+      If the AVN is not identical to the IVN and there is no
+      migration/upgrade running, complete the migration as
+      described within the Installation and Configuration guide,
+      section 'Completing the migration'.
+   
+   Our CVN
+      This value is incremented with every configuration change,
+      such as 'addrgmbr', or 'chrg -o online ...'. The RecoveryRM
+      members keep track that its configuration has changed in this
+      value. If a RecoveryRM member has been down, for example
+      because its node has been Offline, during a configuration
+      change, its local registry will be backlevel. The CVN value
+      allows to find the RecoveryRM members with up to date
+      registry contents. The comparison and registry update happens
+      as part of JOIN processing, when the RecoveryRM members form
+      a group.
+   
+   Total Node Count
+      The total number of nodes defined in the cluster.
+   
+   Joined Member Count
+      The number of nodes that are Online in the cluster.
+   
+   Config Quorum Count
+      The number of nodes required to be Online to have
+      configuration quorum within the cluster.
+   
+   Startup Quorum Count
+      The number of nodes required to start the cluster.
+   
+   Operational Quorum State
+      The state of the operational quorum, which is either
+      HAS_QUORUM, PENDING_QUORUM, or NO_QUORUM
+   
+   In Config Quorum
+      Shows 'True', if the cluster has configuration quorum.
+   
+   In Config State
+      Shows 'True', if the resource configuration is known
+      to be up to date by means of the CVN of the local
+      RecoveryRM member
+   
+   In Jeopardy
+      Shows 'True', if there are not sufficient RecoveryRM
+      members running in the cluster.
+   
+   Replication valid
+      Shows 'True' as long as a cluster registry update is
+      possible. A value of 'False' after startup indicates
+      an error condition.
+   
+   Disconnect
+      Shows 'True', if the session with the local RMC
+      subsystem is broken. This is an error condition.
+   
+   AsyncError
+      Shows 'True', if the local RMC subsystem indicated
+      error condition
+   
+   .
+   Additional Search Keywords
+   .
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV16486
+   
+   
+ * REPORTED COMPONENT NAME
+   SA MULTIPLATFOR
+   
+   
+ * REPORTED COMPONENT ID
+   5724M0000
+   
+   
+ * REPORTED RELEASE
+   322
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-02-28
+   
+   
+ * CLOSED DATE
+   2012-02-29
+   
+   
+ * LAST MODIFIED DATE
+   2012-02-29
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

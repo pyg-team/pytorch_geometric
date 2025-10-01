@@ -1,0 +1,161 @@
+Title: IBM PK63962; 6.1.0.17: Exception while logging in with multiple realms configured - United States
+
+Text:
+PK63962; PK63962; PK63962 DOWNLOADABLE FILES
+
+ABSTRACT
+ An exception is thrown when you login with multiple realms configured 
+
+DOWNLOAD DESCRIPTION
+PK63962 resolves the following problem:
+
+ERROR DESCRIPTION: 
+In an environment with Federated Repositories (FileRegistry & 3 LDAPs) 
+
+Login to a Realm that contains a File Registry and 1 LDAP fails for a valid LDAP user. 
+
+The Virtual Memory Manager Login is performed in two steps: 
+1. Check Password for User 
+2. Load User 
+
+The first step is successful (which proves that the user is found in LDAP), the second step fails with "EntityNotFoundException" because the user is Not Defined in the File Registry.
+
+This exception is thrown by FileAdapter. Currently, this is correct and working as designed. 
+
+What is not correct is that the search does not continue in LDAP, but returns with the exception instead. 
+
+Trace.log shows user is found in the LDAP registry. 
+
+[03.04.08 12:20:10:343 CEST] 00000039 ProfileManage 2 
+com.ibm.ws.wim.ProfileManager loginImpl login successful. 
+
+uid=ratadmin,cn=users,ou=Rational,o=software 
+group,dc=raleigh,dc=ibm,dc=com 
+
+Exception seen when going to file registry which is expected as user is not defined. However, we do not see where we attempt to authenticate against the other 2 LDAP servers defined in the wmmconfig file. 
+
+[03.04.08 12:20:10:875 CEST] 00000039 BridgeUtils < 
+com.ibm.ws.wim.registry.util.BridgeUtils logException RETURN 
+[03.04.08 12:20:10:875 CEST] 00000039 exception 1 
+com.ibm.ws.wim.security.authz.AuthPrivilegedException An error 
+occured while performing a task as the super user 
+
+com.ibm.ws.wim.security.authz.AuthPrivilegedException: An error 
+occured while performing a task as the super user at 
+com.ibm.ws.wim.security.authz.ProfileSecurityManager.runAsSuperU
+ser(ProfileSecurityManager.java:967) 
+
+
+Loses name and searches on a Null: 
+
+[03.04.08 12:20:10:890 CEST] 00000039 LTPAServerObj ESECJ0369E: 
+Authentication failed when using LTPA. The exception is null; 
+nested exception is:
+
+
+
+
+
+com.ibm.websphere.security.EntryNotFoundException. 
+... 
+Exception = java.rmi.RemoteException 
+Source = 
+com.ibm.websphere.security.auth.WSLoginFailedException 
+probeid = 186 
+Dump of callerThis = 
+Object type = 
+com.ibm.websphere.security.auth.WSLoginFailedException 
+java.rmi.RemoteException: null; nested exception is: 
+com.ibm.websphere.security.EntryNotFoundException 
+at 
+com.ibm.ws.security.registry.UserRegistryImpl.createCredential(U
+serRegistryimpl.java:825) 
+at 
+com.ibm.ws.security.ltpa.LTPAServerObject.authenticate(LTPAServe
+rObject.java:775) 
+
+
+LOCAL FIX: 
+N/A 
+
+PROBLEM SUMMARY
+
+USERS AFFECTED:
+All users of IBM® WebSphere® Application Server version 6.1 who use federated repositories (Virtual Member Manager - VMM).
+
+PROBLEM DESCRIPTION:
+An exception is thrown when you login with multiple realms configured.
+
+RECOMMENDATION:
+None
+
+When you login with VMM multiple realms configuration, the login ID appended with the realm name will cause the login() API to fail due to the following exception: 
+
+ 
+
+com.ibm.websphere.wim.exception.InvalidUniqueNameException:
+CWWIM0515E The 'uid=ratadmin,cn=users,ou=Rational,o=software
+group,dc=raleigh,dc=ibm,dc=com/Rational' entity is not in the
+scope of the 'defined' realm.
+at
+com.ibm.ws.wim.RepositoryManager.getRepositoryIndexByUniqueName(
+RepositoryManager.java:235)
+at
+com.ibm.ws.wim.RepositoryManager.getRepositoryID(RepositoryManag
+er.java:192)
+at
+com.ibm.ws.wim.ProfileManager.retrieveEntityFromRepository(Profi
+leManager.java:2396)
+at
+com.ibm.ws.wim.ProfileManager.retrieveEntity(ProfileManager.java
+:2512)
+at
+com.ibm.ws.wim.ProfileManager.getImpl(ProfileManager.java:1322)
+at
+com.ibm.ws.wim.ProfileManager.genericProfileManagerMethod(Profil
+eManager.java:280)
+at com.ibm.ws.wim.ProfileManager.get
+(ProfileManager.java:329)
+at
+com.ibm.websphere.wim.ServiceProvider.get(ServiceProvider.java:3
+45)
+at
+com.ibm.ws.wim.registry.util.BridgeUtils.getEntityByIdentifier(B
+ridgeUtils.java:565)
+at
+com.ibm.ws.wim.registry.util.UniqueIdBridge.getUniqueUserId(Uniq
+ueIdBridge.java:178)
+... 164 more
+
+PROBLEM CONCLUSION: 
+The problem has been fixed. The login() API will not fail with EntityNotFoundException. 
+
+The fix for this APAR is currently targeted for inclusion in Fix Pack 6.1.0.19. Please refer to the Recommended Updates page for delivery information: 
+http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+
+PREREQUISITES
+Please download the UpdateInstaller below to install this fix.
+
+URL LANGUAGE SIZE(Bytes) UpdateInstaller [http://www.ibm.com/support/docview.wss?rs=180&uid=swg21205991] US English 7250000 
+INSTALLATION INSTRUCTIONS
+Please review the readme.txt for detailed installation instructions.
+
+URL LANGUAGE SIZE(Bytes) Readme [ftp://public.dhe.ibm.com/software/websphere/appserv/support/fixes/PK63962/readme.txt] US English 10765 
+DOWNLOAD PACKAGE
+
+
+Download package
+What is Fix Central (FC)? [http://www.ibm.com/systems/support/fixes/en/fixcentral/help/faq_sw.html]
+What is DD? [http://www6.software.ibm.com/dldirector/doc/DDfaq_en.html]
+
+Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options 6.1.0.0-WS-WAS-IFPK63962 4/22/2008 US English 20557 FC [%20http://www.ibm.com/support/fixcentral/quickorder?fixids=6.1.0.0-WS-WAS-IFPK63962&product=ibm%2FWebSphere%2FWebSphere%20Application%20Server&source=dbluesearch] FTP [ftp://public.dhe.ibm.com/software/websphere/appserv/support/fixes/PK63962/6.1.0.0-WS-WAS-IFPK63962.pak] DD 
+
+
+
+
+
+TECHNICAL SUPPORT
+ Contact IBM Support using SR (http://www-306.ibm.com/software/support/probsub.html [http://www-306.ibm.com/software/support/probsub.html]), visit the WebSphere Application Server Support Web site (http://www.ibm.com/software/webservers/appserv/was/support/ [http://www.ibm.com/software/webservers/appserv/was/support/]), or contact 1-800-IBM-SERV(U.S. only). 
+
+ [/support/docview.wss?uid=swg24018995&aid=1]Problems (APARS) fixed [/support/docview.wss?uid=swg24018995&aid=2]Problems (APARS) fixed
+PK63962

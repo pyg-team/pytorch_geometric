@@ -1,0 +1,170 @@
+Title: IBM PI78245: An authData element without an id causes a NullPointerException in the logs. - United States
+
+Text:
+  FIXES ARE AVAILABLE
+17.0.0.2: WebSphere Application Server Liberty 17.0.0.2 [http://www-01.ibm.com/support/docview.wss?uid=swg24043541]
+17.0.0.3: WebSphere Application Server Liberty 17.0.0.3 [http://www-01.ibm.com/support/docview.wss?uid=swg24044079]
+17.0.0.4: WebSphere Application Server Liberty 17.0.0.4 [http://www-01.ibm.com/support/docview.wss?uid=swg24044285]
+18.0.0.1: WebSphere Application Server Liberty 18.0.0.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24044624]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  There is a NullPointerException in the logs for an authData
+   element configured without an id attribute.  The exception
+   is as follows,
+   
+   [1/18/17 9:47:40:622 CST] 0000002b
+   LogService-88-com.ibm.ws.security.auth.data.common
+   E CWWKE0701E:
+   [com.ibm.websphere.security.auth.data.AuthDataProvider(216)]
+   The unsetAuthData method has thrown an exception
+   Bundle:com.ibm.ws.security.auth.data.common(id=88)
+   java.lang.NullPointerException
+   	at java.util.regex.Matcher.getTextLength(Matcher.java:1283)
+   	at java.util.regex.Matcher.reset(Matcher.java:309)
+   	at java.util.regex.Matcher.<init>(Matcher.java:229)
+   	at java.util.regex.Pattern.matcher(Pattern.java:1093)
+   	at
+   com.ibm.websphere.security.auth.data.AuthDataProvider.getKey
+   (AuthDataProvider.java:92)
+   ...
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  All users of IBM WebSphere Application      *
+   *                  Server Liberty - Security                   *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: An authData element without an id       *
+   *                      causes a NullPointerException in the    *
+   *                      logs.                                   *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   There is a NullPointerException in the logs for an authData
+   element configured without an id attribute.  The exception is as
+   follows,
+   
+   [1/18/17 9:47:40:622 CST] 0000002b LogService-88-
+   com.ibm.ws.security.auth.data.common           E CWWKE0701E:
+   [com.ibm.websphere.security.auth.data.AuthDataProvider(216)] The
+   unsetAuthData method has thrown an exception
+   Bundle:com.ibm.ws.security.auth.data.common(id=88)
+   java.lang.NullPointerException
+   	at java.util.regex.Matcher.getTextLength(Matcher.java:1283)
+   	at java.util.regex.Matcher.reset(Matcher.java:309)
+   	at java.util.regex.Matcher.<init>(Matcher.java:229)
+   	at java.util.regex.Pattern.matcher(Pattern.java:1093)
+   	at
+   com.ibm.websphere.security.auth.data.AuthDataProvider.getKey(Aut
+   hDataProvider.java:92)
+   ...
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The code was modified to avoid the NullPointerException when an
+   authData element is configured without an id attribute.
+   
+   The fix for this APAR is currently targeted for inclusion in fix
+   pack 17.0.0.2.  Please refer to the Recommended Updates page for
+   delivery information:
+   http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI78245
+   
+   
+ * REPORTED COMPONENT NAME
+   WAS LIBERTY COR
+   
+   
+ * REPORTED COMPONENT ID
+   5725L2900
+   
+   
+ * REPORTED RELEASE
+   855
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-03-15
+   
+   
+ * CLOSED DATE
+   2017-04-06
+   
+   
+ * LAST MODIFIED DATE
+   2017-04-06
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WAS LIBERTY COR
+   
+   
+ * FIXED COMPONENT ID
+   5725L2900
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R855 PSY
+   UP

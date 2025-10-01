@@ -1,0 +1,138 @@
+Title: IBM JR31348: CAN'T INSTALL BPC EXPLORER TO SUPPORT CLUSTER - United States
+
+Text:
+  FIXES ARE AVAILABLE
+JR31348: 6.2.0: Business Process Choreographer Explorer problem [http://www-01.ibm.com/support/docview.wss?uid=swg24021624]
+WebSphere Process Server V6.2.0 Fix Pack 1 (V6.2.0.1) [http://www-01.ibm.com/support/docview.wss?uid=swg24022185]
+WebSphere Enterprise Service Bus V6.2.0 Fix Pack 1 (6.2.0.1) [http://www-01.ibm.com/support/docview.wss?uid=swg24022868]
+WebSphere Enterprise Service Bus V6.2.0 Fix Pack 2 (6.2.0.2) [http://www-01.ibm.com/support/docview.wss?uid=swg24024407]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  It is common, expected and recommended that customers will put
+   their BPC explorer applicatoin on a deployment target that is
+   separate from the deployment target for customer applications.
+   Need to add support for it.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: Websphere Process Server version 6.2 users.  *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: WebSphere Business Process              *
+   *                      Choreographer (BPC) Explorer cannot be  *
+   *                      configured on different deployment      *
+   *                      targets with the Business Flow          *
+   *                      Manager (BFM) and Human Task Manager    *
+   *                      (HTM)Containers.                        *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   An Error message occurs during the configuration of the BPC
+   explorer if the BPC Explore and BFM/HTM container deployment
+   targets are different. This will abort the BPC Explorer
+   configuration task.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  By installing this fix, BPC Explorer and BFM/HTM containers
+   can be configured on different deployment targets.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR31348
+   
+   
+ * REPORTED COMPONENT NAME
+   WEB PROC SERVER
+   
+   
+ * REPORTED COMPONENT ID
+   5724L0100
+   
+   
+ * REPORTED RELEASE
+   620
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-12-04
+   
+   
+ * CLOSED DATE
+   2008-12-10
+   
+   
+ * LAST MODIFIED DATE
+   2008-12-10
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEB PROC SERVER
+   
+   
+ * FIXED COMPONENT ID
+   5724L0100
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R620 PSY
+   UP

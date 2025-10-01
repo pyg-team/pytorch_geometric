@@ -1,0 +1,29 @@
+Title: IBM New IBM License Metric Tool online Support experience! - United States
+
+Text:
+ NEWS
+
+ABSTRACT
+ IBM Security Support announced in October, 2017, that changes to your online IBM License Metric Tool (ILMT) Support experience were coming. See below for the text of the mailing to that was sent to Support customers. 
+
+CONTENT
+
+Dear IBM License Metric Tool Customer,
+
+In addition to the recently announced LMT forum process [http://ibm.biz/ILMTforumAnnounce], we are excited to announce that we are launching a new online Support experience. Most IBM Security products, including IBM License Metric Tool, will go live with this new technology at the end of October, 2017. 
+
+The move to this new online Support experience should be seamless for you. 
+
+
+ * As announced earlier this year, IBM dW Answers [https://developer.ibm.com/answers/index.html] should still be your first avenue to Support. 
+ * The e-mail and phone support channels offered to you today will remain unchanged. 
+ * Your bookmarks and existing access methods will automatically connect to the new online Support experience once you’ve selected your IBM Security product or you can use a new URL to reach the new online Support experience directly: https://www.ibm.com/mysupport [https://www.ibm.com/mysupport]. 
+ * Any existing PMRs will be automatically converted to “Cases” in the new experience. Simply choose “cases” from the Security product support landing page to see status or make updates. 
+
+
+If you are experiencing a problem with the portal (such as a login issue, etc.), we are here to help. You can submit your issue via our Support page [https://www.ibm.com/mysupport/s/] by clicking “Email IBM Support”, or by emailing spe@us.ibm.com. 
+
+Should you have any questions, please send email to isssprt@us.ibm.com [isssprt@us.ibm.com?subject=Changes%20to%20your%20IBM%20Support%20experience]. [/support/docview.wss?uid=swg22009938&amp;aid=1] IBM Security Support Team 
+
+PRODUCT ALIAS/SYNONYM
+ LMT

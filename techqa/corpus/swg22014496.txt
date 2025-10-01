@@ -1,0 +1,58 @@
+Title: IBM Scheduled reports sometimes fail to run - United States
+
+Text:
+tpaerep; bros; failed to run; SESN0008E; BMXAA5480E TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Attempts to schedule a report using IBM Maximo Asset management using BROS result in the error:
+
+psdi.util.MXApplicationException: BMXAA5480E - The report
+
+{report.rptdesign} of the {application} application failed to run. 
+
+SYMPTOM
+Instead of receiving an email with the attached report output, the user receives an email with the error
+[INVENTOR] report..rptdesign
+
+psdi.util.MXApplicationException: BMXAA5480E - The report
+report.rptdesign of the INVENTOR application
+failed to run.
+null
+at com.ibm.tivoli.maximo.report.birt.admin.ReportAdminService.runReport
+(ReportAdminService.java:3342)
+at com.ibm.tivoli.maximo.report.birt.admin.ReportAdminService.runReport
+(ReportAdminService.java:3260)
+at com.ibm.tivoli.maximo.report.birt.queue.ReportQueueManager.
+runQueuedReport(ReportQueueManager.java:933)
+at com.ibm.tivoli.maximo.report.birt.queue.ReportQueueManager.
+runQueuedReport(ReportQueueManager.java:857)
+at com.ibm.tivoli.maximo.report.birt.queue.ReportQueueManager.doWork
+(ReportQueueManager.java:659)
+at com.ibm.tivoli.maximo.report.birt.queue.
+ReportQueueManager$ReportRunThread.attemptToRunReport
+(ReportQueueManager.java:514)
+at com.ibm.tivoli.maximo.report.birt.queue.
+ReportQueueManager$ReportRunThread.run(ReportQueueManager.java:453)
+Caused by: java.lang.NullPointerException
+at com.ibm.tivoli.maximo.report.birt.admin.ReportAdminService.
+deleteAllFilesFromFolder(ReportAdminService.java:3688)
+at com.ibm.tivoli.maximo.report.birt.admin.ReportAdminService.
+deleteFolder(ReportAdminService.java:3680)
+
+Log will show:
+
+3/2/18 7:53:57:290 CST] 00000100 WASSessionCor E SessionContext
+checkSecurity SESN0008E: A user authenticated as anonymous has
+attempted to access a session owned by
+user:defaultWIMFileBasedRealm/CN=XXXXXXXXXXXXXX,OU=USER,OU=myou,DC=corp,D
+C=company,DC=com.
+
+
+ENVIRONMENT
+websphere, bros
+
+RESOLVING THE PROBLEM
+clear the [Security integration] checkbox in Websphere.
+
+
+[/support/docview.wss?uid=swg22014496&aid=1] [/support/docview.wss?uid=swg22014496&aid=1]

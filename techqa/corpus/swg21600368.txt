@@ -1,0 +1,28 @@
+Title: IBM The Application Build ID is 'Unknown' if the SCA module for WebSphere Process Server (WPS) is installed as a WAR file - United States
+
+Text:
+Application Build ID Unknown; Implementation-Version TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ A WAR or EAR application archive file contains a MANIFEST.MF, which includes a specific Implementation-Version attribute (for example, 4.1.0.0.9). When a web archive (WAR) file is installed using the WebSphere Administrative Console, the value of Application Build ID becomes 'Unknown' . 
+
+SYMPTOM
+When you install an application WAR file in the WebSphere Administrative Console, you will find the value of Application Build ID becomes 'Unknown' as shown in the following screen shot: 
+
+[/support/docview.wss?uid=swg21600368&aid=1] [/support/docview.wss?uid=swg21600368&aid=1] 
+
+
+However, when you install the same application using an enterprise archive (EAR) file, the value of Application Build ID is the same as what is defined in the Implementation-Version attribute within the manifest.mf file. For example:
+
+[/support/docview.wss?uid=swg21600368&aid=2] [/support/docview.wss?uid=swg21600368&aid=2]
+
+
+CAUSE
+The above behavior is working as designed.
+
+
+RESOLVING THE PROBLEM
+An Unknown Application Build ID is the designated value for a module file with the underlying WebSphere Application Server version. Beginning with WebSphere Application Server Version 8.0, this function has changed to show the Application Build ID for a module instead of an Unknown value.
+
+RELATED INFORMATION
+ A simplified Chinese translation is available [http://www.ibm.com/support/docview.wss?uid=swg21618204]

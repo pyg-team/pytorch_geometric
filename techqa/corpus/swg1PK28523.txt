@@ -1,0 +1,156 @@
+Title: IBM PK28523: SETTING DATE/TIME FIELD WITH VBLONGDATE CAUSES UNRECOGNIZED VALU E ERROR. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PERMANENT RESTRICTION.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When using script to populate a datetime field with a long date
+   
+   ClearQuest does not recognize the value as a datetime value.
+   
+   
+   
+   Line of code is: SetFieldValue "datefld1",
+   FormatDateTime(Date,VBLongDate)
+   
+   
+   
+   If This is changed to VBShortDate it works fine.
+   
+   
+   
+   Steps to reproduce:
+   
+   
+   
+   1. Create a field of datetime type.
+   
+   2. Place a text box on a form.
+   
+   3. Uncheck date and time on the Date/Time tab.
+   
+   4. Add the code from above to an action such as submit.
+   
+   5. Make sure to update the field name in the code.
+   
+   
+   
+   Now test and you will see the date on the form as Wednesday, 19
+   July
+   2006.
+   
+   
+   
+   The field will turn red as it does not recognize this as a valid
+   date.
+   If you remove the Wednesday it will work fine.
+   
+   
+   
+   The Windows Regional settings match this format.
+   Tested this in ClearQuest 7.0 and it occurs there as well.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Setting date/time field with VBLongDate causes unrecognized
+   valu
+   e error.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  no plan to fix - workaround is to use VBShortDate
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK28523
+   
+   
+ * REPORTED COMPONENT NAME
+   CLEARQUEST WIN
+   
+   
+ * REPORTED COMPONENT ID
+   5724G3600
+   
+   
+ * REPORTED RELEASE
+   60W
+   
+   
+ * STATUS
+   CLOSED PRS
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2006-07-21
+   
+   
+ * CLOSED DATE
+   2006-08-07
+   
+   
+ * LAST MODIFIED DATE
+   2006-08-07
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  na
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

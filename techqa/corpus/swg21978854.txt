@@ -1,0 +1,20 @@
+Title: IBM Retrieve of On Demand object fails with ANS1088E RC124 - United States
+
+Text:
+filespace RC=124 ARCHIVE TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ After upgrade of CMOD to 9.5.0.4, some object retrievals fail with ANS1088E (RC124) File space '*' does not exist. 
+
+CAUSE
+There was an issue in Content Manager OnDemand (CMOD) version 9.5.0.4 that affected data store on the Tivoli Storage Manager Server, resulting in a problem to access the historical data and for the newly loaded data to be named incorrectly. 
+
+RESOLVING THE PROBLEM
+A Tivoli Storage Manager API service trace during the retrieval shows all objects that failed to be retrieved belonged to filespaces with a prepending "/ARCHIVE", e.g. /ARCHIVE/TST. All objects that were successfully retrieved did not have the /ARCHIVE prepend. This is due to a naming issue specific to CMOD 9.5.0.4 with the default instance name, which has since been resolved. Reference the CMOD technote on this topic, which includes a link and further information on the fixed CMOD packages: 
+
+http://www-01.ibm.com/support/docview.wss?uid=swg21976832 [http://www-01.ibm.com/support/docview.wss?uid=swg21976832]
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ TSM

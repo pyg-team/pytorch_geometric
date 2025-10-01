@@ -1,0 +1,178 @@
+Title: IBM IT08844: AMQ9502: WEBSPHERE MQ RECEIVER CHANNEL GOES INTO AN INITIALIZING STATE. - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The user configured a sender channel to automatically start
+   when a message was placed on the transmit queue. The transmit
+   queue was set up for trigger type first and an initiation queue
+   of SYSTEM.CHANNEL.INITQ. A process definition was defined with
+   the process definition name and a user data value of the
+   receiver channel name. Whenever a message was placed in the
+   transmit queue, using the process definition, the receiver
+   channel was initialized. As such the following error messages
+   were written to the queue manager error log:
+   .
+   04/21/2015 06:24:41 AM - Process(22802.1) User(xxxx)
+   Program(runmqchl)
+   Host(xxxxxx) Installation(Installation1)VRMF(7.5.0.2)
+   QMgr(xxxxxx)
+   
+   AMQ9502: Type of channel not suitable for action requested.
+   .
+   04/21/2015 06:24:41 AM - Process(22802.1) User(xxxx)
+   Program(runmqchl)
+   Host(xxxxxx) Installation(Installation1)VRMF(7.5.0.2)
+   QMgr(xxxxxx)
+   
+   AMQ9999: Channel 'ReceiverChannelName' to host '????' ended
+   abnormally.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Make sure the process definition user data field contains an
+   initiator channel name(e.g. sender channel).
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   Users using triggering for starting channels.
+   
+   
+   Platforms affected:
+   MultiPlatform
+   
+   ****************************************************************
+   PROBLEM DESCRIPTION:
+   This problem occurred due to a trigger being defined for a
+   receiver side channel(e.g. RCVR channel) on the sender side, and
+   the queue manager did not validate the type of the channel
+   before triggering.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  MQ has been modified to validate the type of the channel before
+   triggering and trigger only the specific channel types(e.g. SDR)
+   which are allowed for triggering.
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+   Version    Maintenance Level
+   v7.5       7.5.0.6
+   v8.0       8.0.0.4
+   
+   The latest available maintenance can be obtained from
+   'WebSphere MQ Recommended Fixes'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037]
+   
+   If the maintenance level is not yet available information on
+   its planned availability can be found in 'WebSphere MQ
+   Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT08844
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ BASE MULTIP
+   
+   
+ * REPORTED COMPONENT ID
+   5724H7241
+   
+   
+ * REPORTED RELEASE
+   750
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-05-11
+   
+   
+ * CLOSED DATE
+   2015-07-16
+   
+   
+ * LAST MODIFIED DATE
+   2015-07-16
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ BASE MULTIP
+   
+   
+ * FIXED COMPONENT ID
+   5724H7241
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R750 PSY
+   UP

@@ -1,0 +1,33 @@
+Title: IBM Address Doctor Exception - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Why am I getting the following error in my engine logs: "AddressDoctorException: -1601: Critical error: the engine usage period has expired"? 
+
+CAUSE
+This error is caused by the expiration of the Address Doctor license.
+
+ANSWER
+The Address Doctor license is usually valid for one year. Normally a new license is sent 30 days prior to the expiration of the license. If you are seeing this error and you have not received your new license you will need to submit a Service Request immediately. 
+
+If you have received your licence please use the following steps to activate the new license. 
+
+ *  Run the following query “select * from mpi_handler”.  * The Address Doctor license key is stored in the HANDLERARGS field.
+   
+   
+ * In workbench open your project. Make sure you are in the "Configuration" perspective 
+ * Choose the Handlers icon 
+ * In the "Handlers Arguments" column you will see the Address Doctor Key. The record begins with the word unlockCode, copy the field in notepad in order to update the license key.  * EXAMPLE: unlockCode=AB1CDEFG23HIJKL4M5NOPQRS678T^dbPath=/initiate/software/postal 
+    *  AB1CDEFG23HIJKL4M5NOPQRS678T is the licence key
+   
+   
+ * Remove the old key and insert the new ken in the "Handler Argument" column. 
+ * Save the changes you made. 
+ * Select the "Deploy Handlers" under the "Initiate" option. 
+ * Once the Handlers have been deployed run the following query “select * from mpi_handler”. You should now see the new licence key. 
+ * Monitor your engine logs for the next 30 minutes to verify that the new key is working. 
+
+
+If you continue to see license key errors please submit a Service Request immediately.

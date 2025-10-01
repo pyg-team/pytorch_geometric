@@ -1,0 +1,43 @@
+Title: IBM While running ISD services in AIX, the Node Agent often crashes and generates javacore files showing "Failed to create a thread" - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ We are using Information Services Director (ISD) in AIX and when running several ISD services the Node Agent is crashing often. It seems to happen often when multiple services run concurrently. The javacore files show: 
+
+Dump Event "systhrow" (00040000) Detail "java/lang/OutOfMemoryError":"Failed to crate a thread: retVal -1073741830, errno 11" received
+
+After restarting Information Server the problem doesn't happen again. 
+
+CAUSE
+This error is suggesting that the java process was unable to create a new Thread. This usually indicates some sort of kernel level limit being reached. 
+
+RESOLVING THE PROBLEM
+To verify that there are no limitation to create processes, please verify the following: 
+
+
+
+ 1. That the Node Agent is running as root or that it has been properly configured to run as non-root. See tech note 1415257. [http://www-01.ibm.com/support/docview.wss?rs=14&uid=swg21415257] 
+    
+    
+ 2. That the ulimit setting (if any) for processes that a user can create. In some releases of AIX, you can set the maximum number of processes per user. Run 
+    
+    ulimit -a
+    
+    to check this value. If set to a low value try to increase or set it to unlimited using
+    
+    ulimit -u nnnn
+    
+    where nnnn is the new value. 
+    
+    
+ 3. That the maxuproc is set to a high value. This is a kernel parameter defines the maximum number of processes that a user can have at a given time. This is a system level parameter and applies to all users. To check the current value of maxuproc run:
+    
+    lsattr -E -l sys0|grep maxuproc
+    
+    If you current value is lower than 4096, try to set it to this value and monitor after the change (if you are running a high number of processes you might need to use a higher value). To change maxuproc use the following command
+    
+    chdev -l sys0 -a maxuproc='nnnn' 
+    
+    where nnnn is the new value for this parameter.

@@ -1,0 +1,32 @@
+Title: IBM Hardware and Software Requirements: Version 4.1.4 IBM Spectrum Protect™ Snapshot Prerequisite Checker - United States
+
+Text:
+ PREVENTIVE SERVICE PLANNING
+
+ABSTRACT
+ Run the IBM Spectrum Protect™ Snapshot Prerequisite Checker in an AIX® or Linux environment for Oracle, Oracle for SAP®, or DB2®. With the Prerequisite Checker you can check compatibility of your operating system and the available software to be used by IBM Spectrum Protect™ Snapshot in the supported environments. 
+
+CONTENT
+Tip: Beginning with Version 4.1.3, IBM Tivoli Storage FlashCopy® Manager is now IBM Spectrum Protect™ Snapshot. Some applications such as the software fulfillment systems and IBM License Metric Tool use the new product name. However, the software and its product documentation continue to use the Tivoli Storage Manager product name. To learn more about the rebranding transition, see http://www.ibm.com/support/docview.wss?uid=swg21963634. [http://www.ibm.com/support/docview.wss?uid=swg21963634] 
+
+Scope of the IBM Spectrum Protect™ Snapshot Prerequisite Checker
+The IBM Spectrum Protect™ Snapshot Prerequisite Checker Version 4.1.4 automates checks for the operating system, database instance, and volume group layout on Linux and AIX platforms. 
+
+
+ 
+Requirements for running the IBM Spectrum Protect™ Snapshot Prerequisite Checker
+The following AIX and Linux operating systems are supported: 
+
+ * 64-bit AIX 6.1, and later 6.1.x levels 
+ * 64-bit AIX 7.1, and later 7.1.x levels 
+ * 64-bit AIX 7.2, and later 7.2.x levels 
+ * 64-bit SUSE Linux Enterprise Server (SLES) 11, and later 11.x levels 
+ * 64-bit SUSE Linux Enterprise Server (SLES) 12 GA level 
+ * 64-bit Red Hat Enterprise Linux (RHEL) 5.1 up to 5.11 
+ * 64-bit Red Hat Enterprise Linux (RHEL) 6.1 up to 6.7 
+ * 64-bit Red Hat Enterprise Linux (RHEL) 7.0
+
+
+The Prerequisite Checker does not change the database or the system; it retrieves information from the operating system and database in preparation for installing IBM Spectrum Protect™ Snapshot in an AIX or Linux environment. 
+
+For further instructions about using the Prerequisite Checker refer to the IBM Spectrum Protect™ Snapshot Version 4.1.4 Installations and Users Guide at https://www.ibm.com/support/knowledgecenter/SS36V9_4.1.4/fcm.unx/c_fcmu_plan_prereqcheck.html [https://www.ibm.com/support/knowledgecenter/SS36V9_4.1.4/fcm.unx/c_fcmu_plan_prereqcheck.html]

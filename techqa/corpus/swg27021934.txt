@@ -1,0 +1,56 @@
+Title: IBM Using SSL to Connect to a WebSphere Application Server with a WebSphere MQ Queue Manager - United States
+
+Text:
+ WHITE PAPER
+
+ABSTRACT
+ The objective of this technical document is to describe in detail how to configure the connection between a WebSphere Application Server V7 with a WebSphere MQ Queue Manager V7 using Secured Sockets Layer (SSL). 
+
+CONTENT
+The focus of this techdoc is to provide the steps and the commands that you need to perform to configure the secured connection, and using self-signed certificates which you can generate for your testing. 
+
+The target platforms are these distributed ones: Unix and Windows.
+
+It is not the intention of this document to provide the background and the explanation of what is SSL. Also, this document does not cover advanced features, such as certificate revocation lists or Online Certificate Status Protocol (OCSP), nor other platforms (z/OS, Open VMS, etc).
+
+It is recommended that you perform the tasks in 2 phases because it is easier to narrow down the scope of the problem determination tasks in case that there are problems:
+Phase 1) Connect your MDB in WebSphere Application Server using a non-SSL connection with the MQ queue manager.
+Phase 2) Once the MDB is able to receive messages successfully, then you can configure the connection to add SSL.
+
+For the Phase 1, the Sample MDB and deployment and testing instructions mentioned in the following techdoc were performed successfully (non SSL connection).
+IBM Techdoc: 7016505
+Using WebSphere MQ V7 as JMS Provider for WebSphere Application Server V7 [http://www.ibm.com/support/docview.wss?uid=swg27016505]
+The Sample MDB is a small but fully functional MDB which is very helpful for testing the connection between WebSphere Application Server and MQ. If the message that is placed in the queue has the text "TESTING", then the MDB will write in the WebSphere Application Server SystemOut.log the following:
++++ SAMPLE MDB: Text Message => TESTING
+
+This document covers all the necessary steps for "Phase 2", in which the successful non-SSL connection is transformed into an SSL connection.
+
+This document concentrates on Activation Specifications, which is the preferred mechanism in WebSphere Application Server v7. For completeness, information is provided also for Listener Ports which use information from Connection Factories.
+
+The documentation mentioned in the "References" section provide excellent background on what is SSL but these resources do not offer a comprehensive step-by-step procedure that you can easily follow. Thus, the purpose of this techdoc is to fill the gap between the "theory" of those references and the "practice".
+
+The chapters of this document are:
+
+Chapter 1: Configuration for MQ - create queue manager and objects
+Chapter 2: Configuration for WebSphere Application Server - non-SSL connection
+++ Testing the MDB (using a non-SSL connection)
+Chapter 3: Configuration for MQ - create key database and certificates
+Chapter 4: Configuration for WebSphere Application Server - create certificate stores and certificates
+Chapter 5: Configuration for WebSphere Application Server - server SSL configuration
+++ Section 1: Configure SSL Certificate Stores
+++ Section 2. SSL Configuration
+Chapter 6: Configuration for WebSphere Application Server - JMS SSL configuration and Testing
+++ Section 1. Connection Factory
+++ Section 2. Activation Specification
+++ Section 3: Testing the SSL connection
+
+
+
+File: Using-SSL-WAS-MQ.pdf 
+
+
+Using-SSL-WAS-MQ.pdf [/support/docview.wss?uid=swg27021934&aid=2]Using-SSL-WAS-MQ.pdf [/support/docview.wss?uid=swg27021934&aid=1]
+
+
+Cross reference information Segment Product Component Platform Version Edition Application Servers WebSphere Application Server Security AIX, Linux, Windows 8.5, 8.0, 7.0 PRODUCT ALIAS/SYNONYM
+ WebSphere MQ WMQ WebSphere Application Server WAS

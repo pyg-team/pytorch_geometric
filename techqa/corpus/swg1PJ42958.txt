@@ -1,0 +1,162 @@
+Title: IBM PJ42958: UPDATING THE DISPLAY NAME FOR A PROPERTY TEMPLATE IN ACCE DOES NOT UPDATE IT IN FEM. - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Updating the display name for a property template in
+   Administrative Console for Content Engine (ACCE) does
+   not update it in FileNet Enterprise Manager (FEM).
+   
+   Steps to reproduce:
+   In ACCE,
+   1.  Click on the object store.
+   2.  Navigate to object store > Data Design > Property Templates
+   and click the property template to edit
+   3.  Under General tab, modify the Display Name: field and click
+   the "Save" button.
+   
+   The save will be successful when viewed from ACCE but in FEM
+   the display name is not updated.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  In ACCE, right click on the object store > select Localize
+   Property Templates > click on the property > edit the Localized
+   display name and hit apply.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * Administrative Console for Content Engine (ACCE) on          *
+   * 5.2.1.2-P8CPE-FP002 and prior versions.                      *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * See Error Description                                        *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Upgrade to 5.2.1.3-P8CPE-FP003 or higher.                    *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The issue is caused by incorrect dojo configuration which is set
+   by ICN login page. When browser locale is set to en-us, ICN
+   login page do not set the locale correctly hence dojo.locale
+   function returns incorrect locale. This causes problems when
+   ACCE tries to set a localized string value in Content Engine
+   based on client locale.
+   
+   Fixed in 5.2.1.3-P8CPE-FP003 and higher. This release contains
+   ICN Toolkit 203 FP5 which resolves this issue.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+ *  Canceling APAR & Defects.  Development was unable to duplicate
+   the problem.
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   PJ42958
+   
+   
+ * REPORTED COMPONENT NAME
+   CONTENT ENGINE
+   
+   
+ * REPORTED COMPONENT ID
+   5724R8101
+   
+   
+ * REPORTED RELEASE
+   520
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-02-05
+   
+   
+ * CLOSED DATE
+   2015-12-14
+   
+   
+ * LAST MODIFIED DATE
+   2015-12-14
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CONTENT ENGINE
+   
+   
+ * FIXED COMPONENT ID
+   5724R8101
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R521 PSY
+   UP

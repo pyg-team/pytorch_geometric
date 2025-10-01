@@ -1,0 +1,77 @@
+Title: IBM Enable Security Auditing in Tivoli Integrated Portal - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How can I track users who login to TIP along with their IP address and other information? 
+
+CAUSE
+The security auditing has been introduced in TIP as a part of the security infrastructure. The primary responsibility of the security infrastructure is to prevent unauthorized access and usage of resources. Security auditing achieves these goals by providing the infrastructure that allows you to capture and store supported auditable security events. Each time a TIP application/end user accesses a secured resource or any internal application server process it can be recorded as an auditable event.
+
+The security auditing has the ability to capture the following types of auditable events:
+a. Authentication
+b. Authorization
+
+These types of events can be recorded into audit log files. Each audit log has the option to be signed and encrypted to ensure data integrity. These audit logs can be analyzed to discover breaches over the existing security mechanisms and to discover potential weaknesses in the current security infrastructure. 
+
+
+ANSWER
+TIP provides a script “configureTIPAudit.sh/.bat “ to enable audit capability in TIP/eWAS. By using this script you can enable or disable security auditing. 
+
+Usage: 
+
+ * 
+ *  
+ * 
+ * Where, TIPHOME is home dir of TIP, tipadminuserid is userid which is marked as TIP Administrator user, and password is the password for this user.
+   true/false : enable/disable audit feature in TIP/eWAS.
+   
+   Example;
+   $ configureTIPAudit.sh /opt/IBM/tivoli/tipv2 tipadmin tipadmin true
+
+
+Note : TIP Server needs to be restarted after enabling/disabling the audit capability.  
+
+TIP Audit Log files 
+
+TIP/eWAS generates a Binary Audit log file, which contains the audit records for various actions that is performed in TIP. The log file is created in the following directory: 
+
+<TIPHOME>/profiles/TIPProfile/logs/server1 
+
+The log file is named as “BinaryAudit_TIPCell_TIPNode_server1.log”. Binary Audit log file can be signed/encrypted for protection of audit data. Please refer to Websphere 7.0 Infocenter for details on this : 
+
+Audit Record and Event Types 
+
+Following are Audit event types and audit Filters that are configured in TIP. 
+
+SECURITY_AUTHN : This event type represents the authentication flows in TIP/eWAS. 
+
+ 
+
+For example : when an end user logs into TIP/eWAS, a SECURITY_AUTHN event type will be recorded in audit log files. 
+
+Example : Seq = 12751 | Event Type = SECURITY_AUTHN | Outcome = SUCCESSFUL | OutcomeReason = SUCCESS | OutcomeReasonCode = 5 | SessionId = 2EEYlMJY_5faSiMYNkTtlNJ | RemoteHost = RUCHIRA-009027144166.raleigh.ibm.com | RemoteAddr = 9.27.144.166 | RemotePort = 1171 | ProgName = /kts.do | Action = webAuth | AppUserName = tipadmin | ResourceName = POST | RegistryUserName = TIPRealm/tipadmin | AccessDecision = authnSuccess | ResourceType = web | ResourceUniqueId = 0 | PermissionsChecked = null | PermissionsGranted = null | RolesChecked = null | RolesGranted = null | CreationTime = Thu Jul 07 08:35:27 EDT 2011 | GlobalInstanceId = 0 | EventTrailId = null | FirstCaller = /UNAUTHENTICATED | Realm = TIPRealm | RegistryType = WIMUserRegistry | AuthnType = challengeResponse | Provider = WebSphere | ProviderStatus = providerSuccess 
+
+ 
+
+SECURITY_AUTHN_TERMINATE : This event type represents the logout action in TIP. For example : when user logs out from TIP console, an audit record is recorded. 
+
+Example : Seq = 18516 | Event Type = SECURITY_AUTHN_TERMINATE | Outcome = SUCCESS | OutcomeReason = SUCCESS | OutcomeReasonCode = 9 | SessionId = cdkX1qziTdc2NcCIEfuNhKr | RemoteHost = localhost.localdomain | RemoteAddr = 0:0:0:0:0:0:0:1 | RemotePort = 32825 | ProgName = isclite | Action = logout | AppUserName = tipadmin | ResourceName = GET | RegistryUserName = null | AccessDecision = logoutSuccess | ResourceType = web | ResourceUniqueId = 0 | PermissionsChecked = null | PermissionsGranted = null | RolesChecked = null | RolesGranted = null | CreationTime = Fri Jul 08 09:20:39 EDT 2011 | GlobalInstanceId = 0 | EventTrailId = -20674659 | FirstCaller = tipadmin | Realm = TIPRealm | RegistryType = WIMUserRegistry | AuthnType = challengeResponse | TerminateReason = logout | Provider = TIPLogout | ProviderStatus = providerSuccess | LogoutAction:29bhE1--dc9Cjm0vsA2gr-g = Logout SuccessFully 
+
+ 
+
+SECURITY_MGMT_REGISTRY : The audit event represents the “authorization” action in TIP. Various access control operations on TIP resources such as role management, page management, portlet management actions are all recorded as this event. Please see below sections on what various TIP actions are reported as this event type. 
+
+Example : Seq = 22469 | Event Type = SECURITY_MGMT_REGISTRY | Outcome = SUCCESS | OutcomeReason = SUCCESS | OutcomeReasonCode = 7 | SessionId = null | RemoteHost = null | RemoteAddr = null | RemotePort = null | ProgName = isclite | Action = acl | AppUserName = tipadmin | ResourceName = null | RegistryUserName = null | AccessDecision = RolesGranted | ResourceType = web | ResourceUniqueId = 0 | PermissionsChecked = null | PermissionsGranted = null | RolesChecked = null | RolesGranted = null | CreationTime = Fri Jul 15 08:26:52 EDT 2011 | GlobalInstanceId = 0 | EventTrailId = 1614842881 | FirstCaller = tipadmin | Realm = TIPRealm | RegistryType = WIMUserRegistry | MgmtType = null | MgmtCommand = null | Removed subject (user) 'tipadmin' from the roleAssignment object = SUCCESS 
+
+Seq = 22465 | Event Type = SECURITY_MGMT_REGISTRY | Outcome = SUCCESS | OutcomeReason = SUCCESS | OutcomeReasonCode = 7 | SessionId = null | RemoteHost = null | RemoteAddr = null | RemotePort = null | ProgName = isclite | Action = acl | AppUserName = tipadmin | ResourceName = null | RegistryUserName = null | AccessDecision = RolesGranted | ResourceType = web | ResourceUniqueId = 0 | PermissionsChecked = null | PermissionsGranted = null | RolesChecked = null | RolesGranted = null | CreationTime = Fri Jul 15 08:26:52 EDT 2011 | GlobalInstanceId = 0 | EventTrailId = 1614842881 | FirstCaller = tipadmin | Realm = TIPRealm | RegistryType = WIMUserRegistry | MgmtType = null | MgmtCommand = null | Update Argus Store = Role mapping update in Argus Store 
+
+ 
+
+Note: 
+
+You may notice slow performance from TIP with above traces enabled. In that case please make a backup copy of below file and then manually enable the features you need and disable the remaining ones. Restart TIP after this change. 
+
+
+<TIPHOME>/profiles/TIPProfile/config/cells/TIPCell/audit.xml

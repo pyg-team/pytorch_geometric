@@ -1,0 +1,17 @@
+Title: IBM Index error in log with IBM Datacap Maintenance Manager - United States
+
+Text:
+NENU index zero argument deleting TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When deleting batches using Datacap Maintenance Manager (formerly NENU), the batch appears to be properly deleted, but an error is posted to the log stating:
+
+Error deleting batch:'C:\Datacap\APT\Batches\20170802.000000'
+
+Index (zero based) must be greater than or equal to zero and less than the size of the argument list. 
+
+CAUSE
+The batch folder had previously been deleted, but the database entry remained. This can occur if Datacap is not used to delete the batch.
+
+RESOLVING THE PROBLEM
+Datacap Maintenance Manager is working correctly. No action is needed.

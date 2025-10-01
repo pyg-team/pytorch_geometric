@@ -1,0 +1,51 @@
+Title: IBM VM Managers FAQ - 7.x - United States
+
+Text:
+VM Managers; VmWare; vCenter TECHNOTE (FAQ)
+
+QUESTION
+ 1 .The purpose of the local user account required on vCenter 
+2. Does the vSphere Web Services SDK need to be installed on the VM Manager server in order for the ILMT server to read the host hardware information from the installed agents? Which SDK specifically?
+3. What ports need to be allowed through a firewall in order for the ILMT server to query a VM Manager? 
+4. What vCenter Roles are necessary for the local user account? 
+5. Can the user account be a domain account? 
+6. Is the vCenter configuration needed for vSphere Clusters with the same CPUs across all hosts? 
+7. Do we need to install agents on the vSphere Host servers? 
+8. Regarding the vCenter setup, what information is queried and how is it used? 
+9. What is the performance impact during scans? 
+
+ANSWER
+1) It needs to be a local user account because this is the way how the VMware SDK is working. We are using the VMWare vSphere Web Services SDK in order to connect to the ESX servers/vCenters and retrive the needed data from them. 
+
+2) Yes, the SDK needs to be installed. By default the SDK should be installed 'out of the box' on ESX servers and also it is a standard part of vCenters so it also should be installed out of the box. The ILMT server is using the SDK client in version 2.5 so on a ESX server/vCenter machine the SDK must be in version 2.5 or later (4.0 / 4.1). 
+
+ 
+
+On the following page: 
+http://www.ibm.com/support/knowledgecenter/SS8JFY_7.5.0/com.ibm.lmt75.doc/com.ibm.license.mgmt.admin.doc/r_vmware.html [http://www.ibm.com/support/knowledgecenter/SS8JFY_7.5.0/com.ibm.lmt75.doc/com.ibm.license.mgmt.admin.doc/r_vmware.html] 
+
+you can find the supported versions of the ESX server / vCenters - these version are supported because they have the correct version of the SDK already installed. 
+
+3) It depends of the ESX server/ vCenters configuration. It can be either the HTTP port (80) or HTTPS port (443). By default only the HTTPS port is configured by VmWare. In order to allow the connection on HTTP port you will need to edit the VmWare configuration in proxy.xml file (/etc/vmware/hostd/proxy.xml on ESX or c:\Documents and 
+
+Settings\AllUsers\Application Data\VMware\VMware VirtualCenter on vCenter). 
+
+4) The Read-Only role is enough for the user - but this read-only right needs to be given for all object that are in agents topology, e.g. if an agent is installed on some virtual machine, the defined user needs to have a read-only role for this particular VM, to all the connected hosts and to the cluster - so the easiest is to give a read-only rights to all object for that user (so give a read-only role for this user on "Hosts & Clusters" level in VMWare Infrastructure Client). 
+
+5) Yes, however such user also needs to have the required permissions in vCenter. (in 'VMware Infrastructure Client' the Permissions tab.) 
+
+6) Yes it is. 
+
+7) No, no LMT agents need to be installed on the ESX server or vCenter machine. The agents should be installed only on machine (physical/virtual) on which some IBM software is installed that needs to be discovered. 
+
+8) The below information are being retrieved from vCenter: 
+
+- information about the virtual machines (assigned processor cores / 
+
+UUID / parent ID (id of the host)) 
+
+- information about the hosts/esx server like: uuid, parent id (id of the cluster if host is in the cluster), hostname, processor vendor, processor description, number of physical processors, number of total processor cores on the machine, power state (on/off), connection_state (connected / disconnected / not-responding) 
+
+- information about the clusters - uuid and name (with information about datacenter name in which the cluster is) 
+
+9) By default the ILMT server connects and retrieves data from defined VM Manager every 30 minutes (it can be modified). The performance impact for ESX server machines (or vCenter machine) is very low almost unnoticeable (in normal cases the response should be prepared by vCenter in a few seconds). This has a bigger performance impact for ILMT server itself when the data retrieved from VM Managers are being analyzed and compared with the data retrieved from the agents.

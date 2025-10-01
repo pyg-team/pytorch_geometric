@@ -1,0 +1,37 @@
+Title: IBM Worklight Versions 6.1, 6.0 and 5.0.6 Support Apple iOS 7.1 - United States
+
+Text:
+ PRODUCT DOCUMENTATION
+
+ABSTRACT
+ IBM Worklight V5.0.6 Fix Pack 2, V6.0.0 Fix Pack 2, and 6.1 support the development of applications running on Apple iOS 7.1 with a list of known issues and solutions. 
+
+CONTENT
+IBM Worklight 5.0.6 Fix Pack 2, 6.0.0 Fix Pack 2 and 6.1 were tested against the Apple iOS 7.1 Beta 5 platform. Starting in March 2014, Apple iOS 7.1 is a supported platform for these Worklight versions and any future fix pack. See the Support statement for IBM Worklight, IBM Mobile Foundation, and IBM Mobile Application Platform Pattern [http://www.ibm.com/support/docview.wss?uid=swg27040214]. 
+
+The following links provide you with information on how to download and install the affected product versions: 
+
+ * Download for IBM Worklight V5.0.6 Fix Pack 2 and IBM Mobile Foundation V5.0.6 Fix Pack 2 [http://www.ibm.com/support/docview.wss?uid=swg24036825] 
+ *  [http://www-01.ibm.com/support/docview.wss?uid=swg27038650]Download for IBM Worklight V6.0.0 Fix Pack 1 and IBM Mobile Foundation V6.0.0 Fix Pack 1 [http://www.ibm.com/support/docview.wss?uid=swg24035703] 
+ * Download the IBM Worklight and IBM Mobile Application Platform Pattern V6.1 products [http://www.ibm.com/support/docview.wss?uid=swg24036401] 
+ * Download IBM Worklight 6.1 Developer Edition [http://www.ibm.com/developerworks/downloads/ws/worklight/]
+
+
+The following table lists the known issues at the time of this publication for running IBM Worklight product versions on the Apple iOS 7.1 operating system. An 'X' represents an identified problem for a given release. 
+
+Issue Affects 
+V5.0.6.2 Affects 
+V6.0.0.2 Affects 
+V6.1.0.0 Details PI12337 [http://www.ibm.com/support/docview.wss?uid=swg1PI12337] X X X Hybrid application with a colored background displays a white line at the bottom. 
+Ensure that the proper fixes are installed 
+
+Updates might be needed to fix iOS 7.1 known issues. You can find the fixes on IBM Fix Central [http://www-933.ibm.com/support/fixcentral/]. Apply them to Worklight Studio to ensure the proper level of support.  * Download the cumulative interim fix for IBM Worklight V5.0.6 Fix Pack 2 and IBM Mobile Foundation V5.0.6 Fix Pack 2 
+ * Download the cumulative interim fix for IBM Worklight V6.0.0 Fix Pack 2 and IBM Mobile Foundation V6.0.0 Fix Pack 2 
+ * Download for IBM Worklight V6.1.0 Fix Pack 1 [http://www-01.ibm.com/support/docview.wss?uid=swg24037219]
+
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Mobile- Speech and Enterprise Access IBM Mobile Foundation Upgrades Apple iOS 6.0.0.2, 5.0.6.2 Consumer, Enterprise

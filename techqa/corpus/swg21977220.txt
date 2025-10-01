@@ -1,0 +1,64 @@
+Title: IBM ITCAM4Tx : TEP AMC "applications" - no data for WRT monitored applications - United States
+
+Text:
+71AMCON-PLAN; 71AMCON-CONF; 71AMCON-RPTG; 71AMCON-WV; 71AMCON-TS TECHNOTE (FAQ)
+
+QUESTION
+ Why can't I see WRT data in the TEP under:
+AMC agent node -> Application Management Console -> Applications
+
+I do see RRT data. 
+
+ANSWER
+There are a number of possible reasons for this problem. 
+
+Use the following information to help identify which solution might apply to you. 
+
+
+
+
+ 1. To rule out the possibility of a problem with source data, make sure WRT data in seen in WRT workspaces.
+    
+    For example: 
+    WRT agent node -> Web response Time -> Applications -> 'Applications current status'
+    
+    If you don't see data here, you won't see WRT data in AMC workspaces.
+    
+    
+ 2. Make sure AMC is configured to report WRT data.
+    
+    In the TEP console please open: 
+    
+    Application Management Console > Configuration 
+    Maximise - Agent Details 
+    
+    If any of the following properties are set to True you will not see data for that agent in AMC workspaces:
+    Exclude all data 
+    Exclude Internet Service Monitor data 
+    Exclude Robotic Response Time data 
+    Exclude Transaction Tracking data 
+    Exclude Web Response Time data 
+    
+    These properties are changed by reconfiguring the AMC/T3 agent.
+    
+    
+ 3. Make sure that you have only one active AMC managed system configured in your ITM environment as described in the following technote:
+    
+    Verifying that there is only one AMC in your ITM environment
+    http://www.ibm.com/support/docview.wss?uid=swg21586074 [http://www.ibm.com/support/docview.wss?uid=swg21586074]
+    
+    
+ 4. Performance and synchronisation problems can arise when the AMC/T3 agent is connected to a Remote TEMS.
+    
+    The following advice is extracted from Considerations for installing Response Time [http://www.ibm.com/support/knowledgecenter/SS5MD2_7.4.0.1/com.ibm.itcamt.doc/planning/planning_rt_consider.html] where you will also find more AMC and Response Time agent implementation advice.
+    
+    It is best practice to connect directly to the Hub Tivoli Enterprise Monitoring Server for the most efficient profile distribution and data display in the Tivoli Enterprise Portal workspaces. Connecting directly to the Hub Tivoli Enterprise Monitoring Server also removes any potential synchronization problems. 
+    
+    To ensure AMC is connecting to the Hub TEMS check the AMC T3 ras1 startup log file (<host>_t3_<timestamp>-01.log) and search for the string "Successfully connected to CMS <tems name>".
+    
+    Verify that the tems name is the hub tems. If not, reconfigure your AMC agent to connect to the HUB TEMS. 
+
+
+
+PRODUCT ALIAS/SYNONYM
+ itcam itcam4tx itcamfortx itcam4trans itcamfortrans

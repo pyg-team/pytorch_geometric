@@ -1,0 +1,57 @@
+Title: IBM Using an MSI transform to upgrade to Notes 8.5.2 and add features not currently installed - United States
+
+Text:
+MSI; silent install; ADDFEATURES; upgrade; 8.5.1; 8.5.2; MSI transform TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+When using an MSI transform to upgrade from a Notes 8.5.x installation to 8.5.2 and add features that are not currently installed, such as the Domino Designer and/or Domino Administrator client, you must specify the ADDFEATURES option and a comma-separated list of the features that you want to add. You can do this in a transform or on the silent command line itself. If you use a transform, instead of specifying each desired feature with an ADDFEATURES comma-separated list on the command line, you specify each desired feature in an ADDFEATURES comma-separated list in the transform and then run the silent install by applying that transform. 
+
+In this problem scenario, Lotus Notes 8.5.1 was installed using a Notes Allclient installation executable but without installing the Domino Designer client or Domino Administrator client. Attempting to upgrade to 8.5.2 and add the other clients is unsuccessful, as follows: 
+
+
+1. Run the Notes 8.5.2 Allclient installation executable but do not install the Designer or Administrator clients. 
+
+2. Create a new transform, named all.mst, against the Notes 8.5.2 Allclient install kit, with Designer and Administrator selected.
+
+3. Upgrade the 8.5.2 Notes installation, using the MSI transform, using the following command: 
+
+msiexec /i "Lotus Notes 8.5.2.msi" TRANSFORMS=all.mst /qb+
+
+
+4. Notes is upgraded successfully, but the Administrator and Designer clients are not installed.
+
+Note: This also happens when upgrading with the Notes user interface or a silent command line install; for example using the following command:
+
+setup.exe /s /v"TRANSFORMS=all.mst /qb"
+
+
+
+CAUSE
+Lotus Notes 8.5.2 introduced two new MSI command line install options, and related behavior -- ADDFEATURES and REMOVEFEATURES -- and deprecated the existing SELECTINSTALLFEATURES command line option. 
+
+See the following posts for details: 
+
+-- Tech Note 1424066 "ADDFEATURES and REMOVEFEATURES MSI command line arguments for Notes silent install or upgrade" 
+
+-- Tech Note 1424486 "Notes command line argument SELECTINSTALLFEATURES no longer removes installed features" 
+
+
+
+RESOLVING THE PROBLEM
+If you have installed Notes 8.5.x without specific features that you want to add during upgrade to Notes 8.5.2 (such as the Domino Designer and or Domino Administrator client as illustrated in the problem section) you can create an MSI transform to include these features using the ADDFEATURES argument and a comma-separated list of features to add. 
+
+For example, to add the Domino Designer and/or Domino Administrator clients create a transform, for example all_plus.mst, that includes the property
+ADDFEATURES= DominoDesigner,DominoAdministrator in the property table and then run the transform as follows: 
+
+ msiexec /i "Lotus Notes 8.5.2.msi" TRANSFORMS=all_plus.mst /qb+
+
+
+RELATED INFORMATION
+#Lotus Notes and Domino product documentation - Notes an [http://publib.boulder.ibm.com/infocenter/domhelp/v8r0/index.jsp]
+Lotus Notes and Domino Wiki -- community posts and rela [http://www-10.lotus.com/ldd/dominowiki.nsf]
+
+
+
+
+ * 
+ *

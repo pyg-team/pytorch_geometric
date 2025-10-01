@@ -1,0 +1,33 @@
+Title: IBM Error: "libqt.so.3: open failed: No such file or directory" - United States
+
+Text:
+fatal; libqt.so.3; Test RealTime; Rose RealTime; LD_LIBRARY_PATH; TestRT; 1120227 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When using the IBM Rational Test RealTime® and Rose® RealTime integration and doing a successful build with Test RealTime instrumentation options, the following error is generated when trying to load Tools->Test RealTime -> Viewer -> With Model Coverage:
+
+ld.so.1: <TESTRT_HOME>/bin/sun4/sunOS5/studio: fatal: libqt.so.3: open 
+failed: No such file or directory. 
+
+CAUSE
+This error appears when the LD_LIBRARY_PATH is not correctly set.
+
+RESOLVING THE PROBLEM
+Check and make sure that the LD_LIBRARY_PATH environment variable is set to 
+<TESTRT_HOME>/TestRealTime.2002.05.00/lib/sun4/sunOS5 
+
+
+NOTE: Where TESTRT_HOME is the installation directory for Test RealTime. 
+
+2002.05.00 should be replaced with the version of TestRT that is installed.
+
+
+
+
+
+
+
+ 
+
+HISTORICAL NUMBER
+ 115720830

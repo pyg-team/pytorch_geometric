@@ -1,0 +1,178 @@
+Title: IBM JR54462: PERFORMANCE REGRESSED IN IBM PROCESS DESIGNER WITH LARGE NUMBER OF FAVORITES IN LSW_FAVORITES TABLE - United States
+
+Text:
+  DIRECT LINKS TO FIXES
+8.5.5.0-WS-BPM-IFJR54462 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Standard&fixids=8.5.5.0-WS-BPM-IFJR54462&source=SAR]
+Version 8.5 Refresh Pack 7 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24041575]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  In IBM Process Designer, it takes between 15 and 30 seconds to
+   load the page when you try to debug a process or project or run
+   a graphic user interface (coach view or human task) because IBM
+   Business Process Manager (BPM) is retrieving all the favorites
+   in the lsw_favorite table. IBM BPM searches all favorites that
+   this user is eligible for.  For each favorite, IBM BPM must
+   expand the objects stored in the favorite table.
+   
+   
+   The Java stack of this processing is
+      The java stack of this processing is this.
+   
+   4XESTACKTRACE
+    at com/lombardisoftware/server/ejb/persistence/dao/
+     FavoriteDAO.findFavoritesExposedToUser(FavoriteDAO.
+     java:201)
+   4XESTACKTRACE
+    at com/lombardisoftware/server/ejb/runtime/
+     RuntimeServicesCore.getActiveFavoritesWithFilter
+     (RuntimeServicesCore.java:355)
+   4XESTACKTRACE
+    at com/lombardisoftware/server/ejb/runtime/
+     RuntimeServicesCore.getActiveFavoritesWithFilter
+     (RuntimeServicesCore.java:349)
+   
+   The following parameter introduced in interim fix JR52126 [http://www-01.ibm.com/support/docview.wss?uid=swg1JR52126]
+   triggers the processing that causes the slow performance. The
+   setting is "true" for this configuration parameter:
+   
+   <enforce-correct-service-type-for-execute-service-by-name>
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Interim fix JR52126 [http://www-01.ibm.com/support/docview.wss?uid=swg1JR52126] uses a database query that is functionally
+   correct but rather inefficient and, so, causes the performance
+   issue.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A fix will be included in IBM BPM V8.5.5 and in a IBM BPM V8.5.6
+   cumulative fix.
+   
+   For V8.5.5, go to Fix Central
+   (http://www.ibm.com/support/fixcentral) and search for JR54462:
+   
+   1. Select IBM Business Process Manager with your edition from
+     the product selector, the installed version to the fix pack
+     level, and your platform, and then click Continue.
+   
+   2. Select APAR or SPR, enter JR54462, and click Continue.
+   
+   For V8.5.6, determine whether the cumulative fix is available
+   and download it if it is by completing the following steps on
+   Fix Central:
+   
+   1. Select IBM Business Process Manager with your edition
+     from the product selector, the installed version to the fix
+     pack level, and your platform, and then click Continue.
+   
+   2. Select Text, enter ?cumulative fix?, and click Continue.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  Not applicable
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR54462
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM EXPRESS
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9600
+   
+   
+ * REPORTED RELEASE
+   855
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2015-10-09
+   
+   
+ * CLOSED DATE
+   2015-12-09
+   
+   
+ * LAST MODIFIED DATE
+   2015-12-09
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   BPM STANDARD
+   
+   
+ * FIXED COMPONENT ID
+   5725C9500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R855 PSY
+   UP
+   
+   
+ * R856 PSY
+   UP

@@ -1,0 +1,219 @@
+Title: IBM JR53974: ERROR WHEN TRYING TO PUT BACK MESSAGE INTO MQ FROM ACM CATALOGDATALOADSERVICE CLASS - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  In IBM InfoSphere Master Data Management Collaboration Server
+   11.4.0, when trying to put back message into MQ from ACM
+   CatalogDataLoadService class, the following exception is thrown:
+   
+   [7/29/15 21:31:01:363 IST] 00000044 SystemErr     R
+   at
+   com.ibm.mq.jmqi.remote.internal.RemoteFAP.jmqiConnect(RemoteFAP.
+   java:1716)
+   [7/29/15 21:31:01:363 IST] 00000044 SystemErr     R
+   ... 23 more
+   [7/29/15 21:31:01:363 IST] 00000044 SystemOut     O   MQ Error
+   Message: MQJE001: Completion Code '2', Reason '2540'.
+   [7/29/15 21:31:01:363 IST] 00000044 SystemOut     O   Attempt
+   to connect to Queue Manager failed.
+   [7/29/15 21:31:01:363 IST] 00000044 SystemErr     R
+   java.lang. NullPointerException
+   [7/29/15 21:31:01:363 IST] 00000044 SystemErr     R
+   at com.
+   ibm.mdm.integration.utils.MqClient.openQueue(MqClient.java:148)
+   [7/29/15 21:31:01:363 IST] 00000044 SystemErr     R
+   at com.
+   ibm.mdm.integration.utils.MqClient.publishMsgToOutboundQueue(MqC
+   lient.java:99)
+   [7/29/15 21:31:01:363 IST] 00000044 SystemErr     R           at
+   
+   In systemErr.log, the following was seen:
+   
+   
+   
+   [7/29/15 21:31:01:362 IST] 00000044 SystemErr     R Caused by:
+   com.ibm.mq.jmqi.JmqiException: CC=2;RC=2540;AMQ9204:
+   Connection to host '172.31.55.137(1414)' rejected.
+   [1=com.ibm.mq.jmqi.JmqiException[CC=2;RC=2540;AMQ9520:
+   Channel not defined remotely.
+   [2=172.31.55.137(1414),3=MDM.CHANNEL]],3=172.31.55.137(1414),5=R
+   emoteConnection.analyseErrorSegment]
+   
+   
+   Cause:
+   
+   Channel not defined remotely.
+   [2=172.31.55.137(1414),3=MDM.CHANNEL
+   
+   wcs.properties file has this setting:
+   wcs.mq.port.num=1415
+   
+   However, WCSConfiguration.java is reading the property as:
+   (wcsProp.getProperty("wcs.mq.port", "1414"))
+   
+   This leads to the port always being read as 1414, the default
+   value and overwriting the value set in the wcs.properties file.
+   If the MQ has a different port number which has been configured
+   in wcs.properties, that value is not being read, resulting in
+   failure of MQ connection.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Manually change the port number in the WCSConfiguration.java to
+   read the property as (wcsProp.getProperty("wcs.mq.port",
+   "1415"))
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * All InfoSphere Master Data Management Collaborative Edition  *
+   * implementations are affected by this issue.                  *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * In IBM InfoSphere Master Data Management Collaboration       *
+   * Server 11.4.0, when trying to put back message into MQ from  *
+   * ACM CatalogDataLoadService class, the following exception is *
+   * thrown:                                                      *
+   * [7/29/15 21:31:01:363 IST] 00000044 SystemErr R at           *
+   * com.ibm.mq.jmqi.remote.internal.RemoteFAP.jmqiConnect(Remote *
+   * FAP. java:1716) [7/29/15 21:31:01:363 IST] 00000044          *
+   * SystemErr R ... 23 more [7/29/15 21:31:01:363 IST] 00000044  *
+   * SystemOut O MQ Error Message: MQJE001: Completion Code '2',  *
+   * Reason '2540'. [7/29/15 21:31:01:363 IST] 00000044 SystemOut *
+   * O Attempt to connect to Queue Manager failed. [7/29/15       *
+   * 21:31:01:363 IST] 00000044 SystemErr R java.lang.            *
+   * NullPointerException [7/29/15 21:31:01:363 IST] 00000044     *
+   * SystemErr R at com.                                          *
+   * ibm.mdm.integration.utils.MqClient.openQueue(MqClient.java:1 *
+   * 48) [7/29/15 21:31:01:363 IST] 00000044 SystemErr R at com.  *
+   * ibm.mdm.integration.utils.MqClient.publishMsgToOutboundQueue *
+   * (MqC lient.java:99) [7/29/15 21:31:01:363 IST] 00000044      *
+   * SystemErr R at In systemErr.log, the following was seen:     *
+   * [7/29/15 21:31:01:362 IST] 00000044 SystemErr R Caused by:   *
+   * com.ibm.mq.jmqi.JmqiException: CC=2;RC=2540;AMQ9204:         *
+   * Connection to host '172.31.55.137(1414)' rejected.           *
+   * [1=com.ibm.mq.jmqi.JmqiException[CC=2;RC=2540;AMQ9520:       *
+   * Channel not defined remotely.                                *
+   * [2=172.31.55.137(1414),3=MDM.CHANNEL]],3=172.31.55.137(1414) *
+   * ,5=R emoteConnection.analyseErrorSegment]                    *
+   * Cause: Channel not defined remotely.                         *
+   * [2=172.31.55.137(1414),3=MDM.CHANNEL wcs.properties file has *
+   * this setting: wcs.mq.port.num=1415                           *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Customers facing this issue should apply IBM InfoSphere      *
+   * Master Data Management Collaboration Server Version 11.4.0,  *
+   * Interim Fix 10 to gain resolution for this problem.          *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This issue was fixed in IBM InfoSphere Master Data Management
+   Collaboration Server Version 11.4.0, Interim Fix 10 and is
+   available on the IBM Support site.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR53974
+   
+   
+ * REPORTED COMPONENT NAME
+   MDM SERVER FOR
+   
+   
+ * REPORTED COMPONENT ID
+   5724V5100
+   
+   
+ * REPORTED RELEASE
+   B40
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-07-30
+   
+   
+ * CLOSED DATE
+   2015-08-14
+   
+   
+ * LAST MODIFIED DATE
+   2015-08-14
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   MDM SERVER FOR
+   
+   
+ * FIXED COMPONENT ID
+   5724V5100
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * RB40 PSY
+   UP

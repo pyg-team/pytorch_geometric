@@ -1,0 +1,151 @@
+Title: IBM PJ34023: BPF CONFIG ISSUE: ADDING AE INTEGRATION.XML 3010 COMMAND TO BP8 ACTIONS.XML DOES NOT RETURN LATEST VERSION INFO - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  BPF CONFIG ISSUE:  ADDING AE INTEGRATION.XML 3010 COMMAND TO
+   BP8ACTIONS.XML DOES NOT RETURN LATEST VERSION INFO
+   A configuration issue was encountered when adding the
+   AE/Workplace 3010 "GetInfo" or "ShowProperties" command
+   (configured in the AE/Workplace Integration.xml file) to the
+   Bp8Actions.xml file.
+   If the id parameter is passed, AE/Workplace will always return
+   the metadata/info for the original (MajorVersion == 1.0)
+   version of the document whose metadata/info is being requested
+   via 3010 instead of the current version.
+   This occurs even when the vsID parameter is being passed.
+   To avoid this problem, do *not* pass the id parameter:  pass
+   the vsID parameter only.
+   Specifically, to use the Show Properties (3010) function in
+   BPF with versioning enabled, modify the following three
+   configuration files:
+   1. Bp8Actions.xml -
+   Add an action named ShowProperties in this xml file. NOTE: Keep
+   the "id" parameter. This parameter will only be passed to
+   Bp8WPCommandQueryServlet. It will not be passed to AE.
+   
+   2. Bp8ExtCommands.xml -
+   Find the command ShowProperties and delete its parameter
+   "id".
+   
+   3. Bp8ExtTasks.xml -
+   Find the task ShowProperties and delete its parameter "id".
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  BPF Web ApplicationBPF CONFIG ISSUE:  ADDING AE INTEGRATION.XML
+   Follow configuration recommendations outlined in Problem Conclus
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A configuration issue was encountered when adding the AE/Workpla
+   ce 3010 "GetInfo" or "ShowProperties" command (configured in the
+    AE/Workplace Integration.xml file) to the Bp8Actions.xml file.
+   If the id parameter is passed, AE/Workplace will always return t
+   he metadata/info for the original (MajorVersion == 1.0) version
+   of the document whose metadata/info is being requested via 3010
+   instead of the current version.
+   This occurs even when the vsID parameter is being passed.
+   To avoid this problem, do *not* pass the id parameter:  pass the
+    vsID parameter only.
+   Specifically, to use the Show Properties (3010) function in BPF
+   with versioning enabled, modify the following three configuratio
+   n files:
+   1. Bp8Actions.xml -
+   Add an action named ShowProperties in this xml file. NOTE: Keep
+   the "id" parameter. This parameter will only be passed to Bp8WPC
+   ommandQueryServlet. It will not be passed to AE.
+   
+   2. Bp8ExtCommands.xml -
+   Find the command ShowProperties and delete its parameter "id".
+   
+   3. Bp8ExtTasks.xml -
+   Find the task ShowProperties and delete its parameter "id".
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PJ34023
+   
+   
+ * REPORTED COMPONENT NAME
+   BUS PROC FRAMEW
+   
+   
+ * REPORTED COMPONENT ID
+   5724R7500
+   
+   
+ * REPORTED RELEASE
+   360
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-06-30
+   
+   
+ * CLOSED DATE
+   2008-06-30
+   
+   
+ * LAST MODIFIED DATE
+   2008-06-30
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

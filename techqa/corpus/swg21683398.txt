@@ -1,0 +1,117 @@
+Title: IBM Getting the IBM MQ classes for Java and JMS - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How do I get just the IBM MQ classes for Java and classes for JMS JAR files? I want to use them with the MQ Light Service in Bluemix, or to deploy into a software management tool, or to use with standalone client applications in my company. 
+
+ANSWER
+For WebSphere MQ V7.5 or earlier, you can only get these classes by performing either a full server install or by installing one of the client SupportPacs. This installs far more files than you need. 
+
+For WebSphere MQ V8.0 or later, you can get a self-extracting JAR file that contains just these classes, along with the MQ resource adapter and MQ OSGi bundles. 
+
+ 
+
+Download 
+
+Go to Fix Central [https://www-945.ibm.com/support/fixcentral/swg/identifyFixes?query.parent=ibm~WebSphere&query.product=ibm~WebSphere~WebSphere%20MQ&query.release=9.0&query.platform=All]. Enter "Java" in the Text search box. The name of the file to be downloaded is in this format: 
+<V.R.M.F>-[IBM|WS]-MQ-Install-Java-All.jar. 
+For example, for MQ V9.0:
+9.0.0.0-IBM-MQ-Install-Java-All.jar.
+
+If you can't find the file, make sure that the Product Selected is MQ and the Version is 8.0 or later.
+
+
+Install 
+
+This JAR file is executable. To run, it requires that a Java Runtime Environment has been installed on your machine and added to the system path. 
+
+When run, the installer displays the license agreement, which must be accepted, then asks for a directory to install the resources into. The directory is created if it does not exist; if it already exists an error is reported and no files are installed. 
+
+The installer does not have to be run as root, or as any specific user. The only requirement is that the user under which it runs can write to the directory you specify. 
+
+ 
+
+To start the installation, issue the following command from the directory to which you downloaded the file. For example, for IBM MQ V9.0:
+java -jar 9.0.0.0-IBM-MQ-Install-Java-All.jar
+
+This displays the following text: 
+
+Before you can use, extract, or install IBM MQ V9.0, you must
+accept the terms of 1. IBM International License Agreement for
+Evaluation of Programs 2. IBM International Program License Agreement
+and additional license information. Please read the following license
+agreements carefully.
+
+
+The license agreement is separately viewable using the
+--viewLicenseAgreement option.
+
+Press Enter to display the license terms now, or "x" to skip. 
+
+Either press 'Enter' or 'x' as required, after display of the license or immediately on selection of 'x', additional license terms can be displayed. 
+
+
+Additional license information is separately viewable using the
+--viewLicenseInfo option.
+
+Press Enter to display additional license information now, or 'x' to skip. 
+
+Again press 'Enter' or 'x' as required. 
+
+The license now needs to be accepted, this message is displayed:
+By choosing the "I Agree" option below, you agree to the terms of the
+license agreement and non-IBM terms, if applicable. If you do not
+agree, select "I do not Agree".
+
+
+Select [1] I Agree, or [2] I do not Agree: 
+
+Selecting '2' terminates installation immediately. Selecting '1' allows selection of the installation directory. 
+
+
+Enter directory for product files or leave blank to accept the default value.
+The default target directory is H:\WMQ
+
+Target directory for product files? 
+
+ 
+
+Enter the directory to install the files to, or press 'Enter' without entering any value to install to the default location as displayed. After the files have been installed to the requested location a confirmation message is displayed:
+Extracting files to H:\WMQ\wmq
+Successfully extracted all product files. 
+
+Files Installed 
+
+Within the selected directory a new directory 'wmq' is created, within this the following directories are created.
+
+JavaEE JavaSE OSGi 
+
+The contents of these three directories are as follows:
+
+.\JavaEE:
+wmq.jmsra.ivt.ear
+wmq.jmsra.rar
+
+.\JavaSE:
+com.ibm.mq.allclient.jar
+com.ibm.mq.traceControl.jar
+fscontext.jar
+jms.jar
+providerutil.jar
+JSON4J.jar
+
+.\OSGi:
+com.ibm.mq.osgi.allclient_<V.R.M.F>.jar
+com.ibm.mq.osgi.allclientprereqs_<V.R.M.F>.jar 
+
+ 
+
+References 
+
+Information on using the 'allclient.jar' [https://www.ibm.com/support/knowledgecenter/en/SSFKSJ_9.0.0/com.ibm.mq.dev.doc/q030590_.htm] 
+
+Information on using the IBM MQ Resource Adapter [http://www.ibm.com/support/knowledgecenter/SSFKSJ_9.0.0/com.ibm.mq.dev.doc/q031610_.htm] 
+
+Information on using the OSGi Bundles [https://www.ibm.com/support/knowledgecenter/en/SSFKSJ_9.0.0/com.ibm.mq.dev.doc/q031840_.htm]

@@ -1,0 +1,97 @@
+Title: IBM I am unable to install IBM SPSS product from the installation CD. I am not getting an error message. What can I do? - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ I have placed my IBM SPSS product installation CD in my computers CD/DVD drive, but I can't install my software. Either the CD just spins and the product installation menu never appears or, if the installation menu appears, I select the 'install' option, but the product does not install. What can I do? 
+
+RESOLVING THE PROBLEM
+There are a number of possible causes for this symptom. The following instructions are designed to guide you through resolving most common causes.
+
+The two most common types of problems are:
+
+(1) Upon inserting the IBM SPSS product installation CD, no menu appears providing you with the option to install SPSS. 
+(2) Upon inserting the IBM SPSS product installation CD, a menu appears allowing you to select the option to install my IBM SPSS product. However, after selecting this option the SPSS program does not install.
+
+If the problem you are experiencing is more like (1) go to (A1).
+If the problem you are experiencing is more like (2), select the "Browse the CD ROM" option and see instructions in (B1)
+
+(A1)
+If available, insert the IBM SPSS product installation CD in a different computer.
+If the same problem occurs, see instructions in (A2).
+If the problem does not occur, see instructions in (B1).
+
+(A2)
+Remove the IBM SPSS product installation CD.
+If disk is clean and without cracks, see instructions in (A4).
+If the IBM SPSS product installation CD is not clean, see instructions in section (A3)
+If the IBM SPSS product installation CD is cracked, contact your software vendor to request a replacement.
+
+(A3)
+Use soap, warm water and a soft cloth that is not abrasive to clean the surface.
+Thoroughly dry with a clean, soft cloth.
+Verify that all foreign material has been removed.
+Reinsert the the IBM SPSS product installation CD . 
+If the installation menu still does not appear, see instructions in (A4)
+If the installation menu appears, select the "Browse the CD ROM" option and see instructions in (B1)
+
+(A4)
+Open My Computer (XP) or Computer (Vista) or Finder (Macintosh).
+Browse to CD drive.
+If you can view the files/folders on the CD, see instructions in (B1a) for Microsoft Windows operating systems OR (B1b) for Apple Macintosh operating systems.
+If you can not view the files or folders on the CD, see instructions in (A5)
+
+(A5)
+Remove the the IBM SPSS product installation CD .
+Locate another program installation CD from another product.
+Insert the CD.
+If the alternate CD starts normally, contact your vendor for a replacement SPSS installation CD.
+If the alternative CD does not start normally, you may be experiencing a problem with your drive which may require technical assistance to correct.
+
+(B1a)
+Locate the folder labeled 'SPSS' or 'Statistics' (without quotes).
+Right-click on the folder.
+Select the Copy menu option.
+Minimize the window where the CD files appear.
+Go to your Windows or Macintosh Desktop (which appears when you boot the computer).
+Right-click on an open area of the Windows Desktop (not on a folder).
+Select the Paste menu option.
+Wait for your computer to complete copying the folder and included files.
+If the SPSS folder and included files copies successfully, there should be a folder labeled 'SPSS' or 'Statistics' (without quotes) on your Windows Desktop. See instructions in (B2a).
+If the folder and included files do not copy successfully, contact SPSS Technical Support.
+
+(B1b)
+Locate the folder labeled 'SPSS' or 'Statistics' (without quotes).
+Drag (or copy) the folder to your Macintosh Desktop.
+If the SPSS folder and included files copies successfully, there should be a folder labeled 'SPSS' or 'Statistics' (without quotes) on your Macintosh Desktop. See instructions in (B2b).
+If the folder and included files do not copy successfully, contact SPSS Technical Support.
+
+(B2a)
+Double-click the SPSS folder located on your Windows Desktop.
+Vista users: Right-click on the file labeled 'Setup' (without quotes) and select the 'Run as administrator' (without quotes) menu option.
+XP users: Double-click on the file labeled 'Setup' (without quotes).
+Install the software providing the correct responses when prompted.
+If SPSS installs normally, proceed to license your product in the normal manner.
+If SPSS does not install normally, contact SPSS Technical Support.
+
+(B2b)
+Open the 'SPSS' or 'Statistics' folder.
+Locate the file whose label includes 'Installer'.
+(This file should be a 'disk image' file with the file extension of 'dmg'.)
+Double-click the 'dmg' file.
+Another file with the name 'Installer' should appear in a separate window.
+(This file should be an 'application' file with the file extension of 'app'.)
+Drag the 'app' file to your Desktop.
+Double-click this file.
+The installation process should begin.
+Install the software providing the correct responses when prompted
+
+RELATED INFORMATION
+ Need more help? Our Statistics forum is Live! [https://developer.ibm.com/answers/topics/statistics.html?smartspace=predictive-analytics]
+
+
+ 
+
+HISTORICAL NUMBER
+ 79748

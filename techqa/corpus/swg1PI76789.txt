@@ -1,0 +1,155 @@
+Title: IBM PI76789: HTTPS REQUESTS FAIL WITH A 500 INTERNAL SERVER ERROR WITH THE 64-BIT PLUGIN ON WINDOWS. - United States
+
+Text:
+z/os  FIXES ARE AVAILABLE
+9.0.0.6: WebSphere Application Server traditional V9.0 Fix Pack 6 [http://www-01.ibm.com/support/docview.wss?uid=swg24044242]
+9.0.0.7: WebSphere Application Server traditional V9.0 Fix Pack 7 [http://www-01.ibm.com/support/docview.wss?uid=swg24044620]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The 64-bit Windows plugin fails to load the GSK security
+   library causing HTTPS requests to fail. This happens because
+   the plugin tries to load the 32-bit GSK library instead of the
+   64-bit library. An error message similar to the following can
+   be found the plugin log:
+   
+   ERROR: lib_security: loadSecurityLibrary: Failed to load gsk
+   library from C:\Program Files\IBM\WebSphere\Plugins\gsk8\gsk8_32
+   ERROR: ws_transport: transportInitializeSecurity: Unable to
+   load security library
+   ERROR: ws_server: serverAddTransport: Failed to initialize
+   security. Secure transports are not possible.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  Users of IBM HTTP Server (powered by        *
+   *                  Apache)                                     *
+   *                  WAS Plugin (64-bit only) on Windows         *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: The 64-bit Windows plugin fails to      *
+   *                      load                                    *
+   *                      the GSK security library causing HTTPS  *
+   *                      requests to fail.                       *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   The 64-bit Windows plugin fails to load the GSK security
+   library causing HTTPS requests to fail. This happens because
+   the plugin tries to load the 32-bit GSK library instead of the
+   64-bit library. An error message similar to the following can
+   be found the plugin log:
+   ERROR: lib_security: loadSecurityLibrary: Failed to load gsk
+   library from C:\Program
+   Files\IBM\WebSphere\Plugins\gsk8\gsk8_32
+   ERROR: ws_transport: transportInitializeSecurity: Unable to
+   load security library
+   ERROR: ws_server: serverAddTransport: Failed to initialize
+   security. Secure transports are not possible.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The 64-bit Windows WAS plugin was updated to load the 64-bit GSK
+   library instead of the 32-bit library.
+   
+   This fix is targeted for IBM HTTP Server fix packs:
+   - 9.0.0.6
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI76789
+   
+   
+ * REPORTED COMPONENT NAME
+   WAS IHS 64BIT P
+   
+   
+ * REPORTED COMPONENT ID
+   5655I3511
+   
+   
+ * REPORTED RELEASE
+   850
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-02-18
+   
+   
+ * CLOSED DATE
+   2017-12-07
+   
+   
+ * LAST MODIFIED DATE
+   2017-12-07
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WAS IHS 64BIT P
+   
+   
+ * FIXED COMPONENT ID
+   5655I3511
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R850 PSY
+   UP

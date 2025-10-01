@@ -1,0 +1,30 @@
+Title: IBM Wrong record count when using DASH Prelim Data Filter with ITM Robotic agent - United States
+
+Text:
+DASHL2; Table widget; Premiminary Data Filter; Robotic; Transaction; Testing; RTC; ITM; ITM Agent TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Initial count of returned records when using the Preliminary Data Filter with any DASH widget show "-1 of -1 items shown", even though records are returned. In this case, it is limited to the ITM Robotic Response Time Agent 
+
+SYMPTOM
+When using the DASH Preliminary Data Filter on ITM Robotic Transaction Testing data (RTC), the count of records returned shows -1 of -1 items shown, when there are actually records returned. 
+
+[/support/docview.wss?uid=swg21997089&aid=1] [/support/docview.wss?uid=swg21997089&aid=1]
+
+
+CAUSE
+The incorrect -1 value is returned by the data source, in this case ITM.
+
+
+ENVIRONMENT
+Any version of DASH on any platform retrieving Robotic Transaction Testing (RTC) data from ITM Robotic Response Time Agent using the Preliminary Data Filter.
+
+
+
+DIAGNOSING THE PROBLEM
+Using the DASH Preliminary Data Filter on ITM data source configured to use this filter.
+
+
+
+RESOLVING THE PROBLEM
+The "-1 of -1 items shown" returned is incorrect. To determine if there are valid records returned, please select the "OK" button at the bottom of the page, or refresh the browser.

@@ -1,0 +1,72 @@
+Title: IBM InfoSphere Business Glossary: Disable Compatibility mode in Microsoft Internet Explorer web browser - United States
+
+Text:
+bg91relnotes; compatibility; compatibility mode; IE; Explorer; browser; web browser TECHNOTE (FAQ)
+
+QUESTION
+ How can I disable the Compatibility mode in Microsoft Internet Explorer web browser? Or, how do I force the web browser to display in Edge mode? 
+
+CAUSE
+Compatibility mode supports web pages that are displayed in legacy versions of Windows Internet Explorer. You can force the browser to display contents in Edge mode, rather than in the default Compatibility mode.
+
+ANSWER
+WebSphere Application Server 
+
+ 
+
+Set the system parameter by doing these steps: 
+
+ 
+
+ 1. Log in to WebSphere Integrated Solutions Console as the WebSphere Administrator user.
+    
+ 2. In the left panel, openServers, and then openServer Types. ClickWebSphere application servers.
+    
+ 3. In the Application servers table, click the server where InfoSphere Business Glossary or InfoSphere Information Governance Catalog is installed.
+    
+ 4. Under Server Infrastructure, openJava and Process Management, and then clickProcess definition.
+    
+ 5. Under Additional Properties, clickJava Virtual Machine.
+    
+ 6. Under Additional Properties, clickCustom Properties.
+    
+ 7. ClickNew. Complete these steps to create and apply a system configuration property:
+     1. In the Name field, typecom.ibm.iis.gov.igc.disableIEEdge
+        
+     2. In the Value field, type in false.
+        
+     3. ClickApply, and then clickOK.
+        
+    
+    
+ 8. In the Messages window, clickSaveto save the new property when WebSphere Application Server is restarted.
+    
+ 9. Stop and restart WebSphere Application Server. 
+
+
+
+
+
+WebSphere Application Server Liberty Profile  
+
+Set the system parameter by doing these steps: 
+
+ 1. Log in to the system that hosts InfoSphere Information Server. 
+    
+ 2. Change directory, according to the operating system
+    Windows:C:\IBM\InformationServer\wlp\usr\servers\iis 
+    Linux or other UNIX-based systems: opt/IBM/InformationServer/wlp/usr/servers/iis 
+    
+ 3. Open the file jvm.options with a text editor. 
+    
+ 4. Add the following line to the jvm.options file: -Dcom.ibm.iis.gov.igc.disableIEEdge=false 
+ 5. Save the jvm.options file. 
+ 6. Stop and restart WebSphere Application Server Liberty Profile.
+
+RELATED INFORMATION
+ Specifying legacy document modes [https://msdn.microsoft.com/en-us/library/jj676915(v=vs.85).aspx]
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Information Management InfoSphere Information Server Not Applicable AIX, HP-UX, Linux, Solaris, Windows 9.1, 9.1.0.1, 9.1.2.0

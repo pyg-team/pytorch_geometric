@@ -1,0 +1,138 @@
+Title: IBM PO01959: UNEMPLOYMENT/UNDEREMPLOYMENT QUESTION IS WRONG - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  In IBM Curam Income Support-Affordable Care Act (IS-ACA)
+   Application script the question regarding
+   Unemployment/Underemployment is incorrectly phrased.
+   The question currently reads 'Are any of the members listed
+   below unemployed or underemployed by working less than 100
+   hours per week?'
+   Instead it should read 'Are any of the members listed below
+   unemployed or underemployed by working less than 100 hours per
+   month?'
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  n/a
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Resolved in 6.0.5.2 iFix2
+   PO01959, HCR-3334 - Unemployed/underemployed question is wrong
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The text from "Are any of the members listed below unemployed
+   or underemployed by working less than 100 hours per week?" has
+   been changed to "Are any of the members listed below unemployed
+   or underemployed by working less than 100 hours per month? " in
+   this UnemploymentUnderEmploymentPage.properties file for both
+   HealthCarePortal and CaseWorker script.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PO01959
+   
+   
+ * REPORTED COMPONENT NAME
+   CURAM INCOME SU
+   
+   
+ * REPORTED COMPONENT ID
+   5725H2610
+   
+   
+ * REPORTED RELEASE
+   605
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-09-19
+   
+   
+ * CLOSED DATE
+   2013-09-24
+   
+   
+ * LAST MODIFIED DATE
+   2013-09-24
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  ACA
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R605 PSY
+   UP

@@ -1,0 +1,163 @@
+Title: IBM PI40224: Java 8 VM no longer supports MaxPermSize - United States
+
+Text:
+  FIXES ARE AVAILABLE
+8.5.5.6: WebSphere Application Server V8.5.5 Fix Pack 6 [http://www-01.ibm.com/support/docview.wss?uid=swg24040035]
+8.5.5.7: WebSphere Application Server V8.5.5 Fix Pack 7 [http://www-01.ibm.com/support/docview.wss?uid=swg24040533]
+8.5.5.8: WebSphere Application Server V8.5.5 Fix Pack 8 [http://www-01.ibm.com/support/docview.wss?uid=swg24041178]
+8.5.5.9: WebSphere Application Server V8.5.5 Fix Pack 9 [http://www-01.ibm.com/support/docview.wss?uid=swg24041819]
+8.5.5.10: WebSphere Application Server V8.5.5 Fix Pack 10 [http://www-01.ibm.com/support/docview.wss?uid=swg24042150]
+8.5.5.11: WebSphere Application Server V8.5.5 Fix Pack 11 [http://www-01.ibm.com/support/docview.wss?uid=swg24043005]
+8.5.5.12: WebSphere Application Server V8.5.5 Fix Pack 12 [http://www-01.ibm.com/support/docview.wss?uid=swg24043844]
+8.5.5.13: WebSphere Application Server V8.5.5 Fix Pack 13 [http://www-01.ibm.com/support/docview.wss?uid=swg24044479]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When starting Liberty profile with a Java 8 VM, this error
+   comes up:
+   
+   Java HotSpot(TM) 64-Bit Server VM warning: ignoring option
+   MaxPermSize=256m; support was removed in 8.0
+   
+   This is because the server command script sets -XMaxPermSize
+   which is not supported when the JVM version is 8.0 or
+   greater.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  All users of IBM WebSphere Application      *
+   *                  Server Liberty Profile using Java 8 or      *
+   *                  greater.                                    *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Java 8 VM no longer supports            *
+   *                      MaxPermSize                             *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   When starting Liberty profile with a Java 8 VM this error
+   appears:
+   
+   Java HotSpot(TM) 64-Bit Server VM warning: ignoring option
+   MaxPermSize=256m; support was removed in 8.0
+   
+   This is because the server command script sets -XMaxPermSize
+   which is not supported when the JVM version is 8.0 or greater.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The code has been modified so that when a server is created
+   using a Java 8 VM, the server automatically creates a server.env
+   file that contains WLP_SKIP_MAXPERMSIZE=true.  This will prevent
+   the error.
+   
+   The fix for this APAR is currently targeted for inclusion in fix
+   pack 8.5.5.6.  Please refer to the Recommended Updates page for
+   delivery information:
+   http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  You can manually create the server.env file with the following
+   value:  WLP_SKIP_MAXPERMSIZE=true.
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI40224
+   
+   
+ * REPORTED COMPONENT NAME
+   WAS LIBERTY COR
+   
+   
+ * REPORTED COMPONENT ID
+   5725L2900
+   
+   
+ * REPORTED RELEASE
+   855
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2015-05-01
+   
+   
+ * CLOSED DATE
+   2015-05-07
+   
+   
+ * LAST MODIFIED DATE
+   2015-08-13
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WAS LIBERTY COR
+   
+   
+ * FIXED COMPONENT ID
+   5725L2900
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R855 PSY
+   UP

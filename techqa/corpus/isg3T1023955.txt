@@ -1,0 +1,81 @@
+Title: IBM MustGather Testcase for VIOS Crash or VIOS Hang Condition - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ PowerVM Virtual I/O Server (VIOS) crashed or hung and need to determine root cause. 
+
+SYMPTOM
+VIOS hung or experienced a system crash
+
+
+CAUSE
+There are different factors that can lead a VIOS partition to crash or hung. This may include, but it is not limited to, code defect or hardware malfunction. VIOS memory resource place a vary important role in the VIOS availability. More often than not, VIOS crashed are due to insufficient memory resources on the VIOS partition. 
+
+It is strongly recommended to read this technote entirely before taking any actions to determine which scenario may be best applicable to your situation.
+
+
+ENVIRONMENT
+VIOS 2.2.X managed by HMC
+
+
+
+DIAGNOSING THE PROBLEM
+In order to determine what happened, system dump data must be collected immediately after the system crash or right after forcing a system dump in cases where the VIOS partition is determined to be in a hang condition. 
+
+To determine if there is a good system dump, login as padmin and run: 
+
+ *  $ oem_setup_env 
+   # sysdumpdev -L 
+   0453-039 
+   Device name: /dev/lg_dumplv 
+   Major device number: 10 
+   Minor device number: 11 
+   Size: 21010432 bytes 
+   Date/Time: Tue Feb 12 13:05:33 CST 2015 
+   Dump status: 0 <----- 
+   dump completed successfully <----- 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+
+
+RESOLVING THE PROBLEM
+First determine if the VIOS crashed or hung. 
+
+VIOS System Crash Condition 
+
+A system-generated crash can be identified by a dump progress indicator of 0c9. The VIOS typically boots back up after the dump completes. If the VIOS partition successfully booted back up after the system crash and 'sysdumpdev -L' reports "Dump status: 0", proceed to gather VIOS snap [http://www-01.ibm.com/support/docview.wss?uid=isg3T1013064] data and contact your local IBM Support Line Representative to have the dump analyzed. Contrary to this, if your Dump Status is a non-zero value, see section VIOS Crashed or Hung and there is no successful dump at the end of this technote. 
+
+VIOS Hang Condition
+
+Note: A VIOS partition is considered to be in a hung condition if the partition was in a Running state and suddenly lost both network and console access.
+If the VIOS does not have network connectivity (i.e. telnet, ssh), check for console access. For HMC-managed VIOS, this can be done via HMC GUI by selecting the VIOS partition > Console Window > Open Terminal Window or from the HMC command line, by logging in as hscroot > type vtmenu > enter Number of the Managed System name > enter number of VIOS partition in question. 
+
+If the VIOS has no network connectivity, but it is accessible via console, this indicates the partition is not in a hung condition, and it is possilble that the issue could be a network-related problem. Networking is beyond the scope of this document. For assistance troubleshooting VIOS/AIX networking issues, please, contact your network administrator to see if they can justify the network outage. If no issues are identified by your network administrator that could justify the loss of network connectivity to the VIOS, contact your local IBM SupportLine Representative and request to speak to the networking team for investigation. 
+
+On the other hand, if the VIOS partition is determined to be hung (no network connectivity and no console access) as previously noted, and root cause analysis is needed, a system memory dump must be forced while the partition is in the hung state. Be advised that forcing a system dump may have an impact on the client partitions being served by that VIOS, if they are not fully redundant through a second VIOS. WARNING: This does not apply to a VIOS cluster environment. If the hung VIOS is part of a VIOS cluster, please, contact your local IBM SupportLine Representative to discuss. Do NOT force a dump. 
+
+To force a system dump on the VIOS, refer to the following technote:
+> How to force a system dump [http://www-01.ibm.com/support/docview.wss?uid=isg3T1019210] 
+> LPAR using HMC
+> HMC GUI
+
+After forcing the system memory dump, check that the VIOS partition boots up to the padmin login prompt, and verify 'sysdumpdev -L' output reports the dump completed successfully. If there is a good dump (Dump status: 0), proceed to capture VIOS snap [http://www-01.ibm.com/support/docview.wss?uid=isg3T1013064] data. Then contact you local IBM SupportLine Representative to have the dump analyzed. 
+
+VIOS Crashed or Hung and there is no successful dump
+If 'sysdumpdev -L' does not report a successfully dump, please, be advised that without a successfully system dump, root cause analysis is not possible due to insufficient data (no dump). 
+With that said, in some cases, there may a partial dump (dump status: -2) or a minidump that might allow for an educated speculation. If a minidump was captured, it will be reflected in the errlog. To review the errlog, login as padmin and run:
+$ errlog [https://www.ibm.com/support/knowledgecenter/POWER7/p7hcg/errlog.htm]
+
+RELATED INFORMATION
+ How to Force a System Dump for IVM-Managed VIOS on pBla [http://www-01.ibm.com/support/docview.wss?uid=isg3T1012839]
+padmin login fails with "INIT: failed write of utmp ent [http://www-01.ibm.com/support/docview.wss?uid=isg3T1023923]

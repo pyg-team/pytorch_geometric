@@ -1,0 +1,113 @@
+Title: IBM How do I fix 'Server Login' and 'Local computer' message on a host machine with a MacOS operating system? - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ 'Server Login' and 'Local computer' appears when starting IBM SPSS Statistics on host machine with a MacOS operating system. 
+
+SYMPTOM
+When starting IBM SPSS Statistics on a computer with a Mac operating system, a window displays with 'Server Login: Local computer'. The only response options are 'OK' and 'Cancel'. Selecting the 'OK' button results in no change. Selecting 'Cancel' results in the window closing but the IBM SPSS Statistics product installation does not work.
+
+
+CAUSE
+There are multiple causes for this behavior. The most common causes of -- and remedies for -- the behavior are listed below.
+
+ENVIRONMENT
+Apple Macintosh (Mac) operating systems.
+
+DIAGNOSING THE PROBLEM
+If your Statistics product is version 23, see TechNote 1992861 [http://www.ibm.com/support/docview.wss?uid=swg21992861].
+
+
+For all other versions (or if TechNote 1992861 [http://www.ibm.com/support/docview.wss?uid=swg21992861] did not resolve issue with Statistics 23), perform the following procedure:
+
+
+ 1. Open Statistics. The 'Server Login' window will display. 
+ 2. Open Finder. 
+ 3. Select the 'Go' menu. 
+ 4. Select the 'Utillities' menu entry. 
+ 5. Launch 'Activity Monitor'. 
+ 6. Select 'Memory' (at top of the window). 
+ 7. Check for the presence of the following entries:
+
+
+SPSS Statistics 
+spssengine 
+
+IF 'SPSS Statistics' AND 'spssengine' are NOT both in the list of active programs, THEN close Statistics and go to (A) in 'Resolving the problem' (below). 
+
+IF 'SPSS Statistics' AND 'spssengine' ARE both in the list of active programs, THEN close Statistics and go to (B) in 'Resolving the problem' (below). 
+RESOLVING THE PROBLEM
+(A) 
+
+Check your operating system for compatibility. See the following document for instructions: TechNote 1986726 [http://www.ibm.com/support/docview.wss?uid=swg21986726].
+
+If the operating system of the host machine is NOT included in the list of compatible operating systems, this the likely cause of the 'Server Login: Local computer' message.
+
+If the operating system of the host machine IS included in the list of compatible operating systems, then go to (B).
+
+(B) 
+
+ 1. Open 'Activity Monitor'. 
+ 2. Select the 'Memory' option from the list of available options (e.g. 'CPU', 'Disk'). 
+ 3. Confirm *at least* 1 GB of *free* RAM available before launching Statistics.
+
+
+IF 'free' RAM is equal to, or less than 1GB RAM, THEN insufficient RAM is the likely cause of the 'Server Login' message. To resolve either (a) add physical RAM to the host machine or (b) identify and terminate unneeded programs running in the background to free up sufficient RAM. 
+
+IF 'free' RAM is greater than 1GB RAM, THEN go to (C). 
+
+(C) 
+Perform the procedure described in TechNote 1993131 [http://www.ibm.com/support/docview.wss?uid=swg21993131]. 
+
+IF 'Server Login, does NOT present, THEN the problem is resolved. 
+IF 'Server Login' DOES present, THEN go to (D). 
+
+(D) 
+If you are not experienced with the use of the 'Terminal' application and the process of editing system files, IBM SPSS Support recommends that you enlist the services of a competent Apple support technician to perform the following procedure. 
+ 1.  Open Finder. 
+ 2.  Select the 'Go' menu. 
+ 3.  Select the 'Utilities' menu entry. 
+ 4.  Launch 'Terminal'. 
+ 5.  Type (copy/paste) the following command:
+     
+     cd /etc/
+     
+     
+ 6.  Press Enter/Return. 
+ 7.  Type (copy/paste) the following command (to back up the current 'hosts' file):
+     
+     hosts > hosts-backup
+     
+     
+ 8.  Press Enter/Return. 
+ 9.  Open the 'hosts' file in a command line editor (e.g. nano). 
+ 10. Replace the contents of 'hosts' with the following:
+     
+     ##
+     # Host Database
+     #
+     # localhost is used to configure the loopback interface
+     # when the system is booting. Do not change this entry.
+     ##
+     127.0.0.1 localhost
+     255.255.255.255 broadcasthost
+     ::1 localhost
+     
+     
+ 11. Save the 'hosts' file. 
+ 12. Open Statistics.
+
+
+IF 'Server Login' does NOT present, THEN the problem is resolved. 
+IF 'Server Login' DOES present, THEN go to (E). 
+
+(E) 
+Internet security software -- such as antivirus software -- can interfere with communications between components of the Statistics product. To prevent interference by internet security software 'whitelist' the following applications in all resident internet security software program: 
+
+SPSS Statistics 
+spssengine 
+
+For instructions on 'whitelisting' applications in your internet security software contact your internet security software vendor. RELATED INFORMATION
+ Need more help? Our Statistics forum is Live! [https://developer.ibm.com/answers/topics/statistics.html?smartspace=predictive-analytics]

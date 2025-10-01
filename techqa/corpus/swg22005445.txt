@@ -1,0 +1,44 @@
+Title: IBM GUARIDUM STAP CANNOT START ON TERADATA SERVER - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ STAP does not start if ATAP is enabled on a Teradata host. - How to resolve ? 
+
+ANSWER
+ATAP relies on a set of configured parameters and commands (eg. instrument) to activate ATAP before packets can be sent to the KTAP. 
+Be aware of some basic ATAP concepts:-
+
+
+ *   * Stop the DB server when ATAP is activated. 
+    * ATAP is activated for every DB instance being monitored 
+    * OS users to a DB instance cannot remain logged on during activation 
+    * ATAP has to be deactivated for any DB Server upgrade 
+   
+   
+
+
+If a Teradata database cannot start up, then the ATAP will need to be manually removed 
+ *  cd [TERADATA INSTALL DIR]/bin/ 
+   
+   mv pdemain-guard-original pdemain 
+   
+   rm -f /usr/local/guardium/etc/guard/executor/teradata 
+
+
+
+At this point ATAP will be detached from the DB. You may attempt to start the DB again. 
+
+
+If planning any DB or OS upgrade:-  * 
+ * Stopping the DB server will not be enough. There are bound resources in the kernel which prohibit restarting of DB. 
+   
+   
+
+Please also see Related Information below . 
+
+RELATED INFORMATION
+ Configure/activate A-TAP - Teradata database [https://www.ibm.com/support/knowledgecenter/SSMPHH_10.1.0/com.ibm.guardium.doc.stap/stap/atap_teradata_cfg.html]
+How to Collect Guardium ATAP logs For Terdata [http://www.ibm.com/support/docview.wss?uid=swg21971324]
+"id: guardium: No such user" with Guardium and Teradata [http://www.ibm.com/support/docview.wss?uid=swg21963770]

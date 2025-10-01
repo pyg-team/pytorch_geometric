@@ -1,0 +1,46 @@
+Title: IBM Optim ODPP Running UDF verification Job IOQUINSV fails with -443 error - United States
+
+Text:
+ODPP; UDF; License; ODPPLic; -443; Optim; TDM; Masking; CCN TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ After installing Optim UDF with ODPP and running the verification program, the job fails with a -443 error and the output shown below:
+
+DSNE610I NUMBER OF ROWS DISPLAYED IS 0 
+DSNT408I SQLCODE = -443, ERROR: ROUTINE OPTIMMASK (SPECIFIC NAME 
+OPTIMMASKOSTR) HAS RETURNED AN ERROR SQLSTATE WITH DIAGNOSTIC TEXT 
+DSNT418I SQLSTATE = F270F SQLSTATE RETURN CODE 
+DSNT415I SQLERRP = DSNXRRTN SQL PROCEDURE DETECTING ERROR 
+DSNT416I SQLERRD = -818 0 0 -1 0 0 SQL DIAGNOSTIC INFORMATION 
+DSNT416I SQLERRD = X'FFFFFCCE' X'00000000' X'00000000' X'FFFFFFFF' 
+X'00000000' X'00000000' SQL DIAGNOSTIC INFORMATION 
+DSNE610I NUMBER OF ROWS DISPLAYED IS 0 
+DSNT408I SQLCODE = -443, ERROR: ROUTINE OPTIMMASK (SPECIFIC NAME 
+OPTIMMASKOSTR) HAS RETURNED AN ERROR SQLSTATE WITH DIAGNOSTIC TEXT 
+DSNT418I SQLSTATE = F270F SQLSTATE RETURN CODE 
+DSNT415I SQLERRP = DSNXRCUF SQL PROCEDURE DETECTING ERROR 
+DSNT416I SQLERRD = -818 0 0 -1 0 0 SQL DIAGNOSTIC INFORMATION 
+DSNT416I SQLERRD = X'FFFFFCCE' X'00000000' X'00000000' X'FFFFFFFF' 
+X'00000000' X'00000000' SQL DIAGNOSTIC INFORMATION 
+
+
+SYMPTOM
+Cannot validate the license for the ODPP environment defined under the ENVVARS member, which points to the license file under environment variable LIBPATH
+
+
+CAUSE
+The 2 license files do not exist in the License directory under the environment variable ODPPLL 
+
+ODPPKEYF.OPT
+ODPPLICF.OPT
+
+
+RESOLVING THE PROBLEM
+The License program needs to run in the OMVS environment by running the below command, where the ODPPLic Program resides - under the /path/odpp/lib directory 
+
+ Where CPUID is Mainframe CPUID and Key is the TDM Key for the Optim Z/OS Product: 
+
+
+ODPPLicp OPTZOS CPUID=####### 
+KEY=XXXXXXXXX 
+LICPATH=/path/odpp/odpp_license_files

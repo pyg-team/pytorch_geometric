@@ -1,0 +1,24 @@
+Title: IBM A user in a group cannot retrieve assigned tasks in the IBM Business Process Manager (BPM) Process Portal - United States
+
+Text:
+ibpma801relnotes; ibpms801relnotes; ibpme801relnotes; pd801relnotes; ibpma85relnotes; ibpms85relnotes; ibpme85relnotes; pd85relnotes TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Portal users in a group cannot see tasks that have been assigned to their group. 
+
+CAUSE
+Some user registry configurations expose user and group names in a long form. For example, the Lightweight Directory Access Protocol (LDAP) registry uses the long form ("cn=User1,ou=test,o=ibm,c=us"). Others configurations expose user and group names in a short form ("User1"). 
+
+When users and groups are assigned to participant groups in a process, either the short form or the long form is used. If you switch to a different user registry configuration, your existing process implementations stop working if the new user registry configuration uses a different form for the names. A stand-alone LDAP registry returns group names in the long name format while a federated repository returns only the short names.
+
+
+RESOLVING THE PROBLEM
+Process implementations must use user and group name forms that match the form of the name being returned from the configured registry.
+
+ 
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Business Process Manager Express Security Windows 8.5, 8.0.1 Business Integration IBM Business Process Manager Standard Security Windows 8.5, 8.0.1 
+PRODUCT ALIAS/SYNONYM
+ BPM

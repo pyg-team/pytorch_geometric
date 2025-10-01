@@ -1,0 +1,57 @@
+Title: IBM Character limitation of variable value in the debug detail pane - United States
+
+Text:
+Eclipse; debug; detail pane; variable; limit; customization; debugging; variables; value; check value; inspect; 1306957 TECHNOTE (FAQ)
+
+QUESTION
+ In the Eclipse™ debug perspective, the variable detail pane holds a limited number of characters. How do you change that limit? 
+
+ANSWER
+Note: This technote also applies to other IBM® Rational® Eclipse-based products. 
+
+This task involves two steps. 
+
+ 
+
+ 1. Open the Configure Details Area dialog box.
+    
+ 2. Change the default limit value.
+
+
+
+
+Step 1. Open the Configure Details Area dialog box. 
+
+The following actions apply to Eclipse 3.2.x and the Eclipse 3.2.x Rational products. 
+ * In the debug perspective you left-click the down arrow in the view's top right corner (1). 
+ * Click Detail pane... from the context menu (2). See screenshot below for more details.
+
+
+[/support/docview.wss?uid=swg21306957&aid=1] [/support/docview.wss?uid=swg21306957&aid=1]  * 
+ *  step 2.
+   
+   
+
+The following actions apply to Eclipse 3.3 and 3.4. 
+ * In debug perspective you right-click inside the variable's detail pane. You see, that the context menu opens. You click Max length... . See the screenshot below.
+   
+
+[/support/docview.wss?uid=swg21306957&aid=2] [/support/docview.wss?uid=swg21306957&aid=2] 
+
+
+Step 2: Change the default limit value. 
+ * Set the appropriate number of characters in the dialog box Configure Details Pane.
+
+
+Note: If you set this value to 0, you turn the display limit off. 
+
+
+RELATED INFORMATION
+#Detail pane in Eclipse help [http://help.eclipse.org/help33/index.jsp?topic=/org.eclipse.jdt.doc.user/reference/views/shared/ref-detailpane.htm]
+
+
+
+
+
+
+Cross Reference information Segment Product Component Platform Version Edition Software Development Rational Application Developer for WebSphere Software Eclipse Software Development Rational Software Modeler Eclipse Software Development Rational Software Analyzer Enterprise Edition Eclipse Platform Support Software Development Rational Business Developer Eclipse Software Development Rational Systems Developer Eclipse Software Development Rational Developer for System i Not Applicable Software Development Rational Developer for System z Not Applicable

@@ -1,0 +1,94 @@
+Title: IBM Security Bulletin: Multiple Vulnerabilities in IBM Java SDK Affect IBM Emptoris Strategic Supply Management Suite of Products and IBM Emptoris Services Procurement - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ The IBM Emptoris Strategic Supply Management suite of products are affected by multiple security vulnerabilities that exist in the IBM SDK Java Technology Edition that is shipped with IBM WebSphere Application Server. The security bulletin includes issues that were disclosed as part of the IBM Java SDK updates in January 2018. 
+The IBM Emptoris Strategic Supply Management Suite of products include IBM Emptoris Contract Management, IBM Emptoris Spend Analysis, IBM Emptoris Program Management, IBM Emptoris Strategic Supply Management, IBM Emptoris Supplier Lifecycle Management and IBM Emptoris Sourcing. 
+
+VULNERABILITY DETAILS
+CVEID:CVE-2018-2633 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2018-2633]
+DESCRIPTION: An unspecified vulnerability related to the Java SE JNDI component could allow an unauthenticated attacker to take control of the system.
+CVSS Base Score: 8.3
+CVSS Temporal Score: Seehttps://exchange.xforce.ibmcloud.com/vulnerabilities/137885 [https://exchange.xforce.ibmcloud.com/vulnerabilities/137885]for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:N/AC:H/PR:N/UI:R/S:C/C:H/I:H/A:H)
+CVEID:CVE-2018-2603 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2018-2603]
+DESCRIPTION: An unspecified vulnerability related to the Java SE Libraries component could allow an unauthenticated attacker to cause a denial of service resulting in a low availability impact using unknown attack vectors.
+CVSS Base Score: 5.3
+CVSS Temporal Score: Seehttps://exchange.xforce.ibmcloud.com/vulnerabilities/137855 [https://exchange.xforce.ibmcloud.com/vulnerabilities/137855]for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:L)
+
+CVEID:CVE-2018-2579 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2018-2579]
+DESCRIPTION: An unspecified vulnerability related to the Java SE Libraries component could allow an unauthenticated attacker to obtain sensitive information resulting in a low confidentiality impact using unknown attack vectors.
+CVSS Base Score: 3.7
+CVSS Temporal Score: Seehttps://exchange.xforce.ibmcloud.com/vulnerabilities/137833 [https://exchange.xforce.ibmcloud.com/vulnerabilities/137833]for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:N/AC:H/PR:N/UI:N/S:U/C:L/I:N/A:N)
+
+CVEID:CVE-2018-2602 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2018-2602]
+DESCRIPTION: An unspecified vulnerability related to the Java SE I18n component could allow an unauthenticated attacker to cause low confidentiality impact, low integrity impact, and low availability impact.
+CVSS Base Score: 4.5
+CVSS Temporal Score: Seehttps://exchange.xforce.ibmcloud.com/vulnerabilities/137854 [https://exchange.xforce.ibmcloud.com/vulnerabilities/137854]for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:L/AC:H/PR:N/UI:R/S:U/C:L/I:L/A:L)
+
+CVEID:CVE-2018-2637 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2018-2637]
+DESCRIPTION: An unspecified vulnerability related to the Java SE JMX component could allow an unauthenticated attacker to cause high confidentiality impact, high integrity impact, and no availability impact.
+CVSS Base Score: 7.4
+CVSS Temporal Score: Seehttps://exchange.xforce.ibmcloud.com/vulnerabilities/137889 [https://exchange.xforce.ibmcloud.com/vulnerabilities/137889]for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:H/A:N)
+
+CVEID:CVE-2018-2634 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2018-2634]
+DESCRIPTION: An unspecified vulnerability related to the Java SE JGSS component could allow an unauthenticated attacker to obtain sensitive information resulting in a high confidentiality impact using unknown attack vectors.
+CVSS Base Score: 6.8
+CVSS Temporal Score: Seehttps://exchange.xforce.ibmcloud.com/vulnerabilities/137886 [https://exchange.xforce.ibmcloud.com/vulnerabilities/137886]for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:N/AC:H/PR:N/UI:N/S:C/C:H/I:N/A:N)
+
+AFFECTED PRODUCTS AND VERSIONS
+IBM Emptoris Strategic Supply Management 10.0.0 through 10.1.3.12
+IBM Emptoris Sourcing 10.0.0 through 10.1.3.12
+IBM Emptoris Contract Management 10.0.0 through 10.1.3.12
+IBM Emptoris Spend Analysis 10.0.0 through 10.1.3.12
+IBM Emptoris Program Management 10.0.0 through 10.1.3.12
+IBM Emptoris Services Procurement 10.0.0 through 10.1.1.0
+
+REMEDIATION/FIXES
+An interim fix has been issued for the IBM WebSphere Application Server (WAS) which will upgrade the IBM Java Development Kit to a version which addresses this vulnerability. Customers running any of the IBM Emptoris products listed below should apply the interim fix to all IBM WebSphere Application Server installations that are used to run IBM Emptoris applications. Please refer to Security Bulletin: Multiple Vulnerabilities in IBM® Java SDK affects WebSphere Application Server January 2018 CPU [http://www-01.ibm.com/support/docview.wss?uid=swg22013818] for details.
+
+Select the appropriate WebSphere Application Server fix based on the version being used for IBM Emptoris product version. The following table lists the IBM Emptoris application versions along with the corresponding required version of IBM WebSphere Application Server and a link to the corresponding fix version where further installation instructions are provided.
+
+
+
+Emptoris Product Version WAS Version Java Version Remediation 10.0.0.x, 10.0.1.x 8.5.0.x Java 6 Apply Interim Fix PI93099 [http://www-01.ibm.com/support/docview.wss?uid=swg24044594] 10.0.2.x , 10.0.4 8.5.5.x Java 6 10.1.x 8.5.5.x Java 7 Apply Interim Fix PI93096 [http://www-01.ibm.com/support/docview.wss?uid=swg24044592] 
+Note : Please refer to Security Bulletin: Multiple Vulnerabilities in IBM® Java SDK affects WebSphere Application Server January 2018 CPU [http://www-01.ibm.com/support/docview.wss?uid=swg22013818] for details. WORKAROUNDS AND MITIGATIONS
+None
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v3 Guide [http://www.first.org/cvss/user-guide] 
+On-line Calculator v3 [http://www.first.org/cvss/calculator/3.0] 
+
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] 
+
+CHANGE HISTORY
+ 3 May 2018: Original version published 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY. 
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Commerce Emptoris Contract Management Commerce Emptoris Sourcing Commerce Emptoris Supplier Lifecycle Management Commerce Emptoris Services Procurement Commerce Emptoris Program Management Commerce Emptoris Spend Analysis

@@ -1,0 +1,144 @@
+Title: IBM Virtual HMC appliance (vHMC) Overview - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This document includes an overview of the virtual HMC (vHMC) offering and addresses common questions regarding vHMC. 
+
+RESOLVING THE PROBLEM
+ 
+
+Overview
+Originally the IBM POWER HMC was sold only as an integrated appliance that included the underlying hardware as well as the HMC firmware. IBM extended the POWER HMC offering to allow the purchase of the traditional hardware appliance (e.g. model 7042/7063) or a firmware only virtual HMC machine image. The virtual HMC (vHMC) offering allows clients to use their own hardware and server virtualization to host the IBM supplied HMC virtual appliance. 
+
+Product identification number 
+
+Description Program PID number Introduction vHMC on POWER 5765-HMA V8R8.7 vHMC on x86 5765-HMV V8R8.4 Announcements
+IBM Power Systems Hardware Management Console virtual appliance for POWER-based systems offers increased deployment flexibility (August 8, 2017): [https://www-01.ibm.com/common/ssi/cgi-bin/ssialias?infotype=AN&subtype=CA&htmlfid=897/ENUS217-200&appname=USN]
+https://www-01.ibm.com/common/ssi/cgi-bin/ssialias?infotype=AN&subtype=CA&htmlfid=897/ENUS217-200&appname=USN [https://www-01.ibm.com/common/ssi/cgi-bin/ssialias?infotype=AN&subtype=CA&htmlfid=897/ENUS217-200&appname=USN]
+
+IBM Power Systems Hardware Management Console delivers a virtual appliance format for increased deployment flexibility 
+IBM United States Software Announcement 215-390
+October 5, 2015 
+http://www-01.ibm.com/common/ssi/ShowDoc.wss?docURL=/common/ssi/rep_ca/0/897/ENUS215-390/index.html&lang=en&request_locale=en [http://www-01.ibm.com/common/ssi/ShowDoc.wss?docURL=/common/ssi/rep_ca/0/897/ENUS215-390/index.html&lang=en&request_locale=en]
+
+
+Documentation
+The POWER hardware IBM Knowledge center has the vHMC specific information. 
+Requirements and Installation are at:http://www-01.ibm.com/support/knowledgecenter/8286-42A/p8hai/p8hai_installvhmc.htm?lang=en [http://www-01.ibm.com/support/knowledgecenter/8286-42A/p8hai/p8hai_installvhmc.htm?lang=en]
+
+Always check the release notes and PTF readme files for the latest information. 
+
+Obtaining vHMC install images
+The vHMC deployment images are only available from IBM Entitled Systems Support (ESS). ESS holds only the current release; older releases are not available for download.
+
+ESS Download of install images:
+Prerequisite - SWMA and license announced as BT19 (customer entitled)
+Prerequisite - SWMA active in AAS / CHIS
+
+1. Go to ESS
+http://www.ibm.com/eserver/ess [http://www.ibm.com/eserver/ess]
+
+2. Enter your customer number during registration.
+
+3. If CHIS service, select the contract number and use that for validation.
+
+4. If brand SWMA, select the system number: 
+
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+
+
+5. When registration is completed, go to Software downloads 
+
+
+6. Select any "Operating System" and "Version" from the list then click Continue. 
+
+7. Select 5765-HMV or 5765-HMA Power HMC Virtual Software Appliance. Click continue. 
+
+
+8. Select the download package. Click continue. 
+
+Maintaining vHMC 
+HMC service pack and fix distribution is the same for both the hardware and virtual HMC. Fixes for all offerings are available from IBM fix central at https://www-945.ibm.com/support/fixcentral/ [https://www-945.ibm.com/support/fixcentral/] 
+Fixes can be found by selecting "Product Group" of "Power Systems Management Console" then the desired virtual appliance "Product":  * - Power Hardware Management Console for 7042/7310 Machine Type 
+   - Power Hardware Management Console for 7063 Machine Type 
+   - Power Hardware Management Console virtual appliance for x86 - Power Hardware Management Console virtual appliance for POWER based Systems 
+
+
+Note that service pack/iFix binaries are identical for a given platform (x86 or POWER). The PTFs for vHMC on x86 and PTFs for 7310/7042 machine types are the same and can be used interchangeably. Likewise, PTFs for vHMC on POWER and the PTFs for 7062 machine type are the same. PTFs for vHMC on x86/7042 machine type cannot be used with vHMC on POWER/7062 and vice versa. The four fix central categories are provided due to differences in install media/images. 
+
+Upgrading HMC 
+vHMC can be upgraded using the same network upgrade process as the hardware appliance. Instructions and images for upgrading via a remote network install can be found here: 
+
+HMC V8 network installation images and installation instructions [http://www-01.ibm.com/support/docview.wss?uid=nas8N1020108] 
+
+Support for vHMC 
+Since the hardware and server virtualization is supplied by the client to run the HMC virtual appliance, this infrastructure that actually hosts the HMC virtual appliance is not monitored by IBM. Serviceable events related to the vHMC firmware are monitored however "call-home" for these events is disabled. For further information see document Callhome on HMC Serviceable Events is Disabled on vHMC at http://www-01.ibm.com/support/docview.wss?uid=nas8N1020960 [http://www-01.ibm.com/support/docview.wss?uid=nas8N1020960] 
+
+The HMC virtual appliance continues to monitor the managed Power Systems hardware just like the HMC hardware appliance. Both HMC form factors provide remote notification and automatic call-home of serviceable events for the managed Power Systems servers. 
+
+Support for vHMC firmware, including how-to and usage, is handled by IBM software support similar to the hardware appliance. When contacting IBM support for vHMC issues specify "software support" (not hardware) and reference the vHMC product identification number (PID: 5765-HMV). 
+
+How-to, install, and configuration support for the underlying virtualization manager is not included in this offering. IBM has separate support offerings for most common hypervisors which can be purchased if desired. 
+
+
+Q&A 
+Q: How can I tell if its a vHMC? 
+A: To determine if the HMC is a virtual machine image or hardware appliance, view the HMC model and type. If the machine type and model is in the format of " Vxxx-mmm" then it is a virtual HMC. 
+
+From command line (CLI) use the lshmc -v command and check the *TM field for a model starting with "V" and/or the presence of the *UVMID fields: 
+*TM V8d7-f9d 
+*SE fa6e3fc 
+*MN IBM 
+*PN N/A 
+*SZ 8390283264 
+*OS Embedded Operating Systems 
+*NA 9.5.66.40 
+*FC ???????? 
+*DS Platform Firmware 
+*RM V8R8.4.0.0 
+*UVMID 8d7f:9dfa:6aa6:e3fc 
+
+In the legacy GUI: From Welcome panel hover the mouse over " HMC Version" link; or from the Updates panel under the HMC Code Level section. 
+[/support/docview.wss?uid=nas8N1020969&aid=1] [/support/docview.wss?uid=nas8N1020969&aid=1] 
+
+In the enhanced GUI, click Help (the "circle ?" in the upper right) > About 
+[/support/docview.wss?uid=nas8N1020969&amp;aid=2] 
+
+Q: Are existing HMC customers entitled to vHMC? 
+A: No. vHMC is a separate offering and must be purchased separately. There is no conversion and no upgrade offering. 
+
+Q: Can x86 based vHMC licenses (5765-HMV) be converted to POWER vHMC (5765-HMA )? 
+A: No. They are two different offerings. 
+
+Q: Are there any restrictions related to on-site warranty support for managed servers? 
+A: Restrictions are similar to the hardware appliance 
+- You must supply a workstation or virtual console session located within 8 meters (25 feet) of the managed system. The workstation must have browser and command line access to the HMC. This setup allows service personnel access to the HMC. 
+
+- You should supply a method to transfer service related files (dumps, firmware, logs, etc) to and from the HMC and IBM service. If removable media is needed to perform a service action, you must configure the virtual media assignment through the virtualization manager or provide the media access and file transfer from another host that has network access to HMC. 
+
+- Power vHMC cannot manage (nor service) the server it is hosted on. 
+
+Q: Can the vHMC be hosted on IBM POWER servers? 
+A: Yes, the 5765-HMA product allows vHMC to run on POWER8 servers with firmware 830 or later. 
+
+Q: What restrictions are unique to vHMC on POWER? 
+A: 
+- POWER vHMC cannot manage the server it is is hosted on. 
+This implies the hosting POWER server must be managed by Novalink or another HMC instance. IVM managed servers are not supported. 
+
+- The HMC Virtual Appliance for PowerVM does not provide graphics adapter support for adapters assigned to the partition. "Local console" access is limited to command line only. 
+
+- DLPAR operations are not supported on HMC partitions. 
+
+- Live Partition Mobility is not supported on the HMC partition. 
+Inactive partition migration and Simplified Remote Restart operations are supported. 
+Q: Is DHCP/private network supported?
+A: Automatic configuration of a private DHCP network interface at install time by the activation engine is not supported. Manually configuring a private DHCP network using the HMC GUI/CLI is supported the same as with the hardware appliance. Note that a private DHCP network requires an isolated network to the managed server FSPs. Using the hypervisor to configure an isolated private network is outside the scope of vHMC. As with the hardware appliance, vHMC does not support VlAN tagged packets.

@@ -1,0 +1,50 @@
+Title: IBM Overview of Text Search in i2 iBase - United States
+
+Text:
+IBA; Record ID; Full Text Search; Searching; i2ibase TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ There are two ways to search for text in an IBM i2 iBase database, using Word Search or Search 360 (in Microsoft SQL Server databases only). Search 360 is the replacement for Full-Text Search.
+
+A text search index must exist before users can use either search method. Text search indexes allow users to search multiple fields in multiple entity and link types. Database designers can define the rules used to build and search an index. A text search index is unique to a database.
+
+
+
+
+RESOLVING THE PROBLEM
+Using Search 360 
+
+Search 360 can be used to search any type of text field in SQL Server databases, including documents and charts, using a range of techniques that allow for:
+
+
+ * any number of words in a phrase 
+ * typing mistakes (for example typing ROBETRSON instead of ROBERTSON, or Danielsmith instead of Daniel Smith) 
+ * variations in spellings and variations based on how words are pronounced (for example typing PETERSON instead of PEDERSON because, in English, the two names sound the same) 
+ * synonym matching (for example, in English, Mike and Michael are synonym matches) 
+ * variations in word order (for example "Joyce Gallagher" and "Gallagher, Joyce" are exact matches) 
+ * allowances are made for punctuation and accents (for example Francoise and Françoise are exact matches) 
+ * Records directly related to the main search (ie just one link away from a record found by the main search)
+
+
+See the iBase help for detailed information on the features provided by Search 360. 
+
+Using Word Search 
+
+Word Search can be used to search a database of any format using: 
+ * exact words 
+ * wildcards 
+ * synonym matching 
+ * Soundex
+
+
+When matched text is found it is highlighted in context in the document. Word Search also allows users to browse the index and find text based on the number of times they occur or by their leading characters. 
+
+What is not searched? 
+
+The text search methods do not search: 
+ * The targets (records, files or URLs) of Hyperlink fields, only hyperlink text is searched. 
+ * In Search 360, document types for which there is no installed iFilter on the machine that performs the indexing. 
+ * All Number type fields, including numbers, dates, time zones, system and calculated fields, and so on.
+
+
+For additional information please search on the IBM Support Portal for Search 360

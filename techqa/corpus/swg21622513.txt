@@ -1,0 +1,65 @@
+Title: IBM Web GUI installation in GUI mode unable to display CJK characters - United States
+
+Text:
+CJK; GUI mode; install; CZVY9ML ; RHEL 6.0; display characters; CIEX5ML; CIEX6ML TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Installing Web GUI on RHEL 6.x platform via GUI mode where locale setting is configured as zh_CN.UTF-8, ja_JP.UTF-8 or ko_KR-UTF-8, will not show the respective Chinese, Japanese and Korean (CJK) characters correctly. 
+
+CAUSE
+The IBM JRE 6.0 Service Refresh 7 installer version packaged with the Web GUI installation packages is unable to display CJK characters correctly during installation initiated via GUI mode. 
+
+
+This only effects the CJK characters displayed for the installer's GUI and does not affect the Native Language Support (NLS) files supplied for a user's preferred locale configuration on the RHEL 6.x server
+
+
+ENVIRONMENT
+The following Web GUI versions and installation packages are effected: 
+
+ 
+
+Part # Description CIEX5ML IBM Tivoli Netcool/OMNIbus Web GUI 7.4 for Linux, 32-Bit, Multilingual CIEX6ML IBM Tivoli Netcool/OMNIbus Web GUI 7.4 for Linux, 64-Bit, Multilingual 
+DIAGNOSING THE PROBLEM
+1. Verify that the locale setting for the installation session is configured as zh_CN.UTF-8 or ja_JP.UTF-8 or ko_KR.UTF-8:
+a. locale
+
+2. Extract the Web GUI installation tar package to a temporary folder:
+a. cd /tmp
+b. tar -xvf /path/to/installer/package/<installation_package>.tar
+
+3. Initiate the installation in GUI mode:
+a. ./install.sh
+
+
+
+RESOLVING THE PROBLEM
+In order to successfully display CJK characters with the respective locale setting during the installation, perform either of the below:
+
+Initiate the installation in console mode using the below command:
+
+./install.sh -i console
+
+OR
+
+Initiate the installation in GUI mode and explicitly point the installer to use the Java binary belonging to an alternative IBM JRE version already installed on the RHEL 6.x server. 
+
+ 
+For this method, the installer must only be pointed to use IBM's version of the JRE and Java binary belonging to any of the following IBM JRE versions (or higher). 
+
+
+i. IBM JRE 6.0 Service Refresh 9 
+ii. IBM JRE 6.0 Service Refresh 9 Fix Pack 1
+iii IBM JRE 6.0 Service Refresh 9 Fix Pack 2
+
+To explicitly point the installer to an alternative IBM JRE version during the GUI mode installation, execute the below command:
+
+
+./install.sh LAX_VM /path/to/IBM_JRE_6_SR9/bin/java
+
+As the issue only effects the installer's GUI inability to display the CJK characters correctly, another alternative is to choose English as the preferred language for the duration of the installation in GUI mode.
+English as the preferred language is available for selection in the window when the installation in GUI mode is first initiated. 
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ Omnibus

@@ -1,0 +1,52 @@
+Title: IBM Changes to FileNet Content Manager Application Engine Site Preferences for Actions are saved but don't take effect. - United States
+
+Text:
+Application Engine; Workplace; Site Preferences; Actions; Access Role; Actions.xml; Array Key TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Changes to FileNet Content Manager Application Engine Site Preferences for Actions are saved but don't take effect. 
+
+SYMPTOM
+ 
+
+Access Roles added to Application Engine Site Preferences Actions via Workplace do not take effect.
+
+Access Roles added do not appear when administrator logs out of and back into Workplace Site Preferences/Actions.
+
+
+CAUSE
+
+Actions.xml has been corrupted and multiple <array key="roles"> sections exist within the <object key="actionDefinition"> section of an action. See example below and note the two sections for <array key="roles">. Changes are saved to the first section but Application Engine loads up the last section and ignores the changes. 
+
+<object key="actionDefinition">
+<setting key="id">addDocument</setting>
+<setting key="title" localizationKey="server.Actions_xml.addDocument">Add Document</setting>
+>>>>> Section removed <<<<<
+<array key="roles">
+<value>{6EBB30B1-7D0E-4F18-8DAE-B301D5CC1C24}</value>
+<value>{3A6D1FB4-24D2-402A-9786-7237599B5104}</value>
+</array>
+<array key="roles">
+<value>{3A6D1FB4-24D2-402A-9786-7237599B5104}</value>
+</array>
+</object>
+
+
+DIAGNOSING THE PROBLEM
+ 
+
+Steps to Reproduce.
+1. Log into Workplace as a user with rights to make changes to Application Engine Site Preferences.
+2. Navigate to Site Preferences / Actions
+3. Select and add a new access role to one of the Actions listed in the right panel.
+4. Log off Workplace and then log back on, navigate back to the newly added access role.
+5. Note newly added access role is missing.
+
+
+RESOLVING THE PROBLEM
+ 
+
+ * The resolution involves removing the extra <array key="roles"> sections. 
+ * Only a single <array key="roles"> section should exist for each <object key="actionDefinition"> section of the Actions.xml file. 
+ * This can be done by manually editing the Actions.xml and deleting the extra sections or replacing the Actions.xml file with a good version from a backup. 
+ * Default Location of Actions.xml: C:\Program Files\FileNet\Config\AE

@@ -1,0 +1,46 @@
+Title: IBM How do I uninstall IBM InfoSphere QualityStage without uninstalling IBM InfoSphere DataStage? - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How do I uninstall IBM InfoSphere QualityStage without uninstalling IBM InfoSphere DataStage? 
+
+ANSWER
+For IBM InfoSphere DataStage version 8.1 or older:
+
+Unfortunately if your installation is version 8.1 or older there is no way to uninstall only the QualityStage module without uninstalling and reinstalling the entire IBM Information Server suite. Once QualityStage has been installed with DataStage, uninstallation of just one module cannot be done. 
+
+The capability of uninstalling certain component is available from version 8.5 and newer.
+
+
+For IBM InfoSphere DataStage version 8.5 or newer:
+
+To uninstall QualityStage you would uninstall both the Server and Client.
+
+Firstly, before doing any uninstall, please ensure that you do a proper backup of your Information Server install. We suggest: 
+
+ * that you export out your projects to dsx files for safekeeping 
+ * take all tiers of your Information Server install offline and then do a filesystem backup 
+   
+
+
+(Please do not be limited by the above, if you have any additional steps for backups, please incorporate them) 
+
+Secondly, please review this information regarding preparing to remove software 
+http://pic.dhe.ibm.com/infocenter/iisinfsv/v8r5/topic/com.ibm.swg.im.iis.productization.iisinfsv.install.doc/topics/wsisinst_chk_server1_remove.html [http://pic.dhe.ibm.com/infocenter/iisinfsv/v8r5/topic/com.ibm.swg.im.iis.productization.iisinfsv.install.doc/topics/wsisinst_chk_server1_remove.html] 
+
+If your Websphere Application Server(WAS) and Node Agents are running as non-root, you need to login as non-root, stop them, then change ownership to root. Then login as root and start up the services again. 
+
+To do the uninstall, the link to the appropriate Information Center link is: 
+http://pic.dhe.ibm.com/infocenter/iisinfsv/v8r5/topic/com.ibm.swg.im.iis.productization.iisinfsv.install.doc/topics/wsisinst_chk_server1_remove.html [http://pic.dhe.ibm.com/infocenter/iisinfsv/v8r5/topic/com.ibm.swg.im.iis.productization.iisinfsv.install.doc/topics/wsisinst_chk_server1_remove.html] 
+
+
+Note, if you have DataStage tiers on separate machines, the following applies:  1. Uninstall QualityStage from the Services tier. This will un-deploy the QualityStage services and the QualityStage license. 
+    
+ 2. On the Engine tier and the Client tier, edit Version.xml and remove the line: 
+    <Product productId="qualitystage" version="8.7.0.0"/> 
+    
+
+
+This will cause future patches applied to the Client and Engine tiers to not try to install anything from QualityStage, and will also set those tiers up for a possible future append install of QualityStage if it is determined to be needed in this Information Server after all.

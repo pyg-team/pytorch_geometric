@@ -1,0 +1,13 @@
+Title: IBM How to start Cast Iron Studio without administrator privilege - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Sometimes due to a security policy, a Cast Iron Studio user may not have administrator privilege. In this case, the Studio could fail to start. 
+
+ANSWER
+To run Cast Iron Studio for a user without admin privilege, perform the following steps assuming there are two accounts - Uadmin with admin authority and Ustandard with standard authority. 
+1. Use Uadmin to install Cast Iron Studio into a path where Ustandard 
+has full control. 
+2. Switch to Ustandard and start Studio.

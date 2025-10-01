@@ -1,0 +1,35 @@
+Title: IBM ILMT 7.2.0 Fix Pack 1 fails to install in graphical mode - United States
+
+Text:
+install fails; 7.2.0 fix pack 1; console; flag; silent install TECHNOTE (FAQ)
+
+QUESTION
+ Why does ILMT 7.2.0 Fix Pack 1 is unable to run the installation in graphical mode? 
+
+ANSWER
+When installing ILMT 7.2.0 Fix Pack 1 on base WAS, it is unable to run in graphical mode. It fails with the following error message: 
+
+"The installer is unable to run in graphical mode. Try running the installer with the -console or -silent flag. " 
+If running it with the -console flag, it gives another error message:
+
+"The wizard cannot continue because of the following error: Invalid command line option: console is not supported (1001) (403)".
+
+So the solution in order to apply this fix pack to License Metric Tool installed on the base version of WebSphere Application Server, would be to perform the following steps: 
+
+1. Stop the License Metric Tool Admin server. 
+
+2. Locate and backup the following directories: 
+
+* WebSphere_installation_path /profiles/profile_name/installedApps/cell_name/LMT-TAD4D_Agent_message_handler.ear/com.ibm.license.mgmt.msghandler.web.war 
+
+* WebSphere_installation_path /systemApps/isclite.ear/lmt_admin.war 
+
+3. Overwrite directories located above with the ones supplied in 
+
+7.2.0-TIV-LMT-FP0001-Server-WAS-Base.zip archive. 
+
+4. Start the LMT Admin Server. 
+
+5. Open the Admin Web UI and browse to the About page to verify if the reported product version is 7.2.0.1.
+
+If it still fails, collect the logs located under the COD directory and contact IBM Support.

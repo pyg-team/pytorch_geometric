@@ -1,0 +1,181 @@
+Title: IBM PM06025: MESSAGE DFHUS0002 AND DUMP ISSUED WHEN USERID CHANGES RACF GROUP WHILE ALREADY SIGNED ON TO CICS - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  CICS user is signed on to CICS in a RACF group. While still
+   signed on, the userid is revoked and then moved to a
+   different RACF group. A subsequent signon fails with:
+   ICH408I USER(xxxx    ) GROUP(newgroup) NAME(xxxx xxxxx )
+   LOGON/JOB INITIATION - NOT AUTHORIZED TO APPLICATION xxxxx
+   CICS message DFHUS0002 xxxxxxxx A severe error (code X'0309')
+   has occurred in module DFHUSAD.
+   CICS trace shows
+   XS FE04 XSSB  *EXC* FUNCTION(INQUIRE_PASSWORD_DATA)
+   RESPONSE(EXCEPTION) REASON(APPLID_NOTAUTH)
+   SAF_RESPONSE(8) SAF_REASON(0) ESM_RESPONSE(34)
+   ESM_REASON(0)
+   .
+   US 0309 USAD  *EXC* - Exception-unknown -
+   FUNCTION(ADD_USER_WITH_PASSWORD) SIGNON_TYPE(USER_SIGN_ON)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All CICS users.                              *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: A CICS signon fails with message        *
+   *                      DFHUS0002 A severe error (code X'0309') *
+   *                      has occurred in module DFHUSAD.         *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   A CICS signon drives DFHUSAD add_user processing. The userid
+   already exists in the user directory, and DFHXSPW and DFHXSSB
+   are called in turn to action the request. DFHXSSB issues an
+   INQUIRE_PASSWORD_DATA call which returns exception with reason
+   APPLID_NOTAUTH, as the userid is not authorized to the CICS
+   application. Message ICH408I is issued to report the error.
+   The xssb_applid_notauth condition is passed back as
+   xspw_applid_notauth. However DFHUSAD does not recognize
+   xspw_applid_notauth and sets usad_response to usad_disaster. A
+   system dump, message DFHUS0002 and *EXC trace result.
+   .
+   US 0309 USAD  *EXC* Exception-unknown
+   .
+   The CICS signon fails with message DFHUS0002 A severe error
+   (code X'0309') has occurred in module DFHUSAD.
+   .
+   Additional keywords: MSGICH408I MSGDFHUS0002
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  DFHUSAD has been changed to correctly handle the
+   xspw_applid_notauth condition.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  FIX AVAILABLE BY PTF ONLY
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM06025
+   
+   
+ * REPORTED COMPONENT NAME
+   CICS TS Z/OS V4
+   
+   
+ * REPORTED COMPONENT ID
+   5655S9700
+   
+   
+ * REPORTED RELEASE
+   600
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-01-27
+   
+   
+ * CLOSED DATE
+   2010-02-11
+   
+   
+ * LAST MODIFIED DATE
+   2010-03-01
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    PM04259 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM04259]
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UK54300
+   
+   
+
+MODULES/MACROS
+ *  DESUSAD  DFHUSAD
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CICS TS Z/OS V4
+   
+   
+ * FIXED COMPONENT ID
+   5655S9700
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R600 PSY UK54300 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK54300]
+   UP10/02/17 P F002
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

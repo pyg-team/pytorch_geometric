@@ -1,0 +1,28 @@
+Title: IBM VScan aborts after changing the batches directory path with IBM Datacap Taskmaster Capture - United States
+
+Text:
+vscan scan abort TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ VScan aborts in Taskmaster Client or Taskmaster Client Service after changing the batches directory path in Taskmaster Application Manager. 
+
+CAUSE
+When using Taskmaster Client or Taskmaster Client Service, any change to the file path of the batches folder must be followed by going to Task Settings and resaving the task in order to propagate the setting from the application file to the admin database.
+
+ENVIRONMENT
+This is applicable only to Taskmaster Client and Taskmaster Client Service, not any other clients to include Taskmaster Web.
+
+RESOLVING THE PROBLEM
+After changing the batches directory path, do the following: 
+
+ 1. Open Taskmaster Client 
+ 2. Go to Settings -> Workflow 
+ 3. Expand the corresponding workflow 
+ 4. Locate and select the batch creation task 
+ 5. Click the Setup button 
+ 6. Go to File -> Task Settings and then press OK on Settings for VScan task 
+ 7. Click Done on the VScan Setup - Batch Pilot window 
+ 8. Click Apply on workflow window, then click Done
+
+
+If there are multiple jobs, the steps do not need to be repeated for each scan task unless a different scan module is used.

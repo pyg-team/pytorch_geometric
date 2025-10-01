@@ -1,0 +1,133 @@
+Title: IBM Debugging delays in ksh scripts - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Debugging delays in ksh scripts 
+
+ANSWER
+TARGET AUDIENCE: 
+
+Users attempting to find where delays exist in their ksh/ksh93 scripts 
+
+OBJECTIVE: 
+
+Provide instructions to quickly narrow down the location of the delays 
+
+PROCEDURES:
+
+If you have a script that is taking longer than expected to run, and you are not sure exactly where the delay is occurring, here is a method to narrow it down.
+
+The 'set -x' option in ksh uses the PS4 variable to define what it displays; it defaults to '+':
+
+# echo $PS4
++
+
+That is what is used as ksh is displaying the line-by-line execution of a script:
+
+# set -x
+# echo "Test"
++ echo Test
+Test
+
+However, you can set PS4 to whatever you like. ksh/ksh93 have built-in variables SECONDS and LINENO - you could use these to define PS4 in such a way that the elapsed time since the start of the script and the line number of the script is displayed at the beginning of each line that is executed:
+
+export PS4='[elapsed: $SECONDS] [lineno: $LINENO] +'
+set -x
+
+
+That example will provide output such as:
+
+[elapsed: 0] [lineno: 6] +sleep 1
+[elapsed: 1] [lineno: 7] +echo in main first echo
+in main first echo
+[elapsed: 1] [lineno: 8] +sleep 2
+[elapsed: 3] [lineno: 9] +echo in main second echo
+in main second echo
+[elapsed: 3] [lineno: 10] +sleep 1
+[elapsed: 4] [lineno: 11] +echo done
+done
+
+Using that information you can determine where in your script the unexpected delays are occurring.
+
+If your script contains functions, the line numbers displayed will be relative to the start of the function in ksh. 
+ksh93 will show the line numbers inside of a function as relative to the start of the file.
+
+
+If you'd like to display the name of the function being executed -
+
+$0 will work for ksh and ksh93 if your functions are defined with the 'function' keyword, like this:
+
+function myfunc
+{
+...function contents...
+}
+
+If that is the case, then the following PS4 setting will display the script name if you are in the main portion of the script, or the function name if you are inside a function:
+
+export PS4='$0 [elapsed: $SECONDS] [lineno: $LINENO] +'
+
+
+
+That method will not work if your functions are defined using POSIX-style definitions as follows:
+
+myfunc()
+{
+...function contents...
+}
+
+In that case, ksh93 allows you to display the name of the current function with the .sh.fun variable. If you'd like to display the function name in your debug output, you could use:
+
+export PS4='${.sh.fun} [elapsed: $SECONDS] [lineno: $LINENO] +'
+
+If you are in the main portion of your script, .sh.fun will display nothing.
+
+If your script is using ksh, there does not appear to be a way to define PS4 to print the function name when using this style function definition. You could either change the function definitions to 'function myfunc' style, or else you will need to look through the context of the debug output to determine if you are inside a function.
+
+
+Regarding 'set -x' -
+
+ksh93 will propagate the 'set -x' to all functions in the current script file. This does not happen with ksh. If ksh is being used and you'd like to turn on trace mode inside each of your functions, add this typeset command to your script:
+
+for i in $(typeset +f); do typeset -ft $i; done
+
+If you are sourcing functions from an external file in ksh93, you will need to use this method also.
+
+That will scroll through all known function names (using 'typeset +f') and turn on trace mode for each of them (using 'typeset -ft <functioname>').
+Be sure to place that AFTER all of your function definitions and sourced files, or else ksh's 'typeset +f' will not know the function names. 
+
+
+
+CATEGORY: WWLIB 
+
+SUPPORT: 
+
+If additional assistance is required after completing all of the instructions provided in this document, please follow the step-by-step instructions below to contact IBM to open a service request (PMR) for software under warranty or with an active and valid support contract. The technical support specialist assigned to your support call will confirm that you have completed these steps. 
+
+a. Document and/or take screen shots of all symptoms, errors, and/or messages that might have occurred 
+
+b. Capture any logs or data relevant to the situation 
+
+c. Contact IBM to open a support call (PMR): 
+
+ * For electronic support, please visit the web page: 
+   https://www-947.ibm.com/support/servicerequest/newServiceRequest.action [https://www-947.ibm.com/support/servicerequest/newServiceRequest.action] 
+ * For telephone support, please visit the web page: 
+   http://www.ibm.com/planetwide [http://www.ibm.com/planetwide] 
+ * Please visit the IBM Support Portal web page for additional resources: 
+   https://www-947.ibm.com/support/entry/myportal/support [https://www-947.ibm.com/support/entry/myportal/support]
+
+
+d. Provide a good description of your issue and reference this technote e. Upload all of the details and data to your support call (PMR): 
+
+Please visit this web page for instructions: https://www.secure.ecurep.ibm.com/app/upload [https://www.secure.ecurep.ibm.com/app/upload] 
+
+FEEDBACK: 
+
+Quality documentation is important to IBM and its customers. If you have feedback specific to this article, please send an detailed message to the email address: 
+
+ * aix_feedback@wwpdl.vnet.ibm.com [aix_feedback@wwpdl.vnet.ibm.com] 
+   - This email address is monitored for feedback purposes only.
+   - No support for any IBM products or services will be provided through this email.
+   - To receive support, please follow the step-by-step instructions in the above "SUPPORT" section.

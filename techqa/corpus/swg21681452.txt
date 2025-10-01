@@ -1,0 +1,25 @@
+Title: IBM Is it possible to replace the embedded IBM Java runtime environment
+of IBM SPSS Statistics with other Oracle Java version? - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ I would like to know if I can replace the embedded IBM Java runtime environment
+of IBM SPSS Statistics with other Oracle Java version. 
+
+ANSWER
+Please don't replace the embedded IBM Java runtime environment of IBM SPSS Statistics with other Oracle Java version. If you swapping out to Oracle Java, you will be in an unsupported condition.
+As a licensee of Java Technology, IBM receive advanced warning of Java security vulnerabilities from Oracle, with source code changes and testcases. The fixes are ported to the IBM JDK codebase where applicable.
+
+Fixes are targeted for the next available JDK release after Oracle ship their Critical Patch Update (CPU). This release may take the form of a Service Release (SR) or Fix Pack (FP). IBM ships the fixes as soon as possible after each CPU. It is worth noting that not all products or applications are affected, as the vulnerabilities usually require a specific API or functionality to be exposed to untrusted data. Individual IBM product teams have access to the details of each exposure, and they are able to provide information on which vulnerabilities their customers need to worry about.
+
+In cases where a vulnerability has especially severe consequences for IBM products, we may choose to ship fixes outside of our regular release cycle. In these cases we will collaborate with Oracle to ensure a common response and timeline.
+
+The IBM Java version shipped with SPSS Statistics is used as an embedded component and used solely by that application. It does not become the system default Java and the scope of any attack is limited only to the SPSS application. Any security vulnerabilities reported in the components used within the application (including the Java version) are evaluated by the product team and appropriate patches made available should the situation warrant it.
+
+Details on IBM's security policy is available at the IBM Security Vulnerability Management (PSIRT) [http://www.ibm.com/security/secure-engineering/process.html] site
+
+
+RELATED INFORMATION
+ Need more help? Our Statistics forum is Live! [https://developer.ibm.com/answers/topics/statistics.html?smartspace=predictive-analytics]

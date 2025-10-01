@@ -1,0 +1,138 @@
+Title: IBM IO14479: GEN 2 USB ANPOS CAPS LOCK KEY STUCK IN ON/OFF STATE - United States
+
+Text:
+ 
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  cmvc 21792
+   - Running V5R2 0B00
+   - Gen 2 USB ANPOS keyboard attached to PORT E on 723 Classic
+   Terminal
+   - Started a Keyboard Test
+   - Checking keys in all modes (No Shift, Shift, Alt, CTRL)
+   - Hit CAPS LOCK key and was testing keys in CTRL MODE
+   - Tried to turn off CAPS LOCK and the light remained lit.  Tried
+   several
+     times to no avail.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Configuration - if a function code has been configured as a
+   double key, then any other key that shares this function code is
+   also defined as a double key.
+   Double key redesign
+   depends on breaks from the keys. Currently, if the  key does
+   not result in a break going to the terminal keyboard driver,
+   the key gets stuck in dk processing
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Terminal keyboard driver - fix so breaks for capslk, scrlk, and
+   numlk are always tossed
+   system keyboard driver (USB) - fix so print screen break is
+   passed correctly to keyboard glue
+   keyboard glue - fix so pause key is broken into make / break for
+   terminal keyboard driver
+   keyboard device handler - fix so print screen break is correctly
+   sent to keyboard glue (Enhanced systems)
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IO14479
+   
+   
+ * REPORTED COMPONENT NAME
+   IBM 4690OS V5
+   
+   
+ * REPORTED COMPONENT ID
+   5639GG100
+   
+   
+ * REPORTED RELEASE
+   201
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-07-25
+   
+   
+ * CLOSED DATE
+   2011-07-25
+   
+   
+ * LAST MODIFIED DATE
+   2011-10-26
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    IO14745 [http://www-01.ibm.com/support/docview.wss?uid=swg1IO14745] IO15025 [http://www-01.ibm.com/support/docview.wss?uid=swg1IO15025]
+   
+   
+
+MODULES/MACROS
+ *     CMVC
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   IBM 4690OS V5
+   
+   
+ * FIXED COMPONENT ID
+   5639GG100
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R201 PSY UO01271
+   UP11/08/18 P 0B10

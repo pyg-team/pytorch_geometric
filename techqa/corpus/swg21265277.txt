@@ -1,0 +1,71 @@
+Title: IBM NetView : BNH710I SYSLOGD MESSAGE RECEIVED FROM UNREGISTERED HOST - United States
+
+Text:
+BNH710I SYSLOGD REGIP DSIIPLOG TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ On NETVIEW we see: 
+
+BNH710I SYSLOGD MESSAGE RECEIVED FROM UNREGISTERED HOST xx.xxx.xxx.xxx. 
+when trying to send messages from SYSLOGD to NetView. 
+
+Customer wanted to know how to debug and address this so the message was not shown. 
+
+CAUSE
+The REGIP command needs to be issued for the originating HOST IP Address.
+
+RESOLVING THE PROBLEM
+To be able to send messages from USS SYSLOGD we need to use the NetView® logger task DSIIPLOG. Here is some information on its setup : 
+
+ 
+The task in question handles picking up syslog messages from the network. The task is named DSIIPLOG. The NetView® manuals give the following information on DSIIPLOG : 
+
+1) The REGIP command 
+The REGIP command grants a remote host permission to send syslog messages to the NetView® syslog server. The command can be used to add remote hosts, delete them or list the registered hosts. NetView® task DSIIPLOG must be active for the command to work. 
+2) Section 3.3.10 Enabling TCP/IP Services in the Installation: Configuring Additional Components manual talks about the Syslog Service. 
+3) According to the Installation: Getting Started manual, DSIIPLOG's default is to NOT start automatically. It must be enabled. 
+
+The BNH710I SYSLOGD MESSAGE RECEIVED FROM UNREGISTERED HOST is telling us that the host IP address has not been registered to NetView®.
+
+To use this service we need to issue the REGIP command from NetView® : 
+
+Syntax 
+>>--REGIP host --.-ADD----.-->< 
+|-DELETE-| 
+'-LIST---' 
+
+Purpose of Command 
+The REGIP command grants a remote host permission to send syslog 
+messages to the NetView® syslog server. The command can be used to 
+add remote hosts, delete them or list the registered hosts. 
+NetView® task DSIIPLOG must be active for the command to work. 
+Operand Descriptions 
+host Specifies the remote host to register. It can be specified 
+as a TCP/IP host name or as an IP address in dotted 
+notation (127.44.44.44 for example). 
+Usage Notes 
+The following restrictions apply to the REGIP command: 
+o TCP/IP should be able to resolve host names and addresses (the 
+GETHOSTBYNAME and GETHOSTBYADDR functions must work) 
+
+This tells us that the "GETHOSTBYNAME and GETHOSTBYADDR functions must work". Here is an explanation on why NetView®'s needs to use GETHOSTBYxxxx : 
+
+Since NetView does not own/run the TCPIP stack it must issue SOCKET calls to TCPIP to be able to do the PINGs and other IP functions. Here are some references from the NetView® Command Reference manuals : 
+
+GETHOSTBYADDR Given the address of a host, it returns information about that host. 
+GETHOSTBYNAME Given the name of a host, it returns information about that host. 
+GETHOSTID Obtains the host identifier from TCP/IP. 
+
+The following restrictions apply to the REGIP command: 
+TCP/IP should be able to resolve host names and addresses 
+(the GETHOSTBYNAME and GETHOSTBYADDR functions must work) 
+GETHOSTNAME Obtains the host name from TCP/IP. 
+
+In NetView® V1.4 to issue PING commands to TCPIP you needed to implement the TSO and UNIX command servers. For NetView® v5.4 and higher, the TSO/UNIX servers are not required, but in either case NetView® will invoke a socket call for gethostbyaddr. 
+
+So, after you set up the DSIIPLOG task, DEFAULTS TCPNAME, and do the registration of hostname with REGIP command, you should be able to receive any message from USS syslogd. 
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ Netview NV NVz NVzOS

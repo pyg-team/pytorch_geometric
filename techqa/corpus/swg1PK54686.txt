@@ -1,0 +1,184 @@
+Title: IBM PK54686: DURING CICS SHUTDOWN CKBR RECEIVES AND CKB4 ON MESSAGE DFHAC2236 ALONG WITH MESSAGE CSQC102D - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The customer is receiving the following error messages during
+   CICS shutdown PLT processing:
+   .
+   +DFHAC2236 CICSC Transaction CKBR abend CKB4 in program CSQCBR00
+   term ????. Updates to local recoverable resources will be backed
+   out.
+   .
+   +CSQC102D CICSC CSQCTASK Cannot start the CICS transaction CKBR.
+   EIBFN=1008 EIBRESP=16 EIBRESP2=17
+   .
+   The second message is simply means that CICS cannot start the
+   CKBR transaction because CICS is in shutdown processing and CKBR
+   is defined as shutdown=disabled in the CSD. The dump shows that
+   CSQCBR00 is at UQ87388. The problem here is that a message has
+   been received/processed by CKBR at the same time as the
+   shutdown has been initiated, which results in the EXEC CICS
+   START failing with RESP=16 and RESP2=17. It does look as though
+   it is unnecessary for CKBR to issue a CKB4 abend in this
+   situation.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All users of WebSphere MQ for z/OS V6.0      *
+   *                 using the MQ-CICS Bridge function.           *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: The following error message is output   *
+   *                      to the CICS CSMT log:                   *
+   *                      +DFHAC2236 CICSX 079                    *
+   *                      yyyy/mm/dd hh:mm:ss CICSX Transaction   *
+   *                      CKBR abend CKB4 in program CSQCBR00     *
+   *                      term ????. Updates to local             *
+   *                      recoverable resources will be backed    *
+   *                      out.                                    *
+   *                      This is accompanied by message:         *
+   *                      CSQC102D is issued with EIBFN=1008      *
+   *                      EIBRESP=16 EIBRESP2=17.                 *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   During CICS shutdown CKBR attempts to START a transaction and
+   because the transaction is defined to CICS as SHUTDOWN DISABLED
+   the START fails, returning EIBRESP=16, EIBRESP2=17. CKBR does
+   not handle this condition and abends CKB4.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  CSQCBR00 is changed to handle the START failed condition and to
+   output message CSQC704E. Messages CSQC760I & CSQC762I accompany
+   CSQC704E and detail the MsgId of the message that prompted the
+   START command and the name of the bridge queue that message
+   came from, respectively.
+   000Y
+   CSQCBLK0
+   CSQCBLK1
+   CSQCBLK2
+   CSQCBP00
+   CSQCBP10
+   CSQCBP20
+   CSQCBRH0
+   CSQCBR00
+   CSQCBR20
+   CSQCBR30
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK54686
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ Z/OS V6
+   
+   
+ * REPORTED COMPONENT ID
+   5655L8200
+   
+   
+ * REPORTED RELEASE
+   000
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2007-10-16
+   
+   
+ * CLOSED DATE
+   2007-10-24
+   
+   
+ * LAST MODIFIED DATE
+   2007-12-04
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    PK48484 [http://www-01.ibm.com/support/docview.wss?uid=swg1PK48484]
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UK30573
+   
+   
+
+MODULES/MACROS
+ *     CSQCBLK0 CSQCBLK1 CSQCBLK2 CSQCBP00 CSQCBP10
+   CSQCBP20 CSQCBRH0 CSQCBR00 CSQCBR20 CSQCBR30
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ Z/OS V6
+   
+   
+ * FIXED COMPONENT ID
+   5655L8200
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R000 PSY UK30573 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK30573]
+   UP07/11/07 P F711
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

@@ -1,0 +1,107 @@
+Title: IBM MustGather - WPG performance - United States
+
+Text:
+MustGather; MustGatherDocument; MustGatherReadFirstDocument; performance; CPU; Memory TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Collecting data for performance related problem in IBM WebSphere Partner Gateway (WPG). Gathering this MustGather information before calling IBM support will help expedite problem analysis. 
+
+RESOLVING THE PROBLEM
+ 
+
+This section instructs the items of documentation required by the IBM WPG support team to diagnose the problem, such as: 
+
+ * Performance, hung, high CPU 
+ * Out of Memory errors
+   
+   
+
+
+
+Firstly, gather the following required information and input as PMR description: 
+ 1. Operating system, version and patch level 
+ 2. WPG version and fixpack level 
+ 3. WPG Topology (Simple/Simple Distributed/Full Distributed?) 
+ 4. Database version and fixpack(patch) level
+    (For instructions on how to get above information, refer to WPG ReadFirst Technote [http://www.ibm.com/support/docview.wss?rs=2310&uid=swg21281975]. ) 
+ 5. Is this a production system? 
+ 6. Occurrence (Problem is always reproducible?) 
+ 7. Has this specific operation ever worked before? If yes, was any change recently made before the problem started to occur? 
+ 8. A clear, specific problem scenario.
+
+
+
+Secondly, according to problem symptoms, please collect the required data and upload them to PMR:
+
+
+PERFORMANCE, HUNG, OR HIGH CPU ISSUE
+ 
+
+Please refer to the MustGather: Performance, hung, or high CPU issues with WebSphere Application Server [http://www-01.ibm.com/support/search.wss?rs=180&tc=SSCMPB9+SSCMP9J&q=MustGatherDocument], click "Collect data manually" section, and collect required data respectively.
+
+
+
+
+[/support/docview.wss?uid=swg21457430&amp;aid=1] Back to Top OUT OF MEMORY ISSUE
+ 
+
+1. Enable WPG debug trace: 
+
+ 1. Open the WAS administrative console. 
+ 2. Click Troubleshooting> Logs and Trace 
+ 3. Select server name which is reporting error. 
+ 4. Click Change Log Level Details. 
+ 5. Select the Configuration tab. 
+ 6. Enable the components logging by entering the below trace string:
+    *=info:com.ibm.bcg.*=finest 
+ 7. Click Apply. 
+ 8. Save the changes, restart the affected server(s). 
+
+
+2. Re-run the problematic scenario. 
+3. When observe problem resurfaces, collect the following data: 
+
+ 1. WPG log files. ZIP of the following folders: 
+    <WPG_HUB_HOME>/wasND/profiles/bcgprofile/logs/ffdc
+    <WPG_HUB_HOME>/wasND/profiles/bcgprofile/logs/<server_name>
+    (e.g. Simple mode: 'server1'; Simple distributed: 'bcgserver'; Full distributed: the server which you observed problems.)
+    
+    
+ 2. server.xml file copied from: <WPG_HUB_HOME>/wasND/profiles/bcgprofile/config/cells/<wpgCell>/nodes/<node_name>/servers/<server_name>
+    
+    
+ 3. All the heapdump*.* files and javacore*.* files under: 
+    <WPG_HUB_HOME>/wasND/profiles/bcgprofile
+    
+    
+
+
+4. Follow the instruction to send information to IBM Technical Support [http://www-01.ibm.com/support/docview.wss?rs=180&uid=swg21153852]. 
+( Note: Please upload the compression of Heapdump files, separately.) 
+
+
+Reference information: 
+MustGather: Out of Memory errors with WebSphere Application Server [http://www-01.ibm.com/support/search.wss?rs=180&tc=SSEQTP&tc1=SSCMPCY&q=MustGatherDocument] 
+
+
+
+[/support/docview.wss?uid=swg21457430&amp;aid=2] Back to Top 
+
+
+Related information
+Why have I seen WPG server performance degradation over time? [http://www.ibm.com/support/docview.wss?rs=2310&uid=swg21375553]
+Indexed collection of WPG Technotes [http://www-01.ibm.com/support/docview.wss?uid=swg27016406]
+WPG Troubleshooting Guide [http://publib.boulder.ibm.com/infocenter/dmndhelp/v6r2mx/topic/com.ibm.wpg.entadv.doc/Troubleshooting/overview.html]
+WPG Performance Tuning Guide [http://www-01.ibm.com/support/docview.wss?uid=swg27017300&aid=1]
+Searching solutions by using IBM Knowledge bases [http://publib.boulder.ibm.com/infocenter/dmndhelp/v6r2mx/topic/com.ibm.wpg.entadv.doc/Troubleshooting/Searching_knowledgebases.html]
+MustGather: Read first for WebSphere Partner Gateway [http://www.ibm.com/support/docview.wss?rs=2310&uid=swg21281975]
+
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration WebSphere Partner Gateway Advanced Edition AIX, HP-UX, Linux, Solaris, Windows 6.2.1, 6.2, 6.1.1, 6.1 Advanced 
+PRODUCT ALIAS/SYNONYM
+ WPG
+WebSphere Partner Gateway

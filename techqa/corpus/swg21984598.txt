@@ -1,0 +1,28 @@
+Title: IBM New datasource "Connections" do not save in DASH 3.1.2.1 CP5 on WAS 8.5.5.9 - United States
+
+Text:
+DASHL2; connections; "createAndLinkSharedLib.py"; org.apache.wink.common.internal.http.Accept.valueOf; NullPointerException TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ After the WAS component of Dashboard Application Services Hub (DASH) 3.1.2.1 WAS upgraded to 8.5.5.9 and DASH 3.1.2.1 CP5 was installed, newly defined datasource "Connections" do not save. 
+
+CAUSE
+This has been identified as a product defect under APAR IV85410
+
+DIAGNOSING THE PROBLEM
+WAS 8.5.5.9 hides some jar files that are referenced by DASH. DASH 3.1.2.1 CP5 restores the jar files, but additional library links are needed in order for the replaced jars to be referenced correctly. Without those corrected library links the attempt to save the newly defined connections will generate the following errors in the SystemOut:
+
+###
+[4/27/16 13:37:13:548 PDT] 000000aa rest E
+com.ibm.tivoli.rest.RestRequestProcessor handleRequest unexpected
+exception:
+java.lang.NullPointerException
+at
+org.apache.wink.common.internal.http.Accept.valueOf(Accept.java:139)
+...
+###
+
+RESOLVING THE PROBLEM
+The attached zip file contains a fix package and the corresponding procedure to apply the fix. Alternatively, the customer could upgrade to DASH 3.1.3.
+
+APARIV85410_iFix.zip [/support/docview.wss?uid=swg21984598&aid=2]APARIV85410_iFix.zip [/support/docview.wss?uid=swg21984598&aid=1]

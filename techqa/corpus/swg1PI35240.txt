@@ -1,0 +1,174 @@
+Title: IBM PI35240: SYNDICATION PORTLET FAILS TO RENDER WHEN SYNDICATION REPORT 'REP ORTITEMS' IS MISSING - United States
+
+Text:
+  A FIX IS AVAILABLE
+Fixes integrated in WebSphere Portal 8.0.0.1 Combined Cumulative Fixes [http://www-01.ibm.com/support/docview.wss?uid=swg24034497]
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When the syndication report "ReportItems" is missing for a
+   syndication pair, and the Syndication Portlet attempts to
+   render, an exception is thrown and the portlet will not be
+   rendered.
+   
+   Users experiencing this issue may see the following exception in
+   the SystemOut.log:
+   
+   TransformerUt W   JCR_REPOSITORY_EXCEPTION_CAUGHT_1
+   TransformerUt W   java.io.IOException: Parse error at line -1
+   (org.xml.sax.SAXParseException: Premature end of file.)
+   at com.aptrix.persistency.xml.XMLConverter
+   .parseXMLised(XMLConverter.java:939)
+   at com.aptrix.persistency.xml.XMLConverter
+   .parseXMLised(XMLConverter.java:887)
+   at com.aptrix.persistency.xml.XMLConverter
+   .toObject(XMLConverter.java:794)
+   at com.ibm.workplace.wcm.domain.transformers.TransformerUtils
+   .readXMLBlob(TransformerUtils.java:2604)
+   at com.ibm.workplace.wcm.domain.transformers.objects
+   .ReportTransformer.implode(ReportTransformer.java:330)
+   at ...
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  None available
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  When the syndication report "ReportItems" is missing for a
+   syndication pair, and the Syndication Portlet attempts to
+   render, an exception is thrown and the portlet will not be
+   rendered.
+   
+   Users experiencing this issue may see the following exception in
+   the SystemOut.log:
+   
+   TransformerUt W   JCR_REPOSITORY_EXCEPTION_CAUGHT_1
+   TransformerUt W   java.io.IOException: Parse error at line -1
+   (org.xml.sax.SAXParseException: Premature end of file.)
+   at com.aptrix.persistency.xml.XMLConverter
+   .parseXMLised(XMLConverter.java:939)
+   at com.aptrix.persistency.xml.XMLConverter
+   .parseXMLised(XMLConverter.java:887)
+   at com.aptrix.persistency.xml.XMLConverter
+   .toObject(XMLConverter.java:794)
+   at com.ibm.workplace.wcm.domain.transformers.TransformerUtils
+   .readXMLBlob(TransformerUtils.java:2604)
+   at com.ibm.workplace.wcm.domain.transformers.objects
+   .ReportTransformer.implode(ReportTransformer.java:330)
+   at ...
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  ANALYSIS:
+   The "ReportItems" report is used to determine the number of
+   Failed Items for the syndication pair to be displayed in the
+   table.
+   
+   When this report is missing a NullPointerException is thrown
+   when attempting to calculate the number of failed items for the
+   pair, causing rendering of the Syndication Portlet to fail.
+   
+   SOLUTION:
+   Calculation of the number of failed items for a syndication pair
+   
+   has been updated to only attempt the calculation if the required
+   
+   "ReportItems" report exists.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI35240
+   
+   
+ * REPORTED COMPONENT NAME
+   LOTUS WEB CONT
+   
+   
+ * REPORTED COMPONENT ID
+   5724I2900
+   
+   
+ * REPORTED RELEASE
+   800
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-02-17
+   
+   
+ * CLOSED DATE
+   2015-03-25
+   
+   
+ * LAST MODIFIED DATE
+   2015-03-25
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   LOTUS WEB CONT
+   
+   
+ * FIXED COMPONENT ID
+   5724I2900
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R800 PSY
+   UP

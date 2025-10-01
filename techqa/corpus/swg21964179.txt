@@ -1,0 +1,16 @@
+Title: IBM AIX® Micro Focus COBOL routine compile and link options - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ What link option should be used for AIX Micro Focus COBOL stored procedure? 
+
+ANSWER
+The COBOL routine will be loaded by the DB2 server process, so you need to pass -y option to compile to Self-contained Callable Shared Object. 
+
+For more information on MF COBOL embedded applications, please refer the documentation from Micro Focus.
+http://documentation.microfocus.com/help/index.jsp [http://documentation.microfocus.com/help/index.jsp]
+
+RELATED INFORMATION
+ AIX® Micro Focus COBOL routine compile and link options [http://www.ibm.com/support/knowledgecenter/SSEPGG_10.5.0/com.ibm.db2.luw.apdv.embed.doc/doc/r0007179.html]

@@ -1,0 +1,193 @@
+Title: IBM PI15244: RDZ DEBUGGER GENERATES NULLPOINTEREXCEPTION AND THEN FAILS TO JUMP TO THE NEXT BREAKPOINT AFTER PRESSING F8 - United States
+
+Text:
+  A FIX IS AVAILABLE
+Rational Developer for System z Fix Pack 7 (8.5.1.7) for 8.5.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24042742]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Rational Developer for System z fails with NullPointerException
+   when the RDz user is debugging a cics transaction multiple
+   times. At some point, the debugger won't jump to the next
+   breakpoint after pressing F8. The developer has to click on the
+   active thread in the debug view and the debugger jumps to the
+   breakpoint.
+   At this time, variables won't be shown anymore in the variables
+   view.
+   
+   The .log shows the following Exception every time:
+   The NPE seems to be preceded by
+   !ENTRY org.eclipse.jface 2 0 2014-02-04 13:35:51.346
+   !MESSAGE Keybinding conflicts occurred.  They may interfere with
+   normal accelerator operation.
+   !SUBENTRY 1 org.eclipse.jface 2 0 2014-02-04 13:35:51.346
+   !MESSAGE A conflict occurred for CTRL+SHIFT+M:
+   Binding(CTRL+SHIFT+M,
+   ParameterizedCommand(Command(com.ibm.debug.pdt.ui.monitorExpress
+   ionAction,Ausdruck &#65479;&#65452;berwachen,
+     Dialog 'Ausdruck &#65479;&#65452;berwachen' &#65479;&#65524;ffnen,
+   
+   Category(org.eclipse.debug.ui.category.run,Ausf&#65479;&#65452;hren/Debug,Befe
+   hlskategorie 'Ausf&#65479;&#65452;hren/Debug',true),
+   
+   ActionDelegateHandlerProxy(null,com.ibm.debug.pdt.internal.ui.ac
+   tions.MonitorExpressionActionDelegate),
+     ,,true),null),
+   org.eclipse.ui.defaultAcceleratorConfiguration,
+   com.ibm.debug.pdt.ui.debugging,,,system)
+   Binding(CTRL+SHIFT+M,
+   ParameterizedCommand(Command(c-s-m,c-s-m,
+     ,
+     Category(com.ibm.lpex.category.lpex,LPEX,LPEX,true),
+   
+   LegacyHandlerWrapper(ActionHandler(action=com.ibm.lpex.alef.Lpex
+   KeyBindingAction@312085ca)),
+     ,,true),null),
+   org.eclipse.ui.defaultAcceleratorConfiguration,
+   com.ibm.lpex.lpexScope,,,system)
+   
+   !ENTRY com.ibm.debug.pdt.core 4 0 2014-02-04 13:37:22.783
+   !MESSAGE  [Reply processor] java.lang.NullPointerException
+   !STACK 0
+   java.lang.NullPointerException
+   at
+   com.ibm.debug.pdt.internal.core.model.ExpressionBase.fireChangeE
+   vent(Unknown Source)
+   at
+   com.ibm.debug.pdt.internal.core.model.Expression2.update(Unknown
+   Source)
+   at
+   com.ibm.debug.pdt.internal.core.model.EPDCReplyProcessor.process
+   MonVarChg(Unknown Source)
+   at
+   com.ibm.debug.pdt.internal.core.model.EPDCReplyProcessor.process
+   Reply(Unknown Source)
+   at
+   com.ibm.debug.pdt.internal.core.model.EPDCReplyProcessor.updateM
+   odel(Unknown Source)
+   at
+   com.ibm.debug.pdt.internal.core.model.EPDCReplyProcessor.run(Unk
+   nown Source)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  If the developer creates a new workspace or restarts RDz with
+   the Eclipse option -clean, the debugger will work fine for a
+   while until re-occurrence
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  RD/z throws a Null Pointer Exception while stepping through a
+   program and monitoring variables. This causes debugging to fail
+   and the workspace must be restarted in order to commence
+   debugging again.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fix delivered that handles expressions without a thread id.
+   
+   The problem listed in this APAR has been resolved with
+   IBM Rational Developer for System z V8.5.1.6 Fix Pack which
+   is available from the Recommended Fixes support download page:
+   http://www-1.ibm.com/support/docview.wss?rs=2294&uid=swg27006335 [http://www-1.ibm.com/support/docview.wss?rs=2294&uid=swg27006335]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI15244
+   
+   
+ * REPORTED COMPONENT NAME
+   RATL DEV FOR SY
+   
+   
+ * REPORTED COMPONENT ID
+   5724T0700
+   
+   
+ * REPORTED RELEASE
+   850
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-04-04
+   
+   
+ * CLOSED DATE
+   2015-02-04
+   
+   
+ * LAST MODIFIED DATE
+   2015-05-19
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   RATL DEV FOR SY
+   
+   
+ * FIXED COMPONENT ID
+   5724T0700
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R851 PSY
+   UP

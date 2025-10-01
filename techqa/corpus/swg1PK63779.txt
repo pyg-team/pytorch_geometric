@@ -1,0 +1,134 @@
+Title: IBM PK63779: MAP DESIGNER CRASH WHEN USING XMLLIB -VALIDATE () - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Executing a WTX 8.1.0.1 (Build 114) with the Map Designer
+   crashes when performing an XML validation with a rule similar
+   to:
+   
+   =IF(xmllib->VALIDATE(PACKAGE(XML_IN),...
+   
+   
+   Please not that in addition to the associated fix for this
+   issue, the rule should be rewritten to be:
+   =IF(xmllib->VALIDATE(CPACKAGE (XML_IN, "Native"),...
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  LOCAL FIX:
+   WTXCQ - WTX00000819
+   TR / TR
+   Circumvention: None
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Added conditional compilation code so we'd use GlobalAllocPtr on
+   Windows.  Adjusted the sizes of a couple of memory allocations
+   to be appropriate for the data we were putting in those areas.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Added conditional compilation code so we'd use GlobalAllocPtr on
+   Windows.  Adjusted the sizes of a couple of memory allocations
+   to be appropriate for the data we were putting in those areas.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK63779
+   
+   
+ * REPORTED COMPONENT NAME
+   WSTX
+   
+   
+ * REPORTED COMPONENT ID
+   5724M4000
+   
+   
+ * REPORTED RELEASE
+   810
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2008-04-03
+   
+   
+ * CLOSED DATE
+   2008-06-24
+   
+   
+ * LAST MODIFIED DATE
+   2008-06-24
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WSTX
+   
+   
+ * FIXED COMPONENT ID
+   5724M4000
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R810 PSY
+   UP

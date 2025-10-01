@@ -1,0 +1,122 @@
+Title: IBM IO17152: PDF conversion of Office documents display text with a very small font when IBM Content Navigator is deployed on Linux - United States
+
+Text:
+  A FIX IS AVAILABLE
+Download IBM Content Navigator Version 2.0.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24033943]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Download as PDF action fails for these mime types:
+   xls, doc, rtf, txt, png, csv, msg
+   with the error in SystemOut.log
+   java.util.MissingResourceException: Can't find resource for
+   bundle com.outsideinsdk.ExportResources
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  PDF conversion of Office documents display text with a very
+   small font when IBM Content Navigator is deployed on Linux
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  IBM Content Navigator, Version 2.0.1 Fix Pack 1 resolves this
+   issue.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IO17152
+   
+   
+ * REPORTED COMPONENT NAME
+   CONTENT NAVIGAT
+   
+   
+ * REPORTED COMPONENT ID
+   ISCONTNAV
+   
+   
+ * REPORTED RELEASE
+   200
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-09-18
+   
+   
+ * CLOSED DATE
+   2013-04-19
+   
+   
+ * LAST MODIFIED DATE
+   2013-04-19
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CONTENT NAVIGAT
+   
+   
+ * FIXED COMPONENT ID
+   ISCONTNAV
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R201 PSY
+   UP

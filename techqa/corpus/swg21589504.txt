@@ -1,0 +1,18 @@
+Title: IBM Deleting large web content library fails or takes too long - United States
+
+Text:
+WCM library; delete; deleting; large web content library; wcm; library; large library; fail; crash; long time; too much time; excessive time TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+When you delete a large web content library, the operation can sometimes fail or instead take an excessive amount of time to complete.
+
+RESOLVING THE PROBLEM
+To resolve the issue, consider the following steps depending on the problem that you are experiencing: 
+
+ * If the library cannot be deleted, ensure that the LOGFILSIZ and LOGPRIMARY parameters for the JCR database are correctly set. Typically, this issue manifests itself as an error in the SystemOut.log file for the Portal server. For example, if using a DB2 database, you may get an error containing text such as "DB2 SQL error code -964". When this occurs, the database administrator must update the previous parameters before you retry the deletion.
+   
+ * If the library deletion is taking an excessive amount of time, this can interfere with other operations and sometimes result in a failure. However, you can change the deletion processing that is used by the server to use smaller transactions instead of the default single transaction. For details on how to enable this deletion behavior, refer to "Concurrent Web Content Management operations may fail while library delete is processing [http://www-01.ibm.com/support/docview.wss?uid=swg21444073]."
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Enterprise Content Management IBM Web Content Manager AIX, i5/OS, IBM i, Linux, Solaris, Windows, z/OS 8.0

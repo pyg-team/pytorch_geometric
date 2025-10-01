@@ -1,0 +1,151 @@
+Title: IBM Security Bulletin: Security vulnerabilities addressed in IBM Notes 9.0 (CVE-2011-3026, CVE-2012-6349, CVE-2012-6277) - United States
+
+Text:
+ FLASH (ALERT)
+
+ABSTRACT
+ This security bulletin details fixes for three security vulnerabilities fixed in IBM Notes 9.0. 
+
+CONTENT
+
+VULNERABILITY DETAILS: 
+
+CVE ID: CVE-2011-3026
+
+DESCRIPTION:
+The libpng library contains an integer overflow vulnerability that may allow a remote, unauthenticated attacker to execute arbitrary code on a vulnerable system. This only affects Notes running on the Windows operating system. Linux and Mac are not affected.
+
+CVSS: 
+CVSS Base Score: 6.8
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/73240 [https://exchange.xforce.ibmcloud.com/vulnerabilities/73240] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:M/Au:N/C:P/I:P/A:P)
+
+AFFECTED PLATFORMS: 
+IBM Notes 8.5.x
+
+
+REMEDIATION: 
+
+Fix:
+This issue is being tracked as SPR# KLYH8UDNXD and is fixed in the base code of Notes 9.0. The fix will also be included in 8.5.3 Fix Pack 4. Refer to the Notes & Domino Fix List [http://www-10.lotus.com/ldd/fixlist.nsf/Progress/$first?opendocument] to monitor availability of 8.5.3 Fix Pack 4. 
+
+Workaround: 
+None 
+
+Mitigation:
+None 
+
+
+
+
+
+
+
+VULNERABILITY DETAILS: 
+
+CVE ID: CVE-2012-6349 
+
+DESCRIPTION: 
+IBM Notes buffer overflow in the Autonomy KeyView File Parser for .mdb files. This vulnerability could lead to remote code execution. 
+
+CVSS: 
+CVSS Base Score: 9.3 
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/80669 [https://exchange.xforce.ibmcloud.com/vulnerabilities/80669] for the current score 
+CVSS Environmental Score*: Undefined 
+CVSS Vector: (AV:N/AC:M/Au:N/C:C/I:C/A:C) 
+
+AFFECTED PLATFORMS: 
+IBM Notes 8.5.1.x, 8.5.2.x, 8.5.3.x. 
+REMEDIATION: 
+
+Fix:
+
+This issue is being tracked as SPR# KLYH92XL3W and is fixed in the base code of Notes 9.0. The fix will also be included in 8.5.3 Fix Pack 4. Refer to the Notes & Domino Fix List [http://www-10.lotus.com/ldd/fixlist.nsf/Progress/$first?opendocument] to monitor availability of 8.5.3 Fix Pack 4. 
+
+
+Workaround: 
+Delete or rename the keyview.ini file in the Notes program directory. 
+This disables ALL viewers. When a user clicks View (for any file attachment), a dialog box will display with the message "Unable to locate the viewer configuration file."
+
+Delete or rename the affected DLL file.
+After removing the dll file, when a user tries to view a file that requires that viewer, a dialog box will display with the message "The viewer display window could not be initialized." All other file types work without returning the error message. 
+
+Comment out line in keyview.ini to remove the association with .mbd
+To comment a line, you precede it with a semi-colon (;). When a user tries to view the specific file type, a dialog box will display with the message "There is no viewer filter available for this file. Would you like to try to open the file? To protect your computer from malicious files, do not open a file unless you trust the source. If you aren't sure, view the file or save it to your computer and scan it with an antivirus program before opening.".
+
+Example:
+;263=wkb 0 kvwkbve.dll ; MSAccess presented as a spreadsheet ---> this would be the result of removing the association
+
+Mitigation:
+None 
+
+
+
+
+
+
+
+VULNERABILITY DETAILS: 
+
+CVE ID: CVE-2012-6277 
+
+DESCRIPTION: 
+A remote attacker could supply malicious files to execute arbitrary code on an affected system. 
+
+CVSS: 
+CVSS Base Score: 9.3 
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/80207 [https://exchange.xforce.ibmcloud.com/vulnerabilities/80207] for the current score 
+CVSS Environmental Score*: Undefined 
+CVSS Vector: (AV:N/AC:M/Au:N/C:C/I:C/A:C) 
+
+AFFECTED PLATFORMS: 
+IBM Notes 8.5.1.x, 8.5.2.x, 8.5.3.x 
+REMEDIATION: 
+
+Fix:
+This issue is being tracked as SPR# YBJG8WH5JP and is fixed in the base code of Notes 9.0. The fix will also be included in 8.5.3 Fix Pack 4. Refer to the Notes & Domino Fix List [http://www-10.lotus.com/ldd/fixlist.nsf/Progress/$first?opendocument] to monitor availability of 8.5.3 Fix Pack 4. 
+
+
+Workaround: 
+None 
+
+Mitigation:
+None 
+
+
+
+
+
+
+
+
+REFERENCES: 
+[https://www-304.ibm.com/support/docview.wss?uid=swg21496117&wv=1] Complete CVSS Guide [http://www.first.org/cvss/v2/guide] 
+On-line Calculator V2 [http://nvd.nist.gov/cvss.cfm?calculator&adv&version=2] 
+CVE-2011-3026 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2011-3026] 
+CVE-2012-6349 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2012-6349] 
+CVE-2012-6277 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2012-6277] 
+https://exchange.xforce.ibmcloud.com/vulnerabilities/73240 [https://exchange.xforce.ibmcloud.com/vulnerabilities/73240] 
+https://exchange.xforce.ibmcloud.com/vulnerabilities/80669 [https://exchange.xforce.ibmcloud.com/vulnerabilities/80669] 
+https://exchange.xforce.ibmcloud.com/vulnerabilities/80207 [https://exchange.xforce.ibmcloud.com/vulnerabilities/80207] 
+
+
+RELATED INFORMATION: 
+IBM Secure Engineering Web Portal [https://www-304.ibm.com/jct03001c/security/secure-engineering/] 
+IBM Product Security Incident Response Blog [https://www.ibm.com/blogs/PSIRT] 
+
+
+ACKNOWLEDGEMENT The CVE-2012-6349 vulnerability was reported to IBM by Shawn Denbow of RPISEC. 
+
+CHANGE HISTORY: 
+
+21 March 2013 Initial Publication *The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Flash. 
+
+
+Note: According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.
+
+RELATED INFORMATION
+ Security vulnerabilities addressed in Domino & Domino D [http://www.ibm.com/support/docview.wss?uid=swg21627597]
+Security vulnerabilities addressed in IBM iNotes 9.0 [http://www.ibm.com/support/docview.wss?uid=swg21628658]
+A simplified Chinese translation is available [http://www.ibm.com/support/docview.wss?uid=swg21632951]

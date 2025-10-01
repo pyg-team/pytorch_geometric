@@ -1,0 +1,26 @@
+Title: IBM An issue with "Add a feature to your installed product" - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ An issue with "Add a feature to your installed product" 
+
+ANSWER
+SPSS is very excited about updates to the design and functionality of our License Key Center. Our goal is to make the License Key Center easier to use and more efficient. In our latest release, an issue with ‘Adding a feature to your installed product’ was inadvertently introduced.
+
+The Work around:
+We are working to resolve the situation. Until this resolution is available, SPSS Support assist by creating authorization codes for your entitled modules. 
+
+What to do next:
+1. Please open a case to SPSS Support, using the new SPSS Support Community: [https://www.ibm.com/mysupport/s/]
+[https://www.ibm.com/mysupport/s/]
+https://www.ibm.com/mysupport/s/ [https://www.ibm.com/mysupport/s/]
+
+2. Include the version of SPSS Statistics, the module and the number of users your code should have. If you are requesting a code for more than one module, please let us know if you want one code per module or would like the modules bundled together into one.
+
+We sincerely apologize if this issue causes you difficulties and we are committed to fixing this as quickly as possible. Until then, SPSS Support is ready to help! 
+
+Use this link to find a contact to open a service request over the phone: 
+
+https://www.ibm.com/planetwide/ [https://www.ibm.com/planetwide/]

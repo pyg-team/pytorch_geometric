@@ -1,0 +1,150 @@
+Title: IBM PI58456: RDZ 9.0.1.4 LPEX SAVE TOOLBAR ICON UNEXPECTEDLY DISABLED - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Rational Developer for System z Fix Pack 6 (9.0.1.6) for 9.0.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24043643]
+Rational Developer for System z Interim Fix 1 for 9.0.1.6 [http://www-01.ibm.com/support/docview.wss?uid=swg24044419]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Rational Developer for System z 9.0.1.4 LPEX SAVE TOOLBAR ICON
+   is unexpectedly disabled.
+   
+   After editing a source member and making changes the save icon
+   (diskette in the tool bar) may be found to be grayed out.  This
+   may happen after the editor has lost then gained focus even
+   though the changes are still not saved.
+   
+   This may be a similar problem as RDi APAR SE58364 [http://www-01.ibm.com/support/docview.wss?uid=swg1SE58364]
+   
+   - edit COBOL program in LPEX
+   - right-click on the editor and select menu Software Analyzer
+   >Software
+   Analyzer Configurations
+   - Software Analyzer dialog opens and Save menu becomes disabled
+   - close the Software Analyzer dialog
+   - Save menu is still disabled
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  The CTRL+S key sequence can be used to save the changes.
+   
+   Upgrade to RDz 9.5 and above
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  After editing a source member and making changes the save icon
+   (diskette in the tool bar) may be found to be grayed out.  This
+   may happen after the editor has lost then gained focus even
+   though the changes are still not saved.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The save icon is no longer incorrectly greyed out after a loss
+   of focus.
+   
+   The problem listed in this APAR has been resolved with
+   IBM Rational Developer for System z V9.0.1.6 Fix Pack which
+   is available from the Recommended Fixes support download page:
+   http://www-1.ibm.com/support/docview.wss?rs=2294&uid=swg27006335 [http://www-1.ibm.com/support/docview.wss?rs=2294&uid=swg27006335]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI58456
+   
+   
+ * REPORTED COMPONENT NAME
+   RATL DEV FOR SY
+   
+   
+ * REPORTED COMPONENT ID
+   5724T0700
+   
+   
+ * REPORTED RELEASE
+   901
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-03-03
+   
+   
+ * CLOSED DATE
+   2017-05-11
+   
+   
+ * LAST MODIFIED DATE
+   2017-05-11
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   RATL DEV FOR SY
+   
+   
+ * FIXED COMPONENT ID
+   5724T0700
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R901 PSY
+   UP

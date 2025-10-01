@@ -1,0 +1,137 @@
+Title: IBM IV65309: ADD NEW FUNCTIONALITY IN PROBE TO OBTAIN INCOMING TRAP STATISTICS AND TO IDENTIFY EVENT FLOOD IN PROBE - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  In a (sustained) flood condition the probe can not discard
+   traps faster than they arrive  so rules file based  flood
+   protection does not work.
+   
+   This may be partially mitigated by using  the DSALog and
+   DSAPeriod properties to direct the probe to create log messages
+   that record which traps are lost.
+   While an operational question remains as to what to do with
+   these logged traps,  at least there would be a record as to the
+   fact they were dropped.
+   
+   Therefore, changes to the probe are probably required to address
+    this issue.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * All users of nco_p_mttrapd.                                  *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * In a (sustained) flood condition the probe can not discard   *
+   * traps faster than they arrive  so rules file based  flood    *
+   * protection does not work.                                    *
+   *                                                              *
+   * This may be partially mitigated by using  the DSALog and     *
+   * DSAPeriod properties to direct the probe to create log       *
+   * messages                                                     *
+   * that record which traps are lost.                            *
+   * While an operational question remains as to what to do with  *
+   * these logged traps,  at least there would be a record as to  *
+   * the                                                          *
+   * fact they were dropped.                                      *
+   *                                                              *
+   * Therefore, changes to the probe are probably required to     *
+   * address                                                      *
+   *  this issue.                                                 *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Users need to upgrade to nco_p_mttrapd v19.0                 *
+   ****************************************************************
+   As a mitigation, the probe was enhanced to collect incoming trap
+   statistics and identify event flood in probe.
+   New property for the feature: TrapStat.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV65309
+   
+   
+ * REPORTED COMPONENT NAME
+   SNMP EMS PROBE
+   
+   
+ * REPORTED COMPONENT ID
+   5724P14SN
+   
+   
+ * REPORTED RELEASE
+   100
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-09-30
+   
+   
+ * CLOSED DATE
+   2015-02-10
+   
+   
+ * LAST MODIFIED DATE
+   2015-02-10
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R100 PSY
+   UP

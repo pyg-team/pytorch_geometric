@@ -1,0 +1,41 @@
+Title: IBM Package IBM Rational ClearCase is already installed. This package can only be installed in one location error reported when recording a response file using -skipinstall - United States
+
+Text:
+CC; Package IBM Rational ClearCase is already installed; This package can only be installed in one location; -skipinstall; response file; installation; dataAgentLocation; agent data location TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This technote explains how to resolve an error, Package IBM Rational ClearCase is already installed. This package can only be installed in one location that can occur when selecting a package to install during the recording of a response file when using the -skipinstall option for a IBM Rational ClearCase (CC) 7.1.x installation. 
+
+SYMPTOM
+ 
+
+This error appears when you select a package to install during the recording of a response file with the -skipinstall option; even if ClearCase is not installed on the machine. 
+
+Package IBM Rational ClearCase is already installed. This package can only be installed in one location.
+
+
+
+CAUSE
+ 
+
+The agent data location specified after the -skipinstall has already been used for the creation of a response file for this product.
+
+
+Using -skipInstall option allows you to specify a directory known as the <agentDataLocation> that you write installation information to while skipping the actual installation. After you click the finish button and exit out of the Installation Manager, a response file will be generated in the path you have specified. If you fail to close out of Installation Manager, no response file will be generated until you do. 
+
+
+The <agentDataLocation> must be a writable directory. The argument causes the Installation Manager to save the installation data without actually installing the product. You can use the same <agentDataLocatoin> in the next recording session to record updating or modifying the product or to record managing the licenses for the product. However, the products you have actually installed, and the preferences including repository settings that you use in the normal user interface mode or the record mode without using –skipInstall will not be there. The –skipInstall arguement is optional. You can use -skipInstall to speed up the recording since Installation Manager won’t actually install the products; Installation Manager will just keep the installation data in the specified <agentDataLocation>. 
+
+ 
+
+Important: When you record a response file using -skipInstall, you must keep the directory, folders and files created for agentDataLocation if you wish to modify the response file using the option -record at a later time through the GUI. If you choose to remove that location, then you can only manually edit the response file for required changes.
+
+
+
+RESOLVING THE PROBLEM
+Remove the contents of the agent data location or create a new directory to be used as the agent data location for the creation of this response file. 
+
+
+
+RELATED INFORMATION
+#Recording a response file without installing [https://publib.boulder.ibm.com/infocenter/cchelp/v7r1m0/index.jsp?topic=/com.ibm.rational.clearcase.cc_ms_install.doc/topics/t_installerresponsefile11_rsar.htm]

@@ -1,0 +1,32 @@
+Title: IBM Content Collector: deadlock when retrieving files that are still being written - United States
+
+Text:
+IBM Content Collector for files; deadlock; retrieval; Archive Task; P8 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When IBM Content Collector (ICC) is archiving files to a Filenet P8 destination repository and an attempt is made to retrieve the files, a deadlock can occur, resulting in the error: "An error occurred while evaluating the task route". 
+
+SYMPTOM
+When retrieving files from an ICC for Files repository a deadlock may occur, producing the following error: 
+
+Error An error occurred while evaluating the task 
+route '<Task Route name>': Task Method 'ibm.ctms. 
+p8connector.p84x.ArchiveTask' failed for entity with id '<file name>': Status=error; Message='The 
+process cannot access the file because it is being used by another 
+process. (Exception from HRESULT: 0x80070020)'
+
+
+CAUSE
+If the ICC File System collector is configured with a short time frame schedule and the 'Ignore if Access Denied' checkbox is selected, the collector will repeatedly cycle through the collection location that is used as a source for documents, with a short delay between collections. Despite the repeated cycling, the File System Collector is pretty lightweight and will have minimal impact when pointed at a single collection location where files are deleted after archiving.
+
+
+DIAGNOSING THE PROBLEM
+If the File System retrieval stalls and goes into deadlock, check the logs for the above error message and check the Task Route for a short schedule time.
+
+
+
+RESOLVING THE PROBLEM
+A decision point can be added to the task route before the P8 Archive task. 
+
+This decision point should have a rule that tests to see if both the created and modified dates on the file are more than 1 minute (or any other appropriate delay) to give enough time for the file lock to be released. Both creation and modification dates need to be checked, as when you copy a file to a file share, the last modified date is typically unchanged from the original, but the creation date is updated to reflect the creation date of the file copy. 
+The value of 60000 (60 seconds) is the number of milliseconds to wait.

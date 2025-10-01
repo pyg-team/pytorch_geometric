@@ -1,0 +1,23 @@
+Title: IBM Action required for IBM Integration Bus Hypervisor Edition V9.0 and WebSphere Message Broker Hypervisor Edition V8.0, for security vulnerabilities in Red Hat Linux - United States
+
+Text:
+ FLASH (ALERT)
+
+ABSTRACT
+ IBM Integration Bus Hypervisor Edition V9.0 and WebSphere Message Broker Hypervisor Edition V8.0 require customer action for security vulnerabilities in Red Hat with ImageMagick - CVE-2014-9805, CVE-2014-9806, CVE-2014-9807, CVE-2014-9808, CVE-2014-9809, CVE-2014-9810, CVE-2014-9811, CVE-2014-9812, CVE-2014-9813, CVE-2014-9818,CVE-2014-9819, CVE-2014-9820, CVE-2014-9822, CVE-2014-9823, CVE-2014-9824,CVE-2014-9826, CVE-2014-9814, CVE-2014-9815, CVE-2014-9816, CVE-2014-9817, CVE-2014-9828, CVE-2014-9829, CVE-2014-9830, CVE-2014-9831, CVE-2014-9834, CVE-2014-9835, CVE-2014-9836, CVE-2014-9837, CVE-2014-9838, CVE-2014-9839, CVE-2014-9840, CVE-2014-9842, CVE-2014-9844, CVE-2014-9845, CVE-2014-9846, CVE-2014-9847, CVE-2014-9849, CVE-2014-9851, CVE-2014-9853, CVE-2014-9854, CVE-2015-8894 
+
+CONTENT
+IBM Integration Bus Hypervisor Edition V9.0 and WebSphere Message Broker Hypervisor Edition V8.0 ship with versions of Red Hat Enterprise Linux (RHEL) Server that are vulnerable to CVE-2014-9805, CVE-2014-9806, CVE-2014-9807, CVE-2014-9808, CVE-2014-9809, CVE-2014-9810, CVE-2014-9811, CVE-2014-9812, CVE-2014-9813, CVE-2014-9818,CVE-2014-9819, CVE-2014-9820, CVE-2014-9822, CVE-2014-9823, CVE-2014-9824,CVE-2014-9826, CVE-2014-9814, CVE-2014-9815, CVE-2014-9816, CVE-2014-9817,CVE-2014-9828, CVE-2014-9829, CVE-2014-9830, CVE-2014-9831, CVE-2014-9834, CVE-2014-9835, CVE-2014-9836, CVE-2014-9837, CVE-2014-9838, CVE-2014-9839, CVE-2014-9840, CVE-2014-9842, CVE-2014-9844, CVE-2014-9845, CVE-2014-9846, CVE-2014-9847, CVE-2014-9849, CVE-2014-9851, CVE-2014-9853, CVE-2014-9854 and CVE-2015-8894. 
+
+IBM Integration Bus Hypervisor Edition V9.0 and WebSphere Message Broker Hypervisor Edition V8.0 ship with Red Hat Enterprise Linux (RHEL) Server 6.2.
+
+Remediation: 
+
+IBM strongly recommends that you contact Red Hat to obtain and install fixes for Red Hat Enterprise Linux (RHEL) Server 6.2, as applicable.
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration WebSphere Message Broker Hypervisor Edition Linux 8.0 
+PRODUCT ALIAS/SYNONYM
+ WMB HVE IIB HVE

@@ -1,0 +1,200 @@
+Title: IBM IZ30763: LCM_ADMIN -UNLOAD DOES NOT WORK FOR NOKIA AND ERICSSON - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  On certain TPs is not possible to unload the loadmap
+   using the lcm_admin -unload for both the Nokia BSS S12 and
+   Ericsson UTRAN P5 TechPacks.
+   
+   virtuo]lcm_admin -list
+   [Wed Aug 06 15:34:59 BST 2008] [INFO] [com.vallent.virtuo] [New
+   logger
+   implementation [SYSTEM_OUT,INFO] - from supplied properties]
+   
+   Loader Configuration Information
+   
+   DataSource Name             Version  Type    Loader
+   Configuration Name
+   Ruleset Id
+   ----------------------------------------------------------------
+   ------
+   -----------------
+   UMTS Ericsson UTRAN P5 912  2.0.0.0  Vendor  Ericsson UTRAN P5
+   loader
+   10000
+   Ericsson_UTRAN_P5.1         5.1      Vendor  Ericsson_UTRAN_P5.1
+   5.1
+   loader  10001
+   Nokia GSM BSS               S12      Vendor  Nokia BSS S12
+   loader
+   10002
+   
+   
+   Data Source Information
+   
+   Teckpack Name           Version  DataSource Name
+   Version
+   ----------------------------------------------------------------
+   ----
+   UMTS_Ericsson_UTRAN_P5  2.0.0.0  UMTS Ericsson UTRAN P5 912
+   2.0.0.0
+   UMTS_Ericsson_UTRAN_P5  2.0.0.0  Ericsson_UTRAN_P5.1         5.1
+   Nokia GSM BSS           1.0.0    Nokia GSM BSS               S12
+   
+   [Wed Aug 06 15:35:05 BST 2008] [INFO] [com.vallent.virtuo]
+   [Operation Completed Successfully.]
+   
+   It will not recognise any of the details supplied in
+   the unload command:
+   
+   lcm_admin -unload -datasource "Nokia GSM BSS"
+   -dsversion S12 -techpack "Nokia GSM BSS" -tpversion "1.0.0"
+   
+   [Wed Aug 06 15:51:40 BST 2008] [INFO] [com.vallent.virtuo] [New
+   logger implementation [SYSTEM_OUT,INFO] - from supplied
+   properties]
+   [Wed Aug 06 15:51:43 BST 2008] [ERROR] [com.vallent.virtuo]
+   [Data source does not exist]
+   [Wed Aug 06 15:51:43 BST 2008] [ERROR] [com.vallent.virtuo]
+   [Check the log file for more information:
+   /appl/virtuo/logs/lcm/lcm-server.log]
+   
+   [swallowz1:virtuo]lcm_admin -unload -datasource "UMTS Ericsson
+   UTRAN P5 912" -dsversion 2.0.0.0 -techpack
+   "UMTS_Ericsson_UTRAN_P5"
+   -tpversion 2.0.0.0
+   [Wed Aug 06 15:52:45 BST 2008] [INFO] [com.vallent.virtuo] [New
+   logger
+   implementation [SYSTEM_OUT,INFO] - from supplied properties]
+   [Wed Aug 06 15:52:49 BST 2008] [ERROR] [com.vallent.virtuo]
+   [Data
+   source does not exist]
+   [Wed Aug 06 15:52:49 BST 2008] [ERROR] [com.vallent.virtuo]
+   [Check the
+   log file for more information:
+   /appl/virtuo/logs/lcm/lcm-server.log]
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  See conclusion
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  ***************************************************************
+    *                                                             *
+    * USERS AFFECTED: 9.1.2 Users                                 *
+    *                                                             *
+    ***************************************************************
+    * RECOMMENDATION: Apply the following fix when available      *
+    *                                                             *
+    * The fix for this APAR is to be contained in the following   *
+    * maintenance package(s):                                     *
+    *                                                             *
+    * | interim fix | 9.1.2.26-TIV-TNPMW-IF0016                   *
+    *                                                             *
+    ***************************************************************
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ30763
+   
+   
+ * REPORTED COMPONENT NAME
+   NETCOOL PM WIRE
+   
+   
+ * REPORTED COMPONENT ID
+   5724T0100
+   
+   
+ * REPORTED RELEASE
+   912
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-08-28
+   
+   
+ * CLOSED DATE
+   2008-11-28
+   
+   
+ * LAST MODIFIED DATE
+   2008-11-28
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   NETCOOL PM WIRE
+   
+   
+ * FIXED COMPONENT ID
+   5724T0100
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R912 PSN
+   UP

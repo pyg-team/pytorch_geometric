@@ -1,0 +1,125 @@
+Title: IBM PO03699: OUTBOUND SOAP CONNECTION RESET ERRORS - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  At the moment StubFactory is using a pool of HTTP connections
+   to make outbound web service calls. These connections can be
+   closed on the server side so by the time a connection is used
+   it might be stale. If that's the case the web service
+   invocation fails.
+   Repeating the invocation is not an option as it might not be
+   clear from the exception whether the original request was
+   processed by the server or not.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  OUTBOUND SOAP CONNECTION RESET ERRORS
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  PO03699, WorkItem:106865 - StubFactory must check for stale
+   connections
+   The class StubFactory uses a pool of HTTP connections to make
+   web service calls. The connection might be closed after it is
+   retrieved from the pool causing an error when the application
+   makes a call. The Infrastructure has been configured to check
+   if the connection is available before making web service calls.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PO03699
+   
+   
+ * REPORTED COMPONENT NAME
+   CURAM SOCIAL PG
+   
+   
+ * REPORTED COMPONENT ID
+   5725H2600
+   
+   
+ * REPORTED RELEASE
+   604
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2014-07-01
+   
+   
+ * CLOSED DATE
+   2016-03-25
+   
+   
+ * LAST MODIFIED DATE
+   2016-03-25
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  TEC
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R620 PSY
+   UP

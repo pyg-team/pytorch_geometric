@@ -1,0 +1,190 @@
+Title: IBM PM11753: RC=2082 (MQRC_UNKNOWN_ALIAS_BASE_Q) RETURNED WHEN A COA MESSAGE IS PUT TO A QALIAS THAT RESOLVES TO A CLUSTERED QUEUE. - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  RC=2082 (MQRC_UNKNOWN_ALIAS_BASE_Q) returned when a COA message
+   is put to a qalias that resolves to a clustered queue.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All users of WebSphere MQ for z/OS Version 6 *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: COA/COD Report messages generated from  *
+   *                      a PUT with The MQMD ReplyToQ field      *
+   *                      pointing to a non-clustered QAlias      *
+   *                      whose Base Name is a Clustered queue    *
+   *                      are not resolved when the ReplyToQmgr   *
+   *                      equates to the local qmanager name of   *
+   *                      the qmgr at which the final put to the  *
+   *                      QAlias occurs and the COA/COD message   *
+   *                      goes to the Dead Letter Queue with      *
+   *                      MQRC_UNKNOWN_ALIAS_BASE_Q.              *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   This Apar fixes a difference between all the Distributed
+   platform's implementations of COA/COD/Expiry report processing
+   and the z/OS codebase. This occurs in specific configurations
+   when the ReplyToQ in the original MQMD is a non-clustered QAlias
+   queue on a z/OS QMGR, with a base queue name of a CLUSTER queue
+   and ReplyToQmgr is non-blank and at the time of the PUT of the
+   Report message is the Local qmgr name.
+   e.g When the original message MQPUT is to a queue on QMGR A, but
+       the ReplyToQ is a QAlias on QMGR A or B with a base queue
+       name of a clustered queue and ReplyToQmgr has the QMGR name
+       of the qmgr where the QAlias exists.
+   The resolution of the QAlias is done on the qmgr where it exists
+   and at that time the ReplyToQmgr value is used as ObjectQmgrName
+   in the MQOD used to open the QAlias. Because it is the Local
+   QMGR the z/OS code does not attempt a cluster lookup when the
+   QAlias base queue name does not exist on that qmgr and the
+   Report message is put to the local Dead Letter Queue with a
+   Reason code of 2082 (MQRC_UNKNOWN_ALIAS_BASE_Q).
+   This does NOT occur IF the QAlias itself is clustered or if a
+   QMGR Alias is used as ReplyToQmgr.
+   .
+   On all the Distributed platform versions of MQ this problem does
+   NOT occur, the QAlias base name is resolved via a lookup of the
+   name in the fastnet cache and the Report message arrives
+   correctly at its intended destination via cluster workload
+   balancing.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Module CSQMREPM creates the Report messages for Expiration, COA
+   & COD. When a Report message is about to be PUT in module
+   csqmrepm, the ReplyToQmgr field in the original Mhed is checked
+   to see if the LOCAL qmgr or the QSG name was specified - in
+   which case the fix blanks the ObjectQMgrName in the MQOD to be
+   used to open the ReplyToQ. This causes CSQMOVAL to set the
+   fOtherQmgr flag in the MHND and allows a cluster lookup for the
+   queue in CSQMOAQ1 to occur when a QAlias base queue name is not
+   defined in the local qmgr.
+   In addition, in the CHINIT in rriAddMessage (CSQXRMMQ) when a
+   receiver channel is about to PUT a message to its destination,
+   queue checks are added to determine if it is a Report message
+   for Expiration, COA or COD that is NOT being put to the Dead
+   Letter Queue AND the destination qmgr is the LOCAL qmgr name or
+   the QSG name - then as above the ObjectQMgrName in the MQOD is
+   set to blanks to allow cluster lookups for the QAlias base
+   queue name.
+   000Y
+   CSQMREPM
+   CSQXRMMQ
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM11753
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ Z/OS V6
+   
+   
+ * REPORTED COMPONENT ID
+   5655L8200
+   
+   
+ * REPORTED RELEASE
+   000
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-04-07
+   
+   
+ * CLOSED DATE
+   2010-07-20
+   
+   
+ * LAST MODIFIED DATE
+   2010-09-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    PM18426 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM18426] UK58950
+   
+   
+
+MODULES/MACROS
+ *     CSQMREPM CSQXRMMQ
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ Z/OS V6
+   
+   
+ * FIXED COMPONENT ID
+   5655L8200
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R000 PSY UK58950 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK58950]
+   UP10/08/06 P F008
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

@@ -1,0 +1,48 @@
+Title: IBM Maximo fails to start with error BMXAA4087E - United States
+
+Text:
+TPAESCCD; Maximo; start; BMXAA4087E TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ BMXAA4087E - The MAXMESSAGE value for group login and key username could not be retrieved. 
+
+SYMPTOM
+[ERROR] BMXAA6497E - A message for group login and key username could not be found.
+com.ibm.db2.jcc.c.SqlException: No authorized routine named "ISNULL" of type "FUNCTION" having compatible arguments was found.
+at com.ibm.db2.jcc.c.fg.e(fg.java:1596)
+at com.ibm.db2.jcc.c.fg.a(fg.java:1206)
+at com.ibm.db2.jcc.b.gb.g(gb.java:140)
+at com.ibm.db2.jcc.b.gb.a(gb.java:39)
+at com.ibm.db2.jcc.b.w.a(w.java:34)
+at com.ibm.db2.jcc.b.vb.g(vb.java:139)
+at com.ibm.db2.jcc.c.fg.n(fg.java:1177)
+at com.ibm.db2.jcc.c.fg.a(fg.java:1832)
+at com.ibm.db2.jcc.c.fg.a(fg.java:473)
+at com.ibm.db2.jcc.c.fg.executeQuery(fg.java:457)
+at psdi.server.MXServer.getMessage(MXServer.java:5362)
+at psdi.server.MXServer.getMessages(MXServer.java:5538)
+
+
+ENVIRONMENT
+IBM DB2 database
+
+DIAGNOSING THE PROBLEM
+Connect to database back end and check the result of this query :-
+
+
+select propvalue from maximo.maxpropvalue where propname='mxe.db.format.nullvalue'; 
+
+If you are using DB2 database, the result should be 'COALESCE'.
+
+
+RESOLVING THE PROBLEM
+For IBM DB2, the value is COALESCE, and you cannot change the default value. 
+
+For Oracle, the value is NVL, and you cannot change the default value.
+For SQL Server, the value must be set to ISNULL.
+
+Make sure MXServer is stopped. Connect to database back end and update mxe.db.format.nullvalue by running following query :- 
+
+update maximo.maxpropvalue set propvalue='COALESCE' where propname='mxe.db.format.nullvalue'; 
+
+Start MXServer again.

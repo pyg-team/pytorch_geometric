@@ -1,0 +1,28 @@
+Title: IBM How to configure a datasource for WebSphere Application Server Network Deployment v7 applications to access data in IBM iSeries databases - United States
+
+Text:
+IBM i; IBM iSeries; AS 400; AS400; database; datasource; JDBCprovider; iSeries PREVENTIVE SERVICE PLANNING
+
+ABSTRACT
+ To successfully configure a WebSphere Application Server Network Deployment v7 application to access data in an IBM iSeries database involves several steps. 
+
+*Obtain the JDBC Driver needed for IBM iSeries 
+*Configure the JDBC Provider / Data Source in the WebSphere Application Server
+*Code the application client to utilize the Data Source 
+
+CONTENT
+ 
+
+ 1. Obtain the JDBC Driver from the IBM® Toolbox for Java [http://publib.boulder.ibm.com/infocenter/wasinfo/v7r0/index.jsp?topic=%2Fcom.ibm.websphere.nd.multiplatform.doc%2Finfo%2Fae%2Fae%2Ftcws_toolbox.html] 
+ 2. Configure the JDBC Provider / Data Source using the WebSphere Application Server Administrative Console [http://www-01.ibm.com/support/knowledgecenter/SSAW57_7.0.0/com.ibm.websphere.nd.multiplatform.doc/info/ae/ae/tdat_ccrtprov.html] 
+ 3. Code the application client [http://www-01.ibm.com/support/knowledgecenter/SSAW57_7.0.0/com.ibm.websphere.nd.multiplatform.doc/info/ae/ae/tdat_accdfac.html] to utilize the Data Source
+
+
+** If the following error message is seen in the WebSphere Application Server SystemOut log after following these steps, ensure the IBM® Toolbox for Java AS400 (jt400.jar) code is compatible with the current JDK being used by the WebSphere Application Server Network Deployment v7 environment. 
+
+[11/1/14 22:52:45:321 UTC] 00000057 SystemOut java.lang.ClassCastException: com.ibm.ws.rsadapter.jdbc.WSJdbcDataSource incompatible with com.ibm.as400.access.AS400JDBCDataSource 
+
+Look up information and build versions [http://www-03.ibm.com/systems/i/software/toolbox/index.html] [http://www-03.ibm.com/systems/i/software/toolbox/index.html]for the IBM® Toolbox for Java.  
+
+
+Cross reference information Segment Product Component Platform Version Edition Application Servers WebSphere Application Server Hypervisor Edition Not Applicable AIX, Linux 7.0 All Editions

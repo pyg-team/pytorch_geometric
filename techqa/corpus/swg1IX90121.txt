@@ -1,0 +1,133 @@
+Title: IBM IX90121: PERFORMANCE DEGRADATION MIGHT BE SEEN DURING REMOTE INVOCATION P OST JAVA626_SR6-20130521_01 - United States
+
+Text:
+  FIXES ARE AVAILABLE
+PM91293: SHIP SDK 626 SR6 FOR WSAS V8.0.0.X [http://www-01.ibm.com/support/docview.wss?uid=swg24035398]
+PM91291: SHIP JAVA 7 SR5 AS WEBSPHERE 850x and 855x IFIX [http://www-01.ibm.com/support/docview.wss?uid=swg24035400]
+PI29575: Ship JAVA apar IV66110 for WAS V8008 using Java 626 [http://www-01.ibm.com/support/docview.wss?uid=swg24038841]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Error Message: N/A
+   .
+   Stack Trace: N/A
+   .
+   First seen from the build ->
+   ibm-java-ws-sdk-pwi3260_26sr6-20130521_01
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Added System.getProperty in constructor call of
+   org.omg.CORBA_2_3.portable.OutputStream
+      The exorbitant call is causing this performance degradation.
+   WebSphere tests has found degradation of throughput by 9%.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This defect will be fixed in:
+   6.0.1 SR6
+   .
+   Call this property initially  and based on it set
+   a private static final boolean variable.
+   Use a check of that boolean variable on the constructor.
+   There are performance changes which is causing current ( fixed)
+   626SR6 orb performing better than 626SR5 ORB.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IX90121
+   
+   
+ * REPORTED COMPONENT NAME
+   ORB
+   
+   
+ * REPORTED COMPONENT ID
+   620700123
+   
+   
+ * REPORTED RELEASE
+   260
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-07-04
+   
+   
+ * CLOSED DATE
+   2013-07-08
+   
+   
+ * LAST MODIFIED DATE
+   2013-07-08
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ORB
+   
+   
+ * FIXED COMPONENT ID
+   620700123
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R260 PSY
+   UP

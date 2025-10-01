@@ -1,0 +1,19 @@
+Title: IBM TSAMP 4.1 has incorrect values in the default /var/ct/cfg/trace.conf - United States
+
+Text:
+tsa; tsamp; samp; trace; spool; trace spooling; rsct; rmcd; core TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ TSAMP 4.1 comes with trace spooling configured to create spooled trace files by default. The trace.conf that is shipped with TSAMP has some values for RMCD and other daemons that is set to be to small and could cause core dumps. 
+
+SYMPTOM
+RMCD core files.
+
+
+CAUSE
+This has been identified as a product defect under APAR IV61398
+
+RESOLVING THE PROBLEM
+To resolve this problem please copy the attached trace.conf to your /var/ct/cfg/ directory and restart your cluster as soon as possible.
+
+trace.conf [/support/docview.wss?uid=swg21679513&aid=2]trace.conf [/support/docview.wss?uid=swg21679513&aid=1]

@@ -1,0 +1,43 @@
+Title: IBM Non-root DE fails with "no root authority" message on Solaris - United States
+
+Text:
+DE; KnownIssuesDE TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Improperly created non-root users on Sun platforms may cause Deployment Engine installation to fail 
+
+SYMPTOM
+When installing DE while logged in as a non-root user, an exception similar to the following was thrown, indicating DE was attempting to install as root, although logged on as non-root:
+com.ibm.ac.si.install.InstallUnauthorizedException: ACUINI0061I User, 1054 does not have root authority!
+at com.ibm.ac.si.install.SIInstaller.validateUnixUserAuthority(SIInstaller.java:1997)
+at com.ibm.ac.si.install.SIInstaller.validateUserAuthority(SIInstaller.java:1921)
+at com.ibm.ac.si.install.SIInstaller.setInstallMode(SIInstaller.java:6023)
+at com.ibm.ac.si.install.SIInstaller.initialize(SIInstaller.java:2343)
+at com.ibm.ac.si.install.SIInstaller.<init>(SIInstaller.java:2219)
+at com.ibm.ac.si.install.SIInstaller.<init>(SIInstaller.java:2187)
+at com.ibm.ac.si.install.SIInstaller.<init>(SIInstaller.java:2175)
+at com.ibm.ac.si.install.SIInstaller.getInstalledSIClasspath(SIInstaller.java:1410)
+at com.ibm.ac.coi.ext.ia.DEBootstrapInstall.install(DEBootstrapInstall.java:319)
+at com.ibm.ac.coi.ext.ia.DEBootstrapWorkerThread.run(DEBootstrapWorkerThread.java:253)
+
+
+
+CAUSE
+This error may be a result of an improperly created non-root user on the Solaris platform.
+
+If the non-root user is added using the command syntax normally used on Linux platforms, no folder will be created in /home and /export/home on Solaris. Solaris will set the $HOME variable as /home/<username> (<username> refers to the id of the non-root user being created), which will not exist due to non-root (or even root) user having no write permission on that directory.
+Since Solaris will regard /export/home/<username> as the user home, DE and TIP install will fail, as they will look for the /home/<username> directory in which to install.
+
+RESOLVING THE PROBLEM
+Rather than using the typical Linux-style useradd command syntax (<username> refers to the id of the non-root user being created):
+
+useradd -m <username>
+
+The non-root user should be created with the following command (<username> refers to the id of the non-root user being created):
+
+useradd -d /export/home/<username> -m <username>
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ DE

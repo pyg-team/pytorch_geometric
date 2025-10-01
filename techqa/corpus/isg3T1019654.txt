@@ -1,0 +1,37 @@
+Title: IBM vCenter alert: Power Domain 1 Host Power 0: Power off/down - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ English 
+
+PROBLEM(ABSTRACT)
+ 
+Alerts that are unrelated to a true hardware error and do not correlate to a reboot can be related to full System Event Log and can be resolved by rebooting the host and clearing the SEL log.
+
+
+SYMPTOM
+ 
+
+In vCenter the hardware alert: Power Domain: Host Power: Power off/down is Asserted along with: System Event Log (SEL) 
+
+enabled state and status are Unknown 
+
+
+[/support/docview.wss?uid=isg3T1019654&amp;aid=1] 
+
+
+[/support/docview.wss?uid=isg3T1019654&amp;aid=2]
+
+
+RESOLVING THE PROBLEM
+ 
+
+ 
+
+In two known customer cases the resolution was to reboot and clear the SEL logs during boot up. Work with hardware support to determine how to clear SEL logs during boot up. 
+
+ 
+
+Make sure to check with hardware support to ensure there are no true hardware errors.

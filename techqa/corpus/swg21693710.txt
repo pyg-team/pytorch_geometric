@@ -1,0 +1,54 @@
+Title: IBM InfoSphere Information Governance Catalog: How to increase the number of query rows that are saved to a file - United States
+
+Text:
+Query; export; export results; maxRowsInSearchResultSheet; Excel; spreadsheet; XLS; CSV; xls; csv; rows; isigc113relnotes; isigc115relnotes TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Within any query result, at most 10,000 rows can be saved, by default. 
+
+InfoSphere Information Governance Catalog limits the number of rows that are saved to ensure that this activity does not occupy InfoSphere Information Server resources unintentionally. This limitation also ensures that the number of saved rows can conform to certain Microsoft Excel limitations.
+
+You can change this default limit. 
+
+CAUSE
+The maximum number of saved rows are limited for the following reasons: 
+
+ * CPU burden 
+   
+   Depending on how much information a query selects and how 'costly' it is to retrieve it internally, it can take about one minute per 1,000 rows of saved query results. Therefore, the row limit ensures that InfoSphere Information Server resources are not occupied unintentionally for too long. This holds true regardless of the format (CSV or XLS) of the file that the rows are saved to.
+
+ * Microsoft Excel row limitations 
+   
+   Microsoft Excel has row limits. For details, see http://support.microsoft.com/kb/120596 [http://support.microsoft.com/kb/120596].
+   "In Microsoft Excel 97 for Windows, Microsoft Excel 2000, Microsoft Excel 2002, and Microsoft Office Excel 2003, text files that contain more than 65,536 rows cannot be opened in their entirety.
+   Versions of Excel earlier than Excel 97 have a limit of 16,384 rows. 
+   Versions of Excel later than Excel 2003 have a limit of 1,048,576 rows."
+
+ * Memory limitations, in the case of XLS (Microsoft Excel) format
+   
+   Due to a library limitation, saving to Microsoft Excel requires that the whole spreadsheet document data structure is constructed in memory before serializing it. Therefore, you must consider memory resources when you increase the row limit. 
+   
+   Note: Saving to CSV format does not suffer from this scalability consideration. The spreadsheet data structure is serialized in chunks.
+
+
+RESOLVING THE PROBLEM
+Do the following steps: 
+
+ 
+1. In the command shell, go to installation_directory\ASBServer\bin directory,
+where installation_directory is the directory where InfoSphere Information Server was installed.
+
+
+
+Operating system Installation directory Microsoft Windows C:\IBM\InformationServer UNIX /opt/IBM/InformationServer 
+2. Run the command to allocate max_rows, where max_rows is the maximum number of rows to save. 
+
+
+Operating system Search results to display Microsoft Windows iisAdmin.bat -set -key com.ibm.iis.gov.vr.setting.maxRowsInSearchResultSheet -value max_rows UNIX iisAdmin.sh -set -key com.ibm.iis.gov.vr.setting.maxRowsInSearchResultSheet -value max_rows 
+It is not necessary to restart WebSphere Application Server. InfoSphere Information Governance Catalog picks up the new value automatically, typically within a minute. 
+
+
+Note: 
+Saving to XLS is limited to 65,535 rows, even if max_rows was set higher. To view more results in Microsoft Excel 2003 or later, save to a CSV file, and then open the CSV file with Excel. RELATED INFORMATION
+ How to View All Query Result Instances [http://www-01.ibm.com/support/docview.wss?uid=swg21676451]
+Text files that are larger than 65536 rows... [http://support.microsoft.com/kb/120596]

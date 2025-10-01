@@ -1,0 +1,37 @@
+Title: IBM TIP upgrade is failing with error  INSTCONFFAILED - United States
+
+Text:
+TIPL2INST; upgrade; install fails ; eWAS files already exist; INSTCONFFAILED TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ An attempt to upgrade the Tivoli Integrated Portal is failing with errors that the WebSphereUpdateInstallerV7 directory already exists. 
+
+SYMPTOM
+Installation gets aborted.
+
+
+CAUSE
+The necessary files are already present, possibly from a previous failed install attempt.
+
+DIAGNOSING THE PROBLEM
+Check for such errors listed below in the corresponding Websphere Update Installer logs, which can be found under: 
+
+
+<USER HOME>/updilogs 
+
+2012.11.29 10:08:36.612 MST I Installation Wizard for the Update 
+Installer 7.0.0.19 
+2012.11.29 10:08:36.629 MST I Deleting file: Source: 
+/tmp/.aix_ISMP_lock____ 
+2012.11.29 10:08:37.028 MST I 
+
+ The file:///opt/IBM/tivoli/tipv2/WebSphereUpdateInstallerV7/ already exists 
+and contains the files to be installed. The installation will not continue. 
+2012.11.29 10:08:37.032 MST I CWUPI0000I: EXITCODE=1 
+2012.11.29 10:08:37.033 MST I INSTCONFFAILED 
+
+
+RESOLVING THE PROBLEM
+Delete the directory /opt/IBM/tivoli/tipv2/WebSphereUpdateInstallerV7/ 
+
+Then run the installation again.

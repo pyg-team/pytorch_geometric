@@ -1,0 +1,33 @@
+Title: IBM The Connectivity Diagram in the GUI may Incorrectly Report the Ethernet Connection as Down - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ For a degraded connection between a file module and Storwize V7000, the connectivity diagram in the GUI of IBM Storwize V7000 Unified shows the connection as down. Use an alternate method to check the correct connection status. 
+
+SYMPTOM
+IBM Storwize V7000 Unified GUI reports the health status as shown below: 
+
+"Ethernet connection between mgmt001st001 and Storwize V7000 is down"
+[/support/docview.wss?uid=ssg1S1003987&aid=1] [/support/docview.wss?uid=ssg1S1003987&aid=1]
+
+
+
+DIAGNOSING THE PROBLEM
+In order to determine the correct Ethernet connection status, check the health status of "mgmt0" bond. See the Event Log in the GUI ("Monitoring->Events"). Messages relating to the health status of mgmt0 bond will be displayed. This clearly shows the degraded or down state for the connection. 
+
+
+[/support/docview.wss?uid=ssg1S1003987&aid=2] [/support/docview.wss?uid=ssg1S1003987&aid=2]
+
+Note: This will not affect the data access from the clients.
+
+
+
+RESOLVING THE PROBLEM
+If the diagnosis of this problem shows that Ethernet connection to Storwize V7000 is degraded, you will still be able to perform administrative tasks to the Storwize V7000. 
+
+
+Take corrective actions to restore the connection between the file module (e.g. mgmt001st001) and V7000.
+
+This issue will be addressed in a future release of the IBM Storwize V7000 Unified software.

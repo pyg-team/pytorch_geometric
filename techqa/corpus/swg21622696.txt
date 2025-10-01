@@ -1,0 +1,63 @@
+Title: IBM QRadar: Testing Rsyslog - United States
+
+Text:
+syslog; rsyslog; command line; linux TECHNOTE (FAQ)
+
+QUESTION
+ Does QRadar SIEM work with Rsyslog and how do you test it? 
+
+CAUSE
+QRadar works with any listed protocols to accept events including syslog. 
+Rsyslog is no different than other syslog daemons, but will require a destination.
+
+
+ANSWER
+In the example below, UDP is used for transmitting the message. The destination port is set to the default of 514. Rsyslog is also capable of using much more secure and reliable TCP sessions for message forwarding. 
+
+
+authpriv.* @someplace
+
+
+Also, the destination port can be specified. To select TCP, simply add one additional @ in front of the host name (that is, @host is UDP, @@host is TCP).
+
+To ensure that you are sending to port 514 or other port use the syntax.
+authpriv.* @someplace:514
+
+
+The logger command is a shell script to Rsyslog. You can use it to send commands using Host, TCP, UDP or Port options. 
+Logger options.
+-d, --udp use UDP (TCP is default)
+-n, --server write to this remote syslog server where the remote server will be the Console or Managed host receiving events.
+-P, --port number use this UDP port
+
+To test if Rsyslog is sending to events you can use the logger command.
+To send a message using rsyslog use this command to the QRadar appliance receiving the logs.
+
+logger -n host_ip -P port Test_message
+Example logger -n 192.168.0.77 -P 514 Test
+
+From the QRadar Appliance receiving the events use the tcpdump command
+
+tcpdump -nnAs0 -i interface port 514 | grep Test 
+In QRadar 7.3.x the interface will start with en and with QRadar 7.2.x it will start with eth
+
+[root@QRadar1601 ~]# tcpdump -nnAs0 -i eth0 port 514 | grep test
+tcpdump: verbose output suppressed, use -v or -vv for full protocol decode
+
+listening on eth0, link-type EN10MB (Ethernet), capture size 65535 bytes
+E..:..@.@......Z...M.+...&.p<5>Aug 10 14:56:55 root: Test.
+
+Note: you need to have logger version 2.2.21 or greater installed to use either the -n or -P option.
+To determine what version is installed on your system type logger -V
+
+For more information refer the Rsyslog page:
+
+Rsyslog Examples [http://www.rsyslog.com/doc/rsyslog_conf_examples.html] 
+
+
+Where do you find more information? 
+
+
+
+
+[/support/docview.wss?uid=swg21622696&aid=1] [http://ibm.biz/QRadar-KC] [/support/docview.wss?uid=swg21622696&aid=2] [https://ibm.biz/qradarforums] [/support/docview.wss?uid=swg21622696&aid=3] [http://ibm.biz/qradarknowledge] [/support/docview.wss?uid=swg21622696&aid=4] [http://ibm.biz/SecSuptUTube] [/support/docview.wss?uid=swg21622696&aid=5] [http://ibm.biz/qradarsoftware] [/support/docview.wss?uid=swg21622696&aid=6] [http://ibm.biz/MyNotification] [/support/docview.wss?uid=swg21622696&aid=7] [http://ibm.biz/SuptRegQuikStart]

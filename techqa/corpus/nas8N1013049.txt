@@ -1,0 +1,37 @@
+Title: IBM Use of Java Preferences - United States
+
+Text:
+Java; JDK; JVA; TOOLKIT TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This document provides information on checking for system preferences in Java. 
+
+RESOLVING THE PROBLEM
+You must have a system preferences directory for Java when using java.util.prefs.FileSystemPreferences. 
+
+The errors you may see in the systemout.log (these are from a WebSphere Application Server 6.1 application server) are as follows:
+
+Could not lock System prefs. Unix error code -266024368
+
+[3/26/09 14:11:31:508 CDT] 00000016 prefs W Could not create system preferences directory. System preferences are unusable.
+[3/26/09 14:11:33:546 CDT] 00000016 prefs W Could not lock System prefs. Unix error code 2.
+[3/26/09 14:11:33:572 CDT] 0000001a SystemOut O Mar 26 2009 14:11:33--[server.startup : 2] INFO [root] - java.util.prefs.BackingStoreException: Couldn't get file lock.
+[3/26/09 14:11:33:578 CDT] 0000001a SystemOut O at java.util.prefs.FileSystemPreferences.removeNode(FileSystemPreferences.java:694)
+
+You will need to set the following JVM property; such as:
+
+-Djava.util.prefs.systemRoot=/examplepath/directory1
+
+In this case, you will first have to create a directory in /examplepath/directory1 called .systemPrefs and give the appropriate user (for Websphere Application Server, it is QEJBSVR or whatever user profile your application server is using) *RWX authority to each directory in the path, including .systemPrefs.
+
+The following link is worth mentioning. 
+https://docs.oracle.com/javase/7/docs/api/java/util/prefs/Preferences.html [https://docs.oracle.com/javase/7/docs/api/java/util/prefs/Preferences.html]
+
+The check for systemPreferences (different from user preferences) on the IBM i should look like this: 
+
+1. If you set the property java.util.prefs.systemRoot=/MyPath, this directory, plus a subdirectory of .systemPrefs, must already exist (/MyPath/.systemPrefs must exist). If it does not exist, it jumps to Step 3. (Note: It will not create a .systemPrefs directory here). 2. If you did not set the property, /etc/.java/.systemPrefs must exist or it jumps to Step 3 (again, note that it will not create a .systemPrefs directory here). 3. Assumes the directory for java.home exists and checks for .systemPrefs in the java.home, and will create .systemPrefs in java.home if it was not already there. If it creates the directory, it should log a message that it created. If it attempts to create but fails, it should log a message that says it failed. 4. Final step performed is to check that the .systemPrefs directory has write authority to it. If it does, it makes sure a file named .systemRootModFile is created into the .systemPrefs directory. If write authority does not exist, or if the .systemRootModFile already exists, no action is taken.  
+
+
+Cross reference information Segment Product Component Platform Version Edition Operating System IBM i 6.1 
+HISTORICAL NUMBER
+ 519618524

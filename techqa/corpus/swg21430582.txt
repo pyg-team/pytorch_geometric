@@ -1,0 +1,50 @@
+Title: IBM Memory issues while using Decision Center and Rule Team Server - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Performing actions (such as generating rulesets) on WODM Decision Center or Rule Team Server can be slow and consume a lot of memory, sometimes leading to OutOfMemoryExceptions. How can the memory used be reduced and performance improved? 
+
+RESOLVING THE PROBLEM
+ 
+
+This document addresses memory issues when working with WebSphere Operational Decision Management Decision Center or Rule Team Server (RTS). For detailed recommendations on improving overall performance, refer to the document Improve Performance of Decision Center and RTS [http://www.ibm.com/support/docview.wss?uid=swg21584855]. For the purposes of this document, we will use RTS to refer to both entities, unless explicitly stated otherwise. 
+
+Make sure you provide adequate heap size to RTS. It is normal to set a maximum heap size of 1024MB (using the JVM argument -Xmx). For large projects this value can be higher. Also make sure you have set the initial heap size to a reasonable amount (such as 512MB), using the JVM argument -Xms. 
+
+ 
+
+In addition, please use the following recommendations to reduce memory consumption: 
+
+ * Disable the flag to check the ruleset archive. In the RTS console, uncheck Project > Edit project options > Check the ruleset archive. By default, the ruleset archive is checked for syntax errors. You should turn this off only in testing environments to improve performance. If deploying to a production environment it is recommended that the ruleset check is activated. 
+ * Disable Rule analysis checks. In the RTS console, uncheck Project > Edit Project options > Enable rule analysis. 
+ * Accelerate ruleset generation by turning on Automatic Build. In the RTS console, check Project > Edit Project options > Build automatically. This will enable RTS to generate the IRL as soon as a rule is saved. If this is turned off, the first time a ruleset is generated, RTS will generate the IRL of the entire ruleset, which can be a performance bottleneck. 
+ * If working with JRules 7.1 or earlier, configure RTS to store temporary data to a file rather than in memory by setting the custom parameter teamserver.build.archive.storage to the value file. The default value of this parameter is memory. If the value is set to file, the rule artifacts built when a ruleset is generated are stored in a cache in the file system of the application server machine. In RTS 6.x, navigate to the Admin tab in the RTS console to add the custom parameter. In RTS 7.x, in the RTS console, navigate to Config > Install Manager > Step 5: Set Configuration Parameters to add the custom parameter. Note that while this will reduce the memory used, the performance could deteriorate since data is written to and read from the file system. 
+ * In ODM (v7.5 and later), the IRL cache is always file based, and its location is set by one of the Decision Center configuration parameters, defined in jrules-teamserver-<appserver>.ear/teamserver.war/WEB-INF/lib/teamserver-model-XXX.jar/ilog/rules/teamserver/preferences.properties:
+   
+   # Path where the files generated during the build should be.
+   # The path is determined in the following order
+   # - use of the following property
+   # - use of the system property denoted by 'java.io.tmpdir' plus 'rtscache_<username>' (Ex: <temp dir>/rtscache_<username>)
+   # - <server home>/rtscache_<username>
+   # where username is given by the system property denoted by 'user.name'
+   build.path = 
+   
+   By default, it will be the temp directory of your OS.
+
+
+ * If you have a large project, we recommend you break the project down into multiple projects which are dependent on one another. This will reduce the size of the project currently being edited via the RTS console, and hence reduce the amount of resources required. 
+ * If you see performance problems during synchronization between Rule Studio and RTS, please refer to the guidelines in Improve Performance of Synchronization between Rule Studio and Rule Team Server [http://www-01.ibm.com/support/docview.wss?uid=swg21425548] .
+
+
+ 
+
+RELATED INFORMATION
+#Improve Performance of RTS and Decision Center [http://www.ibm.com/support/docview.wss?uid=swg21584855]
+
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Operational Decision Manager Platform Independent 7.5 Enterprise Business Integration IBM Operational Decision Manager Platform Independent 8.0

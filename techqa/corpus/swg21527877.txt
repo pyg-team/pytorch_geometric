@@ -1,0 +1,36 @@
+Title: IBM Where can I find the layout for the statistics records? (7.0.4345920.2270480) - United States
+
+Text:
+STERLINGPRI TECHNOTE (FAQ)
+
+QUESTION
+ Where can I find the layout for the statistics records? (7.0.4345920.2270480) 
+
+ANSWER
+The names of the statistics records DSECTs are in the:
+
+Connect Direct Event Services Support User's Guide (Connect:Direct for OS/390)
+
+Locate the desired DSECT in the Connect:Direct <hlq>.SAMPLIB and assemble it. For example, member DMCTR is the Copy Termination record.
+
+ 
+
+HISTORICAL NUMBER
+ PRI1215 
+
+PRODUCT ALIAS/SYNONYM
+ 
+
+Fact
+
+
+Connect:Direct OS/390, All Releases 
+7.0.227761.2073098 
+
+7.0.4345920.2270480
+
+
+Goal
+
+
+FAQ: Where can I find the layout for the statistics records?

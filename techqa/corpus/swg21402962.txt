@@ -1,0 +1,76 @@
+Title: IBM Images printed from the FileNet Workplace Viewer (Daeja Viewer) do not fit on the paper when printed - United States
+
+Text:
+WcmJavaViewer.jsp; Workplace Viewer; java viewer; P8 WorkplaceXT; P8 Workplace; Daeja Viewer TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Users are not able to print images from the FileNet Workplace Viewer (Daeja Viewer) and have them fit the printed page. 
+
+SYMPTOM
+When users print images from the Daeja Viewer, some do not fit to the page and a portion of the image is missing. 
+
+
+CAUSE
+ 
+
+The out-of-the-box Daeja ViewONE provided with IBM FileNet P8 Workplace and IBM FileNet P8 WorkplaceXT does not support the ability to scale printouts to fit the printed page.
+
+If this functionality is needed, the following products are required and can be purchased from the 3rd party vendor:
+
+
+
+ * ViewONE Pro
+   
+ * Print Accelerator Module for ViewONE Pro (Windows only)
+
+
+Contact Daeja Image Systems (www.daeja.com) for information on the above products and their purchase. 
+RESOLVING THE PROBLEM
+ 
+
+Instructions for using ViewONE Pro and the Print Accelerator Module:
+
+
+
+ 1. Install the following on the Application Server where Workplace and WorkplaceXT are deployed per the manufacturer's documentation.
+    
+     * ViewONE Pro
+       Installed in place of the default Daeja viewer provided in Workplace and WorkplaceXT.
+       
+       
+     * Print Accelerator Module for ViewONE
+       Provides enhanced print functionality.
+       
+       
+    
+    
+ 2. Stop the Application Server hosting Workplace.
+    
+    
+ 3. Edit the WCMJavaViewer.jsp file (.../Workplace/UI-INFjsp/ui).
+    
+    Add the "<PARAM NAME=“printOriginalSizeOverride” value=“false”>" HTML parameter in the following section of the file:
+    
+    <%-- Note: The following list provides configuration parameters for the Image Viewer.
+    Many of these parameters are necessary for P8 to function normally.
+    Please do not modify any of the FileNet parameters. I've added comments to point out these parameters. --%>
+    
+    The HTML parameter shown above should be placed in the WCMJavaViewer.jsp after the "note" above. There are other "PARAM NAME..." entries in this section of the file so it should be clear where to put it. After modifying the .jsp file, save the changes to the file.
+    
+    
+ 4. Start the Application Server.
+    
+    
+    
+
+Note: Depending on the type of Application Server being used you may need to recreate the app_engine.war or app_engine.ear file, then redeploy the IBM FileNet P8 Workplace or IBM FileNet P8 WorkplaceXT application. 
+
+
+
+Explanation of PrintOriginalSizeOverride parameter: 
+
+Parameter value set to “true”: 
+All printouts sent to the printer will be printed using the print original size functionality. 
+
+Parameter value set to “false”: 
+All printouts will be scaled to fit the printed page.

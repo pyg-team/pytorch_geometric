@@ -1,0 +1,139 @@
+Title: IBM Collecting data for IBM Content Analytics with Enterprise Search - United States
+
+Text:
+MustGatherDocument; ICAwES; IBM Content Analytics with Enterprise Search TECHNOTE (FAQ)
+
+QUESTION
+ This technote provides a description of the background information that IBM Software Support needs for analyzing IBM Content Analytics with Enteprise Search issues. Collecting this information (also known as MustGather data) before you call IBM Software Support helps in problem determination and can save time when resolving Problem Management Records (PMRs). 
+
+
+ANSWER
+Collecting MustGather data early, even before you open a PMR, helps IBM Software Support quickly determine the root cause of the problem. With this information, IBM Software Support can determine if: 
+This is a known problem (rediscovery). 
+This is a new problem and a fix is required.
+
+Collecting general information
+To help IBM Software Support find a solution, collect information about the problem and your system environment.
+
+Problem Description
+Answer the following questions so that IBM Software Support can understand your situation clearly.
+In your detailed problem description: 
+
+ * When you see messages, what messages do you see and where do they occur? 
+ * Is the problem reproducible? If it is reproducible, describe the detailed steps that must be followed to reproduce the problem. 
+ * When did you start seeing this problem? (what date, what time and time zone) 
+ * How frequently does the problem occur? 
+ * What type of system is the product running on (such as production, development, test or QA, staging, and so on)? 
+ * Were there any recent changes to the system? 
+ * Are there any other products or software running on the same computer besides OmniFind Enterprise Edition and its prerequisite products? 
+ * How does the problem impact your business?
+
+
+Environment 
+Provide the following system details so that IBM Software Support can understand your operating environment clearly. Please note that some of the following information may be provided as needed depending on the problem (example crawler types).  * Operating system type and version, including patches and service pack levels. 
+ * IBM Content Analytics with Enterprise Search version, fix pack level, and any applied hot fixes. 
+ * Was ICA installed with WebSphere Application Server or with just the Jetty option 
+ * WebSphere Application server version (if the ICAwES was deployed on WAS) 
+ * Number of nodes 
+ * Is this a single server installation or a distributed installation? 
+ * Are there any additional search or document processing nodes? 
+ * Is there an High Availability backup server?
+
+
+Note: This also applies when you use ICAwES and deploy the search application on WebSphere Application Server.  * Is global security enabled? 
+ * If it is enabled, what is the user repository (such as Active Directory, Domino LDAP, and so on)? 
+ * Is single sign-on (SSO) authentication used? 
+ * Was global security enabled for the Jetty Application Server as well? Are they connected to the same LDAP Server? 
+ * Is the collection a secure collection? 
+ * Are the data source, the Jetty Application Server and the WebSphere Application Server (if used) all connected to the same LDAP server? 
+ * Repository type, version and operating system 
+ * JVM types and versions
+
+
+
+Architecture :  * Data sources in your collections, including the repository or data source type, version, and operating system. 
+ * JVM types and versions. If you replaced the JVM under ES_INSTALL_ROOT/_jvm, provide the output from the ES_INSTALL_ROOT/_jvm/bin/java -version command. 
+ * If you use the Content Edition connector, list the Content Edition version and hot fixes that you applied. 
+ * The number of collections in your enterprise search system. 
+ * The collection ID of the collection where the problem occurred. 
+ * Collection type (search or analytics) 
+ * Is there backup being done using esbackup? 
+ * Crawler type and ID
+
+
+To confirm the system requirements and supported data sources and so on, refer to following information: 
+ * 
+ * 
+ * http://www-01.ibm.com/support/docview.wss?uid=swg27023676
+
+
+To confirm the supported data sources  * 
+ * 
+ * 
+ * http://www-01.ibm.com/support/docview.wss?uid=swg27023680
+
+
+Required logs and files 
+Collect the following data before you contact IBM Software Support. If your issue is a "question and answer" type of problem, you can skip this section. 
+
+For ICA 2.1, ICA 2.2 or ICAwES 3.0: 
+Run the esservice utility with the "-nocore -noheapdump" options. If you have a multiple server configuration, run the esservice utility on each server and gather the output files. 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+
+
+The command creates an output file named service_component_yyyyMMdd_HHmmssz.zip. 
+
+See the following documentation for information about running the esservice command: 
+ * 
+ * 
+ * http://pic.dhe.ibm.com/infocenter/analytic/v2r1m0/index.jsp?topic=/com.ibm.discovery.es.ad.doc/iiysmtresservice.htm
+ * 
+ * 
+ * 
+ * 
+ * http://pic.dhe.ibm.com/infocenter/analytic/v2r2m0/index.jsp?topic=/com.ibm.discovery.es.ad.doc/iiysmtresservice.htm
+ * 
+ * 
+ * 
+ * 
+ * http://pic.dhe.ibm.com/infocenter/analytic/v3r0m0/index.jsp?topic=/com.ibm.discovery.es.ad.doc/iiysmtresservice.htm
+ * 
+
+
+If you have WebSphere Portal Integration: 
+
+http://www-01.ibm.com/support/docview.wss?uid=swg27023985 [http://www-01.ibm.com/support/docview.wss?uid=swg27023985] 
+
+What is the Portal Version? 
+
+If needed request SystemOut.log and SystemErr.log. Here is the link for detailed logging for Portal 6.0 and 6.1. 
+http://www-01.ibm.com/support/docview.wss?uid=swg21392513 [http://www-01.ibm.com/support/docview.wss?uid=swg21392513] 
+
+The instructions for WPS V6.1 is also applicable for V7 and V8, and it's also applicable for ICA V3.0's search portlet. 
+
+Instructions for enabling detailed tracing for WPS V6.1, V7.0, V8.0 
+ 1. Log in to the WebSphere Application Server administrative console on the WebSphere Portal server. 
+ 2. Open the Troubleshooting panel in the left pane, then click Logs and Trace. 
+ 3. Click the WebSphere_Portal server, click Change Log Detail Levels, and then click the Runtime tab. 
+ 4. Add the following description to a text area to define the logging level: com.ibm.es.*=finest
+
+
+Tip: You can specify another trace level, such as finer, to have less information in the output from the trace. If you already opened a problem report, follow the instructions from IBM Software Support. 
+
+Disabling detailed logging on the WebSphere Portal server Version 6.1 (or V7, V8)  1. Log in to the WebSphere Application Server administrative console on the WebSphere Portal server. 
+ 2. Open the Troubleshooting panel in the left pane, then click Logs and Trace. 
+ 3. In the right pane, click Change Log Detail Levels, then click the Runtime tab. 
+ 4. Remove the defined logging level entry (com.ibm.es.*) from the text area.
+
+
+
+Sending files to IBM Software Support 
+Use this Web site to send secure or unsecured files to IBM Software Support: 
+http://www.ecurep.ibm.com/app/upload [http://www.ecurep.ibm.com/app/upload]

@@ -1,0 +1,61 @@
+Title: IBM WebSphere SDK Java Technology Edition Version 7.0.4.0 fixpack fails to install onto WAS Version 8.5.0.2 with the error "Installation Manager cannot find any updates to install..." - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The IBM WebSphere SDK Java Technology Edition Version 7.0.4.0 fixpack fails to install onto WAS Version 8.5.0.2 with an error indicating "Installation Manager cannot find any updates to install...". 
+
+SYMPTOM
+You installed WebSphere Application Server Version 8.5.0.0 onto a Windows machine (or any distributed operating system platform). You used the Installation Manager GUI to install the WebSphere Application Server Version 8.5.0.2 fixpack. You are now trying to install the IBM WebSphere SDK Java Technology Edition Version 7.0.4.0 fixpack using a local repository. The IBM WebSphere SDK Java Technology Edition Version 7.0.4.0 fixpack was down loaded from the same web page that contained the WebSphere Application Server Version 8.5.0.2 fixpack down load. 
+
+The part names for the IBM WebSphere SDK Java Technology Version 7.0.4.0 fixpack you down loaded were:
+
+7.0.4.0-WS-IBMWASJAVA-part1.zip
+7.0.4.0-WS-IBMWASJAVA-part2.zip
+
+You down load and unzip the two .zip files into the same folder on your local machine per the installation instructions for a local repository. You added the fixpack local repository file (repository.xml) to the Installation Manager (File -> Preferences -> Repositories -> Add Repositories) correctly.
+
+You then use the Installation Manager GUI to install the optional SDK Version 7.0.4.0 fixpack package but receive an error indicating "Installation Manager cannot find any updates to install...".
+
+
+
+[/support/docview.wss?uid=swg21651637&aid=1] [/support/docview.wss?uid=swg21651637&aid=1]
+
+To obtain additional information about the error you can use the Installation Manager command line (imcl.exe) install option to get a more descriptive error message:
+
+C:\IBM\Installation Manager\eclipse\tools> imcl.exe install com.ibm.websphere.IBMJAVA.v70_7.0.4000.20130319_1844 -repositories C:\temp\SDKfixpack -installationDirectory C:\WebSphere85\AppServer\java
+
+ERROR: The installation package 'IBM WebSphere SDK Java Technology Edition (Optional)' requires components supplied by other packages.The required components might be supplied by the following installation packages:
+
+Package: WebSphere Application Server Version 8.5
+Package: Application Client for IBM WebSphere Application Server Version 8.5
+Package: DMZ Secure Proxy Server for IBM WebSphere Application Server Version 8.5
+
+
+CAUSE
+This error occurs because you are trying to install the IBM WebSphere SDK Java Technology Edition Version 7.0.4.0 fixpack when the IBM WebSphere SDK Java Technology Edition Version 7.0 product is not already installed.
+IBM WebSphere SDK Java Technology Edition Version 6.0 is installed by default with WebSphere Application Server Version 8.5. Optionally, you can install IBM WebSphere SDK Java Technology Edition Version 7.0 as well using the Installation Manager GUI.
+
+
+RESOLVING THE PROBLEM
+To resolve the error and install the optional IBM WebSphere SDK Java Technology Edition Version 7.0.4.0 fixpack, the IBM WebSphere SDK Java Technology Edition Version 7.0 product must first be installed before the fixpack can be installed. You can use the same Installation Manager GUI to install the product: 
+
+
+The downloadable parts for the IBM WebSphere SDK Java Technology Edition Version 7.0 product are:
+
+- IBM WebSphere SDK Java (TM) Technology Edition V7.0 (1 of 3) (for WebSphere Application Server V8.5) Multiplatform Multilingual (CI717ML)(Filename: WS_SDK_JAVA_TEV7.0_1OF3_WAS_8.5.zip)
+
+- IBM WebSphere SDK Java (TM) Technology Edition V7.0 (2 of 3) (for WebSphere Application Server V8.5) Multiplatform Multilingual (CI718ML) (Filename: WS_SDK_JAVA_TEV7.0_2OF3_WAS_8.5.zip)
+
+- IBM WebSphere SDK Java (TM) Technology Edition V7.0 (3 of 3) (for WebSphere Application Server V8.5) Multiplatform Multilingual (CI719ML) (Filename: WS_SDK_JAVA_TEV7.0_3OF3_WAS_8.5.zip)
+
+More information about installing the optional IBM WebSphere SDK Java Technology Edition Version 7.0 product and fixpack can be found in the following WebSphere Application Server Version 8.5 InfoCenter sections:
+
+Installing IBM WebSphere SDK Java Technology Edition Version 7.0 using the GUI [http://pic.dhe.ibm.com/infocenter/wasinfo/v8r5/topic/com.ibm.websphere.installation.nd.doc/ae/tins_installation_jdk7_gui.html]
+Installing fix packs on IBM WebSphere SDK Java Technology Edition Version 7.0 using the GUI [http://pic.dhe.ibm.com/infocenter/wasinfo/v8r5/topic/com.ibm.websphere.installation.nd.doc/ae/tins_upgrade_jdk7.html]
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ WAS SDK

@@ -1,0 +1,24 @@
+Title: IBM Documentation for IBM Content Manager Enterprise Edition system move and upgrading IBM Content Manager Enterprise Edition from V8.4.x to V8.5.x - United States
+
+Text:
+ WHITE PAPER
+
+ABSTRACT
+ Two documents are available: "Documentation for IBM Content Manager Enterprise Edition System Move"(Content Manager Enterprise Edition system move document), and "Upgrading IBM Content Manager Enterprise Edition V8.4.x to V8.5.x"(Upgrading Content Manager Enterprise Edition V8.4.x to V8.5.x doc). 
+
+The Content Manager Enterprise Edition system move document describes the process of moving Content Manager Enterprise Edition Version 8.4.3 from one machine to another, and provides the Content Manager Enterprise Edition V8.5 upgrade steps on the new machine. Two move samples are provided in the documentation for reference. 
+
+The Upgrading Content Manager Enterprise Edition V8.4.x to V8.5.x document describes a process for upgrading Content Manager Enterprise Edition from Version 8.4.x (Including 8.4.0.x, 8.4.1.x, 8.4.2.x, and 8.4.3.x) to Version 8.5.x (Including 8.5.0 and later Fix Pack). The upgrade process is named Content Manager Enterprise Edition V8.5 Extended Upgrade. This procedure does not require that you upgrade Content Manager Enterprise Edition to V8.4.3 before you upgrade it to V8.5.x. Two upgrade samples are provided in the documentation for reference. 
+
+CONTENT
+See the attached file for instructions and samples.
+
+Documentation for IBM Content Manager Enterprise Edition System Move.pdf [/support/docview.wss?uid=swg27040477&aid=2]Documentation for IBM Content Manager Enterprise Edition System Move.pdf [/support/docview.wss?uid=swg27040477&aid=1]
+
+
+
+
+Upgrading IBM Content Manager Enterprise Edition V8.4.x to V8.5.x.pdf [/support/docview.wss?uid=swg27040477&aid=4]Upgrading IBM Content Manager Enterprise Edition V8.4.x to V8.5.x.pdf [/support/docview.wss?uid=swg27040477&aid=3]
+
+
+Cross reference information Segment Product Component Platform Version Edition Enterprise Content Management Content Manager Enterprise Edition AIX, Linux, Solaris, Windows 8.5, 8.4.3.3, 8.4.3.2, 8.4.3.1, 8.4.3 Enterprise

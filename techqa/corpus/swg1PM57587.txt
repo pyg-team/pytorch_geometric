@@ -1,0 +1,134 @@
+Title: IBM PM57587: WMQ V7.0.1/WMQ JMS V7 APP GETS RC2033 EVEN THOUGH MSGS ON QUEUE. - United States
+
+Text:
+z/os SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DUPLICATE OF ANOTHER APAR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The customer reported that their WMQ v7.0.1/JMS v7 application
+   is getting RC2033 MQRC_NO_MSG_AVAILABLE even though there are
+   messages on the queue.  The change team made the following
+   observations:
+   .
+   From analysis of the customer's trace, I can see that the JMS
+   application is trying to get the response message is setting a
+   message selector of:
+   .
+   TransactionNumber=-5807737851880115730 AND
+   TransactionStepNumber=0
+   .
+   For MQ V7.0.1 with the V7 JMS client, message selectors are
+   processed on the queue manager.  In this case, the response
+   message is being put to the queue, and it contains the correct
+   property values to match the selector, but the queue manager's
+   selection matching routine fails to identify that the message
+   properties and the selector are a match. This results in the
+   message being ignored by the getter.
+   .
+   When the MQ JMS V7 application is run to get the message, it
+   returns without having found it. This occurs on local queues as
+   well as the shared queues used by the customer.
+   .
+   If I run the same application with PROVIDERVERSION set to 6, the
+   message is successfully retrieved by the MQ JMS code. This is
+   because the messaging provider migration mode of operation does
+   not use the qmgr-side selection, and the selector is resolved by
+   the JMS client (as it was for the MQ JMS V6 client).  If the
+   customer is able to use this mode of operation, it would provide
+   relief from the problem while they await to install the APAR
+   fix.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Run the MQ JMS V7 application with PROVIDERVERSION set to 6.
+   Messages will then be successfully retrieved by the MQ JMS code.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *  This APAR is closed as a duplicate of PM55536 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM55536].
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM57587
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ Z/OS V7
+   
+   
+ * REPORTED COMPONENT ID
+   5655R3600
+   
+   
+ * REPORTED RELEASE
+   010
+   
+   
+ * STATUS
+   CLOSED DUA
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-02-07
+   
+   
+ * CLOSED DATE
+   2012-02-22
+   
+   
+ * LAST MODIFIED DATE
+   2012-02-22
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

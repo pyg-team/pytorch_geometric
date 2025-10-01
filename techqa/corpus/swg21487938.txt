@@ -1,0 +1,64 @@
+Title: IBM "This application has failed to start, because the application configuration is incorrect" or "Application failed to initialize properly"  message after install of IBM SPSS Statistics 19.0. - United States
+
+Text:
+side by side error TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ I installed IBM SPSS Statistics 19 on Windows OS. When I start IBM SPSS Statistics 19, I receive the following message: 
+
+'This application has failed to start, because the application configuration is incorrect. Reinstall of the application may fix this problem.'
+
+Alternatively, when I installed IBM SPSS Statistics 19 or above on a Windows 2003 server and start Statistics 19 or above, I receive the following message:
+
+"Application failed to initialize properly"
+
+What could cause these problems and how can I resolve them? 
+
+RESOLVING THE PROBLEM
+If you encounter this message after installing SPSS Statistics 19.0 silently, please refer to technote 1475390 [http://www.ibm.com/support/docview.wss?uid=swg21475390] for steps on how to work around this issue silently by creating batch files. 
+
+A frequent cause of this behavior is the failure of at least one of the Microsoft Visual C++ redistributables ('Vcredist_x86.exe') to be properly installed. To correct this problem requires the installation of the redistributable that failed to install properly during the initial installation of the product. The relevant redistributables are in two different folders ('VC8' and 'VC9') within the Statistics installation directory (see the default installation folder information below). 
+
+*If this problem occurs in Statistics 20, proceed to step 6 to reinstall the redistributables in the VC9 folder. The VC8 folder does not exist in Statistics 20. 
+
+1) Open Windows Explorer.
+2) Browse to the product installation directory appropriate to the bit-version of the operating system.
+3) Open the 'VC8' folder.
+4) Locate the 'Vcredist_x86.exe' program.
+5) Launch the 'Vcredist_x86.exe' program.
+
+
+IF you receive a prompt to uninstall or repair the redistributable, THEN select the 'Cancel' option and proceed to 6.
+IF the application begins the installation process, THEN proceed with the installation and proceed to 9. 
+
+6) Open the 'VC9' folder.
+7) Locate the 'Vcredist_x86.exe' program.
+8) Launch the 'Vcredist_x86.exe' program.
+
+
+9) Test the Statistics program. 
+
+IF the behavior persists, please contact IBM SPSS Technical Support. 
+
+Default Installation Folders 
+
+For 32-bit machine:
+
+C:\Program Files\IBM\SPSS\Statistics\19\VC8\Vcredist_x86.exe 
+C:\Program Files\IBM\SPSS\Statistics\19\VC9\Vcredist_x86.exe 
+
+For 64-bit machine:
+
+C:\Program Files\IBM\SPSS\Statistics\19\VC8\Vcredist_x64.exe 
+C:\Program Files\IBM\SPSS\Statistics\19\VC9\Vcredist_x64.exe 
+
+IBM SPSS would like to apologise for the inconvenience caused.
+
+RELATED INFORMATION
+ Need more help? Our Statistics forum is Live! [https://developer.ibm.com/answers/topics/statistics.html?smartspace=predictive-analytics]
+
+
+ 
+
+HISTORICAL NUMBER
+ 91596

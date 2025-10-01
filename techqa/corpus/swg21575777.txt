@@ -1,0 +1,101 @@
+Title: IBM DB2 Version 9.1, End of Support April 30, 2012 - United States
+
+Text:
+EOS; End of Support FLASH for DB2 V9.1 FLASH (ALERT)
+
+ABSTRACT
+ This document contains information regarding the end of support (EOS) date for DB2® Version 9.1 for Linux®, UNIX®, and Windows® products. End of support for DB2 V9.1 products is April 30, 2012 
+
+CONTENT
+
+
+TAB NAVIGATION
+ *  DB2 Version 9.1 [http://www.ibm.com/support/docview.wss?uid=swg21575777] - selected tab,
+ *  DB2 Version 8 [http://www.ibm.com/support/docview.wss?uid=swg21370360]
+
+TAB NAVIGATION
+ * What are the end of support dates for DB2 V9.1 ?
+ * Where are the DB2 product end of support dates listed?
+ * How do I purchase a Support Extension?
+ * Is there information to help me upgrade?
+ * What DB2 V9.1 servers are affected?
+ * When the server product goes out of support, does the client also go out of support?
+ * How do I know if my DB2 Universal JDBC driver is supported?
+ * What if I have a special build or an older fix pack on DB2 V9.1? Am I still supported?
+ * I am using DB2 V9.1 as part of a bundle, am I still supported?
+ * Is the documentation for Version 9.1 still available?
+ * How do I obtain DB2 V9.1 if I still need it?
+
+Upgrade Today! Learn about the benefits of upgrading to DB2 10 for Linux, UNIX, and Windows. [/support/docview.wss?uid=swg21575777&aid=1] [/support/docview.wss?uid=swg21575777&aid=1]  Learn why you should Upgrade to the latest release of DB2 [http://www.ibm.com/software/data/db2/upgrade/] [http://www.ibm.com/software/data/db2/upgrade/]
+
+ DB2 end of support date [http://www.ibm.com/support/docview.wss?uid=swg21168270] page [http://www.ibm.com/support/docview.wss?uid=swg21168270]contains the list of end of support dates for DB2 versions. 
+
+ US Withdrawal Announcement 910-286 [http://www-01.ibm.com/common/ssi/cgi-bin/ssialias?subtype=ca&infotype=an&appname=iSource&supplier=897&letternum=ENUS910-286] [http://www.ibm.com/common/ssi/ShowDoc.jsp?docURL=/common/ssi/rep_ca/6/897/ENUS910-286/index.html&breadCrum=DET001PT022&url=buttonpressed=DET002PT005&specific_index=DET001PEF502&DET015PGL002=DET001PEF011&submit.x=7&submit.y=8&lang=en_US#spindx]page contains the withdrawal notice and the full list of all DB2 V9.1 products that have end of support. 
+
+ IBM Software Product Support Lifecycle [http://www-01.ibm.com/software/support/lifecycleapp/PLCDetail.wss?psynkey=J038363J86299A04&synkey=I620046H68814U13&synkey=L960784Z04598L21&synkey=P067787Y85362R93&synkey=P900278P43044U41&synkey=S008045U16263E24&synkey=N239086S25668H41&synkey=W262516S50243Z66&synkey=A856900X58200W70&synkey=Z983319R13364R33&synkey=F704494M84899F15&synkey=D053518M30225P30&synkey=I566976Z51402P30&synkey=I920653T72786O66&synkey=S783362T53571C40&synkey=U928161K96774J29&synkey=B195126Q42337H56&synkey=F067639I27128O83&synkey=K332662H42516S34&synkey=K303492C29829C42&synkey=C085867V89032N86&from=spf] page contains the announcement letters and dates for all DB2 server products including the Lifecycle FAQ [http://www.ibm.com/software/support/lifecycle/faq.html].
+
+Back to top
+
+WHAT ARE THE END OF SUPPORT DATES FOR DB2 V9.1 ?
+End of support for DB2 V9.1 products is April 30, 2012. Extended support may be purchased to extend your support until April 30, 2015. 
+
+"End of support" indicates the last date on which you are entitled to base support for your DB2 LUW product. You can extend the support period beyond the end of support date for an additional fee. 
+
+"Extended support" indicates the final date in which IBM shall end all support for the DB2 LUW products. 
+
+WHERE ARE THE DB2 PRODUCT END OF SUPPORT DATES LISTED?
+ The DB2 end of support date page contains the list of end of support dates for DB2 products. The IBM Software Product Support Lifecycle page contains the announcement letters and dates for all IBM Products. 
+
+ DB2 End of Support Dates [http://www.ibm.com/support/docview.wss?uid=swg21168270] 
+
+ Lifecycle dates for DB2 LUW Products [http://www-01.ibm.com/software/support/lifecycleapp/PLCDetail.wss?psynkey=J038363J86299A04&synkey=I620046H68814U13&synkey=L960784Z04598L21&synkey=P067787Y85362R93&synkey=P900278P43044U41&synkey=S008045U16263E24&synkey=N239086S25668H41&synkey=W262516S50243Z66&synkey=A856900X58200W70&synkey=Z983319R13364R33&synkey=F704494M84899F15&synkey=D053518M30225P30&synkey=I566976Z51402P30&synkey=I920653T72786O66&synkey=S783362T53571C40&synkey=U928161K96774J29&synkey=B195126Q42337H56&synkey=F067639I27128O83&synkey=K332662H42516S34&synkey=K303492C29829C42&synkey=C085867V89032N86&from=spf] 
+
+HOW DO I PURCHASE A SUPPORT EXTENSION?
+ Support extensions may be purchased for an additional fee. To extend your support of your DB2 V9.1 product until April 30, 2015, please contact your local IBM Sales Representative. For direct inquiries, US Customers may call IBM Sales at 1-888-426-4343, option 1 and ask for a Service Extension on DB2 LUW Version 9.1. Customers in other geographies should refer to the IBM directory of worldwide support contacts to find sales contact numbers in your region. Note that when you contact support they may inquire if you are on the latest fix pack for DB2 V9.1. 
+
+ IBM directory of worldwide support contacts [http://www.ibm.com/planetwide/] 
+
+IS THERE INFORMATION TO HELP ME UPGRADE?
+ The DB2 Upgrade Portal contains technical information on how to perform the upgrade. If you have questions on how to purchase the latest version of DB2, contact your IBM Sales Representative or dial 'IBM Direct' toll free at 1-800-426-2255 
+
+ How to upgrade: DB2 Upgrade Portal [http://www.ibm.com/software/data/db2/upgrade/portal] 
+
+WHAT DB2 V9.1 SERVERS ARE AFFECTED?
+ The following DB2 V9.1 server products are affected: 
+DB2 Enterprise Server Edition 
+DB2 Workgroup Server Edition 
+DB2 Personal Edition 
+DB2 Express Edition 
+DB2 Connect Enterprise Edition 
+DB2 Connect Personal Edition 
+
+
+ View full list of DB2 V9.1 products ending support [http://www.ibm.com/common/ssi/cgi-bin/ssialias?subtype=ca&infotype=an&appname=iSource&supplier=897&letternum=ENUS910-286] 
+
+WHEN THE SERVER PRODUCT GOES OUT OF SUPPORT, DOES THE CLIENT ALSO GO OUT OF SUPPORT?
+ The DB2 V9.1 clients go out of support at the same time that the server does. 
+
+HOW DO I KNOW IF MY DB2 UNIVERSAL JDBC DRIVER IS SUPPORTED?
+ Effective April 30, 2012, only DB2 V9.5, and V9.7 Universal JDBC drivers will be supported. Use technote 1363866 [http://www.ibm.com/support/docview.wss?uid=swg21363866] to check the version of the DB2 JCC driver installed with your application. 
+
+WHAT IF I HAVE A SPECIAL BUILD OR AN OLDER FIX PACK ON DB2 V9.1? AM I STILL SUPPORTED?
+ All support for DB2 V9.1 ends on April 30, 2012 unless a support extension#EOS3 has been purchased. The policy statement for DB2 for Linux, UNIX and Windows fix packs, special builds, Total Content Ownership agreements and IBM Software Premium Services is located in technote 1180416 [http://www.ibm.com/support/docview.wss?uid=swg21180416]. 
+
+I AM USING DB2 V9.1 AS PART OF A BUNDLE, AM I STILL SUPPORTED?
+ Support terms and conditions may differ for the use of DB2 with certain applications. Customers should check directly with their application vendor for the terms and duration of their support for DB2. Read technote 1051638 [http://www.ibm.com/support/docview.wss?uid=swg21051638] for more information as it relates to SAP 
+
+IS THE DOCUMENTATION FOR VERSION 9.1 STILL AVAILABLE?
+ The DB2 Information Center and PDF manuals for Version 9.1 are still available. However, they will no longer be updated. For information about the DB2 Information Center and PDF manuals for Version 9.1, see the DB2 database product documentation [http://www.ibm.com/support/docview.wss?uid=swg27023554] page. 
+
+HOW DO I OBTAIN DB2 V9.1 IF I STILL NEED IT?
+ Q: I need to download and install the base product of DB2 V9.1 for a migration test environment. How can I obtain it? 
+A: The DB2 V9.1 server editions are available for download on Passport Advantage if you previously purchased them. 
+
+Q: What is the final fix pack for DB2 V9.1 and how do I get it?
+A: The final fix pack is DB2 Version 9.1 Fix Pack 12. Download [http://www.ibm.com/support/docview.wss?uid=swg24033023] 
+
+Back to top
+
+ 
+
+Cross reference information Segment Product Component Platform Version Edition Information Management DB2 Connect 9.1

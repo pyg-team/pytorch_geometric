@@ -1,0 +1,50 @@
+Title: IBM The ad-hoc process box covers my reports in the IBM Security Guardium GUI - United States
+
+Text:
+guardium gui ad hoc process box checkbox check tickbox tick email receivers report TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ In the Guardium GUI, the ad-hoc process box prevents me from viewing my reports in some cases. 
+
+SYMPTOM
+Example of what the problem looks like on the GUI: 
+
+[/support/docview.wss?uid=swg21982064&amp;aid=1]
+
+
+CAUSE
+There are crashed tables in the internal TURBINE database. There can be many reasons why these tables crashed, one of which being:
+
+Restart of database - If the database restarts during any major process (Guardium related or not), this can leave tables "open" or corrupt on database startup.
+Due to this, the process that manages the GUI will not be able to read the necessary information from said tables, causing this issue and possibly others.
+
+
+DIAGNOSING THE PROBLEM
+Finding where the issue lies may vary depending on the environment. 
+
+Standalone unit - Collect a system_db_info must_gather from this appliance. 
+
+Managed unit - The issue may not be on the current appliance. It is possible that the Central Manager has the crashed tables. When the managed unit attempts to gather information necessary for displaying the page in the GUI, this issue may occur. In this case, it is important to get a system_db_info must_gather from both the managed unit and the Central Manager 
+
+ 
+
+Once the must_gather has been collected
+You can check on the status of the database in themysql error logwithin it. This log is named differently depending on whether the system is 32 bit or 64 bit.
+- 32 bit error log is named [hostname].err
+- 64 bit error log is named mysql-error.log
+
+The messages that could indicate a problem are as follows:
+[ERROR]
+[Warning]
+InnoDB: Rolling back trx with id
+
+Here is an example of a crashed table that you could see in this log:
+2016-01-13 08:01:01 4593 [ERROR] /usr/sbin/mysqld: Table './TURBINE/TURBINE_USER_GROUP_ROLE' is marked as crashed and should be repaired
+
+
+RESOLVING THE PROBLEM
+Once identifying a potential issue by following the diagnostic steps above, you should provide your findings, along with the system_db_info must_gather to Guardium Support, explaining the issue. 
+
+RELATED INFORMATION
+ IBM MustGather: Collecting data for Guardium Appliance [http://www-01.ibm.com/support/docview.wss?uid=swg21469838]
+How can I troubleshoot a slow Guardium GUI? [http://www-01.ibm.com/support/docview.wss?uid=swg21979739]

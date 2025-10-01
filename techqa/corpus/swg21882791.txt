@@ -1,0 +1,61 @@
+Title: IBM SolidDB Setup in an IBM Content Collector cluster - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How can I verify that my Content Collector cluster is set up properly? 
+
+CAUSE
+During the installation of the product, if you did not choose the option to join an existing Content Collector cluster when prompted, or if you chose the wrong cluster name, your Content Collector cluster might not be set up properly.
+
+ANSWER
+To verify that your Content Collector cluster is set up correctly, complete the following steps. Open a command prompt in Administrator mode to run the following command on all servers: 
+
+<installdir>\ctms\afuClusterTool.exe -show
+
+You should see the following four entries for every single node in the cluster:
+
+Node - machine name (not fully qualified)
+Configuration Host - database primary machine (config host)
+Configuration Backup Host - database secondary machine (backup host)
+Known nodes - list of all servers that are in the cluster
+
+The values should be the same for all nodes, but the order can be different. For example, on a properly configured five-node cluster, you should see these four entries repeated five times, once for each server.
+
+The output from a two-node Content Collector cluster looks like this:
+
+[/support/docview.wss?uid=swg21882791&aid=1] [/support/docview.wss?uid=swg21882791&aid=1]
+
+
+To reconfigure your cluster, follow these steps:
+
+
+ 1. Create a batch file configureCluster.bat that contains the full configuration of your nodes, replacing host01, host02, and so on with your own servers. Save the file in the ctms subfolder.
+    
+    afuClusterTool.exe -add-node=host01
+    afuClusterTool.exe -add-node=host02
+    afuClusterTool.exe -add-node=host03
+    afuClusterTool.exe -add-node=host04
+    afuClusterTool.exe -add-node=host05
+    afuClusterTool.exe -set-config-host=host01 (primary node)
+    afuClusterTool.exe -set-config-backup-host=host02 (secondary node)
+    
+    See the following example with a two-node cluster:
+    
+    [/support/docview.wss?uid=swg21882791&aid=2] [/support/docview.wss?uid=swg21882791&aid=2]
+    
+ 2.  On every Content Collector Server, edit the 
+    <installdir>\Configuration\afu_install.properties file and make sure that the key CLUSTER_NAME is set to the same value (icc5 in the screen capture below).
+    
+    [/support/docview.wss?uid=swg21882791&aid=3] [/support/docview.wss?uid=swg21882791&aid=3]
+    
+    
+ 3. On all servers, make sure that the IBM Content Collector Configuration Store Manager service is running.
+    
+ 4. On all servers, run the batch script that you just created in Administrator mode.
+
+
+
+HISTORICAL NUMBER
+ pmr 72352.122.000

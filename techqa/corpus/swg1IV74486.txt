@@ -1,0 +1,147 @@
+Title: IBM IV74486: REMOVAL OF INSECURE CIPHERS FROM CORBA INTERFACE - United States
+
+Text:
+  FIXES ARE AVAILABLE
+IBM Tivoli Monitoring Portal Server Insecure Ciphers Update (IV74486) [http://www-01.ibm.com/support/docview.wss?uid=swg24040448]
+IBM Tivoli Monitoring 6.3.0 Fix Pack 6 (6.3.0-TIV-ITM-FP0006) [http://www-01.ibm.com/support/docview.wss?uid=swg24040390]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Removal of insecure ciphers from CORBA interface in response to
+   FREAK (CVE-2015-0138) and Bar Mitzvah (CVE-2015-2808)
+   vulnerabilities.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  See technotes:
+   
+   Vulnerability in IBM Java Runtime affects IBM Tivoli Monitoring
+   (CVE-2015-0138) - FREAK
+   http://www-01.ibm.com/support/docview.wss?uid=swg21701519 [http://www-01.ibm.com/support/docview.wss?uid=swg21701519]
+   
+   Vulnerability in RC4 stream cipher affects IBM Tivoli Monitoring
+   (CVE-2015-2808) - Bar Mitzvah
+   http://www.ibm.com/support/docview.wss?uid=swg21883223 [http://www.ibm.com/support/docview.wss?uid=swg21883223]
+   
+   Vulnerability in Diffie-Hellman ciphers affects IBM Tivoli
+   Monitoring (CVE-2015-4000) - Logjam
+   http://www.ibm.com/support/docview.wss?uid=swg21962739 [http://www.ibm.com/support/docview.wss?uid=swg21962739]
+   
+   Vulnerability in TLS affects IBM Tivoli Monitoring
+   (CVE-2014-8730 ) - POODLE2
+   http://www-01.ibm.com/support/docview.wss?uid=swg21694339 [http://www-01.ibm.com/support/docview.wss?uid=swg21694339]
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Remove insecure ciphers from portal server interface.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Insecure ciphers removed from list of acceptable ciphers.
+   
+   
+   The fix for this APAR is contained in the following maintenance
+   packages:
+   
+      | fix pack | 6.3.0-TIV-ITM-FP0006
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV74486
+   
+   
+ * REPORTED COMPONENT NAME
+   TEPS
+   
+   
+ * REPORTED COMPONENT ID
+   5724C04PS
+   
+   
+ * REPORTED RELEASE
+   630
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2015-06-24
+   
+   
+ * CLOSED DATE
+   2015-12-10
+   
+   
+ * LAST MODIFIED DATE
+   2016-05-17
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TEPS
+   
+   
+ * FIXED COMPONENT ID
+   5724C04PS
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R630 PSY
+   UP

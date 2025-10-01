@@ -1,0 +1,34 @@
+Title: IBM Open Mic on POODLE fix and SHA-2 Implemetation - United States
+
+Text:
+ WEBCAST
+
+ABSTRACT
+ POODLE, SHA-2, KYRTOOL 
+
+CONTENT
+Topic: PODDLE and SHA-2 (Secure your Environment)
+
+
+
+
+Date : Wednesday, February 25th 2015 
+
+Time : At 11:30 AM Indian Standard Time 
+
+QUESTIONS AND ANSWERS 
+Question 1: Is there any plan to upgrade Certificate Admin Database (certsrv)?
+Answer: No, this Database may not be upgraded.
+
+Question 2: We get the certificates in different format. Is there any way to convert the certificate types to use with Domino?
+Answer: Most of the certificates can be opened in notepad, and the content can be copied.
+KYRTOOL/OPENSSL will be able to use most of the certificate extension to merge in a file.
+
+
+PRESENTATION
+[http://www.ibm.com/i/v16/icons/weblecture.gif]Poodle_Sha2_open mic.pdf [/support/docview.wss?uid=swg27045179&aid=2]Poodle_Sha2_open mic.pdf [/support/docview.wss?uid=swg27045179&aid=1]
+
+
+
+MULTIMEDIA
+[http://www.ibm.com/i/v16/icons/video.gif]final.mp4 [/support/docview.wss?uid=swg27045179&aid=4]final.mp4 [/support/docview.wss?uid=swg27045179&aid=3]

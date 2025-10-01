@@ -1,0 +1,174 @@
+Title: IBM Setting up Lotus Domino to work with the IBM HTTP Server (IHS) on Windows platforms - United States
+
+Text:
+web server; ihs; ibm http server; apache; websphere plug-in; plugin TECHNOTE (FAQ)
+
+QUESTION
+The instructions in the Lotus Domino Administrator Help seem to be clear in regards to setting up Lotus Domino and IBM HTTP Server (IHS) on AIX platforms, but are there specific instructions for a Windows installation?
+
+ANSWER
+The following instructions from the Domino Administrator Help have been modified to specifically address a Windows installation of IBM HTTP Server. For AIX guidelines, refer to the Domino Administrator Help. 
+
+Modified Help entry: 
+
+The IBM HTTP Server (IHS) is packaged as part of the WebSphere Application Server (WAS). For information on installing IHS and the WebSphere server see the WebSphere installation documentation. Installing the plug-in is an option during WebSphere installation. For information on installing the plug-in during WebSphere setup, see the WebSphere installation documentation. 
+
+
+Note: Beginning with the Domino 8 server, the Web Server Plugins for IBM® WebSphere® Application server no longer ships with the Domino plugins file kit (the plugin-cfg.xml and iisWASPlugin_http.dll files).
+To install the WebSphere plug-in from Domino 
+
+ 1. Install a Domino server. 
+
+ 2. On the IHS server, create the appropriate directory structure (if it does not already exist from a current installation of WebSphere Application Server). 
+
+ * 
+ * 
+ * c:\WebSphere\AppServer\bin 
+ * c:\WebSphere\AppServer\config 
+ * c:\WebSphere\AppServer\logs
+
+
+3. Copy the following files from the Domino server to the IHS server (you may need to rename existing DLLs and XML files in the pre-existing WebSphere directory):  * 
+ * 
+ *  
+   Note: If using IHS 6.0, use mod_was_ap20_http.dll instead of mod_ibm_app_server_http.dll 
+ * 
+ * 
+ * Copy <Domino data directory>/domino/plug-ins/plugin-cfg.xml to C:\WebSphere\AppServer\config 
+ * NOTE: These instructions assume that you have the WebSphere Application Server "/bin" directory specified in your PATH environment variable. 
+
+
+4. On the IHS server, edit the IHS configuration file httpd.conf (on a default installation this file is located at C:\IBM HTTP Server\conf\httpd.conf). Add the following lines to the bottom of the file:  * 
+ * 
+ * 
+ * 
+ * 
+
+Note: If using IHS 6.0, use the following LoadModule directive:  * 
+ * 
+
+
+5. Modify the plugin-cfg.xml file according to the instructions for configuring the WebSphere plug-in. 
+Hide details for Steps to modify the plugin-cfg.xml file [/support/docview.wss?uid=swg21104930&amp;aid=1]Steps to modify the plugin-cfg.xml file The WebSphere configuration file WebSphere\AppServer\config\plugin-cfg.xml controls the operation of the plug-in. In order for the plug-in to relay requests to the target Domino server, you must add directives to plugin-cfg.xml to define a transport route to the server, and pattern rules for the url namespaces that identify requests which are to be relayed to Domino. The plug-in will only relay requests that match a namespace rule. All other requests will be handled by the frontend Web server. 
+
+To configure plugin-cfg.xml: 
+
+1. Open plugin-cfg.xml in Notepad. 
+
+2. Modify the <Transport> element to target the appropriate Domino server. To do this, change the Hostname and Port parameters to the proper values required for the plug-in to reach your backend server's HTTP task. For example: 
+
+ * 
+ * <ServerGroup Name="default_group">  * 
+    * <!-- The transport defines the hostname and port value that the web server plug-in will use to communicate with the application server. --> 
+    * 
+    * 
+    * 
+   
+   </ServerGroup> 
+   
+
+3. Add these directives to the top of the <UriGroup> section. These directives specify common URL patterns needed for accessing Domino Web applications.  * <UriGroup Name="default_host_URIs">  <Uri Name="*/*.nsf*"/> 
+   <Uri Name="*/icons/*"/>
+   <Uri Name="*/domjava/*"/>
+   </UriGroup>
+   
+   
+   
+
+If your Domino application requires additional namespaces, you can create <Uri> directives for those patterns also. Note All the WAS plugins automatically reread the configuration file once a minute to pick up changes. If you don't want to wait that long, you must stop and restart the frontend Web server. In the case of the IIS plug-in, you must stop the World Wide Web Publishing Service from the Windows services control panel, then restart the Web site from the Internet Services Manager. Just stopping and restarting the Web site by itself won't work because the plug-in dll won't be reloaded.
+Hide details for Another approach for configuring plugin-cfg.xml [/support/docview.wss?uid=swg21104930&amp;aid=1]Another approach for configuring plugin-cfg.xml
+
+Instead of modifying the plugin-cfg.xml file, you may want to leave the default settings intact and create new Domino-specific settings. You can then put them all together in the plug-in configuration for easier reading, as shown in the example below. (Domino specific items are noted in blue text below.)
+
+<?xml version="1.0"?>
+<Config>
+<!-- The LogLevel controls the amount of information that gets written to
+the plugin log file. Possible values are Error, Warn, and Trace. --> 
+<Log Name="C:/WebSphere/AppServer/logs/native.log" LogLevel="Error"/>
+
+<!-- Server groups provide a mechanism of grouping servers together. -->
+<ServerGroup Name="default_group">
+<Server Name="default_server"> 
+<!-- The transport defines the hostname and port value that the web server
+plugin will use to communicate with the application server. --> 
+<Transport Hostname="localhost" Port="9080" Protocol="http"/>
+</Server>
+</ServerGroup>
+
+<ServerGroup Name="domino_web_servers">
+<Server Name="DominoTestServer"> 
+<!-- The transport defines the hostname and port value that the web server
+plugin will use to communicate with the application server. "8080" is used in this context because IIS is using port 80 on the same machine--> 
+<Transport Hostname="dominotestserver.acme.com" Port="8080" Protocol="http"/>
+</Server>
+</ServerGroup>
+
+<!-- Virtual host groups provide a mechanism of grouping virtual hosts together. -->
+<VirtualHostGroup Name="default_host">
+<VirtualHost Name="*:*"/>
+</VirtualHostGroup>
+
+<VirtualHostGroup Name="domino_host">
+<VirtualHost Name="*:*"/>
+</VirtualHostGroup>
+
+
+<!-- URI groups provide a mechanism of grouping URIs together. Only
+the context root of a web application needs to be specified unless 
+you want to restrict the request URIs that get passed to the application
+server. -->
+
+<UriGroup Name="default_host_URIs">
+<Uri Name="/servlet/*"/>
+<Uri Name="/webapp/examples/*"/>
+<Uri Name="*.jsp"/>
+<Uri Name="*.jsv"/>
+<Uri Name="*.jsw"/>
+<Uri Name="/ErrorReporter"/>
+<Uri Name="/j_security_check"/>
+<Uri Name="/tradetheme/*"/>
+<Uri Name="/theme/*"/>
+<Uri Name="/WebSphereSamples/*"/>
+<Uri Name="/estore/*"/>
+</UriGroup>
+
+<UriGroup Name="domino_host_URIs">
+<Uri Name="*/*.nsf*"/>
+<Uri Name="*/icons/*"/>
+<Uri Name="*/domjava/*"/>
+</UriGroup>
+
+<!-- A route ties together each of the above components. -->
+<Route ServerGroup="default_group" UriGroup="default_host_URIs" VirtualHostGroup="default_host"/>
+<Route ServerGroup="domino_web_servers" UriGroup="domino_host_URIs" VirtualHostGroup="domino_host"/>
+</Config>
+
+6. Set up the Domino server according to the instructions for IIS.
+Hide details for Steps to set up the Domino server [/support/docview.wss?uid=swg21104930&amp;aid=1]Steps to set up the Domino server 
+
+On the backend Domino server, add the following line to NOTES.INI: 
+
+ * 
+ * 
+
+
+This setting enables the Domino HTTP task to process the special headers added by the plug-in to requests. These headers include information about the frontend server's configuration and user authentication status. As a security measure, the HTTP task ignores these headers if the setting is not enabled. This prevents an attacker from mimicking a plug-in. 7. Restart the IHS server and test your installation.
+Hide details for Steps to test installation [/support/docview.wss?uid=swg21104930&amp;aid=1]Steps to test installation 
+
+To test your IHS server with plug-in: 
+
+ 1. Start Domino. 
+
+ 2. To verify that the Domino server HTTP task is functional, from a browser enter the url http://<domino server name:http port>/homepage.nsf (or any other NSF request supported by your Domino Web application). This request should be sent directly to the Domino server, and the Domino HTTP task should respond with the expected page. 
+
+ 3. Start the frontend Web server. 
+
+ 4. To verify that the frontend server is functional and that the plug-in is working, in the browser enter http://<frontend-server:http port>/homepage.nsf. This request should be sent to the frontend server; the WebSphere plug-in should relay it to the Domino server. The resulting page should look identical to Step 2.
+
+
+
+
+
+
+ * 
+ *

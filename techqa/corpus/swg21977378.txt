@@ -1,0 +1,27 @@
+Title: IBM Action required for IBM Integration Bus Hypervisor Edition V9.0 and WebSphere Message Broker Hypervisor Edition V8.0 for security vulnerabilities  in Red Hat (CVE-2015-7547) - United States
+
+Text:
+ FLASH (ALERT)
+
+ABSTRACT
+ IBM Integration Bus Hypervisor Edition V9.0 and WebSphere Message Broker Hypervisor Edition V8.0 require customer action for security vulnerabilities in Red Hat (CVE-2015-7547) 
+
+CONTENT
+IBM Integration Bus Hypervisor Edition V9.0 and WebSphere Message Broker Hypervisor Edition V8.0 ship with versions of Red Hat Enterprise Linux (RHEL) Server that are vulnerable to GNU C Library (glibc) - stack-based buffer overflow (CVE-2015-7547)
+
+IBM Integration Bus Hypervisor Edition V9.0 and WebSphere Message Broker Hypervisor Edition V8.0 ship with Red Hat Enterprise Linux (RHEL) Server 6.2. 
+
+Remediation: 
+
+IBM strongly recommends that you contact Red Hat provider to obtain and install fixes for Red Hat Enterprise Linux (RHEL) Server 6.2 as applicable
+
+RELATED INFORMATION
+ google [https://googleonlinesecurity.blogspot.com/2016/02/cve-2015-7547-glibc-getaddrinfo-stack.html]
+
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration WebSphere Message Broker Hypervisor Edition Linux 8.0 
+PRODUCT ALIAS/SYNONYM
+ WebSphere Message Broker WMB IBM Integration Bus IIB

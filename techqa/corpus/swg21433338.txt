@@ -1,0 +1,81 @@
+Title: IBM High CPU usage in the db2dasrrm process - United States
+
+Text:
+db2dasrrm; db2dasrrm.exe; das; high; cpu; spike; 100%; 99%; halt; freeze TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ High CPU usage may be experienced in the db2dasrrm process shortly after starting the DAS process. 
+
+SYMPTOM
+db2dasrrm on UNIX or db2dasrrm.exe on Windows may show high CPU usage up to 100%. 
+
+If a dump file is generated off the db2dasrrm process during the time of high CPU usage, a stack such as the following may be displayed:
+
+3 Id: c3c.88c Suspend: 1 Teb: 000007ff`fffae000 Unfrozen
+RetAddr : Args to Child : Call Site
+00000001`4001aa9d : 00000000`00000000 00000000`00000000 00000000`02b3fdf0 000007fe`fd88c80f : db2dasrrm!recoverFromFailure+0x10f 
+00000001`40017b0c : 00000000`02b3fb38 00000000`002726b0 ffffffff`fffffffe 00000000`02b3fb38 : db2dasrrm!dasRecoverPmem+0x925 
+00000001`400011f8 : 00000000`00000003 00000000`00000000 00000000`00000000 00000000`00000000 : db2dasrrm!dasInit+0x1c6 
+00000001`800130b5 : 00000000`00000000 00000000`00000000 00000000`00000000 00000000`75223f69 : db2dasrrm!dasMain+0x144
+00000000`752237d7 : 00000000`00000000 00000000`00000000 00000000`00000000 00000000`00000000 : DB2OSSE64!oss_AppThdEntry+0x39 
+00000000`75223894 : 00000000`752d95c0 00000000`01dda3f0 00000000`00000000 00000000`00000000 : msvcr80!endthreadex+0x47
+00000000`774bf56d : 00000000`00000000 00000000`00000000 00000000`00000000 00000000`00000000 : msvcr80!endthreadex+0x104
+00000000`775f3281 : 00000000`00000000 00000000`00000000 00000000`00000000 00000000`00000000 : kernel32!BaseThreadInitThunk+0xd
+00000000`00000000 : 00000000`00000000 00000000`00000000 00000000`00000000 00000000`00000000 : ntdll!RtlUserThreadStart+0x1d
+
+
+CAUSE
+This may be caused by corruption in the DAS persistent memory
+
+
+DIAGNOSING THE PROBLEM
+Collect these diagnostics only if following the instructions in "Resolving the problem" do not work. 
+
+Windows:
+1) Start Windows Task Manager->Processes tab
+2) Right click on the process-->Create Dump File
+3) A pop-up window appears indicating the dump was successfully created and located in C:\Users\<userid>\AppData\Local\Temp\2\db2sysc.DMP
+4) Rename the dump file created
+5) Wait 20 seconds and collect another dump
+
+
+Unix/Linux:
+1) Login as DAS userid and collect stack for the PID of db2dassrm process.
+
+AIX and Linux: procstack <pid of db2dassrm> >>stack.txt
+Solaris and HP-UX: pstack <pid of db2dassrm> >>stack.txt
+
+2) Wait 20 seconds
+3) Collect another stack as per step #1
+
+
+
+
+RESOLVING THE PROBLEM
+Please take the following steps 
+
+ 1. Stop the DAS by issuing "db2admin stop"
+    
+ 2. Try to clear the contents of the DAS tmp directory, including any sub-directories.
+    
+    On Unix platforms, delete the contents of:
+    DASHOME/das/tmp
+    (where DASHOME is the home directory of the DAS userid)
+    
+    On Windows platforms, delete the contents of either:
+    - C:\Documents and Settings\All Users\Application Data\IBM\DB2\<db2copyname>\DB2DAS00\tmp
+    - C:\Users\All Users\IBM\DB2\<db2copyname>\DB2DAS00\tmp
+    - C:\ProgramData\IBM\DB2\<db2copyname>\DB2DAS00\tmp
+    The actual directory will vary depending upon the version of Windows.
+    
+    
+ 3. Start the DAS by issuing "db2admin start"
+    
+ 4. If removing the tmp files does not resolve the problem, the next step is to try recreating the DAS. After recreating the DAS, the db2dasrrm process should not longer experience high CPU usage. 
+    
+    Note: Before recreating the DAS, run "get admin config" to capture the settings prior to dropping it so that the values can be reconfigured after the DAS is created again. See the links below for how to configure, remove, and create the DAS.
+
+RELATED INFORMATION
+ Creating a DB2 administration server (DAS) [http://publib.boulder.ibm.com/infocenter/db2luw/v9r5/index.jsp?topic=/com.ibm.db2.luw.admin.gui.doc/doc/t0004960.html]
+Configuring the DB2 administration server (DAS) [http://publib.boulder.ibm.com/infocenter/db2luw/v9r5/index.jsp?topic=/com.ibm.db2.luw.admin.gui.doc/doc/t0005173.html]
+Removing the DB2 administration server (DAS) [http://publib.boulder.ibm.com/infocenter/db2luw/v9r5/index.jsp?topic=/com.ibm.db2.luw.admin.gui.doc/doc/t0005177.html]

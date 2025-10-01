@@ -1,0 +1,32 @@
+Title: IBM Problems Running the AuroraDBDelete.sql on Oracle - Encountering an 
+PLS-00201: identifier 'CTX_DDL" must be declared - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The AuroraDBDelete.sql script is failing with the following error:
+
+PLS-00201: identifier 'CTX_DDL" must be declared 
+
+SYMPTOM
+Any tool that utilizes the AuroraDBDelete.sql script is failing with the following oracle error: 
+
+declare 
+* 
+ERROR at line 1: 
+ORA-06550: line 1, column 7: 
+PLS-00201: identifier 'CTX_DDL' must be declared 
+ORA-06550: line 1, column 7: 
+PL/SQL: Statement ignored 
+ORA-06512: at line 270 
+CAUSE
+The Oracle IDs running the commands do NOT have the proper grants.
+
+
+RESOLVING THE PROBLEM
+To resolve the issue, a DBA should grant EXECUTE on CTXSYS.CTX_DDL. The following is the syntax to provide the grant: 
+
+GRANT EXECUTE ON CTXSYS.CTX_DDL TO <username>; For example: GRANT EXECUTE ON CTXSYS.CTX_DDL TO OPENPAGES; GRANT EXECUTE ON CTXSYS.CTX_DDL TO OPWORKFLOW;
+
+Once the DBA has provided the proper grant, the OpenPages IT administrator should try running the AuroraDBDelete.sql script again.

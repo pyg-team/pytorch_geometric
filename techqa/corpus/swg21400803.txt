@@ -1,0 +1,42 @@
+Title: IBM Rule Execution Server engine pool sizing - United States
+
+Text:
+BRES; RES; context; engine; pool; size; sizing; memory; CPU TECHNOTE (FAQ)
+
+QUESTION
+ How should I size of the J2C Connection Factory/execution unit connection pool (XU) in Rule Execution Server? 
+
+ANSWER
+When Rule Execution Server is deployed on a Java EE environment, rule engines are made available through a resource adapter of the Java EE Connector Architecture (JCA). This adapter is referred to as the 'Execution Unit' or 'XU'. 
+The connector architecture defines a standard SPI (Service Provider Interface) which sets the system-level contract between the resource adapter and the application server when they connect.
+
+The application server pools JCA SPI connections and the default configuration can be changed to adjust the size of the pool (refer to the documentation of your application server).
+
+There is no logical limit to the pool size, the only limit is the memory and number of CPUs of the computer that hosts the XU.
+
+Recommendations are:
+
+
+ 1. Set the pool size as follows (1 CPU = 1 core):  * 10 * number_of_cpus < pool size < 20 * number_of_cpus 
+     * pool size >= the average number of concurrent applications that execute rulesets 
+     * pool size >= the number of different rulesets
+    
+    
+ 2. Then, simulate the production load, and adjust the pool size:  * If the server runs out of memory, decrease the pool size. 
+     * If ruleset executions are waiting for a connection from the pool, increase the pool size.
+    
+    
+
+
+
+Note: It is very hard to calculate the correct value of the pool size because it depends on many parameters (size of ruleset, number of rules, other applications deployed and their load). The fastest way generally consists, therefore, in simulating the production load and trying different values. RELATED INFORMATION
+ Improve performance of rule execution [http://www.ibm.com/support/docview.wss?uid=swg21589513]
+Monitoring the execution unit connection pool size [http://www.ibm.com/support/docview.wss?uid=swg21585898]
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Operational Decision Manager Modules:Execution Server Platform Independent 8.0, 7.5 
+HISTORICAL NUMBER
+ jrules/FAQ/358

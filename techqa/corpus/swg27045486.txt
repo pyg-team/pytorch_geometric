@@ -1,0 +1,268 @@
+Title: IBM Documentation updates for IBM Datacap Taskmaster Capture Version 8.1 Fix Pack 3 - United States
+
+Text:
+ RELEASE NOTES
+
+ABSTRACT
+ This document provides a collection of updates and corrections to the 8.1 documentation for Fix Pack 3. 
+
+CONTENT
+Documentation updates: 
+
+IBM Datacap Taskmaster Capture support for IBM Security Access Manager 
+http://www.ibm.com/support/docview.wss?uid=swg27045387 [http://www.ibm.com/support/docview.wss?uid=swg27045387]
+This techdoc describes how Taskmaster Web can authenticate Taskmaster users who are already authenticated in the IBM Security Access Manager SSO environment. 
+
+
+Enabling SSL for your LLLDAP configuration (LDAPS)
+http://www.ibm.com/support/docview.wss?uid=swg27045687 [http://www.ibm.com/support/docview.wss?uid=swg27045687] 
+You can enable LDAP connections over Secure Sockets Layer (SSL) for your LLLDAP configuration. 
+
+
+Customizing the DotEdit Verify line items panel to handle large numbers of line items 
+http://www.ibm.com/support/docview.wss?uid=swg27045485 [http://www.ibm.com/support/docview.wss?uid=swg27045485] 
+Handling large numbers of line items in the Verify task consumes a lot of memory, which can cause the application to hang, crash, or have issues displaying controls in the panel. You can add a scroll bar to the line items panel, which enables the application to load manageable portions of the line items at a time, instead of attempting to load all of the line items at once. This customization makes it possible to load and process thousands of line items without crashing or degrading performance. 
+
+
+Setting a variable in DotEdit to prevent Image View from returning focus to the first page (Main_Page)
+http://www.ibm.com/support/docview.wss?uid=swg27045562 [http://www.ibm.com/support/docview.wss?uid=swg27045562] 
+When you click a field on a trailing page and the field is associated with the main page, or the field does not have a zone location, focus jumps back to the first page. To keep focus on the current page, you can specify a setting to prevent focus from automatically returning to the first page. 
+
+
+Setting up DotScan to undo rescanned pages
+http://www.ibm.com/support/docview.wss?uid=swg27045038 [http://www.ibm.com/support/docview.wss?uid=swg27045038] 
+For TWAIN and ISIS scanned pages, you can set up DotScan to undo rescanned pages to go back to a previous image. 
+
+
+Running verification on batches and documents
+https://www.ibm.com/support/knowledgecenter/SSZRWV_8.1.0/com.ibm.dc.develop.doc/dcadg606.htm [https://www.ibm.com/support/knowledgecenter/SSZRWV_8.1.0/com.ibm.dc.develop.doc/dcadg606.htm]
+By default Taskmaster Web loads only the data file for the current image when a Verify task is run. You cannot run cross document or cross batch validations. To be able to run validation on an entire batch or a document, you can configure the caching option by setting the LoadDoc value in the <verify>.set.xml file to load all of the data files in the current batch or only for current document. 
+
+
+ * 
+ * 
+ * 
+ * C:\Datacap\ProgramSet
+ * 
+ * 
+ * 
+ * Search > Find
+ * 
+ * LoadDoc
+ * 
+ * 
+ * 
+ * LoadDoc checkbox
+ * 
+ *   * 0 - cache only the current data file 
+    * 1 - cache all of the data files for the current document 
+    * 2 - cache all of the data files for the current batch
+   
+   
+
+Oracle database schema changes required for upgrading to IBM Datacap Taskmaster 8.1 or later
+http://www.ibm.com/support/docview.wss?uid=swg21665610 [http://www.ibm.com/support/docview.wss?uid=swg21665610]
+If you upgrade from IBM Datacap Taskmaster v8.1.0 or earlier to v8.1 FP1 or later, and your Taskmaster databases are in Oracle, you must update the database schemas by using the manual steps described in this technote. 
+
+
+
+
+
+
+
+
+
+Documentation corrections: 
+
+
+PDF: IBM Datacap Taskmaster Capture System Administration Guide
+(c1939532.pdf) 
+
+Section: 
+Keyboard shortcuts for DotScan [http://www.ibm.com/support/knowledgecenter/SSZRWV_8.1.0/com.ibm.dc.admin.doc/dcrkbs002.htm]  * 
+ * Issue:
+ * 
+ * 
+ * 
+ * 
+ * Correction:
+ * 
+ * 
+ * 
+ * 
+ * Image View
+ * 
+ * 
+ * 
+ * Batch View
+ * 
+ * 
+ * 
+ * Start Batch Panel
+ * 
+
+
+
+
+
+
+
+PDF: IBM Datacap Taskmaster Capture Installation and Configuration Guide
+(c1932325.pdf)
+
+Section:
+Taskmaster RV2 [http://www.ibm.com/support/knowledgecenter/SSZRWV_8.1.0/com.ibm.dc.install.doc/dcrvi014.htm] 
+
+ * 
+ * Issue:
+ * 
+ * 
+ * 
+ * 
+ * Correction:
+ * 
+ * 
+ * 
+ * 
+
+
+ * Issue:
+ * 
+ * 
+ * 
+ * 
+ * Correction:
+ * 
+ * 
+ * 
+ * 
+ * 
+
+
+Section: 
+Importing encryption keys to Taskmaster computers [http://www.ibm.com/support/knowledgecenter/SSZRWV_8.1.0/com.ibm.dc.install.doc/dcain010_copyto_inst_tmclientwrkstn2.htm]  * 
+ * Issue:
+ * 
+ * 
+ * 
+ * 
+ * Correction:
+ * 
+ * 
+ * 
+ * 
+ * 
+ *  Datacap server - C:\Datacap\Taskmaster
+   Datacap applications - C:\Datacap\Taskmaster
+   DotScan - C:\Datacap\DotScan
+   DotEdit - C:\Datacap\DotEdit
+   Datacap Studio - C:\Datacap\DStudio
+   Datacap FastDoc - C:\Datacap\FastDoc
+   Datacap Report Viewer - C:\Datacap\RV2\bin
+   Datacap Web Client - C:\Datacap\tmweb.net\bin
+   Datacap Web Services - C:\Datacap\wTM\bin 
+
+
+
+
+PDF: IBM Datacap Taskmaster Capture Creating Custom RV2 Reports Guide
+(c1932521.pdf)
+
+Section:
+Datacap statistics [http://www.ibm.com/support/knowledgecenter/SSZRWV_8.1.0/com.ibm.dc.customrv2.doc/dcapi000.htm] 
+
+ * 
+ * Issue:
+ * 
+ * 
+ * 
+ * 
+ * Correction:
+ * 
+ * 
+ * 
+ * 
+
+
+
+
+
+
+
+PDF: IBM Datacap Taskmaster Application Development Guide
+(c1932515.pdf) 
+
+Section: 
+Recognition language settings [http://www.ibm.com/support/knowledgecenter/SSZRWV_8.1.0/com.ibm.dc.develop.doc/dcadg762.htm]  * 
+ * Issue:
+ * 
+ * 
+ * 
+ * 
+ * Correction: 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+
+
+Section: 
+Skipping a verification task [http://www.ibm.com/support/knowledgecenter/SSZRWV_8.1.0/com.ibm.dc.develop.doc/dcadg815.htm]  * 
+ * Issue:
+ * 
+ * 
+ * 
+ * 
+ * Correction: 
+ * 
+ * 
+
+
+
+
+
+
+NENU Manager setup actions
+
+Section: 
+Application setup actions [https://www.ibm.com/support/knowledgecenter/SSZRWV_8.1.0/com.ibm.dc.develop.doc/dcadg714.htm] 
+
+ * 
+ * Issue
+ * 
+ * 
+ * 
+ * 
+ * 
+ * User
+ * 
+ * Password
+ * 
+ * Station 
+ * 
+ * blank
+ * 
+ * 
+ * 
+ * Correction
+ * 
+ * 
+ * 
+ * 
+ * 
+ * SetUser
+ * 
+ * SetStation
+ * 
+ * SetApplication 
+ * 
+ * SetupOpenApplicationEx
+ *

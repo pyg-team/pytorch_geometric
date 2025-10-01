@@ -1,0 +1,30 @@
+Title: IBM OutOfMemeory during Logical Connection processing - United States
+
+Text:
+discovery; topology manager; collation.properties TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Multiple Logical Connections to be processed causing OutOfMemory! 
+
+SYMPTOM
+OutOfMemeory errors during Topology Builder run! ConnectionDependencyAgent hangs!
+
+
+DIAGNOSING THE PROBLEM
+When processing multiple LogicalConnections, TADDM retrieves from the database all LogicalConnections which have the lastModifiedTime later than the lastRunTime for the agent. This would often result in OutOfMemory(OOM) Errors and with the next run of this agent we end up processing the same data again which could result in another OOM error or hung situation with ConnectionDependencyAgent.
+
+RESOLVING THE PROBLEM
+To resolve this condition a new property was added in TADDM 7.2.1.3 in collation.properties:
+
+com.ibm.cdb.topomgr.topobuilder.agents.ConnectionDependencyAgent2.timeframeBunch=
+
+The value for this property should be specified in milliseconds and represents the timeframe which will be used to retrieve LogicalConnection from the database for a given chunk. 
+
+
+For example if you specify 60000 it means that LogicalConnections will be retrieved in chunks determined by their lastModifiedTime in groups where lastModifiedTime attribute is within 1 minute. Each such group is processed and the lastModifiedTime of the agent is updated.
+
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ TADDM

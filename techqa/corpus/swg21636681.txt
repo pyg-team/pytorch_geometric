@@ -1,0 +1,16 @@
+Title: IBM Connecting to an IBM Endpoint Manager for Remote Control target that is outside of your network - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How does the target detect that is it outside of the network and that it should not contact the server URL but rather the broker URL list instead? 
+
+ANSWER
+It does not. The target does not determine if it should contact the server or the broker in a programmatic way. In fact, the target continues to try and contact the server even when it is outside the internal network and, therefore, it is normal to see errors in the log stating that the target is unable to do so. 
+
+ 
+However, IBM Endpoint Manager for Remote Control version 9.x removes the previous limitation that required the targets to be registered in the server before a broker session can take place. This is achieved by allowing the targets to register themselves when initiating a broker session. To register a target outside of the network, you must start a broker session with that target and provide the target user with a connection code. When the broker receives a valid connection code from an unregistered target, the broker registers the target with the server on the target's behalf. 
+To start a broker session with an unregistered target, the target must be configured for managed mode. The target must have its Managed property set to yes and have at least 1 broker configured. The BrokerList target property must be set to the list of host names or IP addresses, and ports of the brokers that you have configured. In the format BrokerList=hostname1:port, hostname2:port .
+
+Note that if you are using Tivoli Endpoint Manager for Remote Control 8.2.x , it is not possible to start a remote control session via a broker with unregistered targets. Targets must be already registered in the server, which is only achievable from inside the company network, before a remote control session via a broker is possible.

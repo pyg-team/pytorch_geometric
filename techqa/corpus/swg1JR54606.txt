@@ -1,0 +1,190 @@
+Title: IBM JR54606: PROCESS ADMIN CONSOLE SHOWS A BLANK PAGE OR IBM BPM ERROR AFTER YOU APPLY A FIX PACK - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Version 8.5.0 Fix Pack 2 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24040683]
+Version 8.5 Refresh Pack 7 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24041575]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  After you apply an IBM Business Process Manager fix pack and
+   then log in to the Process Admin Console, you might see an ?IBM
+   BPM Error? error message with the text ?500 The call failed on
+   the server; see server log for details.? or the Process Admin
+   Console will show a blank page.
+   
+   The server log shows a
+   com.google.gwt.user.client.rpc.SerializationException message,
+   like the following exception:
+   [10/16/15 17:20:34:444 CST] 00000178 webapp        I
+   com.ibm.ws.webcontainer.webapp.WebApp log SRVE0296E:
+   [IBM_BPM_ProcessAdmin_SingleCluster#ProcessAdmin.war][/ProcessAd
+   min][Servlet.LOG]:.Exception while dispatching incoming RPC
+   call:.com.google.gwt.user.client.rpc.SerializationException:
+   Type 'com.lombardisoftware.gwtcommon.client.preferences.
+     PreferencesDataObject' was not assignable to
+     'com.google.gwt.user.client.rpc.IsSerializable' and did not
+     have a custom field serializer.For security purposes, this
+     type will not be serialized.: instance =
+   com.lombardisoftware.gwtcommon.client.preferences.
+    PreferencesDataObject@90dc9ccf
+     at com.google.gwt.user.server.rpc.impl.
+      ServerSerializationStreamWriter.serialize
+      (ServerSerializationStreamWriter.java:619)
+     at com.google.gwt.user.client.rpc.impl.
+      AbstractSerializationStreamWriter.writeObject
+      (AbstractSerializationStreamWriter.java:126)
+     at com.google.gwt.user.server.rpc.impl.
+      ServerSerializationStreamWriter$ValueWriter$8.write
+      (ServerSerializationStreamWriter.java:153)
+     at com.google.gwt.user.server.rpc.impl.
+      ServerSerializationStreamWriter.serializeValue
+      (ServerSerializationStreamWriter.java:539)
+     ...
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Clear the cache of your browser and reload the Process Admin
+   Console.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  The Process Admin Console uses remote procedure calls (RPC) to
+   communicate with the IBM BPM server. To ensure that the client
+   part and the server part of the Process Admin Console are at the
+   same level, a unique version number is transmitted when remote
+   procedures are called, as part of the call. If the version
+   number on the server differs from version number of the incoming
+   procedure call, the server denies this call and issues the
+   com.google.gwt.user.client.rpc.SerializationException message.
+   
+   When the fix pack was installed, the server part of the Process
+   Admin Console and version numbers were changed. Because the
+   Process Admin Console used a wrong caching algorithm, the
+   browser is not aware of this change and uses the old version
+   numbers, leading to the mismatch and the exception message.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A fix that corrects the caching algorithm so that changes done
+   to the RPC server parts and version numbers are immediately
+   visible to the browser is planned
+   - to be included in a future fix pack for IBM BPM V8.5.0
+   - to be included in an IBM BPM V8.5.6.0 cumulative fix
+   
+   To determine whether the fix pack is available and download it
+   if it is, on Fix Central select IBM Business Process Manager
+   with your edition from the product selector, the installed
+   version to the fix pack level, and your platform, and then click
+   Continue.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  Not applicable
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR54606
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM STANDARD
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9500
+   
+   
+ * REPORTED RELEASE
+   850
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-10-28
+   
+   
+ * CLOSED DATE
+   2015-11-26
+   
+   
+ * LAST MODIFIED DATE
+   2015-11-26
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   BPM STANDARD
+   
+   
+ * FIXED COMPONENT ID
+   5725C9500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R850 PSY
+   UP
+   
+   
+ * R856 PSY
+   UP

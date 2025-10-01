@@ -1,0 +1,68 @@
+Title: IBM FailedEvent DataItems being created following Impact 4 > 5 upgrade - United States
+
+Text:
+netcool; impact; netcool/impact; nci; failed; event; failedevent; data; type; item; datatype; dataitem; upgrade; nci_export; nci_import; import; export; back; up; backup; back-up TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Rows are being added to the FailedEvent DataType after an upgrade of Impact 4.x to Impact 5.x 
+
+SYMPTOM
+Reduction in processing speed, memory issue error messages. Memory and diskspace usage growing. Files being unexpectedly added to the directory: 
+
+ * 
+ * 
+
+
+CAUSE
+Impact 4.x style DefaultExceptionHandler Policy is being launched by the PolicyLogger in response to unhandled exceptions (the cause of which are not addressed in this TechNote). 
+
+
+In upgrading from Impact 4.x to Impact 5.x and copying across the configuration using nci_export/nci_import the old style Impact 4.x DefaultExceptionHandler Policy has overwritten the new style Impact 5 DefaultExceptionHandler Policy and a legacy property has been added to the PolicyLogger properties file that can interfere with the desired configuration.
+
+
+
+
+DIAGNOSING THE PROBLEM
+Examine the output from running: 
+
+
+
+
+ * 
+
+
+
+RESOLVING THE PROBLEM
+To address the overwrite of the Impact 5 style DefaultExceptionHandler Policy simply edit the DefaultExceptionHandler Policy to comment out the AddDataItem line and make the Policy mimic the more modern approach: 
+
+
+
+
+ * 
+
+
+or take advantage of additional variables available to add greater detail to the information logged covered in the TechNote "Variables reporting error and Policy name in ExceptionHandler" [ link below]. 
+
+The PolicyLogger properties file contains a legacy property, usually the result of using nci_import to bring in the configuration from an older version of Impact. Currently it probably reads: 
+
+ * 
+ * 
+ * 
+
+
+This can be cleared up while the ImpactServer is running by opening the PolicyLogger for edit via the GUI, backing off the .props file from: 
+
+ * 
+
+
+for example (as the User that installed, owns and runs Impact): 
+
+ * 
+
+
+and then saving the PolicyLogger configuration (with the desired Error Handling Policy selected). 
+
+Addressing any memory and diskspace usage issues is covered in the TechNote "Memory growing, diskspace used up" [ link below]. 
+RELATED INFORMATION
+ Memory growing diskspace used up [http://www-01.ibm.com/support/docview.wss?uid=swg21578032]
+Variables reporting error and Policy name in ExceptionH [http://www-01.ibm.com/support/docview.wss?uid=swg21515394]

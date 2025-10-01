@@ -1,0 +1,173 @@
+Title: IBM PI10076: INCORROUT TOO MANY ROWS RETURNED WHEN THERE IS A WHERE CLAUSE IN A SUBQUERY OF THE FORM LITERAL1 = LITERAL2 - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  In a subquery there is a WHERE clause with one condition that is
+   true AND'ed with another condition LITERAL1 = LITERAL2 that is
+   not true. So, no rows should be returned. But, rows are
+   returned.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All DB2 11 for z/OS users                    *
+   *                 using constant predicates that               *
+   *                 are always false.                            *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Incorrect output may occur for and SQL  *
+   *                      statement that satisfies the            *
+   *                      following conditions:                   *
+   *                      1. The statement references a           *
+   *                      table expression                        *
+   *                      2. The table expression contains        *
+   *                      an always FALSE predicate               *
+   *                      under a boolean term.                   *
+   *                      3. The table expression contains        *
+   *                      outer joins.                            *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   For Example,
+   CREATE TABLE T1 (C1 INT);
+   CREATE TABLE T2 (C1 INT);
+   CREATE TABLE T3 (C1 INT);
+   
+   INSERT INTO T1 VALUES (1);
+   INSERT INTO T2 VALUES (1);
+   INSERT INTO T3 VALUES (1);
+   
+   
+   SELECT *
+    FROM (SELECT T1.C1
+            FROM   T1 INNER JOIN T2 ON T1.C1 = T2.C1
+                      LEFT OUTER JOIN T3 ON T2.C1 = T3.C1
+            WHERE   1 = 2 AND 1 = 4 ) TX;
+   
+   
+   Incorrect output may receive for the query above. The query
+   above returns 1 row instead of 0 row as expected.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  DB2 was updated to process the always false constant
+   predicate in the table expression correctly.
+   
+   Addtional Keywords:  SQLPRUNE SQLVIEW SQLTABLEEXPR
+                        SQLINCORR SQLINCORROUT DB2INCORR/K
+                        SQLOUTERJOIN
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI10076
+   
+   
+ * REPORTED COMPONENT NAME
+   DB2 OS/390 & Z/
+   
+   
+ * REPORTED COMPONENT ID
+   5740XYR00
+   
+   
+ * REPORTED RELEASE
+   B10
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-01-21
+   
+   
+ * CLOSED DATE
+   2014-03-05
+   
+   
+ * LAST MODIFIED DATE
+   2014-04-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UI15716
+   
+   
+
+MODULES/MACROS
+ *  DSNXOMTX
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   DB2 OS/390 & Z/
+   
+   
+ * FIXED COMPONENT ID
+   5740XYR00
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * RB10 PSY UI15716 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI15716]
+   UP14/03/20 P F403
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

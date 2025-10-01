@@ -1,0 +1,163 @@
+Title: IBM HD64648: GSD : DELETION OF SPECIFIC PLANE TAKES LONG TIME. - United States
+
+Text:
+AIX SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  GSD : DELETION OF SPECIFIC PLANE TAKES LONG
+   TIME.
+   .
+   Scenario.
+   .
+   1) Open the CATPart. Workbench : GSD.
+   2) Select "D331 / Geometrical Set.44 / Plane.1"
+   from specification tree and perform 'Delete'
+   of "Context menu".  "Delete" dialog box is
+   displayed.
+   3) Click the "OK" button in an "Delete" dialog box.
+   > Deletion of an element takes very long time.
+   It takes very long time to delete specific element.
+   .
+   Expected Result
+   .
+   Deletion should not take more than two seconds
+   .
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  GSD : DELETION OF SPECIFIC PLANE TAKES LONG TIME.
+   GSD : DELETION OF SPECIFIC PLANE TAKES LONG
+   TIME.
+   .
+   Scenario.
+   .
+   1) Open the CATPart. Workbench : GSD.
+   2) Select "D331 / Geometrical Set.44 / Plane.1"
+   from specification tree and perform 'Delete'
+   of "Context menu".  "Delete" dialog box is
+   displayed.
+   3) Click the "OK" button in an "Delete" dialog box.
+   > Deletion of an element takes very long time.
+   It takes very long time to delete specific element.
+   .
+   Expected Result
+   .
+   Deletion should not take more than two seconds
+   .
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  THIS PROBLEM WILL BE FIXED ON CATIA VERSION
+   5 RELEASE 19 GA LEVEL.
+   NOTE THAT THIS PROBLEM WILL ALSO BE FIXED
+   ON V5R18SP05
+   Incident Diagnosis.
+   A specific feature in the CATPart was pointing to  to
+   some other feature many times.This caused delay
+   while deleting the feature.
+   .
+   Correction Explantion.
+   Perfomance improved in such cases where the
+   feature was repeatedly pointing to other.
+   .
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   HD64648
+   
+   
+ * REPORTED COMPONENT NAME
+   CATIA V5 NT>XP
+   
+   
+ * REPORTED COMPONENT ID
+   569151000
+   
+   
+ * REPORTED RELEASE
+   517
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2007-05-29
+   
+   
+ * CLOSED DATE
+   2008-03-24
+   
+   
+ * LAST MODIFIED DATE
+   2008-06-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CATIA V5 NT>XP
+   
+   
+ * FIXED COMPONENT ID
+   569151000
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R517 PSN
+   UP
+   
+   
+ * R518 PSN SP51805
+   UP08/06/02 I 1000

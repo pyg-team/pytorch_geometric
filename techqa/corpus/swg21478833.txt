@@ -1,0 +1,21 @@
+Title: IBM Will there be a version of spsstoqt for the latest version of SPSS? - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Is there a version of the SPSS to Quantum script (spsstoqt.sbs) available for the latest version of SPSS? 
+
+RESOLVING THE PROBLEM
+The only version available has only be tested with v13, v14 and v15. You can try it with later versions to see if it works but there are no guarantees it will. There are no plans to update this script for future versions of SPSS.
+
+If you are going to be doing exports from SPSS to Quantum on a regular basis you may want to get in contact with your SPSS account manager to discuss purchasing the SPSS mrStudio which provides this functionality and is supported
+
+RELATED INFORMATION
+ Need more help? Our Statistics forum is Live! [https://developer.ibm.com/answers/topics/statistics.html?smartspace=predictive-analytics]
+
+
+ 
+
+HISTORICAL NUMBER
+ 70965

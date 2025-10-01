@@ -1,0 +1,159 @@
+Title: IBM Knowledge Collection: Database documents for the IBM Business Process Manager products - United States
+
+Text:
+knowledgecollection EDUCATION
+
+ABSTRACT
+ This knowledge collection is a focused compilation of links to database-related documents for the IBM Business Process Manager products. 
+
+CONTENT
+ Knowledge Collections are navigation aids that organize content to help users quickly find relevant information. Knowledge Collections are not designed to be an all-inclusive list of all documents dealing with the specific theme. The applicable version is included in each entry.
+
+Other Knowledge Collections are available for IBM Business Process Manager. 
+
+
+If you need technical support, see the Support section for information on what IBM Software Support needs to investigate the issue. 
+
+
+
+Knowledge Collections are navigation aids that organize content to help users quickly find relevant information. Knowledge Collections are not designed to be an all-inclusive list of all documents dealing with the specific theme. 
+
+
+Oracle ORA-01000 error caused by IBM Business Process Manager (BPM) SQL integration service (1670886) [http://www.ibm.com/support/docview.wss?uid=swg21670886]
+Versions: 8.5, 8.0.1, 8.0, 7.5.1, 7.5
+You can use IBM Business Process Manager SQL integration service to interact with the database. In a high workload, you might find that the prepared statement cache hit ratio is very low for the data source that is used by the SQL integration service. After increasing the statement cache size in the data source, an Oracle ORA-01000 error happens.
+
+
+
+An IBM Business Process Manager (BPM) server might crash due to a hung thread on a JDBC call (1670914) [http://www.ibm.com/support/docview.wss?uid=swg21670914]
+Versions: 8.0.1, 8.0, 7.5.1, 7.5
+IBM Business Process Manager server might crash due to hung thead on a Oracle JDBC call from a Oracle JDBC driver to a Oracle database server.
+
+
+
+ [http://www.ibm.com/support/docview.wss?uid=swg21571422&acss=dakc]The database driver path variables are incorrectly set in the deployment environment in IBM Business Process Manager (BPM) Advanced (1615469) [http://www.ibm.com/support/docview.wss?uid=swg21615469&acss=dakc]
+Version: 8.0.1
+When you create a deployment environment, the database driver path values in the database design file might not be propagated to the WebSphere variables that are set at the node level for DB2UNIVERSAL_JDBC_DRIVER_PATH and DB2UNIVERSAL_JDBC_DRIVER_NATIVEPATH.
+
+
+
+The IBM Business Process Manager (BPM) server log shows database errors and warnings when the first user logs on (1616519) [http://www.ibm.com/support/docview.wss?uid=swg21616519]
+Version: 8.0.1
+The SystemOut.log file might contain database errors and warnings when, after the server has started for the first time, the first user logs on.
+
+
+
+IBM Business Process Manager (BPM) database deadlocks can result in failed business process definition instances (1571422)
+Versions: 8.0, 7.5.1
+In IBM Business Process Manager, you might experience database deadlocks with business process definition (BPD) processes. These deadlocks result in failed process instances.
+
+
+
+Viewing tasks in Process Inspector for IBM Business Process Manager (BPM) results in date error (1612759) [http://www.ibm.com/support/docview.wss?uid=swg21612759&acss=dakc]
+Versions: 8.0, 7.5.1
+When you view tasks in the Process Inspector, an error occurs due to date formatting. The date format should be "YYYY-MM-dd," but it is interpreted sa "YYYY-dd-MM."
+
+
+
+The server start up process for IBM Business Process Manager (BPM) cannot find LSW_PRI_KEY, LSW_USR, or LSW_USR_XREF tables (1612772) [http://www.ibm.com/support/docview.wss?uid=swg21612772&acss=dakc] 
+Versions: 8.0, 7.5.1
+You cannot log into the IBM Business Process Manager server. The SystemOut.log file indicates the server cannot reach system tables.
+
+
+
+Error messages about database unique constraints can occur when starting an IBM Business Process Manager (BPM) clustered server (1593423) [http://www.ibm.com/support/docview.wss?uid=swg21593423&acss=dakc]
+Versions: 8.0, 7.5.1, 7.5
+When starting a server, the system inserts the LSW_EM_INSTANCE row to register an event manager instance. In a clustered environment, more than one cluster member attempts to create a row with this name, which causes a violation of the database unique constraint named LSWC_EM_INST_UQ.
+
+
+
+When using IBM Business Process Manager (BPM) with Microsoft SQLServer, deadlocks can occur if process applications, toolkits, and tracks are created concurrently (1593430) [http://www.ibm.com/support/docview.wss?uid=swg21593430&acss=dakc]
+Version: 8.0
+If two or more users create a new process application, toolkit, or track at nearly the same time, some of these operations can fail with a stack trace that indicates a deadlock. When the operation fails, the underlying Microsoft SQL Server database transaction is fully rolled back and the user receives a database error message.
+
+
+
+"DSRA1300E: Feature is not implemented" error is seen from the Microsoft SQL JDBC driver with the IBM Business Process Manager (BPM) products (1590022) [http://www.ibm.com/support/docview.wss?uid=swg21590022&acss=dakc]
+Versions: 7.5.1, 7.5
+The SystemOut.log file for the IBM Business Process Manager products contain "DSRA1300E: Feature is not implemented" error messages.
+
+
+
+IBM Business Process Manager (BPM): Process Server and Performance Data Warehouse configuration links are missing in the administrative console (1590036) [http://www.ibm.com/support/docview.wss?uid=swg21590036&acss=dakc]
+Version: 7.5.1
+The Cluster Configuration page within the WebSphere Application Server Administrative Console does not have the links to configure a Process Center, Process Server, or a Performance Data Warehouse.
+
+
+
+Windows Authentication is not supported for Microsoft SQL Server database in IBM Business Process Manager (1500823) [http://www.ibm.com/support/docview.wss?uid=swg21500823&acss=dakc]
+Version: 7.5
+IBM Business Process Manager (BPM) V7.5 does not support Windows Authentication for built-in databases to authenticate with a Microsoft SQL Server database. This note applies only to Business Process Manager built-in databases; it does not apply to user databases accessed in IBM Business process Manager Advanced through the JDBC Adapter.
+
+
+
+Business Space is not configured when you use the Oracle database to create a stand-alone profile with IBM Business Process Manager (BPM) (1500856) [http://www.ibm.com/support/docview.wss?uid=swg21500856&acss=dakc]
+Version: 7.5
+Business Space is not configured when creating a WebSphere Enterprise Service Bus stand-alone profile; IBM Business Process Manager Advanced, Process Center stand-alone profile; or IBM Business Process Manager Advanced, Process Server stand-alone profile.
+
+
+
+With IBM Business Process Manager products, IBM DB2 can display errors when under heavy process load (1500897) Version: 7.5 [http://www.ibm.com/support/docview.wss?uid=swg21500897&acss=dakc]
+The IBM DB2 database can display the CWLLG2068E error message when it is under heavy process load.
+
+
+
+Exception displays in the log file on each startup in a network deployment installation running DB2 for z/OS in IBM Business Process Manager, Version 7.5 (1501176) [http://www.ibm.com/support/docview.wss?uid=swg21501176&acss=dakc] 
+Version: 7.5
+In a network deployment installation running DB2 for z/OS, the log files show an exception on each subsequent startup after the first startup.
+
+
+
+WTRN0078E error when using SQL Server 2008 on Windows 2008 Cluster with DTC (1506986) [http://www.ibm.com/support/docview.wss?uid=swg21506986&acss=dakc]
+Version: 7.5
+You might run into an issue with the Microsoft Distributed Transaction Coordinator (MS DTC) when you run IBM Business Process Manager 7.5 JDBC XA transactions against Microsoft SQL Server 2008 on a Windows Server 2008 cluster.
+
+
+
+With IBM Business Process Manager products, an Oracle database can display errors when under heavy process load (1514706) [http://www.ibm.com/support/docview.wss?uid=swg21514706&acss=dakc]
+Version: 7.5
+An Oracle database can display the CWLLG2068E error message when it is under heavy process load.
+
+
+
+
+Back to top
+
+ 
+
+
+
+SUPPORT
+
+If you are having database issues and need help from IBM Support, see the Collect troubleshooting data for database problems in IBM Business Process Manager (BPM) (1610455) [http://www.ibm.com/support/docview.wss?uid=swg21610455&acss=dakc] topic. This document explains what documentation you must collect (MustGather) so that the IBM Business Process Manager Support team can diagnose your problem. If you gather this documentation before contacting support, it will expedite the troubleshooting process, and save you time. 
+
+
+Back to top
+
+
+
+
+OTHER KNOWLEDGE COLLECTIONS FOR IBM BUSINESS PROCESS MANAGER
+ * Knowledge Collection: Installation and configuration documents for the IBM Business Process Manager (BPM) products (7036941) [http://www.ibm.com/support/docview.wss?uid=swg27024590]
+ * Knowledge Collection: Migration documents for the IBM Business Process Manager (BPM) products (7037045) [http://www.ibm.com/support/docview.wss?uid=swg27038196]
+ * Knowledge Collection: Performance documents for the IBM Business Process Manager (BPM) products (7037045) [http://www.ibm.com/support/docview.wss?uid=swg27037045]
+ * Knowledge Collection: Security documents for the IBM Business Process Manager (BPM) products (7036942) [http://www.ibm.com/support/docview.wss?uid=swg27036942]
+
+
+
+
+Back to top
+
+
+
+
+ORIGINAL PUBLICATION DATE
+ 2012/12/14 
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Business Process Manager Standard Databases AIX, Linux, Linux zSeries, Solaris, Windows 8.5, 8.0.1, 8.0, 7.5.1, 7.5 Business Integration IBM Business Process Manager Express Databases Linux, Linux zSeries, Windows 8.5, 8.0.1, 8.0, 7.5.1, 7.5

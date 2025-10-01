@@ -1,0 +1,260 @@
+Title: IBM IV23924: WMQ V7 CONNECTION LEAK WHEN USING JMS APPLICATION WITH XA AND QUEUE MANAGER GROUPS WITHIN A CCDT - United States
+
+Text:
+  FIXES ARE AVAILABLE
+WebSphere MQ V7.5 Fix Pack 7.5.0.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24034616]
+WebSphere MQ V7.0 Fix Pack 7.0.1.10 [http://www-01.ibm.com/support/docview.wss?uid=swg24034145]
+Fix Pack 7.1.0.3 for WebSphere MQ V7.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24035405]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  A WebSphere Application Server is using the WebSphere MQ V7
+   Resource Adapter, configured to use an Activation Specification
+   with XA transactions, and using a CCDT, which controls which
+   queue manager the activation spec will connect to.
+   
+   When the CCDT contains queue manager groups or multiple queue
+   manager entries, the activation specification may connect to
+   different queue managers. If the deployed MDB driven from that
+   activation specification is configured to run under an XA
+   transaction, an XAException will be thrown, resulting in the
+   failure for the MDB to pick up any available messages on
+   the Destination.
+   
+   This exception is of the form:
+   
+   (JmqiXAResource) [:/9e66603] Tracing exception:
+   javax.transaction.xa.XAException: The method 'xa_open' has
+   failed with errorCode '-5'.
+   at
+   com.ibm.mq.jmqi.JmqiXAResource.<init>(JmqiXAResource.java:220)
+   at
+   com.ibm.mq.jmqi.JmqiXAResource.getInstance(JmqiXAResource.java:
+   104)
+   at
+   com.ibm.mq.jmqi.JmqiEnvironment.newJmqiXAResource(JmqiEnvironme
+   nt.java:1592)
+   at
+   com.ibm.msg.client.wmq.internal.WMQXASession.<init>(WMQXASessio
+   n.java:88)
+   at
+   com.ibm.msg.client.wmq.internal.WMQXAConnection.createXASession
+   (WMQXAConnection.java:95)
+   at
+   com.ibm.msg.client.jms.internal.JmsXAConnectionImpl.createXASes
+   sion
+   
+   The XA exception that causes the leaking of TCP connections is:
+   
+   
+   After a number of attempts have been made to consume messages
+   from the Destination and this exception has been thrown many
+   times, it is observed that the queue manager's channel
+   'MAXCHANNEL' limit being reached, and no further connections
+   on this channel can be established.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Local Fix&#65496;
+    Do not use XA transactions with qmanagers defined in a
+   qmanager group inside of CCDT.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   This issue affects users of the WebSphere MQ classes for JMS,
+   who are making use of XA transactions, including:
+   
+   - The WebSphere MQ V7 classes for JMS.
+   - The WebSphere MQ V7 Resource Adapter.
+   - The WebSphere Application Server V7 WebSphere MQ messaging
+   provider.
+   - The WebSphere Application Server V8 WebSphere MQ messaging
+   provider.
+   - The WebSphere Application Server V6.1 WebSphere MQ messaging
+   provider who have configured the WebSphere variable
+   MQ_INSTALL_ROOT to point to a WebSphere MQ V7 installation.
+   
+   Platforms affected:
+   All Distributed (iSeries, all Unix and Windows) +Java +Java zOS
+   ****************************************************************
+   PROBLEM SUMMARY:
+   An Object of the class:
+   
+   com.ibm.msg.client.wmq.internal.WMQXASession
+   
+   is instantiated whenever a call is made to createXASession() on
+   an WebSphere MQ JMS XA Connection object.
+   
+   During the creation of this WMQXASession object, a call is made
+   to the XA resource (the queue manager) to perform an xa_open
+   operation.  In the event of a non xa_ok return code, for
+   example the invalid configuration where a CCDT is being used
+   with queue manager groups, the WMQXASession will fail during
+   creation.  However an underlying TCP connection was created as
+   part of this xa_open, and was not closed when the failure
+   exception was thrown during the creation of the WMQXASession.
+   
+   This resulted in a leak of a TCP connection each time the
+   XAException was thrown.  Depending on which resource ran out
+   first, the JVM resources or the queue manager channel limit,
+   this leak would eventually be externally observed as
+   java.lang.OutOfMemoryError, or the 'MAXCHANNEL' limit being
+   reached.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The code change associated with this APAR fixes the issue by
+   ensuring that the TCP connection associated with the
+   WMQXASession is closed after a failure in the xa_open call
+   during the WMQXASession creation.
+   
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+                      v7.0
+   Platform           Fix Pack 7.0.1.10
+   --------           --------------------
+   Windows            U200352
+   AIX                U853055
+   HP-UX (PA-RISC)    U853082
+   HP-UX (Itanium)    U853087
+   Solaris (SPARC)    U853083
+   Solaris (x86-64)   U853089
+   iSeries            7.0.1.10
+   Linux (x86)        U853084
+   Linux (x86-64)     U853088
+   Linux (zSeries)    U853085
+   Linux (Power)      U853086
+   zOS                7.0.1.10
+   
+                      v7.1
+   Platform           Fix Pack 7.1.0.3
+   --------           --------------------
+   Windows            7.1.0.3
+   AIX                7.1.0.3
+   HP-UX (Itanium)    7.1.0.3
+   Solaris (SPARC)    7.1.0.3
+   Solaris (x86-64)   7.1.0.3
+   iSeries            7.1.0.3
+   Linux (x86)        7.1.0.3
+   Linux (x86-64)     7.1.0.3
+   Linux (zSeries)    7.1.0.3
+   Linux (Power)      7.1.0.3
+   zOS                7.1.0.3
+   
+   Platform           v7.5
+   --------           --------------------
+   Multiplatforms     7.5.0.1
+   
+   The latest available maintenance can be obtained from
+   'WebSphere MQ Recommended Fixes'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037]
+   
+   If the maintenance level is not yet available information on
+   its planned availability can be found in 'WebSphere MQ
+   Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV23924
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ AIX V7
+   
+   
+ * REPORTED COMPONENT ID
+   5724H7221
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-06-27
+   
+   
+ * CLOSED DATE
+   2012-07-31
+   
+   
+ * LAST MODIFIED DATE
+   2012-07-31
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ AIX V7
+   
+   
+ * FIXED COMPONENT ID
+   5724H7221
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R700 PSY
+   UP

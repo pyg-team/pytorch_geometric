@@ -1,0 +1,12 @@
+Title: IBM Case Manager is not affected by the Apache Struts 2.x Vulnerability (CVE-2017-5638) - United States
+
+Text:
+ FLASH (ALERT)
+
+ABSTRACT
+ IBM Case Manager is not vulnerable to the Apache Struts 2.x Vulnerability. 
+
+CONTENT
+IBM Case Manager in all editions and all platforms is NOT vulnerable to Apache Struts 2.x Vulnerability (CVE-2017-5638). 
+NOTE: You should check your applications to determine if they are using the vulnerable Apache Struts APIs and update your Apache Struts 2 accordingly. Refer to https://cwiki.apache.org/confluence/display/WW/S2-045 [https://cwiki.apache.org/confluence/display/WW/S2-045] 
+Change History: March 20, 2017: original version published

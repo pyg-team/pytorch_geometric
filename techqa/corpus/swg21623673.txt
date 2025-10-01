@@ -1,0 +1,38 @@
+Title: IBM Problem with FSSO receiving error DPWWA2016E - United States
+
+Text:
+FSSO DPWWA2016E no single sign on form found SSO FSSO TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ While trying to use Forms Single Sign On an error is displayed when one tries to access a page that would have caused FSSO to activate. The error displayed on the web browser reads:
+DPWWA2016E No HTML form for single-sign-on was found. 
+
+RESOLVING THE PROBLEM
+This occurs when no HTML form with an action URI matching the login-form-action was found in the document returned from the junction. 
+
+For example with the following truncated FSSO conf file:
+[forms-sso-login-pages]
+login-page-stanza = test1
+[test1]
+login-page = /login1.html
+login-form-action = /login.cgi
+gso-resource =
+argument-stanza = login1
+
+What this means is that WebSEAL will intercept any page that matches the string in login-page in this case /login.html and looks for a form with the action login-form-action in this case /login.cgi If WebSEAL can not find the form specified in the FSSO config file they it will give the error you reported.
+
+To fix this examine the login page being returned from the junction. 
+Is it an HTML or WML document?
+Does it contain an HTML form?
+Does the form action URI match the login-form-action entry in the forms SSO configuration file?
+
+When those three questions are true then it should work.
+
+Please note that it is important to specify the final and exact file returned from the back-end server. WebSEAL will not follow a 302, temporarily moved, response. If you specify a file that returns a 302 response WebSEAL will correctly return the error above because it is not able to find the form specified in the 302 response from the server. The correct way to use FSSO is to specify the file the 302 points to.
+
+Also do not specify the junction name in the FSSO conf file. WebSEAL looks for the form that is returned from the back-end server before it does any filtering. The values used should be set from what the back-end server returns.
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ ITAM ISAM AM TAM

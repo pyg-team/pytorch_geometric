@@ -1,0 +1,79 @@
+Title: IBM TDWC connection failed with CORBA NO_PERMISSION error - United States
+
+Text:
+WASX8022E; WASX8021E; webui; gui; corba; tdwc; permission TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Unable to connect to Tivoli Workload Scheduler (TWS) master or backup master using Tivoli Dynamic Workload Console (TDWC). 
+
+SYMPTOM
+ [tws@admin01: /export/home/tws/maestro/TWA/wastools] 
+
+=> sesudo itmcmd execute ux "./manage_ltpa.sh -operation import -profilepath /sys_apps_01/tws/maestro/appserver/profiles/twsprofi> 
+
+Starting user script... 
+
+WASX7209I: Connected to process "twaserver" on node DefaultNode using SOAP connector; The type of process is: UnManagedProcess 
+
+WASX8022E: Incompatible node version; exception information: com.ibm.ws.scripting.ScriptingException: WASX8021E: The wsadmin with version "6.1.0.9" connected to an incompatible server or deployment manager with node version "6.1.0.33", which is not supported. " 
+
+WASX7303I: The following options are passed to the scripting environment and are available as arguments that are stored in the argv variable: "[-import, -serverName, server1, -fileLTPA, /tmp/ltpa, -pwdLTPA, password]"
+
+
+CAUSE
+TDWC is installed with a separate embedded WebSphere Application Server (eWAS) from TWS's eWAS. In this case, the LTPA keys must be shared using a script in the wastools directory: manage_ltpa.sh. The errors above occur because the parameters used with the <twshome>/wastools/manage_ltpa.sh script are not correct.
+
+
+ENVIRONMENT
+TWS master or backup master v8.3 or above. 
+
+TDWC (any version) installed with separate eWAS from TWS's eWAS.
+
+
+RESOLVING THE PROBLEM
+Follow the instructions in the TWS Administration Guide [http://www-01.ibm.com/support/knowledgecenter/SSGSPN_9.2.0/com.ibm.tivoli.itws.doc_9.2/distr/src_ad/awsadshareltpa.htm] or in Technote # 1377224 [http://www-01.ibm.com/support/docview.wss?uid=swg21377224] carefully. 
+
+You must use TWS-specific parameters for -profilepath, -port, and -server when either importing or exporting on the TWS side, and you must use the TDWC-specific -port, -profilepath, and -server parameters when importing or exporting on the TDWC side. 
+
+One solution is to use the TDWC gui to export the TDWC LTPA keys. Then, you can run the manage_ltpa.sh script from the command line on the TWS engine side to import the LTPA key to TWS. 
+
+ 
+
+IMPORTANT NOTE: It has been observed in some environments that using a mixed method of exporting and importing LTPA keys (that is, using the TDWC webui to export and then the command line to import, or vice versa) does not work. If you use one method to export and another to import and find you are still receiving errors when attempting to create an engine connection, then it is advised to perform the export and import again using only one method for both. 
+
+ 
+
+To export the LTPA key from the TDWC webui: 
+
+1. Go to: Secure administration, applications, and infrastructure > Authentication 
+
+mechanisms and expiration > Cross-cell single sign-on 
+
+2. Enter password (any password will work at this point) and fully 
+
+qualified key file name (example: /tmp/ltpa.txt) for the file you are creating. 
+
+3. Select "Export keys" 
+
+ 
+
+To import the TDWC keys to the TWS eWAS: 
+
+1. Run the manage_ltpa.sh script with the correct TWS soap -port (found in output of the showHostProperties.sh script), -server (server1 by default), and -profilepath (<twshome>/appserver/profiles/twsprofile) as well as the other required parameters described in the TWS Administration guide and the Technote in the "Related information" section below. 
+
+ 
+
+Example: 
+
+# <twshome>/wastools/manage_ltpa.sh -operation import -profilepath /export/home/maestro/appserver/profiles/twsprofile -ltpafile /tmp/ltpa.properties -ltpapassword password -user maestro -password tws_user_password -port 31118 -server server1 
+
+The manage_LTPA.sh script will run successfully. 
+
+NOTE: Look in the debug log to see that the import completed successfully. 
+
+2. Stop and restart the eWAS for both TWS and TDWC, then test the TDWC connection.
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ TDWC

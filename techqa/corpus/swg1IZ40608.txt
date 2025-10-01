@@ -1,0 +1,197 @@
+Title: IBM IZ40608: DELETING CORRECT "AUTHORIZATION PROFILES" ON AN SAP ACCOUNT NOT WORKING CONSISTENTLY - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Deleting correct "Authorization Profiles" on an SAP account
+   not working consistently
+   
+   
+   Assigned 3 authorization profiles to an existing account
+   (T999999pj):
+   
+   SAP_NEW_21C - Authorizations for new objects added Rel. 2.1C
+   SAP_NEW_21D - Authorizations for New Objects Added Rel. 2.1D
+   SAP_NEW_22A - Authorizations for New Objects Added Rel. 2.2A
+   
+   Logged in to SAP using the account (T999999pj) and confirmed
+   that these
+   authorization profiles were assigned to the user.
+   
+   Deleted the "SAP_NEW_22A - Authorizations for New Objects Added
+   Rel. 2.2
+   A" authorization role.
+   
+   
+   ITIM reported success, but on the target SAP instance, I found
+   that
+   "SAP_NEW_21C - Authorizations for new objects added Rel. 2.1C"
+   was
+   deleted instead!
+   
+   Went back in ITIM and deleted "SAP_NEW_21C - Authorizations for
+   new
+   objects added Rel. 2.1C".
+   
+   Again ITIM reported a success but on the target SAP instance, I
+   found
+   that "SAP_NEW_21D - Authorizations for New Objects Added Rel.
+   2.1D" was
+   deleted!
+   
+   The end state was ITIM having "SAP_NEW_21D - Authorizations for
+   New
+   Objects Added Rel. 2.1D" authorization profile on the account
+   while SAP
+   showed the user having "SAP_NEW_22A - Authorizations for New
+   Objects
+   Added Rel. 2.2A" authorization profile.
+   
+   Customer points out similarity to apar IZ08011 but that isssue
+   specifically addresses AUTHORIZATION ROLES - not authorization
+   profiles.
+   
+   Dev recommended that customer upgrade to the latest librfc32.dll
+   and
+   retest.  Customer upgraded to librfc32.dll v7000.0.183.5955 and
+   still
+   experiences the issue.  Using customer's latest version of
+   librfc32.dll
+   dev was able to reproduce the issue and recommended that the PMR
+   generate an apar.
+   
+   Environment:
+   
+   *************************
+   ITIM 4.6 FP74
+   ITDS 6 FP 3
+   DB2 8.2 FP11
+   WAS 5.1.1.13
+   SAP Adapter 4.6.9
+   SAP version 7
+   *******************************
+   
+   .
+   Desired behavior:  SAP adapter 4.6.9 to delete correct
+   authorization
+   profiles.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  n/a
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Fix will ship in SAP 4.6.10 for Win.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fix will ship in SAP 4.6.10 for Win.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ40608
+   
+   
+ * REPORTED COMPONENT NAME
+   ITIM AGENTS
+   
+   
+ * REPORTED COMPONENT ID
+   5724C34AG
+   
+   
+ * REPORTED RELEASE
+   460
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-12-22
+   
+   
+ * CLOSED DATE
+   2009-03-27
+   
+   
+ * LAST MODIFIED DATE
+   2009-03-27
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  AGENT
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ITIM AGENTS
+   
+   
+ * FIXED COMPONENT ID
+   5724C34AG
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R460 PSY
+   UP

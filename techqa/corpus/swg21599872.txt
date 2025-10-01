@@ -1,0 +1,56 @@
+Title: IBM Installing, updating, or modifying RFT 8.2.2 results in "CRIMC1037E: Error expanding installation packages" error - United States
+
+Text:
+RFT; functional tester; rational functional tester; install; update; modify; 8.2.2; installation manager; im; PM67734; APAR; known issue; known issues; CRIMC1037E; Error expanding installation packages; com.rational.test.ft.api.help; com.rational.test.ft.enabler.wsw; not in the current feature selection; Component "com.rational.test.ft.api.help" required by component "com.rational.test.ft.enabler.wsw" is not in the current feature selection; In installation context "com.ibm.sdp.eclipse.ide"; CRIMC1037E: Error expanding installation packages TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Attempts to install, update, or modify IBM Rational Functional Tester (RFT) 8.2.2 without selecting the Java Scripting feature result in the error "CRIMC1037E: Error expanding installation packages". 
+
+SYMPTOM
+Steps to reproduce: 
+
+ 1. Install IBM Installation Manager (IM). 
+ 2. Configure IM to connect to the RFT 8.2.2 repository. 
+ 3. During installation select only the .NET Scripting feature, or select no IDE. Do not select the Java Scripting feature.
+
+
+Expected result: The product is installed. 
+
+ 
+
+Actual result: Installation fails. The full error message is as follows:
+CRIMC1037E: Error expanding installation packages
+In installation context "com.ibm.sdp.eclipse.ide":
+Component "com.rational.test.ft.api.help" required by component "com.rational.test.ft.enabler.wsw" is not in the current feature selection 
+
+
+This error also occurs when you attempt to update an existing instance of RFT with no Java Scripting IDE to version 8.2.2, or when you attempt to modify an existing instance of RFT 8.2.2 to remove the Java Scripting IDE.
+
+CAUSE
+This issue is identified as a product defect and has been logged as APAR PM67734 [http://www.ibm.com/support/docview.wss?uid=swg1PM67734].
+
+
+
+RESOLVING THE PROBLEM
+This issue was resolved in Rational Functional Tester Fix Pack 1 (8.2.2.1) for 8.2.2 [http://www.ibm.com/support/docview.wss?uid=swg24033175]. 
+
+
+To avoid this error, install or update directly to RFT version 8.2.2.1 or above. 
+
+ 
+
+WORKAROUND: 
+
+ * If performing a new installation of RFT 8.2.2, select the Java Scripting feature. 
+ * If updating an existing instance of RFT, use the Modify button in IM to add the Java Scripting feature before updating to 8.2.2.
+
+RELATED INFORMATION
+#RFT 8.2.2 [http://www.ibm.com/support/docview.wss?uid=swg24032696]
+RFT installation features [http://publib.boulder.ibm.com/infocenter/rfthelp/v8r2/topic/com.ibm.rational.test.ft.install.doc/topics/r_feature_desc.html]
+
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Software Development IBM Installation Manager Update Windows 1.5.2

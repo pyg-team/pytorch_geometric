@@ -1,0 +1,40 @@
+Title: IBM AddType in web server configuration file missing on z/Apache causes IBM Websphere Host On-Demand sessions to not appear and telnet connection to fail with COMM662 - United States
+
+Text:
+z/Apache sessions missing comm 662 httpd conf AddType TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When using z/Apache as the Web server instead of the IBM HTTP server on z/OS, the instructions included in the Program Directory for IBM Websphere Host On-Demand for the IBM HTTP server are not complete if using the z/Apache Web server. If these directions are followed, the Host On-Demand session icons will not appear and the telnet connection will fail with a COMM662 error. 
+
+SYMPTOM
+IBM Websphere Host On-Demand sessions do not appear and SSL connections fail.
+
+
+CAUSE
+When using z/Apache as the Web server instead of the IBM HTTP server, the AddTypes must be configured explicitly. 
+
+The current instructions do not specify including AddType's for .cf or .obj files that are used in the session configuration. Also, for SSL connections, it does not specify to add the .p12 type.
+
+
+ENVIRONMENT
+z/Apache on z/OS
+
+
+
+RESOLVING THE PROBLEM
+Add the following AddTypes to the z/Apache httpd.conf file: 
+
+ 
+To fix the session disappearing problem, add .cf and .obj. 
+
+ * 
+ * 
+ * 
+ * 
+ * 
+
+To fix the COMM 662 error, add the following AddType : 
+ * 
+ * 
+
+Stop and restart the Web server.

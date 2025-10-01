@@ -1,0 +1,164 @@
+Title: IBM IT18181: SECURITY APAR FOR MULTIPLE SECURITY VULNERABILITIES IN OPENSSL - United States
+
+Text:
+AIX SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  CVE-2016-6302 CVE-2016-6304 CVE-2016-6305 CVE-2016-6303
+   CVE-2016-2180 CVE-2016-2177 CVE-2016-6306 CVE-2016-6307
+   CVE-2016-6308 CVE-2016-2183 CVE-2016-6309 CVE-2016-7052
+   See security bulletin
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * IBM Spectrum Control 5.2.x and TPC 5.x users                 *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * See security bulletin for vulnerability details:             *
+   * http://www-01.ibm.com/support/docview.wss?uid=swg21995129    *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Apply fix maintenance when available                         *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix for this APAR is contained in the following maintenance
+   package:
+   
+   | refresh pack | 5.2-TIV-TPC-RP0012 - December 2016
+   
+   Fixed in IBM Spectrum Control 5.2.12
+   
+   http://www.ibm.com/support/docview.wss?&uid=swg21320822 [http://www.ibm.com/support/docview.wss?&uid=swg21320822]
+   
+   The target dates for future refresh packs do not represent a
+   formal commitment by IBM. The dates are subject to change
+   without notice.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT18181
+   
+   
+ * REPORTED COMPONENT NAME
+   TPC
+   
+   
+ * REPORTED COMPONENT ID
+   5608TPC00
+   
+   
+ * REPORTED RELEASE
+   52B
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-12-01
+   
+   
+ * CLOSED DATE
+   2016-12-12
+   
+   
+ * LAST MODIFIED DATE
+   2016-12-12
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TPC
+   
+   
+ * FIXED COMPONENT ID
+   5608TPC00
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R525 PSY
+   UP
+   
+   
+ * R526 PSY
+   UP
+   
+   
+ * R527 PSY
+   UP
+   
+   
+ * R528 PSY
+   UP
+   
+   
+ * R529 PSY
+   UP
+   
+   
+ * R52A PSY
+   UP
+   
+   
+ * R52B PSY
+   UP

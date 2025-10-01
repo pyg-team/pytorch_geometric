@@ -1,0 +1,149 @@
+Title: IBM JR47011: DBUPGRADE WILL FAIL IF THE WAS BASE VERSION OF BPM IS 8.5.5 - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Version 8.5.0 Fix Pack 1 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24035702]
+Version 8.5 Refresh Pack 5 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24037683]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  If you're migrating to BPM 8.5, and the WAS base of BPM 8.5 is
+   8.5.5, then the migration will fail at DBUpgrade with
+   ClassNotFoundException exception below:
+       Caused by: java.lang.ClassNotFoundException:
+   com.ibm.ws.javaee.dd.ejb.MethodPermission
+   
+   It's caused by some changes in WAS 8.5.5, and the ifix will fix
+   this issue.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  Business Process Manager Version 8.5        *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: DBUpgrade fails with                    *
+   *                      java.lang.ClassNotFoundException        *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   Due to changes in WebSphere Application Server (WAS) 8.5.5,
+   the DBUpgrade will fail during migration to Business Process
+   Manager Version 8.5 if the base WAS version is 8.5.5
+   The DBUpgrade will fail with ClassNotFoundException exception
+   below:
+   Caused by: java.lang.ClassNotFoundException:
+   com.ibm.ws.javaee.dd.ejb.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The iFix corrects the DBUpgrade issue.
+   
+   Install/Dependency information is available in the readme.txt
+   on FixCentral. When the user goes to the download files page
+   in FixCentral, the readme will be available with the fix
+   package as a separate download.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR47011
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM ADVANCED
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9400
+   
+   
+ * REPORTED RELEASE
+   850
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-06-20
+   
+   
+ * CLOSED DATE
+   2013-09-13
+   
+   
+ * LAST MODIFIED DATE
+   2013-09-13
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   BPM ADVANCED
+   
+   
+ * FIXED COMPONENT ID
+   5725C9400
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R800 PSY
+   UP

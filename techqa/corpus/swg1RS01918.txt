@@ -1,0 +1,143 @@
+Title: IBM RS01918: FIREFOX 31 AND ABOVE FREEZE WHEN EDITING DECISION TABLE WITH OD M 8.5.1 ENTERPRISE CONSOLE - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Operational Decision Manager V8.7.1 Download Document [http://www-01.ibm.com/support/docview.wss?uid=swg24039330]
+Operational Decision Manager V8.7.1 Fix Pack [http://www-01.ibm.com/support/docview.wss?uid=swg24040019]
+Operational Decision Manager V8.7.1.1 Fix Pack [http://www-01.ibm.com/support/docview.wss?uid=swg24040633]
+Operational Decision Manager V8.7.0.1: Interim Fix 28 [http://www-01.ibm.com/support/docview.wss?uid=swg24041326]
+Operational Decision Manager V8.7.0.1: Interim Fix 33 [http://www-01.ibm.com/support/docview.wss?uid=swg24041343]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PERMANENT RESTRICTION.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Editing a Decision Table with ODM 8.5.1 Enterprise Console (
+   http://.../teamserver) using Firefox 31 freeze the browser.
+   It is then necessary to close the browser window and login
+   again to the Enterprise Console.
+   The same problem applies to:
+   - Firefox 34,35 or 36 (browser versions on which it was also
+   observed)
+   - ODM 8.5.1 fixpack 1 & 2
+   Using Firebug the below error messages can be seen:
+   - ReferenceError: IlrDTWTextField is not defined
+   - ReferenceError: IlrWComboBox is not defined
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Either use:
+   - The Business Console (http://.../decisioncenter)
+   - ODM 8.5.1 supported version of Internet Explorer or Chrome
+   with both Enterprise and Business Console.
+   - Firefox 17, the lowest supported version of firefox, can also
+   be used as an alternative browser.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  The web component used in decision center are becoming
+   incompatible with newer version of Browser
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  With 8.7 we support officially FF ESR24 and with 8.6 and
+   earlier version ESR 17.  We are making every effort to support
+   newer version of Browser and we will improve this behavior in
+   future updates and release to stay current with Browser support.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   RS01918
+   
+   
+ * REPORTED COMPONENT NAME
+   WS DECISION CTR
+   
+   
+ * REPORTED COMPONENT ID
+   5725B6900
+   
+   
+ * REPORTED RELEASE
+   851
+   
+   
+ * STATUS
+   CLOSED PRS
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-03-02
+   
+   
+ * CLOSED DATE
+   2015-03-23
+   
+   
+ * LAST MODIFIED DATE
+   2015-03-23
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  999
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

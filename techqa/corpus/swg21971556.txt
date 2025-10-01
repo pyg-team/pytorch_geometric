@@ -1,0 +1,34 @@
+Title: IBM Open Mic Presentation on "IBM Notes Traveler Administration & Log Troubleshooting Tips – Part II" on 5th Nov, 2015 - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Presentation and Q&A session for Open Mic session on "IBM Notes Traveler Administration & Log Troubleshooting Tips – Part II" on 5th Nov, 2015 
+
+ANSWER
+IBM conducted an Open Mic session on "IBM Notes Traveler Administration & Log Troubleshooting Tips – Part II" on 5th November 2015 where the presenter has given 75 minutes presentation followed by Q&A session.
+Download Presentation (pdf file) and Audio Recording (mp4 file)
+IBM Notes Traveler Administration and Log Troubleshooting Tips2.pdf [/support/docview.wss?uid=swg21971556&aid=2]IBM Notes Traveler Administration and Log Troubleshooting Tips2.pdf [/support/docview.wss?uid=swg21971556&aid=1]
+IBM Notes Traveler Administration and Log Troubleshooting Tips2.rar [/support/docview.wss?uid=swg21971556&aid=4]IBM Notes Traveler Administration and Log Troubleshooting Tips2.rar [/support/docview.wss?uid=swg21971556&aid=3]
+
+Question 1: How to get notification to administrator when user's devices is not getting sync with traveler Server?
+Ans: There is no mechanism to send the alert when the email is not synched to the device. It has to be to troubleshoot to understand on what is causing the problem by collecting necessary logs.
+
+Question 2: How to extract user details from traveler Server in HA pool?
+Ans: Use the Traveler command to save to a text file -> 
+Tell traveler -f fileout.txt sql SELECT USERNAME,DEVICE_TYPE from Traveler
+
+Question 3: How to reset the orphaned traveler profile in one go?
+Ans: By default the Traveler server will do a cleanup every 30 days and if any orphaned profile is seen will be removed and you can only reset each profile at a time.
+
+.Follow this link .. http://www-01.ibm.com/support/knowledgecenter/SSYRPW/welcome?lookupName=Administering+IBM+Notes+Traveler+9.0.1#action=openDocument&res_title=Resetting_users_and_devices_A901&content=pdcontent [http://www-01.ibm.com/support/knowledgecenter/SSYRPW/welcome?lookupName=Administering+IBM+Notes+Traveler+9.0.1#action=openDocument&res_title=Resetting_users_and_devices_A901&content=pdcontent]
+
+Question 4: In case of HA pool, how to pro-actively monitor the database performance? Is there any automatic monitoring of database in traveler? 
+Answer : As of now, there is no feature available to monitor the database from traveler end. However, DB2 administrator may monitor the database performance with DB2 utilities. 
+
+Question 5: If the Primary DB2 is down on what interval the secondary DB2 server will take effect ? Do DB2 team has to play any role in this fail over/switch over? How do I do manually switch over to secondary DB2 from Traveler server?
+Answer : This is on basis of how you have configured DB2 for traveler. Yes, DB2 team can give more clarity on this. 
+
+Question 6: What are the values retryIntervalForClientReroute=10; maxRetriesForClientReroute=3 signifies? ( I referred http://www-01.ibm.com/support/docview.wss?uid=swg21593442 [http://www-01.ibm.com/support/docview.wss?uid=swg21593442] but unable to understand)
+Answer : These are DB2 queries which are used by Traveler. It would be good to get a PMR created with DB2 for more clarity on this.

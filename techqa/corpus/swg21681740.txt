@@ -1,0 +1,22 @@
+Title: IBM The ".com_ibm_tools_attach" directory is created under /tmp directory after DB2 installation - United States
+
+Text:
+installation; /tmp TECHNOTE (FAQ)
+
+QUESTION
+ Why the ".com_ibm_tools_attach" directory is created under /tmp directory after DB2 installation? 
+
+CAUSE
+After DB2 installation the following directory and subdirectories are created under /tmp directory:
+
+drwxrwxrwt 2 root root 4096 Aug 1 16:22 .com_ibm_tools_attach
+
+ls -ltra /tmp/.com_ibm_tools_attach
+
+drwxrwxrwt 2 root root 4096 Aug 1 16:22 .
+-rw-rw-rw- 1 root root 0 Aug 1 16:22 _master
+-rw-rw-rw- 1 root root 0 Aug 1 16:22 _notifier
+-rw-rw-rw- 1 root root 0 Aug 1 16:22 _attachlock
+
+ANSWER
+This is solely due to the Java Attach API. The Attach API is enabled by default for Java 6 SR 6 or later and creates working files in a common directory by default in the system temporary directory. On non-Windows systems, the system temporary directory is typically /tmp.

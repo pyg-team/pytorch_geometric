@@ -1,0 +1,20 @@
+Title: IBM Netcool/OMNIbus Integrations Release Notice -Probe for Alcatel-Lucent 5620 SAM 3GPP v8 (3_0) - United States
+
+Text:
+release notice; downloads; nco_p_alcatel_5620_sam_3gpp_v8; Probe for Alcatel-Lucent 5620 SAM 3GPP v8 NEWS
+
+ABSTRACT
+ A new version of the Netcool/OMNIbus Probe for Alcatel-Lucent 5620 SAM 3GPP v8 will be available to download from July 1, 2011. 
+
+CONTENT
+ 
+
+The Probe for Alcatel-Lucent 5620 SAM 3GPP v8 now works with the IBM ORB, dependancy on visibroker has been removed.
+
+You can download this package from the IBM Passport Advantage website:
+
+www.ibm.com/software/howtobuy/passportadvantage/pao_customers.htm [http://www.ibm.com/software/howtobuy/passportadvantage/pao_customers.htm]
+
+To obtain this new package, search for the part number that corresponds to your Operating System as shown in the table below.
+
+Part number Operating System CI10REN AIX CI112EN HPUX CI0ZXEN Linux CI12CEN Solaris CI0Y3EN zLinix

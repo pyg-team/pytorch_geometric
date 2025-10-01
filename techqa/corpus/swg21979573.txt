@@ -1,0 +1,129 @@
+Title: IBM The configuration required to monitor IBM Integration Bus V10 in ITCAM for Applications ITCAM Agents for WebSphere Messaging Version 7.3.0 Fix Pack 1 - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ The configuration required to monitor IBM Integration Bus V10. 
+
+ANSWER
+The following configuration is required for WebSphere Mesage Broker agent to monitor IBM integration Bus V10.
+Required: Specify the installation path of IBM integration Bus V10 in the defaultWMBInstallDirectory or WMBInstallDirectory parameter in the agent configuration file.
+
+Important: Java process cannot be shared between V10 broker monitoring and other broker monitoring. Monitoring V10 brokers requires a separate Java process. Do NOT set the IBM integration Bus V10 installation path if you only want to monitor brokers of V7, 8, and 9. 
+
+Example 1: To monitor all brokers including V10 running on the same system, specify the defaultWMBInstallDirectory parameter in the <KqiAgent> tag.
+
+<KqiAgent version="730"
+agentId="B114"
+defaultRetainBrokerEvents="10"
+defaultRetainFlowEvents="10"
+retainProductEvents="10"
+discoveryInterval="300"
+defaultStatisticInterval="60" 
+defaultFlowEventInterval="15"
+defaultHistoricalAccountingType="Archive"
+defaultRetainRecentSnapshotSamples="15"
+defaultRetainRecentArchiveSamples="5"
+defaultRetainRecentPubSubSamples="15"
+defaultRetainRecentResourceSamples="1"
+holdTimeForQuery="180"
+defaultReplyQueueName="KQI.AGENT.REPLY.QUEUE" 
+defaultReplyQueueModel="SYSTEM.BROKER.MODEL.QUEUE"
+defaultCollectNodeData="NO"
+maximumMessageLength="10240"
+defaultPersistentBrokerData="NO"
+defaultRefreshInterval="300"
+defaultTakeActionAuthUsers="*" 
+defaultWMBInstallDirectory="/opt/ibm/mqsi/iib-10.0.0.0">
+</KqiAgent>
+
+Example 2: To monitor specific V10 brokers, specify the WMBInstallDirectory parameter the in <MonitorBroker> tag.
+<KqiAgent version="730"
+agentId="B114"
+defaultRetainBrokerEvents="10"
+defaultRetainFlowEvents="10"
+retainProductEvents="10"
+discoveryInterval="300"
+defaultStatisticInterval="60" 
+defaultFlowEventInterval="15"
+defaultHistoricalAccountingType="Archive"
+defaultRetainRecentSnapshotSamples="15"
+defaultRetainRecentArchiveSamples="5"
+defaultRetainRecentPubSubSamples="15"
+defaultRetainRecentResourceSamples="1"
+holdTimeForQuery="180"
+defaultReplyQueueName="KQI.AGENT.REPLY.QUEUE" 
+defaultReplyQueueModel="SYSTEM.BROKER.MODEL.QUEUE"
+defaultCollectNodeData="NO"
+maximumMessageLength="10240"
+defaultPersistentBrokerData="NO"
+defaultRefreshInterval="300"
+defaultTakeActionAuthUsers="*" >
+<MonitorBroker name="Broker10" WMBInstallDirectory="C:\Program Files\IBM\IIB\10.0.0.0"/>
+</KqiAgent>
+
+Example 3: To monitor specific V10 brokers and V9 brokers by one agent instance, specify the defaultWMBInstallDirectory parameter for IIB 10 in <KqiAgent> tag.
+<KqiAgent version="730"
+agentId="B114"
+defaultRetainBrokerEvents="10"
+defaultRetainFlowEvents="10"
+retainProductEvents="10"
+discoveryInterval="300"
+defaultStatisticInterval="60" 
+defaultFlowEventInterval="15"
+defaultHistoricalAccountingType="Archive"
+defaultRetainRecentSnapshotSamples="15"
+defaultRetainRecentArchiveSamples="5"
+defaultRetainRecentPubSubSamples="15"
+defaultRetainRecentResourceSamples="1"
+holdTimeForQuery="180"
+defaultReplyQueueName="KQI.AGENT.REPLY.QUEUE" 
+defaultReplyQueueModel="SYSTEM.BROKER.MODEL.QUEUE"
+defaultCollectNodeData="NO"
+maximumMessageLength="10240"
+defaultPersistentBrokerData="NO"
+defaultRefreshInterval="300"
+defaultTakeActionAuthUsers="*"
+defaultWMBInstallDirectory="/opt/ibm/mqsi/iib-10.0.0.0" >
+<MonitorBroker name="Broker10"/>
+<MonitorBroker name="Broker9"/>
+</KqiAgent>
+
+- The agent needs to load some WebSphere MQ libraries when it starts to monitor V10 brokers.
+If your environment already has WebSphere MQ installed, set the WebSphere MQ library path like you did for previous versions. 
+If there is no WebSphere MQ installed, you must use another binary file instead of the kqiagent file:
+
+-- On UNIX systems, backup <agent_install_path>/<arch_code>/qi/bin/kqiagent file and rename the kqiagt10 file to kqiagent by completing 
+the following steps. The kqiagt10 file is located in the same directory with the kqiagent file. 
+cd <agent_install_path>/<arch_code>/qi/bin/
+mv kqiagent kqiagent.bak
+mv kqiagt10 kqiagent
+-- On Windows systems, backup the kqiagent.exe file and rename the kqiagt10.exe file to kqiagent.exe. Do not use underscore character '_' to 
+backup the kqiagent.exe since it might be recognised as kqiagent_<instance name>.exe. The kqiagent.exe and kqiagt10.exe files are located 
+in the following directories:
+32-bit agent: <agent_install_path>\TMAITM6\
+64-bit agent: <agent_install_path>\TMAITM6_x64\
+For example, you can do it by running the following command in the command prompt:
+cd C:\IBM\ITM\TMAITM6_x64
+rename kqiagent.exe kqiagent.exe.bak
+rename kqiagt10.exe kqiagent.exe
+
+Remember: The kqiagt10 file is for IBM Integration Bus V10 only. Use it only when there is no WebSphere MQ installed. Otherwise, always use the default binary kqiagent file. 
+
+- Optional: Enable CandleMonitor node 
+
+Some library names have been changed in IBM integration Bus V10. To enable CandleMonitor node for IBM integration Bus V10, navigate to the IBM integration Bus V10 installation path and create a soft link with the following command: 
+
+-- Linux or UNIX: 
+cd <iib10_install_path>/server/lib
+ln -s libimbdfplg.so libimbdfplg64.so
+
+-- Windows: 
+cd <iib10_install_path>/server/lib
+copy imbdfplg.lib imbdfplg64.lib
+
+After you created the soft link, follow the instructions in the agent user's guide to make the node available in the broker environment.
+See http://www-01.ibm.com/support/knowledgecenter/SS3JRN_7.2.1.1/com.ibm.itcama.doc_7.2.1.1/kqi_userguide/c-candlemonitornode_intro.html?lang=en [http://www-01.ibm.com/support/knowledgecenter/SS3JRN_7.2.1.1/com.ibm.itcama.doc_7.2.1.1/kqi_userguide/c-candlemonitornode_intro.html?lang=en]
+
+More information for V730 FP1 messaging agent, please refer to http://www-933.ibm.com/support/fixcentral/swg/selectFix?product=ibm%2FTivoli%2FTivoli+Composite+Application+Manager+for+Applications&fixids=7.3.0-TIV-XEforMsg-FP0001&source=dbluesearch&function=fixId&parent=Tivoli%20Composite%20Application%20Manager [http://www-933.ibm.com/support/fixcentral/swg/selectFix?product=ibm%2FTivoli%2FTivoli+Composite+Application+Manager+for+Applications&fixids=7.3.0-TIV-XEforMsg-FP0001&source=dbluesearch&function=fixId&parent=Tivoli%20Composite%20Application%20Manager]

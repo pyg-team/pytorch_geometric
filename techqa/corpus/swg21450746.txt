@@ -1,0 +1,46 @@
+Title: IBM Install of Fix Pack for Information Server 8.x on Windows Client fails - United States
+
+Text:
+DataStage TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When trying to install DataStage Fix Pack on version 8.x Windows Client one of the following errors were received: 
+
+jre\bin\java.exe -jar updater.jar
+Unhandled exception 
+Type=Segmentation error vmState=0x00040000 
+J9Generic_Signal_Number=00000004 ExceptionCode=c0000005 
+ExceptionAddress=7FD6414 D ContextFlags=0001003f Handler1=7F141110 
+Handler2=7F1E92D0 InaccessibleAddress=80A5F5C8 
+EDI=80A5F5C8 ESI=00A040E8 EAX=00A040E8 EBX=00000080 ECX=00000020 
+EDX=80A5F5C8 EIP=7FD6414D ESP=739EFBE4 EBP=00000080 EFLAGS=00010202 
+GS=0000 FS=003B ES=0023 DS=0023 
+Module=C:\tmp\jre\bin\awt.dll 
+Module_base_address=7FD50000 Offset_in_DLL=0001414d 
+Target=2_30_20090706_38445_lHdSMr (Windows XP 5.1 build 2600 Service Pack 3) 
+
+The install window comes up for a split second then disappears, then it outputs the core dump files. We have attempted this several times, uninstalling and re-installing the entire client, but we can't seem to get it to work. We have successfully installed the fix pack on other PC's in our group. This seems to be isolated specifically to this one client.
+
+Another error that may be received:
+
+C:\IBM\InformationServer\ASBNode\apps\bin\jre\bin\java.exe -jar C:\IBM\InformationServer\updater.jar
+JVMDG217: Dump Handler is Processing Signal 11 - Please wait.
+JVMDG303: JVM Requesting Jave core file
+JVMDG304: Jave core file written to C:\<your path>\javacore.yyyymmdd.nnnnnn.nnnn.txt
+JVMDG215: Dump Handler has Processed Exception Signal 11
+
+Looking in the java core file the following is found:
+
+1XHEXCPCODE Exception code: C0000005 Access Violation
+1XHEXCPADDRESS Fault address: 07E36AF3 01:000D5AF3 
+1XHEXCPMODULE Fault module: 
+C:\IBM\InformationServer\ASBNode\apps\jre\bin\awt.dll 
+
+
+CAUSE
+Before applying the Fix Pack, there was an incompatibility between the Java run-time engine (JRE) and the version of Windows. This incompatibility affected the native GUI framework of the JRE and caused the error when the JRE was used to run the update installer (updater.jar) in GUI mode.
+
+RESOLVING THE PROBLEM
+To work around the problem the Fix Pack should be installed in console mode. For information on installing in console mode please refer to the installation instructions for the particular Fix Pack. 
+
+After the Fix Pack is successfully installed then future Patch or Fix Pack installs using the Update Installer should be able to be installed in GUI mode.

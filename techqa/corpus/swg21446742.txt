@@ -1,0 +1,89 @@
+Title: IBM Downloading and using WebSphere Portal 7.0 installable e-images - United States
+
+Text:
+V7.0; single DVD; set; CDs; install; installing; installation; e-images; eimages; eAssembly TECHNOTE (FAQ)
+
+QUESTION
+This document explains how to download and install IBM WebSphere Portal 7.0 images.
+
+CAUSE
+Starting with release V7.0, IBM Portal Server ships on a single DVD instead of a set of CDs as in previous releases. However, the electronic images available on the Passport Advantage web site are still broken out into CD-size pieces so as to reduce the likelihood of unsuccessful downloads. Users who try to install Portal Server via these e-images may find themselves prompted for additional disks if the complete installable image has not been fully reconstructed from the downloaded files.
+
+ANSWER
+The user who purchases Portal Server is entitled to download and use several associated IBM products in conjunction with Portal Server. Refer to the terms and conditions of your license agreement for specific details about your usage rights. 
+
+These product images are included on the Portal Server download site which means that there are a large number of images available to you within the Portal Server eAssembly for your offering and platform. However, only a handful of these images are required for installing Portal Server itself. The remaining images are optional and can be installed separately at another time if required.
+
+Depending on the offering and platform, there are either 5 or 6 required e-images which must all be downloaded and combined to form the complete Portal Server installation image. If any are left out, the installation may be unable to complete. The exact list varies per eAssembly but in general, the set is composed of the following:
+
+
+ * A Setup image containing the installation program.
+
+ * Three component images containing the product files.
+
+ * One or two images containing the WebSphere Application Server installation program. The eAssembly may include a 32-bit image, a 64-bit image, or both. If both are included in your eAssembly, you must download both, regardless of your target platform.
+
+ * (Express only): An IBM DB2 installation image.
+
+
+A separate Quick Start Guide image is included with each eAssembly. However, the Setup image already includes the Quick Start Guide so this extra image is optional. It is provided so that you can download and review the Quick Start Guide before proceeding with the rest of the product. 
+
+To create the complete installable image: 
+
+1. Download all required images for your eAssembly. The Download Document(see below) lists which e-images are required and which are optional. 
+
+2. Create a directory somewhere on the target system used to host the installation images. The actual directory name is not important but a good choice is the name, "Portal-Setup". 
+
+3. Unpack each downloaded part into this same directory. If you are prompted at any point to overwrite an existing directory, it is OK to do so. Some directories may be duplicated between the e-images but no file names are so you will not overwrite any files. 
+
+Now you have a complete installable image and you can follow the instructions in the Quick Start Guide to install the product. Please note that if any of the required downloaded images are missing from the installable image, you may receive a prompt as follows at some point during the installation: 
+ * Please insert the CD labeled W-1 and enter its location below.
+
+
+The referenced label will vary. To resolve this, verify that you followed the above steps and re-download the e-images as necessary. The above message tells you which e-image is missing. The disk label to which it refers can be found in the description of the images given in the Download Document (refer to the following section). 
+
+Determining the details for your eAssembly: 
+
+IBM provides a Download Document for each eAssembly to assist you in retrieving the product images. It tells you exactly which images are required. These Download Documents are linked from the Quick Start Guides and you can also find them by performing a search on the IBM Support Portal. 
+
+Click here [http://www.ibm.com/search/csass/search?q=download%20document&sn=spe&lang=en&filter=collection:stgsysx,dblue,ic,pubs,devrel1&prod=I682946E87648C32#q%253ddownload%2520document%2520V7.0%2526filter%253d%252btsswrelease%253a7vvv0%2520%252bibmtaskid%253aDL%2520%252bcollection%253astgsysx%252cdblue%252cic%252cpubs%252cdevrel1%2526prod%253dI682946E87648C32%2526sn%253dspe%2526lang%253den%2526sortby%253d%2526o%253d0]for a list of all the Download Documents for the various offerings of Portal V7.0. [http://www.ibm.com/search/csass/search?q=downloaddocument&sn=spe&lang=en&filter=collection:stgsysx,dblue,ic,pubs,devrel1&prod=I682946E87648C32]You can scroll through this list to find the exact offering and platform in which you are interested. 
+
+Example: 
+Here is a representative page located by the above search: 
+
+WebSphere Portal Enable/Extend V7.0 Download Document (Windows) 
+http://www-01.ibm.com/support/docview.wss?uid=swg24026541 [http://www-01.ibm.com/support/docview.wss?uid=swg24026541] 
+
+Below is an excerpt of this page showing the required e-images. Note that the exact eAssemblies to which the document applies are listed, and the required images are listed with their Part Numbers in the first table. A second table of optional images is also included in the Download Document but that is not reproduced here because those images are not required for the Portal installation. 
+ * Downloadable images 
+ * 
+ * 
+ * 
+ *  CRC7SML: IBM WebSphere Portal Enable V7.0 for Windows Multilingual eAssembly CRC7JML: IBM WebSphere Portal Extend V7.0 for Windows Multilingual eAssembly CRC80ML: IBM WebSphere Portal Server V7.0 for Windows Multilingual eAssembly 
+
+
+Required parts 
+To install WebSphere Portal V7.0 on a supported Windows platform, download the following parts: 
+
+Part numbers Description CZLL1ML WebSphere Portal V7.0 Quick Start Guide
+
+Optional: Provides quick install instructions and technical resource information CZLL4ML WebSphere Portal Server Content Install (W-Setup)
+
+Required: Installer for all internal components. CZLL7ML WebSphere Portal Server Content component (1 of 3) (W-3) 
+
+Required: Contains all Portal and Personalization internal component software. CZLM0ML WebSphere Portal Server Content component (2 of 3) (W-4) 
+
+Required: Contains all Portal and Personalization internal component software. CZLM3ML WebSphere Portal Server Content component (3 of 3) (W-5) 
+
+Required: Contains all Portal and Personalization internal component software. CZLN8ML WebSphere Application Server Network Deployment V7.0.0.11 for Windows, 32-bit (W-1) 
+
+Required: Provides application server platform at the correct level and bitness, if applicable, and it is not already installed. CZLP3ML WebSphere Application Server Network Deployment V7.0.0.11 for Windows, 64-bit (W-2) 
+
+Required: Provides application server platform at the correct level and bitness, if applicable, and it is not already installed. 
+Related URL: 
+IBM Support Portal: 
+http://www.ibm.com/support/entry/portal/Overview/Software/WebSphere/WebSphere_Portal [http://www.ibm.com/support/entry/portal/Overview/Software/WebSphere/WebSphere_Portal] 
+
+
+ * 
+ *

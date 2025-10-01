@@ -1,0 +1,183 @@
+Title: IBM IZ68862: BIDIRECTIONAL GATEWAY WILL HANG ON STARTUP AT NTGK WITH SLOW CONNS TO OBJECTSERVER THAT HAVE SLOW LATENCY + EVENT LOAD - United States
+
+Text:
+  DIRECT LINKS TO FIXES
+7.3.0-TIV-NCOMNIbus-Windows-FP0017 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+OMNIbus&fixids=7.3.0-TIV-NCOMNIbus-Windows-FP0017&source=SAR]
+7.3.0-TIV-NCOMNIbus-Solaris-FP0017 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+OMNIbus&fixids=7.3.0-TIV-NCOMNIbus-Solaris-FP0017&source=SAR]
+7.3.0-TIV-NCOMNIbus-Linux-FP0017 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+OMNIbus&fixids=7.3.0-TIV-NCOMNIbus-Linux-FP0017&source=SAR]
+7.3.0-TIV-NCOMNIbus-ZLinux-FP0017 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+OMNIbus&fixids=7.3.0-TIV-NCOMNIbus-ZLinux-FP0017&source=SAR]
+7.3.0-TIV-NCOMNIbus-HPUXIA-FP0017 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+OMNIbus&fixids=7.3.0-TIV-NCOMNIbus-HPUXIA-FP0017&source=SAR]
+7.3.0-TIV-NCOMNIbus-AIX-FP0017 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+OMNIbus&fixids=7.3.0-TIV-NCOMNIbus-AIX-FP0017&source=SAR]
+7.3.0-TIV-NCOMNIbus-Windows-FP0016 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+OMNIbus&fixids=7.3.0-TIV-NCOMNIbus-Windows-FP0016&source=SAR]
+7.3.0-TIV-NCOMNIbus-Solaris-FP0016 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+OMNIbus&fixids=7.3.0-TIV-NCOMNIbus-Solaris-FP0016&source=SAR]
+7.3.0-TIV-NCOMNIbus-Linux-FP0016 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+OMNIbus&fixids=7.3.0-TIV-NCOMNIbus-Linux-FP0016&source=SAR]
+7.3.0-TIV-NCOMNIbus-ZLinux-FP0016 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+OMNIbus&fixids=7.3.0-TIV-NCOMNIbus-ZLinux-FP0016&source=SAR]
+7.3.0-TIV-NCOMNIbus-HPUXIA-FP0016 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+OMNIbus&fixids=7.3.0-TIV-NCOMNIbus-HPUXIA-FP0016&source=SAR]
+7.3.0-TIV-NCOMNIbus-HPUX-FP0016 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+OMNIbus&fixids=7.3.0-TIV-NCOMNIbus-HPUX-FP0016&source=SAR]
+7.3.0-TIV-NCOMNIbus-AIX-FP0016 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+OMNIbus&fixids=7.3.0-TIV-NCOMNIbus-AIX-FP0016&source=SAR]
+7.3.0-TIV-NCOMNIbus-Windows-FP0015 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+OMNIbus&fixids=7.3.0-TIV-NCOMNIbus-Windows-FP0015&source=SAR]
+7.3.0-TIV-NCOMNIbus-Solaris-FP0015 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+OMNIbus&fixids=7.3.0-TIV-NCOMNIbus-Solaris-FP0015&source=SAR]
+7.3.0-TIV-NCOMNIbus-Linux-FP0015 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+OMNIbus&fixids=7.3.0-TIV-NCOMNIbus-Linux-FP0015&source=SAR]
+7.3.0-TIV-NCOMNIbus-ZLinux-FP0015 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+OMNIbus&fixids=7.3.0-TIV-NCOMNIbus-ZLinux-FP0015&source=SAR]
+7.3.0-TIV-NCOMNIbus-HPUXIA-FP0015 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+OMNIbus&fixids=7.3.0-TIV-NCOMNIbus-HPUXIA-FP0015&source=SAR]
+7.3.0-TIV-NCOMNIbus-HPUX-FP0015 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+OMNIbus&fixids=7.3.0-TIV-NCOMNIbus-HPUX-FP0015&source=SAR]
+7.3.0-TIV-NCOMNIbus-AIX-FP0015 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+OMNIbus&fixids=7.3.0-TIV-NCOMNIbus-AIX-FP0015&source=SAR]
+7.3.0-TIV-NCOMNIbus-Linux-FP0006 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+OMNIbus&fixids=7.3.0-TIV-NCOMNIbus-Linux-FP0006&source=SAR]
+7.3.0-TIV-NCOMNIbus-Windows-FP0006 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+OMNIbus&fixids=7.3.0-TIV-NCOMNIbus-Windows-FP0006&source=SAR]
+7.3.0-TIV-NCOMNIbus-Solaris-FP0006 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+OMNIbus&fixids=7.3.0-TIV-NCOMNIbus-Solaris-FP0006&source=SAR]
+7.3.0-TIV-NCOMNIbus-ZLinux-FP0006 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+OMNIbus&fixids=7.3.0-TIV-NCOMNIbus-ZLinux-FP0006&source=SAR]
+7.3.0-TIV-NCOMNIbus-HPUX-FP0006 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+OMNIbus&fixids=7.3.0-TIV-NCOMNIbus-HPUX-FP0006&source=SAR]
+7.3.0-TIV-NCOMNIbus-AIX-FP0006 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+OMNIbus&fixids=7.3.0-TIV-NCOMNIbus-AIX-FP0006&source=SAR]
+Tivoli Netcool/OMNIbus 7.3.0 Fix Pack 3, 7.3.0-TIV-NCOMNIbus-FP0003 [http://www-01.ibm.com/support/docview.wss?uid=swg24026686]
+Tivoli Netcool/OMNIbus 7.3.0 Fix Pack 4, 7.3.0-TIV-NCOMNIbus-FP0004 [http://www-01.ibm.com/support/docview.wss?uid=swg24027482]
+Tivoli Netcool/OMNIbus 7.3.0 Fix Pack 5, 7.3.0-TIV-NCOMNIbus-FP0005 [http://www-01.ibm.com/support/docview.wss?uid=swg24028127]
+Tivoli Netcool/OMNIbus 7.3.0 Fix Pack 13, 7.3.0-TIV-NCOMNIbus-FP0013 [http://www-01.ibm.com/support/docview.wss?uid=swg24036691]
+Tivoli Netcool/OMNIbus 7.2.1 Fix Pack 15, 7.2.1-TIV-NCOMNIbus-FP0015 [http://www-01.ibm.com/support/docview.wss?uid=swg24036693]
+Tivoli Netcool/OMNIbus 7.3.0 Fix Pack 14, 7.3.0-TIV-NCOMNIbus-FP0014 [http://www-01.ibm.com/support/docview.wss?uid=swg24036692]
+Tivoli Netcool/OMNIbus 7.3.0 Fix Pack 15, 7.3.0-TIV-NCOMNIbus-FP0015 [http://www-01.ibm.com/support/docview.wss?uid=swg24039199]
+Tivoli Netcool/OMNIbus 7.3.0 Fix Pack 16, 7.3.0-TIV-NCOMNIbus-FP0016 [http://www-01.ibm.com/support/docview.wss?uid=swg24039351]
+Tivoli Netcool/OMNIbus 7.2.1 Fix Pack 13, 7.2.1-TIV-NCOMNIbus-FP0013 [http://www-01.ibm.com/support/docview.wss?uid=swg24031554]
+Tivoli Netcool/OMNIbus 7.3.0 Fix Pack 17, 7.3.0-TIV-NCOMNIbus-FP0017 [http://www-01.ibm.com/support/docview.wss?uid=swg24039352]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The Bi Directional Gateway will terminate as a service, if you
+   try to run the gateway to a site that has a combination of high
+   event load to process + High latency nework.
+   
+   Often the failure is observed whilst its resizing the NGTK
+   component.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  run objectserver via command line.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   Users that run OMNIbus gateways as Windows services
+   ****************************************************************
+   PROBLEM DESCRIPTION:
+   When a gateway service on Windows is started, with a large
+   number of events needing to be synchronized across a slow
+   network connection, the gateway service would timeout and the
+   gateway would not be started.
+   ****************************************************************
+   RECOMMENDATION:
+   Apply the maintenance package listed in the Problem Conclusion.
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Event processing has been postponed until after the service is
+   marked as started, so that the gateway service will no longer
+   timeout.
+   
+   The fix for this APAR is contained in the following maintenance
+   packages:
+   
+        | fix pack | 7.2.0-TIV-NCOMNIbus-FP0009
+        | fix pack | 7.2.1-TIV-NCOMNIbus-FP0008
+        | fix pack | 7.3.0-TIV-NCOMNIbus-FP0002
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ68862
+   
+   
+ * REPORTED COMPONENT NAME
+   NC/OMNI GTWY (B
+   
+   
+ * REPORTED COMPONENT ID
+   5724O73OS
+   
+   
+ * REPORTED RELEASE
+   720
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2010-01-28
+   
+   
+ * CLOSED DATE
+   2010-03-31
+   
+   
+ * LAST MODIFIED DATE
+   2010-03-31
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   NETCOOL/OMNIBUS
+   
+   
+ * FIXED COMPONENT ID
+   5724O4800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R720 PSN
+   UP

@@ -1,0 +1,81 @@
+Title: IBM java.lang.OutOfMemoryError: PermGen space error received using TDWC - United States
+
+Text:
+oom; outofmemory; awsjdb801e; awsjdb802e; j2ca0046e; webui; dwc; hang TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ AWSJDB801E, AWSJDB802E, and J2CA0046E errors are received during attempts to use the Tivoli Dynamic Workload Console (TDWC) to connect to the Tivoli Workload Scheduler (TWS) master. 
+
+SYMPTOM
+Unable to login or use the TDWC and errors are received.
+
+From the SystemErr.log: 
+
+(Dated 09/21/12) java.lang.OutOfMemoryError: PermGen space 
+
+From SystemOut.log: 
+
+[9/24/12 9:07:36:456 EDT] 00000033 ConnectionPoo E nullDSRA0010E: SQL 
+State = 57019, Error Code = -1,035 
+[9/24/12 9:07:36:558 EDT] 00000033 ExceptionMapp E AWSJDB801E An 
+internal error has been found while accessing the database. The internal 
+error message is: "nullDSRA0010E: SQL State = 57019, Error Code = 
+-1,035". 
+[9/24/12 9:07:38:563 EDT] 00000033 PoolManager E J2CA0046E: Method 
+reserve caught an exception during creation of the ManagedConnection for 
+resource jdbc/twsdb, throwing ResourceAllocationException. Original 
+exception: Failed preTestConnection. Pool requests blocked until the 
+test connection thread is successful. 
+[9/24/12 9:07:38:567 EDT] 00000033 ConnectionPoo E Failed 
+preTestConnection. Pool requests blocked for jdbc/twsdb until the test 
+connection thread is successful. 
+[9/24/12 9:07:38:570 EDT] 00000033 ExceptionMapp E AWSJDB802E An 
+internal error has occurred while connecting to the database. The 
+database connection is not available.
+
+
+CAUSE
+The message indicates that the out of memory error is specific to the PermGen area being exhausted. The default value for MaxPermSize is often too small and needs to be increased.
+
+ENVIRONMENT
+TWS v8.6 that has been upgraded from a previous version. The issue did not occur in the previous version.
+
+DIAGNOSING THE PROBLEM
+See the SystemOut.log and SystemErr.log files for error messages.
+
+RESOLVING THE PROBLEM
+Add -XX:MaxPermSize=512m at the beginning of the genericJvmArguments section of the server.xml file, then stop and restart the WebSphere Application Server (WAS) for this to take effect.
+
+
+
+
+NOTE: The arguments in this file should be added on one line (no "new line" character should be entered) and each separated by a space. 
+
+The server.xml file is located in the following directory: 
+
+<TWAHome>/eWAS/profiles/TIPProfile/config/cells/TIPCell/nodes/TIPNode/servers/server1/ 
+
+ 
+
+Example: 
+
+
+genericJvmArguments="-XX:MaxPermSize=512m -Djava.awt.headless=true" 
+disableJIT="false"><systemProperties xmi:id="Property_1" 
+name="com.ibm.security.jgss.debug" value="off" 
+required="false"/><systemProperties xmi:id="Property_2" 
+name="com.ibm.security.krb5.Krb5Debug" value="off" 
+required="false"/><systemProperties xmi:id="Property_1345735448925" 
+name="java.net.preferIPv6Addresses" value="false" 
+required="false"/><systemProperties xmi:id="Property_1345735448926" 
+name="java.net.preferIPv4Stack" value="false" 
+required="false"/><systemProperties xmi:id="Property_1345735448927" 
+name="com.ibm.CORBA.enableClientCallbacks" value="true" 
+required="false"/>
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ Maestro
+TWS
+TWA

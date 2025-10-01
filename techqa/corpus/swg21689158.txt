@@ -1,0 +1,67 @@
+Title: IBM Security Bulletin: Vulnerability in SSLv3 affects multiple IBM Security Infrastructure appliances (CVE-2014-3566) - United States
+
+Text:
+PSIRT SECURITY BULLETIN
+
+SUMMARY
+ SSLv3 contains a vulnerability that has been referred to as the Padding Oracle On Downgraded Legacy Encryption (POODLE) attack. SSLv3 is enabled in multiple IBM Infrastructure appliances. 
+
+VULNERABILITY DETAILS
+
+CVE-ID: CVE-2014-3566 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-3566]
+
+DESCRIPTION: Product could allow a remote attacker to obtain sensitive information, caused by a design error when using the SSLv3 protocol. A remote user with the ability to conduct a man-in-the-middle attack could exploit this vulnerability via a POODLE (Padding Oracle On Downgraded Legacy Encryption) attack to decrypt SSL sessions and access the plaintext of encrypted connections.
+
+CVSS Base Score: 4.3
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/97013 [https://exchange.xforce.ibmcloud.com/vulnerabilities/97013] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:M/Au:N/C:P/I:N/A:N)
+
+
+AFFECTED PRODUCTS AND VERSIONS
+ 
+
+ * IBM Security Network Protection (XGS) 
+ * IBM Security Network Intrusion Prevention Systems (GX) 
+ * IBM Security Proventia Network Enterprise Scanner 
+ * IBM Security Proventia Network Multi-Function Security System 
+ * IBM Security Proventia Network Active Bypass (NAB) 
+ * IBM Security Network Controller
+
+REMEDIATION/FIXES
+Fixes for each product can be found through the following links:
+
+
+
+ * Vulnerability in SSLv3 affects Network Protection (CVE-2014-3566) [http://www.ibm.com/support/docview.wss?uid=swg21690822] 
+ * Vulnerability in SSLv3 affects IBM Security Network Intrusion Prevention System (CVE-2014-3566) [http://www.ibm.com/support/docview.wss?uid=swg21689349] 
+ * Vulnerabilities in SSLv3 and in OpenSSL affect Enterprise Scanner (CVE-2014-3566, CVE-2014-3513, CVE-2014-3567, and CVE-2014-3568) [http://www.ibm.com/support/docview.wss?uid=swg21690249] 
+ * Vulnerability in SSLv3 affects IBM Security Proventia Network Active Bypass (CVE-2014-3566) [http://www.ibm.com/support/docview.wss?uid=swg21694417] 
+ * Vulnerability in SSLv3 affects IBM Security Network Controller (CVE-2014-3566) [http://www.ibm.com/support/docview.wss?uid=swg21694418]
+
+WORKAROUNDS AND MITIGATIONS
+In the case of the IBM Security Infrastructure appliances the POODLE vulnerability primarily impacts the Local Management Interface (LMI). Administrators with access to the LMI should disable SSLv3 in their browser to prevent the issue.
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v2 Guide [http://www.first.org/cvss/v2/guide] 
+On-line Calculator v2 [http://nvd.nist.gov/CVSS-v2-Calculator] 
+
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] 
+
+CHANGE HISTORY
+ 12 February 2015 - Links to fixes for products added to Remediation section 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY. 
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Security IBM Security Network Intrusion Prevention System Security IBM Security Network Active Bypass Security Proventia Network Enterprise Scanner Security IBM Security Network Controller

@@ -1,0 +1,40 @@
+Title: IBM IGYDS1089-S Trying to Use a COBOL Reserved Word for XML GENERATE. - United States
+
+Text:
+MSGIGYDS1089-S MSGIGYDS1089 IGYDS1089 ; 1179203 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ I want to use reserved words in the WORKING-STORAGE section. In my application, the XML GENERATE must create tags with certain values such as ID or PASSWORD. For example
+01 MY-GROUP. 
+02 ID PICTURE X(8) VALUE "user01". 
+02 PASSWORD PIC X(8) VALUE "secret". 
+
+CAUSE
+Reserved words may not be used as data names.
+
+RESOLVING THE PROBLEM
+You will need to use non-reserved words, then edit them. Here is an example of how to use the reserved words of ID and PASSWORD. The syntax of the INSPECT requires that both operands be the same length. 
+
+01 MY-GROUP.
+02 I8 PICTURE X(8) VALUE "user01". 
+02 PASSWOR8 PIC X(8) VALUE "secret".
+01 XML-STRING PICTURE X(100). 
+XML GENERATE XML-STRING FROM MY-GROUP. 
+INSPECT XML-STRING REPLACING ALL "<I8>" BY "<ID>"
+"</I8>" BY "</ID>" 
+"<PASSWOR8>" BY "<PASSWORD>"
+"</PASSWOR8>" BY "</PASSWORD>". 
+Before the INSPECT you'll see 
+<MY-GROUP><I8>user01</I8><PASSWOR8>secret</PASSWOR8></MY-GROUP>
+After the INSPECT you'll see
+<MY-GROUP><ID>user01</ID><PASSWORD>secret</PASSWORD></MY-GROUP>
+
+
+RELATED INFORMATION
+#Language Reference reserved words appendix E [http://www.ibm.com/software/awdtools/cobol/zos/library/]
+
+
+ 
+
+HISTORICAL NUMBER
+ FITS MR081104187

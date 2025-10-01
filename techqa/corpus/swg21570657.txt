@@ -1,0 +1,123 @@
+Title: IBM Support for Spring in Rational Application Developer  v7.x/8.x - United States
+
+Text:
+Spring; RAD; support; RSA; third party; plugins; eclipse; springsource TECHNOTE (FAQ)
+
+QUESTION
+ What tooling support is provided for using Spring within IBM Rational Application Developer (RAD) or IBM Rational Software Architect for WebSphere (RSA) v7x/8x? What level of support is there for Spring usage in general? 
+
+CAUSE
+There have been incidents involving the use of the Spring Framework/IDE after its installation in a Spring project giving the error: 
+
+"... 
+
+An internal error occurred during: "Initializing Spring UAA"... 
+
+... 
+
+java.lang.NoSuchMethodError: org/osgi/framework/Bundle.getVersion()Lorg/osgi/framework/Version; 
+
+ at org.springframework.ide.eclipse.internal.uaa.UaaManager$ProductDescriptor.buildProduct(Unknown Source) 
+
+ at ... 
+
+..."
+
+
+
+ANSWER
+The Spring framework or Spring tools and plugins do not ship with any RAD v7.0, 7.5 or 8.0 release and is not documented in any RAD 7x/8.x Information Center as supported. Likewise, there is no support provided for any third party plugins or tools. 
+
+ 
+If a third party or open source Spring Framework plugin is compatible with, for example, Eclipse 3.2 (in the case of RAD 7.0), then you should be able to install and use it (as in the provider's instructions). Similarly, RAD 7.5.x is based on Eclipse 3.4.x and RAD 8.0.x is based on Eclipse 3.6.x. The provider should be contacted for any support or help, apart from basic Eclipse/RAD questions. 
+
+If there is a problem installing the Spring Framework plugin in a RAD version, and it can be shown to install in a similar release and update of a stand-alone Eclipse, then RAD Support could look into this from the perspective of supporting Eclipse in RAD.
+
+For more general eclipse plugin support details, refer to :
+Rational Application Developer Support for third party and open-source Eclipse plugins and tools [http://www.ibm.com/support/docview.wss?uid=swg21600040]
+
+Note-Tip: There have been incidents involving the use of the Spring Framework/IDE after its installation in a Spring project giving the error:
+"... 
+
+An internal error occurred during: "Initializing Spring UAA"... 
+
+... 
+
+java.lang.NoSuchMethodError: org/osgi/framework/Bundle.getVersion()Lorg/osgi/framework/Version; 
+
+ at org.springframework.ide.eclipse.internal.uaa.UaaManager$ProductDescriptor.buildProduct(Unknown Source) 
+
+ at ... 
+
+..." 
+
+A similar error was reported in the context of RAD and stand-alone Eclipse, similar to this non-IBM Spring forum item:
+- errors after installing SpringSource Tool Suite 2.7.1 on eclipse 3.6 [http://forum.springsource.org/showthread.php?113618-errors-after-installing-SpringSource-Tool-Suite-2-7-1-on-eclipse-3-6]
+
+The solution in this case was to do an Update of the associated Eclipse packages and restart Eclipse or RAD with the -clean option, because the original install may not have refreshed completely. Sometimes restarting Eclipse/RAD is sufficient. Regardless, making use of third party or open source support resources similar to the above forum example is advised.
+
+It is also recommended to be at the latest maintenance update of any RAD v7.0.0.x, v7.5.5.x, 8.0.4.x, or 8.5.x which would have the latest Eclipse updates, as listed in this Recommended Fixes document:
+- Updates to Rational Application Developer for WebSphere Software [http://www.ibm.com/support/docview.wss?uid=swg27007823]
+
+Note:
+The Rational Application Developer Wiki [https://www.ibm.com/developerworks/wikis/display/rad/Home] on developerWorks has this article
+- Tooling support in Rational Application Developer v 7.5.x for Spring Applications [https://www.ibm.com/developerworks/wikis/download/attachments/113607155/SpringApplications.pdf?version=1]
+It is provided "as is" and is not supported by IBM Rational Application Developer.
+
+
+WebSphere Application Server support for Spring runtime:
+At publication time of this technote, IBM WebSphere Application Server (WAS) 6x, 7x, or 8x articles like
+- The Spring Framework and IBM WebSphere Application Server [http://www.ibm.com/developerworks/websphere/library/techarticles/0706_johnsonbuck/0706_johnsonbuck.html]
+should not be considered a statement of what is supported. Contact IBM WAS Support for more information.
+
+Similarly, for example, the WAS 7 Information Center items
+
+- Spring Applications [http://publib.boulder.ibm.com/infocenter/wasinfo/v7r0/index.jsp?topic=%2Fcom.ibm.websphere.express.doc%2Finfo%2Fexp%2Fae%2Fwelc6tech_spring_intro.html]
+and
+- Spring Framework [http://publib.boulder.ibm.com/infocenter/wasinfo/v7r0/index.jsp?topic=%2Fcom.ibm.websphere.express.doc%2Finfo%2Fexp%2Fae%2Fcspr_intro.html]
+
+
+ * 
+ * 
+ * Spring Framework
+ * 
+ * 
+ * There are some best practices to develop Spring Framework applications that can run successfully in a WebSphere® Application Server environment.
+ * 
+ * 
+ * The Spring Framework is an open source project that provides a framework for simple Java objects that enables them to use the Java EE container through wrapper classes and XML configuration.
+ * 
+ * 
+ * You can use the Spring Framework with WebSphere Application Server Version 6.0.2 and later, but some supported features require a specific release of the product. When this situation applies, it is stated in the relevant topic.
+ * 
+ * 
+ * For WebSphere Application Server Version 7.0, you must use Spring Framework Version 2.5.5 or later.
+ * 
+ * 
+
+
+do not imply that Spring itself is directly supported in WAS v7. WAS versions 6, 7, and 8 do not support Spring itself, and they do not provide the Spring framework. You must engage the Spring provider for assistance with Spring. 
+
+The Spring Framework is not officially supported by IBM WAS Support, as of the publication time of this technote. IBM WAS Support may help with issues like configuration of Spring within an EAR/application, while anything related to specific issues within Spring or configuration details that require internal knowledge of how it works is out of their scope of support. For example, they may review any classloader or transaction handling related issue specific to any application running in WAS. 
+
+The Spring Framework and applications using it are limited as per any EAR application, in that the WAS support of Spring is similar to other external technologies. They allow customers to bring their own versions of third party jar or runtimes in most cases (for example, some customers provide their own commons-logging or JPA provider). Contact IBM Support for WebSphere to inquire about any changes in this regard. 
+
+Spring and RAD SCA Tooling: 
+Regarding the Spring Tutorial Viewlet [http://www.ibm.com/developerworks/wikis/download/attachments/140051369/spring_tutorial.swf?version=1] on the RAD Wiki, RAD versions 7.5.x and 8.0.x support the tools for configuring Spring applications into SCA components. IBM Rational Application Developer does not support Spring. They use an existing Spring applications as implementations for SCA components as documented in: 
+
+RAD 8.0 IC (Information Center): 
+- Create an SCA project [http://publib.boulder.ibm.com/infocenter/radhelp/v8/index.jsp?topic=/com.ibm.sca.tools.doc/topics/create_project.html&resultof=%22spring%22] 
+- SCA Spring tutorial [http://publib.boulder.ibm.com/infocenter/radhelp/v8/index.jsp?topic=/com.ibm.sca.tools.doc/tutorials/spring/sca_spring_abstract.html&resultof=%22spring%22] 
+
+RAD 7.5 IC: 
+- Creating components with Spring implementations [http://publib.boulder.ibm.com/infocenter/radhelp/v7r5/index.jsp?topic=%2Fcom.ibm.sca.tools.doc%2Ftopics%2Fspring_implementations.html] 
+- SCA Spring Tutorial [http://publib.boulder.ibm.com/infocenter/radhelp/v7r5/index.jsp?topic=%2Fcom.ibm.sca.tools.doc%2Ftopics%2Fspring%2Fsca_spring_abstract.html] 
+
+This is not more significant than RAD 8.0.3+ continuing to improve its "accommodation" of Maven in JEE Tools and somewhat for Spring in JEE Tools. However, RAD does not provide direct support for either. 
+
+
+Conclusion: 
+There is currently no RAD tooling support for creating Spring applications or using Spring. 
+Similarly, WAS does not officially support the Spring runtime framework, but allows its use similar to allowing other source JPA runtime implementation in a JEE application. In the case of Spring they also have made their WAS 7 runtime more accommodating of the Spring runtime. 
+RELATED INFORMATION
+#Maven and M2Eclipse support in RAD v7.x and v8.x [http://www.ibm.com/support/docview.wss?uid=swg21500446]

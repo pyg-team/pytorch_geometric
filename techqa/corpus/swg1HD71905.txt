@@ -1,0 +1,209 @@
+Title: IBM HD71905: DMUSPA:THE CLASH VALUE WHICH IS DISPLAYED IN "CLASH PUBLISH" IS NOT CORRECT IN XML GENERATED. - United States
+
+Text:
+AIX SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  DMUSPA:THE CLASH VALUE WHICH IS DISPLAYED
+   IN "CLASH PUBLISH" IS NOT CORRECT IN XML
+   GENERATED.
+   .
+   SCENARIO:
+   1. Launch cATIA V5R18 SP02.
+   2. Click "Tools/Options/Mechanical
+   Design/Assembly Design". Click "DMU Clash -
+   Process" Tab.
+   3. Check On "XML Export for clash process
+   purpose",Check On "Picture generated in XML",
+   Check On "Browzer automatically opened",Check
+   Off "Federated XML output".
+   4. Set "D:\DMU" into "Data base repository" by
+   Browse.Click "OK" Button.
+   5.
+   Click "Tools/Options/General/Display".Click "Perfor
+   mance" Tab.
+   6. Set "0.01" into Fixed of 3D Accuracy. Click "OK"
+   Button.
+   7. Restart CATIA.
+   8. Open "Product1.CATProduct" with ASD W/B.
+   9. Click "Analyze/Clash"."Check Clash" dialog
+   appears.
+   10. Click "Apply" Button."Check Clash" dialog
+   appears.
+   11. Click "Export As" Icon. "Save As" dialog
+   appears.
+   12. Click "Save" Button."Clash Publish" xml file
+   appears.
+   13. 0mm is displayed into Clash Value column.
+   14. This is the Problem.
+   .
+   RESULT:
+   - 0mm is displayed into Clash Value column even
+   though "0.01" is set at step6.
+   .
+   EXPECTED RESULT:
+   - 0.01mm should be displayed into Clash Value
+   column.
+   .
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  DMUSPA:THE CLASH VALUE WHICH IS DISPLAYED IN "CLASH PUBLISH" IS
+   NOT CORRECT IN XML GENERATED.
+   DMUSPA:THE CLASH VALUE WHICH IS DISPLAYED
+   IN "CLASH PUBLISH" IS NOT CORRECT IN XML
+   GENERATED.
+   .
+   SCENARIO:
+   1. Launch cATIA V5R18 SP02.
+   2. Click "Tools/Options/Mechanical
+   Design/Assembly Design". Click "DMU Clash -
+   Process" Tab.
+   3. Check On "XML Export for clash process
+   purpose",Check On "Picture generated in XML",
+   Check On "Browzer automatically opened",Check
+   Off "Federated XML output".
+   4. Set "D:\DMU" into "Data base repository" by
+   Browse.Click "OK" Button.
+   5.
+   Click "Tools/Options/General/Display".Click "Perfor
+   mance" Tab.
+   6. Set "0.01" into Fixed of 3D Accuracy. Click "OK"
+   Button.
+   7. Restart CATIA.
+   8. Open "Product1.CATProduct" with ASD W/B.
+   9. Click "Analyze/Clash"."Check Clash" dialog
+   appears.
+   10. Click "Apply" Button."Check Clash" dialog
+   appears.
+   11. Click "Export As" Icon. "Save As" dialog
+   appears.
+   12. Click "Save" Button."Clash Publish" xml file
+   appears.
+   13. 0mm is displayed into Clash Value column.
+   14. This is the Problem.
+   .
+   RESULT:
+   - 0mm is displayed into Clash Value column even
+   though "0.01" is set at step6.
+   .
+   EXPECTED RESULT:
+   - 0.01mm should be displayed into Clash Value
+   column.
+   .
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  THIS PROBLEM WILL BE FIXED ON CATIA VERSION
+   5 RELEASE 19 GA LEVEL.
+   NOTE THAT THIS PROBLEM WILL ALSO BE FIXED
+   ON V5R18SP05
+   Incident Diagnosis:
+   The method used for computing the value to be
+   displayed in the xml is not consistent with the
+   method used to display the value in the results
+   dialog box.
+   .
+   Correction Explanation:
+   - Problem corrected and it is working fine Now.
+   .
+   Answer and By-Pass:
+   - None.
+   .
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   HD71905
+   
+   
+ * REPORTED COMPONENT NAME
+   CATIA V5 NT>XP
+   
+   
+ * REPORTED COMPONENT ID
+   569151000
+   
+   
+ * REPORTED RELEASE
+   518
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-02-26
+   
+   
+ * CLOSED DATE
+   2008-03-20
+   
+   
+ * LAST MODIFIED DATE
+   2008-06-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CATIA V5 NT>XP
+   
+   
+ * FIXED COMPONENT ID
+   569151000
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R518 PSN SP51805
+   UP08/06/02 I 1000

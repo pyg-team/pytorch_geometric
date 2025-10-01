@@ -1,0 +1,39 @@
+Title: IBM Spectrum Protect server internal extent repair process - United States
+
+Text:
+TSM Tivoli Storage Manager sdFindChunkInPool SdRepairReconOrderCtrlThread SdRepairReconOrderConsumer auto audit autoadudit TECHNOTE (FAQ)
+
+QUESTION
+ Does IBM Spectrum Protect server have an internal extent repair process? 
+
+ANSWER
+IBM Spectrum Protect server inline data deduplication has an internal extent repair process. When writing data to a directory or cloud container pool, the server will check to see if a matching extent already exists in the pool. If an extent is marked damaged, a new copy of the extent is written to the pool. The server then updates previously stored objects to reference the new extent instead of the damaged extent. The internal extent repair process will issue ANR1758I like this when complete:
+
+
+ * ANR1758I Repaired X damaged extents in directory container pools.
+
+
+REPAIR STGPOOL is the preferred method to repair deduplicated extents in a directory-container storage pool when copies of the extents are available. 
+
+In some cases the internal extent repair process can be used as an alternate method of repairing damaged extents. 
+
+Normal server operations such as client backups can trigger the internal extent repair process. 
+
+With IBM Spectrum Protect Version 8.1.5, you can schedule audit operations to identify corrupted files in a storage pool by using the DEFINE STGRULE command with the ACTIONTYPE=AUDIT. Any damaged extents found by the scheduled audit operations are eligible for correction by REPAIR STGPOOL or the internal extent repair process. 
+
+Audit operations can run in the background and the internal extent repair process is run automatically. This can cause the count of damaged extents found and reported in server messages, QUERY DAMAGED and QUERY PROCESS output for AUDIT CONTAINER to change over time even if REPAIR STGPOOL has not been manually run. 
+
+Note: Backup-archive client incremental backups only send new and changed files. Selective backups may be required to re-send objects with damaged extents. 
+
+Use the following command to display information about damaged data extents in a directory-container or cloud-container storage pool: 
+ * 
+ * 
+ * 
+ * 
+ * 
+
+
+QUERY DAMAGED Type=Node and Type=Inventory may take significant time and resources to complete. 
+
+PRODUCT ALIAS/SYNONYM
+ TSM Tivoli Storage Manager

@@ -1,0 +1,32 @@
+Title: IBM JazzSM prerequisite checker - United States
+
+Text:
+TSM ITM R&M prereq Operation Center OC Monitoring and Reporting DASH TECHNOTE (FAQ)
+
+QUESTION
+ Is there a prerequisite checker for Jazz for Service Management (JazzSM)? 
+
+ANSWER
+Yes, there is a prerequisite checker you can use to verify system settings before installing JazzSM. You can access the tool by launching the JazzSM installation. After you download all of the required software for JazzSM as specified in the user guide, start the installation wizard. 
+
+For Windows users, double click launchpad64.exe to start the installation wizard. 
+
+For AIX/Linux users, type "./launchpad.sh" to start the installation wizard. 
+
+ 
+
+The prerequisite scanner is located in the Tools option.
+[/support/docview.wss?uid=swg21695182&aid=1] [/support/docview.wss?uid=swg21695182&aid=1]
+
+Note that if you have already installed IBM Tivoli Monitoring for Tivoli Storage Manager 7.1, DB2 should have been installed as well. It is normal for the Prereq Scanner to report this error:
+
+network.availablePorts.db2instance FAIL
+PortsInUse:135,445,523,1918,1920,3661,6014,9999,10110,15001,15200,15201,1520... 50000
+DBType FAIL DB2 DB2ShdNotBeInstalled
+
+This error can be ignored.
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ TSM SM TCR

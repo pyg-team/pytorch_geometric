@@ -1,0 +1,59 @@
+Title: IBM SECURITY_ANONYMOUS_DISALLOWED when ingesting large files (~25GB) - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When uploading large files to IBM FileNet Content Engine via FileNet Enterprise Manager (FEM) or archiving via IBM Content Collector (ICC), the upload fails with SECURITY_ANONYMOUS_DISALLOWED. 
+
+SYMPTOM
+Errors in the application server log, FEM and the ICC P8 Collector log all report: SECURITY_ANONYMOUS_DISALLOWED: Anonymous users aren't allowed access to the Content Engine.
+
+
+CAUSE
+The symptom can be a valid security issue. But if smaller files upload successfully, then the cause can be that content is being broken into several chunks causing too many round trips to occur during the upload. Basically the authentication for the user times out during the upload causing the SECURITY_ANONYMOUS_DISALLOWED error to be generated and the upload to fail.
+
+DIAGNOSING THE PROBLEM
+If all documents created or archived generate SECURITY_ANONYMOUS_DISALLOWED the error could be reporting a valid security issue. Validate object store and file store security.
+
+
+If smaller files upload and only larger files generate the error, enable tracing on the Content Engine for Content Storage, EJB and Error. The errors are also seen in the web application server logs and if ICC is used, the error will also appear in the ICC Collector logs.
+
+
+RESOLVING THE PROBLEM
+Increase the values for Content Retrieval and FileNet.Content.GetBlockSize KB to 5120K. This will increase the speed of the uploads by reducing the number of round trips. Note that care should be taken to test increasing the parameter values since an increase from the default setting (1024K) increases the memory footprint on the Content Engine server and client. Too many concurrent large document creations and retrievals might cause memory contention. Always make changes in a Development or Test environment before Production. 
+
+The instructions below can also be found in the P8 Performance Tuning Guide: 
+
+Adjusting the Content Retrieval Limit parameter: 
+
+ 1. Log on as object store administrator. 
+ 2. Expand the Sites node. 
+ 3. Right-click a site, and select Properties. 
+ 4. Go to the Content tab. 
+ 5. Adjust the Inline Content Retrieval Limit (kilobytes) field. 
+ 6. Click OK or Apply when you are done.
+
+
+Adjusting the Put/Get Block Size parameters when an application server hosts the Content Engine client 
+
+ 1. Place these lines in the filenet.properties file:  1. FileNet.Content.PutBlockSizeKB=1024 
+     2. FileNet.Content.GetBlockSizeKB=1024
+    
+    
+ 2. Save the file to the following location, for example:  1. WebSphere – C:\Program Files\IBM\WebSphere\AppServer\profiles\ your_profile 
+     2. WebLogic – C:\bea\user_projects\domains\your_domain 
+     3. NOTE This location corresponds with the directory in which you start the application server.
+    
+    
+ 3. Restart the web application server.
+
+
+Adjusting the Put/Get Block Size parameters when the Content Engine client is a stand-alone Java application 
+
+ 1. For stand-alone Java client applications, a switch needs to be applied to the application executable. For example: java.exe –DFileNet.Content.PutBlockSizeKB=1024.
+
+RELATED INFORMATION
+ IBM FileNet P8 Performance Tuning Guide - 4.x [http://www-05.ibm.com/e-business/linkweb/publications/servlet/pbi.wss?CTY=US&FNC=SRX&PBL=GC31-5483-09]
+Performance tuning IBM FileNet P8 components v5.1 [http://publib.boulder.ibm.com/infocenter/p8docs/v5r1m0/index.jsp?topic=%2Fcom.ibm.p8.performance.doc%2Fp8ppt000.htm]
+IBM FileNet P8 Performance Tuning Guide V5.0 [http://www-05.ibm.com/e-business/linkweb/publications/servlet/pbi.wss?CTY=US&FNC=SRX&PBL=GC19-3394-01]

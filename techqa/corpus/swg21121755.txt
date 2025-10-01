@@ -1,0 +1,66 @@
+Title: IBM Performing silent installations and uninstallations of the IBM Rational products - United States
+
+Text:
+silent; installation; silent installation 2003; install; silent install; procedure; steps; 2003.06; 7.0 ; 1121755; cq; suite; install; uninstall; silent; 1130420; 137253418 TECHNOTE (FAQ)
+
+QUESTION
+ This technote provides you with the steps required to preform a silent installation of the IBM® Rational® products. 
+
+ANSWER
+Any previous version of Rational versions products must be completely removed, before installing Rational products.
+
+Make sure the system meets the minimum requirements. Please check the supported Hardware and Software platforms in the Release Notes.
+
+To perform the installation you must: 
+
+ * Have local administrator privileges 
+ * Check that no other applications are running 
+ * Disable any Anti-virus 
+ * Turn off any desktop environments that run on top of Microsoft® Windows®
+
+
+The silent installation is performed in two steps: 
+
+ 1. Create a release area that will contain the defaults files and all the needed information for subsequent silent installation 
+ 2. Perform silent installations on client machines 
+
+
+Create a site defaults file and a release area. 
+
+ 1. Create a shared directory 
+ 2. Use the Enterprise Deployment option in the Rational Setup wizard to create 
+    a site defaults file 
+ 3. Enter the required information in each page of the wizard, such as client or 
+    server, feature names, installation path, license information, registry 
+    information 
+ 4. In the completion pages, enter the shared directory location and the name for 
+    the site defaults file (*.dat)
+
+
+Perform silent installations on client machines.
+The silent installation can be performed on the client machines by running a .bat with the following command: 
+
+ * 
+ * setup.exe /g \\Machinename\Shared\sitedefs.dat
+
+
+Silent Install Options:
+
+
+
+Option: Definition: /p "REBOOT=REALLYSUPPRESS" Suppresses the Automatic Reboot after installation /l c:\temp\<LOGNAME>.txt Creates a log file of the installation process 
+
+Performing a silent uninstallation: msiexec.exe /X <path to product>.msi /qn
+
+Note: msiexec.exe is located in the setup folder in the network release area. 
+
+ 
+
+Option: Definition: /p REBOOT="ReallySuppress" Suppresses the Automatic Reboot after uninstallation /X Indicates that an uninstall operation is executed. /qn Indicates that no User Interface is displayed during the uninstallation, making it silent. 
+For more information about msiexec.exe and associated command-line options, see the Microsoft Windows Installer Platform Software Developer’s Kit documentation at http://support.microsoft.com/kb/314881 [http://support.microsoft.com/kb/314881]. 
+
+
+
+
+HISTORICAL NUMBER
+ 173040647

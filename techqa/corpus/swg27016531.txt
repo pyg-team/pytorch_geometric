@@ -1,0 +1,55 @@
+Title: IBM Updating IBM InfoSphere Information Server, Version 8.5, and installing additional products - United States
+
+Text:
+install85relnotes; information server; 8.5 patch; update installer; patch installation; installing patches; upgrading; upgrade is85relnotes PRODUCT DOCUMENTATION
+
+ABSTRACT
+ These instructions explain how to install and use the Update Installer on IBM InfoSphere Information Server, Version 8.5, to apply patches, fix packs, or other updates. They also describe how to add additional product components to an existing installation. 
+
+CONTENT
+ 
+
+TAB NAVIGATION
+ *  Version 11.3 [http://www.ibm.com/support/docview.wss?uid=swg27041875] 
+ *  Version 9.1 [http://www.ibm.com/support/docview.wss?uid=swg27035672] 
+ *  Version 8.7 [http://www.ibm.com/support/docview.wss?uid=swg27023464] 
+ *  Version 8.5 [http://www.ibm.com/support/docview.wss?uid=swg27016531] - selected tab, 
+
+TAB NAVIGATION
+ *  8.5 Update Installer [http://www.ibm.com/support/docview.wss?uid=swg24024048] Fix Central [http://www.ibm.com/support/fixcentral/] 
+
+1. UPDATING YOUR INSTALLATION
+Right-click and download the instructions
+installing_fixes_fixpacks_updates85.html [/support/docview.wss?uid=swg27016531&aid=2]installing_fixes_fixpacks_updates85.html [/support/docview.wss?uid=swg27016531&aid=1]
+
+
+
+
+Why you need to complete the tasks in the instructions Use the instructions in this file to install one or more patches or fix packs.
+You need to install the most recent version of the Update Installer before you install updates.
+You can use the Update Installer to install one update at a time or multiple updates at once. Directory where you install the Update Installer Windows
+IBM\InformationServer
+UNIX
+/opt/IBM/InformationServer Term for the directory where you install the Update Installer Installation image:
+The location where you extracted InfoSphere Information Server from the product image. 
+2. INSTALLING ADDITIONAL PRODUCTS OR TIERS AFTER THE UPDATES
+Right-click and download the instructions
+
+
+
+installing_additional_product_tier85.html [/support/docview.wss?uid=swg27016531&aid=4]installing_additional_product_tier85.html [/support/docview.wss?uid=swg27016531&aid=3]
+
+
+Why you need to complete the task in the instructions When you install an additional product or tier, you must use the latest version of the Suite Installer to insure that the product installs correctly.
+In addition to containing code that updates the installUpdates.exe file, the Update Installer contains code that updates the is-suite\updateImage.bat (or .sh) file.
+Note: Complete this task after you install updates and before you install any additional products or tiers. Directory where you install the Update Installer Windows
+installation_image_directory\is-suite
+UNIX
+installation_image_directory/is-suite Term for the directory where you install the Update Installer Installation instance:
+The location where you installed InfoSphere Information Server 
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Information Management InfoSphere Business Glossary IBM Information Server Business Glossary Anywhere AIX, HP-UX, Linux, Solaris, Windows 8.5 Information Management InfoSphere DataStage AIX, HP-UX, Linux, Solaris, Windows 8.5 Information Management InfoSphere FastTrack AIX, HP-UX, Linux, Solaris, Windows 8.5 Information Management InfoSphere Information Analyzer AIX, HP-UX, Linux, Solaris, Windows 8.5 Information Management InfoSphere Information Services Director AIX, HP-UX, Linux, Solaris, Windows 8.5 Information Management InfoSphere Metadata Workbench AIX, HP-UX, Linux, Solaris, Windows 8.5 Information Management InfoSphere QualityStage AIX, HP-UX, Linux, Solaris, Windows 8.5

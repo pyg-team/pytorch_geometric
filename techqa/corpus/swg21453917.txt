@@ -1,0 +1,29 @@
+Title: IBM Rational ClearQuest and Rational Requisitepro objects are not instantiated for Rational Insight Data Services installation to a non-default directory - United States
+
+Text:
+SRX; RN 1.0.1 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When the IBM Rational Insight Data Services adapters for IBM Rational ClearQuest or IBM Rational RequisitePro are installed at a non-default installation path on a 64-bit Microsoft Windows operating system, the adapters might fail to function. The installed adapters cannot be accessed through the default URLs http://localhost:9080/DataServices/ClearQuest or http://localhost:9080/DataServices/ReqPro. 
+
+SYMPTOM
+ 
+
+When using a browser to access the Rational ClearQuest adapter which, by default, is at http://localhost:9080/DataServices/ClearQuest, the following error message is displayed: 
+
+ * 
+ * 
+
+
+When using a browser to access the Rational ClearQuest adapter which, by default, is at http://localhost:9080/DataServices/RequisitePro, the following error message is displayed:  * 
+ * CRRED0053E: Cannot instantiate RequisitePro adaptor object
+
+
+CAUSE
+During the installation of the Rational ClearQuest and Rational RequisitePro adapters on 64-bit Microsoft Windows operating systems, the Rational Insight Data Services installer fails to set the path variable correctly. 
+
+
+RESOLVING THE PROBLEM
+ 
+
+ *  Navigate to the IBM WebSphere Application Server administration console which, by default, is at http://localhost:9081/ibm/console. Click Environment > Shared Libraries. For each installed adaptor, modify the shared library classpath to reflect your installation directory. For Rational ClearQuest, change the installation directory for ClearQuest CM API. For Rational Requisite Pro, change the installation directory for RequisitePro RJCB. Restart the IBM WebSphere Application Server service (click Start > Settings > Control Panel > Administrative Tools > Services, right-click IBM WebSphere Application Server V7.0 - IBM Rational Insight, and click Restart).

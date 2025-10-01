@@ -1,0 +1,112 @@
+Title: IBM Collect WebSphere MQ MustGather data to solve data conversion problems on HP NonStop Server - United States
+
+Text:
+MustGather; MustGathers Must Gather; MustGatherDocument; Collect Troubleshooting Data; Collect; Trouble; Shooting; Data Conversion; Conversion; Convert TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ A WebSphere MQ queue manager is failing to convert a message properly, and you need to collect MustGather data to find a solution. 
+
+ENVIRONMENT
+These instructions apply only to WebSphere MQ V5.3.1 and V5.3 on HP NonStop Server. Refer to the IBM MQ Read First page for instructions on other operating systems:
+
+
+
+ * IBM MQ Read First [http://www.ibm.com/support/docview.wss?uid=swg21618728]
+
+
+
+RESOLVING THE PROBLEM
+ 
+
+Please answer these questions about the problem and then follow the steps below:
+
+
+
+ * What data conversion problem did you observe on the system?
+ * What is the MQMD.Format of the message and its original MQMD.CodedCharSetId (CCSID)?
+ * What is the intended MQMD.CodedCharSetId to which the message should be converted?
+ * Which specific characters in the message are invalid, and which did you expect to see instead?
+
+
+
+STEP 1: GENERATE DATA
+
+If the data conversion problem is reproducible or is happening right now, generate data to provide more information about the problem:
+
+
+
+ 1.  
+ 2.  Guardian users should run the osh TACL command to switch to the OSS environment. Then, browse the message immediately after it has been put to WebSphere MQ using a program like the opt/mqm/samp/bin/amqsbcg sample. It is important to see the message in hex in order to examine the MQMD header and the byte values of the message data. For example:
+ 3.   
+     BROWSING MY.QUEUE ON QUEUE MANAGER QMA
+     
+     osh> amqsbcg My.Queue QMA > My.Queue.browse.txt 
+     
+ 4.  
+ 5.  
+ 6.  Alternatively, generate a trace of the queue manager [http://www.ibm.com/support/docview.wss?uid=swg21667375] while the application is putting the message.
+ 7.  
+ 8.  
+ 9.  If the message contents are corrupted while flowing over an MQ channel with CONVERT(YES), generate a trace of the queue manager [http://www.ibm.com/support/docview.wss?uid=swg21667375] while the message is flowing across the sending channel.
+ 10. 
+ 11. 
+ 12. Browse the message using a program like the opt/mqm/samp/bin/amqsbcg sample program just before it is retrieved by the target application.
+ 13. 
+ 14. 
+ 15. If the message contents are corrupted when the target application gets the message, generate a trace of the queue manager [http://www.ibm.com/support/docview.wss?uid=swg21667375] while the application is getting the message.
+ 16. 
+
+
+
+STEP 2: COLLECT DATA
+ 1.  
+ 2.  Record the MQ version and maintenance level [http://www.ibm.com/support/docview.wss?uid=swg21621707].
+ 3.  
+ 4.  
+ 5.  Record the operating system version and maintenance level [http://www.ibm.com/support/docview.wss?uid=swg21634678].
+ 6.  
+ 7.  
+ 8.  On the sending side, use runmqsc to record your queues, channels and channel status information. If any command gives an error, carry on with the others:
+ 9.   
+     DISPLAY QMGR ALL 
+     DISPLAY QLOCAL(*) ALL 
+     DISPLAY QALIAS(*) ALL 
+     DISPLAY QREMOTE(*) ALL 
+     DISPLAY CHANNEL(*) ALL 
+     DISPLAY CHSTATUS(*) ALL 
+     
+ 10. 
+ 11. 
+ 12. On the receiving side, use runmqsc to record your queues, channels and channel status information. If any command gives an error, carry on with the others:
+ 13.  
+     DISPLAY QMGR ALL 
+     DISPLAY QLOCAL(*) ALL 
+     DISPLAY CHANNEL(*) ALL 
+     DISPLAY CHSTATUS(*) ALL 
+     
+ 14. 
+ 15. 
+ 16. Use the sdcp script to package your files for IBM [http://www.ibm.com/support/docview.wss?uid=swg21671892], including files containing the output from the commands listed in Step 1 and 2.
+ 17. 
+
+
+
+STEP 3: SEND DATA TO IBM
+ 1.  
+ 2.  Send your data to the IBM ECuRep repository [http://www.ibm.com/de/support/ecurep/send.html] by email to websphere_support@ecurep.ibm.com, or by standard or secure HTTP or FTP.
+ 3.  
+ 4.  
+ 5.  While the data is transferring, send an email or use the IBM Service Request tool [http://www.ibm.com/support/servicerequest/] to update your PMR with your description of the problem and of the data you are sending.
+ 6.  
+ 7.  
+ 8.  A good description of the problem and the data is the most important information you can provide to IBM. Please do not send data without providing a description!
+ 9.  
+ 10. Contact your country representative [http://www.ibm.com/planetwide/] if you need to speak to an IBM technical support representative, or in the US call 1-800-IBM-SERV. Refer to the IBM Software Support Handbook [http://www14.software.ibm.com/webapp/set2/sas/f/handbook/home.html] for more information on working with IBM.
+ 11. 
+
+Back to top
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ WebSphere MQ WMQ

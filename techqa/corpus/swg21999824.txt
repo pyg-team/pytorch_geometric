@@ -1,0 +1,21 @@
+Title: IBM Pages of StoredIQ for Legal 2.0.1  are cached in IE 11 after upgrade to 2.0.3 - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Why are pages of StoredIQ for Legal v2.0.1 cached in IE11 after upgrade to 2.0.3? 
+
+CAUSE
+Cached pages are not being deleted
+
+ANSWER
+In IE, navigate to Tools > Internet Options > General > Browsing History section, click Delete button and click Delete button in the popup window 
+
+ 1. Make sure you have the latest windows update and perform a restart of the desktop 
+ 2. Press F12 in IE to bring up developer tools and Under Network tab  1. Click Always refresh from Server icon 
+     2. Click Clear Browser cache icon 
+     3. Click Clear Cookies for Domain icon
+    
+    
+ 3. Restart IE and login to StoredIQ for Legal

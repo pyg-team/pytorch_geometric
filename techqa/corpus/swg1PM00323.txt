@@ -1,0 +1,176 @@
+Title: IBM PM00323: ACCESSING WCM CONTENT AS ANONYMOUS RESULTS IN IWKCW1005X - United States
+
+Text:
+  FIXES ARE AVAILABLE
+6.1.0.4 Download: WebSphere Portal and WCM V6.1.0 fix pack 4 & 6.1.5 fix pack 1 [http://www-01.ibm.com/support/docview.wss?uid=swg24026394]
+Recommended Updates for WebSphere Portal and Web Content Management V6.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24023835]
+6.1.0.5 Download: WebSphere Portal and WCM V6.1.0 fix pack 5 [http://www-01.ibm.com/support/docview.wss?uid=swg24027475]
+6.1.0.6 Download: WebSphere Portal and WCM V6.1.0 fix pack 6 [http://www-01.ibm.com/support/docview.wss?uid=swg24030970]
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Accessing WCM content as anonymous user leads to warnings
+   in the
+   SystemOut.log:
+   IWKCW1005X: The
+   Member: PrincipalWrapper: m_principal: PrincipalInformation:
+   {dn:
+   uid=wpsadmin,cn=users,ou=administrators,ou=portal,O=xxx,
+   memberId:
+   32f08dc0-5300-102c-992e-9e1777c1b016, displayName: , name:
+   wpsadmin,
+   locale: null, isValidUser: true, isUser: Type: User,
+   isUserLazyLoaded:
+   false} Could not be found in the User Repository. Reason:
+   wpsadmin
+   
+   
+   The customer code is making the call, running on a public page
+   
+   when it access the content viewer portlet of the WCM
+   of the virtual portal
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  n/a
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Problem Summary:
+   IWKCW1005X warning when running
+   WCM_API.getRepository().getSystemWorkspace() from anonymous user
+   in virtual portal environment
+   
+   Detailed Problem Description:
+   The customer consistently sees the following warning in the
+   SystemOut.log file when calling
+   WCM_API.getRepository().getSystemWorkspace() with an anonymous
+   user
+    in virtual portal environment with realm logic enabled.
+   
+   "WCM_Workspace W IWKCW1005X: The Member: PrincipalWrapper:
+   m_principal: PrincipalInformation: {dn:
+   uid=wpsadmin,cn=users,ou=administrators,ou=portal,O=PXC,
+   memberId: 32f08dc0-5300-102c-992e-9e1777c1b016, displayName: ,
+   name: wpsadmin,
+   locale: null, isValidUser: true, isUser: Type: User,
+   isUserLazyLoaded:false} Could not be found in the User
+   Repository. Reason: wpsadmin "
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Problem Analysis:
+   WCM calls PUMA method to check if the user is in the realm.
+   However PUMA expects the principal object to be authenticated.
+   
+   Problem Solution:
+   The solution is to skip the PUMA check if the user is anonymous
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM00323
+   
+   
+ * REPORTED COMPONENT NAME
+   LOTUS WEB CONT
+   
+   
+ * REPORTED COMPONENT ID
+   5724I2900
+   
+   
+ * REPORTED RELEASE
+   610
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-11-04
+   
+   
+ * CLOSED DATE
+   2010-04-28
+   
+   
+ * LAST MODIFIED DATE
+   2010-04-28
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   LOTUS WEB CONT
+   
+   
+ * FIXED COMPONENT ID
+   5724I2900
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R615 PSY
+   UP
+   
+   
+ * R61A PSY
+   UP
+   
+   
+ * R61B PSY
+   UP
+   
+   
+ * R61C PSY
+   UP

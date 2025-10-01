@@ -1,0 +1,68 @@
+Title: IBM Security Bulletin: Tivoli Provisioning Manager for OS Deployment and Tivoli Provisioning Manager for Images - OpenSSL vulnerabilities (CVE-2015-0286, CVE-2015-0288, CVE-2015-0289, CVE-2015-0293) - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ OpenSSL released fixes for several security vulnerabilities that may affect TPM for OS Deployment and TPM for Images customers. 
+
+VULNERABILITY DETAILS
+CVEID: CVE-2015-0286 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-0286]
+
+DESCRIPTION: OpenSSL is vulnerable to a denial of service, caused by an error in the ASN1_TYPE_cmp function when attempting to compare ASN.1 boolean types. An attacker could exploit this vulnerability to crash any certificate verification operation and cause a denial of service.
+
+CVSS Base Score: 5
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/#/vulnerabilities/101666 [https://exchange.xforce.ibmcloud.com/#/vulnerabilities/101666] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:L/Au:N/C:N/I:N/A:P)
+
+CVEID: CVE-2015-0288 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-0288]
+
+DESCRIPTION: OpenSSL is vulnerable to a denial of service, caused by an error in the X509_to_X509_REQ function. An attacker could exploit this vulnerability to trigger a NULL pointer dereference.
+CVSS Base Score: 5
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/#/vulnerabilities/101675 [https://exchange.xforce.ibmcloud.com/#/vulnerabilities/101675] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:L/Au:N/C:N/I:N/A:P)
+
+
+CVEID: CVE-2015-0289 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-0289]
+
+DESCRIPTION: OpenSSL is vulnerable to a denial of service, caused by the failure to properly handle missing outer ContentInfo by the PKCS#7 parsing code. An attacker could exploit this vulnerability using a malformed ASN.1-encoded PKCS#7 blob to trigger a NULL pointer dereference.
+CVSS Base Score: 5
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/#/vulnerabilities/101669 [https://exchange.xforce.ibmcloud.com/#/vulnerabilities/101669] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:L/Au:N/C:N/I:N/A:P)
+
+
+CVEID: CVE-2015-0293 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-0293]
+
+DESCRIPTION: OpenSSL is vulnerable to a denial of service. By sending a specially-crafted SSLv2 CLIENT-MASTER-KEY message, a remote attacker could exploit this vulnerability to trigger an assertion.
+CVSS Base Score: 5
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/#/vulnerabilities/101671 [https://exchange.xforce.ibmcloud.com/#/vulnerabilities/101671] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:L/Au:N/C:N/I:N/A:P)
+
+AFFECTED PRODUCTS AND VERSIONS
+IBM Tivoli Provisioning Manager for Images 7.1.1.x
+IBM Tivoli Provisioning Manager for OS Deployment 7.1.1.x 
+IBM Tivoli Provisioning Manager for Images (and System X Edition) 7.1.1.x
+IBM Tivoli Provisioning Manager for OS Deployment 5.1.x
+
+REMEDIATION/FIXES
+Customers using IBM Tivoli Provisioning Manager for OS Deployment 7.1.1x or IBM Tivoli Provisioning Manager for Images 7.1.1.x should apply the IBM Tivoli Provisioning Manager for OS/Images Fix Pack 19 (7.1.1.19) or later. 
+
+Customers using the older version of the product (IBM Tivoli Provisioning Manager for OS Deployment 5.1.x) should apply the Limited Availability Fix 5.1.1 build 51.05 available on demand or upgrade to the latest product version. 
+
+The latest Fix Packs are available at this link: http://www.ibm.com/support/fixcentral [http://www.ibm.com/support/fixcentral]
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v2 Guide [http://www.first.org/cvss/v2/guide] 
+On-line Calculator v2 [http://nvd.nist.gov/CVSS-v2-Calculator] RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/PSIRT] *The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.

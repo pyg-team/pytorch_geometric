@@ -1,0 +1,161 @@
+Title: IBM PK15805: EJBDEPLOYMENTEXCEPTION WITH CMP EJB INHERITANCE - COMPOSITE PATTERN - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  "EJBDeploymentException with CMP EJB Inheritance - Composite
+   Pattern"
+   .
+   Customer was trying to implement the Composite design pattern
+   with CMP entity EJBs. He was using WAS inheritance to model the
+   Composite and Leaf objects. They both inherit from a Component
+   object. The Composite object has a one-to-many relationship
+   back to the Component object, creating the composite recursion.
+   It all works nicely up to generating the deployment code,
+   including the top-down mapping using the flat inheritance
+   mapping model. When trying to deploy, they get:
+   
+   Deployment from com.ibm.etools.ejbdeploy.EJBDeployer had errors:
+   index=0, size=0
+   
+   com.ibm.etools.ejbdeploy.EJBDeploymentException: index=0, size=0
+             at
+   com.ibm.etools.ejbdeploy.plugin.EJBDeployOperation.deploy2_0pers
+   istence(
+   Unknown Source)
+             at
+   com.ibm.etools.ejbdeploy.plugin.EJBDeployOperation.deployCMP(Unk
+   nown
+   Source)
+             at
+   com.ibm.etools.ejbdeploy.plugin.EJBDeployOperation.generateBacke
+   nd(Unkno
+   ...
+   ..
+   .
+   
+   They used RSA 6.0.1 with interim fix 001 and prepared a very
+   simple test case that demonstrates the condition (an
+   implementation of the Composite design pattern with EJBs) and
+   exported it as a project interchange file. Please find it
+   attached. The top down mapping is already done (for DB2
+   v8.2, but I also tried with several other back-ends with the
+   same results). It is possible to see what?s going on by simply
+   trying to deploy the EJB module.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  EJBDeploymentException with CMP EJB Inheritance - Composite
+   Patt
+   ern.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The deployment exception when inheritance is involved with
+   CMP beans has been resolved.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK15805
+   
+   
+ * REPORTED COMPONENT NAME
+   APP DEV V6 WIN
+   
+   
+ * REPORTED COMPONENT ID
+   5724J1901
+   
+   
+ * REPORTED RELEASE
+   601
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2005-11-25
+   
+   
+ * CLOSED DATE
+   2006-04-03
+   
+   
+ * LAST MODIFIED DATE
+   2006-04-03
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  na
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   APP DEV V6 WIN
+   
+   
+ * FIXED COMPONENT ID
+   5724J1901
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R601 PSN
+   UP

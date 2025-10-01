@@ -1,0 +1,185 @@
+Title: IBM IV16071: SUPPORT WINDOWS LOCALE SETTING "HR". - United States
+
+Text:
+  A FIX IS AVAILABLE
+IBM Tivoli Monitoring 6.2.2 Fix Pack 9 (6.2.2-TIV-ITM-FP0009) [http://www-01.ibm.com/support/docview.wss?uid=swg24032067]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  If a Windows locale is set to "hr" versus "hr_HR" due to a
+   problem with the installation of the Microsoft Langauge
+   Package support for Croatian ? Croatia (Hrvatski) ITM will
+   not honor only the Region (hr) setting. ITM Requires hr_HR.
+   
+   The user will see in their ITM logs the following error
+   message when this condition occurs.
+   
+   krabufwk.cpp,159,"CTIRA_Set_DefaultCodepage") *INFO:
+   Default IRA codepage set to 37 - ibm-37_P100-1995,
+   Language 1 -
+   
+   Since the hr_HR is not recognized as a valid Region +
+   Language, but just a Region, the Globalization support
+   defaults to the EBCDIC Codepage (37).  The setting of
+   this default results in various ITM components incorrectly
+   interpreting text data.
+   
+   
+   RECREATE INSTRUCTIONS:
+   
+   Install Windows 2008
+   Install ITM Monitoring Agent for Windows OS
+   Set Region to "hr" using Regions/Language
+   Start the OS Agent
+   Observe in the OS Agent log file the message:
+   
+   krabufwk.cpp,159,"CTIRA_Set_DefaultCodepage") *INFO:
+   Default IRA codepage set to 37 - ibm-37_P100-1995,
+   Language 1 -
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Temporarily set the locale of the machine to en_US.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  On Windows, running IBM Tivoli Monitoring in Croatian results in
+   missing data.
+   
+   
+   If the locale on a Windows system is set to "hr" versus "hr_HR",
+   IBM Tivoli Monitoring will not honor the region setting (hr) on
+   its own due to a problem with the installation of the Microsoft
+   Language Package support for Croatian ? Croatia (Hrvatski). A
+   message similar to the following may be seen in the log when
+   this condition occurs:
+   
+   krabufwk.cpp,159,"CTIRA_Set_DefaultCodepage") *INFO:
+   Default IRA codepage set to 37 - ibm-37_P100-1995,
+   Language 1 -
+   
+   Since "hr_HR" is not recognized as a valid region/language
+   combination, the globalization support defaults to EBCDIC
+   codepage 37, resulting in various components incorrectly
+   interpreting text data.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  For Windows servers configured in Croatian, the product now
+   supports both the region/language combination (hr_HR) as well as
+   just the region on its own (hr).
+   
+   The fix for this APAR is contained in the following maintenance
+   
+   packages:
+   | fix pack | 6.2.2-TIV-ITM-FP0009
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  Set the region/language to hr_HR using the Windows Regions and
+   Languages Dialog of the Windows OS. If using this dialog does
+   not alter the setting from hr to hr_HR, then the Microsoft
+   Language Pack for HR must be installed.
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV16071
+   
+   
+ * REPORTED COMPONENT NAME
+   TEMS
+   
+   
+ * REPORTED COMPONENT ID
+   5724C04MS
+   
+   
+ * REPORTED RELEASE
+   622
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-02-23
+   
+   
+ * CLOSED DATE
+   2012-03-30
+   
+   
+ * LAST MODIFIED DATE
+   2012-06-28
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TEMS
+   
+   
+ * FIXED COMPONENT ID
+   5724C04MS
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R622 PSY
+   UP

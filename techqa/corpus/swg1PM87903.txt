@@ -1,0 +1,155 @@
+Title: IBM PM87903: Missing text when saving diagrams as PNG - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Rational Software Architect 9.0 [http://www-01.ibm.com/support/docview.wss?uid=swg24034297]
+Rational Software Architect for WebSphere Software 9.0 [http://www-01.ibm.com/support/docview.wss?uid=swg24034298]
+Rational Software Architect RealTime Edition 9.0 [http://www-01.ibm.com/support/docview.wss?uid=swg24034299]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PERMANENT RESTRICTION.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Environment:
+   - RHEL 5.8
+       - Product: RSA 8.0.4.1
+   
+   Reproducible: Y
+   
+   Description of problem:
+   
+   When you save a diagram as PNG under RHEL 5.8, the resulting png
+   misses parts of the text and/or notes. Exports to PDF, JPG or
+   SVG are fine. The problem also happens on RHEL 5.9, though the
+   missing text is not exactly the same. The problem does not
+   happen on RHEL 6 nor on Windows.
+   
+   Steps to reproduce
+   
+   1) Create a class diagram that contains several classes and
+   interfaces with various relationships and where cardinality of
+   the relationship is displayed
+   2) Export this model as PNG using the 'file-?save as image file'
+   context menu and open the PNG file with any editor.
+   3) Notice that some of the text of the diagram related to
+   cardinlity of relationship is not written in the PNG file
+   
+   Workaround
+   
+   You need to save the diagram as SVG or PDF and then use an
+   external tool to convert the generated image into a PNG file.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   The image generation API in Eclipse GMF had a problem, which
+   caused text to be omitted for PNG images, on certain
+   environments.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This problem is specific t oRHEL 5.
+   The problem is not seen in RHEL 6 or Windows.
+   The problem is quite tricky to resolve and therefore the
+   decision is t oclose this as No plan to fix.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM87903
+   
+   
+ * REPORTED COMPONENT NAME
+   RATL SW ARCHITE
+   
+   
+ * REPORTED COMPONENT ID
+   5725A3000
+   
+   
+ * REPORTED RELEASE
+   804
+   
+   
+ * STATUS
+   CLOSED PRS
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-04-26
+   
+   
+ * CLOSED DATE
+   2014-07-16
+   
+   
+ * LAST MODIFIED DATE
+   2014-07-16
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   RATL SW ARCHITE
+   
+   
+ * FIXED COMPONENT ID
+   5725A3000
+   
+   
+
+APPLICABLE COMPONENT LEVELS

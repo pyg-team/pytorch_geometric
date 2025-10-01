@@ -1,0 +1,51 @@
+Title: IBM CTGKS0040E Socket timed out or Internal Error: Process Message failed - United States
+
+Text:
+times to timeout sockets time out time-out time_out TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Backups were failing and above errors are seen in the tklm_audit.log 
+
+RESOLVING THE PROBLEM
+Backups were failing and the following errors are seen in the tklm_audit.log: 
+
+outcome=[result=successful]
+... 
+resource=[name=
+CTGKS0040E Socket timed out.
+or
+CTGKS0040E Internal Error: Process Message failed 
+
+CTGKS0040E indicates that a socket time out occurred. TKLM server socket time out while waiting for a response from the tape library device. By default, TKLM is set to time out within 10 minutes after not getting a response. The key server cannot serve the keys or better stated it serves the key but did not hear a response within the time out value as the example below:
+
+resource=[name=ReadRequest: Drive Serial Number: xxxxx WWN: xxxxx VolSer: xxxx Key Alias(DKI)/Label[0]: keyxxxx;type=file] 
+....
+resource=[name=CTGKS0040E Internal Error: Process Message failed.;type=file] 
+Usually this problem can be solved by modifying the time out configuration 'TransportListener.tcp.timeout' in the TKLMgrConfig.properties file. Tivoli Key Lifecycle Manager uses a default time out value of 10 minutes. Values can range from 0 to 120. A value of 0 (zero) means never time out. Follow the link attached in the "Related URL: field below.
+
+Check the Time out settings on the library side if any between the Library and the tapes. You may want to increase it as well for testing purposes. 
+
+After the changes are made and applications restarted, run some tests: "Key Path Diagnostics" (KPD) to test the Library and TKLM communication, try doing backups with multiple volumes, initialize several tapes and do some small library saves. 
+The audit log will show write requests for each event and even shows a read request when displaying a tape. 
+
+If you are using SSL then you would need to adjust the TransportListener.ssl.timeout in a similar manner.
+
+By keeping connection open, it will wait until it receives some messages to close the connection or the service is stopped or restarted. This will not cause any resource issues on TKLM servers that have made this time out setting to 0. It does not cause problems on the tape libraries either. This time out (TO) setting wouldn't apply to "ping" type requests that only check if the system was running. It will apply however on key requests initiated by the tape library. Key requests would just start a new connection with the TKLM server which should have a new process id/thread for the new key request.
+
+If that is a concern you may just increase the value to something greater than 10 minutes, so 30 minutes, for example. Those messages are benign unless an issue is experienced with key requests failing causing tape read or writes to fail. 
+
+If time out error on TKLM in the socket persists, there may be an error at the tape library too. 
+Check for errors in the tape library device transaction and error logs. At this point, please engage your Network team to verify possible network issues, all the configurations are set up correctly, double check that a firewall is not blocking the communication between the Library and TKLM, firmware issues or even possibly a NIC card issue on the TKLM server. 
+
+If still having problems then a tape library support needs to be involved.
+
+RELATED INFORMATION
+ Time out setting [http://pic.dhe.ibm.com/infocenter/tivihelp/v2r1/index.jsp?topic=%2Fcom.ibm.tklm.doc%2Fref%2FCTGKS0040E.html ]
+
+
+ 
+
+HISTORICAL NUMBER
+ pmr 56326
+999
+744

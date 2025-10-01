@@ -1,0 +1,167 @@
+Title: IBM PI97740: CRASH OR DISK WRITE ERROR OR COULD NOT OPEN WORK FILES WHEN USING HANDLEIN() FUNCTION TO CALL MORE THAN 64K RUN MAPS - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When using the HANDLEIN() function to call more than 64K RUN
+   map occurrences, one of the following problems may occur.
+   
+   1) A Crash
+   
+   2) Disk write error - return code 16
+   
+   3) Could not open work files - return code 36 (meaning - A
+   scratch file for the HANDLEIN function could not be created.)
+   
+   The problem does not occur is the HANDLEIN() function is
+   replaced with the ECHOIN() function.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  ITXCQ - ITX00058845
+   GM / GM
+   Circumvention: None
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Users Affected:
+   IBM Transformation Extender customers who calls HandleIn
+   function over 64k times
+   
+   Problem Description:
+   Map produces undefined results, crashes or fails with "Disk
+   Write Error" if the map calls HandleIn over 64k times.
+   
+   Platforms Affected:
+   All
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Correct code to handle over 64k calls to HandleIn function from
+   the same map.
+   
+   Applies to:
+   9.0.0.3
+   
+   Fixed in the next service packs and releases.
+   
+   To obtain the fix for this APAR:
+   
+   To see if the next service pack or product release is available,
+   check the IBM Transformation Extender Downloads page:
+   http://www.ibm.com/support/entry/portal/product/other_software/t [http://www.ibm.com/support/entry/portal/product/other_software/t]
+   ransformation_extender
+   
+   If the service pack or product release is available, download it
+   from Fix Central:
+   http://www.ibm.com/support/fixcentral/ [http://www.ibm.com/support/fixcentral/]
+   
+   If the service pack or product release is not available and you
+   require the APAR fix immediately, request a Limited Availability
+   Interim Fix (LAIF) by opening a PMR:
+   http://www.ibm.com/support/servicerequest/Home.action [http://www.ibm.com/support/servicerequest/Home.action]
+   
+   Prior to version 9.0.0, IBM Transformation Extender was called
+   IBM WebSphere Transformation Extender.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI97740
+   
+   
+ * REPORTED COMPONENT NAME
+   ITX
+   
+   
+ * REPORTED COMPONENT ID
+   5724Q2300
+   
+   
+ * REPORTED RELEASE
+   900
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2018-05-08
+   
+   
+ * CLOSED DATE
+   2018-07-26
+   
+   
+ * LAST MODIFIED DATE
+   2018-07-30
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ITX
+   
+   
+ * FIXED COMPONENT ID
+   5724Q2300
+   
+   
+
+APPLICABLE COMPONENT LEVELS

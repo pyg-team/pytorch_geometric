@@ -1,0 +1,41 @@
+Title: IBM EJPAH2012E occurs when creating virtual portal - United States
+
+Text:
+virtual portal; create; EJPAH2012E; InitVirtualPortal.xml TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+When attempting to create a virtual portal via the Virtual Portal Manager portlet, you receive the following error (after clicking View Details to view the error):
+
+com.ibm.portal.WpsException: EJPAH2012E: Can not find xmlaccess script InitVirtualPortal_abc.xml at com.ibm.wps.portlets.managevirtualportals.actions.DoCreateVirtualPortalAction.
+initializeVPContentTree(DoCreateVirtualPortalAction.java:496) at 
+. . . . 
+
+
+DIAGNOSING THE PROBLEM
+1. Confirm that the initialization file referenced in the error message is the correct file that you wish to use for preconfiguring your virtual portal. 
+
+2. Confirm that the initialization file exists in the following default path:
+
+
+6.1:<WP_profile_root>/installedApps/hostname/wps.ear/wps.war/virtualportal
+
+7.0/8.0: <WP_profile_root>/config/cells/<cellname>/assets/VirtualPortal.zip/aver/BASE/bin 
+
+Note: Starting in 7.0, it is possible to define a new path for the virtual portal asset, so adjust the above path accordingly per the asset setting in the WebSphere Integrated Solutions Console under Applications->Application Types->Assets. 
+
+3. Confirm that you are not hitting a WebSphere permission issue. See Related information for further details.
+
+
+RESOLVING THE PROBLEM
+After ensuring that the desired initialization script exists in the correct path on the system, adjust the Virtual Portal Manager portlet as needed to point to the file: 
+
+-Access the Virtual Portal Manager portlet by navigating to Administration->Virtual Portals-> Manage Virtual Portals. 
+
+-Click on Edit Shared Settings from the portlet menu. 
+
+[/support/docview.wss?uid=swg21303041&aid=1] [/support/docview.wss?uid=swg21303041&aid=1] 
+-Update the field Xml script to create virtual portal content tree: with the correct file name. In version 7.0 and later, ensure that the assetname is included as shown in the screenshot above.
+
+RELATED INFORMATION
+ EJPAH2012E caused by lack of WAS permission on v7 [http://www.ibm.com/support/docview.wss?rs=0&uid=swg21469910]
+Administering virtual portals [http://www.lotus.com/ldd/portalwiki.nsf/dx/Administering_virtual_portals_wp7]

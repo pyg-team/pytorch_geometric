@@ -1,0 +1,65 @@
+Title: IBM Installing and licensing the SPSS Concurrent License Manager in a virtual environment - United States
+
+Text:
+License Manager Sentinel TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Installing and licensing the SPSS Concurrent License Manager in a virtual environment. 
+
+ENVIRONMENT
+Windows, AIX, LINUX, UNIX, Solaris, IBM SPSS Statistics, IBM SPSS Modeler
+
+RESOLVING THE PROBLEM
+The concurrent license manager is a utility that serves concurrent licenses to SPSS users. It is installed on a physical or virtual computer that is connected to your network. When users on the same network start an IBM SPSS application, the application communicates over the network and retrieves a license from the license manager. 
+
+This tech note provides special instructions for licensing the license manager in a virtual environment. There are no special instructions for installation.
+
+Licensing the license manager in a virtual environment
+Licenses are tied to the machine running the license manager with a lock (or "locking") code. The lock code is a unique identifier associated with the machine -- typically-but-not-always hardware-based, such as an Ethernet card. On a physical machine, a hardware-based lock code and thus this unique identifier is preferable because it changes only if that piece of physical hardware is changed -- swapping out a NIC, for example
+
+On a virtual machine, however, the hardware is virtual, and the information the lock code is built from can often change when the virtual machine is un-deployed and re-deployed. To ensure the license manager works correctly, you need to find a lock code that does not change when the virtual machine is restarted. When you find a stable lock code, you will use it to license the license manager.
+
+IMPORTANT: If you choose a lock code that does change on reboot or after any other routine maintenance operation in your virtual environment, the license manager will stop working. The IBM SPSS application will not be able to retrieve a license and will fail to start.
+
+To stabilize the License Manager licensing on virtual machine hosts:
+
+
+ 1. Determine whether you will using the hostname or IP address of the License Manager to identify the location of the License Manager host to the client product installations using the License Manager for licensing. 
+ 2. Once you have determined if the hostname or IP address will be used, use a file browser to locate the following file in License Manager installation directory: echoid.dat
+    
+    Locate the License Manager installation directory on Windows operating systems [http://www.ibm.com/support/docview.wss?uid=swg21989514]
+    
+    Locate the License Manager installation directory on MacOS operating systems [http://www.ibm.com/support/docview.wss?uid=swg21989520]
+    
+    Locate the License Manager installation directory on Linux/Unix operating systems [http://www.ibm.com/support/docview.wss?uid=swg21989521]
+    
+ 3. Open 'echoid.dat' in a simple text editor (examples: Notepad, nano). 
+ 4. The next action depends upon the operating system of the License Manager host:
+    
+    Windows
+    IF using the hostname to identify the License Manager host to the clients, THEN change the contents to the following: 0x008
+    
+    IF using the IP address to identify the License Manager host to the clients, THEN change the contents to the following: 0x002
+    
+    MacOS/Linux/Unix
+    
+    IF using the hostname to identify the License Manager host to the clients, THEN change the contents to the following: 0x08
+    
+    IF using the IP address to identify the License Manager host to the clients, THEN change the contents to the following: 0x02 
+ 5.  
+ 6. Save the changes to the 'echoid.dat' file. 
+ 7. Confirm the 'echoid.dat' file did not acquire an extension other than 'dat'.
+
+
+The License Manager is now ready to be licensed for use on a virtual machine host. 
+
+For details regarding licensing the License Manager, see TechNote 1488416 
+http://www.ibm.com/support/docview.wss?uid=swg21488416 [http://www.ibm.com/support/docview.wss?uid=swg21488416] RELATED INFORMATION
+ Need more help? Our Statistics forum is Live! [https://developer.ibm.com/answers/topics/statistics.html?smartspace=predictive-analytics]
+Need more help? Our Licensing forum is Live! [https://developer.ibm.com/answers/topics/spsslicensing.html]
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Analytics SPSS Modeler AIX, Linux, Solaris, Windows 16.0, 15.0

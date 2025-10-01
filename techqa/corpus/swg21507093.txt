@@ -1,0 +1,40 @@
+Title: IBM Datacap Taskmaster Capture service stuck in Stop Pending status - United States
+
+Text:
+stop pending stoppending TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When stopping the Taskmaster Server Service, Taskmaster Client Service, or Datacap Rulerunner Quattro Service, it stays in the Stop Pending status in the Services window. 
+
+CAUSE
+A service will go into Stop Pending status when it has been sent a stop request while busy finishing preexistent work. The service status changes from Stopping to Stop Pending when the stop request times out. The service, once finished with its work, will enter the Stopped state. If something prevents the service from finishing its work, it may remain indefinitely in the Stop Pending state.
+
+RESOLVING THE PROBLEM
+It is recommended that the service be allowed to complete its work gracefully, but in certain rare cases it may be necessary to forcefully terminate the service. For example, if it is known that the service in question is hung and will not reach Stopped status even when given sufficient time. 
+
+Forcefully stopping the Datacap Taskmaster Client Service 
+
+ 1. Terminate TMSub.exe 
+ 2. Terminate any instance of TMrt.exe, if present 
+ 3. Terminate any instance of BPilot.exe (running under client service account), if present 
+ 4. Terminate any instance of DCOProcessor.exe, if present 
+ 5. Terminate any other instance of a process started by (custom) Taskmaster rules, if present
+
+
+Forcefully stopping the Datacap Rulerunner Quattro Service 
+
+ 1. Terminate Quattro.exe 
+ 2. Terminate any instance of dqcs.exe, if present (Datacap Quattro Control Service)
+    - Applicable to IBM Datacap Taskmaster Capture 8.0.0 and later 
+ 3. Terminate any instance of DCOProcessor.exe, if present 
+ 4. Terminate any other instance of a process started by (custom) Taskmaster rules, if present
+
+
+Forcefully stopping the Datacap Taskmaster Server Service 
+
+ 1. Stop the Datacap Taskmaster Client Service and Datacap Rulerunner Quattro Service. 
+ 2. Stop any other client programs, including Taskmaster Client, DotEdit, Taskmaster Web, etc. 
+ 3. Terminate TMS.exe
+
+
+Note: one way to terminate a process is by using Windows Task Manager when logged into the machine.

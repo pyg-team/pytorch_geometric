@@ -1,0 +1,41 @@
+Title: IBM Transactions to SAP fail with WebSphere Message Broker v7.0.0.3 during runtime: Replace WebSphere Adapter for SAP's jar - United States
+
+Text:
+WMB 7.0.0.3 SAP node issues; WebSphere Adapter for SAP; SAP Adapter; SAP Node problems FLASH (ALERT)
+
+ABSTRACT
+ Transactions that involve SAP Input/Output nodes fail with WebSphere Message Broker v7.0.0.3 during runtime.
+
+
+"CWYAP3071E: The adapter cannot find local transaction support in the current resource adapter, which is required for Queued RFC (qRFC) behavior. The IDoc is being processed using Transactional RFC (tRFC). Message: Queue Name Explanation=The IDoc is being processed using tRFC. Because local 
+transactions are not supported, qRFC cannot be used. UserAction=Use the _TX version of the RAR file 
+to run the qRFC call.' 
+
+
+CONTENT
+When the SAP Input / SAP Output nodes are used with the WebSphere Message Broker v7.0.0.3, the underlying WebSphere Adapter for SAP's version will be 7.0.0.3_IF14. Using this version of the adapter, will result in transaction failing with messages such as - "Adapter returned null from StructuredRecord.execute() in WebSphere Adapter for SAP Software". 
+
+Additionally, in the cases where the node is configured for tRFC / qRFC, there wouldn't be any exceptions reported - however, the adapter will be functioning in non-transactional mode. 
+
+Customer can check adapters transactionality from below steps:
+Open the CWYAP_SAPAdapter.jar and traverse till \CWYAP_SAPAdapter.jar\com\ibm\j2ca\sap\ and open the file transaction.properties
+
+supportsLocalTransaction=LocalTransaction 
+
+if supportsLocalTransaction=LocalTransaction then Tx version of the SAP adapter is used. This is the one to be used for WMB runtime.
+
+if supportsLocalTransaction=NoTransaction then non-Tx version of SAP adapter is used. Should not be used for WMB runtime. 
+
+ 
+
+Reason - 
+
+This is due to the incorrect SAP Adapter jar in the WMB Package. Solution - 
+
+Replace the CWYAP_SAPAdapter.jar in the following folder, with the jar in the 'Attachments' section below. 
+
+<WMB Installation>\adapters\prereqs\jars 
+
+Note : WebSphere Message Broker has to be stopped prior to the replacement of the jar
+
+CWYAP_SAPAdapter.jar [/support/docview.wss?uid=swg21569901&aid=2]CWYAP_SAPAdapter.jar [/support/docview.wss?uid=swg21569901&aid=1]

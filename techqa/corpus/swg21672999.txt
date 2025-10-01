@@ -1,0 +1,33 @@
+Title: IBM User Login Failures without Messages in SystemOut.log - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Why are users failing to login without any messages in SystemOut.log? 
+
+CAUSE
+If there are no messages in the WebSphere Application Server (WAS) SystemOut.log corresponding to failed user logins, then the cause is usually something outside of WAS. However, there are cases where the symptoms of failed logins are in the First Failure Data Capture (FFDC) logs.
+
+DIAGNOSING THE PROBLEM
+The FFDC feature has two key artifacts, normally stored in the "ffdc" folders under the "logs" directory of the profile: 
+
+1. A ${SERVER}_exception.log file for each server that has recently produced FFDC exceptions. Here is an example:
+
+Index Count Time of first Occurrence Time of last Occurrence Exception SourceId ProbeId
+------+------+---------------------------+---------------------------+---------------------------
+59 6 4/12/13 6:37:51:588 CEST 4/12/13 8:37:56:921 CEST java.lang.IllegalArgumentException com.ibm.ws.security.token.AbstractTokenImpl.getBytes 197 /WebSphere/profiles/AS/logs/ffdc/server1_340d340d_13.04.12_06.37.51.5885920191392890529768.txt
+
+This is also called the summary log.
+
+2. A ${SERVER}_${IDENTIFIERS_AND_DATE}.txt file for the first occurrence of each FFDC exception.
+
+The design of FFDC is that the first instance of an exception will be printed in detail to the txt file (#2), in addition to an entry being made in the summary log (#1). However, subsequent instances of the same exception will only update the occurrence count in the summary log and no additional txt files will be produced. Thus the name of this component starts with "first failure..."
+
+Within each server, an FFDC "janitor" periodically cleans up old txt files. If a server is running for a long time and the initial txt file with exception details has been deleted, then the only sign of continued exceptions in the same location will be in the summary log.
+
+The above summary log example shows a particular SourceId and ProbeId, com.ibm.ws.security.token.AbstractTokenImpl.getBytes and 197, respectively, which uniquely identifies a failure in the WAS security component to initialize a 3rd party security module required for login. In this example, we can see the "Count" column shows this exception occurred 6 times since April 12th, 2013. The initial exception is detailed in the FFDC txt file at the end of the line.
+
+
+RESOLVING THE PROBLEM
+An exception at this FFDC SourceId and ProbeId will cause those user logins to fail and the only symptom will be this FFDC. To resolve this problem, review the exception details in the FFDC txt file.

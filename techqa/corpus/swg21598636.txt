@@ -1,0 +1,68 @@
+Title: IBM Converting a previously defined COPY_TO_BYTES mode to another mode without restarting the container causes an exception - United States
+
+Text:
+v85xsrnotes TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Exceptions usually occur when a map is defined with a non-COPY_TO_BYTES copy mode and the configuration is changed to use COPY_TO_BYTES copy mode. If you leave the client connected and restart your containers, then old configuration data remains on the client. and you receive an exception. 
+
+SYMPTOM
+The following exception occurs in the log file: 
+
+
+Exception = java.io.EOFException
+Source = com.ibm.ws.objectgrid.ShardImpl.processMessage
+probeid = 287
+Stack Dump = java.io.EOFException
+at java.io.DataInputStream.readInt(DataInputStream.java:375)
+at java.io.ObjectInputStream$BlockDataInputStream.readInt(ObjectInputStream.java:2775)
+at java.io.ObjectInputStream.readInt(ObjectInputStream.java:949)
+at com.ibm.ws.objectgrid.map.LogSequenceImpl.inflate(LogSequenceImpl.java:2037)
+at com.ibm.ws.objectgrid.map.LogSequenceImpl.inflate(LogSequenceImpl.java:1753)
+at com.ibm.websphere.objectgrid.plugins.LogSequenceTransformer.inflate(LogSequenceTransformer.java:145)
+at com.ibm.ws.objectgrid.event.ClientReadWriteRequestSystemEvent.readEvent(ClientReadWriteRequestSystemEvent.java:311)
+at com.ibm.ws.objectgrid.ServerCoreEventProcessor.initRequestEvent(ServerCoreEventProcessor.java:1924)
+at com.ibm.ws.objectgrid.ServerCoreEventProcessor.processClientServerRequest(ServerCoreEventProcessor.java:2017)
+at com.ibm.ws.objectgrid.ShardImpl.processMessage(ShardImpl.java:1033)
+at com.ibm.ws.objectgrid.partition.IDLShardPOA._invoke(IDLShardPOA.java:191)
+at com.ibm.CORBA.poa.POAServerDelegate.dispatchToServant(POAServerDelegate.java:402)
+at com.ibm.CORBA.poa.POAServerDelegate.internalDispatch(POAServerDelegate.java:334)
+at com.ibm.CORBA.poa.POAServerDelegate.dispatch(POAServerDelegate.java:256)
+at com.ibm.rmi.iiop.ORB.process(ORB.java:516)
+at com.ibm.CORBA.iiop.ORB.process(ORB.java:1574)
+at com.ibm.rmi.iiop.Connection.respondTo(Connection.java:2881)
+at com.ibm.rmi.iiop.Connection.doWork(Connection.java:2754)
+at com.ibm.rmi.iiop.WorkUnitImpl.doWork(WorkUnitImpl.java:63)
+at com.ibm.ws.objectgrid.thread.ORBThreadPool$1.run(ORBThreadPool.java:82)
+at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
+at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
+at java.lang.Thread.run(Thread.java:662)
+Dump of callerThis = 
+Object type = com.ibm.ws.objectgrid.ShardImpl
+com.ibm.ws.objectgrid.ShardImpl@710087
+Exception = java.io.EOFException
+Source = com.ibm.ws.objectgrid.ShardImpl.processMessage
+probeid = 287
+Dump of callerThis = 
+Object type = com.ibm.ws.objectgrid.ShardImpl
+__ids = 
+[0] = IDL:com.ibm.ws/objectgrid/partition/IDLShard:1.0
+[1] = IDL:com.ibm.ws/objectgrid/SessionProxy:1.0
+_methods = 
+table = 
+[0] = null
+[1] = java.util.Hashtable$Entry@156f920
+[2] = java.util.Hashtable$Entry@fdbc27
+[3] = null
+[4] = null
+[5] = java.util.Hashtable$Entry@4be179
+[6] = java.util.Hashtable$Entry@1bfd53d
+[7] = null
+
+
+DIAGNOSING THE PROBLEM
+Determine whether recent changes were made to the copy mode of a map; for example, the map might be defined with a non-COPY_TO_BYTES copy mode.
+
+
+RESOLVING THE PROBLEM
+Restart the client or reconnect to the data grid.

@@ -1,0 +1,186 @@
+Title: IBM OA44236: IBM TIVOLI MONITORING PORTAL AND ORACLE JAVA 7 U51 - United States
+
+Text:
+z/os  DIRECT LINKS TO FIXES
+NetView for z/OS Enterprise Management Agent 6.2.0.2 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FIBM+Tivoli+NetView+for+zOS&fixids=6.2.0-TIV-KNA-FP0002&source=SAR]
+NetView for z/OS Enterprise Management Agent 6.1.0.3 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FIBM+Tivoli+NetView+for+zOS&fixids=6.1.0-TIV-KNA-FP0003&source=SAR]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The 6.3.0 Tivoli Enterprise Portal browser and Java web start
+   clients do not work with the default configuration provided by
+   Oracle Java 7 update 51 and, as a result, Tivoli NetView for
+   z/OS Enterprise Management Agent data cannot be retrieved. The
+   following message is displayed when this problem is encountered:
+   "Application blocked by security settings. The Java security
+   settings have prevented this application from running. "
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All Tivoli NetView for z/OS uses of the      *
+   *                 Enterprise Management Agent (EMA).           *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Oracle Java 7 u51 will require that all *
+   *                      JAR files used in applet or Java Web    *
+   *                      Start deployments have the permissions  *
+   *                      attribute set in the JAR manifest file. *
+   *                      This requirement will affect the        *
+   *                      version 6.3.0 of the portal client,     *
+   *                      both browser and Java Web Start modes.  *
+   *                                                              *
+   *                      Applets or Java Web Start applications  *
+   *                      that do not meet these conditions will  *
+   *                      not run in the new default              *
+   *                      configuration. The following message is *
+   *                      displayed when this problem is          *
+   *                      encountered:                            *
+   *                      "Application blocked by security        *
+   *                      settings. The Java security settings    *
+   *                      have prevented this application from    *
+   *                      running."                               *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   NetView for z/OS Enterprise Management Agent application support
+   resource jar files do not have the required MANIFEST.MF
+   statement "permissions:all-permissions". The browser's applet or
+   java web start access to the Tivoli Enterprise Portal will be
+   blocked if the browser's java is Oracle v7 update 51 (u51). No
+   other levels or versions of java running in the browser will
+   have this problem.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The Enterprise Management Agent workstation application support
+   and language pack support resource jars are being rebuilt to
+   include the new permissions statement in the manifest file. For
+   6.2, the fix is included in the package identified as level
+   6.2.0.1 (6.2 fixpack 1). Defects 180488 and 180488.1 contain the
+   change. For 6.1, the fix is included in the package identified
+   as level 6.1.0.2 (6.1 fixpack 2). Defect 180489 contains the
+   change.
+   
+   Fixes for 6.1 and 6.2 will be available for download from Fix
+   Central by 7 March 2014 and will be listed in technote
+   #1660437 at:
+   http://www-01.ibm.com/support/docview.wss?uid=swg21660437 [http://www-01.ibm.com/support/docview.wss?uid=swg21660437]
+   
+   For 6.2 a PTF for the NetView for z/OS Enterprise Management
+   Agent will need to be applied on the host along with the 6.2
+   fixpack 1 application support files. This PTF will also be
+   listed in technote #1660437. The PTF updates files for the
+   self-describing agent function that reside on the host.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   OA44236
+   
+   
+ * REPORTED COMPONENT NAME
+   NETVIEW FOR Z/O
+   
+   
+ * REPORTED COMPONENT ID
+   5697NV600
+   
+   
+ * REPORTED RELEASE
+   20B
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   YesSpecatt / Serviceability / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2014-01-14
+   
+   
+ * CLOSED DATE
+   2014-01-17
+   
+   
+ * LAST MODIFIED DATE
+   2014-05-29
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UA72061 UA72548 UA72549
+   
+   
+
+MODULES/MACROS
+ *     KNAJSTMS KNAJSTPS KNAJSTPW KNAMSMAN KNAMAP
+   KNACAT   KNAATR   KNADOC   KNABAR   KNAAGENT
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   NETVIEW FOR Z/O
+   
+   
+ * FIXED COMPONENT ID
+   5697NV600
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R20A PSY UA72061 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UA72061]
+   UP14/03/11 P F403
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

@@ -1,0 +1,35 @@
+Title: IBM During upgrade of Portal on a Windows system, Portal server launches but fails to initialize - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+When attempting to upgrade Portal on a Windows OS with either a fix/cumulative fix/fixpack, it may be required that Portal be stopped and started several times during the process. It is possible that the upgrade can fail if you are using the -Xlp flag to enable large pages for the JVM heap.
+
+SYMPTOM
+Receive a build failed message which states that Portal Server failed to initialize. The configTrace.log shows the following exception: ADMU3011E: Server launched but failed initialization.
+
+The SystemOut.log does not log anything relevant.
+
+
+CAUSE
+When tuning WebSphere Application Server and Portal, the -Xlp flag can be set on the JVM Heap. This will enable large pages which will reduce CPU overhead. Setting this flag in a Windows environment will cause Portal to not start reliably. This flag only applies to Unix systems.
+
+ENVIRONMENT
+Windows OSs
+
+DIAGNOSING THE PROBLEM
+Reviewing the native_stderr.log we saw the following entry: 
+
+JVMJ9GC032E System configuration does not support option '-Xlp'
+JVMJ9VM015W Initialization error for library j9gc24(2): Failed to initialize; unable to parse command line
+Could not create the Java virtual machine.
+
+
+RESOLVING THE PROBLEM
+To resolve this problem, the -Xlp flag will need to be removed from the WebSphere_Portal's server.xml file. 
+
+ie. genericJvmArguments="-Xlp -Xgcpolicy:gencon..."
+
+RELATED INFORMATION
+#WebSphere Portal and WCM 6.1.x Performance Tuning Guide [http://www-10.lotus.com/ldd/portalwiki.nsf/xpViewCategories.xsp?lookupName=WebSphere%20Portal%20and%20Lotus%20Web%20Content%20Management%206.1.x%20Performance%20Tuning%20Guide]

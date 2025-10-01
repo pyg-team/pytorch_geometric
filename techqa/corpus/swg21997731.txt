@@ -1,0 +1,14 @@
+Title: IBM Known Limitation: Documents in an IBM Content Manager repository are not available to add to cases if the item type associated with the documents starts with "icm" - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ IBM Content Manager classifies "icm" as a reserved word. As a result, item type names that begin with "icm" are not displayed in the class listing in Case Manager Client. 
+
+SYMPTOM
+Item types whose names begin with "icm" are not presented to Case Manager Client users who are adding or searching for documents. Thus, users adding documents cannot save the content for Content Manager item types that begins with "icm." They also cannot search for existing content that was saved as a Content Manager document whose item type name begins with "icm."
+
+
+RESOLVING THE PROBLEM
+To ensure that users can add and search for documents in an IBM Content Manager repository, do not create item type names that being with "icm."

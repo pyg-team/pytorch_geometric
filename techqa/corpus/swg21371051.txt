@@ -1,0 +1,19 @@
+Title: IBM Where can I find the Cognos 8 Administration and Security Guide? - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Where can I find the Cognos 8 Administration and Security Guide? 
+
+RESOLVING THE PROBLEM
+The Cognos 8 Administration and Security Guide can be found in either the IBM Cognos 8 Business Intelligence or IBM Cognos 8 Planning - Server documentation in the Cognos 8|Documentation folder. 
+
+Steps:1. Choose Start|All Programs|Cognos 8|Documentation and select either Cognos 8 Business Intelligence or Cognos 8 Planning - Server.
+2. Scroll down and you will find a link for the Cognos 8 Administration and Security Guide near the bottom next to the heading 'Administering Cognos 8'.
+
+
+
+Cross Reference information Segment Product Component Platform Version Edition Business Analytics Cognos Planning Contributor Windows 8.2 
+HISTORICAL NUMBER
+ 1034648

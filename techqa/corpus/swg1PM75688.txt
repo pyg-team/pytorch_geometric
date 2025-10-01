@@ -1,0 +1,147 @@
+Title: IBM PM75688: RATIONAL DEVELOPER FOR SYSTEM Z (RDZ) REFACTOR->RENAME IN COBOL program may cause client to hang - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Rational Developer for System z - RDz - v8.0.3.3
+   Using the Refactor->Rename in COBOL program may cause a hang
+   condition on the client when renaming a section header.
+   When you select to rename a section name then all of the
+   copybooks that are accessed are downloaded to search for any
+   instances of this name.
+   There could be a deadlock situation if during this process one
+   of the copybooks are locked by another process.
+   ***************************************************************
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Setting affected copybooks on the z/OS host to have STATS ON
+   will significantly reduce the chance of experiencing this issue.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Using the Refactor->Rename in COBOL program may cause a hang
+   condition on the client when renaming a section header.
+   
+   When you select to rename a section name then all of the
+   copybooks that are accessed are downloaded to search for any
+   instances of this name.
+   
+   There could be a deadlock situation if during this process one
+   of the copybooks are locked by another process.
+   
+   ***************************************************************
+   Local fix:
+   Ensure all copybooks are unlocked before doing a
+   refactor->rename.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A dead lock was occurring when threads obtained Jobs API
+   resources scheduling locks and the RDz copy library locks in
+   different orders.
+   
+   The problem listed in this APAR has been resolved with
+   IBM Rational Developer for System z V8.0.3.6 Fix Pack which
+   is available from the Recommended Fixes support download page:
+   http://www-1.ibm.com/support/docview.wss?rs=2294&uid=swg27006335 [http://www-1.ibm.com/support/docview.wss?rs=2294&uid=swg27006335]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM75688
+   
+   
+ * REPORTED COMPONENT NAME
+   RD/Z HOST
+   
+   
+ * REPORTED COMPONENT ID
+   5724T0723
+   
+   
+ * REPORTED RELEASE
+   803
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-10-23
+   
+   
+ * CLOSED DATE
+   2014-07-11
+   
+   
+ * LAST MODIFIED DATE
+   2014-07-11
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   RATL DEV FOR SY
+   
+   
+ * FIXED COMPONENT ID
+   5724T0700
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R803 PSY
+   UP

@@ -1,0 +1,30 @@
+Title: IBM Missing data in Messaging workspaces - United States
+
+Text:
+ITCAM; messaging; attributes; counters; CAMADALL; CAMADWASDC TECHNOTE (FAQ)
+
+QUESTION
+ Why can't I see displayed data when accessing Messaging workspaces in TEP, e.g. TEP -> server name -> websphere agent -> websphere ESB -> Messaging -> Destinations, for attributes like available message or unavailable message? 
+
+CAUSE
+Probably the related PMI counters are not enabled on the WAS side.
+
+ANSWER
+Go thru this checklist to find a probable cause of this problem: 
+
+1- For Resource (PMI) data to be displayed in TEP, it is essential that the monitored feature is used. 
+
+For example, to see any Platform Messaging data, you will need to set up a Service Integration Bus (SIB). If none exists, the Platform Messaging workspaces will be empty and the history charts will display an error. 
+
+2- In addition to the feature being present and exercised, the PMI collection level has to be at the right level for the data to be generated. Each TEMA Attribute corresponds to a Websphere PMI Attribute. To have an Attribute value displayed in TEP you must ensure that the corresponding PMI counter is enabled. PMI counters mapped to TEMA attributes have similar names in most cases. 
+
+E.g. in this case, you have to check that the following counters are enabled. SIB Service --> SIB Messaging Engines --> * --> Destinations 
+
+3- Data for Web Services and Platform Messaging workspaces are not generated either at "Basic" or at "Extended" PMI level. They are generated only for All or when specifically chosen from the Custom setting in PMI from Websphere Administrative Console, Runtime tab. 
+
+4- Are the relevant PMI counters displayed with non-null values in TPV from WAS console? The values you see there are supposed to be the same you see from TEP. 
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Systems and Asset Management Tivoli Composite Application Manager for WebSphere

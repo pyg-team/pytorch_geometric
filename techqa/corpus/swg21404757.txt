@@ -1,0 +1,29 @@
+Title: IBM How do you enable WebSphere Application Server JDBC connection pooling by using the connect string for your application? - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How do you enable WebSphere Application Server JDBC connection pooling by using the connect string for your application? 
+
+ANSWER
+You can enable WebSphere Application Server Java Database Connectivity (JDBC) connection pooling for WebSphere Application Server applications that connect to DB2 Content Manager by configuring the WebSphere Application Server JDBC data source and the DB2 Information Integrator for Content cmbpool.ini file. Enabling connection pooling through this method is the standard process. When you configure connection pooling by using the standard process, the configuration will be effective globally, meaning that all WebSphere Application Server applications that connect to DB2 Content Manager with this copy of DB2 Information Integrator for Content are forced to use WebSphere Application Server JDBC connection pooling. 
+
+In some cases, you just want to enable connection pooling for certain applications and make other applications connect to DB2 Content Manager without the connection pooling. To do this, you can pass a connect string to your DKDatastoreICM object or DKDatastorePool object in your WebSphere Application Server applications to enable the connection pooling, instead of enabling it by modifying the cmbpool.ini file. When you use this method, the connect string must set values for the properties of JAVAPOOL and JDBCPREFIX. For example:
+
+For the DKDatastoreICM class:
+
+DKDatastoreICM dsICM = new DKDatastoreICM();
+String conn_str = "JAVAPOOL=DKPoolWAS;JDBCPREFIX=jdbc/";
+dsICM.connect(database, user, pwd, conn_str);
+
+For the DKDatastorePool class:
+
+String conn_str = "JAVAPOOL=DKPoolWAS;JDBCPREFIX=jdbc/";
+DKDastastorePool dsPool = new DKDastastorePool();
+... ...
+dsPool.setConnectString(conn_str);
+... ...
+DKDatastoreICM ds = dsPool.getConnection(user,pwd);
+
+Note that the connect string is case-sensitive. In the connect string you must use "JAVAPOOL" and not "JavaPool." This usage is different from the existing property name in the cmbpool.ini file.

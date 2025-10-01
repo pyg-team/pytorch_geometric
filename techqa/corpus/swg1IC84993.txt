@@ -1,0 +1,137 @@
+Title: IBM IC84993: DEFAULT SSL CONFIGURATION FOR WEB AND XML MANAGEMENT INTERFACES MISSING CA CERTIFICATES ON 9235 AND 4195 PLATFORMS - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The default SSL Proxy Profile for the Web and XML
+   Management Interfaces should contain one subject
+   certificate and two CA certificates.  In the 5.0.0.0 release on
+   the 9235 and 4195 platforms, the two CA certificates in this
+   default SSL Proxy Profile contain the wrong contents and the SSL
+   handshake will send only the subject certificate
+   instead of all three.
+   
+   The SSL client attempting to make this connection might refuse
+   to validate the certificate chain because of this.
+   
+   The 7198 and 7199 platforms are not affected by this problem.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Configure an SSL Proxy Profile other than the default one for
+   the Web and XML Management Interfaces.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Users of 5.0.0.0 firmware on a 9235 or 4195 platform running
+   the Web or XML Management Interfaces using
+   their default SSL Proxy Profiles might experience certificate
+   validation problems with some SSL clients.
+   
+   The problem is due to the SSL server in this default SSL Proxy
+   Profile failing to send two of the three certificates that it
+   should send.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix is available in 5.0.0.1.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC84993
+   
+   
+ * REPORTED COMPONENT NAME
+   DATAPOWER
+   
+   
+ * REPORTED COMPONENT ID
+   DP1234567
+   
+   
+ * REPORTED RELEASE
+   500
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-06-29
+   
+   
+ * CLOSED DATE
+   2012-06-29
+   
+   
+ * LAST MODIFIED DATE
+   2012-08-24
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   DATAPOWER
+   
+   
+ * FIXED COMPONENT ID
+   DP1234567
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R500 PSY
+   UP

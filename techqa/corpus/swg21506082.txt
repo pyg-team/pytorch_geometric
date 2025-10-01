@@ -1,0 +1,20 @@
+Title: IBM How do I enable the debug menu in the TEM Console? - United States
+
+Text:
+Debug Console Menu Console TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The Debug menu is not visible in TEM Console by default and it must be enabled. 
+
+RESOLVING THE PROBLEM
+To enable the TEM Console Debug menu: 
+
+ 1. From the TEM Console, hit CTRL-ALT-SHIFT-D.
+ 2. Click the "Show Debug Menu" option in the resulting debug dialog.
+ 3. Close the debug dialog.
+ 4. Now you should see the "Debug" option at the top of the console in the menu bar (to the right of the "Help" option).
+
+The debug menu can be used to launch the Presentation Debugger, Load custom wizards, and help with retrieving troubleshooting data requested by TEM support.  
+
+HISTORICAL NUMBER
+ 508

@@ -1,0 +1,14 @@
+Title: IBM Installation Manager 1.7.3.1 or older cannot connect to HTTPS servers that have SSL security protocol disabled - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When using IBM Installation Manager to connect to a HTTPS server, if the server has SSL disabled, versions of IBM Installation Manager older than 1.8 will not be able to connect to it 
+
+RESOLVING THE PROBLEM
+IBM Installation Manager has added support for the TLS protocol in versions 1.8 and 1.7.4. Versions of the Installation Manager that are 1.7.3.1 or older, require SSL security protocol to connect to a HTTPS server. 
+To resolve the issue, update IBM Installation Manager to version 1.7.4, 1.8 or newer.
+
+RELATED INFORMATION
+ Installation Manager and Packaging Utility downloads [http://www-01.ibm.com/support/docview.wss?uid=swg27025142]

@@ -1,0 +1,167 @@
+Title: IBM JR48597: BPM V85 ADVANCED DEFAULT PROPERTY FILE SAMPLE FOR BPMCONFIG COMMAND CREATES 3 DATABASE INSTEAD OF 4. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The samples by design have the minimum # of databases, and
+   that's 3 for an Advanced DE. See
+   http://pic.dhe.ibm.com/infocenter/dmndhelp/v8r5m0/topic/com.ibm. [http://pic.dhe.ibm.com/infocenter/dmndhelp/v8r5m0/topic/com.ibm.]
+   wbpm.imuc.doc/topics/cpln_dbno.html.
+   
+   In topic
+   http://pic.dhe.ibm.com/infocenter/dmndhelp/v8r5m0/index.jsp?topi
+   c=%2Fcom.ibm.wbpm.imuc.doc%2Ftopics%2Fsamplecfgprops.html [http://pic.dhe.ibm.com/infocenter/dmndhelp/v8r5m0/index.jsp?topic=%2Fcom.ibm.wbpm.imuc.doc%2Ftopics%2Fsamplecfgprops.html]
+   we need to change
+   
+   By default, the sample properties file contains properties for
+   setting up four databases: CellDB, CMNDB, BPMDB, and PDWDB. If
+   you want to reduce this set, for example, putting the CellDB
+   tables into the CMNDB, then you need to:Set bpm.cell.db to
+   SharedDB. Add CellScopedDB to the list of values for
+   bpm.de.db.1.dbCapabilities, for example, so that
+   bpm.de.db.1.dbCapabilities=Messaging,BusinessSpace,CommonDB,BPC,
+   CellScopedDB. Delete the set of database properties that
+   correspond to the fourth database, for example, all
+   bpm,de.db.4.* properties.
+   
+   to
+   
+   By default, the sample properties file contains properties for
+   setting up three databases: CMNDB, BPMDB, and PDWDB.
+   
+   And point to
+   http://pic.dhe.ibm.com/infocenter/dmndhelp/v8r5m0/topic/com.ibm.
+   wbpm.imuc.doc/topics/cpln_dbno.html [http://pic.dhe.ibm.com/infocenter/dmndhelp/v8r5m0/topic/com.ibm.wbpm.imuc.doc/topics/cpln_dbno.html]
+   as a related link.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  IBM BPM V8.5 Advanced and Standard          *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: The IBM BPM V8.5 Advanced default       *
+   *                      property file sample for the            *
+   *                      BPMConfig command creates three         *
+   *                      databases instead of four,              *
+   *                      although the Sample configuration       *
+   *                      properties files for use                *
+   *                      with the BPMConfig command topic says   *
+   *                      the command creates four                *
+   *                      databases.                              *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   The client created a
+   deployment
+   environment by using the BPMConfig
+   command and the
+   Advanced-PC-SingleCluster-DB2.propertie
+   s file. The Sample configuration
+   properties files for use with the
+   BPMConfig command topic in the IBM
+   BPM V8.5 information center says
+   "By default, the sample properties
+   file contains properties for setting
+   up four databases: CellDB, CMNDB,
+   BPMDB, and PDWDB."
+   However, only the CMNDB, BPMDB, and
+   PDWDB databases are created.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This topic has been updated to refer to three default
+   databases instead of four.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR48597
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM ADVANCED
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9400
+   
+   
+ * REPORTED RELEASE
+   850
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-11-25
+   
+   
+ * CLOSED DATE
+   2013-12-06
+   
+   
+ * LAST MODIFIED DATE
+   2013-12-06
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

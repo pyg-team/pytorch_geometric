@@ -1,0 +1,48 @@
+Title: IBM Post-upgrade tasks for IBM Business Process Manager Server V8.6 CF2017.12 - United States
+
+Text:
+ PRODUCT README
+
+ABSTRACT
+ After you successfully upgrade your IBM Business Process Manager Server V8.6 cumulative fix (CF) 2017.12 environment, some additional configuration steps might be required. Although most actions are optional, you might have to perform them to ensure applications continue working as expected. 
+
+CONTENT
+
+
+TAB NAVIGATION
+ * Fix list [http://www.ibm.com/support/docview.wss?uid=swg27050527]
+ * What's new [http://www.ibm.com/support/docview.wss?uid=swg27050528]
+ * Downloading the cumulative fix [http://www.ibm.com/support/docview.wss?uid=swg24044264]
+ * Installing the cumulative fix [http://www.ibm.com/support/docview.wss?uid=swg27050517]
+ * Upgrading the profiles [http://www.ibm.com/support/docview.wss?uid=swg27050522]
+ * Post-upgrade tasks [http://www.ibm.com/support/docview.wss?uid=swg27050529]- selected tab,
+
+
+Important notes 
+
+
+ * Depending on the version of IBM BPM version you are upgrading from, you must also look at earlier post-upgrade tasks:  *   * Post-installation tasks for IBM Business Process Manager V8.5.6 CF02 and V8.5.6 CF01 [http://www.ibm.com/support/docview.wss?uid=swg27047155] 
+       * Post-upgrade tasks for IBM Business Process Manager V8.5.7 [http://www.ibm.com/support/docview.wss?uid=swg27047585] 
+       * Post-upgrade tasks for IBM Business Process Manager V8.5.7 Cumulative Fix (CF) 2016.09 and CF2016.06 [http://www.ibm.com/support/docview.wss?uid=swg27048418] 
+       * Post-upgrade tasks for IBM Business Process Manager V8.5.7 Cumulative Fix (CF) 2016.12 [http://www.ibm.com/support/docview.wss?uid=swg27049143] 
+       * Post-upgrade tasks for IBM Business Process Manager V8.5.7 Cumulative Fix (CF) 2017.03 [http://www.ibm.com/support/docview.wss?uid=swg27049396] 
+       * Post-upgrade tasks for IBM Business Process Manager V8.5.7 Cumulative Fix (CF) 2017.06 [http://www.ibm.com/support/docview.wss?uid=swg27049932] 
+       * Post-upgrade tasks for IBM Business Process Manager V8.6 [http://www.ibm.com/support/docview.wss?uid=swg27050104]
+         
+         For example, if you are upgrading from IBM BPM V8.5.6 CF02, also look at the Post-upgrade tasks for IBM Business Process Manager V8.5.7 [http://www.ibm.com/support/docview.wss?uid=swg27047585], the Post-upgrade tasks for IBM Business Process Manager V8.5.7 Cumulative Fix (CF) 2016.09 and CF2016.06 [http://www.ibm.com/support/docview.wss?uid=swg27048418], the Post-upgrade tasks for IBM Business Process Manager V8.5.7 Cumulative Fix (CF) 2016.12 [http://www.ibm.com/support/docview.wss?uid=swg27049143], the Post-upgrade tasks for IBM Business Process Manager V8.5.7 Cumulative Fix (CF) 2017.03 [http://www.ibm.com/support/docview.wss?uid=swg27049396], the Post-upgrade tasks for IBM Business Process Manager V8.5.7 Cumulative Fix (CF) 2017.06 [http://www.ibm.com/support/docview.wss?uid=swg27049932], and the Post-upgrade tasks for IBM Business Process Manager V8.6 [http://www.ibm.com/support/docview.wss?uid=swg27050104].
+         
+      
+      
+   
+   
+ * After IBM Process Center is successfully upgraded, update your process applications to the latest IBM BPM toolkit levels so you can integrate the latest improvements and defect fixes associated with the toolkit objects. After you update to the latest IBM BPM toolkit levels, you might notice small behavior changes in your process application, such as to the user interfaces, which you might need to modify.
+   
+ * Installing cumulative fixes can modify the existing system toolkits for the associated version. If your applications are associated with the latest system toolkits, they will automatically include the changes. 
+
+
+Post-upgrade steps for V8.6 CF2017.12 Interim fix (APAR) Description Tasks to enable the function JR58460 [http://www.ibm.com/support/docview.wss?uid=swg1JR58460] NO ERRORS ARE REPORTED WHEN THE IBM BPM EVENT HANDLER IN FILENET CONTENT MANAGER CAN'T DELIVER AN EVENT If you use the BPM event handler to consume events from a FileNet Content Manager, then you need to update the code module to the latest version as describes under "Updating the event action code module" in Using the event handler for FileNet Content Manager [https://www.ibm.com/support/knowledgecenter/SSFPJS_8.6.0/com.ibm.wbpm.wle.editor.doc/topics/cdev_ecm_filenet_event_handler.html]. JR58724 [http://www.ibm.com/support/docview.wss?uid=swg1JR58724] ARTIFACT INDEXER MIGHT USE MORE MEMORY, RESULTING IN OUTOFMEMORY ERROR Run the artifactIndexFullReindex command. For more information, see Manually recreating or updating the Process Center index [https://www.ibm.com/support/knowledgecenter/SSFPJS_8.6.0/com.ibm.wbpm.admin.doc/topics/cupdatingindex.html]. 
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Business Process Manager Express Installation / Configuration Linux, Windows 8.5.7.CF201706, 8.5.7.CF201703, 8.5.7.CF201612, 8.5.7.CF201609, 8.5.7.CF201606, 8.5.7, 8.5.6.2, 8.5.6.1, 8.5.6, 8.5.5 Business Integration IBM Business Process Manager Standard Installation / Configuration AIX, Linux, Solaris, Windows 8.5.7.CF201706, 8.5.7.CF201703, 8.5.7.CF201612, 8.5.7.CF201609, 8.5.7.CF201606, 8.5.7 Business Integration IBM Business Process Manager Advanced Installation / Configuration AIX, Linux, Solaris, Windows, z/OS 8.5.7.CF201706, 8.5.7.CF201703, 8.5.7.CF201612, 8.5.7.CF201609, 8.5.7.CF201606, 8.5.7 PRODUCT ALIAS/SYNONYM
+ BPM

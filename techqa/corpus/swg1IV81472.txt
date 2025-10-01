@@ -1,0 +1,143 @@
+Title: IBM IV81472: ITCAM MSSQL AGENT BOTTLENECK WORKSPACES LOCATION NOT SPECIFIED IN THE AGENT REFERENCE GUIDE - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  ITCAM Microsoft MSSQL monitoring agent
+   V6.3.1
+   
+   Agent reference guide does not specify the location of
+   bottleneck workspaces.
+   
+   Details
+   
+   The ITCAM for Microsoft SQL Server agent reference guide
+   mentions following in the "Predefined workspaces" section.
+   The Microsoft SQL Server agent has following composite
+   workspaces:
+   v SQL Server CPU Bottleneck workspace
+   Chapter 1. Workspaces reference 3
+   v SQL Server Disk Space and Logon Statistics
+   v SQL Server Logical Disk Bottleneck workspace
+   v SQL Server Memory Bottleneck workspace
+   v SQL Server Physical Disk Bottleneck workspace
+   
+   ------------
+   Since these workspaces are defined at Tivoli Enterprise Portal
+   (TEP) navigator item called "Windows Systems", customers are
+   unable to locate it on the agent navigator items.
+   
+   The reference guide should include the information that these
+   workspaces are defined at "Windows Systems" navigator.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Select "Windows Systems" in TEP navigator, then right click to
+   select the above mentioned workspaces.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  The agent reference guide notes following workspaces, but these
+   cannot be located in the TEP.
+   > SQL Server CPU Bottleneck workspace
+   > SQL Server Disk Space and Logon Statistics
+   > SQL Server Logical Disk Bottleneck workspace
+   > SQL Server Memory Bottleneck workspace
+   > SQL Server Physical Disk Bottleneck workspace
+   > MS SQL Resource Pool Stats attributes
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The tech note to resolve the Doc APAR IV81472 ( SQL Agent) is
+   now published here:
+   http://www.ibm.com/support/docview.wss?uid=swg21977487 [http://www.ibm.com/support/docview.wss?uid=swg21977487]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV81472
+   
+   
+ * REPORTED COMPONENT NAME
+   TIV MON MS SQL
+   
+   
+ * REPORTED COMPONENT ID
+   5724B96MO
+   
+   
+ * REPORTED RELEASE
+   630
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-02-12
+   
+   
+ * CLOSED DATE
+   2016-02-26
+   
+   
+ * LAST MODIFIED DATE
+   2016-02-26
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

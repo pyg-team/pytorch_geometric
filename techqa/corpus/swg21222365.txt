@@ -1,0 +1,24 @@
+Title: IBM Installation or upgrade fails with message:  Installed product has newer version - United States
+
+Text:
+upgrade; install; failure; newer version TECHNOTE (FAQ)
+
+QUESTION
+ Doing an upgrade or installation of the IBM® DB2® Content Manager OnDemand server fails with the following message:
+
+Unable to install IBM OnDemand for Windows over OnDemand for Multiplatforms: Installed product has newer version. 
+
+CAUSE
+You will receive this error when performing an upgrade or new installation on a machine where DB2 Content Manager OnDemand was previously installed.
+
+ANSWER
+Perform these steps: 
+
+1. Go to Start -> Run and enter %SYSTEMROOT%\vpd.properties.
+2. Create a backup of thevpd.properties file.
+3. In the original vpd.properties file, search for all occurrences of "C:\Program Files\IBM\OnDemand for WinNT" entries.
+4. Delete each line that matches the search result from Step 3. 
+5. Save the edited file and restart your system.
+6. Install the desired version of DB2 Content Manager OnDemand.
+
+The file vpd.properties is a registry file used by the InstallShield that contains product information. DB2 Content Manager OnDemand uses InstallShield to install the server software. If for some reason the vpd.properties file already contains the same product at a higher level, the installer fails with a message stating that a newer version is already installed. The InstallShield installer handles this error condition, and IBM does not control what is being written into this registry file. Before DB2 Content Manager OnDemand V7.1.1.0, the vpd.properties file was not used.

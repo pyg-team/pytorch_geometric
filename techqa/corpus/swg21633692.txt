@@ -1,0 +1,69 @@
+Title: IBM Orphaned XA transactions might exist when using Microsoft SQL Server with IBM Business Process Manager (BPM) - United States
+
+Text:
+Microsoft SQL server -2 SPID orphan tran XA resource manager kill jvm TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When you use Microsoft SQL Server as your Business Process Manager database, you can have orphaned transactions on the database side when your Business Process Manager server experiences a crash or network connectivity issue. These transactions do not exist in the transaction service for the Business Process Manager server.
+
+Also see the Microsoft article: "Orphaned XA transactions when you connect to SQL Server by using JDBC Driver for SQL Server" 
+
+SYMPTOM
+You might experience the following symptoms of this issue: 
+
+ * Prior to the issues, you might have had a Java™ virtual machine (JVM) crash or network connectivity issue causing a transaction to terminate while it is in an unprepared state. This scenario does not refer to indoubt (prepared) transactions, which are recovered when a JVM restarts. 
+ * You see that a transaction persists in the database for a long time. These problematic transactions have either a null or -2 session ID in the database. Although there are other transaction states that can use this session ID, those transactions generally are cleaned up quickly or during recovery. 
+ * You might see that current transactions are blocked for a long time frame by a transaction with a -2 session ID. This scenario can lead to lock timeouts or hung threads depending on the lock timeout setting. 
+ * Depending on the orphaned transaction, you can have various behaviors that have a varying impact to the environment:  * Stuck business process definition (BPD) instances 
+    * Hung threads that are waiting on query responses 
+    * A lock that prevents the server from starting up. 
+   
+   
+
+
+Terminology 
+ * Unprepared transaction: 
+   A transaction is unprepared while the bulk of the processing is occurring between the xastart and xaend commands. The xaprepare command is called just before the transaction is ready to commit or rollback. These transactions are not persistent. 
+ * Prepared transaction: 
+   For these transactions, the prepare command has completed and the process to commit or rollback has begun. These transactions are persisted to the WebSphere Application Server tranlogs. There is a small window for issues to occur. If they occur, they lead to in-doubt transactions, which are recovered after a server restart. 
+ * Transaction Manager: 
+   The Transaction Manager is the code in WebSphere Application Server that manages the flow of the transaction and the recovery of it. 
+ * Resource Manager: 
+   The Resource Manager is the part of the database that manages the transaction resources on the database side. An XA transaction might involve multiple resource managers. 
+ * Connection Manager: 
+   The Connection Manager is the code in WebSphere Application Server that manages the communication between the transaction manager and the JDBC driver that communicates with the resource manager.
+
+
+CAUSE
+If the connection between the transaction manager (Business Process Manager) and a resource manager (Microsoft SQL Server) is lost for an unprepared transaction, then the resource manager should dissociate and roll back any associated transaction branches 
+Microsoft SQL Server does not clean up these transactions; they can continue to use resources and block other transactions. For Microsoft SQL Server, these transactions stay in the system until the XA timeout on the database resource is reached or the database is restarted. The timeout defaults to infinity on the Microsoft SQL Server and is not configurable on the database. 
+
+WebSphere Application Server uses the default for a Resource Manager XA timeout value as the transaction manager governs the timeout of the XA transaction. The XA timeout value for the Resource Manager should be set to a value that is higher than any transaction timeout for your environment to avoid unnecessary rollbacks.
+
+
+RESOLVING THE PROBLEM
+To resolve the problem, it is easiest to restart the database when you experience any JVM crashes or network connectivity issues that result in these orphaned transactions. 
+
+You can also individually terminate the transactions on the database to clean up their resources. Although to be sure that a transaction is orphaned, ensure that it is not an indoubt(prepared) transaction or one that is currently in the process of completing. Anything that lasts through a restart of all the JVMs for a related environment and a successful recovery cycle should be orphaned. 
+
+This is an example of a message printed at startup when the transaction recovery work has completed: 
+WTRN0133I: Transaction recovery processing for this server is complete 
+
+For more details on manually killing orphaned transactions, see the SQL Server Kill command [http://msdn.microsoft.com/en-us/library/ms173730.aspx] information on the Microsoft web site. 
+
+There is also a WebSphere Application Server enhancement that is added in V8.5.5 Fix Pack 1 with APAR PM89173 [http://www.ibm.com/support/docview.wss?uid=swg1PM89173]. With this APAR, the transaction timeout can be propagated to the XA resources rather than using the Microsoft SQL Server default of infinity. This can mitigate the impact as it will allow transactions to be cleaned up when their timeouts are reached. Although some potentially long transactions like deployment or instance migration can have timeouts of a few hours. 
+
+RELATED INFORMATION
+ Orphaned XA transactions when you connect to SQL Server [http://support.microsoft.com/kb/3005016]
+XA Specification [http://pubs.opengroup.org/onlinepubs/009680699/toc.pdf]
+JDBC XA Implementation [http://docs.oracle.com/javaee/5/api/javax/transaction/xa/XAResource.html]
+Microsoft article on XA transactions [http://msdn.microsoft.com/en-us/library/aa342335%28v=sql.100%29.aspx]
+Set a default SQL query timeout [http://www.ibm.com/support/knowledgecenter/api/content/nl/en-us/SSAW57_8.5.5/com.ibm.websphere.nd.doc/ae/tdat_querytimeout.html]
+
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Business Process Manager Advanced Databases AIX, Linux, Linux zSeries, Solaris, Windows 8.5.6, 8.5.5, 8.5, 8.0.1, 8.0, 7.5.1, 7.5 Business Integration IBM Business Process Manager Express Databases Linux, Linux zSeries, Windows 8.5.6, 8.5.5, 8.5, 8.0.1, 8.0, 7.5.1, 7.5 
+PRODUCT ALIAS/SYNONYM
+ BPM

@@ -1,0 +1,200 @@
+Title: IBM PI81163: CONTAINER-MANAGED AUTHENTICATION ALIAS NOT APPLIED FOR JMS CONNECTION FACTORIES IF MAPPING-CONFIGURATION ALIAS IS NOT - United States
+
+Text:
+  FIXES ARE AVAILABLE
+9.0.0.6: WebSphere Application Server traditional V9.0 Fix Pack 6 [http://www-01.ibm.com/support/docview.wss?uid=swg24044242]
+8.5.5.13: WebSphere Application Server V8.5.5 Fix Pack 13 [http://www-01.ibm.com/support/docview.wss?uid=swg24044479]
+9.0.0.7: WebSphere Application Server traditional V9.0 Fix Pack 7 [http://www-01.ibm.com/support/docview.wss?uid=swg24044620]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  A JMS queue connection factory was configured to connect
+   to WebSphere MQ and a container-managed authentication alias was
+   specified but the mapping configuration alias was not set.
+   
+   The intended behaviour in this scenario is that the
+   DefaultPrincipalMapping is used to map the authentication
+   alias to the user ID and password, however the alias was not
+   applied and the following message was generated
+   in the SystemOut.log:
+   
+   J2CA0114W: No container-managed authentication alias found for
+   ConnectionFactory or DataSource jms/XXXQCF.
+   
+   Typically this will result in the JMS application failing to
+   connect to the JMS provider with MQRC_NOT_AUTHORIZED errors
+   as userid/password passed to the JMS Provider is not that
+   configured in the container-managed authentication alias
+   specified for the JMS queue connection factory, an example of
+   which is show below:
+   
+   MDBListenerIm W   WMSG0019E: Unable to start MDB Listener XXX,
+   JMSDestination jms/XXXQ :
+   com.ibm.msg.client.jms.DetailedJMSSecurity
+   Exception: JMSWMQ2008: Failed to open MQ queue 'XXXQ'.
+   JMS attempted to perform an MQOPEN, but WebSphere MQ
+   reported an error.Use the linked exception to determine the
+   cause of this error. Check that the specified queue and queue
+   manager are defined correctly.
+   at com.ibm.msg.client.wmq.common.internal.Reason.reasonTo
+   Exception(Reason.java:516)
+   at com.ibm.msg.client.wmq.common.internal.Reason.create
+   Exception(Reason.java:216)
+   at com.ibm.msg.client.wmq.internal.WMQMessageConsumer.check
+   JmqiCallSuccess(WMQMessageConsumer.java:124)
+   at
+   com.ibm.msg.client.wmq.internal.WMQConsumerShadow.initialize
+   (WMQConsumerShadow.java:973)
+   at com.ibm.msg.client.wmq.internal.WMQAsyncConsumerShadow.
+   initialize(WMQAsyncConsumerShadow.java:846)
+   at com.ibm.msg.client.wmq.internal.WMQConnectionBrowser.
+   <init>(WMQConnectionBrowser.java:1359)
+   at com.ibm.msg.client.wmq.internal.WMQConnection.create
+   ConnectionBrowser(WMQConnection.java:835)
+   Caused by: com.ibm.mq.MQException: JMSCMQ0001:
+   WebSphere MQ call failed with
+   compcode '2' ('MQCC_FAILED') reason '
+   2035' ('MQRC_NOT_AUTHORIZED').
+   at com.ibm.msg.client.wmq.common.internal.Reason.
+   createException(Reason.java:204)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  set the mappingConfigAlias to DefaultPrincipalMapping
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  WebSphere Application Server users of JMS   *
+   *                  Connection Factories                        *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Container-managed Authentication        *
+   *                      Alias not mapped using                  *
+   *                      DefaultPrincipalMapping if mapping      *
+   *                      configuration alias not set.            *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   If the mapping configuration alias is not set then the
+   DefaultPrincipalMapping should be used to map the
+   container-managed authentication alias.  This is already the
+   case for datasources, however for JMS Connection Factories the
+   authentication alias was not applied when obtaining the
+   connection.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The J2C component was modified so that the container-managed
+   authentication configured for a JMS Connection Factory is
+   mapped using the DefaultPrincipalMapping if the mapping
+   configuration alias is not set.
+   
+   The fix for this APAR is currently targeted for inclusion in
+   fix packs 8.5.5.13 and 9.0.0.6.  Please refer to the
+   Recommended Updates page for delivery information:
+   http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI81163
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBS APP SERV N
+   
+   
+ * REPORTED COMPONENT ID
+   5724H8800
+   
+   
+ * REPORTED RELEASE
+   850
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-05-05
+   
+   
+ * CLOSED DATE
+   2017-09-05
+   
+   
+ * LAST MODIFIED DATE
+   2017-09-05
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBS APP SERV N
+   
+   
+ * FIXED COMPONENT ID
+   5724H8800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R850 PSY
+   UP
+   
+   
+ * R900 PSY
+   UP

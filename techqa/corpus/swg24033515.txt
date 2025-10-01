@@ -1,0 +1,64 @@
+Title: IBM Required fixes for IBM Business Process Management products - United States
+
+Text:
+WAS; Installation Manager; Fix Pack; IM; aix; win; linux; x86; s390; solaris; sparc; PARISC; hpux; ia86; nd; zip; fp DOWNLOADABLE FILES
+
+ABSTRACT
+ Fixes, including fixes for IBM WebSphere Application Server, are required for several business process management products. 
+
+DOWNLOAD DESCRIPTION
+Installation Instructions
+
+
+ * Download and install the interim fix package for WebSphere Application Server V7.0.0 Fix Pack 25 from the Download package table in this document. 
+   
+   These fixes are required for V7.5.1 Fix Pack 1 of the following products:  * IBM Business Monitor
+      
+      
+    * IBM Business Process Manager Standard 
+      
+      
+    * IBM Business Process Manager Express 
+      
+      
+    * IBM Business Process Manager Advanced 
+      
+      
+    * IBM Business Process Manager Advanced – Process Server
+      
+      
+    * WebSphere Enterprise Service Bus
+      
+      
+   
+   
+ * Install the WebSphere Application Server Feature Packs fix packs.
+   
+   You can download the following WebSphere Application Server Feature Packs:  * WebSphere Application Server V7.0 Feature Pack for XML V1.0.0 Fix Pack 13 [ftp://public.dhe.ibm.com/software/websphere/downloads/xml/service/1.0/fixpacks/xml.1.0.0.13.fp.zip]
+      
+      
+    * WebSphere Application Server V7.0 Feature Pack for Service Component Architecture (SCA) V1.0.1 Fix Pack 15 [ftp://public.dhe.ibm.com/software/websphere/downloads/sca/service/1.0/fixpacks/sca.1.0.1.15.fp.zip]
+      
+      
+    * WebSphere Application Server V7.0 Feature Pack for XML V1.0.0 import repositories [ftp://public.dhe.ibm.com/software/websphere/downloads/xml/import/xml.1.0.import.zip]
+      
+      
+    * WebSphere Application Server V7.0 Feature Pack for Service Component Architecture (SCA) V1.0.1 import repositories [ftp://public.dhe.ibm.com/software/websphere/downloads/sca/import/sca.1.0.import.zip]
+      
+      
+   
+   
+   Note: The WebSphere Application Server Version 7.0 Feature Pack for Service Component Architecture (SCA) does not apply to the IBM Business Monitor. 
+   
+   
+
+DOWNLOAD PACKAGE
+
+
+
+
+Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options 
+What is DD? [http://www6.software.ibm.com/dldirector/doc/DDfaq_en.html] WAS 7.0.0.25 FP All Part1 of 2 25 Sep 2012 English 2098973304 FTP [ftp://public.dhe.ibm.com/software/websphere/bpm/repositories/downloads/was/70025/was.7.0.0.25.fp.all_Part1of2.zip] DD WAS 7.0.0.25 FP All Part 2 of 2 25 Sep 2012 English 2069390912 FTP [ftp://public.dhe.ibm.com/software/websphere/bpm/repositories/downloads/was/70025/was.7.0.0.25.fp.all_Part2of2.zip] DD WAS ND 7.0.0.25 FP AIX 25 Sep 2012 English 1073450726 HTTP [http://public.dhe.ibm.com/software/websphere/bpm/repositories/downloads/was/70025/was.nd.7.0.0.25.fp.aix.zip] DD WAS ND 7.0.0.25 FP Windows 25 Sep 2012 English 1082008170 HTTP [http://public.dhe.ibm.com/software/websphere/bpm/repositories/downloads/was/70025/was.nd.7.0.0.25.fp.win.zip] DD WAS ND 7.0.0.25 FP Linux 25 Sep 2012 English 1049225057 HTTP [http://public.dhe.ibm.com/software/websphere/bpm/repositories/downloads/was/70025/was.nd.7.0.0.25.fp.linux.x86.zip] DD WAS ND 7.0.0.25 FP Linux System z / zSeries 25 Sep 2012 English 1048614939 HTTP [http://public.dhe.ibm.com/software/websphere/bpm/repositories/downloads/was/70025/was.nd.7.0.0.25.fp.linux.s390.zip] DD WAS ND 7.0.0.25 FP Linux PowerPC 25 Sep 2012 English 1054318537 HTTP [http://public.dhe.ibm.com/software/websphere/bpm/repositories/downloads/was/70025/was.nd.7.0.0.25.fp.linux.ppc.zip] DD WAS ND 7.0.0.25 FP Solaris SPARC 25 Sep 2012 English 1033253026 HTTP [http://public.dhe.ibm.com/software/websphere/bpm/repositories/downloads/was/70025/was.nd.7.0.0.25.fp.solaris.sparc.zip] DD WAS ND 7.0.0.25 FP Solaris Intel 64-bit 25 Sep 2012 English 801376492 HTTP [http://public.dhe.ibm.com/software/websphere/bpm/repositories/downloads/was/70025/was.nd.7.0.0.25.fp.solaris.x86.zip] DD WAS ND 7.0.0.25 FP HP-UX PA-RISC 25 Sep 2012 English 785582371 HTTP [http://public.dhe.ibm.com/software/websphere/bpm/repositories/downloads/was/70025/was.nd.7.0.0.25.fp.hpux.PARISC.zip] DD WAS ND 7.0.0.25 FP HP-UX IA64 25 Sep 2012 English 865874167 HTTP [http://public.dhe.ibm.com/software/websphere/bpm/repositories/downloads/was/70025/was.nd.7.0.0.25.fp.hpux.ia64.zip] DD 
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Business Process Manager Standard Installation / Configuration AIX, Linux, Linux zSeries, Solaris, Windows 7.5.1.1 Business Integration IBM Business Process Manager Express Installation / Configuration Linux, Linux zSeries, Windows 7.5.1.1 Business Integration WebSphere Enterprise Service Bus Install AIX, HP-UX, Linux, Linux zSeries, Solaris, Windows 7.5.1.1 
+PRODUCT ALIAS/SYNONYM
+ BPM

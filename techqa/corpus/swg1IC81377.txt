@@ -1,0 +1,133 @@
+Title: IBM IC81377: WEBSPHERE MQ V6 FOR OPENVMS MQSC COMMAND DISPLAY CHANNEL STATUS (DIS CHS) SSLCERTI FIELD IS BLANK FOR SSL CHANNELS. - United States
+
+Text:
+  A FIX IS AVAILABLE
+WebSphere MQ 6.0 for HP OpenVMS Alpha and Itanium - Fix Pack 6.0.2.12 [http://www-01.ibm.com/support/docview.wss?uid=swg24035627]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The field SSLCERTI in the runmqsc command
+   dis chs (channelname)
+   should contain the e full Distinguished Name of the issuer of
+   the remote certificate for SSL channels.  In OpenVMS this field
+   is improperly blank.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Users of WMQ-V6.0 on OpenVMS have the SSL certificate setup
+   between systems and channels are enabled to use SSL protocol.
+   The display of channel status against  a running channel will
+   show blank values for the status attributes SSLPEER & SSLCERTI.
+   .
+   After validation of the SSL peer certificates, the
+   corresponding values of SSLPEER & SSLCERTI are not copied from
+   the certificate to the channel status table in memory. This
+   causes the status attributes to display blank values.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix for this APAR will ensure that the values extracted
+   from the peer certificate after the verifications of the
+   certificates are copied over to channel status table in memory.
+   .
+   The fix for this APAR will be included in the next Fixpack
+   releases for Websphere MQ V6.0 on Alpha and Itanium.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC81377
+   
+   
+ * REPORTED COMPONENT NAME
+   MQSERIES OVMS I
+   
+   
+ * REPORTED COMPONENT ID
+   5724A3802
+   
+   
+ * REPORTED RELEASE
+   600
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-02-13
+   
+   
+ * CLOSED DATE
+   2012-02-24
+   
+   
+ * LAST MODIFIED DATE
+   2012-02-24
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   MQSERIES OVMS I
+   
+   
+ * FIXED COMPONENT ID
+   5724A3802
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R600 PSY
+   UP

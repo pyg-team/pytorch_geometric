@@ -1,0 +1,167 @@
+Title: IBM V8.1.4 Application Performance Management UI certificates are expiring in upgraded environments (fresh V8.1.4 APM installations are not affected) - United States
+
+Text:
+APM; V8.1.4; keystore; truststore; files; expired; expiring; upgrading; apmui; oidc; directory; certificate; server; installation TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ During the server upgrade processing from APM V8.1.3 to APM V8.1.4, the V8.1.3 APMUI certificate keystore and truststore files are copied to a new V8.1.4 location where they are shared by the APMUI, Server1, OIDC, and UViews servers. The default certificate contained in these files is set to expire on the 21st of April, 2019. 
+
+SYMPTOM
+How will I know if the default certificate has expired? 
+
+When the certificate has expired, users will receive a "Secure Connection Failed" message in their browser instead of the APM Login Page. 
+
+
+RESOLVING THE PROBLEM
+To maintain valid UI certificates in your upgraded APM V8.1.4 server installations that are still using the default out of the box certificates, the existing keystore and truststore files must be replaced with the files that are attached at the end of this technote. These new keystore and truststore files contain certificates that are set to expire in March, 2028. 
+
+
+The following new keystore files that are attached at the end of this technote contain certificates that will expire in 2028: 
+
+1. updated.8.1.4.key.jks (password: apmpass) 
+2. updated.8.1.4.trust.jks (password: ccmR0cKs!) 
+
+How do I know if I am using the default certificate files in an upgraded environment?
+
+1. Identify an upgraded V8.1.4 default UI shared keystore by verifying the following:
+
+
+ * The password is apmpass 
+ * There is only a single certificate listed 
+ * Alias is "default" 
+ * Expires 4/21/19 
+ * Signature Algorithm is SHA256withRSA 
+ * Owner: CN=liberty, O=IBM, C=US and Issuer: CN=liberty, O=IBM, C=US
+   
+
+1.1. Navigate to the APMUI keystore directory by issuing the following command:: 
+
+# cd /opt/ibm/wlp/usr/shared/resources/security 
+
+1.2. List the certificates in the key store by issuing the following command: 
+
+# /opt/ibm/java/jre/bin/keytool -v -list -keystore ./key.jks 
+
+Enter the keystore password: apmpass 
+
+1.3. Verify the output: 
+
+Keystore type: jks
+Keystore provider: IBMJCE
+Your keystore contains 1 entry 
+Alias name: default 
+Creation date: Apr 21, 2016
+Entry type: keyEntry
+Certificate chain length: 1
+Certificate[1]: 
+Owner: CN=liberty, O=IBM, C=US
+Issuer: CN=liberty, O=IBM, C=US 
+Serial number: 191bd82a
+Valid from: 4/21/16 1:09 PM until: 4/21/19 1:09 PM
+Certificate fingerprints:
+MD5: 06:FB:FA:F0:68:49:65:38:6D:FB:B3:2D:8A:24:5D:2B
+SHA1: A2:39:41:40:F8:D5:3A:6D:80:62:D5:D5:6A:27:EB:9B:3A:35:B2:DA
+SHA256: 85:B9:FB:97:98:69:B8:DF:2A:B0:38:C6:3B:C7:87:CA:71:21:CA:CE:DE:D0:09:57:FF:AF:B7:EB:E8:77:FD:6D 
+Signature algorithm name: SHA256withRSA 
+Version: 3
+Extensions:
+#1: ObjectId: 2.5.29.14 Criticality=false
+SubjectKeyIdentifier [
+KeyIdentifier [
+0000: 1b 97 38 19 52 43 34 f6 2a 0e 7f a4 22 db 07 80 ..8.RC4.........
+0010: 41 6e 47 a5 AnG.
+]
+] 
+
+2. Identify an upgraded V8.1.4 default truststore by verifying the following: 
+ * The password is ccmR0cKs! 
+ * There is only a single certificate listed 
+ * Alias is "oidc" 
+ * Expires 4/21/19 
+ * Signature Algorithm is SHA256withRSA 
+ * Owner: CN=liberty, O=IBM,C=US and Issuer: CN=liberty, O=IBM, C=US 
+ * Serial number matches the certificate in the key.jks file above
+   
+
+2.1. Navigate to the keystore directory by issuing the following command:: 
+
+# cd /opt/ibm/wlp/usr/shared/resources/security 
+
+2.2. List the certificates in the key store by issuing the following command: 
+
+# /opt/ibm/java/jre/bin/keytool -v -list -keystore ./trust.jks 
+
+Enter keystore password: ccmR0cKs! 
+
+2.3. Verify the output: 
+
+Keystore type: jks
+Keystore provider: IBMJCE
+Your keystore contains 1 entry 
+Alias name: oidc 
+Creation date: Apr 6, 2018
+Entry type: trustedCertEntry
+Owner: CN=liberty, O=IBM, C=US
+Issuer: CN=liberty, O=IBM, C=US
+Serial number: 191bd82a
+Valid from: 4/21/16 1:09 PM until: 4/21/19 1:09 PM
+Certificate fingerprints:
+MD5: 06:FB:FA:F0:68:49:65:38:6D:FB:B3:2D:8A:24:5D:2B
+SHA1: A2:39:41:40:F8:D5:3A:6D:80:62:D5:D5:6A:27:EB:9B:3A:35:B2:DA
+SHA256: 85:B9:FB:97:98:69:B8:DF:2A:B0:38:C6:3B:C7:87:CA:71:21:CA:CE:DE:D0:09:57:FF:AF:B7:EB:E8:77:FD:6D 
+Signature algorithm name: SHA256withRSA 
+Version: 3
+Extensions:
+#1: ObjectId: 2.5.29.14 Criticality=false
+SubjectKeyIdentifier [
+KeyIdentifier [
+0000: 1b 97 38 19 52 43 34 f6 2a 0e 7f a4 22 db 07 80 ..8.RC4.........
+0010: 41 6e 47 a5 AnG.
+]
+] 
+
+Procedures 
+
+Installation procedure (using /opt/ibm as the install directory) 
+
+
+1. Download the new files that are attached at the end of this technote into a temporary directory ( /tmp) on the APM server. 
+
+2. Stop APM by issuing the following command: 
+
+apm stop_all 
+
+3. Back up the existing shared keystore by issuing the following command: 
+
+cp /opt/ibm/wlp/usr/shared/resources/security/key.jks
+/opt/ibm/wlp/usr/shared/resources/security/key.jks.BAK 
+
+4. Install the new keystore (replace the existing file) by issuing the following command: 
+
+cp /tmp/updated.8.1.4.key.jks /opt/ibm/wlp/usr/shared/resources/security/key.jks 
+
+5. Back up the existing UI truststore by issuing the following command: 
+
+cp /opt/ibm/wlp/usr/shared/resources/security/trust.jks /opt/ibm/wlp/usr/shared/resources/security/trust.jks.BAK 
+
+6. Install the new UI truststore (replace the existing file) by issuing the following command: 
+
+cp /tmp/updated.8.1.4.trust.jks /opt/ibm/wlp/usr/shared/resources/security/trust.jks 
+
+7. Restart APM by issuing the following command: 
+
+apm start_all 
+
+Verification procedure - verifying the installation of the new keystore files 
+
+1. After APM is restarted, navigate to the APMUI at https://<APM_server_hostname>:9443 [https://apm_server_hostname:9443/] 
+
+where <APM_server_hostname> is the hostname of your V8.1.4 APM server. 
+
+2. Verify that the APM Log in page appears and log in. 
+
+3. Verify that agent data is shown on the APM dashboard. 
+Note: The passwords for the keystores and truststores are the same passwords as the upgraded 8.1.4 environment, therefore, you don't need to update the server.xml and serverVariables.xml files.
+
+ Keystore and truststore files:
+updated.8.1.4.trust.jks [/support/docview.wss?uid=swg22016073&aid=2]updated.8.1.4.trust.jks [/support/docview.wss?uid=swg22016073&aid=1] updated.8.1.4.key.jks [/support/docview.wss?uid=swg22016073&aid=4]updated.8.1.4.key.jks [/support/docview.wss?uid=swg22016073&aid=3]

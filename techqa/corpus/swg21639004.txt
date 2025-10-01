@@ -1,0 +1,52 @@
+Title: IBM -23197 error when using the IBM Informix  OLEDB provider - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Why you see the -23197 when using the IBM Informix OLEDB providor 
+
+CAUSE
+ With earlier versions of IBM Informix database, we did not restrict what characters (en_us.utf8) you were inserting into the database. It quite possible that we did not complain about inserting the characters into a database that was created with the en_us.819 locale (standard English). You must use the unicode codeset therefore your database must be created with a unicode (en_us.utf8) codeset.
+
+
+
+ANSWER
+Before you create a database on any IDS server (included old version such as 7.31) you should decide which locale you want to use. The locale of a database defines which kind of characters (code set) are allowed into the database. If you don't specify any locale, the default value will be en_US.8859-1. This locale only allows code from the ISO 8859-1. Multibyte characters (such as \u0092) are not allowed. 8859-1 because it is a single byte locale, not a multibyte like UTF8 or UNICODE.
+
+Because you can connect to database server from different clients (Unix/Windows/etc) which they may use different locales (e.g: on a Linux use UTF8, WIndows use CP1252) we have to provide a method to convert characters from a codeset to another. We do through the GLS library (Global Language Support). 
+
+For example, imaging a Windows application connecting to an Informix engine in a HP box.
+Windows uses the CP1252 codeset. The database on the HP server was created with the UTF8 codeset. The application on Windows insert a euro character, this characters in CP1252 correspond to the code 0x80 
+
+
+Because the database is using UTF8 (not CP1252) the GLS library had to do a codeset conversion, it has to find what is the corresponds value for a euro character in the UTF8 codeset and pass that to the database. 
+
+
+The GLS library takes the 0x80, convert it to 0xE2 0X82 0xAC (which is the code for the euro in UTF8) and transfer it to the database server.
+
+Now, if he have a second client running on a Unix box using the Unicode codeset (the euro in Unicode is 0x00 0x80.) Same as before the GLS library will take the 0xE2 0x82 0xAC in the database (UTF8), convert it to 0x00 0x80 (Unicode) and pass it to the application.
+
+This is how GLS works and how we ensure that all clients, no matter which codeset they use, will have access to the data without causing any kind of corruption.
+
+The most common problem is that customers leave the default values (8859-1) when creating the database, and miss configure the GLS variables with incorrect locales on the client side.
+The GLS library needs to know what is the locale of the database (DB_LOCALE) and what is the locale of the client (CLIENT_LOCALE). It needs these two values so it can load the appropriate tables to do the conversion. If these values are wrong, you may end inserting codes in the database which are outside the allowed range. This could be the issue you are seeing ore experiencing.
+
+With old client (non-unicode ones), if the CLIENT_LOCALE was set to the same value as the DB_LOCALE (With OLEDB you set this on the connection string) the GLS library assumes the codeset use by the client is the same as the codeset use by the database, so it doesn't perform any kind of data conversion. Anything that the application passes to the provider will be send as it is to the server. There is no integrity check, nothing will filter values which are outside the allowed codeset range.
+This could be why you managed to insert characters such as 0x00 0x92 into the database while using an old OLEDB driver with an old engine (7.31)
+
+We used to allow connecting from a client with a mismatch DB_LOCALE ( we raised a warning but allowed the connection), but because we realise that most developers didn't 'care' about the warning, we decided to stop that. 
+
+
+Since 11.50.xC8 you can't connect to a database engine if your DB_LOCALE differs the database locale.
+This will be the reason why you are getting the: (-23197) Database locale information mismatch.
+
+Because you are not using the correct DB_LOCALE in the connection string while opening the connection with the database. Just changing your connection string will not fix all the problems, at the moment you have data in the tables with do not belong to the codeset. If your database locale is 8859-1, you can't have multi-byte characters because 8859-1 does not support multi-byte characters. What you may have now is two characters 0x00 and 0x92 from a CP1252 codeset and your application takes that sequence of bytes as a single character. (still is wrong because 8859-1 does not have 0x92)
+
+You need to create the database with a locale that supports the kind of characters that you want to insert, but I believe we don't have any locale which uses 0x00 0x92. As per definition (private use) those are outside the UTF8/UNICODE range. 
+
+Please see the link below for additional information
+
+
+RELATED INFORMATION
+ GLS User Guide [http://publib.boulder.ibm.com/infocenter/idshelp/v117/index.jsp?topic=%2Fcom.ibm.glsug.doc%2Fglsug.htm]

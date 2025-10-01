@@ -1,0 +1,142 @@
+Title: IBM IV20654: INCORRECT FILE PERMISSIONS ON ATTACH API FILES - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Error Message: Files in the /tmp/.com_ibm_tools_attach
+   directory, such as _attachlock, _master, and _notifier, have
+   unnecessary execute permissions.
+   Only owner, group, and world read and write permissions are
+   required.
+   .
+   Stack Trace: N/A
+   .
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Run:
+   chmod 666 /tmp/.com_ibm_tools_attach/_*
+   Do not change permissions on directories.
+   Do not remove any read or write permissions on _attachlock,
+   _master, and _notifier as this will delay VM shutdown.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  The Java VM was creating files with unnecessarily broad
+   permissions, creating security concerns. It was also not
+   handling the case where certain files had incorrect permissions.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This defect will be fixed in:
+   6.0.1 SR2
+   7.0.0 SR1
+   6.0.0 SR11
+   .
+   The default permissions for the attach API common files have
+   been changed.? The recovery algorithm was fixed to handle files
+   with insufficient permissions.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV20654
+   
+   
+ * REPORTED COMPONENT NAME
+   J9 COMMON CODE
+   
+   
+ * REPORTED COMPONENT ID
+   620700127
+   
+   
+ * REPORTED RELEASE
+   260
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-05-04
+   
+   
+ * CLOSED DATE
+   2012-05-08
+   
+   
+ * LAST MODIFIED DATE
+   2012-05-08
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   J9 COMMON CODE
+   
+   
+ * FIXED COMPONENT ID
+   620700127
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R260 PSY
+   UP
+   
+   
+ * R600 PSY
+   UP

@@ -1,0 +1,34 @@
+Title: IBM MAPI profile creation fails with error message:
+AFUM0009E: An error occurred: MAPI call failed, return code '0x81002746', MAPI function 'ConfigureMsgService' - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The ICC E-Mail Connector service and the ICC WebApplications services fail when they try to create a MAPI profile, which is needed to connect to a Microsoft Exchange server. The following error message appears in the systemout.log and trace.log files:
+
+"SEVERE com.ibm.afu.mailinterface.MailException: com.ibm.afu.mailinterface.MailException: AFUM0009E: An error occurred: MAPI call failed, return code '0x81002746', MAPI function 'ConfigureMsgService'."
+
+The problem occurs when these services are run by the Local System account. 
+
+SYMPTOM
+All functions that try to access a mailbox fail. The following error message can be found in the systemout.log and the trace log files: 
+
+SEVERE com.ibm.afu.mailinterface.MailException: com.ibm.afu.mailinterface.MailException: AFUM0009E: An error occurred: MAPI call failed, return code '0x81002746', MAPI function 'ConfigureMsgService'.
+
+
+CAUSE
+To access a mailbox, both the ICC E-Mail Connector service and the ICC WebApplications service require a MAPI profile. Both services first try to find the required profile among the existing profiles. If the profile cannot be found, they try to create it.
+
+Only a mail-enabled user account can create MAPI profiles. The Local System account is not mail-enabled and therefore cannot create MAPI profiles. In addition, a MAPI profile is associated to the user that creates it. So even if there was a profile with the required name, it cannot be found if the services are run by the "Local System account".
+
+
+DIAGNOSING THE PROBLEM
+Whenever mailbox related operations like archiving or restoring fail, check the systemout.log or the trace.log file for the following error message: 
+
+
+SEVERE com.ibm.afu.mailinterface.MailException: com.ibm.afu.mailinterface.MailException: AFUM0009E: An error occurred: MAPI call failed, return code '0x81002746', MAPI function 'ConfigureMsgService'.
+
+
+RESOLVING THE PROBLEM
+Change the logon properties ("Log-on") of the ICC E-Mail Connector service and the ICC WebApplications service so that these services are run by a domain user account with a mailbox and administration rights for Microsoft Exchange.

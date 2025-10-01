@@ -1,0 +1,110 @@
+Title: IBM Rational Change: Idle User sessions don't time out / licenses are not freed - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When I open an IBM Rational Change user session and then "do nothing" for some time, I'd expect the user session to time out, and the used license to be freed. Yet, the session stays active.
+
+
+SYMPTOM
+The symptoms include : 
+
+ * The user not to be automatically logged out from Change 
+ * The Change admin interface still showing the same number of sessions in the "System Status" section 
+ * The FlexLm command "lmutil lmstat" showing the licenses always taken, and the timeout to be repeatedly postponed.
+
+
+CAUSE
+This issue is typically seen when users leave Rational Change open, displaying a custom "Home Page" instead of the Splash screen. The Home Pages are, by definition, displaying Reports.. 
+
+
+By design, IBM Rational Change's "Home Pages" refresh automatically ( this is done using an embedded Javascript script). This is intended to automatically update the reports displayed on the Home Pages.
+
+
+DIAGNOSING THE PROBLEM
+Try to repeat your tests on any Change page, other than the Home Page (preferably the Splash Screen -- click on "Home" to display it) and see if the licenses use matches your expectations more.
+
+
+
+RESOLVING THE PROBLEM
+There are 2 solutions, both with their inconveniences. 
+
+SOLUTION 1: Make the idle end-users' sessions time-out before the auto-refresh of the Home Page. 
+
+The auto-refresh of the Home Page happens every 20 minutes. This can't be changed easily. 
+
+You can change Change's "USER_SESSION_TIMEOUT" parameter to force users to be logged out before those 20 minutes (if they are idle). 
+
+To do so : 
+
+ * 
+ * 
+ * 2. Edit the following section : 
+ *   * 
+      # The number of minutes of inactivity until a user's session is invalidated,
+      # forcing them to re-login. A value of 0 disables the timeout.
+      [CCM_SYSTEM][USER_SESSION_TIMEOUT]0[/USER_SESSION_TIMEOUT][/CCM_SYSTEM] 
+      
+   
+   
+ * 
+ * 
+ * smaller than 20
+ * 
+
+
+Please note that, after the time out happens, it will take another 11 minutes for the license to be released, due to internal License Server mechanisms. 
+
+SOLUTION 2: Remove the ability for the users to stay on the Home Page. 
+
+Please note that this solution overlaps with Technote 1427152 [https://www.ibm.com/support/docview.wss?uid=swg21427152] - However it presents the issue from the end-user's perspective, rather than the "idle time configuration" perspective. It should make it easier to search. 
+
+ 
+
+When end-users open IBM Rational Change, they will be positioned : 
+
+ * On the splash screen (if they haven't set their own default Home Page)
+
+
+...OR...  * On a Home Page (if they've set their own default Home Page, using the option "Set Default Home Page")
+
+
+Reverting to the splash screen as default opening screen (no Default Home Page set) might fix your license issue. 
+
+ 
+
+ * If you are a Change user: If you have set a default home page, then simply reverse your change, still using Change's user interface (use the "Home Page" features in the menu on the left).
+   
+   
+
+
+ * If you are a Change admin You might want to forbid users from setting their own default Home Pages. 
+   
+   Notice: This is a customization task. You should contact IBM Professional services to obtain assistance. 
+   
+   However, here is a quick workaround: 
+   
+    1. Open this folder:
+       
+       <change>\jetty\webapps\change\WEB-INF\wsconfig\templates\pt\forms\user_framework
+       
+    2. Edit the file "home_page_nav.jsp" 
+    3. Comment out this section:
+       
+       <td id= "setDefaultHomePageHL" class="highlight"></td>
+       <td class=...
+       ...
+       ...
+       </td>
+       
+    4. Save the file 
+   
+   
+   This will make the Change's menu option "Set default home page" unavailable for everybody. Users won't be able to define their own default Home Page (the one that's displayed at Change startup). 
+   
+   However people can still create and display their own Home Pages. You can also disable that quickly by removing the Change menu option "Add Home Page" the same way as above. 
+   
+    
+   
+   Note: this means that your users will have to display any needed reports manually in Rational Change, by clicking on the "Reports" link, instead of having them displayed directly on the Home Page at startup.

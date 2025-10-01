@@ -1,0 +1,94 @@
+Title: IBM Analyzing data for DB2 LUW Abend (crash) - United States
+
+Text:
+ProblemDeterminationDocument; Analyze data doc; Analyzing data doc; AnalyzingDataDoc TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This Analyzing data document explains how to debug the DB2 abend or crash, using the Collecting Data documents must gather information. 
+
+RESOLVING THE PROBLEM
+ 
+
+LEARNING MORE ABOUT DB2 LUW ABEND (CRASH)
+ * 1. Learning more [http://www.ibm.com/support/docview.wss?uid=swg21426669]
+ * 2. Troubleshooting [http://www.ibm.com/support/docview.wss?uid=swg21426670]
+ * 3. Collecting data [http://www.ibm.com/support/docview.wss?uid=swg21326400]
+ * 4. Analyzing data [http://www.ibm.com/support/docview.wss?uid=swg21404960]- selected tab,
+
+
+Refer to the Collecting Data document for DB2 DAS SQL4401C errors, which can be used to gather necessary diagnostic data. The following information will help you analyze the information collected. 
+
+The symptoms of a DB2 Abend may include the following: 
+
+ * Applications receive a SQL30081N error when trying to connect to the database. 
+ * Trap and dump files found in the ~home/sqllib/db2dump directory. 
+ * Error messages in the db2diag.log suggesting that a crash recovery is needed for the database. 
+ * Core file is generated if core file collection is turned on at the OS level.
+
+. 
+In several cases, DB2 abends are caused by either a signal 11 or a signal 9. This Analyzing Data Document helps analyze DB2 abends and identify possible APARs that may already exist in released DB2 Fixpaks. If you are not successful in identifying a specific APAR or cause for the abend from your search, please contact IBM DB2 Technical Support at 1-800-IBM-SERV to report the issue. 
+
+AIX/Solaris/Linux/HP-UX Check the db2diag.log for messages about a possible crash. In most cases you should be able to find something similar to the following: 
+
+2009-04-24-05.50.41.368179-300 E6388A896 LEVEL: Severe 
+PID : 428 TID : 1 PROC : db2gds 0 
+INSTANCE: db2inst NODE : 000 
+FUNCTION: DB2 UDB, oper system services, sqloEDUSIGCHLDHandler, probe:50 
+DATA #1 : <preformatted> 
+Detected the death of an EDU with process id 5489 
+The signal number that terminated this process was 11 
+Look for trap files (t5489.*) in the dump directory 
+CALLSTCK: 
+[0] 0x0000000100791988 sqloSetNonCriticalEDUFlag + 0x558 
+[1] 0xFFFFFFFF7BD17740 _setitimer + 0xB4 
+[2] 0xFFFFFFFF7BD111D4 sema_post + 0x530 
+[3] 0xFFFFFFFF7BD113C0 sema_post + 0x71C 
+[4] 0xFFFFFFFF7BD0FC7C msgrcv + 0x68 
+[5] 0x00000001007929BC sqloTermEDUServices + 0x4E0 
+[6] 0x00000001007924A4 sqloInitEDUServices + 0x4D4 
+[7] 0x000000010078E7F0 sqloRunInstance + 0x858 
+[8] 0x000000010021AEE4 DB2main + 0x89C 
+[9] 0x000000010021B03C main + 0x8 
+
+2009-04-24-05.50.41.500396-300 E7285A510 LEVEL: Severe 
+PID : 428 TID : 1 PROC : db2gds 0 
+INSTANCE: db2inst NODE : 000 
+FUNCTION: DB2 UDB, oper system services, sqloEDUCodeTrapHandler, 
+probe:10 
+MESSAGE : ADM0503C An unexpected internal processing error has occurred. 
+ALL DB2 PROCESSES ASSOCIATED WITH THIS INSTANCE HAVE BEEN SHUTDOWN. 
+Diagnostic information has been recorded. Contact IBM Support for further assistance. 
+
+From similar messages in the db2diag.log locate the specific trap file generated in the db2dump directory ( t5489.* in the above example). Once the trap file is located, look for the stack section in that file. Example shown below: 
+
+
+From trap file t5489: 
+<StackTrace> 
+-------Frame------ ------Function + Offset------ 
+0xD0235084 fgets + 0x90 
+0xD03035A0 colon_search + 0xAC4 
+0xD0308A70 method_getpw_common + 0x1C4 
+0xD0309680 method_getpwnam + 0x80 
+0xD0312C44 process_module + 0xBA0 
+0xD03149E4 getuserattrs + 0xCF0 
+0xD030FDF0 getuserattr + 0xC0 
+0xD03BB784 loginrestrictions + 0x7C 
+0xD7E3DA48 sqlo_get_userpw + 0x2F0 
+0xD7F25DD4 sqlockpw_daemon_main__FP20SQLO_EDU_WAIT_HANDLE + 0x48 
+0xD7F25A9C sqlockpw_daemon_init__Fv + 0x2D4 
+0xD7F1881C sqloRunInstance + 0x520 
+0x10002910 DB2main + 0x888 
+0x100035A0 main + 0xC 
+</StackTrace> 
+
+Use the first few functions( colon_search, method_getpw_common, etc.. in the above stack) to search for any known issues/APARs that may already have been opened and fixed in a released DB2 Fixpak. 
+
+For Known Issues For DB2 on AIX 5.x/6.x please refer to technote 1165448 [http://www.ibm.com/support/docview.wss?uid=swg21165448] 
+
+If the signal number that brought down your DB2 instance was signal 9, then a DB2 process was killed using a kill -9 OS command by some external process or user. Please work with your SYSTEM ADMIN to identify login audit records to narrow down who or what might have brought DB2 down in this case. 
+
+
+Windows 
+On Windows, DB2 generates trap files that are in binary format. You can format such files using the db2xprt tool, documented in the below link. 
+
+DB2XPRT - Format Windows Trap file Tool [http://publib.boulder.ibm.com/infocenter/db2luw/v9/index.jsp?topic=/com.ibm.db2.udb.pd.doc/doc/t0020710.htm]

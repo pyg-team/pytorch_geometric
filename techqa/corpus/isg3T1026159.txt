@@ -1,0 +1,24 @@
+Title: IBM Chrome reports obsolete connection settings for WEBGUI - United States
+
+Text:
+Chrome; WEBGUI; obsolete TECHNOTE (FAQ)
+
+QUESTION
+ Checking WEBGUI connection security in Chrome, we will see the following warning by default:
+"The connection to this site uses TLS 1.2 (a strong protocol), RSA (an obsolete key exchange), and AES_128_CBC with HMAC-SHA1 (an obsolete cipher)" 
+
+ANSWER
+Customer needs to find common strong cipher supported both in our IBM JRE and their browser.
+For our IBM JRE cipher list, please refer to the link below:
+https://www.ibm.com/support/knowledgecenter/es/SSYKE2_8.0.0/com.ibm.java.security.component.80.doc/security-component/jsse2Docs/ciphersuites.html?view=embed [https://www.ibm.com/support/knowledgecenter/es/SSYKE2_8.0.0/com.ibm.java.security.component.80.doc/security-component/jsse2Docs/ciphersuites.html?view=embed] 
+
+To check browser supported cipher list, here is the URL on internet:
+https://cc.dcsec.uni-hannover.de [https://cc.dcsec.uni-hannover.de/] 
+
+Please compare both list and find common strong cipher, then configure it in server_gui.xml.
+
+For example:
+1) stop WEBGUI: egosh service stop WEBGUI.
+2) Configure the $EGO_CONFDIR/../../gui/conf/server_gui.xml file as follows:
+<ssl id="defaultSSLSettings" keyStoreRef="defaultKeyStore" sslProtocol="${https.protocols}" enabledCiphers="SSL_ECDHE_RSA_WITH_AES_256_GCM_SHA384"/>
+3) restart WEBGUI: egosh service start WEBGUI.

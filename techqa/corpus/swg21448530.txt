@@ -1,0 +1,33 @@
+Title: IBM DPR-ERR-2014 error message for powerPlayService - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ After installing Powerplay Studio, you're unable to actually use the studio. You get the following error message after selecting the package you wish to use:
+
+DPR-ERR-2014
+
+Unable to load balance the request because no nodes in the cluster are available, or no nodes are configured for the service: powerPlayService. 
+
+SYMPTOM
+Not only do you see the error above, but some other symptoms may include: 
+
+- Unable to use the Powerplay tab in Cognos Administration 
+
+- No reference to the PPESBusServer in the "Details" section in Cognos Configuration when starting services 
+
+- When attempting to use Powerplay Studio, you notice that no PPESBusServer process is running on the server.
+
+
+CAUSE
+Corrupted install
+
+
+
+RESOLVING THE PROBLEM
+- Uninstall your Powerplay Components. 
+
+- If you're using Windows Server 2003/2008, ensure the Data Execution Prevention (DEP) is turned off, and reboot the server. 
+
+- Re-install the Powerplay Components.

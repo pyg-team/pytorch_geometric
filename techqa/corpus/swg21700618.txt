@@ -1,0 +1,158 @@
+Title: IBM Updating the IBM Java Runtime in IBM Watson Explorer Foundational Components - United States
+
+Text:
+ FIX README
+
+ABSTRACT
+ Updating the version of IBM Java Runtime Environment, Java Technology Edition that is provided with IBM Watson Explorer Foundational Components. 
+
+CONTENT
+Affected versions: 
+
+ * Version 11.0 
+ * Version 10.0.0.2 and earlier 
+ * Version 9.0.0.8 and earlier (IBM Watson Explorer) 
+ * Version 8.2-6 and earlier (IBM InfoSphere Data Explorer)
+
+
+Procedures for Linux: 
+
+IBM Java Runtime may be present in one or more of the following folders. You need to update it under each of the listed folders. 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+
+
+
+Follow the steps after you download the required version of IBM Java Runtime for your operating system from Fix Central. The folders and file names used in the steps are shown for example purpose only. Replace the sample file name with the name of the file that you downloaded. 
+1. Copy the java.tgz file that you downloaded into the directory. Do this for all the folders as shown in the example: 
+
+ * 
+ * cp ibm-java-jre-7.1-4.1-linux-x86_64.tgz /opt/ibm/WEX/Engine
+ * 
+ * cp ibm-java-jre-7.1-4.1-linux-x86_64.tgz /opt/ibm/WEX/AppBuilder/java
+ * 
+ * cp ibm-java-jre-7.1-4.1-linux-x86_64.tgz /opt/ibm/WEX/ZooKeeper/java
+ * 
+ * cp ibm-java-jre-7.1-4.1-linux-x86_64.tgz /opt/ibm/WEX/ResultsModule/java
+
+
+2. Shut down ResultsModule, AppBuilder, ZooKeeper and Watson Explorer Engine in order: 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+
+
+3. Uncompress the .tgs file that you copied earlier using gunzip. Do this for all the folders. For example, gunzip ibm-java-jre-7.1-4.1-linux-x86_64.tgz  * 
+ * 
+
+
+4. Extract the JRE from the tar file. Perform this for all the folders: 
+ * tar --strip-components=1 -xvf 
+ * ibm-java-jre-7.1-4.1-linux-x86_64.tar
+
+ * 
+
+
+5. Change the ownership of the new files to the correct owner and group, on the directory where you extracted the JRE: 
+ * cd /opt/ibm/WEX/ResultsModule
+ * 
+ * chown -R wex-resultsmodule:ibm-wex java
+ * 
+ * cd /opt/ibm/WEX/AppBuilder
+ * 
+ * chown -R wex-appbuilder:ibm-wex java
+ * 
+ * cd /opt/ibm/WEX/ZooKeeper
+ * 
+ * chown -R wex-zookeeper:ibm-wex java
+ * 
+ * cd /opt/ibm/WEX/Engine
+ * 
+ * chown -R apache:apache jre properties docs copyright *.txt
+
+
+6. Restart Watson Explorer Engine, ResultsModule, ZooKeeper, and AppBuilder in order: 
+ * /opt/ibm/WEX/Engine/bin/velocity-startup
+ * 
+ * /opt/ibm/WEX/ResultsModule/wlp/bin/server start ResultsModule
+ * 
+ * /opt/ibm/WEX/ZooKeeper/zookeeper/bin/zkServer.sh start
+ * 
+ * /opt/ibm/WEX/AppBuilder/wlp/bin/server start AppBuilder
+
+Procedures for Windows:
+IBM Java Runtime may be present in one or more of the following folders. You need to update it under each of the listed folders.
+
+
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+
+
+Follow these steps after you download the required version of IBM Java Runtime for your operating system from Fix Central. The file names in these steps are shown for example purposes. Replace the sample file name with the name of the file that you downloaded. 
+
+1. Copy the java .zip file that you downloaded into the directory. Do this for all the folders as shown in the example: 
+ * copy ibm-java-jre-7.1-4.1-win-x86_64.zip C:\Program Files\IBM\WEX\Engine
+ * 
+ * copy ibm-java-jre-7.1-4.1-win-x86_64.zip C:\Program Files\IBM\WEX\AppBuilder\java
+ * 
+ * copy ibm-java-jre-7.1-4.1-win-x86_64.zip C:\Program Files\IBM\WEX\ZooKeeper\java
+ * 
+ * copy ibm-java-jre-7.1-4.1-win-x86_64.zip C:\Program Files\IBM\WEX\ResultsModule\java
+
+ * 
+
+
+2. Shut down AppBuilder, ZooKeeper, ResultsModule and Watson Explorer Engine in order:  * 
+ * C:\Program Files\IBM\WEX\AppBuilder\wlp\bin\
+ * server stop AppBuilder
+ * 
+ * C:\Program Files\IBM\WEX\ZooKeeper\zookeeper\bin\zkServer.cmd stop
+ * 
+ * C:\Program Files\IBM\WEX\ResultsModule\wlp\bin\server stop ResultsModule
+ * 
+ * C:\Program Files\IBM\WEX\Engine\bin\velocity-shutdown.exe
+
+
+3. Extract the JRE from the zip file that you copied in the java.zip file earlier. Do this for all the folders. For example: 
+ * chdir “c:\ProgramFiles\IBM\WEX\Engine”
+ * 
+ * unzip ibm-java-jre-7.1-4.1-win-x86_64.zip 
+
+ * 
+ * 
+ * 
+ * 
+ * a) Click on the "Extract" tab in the window 
+   b) Set the destination folder to the Engine root directory, such as C:\Program Files\IBM\WEX\Engine . 
+   c) You will be asked about overwriting existing files twice. Each time, click the "Do this for all" check box and select "Copy and replace". 
+ * 
+ * 
+
+
+4. Restart Watson Explorer Engine, ResultsModule, ZooKeeper, and AppBuilder in order: 
+ * C:\Program Files\IBM\WEX\Engine\bin\velocity-startup.exe
+ * 
+ * C:\Program Files\IBM\WEX\ResultsModule\wlp\bin\server start ResultsModule
+ * 
+ * C:\Program Files\IBM\WEX\ZooKeeper\zookeeper\bin\zkServer.cmd start
+ * 
+ * C:\Program Files\IBM\WEX\AppBuilder\wlp\bin\server start AppBuilder
+
+Change history:
+02 April 2015: publish original document
+28 August 2015: add Version 11.0 to the list of affected versions.
+28 April 2017: added instructions for ResultModule/ZooKeeper/AppBuilder

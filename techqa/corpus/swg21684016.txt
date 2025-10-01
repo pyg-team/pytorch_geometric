@@ -1,0 +1,80 @@
+Title: IBM No traffic is being captured in InfoSphere Guardium reports - United States
+
+Text:
+Infosphere Guardium; traffic; missing DB user; TCP; shared memory TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ InfoSphere Guardium captures two types of traffic:
+
+1. TCP/IP or remote traffic is traffic from remote applications to the database server
+2. Shared memory traffic is local traffic generated at the database server
+
+If neither of the above traffic is captured, there may be many factors to consider. 
+
+SYMPTOM
+Partially or fully missing database traffic in reports.
+
+
+RESOLVING THE PROBLEM
+1. Ensure that a ping can be established from database server where S-TAP is installed to Guardium appliance and vise versa:
+
+
+S-TAP to Guardium Appliance ping 
+
+a) login to database server as root 
+
+b) ping <IP address of Guardium appliance> 
+
+c) Ensure that there are no packet loss
+
+
+Guardium Appliance to S-TAP ping 
+
+a) login to Guardium Appliance as CLI user 
+
+b) Execute the command: support ping stap_hosts all 
+
+c) If the IP address of S-TAP hosts is displayed, enter the corresponding number 
+
+d) Enter the hostname of S-TAP host 
+
+e) Ensure the results of the ping have no packet loss 
+
+ 
+
+2. Ensure that the necessary bi-directional ports are enabled for connectivity between S-TAP and Guardium appliance by confirming that Guardium firewall open ports requirements is met:
+
+http://www-01.ibm.com/support/docview.wss?uid=swg21569674 [http://www-01.ibm.com/support/docview.wss?uid=swg21569674]
+
+3. Check S-TAP Status on Guardium Appliance
+
+Launch GUI for the Guardium Appliance
+
+a) Administration Console > Local Taps > S-TAP Control
+b) Check the status of the S-TAP from which traffic is expected:
+
+i) If the status is red, then S-TAP is likely not active on the database server. On Windows database servers, ensure that the STAP services are started. On Unix/Linux database servers, 'ps -ef | grep stap' should confirm if STAP is running. If the STAP is not running, check the STAP installation log to confirm that STAP was installed without any errors. Checking the syslog (Linux/Unix) or event viewer log (Windows) can also be useful at this point.
+
+ii) If the status is green, then S-TAP is likely sending traffic but no information is displayed in reports due to defined policy rules. Go to Administration Console > Configuration > Policy Installation > click on "Edit Installed Policy" button. Confirm that policy rules are defined appropriately such that the traffic of interest is allowed into the appliance and logged.
+
+iii) If the status is flickering between red and green, this is likely a network issue. For example, DNS may not be defined for the hostnames defined in guard_tap.ini file in which case changing the hostnames to IP addresses and restarting S-TAP will resolve the issue. Other times it could be firewall blocking ports (see above).
+
+4. Sometimes the database connections are encrypted (ie. Oracle ASO, MSSQL kerberos). In the case of MSSQL additional steps need to be completed after installing the S-TAP. Please see topic "MS SQL Server Encryption and Kerberos" in the following article:
+
+http://www-01.ibm.com/support/knowledgecenter/SSMPHH_9.1.0/com.ibm.guardium91.doc/stap/topics/windows_s_tap.html?lang=en [http://www-01.ibm.com/support/knowledgecenter/SSMPHH_9.1.0/com.ibm.guardium91.doc/stap/topics/windows_s_tap.html?lang=en]
+
+In the case of Oracle Advanced Security Option (ASO) and other SSL encrypted database traffic, ATAP (application level tapping) needs to be configured in order to decrypt the packets so the content of these packets can be displayed in reports. See "Related URL" section below for specific cases.
+
+5. If none of the above steps helped resolve the issue, please collect S-TAP diag and Guardium Appliance Must Gather and engage IBM Guardium Support:
+
+S-TAP Diag: http://www-01.ibm.com/support/docview.wss?uid=swg21579891 [http://www-01.ibm.com/support/docview.wss?uid=swg21579891]
+Appliance Must Gather: http://www-304.ibm.com/support/docview.wss?uid=swg21624567 [http://www-304.ibm.com/support/docview.wss?uid=swg21624567]
+
+RELATED INFORMATION
+#Configuring ATAP For Oracle Encryption On AIX [http://www-01.ibm.com/support/docview.wss?uid=swg21683739]
+Remote Traffic not logged for SQL Server in Guardium [http://www-01.ibm.com/support/docview.wss?uid=swg21633790]
+Guardium STAP on Windows collects no traffic from Oracl [http://www-01.ibm.com/support/docview.wss?uid=swg21668667]
+Why doesn't the Guardium S-TAP for Oracle collect local [http://www-01.ibm.com/support/docview.wss?uid=swg21567989]
+Guardium fails to collect shared memory traffic from In [http://www-01.ibm.com/support/docview.wss?uid=swg21664479]
+Infosphere Guardium STAP not collecting traffic or Insp [http://www-01.ibm.com/support/docview.wss?uid=swg21660372]
+Guardium is not capturing traffic after kernel update [http://www-01.ibm.com/support/docview.wss?uid=swg21508312]

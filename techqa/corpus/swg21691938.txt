@@ -1,0 +1,22 @@
+Title: IBM Changing the background color of widgets in DASH - United States
+
+Text:
+DASHL2; DASHL2CONF; configure; customize; change ; background; color; widget; DASH TECHNOTE (FAQ)
+
+QUESTION
+ Can the background color of a widget be changed in DASH (Dashboard Application Services Hub)? 
+
+CAUSE
+Customers would like to customize the background color in the DASH widgets.
+
+ANSWER
+Currently, the background color of the widgets in DASH cannot be customized by the customer. 
+
+However, in DASH we do change the background color of the widgets based on the DASH console theme you select. If you select the "dark" theme, the background is changed to a grey to better match the rest of the page. In the other themes, the background is white. 
+
+If changing the background color is important to you, please submit an Enhancement Request. 
+
+For details please see this website: 
+
+Request For Enhancement (RFE) Process: 
+https://www.ibm.com/developerworks/rfe/ [https://www.ibm.com/developerworks/rfe/]

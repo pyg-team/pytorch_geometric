@@ -1,0 +1,27 @@
+Title: IBM Customer requirements answered in CICS 5.4 Tools - United States
+
+Text:
+rfe ; requests for enhancement ; completed ; done; fulfilled ; CICS PA 5.4 5655Y2300 5655Y2301 R540 R54C R54E R54K R54S 5655-Y23 5655Y23 FMID H24D540 J24D54E J24D54K J24D54C J24D54S ; 697CIC00 5697CIC01 R540 R54E R54K 5697-CIC 5697CIC FMID HCCK540 JCCK54E JCCK54KKIXINFO PRODUCT DOCUMENTATION
+
+ABSTRACT
+ This document lists the customer requirements or requests for enhancements (RFEs) that have been delivered in version 5.4 of the IBM CICS Tools products. 
+
+CONTENT
+For more information about each customer requirement that was delivered in V5.4 of the CICS Tools, click on the headline text in the following table(s). This will display the corresponding entry in the IBM Request For Enhancement (RFE) Community [http://www.ibm.com/developerworks/rfe/]*.
+
+
+
+IBM CICS Performance Analyzer for z/OS (CICS PA) V5.4 
+
+
+RFE ID Headline 82551 CSV for summary statistics reports [http://www.ibm.com/developerworks/rfe/execute?use_case=viewRfe&CR_ID=82551] 89215 CICS PA Historical Database (HDB) needs to provide support for data from multiple releases of CICS TS [http://www.ibm.com/developerworks/rfe/execute?use_case=viewRfe&CR_ID=89215] 89308 Add symbolic variable &WW for cyclic datasets [http://www.ibm.com/developerworks/rfe/execute?use_case=viewRfe&CR_ID=89308] 
+IBM CICS Configuration Manager for z/OS (CICS CM) V5.4 RFE ID Headline 79646 Enable ADD and DELETE Commands be added to a DFHCSDUP format export File [http://www.ibm.com/developerworks/rfe/execute?use_case=viewRfe&CR_ID=79646] 82552 Journaling of CICS resource definition changes that are made by using the Resource management utility DFHCSDUP [http://www.ibm.com/developerworks/rfe/execute?use_case=viewRfe&CR_ID=82552] 
+
+* requires (free) IBM developerWorks registration [https://www.ibm.com/developerworks/dwwi/jsp/Register.jsp]. 
+
+For information about how to use RFE to give feedback and ideas for changes and improvements to CICS Tools, see this blog: How to let the team know what you want in CICS - use RFE! [https://www.ibm.com/developerworks/community/blogs/aimsupport/entry/how_to_let_the_team_know_what_you_want_in_cics_use_rfe?maxresults=15&lang=en] 
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Host Transaction Processing CICS Performance Analyzer for z/OS Availability z/OS 5.4 Host Transaction Processing CICS Configuration Manager for z/OS Availability z/OS 5.4 PRODUCT ALIAS/SYNONYM
+ CICSPA CICS PA

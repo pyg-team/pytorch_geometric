@@ -1,0 +1,110 @@
+Title: IBM Collecting Data:  ITCAM for WebSphere Messaging - United States
+
+Text:
+5724K350CTR; 5724K350CMGX; 5724K3500TR; 5724K3500MGX; 5724V09FETR; 5724V09FEMGX; 5724N13MBTR; 5724N13MBMGX; MustGatherDocument; SupportLandingPageChildren TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Collecting Data documents for ITCAM for WebSphere Messaging agents (mc, mq, m6, qi) 
+
+DIAGNOSING THE PROBLEM
+Collecting Data documents for Messaging Agents used to aid problem determination and reduce time resolving Problem Management Records (PMRs)
+
+RESOLVING THE PROBLEM
+ 
+
+Identifying the problem To research the problem prior to submitting a PMR start with these pre-filtered searches 
+
+Search Hints:  * Do not use New Search, use search within the existing search, add your own search criteria, use 'back' in your browser to move around 
+ * Right click on link to launch in new tab to reference back to this doc 
+ * You may have to launch the Support Portal Search a second time if 0 results occur on the first attempt 
+   
+   WebSphere MQ Configuration Agent 
+   (mc) 5724K350C APARS and Fixes (Portal Search) [https://www.ibm.com/support/entry/myportal/search_results/software/tivoli/tivoli_composite_application_manager/tivoli_composite_application_manager_for_microsoft_applications?sn=spe&q=5724K350C&filter=language:en&productContext=-1419546764]
+   
+   DCF Solutions (Portal Search) [https://www-947.ibm.com/support/entry/myportal/search_results/tivoli/tivoli_composite_application_manager/tivoli_composite_application_manager_for_microsoft_applications?sn=spe&q=5724K350CTR&filter=language:en&productContext=-1419546764] 
+   
+   PMR Searches for IBMers (Wellspring search) [http://eclient.lenexa.ibm.com:9082/search/?q=5724K350C&start=0&selfilt=&tp=&sortkey=source&sortdir=Descending&xqterm_mod=&num=20&details=Hide+All&filter=source.PMR&filter=source.APAR&filter=source.CRM&filter=source.TechNote&filter=source.TechDoc] WebSphere MQ Monitoring Agent 
+   (mq) 5724K3500 APARS and Fixes (Portal Search) [https://www.ibm.com/support/entry/myportal/search_results/software/tivoli/tivoli_composite_application_manager/tivoli_composite_application_manager_for_microsoft_applications?sn=spe&q=5724K3500&filter=language:en&productContext=-1419546764]
+   
+   DCF Solutions (Portal Search) [https://www.ibm.com/support/entry/myportal/search_results/tivoli/tivoli_composite_application_manager/tivoli_composite_application_manager_for_microsoft_applications?sn=spe&q=5724K3500TR&filter=language:en&productContext=-1419546764] 
+   
+   PMR Searches for IBMers (Wellspring search) [http://eclient.lenexa.ibm.com:9082/search/?q=5724K3500&start=0&selfilt=&tp=&sortkey=source&sortdir=Descending&xqterm_mod=&num=20&details=Hide+All&filter=source.PMR&filter=source.APAR&filter=source.CRM&filter=source.TechNote&filter=source.TechDoc] WebSphere MQ File Transfer Agent 
+   (m6) 5724V09FE APARS and Fixes (Portal Search) [https://www.ibm.com/support/entry/myportal/search_results/software/tivoli/tivoli_composite_application_manager/tivoli_composite_application_manager_for_microsoft_applications?sn=spe&q=5724V09FE&filter=language:en&productContext=-1419546764]
+   
+   DCF Solutions (Portal Search) [https://www.ibm.com/support/entry/myportal/search_results/tivoli/tivoli_composite_application_manager/tivoli_composite_application_manager_for_microsoft_applications?sn=spe&q=5724V09FETR&filter=language:en&productContext=-1419546764] 
+   
+   PMR Searches for IBMers (Wellspring search) [http://eclient.lenexa.ibm.com:9082/search/?q=5724V09FE&start=0&selfilt=&tp=&sortkey=source&sortdir=Descending&xqterm_mod=&num=20&details=Hide+All&filter=source.PMR&filter=source.APAR&filter=source.CRM&filter=source.TechNote&filter=source.TechDoc] WebSphere Message Broker Monitoring Agent 
+   (qi) 5724N13MB APARS and Fixes (Portal Search) [https://www.ibm.com/support/entry/myportal/search_results/software/tivoli/tivoli_composite_application_manager/tivoli_composite_application_manager_for_microsoft_applications?sn=spe&q=5724N13MB&filter=language:en&productContext=-1419546764]
+   
+   DCF Solutions (Portal Search) [https://www.ibm.com/support/entry/myportal/search_results/tivoli/tivoli_composite_application_manager/tivoli_composite_application_manager_for_microsoft_applications?sn=spe&q=5724N13MBTR&filter=language:en&productContext=-1419546764] 
+   
+   PMR Searches for IBMers (Wellspring search) [http://eclient.lenexa.ibm.com:9082/search/?q=5724N13MB&start=0&selfilt=&tp=&sortkey=source&sortdir=Descending&xqterm_mod=&num=20&details=Hide+All&filter=source.PMR&filter=source.APAR&filter=source.CRM&filter=source.TechNote&filter=source.TechDoc] L3 and Developers Wiki
+   for mc, mq, and qi [https://www.ibm.com/developerworks/community/wikis/home?lang=en#!/wiki/Tivoli%20Composite%20Application%20Manager/page/ITCAM%20Agents%20for%20WebSphere%20Messaging]
+   L3 and Developers Wiki [https://www.ibm.com/developerworks/community/wikis/home?lang=en#!/wiki/Tivoli%20Composite%20Application%20Manager/page/ITCAM%20Agents%20for%20WebSphere%20Messaging] 
+
+
+
+Gather Documentation  1. Stop the agent 
+ 2. Set RAS1 trace settings below 
+ 3. Reconfigure the agent 
+ 4. Recreate problem and take screen print of issue 
+ 5. Process <install path>/bin/tacmd pdcollect from the command line 
+    
+
+Send the pdcollect jar/tar file, screen prints, and all useful environmental information to the PMR 
+
+ITCAM Agent Trace Settings 
+ * Update the Agent environment file:
+ * Windows 
+ * For 32 bit agent: <install path>\TMAITM6\K<pc>ENV 
+ * For 64-bit agent: <install path>\TMAITM6_x64\K<pc>ENV 
+ * Unix/Linux 
+ * <install path>/config/<pc>.ini 
+   
+   i5/OS
+   For MC agent: KMCTMP/KMSPARM(KBBENV)
+   Trace log will be generated in KMCTMP\KMCAGENT<nn>
+   
+   For MQ agent: KMQTMP/KMSPA<suffix>(KBBENV)
+   Trace log will be generated in KMQTMP\KMQ<suffix><nn>
+   
+   Note: 
+   <pc> is the two-character product code, i.e. mc, mq, m6 and qi.
+   <suffix> is the suffix id, e.g. 00001, 00002.
+   <nn> is the log number, i.e. 01, 02 and 03.
+   
+ * Set trace values for KBB_ RAS1 and KBB_RAS1_LOG 
+ *  KBB_RAS1 set the following for detailed trace option
+   For mc agent:
+   KBB_RAS1=ERROR (UNIT:kcf ALL) (UNIT:kmc ALL)
+   
+   For mq agent:
+   KBB_RAS1=ERROR (UNIT:kmq ALL) (UNIT:kra ALL)
+   
+   For qi agent:
+   KBB_RAS1=ERROR (UNIT:kqia ALL) (UNIT:kqij ALL)
+   
+   For m6 agent:
+   KBB_RAS1=ERROR (UNIT:km6 ALL) 
+ *  KBB_RAS1_LOG set the following for more and larger log files
+   COUNT=05 LIMIT=10 PRESERVE=1 MAXFILES=9 
+ * 
+ * 
+ * 
+ * troubleshooting guide 
+ * 
+
+
+
+
+Delivering Collected Data​​ Upload files using the http://www.ecurep.ibm.com/app/upload [http://www.ecurep.ibm.com/app/upload] website along with the PMR number. 
+Or upload files for review to the following FTP site: ftp.ecurep.ibm.com. Log in as anonymous and place your files in the directory that corresponds to the IBM Tivoli Monitoring component that you use. RELATED INFORMATION
+ ITCAM for Websphere Messaging Troubshooting guide pdf [https://www.ibm.com/developerworks/community/groups/service/html/communityview?communityUuid=0587adbc-8477-431f-8c68-9226adea11ed#fullpageWidgetId=W42ce7c6afdb9_42c2_a9ea_e1ba310bea8c&file=ca1c064b-6ebf-4a88-b7df-c61c9dea5268]
+Exchanging information with IBM support [http://www.ibm.com/software/support/exchangeinfo.html?ibmsst=allSupport]
+Collecting Data: ITCAM for Applications [http://www.ibm.com/support/docview.wss?uid=swg21568133]
+
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ itcam for applications

@@ -1,0 +1,131 @@
+Title: IBM OW57262: DM RELEASE 4.1 AND TBSM 1.5 COMPATABILITY APAR - United States
+
+Text:
+AIX SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS UNREPRODUCIBLE.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Customer is attempting to use DM release 4.1 with TBSM release
+   1.5.  When a TEC event comes in the name field shows N/A
+   instead of valid information.  Also if you look at the
+   properties for this event, the TMR number (for the 1st instance
+   of an endpoint) will be TMR_ (default).
+   This apar is being taken to insure that TBSM will accept feeds
+   from DM 4.1 withhout the need of a generic interface.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All TBSM users with ITM 4.1 and above.       *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: DM 3.7 and ITM 4.1/5.1 have a different *
+   *                      architecture with regards to the slots  *
+   *                      that they use in their TEC events,      *
+   *                      therefore using ihstztec with an ITM    *
+   *                      event did not result in a usable event  *
+   *                      for TBSM.                               *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   Ihstztec needs to map the ITM slots to those used by DM inorder
+   to provide acceptable information to TBSM.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *  This problem is resolved with TBSM version 2.1.1.
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   OW57262
+   
+   
+ * REPORTED COMPONENT NAME
+   TIVOLI BSM OS/
+   
+   
+ * REPORTED COMPONENT ID
+   5698BSM00
+   
+   
+ * REPORTED RELEASE
+   20D
+   
+   
+ * STATUS
+   CLOSED UR3
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2002-11-12
+   
+   
+ * CLOSED DATE
+   2003-06-30
+   
+   
+ * LAST MODIFIED DATE
+   2003-06-30
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TIVOLI BSM OS/
+   
+   
+ * FIXED COMPONENT ID
+   5698BSM00
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R20D PSN
+   UP

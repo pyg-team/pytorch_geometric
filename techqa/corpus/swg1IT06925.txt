@@ -1,0 +1,171 @@
+Title: IBM IT06925: WEBSPHERE MQ: "AMQ5534: USER ID '' AUTHENTICATION FAILED" EVEN THOUGH THE USER ID AND PASSWORD ARE CORRECT. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  An application connecting in client mode may get an error
+   MQRC_NOT_AUTHORIZED (2035) returned to it incorrectly.
+   The error does not happen every time, and may occur when there
+   is an increasing MQ workload.
+   
+   The following three messages are written in queue manager error
+   log file when the application receives the MQRC_NOT_AUTHORIZED:
+   
+   
+   AMQ5534: User ID '' authentication failed
+   and
+   AMQ5542: The failed authentication check was caused by the queue
+   manager
+   CONNAUTH CHCKCLNT(REQUIRED) configuration.
+   and
+   AMQ9557: Queue Manager User ID initialization failed for '...'.
+   
+   The errors detailed above do not occur if Connection
+   Authentication is disabled.
+   
+   MQ trace likely to show incorrect user IDs(e.g. blank user id or
+   part of the user idn etc) during the failure.
+   
+   additional keywords: AUTHINFO CHCKLOCL
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Disabling connection authentication and/or shared conversation
+   likely to workaround this problem.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   Users using MQ client applications connecting to MQ v8 queue
+   manager with SHARECNV > 1 and connection authentication enabled.
+   
+   
+   Platforms affected:
+   MultiPlatform
+   
+   ****************************************************************
+   PROBLEM DESCRIPTION:
+   This problem occurred because the user id and password were not
+   set up correctly when using shared conversation.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  MQ has been modified to set up the user Id and password
+   correctly when using shared conversation.
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+   Version    Maintenance Level
+   v8.0       8.0.0.3
+   
+   The latest available maintenance can be obtained from
+   'WebSphere MQ Recommended Fixes'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037]
+   
+   If the maintenance level is not yet available information on
+   its planned availability can be found in 'WebSphere MQ
+   Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT06925
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ BASE MULTIP
+   
+   
+ * REPORTED COMPONENT ID
+   5724H7251
+   
+   
+ * REPORTED RELEASE
+   800
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-02-03
+   
+   
+ * CLOSED DATE
+   2015-04-09
+   
+   
+ * LAST MODIFIED DATE
+   2015-04-09
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ BASE MULTIP
+   
+   
+ * FIXED COMPONENT ID
+   5724H7251
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R800 PSY
+   UP

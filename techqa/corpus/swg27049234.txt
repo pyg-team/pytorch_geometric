@@ -1,0 +1,89 @@
+Title: IBM StoredIQ for Legal Version 2.0.3 Release Notes - United States
+
+Text:
+ RELEASE NOTES
+
+ABSTRACT
+ IBM StoredIQ for Legal Version 2.0.3 is available. Compatibility, installation, and other getting-started issues are addressed in these release notes. 
+
+CONTENT
+Description
+
+
+IBM StoredIQ for Legal enables you to automate your legal hold notification and compliance process, and to optimize your preservation and collection process.
+
+
+Announcement 
+
+The IBM StoredIQ for Legal Version V2.0.3 announcement is available here [http://www.ibm.com/common/ssi/ShowDoc.wss?docURL=/common/ssi/rep_ca/3/897/ENUS216-493/index.html] [http://www.ibm.com/common/ssi/rep_ca/7/649/ENUSA13-0107/index.html]. See the announcement for the following information: 
+
+ * Detailed product description 
+ * Product-positioning statement 
+ * Packaging and ordering details
+
+
+For more information about V2.0.3, see What's new in StoredIQ for Legal V2.0.3 [http://www.ibm.com/support/knowledgecenter/SSZL2P_2.0.3/KC_ditamaps/whatsnew.dita] and Download IBM StoredIQ for Legal V2.0.3 [http://www.ibm.com/support/docview.wss?uid=swg24042988].  
+
+System requirements 
+
+For information about hardware and software requirements, see system requirements [http://www.ibm.com/support/knowledgecenter/SSZL2P_2.0.3/com.ibm.biq.install.doc/sw_comp_reports.dita].
+
+
+Current limitations 
+
+At the time of publication the following limitations were known: 
+
+
+A COURTESY COPY RECIPIENT MUST BE REMOVED TO BE ADDED AS A CUSTODIAN
+When a person is added as a CC recipient to a notice, that person cannot be added as a custodian to that same notice. The person must be removed from the CC list first in order to be added as a custodian. If that person already received an initial notice as a CC recipient before being added as a custodian, then that person will not receive the same initial notice as a custodian (only the follow-ups and reminders), but can respond using a follow-up notice.
+
+ASCII BASED SORTING IN UPGRADED CLIENTS
+Although the new StoredIQ for Legal 2.0.3 client uses case-insensitive lexical sorting, clients migrated from earlier versions will continue to use case sensitive sorting based on the numeric character value.
+
+BUILT-IN ATTRIBUTES RENAMED IN VERSION 2.0.3 
+
+ * "Login ID" for the person entity changed to "Signin ID" 
+ * "Unique ID" for the matter entity changed to "External ID"
+
+Note that your existing attribute labels are not migrated automatically. Recommendation: From the custom attribute panel, you can manually rename your existing attribute labels accordingly; but this is optional and has no functional impact. 
+
+CUSTODIANS IMPORTED SUCCESSFULLY MISSING A REASON 
+During the import of a custodian, the "reason" field for the succeeded imported custodian does not display in the client. 
+
+MESSAGE EDITOR LIMITATIONS  * When underlining text and modifying the text color, sometimes the color is not applied to the underline. 
+ * When pasting indented or list content into the editor, the formatting might disappear. 
+ * When pasting underlined text into the editor, some underline formatting might disappear. 
+ * When pasting content at bottom of the editor, the screen jumps to top of the editor section. 
+ * Sometimes if you select two columns and delete, only one of the columns is deleted. 
+ * Sometimes inserting or deleting rows or columns in a table that contains a nested table fails 
+ * Sometimes if you bold the last line of a list, the first item of the next list gets bolded too.System variables do not show formatting of the applied style.
+
+Workarounds to known issues 
+
+The following workarounds to known issues are available:
+
+UPGRADE MIGHT FAIL WHEN ILGADMIN PASSWORD CONTAINS NON-ASCII CHARACTERS
+Before upgrading from a prior version of StoredIQ for Legal, make sure the password of the ILGADMIN user contains only ASCII characters. After the successful upgrade to StoredIQ for Legal V2.0.3 you can reset the password and use any UTF-8 character as part of the password.
+
+FAILED IMPORTS MIGHT NOT DISPLAY FOR CSV FILES EXCEEDING 1000 RECORDS
+If you import CSV files with more than 1000 records, the failed imports might exceed the display window in the client. As a workaround, click the Download Errors button to export a file that contains all of the failed imports including their details and reasons for failure.
+
+CUSTODIANS THAT CANNOT SIGN IN TO STOREDIQ FOR LEGAL CAN BE ADDED TO AN INTERVIEW
+If you have people in the system that cannot sign in to StoredIQ for Legal, they still can be added as custodians to an interview. However, when these custodians click the interview link in the notification email, they cannot sign in to StoredIQ for Legal to answer the interview. StoredIQ for Legal currently does not prevent adding those custodians to an interview. To avoid accidental assignment of such custodians to interviews, you should add the column "Can Sign in" to the people picker list that is displayed in interviews. That way users can verify whether all people that receive the interview can sign in.
+
+MATTER IMPORT REQUESTS REQUIRE THE MANAGE MATTER PRIVILEGE
+A user requires the Manage Matter privilege to import matters into StoredIQ for Legal. The default system administrator ID (ilgadmin) will fail with the following error message: "There is no item of type matter corresponding to the provided ID 22." You should create a dedicated user for import with the Manage Matter privilege.
+
+RESTART THE DOCKER MANUALLY IF YOU COULD NOT STOP OR RESTART THE APPLICATION SERVER DURING BIRT REPORT GENERATION
+Stopping or restarting the StoredIQ for Legal application server might not succeed while scheduled BIRT report generation is going on in the background. As a workaround, restart the docker container ilg_sol_plugin using the command "docker restart ilg_sol_plugin".
+
+USE ASCII CHARACTERS ONLY FOR ATTACHMENT FILE NAMES
+File names of attachments for notices and interviews should only contain ASCII characters, due to a known limitation that non-ASCII character representations are truncated to a single byte representation.
+
+PASTING FROM WORD CREATES AN INVALID LINK IN THE MESSAGE EDITOR
+When pasting an image from a Microsoft Word document, Internet Explorer V11 creates an invalid link. As a workaround, 1. Create a new Word document and copy the header and content area of the original word document. 2. Select all content in a new document, and paste it into rich text area of the StoredIQ for Legal message editor.
+
+
+Documentation updates 
+
+To view updates to the IBM StoredIQ for Legal V2.0.3 documentation, see the IBM StoredIQ for Legal in IBM Knowledge Center [http://www.ibm.com/support/knowledgecenter/SSZL2P_2.0.3].

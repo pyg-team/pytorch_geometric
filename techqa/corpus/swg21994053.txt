@@ -1,0 +1,23 @@
+Title: IBM Action required for IBM Integration Bus Hypervisor Edition V9.0 and WebSphere Message Broker Hypervisor Edition V8.0 for security vulnerabilities in Red Hat Linux (CVE-2016-8610, CVE-2016-6323) - United States
+
+Text:
+ FLASH (ALERT)
+
+ABSTRACT
+ IBM Integration Bus Hypervisor Edition V9.0 and WebSphere Message Broker Hypervisor Edition V8.0 require customer action for security vulnerabilities in Red Hat Linux. 
+
+CONTENT
+IBM Integration Bus Hypervisor Edition V9.0 and WebSphere Message Broker Hypervisor Edition V8.0 ship with versions of Red Hat Enterprise Linux (RHEL) Server that are vulnerable to CVE-2016-8610 and CVE-2016-6323. 
+
+IBM Integration Bus Hypervisor Edition V9.0 and WebSphere Message Broker Hypervisor Edition V8.0 ship with Red Hat Enterprise Linux (RHEL) Server 6.2.
+
+Remediation: 
+
+IBM strongly recommends that you contact Red Hat to obtain and install fixes for Red Hat Enterprise Linux (RHEL) Server 6.2, as applicable.
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration WebSphere Message Broker Hypervisor Edition Linux 8.0 
+PRODUCT ALIAS/SYNONYM
+ WMB HVE IIB HVE

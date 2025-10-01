@@ -1,0 +1,177 @@
+Title: IBM IC76101: CLIENT GUI IS UNABLE TO DISPLAY ALL VMWARE VCB BACKUPS AFTER THE NODE WAS EXPORTED - United States
+
+Text:
+AIX  A FIX IS AVAILABLE
+IBM Tivoli Storage Manager (TSM) Client 6.1.5 Downloads and READMEs [http://www-01.ibm.com/support/docview.wss?uid=swg24031696]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Using the IBM Tivoli Storage Manager Client GUI to restore a
+   virtual machine with "Restore VM" option, the restore window may
+   not display information about all VCB backups for virtual
+   machines that were taken. This can happen after exporting the
+   client node using EXPORT NODE
+   operation due to missing local data containers. If this
+   information cannot be retrieved from the server, the client
+   fails to make the correct list of all vm backups. This happens
+   when connecting to the target Tivoli Storage Manager server.
+   Connecting to the source server works fine.
+   
+   Platforms and versions affected:
+   Tivoli Storage Manager client 6.2
+   
+   Initial Impact:
+   Low
+   
+   Additional Keywords:
+   tsm client vstor vcb zz62 vm vstorage
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Use a point-in-time restore or connect to the original/source
+   server if available.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: Backup-archive client versions 6.1 and 6.2   *
+   *                 running on all Microsoft Windows platforms   *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: See ERROR DESCRIPTION                   *
+   ****************************************************************
+   * RECOMMENDATION: Apply fixing level when available. This      *
+   *                 problem is currently projected to be fixed   *
+   *                 in levels 6.2.4 and 6.1.5. Note that until   *
+   *                 the fixing levels are available, this        *
+   *                 information is subject to change at the      *
+   *                 discretion of IBM.                           *
+   ****************************************************************
+   The problem occurs when display VCB display info is missing
+   from the server, e.g. after EXPORT NODE which is fixed under
+   server APAR IC76420 [http://www-01.ibm.com/support/docview.wss?uid=swg1IC76420].
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The backup-archive client now checks if the VCB display info
+   is present.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC76101
+   
+   
+ * REPORTED COMPONENT NAME
+   TSM CLIENT
+   
+   
+ * REPORTED COMPONENT ID
+   5698ISMCL
+   
+   
+ * REPORTED RELEASE
+   62W
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-05-03
+   
+   
+ * CLOSED DATE
+   2011-05-27
+   
+   
+ * LAST MODIFIED DATE
+   2011-05-27
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  DSMJ
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TSM CLIENT
+   
+   
+ * FIXED COMPONENT ID
+   5698ISMCL
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R61D PSY
+   UP
+   
+   
+ * R61F PSY
+   UP
+   
+   
+ * R61W PSY
+   UP
+   
+   
+ * R62W PSY
+   UP

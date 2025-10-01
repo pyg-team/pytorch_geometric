@@ -1,0 +1,27 @@
+Title: IBM InfoSphere Information Server Pack for JD Edwards EnterpriseOne product documentation - United States
+
+Text:
+ds85relnotes DataStage Pack for JD Edwards EnterpriseOne PDF documentation PRODUCT DOCUMENTATION
+
+ABSTRACT
+ This document includes links to the documentation for IBM InfoSphere Information Server Pack for JD Edwards EnterpriseOne. 
+
+CONTENT
+All of the documentation is available in the product installation package.
+
+
+Books with form numbers that begin with LC can be purchased in printed form by customers with a valid product license. These books can not be viewed online or downloaded (other than from the product installation package or from the PDF CD). Use the "Order PDF" link in the right-hand column to order the book. 
+
+
+
+Publication Title and 
+Form Number Description Link to PDF File IBM InfoSphere Information Server Pack for JD Edwards EnterpriseOne Quick Start Guide
+
+Form number: n/a Provides a roadmap for preparing for and installing IBM InfoSphere Information Server Pack for JD Edwards EnterpriseOne. View PDF [http://www.ibm.com/support/docview.wss?uid=swg27012659] IBM WebSphere DataStage Integration Guide for IBM WebSphere DataStage Pack for JD Edwards EnterpriseOne
+
+Form number:
+LC18-9951 The integration guide details data integration between WebSphere DataStage and JD Edwards EnterpriseOne. Order PDF [http://www.elink.ibmlink.ibm.com/publications/servlet/pbi.wss?SSN=09EKR0001884465956&FNC=PBL&PBL=LC18-9951-02] 
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Information Management InfoSphere Information Server

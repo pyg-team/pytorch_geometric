@@ -1,0 +1,180 @@
+Title: IBM PI28139: MQSISTOP/STARTMSGFLOW COMMANDS WITH UNAUTHORIZED USER SUCCEED - United States
+
+Text:
+z/os SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When using the mqistartmsgflow and mqsistopmsgflow commands to
+   start and stop an execution group (EG) with broker
+   administration
+   security enabled, the user must have execute access on the EG
+   specific SYSTEM.BROKER.AUTH.EG queue. If this queue does not
+   exist, then
+   the following BIP2853E and BIP2865E messages will be logged, but
+   the execution group will still be started or stopped.
+   
+    +BIP2853E (Msg 1/2) MQ10BRK 28 THE BROKER WAS UNABLE TO CHECK
+    AUTHORIZATION FOR USER 'CLAPPER ' (SUBCOMPONENT 'EG1'). THE
+   REQUEST HAS BEEN REJECTED OWING TO THIS ERROR, EVEN THOUGH THE
+   USER MAY IN FACT BE AUTHORIZED.
+   
+    +BIP2865E (Msg 2/2) MQ10BRK 28 AUTHORIZATION CHECK FAILED FOR
+   USER 'CLAPPER ' SUBCOMPONENT 'EG1' BECAUSE A REQUIRED WEBSPHERE
+   MQ QUEUE 'SYSTEM.BROKER.AUTH.EG1' WAS NOT FOUND.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  n/a
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   All users of WebSphere Message Broker V8.0 and IBM Integration
+   Bus V9.0 using the mqsistopmsgflow and mqsistartmsgflow commands
+   with broker administration security enabled.
+   
+   
+   Platforms affected:
+   z/OS, MultiPlatform
+   
+   ****************************************************************
+   PROBLEM DESCRIPTION:
+   When using the mqistartmsgflow and mqsistopmsgflow commands to
+   start and stop an execution group (EG) with broker
+   administration security enabled, the user must have execute
+   access on the EG specific SYSTEM.BROKER.AUTH. queue. If this
+   queue does not exist, then BIP2853E and BIP2865E messages will
+   be logged explaining the failure, however, the execution group
+   will still be started or stopped.
+   
+   There are a number of resource name changes between WebSphere
+   Message Broker and IBM Integration Bus Version 9.0. For details
+   visit
+   http://www-01.ibm.com/support/knowledgecenter/SSMKHH_9.0.0/com.i
+   bm.etools.mft.doc/bb23814_.htm [http://www-01.ibm.com/support/knowledgecenter/SSMKHH_9.0.0/com.ibm.etools.mft.doc/bb23814_.htm]
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The execution group is no longer started/stopped if the user
+   fails the authorisation check on the SYSTEM.BROKER.AUTH. queue
+   when starting/stopping the execution group using the
+   mqsistart/stopmsgflow commands.
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+   Version    Maintenance Level
+   v8.0       8.0.0.6
+   v9.0       9.0.0.4
+   
+   The latest available maintenance can be obtained from:
+   http://www-01.ibm.com/support/docview.wss?rs=849&uid=swg27006041 [http://www-01.ibm.com/support/docview.wss?rs=849&uid=swg27006041]
+   
+   If the maintenance level is not yet available,information on
+   its planned availability can be found on:
+   http://www-1.ibm.com/support/docview.wss?rs=849&uid=swg27006308 [http://www-1.ibm.com/support/docview.wss?rs=849&uid=swg27006308]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI28139
+   
+   
+ * REPORTED COMPONENT NAME
+   WEB MB Z/OS
+   
+   
+ * REPORTED COMPONENT ID
+   5697P4400
+   
+   
+ * REPORTED RELEASE
+   800
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-10-22
+   
+   
+ * CLOSED DATE
+   2015-09-09
+   
+   
+ * LAST MODIFIED DATE
+   2015-09-16
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEB MB Z/OS
+   
+   
+ * FIXED COMPONENT ID
+   5697P4400
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R800 PSY
+   UP

@@ -1,0 +1,21 @@
+Title: IBM Configuring the Session timeout with CLM applications - United States
+
+Text:
+RTC; session timeout; WAS; CCM TECHNOTE (FAQ)
+
+QUESTION
+ How do you configure the session timeout when deploying CLM Applications on WebSphere? 
+
+CAUSE
+Administrators prefer to have their users timed out after certain periods of time for security purposes.
+
+ANSWER
+The current session timeout is hardcoded into the application for 6 hours. Due to a defect APAR PM88221, the session timeout cannot be changed when deploying the applications on WebSphere. 
+
+
+For more information on this defect, planned to be resolved in 4.0.4, see jazz.net Defect 263315: Excessive use of HttpServletRequest.getSession() causes expired sessions to be ignored render WAS session configuration useless [https://jazz.net/jazz/web/projects/Jazz%20Foundation#action=com.ibm.team.workitem.viewWorkItem&id=263315] 
+
+ 
+
+Leverage the Jazz Community The Jazz based products have an active community that can provide you with additional resources. Browse and contribute to the User forums, contribute to the Team Blog and review the Team wiki.
+Refer to technote 1319600 [http://ibm.com/support/docview.wss?uid=swg21319600] for details and links.

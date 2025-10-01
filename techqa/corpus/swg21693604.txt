@@ -1,0 +1,81 @@
+Title: IBM 5.2.0.0-ISS-XGS-All-Models-Hotfix-FP0006 - United States
+
+Text:
+5.2.0.0-ISS-XGS-All-Models-Hotfix-FP0006l 5.2.0.0; FP6; FixPack; XGS; All Models TECHNOTE (FAQ)
+
+QUESTION
+ What fixes are included in 5.2.0.0-ISS-XGS-All-Models-Hotfix-FP0006? 
+
+ANSWER
+Abstract:
+Network Security Protection (XGS)
+Fixpack version: FP0006
+Applicable versions: 5.2
+
+Problems resolved:
+- Delivers security fixes to date. Please visit
+http://www-947.ibm.com/support/entry/portal/support [http://www-947.ibm.com/support/entry/portal/support] to view security
+bulletins for this product.
+- 63628: Fix issue with LACP Down.
+- 56147: Fix issue with snapshot upload not working for some browser configurations.
+- 61293: Fix adapter configuration for ips event filter rules.
+- 59564: Fix issue for not able to add ICMP into restriction tab for Non-Web Object
+in NAP rules.
+- 49196: Fix issue for not able to save customized schedule security setting policy
+in SP for Windows OS Language that doe not support the 12-hour notation
+(AM/PM) conversion.
+e.g Japanese
+NOTE: Patch in SiteProtector-XGS-Schedule-Security-Settings-Fix folder
+
+Previous Fixes:
+- Fixes an issue where XGS fails to post events to SP.
+- Fixes an Exception on License and Updates Overview page that does not
+load page when all protection interfaces disabled.
+- Corrects aplsd crash
+- Add DCA lookup logging
+- Corrects pktcapd restart race condition which prevents NAP rule from being
+changed.
+- Fix kernel panic
+- Quarantine rules are not added in response to non-sequitur events (Network
+sweeps, scans and flood events) that have quarantine responses enabled.
+- Quarantine rules are added in response to events that are detected in
+Monitoring mode (IDS mode), even though quarantine responses are not
+applicable in Monitoring mode.
+- Improvements to hardware bypass to prevent a crash on exit under certain
+conditions.
+- PAM XPU 34.070 (July 2014) breaks Domain Certificate Object matching in
+Network Access and SSL Inspection rules.
+- Update to hardware bypass to allow for continued operation of the bypass
+modules if an internal error occurs.
+- Fixes the command line interface to display DHCP acquired management IP
+addresses.
+- Fixes Inbound SSL decryption failures related to error message "No Error
+Set."
+- Fixes an internal error that can occur while processing TLS/SSL traffic.
+- Optimizations to decrease packet latency.
+- Fixes an internal error that can occur when processing TLS or SSL traffic.
+- Fixes an intermittent issue that displays Top 10 Applications as Unknown
+when the application is known.
+- Replaces application database recovery files that were not migrated when
+updating from 5.1.2 to 5.2.
+- Fixes the status of the Application Control license.
+- Fix to preserve the IP Reputation license when the Application License is
+removed
+
+Modules impacted:
+- Pktcapd, SSL, Kernel, LACP, MSL, LMI, SiteProtector
+
+Notes:
+- After applying fixpack, a reboot is required for the changes made by the fixpack to apply
+- Clear the browser cache on any browsers used to manage the appliance.
+- If the Event Id GLGSY0038W appears in your System Events Event Log, then
+the operating system is experiencing a temporary failure. However, the
+appliance is still protecting your network. Contact IBM Support for
+assistance.
+
+
+
+
+
+
+[/support/docview.wss?uid=swg21693604&aid=1] [https://ibm.biz/BdHdZx] [/support/docview.wss?uid=swg21693604&aid=2] [http://ibm.biz/InfraSecForumTechnote] [/support/docview.wss?uid=swg21693604&aid=3] [http://ibm.biz/SecSuptUTube] [/support/docview.wss?uid=swg21693604&aid=4] [http://ibm.biz/InfraSecFixes] [/support/docview.wss?uid=swg21693604&aid=5] [http://ibm.biz/FlexLicLogin] [/support/docview.wss?uid=swg21693604&aid=6] [http://ibm.biz/MyNotification] [/support/docview.wss?uid=swg21693604&aid=7] [http://ibm.biz/ContactSecSupport]

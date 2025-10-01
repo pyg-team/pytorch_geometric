@@ -1,0 +1,222 @@
+Title: IBM PK22231: CICS BRIDGE ABENDS AT STARTUP WITH 5C6-00D4F002 - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When the new V6 CICS Bridge is started
+   the following sequence of messages
+   appear:-
+   >>>>>>
+   CSQC700I CKBR 0000606 IBM WebSphere MQ for z/OS V6 - CICS bridge
+   CSQC725I CKBR 0000606 Messages on bridge queue are not
+   persistent by
+   default
+   CSQC755E CKBR 0000606 Bridge queue is not shareable
+   CSQC762I CKBR 0000606 Queue name CICS01.BRIDGE.QUEUE
+   <<<<<<<<<<
+   And repeats 64 times then MQ Abends
+   5C6-00D4F002-CSQM_ABEND_DEBUG_2
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Change attributes of CICS Bridge Queue to Shareable which will
+   prevent the CICS Monitor Task (CKBR) from looping. Also when
+   the Bridge queue is Disposition = SHARED then ensure that
+   the attribute INDEX TYPE = C.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All users of WebSphere MQ for z/OS Version 6 *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: When the new V6 CICS Bridge is started  *
+   *                      the following sequence of messages      *
+   *                      appear:-                                *
+   *                      +CSQC700I CKBR IBM WebSphere MQ for     *
+   *                                        z/OS V6 - CICS bridge *
+   *                      +CSQC725I CKBR Messages on bridge queue *
+   *                                are not persistent by default *
+   *                      +CSQC766I CKBR Bridge queue not defined *
+   *                                      with INDXTYPE(CORRELID) *
+   *                      +CSQC755E CKBR Bridge queue is not      *
+   *                                                    shareable *
+   *                      +CSQC762I CKBR Queue name XXXXX.XXXXXXX *
+   *                      .                                       *
+   *                      And repeats 64 times then MQ Abends     *
+   *                      5C6-00D4F002                            *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   In the problem the sequence of events is:
+   1 Cics Bridge gets triggered
+   2 The bridge queue is opened successfully but....
+   3 Its been incorrectly defined and .....
+   4 Cics task ends and the Bridge Queue is closed
+   5 As per Triggering Rules MQ generates a free trigger message.
+   6 Go to 1.
+   After 64 repetitions the indices are exhausted and the monitor
+   abends 00D4F002.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  At OPEN the monitor is aware of the invalid queue attributes :-
+   1. Permit shared access  = N and/or
+   2. Index type  . . . . . = N when the Queue Disposition
+                                               = SHARED
+   and will issue
+      CSQC766I Bridge queue not defined with INDXTYPE(CORRELID)
+   and/or
+      CSQC755E Bridge queue is not shareable
+   .
+   After the first OPEN attempt the monitor has been changed to:-
+   1. GET Disable the trigger queue to stop any trigger loop.
+   2. Issue CSQC712I CKBR 0000610 Bridge quiescing
+      Message and Codes will be updated for the above message:-
+    Explanation: The bridge queue has been GET(DISABLED) and the
+    bridge monitor will now quiesce because the attributes of the
+    bridge queue are incorrect.
+   3. Issue CSQC713I CKBR Bridge terminated normally
+   4. Terminate the CKBR task
+   In this way the OPEN loop is avoided and the indices remain
+   unused.
+   The Websphere MQ Messages and Codes (GC34-6602-00 ), chapter 1
+   CICS adapter messages (CSQC). Message CSQC712I will be changed.
+   ...............................................................
+   Message CSQC712I transid taskid Bridge Quiescing
+   Explanation: Bridge Monitor quiesce has been initiated. This
+   would normally be because CICS or the queue manager is shutting
+   down or because the operator has set the bridge queue
+   GET(DISABLED).
+   .
+   Change to:
+   Explanation: The bridge queue has been GET(DISABLED) and the
+   bridge monitor will now quiesce because the attributes of the
+   bridge queue are incorrect.
+   000Y
+   CSQCBLK0
+   CSQCBLK1
+   CSQCBLK2
+   CSQCBP00
+   CSQCBP10
+   CSQCBP20
+   CSQCBR00
+   CSQCBR20
+   CSQCBR30
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK22231
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBS MQ FOR ZOS
+   
+   
+ * REPORTED COMPONENT ID
+   5655L8200
+   
+   
+ * REPORTED RELEASE
+   000
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   YesSpecatt / CST
+   
+   
+ * SUBMITTED DATE
+   2006-03-28
+   
+   
+ * CLOSED DATE
+   2006-04-12
+   
+   
+ * LAST MODIFIED DATE
+   2006-06-12
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UK13438
+   
+   
+
+MODULES/MACROS
+ *     CSQCBLK0 CSQCBLK1 CSQCBLK2 CSQCBP00 CSQCBP10
+   CSQCBP20 CSQCBR00 CSQCBR20 CSQCBR30
+   
+   
+    
+   
+   
+
+Publications Referenced GC34660200 FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBS MQ FOR ZOS
+   
+   
+ * FIXED COMPONENT ID
+   5655L8200
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R000 PSY UK13438 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK13438]
+   UP06/05/04 P F605
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

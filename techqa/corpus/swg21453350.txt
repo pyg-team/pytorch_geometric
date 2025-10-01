@@ -1,0 +1,21 @@
+Title: IBM Using Terminate activity with Studio - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ What does the Terminate activity do and where/when can it be used? 
+
+ANSWER
+The Terminate activity stops all further orchestration job processing in the specific orchestration branch. This activity is commonly used while implementing "If and Else" logic. In an 'If-Then' activity, to stop the job processing on any specific input, one can use "terminate" to stop processing in any of the "if" or "else" branches.
+The details of the terminate activity can also be checked in Studio online help.
+
+ 
+
+HISTORICAL NUMBER
+ 00000759 
+
+PRODUCT ALIAS/SYNONYM
+ Cast Iron Solution
+Cast Iron Operating System
+Cast Iron Studio

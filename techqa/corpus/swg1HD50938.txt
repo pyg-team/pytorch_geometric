@@ -1,0 +1,319 @@
+Title: IBM HD50938: VAULT-WHEN SENDING DOCUMENT FOR FIRST TIME IN A DAY, SOMETIMES NEED STOP AND START THE VAULTSERVER ON THE CACHE MACHINE. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Description of the  problem-
+   .
+   ABSTRACT:When sending document for first time
+   in Day, sometimes need stop and start the
+   VaultServer on the cache machine.
+   .
+   Scenario:
+   What happens is that the client get the problem,
+   first in the morning. Some times, when try
+   to send different model, the server starts, and then
+   all is ok, the rest of the day.
+   If not, the only thing to do is, stop and start the
+   VaultServer on the cache machine, after
+   restart all works ok.
+   As I can see the problem is a DB2 client
+   connection, that times out.
+   .
+   From log file
+   ---- Cut Start ----
+   ﾨ ENOVIAVaultServer: New Connection
+   (10.44.0.39:1196) !
+   ﾨorbixd: End of IIOP Connection
+   (pgfas39.emea.group.XYZ.com:1570) !
+   VSThread-2
+   =================================
+   ==========================
+   VSThread-2 ERROR: prepareStatement
+   executeUpdate failed!!!
+   VSThread-2 Time : <2005-10-14 08:56:34.19>
+   VSThread-2
+   -----------------------------------------------------------
+   VSThread-2 DEBUG INFO: connection object
+   reference: < DB2Connection{ connectionHandle =
+   1
+   SPConnected = false source = PDBC_FR user =
+   PENOVIAD conArgs = closed = false
+   describeCached = false describeParam = true
+   isReadOnly = false autoClose = false LONGDATA
+   compat = false}>
+   VSThread-2
+   -----------------------------------------------------------
+   VSThread-2 ERROR: Error type :
+   VSThread-2 ERROR: SQLState : <23505>
+   VSThread-2 ERROR: Message : <ﾨIBM!ﾨCLI
+   Driver!ﾨDB2/6000! SQL0803N One or more values
+   in the INSERT statement, UPDATE statement, or
+   foreign key update caused by a DELETE statement
+   are not valid because the primary key,
+   unique constraint or unique index identified by "1"
+   constrains table FRENC01.VAULTDOCUMENT"
+   from having duplicate rows for those columns.
+   SQLSTATE=23505
+   >
+   VSThread-2 ERROR: Vendor code: <-803>
+   VSThread-2 ERROR: Stack trace:
+   VSThread-2
+   -----------------------------------------------------------
+   COM.ibm.db2.jdbc.DB2Exception: ﾨIBM!ﾨCLI Driver!
+   ﾨDB2/6000!
+   SQL0803N One or more values in the INSERT
+   statement, UPDATE statement, or foreign key
+   update caused by a DELETE statement are not valid
+   because the primary key, unique
+   constraint or unique index identified by "1"
+   constrains table "FRENC01.VAULTDOCUMENT" from
+   having duplicate rows for those columns.
+   SQLSTATE=23505 at
+   COM.ibm.db2.jdbc.app.SQLExceptionGenerator.thro
+   w_SQLException(Unknown Source)
+   ----- Cut End ------
+   .
+   I run a vsadm command every 2 hours, (
+   echo "France is active try to get status";
+   ./catstart -env PROD_ENOVIA_LCA.V5R13.B13 -
+   direnv /lca13/CATEnv -run "vsadm GET SERVER
+   REQUEST STATE FOR VAULT ENOVIAVaultServer
+   HOST frenovia01.emea.group.XYZ.com PORT
+   1570" )
+   And this gives no error, so the server is up running.
+   .
+   1] Is there any way to test the Enovia db2
+   connection?
+   2] Also can it be the latency, that gives the
+   problem?
+   I have a server in Finland ( latency 30 mms ) no
+   problem, but all other have the same
+   problem ( latency over 60 mms ), and all servers
+   are setup in the same way.
+   Hope you can give some help.
+   .
+   Update from CUSTOMER:
+   ===========
+   In the folder DB2, the db2 table are list for the
+   cache servers.
+   In each folder there is a subfolder, with the cmd
+   files that starts the Catia Enovia.
+   ===========
+   .
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  VAULT-WHEN SENDING DOCUMENT FOR FIRST TIME IN A DAY, SOMETIMES
+   NEED STOP AND START THE VAULTSERVER ON THE CACHE MACHINE.
+   Description of the  problem-
+   .
+   ABSTRACT:When sending document for first time
+   in Day, sometimes need stop and start the
+   VaultServer on the cache machine.
+   .
+   Scenario:
+   What happens is that the client get the problem,
+   first in the morning. Some times, when try
+   to send different model, the server starts, and then
+   all is ok, the rest of the day.
+   If not, the only thing to do is, stop and start the
+   VaultServer on the cache machine, after
+   restart all works ok.
+   As I can see the problem is a DB2 client
+   connection, that times out.
+   .
+   From log file
+   ---- Cut Start ----
+     ENOVIAVaultServer: New Connection
+   (10.44.0.39:1196) !
+    orbixd: End of IIOP Connection
+   (pgfas39.emea.group.XYZ.com:1570) !
+   VSThread-2
+   =================================
+   ==========================
+   VSThread-2 ERROR: prepareStatement
+   executeUpdate failed!!!
+   VSThread-2 Time : <2005-10-14 08:56:34.19>
+   VSThread-2
+   -----------------------------------------------------------
+   VSThread-2 DEBUG INFO: connection object
+   reference: < DB2Connection{ connectionHandle =
+   1
+   SPConnected = false source = PDBC_FR user =
+   PENOVIAD conArgs = closed = false
+   describeCached = false describeParam = true
+   isReadOnly = false autoClose = false LONGDATA
+   compat = false}>
+   VSThread-2
+   -----------------------------------------------------------
+   VSThread-2 ERROR: Error type :
+   VSThread-2 ERROR: SQLState : <23505>
+   VSThread-2 ERROR: Message : < IBM! CLI
+   Driver! DB2/6000! SQL0803N One or more values
+   in the INSERT statement, UPDATE statement, or
+   foreign key update caused by a DELETE statement
+   are not valid because the primary key,
+   unique constraint or unique index identified by "1"
+   constrains table FRENC01.VAULTDOCUMENT"
+   from having duplicate rows for those columns.
+   SQLSTATE=23505
+   >
+   VSThread-2 ERROR: Vendor code: <-803>
+   VSThread-2 ERROR: Stack trace:
+   VSThread-2
+   -----------------------------------------------------------
+   COM.ibm.db2.jdbc.DB2Exception:  IBM! CLI Driver!
+    DB2/6000!
+   SQL0803N One or more values in the INSERT
+   statement, UPDATE statement, or foreign key
+   update caused by a DELETE statement are not valid
+   because the primary key, unique
+   constraint or unique index identified by "1"
+   constrains table "FRENC01.VAULTDOCUMENT" from
+   having duplicate rows for those columns.
+   SQLSTATE=23505 at
+   COM.ibm.db2.jdbc.app.SQLExceptionGenerator.thro
+   w_SQLException(Unknown Source)
+   ----- Cut End ------
+   .
+   I run a vsadm command every 2 hours, (
+   echo "France is active try to get status";
+   ./catstart -env PROD_ENOVIA_LCA.V5R13.B13 -
+   direnv /lca13/CATEnv -run "vsadm GET SERVER
+   REQUEST STATE FOR VAULT ENOVIAVaultServer
+   HOST frenovia01.emea.group.XYZ.com PORT
+   1570" )
+   And this gives no error, so the server is up running.
+   .
+   1  Is there any way to test the Enovia db2
+   connection?
+   2  Also can it be the latency, that gives the
+   problem?
+   I have a server in Finland ( latency 30 mms ) no
+   problem, but all other have the same
+   problem ( latency over 60 mms ), and all servers
+   are setup in the same way.
+   Hope you can give some help.
+   .
+   Update from CUSTOMER:
+   ===========
+   In the folder DB2, the db2 table are list for the
+   cache servers.
+   In each folder there is a subfolder, with the cmd
+   files that starts the Catia Enovia.
+   ===========
+   .
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  THIS PROBLEM WILL BE FIXED ON ENOVIA
+   VERSION 5 RELEASE 17 GA level.
+   .
+   Incident Diagnosis
+   "vsadm REFRESH DOCUMENTS FROM FILE"
+   command may lead to a Vault Server lock-up
+   Correction Explanation
+   Resolved the deadlock problem between vsadm
+   tool/VaultCache/Vault Server
+   Answer and By-Pass
+   No by-pass
+   .
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   HD50938
+   
+   
+ * REPORTED COMPONENT NAME
+   ENOVIA LCA NT>X
+   
+   
+ * REPORTED COMPONENT ID
+   569151700
+   
+   
+ * REPORTED RELEASE
+   513
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2006-03-22
+   
+   
+ * CLOSED DATE
+   2006-04-11
+   
+   
+ * LAST MODIFIED DATE
+   2006-04-11
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ENOVIA LCA NT>X
+   
+   
+ * FIXED COMPONENT ID
+   569151700
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R517 PSN
+   UP

@@ -1,0 +1,131 @@
+Title: IBM HE12490: Domino Template Enablement tool fails to enable domino template due to unsuccessful paramaters update in notes.ini - United States
+
+Text:
+  DIRECT LINKS TO FIXES
+4.0.1.3-IBM-ICC-FP003 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FContent+Collector&fixids=4.0.1.3-IBM-ICC-FP003&source=SAR]
+4.0.1.2-IBM-ICC-Server-IF001 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FContent+Collector&fixids=4.0.1.2-IBM-ICC-Server-IF001&source=SAR]
+4.0.1.2-IBM-ICC-Server-IF001.txt [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FContent+Collector&fixids=4.0.1.2-IBM-ICC-Server-IF001.txt&source=SAR]
+IBM Content Collector V4.0.1 Fix Pack 3 [http://www-01.ibm.com/support/docview.wss?uid=swg24042387]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Customer tried the Domino Template Enablement with ICC/Domino
+   4.0.0.2 and ran into a problem.
+   
+   The Domino configuration and template creation failed when
+   'Start Configuration" was clicked by customer to enable template
+    locally or in the remote Domino server by using "Domino
+   Template Enablement" tool.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Domino Template Enablement with ICC/Domino may cause problem due
+   to unsuccessful paramaters update in notes.ini.
+   
+   The Domino configuration and template creation fails when 'Start
+   Configuration" is clicked  to enable template locally or in the
+   remote Domino server by using "Domino Template Enablement" tool.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Starting with 4.0.1.3-IBM-ICC-FP003 release, this issue has been
+    fixed.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   HE12490
+   
+   
+ * REPORTED COMPONENT NAME
+   ICC FOR EMAIL
+   
+   
+ * REPORTED COMPONENT ID
+   5724V5700
+   
+   
+ * REPORTED RELEASE
+   400
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-01-12
+   
+   
+ * CLOSED DATE
+   2017-05-30
+   
+   
+ * LAST MODIFIED DATE
+   2017-05-30
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ICC FOR EMAIL
+   
+   
+ * FIXED COMPONENT ID
+   5724V5700
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R401 PSY
+   UP

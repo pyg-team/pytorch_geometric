@@ -1,0 +1,190 @@
+Title: IBM IV94269: SYBASE AGENT 6.2 INTERVAL COLLECTION FAILURE FOR CURSOR DBCCON - United States
+
+Text:
+  DIRECT LINKS TO FIXES
+6.2.0.1-TIV-ITM_SYB-IF0001 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Composite+Application+Manager+for+Applications&fixids=6.2.0.1-TIV-ITM_SYB-IF0001&source=SAR]
+IBM Tivoli Composite Application Manager for Applications V7.2.1.2 : Sybase Agent 6.2.0.1-TIV-ITM_SYB-IF0001 [http://www-01.ibm.com/support/docview.wss?uid=swg24043619]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Severity: 2
+   Approver: Hua Ming Zhong
+   Compid: 5724B96SO
+   
+   Environment:
+   All supported windows and non-windows OS versions
+   Sybase server ASE versions 15.0, 15.7, 16.0
+   ITCAM for Applications Monitoring Agent for Sybase Server
+   v06.20.01.00
+   
+   Problem Description:
+   Sybase agent logs an error for DBCCON cursor when the sa_role is
+   not granted.
+   The cursor uses Sybase trace flag 8399, which require sa_role
+   for successful execution.
+   In investigation we found that "Sybase trace flag 8399" is not
+   required to be set.
+   Removing code setting this flag should avoid errors in log file.
+   
+   Detailed Re-creation Procedure:
+   1. Install sybase agent on windows or non-windows platform.
+   2. Configure sybase agent with the IBM Tivoli Monitoring user
+   with non sa_role.
+   3. Observe the collector logs for the error: Interval collection
+   failed for cursor DBCCON.
+   
+   
+   Related Files and Output:
+   Interval collection failed for DBCCON cursor with below error in
+   collector logs
+   YSM0330E (092936) Message: You must have any of the following
+   role(s) to execute this command/procedure: 'sa_role' . Please
+   contact a user with the appropriate role for help.
+   YPP0230E (092936) prep_l_fetch: ct_results() returned
+   CS_CMD_FAIL
+   YPP0225W (092936) Time= 2012/09/01/25 09:29:36, For cursor
+   DBCCON, fetch failed after 0 rows YPP0240W (092936)
+   prep_l_fetch: ct_results() failed:0
+   CGN1521E (092936) Interval collection failed for cursor DBCCON
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Disable the DBCCON cursor. Agent level 3 has tested the change
+   and there is no impact to the agent's normal behavior. Comment
+   out the relevant lines in koycoll.ctl by preceding them with
+   double semi-colons.
+   Example:
+   ;;cursor DBCCON;
+   ;; interval 64000;
+   ;; once;
+   ;; math decimal 0 INT01 0;
+   ;; insert_select
+   ;; dbcc traceon(8399);
+   
+   ;;INSERT INTO DBCCON
+   ;; (INT01)
+   ;; VALUES
+   ;; (:INT!INT01);
+   
+   Restart the agent.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Sybase agent logs an error for DBCCON cursor when the sa_role is
+    not granted.
+   The cursor uses Sybase trace flag 8399, which require sa_role
+   for successful execution.
+   In investigation we found that "Sybase trace flag 8399" is not
+   required to be set.
+   Removing code setting this flag should avoid errors in log file.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Made the required code change to fix the unwanted flag.
+   
+   http://www-01.ibm.com/support/docview.wss?uid=swg24043619 [http://www-01.ibm.com/support/docview.wss?uid=swg24043619]
+   
+   http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FT [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FT]
+   ivoli%2FTivoli+Composite+Application+Manager+for+Applications&fi
+   xids=6.2.0.1-TIV-ITM_SYB-IF0001&source=SAR
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV94269
+   
+   
+ * REPORTED COMPONENT NAME
+   TIV MON SYBASE
+   
+   
+ * REPORTED COMPONENT ID
+   5724B96SO
+   
+   
+ * REPORTED RELEASE
+   630
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-03-17
+   
+   
+ * CLOSED DATE
+   2017-05-26
+   
+   
+ * LAST MODIFIED DATE
+   2017-05-26
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TIV MON SYBASE
+   
+   
+ * FIXED COMPONENT ID
+   5724B96SO
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R620 PSY
+   UP

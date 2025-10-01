@@ -1,0 +1,143 @@
+Title: IBM PK77456: Log parser stops after file gets redirected to /dev/null. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  ITCAMfWAS 6.2 FP3 IF 12 + fixes, TEMA 6.2 FP3 IF10, TEPS 6.2.
+   Our gc logs are named jvmname_0x_native_stderr.log.  At
+   midnight, a log
+   archiver process runs and the logs get dev\nulled
+   (>jvmname_0x_native_stderr.log).  This process seems to break
+   TEMA
+   reporting of Garbage Collection Analysis (Times, Objects Freed,
+   Objects
+   Moved, etc. are reported as 0.  If the jvm is bounced after the
+   logs
+   are archived, GC data gets reported until midnight the next
+   night.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  The ITCAM file that has the fix is tk_runtime.jar in
+   <DC_HOME>/toolkit/lib/ext directory.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  This issue arises when the verbose GC log file is emptied either
+   by explicitly editing and deleting the contents (Windows) or by
+   "cat /dev/null > verboseGCFile" on UNIX systems. Users who have
+   an automated script to do this process will be affected by this.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix is applicable to distributed platforms and not for Z/OS
+   or MVS systems. It is also NOT applicable when the verbose GC
+   file rollover is specified using -Xverbosegclog:<path
+   to file><filename, X, Y> (multiple file envirionment).
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  Not empty the verbose GC file and set it for rollover to
+   multiple files to control the file size.
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK77456
+   
+   
+ * REPORTED COMPONENT NAME
+   ITCAM WAS TEMA
+   
+   
+ * REPORTED COMPONENT ID
+   5724L62TM
+   
+   
+ * REPORTED RELEASE
+   610
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-12-12
+   
+   
+ * CLOSED DATE
+   2009-02-17
+   
+   
+ * LAST MODIFIED DATE
+   2009-08-11
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ITCAM WAS TEMA
+   
+   
+ * FIXED COMPONENT ID
+   5724L62TM
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R610 PSY
+   UP

@@ -1,0 +1,65 @@
+Title: IBM How to change host name on a twinfin - United States
+
+Text:
+hostname host name change vip hosts update TECHNOTE (FAQ)
+
+QUESTION
+ How to change host name on a twinfin 
+
+CAUSE
+need to change host names
+
+ANSWER
+Check the status of the database of the system 
+
+nz80123 nz% nzhw -issues
+nz80123 nz% nzds -issues
+nz80123 nz% nzsession
+nz80123 nz% logout
+
+Shut down the resources on the current system. 
+
+nz80123-h1 root# crm_resources -r nps -p target_role -v stopped. 
+
+Shut down drbd 
+nz80123-h1 root# service drbd stop
+nz80123-h2 root# service drbd stop
+
+Update the host file to add the new file name (do not remove the current name) 
+nz80123-h1 root# vi /etc/hosts
+nz80123-h2 root# vi /etc/hosts
+
+Update the hostnames 
+nz80123-h1 root# cd /opt/nz-hw-support/install-tools
+nz80123-h1 root# ./nz-hostnamer.pl -a <newname-h1> -b <newname-h2> 
+
+
+
+Remove the old hostnames from /etc/hosts
+
+nz80123-h1 root# vi /etc/hosts
+nz80123-h1 root# vi /etc/hosts
+
+
+Reboot both hosts
+nz80123-h1 root# reboot
+nz80123-h1 root# reboot
+
+Wait for the heartbeat to show on-line with both hosts. 
+
+nz80123-h1 root# crm_mon -i3
+
+Start the resources on the new system. 
+
+nz80123-h1 root# crm_resources -r nps -p target_role -v started
+
+Check the database
+nz80123 nz% nzhw -issues
+nz80123 nz% nzds -issues
+
+Test the external connections to the database. 
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Information Management IBM Netezza Analytics Information Management PureData System for Analytics

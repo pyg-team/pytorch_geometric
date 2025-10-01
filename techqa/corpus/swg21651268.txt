@@ -1,0 +1,14 @@
+Title: IBM Jazz for Service Manager/DASH data not sorted in charts - United States
+
+Text:
+JazzSM; DASHL2 charts data not sorted TECHNOTE (FAQ)
+
+QUESTION
+ I am using Jazz for Service Manager to display impact data in charts. The data is sorted in Impact, however charts in DASH are not sorted according to the source data. Is this expected? 
+
+ANSWER
+The current implementation of charting component does not allows user to specify fields on which they want sorting. Default sorting in charting widget behaves as follows 
+
+
+ 1. For column chart, it is column configured for x-axis --> means sorting happens on column configured for x-axis. 
+ 2. For bar chart, it is the column configured for y-axis --> means sorting happens on column configured for y-axis

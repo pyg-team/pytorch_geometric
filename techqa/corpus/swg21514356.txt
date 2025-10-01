@@ -1,0 +1,67 @@
+Title: IBM Framework Generation Issues After Moving the Database Server - United States
+
+Text:
+CommandCenter; framework generation; database move; properties file; password TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ After moving the database server for the OpenPages application, the framework generation process is now erroring out. What additional framework files need to be updated or checked for the framework to generate properly? 
+
+RESOLVING THE PROBLEM
+ 
+
+A framework generation issue could occur after moving the database server if not all the appropriate updates were made. The server administrator should double-check the configuration files; tnsnames entry; and the log files to troubleshoot the issue. 
+
+On the CommandCenter, the server administrator should check: 
+
+ * 
+ * 
+ * 
+ * 
+ * 
+
+
+If the database instance has recently moved, the server administrator may not have updated all the appropriate configurations. The server administrator should check the: ..\OpenPages\CommandCenter\framework\conf\FrameworkGenerator_1.xml 
+and 
+..\OpenPages\CommandCenter\framework\conf\FrameworkGenerator_2.xml 
+files to make sure JDBC url is pointing to the new location. 
+
+When reviewing the JDBC url, make sure that the proper servername is utilized and the servername is resolvable from the CommandCenter server. In addition to that, make sure the database instance in the JDBC url is ping-able when using the tnsping command. 
+
+Note, the JDBC url should utilize the SERVICE_NAME and not the oracle alias. 
+
+Also within these two files are the oracle username and the application login id. The passwords are encrypted. If the passwords in these files are questionable, the proper passwords can be entered in clear text and will be recreated when the framework generator service restarts. 
+
+Another area to check is within the CommandCenter portal and the 'Oracle Native Driver.' If the 'Oracle Native Driver' wasn't recreated properly, the steps to recreate it are as follows:  1.  Open a browser. 
+ 2.  Go to the CommandCenter URL (ie: http://mycommandcenter/crn) 
+ 3.  Login with an administrator id (ie: OpenPagesAdministrator) 
+ 4.  Click on the 'Directory' link under 'Tools' 
+ 5.  Click on the 'Data Sources' tab. 6. Check the checkbox next to 'Oracle Native Driver' 
+ 6.  Click on the 'Delete' icon (next to the magnify glass to the far right). 
+ 7.  Then click on the 'New Data Source' icon (which looks like a cylinder). 
+ 8.  On the 'Name' field, type in the following exactly: Oracle Native Driver 
+ 9.  Then hit on the 'Next >' button. 
+ 10. On the 'Type' dropdown menu, select: Oracle 
+ 11. Then hit on the 'Next >' button. 
+ 12. On the SQL*Net field, put in the SID. 
+ 13. Then check the 'User ID' and 'Password' checkboxes and provide the proper values. Typically the username and password are 'openpages' and 'openpages' respectively. 14. Then click on the 'Test the connection...' 
+ 14. Then click on the 'Test' button and make sure you see a 'Succeeded' status. 
+ 15. Hit the 'Close' button to get out of the testing result screen. 
+ 16. Then hit the 'Close' button again to get of testing wizard screen. 
+ 17. Then hit the 'Next >' button to move forward. 
+ 18. Then click on the 'Set...' icon for 'Open session commands' 
+ 19. Copy and paste the following XML block and hit the 'OK' button:
+     <commandBlock>
+     <commands>
+     <sqlCommand>
+     <sql>ALTER SESSION SET OPTIMIZER_FEATURES_ENABLE='10.1.0.5'</sql>
+     </sqlCommand>
+     </commands>
+     </commandBlock> 
+ 20. Then hit the 'Finish' button. 
+
+
+A misconfiguration of the database instance or passwords typically generate the following error messages in the logs: 
+A new project is being created. BMT-MDC-0002 Unable to logon. CCL-RCI-0001 Unhandled WASP (third-party) exceptions were converted into this generic RCIException code. TCP problem - got closed connection thrown at src/transport/http/HTTPTransportClient.cpp:122 caught at src/transport/http/HTTPTransportClient.cpp:200 rethrown at src/transport/http/HTTPTransportClient.cpp:205 caught at RCIReportNet.cpp:7063 rethrown at RCIReportNet.cpp:7071 BME-SP-0032 Your userid or password is incorrect. Re-enter your logon credentials. Check messages to determine which errors occurred. A new project is being created. BMT-MDC-0002 Unable to logon. CCL-RCI-0001 Unhandled WASP (third-party) exceptions were converted into this generic RCIException code. TCP problem - got closed connection thrown at src/transport/http/HTTPTransportClient.cpp:122 caught at src/transport/http/HTTPTransportClient.cpp:200 rethrown at src/transport/http/HTTPTransportClient.cpp:205 caught at RCIReportNet.cpp:7063 rethrown at RCIReportNet.cpp:7071 BME-SP-0032 Your userid or password is incorrect. Re-enter your logon credentials. Check messages to determine which errors occurred. A new project is being created. BMT-MDC-0002 Unable to logon. CCL-RCI-0001 Unhandled WASP (third-party) exceptions were converted into this generic RCIException code. DPR-ERR-2058 The dispatcher cannot service the request at this time. The dispatcher is still initializing. Contact your administrator if this problem persists. BME-SP-0032 Your userid or password is incorrect. Re-enter your logon credentials. Check messages to determine which errors occurred.  
+
+HISTORICAL NUMBER
+ 00001904

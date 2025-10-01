@@ -1,0 +1,15 @@
+Title: IBM WebSphere Adapter for Flat Files terminates during the polling operation with Synchronous Interaction style setting - United States
+
+Text:
+Flat File Adapter Inbound Module; Synchronous Interaction Style TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ In WebSphere Adapter for Flat Files V6.0.2, when the synchronous Interaction Style setting is used and a ServiceRuntimeException is generated at the endpoint, the adapter terminates; however, the adapter should continue to poll and generate the exception. 
+
+CAUSE
+Because the adapter is using Synchronous Interaction style mode, which is a synchronous method of communication, if any error or exception occurs at the endpoint, the request is not processed.
+
+RESOLVING THE PROBLEM
+Install the latest Fix Pack for Adapter for Flat Files Version 6.0.2. 
+
+Refer to Recommended fixes [http://www-1.ibm.com/support/docview.wss?rs=695&context=SSMKUK&dc=D600&uid=swg27010397&loc=en_US&cs=UTF-8&lang=en] for a complete list of Fix Packs for WebSphere Adapters.

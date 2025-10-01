@@ -1,0 +1,41 @@
+Title: IBM Installing Software Support Toolkit for PureData System for Analytics - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ How to install Software Support Toolkit 
+
+RESOLVING THE PROBLEM
+1. What are the Software Support tools for PureData System for Analytics? 
+
+They are a set of Unix shell scripts that are used to manage the PDA/Netezza environment.
+
+2. Does IBM Netezza software support tools installation require downtime?
+IBM Netezza software support tools installation is an online activity. It does not require any downtime.
+
+3. How much time is required to install the IBM Netezza software support tools?
+IBM Netezza software support tools installation typically takes 10 minutes to complete.
+
+4) How to download IBM Netezza software support tools?
+Download Software Support tool package from IBM fixcentral with following procedure,
+
+---------------------------------------------
+http://www-933.ibm.com/support/fixcentral/ [http://www-933.ibm.com/support/fixcentral/]
+Select product:
+Product Group* -> Information Management 
+Select from Information Management* -> IBM Netezza Tools
+Installed Version* -> SWSUPPORT_7.X (Select required IBM Netezza software support tools package)
+Platform* -> Linux
+Continue -> Browse for fixes -> Continue -> (Download required IBM Netezza software support tools package).
+---------------------------------------------
+
+5) How to install IBM Netezza software support tools?
+Uncompress/untar downloaded Software Support tool package with 'nz' user,
+$ tar -xvzf nz-sw-support-tools-v7.2.1.3-P1.tar.gz 
+
+Then run the installer with following command as 'nz' user,
+$ ./INSTALL-IBM_Netezza_Software_Support_Tools 
+
+6) How to check IBM Netezza software support tools version?
+$ cat /nz/support/Version.txt

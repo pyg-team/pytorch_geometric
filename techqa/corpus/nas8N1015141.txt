@@ -1,0 +1,38 @@
+Title: IBM Enabling and Disabling 'Automatic IPL after Power Restored' on HMC Managed IBM POWER Systems - United States
+
+Text:
+IPL; POWER; FSP; MSGCPF1221 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This document explains how to control automatic restarts after a power loss on HMC Managed IBM POWER systems. 
+
+RESOLVING THE PROBLEM
+On HMC managed POWER servers, the IBM i QPWRRSTIPL system value does not control the restart behavior. The restart behavior is controlled by two settings: the server's auto power restart option and the server's partition start policy setting. 
+
+If a user attempts to change the value for the QPWRRSTIPL system value on a partition running on a HMC managed server, the change operation will fail with the following message:
+V7R1M0 and later: CPF18B4 QPWRRSTIPL cannot be changed in partition.
+V6R1M0: CPF18B4 QPWRRSTIPL cannot be changed in secondary partition.
+V5R4M5: CPF18B4 QPWRRSTIPL cannot be changed in secondary partition.
+V5R4M0: CPF1221 Service processor failed. Return code X'00F0' was received from the service processor. VLOG dump identifier 0100054A has more information about the problem.
+
+Enabling auto power restart
+If the Advanced Management System Interface (ASMI) is set to automatically start after a power loss and the server 's partition start policy allows it, then any partition that was powered down while on battery power (for example, a power handling program or a system value time limit after the UPS power loss signal) or was up and running when the power failed is restarted automatically.
+
+To enable restart for all partitions after an AC power loss, perform the following:
+
+1. Enable Auto Power Restart on the server 
+
+a. Launch the Advanced Management System Interface (ASMI) menu. For information on how to access ASMI, refer to the IBM Systems Hardware Information Center at http://publib.boulder.ibm.com/infocenter/eserver/v1r3s/topic/iphby/accessasmi.htm [http://publib.boulder.ibm.com/infocenter/eserver/v1r3s/topic/iphby/accessasmi.htm]. b. Sign in as admin (the user ID is lowercase). c. Expand the Power/Restart Control menu. d. Select the Auto Power Restart option. e. Choose the Enabled or Disabled setting. f. Click on the Save Settings button. 
+2. Enable auto power restart for the partitions [/support/docview.wss?uid=nas8N1015141&amp;aid=1] POWER 5 servers; POWER 6 servers with server firmware Ex340 and earlier and HMC Version 7.3.4 and earlier
+Using ASMI:
+a. Select the Power On/Off System option.
+b. Set Boot to system server firmware to Running.
+c. Click on the Save Settings button.
+Note: Each time a user "power on" operation is performed on the server this setting will change to the power on option the user selected. If a user selects power on to "standby" then this step will need to be repeated to set the next IPL to running; otherwise the server halts the IPL at standby. [/support/docview.wss?uid=nas8N1015141&amp;aid=1] POWER 7 servers, POWER 6 servers with server firmware Ex350 and HMC Version 7 release 7.3.5 or later
+a. On the HMC, expand Systems Management, Servers and select the server.
+b. Click properties, then the "Power-On Parameters" tab.
+c. Set the "Partition start policy" to either "Auto-Start Always" or "Auto-Start for Auto-Recovery".
+Note: If set to "User initiated" the server will restart and IPL to standby. No partitions will be started. After these steps are completed, you can verify that the change took place by displaying the QPWRRSTIPL system value from the operating system command line. 
+
+HISTORICAL NUMBER
+ 404684428

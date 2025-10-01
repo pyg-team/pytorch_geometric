@@ -1,0 +1,195 @@
+Title: IBM JR56285: SECURITY APAR CVE-2015-0899 CVE-2016-1181 CVE-2016-1182 - VULNERABILITIES IN APACHE STRUTS - United States
+
+Text:
+  DIRECT LINKS TO FIXES
+8.5.6.2-WS-BPM-IFJR56285 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Standard&fixids=8.5.6.2-WS-BPM-IFJR56285&source=SAR]
+8.5.5.0-WS-BPM-IFJR56285 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Standard&fixids=8.5.5.0-WS-BPM-IFJR56285&source=SAR]
+8.5.0.2-WS-BPM-IFJR56285 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Standard&fixids=8.5.0.2-WS-BPM-IFJR56285&source=SAR]
+8.0.1.3-WS-BPM-IFJR56285 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Standard&fixids=8.0.1.3-WS-BPM-IFJR56285-Capilano&source=SAR]
+8.0.1.3-WS-BPM-IFJR56285 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Standard&fixids=8.0.1.3-WS-BPM-IFJR56285&source=SAR]
+bpm.8570.cf2016.09.delta.repository.2of2 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Standard&fixids=bpm.8570.cf2016.09.delta.repository.2of2&source=SAR]
+bpm.8570.cf2016.09.delta.repository.1of2 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Standard&fixids=bpm.8570.cf2016.09.delta.repository.1of2&source=SAR]
+Downloading IBM Business Process Manager V8.5.7 Cumulative Fix 2016.09 [http://www-01.ibm.com/support/docview.wss?uid=swg24042580]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  CVEID:&#160;CVE-2016-1181
+   DESCRIPTION:&#160;Apache Struts could allow a remote attacker to
+   execute arbitrary code on the system, caused by the failure to
+   protect against unintended remote operations against components
+   on server memory by the ActionForm instance. An attacker could
+   exploit this vulnerability to execute arbitrary code on the
+   system.
+   CVSS Base Score: 8.1
+   CVSS Temporal Score:
+   See&#160;https://exchange.xforce.ibmcloud.com/vulnerabilities/113852&#160;
+   for the current score
+   CVSS Environmental Score*: Undefined
+   CVSS Vector: (CVSS:3.0/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:H/A:H)
+   CVEID:&#160;CVE-2016-1182
+   DESCRIPTION:&#160;Apache Struts could allow a remote attacker to
+   bypass security restrictions, caused by the improper validation
+   of input by the Validator. An attacker could exploit this
+   vulnerability to modify validation rules and error messages.
+   CVSS Base Score: 4.8
+   CVSS Temporal Score:
+   See&#160;https://exchange.xforce.ibmcloud.com/vulnerabilities/113853&#160;
+   for the current score
+   CVSS Environmental Score*: Undefined
+   CVSS Vector: (CVSS:3.0/AV:N/AC:H/PR:N/UI:N/S:U/C:N/I:L/A:L)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  No additional information is available.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A fix for WebSphere Lombardi Edition V7.2.0.5 and IBM BPM
+   V7.5.1.2, V8.0.1.3, V8.5.0.2, V8.5.5.0, V8.5.6.,0 and V8.5.7.0
+   is available that upgrades the version of Apache Struts to 1.2.9
+   including three security patches.
+   
+   For WebSphere Lombardi Edition V7.2.0.5 and IBM BPM V7.5.1.2,
+   contact IBM support and request the fix, quoting JR56285.
+   
+   For IBM BPM V8.0.1.3, V8.5.0.2, and V8.5.5.0, search for JR56285
+   on Fix Central (http://www.ibm.com/support/fixcentral):
+   
+   1. Select IBM Business Process Manager with your edition from
+     the product selector, the installed version to the fix pack
+     level, and your platform, and then click Continue.
+   
+   2. Select APAR or SPR, enter JR56285, and click Continue.
+   
+   For IBM BPM V8.5.6.0, this fix is built on IBM BPM 8.5.6.0
+   cumulative fix 2. If you do not already have IBM BPM V8.5.6
+   cumulative fix 2 installed, download and install IBM BPM V8.5.6
+   cumulative fix 2 from
+   http://www.ibm.com/support/docview.wss?uid=swg24041303. [http://www.ibm.com/support/docview.wss?uid=swg24041303.]
+   
+   For IBM BPM V8.5.7.0, the fix will be included in IBM BPM V8.5.7
+   cumulative fix 2016.09. To determine whether the later
+   cumulative fix is available and download it if it is, complete
+   the following steps on Fix Central:
+   
+   1. Select IBM Business Process Manager with your edition from
+     the product selector, the installed version to the fix pack
+     level, and your platform, and then click Continue.
+   
+   2. Select Text, enter 'cumulative fix' and click Continue.
+   
+   When you download fix packages, ensure that you also download
+   the readme file for each fix. Review each readme file for
+   additional installation instructions and information about the
+   fix.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR56285
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM STANDARD
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9500
+   
+   
+ * REPORTED RELEASE
+   751
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-07-11
+   
+   
+ * CLOSED DATE
+   2016-09-30
+   
+   
+ * LAST MODIFIED DATE
+   2016-09-30
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   BPM STANDARD
+   
+   
+ * FIXED COMPONENT ID
+   5725C9500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R801 PSY
+   UP
+   
+   
+ * R850 PSY
+   UP
+   
+   
+ * R855 PSY
+   UP
+   
+   
+ * R856 PSY
+   UP

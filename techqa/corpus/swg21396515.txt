@@ -1,0 +1,66 @@
+Title: IBM Collecting Data: MustGather for IBM Installation Manager - United States
+
+Text:
+agentData; IM; logs; troubleshoot; WTE; Websphere logs; update Installer; How does IBM support gather general Information to troubleshot IBM Installation Manager issue?; 1358628; 1267921; 1397645; Gathering Installation Manager Information TECHNOTE (FAQ)
+
+QUESTION
+ When you experience a problem with IBM Installation Manager, collecting this information before contacting IBM Support will help clarify the problem and save time analyzing the data. It also will help familiarize you with the troubleshooting process and will save you time. This MustGather document contains instructions for general issues regarding IBM Installation Manager; for any product-specific uses of Installation Manager, refer to the Related Information section of this "Collecting Data" document. 
+
+ANSWER
+When working on problems with Installation Manager, it is essential for IBM Support to have all Installation Manager system specific reference files. The location is centrally managed within Installation Manager log storage which hosts configuration settings, logs, uninstall.exe, the installation registry XML file, and subsidiary data. This provides more information than a single Installation Manager xml log. IBM Support can use the data to diagnose the problems and learn the history of Installation Manager usage. 
+
+
+
+
+
+
+
+ 
+
+A] Gather the following information to provide to Support: 
+
+ 1. Customer details information  * Detailed Customer contact information, as well as technical/field representative information, as applicable.
+    
+    
+ 2. Problem description and statement  1. A clear and concise Problem description 
+     2. Error messages and when and where they appear saved for attachment 
+     3. Attach the IBM Installation Manager (IIM) log files which can be harvested using the GUI or through command line following the instructions from the IBM Installation Manager Information Center [http://pic.dhe.ibm.com/infocenter/install/v1r4/index.jsp]. The picture below offers visual assistance on how to navigate to the Export data for problem analysis [http://publib.boulder.ibm.com/infocenter/install/v1r4/index.jsp?topic=/com.ibm.cic.agent.ui.doc/topics/t_im_export_data.html] information from the. Be aware that this same information is available from your deployed IIM under Help -> Help Contents. The Export data for problem analysis for silent installations [http://publib.boulder.ibm.com/infocenter/install/v1r4/index.jsp?topic=/com.ibm.silentinstall12.doc/topics/t_silent_dataexport.html] highlighted link in the picture will assist customers who did not use the GUI to install their product and as a result, need to use a command invocation to gather the required log files for problem determination.
+        [/support/docview.wss?uid=swg21396515&aid=1] [/support/docview.wss?uid=swg21396515&aid=1]
+        
+    
+    
+ 3. Customer Environment  * Environment, including Service pack levels, other pertinent information
+    
+    
+ 4. When did this start happening? Did this always happen? What changed?  * Is it a Single unit or enterprise-wide? 
+     * Anything special?
+    
+    
+ 5. Customer Impact  * How severe of an impact is this having on you?
+    
+    
+ 6. Research and Reproduction steps  * Is the environment still alive? 
+     * Can it be locally reproduced?
+    
+    
+ 7. Attachment
+    If including Attachments, specify which file is for what, and where to find them
+    
+
+
+
+
+B] Carefully follow instructions in Exchanging information with IBM Technical Support [http://www.ibm.com/software/support/exchangeinfo.html] 
+
+You can submit files using one of following methods to help speed problem diagnosis:  * Service Request (SR) 
+ * FTP to the Enhanced Customer Data Repository (ECuRep)
+
+
+
+Related Information 
+
+For a listing of all technotes, downloads, and educational materials specific to the IBM Installation Manager, search the IIM pages of the IBM Support Portal [http://www-947.ibm.com/support/entry/portal/Overview/Software/Rational/IBM_Installation_Manager]. 
+Product-focused:  * MustGather: Enable debugging for ClearCase and ClearQuest installs using Installation Manager [http://www.ibm.com/support/docview.wss?uid=swg21358628] 
+ * Collect troubleshooting data for installation or upgrade problems with WebSphere Process Server [http://www.ibm.com/support/docview.wss?uid=swg21267921] 
+ * MustGather: Installation and update issues for feature packs on WebSphere Application Server V7.0 [http://www.ibm.com/support/docview.wss?uid=swg21397645] 
+ * MustGather: Installation Manager issues for installing and updating WebSphere Application Server V8.0 and V8.5 [http://www.ibm.com/support/docview.wss?uid=swg21497417]

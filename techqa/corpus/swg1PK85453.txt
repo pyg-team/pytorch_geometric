@@ -1,0 +1,172 @@
+Title: IBM PK85453: THE SETUPGSKITLIBPATH SCRIPT NOT DOCUMENTED IN THE VERSION 7.0  INFORMATION CENTER - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Users of a V7.0 plug-in with Web servers other than IBM HTTP
+   Server need to run the setupGSKitLibPath.bat
+   or setupGSKitLibPath.sh command to add location of Gskit to the
+   library path. Run the script before starting a Web server.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  This APAR affects users who are reading the *
+   *                  Information Center for WebSphere            *
+   *                  Application Server Version 7.0 to install   *
+   *                  a Web server plug-in and initialize the     *
+   *                  Global Security Kit (GSKit) for the plug-in.*
+   ****************************************************************
+   * PROBLEM DESCRIPTION: The Information Center for WebSphere    *
+   *                      Application Server Version 7.0 does     *
+   *                      not document several critical steps     *
+   *                      that the user needs to perform to       *
+   *                      make the installation of a Web server   *
+   *                      plug-in less error prone.               *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   The Information Center for WebSphere Application Server
+   version 7.0 does not clearly define how to add the location of
+   the GSKit to the library path and add the GSKit properties so
+   that the Web server plug-in starts properly. This information
+   would make the installation of the Web server plug-in easier
+   and less prone to unexpected results.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The "Troubleshooting Web server plug-ins installation and
+   removal" topic in the Information Center for WebSphere
+   Application Server Version 7.0 will be updated to include a new
+   item under the "Miscellaneous messages, hints, and tips"
+   heading. The new item, which will be listed as "Add the
+   location of GSKit to the library path and add GSKit
+   properties" is described in the following text:
+   
+   Add the location of GSKit to the library path and add GSKit
+   properties
+   
+   Users of Web server Plug-ins for IBM WebSphere Application
+   Server 7.0.0.0 with Web servers other than the IBM HTTP server
+   need to run the following script:
+   
+   setupGSKitLibPath.bat (for Windows)
+   setupGSKitLibPath.sh  (for Linux)
+   
+   This script adds the location of GSKit to the library path. An
+   Apache 2.22 (Linux) example for completing this process follows:
+   
+   Run <plug-ins_root>/bin >setupGSKitLibPath.sh
+   Start the Web server <apache_root>/bin > httpd
+   
+   Also, you need to add the GSKit properties for other Web
+   servers and make the appropriate changes in the httpd.conf
+   configuration file. The installer does not set these properties.
+   
+   Date that the information will be available externally to
+   customers:
+   
+   Periodically, we update the documentation in our information
+   centers. Thus, the changes might exist in the current
+   documentation before you read this text. To access the latest
+   on-line documentation, go to the product library page at
+   http://www.ibm.com/software/webservers/appserv/library [http://www.ibm.com/software/webservers/appserv/library]
+   and select the version and product that is appropriate for
+   your WebSphere Application Server environment.
+   
+   The modified documentation will be available in the May 2009
+   update to the Information Centers.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK85453
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSPHERE APP S
+   
+   
+ * REPORTED COMPONENT ID
+   5724J0800
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-04-27
+   
+   
+ * CLOSED DATE
+   2009-05-12
+   
+   
+ * LAST MODIFIED DATE
+   2009-05-12
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

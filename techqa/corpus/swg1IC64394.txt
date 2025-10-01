@@ -1,0 +1,184 @@
+Title: IBM IC64394: EXECUTE C# MQPUBSUBSAMPLE WITH QMGRNAME AND CHANNELNAME RESULTS IN SYSTEM.NULLREFERENCEEXCEPTION:OBJECT REFERENCE NOT SET - United States
+
+Text:
+  FIXES ARE AVAILABLE
+WebSphere MQ V7.0 Fix Pack 7.0.1.2 [http://www-01.ibm.com/support/docview.wss?uid=swg24026518]
+WebSphere MQ V7.0.1 for i5/OS Fix Pack 7.0.1.2 [http://www-01.ibm.com/support/docview.wss?uid=swg24026566]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Running the C# MQPubSubSample with parameters in the form of
+   qmgrname channelname results in the following error
+   callstack:
+   
+   Unhandled Exception: System.NullReferenceException: Object
+   reference not set to an instance of an object.
+   at IBM.WMQ.Nmqi.ManagedNmqiMQ.MQSUB(Hconn hconn,
+   MQSubscriptionDescriptor pSubDesc, Phobj hobj,
+   Phobj hsub, Int32& pCompCode, Int32& pReason)
+   at IBM.WMQ.MQSubscription.Subscribe(
+   MQSubscriptionDescriptor mqSD)
+   at IBM.WMQ.MQSubscription..ctor(MQQueueManager qMgr,
+   MQTopic  mqTopic, MQSubscriptionDescriptor mqSD)
+   at IBM.WMQ.MQTopic.OpenForSubscription(MQDestination
+   destination, String topicName, String subscriptionName,
+   Hashtable parameters)
+   at IBM.WMQ.MQTopic..ctor(MQQueueManager qMgr, String
+   topicName, String topicObject, Int32 openAs,
+   Int32 options, String altUserId)
+   at IBM.WMQ.MQTopic..ctor(MQQueueManager qMgr, String
+   topicName, String topicObject, Int32 openAs,
+   Int32 options)
+   at IBM.WMQ.MQQueueManager.AccessTopic(String topicName,
+   String topicObject, Int32 openAs, Int32 options)
+   at MQDotnetSamples.MQPUbSubSample.Main(String[] args)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   All .NET users using subscriptions to managed destinations.
+   
+   Platforms affected:
+   Windows
+   
+   ****************************************************************
+   PROBLEM SUMMARY:
+   When the .NET layer opens a managed destination to subscribe
+   to, it passes through null references to an underlying function
+   which expects to have valid parameters. During the attempt to
+   subscribe, these parameters result in NullReferenceExceptions,
+   and this occurs in each of Server Bindings, Client Bindings and
+   fully managed Client bindings.
+   
+   In addition, when the topic object is closed, it should close
+   any subscriptions it has a reference to, and this was failing
+   which resulted in durable subscriptions been left on the queue
+   manager.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The .NET interface has been modified to correctly subscribe to
+   managed destinations, and ensure that when a Topic object is
+   closed then any subscription referenced from it is also closed.
+   
+   In addition the MQPubSubSample was updated to clean the durable
+   subscriptions at topic close so that the sample can be run
+   repeatedly without initial cleanup first.
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+                      v7.0
+   Platform           Fix Pack 7.0.1.2
+   --------           --------------------
+   Windows            U200316
+   
+   The latest available maintenance can be obtained from
+   'WebSphere MQ Recommended Fixes'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037]
+   
+   If the maintenance level is not yet available, information on
+   its planned availability can be found in 'WebSphere MQ
+   Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC64394
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ WINDOWS V7
+   
+   
+ * REPORTED COMPONENT ID
+   5724H7220
+   
+   
+ * REPORTED RELEASE
+   701
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-11-06
+   
+   
+ * CLOSED DATE
+   2009-11-23
+   
+   
+ * LAST MODIFIED DATE
+   2009-11-23
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ WINDOWS V7
+   
+   
+ * FIXED COMPONENT ID
+   5724H7220
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R701 PSY
+   UP

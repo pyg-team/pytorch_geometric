@@ -1,0 +1,275 @@
+Title: IBM HD84096: The behavior of "Secured By option" is not correct - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The behavior of "Secured By option" is not correct
+   V5R18 SP7 HF6 HF15
+   Database sent by Customer in as Exp_R18.dmp
+   (ID=26DDC1D793A94A7FA031587E8D2CA0FB).
+   Accordingly to call information this database was
+   upgraded V5 R14 - R16 - R18.
+   Accordingly to call information this database is
+   some 'Old SmDemo', but really it is CHANGED by
+   Customer DATABASE and SmDemo is
+   only its name, not SmDemo setting.
+   Real SmDemo setting related to Secure By shown
+   in SmarTeam Data Model Designer for
+   SmDemo_V5R18.
+   The problem below does not relate to SmDemo, to
+   old SmDemo, and to upgraded SmDemo.
+   But the problem is next (found by VAR / Customer
+   and related to 'middle class' problem).
+   While in some database Documents Super Class IS
+   NOT ASSIGNED for Secure By, but some Leaf
+   Class ('middle class') as, e.g. Solid Edge IS
+   ASSIGNED for Secure By, then Secure By
+   checkbox IS DISABLED (grayed out) and next
+   cases should be tested after fixing the problem:
+   Scenario 1:
+   1. User joe has a Role in Project-0063 ACME
+   Manufacturing (Project Manager)
+   2. User joe can successfully add Solid Edge Part,
+   Assembly, Drawing, Weldment with Secure By
+   USING SmarTeam Editor to this Project
+   3. Launch Solid Edge integration with joe
+   4. SmarTeam Save Solid Edge Part, Assembly,
+   Draft, Weldment, Sheet Metal
+   5. Project Manager appears => Choose same
+   Project-0063 => Choose Link to Project and Add to
+   Desktop => And click on Documents tree
+   6. KO=NG: Secured By check box IS DISABLED
+   (grayed out)
+   Scenario 2:
+   1. User joe has NO Role in some new created
+   Project (created by bob and only bob has in the
+   new Project some Role as Project Manager)
+   2. User joe can successfully add Solid Edge Part,
+   Assembly, Drawing, Weldment with Secure By
+   USING SmarTeam Editor to this Project
+   NOTE: it is since joe is Admin
+   3. Launch Solid Edge integration with joe
+   4. SmarTeam Save Solid Edge Part, Assembly,
+   Draft, Weldment, Sheet Metal
+   5. Project Manager appears => Choose created
+   Project => Choose Link to Project and Add to
+   Desktop => And click on Documents tree
+   6. KO=NG: Secured By check box IS DISABLED
+   (grayed out)
+   Scenario 3:
+   1. User bob has NO Role in Project-0063 ACME
+   Manufacturing or in any other Project, including
+   created ones for testing purposes
+   2. User bob CAN NOT successfully add Solid Edge
+   Part, Assembly, Drawing, Weldment with Secure By
+   USING SmarTeam Editor to this Project using
+   SmarTeam Editor
+   3. Launch Solid Edge integration with bob
+   4. SmarTeam Save Solid Edge Part, Assembly,
+   Draft, Weldment, Sheet Metal
+   5. Project Manager appears => Choose same
+   Project-0063 or any other Project where bob HAS
+   NO appropriated Role => Choose Link to Project
+   and Add to Desktop => And click on Documents
+   tree
+   6. OK: Secured By check box IS DISABLED
+   (grayed out).
+   Scenario 4:
+   1. User bob has a Role in any Project, including
+   created ones for testing purposes
+   2. User bob can successfully add Solid Edge Part,
+   Assembly, Drawing, Weldment with Secure By
+   USING SmarTeam Editor to this Project
+   3. Launch Solid Edge integration with bob
+   4. SmarTeam Save Solid Edge Part, Assembly,
+   Draft, Weldment, Sheet Metal
+   5. Project Manager appears => Choose any Project
+   where bob has some appropriated Role => Choose
+   Link to Project and Add to Desktop => And click on
+   Documents tree
+   6. KO=NG: Secured By check box IS DISABLED
+   (grayed out).
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  The behavior of "Secured By option" is not correct
+   V5R18 SP7 HF6 HF15
+   Database sent by Customer in as Exp_R18.dmp
+   (ID=26DDC1D793A94A7FA031587E8D2CA0FB).
+   Accordingly to call information this database was
+   upgraded V5 R14 - R16 - R18.
+   Accordingly to call information this database is
+   some 'Old SmDemo', but really it is CHANGED by
+   Customer DATABASE and SmDemo is
+   only its name, not SmDemo setting.
+   Real SmDemo setting related to Secure By shown
+   in SmarTeam Data Model Designer for
+   SmDemo_V5R18.
+   The problem below does not relate to SmDemo, to
+   old SmDemo, and to upgraded SmDemo.
+   But the problem is next (found by VAR / Customer
+   and related to 'middle class' problem).
+   While in some database Documents Super Class IS
+   NOT ASSIGNED for Secure By, but some Leaf
+   Class ('middle class') as, e.g. Solid Edge IS
+   ASSIGNED for Secure By, then Secure By
+   checkbox IS DISABLED (grayed out) and next
+   cases should be tested after fixing the problem:
+   Scenario 1:
+   1. User joe has a Role in Project-0063 ACME
+   Manufacturing (Project Manager)
+   2. User joe can successfully add Solid Edge Part,
+   Assembly, Drawing, Weldment with Secure By
+   USING SmarTeam Editor to this Project
+   3. Launch Solid Edge integration with joe
+   4. SmarTeam Save Solid Edge Part, Assembly,
+   Draft, Weldment, Sheet Metal
+   5. Project Manager appears => Choose same
+   Project-0063 => Choose Link to Project and Add to
+   Desktop => And click on Documents tree
+   6. KO=NG: Secured By check box IS DISABLED
+   (grayed out)
+   Scenario 2:
+   1. User joe has NO Role in some new created
+   Project (created by bob and only bob has in the
+   new Project some Role as Project Manager)
+   2. User joe can successfully add Solid Edge Part,
+   Assembly, Drawing, Weldment with Secure By
+   USING SmarTeam Editor to this Project
+   NOTE: it is since joe is Admin
+   3. Launch Solid Edge integration with joe
+   4. SmarTeam Save Solid Edge Part, Assembly,
+   Draft, Weldment, Sheet Metal
+   5. Project Manager appears => Choose created
+   Project => Choose Link to Project and Add to
+   Desktop => And click on Documents tree
+   6. KO=NG: Secured By check box IS DISABLED
+   (grayed out)
+   Scenario 3:
+   1. User bob has NO Role in Project-0063 ACME
+   Manufacturing or in any other Project, including
+   created ones for testing purposes
+   2. User bob CAN NOT successfully add Solid Edge
+   Part, Assembly, Drawing, Weldment with Secure By
+   USING SmarTeam Editor to this Project using
+   SmarTeam Editor
+   3. Launch Solid Edge integration with bob
+   4. SmarTeam Save Solid Edge Part, Assembly,
+   Draft, Weldment, Sheet Metal
+   5. Project Manager appears => Choose same
+   Project-0063 or any other Project where bob HAS
+   NO appropriated Role => Choose Link to Project
+   and Add to Desktop => And click on Documents
+   tree
+   6. OK: Secured By check box IS DISABLED
+   (grayed out).
+   Scenario 4:
+   1. User bob has a Role in any Project, including
+   created ones for testing purposes
+   2. User bob can successfully add Solid Edge Part,
+   Assembly, Drawing, Weldment with Secure By
+   USING SmarTeam Editor to this Project
+   3. Launch Solid Edge integration with bob
+   4. SmarTeam Save Solid Edge Part, Assembly,
+   Draft, Weldment, Sheet Metal
+   5. Project Manager appears => Choose any Project
+   where bob has some appropriated Role => Choose
+   Link to Project and Add to Desktop => And click on
+   Documents tree
+   6. KO=NG: Secured By check box IS DISABLED
+   (grayed out).
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  FIN - FIX IN NEXT RELEASE
+   Additional Closure Information:
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   HD84096
+   
+   
+ * REPORTED COMPONENT NAME
+   SMARTEAM NT>XP
+   
+   
+ * REPORTED COMPONENT ID
+   569199970
+   
+   
+ * REPORTED RELEASE
+   518
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-04-13
+   
+   
+ * CLOSED DATE
+   2010-03-08
+   
+   
+ * LAST MODIFIED DATE
+   2010-03-08
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R519 PSN
+   UP

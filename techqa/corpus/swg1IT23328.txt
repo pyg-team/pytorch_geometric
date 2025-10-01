@@ -1,0 +1,144 @@
+Title: IBM IT23328: HTTPS REQUEST TO CONTROL CENTER API TOOL FAILING FOR TLSV12 ONLY - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  I'm trying to make HTTPS request to Control Center API tool
+   using the Interactive Console. Although, I'm getting the
+   following response error: "Remote host closed connection during
+   handshake".
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  STRRTC - 556467
+   SF / SF
+   Circumvention: None
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Description of issue: Connection error when trying to make HTTPS
+    requests to the Control Center API tool using the Interactive
+   Console (via launch page), the following error results:
+   Error in interactive console display: "Remote host closed
+   connection during handshake".
+   Error in Websphere/Liberty message log:  E CWWKO0801E: Unable to
+   initialize SSL connection. Unauthorized access was denied or
+   security settings have expired. Exception is
+   javax.net.ssl.SSLHandshakeException: Client requested protocol
+   TLSv1 not enabled or not supported.
+   This error only occurs when restricting the web server to use
+   TLSv1.2 (i.e. engine.properties contains
+   <WEBSERVER_SECURE_PROTOCOL>TLSv1.2</WEBSERVER_SECURE_PROTOCOL>).
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Description of fix: During engine startup, ensure the WLP
+   jvm.options file (located in
+   <install>/web/wlp/usr/servers/defaultServer/jvm.options)
+   contains the following property:
+   -Dcom.ibm.jsse2.overrideDefaultTLS =true.  When the value is set
+    to true, it has the effect to allow/use TLSv1.2.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT23328
+   
+   
+ * REPORTED COMPONENT NAME
+   STR CONTROL CEN
+   
+   
+ * REPORTED COMPONENT ID
+   5725D0200
+   
+   
+ * REPORTED RELEASE
+   610
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-11-29
+   
+   
+ * CLOSED DATE
+   2017-11-30
+   
+   
+ * LAST MODIFIED DATE
+   2017-11-30
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   STR CONTROL CEN
+   
+   
+ * FIXED COMPONENT ID
+   5725D0200
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R610 PSY
+   UP

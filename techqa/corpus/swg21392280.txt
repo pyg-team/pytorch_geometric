@@ -1,0 +1,77 @@
+Title: IBM Cannot log onto ITCAM Managing Server Console - United States
+
+Text:
+CAMADMSALL CAMADMSUSE CAMADMSSEC ITCAM console logon failed federated TECHNOTE (TROUBLESHOOTING)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ US English 
+
+PROBLEM(ABSTRACT)
+ You are unable to log onto ITCAM for WebSphere, J2EE, or Application Diagnostics Managing Server Console the first time you try. 
+
+RESOLVING THE PROBLEM
+The step-by-step approach below uses : 
+
+ * DB2 for the Managing Server database - If you are using Oracle, you will have to make the appropriate command substitutions. 
+ * amuser as the database schema owner - If your schema owner is a different ID, use it wherever you see amuser. 
+ * octigate and the database name 
+
+______________________________________________________ 
+
+
+Verify that each step along the way is working as expected when logging onto the ITCAM Managing Server Console (Visualization Engine): 
+
+ * Verify the ITCAM database (octigate by default) and tables are installed 
+   ITCAM stores the user IDs in the ITCAM database. If you are using DB2, execute the following:  * 
+    * 
+    * 
+   
+   
+   If the tables do not exist, run the $MS_HOME/etc/am-db2.sql script to install the database and tables.
+    * 
+    * 
+    * 
+   
+   
+
+ * Verify Security settings in WebSphere 
+
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+
+ * Make sure you can access the database via ITCAM 
+
+ * 
+
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+
+ * Verify that WebSphere can access the database 
+   
+   Go to the WAS Admin Console and try to access the database. In the WAS Admin Console:  * Go to Resources > JDBC providers > ITCAM-JDBCDriver > Data sources 
+    * Select "ITCAMDataSource" and hit the Test Button 
+    * If this fails, edit "ITCAMDataSource" and make sure the port is set properly for the database (default 50000 for DB2) and password for "amuser" is set correctly as well (or whatever ID you are using). For the password, you will have to drill further by selecting "J2EE Connector Architecture (J2C) authentication data entries" and the selecting the ITCAM alias. 
+   
+   
+
+ 
+
+Cross reference information Segment Product Component Platform Version Edition Systems and Asset Management Tivoli Composite Application Manager for J2EE Solaris, AIX, HP-UX, Linux, Windows 6.1 Systems and Asset Management Tivoli Composite Application Manager for Application Diagnostics AIX, HP-UX, Linux, Solaris, Windows 7.1

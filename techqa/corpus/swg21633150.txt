@@ -1,0 +1,41 @@
+Title: IBM Key not valid for use in specified state in IBM Datacap Taskmaster Capture - United States
+
+Text:
+dcskey; dcskey.exe; keystore; key store TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Unable to import or delete encryption key using dcskey.exe - Key not valid for use in specified state. 
+
+SYMPTOM
+Running dcskey.exe with command line flag d, e, gnk or i results in the following errors: 
+
+Keys couldn't be imported. Key not valid for use in specified state. 
+Keys couldn't be deleted. Key not valid for use in specified state. 
+Keys couldn't be exported. Unable to get the key from the key store. 
+Keys couldn't be generated. Key not valid for use in specified state.
+
+[/support/docview.wss?uid=swg21633150&aid=1] [/support/docview.wss?uid=swg21633150&aid=1]
+
+
+CAUSE
+The crypto keys in the user keystore are out of synch with Windows. The root cause or causes have not been determined. Changing the user's password sometimes plays a role.
+
+
+RESOLVING THE PROBLEM
+Remove the private keys for the affected user on the workstation where the error is occurring. 
+
+ 
+
+ 1. Enable the Show hidden files, folders, and drives Windows Explorer setting. 
+ 2. Browse to the private keys folder on the affected machine for the user experiencing this issue, i.e. the logged in user account when running dcskey that produces this error.  * Windows 7, 2008 and 2008 R2:
+       C:\Users\<user>\AppData\Roaming\Microsoft\Crypto\RSA\<userSID> 
+     * Windows XP:
+       C:\Documents and Settings\<user>\Application Data\Microsoft\Crypto\RSA\<userSID>
+    
+    
+ 3. Find 5 files with identical date/time stamps. If there is only one such group of files, they are the Taskmaster encryption keys. The date/time stamp typically will reflect the time the keys were last created or imported successfully. 
+ 4. Move these files to a separate folder, e.g. a newly created folder on the desktop. 
+ 5. Log in as the affected user and run the appropriate dcskey command.
+
+
+Note: Carefully select the <user> folder in step 2. Domain accounts may be listed as username.DOMAIN.

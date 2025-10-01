@@ -1,0 +1,25 @@
+Title: IBM Trying to import a X.509 Certificate with a very long common name results in an import exception - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When trying to import a X.509 Certificate that has a Common Name (CN) Field length of more than 64 characters, you are getting an import exception. 
+
+RESOLVING THE PROBLEM
+You might want to try modifying TrustpointAll.jar in <installdirectory>/jdk/jre/lib/ext. Here are the steps.
+(Please make a backup copy of the original TrustpointAll.jar) 
+
+ 1. Copy TrustpointAll.jar to an empty directory 
+ 2. jar -xf TrustpointAll.jar to extract jar content 
+ 3. Go to com\trustpoint\config\pkix\pkix1explicit
+    (create that directory in the directory structure) 
+ 4. Create the file DNLength.cfg
+    Put this line into the file:
+    CommonName.length.max = 128 
+ 5. Save the file DNLength.cfg 
+ 6. update the jar file
+    jar uf TrustpointAll.jar com/trustpoint/config/pkix/pkix1explicit/DNLength.cfg 
+ 7. Copy TrustpointAll.jar to <install directory>/jdk/jre/lib/ext
+    Note. You should make a backup copy of TrustpointAll.jar but not save the backup copy in <install directory>/jdk/jre/lib/ext. 
+ 8. Restart ISBI

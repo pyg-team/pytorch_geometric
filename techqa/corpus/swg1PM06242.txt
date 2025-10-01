@@ -1,0 +1,165 @@
+Title: IBM PM06242: CHECK DATA UTILITY ISSUED ABEND0C4 IN DSNIMOFR IF A PARENT TABLE HAD MULTIPLE CHILD TABLES AND MIXED VERSIONED AND NOT VERSIONED. - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Dump Title: HD2P,ABND=0C4-00000004,U=RU99    ,M=(N),C=910.DMC
+   -DSNIDNEX,M=DSNTFRCV,LOC=DSNIDM  .DSNIMOFR+7604
+   Dump Title: HD2P,ABND=0C4-00000010,U=RU99    ,M=(N),C=910.DMC
+               -DSNIDNEX,M=DSNTFRCV,LOC=DSNIDM  .DSNISIE2+06F4
+   Dump Title: HD1P,ABND=0C4-00000010,U=RU99    ,M=(N),C=910.SMC
+               -DSNSGSTG,M=DSNTFRCV,LOC=DSNSLD1 .DSNSVBK +0E2A
+   CHECK DATA utility may cause ABEND0C4 in DSNIMOFR/DSNISIE2 and
+   storage overlay. The storage overlay causes ABENDs in DSNSVBK.
+   This happens when a parent table has multiple child tables and
+   some of them are versioned and others are not versioned.
+   After a down level row in a versioned child table was processed
+   unnecessary conversion happened on a row in a non-versioned
+   child table.
+   The incorrect conversion caused storage overlay.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All DB2 z/OS users of CHECK                  *
+   *                 DATA or LOAD utility.                        *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Down level version flag doesn't get     *
+   *                      reset when processing mixed versioned   *
+   *                      child tables under the same parent for  *
+   *                      RI cascade delete.                      *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   During a referential integrity cascade delete operation, the
+   CHECK DATA or LOAD utility will delete a specific error record
+   (root record) followed by deleting all of its dependent
+   records.
+   If the parent table has multiple child tables, some of the
+   internal control block will be updated to the next dependent,
+   but it is missing to update the down level version flag
+   and cause the storage overlay.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Code has been changed to ensure reset the down level version
+   flag when processing next dependent table.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM06242
+   
+   
+ * REPORTED COMPONENT NAME
+   DB2 OS/390 & Z/
+   
+   
+ * REPORTED COMPONENT ID
+   5740XYR00
+   
+   
+ * REPORTED RELEASE
+   910
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-01-28
+   
+   
+ * CLOSED DATE
+   2010-06-14
+   
+   
+ * LAST MODIFIED DATE
+   2010-07-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UK57956 UK57957
+   
+   
+
+MODULES/MACROS
+ *  DSNIDNEX
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   DB2 OS/390 & Z/
+   
+   
+ * FIXED COMPONENT ID
+   5740XYR00
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R810 PSY UK57956 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK57956]
+   UP10/06/30 P F006
+   
+   
+ * R910 PSY UK57957 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK57957]
+   UP10/06/30 P F006
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

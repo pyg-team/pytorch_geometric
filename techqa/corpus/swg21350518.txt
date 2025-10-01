@@ -1,0 +1,23 @@
+Title: IBM The report request failed. The report entry does not exist. Unable to refresh Report Entry. - United States
+
+Text:
+Multi server load balance error TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Multi-server IWR environment fails to achieve load balancing (as can be seen in the queues when many reports are run). Reports don't seem to be processed on a second server. In Upfront, it sometimes takes 2 or three times of selecting a report to view the report successfully; reports run successfully some of the time and sometimes generate a error (see below). 
+
+Report run perfectly when either one of the servers is disabled, i.e. when it is only one of the servers, doesn't matter which. Using UNC during the publish and all servers are logged under the same domain account. 
+
+SYMPTOM
+The report request failed. The report entry does not exist. Unable to refresh Report Entry.
+
+
+RESOLVING THE PROBLEM
+Ensure that the servers are pointing to data store locations on the same server ( i.e. each of the servers shouldn't be pointing to the *.db files on their own drives). Logically, there can be only one data store in an IWR environment. Changing the Data Store Host and Data Store Location to the same location in the configurations of all servers in the environment resolved the issue.
+
+Steps:On each of the servers, in Configuration Manager go to IBM Cognos Impromptu Web Reports --> Common --> Database and change the Data Store Host and Data Store Location properties to the one and only legitimate datastore location. Alternatively, you can copy the Configuration Manager configuration (.CCS) file from one server to the others to ensure that the data store references and other such references are consistent on all of the machines. 
+
+ 
+
+HISTORICAL NUMBER
+ 1018642

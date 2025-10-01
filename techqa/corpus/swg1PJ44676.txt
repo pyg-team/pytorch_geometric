@@ -1,0 +1,186 @@
+Title: IBM PJ44676: Unable to sort by any column on result set after executing an existing search via Case Client - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+ DIRECT LINKS TO FIXES
+5.2.1.7-ICM-ZLINUX-FP007 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FCase+Manager&fixids=5.2.1.7-ICM-ZLINUX-FP007&source=SAR]
+5.2.1.7-ICM-WIN-FP007 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FCase+Manager&fixids=5.2.1.7-ICM-WIN-FP007&source=SAR]
+5.2.1.7-ICM-LINUX-FP007 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FCase+Manager&fixids=5.2.1.7-ICM-LINUX-FP007&source=SAR]
+5.2.1.7-ICM-AIX-FP007 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FCase+Manager&fixids=5.2.1.7-ICM-AIX-FP007&source=SAR]
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The user is unable to sort on any column on the result set after
+   executing an existing search via Case Client during the process
+   of adding a document from local repository.  When the same
+   existing search is performed via Navigator the user can sort by
+   any column.
+   
+   This issue is produced under the following scenario:
+   A. The user is using an existing saved search.
+   B. Only solution defined properties are displayed in the result
+   set.
+   
+   Steps to reproduce:
+   1. Via Case Builder, create solution with at least 1 solution
+   property and 1 document type
+   2. Add the solution property to the document type
+   3. Create a case type
+   4. Save and deploy solution
+   5. Via Content Navigator,
+   5a. Create several documents using previously created document
+   type
+   5b. Create New Search for same document type using relevant
+   criteria for previously created documents
+   5c. Click on Results Display button, remove all system fields;
+   add only the solution properties previously created
+   5d. Save search
+   6. Via Content Navigator, run the newly created search
+   7. Note the result set can be sorted by any column
+   8. Run solution, create new case
+   9. Open the case, from the Case Information Widget click on the
+   Documents tab
+   10. Add document to case from repository: select Add > Add
+   Document from Repository
+   11. Use same existing search, click on Search
+   
+   Expected results:
+   User can sort result set by any column; the sorting behavior is
+   expected to be consistent between Case Client and Navigator
+   
+   Actual results:
+   User is not able to sort result set by any column from Case
+   Client but can sort by any column via Navigator
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Adding 1 or more system properties to the result display set
+   will allow the user to sort by any column in the result set
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * Case client users needing to sort results from a saved       *
+   * search                                                       *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * See Error Description                                        *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Update to 5.2.1.7-ICM-FP007 or later release to address this *
+   * issue.                                                       *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The SelectObjectDialog is used by Case Manager to display the
+   search page.  The SelectObjectDialog grid did not get set with
+   SingleSort enabled resulting in the user not being able to sort
+   the results.  This has been corrected in 5.2.1.7-ICM-FP007 and
+   later release.  The user should be able to sort by any column
+   from the search results.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PJ44676
+   
+   
+ * REPORTED COMPONENT NAME
+   CASE MGR CLIENT
+   
+   
+ * REPORTED COMPONENT ID
+   5725A1501
+   
+   
+ * REPORTED RELEASE
+   521
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-03-06
+   
+   
+ * CLOSED DATE
+   2017-08-22
+   
+   
+ * LAST MODIFIED DATE
+   2017-08-22
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    PJ44807
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CASE MGR CLIENT
+   
+   
+ * FIXED COMPONENT ID
+   5725A1501
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R521 PSY
+   UP

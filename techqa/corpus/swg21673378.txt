@@ -1,0 +1,39 @@
+Title: IBM OMNIbus installation failed with InvocationTargetException - United States
+
+Text:
+jvm; jre; installer; deployment; engine TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Root installation of OMNIbus failed with error:
+
+This Application has Unexpectedly Quit: Invocation of this Java Application has caused an InvocationTargetException. This application will now exit. (LAX) 
+
+CAUSE
+There was an earlier installation attempt which failed.
+
+DIAGNOSING THE PROBLEM
+Check for missing directories. Both of these directories should exist: 
+
+/usr/ibm/common/acsi 
+/var/ibm/common/acsi
+
+
+RESOLVING THE PROBLEM
+Uninstall the DE using the de_cleanup.sh script (if the script still exists) or manually uninstall as follows: 
+
+
+For Global or root installations:
+* Remove the /var/ibm/common directory.
+* Remove the /usr/ibm/common directory.
+* Clean up the /tmp directory, by removing the acu_de.log file , if it is there.
+* Remove the /tmp/<username> directory, where <username> is the ID of the user that installed DE (e.g. "root").
+* Remove all DE references from the /etc/inittab system file. The DE entries should be delimited by "#Begin AC Solution Install block" and "#End AC Solution Install block". Remove all of the text between those delimiters, and the delimiting text, as well. 
+
+* Remove all DE references from the /etc/services system file.
+
+Then, attempt the installation again.
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ OMNIbus

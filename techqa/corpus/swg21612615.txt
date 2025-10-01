@@ -1,0 +1,83 @@
+Title: IBM Saving an IBM Rational Quality Manager Test Plan linked to a view in IBM Rational DOORS fails with "An error occurred while saving links from requirements provider" - United States
+
+Text:
+http 409; RQM ; test plan; Validates link; unable to load TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Attempts to save a test plan or a test case with a 'Validates' link to a requirement or module view in IBM Rational DOORS fails with: "An error occurred while saving links from requirements provider". The link to DOORS is created in Quality Manager but no link back to Quality Manager is created in DOORS. 
+
+SYMPTOM
+The full error message is as follows - note the status:409:
+
+An error occurred while saving links from requirements provider
+Unable to load /qm/proxy?uri=http%3A%2F%2Fclm%3A8080%2Fdwa%2Frm%2Furn%3Arational%3A%3A1-504dd9b9029f2803-M-00000080 status:409
+
+
+Another variant, with a different cause - note the status:500: 
+
+
+An error occurred while saving links from requirements provider
+Unable to load /qm/proxy?uri=http%3A%2F%2Fclm%3A8080%2Fdwa%2Frm%2Furn%3Arational%3A%3A1-504dd9b9029f2803-M-00000080 status:500
+
+
+
+
+
+
+CAUSE
+ 
+
+ * The 409 error is seen where the DOORS module is open in exclusive edit mode or a section of the module which needs to be updated has been locked in shared edit mode. Or the user does not have write access to the module in DOORS.
+
+
+ * The 500 error can occur when there a mismatch in the dwaHost registered with DOORS and that set in the published.url.prefix parameter in IBM Rational DOORS Web Access (DWA) To verify if this is the issue, open the properties of a DOORS module and note its exact URL. 
+   
+   For example: 
+   http ://tennyson:9999/dwa/rm/urn:rational::1-4f9819536c985f97-M-00000541
+   
+   
+   Edit the <DWA Install folder>\server\festival\config\festival.xml file 
+   
+   Note the value for the parameter published.url.prefix. 
+   
+   The hostname there must match exactly the hostname in the module's properties. 
+   
+   For example: <f:property name="published.url.prefix" value="http ://tennyson.ibm.com:8080/doors/redirector/"/> 
+   
+   This does not match. In DOORS, it is tennyson; In DWA it is tennyson.ibm.com.
+   
+   
+
+
+
+RESOLVING THE PROBLEM
+To resolve the issue: 
+
+ * For the 409 error, close the module in DOORS and try to save the test plan again.
+
+
+ * For the 500 error, if the value in the festival.xml is incorrect, correct it and restart DWA. If the value in the module is incorrect, it is necessary to run the dbadmin command and restart the DOORS database server. 
+   
+   Run the command: dbadmin -data <port@host> -dwaHost <correct hostname> 
+   
+    
+   
+   Verify you see a response like: 
+   
+   I- DBADMIN: DWA host has been set 
+   
+    
+   
+   For example: dbadmin -data 36677@localhost -dwaHost tennyson.ibm.com 
+   
+   -I- DBADMIN: DWA host has been set 
+   
+    
+   
+   Restart the DOORS database server and check in the module properties that it is now correct.
+   
+   
+
+
+RELATED INFORMATION
+#Http 500 error trying to associate a DOORS module with [http://www.ibm.com/support/docview.wss?uid=swg21615699]

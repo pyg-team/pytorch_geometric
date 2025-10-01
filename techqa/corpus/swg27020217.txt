@@ -1,0 +1,38 @@
+Title: IBM An error might occur when you redeploy FileNet Content Engine on WebSphere Application Server or JBoss Application Server after installing Content Search Engine Client files - United States
+
+Text:
+ RELEASE NOTES
+
+ABSTRACT
+ After you install Content Search Engine Client files, you must delete temporary files and deployment application server files before redeploying Content Engine. Otherwise, an error occurs and a message is displayed on the Content Engine Health page. This error can occur during a Content Engine upgrade or when you install Content Search Engine Client after you install software by using IBM FileNet Composite Platform Installation Tool (CPIT) or IBM Case Manager Platform Installation Tool (CMPIT). 
+
+CONTENT
+If you see an error message for the Content Engine Client Version entry on the Content Engine Health page after redeploying Content Engine, complete the following steps to resolve the problem:
+
+
+1. In the application server console, stop and undeploy the Content Engine application.
+
+2. Stop the application server.
+
+3. Delete the following application server files and directories, depending on your application server type:
+
+
+
+WebSphere Paths Action WAS_install_location/profiles/profile_name/
+config/temp/download/cells/node_name/
+applications/FileNetEngine.ear Delete FileNetEngine.ear. WAS_install_location/profiles/profile_name/cells/
+node_name/applications/FileNetEngine.ear Delete FileNetEngine.ear. WAS_install_location/profiles/profile_name/
+installedApps/cell_name/FileNetEngine.ear Delete FileNetEngine.ear. WAS_install_location/profiles/profile_name/temp/
+node_name/server_name/FileNetEngine Delete FileNetEngine. 
+JBoss Paths Action JBoss_install_location/server/server_name/work/
+jboss.web/localhost Delete the contents of localhost. JBoss_install_location/server/server_name/tmp Delete the contents of tmp. 
+
+4. Start the application server. 
+
+5. Install Content Search Engine Client. 
+
+6. Start Configuration Manager and run the Deploy Application task for Content Engine. 
+
+7. Restart the Content Engine application. 
+
+8. Verify that the Content Engine Health page is updated properly.

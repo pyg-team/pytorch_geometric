@@ -1,0 +1,23 @@
+Title: IBM Purging all Authorized CIs in DB2 - United States
+
+Text:
+purge; delete; remove; clear; authorized ci; cis; actual; ccmdb; SCCDCI TECHNOTE (FAQ)
+
+QUESTION
+ How to purge all Authorized CIs in DB2 for a test environment where we have already purged all Actual CIs? 
+
+ANSWER
+Assuming CIs are not used (in places like in Change records or Service Requests and etc) use the script below to clear the Authorized CI space.
+
+--DB2 only:
+alter table maximo.cirelation activate not logged initially with empty table;
+alter table maximo.cirelationhis activate not logged initially with empty table;
+alter table maximo.cispec activate not logged initially with empty table;
+alter table maximo.cispechis activate not logged initially with empty table;
+alter table maximo.ci activate not logged initially with empty table; 
+alter table maximo.cistatus activate not logged initially with empty table;
+delete from maximo.multiassetlocci where cinum is not null;
+alter table maximo.ccideletedactci activate not logged initially with empty table;
+
+If use with Service Provider, also issue this command:
+delete from maximo.pluspcustassoc where ownertable='CI';

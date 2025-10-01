@@ -1,0 +1,115 @@
+Title: IBM PK59472: UNABLE TO OVERRIDE ITCAM DATABASE NAME DURING INSTALLATION - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Customer is unable to change the default name of the OCTIGATE
+   database to something different when performing an installation
+   of the ITCAM managing server (MS).  However, the documentation
+   for this process indicates that the change can be done.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  The technote to provide correct information on change of
+   database name for ITCAM to be other than OCTIGATE is available
+   at:
+   
+   http://www-1.ibm.com/support/docview.wss?&uid=swg21293990 [http://www-1.ibm.com/support/docview.wss?&uid=swg21293990]
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  UNABLE TO OVERRIDE ITCAM DATABASE NAME DURING INSTALLATION
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Technote written for this
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK59472
+   
+   
+ * REPORTED COMPONENT NAME
+   ITCAM WAS MGING
+   
+   
+ * REPORTED COMPONENT ID
+   5724L62MS
+   
+   
+ * REPORTED RELEASE
+   610
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-01-17
+   
+   
+ * CLOSED DATE
+   2008-01-24
+   
+   
+ * LAST MODIFIED DATE
+   2008-08-01
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

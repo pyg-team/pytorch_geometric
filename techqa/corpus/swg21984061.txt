@@ -1,0 +1,28 @@
+Title: IBM Report data showing '<unsupported: NVARCHAR2>' - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When testing Cognos Analytics 11.0.0 report against a Data Module package connecting to both Oracle 11g and Oracle 12c, the cells of the reporting object (list/crosstab/etc) shows '<unsupported: NVARCHAR2>'.
+
+
+
+SYMPTOM
+This only happens in the following situations: 
+
+- only for data types that use NVARCHAR2. Other tested data types that work are VARCHAR2 and NVARCHAR 
+
+- only for Data Module packages. FM packages work. 
+
+- only against Oracle datasource. Both Oracle 11g and 12c are affected. SQLServer using NVARCHAR2 works.
+
+
+CAUSE
+Identified to be a client driver issue.
+
+
+RESOLVING THE PROBLEM
+Please update to the latest Oracle Instant Client version. 
+
+Please make sure to refresh the Data Server schema after copying the new drivers.

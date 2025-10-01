@@ -1,0 +1,183 @@
+Title: IBM PK23814: ILLEGAL XML CHARACTERS CAUSE PERFSERVLET TO FAIL WHEN THE 'VERSION=5' PARAMETER IS SPECIFIED - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  In WebSphere Application Server V6, the performance servlet
+   (PerfServlet) outputs performance data using the J2EE 1.4
+   Performance Data Framework by default.  However, it can provide
+   output in the WebSphere V5 format when the 'version=5' parameter
+   is specified:
+   http://hostname/wasPerfTool/servlet/perfservlet?version=5 [http://hostname/wasPerfTool/servlet/perfservlet?version=5]
+   .
+   This may result in illegal XML characters being output by the
+   PerfServlet, causing the following error to appear in the web
+   browser:
+   .
+   org.w3c.dom.DOMException: INVALID_CHARACTER_ERR: An
+   invalid or illegal XML character is specified.
+    at org.apache.xerces.dom.CoreDocumentImpl.createElement(Unknown
+   Source)
+    at com.ibm.ws.pmi.perfServlet60.XmlPrinter.generateStats(XmlPri
+   nter.java:359)
+   ...
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: WebSphere Application Server version 6.0     *
+   *                 Performance Servlet users querying version 5 *
+   *                 format output containing xml characters      *
+   *                 '%' or '!' (percent sign or exclamation      *
+   *                 point).                                      *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Illegal xml character exceptions        *
+   *                      thrown when requesting version 5        *
+   *                      format output including the '%' or '!'  *
+   *                      characters.                             *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   Illegal xml character exceptions thrown when requesting
+   version 5 format output including the '%' or '!' characters.
+   These characters were in the list of characters filtered.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Simply added '%' and '!' to the list of characters that are
+   filtered from the element and/or attribute creation process.
+   
+   Target fixpack: 6.0.2.11
+   Please refer to the recommended updates page for delivery
+   information:
+   http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK23814
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSPH APP SERV
+   
+   
+ * REPORTED COMPONENT ID
+   5724J0800
+   
+   
+ * REPORTED RELEASE
+   60A
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2006-04-21
+   
+   
+ * CLOSED DATE
+   2006-04-24
+   
+   
+ * LAST MODIFIED DATE
+   2006-05-25
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  PMI
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBSPH APP SERV
+   
+   
+ * FIXED COMPONENT ID
+   5724J0800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R60A PSY
+   UP
+   
+   
+ * R60H PSY
+   UP
+   
+   
+ * R60I PSY
+   UP
+   
+   
+ * R60P PSY
+   UP
+   
+   
+ * R60S PSY
+   UP
+   
+   
+ * R60W PSY
+   UP
+   
+   
+ * R60Z PSY
+   UP

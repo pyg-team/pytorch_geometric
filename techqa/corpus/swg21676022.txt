@@ -1,0 +1,52 @@
+Title: IBM A JspTranslationException message is seen when accessing a Coach from the Process Portal for IBM Business Process Manager (BPM) - United States
+
+Text:
+WAS; WebSphere; Exception; Translater; JSP; JspTranslation; JspTranslationException; JspTranslator; JspTranslator.processVisitors; CoachDesigner; CoachDesigner.jsp; Servlet; Error; Servlet Error; JSPG0227E TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When you access a coach through the Process Portal, it results in an JspTranslation exception. However, the error stack does not provide a cause. 
+
+SYMPTOM
+When you access a coach of a deployed process application from the Process Portal, you receive the following error message in your browser and the SystemOut.log file:
+
+00000435 webapp E 
+com.ibm.ws.webcontainer.webapp.WebApp logServletError SRVE0293E: 
+[Servlet Error]-[/html/coaches/CoachDesigner.jsp]: 
+com.ibm.ws.jsp.translator.JspTranslationException: JSPG0227E: Exception
+caught while translating /html/coaches/CoachDesigner.jsp:
+java.lang.reflect.InvocationTargetException
+
+at
+com.ibm.ws.jsp.translator.JspTranslator.processVisitors(JspTranslator.java:139)
+
+at
+com.ibm.ws.jsp.translator.utils.JspTranslatorUtil.translateJsp(JspTranslatorUtil.java:254) 
+
+at
+com.ibm.ws.jsp.translator.utils.JspTranslatorUtil.translateJspAndCompile(JspTranslatorUtil.java:121) 
+[...]
+
+
+CAUSE
+The root cause of this issue is most likely a corrupt compiled JavaServer™ Pages (JSP) file in the application server.
+
+DIAGNOSING THE PROBLEM
+Review your SystemOut.log file and see whether the error stack provides a cause. To gain more insight on what is happening during the compilation, you can run the JSPBatchCompiler, which is described in the MustGather: JavaServer Pages (JSP) problems [http://www.ibm.com/support/docview.wss?uid=swg21255205] document.
+
+RESOLVING THE PROBLEM
+To resolve the problem, clear all of the compiled JSP files in the temp directories of your application server (WebSphere_Application_Server_install_root/temp and WebSphere_Application_Server_profile_root/temp). For more information, see the InvocationTargetException when rendering a JSP [http://www.ibm.com/support/docview.wss?uid=swg21388377] document.
+
+
+
+
+Note: The WebSphere_Application_Server_install_rootand WebSphere_Application_Server_profile_root variables are specific to your environment. 
+
+
+These changes cause the JSP to be rendered again and the problem should be resolved.
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Business Process Manager Advanced Coach AIX, Linux, Linux zSeries, Solaris, Windows 8.5 
+PRODUCT ALIAS/SYNONYM
+ BPM

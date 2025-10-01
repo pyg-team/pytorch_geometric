@@ -1,0 +1,65 @@
+Title: IBM Garbage Collection and Memory Leaks within Initiate Master Data Service - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How does garbage collection work within IBM Initiate Master Data Service and what constitutes a memory leak? 
+
+CAUSE
+Programming languages handle memory in their own distinct way. In languages such as C and C++, we have to allocate and de-allocate memory manually whereas in Java this happens automatically through a process known as garbage collection.
+
+C and C++ provides implicitly declared global scope allocation function as well as de-allocation functions shown below:
+C++ Allocation:
+void* operator new(std::size_t);
+void* operator new[](std::size_t);
+
+C++ De-allocation:
+void operator delete(void*);
+void operator delete[](void*);
+
+C Allocation: void *malloc(size_t size);
+C De-allocation: void free(void *ptr);
+
+This means that whenever an object is created in languages such as C or C++, we have to free up that memory, other-wise that previously allocated (now redundant) memory will become unusable till the program terminates.
+
+Whereas in Java, the programmer does not explicitly specify memory allocation or removal in the program code. Here the garbage collector finds the unnecessary (garbage) objects and removes them. Objects are termed as garbage if they can no longer be referenced or used by the JVM (i.e. no longer active). The algorithm to find garbage objects is proprietary to a particular garbage collector and the application (MDS here) is not responsible for implementing it. This clean-up is known as a GC cycle.
+
+
+ANSWER
+Memory can be divided in two main categories:
+
+
+1. Native heap 
+
+The operating system controls the native heap (not the JVM) and this memory is used by the operating system to carry out functions in the OS as requested by the JVM. Therefore the JVM does not perform garbage collection in the native heap. But MDS does use the Java Native Interface (JNI) to have a separate working area for the each thread which runs.
+
+For performance reasons, whenever an object is created within a thread, a copy of it saved in native memory. Each thread has its own working space within the native heap and depending on the number of threads, native memory is allocated to a JVM. The total size of the native memory used within a thread is determined by the size of the object it stores. If a thread works with a 600 MB object, then it will store a copy of the 600 MB object within the native space as well. When the object is no longer used, the space is freed up but it is still bind to the MDS thread. If the thread needs to use a 400 MB object, it will reuse some of the 600 MB space. If the thread needs to use 800 MB object, then an additional 200 MB would be assigned from allocated native space or got from the operating system. If the heap allocated is 600 MB but utilization is 400 MB, then the remaining 200 MB would stay with the JVM and will not be given back. In general Java does not give up memory which has been allocated to it to optimize performance in case of memory fragmentation. Automatic garbage collection does not happen in the native heap.
+
+2. Java heap (including stack space) 
+
+The stack is the memory set aside as scratch space for a thread of execution and it contains local variables, parameters passed to a function and other run time data. As soon as the thread returns or no longer needs some information, this memory is freed up and hence there is no garbage collection performed here. Stack space is set using the -Xss JVM argument and is generally faster than regular java heap. 
+
+The heap is memory set aside for dynamic allocation and it contains all the objects used by the JVM and is allocated using JVM arguments like -Xmx (max allowed heap) and Xms (starting heap). It is here that garbage collection takes place and leaks may be introduced.
+
+In Java run time environment, when a JVM starts it allocates memory from server RAM to itself as specified in the -Xms setting (stack space and Java heap). From there onwards, the JVM acts as a virtual machine completing all its operations by utilizing this memory and if it needs more memory, it requests more from the operating system till the maximum allowed is reached (specified by -Xmx setting). It should be noted that once heap is allocated, the JVM does not relinquish it and so the same heap location can be cleaned up and re-used multiple times to store different objects. 
+
+The clean-up is done by the garbage collector and the process is part of the JVM; independent of the application. Garbage collectors can be concurrent (running simultaneous to the application) and/or parallel (multi-threaded garbage collection). Most generational garbage collectors believe that "New Objects die Young" i.e. new objects have a higher change of becoming unusable at any given time than older objects. Therefore it divides memory into young and old objects and garbage collector checks for garbage in young objects more frequently than the old objects.
+
+We can call garbage collection on an object manually from within code using functions such as System.gc() and Runtime.gc() which will send request to Garbage collector from JVM. But this manual call is not necessary because an object becomes eligible for clean-up if it is not reachable from any live threads and does not have any static references i.e. an object becomes eligible for garbage collection if all of its references are null. Cyclic dependencies are not counted as reference so if object A and B have a circular reference to each other and no other object, then both Objects A and B will be eligible for Garbage collection.
+
+Garbage collection has a direct impact on performance and as a general rule, speed of garbage collection grows proportionally to the amount of free heap within a JVM i.e. the speed of garbage collection will double with doubling of free heap within the JVM. Additionally, although most modern servers have hundreds of GB of RAM, most enterprise software still use less than 10 GB of RAM because garbage collection pauses grow in length with the rise in utilized heap. Garbage collection pause is when the JVM execution stops for garbage collection to complete; they can be made less frequent but are inevitable in most modern collectors. Hence to avoid prolonged pauses, most applications are designed for smaller heaps. To get detailed information on garbage collection, we can start the JVM with -verbose:gc as one of the arguments.
+
+In a poorly constructed code, we may have situations where an object is still referenced but the code flow dictates, it will never be used. If an object can no longer be used but it is not eligible for garbage collection, then that is a memory leak. Over time, we can have millions of similar objects which are no longer used but occupy large amounts of memory. To avoid memory leaks, we should ensure there are no references to forgotten objects and there is no leak in native code via Java Native Interface (JNI).
+
+
+
+PRODUCT ALIAS/SYNONYM
+ MDS
+Master Data Service
+MDM
+MDMSE
+Master Data Management
+IBM Infosphere Master Data Service
+MDM Standard Edition
+MDM Hybrid Edition

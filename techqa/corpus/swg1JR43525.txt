@@ -1,0 +1,153 @@
+Title: IBM JR43525: SRVC- REQUESTING CUSTOMIZED TOOLING TO UPGRADE THE SYSTEM APPLICATION IN THE PROFILE & TOOLKIT AND PROCESS PORTAL FOR IFIX - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Many of the Interim fix require profile upgrade and/or database
+   upgrade due to change in system applications and system toolkit
+   Currently we are using generic profile upgrade
+   (BPMProfileUpgrade) and database upgrade tooling (upgrade7x) as
+   post IFix install procedure.
+   
+   These generic tools try to upgrade everything deployed to the
+   profile and everything in the database. If Customer environment
+   profiles, configuration  and database contain unexpected
+   information, the generic upgrade tools are failing on
+   the customer machine.
+   
+   This is causing delay in customer installing the Ifix,   many
+   had to roll back since they were not able to wait for the
+   root-cuase analysis. Post IFix install failures are
+   unrelated to the specific Ifix content.
+   
+   Some of the customer did not have backup of their profile or
+   database to be able to rollback the changes.
+   
+   This is a enhancement request for development to provide
+   customized tooling for each IFix.
+   
+   Intermin Fix upgrading the "System Applciation"  EAR file :
+   
+   1.  IntermFixes installation should automatically update the
+       specific "system Application" (EAR files) by calling the
+       component specific ANT task  after installing the binary.
+   2.  Uninstalling the interm fix should be able to use the same
+       ant task to restore the old System Application after
+       installation Manager rollback of the binary.
+   
+   Interm Fix upgrading the database for system ToolKik, process
+   portal , language pack etc in the Porcess Server database :
+   
+   1. After IntermFix binary installation we need customized
+      tooling for updating the database for only the specific
+      change included int he interm Fix.
+   2 We also  need customized code  which can restore the specific
+     change made by the Interm fix after IM rollback the binary.
+     (update the databasae with previous version of the toolKit)
+   
+   WorkItem RTC# 83837 exist database upgrade tooling for minor
+   upgrade.
+   
+   IF an IFix provide customized post Binary install tooling for
+   installing  and rollback of the system applciations,  it will
+   eleiminate the requirment
+   for customer having to backup complete profiles and database for
+   every minor IFix installation.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  The requirement has been fulfilled in next release.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR43525
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM STANDARD
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9500
+   
+   
+ * REPORTED RELEASE
+   751
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-07-21
+   
+   
+ * CLOSED DATE
+   2014-11-17
+   
+   
+ * LAST MODIFIED DATE
+   2014-11-17
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R751 PSY
+   UP

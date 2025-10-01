@@ -1,0 +1,50 @@
+Title: IBM Enabling Cryptography Support in Netezza - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How to enable Cryptography Support in Netezza 
+
+ANSWER
+Enabling Cryptography Support in Netezza:-
+1) What is Cryptography?
+- Cryptography is a method of storing and transmitting data in a particular form so that only those for whom it is intended can read and process it.
+
+2) Does enabling Cryptography support require downtime?
+- Yes it does require downtime. You need to restart the database (nzstop/nzstart) after running nzconfigcrypto command.
+
+3) How to enable Cryptography support in Netezza?
+- You use the nzconfigcrypto command to enable support for the SP 800-131a enhanced cryptography on an IBM Netezza appliance.
+
+How to Enable Cryptography Support in Netezza:
+
+3.1) Log in to the active host of the Netezza system as the nz user.
+
+3.2) Run the nzconfigcrypto -enable command and specify the host key name. The host key must already be defined in your NPS system and must be of type AES-256.
+
+For example:
+$ nzconfigcrypto -HK ks1.key1 -enable 
+
+3.3) Restart the database (nzstop/nzstart).
+
+3.4) Confirm that the host key is now set to the stronger key that you specified in the nzconfigcrypto command by logging into nzsql.
+
+SYSTEM.ADMIN(ADMIN)=> SHOW SYSTEM DEFAULT HOSTKEY;
+NOTICE: ’HOST KEY’ = ’KS1.KEY1’
+SHOW VARIABLE
+SYSTEM.ADMIN(ADMIN)=> 
+
+3.5) If you use LDAP authentication for your database user accounts, type the following command to restore the LDAP configuration with the enhanced cryptographic support.
+
+SYSTEM.ADMIN(ADMIN)=> SET AUTHENTICATION ldap ssl ’on’ attrname ’cn’ base ’dc=netezza,dc=com’ namecase ’lowercase’ server ’yourldapsvr.company.com’ version ’3’ 
+
+3.6) If you use Kerberos authentication for your database user accounts, type the command that was displayed in the message output from the nzconfigcrypto -enable command earlier in this procedure to enable the Kerberos configuration.
+
+3.7) If you had an audit history configuration that was disabled by the script, you can update the history configuration to digitally sign it using a DSA_KEYPAIR_2048 key as in the following sample configuration named audit1.
+
+SYSTEM.ADMIN(ADMIN)=> ALTER HISTORY CONFIG audit1 KEY ks1.seckey; 
+
+After you alter the audit configuration, you can make it the current configuration to enable that history collection. After you change a history configuration, you must set the new configuration to be the current one, and then restart the NPS software by using the nzstop and nzstart commands to fully enable the audit configuration.
+
+The nzconfigcrypto -enable command verifies that the system can support enhanced cryptography and enables the SP 800-131a support on the Netezza appliance. The command creates a log file named /tmp/crypto_date_time.log to capture the messages and information for later review and troubleshooting.

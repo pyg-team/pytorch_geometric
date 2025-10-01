@@ -1,0 +1,151 @@
+Title: IBM IO25314: IBM CONTENT NAVIGATOR FAILS TO UPLOAD .RAR FILE VIA DRAG'N'DROP METHOD. - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+ DIRECT LINKS TO FIXES
+3.0.1-ICN-WIN [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FOther+software%2FContent+Navigator&fixids=3.0.1-ICN-WIN&source=SAR]
+3.0.1-ICN-zLINUX [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FOther+software%2FContent+Navigator&fixids=3.0.1-ICN-zLINUX&source=SAR]
+3.0.1-ICN-LINUX [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FOther+software%2FContent+Navigator&fixids=3.0.1-ICN-LINUX&source=SAR]
+3.0.1-ICN-AIX [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FOther+software%2FContent+Navigator&fixids=3.0.1-ICN-AIX&source=SAR]
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  IBM Content Navigator fails to upload .rar file via
+   drag'n'drop method.
+   Browser affected: Chrome
+   The error shown is:
+   CIWEB2053
+   The following item cannot be added to the repository:
+   failed_item.
+   Explanation
+   This error can occur for one of the following reasons:
+   You are trying to add a document that was moved or deleted.
+   You are trying to add a document that was renamed.
+   You are trying to add a document that is corrupted.
+   You are trying to add a document that is open in another
+   application.
+   You are trying to add a folder to the repository.
+   You do not have the appropriate permissions on the operating
+   system to
+   access the document.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Use a different browser for drag 'n' drop.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  With Chrome browser, using drag and drop to add documents
+   sometimes results in an error for some file types.  The error
+   message is "CIWEB2053 The following item cannot be added to the
+   repository".
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This has been fixed in IBM Content Navigator V3.0.1. With this
+   fix, drag and drop to add documents using Chrome works for
+   these file types.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IO25314
+   
+   
+ * REPORTED COMPONENT NAME
+   CONTENT NAVIGAT
+   
+   
+ * REPORTED COMPONENT ID
+   ISCONTNAV
+   
+   
+ * REPORTED RELEASE
+   203
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-04-19
+   
+   
+ * CLOSED DATE
+   2017-06-30
+   
+   
+ * LAST MODIFIED DATE
+   2017-06-30
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CONTENT NAVIGAT
+   
+   
+ * FIXED COMPONENT ID
+   ISCONTNAV
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R203 PSY
+   UP

@@ -1,0 +1,183 @@
+Title: IBM IV74490: REDUNDANT KSTAT ERROR MESSAGES IN UNIX OS AGENT RAS1 LOGS ON SOLARIS - United States
+
+Text:
+  A FIX IS AVAILABLE
+IBM Tivoli Monitoring 6.3.0 Fix Pack 7 (6.3.0-TIV-ITM-FP0007) [http://www-01.ibm.com/support/docview.wss?uid=swg24041633]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  On Solaris servers with disabled processors the RAS1 logs of
+   both
+    the kuxagent and the kux_vmstat processes may get flooded by
+   the
+    following messages at the default ERROR level:
+   
+      vm_stat_externals.cpp,1757,"get_cpu_stats") kstat_lookup
+   error -
+         (cpu_stat,123,NULL)
+      vm_stat_externals.cpp,1758,"get_cpu_stats") kux_vmstat does
+   not
+         collect cpu123 information
+   
+    These messages are printed for each disabled CPU, every thirty
+   seconds.
+   
+   Affected Platforms / Versions:
+    This issue affects all the UNIX OS Agent versions, on Solaris
+   only.
+   
+   Diagnostics:
+    n/a
+   
+   Initial Impact:
+    Low, RAS1 logs become harder to review
+   
+   Additional Keywords:
+    UNIXCPU,IV30073 [http://www-01.ibm.com/support/docview.wss?uid=swg1IV30073]
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Repeated messages flooding kuxagent and kux_vmstat RAS1 logs on
+   Solaris
+   
+   
+   RAS1 logs of the Monitoring Agent for UNIX OS at the default
+   ERROR level may become unreadable due to a repeated couple of
+   error messages printed while monitoring processors on the
+   Solaris platform:
+   
+   vm_stat_externals.cpp,1757,"get_cpu_stats") kstat_lookup error -
+   (cpu_stat,123,NULL)
+   vm_stat_externals.cpp,1758,"get_cpu_stats") kux_vmstat does not
+   collect cpu123 information
+   These messages are printed for each disabled processor, every
+   thirty seconds.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  These messages will be printed only at the STATE RAS1 tracing
+   level.
+   
+   The fix for this APAR will be contained in the following
+   maintenance packages:
+   
+   | FixPack    | 6.3.0-TIV-ITM-FP0007
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV74490
+   
+   
+ * REPORTED COMPONENT NAME
+   ITM AGENT UNIX
+   
+   
+ * REPORTED COMPONENT ID
+   5724C040U
+   
+   
+ * REPORTED RELEASE
+   630
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2015-06-24
+   
+   
+ * CLOSED DATE
+   2016-01-15
+   
+   
+ * LAST MODIFIED DATE
+   2017-01-06
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ITM AGENT UNIX
+   
+   
+ * FIXED COMPONENT ID
+   5724C040U
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R630 PSY
+   UP
+   
+   
+ * R610 PSN
+   UP
+   
+   
+ * R620 PSN
+   UP
+   
+   
+ * R621 PSN
+   UP
+   
+   
+ * R622 PSN
+   UP
+   
+   
+ * R623 PSN
+   UP

@@ -1,0 +1,42 @@
+Title: IBM Netcool Omnibus Rename an Object Server - United States
+
+Text:
+Netcool; Omnibus; rename; renaming; object; server TECHNOTE (FAQ)
+
+QUESTION
+ How can I rename an existing object server? 
+
+ANSWER
+Follow below steps to rename an existing Object Server name. Suppose you want to rename NCOMS to BCOMS.
+
+1. Define the new Object Server name (BCOMS), hostname and port in the $NCHOME/etc/omni.dat file. 
+
+2. Generate the interface files by running $NCHOME/bin/nco_igen command. 
+
+ * 
+
+
+3. Create the new Object Server name with the $OMNIHOME/bin/nco_dbinit command. This 
+will create a default object server database and props file.  * 
+
+
+4. Update the new Object Server props file ($OMNIHOME/etc/BCOMS.props) based on the props file for existing object server (NCOMS). 
+
+5. Backup existing object server using below command from nco_sql command. This will create two tab files (master_store.tab, and table_store.tab) in /tmp dir.  * 
+ * 
+ * 
+ * 
+ * 
+
+
+6. Make sure newly created object server (BCOMS) is stopped. 
+
+7. Copy above two tab files to $OMNIHOME/db/BCOMS/ directory. 
+
+8. Start up the new object server (BCOMS) using nco_objserv command. If it's using the same port as the old object server then you need to shutdown the old one first. 
+
+After renaming the object server you may need to modify configuration files for other applications using the object server. Here are a few examples: 
+
+1. For probes, you need to change the Server property to the new Object Server name and restart them. 
+
+2. For Webtop/Webgui, you need to change the data source definition file below if the port is different, but that uses hostname/IP only, not the Object Server name. After this restart TIP.<TIP_HOME>/profiles/TIPProfile/etc/webtop/datasources/ncwDataSourceDefinitions.xml

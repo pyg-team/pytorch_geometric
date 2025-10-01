@@ -1,0 +1,156 @@
+Title: IBM Creating a performance schedule to run scripts in RPT workbench - United States
+
+Text:
+RPT; workbench; schedule; problem determination; 71RRT-RPTPLAN; 71RRT-RPTCONF; 71RRT-RPTREC; 71RRT-RPTPLAY; 71RRT-RPTRPTG; 71RRT-RPTTS TECHNOTE (FAQ)
+
+QUESTION
+ How do you create a performance schedule to run a script iteratively in RPT (Rational Performance Tester) workbench? 
+
+ANSWER
+
+The following instructions show how to run RPT scripts within a performance schedule in RPT workbench. 
+
+Sometimes, IBM Support may ask you to run your script under a performance schedule in RPT workbench to determine whether an error or unusual playback behavior also occurs in RPT. Because some errors are intermittent, a performance schedule allows you to run the script over time to try to reproduce the error. This technote shows you how to use a loop in a performance schedule to emulate the playback interval under the T6 agent. 
+
+ 
+
+Step by Step Instructions 
+
+These screenshots and instructions are for RPT 9.0.1. Note that the menus may be different in other versions of RPT. 
+
+1) In the RPT menu bar, click File > New > Other > Performance Schedule. Click Next. 
+
+[/support/docview.wss?uid=swg21700203&amp;aid=1] 
+
+
+2) The Performance Schedule dialog pops up. Select the project to be associated with the performance schedule. Enter the performance schedule name. Click Finish. 
+
+
+[/support/docview.wss?uid=swg21700203&aid=2] [/support/docview.wss?uid=swg21700203&aid=2] 
+
+
+3) The new performance schedule opens in the RPT Test Editor. 
+
+Select the performance schedule in the Schedule Contents pane (1). In the Performance Schedule Details pane to the right, tic the Show Advanced checkbox (2). Select the user load parameters row (3). Click Edit (4). 
+
+[/support/docview.wss?uid=swg21700203&aid=3] [/support/docview.wss?uid=swg21700203&aid=3] 
+
+
+4) The Add User Stages dialog displays. Edit the performance schedule. In this example, we configure the performance schedule to run as a single user, because the T6 agent only supports single user playbacks. 
+
+Note: The User Load value controls how you would stagger the startup of additional users. These parameters have no impact on single-user playbacks. 
+
+- Set the Number of users to 1. 
+
+- Click OK. 
+
+[/support/docview.wss?uid=swg21700203&aid=4] [/support/docview.wss?uid=swg21700203&aid=4] 
+
+
+5) Select User Group 1 (100%). Click Add. Select Loop from the popup menu. 
+
+[/support/docview.wss?uid=swg21700203&amp;aid=5]
+
+
+The Loop Details panel displays:
+
+[/support/docview.wss?uid=swg21700203&aid=6] [/support/docview.wss?uid=swg21700203&aid=6]
+
+6) Select Loop (1 iteration). 
+
+- In the Loop Details panel, select Time-based and set the test duration. In this example, we set the test duration to 30 minutes. Note that you can set the test duration to seconds, minutes, hours, or days. The test duration displays in parentheses after User Group > Loop. 
+
+- Tic Control the rate of iterations. 
+
+- Set the Iteration rate. In this example, we set the iteration rate to 12 per hour (every 5 minutes) to emulate the script playback rate under the T6 agent. 
+
+- Uncheck the checkboxes in the Options control group. 
+
+[/support/docview.wss?uid=swg21700203&aid=7] [/support/docview.wss?uid=swg21700203&aid=7] 
+7) In the Schedule Contents pane, select Loop (30 minutes). Click Add. Then, select Test from the popup menu. 
+
+ 
+
+[/support/docview.wss?uid=swg21700203&aid=8] [/support/docview.wss?uid=swg21700203&aid=8] 
+
+ 
+
+8) Select the RPT script you want to run under the performance schedule. Click OK. 
+
+[/support/docview.wss?uid=swg21700203&amp;aid=9] 
+
+9) In the Navigator tree, right-click the performance schedule name. Select Run As > Performance Schedule.
+
+[/support/docview.wss?uid=swg21700203&amp;aid=10] 
+
+
+10) Click Yes to select Performance Test perspective. 
+
+[/support/docview.wss?uid=swg21700203&amp;aid=11] 
+
+ 
+
+11) Click Yes to save changes. 
+
+ 
+
+[/support/docview.wss?uid=swg21700203&amp;aid=12] 
+
+12) The performance schedule starts running the script. 
+
+[/support/docview.wss?uid=swg21700203&amp;aid=13] 
+
+ 
+
+13) Wait for the test to complete. Observe messages in the Execution Event Console. The absence of messages normally indicates a successful run. 
+
+[/support/docview.wss?uid=swg21700203&aid=14] [/support/docview.wss?uid=swg21700203&aid=14]
+
+
+14) Also check the performance test result folders in the Navigator tree. 
+
+[/support/docview.wss?uid=swg21700203&amp;aid=15] 
+
+For example, open executiondir in the Navigator tree to display the verdict summary. The verdict summary should be all-green – indicating that there are no failed verdicts. For example:
+
+[/support/docview.wss?uid=swg21700203&aid=16] [/support/docview.wss?uid=swg21700203&aid=16] 
+
+ 
+
+15) Initially, try creating a performance schedule that runs your script for 30 minutes. Then, run the performance schedule for longer intervals to try to determine how long it takes to reproduce the error. 
+
+
+Note: When you run a performance schedule on the Robotic Response Time agent, the performance schedule runs the RPT scripts in the order they are defined inside the performance schedule. The performance schedule playback ignores all other settings that you defined in RPT workbench. The performance schedule playback results in overall edge transactions for the whole performance schedule execution, as well as the individual subtransactions for each of the RPT scripts inside the performance schedule. The playback uses only one virtual user. 
+
+RPT Online Help 
+
+In RPT workbench, click Help > Help Contents. Enter performance schedules in the Search criteria and click Go. 
+
+Also try using the following search criteria: 
+
+- Running performance schedules 
+
+- Evaluating performance schedule results 
+
+ 
+
+[/support/docview.wss?uid=swg21700203&aid=17] [/support/docview.wss?uid=swg21700203&aid=17] 
+
+
+
+RELATED INFORMATION
+ Running RPT tests/scripts sequentially under RRT agent [http://www.ibm.com/support/docview.wss?uid=swg21437881]
+Why RPT script playback is sometimes irregular [http://www.ibm.com/support/docview.wss?uid=swg21429442]
+Content capture not supported in schedule of scripts [http://www.ibm.com/support/docview.wss?uid=swg21501996]
+Troubleshooting playback errors in RPT HTTP Tests [http://www.ibm.com/support/docview.wss?uid=swg21677155]
+LAST_ACK network connections [http://www.ibm.com/support/docview.wss?uid=swg21624509]
+
+
+
+
+HISTORICAL NUMBER
+ 69397.228.631 
+
+PRODUCT ALIAS/SYNONYM
+ ITCAMfT
+T7.4

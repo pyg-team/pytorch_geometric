@@ -1,0 +1,18 @@
+Title: IBM Could you let me know the time out setting in Websphere Application? - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ I am using Websphere with FileNet Content Platform. 
+
+ANSWER
+There are three time out values could be set in WAS application:
+Server HTTP session timeout 
+Application servers > [Server Name] > Session management 
+
+Application HTTP session timeout 
+Enterprise Applications > [Application Name] > Session management 
+
+LTPA session timeout 
+Security > Global Security. Under Authentication select LTPA

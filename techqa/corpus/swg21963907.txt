@@ -1,0 +1,125 @@
+Title: IBM Collecting core files on Linux for Modeler Server. - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ What configurations should be reviewed to determine core file generation upon Modeler Server having a Protection Fault(PF)? 
+
+CAUSE
+No core files being generated during a Modeler Server Protection Fault.
+
+ANSWER
+This aspect is a Linux Administrator knowledge item. Given this the items 
+
+are main points to review to ensure a core file is generated during a Modeler Server PF. 
+
+
+Generating Core dump file for Modeler server on RHEL. 
+These files will be required when a Protection Fault(PF) 
+is determined to have occurrred with Modeler Server
+on Linux.
+
+These settings are specific to Linux RHEL although will apply
+to most other Linux environments. A difference may occur
+with comment syntax across Linux OS flavors.
+
+These operations are performed by root.
+
+CONFIGURATION SETTINGS:
+1)(comment out profile specific limitation of producing core file)
+In /etc/profile comment the line:
+ulimit -S -c 0 > /dev/null 2>&1
+
+2)(This directs where the core file is to end up)
+update /etc/sysctl.conf with
+kernel.core_pattern = /tmp/core-%e-%s-%u-%g-%p-%t
+fs.suid_dumpable = 2 
+
+where the parameters are pre set environment variables.
+%e is the filename
+%g is the gid the process was running under
+%p is the pid of the process
+%s is the signal that caused the dump
+%t is the time the dump occurred
+%u is the uid the process was running under
+
+
+3)
+In /etc/security/limits.conf comment out the line:
+* soft core 0
+NOTE: Be aware this may have an unlimited setting. 
+If true leave this setting.
+For example:
+* soft core unlimited
+
+4) 
+In /etc/sysconfig/init set the core limit as follows:
+DAEMON_COREFILE_LIMIT=’unlimited’
+
+5)Run ulimit -a to assess settings.
+ulimit -a
+core file size (blocks, -c) 0
+data seg size (kbytes, -d) unlimited
+scheduling priority (-e) 0
+file size (blocks, -f) unlimited
+pending signals (-i) 73728
+max locked memory (kbytes, -l) 32
+max memory size (kbytes, -m) unlimited
+open files (-n) 1024
+pipe size (512 bytes, -p) 8
+POSIX message queues (bytes, -q) 819200
+real-time priority (-r) 0
+stack size (kbytes, -s) 10240
+cpu time (seconds, -t) unlimited
+max user processes (-u) 73728
+virtual memory (kbytes, -v) unlimited
+file locks (-x) unlimited
+
+5)
+Update <ModelerServerInstallDir>\modelersrv.sh
+Adjust Modelersrv.sh to include ulimit -c unlimited. This will be
+an addition to other ulimit settings that would already exist within Modelersrv.sh.
+
+6)
+To check if the core file gets written you can kill the relating
+process with cmd "kill -s SEGV ".
+For example
+kill -3 <PID> and it did generate a core file. With
+settings above it should be placed into /tmp/core*
+
+
+7) Modeler client 
+The 'Logging and Status', chose to 'Display SQL
+generation details in the messages log during stream preparation' and
+leave as 'ODBC'. Be sure to close client and open again and validate
+settings take.
+
+
+STEPS after configuration:
+0) Close Modeler Client.
+1) Shutdown Modeler server using ./modelersrv.sh stop.
+2) Confirm it is stopped using ./modelersrv.sh list.
+3) Rename existing <ModelerSrvInstallDir>\log files to filename.bak
+4) Make sure modelersrv.sh contains the ulimit -c unlimited.
+5) Start server with modelersrv.sh start.
+6) List the current processes using ./modelersrv.sh list.
+7) Note the main process Process ID(PID).
+8) Open the stream in client, do not run it yet.
+9) Run ./modelersrv.lst and note the new PIDs.
+10) Run the stream.
+11) Optionally run ./modelersrv.sh list regularly while stream is running and
+check that PID from #6 and #8 remain listed.
+12) If the pid disappears then look for a core file. Waiting is not manditory
+however an option to determine if client is losing a connection or if PID drops
+then a PF occurs.
+
+Regardless of whether the pid disappears or not please provide:
+1) The /var/log/messages file from the system.
+2) The Modeler Server logs within <modelerSrvInstallDir>\log.
+3) The Modeler Client log files from this execution. 
+4) Please provide the PID of the server session noting the main PID
+versus the child PIDs that started upon connecting via Modeler client.
+
+RELATED INFORMATION
+ Need more help? Our Modeler forum is Live! [https://developer.ibm.com/answers/topics/modeler/?smartspace=predictive-analytics]

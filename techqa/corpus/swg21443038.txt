@@ -1,0 +1,33 @@
+Title: IBM Warnings in diagnostics before first execution in a Rule Execution Server XU cluster - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Why does the XU Lookup and XU MBean steps in the diagnostics fail with warning? 
+
+CAUSE
+The XU is not available in the server containing the Rule Execution Server console.
+
+ANSWER
+Typically in a clustered environment the XU(s) and Rule Execution Server console may be installed on separate servers. The diagnostic process looks for a XU in the same server as the Rule Execution Server console. The warning messages below under "XU Lookup" are expected and indicate that such a local XU is not found. Subsequently the steps "Rule Session Execution" and "Rule Session Second Execution" are grayed because they can only be executed when a local XU is available. 
+
+[/support/docview.wss?uid=swg21443038&aid=1] [/support/docview.wss?uid=swg21443038&aid=1] 
+
+In the screenshot above, the warning under "XU MBean" indicates that no "XU MBean" was found in the cluster at this point. This can happen for example with Rule Execution Server on WebSphere Application Server because the XU(s) and their associated MBean are only created upon first use by an application. Subsequently the steps "MBean Execution" and "MBean Second Execution" are grayed out because they can only be executed when a XU MBean is available. 
+
+ 
+
+Once a XU MBean has been found in the cluster (either because it was initialized by the application server at startup, or because a ruleset execution initiated by an application triggered the initialization of the XU) the diagnostic result below is expected. 
+
+
+[/support/docview.wss?uid=swg21443038&aid=2] [/support/docview.wss?uid=swg21443038&aid=2] 
+
+ 
+
+The warning under "XU Lookup" still indicates that there is no XU on the local server hosting the management console. The "Rule Session Execution" and the "Rule Session Second Execution" tabs also remain greyed out as execution in the local XU is not possible.
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Operational Decision Manager Platform Independent 7.5 Enterprise

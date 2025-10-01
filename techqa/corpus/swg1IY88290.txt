@@ -1,0 +1,136 @@
+Title: IBM IY88290: REMEDY GATEWAY INCORRECTLY CACHES SERIAL FROM FEEDBACK NOTIFICAT ION. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Specific Binary:
+   Last-modified-by:
+   Product: Netcool/OMNIBUS
+   Component:
+   Priority: High
+   Severity: High
+   Version N.n:
+   Product Group:
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: Users of Gateway for Remedy patch            *
+   *                 gateway-nco-g-remedy_3                       *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Gateway sometimes caches incorrect      *
+   *                      Serial number in the gateway cache,     *
+   *                      causing incorrect events to be updated  *
+   *                      in the ObjectServer when gateway        *
+   *                      processes feedback.                     *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   *                                                              *
+   ****************************************************************
+   Gateway sometimes caches incorrect Serial number in the gateway
+   cache, causing incorrect events to be updated in the
+   ObjectServer when gateway processes feedback.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *  Not applicable (not yet fixed)
+   
+   Date of Release: 06/29/07 Fix Pack Name: gateway-nco-g-remedy
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   IY88290
+   
+   
+ * REPORTED COMPONENT NAME
+   REMEDY GATEWAY
+   
+   
+ * REPORTED COMPONENT ID
+   5724O73GR
+   
+   
+ * REPORTED RELEASE
+   100
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2006-08-16
+   
+   
+ * CLOSED DATE
+   2006-11-30
+   
+   
+ * LAST MODIFIED DATE
+   2006-11-30
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *     NETCOOL
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R100 PSY
+   UP

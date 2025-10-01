@@ -1,0 +1,161 @@
+Title: IBM IZ07990: DECRIPTION OF RESYNCH NEEDED FOR DOCS - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Regarding why we don't get NV_ALARM_ID populated on resynch, it
+   is because "Nortel and Siemens use the remainder of the body
+   only in notifications so we do not want to attempt to parse this
+   if we are in a resync phase".
+   
+   Only in the case of Notifications, is there support for both
+   filterable and non-filterable notification parameters. Only in
+   case of Notifications, the StructuredEvent struct will contain a
+   remainder_of_body field (as described below), which can be used
+   for storing fields like NV_ALARM_ID.
+   
+   struct StructuredEvent {
+       EventHeader header;
+       FilterableEventBody filterable_data;
+       any remainder_of_body;
+   }; // StructuredEvent
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  NA
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All users of the Siemens and Nortel CORBA    *
+   *                 probes.                                      *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: A customer reported that the Nortel and *
+   *                      Siemens CORBA probes are not currently  *
+   *                      populating the NV_ALARM_ID field at the *
+   *                      time of resynchronization.              *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   *                                                              *
+   ****************************************************************
+   A new subsection Populating tokens during resynchronization
+   will be added to the Filtering notifications and alarms section
+   of the reference guide of the following probes:
+   
+   - Nortel OAM 3GPP - Nortel Preside Wireless Internet - Siemens
+   Corba V2
+   
+   
+   
+   The new subsection will contain the following information.
+   
+   Populating tokens during resynchronization
+   ========================================== The StructuredEvent
+   struct from CosNotifications.idl contains a remainder_of_body
+   field that has the following structure definition:
+   
+   struct StructuredEvent {     EventHeader header;
+   FilterableEventBody filterable_data;     any remainder_of_body;
+   }; // StructuredEvent
+   
+   The remainder_of_body field is only present in notifications,
+   where it can be used for storing non-filterable fields like
+   NV_ALARM_ID. The probe will not populate tokens, other than the
+   standard filterable ones, for alarms received during
+   resynchronization; for example, the probe cannot populate the
+   NV_ALARM_ID field for alarms received during resynchronization.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The product documentation will be updated with the next release
+   of the various Siemens and Nortel CORBA probes.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ07990
+   
+   
+ * REPORTED COMPONENT NAME
+   SIEMENS CORBA V
+   
+   
+ * REPORTED COMPONENT ID
+   5724P18SC
+   
+   
+ * REPORTED RELEASE
+   100
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2007-11-06
+   
+   
+ * CLOSED DATE
+   2007-12-09
+   
+   
+ * LAST MODIFIED DATE
+   2007-12-09
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+Publications Referenced SC23602800 FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

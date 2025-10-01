@@ -1,0 +1,206 @@
+Title: IBM PM15797: Installation Manager reports NullPointerException when users run?exportInstallData option. - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Rational Software Architect, Version 8.0 [http://www-01.ibm.com/support/docview.wss?uid=swg24027042]
+Rational Software Architect for WebSphere Software, Version 8.0 [http://www-01.ibm.com/support/docview.wss?uid=swg24027052]
+Rational Software Architect RealTime Edition, Version 8.0 [http://www-01.ibm.com/support/docview.wss?uid=swg24027201]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Installation Manager reports NullPointerException when invoked
+   with the ?exportInstallData option.
+   
+   How to reproduce:
+   1. Install Installation Manager versions greater then 1.3.3 and
+   less then 1.4 (the problem has been fixed in version 1.4)
+   2. Run C:\Program Files\IBM\Installation
+   Manager\eclipse?ibmimc.exe --launcher.ini silent-install.ini
+   -exportInstallData c:\abc.zip
+   
+   Result
+   Ibmimc:
+   An error has occurred. See the log file
+   C:\Documents and Settings\All Users\Application
+   Data\IBM\Installation Manager\pluginState\.metadata\.log.
+   
+   ?.log?
+   !ENTRY org.eclipse.osgi 4 0 2010-06-02 14:44:23.078
+   !MESSAGE Application error
+   !STACK 1
+   java.lang.NullPointerException
+    at java.io.File.?init?(File.java:221)
+    at
+   com.ibm.cic.agent.internal.application.HeadlessApplication.runAg
+   ent(HeadlessApplication.java:332)
+    at
+   com.ibm.cic.agent.internal.application.HeadlessApplication.run(H
+   eadlessApplication.java:126)
+    at
+   com.ibm.cic.agent.core.HeadlessInvocation.runHeadlessApplication
+   (HeadlessInvocation.java:48)
+    at
+   com.ibm.cic.agent.internal.ui.AgentUIApplication.launch(AgentUIA
+   pplication.java:137)
+    at
+   com.ibm.cic.agent.internal.ui.AgentUIApplication.start(AgentUIAp
+   plication.java:87)
+    at
+   org.eclipse.equinox.internal.app.EclipseAppHandle.run(EclipseApp
+   Handle.java:194)
+    at
+   org.eclipse.core.runtime.internal.adaptor.EclipseAppLauncher.run
+   Application(EclipseAppLauncher.java:110)
+    at
+   org.eclipse.core.runtime.internal.adaptor.EclipseAppLauncher.sta
+   rt(EclipseAppLauncher.java:79)
+    at
+   org.eclipse.core.runtime.adaptor.EclipseStarter.run(EclipseStart
+   er.java:368)
+    at
+   org.eclipse.core.runtime.adaptor.EclipseStarter.run(EclipseStart
+   er.java:179)
+    at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+    at
+   sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessor
+   Impl.java:79)
+    at
+   sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethod
+   AccessorImpl.java:43)
+    at java.lang.reflect.Method.invoke(Method.java:618)
+    at
+   org.eclipse.equinox.launcher.Main.invokeFramework(Main.java:559)
+    at org.eclipse.equinox.launcher.Main.basicRun(Main.java:514)
+    at org.eclipse.equinox.launcher.Main.run(Main.java:1311)
+    at org.eclipse.equinox.launcher.Main.main(Main.java:1287)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   The command line -exportInstallData option does not work. The
+   following workarounds are possible.
+   
+   1. Use the Installation Manager in the graphical user interface
+   mode and chose Help ? Export Data for Problem Analysis.
+   
+   2. Update the Installation Manager to version 1.4 or later.
+   Verify that the File ? Prefernces ? Updates 'Search for
+   Installation Manager updates' is checked.  Verify that File ?
+   Preferences ? Repositories ? 'Search for service repositories
+   during install and update' is checked.  Return to the main panel
+   and click the 'Update' button to update the IM to the latest
+   version.
+   
+   3. Zip the contents of the following folder: C:\Documents and
+   Settings\All Users\Application Data\IBM\Installation Manager
+   manually.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This problem has been resolved in Installation Manager version 1
+   .4 and later.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM15797
+   
+   
+ * REPORTED COMPONENT NAME
+   RATL APP DEV WI
+   
+   
+ * REPORTED COMPONENT ID
+   5724J1901
+   
+   
+ * REPORTED RELEASE
+   750
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-06-02
+   
+   
+ * CLOSED DATE
+   2010-08-23
+   
+   
+ * LAST MODIFIED DATE
+   2010-08-30
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   RATL APP DEV WI
+   
+   
+ * FIXED COMPONENT ID
+   5724J1901
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R750 PSN
+   UP

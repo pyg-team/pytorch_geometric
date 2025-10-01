@@ -1,0 +1,35 @@
+Title: IBM Script package to configure and run VMs in pattern instances in FIPS 140-2 mode for PureApplication Software - United States
+
+Text:
+ DOWNLOADABLE FILES
+
+ABSTRACT
+ This document describes how to download a script package that enables FIPS 140-2 mode for virtual machines (VMs) in pattern instances. 
+
+DOWNLOAD DESCRIPTION
+About this script package
+
+
+This script package enables FIPS 140-2 mode on the operating system and the Java runtime for the VM in a pattern instance, and then restart the VM. After FIPS 140-2 mode is enabled, the system will only be able to use a subset of cryptographic algorithms that are approved by the US Government. Insecure algorithms (such as MD5) will be unusable after FIPS 140-2 mode has been activated.
+
+
+Downloading and assembling the product
+
+
+ 1. Download all required parts below. 
+ 2. Add the script package to the catalog in PureApplication Software by following the instructions in the Knowledge Center: [http://www.ibm.com/support/knowledgecenter/SSL5ES_2.2.0/intel/getstart/getstart.dita]http://www.ibm.com/support/knowledgecenter/SSL5ES_2.2.2/intel/iwd/pct_crescrpa.html [http://www.ibm.com/support/knowledgecenter/SSL5ES_2.2.2/intel/iwd/pct_crescrpa.html]. 
+ 3. Add the script package to a virtual system pattern by following the instructions in the Knowledge Center: http://www.ibm.com/support/knowledgecenter/SSL5ES_2.2.2/intel/iwd/pat_createsvsys.html [http://www.ibm.com/support/knowledgecenter/SSL5ES_2.2.2/intel/iwd/pat_createsvsys.html]
+
+
+
+Downloadable images 
+
+The PureApplication Software FIPS 140-2 mode script package offering consists of .zip file that is packaged in an eImage: 
+
+CNE4TML Enable FIPS 140-2 Workload DOWNLOAD PACKAGE
+ 
+
+Download Release date Language Download options Passport Advantage Online 9/9/2016 English HTTP 
+
+TECHNICAL SUPPORT
+ Passport Advantage Online support at http://www.ibm.com/software/howtobuy/passportadvantage/paocustomer/docs/en_US/ecare.html [http://www.ibm.com/software/howtobuy/passportadvantage/paocustomer/docs/en_US/ecare.html]

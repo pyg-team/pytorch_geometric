@@ -1,0 +1,36 @@
+Title: IBM Error 7127 "There is no license for PASW Statistics Extended Base" Specific Symptom # 18 - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ I have installed Statistics 18.0. I ran the license authorization wizard and the code was accepted. However when I try and run some simple procedures, I receive the message
+
+Error 7127 "There is no license for PASW Statistics Extended Base" Specific Symptom # 18.
+What is happening? 
+
+RESOLVING THE PROBLEM
+Your authorization code does not include PASW Extended Base (21=PASW Statistics Base). It includes Core (which is required) and there are 19 additional modules that may or may not be included. PASW Core is a small subset of the statistics base which is designed for use by developers and does NOT include "PASW Extended Base ".
+
+Note: The following circumstance may also cause Error 7127 with Specific Symptom # 18:
+You have been issued an Authorization Code which contains the Core Module plus one or more additional Module(s) [NOT including the PASW Extended Base (21=PASW Statistics Base) Module]. 
+If at a later date you purchase and add additional Module(s) the authorization code cannot contain the Core (0) Module, if it does the above error will be presented if using that License Code.
+
+
+NOTE: For "Licensing" & "Authorization Codes" please contact your site coordinator or the department that handles the SPSS software for your company or institution.
+If you have no local contact within your company you can contact our Customer Service department as stated below.
+You can send e-mail to SPSS at spsscs@us.ibm.com. In the United States and Canada you may call 1.800.521.1337, between 8:30 a.m. and 5:00 p.m., Central time, Monday - Friday. Outside of the United States, please contact your local SPSS office.
+
+If you feel your Authorization Code has been issued without the correct Base or Modules please contact our Sales Department as stated below.
+
+Sales department - inquiries about software products, training and consulting programs, and publications. Alternatively, for other sales information contact us at salesbox@us.ibm.com or at 800.543.2185
+
+RELATED INFORMATION
+ Need more help? Our Modeler forum is Live! [https://developer.ibm.com/answers/topics/modeler/?smartspace=predictive-analytics]
+Need more help? Our Licensing forum is Live! [https://developer.ibm.com/answers/topics/spsslicensing.html]
+
+
+ 
+
+HISTORICAL NUMBER
+ 86164

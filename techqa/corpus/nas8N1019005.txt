@@ -1,0 +1,86 @@
+Title: IBM Time and Time Zones for V5R3M0 and Later - United States
+
+Text:
+TIME TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This document contains general information on time zones. 
+
+RESOLVING THE PROBLEM
+Time Basics on the IBM System i System 
+
+There are two time settings on the System i system. The first one is Date & Time, shown on jobs, output, the scheduler, and so on. The time setting can be changed with several system values; however, the most complete one is QDATETIME. If you see that your system is off by 5 minutes, run the WRKSYSVAL QDATETIME command, select Option 2, and change the time. 
+
+The second time setting is known as QUTCOFFSET. It keeps track of how many hours you are away from Greenwich mean time or, as it is officially called, Coordinated Universal Time Offset. This is used by servers to change the timestamp to match your time. If you have ever noticed that the timestamps on e-mails you receive and send seem to be off by several hours, this is the most likely cause.
+
+Prior to R530, the UTCOFFSET time was controlled by a system value. Now, this value can be displayed only and cannot be changed. Rather, use the time zones.
+
+Setting Your Time Zone
+
+Use one of the following commands to change the time zone on your system: CHGSYSVAL QTIMZON or WRKTIMZON. Choose which of the new time zones you want, and select Option 8 next to it to update your time zone. The one with a greater than sign (>) next to it is your current time zone. This document assumes that you will be using the WRKTIMZON command, Option 8.
+
+
+
+Caution: Changing the time zone may also change your time. If you update your time zone, run the WRKSYSVAL QDATETIME or WRKSYSVAL QHOUR command and change the time to the actual current time. The short delay between the time zone change and when you do this may cause problems with programs which use times or timestamps. Therefore, do this only when the system is quiet (preferably in a restricted state). 
+
+Use one of the following system values: 
+
+Area Automatic Time Zone No auto change: Fall Spring Area Eastern time zone QN0500EST3 [/support/docview.wss?uid=nas8N1019005&amp;aid=1] QN0500UTCS QN0400UTCS Eastern Central time zone QN0600CST2 [/support/docview.wss?uid=nas8N1019005&amp;aid=1] QN0600UTCS QN0500UTCS Central Mountain time zone QN0700MST3 [/support/docview.wss?uid=nas8N1019005&amp;aid=1] QN0700UTCS QN0600UTCS Mountain Pacific time zone QN0800PST2 [/support/docview.wss?uid=nas8N1019005&amp;aid=1] QN0800UTCS QN0700UTCS Pacific Alaskan time zone QN0900AST2 [/support/docview.wss?uid=nas8N1019005&amp;aid=1] QN0900UTCS QN0800UTCS Alaskan Hawaiian time zone QN1000HAS2 [/support/docview.wss?uid=nas8N1019005&amp;aid=1] QN1000UTCS QN0900UTCS Hawaiian 
+
+When the time Changes for Daylight Saving Time 
+
+If you are using one of the time zones that is automatic, the system changes the time and the offset for you. There is no need for you to do anything. If you are using a time zone without autochange, in the Spring, run the WRKTIMZON command, and select Option 8 on the spring time zone listed for your area. In the Fall, use the WRKTIMZON command, and select Option 8 to change to the Fall. Remember, when you do this, you will change the time. 
+
+Some programs do not like daylight saving time. This has nothing to do with the method other than that a program expects a continuous time and date, and skipping an hour or doing the same hour two times may cause them problems. If you are concerned about a program, contact the vendor, or perform the following: 
+
+For the Spring change, turn the program off just before 2:00 AM, and turn it on a minute later, which will be 3:01 AM. For the Fall change, turn off the program just before 2:00 AM, leave it off for an hour and a minute, then turn it on, which will be 2:01 AM. 
+
+When the time changes in the fall from 2:00 AM back to 1:00 AM, do not manually change the time until after 2:00 AM. If the system turns the clock back an hour for DST and then the time is changed manually, the system does not know if the new time is before or after daylight savings time is observed. Changing the system time between 1:00 and 2:00 AM after the clock has been adjusted for daylight savings time can cause the system clock to be adjusted a second time. 
+
+Customizing The Time Zone 
+
+There are several reasons why you might want to follow the time zones offered. Perhaps: o 2:00 AM is a poor time for a time change for you. o Your time zone dates have changed (as Australia did in the spring of 2006). o You live in a time zone a half hour away from standard. To customize a time zone, run the WRKTIMZON command, select Option 2 on the one you want to change, and press the Enter key. Then, press the F9 key to see all the options (including the ability to see the second page). 
+
+Following is an example of one that will automatically change the time. 
+
+First screen of QN0500EST3 time zone [/support/docview.wss?uid=nas8N1019005&aid=2] [/support/docview.wss?uid=nas8N1019005&aid=2] 
+
+Second page: 
+
+Second screen of QN0500EST3 time zone [/support/docview.wss?uid=nas8N1019005&aid=3] [/support/docview.wss?uid=nas8N1019005&aid=3] 
+
+
+If you live in a half-hour time zone, you might want to change the Offset. Otherwise, it is likely the second page will interest you. 
+
+Daylight Saving Time start: This is for the Spring change. 
+Month: Should be self-explanatory. 
+Day: Which day of the week it is to change. 
+Relative day of month: This is based off of 'Day'. If DAY is *SUN, then a 1 means the first Sunday, a 2 the second Sunday, a *Last the last Sunday. 
+It is not which day of the month; for example, a time zone change cannot be set to happen on "April 1st". 
+Time: This is the time the adjustment will take place, in military time, so 02:00:00 is 2:00 AM and 14:00:00 is 2:00 PM. 
+Daylight Saving Time end: This is for the Fall change. It is otherwise the same as Spring. 
+
+The second screen is the same for all automatically changing time zones. Therefore, if one is changed and then is changed back, use the screen print above to make the adjustments. 
+
+This is what running the WRKTIMZON command, selecting Option 2, and then pressing F9 looks like for a time zone that does not automatically change for daylight saving time: 
+
+Display of QN0500UTCS time zone. [/support/docview.wss?uid=nas8N1019005&aid=4] [/support/docview.wss?uid=nas8N1019005&aid=4] 
+
+Second page: 
+
+Second screen of QN0500UTCS time zone. Daylight savings time is not defined. [/support/docview.wss?uid=nas8N1019005&aid=5] [/support/docview.wss?uid=nas8N1019005&aid=5] 
+
+Note: Daylight Saving Time abbreviated name on the first page is *NONE. The second page values are ignored as long as that name is *NONE. 
+
+Changes in 2007 
+
+In 2007, Congress has declared that Daylight Saving Time should be extended: 
+
+Spring Daylight Saving Time will start on the second Sunday in March rather than the first Sunday in April. Fall Daylight Standard Time will start on the first Sunday in November rather than the last Sunday in October. 
+
+For additional information regarding the daylight savings time changes, refer to document Changes to Daylight Saving Time (DST) for 2007. [http://www.ibm.com/support/docview.wss?uid=nas8N1018965] 
+
+
+Cross reference information Segment Product Component Platform Version Edition Operating System IBM i 6.1 Operating System IBM i 7.1 Operating System IBM i 7.3 Operating System IBM i 7.2 
+HISTORICAL NUMBER
+ 411973037

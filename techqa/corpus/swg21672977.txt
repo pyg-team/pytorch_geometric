@@ -1,0 +1,137 @@
+Title: IBM Preparation for TWSz migration - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ What actions need to be taken before migrating TWS z/OS (COMPID 5697WSZ01 ) 
+
+CAUSE
+migration
+
+ANSWER
+For general issues regarding migration please refer to technote 1608030: 
+
+http://www.ibm.com/support/docview.wss?uid=swg21608030 [http://www.ibm.com/support/docview.wss?uid=swg21608030].
+
+Here are some considerations before/during a migration:
+
+(1) What steps are involved in a TWSz Upgrade?
+
+- Install TWSz with SMP/E from Tapes
+- Customize TWSz parameters and Verify Installation
+- Migrate TWSz Database (AD, CP, LTP etc) 
+- Migrating User Customization (PIF Programs, TWS EXITs etc.)
+- Switching TWSz (Production Environment)
+- Perform Fallback if any Problem 
+
+Installation is covered in chapters 4 and 5 of the Planning and Installation Guide.
+Migration is covered in chapter 6. If there is any discrepancy between the manual technote 1608030, the technote should be followed (see DOC APAR PI13017).
+
+(2) Selecting Migration Procedure
+
+Migrating z/OS First or TWSz First or “at the same time”
+
+We recommend migrating TWSz first considering possible fallback issues
+Avoid concurrent migration of both TWSz and z/OS 
+
+Migrating Controller (Engine) First or Tracker (Agent) First or “at the same time”
+
+- Controller first is recommended (Note if DIALOG SERVER is used, it must be at the same release and maintenance level as the controller)
+
+(3) TWSz Installation issues:
+
+SMF/JES EXIT Installation
+– Use Highest Release and Highest PTF Level
+
+Modify System Parameter (Migration)
+– Specify New Release Library
+– Module Name (EQQINITx and Suffix in IEFSSN)
+– EQQMINOx program name changed to be authorized in IKJTSO
+
+Allocating Data Sets
+– Use previous production size (not size from SEQQSAMP samples)
+
+Modify TWS Start Procedure (Migration)
+– Specify New Release Library
+– Use latest samples as new DDs may be added and other changes may be made (LRECL, BLKSIZE etc) 
+
+
+Modify CP extend/replan/trial job JCL
+– Specify New Release Library
+– Critical changes are made across releases. Use samples created by EQQJOBS as template for JCL
+
+Modify LTP extend/modify/trial/print JCL
+– Specify New Release Library
+– LTPRIN/LTPROUT DD LRECL/BLKSIZE changed since 8.5 release 
+
+(4) GUIs
+
+JSC/TDWC TWS Server
+– Must upgrade TWS for z/OS Connector
+– JSC NOT Supported by 8.6/9.1 anymore
+– NO conversion tool to TDWC from JSC
+
+TEP Server 
+– Meta File is same
+
+TDWC Reporting
+– Keep same HFS(zFS) work directory
+– Specify correct Java and JZOS Batch Launcher
+
+
+(5) Migrating User Customization 
+
+User Program (PIF)
+– Re-Link
+
+TWS EXIT
+– Re-Link
+
+Subroutine Program (EQQUSINx)
+– Re-Link
+
+TWS Macro (JCC/AJR)
+– No change
+
+Batch Loader/BCIT Job
+– Same JCL (Specify New Library)
+
+Mass Update Job
+– Re-create JCL in New Environment 
+
+JCC (Job Completion Checker)
+– Message table in EQQJCLIB can be used as same as before
+
+Dataset trriggering table (EQQDSLST)
+- EQQDSLST in EQQJCLIB can be used as same as before
+
+AJR (Automatic job recovery) JCL
+– Can be used as same as before
+– Case code definition module can be used as same as before
+
+Message Library
+- ALWAYS use library from new release
+– Re-customize if modified (example- if messages were made into WTOs)
+
+TWS TSO ISPF Dialog Panel
+- ALWAYS use library from new release
+– Re-customize if modified
+
+(6) Datastore ( data store ) 
+- the datasets EQQPKIxx EQQSKIxx EQQUDFxx EQQSDFxx do not require any migration (they can be used unchanged from previous release). The datastore task JCL must
+-use new level of SEQQLMD0 (either in STEPLIB or from LINK LIST ( LNKLST )
+
+
+(7) Switching TWSz
+- Practice with test environment
+- Remember output files for EQQICTOP (EQQICNVS) job must be EMPTY before running the job
+- Practice fallback also
+
+Considerations
+- Stop Automatic Job Submission
+– When to extend CP or run REPLAN (always do AFTER migration)
+– Will IPL be used to make system changes (exits, subsystems, authorized load modules) link list) or this be done dynamically?
+- Validating New TWSz with Dummy Jobs
+– Verify TWSz functions with test System
+- Avoid use of new functions until confident that a fallback will not be needed

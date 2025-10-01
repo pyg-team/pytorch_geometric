@@ -1,0 +1,75 @@
+Title: IBM Quickr 8.5 Install fails during 'initialize-nodes' script - United States
+
+Text:
+RULESWORKSPACE; import-nodes; initialize-nodes; Permission denied; error code = 315; error code = 200 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+The Quickr 8.5 installation fails during configuration scripts at the 'initialize-nodes' task.
+
+SYMPTOM
+In the wpinstalllog.txt, the following exception can be seen:
+===============
+(Aug 15, 2011 6:47:27 PM), Quickr.install, com.ibm.wps.install.CopyFileAction, err, Error: Cannot copy file: /QuickrMedia/ZL-Setup/was6_fixes/linux390x /tmp/was6_fixes ServiceException: (error code = 315; message = "could not create directory /tmp/was6_fixes/updateinstaller"; severity = 0)
+(Aug 15, 2011 6:47:27 PM), Quickr.install, com.installshield.wizardx.conditions.PlatformWizardBeanCondition, dbg.platform, target platform: name="Linux" version="2.6.18-92.1.22.el5" arch="s390"
+(Aug 15, 2011 6:47:27 PM), Quickr.install, com.installshield.wizardx.conditions.PlatformWizardBeanCondition, dbg.platform, condition platform: name="IBM OS/400" version="." arch="."
+(Aug 15, 2011 6:47:27 PM), Quickr.install, com.ibm.wps.install.CopyFileAction, msg1, Copying directory from /QuickrMedia/ZL-Setup/portalfixes to /tmp/portalfixes
+(Aug 15, 2011 6:47:27 PM), Quickr.install, com.ibm.wps.install.CopyFileAction, err, Error: Cannot copy file: /QuickrMedia/ZL-Setup/portalfixes /tmp/portalfixes ServiceException: (error code = 315; message = "could not create directory /tmp/portalfixes/maintenance"; severity = 0)
+(Aug 15, 2011 6:47:27 PM), Quickr.install, com.installshield.wizardx.conditions.PlatformWizardBeanCondition, dbg.platform, target platform: name="Linux" version="2.6.18-92.1.22.el5" arch="s390"
+(Aug 15, 2011 6:47:27 PM), Quickr.install, com.installshield.wizardx.conditions.PlatformWizardBeanCondition, dbg.platform, condition platform: name="IBM OS/400" version="." arch="."
+(Aug 15, 2011 6:47:27 PM), Quickr.install, com.ibm.wps.install.CopyFileAction, msg1, Copying directory from /QuickrMedia/ZL-Setup/wizard to /tmp/wizard
+(Aug 15, 2011 6:47:27 PM), Quickr.install, com.ibm.wps.install.CopyFileAction, err, Error: Cannot copy file: /QuickrMedia/ZL-Setup/wizard /tmp/wizard ServiceException: (error code = 200; message = "/tmp/wizard/configwizard.sh (Permission denied)"; severity = 0; exception = [java.io.FileNotFoundException: /tmp/wizard/configwizard.sh (Permission denied)])
+===============
+
+and....
+
+===============
+(Aug 15, 2011 7:45:48 PM), Quickr.install, com.ibm.wps.install.ExternalCommandAction$OutputWatcher, msg2, StdOut: initialize-nodes:
+(Aug 15, 2011 7:45:48 PM), Quickr.install, com.ibm.wps.install.ExternalCommandAction$OutputWatcher, msg2, StdOut: Mon Aug 15 19:45:48 EDT 2011
+(Aug 15, 2011 7:45:48 PM), Quickr.install, com.ibm.wps.install.ExternalCommandAction$OutputWatcher, msg2, StdOut: [echo] Calling JCRInitializer for file: /opt/IBM/WebSphere/PortalServer/pzn/prereq.pzn/config/nodes/pznwcmcontentrc.nodes
+(Aug 15, 2011 7:45:49 PM), Quickr.install, com.ibm.wps.install.ExternalCommandAction$OutputWatcher, msg2, StdErr: 
+(Aug 15, 2011 7:45:49 PM), Quickr.install, com.ibm.wps.install.ExternalCommandAction$OutputWatcher, msg2, StdErr: BUILD FAILED
+(Aug 15, 2011 7:45:49 PM), Quickr.install, com.ibm.wps.install.ExternalCommandAction$OutputWatcher, msg2, StdErr: /opt/IBM/WebSphere/wp_profile/ConfigEngine/config/includes/qpg_cfg.xml:358: The following error occurred while executing this line:
+(Aug 15, 2011 7:45:49 PM), Quickr.install, com.ibm.wps.install.ExternalCommandAction$OutputWatcher, msg2, StdErr: /opt/IBM/WebSphere/PortalServer/pzn/prereq.pzn/config/includes/pzn_cfg.xml:303: The following error occurred while executing this line:
+(Aug 15, 2011 7:45:49 PM), Quickr.install, com.ibm.wps.install.ExternalCommandAction$OutputWatcher, msg2, StdErr: /opt/IBM/WebSphere/PortalServer/jcr/prereq.jcr/config/includes/jcr_cfg.xml:2781: Java returned: 1
+(Aug 15, 2011 7:45:49 PM), Quickr.install, com.ibm.wps.install.ExternalCommandAction$OutputWatcher, msg2, StdErr: 
+(Aug 15, 2011 7:45:49 PM), Quickr.install, com.ibm.wps.install.ExternalCommandAction$OutputWatcher, msg2, StdErr: Total time: 18 minutes 46 seconds
+===============
+
+
+In the SystemOut.log at the time of the failure, the following error is seen:
+
+===============
+[8/15/11 19:46:20:266 EDT] 00000060 JCRInitialize E com.ibm.icm.jcr.init.JCRInitializer initNodes com.ibm.icm.jcr.WorkspaceNotFoundException: Workspace RULESWORKSPACE not found in this repository.
+com.ibm.icm.jcr.WorkspaceNotFoundException: Workspace RULESWORKSPACE not found in this repository.
+at com.ibm.icm.jcr.WorkspaceImpl.getWorkspace(WorkspaceImpl.java:314)
+at com.ibm.icm.jcr.TicketImpl.getWorkspace(TicketImpl.java:563)
+at com.ibm.icm.jcr.init.JCRInitializer.getWorkspace(JCRInitializer.java:186)
+at com.ibm.icm.jcr.init.JCRInitializer.initNodes(JCRInitializer.java:234)
+.
+.
+.
+Caused by: com.ibm.icm.jcr.WorkspaceNotFoundException: Workspace RULESWORKSPACE not found in this repository.
+at com.ibm.icm.jcr.WorkspaceImpl.getWorkspace(WorkspaceImpl.java:314)
+at com.ibm.icm.jcr.TicketImpl.getWorkspace(TicketImpl.java:563)
+at com.ibm.icm.jcr.init.JCRInitializer.getWorkspace(JCRInitializer.java:186)
+at com.ibm.icm.jcr.init.JCRInitializer.initNodes(JCRInitializer.java:234)
+... 23 more
+===============
+
+
+CAUSE
+The error in SystemOut.log indicates that basic data is missing from the JCR database. This happens because of the first exceptions in the wpinstalllog.txt that show a failure to copy several directories to the /tmp directory. 
+
+The Quickr installer installs WebSphere Application Server and WebSphere Portal. Once these installations are complete, required interim fixes are installed on top of them. If these fixes fail to install for any reason, it will lead to missing data in the JCR database and the ultimate failure of the Quickr installation. 
+
+In this case, the fixes failed to copy to the /tmp directory. The installation was being performed by a non-root user. Quickr requires that 'root' completes in the installation. 
+
+
+RESOLVING THE PROBLEM
+To resolve the problem, follow these instructions: 
+
+1. Uninstall the failed Quickr installation following the manual cleanup steps: 
+
+http://www-10.lotus.com/ldd/lqwiki.nsf/dx/Uninstalling_manually_on_Linux_qp85 [http://www-10.lotus.com/ldd/lqwiki.nsf/dx/Uninstalling_manually_on_Linux_qp85] 
+
+2. Reinstall using the 'root' user.

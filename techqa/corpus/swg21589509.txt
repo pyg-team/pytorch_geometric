@@ -1,0 +1,24 @@
+Title: IBM Code Coverage at the same time as debugging. - United States
+
+Text:
+RD/z; RDz; Rational Developer for z series TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ IBM Rational Developer for System z has a Code Coverage feature and a debugger. How do I use both at once? 
+
+DIAGNOSING THE PROBLEM
+In the property group there is a radio button "code coverage" or "debug". You cannot select both. In a batch job, you might try the following JCL but it will not work either. Although the TEST option would normally start the debugger, the ENVAR overrides it. The code coverage feature is started instead.
+
+//GO EXEC PROC=ELAXFGO,GO=HELLO, 
+
+// LOADDSN=USER1.LOAD, 
+
+// PARM=('/TEST(,,,TCPIP&91.236.111.31%8001:*)', 
+
+// 'ENVAR("EQA_STARTUP_KEY=CC")')
+
+
+
+
+RESOLVING THE PROBLEM
+The code coverage feature executes your program at full speed then gives you a report of which statements were executed. The debugger allows you to execute your program slowly and debug it. You cannot do both at the same time.

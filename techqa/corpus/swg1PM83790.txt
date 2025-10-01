@@ -1,0 +1,206 @@
+Title: IBM PM83790: CEX2 TRANSACTION LOOPING, TAKING 100% CPU AFTER MIDNIGHT WHEN THE MVS CLOCK HAS CHANGED - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Rational Asset Manager Interim Fix 9 for 7.5.2 [http://www-01.ibm.com/support/docview.wss?uid=swg24037291]
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  You are running CICS Transaction Server 4.1 and
+   notice the region is using 100% of the CPU.
+   Transaction CEX2 was executing, over and over.
+   We learned from the dump that the CICS clock was
+   out of sync with the MVS clock. Looking at the
+   message log we can see the MVS clock was set
+   backwards by about 46 sesconds:
+   .
+   00.00.00---- THURSDAY,  14 FEB 2013 ----
+   00.00.00 +DFHIC0801 APPLID CICS time altered from
+             24.00.000 to 00.00.486 - date 14/02/13
+   .
+   Because of this time change, and CICS not being in
+   sync with the system time, the CEX2 transaction, that
+   should run every 30 seconds, was now getting kicked
+   off immediately, taking up all the CPU.
+   .
+   They had AUTORESETTIME=NO. AUTORESETTIME=yes or issuing
+   a CEMT PERFORM RESET would have corrected the
+   situation. But there is an option
+   AUTORESETTIME=IMMEDIATE, which is not full proof.
+   It requires a new task to be kicked off, in order
+   to take effect.  This APAR will address this odd
+   case, where a new transaction does not get kicked
+   off at midnight, when the immediate option is
+   specified for AUTORESETTIME.
+   .
+   Additional Symptom(s) Search Keyword(s): KIXREVxxx
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  issue CEMT PERFORM RESET
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All.                                         *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: AUTORESETTIME=IMMEDIATE interpreted as  *
+   *                      YES in specific circumstances.          *
+   ****************************************************************
+   * RECOMMENDATION:                                            . *
+   ****************************************************************
+   The AUTORESETTIME=IMMEDIATE parameter will synchronize the CICS
+   internal clock with the MVS clock after the latter has been
+   altered.  However, this only occurs if DFHAPIN is driven when a
+   CICS user task is attached.
+   It is quite usual to adjust the MVS clock backwards or
+   forwards one hour consistent with daylight saving time but in
+   the reported problem, the MVS clock was moved backwards circa
+   50s at just before MVS midnight. Had a CICS user task been
+   attached then a full resync would have occurred to sync the CICS
+   clock with the MVS clock.
+                                                                  .
+   DFHAPTIM, the Interval Control Midnight Task program ran at
+   CICS midnight but this is a system task that doesn't drive
+   DFHAPIN.  DFHAPTIM contains code to sync the MVS and CICS
+   clocks but a path exists where if it is driven within a 30
+   minute window either side of MVS midnight then it will do a
+   DFHIC reset as if AUTORESETTIME=YES was coded.  This will
+   cause a DFHIC reset but the CICS internal clock is not synced
+   with the MVS clock. This may have the unintended consequence
+   for scheduled tasks whose Interval Control Elements ( ICE's )
+   expire in ( say ) 30 seconds in that they start immediately.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  DFHAPTIM has been modified so that it will treat
+   AUTORESETTIME=YES and AUTORESETTIME=IMMEDIATE as both requiring
+   a full reset in this circumstance.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  *********
+               * HIPER *
+               *********
+   FIX AVAILABLE BY PTF ONLY
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM83790
+   
+   
+ * REPORTED COMPONENT NAME
+   CICS TS Z/OS V4
+   
+   
+ * REPORTED COMPONENT ID
+   5655S9700
+   
+   
+ * REPORTED RELEASE
+   600
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   YesHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-02-27
+   
+   
+ * CLOSED DATE
+   2013-07-03
+   
+   
+ * LAST MODIFIED DATE
+   2013-08-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    PM89639 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM89639] UK95612 UK95613
+   
+   
+
+MODULES/MACROS
+ *  DFHAPTIM
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CICS TS Z/OS V4
+   
+   
+ * FIXED COMPONENT ID
+   5655S9700
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R600 PSY UK95612 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK95612]
+   UP13/07/13 P F307
+   
+   
+ * R700 PSY UK95613 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK95613]
+   UP13/07/13 P F307
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

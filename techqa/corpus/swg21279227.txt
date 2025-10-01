@@ -1,0 +1,93 @@
+Title: IBM MustGather: IDS Connection Failure - United States
+
+Text:
+MustGather; MustGather; MustGather; MustGatherDocument; connection; connectivity; failure TECHNOTE (FAQ)
+
+QUESTION
+ MustGather information for IDS Connection Failure. Gathering this information before calling IBM® support helps familiarize you with the troubleshooting process and saves you time. 
+
+ANSWER
+Gathering general information
+
+For IBM® Informix® products, gather the following information for any problem:
+MustGather: General Information to collect for Informix Family product problems [http://www.ibm.com/support/docview.wss?rs=630&context=SSGU8G&context=SSHPYE&dc=DB520&uid=swg21268933&loc=en_US&cs=utf-8&lang=en]
+
+
+IDS Connection Information
+
+
+ * Are there any associated SQL and/or ISAM errors occurring? 
+ * Are errors occurring with SHM or TCP connections? 
+ * Are errors occurring with all users, or just specific users? 
+ * Are existing connections continuing without impact ? 
+ * Do you need to restart database server to regain functionality ? 
+ * Are there too many client connections beyond the number set in NETTYPE ? 
+ * Are there any errors in the online.log when a connection is attempted ? (eg. -25573, -951, ..) 
+ * Are there any errors when you test the Informix port using the ftp command ? (eg. permission denied) 
+
+
+
+Processes to run for version prior to 11.70.xC1 
+ * On any UNIX or Linux:  * run ps -ef to collect a list of the currently running processes 
+    * run ulimit -a to view default system limits 
+    * run uname -a to display operating system type and version
+   
+   
+ * On AIX:  * run no -a or smitty to view kernel tcp settings 
+    * run instfix -i or smitty to display all filesets and maintenance level
+   
+   
+ * On Solaris:  * run ndd command to collect kernel tcp module settings 
+    * run showrev -p to check Solaris patch levels
+   
+   
+ * On HP-UX:  * run kmtune command to display all kernel settings 
+    * run swlist -l product to collect HP patches
+   
+   
+ * On Linux:  * run sysctl command to view current tcp settings 
+    * run rpm -q glibc to determine Linux GLIBC version
+   
+   
+ * At the command prompt, run:  * onstat -a 
+    * onstat -g all 
+    * onstat -g stk all
+   
+   
+
+
+Files to collect for version prior to 11.70.xC1 
+ * Any core files generated during the problem. 
+ * sqlhosts file 
+ * /etc/hosts file 
+ * onconfig file 
+ * env variable settings 
+ * online.log 
+ * os kernel settings 
+ * complete OS patch list 
+
+
+Collecting data for diagnosing connection failures on versions 11.70.xC1 and above 
+
+In versions of the Informix Server engine 11.70.xC1 and above ifxcollect can be used to gather diagnostic information. To gather the information execute the following command while experiencing the connection failures: 
+
+$INFORMIXDIR/bin/ifxcollect -c connection -s failure 
+
+Executing ifxcollect will create a tar file in $INFORMIXDIR/isa/data that can be uploaded to IBM for review. The format of the file is ifxcollect.<timestamp>.tar. Uploading the file can be accomplished using any of the methods described in the "Submitting information to IBM Support section". 
+
+For additional information on ifxcollect see the following link: 
+
+Collecting data with the ifxcollect tool [http://publib.boulder.ibm.com/infocenter/idshelp/v117/index.jsp?topic=%2Fcom.ibm.adref.doc%2Fids_adr_1098.htm&resultof=%22ifxcollect%22] 
+
+Submitting information to IBM Support 
+
+Once you have collected your information, you can begin Problem Determination through the product Support web page, or simply submit the diagnostic information to IBM support. 
+
+You can submit files using one of following methods to help speed problem diagnosis: 
+ * IBM Support Assistant (ISA) 
+ * Electronic Service Request (ESR) 
+ * FTP to the Enhanced Customer Data Repository (ECuRep)
+
+
+See the Related information article, Submitting diagnostic information to IBM Technical Support for problem determination RELATED INFORMATION
+ Submitting diagnostic information to IBM Technical Sppt [http://www.ibm.com/software/support/exchangeinfo.html]

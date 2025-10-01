@@ -1,0 +1,220 @@
+Title: IBM PK91233: SECURITY ACCESS REQUIREMENT FOR ZCONNECTOR USER ID WITH TWS 8.5 - United States
+
+Text:
+z/os SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  CUstomer noticed the following errors on one of the jsc servers
+   on z/OS:
+   EQQPH25E TME USER ID MISSING IN RACF CLASS TMEADMIN:
+   EQQPH25I TWSUSER@zCONN.ABC.123.COM
+   .
+   There may also appear EQQPH26E and EQQPH26I if TME mapping
+   is used.
+   .
+   The problem is due to the missing Security credentials of the
+   TWSUSER which is the User Id of the zConnector. This is
+   regardless of the methods used for establishing credentials
+   (TMEADMIN or USERMAP).
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  In TWS 8.5 were introduced new features on TDWC regarding the
+   connection the zConnector.
+   .
+   This new release of TWS 8.5 ALSO introduced the SHARING of the
+   eWAS between the TWS DIstributed Connector, the zConnector and
+   TDWC.
+   .
+   For this reasons and to maintain compatibility between
+   TDWC and the JSC, there is a RACF requirement for the TWS
+   Userid for the zConnector to be ALSO defined in the zOS
+   environment.
+   .
+   The RACF credentials for the zConnector Uer id is the same as
+   that of the JSC and TDWC CLient Users that are also defined in
+   the zOS environment IF the zConnector User ID will be used by
+   a JSC Client to access the zOS environment as they will also
+   need access to TWSz FIXED and SUBRESOURCES
+   .
+   However, IF the zConnector User ID will NEVER be used as a LOGIN
+   client, then ONLY READ access to the TWSz Application is
+   required .
+   .
+   This was NOT a requirement on the previous release (8.3) of the
+   product.
+   .
+   The initial handshaking on prior release between the zOS
+   Server and the zCnnector was limited to the JSC/TDWC CLients
+   only and therefore this is a NEW requirement.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All TWSz users connecting to TDWC through    *
+   *                 z/Connect 8.5                                *
+   *                 FUNCTION=DOC                                 *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: During connection of Dynamic Workload   *
+   *                      Console and JSC to TWSz Server the      *
+   *                      following error message                 *
+   *                      EQQPH25E TME USER ID MISSING IN RACF    *
+   *                               CLASS TMEADMIN:                *
+   *                      EQQPH25I TWSUSER@TWS01.POK.IBM.COM      *
+   *                      is issued.                              *
+   ****************************************************************
+   * RECOMMENDATION: APPLY THE PTF FIXING THIS APAR               *
+   ****************************************************************
+   When Dynamic Workload Console and JSC connect to TWSz Server
+   the following error message:
+   EQQPH25E TME USER ID MISSING IN RACF CLASS TMEADMIN:
+   EQQPH25I TWSUSER@TWS01.POK.IBM.COM
+   is got because the WebSphere Application Server administrator
+   is not mapped in the parameter library member (specified
+   in the USERMAP parameter of the SERVOPT) with a RACF user ID.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Documentation changes follows:
+   +-------------------------------------------------------------+
+   |TITLE:        Tivoli Workload Scheduler for z/OS             |
+   |                  Customization and Tuning                   |
+   |                        Version 8.5              SC32-1265-04|
+   |-------------------------------------------------------------|
+   |Chapter 3.  Implementing Security                            |
+   |Section.    Controlling access to Tivoli Workload scheduler  |
+   |            for z/OS                                         |
+   |Subsection. Controlling access to Tivoli Workload scheduler  |
+   |            for z/OS using Dynamic Workload Console or Job   |
+   |            Scheduling Console                               |
+   |                                                             |
+   |After the sentence:                                          |
+   |z/OS security is based on a table that maps the administrator|
+   |to a RACF user ID. When a WebSphere Application Server user  |
+   |tries to initiate an action on z/OS, the administrator ID    |
+   |is used as a key to obtain the corresponding RACF user ID.   |
+   |                                                             |
+   |Add the following new sentence:                              |
+   |At connection time, the WebSphere Application Server         |
+   |administrator user will be mapped to the corresponding       |
+   |RACF user ID. For this reason it is necessary to map,        |
+   |in the parameter library member (specified in the            |
+   |USERMAP parameter of the SERVOPT), the WebSphere             |
+   |Application Server administrator with a RACF user ID.        |
+   |This RACF user ID must not have accesses to particular       |
+   |TWS for z/OS resources, but just being defined as            |
+   |RACF user.  On the contrary, for any actions performed       |
+   |through JSC/TDWC users, the JSC/TDWC users will be           |
+   |mapped to the corresponding RACF user ID.                    |
+   |Moreover add the following sentence at the bottom of         |
+   |the subsection:                                              |
+   |                                                             |
+   |User IDs involved with Dynamic Workload Console              |
+   |or Job Scheduling Console                                    |
+   |                                                             |
+   |The following example explains how the Tivoli                |
+   |administrator ID and the local user ID are related and       |
+   |used when WebSphere Application Server connects to           |
+   |z/OS Engine:                                                 |
+   |-The name of the host on which you run WebSphere Application |
+   | Server (zConnector) is Roma1                                |
+   |-An administrator named CONWAS1 is defined in Roma1          |
+   |-A local user LOCUSR1 is defined in Roma1                    |
+   |-The administrator CONWAS1 is associated with local user     |
+   | LOCUSR1                                                     |
+   |-The controller identifies WebSphere Application Server by   |
+   | means of the following user name:                           |
+   | USER CONWAS1-AT-ROMA1-REGION RACFUSER (TSUSER)              |
+   |                                                             |
+   | where TSUSER is the TSO user-ID on which the IBM            |
+   | Tivoli Workload Scheduler for z/OS dialog runs.             |
+   +-------------------------------------------------------------+
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK91233
+   
+   
+ * REPORTED COMPONENT NAME
+   TIV WRKLD SCHD
+   
+   
+ * REPORTED COMPONENT ID
+   5697WSZ01
+   
+   
+ * REPORTED RELEASE
+   502
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2009-07-13
+   
+   
+ * CLOSED DATE
+   2009-12-04
+   
+   
+ * LAST MODIFIED DATE
+   2010-07-15
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+Publications Referenced SC32126504 FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

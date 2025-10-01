@@ -1,0 +1,31 @@
+Title: IBM How to export and import keys from an HSM-enabled IBM WebSphere DataPower SOA Appliance - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How do I export and import private keys between the same or different Hardware Security Module (HSM) enabled IBM WebSphere DataPower SOA Appliance? 
+
+ANSWER
+HSM-enabled DataPower appliances support the export of private keys using the crypto-export command. For key export to work, various conditions must be met: 
+
+ * HSMs must be initialized and in the same key sharing domain on exporting and importing machines 
+ * The private key in question must be marked exportable at keygen time (see keygen's exportable option) 
+ * HSMs on exporting and importing machines must share internal key-wrapping keys (see hsm-clone-kwk command). A key-wrapping key is a key that encrypts another key.
+
+
+Each HSM has a special key inside of it, the key-wrapping key, that is used to encrypt exported private keys (and to decrypt imported private keys). If the goal is to restore exported keys to the same appliance, then you don't need to worry about hsm-clone-kwk, red keys, or the hsm-domain parameter. That is because the key-wrapping key at import time will already match the key-wrapping key at export time (since the HSM device is the same). If the goal is to move exported keys from one appliance to another one, then all of the steps in this section must be followed :- 
+
+First, the two HSMs in question must be both be initialized and in the same key sharing domain. This means that they must both be initialized in the same mode (both in Security Level 2 or both in Security Level 3). In Security Level 2 mode, they must have used the same hsm-domain parameter during hsm-reinit (this parameter has a default value that is the same on all appliances). In Security Level 3 mode, they must have used the same red PED key during hsm-reinit (and the second initialization must not have overwritten the key value from the first initialization). 
+
+Second, the key to be exported must be exportable. The exportability of keys is immutable. It is determined at keygen time, and it is controlled by that command's exportable parameter. If a key was created outside of the appliance (not using keygen), then it is always considered exportable. 
+
+Finally, before the crypto-export crypto-import sequence, the key-wrapping keys must be synchronized using the hsm-clone-kwk command. This command must be run four times: once on the source HSM appliance (with the key-wrapping key you are copying), once on the destination HSM appliance, once again on the source HSM appliance, and once again on the destination HSM appliance. Each time the command is run, it will need the output file from the previous step (as the input to the current step) which must be moved manually (usually with the copy command). 
+
+Once all of this has been done, then private keys may move from system to system with crypto-export and crypto-import. 
+
+Note that the non-HSM appliance can export keys immediately at keygen time, but never at a later time. 
+
+For additional information refer to the online Info Center [http://publib.boulder.ibm.com/infocenter/wsdatap/v3r8m2/index.jsp?topic=%2Fxi50%2Fwelcome.htm] and search for "PIN entry device".
+
+Note: You will need to sign into the documentation portal with your IBM Registration ID and password.

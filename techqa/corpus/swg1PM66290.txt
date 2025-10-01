@@ -1,0 +1,166 @@
+Title: IBM PM66290: EXCEPTION IN FFDC LOG AFTER CREATING A CELL PROFILE - United States
+
+Text:
+  FIXES ARE AVAILABLE
+8.5.0.1: WebSphere Application Server V8.5 Fix Pack 1 [http://www-01.ibm.com/support/docview.wss?uid=swg24033606]
+8.5.0.2: WebSphere Application Server V8.5 Fix Pack 2 [http://www-01.ibm.com/support/docview.wss?uid=swg24034672]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When creating a cell profile, an ffdc is created in
+   the deployment manager log directory with the following stack
+   trace:
+   
+   java.util.NoSuchElementException
+    at java.util.Hashtable$HashIterator.next(Hashtable.java:190)
+    at
+   com.ibm.ws.grid.AppTypeDeploymentTask.performTaskInstall(AppType
+   DeploymentTask.java:200)
+    at
+   com.ibm.ws.grid.AppTypeDeploymentTask.performTask(AppTypeDeploym
+   entTask.java:160)
+    at
+   com.ibm.ws.management.application.SchedulerImpl.run(SchedulerImp
+   l.java:315)
+    at java.lang.Thread.run(Thread.java:770)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  All users of IBM WebSphere Application      *
+   *                  Server V8.5                                 *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: FFDC exception logged by                *
+   *                      AppTypeDeploymentTask during a cell     *
+   *                      profile create                          *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   When creating a cell profile, the following FFDC exception is
+   logged in the FFDC directory.   No problems are caused by this
+   exception, however, and the profile creates successfully.
+   FFDC Exception:java.util.NoSuchElementException
+   SourceId:com.ibm.ws.grid.AppTypeDeploymentTask.performTaskInstal
+   l ProbeId:132
+   java.util.NoSuchElementException
+   at java.util.Hashtable$HashIterator.next(Hashtable.java:190)
+   at
+   com.ibm.ws.grid.AppTypeDeploymentTask.performTaskInstall(AppType
+   DeploymentTask.java:200)
+   at
+   com.ibm.ws.grid.AppTypeDeploymentTask.performTask(AppTypeDeploym
+   entTask.java:160)
+   at
+   com.ibm.ws.management.application.SchedulerImpl.run(SchedulerImp
+   l.java:315)
+   at java.lang.Thread.run(Thread.java:770)
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The code path resulting in the FFDC exception has been updated
+   to properly handle a cell profile configuration, and the FFDC
+   exception no longer occurs.
+   
+   The fix for this APAR is currently targeted for inclusion in
+   fix pack 8.5.0.1.  Please refer to the Recommended Updates
+   page for delivery information:
+   http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM66290
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBS APP SERV N
+   
+   
+ * REPORTED COMPONENT ID
+   5724H8800
+   
+   
+ * REPORTED RELEASE
+   850
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-06-06
+   
+   
+ * CLOSED DATE
+   2012-10-16
+   
+   
+ * LAST MODIFIED DATE
+   2012-10-16
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBS APP SERV N
+   
+   
+ * FIXED COMPONENT ID
+   5724H8800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R850 PSY
+   UP

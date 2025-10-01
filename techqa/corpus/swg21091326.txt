@@ -1,0 +1,37 @@
+Title: IBM Is there a limit to the number of mail rules each user can create? - United States
+
+Text:
+max; maximum; limit; how many; number; limit; #; create; Domino Server; Incident 1321420; Messaging & Mail; Mail Routing (Router - NRPC); Routing; mail max filters TECHNOTE (FAQ)
+
+QUESTION
+Is there a limit to the number of mail rules each user can create in Lotus Domino? Will the total number of mail rules affect Domino server performance?
+
+ANSWER
+In Notes/Domino 5 a maximum of fifty (50) rules will get recognized for each mail file (although the user will be allowed to add more). Rules are monitors, so the more monitors running on the server, the greater the impact on server performance. Note that monitors can be enabled/disabled via the Security tab of the Server document.
+In Notes/Domino 6 and higher, the default maximum number or rules has been increased to 100. This value can be customized by using the following INI parameter on the server:
+
+
+ * 
+
+
+You can set the parameter from 1 to 100. The default maximum, and maximum set using the INI parameter, affects both the number of rules per user as well as the number of system rules that can be executed on the server. 
+
+An enhancement request (Software Problem Report #IMAO5GRR8K) has been made with Lotus software Quality Engineering requesting that additional functionality be added that gives separate controls to affect the maximum number of user rules and the maximum number of system rules. 
+
+SPR# IMAO5GRR8K is an enhancement request to increase the limit on mail rules for the mail file and mail.box in 8.x. 
+
+Note: Server performance issues may occur in cases where the maximum approaches or is at 100, depending on the total number of users and rules being executed. If it is suspected that the execution of rules is causing a performance issue, use the MailMaxFilters parameter on the server to limit the rules to a smaller value. 
+
+In some cases, you may observe that a rule that has been enabled will not run even though there are less than the maximum. For example, in R5, this may occur in cases where at least 50 rules have been created. This can occur because of the internal numbering structure that enabled rules use -- rules are not renumbered internally if another rule numerically lower is deleted. For example if an enabled rule is written to $FilterFormula_49 in the Calendar Profile (which makes it the 50th rule as the numbering starts with 0) the next rule created would be written to $FilterFormula_50 even if these were the only two rules enabled. In order to renumber the internal $FilterFomula_# entry, use the following workaround: 
+ * Select all of the mail rules that are not enabled and click the "Enable Rule(s)" action. 
+ * Select all of the rules and click the "Disable Rule(s)" action. 
+ * Enable the rules that you want to be active.
+
+RELATED INFORMATION
+ Deleted Mail Rules Still Run and/or Enabled Mail Rules [http://www.ibm.com/support/docview.wss?uid=swg21088058]
+
+
+
+
+HISTORICAL NUMBER
+ 182441

@@ -1,0 +1,74 @@
+Title: IBM i Access - Windows - United States
+
+Text:
+ 
+ 
+
+ * Overview [http://www.ibm.com/support/docview.wss?uid=isg3T1026775]
+ * Client Solutions [http://www.ibm.com/support/docview.wss?uid=isg3T1026805]
+ * Web [http://www.ibm.com/support/docview.wss?uid=isg3T1026808]
+ * Windows [http://www.ibm.com/support/docview.wss?uid=isg3T1026807]
+
+
+
+IBM i Access for Windows delivers TCP/IP connectivity to users running a variety of Microsoft® Windows® operating systems. IBM i Access for Windows offers an all-inclusive client solution for accessing and using resources from your Windows desktop. It includes 5250 emulation, access to DB2 Universal Database® (UDB) for IBM i through its Data Transfer, and utilizes IBM i NetServer for working with the IBM i Integrated File System and printers. It also has a variety of middleware for using and developing client applications to access IBM i resources; and Navigator for i [http://www.ibm.com/support/docview.wss?uid=isg3T1026869], the i5/OS GUI, for administering your IBM i.
+
+Planning
+
+IBM i Access for Windows will not be refreshed for IBM i release 7.2 or beyond. IBM i Access for Windows 7.1 is the most current version available. 
+
+IBM does not plan to support IBM i Access for Windows on operating systems beyond Windows 8.1. For additional information see supported Windows operating systems [https://www.ibm.com/developerworks/community/wikis/home?lang=en#!/wiki/IBM%20i%20Technology%20Updates/page/IBM%20i%20Access%20for%20Windows%20-%20Supported%20Operating%20Systems] and End-of-Service [https://www.ibm.com/developerworks/community/wikis/home?lang=en#!/wiki/IBM%20i%20Technology%20Updates/page/IBM%20i%20Access%20End%20of%20Service%20Dates] plans.
+
+The replacement product is IBM i Access Client Solutions, which includes 5250 emulation, data transfer, printer output, console support, and more.
+
+Service Packs [https://www.ibm.com/developerworks/community/wikis/home?lang=en#!/wiki/IBM%20i%20Technology%20Updates/page/IBM%20i%20Access%20for%20Windows%20-%20Service%20Packs]
+
+Programmer's Toolkit [http://www.ibm.com/support/docview.wss?uid=isg3T1027195]
+
+FUNCTIONS
+ODBC DRIVER
+The IBM i Access ODBC driver provides SQL access to IBM i database files, using standard ODBC interfaces.
+
+ * Database sample program [http://www.ibm.com/support/docview.wss?uid=isg3T1027244]
+ * Learn more [http://publib.boulder.ibm.com/infocenter/iseries/v7r1m0/index.jsp?topic=/rzaik/rzaikappodbc.htm]
+
+.NET DATA PROVIDER
+The IBM DB2 for i .NET provider (named IBM.Data.DB2.iSeries) allows Windows applications to use the Microsoft .NET Framework to access DB2 for i databases.
+
+ * Learn more [http://www.ibm.com/support/docview.wss?uid=isg3T1027163]
+
+OLE DB SUPPORT
+Supports record-level access and SQL access to IBM® i database files.
+
+ * Learn more [https://www.ibm.com/support/knowledgecenter/ssw_ibm_i_73/rzaik/rzaikoledbprovider.htm]
+
+XDA
+Supports remote IBM i SQL access and other database functions.
+
+ * Extended Dynamic Remote SQL (EDRS) APIs [https://www.ibm.com/support/knowledgecenter/en/ssw_ibm_i_71/apis/database3.htm]
+ * Learn more [http://www.ibm.com/support/docview.wss?uid=isg3T1027162]
+
+GET INSIGHTS AND SUPPORT
+SUPPORT
+Get help today and learn more about product support options.
+
+ * Learn more [https://www.ibm.com/developerworks/community/wikis/home?lang=en#!/wiki/IBM%20i%20Technology%20Updates/page/IBM%20i%20Access%20Support]
+
+RESOURCES
+Explore technical topics and join the community.
+
+ * Learn more [https://www.ibm.com/developerworks/community/wikis/home?lang=en#!/wiki/IBM%20i%20Technology%20Updates/page/IBM%20i%20Access%20Resources]
+
+THE KNOWLEDGE CENTER
+Find answers quickly in official IBM product documentation.
+
+ * Learn more [https://www.ibm.com/support/knowledgecenter/ssw_ibm_i]
+
+QUICK LINKS
+ * Ordering/upgrading [https://www.ibm.com/developerworks/community/wikis/home?lang=en#!/wiki/IBM%20i%20Technology%20Updates/page/IBM%20i%20Access%20Ordering%20and%20Upgrading]
+ * Connection releases [https://www.ibm.com/developerworks/community/wikis/home?lang=en#!/wiki/IBM%20i%20Technology%20Updates/page/IBM%20i%20Access%20Connections]
+ * Request a design change [https://www-912.ibm.com/r_dir/ReqDesChange.nsf/Request_for_Design_Change?OpenForm]
+
+RELATED PRODUCTS
+ *  IBM i Access Client Solutions [http://www.ibm.com/support/docview.wss?uid=isg3T1026805]
+ * Navigator for i [http://www.ibm.com/support/docview.wss?uid=isg3T1026869]

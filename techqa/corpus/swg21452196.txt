@@ -1,0 +1,52 @@
+Title: IBM Enabling FIPS prevented TAM TAI to load properly - United States
+
+Text:
+FIPS; TAM; TAI; SECJ0384E; HPDBF0391E; AWXRB0002E; EJPFD0016E; EJPSK0024E TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ After configuring Tivoli Access Manager (TAM)/WebSEAL Trust Association Interceptor for authentication and TAM vault adapter on a clustered WebSphere Portal environment, the Portal server would not start up properly. 
+
+CAUSE
+FIPS was accidentally enabled.
+
+DIAGNOSING THE PROBLEM
+SystemOut.log showed: 
+
+[10/26/10 21:40:16:606 EDT] 0000000a TAMTrustAssoc I com.ibm.ws.security.web.TAMTrustAssociationInterceptorPlusinitialize(Properties) AWXRB0002E An error occurred while creating the Tivoli Access Manager authorization context. The details are: 
+[
+HPDBF0391E The Tivoli Access Manager Runtime for Java cannot run with the FIPS mode set.
+]
+[10/26/10 21:40:16:610 EDT] 0000000a TrustAssociat E SECJ0384E: Trust Association Init Error. The Trust Association interceptor implementation com.ibm.ws.security.web.TAMTrustAssociationInterceptorPlus initialization failed. The error status/exception is -1.
+...
+[10/26/10 21:41:18:868 EDT] 00000021 AccessManager E com.ibm.wps.services.credentialvault.AccessManager41VaultAdapter init EJPSK0279E: Initialization of Vault Adapter 'WPS Access Manager Vault Implementation' was not successful.
+
+[
+HPDBF0391E The Tivoli Access Manager Runtime for Java cannot run with the FIPS mode set.
+]
+...
+[10/26/10 21:41:18:884 EDT] 00000021 VaultAdapterM E com.ibm.wps.services.credentialvault.VaultAdapterManager loadVaultAdapter EJPSK0024E: Vault adapter type AccessManager could not be loaded.
+[10/26/10 21:41:18:900 EDT] 00000021 Servlet E com.ibm.wps.engine.Servlet init EJPFD0016E: Initialization of service failed.
+...
+[10/26/10 21:41:18:958 EDT] 00000021 ServletWrappe E Deregister the mbean because of uncaught init() exception thrown by servlet portal: javax.servlet.UnavailableException: Initialization of one or more services failed.
+...
+[10/26/10 21:41:18:964 EDT] 00000021 WebExtensionP W Servlet portal is currently unavailable: Initialization of one or more services failed.
+
+Security.xml showed:
+<properties xmi:id="Property_43" name="com.ibm.security.useFIPS" value="true" required="false"/>
+
+
+RESOLVING THE PROBLEM
+To resolve the issue: 
+
+
+1) Login to the WebSphere Integrated Solutions Console on Dmgr.
+2) Navigate to Security > SSL certificates and key management.
+3) Uncheck the box for "Use the United States Federal Information Processing Standard (FIPS) algorithms. Note: This option requires the TLS handshake protocol, which some browsers do not enable by default",
+4) Save the change to the master configuration.
+5) Synchronize the changes to all nodes.
+6) Restart the cluster.
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Organizational Productivity- Portals & Collaboration WebSphere Portal End of Support Products AIX, HP-UX, IBM i, Linux, Solaris, Windows, z/OS 7.0, 6.1

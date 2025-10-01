@@ -1,0 +1,82 @@
+Title: IBM CM Synergy in a DHCP Environment - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ CM Synergy in a DHCP Environment 
+
+ANSWER
+
+
+OVERVIEW 
+ 
+
+ Synergy/CM (CCM) requires a consistent IP address to name resolution across all machines where CM processes are running. In a purely DHCP environment, where IP addresses are provided dynamically, this consistency does not exist. However, there is a way to setup the DHCP environment together with WINS and DNS to provide a consistent IP address to name mapping. 
+
+ 
+
+ 
+
+DETAILS 
+ 
+
+ Obtaining a consistent IP to name resolution involves configuring your Windows Network environment with WINS, DNS and DHCP. When all three Windows services are configured on your network, they work together to provide Synergy/CM processes with consistent IP address to name resolution. Once a PC obtains its IP address from DHCP, it registers its IP address and name with WINS. Then, when machines try to resolve either IP addresses or names via DNS, the DNS server can retrieve the dynamically updated information from the WINS server. 
+
+ 
+
+ 
+
+ Windows Server Requirements: 
+
+Configuring your network to run Synergy/CM in a DHCP environment requires you to setup the following services on one (or spread them across multiple) Windows Servers. >  Windows Server with Microsoft's DHCP Server (third party DHCP servers have not been tested)  Windows Server with WINS 
+
+ Windows Server with MS DNS Server 
+
+
+ 
+
+Setup and Implementation of DHCP, WINS and DNS  1.  Configure DHCP Server* 
+ 2.  Configure WINS Server 
+ 3.  Configure DNS Server to use WINS resolution and point to the WINS server 
+
+* Note: Setting the following DHCP options for WINS allows DHCP to configure WINS client settings automatically. This may or may not be the correct for your network. Please consult your Windows NT System administrator to determine how DHCP and WINS is configured on your network. Setting these options in DHCP only provides an administrative convenience and does not in anyway suggest how a network should be configured for DHCP and WINS.  
+
+ DHCP scope options: 
+
+ 
+
+ 44 WINS/NBNS Servers 
+
+46 WINS/NBT Node Windows Client Setup  1.  Setup PC to obtain IP addresses from DHCP server 
+ 2.  Configure PC to point to WINS server 
+ 3.  Configure PC to point to DNS server 
+
+ Optionally, the last two steps can be performed via the configuration of the DHCP server. 
+
+ 
+
+ 
+
+ DHCP and the UNIX Server 
+
+ So far we have covered setting up DHCP in a purely Windows environment. If you will be running CM Synergy PC clients where engine processes are running on UNIX machines, additional steps are required in order for Synergy/CM to work correctly. The two configurations that will work are listed below. 
+
+ 
+
+ 1. Configure UNIX machines that will be running Synergy/CM processes to point to the Windows DNS server for name resolution. 
+
+ 2. Place PCs in a separate domain from the UNIX machines 
+
+ 
+
+ 
+
+ Option 1 is probably not a reasonable scenario for most UNIX sites. To implement option 2, you would need to have the UNIX DNS server point to the PC DNS server as the authority for the PC domain, and vice versa. Resolution of names outside of the current domain would be sent to the authority of the other domain. Since the resolution of PC names on the UNIX machines would be sent to the PC DNS server, which can refer to the dynamic WINS table, UNIX machines will have a consistent IP <----> name mapping of the PC clients which are using DHCP. 
+
+ 
+
+4.5, 5.1, 5.1cs, 6.1, 6.2, 6.3, 6.4, 6.5TB134ContentProduct versionPartner ContentInternal ContentCategoryReference IDAutho 
+
+HISTORICAL NUMBER
+ KB1523

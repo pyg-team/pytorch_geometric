@@ -1,0 +1,193 @@
+Title: IBM PM64501: EXPORT APPLICATION FAILS WITH FILENOTFOUNDEXCEPTION - United States
+
+Text:
+  FIXES ARE AVAILABLE
+8.5.0.1: WebSphere Application Server V8.5 Fix Pack 1 [http://www-01.ibm.com/support/docview.wss?uid=swg24033606]
+8.0.0.5: WebSphere Application Server V8.0 Fix Pack 5 [http://www-01.ibm.com/support/docview.wss?uid=swg24033754]
+8.5.0.2: WebSphere Application Server V8.5 Fix Pack 2 [http://www-01.ibm.com/support/docview.wss?uid=swg24034672]
+8.0.0.6: WebSphere Application Server V8.0 Fix Pack 6 [http://www-01.ibm.com/support/docview.wss?uid=swg24034673]
+8.0.0.7: WebSphere Application Server V8.0 Fix Pack 7 [http://www-01.ibm.com/support/docview.wss?uid=swg24035457]
+8.0.0.8: WebSphere Application Server V8.0 Fix Pack 8 [http://www-01.ibm.com/support/docview.wss?uid=swg24036729]
+8.0.0.9: WebSphere Application Server V8.0 Fix Pack 9 [http://www-01.ibm.com/support/docview.wss?uid=swg24037574]
+8.0.0.10: WebSphere Application Server V8.0 Fix Pack 10 [http://www-01.ibm.com/support/docview.wss?uid=swg24039242]
+8.0.0.11: WebSphere Application Server V8.0 Fix Pack 11 [http://www-01.ibm.com/support/docview.wss?uid=swg24040425]
+8.0.0.12: WebSphere Application Server V8.0 Fix Pack 12 [http://www-01.ibm.com/support/docview.wss?uid=swg24041590]
+8.0.0.13: WebSphere Application Server V8.0 Fix Pack 13 [http://www-01.ibm.com/support/docview.wss?uid=swg24042746]
+8.0.0.14: WebSphere Application Server V8.0 Fix Pack 14 [http://www-01.ibm.com/support/docview.wss?uid=swg24044096]
+8.0.0.15: WebSphere Application Server V8.0 Fix Pack 15 [http://www-01.ibm.com/support/docview.wss?uid=swg24044734]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Export of an application will fail with a FileNotFoundException
+   when a web module is at version 2.4 and a web module library jar
+   contains " META-INF/beans.xml ".
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  All users of IBM WebSphere Application      *
+   *                  Server V8.0 and V8.5                        *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Application export fails with a         *
+   *                      FileNotFoundException when a web        *
+   *                      module library jar contains an XML      *
+   *                      file beneath META-INF.                  *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   Particular combinations of application content cause
+   application export to fail with a FileNotFoundException.  A
+   FileNotFoundException occurs when:
+   1) The application which is being exported contains a web
+   module at version 2.4 (or lower).
+   2) The web module which is at version 2.4 (or lower) contains
+   library jar files.
+   3) Any of the web module library jar files contains an XML
+   file under the library jar file's "META-INF" folder.
+   For example:
+   Web module: sampleWar.war
+   Web module library jar file: WEB-INF/lib/sampleJar.jar
+   XML trigger file: META-INF/beans.xml
+   The example will generate a FileNotFoundException similar to
+   the following:
+   [3/22/12 13:23:17:583 BRT] 0000004b MBeanHelper   2 MBeanHelper
+   invoke::exportApplication THROW java.io.FileNotFoundException:
+   /opt/ibm/WebSphere/WASv8/profiles/was.dmgr/wstemp/appmgmt/mbean/
+   AppManagement_1363b36323b_1/tmp.1363b380a0b/sampleWar.war/WEB-
+   IN
+   F/lib/sampleJar.jar/META-INF/beans.xml (Not a directory)
+   at java.io.FileOutputStream.open(Native Method)
+   at java.io.FileOutputStream.<init>(FileOutputStream.java:190
+   The problem is particular to web modules which use version 2.4
+   or lower for the web module deployment descriptor.  The problem
+   does not occur for web modules which use version 2.5 or higher
+   for the web module deployment descriptor.  The problem does not
+   occur for web modules which do not have a deployment
+   descriptor.  The problem is not triggered by XML files which
+   are present in a library jar file and which are not beneath
+   the "META-INF" folder of the library jar file.
+   Both the case of an XML file which is directly beneath the
+   "META-INF" folder of a library jar file and the case of an XML
+   file which is in a sub-folder of the "META-INF" folder of a
+   library jar file will trigger the problem.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The problem occurs because of inconsistent handling of files
+   during application export.  One file handling area requires
+   that web module library jar files be packaged as jar files,
+   while a second file handling area requires that the web module
+   library jar files be packaged as directories.
+   
+   The problem was fixed by a code update which detects
+   when a library jar is packaged as an expanded directory,
+   and with the addition of new file handling code which is used
+   when an expanded directory is detected.
+   
+   The fix for this APAR is currently targeted for inclusion in
+   fix pack 8.0.0.5 and 8.5.0.2.  Please refer to the Recommended
+   Updates page for delivery information:
+   http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM64501
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBS APP SERV N
+   
+   
+ * REPORTED COMPONENT ID
+   5724H8800
+   
+   
+ * REPORTED RELEASE
+   800
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-05-11
+   
+   
+ * CLOSED DATE
+   2012-06-29
+   
+   
+ * LAST MODIFIED DATE
+   2012-07-17
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBS APP SERV N
+   
+   
+ * FIXED COMPONENT ID
+   5724H8800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R800 PSY
+   UP
+   
+   
+ * R850 PSY
+   UP

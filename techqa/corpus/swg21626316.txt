@@ -1,0 +1,36 @@
+Title: IBM Does IBM Sterling Connect:Express for z/OS version 4.3.0 support TLS versions V1.1 and V1.2? - United States
+
+Text:
+IBM Sterling Connect:Express for z/OS version 4.3.0 supports TLS versions V1.1 and V1.2 TECHNOTE (FAQ)
+
+QUESTION
+ Does IBM Sterling Connect:Express for z/OS version 4.3.0 support TLS versions V1.1 and V1.2? 
+
+CAUSE
+IBM Sterling Connect Express with SSL code based on GSKSSL, implements only TLS versions V1, but not V1.1 or V1.2.
+
+The GSKSSL environment is configured dynamically based on monitor SYSIN and based on SSLCFG SYSIN for each transfer (in or out).
+
+IBM Sterling Connect:Express for z/OS does not update the environment variables, but sets values through GSK API:
+gsk_attribute_set_enum(env_handle, GSK_PROTOCOL_TLSV1, 
+GSK_PROTOCOL_TLSV1_ON);
+
+gsk_attribute_set_enum(soc_handle, GSK_PROTOCOL_TLSV1, 
+GSK_PROTOCOL_TLSV1_ON);
+
+ANSWER
+IBM Sterling Connect:Express for z/OS code will be modified to support TLS versions V1.1 and V1.2 and an Enhancement Request number 368318 was raised.
+This implies adding config keywords in the monitor SYSIN and SSLCFG and take into account the new gskssl.h values below:
+
+GSK_PROTOCOL_TLSV1 = 407, 
+GSK_PROTOCOL_TLSV1_1 = 412, 
+GSK_PROTOCOL_TLSV1_2 = 421 
+GSK_PROTOCOL_TLSV1_ON = 518, /* GSK_PROTOCOL_TLSV1 */ 
+GSK_PROTOCOL_TLSV1_OFF = 519, /* GSK_PROTOCOL_TLSV1 */ 
+GSK_PROTOCOL_USED_TLSV1 = 520, /* GSK_PROTOCOL_USED */ 
+GSK_PROTOCOL_TLSV1_1_ON = 530, /* GSK_PROTOCOL_TLSV1_1 */ 
+GSK_PROTOCOL_TLSV1_1_OFF = 531, /* GSK_PROTOCOL_TLSV1_1 */ 
+GSK_PROTOCOL_USED_TLSV1_1 = 532, /* GSK_PROTOCOL_USED */ 
+GSK_PROTOCOL_TLSV1_2_ON = 558, /* GSK_PROTOCOL_TLSV1_2 */ 
+GSK_PROTOCOL_TLSV1_2_OFF = 559, /* GSK_PROTOCOL_TLSV1_2 */ 
+GSK_PROTOCOL_USED_TLSV1_2 = 560 /* GSK_PROTOCOL_USED */

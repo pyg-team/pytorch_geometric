@@ -1,0 +1,148 @@
+Title: IBM IT23603: COGNOS NEVER FINISHES STARTING - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  CognosReportService logs shows that it has been working on one
+   role for  34 minutes and its still not done.  There is no way
+   this would ever get up for 1393 roles.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  STRRTC - 558220
+   SF / SF
+   Circumvention: None
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Description of Issue:  Cognos takes too long to start when there
+    are lots (100s or 1000s) of  ICC roles defined.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Description of Fix:  Rewrite the logic that maps ICC roles to
+   Cognos roles to reduce the number of Cognos queries needed from
+   several thousand to a dozen.  And remove the updating of
+   workspace permission on workspace folders if the folders already
+    exist.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  IT23603 / R559220
+   Description of Issue:  Cognos takes too long to start when there
+   are lots (100s or 1000s) of  ICC roles defined.
+   Description of Fix:  Rewrite the logic that maps ICC roles to
+   Cognos roles to reduce the number of Cognos queries needed from
+   several thousand to a dozen.  And remove the updating of
+   workspace permission on workspace folders if the folders already
+   exist.
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT23603
+   
+   
+ * REPORTED COMPONENT NAME
+   STR CONTROL CEN
+   
+   
+ * REPORTED COMPONENT ID
+   5725D0200
+   
+   
+ * REPORTED RELEASE
+   610
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2018-01-02
+   
+   
+ * CLOSED DATE
+   2018-01-05
+   
+   
+ * LAST MODIFIED DATE
+   2018-01-05
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   STR CONTROL CEN
+   
+   
+ * FIXED COMPONENT ID
+   5725D0200
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R610 PSY
+   UP
+   
+   
+ * R611 PSY
+   UP

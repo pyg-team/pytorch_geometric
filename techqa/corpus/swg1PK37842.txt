@@ -1,0 +1,147 @@
+Title: IBM PK37842: ABENDU0462, MSGCSV002I WHEN DFSREXX1 LOADED > 32767 TIMES - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Need forward fit of APAR PQ09462 (V6) to V9.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  All IMS R900 users running REXX             *
+   *                  transaction programs.                       *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: MSGCSV002I when running IMS REXX        *
+   *                      transaction application programs.       *
+   ****************************************************************
+   * RECOMMENDATION: INSTALL CORRECTIVE SERVICE FOR APAR/PTF      *
+   ****************************************************************
+   MSGCSV002I occurs when the use count for module DFSREXX1
+   exceeds 32767. A LOAD SVC is issued for module DFSREXX1
+   each time an IMS REXX transaction application program is
+   invoked. The module is not loaded for each call but the
+   module use count is incremented for each LOAD call.
+   The use count is decremented for each DELETE SVC call.
+   Module DFSREXX0 issued the LOAD SVC but no DELETE SVC is
+   ever issued. This caused the module use count to reach its
+   maximum value and caused message CSV002I to be issued.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  AIDS: RIDS/SYS RIDS/CNTRL SYS CNTRL
+     DEP: NONE
+     GEN:
+   
+   *** END IMS KEYWORDS ***
+   Module DFSREXX0 has been changed to not issue the LOAD SVC
+   if module DFSREXX1 has already been loaded.
+   DFSREXX0 now will use the CSVQUERY macro to locate a copy of
+   DFSREXX1. If a return code of 0 is received from the CSVQUERY
+   call (indicating the module has been located) then the LOAD SVC
+   will not be issued.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK37842
+   
+   
+ * REPORTED COMPONENT NAME
+   IMS V9
+   
+   
+ * REPORTED COMPONENT ID
+   5655J3800
+   
+   
+ * REPORTED RELEASE
+   900
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2007-01-22
+   
+   
+ * CLOSED DATE
+   2007-07-06
+   
+   
+ * LAST MODIFIED DATE
+   2007-08-03
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    PK40321 [http://www-01.ibm.com/support/docview.wss?uid=swg1PK40321] UK26890
+   
+   
+
+MODULES/MACROS
+ *  DFSREXX0
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   IMS V9
+   
+   
+ * FIXED COMPONENT ID
+   5655J3800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R900 PSY UK26890
+   UP07/07/13 P F707

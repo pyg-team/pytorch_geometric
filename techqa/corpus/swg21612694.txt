@@ -1,0 +1,47 @@
+Title: IBM Installation of TIP Fix Pack for ILMT fails with error - United States
+
+Text:
+TIPL2; TIPL2INST; WASServiceMsg; CODPT0003E; Patch Tool ; exits ; code 16 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Running the Tivoli Integrated Portal patch installer for the IBM License Metric Tool, the install fails with this error: 
+ODPT0003E: The Patch Tool exits with code 16. 
+
+SYMPTOM
+The following errors are returned after failed installation: 
+
+CODPT0060E: The Tivoli Integrated Portal Fixpack installation has failed with return code: -1. CODPT0022E: The mandatory step "Install Tivoli Integrated Portal fix pack 2.2.0.3" has failed. 
+ODPT0003E: The Patch Tool exits with code 16. 
+
+
+CAUSE
+The WASServiceMsg.dll is locked due to a previous failed install attempt
+
+ENVIRONMENT
+IBM License Metric Tool on Windows
+
+DIAGNOSING THE PROBLEM
+1) Check the corresponding MachinePlan_localhost.log for entries like these: 
+
+
+D:\IBM\TIP\_uninst\TIPInstall2203\plan\install\MachinePlan_localhost\MachinePlan_localhost.xml:302: Error executing step: An error was encountered running step WASFP 
+
+Caused by: The following error occurred while executing this line: 
+D:\IBM\TIP\_uninst\TIPInstall2203\plan\install\MachinePlan_localhost\00003_WASFP\WASFP.xml:288: IAGLOBAL_APPLY_SDKPAK_FAILURE} 
+
+++++++++++++++++++++++++++++++++++++++
+
+2) Check the WAS update log for an exception like this: 
+
+Caused by: com.ibm.ws.install.ni.framework.NIFException: The file bin/WASServiceMsg.dll could not be replaced. 
+
+This log can be found under: 
+
+<TIP_HOME>\logs\update\<name_of_the_fixpack_file>.install\updatelog.txt 
+
+
+RESOLVING THE PROBLEM
+Please see the following technote, which should help solve the "WASServiceMsg.dll" issue: 
+
+WASServiceMsg.dll is locked when installing Fix Packs and cumulative fixes on Windows 
+http://www-01.ibm.com/support/docview.wss?uid=swg21230924 [http://www-01.ibm.com/support/docview.wss?uid=swg21230924]

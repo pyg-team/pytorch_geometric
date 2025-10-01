@@ -1,0 +1,86 @@
+Title: IBM 404 There is no content available when accessing portal for Intelligent Operations Center - United States
+
+Text:
+404; theme; IOC TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Error message "404 - There is no content available" when accessing portal for Intelligent Operations Center occurs after changing default theme. 
+
+SYMPTOM
+"Error 404: There is no content available." when trying to log into the Portal.
+
+WebSphere Portal SystemOut.log will show errors similar to the following.
+
+[8/1/14 14:15:48:667 BRT] 00000098 LocalTranCoor E WLTC0017E:
+Resources rolled back due to setRollbackOnly() being called.
+[8/1/14 14:15:48:673 BRT] 00000098 servlet E
+com.ibm.ws.webcontainer.servlet.ServletWrapper service SRVE0014E:
+Uncaught service() exception root cause /themes/html/Default.jsp:
+com.ibm.websphere.servlet.error.ServletErrorReport:
+com.ibm.wps.resolver.data.exceptions.URIProcessingIOException:
+EJCBD0021E: The URI
+[dav:fs-type1/themes/ibm.ioc.80ICPOTheme/theme_compressed.html] and
+parameters
+[[&#39;themeURI&#39;=[&#39;dav:fs-type1/themes/ibm.ioc.80ICPOTheme/theme
+_compressed.html&#39;], &#39;mime-type&#39;=[&#39;text/html&#39;]]]
+could not be processed: [EJCBD0021E: The URI
+[dav:fs-type1/themes/ibm.ioc.80ICPOTheme/theme_compressed.html] and
+parameters
+[[&#39;themeURI&#39;=[&#39;dav:fs-type1/themes/ibm.ioc.80ICPOTheme/theme
+_compressed.html&#39;], &#39;mime-type&#39;=[&#39;text/html&#39;]]]
+could not be processed: [EJCBD0019E: The data source identified by the
+URI [dyn-cs:id:ioc_portalPageTitle] and parameters []] could not be
+processed: [EJCBD0021E: The URI
+[res:/ibm/ioc/theme/data/servletCaller.jsp?moduleName=pageTitle] and
+parameters []] could not be processed: [null]]]]
+at
+org.apache.jasper.runtime.PageContextImpl.handlePageException(PageContex
+tImpl.java:693)
+at com.ibm._jsp._Default._jspService(_Default.java:1183)
+at
+com.ibm.ws.jsp.runtime.HttpJspBase.service(HttpJspBase.java:99)
+
+
+
+CAUSE
+The default theme of Intelligent Operations Center portal has been changed to another theme. The default theme should be "Portal 8.0 - portal".
+
+RESOLVING THE PROBLEM
+Because the portal cannot be accessed in this state, you must use the command line script xmlaccess.sh to return Intelligent Operations Center to its original state. Follow the steps below.
+
+
+ 1.  Connect to your application server using putty with WebSphere administrator credentials
+    Export your theme and skin configurations using the command line script xmlaccess.sh.
+    Run the following command to export the theme and skin configuration. 
+    
+    <PORTAL_HOME>/bin/xmlaccess.sh -user <PORTAL_ADMIN_USER> -password <PORTAL_ADMIN_PASSWORD> -url http://<SERVER>:<PORT>/wps/config -in <PORTAL_HOME>/doc/xml-samples/ExportThemesAndSkins.xml -out <OUTPUT_FILE_PATH>/Result.xml 
+    
+ 2.  In Result.xml file set "ibm.portal.80Theme" as default theme by setting default="true". See the following snippet.
+    
+    <theme action="update" active="true" context-root="/wps/defaultTheme80" default="true" defaultskinref="ZK_CGAH47L00OEP00IDBHRNLP08T5" domain="rel" objectid="ZJ_CGAH47L00OEP00IDBHRNLP0830" resourceroot="dynamicSpots" uniquename="ibm.portal.80Theme"> 
+    
+ 3.  Make sure for other themes this entry should be default="false"
+    
+ 4.  Save Result.xml file.
+    
+ 5.  Now again import this Result.xml using command line utility
+    <PORTAL_HOME>/bin/xmlaccess.sh -user <PORTAL_ADMIN_USER> -password <PORTAL_ADMIN_PASSWORD> -url http://<SERVER>:<PORT>/wps/config -in <OUTPUT_FILE_PATH>/Result.xml
+    
+    
+    <PORTAL_HOME>
+    Installation path of portal (usually /opt/IBM/WebSphere/PortalServer )
+    
+    <PORTAL_ADMIN_USER> 
+    Portal admin user (usually wpsadmin )
+    
+    <PORTAL_ADMIN_PASSWORD > 
+    Portal admin password
+    
+    <SERVER> 
+    Application server host IP 
+    
+    <PORT> 
+    Port on which portal is running (usually 10039 )
+    
+    <OUTPUT_FILE_PATH> 
+    Any location on which user has access

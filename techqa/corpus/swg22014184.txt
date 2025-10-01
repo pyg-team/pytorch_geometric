@@ -1,0 +1,31 @@
+Title: IBM New online Support experience for IBM Application Security products! - United States
+
+Text:
+SalesForce; ASoC; AppSec; Sales Force NEWS
+
+ABSTRACT
+ In order to serve you better, IBM has launched a new online Support experience for IBM Application Security on Cloud, IBM Security AppScan Enterprise, IBM Security AppScan Source, and IBM Security AppScan Standard. 
+
+CONTENT
+As announced to support customers of IBM Application Security on Cloud (ASoC) and AppScan products in early 2018, the new online IBM Support Community is going live! The transition to our new Community was designed to be seamless for you, and we would like to share some resources to will help you get started.
+To access the Community, follow these steps: 
+
+ *  Go to www.ibm.com/mysupport [http://www.ibm.com/mysupport] For a personalized experience, log in with your IBM ID. 
+
+To learn how to use the new Community to open a Support case and search for Support content, watch these short tutorial videos: 
+
+Video 1 - Introducing the IBM Support Community: Search 
+
+Video 2 - IBM Support Community: Open And Manage Cases
+
+
+
+If you experience a problem with the new community (such as a login issue, etc.), we are here to help. You can submit your issue via our Support page [https://www.ibm.com/mysupport/s/] by clicking “Email IBM Support,” or by emailing mysphelp@us.ibm.com [mysphelp@us.ibm.com]. 
+
+We understand that you may have other IBM products, and this change may require you to temporarily access different portals for different products. We will continue to onboard products quickly so that you can have a simple, consistent experience. 
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Security IBM Security AppScan Enterprise Security IBM Security AppScan Source Security IBM Security AppScan Standard

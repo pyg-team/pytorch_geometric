@@ -1,0 +1,152 @@
+Title: IBM IT13908: THE WEBSPHERE DATAPOWER XC10 APPLIANCE IS AFFECTED BY BUFFER OVE RFLOW VULNERABILITY IN THE GLIBC GETADDRINFO FUNCTION. - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  GNU C Library (glibc) is vulnerable to a stack-based buffer
+   overflow, caused by improper bounds checking by the nss_dns
+   backend for the getaddrinfo() function when performing dual
+   A/AAAA DNS queries. By sending a specially crafted DNS
+   response, a remote attacker could overflow a buffer and
+   execute arbitrary code on the system or cause the application
+   to crash.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  Users of WebSphere DataPower XC10           *
+   *                  Appliance V2.1 and V2.5.                    *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: A GNU C Library(glibc) vulnerability    *
+   *                      with a stack based overflow was         *
+   *                      addressed by WebSphere DataPower XC10   *
+   *                      Appliance.                              *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   CVEID: CVE-2015-7547
+   DESCRIPTION: GNU C Library (glibc) is vulnerable to a
+   stack-based buffer overflow, caused by improper bounds
+   checking by the nss_dns backend for the getaddrinfo() function
+   when performing dual A/AAAA DNS queries. By sending a
+   specially crafted DNS response, a remote attacker could
+   overflow a buffer and execute arbitrary code on the system or
+   cause the application to crash.
+   CVSS Base Score: 8.1
+   CVSS Temporal Score: See
+   https://exchange.xforce.ibmcloud.com/vulnerabilities/110662 [https://exchange.xforce.ibmcloud.com/vulnerabilities/110662]
+   for the current score
+   CVSS Environmental Score*: Undefined
+   CVSS Vector: (CVSS:3.0/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:H/A:H)
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  See recommended fixes page for Websphere DataPower XC10
+   Appliance at:
+   http://www-01.ibm.com/support/docview.wss?uid=swg27019704 [http://www-01.ibm.com/support/docview.wss?uid=swg27019704]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT13908
+   
+   
+ * REPORTED COMPONENT NAME
+   WSDATAPOWER XC1
+   
+   
+ * REPORTED COMPONENT ID
+   5765H4200
+   
+   
+ * REPORTED RELEASE
+   250
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-03-02
+   
+   
+ * CLOSED DATE
+   2016-03-22
+   
+   
+ * LAST MODIFIED DATE
+   2016-03-22
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WSDATAPOWER XC1
+   
+   
+ * FIXED COMPONENT ID
+   5765H4200
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R210 PSY
+   UP
+   
+   
+ * R250 PSY
+   UP

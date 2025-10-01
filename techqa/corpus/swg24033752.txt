@@ -1,0 +1,119 @@
+Title: IBM 1.1.0.3: WebSphere Application Server  Feature Pack for Web 2.0 and Mobile V1.1 - United States
+
+Text:
+ DOWNLOADABLE FILES
+
+ABSTRACT
+ IBM WebSphere Application Server Feature Pack for Web 2.0 and Mobile V1.1 Fix Pack 3 for all platforms, also known as Version 1.1.0.3 
+
+DOWNLOAD DESCRIPTION
+Fix Pack 3 (1.1.0.3) for WebSphere Application Server Feature Pack for Web 2.0 and Mobile V1.1 is provided for the following WebSphere Application Server versions. 
+
+ * WebSphere Application Server V8.0 
+ * WebSphere Application Server V7.0 - Distributed and IBM i operating systems only.
+
+
+For WebSphere Application Server V7.0 Feature Pack for Web 2.0 and Mobile V1.1.0.3 z/OS PTF information visit this link. [https://www-304.ibm.com/support/docview.wss?uid=swg27009131] PREREQUISITES
+WebSphere Application Server V8.0 Feature Pack for Web 2.0 and Mobile 
+
+ 1. WebSphere Application Server V8.0 and a previous version of the Web 2.0 and Mobile Feature Pack must be installed before proceeding with the fix pack installation.
+
+
+
+WebSphere Application Server V6.1 and V7.0 Feature Pack for Web 2.0 and Mobile  1. Update Installer version 7.0.0.19 or greater is required to install fixpack 1.1.0.3 on WebSphere Application Server V6.1 and V7.0. Download and install IBM Update Installer for WebSphere Software Version 7.0.0.19 or higher from the link below. 
+ 2. WebSphere Application Server V6.1 or V7.0 and a previous version of the Web 2.0 and Mobile Feature Pack must be installed before proceeding with the fix pack installation.
+
+
+
+URL LANGUAGE SIZE(Bytes) Update Installer for V7.0 [http://www-01.ibm.com/support/docview.wss?uid=swg24020212] English 4 Fix List for Web 2.0 and Mobile [http://www-01.ibm.com/support/docview.wss?uid=swg27023799] English 1000 
+INSTALLATION INSTRUCTIONS
+
+
+
+WebSphere Application Server V8.0 Feature Pack for Web 2.0 and Mobile
+
+WebSphere Application Server Version 8.0 Feature Pack for Web 2.0 and Mobile is the first Web 2.0 and Mobile Feature Pack version installable through IBM Installation Manager. IBM Installation Manager is a single installation program that can use remote or local software flat-file repositories to install, modify, or update new WebSphere Application Server products. It determines and shows available packages—including products, fix packs, interim fixes, and so on—checks prerequisites and interdependencies, and installs the selected packages. You also use Installation Manager to easily uninstall the packages that it installed. For detailed installation instructions you can visit this Infocenter link. [http://publib.boulder.ibm.com/infocenter/wasinfo/v8r0/index.jsp?topic=%2Fcom.ibm.websphere.web20fepmobile.multiplatform.doc%2Finfo%2Fae%2Fae%2Fwelc6topinstalling_main.html] For additional fix pack installation instructions, refer to the Readme file included in the fix central download link.
+
+To install Fix Pack 1.1.0.3 using a local repository, you need to download the ZIP file listed in the Download Package section below and then point Installation Manager to repository.xml file on your local machine. The steps below require that you have already installed a previous version of the Web 2.0 and Mobile Feature Pack.
+
+To add the repository: 
+
+ 1. Start Installation Manager. 
+ 2. In the top menu, click File > Preferences. 
+ 3. Select Repositories. 
+ 4. Click Add Repository. 
+ 5. Enter the path to the repository.xml file in the location containing the repository files. 
+
+ * This is a sample path for a local repository on Windows operating system:C:\repositories\product_name\local-repositories 
+ * This is a sample path for a local repository on AIX, HP-UX, Linux, Solaris operating system:/var/repositories/product_name/local-repositories
+
+
+WebSphere Application Server V7.0 Feature Pack for Web 2.0 and Mobile 
+
+Follow these steps to install the latest WebSphere Application Server V7.0 Feature Pack for Web 2.0 and Mobile fix pack. 
+
+
+ 1. Stop all application server processes, the nodeagent process, the deployment manager process, and all server processes that belong to serviceable products, such as the IBM HTTP Server. Stop all Java processes, if necessary. The product might not continue to operate successfully if attempts to install Fix Pack 1.1.0.3 while a WebSphere Application Server-related Java processes are still running.
+    
+    
+ 2. Download the latest available Update Installer version from the Update Installer version 7.0 download page [http://www.ibm.com/support/docview.wss?uid=swg24020212]. Extract the downloaded Update Installer package to a temporary directory. Navigate into the UpdateInstaller subdirectory which was extracted in the previous step. Install the Update Installer by running the install or install.exe executable. Update Installer version 7.0.0.19 or later is required to install Web 2.0 and Mobile fix packs for WebSphere Application Server V7.0.
+    
+    
+ 3. Obtain downloadable maintenance packages (1.1.0.3) from the links below.
+    Tip:Do not attempt to unpack the *.pak file. If your browser changes the download package from *.pak file to *.zip, do not attempt to unzip the package. Instead, rename the file to *.pak and proceed to the next step without unzipping the renamed *.pak file.
+    
+    
+ 4. Download the packages into the update installer maintenance directory: 
+    
+    updi_install_root/maintenance 
+    
+ 5. To install downloaded maintenance packages, refer to instructions found in the Update Installer installation documentation directory:
+    
+    updi_install_root/docs/readme_updateinstaller.html 
+    Additional instructions can be found in the V7.0 Information Center, Installing maintenance packages [http://publib.boulder.ibm.com/infocenter/wasinfo/v7r0/index.jsp?topic=%2Fcom.ibm.websphere.web20fepmobile.multiplatform.doc%2Finfo%2Fae%2Fae%2Fwelc6topinstalling_main.html]. Installation instructions are summarized and repeated here for convenience only, refer to the preceding official published sources. 
+    
+ 6. Open a command shell window and change directories to theupdi_install_rootinstall location of the V7.0 Update Installer.
+    
+    cd updi_install_root 
+    
+ 7. Use the update command to install the maintenance package that you downloaded into updi_install_root/maintenance directory.
+    
+    The Update Installer wizard can run in silent mode without graphical user interface and responsefile can be configured for automatic installation.
+
+ * For Windows:
+   
+   update –silent –optionsresponsefile 
+   
+ * For Linux or UNIX platforms:
+   
+   ./update.sh –silent –optionsresponsefile 
+   
+
+And, graphical user interface mode is available by update command without any parameter:  * For Windows:
+   
+   update.bat 
+   
+ * For Linux or UNIX platforms:
+   
+   ./update.sh 
+   
+
+Refer to the following file for detailed information about using the update command: 
+
+updi_install_root/docs/readme_updateinstaller.html 
+
+
+For details on problems fixed in Fix Pack 3, refer to the Fix list for Web 2.0 and Mobile [http://www-01.ibm.com/support/docview.wss?uid=swg27023799] document. DOWNLOAD PACKAGE
+ 
+
+
+
+Platform Version Download Links (Fix Central) All Platforms WebSphere Application Server V8.0 Feature Pack for Web 2.0 and Mobile 1.1.0-WS-WAS8Web2Mobile-FP0000003.zip [http://www.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm/WebSphere&product=ibm/WebSphere/WebSphere+Application+Server+Feature+Pack+for+Web+2.0+and+Mobile&release=All&platform=All&function=fixId&fixids=1.1.0-WS-WAS8Web2Mobile-FP0000003&includeSupersedes=0] Distributed and IBM i WebSphere Application Server V6.1 and V7.0 Feature Pack for Web 2.0 and Mobile 1.1.0-WS-WASWeb2Mobile-FP0000003.pak [http://www.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm/WebSphere&product=ibm/WebSphere/WebSphere+Application+Server+Feature+Pack+for+Web+2.0+and+Mobile&release=All&platform=All&function=fixId&fixids=1.1.0-WS-WASWeb2Mobile-FP0000003&includeSupersedes=0] 
+
+
+TECHNICAL SUPPORT
+ Contact 1-800-IBM-SERV (U.S. only) or visit the WebSphere Application Server Support site [http://www.ibm.com/support/entry/portal/Overview/Software/WebSphere/WebSphere_Application_Server]
+
+
+ [/support/docview.wss?uid=swg24033752&aid=1]Problems (APARS) fixed [/support/docview.wss?uid=swg24033752&aid=2]Problems (APARS) fixed
+PM72002

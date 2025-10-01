@@ -1,0 +1,162 @@
+Title: IBM PI62883: STATISTICS DESKTOP CRASHES WHEN EXECUTING CTABLES COMMAND WITH A/COMPARETEST STYLE=SIMPLE SUBCOMMAND - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Using specific data, SPSS Statistics Desktop 24 backend engine
+   crashes when the CTABLES command contain the /COMPARETEST
+   STYLE=SIMPLE subcommand.
+   
+   No error message is captured in the Output Viewer when this
+   issue occurs.
+   No error message is captured in
+   statistics_client_trace_file0.log file.
+   
+   On Windows, end-user is presented with:
+   spssengine has terminated unexpectedly.
+   
+   On Mac, end-user is not presented with an error message.
+   Application simply becomes unresponsive.
+   
+   Syntax being used is within expected parameters and should
+   execute without errors or crashes.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  It has been observed that if your Custom Tables does not contain
+   any calculations, such as totals, categories, etc, the table
+   output is generated.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * This affects all users of IBM SPSS Statistcs 24.0.           *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * STATISTICS DESKTOP CRASHES WHEN EXECUTING CTABLES COMMAND    *
+   * WITH A /COMPARETEST STYLE=SIMPLE SUBCOMMAND                  *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Please upgrade to IBM SPSS Statistcs 24.0 Fix Pack 1 to      *
+   * resolve this issue.                                          *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This issue has been resolved in IBM SPSS Statistcs 24.0 Fix Pack
+   1 and future releases.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+ *  This issue has been reported to the IBM SPSS Statistics
+   development team and will be addressed in the next Fix Pack.
+   Please refer to the Fix Pack schedule at
+   http://www.ibm.com/software/analytics/support/fixes/pbi_schedule
+   .html [http://www.ibm.com/software/analytics/support/fixes/pbi_schedule.html] for information on upcoming Fix Packs.
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI62883
+   
+   
+ * REPORTED COMPONENT NAME
+   SPSS STATISTICS
+   
+   
+ * REPORTED COMPONENT ID
+   5725A54ST
+   
+   
+ * REPORTED RELEASE
+   O00
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-05-22
+   
+   
+ * CLOSED DATE
+   2016-10-04
+   
+   
+ * LAST MODIFIED DATE
+   2016-10-04
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   SPSS STATISTICS
+   
+   
+ * FIXED COMPONENT ID
+   5725A54ST
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * RO00 PSY
+   UP

@@ -1,0 +1,10 @@
+Title: IBM Leap Seconds in SKLM and TKLM - United States
+
+Text:
+leap second seconds influence vulnerability TECHNOTE (FAQ)
+
+QUESTION
+ Is SKLM or TKLM affected by "Leap Second" 
+
+ANSWER
+No, the "Leap Second" / "Leap Seconds" will not affect TKLM/SKLM.

@@ -1,0 +1,13 @@
+Title: IBM Hypervisor mode agent installation for WAS 8.5.5 fails on SLES 11 - United States
+
+Text:
+hypervisor; agent; websphere TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ For WebSphere Application Server version 8.5.5 on SuSe Enterprise Linux Server 11, installaton of ITCAM Agent for WebSphere Applications in hypervisor mode fails. 
+
+CAUSE
+WebSphere Application Server version 8.5.5 on SuSe Enterprise Linux Server 11 in hypervisor mode is not supported by ITCAM Agent for WebSphere Applications.
+
+RESOLVING THE PROBLEM
+Use another application server version, for example, WebSphere Application Server 8.5. Alternatively, use another Linux distribution, for example, RedHat version 6.

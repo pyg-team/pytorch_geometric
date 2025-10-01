@@ -1,0 +1,120 @@
+Title: IBM ZZ00704: ICO WITH BRING YOUR OWN OPENSTACK (BYOOS) REQUIRES 'DEFAULT' DOMAIN TO BE CREATED IN OPENSTACK PRIOR TO ICO INSTALL. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  ICO with BYOOS installation fail pre-checker indicating the
+   problem with the default domain. ICO installation is hard-coded
+   for "Default" domain and our DOC pages instruct users to
+   prepare various openstack settings based on Default domain,
+   however, we do not explicitly mention that this domain must be
+   setup in advance.
+   Some Openstack's may not define a Default domain.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Create "Default" domain prior to ICO install.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ICO with BYOOS installation fail pre-checker indicating the
+   problem with the default domain. ICO installation is hard-coded
+   for "Default" domain and our DOC pages instruct users to
+   prepare various openstack settings based on Default domain,
+   however, we do not explicitly mention that this domain must be
+   setup in advance.
+   Some Openstack's may not define a Default domain.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Documentation will be updated in the next release
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   ZZ00704
+   
+   
+ * REPORTED COMPONENT NAME
+   SMRTCLOUD ORCHS
+   
+   
+ * REPORTED COMPONENT ID
+   5725H2800
+   
+   
+ * REPORTED RELEASE
+   250
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2018-08-02
+   
+   
+ * CLOSED DATE
+   2018-08-16
+   
+   
+ * LAST MODIFIED DATE
+   2018-08-16
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

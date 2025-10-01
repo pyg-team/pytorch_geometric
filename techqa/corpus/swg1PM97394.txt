@@ -1,0 +1,175 @@
+Title: IBM PM97394: When saving, users are prompted to login to RQM when a module is opened in Read-only mode and then switched to Edit mode - United States
+
+Text:
+  A FIX IS AVAILABLE
+Rational DOORS and Rational DOORS Web Access Fix Pack 1 (9.6.1.1) for 9.6.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24039514]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When saving, users are prompted to login to RQM when a module is
+   opened in Read-only mode and then switched to Edit mode; No
+   changes have been made to any RQM links or any attempt made to
+   follow them.
+   
+   If you choose not to login to RQM, DOORS DXL Errors as listed
+   below would be displayed.
+   
+   Prerequisite for reproducing this issue:
+   --------------------------------------------
+   In a Jazz RQM project, there is a test plan with a Requirements
+   Collection Link to a DOORS module or a DOORS module view. At
+   least one test case was created in RQM from a DOORS Requirement
+   using the Reconciliation of the Requirements collection.
+   
+   Steps to reproduce:
+   ------------------------
+   1.? Make sure that the prerequisite is met. Open the
+   aforementioned Module first in Read Only Mode.
+   
+   2.? Switch the Edit mode of the Module to Exclusive Edit or if
+   its setup for sharing, you can open it in Shareable Edit Mode.
+   
+   3.? Make changes to an Object, say add or modify Object Heading
+   or Text. i.e. the changes made are not related to any of the RQM
+   links or attempts to follow such links are performed.
+   
+   4.? Click on Save icon or File - Save.
+   
+   5.? You would observe a DOORS OAuth login page to login to Jazz
+   RQM is displayed. If you decide not to login, the following DXL
+   error message is displayed in the DXL Interaction window:
+   ==========
+    -R-E- DXL: ?C:\Program
+   Files(x86)\IBM\Rational\DOOS\9.5/lib/dxl/standard/links/collabLi
+   nkBackLi
+   nks.inc:503? null DOM_Document parameter was passed into
+   argument
+   position 1
+   Backtrace:
+   
+    ?C:\Program
+   Files(x86)\IBM\Rational\DOOS\9.5/lib/dxl/standard/links/collabLi
+   nkBackLi
+   nks.inc:737?
+   )
+   ==========
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * Users who have integrated DOORS and RQM via OSLC.            *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * When saving, users are prompted to login to RQM when a       *
+   * module is opened in Read-only mode and then switched to Edit *
+   * mode.                                                        *
+   *                                                              *
+   * No changes have been made to any RQM links or any attempt    *
+   * made to follow them.                                         *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fixed in DOORS 9.6.1.1
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM97394
+   
+   
+ * REPORTED COMPONENT NAME
+   TLOGIC DOORS
+   
+   
+ * REPORTED COMPONENT ID
+   5724V61DR
+   
+   
+ * REPORTED RELEASE
+   950
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-09-19
+   
+   
+ * CLOSED DATE
+   2015-03-12
+   
+   
+ * LAST MODIFIED DATE
+   2015-03-12
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TLOGIC DOORS
+   
+   
+ * FIXED COMPONENT ID
+   5724V61DR
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R961 PSY
+   UP

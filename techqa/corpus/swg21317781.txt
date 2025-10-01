@@ -1,0 +1,81 @@
+Title: IBM SQLCODE -8001 and SQLSTATE 42968 errors occur connecting to a DB2 database with WebSphere Process Server (WPS) - United States
+
+Text:
+DB2 SQL error: SQLCODE: -8001; SQLSTATE: 42968; sqlcode8001; sqlstate42968; db2licm; DSRA8201W: DSRA8040I: TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When you run WebSphere Process Server in some circumstances, a DB2 product might be installed with an evaluation or temporary license. After a period of time, this license expires, making the DB2 product unusable. If you are using an expired evaluation copy of a DB2 product with WebSphere Process Server, the following DB2 SQL error occurs: SQLCODE: -8001, SQLSTATE: 42968 exception in the Systemout.log. 
+
+SYMPTOM
+The following text shows the complete set of error messages that you might see: 
+
+[8/21/08 10:13:35:893 CDT] 0000001d DSConfigurati W DSRA8201W: DataSource Configuration: DSRA8040I: Failed to connect to the DataSource. Encountered java.sql.SQLException: DB2 SQL error: SQLCODE: -8001, SQLSTATE: 42968, SQLERRMC: nullDSRA0010E: SQL State = 42968, Error Code = -8,001.
+java.sql.SQLException: DB2 SQL error: SQLCODE: -8001, SQLSTATE: 42968, SQLERRMC: nullDSRA0010E: SQL State = 42968, Error Code = -8,001
+at com.ibm.db2.jcc.b.bb.a(bb.java:2837)
+at com.ibm.db2.jcc.c.bb.q(bb.java:696)
+at com.ibm.db2.jcc.c.bb.p(bb.java:572)
+at com.ibm.db2.jcc.c.bb.l(bb.java:393)
+at com.ibm.db2.jcc.c.bb.d(bb.java:142)
+at com.ibm.db2.jcc.c.b.qc(b.java:1388)
+at com.ibm.db2.jcc.c.b.b(b.java:1312)
+at com.ibm.db2.jcc.c.b.s(b.java:1026)
+at com.ibm.db2.jcc.c.b.b(b.java:639)
+at com.ibm.db2.jcc.c.b.a(b.java:625)
+at com.ibm.db2.jcc.c.b.a(b.java:363)
+at com.ibm.db2.jcc.c.b.<init>(b.java:299)
+at com.ibm.db2.jcc.c.c.<init>(c.java:33)
+at com.ibm.db2.jcc.DB2PooledConnection.<init>(DB2PooledConnection.java:179)
+at com.ibm.db2.jcc.DB2XAConnection.<init>(DB2XAConnection.java:44)
+at com.ibm.db2.jcc.DB2XADataSource.getXAConnection(DB2XADataSource.java:81)
+at com.ibm.ws.rsadapter.DSConfigurationHelper$1.run(DSConfigurationHelper.java:1246)
+at com.ibm.ws.security.util.AccessController.doPrivileged(AccessController.java:118)
+at com.ibm.ws.rsadapter.DSConfigurationHelper.getPooledConnection(DSConfigurationHelper.java:1278)
+at com.ibm.ws.rsadapter.DSConfigurationHelper.testConnectionForGUI(DSConfigurationHelper.java:2599)
+at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:79)
+at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+at java.lang.reflect.Method.invoke(Method.java:618)
+at com.ibm.ws.management.DataSourceConfigHelperMBean.testConnectionToDataSource2(DataSourceConfigHelperMBean.java:534)
+at com.ibm.ws.management.DataSourceConfigHelperMBean.testConnection(DataSourceConfigHelperMBean.java:462)
+at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:79)
+at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+at java.lang.reflect.Method.invoke(Method.java:618)
+at sun.reflect.misc.Trampoline.invoke(MethodUtil.java:62)
+at sun.reflect.GeneratedMethodAccessor26.invoke(Unknown Source)
+at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+at java.lang.reflect.Method.invoke(Method.java:618)
+at sun.reflect.misc.MethodUtil.invoke(MethodUtil.java:265)
+at javax.management.modelmbean.RequiredModelMBean.invokeMethod(RequiredModelMBean.java:1089)
+at javax.management.modelmbean.RequiredModelMBean.invoke(RequiredModelMBean.java:971)
+at com.sun.jmx.mbeanserver.DynamicMetaDataImpl.invoke(DynamicMetaDataImpl.java:231)
+at com.sun.jmx.mbeanserver.MetaDataImpl.invoke(MetaDataImpl.java:238)
+
+
+DIAGNOSING THE PROBLEM
+To find out if the DB2 product that you are using has expired, run the db2licm command from a DB2 instance and view the expiration date.
+
+The following text is an example command and output that you see for a DB2 evaluation copy that has expired:
+
+> db2licm -l 
+
+Product name: "DB2 Enterprise Server Edition" 
+Expiry date: "Expired" 
+Product identifier: "db2ese" 
+Version information: "9.1"
+
+
+RESOLVING THE PROBLEM
+If the DB2 product license has expired, follow the instructions in the How to update an Expired License for an Installed DB2 Product [http://www.ibm.com/support/docview.wss?uid=swg21139763] document.
+
+RELATED INFORMATION
+ update an Expired License for an Installed DB2® [http://www.ibm.com/support/docview.wss?uid=swg21139763]
+
+
+ 
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration WebSphere Process Server Data Bindings and Data Handlers AIX, Linux, Windows 7.0, 6.2 
+PRODUCT ALIAS/SYNONYM
+ WPS

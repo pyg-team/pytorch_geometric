@@ -1,0 +1,172 @@
+Title: IBM PK11702: WEBSPHERE CACHING PROXY DOESN'T CORRECTLY READ THE OUTBOUND TIME OUT VALUE AND ERRONEOUSLY PERFORMS RETRIES ON POST REQUESTS. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The WebSphere Caching Proxy does not correctly read the outbound
+   request time out value.  The proxy will time-out the outbound
+   read if it takes longer than 60 seconds even if the proxy's
+   outbound time-out value is configured greater than 60 seconds.
+   In addition, the proxy will erroneously re-transmit
+   non-idempotent methods such as POSTs when an outbound
+   time-out occurs.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: WebSphere Application Server Caching Proxy   *
+   *                 Users                                        *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Caching Proxy doesn't correctly read    *
+   *                      the outbound timeout value and          *
+   *                      erroneously retries on POST requests.   *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   Caching Proxy doesn't correclty read the outbound timeout value
+   and erroneously retries on POST requests.  This means outbound
+   requests to target servers will always be timed out after 60
+   seconds of inactivity.  Subsequently, the timeout triggers a
+   request retry and for a POST, this is incorrect.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The Caching Proxy code now reads the outbound request time
+   out value correctly and supresses retries on POST requests as
+   per RFC 2616 section 8.1.4
+   
+   The fix for this APAR is currently targeted for inclusion
+   in fixpack 6.0.2.3.
+   Please refer to the recommended updates page for delivery
+   information:
+   http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK11702
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBS APP SERV N
+   
+   
+ * REPORTED COMPONENT ID
+   5724H8800
+   
+   
+ * REPORTED RELEASE
+   60I
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2005-09-11
+   
+   
+ * CLOSED DATE
+   2005-09-21
+   
+   
+ * LAST MODIFIED DATE
+   2005-09-21
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  PROXY
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBS APP SERV N
+   
+   
+ * FIXED COMPONENT ID
+   5724H8800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R60A PSY
+   UP
+   
+   
+ * R60H PSY
+   UP
+   
+   
+ * R60I PSY
+   UP
+   
+   
+ * R60P PSY
+   UP
+   
+   
+ * R60S PSY
+   UP
+   
+   
+ * R60W PSY
+   UP
+   
+   
+ * R60Z PSY
+   UP

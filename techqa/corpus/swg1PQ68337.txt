@@ -1,0 +1,141 @@
+Title: IBM PQ68337: -XRUNHPROF MONITOR=Y,CPU=TIMES OPTION HANGS JAVA - United States
+
+Text:
+AIX SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  If you try to profile a simple application:
+   java
+   Then you press &#162;C to exit (after the dialog box appears
+   from the application). You will get:
+   
+   &#162;CDumping contended monitor usage ...   stackpointer=34636608
+   Writing Java core file ....
+   At this point java is hung. kill -9 does not help.
+   This fails for other applications as well.
+   Example WebSM on AIX 5.1 gives:
+   wsm -Xrunhprof:monitor=y,thread=y,cpu=times
+   
+   results in:
+    HPROF ERROR: method on stack top != method exiting..
+    HPROF ERROR : stack underflow in method exit
+   	 .
+   	 .
+   	 .
+    stackpointer=3a990d68
+    and then java hangs.
+    If I remove the cpu=times option, it looks to work fine.
+   
+    But killing wsm by Del generates:
+   
+    Dumping contended monitor usage ...   stackpointer=38854a58
+    Writing Java core file ....
+   
+    hang!
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  When trying to profile monitor and cpu
+   information using
+   hprof, Java hangs on AIX, and crashes on Windows.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fixed
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PQ68337
+   
+   
+ * REPORTED COMPONENT NAME
+   JAVA(1.3/1.4 CO
+   
+   
+ * REPORTED COMPONENT ID
+   5648C9800
+   
+   
+ * REPORTED RELEASE
+   310
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2002-11-18
+   
+   
+ * CLOSED DATE
+   2003-01-17
+   
+   
+ * LAST MODIFIED DATE
+   2003-01-17
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   JAVA(1.3/1.4 CO
+   
+   
+ * FIXED COMPONENT ID
+   5648C9800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R310 PSN
+   UP

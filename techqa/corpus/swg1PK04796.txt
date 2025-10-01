@@ -1,0 +1,283 @@
+Title: IBM PK04796: ROBOT: CERTAIN HTML IMAGES DO NOT PLAYBACK SUCCESSFULLY - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Problem: Robot: Certain HTML images do not playback successfully
+   
+   Robot: 2003.06.12
+   Application (external): http://stage.aonsuretyhub.com [http://stage.aonsuretyhub.com]
+   
+   I was able to reproduce this on my Windows XP SP2/Robot
+   2003.06.14/IE 6.0 machine as well
+   
+   When customer records against an HTML image, it does not get
+   executed when playing back
+   IE 6.0
+   
+   When I look at the Preview vs. the Continue links, they appear
+   to the be the same. However, there has to be something
+   different for Robot to only recognize the Preview link and not
+   the Continue link. Below is my script, I am also seeing a
+   command line failure when clicking on the "Continue" link:
+   Sub Main
+    Dim Result As Integer
+   
+    'Initially Recorded: 04/21/2005 4:05:19 PM
+    'Script Name: Z_IBM_DEBUG
+   
+    'Start the application
+    StartBrowser "http://stage.aonsuretyhub.com",
+   "WindowTag=WEBBrowser"
+   
+    'Maximize the browser
+    Window SetContext, "Caption=Aon Surety Hub - Microsoft
+   Internet Explorer", ""
+    Window Click, "", "Coords=175,-13"
+    Window WMaximize, "", ""
+   
+    'Click on Surety Financial Ratings link
+    Browser NewPage,"HTMLTitle=Aon Surety Hub;Index=0",""
+    HTMLLink Click, "HTMLText=Surety Financial Ratings", ""
+   
+    'Click on the Aon Bond Link (Image)
+    Browser NewPage,"HTMLTitle=Aon Surety Hub",""
+    HTMLImage Click, "Name=aonbondlink", "Coords=118,20"
+    Browser NewPage,"HTMLTitle=AonBondLink 2.0",""
+   
+    'Click on the Login Name edit box
+    Window SetContext, "Caption=AonBondLink 2.0 - Microsoft
+   Internet Explorer", ""
+    EditBox Click, "Name=txtLoginID", "Coords=26,11"
+    InputKeys "suretyuser{TAB}bondlink"
+   
+    'Click on the Login button
+    Window SetContext, "Caption=AonBondLink 2.0 - Microsoft
+   Internet Explorer", ""
+    HTMLImage Click, "Name=cmdLogin", "Coords=38,9"
+   
+    'Click on the Bond Actions link
+    Window SetContext, "Caption=AonBondLink Home - Microsoft
+   Internet Explorer", ""
+    HTMLLink Click, "HTMLText=Bond Actions", ""
+   
+    'Click on the txtObligationID field
+    Window SetContext, "Caption=AonBondLink Home - Microsoft
+   Internet Explorer", ""
+    EditBox Click, "Name=txtObligationID", "Coords=37,14"
+    InputKeys "1880660"
+   
+    'Click on the Execute link
+    Window SetContext, "Caption=AonBondLink Home - Microsoft
+   Internet Explorer", ""
+    HTMLLink Click, "HTMLText=Execute", ""
+   
+    'Click on lookup image
+    Window SetContext,
+   "Caption=https://stage.aonsuretyhub.com/Secure/BondExecute.asp?W
+   
+   KBondKey=2007492&WKBondID=2007492&Action - Microsoft Internet
+   Explorer", ""
+    HTMLImage Click, "Name=cmdLookUp", "Coords=23,13"
+   
+    'Select "Test Templates" from the Library drop down
+    Window SetContext, "Caption=Bond Template Query - Microsoft
+   Internet Explorer", ""
+    Browser NewPage,"HTMLTitle=Bond Template Query;Index=0",""
+    ComboBox Click, "Name=cboLibrary", ""
+    ComboListBox Click, "Name=cboLibrary", "Text=Test Templates"
+   
+    'Select the "Template Code" edit box and type in aiabdx
+    Window SetContext, "Caption=Bond Template Query - Microsoft
+   Internet Explorer", ""
+    EditBox Click, "Name=txtTempCode", "Coords=25,15"
+    InputKeys "aiabdx{ENTER}"
+   
+    'Click on the select button
+    Window SetContext, "Caption=Bond Template Query - Microsoft
+   Internet Explorer", ""
+    Browser NewPage,"HTMLTitle=Bond Template Query;Index=0",""
+    HTMLImage Click, "Name=cmdSelect", "Coords=36,9"
+   
+    'Click on the "Superceded" radio button
+    Window SetContext,
+   "Caption=https://stage.aonsuretyhub.com/Secure/BondExecute.asp -
+   
+   Microsoft Internet Explorer", ""
+    Browser NewPage,"",""
+    RadioButton Click, "Name=optReason"
+   
+    'Click on the checkbox under Execution Date
+    Window SetContext,
+   "Caption=https://stage.aonsuretyhub.com/Secure/BondExecute.asp -
+   
+   Microsoft Internet Explorer", ""
+    CheckBox Click, "Name=chkBondID"
+   
+    'Click on the Continue button
+    Window SetContext,
+   "Caption=https://stage.aonsuretyhub.com/Secure/BondExecute.asp -
+   
+   Microsoft Internet Explorer", ""
+    HTMLImage Click, "Name=cmdContinue", "Coords=36,12"
+   
+    'Click on the Preview button
+    Window SetContext, "Caption=Print Or Download Bond -
+   Microsoft Internet Explorer", ""
+    Browser NewPage,"HTMLTitle=Print Or Download
+   Bond;Index=0",""
+    HTMLImage Click, "Name=cmdPreview", "Coords=52,12"
+   
+    'Click on the Cancel button
+    Window SetContext, "Caption=File Download", ""
+    PushButton Click, "Text=Cancel"
+   
+    'Click on the Continue button
+    Window SetContext, "Caption=Print Or Download Bond -
+   Microsoft Internet Explorer", ""
+    HTMLImage Click, "Name=cmdContinue", "Coords=27,12"
+   
+    'Click on the Logout and Done buttons
+    Window SetContext, "Caption=Bond Shipping Edit - Microsoft
+   Internet Explorer", ""
+    Browser NewPage,"HTMLTitle=Bond Shipping Edit;Index=0",""
+    HTMLLink Click, "HTMLTitle=Logout - USBONDLINKWEB3;Index=0",
+   ""
+    HTMLLink Click, "HTMLText=Logout of ABL", ""
+    Browser NewPage,"HTMLTitle=Logout;Index=0",""
+    HTMLImage Click, "Name=cmdDone", "Coords=42,11"
+   
+   End Sub
+   
+   Workaround that customer is using: Click on the browser and tab
+   to the Continue button and hit the enter
+   key:
+   
+   'Click on the Continue button
+    Window SetContext, "Caption=Print Or Download Bond -
+   Microsoft Internet Explorer", ""
+    Window Click, "", "Coords=288,-8"
+    InputKeys "{TAB}{ENTER}"
+   
+   Because the customer has a workaround and this is a CP3, they
+   are willing to wait until the next service release for a fix.
+   
+   LOCAL FIX:
+   Workaround that customer is using: Click on the browser and tab
+   to the Continue button and hit the enter
+   key:
+   
+   'Click on the Continue button
+    Window SetContext, "Caption=Print Or Download Bond -
+   Microsoft Internet Explorer", ""
+    Window Click, "", "Coords=288,-8"
+    InputKeys "{TAB}{ENTER}"
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ERROR DESCRIPTION:
+   Problem: Robot: Certain HTML images do not p
+   layback
+   successfully
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Robot Works as Designed
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK04796
+   
+   
+ * REPORTED COMPONENT NAME
+   RATIONAL ROBOT
+   
+   
+ * REPORTED COMPONENT ID
+   5724G2400
+   
+   
+ * REPORTED RELEASE
+   60W
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2005-04-25
+   
+   
+ * CLOSED DATE
+   2006-12-13
+   
+   
+ * LAST MODIFIED DATE
+   2006-12-13
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   RATIONAL ROBOT
+   
+   
+ * FIXED COMPONENT ID
+   5724G2400
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R60W PSN
+   UP

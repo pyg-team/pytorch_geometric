@@ -1,0 +1,152 @@
+Title: IBM PI92264: The IBM z/OS Connect EE API toolkit is unable to share service projects in multiple workspaces. - United States
+
+Text:
+z/os SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS UNREPRODUCIBLE IN NEXT RELEASE.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The IBM z/OS Connect EE API Toolkit is unable to share service
+   projects in multiple workspaces. When referencing a service
+   project from one Eclipse workspace and that location is in a
+   different workspace an error occurs during the build process.
+   
+   For a project located at:
+   C:\Users\IBM_ADMIN\.zosexplorer
+   
+   Project referenced at:
+   C:\Users\IBM_ADMIN\.zosexplorer2
+   
+   The following error messages are issued when there is an
+   attempt to build the project:
+   
+   Errors occurred during the build.
+   Errors running builder 'Service Project Builder' on project
+   'ivtnoService'.
+   C:\Users\IBM_ADMIN\.zosexplorer2\ivtnoService\service.properties
+   (The system cannot find the path specified.)
+   C:\Users\IBM_ADMIN\.zosexplorer2\ivtnoService\service.properties
+   (The system cannot find the path specified.)
+   C:\Users\IBM_ADMIN\.zosexplorer2\ivtnoService\service.properties
+   (The system cannot find the path specified.)
+   C:\Users\IBM_ADMIN\.zosexplorer2\ivtnoService\service.properties
+   (The system cannot find the path specified.)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Create a copy of the service project for the new workspaces
+   where the service will be built.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All users of the IBM z/OS Connect EE API     *
+   *                 toolkit feature.                             *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: The IBM z/OS Connect EE API toolkit is  *
+   *                      unable to share service projects in     *
+   *                      multiple workspaces.                    *
+   ****************************************************************
+   The IBM z/OS Connect EE API toolkit has been updated to enable
+   the sharing of service projects between multiple Eclipse
+   workspaces.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *  The reported problem has been resolved in the IBM z/OS Connect
+   EE API toolkit feature V3.0.3.1
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI92264
+   
+   
+ * REPORTED COMPONENT NAME
+   Z/OS CONNECT EE
+   
+   
+ * REPORTED COMPONENT ID
+   5655CE300
+   
+   
+ * REPORTED RELEASE
+   000
+   
+   
+ * STATUS
+   CLOSED UR1
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2018-01-10
+   
+   
+ * CLOSED DATE
+   2018-02-22
+   
+   
+ * LAST MODIFIED DATE
+   2018-02-22
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   Z/OS CONNECT EE
+   
+   
+ * FIXED COMPONENT ID
+   5655CE300
+   
+   
+
+APPLICABLE COMPONENT LEVELS

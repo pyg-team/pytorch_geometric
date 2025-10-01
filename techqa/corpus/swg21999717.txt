@@ -1,0 +1,79 @@
+Title: IBM LOAD utility takes longer time when loading more than 1024 bytes of data into LONG VARCHAR column - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ I am inserting data into a LONG VARCHAR column by the LOAD utility. When the data length is greater than 1024 bytes, the LOAD utility takes much longer to process. When the column data type is VARCHAR or CLOB, the problem does not occur. 
+
+SYMPTOM
+Here is an example. 
+
+Generate 2000 rows data of 1024 bytes and 1025 bytes:
+$ n="a"; for((i=0;i<10;i++));do n=$n$n ; done
+$ printf $n | wc -c
+1024
+$ for((i=0;i<2000;i++)) ; do echo $n ; done > 2k_1024.del
+$ for((i=0;i<2000;i++)) ; do echo a$n ; done > 2k_1025.del
+
+Create table:
+$ db2 "create table l1(l long varchar)"
+
+Load data to LONG VARCHAR column:
+$ time db2 load from 2k_1024.del of del insert into l1 nonrecoverable | tail -5
+Number of rows loaded = 2000
+Number of rows rejected = 0
+Number of rows deleted = 0
+Number of rows committed = 2000
+
+real 0m1.198s
+user 0m0.014s
+sys 0m0.013s
+
+$ time db2 load from 2k_1025.del of del insert into l1 nonrecoverable | tail -5
+Number of rows loaded = 2000
+Number of rows rejected = 0
+Number of rows deleted = 0
+Number of rows committed = 2000
+
+real 0m14.423s
+user 0m0.014s
+sys 0m0.013s
+
+
+Load data to VARCHAR or CLOB column:
+$ db2 "create table c1(l clob)"
+$ db2 "create table v1(l varchar(2000))"
+
+$ time db2 load from 2k_1025.del of del insert into c1 nonrecoverable | tail -5
+Number of rows loaded = 2000
+Number of rows rejected = 0
+Number of rows deleted = 0
+Number of rows committed = 2000
+
+real 0m1.287s
+user 0m0.014s
+sys 0m0.012s
+
+$ time db2 load from 2k_1025.del of del insert into v1 nonrecoverable | tail -5
+Number of rows loaded = 2000
+Number of rows rejected = 0
+Number of rows deleted = 0
+Number of rows committed = 2000
+
+real 0m1.033s
+user 0m0.014s
+sys 0m0.012s
+
+
+CAUSE
+This is a limitation of how the long varchar and long vargraphic columns handle buffers. In the current implementation in load, new buffers are allocated depending on the length of the data written and the segments in the buffer. When the data length is greater than 1024 bytes, the formatter EDU to allocate many more new buffers which results in the buffer manipulator EDU to call many more write operations. 
+
+As well, a similar issue happens when there's 2 columns of long data and they are loaded with data that is (1, 1025), (1, 1024), and (1024, 1) lengths. However, data that is lengths (1025, 1) do not have the issue. We cannot show all the patterns, but those are a few examples of data lengths / orders that will have this issue.
+
+
+RESOLVING THE PROBLEM
+Please use varchar or clob column types instead of the long varchar/long vargraphic. Please note that long varchar and long vargraphic data types have been deprecated from DB2 9.7. 
+
+RELATED INFORMATION
+ LONG VARCHAR and LONG VARGRAPHIC data types have been d [https://www.ibm.com/support/knowledgecenter/SSEPGG_9.7.0/com.ibm.db2.luw.wn.doc/doc/i0053825.html ]

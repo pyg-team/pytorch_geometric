@@ -1,0 +1,46 @@
+Title: IBM Migrate Electronic Service Agent (ESA) from using Java 6 to Java 8 - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ With support for Java 6 scheduled to end starting 2018, these PTFs allow ESA to use Java 8 instead. 
+
+RESOLVING THE PROBLEM
+For V7R1 and V7R2 systems, Java 6 32-bit and 64 bit (JV1 option 11 and JV1 option 12) are used By Electronic Service Agent (ESA) by default. 
+
+With support for Java 6 scheduled to end starting 2018, these PTFs allow to change ESA to use 
+Java 8 32-bit and 64 bit (JV1 option 16 and JV1 option 17) instead. 
+
+V7R3 systems already use Java 8 32-bit and 64-bit by default.
+
+
+Note: Java 8 32-bit and 64 bit (JV1 option 16 and JV1 option 17) are required to be on system prior to apply the PTFs. Pre/co requisite PTFs might be downloaded. Assure to apply them also.
+Information about how to obtain the options could be found at following document:
+N1020692: Support of Java Development Kit (JDK) 8.0 on the IBM i OS [http://www-01.ibm.com/support/docview.wss?uid=nas8N1020692]
+
+Disable/enable ESA is recommended after PTFs application. Then force collection.
+
+
+From APAR SE68303 [http://www-01.ibm.com/support/docview.wss?uid=nas2SE68303]
+
+For V7R1 systems:
+
+
+
+Fix / Release
+(Link to PTF Cover Letter) [http://www-912.ibm.com/s_dir/sline003.nsf/GroupPTFs?OpenView&view=GroupPTFs] Licensed
+Program
+Product SI66448 [http://www-01.ibm.com/support/docview.wss?uid=nas3SI66448] 5770SS1 
+
+
+For V7R2 systems: 
+
+Fix / Release
+(Link to PTF Cover Letter) [http://www-912.ibm.com/s_dir/sline003.nsf/GroupPTFs?OpenView&view=GroupPTFs] Licensed
+Program
+Product SI66129 [www-01.ibm.com/support/docview.wss?uid=nas3SI66129] 5770SS1 
+Note: Pre/co requisite PTFs may be downloaded and also need to be applied. 
+
+
+Cross reference information Segment Product Component Platform Version Edition Operating System IBM i 7.2 Operating System IBM i 7.1

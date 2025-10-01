@@ -1,0 +1,238 @@
+Title: IBM IT24090: AFTER DB2 RECYCLE, DB2 STARTED ARCHIVING OLD LOG FILES CAUSING ACTIVE LOG FILESYSTEM QUICK GROWTH. - United States
+
+Text:
+z/os SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Db2 could cause attempt to archive from failpath happen forever
+   and produce FNEX error every archretrydelay seconds.
+   
+   Before db2stop:
+   
+   2018-02-04-00.35.33.718859+480 I1339325887A498      LEVEL: Info
+   PID     : 37945456             TID : 166285         PROC :
+   db2sysc 0
+   INSTANCE: db2inst1             NODE : 000           DB   :
+   SAMPLE
+   HOSTNAME: dummyhost
+   EDUID   : 166285               EDUNAME: db2logmgr (SAMPLE) 0
+   FUNCTION: DB2 UDB, data protection services,
+   sqlpgArchiveLogFile, probe:3180
+   DATA #1 : <preformatted>
+   Completed archive for log file S1383462.LOG to TSM chain 0 from
+   /db2inst1/db2log/SAMPLE/NODE0000/LOGSTREAM0000/.
+   
+   db2stop:
+   
+   2018-02-04-00.35.36.932816+480 I1339351794A332      LEVEL: Event
+   PID     : 28508532             TID : 1              PROC :
+   db2stop
+   INSTANCE: db2inst1             NODE : 000
+   HOSTNAME: dummyhost
+   EDUID   : 1
+   FUNCTION: DB2 UDB, base sys utilities, sqleIssueStartStop,
+   probe:10932
+   DATA #1 : <preformatted>
+   Single node stopped [-1064].
+   
+   After db2 recycle:
+   
+   2018-02-04-00.39.10.389749+480 E56312A782           LEVEL: Info
+   PID     : 35193132             TID : 46006          PROC :
+   db2sysc 0
+   INSTANCE: db2inst1             NODE : 000           DB   :
+   SAMPLE
+   APPHDL  : 0-303                APPID:
+   *LOCAL.db2inst1.180203164326
+   AUTHID  : db2inst1             HOSTNAME: dummyhost
+   EDUID   : 46006                EDUNAME: db2agent (SAMPLE) 0
+   FUNCTION: DB2 UDB, data protection services, sqlpinit,
+   probe:1500
+   DATA #1 : <preformatted>
+   Database is starting up with the following values:
+                    Head Extent ID: 1383548
+                     Log File Size: 50000
+                       Startup Lso: 0
+                          Base Lso: 169058743977825
+               Last Log Record Lso: 169058737720345
+   Current Write Log Extent Limit: 169058947777825
+   
+   2018-02-04-00.39.11.385395+480 E57095A428           LEVEL: Info
+   PID     : 35193132             TID : 164228         PROC :
+   db2sysc 0
+   INSTANCE: db2inst1             NODE : 000           DB   :
+   SAMPLE
+   HOSTNAME: dummyhost
+   EDUID   : 164228               EDUNAME: db2logmgr (SAMPLE) 0
+   FUNCTION: DB2 UDB, data protection services,
+   sqlpgArchiveLogFile, probe:3108
+   DATA #1 : <preformatted>
+   Started archive for log file S1215044.LOG.
+   
+   2018-02-04-00.39.11.385946+480 I57524A1196          LEVEL: Info
+   PID     : 35193132             TID : 164228         PROC :
+   db2sysc 0
+   INSTANCE: db2inst1             NODE : 000           DB   :
+   SAMPLE
+   HOSTNAME: dummyhost
+   EDUID   : 164228               EDUNAME: db2logmgr (SAMPLE) 0
+   FUNCTION: DB2 UDB, data protection services, sqlpgOpenLogExtent,
+   probe:2164
+   MESSAGE : ZRC=0x860F000A=-2045837302=SQLO_FNEX "File not found."
+             DIA8411C A file "" could not be found.
+   DATA #1 : String, 19 bytes
+   Log is not found...
+   DATA #2 : Codepath, 8 bytes
+   19:24:26
+   DATA #3 : String, 99 bytes
+   extNum / logLocation / logStreamId / callerFlag / logFileName1 /
+   logFileName2 / callerSpecifiedPath
+   DATA #4 : SQLPG_EXTENT_NUM, PD_TYPE_SQLPG_EXTENT_NUM, 4 bytes
+   1215044
+   DATA #5 : unsigned integer, 4 bytes
+   0
+   DATA #6 : db2LogStreamIDType, PD_TYPE_DB2_LOG_STREAM_ID, 2 bytes
+   0
+   DATA #7 : Hex integer, 8 bytes
+   0x0000000002020603
+   DATA #8 : String, 0 bytes
+   Object not dumped: Address: 0x0A000000ADBFD6B8 Size: 0 Reason:
+   Zero-length data
+   DATA #9 : String, 0 bytes
+   Object not dumped: Address: 0x0A000000ADBFD7E0 Size: 0 Reason:
+   Zero-length data
+   DATA #10: String, 47 bytes
+   /db2inst1/db2log/SAMPLE/NODE0000/LOGSTREAM0000/
+   
+   2018-02-04-00.39.11.387096+480 I58721A477           LEVEL: Error
+   PID     : 35193132             TID : 164228         PROC :
+   db2sysc 0
+   INSTANCE: db2inst1             NODE : 000           DB   :
+   SAMPLE
+   HOSTNAME: dummyhost
+   EDUID   : 164228               EDUNAME: db2logmgr (SAMPLE) 0
+   FUNCTION: DB2 UDB, data protection services,
+   sqlpgArchiveLogVendor, probe:1630
+   MESSAGE : ZRC=0x860F000A=-2045837302=SQLO_FNEX "File not found."
+             DIA8411C A file "" could not be found.
+   
+   2018-02-04-00.39.11.387516+480 E59199A509           LEVEL:
+   Warning
+   PID     : 35193132             TID : 164228         PROC :
+   db2sysc 0
+   INSTANCE: db2inst1             NODE : 000           DB   :
+   SAMPLE
+   HOSTNAME: dummyhost
+   EDUID   : 164228               EDUNAME: db2logmgr (SAMPLE) 0
+   FUNCTION: DB2 UDB, data protection services,
+   sqlpgArchiveLogFile, probe:3150
+   MESSAGE : ADM1848W  Failed to archive log file "S1215044.LOG" to
+   "TSM chain 0"
+             from
+   "/db2inst1/db2log/SAMPLE/NODE0000/LOGSTREAM0000/".
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Set logarchmeth to logretain, re-cycle db, set logarchmeth1 back
+   to original method and re-cycle again.
+   Make a local copy of any log that was not archived.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * All                                                          *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * See Error Description                                        *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Upgrade to release inclusive of this fix.                    *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT24090
+   
+   
+ * REPORTED COMPONENT NAME
+   DB2 CONNECT
+   
+   
+ * REPORTED COMPONENT ID
+   DB2CONNCT
+   
+   
+ * REPORTED RELEASE
+   A50
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2018-02-16
+   
+   
+ * CLOSED DATE
+   2018-03-23
+   
+   
+ * LAST MODIFIED DATE
+   2018-03-23
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    IT24447
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

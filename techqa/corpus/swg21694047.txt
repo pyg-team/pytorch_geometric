@@ -1,0 +1,99 @@
+Title: IBM QRadar Monthly Support Newsletter - January 14, 2015 - United States
+
+Text:
+january 2015; qradar support newsletter 2015; qradar newsletter; open mic 7; support articles; support newsletter; qradar how-to; assets; january 6; asset model NEWS
+
+ABSTRACT
+ QRadar Support Newsletter - January 14, 2015: Covering QRadar troubleshooting, news, announcements, and how-to articles for IBM Security QRadar users and administrators. 
+
+CONTENT
+[/support/docview.wss?uid=swg21694047&amp;aid=1]
+
+
+QRADAR SUPPORT NEWSLETTER - JANUARY 14, 2015
+
+IBM Security QRadar Community, 
+
+We are pleased to provide our first support newsletter of 2015. The purpose of this newsletter is to provide support information, news, "how-to" articles, and tips for IBM Security QRadar SIEM and other associated QRadar products directly to QRadar users and administrators. Our goal is to provide knowledge and solutions to help security specialists complete their day-to-day activities. 
+
+
+WHAT'S NEW?
+ * 1. 
+ * QRadar Open Mic #7 : 'Let's talk about assets in QRadar' is scheduled for January 28, 2015
+ * 
+ * 
+ * 
+ * 
+ *  QRadar Open Mic #7 Webcast Information Topic Let's talk about assets in QRadar Date Wednesday, January 28, 2015 Time 11:00 AM EST (15:00 UTC/GMT, UTC-5 hours) for 60 minutes Webcast details http://bit.ly/IBMopenMicQR7doc [http://bit.ly/IBMopenMicQR7doc] Ask questions on this topic https://ibm.biz/BdE9dv [https://ibm.biz/BdE9dv] 
+ * 
+ * 
+ * 2. 
+ * QRadar 7.2.4 Patch 3 is released
+ * 
+ * 
+ * 
+ *  QRadar 7.2.4 Patch 3 Release Notes: http://www.ibm.com/support/docview.wss?uid=swg27044928 [http://www.ibm.com/support/docview.wss?uid=swg27044928] QRadar 7.2.4 Patch 3 software download: https://ibm.biz/BdEuDm [https://ibm.biz/BdEuDm] 
+ * 
+ * 
+ * 3. 
+ * DSM and integration updates for QRadar
+ * 
+ * 
+ * 
+ * 
+ *  New: Lastline Enterprise New: OpenStack (requires the new HTTP Receiver Protocol) New: HTTP Receiver Protocol - listens and converts HTTP post messages in to QRadar events. Updated: Kaspersky Security Center now supports Syslog event messages. Syslog is the recommended collection method for Kaspersky Security Center v10.x installations. 
+ * 
+ * 
+ * 
+ * 4. New Security Content Pack - iTCube AgileSI
+ * 
+ * 
+ * https://ibm.biz/BdELRL
+ * 
+ * 
+ * 
+ * 
+ * 
+ *  A number of new rules were added to address the top 25 security use cases for SAP monitoring. New reports were added to address the top 25 security use cases. New saved searches have been added to assist iT-Cube AgileSI customers locate security information faster. New reference sets, map of sets, and a new reference table were added to help AgileSI administrators maintain known information or blacklists for specific information, such as TCodes, work bench objects, and more. 29 new custom event properties were added to make searches and reports easier for data contained within AgileSI events. 
+ * 
+
+SUPPORT ARTICLES AND USEFUL INFORMATION FOR QRADAR:
+ *  How-to: Sharing Dashboard Items from QRadar Saved Searches [http://www.ibm.com/support/docview.wss?uid=swg21679314] How-to: Configuring a QRadar Log Source to Use SSH Keys [http://www.ibm.com/support/docview.wss?uid=swg21654663] How-to: QRadar: Handling of different time zones, device event times, and event time when using Log File Protocol [http://www.ibm.com/support/docview.wss?uid=swg21622451] How-to: QRadar: Overflow Records in Network Activity [http://www.ibm.com/support/docview.wss?uid=swg21693724] How-to: QRadar: How to Determine Average Event Payload and Record Size [http://www.ibm.com/support/docview.wss?uid=swg21685322] Troubleshooting: QRadar is Unable to Configure Email for SMTP Server Without a DNS MX Record [http://www.ibm.com/support/docview.wss?uid=swg21687784] Useful links: Getting Support for IBM Security QRadar Products [http://bit.ly/U7c4B6] 
+ * 
+   
+ * 
+
+
+HOW DO I GET QRADAR QUESTIONS ANSWERED?
+ * 
+ * IBM Customer forum for QRadar
+ * 
+ * 
+ * 
+ * 
+ * IBM Customer Forum for QRadar
+ * 
+ * 
+
+
+WE ARE ON TWITTER
+ * 
+ * @AskIBMSecurity
+ * 
+ * https://twitter.com/AskIBMSecurity
+ * 
+ * 
+
+
+MORE TO COME
+ * 
+ * IBM Customer Forum for QRadar
+ * 
+
+
+
+SUBSCRIPTION INFORMATION
+ * 
+ * 
+ * 
+ *  To subscribe to this list, send an email to isssprt@us.ibm.com [isssprt@us.ibm.com?subject=ste%20subscribe%20SecIntel] with: ste subscribe SecIntel in the subject line. To unsubscribe to this list, send an email to isssprt@us.ibm.com [isssprt@us.ibm.com?subject=ste%20unsubscribe%20SecIntel] with: ste unsubscribe SecIntel in the subject line.

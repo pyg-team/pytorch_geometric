@@ -1,0 +1,69 @@
+Title: IBM Security Bulletin: ClassLoader manipulation with Apache Struts affecting Tivoli Integrated Portal (CVE-2014-0114) - United States
+
+Text:
+TIP; WAS; Security Vulnerability; TIPL2; TIPL2FAQ SECURITY BULLETIN
+
+SUMMARY
+ There is a ClassLoader manipulation vulnerability in Apache Struts that is used by Tivoli Integrated Portal (TIP) & embedded Websphere Application Server (eWAS) 
+
+VULNERABILITY DETAILS
+CVEID: CVE-2014-0114 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-0114]
+
+DESCRIPTION: Apache Struts 1.X could allow a remote attacker to execute arbitrary code on the system, caused by the failure to restrict the setting of Class Loader attributes. An attacker could exploit this vulnerability using the class parameter of an ActionForm object to manipulate the ClassLoader and execute arbitrary code on the system. There is partial impact to confidentiality, integrity, and availability.
+
+CVSS Base Score: 7.5
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/92889 [https://exchange.xforce.ibmcloud.com/vulnerabilities/92889] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:L/Au:N/C:P/I:P/A:P) 
+
+AFFECTED PRODUCTS AND VERSIONS
+Tivoli Integrated Portal (TIP) version 1.x and version 2.x
+
+REMEDIATION/FIXES
+For TIP version 1.x (1.1.x, 1.1.1.x), the Interim fix (IFIX) from Websphere Application Server (WAS) can be applied to the affected environment. Please follow the below link to download the fix: 
+
+http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~WebSphere&product=ibm/WebSphere/WebSphere+Application+Server&release=All&platform=All&function=fixId&fixids=6.1.0.31-WS-WAS-IFPI17190&includeSupersedes=0 [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~WebSphere&product=ibm/WebSphere/WebSphere+Application+Server&release=All&platform=All&function=fixId&fixids=6.1.0.31-WS-WAS-IFPI17190&includeSupersedes=0] 
+
+ 
+
+For TIP version 2.x (2.1/2.2), please click on the below IBM Fix Central link to download the INTERIM FIX from TIP to install the fix in the affected environment. Readme is available as part of the Interim Fix zip file.
+http://www.ibm.com/support/fixcentral/swg/quickorder?parent=ibm%7ETivoli&product=ibm/Tivoli/Tivoli+Integrated+Portal&release=All&platform=All&function=aparId&apars=PI18558&source=fc [http://www.ibm.com/support/fixcentral/swg/quickorder?parent=ibm%7ETivoli&product=ibm/Tivoli/Tivoli+Integrated+Portal&release=All&platform=All&function=aparId&apars=PI18558&source=fc] 
+
+ 
+
+Note: 
+
+The fix for TIP 1.x is applicable only for TIP 1.1.1.15 FP & above (WAS 6.1.0.31 & above) 
+
+The fix for TIP 2.x is applicable to ALL fixpack levels of TIP 2.2 and some fixpack levels of TIP 2.1 (WAS 7.0.0.13 & above) 
+
+Please refer to this page for TIP-WAS version mapping: 
+
+https://www.ibm.com/developerworks/community/blogs/26d4aa47-4fd6-460d-a93b-3ee8945324d6/entry/what_was_fixpacks_are_included_in_tip_fixpacks?lang=en [https://www.ibm.com/developerworks/community/blogs/26d4aa47-4fd6-460d-a93b-3ee8945324d6/entry/what_was_fixpacks_are_included_in_tip_fixpacks?lang=en]
+
+WORKAROUNDS AND MITIGATIONS
+None
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v2 Guide [http://www.first.org/cvss/v2/guide] 
+On-line Calculator v2 [http://nvd.nist.gov/CVSS-v2-Calculator] 
+
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] 
+
+CHANGE HISTORY
+ 28-May-2014 - Original Copy Published 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY. 
+
+
+
+PRODUCT ALIAS/SYNONYM
+ TIP

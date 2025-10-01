@@ -1,0 +1,93 @@
+Title: IBM Memory allocation failure during heavy code generation - United States
+
+Text:
+ClassesPerCGCall; memory; allocation; failure; chunk; Rhapsody could not allocate needed memory; please exit this application TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Attempts to generate code from an entire model within a very large IBM Rational Rhapsody project results in memory allocation errors. 
+
+SYMPTOM
+The following dialog box will appear during code generation if rhapsody.exe runs out of memory: 
+
+image
+[/support/docview.wss?uid=swg21567337&amp;aid=1]
+text
+Rhapsody could not allocate needed memory for XYZ bytes.
+Please exit this application.
+
+You may be forced to restart your machine if you experience system instability afterward.
+
+CAUSE
+On 32-bit windows, 4 GB address space is allocated to a single process; however, this 4 GB boundary consists of 2 GB user-mode space and 2 GB kernel-mode space. This means that 2 GB is the absolute upper limit one process can commit. Once the memory consumption of rhapsody.exe reaches close to 2 GB, you will likely see the error above.
+
+
+
+ENVIRONMENT
+32-bit Windows
+
+
+
+RESOLVING THE PROBLEM
+One way to solve this problem is to use <LANG>_CG::Configuration::ClassesPerCGCall property. (CPP_CG::Configuration::ClassesPerCGCall for C++, C_CG::Configuration::ClassesPerCGCall for C) 
+
+
+The ClassesPerCGCall can be used to specify the maximum number of classes (including all the similar model elements, such as actors and files) that Rhapsody should process in a single code generation "chunk". Above this number, the code generation action will be broken into a number of smaller code generation actions.
+
+For example, if you specify 500 for the value of the property, then if your model has 501-1000 classes, Rhapsody will try to break the code generation action into two smaller code generation actions. In-house test results shows the good use of ClassesPerCGCall will dramatically decrease memory usage during code generation.
+
+If the value is set to -1, the chunking mechanism is not used, meaning that the code generation action will not be broken into a number of smaller actions regardless of how large the model is.
+
+
+
+[/support/docview.wss?uid=swg21567337&amp;aid=2] Normal CG (ClassesPerCGCall=-1) Chunk CG (ClassesPerCGCall=200) Memory Consumption 850 MB 230 MB CG Time 640 seconds 600 seconds 
+*CG = Code Generation 
+
+Note: This property was first introduced in Rhapsody v7.5.3. If your Rhapsody version is older than v7.5.3, review the Other solutions for pre-7.5.3 users section to work around this issue. 
+
+
+
+
+How to find optimal value 
+
+The amount of memory required for Rhapsody's code generation is to be decided by the total number of classes and packages in the model, the maximum number of classes in a package, the model structure where classes and packages are organized, and other minor factors. To find the optimal value of ClassesPerCGCall for your project, first, you might specify the value that process your entire model in 5-10 chunks. For example, if you have 1000 classes in your model, try to set 200 (1000/5) for the value of the property. Next run the entire code generation, and measure the time it takes to complete the code generation and the maximum memory usage. Use the obtained result as your first baseline, and adjust the property value up-and-down. The optimal value is the best working value you find through Trial & Error approach. 
+
+The tables below shows brief results of benchmark test we conducted, provided just for your reference. 
+
+Claasses in scope 200 550 650 1000 2000 Packages in scope 60 100 100 250 500 Optimal Value 50 50 50 200 200 
+
+
+
+
+Other solutions for pre-7.5.3 users 
+
+If your version of Rhapsody is older than Rhapsody v7.5.3, consider to take one of the following options to overcome such problems: 
+ * Run resource intensive code generation from command-line (RhapsodyCL.exe)
+   
+   If you're experiencing insufficient memory during resource intensive code generation (e.g Entire Project), consider to separate the task from the main process on which you do the most of construction works. This way, you can give more resource to the code generator, eventually it may help you overcome the memory shortage.
+   
+   
+ * Use /3GB option to enlarge the user-mode virtual address space to 3 GB
+   
+   On 32-bit Windows, by default, the lower 2 GB are reserved for user-mode space and the upper 2 GB are reserved for kernel-mode space. You can use this parameter to enlarge the user-mode space to 3 GB, leaving 1 GB to kernel. Since such configuration will affect the overall performance of your system, a careful planning is strongly recommended before moving into action. For details, please refer to "How to Set the /3GB Startup Switch in Windows" and "Pushing the Limits of Windows: Virtual Memory" in "Related information" in "Related information" section.
+   
+   
+ * Reorganizing your model into smaller components
+   
+   One additional approach you can consider to solve this issue is to reorganize your model into smaller components. Generating code from a monolithic component such that includes thousands of classes would put tremendous stress on Rhapsody in terms of resource utilization. We have not published a formal limitation stating such monolithic approach is forbidden, nor does Rhapsody blocks you from doing it, yet it is a good modelling practice to keep your components smaller and sizeable. Since it is harder than it sounds to modularize your model within a limited time frame, the above 3 solutions may be preferred. 
+
+
+
+
+
+
+FAQ 
+ * If I install Rhapsody on 64-bit machines, can I work around the memory problem?
+   
+   Unfortunately, not. On 64-bit Windows, one process can use far more memory than it's allowed on 32-bit Windows. That's true. However, even if you installed Rhapsody on 64-bit machine, 2GB memory constraint doesn't go away. That's because Rhapsody running on 64-bit machine operates as a 32-bit application. To fully take advantage of 64-bit machines, you need upgrade to Rhapsody v7.6.1 or later. An enhancement was introduced in Rhapsody v7.6.1 and this enhancement allows Rhapsody on 64bit machine to consume up to 4 GB of memory. 
+   
+   
+
+RELATED INFORMATION
+#Pushing the Limits of Windows: Virtual Memory [http://blogs.technet.com/b/markrussinovich/archive/2008/11/17/3155406.aspx]
+How to Set the /3GB Startup Switch in Windows [http://technet.microsoft.com/en-us/library/bb124810(EXCHG.65).aspx]
+A Japanese translation is available [http://www.ibm.com/support/docview.wss?uid=swg21567338]

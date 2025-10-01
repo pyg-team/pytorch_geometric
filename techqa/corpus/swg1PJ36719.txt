@@ -1,0 +1,289 @@
+Title: IBM PJ36719: RM GET RECORD INFORMATION DOESN'T WORK, YOU GET AN ERROR - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Clicking on the get info button doesn't work properly for RM 4.0
+   
+   Customer is using custom subclasses of Document on the ROS, and
+   Record on the FPOS.  Navigate to the document property page, and
+   select to view the properties of the associated record.  An
+   exception occurs.
+   
+   com.filenet.api.exception.EngineRuntimeException;Requested item
+   not
+   found. object identity
+   
+   classId=ClassDescription&objectId={95445AED-8E4F-419E-BD66-5BEF9
+   A8171C4}
+   
+   &objectStore={764F1F77-27F7-4433-85FE-783546CF1990} class name
+   
+   ClassDescription [Code=null] ... Object Reference
+   [CLASSDESCRIPTION:25]
+   ID "{95445AED-8E4F-419E-BD66-5BEF9A8171C4}" in ObjectStore
+   "FPOSRWQA";
+   OMFC/ClassDescription/GetPropertyDescriptionsXML//E_OBJECT_NOT_F
+   OUND
+   
+   
+   
+   Exception Class:
+   
+   com.filenet.wcm.api.BadReferenceException
+   
+   
+   
+   Stack Trace:
+   
+   com.filenet.wcm.api.BadReferenceException:
+   
+   com.filenet.api.exception.EngineRuntimeException;Requested item
+   not
+   found. object identity
+   
+   classId=ClassDescription&objectId={95445AED-8E4F-419E-BD66-5BEF9
+   A8171C4}
+   
+   &objectStore={764F1F77-27F7-4433-85FE-783546CF1990} class name
+   
+   ClassDescription [Code=null] ... Object Reference
+   [CLASSDESCRIPTION:25]
+   ID "{95445AED-8E4F-419E-BD66-5BEF9A8171C4}" in ObjectStore
+   "FPOSRWQA";
+   OMFC/ClassDescription/GetPropertyDescriptionsXML//E_OBJECT_NOT_F
+   OUND
+   
+   
+   
+   Caused by: com.filenet.api.exception.EngineRuntimeException:
+   
+   E_OBJECT_NOT_FOUND: Requested item not found. object identity
+   
+   classId=ClassDescription&objectId={95445AED-8E4F-419E-BD66-5BEF9
+   A8171C4}
+   
+   &objectStore={764F1F77-27F7-4433-85FE-783546CF1990} class
+         "
+   
+   When the return button on the exception trace screen is pressed,
+   the correct page is displayed.
+   
+   
+   
+   Another strange thing as I explained in my mails is that I
+   noticed is
+   when you check the build version of
+   
+   Records Manager, it says rec205.019. According to the
+   compatibility
+   matrix
+   
+   it must be rec205.020 after installing fixpack 4.0 - 002 and 4.0
+   
+   -002.001?
+         I
+   can defintely confirm that both fixpacks have been nstalled
+   and the
+   .ear
+   
+   files recreated for both Workplace and RM.
+   
+   
+   How long has the problem been occurring (recent changes)?
+   :Always
+   
+   Does this occur on more than one station / server? : no
+   
+   Is there a workaround? : no
+   
+   What is the impact to the customer/system? : System isn't
+   working as designned
+   
+   Can the problem be replicated on an internal system?  Y or N
+   no
+   
+   By Who (L3, Support, etc..)
+   
+   Not reproduced
+   
+   
+   Steps to Reproduce:
+   
+   1) Install and configure the Records Manager 40
+   2) Configure Workplace for use with Records Manager
+   3) Open Workplace and browse to a document that has been
+   declared as a record
+   4) Click on the information icon and scroll down to the bottom
+   5) Click on the "information" icon beside "record information"
+   6) A Record Manager login window appears -login in
+   7) Page opens with an error
+   
+   If you click return the page displays the records manager
+   information correctly
+   
+   
+   
+   Actual Results:
+   
+   Error seen
+   
+   Expected Results:
+   
+   Information on the Record to be displayed
+   
+   
+   
+          Are
+   there any similar or related Defects? If Y provide ECMDB #s N
+   
+   
+        What
+   logs were collected and where are they located?     all
+   logs have been attached to DTS
+   
+   
+   
+   
+   Configuration/Environment :
+   Server OS :  Windows 2003 SP1 64 Byte
+   CE: P845
+   AE: P8402
+   
+   Database : Oracle 10g
+   App Server : Jboss 4.0.5.GA
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * Users who have upgraded from version 3.X to 4.X, and have    *
+   * had a failure occur during the upgrade                       *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * Clicking on the get info button doesn't work properly for RM *
+   * 4.0                                                          *
+   *                                                              *
+   *                                                              *
+   * Customer is using custom subclasses of Document on the ROS,  *
+   * and                                                          *
+   * Record on the FPOS.  Navigate to the document property page, *
+   * and                                                          *
+   * select to view the properties of the associated record.  An  *
+   *                                                              *
+   * exception occurs.                                            *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Please upgrade to either AE 4.0.2-004 and above, or use      *
+   * Workplace XT.                                                *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This issue has been resolved in AE 4.0.2-004 and above.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PJ36719
+   
+   
+ * REPORTED COMPONENT NAME
+   RECORDS MANAGER
+   
+   
+ * REPORTED COMPONENT ID
+   5724S1900
+   
+   
+ * REPORTED RELEASE
+   400
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-08-24
+   
+   
+ * CLOSED DATE
+   2010-09-08
+   
+   
+ * LAST MODIFIED DATE
+   2010-09-08
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   RECORDS MANAGER
+   
+   
+ * FIXED COMPONENT ID
+   5724S1900
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R400 PSY
+   UP
+   
+   
+ * R450 PSY
+   UP
+   
+   
+ * R451 PSY
+   UP

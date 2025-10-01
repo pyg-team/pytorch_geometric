@@ -1,0 +1,59 @@
+Title: IBM After a successful database-transfer the Portal starts with DB2 SQL Error: SQLCODE=-551, SQLSTATE=42501 - United States
+
+Text:
+db2; SQLCODE=-551; SQLSTATE=42501; permissions TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+After a successful database-transfer to DB2 the Portal Server will not start correctly and the Portal startup shows the following error in the SystemOut.log...
+
+com.ibm.db2.jcc.am.SqlSyntaxErrorException: DB2 SQL Error:
+SQLCODE=-551, SQLSTATE=42501, SQLERRMC=DB2USER;EXECUTE;SYSIBM.SQLTABLES,
+DRIVER=4.18.60
+
+
+SYMPTOM
+The Portal Server is not accessible via a browser after startup. Review of the SystemOut.log shows the following...
+
+com.ibm.db2.jcc.am.SqlSyntaxErrorException: DB2 SQL Error:
+SQLCODE=-551, SQLSTATE=42501, SQLERRMC=DB2USER;EXECUTE;SYSIBM.SQLTABLES,
+DRIVER=4.18.60
+
+
+
+
+CAUSE
+The DB2 environment does not have the permissions required for Portal operation
+
+ENVIRONMENT
+Portal 8.5
+DB2
+AIX
+
+
+DIAGNOSING THE PROBLEM
+Review the SystemOut.log and it shows the following during Portal startup...
+
+com.ibm.db2.jcc.am.SqlSyntaxErrorException: DB2 SQL Error:
+SQLCODE=-551, SQLSTATE=42501, SQLERRMC=DB2USER;EXECUTE;SYSIBM.SQLTABLES,
+DRIVER=4.18.60
+
+Research of the DB2 error codes SQLCODE=-551, SQLSTATE=42501 point to a permission's issue...see link for details...
+
+http://www.sqlerror.de/db2_sql_error_-551_sqlstate_42501.html [http://www.sqlerror.de/db2_sql_error_-551_sqlstate_42501.html]
+
+Interpreting the SQLERRMC message is very helpful. In this case it is...
+
+SQLERRMC=DB2USER;EXECUTE;SYSIBM.SQLTABLES
+
+This simply means that the user 'DB2USER' is attempting to perform an EXECUTE statement against the database object 'SYSIBM.SQLTABLES' and cannot due to lack of permissions.
+
+
+
+RESOLVING THE PROBLEM
+Have the DBA correct the issue and provide the permissions needed. 
+
+The following Portal links can help provide guidance on the proper permissions that Portal expects...
+
+http://www-01.ibm.com/support/knowledgecenter/SSHRKX_8.5.0/mp/eua-workflows/kc-db-setupdb-db2.dita?lang=en [http://www-01.ibm.com/support/knowledgecenter/SSHRKX_8.5.0/mp/eua-workflows/kc-db-setupdb-db2.dita?lang=en]
+
+http://www-01.ibm.com/support/knowledgecenter/SSHRKX_8.5.0/mp/eua-workflows/kc-db-grantpermrun-db2.dita?lang=en [http://www-01.ibm.com/support/knowledgecenter/SSHRKX_8.5.0/mp/eua-workflows/kc-db-grantpermrun-db2.dita?lang=en]

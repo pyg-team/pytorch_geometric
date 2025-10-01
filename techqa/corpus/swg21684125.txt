@@ -1,0 +1,50 @@
+Title: IBM Production Imaging Edition (PIE) pro viewer server components fail to function after installation of Workplace XT 1.1.5.2 Interim Fix 001 - United States
+
+Text:
+PIE pro viewer; Production Imaging Edition; Daeja; Workplace XT; streamer; jiserver-external.jar; WorkplaceXT TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The Streamer and Redaction server components of the IBM PIE viewer pro fail to load due to a missing jar file after installation of Workplace XT 1.1.5.2 Interim Fix 001. 
+
+SYMPTOM
+After the installation of XT with the PIE pro viewer, trying to view an image or a pdf file fails with the following message in the viewer window:
+
+Hint: use the zoom in button of the viewer to enlarge the text for reading.
+
+Unable to open <url address>
+
+Error:java.io.IOException:
+
+Server returned HTTP response code 500 for URL: <url address>
+
+Error: Please make sure this file can be accessed and that it is a supported file type.
+
+
+
+
+CAUSE
+Workplace XT installs the Daeja Viewer files. Since Workplace XT 1.1.5 Fix Pack 2 Interim Fix 001 the Daeja viewer version was updated to version 4.0.48. Daeja introduced a change with the requirement of a jar file for the server components, Redaction and Streamer. This is the jiserver-external.jar file. The WorkplaceXT installer does not put down this file that is required in 4.0.48 version of the pro viewer.
+
+
+ENVIRONMENT
+Windows
+
+DIAGNOSING THE PROBLEM
+Locate the Streamer log file at: <install path>/FileNet/ImageViewerPro/LogFiles/iviewpro.streamer.log
+Search for the following error entry: 
+iviewpro.streamer> ERROR: Could not find required jar + jiserver-external.jar on the classpath.
+
+RESOLVING THE PROBLEM
+Contact IBM Daeja or FileNet Content Management support for a copy of the missing jiserver-external.jar file.
+
+Once you have a copy of the file take the following action:
+
+1. Place the file in the <install path>\webclient\WorkplaceXT\WEB-INF\lib directory.
+2. Following the P8 Workplace XT documentation, rebuild the war and ear files and redeploy the Workplace XT application.
+
+Reference: 
+Deploying Workplace XT after upgrading
+http://www-01.ibm.com/support/knowledgecenter/SSNW2F_5.2.0/com.ibm.p8.installingxt.doc/wxtut013.htm?lang=en [http://www-01.ibm.com/support/knowledgecenter/SSNW2F_5.2.0/com.ibm.p8.installingxt.doc/wxtut013.htm?lang=en]
+
+Re-creating the WAR and EAR files
+http://www-01.ibm.com/support/knowledgecenter/SSNW2F_5.2.0/com.ibm.p8.installingxt.doc/wxtut009.htm?lang=en [http://www-01.ibm.com/support/knowledgecenter/SSNW2F_5.2.0/com.ibm.p8.installingxt.doc/wxtut009.htm?lang=en]

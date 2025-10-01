@@ -1,0 +1,138 @@
+Title: IBM JR33573: MCPK DATA SAMPLE CREATION FAILS IF COLUMN CONTAINS              DATETIME/TIMESTAMP FIELD - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Error in log:
+   
+   [IIS-CONN-ODBC-000004] ODBC function {0} reported:  SQLSTATE =
+   22007: Native Error Code = 242: Msg = [Microsoft][ODBC SQL
+   Server Driver][SQL Server]The conversion of a char data type to
+   a datetime data type resulted in an out-of-range datetime value.
+   
+   
+   IA 8.1 RP3 on Windows 2003 SP2 with SQL Server 2005 xmeta and
+   iadb repository.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   Users attempting to create a Data Sample where one of the
+   columns is an Informix datetime data type
+   ****************************************************************
+   PROBLEM DESCRIPTION:
+   The creation of Samples involving Informix datetime fields was
+   failing with the error "[IIS-CONN-ODBC-000004] ODBC function
+   {0} reported:  SQLSTATE =
+   22007: Native Error Code = 242: Msg = [Microsoft][ODBC SQL
+   Server Driver][SQL Server]The conversion of a char data type to
+   esulted in an out-of-range datetime   value."
+   ****************************************************************
+   RECOMMENDATION:
+   Update to Information Analyzer 81 RUP4.  This change is also
+   included in 8.1 Fix Pack 1.
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  In Information Analyzer 81 RUP4 you will be able to create a
+   Data sample containing an Informix datetime column.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR33573
+   
+   
+ * REPORTED COMPONENT NAME
+   WIS INFORM ANAL
+   
+   
+ * REPORTED COMPONENT ID
+   5724Q36IA
+   
+   
+ * REPORTED RELEASE
+   810
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-07-06
+   
+   
+ * CLOSED DATE
+   2009-08-17
+   
+   
+ * LAST MODIFIED DATE
+   2009-12-18
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WIS INFORM ANAL
+   
+   
+ * FIXED COMPONENT ID
+   5724Q36IA
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R810 PSN
+   UP

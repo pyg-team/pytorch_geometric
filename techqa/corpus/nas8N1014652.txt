@@ -1,0 +1,21 @@
+Title: IBM Pool with Higher Priority Not Getting Enough Storage - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This document explains why pools with higher priority are not getting enough storage when the performance adjuster is turned on. 
+
+RESOLVING THE PROBLEM
+Problem: *SHRPOOL5 has a high faulting rate of 100+ faults per second; however, the performance adjuster is not giving it any storage. *SHRPOOL1 has a lower faulting rate of about 50 faults per second, but is not giving up storage; in some cases, it is even being increased in size, even though *SHRPOOL5 has a better priority. 
+
+Solution: The priority is only one factor in determining how to manage the storage pool sizes. We must also examine the acceptable faulting rate for the pools and the minimum and maximum size percents. 
+
+1. Ensure that the maximum size percent is not preventing *SHRPOOL5 from getting any bigger. If it is already at or near its maximum size, that is why the pool is not being increased. 2. Determine the sum of all of the minimum size percents to ensure that there is excess storage available for the performance adjuster to distribute. If not, decrease some of the minimum sizes. 3. Determine the number of active threads in the pools, and calculate the acceptable faulting rate for each pool. Even if *SHRPOOL5 has the same values in the Faults/Second fields as the other shared pools it is competing with, if *SHRPOOL5 has 50 threads and *SHRPOOL1 has only 1 thread, then the acceptable faulting rate is going to be much higher for *SHRPOOL5 (100 faults) than is it for *SHRPOOL1 (12 faults). 
+
+If this is a fairly normal workload for the pools (and not just a spike in the number of threads for *SHRPOOL5), then it might help to increase the faults per thread for *SHRPOOL1, and/or decrease the faults per thread for *SHRPOOL5. It is best to make small incremental changes and observe the effects of each change over a period of time when making adjustments to the Faults/Second.  
+
+
+Cross reference information Segment Product Component Platform Version Edition Operating System IBM i 6.1 Operating System IBM i 7.1 Operating System IBM i 7.3 Operating System IBM i 7.2 
+HISTORICAL NUMBER
+ 433043404

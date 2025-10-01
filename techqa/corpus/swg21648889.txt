@@ -1,0 +1,48 @@
+Title: IBM Using LdapQuery to debug LDAP connection problems in WebSphere Application Server - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ How to use LdapQuery web application to debug LDAP configuration problems with IBM® WebSphere® Application Server 
+
+RESOLVING THE PROBLEM
+
+Use the ldapQuery web application utility to search the LDAP server.
+This will allow you to quickly determine if the search is returning what you expect.
+Once you have successfully queried the LDAP server, you may use the settings in IBM® WebSphere® Application Serve to enable security to the server.
+
+Useful when: 
+
+ * Configuring security using an LDAP server for the first time 
+ * Currently using one LDAP server but want to test connections to another 
+ * Planning to change from stand-alone LDAP to federated LDAP servers 
+
+Hide details for Screen Shot [/support/docview.wss?uid=swg21648889&amp;aid=1]Screen Shot  * [/support/docview.wss?uid=swg21648889&amp;aid=2]
+
+
+The following video explains how to install and do a basic search 
+<a href="http://www.youtube.com/embed/299w6dI7C0c" >http://www.youtube.com/embed/299w6dI7C0c</a>) frameborder="0" allowfullscreen> *Required fields. 
+
+*Host Host name of LDAP server. 
+Can be short name, long name, or IP address. *Port Port 389 is the default LDAP port for non-SSL, 
+Port 636 is usually the default when using SSL but may be different than default *Filter The search object you are looking for *Base Distinguished Name
+(BaseDN) Query starting location in your LDAP tree Bind Distinguished Name
+(BindDN) Fully qualified DN which has the authority to “bind” to your LDAP server and preform the requested queries. 
+Some LDAP servers allow for "anonymous" queries so no bind DN and bind password may be required Bind Password Bind DN’s password. Referral Indicates whether the search should follow referrals if user is not on current server. Default is ignore. Result Limit How many result sets are returned from the server. Default is 20. 
+SSL/Hide (display/hide additional fields) 
+**Required if SSL is enable Enable SSL Allows connections to the LDAP server using SSL Keystore File Fully qualified path to the keystore file on the application server host machine.
+This is only used when the LDAP server is setup to use mutual authentication. Mutual authentication is rarely ever done.
+Keystore must contain a private certificate where the LDAP server has the public certificate. Keystore Password Password to access the keystore file Keystore Type File type **Truststore File Fully qualified path to the truststore file on the application server host machine.
+This is only used when the LDAP server is setup to use mutual authentication. Mutual authentication is rarely ever done.
+Truststore must contain a private certificate where the LDAP server has the public certificate. **Truststore Password Password to access the truststore file **Truststore Type File type 
+
+Download and deploy the EAR on one of your application servers. 
+Once deployed to you server, you can access using this URL. Make sure the port matches the one used by your server. 
+(e.g. if your server is using port 9080 then URL would be [/support/docview.wss?uid=swg21648889&amp;aid=3]) 
+
+LDAPQuery.ear [/support/docview.wss?uid=swg21648889&aid=5]LDAPQuery.ear [/support/docview.wss?uid=swg21648889&aid=4] 
+Updated: (09/04/2013) 
+
+For a command line tool 
+See: Using ldapsearch to debug LDAP configuration problems [http://www.ibm.com/support/docview.wss?uid=swg21113384]

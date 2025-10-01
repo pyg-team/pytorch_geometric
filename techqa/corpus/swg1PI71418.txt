@@ -1,0 +1,144 @@
+Title: IBM PI71418: RDZ DEBUGGER CRASHES FOR COBOL PROGRAM WITH FILLER FIELD CONTAINING ACCENTED CHARACTERS ENDING IN COLUMN 72 - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Rational Developer for System z Fix Pack 6 (9.0.1.6) for 9.0.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24043643]
+Rational Developer for System z Interim Fix 1 for 9.0.1.6 [http://www-01.ibm.com/support/docview.wss?uid=swg24044419]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  In Rational Developer for System z v9.0.1, debugger crashes for
+   a COBOL program containing a FILLER field with accented
+   characters when the string value ends at column 72.
+   Here is an example of the FILLER field:
+   
+          01 WS-LISTX.
+             03 FILLER              PIC X(0052) VALUE
+                    '01instala&#195;&#167;&#195;&#163;o
+   '.
+   '.
+   
+   The same problem can be seen in RDz 9.1.1+ service packs.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Reduce the length of the FILLER value string to end before
+   column 72
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  When debugging code that contains national language characters
+   with the Integrated Debugger, the source appears corrupted in
+   the debug session, or a source not found error may appear.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The listing was not correctly being converted to UTF8 from the
+   host encoding prior to being displayed in the editor.  This
+   issue is now fixed.
+   
+   The problem listed in this APAR has been resolved with
+   IBM Rational Developer for System z V9.0.1.6 Fix Pack which
+   is available from the Recommended Fixes support download page:
+   http://www-1.ibm.com/support/docview.wss?rs=2294&uid=swg27006335 [http://www-1.ibm.com/support/docview.wss?rs=2294&uid=swg27006335]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI71418
+   
+   
+ * REPORTED COMPONENT NAME
+   DEV FOR Z SYS
+   
+   
+ * REPORTED COMPONENT ID
+   5724T0700
+   
+   
+ * REPORTED RELEASE
+   900
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-10-27
+   
+   
+ * CLOSED DATE
+   2017-05-11
+   
+   
+ * LAST MODIFIED DATE
+   2017-05-11
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   DEV FOR Z SYS
+   
+   
+ * FIXED COMPONENT ID
+   5724T0700
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R901 PSY
+   UP

@@ -1,0 +1,137 @@
+Title: IBM PM98651: ctgclient.jar is not signed. - United States
+
+Text:
+  FIXES ARE AVAILABLE
+CICS Transaction Gateway for Multiplatforms V9.0 (all supported platforms) [http://www-01.ibm.com/support/docview.wss?uid=swg24031541]
+CICS Transaction Gateway Desktop Edition V9.0 (all supported platforms) [http://www-01.ibm.com/support/docview.wss?uid=swg24033507]
+CICS Transaction Gateway Desktop Edition V9.1 (all supported platforms) [http://www-01.ibm.com/support/docview.wss?uid=swg24037651]
+CICS Transaction Gateway for Multiplatforms V9.1 (all supported platforms) [http://www-01.ibm.com/support/docview.wss?uid=swg24037652]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Java errors are returned when running applets or web start
+   applications which include the ctgclient.jar.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   All users of applets and web start applications that use CICS
+   TG APIs.
+   ****************************************************************
+   PROBLEM SUMMARY:
+   The default security configuration for Java 7 running in a
+   browser will change significantly in the January 2014 CPU
+   (Oracle 7u51, IBM 7 SR6-FP1).
+   The two two main changes to the default security settings are:
+   1. All applets and web start applications must be signed with a
+   certificate from a trusted authority (self-signed certificates
+   will not be accepted).
+   2. The &quot;Permissions&quot; attribute in the JAR Manifest
+   must be set.
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  CICS TG has been changed. ctgclient.jar is signed and the
+   &quot;Permissions&quot; attribute in the JAR Manifest is
+   set.<br/><br/>
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM98651
+   
+   
+ * REPORTED COMPONENT NAME
+   CICS TRNS GATE
+   
+   
+ * REPORTED COMPONENT ID
+   5724I8103
+   
+   
+ * REPORTED RELEASE
+   900
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-10-08
+   
+   
+ * CLOSED DATE
+   2013-11-12
+   
+   
+ * LAST MODIFIED DATE
+   2013-11-12
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    PM99430 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM99430] PI07057 [http://www-01.ibm.com/support/docview.wss?uid=swg1PI07057]
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CICS TRNS GATE
+   
+   
+ * FIXED COMPONENT ID
+   5724I8103
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R900 PSY
+   UP

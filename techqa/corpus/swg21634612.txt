@@ -1,0 +1,52 @@
+Title: IBM Use"isolate the resource provider" to establish data source connections using a different JDBC driver from the same database vendor - United States
+
+Text:
+isolate this resource provider TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Customer has defined 3 Oracle JDBC Providers at cell, node and server
+scope. Client have following configuration in websphere JDBC provider. 
+
+In Cell Scope - C:\jdbc\ojdbc5\ojdbc5.jar 
+
+In Node Scope - C:\jdbc\ojdbc6_g\ojdbc6_g.jar 
+
+In Server Scope- C:\jdbc\ojdbc6\ojdbc6.jar 
+
+In this case value of JDBC driver path in WebSphere variable is identical. Nornally, If JDBC provider configure at server level then server level driver will get load first. But in this case since all three drivers are from same vendor, So we can not control which driver is picking up. In this case 
+"C:\jdbc\ojdbc6\ojdbc6.jar" should be loaded first but instated, ojdbc5.jar was load first
+
+[13. 4. 5 12:05:15:625 KST] 00000023 CompoundClass < loadClass 
+
+oracle.jdbc.driver.OracleDriver 
+
+loader=com.ibm.ws.bootstrap.ExtClassLoader@5dc95dc9 
+
+source=file:/C:/jdbc/ojdbc5/ojdbc5.jar Exit 
+
+
+
+
+
+
+SYMPTOM
+Due to multiple JDBC drivers from the same vendor were configured in different scopes, the wrong driver class was loaded.
+
+
+CAUSE
+When multiple versions of the JDBC driver are configured in WebSphere Application Server, irrespective of the scopes, there is a possibility of a collision of the classes and we cannot predict from which version of the driver jar the class got loaded. 
+
+RESOLVING THE PROBLEM
+ In order to support the existence of multiple versions of the driver jars, the "Isolate this resource provider" configuration helps to ensure there are no conflicts. This needs to be configured on each JDBC Provider. You cannot isolate only one resource provider, all the provider configurations in different scopes will have to be configured with the "Isolate this resource provider" setting. In this scenario, the resource provider classes from different versions of the jars are not imported or accessed to verify if the isolation has indeed worked. In order to use the server-scoped resource provider the datasource using the server-scoped jdbc provider will have to be referenced from the application after isolating the resource providers and using a resource reference in the application. 
+
+
+Go to the JDBC Provider and enable "isolate the resource provider". When "Isolate this resource provider" is enabled, it ensures that only the jar that was specified in the classpath will be used for all the datasources under that particular JDBC provider. 
+
+ 
+
+Here are links to Knowledge Center articles which contain further information on the setting: 
+
+
+JDBC provider settings [https://www.ibm.com/support/knowledgecenter/SSAW57_9.0.0/com.ibm.websphere.nd.multiplatform.doc/ae/udat_manjdbcprodet.html]
+
+Considerations for isolated resource providers [https://www.ibm.com/support/knowledgecenter/SSAW57_9.0.0/com.ibm.websphere.nd.multiplatform.doc/ae/rdat_isolatedlimitations.html]

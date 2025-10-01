@@ -1,0 +1,237 @@
+Title: IBM IV73701: SCHEDULES USING PM DATA CAN TAKE SO LONG TO LOAD THAT YOU THINK THE SYSTEM IS HUNG. - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  PROBLEM:
+   SCHEDULES USING PM DATA CAN TAKE SO LONG TO LOAD THAT YOU THINK
+   THE SYSTEM IS HUNG.
+   PERFORMANCE ISSUE:
+   We saw one Insert in the log that took 655 seconds.
+   I worked with L3 who suggested a more efficient SQL Insert
+   Where clause.   I sent it to the client who said it made the
+   Insert take only 1.295 seconds.
+   L3 said I should now put in this APAR so they will change the
+   code to make the more efficient SQL.
+   The log, ITSUSRAW00834_MXServer-UI2_maximo_scheduled.log, is in
+   Logs.zip sent 3/23/15.  It is available on EcuRep or I can send
+   you a copy.
+   STEPS TO REPRODUCE:
+   I cannot replicate but I have seen them do it on line and it
+   hangs when they click Save for a Schedule with PM data.
+   Even when we just did it for a single PM with a single Forecast
+   date and waited for 5 minutes nothing happened.
+   Now I see the log where it took 655 seconds for the insert.
+   CURRENT ERRONEOUS RESULT:
+   This was the SQL that took 655 seconds:
+   20 Mar 2015 09:40:45:991 [WARN] [MXServer-UI2]
+   [CID-UIASYNC-3739423]
+   BMXAT0165I - User:ACHAKRABO SPID:307 Scheduler project with
+   unique
+   identifier 1521 takes 671,139 milliseconds and exceeds the time
+   limit ,
+   the query is insert into skdresource (id, initialized, name,
+   skdprojectid, objectid, objectname, refobjname, objrowstamp) (
+   (select
+   ('CRAFT_' || c.craft || '_' || c.orgid) as id,0, c.description
+   as name,
+   1521,c.craftid as objectid,'CRAFT', 'CRAFT', c.rowstamp as
+   objrowstamp
+   from joblabor jl, craft c where jl.craft is not null  and
+   jl.orgid =
+   'JNJ'and jl.jpnum in (select skdjp.jpnum from  skdpmforecastjp
+   skdjp
+   where ((jl.siteid is null) or (jl.siteid=skdjp.siteid)) and
+   jl.orgid=skdjp.orgid and skdjp.skdprojectid = 1521 )  and
+   jl.jpnum in
+   (select jpnum from jobplan jp where jl.jpnum  = jp.jpnum and
+   jl.pluscjprevnum = jp.pluscrevnum and jp.status in ( 'ACTIVE' )
+   ) and
+   jl.craft = c.craft and jl.orgid = c.orgid and c.craftid not in
+   (select
+   objectid from skdresource where skdprojectid = 1521 and
+   objectname =
+   'CRAFT') group by c.craft, c.description, c.craftid, c.orgid,
+   c.rowstamp) ).
+   EXPECTED RESULT:
+   L3 rewrote the above Insert to be more efficient.   I gave it
+   to the client to test and they said it was immensely faster,
+   down to 1.295 seconds.   Here is new more efficient form:
+   nsert into skdresource (id, initialized, name, skdprojectid,
+   objectid, objectname, refobjname, objrowstamp)
+   ((select ('CRAFT_' || c.craft || '_' || c.orgid) as id,0,
+   c.description as name, 1521,c.craftid as objectid,'CRAFT',
+   'CRAFT', c.rowstamp as objrowstamp
+   from joblabor jl, craft c
+   where jl.craft is not null
+   and jl.orgid = 'JNJ'
+   and exists      (select 1 from  skdpmforecastjp skdjp
+                where ((jl.siteid is null)
+                     or
+   (jl.siteid=skdjp.siteid)
+                     )
+                and skdjp.jpnum = jl.jpnum
+                and jl.orgid=skdjp.orgid
+                and skdjp.skdprojectid = 1521
+               )
+   and exists      (select 1 from jobplan jp
+                where jl.jpnum  = jp.jpnum
+                and jl.pluscjprevnum =
+   jp.pluscrevnum
+                and jp.status in ( 'ACTIVE' )
+               )
+   and jl.craft = c.craft
+   and jl.orgid = c.orgid
+   and not exists       (select 1 from skdresource
+                    where skdprojectid =
+   1521
+                    and objectname =
+   'CRAFT'
+                    and objectid =
+   c.craftid
+                   )
+   group by c.craft, c.description, c.craftid, c.orgid,
+   c.rowstamp) )
+   EXPECTED RESULT:
+   Run in 1 second, not 655.   For testing verify that the second,
+   more efficient SQL is created.
+   ENVIRONMENT (SYSTEM INFO):
+   Maximo 7505 or 7506
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  (none)
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * SCHEDULES USING PM DATA CAN TAKE SO LONG TO LOAD THAT YOU    *
+   * THINK THE SYSTEM IS HUNG.                                    *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * SCHEDULES USING PM DATA CAN TAKE SO LONG TO LOAD THAT YOU    *
+   * THINK THE SYSTEM IS HUNG.                                    *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Apply fixpack Release 7.5.0.9 of Base Services or request an *
+   * interim fix.                                                 *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix for this APAR is contined in the follwing maintenance
+   package:
+      | release\fixpack\interim fix for 7.5.0.9
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV73701
+   
+   
+ * REPORTED COMPONENT NAME
+   MAXIMO SCHEDULE
+   
+   
+ * REPORTED COMPONENT ID
+   5724R46SE
+   
+   
+ * REPORTED RELEASE
+   752
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-05-29
+   
+   
+ * CLOSED DATE
+   2015-06-21
+   
+   
+ * LAST MODIFIED DATE
+   2015-06-21
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  Maximo
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   MAXIMO SCHEDULE
+   
+   
+ * FIXED COMPONENT ID
+   5724R46SE
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R750 PSY
+   UP

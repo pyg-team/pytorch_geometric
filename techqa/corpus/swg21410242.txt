@@ -1,0 +1,91 @@
+Title: IBM MustGather:  RBM login failure on Datapower Gateway Appliance - United States
+
+Text:
+MustGatherDocument; mustgather; role-based managment; rbm TECHNOTE (FAQ)
+
+QUESTION
+ What diagnostic information should be collected to help IBM Support troubleshoot RBM (Role-Based Management) login problems on the Datapower Gateway Appliance? 
+
+ANSWER
+The following information describes the documentation needed by IBM support to investigate the problem. Gather as much information listed in this document as possible. 
+1. Describe the problem: 
+
+ * 
+ *   * Is this an existing environment or a new setup? 
+    * Are there any recent changes that may have caused the problem to occur?
+   
+   
+
+2. Enable RBM Debug Logging 
+ * From CLI:
+ * co; 
+   loglevel debug 
+   set var://system/map/debug 3 
+   exit 
+   
+ * From WebGUI:
+ * Control Panel -> Troubleshooting -> Logging 
+   Log Level = Debug 
+   Enable RBM Debug logging = ON 
+   Click 'Set Log Level' 
+   
+
+
+3. Start packet capture if using remote authentication (e.g LDAP, RADIUS) 
+From CLI for versions below v7.5.2:  * 
+ * 
+ * 
+ * where x.x.x.x is the IP address of the remote authentication server
+ * 
+ * 
+
+From CLI for versions above v7.5.2, will need to enable 'Log SSL Key'  * 
+ * 
+
+
+From WebGUI :  * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * where x.x.x.x is the IP address of the remote authentication server
+ * 
+ * 
+ * 
+ * *if on v7.5.2 or above and using SSL to the remote server
+ * 
+ * 
+ * 
+ * 
+
+
+4. Recreate the Problem: 
+
+5. Collecting information on the Problem 
+ * 
+
+ *  From CLI: 
+   save error-report 
+
+ *  From WebGUI: 
+   Control Panel -> Troubleshooting -> Reporting -> click 'Generate Error Report' 
+
+ b) Stop the packet capture
+Control Panel -> Troubleshooting -> 'Stop packet capture' section
+Interface Type= All Interfaces 
+click 'Stop Packet Capture'
+
+*The error-report and pcap will be generated into the temporary directory of the default domain.
+
+c) For v7.5.2 and above, download the SSL Log Key file - logtemp:///sslkeyfile.log 
+
+ * 
+ * 
+ * 
+ * [/support/docview.wss?uid=swg21410242&amp;aid=1]

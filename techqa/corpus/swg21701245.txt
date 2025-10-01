@@ -1,0 +1,22 @@
+Title: IBM Security Bulletin: Possible security exposures within IBM WebSphere Application Server that shipped with WebSphere Enterprise Service Bus (WESB) - IBM SDK for Java January 2015 CPU - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ There are multiple security vulnerabilities within the version of IBM WebSphere Application Server that is provided with WebSphere Enterprise Service Bus. 
+
+VULNERABILITY DETAILS
+These security vulnerabilities are all fixed with available interim fixes and are targeted for specific WebSphere Application Server fix pack levels. For more information on these fixes, see Security Bulletin: Multiple vulnerabilities in IBM Java SDK affect WebSphere Application Server January 2015 CPU [http://www.ibm.com/support/docview.wss?uid=swg21695362]
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v2 Guide [http://www.first.org/cvss/v2/guide] 
+On-line Calculator v2 [http://nvd.nist.gov/CVSS-v2-Calculator] RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/PSIRT] *The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.

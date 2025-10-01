@@ -1,0 +1,156 @@
+Title: IBM PI32277: WMQ Z/OS: GPF ABEND OCCURS AT COM/IBM/MQ/JMQI/LOCAL/INTERNAL/BASE/NATIVE.MQCONNX - United States
+
+Text:
+z/os SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DUPLICATE OF ANOTHER APAR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When a WMB broker address space is using the MQ Java interface
+   and a  queue manager which it has already been connected to
+   becomes unavailable, a  residual value in the MQ Java native
+   code can result in an MQ call  being made with an invalid hconn
+   value. This causes in an attempt to access freed storage and
+   the GPF abend occurs at below Java callstack:
+   
+   com/ibm/mq/jmqi/local/internal/base/Native.MQCONNX
+   Native callstack:
+   CSQBBspiSCTX+0xd1d68950 (0x0000000000000000)
+   ResetContextFn+0xcfbd12d0 (0x0000000000000000)
+   Java_com_ibm_mq_jmqi_local_internal_base_Native_MQCONNX+0xcfbd4
+   568
+   
+   Additional Symptom(s) Search Keyword(s):
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  n/a
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *  Problem summary:
+   A WMB broker address space using the MQ Java Interface, has the
+   queue manager it has already connected to become unavailable,
+   a residual value in the MQ Java native interface code being used
+   in a MQ call. This results in attempting to access freed storage
+   resulting in a GPF abend in the following Java callstack:
+   
+      com/ibm/mq/jmqi/local/internal/base/Native.MQCONNX
+      Native callstack:
+      CSQBBspiSCTX+0xd1d68950 (0x0000000000000000)
+      ResetContextFn+0xcfbd12d0 (0x0000000000000000)
+      Java_com_ibm_mq_jmqi_local_internal_base_Native_MQCONNX+0xcfb
+      d4568
+   
+   Problem resolution:
+   The MQ Java native interface code has been altered to clear the
+   residual values before MQ calls, so freed storage is not
+   accessed for the WMB broker address space.
+   
+   This fix changes the Java component of MQ, and will be
+   included in a FixPack APAR.
+   
+   The fix is targeted for delivery in the following PTFs:
+   
+   Version Maintenance Level
+   v7.0 7.0.1.14 (PI34463 [http://www-01.ibm.com/support/docview.wss?uid=swg1PI34463] on z/OS)
+   v7.1 7.1.0.7  (PI34462 [http://www-01.ibm.com/support/docview.wss?uid=swg1PI34462] on z/OS)
+   v7.5 7.5.0.6  (Distributed platforms only)
+   V8.0 8.0.0.3  (PI34470 [http://www-01.ibm.com/support/docview.wss?uid=swg1PI34470] on z/OS)
+   Re
+   The latest available maintenance can be obtained from
+   'WebSphere MQ Recommended Fixes'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037]
+   
+   
+   If the maintenance level is not yet available information on
+   its planned availability can be found in 'WebSphere MQ
+   Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309]
+   
+   COMMENTS.41
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI32277
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ Z/OS V7
+   
+   
+ * REPORTED COMPONENT ID
+   5655R3600
+   
+   
+ * REPORTED RELEASE
+   018
+   
+   
+ * STATUS
+   CLOSED DUB
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2015-01-06
+   
+   
+ * CLOSED DATE
+   2015-02-13
+   
+   
+ * LAST MODIFIED DATE
+   2017-01-17
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

@@ -1,0 +1,144 @@
+Title: IBM PI08765: WAS APP SERVER ABEND=00EC3000 WITH ITCAM - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Problem description
+   Memory not available for ITCAM causing native storage
+   exhaustion. Memory is not available  because a 64-bit JVM
+   requested less than 2G heap, is not using zArchitecture Large
+   Page Support and requested compressed references.  If all these
+   are true, then the Java heap is allocated from 31-bit private
+   region leaving precious little 31-bit memory for Web Application
+   SMF records.
+   
+   Users Affected:
+   ITCAM 7.1 FP3
+   1) The 64bit Java Virtual Machine is being used
+   2) z/OS Java 6.0 or above is in use
+   3) Compressed References are activated (-Xcompressedrefs)
+   4) Large Pages are NOT in use (no -Xlp or no OS support for
+   large pages activated)
+   5) The Max Heap setting is less than 2GB (-Xmx < 2048M)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Enable the large page support so the Java heap will go above the
+   bar.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Memory not available for ITCAM causing native storage
+   exhaustion.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix for this APAR is contained in the following maintenance
+   release:
+   
+   
+   | interim fix | 7.1.0-TIV-ITCAMAD-FP0004
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI08765
+   
+   
+ * REPORTED COMPONENT NAME
+   TCAM AD WAS DC
+   
+   
+ * REPORTED COMPONENT ID
+   5698B48DC
+   
+   
+ * REPORTED RELEASE
+   710
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-01-03
+   
+   
+ * CLOSED DATE
+   2015-11-18
+   
+   
+ * LAST MODIFIED DATE
+   2015-11-18
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TCAM AD WAS DC
+   
+   
+ * FIXED COMPONENT ID
+   5698B48DC
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R710 PSY
+   UP

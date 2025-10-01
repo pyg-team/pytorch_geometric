@@ -1,0 +1,247 @@
+Title: IBM PK39482: ROLLUP MP 7.1.2.8 AND 7.1.2.9 - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS NEW FUNCTION.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Development APAR
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All users of Content Manager OnDemand for    *
+   *                 z/OS and OS/390.                             *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: 1. Rollup the changes from DB2 Content  *
+   *                         Manager OnDemand for Multiplatforms  *
+   *                         fixpacks 7.1.2.8 and  7.1.2.9        *
+   *                                                              *
+   *                      2. There is no way to specify that the  *
+   *                         OnDemand exits be located in a       *
+   *                         different directory than             *
+   *                         /usr/lpp/ars/bin/exits               *
+   *                                                              *
+   *                      3. There is no way to specify that      *
+   *                         OnDemand use the COMPRESS or         *
+   *                         TRACKMOD clauses on the CREATE       *
+   *                         TABLESPACE for the Application group *
+   *                         data tables.                         *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   1. Rollup the changes from DB2 Content Manager OnDemand for
+      Multiplatforms fixpacks 7.1.2.8 and  7.1.2.9
+   
+   2. There is no way to specify that the OnDemand exits be located
+      in a different directory than /usr/lpp/ars/bin/exits
+   
+   3. There is no way to specify that OnDemand use the COMPRESS or
+      TRACKMOD clauses on the CREATE TABLESPACE for the Application
+      group data tables.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *  Prior to applying this APAR, run the following SQL to
+   determine if any of the ARSAPP columns are currently
+   too big to fit in the updated tables:
+   
+   SELECT NAME, AGID FROM ARSUSER.ARSAPP WHERE
+         LENGTH(FIXED_VIEW)   > 10698  OR
+         LENGTH(INDEXER)      > 10698  OR
+         LENGTH(PREPROCESSOR) >  10698;
+   
+   If any rows are returned, DO NOT APPLY this SYSMOD.  The
+   columns will need to be reduced in size before this SYSMOD
+   is applied.  Contact IBM Support for assistance.
+   
+   1. Rollup the changes from DB2 Content Manager OnDemand for
+      Multiplatforms fixpacks 7.1.2.8 and 7.1.2.9
+   
+   2. A new ars.cfg setting, ARS_USER_EXITS_DIR, is provided.  If
+      specified, this causes OnDemand to look in the specified
+      directory for user exits.  Note That if this is specified,
+      this is the only directory OnDemand will search.  It will not
+      fall back to /usr/lpp/ars/bin/exits if the userexit cannot be
+      loaded.
+   
+   3. Two new ars.cfg settings are provided.
+      ARSMVS_TABLESPACE_COMPRESS=YES | NO
+      ARSMVS_TABLESPACE_TRACKMOD=YES | NO
+   
+   Will cause OnDemand to put a COMPRESS YES | NO and/or a
+   TRACKMOD YES | NO clause on the CREATE TABLESPACE
+   for the application group data table tablespaces.
+   
+   Upgrading customers will need to perform the following after
+   APPLYing this SYSMOD. Customers will need to make sure they have
+   a valid database backup and recovery plan prior to performing
+   this procedure:
+   
+    1. Customize and execute the ARSTSPCC member of
+       SARSINST to create the additional tablespaces.
+    2. Stop the OnDemand Server.
+    3. Backup the OnDemand Database or make sure they
+       have a current backup.
+    4. Run "arsdb <-I instance_name> -vx ARSSYS"
+    5. Run "arsdb <-I instance_name> -vx ARSAPP"
+    6. Run "arsdb <-I instance_name> -vd ARSSYS"
+    7. Run "arsdb <-I instance_name> -vd ARSAPP"
+    8. Run "arsdb <-I instance_name> -vc ARSSYS"
+    9. Run "arsdb <-I instance_name> -vc ARSAPP"
+   10. Run "arsdb <-I instance_name> -vi ARSSYS"
+   11. Run "arsdb <-I instance_name> -vi ARSAPP"
+   12. Run "arsdb <-I instance_name> -vu"
+   13. Start the OnDemand Server
+   ž**** PE07/05/23 PTF IN ERROR. SEE APAR PK45652 [http://www-01.ibm.com/support/docview.wss?uid=swg1PK45652]  FOR DESCRIPTION
+   ž**** PE07/06/28 PTF IN ERROR. SEE APAR PK47630  FOR DESCRIPTION
+   ž**** PE07/06/28 PTF IN ERROR. SEE APAR PK47630  FOR DESCRIPTION
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK39482
+   
+   
+ * REPORTED COMPONENT NAME
+   CM OD Z/OS, OD/
+   
+   
+ * REPORTED COMPONENT ID
+   5655H3900
+   
+   
+ * REPORTED RELEASE
+   711
+   
+   
+ * STATUS
+   CLOSED UR1
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2007-02-15
+   
+   
+ * CLOSED DATE
+   2007-05-10
+   
+   
+ * LAST MODIFIED DATE
+   2007-07-12
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UK24971 UK24972
+   
+   
+
+MODULES/MACROS
+ *     AFP2XMLD ARSADMFN ARSADMIN ARSADMP  ARSADMX
+   ARSADSMS ARSAFPEP ARSAFPZP ARSAG    ARSANN   ARSAODUP ARSAPP
+   ARSARSBM ARSARSDC ARSARSD2 ARSAWSJS ARSBAS64 ARSBIDI  ARSBMPIN
+   ARSBPKG1 ARSBPLN1 ARSCAB   ARSCFG   ARSCMLDV ARSCMNFN ARSCMNST
+   ARSCMSRV ARSCOMM  ARSCS    ARSCSL   ARSCSSM  ARSCSSMS ARSCSV
+   ARSCSVAN ARSCSVAP ARSCSVDC ARSCSVDR ARSCSVFL ARSCSVGP ARSCSVHT
+   ARSCSVLG ARSCSVLV ARSCSVNQ ARSCSVPM ARSCSVPP ARSCSVPR ARSCSVSR
+   ARSCSVSS ARSCSVUS ARSCSX   ARSCSXIT ARSDB    ARSDBDEF ARSDBP
+   ARSDBRD  ARSDBRDS ARSDBSTB ARSDBUTL ARSDB2   ARSDCFTN ARSDOC
+   ARSDOCX  ARSEXPRT ARSFOL   ARSGRNT1 ARSHPRNT ARSHTML  ARSICU
+   ARSID    ARSIEFIX ARSIMEXP ARSIMGEP ARSI30UC ARSJUTL  ARSKMG01
+   ARSKRUN  ARSLACIF ARSLAPI  ARSLDATA ARSLGEN  ARSLOAD  ARSLRUN
+   ARSL390  ARSMAINT ARSMDATE ARSMDMGR ARSMIGFX ARSMIGF2 ARSMKDIR
+   ARSMKDI1 ARSMSARA ARSMSCHS ARSMSCHT ARSMSDAN ARSMSDEU ARSMSENU
+   ARSMSESP ARSMSFIN ARSMSFRA ARSMSFRC ARSMSG   ARSMSGC  ARSMSGOD
+   ARSMSGS  ARSMSGSP ARSMSITA ARSMSJPN ARSMSKOR ARSMSNLD ARSMSNOR
+   ARSMSPTB ARSMSSVE ARSMVSEO ARSMVSEX ARSMVSIE ARSNQ    ARSOADZP
+   ARSOAPJP ARSODAJA ARSODPUB ARSODVCA ARSODVJA ARSODVJ2 ARSOFHCA
+   ARSOFHJA ARSOFHJ2 ARSOS    ARSOUT   ARSPARMS ARSPARSE ARSPRIV
+   ARSPRT   ARSRD    ARSRDCS  ARSREPT  ARSSAAG  ARSSAANN ARSSAAPP
+   ARSSABT  ARSSACAC ARSSACTS ARSSADB  ARSSADOC ARSSAFOL ARSSALD
+   ARSSAMSC ARSSANDX ARSSANQ  ARSSAPIR ARSSAPRT ARSSARD  ARSSARES
+   ARSSASEG ARSSASMS ARSSASQL ARSSASS  ARSSASYS ARSSAUSR ARSSEG
+   ARSSM    ARSSMCAC ARSSMF   ARSSMMV2 ARSSMSMS ARSSMSTB ARSSOCKX
+   ARSSRVR  ARSSVTCS ARSSYS   ARSSYSCR ARSTBLSP ARSTRACE ARSTSPAC
+   ARSTSPCC ARSUSDOC ARSUSEJJ ARSUTIL  ARSUTILS ARSVER   ARSVIEW
+   ARSWWITR ARSWWW   ARSXAGRP ARSXAGXE ARSXAGXU ARSXAPI  ARSXAPP
+   ARSXAUXE ARSXAUXU ARSXCONS ARSXDGXE ARSXDGXU ARSXDR   ARSXDRCS
+   ARSXDUXE ARSXDUXU ARSXEGXE ARSXEGXU ARSXEUXE ARSXEUXU ARSXFLD
+   ARSXGRP  ARSXJNI  ARSXJUTL ARSXML   ARSXOXSE ARSXOXSU ARSXPORT
+   ARSXPRN  ARSXSSET ARSXUGXE ARSXUGXU ARSXUSR  ARSXUUXE ARSXUUXU
+   ARSZDOCD ARSZIMIP ARSZMSG  ARSZUXF  ARS3WAP1 ARS3WCGI ARS3WCNS
+   ARS3WCNV ARS3WCOM ARS3WOUT ARS3WSVT ARS3WUTL H272711J
+   
+   
+    
+   
+   
+
+Publications Referenced GC27137304 FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CM OD Z/OS, OD/
+   
+   
+ * FIXED COMPONENT ID
+   5655H3900
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R711 PSY UK24971 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK24971]
+   UP07/05/12 P F705
+   
+   
+ * R712 PSY UK24972 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK24972]
+   UP07/05/12 P F705
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

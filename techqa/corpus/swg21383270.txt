@@ -1,0 +1,68 @@
+Title: IBM SNMP Link State poll not working - United States
+
+Text:
+ifoper; ifadmin; linkstate; running; polling; monitoring; snmp; mib TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Poller is up, but monitoring for this one specific poll is not functioning. Other polls okay. 
+
+SYMPTOM
+This specific poll not working
+
+CAUSE
+Filter added to the scope tab in GUI
+
+ENVIRONMENT
+Monitoring controlled through the GUI
+
+DIAGNOSING THE PROBLEM
+Eliminate possibilities leading up to the poller first
+
+RESOLVING THE PROBLEM
+The SNMP Link State poll could have any policyId. But by default the policyId is likely #4. If a template is copied and new one is made this would take a little more research. Look in the GUI under monitoring for a poll name that has a definition of 'SNMP Link State'.
+
+
+
+
+Notice that the poller is enabled (pollStatus = 1) and running, but 0 monitors. It's scopeId = 4.
+
+
+
+mysql> select * from ncmonitor.policy where policyId = 4;
++----------+-------------+-----------------+------------+---------+------------+--------------+------------------+---------------------+----------------------+---------------------+
+| policyId | domainMgrId | policyName | templateId | scopeId | pollStatus | pollInterval | monitorUnmanaged | lastUpdate | monitorStatus | monitorLastUpdate |
++----------+-------------+-----------------+------------+---------+------------+--------------+------------------+---------------------+----------------------+---------------------+
+| 4 | 1 | SNMP Link State | 3 | 4 | 1 | 333 | 0 | 2009-04-17 12:47:14 | running (0 monitors) | 2009-04-17 12:52:59 |
++----------+-------------+-----------------+------------+---------+------------+--------------+------------------+---------------------+----------------------+---------------------+
+1 row in set (0.00 sec)
+
+
+mysql> select * from ncmonitor.scopeFilter where scopeId = 4;
++----------+---------+-----------+----------------+
+| filterId | scopeId | tableName | filter |
++----------+---------+-----------+----------------+
+| 1582 | 4 | entity | entityType = 2 |
++----------+---------+-----------+----------------+
+1 row in set (0.00 sec)
+
+mysql>
+
+Go to the GUI and remove this filter. Check mysql again
+
+mysql> select * from ncmonitor.scopeFilter where scopeId = 4;
+Empty set (0.00 sec)
+
+mysql>
+
+mysql> select * from ncmonitor.policy where policyId = 4;
++----------+-------------+-----------------+------------+---------+------------+--------------+------------------+---------------------+-----------------------+---------------------+
+| policyId | domainMgrId | policyName | templateId | scopeId | pollStatus | pollInterval | monitorUnmanaged | lastUpdate | monitorStatus | monitorLastUpdate |
++----------+-------------+-----------------+------------+---------+------------+--------------+------------------+---------------------+-----------------------+---------------------+
+| 4 | 1 | SNMP Link State | 3 | 4 | 1 | 333 | 0 | 2009-04-17 13:17:12 | running (70 monitors) | 2009-04-17 13:18:23 |
++----------+-------------+-----------------+------------+---------+------------+--------------+------------------+---------------------+-----------------------+---------------------+
+1 row in set (0.00 sec)
+
+mysql>
+
+
+Although in future versions this type of scope may be possible, this particular one, although commonly configured, is not entirely logical. This is an SNMP poll with a query to the chassis IP address for mib information on ifAdminStatus and ifOperStatus. EntityType = 2 typically means interface. Although seeking interface information, the poll goes to the main chassis IP.

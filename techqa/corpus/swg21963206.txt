@@ -1,0 +1,22 @@
+Title: IBM Generic Probe for TMF814 unable to subscribe to Ericsson SOEM notification - United States
+
+Text:
+omnibus; probe; tivoli; netcool; integration; tmf814; nco_p_generic_tmf814; corba; troubleshoot TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Error: E-JPR-000-000: Exception when subscribing to notification : org.omg.CORBA.UNKNOWN: vmcid: 0x0 minor code: 0 completed: Maybe 
+
+CAUSE
+From IBM ORB debug log, the above error message was due to a SYSTEM_EXCEPTION thrown by the EMS.
+
+ENVIRONMENT
+nco_p_generic_tmf814 GA version 2.0 and Ericsson SOEM (EMS)
+
+DIAGNOSING THE PROBLEM
+This is because it was found that (and confirmed by Ericsson) SOEM EMS TMF814 implementation only supported STRUCTURED_EVENT. Different from the GA-ed version of the probe; probe-nco-p-generic-tmf814-2_0 which only supported SEQUENCE_EVENT.
+
+RESOLVING THE PROBLEM
+Upgrade to probe-nco-p-generic-tmf814-2_1 which introduced a new probe property; NotificationClientType. User need to enable and change the property value to 'STRUCTURED_EVENT' after apply the testfix. By default, this property has a value of 'SEQUENCE_EVENT'.
+
+RELATED INFORMATION
+ Details Information [https://www.ibm.com/developerworks/community/blogs/cdd16df5-7bb8-4ef1-bcb9-cefb1dd40581/entry/nco_p_generic_tmf814_2_0_probe_unable_to_subcribe_to_Ericsson_SOEM_notification?lang=en]

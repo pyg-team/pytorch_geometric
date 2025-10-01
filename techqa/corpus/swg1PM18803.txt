@@ -1,0 +1,218 @@
+Title: IBM PM18803: Ejbdeploy throws FeatureNotFoundException: CharacterStringType f or any database involving any kind of CHAR type - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PERMANENT RESTRICTION.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Ejbdeploy throws FeatureNotFoundException:
+   CharacterStringDataType for DB2 on System z
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   CharacterStringDataType entry is not available in the model
+   files are older versions of Rational Application Developer /
+   Websphere Application Server. When a model is created in the
+   7551 version, it adds the 'CharacterStringDatatype' entry.
+   When deploy is then attempted in older Rational Application
+   Developer / Websphere Application Server versions, the error
+   is shown
+   
+   Step to reproduce:
+   1. Create new EJB 2.1 project targeting WebSphere
+   Application Server 7.0
+   2. Within Enterprise Explorer, select EJB project, open
+   context-menu, choose new Enterprise Bean (1.x-2.x) Entity
+   Bean. Choose Entity bean with container-managed persistence
+   (CMP) and pick a name like Test. Press Add..., choose a Name
+   like str and Type java.lang.String, press Apply, Close and
+   Finish.
+   3. Within Enterprise Explorer, select EJB project, open
+   context-menu, Java EE ? EJB to RDB Mapping (1.x-2.x) ?
+   Generate Map. Within the wizard press Next, Next, choose DB2
+   for z/OS V8 (New-Function Mode) and press Finish
+   4. Within Enterprise Explorer, open Data Models ?
+   SAMPLE.dbm. Unfold SAMPLE ? NULLID ? TEST and select STR.
+   Within Properties view, change on tab Type the Data type to
+   CHAR and length to 2. Save the file SAMPLE.dbm
+   5. Within Enterprise Explorer, Open the EJB Mapping at
+   ejbModule/META-INF/backends/DB2UDBOS390_NEWFN_V8_1/Map.mapxm
+   i. Make sure that field str is still mapped to column STR of
+   type CHAR(2)
+   6. Use File ? Export, EJB ? EJB JAR file, choose a name like
+   EJBCharacterStringDataType.jar
+   7. On the command line run:
+   "C:\Program
+   Files\ibm\SDP\runtimes\base_v7\bin\ejbdeploy.bat" -keep
+   -trace EJBCharacterStringDataType.jar work
+   EJBCharacterStringDataType-out.jar
+   Result:
+   Error executing deployment:
+   org.eclipse.emf.ecore.resource.impl.ResourceSetImpl$1Diagnos
+   ticWrappedException. Error is
+   org.eclipse.emf.ecore.xmi.FeatureNotFoundException: Feature
+   'CharacterStringDataType' not found.
+   (platform:/resource/EJBCharacterStringDataTypeTest/ejbModule
+   /META-INF/backends/DB2UDBOS390_NEWFN_V8_1/SAMPLE.dbm, 19,
+   116).
+   org.eclipse.emf.ecore.resource.impl.ResourceSetImpl$1Diagnos
+   ticWrappedException:
+   org.eclipse.emf.ecore.xmi.FeatureNotFoundException: Feature
+   'CharacterStringDataType' not found.
+   (platform:/resource/EJBCharacterStringDataTypeTest/ejbModule
+   /META-INF/backends/DB2UDBOS390_NEWFN_V8_1/SAMPLE.dbm, 19,
+   116)
+    at
+   org.eclipse.emf.ecore.resource.impl.ResourceSetImpl.handleDe
+   mandLoadException(ResourceSetImpl.java:315)
+    at
+   org.eclipse.emf.ecore.resource.impl.ResourceSetImpl.demandLo
+   adHelper(ResourceSetImpl.java:274)
+    at
+   org.eclipse.jem.internal.util.emf.workbench.ProjectResourceS
+   etImpl.getResource(ProjectResourceSetImpl.java:704)
+    at
+   org.eclipse.wst.common.internal.emfworkbench.WorkbenchResour
+   ceHelper.getOrCreateResource(WorkbenchResourceHelper.java:38
+   4)
+    at
+   com.ibm.etools.ejbdeploy.core.utils.MappingResourceHelper.ge
+   tSchemaXmiResource(MappingResourceHelper.java:302)
+   ...
+   Caused by:
+   org.eclipse.emf.ecore.xmi.FeatureNotFoundException: Feature
+   'CharacterStringDataType' not found.
+   (platform:/resource/EJBCharacterStringDataTypeTest/e
+   jbModule/META-INF/backends/DB2UDBOS390_NEWFN_V8_1/SAMPLE.dbm
+   , 19, 116)
+    at
+   org.eclipse.emf.ecore.xmi.impl.XMLHandler.reportUnknownFeatu
+   re(XMLHandler.java:1976)
+    at
+   org.eclipse.emf.ecore.xmi.impl.XMLHandler.handleUnknownFeatu
+   re(XMLHandler.java:1940)
+    at
+   org.eclipse.emf.ecore.xmi.impl.XMIHandler.handleUnknownFeatu
+   re(XMIHandler.java:149)
+    at
+   org.eclipse.emf.ecore.xmi.impl.XMLHandler.setAttribValue(XML
+   Handler.java:2694)
+    at
+   com.ibm.datatools.internal.core.resource.DataModelHandler.se
+   tAttribValue(DataModelHandler.java:115)
+    at
+   org.eclipse.emf.ecore.xmi.impl.SAXXMIHandler.handleObjectAtt
+   ribs(SAXXMIHandler.java:80)
+    at
+   org.eclipse.emf.ecore.xmi.impl.XMLHandler.createObjectFromFa
+   ctory(XMLHandler.java:2178)
+    at
+   org.eclipse.emf.ecore.xmi.impl.XMLHandler.createObjectByType
+   (XMLHandler.java:1316)
+    at
+   org.eclipse.emf.ecore.xmi.impl.XMLHandler.createTopObject(XM
+   LHandler.java:1454)
+    at
+   org.eclipse.emf.ecore.xmi.impl.XMLHandler.processElement(XML
+   Handler.java:1019)
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This is a reverse migration issue and the fix cannot be
+   made. A technote has been created.
+   
+   Technote URL is -:
+   http://www-01.ibm.com/support/docview.wss?uid=swg21442406 [http://www-01.ibm.com/support/docview.wss?uid=swg21442406]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM18803
+   
+   
+ * REPORTED COMPONENT NAME
+   RATL APP DEV WI
+   
+   
+ * REPORTED COMPONENT ID
+   5724J1901
+   
+   
+ * REPORTED RELEASE
+   754
+   
+   
+ * STATUS
+   CLOSED PRS
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-07-20
+   
+   
+ * CLOSED DATE
+   2010-10-08
+   
+   
+ * LAST MODIFIED DATE
+   2010-10-08
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

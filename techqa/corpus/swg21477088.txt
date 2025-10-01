@@ -1,0 +1,53 @@
+Title: IBM RTRIM keyword in COMPUTE command explained - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ I am running SPSS for Windows. I wish to use the RTRIM procedure to get rid of some trailing characters in my string values. I don't really understand how the RTRIM procedure works, though. Often times it seems like it is not doing what it is supposed to be doing, but I don't get any error messages that indicates something is wrong. Could you clarify the RTRIM procedure? 
+
+RESOLVING THE PROBLEM
+The RTRIM procedure trims characters starting at the last column of the string variable. For example, if a variable has a format of A12 (string, twelve characters in length), SPSS will start at column 12 to trim out the target value. If a value is "embedded" (in this case, somewhere before column 12), SPSS will not pick that value up and trim it from the variable's value.
+
+Below is an example of how RTRIM works. Suppose we have a variable called LONGSTR and it is 35 characters in length. There are some trailing asterisks that we wish to delete. The trouble is, in only one case do the asterisks extend to column 35. How can we get rid of those other asterisks?
+
+** HERE IS HOW RTRIM WORKS.
+
+DATA LIST / longstr 1-35 (a).
+BEGIN DATA
+This is a text string *
+This is a text string *****
+This is a text string *************
+This is a text string ***
+END DATA.
+
+** If the LONGSTR variable was right-padded with asterisks 
+** (that is, the asterisks ran all the way out to column 35),
+** we could use this syntax.
+
+COMPUTE longstr=rtrim (longstr,'*').
+EXECUTE.
+LIST.
+
+** In most instances, however, this is not the case. Therefore,
+** we have to go through a rather lengthy procedure. We first
+** use the RTRIM function to get rid of any and all spaces from
+** the last asterisk to column 35. Then, we left-pad the value
+** so that the asterisks are flush against the right-hand side
+** of the variable (that is, the last asterisk is at column 35).
+** Then, we use the RTRIM function to strip those asterisks out
+** of the value. We then finally trim out the spaces that we 
+** used to left-pad the value. The result is a value that is
+** left-justified and has no trailing asterisks.
+
+COMPUTE longstr=ltrim(rtrim(lpad(rtrim(longstr,' '),35,' '),'*'),' ').
+LIST.
+
+RELATED INFORMATION
+ Need more help? Our Statistics forum is Live! [https://developer.ibm.com/answers/topics/statistics.html?smartspace=predictive-analytics]
+
+
+ 
+
+HISTORICAL NUMBER
+ 22495

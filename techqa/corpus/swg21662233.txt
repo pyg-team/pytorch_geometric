@@ -1,0 +1,59 @@
+Title: IBM Download re-signed Java applets for IBM Domino (January 2014) - United States
+
+Text:
+Domino applets will no longer work in browsers running JVM update scheduled for 19 January 2014' FLASH (ALERT)
+
+ABSTRACT
+ A new JVM will be pushed out by Oracle on Sunday, 19 January 2014. After this new JVM (version 1.7u51) is pushed out, IBM Domino applets will no longer work in browsers running the latest JVM. This document provides links to .zip files containing re-signed Java applets for Domino 8.x and 9.x. NOTE: 
+
+CONTENT
+ 
+
+Fix & Download information 
+Domino 
+version Platform Fix Central ID File name & download link 9.x All DominoServer_9x_Applets_Jan2014 DominoServer_9x_Applets_Jan2014.zip [http://www.ibm.com/support/fixcentral/swg/selectFix?product=ibm%2FLotus%2FLotus+Domino&fixids=DominoServer_9x_Applets_Jan2014&function=fixId&parent=ibm/Lotus] 8.x All DominoServer_8x_Applets_Jan2014 DominoServer_8x_Applets_Jan2014.zip [http://www.ibm.com/support/fixcentral/swg/selectFix?product=ibm%2FLotus%2FLotus+Domino&fixids=DominoServer_8x_Applets_Jan2014&function=fixId&parent=ibm/Lotus] 
+
+Steps to apply the new applets:  *  Download and unzip the .zip file Shut down your Domino server (optionally you can quit HTTP task by issuing the following command at the server console: tell HTTP quit) Backup existing files Copy the new files into \Domino\data\domino\java 
+
+
+
+Files included in the .zip files:  *  actionbar.jar editor.jar nvapplet.jar outline.jar hotfix license 
+
+
+NOTE: The .jar files in the .zip files linked above are the same for both Domino versions 8.x and 9.x. The only difference in the two .zip files is a version specific hotfix license (i.e., one hotfix license for 8.x and one hotfix license for 9.x). 
+
+
+Q&A 
+What issues do the new applets resolve? 
+The 1.7u51 JVM now requires applets to explicitly declare their name and desired permissions in the included manifest file. This is done before signing of the jar file and increases security of the JVM's browser plug-in.  * SPR# SODY9DDBD5 - Applets Report "Application: Unknown" In Java 7 Update 45, won't run in Java 7 Update 51 
+ * SPR# SODY9FFEYE - Java applets in Domino require whitelist access in Java 7u51 in order to interact with.
+
+
+
+Do these applets conflict with existing Interim Fixes or hotfixes? 
+No. The new applets do not conflict with existing Interim Fixes or hotfixes you have on your servers. You can copy these files to your server even if you have an Interim Fix or hotfix applied. 
+
+
+Besides manually replacing the .jar files, are there other options available to address this issue? 
+No. 
+
+
+Are iNotes users impacted by this? 
+No. iNotes templates do not contain applets and are not impacted. 
+
+
+Are Notes Traveler servers impacted by this? 
+This issue does not affect Notes Traveler servers as they do not use applets. The issue is user interfacing applets surfaced through a browser. Since Notes Traveler's front end client is not a browser, it's not affected. 
+
+
+Are Notes clients impacted by this? 
+The only place it affects the client is with the Domino Designer feature to preview in the browser. The same applets/fixes will suffice. 
+
+
+What error message will you get if you have not updated the applets? 
+"Missing required Permissions manifest attribute in main jar"  
+
+Change History 26 Feb 2014 Added error message 22 Jan 2014 Additional Q&A and note about hotfix license. 17 Jan 2014 Revised title and content to reflect fix availability. 17 Jan 2014 Initial publish. RELATED INFORMATION
+ Unable to share screen in SmartCloud Meetings [http://www-10.lotus.com/ldd/bhwiki.nsf/dx/Unable_to_share_screen_in_SmartCloud_Meetings_lprNewrpr]
+Sametime Meeting Server and Classic Meeting Server secu [http://www.ibm.com/support/docview.wss?uid=swg21654503]
+A simplified Chinese translation is available [http://www.ibm.com/support/docview.wss?uid=swg21604864]

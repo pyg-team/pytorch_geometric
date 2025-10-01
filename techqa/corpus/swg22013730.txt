@@ -1,0 +1,36 @@
+Title: IBM Attempts to run a stream with a Text Analytic Node fail with  "The server request failed. The Modeler Server is running on Secure Socket Layer (SSL)" - United States
+
+Text:
+[ERROR] validateCertificate(spss; TAKey.p12; pkcs12) failed to decrypt safe contents entry: java.security.InvalidKeyException: Illegal key size ssl text analytics TA key size jar files JCE policy files deployment manager text analytics administration console TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Attempts to run a stream with a Text Analytic Node fail with "The server request failed. The Modeler Server is running on Secure Socket Layer (SSL)"
+
+We tried to follow the instructions for eanbling SSL for Text Analytics described in the Deployment Manager User's guide here:
+
+https://www.ibm.com/support/knowledgecenter/en/SS69YH_8.1.0/cads_manager_ddita/textmining/tmfc/admin_console/ta_console_config.html [https://www.ibm.com/support/knowledgecenter/en/SS69YH_8.1.0/cads_manager_ddita/textmining/tmfc/admin_console/ta_console_config.html]
+
+But when trying to save the new settings inside the SPSS Modeler Text Analytics Server Administration cnosole, we received an error like this:
+
+"The Private Key File is missing and/or the Private Key Password does not match the information detected on this server machine. Please verify this information and try again."
+
+And then in the Text Analytics log file on the server (located here: C:\ProgramData\IBM\SPSS\TextAnalytics\xx\log\wrapper.log) , we noticed this error:
+
+INFO | jvm 1 | 11:13:12 | [ERROR] validateCertificate(changeit, cacerts.p12, pkcs12) failed to decrypt safe contents entry: java.security.InvalidKeyException: Illegal key size
+INFO | jvm 1 | 11:19:46 | [INFO] Certificate URL path: /D:/IBM/SPSS/ModelerServer/ext/bin/spss.TMWBServer/lib/cacerts.p12
+INFO | jvm 1 | 11:19:46 | [ERROR] validateCertificate(changeit, cacerts.p12, pkcs12) failed to decrypt safe contents entry: java.security.InvalidKeyException: Illegal key size
+
+
+CAUSE
+The default restricted policy files have a 2048 key size limit. If the RSA key size exceeds this limit then this error is expected. 
+
+RESOLVING THE PROBLEM
+To resolve this issue, install the unlimited strength encryption policy JAR files in Deployment Manager from IBM.com as described in the "Troubleshooting SSL" section found in the Deployment Manager's User's Guide found here: 
+
+https://www.ibm.com/support/knowledgecenter/en/SS69YH_8.1.0/cads_manager_ddita/textmining/tmfc/admin_console/ta_console_config.html [https://www.ibm.com/support/knowledgecenter/en/SS69YH_8.1.0/cads_manager_ddita/textmining/tmfc/admin_console/ta_console_config.html]
+
+As that page describes, this is a known issue described in the technote at http://www-01.ibm.com/support/docview.wss?uid=swg21663373 [http://www-01.ibm.com/support/docview.wss?uid=swg21663373]. Follow the instructions provided in the technote, which require the following steps:
+
+> Download the Unrestricted JCE policy Files (a .zip file).
+> Replace the local_policy.jar file and the US_export_policy.jar file in the jre/lib/security directory.
+> Restart the server.

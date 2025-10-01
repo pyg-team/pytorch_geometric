@@ -1,0 +1,223 @@
+Title: IBM IV68173: XMS .NET v2.5 APPLICATION CRASHES INTERMITTENTLY WHEN TRACE IS ENABLED - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  XMS.NET Multithreaded application crashes with
+   NullReferenceException intermittently when XMS trace is enabled
+   . Following is the exception
+   
+   16:48:28.042930 13024.0003 IBM.XMS.Util.ExceptionHelper d
+   Create() : Exception caughtException =
+   System.NullReferenceException: Object reference not set to an
+   instance of an object.
+      at
+   IBM.XMS.Client.WMQ.XmsManagedCommonServices.TraceEntry(String
+   objectId, UInt32 component, UInt32 method, Object[] parameters)
+      at IBM.WMQ.CommonServices.TraceEntry(String objectId, UInt32
+   component, UInt32 method, Object[] parameters)
+      at IBM.WMQ.MQBase.TrEntry(UInt32 method, Object[] parms)
+      at IBM.WMQ.MQChannelDefinition.Compare(Byte[] arr1, Byte[]
+   arr2)
+      at IBM.WMQ.MQChannelDefinition.Equals(MQChannelDefinition cd)
+      at IBM.WMQ.Nmqi.MQConnectionSpecification.Equals(Object
+   other)
+      at
+   IBM.WMQ.Nmqi.MQFAPConnectionPool.GetSession(MQConnectOptions
+   connectOptions, MQConnectionSecurityParameters mqcsp,
+   MQChannelDefinition mqcd, String qMgrName, Int32 nmqiFlags,
+   String uidFlowUserid, String uidFlowPassword, Int32 ccsid, Int32
+   maxFapLevel)
+      at IBM.WMQ.MQFAP.NmqiConnect(String name, NmqiConnectOptions
+   pNmqiConnectOpts, MQConnectOptions cno, Hconn parentHconn,
+   Phconn pHconn, Int32& compCode, Int32& reason, ManagedHconn
+   rcnHconn)
+      at IBM.WMQ.MQFAP.NmqiConnect(String pQMgrName,
+   NmqiConnectOptions pNmqiConnectOpts, MQConnectOptions
+   pConnectOpts, Hconn parentHconn, Phconn pHconn, Int32&
+   pCompCode, Int32& pReason)
+      at IBM.XMS.Client.WMQ.WmqConnection..ctor(NmqiEnvironment
+   nmqiEnv, NmqiMQ nmqiMQ, XmsPropertyContext connectProps)
+      at
+   IBM.XMS.Client.WMQ.Factories.WmqConnectionFactory.CreateV7Provid
+   erConnection(XmsPropertyContext connectionProps)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   All XMS.NET v2.5 trace enabled applications.
+   
+   
+   Platforms affected:
+   Windows
+   
+   ****************************************************************
+   PROBLEM DESCRIPTION:
+   When an Multithreaded XMS.NET application is running with trace
+   enabled, the application crashes intermittently with
+   NullReferenceException in the Trace Entry calls(TrEntry,
+   TrExit,TrTex). The following is the exception stack
+   
+   Application crashes with NullReferenceException intermittently
+   when XMS trace is enabled . Following is the exception
+   
+   16:48:28.042930 13024.0003 IBM.XMS.Util.ExceptionHelper d
+   Create() : Exception caughtException =
+   System.NullReferenceException: Object reference not set to an
+   instance of an object.
+      at
+   IBM.XMS.Client.WMQ.XmsManagedCommonServices.TraceEntry(String
+   objectId, UInt32 component, UInt32 method, Object[] parameters)
+      at IBM.WMQ.CommonServices.TraceEntry(String objectId, UInt32
+   component, UInt32 method, Object[] parameters)
+      at IBM.WMQ.MQBase.TrEntry(UInt32 method, Object[] parms)
+      at IBM.WMQ.MQChannelDefinition.Compare(Byte[] arr1, Byte[]
+   arr2)
+      at IBM.WMQ.MQChannelDefinition.Equals(MQChannelDefinition cd)
+      at IBM.WMQ.Nmqi.MQConnectionSpecification.Equals(Object
+   other)
+      at
+   IBM.WMQ.Nmqi.MQFAPConnectionPool.GetSession(MQConnectOptions
+   connectOptions, MQConnectionSecurityParameters mqcsp,
+   MQChannelDefinition mqcd, String qMgrName, Int32 nmqiFlags,
+   String uidFlowUserid, String uidFlowPassword, Int32 ccsid, Int32
+   maxFapLevel)
+      at IBM.WMQ.MQFAP.NmqiConnect(String name, NmqiConnectOptions
+   pNmqiConnectOpts, MQConnectOptions cno, Hconn parentHconn,
+   Phconn pHconn, Int32& compCode, Int32& reason, ManagedHconn
+   rcnHconn)
+      at IBM.WMQ.MQFAP.NmqiConnect(String pQMgrName,
+   NmqiConnectOptions pNmqiConnectOpts, MQConnectOptions
+   pConnectOpts, Hconn parentHconn, Phconn pHconn, Int32&
+   pCompCode, Int32& pReason)
+      at IBM.XMS.Client.WMQ.WmqConnection..ctor(NmqiEnvironment
+   nmqiEnv, NmqiMQ nmqiMQ, XmsPropertyContext connectProps)
+      at
+   IBM.XMS.Client.WMQ.Factories.WmqConnectionFactory.CreateV7Provid
+   erConnection(XmsPropertyContext connectionProps)
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  When an XMS.NET application is running, XMS Common Services get
+   initialized everytime when the trace call is made,rather
+   commonservices should be initialized only once during the
+   lifetime of an application
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+   Version    Maintenance Level
+   v2.5       7.5.0.5
+   
+   The latest available maintenance can be obtained from
+   'WebSphere MQ Recommended Fixes'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037]
+   
+   If the maintenance level is not yet available information on
+   its planned availability can be found in 'WebSphere MQ
+   Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV68173
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ XMS
+   
+   
+ * REPORTED COMPONENT ID
+   5724H7247
+   
+   
+ * REPORTED RELEASE
+   750
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-12-29
+   
+   
+ * CLOSED DATE
+   2015-01-14
+   
+   
+ * LAST MODIFIED DATE
+   2015-11-18
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ XMS
+   
+   
+ * FIXED COMPONENT ID
+   5724H7247
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R750 PSY
+   UP

@@ -1,0 +1,15 @@
+Title: IBM TAFS Text Analysis for Survey 4.0 getting invocation.invalidlicense - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ After a complete install my Text Analysis for Survey as Admin and launch TAFS 4.0; I am getting error message "invocation.invalidlicense." I have a network license. I don't get this error doing the same network install for TAFS 3.0. What is wrong with this version? How can I fix this error? 
+
+RESOLVING THE PROBLEM
+This error usually happen when your product is not reading any license. Please confirm make sure that you did activate the license for the particular version. If you are using a network license, make sure the license is being activate on the server. This should resolve the error if you do have proper license
+
+
+
+HISTORICAL NUMBER
+ 91528

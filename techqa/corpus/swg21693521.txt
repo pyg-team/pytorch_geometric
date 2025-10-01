@@ -1,0 +1,71 @@
+Title: IBM Why does onstat -g cmsm shows message : Failover Arbitrator: Failover is disabled ? - United States
+
+Text:
+Connection Manager; Failover Arbitrator disabled TECHNOTE (FAQ)
+
+QUESTION
+ Why does onstat -g cmsm shows message : Failover Arbitrator: Failover is disabled ? 
+
+CAUSE
+Missing sysadmin database
+
+ANSWER
+After starting connection manager see below message in onstat -g cmsm 
+
+ Failover Arbitrator: Failover is disabled 
+
+
+Unified Connection Manager: mySampleCM Hostname: minos
+
+CLUSTER pri_root_cluster LOCAL
+SLA Connections Service/Protocol Rule
+sla1_prim_cm1 0 5115/onsoctcp DBSERVERS=primary
+sla2_sec_cm1 0 5116/onsoctcp DBSERVERS=HDR,primary
+
+Failover Arbitrator: Failover is disabled
+ORDER=HDR TIMEOUT=0 RETRY=1 PRIORITY=0
+
+Looking at the connection manager log see below message:
+
+Cluster pri_root_cluster Arbitrator FOC string = ORDER=ENABLED TIMEOUT=10 RETRY=5
+FOC TIMEOUT = 10
+FOC RETRY = 5
+The server type of cluster pri_root_cluster server sec_root is HDR.
+Connection Manager successfully connected to sec_root
+FOC converted from 'DISABLED' to 'ORDER=DISABLED TIMEOUT=0 RETRY=1'
+Error: Arbitrator requires sysadmin database for failover but cannot find sysadmin in pri_root
+Error: FOC: Failover Arbitrator disabled.
+Connection Manager started successfully
+
+If $INFORMIXDIR/etc/sysadmin/stop file exists, remove it and restart the server. 
+Make sure sysadmin database is created. After sysadmin database is created successfully restart the connection manager. You should see below in connection manager log :
+
+Listener sla1_prim_cm1 DBSERVERS=primary is active with 4 worker threads
+Connection Manager successfully connected to pri_root
+The server type of cluster pri_root_cluster server pri_root is Primary.
+Cluster pri_root_cluster Arbitrator FOC string = ORDER=ENABLED TIMEOUT=10 RETRY=5
+FOC TIMEOUT = 10
+FOC RETRY = 5
+The server type of cluster pri_root_cluster server sec_root is HDR.
+Connection Manager successfully connected to sec_root
+Connection Manager started successfully
+CM mySampleCM arbitrator for pri_root_cluster is active
+
+Also onstat -g cmsm should show :
+
+onstat -g cmsm
+
+IBM Informix Dynamic Server Version 11.70.FC7W2 -- On-Line (Prim) -- Up 00:04:29 -- 173792 Kbytes
+Unified Connection Manager: mySampleCM Hostname: minos
+
+CLUSTER pri_root_cluster LOCAL
+SLA Connections Service/Protocol Rule
+sla1_prim_cm1 0 5115/onsoctcp DBSERVERS=primary
+sla2_sec_cm1 0 5116/onsoctcp DBSERVERS=HDR,primary
+
+Failover Arbitrator: Active Arbitrator, Primary is up
+ORDER=HDR TIMEOUT=10 RETRY=5 PRIORITY=0
+
+
+
+PRODUCT ALIAS/SYNONYM

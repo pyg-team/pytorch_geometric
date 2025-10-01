@@ -1,0 +1,66 @@
+Title: IBM How to modify time-out settings in Microsoft IIS when required by Cognos products ? - United States
+
+Text:
+BI Server; TM1; TM1 Web; TM1 Contributor; Planning; Powerplay; PPES; Report Studio; Analysis Studio; Powerplay Studio; timeout; timed out; time out; time-out; CGI; ASP; script TECHNOTE (FAQ)
+
+QUESTION
+ Various timeout errors can occur in various IBM Cognos products. This document explains how to change various timeout settings in Microsoft IIS. This document applies only to issues that are not related to IBM Cognos products timeout settings.
+
+
+ANSWER
+I) Connection timeout setting
+For IIS 6.0 :
+1.On the Web server, click Start, point to Control Panel, point to Administrative Tools, and then click Internet Information Services (IIS) Manager. 
+2.Expand the local computer node, expand Web Sites, right-click the appropriate Web site, and then click Properties. 
+3.Click the Web Site tab.
+4.In the Connections area, change the value in the Connection timeout field, and then click OK.
+
+For IIS 7.0 / IIS 7.5 :
+1.On the Web server, click Start, point to Control Panel, point to Administrative Tools, and then click Internet Information Services (IIS) Manager.
+2.Expand the local computer node, expand Web Sites, right-click the appropriate Web site, point to Manage Web Site, click Advanced Settings. 
+3.In the Advanced Settings window, expand Connection Limits, change the value in the Connection time-out field, and then click OK.
+
+
+II) Active Server Pages (ASP) setting
+
+For IIS 6.0 :
+1.On the Web server, click Start, point to Control Panel, point to Administrative Tools, and then click Internet Information Services (IIS) Manager.
+2.Expand the local computer node, expand Web Sites, right-click the appropriate Web site, and then click Properties. 
+3.Click the Home Directory tab, and then click Configuration.
+4.In the Application Configuration window, click the Options tab.
+5.Change the values in the following fields:
+-Session timeout
+-ASP script timeout
+6.Click OK. 
+
+For IIS 7.0 / IIS 7.5 :
+1.On the Web server, click Start, point to Control Panel, point to Administrative Tools, and then click Internet Information Services (IIS) Manager.
+2.Expand the local computer node, expand Web Sites, select the appropriate web site and double-click Session State in the right hand panel.
+3.Change the setting for Time-Out.
+
+
+III) ASP Script Timeout Settings
+
+For IIS 7.0 / IIS 7.5 :
+1.On the Web server, click Start, point to Control Panel, point to Administrative Tools, and then click Internet Information Services (IIS) Manager .
+2.Expand the local computer node, expand Web Sites, select the appropriate web site and double-click ASP in the right hand panel.
+3.In the ASP window, expand 'Limits Properties' and change the Script Timeout value. 
+
+
+IV) Application Pool setting
+For IIS 7.0 / IIS 7.5 :
+1.Right-Click /ibmcognos/cgi-bin virtual directory, go to "Manage Application --> Advanced Settings"
+2.At the top, take note of the "Application Pool" then close the dyalog
+3.On the left side, select"Application Pools"
+4.On the right side,right-click this application pool and select Advanced Settings
+5.In the advanced settings, increase "Idle Time-out (minutes)". 
+
+
+V) CGI Time out 
+For IIS 7.0 / IIS 7.5 :
+1.Select /ibmcognos/cgi-bin virtual directory, then in the middle part of the window, double-click CGI icon and increase "Time-out" 
+
+
+VI) Time-out on the client side
+You can also try this Microsoft technote to increase KeepAliveTimeout on the client side : 
+https://support.microsoft.com/en-us/kb/813827 [https://support.microsoft.com/en-us/kb/813827]

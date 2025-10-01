@@ -1,0 +1,35 @@
+Title: IBM Sametime Guided Activity Fails to Modify or Delete a partial deployment plan - United States
+
+Text:
+Sametime System Console; Solaris; FireFox; Sametime; Deployment plan TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+When working on a partially created deployment plan, using the Sametime Integrated Solutions Console and a Firefox browser, you are unable to select the name of the deployment plan you want to work on. 
+
+This issue was seen in two cases:
+
+Log into the Sametime Integrated Solutions Console, using a Firefox web browser and 
+
+1) Try to modify an Existing Deployment 
+
+ *  Navigate to: Sametime System Console -> Sametime Guided Activities -> Install Sametime "X" Server. Click Modify an Existing Deployment plan and then try to click the deployment name => When you click the deployment name the button is NOT selected and the page refreshes with the same screen 
+
+
+2) Try to Delete an Existing Deployment  *  Navigate to: Sametime System Console -> Sametime Guided Activities -> Install Sametime "X" Server. Click Modify an Existing Deployment plan and then try to click the deployment name => When you click the deployment name the button is NOT selected and the page refreshes with the same screen. 
+
+RESOLVING THE PROBLEM
+ This issue was seen when using Firefox 3.6.13 and was resolved by clearing the browser recent history and restarting the browser.
+
+In the Firefox Browser navigate to: Tools -> Clear Recent History {or "Ctrl+Shift+Del"}
+
+Select: 
+
+ * Time range to clear: Today  * 
+    * 
+    *  Browsing & Download History Form & Search History Cookies Cache Active Logins 
+   
+   
+
+Click "OK" 
+
+Restart the browser

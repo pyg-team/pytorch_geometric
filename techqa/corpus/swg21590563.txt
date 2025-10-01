@@ -1,0 +1,406 @@
+Title: IBM Object Server Hostname and IP Address Change - United States
+
+Text:
+Omnibus; hostname change; IP change; DE; deployment engine TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ How can I change the IP address and hostname of the Object Server system? 
+
+RESOLVING THE PROBLEM
+For the Object Server: 
+
+1) Stop the Object Server 
+
+2) Ensure /etc/hosts is updated with correct IP Address and hostname 
+
+3) Update the file omni.dat with the new hostname for any Object Servers, gateways and process agents running on the server. Regenerate the interfaces by running nco_igen. This step should also be done on any probes, gateways or event lists that connect to the Object Server. 
+
+4) If the Object Server property Iduc.ListeningHostname is set explicitly in the Object Server properties file, update the property with the new hostname. 
+
+5) start the Object Server after the hostname or IP Address change is complete 
+
+ 
+
+For the deployment engine DE 1.4.0.7 and above: 
+
+ 
+
+Reinstall and restore the Deployment Engine after a hostname change. In the example steps below, the hostname is changed from abby to ally. 
+
+ 
+
+1. Take backup of existing DE 
+
+<user_home>/.acsi_<old_host_name>/bin/de_backupdb -bfile <backup file name> 
+
+[clgrimes@abby bin]$ ./de_backupdb -bfile /tmp/DEbackup.out 
+
+ 
+
+ 
+
+2. Remove folders <user_home>/.acsi_<old_host_name> and <user_home>/.acsi_<user_name> 
+
+ 
+
+[clgrimes@ally ~]$ rm -rf .acsi_abby 
+
+[clgrimes@ally ~]$ rm -rf .acsi_clgrimes 
+
+ 
+
+ 
+
+3. Reinstall DE :- Restart Omnibus product installer & exit it once DE install is complete Now new DE gets installed as <user_home>/.acsi_<new_hostname> and a symbolic link <user_home>/.acsi_<user_name> to <user_home>/.acsi_<new_hostname> should get created. 
+
+Invoke the Omnibus 7.3.1 installer, exiting with a control-C just after the Deployment Engine installation. You would need to have the Omnibus 7.3.1 installation package on the server prior to the hostname change. 
+
+ 
+
+[clgrimes@ally omniinstall]$ ./install.bin -i console 
+
+Preparing to install... 
+
+Extracting the JRE from the installer archive... 
+
+Unpacking the JRE... 
+
+Extracting the installation resources from the installer archive... 
+
+Configuring the installer for this system's environment... 
+
+ 
+
+Launching installer... 
+
+ 
+
+Preparing CONSOLE Mode Installation... 
+
+ 
+
+===================================================================== 
+
+======= 
+
+Choose Locale... 
+
+---------------- 
+
+ 
+
+ 1- Deutsch 
+
+ ->2- English 
+
+ 3- EspaÃ±ol 
+
+ 4- FranÃ§ais 
+
+ 5- Italiano 
+
+ 6- PortuguÃªs (Brasil) 
+
+ 
+
+CHOOSE LOCALE BY NUMBER: 
+
+===================================================================== 
+
+======= 
+
+OMNIbus (created with InstallAnywhere by 
+
+Macrovision) 
+
+--------------------------------------------------------------------- 
+
+------- 
+
+ 
+
+ 
+
+ 
+
+ 
+
+===================================================================== 
+
+======= 
+
+IBM Tivoli Netcool/OMNIbus Version 7.3.1 
+
+---------------------------------------- 
+
+ 
+
+ 
+
+Welcome to the installation wizard for IBM Tivoli Netcool/OMNIbus. 
+
+ 
+
+This wizard will install Tivoli Netcool/OMNIbus on your computer. 
+
+ 
+
+Licensed Materials - Property of IBM Corp. 5724-S44, 5274-O48 (C) 
+
+Copyright IBM 
+
+Corporation and its licensors: 1994, 2010. All Rights Reserved. IBM, 
+
+the IBM 
+
+logo, Tivoli, the Tivoli Logo, Netcool, OMNIbus and Netcool/OMNIbus a 
+
+trademarks or registered trademarks of International Business Machine 
+
+Corporation in the United States, other countries or both. Java and a 
+
+Java-based trademarks and logos are trademarks of Sun Microsystems, I 
+
+in the 
+
+United States, other countries, or both. Other company, product or 
+
+service 
+
+names may be trademarks or service marks of others. 
+
+ 
+
+Warning: This product is protected by copyright law and international 
+
+treaties. 
+
+ 
+
+ 
+
+ 
+
+PRESS <ENTER> TO CONTINUE: 
+
+ 
+
+ 
+
+ 
+
+===================================================================== 
+
+======= 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ International Program License Agreement 
+
+ 
+
+ Part 1 - General Terms 
+
+ 
+
+ BY DOWNLOADING, INSTALLING, COPYING, ACCESSING, CLICKING ON AN 
+
+ "ACCEPT" BUTTON, OR OTHERWISE USING THE PROGRAM, LICENSEE AGREES 
+
+ THE TERMS OF THIS AGREEMENT. IF YOU ARE ACCEPTING THESE TERMS ON 
+
+ BEHALF OF LICENSEE, YOU REPRESENT AND WARRANT THAT YOU HAVE FULL 
+
+ AUTHORITY TO BIND LICENSEE TO THESE TERMS. IF YOU DO NOT AGREE TO 
+
+ THESE TERMS, 
+
+ 
+
+ - DO NOT DOWNLOAD, INSTALL, COPY, ACCESS, CLICK ON AN "ACCEPT" 
+
+BUTTON, 
+
+ OR USE THE PROGRAM; AND 
+
+ 
+
+ - PROMPTLY RETURN THE UNUSED MEDIA, DOCUMENTATION, AND PROOF OF 
+
+ ENTITLEMENT TO THE PARTY FROM WHOM IT WAS OBTAINED FOR A REFUND O 
+
+THE 
+
+ AMOUNT PAID. IF THE PROGRAM WAS DOWNLOADED, DESTROY ALL COPIES OF 
+
+THE 
+
+ PROGRAM. 
+
+ 
+
+ 
+
+Press Enter to continue viewing the license agreement, or enter "1" t 
+
+ accept the agreement, "2" to decline it, "3" to print it, or "99" 
+
+go back 
+
+ to the previous screen.: 1 
+
+ 
+
+===================================================================== 
+
+======= 
+
+IBM Autonomic Deployment Engine 
+
+------------------------------- 
+
+ 
+
+The installer will now install the IBM Autonomic Deployment Engine. T 
+
+may 
+
+take several minutes. 
+
+ 
+
+PRESS <ENTER> TO CONTINUE: 
+
+ 
+
+ 
+
+ 
+
+===================================================================== 
+
+======= 
+
+Deployment Engine Initialization 
+
+-------------------------------- 
+
+ 
+
+The installation wizard is now configuring the IBM Autonomic Deployme 
+
+Engine 
+
+on the local workstation. 
+
+Installing Deployment Engine. 
+
+Please wait...... 
+
+Step 1 of 15................ 
+
+Step 2 of 15.............. 
+
+Step 3 of 15... 
+
+Step 4 of 15.... 
+
+Step 5 of 15... 
+
+Step 6 of 15.... 
+
+Step 7 of 15...... 
+
+Step 8 of 15................... 
+
+Step 9 of 15.... 
+
+Step 10 of 15.... 
+
+Step 11 of 15.... 
+
+Step 12 of 15........ 
+
+Step 13 of 15... 
+
+Step 14 of 15.... 
+
+Step 15 of 15.... 
+
+Completed. 
+
+ 
+
+ 
+
+ 
+
+===================================================================== 
+
+======= 
+
+Select Installation Directory 
+
+----------------------------- 
+
+ 
+
+Create an installation directory : 
+
+ /opt/IBM/tivoli/netcool 
+
+ 
+
+ENTER AN ABSOLUTE PATH, OR PRESS <ENTER> TO ACCEPT THE DEFAULT DIRECT 
+
+ 
+
+ (DEFAULT: /opt/IBM/tivoli/netcool): 
+
+ 
+
+At this prompt, enter Control-C to exit the installer. The Deployment Engine has been reinstalled. 
+
+ 
+
+4. Restore backup take in step 1 
+
+<user_home>/.acsi_<new_host_name>/bin/de_restoredb -bfile <backup filname> 
+
+ 
+
+[clgrimes@ally bin]$ ./de_restoredb -bfile /tmp/DEbackup.out 
+
+Restoring database from /tmp/DEbackup.out2; please wait ... 
+
+ 
+
+Check the output of listIU.sh to verify all products installed are listed. 
+
+ 
+
+5. Update Omnibus install.properties with new DE home location 
+
+ 
+
+Edit $NCHOME/omnibus/platform/<ARCH>/install/install.properties chang the value of DEHOME to the new hostname directory /home/<username>/.acsi_newhostname. 
+
+ 
+
+[root@abby install]# vi install.properties 
+
+#Tue Feb 21 14:34:14 PST 2012 
+
+version=2 
+
+USER=clgrimes 
+
+DEHOME=/home/clgrimes/.acsi_ally 
+
+NCHOME=/opt/christina/netcool731

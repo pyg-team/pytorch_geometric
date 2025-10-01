@@ -1,0 +1,145 @@
+Title: IBM PM39305: OUTPUT VIEWER LAGS ECHOING LONG COMMAND SYNTAX TO THE NOTES OBJECT - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  I'm running a FACTOR command with a very long list of variables.
+   The Output Viewer lags a very long time before displaying my
+   output. This is because the Notes object of the Viewer is trying
+   to reiterate the long command syntax (in this case a list of
+   40000 variables).
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Make use of the TO keyword in your command syntax whenever you
+   can.  For example rather than listing 1000 contiguous variables
+   singly, list the first and last connected by the TO keyword to
+   get every variable in between them as well.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * Users running very long lists of variables in FACTOR         *
+   * analysis                                                     *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * You are running a FACTOR command with a very long list of    *
+   * variables.                                                   *
+   * The Output Viewer lags a very long time before displaying my *
+   * output. This is because the Notes object of the Viewer is    *
+   * trying                                                       *
+   * to reiterate the long command syntax (in this case a list of *
+   * 40000 variables).                                            *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Upgrade to IBM SPSS Statistics 20.  Alternatively, run       *
+   * shorter command syntax by making good use of the TO keyword  *
+   * to shorten the variable lists.                               *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Upgrade to IBM SPSS Statistics 20.  Alternatively, run shorter
+   command syntax by making good use of the TO keyword to shorten
+   the variable lists.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM39305
+   
+   
+ * REPORTED COMPONENT NAME
+   SPSS STATISTICS
+   
+   
+ * REPORTED COMPONENT ID
+   5725A54ST
+   
+   
+ * REPORTED RELEASE
+   J00
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-05-16
+   
+   
+ * CLOSED DATE
+   2011-08-30
+   
+   
+ * LAST MODIFIED DATE
+   2011-08-30
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   SPSS STATISTICS
+   
+   
+ * FIXED COMPONENT ID
+   5725A54ST
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * RJ00 PSY
+   UP

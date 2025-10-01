@@ -1,0 +1,138 @@
+Title: IBM RS02325: DECISION RUNNER FAIL TO EXECUTE DECISION SERVICE WITH CLASSIC RU LE ENNGINE - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Operational Decision Manager V8.8.0.1: Interim Fix 11 [http://www-01.ibm.com/support/docview.wss?uid=swg24042073]
+Operational Decision Manager V8.8.1 Mod Pack [http://www-01.ibm.com/support/docview.wss?uid=swg24042247]
+Operational Decision Manager V8.8.1 Download Document [http://www-01.ibm.com/support/docview.wss?uid=swg24042245]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Executing certain decision service and test suite will fail in
+   Decision Center 8.8 Business Console with classic rule engine.
+   The same decision service and test suite runs successfully in
+   Decision Center 8.7.1.1 Business Console and Rule Designer 8.8
+   that are using SSP.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  The test suite was failing with DecisionRunner mainly because
+   of bad handling of XML date types (in particular for XSD type
+   'datetime', represented as IlrDateTime in ODM)
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The code is fixed
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   RS02325
+   
+   
+ * REPORTED COMPONENT NAME
+   WS DECISION CTR
+   
+   
+ * REPORTED COMPONENT ID
+   5725B6900
+   
+   
+ * REPORTED RELEASE
+   880
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-02-26
+   
+   
+ * CLOSED DATE
+   2016-03-31
+   
+   
+ * LAST MODIFIED DATE
+   2016-03-31
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  999
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WS DECISION CTR
+   
+   
+ * FIXED COMPONENT ID
+   5725B6900
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R880 PSY
+   UP

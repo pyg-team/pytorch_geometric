@@ -1,0 +1,29 @@
+Title: IBM Reminder: Host On Demand V11.0.x  and Personal Communications V6.x End of Service announced - United States
+
+Text:
+ PRODUCT LIFECYCLE
+
+ABSTRACT
+ The end of service for Host On Demand V11.0.x and Personal Communications V6.x is September 30, 2017. 
+
+CONTENT
+Host On Demand V11.x and Personal Communications V6.x is packaged in Host Access Client Package V7. 
+The Personal Communications v6.x and Host On Demand [http://www-01.ibm.com/cgi-bin/common/ssi/ssialias?infotype=an&subtype=ca&htmlfid=897/ENUS911-080&appname=isource&language=enus] [http://www-01.ibm.com/cgi-bin/common/ssi/ssialias?infotype=an&subtype=ca&htmlfid=897/ENUS911-080&appname=isource&language=enus]v11.x end of service letter refers to the end of service of IBM Host Access Client Package V7, therefore end of service for Personal Communications V6.x and Host on Demand V11.x is September 30, 2017. 
+
+https://www.ibm.com/software/support/lifecycleapp/PLCDetail.wss?q45=Q357182G29521D89 [https://www-01.ibm.com/software/support/lifecycleapp/PLCDetail.wss?q45=Q357182G29521D89]
+
+
+Comment 
+
+The lifecycle information for this product is linked to that of HACP - IBM Host Access Client Package V7.0 
+
+Last updated: 29-Nov-2016.
+
+RELATED INFORMATION
+ End of Support [https://www-01.ibm.com/software/support/lifecycleapp/PLCDetail.wss?q45=Q572560W99975T76]
+
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Networking Personal Communications Networking Rational Host On-Demand

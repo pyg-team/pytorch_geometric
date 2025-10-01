@@ -1,0 +1,12 @@
+Title: IBM Fixed: Documentation on non-English environments is missing text extraction information - United States
+
+Text:
+ RELEASE NOTES
+
+ABSTRACT
+ Some information that concerns text extraction for IBM Content Collector documents is missing from the non-English environment documentation. 
+
+CONTENT
+In the FileNet P8 Information Center, the [http://pic.dhe.ibm.com/infocenter/p8docs/v5r1m0/topic/com.ibm.p8.planprepare.doc/p8pap016.htm] Preparing non-English environments for installing FileNet P8 [http://pic.dhe.ibm.com/infocenter/p8docs/v5r2m0/topic/com.ibm.p8.planprepare.doc/p8pap016.htm] topic mentions some ways to prepare documents for indexing (text extraction). Not mentioned is the text extraction that IBM Content Search Services does for documents that are sent to it by IBM Content Collector. For more information see the Indexable document types and text extraction [com.ibm.p8.ce.admin.tasks.doc/cbr/csscbr_indexable_documenttype.htm] topic. 
+
+A fix for this issue was applied to the IBM FileNet P8 Platform documentation (http://www.ibm.com/support/knowledgecenter/ [http://www.ibm.com/support/knowledgecenter/]).

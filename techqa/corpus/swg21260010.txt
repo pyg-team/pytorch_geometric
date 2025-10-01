@@ -1,0 +1,43 @@
+Title: IBM Possible causes of the generic Informix error -408 "Invalid message type received from the sqlexec process." in the message log - United States
+
+Text:
+Informix error -408 "Invalid message type received from the sqlexec process." TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ You receive one or more Informix® -408 errors - Invalid message type received from the sqlexec process - in your Informix message log but are unsure what the problem is. Further, there is no associated ISAM code. This is a generic message that can have several different causes. 
+
+RESOLVING THE PROBLEM
+
+PROBLEM
+
+You receive one or more -408 errors in your Informix message log. The generic error description is -invalid message type received from the sqlexec process.The informix utility finderr states that it is some form of a communication error but you are still unsure what the problem really is. Further, there is no associated ISAM code in the message log - or the ISAM code reported is 0. 
+
+
+POSSIBLE CAUSES
+
+This is a generic message which can have several causes -
+
+
+ * An older version of CSDK or some other tool is trying to access the database - the server receives in the communication channel from the client, information that it does not know what to do with. 
+ * A simple TELNET to the Informix port. Make sure that the telnet software is compatible with the database engine in use and is using the correct port 
+ * If an 4gl application was compiled on the development machine under a different installed version of 4gl than is present on the runtime machine NOTE: This usually is the singular most common cause of this error. 
+ * If the Informix products are installed either incorrectly, or in the wrong order. An incorrect install may be due to installing the product as a user other than 'root'. This may also be due to attempting to install several products at one time by running tar or cpio off all the media at one time, and then finishing the install by running the various install scripts. The correct way to install would be to transfer the tar or cpio file from the first set of media, then run the install script for that product, and then transfer from the media for the second product followed by its install script, and so on. 
+
+
+As for the correct order of install, there are two golden rules to remember: 
+
+Recall the acronym TEN. This stands for Tools, Engine, Network. All tools, such as SQL, 4GL & ESQL/C should be installed before the Engine, and Network products, such as I-Net or I-Star, should be installed last. The oldest version tools MUST be installed before the newer versions. In other words, you must not install 4GL 6.00.UC1 after you have already installed ESQL/C 7.20.UC1. 
+
+ * If the sqlexec process that was launched against the database engine by the ESQL application has been killed. (Look for 'Process Aborted Abnormally')error messages in the online log to see if this is a potential problem.) Typically this will only happen via a unix 'kill' command.
+
+ * Data or index corruption. Recreating all involved tables, indexes and views. Possibly running an oncheck -cID against the database may help.
+
+ * If the product is installed on an OS that is different than that for which it was ported. For instance, ESQL/C ported for Solaris 2.3 will NOT run reliably on Solaris 2.4 or Solaris 2.5, though it may appear to work on some occasions. This is because the OS versions are not binary compatible.
+
+ * In association with memory allocation errors (-208) because cursors and/or prepared statements are getting reopened/reprepared multiple times in a loop without the original cursor or statement ID being freed.
+
+
+
+SOLUTION 
+
+It is an information message. Look at possible causes above.

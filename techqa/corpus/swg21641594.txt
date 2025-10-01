@@ -1,0 +1,32 @@
+Title: IBM AIX agent commands hanging - United States
+
+Text:
+AIX; hangs TECHNOTE (TROUBLESHOOTING)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ English 
+
+PROBLEM(ABSTRACT)
+ Running agent command like tlmagent -p or tlmagent -hw keeps running for more than 24 hours. 
+
+SYMPTOM
+Looking at the logs, we found:
+trace_level MAX 
+exec(): 0509-036 Cannot load program /opt/tivoli/cit/bin/wscancfg 
+because of the following errors: 
+0509-150 Dependent module libcitcfg.a could not be loaded. 
+0509-022 Cannot load module libcitcfg.a. 
+0509-026 System error: A file or directory in the path name 
+does not exist.
+
+
+CAUSE
+Missing module information may be caused by incorrect LD_LIBRARY_PATH setting. 
+
+RESOLVING THE PROBLEM
+In AIX operating systems, set the environment variable LD_LIBRARY_PATH to include the CIT binaries directory. The following example shows a command from a sh shell: 
+
+LD_LIBRARY_PATH=/opt/tivoli/cit/bin:$LD_LIBRARY_PATH; export 
+LD_LIBRARY_PATH 
+After setting LD_LIBRARY_PATH, please run wscanhw manually and verify if it 
+works: /opt/tivoli/cit/bin/wscanhw

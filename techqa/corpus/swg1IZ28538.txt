@@ -1,0 +1,163 @@
+Title: IBM IZ28538: WINDOWS BI GATE PERIODICALLY FAILS - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Tivoli Netcool/OMNIbus 7.2.0 InterimFix 4, 7.2.0-TIV-NCOMNIbus-IF0004 [http://www-01.ibm.com/support/docview.wss?uid=swg24024892]
+Tivoli Netcool/OMNIbus 7.2.1 Fix Pack 7, 7.2.1-TIV-NCOMNIbus-FP0007 [http://www-01.ibm.com/support/docview.wss?uid=swg24025507]
+Tivoli Netcool/OMNIbus 7.2.1 Fix Pack 15, 7.2.1-TIV-NCOMNIbus-FP0015 [http://www-01.ibm.com/support/docview.wss?uid=swg24036693]
+Tivoli Netcool/OMNIbus 7.2.1 Fix Pack 13, 7.2.1-TIV-NCOMNIbus-FP0013 [http://www-01.ibm.com/support/docview.wss?uid=swg24031554]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  memory corruption occuring in the gateway during it's operation.
+   The gateway is reading memory it does not have access to and the
+   operating system kills the process.
+   
+   Their GW keeps crashing (75% of the time) when processing
+   alerts.status ITMIntType a varchar(1)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  PTF
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: Users of Netcool/OMNIBus ObjectServer        *
+   *                 gateway                                      *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: An intermittent failure may occur       *
+   *                      during replication of char and varchar  *
+   *                      fields that contain maximum length      *
+   *                      strings.  e.g a varchar (1) field       *
+   *                      containing a single character.          *
+   *                                                              *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   *                                                              *
+   ****************************************************************
+   An intermittent failure may occur during replication of char
+   and varchar fields that contain maximum length strings. e.g a
+   varchar (1) field containing a single character.  The
+   intermittent failure was only witnessed on Windows platforms
+   but could potentially occur on any platform.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A code change has been made to the ObjectServer gateway to
+   prevent a memory read error from occurring.  There are no
+   changes to the external functionality of the gateway.
+   
+   The fix for this APAR is contained in the following maintenance
+   packages: | fix pack | 7.1.0.9-TIV-NCOMNIbus-FP0009 | fix pack
+   | 7.2.0.4-TIV-NCOMNIbus-FP0004 | fix pack |
+   7.2.1.2-TIV-NCOMNIbus-FP0002
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ28538
+   
+   
+ * REPORTED COMPONENT NAME
+   NC/OMNI GTWY (B
+   
+   
+ * REPORTED COMPONENT ID
+   5724O73OS
+   
+   
+ * REPORTED RELEASE
+   710
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-07-30
+   
+   
+ * CLOSED DATE
+   2008-09-19
+   
+   
+ * LAST MODIFIED DATE
+   2008-09-19
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  NETCOOL
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   NETCOOL/OMNIBUS
+   
+   
+ * FIXED COMPONENT ID
+   5724O4800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R710 PSY
+   UP

@@ -1,0 +1,79 @@
+Title: IBM Server not created on the Linux operating system due to a stack overflow error - United States
+
+Text:
+new server; stackoverflowerror; gtk TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ A WebSphere Application Server server cannot be created on a Linux operating system that uses GTK3 due to the error, StackOverflowError. 
+
+CAUSE
+The stack overflow error is a bug specific to using GTK 3 on the Linux operating system. This bug is being tracked at the following URL: https://bugs.eclipse.org/bugs/show_bug.cgi?id=459834 [https://bugs.eclipse.org/bugs/show_bug.cgi?id=459834]
+
+ENVIRONMENT
+Linux operating systems that use GTK 3 are affected by this stack overflow error.
+
+DIAGNOSING THE PROBLEM
+To determine if the StackOverflowError is caused by this issue: 
+
+1. Go to File > New > Other... > Server 
+2. Select WebSphere Application Server vX (where X is the version number)
+3. Press Next and the StackOverflowError error occurs
+
+The following statements are a truncated version of the stack trace:
+java.lang.StackOverflowError: operating system stack overflow
+at org.eclipse.swt.internal.gtk.OS._gtk_widget_size_allocate(Native Method)
+at org.eclipse.swt.internal.gtk.OS.gtk_widget_size_allocate(OS.java:14647)
+at org.eclipse.swt.widgets.Control.forceResize(Control.java:769)
+at org.eclipse.swt.widgets.Table.getClientArea(Table.java:1141)
+at org.eclipse.swt.custom.TableEditor.computeBounds(TableEditor.java:120)
+at org.eclipse.swt.custom.ControlEditor.layout(ControlEditor.java:223)
+at org.eclipse.swt.custom.TableEditor.layout(TableEditor.java:265)
+at org.eclipse.swt.custom.TableEditor$1.controlResized(TableEditor.java:98)
+at org.eclipse.swt.widgets.TypedListener.handleEvent(TypedListener.java:235)
+at org.eclipse.swt.widgets.EventTable.sendEvent(EventTable.java:84)
+at org.eclipse.swt.widgets.Display.sendEvent(Display.java:4454)
+at org.eclipse.swt.widgets.Widget.sendEvent(Widget.java:1388)
+at org.eclipse.swt.widgets.Widget.sendEvent(Widget.java:1412)
+at org.eclipse.swt.widgets.Widget.sendEvent(Widget.java:1393)
+at org.eclipse.swt.widgets.TableColumn.gtk_size_allocate(TableColumn.java:399)
+at org.eclipse.swt.widgets.Widget.windowProc(Widget.java:2109)
+at org.eclipse.swt.widgets.Display.windowProc(Display.java:4668)
+at org.eclipse.swt.internal.gtk.OS._gtk_widget_size_allocate(Native Method)
+at org.eclipse.swt.internal.gtk.OS.gtk_widget_size_allocate(OS.java:14647)
+at org.eclipse.swt.widgets.Control.forceResize(Control.java:769)
+
+
+RESOLVING THE PROBLEM
+Open the eclipse.ini file and add the following statement before the -vmargs property: 
+
+--launcher.GTK_version
+2 
+
+The following example shows the eclipse.ini file with the modifications:
+
+-startup
+plugins/org.eclipse.equinox.launcher_1.3.0.v20140415-2008.jar
+--launcher.library
+plugins/org.eclipse.equinox.launcher.gtk.linux.x86_64_1.1.200.v20140603-1326
+-product
+org.eclipse.epp.package.jee.product
+--launcher.defaultAction
+openFile
+-showsplash
+org.eclipse.platform
+--launcher.XXMaxPermSize
+256m
+--launcher.defaultAction
+openFile
+--launcher.appendVmargs
+--launcher.GTK_version
+2
+-vmargs
+-Dosgi.requiredJavaVersion=1.6
+-XX:MaxPermSize=256m
+-Xms40m
+-Xmx512m
+
+Save and start Eclipse. This change will cause Eclipse to run with GTK 2 instead of GTK 3. 
+
+Note: Changing to GTK 2 only affects how the user interface looks. There will be no functional differences by using GTK 2.

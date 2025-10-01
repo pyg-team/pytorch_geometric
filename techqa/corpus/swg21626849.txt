@@ -1,0 +1,145 @@
+Title: IBM Generating System Cores on OutOfMemory Errors - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ While diagnosing OutOfMemory (OOM) errors, it may be necessary to generate system cores at the time of the OOM error for advanced heap analysis and diagnostics. The following describes and details how to configure WebSphere Application Server to generate system cores on the occurrence of an OOM error. 
+
+RESOLVING THE PROBLEM
+There are five high-level steps to completing this diagnostic process: 
+
+ *  Configuring the operating system to permit full system cores Configuring the JVM to generate system cores on OOM Recreating or waiting for an occurrence of OOM Processing the system core with jextract Submitting data to Support 
+
+
+
+
+
+1. Configuring the operating system to permit full system cores Before the Java Virtual Machine (JVM) can automatically generate full and complete system cores, the operating system must be configured to allow such behavior. This step varies depending on the operating system in use: 
+
+AIX
+Set the following ulimits to the following values for the process of interest: 
+
+ * 
+ * ulimit -c unlimited
+   ulimit -f unlimited
+
+
+Set the operating system for full system core generation:  * 
+ * chdev -a fullcore=true -lsys0
+
+
+These steps are described in more detail if necessary at the following link, see steps 1 and 2: 
+"Crash on AIX produces no core or a truncated core" http://www.IBM.com/support/docview.wss?uid=swg21052642 [http://www.IBM.com/support/docview.wss?uid=swg21052642]  
+
+Linux
+Set the following ulimits to the following values for the process of interest: 
+
+ * 
+ * ulimit -c unlimited
+   ulimit -f unlimited
+
+
+This step is described in more detail if necessary at the following link, see step 1: 
+"Crash on Linux produces no core or truncated core" http://www.IBM.com/support/docview.wss?uid=swg21115658 [http://www.IBM.com/support/docview.wss?uid=swg21115658]  
+
+Windows Server 2008, 7, and Vista
+Create a new key in the Windows Registry: 
+
+ * 
+ * HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\Windows Error Reporting\LocalDumps\java.exe
+
+
+Using the key above, create a new DWORD with the following properties:  * 
+ * Name:
+ * DumpType
+   Value:
+ *  
+ * 2
+
+
+These steps are described in more detail if necessary at the following link: 
+"MustGather: Crash on Windows" 
+http://www.IBM.com/support/docview.wss?uid=swg21053924 [http://www.ibm.com/support/docview.wss?uid=swg21053924] 
+
+Windows Server 2003 and XP
+Complete the steps outlined in the following link: 
+"Crash on Windows 2003 does not produce an Drwtsn32.log entry or a user.dmp file" 
+http://www.IBM.com/support/docview.wss?uid=swg21210061 [http://www.IBM.com/support/docview.wss?uid=swg21210061] 
+
+Back to top
+
+
+
+
+
+
+
+2. Configuring the JVM to generate system cores on OOM Once the operating system has been configured to allow full and complete system cores to be generated, the JVM must be configured to automatically generate these files on the occurrence of an OOM error. Add the following Generic JVM argument to the JVM of interest: 
+
+ * 
+ * -Xdump:system:events=systhrow,filter=java/lang/OutOfMem*,range=1..1
+
+
+This will cause a system core to be generated automatically on the first and only the first occurrence of an OOM for a given run of the JVM. This behavior will be added to the default behavior of generating a javacore and a heapdump on every occurrence of an OOM. 
+
+A restart of the JVM will be required for this change to take effect. For more information on how to set Generic JVM arguments, please see the following link: 
+
+"Setting generic JVM arguments in WebSphere Application Server" http://www.IBM.com/support/docview.wss?uid=swg21417365 [http://www.IBM.com/support/docview.wss?uid=swg21417365] 
+
+Note: This step should not be necessary for WebSphere Application Server 8.0, and 8.5 as they are configured with this parameter by default. 
+
+
+Back to top
+
+ 
+
+
+
+
+
+
+
+3. Recreating or waiting for an occurrence of OOM Once the operating system and JVM have been configured (and the JVM restarted for the changes to take effect), the OOM error will need to be recreated. Once the error occurs, a system core should be generated.
+
+
+
+
+Back to top
+
+ 
+
+
+
+
+
+
+
+4. Processing the system core with jextract Once a full and complete system core has been generated, it must be processed with jextract. The result of the jextract processing will be submitted to Support. The following link details how to process a system core with jextract:
+
+"How to process an IBM SDK core dump with jextract"http://www.IBM.com/support/docview.wss?uid=swg21577379 [http://www.IBM.com/support/docview.wss?uid=swg21577379]
+
+Note: System core files generated with the following versions of WebSphere Application Server (and the corresponding shipped Java SDK) are "DDR enabled" and do not need to be processed with jextract for advanced heap analysis and diagnostics: 6.1.0.33+, 7.0.0.15+, 8.0+, 8.5+. That being said, processing such files should not be problematic.
+
+
+
+
+Back to top
+
+ 
+
+
+
+
+
+
+
+5. Submitting data to Support Once the necessary data has been collected, it can be sent to Support using one of the many methods described in the following link:
+
+"Exchanging information with IBM Support"
+http://www.IBM.com/support/docview.wss?uid=swg21153852 [http://www.IBM.com/support/docview.wss?uid=swg21153852] 
+
+
+
+
+Back to top

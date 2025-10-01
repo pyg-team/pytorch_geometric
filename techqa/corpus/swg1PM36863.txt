@@ -1,0 +1,219 @@
+Title: IBM PM36863: UPDATING WEBSPHERE APPLICATION SERVER WAS MAY FAIL WHILE UPDATING IVTAPP.EAR IN PROFILES. - United States
+
+Text:
+  FIXES ARE AVAILABLE
+7.0.0.19: WebSphere Application Server V7.0 Fix Pack 19 [http://www-01.ibm.com/support/docview.wss?uid=swg24030660]
+7.0.0.21: WebSphere Application Server V7.0 Fix Pack 21 [http://www-01.ibm.com/support/docview.wss?uid=swg24031366]
+7.0.0.23: WebSphere Application Server V7.0 Fix Pack 23 [http://www-01.ibm.com/support/docview.wss?uid=swg24032493]
+7.0.0.25: WebSphere Application Server V7.0 Fix Pack 25 [http://www-01.ibm.com/support/docview.wss?uid=swg24033267]
+7.0.0.27: WebSphere Application Server V7.0 Fix Pack 27 [http://www-01.ibm.com/support/docview.wss?uid=swg24033882]
+7.0.0.29: WebSphere Application Server V7.0 Fix Pack 29 [http://www-01.ibm.com/support/docview.wss?uid=swg24034966]
+6.1.0.47: WebSphere Application Server V6.1 Fix Pack 47 [http://www-01.ibm.com/support/docview.wss?uid=swg24035508]
+7.0.0.31: WebSphere Application Server V7.0 Fix Pack 31 [http://www-01.ibm.com/support/docview.wss?uid=swg24036768]
+7.0.0.27: Java SDK 1.6 SR13 FP2 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24035324]
+7.0.0.33: WebSphere Application Server V7.0 Fix Pack 33 [http://www-01.ibm.com/support/docview.wss?uid=swg24037573]
+7.0.0.35: WebSphere Application Server V7.0 Fix Pack 35 [http://www-01.ibm.com/support/docview.wss?uid=swg24038310]
+7.0.0.37: WebSphere Application Server V7.0 Fix Pack 37 [http://www-01.ibm.com/support/docview.wss?uid=swg24039338]
+7.0.0.39: WebSphere Application Server V7.0 Fix Pack 39 [http://www-01.ibm.com/support/docview.wss?uid=swg24041013]
+7.0.0.41: WebSphere Application Server V7.0 Fix Pack 41 [http://www-01.ibm.com/support/docview.wss?uid=swg24041931]
+7.0.0.43: WebSphere Application Server V7.0 Fix Pack 43 [http://www-01.ibm.com/support/docview.wss?uid=swg24043400]
+7.0.0.45: WebSphere Application Server V7.0 Fix Pack 45 [http://www-01.ibm.com/support/docview.wss?uid=swg24044551]
+6.1.0.41: Java SDK 1.5 SR12 FP5 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24031035]
+6.1.0.43: Java SDK 1.5 SR13 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24031963]
+6.1.0.45: Java SDK 1.5 SR14 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24033270]
+6.1.0.47: Java SDK 1.5 SR16 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24035649]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  A config action to update ivtApp.ear in profiles is run when
+   WebSphere Application Server is updated. This action can fail
+   due to extraneous warnings from it's running of the
+   "manageprofiles" command.
+   
+   Normally the updateconfig.log should contain something like:
+   "Operate on profile <PROFILE_NAME>"
+   where <PROFILE_NAME> is the name of one of the profiles in the
+   install.
+   
+   When this issue occurs, the message may occur with
+   <PROFILE_NAME> replaced with extraneous messages.
+   
+   For some customers, this error occurred after applying
+   maintenance for fix packs 7.0.0.11 through 7.0.0.15.
+   The Deployment Manager started successfully, the the node agent
+   did not start.  The postinstaller step failed with the following
+   in the error log:
+   checkProfilePathReturnCode:
+   
+   Skipped because property 'was-profile-path-ok' set.
+   checkProfilePathReturnCode:  duration 0 seconds
+   Exiting
+   /var/WebSphere/V7R0/E/AppServer/properties/service/product/WebS
+   phere/service/actions/660324.xml.
+   Profile path is java.lang.reflect.InvocationTargetException
+    at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+   
+   Caused by: java.lang.NoClassDefFoundError:
+   org.eclipse.emf.ecore.EFactory
+    at java.lang.ClassLoader.defineClass(ClassLoader.java:275)
+    at org.eclipse.osgi.internal.baseadaptor.DefaultClassLoader.
+       defineClass(DefaultClassLoader.java:160)
+   .at org.eclipse.osgi.baseadaptor.loader.ClasspathManager.
+       defineClass(ClasspathManager.java:550)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  All users of IBM WebSphere Application      *
+   *                  Server V6.1 and V7.0 who encounter this     *
+   *                  error upon updating.                        *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: The fixpack config action to update     *
+   *                      ivtApp.ear does not operate correctly   *
+   *                      when manageprofiles output has          *
+   *                      extraneous messages                     *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   The fixpack config action does not operate correctly when the
+   "manageprofiles" command output contains extraneous messages.
+   Such messages are sometimes beyond control of the
+   "manageprofiles" command such as when caused by system
+   libraries or the Java virtual machine.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The config action to update ivtApp.ear in profiles was updated
+   to be more robust against this type of situation.
+   
+   The fix for this APAR is currently targeted for inclusion in
+   fix packs 6.1.0.41 and 7.0.0.19.  Please refer to the
+   Recommended Updates page for delivery information:
+   http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM36863
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBS APP SERV N
+   
+   
+ * REPORTED COMPONENT ID
+   5724H8800
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-04-12
+   
+   
+ * CLOSED DATE
+   2011-08-19
+   
+   
+ * LAST MODIFIED DATE
+   2012-01-26
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBS APP SERV N
+   
+   
+ * FIXED COMPONENT ID
+   5724H8800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R61A PSY
+   UP
+   
+   
+ * R61H PSY
+   UP
+   
+   
+ * R61I PSY
+   UP
+   
+   
+ * R61P PSY
+   UP
+   
+   
+ * R61S PSY
+   UP
+   
+   
+ * R61W PSY
+   UP
+   
+   
+ * R61Z PSY
+   UP
+   
+   
+ * R700 PSY
+   UP

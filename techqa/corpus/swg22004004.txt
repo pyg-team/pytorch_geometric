@@ -1,0 +1,29 @@
+Title: IBM Questions about the encryption among clients, relays and servers by SSL - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Q1. By default, are all communications between BigFix server and clients performed in plain text?
+Q2. Is it possible to encrypt all communications among BigFix server, relays and clients by SSL?
+Q3. Can UDP and ICMP be encrypted despite those are in lower layer than TCP(HTTP/HTTPS)? 
+
+ANSWER
+Answer for Q1: No. Bigfix security model has two central capabilities:
+Clients trust content from server. All commands and questions that clients receive are signed by a key that is verified against a public key installed on the client.
+Clients can submit private reports to server. The client can choose to encrypt reports that it sends up to the server, so that no attacker can interpret what is contained in the report. This feature is disabled by default, and is switched on with a setting. You can enable the client encrption if you need.
+
+Answer for Q2: You can configure client to communicate with authenticating relays.
+Communication using an authenticated relay is a two-way trusted and private communication channel that uses SSL to encrypt all communications. However, communication between a non-authenticating relay and its children is not encrypted unless it is an encrypted report or a mailboxed action or file.
+
+Answer for Q3: Bigfix added Message Level Encryption (MLE) to allow Clients to encrypt upstream data so that no data originating from the Client will be readable on the network. Upstream data from the Client can include Fixlet/Task/Baseline relevance, action statuses, retrieved properties, analyses, and files sent via the Upload Manager. This capability is useful for improving security when an organization has Clients
+reporting across potentially insecure networks, including the Internet. MLE does not affect actions taken from the Console or Fixlets that are already protected by digital signatures.
+So encryption will only encrypt reports sent from client to server or relay.
+As All commands and questions that clients receive are signed by a key that is verified against a public key installed on the client. MLE does not affect actions taken from the Console or Fixlets that are
+already protected by digital signatures.
+For UDP, it is also sent from server or relay to client and already protected by digital signatures, so UDP doesn't need encryption.
+ICMP is sent from client and is only used to find the nearest relay, so ICMP does not belong to the report, and it is also not encrypted.
+
+RELATED INFORMATION
+ Configure authenticating relays [https://www.ibm.com/support/knowledgecenter/SS63NW_9.5.0/com.ibm.bigfix.doc/Platform/Console/ClientAuthentication.html#ClientAuthentication]
+Manage Client Encryption [https://www.ibm.com/support/knowledgecenter/SS63NW_9.5.0/com.ibm.bigfix.doc/Platform/Config/c_managing_client_encryption.html]

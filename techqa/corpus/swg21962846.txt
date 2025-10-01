@@ -1,0 +1,46 @@
+Title: IBM Unable to use multiple facets to narrow search results in Watson Content Analytics 3.5 - United States
+
+Text:
+wca; facets TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ In the Watson Content Analytics 3.5 Search UI, the facets seem to disappear after the second level of searching. In other words, I see say 20 Facets on the intial search, then select a Facet; on the next screen, there are search results, but no Facets at all. Note that I can only reproduce this error in an environment with around 45,000 documents. Does not occur in a similarly configured environment with around 350 docs. documents. 
+
+ENVIRONMENT
+Product or Service: Content Analytics User Interface (UI) 3.5.0, Component ID: 5724Z21UI
+Operating System: Windows (Microsoft)
+
+
+RESOLVING THE PROBLEM
+After changing the element below, restart searcher. (rebuild is NOT 
+
+required)
+
+collection.xml
+------------------------------------------------------------
+<config ... ><collection ...>
+
+<indexes>
+...
+<index>
+<type>FacetCounting</type>
+<path>text/fc</path>
+<enabled>false</enabled>
+...
+</index>
+...
+</indexes>
+...
+</collection></config>
+---------------------------------------------------------------
+
+Here is an explanation of what the configuration change does
+
+1. When you add this configuration, you disable the 3.5 facet counting algorithm. In it's absence the 3.0 facet counting algorithm is invoked.
+
+The difference in the two is simply the math, the algorithm used to do the counting. There is no difference in functionality, in terms of the facets. So, it is perfectly acceptable for you to use the 3.0 algorithm, with no loss of functionality.
+
+2. The 3.5 counting algorithm was optimized for large analytics collections. That is, your collection needs to meet both criteria for the algorithm to function optimally - it must be an analytics collection (not search), and it must be large - in the millions.
+
+If the collection is a small search collection, it makes sense that the large counting algorithm would perform poorly.
+.

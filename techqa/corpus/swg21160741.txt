@@ -1,0 +1,29 @@
+Title: IBM Unable to create basedir.properties file on a Host On-Demand server on z/OS - United States
+
+Text:
+OS/390; 1160741 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ An error occurs during the start of the Host On-Demand service manager on z/OS® if the Host On-Demand HFS is mounted in read-only mode. The file hostondemand/lib/basedir.properties cannot be created. 
+
+RESOLVING THE PROBLEM
+If the Host On-Demand HFS is mounted to the system in read-only mode, the following message is posted in the stdout file: 
+
+*** Error-Unable to create file:
+/usr/lpp/HOD/hostondemand/lib/basedir.properties:
+java.io.FileNotFoundException: /usr/lpp/HOD/hostondemand/lib/basedir.properties
+(EDC5141I Read-only file system.)
+
+The basedir.properties file is needed for the LDAP services only, not the general functionality of the Service Manager. It contains the location of the private directory for the LDAP directory services. If the LDAP services are used, the Service Manager needs to be started at least once with the HFS in read-write mode to create this file. The hostondemand/lib/basedir.properties file can also be created manually. Add the following line and set the permissions of the file to 644:
+
+etcDir=/usr/lpp/HOD/hostondemand/private
+
+If the LDAP services are not used, ignore the message in the stdout.
+
+
+
+
+
+
+HISTORICAL NUMBER
+ 92240

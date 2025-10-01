@@ -1,0 +1,33 @@
+Title: IBM Cannot "Preview" in TI: Unable to Open Connection to Database - United States
+
+Text:
+message; pops up TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ User is trying to open a connection in a Turbo Integrator process (using ODBC) to an Access database. Query is written and when Preview is clicked an error appears.
+
+Can also occur when using other data sources (including Excel). 
+
+SYMPTOM
+Unable to Open Connection to Database
+
+
+CAUSE
+An ODBC System DSN is not yet configured or there has been a network disconnect that is causing the problem.
+
+RESOLVING THE PROBLEM
+Make sure that a System DSN is created on the TM1 Server machine using the full UNC path. Then grant the following permissions at the \\servername\sharename\folder\ level (where the datasource such as the Access database or Excel file resides) for the service account user that is running the TM1 service: 
+
+1. Modify
+2. Read & Execute
+3. List Folder Contents
+4. Read and Write
+
+If using a datasource other than Access/Excel (Oracle, SQL, Informix, etc.) make sure that you are also using the correct platform version (32bit or 64bit) of the driver prior to creating the System DSN. If using 64bit TM1 you can ONLY use the appropriate 64bit driver. As of TM1 version 9.4 (and higher) the Axnet ODBC Gateway no longer exists because it was not manageable in a unicode environment. 
+
+At this writing, there is no 64bit driver available for Access (or Excel), so if using 64bit TM1 , a workaround must be used to import this data.
+Dump your Access data into a comma delimited .csv or .cma file and then use the Datasource Type of Text in TI, rather than ODBC. Excel files can be saved as .csv/.cma files as well and processed with the same solution.
+
+There are 32bit ODBC drivers for Access and Excel that can be used only if you are using 32bit TM1.
+
+If the DSN is properly created then this could be a network disconnect issue. Try rebooting the machine and test again.

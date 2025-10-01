@@ -1,0 +1,145 @@
+Title: IBM IO24947: SAVE BUTTON FOR EDIT METADATA IS FOLLOWED BY POPUP REQUEST FOR SAVING DATA IF ENTRY TEMPLATE LAYOUT IS EDITED - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+ DIRECT LINKS TO FIXES
+3.0.1-ICN-WIN [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FOther+software%2FContent+Navigator&fixids=3.0.1-ICN-WIN&source=SAR]
+3.0.1-ICN-zLINUX [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FOther+software%2FContent+Navigator&fixids=3.0.1-ICN-zLINUX&source=SAR]
+3.0.1-ICN-LINUX [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FOther+software%2FContent+Navigator&fixids=3.0.1-ICN-LINUX&source=SAR]
+3.0.1-ICN-AIX [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FOther+software%2FContent+Navigator&fixids=3.0.1-ICN-AIX&source=SAR]
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  In IBM Content Navigator, if you edit an entry template and set
+   the field width to 400 pixels, for instance, when you modify a
+   property of a document in teamspaces, after you click on Save,
+   you get a pop up message if you go to another document.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Click Save twice
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  In IBM Content Navigator, if you edit an entry template and set
+   the field width to 400 pixels, for instance, when you modify a
+   property of a document in teamspaces, after you click on Save,
+   you get a pop up message if you go to another document.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This issue has been fixed in IBM Content Navigator V2.0.3 Fix
+   Pack 8 LA004 and V3.0 LA001
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IO24947
+   
+   
+ * REPORTED COMPONENT NAME
+   CONTENT NAVIGAT
+   
+   
+ * REPORTED COMPONENT ID
+   ISCONTNAV
+   
+   
+ * REPORTED RELEASE
+   203
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-11-04
+   
+   
+ * CLOSED DATE
+   2017-03-31
+   
+   
+ * LAST MODIFIED DATE
+   2017-03-31
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *     None
+   None
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CONTENT NAVIGAT
+   
+   
+ * FIXED COMPONENT ID
+   ISCONTNAV
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R203 PSY
+   UP

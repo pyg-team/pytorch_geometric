@@ -1,0 +1,68 @@
+Title: IBM JDBC driver or database insufficiencies cause administration portlets to fail. - United States
+
+Text:
+RT0002E; JDBC; database; driver; RepositoryException; PLS; EJPAS0017E TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+You attempt to create a new page via the Manage Pages portlet or add a portlet to a page via the Edit Layout portlet and encounter an error.
+
+SYMPTOM
+SystemOut.log contains:
+... DefaultTransa E Message: Could not save object in repository., 
+Cause: javax.jcr.RepositoryException: RT0002E: Error while calling a function createItems of PLS data manager
+com.ibm.workplace.wcm.services.repository.RepositoryException: 
+Message: Could not save object in repository., Cause: javax.jcr.RepositoryException: RT0002E: Error while calling a function createItems of PLS data manager
+...
+Caused by: com.ibm.icm.da.DBAccessException:
+java.sql.SQLFeatureNotSupportedException:DSRA1300E: Feature is not implemented: PreparedStatement.setBinaryStream
+at com.ibm.icm.da.portable.data.WideTableData.changeItems(WideTableData.java:857) 
+
+ 
+
+The client browser displays: 
+
+
+EJPAS0017E ... Message: Could not save object in repository.,
+Cause: javax.jcr.RepositoryException: RT0002E: Error while calling a
+function createItems of PLS data ...
+
+or:
+
+EJPAE0015E: Failed to add new portlets.
+...
+EJPEC0002E: The transaction has been set to rollback state...
+
+
+CAUSE
+The JDBC driver does not meet WebSphere Portal v8's prerequisites.
+
+
+DIAGNOSING THE PROBLEM
+Check SystemOut.log for the database server version and JDBC driver version: 
+
+
+DSRA8204I: Database product version : ...
+InternalGener I DSRA8205I: JDBC driver name : ...
+InternalGener I DSRA8206I: JDBC driver version : ...
+
+Compare these to WebSphere Portal v8's prerequisites. Refer to the WebSphere Portal V8.0 detailed system requirements link below.
+
+
+RESOLVING THE PROBLEM
+If the database server and/or JDBC driver do not meet WebSphere Portal v8's prerequisites, upgrade or downgrade the component(s) to the appropriate supported level(s) and restart the Portal server(s). 
+
+ 
+
+If upgrading the JDBC driver requires replacing the .jar with another differently named .jar, other components in the system that referenced the older .jar may be affected. Pay special consideration to: 
+
+
+WAS Integrated Solutions Console > Environment > WebSphere Variables
+VMM_JDBC_CLASSPATH
+ORACLE_JDBC_DRIVER_PATH
+
+These are stored in: <profile>/config/cells/<cell name>/variables.xml
+
+Other WebSphere variables may also reference the older .jar, or these same variables may be set in different scopes, so check other variables and variables.xml files as well, such as: <profile>/config/cells/<cell name>/nodes/<node name>/variables.xml
+
+RELATED INFORMATION
+ WebSphere Portal V8.0 detailed system requirements [http://www-01.ibm.com/support/docview.wss?uid=swg27007791]

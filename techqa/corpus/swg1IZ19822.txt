@@ -1,0 +1,174 @@
+Title: IBM IZ19822: ADVANCED PING TOOL DOESN'T WORK WITHOUT HAVING CORRECT LIBRARY PATH & PERMISSIONS FOR A NON-ROOT USER - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When running NGF as non-root user, On the Webtop/Topoviz server
+   following steps are required for Advanced ping tool to function
+   correctly :
+   
+   1.  Add $PRECISION_HOME/platform/solaris2/lib to the non-root
+   user LD_LIBRARY_PATH.
+   
+   2. Add $PRECSION_HOME/platform/solaris2/lib to the trusted
+   list and default search path (using crle command)
+   
+   3. Add setuid in the permissions for the executables in the
+   $NCHOME/guifoundation/webapps/ncp_webtools/WEB-INF/bin directory
+   (chmod u+s)
+   
+   The Advanced Ping tool works having above permissions & path
+   in place.
+   
+   This need to be documented for the tool to work correctly for
+   non-root users.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All users                                    *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: IBM Tivoli Network Manager IP Edition   *
+   *                      V3.7 Topology Visualization Guide       *
+   *                      Revision 00 Netcool/Precision IP V3.6   *
+   *                      Topology Visualization Guide Revision   *
+   *                      00                                      *
+   *                                                              *
+   *                      The documentation can be found at the   *
+   *                      following locations :                   *
+   *                                                              *
+   *                      V3.7 ---Topology Visualization Guide,   *
+   *                      pages 149-155                           *
+   *                                                              *
+   *                      ---Information Center page:             *
+   *                      http://publib.boulder.ibm.com/infocente *
+   *                      r/tivihelp/v8r1/index.jsp?topic=/com.ib *
+   *                      m.itnetmantip.doc_3.7/7962/xF1153840420 *
+   *                      085.html                                *
+   *                                                              *
+   *                                                              *
+   *                                                              *
+   *                      V3.6 ---Topology Visualization Guide,   *
+   *                      pages 159-167                           *
+   *                                                              *
+   *                      ---Information Center page:             *
+   *                      http://publib.boulder.ibm.com/infocente *
+   *                      r/tivihelp/v8r1/index.jsp?topic=/com.ib *
+   *                      m.netcool_precision.doc/pr36to/xF115384 *
+   *                      0420085.html                            *
+   *                                                              *
+   *                      When running the Netcool GUI Foundation *
+   *                      as a non-root user, specific            *
+   *                      permissions and paths must be set on    *
+   *                      the Webtop/Topoviz server  for Advanced *
+   *                      ping tool to function correctly.        *
+   *                                                              *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   *                                                              *
+   ****************************************************************
+   When running the NGF as a non-root user, the following
+   permissions and paths must be set on the Webtop/Topoviz server
+   for Advanced ping tool to function correctly.
+   
+   1.  Add /precision/platform/solaris2/lib to the non-root user
+   LD_LIBRARY_PATH.
+   
+   2. Add /precision/platform/solaris2/lib to the trusted list and
+   default search path (using crle command).
+   
+   3. Add setuid in the permissions for the executables in the
+   /guifoundation/webapps/ncp_webtools/WEB-INF/bin directory. Use
+   the command chmod u+s.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A technote will be written to include this information.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ19822
+   
+   
+ * REPORTED COMPONENT NAME
+   NC/PREC TPL SV
+   
+   
+ * REPORTED COMPONENT ID
+   5724O6000
+   
+   
+ * REPORTED RELEASE
+   360
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-04-10
+   
+   
+ * CLOSED DATE
+   2008-05-07
+   
+   
+ * LAST MODIFIED DATE
+   2008-05-07
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+Publications Referenced SC23796200 FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

@@ -1,0 +1,52 @@
+Title: IBM Finding Information for ITCAM for Transactions Application Management Console - United States
+
+Text:
+71AMCON-PLAN; 71AMCON-INS; 71AMCON-CONF; 71INS-AMC; CSILandingPage; SupportLandingPage NEWS
+
+ABSTRACT
+ You need help finding information for the AMC agent, here are several links 
+
+CONTENT
+The Application Management Console (AMC) focuses on the end user experience, both real and simulated, by monitoring web transactions, playing back recorded scripts, and real user desktop experiences. The Application Management Console (AMC) is one of three agents in the Response Time component.
+
+Application Management Console provides an accurate snapshot of ITCAM for Transactions monitoring in near real time. It provides real-time aggregated and consolidated application and transaction availability and response time information for all applications monitored by Internet Services, Response Time, and Transaction Tracking monitoring agents. It collects data in real time at a configurable, constant interval without relying on the Tivoli Data Warehouse.
+
+Use the Application Management Console to see status summary and trend analysis information across managed resources and to perform problem determination. This information is displayed in the Tivoli Enterprise Portal.
+
+The Application Management Console agent is required when other ITCAM for Transactions agents are installed. The Application Management Console agent includes the AMC Editor which manages and distributes profiles, maintenance windows, client information, and user information for all the other Response Time and Transaction Tracking monitoring agents. Several sources of information are available
+[https://www.ibm.com/developerworks/community/blogs/0587adbc-8477-431f-8c68-9226adea11ed/entry/itcam_for_transactions_blog_on?lang=en] [https://www.ibm.com/developerworks/community/blogs/0587adbc-8477-431f-8c68-9226adea11ed/entry/itcam_for_transactions_blog_on?lang=en] [http://publib.boulder.ibm.com/infocenter/tivihelp/v24r1/topic/com.ibm.itcamt.doc_7.4.0.0/ITCAMTRANS_download.htm] 
+
+ * System Requirements and Prerequisites [https://www.ibm.com/developerworks/community/blogs/0587adbc-8477-431f-8c68-9226adea11ed/entry/itcam_for_transactions_blog_on?lang=en] 
+ * Download Information [http://publib.boulder.ibm.com/infocenter/tivihelp/v24r1/topic/com.ibm.itcamt.doc_7.4.0.0/ITCAMTRANS_download.htm] 
+ * Installation and Configuration Guide, Configuring AMC [http://publib.boulder.ibm.com/infocenter/tivihelp/v24r1/topic/com.ibm.itcamt.doc_7.4.0.0/rt/Install_Guide/amc_config_oview.html] 
+ * Administrator's Guide AMC E [http://publib.boulder.ibm.com/infocenter/tivihelp/v24r1/topic/com.ibm.itcamt.doc_7.4.0.0/rt/AMC_Editor/AMCE_intro.html]ditor 
+ * User's Guide AMC Workspaces [http://publib.boulder.ibm.com/infocenter/tivihelp/v24r1/topic/com.ibm.itcamt.doc_7.4.0.0/rt/Workspaces/T3_AMC/AMC_workspaces.html] 
+ * User's Guide Take Action commands [http://publib.boulder.ibm.com/infocenter/tivihelp/v24r1/topic/com.ibm.itcamt.doc_7.4.0.0/rt/AMC_Editor/amc_take_act.html] 
+ * Documentation Previous Versions [http://publib.boulder.ibm.com/infocenter/tivihelp/v24r1/index.jsp?topic=%2Fcom.ibm.itcamt.doc_7.4.0.0%2Fic%2FprevVersions.html]
+
+
+
+What other information is available? 
+ * Troubleshooting AMC E [http://publib.boulder.ibm.com/infocenter/tivihelp/v24r1/topic/com.ibm.itcamt.doc_7.4.0.0/rt/TSG/itcam_rt_amce.html]ditor 
+ * Troubleshooting AMC agent [http://publib.boulder.ibm.com/infocenter/tivihelp/v24r1/topic/com.ibm.itcamt.doc_7.4.0.0/rt/TSG/itcam_rt62-probdetermgd17.html] [https://www.ibm.com/developerworks/community/wikis/home?lang=en#!/wiki/Tivoli%20Composite%20Application%20Manager/page/ITCAM%20for%20Transactions] 
+ * Collecting Data to open a PMR [http://www.ibm.com/support/docview.wss?uid=swg21458427] 
+ * Developerworks articles [https://www.ibm.com/developerworks/community/wikis/home?lang=en#!/wiki/Tivoli%20Composite%20Application%20Manager/page/ITCAM%20for%20Transactions] 
+ * Media Gallery [https://www.ibm.com/developerworks/community/wikis/home?lang=en#!/wiki/Tivoli%20Composite%20Application%20Manager/page/Media%20Gallery%20for%20ITCAM%20for%20Transactions] 
+ * ITCAM Technotes Index: AMC [http://www.ibm.com/support/docview.wss?uid=swg21396291#AMC] 
+ * ITCAM Technotes Index: AMC E [http://www.ibm.com/support/docview.wss?uid=swg21396291#AMCE]ditor 
+ * FixCentral 7.4 [http://www.ibm.com/support/fixcentral/swg/selectFixes?parent=Tivoli+Composite+Application+Manager&product=ibm/Tivoli/Tivoli+Composite+Application+Manager+for+Transactions&release=7.4.0.0&platform=All&function=all] 
+ * dwAnswers [https://developer.ibm.com/answers/questions/#apm/]
+
+RELATED INFORMATION
+ ITCAM Transaction Technote Index [http://www.ibm.com/support/docview.wss?uid=swg21396291]
+ITCAM Support Portal [http://www.ibm.com/support/entry/portal/product/tivoli/tivoli_composite_application_manager/tivoli_composite_application_manager_for_transactions?productContext=-848134975]
+ITCAM Support Lifecycle [http://www.ibm.com/software/support/lifecycleapp/PLCDetail.wss?synkey=Y126067R51028J24&from=spf]
+Finding Information for ITCAM for Transactions [http://www.ibm.com/support/docview.wss?uid=swg21655543]
+IBM Support Assistant Data Collector [http://www.ibm.com/support/docview.wss?uid=swg21624484]
+IBM Electronic Support [http://www.ibm.com/support/electronicsupport/]
+
+
+
+
+PRODUCT ALIAS/SYNONYM
+ itcamft

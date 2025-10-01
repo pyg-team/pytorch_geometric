@@ -1,0 +1,83 @@
+Title: IBM Customizing the Notification templates to include an image and the image does not appear within email notification. - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Customizing the Notification templates to include an image and the image does not appear within email notification. Just a square box appears where the image should be.
+
+Using following in HTML source code: <img src = 'Logo.GIF' /> /*Added Logo in HTML */ 
+
+RESOLVING THE PROBLEM
+There are two options for getting a logo within the email notification. 
+
+OPTION 1:
+The image source has to be an HTTP reference as it is the Email Reader that will be fetching the image, not the CADS Server. As a result, a file path is not going to work. Will need to use the URL of the company logo located on the companies website.
+
+PLEASE NOTE: By default, most Email Reader will not display images. Most will have a link to click to Show Images. It is up to the Email Reader to allow images from a source. There may be a setting within your Email Client environment that will control this and is something that you will need to validate.
+
+
+EXAMPLE of folder_content.xm file for a HTTP Reference.
+--------------------------------------------------------------------------------
+#* 
+The template is used to generate a notification message when changes to folder content are made
+(new file or file version)
+*#
+/mimeMessage/messageVersion=4.0
+/mimeMessage/messageSubject=PASW Collaboration and Deployment Services:#if( $ActionType=="FileVersionCreated" ) New version of ${ChildName} has been created in#else ${ChildName} has been added to#end ${ResourcePath}
+/mimeMessage/messageContent[text/html;charset=utf-8]=
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
+</head>
+<body>
+<div align="center"><img src="http://www.w3schools.com/images/compatible_firefox.gif"/>
+</div>
+<p>#if( $ActionType=="FileVersionCreated" ) A new version of file <b>${ChildName}</b> has been created in 
+#else The file <b>${ChildName}</b> has been added to #end folder <b>${ResourcePath}</b>.</p>
+
+#if($Attachments)
+See attachment.
+#else
+<p>To review the content of the file, go to <a href='${ChildHttpUrl}'>${ChildHttpUrl}</a>. </br></p>
+#end
+
+<hr><p>This is a machine-generated message. Please do not reply directly. If you do not wish to receive this notification, unsubscribe or contact your Repository administrator.</p>
+</body>
+</html>
+--------------------------------------------------------------------------------
+
+
+OPTION 2:
+Use a URL to an image stored within the CADS repository within a folder. See below steps on how to add image to repository and find URL.
+
+PLEASE NOTE: You will need to use the System name or IP address of the AS400 where the CADS server repository is located and the port number of the CADS server. See Example below.
+
+Please Note: The following parameters (&version ; &username ; &password; &provider; &format) can be added and will be unique to your CADS server. 
+EXAMPLE: &version=l.LATEST&username=admin&password=spss&provider=Native&format=raw"/>
+
+Example of URL to an image stored in CADS repository:
+<div align="center"><img src="http://10.112.5.150:8080/peb/view?id=0a7005965bb6ffe800000128204bc9702477&version=l.LATEST&username=admin&password=spss&provider=Native&format=raw"/>
+
+To Add image to Repository:
+a. Open Deployment Manger and login to Content Explorer.
+b. Locate a folder where you would like to store the image.
+c. Right click on folder and select Add file to repository.
+d. Browse to location where image is stored on PC and then click on Open. This will add the image to the folder.
+
+To find the URL of the image in the C&DS Repository.
+a. Open Deployment Manger and login to Content Explorer.
+b. Locate the folder where the image is store.
+c. Right click on the image and select properties.
+d. Under the General tab, go to the Object URI section.
+e. Copy the ?id=xxxxxx information as this will be needed in the URL.
+f. Now update the folder_content.xm file with this information.
+
+RELATED INFORMATION
+ Need more help? Our C&DS forum is Live! [https://developer.ibm.com/answers/topics/collaboration.html?smartspace=predictive-analytics]
+
+
+ 
+
+HISTORICAL NUMBER
+ 89427

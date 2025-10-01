@@ -1,0 +1,133 @@
+Title: IBM LI79093: STUDIO HELP FUNCTION DO NOT LINK TO THE UPDATED INFOCENTER LINK. - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+ DIRECT LINKS TO FIXES
+7.5.1.0-WS-WCI-20180604-1920_H11_64-CUMUIFIX-021.studio [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FWebSphere+Cast+Iron+Cloud+integration&fixids=7.5.1.0-WS-WCI-20180604-1920_H11_64-CUMUIFIX-021.studio&source=SAR]
+7.5.1.0-WS-WCI-20180604-1920_H11_64-CUMUIFIX-021.32bit.studio [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FWebSphere+Cast+Iron+Cloud+integration&fixids=7.5.1.0-WS-WCI-20180604-1920_H11_64-CUMUIFIX-021.32bit.studio&source=SAR]
+7.5.1.0-WS-WCI-20180604-1919_H7_64-CUMUIFIX-021.vcrypt2 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FWebSphere+Cast+Iron+Cloud+integration&fixids=7.5.1.0-WS-WCI-20180604-1919_H7_64-CUMUIFIX-021.vcrypt2&source=SAR]
+7.5.1.0-WS-WCI-20180604-1919_H7_64-CUMUIFIX-021.scrypt2 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FWebSphere+Cast+Iron+Cloud+integration&fixids=7.5.1.0-WS-WCI-20180604-1919_H7_64-CUMUIFIX-021.scrypt2&source=SAR]
+7.5.1.0-WS-WCI-20180604-1919_H7_64-CUMUIFIX-021.docker [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FWebSphere+Cast+Iron+Cloud+integration&fixids=7.5.1.0-WS-WCI-20180604-1919_H7_64-CUMUIFIX-021.docker&source=SAR]
+WebSphere Cast Iron V7.5.1.0 cumulative ifix 020 for physical appliance upgrade file [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FWebSphere+Cast+Iron+Cloud+integration&fixids=7.5.1.0-WS-WCI-20180302-0957_H11_64-CUMUIFIX-020.scrypt2&source=SAR]
+WebSphere Cast Iron V7.5.1.0 cumulative ifix 020 for hypervisor [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FWebSphere+Cast+Iron+Cloud+integration&fixids=7.5.1.0-WS-WCI-20180302-0957_H11_64-CUMUIFIX-020.vcrypt2&source=SAR]
+WebSphere Cast Iron V7.5.1.0 cumulative ifix 019 for Studio 64-bit installer [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FWebSphere+Cast+Iron+Cloud+integration&fixids=7.5.1.0-WS-WCI-20180228-0529_H8_64-CUMUIFIX-019.studio&source=SAR]
+WebSphere Cast Iron V7.5.1.0 cumulative ifix 019 for hypervisor upgrade file [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FWebSphere+Cast+Iron+Cloud+integration&fixids=7.5.1.0-WS-WCI-20180228-0528_H11_64-CUMUIFIX-019.vcrypt2&source=SAR]
+WebSphere Cast Iron V7.5.1.0 cumulative ifix 019 for Studio 32-bit installer [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FWebSphere+Cast+Iron+Cloud+integration&fixids=7.5.1.0-WS-WCI-20180228-0529_H8_64-CUMUIFIX-019.32bit.studio&source=SAR]
+WebSphere Cast Iron V7.5.1.0 cumulative ifix 019 for physical appliance upgrade file [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FWebSphere+Cast+Iron+Cloud+integration&fixids=7.5.1.0-WS-WCI-20180228-0528_H11_64-CUMUIFIX-019.scrypt2&source=SAR]
+WebSphere Cast Iron V7.5.1.0 cumulative ifix 019 for docker build [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FWebSphere+Cast+Iron+Cloud+integration&fixids=7.5.1.0-WS-WCI-20180228-0528_H11_64-CUMUIFIX-019.docker&source=SAR]
+WebSphere Cast Iron V7.5.1.0 cumulative ifix 018 for hypervisor upgrade file [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FWebSphere+Cast+Iron+Cloud+integration&fixids=7.5.1.0-WS-WCI-20180220-0729_H11_64-CUMUIFIX-018.vcrypt2&source=SAR]
+WebSphere Cast Iron V7.5.1.0 cumulative ifix 018 for Studio 64-bit installer [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FWebSphere+Cast+Iron+Cloud+integration&fixids=7.5.1.0-WS-WCI-20180220-0731_H7_64-CUMUIFIX-018.studio&source=SAR]
+WebSphere Cast Iron V7.5.1.0 cumulative ifix 018 for physical appliance upgrade file [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FWebSphere+Cast+Iron+Cloud+integration&fixids=7.5.1.0-WS-WCI-20180220-0729_H11_64-CUMUIFIX-018.scrypt2&source=SAR]
+WebSphere Cast Iron V7.5.1.0 cumulative ifix 018 for Studio 32-bit installer [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FWebSphere+Cast+Iron+Cloud+integration&fixids=7.5.1.0-WS-WCI-20180220-0731_H7_64-CUMUIFIX-018.32bit.studio&source=SAR]
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Studio Help function do not link to the updated Infocenter link.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  STUDIO HELP FUNCTION DO NOT LINK TO THE UPDATED INFOCENTER LINK.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Modified the Help link to redirect to the correct link
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   LI79093
+   
+   
+ * REPORTED COMPONENT NAME
+   WCI LIVE ENTERP
+   
+   
+ * REPORTED COMPONENT ID
+   5725F7100
+   
+   
+ * REPORTED RELEASE
+   751
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-06-13
+   
+   
+ * CLOSED DATE
+   2018-02-13
+   
+   
+ * LAST MODIFIED DATE
+   2018-02-13
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WCI LIVE ENTERP
+   
+   
+ * FIXED COMPONENT ID
+   5725F7100
+   
+   
+
+APPLICABLE COMPONENT LEVELS

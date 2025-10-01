@@ -1,0 +1,56 @@
+Title: IBM Resolving an OutOfMemoryError when running a large query in Hive - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ You are running a large query in Hive and receive an OutOfMemoryError. 
+
+SYMPTOM
+You ran a large query in Hive shell and received the following error: 
+
+
+JVMDUMP039I Processing dump event "systhrow", detail "java/lang/OutOfMemoryError" at 2013/06/14 09:29:55 - please wait.
+JVMDUMP032I JVM requested Heap dump using '/home/xxxx/heapdump.20130614.092955.30523.0001.phd' in response to an event
+JVMDUMP010I Heap dump written to /home/xxxx/heapdump.20130614.092955.30523.0001.phd
+JVMDUMP032I JVM requested Java dump using '/home/xxxx/javacore.20130614.092955.30523.0002.txt' in response to an event
+JVMDUMP010I Java dump written to /home/xxxx/javacore.20130614.092955.30523.0002.txt
+JVMDUMP032I JVM requested Snap dump using '/home/xxxx/Snap.20130614.092955.30523.0003.trc' in response to an event
+JVMDUMP010I Snap dump written to /home/xxxx/Snap.20130614.092955.30523.0003.trc
+JVMDUMP013I Processed dump event "systhrow", detail "java/lang/OutOfMemoryError".
+JVMDUMP039I Processing dump event "systhrow", detail "java/lang/OutOfMemoryError" at 2013/06/14 09:29:59 - please wait.
+JVMDUMP032I JVM requested Heap dump using '/home/xxxx/heapdump.20130614.092959.30523.0004.phd' in response to an event
+JVMDUMP010I Heap dump written to /home/xxxx/heapdump.20130614.092959.30523.0004.phd
+JVMDUMP032I JVM requested Java dump using '/home/xxxx/javacore.20130614.092959.30523.0005.txt' in response to an event
+JVMDUMP010I Java dump written to /home/xxxx/javacore.20130614.092959.30523.0005.txt
+JVMDUMP032I JVM requested Snap dump using '/home/xxxx/Snap.20130614.092959.30523.0006.trc' in response to an event
+JVMDUMP010I Snap dump written to /home/xxxx/Snap.20130614.092959.30523.0006.trc
+JVMDUMP013I Processed dump event "systhrow", detail "java/lang/OutOfMemoryError".
+Exception in thread "main" java.lang.OutOfMemoryError: Java heap space
+at org.apache.derby.client.am.Cursor.allocateCharBuffer(Unknown Source)
+at org.apache.derby.client.net.NetStatementReply.parseSQLDTARDarray(Unknown Source)
+at org.apache.derby.client.net.NetStatementReply.parseQRYDSC(Unknown Source)
+at org.apache.derby.client.net.NetStatementReply.parseOpenQuery(Unknown Source)
+at org.apache.derby.client.net.NetStatementReply.parseOPNQRYreply(Unknown Source)
+at org.apache.derby.client.net.NetStatementReply.readOpenQuery(Unknown Source)
+at org.apache.derby.client.net.StatementReply.readOpenQuery(Unknown Source)
+at org.apache.derby.client.net.NetStatement.readOpenQuery_(Unknown Source)
+
+
+
+CAUSE
+The OutOfMemoryError occurs when you have large tables or several thousand partitions. The default Java heap size of 256 MB is not enough to handle it.
+
+
+RESOLVING THE PROBLEM
+This is the default setting in $BIGINSIGHTS/hive/bin/hive-conf.sh: 
+
+
+# Default to use 256MB
+export HADOOP_HEAPSIZE=${HADOOP_HEAPSIZE:-256}
+
+You can increase the setting for the hadoop heapsize to 4096. For example:
+
+export HADOOP_HEAPSIZE=4096.
+
+After you make the change, restart Hive using ./start.sh hive.

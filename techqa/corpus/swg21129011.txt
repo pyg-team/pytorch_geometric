@@ -1,0 +1,50 @@
+Title: IBM How to programatically clear an editbox in Rational Robot - United States
+
+Text:
+1129011; sqasetproperty; editbox; clear; 127577029 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This technote explains how to programmatically clear an editbox in IBM Rational Robot. 
+
+RESOLVING THE PROBLEM
+Using the sqasetproperty command you can change the value of an objects properties. Therefore using this command you could clear the property that stores the text for the editbox object.
+
+Example:
+
+
+
+
+Sub Main
+Dim Result As Integer
+' uses sqasetproperty to change values in comboboxes and editboxes using the classics online sample.
+
+StartApplication """C:\Program Files\Rational\Rational Test\Sample Applications\Classics Online\ClassicsA.exe"""
+
+Window SetContext, "Name=frmExistingLogin", ""
+'selects the login user
+result=SQASetProperty ("Name=lstUserName", "ItemSelected", "Admin" )
+if result <> 0 then msgbox error(result)
+
+Window SetContext, "Name=frmExistingLogin", ""
+PushButton Click, "Name=cmdOK"
+
+Window SetContext, "Name=frmMain", ""
+PushButton Click, "Name=cmdOrder"
+
+Window SetContext, "Name=frmOrder", ""
+'clears the quantity field
+result = SQASetProperty ("Name=txtQuantity", "Text", "" )
+if result <> 0 then msgbox error(result)
+delayfor 2000
+
+End Sub
+
+
+
+Disclaimer All source code and/or binaries attached to this document are referred to here as "the Program". IBM is not providing program services of any kind for the Program. IBM is providing the Program on an "AS IS" basis without warranty of any kind. IBM WILL NOT BE LIABLE FOR ANY ACTUAL, DIRECT, SPECIAL, INCIDENTAL, OR INDIRECT DAMAGES OR FOR ANY ECONOMIC CONSEQUENTIAL DAMAGES (INCLUDING LOST PROFITS OR SAVINGS), EVEN IF IBM, OR ITS RESELLER, HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
+
+
+
+
+HISTORICAL NUMBER
+ 127577029

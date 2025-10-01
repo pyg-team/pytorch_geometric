@@ -1,0 +1,143 @@
+Title: IBM PM38288: EXACT TEST RESULTS INCORRECT FOR TABLES LARGER THAN 2X2 IN WIN 7, MAC OS - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When you request chi-square statistics in Crosstabs for a table
+   larger than 2x2 in SPSS Statistics 19.0 or 19.0.0.1, the Exact
+   Test results are incorrect if run on Windows 7 or Mac OS.   The
+   Fisher Exact  test in the Crosstabs procedure incorrectly
+   reported an Exact Significance (2-sided) of 1.0. Significance
+   levels for the Pearson and Likelihood Ratio chi-squares will
+   also be incorrect. These errors do not appear when run on
+   Windows XP or for 2x2 tables on any platform. The defect is
+   scheduled to be corrected in the 19.0.0.2 FixPack.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * Users of IBM SPSS Statistics 19.0 on MacOS or Windows 7      *
+   * platforms, requesting chi-square statistics on crosstabs     *
+   * larger than 2x2                                              *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * When you request chi-square statistics in Crosstabs for a    *
+   * table                                                        *
+   * larger than 2x2 in SPSS Statistics 19.0 or 19.0.0.1, the     *
+   * Exact                                                        *
+   * Test results are incorrect if run on Windows 7 or Mac OS.    *
+   * The                                                          *
+   * Fisher Exact  test in the Crosstabs procedure incorrectly    *
+   * reported an Exact Significance (2-sided) of 1.0.             *
+   * Significance                                                 *
+   * levels for the Pearson and Likelihood Ratio chi-squares will *
+   * also be incorrect. These errors do not appear when run on    *
+   * Windows XP or for 2x2 tables on any platform. The defect is  *
+   * scheduled to be corrected in the 19.0.0.2 FixPack.           *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Apply IBM SPSS Statistics 19.0 FixPack 2                     *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Apply IBM SPSS Statistics 19.0 FixPack 2
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM38288
+   
+   
+ * REPORTED COMPONENT NAME
+   SPSS STATISTICS
+   
+   
+ * REPORTED COMPONENT ID
+   5725A54ST
+   
+   
+ * REPORTED RELEASE
+   J00
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-05-03
+   
+   
+ * CLOSED DATE
+   2011-12-04
+   
+   
+ * LAST MODIFIED DATE
+   2011-12-04
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   SPSS STATISTICS
+   
+   
+ * FIXED COMPONENT ID
+   5725A54ST
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * RJ00 PSY
+   UP

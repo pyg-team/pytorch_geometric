@@ -1,0 +1,89 @@
+Title: IBM InfoSphere Master Data Management (MDM) Support Tools - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ There is a number of IBM InfoSphere Master Data Management (MDM) server support tools available to customers. However, customers might not know exactly which tool to use and when. 
+
+Although, over lap may exist among some of the tools functionalities, each tool is different in its functionalities, the way it is invoked and the output if generates. 
+
+How to identify the tool that best fits my needs during my investigation of an MDM related issue? 
+
+ANSWER
+
+The following tools are available to help customers diagnose and troubleshoot MDM related issues: 
+
+IBM® Support Assistant Data Collector (ISADC) [http://www-01.ibm.com/support/docview.wss?uid=swg21970559] 
+The MDM Performance Log Analyzer Tool [http://www-01.ibm.com/support/docview.wss?uid=swg21969917]
+MDM Assistant Tool (MAT) [http://www-01.ibm.com/support/docview.wss?uid=swg21700482]
+MDM Log Assistant Tool [http://www-01.ibm.com/support/docview.wss?uid=swg21969706]
+
+Use the table below to find the description of the available MDM support tools and what each tool does. Each tool has a detailed readme.txt file that will further illustrate its functionalities and usage examples. 
+
+
+
+Feature ISADC Performance Log Analyzer MAT Tool Log Assistant Collects Logs Yes No No No Resource utilization Yes No Yes No Collects DB profile No No Yes No Flexible SQL Addition No No Yes No One line Invoker No No Yes Yes Log analysis No Yes No No Statistic summary (Table) No Yes No No Statistic summary (Graphical) No Yes No No Divides Logs by Specific Date No No No Yes Divides Logs by Date Range No No No Yes Searches logs for errors No No No Yes Groups Errors by frequency level No No No Yes Run in background No No Yes Yes Tool Link 21970559 [http://www-01.ibm.com/support/docview.wss?uid=swg21970559] 21969917 [http://www-01.ibm.com/support/docview.wss?uid=swg21969917] 21700482 [http://www-01.ibm.com/support/docview.wss?uid=swg21700482] 21969706 [http://www-01.ibm.com/support/docview.wss?uid=swg21969706] Available on Versions MDM AE v11.x 
+MDM SE v11.x MDM AE v11.x 
+MDM SE v11.x MDM AE v11.x 
+MDM SE v11.x 
+MDM CE v11.x MDM AE v11.x 
+MDM SE v11.x 
+MDM CE v11.x Is tool Supported? Yes As is As is As is 
+
+
+
+
+IBM® Support Assistant Data Collector (ISADC) [http://www-01.ibm.com/support/docview.wss?uid=swg21970559] What the tool does? (1) Collects logs & configuration files
+(2) Collects System Info
+(3) Collects metadata from DB When should it be used? (1) When facing general issues where system info and logs are needed.
+(2) When customers want to collect data automatically and submit it automatically to IBM FTP servers. Usage Example (1) IBM needs DB metadata from customer.
+(2) IBM needs to collect system and hardware info.
+(3) IBM needs to collect logs files.
+(4) Customers need to FTP collected files to IBM. 
+
+
+
+The MDM Performance Log Analyzer Tool [http://www-01.ibm.com/support/docview.wss?uid=swg21969917] What the tool does? (1) Analyzes SAM Logs, PM logs and Time logs
+(2) Generates reports, and analyzes the distribution of performance related metrics When should it be used? (1) When in depth analysis of latencies of transactions and performance state in general is required.
+(2) Should be used periodically to capture performance snap shots and to assess the health of the system.
+(3) Should be run for performance tuning purposes. Usage Example (1) Customers need to tune their environment to improve performance.
+(2) Customers need to have performance analyzes data (I. e. a snap shot of system performance) from before & after rolling out a change in customized code or new fixpack installation. 
+
+
+
+MDM Assistant Tool (MAT) [http://www-01.ibm.com/support/docview.wss?uid=swg21700482] What the tool does? (1) Collects System Resource Utilization info for any period of time.
+(2) Collects metadata or any desired info from DB. When should it be used? When facing these symptoms: Poor performance, system crashes, thread hung, data corruption issues or when you need to run any queries against the database for general issues.
+
+Part 1: pMon.sh script: Used when IBM needs info about CPU, memory and I/O from customer's servers (MDM or DB server). This part of the tool would mostly be used for performance & system crash related issues.
+
+Part 2: dbChecker.sh script: Used when
+(1) when IBM needs data collected from customers database. (SQL input files provided for additional flexibility).
+(2) when customers need to run SQL statements against DB easily, quickly and without DBA expertise. This part of the tool would be used for general customers' issues. Usage Example (1) IBM needs the content of some tables such as CONFIGELEMENT table.
+(2) IBM might need to run an SQL statement to find validate data at the DB level.
+(3) IBM needs to find out how much CPU & memory used by the system during a batch job. 
+
+
+
+MDM Log Assistant Tool [http://www-01.ibm.com/support/docview.wss?uid=swg21969706] What the tool does? (1) It searches logs for ALL WAS exceptions and Warning.
+(2) It searches log files for most common MDM errors.
+(3) It divides logs by date or date range preserving log directory structure. When should it be used? (1) When IBM receives log files from customer.
+(2) When you need to examine the logs for errors and warnings.
+(3) When log files are too large to manually examine them.
+(4) When log files contain data for dates irrelevant to the problem investigation Usage Example (1) IBM needs to view customer's logs to understand system activity.
+(2) IBM needs to narrow down the searching in customer logs to relevant log data.
+(3) IBM needs to complete the logs analysis faster than manual searching 
+
+
+PRODUCT ALIAS/SYNONYM
+ IBM InfoSphere Master Data Management Server
+MDM Server
+MDM AE
+MDM Server Advanced Edition
+MDM Advanced Edition
+MDM CE
+MDM Server Collaborative Edition
+MDM Collaborative Edition
+MDM SE
+MDM Server Standard Edition
+MDM Standard Edition

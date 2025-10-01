@@ -1,0 +1,153 @@
+Title: IBM JR43539: DEACTIVATED SNAPSHOT GETS ACTIVATED - United States
+
+Text:
+  A FIX IS AVAILABLE
+Version 7.5.1 Fix Pack 1 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24033036]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  We have taken the following steps when migrating a new snapshot
+   to
+   production
+   
+   1. Moved all in-flight instances to the latest snapshot
+   2. Made the latest snapshot the default.
+   
+   Yet we see that some new instances get created against the old
+   snapshot.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  Users of BPM Express, BPM Standard, and     *
+   *                  BPM Advanced.                               *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: When installing new snapshots and       *
+   *                      migrating instances. The previous       *
+   *                      snapshot is deactivated and archived,   *
+   *                      and only one snapshot per process       *
+   *                      application is active. New instances    *
+   *                      will appear on the previous snapshot.   *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   Running an exposed service by url/project page is causing old
+   snapshots to activate. Snapshot would get activated by
+   executing a favorite (taskless service). If that favorite
+   belonged to a deactivated versioning context, it would cause
+   an old snapshot to activate.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Introduces two new EJB paramaters for deactivated snapshots,
+   those parameters are checked before listing snapshots.
+   
+   Install/Dependency information is available in the readme.txt
+   on FixCentral. When the user goes to the download files page
+   in FixCentral, the readme will be available with the fix
+   package as a separate download
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR43539
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM ADVANCED
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9400
+   
+   
+ * REPORTED RELEASE
+   750
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-07-24
+   
+   
+ * CLOSED DATE
+   2012-10-17
+   
+   
+ * LAST MODIFIED DATE
+   2012-10-17
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    IC82062 [http://www-01.ibm.com/support/docview.wss?uid=swg1IC82062]
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   BPM ADVANCED
+   
+   
+ * FIXED COMPONENT ID
+   5725C9400
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R750 PSY
+   UP

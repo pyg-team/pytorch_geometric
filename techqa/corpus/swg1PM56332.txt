@@ -1,0 +1,171 @@
+Title: IBM PM56332: ODC SUPPORT FOR CLONESEPARATORCHANGE PROPERTY - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Download WebSphere Virtual Enterprise Version 7.0 Fix Pack 3 [http://www-01.ibm.com/support/docview.wss?uid=swg24033858]
+IBM WebSphere Virtual Enterprise Version 7.0 Fix Pack 4, also known as Version 7.0.0.4 is available for download. [http://www-01.ibm.com/support/docview.wss?uid=swg24035621]
+IBM WebSphere Virtual Enterprise Version 7.0 Fix Pack 5, also known as Version 7.0.0.5 is available for download. [http://www-01.ibm.com/support/docview.wss?uid=swg24037897]
+IBM WebSphere Virtual Enterprise Version 7.0 Fix Pack 6, also known as Version 7.0.0.6 is available for download. [http://www-01.ibm.com/support/docview.wss?uid=swg24039270]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  On the JSESSIONID a delimiter is used to parse the session ID
+   from the Application Server ID.  This delimiter is set and
+   returned from the Application Server to the ODR for session
+   routing.
+   
+   By default this is set to colon (:) in the application server.
+   However, the Application Server session management or
+   webcontainer (deprecated in 7.0) properties CloneSeparatorChange
+   and CloneSeparator can be used to change the delimiter to
+   another character.  Most commonly if changed this will be set to
+   plus sign (+) however, this does not have to be the case.
+   
+   Since the delimiter is returned from the application server and
+   the ODR can route to multiple application servers there is no
+   guarantee that each application server will use the same
+   delimiter.  However, currently the ODR can only read a single
+   delimiter.  This means that the ODR could fail to route to
+   application servers which are not using the same delimiter that
+   the ODR is using.  This can be seen in the ODR trace as the
+   example below:
+   
+   [1/5/12 12:17:19:928 EST] 0000001c XDDWLMClientS 3   delimiter
+   ':' not
+   found in session ID '1111j4KdU1111DCtec_MuEiujK_+16mkl87y6'
+   
+   This shows a response from an application server which is using
+   a separator of '+' however, the ODR is looking for a delimiter
+   of ':'
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Set all the CloneSeparators in the application servers to the
+   same value and use this value in the ODR.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  All users of WebSphere Virtual Enterprise   *
+   *                  that                                        *
+   *                  have configured a web container to use non- *
+   *                  default clone id separators.                *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: The On Demand Router does not properly  *
+   *                      handle non-default clone id             *
+   *                      separators.                             *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   The On Demand Router does not properly handle clone id
+   separators
+   when web container custom property CloneSeparatorChange has been
+   set to true.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Support for the CloneSeparatorChange web customer property has
+   been added to the On Demand Configuration component. Please note
+   that PM55852 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM55852] is also needed before the On Demand Router will
+   properly handle the CloneSeparatorChange web customer property.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM56332
+   
+   
+ * REPORTED COMPONENT NAME
+   WAS VIRTUAL ENT
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9203
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-01-19
+   
+   
+ * CLOSED DATE
+   2012-04-02
+   
+   
+ * LAST MODIFIED DATE
+   2012-04-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WAS VIRTUAL ENT
+   
+   
+ * FIXED COMPONENT ID
+   5725C9203
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R700 PSY
+   UP

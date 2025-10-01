@@ -1,0 +1,209 @@
+Title: IBM IV59920: NO MEANS OF ENCRYPTING IMPACT.OBJECTSERVER.SECUREPASSWORD THAT WILL ALLOW AUTHENTICATION TO AN OBJECT SERVER USING FIPS. - United States
+
+Text:
+  DIRECT LINKS TO FIXES
+6.1.0-TIV-BSM-FP0004-zlinux [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Business+Service+Manager&fixids=6.1.0-TIV-BSM-FP0004-zlinux&source=SAR]
+6.1.0-TIV-BSM-FP0004-windows [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Business+Service+Manager&fixids=6.1.0-TIV-BSM-FP0004-windows&source=SAR]
+6.1.0-TIV-BSM-FP0004-solaris [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Business+Service+Manager&fixids=6.1.0-TIV-BSM-FP0004-solaris&source=SAR]
+6.1.0-TIV-BSM-FP0004-linux [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Business+Service+Manager&fixids=6.1.0-TIV-BSM-FP0004-linux&source=SAR]
+6.1.0-TIV-BSM-FP0004-aix [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Business+Service+Manager&fixids=6.1.0-TIV-BSM-FP0004-aix&source=SAR]
+6.1.0-TIV-NCI-FP0004-zlinux [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=6.1.0-TIV-NCI-FP0004-zlinux&source=SAR]
+6.1.0-TIV-NCI-FP0004-windows [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=6.1.0-TIV-NCI-FP0004-windows&source=SAR]
+6.1.0-TIV-NCI-FP0004-solaris [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=6.1.0-TIV-NCI-FP0004-solaris&source=SAR]
+6.1.0-TIV-NCI-FP0004-aix [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=6.1.0-TIV-NCI-FP0004-aix&source=SAR]
+6.1.0-TIV-NCI-FP0004-linux [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=6.1.0-TIV-NCI-FP0004-linux&source=SAR]
+6.1.1-TIV-BSM-FP0004-windows [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Business+Service+Manager&fixids=6.1.1-TIV-BSM-FP0004-windows&source=SAR]
+6.1.1-TIV-BSM-FP0004-zlinux [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Business+Service+Manager&fixids=6.1.1-TIV-BSM-FP0004-zlinux&source=SAR]
+6.1.1-TIV-BSM-FP0004-solaris [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Business+Service+Manager&fixids=6.1.1-TIV-BSM-FP0004-solaris&source=SAR]
+6.1.1-TIV-BSM-FP0004-linux [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Business+Service+Manager&fixids=6.1.1-TIV-BSM-FP0004-linux&source=SAR]
+6.1.1-TIV-BSM-FP0004-aix [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Business+Service+Manager&fixids=6.1.1-TIV-BSM-FP0004-aix&source=SAR]
+6.1.1-TIV-NCI-FP0004-windows [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=6.1.1-TIV-NCI-FP0004-windows&source=SAR]
+6.1.1-TIV-NCI-FP0004-zlinux [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=6.1.1-TIV-NCI-FP0004-zlinux&source=SAR]
+6.1.1-TIV-NCI-FP0004-solaris [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=6.1.1-TIV-NCI-FP0004-solaris&source=SAR]
+6.1.1-TIV-NCI-FP0004-aix [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=6.1.1-TIV-NCI-FP0004-aix&source=SAR]
+6.1.1-TIV-NCI-FP0004-linux [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=6.1.1-TIV-NCI-FP0004-linux&source=SAR]
+5.1.1-TIV-NCI-FP0003-Linux [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=5.1.1-TIV-NCI-FP0003-Linux&source=SAR]
+5.1.1-TIV-NCI-FP0003-HPUX [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=5.1.1-TIV-NCI-FP0003-HPUX&source=SAR]
+5.1.1-TIV-NCI-FP0003-win [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=5.1.1-TIV-NCI-FP0003-win&source=SAR]
+5.1.1-TIV-NCI-FP0003-Solaris [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=5.1.1-TIV-NCI-FP0003-Solaris&source=SAR]
+5.1.1-TIV-NCI-FP0003-Linuxs390 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=5.1.1-TIV-NCI-FP0003-Linuxs390&source=SAR]
+5.1.1-TIV-NCI-FP0003-aix [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=5.1.1-TIV-NCI-FP0003-aix&source=SAR]
+6.1.1-TIV-BSM-FP0002-windows [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Business+Service+Manager&fixids=6.1.1-TIV-BSM-FP0002-windows&source=SAR]
+6.1.1-TIV-BSM-FP0002-zlinux [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Business+Service+Manager&fixids=6.1.1-TIV-BSM-FP0002-zlinux&source=SAR]
+6.1.1-TIV-BSM-FP0002-solaris [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Business+Service+Manager&fixids=6.1.1-TIV-BSM-FP0002-solaris&source=SAR]
+6.1.1-TIV-BSM-FP0002-aix [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Business+Service+Manager&fixids=6.1.1-TIV-BSM-FP0002-aix&source=SAR]
+6.1.1-TIV-BSM-FP0002-linux [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Business+Service+Manager&fixids=6.1.1-TIV-BSM-FP0002-linux&source=SAR]
+IBM Tivoli Netcool/Impact V5.1.1 Fix Pack 3 (5.1.1-TIV-NCI-FP0003) [http://www-01.ibm.com/support/docview.wss?uid=swg24036880]
+IBM Tivoli Netcool/Impact V6.1.1 Fix Pack 4 (6.1.1-TIV-NCI-FP0004) [http://www-01.ibm.com/support/docview.wss?uid=swg24041504]
+IBM Tivoli Business Service Manager V6.1.1 Fix Pack 4(6.1.1-TIV-BSM-FP0004) [http://www-01.ibm.com/support/docview.wss?uid=swg24041505]
+IBM Tivoli Netcool/Impact V6.1.0 Fix Pack 4(6.1.0-TIV-NCI-FP0004) [http://www-01.ibm.com/support/docview.wss?uid=swg24042500]
+IBM Tivoli Business Service Manager V6.1.0 Fix Pack 4(6.1.0-TIV-BSM-FP0004) [http://www-01.ibm.com/support/docview.wss?uid=swg24042501]
+IBM Tivoli Netcool/Impact V6.1.0 Fix Pack 4(6.1.0-TIV-NCI-FP0004) [http://www-01.ibm.com/support/docview.wss?uid=swg24042516]
+IBM Tivoli Netcool/Impact V6.1.1 Fix Pack 5 (6.1.1-TIV-NCI-FP0005) [http://www-01.ibm.com/support/docview.wss?uid=swg24044185]
+IBM Tivoli Business Service Manager V6.1.1 Fix Pack 5(6.1.1-TIV-BSM-FP0005) [http://www-01.ibm.com/support/docview.wss?uid=swg24044193]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  impact.objectserver.securepassword in <servername>_server.props
+   should be a means of connecting to an object server via a
+   secure method.  This works well enough generally if an object
+   server is in SecureMode and nco_g_crypt can be used to encrypt
+   the password, but if an object server is running secure using
+   FIPS as the algorithm then nco_g_crypt does not meet the FIPS
+   standard and the password will be rejected.  Other potential
+   options such as nco_aes_crypt or nci_crypt also fail, possibly
+   because the password generated is too long.  Impact appears to
+   be treating the password value as unencrypted.
+   
+   If the actual plain text password is used for
+   impact.objectserver.securepassword, rather than trying to
+   encrypt it, the connection works fine with FIPS, but this
+   creates a security risk.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Use the unencrypted password and tighten the file permissions
+   on <servername>_server.props.  Alternatively don't use FIPS.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * All Impact Users                                             *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * NO MEANS OF ENCRYPTING IMPACT.OBJECTSERVER.SECUREPASSWORD    *
+   * THAT                                                         *
+   *  WILL ALLOW AUTHENTICATION TO AN OBJECT SERVER USING FIPS.   *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   The Secure Password is saved as plain text instead of encrypted.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Changed the property to require the password to be encrypted.
+   
+   The fix for this APAR is contained in the following maintenance
+   packages:
+   
+   |Fix Pack|5.1.1-TIV-NCI-FP0003
+   |Fix Pack|6.1.0-TIV-NCI-FP0003
+   |Fix Pack|6.1.1-TIV-NCI-FP0002
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV59920
+   
+   
+ * REPORTED COMPONENT NAME
+   NETCOOL/IMPACT
+   
+   
+ * REPORTED COMPONENT ID
+   5724O59IS
+   
+   
+ * REPORTED RELEASE
+   511
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2014-04-29
+   
+   
+ * CLOSED DATE
+   2014-06-27
+   
+   
+ * LAST MODIFIED DATE
+   2015-02-03
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  UNKNOWN
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   NETCOOL/IMPACT
+   
+   
+ * FIXED COMPONENT ID
+   5724O59IS
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R511 PSY
+   UP
+   
+   
+ * R610 PSY
+   UP
+   
+   
+ * R611 PSY
+   UP

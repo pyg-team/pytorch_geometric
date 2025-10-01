@@ -1,0 +1,39 @@
+Title: IBM Update command failing, prompted with Warning 206 ' An invalid character has been found on a command ' in SPSS - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ I am using the update command as found in the Command Syntax Reference and made the necessary changes to accommodate my file.
+I have my open file indicated by an asterisk and the path of the transaction file along with a /BY command.
+
+UPDATE FILE=*
+/FILE = C:\Program Files\SPSS\MyFile.sav
+/BY ID
+/MAP.
+
+When I run the commands I am prompted with the following error messages.
+
+Warning # 206 An invalid character has been found on a command
+
+Error # 5102 in column 15. Text: : Invalid symbol for this command. Check for spelling errors or special symbols. Syntax checking begins with the next slash. This command not executed.
+
+What am I doing wrong? 
+
+RESOLVING THE PROBLEM
+To resolve this just make sure that all file paths and name referenced are enclosed in quotes. You also need an EXECUTE command at the end of your UPDATE commands as well. Please observe this example syntax below.
+
+UPDATE FILE=*
+/FILE = 'C:\Program Files\SPSS\MyFile.sav'
+/BY ID
+/MAP.
+EXECUTE
+
+RELATED INFORMATION
+ Need more help? Our Statistics forum is Live! [https://developer.ibm.com/answers/topics/statistics.html?smartspace=predictive-analytics]
+
+
+ 
+
+HISTORICAL NUMBER
+ 44830

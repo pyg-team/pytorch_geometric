@@ -1,0 +1,166 @@
+Title: IBM IV36526: REMOTE DEPLOY OF KQ7 AGENT FROM 6.2.3 MS APPS CD WILL DEPLOY AND CONFIGURE AT ITM RELEASE 6.2.3 FP1, BUT FAILS AT 6.2.3 FP2. - United States
+
+Text:
+  FIXES ARE AVAILABLE
+IBM Tivoli Monitoring 6.2.3 Fix Pack 5 (6.2.3-TIV-ITM-FP0005) [http://www-01.ibm.com/support/docview.wss?uid=swg24035801]
+IBM Tivoli Monitoring 6.2.3 Fix Pack 4 (6.2.3-TIV-ITM-FP0004) [http://www-01.ibm.com/support/docview.wss?uid=swg24034252]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  APAR Type: Field
+   Approver: JM for XS
+   Severity: 2
+   Reported Release: 623 FP2
+   Compid:  5608A41CI Distributed Installer
+   Abstract: Remote Deploy of KQ7 agent from 6.2.3 MS Apps CD will
+             deploy and configure at ITM release 6.2.3 FP1, but
+             fails at 6.2.3 FP2.
+   Environment:
+     Windows only. Appears to be a regression from 6.2.3 FP1 to
+     6.2.3 FP2.
+   Problem Description:
+     See abstract. This error also occurs when either silent
+     install or Remote Deploy is used to install and automatically
+     configure the agent with default settings.
+   Recreate Instructions:
+     1. Install ITM 6.2.3 FP2 on the endpoint.
+     2. Addbundles for the MS Apps CD release 6.2.3 IIS Agent code
+        KQ7 to an existing TEMS that the endpoint in 1 connects to.
+     3. Deploy the KQ7 agent to the endpoint.
+     4. The deploy should configure the instance and allow the
+        agent to connect to the TEMS but it doesn't.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Configure the KQ7 agent at the endpoint via Manage Tivoli
+     Enterprise Monitoring Services (MTEMS-kinconfg.exe).
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Remote deployment of ITCAM for IIS 6.23 agent (KQ7) fails to
+   configure at IBM Tivoli Monitoring release 6.23 FP2.
+   
+   
+   When remote deploying the IBM Tivoli Composite Application
+   Manager for Microsoft Internet Information Services (IIS) Agent
+   version 6.23, if the endpoint is a Windows system and the IBM
+   Tivoli Monitoring OS agent on the endpoint is version 6.23 FP2,
+   the ITCAM IIS agent is incorrectly configured and the agent is
+   not started.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The code was changed to correctly configure the agent.
+   
+   The fix for this APAR is contained in the following maintenance
+   packages:
+   
+     | fix pack | 6.2.3-TIV-ITM-FP0004
+     | fix pack | 6.3.0-TIV-ITM-FP0001
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  Reconfigure the ITCAM for IIS Agent (KQ7) agent on the endpoint.
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV36526
+   
+   
+ * REPORTED COMPONENT NAME
+   OMEG DIST INSTA
+   
+   
+ * REPORTED COMPONENT ID
+   5608A41CI
+   
+   
+ * REPORTED RELEASE
+   623
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-02-09
+   
+   
+ * CLOSED DATE
+   2013-04-05
+   
+   
+ * LAST MODIFIED DATE
+   2013-10-14
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   OMEG DIST INSTA
+   
+   
+ * FIXED COMPONENT ID
+   5608A41CI
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R623 PSY
+   UP

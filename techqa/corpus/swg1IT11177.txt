@@ -1,0 +1,155 @@
+Title: IBM IT11177: Update docs to show AMQ9489 is an error message that can be suppressed - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The IBM Knowledge Center article "Queue manager error logs"
+   contains a list of error messages that can be suppressed using
+   the parameter SuppressMessage under the QMErrorLog stanza of the
+   queue manager configuration file, qm.ini. Although AMQ9489 is an
+   error message that can be suppressed, it is not listed.
+   
+   http://www-01.ibm.com/support/knowledgecenter/SSFKSJ_8.0.0/com.i
+   bm.mq.con.doc/q019020_.htm [http://www-01.ibm.com/support/knowledgecenter/SSFKSJ_8.0.0/com.ibm.mq.con.doc/q019020_.htm]
+   
+   http://www-01.ibm.com/support/knowledgecenter/SSFKSJ_7.5.0/com.i
+   bm.mq.con.doc/q019020_.htm [http://www-01.ibm.com/support/knowledgecenter/SSFKSJ_7.5.0/com.ibm.mq.con.doc/q019020_.htm]
+   
+   http://www-01.ibm.com/support/knowledgecenter/SSFKSJ_7.1.0/com.i
+   bm.mq.doc/fa12710_.htm [http://www-01.ibm.com/support/knowledgecenter/SSFKSJ_7.1.0/com.ibm.mq.doc/fa12710_.htm]
+   
+   http://www-01.ibm.com/support/knowledgecenter/SSFKSJ_7.0.1/com.i
+   bm.mq.amqzag.doc/fa12710_.htm [http://www-01.ibm.com/support/knowledgecenter/SSFKSJ_7.0.1/com.ibm.mq.amqzag.doc/fa12710_.htm]
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   Users of the product documentation at the page mentioned.
+   
+   
+   Platforms affected:
+   MultiPlatform
+   
+   ****************************************************************
+   PROBLEM DESCRIPTION:
+   The page does not show that AMQ9489 is an error message that can
+   be suppressed. There are also other errors and omissions within
+   the lists that will be corrected at the same time.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The page will be updated to show AMQ9489 is an error message
+   that can be suppressed. In addition to this, other errors in the
+   documented lists at these pages will be corrected.
+   
+   For all releases, these lines will be added:
+   5211 - Maximum property name length exceeded.
+   6254 - The system could not dynamically load shared library
+   9489 - SVRCONN max instances limit exceeded
+   9490 - SVRCONN max instances per client limit exceeded
+   9637 - Channel is lacking a certificate
+   
+   For MQ 7.0.1, these lines will also be added:
+   5973 - Distributed publish/subscribe subscription inhibited
+   5974 - Distributed publish/subscribe publication inhibited
+   
+   For MQ 7.0.1, these lines will be removed, since they apply only
+   to 7.1 and later releases:
+   9776 - Channel was blocked by user id
+   9777 - Channel was blocked by NOACCESS map
+   9782 - Connection was blocked by address
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT11177
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ BASE MULTIP
+   
+   
+ * REPORTED COMPONENT ID
+   5724H7241
+   
+   
+ * REPORTED RELEASE
+   750
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-09-11
+   
+   
+ * CLOSED DATE
+   2015-09-29
+   
+   
+ * LAST MODIFIED DATE
+   2015-09-29
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

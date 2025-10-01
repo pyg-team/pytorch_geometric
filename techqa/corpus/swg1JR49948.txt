@@ -1,0 +1,172 @@
+Title: IBM JR49948: CLUSTER MEMBERS CANNOT BE WITH SAME STARTING PORTS ON DIFFERENT NODES IN DEPLOYMENT ENVIRONMENT WIZARD - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Version 8.5 Refresh Pack 5 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24037683]
+Version 8.5.0 Fix Pack 2 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24040683]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When you specify the same starting ports for two cluster
+   members that belong to different nodes, the Deployment
+   Environment wizard shows the following error message:
+   
+   "The port number for the subsequent cluster groups must
+   increase by 20.
+   
+   Starting ports in the same node must have a difference of at
+   least 20 between their port numbers. &#65442;&#65506;&#65410;&#65452;
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Use BPMConfig with initialPortAssignment parameter
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  IBM Business Process Manager (BPM)          *
+   *                  Advanced                                    *
+   *                  IBM BPM Standard                            *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: When you specify the same starting      *
+   *                      ports for two cluster members that      *
+   *                      belong to different nodes, the          *
+   *                      Deployment Environment wizard shows     *
+   *                      the following error message:            *
+   *                      "The port number for the subsequent     *
+   *                      cluster groups must increase by 20.     *
+   *                      Starting ports in the same node must    *
+   *                      have a difference of at least 20        *
+   *                      between their port numbers."            *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   In the Deployment Environment wizard, you cannot specify
+   cluster members on different nodes with the same starting
+   ports.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A fix is available for IBM BPM V8.5.0.1 so that in the
+   Deployment Environment wizard you can specify the same
+   starting ports for different cluster members even on different
+   nodes.
+   
+   On Fix Central (http://www.ibm.com/support/fixcentral), search
+   for JR49948:
+    1. Select IBM Business Process Manager with your edition from
+   the product selector, the installed version to the fix pack
+   level, and your platform, and then click Continue.
+    2. Select APAR or SPR, enter JR49948, and click Continue.
+   
+   When you download fix packages, ensure that you also download
+   the readme file for each fix. Review each readme file for
+   additional installation instructions and information about the
+   fix.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  Not applicable
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR49948
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM ADVANCED
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9400
+   
+   
+ * REPORTED RELEASE
+   850
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-04-11
+   
+   
+ * CLOSED DATE
+   2014-06-20
+   
+   
+ * LAST MODIFIED DATE
+   2014-06-20
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   BPM ADVANCED
+   
+   
+ * FIXED COMPONENT ID
+   5725C9400
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R800 PSY
+   UP

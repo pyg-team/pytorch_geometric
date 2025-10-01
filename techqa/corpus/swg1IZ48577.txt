@@ -1,0 +1,137 @@
+Title: IBM IZ48577: REQUIREMENTS FOR MONITORING LPARS WITH CEC AGENT NOT CLEARLY DOCUMENTED IN USER'S GUIDE - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  IBM Tivoli Monitoring: CEC Base Agent User's Guide
+   does not clearly document the requirements to monitor an
+   LPAR.
+   
+   A section needs to be added under
+    "Requirements and agent-specific installation and
+    configuration information for the monitoring agent"
+   
+   Under heading:
+    "Requirements for the monitoring agent"
+   
+   This section should document what is necessary in order
+   for the CEC agent to monitor LPARs.
+   
+   Suggested Text:
+   ***
+   The CEC agent requires the following in order to be able to
+   monitor a remote system.
+   1) network connectivity to remote LPARs
+   2) remote LPAR must be running xmtopas/xmservd to support RSI
+   calls
+   3) open communications on UDP port 2279
+   
+   If an LPAR is being reported as un-monitored, possible causes
+   are:
+   1) ITM agent pointing to wrong CEC
+   2) ssh not configured correctly between CEC and HMC
+   <provide a link to the section of the manual where ssh setup is
+   discussed using key.pl>
+   3) xmservd/xmtopas not running on remote LPAR
+   4) communication on UDP port 2279 is blocked
+   *NOTE* CEC monitoring is NOT supported over firewalls.
+   If a firewall is in place between CEC and remote LPAR, opening
+   port 2279 for UDP may allow communications to work.
+   ***
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  The documentation was incomplete.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The documentation will be corrected in the 6.2.0.1 version of
+   the product.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ48577
+   
+   
+ * REPORTED COMPONENT NAME
+   ITM SE SYSP CEC
+   
+   
+ * REPORTED COMPONENT ID
+   5724C04CB
+   
+   
+ * REPORTED RELEASE
+   620
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-04-08
+   
+   
+ * CLOSED DATE
+   2009-04-30
+   
+   
+ * LAST MODIFIED DATE
+   2012-07-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

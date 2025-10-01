@@ -1,0 +1,39 @@
+Title: IBM Encryption compliance with FIPS 140-2 standard - United States
+
+Text:
+TSM encryption fips ssl TECHNOTE (FAQ)
+
+QUESTION
+ Do IBM Spectrum Protect products meet current FIPS 140-2 requirements? 
+
+ANSWER
+IBM Spectrum Protect version 7.1 and 8.1 server and client on Windows, AIX, HP, Sun and Linux utilize cryptographic modules that are compliant with the Federal Information Processing Standard (FIPS) 140-2. IBM Spectrum Protect server and client use GSKIT 8 packages, dependent upon the IBM Spectrum Protect server/client version, which include one of the following certificates, IBM Crypto for C v8.2.2.0 (ICC) or IBM Crypto for C v8.4.1.0 (ICC):
+
+http://csrc.nist.gov/groups/STM/cmvp/documents/140-1/140val-all.htm#1994 [http://csrc.nist.gov/groups/STM/cmvp/documents/140-1/140val-all.htm#1994] http://csrc.nist.gov/groups/STM/cmvp/documents/140-1/140val-all.htm#2420 [http://csrc.nist.gov/groups/STM/cmvp/documents/140-1/140val-all.htm#2420]
+
+FIPS compliant encryption is available in the following IBM Spectrum Protect functions:
+
+
+ * Passwords used internally by the IBM Spectrum Protect Server on Windows, AIX, HP, SUN and Linux 
+ * BA client and API encryption of file or application data before sending to IBM Spectrum Protect server storage. 
+ * SSL protected communications between the BA client and Server on Windows and AIX. 
+ * SSL protected communications between Servers 
+ * Container pool encryption
+
+
+IBM Spectrum Protect does not use FIPS compliant encryption in the following functions: 
+ * Passwords stored by the client. 
+ * IBM Spectrum Protect Client/Server authentication protocol outside of SSL configured environments. 
+ * 56bit DES client side encryption.
+
+
+Operations using Java do not use the FIPS certified java modules by default, this includes cloud operations, the Operations Center, and virtual environments. 
+
+Java must be configured to operate in FIPS mode. 
+https://www.ibm.com/support/knowledgecenter/en/SSYKE2_8.0.0/com.ibm.java.security.component.80.doc/security-component/fips.html [https://www.ibm.com/support/knowledgecenter/en/SSYKE2_8.0.0/com.ibm.java.security.component.80.doc/security-component/fips.html] 
+https://www.ibm.com/support/knowledgecenter/en/SSYKE2_8.0.0/com.ibm.java.security.component.80.doc/security-component/jsse2Docs/runfips.html [https://www.ibm.com/support/knowledgecenter/en/SSYKE2_8.0.0/com.ibm.java.security.component.80.doc/security-component/jsse2Docs/runfips.html] 
+
+https://csrc.nist.gov/projects/cryptographic-module-validation-program/Certificate/1993 [https://csrc.nist.gov/projects/cryptographic-module-validation-program/Certificate/1993] 
+https://csrc.nist.gov/projects/cryptographic-module-validation-program/Certificate/2715 [https://csrc.nist.gov/projects/cryptographic-module-validation-program/Certificate/2715] 
+
+Federal Information Processing Standards (FIPS) are standards and guidelines issued by the National Institute of Standards and Technology (NIST) for federal government computer systems. FIPS are developed when there are compelling federal government requirements for standards, such as for security and interoperability, but acceptable industry standards or solutions do not exist. Government agencies and financial institutions use these standards to ensure that the products conform to specified security requirements. For more information on these standards, see the National Institute of Standards and Technology Web site, at this link: http://csrc.nist.gov/publications/fips/ [http://csrc.nist.gov/publications/fips/].

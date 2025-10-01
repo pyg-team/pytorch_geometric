@@ -1,0 +1,24 @@
+Title: IBM The db2top Monitoring Utility - User Manuals - United States
+
+Text:
+db2top MANUAL
+
+ABSTRACT
+ The db2top is a tool that uses DB2 snapshot monitoring APIs to retrieve information about the database system. 
+
+CONTENT
+
+
+
+DB2 9.7 GA and later fix packs contain the db2top command. Syntax of the db2top command. [http://publib.boulder.ibm.com/infocenter/db2luw/v9r7/index.jsp?topic=/com.ibm.db2.luw.admin.cmd.doc/doc/r0025222.html]
+
+DB2 9.5 FP2 and later contains the db2top command. Use this link to the DB2 9.5 Information Center for the syntax of the db2top command. [http://publib.boulder.ibm.com/infocenter/db2luw/v9r5/index.jsp?topic=/com.ibm.db2.luw.wn.doc/doc/c0025213.html]
+
+DB2 9.1 FP6 and later contains the db2top command. For more information please read the DB2 V9.1 Information Center page entitled: Database monitoring enhanced with the db2top utility [http://publib.boulder.ibm.com/infocenter/db2luw/v9/index.jsp?topic=/com.ibm.db2.udb.rn.doc/doc/c0025213.htm] 
+
+ 
+
+The db2top command is available in DB2® Universal Database™ (DB2 UDB) Version 8.1 FixPak 17 (also known as DB2 UDB Version 8.2 FixPak 10). The attached .pdf files also explains this utility for DB2 Version 8.
+
+
+db2top.pdf [/support/docview.wss?uid=swg27009542&aid=2] [/support/docview.wss?uid=swg27009542&aid=1] db2top - what's new.pdf [/support/docview.wss?uid=swg27009542&aid=4] [/support/docview.wss?uid=swg27009542&aid=3]

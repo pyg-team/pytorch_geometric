@@ -1,0 +1,62 @@
+Title: IBM Configuring DASH High Availability nodes into maintenance mode in case of db2 outage. - United States
+
+Text:
+DASHL2HAB; db2 down; HA configuration; HA down TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Dashboard Application Services Hub nodes can go out of service if they are in an HA cluster and the db2 instance supporting the cluster has a catastrophic event. This document describes how to put DASH nodes into maintenance mode so that users can log in and continue to work until the db2 instance is restored. 
+
+SYMPTOM
+All or most of DASH nodes in an HA cluster become unresponsive and/or users get blank screens upon logging in. 
+
+DASH node will not restart.
+
+
+CAUSE
+The db2 database instance has become unavailable either due to communications issues or problems with the db2 database itself.
+
+
+DIAGNOSING THE PROBLEM
+Checking the SystemOut.log file for DASH shows the following errors: 
+
+[6/17/16 15:47:58:619 CDT] 0000023a AnalyticsServ Z Getting db connection from dataSource: com.ibm.ws.rsadapter.jdbc.WSJdbcDataSource@9b88f74b
+[6/17/16 15:47:58:619 CDT] 0000023a AnalyticsServ 2 runQuery: SELECT * FROM TIP.CONSOLEANALYTICS_DASHBOARDACCESS
+[6/17/16 15:50:28:394 CDT] 000000a3 ConnectionEve W J2CA0206W: A connection error occurred. To help determine the problem, enable the Diagnose Connection Usage option on the Connection Factory or Data Source. This is the multithreaded access detection option. Alternatively check that the Database or MessageProvider is available.
+[6/17/16 15:50:28:395 CDT] 000000a3 ConnectionEve A J2CA0056I: The Connection Manager received a fatal connection error from the Resource Adapter for resource jdbc/tipds. The exception is: com.ibm.db2.jcc.am.DisconnectNonTransientConnectionException: [jcc][t4][2030][11211][3.64.106] A communication error occurred during operations on the connection's underlying socket, socket input stream, 
+or socket output stream. Error location: Reply.fill() - insufficient data (-1). Message: Insufficient data. ERRORCODE=-4499, SQLSTATE=08001
+[6/17/16 15:50:28:396 CDT] 000000a3 SystemErr R java.lang.NullPointerException
+[6/17/16 15:50:28:396 CDT] 000000a3 SystemErr R at com.ibm.isclite.service.datastore.analytics.AnalyticsServiceImpl.runQuery(AnalyticsServiceImpl.java:589)
+
+Upon further investigation, in this case, it is found that db2 is not functioning.
+
+
+RESOLVING THE PROBLEM
+If it is determined that the db2 instance cannot be recovered quickly, use the following process to put the DASH nodes into maintenance mode. This will allow users to log in and function normally however, it will not allow changes to Pages, Roles, etc. that would normally be propagated across HA nodes. 
+
+On each DASH node in the cluster: 
+
+1) Create a back-up of the resources.xml and delete the "tipds" WAS datasource as detailed in the following technical note: 
+
+http://www-01.ibm.com/support/docview.wss?uid=swg21985052 [http://www-01.ibm.com/support/docview.wss?uid=swg21985052] 
+
+2) Create a file "global.lock" under the following directory on each DASH server:
+
+<JazzSM Home>/profile/config/cells/JazzSMNode01Cell/applications/isc.ear/deployments/isc/isclite.war/WEB-INF 
+
+The file can be empty as it is the existence of the file that locks the system. 
+
+3) Stop and restart the DASH server. 
+
+At this point, the users should be able to log in normally though again, no changes to Pages, Roles, etc. may be done. When DB2 is recovered do the following steps to re-establish the cluster on each DASH server:
+
+1) Stop the DASH server
+
+2) Restore the resources.xml to the backup taken.
+
+3) Remove the "global.lock" file under:
+
+<JazzSM Home>/profile/config/cells/JazzSMNode01Cell/applications/isc.ear/deployments/isc/isclite.war/WEB-INF
+
+4) Restart the DASH server
+
+As each node is restarted it will rejoin with the HA cluster.

@@ -1,0 +1,19 @@
+Title: IBM ISAM /  Sharepoint Integration using mutiple replicated Webseals - United States
+
+Text:
+Sharepoint; Integration; Replicated; Webseals; FELB; ISAM; Appliance; 8.0.1; 8.0; 9.0 TECHNOTE (FAQ)
+
+QUESTION
+ Is it possible to configure the ISAM Appliance Integrated with Sharepoint using SAML for Claims-based Authentication in a Multiple replicated Webseal environment 
+
+ANSWER
+There is no way of sharing the cookies between IE and MS Client in a highly-available WebSEAL environment.
+The best option is to configure the load balancer to use sticky / persistent sessions and, to fail over
+to a backup WebSEAL instance in the case where the primary is unresponsive. This could be achieved
+by using Source Hashing algorithm (an algorithm supported by ISAM's FELB implementation -
+
+https://www-01.ibm.com/support/knowledgecenter/SSPREK_9.0.0/com.ibm.isam.doc/admin/task/tsk_gui_felb_mng.html [https://www-01.ibm.com/support/knowledgecenter/SSPREK_9.0.0/com.ibm.isam.doc/admin/task/tsk_gui_felb_mng.html]).
+
+This ensures user requests are sent to the correct WebSEAL instance after authentication while still allowing a degree of automated fail-over. 
+
+The only real limitation here is that if the primary goes down, while continuation of service will be observed, user sessions will be lost across IE/MSClient and users will need to re-authenticate with the secondary WebSEAL instance .

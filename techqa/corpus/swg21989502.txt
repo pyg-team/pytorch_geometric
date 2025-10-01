@@ -1,0 +1,49 @@
+Title: IBM LSMR020I - Restart not specified for the Run Task operation - United States
+
+Text:
+LSMR020I TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Connect:Direct is restarting a process for some unrelated reason and you receive an LSMR020I error message. 
+
+SYMPTOM
+Your Connect:Direct process script was restarted but an embedded Run Task statement is not executed on the restart.
+
+
+CAUSE
+Restart was not specified in either the SYSOPTS parameter in the process script or the Initialization Parameters.
+
+DIAGNOSING THE PROBLEM
+When a Connect:Direct process is restarted, the embedded Run Task is not executed. This event is noted in the Statistics.
+
+RESOLVING THE PROBLEM
+The Connect:Direct Process was restarted. Neither the original session manager nor the Run Task child process was found to be executing. Restart was not specified in either the SYSOPTS parameter or the Initialization Parameters.
+
+What this means is that a process script was running then for some reason was restarted - usually due to a network timeout or temporary loss of communication with the partner node.
+The process script has a Run Task statement and the Run Task was not restarted when the process script was restarted.
+
+There are parameters in C:D that specify whether or not a Run Task statement is restarted within a process script that is restarted.
+There are instances where it might not be desirable for a Run Task to execute again if a process script is restarted.
+
+
+
+
+Therefore a parameter is available to control this.
+
+There are two places where this control is specified.
+1. In the Initparms, in the 'TCQ Information' section, you have the following parameter.
+runtask.restart=N
+This is the default.
+By default, restarting the Run Task in a process script that is restarted is set to 'No' - do not restart the Run Task.
+
+You then have the ability to override this parameter on a process by process basis using a restart(yes) or restart(no) parameter in the SYSOPTS clause of the Run Task statement.
+Following is an EXAMPLE of how you can add this parameter in the Run Task statement. 
+
+
+TESTBAT RUN TASK PNODE (PGM=Windows)
+SYSOPTS="CMD(cmd.exe /c e:\test.bat >> c:\temp\makefile.log 2>~&1) restart(yes)"
+
+You can choose to control this from either the Initparms or with the process script or both.
+It has been observed that most people prefer to control the Run Task restart from within the process script. But the choice is yours.
+
+To resolve the LSMR020I errors, you will need to either make the change in Initparms or add the parameter to the process scripts.

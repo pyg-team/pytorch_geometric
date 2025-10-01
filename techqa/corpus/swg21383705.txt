@@ -1,0 +1,35 @@
+Title: IBM Debugging UNIX install issues - United States
+
+Text:
+UNIX; Install; Debug TECHNOTE (TROUBLESHOOTING)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ English 
+
+PROBLEM(ABSTRACT)
+ If you are having problems installing Maximo Products on UNIX, it may be useful to collect the Debugging information. 
+
+SYMPTOM
+Installer fails on UNIX
+
+
+RESOLVING THE PROBLEM
+To capture the debug output from the Unix command line clients need to perform the following: 
+
+Enter one of the following (based on which shell) at the command line prior to executing the installer:
+
+export LAX_DEBUG=true 
+or 
+setenv LAX_DEBUG true 
+or
+LAX_DEBUG=true 
+or 
+set LAX_DEBUG or whatever would be appropriate for the Unix shell.
+
+Then run the installer. The output that is produced should help debug the installer. If you cannot determine the issue based on the Debug information, please open a PMR and include the Debugging information. 
+
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Systems and Asset Management Tivoli Asset Management for IT Not Applicable Systems and Asset Management Tivoli Change and Configuration Management Database Not Applicable Systems and Asset Management Tivoli Service Request Manager Not Applicable

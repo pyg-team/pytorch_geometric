@@ -1,0 +1,155 @@
+Title: IBM IJ08641: ADAPTER FIRMWARE UPGRADE COULD FAIL W/ FCA_ERR6 AND SENSE 518 - United States
+
+Text:
+AIX SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Adapter firmware upgrade could fail with FCA_ERR6
+   and sense data 518
+   
+   -------------Cut-------------------------
+   LABEL:      FCA_ERR6
+   ..
+   ..
+   ..
+   
+   Detail Data
+   SENSE DATA
+   0000 0020 0000 0518 0000 0005 0000 0000 0000 00AC 0000
+   0000 1000 0090 FAA0 5444
+                   ^^^
+   -------------Cut-------------------------
+   
+   This could happen under the following sequence of events:
+   
+   1) Firmware upgrade is performed on an unused fcs
+   instance
+   2) a monitoring application like fcstat opens the same
+   adapter
+      at the same time
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  1) retry adapter microcode upgrade
+   or
+   2) perform microcode upgrade on actively used fcs
+   instances
+   or
+   3) stop monitoring applications from polling the adapter
+   or
+   4) If all adapters fcs instances are unused, place
+   protocol driver associated with
+      the firmware upgrade in a defined state with the
+   following command:
+   
+   Example: Assuming your upgrading firmware on fcs0
+   rmdev -Rl fscsi0
+   
+   The above will place fscsi0 in a defined state
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Adapter microcode update might fail with FCA_ERR6 and sense
+   code 518
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  code modified to return error to the open thread, if adapter
+   microcode update is already in progress
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IJ08641
+   
+   
+ * REPORTED COMPONENT NAME
+   AIX V7.2
+   
+   
+ * REPORTED COMPONENT ID
+   5765CD200
+   
+   
+ * REPORTED RELEASE
+   720
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SUBMITTED DATE
+   2018-08-20
+   
+   
+ * CLOSED DATE
+   2018-08-20
+   
+   
+ * LAST MODIFIED DATE
+   2018-08-20
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    IJ06644 [http://www-01.ibm.com/support/docview.wss?uid=isg1IJ06644]
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   AIX V7.2
+   
+   
+ * FIXED COMPONENT ID
+   5765CD200
+   
+   
+
+APPLICABLE COMPONENT LEVELS

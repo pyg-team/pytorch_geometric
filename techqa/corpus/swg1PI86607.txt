@@ -1,0 +1,139 @@
+Title: IBM PI86607: WXS 8.6.1 install can fail with a bad JAVA version for WAS 8.5.5 starting at 8.5.5.11 even if the JAVA version is supported - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The install of WXS fails with an error stating that the Java
+   version is incorrect even if Java 8 is installed.
+   
+   Error seen:
+   
+   Package IBM WebSphere
+   eXtreme Scale for WebSphere Application Server requires a
+   minimum SDK Java Technology Edition Version 7.0 or higher
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  Users of WebSphere Application server       *
+   *                  8.5.5 who attempt to install WebSphere      *
+   *                  eXtreme Scale Client 8.6.1.0 or higher.     *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: WXS Client is unable to be installed    *
+   *                      with WAS 8.5.5 because Java 8 is        *
+   *                      required even if Java 8 is installed    *
+   *                      with WAS                                *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   WAS 8.5.5 can optionally install Java 8 as its runtime using a
+   user property in the response file which is not identified by
+   WXS causing the installation to fail.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A fix in the installation code was done to determine the
+   installed java level based on the user property and an iterim
+   fix is made available for this
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI86607
+   
+   
+ * REPORTED COMPONENT NAME
+   WS EXTREME SCAL
+   
+   
+ * REPORTED COMPONENT ID
+   5724X6702
+   
+   
+ * REPORTED RELEASE
+   860
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-08-30
+   
+   
+ * CLOSED DATE
+   2017-10-12
+   
+   
+ * LAST MODIFIED DATE
+   2017-10-12
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WS EXTREME SCAL
+   
+   
+ * FIXED COMPONENT ID
+   5724X6702
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R861 PSY
+   UP

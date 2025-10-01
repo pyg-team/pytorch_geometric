@@ -1,0 +1,138 @@
+Title: IBM PI33622: CONTENT TARGETING DIALOG PORTLET AND PAGE FAIL TO SYNDICATE TO P REVIOUS VERSIONS OF PORTAL SITE - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  To fix syndication problems in the future objectid properties
+   were set for the Content Targeting Dialog portlet and page in
+   WebSphere Portal 8.0.0.1 CF15.
+   
+   Also for WebSphere Portlal 8.5 CF05 there were objectid
+   properties added.
+   
+   The drawback of this is when attempting to syndicate with a
+   previous Server version they will fail as the objectids will
+   be different because they were generated dynamically by
+   WebSphere Portal during install.
+   Opened for release 8001
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  To fix syndication problems in the future objectid properties
+   were set for the Content Targeting Dialog portlet and page in
+   WebSphere Portal 8.0.0.1 CF15.
+   
+   Also for WebSphere Portlal 8.5 CF05 there were objectid
+   properties added.
+   
+   The drawback of this is when attempting to syndicate with a
+   previous Server version they will fail as the objectids will
+   be different because they were generated dynamically by
+   WebSphere Portal during install.
+   Opened for release 8001
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Apply supplied IFIX
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI33622
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSPHERE PORTA
+   
+   
+ * REPORTED COMPONENT ID
+   5724E7600
+   
+   
+ * REPORTED RELEASE
+   800
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-01-28
+   
+   
+ * CLOSED DATE
+   2015-02-03
+   
+   
+ * LAST MODIFIED DATE
+   2015-02-03
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBSPHERE PORTA
+   
+   
+ * FIXED COMPONENT ID
+   5724E7600
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R800 PSY
+   UP

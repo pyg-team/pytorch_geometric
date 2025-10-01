@@ -1,0 +1,58 @@
+Title: IBM Logging in to Upfront results in Page cannot be displayed error - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ IWR 7.0 702
+Windows 2000
+
+Description:
+
+Unable to log into Upfront.
+
+Error Message - 
+
+Page cannot be displayed HTTP: 403.2 Forbidden: Read Access Forbidden 
+
+
+Solution:
+
+1. Open Control Panel and click Administrative Tools, Internet Services Manager.
+
+2. Expand the directory tree in the left pane. Click Default web site, cognos. 
+
+3. Right-click cgi-bin and click Properties. 
+
+4. Click the Directory tab. In the Execute Permissions drop down box, select Scripts and Executables from the drop down list. 
+
+5. Click Apply.
+
+6. Click OK.
+
+You should now be able to launch Upfront successfully. 
+
+For more information on configuring a web server for use with Cognos products, see the Configure your web server section in the Cognos EP Series 7 Solution For Windows Installation Guide. 
+
+RESOLVING THE PROBLEM
+1. Open Control Panel and click Administrative Tools, Internet Services Manager.
+
+2. Expand the directory tree in the left pane. Click Default web site, cognos. 
+
+3. Right-click cgi-bin and click Properties. 
+
+4. Click the Directory tab. In the Execute Permissions drop down box, select Scripts and Executables from the drop down list. 
+
+5. Click Apply.
+
+6. Click OK.
+
+You should now be able to launch Upfront successfully. 
+
+For more information on configuring a web server for use with Cognos products, see the Configure your web server section in the Cognos EP Series 7 Solution For Windows Installation Guide.
+
+ 
+
+Cross reference information Segment Product Component Platform Version Edition Business Analytics Cognos Series 7 Upfront 
+HISTORICAL NUMBER
+ 115158

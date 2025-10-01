@@ -1,0 +1,12 @@
+Title: IBM Java 8 roadmap for Tivoli Integrated Portal (TIP) and JazzSM/DASH - United States
+
+Text:
+TIPL2; DASHL2; java 8; jazzsm TECHNOTE (FAQ)
+
+QUESTION
+ What is the plan for support of Java 8 on the server side of Tivoli Integrated Portal (TIP) and JazzSM Dashboard Application Services Hub (DASH)? 
+
+ANSWER
+Our Websphere Support team indicates that support for Java 8 in WAS starts with WAS 8.5.5.9 which is due to be available for download in the middle of March 2016. DASH has no restriction on updating WAS 8.5.5 fix packs, and no concern with the Java update from 7 to 8 when applying the WAS fix pack. 
+
+Support of Java 8 on WAS (or eWAS) 7 is not on the roadmap, so there is no TIP release which will support Java 8.

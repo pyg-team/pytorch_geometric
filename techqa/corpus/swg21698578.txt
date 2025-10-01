@@ -1,0 +1,48 @@
+Title: IBM Query Service fails to start: ** ASSERTION FAILED ** at CompositeCache.cpp:3860 - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The Query Service fails on startup of the IBM Cognos Business Intelligence service. The java.exe for the Query Service is never visible in the Task Manager/Process Explorer, and a dump file is created in the /bin64 directory. All other services start successfully. 
+
+SYMPTOM
+The IBM Cognos Query Service fails with error.
+QueryService failed to start with the following command-line arguments: [C:\Program Files\ibm\cognos\c10_64\bin64\jre\7.0\bin\java.exe, -Xms1024m, -Xmx1024m, -Xmnx512m, -Xmns512m, -server, -Xscmx100m, -Xshareclasses:cachedir=../data,name=cognos10%u,nonfatal, -Xmso512K, -Xcompressedrefs, -verbose:gc, -Xverbosegclog:C:/Program Files/ibm/cognos/c10_64/logs\XQE\dq_verbosegc_%Y%m%d.%H%M%S.%pid.log,1,1000, -Xgcpolicy:gencon, -Xdump:tool:events=systhrow,filter=java/lang/OutOfMemoryError,exec=cmd.exe /c del /f /s \"C:\Program Files\ibm\cognos\c10_64\data\.xqe.%pid\" > nul, -DParentProcessID=3660, -Dcubingservices_home=C:/Program Files/ibm/cognos/c10_64/v5dataserver, -Dcubingservices_data=C:\Program Files\ibm\cognos\c10_64\data, -DParentProcessPort=49259, -Djava.library.path=C:/Program Files/ibm/cognos/c10_64/bin64;, -classpath, C:/Program Files/ibm/cognos/c10_64/webapps/p2pd/WEB-INF/classes;C:\Program Files\ibm\cognos\c10_64\v5dataserver\lib\*;C:\Program Files\ibm\cognos\c10_64\v5dataserver\lib\ext\*;C:\Program Files\ibm\cognos\c10_64\webapps\p2pd\WEB-INF\lib\*;C:\Program Files\ibm\cognos\c10_64\tomcat\lib\*;, -DenableTraceServer, -ea, -Dorg.dom4j.QName.singleton.strategy=org.dom4j.util.PerThreadSingleton, -Dorg.dom4j.DocumentFactory.singleton.strategy=org.dom4j.util.PerThreadSingleton, com.cognos.xqebifw.cubingservices.DQServer] with console output: <timestamp> 0x40ff0100 j9shr.1009 * ** ASSERTION FAILED ** at CompositeCache.cpp:3860: ((0 )) JVMDUMP039I Processing dump event "traceassert", detail "" at <timestamp> - please wait. JVMDUMP032I JVM requested System dump using 'C:\Program Files\ibm\cognos\c10_64\bin64\core.xxxx.xxxx.xxxx.xxxx.dmp' in response to an event JVMDUMP010I System dump written to C:\Program Files\ibm\cognos\c10_64\bin64\core.xxxx.xxxx.xxxx.xxxx.dmp JVMDUMP032I JVM requested Java dump using 'C:\Program Files\ibm\cognos\c10_64\bin64\javacore.xxxx.xxxx.xxxx.xxxx.txt' in response to an event JVMDUMP010I Java dump written to C:\Program Files\ibm\cognos\c10_64\bin64\javacore.xxxx.xxxx.xxxx.xxxx.txt JVMDUMP032I JVM requested Snap dump using 'C:\Program Files\ibm\cognos\c10_64\bin64\Snap.xxxx.xxxx.xxxx.xxxx.trc' in response to an event JVMDUMP010I Snap dump written to C:\Program Files\ibm\cognos\c10_64\bin64\Snap.xxxx.xxxx.xxxx.xxxx.trc JVMDUMP013I Processed dump event "traceassert", detail "". 
+
+
+CAUSE
+A defect in IBM Java is causing the IBM Cognos Query Service JVM to not startup properly. Refer to APAR PI36391 and IV64749.
+
+ENVIRONMENT
+IBM Cognos 10.2.1 or 10.2.2 with IBM Java
+
+DIAGNOSING THE PROBLEM
+Check cogserver.log for the error " ** ASSERTION FAILED ** at CompositeCache.cpp:3860"
+
+RESOLVING THE PROBLEM
+Steps for IBM Cognos 10.2.1:
+
+
+
+
+
+ 1. Stop the Cognos environment. 
+ 2. For Windows installations, go to C:\Documents and Settings\<user name>\Local Settings\Application Data\javasharedresources where the <user name> represents the User account referenced in the Windows Services.
+    For AIX or Linux installations go to /tmp/javasharedresources/ 
+ 3. Check for a file, with a similar file name like C260M3A64P_cognos10SYSTEM_G21 
+ 4. Make a backup of this file and remove it from the directory. 
+ 5. Repeat step 3 and 4 for all dispatchers configured with IBM Cognos Query Service. 
+ 6. Start the Cognos environment.
+    
+
+
+Steps for IBM Cognos 10.2.2:  1. Stop the Cognos environment. 
+ 2. Go to the ..\data directory of the IBM Cognos installation directory. 
+ 3. Check for a file, with a similar file name like C260M3A64P_cognos10SYSTEM_G21 
+ 4. Make a backup of this file and remove it from the ..\data directory. 
+ 5. Repeat step 3 and 4 for all dispatchers configured with IBM Cognos Query Service. 
+ 6. Start the Cognos environment.
+
+RELATED INFORMATION
+ APAR IV64749 - ASSERTION FAILURE DURING JVM STARTUP [http://www-01.ibm.com/support/docview.wss?uid=swg1IV64749]

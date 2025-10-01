@@ -1,0 +1,23 @@
+Title: IBM Portal v8 fix installation fails with CRIMA1077E error for ConfigEngine - United States
+
+Text:
+CRIMA1077E; ConfigEngine; ConfigEngine.sh; not found; silent; response file; user.wp.profile.update.required; com.ibm.websphere.PORTAL.SERVER.v80 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+When silently installing a Portal v8 fix on a system that was originally installed as a "binary" Portal, the installation fails with CRIMA1077E error for ConfigEngine
+
+SYMPTOM
+The following error is seen in the console output, and in the IIM logs:
+
+ERROR CRIMA1077E 00:10.54 File "/ConfigEngine.sh" not found.
+
+
+CAUSE
+The response file has an incorrect property in it:
+
+<data key='user.wp.profile.update.required,com.ibm.websphere.PORTAL.SERVER.v80' value='true'/>
+
+For a binary installation, even if a profile has been manually created later, this property should be "false".
+
+RESOLVING THE PROBLEM
+To resolve the problem, edit the response file and set the "user.wp.profile.update.required,com.ibm.websphere.PORTAL.SERVER.v80" property to "false", then reinstall the fix.

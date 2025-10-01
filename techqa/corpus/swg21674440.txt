@@ -1,0 +1,44 @@
+Title: IBM UrbanCode Deploy does not undeploy patterns with many images - United States
+
+Text:
+UCD; SCO; IPAS; IWD; images; delete cloud instance; cloud; timeout; deploy; environment; virtual system pattern; delete attached resources; undeployed TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ You will not be able to undeploy images in IBM SmartCloud Orchestrator, IBM Workload Deployer or IBM PureApplication System by deleting the Environment in IBM UrbanCode Deploy, as the "Delete Cloud Instances" check box is absent. 
+
+SYMPTOM
+You created a Virtual System Pattern with multiple images in IBM SmartCloud Orchestrator, IBM Workload Deployer or IBM PureApplication System.
+
+You can successfully deploy this pattern from IBM UrbanCode Deploy by saving an environment based on a blue print created from a Cloud Resource Template.
+
+If you then try to delete the environment in IBM UrbanCode Deploy, you will not see the Delete Cloud Instances check box. Only the Delete Attached Resources is visible.
+
+As a result, the images are not undeployed from the cloud after the environment is deleted.
+
+
+CAUSE
+This issue occurs when the Virtual System Pattern takes a long time to complete its deployment. It has been observed with certain complex patterns that contain 5 images.
+
+DIAGNOSING THE PROBLEM
+You can search for messages of the following form to indicate the current time-out:
+
+"Using Cloud Request Timeout="xxx". Set this property using cloud.requestTimeout=\"<integer>\" in installed.properties, specified in seconds."
+
+
+
+However, note that no error is reported in the traces, even if you enabled cloud traces with the option: 
+
+
+cloud.logLevel=DEBUG
+
+
+
+RESOLVING THE PROBLEM
+SOLUTION 
+
+ 
+
+ 1. Increase the timeout by updating the <Installation_dir>\conf\server\installed.properties file and changing the value of the cloud.requestTimeout = [timeout in seconds] property
+    
+    
+ 2. Restart the UrbanCode Deploy server

@@ -1,0 +1,186 @@
+Title: IBM IT15144: MQ Explorer does not allow selection of TLS 1.2 CipherSpecs for queue managers on the HP-NSS platform after 5.3.1.10 install - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  MQ v5.3.1.10 and higher on HP-NSS (HP Non-Stop) have added
+   support for TLS 1.2 cipherspecs for queue managers, but MQ
+   Explorer does not show these as options or allow setting them
+   on the channel cipherspec setting.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Use runmqsc command to alter channels to set TLS 1.2
+   cipherspecs for HP-NSS queue managers upgraded to 5.3.1.10 or
+   higher.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   All users of the IBM MQ Explorer attempting to connect to a
+   5.3.1.10 queue manager on HP-NSS.
+   
+   
+   Platforms affected:
+   Windows, Linux on zSeries, Linux on x86-64, Linux on x86, Linux
+   on Power
+   
+   ****************************************************************
+   PROBLEM DESCRIPTION:
+   IBM WebSphere MQ for HP NonStop Server 5.3.1.10 added support
+   for the following cipherspecs:
+   
+   DES_SHA_EXPORT1024
+   RC4_56_SHA_EXPORT1024
+   TLS_RSA_WITH_3DES_EDE_CBC_SHA
+   TLS_RSA_WITH_DES_CBC_SHA
+   TLS_RSA_WITH_AES_128_CBC_SHA256
+   TLS_RSA_WITH_AES_256_CBC_SHA256
+   TLS_RSA_WITH_NULL_SHA256
+   TLS_RSA_WITH_AES_128_GCM_SHA256
+   TLS_RSA_WITH_AES_256_GCM_SHA384
+   ECDHE_ECDSA_AES_128_CBC_SHA256
+   ECDHE_ECDSA_AES_256_CBC_SHA384
+   ECDHE_RSA_AES_128_CBC_SHA256
+   ECDHE_RSA_AES_256_CBC_SHA384
+   ECDHE_ECDSA_AES_128_GCM_SHA256
+   ECDHE_ECDSA_AES_256_GCM_SHA384
+   ECDHE_RSA_AES_128_GCM_SHA256
+   ECDHE_RSA_AES_256_GCM_SHA384
+   
+   However the MQ configuration was not modified to understand that
+   these cipherspecs are now available when connected to an HP-NSS
+   queue manager, and so these options were not available when
+   attempting to select a cipherspec for a queue manager or
+   channel.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The IBM MQ Explorer configuration has been modified so that the
+   cipherspecs above are now available for selection when connected
+   to a queue manager running on the HP-NSS platform.
+   
+   The IBM MQ Explorer cannot differentiate between a queue manager
+   at 5.3.1.10 and earlier 5.3 versions, therefore these options
+   will be available even where 5.3.1.10 has not been applied. If
+   an attempt is made to select a cipherspec not valid on that
+   release error AMQ4635 will be thrown.
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+   Version    Maintenance Level
+   v8.0       8.0.0.6
+   v9.0 CD    9.0.1
+   v9.0 LTS   9.0.0.1
+   
+   The latest available maintenance can be obtained from
+   'WebSphere MQ Recommended Fixes'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037]
+   
+   If the maintenance level is not yet available information on
+   its planned availability can be found in 'WebSphere MQ
+   Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT15144
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ BASE MULTIP
+   
+   
+ * REPORTED COMPONENT ID
+   5724H7251
+   
+   
+ * REPORTED RELEASE
+   800
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-05-06
+   
+   
+ * CLOSED DATE
+   2016-05-31
+   
+   
+ * LAST MODIFIED DATE
+   2017-06-01
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ BASE MULTIP
+   
+   
+ * FIXED COMPONENT ID
+   5724H7251
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R800 PSY
+   UP

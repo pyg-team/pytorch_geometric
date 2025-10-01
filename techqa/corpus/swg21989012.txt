@@ -1,0 +1,44 @@
+Title: IBM Send Reminder Notice timer task  execution failed - United States
+
+Text:
+reminder notice ; atlas TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ After upgrade of WebSphere version to 8.5.5.4 the Send Reminder Notice timer task execution fails with following error message in the Atlas log.
+
+--------------
+
+ERROR Thread-74 ~Error while running Send Reminder Notice task. java.util.ConcurrentModificationException 
+
+------------ 
+
+SYMPTOM
+Notice reminders will not be sent to corresponding custodians.
+-----------
+ERROR Thread-74 ~Error while running Send Reminder Notice
+task.java.util.ConcurrentModificationException java.util.ConcurrentModificationException
+at java.util.ArrayList$Itr.checkForComodification(ArrayList.java:871)
+at java.util.ArrayList$Itr.next(ArrayList.java:843)
+at com.secretseal.policyatlas.util.SendReminderNoticeTask.fetchAndSendResen
+dReminderNotices(SendReminderNoticeTask.java:144)
+at com.secretseal.policyatlas.util.SendReminderNoticeTask.doRun(SendReminde
+rNoticeTask.java:107)
+at com.secretseal.policyatlas.timer.BaseTask.run(BaseTask.java:112)
+at com.secretseal.policyatlas.timer.BaseTask.executeBaseClass(BaseTask.java:199)
+at com.secretseal.policyatlas.timer.ExecuteTask.execute(ExecuteTask.java:98
+at pagecode.pages.admin.AvailableTasks$1.run(AvailableTasks.java:182)
+(SendReminderNoticeTask.java:118)
+----------
+
+
+CAUSE
+WebSphere 8.5.5.2 comes with java 1.7 and 1.6. When using WebSphere with java 1.7 you notice this issue.
+
+ENVIRONMENT
+Atlas 6.0.3.3 --> WebSphere 8.5.5.8
+
+DIAGNOSING THE PROBLEM
+Since the Send Reminder Notice timer task runs every night 1 AM , capture the Atlas PAearlog.log for that time to get the exact error.
+
+RESOLVING THE PROBLEM
+Switch the java version from 1.7 to 1.6 for WebSphere and restart WebSphere application server.

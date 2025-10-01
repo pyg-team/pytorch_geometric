@@ -1,0 +1,29 @@
+Title: IBM Rational DOORS HP Quality Center Interface synchronization fails if the Rational DOORS module is open in exclusive edit mode in some scenarios - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Rational DOORS HP Quality Center Interface synchronization fails if the Rational DOORS module is open in exclusive edit mode. 
+
+SYMPTOM
+Rational DOORS HP Quality Center Interface synchronization fails if the Rational DOORS module is open in exclusive edit mode in the following scenarios: 
+
+ * HP ALM is the Master EndPoint for the Test and Defect Entity. 
+ * Rational DOORS is the Master EndPoint and user has reverse mapping (from HP ALM to the Rational DOORS module).
+
+In both scenarios, data flows from HP ALM to the Rational DOORS module. HPQCI needs to open the module in exclusive edit mode to update the data.
+
+
+CAUSE
+This issue was identified as a product defect and logged internally as defect 9533. 
+
+
+ENVIRONMENT
+Rational DOORS HP Quality Center Interface version 3.6 
+
+HP ALM version 11.5x
+
+
+RESOLVING THE PROBLEM
+There is no workaround available for this problem.

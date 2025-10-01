@@ -1,0 +1,44 @@
+Title: IBM SUA Import Error "Check Data Source: API connectivity failed" - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Data Imports are failing with the following errors: 
+
+Import Log The last megabyte of data from the import log: # Logfile 
+
+created on 2015-12-08 21:35:31 +0000 by logger.rb/v1.2.7 
+
+2015-12-08 21:35:31 (+0:00:00.000) INFO: TEMA version: 9.2.0.2-20150624-
+
+1542 
+
+2015-12-08 21:35:31 (+0:00:00.002) INFO: Check datasources 
+
+connectivity: Start 
+
+2015-12-08 21:35:32 (+0:00:00.255) ERROR: RuntimeError: Check Data 
+
+Source: API connectivity failed. 
+
+/app/IBM/SUA/wlp/usr/servers/server1/apps/tema.war/WEB- 
+
+INF/lib/etl/runner.rb:168:in `check_datasources' 
+
+
+CAUSE
+The IEM Data Source definition is corrupted or needs to be modified (eg. password changed, etc). 
+
+ANSWER
+Validating and/or re-entering the Data Source information in the SUA Web
+console (ie. Management -> Data Sources 
+to specify the location of your IEM server database and IEM Admin user 
+(eg. IEMAdmin and password) 
+
+ 
+
+HISTORICAL NUMBER
+ 84322
+442
+000

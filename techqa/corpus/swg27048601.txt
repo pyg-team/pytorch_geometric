@@ -1,0 +1,47 @@
+Title: IBM Installation of ITM Agents 6.0.3.2 and ITCAM MQ Agents 7.3 in Linux - United States
+
+Text:
+ WHITE PAPER
+
+ABSTRACT
+ The purpose of this document is to provide a tutorial for installation of IBM Tivoli Monitoring
+6.3.0.2 and IBM Tivoli Composite Application Manager (ITCAM) for Applications 7.3 in a Linux machine. 
+
+CONTENT
+The overall objective is to have ITM and ITCAM services monitoring MQ queue managers in 
+
+Windows and in Linux, and additional tutorials will provide steps for other components.
+
+The Tivoli agents in Linux will connect to the "Tivoli Enterprise Monitoring Server - TEMS" that was setup in the following techdoc:
+
+http://www.ibm.com/support/docview.wss?uid=swg27048598 [http://www.ibm.com/support/docview.wss?uid=swg27048598]
+Installation of ITM 6.0.3.2 in Windows to monitor MQ queue managers
+
+In order to keep the overall scenario as simple as possible, only the most essential
+components will be installed. Therefore, this tutorial does not show other ITM and ITCAM components; of course, if you need additional components, then you can go ahead and install/configure
+them.
+
+These are the chapters:
+
+Chapter 1: Downloading the software
+Chapter 2: Adding userid "root" to group "mqm"
+Chapter 3: Installing the ITM 6.3.0.2 Agents in Linux
+Agentless Monitoring for Linux Operating Systems V06.30.02.00
+Monitoring Agent for Linux OS V06.30.02.00
+Tivoli Enterprise Services User Interface Extensions V06.30.02.00
+Chapter 4: Configuration of the ITM Linux OS Agent to connect to TEMS in Windows
+Chapter 5: Installing ITCAM 7.3 MQ Agents - IBM Tivoli Monitoring components
+Tivoli Enterprise Services User Interface Extensions V06.30.02.00
+WebSphere MQ Configuration Agent V07.30.01.00
+WebSphere MQ Monitoring Agent V07.30.01.00
+Chapter 6: Configuration of the MQ Agents
+
+
+File: Installation of ITM Agents 6.0.3.2 and ITCAM MQ Agents 7.3 in Linux.pdf 
+
+
+Installation of ITM Agents 6.0.3.2 and ITCAM MQ Agents 7.3 in Linux.pdf [/support/docview.wss?uid=swg27048601&aid=2]Installation of ITM Agents 6.0.3.2 and ITCAM MQ Agents 7.3 in Linux.pdf [/support/docview.wss?uid=swg27048601&aid=1]
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM MQ PRODUCT ALIAS/SYNONYM
+ IBMMQ WMQ MQ

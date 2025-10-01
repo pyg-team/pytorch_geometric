@@ -1,0 +1,160 @@
+Title: IBM IZ74609: MS EXCHANGE SERVER AGENT CRASHES WITH ERROR CODE 0X80070057 IN LOG. - United States
+
+Text:
+  FIXES ARE AVAILABLE
+IBM Tivoli Monitoring for Microsoft Exchange Server 6.2.0-TIV-ITM_EXCHG-IF0004 [http://www-01.ibm.com/support/docview.wss?uid=swg24026722]
+IBM Tivoli Monitoring for Microsoft Exchange Server 6.2.0.2-TIV-ITM_EXCHG-IF0002 [http://www-01.ibm.com/support/docview.wss?uid=swg24028375]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Environment:
+   ITM Microsoft Exchange Server Agent V6.2.0.
+   All versions of MS Exchange Server
+   All Windows versions.
+   .
+   Problem Description:
+   1. IF MS Exchange agent has been configured for the mailbox
+   reachability attribute group, in some environment
+   kexsendemail.exe fails with following error message in its log
+   file.  <CreateOneOff> failed. 0x80070057.
+   2. The agent does not display data for the same attribute groups
+   when it encounters timeout while collecting the reachability
+   data.
+   3. Kexsendemial.exe crashes while freeing some memory variables
+   and
+   the agent stops after this crash.
+   .
+   Detailed Recreation Procedure:
+   1. Configure the agent to Enable the mailbox reachability.
+   2. Start the Agent.
+   .
+   Note:
+   This problem was never recreated at L3 setup and issue was
+   resolved directly using customer's environment. The agent does
+   not show the data for this attribute in case of request gets
+   timeout.
+   .
+   Related Files and Output:
+   We can also Observe the following output in the log file at the
+   location <%CANDLE_HOME%>\IBM\ITM\TMAITM6\logs.
+   .
+   1.Log file created for kexsendemail.exe named *kexsendemail*.log
+   this log file will contain following error message:
+   <CreateOneOff> failed. 0x80070057
+   2. Log file created for kexcma.exe named *kexcma*.log this log
+   file would print the timeout message for reachability data
+   collection.
+   Approver: Steven Barnett
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  MS EXCHANGE SERVER AGENT CRASHES WITH ERROR CODE 0X80070057 IN
+   LOG.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Now no more MS Exchange server Agent crash occures.
+   The fix for this APAR is contained in the following maintenance
+   packages:
+      | interim fix | 6.2.0-TIV-ITM_EXCHG-IF0004
+      | interim fix | 6.2.0.2-TIV-ITM_EXCHG-IF0001
+      | interim fix | 6.2.2-TIV-ITM_EXCHG-IF0002
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ74609
+   
+   
+ * REPORTED COMPONENT NAME
+   ITMF MC EXCHANG
+   
+   
+ * REPORTED COMPONENT ID
+   5724B98EO
+   
+   
+ * REPORTED RELEASE
+   620
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-04-14
+   
+   
+ * CLOSED DATE
+   2010-05-05
+   
+   
+ * LAST MODIFIED DATE
+   2011-02-28
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ITMF MC EXCHANG
+   
+   
+ * FIXED COMPONENT ID
+   5724B98EO
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R620 PSY
+   UP

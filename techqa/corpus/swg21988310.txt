@@ -1,0 +1,52 @@
+Title: IBM nz commands over ssh do not work after upgrade on PureData System for Analytics - United States
+
+Text:
+nz command not available ssh upgrade script openssh bash TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Scripts that use ssh nz@server "nzstate" or other nz commands no longer work after upgrade. 
+
+SYMPTOM
+Command not found is displayed when trying to issue commands 
+
+ssh nz@server 'nzstate'
+bash: nzstate: command not found
+
+
+CAUSE
+openssh was changed for non-interactive sessions so the user environment variables are not available as they would be on an ssh interactive session.
+
+
+ENVIRONMENT
+RedHat
+
+
+
+DIAGNOSING THE PROBLEM
+After upgrade that includes the openssh rpm, issue the command ssh nz@server "nzstate" from another server. If you get bash: nzstate: command not found , the environment path is not available to the ssh session for that user.
+
+
+
+RESOLVING THE PROBLEM
+Setup the path statement and the NZ environment variables in the file /etc/environment 
+
+
+The file by default is empty. 
+
+To have non-interactive ssh sessions find the path to the command files it will need to be edited.
+
+The easiest way to do this would be to login as the nz user and issue the command # echo $PATH
+Then take the output and put it into the file /etc/environment
+so it looks something like this...
+
+export PATH="/nz/kit/bin:/nz/kit/bin/adm:/nz/kit/sbin:/opt/jdk/bin:/nz/kit/bin:/nz/kit/bin/adm:/nz/kit/sbin:/sbin:/usr/sbin:/bin:/usr/bin:/export/home/nz/bin:/usr/local/bin:/opt/net/tools/bin:/usr/kerberos/bin/:/export/home/nz/bin/utm:/discovery/jdk1.6.0_01/bin:/nzscratch/snehal/jazz/scmtools/eclipse/:/nz/var/nzcm/current"
+
+
+Note that you may also need to export some of the nz environment variables in the same manner depending on how your system is setup.
+
+For example.. you may need to include NZ_PASSWORD and NZ_USER into the same /etc/environment file.
+
+export NZ_PASSWORD=password
+export NZ_USER=admin
+
+The final step would be to make the same changes on the standby host if clustered.

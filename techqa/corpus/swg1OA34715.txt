@@ -1,0 +1,162 @@
+Title: IBM OA34715: OMXE FOR MESSAGING CAUSES MQ ABEND 5C6-00E7014F - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When running Messaging V701 with latest PTF and ITCAM for
+   Transactions for MQ with Remote Queue and CICS bridge/adapter,
+   if the MQ agent is restarted, it will cause the following
+   abend in WMQ:
+   
+   CSQY291E CSQXDMPS SDUMPX FAILED, RC=00000B08,M71W,ABN= 5C6-
+   00E7014F,
+   LOC=CSQXADPM.
+   CSQXADPM+04BC8
+   CSQY291E CSQXDMPS SDUMPX FAILED, RC=00000B08,M71W,ABN= 5C6-
+   00E7014F,
+   LOC=CSQXADPM.CSQXADPM+04BC8
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All OMEGAMON XE for WMQ users.               *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: When running Messaging V701 with latest *
+   *                      PTF and ITCAM for Transactions for MQ   *
+   *                      with Remote Queue and CICS              *
+   *                      bridge/adapter, if the MQ agent is      *
+   *                      restarted, it will cause the following  *
+   *                      abend in WMQ:  CSQY291E CSQXDMPS SDUMPX *
+   *                      FAILED, RC=00000B08,M71W,ABN= 5C6-      *
+   *                      00E7014F, LOC=CSQXADPM. CSQXADPM+04BC8  *
+   *                      CSQY291E CSQXDMPS SDUMPX FAILED,        *
+   *                      RC=00000B08,M71W,ABN= 5C6- 00E7014F,    *
+   *                      LOC=CSQXADPM.CSQXADPM+04BC8             *
+   ****************************************************************
+   * RECOMMENDATION: Apply the PTF.                               *
+   When running Messaging V701 with latest PTF and ITCAM for
+   Transactions for MQ with Remote Queue and CICS bridge/adapter,
+   if the MQ agent is restarted, it will cause the following abend
+   in WMQ:  CSQY291E CSQXDMPS SDUMPX FAILED, RC=00000B08,M71W,ABN=
+   5C6- 00E7014F, LOC=CSQXADPM. CSQXADPM+04BC8 CSQY291E CSQXDMPS
+   SDUMPX FAILED, RC=00000B08,M71W,ABN= 5C6- 00E7014F,
+   LOC=CSQXADPM.CSQXADPM+04BC8
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Change code to fix the problem.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   OA34715
+   
+   
+ * REPORTED COMPONENT NAME
+   OMEG XE WEBSPHM
+   
+   
+ * REPORTED COMPONENT ID
+   5608A1100
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-10-27
+   
+   
+ * CLOSED DATE
+   2010-10-29
+   
+   
+ * LAST MODIFIED DATE
+   2010-12-01
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UA57610
+   
+   
+
+MODULES/MACROS
+ *  KMQAMQSB
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   OMEG XE WEBSPHM
+   
+   
+ * FIXED COMPONENT ID
+   5608A1100
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R701 PSY UA57610 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UA57610]
+   UP10/11/17 P F011
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

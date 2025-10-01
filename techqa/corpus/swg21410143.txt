@@ -1,0 +1,30 @@
+Title: IBM OutOfMemoryError causes WebSphere Application Server to become unavailable - United States
+
+Text:
+OutOfMemoryError; Out of memory TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The WebSphere Application Server running within WebSphere Business Events V7.0 runs out of memory on HP-UX and Solaris platforms. 
+
+SYMPTOM
+The following error messages are seen in the logs: 
+
+ * SystemErr.log:
+   [11/10/09 17:11:06:780 GMT] 00000010 SystemErr R Exception in thread "HAManager.thread.pool : 1" java.lang.OutOfMemoryError: PermGen space 
+ * SystemOut.log:
+   [11/10/09 17:11:27:752 GMT] 00000092 BaseMap W CWOBJ0002W: ObjectGrid component is ignoring an unexpected exception: java.lang.OutOfMemoryError: PermGen space 
+ * FFDC:
+   [11/10/09 17:09:11:813 GMT] FFDC Exception:java.lang.OutOfMemoryError SourceId:com.ibm.ws.hamanager.impl.UserCallbacks ProbeId:281 Reporter:com.ibm.ws.hamanager.impl.Worker@583e03a3 java.lang.OutOfMemoryError: PermGen space
+   ==> Performing default dump from com.ibm.ws.hamanager.runtime.DiagnosticMod :Tue Nov 10 17:09:11 GMT 2009
+
+
+
+CAUSE
+This error is because the default permanent generation parameter value is insufficient for holding class data and other long-lived resources.
+
+
+
+RESOLVING THE PROBLEM
+To avoid this error, follow these steps to set the JVM max perm size limit: 
+
+ *  From the WebSphere Application Server Administration Console, select Servers > Server Types > WebSphere Application Servers > <Server running WBE> > Server Infrastructure > Java and Process Management > Process Definition > Java Virtual Machine > Generic JVM arguments. Add -XX:MaxPermSize=1024M to the generic JVM argument to set the max perm size. Restart the application server. After tuning the heap sizes, monitor the system to make sure that paging does not occur.

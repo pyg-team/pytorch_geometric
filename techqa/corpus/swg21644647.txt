@@ -1,0 +1,23 @@
+Title: IBM Why DB2 did not reuse/rename the transaction logs even after they have been successfully archived? - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Why DB2 did not reuse/rename the (full size) transaction logs even after they have been successfully archived? 
+
+CAUSE
+If a log file is archived and contains no open transactions, the DB2 database manager does not delete the file but renames it as the next log file when such a file is needed. This process improves performance because creating a new log file instead of renaming the file would require all pages to be written out to guarantee that the necessary disk space or other storage space is available. 
+The database manager retains up to 8 extra log files in the active log path for renaming purposes.
+
+Aim is that there is existing log file can be used to rename when high workload comes:
+(1) at that point the log consumption will become very quickly.
+(2) creating new log file is a high cost operation since DB2 need to write to log file in advance, otherwise, the disk space may not be actually allocated to DB2.
+
+
+
+
+ANSWER
+You can collect "db2pd -db <database> -dpsdbcb" data. 
+
+Please provide the output file of db2pd command to IBM DB2 Service to check rename array for confirmation.

@@ -1,0 +1,112 @@
+Title: IBM Security Bulletin: Security vulnerabilities in IBM SDK for Node.js might affect IBM Business Process Manager (BPM) Configuration Editor - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ Security vulnerabilities have been reported for IBM SDK for Node.js. IBM Business Process Manager includes a stand-alone tool for editing configuration properties files that is based IBM SDK for Node.js. 
+
+VULNERABILITY DETAILS
+CVEID:CVE-2016-6304 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2016-6304]
+DESCRIPTION: OpenSSL is vulnerable to a denial of service. By repeatedly requesting renegotiation, a remote authenticated attacker could send an overly large OCSP Status Request extension to consume all available memory resources.
+CVSS Base Score: 6.5
+CVSS Temporal Score: Seehttps://exchange.xforce.ibmcloud.com/vulnerabilities/117110 [https://exchange.xforce.ibmcloud.com/vulnerabilities/117110]for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:N/AC:L/PR:L/UI:N/S:U/C:N/I:N/A:H) 
+
+CVEID:CVE-2016-6303 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2016-6303]
+DESCRIPTION: OpenSSL is vulnerable to a denial of service, caused by an integer overflow in the MDC2_Update function. By using unknown attack vectors, a remote attacker could exploit this vulnerability to trigger an out-of-bounds write and cause the application to crash.
+CVSS Base Score: 5.3
+CVSS Temporal Score: Seehttps://exchange.xforce.ibmcloud.com/vulnerabilities/117023 [https://exchange.xforce.ibmcloud.com/vulnerabilities/117023]for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:L)
+
+CVEID:CVE-2016-2178 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2016-2178]
+DESCRIPTION: OpenSSL could allow a remote attacker to obtain sensitive information, caused by an error in the DSA implementation that allows the following of a non-constant time codepath for certain operations. An attacker could exploit this vulnerability using a cache-timing attack to recover the private DSA key.
+CVSS Base Score: 5.3
+CVSS Temporal Score: Seehttps://exchange.xforce.ibmcloud.com/vulnerabilities/113889 [https://exchange.xforce.ibmcloud.com/vulnerabilities/113889]for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:N/A:N)
+
+CVEID:CVE-2016-6306 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2016-6306]
+DESCRIPTION: OpenSSL is vulnerable to a denial of service, caused by missing message length checks when parsing certificates. A remote authenticated attacker could exploit this vulnerability to trigger an out-of-bounds read and cause a denial of service.
+CVSS Base Score: 4.3
+CVSS Temporal Score: Seehttps://exchange.xforce.ibmcloud.com/vulnerabilities/117112 [https://exchange.xforce.ibmcloud.com/vulnerabilities/117112]for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:N/AC:L/PR:L/UI:N/S:U/C:N/I:N/A:L)
+
+CVEID:CVE-2016-2183 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2016-2183]
+DESCRIPTION: OpenSSL could allow a remote attacker to obtain sensitive information, caused by an error in the DES/3DES cipher, used as a part of the SSL/TLS protocol. By capturing large amounts of encrypted traffic between the SSL/TLS server and the client, a remote attacker able to conduct a man-in-the-middle attack could exploit this vulnerability to recover the plaintext data and obtain sensitive information. This vulnerability is known as the SWEET32 Birthday attack.
+CVSS Base Score: 3.7
+CVSS Temporal Score: Seehttps://exchange.xforce.ibmcloud.com/vulnerabilities/116337 [https://exchange.xforce.ibmcloud.com/vulnerabilities/116337]for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:N/AC:H/PR:N/UI:N/S:U/C:L/I:N/A:N)
+
+CVEID:CVE-2016-7099 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2016-7099]
+DESCRIPTION: Node.js could allow a remote attacker to bypass security restrictions, caused by the improper verification of the host name. By sending a specially-crafted certificate containing wildcard characters, a remote attacker could exploit this vulnerability to gain access to the system.
+CVSS Base Score: 6.5
+CVSS Temporal Score: Seehttps://exchange.xforce.ibmcloud.com/vulnerabilities/117538 [https://exchange.xforce.ibmcloud.com/vulnerabilities/117538]for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:L/A:N)
+
+CVEID:CVE-2016-5325 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2016-5325]
+DESCRIPTION: Node.js is vulnerable to HTTP response splitting attacks, caused by improper validation of user-supplied input by the reason argument in ServerResponse#writeHead() function. A remote attacker could exploit this vulnerability to inject arbitrary HTTP headers and cause the server to return a split response, once the URL is clicked. This would allow the attacker to perform further attacks, such as Web cache poisoning or cross-site scripting, and possibly obtain sensitive information.
+CVSS Base Score: 6.1
+CVSS Temporal Score: Seehttps://exchange.xforce.ibmcloud.com/vulnerabilities/117539 [https://exchange.xforce.ibmcloud.com/vulnerabilities/117539]for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:N/AC:L/PR:N/UI:R/S:C/C:L/I:L/A:N)
+
+CVEID: Not assigned by governing body.
+DESCRIPTION: Node.js could allow a local attacker to execute arbitrary code on the system, caused by the loading of third-party engine modules when the ENGINE_load_builtin_engines() function is used. By impersonating malicious code as a module, an attacker could exploit this vulnerability to execute arbitrary code on the system.
+CVSS Base Score: 4.9
+CVSS Temporal Score: Seehttps://exchange.xforce.ibmcloud.com/vulnerabilities/117537 [https://exchange.xforce.ibmcloud.com/vulnerabilities/117537]for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:L/AC:H/PR:N/UI:N/S:U/C:L/I:L/A:L) 
+
+ 
+
+For more information about the vulnerabilities fixed in the IBM SDK for Node.js runtime included in IBM BPM Configuration Editor, see "Security Bulletin: Multiple vulnerabilities may affect IBM® SDK for Node.js™ [https://www.ibm.com/support/docview.wss?uid=swg21985392]"
+
+AFFECTED PRODUCTS AND VERSIONS
+ 
+
+ * IBM Business Process Manager Advanced V8.5.5.0 - V8.5.7.0 prior to cumulative fix 2016.12
+
+REMEDIATION/FIXES
+Install IBM Business Process Manager interim fix JR56833 as appropriate for your current IBM Business Process Manager or WebSphere Lombardi Edition version. 
+
+
+ * IBM Business Process Manager Advanced [http://www.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~WebSphere&product=ibm/WebSphere/IBM+Business+Process+Manager+Advanced&release=All&platform=All&function=aparId&apars=JR56833] 
+ * IBM Business Process Manager Standard [http://www.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~WebSphere&product=ibm/WebSphere/IBM+Business+Process+Manager+Standard&release=All&platform=All&function=aparId&apars=JR56833] 
+ * IBM Business Process Manager Express [http://www.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~WebSphere&product=ibm/WebSphere/IBM+Business+Process+Manager+Express&release=All&platform=All&function=aparId&apars=JR56833]
+
+WORKAROUNDS AND MITIGATIONS
+IBM BPM Configuration Editor [http://www.ibm.com/support/knowledgecenter/SSFTDH_8.5.7/com.ibm.wbpm.imuc.ebpmps.doc/topics/tcfg_edit_win_db2.html] is a stand-alone tool for editing properties file. Use a standard text file editor instead.
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+IMPORTANT NOTE
+ IBM strongly suggests that all System z customers be subscribed to the System z Security Portal to receive the latest critical System z security and integrity service. If you are not subscribed, see the instructions on the System z Security web site [http://www.ibm.com/systems/z/solutions/security_subintegrity.html]. Security and integrity APARs and associated fixes will be posted to this portal. IBM suggests reviewing the CVSS scores and applying all security or integrity fixes as soon as possible to minimize any potential risk. 
+
+REFERENCES
+Complete CVSS v3 Guide [http://www.first.org/cvss/user-guide] 
+On-line Calculator v3 [http://www.first.org/cvss/calculator/3.0] 
+IBM BPM Configuration Editor [http://www.ibm.com/support/knowledgecenter/SSFTDH_8.5.7/com.ibm.wbpm.imuc.ebpmps.doc/topics/tcfg_edit_win_db2.html] 
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] 
+
+CHANGE HISTORY
+ 16 Dec 2016: initial version published
+07 Jan 2017: added CVE information 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Business Process Manager Express Security Linux, Windows 8.5.7, 8.5.6, 8.5.5 Business Integration IBM Business Process Manager Standard Security AIX, Linux, Solaris, Windows 8.5.7, 8.5.6, 8.5.5

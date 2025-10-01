@@ -1,0 +1,219 @@
+Title: IBM JR51706: COMETD SESSION MANAGER'S WAITFORCHANNEL METHOD CAUSES TRANSACTION TIMEOUTS - United States
+
+Text:
+  DIRECT LINKS TO FIXES
+8.5.5.0-WS-BPM-IFJR51918 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Standard&fixids=8.5.5.0-WS-BPM-IFJR51918&source=SAR]
+8.5.0.1-WS-BPM-IFJR51706 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Standard&fixids=8.5.0.1-WS-BPM-IFJR51706&source=SAR]
+8.0.1.2-WS-BPM-IFJR51706 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Standard&fixids=8.0.1.2-WS-BPM-IFJR51706&source=SAR]
+8.0.1.3-WS-BPM-IFJR51706 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Standard&fixids=8.0.1.3-WS-BPM-IFJR51706&source=SAR]
+Version 8.5 Refresh Pack 6 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24039185]
+Version 8.5.0 Fix Pack 2 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24040683]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  You notice several transaction timeout error messages in the log
+   files, reported by the
+   com.ibm.bpm.socialbus.session.SessionManager.waitForChannel
+   method. As a consequence, the task list in IBM Process Portal
+   might load slowly. If the transaction timeout occurs while a
+   process participant is working on a task, he or she might not be
+    able to save the work and, therefore, he or she can't complete
+   the work.
+   
+   You might see a stack trace that is similar to the following
+   stack trace:
+   
+       java.lang.Thread.sleep(Native Method)
+   java.lang.Thread.sleep(Thread.java:920)
+   com.ibm.bpm.socialbus.session.SessionManager.waitForChannel(Sess
+   ionManager.java:235)
+   com.ibm.bpm.socialbus.session.SessionManager.handleUserLeave(Ses
+   sionManager.java:203)
+   com.ibm.bpm.socialbus.session.SessionManager$1.removed(SessionMa
+   nager.java:64)
+   org.cometd.server.ServerSessionImpl.notifyRemoved(ServerSessionI
+   mpl.java:851)
+   org.cometd.server.ServerSessionImpl.removed(ServerSessionImpl.ja
+   va:841)
+   
+      And you would see WTRN0006W and WTRN0124I messages with this
+   java stack in the latter
+   [10/1/15 12:15:10:516 AST] 00000049 TimeoutManage I   WTRN0006W:
+    Transaction
+   0000015022AD3E7300000001723CE5ECE2D9426566E36F9CD2E1D0004AAE5C5F
+   724E33950000015022AD3E7300000001723CE5ECE2D9426566E36F9CD2E1D000
+   4AAE5C5F724E339500000001 has timed out after 120 seconds.
+   [10/1/15 12:15:10:517 AST] 00000049 TimeoutManage I   WTRN0124I:
+   When the timeout occurred the thread with which the transaction
+   is, or was most recently, associated was
+   Thread[SIBJMSRAThreadPool : 9,5,main]. The stack trace of this
+   thread when the timeout occurred was:
+    java.lang.Thread.sleep(Native Method)
+    java.lang.Thread.sleep(Thread.java:920)
+    com.ibm.bpm.socialbus.session.SessionManager.waitForChannel(Ses
+   sionManager.java:235)
+    com.ibm.bpm.socialbus.session.SessionManager.handleUserLeave(Se
+   ssionManager.java:174)
+    com.ibm.bpm.socialbus.session.SessionManager$1.removed(SessionM
+   anager.java:64)
+    org.cometd.server.ServerSessionImpl.notifyRemoved(ServerSession
+   Impl.java:851)
+    org.cometd.server.ServerSessionImpl.removed(ServerSessionImpl.j
+   ava:841)
+   
+   
+      You will probably also see WSVR0605W (hung thread detected)
+   messages like this
+   
+   [10/1/15 12:24:19:460 AST] 00000026 ThreadMonitor W   WSVR0605W:
+   Thread "SIBJMSRAThreadPool : 9" (00000d04) has been active for
+   668944 milliseconds and may be hung.  There is/are 2 thread(s)
+   in total in the server that may be hung.
+    at java.lang.Thread.sleep(Native Method)
+    at java.lang.Thread.sleep(Thread.java:920)
+    at
+   com.ibm.bpm.socialbus.session.SessionManager.waitForChannel(Sess
+   ionManager.java:235)
+    at
+   com.ibm.bpm.socialbus.session.SessionManager.handleUserLeave(Ses
+   sionManager.java:203)
+    at
+   com.ibm.bpm.socialbus.session.SessionManager$1.removed(SessionMa
+   nager.java:64)
+    at
+   org.cometd.server.ServerSessionImpl.notifyRemoved(ServerSessionI
+   mpl.java:851)
+    at
+   org.cometd.server.ServerSessionImpl.removed(ServerSessionImpl.ja
+   va:841)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  The problem occurs because the collaboration session manager
+   code waits too long for communication channels to be
+   established.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A fix is available for IBM BPM V8.0.1.2, V8.0.1.3, V8.5.0.1, and
+   V8.5.5.0.
+   
+   For V8.0.1.2, V8.0.1.3, and V8.5.0.1, search for JR51706 on Fix
+   Central (http://www.ibm.com/support/fixcentral):
+   
+   1. Select IBM Business Process Manager with your edition from
+   the product selector, the installed version to the fix pack
+   level, and your platform, and then click Continue.
+   2. Select APAR or SPR, enter JR51706, and click Continue.
+   
+   For V8.5.5.0, search for JR51918 [http://www-01.ibm.com/support/docview.wss?uid=swg1JR51918] on Fix Central. Interim fix
+   JR51918 [http://www-01.ibm.com/support/docview.wss?uid=swg1JR51918] includes the fix for interim fix JR51706.
+   
+   1. Select IBM Business Process Manager with your edition from
+   the product selector, the installed version to the fix pack
+   level, and your platform, and then click Continue.
+   2. Select APAR or SPR, enter JR51918 [http://www-01.ibm.com/support/docview.wss?uid=swg1JR51918], and click Continue.
+   
+   When you download fix packages, ensure that you also download
+   the readme file for each fix. Review each readme file for
+   additional installation instructions and information about the
+   fix.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR51706
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM ADVANCED
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9400
+   
+   
+ * REPORTED RELEASE
+   850
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2014-11-03
+   
+   
+ * CLOSED DATE
+   2015-02-03
+   
+   
+ * LAST MODIFIED DATE
+   2016-09-06
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   BPM ADVANCED
+   
+   
+ * FIXED COMPONENT ID
+   5725C9400
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R850 PSY
+   UP

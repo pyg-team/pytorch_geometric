@@ -1,0 +1,150 @@
+Title: IBM Configuring and running LoadRunner scripts - United States
+
+Text:
+111; return code 111; Violated Value 111; mdrv pathname; troubleshooting mdrv pathname; Active Directory authentication; LoadRunner; LoadRunner Command Home; LoadRunner command; LoadRunner command arguments; 71RRT-PLAN; 71RRT-INS; 71RRT-CONF; 71RRT-PLAY; 71RRT-RPTG; 71RRT-WV; 71RRT-TS TECHNOTE (FAQ)
+
+QUESTION
+ How do you configure and run LoadRunner scripts under ITCAM for Transactions 7.x? 
+
+ANSWER
+The first thing you need to understand is what the Robotic Response Time (RRT) agent expects when you configure the agent. The agent needs to know the path to the LoadRunner executable mdrv.exe. The default installation location is: 
+
+ * 
+ * 
+
+
+Always set the LoadRunner Command Home entry to the path up to, but not including, the bin directory. Normally, you do not change the LoadRunner command entry even though the entry uses a forward slash instead of a backslash. Also, you normally do not change the default LoadRunner command arguments entry. 
+[/support/docview.wss?uid=swg21468300&aid=1] [/support/docview.wss?uid=swg21468300&aid=1] 
+
+ 
+
+If the path to the mdrv.exe file is incorrect, the TEP workspaces report the following information (see sample TEP workspaces): 
+
+_ Robotic Script Playback Status > Last Run Status -- Failed 
+
+_ Robotic Script Verification Point Failures > 
+
+ Event Type -- Return Code 
+
+ Violated Value -- 111 
+
+
+[/support/docview.wss?uid=swg21468300&aid=2] [/support/docview.wss?uid=swg21468300&aid=2] 
+
+Examine the trace-robotic.log. Check paths to the mdrv.exe command and the LoadRunner script. Find the pathname that the RRT agent actually uses to find the mdrv.exe executable and find the script. 
+
+For example: 
+
+_ Executing command: [ "D:\Program files\HP\Load Runner\\bin/mdrv.exe" 
+
+_ C:\IBM\ITM\tmaitm6\app\LOADRUNNER\scripts\myCampbell2 
+
+It may not be readily apparent in the trace-robotic.log where embedded blanks occur. In this example, the RRT agent reports violated value == 111 because it cannot find the mdrv.exe command. Here, the agent is looking for the mdrv.exe executable with an embedded blank in the "Load Runner" folder name. The default installation does not use an embedded blank in this folder name. 
+
+Note that the path to mdrv.exe looks a little strange with a double backslash in front of 'bin' and a forward slash in front of 'mdrv.exe'. The important thing to understand is that this command line is a valid DOS command. This is the command that the T6 agent constructs from the LoadRunner entries in the T6 agent's configuration. If you enter this command exactly as it is shown in the trace-robotic.log, and the command fails, then you need to correct the command line entries in the T6 agent configuration. One way to test the command line is to copy the command line to the Windows clipboard and then paste the command line into a DOS prompt. Be sure to include the opening and closing quotation marks ("). 
+
+ 
+
+Sample trace-robotic.log Messages 
+
+Messages from a trace-robotic.log, like the samples provided, might lead you to conclude that errors other than a faulty pathname are occurring. In this example, LoadRunner is actually installed on logical drive D. Note that the only error is that the pathname to the mdrv.exe command is configured incorrectly. That is, the pathname uses an embedded blank in the LoadRunner folder name.
+
+[2011-01-26T13:24:54.754-05:00] - MID - AMCAMPIBM03 - PlaybackThreadPoolWorker-18 - 
+com.ibm.tivoli.transperf.playback.generic.util.Process.exec() - Executing command: [ "D:\Program files\HP\Load 
+Runner\\bin/mdrv.exe" ][ -usr ], [ C:\IBM\ITM\tmaitm6\app\LOADRUNNER\scripts\myCampbell2\myCampbell2.usr ], [ -
+out ], [ C:\IBM\ITM\tmaitm6\app\LOADRUNNER\scripts\myCampbell2 ], [ -drv_log_file ], [ C:\IBM\ITM\tmaitm6
+\app\LOADRUNNER\scripts\myCampbell2 ], [ -no_drv_log ], 
+
+-[2011-01-26T13:24:54.754-05:00] - ERROR - AMCAMPIBM03 - PlaybackThreadPoolWorker-18 - 
+com.ibm.tivoli.transperf.playback.generic.util.Process.exec() - command is not running right. Got an exception 
+from the exec method. Most probable cause is the command does not exist on the OS. Set trace to DEBUG_MID for 
+more information.
+
+-[2011-01-26T13:24:54.754-05:00] - ERROR - AMCAMPIBM03 - PlaybackThreadPoolWorker-18 - 
+com.ibm.tivoli.transperf.playback.generic.util.Process.exec() - java.io.IOException: CreateProcess: "D:\Program 
+files\HP\Load Runner\bin\mdrv.exe" -usr C:\IBM\ITM\tmaitm6\app\LOADRUNNER\scripts\myCampbell2\myCampbell2.usr -
+out C:\IBM\ITM\tmaitm6\app\LOADRUNNER\scripts\myCampbell2 -drv_log_file C:\IBM\ITM\tmaitm6
+\app\LOADRUNNER\scripts\myCampbell2 -no_drv_log error=3
+at java.lang.ProcessImpl.<init>(ProcessImpl.java:108)
+at java.lang.ProcessImpl.start(ProcessImpl.java:56)
+at java.lang.ProcessBuilder.start(ProcessBuilder.java:466)
+at java.lang.Runtime.exec(Runtime.java:607)
+at com.ibm.tivoli.transperf.playback.generic.util.Process.exec(Process.java:154)
+at com.ibm.tivoli.transperf.playback.generic.util.Process.exec(Process.java:114)
+at com.ibm.tivoli.transperf.playback.generic.service.GenericPlaybackService.executeCommand
+(GenericPlaybackService.java:894)
+at com.ibm.tivoli.transperf.playback.generic.service.GenericPlaybackService.runCommand
+(GenericPlaybackService.java:1572)
+at com.ibm.tivoli.transperf.playback.generic.service.GenericPlaybackService.queueCommand
+(GenericPlaybackService.java:1470)
+at com.ibm.tivoli.transperf.playback.generic.service.GenericPlaybackService.start
+(GenericPlaybackService.java:639)
+at com.ibm.tivoli.transperf.playback.RoboticScriptRunnable.run(RoboticScriptRunnable.java:209)
+at com.ibm.tivoli.transperf.core.util.concurrent.PooledExecutor$Worker.run(PooledExecutor.java:763)
+at java.lang.Thread.run(Thread.java:801)
+
+-[2011-01-26T13:24:54.754-05:00] - MIN - AMCAMPIBM03 - PlaybackThreadPoolWorker-18 - 
+GenericPlaybackService.issueArmStop() - Policy is arm instrumented. Not stopping arm.
+
+-[2011-01-26T13:24:54.754-05:00] - MIN - AMCAMPIBM03 - PlaybackThreadPoolWorker-18 - 
+com.ibm.tivoli.transperf.playback.Playback.prepEventsForClearing(String) - Key doesn't exist in HashMap 
+violatedEventMap. Probably a brand new execution
+
+-[2011-01-26T13:24:54.754-05:00] - MID - AMCAMPIBM03 - PlaybackThreadPoolWorker-18 - 
+com.ibm.tivoli.transperf.playback.Playback.isRunnableExistForEvent(PBEventData) - 
+LOADRUNNER/myCampbell2.zip:myCampbell2
+
+-[2011-01-26T13:24:54.754-05:00] - MID - AMCAMPIBM03 - PlaybackThreadPoolWorker-18 - 
+com.ibm.tivoli.transperf.playback.Playback.getRunnableUsingPBEvent(PBEventData) - 
+LOADRUNNER/myCampbell2.zip:myCampbell2
+
+-[2011-01-26T13:24:54.754-05:00] - MIN - AMCAMPIBM03 - PlaybackThreadPoolWorker-18 - 
+GenericPlaybackService.issueArmDestory() - Monitor is arm enabled. Not stopping arm.
+
+-[2011-01-26T13:24:54.754-05:00] - MID - AMCAMPIBM03 - PlaybackThreadPoolWorker-18 - 
+GenericPlaybackService.queueCommand() - About to remove "D:\Program files\HP\Load Runner\\bin/mdrv.exe" -usr 
+C:\IBM\ITM\tmaitm6\app\LOADRUNNER\scripts\myCampbell2\myCampbell2.usr -out C:\IBM\ITM\tmaitm6
+\app\LOADRUNNER\scripts\myCampbell2 -drv_log_file C:\IBM\ITM\tmaitm6\app\LOADRUNNER\scripts\myCampbell2 -
+no_drv_log _myCampbell2.zip("D:\Program files\HP\Load Runner\\bin/mdrv.exe" -usr C:\IBM\ITM\tmaitm6
+\app\LOADRUNNER\scripts\myCampbell2\myCampbell2.usr -out C:\IBM\ITM\tmaitm6\app\LOADRUNNER\scripts\myCampbell2 
+-drv_log_file C:\IBM\ITM\tmaitm6\app\LOADRUNNER\scripts\myCampbell2 -no_drv_log _myCampbell2.zip_Wed Jan 26 
+13:24:51 EST 2011) from the queue
+
+-[2011-01-26T13:24:54.754-05:00] - MID - AMCAMPIBM03 - PlaybackThreadPoolWorker-18 - 
+GenericPlaybackService.queueCommand() - Released Sync Lock.
+
+-[2011-01-26T13:24:54.754-05:00] - MIN - AMCAMPIBM03 - PlaybackThreadPoolWorker-18 - GenericPlaybackService.start() - Exit, return value = null
+
+-[2011-01-26T13:24:54.754-05:00] - MIN - AMCAMPIBM03 - PlaybackThreadPoolWorker-18 - 
+com.ibm.tivoli.transperf.playback.RoboticScriptRunnable.run() - PlaybackFailedException: Bad return code. 
+Expected 0, got return code=111
+
+Pathname Problem Determination
+
+For problem determination, open a command prompt and cd to the root directory. Try using the command that the agent uses to launch the mdrv.exe command. This is the command shown in the trace-robotic.log. For example:
+
+
+ * 
+ * "D:\Program files\HP\Load Runner\\bin/mdrv.exe"
+   
+
+If the pathname is correct, the mdrv.exe command displays a help menu in the DOS prompt. 
+
+Authorization Errors 
+
+When LoadRunner scripts access sites that require the user to enter a userid and password, always allow the local operating system to authenticate the userid and password. If you allow Active Directory to authenticate these entries, you may observe that the Last Run Status is Complete, there are no verification point errors, but the transaction status shows Percent Available as zero. 
+
+[/support/docview.wss?uid=swg21468300&aid=3] [/support/docview.wss?uid=swg21468300&aid=3] 
+
+
+[/support/docview.wss?uid=swg21468300&aid=4] [/support/docview.wss?uid=swg21468300&aid=4] 
+
+HISTORICAL NUMBER
+ 59304.L6Q.000 
+
+PRODUCT ALIAS/SYNONYM
+ T7.4
+LR
+ITCAMfT
+ITCAM for Transactions
+LoadRunner

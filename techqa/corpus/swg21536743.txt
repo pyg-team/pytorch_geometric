@@ -1,0 +1,62 @@
+Title: IBM "Failed to acquire semaphore" is given when trying to upload PCKU - United States
+
+Text:
+STERLINGPRI TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ "Failed to acquire semaphore" is given when trying to upload PCKU 
+
+SYMPTOM
+PART: Outbound 6.0 SP2 DCS
+COMPONENT: Other
+OS: <None> - <None>
+DATABASE: <None> - <None>
+WEB SERVER: <None> - <None>
+WEB BROWSER: <None> - <None>
+
+
+RESOLVING THE PROBLEM
+The following troubleshooting guideline can be used for determining why this error was generated:
+If errors "Failed to acquire semaphore" or "Another copy of program already running" occur, try the following:
+
+1. Verify that DCS jobs are not running under the given user name.
+
+2. Use the following command to see what semaphores or shared memory queues are in use by that user name:
+
+ipcs | grep <username>
+
+This will give information such as: s 21 0x00a037fd
+
+The 's' indicates a semaphore (q would be a shared memory queue); 21 is the semaphore ID.
+
+3. Release the semaphore with the following command (based on the example above):
+
+ipcrm -s 21
+
+4. Try running the program again.
+
+If a Solaris background job is failing, you can use the truss utility to try and diagnose what is wrong. Truss will show all the system services that are being used as a result of the calls made in the application program. 
+
+To use truss you issue the command as follows:
+
+truss -f -o <outputfile name> WMSYantrabg <warehouse name> <program name>
+
+e.g. truss -f -o wh132.out WMSYantrabg WH15 wh132
+
+The "-f" means to follow any child processes that are spawned. The "-o" directs the output to a file that you can examine (or that can be sent to Yantra Technical Support for assistance). By reviewing the output, you can sometimes see where the problem is. For example, not being able to open or find a necessary file, or the fact that the semaphore calls were failing.
+NOTE: This solution applies for Solaris platform. check with the unix system administrators for the equivalent commands on other platforms.
+
+Please do not hesitate to contact us with any questions or concerns.
+
+Workaround:
+Try renaming the error files from $BASE/infc_log/$WHSE/log and rerun the upload program to check if the upload goes through.
+
+
+
+HISTORICAL NUMBER
+ PRI48453 
+
+PRODUCT ALIAS/SYNONYM
+ 
+
+Fact

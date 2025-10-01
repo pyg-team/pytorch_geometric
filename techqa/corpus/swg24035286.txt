@@ -1,0 +1,57 @@
+Title: IBM WebSphere MQ V7.5 Fix Pack 7.5.0.2 - United States
+
+Text:
+fixpack7.5.0.2 FP7.5.0.2 7.5.0.2 7502 csd7502 csd7.5.0.2 Fix Pack 7502 Fix Pack 7.5.0.2 CSD fix pack WMQ v7.5.0.2 MQ V7.5.0.2 MQ7502 MQ7.5.0.2 DOWNLOADABLE FILES
+
+ABSTRACT
+ This is Fix Pack 7.5.0.2 for WebSphere MQ V7.5 
+
+DOWNLOAD DESCRIPTION
+
+*********************************************************************************
+Changes introduced by this fix pack might negatively affect existing product function.
+
+Please refer to APARs IC92512 [http://www.ibm.com/support/docview.wss?uid=swg1IC92512], IC96105, [http://www.ibm.com/support/docview.wss?uid=swg1IC96105]IC97251 [http://www.ibm.com/support/docview.wss?uid=swg1IC97251]and IV49971 [http://www.ibm.com/support/docview.wss?uid=swg1IV49971]for description of the problems and corrective actions.
+
+Evaluate these APARs for the potential impact in your environment.
+********************************************************************************* 
+
+*********************************************************************************
+A change introduced by this Fix Pack is incomplete but will not adversely affect existing function.
+
+Please refer to APAR IC95844 [http://www.ibm.com/support/docview.wss?rs=171&uid=swg1IC95844] [http://www.ibm.com/support/docview.wss?rs=171&uid=swg1IV48023]for a description of the problems and corrective actions.
+
+Evaluate this APAR for the potential impact in your environment.
+*********************************************************************************
+
+
+Fix Pack 7.5.0.2 is the second maintenance for the WebSphere MQ V7.5 product first shipped in June 2012 on the following platforms:
+
+AIX
+Solaris SPARC
+Linux on x86-32
+Linux on POWER
+Linux on x86-64
+Linux on zSeries s390x
+Windows
+HP-UX Itanium
+Solaris x86-64
+
+The links in the download section below link to the downloads for Fix Pack 7.5.0.2 on all applicable platforms. You will be asked to register before being presented with a set of downloadable files.
+
+PREREQUISITES
+ 
+
+Prerequisites Install this fix pack on top of IBM WebSphere MQ V7.5.0.0 or MQ V7.5.0.1. The links below give the supported environments for WebSphere MQ V7.5.
+
+Label or File Name URL Platform Language Size (Bytes) WebSphere MQ v7.5 http://www.ibm.com/support/docview.wss?uid=swg27027462 [http://www.ibm.com/support/docview.wss?uid=swg27027462] AIX English 9999 [/support/docview.wss?uid=swg24035286&amp;aid=1] [/support/docview.wss?uid=swg24035286&amp;aid=1] [/support/docview.wss?uid=swg24035286&amp;aid=1] [/support/docview.wss?uid=swg24035286&amp;aid=1] [/support/docview.wss?uid=swg24035286&amp;aid=1] URL LANGUAGE SIZE(Bytes) Readme [http://www.ibm.com/support/docview.wss?uid=swg27039002] English 9999 Problems fixed in WebSphere MQ v7.5.0.2 [http://www.ibm.com/support/docview.wss?uid=swg27038184] English 9999 Latest available standalone MQ Explorer [http://www-01.ibm.com/support/docview.wss?uid=swg24021041] English 9999 
+DOWNLOAD PACKAGE
+
+
+Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options 
+What is Fix Central (FC)? [http://www-304.ibm.com/systems/support/fixes/en/fixcentral/help/faq_sw.html] AIX 07.10.2013 English 500784691 FC [http://www.ibm.com/support/fixcentral/swg/quickorder?product=ibm/WebSphere/WebSphere+MQ&release=7.5&platform=All&function=fixId&fixids=7.5.0-WS-MQ-AixPPC64-FP0002] [ ] HP Itanium 07.10.2013 English 658533321 FC [http://www.ibm.com/support/fixcentral/swg/quickorder?product=ibm/WebSphere/WebSphere+MQ&release=7.5&platform=All&function=fixId&fixids=7.5.0-WS-MQ-HpuxIA64-FP0002] [ ] Solaris SPARC 07.10.2013 English 393396697 FC [http://www.ibm.com/support/fixcentral/swg/quickorder?product=ibm/WebSphere/WebSphere+MQ&release=7.5&platform=All&function=fixId&fixids=7.5.0-WS-MQ-SolarisSparc64-FP0002] [ ] Solaris x86-64 07.10.2013 English 375368251 FC [http://www.ibm.com/support/fixcentral/swg/quickorder?product=ibm/WebSphere/WebSphere+MQ&release=7.5&platform=All&function=fixId&fixids=7.5.0-WS-MQ-SolarisX64-FP0002] [ ] Linux x86-32 07.10.2013 English 351009657 FC [http://www.ibm.com/support/fixcentral/swg/quickorder?product=ibm/WebSphere/WebSphere+MQ&release=7.5&platform=All&function=fixId&fixids=7.5.0-WS-MQ-LinuxIA32-FP0002] [ ] Linux s390x 07.10.2013 English 237499819 FC [http://www.ibm.com/support/fixcentral/swg/quickorder?product=ibm/WebSphere/WebSphere+MQ&release=7.5&platform=All&function=fixId&fixids=7.5.0-WS-MQ-LinuxS390X-FP0002] [ ] Linux on PPC 07.10.2013 English 232051859 FC [http://www.ibm.com/support/fixcentral/swg/quickorder?product=ibm/WebSphere/WebSphere+MQ&release=7.5&platform=All&function=fixId&fixids=7.5.0-WS-MQ-LinuxPPC64-FP0002] [ ] Linux x86-64 07.10.2013 English 394108632 FC [http://www.ibm.com/support/fixcentral/swg/quickorder?product=ibm/WebSphere/WebSphere+MQ&release=7.5&platform=All&function=fixId&fixids=7.5.0-WS-MQ-LinuxX64-FP0002] [ ] Windows 07.10.2013 English 501101636 FC [http://www.ibm.com/support/fixcentral/swg/quickorder?product=ibm/WebSphere/WebSphere+MQ&release=7.5&platform=All&function=fixId&fixids=7.5.0-WS-MQ-Windows-FP0002] [ ] Resource Adapter for use with Application Servers 07.10.2013 English 13423705 FC [http://www.ibm.com/support/fixcentral/swg/quickorder?product=ibm/WebSphere/WebSphere+MQ&release=7.5&platform=All&function=fixId&fixids=7.5.0.2-WS-MQ-Java-InstallRA] [ ] 
+PRODUCT ALIAS/SYNONYM
+ WMQ MQ 
+
+ [/support/docview.wss?uid=swg24035286&aid=2]Problems (APARS) fixed [/support/docview.wss?uid=swg24035286&aid=3]Problems (APARS) fixed
+IC82482, IC83676, IC84106, IC85283, IC85566, IC86777, IC86954, IC87122, IC87430, IC87766, IC87782, IC87817, IC88165, IC88254, IC88255, IC88256, IC88457, IC88481, IC88494, IC88788, IC88802, IC88904, IC88987, IC89153, IC89179, IC89180, IC89239, IC89394, IC89405, IC89447, IC89514, IC89575, IC89595, IC89719, IC89758, IC89838, IC89944, IC89965, IC89972, IC89988, IC90248, IC90282, IC90363, IC90394, IC90404, IC90430, IC90498, IC90658, IC90660, IC90674, IC90677, IC90690, IC90868, IC90896, IC90988, IC91189, IC91358, IC91443, IC91865, IC92914, IC93174, IC93203, IC93233, IC93247, IV24699, IV26318, IV26834, IV27153, IV27277, IV27982, IV29527, IV30448, IV30617, IV30759, IV31840, IV32625, IV33120, IV33501, IV33784, IV33867, IV33932, IV34035, IV34166, IV34168, IV34170, IV34300, IV34512, IV35331, IV35345, IV35429, IV35452, IV35845, IV36035, IV36106, IV36302, IV36662, IV37034, IV37129, IV37436, IV37858, IV38357, IV38739, IV39376, IV43368, PM82583, SE53204

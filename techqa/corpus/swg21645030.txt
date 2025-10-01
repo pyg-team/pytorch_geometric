@@ -1,0 +1,106 @@
+Title: IBM Assisted Side by Side Upgrade Tool for IBM Tivoli Common Reporting - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Side by side installation of a product may fail at times due to resource conflicts. These conflicts have to be detected pro-actively to help make such installations succeed. 
+
+SYMPTOM
+Failures during product installation or at run time
+
+
+CAUSE
+Cause of this install failure or runtime issues could be due to the conflicts in the availability of shared resources(like port, path, disk etc.)
+
+RESOLVING THE PROBLEM
+Since install/upgrade usually happens on the same hardware, conflicts are bound to happen with the shared resources when a second instance of the same product is being installed. In order to eliminate such failures, this utility can be used. As product install/upgrade failures often lead to customer dissatisfaction, IBM Tivoli Common Reporting (TCR) team has taken this step towards developing this utility to solve this pain point and gain customer confidence in using our products. 
+
+The tool, when invoked, detects the potential resource conflicts and recommends relevant changes to be made so that the product install/upgrade becomes successful. Examples of some cases where this tool can be used are:
+
+a) Upgrading TCR from v1.2 to v2.1.1 on the same server
+b) Upgrading TCR from v2.1.1 to v3.1 on the same server 
+
+However, this utility can be extended to be used with any other product which follows a similar installation mechanism (response file based) with necessary changes. 
+
+
+Following are the steps to follow to install this light weight tool (Example used is TCR installation): 
+
+1. Download the attached Assisted Side by Side Upgrade Tool i.e. SPU.jar
+
+2. Extract the files from the SPU.jar file from the location where is saved: 
+
+ * 
+
+
+3. Open the actual component response file from the media package and list down the properties to be validated ex: Path, Port etc 
+
+4. Remove all the properties that exist in ruleFile.txt which is available after SPU.jar file extract.  * 
+ * 
+ * 
+ * For TCR 2.1/2.1.1
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * For TCR 3.1
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ *  
+   Notes: 
+   (i) "Free:5GB": It checks for 5GB available space. If not available the tool checks for other  * 
+   
+   (ii) "incr:10": looks for the availability of port, if not available, it then increments the original port  * 
+   
+   (iii) "count:10": Once a vacant port is found, the tool verifies the availability of a series of 10  * 
+   
+   
+
+
+5. Using 'dos2Unix' command please convert console.sh file to unix compatible and Run ./Console.sh file 
+
+6. Go to ../SPU/prs/unix provide execute permission to all script files 
+
+7. SPU prompt will be opened 
+
+8. On typing help and hitting enter, all available commands will appear as below  * 
+ * 
+ * 
+ * 
+ * 
+
+9. Enable logging by running verbose command like SPU>verbose 
+
+10. Execute the generate option as shown below by passing the original response file that comes with the install media  * generate -t /home/tcr211/TCRInstaller/TCR_sample_response_embedded.txt -o /home/ss/out211.txt
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * generate
+ * 
+
+
+11. Once the out211.txt file is generated, please open the file and update other properties like LICENSE_ACCEPTED, WAS_USER_NAME, WAS_PASSWORD etc 
+
+12. Use the generated output response file to install TCR 
+Here is the example which shows how TCR can be installed by passing the output response file. 
+
+Silent mode - ./install.bin -i silent -f /home/ss/out211.txt 
+GUI Mode - ./install.bin -i GUI -f /home/ss/out211.txt 
+Console Mode - ./install.bin -i console -f /home/ss/out211.txt 
+
+ SPU.jar [/support/docview.wss?uid=swg21645030&aid=2]SPU.jar [/support/docview.wss?uid=swg21645030&aid=1]

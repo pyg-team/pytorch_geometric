@@ -1,0 +1,64 @@
+Title: IBM Create Windows Service for Node Agent and Maximo Server in WebSphere - United States
+
+Text:
+wasservice; service; waservice; install; TPAEWEBSPHERE TECHNOTE (FAQ)
+
+QUESTION
+ Creating a Windows Service for the Node Agent and/or Maximo Application Server in WebSphere. The example in Maximo Asset Management Installation Guide has the incorrect syntax. 
+
+ANSWER
+The WebSphere Node Agent and the Maximo Server(s) Application Server(s) created in the WebSphere Administration Console can be created as Windows services. This allows the Node Agent and Maximo Server(s) to start when the machine is rebooted without having to manually start the Node agent and to go into the WebSphere Administration Console to start the Maximo Server(s) once the machine has rebooted. 
+
+In Chapter 4 of the Maximo Asset Management Installation Guide there is a section titled - "Configuring the WebSphere node agent to run as a Windows service". Step 8 of the section explains the parameters passed to create the service and Step 9 has an example with the incorrect syntax. Here are the correct parameters and default paths and example. 
+
+
+Run the WASService command with the following parameters:
+
+- serverName - name of the node agent, for example, nodeAgent
+
+- profilePath - the profile directory of the server, for example, 
+<D:>\ IBM\WebSphere\AppServer\profiles\ctgAppSrv01
+
+- wasHome - home folder for WebSphere, for example, 
+<D:>\IBM\WebSphere\AppServer
+
+- logRoot - folder location of node agent log file, for example, 
+<D:>\IBM\WebSphere\AppServer\profiles\ctgAppSrv01\logs\nodeagent
+
+- logFile - log file name for node agent (startServer.log) 
+
+- restart - restarts the existing service automatically if the service fails when set to true
+
+Enter the WASService command using the following syntax:
+
+WASService -add NodeAgent -serverName nodeagent -profilePath "C:\IBM\WebSphere\AppServer\profiles\ctgAppSrv01" -wasHome "C:\IBM\WebSphere\AppServer" -logRoot "C:\IBM\WebSphere\AppServer\profiles\ctgAppSrv01\logs\nodeagent" -logFile "C:\IBM\WebSphere\AppServer\profiles\ctgAppSrv01\logs\nodeagent\startServer.log" -restart true
+
+
+
+In Chapter 4 of the Maximo Asset Management Installation Guide there is a section titled - "Configuring the WebSphere Application Server to run as a Windows service". Step 8 of the section explains the parameters passed to create the service and Step 9 has an example with the incorrect syntax. Here are the correct parameters and default paths and example.
+Run the WASService command with the following parameters:
+
+- serverName - name of Maximo application server, for example, MXServer
+
+- profilePath - the profile directory of the server, for example, 
+<D:>\ IBM\WebSphere\AppServer\profiles\ctgAppSrv01
+
+- wasHome - home folder for WebSphere, for example, 
+<D:>\IBM\WebSphere\AppServer
+
+- logRoot - folder location of MXServer log file, for example, 
+<D:>\IBM\WebSphere\AppServer\profiles\ctgAppSrv01\logs\MXServer
+
+- logFile - log file name for MXServer (startServer.log) 
+
+- restart - restarts the existing service automatically if the service fails when set to true
+
+Enter the WASService command using the following syntax:
+
+WASService -add MXServer -serverName MXServer -profilePath "C:\IBM\WebSphere\AppServer\profiles\ctgAppSrv01" -wasHome "C:\IBM\WebSphere\AppServer" -logRoot "C:\IBM\WebSphere\AppServer\profiles\ctgAppSrv01\logs\MXServer" -logFile "C:\IBM\WebSphere\AppServer\profiles\ctgAppSrv01\logs\MXServer\startServer.log" -restart true
+
+ 
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Systems and Asset Management Tivoli Asset Management for IT All Systems and Asset Management Maximo Asset Management Essentials All

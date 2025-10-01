@@ -1,0 +1,22 @@
+Title: IBM An error occurs when trying to save a search template:Content Engine COM API - United States
+
+Text:
+P8 WORKPLACE - UNABLE TO SAVE A SEARCH TEMPLATE - CODE=8004026B TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ An error occurs when trying to save a search template:Content Engine COM API 
+
+RESOLVING THE PROBLEM
+An error occurs when trying to save a search template:
+
+Content Engine COM API error. IDispatch error #107 The operation requires that the following property have a value '<property name>' [Code=8004026b] ... Object Reference [OBJECT_STORE:4] A required property is added to the Document Class superclass using Enterprise Manager. Adding a property to the Document Class superclass also adds the property to all the sub classes under the Document Class superclass. One of those sub classes is the Stored Search class. A Search Template object belongs to the Stored Search class. Since the Stored Search class now has a required property, the system complains when trying to save the new search template because there is no value present for the required property on the new template. . .hence the error.
+
+Remove the required property from the Stored Search class and you can now save the Search Template.
+
+
+
+HISTORICAL NUMBER
+ 10009722 
+
+PRODUCT ALIAS/SYNONYM
+ P8 CONTENT ENGINE

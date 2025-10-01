@@ -1,0 +1,143 @@
+Title: IBM PI34677: MBEANSTARTER LOADEXTENSIONS FAILED TO LOAD EXTENSION - United States
+
+Text:
+  A FIX IS AVAILABLE
+Fixes integrated in WebSphere Portal 8.5.0.0 Combined Cumulative Fixes [http://www-01.ibm.com/support/docview.wss?uid=swg24037786]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  During Portal Start-Up following error is shown:
+   --------------------
+   0000005e MBeanStarter  E com.ibm.wps.
+   
+   scripting.server.MBeanStarter loadExtensions failed to load
+   extension:
+   key: ServerExt.applications / value:
+   com.ibm.wps.scripting.server.
+   ApplicationServerExtensions
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  1) open the WAS admin console
+   2) navigate to Resources > Resource environment providers > WP
+   ScriptingService > Custom properties
+   3) you should see an entry with the name
+   "ServerExt.applications" and value
+   "com.ibm.wps.scripting.server.ApplicationServerExtensions"
+   4) delete this entry, save and restart the server.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  A code fix for this issue is integrated into the WebSphere
+   Portal & WCM Combined Cumulative Fix 05 (PI31198 [http://www-01.ibm.com/support/docview.wss?uid=swg1PI31198]) for Portal
+   8.5.0.0 available from Fix Central:
+   
+   http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent
+   =ibm/WebSphere&product=ibm/WebSphere/WebSphere+Portal&release=Al [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm/WebSphere&product=ibm/WebSphere/WebSphere+Portal&release=Al]
+   l&platform=All&function=aparId&apars=PI31198
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Added a task to remove the outdate resource environment
+   provider entry.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI34677
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSPHERE PORTA
+   
+   
+ * REPORTED COMPONENT ID
+   5724E7600
+   
+   
+ * REPORTED RELEASE
+   850
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-02-10
+   
+   
+ * CLOSED DATE
+   2015-03-10
+   
+   
+ * LAST MODIFIED DATE
+   2015-03-10
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBSPHERE PORTA
+   
+   
+ * FIXED COMPONENT ID
+   5724E7600
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R850 PSY
+   UP

@@ -1,0 +1,195 @@
+Title: IBM MustGather - Application Server Toolkit Web Service Problems - United States
+
+Text:
+MustGather; MustGatherDocument; ProblemDeterminationTool; AST; Application Server Toolkit; Web Service; Web Services; RSA; RAD; options; trace; debug; V6.1; V7.0; wizard; wsdl2java; java2wsdl TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ IBM Application Server Toolkit V6.1 for WebSphere Application Server, IBM Rational Application Developer V7.0, and IBM Rational Software Architect V7.0 include a component which provides the ability to create and work with Web Services. Here is a "MustGather" list of information and tracing that will be helpful to IBM Support when there is a problem with this feature. 
+
+RESOLVING THE PROBLEM
+I. Recommended Updates
+Many problems have already been fixed. Therefore, it is recommended that you should update your software with the latest Refresh Pack or Fix Pack available.
+
+The recommended fixes for Rational Application Developer can be found here:
+http://www.ibm.com/support/docview.wss?uid=swg27007823 [http://www.ibm.com/support/docview.wss?uid=swg27007823]
+
+The recommended fixes for Application Server Toolkit can be found here:
+http://www.ibm.com/support/docview.wss?uid=swg27004980 [http://www.ibm.com/support/docview.wss?uid=swg27004980]
+
+The recommended fixes for WebSphere Application Server can be found here:
+http://www.ibm.com/support/docview.wss?uid=swg27004980 [http://www.ibm.com/support/docview.wss?uid=swg27004980]
+
+
+II. MustGather items for "Web Service" problems
+Please answer the following questions and collect the following traces and logs for IBM support. This is the minimum "MustGather" information required by IBM support.
+
+1. What is the exact version of Rational Application Developer or Application Server Toolkit you are using?
+
+2. What is the exact version of WebSphere Application Server you are using?
+
+3. Is the Application Server a local or a remote server?
+
+4. Is the Application Server configured for security?
+
+5. Provide a simplified test case that exhibits the problem. Also, provide instructions for running the test case. Due to the complex nature of Web Services problems, the fastest way for us to resolve your issue is through a test case. Problem determination might be prolonged without a test case. 
+
+If possible, send your exported project as a project interchange to IBM. Include any unique jar files that your project may reference.
+
+If a simplified test case is not possible, please provide the actual application with source code including the Web Services Description Language (WSDL) and all XML schema files packaged as an EAR. 
+
+
+6. Did this work at one time before changes were made? Explain. 
+
+7. Does this problem involve either of these two commands, wsdl2java or java2wsdl? If so, please enable and collect the tracing as described in Section III. 
+
+8. Is this a run-time issue (for example, a server and client interacting)? If so: 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+
+
+9. Is this a tooling issue (for example, is code being generated)? If so: 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+
+10. Is Web services configured for security? 
+
+11. Follow instructions to send diagnostic information to IBM support. 
+
+12. If the application is deployed to a server, check for the following: 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+
+13. If you are using the Feature Pack for Web Services capabilities, make sure that you are using a Application Server Profile that is augmented with the Feature Pack for Web Services. To check if your profile is augmented with the Feature Pack for Web Services, check if one of the following is true: 
+ * 
+ * 
+ * 
+ * 
+
+
+
+III. Enabling trace for Web Service code generation (java2wsdl and wsdl2java) problems 
+
+To enable the tracing Web Service deploy code generation when targeting a WebSphere Application Server runtime, create a .options file in the product installation directory with the following debug options: 
+ * For WebSphere Application Server V6.0 targeted projects using J2EE 1.4, the .options file should contain the following string: 
+   
+   com.ibm.etools.webservice.was.v6.consumption.j2ee14/debug=true
+   
+   
+
+ * For WebSphere Application Server V6.1 targeted projects using J2EE 1.4, the .options file should contain the following string: 
+   
+   com.ibm.ast.ws.v61.consumption.j2ee14/debug=true
+   
+   
+
+ * For any J2EE 1.3 application, the WebSphere Application Server V5.1.1 Web service emitter is always used, no matter what runtime is being targeted. To trace this emitter call, the following string should be specified in the .options file:
+   
+   com.ibm.etools.webservice.was.v511.consumption.j2ee13/debug=true 
+   
+   
+ * To run Rational Application Developer V7.0 or Rational Software Architect V7.0 with tracing for a JAX-WS Web Service (for use when the Web Service feature pack is enabled), use the following trace string:
+   
+   com.ibm.ast.ws.jaxws.emitter/debug=true
+   
+   
+
+ * To run Rational Application Developer V7.0 or Rational Software Architect V7.0 with tracing enabled, use the following trace string:
+   
+   .\jdk\jre\bin\java.exe -Xquickstart -Xms40m -Xmx768m 
+   -Xgcpolicy:gencon -Xscmx96m -Xshareclasses:singleJVM,keep 
+   -XX:MaxPermSize=512M -cp startup.jar org.eclipse.core.
+   launcher.Main -debug -product com.ibm.rational.rad.
+   product.ide > trace.out 2>&1
+
+ * To run WebSphere Application Server Toolkit V6.1 with the tracing enabled (replacing any paths in the command as necessary): 
+   
+   .\jre\bin\java.exe -Xj9 -cp startup.jar -Dsecurity.
+   overrideProperties=true -Djava.security.properties=
+   "C:\Program Files\IBM\WebSphere\AST\runtimes\base_v61_stub\
+   properties\java.security" -Dcom.ibm.CORBA.ConfigURL=
+   "file:C:\ProgramFiles\IBM\WebSphere\AST\runtimes\base_v61_stub\
+   properties\sas.client.props" -Dcom.ibm.SSL.ConfigURL=
+   "file:C:\ProgramFiles\IBM\WebSphere\AST\runtimes
+   \base_v61_stub\properties\ssl.client.props" org.eclipse.core.
+   launcher.Main -debug > trace.out 2>&1 
+
+
+The resulting traces will be in a trace.out file found in the product installation directory. 
+
+
+Appendix A: Obtaining a TCP/IP monitor trace 
+
+Defining a TCP/IP Monitor configuration: 
+
+There are two ways to configure the monitor in the Application Server Toolkit Preferences: 
+
+Select Window -> Preferences -> Run/Debug -> TCP/IP Monitor from the Application Server Toolkit main menu. 
+
+Then Select Show the TCP/IP Monitor view when there is activity. 
+Enabling this option opens and activates the TCP/IP Monitor view automatically when any TCP/IP traffic on one of the defined and started ports is detected. 
+
+Define TCP/IP Monitors to manually start and stop monitoring ports. To define a new port, click Add a and enter the appropriate data in the fields:  * Local monitoring port—Specify the local port name. 
+ * Host name—Enter the host name or IP address of the actual Web service server. 
+ * Port—Enter the port number of the Web service server. 
+ * Type—To monitor Web services, we recommend that you use the HTTP setting. With the HTTP type setting, the HTTP header information in the request and response can be viewed separately. The displayed message data is only XML and is easier to read.
+
+
+To begin monitoring, select the new monitor and click Start. All TCP/IP requests to the defined local monitoring port will now go through the TCP/IP Monitor. 
+
+To use the monitor with a Web service client will require a change of the endpoint the client is currently using. The Web service client must be configured to use the port the TCP/IP Monitor Local Monitoring port. For example, if your original Web service endpoint was 9080 and your TCP/IP Monitor is configured for Local monitoring port 9081, you would need to make these configuration changes: 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+
+
+
+Submitting information to IBM Support [http://www-1.ibm.com/support/docview.wss?rs=180&uid=swg21153852] 
+Steps to get support [http://www-128.ibm.com/developerworks/websphere/support/appserver_support.html] 
+Mustgather: Application Server Toolkit [http://www-1.ibm.com/support/docview.wss?rs=180&uid=swg21259452] RELATED INFORMATION
+ Recording your screen to share with IBM Support [https://www.ibm.com/developerworks/community/blogs/IBMElectronicSupport/entry/recording_your_screen_to_share_with_support?lang=en]
+
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Application Servers Runtimes for Java Technology Java SDK

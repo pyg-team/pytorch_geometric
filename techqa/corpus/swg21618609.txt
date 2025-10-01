@@ -1,0 +1,52 @@
+Title: IBM How to configure Controller Java subsystem to use a 64-bit JRE - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Customer's Controller application server is based on a 64-bit operating system, and would like to modify the Controller application server so that its JAVA functionality (e.g. AFCs, Intercompany reports etc.) run inside a 64-bit JAVA environment (JRE) rather than a 32-bit environment. 
+
+SYMPTOM
+The reason why customer wants to upgrade is that the customer may be suffering from issues such as: 
+
+ * Intermittent out of memory 
+ * Slow performance due to memory swapping.
+
+
+In some environments, changing the JRE from 32 to 64 bit can alleviate some of the above symptoms. 
+
+ * For example, in one environment, AFC consolidations ran approximately 5% faster using a 64-bit JAVA (compared to the original 32-bit JAVA).
+
+
+CAUSE
+For all versions of Controller 10.1.1671 and earlier, Controller is supplied only with a 32-bit JAVA JRE. 
+
+However, all versions of Controller 10.1.1 (between 10.1.1691 and 10.1.2681 inclusive) are supplied with an 'optional' 64-bit JRE. ENVIRONMENT
+Controller 10.1.1 (from 10.1.1691 onwards) application server based on 64 bit operating system (e.g. Windows 2008 R2).
+
+
+
+RESOLVING THE PROBLEM
+Ensure that you are using Controller 10.1.1691 or later 10.1.1 version, and then reconfigure the Controller application server to use the 64-bit JRE. 
+
+ * IMPORTANT: If you intend to run the FAP Service on this same application server, then make sure you read and action Technote #1620701.
+
+
+Steps:  1.  Ensure no users are using any functionality related to JAVA (or, ideally, ensure no users are in the Controller system at all) 
+ 2.  Logon to the Controller application server as a Windows administrator 
+ 3.  Stop the Windows service "IBM Cognos Controller Java Proxy" 
+ 4.  Launch Windows explorer, and navigate to the ...c10\server folder. TIP: by default this is here: C:\Program Files (x86)\IBM\cognos\c10\server 
+ 5.  Rename the file "ccrproxy.exe" to "ccrproxy.32bit" 
+ 6.  Rename the file "ccrproxy_x64.exe" to "ccrproxy.exe" 
+ 7.  Right-click on "Computer" and choose "Properties" 
+ 8.  Click "Advanced system settings" 
+ 9.  Click "Environment Variables" 
+ 10. Highlight the "CCR_JAVA_HOME" system environment variable and click "Edit" 
+ 11. Modify it to point to the directory of a 64 bit JRE. TIP: By default this is: C:\Program Files (x86)\IBM\cognos\c10\bin64\jre\6.0 
+ 12. Start the Windows service "IBM Cognos Controller Java Proxy" 
+ 13. Test.
+
+[/support/docview.wss?uid=swg21618609&aid=1] [/support/docview.wss?uid=swg21618609&aid=1] 
+
+IMPORTANT: Be aware that any subsequent software upgrade to the Controller server (e.g. later IF patch or whatever) will typically cause the "ccrproxy.exe" to be reset back to the default (32-bit) so the above technique will have to be repeated during any Controller server software patch. RELATED INFORMATION
+#1620701 - "The IBM Cognos FAP Service service on Local [http://www.ibm.com/support/docview.wss?uid=swg21620701]

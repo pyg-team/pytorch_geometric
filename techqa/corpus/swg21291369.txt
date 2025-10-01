@@ -1,0 +1,30 @@
+Title: IBM DB2 Document Manager desktop appears slow - United States
+
+Text:
+DNS; slow; performance TECHNOTE (FAQ)
+
+QUESTION
+ Why does the DB2® Document Manager desktop occasionally take a long time to log in, add an item, or perform a search? 
+
+CAUSE
+One possible cause is that the DB2 Document Manager desktop is having problems resolving the DB2 Document Manager server's name using the DNS server. 
+
+By default the DB2 Document Manager desktop connects to the server using the name of the server (this is read from theDDMDsktp.htm file located on the DB2 Document Manager website or server). 
+
+Once it has the name it uses the DNS server to resolve the IP address. 
+
+If the DNS server is down, running slow or contains bad entries for the DB2 Document Manager server then this could cause problems for the DB2 Document Manager desktop.
+
+
+ANSWER
+To validate that this is a DNS issue, on the DB2 Document Manager desktop edit the 
+
+%SYSTEMROOT%\system32\drivers\etc\hosts file in a text editor. 
+
+Add the IP address and the name of the DB2 Document Manager server. You can add both the short name and the fully qualified name if one or both are used in the DB2 Document Manager configuration. 
+
+Example: 
+
+10.0.0.22 switcher switcher.ibm.com 
+
+If the client performance improves then you should work with your Network administrator to resolve the DNS issue.

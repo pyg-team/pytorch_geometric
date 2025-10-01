@@ -1,0 +1,34 @@
+Title: IBM Changing the Status on Task Work Orders Does Note Track the Status History - United States
+
+Text:
+TPAEWORK; task; status TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When I change the status of my work order and the task work orders are set to inherit the status, the application does not track the status history for the task work order. 
+
+SYMPTOM
+Go to the Activities and Tasks application in the Changes module 
+Recall the originating work order, Select Action | View | 
+Work Order History. Note the status changes: List is empty.
+
+
+CAUSE
+Available setting is not configured
+
+DIAGNOSING THE PROBLEM
+1. Work Order Tracking application, insert a new work order and fill in the required 
+Fields. 
+2. Go to the Plans tab, insert a new task work order and save.
+3. Change the status of the parent work order to APPR. 
+4. Select Action | View | View Work Order History. Note the 
+status changes : WAPPR, APPR. 
+5. Go to the Activities and Tasks application in the Changes module. 
+Recall the originating work order from above, Select Action | View | 
+Work Order History. Note the status changes: NONE.
+
+RESOLVING THE PROBLEM
+There is a setting that tells the application 
+whether or not to record status history for work order tasks. This is based on the Work Type for a work order. 
+Confirm the Work Type for the work orders then check that there is an entry for the work type in 
+question by going to Administrator/Organizations/Work Order 
+options/Work type and that the check box Record Status History for Work Order Tasks? is checked.

@@ -1,0 +1,34 @@
+Title: IBM Cannot connect to Business Space WebDAV - United States
+
+Text:
+business space; webdav; connect; windows TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Attempts to connect to the WebDAV using Microsoft Windows 7 or Windows 2008 result in an error message. 
+
+SYMPTOM
+Windows might ask you to enter the credentials several times. After that, the following error message is shown: 
+
+The folder you entered does not appear to be valid. Please choose another. [/support/docview.wss?uid=swg21590077&amp;aid=1]
+
+
+ENVIRONMENT
+Using Windows 7 or Windows 2008 to map the network location for Business Space WebDAV.
+
+
+RESOLVING THE PROBLEM
+Two steps are necessary to resolve this issue: 
+
+ 1. Make sure you are using the HTTPS URL to access the WebDAV. This URL would look like this:
+    https://<bspace_host>:<bspace_secure_port>/mum/mycontenthandler/mm/dav/filestore
+    e.g. https://bpm751:9443/mum/mycontenthandler/mm/dav/filestore 
+ 2. Install the required Microsoft Hotfix for KB2555258: http://support.microsoft.com/kb/2555258 [http://support.microsoft.com/kb/2555258]
+
+RELATED INFORMATION
+ Connecting to the WebDAV folder [http://publib.boulder.ibm.com/infocenter/dmndhelp/v7r5m1/topic/com.ibm.wbpm.bspace.admin.doc/customizing/tadm_bsp_deploycustom.html]
+Recommended WebDAV clients for accessing IBM WebSphere [http://www.ibm.com/support/docview.wss?uid=swg27023805]
+
+
+ 
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Business Process Manager Advanced Business Space AIX, Linux, Linux zSeries, Solaris, Windows, z/OS 8.0, 7.5.1, 7.5.0.1, 7.5 Business Integration WebSphere Business Monitor Business Space AIX, HP-UX, Linux, Linux zSeries, Solaris, Windows, z/OS 7.5.1, 7.5 Business Integration WebSphere Service Registry and Repository Business Space AIX, HP-UX, HP Itanium, Linux, Linux pSeries, Linux zSeries, Linux/x86, Solaris, Windows, z/OS 8.0, 7.5.0.2, 7.5.0.1, 7.5 Enterprise Content Management Case Manager AIX, Linux, Linux on System z, Windows, Solaris 5.1.0.0, 5.1.0.1

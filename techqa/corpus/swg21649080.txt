@@ -1,0 +1,72 @@
+Title: IBM Must Gather for IBM SPSS Statistics - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ What files or information can be gathered for submission to IBM SPSS Technical Support when facing a problem with IBM SPSS Statistics? 
+
+RESOLVING THE PROBLEM
+Please provide as much of the following information as possible when opening the new PMR to IBM SPSS Technical Support 
+
+Required Environment Details: 
+
+• Operating system and bitness levels running IBM SPSS Statistics client (Example: Windows 7 64-bit or Macintosh OS X 10.9.2) 
+
+• Operating system and bitness levels running IBM SPSS Statistics Server if installed (Example: Windows 2008 R2 64-bit) 
+
+• Operating system and bitness levels running Sentinel RMS License Manager if concurrent installation (Example: Windows 2008 R2 64-bit) 
+
+• Exact version of IBM SPSS Statistics (Example: 22.0.0.1. To locate this information, launch IBM SPSS Statistics and in the data editor, click Help->About) 
+
+• Exact version of Sentinel RMS License Manager if concurrent installation, (Example: 8.5.0.0021.) 
+
+• Authorization code used for installation. If you do not have one or need one created, please contact SPSS Client Care. 
+
+Log Files: 
+
+• IBM SPSS Statistics 21 for Windows and higher ships with a Diagnostic utility called SPSS_Statistics_Diagnostics.exe. It is located in the Utility folder in the SPSS Statistics installation directory. (Example C:\Program Files\IBM\SPSS\Statistics\22\Utility). Run this file to install the Diagnostic Utility and collect the resulting file SPSS_Diagnostics.zip file. 
+
+NOTE: this diagnostic utility is only for IBM SPSS Statistics for Windows. 
+
+
+Detailed Problem Description: 
+
+• Is your issue related to an authorized installation of Statistics or concurrent installation? 
+
+• What is the exact problem you are experiencing, include as much detail as possible. Include sample files as needed along with your own analysis of the problem. 
+
+• Are you receiving an error? If so, list the exact text of the error message and when you receive it. 
+
+• Has it worked before? When? What has changed?
+
+• Does the problem occur for all users? If not, what might be different between the users? Does it occur for the same user on a different PC? Replication Scenario 
+
+• Is there a replication scenario? Please list detailed replication steps 
+
+• Can the issue be reproduced using one of our sample files? 
+
+ 
+
+Link to Supported Version Information: 
+
+http://www-969.ibm.com/software/reports/compatibility/clarity/index.jsp [http://www-969.ibm.com/software/reports/compatibility/clarity/index.jsp] 
+
+Link to Support Knowledge Base: 
+
+http://www-947.ibm.com/support/entry/portal/support [http://www-947.ibm.com/support/entry/portal/support]
+
+
+Link to Documentation 
+
+http://www-947.ibm.com/support/entry/portal/support [http://www-947.ibm.com/support/entry/portal/support]
+
+Most Frequently Used Technotes: 
+
+1506855, 1606447, 1477472, 1489714
+
+
+
+[/support/docview.wss?uid=swg21649080&amp;aid=1] [/support/docview.wss?uid=swg21649080&amp;aid=1] [/support/docview.wss?uid=swg21649080&amp;aid=1] [/support/docview.wss?uid=swg21649080&amp;aid=1] [/support/docview.wss?uid=swg21649080&amp;aid=1] [/support/docview.wss?uid=swg21649080&amp;aid=1] 
+. RELATED INFORMATION
+ Need more help? Our Statistics forum is Live! [https://developer.ibm.com/answers/topics/statistics.html?smartspace=predictive-analytics]

@@ -1,0 +1,36 @@
+Title: IBM Insufficient ulimit Value Causes Native OutOfMemory - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ An out of memory may be observed on a system running WebSphere Application Server on Linux or AIX that is due to ulimit restrictions on number of process/threads per user. Further investigation may reveal a "Failed to create a thread:" message within the generated javacore which would indicate a native out of memory issue has been encountered. The cause of the problem may be an insufficient ulimit setting. While this type of issue can occur on any level of Linux, or AIX, the issue is most likely to be seen in systems running multiple instances of WebSphere Application Server using one userid. The following will outline how to identify if a process ulimit is the culprit and what WebSphere Application Server Support recommends to fix the case. 
+
+SYMPTOM
+An out of memory Dump Event such as: 
+
+"systhrow" (00040000) Detail "java/lang/OutOfMemoryError"
+"Failed to create a thread: retVal -1073741830, errno 11" received
+
+Note: This detailed message will appear only in javacores.
+
+
+DIAGNOSING THE PROBLEM
+When using WebSphere Application Server, ulimits can be set to fix or tune around a number of problems. For more on how to set a ulimit refer to the "Guidelines for setting ulimits [http://www-01.ibm.com/support/docview.wss?uid=swg21469413]" Technote which goes into detail on setting different ulimits on various operating systems and the difference between the soft and hard limit. This article is concerned particularly with the "-u" ulimit or "nproc" limit on Linux, the ulimit - r on AIX which affects the number of threads allowed for a single user process running WebSphere Application Server. 
+
+The AIX issue is less commonly seen as it limits then number of threads for a process but is seen in application servers with very large thread pools, This is becoming more common in 64bit addressing JVMs running complex applications. WebSphere Application support recommends setting the ulimit -r ulimited on AIX.
+
+The nproc limit usually only counts processes on a server towards determining this number. Linux systems running WebSphere Application Server are a particular case. The nproc limit on Linux counts the number of threads within all processes that can exist for a given user. To determine the ulimit settings of a WebSphere Application Server process running on Linux refer to "How to determine the ulimit settings of a running WebSphere Application Server process on Linux [http://www-01.ibm.com/support/docview.wss?uid=swg21407889]".
+
+User Limits (in bytes except for NOFILE and NPROC) 
+
+type soft limit hard limit RLIMIT_AS unlimited unlimited RLIMIT_CORE unlimited unlimited RLIMIT_CPU unlimited unlimited RLIMIT_DATA unlimited unlimited RLIMIT_FSIZE unlimited unlimited RLIMIT_LOCKS unlimited unlimited RLIMIT_MEMLOCK 65536 65536 RLIMIT_NOFILE 65536 65536 RLIMIT_NPROC 131072 131072 
+
+For most cases of older versions of Linux this value will be defaulted to around 2048. For out of the box Red Hat Enterprise Linux (RHEL) 6 the default value for nproc will be set to 1024. This low default setting for larger systems will not allow for enough threads in all processes. 
+
+WebSphere Application Server Support recommends setting the ulimit -u or nproc to a value of 131072 when running on Linux to safely account for all the forked threads within processes that could be created. 
+
+By using this recommended value a sufficient number of threads in all processes will be allowed and will not be a limiting factor for the environment. Increasing the limit to the suggested value should have no negative impact. When the number of threads in all processes reaches the -u ulimit, an out of memory error message will be thrown. This issue can be avoided by increasing this limit. Be aware that if the number of threads/processes reaches the recommended number of 131072 or close, the issue may be deeper and continuing to increase the -u ulimit will only prove to be a temporary fix. 
+
+Once the ulimit is increased, the WebSphere Application Server will need to be restarted to use the 
+new setting. In the case of WebSphere Application Server ND, the nodeagent and the servers on the nodes will need to be restarted.

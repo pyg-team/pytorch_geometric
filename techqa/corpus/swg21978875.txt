@@ -1,0 +1,67 @@
+Title: IBM Security Bulletin: Vulnerabilities in OpenSSL affects IBM Tivoli Composite Application Manager for Transactions (CVE-2015-3194, CVE-2015-3195, CVE-2015-3196) - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ Vulnerabilities in OpenSSL were disclosed on Jan 28, 2016 by openssl.org. OpenSSL 1.0.1s, used by IBM Tivoli Composite Application Manager for Transactions, has addressed these vulnerabilities. 
+
+VULNERABILITY DETAILS
+CVE-ID: CVE-2015-3194 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-3194]
+DESCRIPTION: OpenSSL is vulnerable to a denial of service, caused by a NULL pointer dereference when verifying certificates via a malformed routine. An attacker could exploit this vulnerability using signature verification routines with an absent PSS parameter to cause any certificate verification operation to crash. 
+CVSS Base Score: 5.3
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/108503 [https://exchange.xforce.ibmcloud.com/vulnerabilities/108503] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:L)
+CVE-ID: CVE-2015-3195 [https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-3195]
+DESCRIPTION: OpenSSL could allow a remote attacker to obtain sensitive information, caused by a memory leak in a malformed X509_ATTRIBUTE structure. An attacker could exploit this vulnerability to obtain CMS data and other sensitive information.
+CVSS Base Score: 5.3
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/108504 [https://exchange.xforce.ibmcloud.com/vulnerabilities/108504] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:N/A:N)
+
+CVE-ID: CVE-2015-3196 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-3196]
+DESCRIPTION: OpenSSL is vulnerable to a denial of service, caused by a race condition when PSK identity hints are received by a multi-threaded client and the SSL_CTX structure is updated with the incorrect value. An attacker could exploit this vulnerability to possibly corrupt memory and cause a denial of service.
+CVSS Base Score: 3.7
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/108505 [https://exchange.xforce.ibmcloud.com/vulnerabilities/108505] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:N/AC:H/PR:N/UI:N/S:U/C:N/I:N/A:L)
+
+AFFECTED PRODUCTS AND VERSIONS
+IBM Tivoli Composite Application Manager (ITCAM) for Transactions is affected. ITCAM for Transactions contains multiple sub components (Agents). Only the Internet Service Monitoring component (ISM – Agent code ‘IS’) is affected. 
+
+
+Versions:
+· 7.4 – Affected by CVEs (CVE-2015-3194, CVE-2015-3195, CVE-2015-3196)
+· 7.3 – Affected by CVEs (CVE-2015-3194, CVE-2015-3195, CVE-2015-3196)
+
+REMEDIATION/FIXES
+ 
+
+Product VRMF APAR Remediation/First Fix 7.4.0.1-TIV-CAMIS-IF0003 7.4.0.1 None http://www-01.ibm.com/support/docview.wss?rs=0&uid=isg400002582 [http://www-01.ibm.com/support/docview.wss?rs=0&uid=isg400002582] 7.3.0.1-TIV-CAMIS-IF0037 7.3.0.1 None http://www-01.ibm.com/support/docview.wss?rs=0&uid=isg400002628 [http://www-01.ibm.com/support/docview.wss?rs=0&uid=isg400002628] 
+For older versions of IBM Tivoli Composite Application manager for Transactions (eg 7.1 & 7.2), IBM recommends upgrading to a fixed, supported version/release/platform of the product. WORKAROUNDS AND MITIGATIONS
+None known
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v3 Guide [http://www.first.org/cvss/user-guide] 
+On-line Calculator v3 [http://www.first.org/cvss/calculator/3.0] 
+· OpenSSL website [https://www.openssl.org/] 
+· OpenSSL vulnerabilities addressed over time [https://www.openssl.org/news/vulnerabilities.html] 
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] 
+
+ACKNOWLEDGEMENT
+None 
+
+CHANGE HISTORY
+ 16 Mar 2016 Original Version Published
+12 Apr 2016 Added 7.3.0.1 Remediation/Fix Link 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.

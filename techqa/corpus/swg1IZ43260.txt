@@ -1,0 +1,139 @@
+Title: IBM IZ43260: THE AGENT FIRES A SITUATION FOR A JOB WHICH HAS NEVER RUN - United States
+
+Text:
+  FIXES ARE AVAILABLE
+IBM Tivoli Monitoring for Database Microsoft SQL Server 6.2.0-TIV-ITM_SQL-IF0005 [http://www-01.ibm.com/support/docview.wss?uid=swg24023163]
+IBM Tivoli Monitoring for Database Microsoft SQL Server 6.2.0-TIV-ITM_SQL-IF0007 [http://www-01.ibm.com/support/docview.wss?uid=swg24024095]
+IBM Tivoli Monitoring for Database Microsoft SQL Server 6.2.0-TIV-ITM_SQL-IF0010 [http://www-01.ibm.com/support/docview.wss?uid=swg24027415]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Environment: ITM 6.2.FP1, MS SQL Server Agent 6.2.0, No specific
+   SQL server version and Windows OS required.
+   Approver:  MJK
+   Problem Description:  MS SQL Server Agent shows an incorrect job
+   status for the SQL Server Job which is created but hasn't ever
+   ran.  Therefore, the SQL Server Agent fires a situation for
+   the job as failed, even though the job was never executed.
+   Detailed Recreation Procedure:
+   1. Go to TEP
+   2. Right click on Navigator Item 'Job'
+   3. click on Job detail workspace
+   4. Check 'Job Detail' attribute in job detail view.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Fix will be included in SQL Server Agent 6.2.0 IF0004.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  THE AGENT FIRES A SITUATION FOR A JOB WHICH HAS NEVER RUN
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  NOW NO MORE SITUATION ARE FIRED BY THE AGENT FOR A JOB WHICH HAS
+   NEVER RUN
+   The fix for this APAR is contained in the following maintenance
+   packages:
+               | interim fix | 6.2.0-TIV-ITM_SQL-IF0004
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ43260
+   
+   
+ * REPORTED COMPONENT NAME
+   TIV MON MS SQL
+   
+   
+ * REPORTED COMPONENT ID
+   5724B96MO
+   
+   
+ * REPORTED RELEASE
+   620
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-02-04
+   
+   
+ * CLOSED DATE
+   2009-03-24
+   
+   
+ * LAST MODIFIED DATE
+   2009-03-24
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TIV MON MS SQL
+   
+   
+ * FIXED COMPONENT ID
+   5724B96MO
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R620 PSY
+   UP

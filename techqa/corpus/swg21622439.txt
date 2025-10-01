@@ -1,0 +1,38 @@
+Title: IBM What can cause the Save, Save As or Edit buttons to be missing for an IBM Content Navigator (ICN) Search? - United States
+
+Text:
+saved search; stored search; button; Save; Save As; Edit; add-on; add-ons; Base stored search; Base application TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ What can cause the Save, Save As or Edit buttons to be missing for an IBM Content Navigator (ICN) Search? 
+
+SYMPTOM
+When a New Search is opened in IBM Content Navigator, the Save, and Save As buttons are missing. When an existing search is opened, the Edit button is missing.
+
+
+CAUSE
+The display of the Save, Save As and Edit buttons for any new or saved search depends on the following: 
+
+ * user's privileges 
+ * in the case of FileNet P8 repositories additionally on  * where the saved search was created. Only searches created from IBM Content Navigator will have the Save, Save As and Edit buttons displayed. Searches created in Workplace or Workplace XT can only be run from IBM Content Navigator and will not have the above buttons. 
+    * the installation of a P8 stored search add-on and base application add-on as mentioned below.
+   
+   
+
+DIAGNOSING THE PROBLEM
+Check if the logged in user has the required privileges to be able to store searches to the target item type or class. The user should be able to create instances of the target item type or class into which the search is being saved. 
+
+For FileNet P8 repositories, check if the following FileNet P8 add-ons are correctly installed on the object store. 
+
+ * Base stored search (BASE_STORED_SEARCH_ADDON) 
+ * Base application (BASE_APPLICATION_ADDON) 
+
+
+Refer to the related URLs section for link to this topic. When correctly installed, the FileNet P8 add-ons create two properties - Automatic Search & Show in Tree - to the StoredSearch class 
+RESOLVING THE PROBLEM
+Ensure that the logged in user has the necessary privileges to be able to add documents or create instances of the target item type or class. 
+
+In the case of FileNet P8 repositories, ensure that the P8 add-ons mentioned above are installed.
+
+RELATED INFORMATION
+ CIWEB1650 [http://pic.dhe.ibm.com/infocenter/cmgmt/v8r4m0/topic/com.ibm.installingeuc.doc/CIWEB1650.htm]

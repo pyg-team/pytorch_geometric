@@ -1,0 +1,40 @@
+Title: IBM TRIRIGA-License expired for test application - United States
+
+Text:
+TRIINSTALL; TRIDATABASE; TRICONFIG; TRILICENSE; TRIUI TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ License Expired error message 
+
+SYMPTOM
+Attempts to login to the application causes an error message to display indicating that the license has expired. The error messages that will appear in the WAS SystemOut.log file are: 
+
+DSRA8201W: DataSource Configuration: DSRA8040I: Failed to connect to the DataSource. Encountered java.sql.SQLException: ORA-01017: invalid username/password; logon denied 
+
+DSRA001E: SQL State = 7200. Error Code = 1,1017. java.sql.SQLException: ORA-01017: invalid username/password; logon denied
+
+
+CAUSE
+There are two reasons why this error can appear:
+1 - The license has truly expired.
+2 - Connectivity to the database has failed so the ability to validate the license fails causing the error message.
+
+
+ENVIRONMENT
+Database server
+Application/Process servers
+
+
+
+DIAGNOSING THE PROBLEM
+The server.log file for either the application and/or process servers will indicate an issue connecting to the database. 
+
+Example error message found in the server.log file or WAS SystemOut log:
+
+DSRA8201W: DataSource Configuration: DSRA8040I: Failed to connect to the DataSource. Encountered java.sql.SQLException: ORA-01017: invalid username/password; logon denied
+DSRA0010E: SQL State = 72000, Error Code = 1,017.
+java.sql.SQLException: ORA-01017: invalid username/password; logon denied
+
+
+RESOLVING THE PROBLEM
+Clients should first validate that the database is running and that connections from the application/process servers to the database work. If access is done via a web server, verify that the web server has access to the database server. Check to see if there are any firewall rules or proxy servers in the network configuration that may be preventing the connection to the DB server.

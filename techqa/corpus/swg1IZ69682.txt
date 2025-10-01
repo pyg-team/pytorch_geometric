@@ -1,0 +1,203 @@
+Title: IBM IZ69682: WMQ V7: CONVERSATION SHARING IS NOT HAPPENING BETWEEN A V7 QUEUE MANAGER IN HP-UX AND A MULTI-THREADED JAVA/JMS MQ CLIENT V7 - United States
+
+Text:
+  FIXES ARE AVAILABLE
+WebSphere MQ V7.0.1 for i5/OS Fix Pack 7.0.1.3 [http://www-01.ibm.com/support/docview.wss?uid=swg24026933]
+WebSphere MQ V7.0 Fix Pack 7.0.1.3 [http://www-01.ibm.com/support/docview.wss?uid=swg24026932]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When using Websphere MQ (WMQ) v7 classes for Java or Java
+   Message Service (JMS) to connect to a WMQ 7 queue manager,
+   conversation sharing sometimes does not work when a large number
+   of attempts to create a connection to a queue manager are made
+   simultaneously.
+   
+   The runtime attribute CURSHCNV for the channel has a value of
+   10 (which means 10 shared conversations by default). However,
+   the conversation sharing is not happening; when the WMQ Java/JMS
+   client V7 connects to the queue manager the value of CURSHCNV is
+   only 1.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   This issue affects users of WMQ 7 classes for Java/JMS
+   applications that connect to a V7 queue manager with
+   conversation sharing enabled.
+   
+   Platforms affected:
+   All Distributed (iSeries, all Unix and Windows) +Java
+   ****************************************************************
+   PROBLEM SUMMARY:
+   When using WMQ 7 classes for Java/JMS to connect to a V7 queue
+   manager, due to timing issues, it is possible that connections
+   are not shared as expected.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The WMQ v7 classes for Java/JMS locking model has been altered
+   to ensure connections are shared where possible.
+   
+   
+   | MDVREGR 7.0-WS-MQ-Windows-RP0001          |
+   | MDVREGR 7.0-WS-MQ-SolarisX64-RP0001       |
+   | MDVREGR 7.0-WS-MQ-SolarisSparc64-RP0001   |
+   | MDVREGR 7.0-WS-MQ-LinuxX64-RP0001         |
+   | MDVREGR 7.0-WS-MQ-LinuxS390X-RP0001       |
+   | MDVREGR 7.0-WS-MQ-LinuxPPC64-RP0001       |
+   | MDVREGR 7.0-WS-MQ-LinuxIA32-RP0001        |
+   | MDVREGR 7.0-WS-MQ-HpuxPaRISC64-RP0001     |
+   | MDVREGR 7.0-WS-MQ-HpuxIA64-RP0001         |
+   | MDVREGR 7.0-WS-MQ-AixPPC64-RP0001         |
+   
+   | MDVREGR 7.0.1-WS-MQ-Windows-FP0001        |
+   | MDVREGR 7.0.1-WS-MQ-SolarisX64-FP0001     |
+   | MDVREGR 7.0.1-WS-MQ-SolarisSparc64-FP0001 |
+   | MDVREGR 7.0.1-WS-MQ-LinuxX64-FP0001       |
+   | MDVREGR 7.0.1-WS-MQ-LinuxS390X-FP0001     |
+   | MDVREGR 7.0.1-WS-MQ-LinuxPPC64-FP0001     |
+   | MDVREGR 7.0.1-WS-MQ-LinuxIA32-FP0001      |
+   | MDVREGR 7.0.1-WS-MQ-HpuxPaRISC64-FP0001   |
+   | MDVREGR 7.0.1-WS-MQ-HpuxIA64-FP0001       |
+   | MDVREGR 7.0.1-WS-MQ-AixPPC64-FP0001       |
+   
+   | MDVREGR 7.0.1-WS-MQ-AixPPC64-FP0002       |
+   | MDVREGR 7.0.1-WS-MQ-HpuxIA64-FP0002       |
+   | MDVREGR 7.0.1-WS-MQ-HpuxPaRISC64-FP0002   |
+   | MDVREGR 7.0.1-WS-MQ-LinuxIA32-FP0002      |
+   | MDVREGR 7.0.1-WS-MQ-LinuxPPC64-FP0002     |
+   | MDVREGR 7.0.1-WS-MQ-LinuxS390X-FP0002     |
+   | MDVREGR 7.0.1-WS-MQ-LinuxX64-FP0002       |
+   | MDVREGR 7.0.1-WS-MQ-SolarisSparc64-FP0002 |
+   | MDVREGR 7.0.1-WS-MQ-SolarisX64-FP0002     |
+   | MDVREGR 7.0.1-WS-MQ-Windows-FP0002        |
+   
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+                      v7.0
+   Platform           Fix Pack 7.0.1.3
+   --------           --------------------
+   Windows            U200320
+   AIX                U834987
+   HP-UX (PA-RISC)    U834414
+   HP-UX (Itanium)    U834413
+   Solaris (SPARC)    U834986
+   Solaris (x86-64)   U834210
+   iSeries            tbc_p700_0_1_3
+   Linux (x86)        U834415
+   Linux (x86-64)     U834985
+   Linux (zSeries)    U834412
+   Linux (Power)      U835662
+   
+   The latest available maintenance can be obtained from
+   'WebSphere MQ Recommended Fixes'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037]
+   
+   If the maintenance level is not yet available, information on
+   its planned availability can be found in 'WebSphere MQ
+   Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ69682
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ HP ITAINIUM
+   
+   
+ * REPORTED COMPONENT ID
+   5724H7228
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-02-04
+   
+   
+ * CLOSED DATE
+   2010-02-24
+   
+   
+ * LAST MODIFIED DATE
+   2011-08-09
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ HP ITAINIUM
+   
+   
+ * FIXED COMPONENT ID
+   5724H7228
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R700 PSY
+   UP

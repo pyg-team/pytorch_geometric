@@ -1,0 +1,35 @@
+Title: IBM Setting up filter in Person list for the Reassign action in Workflow - United States
+
+Text:
+restriction restrict reassign reassigning workflow person list people valuelist only specific listed combo TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This documentation is helpful if you need to limit the scope of the workflow reassign action, restricting the Person list to display a filtered list, based upon a where clause criteria.
+
+
+RESOLVING THE PROBLEM
+You can achieve this by creating a Domain in Domains application which restricts data based on a where clause criteria, and then associating this newly created domain to the REASSIGNWF.ASSIGNEE field in your Maximo Database, as you can see in the screenshots below : 
+
+In the example, you will restrict the list to display only users where their name is like "BOB..."
+
+First step here is to go to Domains application, and create a new TABLEDOMAIN type domain , and give it a name.
+In this example, we named it as BOBDOM4
+
+Then, you will need to specify the OBJECT where the data is pulled from (in this case, it's PERSON)
+
+You should enter a Validation Where Clause (which validates the info from ASSIGNEE field against PERSON.PERSONID and a List Where Clause, which specifies what values will be displayed in the list based on a Where clause criteria, in this example, we want only people called like "BOB..."
+
+[/support/docview.wss?uid=swg21444894&aid=1] [/support/docview.wss?uid=swg21444894&aid=1]
+
+
+The tabledomain type domain you just created needs to be associated with REASSIGNWF.ASSIGNEE field in Database Configuration application. 
+
+After that, you need to configure your database, for changes to take effect...
+
+[/support/docview.wss?uid=swg21444894&aid=2] [/support/docview.wss?uid=swg21444894&aid=2]
+
+
+As a result, when you need to Reassign a workflow assignment, you will be able to see only the people that you would like to see, according to how you have specified it on the tabledomain type domain that you created earlier...
+
+[/support/docview.wss?uid=swg21444894&aid=3] [/support/docview.wss?uid=swg21444894&aid=3]
+Should you need any assistance, please contact Maximo Support

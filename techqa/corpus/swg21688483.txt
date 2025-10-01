@@ -1,0 +1,42 @@
+Title: IBM Error: [Errno -2] Name or service not known when adding SharePoint volume - United States
+
+Text:
+SIQ; StoredIQ; [Errno -2]; Errno -2; resolv.conf; SharePoint volume TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Error: [Errno -2] Name or service not known when adding SharePoint volume on StoredIQ dataserver 
+
+SYMPTOM
+Error: [Errno -2] Name or service not known displayed in volume creation dialog box when adding SharePoint volume
+
+
+CAUSE
+When creating a SharePoint volume without a fully qualified server name, the data server will use the search value defined in the /etc/resolv.conf file to search the domain for the host name given in the Server field. If there are errors or misconfiguration of that file then the SharePoint sever name will not be able to resolve.
+
+ENVIRONMENT
+Data Server
+
+DIAGNOSING THE PROBLEM
+Ping the SharePoint server name with and without the domain name. If the server with the fully qualified domain name pings successfully but the hostname alone does not then check the configuration of the /etc/resolv.conf file.
+
+RESOLVING THE PROBLEM
+Ensure that the /etc/resolv.conf file is properly configured. The appropriate configuration format is:
+
+
+
+
+search <domain.name>
+nameserver <ip address>
+nameserver <ip address>
+
+If a change is made to add the search <domain.name> value to the /etc/resolv.conf file then the data server services must be restarted in order to pick up this configuration change for harvesting. To do so ensure that no jobs are currently running and execute the follow commands from the command line on the data server:
+
+service deepfiler stop
+service deepfiler start
+
+Harvests will now be able to execute properly using this volume format.
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Enterprise Content Management StoredIQ Platform VMware ESXi, VMware vSphere 7.6 All Editions Enterprise Content Management Policy Assessment and Compliance StoredIQ Platform Platform Independent 7.5.1, 7.5.0.2, 7.5.0.1, 7.5 All Editions Enterprise Content Management Unstructured Data Identification and Mgmt Not Applicable Platform Independent 7.5.1, 7.5.0.2, 7.5.0.1, 7.5 All Editions

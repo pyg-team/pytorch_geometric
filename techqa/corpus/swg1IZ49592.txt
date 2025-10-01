@@ -1,0 +1,129 @@
+Title: IBM IZ49592: IMPACT 5.1 CLUSTER FAILOVER FAILED - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Customer was testing failover on impact 5.1 clustering.
+   However, the failover test failed when they pull the cable of
+   Primary server.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   All IBM Netcool/Impact 5.1 who are using failover and cluster
+   settings
+   ****************************************************************
+   PROBLEM DESCRIPTION:
+   Clustering settings:
+   1) Machine a has primary cluster member NCIP
+   2) Machine b has secondary cluster member NCIS
+   3) Pull the plug off Machine a where primary is runing
+   4) Note that secondary takes about 2 hours to recognize that the
+   primary is down
+   ****************************************************************
+   RECOMMENDATION:
+   Upgrade to Impact 5.1 Fix Pack 0001 5.1.0.1-TIV-NCI-FP0001
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fixed in Impact 5.1 Fix Pack 0001
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ49592
+   
+   
+ * REPORTED COMPONENT NAME
+   NETCOOL/IMPACT
+   
+   
+ * REPORTED COMPONENT ID
+   5724O59IS
+   
+   
+ * REPORTED RELEASE
+   510
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-04-17
+   
+   
+ * CLOSED DATE
+   2009-05-05
+   
+   
+ * LAST MODIFIED DATE
+   2009-05-05
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   NETCOOL/IMPACT
+   
+   
+ * FIXED COMPONENT ID
+   5724O59IS
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R510 PSN
+   UP

@@ -1,0 +1,232 @@
+Title: IBM JR51046: CWTBG0019E ERROR WHEN CHECKING TASK DATA USING PROCESS INSPECTOR - United States
+
+Text:
+  DIRECT LINKS TO FIXES
+8.5.5.0-WS-BPM-IFJR51046 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Standard&fixids=8.5.5.0-WS-BPM-IFJR51046&source=SAR]
+Version 8.5 Refresh Pack 6 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24039185]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When checking task data of an external activity in Process Admin
+   Console -> Process Inspector, an CWTBG0019E error occurs and the
+   data cannot be retrieved.
+   .
+   Process Inspector in Process Admin throw "CWTBG0019E:
+   Unexpected exception during execution. Exception information:
+   'For input string: "null"'." error when I click the Data of an
+   external activity, that is a User Task.
+   .
+      These errors also occurred in the logs
+   [7/6/14 15:45:34:769 SGT] 00000144 BaseProcessIn E   <Null
+   Message>
+   com.ibm.processinspector.rest.ProcessAdminRestException
+    at
+   com.ibm.processinspector.rest.BaseProcessInspectorRestAPI.getRes
+   ponseData(BaseProcessInspectorRestAPI.java:762)
+    at
+   com.ibm.processinspector.rest.BaseProcessInspectorRestAPI.update
+   TaskTypes(BaseProcessInspectorRestAPI.java:589)
+    at
+   com.ibm.processinspector.rest.BaseProcessInspectorRestAPI.create
+   ProcessInstanceCompleteDetails(BaseProcessInspectorRestAPI.java:
+   393)
+    at
+   com.ibm.processinspector.rest.ProcessInstanceSearchAPIImpl.getPr
+   ocessInstanceCompleteDetails(ProcessInstanceSearchAPIImpl.java:1
+   388)
+    at
+   com.ibm.processinspector.server.handlers.ProcessInstanceDetailsH
+   andler.handleRequest(ProcessInstanceDetailsHandler.java:63)
+    at
+   com.ibm.processinspector.server.BPMInspectorRestFacade.doGet(BPM
+   InspectorRestFacade.java:124)
+    at
+   javax.servlet.http.HttpServlet.service(HttpServlet.java:575)
+   --------
+   
+   And after this there is another error like
+   ----------
+   [7/6/14 15:46:00:205 SGT] 00000144 RestHelper    W   Invalid
+   UUID string  'null'
+   java.lang.IllegalArgumentException:  Invalid UUID string 'null'
+    at com.lombardisoftware.core.TWUUID.invalid(TWUUID.java:131)
+    at com.lombardisoftware.core.TWUUID.fromString(TWUUID.java:47)
+    at
+   com.lombardisoftware.client.persistence.common.ID$UUID.<init>(ID
+   .java:198)
+    at
+   com.lombardisoftware.client.persistence.common.ID.get(ID.java:24
+   1)
+    at
+   com.ibm.bpm.rest.internal.impl.WLE75InternalAPIImpl.findVersioni
+   ngContextAndServiceById(WLE75InternalAPIImpl.java:805)
+    at
+   com.ibm.bpm.rest.internal.impl.WLE75InternalAPIImpl.findServiceB
+   yId(WLE75InternalAPIImpl.java:789)
+    at
+   com.ibm.bpm.rest.impl.service.ServiceModelResource.getServiceMod
+   el(ServiceModelResource.java:107)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  NA
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  IBM Business Process Manager (BPM)          *
+   *                  Advanced                                    *
+   *                  IBM BPM Standard                            *
+   *                  IBM BPM Express                             *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: When checking task data of an           *
+   *                      external activity in Process Admin      *
+   *                      Console -> Process Inspector, an        *
+   *                      CWTBG0019E error occurs and the data    *
+   *                      cannot be retrieved.                    *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   When a user expands the Data field of a process instance
+   within Process Inspector, the following error is displayed in
+   a pop-up window:
+   "CWTBG0019E: Unexpected exception during execution. Exception
+   information: 'For input string: "null"'."
+   The corresponding exception stack may be seen in the logs:
+   Caused by:
+   com.ibm.processinspector.rest.ProcessAdminRestException:
+   com.ibm.processinspector.rest.ProcessAdminRestException
+   at
+   com.ibm.processinspector.rest.TaskActionImpl.getData(TaskActionI
+   mpl.java:174)
+   at
+   com.ibm.processinspector.server.handlers.ActivityInstanceDataHan
+   dler.getData(ActivityInstanceDataHandler.java:123)
+   at
+   com.ibm.processinspector.server.handlers.ActivityInstanceDataHan
+   dler.handleRequest(ActivityInstanceDataHandler.java:96)
+   ... 37 more
+   The issue occurs due to a null process instance ID being used
+   in a REST API request made by Process Inspector.
+   The following HTTP URL request may be seen in the browser's
+   web console or fiddle logs:
+   https://<host>:<port>/rest/bpm/wle/v1/process/null [https://<host>:<port>/rest/bpm/wle/v1/process/null]
+   The problem only occurs when the task is on an External
+   Activity.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A fix is available for IBM BPM v8.5.5.0.  The error no longer
+   occurs as the proper process instance ID is now being passed.
+   
+   On Fix Central (http://www.ibm.com/support/fixcentral), search
+   for JR51046:
+   1.Select IBM Business Process Manager with your edition from
+   the product selector, the installed version to the fix pack
+   level, and your platform, and then click Continue.
+   2.Select APAR or SPR, enter JR51046, and click Continue.
+   When you download fix packages, ensure that you also download
+   the readme file for each fix. Review each readme file for
+   additional installation instructions and information about the
+   fix.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR51046
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM STANDARD
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9500
+   
+   
+ * REPORTED RELEASE
+   855
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-08-17
+   
+   
+ * CLOSED DATE
+   2014-10-27
+   
+   
+ * LAST MODIFIED DATE
+   2014-12-15
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   BPM STANDARD
+   
+   
+ * FIXED COMPONENT ID
+   5725C9500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R800 PSY
+   UP

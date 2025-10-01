@@ -1,0 +1,323 @@
+Title: IBM PI10514: CORRECTIONS ARE NEEDED TO THE DOCUMENTATION IN THE INFORMATION CENTER FOR IBM WEBSPHERE APPLICATION SERVER VERSION 8.5 - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  This APAR describes the issues that customers encountered with
+   IBM WebSphere Application Server Version 8.5. These issues were
+   resolved as information center updates in February, 2014
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  This APAR provides a cumulative list of     *
+   *                  the documentation issues for month_year     *
+   *                  that affect users of IBM WebSphere          *
+   *                  Application Server Version 8.5.             *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: The Information Centers for WebSphere   *
+   *                      Application Server Version 8.5 need     *
+   *                      to reflect customer enhancement         *
+   *                      requests received in problem            *
+   *                      management records (PMRs). These        *
+   *                      enhancements can include fixing         *
+   *                      technical inaccuracies or clarifying    *
+   *                      vague information.                      *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   See the Problem conclusion section for a description of the
+   issues, which are described in customer PMRs, and the
+   documentation change or changes that will address these issues.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Note: We update our information centers monthly. The following
+   Version 8.5 modifications will be available in the month_year
+   update to the Information Centers. To access the latest
+   on-line documentation, go to the product library page at
+   http://www.ibm.com/software/webservers/appserv/library and
+   select the version and product that is appropriate for your
+   WebSphere Application Server environment.
+   
+   ID: PI10514
+   Problem :  Customer can launch IBM Installation Manager GUI,
+   however, no text is displayed in the IBM Installation Manager
+   main GUI; empty boxes are displayed without any fonts or text.
+   The customer is unable to see available options, unable to
+   navigate, or access other panels.
+   It is determined that installing the following two X11
+   filesets on the AIX system resolves this problem.  These
+   filesets need to be added to the WebSphere Application Server
+   information center as a requirement for AIX systems where
+   WebSphere Application Server or IBM Installation manager GUI's
+   are used:
+   - X11.fnt.coreX
+   - X11.fnt.iso_T1
+   This problem can also occur with the WebSphere Application
+   Server  GUIs; WebSphere customization toolbox,, profile
+   management tool, or not installed.
+   
+   Resolution:  Topic, Preparing AIX systems for installation,
+   is update to include the following:
+   To support the graphical user environment on AIX for IBM
+   Installation Manager and WebSphere GUIs, install the following:
+   
+       X11.fnt.coreX
+       X11.fnt.iso.T1
+   ---------------
+   ID: 755960
+   Problem :  Some of the parameters for PDJrteCfg utility are
+   incorrectly specified in the topic,
+   com.tivoli.pd.jcfg.PDJrteCfg utility for Tivoli Access Manager
+   single sign-on, The syntax documented is as follows:
+   ${JAVA_HOME}/bin/java
+   -Dfile.encoding=ISO8859-1
+   -Xnoargsconversion
+   -Dpd.home=${WAS_HOME}/java/jre/PolicyDirector
+   -cp ${WAS_HOME}/tivoli/tam/PD.jar
+   -Dwas.installroot=${WAS_HOME}
+   com.tivoli.pd.jcfg.PDJrteCfg
+   -action config
+   -cfgfiles_path ${WAS_HOME}/java/jre
+   -host myhost.us.ibm.com
+    -alt_config
+    -was
+    -java_home ${JAVA_HOME}
+   
+   Resolution: Topic, com.tivoli.pd.jcfg.PDJrteCfg utility for
+   Tivoli Access Manager single sign-on, is updated and the
+   PDInteCfg utility syntax is documented as follows:
+   
+   Note: Before running the PDJrteCfg utility, run
+   "setupCmdLine.sh and set ${TIV_HOME} and ${TAM_HOST} as system
+   environment variables.
+   
+   ${WAS_HOME}/java/jre/bin/java
+   -Djava.ext.dirs=${TIV_HOME}:${WAS_HOME}/java/jre/lib/ext
+   -Dpd.cfg.home=${TIV_HOME}
+   -Dwas.install.root=${WAS_HOME}
+   -Dpd.home=${TIV_HOME}/PolicyDirector
+   -cp ${TIV_HOME}/PD.jar
+   com.tivoli.pd.jcfg.PDJrteCfg
+   -action config
+   -was
+   -java_home ${WAS_HOME}/java/jre
+   -host ${TAM_HOST}
+   -port 389
+   -cfgfiles_path ${TIV_HOME}
+   -alt_config
+   -config_type full
+   
+   The same update is made in the V8.0 information center.
+   ---------------
+   ID: 756074
+   Problem : Topic, Installing IBM WebSphere SDK Java Technology
+   Edition Version 7.0 using the command line, fails to remind
+   the reader that  when using the imcl command to install the
+   offering, the <installationDirectory> option needs to specify
+   the appropriate WebSphere Application Server installation
+   path.   As a result, the reader can specify the wrong
+   installation path.
+   
+   Resolution: Topic, Installing IBM WebSphere SDK Java
+   Technology Edition Version 7.0 using the command line, is
+   updated to add the following note:
+   
+   Note: For installation_directory, specify the appropriate
+   WebSphere Application Server installation path on which to
+   install IBM WebSphere SDK Java Technology Edition Version 7.0.
+   ------------
+   ID: 756128
+   Problem : Customer is unable to find documentation that states
+   that you are unable to
+   install Plugins under the IHS_HOME directory.  Customers that
+   try to do this using
+   the Installation Manager GUI, found that they were unable to
+   proceed
+   due to a message that states:
+   
+   "The installation directory for the new "Plugins" package
+   group must not be a parent or sub-directory of a previously
+   used installation directory."
+   
+   The information center needs to document that you are unable
+   to install Plugins under the IHS_HOME directory.
+   
+   Resolution: Topics,  Installing the Web Server Plug-ins using
+   the command line, Installing and uninstalling the Web Server
+   Plug-ins on distributed operating systems, and Installing the
+   Web Server Plug-ins using response files, have been updated by
+   adding the following note:
+   
+   NOTE: The target directory for the plug-in must be an empty
+   directory and cannot be installed in a subdirectory of the IBM
+   HTTP Server target directory.
+   
+   This update also applies to the same topics in the V8.0
+   information center.
+   ------------
+   ID: 756310
+   Problem : Topic, Storing transaction and compensation logs in
+   a relational database for high availability, has vague and
+   misleading documentation concerning requirements on the
+   application server in the peer recovery group (cluster) and
+   its use of a single datasource for logs.   This vague
+   information must be clarified.
+   
+   Resolution: Topic, Storing transaction and compensation logs
+   in a relational database for high availability, is updated
+   with the following note:
+   
+   Important:  Each server in the cluster must be able to
+   reference the datasource that a given application server
+   references for its logs. That is, the datasource must be
+   scoped to the cluster (or cell). This scoping allows peer
+   recovery.
+   
+   This update also applies to the same topic in the V8.0
+   informaton center.
+   ----------
+   ID: 756590
+   Problem : Topic, Configuring client reroute for applications
+   that use DB2 databases, has an incorrect statement that says
+   for the following properties:
+   
+   Retry interval for client reroute
+   Maximum retries for client reroute
+   
+   Attention: If you do not specify a value for these properties,
+   DB2
+   failover processing (client rerouting) does not occur.
+   
+   For V8.0 and V8.5, client rerouting continues to occur even if
+   you do not specify the properties: Retry interval for client
+   reroute AND Maximum retires for client reroute.
+   
+   Resolution:  Topic, Configuring client reroute for
+   applications that use DB2 databases, is updated.  The
+   ATTENTION currently documented that says, ----If you do not
+   specify a value for these properties, DB2
+   failover processing (client rerouting) does not occur.---  is
+   removed from the topic.
+   
+   This update also applies to the V8.0 version of the
+   information center topic.
+   ---------
+   ID: 756014
+   Problem : he online documentation for IBM WebSphere Edge
+   components is
+   misleading and should be updated to prevent customer confusion
+   and
+   misconfiguration.  The latest versions of the Load Balancing
+   Guide contains
+   incorrect information and is missing vital information that is
+   required
+   to configure the environment.
+   
+   The concepts guide for Version 8.5.5 should
+   be updated so as to reflect that NAT, CBR and SS is now
+   supported.
+   
+   
+    We can also add the additional note on users not needing to
+   configure
+   cluster address using ifconfig command in user space load
+   balancer.
+   
+   Resolution:  The Edge plugin has been updated to reflect the
+   Load Balancer 8.5.5 changes in the concepts section.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI10514
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSPHERE APP S
+   
+   
+ * REPORTED COMPONENT ID
+   5724J0800
+   
+   
+ * REPORTED RELEASE
+   850
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-01-29
+   
+   
+ * CLOSED DATE
+   2014-03-23
+   
+   
+ * LAST MODIFIED DATE
+   2014-08-20
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

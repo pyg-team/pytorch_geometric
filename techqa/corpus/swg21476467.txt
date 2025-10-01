@@ -1,0 +1,25 @@
+Title: IBM Is there an easy way to insert an SPSS Text item in output via command syntax? - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ I'm using SPSS for Windows and I want to be able to add some fairly extensive comments in some output I'm creating, and I want to be able to do it via the command syntax file that creates the output.
+
+I know about the ECHO command, but it doesn't really work for me for several reasons. First, it creates (or adds to) a Log item and not an SPSS Text item. Since I have 'display commands in the log" turned on (from Edit->Options, Viewer), I also keep my Log output items hidden until I need them. When I go to print output, I print all visible output and this way no Log output is printed. So any comments I've added via ECHO are lost as well.
+
+There are several more inconveniences: with PRINTBACK set to ON (which I nearly always have ON), I get two ECHO outputs--one from the "displayed" command syntax, the other from the actual Output. ECHO is also limited to one line of text and I sometimes want to enter a more verbose explanation for the printout.
+
+COMMENT works pretty well for me, but I would like to separate COMMENTS from regular syntax printback in the log items. I found the Insert->Text menu item, and when I saw that it results in a different category of output than Log I was very excited. Now I am just looking for a way to insert that "SPSS Text" category of output directly from syntax. 
+
+RESOLVING THE PROBLEM
+The ability to create an SPSS Text item via command syntax has been filed with SPSS Development as a feature request
+
+RELATED INFORMATION
+ Need more help? Our Statistics forum is Live! [https://developer.ibm.com/answers/topics/statistics.html?smartspace=predictive-analytics]
+
+
+ 
+
+HISTORICAL NUMBER
+ 68096

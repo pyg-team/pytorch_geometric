@@ -1,0 +1,33 @@
+Title: IBM PureApplication System Release Note: Fixes are available to address the SWEET32 Birthday attack vulnerability - United States
+
+Text:
+v2230rlsnotes RELEASE NOTES
+
+ABSTRACT
+ Fixes are available in the 2.2.3 release to address the SWEET32 Birthday attack vulnerability. 
+
+CONTENT
+Problem: As described in CVE-2016-2183 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2016-2183], OpenSSL could allow a remote attacker to obtain sensitive information, caused by an error in the DES/3DES cipher, used as a part of the SSL/TLS protocol. By capturing large amounts of encrypted traffic between the SSL/TLS server and the client, a remote attacker able to conduct a man-in-the-middle attack could exploit this vulnerability to recover the plaintext data and obtain sensitive information. This vulnerability is known as the SWEET32 Birthday attack.
+
+
+Instances (deployed workloads) and the PureSystems® Manager are vulnerable to this issue and require separate solutions to address the vulnerability. These solutions do not need to be performed at the same time; they are independent.
+
+Resolution: For steps to address the vulnerability for both instances and the PureSystems Manager, see the 2.2.3 product documentation for your system: 
+
+ * 
+ * https://www.ibm.com/support/knowledgecenter/SSNLXH_2.2.3/doc/iwd/psc_sweet32_ov.html
+ * 
+ * 
+ * https://www.ibm.com/support/knowledgecenter/SSCR9A_2.2.3/doc/iwd/psc_sweet32_ov.html
+ * 
+ * 
+ * https://www.ibm.com/support/knowledgecenter/SSGRP3_2.2.3/doc/iwd/psc_sweet32_ov.html
+ * 
+ * 
+ * https://www.ibm.com/support/knowledgecenter/SSCRSX_2.2.3/doc/iwd/psc_sweet32_ov.html
+ * 
+ * 
+ * https://www.ibm.com/support/knowledgecenter/SS6PD2_2.2.3/doc/iwd/psc_sweet32_ov.html
+ * 
+
+Note: These links take you to the overview topic for the section about addressing this vulnerability. See the child topics, which are linked to from the overview topic, for specific steps.

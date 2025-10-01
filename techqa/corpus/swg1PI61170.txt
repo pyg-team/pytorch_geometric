@@ -1,0 +1,166 @@
+Title: IBM PI61170: TOO MANY AQE_SVC TRACE MESSAGES LOGGED WHILE DEBUGGING CICS TRANSACTIONS USING INTEGRATED DEBUGGER IN RDZ - United States
+
+Text:
+z/os  FIXES ARE AVAILABLE
+9.1.1.4: PTF UI41212 for Rational Developer for System z [http://www-01.ibm.com/support/docview.wss?uid=swg24042818]
+9.1.1.5: PTF UI44156 for Rational Developer for System z [http://www-01.ibm.com/support/docview.wss?uid=swg24043245]
+9.1.1.6: PTF UI50717 for Rational Developer for System z [http://www-01.ibm.com/support/docview.wss?uid=swg24044109]
+9.1.1.7: PTF UI55786 for Rational Developer for System z [http://www-01.ibm.com/support/docview.wss?uid=swg24044797]
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  In Rational Developer for System z (RDz) 9.1.1.2, when debugging
+   CICS applications with the Integrated Debugger, excessive
+   AQE_SVC messages are logged. For example, messages similar to
+   the following may be observed in the job log:
+   13.01.58 JOB05898 AQE_SVC(172):      Exit SVC; R15 = 0, R1 =
+   28810ef8
+   13.01.58 JOB05898 AQE_SVC(144):      ENTER - function 8,
+   AQEDBGCB   AA110040
+   13.01.58 JOB05898 AQE_SVC(172):      Exit  SVC; R15 = 0, R1 =
+   28810f4c
+   13.02.00 JOB05898 AQE_SVC(144):      ENTER - function 4,
+   AQEDBGCB   AA110040
+   13.02.00 JOB05898 memRead(30):       location = 28f35000, 0x1000
+   bytes,   key 9
+   13.02.00 JOB05898 AQE_SVC(172):      Exit  SVC; R15 = 0, R1 =
+   288119c0
+   13.02.00 JOB05898 AQE_SVC(144):      ENTER - function 4,
+   AQEDBGCB   AA110040
+   
+   The same problem has been observed in RDz 9.1.1.3
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: 01.Integrated Debugger users who use debug   *
+   *                    CICS applications                         *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: 01.The Integrated Debugger engine logs  *
+   *                         messages in the CICS region logs,    *
+   *                         even when tracing is not enabled.    *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   01.The Integrated Debugger engine did not correctly disable
+      logging.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  01.The Integrated Debugger engine will only log trace messages
+      to the CICS region logs when requested.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI61170
+   
+   
+ * REPORTED COMPONENT NAME
+   RATL DEV FOR SY
+   
+   
+ * REPORTED COMPONENT ID
+   5724T0700
+   
+   
+ * REPORTED RELEASE
+   910
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-04-20
+   
+   
+ * CLOSED DATE
+   2016-09-28
+   
+   
+ * LAST MODIFIED DATE
+   2016-10-01
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  AQECIC32 AQECIC41 AQECIC51 AQECTL   AQEEVDBG
+   AQELDR31 AQELDR64 AQEL3Z3  AQEL3Z6  AQEL6Z3  AQEL6Z6  AQEMVS31
+   AQEMVS64 AQESVC03 AQEW3Z3  AQEW3Z6  AQEXPL31 AQEZPCM
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   RD/Z HOST
+   
+   
+ * FIXED COMPONENT ID
+   5724T0723
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R910 PSY UI41212 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI41212]
+   UP16/10/01 I 1000
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

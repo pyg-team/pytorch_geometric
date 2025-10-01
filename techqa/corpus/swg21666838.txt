@@ -1,0 +1,43 @@
+Title: IBM Documents are not synchronized to the device if DSTLaw is not set in Notes.ini on IBM i - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+Documents are not synchronized to the device when Daylight Saving Time (DST) start/end if DSTLaw is not set in Notes.ini on IBM i.
+
+RESOLVING THE PROBLEM
+It is mandatory to set DSTLaw=3,2,1,11,1,1 (the value for DSTLaw is just an example here, set to the correct value according to your timezone and DST information) in Notes.ini on IBM i platform since the DST rule changed from 2007 in USA. 
+
+Additional information 
+
+The following information provides a checklist of the changes that needed to be made for all IBM i Domino installations, for the 2007 DST rule change. Additional updates may be required for your particular environment: 
+
+
+Overview of Daylight Savings Time changes for 2007 
+
+ * Daylight Savings Time start/end altered by US Congress.
+   
+ * DST starts at 2 AM March 11, 2007
+   This is the second Sunday in March
+   Begins 3 weeks earlier than under previous rules
+   
+ * DST ends at 2 AM November 4, 2007
+   This is the first Sunday in November
+   Ends 1 week later than under previous rules
+
+
+
+
+System i requirements for DST support V5R4M0
+SI26040 & SI25990 PTFs must be installed
+Domino must be restarted after PTF applied.
+Domino must have notes.ini parameter DSTLaw=3, 2, 1, 11, 1, 1 
+
+V5R3Mx
+SI26039 & SI25991 PTFs must be installed 
+Domino must be restarted after PTFs applied.
+Domino must have Notes.ini parameter DSTLaw=3, 2, 1, 11, 1, 1 
+
+V5R2 and earlier releases of OS
+No support

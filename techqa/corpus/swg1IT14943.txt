@@ -1,0 +1,227 @@
+Title: IBM IT14943: JMS fails to deliver large messages when connecting to a queue manager in migration mode. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When an MQ classes for JMS application that is using an
+   asynchronous message consumer (a MessageListener) to consume
+   messages published to a topic, and a publication becomes
+   available that is returned from the queue manager in multiple,
+   segmented TSHs the message is not delivered to the
+   MessageListener and no further messages (regardless of size) are
+   subsequently delivered.  No exception is returned to the
+   application.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Ensure JMS application connects to the queue manager using
+   normal mode instead of migration mode.
+   
+   This is achieved, for example, by setting the server-connection
+   channel attribute, "SHARECNV" to a value of '1' or greater and
+   also set PROVIDERVERSION property (on the JMS Connection Factory
+   definition) to '7', '8' (in the case of the MQ V8 classes for
+   JMS, or by removing it entirely.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   This issue affects users of:
+   
+     - WebSphere MQ V7.1 classes for JMS
+     - WebSphere MQ V7.5 classes for JMS
+     - IBM MQ V8 classes for JMS
+   
+   who have configured their applications to run in "version 6
+   migration mode" and are using a JMS MessageListener on a JMS
+   TopicSubscriber to receive a persistent message that is returned
+   from the queue manager in two or more, segmented transmissions
+   after a previous message (of any size) was successfully
+   delivered.
+   
+   Typically, the queue manager uses 32 kilobyte transmission
+   segments for non-secure socket connections and in the region of
+   15 kilobyte transmission segments for TLS secured socket
+   connections.
+   
+   
+   Platforms affected:
+   MultiPlatform
+   
+   ****************************************************************
+   PROBLEM DESCRIPTION:
+   When an MQ message cannot be sent by the queue manager in a
+   single transmission segment, it is split into multiple segments
+   (each with a TSH header) for transmission to the classes for
+   JMS, and is then reconstructed on receipt and passed to the
+   application.
+   
+   When all of the conditions listed in the users affected section
+   were met, the MQ classes for JMS followed a code path that was
+   unable to process segmented messages received from the queue
+   manager.
+   
+   When the issue happened, a java.lang.NullPointerException was
+   thrown internally within the Java MQI (which underpins the MQ
+   classes for JMS).  No exception was thrown to the application
+   but no further messages could be received by the application's
+   MessageListener.  The java.lang.NullPointerException could be
+   found within a classes for JMS trace with the Java call stack
+   shown below:
+   
+   [java.lang.NullPointerException]
+   at:
+   com.ibm.mq.jmqi.remote.impl.RemoteConnection.releaseReceivedTSH
+     (RemoteConnection.java:3232)
+   at
+   com.ibm.mq.jmqi.remote.impl.RemoteSession.releaseReceivedTSH
+     (RemoteSession.java:1334)
+   at com.ibm.mq.jmqi.remote.api.RemoteFAP.spiGet
+     (RemoteFAP.java:7625)
+   at com.ibm.mq.ese.jmqi.InterceptedJmqiImpl.spiGet
+     (InterceptedJmqiImpl.java:1267)
+   at com.ibm.mq.ese.jmqi.ESEJMQI.spiGet
+     (ESEJMQI.java:814)
+   at com.ibm.msg.client.wmq.compat.base.internal.MQSESSION.spiGet
+     (MQSESSION.java:1814)
+   at com.ibm.msg.client.wmq.compat.base.internal.MQQueue.spiGetInt
+     (MQQueue.java:2922)
+   at com.ibm.msg.client.wmq.compat.base.internal.MQQueue.spiGet
+     (MQQueue.java:2758)
+   at com.ibm.msg.client.wmq.compat.jms.internal.MQMessageConsumer
+     .getMessage(MQMessageConsumer.java:2704)
+   at com.ibm.msg.client.wmq.compat.jms.internal.MQMessageConsumer
+     .receiveAsync(MQMessageConsumer.java:4184)
+   at com.ibm.msg.client.wmq.compat.jms.internal.SessionAsyncHelper
+     .run(SessionAsyncHelper.java:518)
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The MQ classes for JMS have been updated such that the receive
+   mechanism used by asynchronous JMS TopicSubscribers running in
+   version 6 migration mode can correctly handle segmented message
+   flows from the queue manager and a
+   java.lang.NullPointerException is no longer thrown from the
+   com.ibm.mq.jmqi.remote.impl.RemoteConnection.releaseReceivedTSH(
+   ...) method.
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+   Version    Maintenance Level
+   v7.1       7.1.0.8
+   v7.5       7.5.0.8
+   v8.0       8.0.0.6
+   v9.0 CD    9.0.1
+   v9.0 LTS   9.0.0.1
+   
+   The latest available maintenance can be obtained from
+   'WebSphere MQ Recommended Fixes'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037]
+   
+   If the maintenance level is not yet available information on
+   its planned availability can be found in 'WebSphere MQ
+   Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT14943
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ BASE MULTIP
+   
+   
+ * REPORTED COMPONENT ID
+   5724H7251
+   
+   
+ * REPORTED RELEASE
+   800
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-04-26
+   
+   
+ * CLOSED DATE
+   2016-07-29
+   
+   
+ * LAST MODIFIED DATE
+   2017-10-07
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ BASE MULTIP
+   
+   
+ * FIXED COMPONENT ID
+   5724H7251
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R800 PSY
+   UP

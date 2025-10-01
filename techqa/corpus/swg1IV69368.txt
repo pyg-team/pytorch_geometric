@@ -1,0 +1,172 @@
+Title: IBM IV69368: SEARCH PARAMETER VALUE FIELDS CURRENTLY HAVE A MAXIMUM 255 CHARACTER RESTRICTION - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  QRadar currently allows a maximum of 255 characters in search
+   parameter value fields.  Attempting to use more than 255
+   characters results in a error: "General failure. Please try
+   again."
+   
+   Messages similar to the following might be present in
+   /var/log/qradar.error when a search with over 255 characters in
+   a parameter value field is attempted:
+   
+   [ariel.ariel_proxy_server]
+   [ariel_query_2:63ac1bfe-7efb-4adc-82a7-5a06fc975c24] at
+   java.util.regex.Pattern.error(Pattern.java:1935)
+   [ariel.ariel_proxy_server]
+   [ariel_query_2:63ac1bfe-7efb-4adc-82a7-5a06fc975c24] at
+   java.util.regex.Pattern.accept(Pattern.java:1793)
+   [ariel.ariel_proxy_server]
+   [ariel_query_2:63ac1bfe-7efb-4adc-82a7-5a06fc975c24] at
+   java.util.regex.Pattern.group0(Pattern.java:2868)
+   [ariel.ariel_proxy_server]
+   [ariel_query_2:63ac1bfe-7efb-4adc-82a7-5a06fc975c24] at
+   java.util.regex.Pattern.sequence(Pattern.java:2029)
+   [ariel.ariel_proxy_server]
+   [ariel_query_2:63ac1bfe-7efb-4adc-82a7-5a06fc975c24] at
+   java.util.regex.Pattern.expr(Pattern.java:1975)
+   [ariel.ariel_proxy_server]
+   [ariel_query_2:63ac1bfe-7efb-4adc-82a7-5a06fc975c24] at
+   java.util.regex.Pattern.compile(Pattern.java:1676)
+   [ariel.ariel_proxy_server]
+   [ariel_query_2:63ac1bfe-7efb-4adc-82a7-5a06fc975c24] at
+   java.util.regex.Pattern.<init>(Pattern.java:1348)
+   [ariel.ariel_proxy_server]
+   [ariel_query_2:63ac1bfe-7efb-4adc-82a7-5a06fc975c24] at
+   java.util.regex.Pattern.compile(Pattern.java:1058)
+   [ariel.ariel_proxy_server]
+   [ariel_query_2:63ac1bfe-7efb-4adc-82a7-5a06fc975c24] at
+   com.q1labs.cve.utils.IndexPredicates$IndexPredicateBase.initiali
+   ze(IndexPredicates.java:126)
+   [ariel.ariel_proxy_server]
+   [ariel_query_2:63ac1bfe-7efb-4adc-82a7-5a06fc975c24] at
+   com.q1labs.cve.utils.IndexPredicates$NullableIndexPredicate.init
+   ialize(IndexPredicates.java:233)
+   [ariel.ariel_proxy_server]
+   [ariel_query_2:63ac1bfe-7efb-4adc-82a7-5a06fc975c24] at
+   com.q1labs.frameworks.util.predicate.AbstractWrappedPredicate.in
+   itialize(AbstractWrappedPredicate.java:39)
+   [ariel.ariel_proxy_server]
+   [ariel_query_2:63ac1bfe-7efb-4adc-82a7-5a06fc975c24] at
+   com.q1labs.frameworks.util.Utils.initialize(Utils.java:466)
+   [ariel.ariel_proxy_server]
+   [ariel_query_2:63ac1bfe-7efb-4adc-82a7-5a06fc975c24] at
+   com.q1labs.ariel.IndexTreeUtils$Initializer.process(IndexTreeUti
+   ls.java:25)
+   [ariel.ariel_proxy_server]
+   [ariel_query_2:63ac1bfe-7efb-4adc-82a7-5a06fc975c24] ... 15
+   more
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Use multiple ORs within the same search pattern.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  This issue has been resolved in QRadar 7.2.6
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This issue has been resolved in QRadar 7.2.6
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV69368
+   
+   
+ * REPORTED COMPONENT NAME
+   QRADAR SOFTWARE
+   
+   
+ * REPORTED COMPONENT ID
+   5725QRDSW
+   
+   
+ * REPORTED RELEASE
+   723
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-02-10
+   
+   
+ * CLOSED DATE
+   2015-12-09
+   
+   
+ * LAST MODIFIED DATE
+   2015-12-09
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   QRADAR SOFTWARE
+   
+   
+ * FIXED COMPONENT ID
+   5725QRDSW
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R726 PSY
+   UP

@@ -1,0 +1,43 @@
+Title: IBM Rhapsody tm() function is not precise - United States
+
+Text:
+Rhapsody; timer; tm; accuracy; resolution TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Problem with tm() timer in IBM Rational Rhapsody being accurate. 
+
+CAUSE
+The tm() function is not designed to return precise timing results, but its resolution can be refined.
+
+RESOLVING THE PROBLEM
+Modifying the <lang>_CG::Framework::TimerResolution should help, but the Rhapsody timer is only a "rough" clock based on system ticks. 
+
+For example, say a timeout is set to 300ms, and the timer resolution is 100ms (the default), how long after the timeout was set will it expire?
+
+Answer: Somewhere between 200ms and 300ms, on average after 250ms.
+
+Why? The answer relates to the framework timer implementation. The framework timer manager keeps track of the time using a counter that is updated on every timer tick. When a timeout is set the timer manager calculates the timeout expire time as the current-stored-time + timeout-time (for example 16000 + 300).
+
+However since the current-stored-time represents the time on the last tick, the next tick will occur anywhere in (0, timer-resolution-time), and on average after timer-resolution-time/2. So, the current-stored-time + timeout-time is missing the time that passed since the last tick. 
+
+Timeout latency: Some of the OS adaptors' implementation of the tick-timer is synchronous (via sleep(interval)) this means that there is a built-in latency (the time taken to process the expired timeouts)
+that can get to be significant when the timeout is very long (involves many timer ticks). 
+
+In general a timeout will expire between (timeout-time - timer-resolution-time) and timeout-time.
+
+In addition, if your statechart is in the middle of processing an event, that event needs to complete before the timeout is handled.
+
+Just the process of printing out the time (say from a printf) of the timeout actually causes latency in processing it. So the numbers you are looking at may be skewed. 
+
+The creation of the timer itself is done by the timer manager. 
+The number used (default is 100) is the one set in the C_CG.Framework.TimerResolution property.
+
+If you want a rough timeout then the tm function is ideal.
+
+Consider the following options for a more accurate timer:
+
+
+ * Use the Windows Multimedia Timer that can have a resolution up to 1 ms.
+   
+   
+ * Create your own timer class that would use a hardware timer to timeouts accurate to say a uS. This timer class would then call a triggered operation or even a "Synchronous" event.

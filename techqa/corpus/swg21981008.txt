@@ -1,0 +1,52 @@
+Title: IBM Security Bulletin: A Security vulnerability has been identified in IBM WebSphere Application Server shipped with IBM Business Process Manager, WebSphere Process Server and WebSphere Lombardi Edition (CVE-2016-0306) - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ WebSphere Application Server is shipped as a component of IBM Business Process Manager, WebSphere Process Server, and WebSphere Lombardi Edition. Information about a security vulnerability affecting WebSphere Application Server has been published in a security bulletin. 
+
+VULNERABILITY DETAILS
+Consult the following security bulletin for vulnerability details and information about fixes:
+Security Bulletin: Potential security vulnerability in IBM WebSphere Application Server if FIPS 140-2 is enabled (CVE-2016-0306) [http://www.ibm.com/support/docview.wss?uid=swg21979231]
+
+AFFECTED PRODUCTS AND VERSIONS
+ 
+
+ * IBM Business Process Manager 7.5 through 7.5.1.2 
+ * IBM Business Process Manager V8.0 through V8.0.1.3 
+ * IBM Business Process Manager V8.5.0 through V8.5.0.2 
+ * IBM Business Process Manager V8.5.5 
+ * IBM Business Process Manager V8.5.6 through V8.5.6.0 cumulative fix 2 
+ * IBM Business Process Manager V8.5.7 
+ * WebSphere Lombardi Edition V7.2.0.x 
+ * WebSphere Process Server V7.x
+
+
+
+For earlier unsupported versions of the products, IBM recommends upgrading to a fixed, supported version of the product. WORKAROUNDS AND MITIGATIONS
+None
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+IMPORTANT NOTE
+ IBM strongly suggests that all System z customers be subscribed to the System z Security Portal to receive the latest critical System z security and integrity service. If you are not subscribed, see the instructions on the System z Security web site [http://www.ibm.com/systems/z/solutions/security_subintegrity.html]. Security and integrity APARs and associated fixes will be posted to this portal. IBM suggests reviewing the CVSS scores and applying all security or integrity fixes as soon as possible to minimize any potential risk. 
+
+REFERENCES
+Complete CVSS v3 Guide [http://www.first.org/cvss/user-guide] 
+On-line Calculator v3 [http://www.first.org/cvss/calculator/3.0] RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/PSIRT] CHANGE HISTORY
+ 2016-04-20: Original Version Published
+2016-04-20: Added 7.5 release in affected releases 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Business Process Manager Express Security Linux, Windows 8.5.7, 8.5.6, 8.5.5, 8.5.0.2, 8.5.0.1, 8.5, 8.0.1.3, 8.0.1.2, 8.0.1.1, 8.0.1, 8.0, 7.5.1.2, 7.5.1.1, 7.5.1, 7.5.0.1, 7.5 Business Integration IBM Business Process Manager Standard Security AIX, Linux, Solaris, Windows 8.5.7, 8.5.6, 8.5.5, 8.5.0.2, 8.5.0.1, 8.5, 8.0.1.3, 8.0.1.2, 8.0.1.1, 8.0.1, 8.0, 7.5.1.2, 7.5.1.1, 7.5.1, 7.5.0.1, 7.5 Business Integration WebSphere Lombardi Edition Security AIX, HP-UX, Linux, Linux zSeries, Linux/x86, Solaris, Windows, Windows Vista, Windows XP 7.2.0.5, 7.2.0.4, 7.2.0.3, 7.2.0.2, 7.2.0.1, 7.2 Business Integration WebSphere Process Server Security AIX, HP-UX, IBM i, Linux, Solaris, Windows, z/OS 7.0.0.5, 7.0.0.4, 7.0.0.3, 7.0.0.2, 7.0.0.1, 7.0

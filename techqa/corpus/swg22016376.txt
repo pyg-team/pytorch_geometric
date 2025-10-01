@@ -1,0 +1,48 @@
+Title: IBM LDAP error code 32 attempting to retrieve documents - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Some users that were once able to view FileNet Content Platform Engine (CPE) content from Content Navigator (ICN) or Workplace XT (WPXT) now get LDAP error code 32 when retrieving content 
+
+SYMPTOM
+The following error seen in the p8_server_error.log: 
+
+2018-05-08T08:00:41.672 3C50EAD8 ENG FNRCS0025E - ERROR method name: handleLDAPProviderExceptions principal name: P8User123 Global Transaction: false User Transaction: false Exception Info: The server was not able to access the LDAP provider while attempting the operation getSecurityToken for the security principal P8User123. The cause of the error is: [LDAP: error code 32 - 0000208D: NameErr: DSID-0310020A, problem 2001 (NO_OBJECT), data 0, best match of:
+'OU=Security,OU=Groups,DC=Accouting,DC=Finance,DC=Company123,DC=com'
+] Message was: LDAP getAttributes operation failed.
+com.filenet.api.exception.EngineRuntimeException: FNRCS0025E: SECURITY_LDAP_PROVIDER_FAILED: The server was not able to access the LDAP provider while attempting the operation getSecurityToken for the security principal P8User123. The cause of the error is: [LDAP: error code 32 - 0000208D: NameErr: DSID-0310020A, problem 2001 (NO_OBJECT), data 0, best match of:
+'OU=Security,OU=Groups,DC=Accouting,DC=Finance,DC=Company123,DC=com'
+] Message was: LDAP getAttributes operation failed.
+
+
+CAUSE
+LDAP: error code 32 is a generic error more defined by its data code : 
+
+==
+LDAP: error code 32 - 0000208D: NameErr: DSID-0310020A, problem 2001 (NO_OBJECT), data 0
+==
+In this occurrence data code value is "Data '0' = Defined DN (DistinguishedName)does not exist and/or value is not recognized . Error is typically generated during an CPE Authorization search operation issued against the DN of a user object. In this Authorization search operation Content Engine issues a connection to Domain , either via DC(Domain Controller) and /or GC(Global Catalog)searching for the user or group via DN, in which LDAP API does not recognize the value of the DN string.
+
+A nested Active Directory (AD) group that provides the failing users with authorization to CPE content was only searchable from it's source AD domain/domain controllers. When searched via the Global Catalog, other domain controllers found that group in the "Lost and Found" folder, indicating there may have been a replication issue between AD domain controllers essentially orphaning the group.
+
+
+
+ENVIRONMENT
+CPE with Microsoft Active Directory
+
+
+
+DIAGNOSING THE PROBLEM
+To validate the issue/locate the orphaned group, work with your AD/LDAP admin and using an LDAP browsing tool, drill into each nested group within error stack . Ensure resulting Group object DN is in a readable format, not producing an LDAP error 32 from within the LDAP browser tool . Also ensuring each group can be resolved to a DN location (other than the Lost and Found folder). Repeat this for each DC(Domain Controller) and GC(Global Catalog) defined within your CPE DCO(Directory Configuration Object) in Administration Console for Content Engine (ACCE).
+
+
+
+RESOLVING THE PROBLEM
+To resolve, your AD admin can resolve the replication issue (working with Microsoft as needed) or you can update the DCO in ACCE to only include domain controllers that can resolve all the nested groups correctly. 
+
+Note: If the DCO is updated the CPE application servers will need to be restarted for the change to take effect.
+
+RELATED INFORMATION
+ Active Directory Failover Support [https://www.ibm.com/support/knowledgecenter/SSNW2F_5.2.1/com.ibm.p8.security.doc/p8psd005.htm]

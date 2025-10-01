@@ -1,0 +1,81 @@
+Title: IBM My Performance dashboard freezes when generating Task Status pie chart in IBM Business Process Manager (BPM) Process Portal - United States
+
+Text:
+BPM; Process Portal; My Performance; thread hung TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ My Performance dashboard freezes when it generates Task Status pie chart with a large volumn of task data, for example with over 155,000 retrieved tasks. The dashboard displays successfully after a few minutes. 
+
+SYMPTOM
+The following hang messages appear in SystemOut.log: 
+
+[8/22/14 17:55:22:771 CST] 00000068 ThreadMonitor W WSVR0605W: Thread "WebContainer : 10" (00000107) has been active for 774349 milliseconds and may be hung. There is/are 1 thread(s) in total in the server that may be hung.
+at org.jdom.filter.ElementFilter.matches(ElementFilter.java:124)
+at org.jdom.ContentList$FilterList.getAdjustedIndex(ContentList.java:689)
+at org.jdom.ContentList$FilterList.get(ContentList.java:581)
+at com.lombardisoftware.core.script.js.TWDNodeList.get(TWDNodeList.java:74)
+at org.mozilla.javascript.ScriptableObject.getProperty(ScriptableObject.java:1645)
+at org.mozilla.javascript.ScriptRuntime.getObjectElem(ScriptRuntime.java:1388)
+at org.mozilla.javascript.ScriptRuntime.getObjectElem(ScriptRuntime.java:1372)
+at org.mozilla.javascript.Interpreter.interpretLoop(Interpreter.java:3057)
+at org.mozilla.javascript.Interpreter.interpret(Interpreter.java:2487)
+at org.mozilla.javascript.InterpretedFunction.exec(InterpretedFunction.java:178)
+at com.lombardisoftware.core.script.js.JSScript.exec(JSScript.java:60)
+at com.lombardisoftware.core.script.js.JavaScriptRunner$2.execute(JavaScriptRunner.java:260)
+at com.lombardisoftware.core.script.js.PreparedScope.executeWithScope(PreparedScope.java:204)
+at com.lombardisoftware.core.script.js.JavaScriptRunner.execute(JavaScriptRunner.java:258)
+at com.lombardisoftware.core.script.js.JavaScriptRunner.evalExpression(JavaScriptRunner.java:375)
+at com.lombardisoftware.core.script.js.JavaScriptRunner.evalExpression(JavaScriptRunner.java:359)
+at com.lombardisoftware.core.script.js.objects.TWChartScriptable.executeDatasource(TWChartScriptable.java:385)
+at com.lombardisoftware.core.script.js.objects.TWChartScriptable.setReportChartObject(TWChartScriptable.java:216)
+at com.lombardisoftware.core.script.js.objects.ReportScriptable.jsFunction_getChartInstance(ReportScriptable.java:313)
+at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:60)
+at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:37)
+at java.lang.reflect.Method.invoke(Method.java:611)
+at org.mozilla.javascript.MemberBox.invoke(MemberBox.java:161)
+at org.mozilla.javascript.FunctionObject.call(FunctionObject.java:467)
+at org.mozilla.javascript.Interpreter.interpretLoop(Interpreter.java:3330)
+at org.mozilla.javascript.Interpreter.interpret(Interpreter.java:2487)
+at org.mozilla.javascript.InterpretedFunction.exec(InterpretedFunction.java:178)
+at com.lombardisoftware.core.script.js.JSScript.exec(JSScript.java:60)
+at com.lombardisoftware.core.script.js.AbstractEmbededJScript.exec(AbstractEmbededJScript.java:50)
+at com.lombardisoftware.core.script.js.objects.ReportScriptable.jsFunction_displayPage(ReportScriptable.java:287)
+at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:60)
+at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:37)
+at java.lang.reflect.Method.invoke(Method.java:611)
+at org.mozilla.javascript.MemberBox.invoke(MemberBox.java:161)
+at org.mozilla.javascript.FunctionObject.call(FunctionObject.java:467)
+at org.mozilla.javascript.Interpreter.interpretLoop(Interpreter.java:3330)
+at org.mozilla.javascript.Interpreter.interpret(Interpreter.java:2487)
+at org.mozilla.javascript.InterpretedFunction.call(InterpretedFunction.java:164)
+at org.mozilla.javascript.ContextFactory.doTopCall(ContextFactory.java:398)
+at org.mozilla.javascript.ScriptRuntime.doTopCall(ScriptRuntime.java:3070)
+at org.mozilla.javascript.InterpretedFunction.exec(InterpretedFunction.java:175)
+at com.lombardisoftware.core.script.js.JSScript.exec(JSScript.java:60)
+at com.lombardisoftware.core.script.js.AbstractEmbededJScript.exec(AbstractEmbededJScript.java:50)
+at com.lombardisoftware.core.script.js.JavaScriptRunner$2.execute(JavaScriptRunner.java:260)
+at com.lombardisoftware.core.script.js.PreparedScope.executeWithScope(PreparedScope.java:204)
+at com.lombardisoftware.core.script.js.JavaScriptRunner.execute(JavaScriptRunner.java:258)
+at com.lombardisoftware.core.script.js.JavaScriptRunner.evalExpression(JavaScriptRunner.java:375)
+at com.lombardisoftware.core.script.js.JavaScriptRunner.evalExpression(JavaScriptRunner.java:359)
+at com.lombardisoftware.server.ejb.api.ScoreboardAPICore.getScoreboardContentInternal(ScoreboardAPICore.java:102)
+at com.lombardisoftware.server.ejb.api.ScoreboardAPICore.getScoreboardContent(ScoreboardAPICore.java:74)
+
+
+[8/22/14 18:05:05:573 CST] 00000107 ThreadMonitor W WSVR0606W: Thread "WebContainer : 10" (00000107) was previously reported to be hung but has completed. It was active for approximately 1357151 milliseconds. There is/are 0 thread(s) in total in the server that still may be hung.
+
+
+CAUSE
+The default Team Filter for the My Performance dashboard is set to "All the Teams I belong to". It takes time to render the pie chart if too many large tasks are retrieved based on the team filter query. The delay is not caused by a long running database query execution, it is caused by the Javascript code.
+
+
+RESOLVING THE PROBLEM
+To work around the issue, you can apply JR47496 [http://www.ibm.com/support/docview.wss?uid=swg1JR47496] iFix. This changes the default Team Filter to "Me Only", which will limit the set of tasks that are retrieved when loading the dashboard to the ones that are assigned to the user.
+
+ 
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Business Process Manager Advanced Process Portal AIX, Linux, Windows 8.5.5, 8.5, 8.0.1, 7.5.1 Business Integration IBM Business Process Manager Express Process Portal Linux, Windows 8.5.5, 8.5, 8.0.1, 7.5.1

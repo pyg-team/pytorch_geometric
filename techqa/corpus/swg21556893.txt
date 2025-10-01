@@ -1,0 +1,31 @@
+Title: IBM Trying to connect the SMTP Send Adapter to an SMTP server using SSL/TLS :unable to find valid certification path - United States
+
+Text:
+Communication; STERLINGNFX TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Trying to connect the SMTP Send Adapter to an SMTP server using SSL/TLS :unable to find valid certification path 
+
+SYMPTOM
+
+
+Using Gentran Integration Suite 4.3 and build 4317. The SMTP Send Adapter cannot establish a connection to an SMTP server using TLS/SSL. Error Message 2009-07-01 12:23:25.788] DEBUG 000000000000 GLOBAL_SCOPE B2BMailServiceA, sendmail Message exception, javax.mail.MessagingException: Can't send command to SMTP host; 
+nested exception is: 
+javax.net.ssl.SSLHandshakeException: sun.security.validator.ValidatorException: PKIX path building failed: sun.security.provider.certpath.SunCertPathBuilderException: unable to find valid certification path to requested target 
+RESOLVING THE PROBLEM
+
+
+Gentran Integration Suite 4.3 only supports implicit TLS/SSL connections using SMTP. Refer to article ENH1750 for more information.
+
+ 
+
+HISTORICAL NUMBER
+ NFX6482 
+
+PRODUCT ALIAS/SYNONYM
+ 
+
+Severity
+
+
+Normal

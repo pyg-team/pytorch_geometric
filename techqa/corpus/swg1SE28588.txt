@@ -1,0 +1,157 @@
+Title: IBM SE28588: MQM400 CUMULATIVE MDV 60202 (WMQ V6.0 JAVA/JMS CLIENT) - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Collective service delivery for WebSphere MQ v6.0
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Collective service MDV 6.0.2.2 for WebSphere MQ v6.0
+   
+   Details of problems fixed for the WMQ server product (5724H72)
+   are included in APAR SE28587 [http://www-01.ibm.com/support/docview.wss?uid=swg1SE28587].
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Collective service MDV 6.0.2.2 for WebSphere MQ v6.0
+   - which contains fixes for all the problems listed below:
+   
+   
+   .                                                              .
+   PK38906J - EXCESSIVE QUEUE CLOSE AND OPEN FOR AN MDB LISTENER
+   
+   .
+   IY98002 - MDB LISTENER PORT GIVES ERROR WITH CUSTOM PROPERTY   .
+             CCDT URL SET                                         .
+   IY96924 - JMS APPLICATIONS HANG WHEN MULTIPLE THREADS TRY TO   .
+             CONNECT TO A QUEUE MANAGER WHICH IS NOT RUNNING      .
+   IY96066 - MQ JMS PUBLISH/SUBSCRIBE CLEAN UP DOES NOT PROCESS ALL
+             APPLICABLE MESSAGES.                                 .
+   IY95370 - SYNCHRONIZATION ISSUE WITH THE JMSCONNECTION HANGS   .
+             SHUTDOWN OF APPLICATION SERVER                       .
+   IY95181 - JMS NULL VALUED CAUSES EXCEPTION IN MQ JMS APPLICATION
+   IY94811 - NULLPOINTER EXCEPTION OCCURS IF WEBSPHERE APPLICATION.
+             SERVER TRACE IS DISABLED.                            .
+   IY94267 [http://www-01.ibm.com/support/docview.wss?uid=swg1IY94267] - JVM CRASH WHEN USING MQ JMS XA IN BINDINGS MODE IN WAS
+             6.1                                                  .
+   IY93324 - MQJMS2003 GETS GENERATED WITH A NULLPOINTEREXCEPTION..
+   IY92471 - NULLPOINTEREXCEPTION WHEN USING MQ JMS CLIENT IN     .
+             MQJMS_TP_DIRECT_TCPIP MODE WITH SSL                  .
+   IY92441 - BOTHRESH IGNORED IN JMS APPLICATIONS WHEN USING ALIAS.
+             QUEUES.                                              .
+   IY92390 - THE MALFORMED OR UNEXPECTED MESSAGE HANDLING FAILS   .
+             WITH 2098 ERROR IN ASYNCHRONOUS MESSAGE DELIVERY     .
+             SCENARIO.                                            .
+   IY91510 [http://www-01.ibm.com/support/docview.wss?uid=swg1IY91510] - MQJMS2002 JMSEXCEPTION THROWN WHEN USING MULTIPLE    .
+             CONSUMERS WITH SELECTORS ON A TRANSACTED SESSION.    .
+   IC51667 - XA_PROTO ERRORS OCCUR WHEN WEBSPHERE MQ IS USED AS A .
+             JMS PROVIDER WITH WEBSPHERE APPLICATION SERVER.      .
+   102896  - OBJECTMESSAGE FAILURES WHEN USING WAS 6.1 WITH       .
+             SECURITY ENABLED
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   SE28588
+   
+   
+ * REPORTED COMPONENT NAME
+   JAVA CLIENT ISE
+   
+   
+ * REPORTED COMPONENT ID
+   5724L2600
+   
+   
+ * REPORTED RELEASE
+   600
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2007-04-04
+   
+   
+ * CLOSED DATE
+   2007-04-04
+   
+   
+ * LAST MODIFIED DATE
+   2012-12-10
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    SI27287
+   
+   
+
+MODULES/MACROS
+ *  RCHMGR
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   JAVA CLIENT ISE
+   
+   
+ * FIXED COMPONENT ID
+   5724L2600
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R600 PSY SI47908
+   UP12/12/10 I 1000

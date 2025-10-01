@@ -1,0 +1,158 @@
+Title: IBM IC79974: DB2TOP THROWS SEGMENTATION FAULT WHEN MONITORING A LOAD UNDER THE UTILITIES SCREEN - United States
+
+Text:
+z/os  FIXES ARE AVAILABLE
+DB2 Version 9.7 Fix Pack 6 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24032754]
+DB2 Version 9.7 Fix Pack 7 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24033685]
+DB2 Version 9.7 Fix Pack 8 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24034634]
+DB2 Version 9.7 Fix Pack 9 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24036646]
+DB2 Version 9.7 Fix Pack 9a for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24037559]
+DB2 Version 9.7 Fix Pack 10 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24038641]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  I ran "db2 load from /home/db2inst1/export/table2.ixf of IXF
+   replace into table2" on my database.
+   
+   When I opened db2top to the utilities screen, it crashed and
+   threw a segmentation fault, with following StackTrace:
+   
+   <StackTrace>
+   -----FUNC-ADDR---- ------FUNCTION + OFFSET------
+   0x00002AAAACBC6C37 ossDumpStackTraceEx + 0x01ef
+   
+   (/view/shenli_db2_v97fp6_linuxamd64_s120229_loadDb2topTrap/vbs/I
+   NST/lib/libdb2osse.so.1)
+   0x00002AAAACBC19F6 _ZN11OSSTrapFile6dumpExEmiP7siginfoPvm +
+   0x00cc
+   
+   (/view/shenli_db2_v97fp6_linuxamd64_s120229_loadDb2topTrap/vbs/I
+   NST/lib/libdb2osse.so.1)
+   0x00002AAAAB95CD97 sqlo_trce + 0x03fb
+   
+   (/view/shenli_db2_v97fp6_linuxamd64_s120229_loadDb2topTrap/vbs/I
+   NST/lib/libdb2.so.1)
+   0x000000000046174F interrupt + 0x0163
+                   (./db2top)
+   0x00002AAAAD776FC0 address: 0x00002AAAAD776FC0 ; dladdress:
+   0x00002AAAAD747000 ; offset in lib: 0x000000000002FFC0 ;
+                   (/lib64/libc.so.6)
+   0x00002AAAAD7D0D8F __strftime_l + 0x002f
+                   (/lib64/libc.so.6)
+   0x0000000000480945 uti_timestamp + 0x00a7
+                   (./db2top)
+   0x0000000000480AAB display_utility + 0x00f3
+                   (./db2top)
+   0x00000000004817F9 do_utilities + 0x00d3
+                   (./db2top)
+   0x00000000004528E1 do_foreground + 0x05e7
+                   (./db2top)
+   0x0000000000452E32 main + 0x0124
+                   (./db2top)
+   0x00002AAAAD764304 __libc_start_main + 0x00f4
+                   (/lib64/libc.so.6)
+   0x00000000004181D9 __gxx_personality_v0 + 0x0231
+                   (./db2top)
+   </StackTrace>
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * DB2 LUW 9.7 fp 6 on linux                                    *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * See Error Description                                        *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Upgrade to DB2 9.7 FP7                                       *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC79974
+   
+   
+ * REPORTED COMPONENT NAME
+   DB2 FOR LUW
+   
+   
+ * REPORTED COMPONENT ID
+   DB2FORLUW
+   
+   
+ * REPORTED RELEASE
+   970
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-11-23
+   
+   
+ * CLOSED DATE
+   2012-06-06
+   
+   
+ * LAST MODIFIED DATE
+   2012-06-06
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    IC84456
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R970 PSY
+   UP

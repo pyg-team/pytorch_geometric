@@ -1,0 +1,139 @@
+Title: IBM JR51139: DOC BPMCHECKORPHANTOKENS COMMAND NEEDS CLARIFICATIONS ON WHAT THECOMMAND VALIDATES. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  BPMCheckOrphanTokens will compare difference in
+   BPDs but is limited to activities /events.  Documentation is
+   needed to
+   clarify the validation points of this command.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Documentation does not state any current limitations. Updated
+   documentation will help Customers understand how to use this
+   wsadmin command better.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ABSTRACT ? BPMCHECKORPHANTOKENS COMMAND NEEDS CLARIFICATIONS ON
+   WHAT   THECOMMAND VALIDATES
+   ERROR DESCRIPTION -
+   BPMCheckOrphanTokens commands does not detect all changes within
+   a process application.
+   
+   
+   PRODUCTS AFFECTED
+   IBM Business Process Manager (BPM) Advanced
+   IBM BPM Standard
+   IBM BPM Express
+   
+   LOCAL FIX - N/A
+   
+   
+   PROBLEM SUMMARY
+   The current knowledge center documentation for the
+   BPMCheckOrphanTokens command does not specify what application
+   changes are detected between snapshots.  The command may show
+   results of no orphaned tokens for migrating to a new snapshot.
+   However, there are some properties that are undetected that may
+   lead to an orphaned token.  For example, if a flow line is
+   modified in a way that it can produce an orphaned token if
+   instance were migrated.  BPMCheckOrphanTokens does not check for
+   such changes.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A fix is available for IBM BPM v8.5.0.x Knowledge Center.  More
+   information is added to the documentation to clarify what
+   application changes will not be detected by the command.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR51139
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM ADVANCED
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9400
+   
+   
+ * REPORTED RELEASE
+   850
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-08-27
+   
+   
+ * CLOSED DATE
+   2014-11-04
+   
+   
+ * LAST MODIFIED DATE
+   2014-11-04
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

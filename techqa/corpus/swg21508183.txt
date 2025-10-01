@@ -1,0 +1,29 @@
+Title: IBM How can I create a TM1 Service? - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ What steps should I take to create a TM1 Service? 
+
+ANSWER
+ 
+
+From a command window, change to the TM1 bin directory. The default installation path is "C:\Program Files\Cognos\TM1\bin"
+
+For example:
+
+CD "C:\Program Files\Cognos\TM1\bin"
+tm1sd.exe -install -n"ServiceName" -z"DataDirectoryPath"
+
+NOTE:
+* There should be no space between the parameter and its value (e.g., no space between -n and "ServiceName")
+* If either the Service Name or the Data Directory Path contains a space, its value must be enclosed by double quotes
+
+A successful command returns the following message:
+
+TM1 Server / ServiceName installed.
+
+
+RELATED INFORMATION
+#TM1 Operation Guide (pg 87) [http://public.dhe.ibm.com/software/data/cognos/documentation/docs/en/9.5.2/tm1_op.pdf]

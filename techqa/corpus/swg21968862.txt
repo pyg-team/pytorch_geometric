@@ -1,0 +1,61 @@
+Title: IBM Linux OS agent 6.3 FP2 installation fails on RHEL7 - United States
+
+Text:
+RHEL7; Red Hat Enterprise Linux 7; setarch; silent install; rpm; ITM; klzagent TECHNOTE (FAQ)
+
+QUESTION
+ Installation of Linux OS Agent fails on RHEL 7. Using setarch as suggested in technote
+
+http://www-01.ibm.com/support/docview.wss?uid=swg21692457 [http://www-01.ibm.com/support/docview.wss?uid=swg21692457]
+
+cannot be used where silent installation is the preferred method.
+What are the alternative installation methods to have Linux OS Agent installed on RHEL 7 systems? 
+
+CAUSE
+As documented in technote 
+
+http://www-01.ibm.com/support/docview.wss?uid=swg21692457 [http://www-01.ibm.com/support/docview.wss?uid=swg21692457], 
+
+RHEL 7 support was added with 6.3 FP3. 
+
+Anyway this Fixpack is not a fresh install, so theoretically you need to have a base code installed before proceeding with FP3 installation. 
+
+Using silent installation to install 6.3 FP2 is not possible because of the documented prerequisite failure; you should use setarch command to bypass the problem, but in a large enterprise environment this could be not acceptable. 
+
+
+ANSWER
+You have the following two options to install 6.3 FP3 (and higher fixpack levels) on RHEL 7, without using the "setarch" workaround. 
+
+
+Using "createnode"
+
+1) On a single machine that is not RHEL 7, install a Monitoring Server and upgrade it to the 6.30.03 or higher level. 
+2) Make sure that the ITM 6.30.03 or higher agents installation media is accessible from this system
+3) Run tacmd addbundles to add the components to the Monitoring Server depot.
+Make sure that you add the lz and tf components at a minimum. 
+4) Run tacmd createnode to perform a pristine install using the ITM 6.30.03 or higher Monitoring Agent for Linux OS directly with no need for work arounds and upgrades to have running agents on the RHEL 7 systems the first time. 
+5) tacmd createnode supports "Bulk" execution mode which allows you to define deploy groups and to then perform deploy operations to multiple systems with a single command.
+
+Using "exportbundles" 
+
+1) One a single machine that is not RHEL 7, install a Monitoring Server and upgrade it to the 6.30.03 or higher level. 
+2) Make sure that the ITM 6.30.03 or higher Agents installation media is accessible from this system. 
+3) Run tacmd exportbundles with the "-i" option and the "-os LINUX" option to generate bundles that are silently installable on RHEL 7 and any other supported level of RHEL or SLES as well. 
+Make sure that you generate bundles for the lz and tf components at a minimum. 
+For example: 
+
+./tacmd exportbundles -i /space2/software/ITM630FP3/agents/6.3.0-TIV-ITM_TMV-Agents-FP0003/unix -e /opt/exportedbundles -o LOCAL -os LINUX
+
+Note: You just need to export and install using the installation media of the Fixpack level you want to use. No need to export the agent bundle from the pristine installation media (6.3 FP2).
+
+4) You would need to customize the bundle directories and provide a silent configuration response file to provide the Monitoring Server connection information so that you could perform a silent configuration after installation on an endpoint. 
+5) Tar up the exported bundle directories and distribute the tar files any way that you want to, or make them available on shared storage.
+6) You could even create rpm files from the bundle directories if you need to. You could provide post install commands to run the silentInstall.sh script to silently install the agent, perform a silent configuration, and start the agent.
+
+Note: ITM 6.3 FP6 will be a fresh install, so the above procedures are applicable for FP3, FP4 and FP5.
+You don't need to use it with the next FP6.
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ IBM Tivoli Monitoring V6.3.x Linux OS Agent

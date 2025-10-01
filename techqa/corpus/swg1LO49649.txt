@@ -1,0 +1,142 @@
+Title: IBM LO49649: SHA-2 CERTIFICATE SUPPORT FOR IMPORTING INTERNET CERTIFICATE - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  See SPR AJAS82GEJU
+   
+   Cant import a SHA-2 certificate into 8.5.1, the same certificate
+   imports into
+   8.5 without issue.
+   
+   This enhancement request is to ask for SHA-2 support for
+   internet certificate
+   import.
+   
+   
+   There is no SHA-2 support in the product.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  'none
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  A programming error was found and will be corrected in a future
+    release.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A programming error was found and will be corrected in a future
+    release.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+ *  This APAR is associated with SPR# AJAS83EJAQ.
+   Added new GSK8 merge module to installer.
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   LO49649
+   
+   
+ * REPORTED COMPONENT NAME
+   NOTES CLIENT
+   
+   
+ * REPORTED COMPONENT ID
+   5724E6255
+   
+   
+ * REPORTED RELEASE
+   851
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-03-10
+   
+   
+ * CLOSED DATE
+   2013-05-16
+   
+   
+ * LAST MODIFIED DATE
+   2014-01-25
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   NOTES CLIENT
+   
+   
+ * FIXED COMPONENT ID
+   5724E6255
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R851 PSN
+   UP

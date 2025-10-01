@@ -1,0 +1,151 @@
+Title: IBM MQ Commands to setup two way communication between two queue managers on Sender and Receiver channels - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ You want to see a complete set of commands to set up the full (both ways) communication between 2 WebSphere MQ (WMQ) queue managers, using Sender and Receiver channels. 
+
+RESOLVING THE PROBLEM
+At the end of the process, all the necessary MQ objects will be created.
+The technote has instructions on how to test and verify that the objects were configured properly.
+
+** Usage hints
+- Copy the commands from the technote into a text editor.
+- Do a global search-replace on the names of the queue managers, queues, etc.
+- Open 2 command prompts, one for each queue manager.
+- Copy each command from the text editor and paste them into the runmqsc session for each queue manager.
+
+** Here are the runmqsc commands that can be used.
+
+In this example, the following queue managers are used:
+
+QMgr1: QM_ANGELITO (in Windows)
+QMgr2: QM_VER (in Linux)
+
+*** QMgr1: QM_ANGELITO
+
+* Define and start a Listener. The following using the default port 1414.
+define listener(LISTENER) trptype(tcp) control(qmgr) port(1414)
+start listener(LISTENER)
+
+* Define a local queue:
+define qlocal(Q5)
+
+* Define a local queue (used for transmission):
+define qlocal(QM_VER) usage(xmitq)
+
+* Define a remote queue definition by typing the following command: 
+define qremote(Q6_QM_VER) rname(Q6) rqmname(QM_VER) xmitq(QM_VER)
+
+* Define a receiving channel by typing the following command: 
+define channel(QM_VER.QM_ANGELITO) chltype(RCVR) trptype(TCP)
+
+* Define a sender channel by typing the following command: 
+define channel(QM_ANGELITO.QM_VER) chltype(SDR) +
+conname('veracruz.x.ibm.com(1414)') +
+xmitq(QM_VER) trptype(TCP)
+
+* Start the sender channel
+start channel(QM_ANGELITO.QM_VER) 
+
+*** QMgr2: QM_VER
+
+* Define and start a Listener. The following using the default port 1414.
+define listener(LISTENER) trptype(tcp) control(qmgr) port(1414)
+start listener(LISTENER)
+
+* Define a local queue:
+define qlocal(Q6)
+
+* Define a local queue (used for transmission):
+define qlocal(QM_ANGELITO) usage(xmitq)
+
+* Define a remote queue definition by typing the following command: 
+define qremote(Q5_QM_ANGELITO) rname(Q5) rqmname(QM_ANGELITO) xmitq(QM_ANGELITO)
+
+* Define a receiving channel by typing the following command: 
+define channel(QM_ANGELITO.QM_VER) chltype(RCVR) trptype(TCP)
+
+* Define a sender channel by typing the following command: 
+define channel(QM_VER.QM_ANGELITO) chltype(SDR) +
+conname('angelito.x.ibm.com(1414)') +
+xmitq(QM_ANGELITO) trptype(TCP)
+
+* Start the sender channel
+start channel(QM_VER.QM_ANGELITO)
+
+*** Miscellaneous
+
+*** MQ V7.0.1 and later: Sender channel to connect to multi-instance queue managers
+
+* If QM_VER was a multi-instance queue manager, then the Sender channel from QM_ANGELITO would need to exploit the expanded format for CONNAME, introduced in V7. Thus, QM_ANGELITO would need to be at MQ V7 in order to reconnect to the new active instance after a failover of the multi-instance queue manager.
+define channel(QM_ANGELITO.QM_VER) chltype(SDR) +
+conname('veracruz.x.com(1414),cbeech.x.ibm.com(1414)') +
+xmitq(QM_VER) trptype(TCP)
+
+*** To enable Triggering of the Sender Channels
+
+* Modify the XMITQ, for example, from QM_ANGELITO, to start the Sender channel with the First message arrives to the queue (depth of 1)
+ALTER qlocal(QM_VER) usage(xmitq) TRIGGER TRIGTYPE(FIRST) TRIGDPTH(1) +
+INITQ('SYSTEM.CHANNEL.INITQ') TRIGDATA('QM_ANGELITO.QM_VER')
+
+
++++ Testing
+
+
+++ Send messages to each other
+
++ QMgr1: QM_ANGELITO
+
+C:\> amqsput Q6_VER QM_ANGELITO
+Sample AMQSPUT0 start
+target queue is Q6_VER
+TEST-FROM-ANGELITO
+Sample AMQSPUT0 end
+
++ QMgr2: QM_VER
+
+rivera@veracruz: /home/rivera
+$ amqsput Q5_ANGELITO QM_VER
+Sample AMQSPUT0 start
+target queue is Q5_ANGELITO
+TEST-FROM-QMVER
+Sample AMQSPUT0 end
+
+++ Browse the messages
+
++ QMgr1: QM_ANGELITO
+
+C:\> amqsbcg Q5 QM_ANGELITO
+AMQSBCG0 - starts here
+...
+**** Message ****
+length - 15 bytes
+00000000: 5445 5354 2D46 524F 4D2D 514D 4D49 31 'TEST-FROM-QMVER '
+
++ QMgr2: QM_VER
+
+$ amqsbcg Q6 QM_VER
+AMQSBCG0 - starts here
+...
+**** Message ****
+length - 18 bytes
+00000000: 5445 5354 2D46 524F 4D2D 414E 4745 4C49 'TEST-FROM-ANGELI'
+00000010: 544F 'TO '
+
+
++++ Miscellaneous
+
+For an entertaining presentation on the role of the Transmission Queues, see the following presentation and listen to the webcast:
+
+A Day in the Life of a WebSphere MQ Transmission Queue [http://www.ibm.com/support/docview.wss?uid=swg27021403]
+
+Description: This webcast focuses on how the WebSphere MQ message descriptor is handled in a message that is sent from a remote queue definition to a transmission queue. Additional topics related to the transmission queues are also covered, such as basic troubleshooting, clusters and triggering of channels.
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM MQ 
+PRODUCT ALIAS/SYNONYM
+ WMQ MQ MQSeries

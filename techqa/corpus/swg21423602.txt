@@ -1,0 +1,47 @@
+Title: IBM Deletion of a Ruleset from Rule Execution Server using JMX API - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ I want to delete a Ruleset from a RuleApp deployed on Rule Execution Serve. How do I do so using API? 
+
+ANSWER
+ 
+
+RuleApps that have been deployed to Rule Execution Server can be manipulated through the Rule Execution Server console. 
+
+ 
+
+Sometimes, the application requirement is to programmatically modify the deployed ruleApps. This can be done through the class IlrJmxRuleAppMBean, which uses JMX to control ruleApps deployed to Rule Execution Server. The IlrJmxRuleAppMBean interface specifies the methods that are targeted towards the management of rulesets belonging to the deployed ruleApps. 
+
+ 
+
+The attached sample shows how to delete a a particular version of a ruleset from a ruleApp which has been deployed on JBoss server. It is a modified version of the jmxremote sample in the distribution. (Refer to the documentation at Samples > Rule Execution Server Integration > How to Automate Ruleset Management, for more information on the jmxremote sample.) 
+
+The attached sample contains the class JBossClient.java, which defines the functionality to deploy a ruleApp, as well as to delete a ruleset from a deployed ruleApp. 
+
+How to run the sample:
+
+- Make sure that the ANT environment is properly setup:
+Set ANT_HOME to <InstallDir>\shared\tools\ant 
+Add %ANT_HOME%\bin;%PATH% to your PATH 
+Set JAVA_HOME to JDK version 5.0 or 6.0 (available in <InstallDir>\jdk)
+
+-Edit the build.properties file to define the location of the JBoss server and the configuration directory in your environment. Make sure that the JRules Rule Execution Server module has been installed on JBoss server, and that the server is running.
+
+- Navigate to the directory where the sample has been extracted and run the following ant commands: 
+
+
+ 1. ant clean: Cleans any compiled classes in the extracted folder 
+    
+    
+ 2. ant build: Compiles the java classes and places them in the "classes" directory 
+    
+    
+ 3. ant deployruleapp : Deploys the ruleapp (data\JmxRuleappSample.jar) to Rule Execution Server deployed on a JBoss server. To verify that the ruleApp has been deployed, you can log onto the Rule Execution Server console. The ruleApp contains the following rulesets: versions 1.0 and 2.0 of InsuranceRuleset, and version 1.0 of LoanRuleset. 
+    
+    
+ 4. ant removeruleset: Removes the ruleset "InsuranceRuleset" version 1.0, from the JmxRuleappSample ruleApp. To verify that the ruleset has been removed, check the rulesets belonging to the ruleApp using the Rule Execution Server console. The ruleApp should now contain the following rulesets: version 2.0 of InsuranceRuleset, and version 1.0 of LoanRuleset.
+
+JBossJMXClient.zip [/support/docview.wss?uid=swg21423602&aid=2] [/support/docview.wss?uid=swg21423602&aid=1]

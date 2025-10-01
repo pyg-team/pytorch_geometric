@@ -1,0 +1,43 @@
+Title: IBM Preview of ICC Metadata Form Template fails with error 404 - United States
+
+Text:
+java.io.IOException: La structure du disque est endommagée et illisible. Unexpected element: CDATA Extracting template binary TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ An attempt to preview either the default or custom IBM Content Collector (ICC) Metadata Form Template within Configuration Manager fails with browser HTTP error 404. 
+
+SYMPTOM
+The browser displays a standard 'HTTP 404 not found' error page when attempting to preview the template. 
+
+Additionally, when attempting to access the ICC URL:
+https://<icchost>:11443/AFUConfig/Configuration?type=ibm.ctms.configWebService&unique=default
+it returns:
+AFU_NO_MATCH
+
+
+CAUSE
+This can be caused by a file system problem preventing the template from being written to the disk and therefore it can not be served to the browser.
+
+
+DIAGNOSING THE PROBLEM
+The afu_webapplication_trace log shows the following: 
+
+WebContainer : 0 FINE Extracting template binary AFU_NO_MATCH[com.ibm.afu.metadata.config.ConfigAccess: readConfig] 
+
+In addition the ICC Websphere (eWAS) log (SystemOut.log) shows the following error:
+
+ServletWrappe E com.ibm.ws.webcontainer.servlet.ServletWrapper service SRVE0014E: Uncaught service() exception root cause FormServlet: java.io.IOException: The disk structure is corrupted and unreadable 
+at java.io.File.createNewFile(File.java:894)
+at com.ibm.afu.metadata.servlet.FormServlet.uncompressTemplate(FormServlet.java:254)
+at com.ibm.afu.metadata.servlet.FormServlet.doGet(FormServlet.java:151) 
+
+
+RESOLVING THE PROBLEM
+The folder that ICC tries to store the template in is a subfolder of the java system property "java.io.tmpdir" 
+
+ie:
+new File(System.getProperty("java.io.tmpdir")
++ File.separatorChar + "afuMetadata" + File.separatorChar
++ System.currentTimeMillis()); 
+
+Verify the integrity of the file system by running a CHKDSK or similar tool to resolve the issue.

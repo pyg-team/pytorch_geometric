@@ -1,0 +1,174 @@
+Title: IBM PI87419: BUNDLE INSTALLATION FAILS DURING CICS WARM START - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  A CICS region is restarted, however the BUNDLE installation
+   fails because the JVMServer isn't available at that time.
+   
+   There seems to be a timing issue during a CICS warm start when
+   installing a JVMServer and it's associated BUNDLES.
+   
+   
+   The joblog shows the following sequence of messages:
+   ----------------------------------------------------
+   DFHSJ1109 06/12/2016 05:25:16 An attempt to determine the
+             highest semantic version of the OSGi bundle with
+             symbolic name BUNDLE zzzzzzzz to install into
+             JVMSERVER xxxxxx has failed with reason code
+             JVMSERVER_NOT_ENABLED.
+   
+   DFHSJ0915 06/12/2016 05:25:18 JVMSERVER xxxxxx is now
+             enabled and is ready for use.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All CICS users.                              *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: CICS bundle installation failure.       *
+   ****************************************************************
+   * RECOMMENDATION: .                                            *
+   ****************************************************************
+   A CICS bundle is being installed in an OSGi (non-Liberty) JVM
+   server which uses the versionRange attribute for an included
+   OSGi bundle resource. The JVM server and the CICS bundle are
+   both being installed at the same time, either explicitly or
+   during a warm start. The result is that the OSGi bundle
+   resource with versionRange is attempting to be installed while
+   the JVM server is enabling. This leaves the bundle in an
+   disabled state.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  CICS has been changed to defer the installation of a CICS
+   bundle with versionRange attribute until the JVM server has
+   completed its own initialisation.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI87419
+   
+   
+ * REPORTED COMPONENT NAME
+   CICS TS Z/OS V5
+   
+   
+ * REPORTED COMPONENT ID
+   5655Y0400
+   
+   
+ * REPORTED RELEASE
+   100
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-09-15
+   
+   
+ * CLOSED DATE
+   2017-10-18
+   
+   
+ * LAST MODIFIED DATE
+   2017-11-01
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    PI79692 [http://www-01.ibm.com/support/docview.wss?uid=swg1PI79692]
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UI51222 UI51223 UI51224
+   
+   
+
+MODULES/MACROS
+ *  DFHAPJVM DFHAPLJP DFHAXIS2 DFHCAL64 DFHCDJNI DFHCDK64 DFHKETIX
+   DFHSJBD  DFHSJDM  DFHSJDS  DFHSJDUF DFHSJIN  DFHSJIS  DFHSJJS
+   DFHSJL   DFHSJNT  DFHSJPTI DFHSJRE  DFHSJRL  DFHSJRM  DFHSJSA
+   DFHSJSC  DFHSJSM  DFHSJSR  DFHSJST  DFHSJTE  DFHSJTH  DFHSJTRI
+   DFHSJWL  DFHSJXM  DFJ@H356 DFJ@H360 DFJ@H427 DFJ@H468 DFJDTCOE
+   DFJOUTRE DFJWLPPL
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CICS TS Z/OS V5
+   
+   
+ * FIXED COMPONENT ID
+   5655Y0400
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R100 PSY UI51222 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI51222]
+   UP17/10/20 P F710
+   
+   
+ * R103 PSY UI51224 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI51224]
+   UP17/10/20 P F710
+   
+   
+ * R10D PSY UI51223 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI51223]
+   UP17/10/20 P F710
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

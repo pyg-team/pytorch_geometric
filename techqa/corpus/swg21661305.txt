@@ -1,0 +1,18 @@
+Title: IBM db2 migration from older version fails with SQL2514N error during restore operation. - United States
+
+Text:
+SQL2514 migration restore TECHNOTE (FAQ)
+
+QUESTION
+ While migrating the db2 databases from older version to newer version using the off line restore command fails with SQL2514N error. Why? 
+
+CAUSE
+The version of db2 that you are trying to migrate is more than 2 levels down. i.e. You are trying to migrate a v9.1 db to v10.1 or v9.1/v9.5 db to v10.5 versions which are NOT compatible and NOT supported.
+
+ANSWER
+Temporarily migrate the db to supported db2 levels of v9.5 or v9.7 first and then upgrade to the desired level of db2.
+
+RELATED INFORMATION
+ Upgrading to DB2 Version 10.5 roadmap [http://www-01.ibm.com/support/docview.wss?uid=swg21633449]
+Upgrade restrictions for db2 servers [http://pic.dhe.ibm.com/infocenter/db2luw/v10r5/topic/com.ibm.db2.luw.qb.upgrade.doc/doc/c0007191.html]
+SQL2514N [http://pic.dhe.ibm.com/infocenter/db2luw/v10r5/topic/com.ibm.db2.luw.messages.sql.doc/doc/msql02514n.html]

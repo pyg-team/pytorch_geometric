@@ -1,0 +1,84 @@
+Title: IBM Using IBM Support Assistant (ISA) Memory Analyzer Tool (MAT) to identify the name of the application causing the memory leak - United States
+
+Text:
+OutOfMemory; MAT; Memory analyzer; ISA; IBM support assistant TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Memory Analyzer Tool (MAT) that can be added to the IBM Support Assistant (ISA) can be used to identify not only the leak suspects but also the name of the application causing the memory leak. 
+
+SYMPTOM
+Unbounded growth in heap size leading to OutOfMemory error.
+
+
+CAUSE
+Application memory leak.
+
+ENVIRONMENT
+A single application server can run multiple applications. Any one of the applications might be having a memory leak. Knowing the name of the application is helpful in identifying the development team that needs to be involved in resolving the memory leak.
+
+DIAGNOSING THE PROBLEM
+The Memory Analyzer Tool can analyze heapdumps as well as system dumps. The advantage of analyzing a system dump is that MAT can then display objects's contents as well, as opposed to heapdumps (.phd) files which only show the structure of the heap and the number of objects/classes it contains.
+
+
+(Note: up to WebSphere v8.5, the system dump (.dmp) would have to be processed with jextract utility (becomes .dmp.zip) )
+
+In the example below we used a jextracted system dump to get to the application's name; 
+as seen below, the leak has been identified as belonging to the thread "WebContainer : 10".
+
+Example from MAT analysis:
+
+Leak Suspects: 
+
+Problem Suspect 1
+
+The thread com.ibm.ws.util.ThreadPool$Worker @ 0x2664f550 [HUNG] WebContainer : 10 keeps local variables with total size 240,899,544 (30.83%) bytes. 
+…
+
+Once you have this information you can examine that thread's contextClassLoader field, 
+which points to the CompoundClassLoader which contains a "name" field which contains the WAR/EAR name of the application in question.
+
+Note: if one installs the WAS extensions into MAT, then decoding the name field is done automatically and it shows right in the ContextClassLoader as per screenshot below:
+
+
+
+[/support/docview.wss?uid=swg21673014&aid=1] [/support/docview.wss?uid=swg21673014&aid=1]
+
+...
+
+[/support/docview.wss?uid=swg21673014&amp;aid=2]
+
+
+If you didn't install them, then you have to follow through one indirection, from the contextClassLoader content to the CompoundClassLoader to find its “name” field contents.
+
+[/support/docview.wss?uid=swg21673014&aid=3] [/support/docview.wss?uid=swg21673014&aid=3]
+
+...
+
+[/support/docview.wss?uid=swg21673014&aid=4] [/support/docview.wss?uid=swg21673014&aid=4]
+
+...
+
+[/support/docview.wss?uid=swg21673014&aid=5] [/support/docview.wss?uid=swg21673014&aid=5]
+
+References: see links below.
+
+
+
+RESOLVING THE PROBLEM
+With above information, one needs to consult with the application's development team to resolve the memory leak.
+
+RELATED INFORMATION
+#IBM Monitoring and Diagnostic Tools for Java [http://www.ibm.com/developerworks/java/jdk/tools/memoryanalyzer/]
+How to download install and run tools through ISA [http://www-01.ibm.com/support/docview.wss?uid=swg27037822]
+IBM Extensions for MAT [http://www.ibm.com/developerworks/java/jdk/tools/iema/]
+YouTube How to: IBM Extensions for MAT [https://www.ibm.com/developerworks/community/blogs/kevgrig/entry/youtube_video_how_to_install_and_use_the_ibm_extensions_for_mat?lang=en]
+blog:Introducing the IBM Extension for MAT [https://www.ibm.com/developerworks/community/blogs/aimsupport/entry/introducing_the_ibm_extensions_for_memory_analyzer_project_on_alphaworks?lang=en]
+jextract an IBM SDK core dump (AIX Linux Windows) [http://www-01.ibm.com/support/docview.wss?uid=swg21577379]
+
+
+ 
+
+HISTORICAL NUMBER
+ 35226
+7TD
+000

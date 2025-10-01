@@ -1,0 +1,165 @@
+Title: IBM How to create and populate a simple Derby database - United States
+
+Text:
+Derby; database; WASCE; Using the Derby Command Line Interpreter Utility ("ij"); how to create a derby; apache derby NEWS
+
+ABSTRACT
+ This document describes how to create and populate a simple Derby database on a WebSphere Application Server Community Edition server. These actions are performed using the Derby "command line" interface provided with WebSphere Application Server Community Edition. A simple scenario is discussed in which the user can create a database, populate it, and if necessary, delete the database. 
+
+CONTENT
+
+
+
+Using the Derby Command Line Interpreter Utility ("ij") To use the Derby Command Line Interpreter utility, the WebSphere Application Server Community Edition server must be running. The "ij" utility is run from the command line and is executed as follows: 
+<your WASCE install folder>\bin (example: C:\WDF61WASCE1\bin) 
+
+Type "ij" at a command prompt in the above folder. The commands use an SQL-type syntax and are typically followed by a semicolon (";"). 
+
+To display a list of the commands provided by "ij", at the ij prompt, type "help" (example: ij> help;). 
+
+Supported commands include: 
+
+PROTOCOL 'JDBC protocol' [ AS ident ];  * sets a default or named protocol
+
+DRIVER 'class for driver';  * loads the named class
+
+CONNECT 'url for database' [ PROTOCOL namedProtocol ] [ AS connectionName ];  * connects to database URL 
+ * and may assign identifier
+
+SET CONNECTION connectionName;  * switches to the specified connection
+
+SHOW CONNECTIONS;  * lists all connections
+
+AUTOCOMMIT [ ON | OFF ];  * sets autocommit mode for the connection
+
+DISCONNECT [ CURRENT | connectionName | ALL ];  * drop current, named, or all connections; 
+ * the default is CURRENT
+
+COMMIT;  * commits the current transaction
+
+ROLLBACK;  *  rolls back the current transaction
+
+PREPARE name AS 'SQL-J text';  * prepares the SQL-J text
+
+EXECUTE { name | 'SQL-J text' } [ USING { name | 'SQL-J text' } ] ;  * executes the statement with parameter 
+ * values from the USING result set row
+
+REMOVE name;  *  removes the named previously prepared statement
+
+RUN 'filename';  * run commands from the named file
+
+ELAPSEDTIME [ ON | OFF ];  * sets elapsed time mode for ij
+
+MAXIMUMDISPLAYWIDTH integerValue;  * sets the maximum display width for 
+ * each column to integerValue
+
+ASYNC name 'SQL-J text';  * run the command in another thread
+
+WAIT FOR name;  * wait for result of ASYNC'd command
+
+GET [SCROLL INSENSITIVE] CURSOR name AS 'SQL-J query';  * gets a cursor (JDBC result set) on the query 
+ * SCROLL cursors are only available in JDBC 2.0 and higher. 
+ * (Cursor scroll type is ignored in JDBC 1.X.)
+
+NEXT name;  * gets the next row from the named cursor
+
+FIRST name;  * gets the first row from the named scroll cursor
+
+LAST name;  * gets the last row from the named scroll cursor
+
+PREVIOUS name;  * gets the previous row from the named scroll cursor
+
+ABSOLUTE integer name;  * positions the named scroll cursor at the absolute row number 
+ * (A negative number denotes position from the last row.)
+
+RELATIVE integer name;  * positions the named scroll cursor relative to the current row 
+ * (integer is number of rows)
+
+AFTER LAST name;  * positions the named scroll cursor after the last row
+
+BEFORE FIRST name;  * positions the named scroll cursor before the first row
+
+GETCURRENTROWNUMBER name;  * returns the row number for the current position of the named scroll cursor 
+ * (0 is returned when the cursor is not positioned on a row.)
+
+CLOSE name;  * closes the named cursor
+
+LOCALIZEDDISPLAY [ ON | OFF ];  * controls locale sensitive data representation
+
+EXIT;  * exits ij
+
+HELP;  * shows this message
+
+
+NOTE: Any unrecognized commands are treated as potential SQL-J commands and executed directly. 
+
+
+Creating and populating a Derby database To create a new database, at the "ij" command prompt, type the following command:  * CONNECT '<name_of_new_db>;create=true'; 
+ * 
+ * 
+ * CONNECT 'employeeData;create=true';
+
+
+To create new table in a database: 
+
+CREATE TABLE EMPLOYEES 
+(EMPNO NUMERIC(4) PRIMARY KEY NOT NULL, 
+ENAME VARCHAR(15), JOB VARCHAR(15), 
+MGR NUMERIC(4), 
+SAL NUMERIC(7, 2), COMM NUMERIC(7, 2), 
+DEPTNO NUMERIC(2)); 
+
+To populate "employeeData" DB table "EMPLOYEES": 
+ * INSERT INTO 
+ * EMPLOYEES
+ * 
+ * VALUES (1000, 'John Smith', 'AEngineer', 0001, 12345, 1234, 99); 
+ * 
+ * INSERT INTO EMPLOYEES VALUES (1001, 'Bill Green', 'BEngineer', 0002, 11111, 1111, 11);
+ * 
+ * INSERT INTO EMPLOYEES VALUES (1002, 'Sam Jobs', 'CEngineer', 0002, 22222, 2222, 22);
+ * 
+ * INSERT INTO EMPLOYEES VALUES (1003, 'Mike Star', 'DEngineer', 0003, 33333, 3333, 33);
+ * 
+ * INSERT INTO EMPLOYEES VALUES (1004, 'Steve Blue', 'EEngineer', 0004, 44444, 4444, 44);
+ * 
+ * INSERT INTO EMPLOYEES VALUES (1005, 'Bart Simons', 'FEngineer', 0005, 55555, 5555, 55);
+ * 
+ * INSERT INTO EMPLOYEES VALUES (1006, 'Bill Brown', 'GEngineer', 0006, 66666, 6666, 66);
+ * 
+
+
+To view data in table: 
+select * from EMPLOYEES; 
+
+
+Creating and populating database using a file 
+Alternatively, you can put all of the above commands in a file, and execute them as a batch at the ij command prompt by using the " RUN 'filename';" command. You can specify the full path of the file 
+(" run 'C:\WASCE1\bin\derby_Input.sql';"). 
+
+CREATE TABLE EMPLOYEES 
+(EMPNO NUMERIC(4) PRIMARY KEY NOT NULL, 
+ENAME VARCHAR(15), JOB VARCHAR(15), 
+MGR NUMERIC(4), 
+SAL NUMERIC(7, 2), COMM NUMERIC(7, 2), 
+DEPTNO NUMERIC(2)); 
+
+INSERT INTO EMPLOYEES VALUES (1000, 'John Smith', 'AEngineer', 0001, 12345, 1234, 99); 
+INSERT INTO EMPLOYEES VALUES (1001, 'Bill Green', 'BEngineer', 0002, 11111, 1111, 11); 
+INSERT INTO EMPLOYEES VALUES (1002, 'Sam Jobs', 'CEngineer', 0002, 22222, 2222, 22); 
+INSERT INTO EMPLOYEES VALUES (1003, 'Mike Star', 'DEngineer', 0003, 33333, 3333, 33); 
+INSERT INTO EMPLOYEES VALUES (1004, 'Steve Blue', 'EEngineer', 0004, 44444, 4444, 44); 
+INSERT INTO EMPLOYEES VALUES (1005, 'Bart Simons', 'FEngineer', 0005, 55555, 5555, 55); 
+INSERT INTO EMPLOYEES VALUES (1006, 'Bill Brown', 'GEngineer', 0006, 66666, 6666, 66); 
+
+
+
+Miscellaneous ij commands 
+To connect to an existing database: 
+
+connect 'jdbc:derby://localhost:1527/<your database name>'; 
+Example: connect 'jdbc:derby://localhost:1527/employeeData'; 
+
+To delete an existing database: 
+
+There is no "delete" command . You must actually delete the database from the file system ( C:\<your WASCE folder>\var\derby\<your database name>). The database must not be booted when you remove a database.

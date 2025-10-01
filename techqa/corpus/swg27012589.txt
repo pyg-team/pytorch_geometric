@@ -1,0 +1,30 @@
+Title: IBM Webcast replay: CICS File Control Debugging Techniques - United States
+
+Text:
+wste_webcast; WSTE; Support Technical Exchange; education; presentation; webcast; STEwebcastDocument; CICS 5655M1500 R650 650 R500 500 HCI6500 5655-M15 5655M15 5655S9700 R660 660 R600 600 HCI6600 5655-S97 5655S97 5655S9700 R670 670 R700 700 HCI6700 5655-S97 5655S97 5655Y0400 R680 680 R800 800 HCI6800 5655-Y04 5655Y04 kixinfo WEBCAST
+
+ABSTRACT
+ This WebSphere Support Technical Exchange is designed to show you how Debugging has become a lost art. This is the session for you if you want to build your CICS debugging skills. This session concentrates where CICS Level 2 has seen the most problems in File Control. You should learn how to debug FCIOWAITs, Private String waits, and Enqueues. This presentation was created at the CICS Transaction Server for z/OS (CICS TS) 3.2 level, but most of the information still applies; however things like offsets might have changed. 
+
+
+Level of Difficulty: Advanced
+
+Presenter(s): Edward Addison
+
+Date: 03 June 2008 
+
+CONTENT
+To replay this 45 minute exchange, click on Download Audio [ftp://public.dhe.ibm.com/software/websphere/techexchange/June-03-08_Ed-Addison_webcast.mp3] (audio in MP3 format) then open the pdf file below:
+
+Presentation (in PDF format):WSTE_06-03-08-Edward_Addison.pdf [/support/docview.wss?uid=swg27012589&aid=2] [/support/docview.wss?uid=swg27012589&aid=1]
+
+[http://www.ibm.com/i/v14/icons/sout.gif] Get Adobe® Reader® [http://www.adobe.com/products/acrobat/readstep2.html] to view PDF
+
+RELATED INFORMATION
+ WebSphere Support Technical Exchange [http://www.ibm.com/software/websphere/webcast]
+
+
+
+
+PRODUCT ALIAS/SYNONYM
+ CICS/TS CICS TS CICS Transaction Server

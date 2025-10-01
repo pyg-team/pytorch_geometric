@@ -1,0 +1,20 @@
+Title: IBM For WebSphere Process Server (WPS), the Index variable of forEach Activity is always set to 1 even when many items exist in the Iteration Array while using dynamic bounds - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ You create a process using the forEach activity. The interaction is dynamic bounds using an array. When the process runs, there is more than one initialized value in the array and all the data is set. However, the index variable value remains set at one and does not increase, which does not enable you to determine the iteration. 
+
+CAUSE
+The two paths of the forEach activity complete the 'select for update' process on the same resource simultaneously, which should not be possible with transaction isolation level of 4. These simultaneous processes access the same data and make all of them use the first index value that they obtain.
+
+RESOLVING THE PROBLEM
+Check the transaction isolation level of the BPEDB data source. By default, the transaction isolation level for this data source is set to 4. Do not change the value as it causes the index variable value issue. 
+
+For more information on how to set the webSphereDefaultIsolationLevel custom property for the BPEDB data source to the value 4, see Changing the default isolation level for non-CMP applications and describing how to do so using a new custom property webSphereDefaultIsolationLevel [http://www.ibm.com/support/docview.wss?uid=swg21224492].
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ WPS

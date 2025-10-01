@@ -1,0 +1,43 @@
+Title: IBM Tuning 64-bit JVM Memory for Improved P8 Content Engine Performance - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ With a 64-bit Java Virtual Machine (JVM) environment, it possible to allocate a lot more memory to the Java Virtual Machine (JVM) than is possible with a 32-bit JVM. This technical note provides recommendations on tuning the JVM’s use of memory to improve P8 Content Engine performance when using a 64-bit JVM. 
+
+ANSWER
+When running in a 64-bit JVM, the P8 Content Engine will generally perform better when more memory is given to the JVM. In particular, for a 64-bit JVM’s generational garbage collection scheme, specification of a larger nursery space will generally improve the JVM’s garbage collector performance. However, the marginal performance benefit of large JVM memory diminishes when memory size reaches a certain limit. 
+Similar to running in a 32-bit JVM, it is recommended to use the generational heap for both WebLogic and WebSphere with the 64-bit JVMs. Generational collection is default behavior for Sun JVMs. Please see the IBM FileNet P8 Version 5.1 Information Center topic “Tuning the JVM for IBM FileNet P8 components” for more information on this and other general JVM tuning tips.
+
+In the IBM ECM performance labs, close to an overall 10% P8 Content Engine performance improvement was observed in terms of response time measured from CE clients when the JVM was configured to use an 8 GB heap with 4 GB of nursery versus a 1.5 GB heap with 750 MB of nursery when running under the same load.
+
+It is very important to use the "compressed pointer" feature in the 64-bit JVMs, as pointers in 64 bit JVM are by default 64 bits, thus the same object will take more memory space and require more CPU processing than in a 32-bit environment. In our lab, about a 10% performance degradation was seen without the compressed pointer option.
+
+The "compressed pointer" option is configured differently for the various JVMs, for example, for the IBM JRE, the option is: "-XCompressedrefs". For the Sun JRE, the option is : "-XX:+UseCompressedOops". Please note that for IBM WebSphere Application Server, the compressed pointer option becomes the default starting with WebSphere Application Server version 7 fix pack 5 and newer for Windows. Please check the following web pages for more detailed information for other operating systems: 
+http://www-01.ibm.com/support/docview.wss?uid=swg1PK75174 [http://www-01.ibm.com/support/docview.wss?uid=swg1PK75174]
+ftp://ftp.software.ibm.com/software/webserver/appserv/was/WAS_V7_64-bit_performance.pdf [ftp://ftp.software.ibm.com/software/webserver/appserv/was/WAS_V7_64-bit_performance.pdf]
+
+
+There are also benefits to using larger memory page sizes in the operating system. We have seen close to a 10% improvement in the P8 Content Engine performance in our lab. Large page size configuration is also JVM specific, e.g. for Websphere, large page size usage is configured using the -"Xlp" option; for the SUN JRE, it is "-XX:useLargePages" option. 
+
+Larger memory page has to be configured at the operating system level before the JVM can use the large page. Please refer to specific operating system vendor’s documentation for information. For example, see following links: 
+http://www.ibm.com/support/knowledgecenter/SSAW57_8.5.5/com.ibm.websphere.nd.doc/ae/tprf_tuneaix.html [http://www.ibm.com/support/knowledgecenter/SSAW57_8.5.5/com.ibm.websphere.nd.doc/ae/tprf_tuneaix.html]
+http://www.oracle.com/technetwork/java/javase/tech/largememory-jsp-137182.html [http://www.oracle.com/technetwork/java/javase/tech/largememory-jsp-137182.html]
+
+The JVM can manage large amounts of memory. For example, in the IBM ECM performance labs, tests were run using 20+GB total JVM memory for a 64-bit JVM on a P8 domain containing more than 500 object stores and did not experience issues with garbage collection or memory management. 
+
+In summary, significantly larger memory allocations are recommended for use with 64-bit JVMs when there is sufficient physical memory available on the server. Additionally, the large memory page option should be utilized when feasible. For example, for the WebSphere Application Server, you can use following JVM parameters
+
+
+
+
+Total JVM Memory Recommended WebSphere Application Server JVM Parameters 8 GB -Xgcpolicy:gencon -Xms8G -Xmx8G -Xmn4G -XCompressedrefs -Xlp 4 GB -Xgcpolicy:gencon -Xms4G -Xmx4G -Xmn2G -XCompressedrefs -Xlp RELATED INFORMATION
+ Tuning AIX for IBM JVM [http://www.ibm.com/support/knowledgecenter/SSAW57_8.5.5/com.ibm.websphere.nd.doc/ae/tprf_tuneaix.html]
+
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Enterprise Content Management FileNet Content Manager Content Engine AIX, HP-UX, Linux, Solaris, Windows 4.5.1, 5.0, 5.1.0 All Editions

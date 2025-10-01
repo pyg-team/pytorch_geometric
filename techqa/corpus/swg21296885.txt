@@ -1,0 +1,38 @@
+Title: IBM DB2 transaction loss when NIC outage on Standby - United States
+
+Text:
+TSA; TSAMP; HADR_TIMEOUT TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Communication with the ServiceIP (virtual IP) appears to be unavailable for 120 seconds when their is a NIC outage on the standby node. Why would a NIC failure on the standby affect connectivity on the primary via the ServiceIP address ? 
+
+CAUSE
+HADR communication loss and deliberate transaction blocking until HADR_TIMEOUT expires.
+
+ENVIRONMENT
+Tivoli System Automation for Multiplatforms (TSAMP) is being used to automate a DB2 HADR environment, including a floating virtual IP address that moves from node to node when the HADR database moves.
+
+DIAGNOSING THE PROBLEM
+Assuming the ServiceIP is assigned to the primary node, it can be observed that connectivity to the ServiceIP address is not interrupted when the NIC is physically pulled on the standby node. Simply set up a continuous ping to the ServiceIP address from some remote node to prove it. Given the transaction outage is observed to be 120 seconds and a continuous ping occurs once every second, this test is pretty conclusive. So what is the cause of the 120 second outage then ? 
+
+While studying the sequence of events presented in the syslogs, it can be observed that the HADR state remains primary/peer connected on node1 for some time after the NIC is physically pulled on node2. It is expected that the state would change to disconnected, however that does not happen immediately like you might think. Consider the following points:
+
+1) As long as the database is up on the Primary, DB2 will continue to accept client connections. However the updates for those connections will remain blocked as long as HADR is not able to send a log write over to the standby, which will be the case if the NIC has failed (or some other equivalent network connectivity issue) on the standby node.
+
+2) HADR is dependant upon the network layer informing it that the connection between the primary and standby has been terminated. Sometimes this notification is not reliable and thus it may be delayed until the HADR_TIMEOUT period. This is where the 120 seconds arises, since many DB2 HADR deployments will be setup with the default HADR_TIMEOUT=120 seconds. 
+
+A HADR timeout would be logged in the db2diag.log as follows:
+
+2008-02-04-14.08.42.299143-480 I9795A487 LEVEL: Error
+PID : 602234 TID : 1 PROC : db2hadrp (CCRDB1)
+INSTANCE: db2inst1 NODE : 000
+FUNCTION: DB2 UDB, High Availability Disaster Recovery, hdrEduAcceptEvent, probe:20200
+MESSAGE : Did not receive anything through HADR connection for the duration of HADR_TIMEOUT. Closing connection.
+
+
+
+RESOLVING THE PROBLEM
+Decreasing the HADR_TIMEOUT maybe a temptation, but doing so may prevent automated recovery actions controlled by TSAMP, so doing so should be fully tested in each environment. Alternatively, build some retry logic into the front-end application that's attempting to transact with DB2. The HADR_TIMEOUT can be adjusted using the following example: 
+
+
+db2 update db cfg for <db_name> using HADR_TIMEOUT 90

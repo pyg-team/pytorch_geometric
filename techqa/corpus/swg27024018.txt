@@ -1,0 +1,117 @@
+Title: IBM Collection of WebSphere Adapter for Flat File Technotes - United States
+
+Text:
+ PRODUCT DOCUMENTATION
+
+ABSTRACT
+ This technical document is an index of the available WebSphere Adapter for Flat File technical notes, technical documentation and important flash messages. 
+
+CONTENT
+ 
+
+ 1.  WebSphere Adapter for FlatFiles Version 6.0.2.2 Fail to Process Events [http://www-01.ibm.com/support/docview.wss?uid=swg21448638] 
+     
+     
+ 2.  Java API lastModified() method of java.io.File class limitation on UNIX [http://www-01.ibm.com/support/docview.wss?uid=swg21446506]
+     
+     
+ 3.  IBM WebSphere Adapter for Flat Files Version 7 not Moving files from Staging Directory to Output Directory [http://www-01.ibm.com/support/docview.wss?uid=swg21568541]
+     
+     
+ 4.  WebSphere Adapter for FlatFile throws NullPointerException during multi-threaded outbound append operations [http://www-01.ibm.com/support/docview.wss?uid=swg21512555]
+     
+     
+ 5.  FlatFile Adapter archiving with .null extension instead of .success or .fail [http://www-01.ibm.com/support/docview.wss?uid=swg21504645]
+     
+     
+ 6.  FlatFile adapter fails to process event file with unique constraint violation errors [http://www-01.ibm.com/support/docview.wss?uid=swg21449530]
+     
+     
+ 7.  Flat File adapter fails to process BOs in file after poll quantity [http://www-01.ibm.com/support/docview.wss?uid=swg21447414]
+     
+     
+ 8.  anyType datatype does not map to UnstructuredContent datatype when migrating from version 6.0.2 to 6.1 [http://www-01.ibm.com/support/docview.wss?uid=swg21446830]
+     
+     
+ 9.  Flat File adapter does not accurately sort by timestamp with timestamps are within the one second of one another [http://www-01.ibm.com/support/docview.wss?uid=swg21446607]
+     
+     
+ 10. Collect troubleshooting data for problems with the WebSphere Adapter for FlatFiles [http://www-01.ibm.com/support/docview.wss?uid=swg21438198]
+     
+     
+ 11. WebSphere Adapter for Flat Files does not support staging directory with the generateUniqueFile option [http://www-01.ibm.com/support/docview.wss?uid=swg21434084]
+     
+     
+ 12. includeEndBoDelimiter exception thrown while migrating WebSphere Adapter for Flat Files [http://www-01.ibm.com/support/docview.wss?uid=swg21431888]
+     
+     
+ 13. WebSphere Flat File Adapter processes failing async mediation event after server re-start [http://www-01.ibm.com/support/docview.wss?uid=swg21425708]
+     
+     
+ 14. The field "ContentType" under Content is not populated by the adapter [http://www-01.ibm.com/support/docview.wss?uid=swg21417742]
+     
+     
+ 15. WebSphere Adapter for Flat Files: Global elements throw an IllegalArgumentException error while performing outbound operations in SDOX mode with a test component [http://www-01.ibm.com/support/docview.wss?uid=swg21415974]
+     
+     
+ 16. WebSphere Adapter for Flat Files outbound operations with the business object structure containing anonymous complex type global element in SDOX mode, fails with DataBindingException [http://www-01.ibm.com/support/docview.wss?uid=swg21415971]
+     
+     
+ 17. NumberFormatException error is logged in the FFDC logs when performing retrieve operation. [http://www-01.ibm.com/support/docview.wss?uid=swg21412820]
+     
+     
+ 18. The samples instructions link for configuring the custom data bindings is not working [http://www-01.ibm.com/support/docview.wss?uid=swg21403431]
+     
+     
+ 19. WebSphere Adapters do not poll for events on WebSphere Process Server 6.1/6.2 with WebSphere Application Server 6.1.0.23/6.1.0.25 [http://www-01.ibm.com/support/docview.wss?uid=swg21394864]
+     
+     
+ 20. Debugging tips for File content encoding while using WebSphere Adapter for Flat File [http://www-01.ibm.com/support/docview.wss?uid=swg21383864]
+     
+     
+ 21. Debugging tips for out of memory errors while using WebSphere Adapter for Flat File [http://www-01.ibm.com/support/docview.wss?uid=swg21383642]
+     
+     
+ 22. WebSphere Adapter for Flat Files: Error occurs while serializing binary data [http://www-01.ibm.com/support/docview.wss?uid=swg21328557]
+     
+     
+ 23. WebSphere Adapter for Flat Files throws EventNotFoundException after processing event file [http://www-01.ibm.com/support/docview.wss?uid=swg21326372]
+     
+     
+ 24. WebSphere Adapter for Flat Files does not poll for inbound events [http://www-01.ibm.com/support/docview.wss?uid=swg21306351]
+     
+     
+ 25. WebSphere Adapter for Flat Files terminates during the polling operation with Synchronous Interaction style setting [http://www-01.ibm.com/support/docview.wss?uid=swg21305619]
+     
+     
+ 26. Regular expressions in FilenameFunctionSelector in WebSphere Adapter for Flat files [http://www-01.ibm.com/support/docview.wss?uid=swg21290287]
+     
+     
+ 27. Adapter for Flat Files picks up incomplete files during inbound processing [http://www-01.ibm.com/support/docview.wss?uid=swg21289976]
+     
+     
+ 28. Common schemas for Adapter for Flat Files and Adapter for FTP conflict when service descriptions for the adapters are generated in the same module [http://www-01.ibm.com/support/docview.wss?uid=swg21288720]
+     
+     
+ 29. WebSphere Adapter for Flat Files version 6.0.2 requires custom data bindings for content types other than text/xml [http://www-01.ibm.com/support/docview.wss?uid=swg21269631]
+     
+     
+ 30. Making the business object name optional for FixedWidth DataBindings in inbound and outbound scenarios of the Adapter for Flat Files [http://www-01.ibm.com/support/docview.wss?uid=swg21256263]
+     
+     
+ 31. Flat Files Adapter: Access permissions to the file system on UNIX [http://www-01.ibm.com/support/docview.wss?uid=swg21216797]
+     
+     
+ 32. WebSphere Adapter for JDBC version 6.1/6.2 does not poll for events when High Availability is enabled [http://www-01.ibm.com/support/docview.wss?uid=swg21412128]
+     
+     
+ 33. WebSphere Adapter Migration FAQ [http://www-01.ibm.com/support/docview.wss?uid=swg21441550]
+     
+     
+ 34. Retrieve operation fails with fixed width data handler and delimited data handler for WebSphere Adapter for FTP V6.1 and WebSphere Adapter for FlatFile V6.1 [http://www-01.ibm.com/support/docview.wss?uid=swg21422095]
+     
+     
+ 35. Business Graph and Business Object format does not communicate with Mediation Flow Component [http://www-01.ibm.com/support/docview.wss?uid=swg21420708]
+     
+     
+ 36. Using the FlatFile Adapters may cause an exception after publishing a module. [http://www-01.ibm.com/support/docview.wss?uid=swg21415858]

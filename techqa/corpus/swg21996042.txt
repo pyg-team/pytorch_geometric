@@ -1,0 +1,22 @@
+Title: IBM Cannot save documents assigned to an entry template in IBM Content Navigator (ICN) - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ In an environment containing ICN plus IBM FileNet P8 Content Process Engine 5.2.1 (CPE), saving a document associated to an entry template results in the document losing its association to that entry template.
+
+
+SYMPTOM
+The following error appears in Websphere System logs:
+
+Caused by: com.filenet.api.exception.EngineRuntimeException:
+FNRCD0009E: DB_ERROR: The database access failed with the following error: ErrorCode 0, Message 'DSRA1300E: Feature is not implemented: PreparedStatement.setBinaryStream' 
+
+
+
+CAUSE
+The system is configured with the incorrect Oracle JDBC connection to the backend CPE.
+
+RESOLVING THE PROBLEM
+Upgrade the Oracle JDBC connection from ojdbc5.jar to ojdbc6.jar.

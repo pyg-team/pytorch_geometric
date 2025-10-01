@@ -1,0 +1,196 @@
+Title: IBM IT08151: DB2HAICU MAY FAIL WHEN USING XML INPUT FILE DUE TO HOSTNAME LENGTH BEING 8 CHARACTERS OR MORE - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+DB2 Version 10.1 Fix Pack 6 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24043366]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  During db2haicu setup using XML file the following error might
+   occur:
+   
+   db2haicu is collecting information on your current setup. This
+   step may take some time as db2haicu will need to activate all
+   databases for the instance to discover all paths ...
+   Creating domain 'domain' in the cluster ...
+   Creating domain 'domain' in the cluster was successful.
+   Configuring quorum device for domain 'domain' ...
+   Configuring quorum device for domain 'domain' was successful.
+   ...
+   Adding DB2 database partition '0' to the cluster ...
+   There was an error with one of the issued cluster manager
+   commands. The user can determine the cause of the error by
+   invoking 'db2instance -list' and 'db2cluster -list -alert'. The
+   db2diag.log for the current member and the DB2 Information
+   Center may provide additional details.
+   There was an internal db2cluster error. Refer to the diagnostic
+   logs (db2diag.log or /tmp/ibm.db2.cluster.*) and the DB2
+   Information Center for details.
+   
+   db2diag.log entries:
+   2015-02-27-10.49.24.201387-300 E3937264A698         LEVEL: Error
+   PID     : 30146950             TID : 1              PROC :
+   db2haicu
+   INSTANCE: db2inst1              NODE : 000
+   HOSTNAME: hostname1
+   EDUID   : 1
+   FUNCTION: DB2 UDB, high avail services, sqlhaAddResourceGroup2,
+   probe:300
+   MESSAGE :
+   ECF=0x90000552=-1879046830=ECF_SQLHA_OBJECT_DOES_NOT_EXIST
+             Cluster object does not exist
+   DATA #1 : String, 35 bytes
+   Error during vendor call invocation
+   DATA #2 : unsigned integer, 4 bytes
+   17
+   DATA #3 : String, 16 bytes
+   db2_db2inst1_0-rg
+   DATA #4 : unsigned integer, 4 bytes
+   2
+   DATA #5 : unsigned integer, 8 bytes
+   1
+   DATA #6 : signed integer, 4 bytes
+   0
+   DATA #7 : String, 16 bytes
+   Line # : 6994---
+   
+   2015-02-27-10.49.24.202266-300 E3937963A430         LEVEL: Error
+   PID     : 30146950             TID : 1              PROC :
+   db2haicu
+   INSTANCE: db2inst1              NODE : 000
+   HOSTNAME: hostname1
+   EDUID   : 1
+   FUNCTION: DB2 UDB, high avail services, sqlhaAddResourceGroup2,
+   probe:310
+   MESSAGE :
+   ECF=0x90000552=-1879046830=ECF_SQLHA_OBJECT_DOES_NOT_EXIST
+             Cluster object does not exist
+   DATA #1 : String, 7 bytes
+   hostnam
+   
+   The reason it's failing is due to the hostname being truncated
+   when using the XML input file. As seen in data field #1 from the
+   above db2diag.log entry, the hostname value is appearing as
+   "hostnam" instead of "hostname1".
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Run db2haicu in interactive mode.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * db2haicu users                                               *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * See Error Description                                        *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Upgrade to DB2 version 10.1.0.5                              *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fixed in DB2 version 10.1.0.5
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT08151
+   
+   
+ * REPORTED COMPONENT NAME
+   DB2 FOR LUW
+   
+   
+ * REPORTED COMPONENT ID
+   DB2FORLUW
+   
+   
+ * REPORTED RELEASE
+   A10
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-04-06
+   
+   
+ * CLOSED DATE
+   2015-07-13
+   
+   
+ * LAST MODIFIED DATE
+   2015-07-13
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    IT08146 [http://www-01.ibm.com/support/docview.wss?uid=swg1IT08146]
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   DB2 FOR LUW
+   
+   
+ * FIXED COMPONENT ID
+   DB2FORLUW
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * RA10 PSN
+   UP

@@ -1,0 +1,65 @@
+Title: IBM Hosted Transparent Decision Service request and response XML - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How to retrieve the XML request and response that transits between the web service client and the Hosted Transparent Decision Service (HTDS) application? 
+
+ANSWER
+There are several options to access the request/response content of an HTDS web service request. 
+
+1- Use Decision Warehouse captured traces 
+
+A first option is to use the capture Decision Warehouse traces by enabling monitoring options on the ruleset that is exposed as an HTDS web service. First "Enable tracing in the Decision Warehouse" as per the instructions in Setting ruleset monitoring options [http://pic.dhe.ibm.com/infocenter/dmanager/v8r5/topic/com.ibm.wodm.dserver.rules.res.console/topics/tsk_rescons_rulst_exec_options.html]. Then view the trace captured for a ruleset execution as shown in Viewing trace information [http://pic.dhe.ibm.com/infocenter/dmanager/v8r5/topic/com.ibm.wodm.dserver.rules.res.console/topics/tsk_rescons_dw_trace_view.html]. 
+
+This approach only works well if the ruleset execution completed successfully. If in the contrary an exception occurred during execution, then a Decision Warehouse trace may not be available and one of the other options should be used to retrieve the request or response data. 
+
+ 
+
+2- Use the HTDS application logging 
+
+It is possible to configure HTDS logging so that the response XML is dumped in the file res-decisionservice.log by adding the line log4j.logger.ilog.rules.res.decisionservice.web.IlrWebServiceServlet=DEBUGin the log4j configuration file, see: Change the logging configuration of the hosted transparent decision service [http://www-01.ibm.com/support/docview.wss?uid=swg21497154] 
+
+This approach works well to retrieve the response XML but as of ODM 8.5 and earlier versions the request XML cannot be retrieved with this approach. 
+
+ 
+
+3- Use TCPMON 
+
+The tool TCPMON [http://ws.apache.org/tcpmon/]can be used to trace the HTTP requests and responses by listening to a local port and forwarding requests to the HTDS application. For example follow the steps: 
+
+ * Launch TCPMON 
+ * Go to Admin tab 
+ * Enter a free TCP IP port number in "List port #" ( for example 1234 ) 
+ * Leave default of "Act as a..." Listener with the target host name pointing to the HTDS server and the target port number pointing to HTDS server port number 
+ * Click "Add" button at the bottom of the Admin tab. This creates a new tab named after the port number you chose ( for example "Port 1234") 
+ * Configure the web service client to target a URL where the host and port are that of the of the listening TCPMON process instead of the normal HTDS host and port
+
+The HTTP requests and responses between the web service client and HTDS should now be visible in the TCPMON captured traces. This approach works well when the HTDS web service is exposed through HTTP. With HTTPS it is recommended to use a servlet filter instead as explained below. 
+
+ 
+
+4- Use a sample servlet filter in HTDS
+
+Use a zip utility to package the attached tracefilter.jar into the jrules-res-htds-WAS8.ear\jrules-res-htds.war\WEB-INF\lib\ directory. Modify 
+jrules-res-htds-WAS8.ear\jrules-res-htds.war\WEB-INF\web.xml
+to add the following filter in first position: 
+<filter> 
+<filter-name>TraceFilter</filter-name> 
+<filter-class>tracefilter.TraceFilter</filter-class> 
+</filter> 
+along with the following filter mapping: 
+<filter-mapping> 
+<filter-name>TraceFilter</filter-name> 
+<url-pattern>/*</url-pattern> 
+</filter-mapping> 
+
+Then proceed to redeploy this modified HTDS application. The application server log file (SystemOut.log) should then contain traces of the HTTP(s) requests and responses processed by the HTDS application. 
+
+tracefilter-src.zip [/support/docview.wss?uid=swg21650641&aid=2]tracefilter-src.zip [/support/docview.wss?uid=swg21650641&aid=1]tracefilter.jar [/support/docview.wss?uid=swg21650641&aid=4]tracefilter.jar [/support/docview.wss?uid=swg21650641&aid=3]
+
+
+
+RELATED INFORMATION
+#HTDS fails to execute after migration [http://www-01.ibm.com/support/docview.wss?uid=swg21650384]

@@ -1,0 +1,28 @@
+Title: IBM Support for Java 6 with Business Process Manager and Business Monitor ending April 2018 - United States
+
+Text:
+ FLASH (ALERT)
+
+ABSTRACT
+ Support for Java 6 on WebSphere Application Server ended on April 30th, 2018. There will not be any extended support available for Java 6. Customers using Business Process Manager or Business Monitor versions prior to 8.5.6 will need to upgrade if you wish to continue running a supported Java level. 
+
+CONTENT
+For more details on supported Java levels, see BPM and Business Monitor supported Java versions [http://www-01.ibm.com/support/docview.wss?uid=swg21639640]. 
+
+For more info on the withdrawal of Java 6 support for WAS, see the "WebSphere Application Server V8.5 Java™ support" section on the WAS software withdrawal page [https://www-01.ibm.com/common/ssi/ShowDoc.wss?docURL=/common/ssi/rep_ca/3/897/ENUS916-143/index.html&request_locale=en]. 
+
+If you continue to use a supported BPM or Monitor level with Java 6 past this time frame, you will still be able to get support for BPM or Monitor issues. Although you will not be able to get fixes for any Java problems or security flaws that are found in Java. 
+
+It is recommended to migrate or upgrade to the latest version. 
+
+ * For details on the latest BPM product versions and links to the upgrade instructions, see Product maintenance strategy for IBM Business Process Manager [http://www-01.ibm.com/support/docview.wss?uid=swg21964995]. 
+   Upgrading to BPM 8.6 or later, will update you to Java 8. 
+   If you are using BPM 8.5.6 or 8.5.7 with Java 6, you can switch from Java 6 to Java 7 using the following steps, Switching the edition of Java used in IBM BPM [https://www.ibm.com/support/knowledgecenter/en/SSFPJS_8.5.7/com.ibm.wbpm.imuc.doc/topics/tswitchjavaversion.html].
+   
+   
+ * For details on the latest Business Monitor product versions and links to the upgrade instructions, see Fix/Update list for IBM Business Monitor V8.5 [http://www-01.ibm.com/support/docview.wss?uid=swg27045167].
+   Once you have successfully upgraded to Business Monitor 8.5.7, you can switch from Java 6 to Java 7 using the following steps, Switching the edition of Java used in IBM Business Monitor [https://www.ibm.com/support/knowledgecenter/en/SSFPJS_8.5.7/com.ibm.wbpm.mon.imuc.doc/inst/tswitchjavaversionmon.html].
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Business Process Manager Advanced Business Integration IBM Business Process Manager Express Business Integration IBM Business Process Manager Pattern

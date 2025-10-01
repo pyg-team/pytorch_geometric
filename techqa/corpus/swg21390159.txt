@@ -1,0 +1,38 @@
+Title: IBM The TEMA shows libkbb.a errors when starting the agent. - United States
+
+Text:
+libkbb.a ITCAM TEMA CAMADALL CAMADINST TECHNOTE (TROUBLESHOOTING)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ US English 
+
+PROBLEM(ABSTRACT)
+ During startup of the TEMA, it gives library errors in the TEMA logs as follows:
+
+exec(): 0509-036 Cannot load program /opt/IBM/ITM/aix513/yn/bin/kynagent 
+because of the following errors: 
+0509-150 Dependent module libkbb.a could not be loaded. 
+0509-022 Cannot load module libkbb.a. 
+0509-026 System error: A file or directory in the path name does not exist. 
+
+SYMPTOM
+The TEMA agent does not start.
+
+
+CAUSE
+Usually caused by incorrect bit-level on the OS.
+
+RESOLVING THE PROBLEM
+Do a "bootinfo -K" on the OS and verify that the system is using 32-bit or 64-bit.
+
+
+Then reinstall and reconfigure the agent to match the OS bit-level that's being used. 
+
+During install of the TEMA "yn" agent, it usually matches up to the OS level. 
+
+Continue to reinstall and reconfigure the agent and this should resolve the problem.
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ ITCAM4AD ITCAMfAD ITCAM for App Diagnostics

@@ -1,0 +1,25 @@
+Title: IBM SPSS Statistics check out commuter license, receive error 7002 specific symptom number 198 - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The network licenses of IBM SPSS Statistics Client work just fine, but when checking out a commuter license, the client gets an error message (Error 7002 symptom 198) saying the time in the commuted license is different to the one in the device. The computers trying to borrow the license have the same date and time to the license server. 
+
+SYMPTOM
+Error # 7002 
+
+There appears to be a license for IBM SPSS Statistics, but it is invalid. 
+
+Most common causes: System Date/Time changed on machine, or the license persistence files have become corrupted. Check your System Date, and then contact Technical Support. This command not executed. 
+
+Execution of this command stops. 
+
+Specific symptom number: 198
+
+
+RESOLVING THE PROBLEM
+Change the computer name to its IP address in spssprod.inf file. For example:
+DAEMONHOST=127.0.0.1 
+
+The spssprod.inf file is located in the SPSS Statistics installation folder. By default on a Windows platform, the installation folder is: C:\Program Files\IBM\SPSS\Statistics\xx\

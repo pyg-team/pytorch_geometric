@@ -1,0 +1,26 @@
+Title: IBM Verifying that a content cache is being used when retrieving content. - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How do you verify that a content cache is being used when retrieving content from one or more Content Engine servers that are geographically remote? 
+
+CAUSE
+One or a group of Content Engine servers that are geographically remote from some storage areas can be configured with a content cache to improve performance when retrieving content. However, the details of content held in a content cache - the content elements cached, etc. - are not programmatically accessible through the Content Engine API. The server uses the configuration information to determine if a content cache is being used and, if so, uses it while retrieving content. The only visible sign to a user should be increased performance while accessing content.
+
+ANSWER
+Use the IBM FileNet Dashboard to observe metrics about the operation of the content cache. While the server runs performance data is collected concerning the content cache usage as well as many other aspects of the server operation. The following screen shot illustrates some example data related to the content cache. 
+
+[/support/docview.wss?uid=swg21327005&aid=1] [/support/docview.wss?uid=swg21327005&aid=1] 
+
+ 
+
+Metrics for content caches are located under the Server Based Counters category, in turn located under the USER category. There might be multiple Content Cache Areas configured. Each one in use will have its own category with the name of the cache area appended to the category name. In the example above data has been collected for the area named "Test Cache Area One". 
+
+Various metrics are located under the Area Summary sub-category. This is data collected and persisted with the cache area itself, as opposed to data collected for this specific server. If the server is rebooted the data will continue to reflect the state persisted with the cache area. The data will also be similar when reported for different servers, differing only by the time when the server refreshes its own internal view of this data and when the dashboard collects the data. Two key metrics in this sub-category are Retrieval Hits and Retrieval Misses. These represent the number of retrievals where the content element was or was not, respectively, in the cache. The Retrieval Hits metric in particular should increase as the number of retrievals increase that are serviced out of the cache. 
+
+The other sub-categories hold metrics that are specific for this running instance of the server. In the Retrievals sub-category there are again metrics for Retrieval Hits and Retrieval Misses however these reflect the number of hits or misses for this server while it has been running.
+
+RELATED INFORMATION
+ FileNet System Manager Dashboard Help [ftp://public.dhe.ibm.com/software/data/cm/filenet/docs/sysmgrdoc/40x/dashboard.pdf]

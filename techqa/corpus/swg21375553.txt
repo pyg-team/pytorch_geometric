@@ -1,0 +1,67 @@
+Title: IBM Why have I seen WebSphere Partner Gateway server performance degradation over time? - United States
+
+Text:
+WPG; Performance; DB2; Archive; Purge; reorg; rebind; runstats TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ WPG database maintenance task for optimal performance 
+
+RESOLVING THE PROBLEM
+The WPG database maintenance should be completed on a routine basis, in order to keep performance from deteriorating over a period of time. 
+
+Symptoms: 
+
+ * Slow response for WPG console log on , or possible time-out waiting for a log-on request. 
+ * Inbound messages may start to back up on inbound queues / receivers. 
+ * Slow down in message processing times. 
+ * Slow down or time-out on MDN generation and delivery.
+
+
+
+The above symptoms might be caused by: 
+ * WPG Archive/Purge of table data not being performed on a routine basis. 
+ * Omitting to perform DB2 database tuning / maintenance exercises such as: reorgchk, reorg, runstats and rebind, after the WPG Archive and Purge task.
+
+
+
+
+REORGCHK: 
+Is used to identify those tables and indexes that are in need of a REORG and can also be used to collect statistics for all the tables in the database. 
+(Example: db2 -v reorgchk update statistics on table all) 
+
+REORG: 
+This will eliminate overflow rows and reclaim space from deleted rows of tables and indexes, which is very useful if there have been a large number of deletes, updates, or inserts. 
+(Example: db2 reorg table schema.tablename) 
+
+RUNSTATS: 
+After REORGanizing tables and indexes, it is always a good idea to recollect the table and index statistics so that the optimizer can create the most appropriate access plan. 
+( Example: db2 runstats on table schema.lg_msg_archive on all columns with distribution on all columns and detailed indexes all allow write access) 
+
+REBIND: 
+After performing a REORG and RUNSTATS, you will want to REBIND all database packages so that their static SQL can take advantage of the most recent system statistics. 
+(Example: db2rbind bcgapps -l logfile all) 
+Note: 
+
+If you have never ran the Archive and Purge scripts for WPG and have been running the server for a long period of time. You may want to do small date ranges, until the data is at a manageable level. Not doing so could cause further degradation of the database and cause the scripts to run for a very long period of time. due to the large amounts of data being Archived and Purged. The large amounts of data could also fill the DB2 transaction logs and cause the Archive and Purging process to not complete. 
+
+ 
+
+For more information on WPG Archive / Purging routines ( scripts ), please see the WebSphere Partner Gateway Administration Guide for the supported version / release which you are running. 
+
+ 
+
+For DB2 performance tips please see the section "On-going maintenance" at the following link for "Best practices for tuning DB2 UDB v8.1 and its databases" : http://www.ibm.com/developerworks/data/library/techarticle/dm-0404mcarthur/ [http://www.ibm.com/developerworks/data/library/techarticle/dm-0404mcarthur/] 
+
+
+Please also note:
+That DB2 database tuning / maintenance exercises such as: reorgchk, reorg, runstats and rebind need to be run when there is no activity in the database. Preferably a downtime needs to be scheduled. With WPG up and processing at the same time of running the 3R's, so its quite normal to get locktimeout errors, where WPG is attempting to write to the Database and DB2 maybe holding table locks open. WPG may reject messages while attempting to write data to the database during this time. One application ( WPG ) might be waiting on locks for another DB2 (REORG, RUNSTATS, REBIND) to release. 
+
+An average production system might schedule maintenance once every 2 weeks. Your DBA should determine how often the 3R's are ran, this could be weekly, biweekly monthly, quarterly, etc and will depend on how much data is written to and purged from the bcgapps database. The 3R's may not need to be ran after each archive and purge, but should be ran at some frequency. 
+
+
+Once again this should be done in a maintenance window when WPG can be taken off-line.
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ WebSphere Partner Gateway WPG

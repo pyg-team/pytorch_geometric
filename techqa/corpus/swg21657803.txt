@@ -1,0 +1,90 @@
+Title: IBM A WebSphere Process Server (WPS) process with parallel forEach loop encounters deadlocks frequently - United States
+
+Text:
+isolated scope; deadlock; SQLCODE=-911; SQLSTATE=40001; SQLERRMC=2 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When BPEL processes are designed with parallel forEach loops, sometimes a TransactionRolledbackLocalException is returned due to deadlock errors. 
+
+SYMPTOM
+The SystemOut.log reports the deadlock exceptions and transaction was rolled back: 
+
+[8/25/13 19:19:29:123 IDT] 0000005c ExceptionUtil E CNTR0020E: EJB 
+threw an unexpected (non-declared) exception during invocation of method
+"invokeProcessSessionBean" on bean 
+"BeanId(BPEContainer_WPS1.AppTarget#bpecontainer.jar#CScopeProvider, 
+null)". Exception data: javax.ejb.TransactionRolledbackLocalException: 
+; nested exception is: com.ibm.bpe.api.ProcessError 
+com.ibm.bpe.database.TomSQLException: com.ibm.db2.jcc.b.pn: DB2 SQL 
+Error: SQLCODE=-911, SQLSTATE=40001, SQLERRMC=2, DRIVER=3.52.110 
+at com.ibm.bpe.database.ProcessInstanceB.get(ProcessInstanceB.java:151)
+at com.ibm.bpe.database.Tom.getProcessInstanceB(Tom.java:10931) 
+at com.ibm.bpe.database.ActivityInstanceB.getProcessInstanceB(ActivityInsta
+nceB.java:1556) 
+at com.ibm.bpe.engine.BpelActivityKindComplexBegin.doActivate(BpelActivityK
+indComplexBegin.java:163) 
+at com.ibm.bpe.engine.BpelActivityStateInactive.activateOrSkip(BpelActivity
+StateInactive.java:308) 
+at com.ibm.bpe.engine.BpelEngineCore.continueControlLink(BpelEngineCore.jav
+a:342) 
+... 
+Caused by: com.ibm.bpe.api.ProcessError 
+... 30 more 
+Caused by: com.ibm.bpe.database.TomSQLException: com.ibm.db2.jcc.b.pn: 
+DB2 SQL Error: SQLCODE=-911, SQLSTATE=40001, SQLERRMC=2, DRIVER=3.52.110
+at com.ibm.bpe.database.ProcessInstanceB.get(ProcessInstanceB.java:151)
+at com.ibm.bpe.database.Tom.getProcessInstanceB(Tom.java:10931) 
+at com.ibm.bpe.database.ActivityInstanceB.getProcessInstanceB(ActivityInsta
+nceB.java:1556) 
+at com.ibm.bpe.engine.BpelActivityKindComplexBegin.doActivate(BpelActivityK
+indComplexBegin.java:163) 
+at com.ibm.bpe.engine.BpelActivityStateInactive.activateOrSkip(BpelActivity
+StateInactive.java:308) 
+at com.ibm.bpe.engine.BpelEngineCore.continueControlLink(BpelEngineCore.jav
+a:342) 
+at com.ibm.bpe.engine.BpelContinueLinkMessage3.execute(BpelContinueLinkMess
+age3.java:92) 
+at com.ibm.bpe.engine.BpelEngine.onMessage(BpelEngine.java:1464) 
+at com.ibm.bpe.framework.sca.ProcessImplementationHandler.bpc_onMessage(Pro
+cessImplementationHandler.java:595) 
+at com.ibm.bpe.framework.sca.ProcessImplementationHandler.handleScaParamete
+rWrapper(ProcessImplementationHandler.java:256) 
+at com.ibm.bpe.framework.sca.ProcessImplementationHandler.processMessage(Pr
+ocessImplementationHandler.java:155) 
+at com.ibm.ws.sca.internal.message.impl.MessageDispatcherImpl.processMessag
+eWithPCI(MessageDispatcherImpl.java:715) 
+at com.ibm.ws.sca.internal.message.impl.MessageDispatcherImpl.processMessag
+e(MessageDispatcherImpl.java:1167) 
+at com.ibm.ws.sca.internal.proxy.impl.ProxyInvocationHandlerImpl.invoke(Pro
+xyInvocationHandlerImpl.java:781) 
+at $Proxy87.processMessage(Unknown Source) 
+at com.ibm.bpe.framework.sca.ProcessSessionBean.runInComponentContext(Proce
+ssSessionBean.java:1553) 
+at com.ibm.bpe.framework.sca.ProcessSessionBean.bpc_onMessage(ProcessSessio
+nBean.java:2288) 
+... 29 more 
+
+
+CAUSE
+At the end of the parallel forEach loop, there is a small isolated scope as explained in the following scenario:
+When an isolated scope is entered, the BPEL engine tries to get an exclusive lock on the process instance. Thus, no other execution path inside a isolated scope can be active as long as the isolated scope is executed. 
+
+The deadlock happens when two threads simultaneously attempt to enter the isolated scope. The threads attempt to get the exclusive lock after they both have read the process instance and try to update the same variable instance.
+
+
+DIAGNOSING THE PROBLEM
+Review the BPEL process, which indicates a usage problem with the isolation-feature scope. The isolation-feature of a scope is only required if more than one variable is updated and the updates happen in a different order. 
+
+
+
+RESOLVING THE PROBLEM
+Change the problem scope to non-isolated as the isolation-feature scope is not required. This approach helps to avoid the deadlocks.
+
+RELATED INFORMATION
+#A simplified Chinese translation is available [http://www.ibm.com/support/docview.wss?uid=swg21659457]
+
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ WPS

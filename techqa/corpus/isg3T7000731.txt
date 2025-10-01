@@ -1,0 +1,153 @@
+Title: IBM June, 2018 - IBM Spectrum Symphony Technical Support Newsletter - United States
+
+Text:
+Newsletter; Trouble shoot; FAQ; self help; fixes; documentation; problem resolution NEWSLETTER
+
+ABSTRACT
+ Client self assist - Technical Support Information for IBM Spectrum Symphony Administrators 
+
+CONTENT
+ 
+
+
+[/support/docview.wss?uid=isg3T7000731&amp;aid=1] [/support/docview.wss?uid=isg3T7000731&amp;aid=1] 
+[/support/docview.wss?uid=isg3T7000731&amp;aid=1] [/support/docview.wss?uid=isg3T7000731&amp;aid=1] [/support/docview.wss?uid=isg3T7000731&amp;aid=1] [/support/docview.wss?uid=isg3T7000731&amp;aid=1] 
+[/support/docview.wss?uid=isg3T7000731&aid=2] [https://www-947.ibm.com/support/entry/portal/support?brandind=System%20Storage] Systems Storage & Software Defined Infrastructure Technical Support Newsletter
+June 10, 2018 | Issue #6 [/support/docview.wss?uid=isg3T7000731&amp;aid=1] [/support/docview.wss?uid=isg3T7000731&amp;aid=1] [/support/docview.wss?uid=isg3T7000731&amp;aid=1] [/support/docview.wss?uid=isg3T7000731&amp;aid=1] 
+[/support/docview.wss?uid=isg3T7000731&amp;aid=1] 
+IBM Spectrum Symphony
+
+
+Welcome to the IBM Spectrum Symphony technical support information update. This communication is designed to help you derive maximum value from your software by providing the most up-to-date technical information, answers to frequently asked questions, and links to other key information.
+
+
+Notice: Newsletter emails discontinued after May 2018
+
+
+To improve our communications and reduce the number of emails you receive from us, we will be making changes to the distribution of this newsletter. Starting in June, we will continue to publish the IBM Spectrum Computing Symphony Newsletter [http://www.ibm.com/support/docview.wss?uid=isg3T7000731] in an on-line version only and highlighting it on our Support Portal and social channels, however we will no longer send the associated email version. You can continue to receive direct notifications (through emails or RSS feeds) about newly published newsletters by subscribing to your product(s) through MyNotifications [https://www-947.ibm.com/systems/support/myview/subscription/css.wss/].
+
+
+Also, please continue to follow our IBM Systems Storage social channels IBM Storage Support Twitter [https://twitter.com/IBMStorageSupt], LinkedIn [https://www.linkedin.com/groups/2018491/], IBM System Storage Facebook [https://www.facebook.com/groups/37153201060/] and IBM Storage Support YouTube [https://www.youtube.com/user/ibmstorage], where we share these newsletters and a wealth of other information from our support teams.
+
+
+Support Resources
+ 
+
+ *  Support Open MICs – IBM Spectrum Computing Support Webinar [http://www.ibm.com/support/docview.wss?uid=isg3T1026142] 
+   Spectrum Computing Support Webinars are hosted by IBM Spectrum Computing Support to share expertise and knowledge of Spectrum Computing products, as well as share best practices based on various use cases, and share product updates. 
+   
+   Support Portal for IBM Spectrum Symphony [https://www.ibm.com/support/home/product/K737548A06949Q55/IBM_Spectrum_Symphony] 
+   
+   Welcome to the IBM Spectrum Symphony Product Page [https://developer.ibm.com/storage/products/ibm-spectrum-symphony/] 
+   
+   Electronic Live Chat for IBM Spectrum Computing Product offerings [https://www.ibm.com/developerworks/community/blogs/systemssupport/entry/Electronic_Live_Chat_for_IBM_Spectrum_Computing_Product_offerings?lang=en] 
+   All you need is a common web browser, an IBM account and entitlement to receive chat support on selected products. 
+   
+   IBM Support Site Assistance [https://www.ibm.com/support/home/widgets/siteAssistance/siteAssistance.html] 
+   Working with IBM to help support your IBM product(s). Click on the "Call Home Web" tab to learn more and check out 
+    * Configuring connection to IBM Call Home Web [https://www.ibm.com/support/knowledgecenter/STZSWD_11.5.4/UG/xiv_sds_ch4_web_call_home.html] 
+    * Introducing and managing IBM Call Home - YouTube videos [https://www.youtube.com/playlist?list=PLMp5LlSAupxKmVavYofVlbpvh8bJZj3SN&cm_mc_uid=15901765926914915305918&cm_mc_sid_50200000=1491571195]
+   
+   
+
+
+Most Recent News, Flashes, and Bulletins
+
+ *   *  Security Bulletin: Vulnerability in Apache Tomcat affects IBM Platform Symphony, IBM Spectrum Symphony (CVE-2017-15698, CVE-2017-15706, CVE-2018-1323, CVE-2018-1305, CVE-2018-1304) [http://www.ibm.com/support/docview.wss?uid=isg3T1027633] 
+   
+   
+   
+
+
+Latest Technotes and FAQs
+
+ *   *  Installation of Symphony 7.2.0.2 with Multi-head LSF 10.1.x on SLES12 SP2 platform [http://www.ibm.com/support/docview.wss?uid=isg3T1027798] 
+    *  Why is the symmkdir binary missing from the $SOAM_SERVERDIR directory after installing the General Availability setup for 7.2.x installation? [http://www.ibm.com/support/docview.wss?uid=isg3T1027733] 
+    *  When EGO goes down on the WEBGUI host like when "egosh ego shutdown" is run, the WEBGUI fails during startup on the new host when virtual IP is enabled [http://www.ibm.com/support/docview.wss?uid=isg3T1027611] 
+    *  Do we need to have DNS server requirement for Spectrum Symphony? [http://www.ibm.com/support/docview.wss?uid=isg3T1027382] 
+    *  Symphony Client Fails Authentication Due to Missing OS Execution User [http://www.ibm.com/support/docview.wss?uid=isg3T1027149] 
+    *  Why is logging on to WEBGUI console failing after configuring the Client GSS Kerberos plugin? [http://www.ibm.com/support/docview.wss?uid=isg3T1027763] 
+    *  When a host’s resource attribute is configured using egoconfig addresourceattr, is this attribute data written to the compute host’s ego.conf file and is it accessible by service instance? [http://www.ibm.com/support/docview.wss?uid=isg3T1027748] 
+    *  When trying to partially update application profile in Symphony Multi-Cluster, the error below prompts after typing the command. How to resolve this? [http://www.ibm.com/support/docview.wss?uid=isg3T1027747] 
+    *  What is the purpose of the ExecProxy EGO service? Can it be disabled? [http://www.ibm.com/support/docview.wss?uid=isg3T1027703] 
+    *  Why is logging on to WEBGUI console failing after configuring the Client GSS Kerberos plugin? [http://www.ibm.com/support/docview.wss?uid=isg3T1027763] 
+    *  Does the EGO service virtual IP feature provide floating IP functionality when an EGO service fails over from one host to another? [http://www.ibm.com/support/docview.wss?uid=isg3T1027612] 
+   
+   
+
+
+Latest Downloads and Fixes  
+
+ *  Fix Central for IBM Spectrum Symphony [https://www-945.ibm.com/support/fixcentral/swg/selectFixes?parent=IBM%2BSpectrum%2BComputing&product=ibm/Other+software/IBM+Spectrum+Symphony&release=All&platform=All&function=all] 
+   
+   IBM Spectrum Computing Tools [http://www.ibm.com/support/customercare/sas/f/plcomp/] 
+
+
+Education and Training
+
+ *  IBM Spectrum Symphony 7.2.0 Documentation [https://www.ibm.com/support/knowledgecenter/SSZUMP_7.2.0/sym_kc_welcome.html] 
+   
+   IBM Platform Symphony: An Overview for 7.1.1 [https://www.ibm.com/support/knowledgecenter/en/SSGSMK_7.1.1/foundations_sym/chap_symphony_overview_foundations.html] 
+   
+   IBM Spectrum Computing and IBM Systems Educational Videos [https://mediacenter.ibm.com/channel/Systems/62944711] 
+   
+   IBM Spectrum Symphony Knowledge Center [https://www.ibm.com/support/knowledgecenter/SSZUMP/product_welcome_spectrum_symphony.html] 
+   
+   IBM Platform Symphony Legacy Documentation [http://www-304.ibm.com/support/customercare/sas/f/plcomp/platformsymphony.html?acss=danl_5003_web] 
+   
+   IBM Systems Storage Redbooks [https://www.ibm.com/developerworks/community/blogs/storage_redbooks/?lang=en] 
+   
+
+
+Problem Solving Resources  
+
+ *  SSIC (IBM System Storage Interoperation Center (SSIC)) [https://www.ibm.com/systems/support/storage/ssic/ssichelp.wss?search_type=search] 
+   
+   Inside Systems Support 
+   
+   IBM System Storage Solutions Handbook [http://www.redbooks.ibm.com/abstracts/SG245250.html?Open] 
+   
+
+
+Forums and Wikis  
+
+ *  IBM Spectrum Symphony Wiki [https://www.ibm.com/developerworks/community/wikis/home?lang=en&#!/wiki/IBM%20Platform%20Symphony%20Wiki] 
+   
+   IBM Spectrum Symphony Blog [https://www.ibm.com/developerworks/community/blogs/46ecec34-bd69-43f7-a627-7c469c1eddf8?lang=en] 
+   
+   IBM Spectrum Symphony DWA Forum [https://developer.ibm.com/answers/topics/SYMPHONY/] 
+   
+   IBM DeveloperWorks Storage Blog [https://www.ibm.com/developerworks/community/blogs/869bac74-5fc2-4b94-81a2-6153890e029a/?lang=en] 
+   
+   IBM System Storage Forum [https://www.ibm.com/developerworks/community/forums/html/forum?id=11111111-0000-0000-0000-000000000846] 
+   
+   
+   
+
+ *   *   *   *   * Twitter icon [/support/docview.wss?uid=isg3T7000731&amp;aid=3]
+             * 
+            
+            
+         
+         
+      
+      
+   
+   
+
+[/support/docview.wss?uid=isg3T7000731&amp;aid=1] [/support/docview.wss?uid=isg3T7000731&amp;aid=1] [/support/docview.wss?uid=isg3T7000731&amp;aid=1] [/support/docview.wss?uid=isg3T7000731&amp;aid=1] [/support/docview.wss?uid=isg3T7000731&amp;aid=1] Want to provide feedback? Enter your comments in the "Rate this page" section at the bottom of the online version of this newsletter.
+
+View a list of other Storage products that offer these newsletters: IBM Systems Storage Technical Information Newsletters [http://www.ibm.com/support/docview.wss?uid=swg27046284] 
+
+
+
+IBM Privacy Statement [http://www.ibm.com/privacy/]Copyright and trademark information [http://www.ibm.com/legal/copytrade.shtml] [/support/docview.wss?uid=isg3T7000731&amp;aid=1] [/support/docview.wss?uid=isg3T7000731&amp;aid=1] [/support/docview.wss?uid=isg3T7000731&amp;aid=1] [/support/docview.wss?uid=isg3T7000731&amp;aid=1] RELATED INFORMATION
+ IBM Systems Storage Technical Support Newsletters [http://www.ibm.com/support/docview.wss?uid=swg27046284]
+
+
+
+
+PRODUCT ALIAS/SYNONYM
+ IBM Platform Symphony
+IBM Spectrum Symphony
+IBM Platform Computing Symphony

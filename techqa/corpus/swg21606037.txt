@@ -1,0 +1,35 @@
+Title: IBM Opening a model containing Panel Diagram using Rational Rhapsody results in license error - United States
+
+Text:
+Panel Diagram; RPGraph Panel TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Attempts to open a model containing Panel Diagrams using IBM Rational Rhapsody results in error "The FEATURE name RPGraphPanel with version 2012.0315 cannot be found" 
+
+SYMPTOM
+You receive the following error message: 
+
+
+image
+[/support/docview.wss?uid=swg21606037&aid=1] [/support/docview.wss?uid=swg21606037&aid=1]
+
+CAUSE
+Your license file does not contain the RPGraph Panel feature.
+
+
+
+RESOLVING THE PROBLEM
+RPGraph Panel is a license feature which is a part of the IBM Rational Rhapsody Tools & Utilities Add on key in the Rational Rhapsody license. 
+
+ 
+
+You can download this feature from the IBM Rational License Key Center [http://www-01.ibm.com/software/rational/support/licensing/] website if already procured. 
+
+ 
+
+Else, contact your IBM Sales Representative for assistance
+
+
+RELATED INFORMATION
+#How to generate license from Rational License Key Cente [http://www.ibm.com/support/docview.wss?uid=swg21605567]
+License features incorporated in "Tools and Utilities" [http://www.ibm.com/support/docview.wss?uid=swg21606028]

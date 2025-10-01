@@ -1,0 +1,167 @@
+Title: IBM JR42518: SEARCH TEMPLATE USES WRONG SEARCH CONDITIONS TO PERFORM A SEARCH - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  IBM InfoSphere MDM Server for PIM provides "Search Templates" to
+   create predefined searches which can be executed by users.
+   Further, it is possible to create a default Search Template
+   which will be display/selected when the Search Template list is
+   opened in the left navigation pane.
+   
+   If such a default Search Template has been defined and is
+   displayed in the left navigation pane it can overwrite the
+   search conditions of other non-default Search Templates. If a
+   user is selecting another non-default Search Template from the
+   drop down list the search conditions will be correctly displayed
+   in the left navigation pane. But when modifying (click on
+   "Modify") the search conditions of the default Search Template
+   will be displayed and used for the search in the main pane which
+   can cause wrong search results.
+   
+   
+   Steps for reproduction:
+   1.) Have a catalog with a spec containing a few attributes
+   (indexed)
+   2.) Create a Search Template that is using an attribute (let's
+   say "a1") for the search.
+   3.) Save this Search Template as default.
+   4.) Create another Search Template that is using another
+   attribute (let's say "a2") for the search.
+   5.) Save this Search Template (non-default).
+   6.) Refresh the drop down box of Search Template in the left
+   navigation bar.
+   7.) Select the default Search Template and click "Modify" to
+   open the Search Template in the main pane. All search conditions
+   are displayed as originally defined.
+   8.) Select the non-default Search Template from the drop down
+   list in the left navigation pane and click "Modify". In the main
+   pain, there will be not displayed the search conditions as
+   defined but the search conditions of the default Search Template
+   (attribute "a1" will appear).
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  n/a
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * All Master Data Management Collaboration Server              *
+   * implementations are affected by this issue.                  *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * SEARCH TEMPLATE USES WRONG SEARCH CONDITIONS TO PERFORM A    *
+   * SEARCH                                                       *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * IBM recommends that customers facing the issue reported by   *
+   * this APAR apply Master Data Management Collaboration Server  *
+   * version 9.1.0-FP4 to gain resolution to this problem         *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A fix for this problem has been included in Master Data
+   Management Collaboration Server version 9.1.0-FP4
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR42518
+   
+   
+ * REPORTED COMPONENT NAME
+   MDM SERVER FOR
+   
+   
+ * REPORTED COMPONENT ID
+   5724V5100
+   
+   
+ * REPORTED RELEASE
+   910
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-04-12
+   
+   
+ * CLOSED DATE
+   2013-06-21
+   
+   
+ * LAST MODIFIED DATE
+   2013-06-21
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   MDM SERVER FOR
+   
+   
+ * FIXED COMPONENT ID
+   5724V5100
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R910 PSY
+   UP

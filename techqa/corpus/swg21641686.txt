@@ -1,0 +1,54 @@
+Title: IBM How do you suppress the Print Option dialog box from the Workplace XT Daeja Viewer when selecting Print Document? - United States
+
+Text:
+XT Daeja Viewer Printing Option color TECHNOTE (FAQ)
+
+QUESTION
+ How do you suppress the Print Option dialog box from the FileNet Workplace XT Daeja Viewer when selecting Print Document?
+
+
+CAUSE
+The Print Option dialog box asks, Do you want to print with color (yes) or without color (no)? the first time you attempt to print in the Daeja Viewer. You will not be prompted on subsequent print attempts because it's cached in the system's temp directory (C:\Documents and Settings\<user name>\Local Settings\Temp\FileNet JavaView\). You will see the dialog box again if you remove the .\FileNet JavaView folder and Java cache. 
+
+ANSWER
+The steps to disable the dialog box and setting default printing to be in color are:
+
+
+
+ 1. Stop the application server where Workplace XT is deployed.
+    
+    
+ 2. Backup and update the WcmJavaViewer.jsp in the Workplace XT install directory: 
+    
+    <Workplace XT Install directory>\WebClient\WorkplaceXT\UI-INF\jsp\ui\WcmJavaViewer.jsp 
+    
+    Add this parameter after the last writeParam in the section "The following list provides configuration parameters for the Image Viewer." 
+    
+    writeParam('printMono', 'false')' //custom parameter to set default to print as color without Dialog box 
+    
+    
+ 3. Backup and recreate the web_client.war and web_client.ear in the Workplace XT installation directory by running the create_web_client_war.bat and create_web_client_ear.bat in this order. This is the default location where the batch files reside: <Workplace XT Install directory>\WebClient\deploy
+    
+    
+ 4. Undeploy Workplace XT on the Application server.
+    
+    
+ 5. Stop the application server, clear the application server cache, then restart the application server. For instructions on clearing the application server cache, please see the below IBM Knowledge Center for FileNet P8 Platform link on the step 'Back up, undeploy and remove the Workplace XT Web application from the J2EE application server': 
+    
+    http://www-01.ibm.com/support/knowledgecenter/SSNW2F_5.1.0/com.ibm.p8.installingxt.doc/wxtut003.htm [http://www-01.ibm.com/support/knowledgecenter/SSNW2F_5.1.0/com.ibm.p8.installingxt.doc/wxtut003.htm]
+    
+    
+ 6. Redeploy the web_client.ear. 
+
+
+
+Daeja Viewer documentation on PrintMono parameter:
+
+
+<PARAM NAME="printMono" value="true"> 
+
+This parameter sets the default behavior of the print accelerator for monochrome printing. If this parameter is not used, then the user is prompted when they print their first document if they would like to print in color or monochrome. If the parameter is set to true, documents will be printed in monochrome by default and the "print document without color" will be set to true by default. The print menus will be reset to the value specified each time ViewONE is used. Note: The print monochrome functionality is only available when using the print accelerator module for ViewONE. 
+
+
+RELATED INFORMATION
+ Upgrading the Workplace XT Software [http://www-01.ibm.com/support/knowledgecenter/SSNW2F_5.1.0/com.ibm.p8.installingxt.doc/wxtut003.htm]

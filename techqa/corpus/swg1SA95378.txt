@@ -1,0 +1,158 @@
+Title: IBM SA95378: MQM400-MSGAMQ7460-MSGAMQ7462 WRITE DETAILS INTO AMQJRNINF - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  MQSeries uses two messages to communicate the journal receiver
+   names required for restart/recovery:  AMQ7460 : MQM startup
+   journal information.  AMQ7462 : MQM media recovery journal
+   information.  These messages are logged in:  * the Queue Manager
+   message queue (QMQMMSG) * the Queue Manager error log
+   (AMQERR01.LOG) and optionally the user's joblog or the AMQALMPX
+   joblog - depending on how a checkpoint was invoked.  Customers
+   would like the checkpoint data logged in a data area, using a
+   published format.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  MQSeries uses two messages to communicate the journal receiver
+   names required for restart/recovery:  AMQ7460 : MQM startup
+   journal information.  AMQ7462 : MQM media recovery journal
+   information.  These messages are logged in:  * the Queue Manager
+   message queue (QMQMMSG) * the Queue Manager error log
+   (AMQERR01.LOG) and optionally the user's joblog or the AMQALMPX
+   joblog - depending on how a checkpoint was invoked.  Customers
+   would like the checkpoint data logged in a data area, using a
+   published format.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Whenever messages AMQ7460 and AMQ7462 are logged, the checkpoint
+   journal information will also be written to a user space in the
+   Queue Manager library.  This user space is called AMQJRNINF.
+   The data is written in the format:
+   JJJJJJJJJJLLLLLLLLLLYYYYMMDDHHMMSSmmm Where : LLLLLLLLLL =
+   Journal receiver library name JJJJJJJJJJ = Oldest receiver name
+   still required by MQSeries YYYY = Year of oldest Journal entry
+   required by MQSeries MM = Month of oldest Journal entry required
+   by MQSeries DD = Day of oldest Journal entry required by
+   MQSeries HH = Hours of oldest Journal entry required by MQSeries
+   MM = Minutes of oldest Journal entry required by MQSeries SS =
+   Seconds of oldest Journal entry required by MQSeries mmm =
+   Milliseconds of oldest Journal entry required by MQSeries The
+   oldest receiver name is the earlier of that name specified in
+   AMQ7460 and AMQ7462.  If this name is recorded as asterisks
+   '**********' then the checkpoint process could not find a
+   required journal receiver in the Queue Manager Library.  NB:
+   This is not the same as deleting a required journal receiver
+       AFTER the checkpoint process has completed.
+   If the journal receiver in AMQJRNINF is missing or cannot be
+   determined by MQSeries, then the user is recommended to use
+   command RCDMQMIMG with OBJ(*ALL), OBJTYPE(*ALL), DSPJRNDTA(*YES)
+   to generate fresh checkpoint information.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   SA95378
+   
+   
+ * REPORTED COMPONENT NAME
+   MQSERIES FOR AS
+   
+   
+ * REPORTED COMPONENT ID
+   5733A3800
+   
+   
+ * REPORTED RELEASE
+   520
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2002-05-01
+   
+   
+ * CLOSED DATE
+   2002-05-01
+   
+   
+ * LAST MODIFIED DATE
+   2004-11-10
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  LMQML    LMQMLR
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   MQSERIES FOR AS
+   
+   
+ * FIXED COMPONENT ID
+   5733A3800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R520 PSY SF67224
+   UP02/09/23 P 2260

@@ -1,0 +1,177 @@
+Title: IBM PI36166: JVMSERVER STUCK IN A DISABLING STATE AFTER SET JVMSERVER DISABLE IS ISSUED - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  You are trying to DISABLE the JVMSERVER after seeing
+   pthread_create failures. You notice that the JVMSERVER never
+   gets disabled after issuing the command to do so.
+   
+   The SET JVMSERVER DISABLE command is leaving the
+   JVM stuck in a DISABLING state as a direct result of the
+   pthread_create failures.  These pthread_create failures have
+   caused the JVMSERVER current thread count to get incremented by
+   1 each time.  In the SJ Domain in the dump you can see that the
+   count is a non-zero value even though no tasks are running in
+   the JVM.  The disable processing will wait for the count to
+   reach 0 before terminating the JVM.  In this scenario that will
+   never happen.
+   
+   Additional Symptom(s) Search Keyword(s): KIXREVRJL
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All CICS users                               *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: JVMSERVER unable to be disabled after   *
+   *                      a failure to create a thread due to     *
+   *                      insufficient below the line storage.    *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   A JVM server is serving Java requests and CICS region has nearly
+   run out of below the line storage. A request comes in and
+   DFHSJTH is called to handle it. DFHSJTH calls CICS dispatcher to
+   create a new T8 TCB which fails due to insufficient below the
+   line storage. DFHSJTH does not back out the thread/TCB
+   allocation and leaves an incorrect thread counter. This counter
+   results in the JVM server cannot be disabled unless CICS is
+   recycled.
+   Additional keywords: abendAXMZ, AXMZ
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  DFHSJTH has been changed to back out the thread allocation when
+   CICS dispatcher fails to create a new T8 TCB due to insufficient
+   below the line storage.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *              *********
+               * HIPER *
+               *********
+   FIX AVAILABLE BY PTF ONLY
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI36166
+   
+   
+ * REPORTED COMPONENT NAME
+   CICS TS Z/OS V4
+   
+   
+ * REPORTED COMPONENT ID
+   5655S9700
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   YesHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-03-03
+   
+   
+ * CLOSED DATE
+   2015-04-22
+   
+   
+ * LAST MODIFIED DATE
+   2015-06-01
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    PI35798 [http://www-01.ibm.com/support/docview.wss?uid=swg1PI35798]
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UI26990
+   
+   
+
+MODULES/MACROS
+ *     DFHSJDM  DFHSJDUF DFHSJJS  DFHSJST  DFHSJTH
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CICS TS Z/OS V4
+   
+   
+ * FIXED COMPONENT ID
+   5655S9700
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R700 PSY UI26990 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI26990]
+   UP15/05/02 P F505
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

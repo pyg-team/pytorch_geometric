@@ -1,0 +1,49 @@
+Title: IBM How to hide the System Object Store (or other repositories) in IBM FileNet P8 Workplace - United States
+
+Text:
+workplace object store access TECHNOTE (FAQ)
+
+QUESTION
+ How can the System Object Store (or other repositories) in Workplace be hidden? 
+
+ANSWER
+To hide the System Object Store for Workplace users, do the following:
+
+
+
+ 1.  Log into Workplace as Administrator
+     
+     
+ 2.   Click the Administrator link 
+     
+     
+ 3.   Click on Site Preferences
+     
+     
+ 4.   In the frame on the left hand side, select Object Stores
+     
+     
+ 5.   Click on the object store in question
+     
+     
+ 6.   In the first setting for Object Store Access click on Select Access Roles
+     
+     
+ 7.  Select the users/groups that should be allowed access --> they are the only ones that will be able to view the object store in Workplace
+     
+     
+ 8.   Click on Accept
+     
+     
+ 9.   The access role for the object store should now have an entry other than Everyone
+     
+     
+ 10.  Click on Apply and Exit 
+
+
+
+HISTORICAL NUMBER
+ 20003013 
+
+PRODUCT ALIAS/SYNONYM
+ P8 CONTENT ENGINE

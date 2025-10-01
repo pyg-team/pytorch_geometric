@@ -1,0 +1,45 @@
+Title: IBM FileNet Content Manager connected with Content Navigator without search result returned and found no such method error - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The environment was restored from a backup. 
+All features are working well, excepte the searches are not returning any documents in ICN. There are error messages in the logs like the following.
+
+SystemOut O CIWEB Error: [*******(unknown) @ *********] com.ibm.ecm.struts.actions.BaseActionHandlerImpl.executeAction()
+java.lang.NoSuchMethodError: com/filenet/api/collection/PageIterator.getTotalCount()Ljava/lang/Integer;
+at com.ibm.ecm.util.p8.P8PagingIterator.getTotalCount(P8PagingIterator.java:69) 
+
+ENVIRONMENT
+ICN Version 2.0.3 – Build ICN203.800.411 
+
+CPE 5.2.1 patch level - P8 Content Platform Engine 5.2.1.0 / Content Engine Build dap521.234
+Database version - Oracle 11.2
+WAS Version - IBM WebSphere Application Server Network Deployment/ Version 8.5.5.7
+
+
+DIAGNOSING THE PROBLEM
+Check the Ping pages from FileNet Content Manager server and Content Navigator server. 
+
+
+http://cpeservername:9080/FileNet/Engine [http://cpeservername:9080/FileNet/Engine]
+http://host_name:port_number/context_root/Ping [http://host_name:port_number/context_root/Ping] 
+
+ 
+
+FileNet Content Manager is running with CE build is dap521.000.001.002, which matches CE Client Build 5.2.1 (dap521.000.001.002). 
+
+Content Navigator server is running with CE Client 5.1.0 dap501.153. 
+
+ 
+
+The CE client build doesn't match with CE server.
+
+
+RESOLVING THE PROBLEM
+As this environment was restored from backup, for some reason, the Jace.jar was not properly backup/restored. Obtain the proper Jace.jar from FileNet Content Manager server, and replace the original Jace.jar on Content Navigator server. 
+
+Make sure to restart Content Navigator server to use the new Jace.jar. 
+
+It can be double checked to run ICN Ping page again.

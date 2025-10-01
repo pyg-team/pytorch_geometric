@@ -1,0 +1,147 @@
+Title: IBM IV19697: APPLICATION HANG WITH HIGH CPU UTILIZATION - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Error Message: The Java application stops making progress while
+   still using CPU resources (livelock)
+   .
+   Stack Trace: The native stack trace will most likely contain
+   functions related to allocation and freeing of optimization
+   plans used by the JIT
+   .
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  This rare problem needs all of the following conditions to
+   occur:
+   (1) Two compilation requests for the same method occur in
+   parallel.
+   (2) GC has requested all threads to stop because it wants to
+   proceed exclusively
+   (3) The application uses Compiler.disable() interface to disable
+   JIT operation
+   (4) The requested compilation is a synchronous one which is a
+   rare event in itself
+   These conditions can lead to a situation where one compilation
+   request has just started, but stopped because of the GC request.
+   The GC is blocked because of another Java thread not yielding.
+   The other Java thread continuously tries to compile the same
+   method, but cannot because JIT is disabled (due to
+   Compiler.disable call) and at the same time cannot abort the
+   compilation because another attempt is already in progress
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This defect will be fixed in:
+   6.0.1 SR2
+   7.0.0 SR1
+   .
+   The situation described in the "Problem Summary" has been
+   addressed by forcing the second Java thread to yield to GC and
+   wait for the compilation result (despite the Compiler.disable
+   directive). This allows GC to continue which then unblocks the
+   compilation thread which unblocks the two Java threads waiting
+   for the compilation result
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV19697
+   
+   
+ * REPORTED COMPONENT NAME
+   JIT
+   
+   
+ * REPORTED COMPONENT ID
+   620700124
+   
+   
+ * REPORTED RELEASE
+   260
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-04-13
+   
+   
+ * CLOSED DATE
+   2012-04-13
+   
+   
+ * LAST MODIFIED DATE
+   2012-04-13
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   JIT
+   
+   
+ * FIXED COMPONENT ID
+   620700124
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R260 PSY
+   UP

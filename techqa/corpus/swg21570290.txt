@@ -1,0 +1,104 @@
+Title: IBM Enabling and disabling the error logging for standalone JMS applications - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ You have a WebSphere MQ JMS 7.0.1.x application that is standalone, that is, not running inside a J2EE application server.
+You observe that the MQ generated file "mqjms.log" is increasing in size. 
+
+CAUSE
+The mqjms.log file is used by the WebSphere MQ Classes for JMS to display error messages encountered during runtime, for example, when the queue manager is terminated and breaks the connection with the client:
+com.ibm.mq.MQException: JMSCMQ0001: WebSphere MQ call failed with compcode '2' ('MQCC_FAILED') reason '2009' ('MQRC_CONNECTION_BROKEN').
+
+
+ANSWER
+You can use the JMS Configuration File (jms.config) to control the behavior for the error logging (and the tracing). 
+
+ 
+
++ Location: 
+
+It is recommended that you copy this file into a working directory and then you make modifications to your own copy. 
+
+Then at runtime, you pass the appropriate parameters to your JMS application to indicate the location and name of this JMS configuration file. In that way, by altering the contents of the configuration file, you can affect the runtime behavior of your application. 
+
+In Windows: C:\Program Files\IBM\WebSphere MQ\java\bin\jms.config 
+
+In UNIX (except AIX): /opt/mqm/java/bin/jms.config 
+
+In AIX: /usr/mqm/java/bin/jms.config 
+
+ 
+
++ Editing the JMS Configuration File to add controls for error logging 
+
+This file has many of the tracing/logging variables, however, it does not have the one for controlling the general status of the error logging. Thus, you will need to add the following into your own copy.
+.
++ begin quote
+# ----------------------------------------------------------------------------------
+# Logging
+
+# Is trace started or stopped?
+# 
+# Valid values
+# ON - Logging is on (Default)
+# OFF - Logging is off 
+com.ibm.msg.client.commonservices.log.status=OFF
++ end quote
+
++ Scenarios:
+Note: Even though this test was done in Windows, it applies also for UNIX
+
+The following tests were done in Windows using MQ 7.0.1.6. This is one of the samples mentioned in this techdoc:
+Exploiting the Automatic Client Reconnect feature in WebSphere MQ JMS 7.0.1 [http://www.ibm.com/support/docview.wss?rs=171&uid=swg27023313]
+
+The following is a sample invocation that uses myjms.config file with: com.ibm.msg.client.commonservices.log.status=ON
+
+Note: all the text needs to be issued from a single line. Your browser may show the text in multiple lines.
+
+java -Djava.library.path="%MQ_JAVA_LIB_PATH%" -Dcom.ibm.msg.client.config.location="file:c:/var/mqm/myjms.config [file:c:/var/mqm/myjms.config]" JmsJndiProducerLoop 
+-i file:c:/var/mqm/JNDI-Directory [file:c:/var/mqm/JNDI-Directory] -c CF2REC -d Q2
+
+An error is generated when the queue manager used by a Connection Factory is stopped. This error is shown in the command window where the command was executed AND in the file C:/var/mqm/errors/mqjms.log which was specified in the myjms.config:
+com.ibm.msg.client.commonservices.log.outputName=C:/var/mqm/errors/mqjms.log
+An excerpt of the error is:
+com.ibm.mq.MQException: JMSCMQ0001: WebSphere MQ call failed with compcode '2' ('MQCC_FAILED') reason '2009' ('MQRC_CONNECTION_BROKEN').
+
+The queue manager was restarted, then issued again the sample, but this time, it invokes the myjms.config file that specifies NOT to generate the mqjms.log file (in which log.status is OFF):
+com.ibm.msg.client.commonservices.log.status=OFF
+
+java -Djava.library.path="%MQ_JAVA_LIB_PATH%" -Dcom.ibm.msg.client.config.location="file:c:/var/mqm/myjms.config [file:c:/var/mqm/myjms.config]" JmsJndiProducerLoop 
+-i file:c:/var/mqm/JNDI-Directory [file:c:/var/mqm/JNDI-Directory] -c CF2REC -d Q2
+
+After the queue manager was stopped, only the error that was shown in the command window was displayed. There was NO entry in the mqjms.log file. 
+
+ 
+
++ References
+
+WebSphere MQ > WebSphere MQ 9.0.0 > IBM MQ > Developing applications > Developing JMS and Java applications > 
+Using IBM MQ classes for JMS > Installation and configuration of IBM MQ classes for JMS > Solving problems with IBM MQ classes for JMS >
+Logging [http://www.ibm.com/support/knowledgecenter/SSFKSJ_9.0.0/com.ibm.mq.dev.doc/q031880_.htm] 
++ begin quote
+"You can disable log output by setting the property com.ibm.msg.client.commonservices.log.status to OFF. The default value of this property is ON."
++ end quote
+
+WebSphere MQ > WebSphere MQ 9.0.0 > IBM MQ > Developing applications > Developing JMS and Java applications 
+> Using IBM MQ classes for JMS > Writing IBM MQ classes for JMS applications > Logging errors 
+Logging errors in IBM MQ classes for JMS [http://www.ibm.com/support/knowledgecenter/SSFKSJ_9.0.0/com.ibm.mq.dev.doc/q032300_.htm]
+
+
++ Miscellaneous
+
+See MQ V7 Doc APAR:
+
+IZ42533 [http://www.ibm.com/support/docview.wss?rs=171&uid=swg1IZ42533]: UPDATE WEBSPHERE MQ "USING JAVA" TO INCLUDE INFORMATION ON GETTING JMS CLIENT TRACE WITHIN WEBSPHERE APPLICATION SERVER
+
+ 
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM MQ 
+PRODUCT ALIAS/SYNONYM
+ WMQ MQ MQSeries

@@ -1,0 +1,153 @@
+Title: IBM OA49226: OMEGAMON XE Z/OS APPLICATION SUPPORT FILES FOR JAVA CERTIFICATE REFRESH. - United States
+
+Text:
+z/os  DIRECT LINKS TO FIXES
+5.1.0-TIV-KM5-IF0007 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+OMEGAMON+XE+on+zOS&fixids=5.1.0-TIV-KM5-IF0007&source=SAR]
+5.3.0-TIV-KM5-LP0003 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+OMEGAMON+XE+on+zOS&fixids=5.3.0-TIV-KM5-LP0003&source=SAR]
+5.3.0-TIV-KM5-LP0003.fo.xml [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+OMEGAMON+XE+on+zOS&fixids=5.3.0-TIV-KM5-LP0003.fo.xml&source=SAR]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  OMEGAMON XE z/OS Java Certificates will expire, April 16, 2016.
+   A new certificate is required for continued operation.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  n/a
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All OMEGAMON XE ON Z/OS.                     *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: OMEGAMON XE z/OS Java Certificates will *
+   *                      expire, April 2016. A new certificate   *
+   *                      is required for continued operation.    *
+   ****************************************************************
+   * RECOMMENDATION: Apply the PTF.                               *
+   ****************************************************************
+   OMEGAMON XE z/OS Java Certificates will expire, April 16, 2016.
+   A new certificate is required for continued operation.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Provide updated JAVA files with revised certificate for
+   a 2018 expiration.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   OA49226
+   
+   
+ * REPORTED COMPONENT NAME
+   OMEG XE ON Z/OS
+   
+   
+ * REPORTED COMPONENT ID
+   5698A5900
+   
+   
+ * REPORTED RELEASE
+   530
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2015-10-31
+   
+   
+ * CLOSED DATE
+   2015-12-08
+   
+   
+ * LAST MODIFIED DATE
+   2016-03-03
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UA80032 UA80033
+   
+   
+
+MODULES/MACROS
+ *     KM5DOC
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   OMEG XE ON Z/OS
+   
+   
+ * FIXED COMPONENT ID
+   5698A5900
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R510 PSY UA80032 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UA80032]
+   UP16/02/18 P F602
+   
+   
+ * R530 PSY UA80033 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UA80033]
+   UP15/12/11 P F512
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

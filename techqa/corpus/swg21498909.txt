@@ -1,0 +1,42 @@
+Title: IBM Restoring associations lost when backup of xmeta repository is deleted in IBM InfoSphere Metadata Workbench - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ As preparatory to a migration attempt, took a backup of the XMETA database of the current production server.
+
+After taking the backup, one of the hostsystems (and its contained datasources, data collections etc..) were deleted through DataStage > Repository > MetaDataSharing > Management
+
+Now, it is realized that the MWB users were using that host/datasources and have now lost the associations to those datasources.
+
+Can the associations to the host/datasources be restored? 
+
+ANSWER
+The MWB references the Host / Database objects with regard to Lineage - above being a simple browse mechanism for the information contained in XMETA, namely browsing the Database and Database Schema, Table and Columns.
+Lineage is calculated when invoking the Automated Services, but also relies upon other Administrative Tasks. These Tasks must be re-run on the system after the Host / Database object is restored. The metadata associated with the Host / Database is not part of the Asset Interchange (backup / restore) service. 
+
+It is important the Host and Database names do not change. 
+
+
+ 1. Select Database Aliases. For each Alias - map the alias to the Host / Database the connection references. 
+    
+    For example, if using an ODBC Stage in DS to connect to a DB System - that ODBC Reference is an Alias and MWB needs to interpret the actual Host / Database that it represents in the Information Server.
+    
+    
+ 2. Invoke the Automated Services from the MWB UI or CLI - not changing the list of selected projects.
+    
+    
+ 3. If necessary, set a DataSource Identity relationship from the Workbench. The Identity relationship maps two identical Database Schema's.
+    
+    For example. if the newly restored Database, or some of its Schema's or Tables, already exist in the Metadata Repository due to other import / usages (such as import of a BI Report, Profiling in IA), MWB requires the Schema's be mapped so that Lineage will reference both as one. 
+    
+    
+ 4. If necessary, create manual binding between the newly restored Host / Database - Table and Column objects - and the DS Stages which read or write to those Tables. Select Data Item Binding from the Workbench. 
+    
+    
+ 5. If Extended Data Lineage Mappings exist, which reference the Host / Database (Schema, Table, Column) objects - those mappings have been invalidated when the Host was deleted. The Mapping Document may be reconciled in the Workbench after the Host / Database has been restored to re-synchronize the mappings. 
+
+
+Again, initially validate the user is able to browse and view the restored Host / Database. 
+Secondly, if the Host / Database was part of Data Lineage follow the steps above.

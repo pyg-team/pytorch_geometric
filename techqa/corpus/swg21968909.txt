@@ -1,0 +1,29 @@
+Title: IBM Search application not starting on new or secondary nodes - United States
+
+Text:
+search; connections; work managers; CNTR0020E; node; start TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+How to resolve an issue when the search application is starting on some nodes, but not others in a new deployment.
+
+SYMPTOM
+On the WebSphere Integrated Solutions Console, the Search application status reports "Partial Start". 
+
+Checking the systemout.log, you see messages like the following after attempting to start the Search application on these nodes:
+
+LocalExceptio E CNTR0020E: EJB threw an unexpected (non-declared) exception during invocation of method "getBean" on bean "BeanId(Search#dboard.search.ejb.jar#Search
+ServiceLocator, null)". Exception data: org.springframework.beans.factory.access.BootstrapException: Unable to initialize group definition. Group resource name [classpath*:spring/search/app/SearchBeanRefF
+actory.xml], factory key [spring.search.app]; nested exception is org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'spring.search.app' defined in URL [wsjar:file:/E:/
+IBM/WebSphere/AppServer/profiles/connect1/installedApps/ConnectionsCell/Search.ear/search.common.jar!/spring/search/app/SearchBeanRefFactory.xml]: Instantiation of bean failed; nested exception is org.springframework.beans.BeanInstantiationException: Could not instantiate bean class [org.springframework.context.support.ClassPathXmlApplicationContext]: Constructor threw exception; nested exception is org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'INDEXER:dcsWorkManager' defined in class path resource [spring/search/service/IndexingServices.xml]: Invocation of init method failed; nested exception is javax.naming.NameNotFoundException: Context: ConnectionsCell/clusters/InfraCluster, name: wm/search-dcs: First component in name search-dcs not found. [Root exception is org.omg.CosNaming.NamingContextPackage.NotFound: IDL:omg.org/CosNaming/NamingContext/NotFound:1.0]
+at org.springframework.beans.factory.access.SingletonBeanFactoryLocator.useBeanFactory(SingletonBeanFactoryLocator.java:389) 
+
+...
+
+
+CAUSE
+When IBM Connections is first installed, each node is automatically given a Work Manager for Search. However, you must create the Work Managers manually for any subsequent nodes created. The behavior described here indicates that additional Work Managers have not been created. 
+
+
+RESOLVING THE PROBLEM
+Once the Work Managers are created, the Search application should start on all affected Nodes. Instructions on how to do this are available here, in the IBM Connections documentation:
+http://www-01.ibm.com/support/knowledgecenter/SSYGQH_5.0.0/admin/admin/t_admin_search_create_work_managers.dita [http://www-01.ibm.com/support/knowledgecenter/SSYGQH_5.0.0/admin/admin/t_admin_search_create_work_managers.dita]

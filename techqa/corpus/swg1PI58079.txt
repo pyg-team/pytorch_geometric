@@ -1,0 +1,144 @@
+Title: IBM PI58079: DELETION OF PORTLET TITLES OF A LOCALE INCORRECTLY HANDLED - United States
+
+Text:
+  A FIX IS AVAILABLE
+Fixes integrated in WebSphere Portal 8.5.0.0 Combined Cumulative Fixes [http://www-01.ibm.com/support/docview.wss?uid=swg24037786]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  With the Portal Admin interface, in the "Manage portlets"
+   panel, for a given locale, title and description can be deleted.
+   This can also be achieved with XML Access import if the profile
+   variable "delete.empty.portlet.locales" is set to "true".
+   
+   However, if the the portlet is exported and imported, then
+   instead of the deleted title the original title from the web
+   application is restored.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Without this fix, after updating the portlet, deleted locales
+   must again be deleted.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  A code fix for this issue is integrated into the WebSphere
+   Portal & WCM Combined Cumulative Fix 10 (PI55632 [http://www-01.ibm.com/support/docview.wss?uid=swg1PI55632]) for Portal
+   8.5.0.0 available from Fix Central:
+   
+   http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent
+   =ibm/WebSphere&product=ibm/WebSphere/WebSphere+Portal&release=Al [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm/WebSphere&product=ibm/WebSphere/WebSphere+Portal&release=Al]
+   l&platform=All&function=aparId&apars=PI55632
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix provided with this APAR corrects this situation. In
+   order to prevent unexpected side-effects, the profile variable
+   "delete.empty.portlet.locales" must be set to "true" during
+   XMLAccess export and import of the portlet.
+   
+   In this case, during XMLAccess export, for each deleted locale
+   information of a portlet appropriate XML elements are exported
+   which during import assure that the deleted locales are handled
+   correctly.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI58079
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSPHERE PORTA
+   
+   
+ * REPORTED COMPONENT ID
+   5724E7600
+   
+   
+ * REPORTED RELEASE
+   850
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-02-25
+   
+   
+ * CLOSED DATE
+   2016-04-19
+   
+   
+ * LAST MODIFIED DATE
+   2016-04-19
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBSPHERE PORTA
+   
+   
+ * FIXED COMPONENT ID
+   5724E7600
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R850 PSY
+   UP

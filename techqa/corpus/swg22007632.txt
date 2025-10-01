@@ -1,0 +1,39 @@
+Title: IBM OpenPages Administrative Console (OPAdminConsole) fix pack installer is unable to run on the Linux platform - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The OpenPages Administrative Console (OPAdminConsole) installation program may fail to run after the OPAdminConsole program is updated from 7.3.0.0 to 7.3.0.1 or 7.3.0.2 using the IBM Installation Manager (IIM). 
+
+SYMPTOM
+On the Linux platform, after using IBM Installation Manager (IIM) to update the OPAdminConsole from the 7.3.0.0 product level to the 7.3.0.1 or 7.3.0.2 fix pack level, the execute permissions of all executable files in the JRE bundled with the OPAdminConsole program are no longer set. This causes the OPAdminConsole program to be unable to run.
+
+
+CAUSE
+This issue may occur if the user executing the IIM program is different than the user that performed the previous IIM install or update of the OPAdminConsole program.
+
+ENVIRONMENT
+This issue has been seen on the Linux platform where the OPAdminConsole program has been updated to the 7.3.0.1 or 7.3.0.2 fix pack version from the base 7.3.0.0 version.
+
+DIAGNOSING THE PROBLEM
+If you have attempted to run OPAdminConsole on Linux and it fails, then examine the mode of the files in the following directory to determine if the execute permissions are no longer set:
+
+
+ <OPAdminConsole-Root>/OPAdminConfigConsole
+
+where <OPAdminConsole-Root > is the base directory where the OPAdminConsole program is installed. Check if the execute ('x') bit is not set for all users (including the OpenPages user) that will execute the OPAdminConsole program:
+
+# cd <OPAdminConsole-Root>/OPAdminConfigConsole
+# ls -lR .
+
+
+
+RESOLVING THE PROBLEM
+To resolve this issue, exit the OPAdminConsole program if it is running, and using the account of the owner of the files under the <OPAdminConsole-Root>/OPAdminConfigConsole directory, enter the following commands in a command prompt: 
+
+
+# cd <OPAdminConsole-Root>/OPAdminConfigConsole
+# chmod -R 755 *
+
+You can then restart the OPAdminConsole program and continue with the fix pack installation as the OpenPages user.

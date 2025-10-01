@@ -1,0 +1,174 @@
+Title: IBM IV84461: ConnectionFactory property SHARECONVALLOWED=NO not functional in combination with SHARECNV. - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The property SHARECONVALLOWED determines whether a client
+   connection can share its socket with other top-level XMS
+   connections from the same process to the same queue manager,
+   if the channel definitions match.
+   
+   This property can take the values YES or NO.
+   
+   In MQ versions prior to MQ V7.5 the value set
+   for SHARECONVALLOWED takes precedence with regards to SHARECNV
+   set on the channel.
+   
+   This means that when SHARECNV > 1 and SHARECONVALLOWED=NO
+   multiplexing on the channel is not active.
+   In other words: a client connection does NOT share its socket
+   with other top-level XMS connections from the same process to
+   the same queue manager, regardless of what SHARECNV is telling.
+   
+   In MQ V7.5 SHARECONVALLOWED=NO is not being considered.
+   This means that when SHARECNV > 1 and  SHARECONVALLOWED=NO
+   multiplexing on the channel is activated and a client connection
+   shares its socket with other top-level XMS connections from the
+   same process to the same queue manager.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   XMS.NET Applications setting XMSC.WMQ_SHARE_CONV_ALLOWED
+   property on the ConnectionFactory object
+   
+   
+   Platforms affected:
+   Windows
+   
+   ****************************************************************
+   PROBLEM DESCRIPTION:
+   The property XMSC.WMQ_SHARE_CONV_ALLOWED set on the
+   ConnectionFactory object isn't effective. If the property is set
+   to XMSC.WMQ_SHARE_CONV_ALLOWED_NO , then the SHARECNV value
+   should be 0 irrespective of what is set on the channel.But this
+   is not happening, irrespective of what value is set the SHARECNV
+   set on the channel is taking precedence.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  XMS code has been modified such that the ConnectionFactory
+   property XMSC.WMQ_SHARE_CONV_ALLOWED takes precedence over the
+   SHARECNV property
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+   Version    Maintenance Level
+   v2.5       7.5.0.8
+   v8.0       8.0.0.6
+   v9.0 CD    9.0.1
+   v9.0 LTS   9.0.0.1
+   
+   The latest available maintenance can be obtained from
+   'WebSphere MQ Recommended Fixes'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037]
+   
+   If the maintenance level is not yet available information on
+   its planned availability can be found in 'WebSphere MQ
+   Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV84461
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ XMS
+   
+   
+ * REPORTED COMPONENT ID
+   5724H7247
+   
+   
+ * REPORTED RELEASE
+   750
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-05-06
+   
+   
+ * CLOSED DATE
+   2016-06-24
+   
+   
+ * LAST MODIFIED DATE
+   2017-06-01
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ XMS
+   
+   
+ * FIXED COMPONENT ID
+   5724H7247
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R750 PSY
+   UP

@@ -1,0 +1,141 @@
+Title: IBM PI40340: IN A CLUSTER THE ADMIN PORTLET DOES NOT ALWAYS SHOW THE CORRECT LIST OF VIRTUAL PORTALS - United States
+
+Text:
+  A FIX IS AVAILABLE
+Fixes integrated in WebSphere Portal 8.5.0.0 Combined Cumulative Fixes [http://www-01.ibm.com/support/docview.wss?uid=swg24037786]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Portal holds the list of virtual portals (VPs) in a Java map.
+   If a new VP is created on the node which performs this task,
+   the map gets correctly updated.
+   However, other nodes do not get informed of this new VP.
+   Therefore, if an other node returns the list of VPs for the
+   Admin Portlet, this is not correct.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  The nodes of the Portal cluster which have not a correct list
+   of VPs must be restarted. Or if such a node processes
+   a creation or deletion of a VP, then the list gets updated.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  A code fix for this issue is integrated into the WebSphere
+   Portal & WCM Combined Cumulative Fix 07 (PI40843 [http://www-01.ibm.com/support/docview.wss?uid=swg1PI40843]) for Portal
+   8.5.0.0 available from Fix Central:
+   
+   http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent
+   =ibm/WebSphere&product=ibm/WebSphere/WebSphere+Portal&release=Al [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm/WebSphere&product=ibm/WebSphere/WebSphere+Portal&release=Al]
+   l&platform=All&function=aparId&apars=PI40843
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  We created a new cache with name
+   com.ibm.wps.model.impl.VirtualPortalMap.
+   When using the Cache Viewer to display the list of caches, this
+   cache shows up. The configuration parameters of this cache
+   should not be changed.
+   As this cache is cluster-aware, adding or removing virtual
+   portals is propagated to the other nodes.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI40340
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSPHERE PORTA
+   
+   
+ * REPORTED COMPONENT ID
+   5724E7600
+   
+   
+ * REPORTED RELEASE
+   850
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-05-04
+   
+   
+ * CLOSED DATE
+   2015-07-29
+   
+   
+ * LAST MODIFIED DATE
+   2015-07-29
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBSPHERE PORTA
+   
+   
+ * FIXED COMPONENT ID
+   5724E7600
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R850 PSY
+   UP

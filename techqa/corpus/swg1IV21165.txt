@@ -1,0 +1,190 @@
+Title: IBM IV21165: DATABASE CONNECTION LEAK - DETECT LONG RUNNING DATABASE ACONNECTION LEAKS AND CLOSE THEM FROM THE MAXIMO SERVER - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  There are many situations where database connections are lost.
+   
+   With the current maximo logging mechanism, it is very difficult
+   to identify the connection leak.  It takes many hours and days
+   of support as well as development to analyze the connection
+   leak.
+   
+   Here is a proposal, already discussed with development.
+   
+   Enhance maximo such that
+   1) customer be able to observe through maximo log whether there
+   are long running connections, what are their SPIDs, and how long
+   they have been idle at the default logging level without needing
+   to explicitly turn connection watchdog on.
+   2) If they choose to, customer will be able to clean up these
+   inactive long running connections by changing a maximo property
+   value with live refresh.
+   
+   The following approach is proposed, and specific consideration
+   is given to how not to close the long running connections that
+   are actually active.
+   
+   Introduce two properties, first is a time out value, second is a
+   switch that once turned on, perform the action of clean up
+   inactive long running connections. By default, the switch is
+   OFF, the time out value is in the range of many hours, such as
+   10 hours.
+   Enhance connection pool thread to periodically check if the
+   connection has been running beyond the time out period specified
+   and whether it is truly idle through native sql commands. (This
+   is the process of finding inactive long running connections. A
+   connection being used for long running jobs such as reorder or
+   pm workorder generation will not be found as inactive. ) If the
+   connection has been idle past the timeout period, warning will
+   be printed out with its SPID.
+   If the switch is turned on. the long running connection will be
+   then explicitly closed and de-referenced from the connection
+   pool.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Debug or kill database connections from backend.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All                                          *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Bad customization or problematic coding *
+   *                      can leave long running connection       *
+   *                      behind. There lacks a way to            *
+   *                      automatically warn the customer that    *
+   *                      there is such conneciton problem before *
+   *                      the connection is exhasusted on the db  *
+   *                      side. We need a way to detec that and   *
+   *                      also clean it up as a remediation       *
+   *                      during the period of detecting the root *
+   *                      cause of the connection leak.           *
+   *                                                              *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   *                                                              *
+   *                                                              *
+   *                                                              *
+   ****************************************************************
+   Bad customization or problematic coding can leave long running
+   connection behind.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Thefix is not for any connection leak, it is a remediation when
+   this happens.
+   
+   The fix for this APAR is contained in the following maintenance
+   package:
+   
+     | release\fix pack | Release 7.5.0.3
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV21165
+   
+   
+ * REPORTED COMPONENT NAME
+   PRODUCT INSTALL
+   
+   
+ * REPORTED COMPONENT ID
+   5724R46IT
+   
+   
+ * REPORTED RELEASE
+   710
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-05-14
+   
+   
+ * CLOSED DATE
+   2012-06-08
+   
+   
+ * LAST MODIFIED DATE
+   2012-06-08
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  MAXIMO
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   PRODUCT INSTALL
+   
+   
+ * FIXED COMPONENT ID
+   5724R46IT
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R710 PSY
+   UP

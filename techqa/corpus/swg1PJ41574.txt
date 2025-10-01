@@ -1,0 +1,133 @@
+Title: IBM PJ41574: REMOTE HOSTNAME FUNCTIONALITY USED WHEN REMOTELY MONITORING A CMOD SERVER DOES NOT WORK PROPERLY - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The "Remote Host name" functionality, which can be used to
+   overwrite the real hostname of a CMoD server or to remote CMoD
+   server for ODWEK and JDBC-based DB-monitoring, is not correctly
+   used within the CMoD monitors.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * CMoD monitoring without having the ECM SM clients on the     *
+   * monitored machine (e.g. This is how you would monitor when   *
+   * CMoD is on z/OS).                                            *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * See Error Description                                        *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Apply ECM SM 5.1 FP2 IF1.  You must be on ECM SM 5.1 FP2 to  *
+   * apply the interim fix.                                       *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fixed in ECM SM 5.1 FP2 IF1
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PJ41574
+   
+   
+ * REPORTED COMPONENT NAME
+   SYSTEM MONITOR
+   
+   
+ * REPORTED COMPONENT ID
+   5724R9100
+   
+   
+ * REPORTED RELEASE
+   510
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-09-30
+   
+   
+ * CLOSED DATE
+   2013-10-17
+   
+   
+ * LAST MODIFIED DATE
+   2013-10-17
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   SYSTEM MONITOR
+   
+   
+ * FIXED COMPONENT ID
+   5724R9100
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R510 PSY
+   UP

@@ -1,0 +1,56 @@
+Title: IBM Retrieving the name of the problematic rule artifact - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How do I retrieve the name of the rule artifact that was involved in an exception thrown by the engine during rule execution?
+When I implement the IlrExceptionHandler interface, how can I retrieve the name of the rule that caused the exception?
+Is it possible to use IlrTool or the execution unit (XU) plugin to determine which artifact is causing issue? 
+
+ANSWER
+Two options are available to retrieve the name of the rule artifact that is being evaluated when an exception occurs: 
+
+ * The printRuleStackTrace method.
+
+
+When an exception occurs during rule execution, the engine may throw an IlrUserRuntimeException instance. The IlrUserRuntimeException class provides the printRuleStackTrace()method. You can use this method to determine which rule artifact (such as function task, rule task, individual rule) was being evaluated when the exception occurred. 
+
+In particular, when the IlrExceptionHandler interface is implemented, the callback method handleException()receives an IlrUserRuntimeException object as argument, and the related stack trace can be printed by a call to the printRuleStackTrace method. 
+
+Note: In RetePlus execution mode, it may happen that some rule conditions are shared across several rules. In this case, it might be impossible to single out one rule as the cause of an exception thrown when the conditions are evaluated.  * The IlrToolAdapter class.
+
+
+Another option consists in using the IlrToolAdapter class to keep track of the state of rule execution. For example, you can capture the name of the executed rule by overriding methods of the IlrToolAdapter class: notifyBeginInstance (or notifyBeginSequentialInstance for rule tasks in sequential or Fastpath execution modes). Symmetrically, you can use the notifyEndInstance or notifyEndSequentialInstance methods to receive notification that the action part of a rule has been executed. You can attach the instance of IlrToolAdapter to the context engine, which will notify this class with the rule information when the rules are executed. This is illustrated in the attached sample: the rule in the ruleset deliberately throws an exception, which is caught by the exception handler. The name of the offending rule is printed out. 
+
+The sample loads the ruleset, which is included in the project directory. Two rulesets are provided for your tests: one for the RetePlus mode and one for the FastPath mode. Also attached is the rule project from which the rulesets were generated. 
+
+Please note that for the observer to pick up the sequential/Fastpath mode, you must set the ilog.rules.engine.sequential.debug property to true, as described in the following documentation: 
+
+http://pic.dhe.ibm.com/infocenter/brjrules/v7r1/index.jsp?topic=%2Fcom.ibm.websphere.ilog.jrules.doc%2FContent%2FBusiness_Rules%2FDocumentation%2F_pubskel%2FJRules%2Fps_JRules_Global701.html [http://pic.dhe.ibm.com/infocenter/brjrules/v7r1/index.jsp?topic=%2Fcom.ibm.websphere.ilog.jrules.doc%2FContent%2FBusiness_Rules%2FDocumentation%2F_pubskel%2FJRules%2Fps_JRules_Global701.html] 
+
+
+http://pic.dhe.ibm.com/infocenter/dmanager/v7r5/index.jsp?topic=%2Fcom.ibm.dserver.rulestudio%2FContent%2FBusiness_Rules%2F_pubskel%2FInfocenter_Primary%2Fps_DS_Rule_Designer1282.html [http://pic.dhe.ibm.com/infocenter/dmanager/v7r5/index.jsp?topic=%2Fcom.ibm.dserver.rulestudio%2FContent%2FBusiness_Rules%2F_pubskel%2FInfocenter_Primary%2Fps_DS_Rule_Designer1282.html] 
+
+sample.zip [/support/docview.wss?uid=swg21617737&aid=2]sample.zip [/support/docview.wss?uid=swg21617737&aid=1] 
+
+Note: This approach is limited to the situations where an exception is thrown in the action part of a rule, as opposed to its condition part: the notifyBeginInstance method is called only after the condition part has been evaluated successfully and with the conclusion that the rule was to be executed. 
+
+When you use the IlrContext/IlrRuleset API, use the IlrTool interface, as shown in the sample, to receive notifications about the progress of rule execution. 
+
+In the context of Rule Execution Server, it is equivalent to implementing the IlrRuleEngineEventPlugin class through a subclass of IlrDefaultPlugin and registering that custom plugin with the execution unit (XU) (see the plugins XU configuration property in the ra.xml deployment descriptor). With Rule Execution Server, you must also set the ruleset.trace.enabled and ruleset.sequential.trace.enabled ruleset properties to true to activate event notifications.
+
+RELATED INFORMATION
+#API IlrUserRuntimeException [http://pic.dhe.ibm.com/infocenter/dmanager/v8r0m1/topic/com.ibm.wodm.dserver.rules.ref.res/html/api/html/ilog/rules/engine/IlrUserRuntimeException.html]
+API IlrExceptionHandler [http://pic.dhe.ibm.com/infocenter/dmanager/v8r0m1/topic/com.ibm.wodm.dserver.rules.ref.res/html/api/html/ilog/rules/engine/IlrExceptionHandler.html]
+API IlrRuleEngineEvenPlugin [http://pic.dhe.ibm.com/infocenter/dmanager/v8r0m1/topic/com.ibm.wodm.dserver.rules.ref.res/html/api/html/ilog/rules/res/xu/plugin/IlrRuleEngineEventPlugin.html]
+API IlrTool [http://pic.dhe.ibm.com/infocenter/dmanager/v8r0m1/topic/com.ibm.wodm.dserver.rules.ref.res/html/api/html/ilog/rules/engine/IlrTool.html]
+API IlrDefaultPlugin [http://pic.dhe.ibm.com/infocenter/dmanager/v8r0m1/topic/com.ibm.wodm.dserver.rules.ref.res/html/api/html/ilog/rules/res/xu/plugin/IlrDefaultPlugin.html]
+Extending the IlrRuleEngineEventPlugin class [http://pic.dhe.ibm.com/infocenter/brjrules/v7r1/topic/com.ibm.websphere.ilog.jrules.doc/Content/Business_Rules/Documentation/_pubskel/JRules/ps_JRules_Global1038.html]
+
+
+ 
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Operational Decision Manager Modules:Java Engine Platform Independent 8.0, 7.5

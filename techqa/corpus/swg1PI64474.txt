@@ -1,0 +1,144 @@
+Title: IBM PI64474: FILTER VALUES REPEAT FOR FILTER IN A REPORT AND NOT ALL VALUES APPEAR IF ANOTHER FILTER HAS AFTER AUTO AGGREGATION SET - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Filter values repeat for filter in either a Report Studio or a
+   Workspace Advanced report if there is another filter with After
+   Auto Aggregation set
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Remove the After Auto Aggregation setting on the other filter
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * All Users                                                    *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * See Error Description                                        *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Upgrade to IBM Cognos Business Intelligence 10.2.2 Fix Pack  *
+   * 6                                                            *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Code Fix
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+ *  A fix for this APAR is targeted for IBM COGNOS 10.2.2 BI Fix
+   Pack 6.
+   The Fix Pack Release Schedule can be found at
+   http://www.ibm.com/software/analytics/support/fixes/pbi_schedule [http://www.ibm.com/software/analytics/support/fixes/pbi_schedule]
+   .html.
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI64474
+   
+   
+ * REPORTED COMPONENT NAME
+   COG REPORT STUD
+   
+   
+ * REPORTED COMPONENT ID
+   5724W12RS
+   
+   
+ * REPORTED RELEASE
+   A22
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-06-17
+   
+   
+ * CLOSED DATE
+   2016-08-30
+   
+   
+ * LAST MODIFIED DATE
+   2016-08-30
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    PI65353 [http://www-01.ibm.com/support/docview.wss?uid=swg1PI65353]
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   COG REPORT STUD
+   
+   
+ * FIXED COMPONENT ID
+   5724W12RS
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * RA22 PSN
+   UP

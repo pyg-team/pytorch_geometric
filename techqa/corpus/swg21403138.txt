@@ -1,0 +1,47 @@
+Title: IBM TADDM login problems using VMM authentication - United States
+
+Text:
+vmm authentication dm gui TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Login works when logging into the TADDM product console but not the TADDM domain manager. 
+
+RESOLVING THE PROBLEM
+The connection from TADDM to VMM was not successful. This can be fixed by: 
+
+1. Verify that the websphere machine specified during configuration is correct. This is stored in collation.properties, ibmessauthncfg.properties & sas.client.props. If the machine fqdn is incorrect or the machine is unavailable, the following error message will occur in SecurityManager.log:
+2007-10-27 16:34:12,945 SecurityManager [main] DEBUG jini.SecurityManagerServiceImpl - VMMUserRegistry:init(): Getting InitialContext with providerURL = corbaloc:iiop:tv046174.yamato.ibm.com:9809
+2007-10-27 16:37:27,961 SecurityManager [P=654142:O=0:CT] ERROR jini.SecurityManagerServiceImpl - VMMUserRegistry:init(): Fatal NamingException initializing VMM user management module: A communication failure occurred while attempting to obtain an initial context with the provider URL: "corbaloc:iiop:tv046174.yamato.ibm.com:9809". Make sure that any bootstrap address information in the URL is correct and that the target name server is running. A bootstrap address with no port specification defaults to port 2809. Possible causes other than an incorrect bootstrap address or unavailable name server include the network environment and workstation network configuration.
+
+2. Verify that the following entry in dist/etc/sas.client.props matches the port number of the bootstrap port of the WAS instance you have configured TADDM to use.
+com.ibm.CORBA.securityServerPort=2809
+
+When TADDM is configured to use the CCMDB WAS ND instance, it uses the dmgr server which has a default bootstrap port of 9809. Other WAS products have a default bootstrap port of 2809.
+
+If this setting in sas.client.props is not correct, the following error may be observed in dist/log/services/SecurityManager.log when the TADDM log level is set to DEBUG in collation.properties:
+2007-10-17 14:43:46,607 SecurityManager [main] DEBUG jini.SecurityManagerServiceImpl - VMMUserRegistry:init(): Getting InitialContext with providerURL = corbaloc:iiop:slapc11.tivlab.raleigh.ibm.com:2809
+2007-10-17 14:43:59,569 SecurityManager [P=628112:O=0:CT] ERROR jini.SecurityManagerServiceImpl - VMMUserRegistry:init(): Fatal NamingException initializing VMM user management module: NO_PERMISSION exception caught
+
+3. Verify that the VMM ejb interface is correctly installed on the WebSphere instance that TADDM is configured to use. If it is not correctly installed, you will see this error in dist/log/services/SecurityManager.log:
+2007-10-18 04:57:06,712 SecurityManager [P=196474:O=0:CT] ERROR jini.SecurityManagerServiceImpl - VMMUserRegistry:init(): Fatal NamingException initializing VMM user management module: Context: ctgCell01/nodes/ctgNode01/servers/nodeagent, name: ejb/com/ibm/websphere/wim/ejb/WIMServiceHome: First component in name ejb/com/ibm/websphere/wim/ejb/WIMServiceHome not found.
+
+If these lines are present, the VMM EJB interface required by TADDM when TADDM is configured to use WebSphere Federated Repositories has been installed correctly.
+
+On the WebSphere server, if you look in the <WAS_DIR>/profiles/ctgDmgr01/logs/dmgr/SystemOut.log file, you should see lines similar to 
+[10/18/07 8:28:28:953 CDT] 00000016 EJBContainerI I WSVR0037I: Starting EJB jar: wimejb.jar
+[10/18/07 8:28:29:296 CDT] 00000016 EJBContainerI I WSVR0057I: EJB jar started: wimejb.jar
+
+To install the ear correctly on a TIP server, please do the following
+
+
+ * 1) copy wim.ear from a Websphere installation to TIP server D:\IBM\tivoli\tip\installableApps 
+   2) Executed the following on TIP server 
+   D:\IBM\tivoli\tip\profiles\TIPProfile\bin\wsadmin.bat 
+   $AdminApp install "D:\\IBM\\tivoli\\tip\\installableApps\\wim.ear" {-appname wim -cell TIPCell -server server1} 
+   $AdminConfig save 
+   3) restart TIP service on TIP server 
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ taddm

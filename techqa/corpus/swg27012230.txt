@@ -1,0 +1,58 @@
+Title: IBM Content Integrator Version 8.5 repository profile settings - United States
+
+Text:
+Content Integrator ; profile settings; repository settings; IICE; content integration server PRODUCT DOCUMENTATION
+
+ABSTRACT
+ What are the repository settings for each of the connectors? You can view the profile settings for each repository supported with IBM® Content Integrator Version 8.5. 
+
+CONTENT
+You can use the attached Microsoft® Excel spreadsheet to view various connector capabilities and compare these capabilities across several connectors. You can use the spreadsheet to help plan your own coding needs based on the differences between connectors.
+
+
+
+
+To filter the spreadsheet: 
+
+ 1. Select row 1 and click Data ->Filter -> Auto Filter. 
+ 2. Click the arrow in any of the cells to filter specific information.
+
+
+To filter the spreadsheet to show setting for a specific repository: 
+
+ 1. Select row 1 and click Data ->Filter -> Auto Filter. 
+ 2. Click the arrow in the specific repository column. 
+ 3. Select a value from the drop-down list. The setting that are marked with the specified value you selected from the list are shown. 
+
+
+For example: If you want view the TRUE settings for the IBM FileNet BPM repository column only, you can click the arrow in the FileNet BPM column and select TRUE from the drop-down list. The settings that are marked TRUE for the FileNet BPM repository only are displayed.  
+
+To return the document to its original state: 
+
+ 1. Click the arrow in the specific repository column. 
+ 2. Select ALL from the drop-down list.
+
+
+Explanation of values in the spreadsheet: 
+
+Value Description TRUE The setting is supported in that repository. FALSE The setting is not supported in that repository. Blank There are no values required with regards to the string used in queries or property values. null Meaning varies according to the row. In the annotations row, it indicates that no annotations are supported by the connector. In the QueryMaxRecords row, it means that there is no set limit on result set size imposed by the connector. \*,\? Wildcard strings that cannot be escaped in a Like query for the getQuery***InvalidLiterals methods or cannot be entered as a value in the getPropertyValueInvalidLiterals method. 1, -1, 2, 2000 and other number values The number values mean different things in different rows. A -1 value means no limit in the QueryMaxRecords setting. A number other than -1 indicates a limit on the number of results. In the AnnotationTypes setting, the numbers correspond to the content integration server Annotation Types. 
+
+The values are:
+UNKNOWN = 0
+ARROW = 1
+ELLIPSE = 2
+RECTANGLE = 3
+HIGHLIGHT = 4
+LINE = 5
+FREEHAND = 6
+TEXT = 7
+NOTE = 8
+IMAGE_OVERLAY= 9
+STAMP = 10
+
+
+RELATED INFORMATION
+ Information Center [http://publib.boulder.ibm.com/infocenter/ce/v8r5/index.jsp]
+
+
+ConnectorCapabilities_v85.xls [/support/docview.wss?uid=swg27012230&aid=2] [/support/docview.wss?uid=swg27012230&aid=1]

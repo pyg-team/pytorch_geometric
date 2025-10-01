@@ -1,0 +1,30 @@
+Title: IBM Modifying the GUI timeout in Impact - United States
+
+Text:
+gui timeout; timeout TECHNOTE (FAQ)
+
+QUESTION
+ How do I change the GUI timeout value in Impact 5.1.1 ? 
+
+ANSWER
+The Impact 5.1.1 GUI time-out can be set by : 
+
+ 
+Please change the web.xml stanza : 
+
+<session-config> 
+<session-timeout>5</session-timeout> 
+</session-config> 
+
+Where 5 is the number of minutes before your session times out. 
+
+In the following 2 subdirectories : 
+
+$WAS_HOME/profiles/ImpactProfile/config/cells/ImpactCell/applications/g 
+uiserver.ear/deployments/guiserver/nci.war/WEB-INF/web.xml 
+
+$WAS_HOME/profiles/ImpactProfile/installedApps/ImpactCell/guiserver.ear 
+/nci.war/WEB-INF/web.xml 
+
+Once this is done, and your server recycled, the new settings should 
+take effect.

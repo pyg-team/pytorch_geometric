@@ -1,0 +1,131 @@
+Title: IBM PK97282: Entry connector shows up as exit connector - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The entry/exit connectors on statecharts will not show properly
+   when added to a state within the sub-statechart. Specifically, i
+   f I add an entry/exit connector to the substate, it will appear
+   as an exit connector. Even after I hook up arrows to it showing
+   that an event is going into the substate, the
+   connector appears as an exit connector rather than an entry conn
+   ector.
+   Note that the model does generate code and that code compiles ok
+   .
+   
+   To reproduce:
+   1. Create a statechart and add a state.
+   2. Select a state within the statechart and create a 'Sub-Statec
+   hart'
+   3. In the top statechart add two EnterExit Points.
+   4. Draw a transition into one of the EnterExit Points and draw a
+    transition from the other EnterExit Point.
+   5. On the substate diagram select Update EnterExit Points.
+   
+   Both will appear as Exits
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Entry connector shows up as exit connector
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fixed in 7.5.1
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK97282
+   
+   
+ * REPORTED COMPONENT NAME
+   TLOGIC RHAPSODY
+   
+   
+ * REPORTED COMPONENT ID
+   5724V74RP
+   
+   
+ * REPORTED RELEASE
+   750
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-09-28
+   
+   
+ * CLOSED DATE
+   2009-12-02
+   
+   
+ * LAST MODIFIED DATE
+   2009-12-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TLOGIC RHAPSODY
+   
+   
+ * FIXED COMPONENT ID
+   5724V74RP
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R750 PSN
+   UP

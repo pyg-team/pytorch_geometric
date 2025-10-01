@@ -1,0 +1,27 @@
+Title: IBM Release Notes for IBM Business Process Manager (BPM) Standard Version 8.5.x - United States
+
+Text:
+release notes; 8.5; v8.5; BPM; 8.5.0.1; 8.5.5; 8.5.6; 8.5.7 RELEASE NOTES
+
+ABSTRACT
+ This Release Notes document for IBM Business Process Manager Standard Version 8.5.x is a dynamic list of known issues and their resolutions for this product release and all of its fix packs. 
+
+CONTENT
+Use the following links to receive a dynamically generated list of known issues, their resolutions, and relevant downloads for a specific release: 
+
+ * Release notes for IBM Business Process Manager Standard Version 8.5 Refresh Pack 7 [http://www.ibm.com/support/search.wss?tc=SSFTDH&atrn=SWVersion&atrv=8.5.7] 
+ * Release notes for IBM Business Process Manager Standard Version 8.5 Refresh Pack 6 [http://www.ibm.com/support/search.wss?tc=SSFTDH&atrn=SWVersion&atrv=8.5.6] 
+ * Release notes for IBM Business Process Manager Standard Version 8.5 Refresh Pack 5 [http://www.ibm.com/support/search.wss?tc=SSFTDH&atrn=SWVersion&atrv=8.5.5] 
+ * Release notes for IBM Business Process Manager Standard Version 8.5.0 Fix Pack 1 [http://www.ibm.com/support/search.wss?tc=SSFTDH&atrn=SWVersion&atrv=8.5.0.1] 
+ * Release notes for IBM Business Process Manager Standard Version 8.5 [http://www.ibm.com/support/search.wss?tc=SSFTDH&atrn=SWVersion&atrv=8.5]
+   
+   Note: For Version 8.5.0.0, also refer to the Required Interim Fixes link below to ensure that you have the latest available fix for this release.
+
+RELATED INFORMATION
+ V8.5.0.0: Required Interim Fixes [http://www.ibm.com/support/docview.wss?uid=swg24035108]
+
+
+
+
+PRODUCT ALIAS/SYNONYM
+ BPM

@@ -1,0 +1,59 @@
+Title: IBM Agent data is not showing up in the Warehouse database - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The IBM Tivoli Monitoring (ITM) Warehouse Proxy Agent (WPA) does not seem to be processing data. 
+
+SYMPTOM
+Using the KIS.LOCK table as an example, the TEPS log shows the following error: 
+
+KFWITM217E Request error: [IBM][CLI Driver][DB2/LINUXX8664] SQL0204N "KIS.LOCK" is an undefined name. SQLSTATE=42704, GENERIC SQLSTATE: 42S02, ERR: -204 SQLExecDirect rc=-1: SQL_ERROR
+
+Followed by these lines stating that it cannot allocate new pages in the tablespace when it tries to create the KIS.LOCK table (the table name could be any table name): 
+(5183C8E3.0013-1D:ctsqlaccessodbc.cpp,347,"CTSQLEvalODBC::IssueStatementWorker::run") TEPS(486): CREATE TABLE KIS.LOCK ( hostname VARCHAR(254) NOT NULL, tool VARCHAR(10) NOT NULL, pid INT NOT NULL DEFAULT 1, timestamp VARCHAR(32) NOT NULL, username VARCHAR(254) NOT NULL, PRIMARY KEY(hostname))
+
+(5183C8E4.0000-1D:ctsqlconnectionodbc.cpp,148,"CTSQLEvalODBC::Connection::sqlErrorCheckMsg") [IBM][CLI Driver][DB2/LINUXX8664] SQL0289N Unable to allocate new pages in table space "USERSPACE1". SQLSTATE=57011, GENERIC SQLSTATE: 57011, ERR: -289
+
+
+CAUSE
+The USERSPACE1 tablespace is defined as automatic storage, but when you view it using the "db2 list tablespaces show detail" command after connecting to the database it shows Free pages = 0 as shown below. 
+
+db2 connect to WAREHOUS user itmuser using <password> 
+
+db2 list tablespaces show detail 
+Tablespace ID = 2 
+Name = USERSPACE1 
+Type = Database managed space 
+Contents = All permanent data. Large table 
+space. 
+State = 0x0000 
+Detailed explanation: 
+Normal 
+Total pages = 15392 
+Useable pages = 15360 
+Used pages = 15360 
+Free pages = 0 
+High water mark (pages) = 15360 
+Page size (bytes) = 4096 
+Extent size (pages) = 32 
+Prefetch size (pages) = 32 
+Number of containers = 1 
+
+The database is out of file space to allocate new storage for tables, so more space needs to be allocated for the database.
+
+
+RESOLVING THE PROBLEM
+If the tablespace is set up to use automatic storage then it means the file system is full. Check your file system space to see if it is full. You should be able to use the "df -k" command on Unix. 
+
+
+If the database storage is located on a logical volume you could add more file space. 
+
+Here is a link specifying how to add a separate path for additional storage: 
+http://pic.dhe.ibm.com/infocenter/db2luw/v9r7/index.jsp?topic=%2Fcom.ibm.db2.luw.admin.dbobj.doc%2Fdoc%2Ft0023143.html [http://pic.dhe.ibm.com/infocenter/db2luw/v9r7/index.jsp?topic=%2Fcom.ibm.db2.luw.admin.dbobj.doc%2Fdoc%2Ft0023143.html]
+
+Also if normal reorgs and runstats have not been done on the tables in the database, it could be an issue where the space is not getting reclaimed by the operating system. Here is a link showing giving an example about how to set up regular reorgs and runstats: 
+http://www-304.ibm.com/support/docview.wss?uid=swg21444174 [http://www-304.ibm.com/support/docview.wss?uid=swg21444174]
+
+So basically the answer here is to increase the space available to the database.

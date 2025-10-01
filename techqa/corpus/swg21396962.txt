@@ -1,0 +1,137 @@
+Title: IBM Setting up IBM Rational Rhapsody DiffMerge for IBM Rational Synergy - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How to get IBM Rational Synergy to invoke the IBM Rational Rhapsody DiffMerge instead of the text tool. 
+
+ANSWER
+To configure Rational Rhapsody DiffMerge for Rational Synergy:
+
+
+ 1. Update the PATH environment variable on the client machine:
+    On the client machines, ensure the location of the Rhapsody DiffMerge.exe is included in the PATH environment variable (right-click My Computer -> Properties -> Advanced -> Environment Variables). This will be the same folder as the Rational Rhapsody installation folder. 
+    
+    To test this, open up a DOS window on the client and type diffmerge. Verify that the Diff/Merge tool launches. 
+    
+    [/support/docview.wss?uid=swg21396962&amp;aid=1]
+    
+    [/support/docview.wss?uid=swg21396962&amp;aid=2]
+    
+    You must also include the bin folder in the synergy directory in the path, and also make sure there is a user path variable pointing to the synergy install path (NOT \bin) called CCM_HOME
+    
+    
+ 2. Modify Rational Synergy server to recognize Rational Rhapsody Types:
+    On the Synergy server, login as type_developer and import the rhapsodytypes.xml types file (located in the <Rhapsody installation path>\Share\cm\Synergy).
+    
+    
+    ccm set role type_developer
+    ccm typedef -import rhapsodytypes -dir "directory_path_of_rhapsodytypes.xml_file"
+    
+    
+    This will create one type definition "rhapsodytypes" with the migrate rules associated with all the Rhapsody file extensions (.cls, .sbs, etcetera). 
+    
+    It also links the Rational Rhapsody DiffMerge tool to perform comparison and merging on Rational Rhapsody files within Rational Synergy. 
+    
+    
+ 3. Modify ccm.properties file on Synergy Client
+    Open the following ccm.properties file on the Synergy client under <Synergy Installation Folder>\etcetera\ and add the following: 
+    
+    
+    windows.tool.compare.rhapsodytypes = DiffMerge.exe -xcompare "%file1" "%file2" -base "%ancestor"
+    windows.tool.merge.rhapsodytypes = DiffMerge.exe -xmerge "%file1" "%file2" -base "%ancestor" -out "%outfile"
+    
+    
+    Ensure that you modify the C:\\Program Files\\telelogic\\Rhapsody 7.4\\diffmerge.exe to the hard coded path of where DiffMerge.exe is situated on the client machines. 
+    
+    Make sure you put this code into ccm.properties file not into ccm.user.properties.
+    
+    Note that the ccm.properties file is edited on <Synergy Installation Folder>\etc\ on the server, but the changes will take effect when the Synergy client is restarted, so you should not have to restart the Synergy server.
+
+
+
+Troubleshooting 
+
+ 
+
+If this fails to invoke the DiffMerge then temporarily enter a hard coded path (one that will find the DiffMerge.exe on the client machine) such as: 
+
+ * 
+ * 
+   windows.tool.compare.rhapsodytypes = "C:\\Program Files\\telelogic\\Rhapsody 7.4\\diffmerge.exe" -xcompare "%file1" "%file2" -base "%ancestor"
+ * windows.tool.merge.rhapsodytypes = "C:\\Program Files\\telelogic\\Rhapsody 7.4\\diffmerge.exe" -xmerge "%file1" "%file2" -base "%ancestor" -out "%outfile"
+   
+
+
+If there appears to be an issue with the rhapsodytypes, then specify each file type manually thus: 
+
+ * 
+ * 
+   windows.tool.merge.sbs = "C:\\Program Files\\telelogic\\Rhapsody 7.4\\diffmerge.exe" -xmerge "%file1" "%file2" -base "%ancestor" -out "%outfile"
+ * windows.tool.compare.sbs = "C:\\Program Files\\telelogic\\Rhapsody 7.4\\diffmerge.exe" -xcompare "%file1" "%file2" 
+ * windows.tool.merge.rpy = "C:\\Program Files\\telelogic\\Rhapsody 7.4\\diffmerge.exe" -xmerge "%file1" "%file2" -base "%ancestor" -out "%outfile" 
+ * windows.tool.compare.rpy = "C:\\Program Files\\telelogic\\Rhapsody 7.4\\diffmerge.exe" -xcompare "%file1" "%file2" 
+ * windows.tool.merge.cls= "C:\\Program Files\\telelogic\\Rhapsody 7.4\\diffmerge.exe" -xmerge "%file1" "%file2" -base "%ancestor" -out "%outfile" 
+ * windows.tool.compare.cls = "C:\\Program Files\\telelogic\\Rhapsody 7.4\\diffmerge.exe" -xcompare "%file1" "%file2" 
+   
+
+
+
+
+
+Testing 
+
+
+Verify DiffMerge invocation from Synergy client: 
+
+ 1.  In Rhapsody, right-click on a file and choose Configuration Management ->History or via Configuration Items click History. 
+ 2.  It should invoke the Synergy Java client history: 
+     
+     [/support/docview.wss?uid=swg21396962&aid=3] [/support/docview.wss?uid=swg21396962&aid=3] 
+ 3.   
+ 4.  Click on the Compare icon after using CNTRL and left-click to select the two files. 
+ 5.   
+ 6.  Verify that the Rational Rhapspody DiffMerge tool is invoked not the default Synergy differencing tool. You should be able to view the differences. 
+     
+     [/support/docview.wss?uid=swg21396962&amp;aid=4] 
+ 7.   
+ 8.   
+ 9.  Clicking the Merge icon in the Synergy History window should also launch DiffMerge. 
+     
+     [/support/docview.wss?uid=swg21396962&amp;aid=5] 
+ 10.  
+ 11.  
+ 12. Clicking on Yes to Merge Trivial Differences and then doing a File -> Save should then automatically display the merged file in the Synergy History window. 
+     
+     [/support/docview.wss?uid=swg21396962&amp;aid=6] 
+ 13.  
+ 14.  
+ 15. Verify the same operations can be used on the Synergy Classic client. Use the Show History command and select the files as before. Use the Compare/Merge icons at the top: 
+     
+     [/support/docview.wss?uid=swg21396962&amp;aid=7] 
+ 16. 
+
+
+
+Verify DiffMerge invocation from Rhapsody  1.  
+ 2. The DiffMerge tool should also be able to compare the checked out file with the archived file: 
+    
+    [/support/docview.wss?uid=swg21396962&aid=8] [/support/docview.wss?uid=swg21396962&aid=8] 
+ 3.  
+ 4. 
+    [/support/docview.wss?uid=swg21396962&aid=9] [/support/docview.wss?uid=swg21396962&aid=9]
+
+
+If you find the compare still fails (perhaps on the Synch window) please contact IBM Rational Client Support. 
+
+
+
+
+
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Software Development Rational Rhapsody Installation Windows 7.4, 7.4.0.1

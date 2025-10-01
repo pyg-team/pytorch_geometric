@@ -1,0 +1,74 @@
+Title: IBM CLOUD: How to create a Cognos data source to BigInsights on Cloud Hive - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ This article describes how to create a Cognos dynamic query (DQM) data source to an instance of Hive on BigInsights on Cloud. 
+
+ANSWER
+1. BigInsights on cloud’s Hive only requires 2 drivers files to establish connectivity. Acquire these two files from your BigInsights on cloud cluster:
+/usr/iop/4.2.0.0/hive/lib/hive-jdbc-1.2.1-IBM-*-standalone.jar
+/usr/iop/4.2.0.0/hadoop/hadoop-common-2.7.2-IBM-*.jar
+*exact name/version may vary slightly
+
+2. These two driver files must be placed into the <cognos>/analytics/drivers folder on all Cognos report servers.
+
+3. BigInsights/Hive uses an SSL key size greater than 128-bit therefore an update your Websphere OR the default/provided Websphere Liberty Profile is needed before you can connect.
+
+http://www-01.ibm.com/support/docview.wss?uid=swg21990775&aid=1 [/support/docview.wss?uid=swg22008261&aid=1] [/support/docview.wss?uid=swg22008261&aid=1]
+
+To correct the above error (Illegal key size), acquire the unrestricted JCE policy files (local_policy.jar, US_export_policy.jar) from the link below and replace the policy files you currently have in place for the JRE which is in use by Websphere or Websphere Liberty profile. A Cognos/websphere restart is needed.
+
+Websphere:
+<Websphere install>\AppServer\java_1.XXXXX\jre\lib\security 
+
+
+Websphere Liberty Profile:
+<Cognos 11 install>\jre\lib\security
+
+Unrestricted JCE policy File.
+https://www14.software.ibm.com/webapp/iwm/web/reg/pick.do?source=jcesdk&lang=en_US [https://www14.software.ibm.com/webapp/iwm/web/reg/pick.do?source=jcesdk&lang=en_US]
+
+
+4. Bluemix BigInsights on Cloud's Hive utilizes SSL therefore you need to create a keystore to be used by the report server(s) to establish a connection. Using your browser, browse to your Ambari web interface. Click the lock icon in the address bar and choose 'More Information' to view the certificate.
+
+[/support/docview.wss?uid=swg22008261&aid=2] [/support/docview.wss?uid=swg22008261&aid=2]
+
+
+5. Export the certificate using your browser to x.509 pem/crt.
+
+[/support/docview.wss?uid=swg22008261&amp;aid=3]
+
+
+6. Use Keytool to create a keystore containing the certificate which you exported from Ambari. Keytool is a tool which is provided with the IBM jre and is generally located in the bin directory of the jre. Use the keytool.exe/sh which is in the path of the java utilized by Cognos. 
+
+In the below syntax bic4103-105-mastermanager.bicloud.com.crt is the exported certificate from step5, bic4103-105-keystore.jks is an arbitrary name of the keystore to be created.
+
+keytool -import -trustcacerts -alias biginsights -file bic4103-105-mastermanager.bicloud.com.crt -keystore bic4103-105-keystore.jks -storepass mypassword -noprompt
+
+
+Important: This jks must be placed in the same location on all Cognos report servers.
+
+
+
+7. Login to Cognos Connection > Cognos Administration and click the Configuration tab then Data Source Connections. Select the ‘New Data Source’ button in the top right. Select the following options to create a JDBC Hive type connection :
+
+Type: JDBC
+Type: Hive
+*JDBC URL: jdbc:hive2://<HiveServer2 node IP>:10000/default;ssl=true;sslTrustStore=C://keyStore_fromStep6.jks;trustStorePassword=password_Step6
+Connection Properties: <leave blank>
+User ID: biadmin
+Password: <biadmin password>
+
+*Note:
+-on windows double slash is needed in the sslTrustStore param
+-all parameters are case sensitive
+-the sslTrustStore is the Cognos report server location from Step6
+-the trustStorePassword is the arbitrary password from Step6
+
+[/support/docview.wss?uid=swg22008261&aid=4] [/support/docview.wss?uid=swg22008261&aid=4]
+
+example ‘JDBC URL’ field:
+
+jdbc:hive2://bi4c-11-master-3.bi.services.bluemix.net:10000/default;ssl=true;sslTrustStore=C:// 11.jks;trustStorePassword=changeit

@@ -1,0 +1,99 @@
+Title: IBM Security Network Protection firmware update 5.3.3 release notes - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ What are the new features and known issues included in IBM Security Network Protection firmware update 5.3.3? 
+
+ANSWER
+IBM Security Network Protection firmware version 5.3.3 is a firmware update for the XGS NGIPS network protection platform. This release provides the following updates to IBM Security Network Protection Firmware Version 5.3.2: 
+
+ * Inbound SSL inspection enhancements:  * Support for SSL configuration of Extended Master Secret TLS extension in the web server.
+   
+   
+ * Outbound SSL inspection enhancements:  * Support for Extended Master Secret TLS extension. 
+    * Support for Channel ID TLS extension and ChaCha20-Poly1305 Cipher Suites (for Chrome browser to access Google web sites).
+   
+   
+ * XGS/GX parity features:  * Support for Email Response object content customization. 
+    * Added additional information to the IPS events sent to SiteProtector System, including event-type, Issue ID, target-ip-addr-start, and target-ip-addr-end.
+   
+   
+ * Administrator Settings:  * Added OK option in login prompt for both LMI and CLI when enabling login warning banner. 
+    * Added a configurable policy control for minimum length of new password.
+   
+   
+ * LMI/CLI enhancements:  * Added system summary information in LMI dashboard and CLI. 
+    * Added the capability to configure the unique rule label for the Access events of the Network Access Policy rules. 
+    * Added a Clear Events button to the Network Access Events and IPS Events page. 
+    * Added filtering function to the network objects when creating a Network Access Policy rule. 
+    * Added a Download button to the Manage > Available Updates page to download an update without installing it. 
+    * Added Speed/Duplex settings to the Management Interfaces page. 
+    * Added a warning message to the pending policy deployment page in LMI for potential link flapping due to policy change. 
+    * Support for grep function for log viewer CLI > log > grep 
+    * Added a function that allows the system event details list to be downloaded through LMI Help page.
+   
+   
+ * Support for Remote Syslog over TLS. 
+ * Serviceability:  * Added the capability to log the enter and exit software bypass in system events as critical events. 
+    * Added the capability to report unanalyzed and dropped frames. 
+    * Added more details to Outbound SSL Inspection failures in system events and improved existing Inbound SSL Inspection logging. 
+    * Added additional system information to support file, including top, date, and uptime. 
+    * Added the capability to include appliance policy change history with Subversion in the support file.
+   
+   
+
+This release includes all of the defect fixes from firmware update 5.3.2.3. For a list of those fixes, see technote #1984078:  * http://www.ibm.com/support/docview.wss?uid=swg21984078 [http://www.ibm.com/support/docview.wss?uid=swg21984078]
+
+Note: Some enhancements are only available when the IBM Security Network Protection XGS appliance is updated with the latest machine code. For details, see technote #1989529:  * http://www.ibm.com/support/docview.wss?uid=swg21986529 [http://www.ibm.com/support/docview.wss?uid=swg21986529]
+
+Announcement 
+The IBM Security Network Protection firmware version 5.3.3 announcement is available at http://www.ibm.com/common/ssi/index.wss [http://www.ibm.com/common/ssi/index.wss]. See the announcement for the following information:  * Detailed product description, including a description of new functionality 
+ * Product-positioning statement 
+ * Packaging and ordering details 
+ * International compatibility information
+
+Compatibility 
+The following web browsers are currently supported by the IBM Security Network Protection local management interface:  * Internet Explorer 10 or 11 
+ * Firefox 28 and later 
+ * Google Chrome 34 and later
+
+To manage Network Protection 5.3.3 appliances using the SiteProtector System, you must apply the following database service packs:  * SiteProtector System 3.0 - Install all DBSPs up to and including SP3.0 DBSP 3.0.0.55 
+ * SiteProtector System 3.1.1 - Install all DBSPs up to and including SP3.1.1 DBSP 3.1.1.37
+
+Important: Ensure that the SiteProtector Core is at version 3.1.1.5 before applying this Database Service Pack (DBSP) update to the IBM Security Network Protection appliance. The following schemas will be updated upon installing the DBSP: 
+
+Policy 
+
+ *  Advanced Threat Policy IPS Event Filter Management Interface Access Network Access Open Signatures System Alerts Update Servers Administrator Settings 
+
+Shared Objects  *  Email Response Remote Syslog Intrusion Prevention 
+
+Installation and Configuration 
+Prior to running firmware updates on a Network Protection appliance, migrate your policies in SiteProtector to the new version:  * http://www.ibm.com/support/docview.wss?uid=swg21959896 [http://www.ibm.com/support/docview.wss?uid=swg21959896]
+
+For step-by-step installation instructions, see the Installing Updates topic in the IBM Knowledge Center:  * https://www.ibm.com/support/knowledgecenter/SSHLHV_5.3.3/com.ibm.alps.doc/tasks/alps_installing_updates.htm [https://www.ibm.com/support/knowledgecenter/SSHLHV_5.3.3/com.ibm.alps.doc/tasks/alps_installing_updates.htm]
+   Note: After installation, clear web browser cache, cookies, and temporary internet files.
+
+For other configuration instructions, see the following topics in the IBM Knowledge Center:  * https://www.ibm.com/support/knowledgecenter/SSHLHV_5.3.3/com.ibm.alps.doc/alps_collateral/alps_dochome_stg.htm [https://www.ibm.com/support/knowledgecenter/SSHLHV_5.3.3/com.ibm.alps.doc/alps_collateral/alps_dochome_stg.htm] 
+ * https://www.ibm.com/support/knowledgecenter/SSHLHV_5.3.3/com.ibm.alps.doc/concepts/alps_getting_started_container.htm [https://www.ibm.com/support/knowledgecenter/SSHLHV_5.3.3/com.ibm.alps.doc/concepts/alps_getting_started_container.htm] 
+ * https://www.ibm.com/support/knowledgecenter/SSHLHV_5.3.3/com.ibm.alps.doc/tasks/alps_configuring_settings_lmi.htm [https://www.ibm.com/support/knowledgecenter/SSHLHV_5.3.3/com.ibm.alps.doc/tasks/alps_configuring_settings_lmi.htm]
+
+Known issues 
+IBM Security Network Protection 5.3.3 includes the following known issues:  * Remembering login password in Firefox causes "Password not set" error message in Manage System Settings > Administrator Settings. 
+
+Appliance Support Lifecycle 
+This release does not impact the product lifecycle. For IBM Security Network Protection XGS appliance support lifecycle, see technote #1644709:  * http://www-01.ibm.com/support/docview.wss?uid=swg21644709 [http://www-01.ibm.com/support/docview.wss?uid=swg21644709]
+
+Copyright statement © Copyright IBM® Corporation 2012, 2016. U.S. Government Users Restricted Rights - Use, duplication or disclosure restricted by GSA ADP Schedule Contract with IBM Corp. 
+
+Related information:
+Contacting Technical Support [https://www.ibm.com/support/knowledgecenter/SSHLHV_5.3.3/com.ibm.alps.doc/concepts/technical_support_contacts.htm]
+
+
+
+
+
+
+[/support/docview.wss?uid=swg21986450&aid=1] [https://ibm.biz/BdHdZx] [/support/docview.wss?uid=swg21986450&aid=2] [http://ibm.biz/InfraSecForumTechnote] [/support/docview.wss?uid=swg21986450&aid=3] [http://ibm.biz/SecSuptUTube] [/support/docview.wss?uid=swg21986450&aid=4] [http://ibm.biz/InfraSecFixes] [/support/docview.wss?uid=swg21986450&aid=5] [http://ibm.biz/FlexLicLogin] [/support/docview.wss?uid=swg21986450&aid=6] [http://ibm.biz/MyNotification] [/support/docview.wss?uid=swg21986450&aid=7] [http://ibm.biz/ContactSecSupport]

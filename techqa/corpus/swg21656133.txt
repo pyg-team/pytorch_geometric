@@ -1,0 +1,35 @@
+Title: IBM After configured SSO, it does not return to Workplace XT when I log out - United States
+
+Text:
+SSO; SPNEGO; WAS; WPXT; Security; TAI; unprotected TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ We have configured Single Sign On (SSO) via SPNEGO on FileNet Workplace XT (WPXT). When I log out on WPXT from "Browse" or "Search" page, SSO works properly. However, when I tried to log ou from "My Workplace" page, it will return blank page. 
+
+ENVIRONMENT
+Websphere Application Server 8.x
+
+DIAGNOSING THE PROBLEM
+ The following error can be found from Systemout.log
+
+"[10/18/13 13:46:38:456 EDT] 0000010a WASSessionCor E SessionContext
+checkSecurity SESN0008E: A user authenticated as anonymous has attempted to access a session owned by user:defaultWIMFileBasedRealm/CN=XXXX,OU=Users,OU=XXXX,OU=XXXX,DC=XXXX,DC=XXXX. "
+
+RESOLVING THE PROBLEM
+Please add the custom property and set the value as true.:
+
+
+- com.ibm.websphere.security.performTAIForUnprotectedURI
+
+
+This is security custom property at:
+
+Global security > Custom properties
+
+com.ibm.websphere.security.performTAIForUnprotectedURI
+
+This property is used to specify TAI invocation behavior when Use available authentication data when an unprotected URI is accessed is selected in the administrative console.
+
+Default false
+
+Note: In previous versions of WebSphere Application Server, the default value of this custom property was true. For WebSphere Application Server Version 8.0.0.1, the default value is now false.

@@ -1,0 +1,27 @@
+Title: IBM What happens when a custodian does not confirm a hold, responds with a "No"? Can the response be changed? - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ What happens when a custodian does not confirm a hold, responds with a "No"? Can the response be changed? 
+
+ANSWER
+When a custodian does not confirm a hold, responds with a "No", the following will happen:
+- When viewing the notice and reports the "Replied, No Confirmation" statistic will be incremented by 1 for the custodian's response
+- If you configured the hold notice with the "On Exception, alert" setting to send to the attorney, paralegal or both; the selected people will receive an alert if a custodian responds "No" to the confirmation question
+
+The custodian will still be considered on hold, but he/she will no longer receive any further confirmation reminders. The custodian will still receive future auto-reminders if configured for the hold notice.
+
+In terms of having the custodian change his/her response, this depends on the type of confirmation mechanism used for the hold notice. If the embedded question was used, for example adding the $Q:FullyComply to the notice content, the custodian can go back to the hold notice email and resubmit a different response. Now if an interview was included for the hold notice, the custodian will not be able to respond to the interview again.
+
+For the hold with interview situation, here are a couple suggestions to capture a different response.
+
+1. The custodian can be removed and re-added as a recipient to the hold. The custodian will receive a new notice and be able to complete the interview again. This will show up as two separate interview results for the same person.
+
+2. Have the paralegal capture the fact that the custodian responded incorrectly as an ad-hoc interview log. This is more for informational purposes only if the custodians response becomes a point of interest for the matter.
+
+
+
+HISTORICAL NUMBER
+ 1540

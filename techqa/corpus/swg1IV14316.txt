@@ -1,0 +1,234 @@
+Title: IBM IV14316: ERROR TRYING TO REFORECAST SUBSEQUENT DATES - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PERMANENT RESTRICTION.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Problem:  Error trying to reforecast subsequent dates
+   
+   Version of Maximo:  maxdemo 7.1.1.6 with scheduler 7.1.1.0
+   Description:
+   STEPS:
+   replicated in maxdemo DB2 specific, maxdemo 7.1.1.6 with
+   scheduler
+   7.1.1.0
+   
+   1.Create a PM  for an Asset with a Job plan (check the  Job plan
+   sequence tab, there should be job plan sequence defined).
+   
+   2.Enter the frequency as 45 days and enter an ?stimated next due
+   date?
+   
+   3. Click the Forecast tab, Check the check box ?eforecast
+   subsequent
+   Dates?
+   
+   4. Save and change the status of PM to ACTIVE.
+   
+   5. Select ?enerate Forecast?from the select action.
+   
+   6. Enter the following value in the populated window.
+   Forecast for (Days) ?1300 and click OK.
+   7.Maximo will show the confirmation for the forecast generation,
+   click
+   OK
+   
+   8. User could see that 29 PM forecasted  lines are created.
+   9. Select a new date for the first line and click on save icon.
+   10. The below message will be popped up and click ?es
+   
+   11. Maximo throws the below error.
+   
+   
+    BMXAA4210E - Database error number -4470 has occurred.
+   [jcc][t4][10120][10898][3.53.70] Invalid operation: result set
+   is
+   closed. ERRORCODE=-4470, SQLSTATE=null
+   
+   
+   
+   This error is thrown only when the fore cast lines are more than
+   22.
+   In step 6 if we enter 1000 as the days instead of 1300, the
+   number of
+   lines created will be 22 and this error will not be thrown by
+   maximo.
+   
+   tried applying SCHED7110_hfixes.20111205-1903.zip but it didn't
+   fix the
+   error
+   
+   below is an excerpt from the maximo.log (attached)
+   29 Jan 2012 16:47:29:952 [INFO] BMXAA6719I - USER = (MAXADMIN)
+   SPID = (127.0.0.1.27398.120129212925) app (null) object
+   (PMFORECAST) : select * from pmforecast  where pmnum = '1014'
+   and siteid = 'BEDFORD'  and ltdpmcounter = (select
+   min(ltdpmcounter) from pmforecast  where pmnum = '1014'  and
+   siteid = 'BEDFORD' ) for read only
+   29 Jan 2012 16:47:29:967 [ERROR] BMXAA6712E - The MBO could not
+   be fetched from the database in the mboset. Closing the mboset.
+   29 Jan 2012 16:47:30:139 [ERROR] BMXAA6713E - The MBO fetch
+   failed in the mboset with the SQL error code:-4470
+   com.ibm.db2.jcc.b.SqlException: [jcc][t4][10120][10898][3.53.70]
+   Invalid operation: result set is closed. ERRORCODE=-4470,
+   SQLSTATE=null
+    at com.ibm.db2.jcc.b.bd.a(bd.java:660)
+    at com.ibm.db2.jcc.b.bd.a(bd.java:60)
+    at com.ibm.db2.jcc.b.bd.a(bd.java:103)
+    at com.ibm.db2.jcc.b.ul.Fb(ul.java:4171)
+    at com.ibm.db2.jcc.b.ul.c(ul.java:312)
+    at com.ibm.db2.jcc.b.ul.next(ul.java:291)
+    at psdi.mbo.MboSet.getNextRecordData(MboSet.java:2952)
+    at psdi.mbo.MboSet.fetchMbosActual(MboSet.java:2584)
+    at psdi.mbo.MboSet.fetchMbos(MboSet.java:2550)
+    at psdi.mbo.MboSet.getMbo(MboSet.java:1843)
+    at
+   psdi.skd.app.pm.SKDPM.reforecastSubsequentDates(SKDPM.java:1834)
+    at
+   psdi.skd.app.pm.SKDPM.reforecastSubsequentDates(SKDPM.java:1711)
+    at psdi.skd.app.pm.PMForecast.save(PMForecast.java:256)
+    at psdi.mbo.MboSet.saveMbos(MboSet.java:6981)
+    at psdi.mbo.MboSet.validateTransaction(MboSet.java:6962)
+    at
+   psdi.txn.MXTransactionImpl.validateTransaction(MXTransactionImpl
+   .java:376)
+    at
+   psdi.txn.MXTransactionImpl.saveTransaction(MXTransactionImpl.jav
+   a:213)
+    at psdi.txn.MXTransactionImpl.save(MXTransactionImpl.java:162)
+    at psdi.mbo.MboSet.save(MboSet.java:6653)
+    at psdi.mbo.MboSet.save(MboSet.java:6594)
+    at psdi.webclient.system.beans.AppBean.save(AppBean.java:532)
+    at psdi.webclient.system.beans.AppBean.SAVE(AppBean.java:830)
+    at
+   psdi.skd.webclient.beans.pm.SKDPMAppBean.SAVE(SKDPMAppBean.java:
+   181)
+    at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+   
+   note: IF I click the 'Process Pending Reforecast' button instead
+   of 'Save'.
+   I get error BMXAT02163  - cannot process pending reforecast
+   until the record is saved.
+   
+   so I had to hit the save button and then get the same error
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  n/a
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: Scheduler Users                              *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: ERROR TRYING TO REFORECAST SUBSEQUENT   *
+   *                      DATES on DB2 database                   *
+   *                                                              *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   *                                                              *
+   *                                                              *
+   *                                                              *
+   ****************************************************************
+   ERROR TRYING TO REFORECAST SUBSEQUENT DATES on DB2 database
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Throw exception in the bean.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV14316
+   
+   
+ * REPORTED COMPONENT NAME
+   PREVENTIVE MAIN
+   
+   
+ * REPORTED COMPONENT ID
+   5724R46PM
+   
+   
+ * REPORTED RELEASE
+   711
+   
+   
+ * STATUS
+   CLOSED PRS
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-01-30
+   
+   
+ * CLOSED DATE
+   2012-03-02
+   
+   
+ * LAST MODIFIED DATE
+   2012-03-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *     MAXIMO
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

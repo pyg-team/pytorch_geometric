@@ -1,0 +1,248 @@
+Title: IBM PI72791: Focus jumps to wrong module row when editing a module row and then select a different row (WI 111263) - United States
+
+Text:
+  A FIX IS AVAILABLE
+Rational DOORS Next Generation 6.0.4 [http://www-01.ibm.com/support/docview.wss?uid=swg24043729]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS UNREPRODUCIBLE IN NEXT RELEASE.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  With IBM Doors Next Generation, three different problems have
+   been identified as symptoms caused by the same defect, which are
+   all related to importing artifacts from CSV and/or XSL into
+   Japanese projects:
+   
+   A.  Round-trip XLS and CSV import loosing Line Breaks:
+   
+   1) Install both the English and Japanese language packs on the
+   RDNG server.
+   2) Set the browser to the Japanese language.
+   3) Access RDNG and ensure that everything is loaded in Japanese.
+   Refresh the browser if necessary.
+   4) Create a new project.
+   5) Switch the browser to the English language. Refresh the
+   browser.
+   6) Verify that the Manage Project Properties page shows that
+   system-defined types are created in Japanese. This is expected.
+   7) Create a module.
+   8) In the module, create an artifact that contains the following
+   text. Use "Shift + Enter" to separate the lines:
+   Line 1
+   Line 2
+   Line 3
+   9) Add the Name column to the module view.
+   10) Save the module view.
+   11) Export that view to Microsoft Excel (XLS) format
+   12) Import the spreadsheet back to update the module.
+   
+   Expected Results:
+   The text remains formatted with line breaks.
+   
+   Actual Results:
+   The line breaks disappear and everything appears on one line.
+   
+   
+   B.  Another symptom caused by the same defect is the following:
+   In an environment with the Japanese language pack installed,
+   importing a spreadsheet to update a module can replace a table
+   with text such as "{TABLE id=_1466728439867}"
+   
+   Steps to Reproduce:
+   1) Install both the English and Japanese language packs on the
+   RDNG server
+   2) Set the browser to the Japanese language
+   3) Access RDNG and ensure that everything is loaded in Japanese.
+   Refresh the browser if necessary.
+   4) Create a new project.
+   5) The project template chosen does not matter. In this test,
+   use the out-of-the-box template "Requirements Template for
+   Testers.
+   6) Switch the browser to the English language. Refresh the
+   browser. (This is assuming you are an English speaker to make it
+   easier. It is only necessary that the project was initially
+   created when the browser was set to Japanese)
+   7) Verify that the Manage Project Properties page shows that
+   system-defined types are created in Japanese. This is expected.
+   8) Create a module.
+   9) In the module, create an artifact that contains a table
+   10) In the module, create a view.
+   11) Export that view to XLS format
+   13) An error appears saying that the Name column is missing. -->
+   This error does NOT appear if the project was initially created
+   in English. See attachment 61493
+   14) Modify the module view to include the Name column and
+   re-export the view to XLS format. See attachment 61494
+   15) Import the spreadsheet back to update the module
+   
+   Expected Results:
+   The table in the module remains
+   
+   Actual Results:
+   The table in the module is replaced by text "{TABLE
+   id=_XXXXXXXXXXXX}".
+   Additional Information:
+   - For a Japanese language project, if we use CSV format, we also
+   get a different but bad result. The table format is lost. See
+   attachment 61496
+   (10_ResultWithCSVRoundTrip_TableLosesFormatting.PNG)
+   
+   C. Another symptom caused by the same defect is the following:
+   In a Japanese project, when importing an Excel (xls or xlsx)
+   into DNG, that imports text that contains  '"![CDATA[  ]]"',
+   then '"![CDATA[  ]]"'  will not be imported into the text  of
+   the artifact.
+   If '"![CDATA[  ]]"' contains text (ie '"![CDATA[ MyText]]"',
+   then only ' MyText' gets imported in the artifacts text.
+   The problem is not reproducible in an English project.
+   The problem does not occur for the Name or Description fields,
+   it occurs with the Primary Text field.
+   
+   Steps to Reproduce:
+   1) Create a project in Japanese
+   1-1) Change the browser language to Japanese
+   1-2) Go to
+   rm/admin#action=jazz.viewPage&id=com.ibm.team.process.ProjectAre
+   aManagement > Create project area on the page > Name the project
+   and [Save]
+   If the stream name or default artifact attributes are in
+   Japanese, then it is a Japanese project.
+   2) In Browse Artifacts page, create an artifact and enter
+   "![CDATA[MyText]]"  in the Primary Text.
+   3) Edit icon > Export artifact > XLS or XLSX
+   4) Import the XLS back into the Browse Artifacts. (Select the
+   'Create new artifacts for all entries' option)
+      Import the artifacts into a module.
+   
+   Expected Results:(Note that this works fine in English projects)
+   Expected is that the data imports as it was when exporting, and
+   it will show '"![CDATA[ 'MyText]]" ' completely,
+   
+   Actual Results:
+   "![CDATA[  ]]" is interpreted and you only  see 'MyText'  in the
+   Primary Text.
+   
+   Please refer to the following jazz.net work item for more
+   information on this defect:
+   https://jazz.net/jazz03/resource/itemName/com.ibm.team.workitem. [https://jazz.net/jazz03/resource/itemName/com.ibm.team.workitem.]
+   WorkItem/108403
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  No know workaround
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * All user/environments are affected                           *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * In DNG, sometimes when you edit a module row and then select *
+   * a different row, the wrong row gets highlighted.             *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This issue is fixed in the DOORS Next Generation 6.0.4 release.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI72791
+   
+   
+ * REPORTED COMPONENT NAME
+   RATL DOORS NG
+   
+   
+ * REPORTED COMPONENT ID
+   5724W87NG
+   
+   
+ * REPORTED RELEASE
+   601
+   
+   
+ * STATUS
+   CLOSED UR1
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-11-24
+   
+   
+ * CLOSED DATE
+   2017-06-07
+   
+   
+ * LAST MODIFIED DATE
+   2017-06-07
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   RATL DOORS NG
+   
+   
+ * FIXED COMPONENT ID
+   5724W87NG
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R601 PSN
+   UP

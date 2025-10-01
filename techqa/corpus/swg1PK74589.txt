@@ -1,0 +1,296 @@
+Title: IBM PK74589: SCHEMA NAME  JCR   IS HARDCODED AND CANNOT BE CHANGED IF DB     TRANSFER - United States
+
+Text:
+  FIXES ARE AVAILABLE
+6.0.1.7 Download: WebSphere Portal and Web Content Manager V6.0.1, fix pack 7 [http://www-01.ibm.com/support/docview.wss?uid=swg24025748]
+6.0.1.5 Download: WebSphere Portal and Web Content Management V6.0.1 fix pack 5 [http://www-01.ibm.com/support/docview.wss?uid=swg24021241]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Portal 6.0.1.4 on Z/OS
+   The following error is noticed  during database transfer  from
+   cloudscape  to  DB2 on Z/OS
+   
+   The error is below
+   
+   
+   create-jcr-dynamic-tables-db2-zos:
+   
+    Tue Oct 14 12:05:27 EDT 2008
+         [java] Initializing with input file
+   '/wasconfig/wpcell/wpwpna/Portal/jcr/config/dynamic/icmjcrmvs.dd
+   l'.
+         [java] Unable to instantiate ILogonOutput object.
+         [java] com.ibm.icm.da.DBAccessException: DB2 SQL error:
+   SQLCODE:
+   -204, SQLSTATE: 42704, SQLERRMC: JCR.ICMSTSYSCONTROLThread
+   428397145 :
+   lException: DB2 SQL error: SQLCODE: -204, SQLSTATE: 42704,
+   SQLERRMC:
+   JCR.ICMSTSYSCONTROL
+         [java] Connected to
+   jdbc:db2://pelp13p.pbm.ihost.com:446/DB01
+         [java] DROP TABLE WPJCRWP.ICMUT01000001
+         [java]    at com.ibm.db2.jcc.c.ig.e(ig.java:1685)
+         [java]    at com.ibm.db2.jcc.c.ig.a(ig.java:1244)
+         [java]    at com.ibm.db2.jcc.c.ig.a(ig.java:1230)
+         [java]    at com.ibm.db2.jcc.b.kb.h(kb.java:132)
+         [java] Not required (com.ibm.db2.jcc.c.SqlException: DB2
+   SQL
+   error: SQLCODE: -204, SQLSTATE: 42704, SQLERRMC:
+   WPJCRWP.ICMUT01000001)
+   1     [java]    at com.ibm.db2.jcc.b.kb.a(kb.java:43)
+         [java]    at com.ibm.db2.jcc.b.w.a(w.java:30)
+         [java]    at com.ibm.db2.jcc.b.dc.f(dc.java:161)
+         [java]    at com.ibm.db2.jcc.c.ig.n(ig.java:1224)
+         [java]    at com.ibm.db2.jcc.c.ig.a(ig.java:1963)
+         [java]    at com.ibm.db2.jcc.c.ig.a(ig.java:524)
+         [java] CREATE TABLE WPJCRWP.ICMUT01000001(COMPCLUSTERID
+   INTEGER
+   NOT NULL,COMPONENTID CHAR(18) NOT NULL,ITEMID CHAR(26) NOT
+   NULL,VERSIONID SMALLINT NOT NULL,ACLCODE INTEGER NOT
+   NULL,SEMANTICTYPE
+   INTEGER NOT NULL,EXPIRATIONDATE DATE,COMPKEY CHAR(23) NOT NULL,
+    CREATETS TIMESTAMP NOT NULL,CREATEUSERID CHAR(32) NOT
+   NULL,LASTCHANGEDTS TIMESTAMP NOT NULL,LASTCHANGEDUSERID CHAR(32)
+   NOT
+   NULL, PRIMARY KEY (COMPKEY), UNIQUE (COMPONENTID,VERSIONID)) IN
+   .ICMLFQ32
+         [java]    at
+   com.ibm.db2.jcc.c.ig.executeQuery(ig.java:508)
+         [java]    at
+   com.ibm.icm.da.portable.common.sql.PStatement.executeQuery(PStat
+   ement.ja
+   va:96)
+         [java]    at
+   com.ibm.icm.da.portable.connection.Logon.getSysControl(Logon.jav
+   a:73)
+         [java] Error during statement execution!
+         [java]    at
+   com.ibm.icm.da.portable.connection.Logon.logon(Logon.java:143)
+         [java] com.ibm.db2.jcc.c.SqlException: DB2 SQL error:
+   SQLCODE:
+   -104, SQLSTATE: 42601, SQLERRMC: .;DATABASE <IDENTIFIER>
+         [java]    at
+   com.ibm.icm.da.portable.connection.ConnectionManager.logon(Conne
+   ctionMan
+   ager.java:48)
+         [java]    at com.ibm.db2.jcc.c.ig.e(ig.java:1685)
+         [java]    at com.ibm.db2.jcc.c.ig.b(ig.java:1212)
+         [java]    at com.ibm.db2.jcc.b.kb.i(kb.java:225)
+         [java]    at
+   com.ibm.wps.config.IcmzosTables.obtainConnection(IcmzosTables.ja
+   va:488)
+         [java]    at
+   com.ibm.wps.config.IcmzosTables.discoverDatabaseName(IcmzosTable
+   s.java:3
+   97)
+         [java]    at com.ibm.db2.jcc.b.kb.b(kb.java:50)
+         [java]    at com.ibm.db2.jcc.b.w.b(w.java:36)
+         [java]    at com.ibm.db2.jcc.b.dc.e(dc.java:150)
+         [java]    at
+   com.ibm.wps.config.IcmzosTables.main(IcmzosTables.java:185)
+         [java]    at com.ibm.db2.jcc.c.ig.m(ig.java:1209)
+         [java]    at com.ibm.db2.jcc.c.ig.a(ig.java:1998)
+         [java]    at com.ibm.db2.jcc.c.ig.e(ig.java:810)
+         [java] getNextException:Thread 428397145 : lException: DB2
+   SQL
+   error: SQLCODE: -514, SQLSTATE: 26501, SQLERRMC: SQL_CURLH200C1
+         [java]    at com.ibm.db2.jcc.c.ig.e(ig.java:1685)
+         [java]    at com.ibm.db2.jcc.c.ig.a(ig.java:1265)
+         [java]    at com.ibm.db2.jcc.c.ig.execute(ig.java:794)
+         [java]    at
+   com.ibm.wps.config.SqlProcessor.process(SqlProcessor.java:591)
+         [java]    at com.ibm.db2.jcc.b.kb.o(kb.java:611)
+         [java]    at com.ibm.db2.jcc.b.kb.j(kb.java:264)
+         [java]    at com.ibm.db2.jcc.b.kb.c(kb.java:57)
+         [java]    at
+   com.ibm.wps.config.SqlProcessor.process(SqlProcessor.java:93)
+         [java]    at
+   com.ibm.wps.config.IcmzosTables.processSql(IcmzosTables.java:555
+   )
+         [java]    at com.ibm.db2.jcc.b.w.c(w.java:42)
+         [java]    at com.ibm.db2.jcc.b.dc.g(dc.java:178)
+         [java]    at com.ibm.db2.jcc.c.ig.p(ig.java:1261)
+         [java]    at
+   com.ibm.wps.config.IcmzosTables.main(IcmzosTables.java:198)
+         [java] (ErrCode=-104, SqlState=42601)
+         [java]    at com.ibm.db2.jcc.c.ig.a(ig.java:1965)
+         [java]    at com.ibm.db2.jcc.c.ig.a(ig.java:524)
+         [java]    at
+   com.ibm.db2.jcc.c.ig.executeQuery(ig.java:508)
+         [java]    at
+   com.ibm.icm.da.portable.common.sql.PStatement.executeQuery(PStat
+   ement.ja
+   va:96)
+         [java]    at
+   com.ibm.icm.da.portable.connection.Logon.getSysControl(Logon.jav
+   a:73)
+         [java]    at
+   com.ibm.icm.da.portable.connection.Logon.logon(Logon.java:143)
+         [java]    at
+   com.ibm.icm.da.portable.connection.ConnectionManager.logon(Conne
+   ctionMan
+   ager.java:48)
+         [java]    at
+   com.ibm.wps.config.IcmzosTables.obtainConnection(IcmzosTables.ja
+   va:488)
+         [java]    at
+   com.ibm.wps.config.IcmzosTables.discoverDatabaseName(IcmzosTable
+   s.java:3
+   97)
+         [java]    at
+   com.ibm.wps.config.IcmzosTables.main(IcmzosTables.java:185)
+   1     [java] ERROR: Unable to obtain DB connection.
+         [java] Setting database autocommit to:true
+         [java] ERROR processing SQL!  Mission aborted.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  ************************************
+   Following the execution of database-transfer-part-one, there are
+   a
+   series of files generated for me here on my system:
+   
+   PELP13:PORTAL1:/wasconfig/wpcell/wpwpna/Portal/jcr/config/dynami
+   c
+   Which translates to <PORTAL_HOME>/jcr/config/dynamic
+   
+   In this directory there is only one file that concerns us
+   (icmjcrmvs.ddl) and it is this file which should be first backed
+   up to
+   /tmp on the system you're working on.  Edit this file on your
+   local
+   machine by ftp'ing it down and then ftp'ing it back up as you'll
+   need to
+   replace thousands of references of the variable %JCRSCHEMA% and
+   you will
+   want to use a find/replace tool   ---  This variable reference
+   must be
+   replaced to the schema entered during the initial parts of the
+   configuration process (the desired final schema).  In my case it
+   is WPJCRSCH
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Problem Summary: Error in performing DB Transfer using
+   non-default prefix JCR
+   
+   Detail: Non Default JCR error with zOS platforms
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A fix is available from Fix Central:
+   http://www.ibm.com/eserver/support/fixes/fixcentral/swg/quickord
+   er?apar=PK74589&productid=WebSphere%20Portal&brandid=5 [http://www.ibm.com/eserver/support/fixes/fixcentral/swg/quickorder?apar=PK74589&productid=WebSphere%20Portal&brandid=5]
+    You may need to type or paste the complete address into your
+    Web browser.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK74589
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSPHERE PORTA
+   
+   
+ * REPORTED COMPONENT ID
+   5724E7600
+   
+   
+ * REPORTED RELEASE
+   60H
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-10-28
+   
+   
+ * CLOSED DATE
+   2008-12-11
+   
+   
+ * LAST MODIFIED DATE
+   2008-12-11
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  JCR
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBSPHERE PORTA
+   
+   
+ * FIXED COMPONENT ID
+   5724E7600
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R60G PSY
+   UP

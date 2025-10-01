@@ -1,0 +1,162 @@
+Title: IBM PM92247: SOLUTION INSTALLER FAILS TO DEPLOY A PAA FILE WHERE THE WASUSERI D DIFFERS FROM THE PORTALADMINID - United States
+
+Text:
+  A FIX IS AVAILABLE
+Fixes integrated in WebSphere Portal 8.0.0.1 Combined Cumulative Fixes [http://www-01.ibm.com/support/docview.wss?uid=swg24034497]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The credential check attempts to log into Portal using the
+   wsadmin tool and it fails, where the PortalAdminId differs from
+   the WasUserid.  To fix this issue the credential check will now
+   just verify that the wsadmin tool can authenticate with a
+   running server.  The wcmdetect and delete tasks have been
+   modified to ensure they always use the PortalAdminId and
+   password.
+   
+   ConfigTrace.log contains:
+   si-check-was-password:
+   ...
+   [wsadmin] WASX7017E: Exception received while running file
+   ".../PortalServer/solutionInstaller/wp.si/config/templates/waste
+   st.py";
+   ...
+   [wsadmin] EJPXD0016W: The login failed: EJPSG0002E: Requested
+   Member
+   does not exist.uid=adminid,o=ibm.com
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Solution Installer fails to deploy a paa file where the
+   WASUserID differs from the PortalAdminId.
+   
+   The credential check attempts to log into Portal using the
+   wsadmin tool and it fails, where the PortalAdminId differs from
+   the WasUserid. To fix this issue the credential check will now
+   just verify that the wsadmin tool can authenticate with a
+   running server. The wcmdetect and delete tasks have been
+   modified to ensure they always use the PortalAdminId and
+   password.
+   
+   ConfigTrace.log contains:
+   si-check-was-password:
+   ...
+   [wsadmin] WASX7017E: Exception received while running file
+   ".../PortalServer/solutionInstaller/wp
+   .si/config/templates/waste
+   st.py";
+   ...
+   [wsadmin] EJPXD0016W: The login failed: EJPSG0002E: Requested
+   Member
+   does not exist.uid=adminid,o=ibm.com
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A code fix for this issue is integrated into the Combined
+   Cumulative Fix 007 (PM91269 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM91269]) for WebSphere Portal & WCM 8.0.0.1.
+   
+   http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent
+   =ibm/WebSphere&product=ibm/WebSphere/WebSphere+Portal&release=Al [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm/WebSphere&product=ibm/WebSphere/WebSphere+Portal&release=Al]
+   l&platform=All&function=aparId&apars=PM91269
+   
+   You might need to type or paste the complete address into your
+   Web browser.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM92247
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSPHERE PORTA
+   
+   
+ * REPORTED COMPONENT ID
+   5724E7600
+   
+   
+ * REPORTED RELEASE
+   800
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-07-02
+   
+   
+ * CLOSED DATE
+   2013-08-13
+   
+   
+ * LAST MODIFIED DATE
+   2013-08-13
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBSPHERE PORTA
+   
+   
+ * FIXED COMPONENT ID
+   5724E7600
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R800 PSY
+   UP

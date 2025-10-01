@@ -1,0 +1,146 @@
+Title: IBM PM41450: RHP 753 - 'Action on Exit' code not execting correctly with concurrency - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Rational Rhapsody 8.0 [http://www-01.ibm.com/support/docview.wss?uid=swg24032982]
+Rational Rhapsody 8.0.6 [http://www-01.ibm.com/support/docview.wss?uid=swg24037021]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Transition from join to terminatin connector results in one of
+   the concurrent state's 'Action on Exit' not being called
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   In cases where orthogonal states exit to a join connector
+   that is followed by a termination connector, the code that
+   is generated always uses the exit action of the first state
+   regardless of which of the orthogonal states the system was
+   in.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fixed in version 8.0. To preserve the previous code
+   generation behavior for pre-8.0 models, a property called
+   CG::Statechart::UsePre80StatechartCG was added to the
+   backward compatibility settings for C, C++, and Java with a
+   value of True.
+   
+   In the original description of the item, the user also
+   indicated that there is an additional defect: the exit
+   action of the AND state containing all orthogonal components
+   is not executed. Since the target of the compound
+   transitions is a termination connector (terminate pseudo
+   state), this is not a defect according to the UML
+   specification. Following is a citation: "Entering a
+   terminate pseudostate implies that the execution of this
+   state machine by means of its context object is terminated.
+   The state machine does not exit any states nor does it
+   perform any exit actions other than those associated with
+   the transition leading to the terminate pseudostate."
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM41450
+   
+   
+ * REPORTED COMPONENT NAME
+   TLOGIC RHAPSODY
+   
+   
+ * REPORTED COMPONENT ID
+   5724V74RP
+   
+   
+ * REPORTED RELEASE
+   750
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-06-13
+   
+   
+ * CLOSED DATE
+   2012-09-27
+   
+   
+ * LAST MODIFIED DATE
+   2012-09-27
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TLOGIC RHAPSODY
+   
+   
+ * FIXED COMPONENT ID
+   5724V74RP
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R750 PSN
+   UP

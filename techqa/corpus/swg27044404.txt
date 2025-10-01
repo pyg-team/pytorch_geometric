@@ -1,0 +1,30 @@
+Title: IBM Webcast: Debugging IBM Decision Optimization Center Applications - United States
+
+Text:
+ WEBCAST
+
+ABSTRACT
+ This presentation provides guidelines in resolving issues encountered during installation, development and deploying applications using IBM Decision Optimization Center, previously called IBM ILOG ODM Enterprise. We will provide guidelines to troubleshooting by identifying problematic areas and utilizing log files to debug the application. We will also provide guidelines on memory management with these applications. 
+
+CONTENT
+Title: Debugging IBM Decision Optimization Center Applications 
+
+Presenter: Nikhila Arkalgud, Level 2 Technical Support Engineer 
+Olivier Binckly, Level 2 Technical Support Engineer
+
+Overview: 
+
+This presentation provides guidelines in resolving issues encountered during installation, development and deploying applications using IBM Decision Optimization Center, previously called IBM ILOG ODM Enterprise. We will provide guidelines to troubleshooting by identifying problematic areas and utilizing log files to debug the application. We will also provide guidelines on memory management with these applications. 
+
+
+Level of Difficulty: Beginner/Intermediate
+
+
+PRESENTATION
+[http://www.ibm.com/i/v16/icons/weblecture.gif]2014-11 WSTE Nikhila_Olivier.pdf [/support/docview.wss?uid=swg27044404&aid=2]2014-11 WSTE Nikhila_Olivier.pdf [/support/docview.wss?uid=swg27044404&aid=1] 
+
+Double click the PDF file above to view or save the slide presentation for this webcast.
+
+
+AUDIO
+[http://www.ibm.com/i/v16/icons/aud.gif]You can watch this presentation on YouTube [https://www.youtube.com/watch?v=lIQAMpgdz-E&list=PLtMc0oRyKu5ycqS_JoX-tBI-BmF1K1iOm&index=2] on our IBM Decision Optimization Support channel

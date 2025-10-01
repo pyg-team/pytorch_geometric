@@ -1,0 +1,30 @@
+Title: IBM RC12 when issuing CEMT commands from batch jobs with CICS TS 4.2 - United States
+
+Text:
+5655S9700 R670 670 R700 700 HCI6700 5655-S97 5655S97 KIXINFO kixdcfcic670 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ You are issuing CEMT commands from a batch job. After upgrading to CICS Transaction Server for z/OS (CICS TS) V4.2, your batch job receives a return code 12 (RC12). Commands other than INQUIRE that contain even minor errors are no longer processed. For example, you receive RC12 with "E '000' is not valid and is ignored" when using H&W SYSB-II. 
+
+SYMPTOM
+In this case, SYSB-II builds a parameter string that contains the command to execute. In building this string, characters are inadvertently added at the end of the command. Here is an example of the command:
+
+SET FILE(filename) CLOSED 000 
+
+In CICS TS V4.1, when this command is executed a return code of 8 is received along with the message E '000' is not valid and is ignored. The command however is honored and executed. 
+
+But when using CICS TS 4.2, the command is no longer being executed. It now receives a return code of 12, but is still accompanied with the messages E '000' is not valid and is ignored. It appears that executing commands other than INQUIRE that contain even minor errors are no longer processed.
+
+
+CAUSE
+The change in CICS TS V4.2 has to do with FIN APAR PK97800 [http://www-01.ibm.com/support/docview.wss?uid=swg1PK97800]which was taken to make the programmable interfaces work the same as CEMT. So, if no display is involved and any sort of error has occurred on a SET command CICS now sets a return code of 12 in DFHEMT01. The logic was added at base for CICS TS V4.2.
+
+RESOLVING THE PROBLEM
+As the intent of the change was to tighten up on the error checking when incorrect parameters are entered, you will have to correct the errors. 
+
+If you are using SYSB-II, you might need to contact [/support/docview.wss?uid=swg21597316&amp;aid=1] H&W [http://www.hwcs.com/].
+
+
+
+PRODUCT ALIAS/SYNONYM
+ CICS/TS CICS TS CICS Transaction Server

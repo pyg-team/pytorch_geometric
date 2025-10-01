@@ -1,0 +1,34 @@
+Title: IBM The specified upgrade package cannot be installed over current version - United States
+
+Text:
+svcupgradetest; firmware update TECHNOTE (TROUBLESHOOTING)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ English 
+
+PROBLEM(ABSTRACT)
+ Firmware update fails with message:
+
+The system is unable to install upgrade package. 
+The specific upgrade package cannot be installed over current version. 
+
+lssoftwareupgradestatus showing inactive, 0. 
+
+CAUSE
+The Upgrade Test Utility is rejecting the upgrade because the build level is not in the upgrade utility list. Only publicly release firmware builds and iFix builds are listed in the Upgrade Test Utility
+
+DIAGNOSING THE PROBLEM
+Open the 'Firmware Release Letter' from Fix Central [https://www-945.ibm.com/support/fixcentral/] and verify that the upgrade is listed under 'Supported Upgrade Path'. 
+
+ 1. From the 'Firmware Release Letter', verify that prerequisite listed under 'Preparing the Upgrade' are met. Check the FlashSystem for any open event that need to be fixed prior to firmware upgrade. 
+ 2. Verify that the MD5 sum for svcupgrade test utility and firmware image are correct 
+ 3. Retry the upgrade
+
+
+
+RESOLVING THE PROBLEM
+If problem still persist, create a SNAP and address via PMR to IBM FlashSystem support. 
+
+ 
+
+A workaround exists but it requires development access and engineering mode to execute it.

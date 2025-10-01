@@ -1,0 +1,77 @@
+Title: IBM Failed to apply FP2 for IBM FileNet P8 Content Platform Engine 5.2.1 - United States
+
+Text:
+5.2.1.2-P8CPE-LINUX-FP002; filenet; P8CPE; FP2; install failed; date format; Unparseable date; mergeears.xml TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+Customer has problem applying IBM FileNet P8 Content Platform Engine 5.2.1 Fix Pack 2. 
+
+BUILD FAILED
+/opt/IBM/Connections/ccm/ccm/ccm/config/includes/filenet_update_cfg.xml:626: Failed to configure CE generateupgrade
+
+Error: Please read the log for detail of the problem, it is /opt/IBM/Connections/ccm/ccm/ccm/scripts/fn-ce-update.log. 
+
+
+CAUSE
+Currently the locale's set as non-English , i.e.: "zh_CN.UTF-8" 
+
+[/support/docview.wss?uid=swg21966073&amp;aid=1] 
+
+Non English(US) date format was not recognized by Filenet Content Engine 5.2.1.2 install script.
+
+
+
+ENVIRONMENT
+IBM Connections 5.0 CCM CR3 
+
+Redhat Enterprise Linux 6.3
+
+
+DIAGNOSING THE PROBLEM
+ 
+
+There's error like follows in /opt/IBM/Connections/ccm/ccm/ccm/scripts/fn-ce-update.log:
+
+[exec] BUILD FAILED
+[exec] /opt/IBM/Connections/addons/ccm/ContentEngine/lib/mergeears.xml:99: The following error occurred while executing this line:
+[exec] /opt/IBM/Connections/addons/ccm/ContentEngine/lib/mergeears.xml:135: The following error occurred while executing this line:
+[exec] /opt/IBM/Connections/addons/ccm/ContentEngine/lib/mergeears.xml:202: Unparseable date: "09/06/2015 12:25 上午"
+
+
+
+RESOLVING THE PROBLEM
+This issue has been reported to Quality Engineering team as APAR PJ43439 and will be fixed in IBM FileNet P8 Content Platform Engine (P8CPE) 5.2.1 Fix Pack 3. 
+
+
+As a workaround, customer was suggested to set locale as en_US.UTF-8 by running following commands:
+Export LC_ALL=en_US.UTF-8
+Export LANG=en_US.UTF-8
+
+After doing so, the FileNet CPE and CPE Fixpack can be installed successfully.
+
+[echo] ... CE FixPack install completed. 
+
+install-CPE-unix: 
+
+config-ce-app: 
+[echo] ... generating CCM Content Engine profile completed 
+[echo] Running Content Engine configuration tasks 
+... 
+[echo] @@CPE configuration success@@ 
+
+update-FileNetEngine-Waltz-Sonata: 
+[copy] Copying 1 file to /opt/IBM/Connections/ccm/ccm/ccm/work 
+... 
+[wsadmin] OK: 
+updatePartialAppToAnAppWithUpdateCommand('FileNetEngine', 
+'"/opt/IBM/Connections/ccm/ccm/ccm/waltz-jre15/APP-INF.zip"', 'APP-INF', 
+'false'): 
+
+action-post-config: 
+Thu Sep 10 11:28:24 CST 2015 
+
+BUILD SUCCESSFUL 
+
+RELATED INFORMATION
+ FileNet Content Engine 5.2.1 Fix Pack 2: 5.2.1.2-P8CPE- [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FFileNet+Content+Engine&fixids=5.2.1.2-P8CPE-SOL-FP002&source=dbluesearch]
+IBM Connections 5.0 CR requirements for IBM FileNet for [http://www.ibm.com/support/docview.wss?uid=swg21683147]

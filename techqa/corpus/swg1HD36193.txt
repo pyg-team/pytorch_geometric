@@ -1,0 +1,239 @@
+Title: IBM HD36193: VB EXTRACTING THE PART PRODUCT NUMBER FROM THE FRONT VIEW WHEN RINSERTING A FRAME TITLEBLOCK - United States
+
+Text:
+AIX SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PERMANENT RESTRICTION.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  VB : Extracting the part/product number from the
+   front view w hen rinserting a Frame & Titleblock
+   I am trying to improve a drawing border script that
+   we currently have.
+   One of the sub routines within this macro extracts
+   the part number from
+   the Front View. Create a Front view of a product for
+   example and then
+   run the following script:
+   Language="VBSCRIPT"
+   Sub CATMain()
+   Set DrwDocument = CATIA.ActiveDocument
+   Set DrwSheets = DrwDocument.Sheets
+   Set DrwSheet = DrwSheets.ActiveSheet
+   Set ProductDrawn = DrwSheet.Views.Item("Front
+   view").GenerativeBehavior.Document
+   msgbox(ProductDrawn.name )
+   msgbox(ProductDrawn.partnumber)
+   End Sub
+   The script will display two message boxes, both
+   having the part number
+   shown
+   The problem with this script is that the script will
+   fail, if the Front
+   view is referencing a scene of a product. This will
+   mean that the
+   ProductDrawn.name will be scene1 for example
+   and the
+   ProductDrawn.partnumber will give an error as a
+   scene does not contain
+   this property. (This also applies, if on a part
+   drawing, when creating
+   the front view the part body is selected from the
+   spec tree prior to
+   selecting geometry on the part).
+   How do I extract the correct information to enable
+   the script to fill
+   in the drawing border.
+   See attached drawing for clarification of issue)
+   SCENARIO:
+   File->Open Scene
+   Drg.CATDrawing
+   Tools->Macro navigate to and run the
+   Macro1.catvbs macro
+   ====>Message box comes up saying "scene2". if
+   you OK this the
+   script will then fail as it cannot relate itself to any
+   part  number.
+   EXPECTED
+   RESULT
+   a msgbox (twice) saying
+   Product8.
+   Now create a new sheet in the
+   CATDrawing,
+   Open the Product and insert a new Front View onto
+   this new sheet (select a YZ Plane under Part58)
+   and run
+   the Macro again. This time you see what the
+   customer expects:
+   a msgbox (twice) saying Product8.
+   Reproduced on V5R15 BSF on 03/04/05
+   .
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  VB Extracting the part product number from the front view when
+   rinserting a Frame Titleblock
+   VB : Extracting the part/product number from the
+   front view w hen rinserting a Frame & Titleblock
+   I am trying to improve a drawing border script that
+   we currently have.
+   One of the sub routines within this macro extracts
+   the part number from
+   the Front View. Create a Front view of a product for
+   example and then
+   run the following script:
+   Language="VBSCRIPT"
+   Sub CATMain()
+   Set DrwDocument = CATIA.ActiveDocument
+   Set DrwSheets = DrwDocument.Sheets
+   Set DrwSheet = DrwSheets.ActiveSheet
+   Set ProductDrawn = DrwSheet.Views.Item("Front
+   view").GenerativeBehavior.Document
+   msgbox(ProductDrawn.name )
+   msgbox(ProductDrawn.partnumber)
+   End Sub
+   The script will display two message boxes, both
+   having the part number
+   shown
+   The problem with this script is that the script will
+   fail, if the Front
+   view is referencing a scene of a product. This will
+   mean that the
+   ProductDrawn.name will be scene1 for example
+   and the
+   ProductDrawn.partnumber will give an error as a
+   scene does not contain
+   this property. (This also applies, if on a part
+   drawing, when creating
+   the front view the part body is selected from the
+   spec tree prior to
+   selecting geometry on the part).
+   How do I extract the correct information to enable
+   the script to fill
+   in the drawing border.
+   See attached drawing for clarification of issue)
+   SCENARIO:
+   File->Open Scene
+   Drg.CATDrawing
+   Tools->Macro navigate to and run the
+   Macro1.catvbs macro
+   ====>Message box comes up saying "scene2". if
+   you OK this the
+   script will then fail as it cannot relate itself to any
+   part  number.
+   EXPECTED
+   RESULT
+   a msgbox (twice) saying
+   Product8.
+   Now create a new sheet in the
+   CATDrawing,
+   Open the Product and insert a new Front View onto
+   this new sheet (select a YZ Plane under Part58)
+   and run
+   the Macro again. This time you see what the
+   customer expects:
+   a msgbox (twice) saying Product8.
+   Reproduced on V5R15 BSF on 03/04/05
+   .
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  THIS PROBLEM IS PERMANENT RESTRICTION IN
+   CATIA
+   Incident Diagnosis
+   impossible to retrieve the part number in title block
+   when the front view is created by selecting a scene.
+   Restriction Explanation
+   In the script associated to the insert title block
+   command, the front view is linked to the scene, but
+   from the scene you can not retrieve the instance of
+   the product, so that why no text associated to the
+   part number is created
+   By-Pass
+   There is no by pass in standard case
+   .
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   HD36193
+   
+   
+ * REPORTED COMPONENT NAME
+   CATIA V5 NT>XP
+   
+   
+ * REPORTED COMPONENT ID
+   569151000
+   
+   
+ * REPORTED RELEASE
+   512
+   
+   
+ * STATUS
+   CLOSED PRS
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2005-03-07
+   
+   
+ * CLOSED DATE
+   2005-03-25
+   
+   
+ * LAST MODIFIED DATE
+   2005-03-25
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

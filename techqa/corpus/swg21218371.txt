@@ -1,0 +1,47 @@
+Title: IBM Abend106 S106-0F when trying to run a TWS z/OS program - United States
+
+Text:
+S106 ABENDS106 ABEND106 5697wsz01 TWSZOS ITWSZ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Executing a TWS z/OS program, either from a batch job or a started task (EQQMAJOR, EQQBATCH, EQQSERVR, etc.) the messages IEW4009I, iew4005I, csv031I are seen 
+
+CAUSE
+LINK LIST library has gone into additional extents.
+
+RESOLVING THE PROBLEM
+These messages are seen, followed by an abend S106-0F:
+
+IEW4009I FETCH FAILED FOR MODULE EQQYVPAR FROM DDNAME -LNKLST- BECAUSE OF AN I//O ERROR. 
+IEW4005I FETCH FOR MODULE EQQYVPAR FROM DDNAME -LNKLST- FAILED BECAUSE IEWFETCH ISSUED RC 0F AND REASON 40 
+CSV031I LIBRARY ACCESS FAILED FOR MODULE EQQYVPAR, RETURN CODE 24, REASON CODE 26080021, DDNAME *LNKLST* 
+
+These messages and the ABENDS106-0F indicate that a link list ( LNKLST ) library has gone into additional extents. This could occur if SMP/E maintenance was being applied to the library ( SEQQLMD0 ). 
+
+To bypass the problem temporarily, a STEPLIB could be inserted into the JCL pointing to the affected load library (usually SEQQLMD0). 
+
+A refresh of the LLA (MVS command F LLA,REFRESH) may also help to avoid the problem. 
+
+Of course an IPL will solve the problem, but if this is not practical, the following method can be use to temporarily DELETE and then ADD back the SEQQLMD0 library from the LNKLST concatenation. 
+
+Assuming that the LNKLST concatenation (verified by issuing command D PROG,LNKLST) is currently: 
+
+CSV470I 17.13.14 LNKLST DISPLAY 859 
+LNKLST SET LNKLST00 LNKAUTH=LNKLST
+ENTRY APF VOLUME DSNAME
+1 A P1701B SYS1.LINKLIB
+2 P1701B SYS1.MIGLIB 
+3 P1701B SYS1.CSSLIB 
+4 A *SMS* USER.ZOS17.LINKLIB
+5 A *SMS* TWSZ.V8R2M0.SEQQLMD0
+
+Then the following PROGxx member can be set up in the system PARMLIB to remove SEQQLMD0 from the LNKLST and then add it back into the exact place it was before:
+
+LNKLST DEFINE,NAME=TEMPMOVE,COPYFROM=CURRENT
+LNKLST DELETE NAME(TEMPMOVE)
+DSNAME(TWSZ.V8R2M0.SEQQLMD0)
+LNKLST ADD NAME(TEMPMOVE) 
+DSNAME(TWSZ.V8R2M0.SEQQLMD0) AFTER (USER.ZOS17.LINKLIB) 
+LNKLST ACTIVATE,NAME=TEMPMOVE 
+
+Once this is set up, console command SET PROG=XX where XX is the suffix of the PROG member used, will correct the S106-0F abend.

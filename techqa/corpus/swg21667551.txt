@@ -1,0 +1,53 @@
+Title: IBM Huge memory allocation after starting DB2 agent - United States
+
+Text:
+5724B96DOTR TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When ITCAM agent for DB2 database which is monitoring DB2 database level 10.1 instance is started, the system memory usage goes up by large amount, it subsequently comes back down, but this can cause serious system performance problem. 
+
+SYMPTOM
+System performance is affected when DB2 monitoring agent is started.
+
+
+CAUSE
+DB2 Diagnostic log (db2diag.log) monitoring by agent could be causing the problem. 
+
+ENVIRONMENT
+DB2 level 10.1
+
+DIAGNOSING THE PROBLEM
+Note the system memory usage using operating system commands such as top, nmon when DB2 instance is running and DB2 monitoring agent is not running. 
+
+
+Start DB2 agent. Check if the memory usage spikes and then returns to normal.
+
+
+RESOLVING THE PROBLEM
+1. DB2 agent monitors DB2 diagnostic log by PD_GET_DIAG_HIST. The following DB2 database APAR may cause the memory problem. 
+
+Consider upgrading DB2 to 10.1 FP3 or latest available fix pack to get fix for this APAR. 
+http://www-01.ibm.com/support/docview.wss?uid=swg1IC93170 [http://www-01.ibm.com/support/docview.wss?uid=swg1IC93170] 
+
+2. If you do not use DB2 diagnostic log monitoring, then disable it as follows:
+Set following property in ud.ini file and restart the agent instance. 
+KUD_DISABLE_DIAGLOG=Y 
+
+This property is externalized (added to ud.ini) in 7.1 IF0001, but it can be used in 7.1 GA level agent. 
+Check memory usage when agent is restarted with this setting to confirm resolution. 
+
+3. To fall back to DB2 diagnostic log monitoring using parsing method used for previous DB2 versions, 
+
+use following setting in ud.ini which is available in 7.1 Interim Fix 0001 or greater agent levels: 
+
+By default, the monitoring agent collects diagnostic log using table query method for DB2 V10 and above. 
+
+# For DB2v10 and above to collect diagnostic log by table query by setting KUD_DIAGLOG_BY_TABLE=Y 
+
+Change this setting to N so that agent will instead use the parsing method to monitor the diagnostic log.
+KUD_DIAGLOG_BY_TABLE=N 
+
+Restart the agent and check if the memory allocation issue reduces. 
+
+ 
+Note: Changed settings in ud.ini affect all DB2 agent instances in that ITM home after the setting is changed.

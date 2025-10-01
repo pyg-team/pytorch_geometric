@@ -1,0 +1,154 @@
+Title: IBM JR52019: MissingResourceException on key "ERR_REQUESTED_RESOURCE_NOT_FOUND" when using REST request - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When using rest request to find product by id and the product
+   does not exist, an error missing resource bundle on
+   ERR_REQUESTED_RESOURCES_NOT_FOUND is logged.
+   
+   [11/18/14 13:16:27:656 GMT] 00000065 ServiceLogger 2
+   com.ibm.commerce.rest.caching.RESTCacheFilter doFilter THROW
+   
+   java.util.MissingResourceException: Can't find resource for
+   bundle java.util.PropertyResourceBundle, key
+   ERR_REQUESTED_RESOURCE_NOT_FOUND
+       at
+   java.util.ResourceBundle.getObject(ResourceBundle.java:408)
+       at
+   java.util.ResourceBundle.getString(ResourceBundle.java:422)
+       at
+   com.ibm.commerce.foundation.rest.utils.RestServicesUtils.createE
+   xceptionFromError(RestServicesUtils.java:368)
+       at
+   com.ibm.commerce.rest.bod.helpers.SearchHelper.getProductUniqueI
+   dentifier(SearchHelper.java:1214)
+       at
+   com.ibm.commerce.rest.caching.RESTCacheFilter.doFilter(RESTCache
+   Filter.java:327)
+   This issue only occurs on feature pack 5 and lower.  The code
+   was moved to a different location starting in FEP6.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  USERS AFFECTED:
+   System administrators and develpers who attempted to investigate
+    problems found in the trace.
+   
+   PROBLEM ABSTRACT:
+   MissingResourceException on key
+   "ERR_REQUESTED_RESOURCE_NOT_FOUND" when using REST request
+   
+   BUSINESS IMPACT:
+   The exception information logged in the trace was misleading and
+    may result in confusion with what the original error was.
+   
+   RECOMMENDATION:
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This exception should be ignored and exception happened shortly
+   before this exception on the same thread ID should be
+   investigated.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR52019
+   
+   
+ * REPORTED COMPONENT NAME
+   WC BUS EDITION
+   
+   
+ * REPORTED COMPONENT ID
+   5724I3800
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-12-10
+   
+   
+ * CLOSED DATE
+   2015-01-28
+   
+   
+ * LAST MODIFIED DATE
+   2015-02-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WC BUS EDITION
+   
+   
+ * FIXED COMPONENT ID
+   5724I3800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R700 PSY
+   UP

@@ -1,0 +1,129 @@
+Title: IBM ZZ00339: HOW TO CONFIGURE Z-REGION SERVER DOC IS CONFUSING - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  1. on the knowledge center DOC page, for installing zVM Region
+   Server, at the top of the page it says "Configure OpenStack by
+   following chapter 5 in the Enabling z/VM for OpenStack guide..."
+   This is not correct, and this line needs to be deleted. The
+   correct order of this is at the end of step #6, where it does
+   show to 'What to do next ... Configure OpenStack by
+   following..."
+   
+   2. We instruct the user to 'Configure Openstack by following
+   chapter 5' of the pdf doc, but, that chap 5 is almost 40 pages
+   and covers a full range of topics which probably are not
+   relevant to the needs of our ICO z-region deployment. We need
+   to articulate more specifically what are the exact items that
+   needs to be reviewed and configured. That statement is too
+   wide-open as a 'what to do next' step.
+   
+   3. In the 'Note' section of step 5, the customer doesn't
+   understand how/where to do the 'Customizing a zVM Region Server
+   Deployment'. The order of that topic makes it seem like you
+   will complete the region server deployment and then next you
+   will customize it. Really that is not the case- the customer
+   should read and understand all of the available customizations
+   before he creates the ds job.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Description how to configure z-region server is not precise
+   enough. In addition the link to the "OpenStack Configuration" of
+   "Enabling z/VM for OpenStack
+   (Support for OpenStack Icehouse Release)
+   " pointing to the parent chapter.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Improve documentation and fix link reference to "OpenStack
+   Configuration".
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   ZZ00339
+   
+   
+ * REPORTED COMPONENT NAME
+   SMRTCLOUD ORCHS
+   
+   
+ * REPORTED COMPONENT ID
+   5725H2800
+   
+   
+ * REPORTED RELEASE
+   240
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-12-17
+   
+   
+ * CLOSED DATE
+   2015-01-16
+   
+   
+ * LAST MODIFIED DATE
+   2015-01-16
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

@@ -1,0 +1,46 @@
+Title: IBM Test Connection fails at Data Source DWLConfig for SSL support enabled databases. - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ SYMPTOM:
+Test Connection fails at Data Source DWLConfig for SSL support enabled databases. 
+
+
+CAUSE:
+The SSL Certificate is not available at the WebSphere Application Server Key Store.
+
+
+ENVIRONMENT:
+The issue can be noticed when WebSphere Application Server Cluster is used for MDM deployment.
+
+DIAGNOSING THE PROBLEM:
+The below error message can be noticed when Test Connection is performed from the WebSphere Admin Console on Datasources DWLConfig and DWLCustomer:
+
+java.sql.SQLException: [jcc][t4][2030][11211][3.69.49] A communication error occurred during operations on the connection's underlying socket, socket input stream, or socket output stream. Error location: Reply.fill() - socketInputStream.read (-1). Message: com.ibm.jsse2.util.j: PKIX path building failed: java.security.cert.CertPathBuilderException: unable to find valid certification path to requested target. ERRORCODE=-4499, SQLSTATE=08001 DSRA0010E: SQL State = 08001, Error Code = -4,499.
+
+RESOLVING THE PROBLEM:
+Follow the steps provided in link http://www-01.ibm.com/support/docview.wss?uid=swg21667093 [http://www-01.ibm.com/support/docview.wss?uid=swg21667093]. 
+
+CAUSE
+The SSL Certificate is not available at the WebSphere Application Server Key Store.
+
+ENVIRONMENT
+The issue can be noticed when WebSphere Application Server Cluster is used for MDM deployment.
+
+DIAGNOSING THE PROBLEM
+The below error message can be noticed when Test Connection is performed from the WebSphere Admin Console on Datasources DWLConfig and DWLCustomer: 
+
+java.sql.SQLException: [jcc][t4][2030][11211][3.69.49] A communication error occurred during operations on the connection's underlying socket, socket input stream, or socket output stream. Error location: Reply.fill() - socketInputStream.read (-1). Message: com.ibm.jsse2.util.j: PKIX path building failed: java.security.cert.CertPathBuilderException: unable to find valid certification path to requested target. ERRORCODE=-4499, SQLSTATE=08001 DSRA0010E: SQL State = 08001, Error Code = -4,499.
+
+
+
+RESOLVING THE PROBLEM
+Follow the steps provided in link http://www-01.ibm.com/support/docview.wss?uid=swg21667093 [http://www-01.ibm.com/support/docview.wss?uid=swg21667093].
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Information Management InfoSphere Master Data Management Information Management InfoSphere Master Data Management Custom Domain Hub Stand Alone Information Management InfoSphere Master Data Management Reference Data Management Hub Information Management InfoSphere Master Data Management Server

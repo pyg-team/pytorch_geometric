@@ -1,0 +1,42 @@
+Title: IBM Saving and Restoring Spooled Files - United States
+
+Text:
+BACKUP; BRM; OSP; PRINT; PRT; PRTF; SPLS TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This is a generalized document describing various ways to save and restore spooled files. 
+
+RESOLVING THE PROBLEM
+There are many occasions when you want to know how to save and restore spooled files or duplicate them. The correct response depends on what you want to save/restore such as one spooled file, a small number of spooled files, all spooled files from one or more output queues, or the entire QSPL library. 
+
+For release V5R4 and later, you can save and restore spooled files and all of their attributes using the native SAVLIB, SAVOBJ, SAVRSTLIB, SAVRSTOBJ commands, the QSRSAVO API, and Save menu Options 21-23. For restoring, you can use the native RSTLIB, RSTOBJ, SAVRSTLIB, SAVRSTOBJ commands, the QSRRSTO API, and Restore menu Options 21-23. When you save an output queue with the save commands, the menu, or the QSRSAVO API, you can choose to save all of its spooled files. You can do this by specifying *ALL for the Spooled file data (SPLFDTA) command parameter, menu prompt, or API key. When you restore output queues with the restore commands, the menu, or the QSRRSTO API, you can choose to restore any saved spooled files that do not already exist on the system. You can do this by specifying *NEW for the SPLFDTA parameter, prompt, or key. With the QSRSAVO and QSRRSTO APIs, you can also choose to save or restore spooled files by using a set of selection criteria. If you save spooled files with the QSRSAVO API using selection criteria and the *SPLF special library value, you must use the QSRRSTO API with the *SPLF special library value to restore the spooled files.
+
+For previous releases, there are several operating system commands that are available and tools that can be created to support the requested functions. You should review one or more of the following items with your customer, based on what they intend or expect to accomplish:
+
+
+Be advised that IBM's QUSRTOOL is provided as is and is not actively maintained. We neither support nor guarantee that the tool will do what it is intended or designed to do. The tool is designed for convenience rather than for disaster recovery and should be fully tested before being used. 
+
+1. Refer to document N1010238, Using CPYSPLF to Re-Create a Spooled File or Create a PC File [http://www-01.ibm.com/support/docview.wss?uid=nas8N1010238], for a description of creating a database file (CRTPF) using copy spooled file (CPYSPLF) and save object (SAVOBJ) commands. RSTOBJ and CPYF commands can later be used to restore the saved spooled file and print the information from it. This is a good method for saving/restoring one or a limited number of your typical spooled files (without *AFPDS, and so on). 2. There is an IBM (free) QUSRTOOL to save/restore spooled file (SAVRSTSPLF) that requires an ILE C compiler. The SAVRSTSPLF tool provides a method for saving spooled files into a designated library (or device) and to restore and print them at a later time. It consists of the programs for creating ZSAVSPLF and ZRSTSPLF commands. On the ZSAVSPLF command, the spooled files to be saved can be selected by user, output queue, form type, or user data. The ZRSTSPLF command restores those files from the library or device to the output queue in which they were originally spooled. There are certain limitations to consider for SAVRSTSPLF tool. Refer to member TSRINFO in file QUSRTOOL/ATTINFO for further information on its description and tool creation steps. Command DSPSFWRSC can be used to determine whether the customer has 57xxCX2 (ILE C compiler) and 57xxSS1 Option 7 (example tools) products installed on the system or not. 3. Product 57xxBR1, Backup Recovery and Media Services/400, generally known as BRMS, can be used to perform save/restore related management of spooled files. When using a control group to save libraries with outqs, the control group attribute 'Save spooled file data' can be set to *ALL to save the spooled files when the outqs are saved. When these libraries or outq objects are restored, the spooled files will also be restored if SPLFDTA(*NEW) is used with the restore. 
+
+If object level detail is retained or spooled lists are used to save spooled files, the Work with Saved Spooled Files using BRM (WRKSPLFBRM) command creates a display or report of saved spooled files based on specified libraries, output queues, files, job names, users, date ranges and sequences. Processing the Work with Saved Spooled Files command takes you to the Work with Saved Spooled Files display where you can remove, display or retrieve selected spooled file entries as well as work with media that contains saved spooled files. Following are some of the commonly used commands for saving and restoring spooled files: o WRKSPLF
+
+Select Option 8 to note attributes of each spooled file you want to copy/save/restore. o CRTPF FILE(name of library and file) RCDLEN(133) MAXMBRS(#of_splfiles) SIZE(*NOMAX)
+
+This assumes that our spooled file is for a document that is 132 characters wide. o CPYSPLF FILE(nameofthespoolfile) TOFILE(nameofpfcreatedabove) JOB(fillthisinfromtheattributes) + SPLNBR(x) TOMBR(mbrname) MBROPT(*ADD) CTLCHAR(*FCFC) o SAVOBJ OBJ(nameofpf) LIB(libname) DEV(tapxx)
+
+If possible, make two copies on different tapes. o RSTOBJ OBJ(nameofpf) SAVLIB(libname) FILEMBR(*ALL or mbrname) DEV(tapxx) RSTLIB(lib2)
+
+Do this before deleting the spooled file(s) to ascertain that the tape can be read correctly. o OVRPRTF QSYSPRT CTLCHAR(*FCFC) o CPYF FROMFILE(rstlib/nameofpf) FROMMBR(mbrname) TOFILE(QSYSPRT) o SAVOBJ OBJ(OUTQNAME) LIB(OUTQLIB) DEV(TAPXX) OBJTYPE(*OUTQ) SPLFDTA(*ALL)
+
+This command will save the specific outq specified and the spooled files in that outq. o RSTOBJ OBJ(OUTQNAME) SAVLIB(OUTQLIB) DEV(TAPXX) OBJTYPE(*OUTQ) SPLFDTA(*NEW)
+
+This command will restore the specific outq specified and any new spooled files from that outq that do not exist on the target system. o SAVLIB(QUSRSYS) DEV(TAPXX) SPLFDTA(*ALL)
+
+This command will save the entire QUSRSYS library including all spooled files. o RSTOBJ OBJ(*ALL) SAVLIB(QUSRSYS) DEV(TAPXX) OBJTYPE(*OUTQ) SPLFDTA(*NEW)
+
+This command will restore all outqs and new spooled files from library QUSRSYS. Note: You cannot restore a spooled file that already exists on the system to a different library. 
+
+
+Cross reference information Segment Product Component Platform Version Edition Operating System IBM i 7.2 Operating System IBM i 7.1 Operating System IBM i 6.1 Operating System IBM i 7.3 
+HISTORICAL NUMBER
+ 15432846

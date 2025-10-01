@@ -1,0 +1,122 @@
+Title: IBM DB2StdXADataSource not support by new IBM Technology for Java JDK V5.0 on i5/OS - United States
+
+Text:
+v61rnotes TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The i5/OS Native JDBC driver implementation class com.ibm.db2.jdbc.app.DB2StdXADataSource is not supported when running in the new IBM Technology for Java JVM (5722-JV1 option 8, J2SE 5.0 32 bit) introduced in V5R4M0 of i5/OS.
+
+The error that will be seen when attempting to use the com.ibm.db2.jdbc.app.DB2StdXADataSource.class in the J2SE 5.0 32 bit JVM environment:
+
+java.sql.SQLException: java.lang.UnsatisfiedLinkError: 
+com/ibm/db2/jdbc/app/DB2ConnectionRuntimeXAImpl.SQLConnect(Lcom/ibm/db2/jdbc/app/DB2Connection;Ljava/lang/String;
+Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;IIII)I. 
+
+CAUSE
+In OS/400 release V5R2M0, DB2 UDB for iSeries introduced a new transaction service ( NTS ) to enhance the capabilities of global transactions. To support NTS, the iSeries Developer Kit for Java (Native JDBC driver) created a new XA-compliant Type 2 implementation class com.ibm.db2.jdbc.app.UDBXADataSource.class, while continuing to support the old transaction model through its existing XA-compliant Type 2 implementation class com.ibm.db2.jdbc.app.DB2StdXADataSource.class. Since the inception of NTS in V5R2M0, the Native JDBC driver has made no enhancements to the DB2StdXADataSource class to further the support of the old transaction model. The new J2SE 5.0 32 bit JDK introduced in V5R4M0 only supports the newer NTS classes.
+
+RESOLVING THE PROBLEM
+If you have IBM WebSphere Application Server V6.1 datasources defined with this JDBC Provider implementation class you have two options. 
+
+ 1. Continue to use the Classic (64 bit) JVM (5722-JV1 option 7, Java Developer Kit 5.0). The Classic JVM is used by default for Application Server V6.1.
+    The DB2StdXADataSource implementation class continues to be supported by the Native JDBC driver in that environment. 
+ 2. If you wish to use the new J2SE 5.0 32 bit JVM, change all JDBC Providers that use the implementation class com.ibm.db2.jdbc.app.DB2StdXADataSource.class to use the NTS supported implementation class com.ibm.db2.jdbc.app.UDBXADataSource.class.
+    NTS is the only transaction service the Native JDBC driver supports in J9.
+    
+
+
+Follow the steps below to modify the implementation class using either the administrative console (recommended) or by manually editing the configuration files. 
+
+Steps to change the JDBC Provider implementation class through the WebSphere administration console: 
+This is the recommended method for modifying the implementation class. 
+ *  Choose the following links in the administration console:
+   Resources> JDBC> JDBC Providers In the Scopes section, select 'All scopes' With the left mouse button, click on the JDBC Provider that uses the iSeries Native JDBC - XA driver At the bottom of the page in the box labelled "* Implementation class name", change the class name from:
+   com.ibm.db2.jdbc.app.DB2StdXADataSource
+   to 
+   com.ibm.db2.jdbc.app.UDBXADataSource Click the 'Apply' button Save the changes Repeat the steps above for all iSeries Native XA JDBC Providers that are configured with the implementation class name com.ibm.db2.jdbc.app.DB2StdXADataSource Restart all affected application servers, node agents and deployment managers for these changes to take effect. 
+
+
+Steps to change the JDBC Provider implementation class by directly editing WebSphere configuration files: 
+Use this method if you are not able to use the administrative console to make the updates. 
+
+Note: If you are making updates to resources contained in Network Deployment cell it is highly recommended that you use the administrative console to make the changes. If you cannot use the administrative console, profile_root in the instructions below must be the deployment manager profile root. 
+
+There are three resources.xml files for each Application Server profile that may contain JDBC Provider definitions: 
+ * Cell level:
+ * 
+   profile_root
+ * 
+ * cellName
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * Node level:
+ * 
+   profile_root
+ * 
+ * cellName
+ * 
+ * nodeName
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * Server level:
+ * 
+ * profile_root
+ * 
+ * cellName
+ * 
+ * nodeName
+ * 
+ * serverName
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+
+ * 
+ * profile_root
+ * 
+ * cellName
+ * 
+ * nodeName
+ * 
+ * serverName
+ * 
+
+ 1. For each of the three resource files, edit the file using Wordpad if you have a mapped network drive, or using the EDTF CL command from the i5/OS command line, and replace all occurrences of "DB2StdXA" with "UDBXA". 
+ 2. Save the changes 
+ 3. Restart all affected Application Servers, node agents and deployment managers for these changes to take effect. 
+
+
+
+Note: 
+Noth methods described above will change the datasources' JDBC Provider implementation class only. This will allow your applications to continue to run in the J9 environment. However, names and descriptions that may imply the use of the previous implementation class name have not been changed with these instructions. Those changes are left to the discretion of the system administrator. RELATED INFORMATION
+#Changing the JVM [http://publib.boulder.ibm.com/infocenter/wasinfo/v6r1/index.jsp?topic=/com.ibm.websphere.base.iseries.doc/info/iseries/ae/rxml_enablejvm.html]
+
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Application Servers Runtimes for Java Technology Java SDK

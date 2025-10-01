@@ -1,0 +1,139 @@
+Title: IBM JR51641: TWPROCESSAPP'S SNAPSHOTS PROPERTY DOES NOT RETURN THE ITEMS IN THE DOCUMENTED ORDER - United States
+
+Text:
+  A FIX IS AVAILABLE
+Version 8.5 Refresh Pack 6 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24039185]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  TWProcessApp's snapshots property does not return the items in
+   the documented order
+   
+   http://www-01.ibm.com/support/knowledgecenter/SSFPJS_8.5.5/com.i
+   bm.wbpm.ref.doc/ae/doc/JSAPI.html [http://www-01.ibm.com/support/knowledgecenter/SSFPJS_8.5.5/com.ibm.wbpm.ref.doc/ae/doc/JSAPI.html]
+   The product javascript documentation mentions the following for
+   this property:
+   snapshots - Returns a JavaScript array of all of the snapshots
+    of  the current process app on a Teamworks Process Server or
+    Process Center. If on Process Center, excludes archived
+    snapshots. This list returns the snapshots in the order of
+    oldest to newest based on the snapshot creation date.
+   
+   The observed behavior is that it sometime is in the creation
+   order by track and sometimes it may appear to be somewhat
+   random.
+   .
+   .---------------------------------------------
+      The query that is run that returns the data is
+   select t0.SNAPSHOT_ID,t0.CREATED_ON,t0.NAME,t0.ACRONYM,
+   t0.DESCRIPTION,t 0.SEQ_NUM,t0.ERROR_COUNTER,
+   t0.ORIG_CREATED_ON,t0.ACTIVATED_ON,t0.STATUS, t0.CAPABILITY,
+   t0.ARCHIVED_ON,t0.LAST_MODIFIED,t0.REPOSITORY_BRANCH_ID,
+   t0.CREATED_BY_USER_ID,t0.BRANCH_ID,t0.PROJECT_ID,
+   t0.LAST_MODIFIED_BY_USER_ ID,t0.CHANGE_DATA,t0.IS_ACTIVE,
+   t0.IS_BLA_ACTIVE,t0.IS_STARTED,t0.IS_INSTALLED,
+   t0.IS_BLA_INSTALLED,t0.IS_TIP_DEPLOYED,t0.IS_DEFAULT,
+   t0.TIP_DEPLOYMENT_IN_PROGRESS,t0.IS_ARCHIVED from LSW_SNAPSHOT
+   t0 where PROJECT_ID = ? and
+   IS_ARCHIVED = ? and NAME is not null order by SEQ_NUM ASC
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  To workaround the issue you would want to ensure that you sort
+   the array after obtaining it. You may want to use the
+   dateCreated or dateInstalled properties for the snapshots.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  The problem will be fixed in next release.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR51641
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM ADVANCED
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9400
+   
+   
+ * REPORTED RELEASE
+   850
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-10-29
+   
+   
+ * CLOSED DATE
+   2014-11-04
+   
+   
+ * LAST MODIFIED DATE
+   2015-06-03
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R855 PSY
+   UP

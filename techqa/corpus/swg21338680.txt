@@ -1,0 +1,37 @@
+Title: IBM What are the files and directories located in the ../cognos/temp directory used for ? - United States
+
+Text:
+temporary space temp files disk disc TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ What are the files and directories located in the temp directory used for? 
+
+RESOLVING THE PROBLEM
+By default IBM Cognos stores temporary files created in operation in the ../temp directory of the installation.
+
+
+The amount of space required depends on several factors, including the number and the type of reports that are created and run by a user, and how many users are on the system. 
+
+The files created are the UDA file and the CCLVPage file as the main ones for a report running in Windows or UNIX. 
+
+The UDA file is the file with the data that is retrieved from the Database, and is the data workfile. 
+
+The CCLVPage file is the file that contains the report output, in the format specified by the report. 
+
+The dmbTempxxxxx.dmc file is the file that holds "cube" data for the report, and is also a temporary file that gets created during the Report Run. 
+
+The Axisxxxaxis file is created by Event Studio. This file is not removed by the Event Studio. It has to be removed manually. 
+
+There is also the CM directory, where the temporary PDF files will be created, named for instance CM_12345.tmp, and these are the output for any PDF report. 
+
+There are other directories also in Cognos/Temp, in which files get stored, for example the SDS directory where the JobQueue and the MailQueue is located and the XQE folder for Dynamic Query Mode. 
+
+The temporary directory may contain large files at certain times, depending on server activity.
+If the load on the server is such that many users are running reports, these directories require sufficient space to accommodate files from all the users. 
+
+The ../Temp directory can be located elsewhere on the system, to ensure that there is enough space. This is done in Cognos Configuration, under the Environment entry, by changing the value for Temporary files location to the desired path.
+
+ 
+
+HISTORICAL NUMBER
+ 1005619

@@ -1,0 +1,61 @@
+Title: IBM ECM Widgets 4.5.2 Release Notes - United States
+
+Text:
+ RELEASE NOTES
+
+ABSTRACT
+The IBM Enterprise Content Management Wigets (IBM ECM Widgets) Version 4.5.2 Release Notes include links to the IBM ECM Widgets documentation in the IBM FileNet P8 Information Center, information about new features, and a list of known issues.
+
+CONTENT
+ 
+
+IBM ECM Widgets is a collection of portable, reusable components, also called widgets, that you can use to create user interfaces for Enterprise Content Management (ECM) applications and business process management (BPM) applications. 
+
+
+WHAT'S NEW
+The features and changes that were introduced in the this release of IBM ECM Widgets include the following capabilities and features:
+
+ * New widgets:  * Process History widget
+    * IBM WEBi widget
+   
+   
+ * Support for IBM Content Manager through the Attachment widget, the Viewer widget, and the IBM WEBi widget
+ * Enhancements to existing widgets to enable partner/customer integration
+ * User interface improvements
+ * Support for AIX and Oracle
+ * Arabic Language Support
+ * Improved Configuration
+ * Improved Logging and Tracing
+ * Support for Business Space Powered by WebSphere 7.0
+
+
+PRODUCT DOCUMENTATION
+Download the IBM ECM Widgets documentation at http://www.ibm.com/support/docview.wss?uid=swg27010422#wid [http://www.ibm.com/support/docview.wss?rs=3247&uid=swg27010422#wid]. The documentation is available in multiple formats and languages.
+
+The documentation is also available online in the IBM FileNet P8 information center [http://publib.boulder.ibm.com/infocenter/p8docs/v4r5m1/topic/com.ibm.p8.doc/ecmwidgets_help/intro/intro_overview.htm], where you can easily search across all documentation.
+
+
+DOWNLOADING THE PRODUCT
+For information on downloading IBM ECM Widgets 4.5.2, see Download IBM FileNet Business Process Manager [http://www.ibm.com/support/docview.wss?rs=3278&uid=swg24024090].
+
+
+
+IBM ECM WIDGETS VERSION 4.5.2 KNOWN ISSUES
+The following section describes known problems, issues, and restrictions in IBM ECM Widgets 4.5.2.
+
+Important: Business Space powered by WebSphere users should read the following technote before installing IBM ECM Widgets to understand important Business Space restrictions: 
+Cannot augment the Deployment Manager profile with the dmgr.bspace profile template [http://www.ibm.com/support/docview.wss?uid=swg21432311] 
+
+
+General problems, issues, and restrictions You might see unexpected widget settings when editing widgets [http://www.ibm.com/support/docview.wss?uid=swg27018875] A new work item does not display for the In-basket widget in an AIX6.1/Oracle10g/Tivoli 6.1 environment [http://www.ibm.com/support/docview.wss?rs=3247&uid=swg27018262] The In-basket widget displays default values for properties that do not apply to a work item [http://www.ibm.com/support/docview.wss?uid=swg27018701] In the Content List widget stored search definition, all results are left-justified [http://www.ibm.com/support/docview.wss?rs=3247&uid=swg27018263] The Content List widget does not use the label for property values in results [http://www.ibm.com/support/docview.wss?rs=3247&uid=swg27018265] You cannot change the layout of a page that includes the IBM WEBi widget [http://www.ibm.com/support/docview.wss?uid=swg27018854] The content list is blank if you log out of the IBM WEBi widget and log in again [http://www.ibm.com/support/docview.wss?uid=swg27018806] Long response time for IBM WEBi search in IBM ECM Widgets [http://www.ibm.com/support/docview.wss?rs=3247&uid=swg27018365] When running a stored search, the results are not ordered if a sort order is not specified [http://www.ibm.com/support/docview.wss?rs=3247&uid=swg27018264] Updating and saving a write-only Array attachment in the Attachment widget replaces the previous attachment [http://www.ibm.com/support/docview.wss?rs=3247&uid=swg27018266] Document title not updated in the Attachment widget [http://www.ibm.com/support/docview.wss?rs=3247&uid=swg27018268] Online help is not available from the Daeja viewer [http://www.ibm.com/support/docview.wss?rs=3247&uid=swg27018269] Action IDs are not translated in Traditional Chinese and Brazilian Portuguese [http://www.ibm.com/support/docview.wss?rs=3247&uid=swg27018272] Header widget stays at initial state screen when the subject name is empty [http://www.ibm.com/support/docview.wss?rs=3247&uid=swg27018381] 
+Installation problems, issues, and restrictions Business Space 6.0 Global page does not work in Business Space 7.x environment after upgrade and migration [http://www.ibm.com/support/docview.wss?rs=3247&uid=swg27018380] Cannot augment the Deployment Manager profile with the dmgr.bspace profile template [http://www.ibm.com/support/docview.wss?uid=swg21432311] 
+Business Space problems, issues, and restrictions Widgets added to a specific layout do not properly resize when the browser is resized [http://www.ibm.com/support/docview.wss?uid=swg27018741] 
+IBM Lotus Mashup problems, issues, and restrictions Supported languages in IBM Lotus Mashups [http://www.ibm.com/support/docview.wss?uid=swg27018812] 
+Web browser problems, issues, and restrictions You might see a JavaScript error when adding a document through the Attachment widget [http://www.ibm.com/support/docview.wss?uid=swg27018883] Your changes are not automatically saved when a step processor page is refreshed [http://www.ibm.com/support/docview.wss?uid=swg27018745] Scrollbar in the Process History widget does not scroll in the FireFox version 3 browser [http://www.ibm.com/support/docview.wss?rs=3247&uid=swg27018258] Column names do not display well in the Microsoft Internet Explorer browser [http://www.ibm.com/support/docview.wss?rs=3247&uid=swg27018243] WEBi widget does not work properly when the browser language is Arabic [http://www.ibm.com/support/docview.wss?rs=3247&uid=swg27018255] Navigation links display incorrectly in Arabic [http://www.ibm.com/support/docview.wss?rs=3247&uid=swg27018256] In the Work Data widget, the panel does not display correctly in Internet Explorer 7 [http://www.ibm.com/support/docview.wss?rs=3247&uid=swg27018257] 
+IBM FileNet P8 known issues The security settings on IBM FileNet P8 object stores determine which object stores are displayed in IBM ECM Widgets [http://www.ibm.com/support/docview.wss?uid=swg27018853] An out of memory error occurs when multiple users view an attachment [http://www.ibm.com/support/docview.wss?uid=swg27018842] Work items with blank fields are removed when the list of work items is sorted [http://www.ibm.com/support/docview.wss?uid=swg27018843] 
+IBM Content Manager known issues You cannot open the returned folder when using an Attachment widget search [http://www.ibm.com/support/docview.wss?rs=3247&uid=swg27018259] Users with read-only privileges do not see an error message when attempting to check out an IBM Content Manager document [http://www.ibm.com/support/docview.wss?uid=swg27018260] The Viewer widget display image covers other dialogs [http://www.ibm.com/support/docview.wss?rs=3247&uid=swg27018261] The web browser closes when a users tries to open a large file from IBM Content Manager [http://www.ibm.com/support/docview.wss?uid=swg27018730] You cannot add annotations to IBM Content Manager documents if the Viewer widget is not in pop-up mode [http://www.ibm.com/support/docview.wss?uid=swg27018751] 
+Documentation updates Events for the Step Completion widget [http://www.ibm.com/support/docview.wss?uid=swg27018803] Event topics for the step processor widgets incorrectly list restrictions on certain handled events [http://www.ibm.com/support/docview.wss?rs=3247&uid=swg27018270] 
+
+
+
+Cross Reference information Segment Product Component Platform Version Edition Enterprise Content Management Content Manager Enterprise Edition Not Applicable AIX, Windows, Windows Vista

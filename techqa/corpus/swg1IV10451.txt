@@ -1,0 +1,186 @@
+Title: IBM IV10451: MANUALLY POPULATING ORGANIZATION IN GLACCOUNT POP-UP IN ADVANCE SEARCH OF APPLICATIONS RETRIEVES ALL VALUES. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Steps to replicate:
+   
+                 1. Navigate to an application ( I have used
+   Purchase Requisition for    reference) and in the List tab move
+   to Advance Search
+                                              2. Open  GLDEBIT
+   account lookup
+                                                                 3.
+   Manually Type EAGLENA in the ORGANIZATION field and tab out.
+   Press   Enter on the GL Component Value Field. All the values of
+   the GL         Component populate irrespective of the
+   Organization.
+                                           4. On entering the
+   organization via the Lookup, values populate         correctly
+   
+   
+     If choose the Organization from field lookup, this issue won't
+   happen.
+                   Environment:
+   
+                                 Client reported in
+   
+                                               Base Services
+   7.1.1.7-LA20110131-1130 Build 20100522-0325 DB Build
+   V7117-47 HFDB Build HF7117-20
+   
+                 L2 replicated in
+   
+                               Base Services 7.1.1.7 Build
+   20100522-0325 DB Build V7117-47             Base Services
+   7.1.1.8-LA20111107-0936 Build 20110105-1024 DB Build
+   V7118-37 HFDB Build HF7118-20
+          Tivoli's process automation engine 7.5.0.0 Build
+   20110413-2230 DB Build V7500-721
+                                 IBM Maximo Asset Management
+   7.5.0.0 Build 20110415-0030 DB Build        V7500-00
+                                                      Base Services
+   7.1.1.9 Build 20110725-1550 DB Build V7119-56
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  NA
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: maximo                                       *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: MANUALLY POPULATING ORGANIZATION IN     *
+   *                      GLACCOUNT POP-UP IN ADVANCE  SEARCH OF  *
+   *                      APPLICATIONS RETRIEVES ALL VALUES.      *
+   *                                                              *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   *                                                              *
+   *                                                              *
+   *                                                              *
+   ****************************************************************
+   MANUALLY POPULATING ORGANIZATION IN GLACCOUNT POP-UP IN ADVANCE
+   SEARCH OF APPLICATIONS RETRIEVES ALL VALUES.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  <This is fixed in code.>
+   
+   
+   
+   
+   
+   The fix for this APAR is contained in the following maintenance
+   package:
+   
+     | release\fix pack | REL 7.1.1.11 - BS
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV10451
+   
+   
+ * REPORTED COMPONENT NAME
+   ADMINISTRATION
+   
+   
+ * REPORTED COMPONENT ID
+   5724R46A1
+   
+   
+ * REPORTED RELEASE
+   710
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-11-10
+   
+   
+ * CLOSED DATE
+   2011-12-12
+   
+   
+ * LAST MODIFIED DATE
+   2011-12-12
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  MAXIMO
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ADMINISTRATION
+   
+   
+ * FIXED COMPONENT ID
+   5724R46A1
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R710 PSY
+   UP

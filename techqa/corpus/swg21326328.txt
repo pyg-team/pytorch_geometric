@@ -1,0 +1,42 @@
+Title: IBM EJPXB0015E failure during modify-servlet-path configuration task - United States
+
+Text:
+context root; servlet path TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+The IBM® WebSphere® Portal 6.1 configuration task modify-servlet-path may fail with a EJPXB0015E error code during the action-remove-pznauthor-portlet subtask.
+
+SYMPTOM
+The <wp_profile>/ConfigEngine/log/ConfigTrace.log will contain a failure similar to the following:
+action-remove-pznauthor-portlet:
+Thu Oct 30 16:00:00 EDT 2008
+[xmlaccess] EJPXB0006I: Connecting to URL http://localhost:10040/newroot/config/
+[xmlaccess] EJPXB0002I: Reading input file /opt/WebSphere/profiles/wp_profile/PortalServer/pzn/prereq.pzn/deploy/pzndelfull6.xml
+[xmlaccess] EJPXB0015E: Server response indicates an error.
+[xmlaccess] EJPXB0015E: Server response indicates an error.
+
+BUILD FAILED
+/opt/WebSphere/profiles/wp_profile/PortalServer/installer/wp.config/config/includes/wp.config_cfg.xml:68: The following error occurred while executing this line:
+/opt/WebSphere/profiles/wp_profile/PortalServer/installer/wp.config/config/includes/wp.config_cfg.xml:81: The following error occurred while executing this line:
+/opt/WebSphere/profiles/wp_profile/PortalServer/installer/wp.config/config/includes/wp.config_cfg.xml:95: The following error occurred while executing this line:
+/opt/WebSphere/profiles/wp_profile/PortalServer/pzn/prereq.pzn/config/includes/pzn_cfg.xml:114: EJPXB0015E: Server response indicates an error.
+
+The <wp_profile>/logs/WebSphere_Portal/SystemOut.log will contain startup errors that begin with a failure similar to the following:
+
+[10/30/08 15:59:00:000 EDT] 00000013 VirtualHost E SRVE0164E: Web Application WebSphere Portal Server WSRP Facade uses the context root /newroot/*, which is already in use by Web Application WebSphere Portal Server. Web Application WebSphere Portal Server WSRP Facade will not be loaded.
+
+
+CAUSE
+This problem can be caused by setting the same value for both WsrpContextRoot and WpsContextRoot, for example:
+
+In <wp_profile>/ConfigEngine/properties/wkplc_comp.properties:
+
+WsrpContextRoot=newroot
+
+In <wp_profile>/ConfigEngine/properties/wkplc.properties:
+
+WpsContextRoot=newroot
+
+
+RESOLVING THE PROBLEM
+WsrpContextRoot and WpsContextRoot cannot be set to the same value. To resolve the problem, change one of these properties to another value and retry the modify-servlet-path task.

@@ -1,0 +1,147 @@
+Title: IBM JR32181: REGRESSION OF APAR JR28854 SETTING WEB SERVICE TIMEOUT TO CUSTOMVALUE WHEN USING DYNAMIC ENDPOINT API. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS UNREPRODUCIBLE.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Regression of APAR JR28854 [http://www-01.ibm.com/support/docview.wss?uid=swg1JR28854]
+   ERROR DESCRIPTION:
+   When invoking a web service while using dynamic endpoint SCA API
+   to  change the endpoint, the web service timeout value will
+   always uses the default value (300 seconds or 5 minutes).  A
+   user configured value will not be honored.
+   
+   A standard invoke that does not use the dynamic endpoint API
+   will honor the user configured value and does not show this
+   problem.
+   
+   
+   This APAR corrects the behavior so that the user
+   configurable  value will take effect.The value can be configured
+   within the admin console under the Web Service Client Bindings
+   for the particular application module.
+   
+   A sample of the invoke call using the API is as follows:
+   
+   EndpointReference eRef =
+   EndpointReferenceFactory.INSTANCE.createEndpointReference();
+   eRef.setAddress("http://localhost:9081/ramExportWeb/sca/ramLib
+   InterfaceExport1");
+   Service sv =
+   (Service)ServiceManager.INSTANCE.getService("ramLibInterfacePart
+   ner", eRef);
+     DataObject response = (DataObject)sv.invoke("operation1",
+   "Testdata");
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  NA
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: No user is affected because customer/L2/L3   *
+   *                 could not replicate this issue.              *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: A binding was replaced by a Service     *
+   *                      Component Architecture (SCA)            *
+   *                      invocation to resolve JR28854 [http://www-01.ibm.com/support/docview.wss?uid=swg1JR28854] could     *
+   *                      have caused regression.                 *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   The problem is that customer has a long running process which
+   uses late binding to start another long running process. The
+   customer said that in this scenario the activity that starts
+   long running process moves to stopped state.  They suspected
+   this as a regression of JR28854 [http://www-01.ibm.com/support/docview.wss?uid=swg1JR28854]. But when
+   development wanted to replicate the issue to analyze and
+   resolve it then neither the customer nor L2/L3 could
+   replicate the issue therefore we decided to cancel the defect.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR32181
+   
+   
+ * REPORTED COMPONENT NAME
+   WEB PROC SERVER
+   
+   
+ * REPORTED COMPONENT ID
+   5724L0100
+   
+   
+ * REPORTED RELEASE
+   610
+   
+   
+ * STATUS
+   CLOSED UR5
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-02-26
+   
+   
+ * CLOSED DATE
+   2009-04-08
+   
+   
+ * LAST MODIFIED DATE
+   2009-04-08
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

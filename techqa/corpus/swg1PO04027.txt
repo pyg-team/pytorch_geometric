@@ -1,0 +1,121 @@
+Title: IBM PO04027: GETTING ERROR "FAILED TO ENCRYPT DATA" WHEN TRYING TO CREATE NEW SECURITY FILE IN IBASE DESIGNER. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS SUGGESTION FOR FUTURE RELEASE.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  A customer of ours needs to enable FIPS-140-2 security for the
+   iBase environment. When that is enabled, they can no longer
+   open or create security files in iBase Designer. Below is the
+   details of the error message.
+   
+   "Failed to encrypt data"
+   
+   the details of the problem are :
+   "An error occurred in
+   MSecurity::E
+   MSecurity:EncodeSecurityPolicy
+   idSecurityPolicy:Save
+   FMain:DoCommand(SecurityFileNew)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Change the default value of 1 of the following registry key to
+   0.
+   
+   "HKLM\System\CurrentControlSet\Control\Lsa\FIPSAlgorithmPolicy\E
+   nabled"
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *  FIPS (Federal Information Processing Standard) 140-2 is the
+   U.S. government computer security standard used to accredit
+   cryptographic modules.  This capability is not currently
+   available in iBase.
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   PO04027
+   
+   
+ * REPORTED COMPONENT NAME
+   I2 IBASE
+   
+   
+ * REPORTED COMPONENT ID
+   5725G1500
+   
+   
+ * REPORTED RELEASE
+   8XX
+   
+   
+ * STATUS
+   CLOSED SUG
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-09-08
+   
+   
+ * CLOSED DATE
+   2014-11-25
+   
+   
+ * LAST MODIFIED DATE
+   2014-11-25
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

@@ -1,0 +1,81 @@
+Title: IBM Objects in Container Storage Pools Might Lose Data Under Specific Boundary Conditions - United States
+
+Text:
+Windows System State Extended Attributes ACL Metadata Replication IT14687 IT14919 FLASH (ALERT)
+
+ABSTRACT
+ When you store files to an IBM® Spectrum Protect® server in a container storage pool, two boundary conditions might result in data loss. First, files with a metadata size that is greater than 4 KB might lose their metadata. The files that are most likely affected are Microsoft™ Windows™ System State files and UNIX, Linux, and Macintosh files with large extended attributes or access control lists. Second, a timing situation exists in which an object's data might not be flushed to media prior to a server crash. 
+
+CONTENT
+Releases Affected: 
+This problem affects IBM Spectrum Protect Versions 7.1.3, 7.1.4, and 7.1.5.
+All other releases and levels are unaffected.
+
+Required Conditions:
+A container storage pool (STGTYPE=CONTAINER or STGTYPE=CLOUD) must be defined. 
+
+The first boundary problem affects backup and archive files with metadata sizes that are greater than 4 KB, which includes Windows System State files and UNIX, Linux, and Macintosh files with extended attributes or access control lists that exceed 4 KB.
+
+The second boundary problem can occur if a retrieval operation is attempted too soon after a file is backed up, archived, replicated, or protected. The retrieval operations include operations that are initiated by the PROTECT STGPOOL, REPLICATE NODE, and AUDIT CONTAINER commands, and client retrievals.
+
+Problem Summary:
+The two problems are not detected when data is backed up or archived. However, the problems can be detected during restore or replication processing. Replication and restore operations are likely to fail without errors, as in this example message: 
+
+ANR1893E Process 51 for Replicate Node completed with a completion state of FAILURE.
+
+First boundary condition (from large metadata):
+
+After a failed restore or replication operation, the object's non-deduplicated extent, which contains the object's metadata, is marked as damaged. If the container of this non-deduplicated extent is audited, the following error can occur:
+
+02/23/16 11:16:02 ANR2338E smtrans.c(7062): Invalid header received for object
+10331953, length 446. Size (321), pushed (4), skipped (0),
+status (0). Found length (0), type (0), size (4).
+
+Second boundary condition (general timing condition):
+
+If the following error occurs during a retrieve or restore operation, the condition is temporary:
+
+ANR2818E consistency check failed on container /tsm/container/10/00000000000010a5.dcf with error 4800.
+
+This error message can be accompanied by similar error messages from the process that performs the retrieval, as in this example error for the PROTECT STGPOOL command:
+
+ANR4847W PROTECT STGPOOL detected an extent with ID 5702387903525131283 on container /tsm/container/10/00000000000010a5.dcf that is marked damaged.
+
+If the ANR2818E error message is issued, quiesce all backup, archive, replication, and protect operations to the storage pool, wait for all of these sessions to end, and then issue the AUDIT CONTAINER command for the affected containers. If the extents remain damaged, the second boundary condition is not the source of the error messages. 
+
+However, if the server crashed during a backup, archive, replication, or protect operation, the ANR2818E error message might not be issued, and the AUDIT CONTAINER command might detect damaged extents in one or more containers in the storage pool. In this situation, these extents might be affected by the second boundary condition, and the AUDIT CONTAINER command will not resolve this problem. 
+
+Identifying Affected Objects:
+
+First boundary condition (from large metadata):
+
+You can identify affected files or objects with permanent metadata loss by using the following SELECT statement:
+
+db2 -x "select 'show invo ' || cast( sdro.objid as char(24)) from sd_recon_order sdro inner join sd_non_dedup_locations sdndl on (sdro.chunkid=sdndl.chunkid) where sdro.chunktype=1 and sdro.offset=0 and sdndl.length!=(select sdro2.offset+128 from sd_recon_order sdro2 where sdro.objid=sdro2.objid and sdro2.offset>0 order by sdro2.offset fetch first row only) for read only with ur" >> macro.file
+
+The output from this SELECT statement generates a list of SHOW INVO commands that can be used as a macro file for the administrative client to display information about the files that are affected by this problem. This SELECT statement initiates a complete table scan for large inventory tables and can take several hours to run. This statement can be executed while the server is running; however, in that mode it can produce false positives. To identify a false positive, the SHOW INVO command reports that the object cannot be found on the server.
+
+Second boundary condition (general timing condition):
+
+For the secondary boundary condition, if the server crashed while storing data (during a backup, archive, replication, or protect operation), and the AUDIT CONTAINER command detected damaged extents, use the QUERY DAMAGED command to identify additional objects that are affected by the damaged extents.
+
+Problem Resolution: 
+Apply the fixing level. These problems are resolved in the IBM Spectrum Protect server 7.1.5.200 and later with APARs IT14687 and IT14919.
+
+Each object ID in the SELECT output described above identifies an object or file that lost its metadata due to the described problem. These files must be deleted and backed up again. For each file or object listed, complete the following tasks:
+
+1. Delete the object by using the DELETE OBJECT command:
+delete object <object_id>
+
+2. Back up the file that is shown in the SHOW INVO output for that object.
+
+NOTE: If deleting multiple objects in a macro with dsmadmc, use the ITEMCOMMIT flag.
+
+If an object is listed by the QUERY DAMAGED command, but the object does not appear in the SELECT output, that object is affected by damaged extents related to the second boundary condition. The files that are listed by the QUERY DAMAGED command, but do not appear in the SELECT output as described above, must be stored again (by using backup, archive, or other operations). In this way, you might be able to resolve the second boundary problem without first deleting the object. If this action does not resolve the issue, delete each object or file and back it up again, as described for the objects and files that are listed in the SELECT output.
+
+
+ 
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Storage Management Tivoli Storage Manager Storage Management Tivoli Storage Manager Extended Edition

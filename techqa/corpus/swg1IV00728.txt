@@ -1,0 +1,219 @@
+Title: IBM IV00728: TAM ESSO V8.0-SHAREDPIONT IS NOT SEEN MS PPT 2010 - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PERMANENT RESTRICTION.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  TAM ESSO v8.0-Sharedpiont is not seen MS PPT 2010
+   
+   
+   
+   Description:
+   TAM ESSO AccessAgent is able to manage the initial login (a
+   form-based
+   login) since it is exposed from IE (ieexpolorer.exe).  Via the
+   IE TAM
+   ESSO BHO, the user gets an automated login to the GM Sharepoint
+   applications since we have an AccessProfile created for the
+   login
+   screen being presented by IE.
+   However, when the user accesses an office doc within Sharepoint,
+   the MS
+   office application gets launched as a result of opening the doc.
+   At
+   this point, another login screen is presented to the end user.
+   While
+   the login screen appears to be the same as the initial login
+   screen (it
+   is still a form-based login screen), this one is being presented
+   by the
+   MS office application.  The TAM ESSO AccessAgent does not
+   provide an
+   automated login.  However, the interaction between the MS Office
+   application and the authentication service is still HTTP based
+   authentication.
+   
+   Mohit recommended that they can do the following:
+   
+   There are going to be two profiles
+   
+   a) one for the normal web shared ppoint logon windows
+   
+   b) the one will be winword in this case. With an windows
+   activate
+   trigger and a "start installing bho....
+   action.
+        The overhead is minimal and much less than wht they would
+   get by
+   enabling sso for a typcial because we are doing is enabling web
+   profiles
+   to run inside winword.
+   
+   
+   Results: It works for all the microsoft doc such as excel, doc,
+   ppt  in
+   2010 and 2007 version except ppt in 2010.
+   
+   I?ve ran into an issue with one of the Office apps and I?d like
+   to get
+   input from you and your team.  For Office 2007 I?ve been able to
+   create
+   profiles for Word, Excel, PowerPoint, InfoPath, and Access.
+   I?ve been
+   able to use a basic profile that just starts the BHO when it
+   sees the
+   login screen.  The existing profile for that login page is
+   taking over
+   from there.  The profiles for the office apps have been the same
+   flow
+   and signatures for each of the apps.
+   
+   When I started testing on Office 2010 four of the apps work fine
+   (Word,
+   Excel, InfoPath, and Access), PowerPoint is not working though.
+   The
+   profile recognizes the login window and is starting the BHO but
+   SSO is
+   not occurring.  If I use Access Studio to highlight the window
+   it
+   recognizes the signature as expected.  I tried to see if Studio
+   could
+   see the HTML fields in the window but it is not having any luck
+   (it was
+   actually crashing Studio 8.0).  I?ve tried testing with both AA
+   8.0 and
+   AA 8.1 with the same result.  I also tried making the signature
+   more
+   specific to make sure the embedded IE window was present before
+   trying
+   to load the BHO but ended up with the same result.  Have also
+   tried
+   using a Window Found trigger instead of Created or Activated.
+   
+   I?ve attached a copy of the profile for PowerPoint (modified
+   with the
+   more specific signature) and one for Word for comparison.  I?ve
+   also
+   attached AA logs for the behavior with PowerPoint and then with
+   Word for
+   comparison.
+   
+   Please let me know if you or your dev team have any thoughts on
+   why the
+   BHO doesn?t seem to be working in this case.
+   
+   U
+   sers do not receive SSO when accessing Office documents via
+   Sharepoint.
+   
+   Steps to Duplicate:see problem description
+   
+   Desired Behavior:see problem description
+   
+   
+   Environment:TAM ESSO v8.1, Sharepoint web profile, MS office
+   2010 or
+   2007 , Powerpoint.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  23756
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  When accessing a PowerPoint 2010 document through Sharedpoint
+   and the PowerPoint file is opened in an embedded browser, single
+   sign-on will not work as the signature is not recognized
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This limitation will not be addressed.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV00728
+   
+   
+ * REPORTED COMPONENT NAME
+   SSO ACCESS AGEN
+   
+   
+ * REPORTED COMPONENT ID
+   5724V67AG
+   
+   
+ * REPORTED RELEASE
+   800
+   
+   
+ * STATUS
+   CLOSED PRS
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-05-20
+   
+   
+ * CLOSED DATE
+   2011-11-11
+   
+   
+ * LAST MODIFIED DATE
+   2011-11-11
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

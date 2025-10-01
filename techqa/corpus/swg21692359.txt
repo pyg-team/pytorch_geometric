@@ -1,0 +1,48 @@
+Title: IBM ITCAM4Tx :  WRT 7.4 not returning data in TEP - kfcmserver.exe fails to start - United States
+
+Text:
+71WRT-PLAN; 71WRT-INS TECHNOTE (FAQ)
+
+QUESTION
+ Using ITCAM for Tx with WRT agent 7.4 installed on Windows 32bit OS, kfcmserver.exe does not start 
+
+CAUSE
+Windows Network Monitor has been installed but not WinPcap
+
+ANSWER
+With WRT 7.4 on Windows , you need to install WinPcap, not "Windows Network Monitor". 
+
+
+If WinPcap is not installed yet, when starting the WRT "ITCAM for Web Response Time" service, kt5agent process is started, but not kfcmserver.exe
+
+
+<ITM_HOME>\TMAITM6\logs\<host>_t5_<timestamp>.log is ending with many messages like :
+analyzerlogadapter.cpp,59,"log") (E:\tema\itm\t5tema\CWRMCollector.cpp,226) Connecting...
+analyzerlogadapter.cpp,59,"log") (E:\tema\itm\t5tema\CWRMCollector.cpp,242) Unable to connect. rc[12]
+
+
+
+Attempting to start manually, from a Windows command line, the kfcmserver with command like :
+<ITM_HOME>\TMAITM6\wrm\Analyzer\kfcmserver.exe test
+fails with error like :
+Unable to locate component - the application has failed to start because wpcap.dll was not found 
+
+ 
+
+So 
+
+ 
+
+- uninstall Windows Network Monitor 
+
+- install WinPcap 
+
+ 
+
+you can refer to ITCAM4Tx 7.4 documentation link :
+https://www.ibm.com/support/knowledgecenter/en/SS5MD2_7.4.0.1/com.ibm.itcamt.doc/rt/Install_Guide/beforeyoubeginaninstallation.html [https://www.ibm.com/support/knowledgecenter/en/SS5MD2_7.4.0.1/com.ibm.itcamt.doc/rt/Install_Guide/beforeyoubeginaninstallation.html]
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ itcam itcam4tx itcamfortx itcam4t web response time monitor

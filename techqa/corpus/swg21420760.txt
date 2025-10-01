@@ -1,0 +1,174 @@
+Title: IBM Common application issues when migrating from the legacy JDBC driver - United States
+
+Text:
+migration; JDBC; specifications; non-compliant; db2jcc.jar; db2java.zip; -4470; -4302; routine; stored procedure; udf TECHNOTE (FAQ)
+
+QUESTION
+ What are the common issues faced when migrating from the legacy JDBC driver (db2java.zip) to the IBM Data Server Driver for JDBC and SQLJ also known as DB2 Universal JDBC Driver (db2jcc.jar)? Why did the application work with the deprecated legacy JDBC driver before migration? Why did the Java routines work on DB2 v8.x/v9.1 but fail on v9.5/v9.7/v9.8? 
+
+CAUSE
+The Java application/routine may have been coded based on non-compliant JDBC specifications. With the legacy JDBC driver db2java.zip, JDBC calls would be intercepted by DB2's Call Level Interface (CLI) which acts as a middleman before passing the call to DB2. The CLI will parse and correct some non-compliant JDBC code before sending it to the DB2 server. With the DB2 Universal JDBC driver there is no DB2 CLI acting as the middleman, thus any Java code which does not comply to JDBC specifications will return an exception.
+
+ANSWER
+Below are the most common coding scenarios which return an exception. Please refer to the links in the Related URL section for additional scenarios. 
+
+1.0) ResultSet.next() returns Invalid operation: result set is closed. ERRORCODE=-4470 
+
+ 
+
+ *  1.1) Nested ResultSets 
+   
+   By default auto-commit is enabled and -4470 is returned once the inner resultset Resultset2 has completed fetching all the rows from Resultset2 because this causes a COMMIT to be sent to the server. The COMMIT also closes any other open ResultSets such as ResultSet1. This behaviour conforms to JDBC specifications. 
+   
+   One alternative is to disable autocommit before any nested Resultset code and then re-enable auto-commit after the nested resultset code. 
+   
+   Connection.setAutoCommit(false); /* Disable autocommit */ 
+   
+   Resultset1 = getResultSet(sqlQuery1); 
+   
+   While(Resultset1.next()) /* Returns exception here */ 
+   { 
+   /* Inner resultset */ 
+   Resultset2 = getResultSet(sqlQuery2); 
+   While(Resultset2.next()) 
+   { 
+   /* Code */ 
+   } 
+   
+   } 
+   
+   Connection.commit(); /* Perform manual COMMIT */ Connection.setAutoCommit(true); /* Enable autocommit */ 
+
+
+
+ *  1.2) Calling ResultSet.next() after it previously returned false 
+   
+   while(Resultset.next()) 
+   { 
+   /* Code */ 
+   } 
+   
+   Resultset.next(); /* Returns an exception here */  
+   
+   Once the while loop returns false the ResultSet object is automatically closed. Thus any subsequent calls to resultset.next() will fail. 
+   
+    
+   
+   Another workaround for 1.1 and 1.2 is to set downgradeHoldCursorsUnderXA=true and resultSetHoldability=1.
+   
+   
+
+ 
+
+2.0) An unexpected token "" was found following "". Expected tokens may include: "Y OPTIMIZE FOR 1 ROW" 
+
+The SQL statement contains a semi-colon (;). To resolve this error, the semi-colon should be removed. 
+
+For example change 
+
+"SELECT C1 FROM T1;" 
+
+to 
+
+"SELECT C1 FROM T1" 
+
+ 
+
+ 
+
+3.0) Invalid operation: wasNull() called with no data retrieved or SQL0301 
+
+ 
+
+The column PRODNUM on the database is defined as INTEGER. The legacy driver would convert the data type String to Integer before sending it to the DB2 for z/OS database. Although this situation applies only to DB2 for z/OS database it is good coding practice to match the data type used in the JDBC call and the database. 
+
+ 
+
+The Java setXXXX or getXXXX methods must match the column datatype defined in the DB2 for z/OS database. 
+
+Example: 
+
+SELECT * FROM PRODUCTS WHERE PRODUCTNUMBER=? 
+
+The legacy JDBC driver accepted setString. 
+
+CallableStatement.setString(1, productNumber) 
+
+ 
+
+With the Universal JDBC driver the application must use setInt() since PRODNUM is defined as INTEGER on the database. 
+
+CallableStatement.setInt(1, productNumber); 
+
+ 
+
+CREATE TABLE PRODUCTS(PRODNUM INTEGER, ...) 
+
+ 
+
+4.0) Calling a stored procedure using executeQuery() returns ERRORCODE=-4476 no result set was returned. 
+
+
+[Jan 01, 2010 17:23:34] ERROR T4TestProgram: sql error -4476 null com.ibm.db2.jcc.am.SqlException: [jcc][10100][10910][4.9.78] 
+java.sql.CallableStatement.executeQuery() was called but no result set 
+was returned. Use java.sql.CallableStatement.executeUpdate() for non-queries. ERRORCODE=-4476, SQLSTATE=null 
+
+ 
+
+When calling a stored procedure the method PreparedStatement.executeUpdate() must be used if the stored procedure does not return a ResultSet. However there may be situations in which the stored procedure does return a ResultSet and thus -4476 is returned. One alternative is to use the PreparedStatement.execute() method and then check the return value to determine if a ResultSet was returned before attempting to retrieve a row from the ResultSet. 
+
+ 
+
+
+5.0) Calling a Java stored procedure returns Invalid SQL statement length in the server's db2diag.log
+
+2010-01-01-09.00.00.339060-240 E3075A777 LEVEL: Error
+PID : 790594 TID : 2829 PROC : db2sysc 0
+INSTANCE: db2inst1 NODE : 000 DB : SAMPLE
+APPHDL : 0-7 APPID: 10.123.123.111.3478.100324154203
+AUTHID : DB2INST1
+EDUID : 2829 EDUNAME: db2agent (SAMPLE) 0
+FUNCTION: DB2 UDB, DRDA Application Server, sqljsParseSqlSttGrpNOC, probe:419
+MESSAGE : DIA5000C A DRDA AS token "RECOVERABLE" was detected. The diagnostic data returned is (SRVDGN): "FUNCTION ID = 0050 , PROBE POINT = 0419 , TRACE POINT = 0015 , SUBCODE1 = FFFFFFFF804B0095, SUBCODE2 = 
+00000000002FFF8F, SUBCODE3 = 0000000000000000, ERROR MSG = Parser: 
+Invalid SQL statement length".
+
+2010-01-01-09.00.00.331662-240 I3853A626 LEVEL: Error
+PID : 790594 TID : 2829 PROC : db2sysc 0
+INSTANCE: db2inst1 NODE : 000 DB : SAMPLE
+APPHDL : 0-7 APPID: 10.123.123.111.3478.100324154203
+AUTHID : DB2INST1
+EDUID : 2829 EDUNAME: db2agent (SAMPLE) 0
+FUNCTION: DB2 UDB, DRDA Application Server, sqljsParseSqlSttGrpNOC, probe:15
+MESSAGE : ZRC=0x804B0095=-2142568299=SQLJS_VALNSP "VALUE ERROR"
+DATA #1 : DDM Object, PD_TYPE_DDM_OBJECT, 16 bytes
+
+data length : 3145621
+codepoint : 0x2414 ( SQLSTT )
+length : 8 ( EXTENDED ) 
+
+
+An invalid SQL statement was sent to the Java stored procedure. The legacy JDBC driver may have accepted queries containing invalid characters such as carriage returns. 
+
+ 
+
+ 
+
+Further notes regarding Java stored procedures 
+
+For Java routines (stored procedures and user defined functions) starting with DB2 v9.5 by default the DB2 Universal JDBC driver is used to run Java routines instead of the legacy JDBC driver. Thus a routine which worked in DB2 v8.x may fail to run on DB2 v9.5 or higher due to non-compliant JDBC coding. The DB2 registry variable DB2_USE_DB2JCCT2_JROUTINE can be set to revert to DB2 v8.x behaviour. For more details please see the link Specification of a driver for Java routines. 
+
+As of v10.1 DB2_USE_DB2JCCT2_JROUTINE has been removed since Java stored procedure no longer support the use of legacy driver db2java.zip 
+
+ 
+
+
+
+RELATED INFORMATION
+ JDBC differences between the current IBM Data Server Dr [http://publib.boulder.ibm.com/infocenter/db2luw/v9r7/topic/com.ibm.db2.luw.apdv.java.doc/src/tpc/imjcc_rjvjcdif.html]
+Migrating Java applications that use DB2 JDBC Type 2 dr [http://publib.boulder.ibm.com/infocenter/db2luw/v9r5/index.jsp?topic=/com.ibm.db2.luw.qb.migration.doc/doc/t0024117.html]
+Java software support for DB2 products [http://publib.boulder.ibm.com/infocenter/db2luw/v9r7/index.jsp?topic=/com.ibm.db2.luw.qb.server.doc/doc/r0011932.html]
+SDK for Java differences that affect the IBM Data Serve [http://publib.boulder.ibm.com/infocenter/db2luw/v9r7/topic/com.ibm.db2.luw.apdv.java.doc/src/tpc/imjcc_r0052677.html]
+Specification of a driver for Java routines [http://publib.boulder.ibm.com/infocenter/db2luw/v9r7/index.jsp?topic=/com.ibm.db2.luw.apdv.routines.doc/doc/c0024190.html]
+DB2 JDBC Type 2 Driver is discontinued [http://www-01.ibm.com/support/knowledgecenter/SSEPGG_10.1.0/com.ibm.db2.luw.wn.doc/doc/i0058719.html?lang=en]
+DB2_USE_DB2JCCT2_JROUTINE Removed in v10.1 [http://www-01.ibm.com/support/knowledgecenter/SSEPGG_10.1.0/com.ibm.db2.luw.wn.doc/doc/i0052379.html?lang=en]

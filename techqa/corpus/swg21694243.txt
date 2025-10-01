@@ -1,0 +1,32 @@
+Title: IBM The Effects of Fuzzy Ambiguity on Stop words - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Does adding fuzzy ambiguity (tolerance) on stop words change the behavior of stop words in IBM Watson Content Analytics? 
+
+CAUSE
+After adding fuzzy ambiguity (tolerance) to a known stop word term in the search query, the results only show documents with the search terms including the stop word term. It seems the stop word behavior has changed and the stop word has acted as a search term instead of it being ignored in the results as a stop word should, by design.
+
+ANSWER
+Fuzzy ambiguity will, by design, have an effect on stop word functionality. Fuzzy ambiguity will override the behavior of the stop word and begin to treat the term as a search term. Since stop words are words a query should ignore when gathering search results, using fuzzy ambiguity on stop words may not be practical - unless the word is actually in the context of the records and you have purposefully intended to look for such term. 
+
+Take the following as an example: 
+
+ * The stop word is "bird" and the following records have the following information: 
+   
+   Record 1. blue bird 
+   Record 2. flying bird 
+   Record 3. blue car 
+   
+   When typing "blue bird" in the search query, record 1 and record 3 will show up. 
+   
+   Now let's add fuzzy ambiguity: 
+   After searching "blue bird~0.97", "bird" is also treated as a search term, 
+   
+   Therefore only record 1 shows up as a result 
+   
+
+(Please note: The above terms do not include quotes in the search query.) RELATED INFORMATION
+ Custom stop word dictionaries [http://www-01.ibm.com/support/knowledgecenter/SS5RWK_3.5.0/com.ibm.discovery.es.ta.doc/iiysastpwrds.htm?lang=en]

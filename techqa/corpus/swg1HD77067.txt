@@ -1,0 +1,203 @@
+Title: IBM HD77067: SMARTEAM SWITCHES CONFIGURATIONS IN SW2007 WITHOUT GETTING FINI SHED - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  SMARTEAM switches configurations in SW2007
+   without getting finished
+   The customer has the problem that if he opens or
+   saves a SW-Part with more than 1 configuration via
+   SMARTEAM, SMARTEAM switches between the
+   two configurations in a loop, that finishes with SW
+   crash or the SW Task has to be killed manually.
+   This problem I could reproduce with customers
+   Database and the following scenario.
+   - In the System Configuration Manager, set the
+   following value
+   "SolidWorks.MapEvaluatedValue" = TRUE
+   - Launch SolidWorks 2007
+   - Login to SmarTeam (user = joe / pwd =
+   2smart4all)
+   - Open "SmarTeam / Extras / Options" and select
+   "Administrator Options"
+   In the field of "Simplified configuration extension"
+   enter (*)
+   - Sel OK to close
+   - Fk File / Open and
+   select "Teil_mit_zwei_Konfigs.sldprt"
+   (is attached to this request)
+   -> In the configuration manager, there are two
+   configurations available
+   - Fk SmarTeam / Save
+   - Save this part into SmarTeam
+   - On the Profile Card select OK to confirm
+   => SolidWorks loops
+   You can see, that it activates one configuration and
+   afterwards the other one.
+   After some time, SolidWorks closes.
+   If the "SolidWorks.MapEvaluatedValue" has been
+   set to FALSE, this problem can not be reproduced.
+   If the Option ""Simplified configuration extension"
+   is not set, this problem does not happen.
+   (This problem, I couldn't reproduce on a SmDemo.)
+   Could you please analyse this problem and let me
+   know, if you need additional information.
+   As attachement you also get a video, showing the
+   problem.
+   As the database has about 34MB of size, I have it
+   on a filetransfer with the import information.
+   .
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  SMARTEAM switches configurations in SW2007 without getting fini
+   shed
+   SMARTEAM switches configurations in SW2007
+   without getting finished
+   The customer has the problem that if he opens or
+   saves a SW-Part with more than 1 configuration via
+   SMARTEAM, SMARTEAM switches between the
+   two configurations in a loop, that finishes with SW
+   crash or the SW Task has to be killed manually.
+   This problem I could reproduce with customers
+   Database and the following scenario.
+   - In the System Configuration Manager, set the
+   following value
+   "SolidWorks.MapEvaluatedValue" = TRUE
+   - Launch SolidWorks 2007
+   - Login to SmarTeam (user = joe / pwd =
+   2smart4all)
+   - Open "SmarTeam / Extras / Options" and select
+   "Administrator Options"
+   In the field of "Simplified configuration extension"
+   enter (*)
+   - Sel OK to close
+   - Fk File / Open and
+   select "Teil_mit_zwei_Konfigs.sldprt"
+   (is attached to this request)
+   -> In the configuration manager, there are two
+   configurations available
+   - Fk SmarTeam / Save
+   - Save this part into SmarTeam
+   - On the Profile Card select OK to confirm
+   => SolidWorks loops
+   You can see, that it activates one configuration and
+   afterwards the other one.
+   After some time, SolidWorks closes.
+   If the "SolidWorks.MapEvaluatedValue" has been
+   set to FALSE, this problem can not be reproduced.
+   If the Option ""Simplified configuration extension"
+   is not set, this problem does not happen.
+   (This problem, I couldn't reproduce on a SmDemo.)
+   Could you please analyse this problem and let me
+   know, if you need additional information.
+   As attachement you also get a video, showing the
+   problem.
+   As the database has about 34MB of size, I have it
+   on a filetransfer with the import information.
+   .
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  THIS PROBLEM WILL BE FIXED ON SMARTEAM
+   VERSION 5 RELEASE 19 SP02 LEVEL.
+   -
+   .
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   HD77067
+   
+   
+ * REPORTED COMPONENT NAME
+   SMARTEAM NT>XP
+   
+   
+ * REPORTED COMPONENT ID
+   569199970
+   
+   
+ * REPORTED RELEASE
+   518
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-08-12
+   
+   
+ * CLOSED DATE
+   2008-09-25
+   
+   
+ * LAST MODIFIED DATE
+   2008-11-07
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   SMARTEAM NT>XP
+   
+   
+ * FIXED COMPONENT ID
+   569199970
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R519 PSN SP51902
+   UP08/11/07 I 1000

@@ -1,0 +1,38 @@
+Title: IBM A JMS application is failing to get messages off a queue and receives MQJCA1025 error - United States
+
+Text:
+wmq; jms; listener; MQJCA1025; setMessageListener TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ A JMS application running in an application server fails to get messages from the WebSphere MQ queue. Error MQJCA1025 is logged. 
+
+SYMPTOM
+MQJCA1025: The message consumer must not have a message listener. An application attempted to set a message listener for a JMS message consumer. This exception occurs only if the application is running in a managed environment. Modify the application so that it does not use a message listener.
+at com.ibm.mq.connector.services.JCAExceptionBuilder.
+buildException(JCAExceptionBuilder.java:149)
+at com.ibm.mq.connector.services.JCAExceptionBuilder.
+buildException(JCAExceptionBuilder.java:86)
+at com.ibm.mq.connector.outbound.MessageConsumerWrapper.
+setMessageListener(MessageConsumerWrapper.java:177)
+at org.apache.axis2.transport.jms.JMSConnectionFactory.
+listenOnDestination(JMSConnectionFactory.java:458)
+at org.apache.axis2.transport.jms.JMSConnectionFactory.listen
+(JMSConnectionFactory.java:421)
+at org.apache.axis2.transport.jms.JMSListener.start(JMSListener.
+java:319)
+
+
+
+CAUSE
+Calling setMessageListener() method in a managed environment is a violation of J2EE specification, and therefore should not be used.
+
+ENVIRONMENT
+Any application server
+
+RESOLVING THE PROBLEM
+Your JMS application needs to be altered to not call setMessageListener() method. Instead, Activation Specifications are provided for the functionality which this method provides
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ WebSphere MQ WMQ

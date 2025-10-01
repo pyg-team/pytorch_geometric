@@ -1,0 +1,228 @@
+Title: IBM PI53032: ABEND S0C4 OCCURRING IN VERSIONED MODULE CJE9XLGR AT OFFSET X'214' - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  A CICS region was shutting down, when it
+   experienced an abend S0C4/AKEA in CPSM versioned module
+   CJE9XLGR. In the job log, the following messages occurred
+   repeatedly indicating the problem:
+   
+   DFHAP0701  An abend (code 0C4/AKEA) has occurred in exit
+              program CJE9XLGR at exit point XPCTA.
+   DFHAP0001  An abend (code 0C4/AKEA) has occurred at
+              offset X'00000214' in module CJE9XLGR.
+   ........
+   
+   DFHAP0701  An abend (code ---/ASRA) has occurred in exit
+              program CJE9XLGR at exit point XPCTA.
+   DFHAP0001  An abend (code ---/ASRA) has occurred at
+              offset X'192C' in module DFHABAB.
+   
+   For the task that experienced the S0C4, code in EYU9XLGR picked
+   
+   up the value in XLWA_AOPB_VO (XLWA +x'360') and  XLWA_AOPB_LEN
+   
+   (XLWA +x'364'). These values are no longer valid but get used
+   
+   as the location of the AOPB, we use AOPB_ELE_VO (AOPB +x'180')
+   
+   as the start address of the array AOPB_CURR_ELE (AOPB +x'14')
+   
+   as the number of entries.
+   
+   
+   
+   The abend occurs because the XLWA_AOPB_VO address in the XLWA
+   
+   is not getting cleared.
+   
+   Additional Symptom(s) Search Keyword(s): KIXREVxxx
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  n/a
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All CICSPlex SM V5R2M0 Users                 *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: When your CTS 5.2 MAS is running on     *
+   *                      a CICS 680 region, then the MVS         *
+   *                      Console reports AKEA abends in the      *
+   *                      XPCTA exit point for module CJE9XLGR    *
+   *                      during CICS shutdown.                   *
+   *                                                              *
+   *                      If the CPSM Debugger transaction is     *
+   *                      used on one of these mixed-version      *
+   *                      MASes, then the CODB transaction        *
+   *                      abends ASRA on entry to the             *
+   *                      mainline debugger program.              *
+   *                                                              *
+   ****************************************************************
+   * RECOMMENDATION: After applying the PTF that resolves         *
+   *                 this APAR, all MASes must be recycled        *
+   *                 to pick up the new code. Note that           *
+   *                 regions do not need to be brought down       *
+   *                 and restarted at the same time.              *
+   *                                                              *
+   ****************************************************************
+   When the CPSM MAS agent shuts down, it should disable all
+   CICS Global User Exits that it had enabled. Due to a module
+   naming logic error, the CPSM modules for the XPCTA and XSRAB
+   were not being disabled at MAS shutdown. Consequently, if a
+   program abend occurred subsequent to the shutdown, then CPSM
+   Exit modules were still being called, and they attempted to
+   locate the CPSM control block infrastructure - which no
+   longer existed. This resulted in an abend in the CPSM XPCTA
+   exit module CJE9XLGR.
+   
+   When the CPSM Deubber Transaction CODB was used to attempt
+   to diagnose this problem, it abended ASRA on entry to the
+   debugger mainline code. Also, the internal program error
+   diagnosis codes were not being set correctly. This would
+   have made further problem resolution inside the debugger
+   very difficult to diagnose.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Changes were made to CPSM Kernel Program EYU9XLEV to ensure that
+   it disables the correct XPCTA and XSRAB module names when the
+   CPSM V5.2 agent is running on a CICS 680 region. Also, the
+   XPCTA Abend Exit module EYU9XLGR, and the XSRAB Abend Exit
+   module EYU9XLSR, have been modified to capture abends from
+   CPSM 5.2 modules running on CICS regions prior to CICS 690.
+   
+   The Linkage Editor control statements for the CJE9DBUG module
+   (that is the CPSM 520/CICS 680 module) has had an ENTRY
+   statement added, to prevent the program from trying to execute
+   its prologue messages. Also, the program now uses Load Address
+   (LA) instructions to set internal problem notification codes,
+   rather than standard Load (L) instructions.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  FIX AVAILABLE BY PTF ONLY
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI53032
+   
+   
+ * REPORTED COMPONENT NAME
+   CICS TS Z/OS V5
+   
+   
+ * REPORTED COMPONENT ID
+   5655Y0400
+   
+   
+ * REPORTED RELEASE
+   90M
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2015-11-23
+   
+   
+ * CLOSED DATE
+   2016-01-11
+   
+   
+ * LAST MODIFIED DATE
+   2016-02-01
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    PI55138 [http://www-01.ibm.com/support/docview.wss?uid=swg1PI55138] UI34335 PI55835
+   
+   
+
+MODULES/MACROS
+ *  CJA9DBUG CJA9XLEV CJA9XLGR CJA9XLSR CJB9DBUG CJB9XLEV CJB9XLGR
+   CJB9XLSR CJC9DBUG CJC9XLEV CJC9XLGR CJC9XLSR CJD9DBUG CJD9XLEV
+   CJD9XLGR CJD9XLSR CJE9DBUG CJE9XLEV CJE9XLGR CJE9XLSR EYU9DBUG
+   EYU9XLEV EYU9XLGR EYU9XLSR JCI690MJ
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CICS TS Z/OS V5
+   
+   
+ * FIXED COMPONENT ID
+   5655Y0400
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R90M PSY UI34335 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI34335]
+   UP16/01/13 P F601
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

@@ -1,0 +1,36 @@
+Title: IBM Unable to fetch data from the database of IBM FileNet Process Analyzer after applying Fix Pack 2 - United States
+
+Text:
+PA TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ After I applied Fix Pack 2 on top of IBM FileNet Process Analyzer 4.5.1 version, I cannot fetch data from the database if I am using Microsoft® SQL Server (MSSQL) 2008 SP2.
+
+
+SYMPTOM
+I can see the following error when fetching data in IBM FileNet Process Task Manager 
+
+ 
+Unable to fetch data fields from the Process Analyzer database. java.lang.reflect.InvocationTargetException at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method) ….....
+Caused by: java.lang.UnsupportedClassVersionError: (com/microsoft/sqlserver/jdbc/SQLServerDriver) bad major version at offset=6 ….........
+
+
+CAUSE
+Process Analyzer 4.5.1 Fix Pack 2 also upgrades Java Runtime Environment(JRE) from 1.5 version to 1.6 version. The old MSSQL 2008 driver 2.0, however, is not working with JRE 1.6 version.
+
+
+RESOLVING THE PROBLEM
+You need to use MSSQL JDBC driver 3.0 after installing Process Analyzer 4.5.1 Fix Pack 2 . Please refer to related URL section about where to download MSSQL JDBC driver 3.0. 
+
+
+Microsoft® SQL Server JDBC 3.0 package includes 2 drivers, sqljdbc.jar and sqljdbc4.jar. Java CLASSPATH, however, should only points to one JDBC driver. 
+So you should follow below steps to replace the JDBC driver in your server: 
+
+ 1. Be sure to backup current 2.0 driver folder 
+ 2. Install MSSQL JDBC driver 3.0 
+ 3. Locate sqljdbc.jar and sqljdbc4.jar in your server 
+ 4. Remove sqljdbc.jar or sqljdbc4.jar from its folder 
+ 5. Restart server
+
+RELATED INFORMATION
+ Download the Microsoft SQL Server JDBC Driver 3.0 [http://www.microsoft.com/en-us/download/details.aspx?id=21599 ]

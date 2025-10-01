@@ -1,0 +1,64 @@
+Title: IBM Fix list for IBM Content Navigator Version 3.0.0 - United States
+
+Text:
+ PRODUCT DOCUMENTATION
+
+ABSTRACT
+ The following table contains the complete listing of fixes for Version 3.0.0. 
+
+CONTENT
+APARs fixed in IBM Content Navigator Version 3.0.0 
+
+APAR Description IO24490 (IBM FileNet P8 users) When EDS is used to hide workflow properties in the in-basket filter, moving the input focus through each visible workflow property field with the tab key causes a null script error when the next field is hidden. This also causes the input focus to stop moving to the next visible field.
+With this fix, the tab key moves the input focus through each of the visible fields. IO24492 (IBM Content Navigator for Microsoft Office users) When the LTPA token times out, the SSO Kerberos does not recover.
+With this fix, the user connection is reestablished. IO24514 (IBM Content Manager users) Child attribute values are not exported with the other attributes. [https://cmdtsweb4.usca.ibm.com:9449/jazz/resource/itemName/com.ibm.team.workitem.WorkItem/84947] 
+With this fix, the child attributes and the values are exported. IO24539 (IBM FileNet P8 users) When criteria are entered into the workflow in-basket filter, pressing the Enter key does not close the filter dropdown and apply the filter criteria.
+With this fix, the Enter works as expected. IO24544 (IBM CMIS for Content Manager users) Administrators must restart CMIS after modifying the Content Manager data model for users to see the changes.
+With this fix, the Content Manager configuration cache is cleared and the data model changes now appear. IO24653 (IBM Content Navigator for Microsoft Office users) Users are unable to select a different document class when adding an email from Outlook.
+With this fix, users can change the document model class. IO24710 (IBM FileNet P8 users) When users attempt to download documents with the Download All action and the user does not have permission to open all of the documents, the user receives an error.
+With this fix, the user receives a friendly error message that the user does not have sufficient permissions. IO24711 (IBM FileNet P8 users) After editing the properties of multiple documents or folders that have an entry template, the reference to the entry template is lost after changes are saved.
+With this fix, the entry template information is retained. IO24745 (IBM FileNet P8 users) The annotateEdit HTML parameter is set to true but annotation editing remains enabled.
+With this fix, the annotateEdit parameter disables annotation editing. IO24752 (IBM Content Navigator for Microsoft Office users) When the locale is set to a RTL orientation, some choice lists remain set to LTR.
+With this fix, the choice list option orientation is set correctly. IO24757 (IBM CMIS for Content Manager users) When files of 0 byte length are encountered, the document id is not retrieved.
+With this fix, the document id, cmis:contentStreamId, is available in the response metadata when using IBM Content Manager Search API. IO24759 (IBM Content Navigator users) When using the sample feature, the ‘Get Next’ button does not work.
+With this fix, the ‘Get Next’ button retrieves the next document. IO24765 (IBM FileNet P8 users) When a search returns more than the maximum count of items, the count displays as 0.
+With this fix, the message will reflect that the maximum count was exceeded. IO24777 (IBM CMIS for FileNet users) [https://cmdtsweb4.usca.ibm.com:9449/jazz/resource/itemName/com.ibm.team.workitem.WorkItem/84806]CMIS logs an error that parsing runtime descriptor failed.
+With this fix, the error is no longer logged. IO24779 (IBM Content Manager users) Users are unable to select the role when adding users or groups to a search, teamspace, or entry template role in a repository configuration.
+With this fix, the role can be selected. IO24784 (IBM Content Navigator users) Themes can not be saved. 
+With this fix, themes can be saved. IO24789 (IBM Content Navigator users) New inheritance security is not set to include document access rights for Owner, Author and Reader.
+With this fix, the default document access rights are corrected. IO24790 (IBM Content Manager users) Users are unable to retrieve a worklist containing a very large number of work items. 
+With this fix, the worklist will display the list of work items. IO24791 (IBM Content Navigator users) Some TIFF images compressed in JPEG only shows a partial image preview.
+With this fix, the complete image can be previewed. IO24803 (IBM Content Manager OnDemand users) Users can not sort a field containing a mapping in the OnDemand application group. 
+With this fix, the column can be sorted. IO24804 (IBM FileNet P8 users) For documents with replication mapping set as inbound only, all annotations appear to save without any error message but only the first annotation is saved with the content.
+With this fix, the annotations are saved correctly. IO24807 (IBM Content Navigator users) The default desktop load fails if there are references to menu actions in a disabled plug-in.
+With this fix, the default desktop will load and ignore the references to the disabled plugin. IO24808 (IBM FileNet P8 users) Text searches with a phrase containing a reserved word like "and" generates the wrong query.
+With this fix, the query is generated correctly. IO24813 (IBM Content Manager uses) Some annotations created using other clients are not correctly displayed in the Daeja Virtual Viewer.
+With this fix, the annotations are displayed correctly. IO24821 (IBM CMIS for FileNet users) The CMIS documentation for the allowedRepositories configuration property should have values separated by spaces.
+With this fix, the documentation is corrected. IO24822 (IBM Content Navigator for Microsoft Office users) The Send file as link action removes custom subject.
+With this fix, the custom subject setting is used. IO24825 (IBM Content Navigator users) The Move to folder action in the context menu is not working from within a teamspace when over 400 teamspaces exist.
+With this fix, the action performs as expected. IO24826 (IBM Content Manager users) The work item list is not updated with the current owner after the work item owner has been changed and the item has been processed to the next step.
+With this fix, the work item list is updated. IO24830 (IBM Content Navigator users) After viewing a document with the applet viewer, an error is found in the log: SRVE0190E: File not found: /applets/DropDown.gif
+With this fix, the error does not occur. IO24831 (IBM Content Navigator users) Download All action should download all parts as a zip file when multiple documents are selected. IO24836 (IBM Content Navigator users) If the session expired login dialog is cancelled, the user is not logged out and the session is not expired.
+With this fix, the user session is expired when Cancel is selected. IO24846 (IBM Content Navigator users) Change language and locale settings dialog do not display. 
+With this fix, the settings dialog appears. IO24847 (IBM Content Navigator for Microsoft Office users) After adding columns to the results list and the user selects to sort, the original list of columns is displayed.
+With this fix, the updated list of columns is displayed for the sorted results. IO24861 (IBM Content Navigator for Microsoft Office users) When using drag-and-drop to add documents to a teamspace with multiple entry templates defined, if the user selects a different template there is an error message about folder selection.
+With this fix, the folder selection is not lost so the error message does not appear. IO24865 (IBM Content Manager users) When a user tries to view the next or previous document in the list from the Daeja ViewONE Virtual viewer with the Properties pane open, the viewer hangs.
+With this fix, the issue is resolved. IO24869 (IBM Image Service users) Users are unable to view federated annotations from Image Services.
+With this fix, users can view the federated annotations. IO24871 (IBM Content Navigator users) The version of the document added to the Favorites list is not the same version opened.
+With this fix, the same version that was added to the list is the same one opened. IO24880 (IBM Content Navigator users) When adding a document by clicking Add Document Using Entry Template, the repository root folder is automatically selected in the Save in field, and an error message is displayed if the logged in user does not have permission to save the document under the root folder.
+With this fix, the repository root folder is not automatically selected. IO24883 (IBM Content Manager users) Some TIFF files can not be viewed when using the Content Manager applet viewer.
+With this fix, the documents can be viewed. IO24884 (IBM Content Navigator for Microsoft Office users) When the results list is displaying the contents of a folder , users can not refresh the results.
+With this fix, the folder contents can be refreshed. IO24886 (IBM Content Navigator for Microsoft Office users) For Content Manager user, if the name property is a string:ext type, the name does not appear. 
+With this fix, the name property is used for the document title. IO24909 (IBM Content Navigator users) When a multi-line value is first displayed in an entry template property layout text area field, the complete value is not displayed. The text area field does not resize to display the full value until the input focus enters the text area field.
+With this fix, the text area displays the value as expected. IO24944 (IBM Content Manager users) Navigator does not allow a user to change the class of a document with content to another class if the user does not have permission to add content to the target class. IBM Content Manager does not require the permission to add content to the target class.
+With this fix, the user can change the class. IO24949 IBM Content Manager OnDemand users) Decimal numbers are not sorted properly when the server is set to a locale that uses a comma to indicate the decimal place, i.e., French.
+With this fix, decimal numbers are sorted properly. IO24952 (IBM Content Navigator users) In a load balanced environment, if the client IP address for a request changes for an active session, the application executes an invalid DNS look up for each request after the client IP address change which can add a significant delay to the time it takes to process each request.
+With this fix, the invalid DNS look up is not executed. IO24953 (IBM Content Navigator for Microsoft Office users) When uploading a document, the user can manipulate the upload path and save documents in a restricted folder.
+With this fix, the user to limited to folders they have permissions for. IO24965 (IBM FileNet P8 users) Sometimes adding the related child document fails.
+With this fix, the child document provides an error that document import failed. IO24972 (IBM Content Manager users) When using a layout and a dependent property is linked to a foreign key, the dependent property is not displaying the default foreign key values when the parent property value changes.
+With this fix, the foreign key default choices are updated properly as the user changes the parent property value. IO24973 (IBM Content Navigator users) When using the Paste action from the context menu to paste the password into the Password field, the login button is not enabled. 
+With this fix, the Paste action enables the Add button. IO24985 (IBM Content Navigator for Microsoft Office users) Users can not install on Windows 10 if .Net 4.6.2 is already installed.
+With this fix, users can install on Windows 10. PJ44290 (IBM Collaboration Services users) When the document name is renamed with an extension, the first content element is not displayed as expected. Instead the user is prompted to download the content element as a document with the same extension. 
+With this fix, the content is downloaded with the correct extension. PJ44413 (IBM Case Manager users) When using Internet Explorer v11, the carriage return does not start a new line in a text area. 
+With this fix, the new line is created. PJ44420 (IBM CMIS for FileNet users) With CMIS v1.1, the "query" and "unfiled" links are throwing an error.
+With this fix, the links do not cause an error.

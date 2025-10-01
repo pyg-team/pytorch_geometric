@@ -1,0 +1,63 @@
+Title: IBM High CPU in the WebSphere MQ channel initiator job during reallocation of messages on the SYSTEM.CLUSTER.TRANSMIT.QUEUE - United States
+
+Text:
+high cpu performance loop chin chinit channel initiator cluster rrmReallocMsgs rmRMsg retry TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The WebSphere MQ for z/OS channel initiator (CHIN) is experiencing extremely high CPU. WebSphere MQ is recycled, but the CHIN immediately experiences the same symptoms. One or more CLUSSDR channels may appear to be hung. 
+
+SYMPTOM
+Additional symptoms may include: 
+
+- CURDEPTH is high in DISPLAY QUEUE or DISPLAY QSTATUS output for SYSTEM.CLUSTER.TRANSMIT.QUEUE
+- MSGAGE and QTIME increase in DISPLAY CHSTATUS output for SYSTEM.CLUSTER.TRANSMIT.QUEUE
+
+
+CAUSE
+WebSphere MQ tries to reallocate cluster messages on the SYSTEM.CLUSTER.TRANSMIT.QUEUE to a different cluster channel, if possible, when a CLUSSDR goes into retry mode. 
+
+
+The SYSTEM.CLUSTER.TRANSMIT.QUEUE contains thousands of messages that required examination for reallocation. The problem is aggravated by having small buffer pools, which means I/O to the page set is necessary.
+
+
+RESOLVING THE PROBLEM
+ 
+
+ * Fix the channel problem. Depending on the error message in the CHIN joblog, this may include:  * Start the listener on the remote end 
+    * Use ADOPTMCA / AdoptNewMCA on the remote end so that the clusrcvr channel can be automatically restarted after a communications failure. If this feature has not been implemented, stop the receiver channel with MODE(FORCE), then start it again to re-enable it. 
+    * Use TCPKEEP / KeepAlive / RCVTIME [https://www.ibm.com/support/knowledgecenter/SSFKSJ_9.0.0/com.ibm.mq.ref.adm.doc/q085320_.htm] to recover from communications failures 
+    * Resolve network problems
+   
+   
+ * If this can not be done immediately, you can stop the channel to prevent it from retrying. See additional information below about stopping the channel. Another option is to decrease LONGRTY or increase LONGTMR, so that retries will not occur as frequently. 
+ * If you do not need your messages bound to a specific instance of the cluster queue, then use the MQOO_BIND_NOT_FIXED option. This will allow the messages to be allocated to another channel. The reallocation process is less efficient if each iteration must examine thousands of messages put using the MQOO_BIND_ON_OPEN option. 
+ * Make sure your Buffer Pool allocations are large enough, as described in Defining your buffer pools [https://www.ibm.com/support/knowledgecenter/SSFKSJ_9.0.0/com.ibm.mq.pla.doc/q006005_.htm].
+
+
+Additional information
+
+With WebSphere MQ for z/OS MQ V7 and above:
+
+
+ * 
+ * CSQX191I
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+
+
+Recycling the CHIN will also interrupt reallocate processing, but reallocation will occur after startup if the channel again fails to start. 
+
+
+Effects which may be seen if reallocate processing is interrupted:
+- Messages are delivered in a different order in which they were put.
+- Messages remain on the SYSTEM.CLUSTER.TRANSMIT.QUEUE until the channel is manually restarted despite there being alternative destinations.
+
+
+
+PRODUCT ALIAS/SYNONYM
+ WMQ MQ

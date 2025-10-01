@@ -1,0 +1,28 @@
+Title: IBM Think Time values in use for playback of RPT scripts on RRT T6 agent - United States
+
+Text:
+71RRT-RPTPLAY TECHNOTE (FAQ)
+
+QUESTION
+ Describe the various values, or rules, that apply on the Think Time and that is applicable to each sub transaction, when a RPT script is played back by the RRT ITCAM for Transactions agent. 
+
+CAUSE
+Depending on the type of Rational Performance Tester RPT test script (http, Citrix, sap...) different Think Time value is in use and applies to each sub transaction, during the script playback by the Robotic Response Time T6 ITCAMfTx agent
+
+ANSWER
+- for RPT HTTP/HTTPS script (including BSD script), during playback on RRT T6 ITCAM agent, all Think Time values for each sub transaction recorded in the script are set to 0 sec. 
+
+- for RPT SAP GUI script, during playback on RRT T6 ITCAM agent, all Think Time values for each sub transaction recorded in the script are set to 1 sec.
+
+- for RPT CITRIX script, during playback on RRT T6 ITCAM agent, all Think Time values of each sub transaction recorded in the script are left to the original recorded values. Recorder values from the script are used during playback.
+
+- for RPT SAP Web Interface script, during playback on RRT T6 ITCAM agent, all Think Time values of each sub transaction recorded in the script are set to 0 sec. Behavior is the same as for HTTP type of RPT script. SAP Web extends HTTP(S)
+
+- for RPT Siebel script, during playback on RRT T6 ITCAM agent, all Think Time values of each sub transaction recorded in the script are set to 0 sec. Behavior is same as HTTP. Siebel extends HTTP(S).
+
+- for RPT WebService/SOA script, during playback on RRT T6 ITCAM agent, all Think Time values of each sub transaction recorded in the script are left to the original recorded values. Recorder values from the script are used during playback.
+
+
+
+PRODUCT ALIAS/SYNONYM
+ itcam itcam4tx itcamtransactions

@@ -1,0 +1,31 @@
+Title: IBM Using OpenSSH and db2locssh in purescale environment - United States
+
+Text:
+db2locssh; ssh; db2ssh; openssh; setup_db2locssh TECHNOTE (FAQ)
+
+QUESTION
+ In purescale environments, why is OpenSSH user used when db2locssh user is available ? 
+
+CAUSE
+In a normal setup, you will have the instance owner(suppose db2inst2) using openssh and a different user you create, suppose db2ssh1, using db2locssh. 
+You may find sometimes that although the db2locssh works without problem with user db2ssh1, db2 still looks for user db2inst2 (openssh) in purescale environment. 
+For example, in syslog you may find access to openssh as:
+**************************************
+Nov 15 21:00:36 HOS10013 auth|security:info sshd[4391250]: Accepted publickey for db2inst2 from xx.xxx.xxx.xx port xxxxx ssh2
+Nov 15 21:00:36 HOS10043 auth|security:info sshd[3343110]: Disconnecting: Remote login for account db2inst2 is not allowed.
+**************************************
+
+
+
+ANSWER
+When we configure db2locssh, it allows GPFS to perform their cluster operations via db2locssh without having to enable the remote root login setting and passwordless SSH for the root user. The mmlscluster output should be checked to see if GPFS is correctly configured to use db2locssh and db2scp. 
+
+
+So, for example, the "db2cluster -cfs ..." commands would make use of db2locssh for performing operations on remote hosts.
+
+However, there are other non-pureScale specific communications performed for which the instance user needs to be able to access other hosts in the cluster. Those communications do not make use of db2locssh. As such, the remote access cannot be disabled for instance ID - even if the instance ID is used as the db2ssh ID for db2locssh.
+
+Please note that users must set the remote login setting for the instance ID and other user IDs to TRUE.
+
+RELATED INFORMATION
+ Setting up db2locssh [http://www.ibm.com/support/knowledgecenter/SSEPGG_10.5.0/com.ibm.db2.luw.qb.server.doc/doc/t0061036.html]

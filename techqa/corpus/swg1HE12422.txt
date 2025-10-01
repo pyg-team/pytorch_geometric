@@ -1,0 +1,128 @@
+Title: IBM HE12422: The bottom History button in the Classification Library's first level folders creates an incorrect breadcrumb. - United States
+
+Text:
+  DIRECT LINKS TO FIXES
+6.0.3.3-ATLAS-IF001-README.pdf [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FGlobal+Retention+Policy+and+Schedule+Management&fixids=6.0.3.3-ATLAS-IF001-README&source=SAR]
+6.0.3.3-ATLAS-IF001 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FGlobal+Retention+Policy+and+Schedule+Management&fixids=6.0.3.3-ATLAS-IF001&source=SAR]
+Download IBM Atlas Policy Suite V6.0.3.3 Interim Fix 1 [http://www-01.ibm.com/support/docview.wss?uid=swg24042026]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When clicking on a first level folder of the Classification
+   Library, there are two History buttons - one at the top of the
+   page, one on the bottom.
+   The top one creates a breadcrumb that redirects to
+   templateFolderView.jsp. This is working as expected. The bottom
+   one creates a breadcrumb that redirects to
+   policyTemplateView.jsp.
+   This is incorrect; it should also point to
+   templateFolderView.jsp.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Incorrect breadcrumb is displayed when the bottom History button
+    in the details page of first level folders from Classification
+   Library page is selected.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fix is available in Fix Central in 6033 iFix1.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   HE12422
+   
+   
+ * REPORTED COMPONENT NAME
+   ATLAS EDISCOVER
+   
+   
+ * REPORTED COMPONENT ID
+   5725D7500
+   
+   
+ * REPORTED RELEASE
+   603
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2015-10-27
+   
+   
+ * CLOSED DATE
+   2016-04-18
+   
+   
+ * LAST MODIFIED DATE
+   2016-04-18
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ATLAS EDISCOVER
+   
+   
+ * FIXED COMPONENT ID
+   5725D7500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R603 PSY
+   UP

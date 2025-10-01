@@ -1,0 +1,72 @@
+Title: IBM How to address a Communication Encryption Vulnerability - United States
+
+Text:
+Cleartext Clear Text SPIPE HTTPS Encryption vulnerability AIX port usage TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ SSL Server Allows Cleartext Communication Vulnerability port <###>/tcp over SSL 
+
+SYMPTOM
+SPIPE communication is enabled. A Network scan tool may highlight a SSLv3 port which supports ciphers with NO ENCRYPTION
+
+
+CAUSE
+The ITM supplied IBM HTTP server does not support the more secure encrypted environment for the identified http port <###> which permits the scan tool to identify the "SSL Server Allows Cleartext Communication Vulnerability".
+
+ENVIRONMENT
+Distributed Operating Systems
+
+DIAGNOSING THE PROBLEM
+SSL Server Allows Cleartext Communication Vulnerability port 59735/tcp over SSL 
+
+
+SSLv3 SUPPORTS CIPHERS WITH NO ENCRYPTION 
+NULL-MD5 RSA RSA MD5 None LOW 
+TLSv1 SUPPORTS CIPHERS WITH NO ENCRYPTION 
+NULL-MD5 RSA RSA MD5 None LOW 
+
+You will need to identify the UNIX command in order to determine the task which opens the port which shows the vulnerability.
+
+An AIX example: 
+1. # netstat -Aan | grep <port number> 
+- This shows if the specified <port number> is being used. The hex number in the first column is the address of protocol control block (PCB) 
+2. # rmsock <addr of PCB> tcpcb 
+- This shows the process who is holding the socket. Note that this command must be run as root. 
+# netstat -Aan | grep 9515 
+
+Command response: 
+f100060003743b98 tcp4 0 0 *.9515 *.* LISTEN 
+
+# rmsock f100060003743b98 tcpcb 
+
+Command response:
+
+The socket 0x3743808 is being held by process 438488 (java). 
+
+Here is a second example: 
+
+# netstat -Aan | grep 59735 
+f1000e0000216bb0 tcp 0 0 *.59735 *.* LISTEN 
+
+# rmsock f1000e0000216bb0 tcpcb 
+
+Command response:
+
+The socket 0x216808 is being held by proccess 153067 (KfwServices).
+
+
+RESOLVING THE PROBLEM
+ 
+
+1) You can turn off the https service using IP.SSL.HTTPS USE:N This prevents the port number from being opened. 
+2) If https is required, you can use a more robust HTTP Server like IIS HTTP Server or Apache HTTP Server. 
+3) If you determine that you may need the more secured HTTPS service, you can remove the non-compliant encryption mode by enabling FIPS 140-2(*). 
+
+*Information Processing Standard (FIPS) 140-2. 
+
+When in FIPS 140-2 mode, Tivoli Management Services components and Tivoli Enterprise Monitoring Agents use one or more of these FIPS 140-2 approved cryptographic providers: IBMJCEFIPS (certificate 497), IBMJSSEFIPS (certificate 409), and IBM Crypto for C (ICC (certificate 775) for cryptography. The certificates are listed on the NIST Web site at http://csrc.nist.gov/groups/STM/cmvp/documents/140-1/140val-all.htm [http://csrc.nist.gov/groups/STM/cmvp/documents/140-1/140val-all.htm]. 
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ IBM Tivoli Monitoring ITM

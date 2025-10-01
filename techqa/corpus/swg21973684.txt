@@ -1,0 +1,33 @@
+Title: IBM Unsupported  FileNet Content Manager API class CmIndexDefinition - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ An application that uses the Content Engine .NET API application is returning an error similar to:
+
+File = .\FnIndexHelper.cpp, Line = 396, Rev. = $Revision: 1.4 $
+Source =
+Description = Unsupported API class CmIndexDefinition.
+--------
+Error Code: 0
+Error Source: FileNet.Api
+
+HR = 0x80004005
+HR Description = Error 0x80004005
+MinorCode = 0x00000a94
+. 
+
+CAUSE
+The CmIndexDefinition class is new in FileNet Content Manager V5.2.1, so the "Unsupported API class CmIndexDefinition" error indicates that the version of the Content Engine .NET API being used in the client application needs to be updated to V5.2.1.
+
+RESOLVING THE PROBLEM
+You can use the Client API Download service in Administration Console for Content Engine (ACCE) to download the current version of the Content Engine .NET API. 
+
+To download API components:
+
+
+ 1. In the administration console, from the domain navigation pane, click the Client API Download folder.
+    
+    
+ 2. Locate the client files that you want to download and click Download Feature Set.

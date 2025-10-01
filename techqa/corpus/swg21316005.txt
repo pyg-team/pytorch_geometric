@@ -1,0 +1,128 @@
+Title: IBM Installation of WebSphere Application Server V6.1 or V7.0 fails with message "Illegal character in path at index 18" or simply shows an installation failure with a "null" error - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The installation of the IBM® WebSphere® Application Server V6.1 or V7.0 fails. Installing the Update Installer V6.1 or V7.0 utility also fails. The graphical interface might simply show an installation failure with a "null" error, whereas a silent installation's log file shows messages similar to the following:
+
+Illegal character in path at index 18: $NIFDEFFSSOURCEURI{/opt/IBM/WebSphere/AppServer}
+Illegal character in path at index 18: $NIFDEFFSTARGETURI{<user_target_path>} 
+
+SYMPTOM
+This issue can affect the WebSphere Application Server V6.1 and V7.0 product installer, as well as the Update Installer V6.1 and V7.0 installer. The product and utility installations can be performed by way of a graphical installation wizard or using a silent response file. The problem described in this article will show different kinds of errors depending on whether the graphical installation wizard or a silent response file is used. 
+
+Symptoms of the failure when using the graphical installation wizard
+The installation wizard for the installer starts up, and before the user is given the opportunity to do anything, a message similar to the following is displayed:
+
+
+Installation Complete
+
+Failure: The installation of the following product has failed:
+
+null
+Path: /opt/IBM/WebSphere/AppServer
+
+For more information, refer to the following log file:
+/opt/IBM/WebSphere/AppServer/logs/install/log.txt
+
+Click Finish to exit. 
+There are several characteristics associated with this problem:  * The installation wizard does not allow the user to do anything. The error occurs immediately after starting the installer.
+   
+ * The directories listed are defaults and not necessarily the directories the user wants. The defaults may not make sense for the current operating system.
+   
+ * The log file mentioned in the error text does not exist at the location specified. See the information further below for details about how to find the log file.
+
+
+Symptoms of the failure when using silent installation (response file) 
+The silent installation terminates without actually installing the product, and might not show any kind of error message. See the information further below for an explanation about how to locate a log file to learn more. 
+
+Locating the Update Installer installer's log file 
+When the installer fails and does not create the destination product directory, the installation failure log file is typically moved to a directory named waslogs or updilogs. This directory is created under the current user's home directory. 
+
+Due to this error, the log might not show up in one of those directories. This error usually means that the installer was unable to start the proper logging facilities, so the installer might not produce a log file at all. Under some circumstances, the log file be put in the system temporary directory, under a subdirectory named niflogs. The log file name is log.txt. The exact location of this directory depends on the system configuration. Here are some examples of where the log file could be: 
+ * Windows-based system:
+   
+   <location of user's home>\Local Settings\Temp\niflogs\log.txt 
+   
+ * AIX and Linux:
+   
+   /tmp/niflogs/log.txt 
+   
+ * HP-UX and Solaris:
+   
+   /tmp/niflogs/log.txt
+   
+   OR 
+   
+   /var/tmp/niflogs/log.txt 
+   
+
+Forcing log data to be shown on the console 
+If the log cannot be located, then attempt to invoke the installer using the -is:javaconsole parameter. For example, in UNIX environments, the installer would be invoked like this: 
+
+./install -is:javaconsole 
+Error shown in the log for the graphical wizard or the silent installation 
+If a log is produced, it will show the following error: 
+
+com.ibm.ws.install.ni.ismp.actions.InstallTypeDetectAction, err, Illegal character in path at index 18:$NIFDEFFSSOURCEURI{source_location/AppServer}
+com.ibm.ws.install.ni.ismp.actions.SetExitCodeAction, msg1, CWUPI0000I: EXITCODE=1
+com.ibm.ws.install.ni.ismp.actions.ISMPLogSuccessMessageAction, msg1, INSTCONFFAILED
+com.ibm.ws.install.ni.ismp.actions.MoveAndCompressLogsAction, err, Illegal character in path at index 18: $NIFDEFFSTARGETURI{/opt/IBM/WebSphere/AppServer}
+com.ibm.ws.install.ni.ismp.actions.MoveAndCompressLogsAction, err, Illegal character in path at index 18: $NIFDEFFSTARGETURI{/opt/IBM/WebSphere/AppServer}
+com.ibm.ws.install.ni.ismp.actions.MoveAndCompressLogsAction, err, java.net.URISyntaxException: Illegal character in path at index 18: $NIFDEFFSTARGETURI{/opt/IBM/WebSphere/AppServer}
+at java.net.URI$Parser.fail(URI.java:2821)
+at java.net.URI$Parser.checkChars(URI.java:2994)
+at java.net.URI$Parser.parseHierarchical(URI.java:3078)
+at java.net.URI$Parser.parse(URI.java:3036)
+at java.net.URI.<init>(URI.java:590)
+at com.ibm.ws.install.ni.ismp.actions.MoveAndCompressLogsAction.execute
+(MoveAndCompressLogsAction.java:59)
+at com.installshield.wizard.StandardWizardListener.execute
+(StandardWizardListener.java:123) 
+The error message of interest is highlighted in bold text above. That error message is: 
+
+Illegal character in path at index 18:$NIFDEFFSSOURCEURI{source_location/AppServer} 
+The source_location varies depending on the location of the product's installer. 
+CAUSE
+This problem occurs when the filesystems.xml or loggers.xml file is unreadable or missing from the product's installer. These files are located in the product installer's framework subdirectory. This may occur if the installer package is corrupt or its compressed archive is not extracted properly after it is downloaded from IBM.com. It can also occur when a filesystem is improperly mounted, causing the installer to be unable to locate certain files.
+
+Note: This article is about the product installers, including the Update Installer. If the Update Installer is already installed, then it will show a different error if it is unable to read these files.
+
+
+RESOLVING THE PROBLEM
+Verify the product image 
+
+Navigate to the main directory of the product installer. The main directory for the WebSphere Application Server product installer is named "WAS". The main directory for the Update Installer installer is named "UpdateInstaller".
+
+Check for a subdirectory named "framework". Review the file listing in that directory. Verify that files named filesystems.xml and loggers.xml are present and have permissions which allow them to be read by the user running the installer.
+
+If these files appear to be missing, then obtain a new copy of the product's installation image. Verify that the images are extracted from zip or tar.gz files properly.
+
+Check the filesystem mount point
+In UNIX environments, filesystems are typically mounted to an empty directory called a "mount point". The file permissions of the empty directory sitting underneath the mount point are important. If the mount point does not have proper permissions, then this will cause major problems for the Java SDK that runs the product and its installer.
+
+When a filesystem is mounted, the mount point directory's permissions become obscured. By default, listing the mount point directory will show the permissions associated with the root directory of the mounted filesystem. If the mount point's permissions are incorrect, then it can cause bizarre effects on applications that run from that filesystem.
+
+In order to check a mount point's permissions, you must unmount the filesystem. Once the filesystem is mounted, verify that the permissions of the mount point directory are correct. If they are incorrect, then correct them and remount the filesystem.
+
+Example of checking the filesystem mount point
+Here is an example scenario for checking the filesystem mount point. A user named "wasadmin" is attempting to install the WebSphere Application Server product and has encountered the error described in this technote. The product installer is located in the /san/installer/WAS directory. The "san" filesystem is mounted to an empty directory named /san.
+
+It is possible to check the permissions of the filesystem's root directory by running this command and viewing the results:
+
+
+# ls -lad /san
+drwxr-xr-x 24 root system 4096 Jan 01 12:00 /san 
+This appears to have correct permissions for the wasadmin user to read the /san filesystem. But, this only lists the filesystem's permissions, not the mount point's permissions. To view the mount point's permissions, the filesystem must be unmounted. This sequence of commands and results would appear like this: 
+
+# umount /san
+# ls -lad /san
+drwx------ 2 root system 256 Dec 31 00:01 /san 
+Now that the filesystem is unmounted, it is apparent that the permissions on the mount point directory are not sufficient to allow the wasadmin user to read that directory. Although the wasadmin user appears to be able to read files in the san filesystem when it is mounted, the incorrect permissions on the mount point will cause the wasadmin user to experience strange issues when trying to run applications. 
+
+Explanation of mount point permissions issue 
+If a mount point's permissions are incorrect, it can have strange effects on software running from within the filesystem on that mount point. This is because some operating systems will read the permissions associated with the mount point when reading "relative" paths, such as the ".." directory. This can cause an operating system to perceive one set of permissions when reading a path such as "/usr/../usr/san" and a different set of permissions when reading "/usr/san", even though both paths point to the same directory. This can cause the operating system to sometimes allow a user to read a file, and sometimes refuse to read that same file due to insufficient permissions.  
+
+
+Cross reference information Segment Product Component Platform Version Edition Application Servers WebSphere Application Server - Express Install and migration AIX, HP-UX, Linux, Solaris, Windows 6.1

@@ -1,0 +1,117 @@
+Title: IBM Switch cannot be connected from Brocade SMI Agent for FOS – What to check? - United States
+
+Text:
+brocade smi agent cim connect switch cimom problem TECHNOTE (FAQ)
+
+QUESTION
+ What should I do if the Brocade SMI Agent for FOS is not connecting to the switches I want to monitor? 
+
+ANSWER
+The Tivoli Storage Productivity Center CIMOM Agent can be configured to connect to the Brocade SMI Agent for FOS as a data source for switch and fabric data collection and management. If the Brocade SMI Agent is not connected to the switches, then no information about them will be reported back to Tivoli Storage Productivity Center. Listed below are common reasons why the switches may not connect to the Brocade SMI Agent and suggestion to help resolve them.
+
+1.) Firmware Version supported
+
+Check if the firmware version of the switch added is supported by the SMI Agent version being used. The best document to check that is the Release Notes document shipped with each version of the Brocade SMI Agent. Look for the section "Supported as proxy connection". 
+
+2.) User and Password problems 
+
+a) Telnet to the switch from the host where Brocade SMI Agent is running with same password. Telnet must be enabled on the switch.
+
+b) Log onto the switch with this userid and run userconfig. Make sure the user has role of admin and membership of AD 0-255: 
+
+admin> userconfig --show
+Account name: admin
+Role: admin
+Description: Administrator
+Enabled: Yes
+Password Last Change Date: Unknow
+Password Expiration Date: Not Applicable
+Locked: No
+AD membership: 0-255
+Home AD: 0
+
+3.) Multiple IP addresses on the SMI Agent Host:
+
+a) If the host has multiple IP addresses, make sure that SMIAgentConfig.xml is set correct. Run "ipconfig" command on the SMIS Agent host.
+
+Change line: 
+
+ * 
+ * 
+
+to:  * 
+ * 
+
+where xxx is replaced by the IP address of the active ethernet port. 
+b) Telnet to the switch and make sure that the IP address you configured in SMIAgentConfig.xml is pingable from the switch. 
+
+4.) Firewall between SMI Agent host and switches 
+
+Venting and ARR ports required by the Brocade SMI Agent are not configured. As a result, the ports chosen by the operating system are likely blocked by the firewall: 
+
+a) Follow this procedure to configure dedicated ports for ARR & Eventing: 
+ 1. Launch the Brocade SMI Agent Configuration Tool. 
+ 2. Click ARR & Eventing in the menu tree. The content pane displays the current ARR and eventing ports. 
+ 3. To change the settings, type new values in the fields. The value must be between 0 and 65535, inclusive. If the value is 0, the SMI Agent dynamically allocates a port during server startup. 
+ 4. Click Apply. The changes take effect when you restart the server. Click Start Server to restart the server.
+    
+
+[/support/docview.wss?uid=swg21426285&amp;aid=1] 
+
+Be aware that if there is a firewall between SMIS Agents and Switches you have to define ARR & Eventing Ports. You cannot use the default configuration (0) in this case. 
+
+5.) Check RPCD on the switch 
+
+The daemon RPCD must be up and running on the proxy switch. Verify this by logging on to the switch as user “root” and executing the following commands and reviewing the output. 
+
+a) chkconfig | grep rpcd 
+rpcd on 
+
+b) ps -eaf | grep rpcd 
+root 938 781 0 Sep27 ? 00:00:04 /fabos/libexec/rpcd -S fcsw -s 0 
+
+c) netstat -an | grep 897 | grep ESTABLISHED 
+
+Make sure that there are not more than 19 established connections for this port. If there are, then there are too many other Management Application, such as Brocade Element Manager, connected to the switch. The SMIS Agent needs at least 1 free RPC handle and the overall amount is limited to 20. 
+
+6,) Check EVMD on the switch 
+
+The daemon EVMD must be up and running on the proxy switch. Verify this by logging on to the switch as user “root” and executing the following commands and its output: 
+
+a) chkconfig | grep evmd 
+evmd on 
+
+b) ps -eaf | grep evmd 
+root 938 781 0 Sep27 ? 00:00:04 /fabos/libexec/evmd -S fcsw -s 0 
+
+
+7.) Check CALD on the switch 
+
+The daemon CALD must be up and running on the proxy switch. Verify this by logging on to the switch as user “root” and executing the following commands and its output: 
+
+a) chkconfig | grep clad 
+cald on 
+
+b) ps -eaf | grep cald 
+root 938 781 0 Sep27 ? 00:00:04 /fabos/libexec/clad -S fcsw -s 0 
+
+8.) Log files are needed for investigation if all of these checks are successful. 
+
+Deeper analysis is necessary. Brocade support should be engaged to help debug. 
+
+a) Configure the SMI Agent for additional logging.  1. Launch the Brocade SMI Agent Configuration Tool. 
+ 2. Click Debugging and Logging in the menu tree. Change the settings according to this picture:
+    
+
+[/support/docview.wss?uid=swg21426285&amp;aid=2] 
+ * 
+
+
+b) Zip the following directories and provide to Brocade support. 
+
+\SMIAgent\agent\server\jserver\logr 
+\SMIAgent\agent\server\jserver\bin  
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Storage Management Tivoli Storage Productivity Center AIX, Linux, Windows 5.1, 5.1.1

@@ -1,0 +1,151 @@
+Title: IBM IT04771: A DATAPOWER APPLIANCE CONFIGURED FOR MQ SHARING CONVERSATIONS MIGHT RESTART IF THE NETWORK IS UNSTABLE - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Fix packs for DataPower B2B Appliance version 6.0 [http://www-01.ibm.com/support/docview.wss?uid=swg24034956]
+Fix packs for DataPower Integration Appliance version 6.0 [http://www-01.ibm.com/support/docview.wss?uid=swg24034957]
+Fix packs for DataPower Service Gateway version 6.0 [http://www-01.ibm.com/support/docview.wss?uid=swg24034959]
+Fix packs for DataPower Service Gateway version 6.0.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24036407]
+Fix packs for DataPower B2B Appliance version 6.0.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24036409]
+Fix packs for DataPower Integration Appliance version 6.0.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24036410]
+Fix packs for DataPower Service Gateway version 7.0 [http://www-01.ibm.com/support/docview.wss?uid=swg24037486]
+Fix packs for DataPower B2B Appliance version 7.0 [http://www-01.ibm.com/support/docview.wss?uid=swg24037487]
+Fix packs for DataPower Integration Appliance version 7.0 [http://www-01.ibm.com/support/docview.wss?uid=swg24037488]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  There are conditions when network errors might cause an
+   appliance to restart if MQ shared conversation is configured.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Resolve any network issues between the DataPower appliance and
+   the WebSphere MQ server.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Customers who use the shared conversation function of MQ with
+   an unstable network are likely to see this problem.
+   
+   DataPower might restart with MQ using a network which is
+   experiences errors.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fix is available in 5.0.0.18, 6.0.0.10, 6.0.1.6 and 7.0.0.3.
+   
+   For a list of the latest fix packs available, please see:
+   http://www-01.ibm.com/support/docview.wss?uid=swg21237631 [http://www-01.ibm.com/support/docview.wss?uid=swg21237631]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT04771
+   
+   
+ * REPORTED COMPONENT NAME
+   DATAPOWER
+   
+   
+ * REPORTED COMPONENT ID
+   DP1234567
+   
+   
+ * REPORTED RELEASE
+   601
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-10-08
+   
+   
+ * CLOSED DATE
+   2014-10-23
+   
+   
+ * LAST MODIFIED DATE
+   2014-11-21
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   DATAPOWER
+   
+   
+ * FIXED COMPONENT ID
+   DP1234567
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R500 PSY
+   UP
+   
+   
+ * R600 PSY
+   UP
+   
+   
+ * R601 PSY
+   UP
+   
+   
+ * R700 PSY
+   UP

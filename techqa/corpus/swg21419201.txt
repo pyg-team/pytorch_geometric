@@ -1,0 +1,29 @@
+Title: IBM RES and XU resource adapter transaction support - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ What type of transaction does the XU resource adapter support? 
+Why does my ruleset execution lead to a transaction failure about a one phase capable resource?
+Can I use a non XA datasource for RES persistence? 
+
+ANSWER
+The RES XU itself as a resource only supports enlistment in local transactions, also known as one-phase commit scenario. This is configured in the XU resource adapter deployment descriptor in META-INF/ra.xml with the <transaction-support> tag. The values that are supported are: 
+
+ * NoTransaction 
+ * LocalTransaction
+
+Namely the value XATransaction is not supported. The XU transaction support level is independent from the ability of the application code (or XOM) to take part in transactions : for example a ruleset execution can invoke XOM methods that take part in a XA transaction even if the XU is configured for NoTransaction support. 
+In most situations the level NoTransaction is recommended. When a failure occurs within a stateless rule session, it is not useful to rollback the state of the rule engine to a previous state: the other resources can be rollback while the rule engine itself is best reset to its original state for later reuse or retirement. The level LocalTransaction might be relevant when using stateful rule sessions if there is a need for the rule engine to be restored to a previous state when a transaction failure occurs. There can be at most one single phase commit (non-XA) resource enlisted in a transaction. The following error messages are typical of situations where this constraint was not respected: 
+
+ * "An illegal attempt to commit a one phase capable resource with existing two phase capable resources has occurred" 
+ * "Illegal attempt to enlist multiple 1PC XAResources" 
+ * "An illegal attempt to commit a one phase capable resource in a subordinate transaction branch has occurred"
+
+This might happen in particular when the XU is configured for LocalTransaction support and another one-phase commit resource was also enlisted in the same transaction. The solution is to either configure the XU for NoTransaction support or make sure that all the other resources enlisted are XA (two-phase commit capable). It is possible to use a non-XA datasource for RES persistence as long as the XU transaction support is set to NoTransaction. 
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Operational Decision Manager Platform Independent 8.5, 8.0.1, 8.0, 7.5

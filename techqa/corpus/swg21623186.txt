@@ -1,0 +1,39 @@
+Title: IBM Cognos Open Mic Webcast : IBM Cognos 10.2 New Features Part 1 - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ 
+IBM hosted an Open Mic webcast with Cognos Support Engineers from India on 16th January 2013. The topic was " IBM Cognos 10.2 New Features Part 1 "
+
+
+ANSWER
+Content 
+
+Presentation IBM Cognos 10.2 New Features_PART 1.pdf [/support/docview.wss?uid=swg21623186&aid=2]IBM Cognos 10.2 New Features_PART 1.pdf [/support/docview.wss?uid=swg21623186&aid=1] 
+
+Q & A 
+Q1. Can we freeze the columns in Report Studio ? 
+A. No.You can not set the property in Report Studio.But once the output appear in Cognos Viewer user has the option to freeze the columns and row headings. 
+
+Q2. In IBM Cognos Workspace Advanced user has the option to "Automatically create crosstab headers for sets" which displays the Parent category of data items. 
+Does this property also applies to the nested rows and columns ? 
+A. Yes "Automatically create crosstab headers for sets" also applies to nested rows and columns. 
+
+Q3. Does the Multitenancy work with no changes to Active Directory ? 
+A. Yes , no changes are required in the Active Directory. 
+Multitenancy is the concept which is implemented by configuring two advanced properties and one custom property in Cognos Configuration .More details in the attached Presentation. 
+Only the Multitenancy Information needs to be identified with the help of the Directory Server Administrator.Examples of multitenancy Information have been provided in 'Chapter 26' of the Administration and Security guide for IBM Cognos 10.2. 
+
+There will be one Content Store and one Active Directory Server. 
+
+Q4. Any specific Hardware requirement or impact for Multitenancy ? 
+A.There are no known impact after implementing the Multitenancy. 
+Multitenancy is implemented in the IBM Cognos 10.2 environment. 
+User should have the minimum Hardware requirements to install IBM Cognos 10.2 
+For details on the hardware requirements please refer the Installation and Configuration guide for IBM Cognos 10.2 
+
+Q5. Does the data in the multiple sheets get exported with the new feature "Copy Data" in IBM Cognos Workspace Advanced ? 
+A . There are no multiple tabs in IBM Cognos Workspace Advanced . 
+"Copy Data" copies all the data from the report to the Microsoft Excel 2007 spreadsheet.

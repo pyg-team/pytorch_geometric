@@ -1,0 +1,49 @@
+Title: IBM Documentation update for IBM Content Search Services query syntax - United States
+
+Text:
+ RELEASE NOTES
+
+ABSTRACT
+ The IBM Content Search Services documentation in the SQL Syntax Reference section of the Content Engine Developer's Guide requires updates to these sectons: "Specifying Optional Terms" and "Wildcard Searches." 
+
+CONTENT
+Specifying Optional Terms 
+
+Replace the documentation in the "Specifying Optional Terms" section with the following information: 
+
+You can use a percent sign (%) to indicate that a search term is optional. For example, the following query returns all documents that contain the word "cat", and optionally contain the word "dog". This query provides a higher score on documents that also contain the word "dog":
+
+cat %dog
+
+The optional operator is in effect only if there is more than one search term in an expression. If there is only one term in an expression or within a set of parenthesis, the operator is ignored. For example, each of the following queries is equivalent in both search results and score: 
+
+%dog
+%(dog)
+(%dog)
+dog
+
+In the following query, the optional operator is ignored because the search term %dog is the only term within a set of parenthesis:
+
+cat(%dog)
+
+If all the search terms in an expression are optional, the query is equivalent to an OR query. For this type of query, at least one term must be found for a match to occur. For example, each of the following queries is equivalent, in both search results and score, and return documents that contain either the words "cat" or "dog":
+
+%cat %dog
+%cat OR %dog
+cat OR dog
+
+In the following query, the words "dog" and "horse" are marked as optional, but because they are the only terms within a set of parenthesis, at least one of them must be found in a document for it to be returned. Therefore, each document that is returned must contain the word "cat" and must contain either the word "dog" or "horse" (or both): 
+
+cat (%dog %horse)
+
+In addition, the following queries are equivalent:
+
+cat (%dog %horse)
+cat (%dog OR %horse)
+cat (dog OR horse)
+
+Wildcard Searches
+
+Replace the note at the end of the "Wildcard Searches" section with the following text:
+
+Note: Using a multiple character wildcard (*) at the beginning of a search term can have a negative impact on the performance of a search query when many matching terms are found. There is a configurable limit on the number of terms that can be returned; an error is returned when the limit (1024 terms by default) is exceeded. To change this limit, open the <install-location>\config\config.xml file, add the queryExpansionLimit parameter, and specify a value. For example, to set the queryExpansionLimit parameter to 4096, add the following to the config.xml file: <queryExpansionLimit>4096</queryExpansionLimit>.

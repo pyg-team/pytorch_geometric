@@ -1,0 +1,46 @@
+Title: IBM java.net.SocketException: Too many open files in system received in system log (SCI67669) - United States
+
+Text:
+STERLINGPRI TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ java.net.SocketException: Too many open files in system received in system log (SCI67669) 
+
+SYMPTOM
+
+
+ERROR Got IOException in URL.send 
+java.net.SocketException: Too many open files in system
+
+
+CAUSE
+The maximum number of allowed file descriptors is not high enough.
+
+RESOLVING THE PROBLEM
+
+
+The allowable file descriptors for the Gentran Integration Suite (GIS) user must be increased.? Per session, this can be done with ulimit. By default, most linux systems are only set to 1024 per user.? A permanent way to make this change (and our recommended method) is to edit /etc/security/limits.conf, giving the GIS user 8192 for the soft limit.
+
+
+More information about system-wide file descriptor settings:
+
+
+The? /proc/sys/fs/file-nr will show the number of allocated file descriptors, the number of file descriptors used, and the maximum number of file descriptors .
+The /proc/sys/fs/inode-nr will show the number of descriptors left.
+
+ 
+
+HISTORICAL NUMBER
+ PRI6676 
+
+PRODUCT ALIAS/SYNONYM
+ 
+
+Fact
+
+
+Gentran Integration Suite
+? Release 3.1 
+Red Hat Linux AS 2.1 
+
+SCI67669

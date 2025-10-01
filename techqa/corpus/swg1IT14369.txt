@@ -1,0 +1,135 @@
+Title: IBM IT14369: PURESYSTEMS MANAGER SERVICE60 NOT RUNNING AND THE WORKLOAD CONSOLE BECAME UNAVAILABLE - United States
+
+Text:
+  A FIX IS AVAILABLE
+IBM PureApplication System Version 2.2.2.0 [http://www-01.ibm.com/support/docview.wss?uid=swg24042631]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  IBM PureApplication System users reported that the
+   PureSystems Manager (PSM) Service60 was not running and the
+   Workload Console is offline or unavailable. The issue auto
+   recovered after about 90 minutes.
+   
+   Another error that may be seen is:
+   CWZIP9604W: Service7 failed. The high availability component
+     will attempt to recover the service
+   
+   This service also auto-recovered.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Service60 and Service7 should auto-recover after about 90
+   minutes.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  There was code issuing a kill process command that was
+   occasionally using a process ID that had already been reused
+   by the operating system, and killing the wrong process.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A code fix is being provided in PureApplication System
+   version 2.2.2.0.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT14369
+   
+   
+ * REPORTED COMPONENT NAME
+   PAPP SYS 8382 I
+   
+   
+ * REPORTED COMPONENT ID
+   5725G3200
+   
+   
+ * REPORTED RELEASE
+   211
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-03-17
+   
+   
+ * CLOSED DATE
+   2016-07-18
+   
+   
+ * LAST MODIFIED DATE
+   2016-10-31
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   PAPP SYS 8382 I
+   
+   
+ * FIXED COMPONENT ID
+   5725G3200
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R222 PSY
+   UP

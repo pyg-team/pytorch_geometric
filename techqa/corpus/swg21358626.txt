@@ -1,0 +1,44 @@
+Title: IBM Setting Java Virtual Machine custom properties - United States
+
+Text:
+jvm JVM TECHNOTE (FAQ)
+
+QUESTION
+ How do I set Java™ Virtual Machine custom properties? 
+
+ANSWER
+This technote explains the necessary steps to define Java virtual machine custom properties in WebSphere Application Server:
+Setting Java Virtual Machine custom properties by product
+
+Select the product that is applicable to you: 
+
+[/support/docview.wss?uid=swg21358626&amp;aid=1] WebSphere Application Server V6.0, V6.1 and V7.0 
+
+
+
+
+
+
+
+
+
+WebSphere Application Server V6.0, V6.1 and V7.0
+
+
+ 1. Log in to the WebSphere Administration Console. 
+ 2. Click Servers > Application Server. 
+ 3. Select your server. 
+ 4. In the Server infrastructure section, click Java and process management > Process Definition > Java Virtual Machine > Custom Properties > New 
+ 5. In the Name field, type the name of the custom property (for example, com.ibm.ws.cache.CacheConfig.cascadeCachespecProperties ). 
+ 6. Type a valid value for the property in the Value field. 
+ 7. Click OK and save the changes. This setting takes effect when the server is restarted. 
+ 8. Repeat steps b to g for all the servers in your cluster.
+
+
+
+
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Commerce WebSphere Commerce Enterprise Configuration AIX, i5/OS, Linux, Solaris, Windows 7.0, 6.0 Enterprise Commerce WebSphere Commerce - Express Configuration i5/OS, Linux, Windows 7.0, 6.0 Express

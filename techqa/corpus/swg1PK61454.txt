@@ -1,0 +1,133 @@
+Title: IBM PK61454: PART D53ZZLL-IBM RATIONAL FUNCTIONAL TESTER EXT TERMINAL BASED A PS S390 - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Part D53ZZLL-IBM RATIONAL FUNCTIONAL TESTER EXT TERMINAL BASED
+   APS S390
+   Customer generated floating license key for the Functional
+   Tester EXT and imports fine into the license server and the
+   server status shows the key is working.. When the customer opens
+   up intallation manager and tries to point to the license server
+   receives error The server is available, but does not serve
+   license keys for installation package IBM Rational Functional
+   Tester Extension for Terminal Based Applications..I have been
+   able to reproduce the isse. Screenshot is attached.
+   Key that I generated for the customer yesterday:
+   SERVER LNM0070RAT13 DISK_SERIAL_NUM=b032ee59
+   VENDOR ibmratl
+   INCREMENT ibmfte ibmratl 7.00000 permanent 10 DUP_GROUP=UH \
+    vendor_info="0|IBM Rational Functional Tester Ext Terminal \
+    Based Aps Floating License Key|0" ISSUED=20-feb-2008 \
+    NOTICE="Sales Order Number: 0052187772 for IRS New Carrollton \
+    Site" ck=219 SN=2237170 SIGN="00AA 1665 7C08 6A9E 173C 32F5 \
+    7335 7B00 5589 5513 CF82 C8A5 66CB D2BC B3F9"
+   I tested out Part number D53ZVLL-IBM RATIONAL FUNCTIONAL
+   TESTER EXT TERMINAL BASED APS  and that works with the license
+   server and installation manager.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Component fixed on D53ZZLL from ibmfte to ibmrfte.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Component fixed on D53ZZLL from ibmfte to ibmrfte.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK61454
+   
+   
+ * REPORTED COMPONENT NAME
+   RAT FUNC TEST E
+   
+   
+ * REPORTED COMPONENT ID
+   5724J0700
+   
+   
+ * REPORTED RELEASE
+   100
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-02-21
+   
+   
+ * CLOSED DATE
+   2008-05-06
+   
+   
+ * LAST MODIFIED DATE
+   2008-05-06
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   RAT FUNC TEST E
+   
+   
+ * FIXED COMPONENT ID
+   5724J0700
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R100 PSN
+   UP

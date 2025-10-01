@@ -1,0 +1,27 @@
+Title: IBM Dashboard Application Services Hub console does not function correctly after applying WebSphere Application Server interim fix PI50993 - United States
+
+Text:
+jazzsm1121relnotes; console navigation; iFix PI50993; PI50993; WAS; WAS PI50993; iFix TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The console does not function correctly after applying IBM® WebSphere® Application Server interim fix PI50993 in a WebSphere Application Server Version 8.5.5.8 environment. 
+
+SYMPTOM
+When you apply WebSphere Application Server interim fix PI50993, it causes the navigation render incorrectly, as well as causing issues with REST services in the Dashboard Application Services Hub.
+
+
+RESOLVING THE PROBLEM
+To fix this issue, apply Dashboard Application Services Hub 3.1.2.1 cumulative patch 5 and set the classloader for the Dashboard Application Services Hub REST war to PARENT_LAST, as follows: 
+
+ 1.  Start the WebSphere Application Server. 
+ 2.  Log into the WebSphere Application Server administrative console as an administrator. 
+ 3.  In the administrative console, click Applications --> Application Types. 
+ 4.  Select WebSphere Enterprise Applications. 
+ 5.  In the table, select the isc link. 
+ 6.  In the Modules panel, click the Manage Modules link. 
+ 7.  In the table, click the NavModel Rest Servlet link. 
+ 8.  In the Class loader order section, select Classes loaded with application class loader first (parent last) from the drop-down list. 
+ 9.  Click OK. 
+ 10. In the message dialog, click Save. 
+ 11. Restart the Dashboard Application Services Hub server. 
+ 12. Log in to Dashboard Application Services Hub console to confirm that issue is resolved.

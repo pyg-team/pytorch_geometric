@@ -1,0 +1,79 @@
+Title: IBM Content based routing from a stylesheet using routing-url method with WebSphere DataPower SOA Appliance - United States
+
+Text:
+datapower; stylesheet; style sheet; backend; backends; multiple backends; routing-url method; rout; route; 7993; 7993; 7993; machine type 7993 TECHNOTE (FAQ)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ English 
+
+QUESTION
+ You have two endpoint/environments/applications, for instance one for QA and one for User Acceptance Test (UAT). You would like to use the same service running on a DataPower device and depending on some trigger forward to a specific backend environment. 
+Is it possible to set it up so the QA testers get their messages routed to the QA web service and the user acceptance testers get their messages routed to the UAT web service? 
+
+ANSWER
+Yes, this is known as content based routing. There are a couple of ways to approach this issue: 
+
+
+ * If you simply need to route based on some protocol, such as HTTP, specific information or a URL, then you could do this matching within a MATCH action at the beginning of the processing rule. You can create a reusable rule or duplicate the rule(s) and actions to other rules to perform the same actions on the content.
+   
+ * This can also be done within the rule processing through a stylesheet. This is a simple example from which to start to building your stylesheet. You can build it to do anything from HTTP, MQ, FTP, use XPATH, or other ideas such as token routing. This stylesheet was created and tested on the 3.6.0.18 firmware release.
+   
+
+
+If you choose to use a stylesheet, this can be configured using a routing rule within a stylesheet. A simple Multi-Protocol Gateway (MPG) with dynamic backend configured can use the attached stylesheet to send content to the chosen backend server. 
+The main functions used are http-request-header or var://service/original-content-type to examine the header value and determine the destination URL. 
+
+Note: Depending on the service type, configuration, input method etc. the HTTP Content-Type header may require using the original-content-type variable value rather than extracting it as any other header value. 
+
+routable.xsl [/support/docview.wss?uid=swg21282684&aid=2] [/support/docview.wss?uid=swg21282684&aid=1] 
+
+For information on the http-request-header, see IBM WebSphere DataPower Extension Elements/Functions Catalog, Metadata Extension Functions chapter, http-request-header( ) function. 
+
+For information on the write-only variable var://service/routing-url, see IBM WebSphere DataPower Extension Elements/Functions Catalog, Working with Variables appendix, Transaction variables section, Routing. This section is highly recommended as it presents other options for setting a backend url. 
+
+The other method noted is XPATH evaluation. This can be done via a stylesheet or using the Match Action XPATH type. There is an included building XPATH tool in the Match Action that can significantly help. A simple example of a soap envelope follows: 
+
+<?xml version="1.0" encoding="utf-8"?> 
+<soapenv:Envelope xmlns:soapenv=" http://schemas.xmlsoap.org/soap/envelope/" xmlns:sim=" http://www.example.org/SimpleSOAP/"> 
+<soapenv:Header/> 
+<soapenv:Body> 
+<sim:Pass> 
+<test>blah</test> 
+</sim:Pass> 
+</soapenv:Body> 
+</soapenv:Envelope> 
+
+Using theXPATH tool with the Namespace Handling of local you get the following: 
+/*[local-name()='Envelope']/*[local-name()='Body']/*[local-name()='Pass']/*[local-name()='test'] 
+
+Any soap envelopes sent into this service that match this rule are allowed through. Set the routing-url() in another stylesheet within the processing rule to forward to the appropriate destination. 
+
+The stylesheet would use something like: 
+<xsl:variable name="backEndUrl" select=" http://redneck:port/" /> 
+<dp:set-variable name="'var://service/routing-url'" value="$backEndUrl" /> 
+
+
+Notes: 
+ 1. The routing-url() method is primarily meant to be used within a MPG. For an XML Firewall, you would use the set-target() to specify the destination URL like so:
+    
+    <dp:set-target><host>1.2.3.4</host><port>80</port></dp:set-target>
+    
+ 2. When using different services such as MPGs, Web Service Proxy, and so on, you will run into issues where the variables are treated differently. You will find that the XML Firewall ignores the URI portion of a URL. First of all, this is working by design and will be more clearly documented as the IBM WebSphere DataPower Extension Elements/Functions Catalog is developed in subsequent releases.
+
+ * 
+ * 
+ * 
+ * <xsl:variable name="targetURL">
+ * 
+ * 
+ * 
+ * 
+ * 
+ * x.x.x.x
+ * 
+ * 
+ * 
+ * 
+ * <dp:set-variable name="'var://service/routing-url'" value="$targetURL"/>
+ * 
+ * <dp:set-variable name="'var://service/URI'" value="'/outbound/uri/'"/>

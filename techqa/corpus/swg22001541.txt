@@ -1,0 +1,22 @@
+Title: IBM Clarification regarding TRIRIGA, TLS, SSL, and HTTP - United States
+
+Text:
+TRISECURITY; TRICONFIG ; TRIBROWSER; #iotsupport ; #supiwms; #jalynch TECHNOTE (FAQ)
+
+QUESTION
+ I am new to the TLS and SSL protocols. Does TRIRIGA use TLS or SSL and, if so, do I need to worry about these if I am connecting to TRIRIGA using HTTP? 
+
+ANSWER
+TLS stands for 'Transport Level Security' and SSL stands for 'Secure Sockets Layer.' Both are secure protocols used by HTTPS for encrypting communications. If encrypted communications between web server and browser are needed by HTTPS, either TLS or SSL would be implemented. You would not see both TLS and SSL in place at the same time. 
+When TLS or SSL are implemented, the connection is secured via HTTPS only. Both the TLS and SSL protocols use what is known as an 'asymmetric' Public Key Infrastructure (PKI) system. An asymmetric system uses two 'keys' to encrypt communications, a 'public' key and a 'private' key. Anything encrypted with the public key can only be decrypted by the private key and vice-versa. 
+
+If you are using HTTP, you do not need to worry about TLS or SSL. 
+
+If TLS or SSL is configured outside of TRIRIGA to work with HTTPS and it is configured correctly, TRIRIGA will be subject to and work with it.
+
+RELATED INFORMATION
+ Does IBM TRIRIGA support HTTPS SSL and TLS? [http://www-01.ibm.com/support/docview.wss?uid=swg21685881 ]
+Configuring TRIRIGA to use TLSv1.1 or TLSv1.2 or SSL [http://www-01.ibm.com/support/docview.wss?uid=swg21988268]
+What's the difference between SSL TLS and HTTPS? [https://security.stackexchange.com/questions/5126/whats-the-difference-between-ssl-tls-and-https]
+What is SSLTLS and HTTPS? [https://www.symantec.com/page.jsp?id=ssl-information-center]
+Transport Layer Security [https://en.wikipedia.org/wiki/Transport_Layer_Security]

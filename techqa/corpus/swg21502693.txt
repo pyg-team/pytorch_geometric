@@ -1,0 +1,117 @@
+Title: IBM org.apache.commons.logging.LogConfigurationException running RMIC or other classloader issues in EJB deploy - United States
+
+Text:
+EJB Deploy; classloader; ejbdeploy; DeployEJBTask; ADMA0158I; org.apache.commons.logging.LogConfigurationException; RMIC; EJBDEPLOY_JVM_ARGS; PM33018; PM30024; PM29763; Jdk14Logger; RATLC00327204; PM43711; org.apache.log4j.ConsoleAppender; org.apache.log4j.Appender; PM48898 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ After upgrading your IBM WebSphere Application Server, attempts to deploy EJB using Rational Application Developer for WebSphere Software fails to run RMIC or logs classloader issues during an EAR install or from the command line or ant task. 
+
+SYMPTOM
+After upgrading to WebSphere Application Server 6.1.0.39 from version 6.1.0.37, 7.0.0.17 from version 7.0.0.15, or 8.0.0.2 from version 8.0.0.1, EJB deploy fails to run RMIC or logs classloader issues during an EAR install or from the command line or ant task. Examples related to the LogConfigrationException are as follows, but you may see other classloader issues being logged:
+
+
+Example 1: 
+
+
+DeployEJBTask I ADMA0158I:
+[EJBDeploy] Caused by:
+org.apache.commons.logging.LogConfigurationException:
+org.apache.commons.logging.LogConfigurationException:
+org.apache.commons.logging.LogConfigurationException: Class
+org.apache.commons.logging.impl.Jdk14Logger does not implement Log 
+
+ 
+
+Example 2: 
+
+
+log4j:ERROR A "org.apache.log4j.ConsoleAppender" object is not assignable to a "org.apache.log4j.Appender" variable. 
+log4j:ERROR The class "org.apache.log4j.Appender" was loaded by
+log4j:ERROR [com.ibm.tools.rmic.iiop.DirectoryLoader@1e5f156] whereas object of type log4j:ERROR "org.apache.log4j.ConsoleAppender" was loaded by [java.net.URLClassLoader@1f5833c].
+
+CAUSE
+This has been identified as a product defect under APAR PM43711. 
+
+
+Specifically using the LogConfigrationException as an example, the input application has a version of the Apache commons-logging.jar that conflicts with the version shipped with WebSphere Application Server.
+
+Note: Additional details can be found in the Log4JLogger does not implement Log section on the Commons Logging Frequently Asked Questions [http://wiki.apache.org/commons/Logging/FrequentlyAskedQuestions] page. 
+
+This problem was avoided in earlier versions of WebSphere Application Server due to an EJB deploy coding change that removed a class loader thought to be preventing the removal of temporary files when custom converter classes were used. However, removing this class loader caused custom converters to not build correctly so the removed class loader was added back under APAR PM33018 [http://www.ibm.com/support/docview.wss?uid=swg1PM33018] delivered in WebSphere Application Server 7.0.0.17:
+
+PM33018 includes the following 2 APARs:
+
+
+ 1. APAR PM30024: Prepare for deployment fails in presence of a Custom Converter
+    
+    Note: Rational Application Developer for WebSphere Software technote (Prepare for deployment fails in presence of a custom converter [http://www.ibm.com/support/docview.wss?uid=swg21459680]) provides additional details.
+    
+    
+ 2. APAR PM29763: Prepare for deployment on EJB with blob in RDB mapping fails with RuntimeException: unknown data type
+
+RESOLVING THE PROBLEM
+To resolve this issue, apply the following iFix available for 
+
+ *  [http://www.ibm.com/support/docview.wss?uid=swg24030845]WebSphere Application Server 6.1.0.39 [http://www.ibm.com/support/docview.wss?uid=swg24030846] (*see note below) 
+ * WebSphere Application Server 7.0.0.17 [http://www-01.ibm.com/support/docview.wss?uid=swg24030845] 
+
+
+Note: The WAS 6.1.0.39 iFix should fix most customer issues. If it does not, please contact IBM Rational Application Developer support for the latest internal test fix to be included in a future WAS 6.1.0.x Fix Pack. 
+
+Or upgrade to the following WAS Fix Pack which includes the iFix:  * WebSphere Application Server 6.1.0.43 [http://www-01.ibm.com/support/docview.wss?uid=swg24031962] 
+ * WebSphere Application Server 7.0.0.21 [http://www-01.ibm.com/support/docview.wss?uid=swg24031366] 
+ * WebSphere Application Server 8.0.0.3 [http://www-01.ibm.com/support/docview.wss?uid=swg24032315] 
+
+
+WORKAROUND when running ejbdeploy from the command line: 
+
+If you are not using any EJB custom converters, you can set the property 
+
+EJBDEPLOY_JVM_ARGS=-DNoCustomConverter=true 
+
+either as an environment variable on the system or you can pass it in as a parameter to the Java command located in the <WAS_ROOT_INSTALL>\AppServer\deploytool\itp\ejbdeploy.bat or <WAS_ROOT_INSTALL>/AppServer/deploytool/itp/ejbdeploy.sh file. If you pass it in as a parameter in the ejbdeploy.bat or ejbdeploy.sh file, you will add it like the following: 
+
+On Windows:
+"%JAVA_HOME%\bin\java" -DNoCustomConverter=true -Ditp.loc="%ITP_LOC%" -Dorg.osgi.framework........
+
+On Linux/Unix:
+$JAVA_CMD \
+..........
+-Dcom.ibm.sse.model.structuredbuilder="off" \
+-DNoCustomConverter="true" \
+-cp $ejbd_cp \
+
+*In Unix/Linux, make sure when editing:
+1. To add a "\" when you add a new line, and
+2. There should be no [space] character or other hidden character after the "\" 
+
+ 
+
+WORKAROUND if using WsEjbDeploy ant task:
+
+If you are not using any EJB custom converters, pass the NoCustomConverter=true property using the systemProperty tag. For example:
+
+<wsejbdeploy ...>
+<systemProperty value="NoCustomConverter=true"/>
+</wsejbdeploy>
+
+See the links in the related section for more information about the WsEjbDeploy ant task.
+
+
+These work arounds avoid creating the secondary classloader which restores your system to the class loader behavior that was seen prior to the WebSphere Application Server 7.0.0.17 change.
+
+Note: If you chose to add the EJBDEPLOY_JVM_ARGS parameter to the ejbdeploy.bat (or .sh) file directly, installing future WebSphere Application Server Fix Packs may overwrite this change so you may need to reapply this work around.
+
+
+RELATED INFORMATION
+#Rational RFE Community [http://www.ibm.com/developerworks/rfe/?PROD_ID=21]
+WsEjbDeploy for WAS 6.1 [http://publib.boulder.ibm.com/infocenter/wasinfo/v6r1/index.jsp?topic=%2Fcom.ibm.websphere.javadoc.doc%2Fpublic_html%2Fapi%2Fcom%2Fibm%2Fwebsphere%2Fant%2Ftasks%2FWsEjbDeploy.html]
+WsEjbDeploy for WAS 7.0 [http://publib.boulder.ibm.com/infocenter/wasinfo/v7r0/index.jsp?topic=%2Fcom.ibm.websphere.javadoc.doc%2Fweb%2Fapidocs%2Fcom%2Fibm%2Fwebsphere%2Fant%2Ftasks%2FWsEjbDeploy.html&resultof=%22wsejbdeploy%22%20%22wsejbdeploi%22]
+WsEjbDeploy for WAS 8.0 [http://publib.boulder.ibm.com/infocenter/wasinfo/v8r0/index.jsp?topic=%2Fcom.ibm.websphere.javadoc.doc%2Fweb%2Fapidocs%2Fcom%2Fibm%2Fwebsphere%2Fant%2Ftasks%2FWsEjbDeploy.html&resultof=%22wsejbdeploy%22%20%22wsejbdeploi%22]
+
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Application Servers WebSphere Application Server EJBDeploy (WSAD)

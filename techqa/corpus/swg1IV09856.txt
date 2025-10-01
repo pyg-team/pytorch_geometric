@@ -1,0 +1,178 @@
+Title: IBM IV09856: INSTALLER FAILS IF THE PATH ENVIRONMENT VARIABLE IS LONGER THAN 1024 CHARACTERS. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PERMANENT RESTRICTION.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Installer failed if the PATH environment variable is longer
+   than 1024 characters.
+   
+        Detailed Recreation Procedure:
+   
+        (1) On a windows 7 machine, edit PATH environment variable
+            attach more directories to make the environment varible
+            longer than 1024 charator
+        (2) Installing application support for ITM 623 and getting
+            error message:
+   
+            PATH environment variable length exceeds the maximum,
+            abort install.
+   
+            See Microsoft Knowledge Base KB180410, KB906469,
+            KB832978.
+   
+        Log shows:
+   
+    0-26-2011 11:12:11 ABORT: EnvKey(LIBPATH)
+    Value(C:\IBM\ITM\TMAITM6;C:\IBM\ITM\InstallITM)
+    10-26-2011 11:12:11 ABORT: EnvKey(KDEBE_KEY_LABEL) Value()
+    10-26-2011 11:12:11 ABORT: EnvKey(KDEBE_KEY_RING) Value()
+    10-26-2011 11:12:11 ABORT: EnvKey(KDEBE_KEYRING_STASH) Value()
+    10-26-2011 11:12:11 ABORT: EnvKey(CANDLE_HOME)
+   Value(C:\IBM\ITM)
+    10-26-2011 11:12:11 ABORT: KinCrypt.dll not loaded, or could
+   not be
+    unloaded
+    10-26-2011 11:12:11 ABORT: Kglbase.dll not loaded, or could not
+   be
+    unloaded
+    10-26-2011 11:12:11 ABORT: Kbb.dll not loaded, or could not be
+   unloaded
+    10-26-2011 11:12:11 Directory
+    C:\Users\AppData\Local\Temp\{F46D835E-B6DF-2C9D-1CF2-94A7
+   ACA7E7BE
+   }
+    \license deleted
+    10-26-2011 11:12:11 Directory
+    C:\Users\AppData\Local\Temp\{F46D835E-B6DF-2C9D-1CF2-94A7
+   ACA7E7BE
+   }
+    \InstallITM deleted
+    10-26-2011 11:12:12 Directory
+    C:\Users\AppData\Local\Temp\plugin_tmp deleted
+    10-26-2011 11:12:12 Directory
+   C:\Users\AppData\Local\Temp\logs
+    deleted
+    10-26-2011 11:12:14 HandleInstallDirectory(ABORT)
+    10-26-2011 11:12:14 RegistryGetKeyValue
+    Key(HKLM\SOFTWARE\Candle\OMEGAMON) Value(InstallDir)
+   Type(REGDB_STRING)
+    ValueData(C:\IBM\ITM\InstallITM)
+    10-26-2011 11:12:14 HandleInstallDir - ABORT run type FIRST
+   TIME
+    10-26-2011 11:12:14 HandleInstallDir - ABORT complete.
+    10-26-2011 11:12:14 RC_INFO: PATH environment variable length
+   exceeds
+    the maximum, abort install.  See Microsoft Knowledge Base
+    KB180410,
+    KB906469, and KB8329
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Workaround:
+   Setup a temporary PATH just for the installer, do the
+   installation and put the old PATH back.
+   (1)Take current PATH and rename to PATHX
+   (2)Create a new PATH shorter than 1024
+   (3)Install ITM
+   (4)Merge the newly added directories in PATH into PATHX.
+   (5)Delete PATH and rename PATHX to PATH.
+   Don't start anything other than the ITM installer while PATH is
+   reset
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  See Error Description.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This is a current product limitation.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV09856
+   
+   
+ * REPORTED COMPONENT NAME
+   OMEG DIST INSTA
+   
+   
+ * REPORTED COMPONENT ID
+   5608A41CI
+   
+   
+ * REPORTED RELEASE
+   623
+   
+   
+ * STATUS
+   CLOSED PRS
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-10-27
+   
+   
+ * CLOSED DATE
+   2012-02-14
+   
+   
+ * LAST MODIFIED DATE
+   2012-02-14
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

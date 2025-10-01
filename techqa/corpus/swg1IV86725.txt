@@ -1,0 +1,340 @@
+Title: IBM IV86725: SERVER LOG ROLLOVER DURING INSTALL CAUSES FAILED FIXPACK INSTALL - United States
+
+Text:
+  DIRECT LINKS TO FIXES
+7.1.0-TIV-NCI-ZLINUX-FP0007 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=7.1.0-TIV-NCI-ZLINUX-FP0007&source=SAR]
+7.1.0-TIV-NCI-WINDOWS-FP0007 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=7.1.0-TIV-NCI-WINDOWS-FP0007&source=SAR]
+7.1.0-TIV-NCI-SOLARIS-FP0007 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=7.1.0-TIV-NCI-SOLARIS-FP0007&source=SAR]
+7.1.0-TIV-NCI-AIX-FP0007 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=7.1.0-TIV-NCI-AIX-FP0007&source=SAR]
+7.1.0-TIV-NCI-LINUX-FP0007 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=7.1.0-TIV-NCI-LINUX-FP0007&source=SAR]
+IBM Tivoli Netcool/Impact V7.1.0 Fix Pack 7(7.1.0-TIV-NCI-FP0007) [http://www-01.ibm.com/support/docview.wss?uid=swg24042688]
+IBM Tivoli Netcool/Impact V7.1.0 Fix Pack 8(7.1.0-TIV-NCI-FP0008) [http://www-01.ibm.com/support/docview.wss?uid=swg24042885]
+IBM Tivoli Netcool/Impact V7.1.0 Fix Pack 9(7.1.0-TIV-NCI-FP0009) [http://www-01.ibm.com/support/docview.wss?uid=swg24043378]
+IBM Tivoli Netcool/Impact V7.1.0 Fix Pack 10(7.1.0-TIV-NCI-FP0010) [http://www-01.ibm.com/support/docview.wss?uid=swg24043588]
+IBM Tivoli Netcool/Impact V7.1.0 Fix Pack 11(7.1.0-TIV-NCI-FP0011) [http://www-01.ibm.com/support/docview.wss?uid=swg24043858]
+IBM Tivoli Netcool/Impact V7.1.0 Fix Pack 12 (7.1.0-TIV-NCI-FP0012) [http://www-01.ibm.com/support/docview.wss?uid=swg24044312]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  product: Netcool/Impact
+   release: 7.1.0
+   abstract: server log rollover during install causes failed
+             fixpack install
+   
+   problem: fixpack install falls, server rollover seems to be the
+            cause.
+   
+   
+   During fixpack install, fails:  ends like this...
+   ================================================================
+   ================================================================
+   
+   B. Back, U. Update, C. Cancel
+   -----> [U]
+   25% 50% 75% 100%
+   ------------------|------------------|------------------|-------
+   --------
+   ---|
+   ...........................................................
+   
+   ..................
+   
+   =====> IBM Installation Manager> Update> Packages> Licenses>
+   Configurations>
+   Summary> Completion
+   
+   There were problems during the update.
+   ERROR: Error during "post-install configure" phase:
+   
+   V. View Message Details
+   
+   Options:
+   B. Back, F. Finish
+   -----> [B]
+   ================================================================
+   ================================================================
+   =====> IBM Installation Manager> Update> Packages> Licenses>
+   Configurations>
+   Summary> Completion
+   
+   There were problems during the update.
+   ERROR: Error during "post-install configure" phase:
+   
+   V. View Message Details
+   
+   Options:
+   B. Back, F. Finish
+   -----> [B] v
+   
+   =====> IBM Installation Manager> Error
+   
+   ERROR: Error during "post-install configure" phase:
+   
+   Details:
+   CRIMA1076E: Error executing the
+   /opt/IBM/tivoli/impact/install/configuration/configure_impact_ex
+   tensions
+   .sh command: status=1.
+   For more information, see the agent log file:
+   /home/ncosys/var/ibm/InstallationManager/logs/native/20160623_12
+   37.log
+   
+   Explanation: The installation operation failed due to an error
+   executing
+   the exec command. An issue has occurred with the package that
+   cannot be
+   resolved by Installation Manager.
+   
+   User Action: Identify the package that has the issue. Contact
+   IBM
+   Support.
+   
+   ERROR: Error executing the chmod() command: status=-1.
+   For more information, see the agent log file:
+   /home/ncosys/var/ibm/InstallationManager/logs/native/20160623_12
+   53b.log
+   
+   CRIMA1077E: File /opt/IBM/tivoli/impact/sdk/bin/java not found.
+   
+   Explanation: Installation Manager cannot locate the file that is
+   required for the installation. An issue has occurred with the
+   package
+   that cannot be resolved by Installation Manager.
+   
+   User Action: Identify the package that has the issue. Contact
+   IBM
+   Support.
+   
+   CRIMA1077E: File
+   /opt/IBM/tivoli/impact/install/configuration/create_liberty_serv
+   er.sh
+   not found.
+   
+   Explanation: Installation Manager cannot locate the file that is
+   required for the installation. An issue has occurred with the
+   package
+   that cannot be resolved by Installation Manager.
+   
+   User Action: Identify the package that has the issue. Contact
+   IBM
+   Support.
+   
+   CRIMA1077E: File
+   /opt/IBM/tivoli/impact/install/configuration/create_liberty_serv
+   er.sh
+   not found.
+   
+   Explanation: Installation Manager cannot locate the file that is
+   required for the installation. An issue has occurred with the
+   package
+   that cannot be resolved by Installation Manager.
+   
+   User Action: Identify the package that has the issue. Contact
+   IBM
+   Support.
+   
+   CRIMA1077E: File
+   /opt/IBM/tivoli/impact/install/configuration/configure_impact.sh
+   not
+   found.
+   
+   Explanation: Installation Manager cannot locate the file that is
+   required for the installation. An issue has occurred with the
+   package
+   that cannot be resolved by Installation Manager.
+   
+   User Action: Identify the package that has the issue. Contact
+   IBM
+   Support.
+   
+   CRIMA1077E: File
+   /opt/IBM/tivoli/impact/install/configuration/configure_impact.sh
+   not
+   found.
+   
+   Explanation: Installation Manager cannot locate the file that is
+   required for the installation. An issue has occurred with the
+   package
+   that cannot be resolved by Installation Manager.
+   
+   User Action: Identify the package that has the issue. Contact
+   IBM
+   Support.
+   
+   CRIMA1077E: File
+   /opt/IBM/tivoli/impact/install/configuration/configure_impact_ex
+   tensions
+   .sh not found.
+   
+   Explanation: Installation Manager cannot locate the file that is
+   required for the installation. An issue has occurred with the
+   package
+   that cannot be resolved by Installation Manager.
+   
+   User Action: Identify the package that has the issue. Contact
+   IBM
+   Support.
+   
+   O. OK, D. Hide Details
+   -----> [O]
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  To minimize the possibility of a log roll over during
+   installation,
+   perform the following steps prior to the upgrade:
+   
+   1. Open impactserver.log4j.properties and lower the log setting
+   by
+   removing/replacing DEBUG entries with INFO.
+   
+   /opt/IBM/tivoli/impact/etc/impactserver.log4j.properties
+   
+   2. Stop the impact server, and rename/delete the current
+   impactserver.log.
+   
+   /opt/IBM/tivoli/impact/log/impactserver.log
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * ALL IMPACT USERS                                             *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * The installer will stop/start the servers during the         *
+   * install. To verify                                           *
+   * whether the server started successfully, it'll scan          *
+   * impactserver.log                                             *
+   * for a specific string                                        *
+   * ("Impact_instance_started_successfully").                    *
+   * However, if the debug level is set too high, the log may     *
+   * rollover                                                     *
+   * before the log can be scanned. As a result, the installer    *
+   * waits for 10                                                 *
+   * minutes before timing out with an error.                     *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   Being that the issue was mainly with the amount of data being
+   logged,
+   which prevented the reader from keeping up; the installer will
+   ammend
+   the logger (preventing debug logging from being enable during
+   the
+   install).
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix for this APAR is contained in the following
+   maintenance packages:
+   |Fix Pack | 7.1.0-TIV-NCI-FP0007
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV86725
+   
+   
+ * REPORTED COMPONENT NAME
+   NETCOOL/IMPACT
+   
+   
+ * REPORTED COMPONENT ID
+   5724O59IS
+   
+   
+ * REPORTED RELEASE
+   710
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-07-11
+   
+   
+ * CLOSED DATE
+   2016-09-19
+   
+   
+ * LAST MODIFIED DATE
+   2016-09-19
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  UNKNOWN
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   NETCOOL/IMPACT
+   
+   
+ * FIXED COMPONENT ID
+   5724O59IS
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R710 PSY
+   UP

@@ -1,0 +1,155 @@
+Title: IBM IZ04968: ORACLE ERROR WHEN INSERTING CLOB FIELD WITH LARGE NUMBER OF CHARS: ORA-21560: ARGUMENT 2 IS NULL, INVALID, OR OUT OF RANGE - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Impact 4.0 Unable insert large string into oracle datatype
+   that has a field CLOB type has a field CLOB type. Customer would
+   like to be an to exceed the current value of 4000 characters
+   during updates and 32000 character during inserts.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  There is no work around at this time.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All Impact Users who are using Oracle DSA    *
+   *                 with CLOB field                              *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: ORACLE ERROR WHEN INSERTING CLOB FIELD  *
+   *                      WITH LARGE NUMBER OF CHARS: ORA-21560:  *
+   *                      ARGUMENT 2 IS NULL, INVALID, OR OUT OF  *
+   *                      RANGE                                   *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   *                                                              *
+   ****************************************************************
+   Steps to replicate:
+   
+   1) Configure Impact Server and create Oracle DSA 2) Create Data
+   Type for table that contains CLOB Field 3) Insert large string
+   (>32000 chars)  into clob field 4) View the Data item in Impact
+   5) Create a policy to query the current data including the CLOB
+   field, and then insert it into the table
+   nodes=GetByFilter('DataType_Name','filter',false);
+   oldValue=nodes 0 .CLOB_FIELD_NAME;         item=NewObject();
+   item.CLOB_FIELD_NAME=oldValue +  ANY OTHER STRING;
+   item.KeyField=<value>;        //to insert new row
+   AddDataItem('DataType_Name',item);      //update the existing
+   field      nodes 0 .CLOB_FIELD_NAME=oldValue +  another updated
+   value ; 6) Check the log file and observe the following error:
+    ORA-21560: ARGUMENT 2 IS NULL, INVALID, OR OUT OF RANGE
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fixed in  Impact 4.0.2
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ04968
+   
+   
+ * REPORTED COMPONENT NAME
+   NETCOOL/IMPACT
+   
+   
+ * REPORTED COMPONENT ID
+   5724O59IS
+   
+   
+ * REPORTED RELEASE
+   400
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2007-09-17
+   
+   
+ * CLOSED DATE
+   2007-12-17
+   
+   
+ * LAST MODIFIED DATE
+   2007-12-17
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *     NETCOOL
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   NETCOOL/IMPACT
+   
+   
+ * FIXED COMPONENT ID
+   5724O59IS
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R400 PSY
+   UP

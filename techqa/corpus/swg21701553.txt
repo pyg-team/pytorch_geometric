@@ -1,0 +1,30 @@
+Title: IBM Value of PM Earliest Next Due Date Changes Without New Readings - United States
+
+Text:
+PM.ERLSTWOGENDATE; METER FREQUENCY; PREVENTIVE MAINTENANCE; MAXIMO; TPAEWORK TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The value of the "Earliest Next Due Date" field in the Preventive Maintenance application changes and increases from one day to the next even without meter readings being entered. 
+
+
+
+
+SYMPTOM
+The Preventive Maintenance, Based Frequency Tab shows the Earliest Next Due Date (PM.ERLSTWOGENDATE) value as today. If you then look at the same record a day later, the date would have also changed and yet no new meter readings records have been entered.
+
+
+RESOLVING THE PROBLEM
+
+Today we use the reading history to calculate an average and use that average to project an earliest next due date from today. We assume that if there are no readings between the last reading and today, then there are no readings, and as such 0 units were consumed during that time.
+
+Today If you project an earliest next due date in 6 days, then you go in tomorrow and NO new readings are entered, then the earliest next due date would be pushed out by another day (since 0 readings were entered, yesterday).
+
+There is a case to be made that the earliest next due date should use the last date of the meter reading instead of today (ie. assume that units that are not yet entered will be entered at some point). There are user requests for this, as well as other models to calculate next due date, but currently, that is not how it is designed. 
+
+It is designed to assume that if no readings are entered, then there are 0 units consumed.
+
+
+
+ 
+
+Cross reference information Segment Product Component Platform Version Edition Systems and Asset Management Control Desk on Cloud

@@ -1,0 +1,161 @@
+Title: IBM HD62330: POSSIBLE TO UNLOCK PART REFERENCE LOCKED BY OTHER USER - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Possible to Unlock Part Reference locked by other
+   user
+   Scenario
+   1. Logon to ENOVIA as User1 with Role.Org.Project .
+   2. Create a product P1 and open it in Product Editor.
+   3. Insert a part/instance under the product and
+   lock only the part reference. Save the structure
+   and exit LCA.
+   4. Again login to ENOVIA as User2 with same
+   context, Role.Org.Project.
+   5. Open the same product P, expand the Product
+   Structure
+   6. Lock the  Usage of Part whose reference was
+   already locked by other User1.
+   7. Save and Select Part in List and choose the
+   Unlock Selections option.
+   => Actual result: Both Usage and Reference is
+   unlocked
+   But the Reference was locked by other user.
+   Expected Result: Only Usage lock is unlocked.
+   .
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Possible to Unlock Part Reference locked by other user
+   Possible to Unlock Part Reference locked by other
+   user
+   Scenario
+   1. Logon to ENOVIA as User1 with Role.Org.Project .
+   2. Create a product P1 and open it in Product Editor.
+   3. Insert a part/instance under the product and
+   lock only the part reference. Save the structure
+   and exit LCA.
+   4. Again login to ENOVIA as User2 with same
+   context, Role.Org.Project.
+   5. Open the same product P, expand the Product
+   Structure
+   6. Lock the  Usage of Part whose reference was
+   already locked by other User1.
+   7. Save and Select Part in List and choose the
+   Unlock Selections option.
+   => Actual result: Both Usage and Reference is
+   unlocked
+   But the Reference was locked by other user.
+   Expected Result: Only Usage lock is unlocked.
+   .
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  THIS PROBLEM WILL BE FIXED ON ENOVIA
+   VERSION 5 RELEASE 18 GA level.
+   NOTE THAT THIS PROBLEM WILL ALSO BE FIXED
+   ON V5R17SP05.
+   .
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   HD62330
+   
+   
+ * REPORTED COMPONENT NAME
+   ENOVIA LCA AIX
+   
+   
+ * REPORTED COMPONENT ID
+   569101700
+   
+   
+ * REPORTED RELEASE
+   516
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2007-03-06
+   
+   
+ * CLOSED DATE
+   2007-04-05
+   
+   
+ * LAST MODIFIED DATE
+   2007-04-05
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ENOVIA LCA AIX
+   
+   
+ * FIXED COMPONENT ID
+   569101700
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R516 PSN
+   UP
+   
+   
+ * R517 PSN
+   UP

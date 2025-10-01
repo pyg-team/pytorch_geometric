@@ -1,0 +1,91 @@
+Title: IBM DWW1541I RC=4 when running DWWLC with LOGSTREAMCOPY and DELETE - United States
+
+Text:
+DWW1541 DWW1502 DWW1541I DWW1502I RC4 RC04 CC4 DASDONLY ; DASD ONLY ; logger logstreams logging logs migrate upgrade migrating upgrading 5655H9101 5655P3000 R330 R410 R420 R430 5655-H91 5655H91 5655-P30 5655P30 FMID HCCV330 HCCV410 HCCV420 HCCV430 ; 5655Y2400 R510 R51E R51K 5655-Y24 ; 5655Y24 FMID HCCV510 JCCV51E JCCV51K ; kixdcfcvr430 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ After upgrading from CICS VSAM Recovery for z/OS (CICS VR) V4.1 to V4.3 or higher, your DWWLC job ends with RC=4 (RC4) and message DWW1541I. You are specifying the LOGSTREAMCOPY command with the DELETE option, but the copied logstream blocks are not being deleted by the MVS logger. 
+
+SYMPTOM
+DWW1541I [http://publib.boulder.ibm.com/infocenter/cicsts/v4r2/topic/com.ibm.cics.cvr.doc/dwwmd/dwwmd00036.html] The MVS log stream tail delete was requested but CICSVR does not permit it.
+DWW1502I [http://publib.boulder.ibm.com/infocenter/cicsts/v4r2/topic/com.ibm.cics.cvr.doc/dwwmd/kw00414.html] The MVS log stream copy utility is terminated. The maximum condition code is 4.
+
+Prior to running DWWLC, you ran the DWWMIW utility to migrate your V4.1 Recovery Control Data Set (RCDS) to V4.3 or higher. The DWWMIW completed with RC=0. 
+
+
+CAUSE
+The CICSVR_GENERAL_CONTROL option LCDEL is not specified for the CICS VR server address space and defaults to NO. Therefore, CICS VR is not requesting that MVS logger delete the copied logstream blocks.
+
+DIAGNOSING THE PROBLEM
+You can verify the current setting by entering the following command from the MVS console:
+
+SETSMS CICSVR_GENERAL_CONTROL(DISPLAY LCDEL)
+
+The SETSMS command responds as follows: 
+
+DWW599I DISPLAY CONTROL DEFAULTS.
+CONTROL DEFAULTS 
+NAME VALUE SCOPE OWNER
+LCDELNOGLOBAL DWWMPROD
+IEE932I 183
+DWW590I CICSVR CONTROL SERVICE REQUEST IS ACCEPTED.
+CONTROL FUNCTION: GENERAL
+CONTROL STRING: DISPLAY LCDEL 
+STATE DESCRIPTION: CONTROL DEFAULT(S) DISPLAYED
+
+In this instance, the LCDEL value is NO.
+
+
+RESOLVING THE PROBLEM
+If your logstreams are defined to MVS with attributes RETPD(0) and AUTODELETE(NO) and you need to delete the accumulated logblocks, you can run as in the following example which uses CICS exit DFHLGCNV:
+
+//DELLOG EXEC PGM=IEFBR14 
+
+//STEPLIB DD DSN=&your.hlq..SDFHLOAD,DISP=SHR
+//SYSPRINT DD SYSOUT=* 
+//SYSUT1 DD DSN=your.logstream,
+// DCB=BLKSIZE=32760, 
+// SUBSYS=(LOGR,DFHLGCNV,,DELETE) 
+
+...or if you do not have CICS, you can use the following JCL with the sample logger exit:
+
+//DELLOG EXEC PGM=IEFBR14 
+//SYSPRINT DD SYSOUT=*
+//ACCIN DD DSN=your.logstream,DISP=SHR,
+// DCB=BLKSIZE=32760,
+// SUBSYS=(LOGR,IFBSEXIT,,DELETE)
+/*
+
+If you need the CICSVR DWWLC logstream copy utility to request the MVS logger to delete successfully copied logstream blocks when the DELETE keyword of the LOGSTREAMCOPY command is specified, you need to ensure the CICSVR server parameter CICSVR_GENERAL_CONTROL specifies LCDEL YES. LCDEL can be set to YES using one of the following methods:
+
+
+ * Specify the CICSVR_GENERAL_CONTROL(LCDEL YES) parameter in your IGDSMSxx member in SYS1.PARMLIB. This will result in the LCDEL option being set to YES when the CICSVR server address starts.
+   
+   
+ * Enter the following command from the MVS console to dynamically change the LCDEL setting [http://publib.boulder.ibm.com/infocenter/cicsts/v4r2/index.jsp?topic=/com.ibm.cics.cvr.doc/dwwig/dwwig00064.html] to YES if the CICSVR server address is currently active:
+   
+   SETSMS CICSVR_GENERAL_CONTROL(LCDEL YES)
+   
+   
+ * In CICS VR V4.3 or higher, you can use the ISPF dialog interface [http://publib.boulder.ibm.com/infocenter/cicsts/v4r2/index.jsp?topic=/com.ibm.cics.cvr.doc/dwwug/setserveaddspacedef.html] to check CICS VR Server address space defaults and update them.  1. Select 8 (CICS VR server default settings) from the CICS VR main menu panelid (DWWPPMEN ). 
+    2. Select 3 (Server default settings) on panelid (DWWPPCVS) . 
+    3. Modify the LCDEL default value column from NO to YES on panelid (DWWPPSDF) and press the Enter key. 
+    4. If successful, message text "The CICSVR server defaults are now saved in the recovery control data set." will be displayed. The MSGID command will display DWWP680. 
+       
+       
+   
+   
+ * In CICS VR V4.3 or higher, you can also use the new SETUP parameter in the IGDSMSxx SYS1.PARMLIB member [http://publib.boulder.ibm.com/infocenter/cicsts/v4r2/index.jsp?topic=/com.ibm.cics.cvr.doc/dwwig/gencont.html] to specify a setup job that must be run during the initialization of the CICS VR server address space to set Server address space defaults. For example:
+   
+   CICSVR_GENERAL_CONTROL(SETUP DWWRMDFS)
+   
+   CICS VR supplies a sample job DWWRMDFS to show how to activate several defaults. 
+
+RELATED INFORMATION
+#LOGSTREAMCOPY command [http://publib.boulder.ibm.com/infocenter/cicsts/v4r2/topic/com.ibm.cics.cvr.doc/dwwig/xlscop.html]
+
+
+
+
+PRODUCT ALIAS/SYNONYM
+ CICSVR CICS VR CICS/VR

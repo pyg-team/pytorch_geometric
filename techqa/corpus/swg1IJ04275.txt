@@ -1,0 +1,145 @@
+Title: IBM IJ04275: MISCELLANEOUS ROLL UP FOR CICS EXPLORER - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+ A README IS AVAILABLE
+IBM CICSEX-5.4.0-FP0008 [http://www-01.ibm.com/support/docview.wss?uid=isg400003771]
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  This APAR includes fixes to various defects identified in CICS
+   Explorer V5.4.0.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  It was not possible to connect to DB2 V11 on z/OS when using
+   CICS PA and CICS IA.
+   com.ibm.cics.core.comm.
+   EnhancedConnectionException: IZE0106E Connect failed with error
+   " jcc
+    t4  10509  13454  4.21.29  Connection to the data server
+   failed. The
+   IBM Data Server for JDBC and SQLJ license was invalid
+   or was not activated for the DB2 for z/OS subsystem.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  An incorrect license file that prevented the correct operation
+   of the DB2 driver used by downstream products has been
+   corrected.
+   .
+   This fix will be made available in Version 5.4.0.8 of the CICS
+   Explorer.
+   .
+   For installation instructions please see:
+   Ordering maintenance for IBM CICS Explorer and CICS Explorer
+   plug-ins
+   http://www.ibm.com/support/docview.wss?uid=swg21380083 [http://www.ibm.com/support/docview.wss?uid=swg21380083]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IJ04275
+   
+   
+ * REPORTED COMPONENT NAME
+   CICS EXPLORER V
+   
+   
+ * REPORTED COMPONENT ID
+   5655Y0401
+   
+   
+ * REPORTED RELEASE
+   540
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2018-02-20
+   
+   
+ * CLOSED DATE
+   2018-03-23
+   
+   
+ * LAST MODIFIED DATE
+   2018-03-23
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *     EXPLORER
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CICS EXPLORER V
+   
+   
+ * FIXED COMPONENT ID
+   5655Y0401
+   
+   
+
+APPLICABLE COMPONENT LEVELS

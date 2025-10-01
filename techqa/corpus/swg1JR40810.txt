@@ -1,0 +1,118 @@
+Title: IBM JR40810: THE OVERWRITE OPERATION DOESN'T MOVE THE FILE BACK TO THE OUTPU T DIRECTORY - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  FF adapter doesn't move the file back to the output directory
+   for the oerwrite function
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  The application is using a FlatFile adapter to
+   write files to a NFS mounted directory. Using
+   overwrite operation in the FlatFile adapter,
+   the files are not moved back to the Output
+   directory.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Applied the IBM WebSphere Adapter for Flat
+   Files version_7.0.0.4_IF02
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR40810
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBS ADPT FLAT
+   
+   
+ * REPORTED COMPONENT ID
+   5724L7800
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-10-05
+   
+   
+ * CLOSED DATE
+   2011-10-19
+   
+   
+ * LAST MODIFIED DATE
+   2011-10-19
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBS ADPT FLAT
+   
+   
+ * FIXED COMPONENT ID
+   5724L7800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R700 PSN
+   UP

@@ -1,0 +1,21 @@
+Title: IBM 878 or 80A abend with reason code 0C or 10 when CICS TS is connected to MQ - United States
+
+Text:
+S878 S80A ; abend878 ; abend80A ; abendS878 ; abendS80A ; 0C ; 10 ; RSN0C ; RSN10 ; LSQA ; PRHWs ; PRHW ; getmain fails ; 5655M1500 R650 650 R500 500 HCI6500 5655-M15 5655M15 ; 5655S9700 R660 660 R600 600 HCI6600 R670 670 R700 700 HCI6700 5655-S97 5655S97 KIXINFO TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ You are running WebSphere MQ for z/OS V6 or V7. After upgrading to CICS Transaction Server for z/OS (CICS TS) V3.2 or higher, you receive an abend 878 or 80A with reason code x'0C' or x'10' (abend878 abend80A RSN0C RSN10). Getmains fail due to lack of below the line LSQA storage. 
+
+CAUSE
+A large proportion of LSQA storage had been allocated for PRHWs, program request handler control blocks. PRHWs are used by CICS tasks to communicate with MQ through the MQ-CICS adapter.
+
+In CICS releases before CICS TS 3.2, MQ allocated one PRHW for each of the eight subtask TCBs used for communication between CICS and MQ. In CICS TS 3.2 and above, where CICS has control of MQ-CICS adapter and bridge components, CICS attaches to MQ under the User tasks L8 Open TCB. Because of this there is now no limit to the number of PRHWs that can be allocated. This leads to the possibility of filling LSQA below the line.
+
+RESOLVING THE PROBLEM
+Apply PTF for MQ V6 APAR PK68189 [http://www.ibm.com/support/docview.wss?uid=swg1PK68189] or MQ V7 APAR PK69439 [http://www.ibm.com/support/docview.wss?uid=swg1PK69439] . Afterwards, MQ will getmain PRHW storage from extended LSQA.
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Host Transaction Processing CICS Transaction Server MQ adapter z/OS 
+PRODUCT ALIAS/SYNONYM
+ CICS/TS CICS TS CICS Transaction Server

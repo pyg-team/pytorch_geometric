@@ -1,0 +1,21 @@
+Title: IBM Merging scan jobs and their results from two different databases - United States
+
+Text:
+scan; job; ASE; AppScan; Enterprise; Database; transfer; result; re-scan; rescan; re-run; how to TECHNOTE (FAQ)
+
+QUESTION
+ In IBM Security AppScan Enterprise, how can I merge scan jobs and their results from two different databases? 
+
+CAUSE
+This may be required to include information from all scan jobs within the same dashboard.
+
+ANSWER
+AppScan Enterprise does not offer such a functionality. The best way to achieve this is to: 
+
+ 1. Export the job properties of each scan job you need to move to another database. 
+ 2. Using the exported XML files, re-create identical scan jobs in the target database. 
+ 3. Run these moved scan jobs. 
+
+
+However, if the above is impossible, the scan results cannot be moved to the new database. 
+Note: You may want to contact the Professional Services to see if they can achieve this, as a service, on a separate contract.

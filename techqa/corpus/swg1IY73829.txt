@@ -1,0 +1,175 @@
+Title: IBM IY73829: 16623 UNABLE TO INSTALL SYBASE AGENT ON WINDOWS 2003 - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Title:  Unable to install Sybase Agent on ITIM server
+   
+   Problem Description:  I am unable to install on w2k3 - the
+   installer
+   gets to the part where it
+   reports the size to be installed and says 0MB.  I click finish,
+   nothing,
+   no service at all
+   On XP I can install, but the service doesn't start.
+   
+   when I try to run SybaseAgent.exe from the command line I get
+   
+   Application popup: SybaseAgent.exe - Unable To Locate Component
+   : This
+   application has failed to start because icuuc26.dll was not
+   found.
+   Re-installing the application may fix this problem.
+   
+   Customer Recreate:
+   
+   Desired Behavior:
+   
+   Business Justification (enh):
+   
+   Steps to Duplicate:  I've done some testing with the Sybase
+   install.
+   And here is what I
+   found:
+   
+   XP - same results as yours.  I'm missing some .dll files and it
+   recommends me to reinstall.  Since the release notes don't
+   mention
+   Windows XP as a supported platform, I'm guessing it's not going
+   to work
+   on this.
+   
+   Win2k3 - same results as yours.  Attempting to install both in
+   console
+   mode and in InstallShield mode.  In both cases, I see 0 KB
+   
+   ------------
+   
+   I am going to check with Development to confirm this, and then
+   submit a
+   bug for this, as we can reproduce the issue as well.
+   
+   Environment: Platform/operating system: w2k3/ITIM 4.5.1
+   FP28/Sybase ASE
+   12.5/Tivoli
+   Sybase Agent 4.5.1004
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  16623
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *   Installer needs HotFix for Win2003 support.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *   Fix shipped in Sybase Agent v4.5.3
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IY73829
+   
+   
+ * REPORTED COMPONENT NAME
+   ITIM AGENTS
+   
+   
+ * REPORTED COMPONENT ID
+   5724C34AG
+   
+   
+ * REPORTED RELEASE
+   450
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2005-07-08
+   
+   
+ * CLOSED DATE
+   2005-07-29
+   
+   
+ * LAST MODIFIED DATE
+   2005-07-29
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *     INSTALL
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ITIM AGENTS
+   
+   
+ * FIXED COMPONENT ID
+   5724C34AG
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R450 PSY
+   UP

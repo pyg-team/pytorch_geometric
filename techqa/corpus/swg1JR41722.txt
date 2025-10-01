@@ -1,0 +1,176 @@
+Title: IBM JR41722: CATEGORY SEARCH NOT WORKING WITH SEARCH_IGNORECASE=YES - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Error Description&#65496;
+   Category search does not work in InfoSphere MDM Server for PIM
+   new UI when search_ignorecase is set to Yes.
+   
+   Steps to reproduce:
+   1.  Set search_ignorecase=Yes in
+   $TOP/etc/default/common.properties
+   
+   2.  Load an item and click on 'Categories' tab to map
+   categories to an item.
+   
+   3.  In Search String type *test* which should bring back
+   categories with Test, test results.
+   
+   Note: Only certain categories are returned, for example
+   categories with 'test' and 'Test' results are omitted.
+   
+   Expected behavior is that the search should return all results
+   and treat the search as case insensitive.
+   
+   Keyword: invalid search
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Local Fix&#65496;
+   None
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * All Master Data Management Server for Product Information    *
+   * Management implementations are affected by this issue.       *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * Error Description&#216;                                           *
+   * Category search does not work in InfoSphere MDM Server for   *
+   * PIM                                                          *
+   * new UI when search_ignorecase is set to Yes.                 *
+   *                                                              *
+   * Steps to reproduce:                                          *
+   * 1.  Set search_ignorecase=Yes in                             *
+   * $TOP/etc/default/common.properties                           *
+   *                                                              *
+   * 2.  Load an item and click on 'Categories' tab to map        *
+   * categories to an item.                                       *
+   *                                                              *
+   * 3.  In Search String type *test* which should bring back     *
+   * categories with Test, test results.                          *
+   *                                                              *
+   * Note: Only certain categories are returned, for example      *
+   * categories with 'test' and 'Test' results are omitted.       *
+   *                                                              *
+   * Expected behavior is that the search should return all       *
+   * results                                                      *
+   * and treat the search as case insensitive.                    *
+   *                                                              *
+   * Keyword: invalid search                                      *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * IBM recommends that customers facing the issue reported by   *
+   * this APAR apply  Master Data Management Server for Product   *
+   * Information Management version 9.1.0-FP003 to gain           *
+   * resolution to this problem.                                  *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A fix for this problem has been included in Master Data
+   Management Server for Product Information Management version
+   9.1.0-FP003
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR41722
+   
+   
+ * REPORTED COMPONENT NAME
+   MDM SERVER FOR
+   
+   
+ * REPORTED COMPONENT ID
+   5724V5100
+   
+   
+ * REPORTED RELEASE
+   910
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-01-18
+   
+   
+ * CLOSED DATE
+   2012-07-02
+   
+   
+ * LAST MODIFIED DATE
+   2012-07-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   MDM SERVER FOR
+   
+   
+ * FIXED COMPONENT ID
+   5724V5100
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R910 PSY
+   UP

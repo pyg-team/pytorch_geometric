@@ -1,0 +1,57 @@
+Title: IBM MQ V9.0.0 running on Windows: Explorer fails to start after removing Fix Pack - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The MQ installation was originally at the Fix Pack 9.0.0.1 level, then Fix Pack 9.0.0.2 was applied. After removing Fix Pack 9.0.0.2 to return it to the 9.0.0.1 level, the MQ Explorer fails to start. In the Explorer log the following exception is reported: 
+
+!ENTRY org.eclipse.osgi 4 0 2017-09-28 12:14:38.616
+!MESSAGE Application error
+!STACK 1
+java.lang.RuntimeException: Application "com.ibm.mq.explorer.ui.rcp.RcpApplication" could not be found in the registry. The applications available are: org.eclipse.ant.core.antRunner, org.eclipse.e4.ui.workbench.swt.E4Application, org.eclipse.e4.ui.workbench.swt.GenTopic, org.eclipse.equinox.app.error, org.eclipse.equinox.p2.garbagecollector.application, org.eclipse.equinox.p2.publisher.InstallPublisher, org.eclipse.equinox.p2.publisher.EclipseGenerator, org.eclipse.equinox.p2.publisher.ProductPublisher, org.eclipse.equinox.p2.publisher.FeaturesAndBundlesPublisher, org.eclipse.equinox.p2.reconciler.application, org.eclipse.help.base.infocenterApplication, org.eclipse.help.base.helpApplication, org.eclipse.help.base.indexTool, org.eclipse.ui.ide.workbench.
+at org.eclipse.equinox.internal.app.EclipseAppContainer.startDefaultApp(EclipseAppContainer.java:248)
+at org.eclipse.equinox.internal.app.MainApplicationLauncher.run(MainApplicationLauncher.java:29)
+at org.eclipse.core.runtime.internal.adaptor.EclipseAppLauncher.runApplication(EclipseAppLauncher.java:134)
+at org.eclipse.core.runtime.internal.adaptor.EclipseAppLauncher.start(EclipseAppLauncher.java:104)
+at org.eclipse.core.runtime.adaptor.EclipseStarter.run(EclipseStarter.java:380)
+at org.eclipse.core.runtime.adaptor.EclipseStarter.run(EclipseStarter.java:235)
+at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:95)
+at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:55)
+at java.lang.reflect.Method.invoke(Method.java:508)
+at org.eclipse.equinox.launcher.Main.invokeFramework(Main.java:648)
+at org.eclipse.equinox.launcher.Main.basicRun(Main.java:603)
+at org.eclipse.equinox.launcher.Main.run(Main.java:1465)
+
+The log also contains lots of errors indicating that the required bundle com.ibm.mq.osgi.allclient cannot be resolved. Here is an example of these errors:
+
+!ENTRY com.ibm.mq.explorer.ams 4 0 
+!MESSAGE FrameworkEvent ERROR
+!STACK 0
+org.osgi.framework.BundleException: Could not resolve module: com.ibm.mq.explorer.ams [510]
+Unresolved requirement: Require-Bundle: com.ibm.mq.osgi.allclient
+at org.eclipse.osgi.container.Module.start(Module.java:434)
+at org.eclipse.osgi.container.ModuleContainer$ContainerStartLevel.incStartLevel(ModuleContainer.java:1582)
+at org.eclipse.osgi.container.ModuleContainer$ContainerStartLevel.incStartLevel(ModuleContainer.java:1561)
+at org.eclipse.osgi.container.ModuleContainer$ContainerStartLevel.doContainerStartLevel(ModuleContainer.java:1533)
+at org.eclipse.osgi.container.ModuleContainer$ContainerStartLevel.dispatchEvent(ModuleContainer.java:1476)
+at org.eclipse.osgi.container.ModuleContainer$ContainerStartLevel.dispatchEvent(ModuleContainer.java:1)
+at org.eclipse.osgi.framework.eventmgr.EventManager.dispatchEvent(EventManager.java:230)
+at org.eclipse.osgi.framework.eventmgr.EventManager$EventThread.run(EventManager.java:340) 
+
+RESOLVING THE PROBLEM
+To correct this error, try adding the following lines: 
+
+ * com.ibm.mq.osgi.allclient,9.0.0.1,plugins/com.ibm.mq.osgi.allclient_9.0.0.1.jar,4,false 
+ * com.ibm.mq.osgi.allclientprereqs,9.0.0.1,plugins/com.ibm.mq.osgi.allclientprereqs_9.0.0.1.jar,4,false
+
+to the file: 
+<MQ_Installation_Path>\MQExplorer\eclipse\configuration\org.eclipse.equinox.simpleconfigurator\bundles.info 
+
+Then retry starting the Explorer. 
+
+Please note that this error is specific to Fix Pack 9.0.0.1 and its plugins. 
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM MQ Not Applicable Windows

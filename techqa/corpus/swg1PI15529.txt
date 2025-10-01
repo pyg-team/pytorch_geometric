@@ -1,0 +1,170 @@
+Title: IBM PI15529: Hung thread in CacheNodeSequence due to frequent array expansion - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Hung thread, CPU issue:
+   
+   ThreadMonitor W WSVR0605W: Thread "WebContainer : 0" (0000005b)
+   has been active for 694749 milliseconds and may be hung. There
+   is/are 1 thread(s) in total in the server that may be hung.
+   
+   atcom.ibm.xml.xci.dp.cache.dom.CacheNodeSequence.appendSequence
+   (CacheNodeSequence.java:678)
+   
+   atcom.ibm.xml.xci.dp.cache.dom.CacheNodeSequence.sequenceConcat
+   (CacheNodeSequence.java:403)
+   
+   atcom.ibm.xltxe.rnm1.xtq.xslt.runtime.v2.BasisLibrary2.
+   xpathStep(BasisLibrary2.java:4907)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  n/a
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  All IBM WebSphere Application Server        *
+   *                  Feature Pack for XML users                  *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Hung thread in CacheNodeSequence due to *
+   *                      frequent array expansion                *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   The algorithm to expand the array in
+   com.ibm.xml.xci.dp.cache.dom.CacheNodeSequence consumes a lot
+   of resources when iterating over an extremely large Cursor set
+   that contains thousands of nodes.
+   The following hung thread message could be seen :
+   Thread "WebContainer : 5" (00000dab) has been active for
+   669268 milliseconds and may be hung.  There is/are 1 thread(s)
+   in total in the server that may be hung.
+   at
+   com.ibm.xml.xci.dp.cache.dom.CacheNodeSequence.appendSequence(Ca
+   cheNodeSequence.java:678)
+   at
+   com.ibm.xml.xci.dp.cache.dom.CacheNodeSequence.sequenceConcat(Ca
+   cheNodeSequence.java:403)
+   at
+   com.ibm.xltxe.rnm1.xtq.xslt.runtime.v2.BasisLibrary2.xpathStep(B
+   asisLibrary2.java:4907)
+   .....
+   .....
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The new algorithm expands the array more efficiently and does
+   not exhaust the system, which prevents the thread from being
+   hung.
+   
+   The fix for this APAR is currently targeted for inclusion in
+   IBM WebSphere Application Server Feature Pack for XML
+   1.0.0.17. Please refer to the Recommended Updates page for
+   delivery information:
+   http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI15529
+   
+   
+ * REPORTED COMPONENT NAME
+   XML FEATUREPACK
+   
+   
+ * REPORTED COMPONENT ID
+   5724J0856
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-04-08
+   
+   
+ * CLOSED DATE
+   2014-05-02
+   
+   
+ * LAST MODIFIED DATE
+   2014-05-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    PI15317 [http://www-01.ibm.com/support/docview.wss?uid=swg1PI15317]
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   XML FEATUREPACK
+   
+   
+ * FIXED COMPONENT ID
+   5724J0856
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R700 PSY
+   UP

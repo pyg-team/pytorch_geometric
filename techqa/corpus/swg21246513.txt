@@ -1,0 +1,144 @@
+Title: IBM Specifying table space sizes when performing a redirected restore operation - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Prior to performing a redirected restore operation, you should determine table space and table space container sizes. Fortunately, this information is contained within the DB2 backup images.
+
+Executing a restore operation using an application or script, might generate redirected restores "under the covers". As such, the restore operation can use default settings for container sizes of DMS table spaces. These defaults might no longer be sufficient to allow for the data that now resides in the table space on the backup image. So, what does this mean? 
+
+During a redirected restore you may encounter the following warning:
+
+$ db2 "RESTORE DATABASE DB1 FROM /db2inst1/backups REDIRECT"
+SQL1277N Restore has detected that one or more table space containers are
+inaccessible, or has set their state to 'storage must be defined'.
+DB20000I The RESTORE DATABASE command completed successfully.
+
+$ db2 "SET TABLESPACE CONTAINERS FOR 4 USING ( FILE './mydms1.0001' 3000 )"
+DB20000I The SET TABLESPACE CONTAINERS command completed successfully.
+
+$ db2 RESTORE DATABASE DB1 CONTINUE
+SQL2059W A device full warning was encountered on device "MYDMS1".
+Do you want to continue(c), terminate this device only(d), abort the utility(t) ? (c/d/t)
+
+and in the db2diag.log you may see messages like:
+
+2006-06-09-01.34.11.245514-300 I81602A420 LEVEL: Warning
+PID : 4128972 TID : 1 PROC : db2agent (DB1) 0
+INSTANCE: db2inst1 NODE : 000 DB : DB1
+APPHDL : 0-641 APPID: *LOCAL.db2inst1.060609062920
+FUNCTION: DB2 UDB, database utilities, sqludrsa, probe:50
+MESSAGE : Insufficient space in tablespace MYDMS1, you must have at least 3008
+pages
+
+
+
+
+CAUSE
+In our particular case, the high-water mark of the table space was 3008 at the time of the backup:
+Tablespace ID = 4
+Name = MYDMS1
+Type = Database managed space
+Contents = Any data
+State = 0x0000
+Detailed explanation:
+Normal
+Total pages = 4000
+Useable pages = 3872
+Used pages = 3008
+Free pages = 864
+High water mark (pages) = 3008
+Page size (bytes) = 4096
+Extent size (pages) = 32
+Prefetch size (pages) = 96
+Number of containers = 3
+
+The SET TABLESPACE CONTAINERS command above has defined the total number of pages as 3000. 
+
+$ db2 "SET TABLESPACE CONTAINERS FOR 4 USING ( FILE './mydms1.0001' 3000)"
+
+When the database attempts to restore the data for this table space (device), it fails because the data contained in the backup image (3008 used pages) exceeds the storage space allocated for the table space (3000 pages).
+
+
+
+
+ANSWER
+The backup image can be queried to determine the minimum table space size. For example the "TotalPages:" specified in the backup image can be used: 
+
+
+db2ckbkp -T DB1.0.corrente.NODE0000.CATN0000.20060609012350.001
+
+[SNIP]
+
+MYDMS1
+ID: 4
+flags: 102
+flags2: 400
+extent_size: 32
+prefetch_size: 96
+version: 37
+flavour: 3
+state: 0
+statechangeobjectid: 0
+statechangepoolid: 0
+LifeLSN: 0000 04E2 032A
+LoadPendingLSN: 0000 0000 0000
+LoadRecoveryLSN: 0000 0000 0000
+BeginLSN: 0000 0000 0000
+EndLSN: 0000 0000 0000
+StordefLSN: 0000 0697 84A8
+Full Backup LSN: 0000 0000 0000
+Last Backup LSN: 0000 0000 0000
+Full Backup Time: 00000000 = "19700101110000"
+Last Backup Time: 00000000 = "19700101110000"
+TotalPages: 4000
+UseablePages: 3872
+reorgPoolID: 0
+reorgObjID: 0
+poolReorgCount: 0
+# of containers: 3
+current_group: 0
+cont_csum: 51533660
+current_map_entries: 3
+page_size: 4096
+map_csum: 4028
+tsp rfwd encountered: 16
+
+Container CB
+Type: 6
+TotalPages: 1000
+UsablePages: 960
+# of OS rsvd bytes: 512
+Page 0 offset: 131072
+Tag offset: 512
+Extent offset: 0
+Name: ./mydms1.0001
+
+
+Container CB
+Type: 6
+TotalPages: 2000
+UsablePages: 1952
+# of OS rsvd bytes: 512
+Page 0 offset: 131072
+Tag offset: 512
+Extent offset: 0
+Name: ./mydms1.0002
+
+
+Container CB
+Type: 6
+TotalPages: 1000
+UsablePages: 960
+# of OS rsvd bytes: 512
+Page 0 offset: 131072
+Tag offset: 512
+Extent offset: 31
+Name: ./mydms1.0003
+
+The SET TABLESPACE command should be:
+
+$ db2 "SET TABLESPACE CONTAINERS FOR 4 USING ( FILE './mydms1.0001' 4000)"
+
+The restore operation can then be completed without problems.

@@ -1,0 +1,78 @@
+Title: IBM Message CWWKZ0002E occurs with IBM WebSphere Application Server (WAS) Liberty v8.5.5 - United States
+
+Text:
+WAS; Liberty; application; install; CWWKZ0002E; UTF-16; UTF-8; javax.xml.stream.XMLStreamException; com.ibm.ws.javaee.ddmodel.DDParser$ParseException; com.ibm.wsspi.adaptable.module.UnableToAdaptException TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When attempting to deploy and start a new web application, the IBM WebSphere Application Server v8.5.5 Liberty server throws a CWWKZ0002E message during start up indicating an exception occurred when starting the application. 
+
+SYMPTOM
+CWWKZ0002E: An exception occurred while starting the application records. The exception message was: com.ibm.wsspi.adaptable.module.UnableToAdaptException: com.ibm.ws.javaee.ddmodel.DDParser$ParseException: javax.xml.stream.XMLStreamException
+
+
+CAUSE
+WEB-INF/web.xml file in the JEE Web Application WAR file is encoded with UTF-16, which is not supported by IBM WAS Liberty. Only UTF-8 encoding is supported.
+
+ENVIRONMENT
+IBM i OS, IBM WebSphere Application Server v8.5.5 Liberty
+
+DIAGNOSING THE PROBLEM
+Review the wlp/usr/servers/J<server>/logs/messages.log log file for the CWWKZ0002E message. Obtain the WAR file being deployed/started to the WAS Liberty server. Review the encoding of the WEB-INF/web.xml file in the application WAR file to see if it is encoded with UTF-16
+
+RESOLVING THE PROBLEM
+In this example, here are the following messages logged to the messages.log file indicating a problem starting the "records" application. NOTE: This applies to any application name using an UTF-16 encoded web.xml file.
+
+
+
+
+Hide details for Errors in the messages.log file: [/support/docview.wss?uid=nas8N1020586&amp;aid=1]Errors in the messages.log file: 
+
+Errors in the messages.log file:
+2/18/15 14:02:22:355 CST] 0000004b com.ibm.ws.app.manager.AppMessageHelper I CWWKZ0018I: Starting application records.
+[2/18/15 14:02:23:174 CST] 0000004b com.ibm.ws.logging.internal.impl.IncidentImpl I FFDC1015I: An FFDC Incident has been created: "javax.xml.stream.XMLStreamException com.ibm.ws.javaee.ddmodel.DDParser 351" at ffdc_15.02.18_14.02.23.0.log
+[2/18/15 14:02:23:335 CST] 0000004b com.ibm.ws.logging.internal.impl.IncidentImpl I FFDC1015I: An FFDC Incident has been created: "com.ibm.wsspi.adaptable.module.UnableToAdaptException: com.ibm.ws.javaee.ddmodel.DDParser$ParseException: javax.xml.stream.XMLStreamException com.ibm.ws.app.manager.war.internal.WARApplicationHandlerImpl 96" at ffdc_15.02.18_14.02.23.1.log
+[2/18/15 14:02:23:337 CST] 0000004b om.ibm.ws.app.manager.war.internal.WARApplicationHandlerImpl E CWWKZ0106E: Could not start web application records.
+[2/18/15 14:02:23:345 CST] 0000004b com.ibm.ws.logging.internal.impl.IncidentImpl I FFDC1015I: An FFDC Incident has been created: "com.ibm.wsspi.adaptable.module.UnableToAdaptException: com.ibm.ws.javaee.ddmodel.DDParser$ParseException: javax.xml.stream.XMLStreamException com.ibm.ws.app.manager.internal.statemachine.StartAction$1 applicationStartFail" at ffdc_15.02.18_14.02.23.2.log
+[2/18/15 14:02:23:346 CST] 0000004b com.ibm.ws.app.manager.AppMessageHelper E CWWKZ0002E: An exception occurred while starting the application records. The exception message was: com.ibm.wsspi.adaptable.module.UnableToAdaptException: com.ibm.ws.javaee.ddmodel.DDParser$ParseException: javax.xml.stream.XMLStreamException
+
+An FFDC log shows the following stack trace of the exception.
+
+Hide details for Stack Dump = com.ibm.wsspi.adaptable.module.UnableToAdaptException: com.ibm.ws.javaee.ddmodel.DDParser$ParseEx [/support/docview.wss?uid=nas8N1020586&amp;aid=1]Stack Dump = com.ibm.wsspi.adaptable.module.UnableToAdaptException: com.ibm.ws.javaee.ddmodel.DDParser$ParseException: javax...
+Stack Dump = com.ibm.wsspi.adaptable.module.UnableToAdaptException: com.ibm.ws.javaee.ddmodel.DDParser$ParseException: javax.xml.stream.XMLStreamException
+at com.ibm.ws.javaee.ddmodel.web.WebAppAdapter.adapt(WebAppAdapter.java:43)
+at com.ibm.ws.javaee.ddmodel.web.WebAppAdapter.adapt(WebAppAdapter.java:26)
+at com.ibm.ws.adaptable.module.internal.AdapterFactoryServiceImpl.adapt(AdapterFactoryServiceImpl.java:189)
+at com.ibm.ws.adaptable.module.internal.AdaptableContainerImpl.adapt(AdaptableContainerImpl.java:171)
+at com.ibm.ws.app.manager.module.internal.DeployedAppInfoBase$ModuleContainerInfo.<init>(DeployedAppInfoBase.java:132)
+at com.ibm.ws.app.manager.module.internal.DeployedAppInfoBase$WebModuleContainerInfo.<init>(DeployedAppInfoBase.java:212)
+at com.ibm.ws.app.manager.war.internal.WARDeployedAppInfo.<init>(WARDeployedAppInfo.java:57)
+at com.ibm.ws.app.manager.war.internal.WARDeployedAppInfoFactoryImpl.createDeployedAppInfo(WARDeployedAppInfoFactoryImpl.java:121)
+at com.ibm.ws.app.manager.war.internal.WARDeployedAppInfoFactoryImpl.createDeployedAppInfo(WARDeployedAppInfoFactoryImpl.java:39)
+at com.ibm.ws.app.manager.war.internal.WARApplicationHandlerImpl.install(WARApplicationHandlerImpl.java:95)
+at com.ibm.ws.app.manager.internal.statemachine.StartAction.execute(StartAction.java:134)
+at com.ibm.ws.app.manager.internal.statemachine.ApplicationStateMachineImpl.enterState(ApplicationStateMachineImpl.java:1277)
+at com.ibm.ws.app.manager.internal.statemachine.ApplicationStateMachineImpl.run(ApplicationStateMachineImpl.java:876)
+at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:895)
+at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:918)
+at java.lang.Thread.run(Thread.java:761)
+Caused by: com.ibm.ws.javaee.ddmodel.DDParser$ParseException: javax.xml.stream.XMLStreamException
+at com.ibm.ws.javaee.ddmodel.DDParser.createXMLStreamReader(DDParser.java:352)
+at com.ibm.ws.javaee.ddmodel.DDParser.parseRootElement(DDParser.java:472)
+at com.ibm.ws.javaee.ddmodel.web.WebAppAdapter$WebAppDDParser.parse(WebAppAdapter.java:56)
+at com.ibm.ws.javaee.ddmodel.web.WebAppAdapter.adapt(WebAppAdapter.java:39)
+... 15 more
+Caused by: javax.xml.stream.XMLStreamException
+at com.ibm.xml.xlxp.api.stax.msg.StAXMessageProvider.throwXMLStreamException(StAXMessageProvider.java:64)
+at com.ibm.xml.xlxp.api.stax.XMLStreamReaderImpl.setDocumentEntity(XMLStreamReaderImpl.java:378)
+at com.ibm.xml.xlxp.api.stax.XMLInputFactoryImpl.createXMLStreamReader(XMLInputFactoryImpl.java:1332)
+at com.ibm.xml.xlxp.api.stax.XMLInputFactoryImpl.createXMLStreamReaderInternal(XMLInputFactoryImpl.java:1424)
+at com.ibm.xml.xlxp.api.stax.XMLInputFactoryImpl.createXMLStreamReader(XMLInputFactoryImpl.java:1486)
+at com.ibm.ws.javaee.ddmodel.DDParser.createXMLStreamReader(DDParser.java:350)
+... 18 more 
+
+It was found the above exceptions were occurring because the WAR application being deployed/started had a WEB-INF/web.xml file encoded as UTF-16. Currently, the IBM WebSphere Application Server Liberty product does not support UTF-16 encoded web.xml files. The IBM WAS Liberty product only supports UTF-8 encoded web.xml files. To resolve the issue, the WAR file was rebuilt with a web.xml file encoded for UTF-8.
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Operating System IBM i 7.2 Operating System IBM i 7.1 Operating System IBM i 6.1 Operating System IBM i 7.3

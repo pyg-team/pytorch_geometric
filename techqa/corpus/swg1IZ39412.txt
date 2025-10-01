@@ -1,0 +1,178 @@
+Title: IBM IZ39412: MISSING CALLER INFORMTION WITH COM.IBM.JVM.DUMP.* API - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Error Message: Currently if the Java application calls the
+   com.ibm.jvm.Dump API they see this on stdout/err:
+    JVMDUMP007I JVM Requesting Heap Dump using
+   'C:\test\heapdump.20081208.115501.2912.0001.phd'
+    JVMDUMP010I Heap Dump written to
+   C:\test\heapdump.20081208.115501.2912.0001.phd
+   This message is misleading as the generation could also have
+   been initiated from the -Xdump agents.  Request a new message
+   the details which process initiated the request.
+   .
+   Stack Trace: N/A
+   .
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Additional details are required to further specify the source of
+   a dump data; javacore, snap, system core or heapdump.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This defect will be fixed in:
+   5.0.0 SR10
+   6.0.0 SR5
+   .
+   The code has been updated to produce more detailed output.
+   C:\temp\sdk\jre\bin>java -Xdump:java:events=vmstop  HelloWorld
+   Hello, world
+   JVMDUMP006I Processing dump event "vmstop", detail "#00000000" -
+   please wait.
+   JVMDUMP032I JVM Requested Java dump using
+   'C:\temp\sdk\jre\bin\javacore.20081217.124415.5984.0001.txt' in
+   response to an event
+   JVMDUMP010I Java dump written to
+   C:\temp\sdk\jre\bin\javacore.20081217.124415.5984.0001.txt
+   JVMDUMP013I Processed dump event "vmstop", detail "#00000000".
+   If you trigger the dump using -Xtrace:trigger the message is
+   different:
+   C:\temp\sdk\jre\bin>java -Xtrace:trigger=Method{*.main,javadump}
+   HelloWorld
+   JVMDUMP034I User requested Java dump using
+   'C:\temp\sdk\jre\bin\javacore.20081217.124122.1544.0001.txt'
+   through -Xtrace:trigger
+   JVMDUMP010I Java dump written to
+   C:\temp\sdk\jre\bin\javacore.20081217.124122.1544.0001.txt
+   Hello, world
+   and different again if you use the com.ibm.jvm.Dump API:
+   C:\temp\sdk\jre\bin>java -Xdump  DumpTest
+   JVMDUMP034I User requested Java dump using
+   'C:\temp\sdk\jre\bin\javacore.20081217.130823.4216.0001.txt'
+   through com.ibm.jvm.Dump.JavaDump
+   JVMDUMP010I Java dump written to
+   C:\temp\sdk\jre\bin\javacore.20081217.130823.4216.0001.txt
+   The header for Javacores has been modified to look like this for
+   an event-driven dump:
+   0SECTION       TITLE subcomponent dump routine
+   NULL           ===============================
+   1TISIGINFO     Dump Event "vmstop" (00000002) Detail "#00000000"
+   received
+   1TIDATETIME    Date:                 2008/12/17 at 13:11:27
+   1TIFILENAME    Javacore filename:
+   C:\temp\sdk\jre\bin\javacore.20081217.131127.2252.0001.txt
+   and like this for an event driven dump:
+   NULL
+   ----------------------------------------------------------------
+   --------
+   0SECTION       TITLE subcomponent dump routine
+   NULL           ===============================
+   1TISIGINFO     Dump Requested By User (00100000) Through
+   com.ibm.jvm.Dump.JavaDump
+   1TIDATETIME    Date:                 2008/12/17 at 13:08:23
+   1TIFILENAME    Javacore filename:
+   C:\temp\sdk\jre\bin\javacore.20081217.130823.4216.0001.txt
+   .
+   To obtain the fix:
+   Install build 20090117 or later
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ39412
+   
+   
+ * REPORTED COMPONENT NAME
+   J9 COMMON CODE
+   
+   
+ * REPORTED COMPONENT ID
+   620700127
+   
+   
+ * REPORTED RELEASE
+   600
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-12-10
+   
+   
+ * CLOSED DATE
+   2009-01-16
+   
+   
+ * LAST MODIFIED DATE
+   2009-01-16
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    IZ39371 [http://www-01.ibm.com/support/docview.wss?uid=swg1IZ39371]
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   J9 COMMON CODE
+   
+   
+ * FIXED COMPONENT ID
+   620700127
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R600 PSN
+   UP

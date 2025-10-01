@@ -1,0 +1,156 @@
+Title: IBM PM86912: ONLY TWO ARGUMENTS TO LICENSEACTIVATOR.EXE ARE DOCUMENTED - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  You are trying to install and license Statisitcs 21.0 from
+   behind a proxy and you need to be able to supply the proxy
+   hostname, port, user, and password to the licenseactivator.exe.
+   Your problem is that only the PROXYUSER and PROXYPASS arguments
+   are documented in the SPSS Statistics Installation Guide.
+   
+   In reality, licenseactivator.exe has four (4) main arguments.
+   These can be found by issuing the /help switch from command
+   line:
+   
+   C:\Program Files\IBM\SPSS\Statistics\21>licenseactivator /help
+   Run this from the installation directory to activate
+   authorization code or add a
+    license code.
+   
+   licenseactivator code1[:code2:...upto...:code10]
+   PROXYHOST=[proxy-hostname] PROXYPORT=[proxy-port-number]
+   PROXYUSER=[proxy-username] PROXYPASS=[proxy-password]
+   
+   
+   Optional Proxy Paramaters:
+   
+   PROXYHOST       Proxy Server Name or IP address.
+   PROXYPORT       Proxy Server port number used to connect to the
+   internet.
+   PROXYUSER       If required Proxy Server username.
+   PROXYPASS       If required Proxy Server password.
+   
+   Additional Paramaters:
+   
+   INITMODE        Used to initialize the machine only.
+   DEBUGMODE       Used to run with debugging turned on.
+   
+   !Note: Before entering a license code, all characters after '#'
+   should be removed or add quotes around each License code.
+   
+   C:\Program Files\IBM\SPSS\Statistics\21>
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  This issue will be addressed in the documentation of a future
+   release.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * Users who wish to deploy Statistics behind a proxied         *
+   * environment by command line with the licenseactivator        *
+   * executable.                                                  *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * ONLY TWO ARGUMENTS TO LICENSEACTIVATOR.EXE ARE DOCUMENTED    *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Please upgrade to Statistics 22.0                            *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This issue has been resolved for Statistics 22.0
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM86912
+   
+   
+ * REPORTED COMPONENT NAME
+   SPSS STATISTICS
+   
+   
+ * REPORTED COMPONENT ID
+   5725A54ST
+   
+   
+ * REPORTED RELEASE
+   K00
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-04-12
+   
+   
+ * CLOSED DATE
+   2013-08-22
+   
+   
+ * LAST MODIFIED DATE
+   2013-08-22
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

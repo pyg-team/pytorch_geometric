@@ -1,0 +1,29 @@
+Title: IBM SQL Server StoreProcedure returnValue causes a ClassCast exception when configured with a stored procedure in the table business object - United States
+
+Text:
+Adapter ; JDBC ; SQL Server TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ WebSphere Adapter for JDBC supports configuring the stored procedure named ASI in a table business object , such as retrieveAllSP , CreateSP , UpdateSP and so on. When using the SQL Server database, the SQLServer stored procedure always has a return value in the stored procedure. This causes a problem in runtime. 
+
+SYMPTOM
+When the retrieveAll stored procedure ASI is configured in BO in JDBC adapter for SQL Server 2005 database, the following exception error is thrown in runtime.
+
+Caused by: com.ibm.websphere.sca.ServiceRuntimeException: ResourceException thrown in J2CMethodBindingImpl.invoke() javax.resource.ResourceException: java.lang.ClassCastException: java.lang.String incompatible with java.sql.ResultSet
+
+
+CAUSE
+SQL Server stored procedure always returns value ( 0 or 1), it is unexpected in the stored procedure
+
+RESOLVING THE PROBLEM
+To resolve the issue , you need to manually edit the business object content and remove the ReturnValue tag in business object file
+
+
+See the following section, where the ReturnValue from the BO content is manually removed .
+<jdbcasi:Name>RetrieveAll</jdbcasi:Name>
+<jdbcasi:StoredProcedures>
+<jdbcasi:StoredProcedureType>RetrieveAllSP</jdbcasi:StoredProcedureType>
+<jdbcasi:StoredProcedureName>dbo.sp_Test;1</jdbcasi:StoredProcedureName>
+<jdbcasi:ResultSet>true</jdbcasi:ResultSet>
+< jdbcasi:ReturnValue > Rav </ jdbcasi:ReturnValue > 
+</jdbcasi:StoredProcedures>

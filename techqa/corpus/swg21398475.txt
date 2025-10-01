@@ -1,0 +1,47 @@
+Title: IBM Why do I receive a SQL1822N rc1045 when accessing Mysql? - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+Why do I receive a SQL1822N rc1045 when accessing Mysql? 
+
+ANSWER
+The following is seen in the db2diag.log after receiving a -1822 rc1045 when accessing Mysql database using the Federation Server ODBC wrapper.
+2009-07-08-18.47.50.390000-240 E1647690H917 LEVEL: Error 
+(Received) 
+PID : 1836 TID : 1764 PROC : db2syscs.exe 
+INSTANCE: DB2 NODE : 000 DB : SAMPLE 
+APPHDL : 0-62 APPID: *LOCAL.DB2.090708224500 
+AUTHID : OPTIMUSER 
+EDUID : 1764 EDUNAME: db2agent (SAMPLE) 0 
+FUNCTION: DB2 UDB, ODBC wrapper, report_error_message, probe:1074 
+DATA #1 : String, 16 bytes 
+Server name: 
+DATA #2 : String, 7 bytes 
+MYSQLVM 
+DATA #3 : String, 16 bytes 
+Function name: 
+DATA #4 : String, 7 bytes 
+connect 
+DATA #5 : String, 16 bytes 
+ODBC native err: 
+DATA #6 : signed integer, 4 bytes 
+1045 
+DATA #7 : String, 16 bytes 
+ODBC sqlstate: 
+DATA #8 : String, 5 bytes 
+HY000 
+DATA #9 : String, 16 bytes 
+ODBC error text: 
+DATA #10: String, 87 bytes 
+ÝMySQL¨ÝODBC 5.1 Driver¨Access denied for user 'root'@'localhost' (usin
+password: YES) 
+
+From the trace the user is "root" and password is "YES". 
+
+The error information from the MYSQL manual is: 
+Error: 1045 SQLSTATE: 28000 (ER_ACCESS_DENIED_ERROR) 
+Message: Access denied for user '%s'@'%s' (using password: %s) 
+
+A 'GRANT ALL' for the user may need to be granted on the Mysql database.

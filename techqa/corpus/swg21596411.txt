@@ -1,0 +1,69 @@
+Title: IBM Java ORB : Visibroker replacement - United States
+
+Text:
+visibroker; Visibroker; ORB; CORBA; corba; java orb; Java ORB; Orbix; debugging; dumpnameservice; nsdump; dumpns TECHNOTE (FAQ)
+
+QUESTION
+ IBM Java ORB : What happened to Visibroker? 
+
+CAUSE
+Visibroker was replaced by the IBM Java ORB in 2012
+
+ANSWER
+ 
+
+The Visibroker CORBA software is being phased out of the integrations product line. New probes will use the ORB provided with the IBM JRE included within the base installation of Netcool/OMNIbus. Ensure the probes readme or description files are read before installation to ensure that the necessary dependencies are installed first. 
+
+ 
+
+The dumpnameservice.sh utility uses Visibroker [not Visibroker8] and Visibroker needs to be installed to use it. 
+
+Its replacement is dumpns, as provided with the latest CORBA framework package [probe-corba-framework 3_0 or above]. The command is located in the $NCHOME/omnibus/probes/java/corba directory and takes the host port as arguments. 
+
+You can also use the standard jacorb.jar to dump the name service contents using this syntax:
+java -cp /tmp/jacorb.jar org.jacorb.naming.ContextLister -url corbaloc:iiop:<naming-server-ip>:<naming-server-port>/NameService
+
+Listing output:
+TMF_MTNM.Class/
+TejasNetworks.Vendor/
+TejasNetworks\/NORTH-CDG.EmsInstance/
+3\.5.Version/
+TejasNetworks\/NORTH-CDG.EmsSessionFactory_I
+
+Example probe property:
+NamingContextPath: "TMF_MTNM.Class/TejasNetworks.Vendor/TejasNetworks\\/NORTH-CDG.EmsInstance/3\\.5.Version/TejasNetworks\\/NORTH-CDG.EmsSessionFactory_I"
+
+Note : jacorb.jar is available from the JACORB JAR download link. 
+
+ 
+
+Debugging the Java ORB: 
+
+The latest CORBA framework allows probes to use the ORB debugging properties: 
+
+e.g.
+ORBDebug : 'true'
+ORBDebugFile : '/tmp/orb_debug.log'
+
+Use the -dumpprops option on the probe to see if these properties are available or not.
+
+
+To manually debug the IBM Java ORB the probe specific environment file needs to be modified as described below: 
+
+
+Edit or create the $OMNIHOME/probes/java/nco_p_<probe>.env file and add the following line to enable IBM ORB trace logging.
+
+NCO_JPROBE_JAVA_FLAGS="-Dcom.ibm.CORBA.Debug=true -Dcom.ibm.CORBA.CommTrace=true -Dcom.ibm.CORBA.Debug.Output=$OMNIHOME/log/ibm_orb_trace.log $NCO_JPROBE_JAVA_FLAGS"
+
+Notes: 
+The ORB debugging should not be enabled unless required and not left running in a production environment unless requested by IBM Tivoli Netcool support.
+
+If the property ORB debugging is available in the probe, the manual java option method does not work.
+
+If the probe reports encoding issues when used with the IBM Java ORB set the probe properties as shown below before contacting support;
+ORBWCharDefault : "UTF16"
+ORBCharEncoding : "ISO8859_1"
+
+
+RELATED INFORMATION
+#JACORB JAR download [http://www.jacorb.org/download.html]

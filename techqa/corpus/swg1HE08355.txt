@@ -1,0 +1,165 @@
+Title: IBM HE08355: IBM Content Collector returns an error when collecting from public folders on a Microsoft Exchange 2007 or 2010 server. - United States
+
+Text:
+  A FIX IS AVAILABLE
+IBM Content Collector V2.2 Fix Pack 2 [http://www-01.ibm.com/support/docview.wss?uid=swg24031075]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  If IBM Content Collector is configured to collect documents from
+   public folders on a Microsoft Exchange 2007 or 2010 server,
+   Content Collector might return the following error message:
+   
+   "AFUM0022E: An error occurred: The entry ID of the primary
+   message store could not be found in the message store table."
+   
+   On Exchange 2007 and Exchange 2010 servers, public folder stores
+   do not exist by default. As a result, a MAPI profile that is
+   created against Exchange 2007 or Exchange 2010 does not usually
+   contain the public folder store provider. If this information is
+   missing, IBM Content Collector returns an error when trying to
+   access the public folders.
+   
+   The public folder store provider is added to the MAPI profile
+   when the profile user's mailbox is opened for the first time.
+   After that and a new session logon, IBM Content Collector can
+   access the public folders without error.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Workaround:
+   
+   As a workaround, start Microsoft Outlook with the IBM Content
+   Collector profile and open the mailbox of the Content Collector
+   user to add the required information to the profile.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  If IBM Content Collector was configured to collect documents
+   from public folders on a Microsoft Exchange 2007 or 2010
+   server, Content Collector in some cases returned the following
+   error message:
+   
+   "AFUM0022E: An error occurred: The entry ID of the primary
+   message store could not be found in the message store table."
+   
+   On Exchange 2007 and Exchange 2010 servers, public folder stores
+   do not exist by default. As a result, a MAPI profile that is
+   created against Exchange 2007 or Exchange 2010 does not usually
+   contain the public folder store provider. If this information
+   is missing, IBM Content Collector returns an error when trying
+   to access the public folders.
+   
+   The public folder store provider is added to the MAPI profile
+   when the profile user's mailbox is opened for the first time.
+   After that and a new session logon, IBM Content Collector can
+   access the public folders without error.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Starting with this fix, Content Collector provides an
+   environment variable named AFU_EX_ADD_PF_TO_PROFILE. When this
+   environment variable is set, the IBM Content Collector Email
+   Connector service automatically creates the store provider
+   entry in the profile.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   HE08355
+   
+   
+ * REPORTED COMPONENT NAME
+   ICC FOR EMAIL
+   
+   
+ * REPORTED COMPONENT ID
+   5724V5700
+   
+   
+ * REPORTED RELEASE
+   211
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-06-28
+   
+   
+ * CLOSED DATE
+   2011-11-25
+   
+   
+ * LAST MODIFIED DATE
+   2011-11-25
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ICC FOR EMAIL
+   
+   
+ * FIXED COMPONENT ID
+   5724V5700
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R220 PSN
+   UP

@@ -1,0 +1,122 @@
+Title: IBM IZ47675: REMOTE BPC EXPLORER PROCESS STATE VIEWER SOMETIMES FAILS. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Remote BPC Explorer process state viewer sometimes fails.
+   .
+   Trying to click on the "view process state" for a process
+   instance in the BPC Explorer throws a 404 error.  This can
+   occur for instance if some of the process templates of a remote
+   BPC Explorer setup is used.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Remote BPC Explorer process state viewer sometimes fails.
+   .
+   Trying to click on the "view process state" for a process
+   instance in the BPC Explorer throws a 404 error.  This can
+   occur for instance if some of the process templates of a remote
+   BPC Explorer setup is used.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Problem will be fixed with V6202
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ47675
+   
+   
+ * REPORTED COMPONENT NAME
+   BUS PRC CHOREOG
+   
+   
+ * REPORTED COMPONENT ID
+   5655FLW11
+   
+   
+ * REPORTED RELEASE
+   620
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-03-26
+   
+   
+ * CLOSED DATE
+   2009-05-04
+   
+   
+ * LAST MODIFIED DATE
+   2009-05-04
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   BUS PRC CHOREOG
+   
+   
+ * FIXED COMPONENT ID
+   5655FLW11
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R620 PSY
+   UP

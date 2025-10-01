@@ -1,0 +1,121 @@
+Title: IBM IV56090: UNABLE TO START UP OBJECT SERVER WITH LDAP MODE ON HPUX - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS REQUIREMENT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Unable to start up object server with LDAP mode on HP-UX
+   encountered error as below. Makes no difference if ldap.props
+   file populated or not with the required info.
+   
+   bash-4.0# ./nco_objserv -name NCOMSLDAP -messagelevel debug
+   -authenticate LDAP
+   Netcool/OMNIbus Object Server - Version 7.3.1
+   
+   Error log:
+   ==========================================================
+   2014-02-26T07:34:37: Debug: D-ETC-004-019: CLOCK thread:
+   sleeping ...
+   2014-02-26T07:34:37: Debug: D-ETC-004-032: Attempting to load
+   module 'authldap' from path:
+   /space/mahes/7319/omnibus/platform/hpux11/module/authentication/
+   authldap.sl
+   2014-02-26T07:34:37: Error: E-UNK-102-001: Failed to open
+   authentication module: "authldap": No such file or directory
+   2014-02-26T07:34:37: Error: E-OBX-102-014: Failed to initialise
+   security system: (2:No such file or directory)
+   2014-02-26T07:34:37: Debug: D-IVM-002-030: User defined start
+   handler failed: No such file or directory
+   2014-02-26T07:34:37: Error: E-IVM-005-001: OpenServer - Error:
+   16334/10/0: SRV_START event aborted srv_run
+   ==========================================================
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *  The fix for this has been deferred since no customers have
+   reported the problem.
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV56090
+   
+   
+ * REPORTED COMPONENT NAME
+   NETCOOL/OMNIBUS
+   
+   
+ * REPORTED COMPONENT ID
+   5724O4800
+   
+   
+ * REPORTED RELEASE
+   731
+   
+   
+ * STATUS
+   CLOSED REQ
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-02-28
+   
+   
+ * CLOSED DATE
+   2014-12-03
+   
+   
+ * LAST MODIFIED DATE
+   2014-12-03
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

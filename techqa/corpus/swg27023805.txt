@@ -1,0 +1,85 @@
+Title: IBM Recommended WebDAV clients for accessing IBM WebSphere Portal version 8.5, 8.0, and 7.0.0.2 - United States
+
+Text:
+7002eGA PRODUCT README
+
+ABSTRACT
+ IBM has tested various WebDAV clients with Portal 7.0.0.2, Portal 8.0 and Portal 8.5 and recommends some of those clients and notes limitation of other clients. 
+
+CONTENT
+IBM has grouped various WebDAV clients into 2 tiers. 
+
+Tier 1 clients are fully supported. Client "quirks" (e.g. spec-inconsistent behavior on client side) may be called out as limitations or a documented work around may be required. 
+
+Tier 2 clients are supported on a "best effort" basis. Issue or limitations that are found to be specific to a particular client may be documented. 
+
+Client that are not listed in either tier 1 or tier 2 are not supported. These clients may or may not work with WebSphere Portal. 
+
+ * 
+
+Portal 8.5 
+
+Tier 1  * davfs2 v1.4.7 on Linux client RHEL 6 and SLES 11 
+ * JSCAPE AnyClient v5.0 on Windows 7 SP1 and Windows Vista SP2 
+ * SRT WebDrive 11 on Windows 7 SP1 and Windows Vista SP2 
+
+Portal 8.0 
+
+Tier 1  * davfs2 v1.4.6 on Linux client RHEL 6 and SLES 11 
+ * JSCAPE AnyClient v4.1 on Windows 7 SP1 and Windows Vista SP2 
+ * SRT WebDrive 10.0 on Windows 7 SP1 and Windows Vista SP2
+
+
+Tier 2  * Adobe Dreamweaver 11 (CS 5) on Windows 7 SP1 and Windows Vista SP2 
+   Limitations  * 
+    * 
+    * 
+    * 
+    * 
+   
+   
+ * DAV Explorer v0.91 with Java 1.4 or later 
+ * davfs 2 v1.4.6 on Linux Client Ubuntu 11.10, Fedora 16 
+ * Konqueror 4.3 on Linux client RHEL 6 and SLES 11
+   Limitation - Not supported for overwriting folders and files. 
+ * Microsoft Web Folders on Windows 7 SP1 and Windows Vista SP2 
+   Limitations  * 
+    * http://support.microsoft.com/kb/2555258
+    * 
+    * 
+    * 
+   
+   
+ * Microsoft Office 2010 - Not for Web Development. Document storage only. 
+ * Open Office 3.3 - Not for Web Development. Document storage only. 
+   
+   
+
+
+Portal 7.0.0.2 
+
+Tier 1  * davfs 2 v1.4.6 on Linux client - (RHEL 6 and SUSE 11) 
+ * Any Client v2.2 on Windows 7 SP1 and Windows Vista SP2 
+ * WebDrive 9.1 on Windows 7 SP1 and Windows Vista SP2
+
+
+Tier 2  * Adobe Dreamweaver 8 on Windows 7 SP1 and Windows Vista SP2
+   Limitations  * 
+    * 
+    * 
+    * 
+    * 
+   
+   
+ * davfs 2 v1.4.6 on Linux Client Ubuntu 10.10, Fedora 14, openSUSE 11.4, debian 6.0 
+ * Microsoft Office 2007 SP2 - Not for Web Development. Document storage only. 
+ * Open Office 3.3 - Not for Web Development. Document storage only. 
+ * Microsoft Web Folders on Windows 7 SP1 and Windows Vista SP2
+   Limitation - Requires installation of Microsoft Hotfix KB2555258 (http://support.microsoft.com/kb/2555258 [http://support.microsoft.com/kb/2555258]) 
+ * Konqueror 4.3 on Linux client - (RHEL 6 and SUSE 11)
+   Limitation - Not supported for overwriting folders and files. Vendor ticket opened 288980 [https://bugs.kde.org/show_bug.cgi?id=288980]. 
+ * DAV Explorer v0.91 with Java 1.4 or later
+
+
+RELATED INFORMATION
+ Detalied system requirements [http://www-01.ibm.com/support/docview.wss?uid=swg27007791]

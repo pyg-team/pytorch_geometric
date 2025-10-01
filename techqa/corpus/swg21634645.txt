@@ -1,0 +1,97 @@
+Title: IBM The "You have been automatically logged out for security reasons" or "BPM has been unable to retrieve data from your web session. It may have expired" error is seen with IBM Business Process Manager (BPM) - United States
+
+Text:
+BPM 7.5 BPM 8 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When you submit a coach or run an exposed service you might see the error message: "You have been automatically logged out for security reasons. Unfortunately, because of this we are unable to save your information at this time. Please run this task again to save your information." or "BPM has been unable to retrieve data from your web session. It may have expired." 
+
+CAUSE
+There are several reasons why this error is thrown by IBM Business Process Manager. This document provides a list of all of the possible reasons and resolutions.
+The possible causes of the error are:
+
+
+ 1. You are using a process application that was imported from WebSphere Lombardi Edition V7.x and it contains the old system toolkit dependencies.
+    
+    
+ 2. The CoachDesigner.xsl file, coach_designer.css file, or both files in your process application are not the stock files.
+    
+    
+ 3. The problem occurs when a user is working on a Heritage Coach and then clicks a button that triggers a boundary event. A transition to the next Heritage Coach then occurs and, in some cases, you can see the same error message instead of a next coach.
+    
+    
+ 4. You attempt to run the same task and submit the same coach from several browser windows.
+    
+    
+ 5. You might have a general Java™Script syntax error in your coach in a custom HTML block.
+    
+    
+ 6. You have changed the URLs in IBM Business Process Manager configuration files after adding a front-end web server.
+    
+    
+ 7. You have configured IBM Business Process Manager to work with your Load Balancer.
+    
+    
+ 8. The IBM Business Process Manager server is not in the list of trusted sites for Microsoft Internet Explorer
+
+RESOLVING THE PROBLEM
+The following information provides a resolution for each of the previously listed causes: 
+
+
+Causes 1 and 2
+To resolve these issues, complete the following steps: 
+
+ 1. Upgrade the System Data Toolkit (TWSYS) to the latest version.
+    [/support/docview.wss?uid=swg21634645&amp;aid=1]
+    
+    
+ 2. Modify the coach_designer.xsl or coach_designer.css files.
+    
+    
+    If you are modifying the stock versions of either the coach_designer.xsl or coach_designer.css file, make sure that you do not introduce any syntax errors. Otherwise, these syntax errors might lead to the same error. If you are upgrading from a previous version of the product to the latest version and you used a custom version of the coach_designer.xsl, coach_designer.css, or both files, you need to re-write them based on the latest stock versions of these files. Use the stock version from the current System Data toolkit as a base. Because most likely newer versions of the Product contain important changes/fixes in those files and so, if you use your old customized versions it might lead to the same error. 
+    
+    
+ 3. In the process application settings, verify that the coach_designer.css and coach_designer.xsl files are using the current TWSYS version. If a base stock file was modified, use the new TWSYS version and append the custom modifications. See the following screen shots for reference in the process application settings screen:  * IBM Business Process Manager Version 7.5.x 
+       [/support/docview.wss?uid=swg21634645&aid=2] [/support/docview.wss?uid=swg21634645&aid=2] 
+     * IBM Business Process Manager Version 8.0.x
+       [/support/docview.wss?uid=swg21634645&aid=3] [/support/docview.wss?uid=swg21634645&aid=3] 
+     * Check the coach level. In general these should be small over additions to the overall CSS or XSL files. If an older version is selected, please remove or update.
+       [/support/docview.wss?uid=swg21634645&aid=4] [/support/docview.wss?uid=swg21634645&aid=4]
+    
+    
+
+
+
+Cause 3 Using the WebSphere administrative console, add the com.ibm.wsspi.security.web.webAuthReq property to the Java virtual machine settings with value set to "persisting". For more information, see the Web authentication settings [http://pic.dhe.ibm.com/infocenter/wasinfo/v8r0/index.jsp?topic=%2Fcom.ibm.websphere.express.doc/info/exp/ae/usec_webauth.html] document in the WebSphere Application Server Information Center.
+
+
+
+Cause 4
+Use the first Coach submission as the instance does not fail. Subsequent submissions of the same task results in the failure message.
+
+
+Cause 5
+Review the code in your custom HTML and debug it using Firebug in Mozilla Firefox or developer tools in Google Chrome. It is possible for the JavaScript, which is referenced in a custom HTML block (either local or from a managed asset), to have a runtime error. This error might cause the coach to fail and result in the log out issue for security reasons.
+
+
+Cause 6 and 7
+For troubleshooting and resolution steps for this cause, see the "You have been automatically logged out for security reasons" occurs after changing URL prefixes in IBM Business Process Manager (BPM) configuration files [http://www.ibm.com/support/docview.wss?uid=swg21600521] document.
+
+
+
+Also, in configuring Load Balancer to work with IBM Business Process Manager, make sure that you have enabled sticky sessions (session affinity) in the configuration of your Load Balancer. Otherwise, this omission can lead to the same error. For information about configuring Load Balancer, see The Process Portal for the IBM Business Process Manager (BPM) products does not render properly when using Load Balancer [http://www.ibm.com/support/docview.wss?uid=swg21587668] document.
+
+
+Cause 8
+Add the IBM Business Process Manager server to the list of trusted sites in Microsoft Internet Explorer.
+
+RELATED INFORMATION
+ Additional symptoms and resolutions from dwAnswers. [https://developer.ibm.com/answers/questions/185411/you-have-been-automatically-logged-out-for-securit.html#answer-185412]
+
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Business Process Manager Advanced Coach AIX, Linux, Solaris, Windows 8.0.1, 8.0, 7.5.1 Business Integration IBM Business Process Manager Express Coach Linux, Windows 8.0.1, 8.0, 7.5.1 
+PRODUCT ALIAS/SYNONYM
+ BPM

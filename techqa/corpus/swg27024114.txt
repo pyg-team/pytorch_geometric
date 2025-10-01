@@ -1,0 +1,52 @@
+Title: IBM Webcast replay: Achieving optimum CICS performance - United States
+
+Text:
+CICS performance; Education webcast ; cics transaction server 4.2 ; OMEGAMON XE for CICS V5.1; CICS PA; APA ; application perfomance analyzer ; IMS ; 5655S9700 R670 670 R700 700 HCI6700 5655-S97 5655S97 KIXINFO EDUCATION
+
+ABSTRACT
+ On 14 March 2012, IBM and SHARE presented this complimentary webcast on optimizing the performance of CICS systems and applications. If you use CICS Transaction Server for z/OS (CICS TS), especially if you use it with IMS Database Manager, listen to this webcast to learn how new features in these products can significantly reduce your CPU usage and improve response times. 
+
+CONTENT
+With CICS TS V4.2, even more optimization opportunities are now available. But with the growing complexity of systems, it can be difficult to take full advantage of them - without the support of powerful monitoring, tuning and reporting utilities. 
+
+In this webcast, you will learn how CICS TS not only releases capacity to support new or growing workloads, but also helps to improve response times and increase customer satisfaction. You will learn about a powerful set of IBM tools that can work together to support a wide range of performance scenarios, not just threadsafe analysis, but capacity planning, application-level analysis, monitoring and alerting, problem determination, and many others. The webcast features extensive demonstrations of key scenarios.
+
+Topics include: 
+
+ * Where to focus performance tuning efforts that also meet demanding SLAs 
+ * Automate monitoring of CICS applications and know when they exceed performance thresholds 
+ * Quickly identify and dynamically respond to out-of-line business situations 
+ * Ensure the scalability of your application portfolio 
+ * Take better advantage of the specialty engines
+
+To replay the recording of this Webcast, click on Audio [http://public.dhe.ibm.com/software/websphere/techexchange/March_14_Webcast_Achieving_Optimum_CICS_Performance_webcast.mp3] (45MB audio file in MP3 format) then open the PDF file below.
+
+Right-click and select Save As to store the file on your local computer for later playback.
+
+Problem listening to the audio replay?
+If you are having a problem listening to the audio when you use a left-click on the audio link above, you need to download the MP3 file to your local computer before playback by doing a right-click and Save As.
+
+You can also download the latest edition of the IBM Redbooks publication Threadsafe Considerations for CICS [http://www.redbooks.ibm.com/abstracts/sg246351.html]. It features the use of CICS Tools to support threadsafe analysis in a CICS TS V4.2 and IMS V12 environment.
+
+Speakers: 
+Ted Caffarelli – CICS Tools Product Line Manager
+Mike E Goodman – Tivoli z Product Manager
+Joseph Gailey – Client Technical Specialist, CICS Tools
+Doug Stout – Senior IT Specialist, PD Tools
+
+Developed for: IT and enterprise architects; developers; IT managers; performance specialists; and system programmers 
+
+Technical level: Intermediate
+
+
+RELATED INFORMATION
+ CICS Family Overview [http://www.ibm.com/software/htp/cics/]
+Other CICS Webcasts [http://www.ibm.com/support/docview.wss?uid=swg27007244]
+
+
+march_14_webcast__achieving_optimum_cics_performance_webcast_prz_download.pdf [/support/docview.wss?uid=swg27024114&aid=2]march_14_webcast__achieving_optimum_cics_performance_webcast_prz_download.pdf [/support/docview.wss?uid=swg27024114&aid=1]
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Host Transaction Processing CICS Performance Analyzer for z/OS z/OS 3.1, 3.2 Software Development Application Performance Analyzer for z/OS Systems and Asset Management Tivoli OMEGAMON XE for CICS on z/OS PRODUCT ALIAS/SYNONYM
+ CICS/TS CICS TS CICS Transaction Server

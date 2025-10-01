@@ -1,0 +1,170 @@
+Title: IBM TroubleShooting: Plug-in generation and propagation for V7, V8 and V8.5 - United States
+
+Text:
+troubleshooting; troubleshooting; troubleshooting; plugin; plug-in; generation; propagation; propergation; plugin-cfg.xml; generate; Generate Plug-in; Propagate Plug-in; TroubleShootingDocument; WASADM; WASEMP; TroubleShootingFlowDocument TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Troubleshooting for problems with WebSphere Application Server plug-in generation and propagation. This should help address common issues with this component before calling IBM support and save you time. 
+
+DIAGNOSING THE PROBLEM
+Steps to help resolve plug-in generation and propagation problems 
+
+ 1. Is a Web Server definition created in the WebSphere repository?  * Yes, continue to the next question.
+       
+     * No, create and configure the Web server. For more details, see WebSphere Application Server Library [http://www-01.ibm.com/software/webservers/appserv/was/library/] under installing Web server plug-ins.
+       
+       See Technote on using a Globally Generated Plugin-cfg.xml:
+       Information on using a Global Generate of Plug-in [http://www-01.ibm.com/support/docview.wss?uid=swg21441220]
+       
+       
+    
+    
+ 2. Generate the plug-in by selecting the following in the administrative console:  * Servers > Web servers:  * Click Checkbox for Target Web server. 
+        * Click Generate button.
+          
+          
+       
+       
+    
+    
+ 3. Locate the the generated plugin-cfg.xml in the WebSphere Repository  * For WebSphere Network Deployment Manager
+       Deployment Manager profile/config/cells/<cellName>/nodes/<NodeName>/servers/<Web serverName>
+       
+     * For WebSphere Base Application Server:
+       Application Server Profile/config/cells/<cellName>/nodes/<NodeName>/servers/<Web serverName>
+       
+       
+    
+    
+ 4. Does the plugin-cfg.xml file contain the expected information (uri, ports, weights, and so on)?  * Yes, this is not a plug-in generation issue.
+       
+     * No, this may be a problem caused by not mapping the Web server to the Application. Check the Application "module mapping". 
+       
+       
+    
+    
+ 5. Propagate the plug-in by selecting the following in the administrative console:
+    Servers > Web servers.  * Click Checkbox for Target Web server. 
+     * Click Propagate Plug-in. 
+       
+       
+    
+    
+ 6. Locate the the propagated plugin-cfg.xml for the target Web server.
+    Hint:  * For IBM HTTP Server, review the http.conf file to find the location: 
+       WebSpherePluginConfig "​/usr​/WebSphere/Plugin/config/<Web serverName>/plugin-cfg.xml
+       
+       OR
+       
+     * Check the WebSphere Administration Console Plug-in Properties:
+       Servers -> Web servers -> webserver1 -> "Plug-inProperties"
+       See field:
+       "Plug-in configuration directory and file name"
+       
+       
+    
+    
+ 7. Check the timestamp of the plugin-cfg.xml at the the target Web server. If the time stamp reflects recent update due to the Propagation then the problem is not with Generate or Propagate but with some Application or Web server mapping.
+    
+    
+ 8. Are the plugin-cfg.xml files on the WebSphere repository and Web server identical?  * Yes, Then this is not a Plug-in Generate or Plug-in Propagation problem#plugingen.
+       
+     * No, continue to the Must Gather for Plug-in propagation section because the files have not been correctly propagated.
+    
+    
+
+
+
+
+
+MustGather for Problems or Errors with Generate of the Plug-in:  1. Set trace in the Deployment Manager server or the Application Server:
+    *=info: 
+    com.ibm.ws.console.web.*=all:
+    com.ibm.ws.management.webserver.*=all: 
+    com.ibm.ws.process.*=all:
+    com.ibm.websphere.plugincfg.*=all: 
+    com.ibm.websphere.management.filetransfer.*=all:
+    com.ws.management.filetransfer.*=all:
+    com.ibm.ws.management.fileservice.*=all
+    
+    
+ 2. Send in trace.log, SystemOut.log, SystemErr.log and all FFDC files
+    
+
+
+Must Gather for Problems or Errors with Propagate of the Plug-in: 
+ 1.  [http:///]Determine if the Web server is defined to an UnManaged or Managed node. For detail Goto Web Server Node type:
+    
+    
+ 2. Set trace in the Deployment Manager server or the Application Server:
+    *=info: 
+    com.ibm.ws.console.web.*=all:
+    com.ibm.ws.management.webserver.*=all: 
+    com.ibm.ws.process.*=all:
+    com.ibm.websphere.plugincfg.*=all: 
+    com.ibm.websphere.management.filetransfer.*=all:
+    com.ws.management.filetransfer.*=all:
+    com.ibm.ws.management.fileservice.*=all
+    
+    
+ 3. For Web server defined to a Managed Node set the following traces in the Node Agent:
+    *=info:
+    com.ibm.ws.management.nodeagent.NodeAgent=all: com.ibm.ws.management.metadata.NodeAgentCollector=all:
+    com.ibm.ws.management.tools.GenericServerProcHelper=all:
+    com.ibm.ws.process.*=all:
+    com.ibm.ws.management.launcher.*=all:
+    com.ibm.websphere.plugincfg.*=all:
+    com.ibm.ws.management.filetransfer.*=all:
+    com.ibm.ws.management.fileservice.*=all
+    
+    
+ 4. For Web server defined to an UnManaged node the following trace should be set in the IBM Administration Server:
+    LogLevel debug in the admin.conf. This requires restart the IBM Administration Server
+    
+    
+ 5. Send in the following files as appropriate:  * Application Server or Deployment Manager trace.log, SystemOut.log, SystemErr.log and all FFDC files 
+     * Node Agent trace.log, SystemOut.log, SystemErr.log and all FFDC files
+       
+       OR
+       
+     * IBM Administration Server admin.conf, admini_error.log, admin_access.log
+    
+    
+
+ * 
+ * 
+ * 
+ * 
+ * Web server node Type Managed or Unmanaged 
+ * 
+ * 
+ * 
+ * 
+ *  For network deployment we need to determine if the Web server is defined to a Managed or UnManaged node. 
+   Goto WebSphere Administration console
+   Servers -> Web servers -> Node Version 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ *  For WebSphere Application Server Base all Web servers are defined to an Unmanaged node 
+ * 
+ * What to do next
+ * 
+ * 
+ * 
+ * MustGather
+ * 
+
+ 
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Application Servers WebSphere Application Server - Express Plugin AIX, HP-UX, Linux, Solaris, Windows 6.1, 6.0 Application Servers Runtimes for Java Technology Java SDK

@@ -1,0 +1,218 @@
+Title: IBM IZ09921: UTILIZATION OF I5/OS AGENT JOB HIGH WITH SNTP - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Problem Description:
+   CT_AGENT job of i5/OS agent utilizes high CPU and causes
+   eventual
+     shutdown of the system when SNTP( Simple Network Time
+   Protocol)
+     used by other applications changed the software clock of the
+     system. This causes this agent job to go into loop and
+   consumes
+     high CPU utilization than normal below 2% level.
+   
+   Environment:
+   i5/OS
+     ITM 6.1 i5/OS Agent fixpack 4
+   
+   
+   Detailed Recreation Procedure:
+     No proper steps identified to recreate this problem.
+     However, the work around and fix resolved the issue
+     on several customer systems.
+   
+   Related Files and Output:
+     1. CT_AGENT job log spool file.
+     2. Call stack of the thread consuming high CPU
+     3. QAUTOTMP/KA4AGENT01, QAUTOTMP/KA4AGENT02,
+   QAUTOTMP/KA4AGENT03
+        trace files with KBB_RAS1=ERROR (UNIT:KA4 ALL)
+   
+   Approver:VG
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Local Fix:
+   1. End the OMA Agent
+   GO OMA, then Option 3 or ENDOMA command
+   
+   2. Verify that the Agent has ended.
+   
+   3. Backup the OMA Agent if needed.
+   CRTSAVF   FILE(CCCINST/OMAAGENT)   TEXT('Savf for saved
+   0ka4610')
+   
+   
+   SAVLICPGM   LICPGM(OKA4610)   DEV(*SAVF) SAVF(CCCINST/OMAAGENT)
+   DTACPR(*YES)
+   
+   4. Rename the CT_AGENT Program in QAUTOMON library.
+   RNMOBJ   OBJ(QAUTOMON/CT_AGENT)   OBJTYPE(*PGM)
+   NEWOBJ(CT_AGENT1)
+   
+   5. Create this CL program in QAUTOMON Library.
+   Program name MUST be CT_AGENT
+   
+   CL Program source
+   PGM
+   ADDENVVAR    ENVVAR('QIBM_GETTIMEOFDAY_USE_SFWCLK') +
+   VALUE('N')   REPLACE(*YES)
+   CALL         PGM(CT_AGENT1)
+   ENDPGM
+   
+   6. Create the CL Program with CRTCLPGM or STRPDM option 14, then
+   F4
+   (prompt) to change object library to QAUTOMON
+   
+   CRTCLPGM   PGM(QAUTOMON/CT_AGENT)   SRCFILE(<yourlib>/QCLSRC)
+   
+   7. Start the agent.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  See APAR description.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fixed in ITM 6.1 i5/OS agent LA fix 6.1.0-TIV-ITM_i5OS-LA0008.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  1. End the OMA Agent
+   GO OMA, then Option 3 or ENDOMA command
+   
+   2. Verify that the Agent has ended.
+   
+   3. Backup the OMA Agent if needed.
+   CRTSAVF   FILE(CCCINST/OMAAGENT)   TEXT('Savf for saved
+   0ka4610')
+   
+   
+   SAVLICPGM   LICPGM(OKA4610)   DEV(*SAVF) SAVF(CCCINST/OMAAGENT)
+   DTACPR(*YES)
+   
+   4. Rename the CT_AGENT Program in QAUTOMON library.
+   RNMOBJ   OBJ(QAUTOMON/CT_AGENT)   OBJTYPE(*PGM)
+   NEWOBJ(CT_AGENT1)
+   
+   5. Create this CL program in QAUTOMON Library.
+   Program name MUST be CT_AGENT
+   
+   CL Program source
+   PGM
+   ADDENVVAR    ENVVAR('QIBM_GETTIMEOFDAY_USE_SFWCLK') +
+   VALUE('N')   REPLACE(*YES)
+   CALL         PGM(CT_AGENT1)
+   ENDPGM
+   
+   6. Create the CL Program with CRTCLPGM or STRPDM option 14, then
+   F4
+   (prompt) to change object library to QAUTOMON
+   
+   CRTCLPGM   PGM(QAUTOMON/CT_AGENT)   SRCFILE(<yourlib>/QCLSRC)
+   
+   7. Start the agent.
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ09921
+   
+   
+ * REPORTED COMPONENT NAME
+   ITM AGENT ISERI
+   
+   
+ * REPORTED COMPONENT ID
+   5724C04A4
+   
+   
+ * REPORTED RELEASE
+   610
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2007-12-03
+   
+   
+ * CLOSED DATE
+   2008-02-17
+   
+   
+ * LAST MODIFIED DATE
+   2008-02-17
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ITM AGENT ISERI
+   
+   
+ * FIXED COMPONENT ID
+   5724C04A4
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R610 PSY
+   UP

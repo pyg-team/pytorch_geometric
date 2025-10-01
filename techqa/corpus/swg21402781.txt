@@ -1,0 +1,43 @@
+Title: IBM 0C4 loading the SIT in CICS TS 4.1 with CA Common Services - United States
+
+Text:
+DFHPA1108 ; IEA995 ; initialisation ; initialization ; MSGDFHPA1108 ; MSGDFHPA1101 ; S0C4 ; abends0C4 ; CA-Common Services ; CA-CommonServices ; CAENF ; CA-ENF ; CICS TS 4.1 ; migrates migration migrating upgrades upgrading 5655S9700 R660 660 R600 600 HCI6600 5655-S97 5655S97 5655S9700 R670 670 R700 700 HCI6700 5655-S97 5655S97 kixinfo kixdcfcic660 retention42 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ You have just installed CICS Transaction Server for z/OS (CICS TS) V4.1 and are running with CA Common Services. You receive an abend 0C4 during CICS startup while loading the System Initialization Table (SIT). The CICS region still comes up and is available. 
+
+SYMPTOM
+The problem occurs after message DFHPA1101 [https://publib.boulder.ibm.com/infocenter/cicsts/v4r1/index.jsp?topic=/com.ibm.cics.ts.messages.doc/cics_mc/dfhpa/PA1101.html] DFHSIT IS BEING LOADED.
+You also see message IEA995I indicating that an 0C4 abend has occurred.
+
+
+CAUSE
+Missing maintenance for CA Common Services
+
+ENVIRONMENT
+New CICS TS V4 installation
+
+DIAGNOSING THE PROBLEM
+The dump is taken by CA ENF with this title: CA ENF Subsystem Intercept Error Routine
+
+The problem occurs immediately after the SIT has been loaded. The TCB/RB structure shows that DFHPADM has issued a Write To Operator (WTO) request to put out message:
+
+DFHPA1108 [https://publib.boulder.ibm.com/infocenter/cicsts/v4r1/index.jsp?topic=/com.ibm.cics.ts.messages.doc/cics_mc/dfhpa/PA1108.html] DFHSITxx HAS BEEN LOADED.
+
+The abend0C4 occurs under the jobstep TCB. The 0C4 is occurring in CA module CASECPRM around offset x'178' on an ICM instruction (BF3F 400C) due to the contents of Reg4. Reg4 contains C6F4E2C1 or the chars 'F4SA' and is loaded from offset 4 into the Kernel stack for module DFHPADM. It appears that CASECPRM is trying to access a backward save area pointer in the CICS Kernel stack. However, in CICS TS V4.1, this offset contains the save area identifier 'F4SA'.
+
+RESOLVING THE PROBLEM
+Apply the following CA fixes for CA Common Services:
+
+QO94573
+QO94574
+QO99498
+RO08960
+RO08982
+
+For additional assistance with CA Common Services, contact [/support/docview.wss?uid=swg21402781&amp;aid=1]CA [http://www.ca.com/].
+
+
+
+PRODUCT ALIAS/SYNONYM
+ CICS/TS CICS TS CICS Transaction Server

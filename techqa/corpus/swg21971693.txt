@@ -1,0 +1,75 @@
+Title: IBM Web application technologies supported by AppScan - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ What web application technologies are supported by IBM Security AppScan Standard and IBM Security AppScan Enterprise? 
+
+CAUSE
+AppScan Standard and AppScan Enterprise uses a DAST Scanner (Dynamic Application Security Testing Scanner), which is a "Black-box" scanner. A DAST Scanner explores and tests your site using the same mechanisms as a browser (Internet Explorer, FireFox, or Chrome) does. 
+Server-side technologies of your site do not affect the scan. They are transparent to AppScan in the same way as they are transparent to a browser. 
+
+However Client-side technologies of your site, such as JavaScript or HTTP protocol, may affect the scan. Therefore unlike a browser, the AppScan scanner needs to understand these technologies at a level that allows automatic crawling, session maintenance, and testing. In these cases you may need to configure AppScan to scan your site properly. 
+
+
+
+ANSWER
+An AppScan scan consists of two main phases: Explore phase and Test phase. For each phase, consult the guidelines below for understanding which server-side and client-side technologies might affect the scan, and in which cases additional configuration is needed. 
+
+
+
+
+
+In Explore phase 
+
+In the explore phase Appscan finds unique pages of the scanned application. You can explore the application with Appscan using automatic explorer or manual explorer or a mix of both. Manual explorer works well with every technology, however the automatic explorer may have a difficulty to automatically crawl applications with some technologies. 
+
+
+ * Server-side technologies 
+   
+   Any server-side technology that does not affect the client, such as the specific database used, does not affect the scan in any way.
+   
+   Many mechanisms that do affect the client (like session management) will not limit the scan as long as AppScan is configured correctly. For example, web servers and application servers affect how session IDs are managed, and AppScan must be able to track these IDs. Many common session IDs are predefined or can be automatically detected by AppScan and do not require additional configuration. However, additional configuration may still be required for some custom mechanisms.
+   
+   AppScan specifically supports WebSphere Portal custom URLs. WebSphere Portal encodes the URLs in a way that makes it difficult to track them as they appear. AppScan decodes the URLs so they can be understood and tuned.
+   
+   Glass box scanning is supported for Java and .NET only.
+   
+
+
+ * Client-side technologies 
+   
+   The two main client-side technologies used today, HTML and JavaScript, are supported. 
+    * AppScan fully supports HTML (HTML5). This means that the automatic explorer can extract all URL, and it understands forms to fill them correctly. 
+      
+    * AppScan supports plain JavaScript. Besides AppScan supports several major JavaScript frameworks, including JQuery, AngularJS, and PrototypeJS. Many other JavaScript frameworks, that are not specifically supported, do not limit the scan expect the automatic explorer may miss some pages. 
+      
+   
+   If the automatic explorer misses pages due to a specific technology, the pages can be added to the scan by exploring the pages manually after the automatic explorer phase and before the test phase.
+   
+   You may use the Manual Explorer to explore any site with any technology if the site can be explored in a browser which uses HTTP to communicate with the server. This includes HTML pages that AppScan failed to explore automatically, or Java Applets, Microsoft Silverlight, Adobe Flash, etc. Besides, you can use external devices (such as test tools or mobile applications) as the Manual Explorer to manually explore your site. 
+   
+
+
+
+
+In Test phase 
+
+In the test phase the AppScan scanner sends tests to the pages discovered during the explore phase. 
+ * Server-side technologies
+   
+   AppScan is designed to test the application and not its supporting technologies, therefore they do not affect testing. To consider databases again: AppScan’s suite of SQL Injection tests are independent of the database used. It also offers specific tests for 3rd Party testing (Common Vulnerabilities testing).
+
+
+ * Client-side technologies 
+   
+   Client-side testing is performed only on JavaScript code. Currently only plain JavaScript vulnerabilities are detected. 
+   
+   JavaScript Frameworks are not supported, and therefore JavaScript code that uses a framework may not be properly analyzed.
+
+ 
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Security IBM Security AppScan Enterprise General Support Issues Version Independent

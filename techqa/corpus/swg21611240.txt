@@ -1,0 +1,23 @@
+Title: IBM Open multiple reports in TIP without providing user ID and password. - United States
+
+Text:
+TIPL2CONF; launch pages without password TECHNOTE (FAQ)
+
+QUESTION
+ Is there a way to bypass User ID, password window in Tivoli Integrated Portal, while opening a page in TIP? In addition, is it possible to pass parameters with the URL. 
+
+CAUSE
+Users need to open reports in TIP through an external URL without providing user credentials. The following technote explains it but it does not satisfy all the requirements:
+http://www-01.ibm.com/support/docview.wss?uid=swg21502893 [http://www-01.ibm.com/support/docview.wss?uid=swg21502893] 
+
+1. Above approach requires a separate page be created just like another portal page. So if there are 20 reports which need to run through URL then 20 pages need to be created in portal which is difficult. 
+
+2. Second problem is that if we are passing parameters through URL they are becoming static values. That is, whatever value we are giving in the URL is being fixed every time the report is run. Is there any way for making the parameter values dynamic when passed through URL?
+
+
+
+ANSWER
+1. There is no out of the box feature available for doing this. But what you can do is create an HTML page with links to all the reports that you want and deploy this HTML either inside TIP or inside the Cognos server, or any other server, and use Web Widget (similar to Iframe portlet) to launch this HTML. From this HTML you can open up the reports. Xlaunch here again can be used to bypass TIP credentials. 
+
+
+2. TIP does not support passing of dynamic parameters through an external URL.

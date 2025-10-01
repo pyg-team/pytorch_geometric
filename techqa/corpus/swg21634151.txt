@@ -1,0 +1,32 @@
+Title: IBM Warehouse Proxy Agent (WPA) seems to lose connection to the database - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The IBM Tivoli Monitoring (ITM) WPA appears to lose its connection to the database and stops functioning 
+
+SYMPTOM
+The WPA stops sending data to the database. Checking the WPA logs (*_hd_*.log) errors containing the string "Too many open files" similar to the following are seen: 
+
++5117C7AE.006B ERROR MESSAGE: "com.tivoli.twh.khd.KHDException: getDbConnection Error : 
++5117C7AE.006B at com.tivoli.twh.khd.khdxjdbc.getDbConnection(khdxjdbc.java:317)
++5117C7AE.006B Caused by: com.ibm.db2.jcc.am.DisconnectNonTransientConnectionException: [jcc][t4][2043][11550][3.64.96] Exception java.net.SocketException: Error opening socket to server /139.51.246.1 on port 60,001 with message: Too many open files. ERRORCODE=-4499, SQLSTATE=08001
+
++5117C7AE.006B Caused by: java.net.SocketException: Too many open files
+
+
+CAUSE
+This error may indicate that the maximum number of open files allowed at the operating system level is too low. On a typical UNIX system the ulimit command can be used to check what the value is currently set to.
+
+Here is an example command run on a Linux machine and the line that it returns: 
+ulimit -a | grep "open files" 
+open files (-n) 1024
+
+The ITM Installation and Setup guide contains a section titled: 
+"Setting ulimit values for the Warehouse Proxy Agent"
+with recommendations for the number of open files that should be used in typical installations. The general guideline is to set this value to the number of agents warehousing to the WPA + 1000.
+
+
+RESOLVING THE PROBLEM
+Increase the maximum number of open files allowed at the operating system level. The command or procedure to alter this number will vary by operating system.

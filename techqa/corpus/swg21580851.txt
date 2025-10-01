@@ -1,0 +1,15 @@
+Title: IBM Can I re-open a closed Matter? - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Can I re-open a closed Matter? 
+
+ANSWER
+Yes, you can re-open a closed Matter. First, search for the Matter using Advanced Search. Click on the Matter to get to the Matter Detail screen. There will be a "Re-Open" button available for the matter. When a Matter is re-opened the following things will occur: - The Requests and Notices stay in the same state as when they were closed. You are free to create new Requests, Holds, Collections, and Interviews. - You can still resume the email transmission for existing Notices, which will then allow Custodians to continue responding to those Notices. - Unless you re-open the associated Requests for the existing Notices, you will not be able to add additional people as Recipients to any of those Notices. * For older 4.x and 4.5.x releases of Atlas, there is an open issue with the functionality to re-open a Request. Once the Request is active again you will be able to continue making changes to the People in Scope and the Recipient Lists of Notices associated to this Request. However, to be able to Resume the Notice Transmission after re-opening the Request, you will need to run the following script against the database: update legalrequest set iscompleteall = null where requestid = ; The "requestid" can be retrieved from your browser URL when viewing the Request Detail screen.
+
+
+
+HISTORICAL NUMBER
+ 1182

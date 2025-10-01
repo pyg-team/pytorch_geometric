@@ -1,0 +1,43 @@
+Title: IBM Null Pointer Exception when fetching metadata with the LWCM Access builder - United States
+
+Text:
+WCM; NPE; LWC Builder TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+When selecting the Refresh Metadata button in the Lotus Web Content Management Access builder, a null pointer exception is returned to the designer. This article is intended to highlight the common causes for this behavior.
+
+SYMPTOM
+Observed exception:
+
+com.bowstreet.designer.model.ModelException:
+java.lang.NullPointerException
+at
+com.ibm.workplace.wcm.api.WCM_Workspace.findByType(WCM_Workspace.java:25
+35)
+at
+com.ibm.workplace.wcm.api.WCM_Workspace.findByType(WCM_Workspace.java:25
+15)
+at
+com.bowstreet.builders.webapp.methods.LWCMDesignerDataUtility.toLookupXm
+l(LWCMDesignerDataUtility.java:146)
+at
+com.bowstreet.builders.webapp.methods.LWCMDesignerDataUtility.getLWCMMet
+aData(LWCMDesignerDataUtility.java:97)
+at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+at
+sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.jav
+a:79)
+at
+sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessor
+Impl.java:43)
+at java.lang.reflect.Method.invoke(Method.java:618)
+
+
+
+CAUSE
+Typically when a null pointer exception is encountered in this manner, it indicates an access issue to the library for which you're trying to fetch metadata.
+
+RESOLVING THE PROBLEM
+The first step is to review the properties file used for designer authentication. The user name and password specified in this properties file must have full access to all of the WCM content. If the properties file is correct then the access control in WCM should be reviewed as well.
+
+If the credentials have valid access to all WCM objects, then the default library should be checked. If the default library is removed or disabled a library must be specified in the builder input.

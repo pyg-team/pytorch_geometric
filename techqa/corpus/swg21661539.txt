@@ -1,0 +1,36 @@
+Title: IBM SECJ0129E error when running configure-common-component-resources task - United States
+
+Text:
+theme deployment; SECJ0129E; authorization failed; response code 403 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+When attempting to install Page Builder Theme, client received an authentication error during the configEngine step configure-common-component-resources
+
+SYMPTOM
+Task fails in configTrace log with:
+
+BUILD FAILED
+/usr/WebSphere7/PortalServer/theme/wp.mashup.cc.
+theme/config/includes/wp.mashup.cc.theme_cfg.xml:34: The following
+error occurred while executing this line:
+/usr/WebSphere7/PortalServer/ext/wp.filestore/base/config/includes/wp.
+filestore.base_cfg.xml:55: The following error occurred while executing
+this line:
+/usr/WebSphere7/PortalServer/jcr/wp.content.repository.
+install/config/includes/jcr.install_cfg.xml:984: "Http Error, Response
+code 403. Exception : Forbidden . Please check the server log for details.
+
+The Systemout.log indicates: SECJ0129E: Authorization failed for user
+<admin id>:<ldap hostname>:<ldap port> while invoking GET on default_host:
+jcr/remotetask, Authorization failed, Not granted any of the required
+roles: AllAuthenticatedUsers
+
+
+CAUSE
+It appears that the security role mapping for the application JavaContentRepository was set or modified incorrectly at some point.
+
+DIAGNOSING THE PROBLEM
+Reviewing a working system, we were able to compare the security role mapping to the problem system and found that Special Subjects for the AllAuthenticatedUser was missing. The working system had defined "All Authenticated in Application's Realm"
+
+RESOLVING THE PROBLEM
+The client added this to the AllAuthenticatedUsers' Special Subjects attribute and re-ran the configure-common-component-resources task successfully

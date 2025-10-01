@@ -1,0 +1,30 @@
+Title: IBM TDWC logon fails no node found - United States
+
+Text:
+webui logon fails node TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Once we enter the username and password for a logon to the TDWC it returns error, " WebGui: com.ibm.isclite.runtime.CoreException: no node found ". 
+
+SYMPTOM
+TDWC logon failure, browser returns message :- 
+
+WebGui: com.ibm.isclite.runtime.CoreException: no node found 
+
+
+CAUSE
+There is more than one browser session active to the same TDWC on the same physical server. The ISC runs as a finite-state machine. As a result, the same session on a windows machine is used when you open a second windows on the browser.
+
+
+ENVIRONMENT
+Internet Explorer and/or Firefox on Windows.
+
+
+
+DIAGNOSING THE PROBLEM
+Check the machine to see which browsers are already open, including the browser tabs. If you already have a browser session open to the TDWC then use that and do not start another.
+
+
+
+RESOLVING THE PROBLEM
+Do not have multiple browsers running on the same physical machine with connections to the same TDWC. This is not supported.

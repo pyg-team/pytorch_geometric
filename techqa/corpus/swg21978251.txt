@@ -1,0 +1,103 @@
+Title: IBM SQL1476N  The current transaction was rolled back because of error "-430".
+SQLSTATE=40506 when creating nickname using JDBC wrapper for table on OpenEdge 10.1c server - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ when creating nickname using JDBC wrapper for table on OpenEdge 10.1c server.
+
+We met error:
+DB21034E The command was processed as an SQL statement because it was not a
+valid Command Line Processor command. During SQL processing it returned:
+SQL1476N The current transaction was rolled back because of error "-430".
+SQLSTATE=40506
+
+
+
+SYMPTOM
+-- --------------------------- 
+
+-- DDL Statements for SERVER
+-- ---------------------------
+create server qadjdbc2 type jdbc version 3.0 wrapper jdbc options 
+(driver_package 'C:\JDBCDRIVER\base.jar;C:\JDBCDRIVER\openedge.jar;C:\JDBCDRIVER\progress.jar;C:\JDBCDRIVER\util.jar', 
+driver_class 'com.ddtek.jdbc.openedge.OpenEdgeDriver',
+JDBC_LOG 'Y', 
+url 'jdbc:datadirect:openedge://9.112.232.92:3334;databaseName=oedb;defaultSchema=PUB;user=administrator'); 
+
+
+
+-- --------------------------------
+-- DDL Statements for USER MAPPING
+-- --------------------------------
+create user mapping for administrator server qadjdbc2 options (add remote_authid 'administrator', REMOTE_PASSWORD 'Superh0t') 
+
+PASSTHRU is succesful;
+
+db2 => set passthru QADJDBC2;
+DB20000I The SQL command completed successfully.
+db2 => select count(*) from pub.Customer;
+
+count(*)
+--------------------
+1117
+
+1 record(s) selected.
+
+when create the nickname it will hang a while then report SQL1476N
+
+db2 => create nickname customer for qadjdbc2.pub.Customer;
+DB21034E The command was processed as an SQL statement because it was not a
+valid Command Line Processor command. During SQL processing it returned:
+SQL1476N The current transaction was rolled back because of error "-430".
+SQLSTATE=40506
+
+
+
+CAUSE
+This crash is caused by OpenEdge server's invalid behavior, seems only exist in this specific version.
+OpenEdge returns "0" for a Column ORDINAL_POSITION, which is an invalid value. Valid range should start from 1. This finally return in our code crash.
+OpenEdge announces that the return value of ORDINAL_POSITION comply with JAVA Core Api specification, but it doesn't.
+http://documentation.progress.com/output/OpenEdge113/oe113html/Data%20Management/wwhelp/wwhimpl/common/html/wwhelp.htm#href=SQL%20Reference/18dmsrfJConform.150.3.html#757188&single=true [http://documentation.progress.com/output/OpenEdge113/oe113html/Data%20Management/wwhelp/wwhimpl/common/html/wwhelp.htm#href=SQL%20Reference/18dmsrfJConform.150.3.html]
+
+
+ENVIRONMENT
+[Data Source]: Progress Open Edge
+
+[Operating system ]is: NT 64BIT 
+Microsoft Windows [Version 6.1.7601]
+
+[DB2 Release Info]
+
+Server is running MPP/EEE (single node).
+DB21085I This instance or install (instance name, where applicable: "DB2") 
+
+uses "64" bits and DB2 code release "SQL09078" with level identifier 
+
+"08090107".
+
+Informational tokens are "DB2 v9.7.800.717", "s130316", "IP23428", and Fix Pack 
+
+"8".
+Product is installed at "D:\APP\IBM\SQLLIB" with DB2 Copy Name "DB2COPY1".
+
+
+
+DIAGNOSING THE PROBLEM
+The error only happen against OpenEdge 10.1c server, newer version OE server works well.
+
+
+
+RESOLVING THE PROBLEM
+Solution: 
+
+Upgrade the data server to a newer version, which has been proven by us work well. If customer insists on using current version, suggest them contact DataDirect for a possible fix.
+At Federation Server Side, we will enhance the code logic to prevent this invalid return value crash fmp process. But, we won't ignore this error and let "CREATE NICKNAME" succeeds. We now return an error message:
+
+$ db2 "create nickname customer for JDBC_OE.pub.Customer"
+DB21034E The command was processed as an SQL statement because it was not a
+valid Command Line Processor command. During SQL processing it returned:
+SQL0901N The SQL statement failed because of a non-severe system error.
+Subsequent SQL statements can be processed. (Reason "Index column
+ORDINAL_POSITION value is invalid".) SQLSTATE=58004

@@ -1,0 +1,217 @@
+Title: IBM PK60025: New z/TPFDF hashing algorithm #TPFDB11 - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  See Problem Summary.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  na
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  APAR NUMBER:  PK60025
+   PRODUCT:  z/TPFDF
+   FUNCTIONAL AREA:  TPFDF CENTRAL DATABASE ROUTINES
+   SHIPPED IN PUT:  7
+   
+   ABSTRACT:
+   A new z/TPFDF hashing algorithm (#TPFDB11) is needed to hash
+   8-byte character algorithm string.
+   
+   PACKAGE CONTENTS:
+   Source Segments:
+   (C) tpfdf/macro/db125.mac
+   (C) tpfdf/macro/dfmdb.mac
+   (C) tpfdf/macro/idfeq.mac
+   (C) tpfdf/rt/ubj0.asm
+   
+   Object Only Binaries:
+   None.
+   
+   Configuration Independent Binaries:
+   None.
+   
+   Support Files:
+   None.
+   
+   OTHER BINARIES TO BUILD: YES
+   (C) <sys>/lib/libUTDF.so
+   (C) <sys>/load/UTDF.so
+   (C) <sys>/obj/ubj0.o
+   
+   COMMENTS:
+   z/TPFDF algorithm #TPFDB09 is a hashing algorithm that uses an
+   8-byte algorithm argument that accepts hexadecimal data.
+   Although this algorithm usually provides an even distribution
+   of data, this may not be true under certain circumstances. If
+   the algorithm argument typically (or often) contains only a
+   small subset of possible hexadecimal values (such as pairs of
+   4-byte alphabetic location codes) and a large number of hash
+   slots exist, an unbalanced distribution of data may result.
+   This is due to the fact that addition instead of multiplication
+   is used in the underlying hashing calculation. A new hashing
+   algorithm should be created to provide an even distribution of
+   data in this situation.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  SOLUTION:
+   Hashing algorithm #TPFDB11 has been created to hash 8-byte
+   character strings. This algorithm takes an 8-byte input string
+   and separates it into 2 tokens of 4 bytes each. Each 4-byte
+   token is divided by a (different) prime number. If the
+   remainder from the high-order 4-byte token is a multiple of the
+   number of ordinals, that remainder is increased by 1. The two
+   remainders are multiplied together and then divided by the
+   number of ordinals. The final remainder is the target ordinal.
+   
+   #TPFDB11 differs from #TPFDB09 in that it can distribute LRECs
+   across subfiles better when the number of ordinals is large and
+   the algorithm string passed uses only a small subset of the
+   available hexadecimal values. For example, if there are 200
+   possible 4-byte locations, the 8-byte algorithm string consists
+   of location pairs, and there are 1 million ordinals (hash
+   slots). With #TPFDB09, many of the hash slots will remain empty
+   in this case. #TPFDB09 will have a better distribution than
+   #TPFDB11 when the algorithm string contains a
+   disproportionately high number of the same value for either the
+   high order or low order 4-bytes of the algorithm string. For
+   example, if 8-byte file addresses are used and the high order 4
+   bytes are often x'00000000'. This may result in a
+   disproportionate number of collisions at a particular ordinal
+   value when using #TPFDB11.
+   
+   Users should run tests with different algorithms using sample
+   data to ensure best distribution.
+   
+   For MDBF overrides the new algorithm #TPFDB11 has been added to
+   the same group as #TPFDB09 and #TPFDB10.
+   
+   COREQS: NO
+   None.
+   
+   MIGRATION CONSIDERATIONS: YES
+   Application programming interface (API) changes:
+   Hashing algorithm #TPFDB11 can now be specified in a file's
+   DSECT (&SW00RBV) or DBDEF (RBV=).
+   
+   
+   
+   BUILD COMMANDS AND INSTRUCTIONS: YES
+   #maketpf commands for linux
+   maketpf -f UTDF ubj0.o
+   maketpf UTDF link
+   
+   UPDATED INFORMATION UNITS: YES
+   z/TPF and z/TPFDF Migration Guide: PUT 2 and Later
+   z/TPFDF Database Administration
+   
+   See your IBM representative if you need additional information.
+   
+   DOWNLOAD INSTRUCTIONS:
+   http://www.ibm.com/software/htp/tpf/maint/maintztpf.html [http://www.ibm.com/software/htp/tpf/maint/maintztpf.html]
+   
+   APAR URL:
+   http://www.ibm.com/software/htp/tpf/ztpfmaint/put7/PK60025.htm [http://www.ibm.com/software/htp/tpf/ztpfmaint/put7/PK60025.htm]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK60025
+   
+   
+ * REPORTED COMPONENT NAME
+   ZTPFDF
+   
+   
+ * REPORTED COMPONENT ID
+   5748F1501
+   
+   
+ * REPORTED RELEASE
+   110
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-01-28
+   
+   
+ * CLOSED DATE
+   2010-07-27
+   
+   
+ * LAST MODIFIED DATE
+   2010-07-27
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+Publications Referenced SK2T8062 FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ZTPFDF
+   
+   
+ * FIXED COMPONENT ID
+   5748F1501
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R110 PSY
+   UP

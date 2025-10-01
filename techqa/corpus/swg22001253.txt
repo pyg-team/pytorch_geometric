@@ -1,0 +1,48 @@
+Title: IBM Data Collection: Must Gather for IBM Intelligent Video Analytics - United States
+
+Text:
+must gather; mustgather; data collection; datacollection TECHNOTE (FAQ)
+
+QUESTION
+ Before raising a service request for Intelligent Video Analytics (IVA), what diagnostic data should I collect?
+
+Collecting data early, even before opening the PMR, helps IBM Support quickly determine if:
+1. Symptoms match known problems.
+2. The problem is not a defect and can be identified and resolved quickly.
+3. A workaround exists to reduce the problem severity. 
+
+ANSWER
+Thoroughly describe the problem. Include any relevant system history, troubleshooting steps taken, and whether the issue is consistent or intermittent. Also include any screenshots that will help illustrate the issue. 
+
+The Video Management System (VMS) integrated with IVA, including release. 
+
+ 
+
+From the Smart Surveillance Engine (SSE) Server, upload the contents of: 
+
+\Program Files (x86)\IBM\SSE\* 
+
+ 
+
+From the Middleware for Large Scale Surveillance (MILS) Server, upload the contents of: 
+
+IVA V1.6.x 
+
+ \IBM\SVS\HTTPServer\logs\* 
+
+\IBM\SVS\WebSphere\AppServer\profiles\AppSrv01\logs\server1\* 
+
+ 
+
+IVA V2.0 
+
+ \IBM\HTTPServer\logs\* 
+
+\IBM\WebSphere\AppServer\profiles\AppSrv01\logs\server1\* 
+
+ 
+
+If the problem is related to a problem with analytics for a particular video, upload the video file that we can use to reproduce the issue.
+
+RELATED INFORMATION
+ Upload files to PMR with EcuREP utility [http://www.ecurep.ibm.com/app/upload]

@@ -1,0 +1,53 @@
+Title: IBM Updating Apache commons-collections-3.2.jar in ITCAM for WebSphere agent install - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How to update Apache commons-collections-3.2.jar with commons-collections.3.2.2.jar in an ITCAM for WebSphere agent installation? 
+
+ANSWER
+These instructions are for users to replace commons-collections-3.2.jar with commons-collections.3.2.2.jar in ITCAM Agent for WebSphere Applications agent environment and agent support environment:
+Part I: IBM Tivoli Composite Management Agent for WebSphere Applications agent environment 
+
+ 1. Windows platforms  * Download commons-collections-3.2.2.jar; 
+     * Stop the IBM Tivoli Composite Management Agent for WebSphere Applications agent; 
+     * Replace <ITM_HOME>\TMAITM6\kynlib\commons-collections-3.2.jar with commons-collections-3.2.2.jar; 
+     * Modify <ITM_HOME>\TMAITM6\kynconfig.classpath.cfg and <ITM_HOME>\TMAITM6\kynwb.properties: Replace commons-collections-3.2.jar with commons-collections-3.2.2.jar 
+     * Start the IBM Tivoli Composite Management Agent for WebSphere Applications agent.
+    
+    
+ 2. Linux/UNIX platforms  * Download commons-collections-3.2.2.jar; 
+     * Replace <ITM_HOME>/<OS-arch>/yn/lib/commons-collections-3.2.jar with commons-collections-3.2.2.jar; 
+     * Modify <ITM_HOME>/<OS-arch>/yn/config/kynwb.properties and <ITM_HOME>/config/kyn_config.ini: Replace common-collections-3.2.jar with commons-collections-3.2.2.jar 
+     * Restart the IBM Tivoli Composite Management Agent for WebSphere Applications agent.
+    
+    
+
+
+
+Part II: IBM Tivoli Composite Management Agent for WebSphere Applications agent support environment  1. Windows platforms  * Download commons-collections-3.2.2.jar.signed; 
+     * Rename commons-collections-3.2.2.jar.signed to commons-collections-3.2.2.jar; 
+     * Replace <ITM_HOME>/CNB/classes/commons-collections-3.2.jar and <ITM_HOME>/CNP/commons-collections-3.2.jar with commons-collections-3.2.2.jar; 
+     * Modify <ITM_HOME>/CNB/classes/KYN.INF and <ITM_HOME>/CNP/KYN.INF: Replace commons-collections-3.2.jar with commons-collections-3.2.2.jar; 
+     * Reconfigure the browser client from MTEMS
+    
+    
+ 2. Linux/UNIX platforms  * Download commons-collections-3.2.2.jar.signed; 
+     * Rename commons-collections-3.2.2.jar.signed to commons-collections-3.2.2.jar; 
+     * Replace <ITM_HOME>/<OS-arch>/cw/classes/commons-collections-3.2.jar and <ITM_HOME>/<OS-arch>/cj/lib/commons-collections-3.2.jar with commons-collections-3.2.2.jar; 
+     * In ITM 630 environment:
+       -- Modify <ITM_HOME>/<OS-arch>/cw/KYN.INF and <ITM_HOME>/<OS-arch>/cj/KYN.INF: Replace commons-collections-3.2.jar with commons-collections-3.2.2.jar;
+       -- Reconfigure the Tivoli Enterprise Portal Browser Client (cw): <ITM_HOME>/bin/itmcmd config -A cw 
+     * In ITM 623 environment:
+    
+    
+
+ * 
+ * 
+ * 
+ * 
+ * 
+
+
+commons-collections-3.2.2.jar [/support/docview.wss?uid=swg21972189&aid=2]commons-collections-3.2.2.jar [/support/docview.wss?uid=swg21972189&aid=1] commons-collections-3.2.2.jar.signed [/support/docview.wss?uid=swg21972189&aid=4]commons-collections-3.2.2.jar.signed [/support/docview.wss?uid=swg21972189&aid=3]

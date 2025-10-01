@@ -1,0 +1,186 @@
+Title: IBM IT01411: USING DB2MOVE WITH THE COPY OPTION TO MOVE FROM V9.5/V9.7 TO V10.1 FAILS WITH 'SQLCODE -204' - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+DB2 Version 10.1 Fix Pack 6 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24043366]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Using the db2move with the COPY option to move schema from V9.5
+   or V9.7 to V10.1 fails with :
+   
+   Error: Error Message : sqlcode -204:select obj_qualifier,
+   related_obj_info, sql_stmt,
+   
+   db2move failed with -1 (debuginfo:50).
+   
+   db2diag.log shows:
+   
+   2014-04-23-14.04.01.292685-240 I683470E1667          LEVEL:
+   Severe
+   PID     : 28598                TID : 140649062643488 PROC :
+   db2move
+   INSTANCE: db2inst1             NODE : 000            DB   :
+   SAMPLE
+   APPID   : 10.54.186.49.38446.140423180354
+   HOSTNAME: nykpcr00008n03
+   FUNCTION: <0>, <0>, <0>, probe:403
+   MESSAGE : ZRC=0xFFFFFF34=-204
+             SQL0204N  "" is an undefined name.
+   
+   DATA #1 : String, 94 bytes
+   [IBM][CLI Driver][DB2/SUN64] SQL0204N  "SYSCAT.PERIODS" is an
+   undefined name.  SQLSTATE=42704
+   DATA #2 : String, 1063 bytes
+   select obj_qualifier, related_obj_info, sql_stmt,
+   case when exists ( select 1 from SYSCAT.PERIODS
+   where (OBJ_SCHEMA,OBJ_NAME) =
+   (HISTORYTABSCHEMA,HISTORYTABNAME) and
+   HISTORYTABSCHEMA <> TABSCHEMA)
+   then 'H'                             when exists ( select 1 from
+   SYSCAT.PERIODS                                           where
+   (OBJ_SCHEMA,OBJ_NAME) =
+   (TABSCHEMA,TABNAME) and
+   HISTORYTABSCHEMA is not NULL and
+   HISTORYTABSCHEMA <> TABSCHEMA)
+   then 'S'                             else 'N' end as skipped
+   from SYSTOOLS.DB2LOOK_INFO where OP_TOKEN = ? AND
+   SQL_OPERATION = 'CREATE' and
+   OBJ_TYPE = ? and OBJ_NAME = ? and OBJ_SCHEMA = ?
+   DATA #3 : signed integer, 4 bytes
+   -204
+   DATA #4 : String, 5 bytes
+   42S02
+   
+   ==
+   
+   This is because new code was added in v10.1 that queries the
+   SYSCAT.PERIODS table, which does not exist in V9.5 / V9.7.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Use "db2move EXPORT" on the source database (v95 or v97 system),
+   and then "db2move IMPORT" or "db2move LOAD" on target database
+   (v10 system)
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * All                                                          *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * See Error Description                                        *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Upgrade to DB2 V10.1 Fix Pack 5 or higher                    *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  First Fixed in DB2 V10.1 Fix Pack 5
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT01411
+   
+   
+ * REPORTED COMPONENT NAME
+   DB2 FOR LUW
+   
+   
+ * REPORTED COMPONENT ID
+   DB2FORLUW
+   
+   
+ * REPORTED RELEASE
+   A10
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-04-30
+   
+   
+ * CLOSED DATE
+   2015-07-15
+   
+   
+ * LAST MODIFIED DATE
+   2015-07-15
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    IT01904 [http://www-01.ibm.com/support/docview.wss?uid=swg1IT01904]
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   DB2 FOR LUW
+   
+   
+ * FIXED COMPONENT ID
+   DB2FORLUW
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * RA10 PSN
+   UP
+   
+   
+ * RA10 PSY
+   UP

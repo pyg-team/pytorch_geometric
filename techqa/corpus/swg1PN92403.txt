@@ -1,0 +1,164 @@
+Title: IBM PN92403: TCPIP R310 USSMSG10 TABLE IS NOT BEING DELETED CAUSING ABEND906 RC08 AND MESSAGES CSV002IAND CSV028I - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Abend906-08 in TCPIP R310 for USS table module linked RENT
+   REUS because it is not being deleted.  Also seen are messages:
+   CSV002I requests for MODULE xxxxxxxx exceed maximum use count
+   (where xxxxxxxx is the name of the USSMSG10 module)
+   and CSV028I ABEND906-08
+      This only occurs with LUSESSIONPEND specified for TELNET
+   users. It occurs no matter what method they use to exit TELNET.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Turn off LUSESSIONPEND for TELNET
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All Telnet users with LUSESSIONPEND.         *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: The USS Table use count is not getting  *
+   *                      decremented during the termination      *
+   *                      process of a Telnet connection. This    *
+   *                      will eventually cause an ABEND906-08    *
+   *                      in TCP/IP because the table is never    *
+   *                      deleted.                                *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   The USS Table (USSTAB) delete use count is never decremented,
+   causing MVS to exceed the maxium use count. The USS Table
+   delete function in MVPVTWK was receiving control to delete
+   the table during the termination of each Telnet connection.
+   However, since the USS table was loaded by another task the
+   Delete function was ignored.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Modules MVPVTWK (EZACA03S) and MVPDG7C (EZACA01D) was changed
+   to resolve the problem of decrementing the table Delete USE
+   Count. The USS Table delete code was removed from MVPVTWK and
+   added to MVPDG7C.
+   
+   * Cross Reference between External and Internal Names
+   EZACA01D (MVPDG7C )  EZACA03S (MVPVTWK )
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PN92403
+   
+   
+ * REPORTED COMPONENT NAME
+   TCP/IP V3 MVS
+   
+   
+ * REPORTED COMPONENT ID
+   5655HAL00
+   
+   
+ * REPORTED RELEASE
+   310
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   1996-12-16
+   
+   
+ * CLOSED DATE
+   1997-01-31
+   
+   
+ * LAST MODIFIED DATE
+   1997-03-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UQ00869
+   
+   
+
+MODULES/MACROS
+ *  EZACA01D EZACA03S
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TCP/IP V3 MVS
+   
+   
+ * FIXED COMPONENT ID
+   5655HAL00
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R310 PSY UQ00869 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UQ00869]
+   UP97/02/11 P F702
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

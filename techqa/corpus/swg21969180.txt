@@ -1,0 +1,20 @@
+Title: IBM Subscribe Work Manager thread warning message - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ About twelve minutes after starting ICFM, a warning message is displayed, which indicates that the Subscribe Work Manager thread might be hung. 
+
+SYMPTOM
+For example:
+
+[9/17/15 8:28:44:960 EDT] 00000048 SonP2PShimImp I ODCF8030I: Peer layer started; process=DManagerCell\CFNode\CFServer.
+[9/17/15 8:40:13:390 EDT] 00000091 ThreadMonitor W WSVR0605W: Thread "WorkManager.Subscribe : 0" (00000092) has been active for 697447 milliseconds and may be hung. There is/are 1 thread(s) in total in the server that may be hung.
+
+
+CAUSE
+WebSphere Application Server sends this message to indicate that the subscriber thread has not terminated. This message is as expected since the subscriber is still running. 
+
+RESOLVING THE PROBLEM
+No action necessary. You can ignore this warning as it does not affect functionality.

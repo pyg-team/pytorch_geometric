@@ -1,0 +1,25 @@
+Title: IBM nco_confpack Error "libFilePermsJNI.so, not in library search path" - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When running nco_confpack on Omnibus 7.4, receive an error that libFilePermsJNI.so is not in the library search path.
+
+
+SYMPTOM
+ 
+
+nco_confpack -list -server NCOMS -file /opt/IBM/tivoli/NCOMS.list 
+
+Unable to process external file, /opt/IBM/tivoli/scripts/scriptname, required library, libFilePermsJNI.so, not in library search path 
+CAUSE
+APAR IV47404 NCO_CONFPACK ERROR:LIBFILEPERMSJNI.SO, NOT IN LIBRARY SEARCH PATH. When running a java program on a 64 bit environment such as nco_confpack on Omnibus 7.4.0, the LD_LIBRARY_PATH is not set correctly by the nco_common command line script.
+
+
+RESOLVING THE PROBLEM
+The fix for this APAR IV47404 will be included in 7.4.0-TIV-NCOMNIbus-FP0003 tentatively scheduled for release in 1Q2014. When released, Omnibus 7.4.0 Fixpack 3 will be available for download at 
+
+http://www.ibm.com/support/docview.wss?uid=swg24034944 [http://www.ibm.com/support/docview.wss?uid=swg24034944]
+
+Until the Fixpack is released, please open a PMR to request a test fix for APAR IV47404 from IBM Tivoli Netcool Support. When opening the PMR, please include the output of $OMNIHOME/bin/nco_id and the operating system version.

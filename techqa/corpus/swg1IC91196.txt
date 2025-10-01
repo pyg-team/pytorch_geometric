@@ -1,0 +1,269 @@
+Title: IBM IC91196: SPACE RECLAMATION PROCESSES MIGHT COMPETE OVER RECLAIMABLE VOLUMES RESULTING IN SOME PERFORMANCE DEGRADATION. - United States
+
+Text:
+AIX SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  This issue can be encountered under the following example
+   scenario:
+   
+   Two reclaim processes are actively processing volumes on the
+   reclaimable volume list. This list is built based on the reclaim
+   threshold as dictated by the storage pool definition or the
+   command parameter if RECLAIM STGPOOL is used to invoke the
+   process. In this scenario, The first process picks up volume A
+   from the reclaim list which has a file that is spanned onto
+   volume B.  The first process has to lease volume B in order to
+   completely reclaim volume A.  However, volume B is also a
+   reclaim candidate. Process 8 picks volume B off of the reclaim
+   list and tries to lease the volume, and reclaim the data on it,
+   but Process 7 still owns the lease on volume B. The processes
+   CANNOT share the volume since Process 7 is relying on the
+   contents of the volume to be the same.  This results with a
+   repeating ANR1042I message in the activity log for the second
+   process:
+   
+   ANR1042I Space reclamation for storage pool XXX will be retried
+   in 60 seconds.~
+   
+   NOTE: This will only occur when there are no other volumes to be
+   reclaimed in the pool that have not already been
+   leased.
+   
+   Customer/L2 Diagnostics (if applicable)
+   Tracing afmove:
+   Reclamation process 7 and 8 start:
+   17:51:13.270 [78][output.c][7271][PutConsoleMsg]:ANR0984I
+   Process 7 for SPACE RECLAMATION started in the BACKGROUND at
+   05:51:13 PM.~
+   17:51:13.270 [78][output.c][7271][PutConsoleMsg]:ANR4930I
+   Reclamation process 7 started for primary storage pool FILEPOOL
+   automatically, threshold=1, duration=None.~
+   17:51:13.271 [78][output.c][7271][PutConsoleMsg]:ANR0984I
+   Process 8 for SPACE RECLAMATION started in the BACKGROUND at
+   05:51:13 PM.~
+   17:51:13.271 [78][output.c][7271][PutConsoleMsg]:ANR4930I
+   Reclamation process 8 started for primary storage pool FILEPOOL
+   automatically, threshold=1, duration=None.~
+   ...
+   Process 7 getting the volume/lease for volume in reclaim list:
+   18:09:42.453 [401][afrclm.c][1158][AfRclmOnsiteVols]:Proc 7:
+   taking volume /filepool/0000BCF6.BFS(48374) from reclaim list.
+   18:09:42.454 [401][afrclm.c][1190][AfRclmOnsiteVols]:Got the 2
+   volumes associated with volume /filepool/0000BCF6.BFS(48374).
+   18:09:42.454 [401][afrclm.c][1194][AfRclmOnsiteVols]:Volume
+   48371 is the 0 of 2 in the volume list.
+   18:09:42.454 [401][afrclm.c][1194][AfRclmOnsiteVols]:Volume
+   48374 is the 1 of 2 in the volume list.
+   18:09:42.454 [401][afrclm.c][1222][AfRclmOnsiteVols]:Proc 7 has
+   processed volume(48371), the 0 of 2 volumes.
+   18:09:42.454 [401][afrclm.c][1378][AfRclmOnsiteVols]:Proc 7
+   Leased volume 48371.
+   18:09:42.454 [401][afrclm.c][1222][AfRclmOnsiteVols]:Proc 7 has
+   processed volume(48374), the 1 of 2 volumes.
+   18:09:42.455 [401][afrclm.c][1378][AfRclmOnsiteVols]:Proc 7
+   Leased volume 48374.
+   18:09:42.455 [401][output.c][7271][PutConsoleMsg]:ANR1040I Space
+   reclamation started for volume /filepool/0000BCF6.BFS, storage
+   pool FILEPOOL (process number 7).~
+   18:09:42.455 [401][afrclm.c][3425][ReportRclmVols]:Proc 7
+   getting associated volume list for onsite volume
+   /filepool/0000BCF6.BFS(48374).
+   18:09:42.455 [401][output.c][7271][PutConsoleMsg]:ANR1044I
+   Removable volume /filepool/0000BCF3.BFS is required for space
+   reclamation.~
+   18:09:42.455 [401][output.c][7271][PutConsoleMsg]:ANR1044I
+   Removable volume /filepool/0000BCF6.BFS is required for space
+   reclamation.~
+   ...
+   18:09:52.743 [631][output.c][7271][PutConsoleMsg]:ANR8333I FILE
+   volume /filepool/0000BCF3.BFS is mounted R/O, status: IN USE.~
+   ...
+   Process 8 trying to get lease for same volume in reclaim list:
+   18:12:05.778 [402][afrclm.c][1158][AfRclmOnsiteVols]:Proc 8:
+   taking volume /filepool/0000BCF3.BFS(48371) from reclaim list.
+   18:12:05.779 [402][afrclm.c][1190][AfRclmOnsiteVols]:Got the 1
+   volumes associated with volume /filepool/0000BCF3.BFS(48371).
+   18:12:05.779 [402][afrclm.c][1194][AfRclmOnsiteVols]:Volume
+   48371 is the 0 of 1 in the volume list.
+   18:12:05.779 [402][afrclm.c][1222][AfRclmOnsiteVols]:Proc 8 has
+   processed volume(48371), the 0 of 1 volumes.
+   18:12:05.779 [402][afrclm.c][1239][AfRclmOnsiteVols]:The lease
+   tag of the volume 48371 is 5, current sessId is 805.
+   18:12:05.779 [402][afrclm.c][1249][AfRclmOnsiteVols]:Proc 8 will
+   process 48371: the volume is in use but shareable.
+   18:12:05.779 [402][afrclm.c][1371][AfRclmOnsiteVols]:Proc 8
+   could not Lease volume 48371 for pool FILEPOOL(8), existing
+   lease tag is 5. rc=3061.
+   18:12:05.779 [402][afrclm.c][1405][AfRclmOnsiteVols]:Proc 8
+   failed leasing reclaimable Volume 48371. Volume
+   /filepool/0000BCF3.BFS put back to the list.
+   18:12:05.780 [402][output.c][7271][PutConsoleMsg]:ANR1042I Space
+   reclamation for storage pool FILEPOOL will be retried in 60
+   seconds.~
+   
+   *NOTE*
+   The volume is not shareable even though the volume is mounted as
+   Read Only and is noted as shareable in the trace.
+   
+   Platforms affected:
+   All V6 Unix, Linux, Windows platforms
+   
+   Initial Impact: Low
+   
+   Additional Keywords: ZZ63 reclamation reclaiming vol 90499 span
+   spanning spanned perf performance degrade
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All Tivoli Storage Manager server users.     *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: See ERROR DESCRIPTION.                  *
+   ****************************************************************
+   * RECOMMENDATION: Apply fixing level when available.  This     *
+   *                 problem is currently projected to be fixed   *
+   *                 in levels 6.2.6 and 6.3.4. Note that this is *
+   *                                                              *
+   *                 subject to change at the discretion of IBM.  *
+   ****************************************************************
+   *
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This problem was fixed.
+   
+   Affected platforms:  AIX, HP-UX, Solaris, Linux, and Windows.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC91196
+   
+   
+ * REPORTED COMPONENT NAME
+   TSM SERVER
+   
+   
+ * REPORTED COMPONENT ID
+   5698ISMSV
+   
+   
+ * REPORTED RELEASE
+   63L
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-03-29
+   
+   
+ * CLOSED DATE
+   2013-04-04
+   
+   
+ * LAST MODIFIED DATE
+   2013-04-04
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TSM SERVER
+   
+   
+ * FIXED COMPONENT ID
+   5698ISMSV
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R62A PSY
+   UP
+   
+   
+ * R62H PSY
+   UP
+   
+   
+ * R62L PSY
+   UP
+   
+   
+ * R62S PSY
+   UP
+   
+   
+ * R62W PSY
+   UP
+   
+   
+ * R63A PSY
+   UP
+   
+   
+ * R63H PSY
+   UP
+   
+   
+ * R63L PSY
+   UP
+   
+   
+ * R63S PSY
+   UP
+   
+   
+ * R63W PSY
+   UP

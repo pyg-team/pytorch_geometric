@@ -1,0 +1,189 @@
+Title: IBM PM59737: Unable to create a JAX-RS web project targeting WebSphere Application Server if a WebSphere Portal runtime is available - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Rational Application Developer for WebSphere Software 8.5 [http://www-01.ibm.com/support/docview.wss?uid=swg24032855]
+Rational Software Architect Interim Fix 1 for 8.0.4.2 [http://www-01.ibm.com/support/docview.wss?uid=swg24036852]
+Rational Software Architect for WebSphere Software Interim Fix 1 for 8.0.4.2 [http://www-01.ibm.com/support/docview.wss?uid=swg24036853]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Abstract:
+   
+   Attempts to create a dynamic web project (following the 2.4 or
+   2.5 specification) with the IBM JAX-RS Configuration (or the
+   JAX-RS 1.1 facet) specified and targeting a WebSphere
+   Application Server v6.1 or v7.0 runtime may result in an error
+   dialog showing a NullPointerException and the JAX-RS classpath
+   library missing from the build path of the project.
+   
+   Problem:
+   
+   If you have a WebSphere Portal Server v6.1 (using either
+   WebSphere Application Server v6.1 or v7.0) or WebSphere Portal
+   Server v7.0 defined in workspace as a Server Runtime
+   Environments then a NullPointerException similar to the
+   following will be produced in this situation:
+   
+   ENTRY org.eclipse.wst.common.project.facet.core 4 0 2011-08-08
+   11:27:32.470
+   !MESSAGE Failed while installing JAX-RS (REST Web Services) 1.1.
+   !STACK 0
+   java.lang.NullPointerException
+       at
+   org.eclipse.jdt.internal.core.JavaModelManager.containerPutIfIni
+   tializingWithSameEntries(Unknown
+   Source)
+       at
+   org.eclipse.jdt.internal.core.SetContainerOperation.executeOpera
+   tion(Unknown
+   Source)
+       at
+   org.eclipse.jdt.internal.core.JavaModelOperation.run(Unknown
+   Source)
+       at org.eclipse.core.internal.resources.Workspace.run(Unknown
+   Source)
+       at
+   org.eclipse.jdt.internal.core.JavaModelOperation.runOperation(Un
+   known
+   Source)
+       at
+   org.eclipse.jdt.internal.core.JavaModelManager.getClasspathConta
+   iner(Unknown
+   Source)
+       at
+   org.eclipse.jdt.core.JavaCore.getClasspathContainer(Unknown
+   Source)
+       at
+   org.eclipse.jdt.internal.core.JavaProject.resolveClasspath(Unkno
+   wn
+   Source)
+   ...
+   
+   Local fix:
+   
+   Define your own User Library for the Java Build Path of your
+   project. For example, if targeting WebSphere Application Server
+   v6.1 then create a User Library with required jars from this
+   runtime location (?RAD 8.0 Install
+   Dir?\SDP\runtimes\base_v61\web2mobilefep_1.1\optionalLibraries\)
+   and add them to a user library on the projects Java Build Path ?
+   Libraries property page.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   Unable to create a JAX-RS web project targeting WebSphere
+   Application Server if a WebSphere Portal runtime is
+   available
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix is to more accurately check for the existence of the
+   Web 2.0 feature pack.  The fix for this APAR is included in
+   Rational Application Developer v8.0.4.1.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM59737
+   
+   
+ * REPORTED COMPONENT NAME
+   RATL APP DEV WI
+   
+   
+ * REPORTED COMPONENT ID
+   5724J1901
+   
+   
+ * REPORTED RELEASE
+   803
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-03-05
+   
+   
+ * CLOSED DATE
+   2012-05-15
+   
+   
+ * LAST MODIFIED DATE
+   2012-05-15
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   RATL APP DEV WI
+   
+   
+ * FIXED COMPONENT ID
+   5724J1901
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R803 PSN
+   UP

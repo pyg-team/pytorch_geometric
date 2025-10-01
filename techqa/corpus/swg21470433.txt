@@ -1,0 +1,20 @@
+Title: IBM Rational DOORS module becomes corrupted after upgrade - United States
+
+Text:
+doors; upgrade; migrate; 7; 9; dtc; dtb; corrupt; open; module; treedata TECHNOTE (FAQ)
+
+QUESTION
+ I have just upgraded directly from Telelogic DOORS 7.1 to IBM Rational DOORS 9.3 and I'm receiving errors when I open the upgraded modules that look like this:
+'Unable to open module '.../.../ModuleName' No such file or directory C:\Program Files\IBM\Rational\9.x\data\v6\...\...\m000xxxx1.mod\current.ver\treedata.dtc'
+Why is this happening? 
+
+CAUSE
+There is a known defect logged with APAR ID PM21698 which has now been resolved in IBM Rational DOORS 9.3.0.3.
+
+ANSWER
+All migrations from a DOORS 7.x database to DOORS 9.3 should be done on only a DOORS 9.3.0.3 database. The DOORS database should also be configured to require a minimum client version of DOORS 9.3.0.3. See for more details: How to change the minimum and maximum Rational DOORS client version [http://www.ibm.com/support/docview.wss?uid=swg21442350]
+
+
+Another alternative is to first migrate the DOORS database from DOORS 7.x to DOORS 8.3, and then to DOORS 9.x. 
+
+Contact IBM Rational DOORS Client Support if you are facing module corruptions after upgrading directly to DOORS 9.x from DOORS 7.x to help you recover those modules.

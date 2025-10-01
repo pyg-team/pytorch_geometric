@@ -1,0 +1,238 @@
+Title: IBM HE12059: IBM Content Collector might fail to connect to Microsoft Exchange 2013 servers for various reasons - United States
+
+Text:
+  A FIX IS AVAILABLE
+IBM Content Collector V4.0 Fix Pack 2 [http://www-01.ibm.com/support/docview.wss?uid=swg24037306]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  If IBM Content Collector is configured to process mailboxes on a
+   Microsoft Exchange 2013 server, it might fail to connect to
+   Exchange for several reasons:
+   
+   1. If you configured domain security (mutual authentication) in
+   your Exchange organization, the IBM Content Collector Email
+   Connector service and the IBM Content Collector Web Application
+   service cannot connect to the Exchange server, and the following
+   message is written to the corresponding log file:
+   
+       AFUM0009E: An error occurred: The Messaging Application
+   Programming
+       Interface (MAPI) function 'IMAPISession::OpenMsgStore
+   (private)'
+       failed with return code 'MAPI_E_FAILONEPROVIDER'.
+   
+   This problem might occur regardless of whether you configured
+   the Email Connector to use manual configuration or automatic
+   configuration to connect to the Exchange server.
+   
+   2. If your Exchange server is configured to exclusively accept
+   SSL connections, the IBM Content Collector Web Application
+   service cannot connect to the Exchange server. The IBM Content
+   Collector Email Connector service can connect to the Exchange
+   server only if the check box "If connecting to Microsoft
+   Exchange using HTTP, require an SSL connection" is selected. If
+   the check box is not selected, the connection fails. The
+   following message is written to the corresponding log file:
+   
+       AFUM0009E: An error occurred: The Messaging Application
+   Programming
+       Interface (MAPI) function 'IMAPISession::OpenMsgStore
+   (private)'
+       failed with return code 'MAPI_E_FAILONEPROVIDER'.
+   
+   3. Automatic configuration of the server connection does not
+   work when the logon user and the SMTP address of the account
+   that runs the IBM Content Collector Email Connector service and
+   the IBM Content Collector Web Application service are different.
+   In Active Directory, the logon user is represented by the
+   attribute "userPrincipalName", and the SMTP address is
+   represented by the attribute "mail". The following message is
+   written to the corresponding log file:
+   
+       AFUP0010E A thread connection to the mail server could not
+   be established. See the following message:
+       com.ibm.afu.mailinterface.MailException: could not resolve
+   mail server from
+   
+   In addition, the following message is written to the
+   corresponding trace file:
+   
+       Autodiscovery for url
+   https://<server>/autodiscover/autodiscover.xml failed with
+   code:HTTP/1.1 401 Unauthorized
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  1. Open the IBM Content Collector Configuration Manager and
+   select the Connection tab of the Email Connector configuration.
+      a. Select manual configuration and specify "manual" as the
+   server.
+      b. If your Exchange server requires SSL connections, select
+   the check box "If connecting to Microsoft Exchange using HTTP,
+   require an SSL connection". In that case, you cannot use the Web
+   Application.
+         If your Exchange server accepts both SSL and non-SSL
+   connections, clear the check box "If connecting to Microsoft
+   Exchange using HTTP, require an SSL connection".
+   
+   2. Log on to the computer that runs the IBM Content Collector
+   server with the logon account that runs the IBM Content
+   Collector Email Connector service and the IBM Content Collector
+   Web Application service.
+   
+   3. Create an Outlook profile named "AFU_manual".
+      a. Start Microsoft Outlook.
+      b. On the "choose Profile" dialog, click "New".
+      c. On the "New Profile" dialog, specify "AFU_manual" and
+   click "OK".
+      d. On the "Add Account" dialog, specify the SMTP address of
+   the IBM Content Collector account in the "E-mail Address" field.
+   If the SMTP address differs from the logon account, enter the
+   password. Click "Next".
+      e. Wait for Outlook to configure the profile. After Outlook
+   has configured the profile, select the "Change account settings"
+   check box. Click "Next".
+      f. On the "Server Settings" page, clear the check box "Use
+   Cached Exchange Mode".
+      g. Click "Finish".
+      h. Open Outlook using the new profile to make sure that you
+   can connect to the Exchange server.
+      i. Close Outlook.
+   
+   Alternatively, change your Exchange configuration as follows:
+   To fix problem 1: Disable mutual authentication in your Exchange
+   organization.
+   To fix problem 2: Change your Exchange server configuration to
+   also accept non-SSL connections.
+   To fix problem 3: Use manual configuration.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  With Microsoft Exchange 2013 server, MAPI clients cannot use RPC
+    over TCP to connect to the server, but clients must use RPC
+   over HTTP (Outlook Anywhere). This must be reflected in the
+   Outlook profile. When IBM Content Collector creates the profile,
+    it does not set all required properties. Therefore, Content
+   Collector cannot connect to the Exchange server in all cases.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Starting with IBM Content Collector 4.0.0 Fix Pack 2, the
+   following fixes are applied:
+   - When using automatic configuration, IBM Content Collector
+   derives all relevant information from the autodiscovery
+   response.
+   - When domain security (mutual authentication) is configured in
+   the Exchange organization and manual configuration is used, the
+   following connector variable must be set on the Variables tab of
+   the Email Connector configuration so that the connection to the
+   Exchange server can be established:
+      ex.profile.RpcOverHttp.CertPrincipalName=<CertPrincipalName>
+      <CertPrincipalName> is the Mutual Authentication Principal
+   name (for example msstd:server.company.com). To look up this
+   value, enter the following command in the Exchange Management
+   Shell: Set-OutlookProvider EXPR
+   - The IBM Content Collector Web Application service respects all
+   configuration settings.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   HE12059
+   
+   
+ * REPORTED COMPONENT NAME
+   ICC FOR CONNECT
+   
+   
+ * REPORTED COMPONENT ID
+   5724V5703
+   
+   
+ * REPORTED RELEASE
+   400
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-04-04
+   
+   
+ * CLOSED DATE
+   2014-04-23
+   
+   
+ * LAST MODIFIED DATE
+   2014-04-23
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ICC FOR CONNECT
+   
+   
+ * FIXED COMPONENT ID
+   5724V5703
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R400 PSY
+   UP

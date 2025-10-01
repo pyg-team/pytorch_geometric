@@ -1,0 +1,59 @@
+Title: IBM "Excel experienced a serious problem with the 'excel and eqd com addin'
+add-in" error message in Clarity application when opening a report in Excel - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When attempting to open a report in Excel from Clarity, an Excel add-in related error message is generated. This is happening on specific client machines.
+
+The same error message appears when attempting to open a report within Clarity Studio. 
+
+SYMPTOM
+When trying to export in Excel the following error is generated: 
+
+"Excel experienced a serious problem with the 'excel and eqd com addin' add-in. If you have seen this message multiple times, you should disable this add-in and check to see if an update is available. Do you want to disable this add-in?"
+
+CAUSE
+The issue is caused by the Essbase Query Designer Excel add-in, which interferes with Clarity on a specific machine. 
+
+
+
+ENVIRONMENT
+Clarity 7.2.1 
+
+Essbase 
+
+
+DIAGNOSING THE PROBLEM
+In Clarity application: 
+
+- Open a specific template/report in Clarity in browser; 
+
+- Click on the "Open in Excel" option from the left panel; 
+
+- Observe the error message that is generated. 
+
+ 
+
+In Studio: 
+
+- Open any report/template within Studio; 
+
+- The above error message appears.
+
+
+RESOLVING THE PROBLEM
+In order to resolve the issue, you can either disable the Eqd Excel add-in or to re-install the Hyperion plug-in. 
+
+
+Here are the steps needed to disable the add-in Excel:
+
+1) Launch Excel
+2) Click Office button and select Excel Options.
+3) Select Add-ins in the left pane and select COM add-ins from the drop down under Manage. Click GO.
+4) Uncheck the 'EXCEL and EQD COM Addin' as and click OK.
+5) Click Office button and select Excel Options. Select Add-ins in the left pane and select 'Excel add-ins' from the drop down under Manage. Click GO.
+6) Uncheck the 'Essbase Query Designer Addin' and click OK.
+
+*Please note that Essbase Query Designer is not required for Essbase retrievals, it is an advanced add-in to do custom coding for queries. By following the above steps, you are only disabling the Essbase Query Designer add-in for both COM and Excel addins sections under Excel and not the main Hyperion Essbase add-in used by the users.

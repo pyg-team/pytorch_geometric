@@ -1,0 +1,47 @@
+Title: IBM Browser dependency issues in CLM products - United States
+
+Text:
+Internet explore; IE; Firefox; FF; browser; DNG; TeamConcert TECHNOTE (FAQ)
+
+QUESTION
+ What specific browser dependency issues exist when using IBM Rational Collaborative Lifecycle Management (CLM)? 
+
+ANSWER
+ 
+
+TAB NAVIGATION
+ * Internet Explorer- selected tab,
+ * Firefox
+
+INTERNET EXPLORER (IE) ISSUES
+Title Description Cannot use Drag & Drop capability across tabs/browsers on IE10 Cannot use Drag & Drop capability across tabs/browsers on IE10, but can use it on FF (ESR24). 
+
+Restriction: These steps are supported in Firefox and Chrome browsers only. 
+
+This issue is resolved in CLM 5.0 Add link menu will disappear Works in Firefox (ESR24) but not in IE 10. 
+
+This issue is resolved in CLM 5.0 Words after insert will be truncated in IE8 RTC issue only with IE 8 (not with IE 9, FireFox or Chrome). 
+
+As the issue only occurs in IE8, this indicates strongly it is an IME-Browser compatibility issue. 
+
+Review the IE8 not compatible with Japanese IME pad [http://social.msdn.microsoft.com/Forums/ie/en-US/383daa93-58ee-4d7f-a4c8-a76b4d91a986/ie8-not-compatible-with-japanese-ime-pad] forum post for more details. RTC JavaScript warning occurs on IE8 on Win7 Security Warning in IE 8 when editing a Plan View. 
+
+This happen on IE 8 only. IE 9, FireFox, and Chrome are OK. 
+
+[Defect 297998]Security warning in the Plan view in IE8 [https://jazz.net/jazz/web/projects/Rational%20Team%20Concert#action=com.ibm.team.workitem.viewWorkItem&id=297998]
+
+This issue is resolved in CLM 5.0 
+FIREFOX (FF) ISSUES
+Title Description Related Artifact: file:/// syntax URI not working with Firefox Tried to enter a file://server///path/file.doc [file://server///path/file.doc] to a document on a shared network location (Related Artifact), but the file link does not open in Firefox.
+
+jazz.net Defect: Unable to open a related artifact link to unc path via Webui [https://jazz.net/forum/questions/77464] Can not open Firefox browser with URL with spaces When you click on a URL in work item comment the browser does not open. You have RTC set up to open external browser of FireFox (always have). Workitem update not reflected in hover display in plan view in Firefox and query view in 4 mins When changing some fields in a workitem and refreshing the browser for a plan view/query view which contains that workitem, hover over the workitem, you only see the summary got updated. Other fields such as due date, descriptions update will not reflect to the hover view in Firefox 24 ESR browser. You have to wait for about 4 mins to see the updates in the hover display. 
+
+WORKAROUND: This behavior is controlled by Firefox cache. Clear the cache in Firefox and you can see the updated value upon hover. Japanese IME does not work properly When focusing on FireFox windows Japanese IME fixed in Hankaku mode and can not change to other mode. This happen in FireFox 24 but dose not happen in IE8
+
+Bug 836231 - Can't input Japanese using Microsoft IME in a contenditable field [https://bugzilla.mozilla.org/show_bug.cgi?id=836231] IME does not work well on HTML field When you try to enter Japanese words in Description or Discussion field (HTML field), IME can not be turned on. 
+
+This is a Firefox issue. 
+Bug 836231 - Can't input Japanese using Microsoft IME in a contenditable field [https://bugzilla.mozilla.org/show_bug.cgi?id=836231] 
+RELATED INFORMATION
+#Linking between artifacts in modules [http://pic.dhe.ibm.com/infocenter/clmhelp/v4r0m5/index.jsp?re=1&topic=/com.ibm.rational.rrm.help.doc/topics/t_link_artifact_module.html&scope=null]
+[Story 83911] Use Drag and Drop across tabs [https://jazz.net/jazz03/web/projects/Requirements%20Management#action=com.ibm.team.workitem.viewWorkItem&id=83911]

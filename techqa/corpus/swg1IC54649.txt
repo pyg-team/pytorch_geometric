@@ -1,0 +1,203 @@
+Title: IBM IC54649: CLIENT INSTALL ON SOLARIS LOCAL ZONE FAILS WITH UNABLE TO CREATE PACKAGE - United States
+
+Text:
+AIX SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  An attempt at installing the client on a Solaris Local Zone
+   fails with:
+    /usr/lib/libXApi.so <symbolic link>
+   pkgadd: ERROR: unable to create package object
+   </usr/lib/libXApi.so>.
+       pathname does not exist
+       unable to create symbolic link to
+   <../../opt/tivoli/tsm/client/api/bin/libXApi.so>
+   pkgadd: ERROR: unable to create package object
+   </usr/lib/libtsm541xerces-c1_6_0.so>.
+       pathname does not exist
+       unable to create symbolic link to
+   <../../opt/tivoli/tsm/client/api/bin/libxerces-c1_6_0.so>
+   [ verifying class <none> ]
+   ERROR: attribute verification of </usr/lib/libXApi.so> failed
+       pathname does not exist
+       unable to create symbolic link to
+   <../../opt/tivoli/tsm/client/api/bin/libXApi.so>
+   ERROR: attribute verification of
+   </usr/lib/libtsm541xerces-c1_6_0.so> failed
+       pathname does not exist
+       unable to create symbolic link to
+   <../../opt/tivoli/tsm/client/api/bin/libxerces-c1_6_0.so>
+   ## Executing postinstall script.
+     TSM Versions Affected: 5.4
+     Additional Keywords: Solaris zone local global symlink
+   symbolic link client libxapi libxapi.so pathname path name
+   install
+                          sparse root libxerces-c1_6_0.so libxerces
+   attribute verification
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  When manually installing the client on a local zone instead of a
+   global zone the symbolic links need to be created manually
+   because the /usr file system is read-only.
+   Only the administrator of the global zone can create these
+   links. The installation procedure is attempting to set the links
+   in /usr for the xapi and xerces libraries.
+   creating the following links from the global zone will work
+   around this problem.  If created on the Global zone, they will
+   only need to be created one time for the install to work on
+   all zones.
+    cd /usr/lib
+    ln -s ../../opt/tivoli/tsm/client/api/bin/libApiDS.so
+    ln -s ../../opt/tivoli/tsm/client/api/bin/libXApi.so
+    ln -s ../../opt/tivoli/tsm/client/api/bin/libxmlutil-5.4.1.0.so
+    ln -s ../../opt/tivoli/tsm/client/api/bin/libxerces-c1_6_0.so
+    /usr/lib/libtsm541xerces-c1_6_0.so
+    cd /usr/lib/sparcv9
+    ln -s ../../../opt/tivoli/tsm/client/api/bin64/libApiDS64.so
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All version 5.4.0, 5.4.1 and 5.5.0 clients   *
+   *                 running on Solaris.                          *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: See ERROR DESCRIPTION                   *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   *
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  When installing the client on a Solaris Local Zone, the Solaris
+   rules do not permit creation of symbolic links in /usr/lib.
+   
+   After installation, it is not obvious if the install succeeded
+   or not, as there are error messages about the symbolic link
+   creation failure.
+   
+   The installation will now check if the file system is
+   read-only. If you need to create additional links, a warning
+   message similar to the following will be issued:
+   
+   WARNING:
+      The host 'bluezone' is a sparse root non-global zone!
+      TSM API libraries cannot be linked to the /usr file
+      system because the /usr file system is read only.
+      Please contact your global administrator in order
+      to create links to TSM API libraries as following:
+   
+      cd /usr/lib
+         ln -s ../../opt/tivoli/tsm/client/api/bin/libApiDS.so
+         ln -s ../../opt/tivoli/tsm/client/api/bin/libXApi.so
+         ln -s ../../opt/tivoli/tsm/client/api/bin/libxmlutil-
+               5.4.2.0.so
+         ln -s ../../opt/tivoli/tsm/client/api/bin/libxerces-
+               c1_6_0.so  /usr/lib/libtsm542xerces-c1_6_0.so
+      cd /usr/lib/sparcv9
+         ln -s ../../../opt/tivoli/tsm/client/api/bin64/
+               libApiDS64.so
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC54649
+   
+   
+ * REPORTED COMPONENT NAME
+   TSM CLIENT
+   
+   
+ * REPORTED COMPONENT ID
+   5698ISMCL
+   
+   
+ * REPORTED RELEASE
+   54S
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2007-12-10
+   
+   
+ * CLOSED DATE
+   2008-02-19
+   
+   
+ * LAST MODIFIED DATE
+   2008-02-19
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TSM CLIENT
+   
+   
+ * FIXED COMPONENT ID
+   5698ISMCL
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R54S PSY
+   UP
+   
+   
+ * R55S PSY
+   UP

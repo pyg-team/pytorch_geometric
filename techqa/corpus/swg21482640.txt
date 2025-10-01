@@ -1,0 +1,27 @@
+Title: IBM I'm using SPSS 17 with Clementine 12 and having problems. - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ I've installed SPSS 17 and attempting to use with Clementine 12. I'm running into various issues. Why is this? 
+
+RESOLVING THE PROBLEM
+SPSS 17 and Clementine 12 are not supported.
+SPSS 17 will be supported with Clementine 13. 
+
+
+Tech Support website; Clementine Product Compatibility Matrix:
+
+SPSS Integration with Clementine
+To use the SPSS integration features in Clementine 12 (that is the SPSS Procedure, Output and Custom Tables nodes), an SPSS 16 installation is required. 
+To use the SPSS integration features in Clementine 11 (that is the SPSS Procedure and Output nodes), an SPSS 15 installation is required.
+
+RELATED INFORMATION
+ Need more help? Our Modeler forum is Live! [https://developer.ibm.com/answers/topics/modeler/?smartspace=predictive-analytics]
+
+
+ 
+
+HISTORICAL NUMBER
+ 80840

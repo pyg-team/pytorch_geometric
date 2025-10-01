@@ -1,0 +1,54 @@
+Title: IBM Bad performance during load - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ What is the possible reason for a bad performance during load? 
+
+CAUSE
+This technote will focus on slow loads performed using CLP PLUS as per this guide:
+https://www.ibm.com/support/knowledgecenter/SS6NHC/com.ibm.swg.im.dashdb.doc/learn_how/loaddata_clpplus.html#loaddata_clpplus [https://www.ibm.com/support/knowledgecenter/SS6NHC/com.ibm.swg.im.dashdb.doc/learn_how/loaddata_clpplus.html#loaddata_clpplus] 
+
+However it can be applicable to all loads.
+
+
+ANSWER
+A number of reasons can play a role. 
+
+It's worth to try all load parameters from this list to get the best performance possible:
+https://www.ibm.com/support/knowledgecenter/en/SSEPGG_11.1.0/com.ibm.db2.luw.admin.dm.doc/doc/c0004605.html [https://www.ibm.com/support/knowledgecenter/en/SSEPGG_11.1.0/com.ibm.db2.luw.admin.dm.doc/doc/c0004605.html]
+
+The most important two are:
+
+1. ANYORDER
+
+In an SMP environment, specifying the anyorder file type modifier instructs the load utility to not preserve the order, which improves efficiency by avoiding the synchronization necessary to preserve that order. However, if the data to be loaded is presorted, anyorder might corrupt the presorted order, and the benefits of presorting are lost for subsequent queries.
+
+
+2. NOROWWARNINGS
+
+During a load operation, warning messages about rejected rows are written. However, if the load utility has to process a large volume of rejected, invalid or truncated records, it can seriously affect load's performance. In cases where many warnings are detected (but these warnings can be ignored) it is useful to use the norowwarnings file type modifier to suppress the recording of these warnings.
+
+To identify these load warnings and a number of them, a below technique can be used:
+
+a) add 'MESSAGES ON SERVER' to load parameters, e.g.:
+
+load FROM /mnt/clusterfs/scratch/SAMPLE.txt of del MESSAGES ON SERVER INSERT INTO MYSCHEMA.TEST_TABLE
+
+b) when a test load is done, at bottom of load summary two SQL queries will be proposed:
+
+- a query to list all load warnings, in our case:
+SELECT DBPARTITIONNUM, AGENTTYPE, SQLCODE, MSG FROM TABLE(SYSPROC.ADMIN_GET_MSGS('651696768_432019370_BLUADMIN')) AS MSG
+
+- a query to purge messages from server, in our case:
+CALL SYSPROC.ADMIN_REMOVE_MSGS('651696768_432019370_BLUADMIN')
+
+A sample warning can be: too many columns in source file, a text is too long and must be cut etc...
+
+If there is a large number of warnings, the load performance can be significantly reduced. Either address all these warnings or use 'NOROWWARNINGS' option to suppress all of them.
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Information Management IBM DashDB Local Not Applicable Version Independent All Editions

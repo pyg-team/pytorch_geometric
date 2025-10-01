@@ -1,0 +1,47 @@
+Title: IBM Error: “The Reference to Entity "Language" Must End With the ';' Delimiter” - United States
+
+Text:
+delimiter; ampersand; amp; org.xml.sax.SAXParseException TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Executing UpdateDB results in the error "The reference to entity "language" must end with the ';' delimiter”, specifically while processing script file V7110_props.dbc. 
+
+SYMPTOM
+Executing UpdateDB results in the error "The reference to entity "language" must end with the ';' delimiter”, specifically while processing script file V7110_props.dbc.
+
+
+CAUSE
+This is due to special characters in the XML (DBC) file. The '&' (ampersand) is a special character in XML, which needs to be escaped to work correctly. The XML Parser is trying to dereference "language" since it is followed by the ampersand causing the syntax error.
+
+DIAGNOSING THE PROBLEM
+The following full error will be displayed in the UpdateDB log file located in \ibm\SMP\maximo\tools\maximo\logs\ 
+
+Caused by: org.xml.sax.SAXParseException: The reference to entity "language" must end with the ';' delimiter.
+at org.apache.xerces.util.ErrorHandlerWrapper.createSAXParseException(Unknown Source)
+at org.apache.xerces.util.ErrorHandlerWrapper.fatalError(Unknown Source)
+at org.apache.xerces.impl.XMLErrorReporter.reportError(Unknown Source)
+at org.apache.xerces.impl.XMLErrorReporter.reportError(Unknown Source)
+at org.apache.xerces.impl.XMLScanner.reportFatalError(Unknown Source)
+at org.apache.xerces.impl.XMLScanner.scanAttributeValue(Unknown Source)
+
+
+RESOLVING THE PROBLEM
+To resolve the issue, wherever an ampersand appears in the V7110_props.dbc file add "amp;" (without quotes) then save the file and run UpdateDB again. 
+
+
+
+For example, if the following line was problematic, the solution would look like this:
+
+<add_property
+name="mxe.db.url"
+description="mxe.db.url"
+maxtype="ALN"
+scope="global"
+secure_level="secure"
+live_refresh="false"
+required="false"
+online_changes="true"
+user_defined="true"
+encrypted="false"
+value="jdbc:inetdae7a:MAXIMODB:1433?database=MAXIMO&amp;language=us_english&amp;nowarnings=true&amp;mars=false"
+/>

@@ -1,0 +1,48 @@
+Title: IBM Windows OS Agent - kntcma process consumes excessive amount of memory and CPU - United States
+
+Text:
+5724C040W TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Windows operating system agent v6.3 Fix Pack 3 consumes excessive amount of memory and CPU, reaches a point where the server shutsdown by itself. 
+
+SYMPTOM
+Memory and CPU consumption for the kntcma process is very high (Task Manager) or the server may shutdown.
+
+
+ENVIRONMENT
+Windows 2008 R2 server 
+
+ITM NT agent 6.3 FP3. However this can affect agent at any version beyond v6.3
+
+
+DIAGNOSING THE PROBLEM
+There can be several reasons for the high CPU and memory consumption. 
+
+1) Check to see if disabling the watchdog service makes a difference. If it does (memory and CPU consumption drops) then open a ticket with IBM support. 
+
+2) Ensure that KBB_RAS1=ERROR in the KNTENV file. Higher traces have caused high CPU and memory issues. 
+
+3) Check to make sure if there are any Windows Event Log situations defined in your environment. 
+
+- If yes, stop all the situations and see if that makes a difference. Restart each situation one at a time to identify which of these situations are causing the issue. 
+
+- In the KNTENV file add the following line NT_LOG_THROTTLE=1, which will restrict duplicated events for the NT agent to monitor. 
+
+- Make sure "Log Name" attribute is defined for the situations which involve Windows Event Log monitoring. Here is a comparison of two situation formulae which highlight the difference: 
+
+Situation 1: 
+
+[$3C5A1E0B83F6FBB2.jpg] [/support/docview.wss?uid=swg21985786&amp;aid=1] Situation 2: 
+
+ 
+
+[$7D213106059952B4.jpg] [/support/docview.wss?uid=swg21985786&amp;aid=2] NOTE: Always define a situation with the Log Name defined in Situation 1. 
+RESOLVING THE PROBLEM
+In the customer situation we were working on, the issue was resolved when Situation 2 was corrected to use the Log Name attribute. We identified the situations which were defined for Windows Event Log monitoring and fixed the situation accordingly.
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Systems and Asset Management IBM Monitoring

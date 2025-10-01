@@ -1,0 +1,146 @@
+Title: IBM IO06996: SEARCH SAVED WITH THE PROMPT FOR VALUE OPTION DOES NOT HONOR THE CASE INSENSITIVE OPTION. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When a Power Search is saved using the Prompt for Value option
+   and on the Library tab the box is checked for Case Insensitive,
+   this option is not honored.
+   
+   Launch Power Search and configure a search, be sure to select
+   the "Enable prompting for values" and on the Library tab check
+   the Case Insensitive box.  Save the Search.
+       In my test I set U.S. State =
+       I checked the "Enable prompting for values", and entered
+   "What State do you want to seach"
+       On the Library tab check the Case Insensitive box
+   Find the search, double click on it, answer the prompt, enter it
+   in all lower case.
+       On my system I enter "Fl" and the search fails, the DM log
+   shows this.
+       [04/23/2007 14:38:15.459]      928 D: Evaluating query: '/*
+   [((@SEMANTICTYPE = 1) OR (@SEMANTICTYPE = 2) OR (@SEMANTICTYPE =
+   1000)) AND (@State = "Fl")]'
+       [04/23/2007 14:38:15.553]      928 D: Number found: 0 in
+   93ms
+       [04/23/2007 14:38:15.553]      928 D: Number returned: 0
+   
+       However is I enter "FL" the search works
+       04/23/2007 14:42:48.192]      928 D: Evaluating query: '/*
+   [((@SEMANTICTYPE = 1) OR (@SEMANTICTYPE = 2) OR (@SEMANTICTYPE =
+   1000)) AND (@State = "FL")]'
+       [04/23/2007 14:42:49.192]      928 D: Number found: 101 in
+   1000ms
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  If a Power Search was saved that had both the Enable prompting
+   for values option selected and the Case insensitive search
+   option selected, the Case insensitive search option was not
+   honored when the search was executed.
+   
+   (The fix for this problem is not included in
+   DB2 Document Manager Version 8.4.)
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix is available in DB2 Document Manager v8.3 Fix Pack 7 and
+   in v8.4 Fix Pack 1.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IO06996
+   
+   
+ * REPORTED COMPONENT NAME
+   DOCMGR DESKTOP
+   
+   
+ * REPORTED COMPONENT ID
+   5724H9000
+   
+   
+ * REPORTED RELEASE
+   830
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2007-07-05
+   
+   
+ * CLOSED DATE
+   2007-12-27
+   
+   
+ * LAST MODIFIED DATE
+   2008-07-07
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   DOCMGR DESKTOP
+   
+   
+ * FIXED COMPONENT ID
+   5724H9000
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R830 PSY
+   UP

@@ -1,0 +1,228 @@
+Title: IBM Frequently asked questions (FAQ) about WebSphere MQ Workflow - United States
+
+Text:
+FAQ; WebSphere MQ Workflow; troubleshooting PRODUCT DOCUMENTATION
+
+ABSTRACT
+ The following list includes frequently asked questions (FAQ) about WebSphere MQ Workflow to help you troubleshoot potential problems and enhance how you use the product. 
+
+CONTENT
+Do you have ideas for other FAQ about WebSphere MQ Workflow? Give us your feedback in the Rate this page section at the bottom.
+
+
+Additional FAQ documents are available for other WebSphere Business Process Management products.
+
+
+FAQ table of contents
+
+
+Planning/Migration#inst01 
+
+What are the current applications/products which IBM WebSphere MQ Workflow version 3.6 supports?
+When will support for Workflow 3.6 end?
+What release and version of Workflow is out of support?
+Where can I get the latest Workflow service pack?
+
+
+Database
+Does Workflow database support cross platforms?
+When should Database optimization be done?
+Does Workflow Support Oracle RAC (Real Application Clusters) connections?
+What needs to be taken into account when using WebSphere MQ Workflow together with DB2 UDB Version 9.5?
+What needs to be considered when the runtime database was created with a DB2 version earlier than V8?
+What version of DB2 is bundled with WebSphere MQ Workflow?
+
+
+Miscellaneous
+What is the difference between MQ and MQ Workflow?
+How do I increase Maximum message length settings in Workflow?
+What are the steps to shut down Workflow?
+What are the steps to startup Workflow?
+Why does WMQWF client time out after MQ has been upgraded to V7?
+How can Cleanup or Scheduling Server be moved to a different system in the same system group? 
+
+
+
+
+
+
+
+
+
+Planning/Migration 
+
+
+FAQ: What are the current applications/products which IBM WebSphere MQ Workflow version 3.6 supports?
+Answer: 
+Starting with IBM WebSphere MQ Workflow version 3.6 with service pack 9 (SP9 [http://www-01.ibm.com/support/search.wss?rs=795&tc=SSVLA5&rankprofile=8&dc=D420&dtm]), the new supported prerequisite and corequisite software releases that Workflow v3.6 SP9 [http://www-01.ibm.com/support/search.wss?rs=795&tc=SSVLA5&rankprofile=8&dc=D420&dtm] (Service PAC) supports are: 
+
+ *  Support of IBM WebSphere Application Server 6.1 
+ *  Support of Oracle Database 10g Release 2 (10.2) 
+ *  Support of Sun Solaris 10 
+ *  Support of response files for FDL import/export 
+ *  Support of IBM Tivoli Directory Server v6.0 
+ *  Support of IBM DB2 UDB Version 9.1 on workstations 
+ *  Support of HP-UX 11i v2 on PA-RISC 
+ *  Support of HP-UX 11i v3 on PA-RISC 
+ *  Support of HP-UX 11i v3 on Itanium 
+ *  Support of Red Hat Enterprise Linux V4 
+ *  Support of Suse Linux Enterprise Server V10 
+ *  Support of IBM DB2 UDB Version 9.5 
+ *  Support of IBM WebSphere MQ Version 7 on distributed platforms 
+ *  Support of Red Hat Enterprise Linux V5 
+ *  Support of IBM AIX 6.1 
+ *  Support of IBM XL C/C++ for AIX, V10.1 
+ *  Support of IBM WebSphere Application Server 7.0 on distributed platforms 
+ *  Support of JDK 5 and JDK 6 
+ *  Support of IBM WebSphere MQ Version 7.0.1 on z/OS 
+ *  Support of IBM DB2 UDB Version 9.7 
+ *  Support of Oracle Database 11g Release 1 (11.1.0) and Release 2 (11.2.0) 
+ *  Support of Microsoft Windows 7 Professional and Microsoft Windows Server 2008 
+ *  Support of XML Toolkit Version 1.9 on z/OS
+
+Note: Workflow service pack 9 (SP9) Readme.txt [http://www-01.ibm.com/support/docview.wss?rs=795&context=SSVLA5&q1=readme&uid=swg27006886&loc=en_US&cs=utf-8&lang=en] file has step-by-step instructions of how to apply the above SP9 [http://www-01.ibm.com/support/search.wss?rs=795&tc=SSVLA5&rankprofile=8&dc=D420&dtm] and make the newly release products work with Service pack 9 (SP9 [http://www-01.ibm.com/support/search.wss?rs=795&tc=SSVLA5&rankprofile=8&dc=D420&dtm])
+
+
+FAQ: When will support for Workflow 3.6 end?
+Answer: Version 3.6.0: for end date please click this link [http://www-01.ibm.com/support/docview.wss?rs=795&uid=swg21051929]
+
+
+FAQ: What release and version of Workflow is Out of support?
+Answer: 
+
+ *  MQ Series V5.3 
+ * MQ Workflow V3.5 
+ * DB2 V8.2 
+
+
+FAQ: Where can I get the latest Workflow service pack?
+Answer: The current Service pac for Workflow can be found here [http://www-01.ibm.com/support/search.wss?rs=795&tc=SSVLA5&rankprofile=8&dc=D420&dtm].
+
+
+Back to top
+
+
+Database 
+
+
+FAQ: Does Workflow database support cross platforms?
+Answer: Workflow database is required to be on the same type operating system as the Workflow Server.
+
+
+The database can be on the same machine as the Workflow server or a remote machine.
+
+
+FAQ: When should Database optimization be done?
+Answer: 
+Database optimization should always been done after the Workflow Cleanup Server completes. For DB2 this is a RUNSTATS/REBIND.
+The files fmcsys.log and fmcerr.log have corresponding database tables fmc.system_log and fmc.error_log.
+The Workflow system should be configured through the FDL to remove entries over a set age from the Workflow system and error logs.
+In the db2diag.log file large numbers of lock escalations on fmc.system_log and fmc.error_log can be an indication the tables are too large.
+
+
+FAQ: Does Workflow support Oracle RAC (Real Application Clusters) connections?
+Answer: Workflow simply does not support Oracle RAC (Real Application Clusters) connections.
+
+
+FAQ: What needs to be taken into account when using WebSphere MQ Workflow together with DB2 UDB Version 9.5?
+Answer: To use DB2 UDB Version 9.5 as the runtime database for WebSphere MQ Workflow, you need 
+
+
+
+ 1. WebSphere MQ Workflow 3.6 SP7
+ 2. 
+ 3. DB2 UDB V9.5 FP 6 or APAR IC62872 (otherwise new server and Buildtime configurations will create databases in Unicode, and Unicode databases are not supported)
+ 4. 
+
+
+FAQ: What needs to be considered when the runtime database was created with a DB2 version earlier than V8?
+Answer: When the runtime database was created with a DB2 version earlier than V8, there are possibly still type-1 indexes contained in the database. That index type might due to next-key locking situations lead to occurrences of deadlocks that would (because of their improved concurrency) not occur with type-2 indexes.
+Please see Converting type-1 indexes to type-2 indexes in migrated databases [http://publib.boulder.ibm.com/infocenter/db2luw/v9r5/index.jsp?topic=/com.ibm.db2.luw.qb.migration.doc/doc/t0050553.html] for details and instructions.
+
+
+FAQ: What version of DB2 is bundled with WebSphere MQ Workflow?
+Answer: the currently available media pack is on SP9 level and contains DB2 Version 9.1.
+
+
+Back to top
+
+
+
+
+Miscellaneous
+
+
+
+FAQ: What is the difference between MQ and MQ Workflow?
+Answer: MQ Series is a messaging product and often referred to as just 'MQ', while MQSeries Workflow is a workflow management system (that, however, utilizes MQSeries to handle the communication between its components).
+
+
+FAQ: How do I increase Maximum message length settings in Workflow?
+Answer: The parameters MAXIMUM_MESSAGE_SIZE and MAXIMUM_QUERY_MESSAGE_SIZE, defined in the FDL, should be of a large enough value to handle the largest message sent through MQ Series. They should also be synchronized with the MQ Series parameter maxmsgl:
+
+
+ * MAXIMUM_MESSAGE_SIZE in the FDL 
+ * MAXIMUM_QUERY_MESSAGE_SIZE in the FDL 
+ * alter qmgr maxmsgl(....) in runmqsc 
+ * alter qlocal(EXCINPUTQ) maxmsgl(....) in runmqsc 
+ * alter channel(QMGRNAME.CL.TCP) CHLTYPE(SVRCONN) maxmsgl(....) in runmqsc 
+ * alter channel(QMGRNAME.CL.TCP) CHLTYPE(CLNTCONN) maxmsgl(....) in runmqsc 
+
+FAQ: What are the steps to shut down Workflow?
+Answer: The Workflow server must always be completely stopped before MQ Series or the database system. This means all Workflow servers: Admin, Execution, Cleanup, Scheduling.
+
+
+FAQ: What are the steps to startup Workflow?
+Answer: To startup Workflow server, you must always start the database system first, MQ Series second and then all Workflow servers: Admin, Execution, Cleanup, Scheduling.
+
+
+FAQ: Why does WMQWF client time out after MQ has been upgraded to V7?
+Answer: For WebSphere MQ V7, the fix for APAR PM14021 [http://www.ibm.com/support/docview.wss?uid=swg1PM14021] needs to be applied.
+
+
+FAQ: How can Cleanup or Scheduling Server be moved to a different system in the same system group?
+Answer: To move Cleanup or Scheduling Server to a different system in a system group, the following FDL needs to be imported into the runtime database:
+/* Get rid of the old definition */
+DELETE SERVER 'SCHEDSVR.FMCSYS.FMCGRP' TYPE SCHEDULING_SERVER
+
+/* Redefine the server with a new/different RELATED_SYSTEM specified */
+SERVER 'SCHEDSVR'
+DESCRIPTION "Default scheduling server"
+RELATED_GROUP 'FMCGRP'
+RELATED_SYSTEM 'FMCSY2'
+TYPE SCHEDULING_SERVER
+END 'SCHEDSVR'
+
+
+Please note that 
+
+ 1. in the DELETE statement the fully qualified name has to be used 
+ 2. both steps, DELETE and the corresponding new definition have to be in a single FDL input file and need to be handled in the same import run 
+ 3. the sample FDL refers to the scheduling server; for cleanup server it needs to be adapted appropriately
+
+Back to top
+
+
+
+
+
+
+RELATED INFORMATION
+ WebSphere Integration Developer [http://www.ibm.com/support/docview.wss?uid=swg27016440]
+WebSphere Business Modeler [http://www.ibm.com/support/docview.wss?uid=swg27017899]
+WebSphere Business Compass [http://www.ibm.com/support/docview.wss?uid=swg27017900]
+WebSphere Business Monitor [http://www.ibm.com/support/docview.wss?uid=swg27017940]
+WebSphere Process Server [http://www.ibm.com/support/docview.wss?uid=swg27018084]
+WebSphere Dynamic Process Edition [http://www.ibm.com/support/docview.wss?uid=swg27019349]
+Business Space powered by WebSphere [http://www.ibm.com/support/docview.wss?rs=0&uid=swg27020117]
+
+
+
+
+ORIGINAL PUBLICATION DATE
+ 2010/7/8 
+
+PRODUCT ALIAS/SYNONYM
+ FAQ
+WebSphere MQ Workflow
+troubleshooting

@@ -1,0 +1,239 @@
+Title: IBM HC68495: INSTALL :SESSION CAPABILITY IN V4 (BY COM LICENSE) NEED TO TAKE ASD. IN V5. - United States
+
+Text:
+AIX SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS UNREPRODUCIBLE.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Does CATIA V5 without the 5691-ASD (assembly design) provide
+   SIMPLE multi-model capability?
+   In other words, is there a facility within
+   base CATIA V5 to provide "session" style capability which is
+   provided with COM in V4??
+   .
+   Here is the test scenario I followed:
+   .
+   1. Remove all LUM licences on the system
+   2. Introduce only the 5691-ADD licences (which does not
+   include     5691-ASD   (assembly))
+   3. Start CATIA V5==> There is NO multi-model capability
+      (ie Product)
+   4. Quit CATIA
+   5. Introduce 5691-ASD licence
+   6. Start CATIA  ==>  There is capability to work with
+   multiple      models.
+   
+   I hear everyone asking the question.
+   And migrating to V5, do they need to buy ASD ?
+   .
+   This is the trouble to migrate to V5 for the cst.
+   20 x  5691-ASD licences OR in other words 20 x $6005 = $120100
+   and the cst can not accept it.
+   .
+   --------------
+   We studied further about this issue:
+   There is some follow on information that may be useful.
+   There is a work around to my query but it seems as if there is
+   actually
+   a bug within CATIA V5.
+   .
+   1. If your customer has no assembly product (5691-ASD) in V5
+      as part of their migration from V4 (eg5691-ADD or
+   5691-SBD)      then the -y have NO multi-model(or "V4 session")
+   capability.
+   .
+   2. If the customer has an existing CATProduct file from
+   any          source
+      (even an empty one) everything seems to be OK. It is
+   possible    to open this CATProduct file,create further
+   assemblies and       sub-assemblies on top of it and even save
+   it as a new Product     again.
+       So working from a blank one is the work around to
+   this           problem.
+   .
+   ---------------
+   Hi DS,
+   it seems that one cannot create a CATProduct (equivalent session
+   in V4) without 5691-ASD, but if they somehow get hold of a
+   CATProduct file (from any source, even if empty) then all "V4
+   session" functionality within
+   V5 is OK.
+   .
+   
+   I have tried your secnario with CATIA V5R3GA . You are right
+   that
+   under START/Infrastructure , Product Struct is listed as an
+   available
+   product ( OnLY ADD Configuration was insatlled ) But After
+   selecting
+   the 'product structure item ' I got an error message saying that
+   I
+   would
+   need the ASD license ( Why not ' ) So I havejust sent a note to
+   the development team to know why ASD is needed .
+   Thank you for your understanding,
+   ------------------------------------------------------------
+   Best Regards, Luc GERVAIS.
+                 luc_gervais`ds-fr.com
+   
+   Hello DS,
+   please open an APAR.
+   Regards, Paul Oh
+   
+   Update From GERVAIS Luc                           ==>
+   $$RSPMNT=BRJ$$ <=
+   Hello Benoit
+   Coudl you see with the development team what could be done ?
+   Best Regards,Luc.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  SESSION CAPABILITY IN V4 (BY COM LICENSE) NEED TO TAKE ASD.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *  THE PROBLEM WAS SUBMITTED ON :
+       CATIA VERSION 5 RELEASE 3
+   .
+   THIS PROBLEM IS NOT REPRODUCIBLE ON :
+       CATIA VERSION 5 RELEASE 5 GA level AND ON V5R5SP1
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   HC68495
+   
+   
+ * REPORTED COMPONENT NAME
+   CATIA V5 NT_INT
+   
+   
+ * REPORTED COMPONENT ID
+   569151000
+   
+   
+ * REPORTED RELEASE
+   503
+   
+   
+ * STATUS
+   CLOSED UR3
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2000-07-05
+   
+   
+ * CLOSED DATE
+   2000-11-07
+   
+   
+ * LAST MODIFIED DATE
+   2000-11-07
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CATIA V5 NT_INT
+   
+   
+ * FIXED COMPONENT ID
+   569151000
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R003 PSN
+   UP
+   
+   
+ * R103 PSN
+   UP
+   
+   
+ * R203 PSN
+   UP
+   
+   
+ * R303 PSN
+   UP
+   
+   
+ * R703 PSN
+   UP
+   
+   
+ * R503 PSN
+   UP
+   
+   
+ * R004 PSN
+   UP
+   
+   
+ * R104 PSN
+   UP
+   
+   
+ * R204 PSN
+   UP
+   
+   
+ * R304 PSN
+   UP
+   
+   
+ * R704 PSN
+   UP
+   
+   
+ * R504 PSN
+   UP

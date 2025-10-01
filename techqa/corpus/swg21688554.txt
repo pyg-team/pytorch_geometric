@@ -1,0 +1,201 @@
+Title: IBM Programs that are included in the Rational Development and Test Environment for System z V9.1.0 offering - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ In addition to the System z emulator, what programs are included in the Rational Development and Test Environment for System z V9.1.0 offering? 
+
+ANSWER
+
+
+There are supporting programs and additional programs in the offering media. Note that some bundled products have important usage restrictions. Please see the product license for terms and conditions on the use of these programs with Rational Development and Test Environment for System z V9.1.0. 
+
+The following are Supporting Programs: 
+
+Rational Integration Tester V8.6 (Components: Rational Integration Test Control Panel v8.6, Rational Integration Tester Platform Pack v8.6) 
+
+
+======================================== 
+*** z/OS 1.13 Software Distribution *** 
+======================================== 
+AFP font Century Schoolbook Object V1.01.00 (FONT) 
+AFP(TM) Font Collection for VSE 
+CICS Transaction Server for z/OS V4.1 
+CICS Transaction Server for z/OS V4.2 
+Data1 Fonts Object v1.01.02 (FONT) 
+DB2 Administration Tool for z/OS V10 
+DB2 for z/OS V10 
+DB2 for z/OS V9.1 
+DB2 Object Comparison Tool for z/OS V10 
+DB2 Utilities Suite for z/OS V10 
+Enterprise COBOL for z/OS V4.2 
+IBM 31-bit SDK for z/OS Java Technology Edition V6 
+IBM 31-bit SDK for z/OS Java Technology Edition V6.0.1 
+IBM 31-Bit SDK for z/OS Java Technology Edition V7.0.0 
+IBM 64-bit SDK for z/OS Java Technology Edition V6 
+IBM 64-bit SDK for z/OS Java Technology Edition V6.0.1 
+IBM 64-Bit SDK for z/OS Java Technology Edition V7.0.0 
+IBM APL2 Fonts Object V1.01.02 (FONT) 
+IBM CICS Transaction Gateway for z/OS V8.1 
+IBM CICS VSAM Recovery for z/OS V4.3 
+IBM DB2 Accessories Suite for z/OS V2.1 
+IBM Debug Tool for z/OS V12.1 
+IBM DITTO/ESA for MVS 
+IBM Document Composition Facility (DCF) V1.04 
+IBM Encryption Facility for z/OS, V1.2 
+IBM Enterprise PL/I for z/OS V4.2.1 
+IBM IMS Fast Path Solution Pack for z/OS, V1.1.0 
+IBM IMS High Availability Large Database Toolkit for z/OS, Version 3 Release 2 
+IBM IMS High Performance Image Copy for z/OS V4.2.0 
+IBM IMS Library Integrity Utilities for z/OS, Version 2 Release 1 
+IBM IMS Online Reorganization Facility for z/OS, Version 1 Release 2 
+IBM IMS Tools Base for z/OS 
+IBM Library for REXX/370 
+IBM Optim Query Workload Tuner for DB2 for z/OS V2.2.1.0 
+IBM Ported Tools for z/OS 1.2.0 
+IBM Rational COBOL Runtime V6.0.1 
+IBM Rational Developer for System z V8.5.0 (Remote System Explorer Component) 
+IBM Rational Team Concert V4.0 (Components: FMID HRBT400 Build System Toolkit, FMID HRCC400 Common Components, FMID HRBA400 Rational Build Agent, and FMID HRDV400 Rational Developer for System z subset) 
+IBM Tivoli Management Services for z/OS V6.2.3 
+IBM Tivoli NetView for z/OS V6.1 
+IBM Tivoli OMEGAMON Dashboard Edition on z/OS V5.1.0 
+IBM Tivoli OMEGAMON XE for CICS on z/OS V5.1.0 
+IBM Tivoli OMEGAMON XE for DB2 Performance Expert on z/OS, V5.1.1 
+IBM Tivoli OMEGAMON XE for DB2 Performance Monitor on z/OS, V5.1.1 
+IBM Tivoli OMEGAMON XE for IMS on z/OS V4.2.0 
+IBM Tivoli OMEGAMON XE for IMS on z/OS V5.1.0 
+IBM Tivoli OMEGAMON XE for Mainframe Networks V4.2.0 
+IBM Tivoli OMEGAMON XE for Messaging for Z/OS 7.0.1 
+IBM Tivoli OMEGAMON XE on z/OS 5.1.0 
+IBM Tivoli System Automation for z/OS V3.3 
+IBM Tivoli Workload Scheduler for z/OS V8.6.0 
+IBM WebSphere Application Server for z/OS V8.0 
+IBM WebSphere Application Server for z/OS V8.5 
+IBM z/OS Management Facility V1.13 
+IBM z/OS Version 1 Release 13 
+IMS Enterprise Suite V1.01 
+IMS High Performance Pointer Checker for z/OS V3.1 
+IMS Queue Control Facility for z/OS V3.1 
+IMS(TM) Database Control Suite for z/OS V3.2 
+Infoprint Fonts - Japanese 
+Infoprint Fonts - Korean 
+Infoprint Fonts - Simplified Chinese 
+Infoprint Fonts - Traditional Chinese 
+Infoprint Fonts for z/OS V1.1 
+Information Management System (IMS) V11.01.0 
+Information Management System (IMS) V12.01.0 
+IRLM V2.2.3 
+Mathematics and Science Font Object AFP V1.01.00 (FONT) 
+Pi and Specials Fonts Object V1.01.01 (FONT) 
+Print Services Facility for z/OS V4.3 
+Publishing Systems BookMaster V1.4 
+REXX/370 Compiler 
+Sonoran Sans Serif Condensed Font Object V1.01.01 (FONT) 
+Sonoran Sans Serif Expanded Font Object V1.01.01 (FONT) 
+Sonoran Sans Serif Font Object V1.01.02 (FONT) 
+Sonoran Sans Serif Headliner Font Object V1.01.01 (FONT) 
+Sonoran Serif Font Object V1.01.02 (FONT) 
+Sonoran Serif Headliner Font Object V1.0.10.1 (FONT) 
+WebSphere MQ for z/OS V7.1 
+XML Toolkit for z/OS V1.10 
+
+======================================== 
+*** z/OS 2.1 Software Distribution *** 
+======================================== 
+CICS Deployment Assistant for z/OS V5.1.0 
+CICS Deployment Assistant for z/OS V5.2.0 
+CICS Transaction Gateway for z/OS V9.0 
+CICS Transaction Server for z/OS V4.2 
+CICS Transaction Server for z/OS V5.1 
+CICS Transaction Server for z/OS V5.2 
+CICS VSAM Recovery for z/OS V5.1.0 
+CICS VSAM Recovery for z/OS V5.2.0 
+DB2 10 for z/OS V10.1 
+DB2 11 for z/OS V11.1 
+IBM 31-bit SDK for z/OS, Java Technology Edition V6.0.0 
+IBM 31-bit SDK for z/OS, Java Technology Edition V6.0.1 
+IBM 31-bit SDK for z/OS, Java Technology Edition V7.0.0 
+IBM 31-bit SDK for z/OS, Java Technology Edition V7.1.0 
+IBM 64-Bit SDK for z/OS Java Technology Edition V6.0.0 
+IBM 64-Bit SDK for z/OS Java Technology Edition V6.0.1 
+IBM 64-Bit SDK for z/OS Java Technology Edition V7.0.0 
+IBM 64-Bit SDK for z/OS Java Technology Edition V7.1.0 
+IBM CICS TS Feature Pack for Dynamic Scripting V2.0 
+IBM CICS TS Feature Pack for Mobile Extensions V1.0 
+IBM CICS TS Feature Pack for Modern Batch V1.0 
+IBM CICS TS Feature Pack for Security Token Extensions V1.0 
+IBM Compiler for REXX on zSeries 1.4.0 
+IBM Data Interfile Transfer, Testing, and Operations Utility for MVS, VSE, VM (DITTO) 1.3 
+IBM DB2 Accessories Suite for z/OS V2.2 
+IBM DB2 Administration Tool for z/OS V11.1 
+IBM DB2 Buffer Pool Analyzer for z/OS, V5.1.1 
+IBM DB2 Object Comparison Tool for z/OS, V11.1 
+IBM DB2 Utilities Suite for z/OS, V10.1 
+IBM DB2 Utilities Suite for z/OS, V11.1 
+IBM Debug Tool for z/OS , V13.1 
+IBM Encryption Facility for z/OS, V1.2 
+IBM Enterprise COBOL for z/OS V5.1 
+IBM Enterprise PL/I for z/OS V4.4 
+IBM HTTP SERVER V7.0 
+IBM IMS BUFFER POOL ANALYZER FOR Z/OS, V1.4 
+IBM IMS Command Control Facility for z/OS V2.2 
+IBM IMS Enterprise Suite for z/OS, V3.1.1 
+IBM IMS Extended Terminal Option Support for z/OS, V3.2 
+IBM IMS High Performance System Generation Tools for z/OS, V2.3 
+IBM IMS NETWORK COMPRESSION FACILITY FOR Z/OS, V1.2 
+IBM IMS Program Restart Facility for z/OS, V2.2 
+IBM Library for REXX on zSeries 1.4.0 
+IBM Ported Tools for z/OS V1.02.1 
+IBM Print Services Facility for z/OS V4.3.0 
+IBM Rational Team Concert V5.0 (Components: FMID HRBA500 Rational Build Agent, FMID HRBT500 Build System Toolkit, FMID HRCC500 Rational Common Components, and FMID HRDV500 Rational Developer for System z subset) 
+IBM Tivoli Management Services on z/OS V6.2.3 
+IBM Tivoli NetView for z/OS V6.1 
+IBM Tivoli OMEGAMON XE for CICS on z/OS V5.1 
+IBM Tivoli OMEGAMON XE for DB2 Performance Expert on z/OS, V5.1 
+IBM Tivoli OMEGAMON XE for DB2 Performance Monitor on z/OS V5.1.1 
+IBM Tivoli OMEGAMON XE for IMS on z/OS V5.1 
+IBM Tivoli OMEGAMON XE for Mainframe Networks V4.2 
+IBM Tivoli OMEGAMON XE for Messaging for z/OS V7.1 
+IBM Tivoli OMEGAMON XE on z/OS V5.1 
+IBM Tivoli Workload Scheduler for z/OS V9.2 
+IBM Tools Base for z/OS, V1.4 
+IBM WebSphere MQ for z/OS v7.1 
+IBM XML Toolkit for z/OS, V1.10 
+IBM z/OS Management Facility V2.1 
+IBM z/OS V2.1 
+IMS DATABASE CONTROL SUITE FOR Z/OS, V3.2 
+IMS Transaction and Database Servers V12.1 
+IMS Transaction and Database Servers V13.1 
+RATIONAL COBOL RUNTIME 6.0.1 
+Rational Developer for System z V9.1.0 
+System Automation for z/OS 3.4.0 
+VS FORTRAN Version 2 
+WebSphere Application Server for z/OS V8.0.0 
+WebSphere Application Server for z/OS V8.5.0 
+
+The following are Additional Programs
+
+CICS Interdependency Analyzer for z/OS
+Fault Analyzer for z/OS
+File Manager for z/OS
+
+
+
+
+For a more detailed listing on the z/OS 2.1 distribution, see Rational Development and Test Environment for System z v9.1 Volumes and Disk Contents for the z/OS 2.1 distribution [http://www-01.ibm.com/support/docview.wss?uid=swg21683724]. 
+
+The following are Supporting Programs included only with Rational Development and Test Environment for System z with Parallel Sysplex V9.1.0:
+
+========================================
+*** z/VM 6.2 Distribution ***
+========================================
+IBM Directory Maintenance Facility for z/VM, function level 620
+IBM Performance Toolkit for VM, function level 620
+IBM RACF Security Server for z/VM, function level 620
+IBM Remote Spooling Communications Subsystem Networking for z/VM, function level 620
+IBM z/VM, version 6 release 2
+
+
+
+This information could include technical inaccuracies or typographical errors. Changes are periodically made to the information herein; these changes will be incorporated in new editions of the publication. IBM may make improvements and/or changes in the product(s) and/or the program(s) described in this publication at any time without notice.

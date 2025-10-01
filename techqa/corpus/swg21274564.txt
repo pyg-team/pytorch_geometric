@@ -1,0 +1,41 @@
+Title: IBM Using client logging for Filenet IDM Desktop when connecting to Filenet Content Services - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How is client logging, also known as Trace logging, performed for IDM Desktop when connecting to a Content Services server? 
+
+ANSWER
+Turn on logging 
+
+ 1. Run IDM Trace. 
+ 2. Select these options.  * Enable Tracing 
+     * Enable System trace logging 
+     * Enable SQL trace logging
+    
+    
+ 3. Click on OK.
+
+
+Generate log 
+
+ 1. Run Filenet Neighborhood, IDM Find, or the IDM application for which logging needs to be generated. 
+ 2. Perform the specific action to be logged. 
+ 3. Retrieve the log. It is named fndslog.txt and is located at \filenet\idm\temp.
+
+
+Additional comments 
+
+ * The size of this file is not regulated and can get very large. It is recommended that logging be turned off for normal operations. 
+ * The fndslog.txt file can be deleted at any time. If logging is still turned on, a new log file will be generated as needed. 
+ * The workstation does not have to be reset after changing Trace options. However, if an IDM application is already running, it does need to be restarted. 
+ * Trace logging cannot be used if connecting to an Image Services server.
+
+
+
+HISTORICAL NUMBER
+ 10002963 
+
+PRODUCT ALIAS/SYNONYM
+ IDM DESKTOP

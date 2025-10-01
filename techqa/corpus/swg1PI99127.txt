@@ -1,0 +1,161 @@
+Title: IBM PI99127: USING SORTUPBY WITH ITX V9.0.0.2 MAP DOES NOT ENCOUNTER AN ERROR - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Using SORTUPBY function in a IBM transformation Extender
+   (ITX) V9.0.0.2 map rule does not encounter an error as expected.
+   The map completes successfully but there is no output created.
+   
+   SORTUPBY is a new feature in ITX 9.0.0.3.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  ITXCQ - ITX00058959
+   GK / GK
+   Circumvention: None
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Users Affected:
+   IBM Transformation Extender customers who compile maps in
+   release X and try to run them in a release earlier than X.
+   
+   
+   Problem Description:
+   If a map encounters an unknown "opcode" in a rule, it was just
+   returning NONE for that opcode.
+   
+   Platforms Affected:
+   All
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The code has been changed to set a "map must be recompiled"
+   return code and abort the map.
+   
+   Applies to:
+   9.0.0.3
+   
+   Fixed in the next service packs and releases.
+   
+   To obtain the fix for this APAR:
+   
+   To see if the next service pack or product release is available,
+   check the IBM Transformation Extender Downloads page:
+   http://www.ibm.com/support/entry/portal/product/other_software/t [http://www.ibm.com/support/entry/portal/product/other_software/t]
+   ransformation_extender
+   
+   If the service pack or product release is available, download it
+   from Fix Central:
+   http://www.ibm.com/support/fixcentral/ [http://www.ibm.com/support/fixcentral/]
+   
+   If the service pack or product release is not available and you
+   require the APAR fix immediately, request a Limited Availability
+   Interim Fix (LAIF) by opening a PMR:
+   http://www.ibm.com/support/servicerequest/Home.action [http://www.ibm.com/support/servicerequest/Home.action]
+   
+   Prior to version 9.0.0, IBM Transformation Extender was called
+   IBM WebSphere Transformation Extender.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI99127
+   
+   
+ * REPORTED COMPONENT NAME
+   ITX
+   
+   
+ * REPORTED COMPONENT ID
+   5724Q2300
+   
+   
+ * REPORTED RELEASE
+   900
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2018-06-13
+   
+   
+ * CLOSED DATE
+   2018-07-26
+   
+   
+ * LAST MODIFIED DATE
+   2018-07-30
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ITX
+   
+   
+ * FIXED COMPONENT ID
+   5724Q2300
+   
+   
+
+APPLICABLE COMPONENT LEVELS

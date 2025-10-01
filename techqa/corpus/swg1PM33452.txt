@@ -1,0 +1,251 @@
+Title: IBM PM33452: Service for Debug Tool 11.1. - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  --- Features ---
+   
+   -DTSU foreground:  MSGCLASS for SYSOUT=*.
+   
+   --- End Features ---
+   
+   --- Service ---
+   
+   -The DTSU function does not perform a correct override for the
+    DD cards in the PROC.
+    (PM26365 [http://www-01.ibm.com/support/docview.wss?uid=isg1PM26365] at 10.1)
+   
+   -The DTSU does not recognize the null ( // ) JCL statement.
+    (PM26369 [http://www-01.ibm.com/support/docview.wss?uid=isg1PM26369] at 10.1)
+   
+   -Problem with conversion of JCL with a SYSTSIN DD DUMMY to a
+    Setup file.
+    (PM31326 [http://www-01.ibm.com/support/docview.wss?uid=isg1PM31326] at 10.1)
+   
+   -Remote: ABEND U4088 REASON 6F debugging a C++ program where
+    the CU (Compile Unit) name contains an empty member and is in
+    the form abc::xyz(). You may also receive an EQA9981I -
+    EQA00STO Internal Error 00000004 message along with an
+    ABENDS0C1.
+    (PM32418 [http://www-01.ibm.com/support/docview.wss?uid=isg1PM32418] at 11.1)
+   
+   -A user is trying to copy JCL for a Debug Tool session, and
+    gets this message:
+     CEE0454S The message number 1778 could not be found for
+     facility ID EQA.
+    (PM33172 [http://www-01.ibm.com/support/docview.wss?uid=isg1PM33172] at 11.1)
+   
+   -In Debug Tool Utilities 'Debug Tool Setup File', on panel
+    - EQAPFORS, where you enter a string for the 'parameters'
+      field
+    - EQAPFPRM, where you enter a string for the 'Program
+      arguments' field
+    check for the following conditions:
+     (1) if the string is enclosed within quotes, it should be a
+         pair of matched quotes.
+     (2) if the string has blanks, it should be enclosed within a
+         pair of matched quotes.
+    See the ++HOLD DOC for information about two new messages
+    EQAZ119W and EQAZ120W) that can be issued.
+   
+   -Problem with conversion of JCL with multiple consecutive
+    INCLUDEs of DD statements to a setup file.
+   
+   --- End Service ---
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: Debug Tool 11.1 users who need the feature   *
+   *                 or have the problems described in the        *
+   *                 Problem Description.                         *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: --- Features ---                        *
+   *                                                              *
+   *                      -DTSU foreground:  MSGCLASS for         *
+   *                       SYSOUT=*.                              *
+   *                                                              *
+   *                      --- End Features ---                    *
+   *                                                              *
+   *                      --- Service ---                         *
+   *                                                              *
+   *                      -The DTSU function does not perform a   *
+   *                       correct override for the DD cards in   *
+   *                       the PROC.                              *
+   *                       (PM26365 [http://www-01.ibm.com/support/docview.wss?uid=isg1PM26365] at 10.1)                      *
+   *                                                              *
+   *                      -The DTSU does not recognize the null   *
+   *                       ( // ) JCL statement.                  *
+   *                       (PM26369 [http://www-01.ibm.com/support/docview.wss?uid=isg1PM26369] at 10.1)                      *
+   *                                                              *
+   *                      -Problem with conversion of JCL with a  *
+   *                       SYSTSIN DD DUMMY to a Setup file.      *
+   *                       (PM31326 [http://www-01.ibm.com/support/docview.wss?uid=isg1PM31326] at 10.1)                      *
+   *                                                              *
+   *                      -Remote: ABEND U4088 REASON 6F          *
+   *                       debugging a C++ program where the CU   *
+   *                       (Compile Unit) name contains an empty  *
+   *                       member and is in the form abc::xyz().  *
+   *                       You may also receive an EQA9981I -     *
+   *                       EQA00STO Internal Error 00000004       *
+   *                       message along with an ABENDS0C1.       *
+   *                       (PM32418 [http://www-01.ibm.com/support/docview.wss?uid=isg1PM32418] at 11.1)                      *
+   *                                                              *
+   *                      -A user is trying to copy JCL for a     *
+   *                       Debug Tool session, and gets this      *
+   *                       message:                               *
+   *                        CEE0454S The message number 1778      *
+   *                        could not be found for facility ID    *
+   *                        EQA.                                  *
+   *                       (PM33172 [http://www-01.ibm.com/support/docview.wss?uid=isg1PM33172] at 11.1)                      *
+   *                                                              *
+   *                      -In Debug Tool Utilities 'Debug Tool    *
+   *                       Setup File', on panel                  *
+   *                       - EQAPFORS, where you enter a string   *
+   *                         for the 'parameters' field           *
+   *                       - EQAPFPRM, where you enter a string   *
+   *                         for the 'Program arguments' field    *
+   *                       check for the following conditions:    *
+   *                        (1) if the string is enclosed within  *
+   *                            quotes, it should be a pair of    *
+   *                            matched quotes.                   *
+   *                        (2) if the string has blanks, it      *
+   *                            should be enclosed within a pair  *
+   *                            of matched quotes.                *
+   *                       See the ++HOLD DOC for information     *
+   *                       about two new messages EQAZ119W and    *
+   *                       EQAZ120W) that can be issued.          *
+   *                                                              *
+   *                      -Problem with conversion of JCL with    *
+   *                       multiple consecutive INCLUDEs of DD    *
+   *                       statements to a setup file.            *
+   *                                                              *
+   *                      --- End Service ---                     *
+   ****************************************************************
+   * RECOMMENDATION: Installations that need this feature or      *
+   *                 these problem fixes should install this      *
+   *                 service.                                     *
+   ****************************************************************
+   Miscellaneous service.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Service available.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM33452
+   
+   
+ * REPORTED COMPONENT NAME
+   DEBUG TOOL Z/OS
+   
+   
+ * REPORTED COMPONENT ID
+   5655W4500
+   
+   
+ * REPORTED RELEASE
+   B10
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2011-02-23
+   
+   
+ * CLOSED DATE
+   2011-02-25
+   
+   
+ * LAST MODIFIED DATE
+   2011-03-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UK65267
+   
+   
+
+MODULES/MACROS
+ *  DMH4019I DMH4048I DMHU921I EQA00ABE EQA00CIC EQA00CND EQA00MSG
+   EQA0CINF EQA0SCL1 EQA0SCL2 EQA0SRP1 EQA0SRP2 EQA0SUTI EQA10PRC
+   EQA80VER EQADCCN0 EQADCVSD EQALMA   EQASUER0 EQASUER1 EQASUJCL
+   EQAXBTS  EQAXCJ   EQAXCJ2  EQAXFOR  EQAXFPRM EQAXMSGT EQAYSMMN
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   DEBUG TOOL Z/OS
+   
+   
+ * FIXED COMPONENT ID
+   5655W4500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * RB10 PSY UK65267 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK65267]
+   UP11/03/01 P F102
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

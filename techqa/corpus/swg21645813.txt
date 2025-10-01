@@ -1,0 +1,151 @@
+Title: IBM Database migration from WebSphere Lombardi Edition (WLE) Version 7.1 to IBM Business Process Manager (BPM) fails with column length errors from the database upgrade script - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When you attempt to migrate a database from WebSphere Lombardi Edition V7.1 to IBM Business Process Manager, it fails with a "ORA-01441: cannot decrease column length because some value is too big" error message. 
+
+SYMPTOM
+The database upgrade script fails with the following errors:
+
+
+Mar 25, 2013 4:32:42 PM SEVERE: com.lombardisoftware.tools.SQLFileExec - SQL statement that failed: BEGIN
+DECLARE
+v_isNullable CHAR(1);
+BEGIN
+select nullable into v_isNullable from all_tab_columns where UPPER(owner)=UPPER('DBName') AND UPPER(table_name) = UPPER('LSW_SWITCH_CONDITION') AND UPPER(column_name)= UPPER('CONDITION');
+IF (v_isNullable = 'Y') THEN
+EXECUTE IMMEDIATE 'ALTER TABLE LSW_SWITCH_CONDITION MODIFY "CONDITION" NVARCHAR2(1000)';
+ELSE
+EXECUTE IMMEDIATE 'ALTER TABLE LSW_SWITCH_CONDITION MODIFY "CONDITION" NVARCHAR2(1000)';
+END IF ;
+END ;
+END ;
+
+
+Mar 25, 2013 4:32:42 PM FINE: com.lombardisoftware.tools.SQLFileExec - ORA-01441: cannot decrease column length because some value is too big
+ORA-06512: at line 7
+
+java.sql.SQLException: ORA-01441: cannot decrease column length because some value is too big
+ORA-06512: at line 7
+
+at oracle.jdbc.driver.T4CTTIoer.processError(T4CTTIoer.java:439)
+at oracle.jdbc.driver.T4CTTIoer.processError(T4CTTIoer.java:395)
+at oracle.jdbc.driver.T4C8Oall.processError(T4C8Oall.java:802)
+at oracle.jdbc.driver.T4CTTIfun.receive(T4CTTIfun.java:436)
+at oracle.jdbc.driver.T4CTTIfun.doRPC(T4CTTIfun.java:186)
+at oracle.jdbc.driver.T4C8Oall.doOALL(T4C8Oall.java:521)
+at oracle.jdbc.driver.T4CStatement.doOall8(T4CStatement.java:194)
+at oracle.jdbc.driver.T4CStatement.executeForRows(T4CStatement.java:1000)
+at oracle.jdbc.driver.OracleStatement.doExecuteWithTimeout(OracleStatement.java:1307)
+at oracle.jdbc.driver.OracleStatement.executeInternal(OracleStatement.java:1882)
+at oracle.jdbc.driver.OracleStatement.execute(OracleStatement.java:1847)
+at oracle.jdbc.driver.OracleStatementWrapper.execute(OracleStatementWrapper.java:301)
+at com.lombardisoftware.tools.SQLFileExec.doSQL(SQLFileExec.java:124)
+at com.lombardisoftware.tools.SQLFileExec.start(SQLFileExec.java:83)
+at com.lombardisoftware.tools.dbupgrade.SchemaUpgradeStep.execute(SchemaUpgradeStep.java:58)
+at com.lombardisoftware.tools.dbupgrade.UpgradeDatabase.upgradeDatabase(UpgradeDatabase.java:274)
+at com.lombardisoftware.tools.dbupgrade.UpgradeDatabase.main(UpgradeDatabase.java:260)
+at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:60)
+at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:37)
+at java.lang.reflect.Method.invoke(Method.java:611)
+at org.apache.tools.ant.taskdefs.ExecuteJava.run(ExecuteJava.java:217)
+at org.apache.tools.ant.taskdefs.ExecuteJava.execute(ExecuteJava.java:152)
+at org.apache.tools.ant.taskdefs.Java.run(Java.java:764)
+at org.apache.tools.ant.taskdefs.Java.executeJava(Java.java:218)
+at org.apache.tools.ant.taskdefs.Java.executeJava(Java.java:132)
+at org.apache.tools.ant.taskdefs.Java.execute(Java.java:105)
+at org.apache.tools.ant.UnknownElement.execute(UnknownElement.java:288)
+at sun.reflect.GeneratedMethodAccessor5.invoke(Unknown Source)
+at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:37)
+at java.lang.reflect.Method.invoke(Method.java:611)
+at org.apache.tools.ant.dispatch.DispatchUtils.execute(DispatchUtils.java:106)
+at org.apache.tools.ant.Task.perform(Task.java:348)
+at org.apache.tools.ant.Target.execute(Target.java:357)
+at org.apache.tools.ant.Target.performTasks(Target.java:385)
+at org.apache.tools.ant.Project.executeSortedTargets(Project.java:1337)
+at org.apache.tools.ant.Project.executeTarget(Project.java:1306)
+at org.apache.tools.ant.helper.DefaultExecutor.executeTargets(DefaultExecutor.java:41)
+at org.apache.tools.ant.Project.executeTargets(Project.java:1189)
+at org.apache.tools.ant.Main.runBuild(Main.java:758)
+at org.apache.tools.ant.Main.startAnt(Main.java:217)
+at org.apache.tools.ant.Main.start(Main.java:179)
+at org.apache.tools.ant.Main.main(Main.java:268)
+Mar 25, 2013 4:32:42 PM FINE: com.lombardisoftware.tools.SQLFileExec - SQL file execution finished.
+Mar 25, 2013 4:32:42 PM SEVERE: com.lombardisoftware.tools.dbupgrade.UpgradeDatabase - Exception while upgrading your BPM installation
+Mar 25, 2013 4:32:42 PM SEVERE: com.lombardisoftware.tools.dbupgrade.UpgradeDatabase - Check the log files for details
+Mar 25, 2013 4:32:42 PM FINE: com.lombardisoftware.tools.dbupgrade.UpgradeDatabase - Errors occurred while running the schema upgrade. Check the log files for details.
+java.lang.RuntimeException: Errors occurred while running the schema upgrade. Check the log files for details.
+at com.lombardisoftware.tools.dbupgrade.SchemaUpgradeStep.execute(SchemaUpgradeStep.java:60)
+at com.lombardisoftware.tools.dbupgrade.UpgradeDatabase.upgradeDatabase(UpgradeDatabase.java:274)
+at com.lombardisoftware.tools.dbupgrade.UpgradeDatabase.main(UpgradeDatabase.java:260)
+at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:60)
+at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:37)
+at java.lang.reflect.Method.invoke(Method.java:611)
+at org.apache.tools.ant.taskdefs.ExecuteJava.run(ExecuteJava.java:217)
+at org.apache.tools.ant.taskdefs.ExecuteJava.execute(ExecuteJava.java:152)
+at org.apache.tools.ant.taskdefs.Java.run(Java.java:764)
+at org.apache.tools.ant.taskdefs.Java.executeJava(Java.java:218)
+at org.apache.tools.ant.taskdefs.Java.executeJava(Java.java:132)
+at org.apache.tools.ant.taskdefs.Java.execute(Java.java:105)
+at org.apache.tools.ant.UnknownElement.execute(UnknownElement.java:288)
+at sun.reflect.GeneratedMethodAccessor5.invoke(Unknown Source)
+at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:37)
+at java.lang.reflect.Method.invoke(Method.java:611)
+at org.apache.tools.ant.dispatch.DispatchUtils.execute(DispatchUtils.java:106)
+at org.apache.tools.ant.Task.perform(Task.java:348)
+at org.apache.tools.ant.Target.execute(Target.java:357)
+at org.apache.tools.ant.Target.performTasks(Target.java:385)
+at org.apache.tools.ant.Project.executeSortedTargets(Project.java:1337)
+at org.apache.tools.ant.Project.executeTarget(Project.java:1306)
+at org.apache.tools.ant.helper.DefaultExecutor.executeTargets(DefaultExecutor.java:41)
+at org.apache.tools.ant.Project.executeTargets(Project.java:1189)
+at org.apache.tools.ant.Main.runBuild(Main.java:758)
+at org.apache.tools.ant.Main.startAnt(Main.java:217)
+at org.apache.tools.ant.Main.start(Main.java:179)
+at org.apache.tools.ant.Main.main(Main.java:268)
+
+
+CAUSE
+The value of the LSW_SWITCH_CONDITION condition field is different as described in the following statements: 
+
+ * For WebSphere Lombardi Edition V7.1, the field is a NVARCHAR2 type and its length is 1024 
+ * The field length for WebSphere Lombardi Edition V7.2 and IBM Business Process Manager V7.5 and later is 1000. 
+
+If a row in the LSW_SWITCH_CONDITION table contains a value in the CONDITION field that is greater than 1000 characters, the alter table statement fails, which causes the database upgrade script to fail. 
+RESOLVING THE PROBLEM
+To resolve this issue, complete the following steps: 
+
+ 1. Restore the Process Server, Process Center, and Performance Data Warehouse databases using a pre-upgrade backup.
+    
+    
+ 2. Connect to the Process Server database using the appropriate database user ID and password.
+    
+    
+ 3. Run the following query to find the rows that have more than 1000 characters, which causes the SQL script to fail:
+    
+    
+    SELECT SWITCH_CONDITION_ID, SWITCH_ID, SEQ, END_STATE_ID, CONDITION, GUID, VERSION_ID, LAST_MODIFIED, LAST_MODIFIED_BY_USER_ID FROM LSW_SWITCH_CONDITION WHERE length(condition)>1000;
+    
+    
+ 4. Manually modify each of the CONDITION fields that are returned by the previous query to reduce its length to 1000 characters or less.
+    
+    
+    You can accomplish this task by removing white space or re-factoring the Boolean logic that is contained in the CONDITION field. Consult with the application developer if you have to refactor the Boolean logic to reduce the length.
+    
+    
+ 5. Re-run the query in step 2 to verify the changes and enure that it does not return any rows with more than 1000 characters.
+    
+    
+ 6. Re-run the database upgrade script to complete the database upgrade. 
+
+ 
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Business Process Manager Advanced Migration AIX, Linux, Linux zSeries, Solaris, Windows 8.5, 8.0, 7.5.1, 7.5 
+PRODUCT ALIAS/SYNONYM
+ BPM
+WLE
+Lombardi

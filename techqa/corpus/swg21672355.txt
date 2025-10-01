@@ -1,0 +1,130 @@
+Title: IBM Configuring Java and browser options for access to the Local Management Interface on Security Network IPS sensors - United States
+
+Text:
+GX; java; cach; LMI; policy; save; fail; CPE; JRE; pop TECHNOTE (FAQ)
+
+QUESTION
+ How should users configure their web browser and Java to allow access to the Local Management Interface (LMI) on Security Network IPS (GX) sensors? 
+
+CAUSE
+Newer versions of the Java Runtime Environment have settings that can prevent the LMI from functioning properly.
+
+ANSWER
+This article covers multiple configuration changes needed to correct most LMI issues. The article is divided into sections based on the configuration change being made. 
+
+Supported Java versions
+
+The LMI supports the 32-bit versions of the Java Runtime Environment (JRE) 6 and higher plug-in. Users who are running the 64-bit version will find that the LMI displays a message asking them to install Java.
+
+Supported browser versions
+
+The LMI is supported only on Internet Explorer 8 or newer and Firefox 13 and newer. Using other browser versions might result in unexpected behavior.
+
+Clearing the Java cache and disabling caching
+
+Java's caching of files can cause the LMI to display old policy versions and can cause policy saves from the LMI to fail. It is recommended that Java's caching functionality be disabled and any previously cached files be cleared.
+
+
+ 1. Close all web browser windows.
+    
+ 2. Open Windows Control Panel. Locate and open the entry for Java. This will open the Java Control Panel.
+    
+ 3. Under the General tab, locate the section that is labeled Temporary Internet Files and click the Settings... button.
+    
+ 4. Clear the box that is labeled Keep temporary files on my computer.
+    
+ 5. Click the Delete Files... button.
+    
+ 6. Ensure that all available check boxes are selected and then click OK.
+    
+ 7. Click OK to exit the Temporary Internet Files section and then click OK again to exit the Java Control Panel.
+
+
+
+Adding the Network IPS LMI to the Java Exception Site List 
+
+Recent security changes in Java can prevent the LMI from functioning. The recommended method to correct this is for users to add the LMI as a trusted site in Java. Alternatively, users can set the Java security level to Medium but this is not recommended as it can introduce security issues in a user's browser. 
+ 1. Close all web browser windows.
+    
+ 2. Open Windows Control Panel. Locate and open the entry for Java. This will open the Java Control Panel.
+    
+ 3. Under the Security tab, click the Edit Site List... button.
+    
+ 4. Click Add and enter the domain name or IP address of the Network IPS in the resulting field. Use a format like https://domain_name or https://IP_address.
+    
+    [/support/docview.wss?uid=swg21672355&aid=1] [/support/docview.wss?uid=swg21672355&aid=1]
+    
+ 5. Click OK to exit the Exception Site List then click OK again to exit the Java Control Panel.
+
+
+
+LMI pages fail to load with Java 1.7 Update 51 or higher 
+
+When running Java 1.7 Update 51 and later and GX firmware 4.6.1 or earlier, some pages will fail to load with messages like the following: 
+
+Java applications are blocked by your security settings
+
+Missing Application-Name manifest attribute
+
+Missing required Permissions manifest attribute in main jar 
+
+Java has further enhanced security to make the user system less vulnerable to external exploits in Java 7 Update 51 and later. With this update, Java does not allow users to run applications that are not signed (unsigned), are self-signed (not signed by trusted authority), or that are missing permission attributes. See Java's website [https://www.java.com/en/download/help/java_blocked.xml] for further details. 
+
+This issue can be resolved by updating your firmware to 4.6.2. For details on installing firmware updates, see the Installing available updates for Network IPS [http://www.ibm.com/support/knowledgecenter/SSB2MG_4.6.2/com.ibm.ips.doc/tasks/gx_gv_install_updates.htm?lang=en] documentation. 
+
+
+Mixed code verification options 
+
+Java allows users to configure how it will handle applications that contain mixed code. This setting can be found in the Java Control Panel under Advanced > Mixed code (sandboxed versus trusted) security verification. By default, the Enable - show warning if needed option is selected. With this setting, Java will display a warning asking users if they would like to block the components from being run. Users must select No or Don't Block to allow the LMI to function. 
+
+[/support/docview.wss?uid=swg21672355&aid=2] [/support/docview.wss?uid=swg21672355&aid=2] 
+
+Users can modify this behavior so that warning messages for mixed code are no longer displayed by selecting the Disable verification (not recommended) option. This is not recommended as it can introduce security issues in a user's browser. 
+
+
+Windows 8.1 and Internet Explorer 11 Java issue 
+
+There is an issue where the Java applet is disabled for the LMI that occurs only on Windows 8.1 running Internet Explorer 11 with Java 1.7u51 and later. To enable the Java applet, run Internet Explorer 11 with Administrator Privileges: 
+ 1. Right-click the Internet Explorer icon.
+    
+ 2. Select Run as Administrator.
+
+
+
+Disabling Pop-up blockers 
+
+The LMI uses pop-up messages when displaying error, warning, and informational messages to users. If the browser is configured to block pop-up windows, important messages will not be displayed. Because of this, browsers should be configured to allow pop-ups from the LMI. 
+
+
+Adjusting Java memory settings 
+
+Users might find that they experience issues updating large policies in the LMI. A common source of this is the Security Events policy on the GX. This is generally caused by Java running low on memory while trying to process the large policy. You can adjust the memory settings with the following instructions: 
+ 1. Close all web browser windows.
+    
+ 2. Open Windows Control Panel. Locate and open the entry for Java. This will open the Java Control Panel.
+    
+ 3. Under the Java tab, click the View... button. This will open the Java Runtime Environment Settings window.
+    
+ 4. Double-click the section of the entry under the Runtime Parameters heading to enter edit mode for that field. By default, the field is empty. However, it can contain a value if users have edited it in the past.
+    
+    [/support/docview.wss?uid=swg21672355&aid=3] [/support/docview.wss?uid=swg21672355&aid=3]
+    
+ 5. Enter the following value in the field:
+    
+    -Xmx512m
+    
+    This will assign a maximum value of 512 MB for Java's memory usage.
+    
+ 6. Click OK to close the Java Runtime Environment Settings window and then click OK again to exit the Java Control Panel.
+
+
+
+Reinstalling Java 
+
+You might find that the LMI of the sensor continues to display an error regarding the required Java version although you are running a more recent version than it is reporting. In this situation, it might be necessary to remove all Java Runtime Environment installations from the system in question and install only the most recent version from the Java website [https://www.java.com]. 
+
+
+[/support/docview.wss?uid=swg21672355&aid=4] [http://ibm.biz/KC-SNIPS] [/support/docview.wss?uid=swg21672355&aid=5] [http://ibm.biz/InfraSecForumTechnote] [/support/docview.wss?uid=swg21672355&aid=6] [http://ibm.biz/SecSuptUTube] [/support/docview.wss?uid=swg21672355&aid=7] [http://ibm.biz/InfraSecFixes] [/support/docview.wss?uid=swg21672355&aid=8] [http://ibm.biz/FlexLicLogin] [/support/docview.wss?uid=swg21672355&aid=9] [http://ibm.biz/MyNotification] [/support/docview.wss?uid=swg21672355&aid=10] [http://ibm.biz/ContactSecSupport] 
+RELATED INFORMATION
+ A Japanese translation is available [http://www.ibm.com/support/docview.wss?uid=swg21959964]
+A Spanish translation is available [http://www.ibm.com/support/docview.wss?uid=swg21902632]

@@ -1,0 +1,33 @@
+Title: IBM javacompute.jar file's Base64 class moved to a different location - United States
+
+Text:
+javacompute; javacompute.jar; noClassDefFound; Base64; IIB; BIP3202E; BIP2943E TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ You are moving to IBM Integration Bus (IIB) V9 from an earlier version, which referenced the javacompute.jar file's Base64 class to encode or decode data in Base64 format. However, when you are running IBM Integration Bus V9, you get a NoClassDefFound exception or an error message saying that the Java class could not be resolved. 
+
+SYMPTOM
+One or more of the following error messages might be displayed: 
+
+ * Exception: java.lang.NoClassDefFoundError: com/ibm.broker/javacompute/Base64. 
+ * BIP3202E: An error occurred when trying to resolve the Java class or method 'com.ibm.broker.javacompute.Base64.encode' 
+ * BIP2943E: The Java method 'com.ibm.broker.javacompute.Base64.encode' could not be found as its containing class could not be found in the deployed bar file or in the 'workpath/shared-classes/' directory.
+
+
+CAUSE
+The Base64 class has been moved to a different location.
+
+RESOLVING THE PROBLEM
+To resolve the issue, choose one of the following options: 
+
+ 1. Download a third-party JAR file that has the Base64 class, and add the JAR to the Java project's build path or import the classes into your project. 
+ 2. Use ESQL, which provides built-in BASE64ENCODE [http://www.ibm.com/support/knowledgecenter/SSMKHH_9.0.0/com.ibm.etools.mft.doc/bk52010_.htm?lang=en] and BASE64DECODE [http://www.ibm.com/support/knowledgecenter/SSMKHH_9.0.0/com.ibm.etools.mft.doc/bk52000_.htm?lang=en] functions. 
+ 3. Point to the jplugininternal.jar file's com.ibm.broker.isr.Base64 class.
+
+ * Note
+ * 
+
+
+For more information, see the following web pages:  * Base64 class from Oracle [http://docs.oracle.com/javase/8/docs/api/java/util/Base64.html] 
+ * Base64 class from Apache [http://commons.apache.org/proper/commons-codec/apidocs/org/apache/commons/codec/binary/Base64.html] 
+ * Generic base encoding from Google [http://docs.guava-libraries.googlecode.com/git/javadoc/com/google/common/io/BaseEncoding.html]

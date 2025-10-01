@@ -1,0 +1,99 @@
+Title: IBM DataStage Web Service stage error - javax.net.ssl.SSLKeyException: RSA premaster secret - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Users may encounter "javax.net.ssl.SSLKeyException: RSA premaster secret" when trying to use a Web Service Client stage to connect to a web service 
+
+SYMPTOM
+The entire stack trace is available in the job log:
+
+
+
+com.ascentialsoftware.wsclient.ServiceInvocationException: Service invocation exception: <Fault xmlns="http://schemas.xmlsoap.org/soap/envelope/ [http://schemas.xmlsoap.org/soap/envelope/]">
+<faultcode xmlns="">Server.userException</faultcode>
+<faultstring xmlns="">javax.net.ssl.SSLKeyException: RSA premaster secret error</faultstring>
+<detail xmlns="">
+<stackTrace xmlns="http://xml.apache.org/axis/ [http://xml.apache.org/axis/]">javax.net.ssl.SSLKeyException: RSA premaster secret error 
+at com.ibm.jsse2.jb.&lt;init&gt;(jb.java:90) 
+at com.ibm.jsse2.lb.a(lb.java:522) 
+at com.ibm.jsse2.lb.a(lb.java:349) 
+at com.ibm.jsse2.kb.s(kb.java:545) 
+at com.ibm.jsse2.kb.a(kb.java:530) 
+at com.ibm.jsse2.SSLSocketImpl.a(SSLSocketImpl.java:79) 
+at com.ibm.jsse2.SSLSocketImpl.h(SSLSocketImpl.java:437) 
+at com.ibm.jsse2.SSLSocketImpl.a(SSLSocketImpl.java:142) 
+at com.ibm.jsse2.SSLSocketImpl.startHandshake(SSLSocketImpl.java:686) 
+at org.apache.axis.components.net.JSSESocketFactory.create(JSSESocketFactory.java:224) 
+at org.apache.axis.transport.http.HTTPSender.getSocket(HTTPSender.java:157) 
+at org.apache.axis.transport.http.HTTPSender.invoke(HTTPSender.java:114) 
+at org.apache.axis.strategies.InvocationStrategy.visit(InvocationStrategy.java:71) 
+at org.apache.axis.SimpleChain.doVisiting(SimpleChain.java:150) 
+at org.apache.axis.SimpleChain.invoke(SimpleChain.java:120) 
+at org.apache.axis.client.AxisClient.invoke(AxisClient.java:180) 
+at org.apache.axis.client.Call.invokeEngine(Call.java:2564) 
+at org.apache.axis.client.Call.invoke(Call.java:2553) 
+at org.apache.axis.client.Call.invoke(Call.java:1753) 
+at com.ascentialsoftware.wsclient.OperationCall.invoke(OperationCall.java:285) 
+at com.ascentialsoftware.wsclient.WebService.callServiceInternal(WebService.java:1685) 
+at com.ascentialsoftware.wsclient.WebService.callService(WebService.java:1591) 
+at com.ascentialsoftware.wsclient.WebService.callService(WebService.java:1544) 
+at com.ascentialsoftware.wspack.Transformer.process(Transformer.java:105) 
+at com.ascentialsoftware.jds.StageFactory.runStage(StageFactory.java:544) 
+at com.ascentialsoftware.jds.StageFactory.runTransformer(StageFactory.java:361) 
+Caused by: java.security.InvalidKeyException: Illegal key size or default parameters 
+at javax.crypto.Cipher.a(Unknown Source) 
+at javax.crypto.Cipher.a(Unknown Source) 
+at javax.crypto.Cipher.a(Unknown Source) 
+at javax.crypto.Cipher.init(Unknown Source) 
+at com.ibm.jsse2.jb.&lt;init&gt;(jb.java:3) 
+... 25 more 
+</stackTrace>
+</detail>
+</Fault> 
+at com.ascentialsoftware.wsclient.OperationCall.handleRemoteException(OperationCall.java:388) 
+at com.ascentialsoftware.wsclient.OperationCall.invoke(OperationCall.java:293) 
+at com.ascentialsoftware.wsclient.WebService.callServiceInternal(WebService.java:1685) 
+at com.ascentialsoftware.wsclient.WebService.callService(WebService.java:1591) 
+at com.ascentialsoftware.wsclient.WebService.callService(WebService.java:1544) 
+at com.ascentialsoftware.wspack.Transformer.process(Transformer.java:105) 
+at com.ascentialsoftware.jds.StageFactory.runStage(StageFactory.java:544) 
+at com.ascentialsoftware.jds.StageFactory.runTransformer(StageFactory.java:361) 
+
+
+CAUSE
+The issue is that the certificate in the keystore has too large a key size.
+
+Essentially the client is not able to understand the keys in its keystore.
+
+
+DIAGNOSING THE PROBLEM
+To verify this is your issue, note if the primary exception message is "RSA presecret error", and if the inner exception is "Illegal key size or default parameters"
+
+
+
+RESOLVING THE PROBLEM
+Information Server installs with Java Runtime Environments that have limited (but strong) jurisdiction policy files. United States federal law places restrictions on the level of encryption that can be freely exported. 
+
+The IBM Java supplied complies with these restrictions, which means it only supports SSL keys of 2048-bits or less. Many keys are now being created with larger keys (e.g. 4096-bits), which will not work with the default settings.
+If your key is larger than 2048 bits, you may get this error.
+
+If you are based in the US, you can download and install unrestricted JSSE policy files.
+These are provided by IBM here:
+https://www14.software.ibm.com/webapp/iwm/web/preLogin.do?source=jcesdk [https://www14.software.ibm.com/webapp/iwm/web/preLogin.do?source=jcesdk]
+
+You will need your IBM Web Account to access these.
+
+In order to install the unrestricted JSSE policy files: 
+
+ 1. Stop all DataStage processes, and stop all running WAS servers 
+ 2. Identify the primary security folder for your Information Server installation.
+    For instance, for 9.1, the folder is IS_HOME/ASBNode/apps/jre/lib/security/
+    For instance, for 11.3 and later, the folder is IS_HOME/jdk/jre/lib/security/ 
+ 3. Back up the contents of the primary security directory. 
+ 4. Copy the local_policy.jar and US_export_policy.jar files into the primary security direction. 
+ 5. Restart all running WAS servers and DataStage processes. 
+ 6. 
+
+If you are outside the US, you may need to talk with your certificate provider, and inquire about obtaining a 2048-bit key.

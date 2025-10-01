@@ -1,0 +1,171 @@
+Title: IBM IC69212: SOME REPORTS IN TIVOLI STORAGE MANAGER REPORTING AND MONITORING 6.1 CANNOT BE EXPORTED AS PDF, PS AND XLS - United States
+
+Text:
+AIX SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Tivoli Storage Manager Reporting and Monitoring uses Tivoli
+   Common Reporting engine and reports are generated within this
+   component. For some views it can happen that the report creation
+   fails with below message when format PDF, PS or XLS is selected.
+   Reports in HTML format will work.
+   
+   CTGTRE034E A failure occurred attempting to run and format the
+   report [ /TSMReports/TSM_client_schedule_status ] . The report
+   cannot be run or formatted.
+   
+   Customer/L2 diagnostics:
+   To verify if you are affected of this APAR you can review
+   ReportingEngine log file and look for the following lines:
+   
+   Month DD, YYYY HH:MM:SS AM/PM
+   org.eclipse.birt.report.engine.api.impl.ReportEngine
+   SEVERE: An error happened while running the report. Cause:
+   java.lang.ArrayIndexOutOfBoundsException: Array index out of
+   range: 4
+           at
+   org.eclipse.birt.report.engine.layout.pdf.PDFImageLM.getArea(PDF
+   ImageLM.
+   java:531)
+   
+   This TSM APAR relates to TCR bug TCR1023.
+   
+   Tivoli Storage Manager Versions Affected:
+   6.1 Reporting and Monitoring
+   
+   Initial Impact:
+   Low
+   
+   Additional Keywords:
+   TCR TSM TIP AC ISC RM Report export KSKAGENT ITM Warehous
+   Warehouse
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Run report as HTML, then print as PDF.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All users running Schedule Status or         *
+   *                 Client Currency report as PDF format from    *
+   *                 the Administration Center                    *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: See Error Description                   *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   This problem is projected to be fixed in a future version of
+   the Administration Center
+   NOTE this is subject to change at the discretion of ITM
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+ *  *
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC69212
+   
+   
+ * REPORTED COMPONENT NAME
+   TSM SERVER
+   
+   
+ * REPORTED COMPONENT ID
+   5698ISMSV
+   
+   
+ * REPORTED RELEASE
+   61W
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-06-15
+   
+   
+ * CLOSED DATE
+   2010-08-16
+   
+   
+ * LAST MODIFIED DATE
+   2010-08-16
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R61A PSY
+   UP
+   
+   
+ * R61H PSY
+   UP
+   
+   
+ * R61L PSY
+   UP
+   
+   
+ * R62A PSY
+   UP
+   
+   
+ * R62H PSY
+   UP

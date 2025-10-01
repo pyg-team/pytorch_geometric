@@ -1,0 +1,65 @@
+Title: IBM Configuring IBM Rational DOORS to use DXL scripts in custom locations - United States
+
+Text:
+shared; -a; -J; switch; addins TECHNOTE (FAQ)
+
+QUESTION
+ How do you configure IBM Rational DOORS to access DXL scripts in custom locations and have them show up in DOORS client menus? 
+
+ANSWER
+To set up your custom DXL script directories so they show up in the IBM Rational DOORS menu:
+1. Decide the scope at which the DXL scripts need to run. DXL scripts that run at the project level should be under one directory, whose location is referenced via the projectaddins (-J) switch. DXL scripts that work at the module or object level should be under a different directory, whose location is referenced via the addins (-a) switch. Note that the directory referenced by -a or -J must contain at least one subdirectory, each of which corresponds to a separate menu. Each such menu directory can have further subdirectories that correspond to submenu items. DXL scripts in the top directory -- the directory that is specified in the -a or -J switch -- will not appear in any menu. Thus, the directory in the -a or -J switch MUST have at least one level of subdirectories. 
+
+2. In each root directory containing your custom DXL scripts, create .hlp and .idx files for your directory. You would do this by copying the default addins.hlp and addins.idx files from your $DOORSHOME\lib\dxl\addins directory to your custom directory, then renaming them to match your directory name. For example, if your custom directory was C:\DXL\myaddins, you would rename your copies of addins.hlp and addins.idx to myaddins.hlp and myaddins.idx. You can use spaces in your directory name (for example: my addins.hlp and my addins.idx for a directory named "my add-ins").
+To learn more about the .hlp and .idx files, please refer to Tech Note #1396989 [http://www-01.ibm.com/support/docview.wss?uid=swg21396989] and the "The DXL Library and Addins menus" section in the DOORS DXL Reference Manual or from the DXL online help. You can access the "The DXL Library and Addins menus" topic in DXL online help from the DOORS client as follows: 
+
+ 1. From the main DOORS window, choose Tools -> Edit DXL... 
+
+ 2. In the DXL Interaction window, click the Help button -- this brings up the DOORS DXL online help. 
+
+ 3. Search for menu in the DXL online help. 
+
+ 4. Double-click the "The DXL Library and Add-ins menus" topic among the search results. 
+
+ 
+
+3. Once your custom DXL directory is set up, you need to tell DOORS about it. You can do this via the shortcut you use to start your DOORS client. 
+
+ * If you use -a in the DOORS shortcut, you see a menu for each directory containing DXL scripts in the specified directory in the module window, as these scripts work at the module or object level. 
+ * If you use -J in the DOORS shortcut, you see a menu for each directory containing DXL scripts in the specified directory in the DOORS database window, as these scripts work at the project level.
+
+
+Below are some examples of using the -a switch. The same syntax applies to the -J switch. 
+
+1. You have a single custom directory with no spaces anywhere in the name or its path: 
+
+ * 
+ * 
+   -a C:\DXL\myaddins
+   
+
+
+2. You have a single custom directory with spaces in its name or path:  * 
+ * 
+   -a "C:\DXL Scripts\myaddins"
+   
+
+
+3. You have multiple custom directories:  * 
+ * 
+   -a "C:\DXL\myaddins;C:\DXL Scripts\More addins"
+   
+
+
+Further details are available in the DOORS online help -- search the help for the word 'switch'. This leads you to the help topic describing the syntax for all DOORS command switches (Summary of command line switches). As an alternative to setting command switches in the DOORS shortcut, you can also set them via the Microsoft Windows Registry. To learn about setting the switches in the Registry, refer to the 'Settings in the registry' DOORS online help topic, available as a Related Topic from the DOORS command switch online help page. 
+
+A few notes on the directory structure and naming: 
+
+ * Only well formed *.dxl files and subdirectories appear in the menus. A well formed *.dxl file has a comment line and a comment block near the top of the file. A well formed subdirectory has an *.idx and a *.hlp file inside, with the same exact name as the directory. 
+ * The path of the -a or -J switch should go to the first directory that contains .idx and .hlp files. That directory might have DXL scripts, as well as directories of its own. However, DXL scripts in the first directory will not appear in any menu; DXL scripts that need to show up in menus should be placed in subdirectories of the first directory. Each subdirectory needs to have its own .idx and .hlp files. 
+ * If the .hlp and .idx files are missing or not named correctly, the menu for that directory will not show up in DOORS. 
+ * The directory's .idx file controls the names and order in the menu of the DXL scripts and submenus in that directory. If a *.dxl file or submenu is not referenced in the *.idx file, then its actual name is used in the menu. You cannot use the *.idx file to suppress displaying a well formed dxl or subdirectory. 
+ * The DXL Browse tool (available via the Browse button from the DXL interaction window and from the Module window Tools > DXL Library command) contains information from the *.hlp and *.dxl files. The first line of the *.hlp and the comment line from the *.dxl are used in the upper hierarchy window, and the additional lines from the *.hlp and the comment block from the *.dxl are displayed in the lower window when you select a folder or file from the upper window.
+
+RELATED INFORMATION
+ How to add a custom menu for DOORS modules [http://www.ibm.com/support/docview.wss?uid=swg21396989]

@@ -1,0 +1,31 @@
+Title: IBM A NullPointerException occurs in the WebSphere Process Server (WPS) SCA binding import after you upgrade - United States
+
+Text:
+SCA; import; export; NullPointerException TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ You have two modules. Module A calls module B through the Service Component Architecture (SCA) binding import and export. When the SCA binding import receives the response from the SCA binding export, a NullPointerException error occurs. This issue occurs only after you upgrade WebSphere Process Server to Versions 7.0.0 Fix Pack 4 or Fix Pack 5. 
+
+SYMPTOM
+The issue is indicated by the following error messages in the First Failure Data Capture (FFDC) file: 
+
+**************
+java.lang.NullPointerException
+at
+org.eclipse.emf.ecore.impl.BasicEObjectImpl.eDerivedStructuralFeatureID(BasicEObjectImpl.java:1073)
+at org.eclipse.emf.ecore.impl.BasicEObjectImpl.eSet(BasicEObjectImpl.java:651)
+at com.ibm.ws.sca.internal.ejb.util.ObjectCopier.copyContainment(ObjectCopier.java:210)
+at com.ibm.ws.sca.internal.ejb.util.ObjectCopier.copy(ObjectCopier.java:500)
+at com.ibm.ws.sca.internal.ejb.util.ObjectCopier$2.run(ObjectCopier.java:851)
+at java.security.AccessController.doPrivileged(AccessController.java:202)
+at com.ibm.ws.sca.internal.ejb.util.ObjectCopier.copyObject(ObjectCopier.java:847)
+at com.ibm.ws.sca.internal.binding.handler.SCAImportBindingHandler.copyMessage(SCAImportBindingHandler.java:716)
+**************
+
+
+CAUSE
+The SCA binding import and SCA binding export do not share the same interface. The interface names are the same, and the input and output attribute types are the same, but the attribute names of the input and output are different. This issue might cause the NullPointerException error. In WebSphere Process Server Versions 7.0.0 Fix Pack 4 and Fix Pack 5, the type check for business objects has been improved to prevent any issues, which is why the NullPointerException only happens in WebSphere Process Server Versions 7.0.0 Fix Pack 4 and Fix Pack 5.
+
+
+RESOLVING THE PROBLEM
+Update the interface to make the attribute names match. A best practice is to put a single interface file in a library and use that same interface for the two modules that depend on that library.

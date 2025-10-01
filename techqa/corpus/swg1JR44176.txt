@@ -1,0 +1,149 @@
+Title: IBM JR44176: REFRESH AND PUBLISH FROM IID TO PC TAKES A LONG TIME WHEN THERE ARE A LARGE NUMBER OF PA/TKS, SNAPSHOTS OR BPD/AISS - United States
+
+Text:
+  FIXES ARE AVAILABLE
+7.5.1.2: IBM Integration Designer V7.5.1 Fix Pack 2 for Linux [http://www-01.ibm.com/support/docview.wss?uid=swg24037018]
+7.5.1.2: IBM Integration Designer V7.5.1 Fix Pack 2 for Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24037036]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Users connecting from IID to Process Center may experience long
+   delay when there are a large number of PA/TKs, snapshots or
+   bpd/AISs , during Refresh and Publish from IID to PC.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  None avilable.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  Users connecting from IID to Process        *
+   *                  Center trying to Refresh or Publish.        *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Users connecting from IID to Process    *
+   *                      Center may experience long              *
+   *                      delay when there are a large number     *
+   *                      of PA/TKs, snapshots or                 *
+   *                      bpd/AISs , during Refresh and Publish   *
+   *                      from IID to PC.                         *
+   ****************************************************************
+   * RECOMMENDATION:  Ifix recommended.                           *
+   ****************************************************************
+   Publishing and refresh from IID to Process Center in 7.5.1.0
+   and 7.5.1.1 may take a long time.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  An ifix has been provided for 7.5.1.0 and 7.5.1.1 in Fix
+   Central.
+   
+   IMPORTANT:
+   1) This iFix need to be installed with Process Center
+   iFix JR44177 [http://www-01.ibm.com/support/docview.wss?uid=swg1JR44177].
+   
+   Install/Dependency information is available in the readme.txt
+   on FixCentral. When the user goes to the download files page in
+   FixCentral, the readme will be available with the fix package
+   as a separate download.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR44176
+   
+   
+ * REPORTED COMPONENT NAME
+   INTEGRATION DES
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9702
+   
+   
+ * REPORTED RELEASE
+   751
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-09-21
+   
+   
+ * CLOSED DATE
+   2012-12-07
+   
+   
+ * LAST MODIFIED DATE
+   2013-02-07
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   INTEGRATION DES
+   
+   
+ * FIXED COMPONENT ID
+   5725C9702
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R751 PSY
+   UP

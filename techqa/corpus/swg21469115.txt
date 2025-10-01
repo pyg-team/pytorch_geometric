@@ -1,0 +1,72 @@
+Title: IBM Poor performance at ruleset execution - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ How do I improve the time spent to execute a ruleset? 
+
+CAUSE
+Two processes account for the time spent for ruleset execution: 
+
+ * The time spent to parse the ruleset 
+ * The time spent to execute the rules
+
+
+Both depend on numerous factors, including the size of the ruleset, the type of rules that it contains, and the execution mode that you selected. 
+
+In Rule Execution Server, you have additional configuration settings to take into account. 
+DIAGNOSING THE PROBLEM
+In Rule Execution Server, activating the eXecution Unit (XU) trace can help identify how much time is spent parsing versus executing. If you use the engine API, activating timestamps has the same effect. 
+
+See WebSphere ILOG JRules BRMS V7.1 > Rule Execution Server > Configuring Rule Execution Server > Changing the default behavior of the execution stack > Changing the trace level [http://pic.dhe.ibm.com/infocenter/brjrules/v7r1/topic/com.ibm.websphere.ilog.jrules.doc/Content/Business_Rules/Documentation/_pubskel/JRules/ps_JRules_Global1006.html] or Decision Server V8.0.1 > Decision Server Rules > Reference > Rule Execution Server reference > Rule Execution Server logging [http://pic.dhe.ibm.com/infocenter/dmanager/v8r0m1/topic/com.ibm.wodm.dserver.rules.ref.res/topics/tpc_resref_logging_services.html] for more information about the XU trace. 
+
+ 
+
+With Rule Execution Server, you must take into account that the ruleset is cached and that subsequent executions are likely to be faster because, as long as the ruleset is not removed from the cache, time is spent only on executing the rules.
+
+
+RESOLVING THE PROBLEM
+First of all, the time required to parse the ruleset is directly related to the size of the ruleset and of its artifacts. Therefore, it is recommended, in this respect, to remove unused rules and BOM elements to reduce the size of the resulting ruleset. 
+
+Moreover, the execution mode can affect both the parsing and the execution time (in addition to the ruleset behavior). It is therefore important to understand what each execution algorithm entails and which one is best appropriate for your rules. 
+
+By default, the execution mode for all rule tasks is RetePlus. However, RetePlus is not always the most efficient execution mode, depending on the rules selected in each rule task. This mode yields a good parsing time but the execution time can be long. The sequential mode and Fastpath mode require compilation, therefore they increase the parsing time, but shorten the execution time. 
+
+You must carry out tests to identify which mode provides the best balance between execution and parsing time. 
+
+You must make that choice for each rule task because patterns can differ from one rule task to another. See WebSphere ILOG JRules BRMS V7.1 > Rule Studio > Optimizing execution > Choosing an execution mode > Deciding on an execution mode [http://pic.dhe.ibm.com/infocenter/brjrules/v7r1/index.jsp?topic=%2Fcom.ibm.websphere.ilog.jrules.doc%2FContent%2FBusiness_Rules%2FDocumentation%2F_pubskel%2FJRules%2Fps_JRules_Global779.html] or Decision Server V8.0.1 > Decision Server Rules > Running rule projects in Rule Designer > Optimizing execution > Choosing an execution mode > Deciding on an execution mode [http://pic.dhe.ibm.com/infocenter/dmanager/v8r0m1/topic/com.ibm.wodm.dserver.rules.designer.run/optimizing_topics/tpc_opt_choose_execmode_criteria.html] for more information. 
+
+ 
+
+When you use Rule Execution Server to execute potentially multiple rulesets in multithread mode, it is good to anticipate the number of requests per ruleset and understand how to make sure that the parsing time does not affect client requests. 
+
+For this purpose, the ruleset.shareable ruleset property is set to true by default so that the rulesets are shared among Rule Execution Server clients. 
+
+Also, ruleset parsing is set to asynchronous by default: asynchronous ruleset parsing means that a new version of a cached ruleset is parsed without incoming execution requests being affected because those new requests use the previous version of the ruleset until the new version is parsed and available. 
+
+You can change the parsing behavior as described in Rule Execution Server > Introducing Rule Execution Server > Rule Execution Server basics > Execution > Ruleset parsing and the ruleset cache [http://pic.dhe.ibm.com/infocenter/brjrules/v7r1/topic/com.ibm.websphere.ilog.jrules.doc/Content/Business_Rules/Documentation/_pubskel/JRules/ps_JRules_Global939.html] or Decision Server V8.0.1 > Decision Server Rules > Managing business rule execution in Rule Execution Server > Developing client applications Ruleset parsing and the ruleset cache [http://pic.dhe.ibm.com/infocenter/dmanager/v8r0m1/topic/com.ibm.wodm.dserver.rules.res.managing/topics/tpc_res_devclient_parsing_cache.html]. 
+
+That section also discusses the tuning of the ruleset timeout which determines how long a ruleset remains in the cache when it is not used by any engine. Namely, after a cached ruleset has been removed from the cache, that ruleset needs to be parsed again at the next client request. This feature is new in 7.1. 
+
+Finally, depending on the expected number of requests for each ruleset, it is important to assign a proper size the the pool to prevent rulesets uncaching (see technote Rule Execution Server engine pool sizing [http://www.ibm.com/support/docview.wss?uid=swg21400803]). 
+
+It might even be useful to create several XU pools, dedicated to specific rulesets, so that a large ruleset that is more rarely used (compared to others) gets garbage-collected because all engines in the pool are executing the more frequent rulesets. See our documentation at WebSphere ILOG JRules BRMS V7.1 > Rule Execution Server > Configuring Rule Execution Server Using connection pooling [http://publib.boulder.ibm.com/infocenter/brjrules/v7r1/topic/com.ibm.websphere.ilog.jrules.doc/Content/Business_Rules/Documentation/_pubskel/JRules/ps_JRules_Global1001.html] or Decision Server V8.0.1 > Decision Server Rules > Managing business rule execution in Rule Execution Server > Configuring a Rule Execution Server instance > Rule session tuning > Connection pools and performance [http://pic.dhe.ibm.com/infocenter/dmanager/v8r0m1/topic/com.ibm.wodm.dserver.rules.res.managing/topics/tpc_res_config_conx_pools.html] for more information. 
+
+For more information on improving execution performance, see our product documentation at WebSphere ILOG JRules BRMS V7.1 > Rule Studio > Optimizing execution [http://pic.dhe.ibm.com/infocenter/brjrules/v7r1/topic/com.ibm.websphere.ilog.jrules.doc/Content/Business_Rules/Documentation/_pubskel/JRules/ps_JRules_Global764.html] or Decision Server V8.0.1 > Decision Server Rules > Running rule projects in Rule Designer > Optimizing execution [http://pic.dhe.ibm.com/infocenter/dmanager/v8r0m1/topic/com.ibm.wodm.dserver.rules.designer.run/optimizing_topics/tpc_optimizing_execution.html].
+
+RELATED INFORMATION
+ Ruleset parsing performance while debugging [http://www.ibm.com/support/docview.wss?rs=0&uid=swg21444782]
+Minimizing the impact of ruleset parsing on RES [http://www.ibm.com/support/docview.wss?rs=0&uid=swg21427266]
+Parsing performance issue with sequential mode [http://www.ibm.com/support/docview.wss?uid=swg1RS00342]
+Optimizing execution in JRules 7.0 [http://publib.boulder.ibm.com/infocenter/brjrules/v7r0m3/topic/com.ibm.websphere.ilog.jrules.doc/Content/Business_Rules/Documentation/_pubskel/JRules/ps_JRules_Global947.html]
+Deciding on an execution mode in JRules 7.0 [http://publib.boulder.ibm.com/infocenter/brjrules/v7r0m3/topic/com.ibm.websphere.ilog.jrules.doc/Content/Business_Rules/Documentation/_pubskel/JRules/ps_JRules_Global964.html]
+Ruleflow execution performance [http://www.ibm.com/support/docview.wss?rs=0&uid=swg21400839]
+Ruleset parsing in the JRules 7.0 documentation [http://publib.boulder.ibm.com/infocenter/brjrules/v7r0m3/topic/com.ibm.websphere.ilog.jrules.doc/Content/Business_Rules/Documentation/_pubskel/JRules/ps_JRules_Global814.html]
+Proven Practices for Enhancing Performance [http://www.redbooks.ibm.com/abstracts/redp4775.html]
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Operational Decision Manager Platform Independent 8.5, 8.0, 7.5

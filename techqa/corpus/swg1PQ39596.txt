@@ -1,0 +1,171 @@
+Title: IBM PQ39596: MERVA USE & BRANCH FOR WINDOWS NT - DEVELOPMENT APAR - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  +                                                    +
+   For a List of changes, see PROBLEM SUMMARY section.
+   +                                                    +
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  +
+    UFM:
+     - Missing lines in printout of user rights
+   +
+    MQI_Attachment:
+     - Message exit stops MQSeries receiver channel
+     - MsgID from ESA is not copied properly into CorrelID
+   +
+    Correspondent_Maintenance:
+     - it's possible to perform 'Delete All', 'Delete selective' or
+       'Selected->Delete' even there is no Correspondent available
+     - Segmentation fault when adding BIC
+     - ESC Key on Literal Group behaves like NEW PB
+   +
+    Logging:
+     - Correct MFCL User Audit Log Entries by logging the
+       workstation host name
+     - Missing File and Line information in trace files
+   +
+    OS_Layer_NT:
+     - ENM5013i Check for MERVA Key failed, but prod. key installed
+     - Enable OS Layer trace on a per process base
+   +
+   
+    MFCL_API:
+     - Insufficient message for max. num. of clients reached
+   +
+    MCC_Programs:
+     - MERVA not in 'stopped' state after start failure
+   +
+    Installation_NT:
+    - Default config file extension is ATT not CFG (in comment line
+    - GA Installation Procedure does not check for DB2 UDB PE
+    - Bind ALL gets SQL -464 Warning MSG for 'ENMGetTRN' function
+   +
+    MERVA_Link:
+     - Conversation Security type SAME does not work
+   +
+    MERVA Control Process:
+     - ENMAMI should set stateofmrv after MERVA was stopped
+   +
+    USE:
+     - BKE Include Dialog, User Search -> empty entries in List Box
+     - MERVA Remote Card Reader Server, security enhancement
+   +
+    SWIFT_Link:
+     - Resynchronisation loops-after line connection is established
+   +
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  +                               +
+     Various MERVA Modules changed
+   +                               +
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PQ39596
+   
+   
+ * REPORTED COMPONENT NAME
+   MERVA NT USE
+   
+   
+ * REPORTED COMPONENT ID
+   5648B3001
+   
+   
+ * REPORTED RELEASE
+   410
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2000-07-06
+   
+   
+ * CLOSED DATE
+   2000-07-06
+   
+   
+ * LAST MODIFIED DATE
+   2002-01-23
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *     VARIOUS  MERVA    MODULES  CHANGED
+   
+   
+    
+   
+   
+
+Publications Referenced SH12633800 SH12638300 FIX INFORMATION
+ * FIXED COMPONENT NAME
+   MERVA NT USE
+   
+   
+ * FIXED COMPONENT ID
+   5648B3001
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R410 PSY UQ43280
+   UP00/08/01 N 1000

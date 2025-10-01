@@ -1,0 +1,43 @@
+Title: IBM Manually Remove Admin Center 6.2 - United States
+
+Text:
+Remove uninstall admin center 6.2 zz62 manual steps TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ How do you manually remove Admin Center? 
+
+CAUSE
+One possible cause for the removal of the Admin Center is the password was forgotten.
+
+ENVIRONMENT
+Windows/AIX
+
+RESOLVING THE PROBLEM
+Manual steps to removing the Admin Center 6.2.
+
+
+**** IMPORTANT: The Tivoli Storage Manager server 6.x must NOT be installed on the same system as the Admin Center in order to complete the steps below because it removes the entire Deployment Engine. Contact Tivoli Storage Manager support for instructions to remove Admin Center if the Tivoli Storage Manager server is installed on this same machine. 
+
+ 
+
+UNIX/Linux:
+1. Remove the Admin Center directory:
+rm -r -f /opt/ibm/ac
+2. Remove the Deployment Engine:
+/usr/ibm/common/acsi/bin/si_inst.sh -r -f
+or
+/home/<user>/acsi_<user>/bin/si_inst.sh
+
+Windows:
+1. From a DOS prompt, navigate to <install dir>\IBM\AC\bin
+2. Issue: WASService.exe -stop "IBMWAS61Service - TIP Service" 
+3. Issue: WASService.exe -remove " IBMWAS61Service - TIP Service"
+4. Remove Deployment Engine
+..Program Files\IBM\Common\acsi\bin\si_inst -r -f 
+5. Remove the Admin Center directory:
+<install dir>\IBM\AC
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ TSM

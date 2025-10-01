@@ -1,0 +1,19 @@
+Title: IBM Domino no longer ships with Web Server Plugin for WebSphere Application Server - United States
+
+Text:
+IIS; IIS; IIS; Domino 8; Domino 8; Domino 8; plug-in; plug-in; plug-in; plugin-cfg.xml; plugin-cfg.xml; web server plug-in; Domino 8; WAS plugin; WAS plug-in; WAS plugin; web server plug-in; web server plugin; iisWASPlugin_http.dll; iisWASPlugin_http.dll; iisWASPlugin; webserver; http; http; IIS; IIS plug-in; Microsoft IIS as front end; does not ship with; come with; packaged with; bundled TECHNOTE (FAQ)
+
+QUESTION
+Where can you find the Web Server Plugin for use with a Lotus® Domino® server?
+
+ANSWER
+Beginning with the Domino 8 server, the Web Server Plugins for IBM® WebSphere® Application server no longer ships with the Domino plugins file kit (the plugin-cfg.xml and iisWASPlugin_http.dll files).
+
+To obtain the latest releases of these 2 Web Server Plugin files for WebSphere Application server, please refer to the WebSphere Trials and demos download [http://www14.software.ibm.com/webapp/download/search.jsp?go=y&rs=wspwas&S_TACT=105AGX28&S_CMP=DLMAIN] site and the Latest fix packs for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg27009661].
+
+Please note that you will need to sign in with your universal IBM user ID to obtain these files. If you do not have a universal IBM user ID, you will need to first register with the website to create one.
+
+For additional information, see Configuring Domino and the WebSphere Plugin for Microsoft IIS 7.0, 7.5, or 8.5 [https://www-10.lotus.com/ldd/dominowiki.nsf/dx/Configuring_the_WebSphere_Plugin_for_IIS7].
+
+RELATED INFORMATION
+ A simplified Chinese translation is available [http://www.ibm.com/support/docview.wss?uid=swg21603516]

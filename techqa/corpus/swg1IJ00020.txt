@@ -1,0 +1,138 @@
+Title: IBM IJ00020: RUNNING REPORTS FAILS WHEN PLAN CONTAINS JOBS ON NON-ACTIVE WORKSTATIONS. - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  We have TWSv9.2 BKM on Solaris with DWC on a linux.
+   When i create a forecast plan on BKM an try to run a report on
+   it, it
+   is timing out and failing with below error, it used to work fine
+   previously.
+   
+   "
+   AWSUI2007E The following Tivoli Workload Scheduler engine error
+   occurred during the running of the report:
+   AWSJCO005E WebSphere Application Server has given the following
+   error:
+   CORBA NO_RESPONSE 0x4942fb01 Maybe; nested exception is:
+   org.omg.CORBA.NO_RESPONSE: Request 3818996 timed out vmcid: IBM
+   minor
+   code: B01 completed: Maybe."
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Had user remove two jobs that were defined to run on non-active
+   workstations (that were not in the current plan)  Once this was
+   done the forecast plan reports ran correctly.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  see apar description
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This apar will be fixed    9.2.0-TIV-TWS-FP0003
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IJ00020
+   
+   
+ * REPORTED COMPONENT NAME
+   TIV WKLD SCHDL
+   
+   
+ * REPORTED COMPONENT ID
+   5698WKB92
+   
+   
+ * REPORTED RELEASE
+   9L2
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-09-14
+   
+   
+ * CLOSED DATE
+   2017-11-09
+   
+   
+ * LAST MODIFIED DATE
+   2017-11-09
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TIV WKLD SCHDL
+   
+   
+ * FIXED COMPONENT ID
+   5698WKB92
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R9L2 PSY
+   UP

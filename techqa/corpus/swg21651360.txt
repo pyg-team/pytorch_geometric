@@ -1,0 +1,96 @@
+Title: IBM WARNING CRIMA1137W - The following packages do not support the 64-bit version of IBM Installation Manager - United States
+
+Text:
+RAD; IM; IM64; IM32; 64bit; 64-bit; 64 bit; 32bit; 32 bit; 32-bit; Installation Manager; IIM; WARNING; CRIMA1137W; re-install manually; manual; reinstall; re-install TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When installing IBM Rational Application Developer for WebSphere Software (RAD) 8.0.4 64-bit with IBM Installation Manager 1.7 64-bit on Windows 7 64-bit, a WARNING message indicated that the 64-bit version of IBM Installation Manager is not supported. 
+
+SYMPTOM
+These messages were from the IBM Installation Manager(IM) logs when installing RAD 8.0.4 64-bit with IM 1.7 64-bit:
+
+64 WARNING CRIMA1137W 03:16.60 The following packages do not support the
+64-bit version of Installation Manager that you are using: IBM®
+Rational® Application Developer for WebSphere® Software version 8.0.4.
+If you continue, you might have issues with installation and deployment.
+For information about 64-bit mode support for a package, see the package
+documentation. The 64-bit version of Installation Manager checks each
+package for 64-bit support. If a package does not support the 64-bit
+version, you receive a warning. Use a 32-bit version of Installation
+Manager to install the package.
+
+65 ERROR 03:18.39 This Feature does not support 64 bit architecture
+66 ERROR 03:18.39 This Feature does not support 64 bit architecture
+
+
+CAUSE
+In general, the "64 WARNING CRIMA1137W ... " will depend on each IBM package/product being installed. 
+
+If the installation code has dependencies on the 32 bit IM (loading 32 bit shared objects, accessing a specific 32 bit program on the computer, ...) then the package will have a problem installing, updating or uninstalling. A package that displays this warning message has not declared it's support for the IM 64.
+
+
+ENVIRONMENT
+Windows 7 64-bit
+
+
+
+RESOLVING THE PROBLEM
+The message indicates you should use a 32-bit version of IBM Installation Manager (IM). 
+
+The 64-bit version of Installation Manager checks each package for 64-bit support. 
+
+If a package does not support the 64-bit version, you receive a warning. 
+
+Use a 32-bit version of Installation Manager to install the package. Consult the product documentation and system requirements if this is necessary.
+
+
+The warning can be ignored for RAD 8.0.4 and 8.5.1: 
+
+There are no known issues installing RAD 8.0.4 or 8.5.1 with IM 64-bit. 
+
+A warning is now shown to warn you of the the potential risk. 
+
+Note: When RAD 8.0.4 install images became available on IBM PassPort Advantage, IBM Installation Manager (IM) was only available only as 32-bit; hence, the IM 1.4.4+ system requirements. IM became available in a 64-bit edition starting with IM 1.6.2; therefore, RAD 8.0.4 at that time was not being tested with 64-bit IM. 
+
+
+If an IBM Product is not supported with IM64:
+
+Since the IM32 will install all of these packages and has been tested by IBM, the most conservative approach is to reinstall the latest version of the IM32 following the instructions here:
+
+IM 1.6: Reinstalling Installation Manager in wizard mode and Manually reinstalling Installation Manager [http://pic.dhe.ibm.com/infocenter/install/v1r6/topic/com.ibm.cic.agent.ui.doc/topics/t_manually_installing.html]
+or
+IM 1.7: Reinstalling Installation Manager in wizard mode and Manually reinstalling Installation Manager [http://pic.dhe.ibm.com/infocenter/install/v1r7/topic/com.ibm.cic.agent.ui.doc/topics/t_manually_installing.html]
+
+The specific IBM product/package documentation, system requirements and IBM {Product} Support Team should be consulted, if there are any problems, concerns or assistance is needed.
+
+
+WebSphere Application Servers (WAS) Installations and IM 64-bit: 
+
+Note: The WAS server installs are separate from the install of RAD itself. Consult IBM WebSphere Support if there are any concerns or questions with a WAS installation or any of the above WAS specific details.
+
+Since RAD 8.+ ship with WAS servers, it is important to know that the WAS 7.0, 8.0 and 8.5 Information Centers , state:
+
+"..
+You can use 64-bit Installation Manager Version 1.6 for the following installations only:
+- WebSphere Application Server Version {v.r.m.f} and later
+Using 64-bit Installation Manager Version 1.6 for anything else can result in issues with installation and deployment.
+..."
+
+Installation Manager 1.6 (64 bit) is tested and supported to install the following products: 
+
+ * WebSphere Application Server V8.0.0.5 or later 
+ * WebSphere Application Server V8.5.0.1 or later 
+ * WebSphere Application Server V7.0.0.25 Feature Packs (FeP): CEA 1.0.0.13, XML 1.0.0.13, and
+   SCA 1.0.1.15, OSGI/JPA feature pack 1.0.0.9
+   
+
+
+WAS Info Center (IC) references:  * WAS 8.0 IC: Installing and uninstalling the product on distributed operating systems [http://pic.dhe.ibm.com/infocenter/wasinfo/v8r0/index.jsp?topic=%2Fcom.ibm.websphere.installation.nd.doc%2Finfo%2Fae%2Fae%2Ftins_installation_dist.html] 
+ * WAS 8.5 IC: Installing and uninstalling the product on distributed operating systems [http://pic.dhe.ibm.com/infocenter/wasinfo/v8r5/index.jsp?topic=%2Fcom.ibm.websphere.installation.base.doc%2Fae%2Ftins_installation_dist.html] 
+ * WAS 7.0 IC - SCA FeP: Installing and uninstalling the feature pack on distributed operating systems [http://pic.dhe.ibm.com/infocenter/wasinfo/v7r0/index.jsp?topic=%2Fcom.ibm.websphere.installation.soafepnd.doc%2Finfo%2Fae%2Fae%2Ftins_installfp_dist.html] 
+ * WAS 7.0 IC - CEA FeP: Installing and uninstalling the feature pack on distributed operating systems [http://pic.dhe.ibm.com/infocenter/wasinfo/v7r0/index.jsp?topic=%2Fcom.ibm.websphere.ceafep.multiplatform.doc%2Finfo%2Fae%2Fae%2Ftins_installfp_dist.html] 
+ * WAS 7.0 IC - OSGI/JPA FeP: Installing and uninstalling the feature pack on distributed operating systems [http://pic.dhe.ibm.com/infocenter/wasinfo/v7r0/index.jsp?topic=%2Fcom.ibm.websphere.jpafep.multiplatform.doc%2Finfo%2Fae%2Fae%2Ftins_installfp_dist.html] 
+ * WAS 7.0 IC - XML FeP: Installing and uninstalling the feature pack on distributed operating systems
+
+RELATED INFORMATION
+#Re-installing IM without removing IBM installed product [http://www.ibm.com/support/docview.wss?uid=swg21290142]

@@ -1,0 +1,27 @@
+Title: IBM MQJMS1068 error occurs when trying to create an XA connection from WebSphere Application Server to MQ - United States
+
+Text:
+MQPRB MQPRB3189 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When attempting to create an XA connection to WebSphere® MQ from either WebSphere Application Server Version 7.x or Version 8.x with a connection factory that uses the Client Channel Definition Table (CCDT), the following error appears in the application server's SystemOut.log file: 
+
+ J2CA0056I: The Connection Manager received a fatal connection error from the Resource Adaptor for resource <connection factory>. The exception which was received is javax.jms.JMSException: MQJMS1068: failed to obtain XAResource 
+
+
+
+CAUSE
+The reason why it is not possible to use the CCDT with XA connections is related to transaction recovery. 
+
+ If the application server stops while there are still active transactions, there is no way with the current implementation to ensure that it will connect to the same queue manager when it restarts. This can lead to in-doubt transactions being left dangling, and never resolved. 
+
+ It is hoped that this restriction will be resolved in future releases of WebSphere Application Server and WebSphere MQ.
+
+RESOLVING THE PROBLEM
+The use of the Client Channel Definition Table (CCDT) with XA connections is not supported.
+
+ 
+
+Cross reference information Segment Product Component Platform Version Edition Application Servers WebSphere Application Server Java Message Service (JMS) Application Servers Runtimes for Java Technology Java SDK 
+PRODUCT ALIAS/SYNONYM
+ WMQ WASAS WAS

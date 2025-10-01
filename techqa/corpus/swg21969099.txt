@@ -1,0 +1,78 @@
+Title: IBM Understanding CORBA Debug logging - United States
+
+Text:
+InvalidParameter; CORBA; unable to get events; ORB; exception TECHNOTE (FAQ)
+
+QUESTION
+ ORBDebug : How can you read the ORB debug logs? 
+
+CAUSE
+Normal debug logging is usually not enough to understand the cause of problems with IBM CORBA probes.
+
+ANSWER
+ 
+
+The ORB Debug logging contains the detail of the ORB interaction between the client and server. 
+
+One simple way to check how the communication has gone is to search for the 'Reply Status' messages, and see where there was a problem: 
+
+e.g.
+grep 'Reply Status:' CORBA_trace.log
+Reply Status: NO_EXCEPTION
+Reply Status: NO_EXCEPTION
+Reply Status: NO_EXCEPTION
+Reply Status: NO_EXCEPTION
+Reply Status: NO_EXCEPTION
+Reply Status: NO_EXCEPTION
+Reply Status: NO_EXCEPTION
+Reply Status: NO_EXCEPTION
+Reply Status: NO_EXCEPTION
+Reply Status: NO_EXCEPTION
+Reply Status: USER_EXCEPTION
+
+
+Looking at the file in detail, where the 'Reply Status' errored, the cause of the problem is seen more clearly:
+
+
+IN COMING:
+Reply Message
+Date: <DATA>
+Thread Info: RT=0:P=969705:O=0:TCPTransportConnection[addr=<IPADDRESS>,port=<remote-port>,local=<local-port>]
+Local Port: <local-port> (0x8040)
+Local IP: <LOCAL-IP>
+Remote Port: <remote-port> (0x797C)
+Remote IP: <IPADDRESS>
+GIOP Version: 1.2
+Byte order: big endian
+Fragment to follow: No
+Message size: 495 (0x1EF)
+--
+Request ID: 26
+Service Context: length = 0 (0x0)
+Reply Status: USER_EXCEPTION
+
+0000: 47494F50 01020001 000001EF 0000001A GIOP............
+0010: 00000001 00000000 0000003D 49444C3A ...........=IDL:
+0020: 33677070 7361352E 6F72672F 4D616E61 3gppsa5.org/Mana
+0030: 67656447 656E6572 69634952 50537973 gedGenericIRPSys
+0040: 74656D2F 496E7661 6C696450 6172616D tem/InvalidParam
+0050: 65746572 3A312E30 000FAF64 0000019B eter:1.0...d....
+0060: 75736572 4964203A 20494F52 3A303062 userId : IOR:00b
+
+
+In this example the userid given in the probe, was either incorrect, incorrectly configured, or required by the server. The server logging will contain more details, and the server administration will be able to provide the correct settings for the probe to use.
+
+Note:
+The newer IBM CORBA have the following properties available [use -dumpprops to check availability]: 
+ORBDebug 
+Use this property to specify whether the probe writes ORB messages to a debug log file. This property takes the following values:
+false: The probe does not write ORB messages to a debug file.
+true: The probe writes ORB messages to a debug file.
+The default is false.
+
+ORBDebugFile
+Use this property to specify the location of the ORB debug file.
+The default is $OMNIHOME/log/orb.debug.
+
+RELATED INFORMATION
+ IBM ORB debug logging [http://www-01.ibm.com/support/docview.wss?uid=swg21642757]

@@ -1,0 +1,59 @@
+Title: IBM Download WebSphere eXtreme Scale Version 8.5 - United States
+
+Text:
+PAODownloadDocument DOWNLOADABLE FILES
+
+ABSTRACT
+ This document describes how to download and assemble IBM WebSphere eXtreme Scale Version 8.5 using the Passport Advantage® Online website. 
+
+DOWNLOAD DESCRIPTION
+IBM WebSphere eXtreme Scale is an elastic, scalable in-memory data grid that provides a key-addressable store of values or graphs. This product supports a processing unit state store for applications written in Java. You can replicate the data stored in the grid depending on availability requirements, and you can achieve out-of-the-box database integration. 
+
+WebSphere eXtreme Scale can be integrated with existing WebSphere Application Server and WebSphere Application Server, Network Deployment installations or you can install the product separately, supporting both Java Platform, Standard Edition and Java Platform, Enterprise Edition application environments.
+
+More information
+To access a wide variety of technical resources for this product, see the IBM WebSphere eXtreme Scale Version 8.5 Information Center [http://publib.boulder.ibm.com/infocenter/wxsinfo/v8r5/index.jsp] [http://publib.boulder.ibm.com/infocenter/wxsinfo/v7r0/index.jsp]. 
+
+PREREQUISITES
+Space requirements 
+
+ * Approximately 1.1 GB of disk space to store the required downloadable parts 
+ * Approximately 1.1 GB of disk space to unpack the parts 
+ * Approximately 400 MB of disk space to install the product 
+ * Approximately 100 MB of space in the tmp directory to run the installation program
+   
+   For more detailed information, see the WebSphere eXtreme Scale system requirements [http://www-01.ibm.com/support/docview.wss?uid=swg27019121] document.
+
+
+WebSphere Application Server requirements  * WebSphere Application Server Version 6.1.0.41 or later 
+ * WebSphere Application Server Version 7.0.0.21 or later 
+ * WebSphere Application Server Version 8.0.0.2 or later
+
+URL LANGUAGE SIZE(Bytes) Detailed system requirements [http://www-01.ibm.com/support/docview.wss?uid=swg27019121] English 6215 
+INSTALLATION INSTRUCTIONS
+Downloading and assembling the product
+1. Navigate your browser to the Find Downloads and Media [http://www-112.ibm.com/software/howtobuy/passportadvantage/paocustomer/sdma/SDMA?PO=DOWNLOAD_FIND_BY_PART_NUMBER] Web page on the IBM Passport Advantage Online Web site.
+2. Select the Find by part number search option under Download finder options.
+3. Search for each downloadable image by part number.
+4. Download all of the required parts.
+5. Install IBM Installation Manager [http://www-01.ibm.com/support/docview.wss?uid=swg24031300].
+6. Use Installation Manager to install the product from the downloadable product repositories. 
+Downloadable parts 
+To install WebSphere eXtreme Scale Version 8.5 on distributed operating systems, download the following parts:
+
+
+
+Part Description File name (part number.extension) Download 1 of 2: WebSphere eXtreme Scale Version 8.5 Quick Start Guide CI6E2ML.zip Download 2 of 2: WebSphere eXtreme Scale Version 8.5 installation image. CI6E3ML.zip 
+About the installation image: 
+When you download the WebSphere eXtreme Scale Version 8.5 installation image, the following product offerings are included: 
+
+Description File name (part number.extension) WebSphere eXtreme Scale in a stand-alone environment image_xs.8500.zip WebSphere eXtreme Scale for WebSphere Application Server Version 6 image_xs_was6.8500.zip WebSphere eXtreme Scale for WebSphere Application Server Version 7 image_xs_was7.8500.zip WebSphere eXtreme Scale for WebSphere Application Server Version 8 image_xs_was8.8500.zip URL LANGUAGE SIZE(Bytes) Quick Start Guide [ftp://public.dhe.ibm.com/software/webserver/appserv/library/v80/85_qsg.pdf] English 184320 
+DOWNLOAD PACKAGE
+http://www.ibm.com/software/howtobuy/passportadvantage/pao_customers.htm [http://www.ibm.com/software/howtobuy/passportadvantage/pao_customers.htm] 
+
+
+
+
+TECHNICAL SUPPORT
+ Passport Advantage Online support at http://www.ibm.com/software/howtobuy/passportadvantage/paocustomer/docs/en_US/ecare.html [http://www.ibm.com/software/howtobuy/passportadvantage/paocustomer/docs/en_US/ecare.html] 
+WebSphere Portal Server support at http://www.ibm.com/software/genservers/portal/support [http://www.ibm.com/software/genservers/portal/support]

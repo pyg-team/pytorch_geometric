@@ -1,0 +1,60 @@
+Title: IBM The IBM Business Process Manager (BPM) BPMMigrateCluster command fails to run with the Oracle RAC database - United States
+
+Text:
+Migration; BPMMigrateCluster; BPCNotConfiguredException; Oracle RAC; URL TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ You attempt to migrate the runtime from WebSphere Process Server (WPS) to IBM Business Process Manager with the Oracle RAC database. However, the process fails when the BPMMigrateCluster command attempts to migrate the App cluster application and the configuration information. 
+
+SYMPTOM
+You can see a BPCNotConfiguredException in the BPMMigrateCluster log file.
+
+
+CAUSE
+The cause of the issue is that the database URL, which is used to connect to the Business Process Choreographer database, is an Oracle RAC database URL and not a classic Oracle database URL.
+
+RESOLVING THE PROBLEM
+To resolve this issue, before running the BPMMigrateCluster command, complete the following steps: 
+
+ 1. Find the following resource file in WebSphere Process Server deployment manager snapshot:
+    WPS_DMGR_Snapshot/profiles/profile_name/config/cells/cell_name/clusters/App_cluster_name/resources.xml 
+    Where profile_name, cell_name, andApp_cluster_nameare specific to your environment.
+    
+    
+ 2. In the resources.xml file, find the following configuration data for connecting to the BPEDB database:
+    <factories xmi:type="resources.jdbc:DataSource" xmi:id="DataSource_1241776829244"
+    name="BPEDB" jndiName="jdbc/BPEDB" description="New JDBC Datasource"
+    providerType="Oracle JDBC Driver (XA)" authMechanismPreference="BASIC_PASSWORD"
+    authDataAlias="NodeName/BPEDB" manageCachedHandles="false"
+    logMissingTransactionContext="true" xaRecoveryAuthAlias="NodeName/BPEDB"
+    relationalResourceAdapter="builtin_rra" statementCacheSize="10"
+    datasourceHelperClassname="com.ibm.websphere.rsadapter.Oracle10gDataStoreHelper">
+    <propertySet xmi:id="J2EEResourcePropertySet_1241776829245">
+    ...
+    ...
+    <resourceProperties xmi:id="J2EEResourceProperty_1241776829268"
+    name="URL" type="java.lang.String" value="
+    jdbc:oracle:thin:@(DESCRIPTION=(ENABLE=BROKEN)(ADDRESS_LIST=(ADDRESS=
+    (PROTOCOL=TCP)(HOST=hostName)(PORT=1521))(ADDRESS=(PROTOCOL=TCP)
+    (HOST=hostName)(PORT=1526)))(CONNECT_DATA=(SERVICE_NAME=DatabaseName)))"
+    description="This is a required property. The URL indicating the database
+    from which the Data Source will obtain connections, such as
+    'jdbc:oracle:thin:@localhost:1521:sample' for thin driver and
+    'jdbc:oracle:oci8:@sample' for thick driver." required="true"/>
+    </propertySet>
+    ...
+    ...
+    </factories>
+    
+    
+ 3. Replace the Oracle RAC database URL with a short one. For example:
+    jdbc:oracle:thin:@hostname:1521:DatabaseName 
+    
+    
+ 4. Save the resources.xml file.
+
+
+After you run the BPMMigrateCluster command successfully, replace the URL with the original URL.  
+
+PRODUCT ALIAS/SYNONYM
+ BPM

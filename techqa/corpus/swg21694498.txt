@@ -1,0 +1,28 @@
+Title: IBM Object Server - WebGUI Restriction Filters - United States
+
+Text:
+filter fails; AEL filter; event restriction; restrict users TECHNOTE (FAQ)
+
+QUESTION
+ Restriction Filters created in the ObjectServer and applied to a Group have no effect on WebGUI users who are members of that group. 
+
+CAUSE
+The group does not exist in WebGUI.
+
+ANSWER
+Using the group ObjRFTest as an example, proceed as follows:
+
+1) In OMNIbus, create your Restriction Filter - eg Severity = > 2
+2) Create a group, ObjRFTest in WebGUI and assign it ncw_* roles
+3) Populate it with your user, TestUser1 
+4) In the ObjectServer, once WebgUI synchronisation has occurred, apply 
+the Restriction Filter to the group ObjRFTest
+
+You should now be able to see the filter working when TestUser1 next logs into WebGUI and 
+opens an Event List.
+
+You can also verify that the filter is in place:
+
+Click Settings > User Preferences for Tivoli Netcool/OMNIbus Web GUI. 
+Then, select TestUser1 and click Modify - the filter will be displayed 
+in the User filter field.

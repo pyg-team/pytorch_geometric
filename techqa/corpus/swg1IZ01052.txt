@@ -1,0 +1,140 @@
+Title: IBM IZ01052: JSC HANGS WHEN TRACE LOGS ARE ACTIVATED AND MULTIPLE REFRESHES A RE EXECUTED - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  JSC hangs with a blank screen intermittently when the "All
+   Schedules Job" view is opened either for the current or an
+   alternate plan.  The problem only occurs when the test fix for
+   APAR iy95687 is applied and the JSC trace log
+   (com.tivoli.logging=true) is enabled.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Disable JSC trace log (com.tivoli.logging=false).
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  See apar description. This problem
+   can randomly occurs when
+   (com.tivoli.logging=true) is enabled.The apar named into
+   apar description did not have any relationship with this
+   apar.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This apar has been created to mitigate
+   this behaviour. More accurate trace path has been
+   set into JSC code to better traces some path and avoid
+   tracing on other path that are not relevant for problem
+   determination. In this way we implement some mitigation
+   of this hang that can occurs when JSC traces are on and that
+   can occurs due to multiple threads that on JSC will traces
+   at same time on the same file.
+   This apar will be fixed into 8.3.0-TIV-TWSJSC-FP0004.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  Disable JSC trace.
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ01052
+   
+   
+ * REPORTED COMPONENT NAME
+   JOB SCHEDLR CON
+   
+   
+ * REPORTED COMPONENT ID
+   TIVOJSC83
+   
+   
+ * REPORTED RELEASE
+   D83
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2007-07-04
+   
+   
+ * CLOSED DATE
+   2007-07-13
+   
+   
+ * LAST MODIFIED DATE
+   2008-01-14
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   JOB SCHEDLR CON
+   
+   
+ * FIXED COMPONENT ID
+   TIVOJSC83
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * RD83 PSY U815449
+   UP08/01/14 I 1000

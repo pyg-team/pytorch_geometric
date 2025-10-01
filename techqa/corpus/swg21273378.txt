@@ -1,0 +1,166 @@
+Title: IBM How to modify font and color properties of unread/read documents in Notes 8.x - United States
+
+Text:
+modify; color of Unread documents; color; unread documents; unread; Notes 8; font; color; APAR LO29431; APAR LO31498; 8 releases; 8; mail files; mailfiles; mail template; template; unread documents; black; red; rgb; Rows Unread; View properties; Folder properties; default is red; default; change font and color; change font; change color; You want to change the color of read and unread documents in your mail file design; How to change the color of read and unread TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+ 
+
+In Lotus Notes 8 releases, you notice that the mail files using the Notes 8 mail template display unread documents in black. Custom databases and mail files using the Notes 6 or 7 mail template display unread documents as specified in the "Rows Unread" setting of the View/Folder properties. The default is red for templates that ship with Notes/Lotus Domino. 
+
+
+
+CAUSE
+Notes 8 Standard Configuration contains a code file (Notes.CSS) to determine the color of unread documents in a mail file based on the Notes 8 mail template. This code file does not read from the View/Folder Property Rows setting found on the Style tab.
+
+
+
+RESOLVING THE PROBLEM
+ 
+
+Starting in Notes 8.5.1, you can use red text to indicate unread documents. 
+
+Fix details: SPR# JSTN7EEJXL [http://www.lotus.com/ldd/r5fixlist.nsf/SPR/JSTN7EEJXL] [http://www.lotus.com/ldd/r5fixlist.nsf/SPR/JCOL6ERQDB]. 
+
+Refer to the Upgrade Central [http://www.ibm.com/software/lotus/support/upgradecentral/index.html] site for details on upgrading Notes/Domino. 
+
+
+
+
+Workaround Notes 8.0.2 and later 
+Starting in Notes 8.0.2, the Notes.CSS file is contained within a JAR file. Modifying the Notes.CSS file requires extracting the host .jar file, updating the Notes.CSS file as described above, and then recreating the JAR file using the Java™ Development Kit (JDK). An alternative to using the JDK would be to use a utility which has the ability to access the JAR contents directly. Note: After revising the JAR file contents it is necessary to delete or rename the file platform.xml found in the following directory:  * 
+ * 
+
+
+The .jar file and location are in:  * 
+ * 
+
+
+Note: The .jar file name will change based on the version number. 
+
+
+Example: How to use JDK to extract the Notes.CSS from the JAR file, and then rebuild the JAR file: The relative command to extract the contents of a jar file is: jar xf jar-file 
+The command to rebuild a JAR file is: jar uf jar-file input-file(s)
+
+Using JDK, the following are the steps you would use to update the Notes.CSS file: 
+
+1. Exit Notes.
+2. Navigate to the directory containing the JAR file: <program dir>\framework\shared\eclipse\plugins
+3. Issue the command to extract the JAR file: 
+
+ * 
+ * 
+
+
+4. Open the Notes.CSS file. 
+5. Modify the Notes.CSS contents as desired, using the information provided in this document (above). 
+6. Save the Notes.CSS file, and exit (the text editor). 
+7. Issue the command to rebuild the JAR file with the revised Notes.CSS:  * 
+ * 
+
+
+8. After revising the JAR file contents it is necessary to delete or rename the file platform.xml found in the following directory: <Notes data>\workspace\.config\org.eclipse.update\ Note: Remember the name is release dependent, so the JAR file you are looking for will be different in later releases and Cumulative Client Hotfixes (CCHs).
+
+Example: How to use the WinRAR utility to access the Notes.CSS file within the JAR file: 
+
+1. Exit Notes.
+2. Start the WinRAR utility.
+3. Navigate to the directory containing the JAR file: <program dir>\framework\shared\eclipse\plugins
+4. Open the com.ibm.notes.branding_8.0.2.20080809-0430.jar file. 
+5. Open the Themes subdirectory (within the JAR file).
+6. Open the Notes.CSS file.
+7. Modify the Notes.CSS contents as desired, using the information provided in this document (above).
+8. Save the file, and exit (the text editor).
+9. Select "Yes" when prompted: "File 'notes.css' was modified. Do you wish to update the archive?"
+10. Exit the WinRAR utility: File > Exit.
+11. After revising the JAR file contents it is necessary to delete or rename the file platform.xml found in the following directory: <Notes data>\workspace\.config\org.eclipse.update\ 
+
+Note: Remember the name is release dependent, so the JAR file you are looking for will be different in later releases and Cumulative Client Hotfixes (CCHs).
+
+
+Sample JAR files
+Notes Support has provided two JAR files with the unread document colors modified to red and blue. These files have not been reviewed by Quality Engineering. 
+
+Note: These were prepared for Notes release 8.0.2, they may not function as expected in later releases. If using one of the following files be sure to exit Notes, rename the existing JAR file, delete the platform.xml, and then finally copy the JAR file into the relative directory. See example above for details on directories for the JAR and XML file.
+
+-- The following JAR file contains a Notes.CSS file which displays unread documents in the color red, in bold:
+
+com.ibm.notes.branding_8.0.2.20080809-0430.jar [/support/docview.wss?uid=swg21273378&aid=2] [/support/docview.wss?uid=swg21273378&aid=1]
+
+-- The following JAR file contains a Notes.CSS file which displays unread documents in the color blue, in bold:
+
+com.ibm.notes.branding_8.0.2.20080809-0430.jar [/support/docview.wss?uid=swg21273378&aid=4] [/support/docview.wss?uid=swg21273378&aid=3]
+
+
+
+
+Workaround for Notes 8.0 and 8.0.1 
+To change the color of read and unread documents, you must manually modify the Notes.CSS file that stores these settings. You must also be sure that the Preferences Theme setting (File --> Preferences --> Windows and Themes --> Theme) is set to "Notes 8 Theme". Also, Notes should be exited before editing the file. 
+
+To locate the Notes.CSS file, it's best to use the operating system search feature since the file location can vary depending on when and where Notes was installed. A typical location for this file is in a directory structure similar to the following: 
+
+C:\Programfiles\Lotus\notes\framework\shared\eclipse\plugins\com.ibm.notes.branding_3.0.0.20070803-1143\themes 
+
+Note: The color parameters for the color fields in the Notes.CSS file can be specified in three different ways: 
+
+-- Using a predefined constant such as black, white, red, blue. 
+
+-- Using a Red-Green-Blue color coefficient passed within the RGBb function which has value ranges of 0-255 for the red, green, and blue parameter. For example, red is rgb(255,0. 
+
+-- Using an HTML color code coefficient. For example, red is #FF0000. 
+************************************************************************ 
+The following section of the Notes.CSS file pertains to unread font detail: 
+
+/* - This sets the style for messages that have been marked "unread" 
+*/ mailtable>row>unread { 
+color: black; 
+font-family: Tahoma, Times, Helvetica; 
+font-size: x-small; 
+font-style: normal; 
+font-weight: bold; 
+
+In order to have an unread font appearance similar to earlier Notes mail file designs, change the color to red and the font-weight to normal. 
+************************************************************************ 
+The following sections of the Notes.CSS file pertain to the read font detail: 
+
+The read font detail is specific to the noted views/folders. 
+
+mailtable. Inbox>row>read { 
+color: #646464; 
+font-style: normal; 
+} 
+
+mailtable. Drafts>row>read { 
+color: #646464; 
+font-style: normal; 
+} 
+
+mailtable. Sent>row>read { 
+color: #646464; 
+font-style: normal; 
+} 
+
+mailtable. FollowUp>row>read { 
+color: #646464; 
+font-style: normal; 
+} 
+
+mailtable. AllDocuments>row>read { 
+color: #646464; 
+font-style: normal; 
+} 
+
+mailtable. Trash>row>read { 
+color: #646464; 
+font-style: normal; 
+} 
+
+mailtable. Junk>row>read { 
+color: #646464; 
+font-style: normal; 
+
+
+ * 
+ *  Cross reference information Segment Product Component Platform Version Edition Messaging Applications IBM Domino Designer Not Applicable Windows 8.5, 8.0 All Editions 
+ * 
+ *

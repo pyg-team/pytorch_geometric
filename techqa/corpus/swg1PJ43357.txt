@@ -1,0 +1,242 @@
+Title: IBM PJ43357: ICM_OPERATIONS::GETTASKPROPERTYVALUES RETURNS DATETIME VALUES IN"MM/DD/YYYY HH:MM:SS" INSTEAD OF "YYYY-MM-DDTHH:MM:SSZ" FORMAT - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+ DIRECT LINKS TO FIXES
+5.2.1.2-ICM-WIN-IF001 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FCase+Manager&fixids=5.2.1.2-ICM-WIN-IF001&source=SAR]
+5.2.1.2-ICM-LINUX-IF001 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FCase+Manager&fixids=5.2.1.2-ICM-LINUX-IF001&source=SAR]
+5.2.1.2-ICM-AIX-IF001 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FCase+Manager&fixids=5.2.1.2-ICM-AIX-IF001&source=SAR]
+5.2.1.2-ICM-ZLINUX-IF001 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FCase+Manager&fixids=5.2.1.2-ICM-ZLINUX-IF001&source=SAR]
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  ICM_Operations::getTaskPropertyValues returns DateTime values in
+   a PE-API-specific "MM/dd/yyyy HH:mm:ss" (e.g.
+   "06/01/201500:00:00") format.  This format is considered invalid
+   when passed as an element of the string[] customPropertyValues
+   parameter for the
+   ICM_Operations::createCaseUsingSpecifiedCaseType operation.
+   
+   The operation getTaskPropertyValues should instead return
+   DateTime values consistent with the CE-API-specific/UTC
+   "yyyy-MM-ddTHH:mm:ssZ" (e.g. "2015-06-01T00:00:00Z") format (as
+   ICM_Operations::getCasePropertyValues currently returns in this
+   format).
+   
+   Task Properties are CE properties, not PE workflow properties,
+   so Task Property values that are Dates should use the same
+   formatting as for Case Property values.
+   
+   This means that the IBM Knowledge Center topics (listed below)
+   for "setTaskPropertyValue operation" will need to be changed.
+   
+   
+   http://www-01.ibm.com/support/knowledgecenter/SSCTJ4_5.2.1/com.i
+   bm.casemgmt.help.doc/acmpdh47.htm?lang=en [http://www-01.ibm.com/support/knowledgecenter/SSCTJ4_5.2.1/com.ibm.casemgmt.help.doc/acmpdh47.htm?lang=en]
+   
+   - and for "createDiscretionaryTaskInCurrentCase WithProperties
+   operation" @
+   
+   
+   http://www-01.ibm.com/support/knowledgecenter/SSCTJ4_5.2.1/com.i
+   bm.casemgmt.help.doc/acmpdh43.htm?lang=en [http://www-01.ibm.com/support/knowledgecenter/SSCTJ4_5.2.1/com.ibm.casemgmt.help.doc/acmpdh43.htm?lang=en]
+   
+   Both currently state "Time values are expressed in the form
+   MM/dd/yyyy HH:mm:ss" - Using this format will cause
+   "java.lang.Exception: Invalid date type format" errors from the
+   Workflow System Component Adaptor layer when used in operations
+   such as ICM_Operations::createCaseUsingSpecifiedCaseType, as
+   seen in the following StackTrace:
+   
+   ===
+   2015/06/02 10:55:27.986-0400 RPCHandler PEPrimary3 [Error]
+   CMExecute[82].cpe_db_tos.FNTOSDS_2.ICM_Operations.AppIN_055947_m
+   [VSCMS_AddDataRequest:0609138A3692B84BAFE8737D7F392FDB:Create
+   Data Request case:createCaseUsingSpecifiedCaseType] FAILED.;
+   Exception: java.lang.Exception: Invalid date type format found
+   in case operations
+           at
+   com.ibm.casemgmt.caseops.ICMOperations.createCaseUsingSpecifiedC
+   aseType(ICMOperations.java:864)
+           at sun.reflect.NativeMethodAccessorImpl.invoke0(Native
+   Method)
+   
+           at
+   sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessor
+   Impl.java:60)
+           at
+   sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethod
+   AccessorImpl.java:37)
+           at java.lang.reflect.Method.invoke(Method.java:611)
+           at
+   filenet.vw.integrator.adaptors.pejava.PEJavaAdaptor.execute(PEJa
+   vaAdaptor.java:102)
+           at
+   filenet.jpe.cm.CMExecuteAStepTask$TaskWorker$1.run(CMExecuteASte
+   pTask.java:149)
+           at
+   filenet.jpe.cm.CMExecuteAStepTask$TaskWorker$1.run(CMExecuteASte
+   pTask.java:134)
+   ...
+   ===
+   
+   The code and the documentation need to be changed to
+   use/reference the correct UTC "yyyy-MM-ddTHH:mm:ssZ" (e.g.
+   "2015-06-01T00:00:00Z") date format instead of the currently
+   used/referenced "MM/dd/yyyy HH:mm:ss" (e.g. "06/01/2015
+   00:00:00") format - which causes the error above.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  There is no workaround for this issue except to reformat
+   DateTime string values in the string[] that is returned from
+   ICM_Operations::getTaskPropertyValues by adding functionality
+   for this purpose in the Workflow Map.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * Case Manager solution designers trying to implement calls to *
+   * ICM_Operations::getTaskPropertyValues involving DateTime     *
+   * field values.                                                *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * See Error Description                                        *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * To fix this problem, apply 5.2.1.2-ICM-IF001 or later        *
+   * releases.                                                    *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fixed in 5.2.1.2-ICM-IF001 and higher.  The fix for this problem
+   is provided in and resolved by IBM Case Manager
+   5.2.1.2-ICM-IF001 or later releases.
+   
+   With this fix, Case Manager solution designers trying to
+   implement calls to ICM_Operations::getTaskPropertyValues
+   involving DateTime field values will be able to do so
+   successfully without receiving invalid date format errors from
+   Workflow behind the scenes.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PJ43357
+   
+   
+ * REPORTED COMPONENT NAME
+   CASE MGR BUILDE
+   
+   
+ * REPORTED COMPONENT ID
+   5725A1500
+   
+   
+ * REPORTED RELEASE
+   521
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-06-18
+   
+   
+ * CLOSED DATE
+   2015-10-05
+   
+   
+ * LAST MODIFIED DATE
+   2015-10-05
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CASE MGR BUILDE
+   
+   
+ * FIXED COMPONENT ID
+   5725A1500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R500 PSN
+   UP
+   
+   
+ * R510 PSN
+   UP
+   
+   
+ * R511 PSN
+   UP
+   
+   
+ * R520 PSN
+   UP
+   
+   
+ * R521 PSY
+   UP

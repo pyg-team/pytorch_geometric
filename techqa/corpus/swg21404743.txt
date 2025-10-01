@@ -1,0 +1,44 @@
+Title: IBM Why I am not able to preview archived emails? - United States
+
+Text:
+ICC; Oracle; Content Collector TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ I am trying to preview the emails which are archived using IBM Content Collector but the preview always displays the blank page instead of actual email. 
+
+SYMPTOM
+The following error can be seen from the IBM Content Collector Web Application log. 
+
+For example, in 
+<Content Collector installDir>\WebApplication\afu\logs\trace.log 
+
+[2009-09-18] [17:03:51.268] 19 server.startup : 0 SEVERE Io exception: Socket is not connectedDSRA0010E: SQL State = null, Error Code = 17,002 [DatabaseMediator: readConfig]
+sun.reflect.NativeConstructorAccessorImpl.newInstance0(Native Method)
+sun.reflect.NativeConstructorAccessorImpl.newInstance(NativeConstructorAccessorImpl.java:67)
+sun.reflect.DelegatingConstructorAccessorImpl.newInstance(DelegatingConstructorAccessorImpl.java:45)
+java.lang.reflect.Constructor.newInstance(Constructor.java:522)
+
+
+CAUSE
+Configuration Web Service is not configured properly.
+
+
+ENVIRONMENT
+IBM InfoSphere Content Collector with FileNet P8.
+
+
+
+DIAGNOSING THE PROBLEM
+"Database server" for Configuration Web Service is specified with the host name and the validation of the Configuration Web Service is successful.
+
+
+
+RESOLVING THE PROBLEM
+ 
+
+ * Launch IBM Content Collector Configuration Manager. 
+ * Select "Email Services" . 
+ * Select "Configuration Web Service. 
+ * Modify the value for "Database server" with the correct host name,where your configuration database installed. 
+ * Save the changes. 
+ * Retrieve the email again using preview stub.

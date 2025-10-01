@@ -1,0 +1,56 @@
+Title: IBM Downloading InfoSphere Optim v9.1 for use on Windows - United States
+
+Text:
+ DOWNLOADABLE FILES
+
+ABSTRACT
+ This document lists the download components of IBM® InfoSphere® Optim™ 9.1 on the Passport Advantage® website. The DVDs are also listed. 
+
+DOWNLOAD DESCRIPTION
+You must install and configure a workstation on a Microsoft Windows computer before installing Optim components on any other operating system. 
+
+For the latest guidelines on how to perform an installation in your environment, refer to the Optim solutions information center [http://pic.dhe.ibm.com/infocenter/optsol/v9r1/index.jsp].
+
+Contents
+
+
+ * Downloading from Passport Advantage 
+ * Tips for downloading this product 
+ * Download and DVD part numbers 
+ * Trial edition license 
+ * System i and Teradata 2.5 data sources
+
+
+
+Downloading from Passport Advantage 
+
+After proof of entitlement, download any or all of the images listed here. To obtain the download images: 
+ 1. Navigate to the Find Downloads and Media web page on the IBM Passport Advantage website. 
+ 2. Under Download finder options, select the Find by part number search option. 
+ 3. Search for each downloadable image by download name. 
+ 4. Download all required parts. You must create a temporary directory for each download. 
+ 5. Use a file extracting utility that supports large file extractions to extract each of the parts into a single, temporary directory on your system. 
+ 6. Follow the installation instructions in the image you downloaded.
+
+
+
+Download and DVD part numbers 
+
+Operating system Download part number DVD part number Windows CIN8BEN C6B87EN 
+Trial edition license 
+
+You can install a 30-day full-function trial of Optim to create demos and proofs of concepts by using the following license information during installation. 
+
+ * Company Name: OPTIMDEMO 
+ * Company ID: 388713 
+ * Company Password: 9863ZU 
+ * License Key: LRIOLG-FVKFPN-STMBJ7-QY7EZS-4ZWSG1
+
+
+
+System i and Teradata 2.5 data sources 
+
+Optim is packaged with IBM InfoSphere Federation Server. If you plan to apply Optim to data on System i or Teradata 2.5 computers, you must install Federation Server on the Optim server. To obtain the downloads for Federation Server, see the Federation Server download document [http://www-01.ibm.com/support/docview.wss?rs=3551&uid=swg24023229]. PREREQUISITES
+Detailed system requirements for Optim 9.1:
+
+URL LANGUAGE SIZE(Bytes) Optim 9.1 system requirements [http://www.ibm.com/support/docview.wss?rs=3473&uid=swg27024294] English 100000 Optim 9.1 Designer requirements [http://www.ibm.com/support/docview.wss?rs=3473&uid=swg27036273] English 100000 Optim 9.1 Web Applications requirements [http://www.ibm.com/support/docview.wss?rs=3473&uid=swg27036293] English 100000

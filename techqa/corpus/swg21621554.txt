@@ -1,0 +1,33 @@
+Title: IBM Recreation of Oracle Text indexes fails with ORA-00955 error. - United States
+
+Text:
+ORA-00955 @create_ctxsys_indexes.sql Atlas PSS TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ After refreshing the Atlas database in a development environment with production data, we then executed the scripts to recreate the Oracle Text indexes but the create script @create_ctxsys_indexes.sql fails with the following error.
+
+
+
+CREATE INDEX IDX_RECORDTYPE_TEXT ON RECORDTYPE(RECORDTYPE)
+
+*
+
+ERROR at line 1:
+
+ORA-00955: name is already used by an existing object 
+
+CAUSE
+The Create script @create_ctxsys_indexes.sql in Atlas 6.0.1.3 is incorrect and does not contain a statement to drop the IDX_RECORDTYPE_TEXT index..
+
+
+ENVIRONMENT
+Atlas 6.0.1.3
+
+DIAGNOSING THE PROBLEM
+Capture the SQLPLUS when running the index creation script @create_ctxsys_indexes.sql 
+output to identify the cause of the problem.
+
+RESOLVING THE PROBLEM
+Before running @create_ctxsys_indexes.sql, execute the following command from SQLPLUS as PSSAPL user.
+
+DROP INDEX IDX_RECORDTYPE_TEXT;

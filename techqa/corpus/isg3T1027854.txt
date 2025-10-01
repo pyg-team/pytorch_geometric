@@ -1,0 +1,12 @@
+Title: IBM Cputime and runtime of a LSF job - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ What's the difference between cputime and runtime? 
+
+ANSWER
+Runtime is wall time from start to finished while cputime reflects the usage of cpu resource which is allocate by OS to a running process through cpu time slices. 
+
+For example, for a sleep job of 60 seconds. The runtime is around 60 seconds but the cputime is very small almost zero because it doesn't required cpu resource to run the sleep job.

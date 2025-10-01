@@ -1,0 +1,57 @@
+Title: IBM Differences between Node-Locked and Floating/Server license files - United States
+
+Text:
+node-locked; floating; license file TECHNOTE (FAQ)
+
+QUESTION
+ What is the difference between Node-Locked and Floating/Server license file?
+
+
+ANSWER
+The difference between Node-Locked and Floating/Server license file: 
+
+Node-locked license: 
+
+ 
+
+A node-locked license key is for use on one computer, and is tied to that computer. You do not need to run a license server if you are using a node-locked license. 
+
+ 
+
+An example of a node-locked license key is given below: 
+
+ 
+
+ * 
+   VENDOR telelogic
+ * FEATURE DOORS telelogic 2008.1231 31-dec-2009 uncounted \ 
+ * 1234567890ABCDEF1234 VENDOR_STRING=T99-12345 
+ * HOSTID=DISK_SERIAL_NUM=12341234
+   
+
+
+
+
+ 
+
+Floating or Server or Network license: 
+
+ 
+
+A floating license system allows users on a network to check out individual licenses from a commonly shared set. Floating license keys contain the hostname and hostID of the IBM Rational License Server TL. 
+
+The license manager daemon and vendor daemon must be running on the license server whose hostname and hostID are specified in the license key. 
+
+When a user quits an application, all licenses used during that session are returned to the pool of available licenses. 
+
+ 
+
+An example of a floating license key is given below: 
+
+ 
+
+ * 
+   SERVER myserver DISK_SERIAL_NUM=12341234 19353
+ * VENDOR telelogic 
+ * FEATURE DOORS telelogic 2008.1231 31-dec-2009 5 1234567890ABCDEF1234 \ 
+ * VENDOR_STRING=T99-12345

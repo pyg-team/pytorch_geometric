@@ -1,0 +1,197 @@
+Title: IBM JR50238: SQL CONSTRAINT VIOLATION ERROR OCCURS WHEN YOU TRY TO RUN A STORED PROCEDURE - United States
+
+Text:
+  DIRECT LINKS TO FIXES
+8.0.1.2-WS-BPM-IFJR50238 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Standard&fixids=8.0.1.2-WS-BPM-IFJR50238&source=SAR]
+7.5.1.2-WS-BPM-IFJR50238 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Standard&fixids=7.5.1.2-WS-BPM-IFJR50238&source=SAR]
+7.5.1.1-WS-BPM-IFJR50238 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Standard&fixids=7.5.1.1-WS-BPM-IFJR50238&source=SAR]
+7.5.1.0-WS-BPM-IFJR50238 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Standard&fixids=7.5.1.0-WS-BPM-IFJR50238&source=SAR]
+Version 8.5 Refresh Pack 5 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24037683]
+Download Version 8.0.1 Fix Pack 3 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24037734]
+Version 8.5.0 Fix Pack 2 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24040683]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  While one of the following stored procedures runs, you might see
+   an error that indicates that a group cannot be deleted because
+   of a foreign key constraint violation:
+   
+   - LSW_HOUSE_KEEPING
+   - LSW_ERASE_BPD_INSTANCE
+   - LSW_ERASE_TASK
+   - LSW_BPD_INSTANCE_DELETE
+   
+   ,-------------------------------------------------------
+   BPMProcessInstancesCleanup failed due to:
+   PreparedStatementCallback;
+   SQL [DELETE FROM LSW_USR_GRP_XREF WHERE GROUP_ID = ?]; Error for
+   batch element #1: DB2 SQL Error: SQLCODE=-532, SQLSTATE=23504,
+   SQLERRMC=BPM_USER.LSW_GRP_GRP_MEM_XREF.LSWC_GGXREF_FK2,
+   DRIVER=4.11.69;
+   nested exception is
+   com.ibm.db2.jcc.am.SqlIntegrityConstraintViolationException:
+   Error for batch element #1: DB2 SQL Error: SQLCODE=-532,
+   SQLSTATE=23504,
+   SQLERRMC=BPM_USER.LSW_GRP_GRP_MEM_XREF.LSWC_GGXREF_FK2,
+   DRIVER=4.11.69
+      java.lang.Exception:
+   PreparedStatementCallback; SQL [DELETE FROM LSW_USR_GRP_XREF
+   WHERE GROUP_ID = ?]; Error for batch element #1: DB2 SQL Error:
+   SQLCODE=-532, SQLSTATE=23504,
+   SQLERRMC=BPM_USER.LSW_GRP_GRP_MEM_XREF.LSWC_GGXREF_FK2,
+   DRIVER=4.11.69; nested exception is
+   com.ibm.db2.jcc.am.SqlIntegrityConstraintViolationException:
+   Error for batch element #1: DB2 SQL Error: SQLCODE=-532,
+   SQLSTATE=23504,
+   SQLERRMC=BPM_USER.LSW_GRP_GRP_MEM_XREF.LSWC_GGXREF_FK2,
+   DRIVER=4.11.69
+    at
+   com.ibm.bpm.pal.action.OtherActionsImpl.processInstancesCleanup(
+   OtherActionsImpl.java:688)
+    at
+   com.ibm.bpm.pal.commands.CommandServiceImpl.otherProcessInstance
+   sCleanup(CommandServiceImpl.java:2186)
+    at
+   com.ibm.bpm.pal.commands.impl.internal.BPMProcessInstancesCleanu
+   p.execute(BPMProcessInstancesCleanup.java:120)
+    at
+   com.ibm.ws.management.cmdframework.impl.RemoteCommandMgrImpl.adm
+   inCmdExecute(RemoteCommandMgrImpl.java:335)
+    at
+   com.ibm.ws.management.cmdframework.impl.RemoteCommandMgrImpl.exe
+   cute(RemoteCommandMgrImpl.java:292)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  This error occurs because the stored procedures incorrectly
+   handle groups within ad hoc groups that are stored in the IBM
+   BPM database.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A fix is/will be available that deletes groups in ad hoc groups.
+   
+   On Fix Central (http://www.ibm.com/support/fixcentral), search
+   for JR50238:
+   
+   1. Select IBM Business Process Manager with your edition from
+    the product selector, the installed version to the fix pack
+    level, and your platform, and then click Continue.
+   
+   2. Select APAR or SPR, enter JR50238, and click Continue.
+   
+   When you download fix packages, ensure that you also download
+   the readme file for each fix. Review each readme file for
+   additional installation instructions and information about the
+   fix.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR50238
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM ADVANCED
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9400
+   
+   
+ * REPORTED RELEASE
+   751
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-05-14
+   
+   
+ * CLOSED DATE
+   2014-07-16
+   
+   
+ * LAST MODIFIED DATE
+   2015-08-11
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   BPM STANDARD
+   
+   
+ * FIXED COMPONENT ID
+   5725C9500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R751 PSY
+   UP
+   
+   
+ * R800 PSY
+   UP
+   
+   
+ * R801 PSY
+   UP
+   
+   
+ * R850 PSY
+   UP

@@ -1,0 +1,37 @@
+Title: IBM Oracle Database connection test fails when installing IBM Sterling B2B Integrator (SBI) using the IBM Installation Manager for the SI_5020500.jar and pointing to the ojdbc7.jar driver - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When installing SBI 5.2.5 using the IBM Installation Manager, users are unable to successfully Test the Oracle DB connection when using the ojdbc7.jar for the jdbc driver. 
+
+SYMPTOM
+Oracle Database connection test fails when installing IBM Sterling B2B Integrator (SBI) using the IBM Installation Manager for the SI_5020500.jar and pointing to the ojdbc7.jar JDBC driver.
+
+
+CAUSE
+The version of IBM Installation Manager which ships with the SI_5020500.jar media is not compatible with the ojdbc7.jar 
+
+ENVIRONMENT
+Unix/Linux and Windows
+
+DIAGNOSING THE PROBLEM
+If using a GUI Mode install the Oracle DB connection test will fail when pointing to the ojdbc7.jar.
+
+
+
+
+ If using the Text Mode install for Unix/Linux the following error will be thrown: 
+
+IBM Installation Manager> Install> Licenses> Location> Features>
+Custom panels> Unexpected Exception
+java.lang.UnsupportedClassVersionError: JVMCFRE003 bad major version; class=oracle/jdbc/driver/OracleDriver 
+
+
+RESOLVING THE PROBLEM
+Use the Silent Install method to install the SI_5020500.jar when using the ojdbc7.jar 
+
+Documentation for Silent Install on Windows [http://www-01.ibm.com/support/knowledgecenter/SS3JSW_5.2.0/com.ibm.help.install_win_non_clus_523.doc/SI_SilentMethod_Unix_NC.html]. 
+
+Documentation for Silent Install on Unix/Linux [http://www-01.ibm.com/support/knowledgecenter/SS3JSW_5.2.0/com.ibm.help.install_unix_non_clus_523.doc/SI_SilentMethod_Unix_NC.html]

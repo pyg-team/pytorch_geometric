@@ -1,0 +1,109 @@
+Title: IBM Security Bulletin: IBM Connections Security Refresh (CVE-2013-4316 CVE-2013-4310 CVE-2013-2251 CVE-2013-2248 CVE-2013-2135 CVE-2013-2134 CVE-2013-2115 CVE-2013-1966) - United States
+
+Text:
+Planning; Preventive Service; Security SECURITY BULLETIN
+
+SUMMARY
+ This bulletin relates to several security vulnerabilities that have been reported against Apache Struts 2 through October 2013. IBM Connections uses a version of Struts 2 that is vulnerable to these issues. 
+
+VULNERABILITY DETAILS
+Several security vulnerabilities have been reported against Apache Struts 2 through October 2013. IBM Connections uses Struts 2. A version of the package that is vulnerable to these issues is used in several past versions of IBM Connections. The latest versions of Struts 2 address these vulnerabilities and can be applied through the fixes detailed in the Remediation section.
+
+
+CVE-2013-4316 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2013-4316]
+Description: Apache Struts 2.0.0 through 2.3.15.1 enables Dynamic Method Invocation by default, which has unknown impact and attack vectors.
+CVSS Base Score: 10.0
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/87373 [https://exchange.xforce.ibmcloud.com/vulnerabilities/87373] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:L/Au:N/C:C/I:C/A:C)
+
+CVE-2013-4310 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2013-4310] 
+Description: Apache Struts 2.0.0 through 2.3.15.1 allows remote attackers to bypass access controls via a crafted action: prefix.
+CVSS Base Score: 5.8
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/87336 [https://exchange.xforce.ibmcloud.com/vulnerabilities/87336] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:M/Au:N/C:P/I:P/A:N)
+
+CVE-2013-2251 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2013-2251] 
+Description: Apache Struts 2.0.0 through 2.3.15 allows remote attackers to execute arbitrary OGNL expressions via a parameter with a crafted (1) action:, (2) redirect:, or (3) redirectAction: prefix.
+CVSS Base Score: 7.5
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/85756 [https://exchange.xforce.ibmcloud.com/vulnerabilities/85756] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:L/Au:N/C:P/I:P/A:P)
+
+CVE-2013-2248 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2013-2248] 
+Description: Multiple open redirect vulnerabilities in Apache Struts 2.0.0 through 2.3.15 allow remote attackers to redirect users to arbitrary web sites and conduct phishing attacks via a URL in a parameter using the (1) redirect: or (2) redirectAction: prefix.
+CVSS Base Score: 4.3
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/85755 [https://exchange.xforce.ibmcloud.com/vulnerabilities/85755] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:M/Au:N/C:N/I:P/A:N)
+
+CVE-2013-2135 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2013-2135] 
+Description: Apache Struts 2 before 2.3.14.3 allows remote attackers to execute arbitrary OGNL code via a request with a crafted value that contains both "${}" and "%{}" sequences, which causes the OGNL code to be evaluated twice.
+CVSS Base Score: 7.5
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/84763 [https://exchange.xforce.ibmcloud.com/vulnerabilities/84763] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:L/Au:N/C:P/I:P/A:P)
+
+CVE-2013-2134 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2013-2134]
+Description: Apache Struts 2 before 2.3.14.3 allows remote attackers to execute arbitrary OGNL code via a request with a crafted action name that is not properly handled during wildcard matching, a different vulnerability than CVE-2013-2135.
+CVSS Base Score: 7.5
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/84762 [https://exchange.xforce.ibmcloud.com/vulnerabilities/84762] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:L/Au:N/C:P/I:P/A:P)
+
+CVE-2013-2115 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2013-2115]
+Description: Apache Struts 2 before 2.3.14.2 allows remote attackers to execute arbitrary OGNL code via a crafted request that is not properly handled when using the includeParams attribute in the (1) URL or (2) A tag. NOTE: this issue is due to an incomplete fix for CVE-2013-1966.
+CVSS Base Score: 7.5
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/84543 [https://exchange.xforce.ibmcloud.com/vulnerabilities/84543] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:L/Au:N/C:P/I:P/A:P)
+
+CVE-2013-1966 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2013-1966]
+Description: Apache Struts 2 before 2.3.14.1 allows remote attackers to execute arbitrary OGNL code via a crafted request that is not properly handled when using the includeParams attribute in the (1) URL or (2) A tag.
+CVSS Base Score: 7.5
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/84542 [https://exchange.xforce.ibmcloud.com/vulnerabilities/84542] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:L/Au:N/C:P/I:P/A:P)
+
+AFFECTED PRODUCTS AND VERSIONS
+The following versions of IBM Connections are impacted:
+
+IBM Connections 4.5
+IBM Connections 4.0
+IBM Connections 3.0.1.1 and earlier releases
+
+REMEDIATION/FIXES
+Apply the appropriate fix pack or APAR to remediate these issues as per this table. Note, if possible, it is always recommended to upgrade to the most recent release of IBM Connections.
+
+
+
+Product Version Remediation [/support/docview.wss?uid=swg21667890&amp;aid=1] [/support/docview.wss?uid=swg21667890&amp;aid=1] IBM Connections 4.5 Upgrade to IBM Connections 4.5 CR4 [http://www-933.ibm.com/support/fixcentral/swg/downloadFixes?product=ibm/Lotus/Lotus+Connections&release=4.5.0.0&platform=All&function=fixId&fixids=4.5.0.0-IC-Multi-CR04-LO78429&includeRequisites=1&includeSupersedes=0&downloadMethod=http] or apply Interim Fix APAR LO79096 [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?product=ibm/Lotus/Lotus+Connections&release=ALL&platform=All&function=aparId&apars=LO79096] for IBM Connections 4.5 CR3. IBM Connections 4.0 Upgrade to IBM Connections 4.0 CR4 and apply Interim Fix APAR LO79096 [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?product=ibm/Lotus/Lotus+Connections&release=ALL&platform=All&function=aparId&apars=LO79096] [http://g01zciwas018.ahe.pok.ibm.com/support/dcf/preview.wss?host=g01zcidbs003.ahe.pok.ibm.com&db=support/swg/lottech.nsf&unid=335A92288496365F85257CA0007455BE&taxOC=SSYGQH&MD=2014/04/02%2013:04:05&sid=] IBM Connections 3.0.1.1 Upgrade to IBM Connections 3.0.1.1 CR3 and apply APAR LO79096 [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?product=ibm/Lotus/Lotus+Connections&release=ALL&platform=All&function=aparId&apars=LO79096] IBM Connections 3.0.1 and earlier releases Either upgrade to IBM Connections 4.5 CR4 [http://www-933.ibm.com/support/fixcentral/swg/downloadFixes?product=ibm/Lotus/Lotus+Connections&release=4.5.0.0&platform=All&function=fixId&fixids=4.5.0.0-IC-Multi-CR04-LO78429&includeRequisites=1&includeSupersedes=0&downloadMethod=http] or upgrade to IBM Connections 3.0.1.1 CR3 and apply APAR LO79096 [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?product=ibm/Lotus/Lotus+Connections&release=ALL&platform=All&function=aparId&apars=LO79096] WORKAROUNDS AND MITIGATIONS
+None
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v2 Guide [http://www.first.org/cvss/v2/guide] 
+On-line Calculator v2 [http://nvd.nist.gov/CVSS-v2-Calculator] 
+X-Force Vulnerability Database 
+http://xforce.iss.net/xforce/xfdb/87373 [http://xforce.iss.net/xforce/xfdb/87373] 
+http://xforce.iss.net/xforce/xfdb/87336 [http://xforce.iss.net/xforce/xfdb/87336] 
+http://xforce.iss.net/xforce/xfdb/85756 [http://xforce.iss.net/xforce/xfdb/85756] 
+http://xforce.iss.net/xforce/xfdb/85755 [http://xforce.iss.net/xforce/xfdb/85755] 
+http://xforce.iss.net/xforce/xfdb/84763 [http://xforce.iss.net/xforce/xfdb/84763] 
+http://xforce.iss.net/xforce/xfdb/84762 [http://xforce.iss.net/xforce/xfdb/84762] 
+http://xforce.iss.net/xforce/xfdb/84543 [http://xforce.iss.net/xforce/xfdb/84543] 
+http://xforce.iss.net/xforce/xfdb/84542 [http://xforce.iss.net/xforce/xfdb/84542] 
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] 
+
+ACKNOWLEDGEMENT
+None 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.

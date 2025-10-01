@@ -1,0 +1,29 @@
+Title: IBM Running reports as Excel generates files that are too large and take too long to open - United States
+
+Text:
+performance output big XML CSS XSL slow TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This document provides an explanation for the following observations:
+
+The file that is generated from running a report as Excel seems unnecessarily big for the amount of data in it. The file also takes much longer to open in Excel than other files with the same number of rows and columns. Furthermore, after re-saving the report from within Excel, the file becomes much smaller. 
+
+CAUSE
+Excel formatted files contain markup tags that allow what appears in Excel to be consistent with the formatting that was defined in the report (including background colors, font sizes, etc). These tags will make the file much larger than just a data output (which would be a CSV) and therefore the file would take longer to be generated and would take longer to open.
+
+
+The reason that Cognos 10 generated Excel files are larger than when that same output is re-saved from within Excel is that even though the outputs appear with an XLS extension, the outputs are created in MHT format which is stored as ASCII text and comprised of HTML-like tags that will ensure as much report formatting as possible is kept during the export to Excel. When you re-save this output from within Excel, the file is actually converted into binary XLS language (as opposed to plain-text MHT). Since the binary file is already converted into "machine" language, it can be much smaller while holding the same end-user information than the plain-text MHT file. You'll be able to see this difference by opening a C10 generated Excel file in Notepad before and after it has been re-saved in Excel. 
+
+One reason why Cognos 10 generates its Excel outputs in this MHT format is that the MHT format can be viewed in Internet Browsers and other applications while the binary XLS format can only be viewed in Microsoft Excel, thus a report's target audience has potentially greatly been increased beyond those users that have Microsoft Excel installed on their local workstations. Another reason is that MHT format also supports much more functionality in terms of formatting which you will notice on certain reports that you re-save as binary XLS when an warning pops up indicating that certain formatting will be lost during the save. Typically, CSV is used if there are no user requirements related to exporting formatting 
+RESOLVING THE PROBLEM
+If formatting is not required then run the report as CSV instead of Excel. 
+
+
+As another possible workaround, executing the report as Excel 2007 as opposed to Excel 2002 will make the file sizes much smaller (note that you can still open Excel 2007 outputs in Excel 2003).
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Analytics Cognos Business Intelligence Report Studio AIX, HP-UX, Linux, Solaris, Windows 10.2, 10.2.1, 10.2.2 Edition Independent 
+HISTORICAL NUMBER
+ 1035653

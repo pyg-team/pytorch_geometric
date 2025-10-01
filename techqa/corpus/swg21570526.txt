@@ -1,0 +1,81 @@
+Title: IBM Unable to find RuleApp /MyRuleApp/MyRuleset used by the interceptor - United States
+
+Text:
+security TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ I have enabled the interceptor on my RuleApp/ruleset as indicated in the documentation but my interceptor is not called and I get this error message: "Unable to find RuleApp /MyRuleApp/MyRuleset used by the interceptor". 
+
+SYMPTOM
+The interceptor is enabled on the client side by theIlrSessionRequest.setInterceptorEnabled(true) method but it is not called and errors such as the following show in the server logs: 
+
+In the WebSphere Application Server (WAS) SystemOut.log: 
+
+SECJ0305I: The role-based authorization check failed for admin-authz operation IlrJMXRepository:getGreatestRuleAppObjectName:java.lang.String. The user UNAUTHENTICATED (unique ID: unauthenticated) was not granted any of the following required roles: deployer, operator, configurator, monitor, administrator, adminsecuritymanager, auditor. 
+
+In the WAS SystemErr.log: 
+
+ 
+
+ilog.rules.res.session.IlrSessionException: An error occurred while the rule session was invoked.:
+ilog.rules.res.session.interceptor.IlrSessionInterceptorException: ilog.rules.res.session, Message code: 10046, parameters: /MyRuleApp/MyRuleset
+at ilog.rules.res.session.impl.IlrStatelessSessionBase.execute(IlrStatelessSessionBase.java:118)
+at test.RESPOJOClient.callRES(RESPOJOClient.java:48)
+at test.HelloServlet.doGet(HelloServlet.java:32)
+at javax.servlet.http.HttpServlet.service(HttpServlet.java:718)
+at javax.servlet.http.HttpServlet.service(HttpServlet.java:831)
+at com.ibm.ws.webcontainer.servlet.ServletWrapper.service(ServletWrapper.java:1657)
+...
+Caused by: ilog.rules.res.session.interceptor.IlrSessionInterceptorException: ilog.rules.res.session, Message code: 10046, parameters: /MyRuleApp/MyRuleset
+at ilog.rules.res.session.util.IlrInterceptorHelper.initChain(IlrInterceptorHelper.java:58)
+at ilog.rules.res.session.util.IlrInterceptorHelper.initialize(IlrInterceptorHelper.java:38)
+at ilog.rules.res.session.impl.IlrStatelessSessionBase.execute(IlrStatelessSessionBase.java:71)
+... 25 more
+
+
+CAUSE
+The interceptor uses Java Management Extensions (JMX) to access to the management model. Therefore, when the interceptor is enabled, the user that calls the rule session must have the right to access JMX beans. Otherwise, the execution fails with a security exception. 
+
+In WAS, it requires to call the interceptor with credentials given the WebSphere Monitor role.
+
+
+ENVIRONMENT
+WebSphere or WebLogic application server.
+
+
+
+DIAGNOSING THE PROBLEM
+Ensure that: 
+
+ * the interceptor is correctly set up as indicated in the documentation, in "WebSphere ILOG JRules BRMS V7.1 > Rule Execution Server > Introducing Rule Execution Server > Rule Execution Server basics > Execution > Ruleset interceptors [http://publib.boulder.ibm.com/infocenter/brjrules/v7r1/topic/com.ibm.websphere.ilog.jrules.doc/Content/Business_Rules/Documentation/_pubskel/JRules/ps_JRules_Global938.html]" : 
+ * the interceptor class is well packaged with the client application that execute the rules. 
+ * the RuleApp property is correctly set with the fully qualified name of the interceptor. 
+
+RESOLVING THE PROBLEM
+If the application that executes the rules requires authentication, you can map the authenticated user (or a group it belongs to) of that client application with the WebSphere Monitor role, if that it is acceptable. 
+
+ 
+
+Otherwise, the other possibility is to modify the application descriptor to have it "run-as" a user that is mapped (or a group it belongs to) to the WAS Monitor role: 
+
+ * in the web.xml for a servlet 
+ * in the ejb-jar.xml for an EJB2, or with the @runas annotation for an EJB3
+
+
+For example, you can have the client application "run-as" a user belonging to resAdministrators, since the Rule Execution Server administrator group must be mapped to the Monitor role, as explained in "WebSphere ILOG JRules BRMS V7.1: Java EE add-ons > Installing on WebSphere Application Server > Installing Rule Execution Server > Installing Rule Execution Server on WebSphere Application Server V7.0 > Activating security on WebSphere V7.0 > Mapping the resAdministrators group to the Monitor role [http://publib.boulder.ibm.com/infocenter/brjrules/v7r1/topic/com.ibm.websphere.ilog.jrules.install.doc/Content/Business_Rules/Documentation/_pubskel/JRules_Application_Servers/ps_Installing_JRules_IC52.html]". 
+
+ 
+
+See external links below for more information on how to make those changes.
+
+RELATED INFORMATION
+#Ruleset interceptors in ODM V8.5 [http://pic.dhe.ibm.com/infocenter/dmanager/v8r5m1/topic/com.ibm.odm.dserver.rules.res.developing/topics/con_res_devclient_rlst_intercept.html]
+Security Identity for EJBs and servlets [http://docs.jboss.org/jbossas/docs/Server_Configuration_Guide/beta422/html/J2EE_Declarative_Security_Overview-Security_Identity.html]
+EJB 3.0 partial deployment descriptors [http://docs.jboss.org/ejb3/docs/reference/build/reference/en/html/partial_deployment_descriptors.html]
+EJB 3.0 run-as annotation [https://docs.jboss.org/author/display/AS7/EJB+3+Reference+Guide]
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Operational Decision Manager Modules:Execution Server Platform Independent 8.5, 8.0, 7.5

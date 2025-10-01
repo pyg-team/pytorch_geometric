@@ -1,0 +1,24 @@
+Title: IBM Unable to locate component, MSVCR71.dll - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When I start IBM SPSS Text Analytics for Syrveys I receive two messages. The first error message window is titled "- Unable To Locate Component" and states that "This application has failed to start because MSVCR71.dll was not found. Re-installing the application may fix this problem". 
+
+The second message advises "launcher error 0005 Java VM not found."
+
+I have tried to reinstall several times but the error persists. 
+
+RESOLVING THE PROBLEM
+The problem is often due to a missing or corrupt file. 
+
+Check the "Windows\system32\" folder to confirm that the MSVCR711.dll exists, if it does rename it to something like MSVCR711.dll.old the copy a the MSVCR711.dll file from the folloing location "C:\Program Files\IBM\SPSS\Text
+Analytics for Surveys\4\jre\bin". This folder may vary if you have not installed IBM SPSS Text Analytics for Surveys in the default folder.
+
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Analytics SPSS Text Analytics for Surveys Not Applicable Windows 4.0.1 All Editions

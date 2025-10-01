@@ -1,0 +1,158 @@
+Title: IBM HA Cluster Stop/Start and Host reboot - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How to stop HA cluster in order to reboot Hosts and start HA cluster after Host reboot 
+
+ANSWER
+HA Cluster Stop/Start and Host reboot
+================================
+
+1. Login into host the hosts as root as host hostname / IPs. Do not login into Active host with VIP.
+
+2. Check and confirm Active host in cluster with crm_mon command as root,
+
+
+Last updated: Mon Jul 13 21:03:19 2015
+Current DC: nz-host-02 (3795229b-8421-4cc2-a01b-4c02871541bb)
+2 Nodes configured.
+3 Resources configured.
+============
+
+Node: nz-host-02 (3795229b-8421-4cc2-a01b-4c02871541bb): online
+Node: nz-host-01 (ea1111ae-a9bd-4738-add3-f8d851b9bad9): online
+
+Resource Group: nps
+drbd_exphome_device (heartbeat:drbddisk): Started nz-host-01
+drbd_nz_device (heartbeat:drbddisk): Started nz-host-01
+exphome_filesystem (heartbeat::ocf:Filesystem): Started nz-host-01
+nz_filesystem (heartbeat::ocf:Filesystem): Started nz-host-01
+fabric_ip (heartbeat::ocf:IPaddr): Started nz-host-01
+wall_ip (heartbeat::ocf:IPaddr): Started nz-host-01
+nz_dnsmasq (lsb:nz_dnsmasq): Started nz-host-01
+nzinit (lsb:nzinit): Started nz-host-01
+fencing_route_to_ha1 (stonith:apcmastersnmp): Started nz-host-02
+fencing_route_to_ha2 (stonith:apcmastersnmp): Started nz-host-01
+
+
+
+3. Verify drbd status with following command as root,
+
+[root@nz-host-01 ~]# service drbd status
+drbd driver loaded OK; device status:
+version: 8.2.6 (api:88/proto:86-88)
+GIT-hash: 3e69822d3bb4920a8c1bfdf7d647169eba7d2eb4 build by root@nz80237-H1, 2014-06-26 06:55:09
+m:res cs st ds p mounted fstype
+0:r1 Connected Primary/Secondary UpToDate/UpToDate C /export/home ext3
+1:r0 Connected Primary/Secondary UpToDate/UpToDate C /nz ext3
+
+
+[root@nz-host-02 ~]# service drbd status
+ssh ha2 service drbd status
+drbd driver loaded OK; device status:
+version: 8.2.6 (api:88/proto:86-88)
+GIT-hash: 3e69822d3bb4920a8c1bfdf7d647169eba7d2eb4 build by root@nz80237-H1, 2014-06-26 06:55:09
+m:res cs st ds p mounted fstype
+0:r1 Connected Secondary/Primary UpToDate/UpToDate C
+1:r0 Connected Secondary/Primary UpToDate/UpToDate C
+
+
+4. It is recommended to take nzhostbackup. Run nzhostbackup with following command as nz user,
+
+
+nzhostbackup /nzscratch/nzhostbackup_YYYYMMDD
+
+e.g. : 
+
+nzhostbackup /nzscratch/nzhostbackup_20151230
+
+
+4. Stop database as nz user,
+
+nzstop
+
+
+5. Make cluster services OFF on ONBOOT on both the hosts as root user,
+
+chkconfig drbd off
+chkconfig heartbeat off
+
+
+6. Verify cluster services makde OFF on ONBOOT on both the hosts as root user, 
+
+chkconfig --list drbd 
+chkconfig --list heartbeat
+
+
+7. Stop heartbeat on Standby host first with following command as root,
+
+service heartbeat stop
+
+
+8. Once heartbeat is stopped on Standby host then stop heartbeat on Active host with following command as root,
+
+service heartbeat stop
+
+
+9. After stopping heartbeat on both the hosts check DRBD status on both the hosts,
+
+service drbd status 
+
+
+10. Stop DRBD on Standby host first and then on Active host with following command as root,
+
+service drbd stop
+
+
+11. Before rebooting hosts make sure that Host IMM is working, in case it is needed during host booting issue.
+
+12. Reboot hosts one after one with following command as root user,
+
+shutdown -rf now
+
+
+13. once both the hosts are online, start NPS with following procedure.
+
+14. Start DRBD on Active host and then on Standby Host with following command.
+
+service drbd start
+
+
+15. Verify DRBD status on both the hosts as root user,
+
+service drbd status
+
+
+16. Start HEARTBEAT on Active host with following command as root,
+
+service heartbeat start
+
+
+17. Start HEARTBEAT on standby host with following command as root,
+
+service heartbeat start
+
+
+18. Monitor cluster status with command as root user,
+
+crm_mon
+
+
+19. You can check NPS bootup status with following log files.
+
+tail -f /nz/kit/log/startupsvr/startupsvr.log
+
+
+Once system goes to "Discovering" then tailf to sysmgr logs
+
+tail -f /nz/kit/log/sysmgr/sysmgr.log
+
+
+20. Once system is Online check issues with following commands as nz user,
+
+nzstate
+nzhw -issues
+nzds -issues
+nzhealthcheck

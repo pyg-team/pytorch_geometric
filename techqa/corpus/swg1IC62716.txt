@@ -1,0 +1,191 @@
+Title: IBM IC62716: STREAMING TO LARGE INVALID OFFSET CAN CAUSE OUT OF MEMORY ABEND - United States
+
+Text:
+  A FIX IS AVAILABLE
+WebSphere Message Broker V6.1 - Fix Pack 6.1.0.7 [http://www-01.ibm.com/support/docview.wss?uid=swg24026355]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When using the TCPIP Client Input node or FileInput nodes, AND
+   the incoming message has been defined in the MRM, the following
+   error may be reported:
+   
+   ParserException  BIP5362E: Message validation error. The value
+   ''1380532559'' for element ''length'' in the message is not
+   valid.
+   
+   The value is greater than the maximum inclusive value ''4096''.
+   
+   (Note: The "1380532559" size could be different on another
+   system)
+   
+   The message may or may not be valid parsed against the schema,
+   but that invalidity ought not cause the execution group to
+   abend.
+   
+   The abend file shows:
+   
+   ---> Inserts <---
+   Failed to allocate memory
+   
+   The field in question indicates a size of the message, and if
+   that size is sufficiently large, and even possibly incorrectly
+   large, the broker will still attempt to alloate a buffer large
+   enough to handle in the anticipating incoming message.
+   
+   The EG abends because it reads the first field that indicates
+   the length of the data , so a very large value in this field
+   will make EG to try to allocate that much amount of buffer. And
+   with a very large buffer request it is likely to fail with the
+   abend if it cannot find that much space on the heap.
+   
+   The buffer alocation needs to be optimized so that when  a
+   request for such large buffer is made,  they are read in smaller
+   chunks and that will allow entire stream to be read , and once
+   the entire bitstream is read , the validation will occur and the
+   message will be rejected based on the value constraint put on
+   the length field.
+   
+   KeyWords:
+   FileInput TCPIPClientInput BIP5362 BIP5362E 5362
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Ensure any MRM field denoting a message or field length is
+   correct and proper, especially for verly large values
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All WebSphere Message Broker V6.1 users      *
+   *                 who use TCPIP/File Input node.               *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: The File and TCP/IP Input nodes         *
+   *                      follow stream based parsing. So they    *
+   *                      do not know how much data is available  *
+   *                      until it tries to get it.               *
+   *                      Therefore when the parsers ask          *
+   *                      for a large number of bytes, it has to  *
+   *                      do a read on the stream to try and      *
+   *                      get this amount of data. To do this     *
+   *                      read, it first allocates a buffer       *
+   *                      to receive that many bytes just in      *
+   *                      case the stream can actually give       *
+   *                      that much. This results in an           *
+   *                      allocation failure and abend.           *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   A message flow trying to parse an input message against a
+   messageset using either a TCPIPInput node or FileInput node.
+   A Messageset has one fixed length string element whose length
+   is specified through a prior element. When the user input a
+   sufficiently large value as the string length the
+   Execution group will abend while parsing.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  WebSphere Message Brokre has been modified so that the buffer
+   allocation is made in smaller chunks to avoid allocation
+   failure.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC62716
+   
+   
+ * REPORTED COMPONENT NAME
+   WMB WINDOWS V6
+   
+   
+ * REPORTED COMPONENT ID
+   5724J0500
+   
+   
+ * REPORTED RELEASE
+   610
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-08-24
+   
+   
+ * CLOSED DATE
+   2009-09-30
+   
+   
+ * LAST MODIFIED DATE
+   2009-09-30
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMB WINDOWS V6
+   
+   
+ * FIXED COMPONENT ID
+   5724J0500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R610 PSY
+   UP

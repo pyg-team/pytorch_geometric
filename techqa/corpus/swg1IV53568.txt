@@ -1,0 +1,219 @@
+Title: IBM IV53568: ON WINDOWS FOR NUMEVENTSTOCATCHUP=-1 CREATES MULTIPLE ENTRIES FOR EACH LOGS IN .RST AND MISSES EVENTS - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Tivoli Log File Agent, Version 6.3.0 Interim Fix 03 6.3.0-TIV-ITM_LFA-IF0003 [http://www-01.ibm.com/support/docview.wss?uid=swg24037822]
+Tivoli Log File Agent, Version 6.3.0 Fix Pack 01 (6.3.0-TIV-ITM_LFA-FP0001) [http://www-01.ibm.com/support/docview.wss?uid=swg24042317]
+Tivoli Log File Agent, Version 6.3.0 Interim Fix 04 6.3.0-TIV-ITM_LFA-IF0004 [http://www-01.ibm.com/support/docview.wss?uid=swg24039388]
+Tivoli Log File Agent, Version 6.3.0 Fix Pack 02 (6.3.0-TIV-ITM_LFA-FP0002) [http://www-01.ibm.com/support/docview.wss?uid=swg24043263]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Looked at 52158,697,760.  The way this is supposed to work is
+   that if NumEventsToCatchUp=-1, as it does in this case, the kum
+   library should continuously update a file ending in '.rst' in
+   the logs directory.  This file contains the name of each log
+   being monitored along with the last position read from the
+   file.  I know development had a lot of trouble with this code
+   at various times, and we updated it for 6.3 to handle remote.
+   It appears that it is now broken.  Just a small sample from the
+   customer's logs/LO_LFA05_LogfileEvents_zlnitm10.rst file shows:
+   
+   
+   C:/Tivoli/log/maint_reboot_end_logsource.log;1384240071;13868226
+   43;14570;(null);
+   
+   C:/Tivoli/log/maint_reboot_end_logsource.log;1384240071;13868226
+   43;14670;(null);
+   
+   C:/Tivoli/log/maint_reboot_end_logsource.log;1384240071;13868226
+   43;14720;(null);
+   
+   C:/Tivoli/log/maint_reboot_end_logsource.log;1384240071;13868226
+   49;15534;(null);
+   
+   C:/Tivoli/log/maint_reboot_start_logsource.log;1384240040;138677
+   5923;13448;(null);
+   
+   C:/Tivoli/log/maint_reboot_start_logsource.log;1384240040;138677
+   5923;13448;(null);
+   
+   C:/Tivoli/log/maint_reboot_end_logsource.log;1384240071;13868226
+   49;15534;(null);
+   
+   C:/Tivoli/log/maint_reboot_start_logsource.log;1384240040;138677
+   5923;13448;(null);
+   
+   C:/Tivoli/log/maint_reboot_end_logsource.log;1384240071;13868226
+   49;15534;(null);
+   
+   C:/Tivoli/log/maint_reboot_end_logsource.log;1384240071;13868240
+   70;15584;(null);
+   
+   C:/Tivoli/log/maint_reboot_start_logsource.log;1384240040;138677
+   5923;13448;(null);
+   
+   
+   This is wrong-- each monitored file should only be listed once.
+    It appears that kum is adding to it on each update rather than
+   replacing it, so when the agent restarts, it has no idea where
+   it left off and so it misses events that occurred while it was
+   down.
+   
+   I recreated this on my own Windows system with no trouble.  In
+   a very short time it had two entries for the same file, with
+   the wrong size in both.  Interestingly, it appears to work fine
+   on UNIX.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  On Windows systems, when the configuration option
+   NumEventsToCatchUp is used to specify the event in a locally
+   monitored file that the agent starts with, the agent does not
+   correctly determine the proper restart position and events that
+   occurred when the agent was stopped are missed.
+   
+   For each file being monitored, new entries containing the last
+   position read are added to the restart (.rst) file, instead of
+   updating the existing one.  Therefore, the agent cannot
+   determine where to resume when restarted.
+   
+   This problem occurs on Log File Agent v6.3 on Windows platforms,
+   when monitoring files locally.  This does not occur on UNIX
+   platforms or for remote file monitoring.
+   
+   CPU performance issues might result from the excess processing
+   of the restart file.
+   With a minimum of KBB_RAS1: ERROR (UNIT:kumpfdp2 ALL), the
+   agent log <hostname>_lo_<instance>_kloagent_<timestamp>.log
+   contains trace entries similar to the following where the
+   monitored file is the same as the file being monitored.
+   Instead of the record being updated, the .rst records are
+   rewritten and a new one is added each cycle.
+   
+   - - -
+   ...
+   ...:kumpfdp2.c,471,"UpdateRestartFileBaseFunction")
+   Rewritting statistics for (null) file
+   <C:/IBM/ITM/TMAITM6/logs/ADMIN_lo_winEvent_kloagent_53
+   5e9bcd-02.log> create <1398709265> mod <1398710146> size
+   <2821163>
+   ...:kumpfdp2.c,471,"UpdateRestartFileBaseFunction")
+   Rewritting statistics for (null) file
+   <C:/IBM/ITM/TMAITM6/logs/ADMIN_lo_winEvent_kloagent_53
+   5e9bcd-02.log> create <1398709265> mod <1398710146> size
+   <2823963>
+   ...
+   - - -
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Do not log the remote location field as a NULL string for local
+   files.
+   
+   The fix for this APAR is included in the following maintenance
+   vehicle:
+   
+   | interim fix | 6.3.0-TIV-ITM_LFA-IF0002
+   
+   available at
+   http://www.ibm.com/support/docview.wss?uid=swg24037287 [http://www.ibm.com/support/docview.wss?uid=swg24037287]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV53568
+   
+   
+ * REPORTED COMPONENT NAME
+   ITM LOG FILE AG
+   
+   
+ * REPORTED COMPONENT ID
+   5724C04LF
+   
+   
+ * REPORTED RELEASE
+   630
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-12-24
+   
+   
+ * CLOSED DATE
+   2014-03-31
+   
+   
+ * LAST MODIFIED DATE
+   2014-04-28
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ITM LOG FILE AG
+   
+   
+ * FIXED COMPONENT ID
+   5724C04LF
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R630 PSY
+   UP

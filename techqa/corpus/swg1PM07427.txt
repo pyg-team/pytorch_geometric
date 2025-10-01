@@ -1,0 +1,178 @@
+Title: IBM PM07427: HUNG THREADS AND PORTAL RESTARTS DURING WCMAUTHORING RUNS - United States
+
+Text:
+  FIXES ARE AVAILABLE
+6.1.0.4 Download: WebSphere Portal and WCM V6.1.0 fix pack 4 & 6.1.5 fix pack 1 [http://www-01.ibm.com/support/docview.wss?uid=swg24026394]
+Recommended Updates for WebSphere Portal and Web Content Management V6.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24023835]
+6.1.0.5 Download: WebSphere Portal and WCM V6.1.0 fix pack 5 [http://www-01.ibm.com/support/docview.wss?uid=swg24027475]
+Fixes integrated in WebSphere Portal V7.0 Combined Cumulative Fix [http://www-01.ibm.com/support/docview.wss?uid=swg24027254]
+6.1.0.6 Download: WebSphere Portal and WCM V6.1.0 fix pack 6 [http://www-01.ibm.com/support/docview.wss?uid=swg24030970]
+7.0.0.2 Download: WebSphere Portal and WCM V7.0 fix pack 2 [http://www-01.ibm.com/support/docview.wss?uid=swg24031676]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The following errors
+   
+    Trace: 2009/11/16 16:31:30.841 01 t=8C2718 c=UNK key=P8
+   (00000011)
+      Description: Log Java Message
+      Message: [ErrorCode:10024] Error, item
+   AB001001N09K16C01801B56501, versionID=1
+   (userTable=ICMUT01278001) is stale, timestamp misma
+    tch: 11/16/09 9:30 PM, 11/16/09 9:31 PM
+   com.ibm.icm.da.portable.data.ProcessAction.processUpdateActions
+    Trace: 2009/11/16 16:31:54.080 01 t=8C7B58 c=UNK key=P8
+   (13007002)
+      ThreadId: 000000ce
+      FunctionName: com.ibm.ws.runtime.component.ThreadMonitorImpl
+      SourceId: com.ibm.ws.runtime.component.ThreadMonitorImpl
+      Category: WARNING
+      ExtendedMessage: BBOO0221W: WSVR0605W: Thread
+   "WebSphere:ORB.thread.pool t=008c24f8" (000000bb) has been
+   active for 630958 millise
+    conds and may be hung.  There is/are 1 thread(s) in total in
+   the server that may be hung.
+       at
+   com.ibm.workplace.wcm.app.ui.portlet.widget.browser.model.node.Q
+   ueryRepositoryNode.getId(QueryRepositoryNode.java:95)
+   A computable ID is being calculated, and is causing a deadlock
+   in certain situations on z/OS
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Compute the ID, and avoid the deadlock scenario.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Hung Threads and Portal restarts during WcmAuthoring runs.
+   The following errors
+   
+    Trace: 2009/11/16 16:31:30.841 01 t=8C2718 c=UNK key=P8
+   (00000011)
+      Description: Log Java Message
+      Message: [ErrorCode:10024] Error, item
+   AB001001N09K16C01801B56501, versionID=1
+   (userTable=ICMUT01278001) is stale, timestamp misma
+    tch: 11/16/09 9:30 PM, 11/16/09 9:31 PM
+   com.ibm.icm.da.portable.data.ProcessAction.processUpdateActions
+    Trace: 2009/11/16 16:31:54.080 01 t=8C7B58 c=UNK key=P8
+   (13007002)
+      ThreadId: 000000ce
+      FunctionName: com.ibm.ws.runtime.component.ThreadMonitorImpl
+      SourceId: com.ibm.ws.runtime.component.ThreadMonitorImpl
+      Category: WARNING
+      ExtendedMessage: BBOO0221W: WSVR0605W: Thread
+   "WebSphere:ORB.thread.pool t=008c24f8" (000000bb) has been
+   active for 630958 millise
+    conds and may be hung.  There is/are 1 thread(s) in total in
+   the server that may be hung.
+       at
+   com.ibm.workplace.wcm.app.ui.portlet.widget.browser.model.node.Q
+   ueryRepositoryNode.getId(QueryRepositoryNode.java:95)
+   A computable ID is being calculated, and is causing a deadlock
+   in certain situations on z/OS
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Compute the ID, and avoid the deadlock scenario.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM07427
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSPHERE PORTA
+   
+   
+ * REPORTED COMPONENT ID
+   5724E7600
+   
+   
+ * REPORTED RELEASE
+   615
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-02-11
+   
+   
+ * CLOSED DATE
+   2010-02-11
+   
+   
+ * LAST MODIFIED DATE
+   2010-02-11
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBSPHERE PORTA
+   
+   
+ * FIXED COMPONENT ID
+   5724E7600
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R615 PSY
+   UP

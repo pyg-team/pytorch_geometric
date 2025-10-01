@@ -1,0 +1,162 @@
+Title: IBM HD82041: REFRESH OF PROFILECARDS R19 BEHAVIOR CHANGE - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PERMANENT RESTRICTION.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Refresh of Profilecards R19 Behavior Change.
+   Scenario:
+   1) On Machine1, Log as joe on smdemo DB
+   2) Create a new project with 'toto' for description
+   (for example).
+   3) Leave SMARTEAM opened.
+   4) On a client Machine2, log with an other User2
+   with full authorization.
+   ==> User2 can see the newly created project 'toto'.
+   5) User2 update the project's profile card and
+   change the description to 'toto1234' and save it
+   with OK on Profile Card.
+   6) Go back to Machine2, select some other Project
+   and select back the Project of 'toto'.
+   ==> KO: the description attribute is not updated
+   from the Database. It keeps displaying 'toto' and
+   not refreshed with new description 'toto1234'.
+   Only Refresh (F5) updates the Profile Card.
+   Expected: when user switch between Objects on
+   Tree view, the content of the attributes must be
+   updated from Database.
+   .
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Refresh of Profilecards R19 Behavior Change
+   Refresh of Profilecards R19 Behavior Change.
+   Scenario:
+   1) On Machine1, Log as joe on smdemo DB
+   2) Create a new project with 'toto' for description
+   (for example).
+   3) Leave SMARTEAM opened.
+   4) On a client Machine2, log with an other User2
+   with full authorization.
+   ==> User2 can see the newly created project 'toto'.
+   5) User2 update the project's profile card and
+   change the description to 'toto1234' and save it
+   with OK on Profile Card.
+   6) Go back to Machine2, select some other Project
+   and select back the Project of 'toto'.
+   ==> KO: the description attribute is not updated
+   from the Database. It keeps displaying 'toto' and
+   not refreshed with new description 'toto1234'.
+   Only Refresh (F5) updates the Profile Card.
+   Expected: when user switch between Objects on
+   Tree view, the content of the attributes must be
+   updated from Database.
+   .
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  THIS PROBLEM IS PERMANENT RESTRICTION IN
+   SMARTEAM.
+   The previous behavior of the refreshing of the
+   Profile Card has been changed in the R19.
+   Currently, the dynamic cache is created on the
+   client per view. If an object has already open in the
+   specific view, it's data has been created in the
+   cache. Next time the system will not retrive the
+   data from the database, but will retrieve it from the
+   cache. In this case, if the Profile Card of the object
+   was updated by another user, the modification will
+   not be presented in the view without the refresh
+   (F5). This is a restriction to maintan consistance of
+   the Data in the Profile Card vs. data in the
+   Documents Tree view which refresh only upon
+   refresh (F5). This is documented in R19 SP4
+   Program Directory.
+   .
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   HD82041
+   
+   
+ * REPORTED COMPONENT NAME
+   SMARTEAM NT>XP
+   
+   
+ * REPORTED COMPONENT ID
+   569199970
+   
+   
+ * REPORTED RELEASE
+   519
+   
+   
+ * STATUS
+   CLOSED PRS
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-02-05
+   
+   
+ * CLOSED DATE
+   2009-03-18
+   
+   
+ * LAST MODIFIED DATE
+   2009-03-18
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

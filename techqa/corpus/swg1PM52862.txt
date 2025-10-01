@@ -1,0 +1,193 @@
+Title: IBM PM52862: PROBLEMS DEPLOYING XML FILES USING 0X0A LINEBREAKS - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+WebSphere Message Broker V6.1 - Fix Pack 6.1.0.11 [http://www-01.ibm.com/support/docview.wss?uid=swg24033879]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When XML files are deployed to WebSphere Message Broker in a
+   bar file, if the XML file uses the single character '0x0A' (\n)
+   as a line break character instead of the double
+   character '0x0D0A' (\r\n) this can under some circumstances
+   cause the XML file to not be successfully created on the Broker
+   although the overall deploy may succeed and there may not
+   necessarily be errors in the syslog to indicate that a problem
+   has occurred.
+   
+   Follow on exceptions may be observed when a node attempts to
+   access the XML file either during node initialization or during
+   execution of a flow.
+   
+   When using the ia0s supportpac (CEPNodes) for example the
+   following error may be observed during deploy:
+   
+   BIP4368S: The method 'setAttribute' has thrown the following
+   exception:
+   java.lang.RuntimeException: Invalid definition file
+   specification:
+   xmlFile.XML. File wasn't found.
+   The Java API framework has caught an unhandled Java
+   exception.
+   Contact the node provider for further details.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   All users of WebSphere Message Broker using deployed XML files.
+   
+   Platforms Affected:
+   All Platforms
+   ****************************************************************
+   PROBLEM SUMMARY:
+   When XML files are deployed to WebSphere Message Broker in a
+   bar file, if the XML file uses the single character '0x0A' (\n)
+   as a line break character instead of the double
+   character '0x0D0A' (\r\n) this can under some circumstances
+   cause the XML file to not be successfully created on the Broker
+   although the overall deploy may succeed and there may not
+   necessarily be errors in the syslog to indicate that a problem
+   has occurred.
+   
+   Follow on exceptions may be observed when a node attempts to
+   access the XML file either during node initialization or during
+   execution of a flow.
+   
+   When using the ia0s supportpac (CEPNodes) for example the
+   following error may be observed during deploy:
+   
+   BIP4368S: The method 'setAttribute' has thrown the following
+   exception:
+   java.lang.RuntimeException: Invalid definition file
+   specification:
+   xmlFile.XML. File wasn't found.
+   The Java API framework has caught an unhandled Java
+   exception.
+   Contact the node provider for further details.
+   
+   The problem is caused by a failure to parse the XML declaration
+   at the start of the document in order to determine if the XML
+   file is a UTF-16 document. This can lead to an IOException
+   being thrown in the parsing code which prevents the XML file
+   from being written to disk during deployment.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  WebSphere Message Broker has been updated so that this parsing
+   error no longer occurs if the document used '0x0A' line
+   separators.
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+   V6.1 - Maintenance Level 6.1.0.11
+   
+   The latest available maintenance can be obtained from
+   'WebSphere Message Broker Recommended Fixes'
+   http://www.ibm.com/support/docview.wss?rs=849&uid=swg27006041 [http://www.ibm.com/support/docview.wss?rs=849&uid=swg27006041]
+   
+   If the maintenance level is not yet available, information on
+   its planned availability can be found in 'WebSphere Message
+   Broker Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=849&uid=swg27006308 [http://www-1.ibm.com/support/docview.wss?rs=849&uid=swg27006308]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM52862
+   
+   
+ * REPORTED COMPONENT NAME
+   WMB Z/OS V6
+   
+   
+ * REPORTED COMPONENT ID
+   5655M7400
+   
+   
+ * REPORTED RELEASE
+   100
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-11-24
+   
+   
+ * CLOSED DATE
+   2012-01-13
+   
+   
+ * LAST MODIFIED DATE
+   2012-01-13
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMB Z/OS V6
+   
+   
+ * FIXED COMPONENT ID
+   5655M7400
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R100 PSY
+   UP

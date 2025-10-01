@@ -1,0 +1,115 @@
+Title: IBM ITM 6.2.x and Windows 2008 User Access Control (UAC) Settings - United States
+
+Text:
+ EDUCATION
+
+ABSTRACT
+ The following information was created by testing on Windows 2008 with the included UAC settings. These settings are suggestions only as the setting for any UAC value must be evaluated within the Security guidelines and restrictions for each customer environment. 
+
+CONTENT
+UAC experiences and behaviors when installing ITM both locally and remotely. 
+
+The following notes are based on running with UAC settings shown below. Notes on UAC in general are included. Please refer to the suggested UAC Settings that follow these experiences for more information.
+
+UAC Experiences
+
+
+ * When setup.exe is launched locally from an administrator account but not the built-in Administrator account, an error popup is displayed that states "Your logon ID must have Administrator rights to install IBM Tivoli Monitoring." To circumvent this, the recommended procedure is to run setup.exe from a DOS command prompt that has been launched with Run as Administrator. An alternate method is to launch setup.exe with Run as Administrator. 
+ * Running tacmd... We recommend running tacmd from a DOS command prompt that has been launched with Run As Administrator. This will assure all actions taken by tacmd are not blocked by UAC. 
+ * Command tacmd createnode may not work if UAC Policy "Admin Approval Mode for the Built-in Administrator account" is enabled. Whether it works or not depends on the maintenance level of Windows 2008. To run createnode disable the above policy, run the createnode, then re-enable the policy. Alternatively, install the NT Agent locally on the target system. If the NT Agent is installed by createnode the ID used MUST be the true built-in Administrator account and password. 
+ * Manage Tivoli Enterprise Monitoring Services (MTEMS - Kinconfg) should be launched with Run as Administrator. MTEMS starts and stops services and makes registry changes to these services and the ITM Registry key (HKLM\Software\Candle\...). MTEMS may require Administrator authority to complete some of the tasks requested, so it is best to give it the authority when launching it. If MTEMS is not launched with Run As Administrator, some functions of MTEMS may not be available. 
+ * If the ID being used for the deploy is active on the deploy target machine, a popup windows entitled Interactive services dialog detection will be displayed. This is a security precaution and can be ignored. After the deploy completes the window will disappear. 
+ * Install may fail if MTEMS is running, since the installer may not be able to stop it. Make sure MTEMS window has been closed before launching the install. 
+ * If there is not enough space on the drive where the System %TEMP% directory is located, the install will fail with the reason given as the deployed agent could not be started. If the target machine does not actually have the agent installed but the ver file is present, and agent shows in the MTEMS GUI, this lack of space is probably the reason.
+
+
+Agents Tested with new settings and above caveats: 
+ 1. KNT - Monitoring Agent for Windows OS at 6.2.2 FP1 
+ 2. KUM - Universal Agent at 6.2.2 FP1 
+ 3. KMQ - WebSphere MQ Monitoring Agent at 7.0.0 FP2 
+ 4. KD4 - ITCAM for SOA at 7.1.0 
+ 5. KVM - Monitoring Agent for VMWare VI at 6.2.1 IF3 
+ 6. KVM - Monitoring Agent for VMWare VI at 6.2.2 FP1 was an upgrade to item 5. 
+ 7. KOQ - Monitoring Agent for MS SQL Server (Part of MS Apps CD) 
+ 8. KQ7 - Microsoft Internet Information Services (IIS) Agent (Part of MS Apps CD) 
+ 9. KQB - Monitoring Agent for Microsoft BizTalk Server (Part of MS Apps CD)
+
+
+Each agent deployed, configured, and reported into the TEMS and TEPS also running on Win 2008. Only 32-bit machines were used for this test. All agents reported to TEMS and were shown in the TEPS. 
+
+UAC Settings 
+
+To learn more about UAC Settings, on your Windows 2008 machine, navigate to the Local Security Policy dialog, then expand Local Policies, and select Security Options. For each UAC setting double click to select it, then press the Explain tab on the shown dialog. Each setting is explained and a link is provided if more information is needed. 
+
+Suggested UAC that work with ITM and Remote Deploy for both Local and Remote machines follow: 
+---------------------------------------------------------- 
+User Account Control: 
+Admin Approval Mode for the Built-in Administrator account 
+Recommended setting: Enable 
+Default: Disabled 
+
+NOTE: Enabled is chosen because if causes even the true Administrator to provide confirmation that a task should be allowed to execute. For Remote Deploy (createnode) the recommended setting is Disabled. The Disabled option can be reset to Enabled after the NT Agent is installed. 
+---------------------------------------------------------- 
+User Account Control: 
+Allow UIAccess applications to prompt for elevation without using the secure desktop 
+Enabled 
+Default: not specified. 
+
+NOTE: Since we as a vendor cannot control the structure of a customers environment, and we don't want customers running installs from protected areas, the Enabled setting was chosen. Then, if elevation was required, an operator at the console could make the decision to elevate or cause the request to fail. Choosing this option does not required a secure desktop. 
+---------------------------------------------------------- 
+User Account Control: 
+Behavior of the elevation prompt for administrators in Admin Approval Mode 
+Elevate without prompting 
+Default: Prompt for consent 
+
+NOTE: Since prompting may not be an option during a Remote Deploy operation, the value chosen was Elevate without prompting. For a local GUI install, this value could be either Prompt for consent, or Prompt for credential. 
+---------------------------------------------------------- 
+User Account Control: 
+Behavior of the elevation prompt for standard users 
+Prompt for credential 
+Default: Prompt for credential (home) / Automatically deny elevation requests (enterprise) 
+
+NOTE: Since ITM requires Administrator authority to install, this option can also be set to Automatically deny elevation requests. Using the automatically deny option may prevent standard users from installing software that required Administrator authority. 
+---------------------------------------------------------- 
+User Account Control: 
+Detect application installations and prompt for elevation 
+Enabled 
+User Account Control: Detect application installations and prompt for elevation 
+Default: Enabled (home) / Disabled (enterprise) 
+
+NOTE: The selected option Enabled was chosen because it should offer both protection and permission if a software install needs to be elevated to full Administrator privileges. 
+---------------------------------------------------------- 
+User Account Control: 
+Only elevate executables that are signed and validated 
+Disabled 
+Default: Disabled 
+
+NOTE: The selected option Disabled was chosen because not all of the ITM Agents or CDs have valid signed information. Any ITM CD based on ITM 6.2.1 or above should be signed and then this value could be enabled. For older ITM installer based CDs disabled is the correct setting. 
+---------------------------------------------------------- 
+User Account Control: 
+Only elevate UIAccess applications that are installed in secure locations 
+Disabled 
+Default: Enabled 
+
+NOTE: Since ITM is not installed from the above protected locations, the Disabled setting was chosen. 
+---------------------------------------------------------- 
+User Account Control: 
+Run all administrators in Admin Approval Mode 
+Enabled 
+Default: Enabled 
+
+NOTE: The default value of Enabled was selected because it seemed to offer the most security and did not effect Remote Deploy of Agents. 
+---------------------------------------------------------- 
+User Account Control: 
+Switch to the secure desktop when prompting for elevation 
+Disabled 
+Default: Enabled 
+
+NOTE: Since we as a vendor cannot know if a customer has a secure desktop running on remote machines, the disabled option was chosen. 
+---------------------------------------------------------- 
+User Account Control: 
+Virtualize file and registry write failures to per-user locations 
+Enabled 
+Default : Enabled 
+
+NOTE: Default value Enabled chosen, so Windows with UAC would act the same way as previous versions of Windows without UAC.

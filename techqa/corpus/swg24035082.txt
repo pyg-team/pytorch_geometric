@@ -1,0 +1,134 @@
+Title: IBM Software Delivery and Lifecycle Patterns 1.0 - United States
+
+Text:
+service release; modpack; mod pack; upgrade; refresh; refresh pack DOWNLOADABLE FILES
+
+ABSTRACT
+ IBM Software Delivery and Lifecyle Patterns 1.0 has been made generally available on Passport Advantage. 
+
+DOWNLOAD DESCRIPTION
+ 
+
+Table of Contents Sections Description  * What's new
+
+This section provides an overview on what is new in this release with a description of any new functions or enhancements when applicable.  * Impact assessment
+
+This section provides information related to the impact of this release to allow you to assess how your environment may be affected.  * Prerequisites
+
+This section provides important information to review prior to the installation of this release.  * Download package
+
+This section provides the direct link to obtain the download package for installation in your environment.  * Installation instructions
+
+This section provides the installation instructions necessary to apply this release into your environment.  * Known problems
+
+This section contains a link to the known problems (open defects) identified at the time of this release. Supporting Documentation Document Description  * Detailed System Requirements [http://www.ibm.com/support/docview.wss?uid=swg27038774]
+
+Click to review the detailed system requirements information for a complete list of hardware requirements, supported operating systems, prerequisites and optional supported software, with component-level details and operating system restrictions.  * Information Center [http://pic.dhe.ibm.com/infocenter/patterns/v1r0/index.jsp]
+
+The information center provides you with user assistance for the product. You can view, browse, and search online information related to the product. You can also visit IBM Product information [http://www.ibm.com/support/publications/us/library/index.shtml#letter_R] page to browse for additional information centers. PREREQUISITES
+ 
+
+ * Use IBM PureApplication System or IBM Workload Deployer to import and deploy the provided patterns:  * License server shared service (based on Rational License Key Server)
+    * Rational solution for Collaborative Lifecycle Management virtual system pattern
+    * Rational Application Developer virtual system pattern
+   
+   
+ * The license server shared service pattern must be deployed in the same cloud group as the application patterns that use it. Deploy the license server shared server first. Subsequent application deployments locate the shared service automatically.
+
+INSTALLATION INSTRUCTIONS
+ 
+
+See the Information Center [http://pic.dhe.ibm.com/infocenter/patterns/v1r0/index.jsp] for instructions on how to install each pattern.
+
+DOWNLOAD PACKAGE
+ 
+
+Download options Access type Description Passport Advantage [https://www.ibm.com/software/howtobuy/softwareandservices/passportadvantage] Passport Advantage and Passport Advantage Express clients are required to sign in to download the software package. IBM OEM software [https://www.ibm.com/software/howtobuy/softwareandservices/oem] IBM Software Group OEM offerings are designed for partners who develop and sell business solutions with embedded or bundled IBM middleware software. Clients with Flexible Contract Type (FCT) license purchases and IBM Business Partners must sign in to download the software package. HOW CRITICAL IS THIS FIX?
+ 
+
+Impact Assessment Impact Description Recommended This is the first release of IBM Software Delivery and Lifecycle Patterns. KNOWN SIDE EFFECTS
+ Note the following issues.
+
+
+
+
+
+
+ * Rational License Key Server
+ *  Problem: Rational License Key Server is run as the root user on Linux and UNIX. When it starts, you get a message in the log /opt/IBM/RationalRLKS/logs/lmgrd.log observing that the license server manager (lmgrd) is running as root, which is "a potential security problem and not recommended." Workaround: There is no workaround for this issue. The server cannot be run as a non-root user. The issue may be resolved in a future release of Rational License Key Server. 
+ * Rational License Key Server
+ *  Problem: when starting the server, the following error entries may appear in the log /opt/IBM/RationalRLKS/logs/lmgrd.log> 
+   (lmgrd) license daemon: execute process failed: 
+             (/opt/IBM/RationalRLKS/bin/telelogic) -T fit-ipasvm-115 11.10 3 
+             -c /opt/IBM/RationalRLKS/config/tokenStarterPack.dat
+   (lmgrd) license daemon: system error code: No such file or directory
+   (lmgrd) telelogic exited with status 45 (Child cannot exec requested server)
+   (lmgrd) Please correct problem and restart daemons
+   (lmgrd) license daemon: execute process failed: 
+             (/opt/IBM/RationalRLKS/bin/rational) -T fit-ipasvm-115 11.10 3 
+             -c /opt/IBM/RationalRLKS/config/tokenStarterPack.dat
+   (lmgrd) license daemon: system error code: No such file or directory
+   (lmgrd) rational exited with status 45 (Child cannot exec requested server)
+   (lmgrd) Please correct problem and restart daemon
+   
+   
+   Workaround: Ignore the log entries. The license server supports both new and legacy license file types. These messages indicate that you are using a new license file type. 
+ * Rational Application Developer  * Problem: When configuring a Project area connection, if you allow Rational Team the Concert client to save your credentials, (Remember my password option), RTC hangs after asking for the master password. It attempats to setup password recover but never completes. 
+    *  Workaround: use any of the following workarounds.  * Uncheck Remember my password when you are prompted for credentials.
+       * If you check Remember my password, you are prompted to enter a master password. Enter one. When you are prompted to specify a recover profile, click No. The recovery profile consists of additional security questions and answers.
+       * Disable Secure Storage before creating a repository connection in the Rational Team Concert Client. Go to Window > Preferences, then navigate to General > Security > Secure Storage. Clear the UI Prompt check box. Click Apply, then OK to save the preference. 
+      
+      
+   
+   
+
+
+CHANGE HISTORY
+ This is the first release of IBM Software Delivery and Lifecycle Patterns. 
+
+ 
+
+Back to top
+
+
+TECHNICAL SUPPORT
+ 
+
+TAB NAVIGATION
+ * General Support Information- selected tab,
+ * Support Resources [http://www.ibm.com/support/docview.wss?uid=swg27020747]- selected tab,
+
+
+
+
+IBM Rational Software Support Communities 
+
+ * Visit the IBM Support Portal [http://www.ibm.com/support/entry/portal/Overview/Software/Rational/product] to configure your support portal experience and review FAQs, lists of known problems, fixes, and a wealth of important support information.
+   
+   
+ * Visit developerWorks [http://www.ibm.com/developerworks/rational/] to access an online collection of tutorials, sample code, standards, forums and other resources provided by experts at IBM to assist software developers using Rational tools including access to the IBM RFE Community [http://www.ibm.com/developerworks/rfe/].
+   
+   
+ * Visit the Jazz Community [http://jazz.net/] if you use a Rational product created using the Jazz platform to interact directly with the Jazz development team and other community members, download product trials and betas and track developement progress. 
+
+
+
+
+HELPFUL HINTS FOR OBTAINING TECHNICAL ASSISTANCE:
+Before you contact IBM Rational Software Support, gather the background information that you need to describe the problem. When you describe a problem to an IBM software support specialist, be as specific as possible and include all relevant background information so that the specialist can help you solve the problem efficiently. To save time, know the answers to these questions: 
+
+ * What software versions were you running when the problem occurred? 
+ * Do you have logs, traces, or messages that are related to the problem? 
+ * Can you reproduce the problem? If so, what steps do you take to reproduce it? 
+ * Is there a workaround for the problem? If so, be prepared to describe the workaround. 
+
+If you have helpful information to diagnose or identify the problem on your system, you can provide this data by following the instructions to exchange information with IBM Technical Support [http://www.ibm.com/software/support/exchangeinfo.html]. 
+
+ 
+
+Follow IBM Rational Client Support on Twitter [http://twitter.com/rationalsupport] | Facebook [http://facebook.com/rationalsupport] | YouTube [http://www.youtube.com/ibmrationalsupport] | devWorks Blog [https://www.ibm.com/developerworks/mydeveloperworks/blogs/nfrsblog/?lang=en]
+
+
+
+
+ Back to top

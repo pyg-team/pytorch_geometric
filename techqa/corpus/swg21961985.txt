@@ -1,0 +1,48 @@
+Title: IBM ** Troubleshooting** User receive "Could not create the view - FAIL:!Java heap space!" when trying to use Java-related function (e.g. UDbR) - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ User tries to use a JAVA-related function (for example UDBR). An error appears. 
+
+SYMPTOM
+UdBR (Scenario #1)[/support/docview.wss?uid=swg21961985&aid=1] [/support/docview.wss?uid=swg21961985&aid=1] 
+
+Could not create the view ...
+Caused by: ..... FAIL:!Java heap space!
+
+
+CAUSE
+The error "Could not create the view" is generic. 
+
+ * There are many possible causes for this error.
+
+
+Instead, this Technote relates to the scenario where the error message includes the message "FAIL:!Java heap space!"  * Again, there are several possible causes.
+
+
+Scenario #1 (likely) - This error affects all users simultaneously  * The system was working OK for a long time (for example several weeks) and suddenly all users affected 
+ * In this scenario, the cause is that the JAVA Proxy service has run out of memory.
+
+
+Scenario #2 (rare) - This error affects only one user  * In this scenario, the cause is corrupt/invalid cache files inside the 'bad' user's profile 
+ * For more details, see separate IBM Technote #1882560.
+
+RESOLVING THE PROBLEM
+Scenario #1 (likely) - JAVA Proxy service has run out of memory. 
+
+ 
+Workaround:
+Restart the Windows service "IBM Cognos Controller Java Proxy" on the Controller application server.
+
+Long term fix:
+Increase the memory allocation to the Java Proxy service, by using the file 'CCRProxy.options'. 
+
+ * TIP: For instructions, see separate IBM Technote #1616770.
+
+
+Scenario #2 (rare) - Corrupt/invalid cache files inside the 'bad' user's profile 
+See separate IBM Technote #1882560. RELATED INFORMATION
+ 1882560 - Some user(s) receive "...java.lang.OutOfMemor [http://www.ibm.com/support/docview.wss?uid=swg21882560]
+1616770 - Intermittent "Error in AFC:!java.lang.OutOfMe [http://www.ibm.com/support/docview.wss?uid=swg21616770]

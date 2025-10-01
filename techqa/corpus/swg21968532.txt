@@ -1,0 +1,50 @@
+Title: IBM Security Bulletin: Multiple vulnerabilities in IBM Business Process Manager, and other bundling products shipped with IBM SmartCloud Orchestrator and SmartCloud Orchestrator Enterprise - United States
+
+Text:
+CVE-2015-1885; CVE-2015-1946; CVE-2015-1927; CVE-2015-1920 SECURITY BULLETIN
+
+SUMMARY
+ Multiple vulnerabilities in IBM Business Process Manager, and other bundling products shipped with IBM SmartCloud Orchestrator and SmartCloud Orchestrator Enterprise. Information about security vulnerabilities affecting IBM Business Process Manager, and the bundling products IBM SmartCloud Cost Management, IBM Tivoli System Application Automation Manager and IBM Tivoli Monitoring has been published in a security bulletin (CVE-2015-1885, CVE-2015-1946, CVE-2015-1927, CVE-2015-1920). 
+
+VULNERABILITY DETAILS
+Consult the following security bulletins for vulnerability details and information about fixes for affected supporting products that are shipped with IBM SmartCloud Orchestrator 
+
+ * Security Bulletin: Multiple vulnerabilities in IBM Business Process Manager shipped with IBM Cloud Orchestrator and IBM SmartCloud Orchestrator (CVE-2015-1885, CVE-2015-1946, CVE-2015-1927, CVE-2015-1920) [http://www.ibm.com/support/docview.wss?uid=swg21882542] 
+ * Security Bulletin: Multiple vulnerabilities in IBM Tivoli System Automation Application Manager shipped with IBM Cloud Orchestrator and IBM SmartCloud Orchestrator (CVE-2015-1885, CVE-2015-1946, CVE-2015-1927) [http://www.ibm.com/support/docview.wss?uid=swg21882528] 
+
+Consult the following security bulletins for vulnerability details and information about fixes for affected supporting products that are shipped solely with IBM SmartCloud Orchestrator Enterprise  *  [http://www.ibm.com/support/docview.wss?uid=swg21883102]Security Bulletin: Multiple vulnerabilities in IBM Business Process Manager shipped with IBM Cloud Orchestrator and IBM SmartCloud Orchestrator (CVE-2015-1885, CVE-2015-1946, CVE-2015-1927, CVE-2015-1920) [http://www.ibm.com/support/docview.wss?uid=swg21882542] 
+ * Security Bulletin: Multiple vulnerabilities in IBM Tivoli System Automation Application Manager shipped with IBM Cloud Orchestrator and IBM SmartCloud Orchestrator (CVE-2015-1885, CVE-2015-1946, CVE-2015-1927) [http://www.ibm.com/support/docview.wss?uid=swg21882528] 
+ * Security Bulletin: Multiple vulnerabilities in IBM SmartCloud Cost Management shipped with IBM Cloud Orchestrator Enterprise and IBM SmartCloud Orchestrator Enterprise (CVE-2015-1885, CVE-2015-1946, CVE-2015-1927) [http://www.ibm.com/support/docview.wss?uid=swg21883102] 
+ * Security Bulletin: Multiple vulnerabilities in IBM Tivoli Monitoring shipped with IBM Cloud Orchestrator Enterprise and IBM SmartCloud Orchestrator Enterprise (CVE-2015-1946, CVE-2015-1920 ) [http://www.ibm.com/support/docview.wss?uid=swg21883331] 
+
+
+For unsupported IBM SmartCloud Orchestrator V2.2.0 and V2.2.0.1 and IBM SmartCloud Orchestrator Enterprise V2.2.0 and V2.2.0.1. IBM recommends upgrading to a fixed, supported version/release/platform of the product. AFFECTED PRODUCTS AND VERSIONS
+Affected versions of IBM SmartCloud Orchestrator, IBM SmartCloud Orchestrator Enterprise, and affected supporting products, which are shipped with IBM SmartCloud Orchestrator and IBM SmartCloud Orchestrator Enterprise, are listed in the following table.
+
+
+
+Affected Principal Product and Versions Affected Supporting Product and Version IBM SmartCloud Orchestrator V2.2 and V2.2.0.1 IBM Business Process Manager Standard V8.0.1 IBM SmartCloud Orchestrator Enterprise V2.2 and V2.2.0.1 IBM Business Process Manager Standard V8.0.1
+IBM Tivoli Monitoring V6.3.0
+IBM SmartCloud Cost Management V2.1.0.2 IBM SmartCloud Orchestrator V2.3 and V2.3.0.1 up to iFix7 
+IBM Business Process Manager Standard V8.5
+IBM Tivoli System Automation Application Manager V3.2.2.2 IBM SmartCloud Orchestrator Enterprise V2.3 and V2.3.0.1 up to iFix7 IBM Business Process Manager Standard V8.5
+IBM Tivoli System Automation Application Manager V3.2.2.2
+IBM SmartCloud Cost Management V2.1.0.3
+IBM Tivoli Monitoring V6.3.0.1 GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v2 Guide [http://www.first.org/cvss/v2/guide] 
+On-line Calculator v2 [http://nvd.nist.gov/CVSS-v2-Calculator] 
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] CHANGE HISTORY
+ * 19 November 2015: Updated Vulnerability Details Section
+* 11 November 2015: updated title and summary 
+* 29 October 2015: updated affected and unsupported versions
+* 12 October 2015: Original copy published 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.

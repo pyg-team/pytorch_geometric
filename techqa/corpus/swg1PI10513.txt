@@ -1,0 +1,178 @@
+Title: IBM PI10513: HUNG THREAD MESSAGE IN SYSTEMOUT LOGS - United States
+
+Text:
+  A FIX IS AVAILABLE
+Fixes integrated in WebSphere Portal 7.0.0.1 & 7.0.0.2 Combined Cumulative Fixes [http://www-01.ibm.com/support/docview.wss?uid=swg24029452]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The following hung thread message can be seen in the SystemOut
+   logs even if the Portal server overall is not hung and is
+   responding to requests.
+   
+   [1/7/14 9:05:26:261 EST] 0000001b ThreadMonitor W WSVR0605W:
+   Thread  "WorkManager.pznRuleeventsWorkManager : 3269" (00000ea7)
+   has been active for 988116 milliseconds and may be hung.
+   
+   There is/are 1 thread(s) in total in the server that may be
+   hung.
+   at java.lang.Thread.sleep(Native Method)
+   at java.lang.Thread.sleep(Thread.java:853)
+   at com.ibm.websphere.personalization.util
+   .PznRequestDataManager$ClearRequestTask.run
+   (PznRequestDataManager.java:113)
+   at com.ibm.websphere.personalization.workmanager.
+   impl.was.WasWork.run(WasWork.java:62)
+   at com.ibm.ws.asynchbeans.J2EEContext$RunProxy.run
+   (J2EEContext.java:268)
+   at java.security.AccessController.doPrivileged
+   (AccessController.java:250)
+   at javax.security.auth.Subject.doAs(Subject.java:495)
+   at com.ibm.websphere.security.auth.WSSubject.doAs
+   (WSSubject.java:131)
+   at com.ibm.websphere.security.auth.WSSubject.doAs
+   (WSSubject.java:89)
+   at com.ibm.ws.asynchbeans.J2EEContext$DoAsProxy.run
+   (J2EEContext.java:335)
+   at java.security.AccessController.doPrivileged
+   (AccessController.java:277)
+   at com.ibm.ws.asynchbeans.J2EEContext.run(J2EEContext.java:777)
+   at com.ibm.ws.asynchbeans.WorkWithExecutionContextImpl
+   .go(WorkWithExecutionContextImpl.java:222)
+   at com.ibm.ws.asynchbeans.ABWorkItemImpl.run
+   (ABWorkItemImpl.java:159)
+   at com.ibm.ws.util.ThreadPool$Worker.run(ThreadPool.java:1656)
+   
+   This does not affect performance.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  None available.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  A code fix for this issue is integrated into the WebSphere
+   Portal & WCM Combined Cumulative Fix 28 (PI10705 [http://www-01.ibm.com/support/docview.wss?uid=swg1PI10705]) for Portal
+   7.0.0.2 available from Fix Central:
+   
+   http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent
+   =ibm~WebSphere&product=ibm/WebSphere/WebSphere+Portal&release=Al [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~WebSphere&product=ibm/WebSphere/WebSphere+Portal&release=Al]
+   l&platform=All&function=aparId&apars=PI10705
+   
+   You might need to type or paste the complete address into your
+   Web browser.
+   .
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A code fix for this issue is integrated into the WebSphere
+   Portal & WCM Combined Cumulative Fix 28 (PI10705 [http://www-01.ibm.com/support/docview.wss?uid=swg1PI10705]) for Portal
+   7.0.0.2 available from Fix Central:
+   
+   http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent
+   =ibm~WebSphere&product=ibm/WebSphere/WebSphere+Portal&release=Al [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~WebSphere&product=ibm/WebSphere/WebSphere+Portal&release=Al]
+   l&platform=All&function=aparId&apars=PI10705
+   
+   You might need to type or paste the complete address into your
+   Web browser.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI10513
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSPHERE PERSO
+   
+   
+ * REPORTED COMPONENT ID
+   5724E7614
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-01-29
+   
+   
+ * CLOSED DATE
+   2014-04-28
+   
+   
+ * LAST MODIFIED DATE
+   2014-04-28
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBSPHERE PERSO
+   
+   
+ * FIXED COMPONENT ID
+   5724E7614
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R700 PSY
+   UP

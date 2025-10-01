@@ -1,0 +1,47 @@
+Title: IBM Data tools do not automatically check and restore a dropped database connection in Data Source Explorer view - United States
+
+Text:
+RAD; RDz; RDi; RDp database connection; dropped; RFE; RFE ID 7644; 7644; data source explorer; connection management; preference; workspace; data tools; data management; timeout TECHNOTE (FAQ)
+
+QUESTION
+ If a database connection in the Data Source Explorer drops, IBM Rational Application developer (RAD) versions 7.5, 8.x and 9.0 do not restore it or provide a means to have it checked and automatically restored. The same is true for IBM Rational Developer for System z (RDz) and IBM Rational Developer for i (RDi). Why is this feature not available, especially since RFE ID 7644 shows this as delivered in RDz v8.5? 
+
+CAUSE
+This feature was in RAD v7.0 and was not provided in RAD v7.5 or later. 
+
+The customer submitted Feature request (request for enhancement, or RFE):
+RFE ID 7644: database connection timeout (DB2 v9.1 z/OS) in database explorer (RDz v7.6)) [http://www.ibm.com/developerworks/rfe/execute?use_case=viewRfe&CR_ID=7644]
+incorrectly shows:
+"... Most recent IBM developer update:
+IBM_Rational_Developer (IBM) Delivered with RDz 8.5 ..."
+
+
+This feature became more of an issue after z/OS DB2 v8+ New Function Mode became available. The primary cause in similar problems with dropped connections was found to be the connection to any z/OS DB2 v8+ NFM (new function mode) system in Data Source Explorer being dropped typically after 5 minutes, because on the z/OS side for DB2 v8x/v9x (new function mode) it was configured for all DB2 subsystems to timeout active threads that are idle. All had IDLE THREAD TIMEOUT set to 300 seconds. The default is for the "DDF THREADS" parameter to be set to "ACTIVE " for a newly installed z/OS DB2 v9.1 in NFM, and it had to be changed to INACTIVE [if permitted by the database administrator (DBA)]. If you need help with that setting, IBM DB2 support should be engaged. You can also refer to the DB2 (z/OS) Information Center [http://pic.dhe.ibm.com/infocenter/dzichelp/v2r2/index.jsp].
+
+
+
+ANSWER
+This enhancement request should not have been closed as delivered in RDz v8.5.
+It is also not in the new RAD/RDz v9.0 which use a subset of Data Studio 4.1.
+
+
+Workaround:
+
+
+ 1. Manually reconnect the database connection. 
+ 2. (Optional) Install Data Studio (DS) 3.2 into same package as RDz/RAD 8.5 using IBM installation Manager (this shell shares the same Eclipse IDE)
+    Refer to Download and install IBM Data Studio Version 3.2 [http://www.ibm.com/support/docview.wss?uid=swg24033663].
+    
+    It has a workspace preference, 
+    Window > Preferences > Data management > Connectivity > Connection Management:
+
+
+[/support/docview.wss?uid=swg21645362&aid=1] [/support/docview.wss?uid=swg21645362&aid=1] 
+
+Contact IBM Rational Application Developer support if there are further questions regarding such a feature request. 
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Software Development Rational Developer for System z Linux, Windows 7.5, 7.5.1, 7.5.1.3, 7.5.1.4, 7.6, 7.6.1, 7.6.2, 7.6.2.2, 7.6.2.3, 7.6.2.4, 8.0.1, 8.0.2, 8.0.3, 8.0.3.1, 8.0.3.2, 8.0.3.3, 8.0.3.4, 8.5, 8.5.0.1, 8.5.1, 8.5.1.1, 8.5.1.2, 8.5.1.3, 9.0 Software Development Rational Developer for i

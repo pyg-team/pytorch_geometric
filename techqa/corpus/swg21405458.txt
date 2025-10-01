@@ -1,0 +1,50 @@
+Title: IBM sybaseoc.so failed to load error on IBM InfoSphere DataStage - United States
+
+Text:
+information server sybase plug-in plugin plug in library TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Error is:
+
+main_program: Fatal Error: Fatal: Shared library (sybaseoc.so) failed 
+to load: errno = (2), system message = ( 0509-022 Cannot load module 
+/opt/IBM/InformationServer/Server/DSComponents/bin/sybaseoc.so. 
+0509-150 Dependent module libcomn64.so could not be loaded. 
+0509-022 Cannot load module libcomn64.so. 
+0509-026 System error: A file or directory in the path name does not exist. 
+0509-022 Cannot load module 
+/opt/IBM/InformationServer/Server/DSComponents/bin/sybaseoc.so. 
+0509-150 Dependent module 
+/opt/IBM/InformationServer/Server/DSComponents/bin/sybaseoc.so could 
+not be loaded.) 
+
+RESOLVING THE PROBLEM
+If the Sybase Client version is 12.5: 
+
+ 1. Ensure the following environment variables are set in dsenv:
+    
+    # Define SYBASE variables
+    
+    SYBASE=/u1/sybase
+    SYBASE_OCS=/u1/sybase/OCS-12_5
+    export SYBASE SYBASE_OCS 
+    
+    # Define variable for Sybase Enterprise Stage
+    
+    PATH=$SYBASE_OCS/bin:$PATH
+    export PATH
+    
+    LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$SYBASE/OCS-12_5/lib:$SYBASE/OCS-12_5/lib3p;
+    export LD_LIBRARY_PATH
+    
+ 2. Issue the following command after logging on to the server and sourcing the dsenv:
+    
+    cd /opt/IBM/InformationServer/Server/DSComponents/bin/
+    ldd sybaseoc.so
+
+
+
+If you have upgraded to Sybase Client version 15: 
+ 1. Please refer to Sybase document "New Features SDK 15.0 and Open Server 15.0 for Microsoft Windows, Linux, and UNIX."
+    
+    Basically, you need to run the script lnsyblibs (as ./lnsyblibs create) present under $SYBASE/$SYBASE_OCS/scripts and the appropriate links are created.

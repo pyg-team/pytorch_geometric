@@ -1,0 +1,58 @@
+Title: IBM Storing files in an IBM Spectrum Protect container storage pool might result in data loss - United States
+
+Text:
+ FLASH (ALERT)
+
+ABSTRACT
+ 
+When you store files in a container storage pool in an IBM Spectrum Protect™ server environment, files with a metadata size that is greater than 4 KB might lose their metadata, which in turn, might result in data loss. The files that are most likely affected are Microsoft™ Windows™ System State files and UNIX, Linux, and Macintosh files with large extended attributes or access control lists. 
+
+CONTENT
+Releases Affected: 
+This problem affects IBM Spectrum Protect Version 8.1.0.000.
+All other releases and levels are unaffected.
+
+Required Conditions:
+A container storage pool (STGTYPE=CONTAINER or STGTYPE=CLOUD) must be defined. 
+
+This boundary problem affects backup and archive files with metadata sizes that are greater than 4 KB, which includes Windows System State files and UNIX, Linux, and Macintosh files with extended attributes or access control lists that exceed 4 KB.
+
+Problem Summary:
+This problem is not detected when data is backed up or archived. However, the problem can be detected during restore or replication processing. Replication and restore operations are likely to fail without errors, as shown in this example message: 
+
+ANR1893E Process 51 for Replicate Node completed with a completion state of FAILURE.
+
+After a failed restore or replication operation, the object's non-deduplicated extent, which contains the object's metadata, is marked as damaged. If the container of this non-deduplicated extent is audited, the following error can occur:
+
+02/23/16 11:16:02 ANR2338E smtrans.c(7062): Invalid header received for object
+10331953, length 446. Size (321), pushed (4), skipped (0),
+status (0). Found length (0), type (0), size (4).
+
+
+Identifying Affected Files or Objects:
+
+You can identify affected files or objects with permanent metadata loss by using the following SELECT statement:
+
+db2 -x "select 'show invo ' || cast( sdro.objid as char(24)) from sd_recon_order sdro inner join sd_non_dedup_locations sdndl on (sdro.chunkid=sdndl.chunkid) where sdro.chunktype=1 and sdro.offset=0 and sdndl.length!=(select sdro2.offset+128 from sd_recon_order sdro2 where sdro.objid=sdro2.objid and sdro2.offset>0 order by sdro2.offset fetch first row only) for read only with ur" >> macro.file
+
+The output from this SELECT statement generates a list of SHOW INVO commands that can be used as a macro file for the administrative client to display information about the files that are affected by this problem. This SELECT statement initiates a complete table scan for large inventory tables and can take several hours to run. This statement can be executed while the server is running; however, in that mode, that statement can produce false positives. To identify a false positive, the SHOW INVO command reports that the object cannot be found on the server.
+
+
+Problem Resolution: 
+Apply the fixing level. These problems are resolved in the IBM Spectrum Protect server 8.1.1.000 and later with APAR IT21335.
+
+Each object ID in the SELECT output identifies an object or file that lost its metadata due to the described problem. The files must be deleted on the server side, and backed up again on the client side. For each file or object listed, complete the following tasks:
+
+1. Delete the object by using the DELETE OBJECT command:
+delete object <object_id>
+
+2. Back up the file that is shown in the SHOW INVO output for that object
+
+
+Restriction: If you are deleting multiple objects in a macro wit h the DSMADMC command, specify the ITEMCOMMIT option.
+
+If an object is listed by the QUERY DAMAGED command, but the object does not appear in the SELECT output, that object is affected by damaged extents related to the second boundary condition. The files that are listed by the QUERY DAMAGED command, but do not appear in the SELECT output, must be stored again (by using backup, archive, or other operations). In this way, you might be able to resolve the second boundary problem without first deleting the object. If this action does not resolve the issue, delete each object or file and back it up again, as described for the objects and files that are listed in the SELECT output.
+Cross reference information
+Segment Product Component Platform Version Edition
+Storage Management Tivoli Storage Manager 
+Storage Management Tivoli Storage Manager Extended Edition

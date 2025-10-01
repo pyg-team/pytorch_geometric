@@ -1,0 +1,40 @@
+Title: IBM How do I remove the Bigfix Agent on my Mac endpoint? - United States
+
+Text:
+436; Bigfix; Mac; Agent; Installation; googlebigfix TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Steps to remove the Bigfix Agent from a Mac endpoint. 
+
+RESOLVING THE PROBLEM
+Bigfix provides a DMG file that includes a script that will uninstall the Macintosh Bigfix Client. You can find the DMG file with step by step instructions here: 
+BigFix Unix, Linux, and Mac Clients [http://support.bigfix.com/install/besclients-nonwindows.html#mac] 
+
+The original download has an uninstaller application that can be run on the client machine to remove the Bigfix Mac client.
+
+Some administrators may have never seen the original file. They have only seen the distributable package, created by the MAC installer, in steps 4 and 5. 
+
+The original installer can be found by following the download link for the Bigfix MAC Agent. Inside the DMG file you will find 3 applications:
+
+
+BESAgent Uninstaller.app BESAgent Installer Builder.app BigFixQnA.app 
+
+The application of interest is the BESAgent Uninstaller.app which can then be copied and run to remove the Bigfix Mac agent from the endpoint.
+
+Follow these steps to uninstall the Bigfix Client: 
+
+ 1. Download the DMG file to the particular Macintosh system. 
+ 2. Mount the file by double clicking on the DMG file 
+ 3. In the mounted file double click the BESAgent Uninstaller which will lead you through the uninstall process. 
+
+
+This only applies to Agents of 9.0 or lower 
+You need to find the DMG file that matches the version that you are using. Those can be found here: 
+http://support.bigfix.com/bes/release/ [http://support.bigfix.com/bes/release/] 
+
+In Version higher in the 9.0 you use sudo to run the uninstall script: > sudo /Library/BESAgent/BESAgent.app/Contents/MacOS/BESAgentUninstaller.sh
+
+ 
+
+HISTORICAL NUMBER
+ 436

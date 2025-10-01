@@ -1,0 +1,26 @@
+Title: IBM There isn't VBA on Solaris, how do I access the API? - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ There isn't VBA on Solaris, how do I access the API? 
+
+ANSWER
+
+
+Rhapsody users on a Solaris platform can access the Rhapsody API using VBScript (Visual Basic Scripting edition), a cross-platform development language. Running VBScript: The setup for running VBScript scripts is now done during installation. But there are still some actions that users must take to get started:  
+
+ *  Before running a VBScript script, the user must run Rhapsody at least once for registration of the COM interfaces in the registry. 
+ *  Run the script VBS located in the Rhapsody home directory. 
+ *  Use the vbstest program by mainsoft to run vbs programs. 
+ *  VBScript samples are available in the Samples/VBS directory of the Rhapsody installation. 
+
+ 
+
+ See the online help for further info and VBScript samples. 
+
+289AnswerProduct versionPartner ContentInternal ContentCategoryReference ID 
+
+HISTORICAL NUMBER
+ 10222

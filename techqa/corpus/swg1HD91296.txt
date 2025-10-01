@@ -1,0 +1,191 @@
+Title: IBM HD91296: CHANGE ATTRIBUTE ON USER S PROFIEL CARD GIVES ERROR AND PASSWORD - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  scenario:
+   VAR has some problems with his environment where upgraded an
+   R16 FDA environment to R19 SP6.
+   they have first upgraded the database to R17 SP5 so that they
+   should be able to follow the upgrade procedure described in
+   Appendix C in RCFAdminGuide.pdf that was delivered with SP6.
+   They have problems with updating the users only in Editor,
+   not in User Maintenance.
+   scenario
+   ------------------------
+   on machine A test that you can login as user hn7
+   on machine B, open user maintenance and check that for the
+   user hn7, the expiration date is not for today
+   now in editor of machine B, search for the user hn7 and
+   update his profile card. change 2 attributes in it as shown
+   in the video attached
+   click OK to validate change: you will receive errors
+   The error I get now is:
+   Error No: 00964
+   Incorrect Password for user "hn7".
+   where  hn7  is the Login for the user that I am trying to
+   update, followed by
+   Error Detected in Function: RegulatoryCompliance_AuditTrail
+   Error Details:
+   SmarTeam error (6). Operation not accepted.
+   Error No: 00964
+   Incorrect Password for user "hn7".
+   Go back to user maintenance and check that After this error
+   the password for the user I tried to update is reset and set
+   to be expired today. .
+   On machine A hn7 user can not login anymore
+   -------------------
+   In the mail jobs class this update also generates 2 new mail
+   jobs.
+   Message1:
+   SmarTeam user account for user hn7 was updated Sign:EEE
+   Ref Name:Ref name
+   Message2:
+   Your SmarTeam account for user login : hn7 is now active.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  scenario:
+   VAR has some problems with his environment where upgraded an
+   R16 FDA environment to R19 SP6.
+   they have first upgraded the database to R17 SP5 so that they
+   should be able to follow the upgrade procedure described in
+   Appendix C in RCFAdminGuide.pdf that was delivered with SP6.
+   They have problems with updating the users only in Editor,
+   not in User Maintenance.
+   scenario
+   ------------------------
+   on machine A test that you can login as user hn7
+   on machine B, open user maintenance and check that for the
+   user hn7, the expiration date is not for today
+   now in editor of machine B, search for the user hn7 and
+   update his profile card. change 2 attributes in it as shown
+   in the video attached
+   click OK to validate change: you will receive errors
+   The error I get now is:
+   Error No: 00964
+   Incorrect Password for user "hn7".
+   where ?hn7? is the Login for the user that I am trying to
+   update, followed by
+   Error Detected in Function: RegulatoryCompliance_AuditTrail
+   Error Details:
+   SmarTeam error (6). Operation not accepted.
+   Error No: 00964
+   Incorrect Password for user "hn7".
+   Go back to user maintenance and check that After this error
+   the password for the user I tried to update is reset and set
+   to be expired today. .
+   On machine A hn7 user can not login anymore
+   -------------------
+   In the mail jobs class this update also generates 2 new mail
+   jobs.
+   Message1:
+   SmarTeam user account for user hn7 was updated Sign:EEE
+   Ref Name:Ref name
+   Message2:
+   Your SmarTeam account for user login : hn7 is now active.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  NOTE THAT THIS PROBLEM WILL ALSO BE FIXED ON V5R19 SP7.
+   NOTE THAT THIS PROBLEM WILL ALSO BE FIXED ON V5R20 SP1.
+   Additional Closure Information:
+   N/A
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   HD91296
+   
+   
+ * REPORTED COMPONENT NAME
+   SMARTEAM NT>XP
+   
+   
+ * REPORTED COMPONENT ID
+   569199970
+   
+   
+ * REPORTED RELEASE
+   519
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-12-01
+   
+   
+ * CLOSED DATE
+   2009-12-20
+   
+   
+ * LAST MODIFIED DATE
+   2010-02-24
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   SMARTEAM NT>XP
+   
+   
+ * FIXED COMPONENT ID
+   569199970
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R519 PSN
+   UP

@@ -1,0 +1,25 @@
+Title: IBM Guardium S-TAP Verification with Network Address Translation (NAT) - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ NAT is used between the network locations where my S-TAP and Collector are installed.
+What is the expected behavior of Guardium S-TAP Verification in this case? 
+
+CAUSE
+S-TAP Verification (both advanced and standard) checks the client and server IP of the connection from collector to database. If the IP addresses are different from the perspective of the collector and the database server, for example if NAT is used, the verification process will not work as expected. 
+
+The verification process is looking for traffic from IP1 to IP2, but the S-TAP is reporting traffic from IP3 to IP4 due to NAT.
+
+
+ANSWER
+If NAT is used between network locations of the collector and S-TAP, S-TAP verification will fail, even if the S-TAP is in fact collecting traffic. Run diagnostics will show '0 failed checks'. 
+
+As of Guardium v10.1.2 and v9.5 this is the expected behavior. S-TAP verification is not supported in NAT environment. 
+
+Check in reports to verify if these S-TAPs are collecting data. For example - How can I check if the correct data is being logged on my Guardium appliance? [http://www-01.ibm.com/support/docview.wss?uid=swg21699711]
+
+RELATED INFORMATION
+ Resolve S-TAP Verification Failure with 0 Failed Checks [http://www-01.ibm.com/support/docview.wss?uid=swg21690135]
+What to do if Guardium inspection engine status is fail [http://www-01.ibm.com/support/docview.wss?uid=swg21959830]

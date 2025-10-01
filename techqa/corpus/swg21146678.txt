@@ -1,0 +1,33 @@
+Title: IBM Renaming a dbset on UNIX-based systems - United States
+
+Text:
+1146678; CQ; rename; connection; dbset; cqunix; unix; reg; cqreg TECHNOTE (FAQ)
+
+QUESTION
+ How do you rename a dbset/connection using a Linux® or UNIX® version of IBM® Rational® ClearQuest®? 
+
+ANSWER
+There is no rename option available in the Linux or UNIX based versions of ClearQuest when using the command cqreg. To workaround this, you can add a new dbset with a new name and same database information, and then drop the old dbset. This can be done using the cqreg options of add_dbset and drop_dbset. For more information regarding this commands, refer to technote 1320850 [http://ibm.com/support/docview.wss?rs=988&uid=swg21320850]. 
+
+
+
+
+Starting with version 7.0.0, ClearQuest uses an Eclipse RCP client. This client allows for the creation and managing of database connections with a GUI interface, which is a more flexible and easy to use method than using cqreg. This screen can be accessed through via File --> Database --> Manage Connections. 
+
+This client is launched by running ./clearquest in opt/rational/clearquest/bin, the default installation directory. 
+
+ 
+
+
+
+
+
+RELATED INFORMATION
+#Managing connections with command line utility "cqreg" [http://ibm.com/support/docview.wss?rs=988&uid=swg21320850]
+
+
+
+
+
+
+Cross Reference information Segment Product Component Platform Version Edition Software Development Rational ClearQuest Client - Eclipse RCP 7.0, 7.0.0.1, 7.0.0.2, 7.0.0.3, 7.0.1, 7.0.1.1, 7.0.1.2

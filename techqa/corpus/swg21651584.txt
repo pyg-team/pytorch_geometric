@@ -1,0 +1,52 @@
+Title: IBM Importing data from all scopes with the MCWAS Plug-in - United States
+
+Text:
+import; data; macwas; node; cell; cluster; scope; data source; websphere application server base; was; db2; java.lang.ClassDefNotFoundError; deploy; deployment TECHNOTE (FAQ)
+
+QUESTION
+ When using the MCWAS Plug-in in IBM UrbanCode v6, can you import data from all scopes (cell, cluster, node, server)? 
+
+CAUSE
+This question arises because of scenarios like the following example: 
+
+ 1. Create an exemplar profile with a data source defined in Cell scope, using IBM WebSphere Application Server v8.5 Base, targeting IBM DB2 v9.7. The JDBC Driver used by this data source contains default references to WebSphere Environment Variables, with names such as:
+    DB2UNIVERSAL_JDBC_DRIVER_NATIVEPATH 
+    
+    
+ 2. Note that these variables are defined by default in Node scope, and their values contain the path to the location of the JDBC Driver jars in the DB2 installation
+    
+    
+ 3. Use the MCWAS Plug-in to promote the exemplar configuration to a target WebSphere Application Server v8.5 Base profile
+    
+    
+ 4. Select the data source in the target profile and select Test Connection
+    
+    
+ 5. Note that the connection fails with the error: java.lang.ClassDefNotFoundError
+    
+    
+ 6. Open the Administrative Console of the target profile and navigate to Environment > WebSphere variables
+    
+    
+ 7. Note that the variables do not have any values (the values set at Node scope in the exemplar profile were not copied over to the target profile)
+
+ANSWER
+ANSWER 
+
+The MCWAS Plug-in in IBM UrbanCode v6.0 only imports data defined in Cell and Cluster scope. 
+
+This limitation has been removed in the MCWAS Plugin shipped with IBM UrbanCode v6.0.1, which has the following build number: MCWASPlugin-3.131121. This version of the MACWASPlugin can also import configuration data stored in Node and Server scope. 
+
+If you are using the earlier version of the Plugin, define all configuration entries in either Cell scope or Cluster scope. 
+
+Note 1: In a WebSphere Application Server v8.5 Base installation, Cluster scope is not available. Define configuration entries in Cell scope. 
+
+Note 2: For the above example: 
+
+ 1. Add new variables--with different names--in Cell scope, in the exemplar profile
+    
+    
+ 2. Reference the Cell-scoped variables in the JDBC Driver definition in the exemplar profile
+    
+    
+ 3. Execute the MCWAS Plug-in scripts and UrbanCode Deploy process once again. (If you just add variables with the same name in Cell scope, the variables in Node scope will take precedence and the data source will still fail to connect.)

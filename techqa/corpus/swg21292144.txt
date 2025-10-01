@@ -1,0 +1,31 @@
+Title: IBM WebSphere MQ does not provide native support for SNMP - United States
+
+Text:
+SNMP; Management Information Base MIB TECHNOTE (TROUBLESHOOTING)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ English 
+
+PROBLEM(ABSTRACT)
+ You want to know if WebSphere MQ has a Management Information Base (MIB), and if MQ can send Simple Network Management Protocol (SNMP) alerts. 
+
+RESOLVING THE PROBLEM
+ 
+
+ * MQ does not define Management Information Base (MIB) reports. 
+ * MQ does not support Simple Network Management Protocol (SNMP) in regards to providing an SNMP agent or a MIB's listing. 
+ * There are other vendor products that produce MIBs for MQ. 
+
+
+There are a few different ways to achieve monitoring dependent on what operating system you have and what IBM Tivoli product set, that is, if you have Tivoli Enterprise Console or Tivoli Monitoring (using the MQ Business Integration pack). We would recommend these over using SNMP, since MQ does not provide an SNMP agent. 
+
+"A number of vendors have produced MIBs for MQ, such as Nastel as part of MQControl. Defining the MIB is not hard but writing the agent is the complex part. The MIB just defines the interface to the agent and tells products like Netview what your agents supports. A simple agent could take our events and convert them to SNMP traps. An agent which allowed commands would be much more complicated. 
+We have stated that MQ will not be providing an SNMP agent as our vendors have already done it. 
+The agent itself is really only the start." 
+. 
+The MIB file with the trap definitions could then be loaded so that Netview can format the traps it receives into a human readable form, rather than as a string of numbers. Depending on how good this file is there may be some additional configuration work on Netview server also. 
+. 
+However, the Programmable Command Format(PCF) can be used in (C, C++, Java™, etc) to programmatically check channels, queue depths, and so on; that is, the health of MQ. See the Programmable Command Formats and Administration Interface manual [http://publibfp.boulder.ibm.com/epubs/pdf/csqzac05.pdf] for further information.  
+
+PRODUCT ALIAS/SYNONYM
+ WMQ MQ

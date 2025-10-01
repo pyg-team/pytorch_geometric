@@ -1,0 +1,314 @@
+Title: IBM LO59203: NSD DOES NOT RUN WHEN NSERVER HITS THE 2GB ADDRESS SPACE LIMIT - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The customer has a server that hit the 2GB address space limit,
+   but NSD does not run. Instead the server hung until he manually
+   ran NSD and then killed off the Domino server.
+   
+   
+   OS Version      : Windows/2003 5.2 [32-bit] (Build 3790),
+   PlatID=2, Service Pack 2 (8 Processors)
+   Build time      : Wed Aug 11 02:05:49 2010
+   Latest file mod : Fri Jul 23 11:01:49 2010
+   Domino Version   : Release 8.5.2 HF16 (32-bit server)
+   
+   
+   
+   -The manual NSDs we took are from 14:03 and 14:08 - so they are
+   in the Mountain time zone
+   
+   -The semaphore timeouts start scrolling at 13:26 and continue
+   until we brought down the server:
+   
+   03/09/2011 01:26:54 PM MST sq="001280FD" THREAD [1698:0004-17B0]
+   WAITING FOR WRITE LOCK ON FRWSEM 0x030B Collection semaphore
+   (@02BAD12A)
+   (R=0,W=1,WRITER=16A4:17A4,1STREADER=0000:0000) FOR 30000 ms
+   03/09/2011 01:26:54 PM MST sq="001280FE" THREAD [113C:0023-11EC]
+   WAITING FOR WRITE LOCK ON RWSEM 0x4117  (@00C50062)
+   (R=0,W=1,WRITER=08D4:15B8,OWNER=08D4:15B8) FOR 30000 ms
+   
+   03/09/2011 01:26:54 PM MST sq="00128102" THREAD [16A4:0004-17A4]
+   WAITING FOR WRITE LOCK ON RWSEM 0x4117  (@00C00062)
+   (R=0,W=1,WRITER=08D4:15B8,OWNER=08D4:15B8) FOR 30000 ms
+   
+   
+   
+   03/09/2011 02:13:20 PM MST sq="0012CE0D" THREAD [1698:0004-17B0]
+   WAITING FOR WRITE LOCK ON FRWSEM 0x030B Collection semaphore
+   (@02BAD12A)
+   (R=0,W=1,WRITER=16A4:17A4,1STREADER=0000:0000) FOR 30000 ms
+   
+   03/09/2011 02:13:20 PM MST sq="0012CE20" THREAD [1704:0007-0C98]
+   WAITING FOR WRITE LOCK ON RWSEM 0x4117  (@00EC0062)
+   (R=0,W=1,WRITER=08D4:15B8,OWNER=08D4:15B8) FOR 30000 ms
+   
+   03/09/2011 02:13:20 PM MST sq="0012CE57" THREAD [13FC:0005-0C40]
+   WAITING FOR WRITE LOCK ON RWSEM 0x012E  (@00C2C87E)
+   (R=0,W=2,WRITER=08D4:15B8,OWNER=08D4:15B8) FOR 30000 ms
+   
+   
+   -The server console also stopped at the time the semaphores
+   began
+   
+   
+   
+   -This is the writer for the collection semaphore:
+   
+   ############################################################
+   ### thread 2/4: [ nUpdate:  16a4:  17a4]
+   ### FP=0x06fff1ac, PC=0x7c8285fc, SP=0x06fff13c
+   ### stkbase=0x07000000, total stksize=262144, used stksize=3780
+   ############################################################
+    [ 1] 0x7c8285fc ntdll.KiFastSystemCallRet+0
+   (11c,7530,0,6fff1f0)
+    [ 2] 0x77e61c8d kernel32.WaitForSingleObject+18
+   (11c,7530,c00090,c00064)
+   @[ 3] 0x600cf673 nnotes.WaitOnNativeSemaphore@16+659
+   (1,7530,0,0)
+   @[ 4] 0x6000133c nnotes.OSLockSemInt@8+284 (c00090,1)
+   @[ 5] 0x6000120e nnotes.OSLockSem@4+14 (c00064)
+   @[ 6] 0x60001737 nnotes.OSLockWriteSem@4+55 (c00062)
+   @[ 7] 0x60007b75 nnotes.AllocHandle@16+21
+   (c00062,612a7080,c356,1006)
+   @[ 8] 0x60007dee nnotes.OSMemAllocExtended@16+190
+   (c356,1000,0,40d671b6)
+   @[ 9] 0x600085b7 nnotes.OSMemAlloc@12+23 (c356,1000,40d671b6)
+   @[10] 0x60c7dcd6 nnotes.NIFViewPutUpdate@20+742
+   (40d670f8,40d671b6,0,3,0)
+   @[11] 0x60146953 nnotes.DeleteEntry@4+579 (0)
+   @[12] 0x60146392 nnotes.DeleteFromHierarchy@8+802 (ffff0000,0)
+   @[13] 0x60cd74b3 nnotes.RemoveUnmatchedEntry@24+35
+   (415,6ff002e,386b54b8,1e,0,6fff434)
+   @[14] 0x60cd736a nnotes.HashEnumerate@12+74
+   (6fff4b8,60cd7490,40d670f8)
+   @[15] 0x60cd77d5 nnotes.UpdatePermutations@28+277
+   (40d670f8,6fff60c,6fff5ec,ffffffff,0,6fff4c4,f10f10)
+   @[16] 0x60cd793f nnotes.ModifyPermutations@24+303
+   (2baf90c,0,6fff60c,6fff5ec,0,6fff4fc)
+   @[17] 0x60cca55b nnotes.UpdatePermInIndex@20+75
+   (40d670f8,6fff60c,6fff5ec,5772041d,0)
+   @[18] 0x600b6e67 nnotes.ProcessNote@12+1447 (0,5471fdfc,6ff01a3)
+   @[19] 0x60066f42 nnotes.UpdateCollection@8+5010 (0,0)
+   @[20] 0x600a6d02 nnotes.NIFUpdateCollectionNext@8+2882
+   (40d670f8,4281848c)
+   @[21] 0x6005c4b2 nnotes.NIFUpdateCollection@4+466 (15ae)
+   @[22] 0x60c8ec12 nnotes.NAMEUpdateOpenNamespacesExtended@4+578
+   (0)
+   @[23] 0x60c8fa87 nnotes.NAMEUpdateOpenNamespaces@0+7 ()
+   @[24] 0x00405369 nUpdate.NABIndexingThread@4+297 (0)
+   @[25] 0x601556af nnotes.ThreadWrapper@4+175 (0)
+    [26] 0x77e6482f kernel32.GetModuleHandleA+223
+   (60155600,0,0,dddd04d2)
+   
+   
+   -That update thread (16a4:0004-17a4) is the waiter for the
+   0x4117 semaphore
+   
+   
+   -This is the writer of the 0x012E & 0x4117 semaphores:
+   
+   ############################################################
+   ### thread 64/142: [ nSERVER:  08d4:  15b8]
+   ### FP=0x0b2176d0, PC=0x7c8285fc, SP=0x0b217668
+   ### stkbase=0x0b220000, total stksize=262144, used stksize=35224
+   ############################################################
+    [ 1] 0x7c8285fc ntdll.KiFastSystemCallRet+0
+   (3e8,0,b2176f0,600c7e4a)
+    [ 2] 0x77e424fd kernel32.Sleep+15 (3e8,d4a705,b217ebc,601dab4a)
+   @[ 3] 0x600c7e4a nnotes.OSDelayThread@4+42 (3e8)
+   @[ 4] 0x601dab4a nnotes.Panic@4+58 (b217ec8)
+   @[ 5] 0x601540fb nnotes.AccessAllProtected@0+139 ()
+   @[ 6] 0x6005a75e nnotes.AccessAll@8+46 (1,0)
+   @[ 7] 0x60001cb0 nnotes.Access@4+64 (d4a705)
+   @[ 8] 0x600017c3 nnotes.LockMem@4+35 (d4a705)
+   @[ 9] 0x60070a0d nnotes.AccessSHTChunksInt@0+253 ()
+   @[10] 0x601df3a3 nnotes.OSLockObjectExt@8+35 (79e7,0)
+   @[11] 0x60002b7e nnotes.OSLockObject@4+14 (79e7)
+   @[12] 0x601569cd nnotes.OSConsoleWriteToBuffers@12+61
+   (b218c84,2,0)
+   @[13] 0x6012860e nnotes.OSConsoleWriteExt@36+2478
+   (0,2,0,0,0,b218fd4,f10f10,ffffffff,0)
+   @[14] 0x60127e3b nnotes.OSConsoleWriteExt@36+475
+   (b219fb0,a0,0,0,0,b219f60,f10f10,ffffffff,0)
+   @[15] 0x601ed199 nnotes.OSConsoleWrite@8+137 (b219fb0,a0)
+   @[16] 0x601dabde nnotes.Panic@4+206 (b21a77c)
+   @[17] 0x601540fb nnotes.AccessAllProtected@0+139 ()
+   @[18] 0x6005a75e nnotes.AccessAll@8+46 (1,0)
+   @[19] 0x60001cb0 nnotes.Access@4+64 (d4a705)
+   @[20] 0x600017c3 nnotes.LockMem@4+35 (d4a705)
+   @[21] 0x60070a0d nnotes.AccessSHTChunksInt@0+253 ()
+   @[22] 0x60002ca6 nnotes.OSMemoryLock@4+22 (f023d74d)
+   @[23] 0x602074f8 nnotes.OSFDGReleaseOSFDExt@12+24
+   (132141f,a5d8,b21aa20)
+   @[24] 0x600136f4 nnotes.OSFDGReleaseOSFD@8+20 (132141f,a5d8)
+   @[25] 0x600182c8 nnotes.NSFReleaseDeaccessOSFD@4+40 (b21aa48)
+   @[26] 0x60025792 nnotes.DBCONTReadPage@32+2354
+   (261,9bce0,7a4,1000,0,b21aac8,f10f10,ffffffff)
+   @[27] 0x60018fee nnotes.UBMSetupPage@24+1406
+   (b21b080,126c9,143bbc1,37200033,0,b21ac20)
+   @[28] 0x60019dba nnotes.UBMReplaceBuffer@24+954
+   (b21b080,2,1b6c,3,0,b21ac64)
+   @[29] 0x60018608 nnotes.UBMClock@16+664 (b21b080,1b6c,1,0)
+   @[30] 0x60aca92e nnotes.UBMPinExtended@12+862
+   (b21b080,0,b21aea8)
+   @[31] 0x60006484 nnotes.UBMPin@4+20 (1)
+   @[32] 0x6087aa03 nnotes.BUFPin@28+419
+   (b21f9f8,131ff14,3405,61272dc0,0,b21b0c0,f10f10)
+   @[33] 0x60007153 nnotes.iNSFSlotPin@24+947
+   (b21f9f8,3405,61272dc0,7a4,0,b21b3c8)
+   @[34] 0x60926fc9 nnotes.EHFindEntry@52+697
+   (1320f80,b21f9f8,61272dc0,131cc54,0,b21b5f8,f10f10,ffffffff,0,0,
+   0,0,0)
+   @[35] 0x6003bcec nnotes.keySearch+1212
+   (1320f80,b21f9f8,61272dc0,b21bc1c)
+   @[36] 0x600dc342 nnotes.EHKeySearchCtx@24+34
+   (1320f80,b21f9f8,61272dc0,b21bc1c,0,b21b864)
+   @[37] 0x600dd6e6 nnotes.UNIDIndexFindEntry@28+1334
+   (b21f9f8,78eaee68,0,b21f180,0,b21bc40,f10f10)
+   @[38] 0x60946db9 nnotes.NoteUpdateImpl@56+6425
+   (b21f9f8,59e8,4105,0,0,b21f230,f10f10,ffffffff,0,0,0,0,0,0)
+   @[39] 0x60954562 nnotes.iNoteUpdate2@24+546
+   (b21f9f8,59e8,12802d5,0,0,b21f5dc)
+   @[40] 0x6096106e nnotes.DispatchNoteUpdate@36+1534
+   (b21f9f8,1,105,0,0,b21f83c,f10f10,ffffffff,0)
+   @[41] 0x60961c7a nnotes.NSFNoteUpdateExtended3@28+1498
+   (1320000,105,0,0,0,b21fa64,f10f10)
+   @[42] 0x6017d5fb nnotes.NSFNoteUpdate@8+27 (59e8,105)
+   @[43] 0x60830597 nnotes.LogCompleteEntry@4+327 (c60)
+   @[44] 0x100203d3 nserverl.DbServerTerm@8+2563
+   (5e34e978,81ac00c3)
+   @[45] 0x10005f60 nserverl.DeleteTask@8+128 (4b000c2,1)
+   @[46] 0x1003751a nserverl.WorkThreadTask@8+1978 (66105f8,0)
+   @[47] 0x10001a2e nserverl.Scheduler@4+750 (0)
+   @[48] 0x601556af nnotes.ThreadWrapper@4+175 (0)
+    [49] 0x77e6482f kernel32.GetModuleHandleA+223
+   (60155600,0,0,8000a)
+   
+   
+   
+   -That thread shows an AccessAllProtected Panic, but NSD never
+   ran until he manually kicked it off.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  None. Run NSD manually to discover if the problem it is a hang
+   or a crash.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  A programming error was found and will be corrected in a future
+    release.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A programming error was found and will be corrected in a future
+    release.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+ *  This APAR is associated with SPR# JCOL8EUKAD.
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   LO59203
+   
+   
+ * REPORTED COMPONENT NAME
+   DOMINO SERVER
+   
+   
+ * REPORTED COMPONENT ID
+   5724E6200
+   
+   
+ * REPORTED RELEASE
+   852
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-03-11
+   
+   
+ * CLOSED DATE
+   2011-07-12
+   
+   
+ * LAST MODIFIED DATE
+   2011-07-12
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   DOMINO SERVER
+   
+   
+ * FIXED COMPONENT ID
+   5724E6200
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R852 PSN
+   UP

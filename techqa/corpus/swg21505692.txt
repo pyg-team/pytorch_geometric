@@ -1,0 +1,39 @@
+Title: IBM Guide to Configuring TEM ODBC DSNs - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ How to configure TEM ODBC DSNs 
+
+RESOLVING THE PROBLEM
+ 
+
+This guide provides information on how to use ODBC (Open DataBase Connectivity) in Windows 2000 and 2003 Server with emphasis on setting up and configuring Data Source Name (DSN) with TEM. The first section introduces how to use and configure the DSN. The following section goes into detail on how to configure your DSNs for use by TEM. The final section provides reference material for how the various TEM Components will use the various DSNs. 
+
+INTRODUCTION TO WINDOWS ODBC
+To make accessing a database easier, Windows uses a DSN to save authentication and setting information for a database connection. Doing so allows users to connect with a database once and save the information for future use. DSNs are stored locally on the computer used to reach the database. Each DSN is identified by a name, like "bes_bfenterprise".
+
+THE ODBC AND DSN
+The ODBC is a standardized interface to the database developed by the SQL Access group. DSNs are stored setting for using an ODBC. TEM may use several DSNs to connect to the same database. The reason for this is each DSN has different settings and each one may be used to connect to the database in different ways. For example, the primary distinction between the "bes_bfenterprise" and "bes_EnterpriseServer" DSNs is that "bes_bfenterprise" connects to the TEM database using Windows NT authentication and "bes_EnterpriseServer" connects using SQL authentication. 
+
+ You can view your DSNs by running Control Panel > Administrative Tools > Data Sources (ODBC), which will launch the ODBC Data Source Administrator tool. The first tab, "User DSN", specifies DSNs that are available only to the currently logged in user. Most of the TEM DSNs will be found and created in the "System DSN" which contain DSNs that are available to anyone using the machine and by the System account of the machine itself. Only a user with Administrative privileges can make changes in the "System DSN" tab. If you create a new DSN here it will use "SQL Server" as a Driver. 
+
+MANAGING WINDOWS ODBC WITH TEM
+The follow portion details the components of an DSN that are used by TEM and how TEM uses those components. If you add a new "System DSN" or configure an existing one, the following fields will need to be configured for use with TEM in the Microsoft SQL Server DSN Configuration:
+
+NAME
+The name of the DSN is used to identify stored DSNs. TEM looks for DSNs with certain names like "enterprise_setup" and "bes_bfenterprise". Certain TEM components will expect a DSN with a certain name to exist and will automatically attempt to use those DSNs to connect to the database. Please read the reference guide below for more specific details. The "bes_" prefix is special. The TEM Console and TEM Admin Tool will allow to use any DSN with the "bes_" prefix on it. It will display these DSNs without the prefix when launched. SERVER
+This field specifies the database the DSN will go to. This field needs to be the machine running TEM's database. If you are setting up a remote database you will need to change this field to point to the database machine for all DSNs that are created automatically by TEM installers. Any upgrades will reset the DSNs to point to the TEM Server. Therefore, you will need to reset these DSNs after any upgrades to the TEM Consoles and TEM Server.
+
+AUTHENTICATION METHOD
+There are two options for this field, Windows NT or SQL authentication. The Windows NT authentication method will automatically use your Windows Login and Password as the Login ID and Password to the database. The SQL authentication method will require a Login ID and Password be supplied manually every time a connection to the database is made. You can set up the TEM components to use either of these two authentication methods. We recommend you choose one approach and try to maintain use of that scheme for configuring DSNs. The exception is the "bes_EnterpriseServer" DSN which should always use SQL authentication.
+
+DEFAULT DATABASE
+The default database is the database instance that this DSN will attempt to use. This field will be set to be one of the two TEM database instances which are named "bfenterprise" and "BESReporting" by default. If the DSN is going to be used for Web Reports it will likely default to the "BESReporting" database instance. Otherwise the DSN should use "bfenterprise" by default. The default database specifies which database instance your DSN will use. Your authentication information will be used to access this database instance as well. There are two levels of permissions on SQL Server, the first is to access the database itself and the second to access database instances.
+
+Note: Notice that the field used to specify a Login ID and Password on the second screen of the DSN Configuration setup is not listed above. You will NOT need to check the box to "Connect to SQL Server to obtain default settings for the additional configuration options." and provide an ID and password. The only use of checking this box would be in testing the connection on the final screen where the Login and Password provided will be used by the "Test Data Source..." option. The Login ID and Password you provide will not be stored with this DSN! It is used to obtain default settings and test the DSN but after configuration of the DSN is complete the information is discarded. If you set the DSN to use SQL authentication, provide a Login ID and Password and then successfully "test" the DSN, then you have verified that the Login ID and Password can be used to connect to the database but you will have to provide the same credentials every time the SQL authenticated DSN attempts to connect to the database.
+
+REFERENCE OF TEM COMPONENTS AND DSNS
+TEM Component DSNs Used Authentication Methods TEM Server Installation enterprise_setup NT TEM Server bes_bfenterprise NT or SQL TEM Console any DSN beginning with "bes_" NT or SQL TEM Administration Tool any DSN beginning with "bes_" NT or SQL. Web Reports LocalBESReportingServer
+(Note:the LocalBESReporting DSN contains configuration and login data, not data shown in Web Reports reports. In Web Reports on the "Database Settings" page when adding a new database or configuring a remote database, use the "bes_bfenterprise" DSN.) NT or SQL.

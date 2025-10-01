@@ -1,0 +1,103 @@
+Title: IBM Auto start of the ITM 6.x i5/OS Agent during IPL - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Can i5/OS ITM 6.x agent be configured to start automatically during IPL? 
+
+CAUSE
+Configuration process for starting the ITM i5/OS agent during system IPL
+
+ANSWER
+Yes, i5/OS Agent can be configured to start automatically during IPL in two ways 
+
+1) Call a program at the end of the IPL startup program that calls QAUTOMON/STROMA.
+
+2) Setting the "Adding TCP/IP Server" parameter on "Config i5/OS Monitoring Agent (CFGOMA)" to *YES
+
+Method 1:
+
+Create a CL program that calls QAUTOMON/STROMA and that is called from the IPL startup program specified in the QSTRUPPGM system value.
+
+The CL program adopts authority of the owner's user profile where the owner has authority to start the agent. QPGMR, which is the user profile that runs the IPL startup program, is granted *USE authority to the CL program.
+
+In the following example, a program ITMPGMR/KA4STRUP is created from CL source stored in ITMPGMR/QCLSRC(KA4STRUP).
+
+The owner is changed to QSYS and QPGMR is granted *USE authority while *PUBLIC is excluded.
+
+1. Create CL source.
+PGM 
+QAUTOMON/STROMA 
+QSYS/MONMSG MSGID(CPF0000)
+ENDPGM 
+
+2. Create CL program.
+CRTCLPGM PGM(ITMPGMR/KA4STRUP) SRCFILE(ITMPGMR/QCLSRC) TEXT('IBM i OS agent startup program') USRPRF(*OWNER)
+
+3. Change owner of the CL program.
+CHGOBJOWN OBJ(ITMPGMR/KA4STRUP) OBJTYPE(*PGM) NEWOWN(QSYS)
+
+4. Grant authority to QPGMR and exclude *PUBLIC
+GRTOBJAUT OBJ(ITMPGMR/KA4STRUP) OBJTYPE(*PGM) USER(QPGMR) AUT(*USE)
+GRTOBJAUT OBJ(ITMPGMR/KA4STRUP) OBJTYPE(*PGM) USER(*PUBLIC) AUT(*EXCLUDE)
+
+5. Update IPL startup program to call the CL program.
+CALL PGM(ITMPGMR/KA4STRUP)
+MONMSG MSGID(CPF0000)
+
+Refer to the i5/OS or IBM i system documentation for steps to change the IPL startup program.
+V5R4 documentation on "Changing the IPL startup program" can be found using the link
+http://publib.boulder.ibm.com/infocenter/iseries/v5r4/index.jsp?topic=%2Frzal2%2Frzal2chgiplstartup.htm [http://publib.boulder.ibm.com/infocenter/iseries/v5r4/index.jsp?topic=%2Frzal2%2Frzal2chgiplstartup.htm]
+The same process is applicable for IBM i 5.4, 6.1, 7.1, and 7.2.
+The agent can encounter errors during agent startup if TCP/IP is not already running on the system.
+In such cases, make sure to start the agent as the last step of the IPL process.
+
+Notes:
+1. This method can be used to allow other user profiles and group profiles with limited authority to start the agent by granting the profile *USE authority to the CL program.
+2. This method can be used to allow other user profiles and group profiles with limited authority to perform other agent operations such as ENDOMA, DSPOMALOG, and CFGOMA by creating similar CL programs to call the specific agent commands.
+
+
+Method 2:
+
+When using this method, there are some reports of agent malfunctioning when TCP/IP started too early during IPL. In case such scenario, auto starting the agent using method 1 need to be used.
+
+It is possible to configure the agent to start automatically during IPL by setting "Adding TCP/IP Server" parameter on "Config i5/OS Monitoring Agent (CFGOMA)" screen to *YES.
+If properly configured , it works well on most systems.
+
+1) From an i5/OS command line, enter the following command:
+GO OMA 
+
+2) Enter 4 (Configure Tivoli® Monitoring: i5/OS Agent). 
+The Config i5/OS Monitoring Agent (CFGOMA) window is displayed.
+
+3) Set "Adding TCP/IP Server" parameter to *YES and press Enter
+
+4) Place the cursor on the message at the bottom of the screen and press F1.
+
+5) Press F10 to "Display messages in job log". 
+You would see message "TCP/IP server *ITMI5OS added successfully." if TCP/IP server *ITMI5OS added successfully. 
+
+Otherwise, error messages may be displayed indicating the exceptions. Those exceptions need to be corrected for the successful configuration.
+
+Repeat steps 1 - 4 if exceptions/errors encountered in step 4 for successful configuration.
+
+Another way to make sure the agent is configured properly as TCP/IP server is provided below.
+
+Enter the command CHGTCPSVR SVRSPCVAL(*ITMI5OS) on i5/OS command line and press F4.
+
+If agent's TCP/IP server added correctly, "Change TCP/IP Server" screen displays with data related to *ITMI5OS server. Exit the screen with out making any changes.
+
+If TCP/IP server not added correctly, message "Current values could not be retrieved." will be displayed on the message line at the bottom of the screen.
+
+To rectify this, need to reset the previous setting for "Adding TCP/IP Server" parameter to *NO and try again. Instructions provided in the step 4 above can be used to find the exceptions.
+
+If configuration was successful and if the agent still did not start during next IPL, then the problem could be due to the lack of sufficient authorities for QTCP use on objects in QAUTOMON library.
+
+Technote http://www.ibm.com/support/docview.wss?uid=swg21616159 [http://www.ibm.com/support/docview.wss?uid=swg21616159]
+provides the necessary steps to authorize QTCP user profile on objects in QAUTOMON library. 
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ Monitoring agent for i5/OS

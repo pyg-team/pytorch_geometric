@@ -1,0 +1,162 @@
+Title: IBM 【セキュリティ情報】 IBM WebSphere MQ (HP-NSS and OVMS platforms) and Eclipse Paho MQTT C クライアント　ライブラリー(Windows and Linux platforms) へのOpenSSLの脆弱性の影響(CVE-2014-3570, CVE-2014-3572, CVE-2015-0204, CVE-2015-0205) - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ 2015年1月8日OpenSSLの脆弱性が報告されました。FREAK(Factoring Attack on RSA-EXPORT keys)と呼ばれるTLS/SSL通信時の脆弱性を含みます。
+OpenSSLは、IBM WebSphere MQ on HP-NSS と HP OpenVMS プラットフォームで使用されています。
+
+
+VULNERABILITY DETAILS
+脆弱性の詳細： 
+
+CVEID: CVE-2014-3570 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-3570]
+DESCRIPTION: An unspecified error in OpenSSL related to the production of incorrect results on some platforms by Bignum squaring (BN_sqr) has an unknown attack vector and impact.
+CVSS Base Score: 2.6
+CVSS Temporal Score: See http://exchange.xforce.ibmcloud.com/#/vulnerabilities/99710 [http://exchange.xforce.ibmcloud.com/#/vulnerabilities/99710] or the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:H/Au:N/C:N/I:P/A:N) 
+
+ 
+
+CVEID: CVE-2014-3572 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-3572]
+DESCRIPTION: OpenSSL could provide weaker than expected security. The client accepts a handshake using an ephemeral ECDH ciphersuite with the server key exchange message omitted. An attacker could exploit this vulnerability to launch further attacks on the system.
+CVSS Base Score: 1.2
+CVSS Temporal Score: See http://exchange.xforce.ibmcloud.com/#/vulnerabilities/99705 [http://exchange.xforce.ibmcloud.com/#/vulnerabilities/99705] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:L/AC:H/Au:N/C:N/I:P/A:N) 
+
+ 
+
+CVEID: CVE-2015-0204 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-0204]
+DESCRIPTION: A vulnerability in the OpenSSL ssl3_get_key_exchange function could allow a remote attacker to downgrade the security of certain TLS connections. An OpenSSL client accepts the use of an RSA temporary key in a non-export RSA key exchange ciphersuite. This could allow a remote attacker using man-in-the-middle techniques to facilitate brute-force decryption of TLS/SSL traffic between vulnerable clients and servers. 
+
+This vulnerability is also known as the FREAK attack. 
+
+CVSS Base Score: 4.3
+CVSS Temporal Score: See http://exchange.xforce.ibmcloud.com/#/vulnerabilities/99707 [http://exchange.xforce.ibmcloud.com/#/vulnerabilities/99707] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:M/Au:N/C:N/I:P/A:N) 
+
+ 
+
+CVEID: CVE-2015-0205 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-0205]
+DESCRIPTION: OpenSSL could allow a remote authenticated attacker to bypass security restrictions, caused by the acceptance of a DH certificate for client authentication without verification. An attacker could exploit this vulnerability to authenticate without the use of a private key.
+CVSS Base Score: 2.1
+CVSS Temporal Score: See http://exchange.xforce.ibmcloud.com/#/vulnerabilities/99708 [http://exchange.xforce.ibmcloud.com/#/vulnerabilities/99708] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:H/Au:S/C:N/I:P/A:N)
+
+AFFECTED PRODUCTS AND VERSIONS
+影響のある製品・バージョン： 
+
+次の製品に影響があります。 
+
+IBM MQ Appliance M2000 
+
+IBM WebSphere MQ for OpenVMS V6 
+
+IBM WebSphere MQ V5.3 for HP NonStop 
+
+IBM WebSphere MQ Client for HP Integrity NonStop Server - SupportPac MAT1 
+
+IBM MQ Client for HP Integrity NonStop Server - SupportPac MQC8 
+
+IBM Mobile Messaging and M2M Client Pack (Eclipse Paho MQTT C Client libraries only) - Support Pac MA9B
+
+REMEDIATION/FIXES
+修正策：
+
+次のMQのCipherSpecのいずれかを使用するチャネル定義をより強力な暗号化アルゴリズムを使用するように変更することを推奨いたします。
+現在利用可能なMQのCipherSpecのさらなる詳細をここ [http://www-01.ibm.com/support/knowledgecenter/SSFKSJ_8.0.0/com.ibm.mq.sec.doc/q014260_.htm]から参照できます。 
+
+ 
+
+ * RC4_MD5_EXPORT 
+ * TLS_RSA_EXPORT_WITH_RC4_40_MD5 
+ * RC2_MD5_EXPORT 
+ * TLS_RSA_EXPORT_WITH_RC2_40_MD5
+
+
+IBM MQ Appliance M2000
+この修正が含まれるファームウェアはリリース済みですので、ファームウェアをアップデートしてください。詳細については、IBMサポートにお問い合わせください。 
+
+ 
+
+IBM WebSphere MQ for OpenVMS V6 
+
+MQで使用する OpenSSLは、Hewlett-Packard社より提供されています。詳細は、HP support [http://h71000.www7.hp.com/openvms/products/ssl/ssl.html] にお問い合わせください。 
+
+ 
+
+IBM WebSphere MQ V5.3 for HP NonStop 
+
+WebSphere MQ v531.11のOpenSSLで修正予定です。iFixに関しては、IBMサポートまでお問い合わせください。 
+
+ 
+
+IBM WebSphere MQ Client for HP Integrity NonStop Server - Support Pac MAT1
+このサポートパックは、現在サポートされておらず、IBM MQ Client for HP Integrity NonStop serverに置き換えられています。下記のiFixの導入をしてください。
+
+
+IBM MQ Client for HP Integrity NonStop Server - Support Pac MQC8 
+
+Fix Centralから ifix 8.0.0.2b-WS-MQC-HPNS-IA64 [http://www.ibm.com/support/fixcentral/swg/quickorder?parent=ibm%7EWebSphere&product=ibm/WebSphere/WebSphere+MQ&release=8.0&platform=HP+NonStop&function=fixId&fixids=8.0.0.2b-WS-MQC-HPNS-IA64&includeSupersedes=0&source=fc]をダウンロードし、導入してください。 
+
+ 
+
+IBM Mobile Messaging and M2M Client Pack (Eclipse Paho MQTT C Client libraries only) - Support Pac MA9B 
+
+下記を参照し、OpenSSLの新バージョンに対してCクライアントライブラリを再作成してください。
+
+WORKAROUNDS AND MITIGATIONS
+回避策/軽減策： 
+
+ 
+
+IBM WebSphere MQ and IBM MQ Appliance
+MQチャネルプロトコルは、チャンネルSSLCIPHの検証を経て、セキュアソケットプロトコルおよび/または暗号スイートのマン・イン・ザ・ミドルグレードから保護します。
+ハンドシェクの成功後、チャネル接続ではまずネゴシエーション処理が実施され、園中でEXPORT暗号化アルゴリズムがないか検知します。もしも検知された場合は、チャネルはメッセージデータの送受信は行わず、接続を終了する前にキュー・マネージャーのエラー・ログにAMQ9631エラーを記録します。
+
+
+IBM Mobile Messaging and M2M Client Pack
+MA9Bサポートパックが提供するCクライアントライブラリは、ソースから再構築し、次の instructions [http://pic.dhe.ibm.com/infocenter/wmqv7/v7r5/topic/com.ibm.mm.tc.doc/tc10155_.htm]を使用してのOpenSSL1.0.1の新しい保守レベルに対してリンクすることができます。この脆弱性に対処するために、OpenSSL 1.0.1以降のバージョンを使用する必要があります。
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v2 Guide [http://www.first.org/cvss/v2/guide] 
+On-line Calculator v2 [http://nvd.nist.gov/CVSS-v2-Calculator] 
+. 参照情報：
+
+[IBMサイト]
+この文書は、米国 IBM 社の資料を翻訳した参考文書です。翻訳元の文書は、以下のリンクよりご参照ください。
+Security Bulletin: Vulnerabilities in OpenSSL affect IBM WebSphere MQ (HP-NSS and OVMS platforms) and Eclipse Paho MQTT C Client libraries (Windows and Linux platforms) (CVE-2014-3570, CVE-2014-3572, CVE-2015-0204, CVE-2015-0205) [http://www.ibm.com/support/docview.wss?uid=swg21699052]
+
+
+公開済みのフィックスパックについては、以下のサイトよりご利用いただけます。
+Recommended fixes for WebSphere MQ [http://www-01.ibm.com/support/docview.wss?rs=171&uid=swg27006037]
+
+フィックス・パックの公開予定については、以下のサイトよりご確認いただけます。
+WebSphere MQ planned maintenance release dates [http://www-01.ibm.com/support/docview.wss?rs=171&uid=swg27006309]
+
+[CVSS情報]
+独立行政法人 情報処理推進機構: 共通脆弱性評価システムCVSS概説 [http://www.ipa.go.jp/security/vuln/CVSS.html]
+JVN iPedia: CVSS計算ソフトウェア日本語版 [http://jvndb.jvn.jp/cvss/ja.html] 
+
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/PSIRT] . 
+関連情報： 
+. 
+[お問合せ先] 
+技術的な内容に関して、サービス契約のあるお客様はIBMサービス・ラインにお問い合わせください。 
+IBM サービス・ライン [http://www.ibm.com/jp/news/20070420001.html] *The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.
+
+関連情報
+ An US English translation is available [http://www.ibm.com/support/docview.wss?uid=swg21699052]

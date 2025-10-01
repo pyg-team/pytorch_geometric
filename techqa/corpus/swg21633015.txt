@@ -1,0 +1,36 @@
+Title: IBM Invalid HSM Key Name during keygen on DataPower XI52 Appliance - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When creating a key pair inside of the Hardware Security Module (HSM) of a DataPower XI52 appliance using the keygen action, an error occurs:
+keygen : *invalid HSM key name: my.really.long.common.name.com*
+keygen : keygen failed
+
+
+CAUSE
+Each HSM private key has an immutable HSM key name that is constrained by a length limitation. On the XI52, the concatenation of the DataPower application domain name and the HSM key name must fit into 31 characters. Any HSM key name that doesn't meet this constraint will be rejected during the command that attempts to create the HSM key (such as as the keygen or crypto-import commands).
+
+RESOLVING THE PROBLEM
+Use a shorter HSM key name and/or a shorter DataPower application domain name.
+
+
+The keygen command takes the HSM key name from one of three places:
+
+1. If its hsm-name parameter is specified, it uses that value.
+Note: keygen's hsm-name parameter is only available in the CLI
+
+2. If its object-name parameter is specified, it uses that value.
+Note: object-name is called "Object Name" in the WebGUI and is only visible when setting "Generate Key and Certificate Objects" to ON. 
+
+3. Otherwise, it uses the value of the Common Name (CN) parameter. 
+
+
+Make sure that the HSM key name is short enough to fit within the length restriction described above, regardless of which of the three keygen parameters is used to specify it.
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration WebSphere DataPower Integration Appliance XI52 4.0.2, 5.0.0, 6.0.0

@@ -1,0 +1,36 @@
+Title: IBM DFHSJ0210 OPEN_JVM_ERROR - United States
+
+Text:
+DFHSJ0210 JVM JVMSERVER DFH$JVMS OPEN_JVM_ERROR DFHSJ0914 E dlopen failed libjvm.so CEE3587S AMODE 31 DLL AMODE 64 JAVA_HOME J6.0.1 J6.0.1_64 5655-S97 5655S97 5655S9700 R670 670 R700 700 HCI6700 5655-S97 5655S97 5655Y0400 R680 680 R800 800 HCI6800 5655-Y04 5655Y04 kixinfo TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ You receive the following message when you try to install a JVMServer:
+DFHSJ0210 CICSTEST An attempt to start a JVM for the JVMSERVER resource DFH$JVMS has failed. Reason code: OPEN_JVM_ERROR 
+
+SYMPTOM
+DFHSJ0210 [http://pic.dhe.ibm.com/infocenter/cicsts/v5r1/topic/com.ibm.cics.ts.messages.doc/DFHSJ/DFHSJ0210.html] OPEN_JVM_ERROR
+
+
+CAUSE
+DFHSJ0914 [http://pic.dhe.ibm.com/infocenter/cicsts/v5r1/topic/com.ibm.cics.ts.messages.doc/DFHSJ/DFHSJ0914E.html] E CICSTEST JVMSERVER DFH$JVMS is DISABLED because the Language Environment Enclave was not created.
+
+DIAGNOSING THE PROBLEM
+Looking at the /u/CICSTEST.DFH$JVMS.dfhjvmtrc file (where CICSTEST is your applid) you see:
+
+*Exc*: dlopen failed - libjvm.so not found 
+*Exc*: error = CEE3587S A call was made to a function in the AMODE 31 DLL libjvm.so from an AMODE 64 caller.
+
+These messages are indicating that the 31-bit JVM is being used.
+
+RESOLVING THE PROBLEM
+Verify the JAVA_HOME parameter in the JVM Profile is pointing to the 64-bit JVM.
+
+Change:
+JAVA_HOME=/usr/lpp/java/J6.0.1
+to:
+JAVA_HOME=/usr/lpp/java/J6.0.1_64
+
+
+
+PRODUCT ALIAS/SYNONYM
+ CICS/TS CICS TS CICS Transaction Server

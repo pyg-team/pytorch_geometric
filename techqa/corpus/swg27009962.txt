@@ -1,0 +1,25 @@
+Title: IBM Featured documents for IBM WebSphere DataPower SOA Appliances - United States
+
+Text:
+PremiumSupportTips; datapower; top10; top ten; most useful; popular; helpful; most accessed; 3.6; 3.6.1; 3.6.0; 3.5.1; FeaturedDocument; featured documents; featured; PremiumSupportTips; most popular; recommended; most requested; highlight; 7993; 7993; 7993; machine type 7993 NEWSLETTER
+
+ABSTRACT
+ IBM DataPower Support is increasingly focused on delivering content that is social. As a result, this document will no longer contain a quarterly summary of content. We would like to encourage you to engage with the DataPower Support Team in our social channels. 
+
+CONTENT
+Recent industry surveys show a trend towards social content that allows clients to collaborate with companies like IBM. As part of becoming more social, DataPower Support will no longer be sending out emails for the quarterly Support Newsletters or updating the associated featured links that were previously in this on-line document. 
+
+In addition to blogging, tweeting, and posting to Facebook and YouTube, the DataPower support team is now posting questions and answers on developerWorks Answers (dW Answers ) [https://developer.ibm.com/answers/questions/] where anyone can contribute easily. You can "Like", "Unlike", or "Comment" on any question or answer. You can post questions and receive responses from the community of users, many of which are IBMers. You can also share your expertise by answering questions from others in the community.
+
+dW Answers makes it easy to view content in different ways. For example, you can view the Newest content tagged with DataPower on dW Answers [https://developer.ibm.com/answers/topics/datapower/?sort=newest]or view theDataPower content with the most Likes on dW Answers [https://developer.ibm.com/answers/topics/datapower/?sort=votes]. From any question with the DataPower tag, you can click the tag then click "+Follow" to be notified by email of things like new questions asked or new answers accepted. You define the email notifications that you want and the frequency by setting up "My preferences" within dW Answers. You can also follow tags using the RSS feed. 
+
+If you would like to see IBM DataPower content and other related content shortly after it is published to the various social channels including dW Answers, make sure that you follow @IBMDataPower on Twitter.
+
+As a result of these changes, this document will be removed from the web in January of 2016 so please bookmark the new pages.
+
+
+
+
+
+ORIGINAL PUBLICATION DATE
+ 2007/6/20

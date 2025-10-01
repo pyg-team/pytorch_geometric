@@ -1,0 +1,123 @@
+Title: IBM PM10720: RTI-21 Generation of empty C-files for types - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  RTI-21 Generation of empty C-files for types
+   
+   For packages / files with type definitions empty C-files are gen
+   erated. The property C_CG:File:GenerateSpecificationOnly is igno
+   red.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  For packages and files with type definitions, empty .c files
+   are generated. The value of the property
+   C_CG::File::GenerateSpecificationOnly is ignored.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The following workarounds are available for this issue: For
+   files, you can add one source artifact (specification), and
+   this will prevent the generation of the implementation file.
+   For packages, you must add an implementation source artifact
+   and set the value of its CG::File::Generate property to
+   False.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM10720
+   
+   
+ * REPORTED COMPONENT NAME
+   TLOGIC RHAPSODY
+   
+   
+ * REPORTED COMPONENT ID
+   5724V74RP
+   
+   
+ * REPORTED RELEASE
+   751
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-03-24
+   
+   
+ * CLOSED DATE
+   2010-06-21
+   
+   
+ * LAST MODIFIED DATE
+   2010-06-21
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TLOGIC RHAPSODY
+   
+   
+ * FIXED COMPONENT ID
+   5724V74RP
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R751 PSN
+   UP

@@ -1,0 +1,56 @@
+Title: IBM SQL0180N error from the DB2 Command Line Processor (CLP) when date with default format concatenated with timestamp in the where clause of a select statement - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ CLP by default follows the US format for displaying timestamp and date values. The format is:
+Date : MM/DD/YYYY 
+Timestamp : YYYY-MM-DD-HH.MM.SS.MMMMMM
+User could see SQL0108N error in certain scenarios when date with default format (USA format) is concatenated with timestamp in the where clause of a select statement and sent to server for execution. 
+
+SYMPTOM
+SQL0108N error is reported to user trying to select timestamp date
+
+
+CAUSE
+The concatenated date-time format is incorrect.
+
+RESOLVING THE PROBLEM
+What is the date and timestamp format followed by CLP for displaying results of query containing timestamp and date data?
+
+
+CLP displays date and timestamp according to USA format which is MM/DD/YYYY and corresponding timestamp format is YYYY-MM-DD-HH.MM.SS.MMMMMM. 
+
+When the query contains the timestamp data which is not compatible with the standard US format (the values could be manipulated by user via operations like concatenation etc), user receives SQL0108N error from CLP client. To explain the behavior please see the example below:
+
+db2 "create table testdate(colint int, coldate date, coltimestamp timestamp)"
+db2 "insert into testdate values(1, current date, current timestamp)"
+db2 "select * from testdate where coltimestamp between coldate||' 00:00:00' and coldate||' 23:59:59'"
+
+Let us assume the current date is 06/17/2010 (17th June 2010 in US format). As coldate column and 'current date' represents date in US format (the default which clp follows ), the concatenation of "coldate||' 00:00:00' " results in the string 06/17/2010 00:00:00, but what is exepected by server is the timestamp in US format i.e 2010-06-17 00:00:00. As the timestamp is not in the standard format, server returns the SQL0108N error.
+
+Same behavior could be seen in cases where the timestamp value is violated and not following the specified standard.
+
+The error could be resolved if the date is returned in a format which is compatible with the "date part" of the timestamp. This can be achieved by following the ISO format, because in ISO format date and "date part" of timestmap are same in representation.
+
+ISO format:
+Date : YYYY-MM-DD
+Timestamp : YYYY-MM-DD HH:MM:SS.MMMMMM
+
+
+What are the solutions available to change from one format to another?
+Users can follow the below methods to resolve the problem: 
+
+ * Bind the CLP packages using the ISO format
+
+db2 bind @db2ubind.lst DATETIME ISO SQLERROR CONTINUE 
+ *  Use CHAR scalar function
+
+The syntax of char function is : char(datetime-expression, datetime-format) 
+The datetime-format could be any of the following: 
+ISO, USA, EUR, JIS, LOCAL 
+
+db2 "select * from testdate where coltimestamp between char(coldate, ISO)||' 00:00:00' and char(coldate, ISO)||' 23:59:59'" 
+
+Note: CLI follows ODBC standard for representation of timestamp and date which is ISO format, and hence gives the expected result without any error

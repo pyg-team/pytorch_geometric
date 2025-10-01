@@ -1,0 +1,177 @@
+Title: IBM PJ43523: THE ROUTER PARAMETER IN A SOAP REQUEST ASSOCIATED WITH A PROCESS ENGINE WS API NO LONGER WORKS - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The current PE 5.0 documentation has a forward slash associated
+   with
+   the Router parameter.
+   Here is what was documented since PE 4.5.1:
+   
+   <Router
+   xmlns="http://www.filenet.com/ns/fnpe/2004/06/ws/schema">
+           /connectionPoint2</Router>
+   
+   Here is a link to the corrected documentation page in the CPE
+   5.2.1 documentation:
+   http://www.ibm.com/support/knowledgecenter/SSNW2F_5.2.0/com.ibm.
+   p8.pe.dev.doc/web_services/ws_usage_regions.htm?lang=en [http://www.ibm.com/support/knowledgecenter/SSNW2F_5.2.0/com.ibm.p8.pe.dev.doc/web_services/ws_usage_regions.htm?lang=en]
+   
+   In the current CPE 5.2.1 documentation, the example Router
+   specification is correctly shown as:
+   
+   <Router
+   xmlns="http://www.filenet.com/ns/fnpe/2004/06/ws/schema">
+      connectionPoint2</Router>
+   
+   The forward slash when passed in to PE, worked in PE 4.5.1.
+   However, in PE 5.0 and CPE 5.2.x and all subsequent releases,
+   the BPM software no longer accepts the forward slash in front of
+   the connection point name in the Router parameter.
+   
+   Here is the error that is returned if the Router parameter
+   contains the forward slash:
+   <faultcode>soapenv:Server</faultcode>
+   <faultstring>Failed to retrieve bootstrap information.
+   java.net.MalformedURLException: "/CP1" is not a valid Connection
+   Point URI.
+   Root Cause:
+   "/CP11" is not a valid Connection Point URI.</faultstring>
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Remove the forward slash before the control point name.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * Component Manager documentation                              *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * When the control point name in the Router parameter has a    *
+   * leading forward slash, this error will be seen:              *
+   *                                                              *
+   * <faultcode>soapenv:Server</faultcode>                        *
+   * <faultstring>Failed to retrieve bootstrap information.       *
+   * java.net.MalformedURLException: "/CP1" is not a valid        *
+   * Connection                                                   *
+   * Point URI.                                                   *
+   * Root Cause:                                                  *
+   * "/CP1" is not a valid Connection Point URI.</faultstring>    *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Do not include a slash before the control point name in the  *
+   * Router specification, as described in the current            *
+   * documentation:                                               *
+   * https://www.ibm.com/support/knowledgecenter/en/SSNW2F_5.2.1/ *
+   * com.ibm.p8.pe.dev.doc/web_services/ws_usage_regions.htm      *
+   *                                                              *
+   * The Router parameter should something look like this:        *
+   * <Router                                                      *
+   * xmlns="http://www.filenet.com/ns/fnpe/2004/06/ws/schema">    *
+   *    connectionPoint2</Router>                                 *
+   *                                                              *
+   * with no "/" before the "controlPoint2" value.                *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A leading forward slash before the connection point name in the
+   Router specification was required and accepted in PE 4.5.1.
+   But in releases since then, the leading slash is no longer
+   accepted.
+   The CPE 5.2.1 documentation has been fixed to no longer include
+   the leading slash in the example:
+   https://www.ibm.com/support/knowledgecenter/en/SSNW2F_5.2.1/com.
+   ibm.p8.pe.dev.doc/web_services/ws_usage_regions.htm [https://www.ibm.com/support/knowledgecenter/en/SSNW2F_5.2.1/com.ibm.p8.pe.dev.doc/web_services/ws_usage_regions.htm]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PJ43523
+   
+   
+ * REPORTED COMPONENT NAME
+   PROCESS ENGINE
+   
+   
+ * REPORTED COMPONENT ID
+   5724R7607
+   
+   
+ * REPORTED RELEASE
+   500
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2015-08-26
+   
+   
+ * CLOSED DATE
+   2017-02-22
+   
+   
+ * LAST MODIFIED DATE
+   2017-02-22
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

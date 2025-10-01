@@ -1,0 +1,58 @@
+Title: IBM PowerHA Node by Node Migration - Corrective Action for an Incomplete Migration. - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ PowerHA Node by Node Migration - Corrective Action for an Incomplete Migration 
+
+SYMPTOM
+A symptom of an incomplete PowerHA node by node migration is that a verify and sync fails with a message that the cluster is still in migration, even though the customer has upgraded the PowerHA software on all nodes, and all nodes are on line. 
+
+Incomplete migration can be proven by checking the content of the PowerHA ODM: 
+
+ odmget HACMPcluster | grep cluster_version
+odmget HACMPnode | grep version 
+
+ where the numerical values do not all match. 
+
+If the above symptoms are evident indicating an incomplete PowerHA node by node migration, attempts to verify / sync the PowerHA cluster configuration will fail. Changes to the cluster configuration will also fail, because verify and sync cannot be run. Some variations of this problem have been observed where it is impossible to start a node due to a pending configuration change, and disallowed verify and sync.
+
+
+CAUSE
+In a node by node migration of a PowerHA cluster, on each node in turn: 
+
+-- PowerHA is stopped on the node.
+-- The new PowerHA level is installed.
+-- PowerHA is restarted to allow the updated node to rejoin the cluster.
+
+The PowerHA cluster during this process is in what is called "mixed mode", with some nodes at the original PowerHA level and other nodes at the new target PowerHA level.
+
+The PowerHA migration is completed when: 
+
+1) All nodes have been upgraded to the new target PowerHA level and . . .
+2) PowerHA has been restarted on all nodes and the nodes have collectively joined the cluster and have been present in the cluster at the same time. 
+
+When both of the above steps 1) and 2) have been achieved, the PowerHA migration complete protocol should run, during which: 
+
+-- The PowerHA ODM is updated to reflect a consistent PowerHA version across all PowerHA ODM entries on all of the PowerHA nodes.
+-- Certain PowerHA scripts / binaries which remained at the original level during the node by node migration process, are now updated to the target PowerHA level. 
+
+Incomplete migrations have been caused by other failures that prevent the nodes from joining the cluster, and, in some cases, by attempting multiple upgrades on a node before completion of migration. It is because of this latter case that it is recommended that the customer always upgrade all nodes to a new base level, and start cluster services on all nodes, before upgrading to subsequent PTFs. While this is not strictly necessary in all cases, it is an approach that reduces the chance of a failed migration.
+
+
+
+DIAGNOSING THE PROBLEM
+Please see the explanation provided in the Symptom section above.
+
+
+
+RESOLVING THE PROBLEM
+
+- If the PowerHA node by node cluster migration process did not complete properly, resulting in the inconsistent version numbers in the PowerHA ODM, the PowerHA cluster remains functional with respect to resource monitoring and resource group movement, so the issue need not be corrected immediately. 
+
+However, a verify / sync of the cluster configuration is not possible while the PowerHA cluster remains in this state. 
+
+- Please do not manually update the PowerHA ODM classes in an attempt to correct the incomplete PowerHA migration; this can set the configuration up for worse problems in the future. 
+
+A recommended corrective action is to use the PowerHA converted cluster snapshot migration approach. The converted cluster snapshot migration process does require down time, but it is a very reliable alternative and it is not time intensive. See the IBM Knowledge Center article on Upgrading PowerHA SystemMirror Using A Snapshot for more details on this process.

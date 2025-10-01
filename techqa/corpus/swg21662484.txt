@@ -1,0 +1,40 @@
+Title: IBM FileNet Content Engine deployed on IBM WebSphere Application Server only displays Health Page header information - United States
+
+Text:
+APAR PM76886; CE Health Page; Health Servlet; DefTag::doTag() TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ FileNet Content Engine deployed on IBM WebSphere Application Server only displays Health Page header information 
+
+SYMPTOM
+Accessing the CE Health Page on a FileNet Content Engine deployed on an IBM WebSphere Application Server only display the page header information (CE System Health page title and CE Instance : [http://<<server>>:<<port>>/wsi/FNCEWS40MTOM/] listing). No other details about the P8 Domain and is displayed. 
+
+SystemOut.log contains the following entry : 
+
+
+SystemOut O DefTag::doTag() - no params defined
+
+
+CAUSE
+This behavior is observed if the URL used to access the Content Engine Health Page includes a trailing slash, for example : 
+
+ 
+
+http://<<server>>:<<port>>/P8CE/Health/
+
+
+
+DIAGNOSING THE PROBLEM
+Omit the trailing slash in the URL used to access the Content Engine Health page. After upgrading to WebSphere Application Server versions 6.1.0.47, 7.0.0.29 ,8.0.0.6 , and 8.5.0.2 and later, attempts to access the Health page with the trailing slash will return an error instead of the page header only : 
+
+
+Error 404: SRVE0190E: File not found: /Health/
+
+
+
+RESOLVING THE PROBLEM
+Access the Content Engine Health Page without a trailing slash will succeed and display the P8 Domain information, for example : 
+
+ 
+
+http://<<server>>:<<port>>/P8CE/Health

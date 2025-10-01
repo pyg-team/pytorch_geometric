@@ -1,0 +1,207 @@
+Title: IBM SPSS Java Security Vulnerability CVE-2010-4476 Exposure Response - United States
+
+Text:
+ FLASH (ALERT)
+
+ABSTRACT
+ Last updated on March 2, 2011.
+
+This Security Alert addresses a serious security vulnerability (CVE-2010-4476) that can cause the Java Virtual Machine to enter an infinite loop. This issue is described in more detail at http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2010-4476 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2010-4476]. 
+
+CONTENT
+Products Affected 
+
+The issue exists in the Java class libraries and affects server products that use Java. IBM SPSS server products that use Java include: 
+
+ * Statistics products:
+   □ SPSS Statistics Server versions 19, 18 
+ * Modeling & Text Mining products:
+   □ SPSS Modeler Server versions 14.1, 14, 13
+   □ SPSS Text Analytics Server versions 14.1, 14, 13 
+   
+ * Collaboration and Deployment Services products:
+   □ SPSS Collaboration and Deployment Services versions 4.2, 4.1, 4.0
+   □ SPSS Predictive Enterprise Services versions 3.5
+   
+ * Decision Management products:
+   □ SPSS Decision Management versions 6.1, 6.0
+   □ SPSS Event Builder versions 5.0
+   □ SPSS Risk Control Builder versions 5.x
+   □ SPSS Interaction Builder versions 5.x 
+   
+ * ShowCase products:
+   □ SPSS ShowCase versions 9.0, 8.0
+   □ Oracle Hyperion Enterprise Performance Management 11.1
+
+
+
+Description 
+This vulnerability can cause the Java Runtime Environment (JRE) to hang, enter an infinite loop, or crash when converting "2.2250738585072012e-308" to a binary floating-point number. The result can be a denial of service exposure in server products. This same problem can occur if the number is written without scientific notation (that is, using all of the 324 decimal places). This vulnerability can affect any Java program that uses the Double.parseDouble method.
+
+Solution
+To prevent this vulnerability from affecting your server product, you must apply a patch to your existing Java version or install a Java version that includes the fix.
+
+No action is necessary if you do not require the fix.
+
+Customer Supplied Java 
+
+Below is a list of SPSS products that do not include a JRE runtime as part of the product. The JRE used with these SPSS products is a separately installed component that is available from the operating system, application server, or Java vendor. 
+
+ * Collaboration and Deployment Services products:
+   □ SPSS Collaboration and Deployment Services Server
+   □ SPSS Predictive Enterprise Services 
+ * Decision Management products:
+   □ SPSS Decision Management
+   □ SPSS Event Builder
+   □ SPSS Risk Control Builder 
+   □ SPSS Interaction Builder 
+   
+ * ShowCase products:
+   □ SPSS ShowCase Server
+   □ Oracle Hyperion Enterprise Performance Management on IBM i
+
+
+
+For the products above, to resolve the security vulnerability, you will need to patch or upgrade the JRE to a version that is recommended by the Operating System, Application Server or Java vendor. 
+
+The following table provides links to vendor-supplied details and solutions for this vulnerability: IBM http://www.ibm.com/developerworks/java/jdk/alerts/cve-2010-4476.html [http://www.ibm.com/developerworks/java/jdk/alerts/cve-2010-4476.html] HP https://h20392.www2.hp.com/portal/swdepot/displayProductInfo.do?productNumber=HPUXFPUPDATER [https://h20392.www2.hp.com/portal/swdepot/displayProductInfo.do?productNumber=HPUXFPUPDATER] Oracle http://www.oracle.com/technetwork/topics/security/alert-cve-2010-4476-305811.html [http://www.oracle.com/technetwork/topics/security/alert-cve-2010-4476-305811.html] 
+Before you update your JRE on a production system, it is strongly recommended that you: 
+• Apply the patch in a test environment to verify that your product is working correctly 
+• Make a backup before you apply any changes 
+
+SPSS-provided Java 
+The products listed below do include a JRE as part of the product installation.  * Statistics products:
+   □ SPSS Statistics Server 
+ * Modeling & Text Mining products:
+   □ SPSS Modeler Server 
+   □ SPSS Modeler Adapters for Collaboration and Deployment Services 
+   □ SPSS Text Analytics Server 
+   □ SPSS Text Mining Adapters for Collaboration and Deployment Services 
+ * ShowCase products:
+   □ ShowCase Enterprise Server
+   □ Oracle Hyperion Enterprise Performance Management on Microsoft Windows
+
+
+You can also manually apply the patch to your JRE using the following steps. 
+
+
+Determine which version of JRE you are using 
+
+ * 
+ * spss_location_jre
+ * 
+ * spss_location_jre
+ * 
+ * 
+ * 
+ * 
+ * 
+ * java -version
+   
+
+The resulting message will indicate whether you have an IBM or Sun version of JRE. 
+
+JRE Locations by Product 
+
+SPSS Statistics Server <Statistics Install Location>/JRE SPSS Modeler Server <Modeler Install Location>/jre <Modeler Install Location>/ext/bin/spss.xd/xdexe/JRE SPSS Modeler Adapters for Collaboration and Deployment Services <Collaboration and Deployment Services Install Location>/components/modeler/jre <Collaboration and Deployment Services Install Location>/components/modeler/ext/bin/spss.xd/xdexe/JRE SPSS Text Analytics Server <Modeler Install Location>/ext/bin/spss.TMWBServer/jre SPSS Text Mining Adapters for Collaboration and Deployment Services <Collaboration and Deployment Services Install Location>/components/modeler/ext/bin/spss.TMWBServer/jre ShowCase Enterprise Server 9.0 <ShowCase Install Location>/JRE/jre ShowCase Enterprise Server 8.0 <ShowCase Install Location>/JRE Oracle Hyperion Enterprise Performance Management <EPM Install Location>/common/jre
+<EPM Install Location>/common/jre-64 (if 64-bit was installed) 
+To apply a patch to an IBM version of JRE, do the following: 
+
+Go to the following Web page, and follow the instructions provided: http://www.ibm.com/developerworks/java/jdk/alerts/cve-2010-4476.html [http://www.ibm.com/developerworks/java/jdk/alerts/cve-2010-4476.html] 
+ * 
+ * 
+ * 
+ * 
+ * spss_location_jre
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * java -jar ParseDoubleTest.jar
+   
+   
+ * 
+ * 
+ * 
+ * 
+ * http://www.ibm.com/developerworks/java/jdk/alerts/cve-2010-4476.html
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * http://www.ibm.com/developerworks/java/jdk/alerts/updateinstaller.html
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * java -jar JavaUpdateInstaller.jar -install [patch JAR file] [JAVA_HOME of target JDK]
+   
+ * 
+ * 
+ * [JAVA_HOME of target JDK]
+ * 
+ * spss_location
+ * 
+ * jre
+ * 
+ * 
+ * 
+ * 
+ * 
+ * java -jar JavaUpdateInstaller.jar -install IZ94423_FIX_1.jar "C:\Program Files\IBM\SPSS\StatisticsServer\19\JRE"
+ * 
+ * 
+ * 
+ *  
+   
+   
+ * 
+ * 
+ * o Make sure the spss_location_ jre/lib/rt.jar file is not marked Read Only in your file system 
+   
+   o Make sure the patch file that was downloaded is for the version of the JRE being updated 
+   
+   o Make sure the version of Java in spss_location_ jre/bin is being used to run the commands 
+   
+
+
+To apply a patch to a SUN version of JRE, do the following:  * 
+ * 
+ * http://www.oracle.com/technetwork/java/javase/downloads/index.html#fpupdater
+ * 
+ * 
+ * 
+ * spss_location
+ * 
+ * jre
+ * 
+ * 
+ * 
+ * 
+ * spss_location
+ * 
+ * jre
+ * 
+ * 
+ * 
+ * java -jar fpupdater.jar -u -v
+
+RELATED INFORMATION
+ Need more help? Our Statistics forum is Live! [https://developer.ibm.com/answers/topics/statistics.html?smartspace=predictive-analytics]
+
+
+ 
+
+Cross reference information Segment Product Component Platform Version Edition Business Intelligence & Financial Performance Management SPSS Collaboration and Deployment Services Platform Independent 4.0, 4.1, 4.2 Business Intelligence & Financial Performance Management SPSS Modeler Platform Independent 14.0.0, 14.1.0 Business Intelligence & Financial Performance Management ShowCase Reporting Platform Independent 9.0, 8.0

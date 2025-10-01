@@ -1,0 +1,269 @@
+Title: IBM PK46606: DEFINE "DIRECTORY TO INSTALL APPLICATION" FIELD FOR ENHANCED EAR FILES. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The documentation for the directory to install an application
+   needs to be updated in the Information Centers for WebSphere
+   Application Server Versions 6.0.x and 6.1.
+   
+   When you install a non-enhanced enterprise archive (EAR) file
+   the Applcation Server adds the the earName suffix unless the
+   APPDEPL_INSTALL_DIR_FINAL option is specified. In this case,
+   the value that is specified for this option is the final
+   value for the location of the application binaries.
+   
+   When you install an enhanced EAR file, the embedded
+   deployment.xml file contains a binaryURL defintion. The
+   Application Server does not add the suffix. If you specify
+   $(APP_INSTALL_ROOT)/CELLNAME in the "Directory to install
+   application" field within the Administrative Console, the
+   Application Server installs the EAR file in the
+   $(APP_INSTALL_ROOT)/CELLNAME directory and overwrites the
+   other applications in that location.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Keywords: deploy install EAR WAR delete erase config
+   installedapps
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: This APAR affects users who are reading      *
+   *                 the documentation for the Directory to       *
+   *                 install application field in the             *
+   *                 Information Centers for WebSphere            *
+   *                 Application Server Versions 6.1 and 6.0.x.   *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: The documentation for the Directory     *
+   *                      to install application field in the     *
+   *                      Version 6.x Information Centers is      *
+   *                      unclear.                                *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   If you install an application on an application server, the
+   product installs the application files in a subdirectory of
+   the directory that is specified in the Directory to install
+   application field in the application installation wizard. The
+   subdirectory has the same name as the application enterprise
+   archive (EAR) file. If you export the installed application
+   and then reinstall it onto an application server, a
+   subdirectory with the same name as the EAR file, is not
+   created. This information on the target directory is not
+   clearly stated in the Version 6.x Information Centers.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The description for the Directory to install application field
+   within the following help topics in the Version 6.x
+   Information Centers more clearly describes the options for the
+   field and the target directory:
+   -"Select installation options settings"
+   -"Application binary settings" (V6.1)
+   -"Enterprise application settings" (V6.0.x)
+   The following information applies to these topics:
+   
+   Directory to install application
+   Specifies the directory to which the enterprise application
+   (EAR) file will be installed. By default, the EAR file is
+   installed in the profile_root/installedApps/cell_name/
+   application_name.ear directory.
+   
+   Setting options include the following:
+   
+   -Do not specify a value and leave the field empty.
+    If you do not specify a directory for Directory to install
+    application, the default value of APPDEPL_INSTALL_DIR is used.
+    The default value is APP_INSTALL_ROOT/cell_name, where the
+    APP_INSTALL_ROOT variable is profile_root/installedApps. A
+    directory having the EAR file name of the application being
+    installed is appended to APP_INSTALL_ROOT/cell_name. Thus, if
+    you do not specify a directory, the EAR file is installed in
+    the profile_root/installedApps/cell_name/application_name.ear
+    directory.
+   
+   -Specify a directory.
+    If you specify a directory for Directory to install
+    application, the application is installed in
+    specified_path/application_name.ear directory. A directory
+    having the EAR file name of the application being installed is
+    appended to the path that you specify for Directory to install
+    application. For example, if you are installing Clock.ear and
+    specify C:/myapps on Windows machines, the application is
+    installed in the myapps/Clock.ear directory. The
+    APP_INSTALL_ROOT variable is set to the specified path.
+   
+   -Specify ${APP_INSTALL_ROOT}/${CELL) for the initial
+    installation of the application.
+    If you intend to export the application from one cell and
+    later install the exported application on a different cell,
+    specify the $(CELL) variable for the initial installation of
+    the application. For example, specify
+    ${APP_INSTALL_ROOT}/${CELL) for this setting. Exporting the
+    application creates an enhanced EAR file that has the
+    application and its deployment configuration. The deployment
+    configuration retains the cell name of the initial
+    installation in the destination directory unless you specify
+    the $(CELL) variable. Specifying the $(CELL) variable ensures
+    that the destination directory has the current cell name, and
+    not the original cell name.
+   
+    Important: If an installation directory is not specified when
+    an application is installed on a single-server configuration,
+    the application is installed in APP_INSTALL_ROOT/cell_name.
+    When the server is made a part of a multiple-server
+    configuration (using the addNode utility), the cell name of
+    the new configuration becomes the cell name of the deployment
+    manager node. If the -includeapps option is used for the
+    addNode utility, then the applications that are installed
+    prior to the addNode operation still use the installation
+    directory APP_INSTALL_ROOT/cell_name. However, an application
+    that is installed after the server is added to the network
+    configuration uses the default installation directory
+    APP_INSTALL_ROOT/network_cell_name. To move the application to
+    the APP_INSTALL_ROOT/network_cell_name location upon running
+    the addNode operation, explicitly specify the installation
+    directory as ${APP_INSTALL_ROOT}/${CELL) during installation.
+    In such a case, the application files can always be found
+    under APP_INSTALL_ROOT/current_cell_name.
+   
+   -If the application has been exported and you are installing
+    the exported EAR file in a different cell or location, specify
+    $(APP_INSTALL_ROOT)/cell_name/application_name.ear if you did
+    not specify ${APP_INSTALL_ROOT}/${CELL) for the initial
+    installation.
+   
+    The exported EAR file is an enhanced EAR file that has the
+    application and its deployment configuration. The deployment
+    configuration retains the value for Directory to install
+    application that was used for the previous installation of the
+    application. Unless you specify a different value for
+    Directory to install application for this installation, the
+    enhanced EAR file will be installed to the same directory as
+    for the previous installation.
+   
+    If you did not specify the $(CELL) variable during the initial
+    installation, the deployment configuration uses the cell name
+    of the initial installation in the destination directory. If
+    you are installing on a different cell, specify
+    $(APP_INSTALL_ROOT)/cell_name/application_name.ear, where
+    cell_name is the name of the cell to which you want to install
+    the enhanced EAR file. If you do not designate the current
+    cell name, cell_name will be the original cell name even
+    though you are installing the enhanced EAR file on a cell that
+    has a different name.
+   
+   -Specify an absolute path or a use pathmap variable.
+    You can specify an absolute path or use a pathmap variable
+    such as ${MY_APPS}. You can use a pathmap variable in any
+    installation.
+   
+    A pathmap variable is particularly needed when installing an
+    application on a cluster with members on heterogeneous nodes
+    because, in such cases, there might not be a single way to
+    specify an absolute path. A WebSphere Application Server
+    variable ${CELL} that denotes the current cell name can also
+    be in the pathmap variable; for example, ${MY_APP}/${CELL}.
+    You can define WebSphere Application Server variables on the
+    WebSphere Variables console page, accessed by clicking
+    Environment > WebSphere Variables.
+   
+    This Directory to install application field is the same as the
+    Location (full path) setting on an Application binaries page.
+   
+    Date that information will be available externally to
+    customers: The modified documentation will be available in the
+    3rd quarter update to the Information Centers, which is
+    scheduled to occur on or before September 30, 2007.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK46606
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBS APP SERV N
+   
+   
+ * REPORTED COMPONENT ID
+   5724H8800
+   
+   
+ * REPORTED RELEASE
+   60S
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2007-06-06
+   
+   
+ * CLOSED DATE
+   2007-06-17
+   
+   
+ * LAST MODIFIED DATE
+   2007-06-17
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

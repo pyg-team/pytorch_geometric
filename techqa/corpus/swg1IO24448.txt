@@ -1,0 +1,136 @@
+Title: IBM IO24448: TASK PROFILE NOT EXECUTING WHEN RUNNING VSCAN THROUGH DATACAP NAVIGATOR - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Provided information/documents:
+   Below is the sample APT application that configured with a task
+   profile, GetOp, in iVScan task (Web Main job) and NavVscan task
+   (Navigator Demo Job).
+   https://ecurep.mainz.de.ibm.com/rest/download/86740%2C227%2C000/ [https://ecurep.mainz.de.ibm.com/rest/download/86740%2C227%2C000/]
+   support_files/APT.zip
+   Step to reproduce:
+   1) Deploy the attached APT application appropriately.
+   TMweb:
+   1) Logon to TMWeb as admin/admin
+   2) Run iVScan shortcut and select Web Main Job.
+   3) Scan in some pages then upload===>Look at the batch, you
+   would see the GetOp_rrs.log.  This means the GetOp task profile
+   has been executed.
+   Datacap Navigator:
+   1) Logon to Datacap Navigator
+   2) Run the NavVScan shortcut
+   3) Scan in some page, then upload====> You don't see the
+   GetOp_rrs.log. This means the GetOp task profile has NOT been
+   executed.
+   
+   I think I know the reason for this.  In order for TMWeb to
+   execute a task profile during VScan, we must add a property call
+   "Run Rules on Start" and set it equals to 1.  I have done this
+   for BOTH iVScan task (tmweb) and NavVScan task (Datacap
+   Navigator).  Again, iVScan task would recognize this flag and
+   executes the task profile.  However, Datacap Navigator does not.
+   
+   Examine ivscan.set.xml and navvsca.set.xml for more details on
+   this parameter.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * n/a                                                          *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * See Error Description                                        *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Upgrade to Datacap 901FP1.                                   *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IO24448
+   
+   
+ * REPORTED COMPONENT NAME
+   DATACAP NAVIGAT
+   
+   
+ * REPORTED COMPONENT ID
+   5725C1503
+   
+   
+ * REPORTED RELEASE
+   900
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-03-31
+   
+   
+ * CLOSED DATE
+   2016-05-05
+   
+   
+ * LAST MODIFIED DATE
+   2016-05-05
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R901 PSN
+   UP

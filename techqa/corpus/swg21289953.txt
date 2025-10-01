@@ -1,0 +1,54 @@
+Title: IBM Oracle 9i Thin Driver cannot save failed events larger than 4 KB - United States
+
+Text:
+v61rnotes; SQLException ORA-01483; v612rnotes TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ If WebSphere® Process Server is configured with Oracle 9i as the database, and Oracle Thin Driver as the database driver, failed events are not saved to the database if the event size is larger than 4 KB. 
+
+SYMPTOM
+The following exception is written to the logs: 
+
+
+
+
+java.sql.SQLException: ORA-01483: invalid length for DATE or NUMBER bind variable
+DSRA0010E: SQL State = 72000, Error Code = 1,483 
+CAUSE
+The Oracle 9i Thin Driver limits the size of data to no more than 4 KB for VARCHAR2, NVARCHAR2, BLOB, and CLOB types.
+
+
+RESOLVING THE PROBLEM
+Use either of the following solutions to solve the problem: 
+
+ * Use the Oracle 10g driver file.  1. Log on to the administrative console and navigate to Environment > WebSphere Variables.
+       
+       
+    2. Select the variable ORACLE_JDBC_DRIVER_PATH.
+       
+       
+    3. Change the variable value to the folder that contains the Oracle 10g driver (ojdbc14.jar).
+       
+       
+    4. Save the configuration.
+       
+       
+    5. Restart the server.
+   
+   
+   Note: In a network deployment environment, change the variable value at the cell level and in all of the nodes scopes, and restart all of the servers and deployment manager processes.
+   
+   
+ * If the Oracle server or client is installed and configured correctly on the same system as WebSphere Process Server, change the data source to use the Oracle 9i OCI driver.  1. Log on to the administrative console and navigate to Resources > JDBC > Data sources.
+       
+       
+    2. Select the data source with the JNDI name jdbc/WPSDB.
+       
+       
+    3. Change the URL format from Thin to OCI. For example, if the original URL is jdbc:oracle:thin:@localhost:1521:WPRCSDB, change it to jdbc:oracle:oci:@WPRCSDB.
+       
+       
+    4. Save the configuration.
+       
+       
+    5. Restart the server.

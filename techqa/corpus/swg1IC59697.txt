@@ -1,0 +1,169 @@
+Title: IBM IC59697: WMQFTE WILD CARD BEHAVIOR IS NOT CORRECT, AS STATED IN THE      MANUAL. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  In the manual it is stated when wild card '*' symbol is used the
+   symbolic links are ignored. But on linux, MQFTE doesn't ignore.
+   When a destination file is created from a source that is a
+   symbolic link, the destination file becomes a hard link (that is
+   a regular file). You cannot successfully transfer symbolic links
+   to directories.
+   If symboliclink is directory and file is saved under the
+   symbolic linkdir, file is not sent. But if symbolic link is a
+   file, file is sent though set upper dir in fteCreateTransfer.
+   
+   PROBLEM CONCLUSION:
+   The Infocentre at Boulder has been updated with teh correct
+   words. A new disk will be produced and translated for the first
+   fixpack.
+   
+   
+   Here are the relevant words from
+   
+   http://publib.boulder.ibm.com/infocenter/wmqfte/v7r0/topic/com.i
+   bm.wmqfte.admin.doc/wildcards.htm [http://publib.boulder.ibm.com/infocenter/wmqfte/v7r0/topic/com.ibm.wmqfte.admin.doc/wildcards.htm]
+   
+   Before:
+   Symbolic links
+   Symbolic links are a type of file that contain a pointer to
+   another file or directory and are known as shortcuts on Windows.
+   Wildcard source specifications ignore symbolic links, but you
+   can use symbolic links in a file transfer if you exactly specify
+   the symbolic link as a source. However, when a destination file
+   is created from a source that is a symbolic link, the
+   destination file becomes a hard link (that is, a regular file).
+   You cannot successfully transfer symbolic links to directories.
+   
+   After:
+   Symbolic links
+   Symbolic links are a type of file that contain a pointer to
+   another file or directory and are known as shortcuts on Windows.
+   You can match symbolic link files with wildcard characters.
+   However, when a destination file is created from a source that
+   is a symbolic link, the destination file becomes a hard link
+   (that is, a regular file). You cannot successfully transfer
+   symbolic links to directories because this could potentially
+   create a recursive path.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  WMQFTE manual incorrectly described wild card behaviour when
+   compared to the product.
+   Manual needs correcting
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Here are the relevant words from
+   http://publib.boulder.ibm.com/infocenter/wmqfte/v7r0/topic/com.i
+   bm.wmqfte.admin.doc/wildcards.htm [http://publib.boulder.ibm.com/infocenter/wmqfte/v7r0/topic/com.ibm.wmqfte.admin.doc/wildcards.htm]
+   
+   Before:
+   Symbolic links
+   Symbolic links are a type of file that contain a pointer to
+   another file or directory and are known as shortcuts on Windows.
+   Wildcard source specifications ignore symbolic links, but you
+   can use symbolic links in a file transfer if you exactly specify
+   the symbolic link as a source. However, when a destination file
+   is created from a source that is a symbolic link, the
+   destination file becomes a hard link (that is, a regular file).
+   You cannot successfully transfer symbolic links to directories.
+   
+   After:
+   Symbolic links
+   Symbolic links are a type of file that contain a pointer to
+   another file or directory and are known as shortcuts on Windows.
+   You can match symbolic link files with wildcard characters.
+   However, when a destination file is created from a source that
+   is a symbolic link, the destination file becomes a hard link
+   (that is, a regular file). You cannot successfully transfer
+   symbolic links to directories because this could potentially
+   create a recursive path.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC59697
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ FILE TRANSF
+   
+   
+ * REPORTED COMPONENT ID
+   5724R1000
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-01-27
+   
+   
+ * CLOSED DATE
+   2009-02-05
+   
+   
+ * LAST MODIFIED DATE
+   2009-02-05
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

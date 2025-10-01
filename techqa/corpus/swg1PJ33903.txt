@@ -1,0 +1,137 @@
+Title: IBM PJ33903: WHEN ATTEMPTING TO SAVE A NEW FORM TEMPLATE POLICY, 50 WARNINGS OCCUR IF DOCUMENT TITLE IN THE BASE DOC CLASS IS MARKED REQUIRED - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When attempting to save a new Form Template Policy, 50
+   warnings occur if document title in the base doc class is
+   marked required
+   Expanded description:
+   In Enterprise Manager, select the Form Policy class property
+   Select Property Definitions  in property tab
+   Click Inherited Properties
+   Select Document Title then do Edit
+   Select More Tab
+   Check the Value required check box.
+   Log on Workplace
+   Add a Form Template (ITX) file to the object store
+   From Author Advanced Tools, create an ordinary document Entry
+   Template
+   From Author Advanced Tools, create a Form Template Policy
+   In the policy wizard:
+   select the ITX file added previously
+   select the entry template added previously
+   proceed to save the policy:
+   select a folder, press next to get to the policy properties
+   screen and...
+   50 more browser windows will eventually popup on the screen,
+   each complaining that the document title property is required
+   but not been filled in.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Form Template designersWhen attempting to save a new Form Templa
+   warnings occur if document title in the base doc class is
+   marked required  P8AE-4.0.1-004
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  P8AE-4.0.1-004
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PJ33903
+   
+   
+ * REPORTED COMPONENT NAME
+   APPLICATION ENG
+   
+   
+ * REPORTED COMPONENT ID
+   5724R7610
+   
+   
+ * REPORTED RELEASE
+   401
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-06-16
+   
+   
+ * CLOSED DATE
+   2008-07-24
+   
+   
+ * LAST MODIFIED DATE
+   2008-07-24
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   APPLICATION ENG
+   
+   
+ * FIXED COMPONENT ID
+   5724R7610
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R401 PSN
+   UP

@@ -1,0 +1,116 @@
+Title: IBM PO07368: OPERATOR "CONTAINS" IS IGNORING SEARCH STRINGS THAT CONTAIN WILDCARDS * OR ? IN CONDITIONS. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The operator "contains" has issues with wildcard characters
+   while searching in text values. When using wildcard characters
+   * or ?, the text string is getting ignored completely. The
+   condition neither hits its original value nor its wildcard
+   search string counterpart. When using a list with multiple
+   search strings, only those with wildcard characters are
+   getting ignored. Others will hit normally. This affects all
+   kind conditions in the software. Rule conditions, mandator
+   conditions, case conditions and other conditions. Other
+   operators are not affected.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Use other operators
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  A condition with text input attribute, wildcard expression
+   (containing characters '* ?') and operator other than '[not]
+   equal to' like 'text attribute -> contains -> wildcard' always
+   returned false. This has been fixed, so wildcard characters in
+   combination with operators other than '[not] equal to' will just
+    be considered a standard character.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PO07368
+   
+   
+ * REPORTED COMPONENT NAME
+   CFM SAFER PAYME
+   
+   
+ * REPORTED COMPONENT ID
+   5725Z8200
+   
+   
+ * REPORTED RELEASE
+   540
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-09-01
+   
+   
+ * CLOSED DATE
+   2018-06-13
+   
+   
+ * LAST MODIFIED DATE
+   2018-06-13
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

@@ -1,0 +1,76 @@
+Title: IBM Error: '12325...ODBC MySQL...' when using ODBC -> My SQL - United States
+
+Text:
+8.5; LEI 8.5; My SQL; decs; domino; LEI 8.0.2; 802; Lotus OEM 5.3; DataDirect ODBC 5.3; real time activities; activities; lotus OEM; oem; MySQL driver; mysql; driver; cannot create; create; creating; not able to create; external key table; external; key table; virtual document; error; lei error; 12325 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+You are using the Lotus Enterprise Integrator (LEI) real time activities with Lotus OEM (original equipment manufacturer) 5.3 SP1 (Data Direct ODBC 5.3 SP1) --> MySQL driver. LEI cannot create an external key table automatically with virtual document activity or with the drop-down list, and throws the following error while trying to create the external key table or attachment table: 
+
+[/support/docview.wss?uid=swg21358707&aid=1] [/support/docview.wss?uid=swg21358707&aid=1]
+
+The above error message is observed on all operating systems including the IBM iSystem (i5/OS) while using the ODBC Connector to connect to MySQL server. Lotus OEM 5.3 SP1 drivers are supported on LEI 8.0.2 (except IBM iSystem) and 8.5 and later versions.
+
+
+
+CAUSE
+The problem is that the schema concept in MySQL is synonymous with the database (ODBC catalog) and not the owner (ODBC schema). Therefore, the driver returns 0 for SQLGetInfo(SQL_MAX_[OWNER|SCHEMA]_NAME_LEN). 
+
+
+This is also why the TABLE_SCHEM column of the result set is Null. However, the driver will return the database (MySQL's schema) in which the table is created as TABLE_CAT. 
+
+This situation can be demonstrated as follows: If you create a MySQL database named Test and you create two users, Test1 and Test2, who have privileges to create tables in Test, it is not possible for both users to create a table with the same name. This is expected behavior by design. 
+
+Even if the driver allowed the application to pass a SchemaName argument to SQLColumns, the correct behavior would be to return no rows since the TABLE_SCHEM column of the result set would not match the SchemaName argument to SQLColumns.
+
+
+RESOLVING THE PROBLEM
+This issue was reported to Quality Engineering as SPR# AKSH7JJDN4. 
+
+
+Workaround:
+An alternate solution is to use the existing external key table or virtual attachment table. If the table does not already exist, you must create it using the database client such as the MySQL client. 
+
+1. To create an external key table, use the following query:
+
+
+ * CREATE TABLE <SCHEMA NAME>.<TABLE NAME> (
+ *  <PRIMARY KEY COLUMN NAME> <PRIMARY KEY DATATYPE> NOT NULL,  * EINOTEID INTEGER,
+    * 
+    * EIUNID CHAR (32),
+    * 
+    * EIMODIFIED TIMESTAMP, 
+    * 
+    * EINOTEPROPS LONG VARCHAR);
+    * 
+   
+   
+
+2. After creating the external key table, select the key table using the Key Table Name drop-down box in the Virtual Documents Activity Document as shown below:  * [/support/docview.wss?uid=swg21358707&amp;aid=2]
+
+
+3. To create the virtual attachment table, use the following query:  * 
+ * CREATE TABLE QEPUMP.VATTACH (
+ *  <PRIMARY KEY COLUMN NAME> <PRIMARY KEY COLUMN DATATYPE>,  * EIDBID CHAR (16) NOT NULL,
+    * 
+    * EIFILEID INTEGER NOT NULL,
+    * 
+    * EIFILESIZE INTEGER,
+    * 
+    * EIFILE BLOB (51200),
+    * 
+    * EIUNID CHAR (32) NOT NULL,
+    * 
+    * EIFILENAME VARCHAR (256),
+    * 
+    * EICONTENTS BLOB (104857600));
+   
+   
+
+
+4. After creating the attachment table, select the attachment table using the Attachment Table drop-down box in the Real Time Activity Document as shown below: 
+ * [/support/docview.wss?uid=swg21358707&amp;aid=3]
+
+
+
+ * 
+ *

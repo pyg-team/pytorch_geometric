@@ -1,0 +1,189 @@
+Title: IBM PK74171: WP V6.1 IC DATABASE CONFIGURATION STEPS FOR DB2 INCORRECT - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The following WP v6.1 IC pages:
+   Adding a database user registry on i5/OS
+   Migrating the security configuration
+   Adding a database user registry on i5/OS
+   Adding a database user registry on HP-UX
+   Adding a database user registry on AIX
+   Adding a database user registry on Solaris
+   Adding a database user registry on HP-UX
+   Adding a database user registry on Windows
+   Adding a database user registry on Linux
+   Adding a database user registry on Solaris
+   Configuring a property extension database on i5/OS
+   Adding a database user registry on Linux
+   Adding a database user registry on Windows
+   Adding a database user registry on AIX
+   Configuring a property extension database on Linux
+   Configuring a property extension database on Solaris
+   Configuring a property extension database on Windows
+   Configuring a property extension database on HP-UX
+   Configuring a property extension database on AIX
+   
+   
+   Have this step:
+   If the WebSphere Application Server installed PK66195 and you
+   installed WebSphere Portal version 6.1.0, perform the following
+   steps:
+   
+   ...
+   
+   If the WebSphere Application Server did not install PK66195,
+   copy the above library files into the appserver/lib directory
+   prior to starting the server.
+   
+   That needs the following corrected as follows:
+   If the WebSphere Application Server did not install PK66195,
+   copy the above library files into the appserver/lib directory.
+   Then stop and restart server1 and WebSphere_Portal servers to
+   load the library files.
+   
+   Because failure to load the library files will cause subsequent
+   tasks to complete incorrectly.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  n/a
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ERROR DESCRIPTION:
+   The following WP v6.1 IC pages:
+   Adding a database user registry on i5/OS
+   Migrating the security configuration
+   Adding a database user registry on i5/OS
+   Adding a database user registry on HP-UX
+   Adding a database user registry on AIX
+   Adding a database user registry on Solaris
+   Adding a database user registry on HP-UX
+   Adding a database user registry on Windows
+   Adding a database user registry on Linux
+   Adding a database user registry on Solaris
+   Configuring a property extension database on i5/OS
+   Adding a database user registry on Linux
+   Adding a database user registry on Windows
+   Adding a database user registry on AIX
+   Configuring a property extension database on Linux
+   Configuring a property extension database on Solaris
+   Configuring a property extension database on Windows
+   Configuring a property extension database on HP-UX
+   Configuring a property extension database on AIX
+   
+   
+   Have this step:
+   If the WebSphere Application Server installed PK66195 and y
+   installed WebSphere Portal version 6.1.0, perform the follo
+   steps:
+   
+   ...
+   
+   If the WebSphere Application Server did not install PK66195
+   copy the above library files into the appserver/lib directo
+   prior to starting the server.
+   
+   That needs the following corrected as follows:
+   If the WebSphere Application Server did not install PK66195
+   copy the above library files into the appserver/lib directo
+   Then stop and restart server1 and WebSphere_Portal servers
+   load the library files.
+   
+   Because failure to load the library files will cause subseq
+   tasks to complete incorrectly.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  IC updated as required
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK74171
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSPHERE PORTA
+   
+   
+ * REPORTED COMPONENT ID
+   5724E7600
+   
+   
+ * REPORTED RELEASE
+   610
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-10-21
+   
+   
+ * CLOSED DATE
+   2008-11-12
+   
+   
+ * LAST MODIFIED DATE
+   2008-11-12
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

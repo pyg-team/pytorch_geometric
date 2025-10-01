@@ -1,0 +1,185 @@
+Title: IBM IZ85904: V7 WEBSPHERE MQ JAVA/JMS CLIENTS: WHEN CONVERSATION SHARING IS  BEING USED THERE IS A DELAY IN 2059 CONNECTION TIMEOUT REPORTING - United States
+
+Text:
+  FIXES ARE AVAILABLE
+WebSphere MQ V7.0 Fix Pack 7.0.1.5 [http://www-01.ibm.com/support/docview.wss?uid=swg24029055]
+WebSphere MQ V7.0.1 for i5/OS Fix Pack 7.0.1.5 [http://www-01.ibm.com/support/docview.wss?uid=swg24029788]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  If a connection cannot be created, an error will return in a
+   period specified by the Connect_Timeout property. If
+   conversation sharing is enabled, only one of the shared
+   connections will receive the error after this time period, the
+   rest will be notified at 5 second intervals. So if 10
+   conversations are shared, the last connection attempt may not be
+   notified of the problem until 50 seconds after the
+   Connect_Timeout expires.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   This issue affects users of the WebSphere MQ V7 classes for
+   Java and WebSphere MQ v7 classes for Java Message Service (JMS)
+   with connection attempts timing out while conversation
+   sharing is enabled.
+   
+   Platforms affected:
+   All Distributed (iSeries, all Unix and Windows) +Java
+   ****************************************************************
+   PROBLEM SUMMARY:
+   The differences in behaviour when detecting connection
+   timeouts between v6 and v7 were down to the fact that v7 uses
+   conversation sharing, and v6 uses a separate physical
+   connection for each conversation.
+   
+   At v6 each connection is made independently, and so each
+   thread makes its own connection. These connections are all
+   made at the same time, and so these will all timeout and pass
+   the 2059 (MQRC_Q_MGR_NOT_AVAILABLE) errors back to the threads
+   which created them at the same time.
+   
+   At v7, when conversation sharing is being used, the single
+   shared connection will be created by the first thread. All of
+   the other threads wishing to share this would then queue up
+   waiting for the connection to be available. Once the
+   connection attempt timed out, the other threads all must 'wake
+   up' one at a time to be informed of the error. Each thread did
+   not wake up until the one in front of it in the waiter queue had
+   been informed - this led to the issue with the 5 second delays
+   between each thread being informed of the timeout error.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The first thread will now receive the MQRC_Q_MGR_NOT_AVAILABLE
+   error after the period specified in Connect_Timeout, the other
+   threads are notified 5 seconds later. The matches the behaviour
+   of the c client.
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+                      v7.0
+   Platform           Fix Pack 7.0.1.5
+   --------           --------------------
+   Windows            U200324
+   AIX                U839183
+   HP-UX (PA-RISC)    U839621
+   HP-UX (Itanium)    U839626
+   Solaris (SPARC)    U839622
+   Solaris (x86-64)   U839628
+   iSeries            tbc_p700_0_1_5
+   Linux (x86)        U839623
+   Linux (x86-64)     U839627
+   Linux (zSeries)    U839624
+   Linux (Power)      U839625
+   
+   The latest available maintenance can be obtained from
+   'WebSphere MQ Recommended Fixes'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037]
+   
+   If the maintenance level is not yet available, information on
+   its planned availability can be found in 'WebSphere MQ
+   Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ85904
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ HP V7
+   
+   
+ * REPORTED COMPONENT ID
+   5724H7222
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-09-28
+   
+   
+ * CLOSED DATE
+   2010-10-15
+   
+   
+ * LAST MODIFIED DATE
+   2010-10-15
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ HP V7
+   
+   
+ * FIXED COMPONENT ID
+   5724H7222
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R700 PSY
+   UP

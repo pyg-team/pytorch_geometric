@@ -1,0 +1,181 @@
+Title: IBM PM18202: UNABLE TO CREATE NEW USERS FROM THE ITCAM MS GUI. TRYING TO ADD A NEW USER RESULTS IN: CYNVE0002E: A SYSTEM ERROR HAS OCCURRED - United States
+
+Text:
+  FIXES ARE AVAILABLE
+7.1.0.1-TIV-ITCAMAD-IF0001 [http://www-01.ibm.com/support/docview.wss?uid=swg24027898]
+7.1.0.2-TIV-ITCAMAD-IF0001: ITCAM for Application Diagnostics V7.1 FP2 IF1 [http://www-01.ibm.com/support/docview.wss?uid=swg24029067]
+7.1.0.2-TIV-ITCAMAD-IF0006: ITCAM for Application Diagnostics V7.1 FP2 IF6 [http://www-01.ibm.com/support/docview.wss?uid=swg24031010]
+7.1.0.2-TIV-ITCAMAD-IF0007: ITCAM for Application Diagnostics V7.1 FP2 IF7 [http://www-01.ibm.com/support/docview.wss?uid=swg24031710]
+7.1.0.2-TIV-ITCAMAD-IF0010: ITCAM for Application Diagnostics V7.1 FP2 IF10 [http://www-01.ibm.com/support/docview.wss?uid=swg24032110]
+7.1.0-TIV-ITCAMAD-FP0003: ITCAM for Application Diagnostics V7.1 Fix Pack 3 [http://www-01.ibm.com/support/docview.wss?uid=swg24032604]
+7.1.0.3-TIV-ITCAMAD-IF0001: ITCAM for Application Diagnostics V7.1 FP3 IF1 [http://www-01.ibm.com/support/docview.wss?uid=swg24032985]
+7.1.0.3-TIV-ITCAMAD-IF0004: ITCAM for Application Diagnostics V7.1 FP3 IF4 [http://www-01.ibm.com/support/docview.wss?uid=swg24033735]
+7.1.0.3-TIV-ITCAMAD-IF0005: ITCAM for Application Diagnostics V7.1 FP3 IF5 [http://www-01.ibm.com/support/docview.wss?uid=swg24033938]
+7.1.0.3-TIV-ITCAMAD-IF0004: ITCAM for Application Diagnostics V7.1 FP3 IF6 [http://www-01.ibm.com/support/docview.wss?uid=swg24034668]
+7.1.0.3-TIV-ITCAMAD-IF0008: ITCAM for Application Diagnostics V7.1 FP3 IF8 [http://www-01.ibm.com/support/docview.wss?uid=swg24037994]
+7.1.0-TIV-ITCAMAD-FP0004: ITCAM for Application Diagnostics V7.1 Fix Pack 4 [http://www-01.ibm.com/support/docview.wss?uid=swg24041705]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Environment
+   ===========
+   ITCAM for WAS v6.1 FP05 MS
+   DB2 DB 8.2.7
+   AIX 5.3
+   
+   Problem Description
+   ===================
+   Customer unable to add new users in the ITCAM for WAS MS GUI.
+   When the prinicipal user attempts to add a new user the followng
+   error is seen -
+   
+   "CYNVE0002E: A system error has occurred. Check VE log files
+   to get more information about the error"
+   
+   The Visualization Engine logs show following exception:
+   
+   Caused by: java.rmi.MarshalException: CORBA BAD_PARAM 0x4f4d0006
+   Maybe; nested exception is:
+    java.io.NotSerializableException: java.lang.Object is not
+   serializable
+    at
+   com.ibm.CORBA.iiop.UtilDelegateImpl.mapSystemException(UtilDeleg
+   ateImpl.java:278)
+    at javax.rmi.CORBA.Util.mapSystemException(Util.java:84)
+    at com.ibm.rmi.util.ProxyUtil.copyObject(ProxyUtil.java:483)
+    at
+   com.ibm.CORBA.iiop.UtilDelegateImpl.copyObject(UtilDelegateImpl.
+   java:795)
+    at javax.rmi.CORBA.Util.copyObject(Util.java:333)
+    at
+   com.cyanea.octigate.account._AccountManager_Stub.findRoleList(_A
+   ccountManager_Stub.java:1054)
+   
+   ---------------------------------------------
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:
+   *
+   * ITCAM 6.1 and AD 7.1 Managing server users trying to create
+   * new users from the MS GUI.
+   *
+   ****************************************************************
+   *
+   * PROBLEM DESCRIPTION:
+   *
+   * When creating new user definition through ITCAM MS GUI,
+   * CYNVE0002E message is dispalyed and
+   * java.io.NotSerializableException is displayed in the VE
+   * application logs.
+   *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix for this APAR is contained in the following maintenance
+   releases:
+   
+     | interim fix | 6.1.0.5-TIV-ITCAMfWAS_SVR-IF0012
+   
+     | interim fix | 7.1.0.1-TIV-ITCAMAD_SVR-IF0001
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM18202
+   
+   
+ * REPORTED COMPONENT NAME
+   ITCAM WAS MGING
+   
+   
+ * REPORTED COMPONENT ID
+   5724L62MS
+   
+   
+ * REPORTED RELEASE
+   610
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-07-12
+   
+   
+ * CLOSED DATE
+   2010-08-29
+   
+   
+ * LAST MODIFIED DATE
+   2010-08-29
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ITCAM WAS MGING
+   
+   
+ * FIXED COMPONENT ID
+   5724L62MS
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R610 PSY
+   UP

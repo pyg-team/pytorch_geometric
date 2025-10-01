@@ -1,0 +1,26 @@
+Title: IBM Recommended fixes for OMNIbus - United States
+
+Text:
+recommended fixes; recommended fixes; recommended fixes; recommended updates; recommended updates; recommended updates; RecommendedFixesDocument; TopTenDocument; service pack; fixpack; fixpak; cumulative fix; cum fix; interim fix; ifix; configuration; efix; required; fixes; policy; list of defects; list of defects; list of defects; preferred; RecommendedFixesDocument PRODUCT DOCUMENTATION
+
+ABSTRACT
+ A comprehensive list of recommended, generally available (GA) fixes for IBM® OMNIbus releases.
+
+Fix packs are cumulative. When a prerequisite or co-requisite fix pack is recommended that specific fix pack or later fix packs may be applied. 
+
+Tables are organized by version in the order they were released. 
+
+CONTENT
+ 
+
+RECOMMENDED FIXES
+8.1.0 7.4.0 8.1.0
+8.1.0 Troubleshoot Level Released Comments 8.1.0-TIV-NCOMNIbus-FP0010 [http://www.ibm.com/support/docview.wss?uid=swg24042764] OMNIbus 8.1 Fix Pack 10 16 Dec 2016 Recommended 8.1.0-TIV-NCOMNIbus_GUI-FP0008 [http://www.ibm.com/support/docview.wss?uid=swg24042743] WebGUI 8.1 Fix Pack 8 16 Dec 2016 Recommended Additional information Omnibus Core and WebGUI Fixpacks are not required to be at the same level. 
+For Fixpack installation instructions, see the README that is downloaded with the Fixpack. Back to Top 
+
+7.4.0
+7.4.0 Troubleshoot Level Released Comments 7.4.0-TIV-NCOMNIbus-FP0012 [http://www.ibm.com/support/docview.wss?uid=swg24042765] OMNIbus 7.4.0 Fix Pack 12 12 Oct 2016 Recommended 7.4.0-TIV-NCOMNIbus_GUI-FP0006 [http://www.ibm.com/support/docview.wss?uid=swg24041690] WebGUI 7.4.0 Fix Pack 6 03 Aug 2016 Recommended Additional information Omnibus Core and WebGUI Fixpacks are not required to be at the same level. 
+For Fixpack installation instructions, see the README that is downloaded with the Fixpack. Back to Top 
+
+SUPPORT POLICY STATEMENTS AND RELATED DOCUMENTS
+Support policy statements and related documents Support policy statements IBM Software Support Lifecycle [http://www.ibm.com/software/sysmgmt/products/support/lifecycle/] Download Director What is Download Director? [http://www.ibm.com/support/us/ddhelp.html] Related resources Fixes by Version for OMNIbus [http://www.ibm.com/support/docview.wss?rs=3120&uid=swg27011463]

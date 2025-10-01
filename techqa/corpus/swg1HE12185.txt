@@ -1,0 +1,152 @@
+Title: IBM HE12185: IBM Lotus Domino template checking for function image resources might take a long time in some environments - United States
+
+Text:
+  DIRECT LINKS TO FIXES
+4.0.0.3-IBM-ICC-FP003 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FContent+Collector&fixids=4.0.0.3-IBM-ICC-FP003&source=SAR]
+3.0.0.6-IBM-ICC-FP006 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FContent+Collector&fixids=3.0.0.6-IBM-ICC-FP006&source=SAR]
+IBM Content Collector V3.0 Fix Pack 6 [http://www-01.ibm.com/support/docview.wss?uid=swg24039002]
+IBM Content Collector V4.0 Fix Pack 3 [http://www-01.ibm.com/support/docview.wss?uid=swg24039003]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When the IBM Lotus Domino template is enabled in IBM Content
+   Collector, the Content Collector functions are accessed which
+   includes searching for the Content Collector function image
+   resources. In some environments, this search might take a long
+   time causing delays and unresponsiveness on the Lotus Notes
+   client workstation.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  When the IBM Lotus Domino template is enabled in IBM Content
+   Collector, the Content Collector functions are accessed which
+   includes searching for the Content Collector function image
+   resources. In some environments, this search might take a long
+   time causing delays and unresponsiveness on the Lotus Notes
+   client workstation.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Install IBM Content Collector 3.0 Fix Pack 6 or 4.0 Fix Pack 3
+   and set AFU_UNCHECK_IMAGE_RESOURCE = 1 in the notes.ini file.
+   After you have installed the fix and set the variable, IBM
+   Content Collector will skip checking the image resources.
+   However, the attachment icon in the Lotus Notes view column
+   might not be displayed properly.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  Fix available in 3.0.0.5-IBM-ICC-Server-LA002 ,
+   4.0.0.2-IBM-ICC-Server-LA016 and
+   4.0.0.2-IBM-ICC-LA019 (Server and Notes Client)
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   HE12185
+   
+   
+ * REPORTED COMPONENT NAME
+   ICC FOR EMAIL
+   
+   
+ * REPORTED COMPONENT ID
+   5724V5700
+   
+   
+ * REPORTED RELEASE
+   300
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-08-22
+   
+   
+ * CLOSED DATE
+   2014-12-30
+   
+   
+ * LAST MODIFIED DATE
+   2014-12-30
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ICC FOR EMAIL
+   
+   
+ * FIXED COMPONENT ID
+   5724V5700
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R300 PSY
+   UP
+   
+   
+ * R400 PSY
+   UP

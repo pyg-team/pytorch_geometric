@@ -1,0 +1,114 @@
+Title: IBM PASW Statistics Script to cycle through Custom Tables and add formatted title, Row by Column variable - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ I am using SPSS for Windows. I have produced many Custom Tables in my output. I clicked Analyze->Tables->Custom Tables. Each Custom Table contains a single row variable by a single column variable. 
+
+I would like to add a title to each Custom Table which indicates each of the row and column variables, separated by the word, 'by'. For example, one of my Custom Tables has a row variable, 'Gender,' and a column variable, 'Employment Category.' I would like to include a title that states, 'Gender by Employment Category'. 
+
+I know that I can use the /TITLES TITLE= ')TABLE' subcommand in CTABLES to produce the above described title. However, I already made the Custom Tables and do not want to re-run the tables. 
+
+Is there anyway I can automate this process of adding a title, as described above, for each Custom Table in my output? 
+
+RESOLVING THE PROBLEM
+Yes. The following script should assist you. Highlight the script below and click Edit->Copy. Next, click File->New->Script. Click Cancel. Delete any visible text. Click Edit->Paste. Next, click File->Save As and save the script using a name such as AddTitleRowByColumnVariable.sbs. Exit the script window. Next, open or produce your Custom Tables output, as described above. Again, this script assumes that each Custom Table in the output contains a single row variable by a single column variable. The script also assumes that the output contains only this specific type of Custom Tables. 
+
+In the output window, click Utilities->Run Script. Locate the saved script and click Run. You should notice that for each Custom Table, as described above, a title is added in the format, Row by Column Variable. 
+
+Read through the script for additional details. 
+'___________________________________________________________
+'Begin Description
+'The following script assumes that you have Custom
+'Tables in your entire output
+'The script assumes that each Custom Table has a single
+'Row variable and a single Column variable
+'The script will cycle through each
+'Custom Table
+'For each Custom Table found, it will add a title
+'in the format, Row by Column Variable
+'End Description
+
+Option Explicit
+Sub Main
+
+Dim objDocuments As ISpssDocuments ' SPSS documents.
+Dim objOutputDoc As ISpssOutputDoc ' Output document
+Dim objItems As ISpssItems ' Output Navigator items
+Dim objPivotTable As PivotTable ' The Pivot Table
+Dim i As Integer
+
+'Get list of documents in SPSS.
+Set objDocuments = objSpssApp.Documents
+
+'Get designated document only if there is at least one output document.
+'Omitting this test results in a error message.
+If objDocuments.OutputDocCount > 0 Then
+'Get the currently designated output document.
+Set objOutputDoc = objSpssApp.GetDesignatedOutputDoc
+Else
+'If no navigator window exists, quit the script.
+'comment the following line out and the script will go away silently.
+MsgBox "Please open an output window before running this script.", vbExclamation, "Script Error"
+Exit Sub
+End If
+
+'Get the outline tree from the Navigator.
+Set objItems = objOutputDoc.Items
+Dim objItem As ISpssItem
+
+'Get each item in the Navigator.
+For i = 0 To objItems.Count - 1
+Set objItem = objItems.GetItem(i) 'Get each item in turn.
+If objItem.SPSSType = SPSSPivot Then
+'Check to see if it's a PivotTable
+Set objPivotTable = objItem.ActivateTable()
+'Activate the pivot table.
+'objPivotTable.UpdateScreen = False
+'Defer drawing until later.
+
+'AddTitleRowByColumnVariable is the subroutine we call
+
+Call AddTitleRowByColumnVariable(objPivotTable)
+
+objPivotTable.UpdateScreen = True
+objItem.Deactivate
+End If
+Next
+End Sub
+
+
+Sub AddTitleRowByColumnVariable (objPivotTable As PivotTable)
+
+'Now we get the row labels and store them in an array
+
+Dim objRowLabels As ISpssLabels
+
+'Now we get the row labels and store them in an array
+
+Dim objColumnLabels As ISpssLabels
+
+
+Set objRowLabels = objPivotTable.RowLabelArray ()
+
+Set objColumnLabels = objPivotTable.ColumnLabelArray()
+
+'Here we get the first row label for the first row variable and the first column label for the first
+'column variable, and insert it as a title to the Custom Table
+
+objPivotTable.TitleText= objRowLabels.ValueAt(0,1) & " " & "by" & " " & objColumnLabels.ValueAt(1,0)
+
+
+objPivotTable.UpdateScreen = True
+
+End Su
+
+RELATED INFORMATION
+ Need more help? Our Statistics forum is Live! [https://developer.ibm.com/answers/topics/statistics.html?smartspace=predictive-analytics]
+
+
+ 
+
+HISTORICAL NUMBER
+ 33031

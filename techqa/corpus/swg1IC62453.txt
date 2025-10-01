@@ -1,0 +1,137 @@
+Title: IBM IC62453: APPLIANCE RESTART IF <XS:IMPORT/> IMPORTS A WSDL FILE - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The problem occurs when loading a WSDL to the appliance, for
+   instance in a WS-Proxy configuration.
+   The WSDL contains a <wsdl:types/> section with a schema
+   <xs:import/> line, but the thing the <xs:import/> imports
+   is actually the same WSDL definition.
+   -
+   Additional Symptoms: Appliance hangs, no response to CLI,
+   continous restarts of applaince.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  The current work around is to avoid importing any schema where
+   the schema file imports itself.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  The appliance may restart during compilation of
+   an XML schema if an <xs:import/> or similar statement imports
+   a WSDL file rather than another schema.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  DataPower firmware releases 3.7.1.11,
+   3.7.2.7, and 3.7.3.6 will be updated to resolve this issue.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC62453
+   
+   
+ * REPORTED COMPONENT NAME
+   DATAPOWER
+   
+   
+ * REPORTED COMPONENT ID
+   DP1234567
+   
+   
+ * REPORTED RELEASE
+   373
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-08-10
+   
+   
+ * CLOSED DATE
+   2009-10-05
+   
+   
+ * LAST MODIFIED DATE
+   2009-12-22
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   DATAPOWER
+   
+   
+ * FIXED COMPONENT ID
+   DP1234567
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R371 PSY
+   UP
+   
+   
+ * R372 PSY
+   UP
+   
+   
+ * R373 PSY
+   UP

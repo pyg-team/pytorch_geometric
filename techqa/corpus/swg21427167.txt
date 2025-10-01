@@ -1,0 +1,29 @@
+Title: IBM DFHDM0001 0C1 AKEX X'0538' with CA QuickFetch - United States
+
+Text:
+0C1 ; S0C1 ; abend0C1 ; abendS0C1 ; AKEX ; AKEA ; QFSSUBS ; CA-QUICK-FETCH ; QUICK-FETCH ; QUICKFETCH ; DFHDMDS ; INITIALISE_DOMAIN ; INITIALIZE_DOMAIN ; zeros; zeroes ; DM0001 ; initialization ; initialisation ; startup ; 5655M1500 R640 640 R400 400 HCI6400 R650 650 R500 500 HCI6500 5655-M15 5655M15 5655S9700 R660 660 R600 600 HCI6600 5655-S97 5655S97 5655S9700 R670 670 R700 700 HCI6700 5655-S97 5655S97 kixinfo retention42 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Your CICS Transaction Server for z/OS (CICS TS) regions receive abend0C1 and abendAKEX. You are using CA Technologies QuickFetch for OS/390. 
+
+SYMPTOM
+DFHDM0001 [http://pic.dhe.ibm.com/infocenter/cicsts/v4r2/topic/com.ibm.cics.ts.messages.doc/cics_mc/dfhdm/DM0001.html] An abend (code ---/AKEX) has occurred at offset X'0538' in module DFHDMDS.
+
+
+CAUSE
+When a LOAD request for a program is handled by Quick-Fetch, the program might be loaded into a different location than requested by the specified parameters on the LOAD macro.
+
+DIAGNOSING THE PROBLEM
+The AKEX [http://pic.dhe.ibm.com/infocenter/cicsts/v4r2/topic/com.ibm.cics.ts.messages.doc/cics_mc/AKxx_abend_codes/AKEX.html] abend indicates that a program check was detected by the Kernel while running under a TCB that is not enabled for EXEC CICS commands. The program check is an abend 0C1 that occurs due to a branch to an area that contains zeroes. The Branch Event Address Register (BEAR) shows that the branch came from module DFHKEDCL. (If available, the BEAR will be formatted with the Kernel error information as Branch Event Address).
+
+The Kernel stacks show CICS processing an INITIALISE_DOMAIN call at the time of the 0C1. DFHKEDCL is trying to branch to the module addressed by Register 15. The CICS Loader domain indicates that the Reg15 address should be the entry point for module DFHWBDML, but this area of storage contains zeroes.
+
+The entry point for DFHWBDML is program DFHWBDM. DFHWBDM can be found elsewhere in the dump by searching in browse mode. However, the area of storage where DFHWBDM is found is in private storage, outside of the CICS EDSA, and is not where CICS expects this module to be loaded.
+
+RESOLVING THE PROBLEM
+Apply CA Technologies fix RO14553 for QuickFetch for OS/390. Contact [/support/docview.wss?uid=swg21427167&amp;aid=1]CA Technologies [http://www.ca.com/us/] if you need additional assistance.
+
+
+
+PRODUCT ALIAS/SYNONYM
+ CICS/TS CICS TS CICS Transaction Server

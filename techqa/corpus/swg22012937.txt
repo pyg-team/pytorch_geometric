@@ -1,0 +1,31 @@
+Title: IBM Upgrade to Guardium v10.1.4 fails, MySQL database down. - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ IBM Security Guardium may fail during upgrade to v10 GPU 400, leaving the MySQL database down and CLI in recovery mode. 
+
+SYMPTOM
+Logging into CLI reports the unit is in recovery mode. Only limited CLI commands are available. 
+
+IMPORTANT! Recovery mode is expected and normal during the GPU 400 upgrade. If recovery mode lasts more than 8 hours, upgrade has likely failed. 
+
+The p9997 Health Check was not run immediately before GPU 400 upgrade.
+
+
+CAUSE
+Per the v10.1.4 Release Notes, running p9997 prior to the GPU 400 upgrade is REQUIRED. The p400 upgrade should abort if p9997 was not run. IBM has identified cases where p9997 was run months ago and p400 still runs. 
+
+This can allow the unit to fill up critically tight disk space on the root / partition after the Health Check was run. If that happens, p400 will fail during RPM installation when it runs out of disk space after the old MySQL version has been removed. This leaves the Guardium system without a functional internal database.
+
+
+
+RESOLVING THE PROBLEM
+The best solution in this case is to restore a VM snapshot or backup taken prior to the upgrade. Then run the latest Health Check and resolve any issues found before upgrading to GPU 400. 
+
+To avoid this kind of issue, always download the latest Health Check (p9997) from Fix Central and make sure it runs without errors before upgrading Guardium. 
+
+IBM also recommends backing up the system before running a major GPU upgrade like p400. 
+
+The failure to enforce a recent Health Check has been reported to IBM Security Guardum R&D and will be included in future patches.

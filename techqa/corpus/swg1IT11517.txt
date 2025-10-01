@@ -1,0 +1,263 @@
+Title: IBM IT11517: WEBSPHERE MQ V7.5: MQ RESOURCE ADAPTER INCORRECTLY USES AUTOMATIC CLIENT RECONNECTION IN JAVA EE APPLICATION SER - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The use of automatic client reconnection within Java EE
+   application servers is not supported and should not be used by
+   the MQ Resource Adapter in those environments. Activation
+   Specifications contain their own reconnection logic which
+   should be used for reconnection.
+   
+   However, some logic within the WebSphere MQ Resource Adapter is
+   incorrect, so when it detected that queue manager was no longer
+   running, the WebSphere MQ Resource Adapter decided to connect
+   to the failed-over queue manager using the WebSphere MQ
+   automatic client reconnection functionality incorrectly.
+   
+   If it is opening a non-durable subscription, the application
+   may encounter exceptions similar to following after it
+   reconnects to the queue manager:
+   JMSCMQ0001: WebSphere MQ call failed with compcode '2'
+   ('MQCC_FAILED') reason '2428' ('MQRC_NO_SUBSCRIPTION').
+   JMSWMQ0026: Failed to subscribe to topic
+   'SYSTEM.MANAGED.NDURABLE.55EE51C92001DB04' using MQSUB.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   This issue affects two categories of user:
+   
+   Category 1:
+   -----------------
+   Users of:
+   
+   - The WebSphere MQ V7.5 resource adapter.
+   - The MQ V8 resource adapter.
+   
+   who have:
+   
+   - deployed the resource adapter into an application server that
+   is running the same system as either a queue manager or client
+   installation
+   - modified the MQ client configuration file (mqclient.ini) on
+   the system so that the DefRecon attribute in the CHANNELS stanza
+   is set to YES.
+   - defined an Activation Specifications that connects to a queue
+   manager using the CLIENT transport and WebSphere MQ messaging
+   provider normal mode, and monitors a topic destination for
+   messages.
+   
+   Category 2:
+   -----------------
+   Users of:
+   
+   - The WebSphere MQ V7.5 classes for JMS.
+   - The MQ V8 classes for JMS.
+   
+   who have:
+   
+   - modified the MQ client configuration file (mqclient.ini) on
+   the system so that the DefRecon attribute in the CHANNELS stanza
+   is set to YES.
+   - defined a connection factory that connects to a queue manager
+   using the CLIENT transport and and WebSphere MQ messaging
+   provider normal mode, and has the CLIENTRECONNECTOPTIONS
+   property set to the value DISABLED.
+   
+   
+   Platforms affected:
+   MultiPlatform
+   
+   ****************************************************************
+   PROBLEM DESCRIPTION:
+   When an activation specification starts up, the WebSphere MQ
+   resource adapter creates an internal JMS connection factory that
+   represents the activation specification. The resource adapter
+   then passes the connection factory to the WebSphere MQ classes
+   for JMS (which are contained within the adapter) so that a JMS
+   connection to a queue manager can be created for the activation
+   specification to use. The connection factory for the activation
+   specification is always created with the CLIENTRECONNECTOPTIONS
+   property set to the value DISABLED, as the use of the WebSphere
+   MQ automatic client reconnection functionality is not supported
+   inside of Java Enterprise Edition application servers. More
+   information on this can be found in the:
+   
+   "Using automatic client reconnection in Java Platform,
+   Enterprise Edition environments"
+   
+   topic in the MQ V8.0 section of IBM Knowledge Center.  The URI
+   for this topic is shown below:
+   
+   https://www-01.ibm.com/support/knowledgecenter/SSFKSJ_8.0.0/com.
+   ibm.mq.dev.doc/q119420_.htm?lang=en [https://www-01.ibm.com/support/knowledgecenter/SSFKSJ_8.0.0/com.ibm.mq.dev.doc/q119420_.htm?lang=en]
+   
+   
+   When the JMS connection was created from the connection factory,
+   the WebSphere MQ classes for JMS incorrectly checked if there
+   was an MQ client configuration file (mqclient.ini) on the
+   system. If it found one, it read the value of the DefRecon
+   attribute in the CHANNELS stanza to determine whether the
+   connection to the queue manager should use the automatic client
+   reconnection functionality. If the DefRecon attribute was set to
+   the value YES, then automatic client reconnection was enabled.
+   
+   As a result:
+   
+   - if the queue manager was shut down unexpectedly while an
+   activation specification was running, then the automatic client
+   reconnection functionality would try to reconnect the activation
+   specification rather than the reconnection logic provided by the
+   resource adapter.
+   - if the queue manager was stopped unexpectedly while a
+   stand-alone application was running, then instead of an
+   exception being thrown back to the application, the automatic
+   client reconnection functionality would try to reconnect the
+   application.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The WebSphere MQ classes for JMS have been updated so that if a
+   JMS connection is created from a connection factory that has the
+   CLIENTRECONNECTOPTIONS property set to the value DISABLED, the
+   connection to the queue manager associated with the JMS
+   connection will not use the automatic client reconnection
+   functionality. This ensures that:
+   
+   - Stand-alone applications will receive a exception when the
+   queue manager they are connected to stops unexpectedly.
+   - The WebSphere MQ resource adapter will be notified if the
+   queue manager that an activation specification is connected to
+   stops unexpectedly. This allows the reconnection logic inside
+   the resource adapter to shut down the activation specification
+   and try to reconnect to the queue manager at regular intervals.
+   
+   For more information about this APAR, please see the following
+   video : https://www.youtube.com/watch?v=x6Hu-xvJcWU [https://www.youtube.com/watch?v=x6Hu-xvJcWU]
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+   Version    Maintenance Level
+   v7.5       7.5.0.7
+   v8.0       8.0.0.5
+   
+   The latest available maintenance can be obtained from
+   'WebSphere MQ Recommended Fixes'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037]
+   
+   If the maintenance level is not yet available information on
+   its planned availability can be found in 'WebSphere MQ
+   Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT11517
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ BASE MULTIP
+   
+   
+ * REPORTED COMPONENT ID
+   5724H7241
+   
+   
+ * REPORTED RELEASE
+   750
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2015-09-30
+   
+   
+ * CLOSED DATE
+   2016-01-27
+   
+   
+ * LAST MODIFIED DATE
+   2016-04-29
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ BASE MULTIP
+   
+   
+ * FIXED COMPONENT ID
+   5724H7241
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R750 PSY
+   UP

@@ -1,0 +1,35 @@
+Title: IBM Schema name supplied at design time within Event Designer results in SQL error at execution time - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ DataResolver exception in the system log trying to retrieve data from a named schema that is different than the username that created the data connection in the Event Designer. 
+
+SYMPTOM
+[3/30/12 8:51:58:158 PDT] 00000038 SystemErr R 
+com.ibm.wbe.server.resolver.DataResolverException: BEER2795E: An error 
+occurred retrieving data from SQL: com.ibm.db2.jcc.am.io: DB2 SQL Error:
+SQLCODE=-204, SQLSTATE=42704, SQLERRMC=SCHEMANAME, DRIVER=3.57.82 
+
+
+CAUSE
+The event runtime can only access the tables in the schema named after 
+the username specified for use in authenticating the data connection
+
+ENVIRONMENT
+Database independent.
+
+DIAGNOSING THE PROBLEM
+Behavior of naming schemas' default vs non default.
+
+
+If you set a default schema: 
+1- Event Designer only shows the tables in that schema 
+2- the runtime can only access the tables in the schema named after 
+the username of the data connection 
+If you don't set a default schema: 
+1- Event Designer shows all the tables regardless of which schema they 
+belong to 
+2- the runtime can still only access the tables in the schema named 
+after the username of the data connection

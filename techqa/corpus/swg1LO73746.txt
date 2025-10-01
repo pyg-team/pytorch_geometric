@@ -1,0 +1,133 @@
+Title: IBM LO73746: SENDER RECIEVES COPY ON REPLY TO ALL FROM NOKIA DEVICE. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When Reply-To-All from Nokia device, customer found that the
+   sender was added to the recipient field.  In general the
+   Notes/Domino philosophy is to not send a copy of the mail to the
+   sender unless explicitly added.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  NA
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Customer reported that when Reply-To-All from Nokia device the
+   sender would recieve a copy of the message.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The Notes Traveler client for Nokia devices was updated to
+   prevent sending a copy of the message to the sender.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  This fix will be included in Notes Traveler 8.5.3.200 IF1 and
+   all later releases.  See this technote for the latest
+   maintenance information:
+   
+   http://www.ibm.com/support/docview.wss?uid=swg24019529 [http://www.ibm.com/support/docview.wss?uid=swg24019529]
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   LO73746
+   
+   
+ * REPORTED COMPONENT NAME
+   LOTUS NOTES TRA
+   
+   
+ * REPORTED COMPONENT ID
+   5724E6204
+   
+   
+ * REPORTED RELEASE
+   853
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-02-01
+   
+   
+ * CLOSED DATE
+   2013-02-24
+   
+   
+ * LAST MODIFIED DATE
+   2013-02-24
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   LOTUS NOTES TRA
+   
+   
+ * FIXED COMPONENT ID
+   5724E6204
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R853 PSY
+   UP

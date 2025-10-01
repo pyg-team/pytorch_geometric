@@ -1,0 +1,22 @@
+Title: IBM Notes & Domino are NOT affected by the Bash vulnerabilities (CVE-2014-6271, CVE-2014-7169, CVE-2014-7186, CVE-2014-7187, CVE-2014-6277, and CVE-2014-6278) - United States
+
+Text:
+Bash Bug; Shellshock; memory corruption vulnerabilities TECHNOTE (FAQ)
+
+QUESTION
+Are IBM Notes & Domino affected by the Bash vulnerabilities that have been referred to as “Bash Bug” or “Shellshock” and the two memory corruption vulnerabilities? 
+
+ANSWER
+IBM Notes and Domino in all editions and all platforms are NOT vulnerable to the Bash vulnerabilities disclosed in September 2014 (CVE-2014-6271, CVE-2014-7169, CVE-2014-7186, CVE-2014-7187, CVE-2014-6277, and CVE-2014-6278). 
+
+NOTE: IBM recommends that you review your entire environment to identify vulnerable releases of Bash, including your operating systems, and take appropriate mitigation and remediation actions. Contact your Operating System provider for more information. 
+
+
+
+RELATED INFORMATION
+ IBM PSIRT blog - Bash vulnerability [www.ibm.com/connections/blogs/PSIRT/entry/bash_vulnerable_to_cve_2014_6271_and_cve_2014_7169?lang=en_us]
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Messaging Applications IBM Notes

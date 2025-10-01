@@ -1,0 +1,84 @@
+Title: IBM SQL3119W error while loading DB2 audit data in DB2 for Linux, Unix, and Windows Version 9.7 . - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ While attempting to load DB2 audit data into a table you might encounter the following error: SQL3119W The field value in row "row number" and column "column number" cannot be converted to an INTEGER value. A null was loaded.
+
+
+SYMPTOM
+The AUDIT_DELIM_EXTRACT stored procedure can be used to extract, to a delimited ASCII file, the audit files of a database. In addition the db2audit tool can be used with the 'extract' and 'delasc' options to accomplish the same. The extracted audit records are placed in a delimited ASCII format which then can be inserted into DB2 database table using the LOAD command. 
+
+The load may encounter the following errors and as a result reject some of the records. 
+
+LOAD FROM D:\AUDIT\execute.del OF DEL MODIFIED BY DELPRIORITYCHAR LOBSINFILE INSERT INTO DB2AUDIT.EXECUTE
+SQL3501W The table space(s) in which the table resides will not be placed in 
+backup pending state since forward recovery is disabled for the database.
+
+SQL3109N The utility is beginning to load data from file 
+"D:\AUDIT\execute.del".
+
+SQL3500W The utility is beginning the "LOAD" phase at time "06/29/2010 
+14:04:55.319513".
+
+SQL3519W Begin Load Consistency Point. Input record count = "0".
+
+SQL3520W Load Consistency Point was successful.
+
+SQL3119W The field value in row "135" and column "27" cannot be converted to 
+an INTEGER value. A null was loaded.
+
+SQL3229W The field value in row "135" and column "32" is invalid. The row was 
+rejected. Reason code: "1".
+
+SQL3185W The previous error occurred while processing data from row "135" of 
+the input file.
+
+SQL3125W The character data in row "420" and column "2" was truncated because 
+the data is longer than the target database column.
+
+SQL3117W The field value in row "420" and column "10" cannot be converted to 
+a SMALLINT value. A null was loaded.
+
+SQL3119W The field value in row "460" and column "27" cannot be converted to 
+an INTEGER value. A null was loaded.
+
+SQL3229W The field value in row "460" and column "32" is invalid. The row was 
+rejected. Reason code: "1".
+
+SQL3185W The previous error occurred while processing data from row "460" of 
+the input file.
+
+SQL3119W The field value in row "923" and column "27" cannot be converted to 
+an INTEGER value. A null was loaded.
+
+SQL3229W The field value in row "923" and column "32" is invalid. The row was 
+rejected. Reason code: "1".
+
+SQL3185W The previous error occurred while processing data from row "923" of 
+the input file.
+
+SQL3119W The field value in row "924" and column "27" cannot be converted to 
+an INTEGER value. A null was loaded.
+
+SQL3229W The field value in row "924" and column "32" is invalid. The row was 
+rejected. Reason code: "1".
+
+SQL3185W The previous error occurred while processing data from row "924" of 
+the input file. 
+
+ 
+
+
+
+
+RESOLVING THE PROBLEM
+The first parameter of AUDIT_DELIM_EXTRACT procedure is an optional argument that specifies the character delimiter to be used in the delimited files. If the empty string specified has a space, like ' ' (space between the single quotes), then the double quote will not be used as the delimiter character and will result in the SQL3119W error messages. To resolve the SQL3119W errors ensure NULL or an empty string, like '' (no space between the single quotes), is specified as the first parameter in AUDIT_DELIM_EXTRACT procedure, for example 
+
+
+call sysproc.audit_delim_extract(NULL,NULL,NULL,'%201007021%',NULL) 
+
+or 
+
+call sysproc.audit_delim_extract('',NULL,NULL,'%201007021%',NULL)

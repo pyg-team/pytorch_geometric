@@ -1,0 +1,150 @@
+Title: IBM PI34113: SUPPORT THE CICS EXCI OPTION - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Support the CICS EXCI option
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: Users of the CICS preprocessor who want to   *
+   *                 use the CICS option EXCI                     *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Previously, the integrated CICS         *
+   *                      preprocessor did not recognize the EXCI *
+   *                      option and would insert DFHEIPTR into   *
+   *                      the MAIN procedure statement even when  *
+   *                      this option was in effect               *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The CICS preprocessor has been enhanced to recognize the EXCI
+   option and to leave the MAIN procedure statement unchanged when
+   this option is in effect
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI34113
+   
+   
+ * REPORTED COMPONENT NAME
+   ENT PL/I FOR ZO
+   
+   
+ * REPORTED COMPONENT ID
+   5655W6700
+   
+   
+ * REPORTED RELEASE
+   420
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-02-03
+   
+   
+ * CLOSED DATE
+   2015-02-04
+   
+   
+ * LAST MODIFIED DATE
+   2015-03-03
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UI24943 UI24944 UI24945
+   
+   
+
+MODULES/MACROS
+ *     IBMMEXEC
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ENT PL/I FOR ZO
+   
+   
+ * FIXED COMPONENT ID
+   5655W6700
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R420 PSY UI24943 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI24943]
+   UP15/02/05 P F502
+   
+   
+ * R430 PSY UI24944 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI24944]
+   UP15/02/05 P F502
+   
+   
+ * R440 PSY UI24945 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI24945]
+   UP15/02/05 P F502
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

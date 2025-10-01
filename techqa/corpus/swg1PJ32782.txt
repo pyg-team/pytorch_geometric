@@ -1,0 +1,169 @@
+Title: IBM PJ32782: BPF IMPORT FAILS WITH ERROR 457 WHEN USING BPF EXPLORER FOR 3.6.0-001 OR -002. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Imports of XML manifests fail in the following scenario:
+   1. import the XML manifest attached to the DTS once => should
+   work.
+   2. import it again => fails immediately (before asking if we
+   want to preserve users or not).
+   The error is "Error 457 - This key is already associated with
+   an element of this collection"
+   Find below a summary of the tests done by the customer:
+   -------------------
+   - I started using our DE_GCB_CCP3 application where I also
+   added inbasket templates (and applied the template to one
+   inbasket)
+    - I exported my metastore -> no errors
+    - I imported the definition again (against the same
+   metastore) -> no errors
+    - I imported a second time -> no errors
+   - now I imported the xml export I got from Millin (the one
+   where you saw the problems), using the option (do not preserve
+   users) -> no errors
+   - now I tried to import this xml a second time -> now I receive
+   the error Millin also saw!
+   - in fact now I cannot import anything anymore
+    - I get the same error now even if I now try to import
+   the DE_GCB_CCP3 xml - the one that worked fine before
+    - I can even see the same error when I try to import an
+   empty xml file (looks like the error is raised for some
+   "preparation" task)
+   -------------------
+   This happens only with BPF Explorer 3.6.0-001 or -002, the
+   same import works fine with BPF Explorer 3.6.0-000.
+   How long has the problem been occurring (recent changes)? :
+   Since upgrading to BPF 3.6.0-002
+   Does this occur on more than one station / server? : N/A
+   Is there a workaround? : Yes, first convert the export
+   manifest to a SQL script and run it manually.
+   What is the impact to the customer/system? : Customer cannot
+   import the BPF configuration from UAT to Production.
+   Can the problem be replicated on an internal system?  Yes
+   By Who: CSS
+   System configuration: BPF Explorer 3.6.9-001 and 002 on Windows
+   2003 with SQL Server.
+   Steps to Reproduce:
+   1. import the XML manifest attached to the DTS once => should
+   work.
+   2. try to import it again
+   => fails immediately (before asking if we want to preserve
+   users or not).
+   Actual Results: The import fails with an error 457.
+   Expected Results: The import should be successful
+   Are there any similar or related Defects? none that I could
+   find.
+   What logs were collected and where are they located? no logs,
+   but the export manifest is attached.
+   Customer's Configuration/Environment : Citibank's environment
+   BPF 3.6.0-002 + 1016 and 1017 (and 1018 soon) on Weblogic and
+   MS SQL Server backend.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  BPF Explorer usersBPF IMPORT FAILS WITH ERROR 457 WHEN USING BPF
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix for this APAR is contained in the following maintenance
+   packages:
+   BPF-3.6.0-004
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PJ32782
+   
+   
+ * REPORTED COMPONENT NAME
+   BUS PROC FRAMEW
+   
+   
+ * REPORTED COMPONENT ID
+   5724R7500
+   
+   
+ * REPORTED RELEASE
+   360
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-01-28
+   
+   
+ * CLOSED DATE
+   2008-05-21
+   
+   
+ * LAST MODIFIED DATE
+   2008-06-11
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   BUS PROC FRAMEW
+   
+   
+ * FIXED COMPONENT ID
+   5724R7500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R360 PSY
+   UP

@@ -1,0 +1,49 @@
+Title: IBM Withdrawal of support for the IBM WebSphere DataPower SOA Appliances 6.0 & 6.0.1 firmware levels - United States
+
+Text:
+ NEWS
+
+ABSTRACT
+ Effective 19 June 2016, IBM will withdraw support for the WebSphere DataPower SOA Appliances 6.0 and 6.0.1 firmware levels. 
+
+CONTENT
+Effective 19 June 2016, IBM will withdraw support for the WebSphere DataPower SOA Appliances 6.0 and 6.0.1 firmware levels. See software withdrawal and discontinuance of service announcement letters: 
+
+
+
+ 
+
+US 915-085 [http://www-01.ibm.com/common/ssi/ShowDoc.wss?docURL=/common/ssi/rep_ca/5/897/ENUS915-085/index.html&lang=en&request_locale=en] Canada A15-0304 [http://www-01.ibm.com/common/ssi/ShowDoc.wss?docURL=/common/ssi/rep_ca/4/649/ENUSA15-0304/index.html&lang=en&request_locale=en] EMEA ZP15-0207 [http://www-01.ibm.com/common/ssi/ShowDoc.wss?docURL=/common/ssi/rep_ca/7/877/ENUSZP15-0207/index.html&lang=en&request_locale=en] AP WP15-0057 [http://www-01.ibm.com/common/ssi/ShowDoc.wss?docURL=/common/ssi/rep_ca/7/872/ENUSWP15-0057/index.html&lang=en&request_locale=en] Japan JP15-0206 [http://www-01.ibm.com/common/ssi/ShowDoc.wss?docURL=/common/ssi/rep_ca/6/760/ENUSJP15-0206/index.html&lang=en&request_locale=en] LA LP15-0206 [http://www-01.ibm.com/common/ssi/ShowDoc.wss?docURL=/common/ssi/rep_ca/6/899/ENUSLP15-0206/index.html&lang=en&request_locale=en]  
+
+Effective 19 June 2016, IBM will withdraw support for firmware level 6.0 and 6.0.1 on the following WebSphere DataPower SOA Appliances: 
+
+ * XG45 (7198-32X, 2426-32X/33X) 
+ * XG45 Virtual Edition 
+ * XI52 (7199-42X, 2426-42X/43X) 
+ * XI52 Virtual Edition 
+ * XB62 (7199-62X, 2426-62X/63X)
+
+
+ 
+
+Note: Standard firmware support (all releases) for the XI50 Blade (MTM 4195-4BX) ends 4/30/2015. See IBM WebSphere DataPower Appliance Support Lifecycle [http://www.ibm.com/support/docview.wss?rs=2362&uid=swg21246298] and announcement letter [http://www-01.ibm.com/common/ssi/ShowDoc.wss?docURL=/common/ssi/rep_ca/6/897/ENUS913-076/index.html&lang=en&request_locale=en] 914-067 [http://www-01.ibm.com/common/ssi/ShowDoc.wss?docURL=/common/ssi/rep_ca/7/897/ENUS914-067/index.html&lang=en&request_locale=en] for more information. 
+
+
+
+ 
+
+Customers running firmware level 6.0 or 6.0.1 (or any earlier level) are advised to plan to upgrade to the latest supported releases of WebSphere DataPower firmware in order to continue receiving technical support, as well as proactively avoiding problems that are already resolved. Refer to Supported Firmware versions and recommended upgrade levels [http://www-01.ibm.com/support/docview.wss?uid=swg21237631] for more information. 
+
+
+
+ 
+
+IBM recommends that users consider applying the 7.0 or 7.1 latest fixpack version (or later) of the firmware. Of course, in the case of upgrading firmware for any critical embedded system, IBM recommends that users test their configurations and surrounding applications before moving into production. To easily find the latest fixpack levels, please use this link: http://www-01.ibm.com/support/docview.wss?uid=swg21237631 [http://www-01.ibm.com/support/docview.wss?uid=swg21237631] . 
+
+
+
+
+In addition, refer to the following documents: 
+
+ * IBM WebSphere DataPower Appliance Support Lifecycle [http://www.ibm.com/support/docview.wss?rs=2362&uid=swg21246298] 
+ * Critical updates for IBM WebSphere DataPower SOA appliances [http://www-01.ibm.com/support/docview.wss?rs=2362&uid=swg21390112] (for guidance when migration to a later firmware level)

@@ -1,0 +1,28 @@
+Title: IBM Generation of license keys for IBM Rational System Architect - United States
+
+Text:
+generate; license key; System Architect; add-ons; RLKC TECHNOTE (FAQ)
+
+QUESTION
+ How to generate a Floating license key for IBM Rational System Architect with DODAF 
+
+ANSWER
+Steps to generate a license key for Rational System Architect with add-ons from the Rational License key center: 
+
+ 1. Open the Rational License key center page at: http://www.ibm.com/software/rational/support/licensing/ [http://www.ibm.com/software/rational/support/licensing/] 
+ 2. Log in using your login credentials sent in the welcome email 
+ 3. Click 'Get Keys' 
+ 4. Select the Product 'IBM Telelogic System Architect' 
+ 5. Select 'Telelogic System Architect Floating single site' 
+ 6. Check the availability box of license keys and then hit 'Next' 
+ 7. Enter the Number of keys to generate and fill the information for the below fields
+    Version: Select the appropriate product version
+    Existing Hosts: select 'Use existing host'
+    Server Configuration: select 'Single license server'
+    Host Id type: select accordingly from the list
+    Host Id: enter the host id as selected from the above option
+    Host name: enter host name of the machine
+    Port: enter the port number (19353)
+    Description: Enter a short description 
+ 8. Click 'Generate' and the next page will display the license file 
+ 9. Click 'Download License Keys' and save the file as 'license.dat' on the machine

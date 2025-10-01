@@ -1,0 +1,68 @@
+Title: IBM Content Collector Web Application service goes down when task route engine service is brought up - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ In ICC cluster, the "IBM Content Collector Web Application" service goes down. Rebooted the servers to bring it up. 
+NODE 01 Services come up fine. 
+But on NODE02, the Web application service goes down after start the Task Route Engine service. 
+
+CAUSE
+afuEnv.bat file has AFUEWASHOSTNAME set as Primary server Host name.
+
+ENVIRONMENT
+ICC 4.0.1.6
+Filenet P8
+Windows Server 2012 R2 Standard 
+
+DIAGNOSING THE PROBLEM
+NODE02 afuEnv.bat file has AFUEWASHOSTNAME set as Primary server Host name.
+
+
+
+
+Changes done on node 02:
+AFUEWASHOSTNAME should be node name of the server you are on.
+AFUICCHOSTNAME is ICC Primary server Host name
+
+@set AFUEWASHOSTNAME=NODE02_HOSTNAME
+@set AFUICCHOSTNAME=NODE01_HOSTNAME
+
+
+RESOLVING THE PROBLEM
+Perform following steps on environment, to create new WAS profile after doing the changes in afuEnv.bat file. 
+
+
+1. stop all ICC services and clear logs from below paths:
+- <icc-install-directory>\AFUWeb\ewas\profiles\AFUWeb\wstemp
+- <icc-install-directory>\AFUWeb\ewas\profiles\AFUWeb\temp
+- <icc-install-directory>\AFUWeb\ewas\profiles\AFUWeb\config\temp
+- <icc-install-directory>\AFUWeb\ewas\profiles\AFUWeb\logs\afuServer
+
+clearing the logs from above paths can be optional.
+
+2. Edit below fields in afuEnv.bat file :
+@set AFUEWASHOSTNAME=*EWAS_HOST*
+@set AFUICCHOSTNAME=*ICC_HOST*
+
+Note : 
+AFUEWASHOSTNAME is node name of the server you are on.
+AFUICCHOSTNAME is ICC Primary server Host name
+
+On node 2 AFUEWASHOSTNAME is node2 server hostname.
+
+3. Open command prompt in administrator mode.
+4. Change the directory ...\ContentCollector\AFUWeb
+5. Run the following script
+afu_ewas_uninstall.bat
+6. Once the above un-install script completes, please execute below scripts for re-install
+afu_ewas_install.bat
+7. Start the first four services, then open configuration manager and reconfigure Web service from configuration manager, then start task routing service.
+
+OR
+
+Start the first four services, then web application service, then task routing service.
+
+8. Import new certificate(you may see certificate error at step 6).
+9. Reboot nodes as per best practices

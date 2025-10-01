@@ -1,0 +1,42 @@
+Title: IBM ICM samples: Troubleshooting "DGL0400A: Invalid object type : S_lob" with SResourceItem3rdPartyIngestICM sample - United States
+
+Text:
+400; DGL0400A; S_lob; SResourceItem3rdPartyIngestICM; Invalid object type TECHNOTE (FAQ)
+
+QUESTION
+ I get DKUsageError "DGL0400A: Invalid object type : S_lob" running the SResourceItem3rdPartyIngestICM sample. How do I correct this? 
+
+CAUSE
+When the SResourceItem3rdPartyIngestICM API education sample is run without first running the prerequisite sample modules, you receive the following error.
+XXXXXXXXXXXXXXXXXXXXXXXXXXXX
+X !!! Exception !!! X
+XXXXXXXXXXXXXXXXXXXXXXXXXXXX
+Name: DKUsageError
+Message: DGL0400A: Invalid object type : S_lob
+Message ID: 400
+Error State:
+Error Code: 0
+at com.ibm.mm.sdk.server.DKDatastoreICM.checkEntityTypeDef(DKDatastoreICM.java:7887)
+at com.ibm.mm.sdk.server.DKDatastoreICM.createDDO(DKDatastoreICM.java:6628)
+at SResourceItem3rdPartyIngestICM.main(SResourceItem3rdPartyIngestICM.java:259)
+---------------------------------- 
+
+The "S_lob" resource-classified item type definition has not yet been created. You cannot create a resource item until you create a resource-classified item type. In this case, sample SItemTypeCreationICM creates the S_lob item type that is used by this sample.
+
+
+ANSWER
+Follow the "PREREQUISITE" documentation section in the header documentation of the sample that you are attempting to execute. 
+
+
+The samples are a set of learning modules that leverage each other in an incremental set of modules building from the ground up. If you are learning the APIs for the first time, follow the "GETTING_STARTED_EDUCATION.txt" located with the samples. If you have already read and run the sample modules incrementally and want a faster way to get the prerequisites setup, follow online document 1137002, "ICM Samples: One-step data model setup for all major sample prerequisites", linked in the references section.
+
+With the SResourceItem3rdPartyIngestICM sample, you will have to have an FTP server loaded with data as explained in the header documentation to that sample.
+
+RELATED INFORMATION
+ Easily Run All Sample Prerequisite Steps [http://www.ibm.com/support/docview.wss?rs=0&uid=swg21137002]
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Enterprise Content Management Content Manager Usage AIX, Linux, Solaris, UNIX, Windows 2000, Windows NT, Windows XP 8.1, 8.2

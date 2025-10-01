@@ -1,0 +1,113 @@
+Title: IBM Prerequisites for installing Rational Functional Tester on Red Had Enterprise Linux - United States
+
+Text:
+rft; rhel; prerequisites TECHNOTE (FAQ)
+
+QUESTION
+ What are the additional platform requirements when installing IBM Rational Functional Tester (RFT) 8.1.5.3 on Red Hat Enterprise Linux (RHEL) 6.5? 
+
+CAUSE
+A standard installation of 64 bit RHEL 6.5 requires some additional libraries in order to run RFT 8.5.1.3. This document details which additional libraries are requires, and explains how to install those.
+
+ANSWER
+Assumptions about the platform 
+
+This document relates to a 64 bit installation of RHEL 6.5 which includes a GUI display. It is assumed that IBM Installation Manager will run on the display. 
+
+ 
+
+Additional Libraries required 
+
+These libraries are required: 
+
+ * libstdc++.so.5
+ * 
+ * libXp.so.6
+ * 
+ * gtk2.i686 
+ * 
+ * gtk2-engines.i686 
+ * 
+ * PackageKit-gtk-module.i686 
+ * 
+ * PackageKit-gtk-module.x86_64 
+ * 
+ * libcanberra-gtk2.x86_64 
+ * 
+ * libcanberra-gtk2.i686
+
+
+N.B. These libraries may already be installed on some machines where other software has been installed which uses those libraries. 
+
+
+How to install the additional libraries 
+
+To install these libraries login as root and run this single command: 
+
+ * yum install libstdc++.so.5 libXp.so.6 gtk2.i686 gtk2-engines.i686 PackageKit-gtk-module.i686 PackageKit-gtk-module.x86_64 libcanberra-gtk2.x86_64 libcanberra-gtk2.i686
+
+
+This command may be run before or after the installation of IBM Rational Functional Tester, as they are not required at installation time, however without these libraries it may not be possible to start IBM Rational Functional Tester. 
+
+
+Starting RFT from the command line 
+
+When problems occur during the start up of RFT the nature of the problem is masked if RFT is launched from the GNOME menus. Instead this command line may be used: 
+
+ * /opt/IBM/SDP/eclipse -product com.ibm.rational.rft.product.ide
+
+
+
+Now if an issue occurs a message will be printed to the console detailing the name of a log file containing details of the problem. 
+
+
+What problems occur without these libraries? 
+
+With out the above libraries a log file may contain an error such as this: 
+
+ * !SESSION 2014-07-18 19:05:16.925 -----------------------------------------------
+ * 
+ * eclipse.buildId=unknown
+ * 
+ * java.fullversion=JRE 1.7.0 IBM J9 2.6 Linux x86-32 20140409_195732 (JIT enabled, AOT enabled)
+ * 
+ * J9VM - R26_Java726_SR7_20140409_1418_B195732
+ * 
+ * JIT - r11.b06_20140409_61252
+ * 
+ * GC - R26_Java726_SR7_20140409_1418_B195732
+ * 
+ * J9CL - 20140409_195732
+ * 
+ * BootLoader constants: OS=linux, ARCH=x86, WS=gtk, NL=en_US
+ * 
+ * Framework arguments: -product com.ibm.rational.rft.product.ide
+ * 
+ * Command-line arguments: -os linux -ws gtk -arch x86 -product com.ibm.rational.rft.product.ide
+ * 
+ * 
+ * !ENTRY org.eclipse.osgi 4 0 2014-07-18 19:05:20.225
+ * 
+ * !MESSAGE Application error
+ * 
+ * !STACK 1
+ * 
+ * java.lang.UnsatisfiedLinkError: Could not load SWT library. Reasons:
+ * 
+ * /opt/IBM/SDP/configuration/org.eclipse.osgi/bundles/451/1/.cp/libswt-pi-gtk-4236.so (libgtk-x11-2.0.so.0: cannot open shared object file: No such file or directory)
+ * 
+ * swt-pi-gtk (Not found in java.library.path)
+ * 
+ * /root/.swt/lib/linux/x86/libswt-pi-gtk-4236.so (libgtk-x11-2.0.so.0: cannot open shared object file: No such file or directory)
+ * 
+ * /root/.swt/lib/linux/x86/libswt-pi-gtk.so (/root/.swt/lib/linux/x86/liblibswt-pi-gtk.so.so: cannot open shared object file: No such file or directory)
+ * 
+
+
+The key text here is: 
+
+ * swt-pi-gtk (Not found in java.library.path)
+ * 
+
+
+Which suggests that the above required libraries may be missing.

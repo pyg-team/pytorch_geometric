@@ -1,0 +1,162 @@
+Title: IBM IZ71021: UA DURING STARTUP MAY ENTER INFINITE LOOP AND LEAK MEMORY - United States
+
+Text:
+  FIXES ARE AVAILABLE
+IBM Tivoli Monitoring 6.2.2 Fix Pack 8 (6.2.2-TIV-ITM-FP0008) [http://www-01.ibm.com/support/docview.wss?uid=swg24031354]
+IBM Tivoli Monitoring 6.2.2 Fix Pack 9 (6.2.2-TIV-ITM-FP0009) [http://www-01.ibm.com/support/docview.wss?uid=swg24032067]
+IBM Tivoli Monitoring 6.2.2 Fix Pack 6 (6.2.2-TIV-ITM-FP0006) [http://www-01.ibm.com/support/docview.wss?uid=swg24030135]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Severity: 1
+   Approver:BEH
+   Compid:  5724K1000 Tivoli Universal Agent
+   Abstract:UA during startup may enter infinite loop and leak
+   memory
+   
+   Environment:
+   6.2.1, 6.2.2
+   
+   Problem Description:
+   Universal Agent ate up memory to over 2GB immediately after UA
+   starting up.
+   
+   Detailed Recreation Procedure:
+   The detailed recreation procedure is unknown for now.
+   A lot of recycling UA can cause the problem infrequently.
+   
+   Related Files and Output:
+   When the problem occurs, the following line is outputted
+   infinitely under KBB_RAS1=ERROR METRICS (UNIT:kumdcw ALL)
+   (UNIT:kumdchsv DET METRICS STATE ERROR) (UNIT:kumpldsf DET)
+   =======
+   (4B863BE9.00C5-3:kumdchsv.cpp,5498,"DCHserver::dp_getApplNameLis
+   t") Comparing DCH_dc_waitForApplNameList 2048 srcName[ASFS]
+   against waiterType[2070] source[NULL]
+   =======
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  There is an exposure in startup processing of UA. If the UA
+   thread timing occurs in a particular sequence, an infinite loop
+   condition is triggered and 8 bytes of memory is allocated
+   repeatedly until system's heap memory space is exhausted. UA is
+   effectively disabled and cannot monitor.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A statement missing from inside the loop logic was added to
+   reset a flag, thereby eliminating the possible infinite loop and
+   the subsequent memory leak.
+   
+   The fix for this APAR is included in the following maintenance
+   vehicle:
+       | fix pack | 6.2.1.0-TIV-ITM-FP0003
+   
+   Note: Search the IBM Technical support web site for maintenance
+   package availability
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ71021
+   
+   
+ * REPORTED COMPONENT NAME
+   UNIVERSAL AGENT
+   
+   
+ * REPORTED COMPONENT ID
+   5724K1000
+   
+   
+ * REPORTED RELEASE
+   621
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-03-01
+   
+   
+ * CLOSED DATE
+   2010-03-22
+   
+   
+ * LAST MODIFIED DATE
+   2010-07-22
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   UNIVERSAL AGENT
+   
+   
+ * FIXED COMPONENT ID
+   5724K1000
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R621 PSY
+   UP

@@ -1,0 +1,35 @@
+Title: IBM Load Balancing and Farming Datacap Servers - United States
+
+Text:
+load balancer farm TECHNOTE (FAQ)
+
+QUESTION
+ What load balancing or farming methods can be used with Datacap servers? 
+
+ANSWER
+Load balancers can be used to manage client requests across servers in a Datacap system. 
+
+Load balancing is a method for scaling a system horizontally by distributing the work across many compute nodes in a "farm." It also provides high availability by redirecting clients to a working node in case of failure. A load balancer presents a single address for communication with multiple servers, for one or more Taskmaster applications. Configure the load balancer to send requests directed to each pooled / balanced address to one of the servers in the farm. You can select round robin scheduling or another method. 
+
+Clients access Datacap Taskmaster Server using a TCP/IP socket based protocol. You configure the server's name or IP address and port in Taskmaster Application Manager. The server normally listens on port 2402, but you can change the port in Taskmaster Server Manager, in which case you must also configure the port number in Taskmaster Application Manager. The socket keeps the TCP/IP session active until the client disconnects. As a result, the load balancer connection for Taskmaster Server need not be persistent. If a load balanced server fails, further client requests will be directed to a different server, in which case the old session will be invalidated and the user or client will have to login again. Any outstanding server requests will terminate unsuccessfully, and any batches that were in process via that server will typically be left in running status. Users who logged in to this server will receive an error message and must login again. 
+
+Datacap Taskmaster Web Servers can also be farmed. Designate one or more IP addresses or port on your network for your Datacap Taskmaster Web site home page(s). Client browsers connect to this load balancer port using HTTP or HTTPS protocol. Configure your load balancer to redirect those requests to individual Web Servers using round robin scheduling, or another method. Ports 80 and 443 are standard, you can configure an alternate port in Microsoft IIS Manager. Datacap Taskmaster Web uses session cookies, so you must configure the load balancer to persist sessions based on the client's IP address. Set the load balancer's session timeout to match the IIS session timeout. If a Taskmaster Web Server fails, users who connected to the failed server will receive an error message and must login again. 
+
+Datacap Taskmaster Web Services (wTM) can be farmed, Clients connect to an address and port for the load balancer and are redirected to a specific server. Sessions must be persistent based on the client IP address, and the session timeout must match that of the Web Service. Failure of a Web Services server will generate an error for requests in progress, the requested operations may or may not have completed. 
+
+Datacap RV2 IIS servers can be farmed, Clients connect to an address and port for the load balancer and are redirected to a specific server. Sessions must be persisted based on IP address, and the session timeout must match that of the IIS Server. Failure of an RV2 server will end any existing sessions. 
+
+Datacap Taskmaster Fingerprint Service can be farmed if the fingerprints are static during normal system operation. Updates and deletions of fingerprints are not synchronized automatically between servers. Fingerprint Servers must either be restarted, or their contents programmatically reset to keep them synchronized, if changes are made to the set of fingerprints. 
+
+Datacap Rulerunner Servers independently poll Taskmaster Server(s) for pending work, they do not require or benefit from load balancing. 
+
+The following table summarizes load balancing options for Datacap Servers:
+[/support/docview.wss?uid=swg21668810&aid=1] [/support/docview.wss?uid=swg21668810&aid=1]
+
+Grant network access to the back-end server addresses if possible. This makes initial setup and subsequent problem solving much easier. 
+
+Test your system without any load balancing at first. Add load balancing to one component at a time, reconfiguring as needed, and testing each balanced address, including failover to each back-end server, before moving on to the next component. If policy requires that you disable connections to the back-end servers, be prepared to re-enable for troubleshooting if required.
+
+Datacap does not provide explicit instructions on how to configure any load balancer, nor does Datacap Support assist with load balancer setup. It is the customer's responsibility to determine the correct configuration for load balancing to work properly within their environment.
+
+Datacap load balancing.pdf [/support/docview.wss?uid=swg21668810&aid=3]Datacap load balancing.pdf [/support/docview.wss?uid=swg21668810&aid=2]

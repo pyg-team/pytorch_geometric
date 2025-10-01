@@ -1,0 +1,23 @@
+Title: IBM What users are needed to set up HA (High Availability) for DB2? - United States
+
+Text:
+High Availability HADR cluster TSA users system administrator root TECHNOTE (FAQ)
+
+QUESTION
+ What users are needed to set up HA (High Availability) for DB2? 
+
+ANSWER
+Depending upon what option of High Availability you wish to implement, the following user's are needed at a minimum or have user's with these credentials:
+DB2 Instance Owner and DB2 Database Owner - for DB2 related tasks.
+
+Operating System Admin Team - For "Root Access" tasks that need to be completed.
+
+System Administrators for hardware - To complete hardware related tasks and configurations of all the servers involved.
+
+System Network Administrators - To complete network related tasks and configurations.
+
+Collectively, all of the above teams combined would be needed to install, configure, monitor/maintain a DB2 HA (High Availability) environment.
+
+RELATED INFORMATION
+ DB2 High Availability Feature [http://www-01.ibm.com/support/knowledgecenter/SSEPGG_9.7.0/com.ibm.db2.luw.admin.ha.doc/doc/c0051345.html]
+High Availability Disaster Recovery (HADR) [http://www-01.ibm.com/support/knowledgecenter/SSEPGG_9.7.0/com.ibm.db2.luw.admin.ha.doc/doc/c0011267.html]

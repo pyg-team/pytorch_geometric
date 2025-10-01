@@ -1,0 +1,36 @@
+Title: IBM Content Analytics has 'Out of Memory' errors on Linux - United States
+
+Text:
+ICA; nproc; OOM TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ I am running IBM Content Analytics with Enterprise Search on RHEL 6.3 64-bit, which runs correctly as long as only one collection runs at a time. If I start multiple collections, out of memory errors occur. 
+
+SYMPTOM
+Output from the command 'esadmin system stop' shows: 
+
+FFQC5306I Stopping the system...
+JVMDUMP039I Processing dump event "systhrow", detail "java/lang/OutOfMemoryError" 
+
+Also, numerous Javacore files are generated in the /logs directory that contain entries similar to the following: 
+
+"Failed to create a thread"
+....
+"2CIUSERLIMIT RLIMIT_NPROC 1024 515312 "
+
+
+CAUSE
+The soft limit of the number of processes for the user is 1024 in Javacore. On Linux this means that the total number of threads are (equal to number of processes) limited to 1K, which is too small for multiple collections.
+
+
+RESOLVING THE PROBLEM
+See the documentation link in the Related information section below for instructions on checking the ulimit settings on Linux. 
+
+In addition, the documentation is missing the following ulimit settings when working with Linux:
+<USER_ID> soft nproc 16384
+<USER_ID> hard nproc 32768
+<USER_ID> soft as unlimited
+<USER_ID> hard as unlimited 
+
+RELATED INFORMATION
+ Setting ulimit values [http://pic.dhe.ibm.com/infocenter/analytic/v3r0m0/topic/com.ibm.discovery.es.in.doc/iiysiulimits.htm]

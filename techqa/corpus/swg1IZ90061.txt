@@ -1,0 +1,151 @@
+Title: IBM IZ90061: BPEUPGRADE.JACL WILL BE CHANGED TO SUPPORT A URL FROM ORACLE - United States
+
+Text:
+  A FIX IS AVAILABLE
+WebSphere Enterprise Service Bus V7.0.0 Fix Pack 4 (7.0.0.4) [http://www-01.ibm.com/support/docview.wss?uid=swg24030312]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  bpeupgrade.jacl will be changed to support a URL from Oracle.
+   .
+   jdbc:oracle:thin:@(DESCRIPTION =(ADDRESS = (PROTOCOL = TCP)(HOST
+   =lp97100-vip.ent.agt.ab.ca)(PORT = 41521)) (ADDRESS = (PROTOCOL
+   = TCP) (HOST = lp97101-vip.ent.agt.ab.ca)(PORT = 41521))(ADDRESS
+   = (PROTOCOL = TCP)(HOST = lp97102-vip.ent.agt.ab.ca)(PORT =
+   41521))(CONNECT_DATA = (SERVER = DEDICATED)(SERVICE_NAME =
+   FABRICPRSVA)))
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  During upgrade to WPS 7.0.0.3, BPMProfileUpgrade.ant fails in
+   bpeupgrade.jacl when the Oracle URL was specified using
+   Net connection descriptor syntax, for example:
+   jdbc:oracle:thin:@(DESCRIPTION =(ADDRESS = (PROTOCOL = TCP)(HOST
+   = localhost)(PORT = 41521)) (CONNECT_DATA =(SERVICE_NAME =
+   BPEDB)))
+   
+   The exception looks similar to this:
+   
+   Writing database design file using '-databaseType Oracle -noexec
+   true -delayConfig true -scenario WorkItemMigration -databaseName
+   {(DESCRIPTION =(ADDRESS = (PROTOCOL = TCP)(HOST =
+   localhost)(PORT = 41521)) (CONNECT_DATA =(SERVICE_NAME =
+   BPEDB)))} -databaseSchema WPRBE00'...
+   Process Choreographer upgrade aborted due to:
+   com.ibm.ws.scripting.ScriptingException:
+   com.ibm.bpm.db.config.exceptions.MetadataException:
+   com.ibm.bpm.db.config.exceptions.MetadataException: failed to
+   create the specified output directory
+   /WebSphere/ProcServer/profiles/Dmgr01/dbscripts/ProcessChoreogra
+   pher/Oracle/(DESCRIPTION =(ADDRESS = (PROTOCOL = TCP)(HOST =
+   localhost)(PORT = 41521)) (CONNECT_DATA =(SERVICE_NAME =
+   BPEDB)))/WPRBE00.
+   
+   After applying this interim fix as described below, re-run
+   BPMProfileUpgrade.ant as described in the WPS 7.0.0.3
+   fix pack instructions at
+   http://www-01.ibm.com/support/docview.wss?rs=2307&uid=swg2701923 [http://www-01.ibm.com/support/docview.wss?rs=2307&uid=swg2701923]
+   3#recoverFailure.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  iFix available on top of V7003
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ90061
+   
+   
+ * REPORTED COMPONENT NAME
+   BUS PRC CHOREOG
+   
+   
+ * REPORTED COMPONENT ID
+   5655FLW11
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-12-02
+   
+   
+ * CLOSED DATE
+   2010-12-09
+   
+   
+ * LAST MODIFIED DATE
+   2010-12-09
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   BUS PRC CHOREOG
+   
+   
+ * FIXED COMPONENT ID
+   5655FLW11
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R700 PSY
+   UP

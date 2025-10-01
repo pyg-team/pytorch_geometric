@@ -1,0 +1,21 @@
+Title: IBM Removing updates made by a particular CICS transaction from a VSAM sphere with CICS VR - United States
+
+Text:
+remove updates ; CICS transaction ; dataset ; data set ; selective recovery ; exclude transactions ; restoring ; recovering without ; CICSVR ; CICS VSAM Recovery ; 5655P3000 5655-P30 5655P30 ; R420 R42E R42K FMID HCCV420 JCCV42E JCCV42K ; R430 R43E R43K FMID HCCV430 JCCV43E JCCV43K ; 5655Y2400 R510 R51E R51K 5655-Y24 ; 5655Y24 FMID HCCV510 JCCV51E JCCV51K TECHNOTE (FAQ)
+
+QUESTION
+ How do you remove updates made by a particular CICS transaction from a VSAM sphere (data set) when using CICS VSAM Recovery for z/OS (CICS VR)? 
+
+ANSWER
+Create a recovery job for the VSAM sphere that will not apply the updates made by the specified transaction. Using the CICS VR panels for the VSAM sphere, add an EXCLUDE command that specifies the appropriate transaction ID. 
+
+CICS VR can automatically build and add the EXCLUDE command to the job if you select the Selective forward recovery option from the CICS VR parameters secondary window. Once the CICS VR selective forward recovery panel [http://publib.boulder.ibm.com/infocenter/cicsts/v3r2/topic/com.ibm.cics.cvr.doc/dwwug/dwwug00050.html] is displayed, enter 2 for EXCLUDE in the "Command" field and enter the transaction ID of the CICS transaction associated with the updates you wish to remove from the sphere. 
+
+The created job will restore the sphere from its latest backup, and forward recover the sphere without applying the log records for the specified CICS transaction. Therefore, the resulting VSAM sphere will have all updates made by the CICS transaction removed. 
+
+Note: Depending on the complexity of your recovery, you can EXCLUDE and INCLUDE log records based on transaction, terminal, and file identifiers.
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ CICSVR CICS VR CICS/VR

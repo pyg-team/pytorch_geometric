@@ -1,0 +1,45 @@
+Title: IBM Image Services: Oracle user password expires on Oracle version 11g - United States
+
+Text:
+image services; oracle; 28002; password; expire TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Oracle 11g creates a more secure configuration than in previous releases of Oracle Database, in which it automatically assigns a default profile called DEFAULT to all users that do not already have a profile assigned explicitly. This default profile requires passwords to be changed every 180 days or the passwords will expire and the user will be locked out of Oracle.
+
+The Oracle 11g default security configuration may be turned on in the following two situations:
+
+Create a database using Oracle Database Configuration Assistance (dbca): choose “Keep the enhanced 11g default security setting” which is the default during creation of a new database; It invokes the new password expiration policy. 
+
+Upgrade a database using Database Upgrade Assistant (dbua) or other tools: choose to upgrade a database from a previous release in which the existing users do not have a profile assigned.
+
+The Oracle 11g default security configuration can be reverted to pre-11g security configuration with either one of the followings:
+
+dbca: During creation of a new database, choose “Revert to pre-11g default security settings” option.
+
+dbca: If the database is already created or upgraded to 11g, run dbca -> Configure Database Options -> Revert to pre-11g default security settings.
+
+
+SYMPTOM
+When a user password is about to expire, IS returns logon error 121,1,28002. 
+
+$oerr ora 28002
+28002, 00000, "the password will expire within %s days"
+// *Cause: The user's account is about to about to expire and the password
+// needs to be changed
+// *Action: change the password or contact the DBA
+//
+
+
+RESOLVING THE PROBLEM
+Below are steps to take if Oracle 11g secure configuration is turned on:
+
+Resetting the password before it expires
+
+Use Xapex -> Applications -> Database Server Connect or Xdbconnect to change the password before it expires. 
+
+What to do if the password does expire and IS is locked out of Oracle
+
+In the case where the password does expire, Xdbconnect will not work since it relies on the current password to connect to the database, you need to recreate a new password file.
+- Move /fnsw/local/sd/rdbup.bin to a different file,
+- Use the following command to create a new password file:
+fn_util create_rdbup "f_sw_password" "f_maint_password" "f_sqi_password” "f_open_password"

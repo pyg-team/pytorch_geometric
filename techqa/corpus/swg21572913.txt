@@ -1,0 +1,21 @@
+Title: IBM InfoSphere Change Data Capture - Locating log files - United States
+
+Text:
+logs; job log; spool files; address space; traces TECHNOTE (FAQ)
+
+QUESTION
+ In addition to the Management Console event log, InfoSphere® CDC produces other logs to help troubleshoot replication errors. 
+
+ANSWER
+For InfoSphere CDC for z/OS®, if you encounter replication errors or replication stops, review the SPOOLed output for the address space: 
+· CHCPRINT—Contains all messages issued by the product during replication. This should be viewed for all error and warning messages.
+· CHCAUDIT—Contains information on maintenance applied and parameters used for the running address space, and information on configuration changes to replication.
+· CHCREPRT—Contains output from reports. Some errors cause diagnostic reports to be generated. The staging space report can be run against an active subscription to report on the Units of Recovery in progress.
+
+For InfoSphere CDC for System i (AS/400), if you encounter replication errors or replication stops, review the Job Log or Spooled Files: 
+· WRKSPLF for user D_MIRROR or user who started replication
+· DSPJOB or WRKJOB if you have the job_number/job_user/job_name 
+
+For all other InfoSphere CDC replication engines, if you encounter replication errors or replication stops, review any of these trace logs: 
+· <CDC_installation_directory>/log—This directory contains information for an InfoSphere CDC problem. Refer to this directory if the problem is related to configuring an InfoSphere CDC instance. However, it is always useful to refer this directory as well as the <CDC_installation_directory>/instance/<instance_name>/log directory to troubleshoot any problem.
+· <CDC_installation_directory>/instance/<instance_name>/log—This directory stores trace files for a specific InfoSphere CDC instance. It is also useful to refer to the <CDC_installation_directory>/instance/<instance_name>/log directory to troubleshoot your problem.

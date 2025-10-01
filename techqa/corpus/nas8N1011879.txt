@@ -1,0 +1,84 @@
+Title: IBM Message CPFB9C8 Received When Using ILE RPG with Java - United States
+
+Text:
+Java; MSGMCH5601; MSGCPFB9C8; RPG; RPGLE TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ An ILE RPG with Java program fails with MSGCPFB9C8 in the job log. 
+
+SYMPTOM
+MSGCPFB9C8 is thrown in the failing job's job log.
+
+
+CAUSE
+File Descriptors 0,1, and 2 have not been set up in the ILE RPG program prior to calling into Java.
+
+ENVIRONMENT
+IBM i; IBM Java Development Kit (JDK), IBM Portable Application Solutions Environment (PASE)
+
+RESOLVING THE PROBLEM
+The IBM i Java Development Kit requires three stream file descriptors (FD) be defined when using standard IO (STDIO). When running Java from QSHELL or PASE (QP2TERM), these file descriptors are automatically created. When an ILE RPG program calls a Java class, the Java Virtual Machine (JVM) requires these descriptors for standard input, output, and error data. If they have not been previously created, the RPG program will fail with message CPA0702 after a cascade of additional messages. The initial cause of this exception is found in the job log, as shown below: 
+
+
+
+MCH5601 Escape 40 11/19/10 17:44:38.767977 < IInterface 000CFC QP2SYS QSYS *STMT
+From Program . . . . . . . : PpPaseMIInterface
+To module . . . . . . . . . : QP2LOAD
+To procedure . . . . . . . : Qp2Load
+Statement . . . . . . . . . : 111
+Thread . . . . : 00000062
+Message . . . . : Template value not valid for instruction.
+Cause . . . . . : The location of the value is template with an offset to field in bytes X'0008', an offset in field in bits X'001F', a length of field of 4, and an instruction operand number of 1. The reason code is X'0000'. If the reason code is X'0000', a reason code may not be available.
+
+CPFB9C8 Escape 40 11/19/10 17:44:38.768115 QP2SYS QSYS *STMT QXJ9VM QJVM1464 *STMT
+From module . . . . . . . . : QP2LOAD
+From procedure . . . . . . : send_message__FPcT1Pvi
+Statement . . . . . . . . . : 11
+To module . . . . . . . . . : QXJ9STRTPA
+To procedure . . . . . . . : paseMainThread__13Qxj9StartPaseFPv
+Statement . . . . . . . . . : 41
+Thread . . . . : 00000062
+Message . . . . : File descriptors 0, 1, and 2 must be open to run the PASE for i program.
+Cause . . . . . : When ILE environment variable QIBM_USE_DESCRIPTOR_STDIO is Y or I, Integrated File System file descriptors 0, 1, and 2 must be opened before calling the Qp2RunPase API to run a PASE for i program. 
+Recovery . . . : Either open file descriptors 0, 1, and 2 or change environment variable QIBM_USE_DESCRIPTOR_STDIO, and then try the request again.
+
+There are several reasons these file descriptor streams must be defined. The most common reason is that the QIBM_USE_DESCRIPTOR_STDIO environment variable is defined with a value of either 'Y' or 'I'. The Classic JDK will use the descriptors if defined and ignore them if they are not defined. The new IBM Technology (IT) for Java (J9) which runs in the PASE environment will require the file descriptors be previously defined prior to creating the JVM. The message CPFB9C8 will be thrown if they are not defined.
+
+This issue can cause some confusion after upgrading to IBM i 6.1 or later. IBM i 6.1 and later releases default to the new IBM Technology for Java JDK when the earlier releases had defaulted to the Classic JDK, which tolerated the missing descriptors. For IBM i 7.1 and later, the Classic JDK is no longer available.
+
+It is important to understand how RPG and Java call into each other. This is much different than RPG calling an RPG program. PASE is an AIX (Unix) runtime environment. It allows programs written for the AIX OS to run on the IBM i OS. The IBM Technology for Java (J9) JDK is basically the same JDK that runs on AIX. It is faster, more standard, and has better performance characteristics than the old Classic JDK. 
+
+The message text for CPFB9C8 describes what is going on; however, it does not make sense from an RPG perspective. When the QIBM_USE_DESCRIPTOR_STDIO environment variable is set to "Y" or "I", PASE requires these file descriptors to be defined. When using QSHELL (STRQSH) or PASE (CALL QP2TERM), these descriptors are set automaticly. If these file descriptors were not created, PASE issues the CPFB9C8 message when it tries to start.
+
+RPG is using a Java architecture called JNI (Java Native Interface). Java programs run in a Java Virtual Machine (JVM). It is this JVM that is implemented on all platforms. (Stressing the term Virtual Machine, an imaginary computer), This is what allows the same compiled Java program to run on different platforms unmodified. When RPG calls a Java class method, it is actually more like a program running in one computer calling a program in another computer (JVM). On the IBM i, the job that is running the RPG program is allowed to create one associated JVM. This JVM is created automatically by the RPG runtime environment just prior to calling the first Java class method. RPG does not set up the file descriptors required by PASE when QIBM_USE_DESCRIPTOR_STDIO was set. There are other environment variables and some Java methods that also require file descriptors. 
+
+When you search the Information Center with the CPFB9C8 message ID, you are shown an article on Java Invocation API:
+https://www.ibm.com/support/knowledgecenter/ssw_ibm_i_73/rzaha/invocapi.htm [https://www.ibm.com/support/knowledgecenter/ssw_ibm_i_73/rzaha/invocapi.htm]. 
+
+This article describes some of the above in more detail. It also contains a sample "C" program article titled Example: Java Invocation API at the following URL: 
+https://www.ibm.com/support/knowledgecenter/ssw_ibm_i_73/rzaha/invapiex.htm [https://www.ibm.com/support/knowledgecenter/ssw_ibm_i_73/rzaha/invapiex.htm]
+
+This describes how to create the file descriptors:
+
+#include <stdlib.h>
+#include <stdio.h>
+int fd0, fd1, fd2; /* file descriptors for IO */
+fd0 = open("/dev/null", O_CREAT|O_TRUNC|O_RDWR, S_IRUSR|S_IROTH);
+fd1 = open("/dev/null", O_CREAT|O_TRUNC|O_WRONLY, S_IWUSR|S_IWOTH);
+fd2 = open("/dev/null", O_CREAT|O_TRUNC|O_WRONLY, S_IWUSR|S_IWOTH);
+
+Now, ILE RPG somewhat hides much of the JNI and replaces it with RPG like syntax statements. The initial creation of the JVM is done the first time a Java method is called; however, it does not create the file descriptors. Normally, they are not needed unless requested, for example, specifying the environment variable QIBM_USE_DESCRIPTOR_STDIO. 
+
+IBM Rochester Support Center knowledgebase document, Getting a Java Exception Trace into a File from ILE RPG Calling Java is available at the following URL: [http://www.ibm.com/support/docview.wss?uid=nas8N1014290]
+http://www.ibm.com/support/docview.wss?uid=nas8N1014290 [http://www.ibm.com/support/docview.wss?uid=nas8N1014290]
+
+This document explains how to get a Java trace for Java exceptions thrown by a Java method called by ILE RPG. It also explains the necessary environment variables, Java properties, and some additional setup needed before RPG calls any Java methods. It contains a program named OPENSTDIO that contains the same code shown in the "C" example above; however, it is written in RPG instead.
+
+From this document, you would call the programs SETUPENV and then OPENSTDIO prior to calling into Java the first time (before the JVM is created).
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Operating System IBM i 7.2 Operating System IBM i 7.1 Operating System IBM i 6.1 Operating System IBM i 7.3 
+HISTORICAL NUMBER
+ 580638766

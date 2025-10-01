@@ -1,0 +1,52 @@
+Title: IBM CTGIM0019E: Error Unprocessed Continuation Reference, during AD data feed - United States
+
+Text:
+CTGIM0019E Unprocessed Continuation Reference AD TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Running an AD data feed in ITIM, the recons successfully process some accounts, but eventually fails with the following error:
+
+CTGIM0019E The following jndi error occurred: Error Unprocessed Continuation Reference(s). 
+
+CAUSE
+This issue is caused by specifying a "Naming Context" value in the Service Definition that spans multiple subparts of the directory. It is only an issue if the customer has multiple subdirectories configured in the Active Directory setup.
+For example, if there were 2 subparts to the AD tree, "CN=Administrators,DC=Acme,DC=com", and "DC=Users,DC=Acme,DC=com". Then specifying a naming context of "DC=Acme,DC=com" would cause the issue.
+
+
+RESOLVING THE PROBLEM
+ 
+
+Use an LDAP browser to connect to the ITIM LDAP server. Navigate to the AD profile definition. For example, if the root of ITIM is "DC=COM", go to:
+
+
+
+ * 
+
+
+Then add a value to the multi-valued "erproperties" attribute: 
+
+ * 
+
+
+Then restart the ITIM server (or wait 10 minutes for the object profile cache to refresh). 
+
+Another way of correcting this would be to edit the ITIM data file containing the initial LDAP data contents, and then re-run "ldapConfig". While this may be simpler, note this will reload the ITIM LDAP data into the directory, and so will erase any customizations that have been done, such as ACI modifications, or form designer changes to standard forms. 
+
+To edit the ITIM LDAP data, edit file $ITIM/config/ldap/itimx.dsml2. Search for "Service Profile Definition for AD Feed Source". 30 lines after this should be the line "". After this line (which is actually line 1132 in the current version of this file), add the new line: 
+
+ * 
+
+
+Shut down the ITIM server. Then open a command window, and "cd" to the $ITIM/bin/win directory, then run "ldapConfig". For example: 
+
+ * 
+ * 
+ * 
+
+
+Follow prompts, with same values as used when ITIM was installed. 
+
+Then restart the ITIM server.  
+
+PRODUCT ALIAS/SYNONYM
+ ITIM ISIM

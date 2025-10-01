@@ -1,0 +1,47 @@
+Title: IBM What is the purpose of UPSHA.exe   (Yantra agent)? - United States
+
+Text:
+STERLINGPRI TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ What is the purpose of UPSHA.exe (Yantra agent)? 
+
+SYMPTOM
+PART: Manifest 6.2 SP2 DCS
+
+What is the purpose of UPSHA.exe (Yantra agent)? General information on UPS PLD file generation and process.
+
+
+RESOLVING THE PROBLEM
+This process explains the steps involved in creating and uploading PLD files to UPS Server and the purpose of UPSHA agent.
+---------------------------------------------------------------------- -------------------------------------------------------------------------------- --------------------------------------------
+
+1) whbu030 : This reads data from DCS inserts into YCS tables : YCS_MANIFEST_UPS_HDR,YCS_MANIFEST_UPS_DTL
+This changes the manifest status in shipment_manifest table from 02 (closed) to 03 (uploaded).
+
+2) runPLDUpload: This creates 2 PLD files and ftps into the DestDir configured in ycs.properties file .
+
+////////////////////////////////////////ycs.properties///////////////// /////////
+# Ftp parameters. for UPS Host access
+ycs.ups.upload.servername=10.56.0.241
+ycs.ups.upload.port=21
+ycs .ups.upload.UserID=upsupload
+ycs.ups.upload.Passwd=Yantra4U
+ycs.ups.upload .DestDir=/YantraPLD
+
+3) UPSHA.exe :This is wrapper program around UPS host access and is used to send the PLD files from an NT/WIN2000 machine to the UPS server. This program uses UPS supplied PLD software API and therefore must be installed in the same directory on the NT/WIN2000 machine where UPS Host access software is installed. Users would then schedule the UPSHA.exe in their scheduler on the NT/WIN2000 machine to run everyday to process the day's UPS PLD files.
+
+If you make any changes to the UPS Host Access configuration, these files should be copied over again into <YANTRA_UPSHA> directory.
+Hafcnfg.cfg, Hafemsg.txt, Hafprxy.txt, Servers.ini, Webserv.ini
+
+UPSHA agent automates the process of uploading PLD files into UPS servers .
+
+
+
+HISTORICAL NUMBER
+ PRI49103 
+
+PRODUCT ALIAS/SYNONYM
+ 
+
+Fact

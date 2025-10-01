@@ -1,0 +1,216 @@
+Title: IBM PM91916: ADMINTASK.UPDATEIDMGRLDAPSERVER FAILS WITH NULLPOINTEREXCEPTION - United States
+
+Text:
+  FIXES ARE AVAILABLE
+8.0.0.8: WebSphere Application Server V8.0 Fix Pack 8 [http://www-01.ibm.com/support/docview.wss?uid=swg24036729]
+7.0.0.31: WebSphere Application Server V7.0 Fix Pack 31 [http://www-01.ibm.com/support/docview.wss?uid=swg24036768]
+8.5.5.2: WebSphere Application Server V8.5.5 Fix Pack 2 [http://www-01.ibm.com/support/docview.wss?uid=swg24037250]
+7.0.0.33: WebSphere Application Server V7.0 Fix Pack 33 [http://www-01.ibm.com/support/docview.wss?uid=swg24037573]
+8.0.0.9: WebSphere Application Server V8.0 Fix Pack 9 [http://www-01.ibm.com/support/docview.wss?uid=swg24037574]
+8.5.5.3: WebSphere Application Server V8.5.5 Fix Pack 3 [http://www-01.ibm.com/support/docview.wss?uid=swg24038133]
+7.0.0.35: WebSphere Application Server V7.0 Fix Pack 35 [http://www-01.ibm.com/support/docview.wss?uid=swg24038310]
+8.5.5.4: WebSphere Application Server V8.5.5 Fix Pack 4 [http://www-01.ibm.com/support/docview.wss?uid=swg24038539]
+8.0.0.10: WebSphere Application Server V8.0 Fix Pack 10 [http://www-01.ibm.com/support/docview.wss?uid=swg24039242]
+7.0.0.37: WebSphere Application Server V7.0 Fix Pack 37 [http://www-01.ibm.com/support/docview.wss?uid=swg24039338]
+8.5.5.5: WebSphere Application Server V8.5.5 Fix Pack 5 [http://www-01.ibm.com/support/docview.wss?uid=swg24039425]
+8.5.5.6: WebSphere Application Server V8.5.5 Fix Pack 6 [http://www-01.ibm.com/support/docview.wss?uid=swg24040035]
+8.0.0.11: WebSphere Application Server V8.0 Fix Pack 11 [http://www-01.ibm.com/support/docview.wss?uid=swg24040425]
+8.5.5.7: WebSphere Application Server V8.5.5 Fix Pack 7 [http://www-01.ibm.com/support/docview.wss?uid=swg24040533]
+7.0.0.39: WebSphere Application Server V7.0 Fix Pack 39 [http://www-01.ibm.com/support/docview.wss?uid=swg24041013]
+8.5.5.8: WebSphere Application Server V8.5.5 Fix Pack 8 [http://www-01.ibm.com/support/docview.wss?uid=swg24041178]
+8.0.0.12: WebSphere Application Server V8.0 Fix Pack 12 [http://www-01.ibm.com/support/docview.wss?uid=swg24041590]
+8.5.5.9: WebSphere Application Server V8.5.5 Fix Pack 9 [http://www-01.ibm.com/support/docview.wss?uid=swg24041819]
+7.0.0.41: WebSphere Application Server V7.0 Fix Pack 41 [http://www-01.ibm.com/support/docview.wss?uid=swg24041931]
+8.5.5.10: WebSphere Application Server V8.5.5 Fix Pack 10 [http://www-01.ibm.com/support/docview.wss?uid=swg24042150]
+8.5.5.11: WebSphere Application Server V8.5.5 Fix Pack 11 [http://www-01.ibm.com/support/docview.wss?uid=swg24043005]
+8.0.0.13: WebSphere Application Server V8.0 Fix Pack 13 [http://www-01.ibm.com/support/docview.wss?uid=swg24042746]
+7.0.0.43: WebSphere Application Server V7.0 Fix Pack 43 [http://www-01.ibm.com/support/docview.wss?uid=swg24043400]
+8.5.5.12: WebSphere Application Server V8.5.5 Fix Pack 12 [http://www-01.ibm.com/support/docview.wss?uid=swg24043844]
+8.0.0.14: WebSphere Application Server V8.0 Fix Pack 14 [http://www-01.ibm.com/support/docview.wss?uid=swg24044096]
+8.5.5.13: WebSphere Application Server V8.5.5 Fix Pack 13 [http://www-01.ibm.com/support/docview.wss?uid=swg24044479]
+7.0.0.45: WebSphere Application Server V7.0 Fix Pack 45 [http://www-01.ibm.com/support/docview.wss?uid=swg24044551]
+8.0.0.15: WebSphere Application Server V8.0 Fix Pack 15 [http://www-01.ibm.com/support/docview.wss?uid=swg24044734]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Running a jython script to configure federated repositories
+   fails with "NullPointerException"  when invalid userid or
+   password are specified. The client would like a more specific
+   message.
+    -
+   The problem is seen when there is a federated LDAP repository.
+   This is an example of the command formatted to make it easier
+   to read:
+   ------------------------------------------------------------
+   AdminTask.updateIdMgrLDAPServer('&#65517;
+    -id MY_LDAP -host ldaphost.domain.com -port 389
+    -bindDN  "cn=wasadmin,cn=users,dc=ldaphost,dc=local"
+    -bindPassword WRONGPW &#65529;')
+   -----------------------------------------------------------
+    -
+   The response on the command line shows:
+   WASX7015E: Exception running command:
+    "AdminTask.updateIdMgrLDAPServer('&#65517;-id MY_LDAP
+    -host ldaphost.domain.com
+    -port 389
+    -bindDN "cn=wasadmin,cn=users,dc=ldaphost,dc=local"
+    -bindPassword ***** &#65529;')";
+   exception information:
+    java.lang.NullPointerException: java.lang.NullPointerException
+     ----
+   Seeing java.lang.NullPointerException is too generic and does
+   not help the user find the cause of the problem. A more
+   detailed message that points to the user id or password as the
+   cause of the problem should be displayed.
+    -
+   This is the error that will come out when the problem is fixed:
+   CWWIM5020E  Could not connect to the
+   ldap://ldaphost.domain.com:389 repository using properties:
+    &#65517;port=389&#65529;,&#65517;ldapServerType=IDS&#65529;, &#65517;bindDN=cn=root&#65529;,
+    &#65517;host=ldaphost.domain.com&#65529;,
+    &#65517;certificateMapMode=exactdn&#65529;,&#65517;sslConfiguration=&#65529;,
+    &#65517;certificateFilter=&#65529;,
+    &#65517;sslEnabled=false&#65529;,&#65517;connectTimeout=0&#65529;,&#65517;bindPassword=****&#65529;,
+    &#65517;authentication=simple&#65529;,&#65517;id=MY-LDAP&#65529;,.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  None
+    -
+   Keywords: LDAP AD TDS wsamin admintask security
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  All users of IBM WebSphere Application      *
+   *                  Server                                      *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: LDAP repository configuration CLIs      *
+   *                      throws NPE when wrong Bind DN           *
+   *                      password is provided.                   *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   VMM throws NullPointerExcepton if wrong Bind DN password
+   is provided in LDAP repository configuration CLIs.
+   Instead it should give proper error message like Invalid
+   credentials.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix corrects the code to check if password is incorrect it
+   will throw proper exception on the console
+   
+   The fix for this APAR is currently targeted for inclusion in
+   fix pack 7.0.0.31, 8.0.0.8 and 8.5.5.2.  Please refer to the
+   Recommended Updates page for delivery information:
+   http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM91916
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBS APP SERV N
+   
+   
+ * REPORTED COMPONENT ID
+   5724H8800
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-06-26
+   
+   
+ * CLOSED DATE
+   2013-10-15
+   
+   
+ * LAST MODIFIED DATE
+   2013-10-15
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBS APP SERV N
+   
+   
+ * FIXED COMPONENT ID
+   5724H8800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R700 PSY
+   UP
+   
+   
+ * R800 PSY
+   UP
+   
+   
+ * R850 PSY
+   UP

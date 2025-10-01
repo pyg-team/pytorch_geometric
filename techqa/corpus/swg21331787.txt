@@ -1,0 +1,29 @@
+Title: IBM Font usage in Cognos products - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Q: What is the default font formatting utilized by Impromptu and PowerPlay?
+
+A: To the best of our knowledge, the default for both headers and data is Arial.
+
+
+Q: How many fonts are available to the Adobe writer and what are they?
+
+A: By default, there are 13 fonts plus Zapf Dingbats. They are Courier, Courier Bold, Courier Italic, Courier Bold Italic, Helvetica, Helvetica Bold, Helvetica Oblique, Helvetica Bold Oblique, Times, Times Bold, Times Italic, Times Bold Italic, and Symbol.
+
+
+Q: If font embedding is disabled on the PDF server for IWR and within PowerPlay Enterprise Server, what fonts are available for report generation at the time of request? 
+
+A: If font embedding is disabled, fonts available for report creation are those that are installed on the workstation where report is generated. They are not restricted to True Type. 
+
+Q: What happens if a font used during creation of a report is not available at run time? 
+
+A: If a font used in creation is 
+not available on the viewer's workstation, then the printer font substitution table is used (see settings, printers, properties) - for example, Helvetica is often substituted for Arial. The basic fonts installed are usually the 14 as listed above. 
+
+
+
+HISTORICAL NUMBER
+ 92715

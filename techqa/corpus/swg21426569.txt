@@ -1,0 +1,164 @@
+Title: IBM Engaging IBM Informix Support - Your Top Questions: Answered - United States
+
+Text:
+support portal; im_support; support email; Passport Advantage; Fix Central; ecurep; ftp instruction; Electronic Support; FTS; UP MYSSYS; MustGather; Must Gather; support contact; sanjitc; sanjitc2010 TECHNOTE (FAQ)
+
+QUESTION
+ What are Frequently Asked Questions (FAQs) on getting IBM Informix Software Support? 
+
+ANSWER
+We have created a set of common Support questions and answers to help you get the most out of your investment in IBM Informix Software:
+
+[/support/docview.wss?uid=swg21426569&aid=1] [/support/docview.wss?uid=swg21426569&aid=1] 
+
+ * How can I reach Support? 
+ * When will I hear from Support? 
+ * How can I improve the time to resolution? 
+ * What is the best way to engage Support for severity-1 issues? 
+ * When does my Informix product reach End of Support? 
+ * My Informix product is reaching End of Support. What should I do? 
+ * I have valid software license but where can I download Informix product? 
+ * How do I provide an update to, or check the status of, an existing PMR? 
+ * How do I upload/FTP diagnostics data to IBM for my PMR? 
+ * Where can I find more information on Informix product and support? 
+ * What is IBM Elite Support for IBM Informix Innovator-C and Ultimate-C Editions? 
+ * Where can I find the more information on Software Support Handbook?
+
+[/support/docview.wss?uid=swg21426569&aid=2] [/support/docview.wss?uid=swg21426569&aid=2] 
+
+Q. How can I reach Support? 
+
+A. To ensure you receive the best possible Support service, contact us using one of the following options:  * Online by opening Electronic Service Request [http://www.ibm.com/support/electronicsupport/workwithibm.html] 
+ * Technical Support Chat [http://www.ibm.com/software/data/support/chat.html] for North America
+
+
+[/support/docview.wss?uid=swg21426569&amp;aid=3] Back to top 
+
+Q. When will I hear from Support? 
+
+A. Response times are determined by you and the business impact of your Support needs. When you contact Support, please help us understand:  * The severity of your issue 
+ * Relevant diagnostic information - submit through Collecting Data documents [http://www.ibm.com/support/docview.wss?uid=swg21242979] 
+ * Your desired update frequency
+
+
+Depending on the severity of your Support issues, the initial and ongoing IBM response times are outlined in the chart below. 
+
+Severity Description Initial Response Ongoing Response 1 Critical 
+Business Impact Within 2 business 
+hours Every Day / 
+Mutual Agreement 2 Significant 
+Business Impact Within 2 business 
+hours Every 5 Days 
+(minimum) 3 Some 
+Business Impact Within 2 business 
+hours Every 10 Days 
+(minimum) 4 Minimal 
+Business Impact Within 2 business 
+hours Every 10 Days 
+(minimum) 
+[/support/docview.wss?uid=swg21426569&amp;aid=4] Back to top 
+
+Q. How can I improve the time to resolution? 
+
+A. When you create a Service request:  * Ensure you set the appropriate severity level 
+ * State the business impact/deadlines 
+ * Check the Electronic Service Request for your updates
+
+
+Reduce Iteration Time  * Use Collecting Data documents [http://www.ibm.com/support/docview.wss?uid=swg21242979] to collect relevant diagnostics information 
+ * Provide timely feedback on recommendations/tests
+
+
+Escalation 
+If you feel it is appropriate, escalate your issue by:  * Asking to speak to an IBM Support Manager 
+ * Asking to speak to an IBM Duty Manager 
+ * Raising the severity level 
+ * Asking your IBM sales rep to escalate to Informix L2 Support management
+
+
+[/support/docview.wss?uid=swg21426569&amp;aid=5] Back to top 
+
+Q. What is the best way to engage Support for severity-1 issues? 
+
+A. For severity-1 issues, the best way to engage Support is through Informix Follow-the Sun (FTS). This English-only option ensures that you receive direct-to-engineer attention and 24/7 Support assistance to get you up and running quickly and effectively. 
+
+Contact Informix FTS:  * Call US Toll Free:
+   – Step 1:  * 
+    * AT&T Direct Access numbers
+    * 
+   
+   – Step 2:  * 
+   
+   
+ * English only
+
+
+For Latin American assistance, you can also Contact your Local Language Support Representatives.  * This option uses the call back model
+
+
+[/support/docview.wss?uid=swg21426569&amp;aid=6] Back to top 
+
+Q. When does my Informix product reach End of Support? 
+
+A. Being aware of your product's End of Support date is critical to your business. You can ensure that you:  * Retain access to continuous support 
+ * Maximize your Software Support investment
+
+Product Version End of Support Date 7.31 September 2009 9.40 April 2009 10.00 September 2010 11.10 September 2012 
+Discover the Continuing Support [http://www.ibm.com/support/docview.wss?uid=swg21439094] options available to you when your Informix software reaches End of Support. Contact your account reps to get a quote. 
+
+Please check the IBM Product Lifecycle [http://www.ibm.com/software/data/support/lifecycle/] site for other Informix products. 
+
+[/support/docview.wss?uid=swg21426569&amp;aid=7] Back to top 
+
+Q. My Informix product is reaching End of Support. What should I do? 
+
+A. Being aware of your product’s End of Support date is critical to your business. You can ensure that you:  * Upgrade your Informix product version by contacting your software sales representative, or through IBM Passport Advantage [http://www-01.ibm.com/software/howtobuy/passportadvantage/]. 
+
+ * If you are not ready to upgrade, you can work with your software sales representative on a support extension. This option is more costly than adopting the latest software version, but is available for an additional fees. Discover the Continuing Support [http://www.ibm.com/support/docview.wss?uid=swg21439094] options available to you when your Informix software reaches End of Support.
+
+
+[/support/docview.wss?uid=swg21426569&amp;aid=8] Back to top 
+
+Q. I have valid software license but where can I download Informix product? 
+
+A. The ' Fix Central [http://www.ibm.com/support/fixcentral/]' provides fixes and updates for your Informix product. Choose 'Product Group' as 'Information Management' from the drop down menu to get your Informix product. 
+
+[/support/docview.wss?uid=swg21426569&amp;aid=9] Back to top 
+
+Q. How do I provide an update to, or check the status of, an existing PMR? 
+
+A. You can provide an update or check the status of, an existing PMR using one of the following options:  * Via Phone
+   Contact your technical support engineer directly using the number they provided.
+   
+ * Via Online Access
+   Use the Electronic Service Request [http://www.ibm.com/support/electronicsupport/workwithibm.html] through our Electronic Support [http://www.ibm.com/support/docview.wss?uid=swg21189715] tool
+   
+ * Via E-mail
+   Send an email to IM-Support [im_support@ecurep.ibm.com] with the subject line PMR xxxxx,xxx,xxx (Using the actual full PMR number provided when the PMR was opened). Please note that this method is only suitable for updating or checking the status of existing PMRs and cannot be used to create a new PMRs. Also note that it is important to include the full PMR # in the subject line in order for the email to be processed. 
+   
+
+[/support/docview.wss?uid=swg21426569&amp;aid=10] Back to top 
+
+Q. How do I upload/FTP diagnostics data to IBM for my PMR? 
+
+A. To diagnose or identify a problem, it is sometimes necessary to provide Technical Support with data and information from your system. Check the upload instruction [http://www.ibm.com/support/docview.wss?uid=swg21243808] to find out a suitable option for you. 
+
+[/support/docview.wss?uid=swg21426569&amp;aid=11] Back to top 
+
+Q. Where can I find more information on Informix product and support? 
+
+A. Check the IBM Support Portal [http://www.ibm.com/support/entry/portal/Overview/Software/Information_Management] for appropriate Informix product. 
+
+[/support/docview.wss?uid=swg21426569&amp;aid=12] Back to top 
+
+Q. What is IBM Elite Support for IBM Informix Innovator-C and Ultimate-C Editions? 
+
+A. Under IBM Elite Support for IBM Informix Innovator-C and Ultimate-C Editions, clients will be entitled to Cross-platform software technical support-around the clock and around the world. Check the IBM Elite Support [http://www-01.ibm.com/support/docview.wss?uid=swg21431136]for more information. 
+
+[/support/docview.wss?uid=swg21426569&amp;aid=13] Back to top 
+
+Q. Where can I find the more information on Software Support Handbook? 
+
+A. Check the IBM Software Support Handbook [http://www14.software.ibm.com/webapp/set2/sas/f/handbook/home.html] Portal. 
+
+[/support/docview.wss?uid=swg21426569&amp;aid=14] Back to top

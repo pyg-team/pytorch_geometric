@@ -1,0 +1,128 @@
+Title: IBM PI29439: WHEN A REPORT CONTAINING A REPORT REFERENCE IS OPENED IN WORKSPACE ADVANCED, THE REPORT GETS STUCK AT A "WORKING" - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED WITH UNKNOWN CLOSE CODE.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When a report containing a report reference in opened in
+   workspace advanced, the report gets stuck at a waiting symbol.
+   Customer has a report which contains a report reference and upon
+   making an attempt to open this report in Cognos workspace, this
+   report gets stuck at "Working" symbol.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  No Local fix available yet.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * All Users                                                    *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * See error description.                                       *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Upgrade to IBM Cognos Business Intelligence 10.2.2 Fix Pack  *
+   * 1                                                            *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *  A fix for this APAR is targeted for IBM Cognos Business
+   Intelligence 10.2.2 Fix Pack 1
+   
+   The Fix Pack Release Schedule can be found at
+   www-01.ibm.com/software/analytics/cognos/support/fixpacks.html
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI29439
+   
+   
+ * REPORTED COMPONENT NAME
+   COG WRKSPC ADV
+   
+   
+ * REPORTED COMPONENT ID
+   5724W12BA
+   
+   
+ * REPORTED RELEASE
+   A20
+   
+   
+ * STATUS
+   CLOSED URX
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-11-11
+   
+   
+ * CLOSED DATE
+   2015-04-19
+   
+   
+ * LAST MODIFIED DATE
+   2015-04-19
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    PI33863 [http://www-01.ibm.com/support/docview.wss?uid=swg1PI33863]
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * RA22 PSN
+   UP

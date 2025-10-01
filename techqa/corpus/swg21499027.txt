@@ -1,0 +1,38 @@
+Title: IBM Mapping Drive Letters for IBM Datacap Taskmaster Capture Services - United States
+
+Text:
+mapped mapping drive TECHNOTE (FAQ)
+
+QUESTION
+ How do I use mapped drives for Datacap Taskmaster Services using the Datacap Executive Service (DCExec)? 
+
+CAUSE
+Microsoft does not support accessing mapped drives from a Service in Windows 2003. Nonetheless IBM Datacap has offered this capability as a work around for customers wishing to use mapped drives with the Taskmaster Server and Client Services. There is no guarantee that future updates to Windows 2003 will preserve this capability. Datacap expects this capability to continue functioning, and IBM Datacap will make best efforts to support this method in the future.
+
+ANSWER
+To map a drive for use by the local system account under Windows 2003 using the Datacap Executive Service: 
+
+ 1.  Update dcexec.exe to v1.0.0.9 or above and dcexecer.exe to 7.0.0.24593 or above.  1. On the computer where Taskmaster is installed (usually the file server), browse to \Datacap\support\dcexec_service. 
+      2. Make a copy of (do not move or rename) dcexec.exe and dcexecr.exe. 
+      3. Copy the new versions over the old files.
+     
+     
+ 2.  Register the DCExec service: On the computer where dcexec will operate, run the command: C:\Datacap\support\DCExec_Service\dcexec.exe /Service 
+ 3.  Run C:\Datacap\support\DCExec_Service\DCExecer.exe 
+ 4.  Select the Service start up tab. 
+ 5.  In the Program path: field, enter “subst” without quotations. 
+ 6.  In the Command line parameters: field, enter “drive: \\computer\folder” without quotations, but with a space between the drive letter and the UNC path. Example Y: \\server\c 
+ 7.  Check Working directory (auto). 
+ 8.  Uncheck User interface. 
+ 9.  Select Add new process. 
+ 10. Close the Datacap Executive Service window. 
+ 11. Open the Control Panel, then Administrative Tools then Services. 
+ 12. Select properties on the Datacap Executive Service and set it to start automatically.
+
+
+To make the Datacap Executive Service wait until network connections are prepared and make the Taskmaster Client Service wait for the Datacap Executive Service to start:  1. Run regedit.exe and select the key
+    HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\DCExec. 
+ 2. In the right-hand pane, right-click DependOnService and choose Modify. 
+ 3. Put the cursor on a new line and add “Netman” (without the quotation marks). This will prevent the DCExec service from starting until network connections are available. 
+ 4. For the Taskmaster Client Service, perform the same action, adding DCExec in the DependOnService item in
+    HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\DCTMSub.

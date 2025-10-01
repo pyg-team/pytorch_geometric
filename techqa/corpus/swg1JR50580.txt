@@ -1,0 +1,202 @@
+Title: IBM JR50580: CONTEXT ROOT PREFIX NOT SET FOR NEW WEB MODULES THAT WERE ADDED IN IBM BPM V8.5.5.0 - United States
+
+Text:
+  A FIX IS AVAILABLE
+Version 8.5 Refresh Pack 6 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24039185]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When you upgrade an IBM Business Process Manager (BPM)
+   deployment environment with a customized context root prefix
+   from IBM BPM V8.5.0 to IBM BPM V8.5.5.0, the context root
+   prefix is not set for the new web modules that were added in
+   IBM BPM V8.5.5.0:
+   - cews.war in IBM_BPM_DocumentStore
+   - acce_navigator.war in IBM_BPM_DocStoreAdmin
+   - web-pd.war in IBM_BPM_WebPD
+   - bpm.coachflow.war in IBM_BPM_Teamworks
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Once upgraded to 8.5.5.0, the following command needs to run to
+   update/refresh the context root prefix for all applications.
+   
+   ${BPM_INSTALL_PATH}/bin/BPMConfig.sh -update -profile
+   ${DMGR_PROFILE_NAME} -de ${DE_NAME} -contextRootPrefix
+   ${CONTEXT_ROOT_PREFIX}
+   
+   After running this command, restart the Dmgr, Managed Nodes and
+   their servers to properly pick up the synched changes.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  IBM Business Process Manager (BPM)          *
+   *                  Advanced                                    *
+   *                  IBM BPM Standard                            *
+   *                  IBM BPM Express                             *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: When you upgrade an IBM Business        *
+   *                      Process Manager (BPM) deployment        *
+   *                      environment with a customized context   *
+   *                      root prefix from IBM BPM V8.5.0 to      *
+   *                      IBM BPM V8.5.5.0, the context root      *
+   *                      prefix is not set for the new web       *
+   *                      modules that were added in IBM BPM      *
+   *                      V8.5.5.0:                               *
+   *                      - cews.war in IBM_BPM_DocumentStore     *
+   *                      - acce_navigator.war in                 *
+   *                      IBM_BPM_DocStoreAdmin                   *
+   *                      - web-pd.war in IBM_BPM_WebPD           *
+   *                      - bpm.coachflow.war in                  *
+   *                      IBM_BPM_Teamworks                       *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   No additional information is available.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A fix is available for IBM BPM V8.5.5.0 that correctly sets
+   the customized context root prefix for new web modules when
+   the fix is applied before starting the deployment manager (IBM
+   BPM Standard and IBM BPM Advanced) or stand-alone server (IBM
+   BPM Express) for the first time after you apply the IBM BPM
+   V8.5.5.0 refresh pack.
+   
+   On Fix Central (http://www.ibm.com/support/fixcentral), search
+   for JR50580:
+   1. Select IBM Business Process Manager and then Advanced from
+   the product selector, the installed version to the fix pack
+   level, and your platform, and then click Continue.
+   2. Select APAR or SPR, enter JR50580, and click Continue.
+   
+   When you download fix packages, ensure that you also download
+   the readme file for each fix. Review each readme file for
+   additional installation instructions and information about the
+   fix.
+   
+   If you install the fix after starting the IBM BPM V8.5.5.0
+   server,  run the following commands to update or add the
+   context root prefix for all applications:
+   
+   1. Stop all the servers, including the deployment manager and
+   the node agents (for IBM BPM Standard and IBM BPM Advanced)
+   2. On Windows, run <install_root>\bin\BPMConfig -update
+   -profile <profileName> -de <deName> -contextRootPrefix
+   <contextRootPrefix>
+       On Unix, run <install_root>/bin/BPMConfig.sh -update
+   -profile <profileName> -de <deName> -contextRootPrefix
+   <contextRootPrefix>
+       where <profileName> is the name of the deployment manager
+   (for IBM BPM Standard and IBM BPM Advanced) or stand-alone
+   server (for IBM BPM Express) profile, <deName> is the name of
+   the deployment environment, and <contextRootPrefix> is the
+   custom context root prefix for the DE.
+   3. Restart the deployment manager (IBM BPM Standard and IBM
+   BPM Advanced) or stand-alone server (IBM BPM Express)
+   4. On IBM BPM Standard and IBM BPM Advanced, restart the node
+   agents and wait for node synchronization to finish.
+   5. On IBM BPM Standard and IBM BPM Advanced,restart the
+   clusters.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR50580
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM ADVANCED
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9400
+   
+   
+ * REPORTED RELEASE
+   855
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-06-20
+   
+   
+ * CLOSED DATE
+   2014-09-01
+   
+   
+ * LAST MODIFIED DATE
+   2014-09-01
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   BPM ADVANCED
+   
+   
+ * FIXED COMPONENT ID
+   5725C9400
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R800 PSY
+   UP

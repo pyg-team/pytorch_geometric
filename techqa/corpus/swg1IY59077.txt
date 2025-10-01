@@ -1,0 +1,145 @@
+Title: IBM IY59077: PDWEBPI ON UNIX DOES NOT PROVIDE SUCCESFULLY LTPA TOKEN SSO FOR WEBSPHERE IF CONFIGURED TWARDS POLICY SERVER ON AD - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  pdwebpi on IHS 1.3.28 on Linux does not provide correct SSO LTPA
+   token for WAS if it is configured towards Policy Server on AD.
+   STEPS to reproduce
+   1) configure pdwebpi on IHS ( IHS has plug-in for WAS ) towards
+      Policy Server on AD 2000
+   2) edit pdwebpi.conf to enable ltpa token sso to was ( refer to
+      manual "Plug-in for Web Servers Integration Guide 5.1" page
+   127 )
+   .
+   3) open a browser and go http://apache/snoop/servlet you will be
+    prompted for TAM plug-in BA , once you have succesfully filled
+   i than WAS ask you to provide a second login .. that means WAS d
+   id not recognize the ltpa token.
+   In the was log you can see that the plug-in seems to not be able
+    to include the credential in the token
+   .
+   in the was log :
+   SECJ0373E: Cannot create credential for the user <null> during
+   the Validation of the token.
+   The exception is
+   com.ibm.websphere.security.CustomRegistryException: Cannot find
+   uniqueID for the user unauthenticated at
+   .
+   NOTE 1) This problem does not arose if the Plug-in is configured
+   against a Policy Server on LDAP.
+   NOTE 2) If on the Pdpwepi machine it is configured WebSeal and c
+   reate a junction ltpa than the SSO works ( of coureither using
+   AD or LDAP as user registry
+   NOTE 3) I've repplicated the problem on SuSe sles 8 with pdpwepi
+    gold ( no fixpack ) on top oh IHS 1.3.28, customer has replicat
+   ed on REDHAT and also used pdpwebpi FP1
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *   see main problem description
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *   Fixed in 5.1-WPI-0006LA.
+   The fix for this APAR is expected to be contained in the followi
+   ng maintenance packages:
+   | LA interim fix | 5.1-WPI-0006LA
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IY59077
+   
+   
+ * REPORTED COMPONENT NAME
+   ACCESS MGR WEBS
+   
+   
+ * REPORTED COMPONENT ID
+   5724C0813
+   
+   
+ * REPORTED RELEASE
+   510
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2004-07-20
+   
+   
+ * CLOSED DATE
+   2004-08-13
+   
+   
+ * LAST MODIFIED DATE
+   2004-08-13
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ACCESS MGR WEBS
+   
+   
+ * FIXED COMPONENT ID
+   5724C0813
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R510 PSN
+   UP

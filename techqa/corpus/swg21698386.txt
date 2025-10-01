@@ -1,0 +1,47 @@
+Title: IBM Error CTGIN2178E occurred during installation - United States
+
+Text:
+Cluster CTGIN2178E install JMS WebSphere TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ While installing IBM Maximo Asset Management/SmartCloud Control Desk 7.5.x for use with a pre-configured clustered WebSphere Application Server, the following error is reported in the launchpad installer:
+CTGIN2178E: The required service integration bus has not been correctly configured. 
+
+CAUSE
+IBM Maximo Asset Management/SmartCloud Control Desk 7.5.x installer has a very rigid set of expectations around the configuration that must be done for WebSphere Application Server and does not support clustered environments.
+
+ENVIRONMENT
+7.5 clustered WebSphere environment
+
+RESOLVING THE PROBLEM
+Ensure WebSphere has been configured manually according to the instructions in URL below with exactly the same naming and scope for all JMS and SIB entities with all destinations on the SAME bus. If you don't do this you might receive validation failures and error CTGIN2178E. Please refer to the link below.
+
+
+The suggested work around is to either, select "WebLogic" in the installer as the application server, or change the application to WebLogic in the install.properties.
+
+Making this change will force the installer to skip WebSphere configuration validation and proceed with the install.
+
+
+If you encounter the error condition described, complete the following steps to resolve the issue: 
+
+1) In the installer, select WebLogic for the application server when prompted and proceed with the install. 
+
+OR 
+
+1) Quit the IBM Maximo Asset Management installation program. 
+
+2) Open the <Product_Home>\maximo\applications\maximo\properties\install.properties file for editing. 
+
+a) Locate the WAS.SibName property and update its value to the default intjmsbus. 
+
+b) Locate the ApplicationServer.Vendor property and update it's value to WebLogic. 
+
+c) Saves changes. 
+
+3) Restart the IBM Maximo Asset Management installation program.
+
+
+Note: Moving forward 7.6 installer supports clustered environments.
+
+RELATED INFORMATION
+#Manually configuring WebSphere [http://pic.dhe.ibm.com/infocenter/tivihelp/v49r1/index.jsp?topic=%2Fcom.ibm.mam.inswas.doc%2Finstall%2Fc_ccmdb_manconfigj2ee.html]

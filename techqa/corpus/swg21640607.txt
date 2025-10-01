@@ -1,0 +1,127 @@
+Title: IBM Collect troubleshooting data for BPM document store problems in IBM Business Process Manager (BPM) - United States
+
+Text:
+MustGather; BPM document store TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ You are having a BPM document store problem with the IBM Business Process Manager products. For example, you might be experiencing a problem when you attach or migrate documents. You would like to know what information you must collect (MustGather) so that the IBM Business Process Manager Support team can diagnose your problem. If you gather this documentation before contacting support it will expedite the troubleshooting process, and save you time. 
+
+DIAGNOSING THE PROBLEM
+Collect troubleshooting information for BPM document store problems in IBM Business Process Manager. Gathering this information before calling IBM support helps in understanding the problem and saves time when data is analyzed.
+
+
+
+SETTING THE TRACE STRING
+
+ * For issues involving adding and viewing documents, set the trace string on the AppTarget cluster to:
+   ​*=info:
+   WLE.*=all:
+   com.ibm.bpm.embeddedecm.*=all: 
+   com.ibm.bpm.integration.*=all: 
+   com.ibm.bpm.auth.*=all: 
+   WLE.wle_security=all: 
+   WAS.clientinfopluslogging=all:
+   com.lombardisoftware.component.ecmconnector.*=all 
+   (Collect the trace for the entire scenario starting from document attachment to document viewing)
+   
+   Gather the following table exports:
+   select * from LSW_BPD_INSTANCE where bpd_instance_id IN (<processinstanceid>) 
+   and 
+   select * from LSW_TASK where task_id in (<taskid>) 
+   if the process instance ids or task ids are not available, or in the case where subprocesses or linked processes are used please send in the entire table content. 
+   
+   Gather the responses from the following REST API:
+   <host:port>/rest/bpm/wle/v1/process/<processInstanceId>
+   <host:port>/rest/bpm/wle/v1/task/<taskid> 
+   
+   If you are not sure which task ID or process instance ID is failing, the following lines in the above trace taken at the time of the issue should show them:
+   wle 1 com.lombardisoftware.server.api.DefaultAuthorizationAPI canViewTaskInternal canViewTaskInternal(...) taskId=<taskId>) 
+   and
+   wle 1 com.lombardisoftware.server.api.DefaultAuthorizationAPI canViewInstance canViewInstance(...) instanceId=<processinstanceid>) 
+   
+   Refer to the security mustgathers for instance/task authorization:
+   http://www-01.ibm.com/support/docview.wss?uid=swg21609418 [http://www-01.ibm.com/support/docview.wss?uid=swg21609418] 
+ * For problems during document migration, set the trace string on the AppTarget cluster to:
+   *=info:
+   com.ibm.bpm.embeddedecm.*=all:
+   com.lombardisoftware.server.document.migration.*=all
+
+
+
+Note: Enabling the trace might slow down your system. This delay can lead to transaction time-outs and errors. Disable this trace after collecting the requested information. 
+
+To set the tracing and generate a new set of logs and traces, complete the following steps for the servers or cluster that show the issue:  1. In the Integrated Solutions Console, under ​Troubleshooting​ ​>​ ​Log and Trace​, pick the server for which you want to change the settings. ​
+    
+    
+ 2. Click Change Log Detail Levels​.
+    
+    
+ 3. Select the ​configuration tab to set the tracing. This change takes effect after the next server restart and a completely new set of log files can be collected. Optionally, select the runtime​ tab to dynamically set the tracing.
+    
+    
+ 4. Enter the trace string and click OK.
+    
+    
+ 5. If you selected the configuration tab, stop the server.
+    
+    
+ 6. Archive and delete the current logs/traces/ffdc from the following directories:  * <install​​_​​root>​​/​​profiles/<profile​​_​​name>​​/​​logs​​/<​​server​​_​​name> 
+     * <install​​_​​root>​​/​​profiles/<profile​​_​​name>​​/​​logs​​/ffdc
+       
+       
+    
+    
+ 7. Start the server and check the trace.log file to make sure that the correct tracing is set.
+    
+    
+ 8. Reproduce the problem and note down the timestamp. Check the trace.log file to ensure that the time of the issue is covered in the file. Gather the complete server log files and the ffdc directory.
+    
+    
+ 9. Delete the trace string from the Log Detail Level for your server.
+    
+    
+
+
+Note: Ensure that you have set the Maximum trace file size (recommendation: 20MB) as well as the number of historical trace files (recommendation: 20) to an appropriate value. You can find those values at Servers > Application Servers > server_name > Diagnostic Trace Service. 
+
+GENERAL DIAGNOSTIC INFORMATION
+
+Collect the general troubleshooting information as described in Collect troubleshooting data for the IBM Business Process Manager products [http://www.ibm.com/support/docview.wss?uid=swg21569731].
+
+In addition: 
+
+ * Describe the problem in detail. 
+ * Provide WebSphere Application Server user registry information. 
+ * Ensure that the log files of the AppTarget include the server start. 
+ * Run the getDocumentStoreStatus command [http://pic.dhe.ibm.com/infocenter/dmndhelp/v8r5m0/topic/com.ibm.wbpm.ref.doc/topics/rref_getdocstorestatus.html] and provide the output. 
+ * Provide the FileNet logs from the <install​​_​​root>​​/​​profiles/<profile​​_​​name>​​/​​FileNet​​/<​​server​​_​​name>/p8_server_error.log andp8_server_trace.log files.
+
+
+WHAT TO DO NEXT
+ 
+
+ 1. Review the logs and traces at the time of the problem to try to determine the source of the problem.
+    
+    
+ 2. Use IBM Support Assistant [http://www.ibm.com/software/support/isa/] to search for known problems in the information center, forums, and technotes.
+    
+    
+ 3. If you cannot find related problems or cannot solve the problem, send the information that you have collected to IBM by following the instructions in Exchanging Information with IBM Technical Support. [http://www.ibm.com/software/support/exchangeinfo.html]
+    
+    
+
+RELATED INFORMATION
+ Administering the IBM BPM document store [http://pic.dhe.ibm.com/infocenter/dmndhelp/v8r5m0/topic/com.ibm.wbpm.admin.doc/topics/tbpmdocadmin.html]
+Migrating doc attachments to the BPM document store [http://pic.dhe.ibm.com/infocenter/dmndhelp/v8r5m0/topic/com.ibm.wbpm.imuc.doc/topics/tbpmdocmig_std_lin.html]
+BPM cannot communicate with the BPM document store [http://www.ibm.com/support/docview.wss?uid=swg21673250]
+The integration of IBM BPM with an ECM System generates [http://www.ibm.com/support/docview.wss?uid=swg21678689]
+Workaround to overwrite or recreate ECM config [http://www.ibm.com/support/docview.wss?uid=swg1JR50446]
+
+
+ 
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Business Process Manager Express General Linux, Windows 8.5 Business Integration IBM Business Process Manager Standard General AIX, Linux, Solaris, Windows 8.5 Business Integration IBM Business Process Manager Application Pattern General Linux Red Hat - xSeries 8.5 
+PRODUCT ALIAS/SYNONYM
+ BPM

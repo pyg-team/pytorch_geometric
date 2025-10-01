@@ -1,0 +1,167 @@
+Title: IBM IC39221: Object was found but is not visible within its parent - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  For example, after you have NACIS (our software) installed, the
+   main
+   screen
+   (Policy Info) has a field called Death Benefit.  On the previous
+   version
+   (2002) of NACIS it recognized the Death Benefit field, but on
+   version
+   2003
+   it said, "Object was found but is not visible within its parent"
+   (I
+   found
+   this in Test Manager, right clicked on where it failed and
+   selected
+   Properties).  I tried recording the field and fortunately it did
+   not
+   shut
+   down my computer and I was able to record it.  As you can see
+   below in
+   the
+   third blue line, it says "Undefined=" in the EditBox statement.
+   The
+   text in
+   green represents what version 2002 recognized.  This type of
+   situation
+   seems
+   to only happen on a few Edit boxes.
+   
+   I can get around the problem now by just inserting "Undefined="
+   into the
+   selected code but there still is an issue either with our
+   software or
+   Rational.  I will show this to our developers on Monday to see
+   if they
+   made
+   any changes to fields like this during our last release.
+   
+   Sub GoTo_DeathBen
+   Window SetContext, "Name=frmMain", ""
+   'EditBox Click, "Name=ctlPolicyInfo1.txtBenefitAmount", ""
+   EditBox Click,
+   "Name=ctlPolicyInfo1.txtBenefitAmount.txtNumb;Undefined=", ""
+   End Sub
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  RATLC00453901 McKinley Hot Fix
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Error in code causing GUI Test to not function properly since
+   object is not visible within its parent
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Appropriate files of scripts have been modified to correct
+   defect
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  GUI Test 2003.06.13 Fix Pack
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC39221
+   
+   
+ * REPORTED COMPONENT NAME
+   RATL ROBOT VXXX
+   
+   
+ * REPORTED COMPONENT ID
+   5724F3900
+   
+   
+ * REPORTED RELEASE
+   ALL
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2004-02-02
+   
+   
+ * CLOSED DATE
+   2005-04-25
+   
+   
+ * LAST MODIFIED DATE
+   2005-04-25
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *     DEFSRXXX
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * RALL PSY
+   UP

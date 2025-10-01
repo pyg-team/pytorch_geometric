@@ -1,0 +1,191 @@
+Title: IBM IY54159: 5.1 Plug-in for Web Server get access plugin error, location hea der not populated with an absolute url during fsso - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  PMR: 59496,L6Q,000
+   
+   We are using Tivoli Access Manager version 5.1. We have the
+   plugin for
+   webserers configured with a SunOne web server version 6. We are
+   configured to use Form Single Sign On (FSSO).
+   
+   We have the following FSSO configuration. In pdwebpi.conf, we
+   have the
+   following
+   
+   [fsso]
+   login-page-stanza = login-ehansel-JHAuthServlet
+   
+   [login-ehansel-JHAuthServlet]
+   login-page = /ehansel/startJHAuth.html
+   login-form-action = /*
+   argument-stanza = login-ehansel-JHAuthServlet-data
+   
+   [login-ehansel-JHAuthServlet-data]
+   WSSLDAPDN=cred:wssldapdn
+   WSSLDAPPW=cred:wssldappw
+   CSALDAPDN=cred:azn_cred_registry_id
+   CSAAPPLCD=string:63151
+   User-Environment=string:100
+   
+   The html page that triggers FSSO, /ehansel/startJHAuth.html,
+   contains a
+   form with an Action of
+   /NASApp/JHAuthorizationService/JHAuthorizationServlet
+   
+   After calling https://servername/ehansel/startJHAuth.html, the
+   browser
+   is send a redirect (HTTP response code 302). The Location header
+   included in the 302 response contains the following.
+   
+   /NASApp/JHAuthorizationService/JHAuthorizationServlet?PDWPI-FSSO
+   =fce2462
+   a-5030-11d8-81f6-a54725c7aa77
+   
+   The Location response header is supposed to contain an absolute
+   URI (see
+   RCF
+   http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.30) [http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.30)]
+   .
+   The Location header above contains a server relative URL. For
+   browsers,
+   this has not been an issue. Browsers seem to figure out what to
+   do. For
+   other HTTP clients (like the Java class HttpsURLConnection),
+   having a
+   server relative URL in the Location header is causing some
+   issues.
+   
+   
+   
+   Our  app, the client app, would need to include the logic needed
+   to
+   follow the  re-direct (302) that the Access Manager plugin
+   responds with
+   as part of Form  Single Sign On (FSSO). Currently, we have the
+   client
+   class (HttpsUrlConnection)  follow the redirects automatically.
+   Since
+   the 302 does not include the absolute  URL in the Location
+   header,
+   having the client follow the redirect automatically  will not
+   work.
+   Adding the re-direct functionality to our app will work, but a
+   bug
+   should be filed so this is fixed in the product.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  add the re-direct functionality to app to workaround
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *   see main problem description
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *   Fixed in 5.1-WPI-0003LA.
+   The fix for this APAR is expected to be contained in the followi
+   ng maintenance packages:
+   | LA interim fix | 5.1-WPI-0003LA
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IY54159
+   
+   
+ * REPORTED COMPONENT NAME
+   ACCESS MGR WEBS
+   
+   
+ * REPORTED COMPONENT ID
+   5724C0811
+   
+   
+ * REPORTED RELEASE
+   510
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2004-02-27
+   
+   
+ * CLOSED DATE
+   2004-08-23
+   
+   
+ * LAST MODIFIED DATE
+   2004-08-23
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ACCESS MGR WEBS
+   
+   
+ * FIXED COMPONENT ID
+   5724C0813
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R510 PSN
+   UP

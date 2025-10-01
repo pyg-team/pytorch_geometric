@@ -1,0 +1,46 @@
+Title: IBM Message "The Form XYZ needs to be updated" for one user, even when no changes made in data entry form, caused by invalid cache files - United States
+
+Text:
+update refresh layout Excel TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ User A clicks 'Company - Data Entry - Reported values'. User A opens a form (for example "XYZ"). Form works successfully (no problem).
+User B access the same form (XYZ). User B receives error message indicating that the form needs processing. However, the form does not need updating. No other user is experiencing this problem 
+
+SYMPTOM
+The Form XYZ needs to be updated 
+
+
+CAUSE
+There are many different possible causes for this (or similar) errors. 
+
+ * Search the IBM Technotes for more examples, for example #1639815.
+
+
+However, this IBM Technote specifically relates to the scenario where only one (or some) user(s) receive this error message. In this scenario, the problem is caused by the 'bad' end user having old/out-of-date Controller cache files. 
+
+More Information 
+Controller stores cache files (inside the folder %APPDATA%\cognos\ccr) to speed up many of its functions. If a superuser makes changes to the structures of the system (for example a form) then the end users may have out-of-date information inside their cache folder, which causes the Controller client to not recognise changes made by the central superuser(s).  * TIP: For more examples, see separate IBM Technotes #1345944, 1346790, 1381197, 1378194.
+
+RESOLVING THE PROBLEM
+Clear Controller cache files on 'bad' end user's client device. 
+
+ 
+
+Steps: 
+
+The easiest method is to ask the 'bad' end user to click 'Maintain - Special Utilities - Clear Local Cache' (inside Controller).
+
+
+RELATED INFORMATION
+#1345944 - User cannot see changes made to company struc [http://www.ibm.com/support/docview.wss?uid=swg21345944]
+1346790 - A user cannot see changes made to form struct [http://www.ibm.com/support/docview.wss?uid=swg21346790]
+1381197 - New structures can't be seen by all users [http://www.ibm.com/support/docview.wss?uid=swg21381197]
+1378194 - "The form XXXX is invalid" error - affects on [http://www.ibm.com/support/docview.wss?uid=swg21378194]
+1639815 - ** Troubleshooting ** "The form is invalid" w [http://www.ibm.com/support/docview.wss?uid=swg21639815]
+
+
+
+
+HISTORICAL NUMBER
+ 1042311

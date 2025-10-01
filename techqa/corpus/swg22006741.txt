@@ -1,0 +1,54 @@
+Title: IBM System in maintenance mode, please contact your Administrator or try later - United States
+
+Text:
+WebGUI; WebGUI 8.1; global.lock; role; roles; TCR; Reporting Service TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Why is global.lock file generated in $JazzSM_HOME/profile/config/cells/JazzSMNode01Cell/applications/isc.ear/deployments/isc/isclite.war/WEB-INF directory ? 
+
+SYMPTOM
+Environment: 
+
+WebSphere 8559
+JazzSM 1131/DASH 3130
+Reporting Service 3130
+WebGUI 8.1
+ITNM 4.2
+
+I installed WebShpere, JazzSM/DASH, Reporting Service and WebGUI on one server. The installation was completed successfully. However after JazzSM was started, when I tried to modify user roles, it failed with this error to screen: 
+
+System in maintenance mode, please contact your Administrator or try later
+
+A global.lock file was generated in /profile/config/cells/JazzSMNode01Cell/applications/isc.ear/deployments/isc/isclite.war/WEB-INF directory. After I removed global.lock file, the problem disappear. 
+
+I would like to know why global.lock file was generated and the root cause of it. 
+
+
+CAUSE
+When WebShpere, JazzSM/DASH, Reporting Service and WebGUI are installed on one server, after Reporting Server is installed, the installer overwrite JAVA_HOME in setTCRenv.sh file causing the wrong Java been called. 
+
+In setTCRenv.sh file, Java 1.7 is defined before Reporting Service is installed 
+JAVA_HOME=$WAS_HOME/java_1.7_64/jre
+
+After Reporting Service is installed, Java home is set to Java 1.6 
+JAVA_HOME=$WAS_HOME/java/jre
+
+At the last step of WebGUI installation, the installer create the default groups/users/roles in ObjectServer and in WebGUI. These groups/users/roles are added into tipRoleUser.dat and tipRoleUser.dat files in $JazzSM_HOME/profile/config/cells/JazzSMNode01Cell/applications/isc.ear/deployments/isc/isclite.war/WEB-INF directory. If JAVA_HOME is set to Java 1.6, the step to create the default groups/users/roles will fail with Java exception 
+
+Exception in thread "main" java.lang.UnsupportedClassVersionError: JVMCFRE003 bad major version; class=com/ibm/tivoli/tip/vmm4ncos/ObjectServerAdapter, offset=6
+
+Due to the exception, global.lock is generated in the same directory. 
+
+JAVA_HOME been set to Java 1.6 also cause the other issues, for example, confvmm4ncos.sh failure to run; global.lock can cause WebGUI fix pack installation failure. 
+
+The problem only occurs when Reporting Service is installed on the same server with WebGUI and ITNM. 
+
+
+
+RESOLVING THE PROBLEM
+To permanently fix the problem, manually update setTCRenv.sh file to point to Java 1.7 
+
+
+JAVA_HOME=$WAS_HOME/java_1.7_64/jre
+
+This is one-time action. Once it is updated, it will not need to do it again. We've already had the defect which have parked it for future release of TCR.

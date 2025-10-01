@@ -1,0 +1,29 @@
+Title: IBM Configuring the CPU Consumption graph on Lifecycle Query Engine - United States
+
+Text:
+LQE; JRS; CPU Consumption; Health Monitoring; LQE Application CPU; Total System CPU; zero; healthcenter TECHNOTE (FAQ)
+
+QUESTION
+ How can I configure the CPU Consumption graph on Lifecycle Query Engine (LQE) Health Monitoring for IBM Jazz Reporting Service (JRS)? 
+
+CAUSE
+The CPU Consumption graphs always show zero. 
+
+When you look at the LQE Health Monitoring Details you see that the CPU Consumption graphs showing 'LQE Application CPU' and 'Total System CPU' show zero. When you select 'View As A List' you will only see "Unavailable".
+[/support/docview.wss?uid=swg22010666&aid=1] [/support/docview.wss?uid=swg22010666&aid=1]
+
+[/support/docview.wss?uid=swg22010666&aid=2] [/support/docview.wss?uid=swg22010666&aid=2]
+
+The values are not captured as it is not enabled when the LQE server is started.
+
+
+
+ANSWER
+To enable the capture of these statistics you need to look in the server.startup.bat file to see if has the setting: 
+
+-agentlib:healthcenter 
+-Dcom.ibm.java.diagnostics.healthcenter.agent.port=1972
+
+For additional details see Starting the monitoring agent [https://www.ibm.com/support/knowledgecenter/en/SS3KLZ/com.ibm.java.diagnostics.healthcenter.doc/topics/enablingagent.html].
+
+Note: Enabling the capture of these statistics may affect the performance of the server.

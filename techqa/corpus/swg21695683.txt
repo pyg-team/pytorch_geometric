@@ -1,0 +1,13 @@
+Title: IBM Rational License Key Server (RLKS) is not affected by the GNU C library (glibc) vulnerability (CVE-2015-0235) - United States
+
+Text:
+ FLASH (ALERT)
+
+ABSTRACT
+ IBM Rational License Key Server (RLKS) and its components are not vulnerable to the GNU C library (glibc) vulnerability that has been referred to as “GHOST”.
+
+
+CONTENT
+RLKS and its following components in all editions and all platforms are NOT vulnerable to the GNU C library (glibc) vulnerability (CVE-2015-0235). 
+
+ *  Rational License Key Server (RLKS) RLKS Administration and Reporting Tool RLKS Administration Agent License Key Administrator (LKAD) License Borrow Tool

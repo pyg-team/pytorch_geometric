@@ -1,0 +1,204 @@
+Title: IBM PI19202: PLATFORM/APPLICATION BUNDLE INSTALLED TRANSACTION IS UNUSABLE AFTER CICS STARTUP - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  An Application bundle is being deployed to a Platform. The
+   platform consists of created region types (i.e. a "Top-down"
+   Platform). The bundle being deployed includes a CICS Transaction
+   definition.
+   .
+   The MAS uses MASPLTWAIT(YES). When the MAS is started, an
+   inquire (RLPM FUNCTION=GET_NEXT_BUNDLE ) is issued for the
+   bundle, and it is found to be in STATE(DISABLING). The intended
+   state is DISABLED. This does not match, so a  DISABLE (APRL
+   FUNCTION=SET_BUNDLE_BY_ID_VER) is issued against the bundle.
+   This causes the bundle to move to a FAILED state, and it cannot
+   be ENABLED.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All CICSPlex SM V5R2M0 Users                 *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:    A CICS bundle is installed into a    *
+   *                      region during startup as part of a      *
+   *                      CICS Cloud Platform. The bundle parts   *
+   *                      are installed successfully but during   *
+   *                      the installation a request is received  *
+   *                      to DISABLE the bundle. On examination,  *
+   *                      the bundle reports that it is in the    *
+   *                      FAILED state. The bundle parts can not  *
+   *                      be enabled in this state.               *
+   *                                                              *
+   *                         A CICS Cloud Application has been    *
+   *                      enabled but has returned to the         *
+   *                      SOMEDISABLED state due to a CICS        *
+   *                      bundle, without an entry point, failing *
+   *                      to ENABLE. When the Application is made *
+   *                      AVAILABLE, the request fails with a     *
+   *                      response APPLCTN_AVAILABLE_SOME_BUNDLES *
+   *                      but the Application becomes AVAILABLE.  *
+   ****************************************************************
+   * RECOMMENDATION: After applying the PTF that resolves this    *
+   *                 APAR, all CMASes and MASes must be recycled  *
+   *                 to pick up the new code. Note that regions   *
+   *                 do not need to be brought down and restarted *
+   *                 at the same time.                            *
+   ****************************************************************
+      During region startup CICS bundles installed on behalf of a
+   CICS Cloud Platform are created then set to the correct state by
+   CICSPlex SM. If a bundle part is asked to disable during CICS
+   bundle creation, it can transition to an invalid state.
+   
+      During an AVAILABLE action against a CICS Cloud Application
+   CICS is requested to set the CICS bundles to the available
+   state.  For bundles that do not have entry points that have been
+   forced DISABLED, perhaps due to an unsatisfied import, CICS
+   returns a NOT_ENABLED response from module DFHAPRL. This causes
+   CICSPlex SM to mistakenly identify that the bundle has failed to
+   become available. As the bundle has no entry points, this is not
+   possible.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Module DFHRLRS was updated to ignore attempts to disable a
+   bundle part while it is still being created.
+   
+      Module EYU0BPAS and EYU0BPMI were updated to correctly
+   acquire the CICS Cloud Application Enqueue.
+   
+      Module EYU0BNBN was updated to return the correct return code
+   when a CICS bundle SET fails.
+   
+      Module DFHRLPK has been updated to return AVAIL_NONE instead
+   of NOT_ENABLED when a bundle has no entry points.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  *********
+               * HIPER *
+               *********
+   FIX AVAILABLE BY PTF ONLY
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI19202
+   
+   
+ * REPORTED COMPONENT NAME
+   CICS TS Z/OS V5
+   
+   
+ * REPORTED COMPONENT ID
+   5655Y0400
+   
+   
+ * REPORTED RELEASE
+   900
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   YesHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-06-03
+   
+   
+ * CLOSED DATE
+   2014-09-19
+   
+   
+ * LAST MODIFIED DATE
+   2015-03-19
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UI21454 UI21455
+   
+   
+
+MODULES/MACROS
+ *  CJA0BNBN CJB0BNBN CJC0BNBN CJD0BNBN CJE0BNBN EYU0BNBN EYU0BPAS
+   EYU0BPMI
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CICS TS Z/OS V5
+   
+   
+ * FIXED COMPONENT ID
+   5655Y0400
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R90M PSY UI21455 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI21455]
+   UP14/09/27 P F409 ½
+   
+   
+ * R900 PSY UI21454 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI21454]
+   UP14/09/27 P F409 ½
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

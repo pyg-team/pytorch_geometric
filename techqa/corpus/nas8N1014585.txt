@@ -1,0 +1,35 @@
+Title: IBM STRDBG May Continue to Hang for Approximately 15 Seconds after a System Crash - United States
+
+Text:
+5250; DATAQ; DBG; RECOVERY; system; system down TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The STRDBG command fails to run quickly after a system crash because of debug server objects needing to be cleaned up. 
+
+RESOLVING THE PROBLEM
+After a system has been shut down abnormally due to a power loss or other failure, it is always best to contact the IBM Support Center to ensure the system is running correctly. 
+
+One known issue that has occurred many times happens to be with the ability to debug programs. If your system has not been shut down properly, follow these recommended steps. 
+
+1. To determine if any QTES* jobs are running, run the following command:
+
+WRKACTJOB JOB(QTES*) 2. Look in the QGPL library to determine if QTESDTAQ *DTAQ exists.
+
+a Use WRKACTJOB JOB(QTES*) and if there are QTES* jobs,then do a ENDTCPSVR *DBG to end the jobs. Use WRKACTJOBJOB(QTES*) again to ensure these jobs have ended.
+
+
+b If there are no QTES* jobs, run the following commands:
+
+STRTCPSVR *DBG
+ENDTCPSVR *DBG This should clean up the QTESDTAQ *DTAQ from QGPL, and the STRDBG command will no longer experience the 15-second delay. 
+
+More Details about QTES* Jobs 
+
+The QTESDBGHUB job and QTESDTAQ data queue are required for the Graphical System Debugger. If the user is not using the Graphical System Debugger, a workaround for the delay during the STRDBG command is to shut down the debug server (QTESDBGHUB) using the ENDTCPSVR *DBG command. 
+
+The debug hub has a built-in wait time (defaulted to 15 seconds) when communicating with the debug data queue. It appears that this wait time is expiring which means communications between the debug hub and debug data queue is not occurring.  
+
+
+Cross reference information Segment Product Component Platform Version Edition Operating System IBM i 6.1 
+HISTORICAL NUMBER
+ 438728542

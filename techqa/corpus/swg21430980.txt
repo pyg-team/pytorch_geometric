@@ -1,0 +1,35 @@
+Title: IBM Intermittent deadlocks occur when using OSGi applications with Java 2 security enabled - United States
+
+Text:
+OSGIJPARnotes TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When using OSGi applications with Java 2 security enabled, your system might experience intermittent deadlocks. 
+
+SYMPTOM
+When you are running in an environment with Java 2 security enabled and are deploying an OSGi application as a business-level application, the deadlocks most commonly occur at server startup. However, they can occur at other times. For example, these deadlocks can occur in the following instances: 
+
+ * When you import the enterprise bundle archive (EBA) file as an asset 
+ * When you add the EBA asset to a business-level application 
+ * When you start the business-level application
+
+
+As a result of the deadlock, the action does not complete. If you check the log files, you might see many instances of the following exception message: 
+
+[3/2/10 18:12:54:103 CST] 00000009 prefs W 
+Couldn't flush user prefs: java.util.prefs.BackingStoreException: 
+Couldn't get file lock. 
+RESOLVING THE PROBLEM
+Apply the following fixes, which are available from the IBM Support Fix Central Web page: 
+
+ * Interim fix for APAR number PM10732 [http://www.ibm.com/support/docview.wss?&uid=swg1PM10732] for WebSphere Application Server 
+ * WebSphere Application Server Version 7 Fix Pack 11 for distributed operating systems [http://www.ibm.com/support/docview.wss?uid=swg24026852] or for the z/OS operating system. [http://www.ibm.com/support/docview.wss?uid=swg1PM15830]
+
+RELATED INFORMATION
+ Information Center [http://www14.software.ibm.com/webapp/wsbroker/redirect?version=v700osgijpa&product=was-nd-mp]
+Fix Central [http://www.ibm.com/support/fixcentral/]
+
+
+ 
+
+Cross reference information Segment Product Component Platform Version Edition Application Servers WebSphere Application Server Not Applicable AIX, HP-UX, Linux, Solaris, Windows 7.0.0.9 Application Servers WebSphere Application Server for z/OS Not Applicable z/OS 7.0.0.9

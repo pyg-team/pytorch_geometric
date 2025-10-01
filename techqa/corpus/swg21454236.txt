@@ -1,0 +1,31 @@
+Title: IBM The Services Management Agent Environment tree does not show up. - United States
+
+Text:
+d4 agent SOA Services Management Agent Environment not showing up not displayed CAMD4ALL CAMD4INST TECHNOTE (TROUBLESHOOTING)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ US English 
+
+PROBLEM(ABSTRACT)
+ The Services Management Agent Environment tree does not show up in the Physical Navigator view for my SOA agent. 
+
+SYMPTOM
+You will not see a sub-tree under the Services Management Agent tree.
+
+
+CAUSE
+This is caused because there is no SOA traffic being generated.
+
+ENVIRONMENT
+ITM 6.2.2 with ITCAM for SOA 7.1.x.
+
+RESOLVING THE PROBLEM
+To resolve the problem simply run some SOA traffic through it. You will then see the Services Management Agent sub-tree show up under the Services Management Agent tree. This is how it looks when you have valid SOA traffic that's processed by the SOA agent.
+
+
+[/support/docview.wss?uid=swg21454236&amp;aid=1]
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ ITCAM for SOA agent

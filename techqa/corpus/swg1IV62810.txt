@@ -1,0 +1,160 @@
+Title: IBM IV62810: COLLECTOR CRASH OBSERVED IN CASE OF SQL SERVER CONNECTION ERROR. - United States
+
+Text:
+  FIXES ARE AVAILABLE
+ITCAM for Microsoft (R) App : SQL Server 6.3.0.1-TIV-ITM_SQL-IF0002 [http://www-01.ibm.com/support/docview.wss?uid=swg24038411]
+ITCAM for Microsoft (R) App : SQL Server 6.3.0.2-TIV-ITM_SQL-IF0003 [http://www-01.ibm.com/support/docview.wss?uid=swg24038534]
+ITCAM for Microsoft (R) App : SQL Server 6.3.0.1-TIV-ITM_SQL-IF0003 [http://www-01.ibm.com/support/docview.wss?uid=swg24039105]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Severity: 1
+   Approver: Hua Ming Zhong
+   Compid: 5724B96MO
+   Abstract: Collector crash observed in case of SQL server
+   connection error.
+   
+   Environment:
+   All windows versions
+   All Microsoft SQL Server versions
+   Microsoft SQL Server Agent 6.3.0.1
+   
+   Problem Description: Collector crashes on agent version
+   6.3.0.1 if the connection from collector exe with SQL server
+   gets terminated while fetching data from SQL Server.
+   Due to the connection failure following error message is
+   observed in collector log.
+   SQLSTATE: HY000, Native error: 0, Message: [Microsoft]
+   [ODBC SQL Server Driver]Unspecified error occurred
+   on SQL Server. Connection may have been terminated by the
+   server.
+   
+   Detailed Re-creation Procedure:
+   1. Install SQL agent version 630 FP1
+   2. Send request to Table Details attribute group.
+   3. Stop the SQL server service.
+   4. Observe the koqcoll.exe in task manager.
+   
+   Related Files and Output:
+   Observe koqcoll process using task manager
+   Observe collector logs
+   <CANDLE_HOME>\TMAITM6\logs\<HOSTNAME>_oq_<INSTANCE_NAME>_col.out
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  na
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  COLLECTOR CRASH OBSERVED IN CASE OF SQL SERVER CONNECTION
+   ERROR.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Now collector process does not crash when SQL server
+   connection error occures.
+   The fix for this APAR is contained in the following maintenance
+   packages:
+                        | interim fix | 6.3.0.1-TIV-ITM_SQL-IF0002
+                        | interim fix | 6.3.0.2-TIV-ITM_SQL-IF0003
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV62810
+   
+   
+ * REPORTED COMPONENT NAME
+   TIV MON MS SQL
+   
+   
+ * REPORTED COMPONENT ID
+   5724B96MO
+   
+   
+ * REPORTED RELEASE
+   630
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-07-22
+   
+   
+ * CLOSED DATE
+   2014-09-22
+   
+   
+ * LAST MODIFIED DATE
+   2014-10-20
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TIV MON MS SQL
+   
+   
+ * FIXED COMPONENT ID
+   5724B96MO
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R630 PSY
+   UP

@@ -1,0 +1,77 @@
+Title: IBM How to identify what columns are related to a constraint for error SQL3603N - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ After LOAD, you may receive SQL0668N reason code "1" when issuing queries on a table. 
+
+SYMPTOM
+ 
+
+For example, 
+
+$ db2 "select count(*) from S1.T1"
+
+1
+-----------
+SQL0668N Operation not allowed for reason code "1" on table
+"S1.T1". SQLSTATE=57016
+
+SQL0668N Operation not allowed for reason code "1" on table "S1.T1".
+
+Explanation:
+
+Access to table "<table-name>" is restricted. The cause is based on the
+following reason codes "<reason-code>":
+
+1
+
+The table is in the Set Integrity Pending No Access state. The
+integrity of the table is not enforced and the content of the
+table may be invalid. An operation on a parent table or an
+underlying table that is not in the Set Integrity Pending No
+Access state may also receive this error if a dependent table
+is in the Set Integrity Pending No Access state.
+
+$ db2 set integrity for S1.T1 immediate checked 
+
+
+DB21034E The command was processed as an SQL statement because it was not a
+valid Command Line Processor command. During SQL processing it returned:
+SQL3603N Integrity processing through the SET INTEGRITY statement has found
+an integrity violation involving a constraint, a unique index, a generated
+column, or an index over an XML column. The associated object is identified by "S1.T1.SQL131001102018230". SQLSTATE=23514
+
+
+RESOLVING THE PROBLEM
+
+1. Verify the type of the constraint and whether it's enforced. 
+$ db2 "select TYPE, ENFORCED from SYSCAT.TABCONST where CONSTNAME='SQL131001102018230'"
+TYPE ENFORCED
+---- --------
+P Y
+
+1 record(s) selected.
+
+You can find the meanings of TYPE column in the following list: 
+
+ * F = Foreign key 
+ * I = Functional dependency 
+ * K = Check 
+ * P = Primary key 
+ * U = Unique
+
+
+2. Find out what are the colmuns associated with this constraint: 
+For example: 
+$ db2 "select COLSEQ,COLNAME from SYSCAT.KEYCOLUSE where CONSTNAME='SQL131001102018230'" 
+COLSEQ COLNAME 
+------ -------------------------------------------------------------------------------------------------------------------------------- 
+1 C1 
+
+1 record(s) selected. 
+
+3. At this point, you can drop the constraint, and clean-up column data that violates the constraint and recreate the constrain. Alternatively if you were doing LOAD, then you can inspect the data to load and issue LOAD again. RELATED INFORMATION
+ SYSCAT.TABCONST catalog view [http://pic.dhe.ibm.com/infocenter/db2luw/v9r7/topic/com.ibm.db2.luw.sql.ref.doc/doc/r0001062.html]
+SYSCAT.KEYCOLUSE catalog view [http://pic.dhe.ibm.com/infocenter/db2luw/v9r7/topic/com.ibm.db2.luw.sql.ref.doc/doc/r0001048.html]

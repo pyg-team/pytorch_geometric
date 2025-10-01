@@ -1,0 +1,46 @@
+Title: IBM Content Navigator documentation: Configuring the User Column Settings plug-in (IBM FileNet P8) - United States
+
+Text:
+ PRODUCT DOCUMENTATION
+
+ABSTRACT
+ For IBM FileNet Content Manager repositories, users can select and save custom column settings for the Browse view by registering and configuring the User Column Settings plug-in. 
+
+CONTENT
+Before you begin
+
+
+You can use the sample jar file UserColumnSettingsPlugin.jar. Or, if you want to extend the sample plug-in, you can copy the sample plug-in project files, customize the plug-in, and replace the UserColumnSettingsPlugin.jar with your own jar files.
+
+About this task
+By registering and configuring the User Column Settings plug-in, an administrator allows users to select and save custom column settings for the Browse view for IBM FileNet Content Manager repositories. Users can select which properties to display, in what order, and whether to display the properties in the Details view, the Magazine view, or both.
+
+The plug-in includes a custom menu action to open a custom dialog, and a custom service to save and retrieve a user’s saved settings, through the use of the following filters:
+- Open folder Request filter
+- Open folder Response filter
+
+Procedure 
+
+To configure the User Column Settings plug-in: 
+
+ 1. In the IBM Content Navigator administration tool, select Plug-ins, and then click New Plug-in. 
+ 2. Register and configure the User Column Settings plug-in: UserColumnSettingsPlugin.jar. Load the JAR file by entering the fully qualified URL or the file path to the UserColumnSettingsPlugin.jar file that is installed on the server:  * Enter the URL in the following sample format: http://host_name:port_number/ECMClient_installdir/samples/ UserColumnSettingsPlugin.jar 
+     * Enter the path to the file that is installed on the server, for example:  * Linux: /opt/IBM/ECMClient/plugins/UserColumnSettingsPlugin.jar 
+        * Microsoft Windows: C:\Program Files\IBM\ECMClient\plugins\ UserColumnSettingsPlugin.jar
+       
+       
+    
+    
+ 3. Click “Load”. The plug-in is loaded, the Displayed Column Preferences action is available to be added to your menus. 
+ 4. Save the plug-in configuration. 
+ 5. In the IBM Content Navigator administration tool, select Menus, and then select the menu that you want to add the Displayed Column Preferences action. For example, you might create a custom menu by selecting the Default banner user session context menu, click Copy, and enter a new name for your menu. 
+ 6. Select the Displayed Column Preferences action from the list of Available actions, and add it to the list of Selected actions, and save your changes. 
+ 7. In the IBM Content Navigator administration tool, select Desktops, and then select the desktop to add the new menu, and click Edit. 
+ 8. For the selected desktop, on the Menus page, for the menu that you want to change, select your new menu. Save your changes.
+
+
+Results When you refresh your browser, the Displayed Column Preferences action is displayed in the menu that you specified for your desktop. You can select the Displayed Column Preferences action, and a dialog is displayed where you set up your preferred column settings. Then, the columns are displayed in the Browse view.
+
+For general information about configuring plug-ins, see Registering and configuring plug-ins [http://www.ibm.com/support/knowledgecenter/SSEUEX_2.0.3/com.ibm.installingeuc.doc/eucco012.htm].
+
+Minimum required version: IBM Content Navigator Version 2.0.3 Fix Pack 7.

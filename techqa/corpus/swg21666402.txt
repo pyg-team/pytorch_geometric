@@ -1,0 +1,61 @@
+Title: IBM Why does IBM Datacap 8.1 appear to hang, requiring a restart of all components? - United States
+
+Text:
+hang; non responsive; timeout; Admin retry; Engine retry TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Why does IBM Datacap appear to hang, requiring a restart of all components? 
+
+SYMPTOM
+The Datacap system appears to become non-responsive, requiring a restart of all components to get it working again.
+
+
+CAUSE
+The cause is due to a malformed SQL query string. From the client perspective, it was reported to occur during logon via TMWeb, and Thick Client. Another case was from a user that was doing a Thick Client query. 
+
+TMServer has an feature where it will retry any command that results in error, based on the settings in the registry. The settings reflect the number of retries to do and the time interval to wait. The default settings have a duration of 16 minutes, which gives the appearance that the TMServer has hung.
+
+
+DIAGNOSING THE PROBLEM
+Collect and examine the TMServer log. Look for multiple instances (6-12) of an ADO error, indicating a bad query was executed. This information can be used to identify the user that is causing the problem
+
+
+
+RESOLVING THE PROBLEM
+While bad queries should be avoided, the following will allow TMServer to respond faster, should a bad query happen: 
+
+1. Stop all Datacap applications, then stop the TMServer. 
+
+2. Change the following registry entries on the TMServer box:
+
+
+ * 
+ * 
+ *  HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node\Datacap\TMS\InterThread (REG_SZ) Admin retries HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node\Datacap\TMS\InterThread (REG_SZ) ADO retries HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node\Datacap\TMS\InterThread (REG_SZ) Engine retries 
+ * 
+ * 
+ * 
+ *  HKEY_LOCAL_MACHINE\SOFTWARE\Datacap\TMS\InterThread (REG_SZ) Admin retries HKEY_LOCAL_MACHINE\SOFTWARE\Datacap\TMS\InterThread (REG_SZ) ADO retries HKEY_LOCAL_MACHINE\SOFTWARE\Datacap\TMS\InterThread (REG_SZ) Engine retries 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+
+
+3. Restart the TMServer, then start the Datacap applications in reverse order. 
+
+Please Note: Since these are considered tuning parameters, you will need to test to see what settings work best for your system. 
+
+Note: for Datacap 9.x, the registry entry name is singular, as in 'Admin retry' or 'Engine retry'.

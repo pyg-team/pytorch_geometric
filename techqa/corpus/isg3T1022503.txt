@@ -1,0 +1,54 @@
+Title: IBM How to enable group admin feature in Process Manager - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How to enable group admin feature in Process Manager 
+
+CAUSE
+There is a need to enable none Process Manager admins to control flows and jobs for their users
+
+ANSWER
+This feature allow to create user groups and have their admins and have control on their flows and jobs 
+
+Please follow the steps below to enable this feature.
+Actions on LSF cluster :
+1- Edit lsb.users file and enable the section as the example below:
+
+
+ * Begin UserGroup
+ * 
+ * GROUP_NAME GROUP_MEMBER USER_SHARES GROUP_ADMIN
+ * 
+ * ugroup1 (user1 user2 user3) ([user1, 4] [others, 10]) (AdminUser or Admingroup)
+ * 
+ * 
+ * End UserGroup
+
+
+2- Issue badmin reconfig for the changes to take effect 
+3- For windows environment use Windows Service Manager console to stop and start LSF services:  * LIM, RES and SBD 
+
+
+Actions on Process Manager Server: 
+1- Stop Process Manager service : jadmin stop 
+2- Edit and save the js.conf file under JS_TOP and add the below parameter: 
+ * JS_ENABLE_GROUP_ADMIN=true 
+   
+
+3- Start Process Manager service : jadmin start 
+ * 
+ * egosh service stop <service name> 
+   egosh service start <service name> 
+   
+ * 
+ * 
+
+The outcome of the above steps will allow the user called: AdminUser or all members of the Admingroup under the column "GROUP_ADMIN" will be able to control all the flows and the jobs for users : user1, user2 and user3 
+
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition IBM Spectrum Computing IBM Spectrum LSF Process Manager

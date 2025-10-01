@@ -1,0 +1,147 @@
+Title: IBM IT09145: DISABLING ALL DOMAINS OR APPLIANCE QUIESCE WITH LARGE AMOUNT OF SQL CONNECTIONS MAY LEAD TO AN UNEXPECTED RESTART OF APPLIANCE - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Fix packs for DataPower Integration Appliance version 6.0 [http://www-01.ibm.com/support/docview.wss?uid=swg24034957]
+Fix packs for DataPower Service Gateway version 6.0 [http://www-01.ibm.com/support/docview.wss?uid=swg24034959]
+Fix packs for DataPower Service Gateway version 6.0.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24036407]
+Fix packs for DataPower Integration Appliance version 6.0.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24036410]
+Fix packs for DataPower Service Gateway version 7.0 [http://www-01.ibm.com/support/docview.wss?uid=swg24037486]
+Fix packs for DataPower Integration Appliance version 7.0 [http://www-01.ibm.com/support/docview.wss?uid=swg24037488]
+Fix packs for DataPower Gateway version 7.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24038524]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When there are a large number of SQL connections configured on
+   an appliance, quiescing or disabling all domains may lead to an
+   unexpected restart of the appliance which does not produce a
+   backtrace.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Datapower system that has large number of SQL Data Source
+   configured might restart while disabling domains or
+   quiesceding the appliance.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fix is available in 6.0.0.16, 6.0.1.12, 7.0.0.9, 7.1.0.6
+   and 7.2.0.0.
+   
+   For a list of the latest fix packs available, please see:
+   http://www-01.ibm.com/support/docview.wss?uid=swg21237631 [http://www-01.ibm.com/support/docview.wss?uid=swg21237631]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT09145
+   
+   
+ * REPORTED COMPONENT NAME
+   DATAPOWER
+   
+   
+ * REPORTED COMPONENT ID
+   DP1234567
+   
+   
+ * REPORTED RELEASE
+   601
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-05-27
+   
+   
+ * CLOSED DATE
+   2015-07-28
+   
+   
+ * LAST MODIFIED DATE
+   2015-09-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   DATAPOWER
+   
+   
+ * FIXED COMPONENT ID
+   DP1234567
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R600 PSY
+   UP
+   
+   
+ * R601 PSY
+   UP
+   
+   
+ * R700 PSY
+   UP
+   
+   
+ * R710 PSY
+   UP
+   
+   
+ * R720 PSY
+   UP

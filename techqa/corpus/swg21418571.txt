@@ -1,0 +1,34 @@
+Title: IBM Duplicate CA certificate in DataPower SOA appliance - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Why does my WebSphere DataPower SOA Appliance not work properly when there are CA certificates with the same subject name in a validation credential? 
+
+CAUSE
+Prior to version 3.8.2, the DataPower appliance does not return consistent results when a ValCred contains multiple certificates with the same subject DN, or certificates that have the same DN in their subject and issuer name fields, but which are not trusted roots. See Validate branched certification path support [http://www-01.ibm.com/support/docview.wss?uid=swg21452478] for further details.
+
+DIAGNOSING THE PROBLEM
+The usual error message in the log will be similar to log message given below. 
+
+Data:Time [X.X.X.X.X.X] xs40-ref-1-xtc-de [ssl][error]valcred(ABCD): trans(1234567)[X.X.X.X]: SSLProxyProfile 'xyz-ssl': connection error: CA certificate missing true Basic Constraints CA flag
+
+
+
+RESOLVING THE PROBLEM
+To resolve this issue: 
+
+ * Remove the duplicate CA certificate that is not required. This may be decided based on expiration date. 
+ * Match issuer and serial instead on DN of the CA certificate.
+
+
+Alternatively, you can upgrade to firmware version 3.8.2 for the following three cases:  * For SSL mutual authentication to restrict certain SSL client's certificates 
+ * For digital signature verification to trust certain signature issuers 
+ * Custom use of the dp:validate-certificate() extension function
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration WebSphere DataPower Integration Appliance XI50 Firmware 3.8.2, 3.8.1, 3.8, 3.7.3 Edition Independent

@@ -1,0 +1,156 @@
+Title: IBM JR53526: ERROR OCCURS WHILE CONNECTING IBM INTEGRATION DESGINER TO IBM DATAPOWER GATEWAY - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+ DIRECT LINK TO FIX
+7.5.1.2-WS-IID-IFJR53526 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Integration+Designer&fixids=7.5.1.2-WS-IID-IFJR53526&source=SAR]
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Connecting from IBM Integration Designer to IBM DataPower
+   Gateway fails after you upgrade DataPower Gateway to fix pack
+   7.0.0.7. You see the following error:
+   
+   "SSL handshake on the connection to the DataPower appliance
+   <host> was not successful. Contact the DataPower administrator.
+   The JVM truststore file
+   "<WID_HOME>/v7.5/jdk/jre/lib/security/cacerts" cannot be loaded
+   because of I/O problems or format problems with the JVM
+   truststore data. Try to create a new truststore file using the
+   IBM ikeyman utility located in <WID_HOME>/eclipse/jdk/jre/bin."
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Integration Designer and Data Power Gateway cannot connect
+   because SSLv3 protocol is enabled in the DataPower Gateway web
+   service plug-in. Because SSLv3 protocol is vulnerable and is not
+    supported by every implementation of the Java platform, it must
+    be replaced with TLSv1 protocol.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A fix is available for IBM Integration Designer that replaces
+   SSLv3 protocol with TLSv1 protocol in the DataPower Gateway web
+   service plug-in because TLSv1 protocol is the strongest and is
+   supported by every implementation of the Java platform.
+   
+   On Fix Central (http://www.ibm.com/support/fixcentral), search
+   for JR53526:
+   
+   1. Select IBM Integration Designer with your edition from the
+   product selector, the installed version to the fix pack level,
+   and your platform, and then click Continue.
+   2. Select APAR or SPR, enter JR53526, and click Continue.
+   
+   When you download fix packages, ensure that you also download
+   the readme file for each fix. Review each readme file for
+   additional installation instructions and information about the
+   fix.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR53526
+   
+   
+ * REPORTED COMPONENT NAME
+   INTEGRATION DES
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9702
+   
+   
+ * REPORTED RELEASE
+   751
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-06-09
+   
+   
+ * CLOSED DATE
+   2015-07-17
+   
+   
+ * LAST MODIFIED DATE
+   2015-07-17
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   INTEGRATION DES
+   
+   
+ * FIXED COMPONENT ID
+   5725C9702
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R751 PSY
+   UP

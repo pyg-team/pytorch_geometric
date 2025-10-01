@@ -1,0 +1,33 @@
+Title: IBM Remote scanning freezes or stops with IBM Datacap Taskmaster Capture - United States
+
+Text:
+hang scan ie8 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Remote scanning using scanner freezes or stops when using Internet Explorer 8 or later. 
+
+SYMPTOM
+Additional symptoms include: 
+
+ * The web page may crash and recover (close and quickly reopen). 
+ * The freeze may occur during or after scanning the first page.
+
+
+CAUSE
+Internet Explorer (IE) 8 and later includes its own version of Data Execution Prevention (DEP) which can cause the above symptoms and prevent scanning from running.
+
+ENVIRONMENT
+Internet Explorer 8 and later
+
+
+
+RESOLVING THE PROBLEM
+To disable DEP: 
+
+ 1. In the browser, open the Tools menu, and select Internet Options. 
+ 2. Select the Advanced tab. 
+ 3. Uncheck Enable memory protection to mitigate online attacks. 
+ 4. Close all windows, restart the browser and start scanning again.
+
+
+Note: If using Datacap 8.1, this issue has been fixed in 8.1 Fix Pack 1.

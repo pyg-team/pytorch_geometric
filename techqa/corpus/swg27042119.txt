@@ -1,0 +1,24 @@
+Title: IBM Conflict between InfoSphere Guardium and WAS 8.0 - United States
+
+Text:
+ PRODUCT DOCUMENTATION
+
+ABSTRACT
+ Here is a third-party software application that conflicts with the Guardium application. 
+
+CONTENT
+The following identifies third-party applications that interfere with the installation or running of Guardium and how to work around these conflicts. 
+
+WAS 8.0 
+
+(4) WAS 8.0 (IBM WebSphere application) - Bug 39694 - The startup of Websphere is making a lot of shmat() calls which S-TAP must check. The problem is latency introduced from checking the large number of shmat() calls. 
+
+Specifically, WAS startup invokes a Java process which makes a very large number of shmat() (shared memory) calls. For maximum security, S-TAP must intercept all shared memory calls to determine which are database-related. This shmat checking can introduce latency to the WAS startup process. Since this Java activity is not interesting from an auditing perspective, it can be omitted from the check by using the blacklist_shmem_ops_by_proc parameter in the STAP guard_tap.ini. 
+
+For example: 
+
+blacklist_shmem_ops_by_proc=/usr/IBM/WebSphere2/AppServer/java/bin/java 
+
+Substitute the Java location with the actual path to the Java binary used by your WAS application. 
+
+Restart STAP after making any guard_tap.ini changes.

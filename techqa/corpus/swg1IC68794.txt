@@ -1,0 +1,205 @@
+Title: IBM IC68794: AUTOMATIC SETTING FOR STATEMENT HEAP MAY RESULT IN INCONSISTENT PERFORMANCE DUE TO EARLY FALLBACK TO GREEDY JOIN OPTIMIZATION - United States
+
+Text:
+z/os  FIXES ARE AVAILABLE
+DB2 Version 9.5 Fix Pack 7 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24028731]
+DB2 Version 9.5 Fix Pack 8 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24030302]
+DB2 Version 9.5 Fix Pack 9 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24032087]
+DB2 Version 9.5 Fix Pack 10 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24033308]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The AUTOMATIC setting for STMTHEAP currently relies on some
+   internally calculated memory thresholds to decide when to
+   discontinue dynamic join enumeration and fall back to greedy
+   join enumeration. This prevents the allocation of excessive
+   amounts of memory under dynamic join enumeration.
+   
+   The current thresholds used for making the decision to
+   discontinue dynamic join enumeration can be triggered in an
+   inconsistent and unpredictable manner.  This may result in
+   different access plans for the same query at different times -
+   sometimes compiled with dynamic join, and sometimes greedy. A
+   query compiled under greedy may not perform as well as with
+   dynamic,  so the differing access plan could result in
+   differences in performance.
+   
+   If a query is experiencing unexpected changes in performance
+   when STMTHEAP is AUTOMATIC,  a secondary indicator that this may
+   be related to this issue would be unexpected SQL0437W (rc=1
+   warnings returned to the application.
+   
+   With this APAR, a consistent upper limit for dynamic join memory
+   usage will be used when Statement Heap is set to AUTOMATIC. That
+   upper limit will be the configured value underlying the
+   AUTOMATIC setting, which previously had not been utilized. There
+   is no change to the behaviour of allowing unlimited growth
+   during greedy join enumeration under AUTOMATIC, and there is no
+   change to the behaviour when Statement Heap is set to a fixed
+   value.
+   
+   For example,
+     db2 update db cfg for sample using 8192 AUTOMATIC
+   
+   results in the setting:
+     STMTHEAP = AUTOMATIC (8192)
+   
+   Under the old behaviour, the value 8192 had no effect. Internal
+   volatile thresholds were used for dynamic join memory allowance,
+   and the greedy join memory allowance was unlimited.
+   
+   Under the new behaviour, the dynamic join allowance is 8192 (4K
+   pages), and the greedy join allowance remains unlimited.
+   
+   Note that the statement heap growth can still be limited by
+   higher-level memory limits such as APPL_MEMORY, INSTANCE_MEMORY,
+   and system memory.
+   
+   One further change is that the default Statement Heap setting
+   for 64-bit DB2 has been doubled from AUTOMATIC (4096) to
+   AUTOMATIC (8192). This change affects only new databases created
+   on 64-bit instances.  The Statement Heap setting is not altered
+   on migration or Fix Pack upgrades.
+   
+   In some cases, the existing underlying value for the AUTOMATIC
+   setting may reflect a lower memory limit for dynamic join than
+   the effective limit at a given time under the old behaviour. If
+   SQL0437 (rc=1) warnings are received after applying this APAR,
+   it may be necessary to increase the underlying value for
+   STMTHEAP.
+   
+   In other cases, the existing underlying value for the AUTOMATIC
+   setting may reflect a higher memory limit for dynamic join than
+   the effective limit at a given time under the old behaviour.
+   After applying this APAR fix, if performance is degraded due to
+   increased query compilation time, it may be necessary to
+   decrease the underlying value for STMTHEAP.
+   
+   Updates can be performed dynamically as follows:
+      db2 connect to <db>
+      db2 update db cfg for <db> using STMTHEAP <new value>
+   AUTOMATIC
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Update STMTHEAP to a non-AUTOMATIC value (for example, the
+   current on-disk value underlying AUTOMATIC)
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * Configurations with Statement Heap (STMTHEAP) set to         *
+   * AUTOMATIC                                                    *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * See Error Description                                        *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Update STMTHEAP to non-AUTOMATIC value                       *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Problem first fixed in DB2 Version 9.5 Fix Pack 7
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC68794
+   
+   
+ * REPORTED COMPONENT NAME
+   DB2 FOR LUW
+   
+   
+ * REPORTED COMPONENT ID
+   DB2FORLUW
+   
+   
+ * REPORTED RELEASE
+   950
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-05-21
+   
+   
+ * CLOSED DATE
+   2010-10-12
+   
+   
+ * LAST MODIFIED DATE
+   2011-03-11
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    IC69070 [http://www-01.ibm.com/support/docview.wss?uid=swg1IC69070] IC69071 [http://www-01.ibm.com/support/docview.wss?uid=swg1IC69071]
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   DB2 FOR LUW
+   
+   
+ * FIXED COMPONENT ID
+   DB2FORLUW
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R950 PSN
+   UP

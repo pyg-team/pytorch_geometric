@@ -1,0 +1,273 @@
+Title: IBM PK51392: MESSAGE J2CA0024E OCCURRED WHEN USING UOWMANAGER TO PERFORM SOME WORK UNDER A LOCAL TRANSACTION. - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Java SDK 1.5 SR8 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24020073]
+Java SDK 1.5 SR8 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24021203]
+Java SDK 1.5 SR10 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24024201]
+6.1.0.31: Java SDK 1.5 SR11 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24026453]
+6.1.0.33: Java SDK 1.5 SR12 FP1 Cumulative Fix for WebSphere [http://www-01.ibm.com/support/docview.wss?uid=swg24027786]
+6.1.0.29: Java SDK 1.5 SR11 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24025191]
+6.1.0.35: Java SDK 1.5 SR12 FP2 Cumulative Fix for WebSphere [http://www-01.ibm.com/support/docview.wss?uid=swg24028574]
+6.1.0.37: Java SDK 1.5 SR12 FP3 Cumulative Fix for WebSphere [http://www-01.ibm.com/support/docview.wss?uid=swg24029525]
+6.1.0.39: Java SDK 1.5 SR12 FP4 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24030426]
+6.1.0.41: Java SDK 1.5 SR12 FP5 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24031035]
+6.1.0.43: Java SDK 1.5 SR13 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24031963]
+6.1.0.45: Java SDK 1.5 SR14 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24033270]
+6.1.0.47: WebSphere Application Server V6.1 Fix Pack 47 [http://www-01.ibm.com/support/docview.wss?uid=swg24035508]
+6.1.0.47: Java SDK 1.5 SR16 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24035649]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  I am using the UOWManager to start a new local transaction in
+   which to do some database work.  My understanding is that I am
+   supposed to commit the transaction within the run method of
+   the UOWAction since the local transaction is configured to be
+   application resolved. However, when I do commit in the run
+   method I get the following exception somewhat later when the
+   UOWManager.runUnderUOW() method is finishing up:
+   
+   [7/17/07 16:03:10:536 CDT] 0000003e LocalTransact E
+   J2CA0024E: Method commit, within transaction branch ID <null>
+   of resource pool jdbc/WPSDB, caught
+   
+   com.ibm.ws.exception.WsException: DSRA0040E: WebSphere
+   internal error occurred. Please contact WebSphere support with
+   the following data: Cannot commit SPI local transaction.
+   DSRA0250E: An exception was received by the Data Store
+   Adapter. See original exception message: Action = LT_COMMIT is
+   not allowed for the current transaction state =
+   NO_TRANSACTION_ACTIVE.
+   
+   at com.ibm.ws.rsadapter.spi.WSRdbSpiLocalTransactionImpl.commit
+   (WSRdbSpiLocalTransactionImpl.java:407)
+   at com.ibm.ejs.j2c.LocalTransactionWrapper.commit(LocalTransact
+   ionWrapper.java:259)
+   at com.ibm.ws.LocalTransaction.LocalTranCoordImpl.complete(Loca
+   lTranCoordImpl.java:870)
+   at com.ibm.ws.LocalTransaction.LocalTranCoordImpl.complete(Loca
+   lTranCoordImpl.java:756)
+   at com.ibm.ws.LocalTransaction.LocalTranCoordImpl.end(LocalTran
+   CoordImpl.java:1331)
+   at com.ibm.ws.LocalTransaction.LocalTranCurrentImpl.end(LocalTr
+   anCurrentImpl.java:493)
+   at com.ibm.ws.LocalTransaction.LocalTranCurrentSet.end(LocalTra
+   nCurrentSet.java:257)
+   at com.ibm.ws.uow.UOWManagerImpl.uowCommit(UOWManagerImpl.java:
+   1051)
+   at com.ibm.ws.uow.UOWManagerImpl.uowEnd(UOWManagerImpl.java:101
+   7)
+   at com.ibm.ws.uow.UOWManagerImpl.runUnderNewUOW(UOWManagerImpl.
+   java:967)
+   at com.ibm.ws.uow.UOWManagerImpl.runUnderUOW(UOWManagerImpl.jav
+   a:507)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All IBM WebSphere Application Server version *
+   *                 6.0.2 and 6.1 users of UOWManager            *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Message J2CA0024E was produced during   *
+   *                      the termination of the runUnderUOW()    *
+   *                      method                                  *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   An application was using the UOWManager to start a new local
+   transaction in which to do some database work.  The
+   transaction was committed within the run method of  the
+   UOWAction since the local transaction is configured to be
+   application resolved. However, when the commit was done in the
+   run method the following exception occurred when the
+   UOWManager.runUnderUOW() method was finishing:
+   
+   [7/17/07 16:03:10:536 CDT] 0000003e LocalTransact E J2CA0024E:
+   Method commit, within transaction branch ID <null> of resource
+   pool jdbc/WPSDB, caught
+   
+   com.ibm.ws.exception.WsException: DSRA0040E: WebSphere
+   internal error occurred. Please contact WebSphere support with
+   the following data: Cannot commit SPI local transaction.
+   DSRA0250E: An exception was received by the Data Store
+   Adapter. See original exception message: Action = LT_COMMIT is
+   not allowed for the current transaction state =
+   NO_TRANSACTION_ACTIVE.
+   
+   This problem only occurred when the Activity Session service
+   was enabled for the server, and the application component from
+   which the call to runUnderUOW() was made, was configured with
+   a local transaction resolver of Container At Boundary. When
+   using runUnderUOW the application's resolver configuration
+   should be ignored - but when the Activity Session service was
+   enabled this was not being done.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Class UOWManagerImpl has been changed so that a local
+   transaction containment that is begun during the runUnderUOW()
+   method will have a resolver of Application.
+   
+   The fix for this APAR is currently targeted for inclusion in
+   fixpack 6.0.2.25 and 6.1.0.13. Please refer to the recommended
+   updates page for delivery information:
+   http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK51392
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSPH APP SERV
+   
+   
+ * REPORTED COMPONENT ID
+   5724J0800
+   
+   
+ * REPORTED RELEASE
+   61A
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2007-08-21
+   
+   
+ * CLOSED DATE
+   2007-09-19
+   
+   
+ * LAST MODIFIED DATE
+   2007-09-19
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  TRAN
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBSPH APP SERV
+   
+   
+ * FIXED COMPONENT ID
+   5724J0800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R60A PSY
+   UP
+   
+   
+ * R60H PSY
+   UP
+   
+   
+ * R60I PSY
+   UP
+   
+   
+ * R60P PSY
+   UP
+   
+   
+ * R60S PSY
+   UP
+   
+   
+ * R60W PSY
+   UP
+   
+   
+ * R60Z PSY
+   UP
+   
+   
+ * R61A PSY
+   UP
+   
+   
+ * R61H PSY
+   UP
+   
+   
+ * R61I PSY
+   UP
+   
+   
+ * R61P PSY
+   UP
+   
+   
+ * R61S PSY
+   UP
+   
+   
+ * R61W PSY
+   UP
+   
+   
+ * R61Z PSY
+   UP

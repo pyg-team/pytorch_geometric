@@ -1,0 +1,56 @@
+Title: IBM Unable to login to TSAM SimpleSRM UI - United States
+
+Text:
+GUI; UI; simplesrm; logon; login; unable; fail; failing TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ You are not able to login to the SimpleSRM GUI. 
+
+SYMPTOM
+Looking at the SystemOut.log you can see the following errors: 
+
+[11/14/12 11:38:07:834 SGT] 0000002a SystemOut O 2012.11.14 
+11:38:07.834 com.tivoli.dms.common.DBOperation executeUpdate Tivoli 
+Tivoli Web Gateway Device_Manager_Server geptsa01 
+com.ibm.db2.jcc.am.SqlException: DB2 SQL Error: SQLCODE=-964, 
+SQLSTATE=57011, SQLERRMC=null, DRIVER=3.61.65 
+[11/14/12 11:38:07:838 SGT] 0000002a SystemOut O 2012.11.14 
+11:38:07.838 com.tivoli.dms.common.DBOperation executeUpdate Tivoli 
+Tivoli Web Gateway Device_Manager_Server geptsa01 
+DYM2789E: The following SQL command failed: UPDATE 
+NOTIFICATION_POLLING_LOCK SET LOCKED = 1, DMS_ID = 133965476806009558 
+WHERE LOCKED = 0 
+See nested exception for details. 
+[11/14/12 11:38:34:727 SGT] 00000527 SystemOut O 
+[maximo-UserMonitor][ERROR][SR ] BMXAA4211E - Database error number 
+-723 has occurred when operating on MAXSESSION MAXSESSIONUID=4,328. 
+An error occurred in a triggered SQL statement in trigger 
+"MAXIMO.MAXSESSION_U". Information returned for the error includes 
+SQLCODE "-964", SQLSTATE "57011" and message tokens "".. SQLCODE=-723, 
+SQLSTATE=09000, DRIVER=3.61.65 
+psdi.util.MXSystemException: BMXAA4211E - Database error number -723 
+has occurred when operating on MAXSESSION MAXSESSIONUID=4,328. 
+[11/14/12 11:38:44:924 SGT] 00000522 SystemOut O 
+[maximo-CrontaskMonitorThread][ERROR][SR ] BMXAA6425E - The server was 
+not deleted from the Maxsession table: MXServerlwi 
+com.ibm.db2.jcc.am.SqlException: The transaction log for the database 
+is full.. SQLCODE=-964, SQLSTATE=57011, DRIVER=3.61.65 
+
+
+CAUSE
+The errors indicate depletion of transaction log space.
+
+
+RESOLVING THE PROBLEM
+Change LOGSECOND db2 parameter using command: 
+
+
+db2 update db cfg for <dbname> using logsecond <new_value> 
+
+where <new_value> will be the new value you want (for example double the current value you have) 
+
+You can find the current value for the LOGSECOND parameter by reviewing the output from the GET DATABASE CONFIGURATION command - look at the Infocenter: 
+
+http://publib.boulder.ibm.com/infocenter/db2luw/v9/topic/com.ibm.db2.udb.admin.doc/doc/r0001954.htm [http://publib.boulder.ibm.com/infocenter/db2luw/v9/topic/com.ibm.db2.udb.admin.doc/doc/r0001954.htm]
+
+or from the Configure Database window of the DB2 Control Center.

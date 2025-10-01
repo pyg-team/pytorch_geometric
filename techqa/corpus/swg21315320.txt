@@ -1,0 +1,45 @@
+Title: IBM Report Support - United States
+
+Text:
+TPAEREP; maximo; report; ibmeam; v7; data; analysis; custom; support; 71; 75; 76; birt TECHNOTE (FAQ)
+
+QUESTION
+ How are customized and modified reports supported by IBM? 
+
+ANSWER
+In each of the Maximo-based Product releases, reporting is enabled as a key component for you to analyze the powerful and rich Maximo data set. This analysis can be used to help you make the best business decisions possible in your individual environment.
+The reporting functionality provides you with powerful, configurable system level reporting functionality and value-add reports. The system level reporting functionality includes report security, execution, scheduling, emailing and report administration.
+
+Out of the box reports are delivered to you as examples of how you can analyze the rich Maximo Data Set. Depending on the release and the number of products you are licensed for determines the number of Out of the Box (OOB) reports you have received. These reports span the variety of applications and include list, detail, analysis, drilldown and graphical reports.
+
+Due to the amount of application and database configurations that are available to you, only the OOB Reports that are delivered as part of your product package are supported by IBM’s Support Group.
+
+IBM realizes that you may need to create or customize reports to meet your unique business requirements. Therefore, report development tools, report templates, libraries and report source files are delivered as part of the releases to enable you in these efforts. Additionally, documentation is available on how to install and configure your development environment to create Maximo Based Reports.
+
+However, any customizations that you may make to an OOB Report, such as adding a grouping section, removing a Subheader, including additional fields or bar code fonts, are outside the scope of IBM Support. Additionally, any new reports that you may create for your individual business needs or for your own cloned applications, are outside the scope of IBM’s Support Department.
+
+If you customize or create your own reports, IBM highly recommends that you first make a copy of the OOB reports that are delivered to you. This will enable you to maintain a base or backup of your report source, before applying any customizations. For more details on this, click here [https://www.ibm.com/developerworks/community/wikis/home?lang=en#!/wiki/IBM%20Maximo%20Asset%20Management/page/Customizing%20Reports] for best practices on custom report file source and directory structures. 
+
+If you encounter any issues with reports you have created or customized, please consider using the following troubleshooting tools:
+
+1. On Line Help available in Report Designer
+2. Maximo Report Development Documentation available here [https://www.ibm.com/developerworks/community/wikis/home?lang=en#!/wiki/IBM%20Maximo%20Asset%20Management/page/Reporting%20Documentation]
+3. Error logs [http://www-01.ibm.com/support/docview.wss?uid=swg21423974] that are generated when compiling or running the report from within the Report Designer or from the Product Based Application.
+4. Using the SMC Asset Management Community [https://www.ibm.com/developerworks/servicemanagement/am/index.html] to network and interact with other clients on reporting users thru either the User Forum [https://www.ibm.com/developerworks/community/forums/html/forum?id=11111111-0000-0000-0000-000000001119] or the Report Community [https://www.ibm.com/developerworks/community/groups/service/html/communityview?communityUuid=5d8025d9-0449-47fc-9872-55f3b98e0636]
+5. Utilizing IBM Global Services to assist in customizing OOB reports or developing custom reports 
+
+Also, the OOB Reports contain a significant amount of code that you can evaluate, and potentially apply to your custom report. A few examples of this code include how to 
+Hyperlinking between reports
+Incorporating subreports and graphs
+Updating database from the report
+Enabling hidden fields for display only in a report download
+Localizing database fields
+
+To find additional information on the OOB Reports, click here [https://www.ibm.com/developerworks/community/wikis/home?lang=en#!/wiki/IBM%20Maximo%20Asset%20Management/page/Delivered%20Reports]for the latest Report Booklets, which contain listings, screenshots and details on the OOB reports for the Maximo 7 Releases. 
+
+Additionally, you can click here [https://www.ibm.com/developerworks/community/groups/service/html/communityview?communityUuid=5d8025d9-0449-47fc-9872-55f3b98e0636#fullpageWidgetId=W99d397eae619_45c7_8db3_42f9ce3f9435&file=4c3ee176-f8b6-42b2-8805-00246bc59e47] for a downloadable listing of the Maximo Report Reference Materials or here to access in-depth, dynamic report information on the Maximo Report Wiki [https://www.ibm.com/developerworks/community/wikis/home?lang=en#!/wiki/IBM%20Maximo%20Asset%20Management/page/Reporting]pages
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Systems and Asset Management Tivoli Asset Management for IT All Systems and Asset Management Tivoli Asset Management for IT All Systems and Asset Management Tivoli Asset Management for IT All Systems and Asset Management Tivoli Asset Management for IT All Systems and Asset Management Tivoli Asset Management for IT All Systems and Asset Management Tivoli Asset Management for IT All Systems and Asset Management Tivoli Asset Management for IT All Systems and Asset Management Tivoli Asset Management for IT All Systems and Asset Management Tivoli Asset Management for IT All

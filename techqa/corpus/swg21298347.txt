@@ -1,0 +1,31 @@
+Title: IBM WebSphere Application Server certification for Oracle11g - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Is there detailed support and certification for Oracle11g on IBM® WebSphere® Application Server V6.1? 
+
+ANSWER
+Oracle11g certification was added to IBM® WebSphere® Application Server beginning with version 6.1.0.17. Prior to version 6.1.0.17, Oracle 11g was supported under the "Other configurations" section of our support statement. However, a minimum of WebSphere Application Server V6.1.0.11 is required as it fixes an Oracle 11g issue (PK47930).
+In this context, the term Supported indicates that customers may open PMRs and obtain assistance from IBM support, the term Certified indicates supported and additionally that all WebSphere Application Server test suites were run against Oracle 11g and that Oracle 11g will be listed in the WebSphere Application Server supported software web page.
+
+Note:
+
+
+ * When configuring a datasource for connection to an Oracle 11g database in WebSphere Application Server version V6.1.0.17 and greater, the datasource data store helper class name must be set to Oracle 11g data store helper (classname Oracle11gDataStoreHelper).
+
+ * When configuring a datasource for connection to an Oracle 11g database in a WebSphere Application Server version prior to V6.1.0.17, the datasource data store helper class name must be set to Oracle 10g data store helper (classname Oracle10gDataStoreHelper).
+
+ * Oracle 11g patch #6406402 is required to resolve connection matching issues when TypeMap is used.
+
+ * Oracle patch #6651027 is required to resolve an internal Oracle error (ora-0600) which is thrown when stressing the Oracle system.
+
+ * Either of the following two JDBC drivers may be used to connect IBM WebSphere Application Server version V6.1.0.17 to an Oracle 11g database.  1. ojdbc5.jar which is an 11g driver. 
+    2. ojdbc14.jar which is a 10g driver
+   
+   
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Application Servers WebSphere Application Server for z/OS DB Connections/Connection Pooling z/OS 6.1

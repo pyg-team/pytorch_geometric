@@ -1,0 +1,61 @@
+Title: IBM Interface Adapters may hang after 497 days of uptime - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ If a system has been in operation for 497 days without a reboot, all the Fibre Channel or Infiniband links could be disabled which could stop all data flowing to and from the storage subsystem. 
+
+CAUSE
+This issue is due to a very long counter reaching the maximum count when the system reaches 497 days of uptime. The issue exists in the following Firmware levels:
+
+Models 720 and 820: 6.3.1-p9 and earlier
+Models 840 and V840: 1.1.1.4 and earlier
+
+
+DIAGNOSING THE PROBLEM
+Another way to diagnose that you have hit this problem is DMA Stall error messages would display in the event logs in the System Report.
+
+
+
+RESOLVING THE PROBLEM
+ 
+
+For IBM FlashSystem 720, IBM FlashSystem 820, TMS RamSan 720, and TMS RamSan 820, please install firmware version 6.3.1-p10 or newer. 
+
+For IBM FlashSystem 840 and IBM FlashSystem V840, please install firmware version 1.1.2.2 or newer. 
+
+
+The file is available by typing in the appropriate Product Name in the Find Product tab or going to the Select Product tab and selecting the appropriate Product Group and entering the appropriate information in the subsequent drop down menus on IBM Support's Fix Central web page, at the following URL: 
+
+http://www.ibm.com/support/fixcentral/ [http://www.ibm.com/support/fixcentral/] 
+
+ 
+
+For the models 840 and V840, while rebooting is a possible work around, IBM recommends upgrading the firmware since it may be performed as a concurrent operation (except when upgrading from 1.1.0.3) instead of the non-concurrent operation of rebooting the system. 
+
+ 
+
+For models 720 and 820, there are 2 work arounds which reset the timer if you do not want to update Firmware though IBM strongly recommends you update Firmware.
+
+1. Reboot the system. This is a non-concurrent work around.
+
+2. Reset the fibre channel controllers by using the appropriate CLI command: The following commands will stop of data flow to the ports being reset. Make sure this is being performed at a time of low IO, there are redundant paths through the alternate controller and wait a sufficient time for all activity to resume on the first controller before restarting the next controller. This could be up to 60 seconds or longer depending on your specific configuration.
+
+
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Flash Storage IBM FlashSystem 720 Flash Storage IBM FlashSystem 820 Flash Storage IBM FlashSystem 840 Flash Storage IBM FlashSystem V840 Flash Storage RamSan-720 Flash Storage RamSan-820

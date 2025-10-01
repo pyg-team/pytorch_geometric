@@ -1,0 +1,88 @@
+Title: IBM database-transfer fails on start-portal-server-recovery in a cluster - United States
+
+Text:
+database transfer cluster Portal 8 node nodeagent start server recovery dmgr deployment manager TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+When running a database-transfer in a clustered environment, it may fail on the start-portal-server-recovery sub-task.
+
+SYMPTOM
+Errors in ConfigTrace.log: 
+
+==================================== 
+
+
+start-portal-server-recovery:
+[logmsg] [08/21/12 15:43:59.913 CST] EJPCA3163I: Starting Server "WebSphere_Portal"
+[echo] 'WebSphere_Portal' seems to be stopped.
+[echo] Starting 'WebSphere_Portal'
+[exec] ADMU0116I: Tool information is being logged in file
+[exec] /opt/IBM/WebSphere/wp_profile/logs/WebSphere_Portal/startServer.log
+[exec] ADMU0128I: Starting tool with the wp_profile profile
+[exec] ADMU3100I: Reading configuration for server: WebSphere_Portal
+[exec] ADMU3200I: Server launched. Waiting for initialization status.
+[exec] ADMU3001I: Server WebSphere_Portal open for recovery; process id is 6226192
+[exec] ADMU3014W: Server recovery complete, problems occurred during recovery. Server
+[exec] log files should contain failure information.
+--- Exception Thrown ---
+/opt/IBM/WebSphere/PortalServer/base/wp.base/config/includes/wp.base_cfg.xml:1679: exec returned: 255
+at org.apache.tools.ant.taskdefs.ExecTask.runExecute(ExecTask.java:591)
+at org.apache.tools.ant.taskdefs.ExecTask.runExec(ExecTask.java:617)
+at org.apache.tools.ant.taskdefs.ExecTask.execute(ExecTask.java:452)
+at com.ibm.wps.config.WpsExecTask.execute(WpsExecTask.java:88)
+at org.apache.tools.ant.UnknownElement.execute(UnknownElement.java:275)
+at org.apache.tools.ant.Task.perform(Task.java:364)
+at org.apache.tools.ant.taskdefs.Sequential.execute(Sequential.java:64)
+at com.ibm.wps.config.If.execute(If.java:75)
+at org.apache.tools.ant.UnknownElement.execute(UnknownElement.java:275)
+at org.apache.tools.ant.Task.perform(Task.java:364)
+at org.apache.tools.ant.Target.execute(Target.java:341)
+
+BUILD FAILED
+/opt/IBM/WebSphere/ConfigEngine/config/includes/serverTargets.xml:454: The following error occurred while executing this line:
+/opt/IBM/WebSphere/PortalServer/base/wp.base/config/includes/wp.base_cfg.xml:1679: exec returned: 255
+
+
+==================================== 
+
+ 
+
+Error in SystemOut.log: 
+
+ 
+
+==================================== 
+
+
+[8/21/12 15:44:21:097 CST] 00000000 WsServerImpl E WSVR0009E: Error occurred during startup
+com.ibm.ws.exception.RuntimeError: com.ibm.ejs.EJSException: Could not register with Location Service Daemon, which could only reside in the NodeAgent. Make sure the NodeAgent for this node is up and running.; nested exception is: 
+org.omg.CORBA.ORBPackage.InvalidName: LocationService:org.omg.CORBA.TRANSIENT: java.net.ConnectException: Connection refused:host=svr058048,port=9900 vmcid: IBM minor code: E02 completed: No
+at com.ibm.ws.runtime.component.ORBImpl.start(ORBImpl.java:459)
+at com.ibm.ws.runtime.component.ContainerHelper.startComponents(ContainerHelper.java:539)
+at com.ibm.ws.runtime.component.ContainerImpl.startComponents(ContainerImpl.java:627)
+at com.ibm.ws.runtime.component.ContainerImpl.start(ContainerImpl.java:618)
+
+
+==================================== 
+
+
+
+CAUSE
+The database-transfer task is not "cluster-aware" and will not try to start the nodeagent prior to starting Portal.
+
+
+
+ENVIRONMENT
+Portal cluster
+
+
+
+RESOLVING THE PROBLEM
+Start the Dmgr and nodeagent prior to running database-transfer.
+
+
+
+
+
+ * 
+ *

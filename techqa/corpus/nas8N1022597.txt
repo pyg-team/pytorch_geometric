@@ -1,0 +1,39 @@
+Title: IBM Why Am I Not Able to Export Spooled Files via Navigator for i? - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ When I try to export a spooled file in any format from Navigator for i, nothing happens after I select the file I want to export. Why can't I export a spooled file? 
+
+CAUSE
+The browser is not allowing the redirect or download function.
+
+ANSWER
+As designed, the Export function Navigator for i uses the browser's redirect and download functions. The browser may be posting a message at the top of the session to allow for the redirect, for which you need to click on Allow to continue: 
+
+Print screen of message at top of browser session prompting to allow for an automatic redirect [/support/docview.wss?uid=nas8N1022597&amp;aid=1]Print screen of message at top of browser session prompting to allow for an automatic redirect [/support/docview.wss?uid=nas8N1022597&amp;aid=2] 
+
+If you do not see the message, check your browser settings for a setting to allow for the redirect, such as:
+Warn me when websites try to redirect or reload the page 
+
+More recently for security reasons, browsers have removed the options for redirect and download. If unable to find a redirect or download browser option, contact the browser support group to see how their browser can be configured or changed to allow for redirect and downloads. 
+
+ 
+
+You could choose to download the spooled file in either text or PDF format using Access Client Solutions Printer Output.
+Print screen of IBM i Access Client Solutions Welcome window highlighting Printer Output [/support/docview.wss?uid=nas8N1022597&aid=3] [/support/docview.wss?uid=nas8N1022597&aid=3] 
+
+After selecting Printer Output from the IBM i Access Client Solutions Welcome window, a box showing your spooled files will appear. 
+
+The default is to download the spooled files in PDF format using IBM i Transform Services (product 5770TS1), however, can be changed to text format by setting the Preferences (EDIT / PREFERENCES):
+Print screen of IBM i Access Client Solutions Printer Output Preferences where the location of the file can be specified as well as the check box to Use PDF format if available [/support/docview.wss?uid=nas8N1022597&amp;aid=4]
+If the box for Use PDF format if available is not checked, the file will be downloaded in text format. 
+
+Spooled files owned by others can also be found by changing the Filter (EDIT / FILTER). 
+
+
+
+
+
+Keywords for searching: Access Client Solutions ACS IBM Access for Web printer output queue queues re-direct down load iaw

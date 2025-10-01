@@ -1,0 +1,43 @@
+Title: IBM "Manage RuleDoc locations" in RTS and user credentials - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ When I supply the credentials that work for my file system, in the form to "Manage RuleDoc locations" of Rule Team Server (RTS) and try publishing the ruledocs, the publish fails with this error message:
+
+You do not have access to specified resource. 
+Reason: Could not create directory [...] Please contact your administrator for further details.
+
+Why does this happen? 
+
+CAUSE
+The form for the credentials is used by RTS, only when the RuleDoc location is defined in a WEBDAV URL format, similar to this:
+http://webdavhost.com/path/to/the/ruledoc/folder
+
+When the URL refers to a file system, then the credentials are not considered. the user who started RTS application needs to have access to the file location in question.
+
+
+ANSWER
+If you are using the file system path, you need to make sure that the user who starts the RTS application has access to the file location in question. It is the user used to run the server and not the user logged into the RTS console at one time. 
+
+Remember : 
+
+In the "Manage RuleDoc locations" feature, users can create new Ruledoc location. Here, the users are presented with "Username" "Password" for the ruledoc location. 
+
+Now the ruledoc location can be one of : 
+
+
+ 1. \\servername\path to folder 
+ 2. <root>:\path to folder 
+ 3. /path/to/folder 
+ 4. http://webdavurl.com/path/to/the/ruledoc/folder 
+
+
+It's only with the format (4) that username and password are significant. For reference: WebSphere ILOG JRules V7.1 > WebSphere ILOG Rule Team Server online help > Project: Manage your project > Working with RuleDocs > Managing RuleDoc locations
+
+ 
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Operational Decision Manager Platform Independent 7.5 Enterprise

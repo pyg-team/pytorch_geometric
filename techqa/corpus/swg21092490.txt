@@ -1,0 +1,87 @@
+Title: IBM How to uninstall Notes client from the Macintosh - United States
+
+Text:
+notes; uninstall; remove from; mac os; mac platform; macintosh platform; nd6; ND7; MacOS; steps; deinstall; system; computer; machine TECHNOTE (FAQ)
+
+QUESTION
+How do you uninstall the Lotus Notes® client on a Macintosh OS X platform?
+
+ANSWER
+Removing Notes from the various versions of Mac OS X is different than removing Notes on older Mac OS versions such as OS 9. There are also differences between Notes 6.x and 7.x clients.
+
+Uninstalling Notes 6.x:
+
+1. Back up any files you want to save (especially your user.id and names.nsf).
+2. Delete the Lotus Notes directory (and data dir if it is not underneath Lotus Notes).
+3. Delete Notes Preferences File.
+4. Empty Trash.
+
+Uninstalling Notes 7.x:
+
+1. Back up any files you want to save (especially your user.id and names.nsf).
+2. Delete the Notes App directory (the Notes icon in /Applications).
+3. Delete the data directory: 
+
+ * 
+ * 
+ * 
+
+4. Delete the Notes Preferences File. 
+5. Delete com.ibm.lotus.Notes.plist (same location as Notes Preferences). 
+6. Delete com.ibm.lotus.NotesInstaller.plist (same location as Notes Preferences). 
+7. Delete /Library/Receipts/Lotus Notes Installer.pkg 
+8. Empty Trash. 
+
+Uninstalling Notes 8.x: 
+
+Instructions can also be found at: 
+
+http://publib.boulder.ibm.com/infocenter/domhelp/v8r0/index.jsp?topic=/com.ibm.help.domino.admin85.doc/H_UNINSTALLING_NOTES_FROM_A_MAC_OS_CLIENT_OVER.html [http://publib.boulder.ibm.com/infocenter/domhelp/v8r0/index.jsp?topic=/com.ibm.help.domino.admin85.doc/H_UNINSTALLING_NOTES_FROM_A_MAC_OS_CLIENT_OVER.html] 
+
+You can uninstall IBM ® Lotus ® Notes ® by dragging Notes.app from /Applications to the trash. This preserves user data. You can also uninstall Notes using the uninstaller application supplied with the Notes install media. This preserves user data. As well, you can also uninstall Notes by dragging the following items to the Apple ® Mac OS X ® trash bin:  * Notes.app 
+ * ~/Library/Application Support/Lotus Notes Data folder ("~" = user's home directory) 
+ * ~/Library/Preferences/Notes Preferences
+
+
+Note To reinstall after uninstalling, you may also need to delete the following items prior to reinstalling Notes:  * /Library/Receipts/Lotus Notes Installer.pkg 
+ * /Library/Receipts/Lotus Notes Installer_English.pkg 
+ * /Library/Receipts/xpdcoreinstaller.pkg
+
+
+Note If you installed the Notes basic configuration, rather than the standard configuration, you can uninstall the Notes basic configuration by dragging Notes.app from /Applications to the trash. This preserves user data. You can also uninstall Notes by dragging the following items to the Mac OS X trash bin:  * /Applications/Notes.app 
+ * ~/Library/Application Support/Lotus Notes Data folder ("~" = user's home directory) 
+ * ~/Library/Preferences/Notes Preferences 
+ * /Library/Receipts/Lotus Notes Installer.pkg 
+ * /Library/Receipts/Lotus Notes Installer_English.pkg
+
+
+Uninstalling Notes 9.x: 
+
+Instructions can also be found at: http://www-01.ibm.com/support/knowledgecenter/SSKTMJ_9.0.1/admin/inst_uninstallingnotesfromamacosxclient_c.dita [http://www-01.ibm.com/support/knowledgecenter/SSKTMJ_9.0.1/admin/inst_uninstallingnotesfromamacosxclient_c.dita] 
+
+Note: before starting back up any files you want to save. The data folder and Preference file may be all that you need:  * ~/Library/Application Support/IBM Notes Data folder (where ~ is the user's home directory) 
+ * ~/Library/Preferences/Notes Preferences
+
+
+
+You can uninstall Notes® by dragging IBM Notes.app from /Applications to the trash. You can also uninstall Notes using the uninstaller application supplied with the Notes install media. Both methods preserve user data. You can also uninstall Notes by dragging the following items to the Apple Mac OS X trash bin: 
+
+ * IBM Notes.app 
+ * ~/Library/Application Support/IBM Notes Data folder (where ~ is the user's home directory) 
+ * ~/Library/Preferences/Notes Preferences
+
+
+Note To reinstall after uninstalling, you may also need to delete the following items prior to reinstalling Notes:  * /Library/Receipts/IBM Notes Installer.pkg 
+ * /Library/Receipts/IBM Notes Installer_English.pkg 
+ * /Library/Receipts/xpdcoreinstaller.pkg
+
+
+
+For information on the Notes Preferences file, including where to find it, see the technote, "Where is the Notes.ini file located on the Macintosh? " (#1090921) [http://www.ibm.com/support/docview.wss?uid=swg21090921]. RELATED INFORMATION
+ Where is the Notes.ini file located on the Macintosh? [http://www.ibm.com/support/docview.wss?uid=swg21090921]
+
+
+
+
+PRODUCT ALIAS/SYNONYM
+ Lotus Notes Client

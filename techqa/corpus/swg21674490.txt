@@ -1,0 +1,30 @@
+Title: IBM FileNet Content Engine Content Search Services index-area fails to create using ACCE - United States
+
+Text:
+CSS index area FNRCE0010E E_BAD_VALUE: TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Attempts to create an index area using Administration Console Content Engine (ACCE) fails with error The 'index_area_name' object was not created. 
+
+SYMPTOM
+The P8 server logs will show the following message:
+
+CBR FNRCE0010E - ERROR CSEDispatcherForSPI:Master serial=91 running with error , with message The value given for a property or list element lies outside the permitted range or value set, or exceeds the maximum length allowed. Failed to decode the password property value, most likely because the property value was not UTF-8 encoded, then encrypted.\ncom.filenet.api.exception.EngineRuntimeException: FNRCE0010E: E_BAD_VALUE: The value given for a property or list element lies outside the permitted range or value set, or exceeds the maximum length allowed. Failed to decode the password property value, most likely because the property value was not UTF-8 encoded, then encrypted.\n at com.filenet.engine.util.Encryption.masterDecryptDecode(Encryption.java:151)\n at com.filenet.engine.util.Encryption.masterDecryptDecodeString(Encryption.java:170)\n at 
+,,,,\nCaused by: com.filenet.api.exception.EngineRuntimeException: FNRCE0066E: E_UNEXPECTED_EXCEPTION: An unexpected exception occurred. The unexpected exception is chained to this exception. Message was: General exception while encrypting or decrypting data\n 
+
+
+CAUSE
+The FileNet Content Engine Content Search Services authentication token in ACCE does not match the token configured for the IBM Content Search Services server.
+
+RESOLVING THE PROBLEM
+
+1. To find the authentication token configTool printToken –configPath path
+
+For example:
+C:\Program Files\IBM\Content Search Services\CSS Server\bin>configTool printToken -configPath "C:\ProgramFiles\IBM\Content Search Services\CSS Server\config"
+
+2. Access the properties for the server in the ACCE: 
+
+i In the domain navigation pane, click the Text Search Servers folder.
+ii In the details pane, click the name of the IBM® Content Search Services server. 
+iii Click the General tab and in the Authentication token field, enter the correct token value.

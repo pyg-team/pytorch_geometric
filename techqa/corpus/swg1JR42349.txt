@@ -1,0 +1,168 @@
+Title: IBM JR42349: WITH GERMAN LOCALE, CBE BROWSER THROWS ILLEGALARGUMENTEXCEPTION:DATE FORMAT PATTERN NOT VALID: JJJJ-MM-TT - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  If you change the operating system's locale format to German,
+   and try to open the Commone Base Event browser from the
+   AdminConsole (using Internet Explorer), it displays a HTTP error
+   500. The SystemOut.log shows:
+   
+   [3/26/12 17:54:05:201 CEST] 0000005f servlet       E
+   com.ibm.ws.webcontainer.servlet.ServletWrapper service
+   SRVE0068E: Uncaught exception created in one of the service
+   methods of the servlet /jsp/viewer/CBEBrowserGetEvents.jsp in
+   application cbebrowser. Exception created :
+   java.lang.IllegalArgumentException: Date format pattern not
+   valid: jjjj-MM-tt
+    at
+   com.ibm.psw.wcl.core.form.WDateChooser.setDateFormatPattern(Unkn
+   own Source)
+    at
+   com.ibm.psw.wcl.tags.core.form.WDateChooserTag.setWDateChooserAt
+   tributes(Unknown Source)
+    at
+   com.ibm.psw.wcl.tags.core.form.WDateChooserTag.getNewWDateChoose
+   r(Unknown Source)
+    at
+   com.ibm.psw.wcl.tags.core.form.WDateChooserTag.doStartTag(Unknow
+   n Source)
+    at
+   com.ibm._jsp._CBEBrowserGetEvents._jspService(_CBEBrowserGetEven
+   ts.java:1379)
+    at
+   com.ibm.ws.jsp.runtime.HttpJspBase.service(HttpJspBase.java:99)
+    at javax.servlet.http.HttpServlet.service(HttpServlet.java:831)
+    at
+   com.ibm.ws.webcontainer.servlet.ServletWrapper.service(ServletWr
+   apper.java:1657)
+    at
+   com.ibm.ws.webcontainer.servlet.ServletWrapper.handleRequest(Ser
+   vletWrapper.java:939)
+    ...
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  Businese Process Manager 7.5 Users          *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: CBE Browser throws                      *
+   *                      IlleagalArgumentException when date     *
+   *                      format pattern is not valid             *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   If the operating system's locale format is German, when
+   customer and the user tries to open the CBE Browser,
+   the following exception
+   occurs: java.lang.IllegalArgumentException: Date format
+   pattern not valid: jjjj-MM-tt
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This problem is resolved by JR42349 fix. The locale will not
+   impact the date format after applying this fix.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR42349
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM ADVANCED
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9400
+   
+   
+ * REPORTED RELEASE
+   750
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-03-26
+   
+   
+ * CLOSED DATE
+   2012-06-25
+   
+   
+ * LAST MODIFIED DATE
+   2012-06-25
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   BPM ADVANCED
+   
+   
+ * FIXED COMPONENT ID
+   5725C9400
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R750 PSY
+   UP

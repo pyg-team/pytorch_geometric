@@ -1,0 +1,207 @@
+Title: IBM HD72000: ELECTRICAL (EHI) / AFTER ROUTING WIRE, BEND RADIUS RATIO VALUE CHANGES - United States
+
+Text:
+AIX SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  AFTER ROUTING WIRE, BEND RADIUS RATIO
+   VALUE CHANGES
+   .
+   Settings
+   Select Tools/ Options/ Equipment
+   Systems/Electrical HarnessDiscipline/Electrical
+   Process Interface Tab
+   1. Check on  External Data Interfacing
+   2. Define the directory of xml on
+   ExternalDataRepository
+   .
+   1. Open the  Product.CATProduct.
+   2. Change Workbench to Electrical Harness
+   Assembly.
+   3. To confirm the Bend Radius Ratio, Activate Multi-
+   branchable1
+   4. Select Bundle segment.3 and Select Branch
+   Definition icon
+   5. Check the Bend Radius Ratio Value  1
+   6. Double click Product1
+   7. Change Workbench to Electrical Wire Routing.
+   8. Select External Systems icon. System Selection
+   window is displayed. test.xml sent to current
+   systems. Select one xml as Current Systems.
+   9. Select Automatic Wire routing icon. Wire and
+   Wire group Routing window is displayed.
+   10. All wire which is displayed on Available Wires /
+   Wire groups is sent to Wire / Wire groups To Route
+   11. Click Route button. Automatic Wire Routing
+   Report window is displayed. Confirm that Status is
+   successfully routed
+   12. Result is OK.
+   13. To confirm the Bend Radius Ratio, Activate
+   Multi-branchable1
+   14. Select Bundle segment.3 and Select Branch
+   Definition icon
+   15. Bend Radius Ratio value is changed to 4.67.
+   .
+   Problem: Bend Ratio is changed.
+   .
+   Expected result: Bend ratio should not be changed.
+   .
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Electrical (EHI) / AFTER ROUTING WIRE, BEND RADIUS RATIO VALUE
+   CHANGES
+   AFTER ROUTING WIRE, BEND RADIUS RATIO
+   VALUE CHANGES
+   .
+   Settings
+   Select Tools/ Options/ Equipment
+   Systems/Electrical HarnessDiscipline/Electrical
+   Process Interface Tab
+   1. Check on  External Data Interfacing
+   2. Define the directory of xml on
+   ExternalDataRepository
+   .
+   1. Open the  Product.CATProduct.
+   2. Change Workbench to Electrical Harness
+   Assembly.
+   3. To confirm the Bend Radius Ratio, Activate Multi-
+   branchable1
+   4. Select Bundle segment.3 and Select Branch
+   Definition icon
+   5. Check the Bend Radius Ratio Value  1
+   6. Double click Product1
+   7. Change Workbench to Electrical Wire Routing.
+   8. Select External Systems icon. System Selection
+   window is displayed. test.xml sent to current
+   systems. Select one xml as Current Systems.
+   9. Select Automatic Wire routing icon. Wire and
+   Wire group Routing window is displayed.
+   10. All wire which is displayed on Available Wires /
+   Wire groups is sent to Wire / Wire groups To Route
+   11. Click Route button. Automatic Wire Routing
+   Report window is displayed. Confirm that Status is
+   successfully routed
+   12. Result is OK.
+   13. To confirm the Bend Radius Ratio, Activate
+   Multi-branchable1
+   14. Select Bundle segment.3 and Select Branch
+   Definition icon
+   15. Bend Radius Ratio value is changed to 4.67.
+   .
+   Problem: Bend Ratio is changed.
+   .
+   Expected result: Bend ratio should not be changed.
+   .
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  THIS PROBLEM WILL BE FIXED ON CATIA VERSION
+   5 RELEASE 19 GA LEVEL.
+   NOTE THAT THIS PROBLEM WILL ALSO BE FIXED
+   ON V5R18SP05
+   Incident Diagnosis
+   Bend Radius Ratio value changes after wire routing.
+   .
+   Correction Explanation
+   If Ratio check button is ON then, code does not
+   change Bend radius Ratio instead evaluate Bend
+   Radius from it.
+   .
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   HD72000
+   
+   
+ * REPORTED COMPONENT NAME
+   CATIA V5 NT>XP
+   
+   
+ * REPORTED COMPONENT ID
+   569151000
+   
+   
+ * REPORTED RELEASE
+   518
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-02-29
+   
+   
+ * CLOSED DATE
+   2008-03-24
+   
+   
+ * LAST MODIFIED DATE
+   2008-06-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CATIA V5 NT>XP
+   
+   
+ * FIXED COMPONENT ID
+   569151000
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R518 PSN SP51805
+   UP08/06/02 I 1000

@@ -1,0 +1,235 @@
+Title: IBM JR53006: IF MULTIPLE TIMERS ARE SCHEDULED TO FIRE AT THE SAME TIME, NOT ALL THE TIMERS FIRE AS SCHEDULED DUE TO DB LOCK CONTENTION - United States
+
+Text:
+  DIRECT LINKS TO FIXES
+bpm.8560.cf1.delta.repository.2 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Standard&fixids=bpm.8560.cf1.delta.repository.2&source=SAR]
+bpm.8560.cf1.delta.repository.1 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Standard&fixids=bpm.8560.cf1.delta.repository.1&source=SAR]
+8.5.6.0-WS-BPM-IFJR53006 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Standard&fixids=8.5.6.0-WS-BPM-IFJR53006&source=SAR]
+8.5.5.0-WS-BPM-IFJR53006 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Standard&fixids=8.5.5.0-WS-BPM-IFJR53006&source=SAR]
+8.5.0.1-WS-BPM-IFJR53006 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Standard&fixids=8.5.0.1-WS-BPM-IFJR53006&source=SAR]
+Version 8.5.0 Fix Pack 2 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24040683]
+Version 8.5 Refresh Pack 7 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24041575]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  If a thousand or more timers are scheduled for the same date and
+   time, a concurrency problem might occur in a clustered
+   environment due to lock contention on the DB that results in a
+   CWLLG0592E error. This problem might cause event manager tasks
+   to be in state 2, meaning that they are ignored until the
+   cluster restarts.
+   
+   [2/24/15 0:00:21:377 CET] 000000ad WSRdbXaResour E   DSRA0304E:
+   XAException occurred. XAException contents and details are: "".
+   [2/24/15 0:00:21:378 CET] 000000ad WSRdbXaResour E   DSRA0302E:
+   XAException occurred.  Error code is: XAER_NOTA (-4).  Exception
+   is:
+   [jcc][t4][2041][12326][4.11.69] Error executing
+   XAResource.rollback().
+   Server returned XAER_NOTA. ERRORCODE=-4203, SQLSTATE=null
+   [2/24/15 0:00:21:378 CET] 000000ad XATransaction E   J2CA0027E:
+   An exception occurred while invoking rollback on an XA Resource
+   Adapter from DataSource jdbc/TeamWorksDB, within transaction ID
+   {XidImpl: formatId(57415344), gtrid_length(36),
+   bqual_length(54),
+   
+   and
+   
+   [2/24/15 0:00:21:380 CET] 000000ad wle           E   CWLLG0592E:
+   An exception occurred while executing task.
+   org.springframework.dao.ConcurrencyFailureException:
+   PreparedStatementCallback; SQL [
+             SELECT
+                 CURRENT TIMESTAMP,
+                 T.TASK_ID,
+                 T.SCHEDULED_TIME,
+                 CASE
+                     WHEN T.SCHEDULED_TIME > CURRENT_TIMESTAMP THEN
+   T.SCHEDULED_TIME
+                     ELSE CURRENT_TIMESTAMP
+                 END AS DT,
+                 T.DISCRIMINATOR,
+                 T.DESCRIPTION,
+                 T.TASK_EXECUTION_CLASS,
+                 T.TASK_ARGUMENTS_STR,
+                 T.TASK_ARGUMENTS,
+                 T.IN_CLOSING_TRANSACTION,
+                 CASE
+                     WHEN (BC.IS_BLACKED_OUT = 1 OR CURRENT
+   TIMESTAMP >=
+   BC.NEXT_START) THEN 1
+                     ELSE 0
+                 END,
+                 T.BLACKOUT_CALENDAR_ID,
+                 T.BLACKOUT_BEHAVIOR,
+                 T.QUEUE_ID,
+                 T.RE_EXECUTE_COUNT,
+                 T.REPEAT_STRING,
+                 K.KEYWORD
+             FROM
+                 ((LSW_EM_TASK T
+                 LEFT OUTER JOIN LSW_EM_TASK_KEYWORDS K ON
+   T.TASK_ID =
+   K.TASK_ID)
+                 LEFT OUTER JOIN LSW_BLACKOUT_CALENDAR BC ON
+   T.BLACKOUT_CALENDAR_ID = BC.CALENDAR_ID)
+             WHERE
+                     T.TASK_OWNER = ?
+                 AND T.TASK_ID IN
+   (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?
+   ,?,?,?,?
+   ,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
+           ]; DB2 SQL Error: SQLCODE=-911, SQLSTATE=40001,
+   SQLERRMC=2,
+   DRIVER=4.11.69; nested exception is
+   com.ibm.db2.jcc.am.SqlTransactionRollbackException: DB2 SQL
+   Error:
+   SQLCODE=-911, SQLSTATE=40001, SQLERRMC=2, DRIVER=4.11.69
+       at
+   org.springframework.jdbc.support.SQLExceptionSubclassTranslator.
+   translate(SQLExceptionSubclassTranslator.java:52)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Stop and restart the AppTarget cluster.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  The problem occurs wherever there is a problem with the database
+   while event manager acquires and tries to load event manager
+   tasks.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A fix is available for IBM BPM that handles the exception
+   properly and ensures the event manager reloads the event
+   manager tasks later.
+   
+   On Fix Central (http://www.ibm.com/support/fixcentral), search
+   for JR53006:
+   
+   1. Select IBM Business Process Manager with your edition from
+     the product selector, the installed version to the fix pack
+     level, and your platform, and then click Continue.
+   
+   2. Select APAR or SPR, enter JR53006, and click Continue.
+   
+   When you download fix packages, ensure that you also download
+   the readme file for each fix. Review each readme file for
+   additional installation instructions and information about the
+   fix.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  Not applicable
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR53006
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM ADVANCED
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9400
+   
+   
+ * REPORTED RELEASE
+   850
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-04-02
+   
+   
+ * CLOSED DATE
+   2015-06-02
+   
+   
+ * LAST MODIFIED DATE
+   2015-11-05
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   BPM STANDARD
+   
+   
+ * FIXED COMPONENT ID
+   5725C9500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R850 PSY
+   UP
+   
+   
+ * R855 PSY
+   UP
+   
+   
+ * R856 PSY
+   UP

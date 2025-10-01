@@ -1,0 +1,99 @@
+Title: IBM Security Bulletin:  Multiple vulnerabilities in IBM Java SDK affect Rational Insight (CVE-2014-3566, CVE-2014-6457, CVE-2014-6468) - United States
+
+Text:
+CVE-2014-3566; CVE-2014-6457; CVE-2014-6468 SECURITY BULLETIN
+
+SUMMARY
+ There are multiple vulnerabilities in IBM® SDK Java™ Technology Edition, Version 6 that is used by Rational Insight. This also includes a fix for the Padding Oracle On Downgraded Legacy Encryption (POODLE) SSLv3 vulnerability (CVE-2014-3566). These were disclosed as part of the IBM Java SDK updates in October 2014. 
+
+VULNERABILITY DETAILS
+
+CVEID: CVE-2014-3566 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-3566] 
+
+Description: Product could allow a remote attacker to obtain sensitive information, caused by a design error when using the SSLv3 protocol. A remote user with the ability to conduct a man-in-the-middle attack could exploit this vulnerability via a POODLE (Padding Oracle On Downgraded Legacy Encryption) attack to decrypt SSL sessions and access the plaintext of encrypted connections. 
+
+CVSS Base Score: 4.3
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/97013 [https://exchange.xforce.ibmcloud.com/vulnerabilities/97013] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:M/Au:N/C:P/I:N/A:N) 
+
+ 
+
+CVEID: CVE-2014-6457 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-6457] 
+
+Description: An unspecified vulnerability related to the JSSE component has partial confidentiality impact, partial integrity impact, and no availability impact. 
+
+CVSS Base Score: 4
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/97148 [https://exchange.xforce.ibmcloud.com/vulnerabilities/97148] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:H/Au:N/C:P/I:P/A:N) 
+
+ 
+
+CVEID: CVE-2014-6468 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-6468] 
+
+Description: An unspecified vulnerability related to the Hotspot component has complete confidentiality impact, complete integrity impact, and complete availability impact. 
+
+CVSS Base Score: 6.9
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/97138 [https://exchange.xforce.ibmcloud.com/vulnerabilities/97138] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:L/AC:M/Au:N/C:C/I:C/A:C) 
+
+AFFECTED PRODUCTS AND VERSIONS
+Rational Insight 1.1, 1.1.1, 1.1.1.1, 1.1.1.2, 1.1.1.3, 1.1.1.4, 1.1.1.5 and 1.1.1.6
+
+REMEDIATION/FIXES
+Apply the recommended fixes to all affected versions of Rational Insight.
+
+
+Rational Insight 1.1 
+
+
+
+ * Download the IBM Cognos Business Intelligence 10.1.1 Interim Fix 10 [http://www-01.ibm.com/support/docview.wss?uid=swg24039564]. 
+   Review technote 1679272: Install a Cognos Business Intelligence 10.1.1 fix package in Rational Insight 1.1 [http://www-01.ibm.com/support/docview.wss?uid=swg21679272] for detailed instructions.
+
+
+[http://www-01.ibm.com/support/docview.wss?uid=swg24035869] Rational Insight 1.1.1, 1.1.1.1 and 1.1.1.2 
+
+ * Download the IBM Cognos Business Intelligence 10.1.1 Interim Fix 10 [http://www-01.ibm.com/support/docview.wss?uid=swg24039564].
+   Read technote 1679281: Install a Cognos Business Intelligence 10.1.1 fix package in Rational Reporting for Development Intelligence 2.0.x and Rational Insight 1.1.1.x [http://www-01.ibm.com/support/docview.wss?uid=swg21679281] for the detailed instructions for patch application.
+
+
+[http://www-01.ibm.com/support/docview.wss?uid=swg24035869] Rational Insight 1.1.1.3 
+
+ * Download the IBM Cognos Business Intelligence 10.2.1 Interim Fix 9 [http://www-01.ibm.com/support/docview.wss?uid=swg24039563].
+   Review technote 1679283: Installing Cognos Business Intelligence 10.2.1.x fix pack in Rational Reporting for Development Intelligence 2.0.x/5.0.x and Rational Insight 1.1.1.x [http://www-01.ibm.com/support/docview.wss?uid=swg21679283] for the detailed instructions for patch application.
+
+
+[http://www-01.ibm.com/support/docview.wss?uid=swg24035869] Rational Insight 1.1.1.4 and 1.1.1.5 and 1.1.1.6 
+
+ 1. If the Data Collection Component or Jazz Reporting Serivce are used, perform this step first.
+    Review the topics in Security Bulletin: Multiple vulnerabilities in IBM Java SDK affects multiple IBM Rational products based on IBM Jazz technology (CVE-2014-3566, CVE-2014-6457, CVE-2014-6468) [http://www-01.ibm.com/support/docview.wss?uid=swg21693298] for addressing the listed vulnerabilities in their underlying Jazz Team Server.
+    
+ 2. If the Cognos-based reporting server is used, also perform this step.
+    Download the IBM Cognos Business Intelligence 10.2.1.1 Interim Fix 8 [http://www-01.ibm.com/support/docview.wss?uid=swg24039563].
+    Review technote 1679283: Installing Cognos Business Intelligence 10.2.1.x fix pack in Rational Reporting for Development Intelligence 2.0.x/5.0.x and Rational Insight 1.1.1.x [http://www-01.ibm.com/support/docview.wss?uid=swg21679283] for the detailed instructions for patch application.
+
+
+IBM recommends that you review your entire environment to identify areas that enable the SSLv3 protocol and take appropriate mitigation and remediation actions. The most immediate mitigation action that can be taken is disabling SSLv3. You should verify disabling SSLv3 does not cause any compatibility issues. WORKAROUNDS AND MITIGATIONS
+None
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v2 Guide [http://www.first.org/cvss/v2/guide] 
+On-line Calculator v2 [http://nvd.nist.gov/CVSS-v2-Calculator] 
+IBM Java SDK Security Bulletin [http://www-01.ibm.com/support/docview.wss?uid=swg21688283] 
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] 
+
+ACKNOWLEDGEMENT
+None 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.

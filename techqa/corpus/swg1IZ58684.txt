@@ -1,0 +1,166 @@
+Title: IBM IZ58684: SELF SERVICE SEARCH SOLUTIONS APPLICATION, SEARCHING ON DATABASE RESERVED TERMS SUCH AS NT, RT WILL RESULT IN AN ORA-20000 ERROR - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  In the Search Solutions application under Self Service Module if
+   you search using Oracle reserved words it will result in a
+   System Message Box pointing to an ORA-20000: Oracle Text error
+   this message box can not be cleared, you must close
+   the browser to clear message box.
+   
+   
+   Go To - Self Service -> Service Requests -> Search Solution
+   application.
+   
+   In the Solution Description Field type -> Windows NT
+   
+   Results in:
+   
+   BMXAA4210E - Database error number 29902 has occurred.
+   ORA-29902: error in executing ODCIIndexStart() routine
+   ORA-20000: Oracle Text error:
+   DRG-50901: text query parser syntax error on line 1, column 8
+   
+   When you click OK nothing happens you have to close the
+   browser to continue.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Use Quoted on any of the reserved terms.
+   
+   Instead of searching for Windows NT, use Windows "NT"
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: SELF SERVICE SEARCH SOLUTIONS APPLICATION,   *
+   *                 SEARCHING ON DATABASE  RESERVED TERMS SUCH   *
+   *                 AS NT, RT WILL RESULT IN AN ORA-20000 ERROR  *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: SELF SERVICE SEARCH SOLUTIONS           *
+   *                      APPLICATION, SEARCHING ON DATABASE      *
+   *                      RESERVED TERMS SUCH AS NT, RT WILL      *
+   *                      RESULT IN AN ORA-20000 ERROR            *
+   *                                                              *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   *                                                              *
+   *                                                              *
+   *                                                              *
+   ****************************************************************
+   SELF SERVICE SEARCH SOLUTIONS APPLICATION, SEARCHING ON
+   DATABASE  RESERVED TERMS SUCH AS NT, RT WILL RESULT IN AN
+   ORA-20000 ERROR
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Modified the SearchBean in the ServiceDesk package
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ58684
+   
+   
+ * REPORTED COMPONENT NAME
+   SELF SERVICE
+   
+   
+ * REPORTED COMPONENT ID
+   5724R46SS
+   
+   
+ * REPORTED RELEASE
+   711
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-08-17
+   
+   
+ * CLOSED DATE
+   2009-08-21
+   
+   
+ * LAST MODIFIED DATE
+   2009-08-21
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  MAXIMO
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   SELF SERVICE
+   
+   
+ * FIXED COMPONENT ID
+   5724R46SS
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R711 PSY
+   UP

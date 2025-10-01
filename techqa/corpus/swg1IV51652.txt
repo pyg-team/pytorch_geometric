@@ -1,0 +1,232 @@
+Title: IBM IV51652: CANNOT CORRECT GL DEBIT ACCOUNT IF LABOUR RECORD AND WORKORDER RECORD MERGE TO FORM INVALID GL - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Cannot correct GL Debit account if Labour Record and Workorder
+   Record merge to form an invlaid GL
+   
+   if the labour/workorder GL combination is invalid there is no
+   way to correct the invalid account.
+   
+   Environment Maximo Asset Managment 7.5.0.4
+   
+   Steps to reproduce:
+   Ensure JONES laborcraftrate record has glaccount='???-???-300'
+   (select glaccount from laborcraftrate where laborcode='JONES')
+   
+       In Chart of Accounts application, Select Action ->
+   Validation
+       Options, Ensure that "Validate GL Component Combinations" is
+   TRUE
+   
+       In Chart of Accounts application, Delete account
+   '6000-200-300'
+   
+       Create a new Work Order: GL Account' 6000-200-???'
+   
+       Approve work order
+   
+       In the work order Actuals tab, create New Row, specify Labor
+   JONES
+   RESULT:As expected, get the following error since the
+   combination
+   results in invalid account combination '6000-200-300': Not a
+   valid GL
+   account.
+   Either the required components are not filled or the component
+   values
+   are not valid. Make sure the GL account value is entered in the
+   appropriate format as defined in the GL Account application.
+   (BMXAA4146)
+   
+       Second attempt. Create another Labor transaction using New
+   Row,
+   clear out the GL Debit Account field FIRST, now select labor
+   JONES.
+   RESULT: Again error.
+   
+   They want to be able to change the GL on the work
+   order to a valid GL for the 1% of the time this happens. By
+   not allowing them to change it (as the program is currently
+   functioning),
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * Users that use Labor Reporting or Actuals on Work Orders     *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * Cannot correct GL Debit account if Labour Record and         *
+   * Workorder                                                    *
+   * Record merge to form an invlaid GL                           *
+   *                                                              *
+   * if the labour/workorder GL combination is invalid there is   *
+   * no                                                           *
+   * way to correct the invalid account.                          *
+   *                                                              *
+   * Environment Maximo Asset Managment 7.5.0.4                   *
+   *                                                              *
+   * Steps to reproduce:                                          *
+   * Ensure JONES laborcraftrate record has                       *
+   * glaccount='???-???-300'                                      *
+   * (select glaccount from laborcraftrate where                  *
+   * laborcode='JONES')                                           *
+   *                                                              *
+   *     In Chart of Accounts application, Select Action ->       *
+   * Validation                                                   *
+   *     Options, Ensure that "Validate GL Component              *
+   * Combinations" is                                             *
+   * TRUE                                                         *
+   *                                                              *
+   *     In Chart of Accounts application, Delete account         *
+   * '6000-200-300'                                               *
+   *                                                              *
+   *     Create a new Work Order: GL Account' 6000-200-???'       *
+   *                                                              *
+   *     Approve work order                                       *
+   *                                                              *
+   *     In the work order Actuals tab, create New Row, specify   *
+   * Labor                                                        *
+   * JONES                                                        *
+   * RESULT:As expected, get the following error since the        *
+   * combination                                                  *
+   * results in invalid account combination '6000-200-300': Not a *
+   * valid GL                                                     *
+   * account.                                                     *
+   * Either the required components are not filled or the         *
+   * component                                                    *
+   * values                                                       *
+   * are not valid. Make sure the GL account value is entered in  *
+   * the                                                          *
+   * appropriate format as defined in the GL Account application. *
+   * (BMXAA4146)                                                  *
+   *                                                              *
+   *     Second attempt. Create another Labor transaction using   *
+   * New                                                          *
+   * Row,                                                         *
+   * clear out the GL Debit Account field FIRST, now select labor *
+   * JONES.                                                       *
+   * RESULT: Again error.                                         *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Apply fixpack Release 7.5.0.5 of Base Services, Release      *
+   * 7.5.0.6 of Base Services or request an interim fix           *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fix has been made to delay the GL validation to when the record
+   is saved. This will allow the user to change the GL account.
+   
+    The fix for this APAR is contained in the following maintenance
+   package:
+      | release\fix pack\interim fix for Release 7.5.0.5 of Base
+   Services and Release 7.5.0.6 of Base Services
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV51652
+   
+   
+ * REPORTED COMPONENT NAME
+   WORK ORDERS
+   
+   
+ * REPORTED COMPONENT ID
+   5724R46WO
+   
+   
+ * REPORTED RELEASE
+   750
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-11-06
+   
+   
+ * CLOSED DATE
+   2013-12-02
+   
+   
+ * LAST MODIFIED DATE
+   2013-12-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  Maximo
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WORK ORDERS
+   
+   
+ * FIXED COMPONENT ID
+   5724R46WO
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R750 PSY
+   UP

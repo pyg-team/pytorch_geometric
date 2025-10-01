@@ -1,0 +1,98 @@
+Title: IBM Collect troubleshooting data for a Toolkit problem in WebSphere Message Broker for Linux on Intel - United States
+
+Text:
+toolkit; MustGather; MustGathers; Must Gather; Collect Troubleshooting Data; MustGatherDocument; Collecting; Trouble; Shooting TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ You are experiencing a Toolkit problem in WebSphere Message Broker for Linux on Intel. You would like to know what documentation you must collect (MustGather) so that the WebSphere Message Broker Support team can diagnose your problem. If you gather this documentation before contacting support it will expedite the troubleshooting process, and save you time. 
+
+RESOLVING THE PROBLEM
+ Gather this MustGather data before contacting IBM Support: 
+
+[/support/docview.wss?uid=swg21299818&amp;aid=1] Collecting general data for all problems
+[/support/docview.wss?uid=swg21299818&amp;aid=1] Collecting troubleshooting data for this problem
+[/support/docview.wss?uid=swg21299818&amp;aid=1] Troubleshooting hints and tips
+[/support/docview.wss?uid=swg21299818&amp;aid=1] Exchanging data with IBM Support
+
+[/support/docview.wss?uid=swg21299818&amp;aid=2] Go back to: WebSphere Message Broker Read first [http://www.ibm.com/support/docview.wss?uid=swg21209857]
+
+Collecting general data for all problems
+A complete description of the problem, including the following: 
+
+ * WebSphere Message Broker version, release, and maintenance level 
+ * Operating system version, release, and maintenance level 
+ * Related products version, and release levels if applicable 
+ * Components installed 
+ * Number of machines (include operating systems) 
+ * Number of brokers (include operating systems) 
+ * Details of any User Name Servers on V6.1 and V6.(This is not applicable for V7 and v8)Back to top
+   
+   
+
+
+Collecting troubleshooting data for this problem 
+
+Select the point of failure: 
+[/support/docview.wss?uid=swg21299818&amp;aid=1] Installation 
+[/support/docview.wss?uid=swg21299818&amp;aid=1] Startup 
+[/support/docview.wss?uid=swg21299818&amp;aid=1] General 
+
+
+Installation failure 
+Required (MustGather) data:  * Brief Description of the steps that led to the current status 
+ * Installation Manager logs [http://publib.boulder.ibm.com/infocenter/wmbhelp/v8r0m0/topic/com.ibm.etools.mft.doc/bu16190_.htm] (for v8, v7 and v6.1 Toolkits) [http://publib.boulder.ibm.com/infocenter/wmbhelp/v6r0m0/topic/com.ibm.etools.mft.doc/au16700_.htm]
+
+
+Note: The .log file in the <Toolkit workspace>/.metadata directory. 
+
+
+Startup 
+Required (MustGather) data:  *  [http://www.ibm.com/support/docview.wss?rs=849&uid=swg21295454] [http://www.ibm.com/support/docview.wss?rs=849&uid=swg21299230]Installation Manager logs [http://publib.boulder.ibm.com/infocenter/wmbhelp/v8r0m0/topic/com.ibm.etools.mft.doc/bu16190_.htm] (for v8, v7 and v6.1 Toolkits) 
+ * The following files from the ToolkitInstallDirectory [http://publib.boulder.ibm.com/infocenter/wmbhelp/v8r0m0/index.jsp?topic=%2Fcom.ibm.etools.mft.doc%2Fbh44510_.htm](like WMBT800 or WMBT700 or WMBT610)  * <ToolkitInstallDir>\configuration\XXX.log 
+    * <ToolkitInstallDir>\configuration\config.ini 
+    * <ToolkitInstallDir>\configuration\org.eclipse.update\platform.xml
+   
+   
+
+[http://www-1.ibm.com/support/docview.wss?rs=172&uid=swg21174924#UNIXat] 
+
+General 
+Required (MustGather) data:  *  If the problem is associated with connectivity, you can collect the CMP and MQ Java client trace as per following steps
+
+1. open Toolkit > Window > Preferences > broker Development > Broker Runtime 
+2. Select both CMP API and MQ Java client trace and provide the location of these files 
+3. Click Apply 
+4. Recreate the problem and provide the 2 trace files.  *  [http://www.ibm.com/support/docview.wss?rs=849&uid=swg21295454] [http://www.ibm.com/support/docview.wss?rs=849&uid=swg21295454]If the problems are associated with toolkit functionality, send us the snapshot of the problematic scenario. 
+ * .metadata directory within the workspace 
+ * Message Project exports (if the problem is related to the message projects) [http://www.ibm.com/support/docview.wss?rs=849&uid=swg21299230]Back to top
+   
+   
+
+
+Troubleshooting hints and tips  * Search the [http://www.ibm.com/software/htp/cics/tserver/support/]WebSphere Message Broker support site [http://www.ibm.com/support/entry/portal/Overview/Software/WebSphere/WebSphere_Message_Broker] for known problems using symptoms like the message number and error codes. 
+ * Gather the documentation and work with the WebSphere Message Broker support team to resolve your problem. 
+ * Troubleshooting [http://publib.boulder.ibm.com/infocenter/wmbhelp/v8r0m0/topic/com.ibm.etools.mft.doc/au09090_.htm] 
+ * Installing and uninstalling Message Broker Toolkit [http://publib.boulder.ibm.com/infocenter/wmbhelp/v8r0m0/index.jsp?topic=%2Fcom.ibm.etools.mft.doc%2Fah20606_.htm] 
+ * Resolving problems when you use the workbench [http://publib.boulder.ibm.com/infocenter/wmbhelp/v8r0m0/topic/com.ibm.etools.mft.doc/au16600_.htm]
+
+
+Learn more about this component  * Library and Information centers [http://www.ibm.com/software/integration/wbimessagebroker/library/] [http://www-306.ibm.com/software/integration/wmq/library/] 
+ * Message Broker Toolkit [http://publib.boulder.ibm.com/infocenter/wmbhelp/v8r0m0/topic/com.ibm.etools.mft.doc/ab00030_.htm] 
+ * Using the Message Broker Toolkit [http://publib.boulder.ibm.com/infocenter/wmbhelp/v8r0m0/topic/com.ibm.etools.mft.doc/aa40030_.htm]Back to top
+   
+   
+
+
+Exchanging data with IBM Support  * See Exchanging information with IBM Technical Support [http://www.ibm.com/support/docview.wss?rs=1083&context=SSGMGV&uid=swg21392217] for FTP and email instructions using the IBM Enhanced Customer Data Repository (ECuRep). 
+ * Go to the Service Request page [http://www.ibm.com/support/servicerequest/] to open or update a problem.
+   Note: Always update your Service Request (problem record) to indicate that data has been sent. 
+
+
+If you need to speak to an IBM technical support representative call your country representative [http://www.ibm.com/planetwide/]. If you need to speak to an IBM technical support representative in the US call 1-800-IBM-SERV. Back to top
+
+
+
+
+
+PRODUCT ALIAS/SYNONYM
+ WMB MB WBIMB

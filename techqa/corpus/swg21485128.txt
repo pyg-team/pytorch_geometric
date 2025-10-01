@@ -1,0 +1,49 @@
+Title: IBM An unknown error has terminated communication with the processor when exporting to Excel and the subcommand /MISSING = RECODE is used on Windows 7 - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ I am working with IBM SPSS Statistics 19 on a Windows 7 operating system. I have a data file with numeric and string variables, all containing system missing values and user missing values code 1 for the missings in the string variables. I would like to export my SPSS data file as Excel XLS file by using the /MISSING = RECODE subcommand since I would like to recode the user missing values to blank strings in the resulting Excel file.
+Example:
+SAVE TRANSLATE OUTFILE='C:\Temp\MyFile1.xls'
+/TYPE=XLS
+/VERSION=8
+/MISSING = RECODE
+/MAP
+/REPLACE
+/FIELDNAMES
+/CELLS=VALUES.
+
+However, when I run my syntax the program crashes with the message below and I have to quit the program via task manager:
+
+"An unknown error has terminated communication with the processor. The SPSS Statistics Processor is unavailable".
+
+An Excel file was created but when i try to open this file in Excel I get the error:
+
+"Test1.xls:: file format is not valid" 
+
+This does not happen on a windows XP computer, why is this? 
+
+RESOLVING THE PROBLEM
+This problem has been reported to SPSS Development - Workaround Available. It is expected to be addressed with the 19.0.0.2 FixPack (19.0.2 Patch).
+
+As a workaround either remove the subcommand /MISSING = RECODE from your syntax or save the SPSS data file as Excel XLSX file with this syntax below. We apologize for the inconvenience.
+
+SAVE TRANSLATE OUTFILE='C:\Temp\MyFile2.xlsx'
+/TYPE=XLS
+/VERSION=12
+/MISSING = RECODE
+/MAP
+/REPLACE
+/FIELDNAMES
+/CELLS=VALUES.
+
+RELATED INFORMATION
+ Need more help? Our Statistics forum is Live! [https://developer.ibm.com/answers/topics/statistics.html?smartspace=predictive-analytics]
+
+
+ 
+
+HISTORICAL NUMBER
+ 92179

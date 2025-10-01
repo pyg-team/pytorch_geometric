@@ -1,0 +1,148 @@
+Title: IBM Recovery options for data page corruptions - United States
+
+Text:
+torn-page; parital-page-write; recovery corrupt page; consistency bit; checksum; sqlbVerifyCBITS TECHNOTE (FAQ)
+
+QUESTION
+ What recovery options exist for torn-pages or data page corruptions?
+
+
+CAUSE
+When a host system is brought down due to a power-failure or forced reboot, in flight i/o requests (that may comprise a larger atomic operation at the application level), might not have all completed successfully. During crash-recovery or later, DB2 might encounter a "torn-page" and display sqlbVerifyCBITS or checksum errors within the db2diag.log.
+Typically this would warrant a database restore and rollforward, however different recovery options might be possible, as described below.
+It is fully expected that IBM Support be engaged to assist.
+
+
+ANSWER
+ 
+
+Consistency Bits & Checksums:
+A DB2 data page contains a "consistency bit" at regular intervals in releases before 10.1, or a "checksum" value in releases 10.1 and newer. Just before DB2 writes a data page from memory/bufferpool to disk, every "consistency bit" on the data page is set to an arbitrary matching value, or the "checksum" value is set to reflect the contents of the page. When reading this data page from disk later, the consistency bit or checksum allows DB2 to determine whether the entire page was correctly written to disk during the previous i/o write operation. If every consistency bit is not identical or if the checksum value no longer reflects the page contents, then this implies that a page corruption occurred during or after the i/o write operation, outside of DB2 control.
+
+Torn-page Exposure: 
+When DB2 writes a data page to disk, it is usually handled by the file system as a unit-of-work comprising multiple discreet (4k) block writes, and further broken down by the disk controller at sector size boundaries of 512 bytes. While this page write is viewed as an atomic operation from the DB2 perspective, the same is not guaranteed from the perspective of file system + host-bus-adapter + disk controller.
+A "torn-page" occurs when only some of the block writes succeed before a system crash, power-outage, or hardware error occurs. For example, after DB2 requests to write an 8K data page to disk, the host crashes (or a forced reboot) after only one of the file system's 4k block writes makes it onto disk, the other 4k block write may be lost. Battery backed disk controllers help minimize the chance of a partial-page-write at the disk level, but they are not guaranteed.
+
+Impact to DB2 crash-recovery:
+When the database is restarted after an unexpected outage, DB2 performs crash-recovery by replaying log-records to assure that all the data page changes for committed transactions are reflected on disk, and rolling back the data page changes for all uncommitted transactions. When the victim page is read from disk, the consistency bit or checksum mismatch is detected. DB2 log records do not contain a full copy of the data page (only the record that was modified) so this entire page cannot be recovered now, DB2 places the table space in restore-pending state.
+
+
+Identifying torn-pages: 
+
+When DB2 abends due to a torn-page, usually the db2diag.log would contain a severe error from the function 'sqlbVerifyCBITS'. 
+
+2012-02-26-05.06.26.394468-300 I18856E3916 LEVEL: Severe 
+PID : 31823 TID : 46964070672704PROC : db2sysc 0 
+INSTANCE: db2inst1 NODE : 000 DB : SAMPLE
+APPHDL : 0-12 APPID: 123.4.56.789.33722.120226100516 
+AUTHID : db2id1 
+EDUID : 82 EDUNAME: db2redow (SAMPLE) 0 
+FUNCTION: DB2 UDB, buffer pool services, sqlbVerifyCBITS, probe:1110 
+MESSAGE : ZRC=0x86020019=-2046689255=SQLB_CSUM "Bad Page, Checksum Error" 
+DIA8426C A invalid page checksum was found for page "". 
+DATA #1 : String, 64 bytes 
+Error encountered trying to read a page - information follows : 
+DATA #2 : String, 97 bytes 
+CBIT verification error 
+bitExpected is 1, userByte is 138, sector 31 (from head of page, 0 based) 
+DATA #3 : Page ID, PD_TYPE_SQLB_PAGE_ID, 4 bytes 
+3280483 
+DATA #4 : Object descriptor, PD_TYPE_SQLB_OBJECT_DESC, 88 bytes 
+Obj: {pool:1;obj:45;type:1} Parent={1;45} 
+lifeLSN: 00000095660EB1CC 
+tid: 0 0 0 
+extentAnchor: 5664 
+initEmpPages: 0 
+poolPage0: 5696 
+poolflags: 4122 
+objectState: 27 
+lastSMP: 0 
+pageSize: 32768 
+extentSize: 32 
+bufferPoolID: 2 
+partialHash: 19726337 
+bufferPool: 0x00002aaae5234720 
+pdef: 0x00002ab5791eb180 
+DATA #5 : Bitmask, 4 bytes 
+0x00000023 
+DATA #6 : Page header, PD_TYPE_SQLB_PAGE_HEAD, 48 bytes 
+pageHead: {tbspSeed:1;obj:45;type:1} PPNum:3280483 OPNum:1393955 
+
+Other db2diag.log entries are also possible, which are sometimes caused by classic torn-pages, and sometimes caused by other external corruptions: 
+
+2013-05-12-15.03.28.468908-240 I5229230E450 LEVEL: Severe 
+PID : 26765 TID : 47360914745664PROC : db2sysc 0 
+INSTANCE: db2inst1 NODE : 000 DB : SAMPLE
+APPHDL : 0-386 APPID: *LOCAL.ddainp01.130512184348 
+AUTHID : db2id1 
+EDUID : 522 EDUNAME: db2agent (SAMPLE) 0 
+FUNCTION: DB2 UDB, buffer pool services, sqlbCheckSMP4ObjDel, probe:3262 
+MESSAGE : Found mixed bits! 
+
+The db2diag.log entries that report corrupt pages are always accompanied by the actual page identifier.
+
+Obj={pool:1082;obj:4;type:1} State=x427 Parent={1081;4}, EM=96, PP0=0 Page=936713 
+
+How to determine the type of page: 
+
+The page "type" is usually included in the db2diag.log entry for the corrupt page, such as "type:1" in decimal notation in the example above. 
+However, the page type can always be determined by dumping the raw page data using db2dart. Using the "pool:" value as the <tablespaceID> and the "Page=" value as the <poolPageNum>, the following db2dart command can be used:
+
+>db2dart <dbname> /DP /TSI <tablespaceID> /PS <poolPageNum> /NP 1 /V Y 
+
+The page type can be extracted from the 11th byte of the raw page dump. In this example the value is x0E as seen in red:
+
+[....] 
+Tablespace page report phase start. 
+Total number of pages in this tablespace is 4096. 
+Any page with number greater than 4095 will be silently ignored. 
+Dump format is hex (consistency bits are untouched). 
+
+0000 *3000D00F 00000000 00050E02 02000000* *0...............* 
+0010 *00000000 FEFF0000 00000000 00000000* *................* 
+0020 *00000000 00000000 00000000 00000000* *................* 
+0030 *01000000 00000000 00000000 00000000* *................* 
+0040 *00000000 00000000 00000000 00000000* *................* 
+0050 *00000000 00000000 00000000 00000000* *................* 
+[....] 
+
+The hexidecimal notation value of the page type can be determined below. 
+(If the decimal notation value from the db2diag.log entry is being used, then it must be converted to a hexidecimal value first)
+
+the bit 0x0E = Space Map Page (SMP). 
+the bit 0x40 = Extent Map Page (EMP). 
+the bit 0x00 = Data Page - data/table object. 
+the bit 0x01 = Data Page - index object. 
+the bit 0x02 = Data page - long object. 
+the bit 0x03 = Data page - lob object. 
+the bit 0x04 = Data page - lob-allocation object. 
+the bit 0x05 = Data page - MDC block-map object. 
+the bit 0x06 = Data page - XML XDA object. 
+
+
+Options to recover from torn or corrupt pages: 
+
+For torn or corrupt SMP and EMP pages. The SMP page is responsible for tracking all pages within all objects in the tablespace. The EMP page is responsible for mapping all of the data pages associated with the single object. 
+The possible recovery options are: 
+(note, for EMP page corruptions, dropping and recreating the object is not possible since access to all EMP pages for the object is required to fully traverse it).
+i) tablespace level restore and rollforward to end of logs. 
+ii) database level restore and rollforward to end of logs. 
+iii) drop all objects within the tablespace, drop the tablespace, recreate the tablespace, recreate all objects within the tablespace. repopulate all objects within the tablespace. 
+
+For torn or corrupt index object pages, the possible recovery options are: 
+i) drop the index, recreate the index. 
+-- (note, if crash-recovery is failing, the index can be explicitly marked bad using the db2dart /MI option, which will force crash-recovery to skip replay of log-records associated with the index). 
+-- (note, for partitioned-tables, if the index is a partitioned-index then one can detach the data partition, drop and recreate the index on this data partition, and then reattach the data partition). 
+ii) tablespace level restore and rollforward to end of logs. 
+iii) database level restore and rollforward to end of logs. 
+
+For torn or corrupt data/table, long/lob/lob-alloc, mdc block-map and xml xda pages, the possible recovery options are: 
+i) drop table, recreate table, repopulate table. 
+-- (if data for the table is not available via some other source for repopulation, then the db2dart /DDEL option can be used to extract partial data from the table into a comma delimited ascii format, however data from the corrupt page may not be available, and this is only possible when table contains only standard data types). 
+-- (note, for partitioned-tables, one can detach the data partition, drop/recreate/repopulate the data partition, and then reattach the data partition). 
+ii) tablespace level restore and rollforward to end of logs. 
+iii) database level restore and rollforward to end of logs. 
+
+*** DB2 support teams can help you diagnosing and resolving these kinds of issues. ***
+
+After recovering from the issue, it is recommended to run a full "db2dart <dbname> /DB" to inspect the database for other damage or corruption. Note that this can be a very long running operation.

@@ -1,0 +1,53 @@
+Title: IBM Collecting Data: IBM Maximo for Utilities and Troubleshooting Wiki for Utilities - United States
+
+Text:
+Collecting Data; MustGather; Must Gather; collect data; collectdata; TPAEITC; TPAEUTIL TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Collecting data for IBM Maximo for Utilities problems. Gathering this information before calling IBM support will help you with the troubleshooting process and save time analyzing the data. 
+
+DIAGNOSING THE PROBLEM
+This document describes what information you need to compile to begin troubleshooting a IBM Maximo for Utilities issue. 
+
+Clients should provide this information when entering a Maximo for Utilities PMR.
+
+Must Gather
+
+1. Check the exact version information of Maximo, Utilities and other Industry Solutions that may be installed in your environment. This can be done by viewing the Help > System Information.
+
+2. Verify if the combination of Maximo, Utilities and Browser is supported and/or certified. 
+
+Maximo Platform matrix:
+
+https://www.ibm.com/developerworks/mydeveloperworks/groups/service/html/communityview?communityUuid=a9ba1efe-b731-4317-9724-a181d6155e3a#fullpageWidgetId=W5f281fe58c09_49c7_9fa4_e094f86b7e98&file=97d773e7-2177-4c0a-8b6b-170374718f9e [https://www.ibm.com/developerworks/mydeveloperworks/groups/service/html/communityview?communityUuid=a9ba1efe-b731-4317-9724-a181d6155e3a#fullpageWidgetId=W5f281fe58c09_49c7_9fa4_e094f86b7e98&file=97d773e7-2177-4c0a-8b6b-170374718f9e]
+
+
+3. Request the latest patch or hot fix read me file to confirm if the issue has not previously been addressed.
+
+4. Provide a document outlining steps to reproduce the issue with screen shots to better illustrate the scenario.
+
+5. Attempt to confirm that the issue can only be reproduced in Utilities and is not related to Maximo core functionality.
+
+6. Capture the application-specific logging. 
+
+ * Configure the appropriate and application-specific logging parameters within the Maximo Logging application. For most cases, and for initial troubleshooting, the Debug Level can be set to INFO.  * Create an Application Logger for the module in which the issue is present:
+      ex. PLUSDCUEST (for CU Estimating(T&D)) 
+    * Create sql Loggers for as many subcomponents of the application that are suspected to be causative to the issue:
+      ex. PLUSDCUESTIMATE.PLUSDESTDETAIL (for CU Estimating Details Info)
+   
+   
+ * Capture the logging for the time period when the issue presents itself
+
+
+7. Visit the Maximo for Utilities wiki: 
+
+https://www.ibm.com/developerworks/community/wikis/home?lang=en#!/wiki/Tivoli%20Documentation%20Central/page/IBM%20Maximo%20for%20Utilities [https://www.ibm.com/developerworks/community/wikis/home?lang=en#!/wiki/Tivoli%20Documentation%20Central/page/IBM%20Maximo%20for%20Utilities] 
+
+Additional Utilities documentation can be found here: 
+
+http://www-947.ibm.com/support/entry/portal/search_results?brandind=software~tivoli?sn=spe&q=TPAEUTIL&sortby=-dcdate&ibmprd=MAXLP&filter= [http://www-947.ibm.com/support/entry/portal/search_results?brandind=software~tivoli?sn=spe&q=TPAEUTIL&sortby=-dcdate&ibmprd=MAXLP&filter=] 
+RELATED INFORMATION
+ Maximo for Utilities Wiki [https://www.ibm.com/developerworks/community/wikis/home?lang=en#!/wiki/Tivoli%20Documentation%20Central/page/IBM%20Maximo%20for%20Utilities]
+Maximo Platform Matrix [https://www.ibm.com/developerworks/mydeveloperworks/groups/service/html/communityview?communityUuid=a9ba1efe-b731-4317-9724-a181d6155e3a#fullpageWidgetId=W5f281fe58c09_49c7_9fa4_e094f86b7e98&file=97d773e7-2177-4c0a-8b6b-170374718f9e]
+Additional Utilities Documentation [http://www-947.ibm.com/support/entry/portal/search_results?brandind=software~tivoli?sn=spe&q=TPAEUTIL&sortby=-dcdate&ibmprd=MAXLP&filter=]
+Maximo Documentation Launch Pad [http://www-01.ibm.com/support/docview.wss?uid=swg21418666]

@@ -1,0 +1,51 @@
+Title: IBM Silent Install of ClearCase Change Management server fails with errors: Error executing "/opt/IBM/RationalSDLC/common/IHS/bin/ihs_startup" operation - United States
+
+Text:
+1421957; CC; silent; install; 7.1; ihs_startup; response; file; /var/ibm/InstallationManager/logs/native/; IU: ratl.IHS.service.control.sun5 null; Error executing "/opt/IBM/RationalSDLC/common/IHS/bin/ihs_startup"; CM server; Silent Install; CRIMAF37550BFE TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This technote explains how to resolve an error, Error executing "/opt/IBM/RationalSDLC/common/IHS/bin/ihs_startup" operation (status=1), that can occur when performing a silent installation of IBM Rational ClearCase 7.1.x. 
+
+SYMPTOM
+ 
+
+Silent installation of ClearCase 7.1.x with Change Management (CM) Server halts and reports error:
+
+135 INFO 27:35.89 Error occurred in phase: install 
+
+SU: ratl.IHS.sun5 7.1.1000.0000-7-1-1-D091028 
+
+IU: ratl.IHS.service.control.sun5 null->999.999.999.-503920873 
+
+Message: Error executing "/opt/IBM/RationalSDLC/common/IHS/bin/ihs_startup" operation (status=1). 
+
+See agent output log for more information: /var/ibm/InstallationManager/logs/native/20100106_1352.log 
+
+136 INFO 27:35.89 Elapsed time 25:13.89 for: Performing "install" phase 
+
+137 ERROR CRIMAF37550BFE 27:37.00 Error executing "/opt/IBM/RationalSDLC/common/IHS/bin/ihs_startup" operation (status=1). 
+
+See agent output log for more information: /var/ibm/InstallationManager/logs/native/20100106_1352.log 
+
+
+The installer then rolls back the install and ClearCase fails to install.
+
+CAUSE
+This can be caused by not having a valid user and group to start the IBM HTTP Server (IHS) server process. 
+
+
+Check the logs 
+./IHS_logs/logs/ihs_start.log 
+
+
+
+httpd: bad user name www 
+
+
+This is due to an invalid user name and group in the response file:
+<data key='user.Common_IHSUserName' value='www' />
+<data key='user.Common_IHSGroupName' value='other' />
+
+
+RESOLVING THE PROBLEM
+Edit the response file to use a valid user and group name, and run the silent install again.

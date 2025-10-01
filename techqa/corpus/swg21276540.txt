@@ -1,0 +1,63 @@
+Title: IBM HPII Err <0,0,1026>-   Can't execute cmd 'move \Y D:\fnsw_loc\bin\20050110fn.e - United States
+
+Text:
+PANAGON IDM IMAGE SERVICES TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ HPII Err <0,0,1026>- Can't execute cmd 'move \Y D:\fnsw_loc\bin\20050110fn.e 
+
+RESOLVING THE PROBLEM
+HPII Err <0,0,1026>
+- Can't execute cmd 'move \Y D:\fnsw_loc\bin\20050110fn.eod i:\eob > null:'
+- HPII Error document does not contain any page. This resolution applies to all versions of HPII and Microsoft SQL on a Windows 2000 environment.
+
+HPII would not process any jobs. Error 0,0,126 in HPII imp file.
+
+2005/01/11 01:00:14 <fnsw> (003916) 
+Terminate received. Waiting for active children to finish
+--- 2005/01/11 01:00:14 <fnsw> (003916) Err <0,0,1026>
+- Can't execute cmd 'move \Y D:\fnsw_loc\bin\20050110fn.eod i:\eob > null:'
+- HPII Err: Can't exec command
+
+
+When analyzing the IMS error logs the following error is listed.
+
+
+2005/01/11 04:36:57.671 121,7,9002 <fnsw> dtp_tran (2288.3108.85 0x8f0.c24) ... [OPERATOR INTERVENTION]
+MS SQL Server Msg No:9002, State:6, Severity:17, Message: The log file for database 'indexdb' is full. Back up the transaction log for the database to free up some log space.
+
+2005/01/11 04:36:57.671 121,7,9002 <fnsw> dtp_tran (2288.3108.85 0x8f0.c24) ...
+INX_create: GDB_exec_error on doc_id 20847018
+
+2005/01/11 04:36:57.671 121,7,9002 <fnsw> dtp_tran (2288.3108.85 0x8f0.c24) ...
+INSERT INTO doctaba(f_docnumber, f_docclassnumber, f_entrydate, f_lastaccess, f_annotationflag, f_archivedate, f_purgedate, f_deletedate, f_retentbase, f_retentdisp, f_retentoffset, f_pages, f_accessrights, f_doctype, f_docformat, f_doclocation,a40,a33,a3
+
+2005/01/11 04:36:57.671 121,7,9002 <fnsw> dtp_tran (2288.3108.85 0x8f0.c24) ... [OPERATOR INTERVENTION]
+MS SQL Server Msg No:9002, State:6, Severity:17, Message: The log file for database 'indexdb' is full. Back up the transaction log for the database to free up some log space.
+
+2005/01/11 04:36:57.686 121,7,9002 <fnsw> dtp_tran (2288.3108.85 0x8f0.c24) ...
+INX_create: GDB_exec_error on doc_id 20847019
+
+2005/01/11 04:36:57.686 121,7,9002 <fnsw> dtp_tran (2288.3108.85 0x8f0.c24) ...
+INSERT INTO doctaba(f_docnumber, f_docclassnumber, f_entrydate, f_lastaccess, f_annotationflag, f_archivedate, f_purgedate, f_deletedate, f_retentbase, f_retentdisp, f_retentoffset, f_pages, f_accessrights, f_doctype, f_docformat, f_doclocation,a40,a33,a3
+
+2005/01/11 04:36:57.686 121,7,9002 <fnsw> dtp_tran (2288.3108.85 0x8f0.c24) ... [OPERATOR INTERVENTION]
+MS SQL Server Msg No:9002, State:6, Severity:17, Message: The log file for database 'indexdb' is full. Back up the transaction log for the database to free up some log space.
+
+
+============== Problem / Solution:
+
+The problem is with the Miscrosoft SQL database, the transaction log is full. Customer needs to contact Microsoft so they can help the customer truncate the SQL database. After truncating the SQL database, restart HPII and then the jobs will process.
+
+-end
+
+
+
+
+
+
+HISTORICAL NUMBER
+ 10011491 
+
+PRODUCT ALIAS/SYNONYM
+ IDM SERVICES

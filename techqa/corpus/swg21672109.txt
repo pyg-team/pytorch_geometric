@@ -1,0 +1,20 @@
+Title: IBM Cannot launch IBM SPSS Statistics 22 in Windows 8 - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ I downloaded SPSS Statistics 22 to my laptop with Windows 8 and I could not get it to open, it kept wanting to install. I tried to download the trial software off of your website and had the same challenge. 
+
+CAUSE
+The issue here is that after a successful install of IBM SPSS Statistics, a lot of customers don't know how to launch SPSS Statistics 22 in Windows OS, especially Windows 8.
+
+RESOLVING THE PROBLEM
+Launch SPSS Statistics 22 from Windows Start menu. 
+Start-> All Program->IBM SPSS Statistics->IBM SPSS Statistics 22 
+
+If you do not know where the Start menu is, please refer to the Microsoft web site for guidance: 
+http://windows.microsoft.com/en-us/windows-8/where-is-start-menu [http://windows.microsoft.com/en-us/windows-8/where-is-start-menu]
+
+RELATED INFORMATION
+ Need more help? Our Statistics forum is Live! [https://developer.ibm.com/answers/topics/statistics.html?smartspace=predictive-analytics]

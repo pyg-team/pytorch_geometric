@@ -1,0 +1,53 @@
+Title: IBM Security Bulletin: Remote Code Execution (RCE) Vulnerability in Apache Struts affects IBM Connections - United States
+
+Text:
+Planning; Preventive Service; Security SECURITY BULLETIN
+
+SUMMARY
+ Certain versions of Apache Struts 2 Framework are vulnerable to RCE attacks. IBM Connections uses an Apache Struts 2 version which is vulnerable to this attack. 
+
+VULNERABILITY DETAILS
+ 
+CVEID: CVE-2017-5638 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2017-5638]
+DESCRIPTION: Apache Struts could allow a remote attacker to execute arbitrary code on the system, caused by an error when performing a file upload based on Jakarta Multipart parser. An attacker could exploit this vulnerability using a malicious Content-Type value to execute arbitrary code on the system.
+CVSS Base Score: 7.3
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/122776 [https://exchange.xforce.ibmcloud.com/vulnerabilities/122776] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:L/A:L)
+
+
+AFFECTED PRODUCTS AND VERSIONS
+The following versions of IBM Connections are impacted:
+
+IBM Connections 5.5
+IBM Connections 5.0
+IBM Connections 4.5
+IBM Connections 4.0
+
+REMEDIATION/FIXES
+Apply the appropriate fix pack or APAR to remediate these issues as per this table. Note, if possible, it is always recommended to upgrade to the most recent release of IBM Connections.
+
+
+
+
+Product Version Remediation IBM Connections 5.5 Upgrade to IBM Connections 5.5 CR2 [https://www-01.ibm.com/support/docview.wss?uid=swg21991630] and apply Interim Fix for APAR LO91850 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FLotus%2FLotus+Connections&fixids=5.5.0.0-IC-IFLO91850&source=SAR] IBM Connections 5.0 Upgrade to IBM Connections 5.0 CR4 , [http://www-01.ibm.com/support/docview.wss?uid=swg21976698] [http://www-933.ibm.com/support/fixcentral/swg/downloadFixes?product=ibm/Lotus/Lotus+Connections&release=4.5.0.0&platform=All&function=fixId&fixids=4.5.0.0-IC-Multi-CR04-LO78429&includeRequisites=1&includeSupersedes=0&downloadMethod=http] [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FLotus%2FLotus+Connections&fixids=5.0.0.0-IC-Common-IFLO88784&source=SAR] [http://www-933.ibm.com/support/fixcentral/swg/downloadFixes?parent=Collaboration%2BSolutions&product=ibm/Lotus/Lotus+Connections&release=All&platform=All&function=fixId&fixids=4.5.0.0-IC-Multi-IFLO5600&includeRequisites=0&includeSupersedes=0&downloadMethod=http] [http://www.ibm.com/support/fixcentral/swg/quickorder?product=ibm/Lotus/Lotus+Connections&release=4.5.0.0&platform=All&function=fixId&fixids=4.5.0.0-IC-Multi-IFLO81215&includeRequisites=0&includeSupersedes=0&downloadMethod=http&source=fc]apply prereqs and then apply Interim Fix for APAR LO91850 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FLotus%2FLotus+Connections&fixids=5.0.0.0-IC-IFLO91850&source=SAR] IBM Connections 4.5 Upgrade to IBM Connections 4.5 CR5 [https://www-304.ibm.com/support/docview.wss?uid=swg21674096] [http://www-933.ibm.com/support/fixcentral/swg/downloadFixes?product=ibm/Lotus/Lotus+Connections&release=4.5.0.0&platform=All&function=fixId&fixids=4.5.0.0-IC-Multi-CR04-LO78429&includeRequisites=1&includeSupersedes=0&downloadMethod=http] , apply prereqs and then apply Interim Fix for APAR LO91850 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FLotus%2FLotus+Connections&fixids=4.5.0.0-IC-IFLO91850&source=SAR] IBM Connections 4.0 Upgrade to IBM Connections 4.0 CR4 [https://www-01.ibm.com/support/docview.wss?uid=swg21637538] [https://www-304.ibm.com/support/docview.wss?uid=swg21674096] [http://www-933.ibm.com/support/fixcentral/swg/downloadFixes?product=ibm/Lotus/Lotus+Connections&release=4.5.0.0&platform=All&function=fixId&fixids=4.5.0.0-IC-Multi-CR04-LO78429&includeRequisites=1&includeSupersedes=0&downloadMethod=http] [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FLotus%2FLotus+Connections&fixids=4.5.0.0-IC-IFLO89929&source=SAR] [https://www-304.ibm.com/support/docview.wss?uid=swg21674096] [http://www-933.ibm.com/support/fixcentral/swg/downloadFixes?product=ibm/Lotus/Lotus+Connections&release=4.5.0.0&platform=All&function=fixId&fixids=4.5.0.0-IC-Multi-CR04-LO78429&includeRequisites=1&includeSupersedes=0&downloadMethod=http] , apply prereqs and then apply Interim Fix for APAR LO91850 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FLotus%2FLotus+Connections&fixids=4.0.0.0-IC-IFLO91850&source=SAR] WORKAROUNDS AND MITIGATIONS
+None
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v3 Guide [http://www.first.org/cvss/user-guide] 
+On-line Calculator v3 [http://www.first.org/cvss/calculator/3.0] 
+
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] 
+
+CHANGE HISTORY
+ 27 March 2017: Original version published 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.

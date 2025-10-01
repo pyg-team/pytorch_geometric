@@ -1,0 +1,112 @@
+Title: IBM QuickFile Version 1.0 Release Notes - United States
+
+Text:
+ PRODUCT DOCUMENTATION
+
+ABSTRACT
+ The IBM QuickFile Version 1.0 Release Notes document supplements IBM QuickFile Version 1.0 documentation. 
+
+CONTENT
+Release notes are updated with each release of the product and contain last-minute changes and other important product information. Read the document before installation. 
+
+
+
+
+Operations 
+
+Review the following list to identify information that affects operations: 
+
+ * If you define more than 2000 users and you add users to groups when you use the wizard, you might experience performance issues. If performance prevents you from managing groups, use the API calls for this task. See the group API information at developerWorks [https://www.ibm.com/developerworks/mydeveloperworks/wikis/home?lang=en#/wiki/W2b2738f2ab4d_4ec0_b10d_ea5256c858e7/page/IBM%20QuickFile%20-%20Change%20Policy%20Group%20Membership] for instructions on using the API calls. 
+ * When a user sends a file with the Firefox browser and Accept third party cookies is disabled in the browser privacy settings, the file might go into a paused state. The user receives the following message:  * 
+    * After uploading, unexpected response code is received from the server. The response code is 401.
+   
+   
+   Complete the following procedure to fix this problem:  * 
+    * Tools
+    * 
+    * Options 
+    * 
+    * Privacy
+    * 
+    * 
+    * 
+    * 
+   
+   
+ * Unregistered users might be unable to upload a file when they use Internet Explorer version 9 and Gmail by Google. The following error message is displayed:  * 
+    * An error has occurred. Please contact your administrator. Details: Unable to get value of the property 'hide': object is null or undefined.
+   
+   
+   Complete one of the following tasks to fix the problem:  *  Copy and paste the link from the email into the browser URL bar. Use a different browser to open the link. 
+   
+   
+ * If SSL is enabled, but the user receives an error that the certificate is not trusted, the user also gets the error,  * ssl_error_rx_record_too_long
+   
+   
+   To fix the problem, the user clears the browser cache or browser history. Then, try the connection again. 
+ * If an administrator configures an SMTP server to enable SSL, the administrator must edit the SSL configuration and add the SMTP server certificate into the truststore. 
+ * If you enable LDAP, an LDAP user is not displayed in the user list until the user signs on to QuickFile. 
+ * If you modify a task interval and use a CRON notation, the next run interval might be delayed. 
+
+
+Database Review this list of database considerations before you install the product: 
+
+ * If you have multiple QuickFile servers in a workgroup, all servers must use the same timezone and NTP server. 
+ * If you use the Oracle or DB2 database, make sure that the database server defines the same timezone as the QuickFile server.
+
+
+Running in a nonproduction environment QuickFile does not support VMWare in a production environment. However, you can configure VMWare for testing. 
+
+If you run QuickFile in a nonproduction environment and you run Windows XP VMWare and Internet Explorer version 8, you might experience a problem when you load the Welcome page. Complete the following steps to fix the problem: 
+
+ * On Internet Explorer, select Tools > Internet Options > Security. 
+ * Set security to Medium and click OK. 
+ * Restart Internet Explorer. 
+ * Log in to QuickFile.
+
+
+Advanced File Transfer The following list identifies information to consider when you use the Advanced File Transfer feature: 
+
+ * If you receive the error, "Java(TM) was blocked because it is out of date", uninstall all previous versions of Java. 
+ * When you use IBM JRE version 1.7 with Internet Explorer version 8 or 9, reloading the page might cause the browser to stop working. To fix this issue, upgrade to JRE version 1.7.0_06/07 or later.
+   This issue is a known JRE issue, described in Sun bug database ID 7176027. 
+ * When you use Oracle JRE version 1.7 with Internet Explorer version 8 or 9, reloading a page might cause the browser to stop working. To fix the issue, upgrade to JRE version 1.7.0_06/07 or later.
+   This issue is a known JRE issue, described in Sun bug database ID 7176027. 
+ * When you use Windows 7 and Java version 1.7.0_04 or later and select files to send, you might experience problems. This issue is reported in Sun bug database ID 7177373.
+
+
+The following table identifies how to prevent Java from upgrading and how to remove the latest version: Action Steps Prevent your system from upgrading to version 1.7.0_04  * 
+ * Control Panel
+ * 
+ * Java
+ * 
+ * 
+ * 
+ * Update 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * OK
+ * 
+
+Remove the latest version of Java  * 
+ * Control Panel
+ * 
+ * 
+ * 
+ * Programs and Features
+ * 
+ * 
+ * 
+ * 
+ * 
+ *  
+   Java download site [http://www.oracle.com/technetwork/java/javasebusiness/downloads/java-archive-downloads-javase6-419409.html] 
+
+Global information 
+
+This information identifies global issues. 
+
+Form fields do not support Thai characters when QuickFile validates the text length

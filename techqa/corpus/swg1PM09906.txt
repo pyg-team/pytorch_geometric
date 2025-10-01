@@ -1,0 +1,165 @@
+Title: IBM PM09906: PORTLET PALETTE USAGE CAUSES THROWMISSINGACCESSRIGHTSEXCEPTION E JPPD0002E TO BE LOGGED - United States
+
+Text:
+  FIXES ARE AVAILABLE
+6.1.0.4 Download: WebSphere Portal and WCM V6.1.0 fix pack 4 & 6.1.5 fix pack 1 [http://www-01.ibm.com/support/docview.wss?uid=swg24026394]
+Recommended Updates for WebSphere Portal and Web Content Management V6.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24023835]
+6.1.0.5 Download: WebSphere Portal and WCM V6.1.0 fix pack 5 [http://www-01.ibm.com/support/docview.wss?uid=swg24027475]
+6.1.0.6 Download: WebSphere Portal and WCM V6.1.0 fix pack 6 [http://www-01.ibm.com/support/docview.wss?uid=swg24030970]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  If there are portlets in the Portlet Palette for which a user
+   does not have access a message like this will be logged to
+   SystemOut.log
+   QueryPortletC E com.ibm.wps.command.portlets
+   .QueryPortletCommand
+   AbstractCommand.throwMissingAccessRightsException EJPPD0002E:
+   User uid=<id>,... is not authorized to execute the command
+   QueryPortlet.
+   
+   The message is actually a warning and does not indicate an
+   error if the portlets are indeed visible to users who should
+   see them. This APAR is to suppress the message.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  If there are portlets in the Portlet Palette for which a user
+   does not have access a message like this will be logged to
+   SystemOut.log:
+   
+   QueryPortletC E com.ibm.wps.command.portlets
+   .QueryPortletCommand
+   AbstractCommand.throwMissingAccessRightsException EJPPD0002E:
+   User uid=<id>,... is not authorized to execute the command
+   QueryPortlet.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The message is actually a warning and does not indicate an
+   error if the portlets are indeed visible to users who should see
+   them. This APAR is to suppress the message.
+   
+   Failing Module(s):
+      Engine: Tags & Commands
+   
+   Affected Users:
+      All users
+   
+   Version Information:
+      Portal Version(s): 6.1.0.3
+       Pre-Requisite(s): ---
+        Co-Requisite(s): ---
+   
+   Manuel Steps:
+      None
+   
+   Platform Specific:
+      This fix applies to all platforms.
+   
+   
+   PM09906 is part of Cumulative Fix 03 for Portal 6.1.0.3.
+   
+   The Cumulative Fix is available on Fix Central:
+   
+   http://www.ibm.com/eserver/support/fixes/fixcentral/swgquickorde
+   r?apar=PM09968&productid=WebSphere%20Portal&brandid=5 [http://www.ibm.com/eserver/support/fixes/fixcentral/swgquickorder?apar=PM09968&productid=WebSphere%20Portal&brandid=5]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM09906
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSPHERE PORTA
+   
+   
+ * REPORTED COMPONENT ID
+   5724E7600
+   
+   
+ * REPORTED RELEASE
+   615
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-03-12
+   
+   
+ * CLOSED DATE
+   2010-04-08
+   
+   
+ * LAST MODIFIED DATE
+   2010-04-08
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBSPHERE PORTA
+   
+   
+ * FIXED COMPONENT ID
+   5724E7600
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R61C PSY
+   UP

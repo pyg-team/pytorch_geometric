@@ -1,0 +1,14 @@
+Title: IBM Information Server Informix Wire Protocol driver error "Transaction not available" from ODBC Connector Stage - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When using the ODBC Connector Stage to access data in an Informix database, receive the following error:
+
+Message: ODBC_Connector_0: ODBC function "SQLPrepare" reported: SQLSTATE = HY000: Native Error Code = -95: Msg = [IBM(DataDirect OEM)][ODBC Informix Wire Protocol driver][Informix]Unexpected Network Error.
+ODBC function "SQLPrepare" reported: SQLSTATE = HY000: Native Error Code = -256: Msg = [IBM(DataDirect OEM)][ODBC Informix Wire Protocol driver][Informix]Transaction not available. (CC_OdbcDBStatement::dbsPrepare, file CC_OdbcDBStatement.cpp, line 347)
+
+
+RESOLVING THE PROBLEM
+To resolve the above error, set the Transaction handling>Isolation Level from none to Auto-Commit.

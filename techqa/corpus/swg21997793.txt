@@ -1,0 +1,34 @@
+Title: IBM Resolving Failed Oracle Text Indexes - United States
+
+Text:
+TPAEORACLE; TPAEDATABASE TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ How to recreate Oracle text index which is in a failed status 
+
+DIAGNOSING THE PROBLEM
+The following sql statement will find failed text indexes:
+
+select owner, index_name, table_name, status, domidx_status, domidx_opstatus
+from dba_indexes
+where index_type= 'DOMAIN' and domidx_opstatus='FAILED'
+and owner= 'maximo schema name';
+
+RESOLVING THE PROBLEM
+You will have to drop the FAILED indexes first, then create.
+FAILED indexes must be dropped and cannot be rebuilt.
+
+For each of the indexes, do the following:.
+
+drop index INDEX_NDX1;
+
+Then to create the text index, run this statement and the generated sql statement:.
+
+select 'CREATE INDEX '||a.index_name||' on
+'||b.table_name||'('||a.column_name||') indextype is ctxsys.context
+parameters (''lexer global_lexer language column LANGCODE'');'
+from user_ind_columns a, user_indexes b
+where b.index_type = 'DOMAIN'
+and b.index_name = a.index_name and b.index_name in
+('INDEX_NDX1')
+order by b.table_name, a.index_name;

@@ -1,0 +1,27 @@
+Title: IBM Broker error message - United States
+
+Text:
+broker; certificate; error TECHNOTE (FAQ)
+
+QUESTION
+ My borker session is working however in the broker log is reported an error. 
+
+CAUSE
+What does the error "ERROR ¬ 2208| I0000/00cf: unable to obtain peer certificate" mean? Which is the impact?
+
+ANSWER
+This message can be safely ignored for connections coming from a controller or target. 
+
+Background information: 
+When the broker accepts an incoming connection, the first thing to 
+happen on the connection is the SSL/TLS handshake to establish a secure (encrypted) connection. During the SSL/TLS handshake, there is a certificate verification step where the client verifies the server certificate and optionally the server verifies the client's certificate. 
+Endpoints (controllers and targets) do not need a certificate but brokers do need one. 
+The problem is, during the TLS/SSL handshake, the broker does not yet 
+know if the client is an endpoint or another broker, which means that it 
+doesn't know if it has to ask for a client certificate or not. Hence, 
+the broker always requests a client certificate and if the client sends 
+a certificate, the broker verifies it. Then, after the SSL/TLS handshake 
+has completed, the broker determines the type of client. Now that the 
+broker knows the type of client, it can check if a certificate is 
+required and refuse the connection when the client did not provide a 
+certificate if one was required.

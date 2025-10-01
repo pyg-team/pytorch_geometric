@@ -1,0 +1,44 @@
+Title: IBM How to Change the iSeries Acting as Server or Client to Support Only Version 1 or 2 of SSH - United States
+
+Text:
+TCPIP TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This document describes how to change the IBM i 6.1 acting as server or client to support only Version 1 or 2 of SSH. 
+
+RESOLVING THE PROBLEM
+You can change the IBM i 6.1 acting as a client to use only SSH Version 1 or 2 by editing the following configuration file: 
+
+1. Run the WRKLNK '/' command. 2. Then, drill down to the ssh_config using the following path:
+
+/QOpenSys/QIBM/UserData/SC1/OpenSSH/openssh-version/etc/ssh_config 3. Select Option 2 to edit the file, and page down until you see the following keyword: 
+
+#Protocol 2,1 4. To change the iSeries as a client to use only one SSH Version 2, remove the # sign, the comma, and the 1. 
+You can change the iSeries acting as a server to allow only SSH Version 1 or 2 connections by doing the following: 
+
+1. Edit the following configuration file:
+
+/QOpenSys/QIBM/UserData/SC1/OpenSSH/openssh-version/etc/sshd_config 2. Select option 2 to edit the file and page down until you see the following keyword: 
+
+#Protocol 2,1 3. To change the iSeries as a server to allow only SSH Version 2 connections, remove the # sign, the comma, and the 1. 4. End and start the SSH server for this change to take effect.
+
+Note: Any new ssh client connections will use the new values in the ssh_config file.
+
+Replace the openssh_version folder with the correct implementation of OpenSSH running on the System i. The different versions of openssh that are installed on the various releases of the System i are located below: 
+
+openssh-3.5p1 is installed on R540 machines.
+
+openssh-3.8.1p1 is installed on R610 machines.
+
+openssh-4.7p1 is installed on R710 machines.
+
+Note: On IBM i 7.2 systems, openssh version folders in the ProdData & UserData directories do 
+not exist anymore. The ssh client & server configuration files at this OS release can be found 
+in the IFS directories below: 
+
+Client Configuration File Path - /QOpenSys/QIBM/UserData/SC1/OpenSSH/etc/ssh_config
+
+Server Configuration File Path - /QOpenSys/QIBM/UserData/SC1/OpenSSH/etc/sshd_config [/support/docview.wss?uid=nas8N1013725&amp;aid=1] [/support/docview.wss?uid=nas8N1013725&amp;aid=1] [/support/docview.wss?uid=nas8N1013725&amp;aid=1] [/support/docview.wss?uid=nas8N1013725&amp;aid=1]  
+
+HISTORICAL NUMBER
+ 484452956

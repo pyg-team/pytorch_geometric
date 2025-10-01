@@ -1,0 +1,33 @@
+Title: IBM Detailed System Requirements: IBM InfoSphere Optim Data Growth and Application Retirement solutions for JD Edwards 9.1 - United States
+
+Text:
+ DETAILED SYSTEM REQUIREMENTS
+
+ABSTRACT
+ This techdoc summarizes the hardware, platforms, and software supported by the IBM® InfoSphere® Optim™ Data Growth and Application Retirement solutions for JD Edwards v9.1. 
+
+CONTENT
+
+
+SUPPORTED VERSIONS OF JD EDWARDS ENTERPRISEONE
+The solutions for JD Edwards support the following JD Edwards EnterpriseOne versions:
+
+ * JD Edwards EnterpriseOne Xe and ERP 8.0
+ * JD Edwards EnterpriseOne 8.10, 8.11, 8.12, 9.0, and 9.1
+
+Version 9.1 of the Optim solutions for JD Edwards are tested and distributed with the IBM InfoSphere Optim Solution v9.1. Detailed hardware and software requirements for the Optim Solution are at: http://www.ibm.com/support/docview.wss?uid=swg27036209 [http://www.ibm.com/support/docview.wss?uid=swg27024294].
+
+Note: Hardware and software requirements for the Optim Solution may list database management systems and character sets that the JD Edwards application does not support. Therefore, only a subset of the Optim information applies to the solutions for JD Edwards EnterpriseOne.
+
+SETUP CONSIDERATIONS FOR ARCHIVING ENTERPRISEONE XE AND 8.0 DATA ON ISERIES
+If you are use EnterpriseOne Xe or ERP 8.0, the following steps are required to set up the Optim solution for archiving of JD Edwards EnterpriseOne data on System i:
+
+ * Install and configure the Optim server and install DB2 for Linux, UNIX, and Windows, including the Federation Server, on the same machine.
+ * Configure the Federation Server, which includes creating a SAMPLE database and a wrapper for that database.
+ * Set up iSeries Database Communication, such as specifying TCP/IP communication parameters.
+ * Define the iSeries Database Server.
+ * Create the appropriate User Mapping from the local system to the iSeries server.
+ * Create Nicknames in the DB2 SAMPLE database for the tables in your iSeries database. (Scripts are provided to create the nicknames in bulk.)
+ * Create a DB Alias so the Optim solution can connect to the SAMPLE database.
+
+The above steps are documented in the Installation Guide for IBM InfoSphere Optim Data Growth Solution for JD Edwards EnterpriseOne.

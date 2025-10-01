@@ -1,0 +1,133 @@
+Title: IBM IZ81314: A STACKOVERFLOWERROR MIGHT OCCUR AFTER SELECTING 'SHOW          RELATIONSHIPS' IN THE WSRR CONTENT VIEW - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  After retrieving documents with circular relationships using the
+   WSRR Content View in Studio, selecting 'Show Relationships'
+   triggers a StackOverflowError.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  When documents that have a circular dependency are retrieved by
+   WSRR Studio and shown in the 'WSRR Content View', selecting
+   'Show Relationships' will cause the following error as shown in
+   the log:
+   
+   !MESSAGE Unhandled event loop exception
+   !STACK 0
+   java.lang.StackOverflowError
+   at org.eclipse.swt.widgets.Display.windowProc(Display.java:4541)
+   at org.eclipse.swt.internal.win32.OS.SendMessageW(Native Method)
+   at org.eclipse.swt.internal.win32.OS.SendMessage(OS.java:3012)
+   at org.eclipse.swt.widgets.Tree.CDDS_ITEMPREPAINT(Tree.java:925)
+   at org.eclipse.swt.widgets.Tree.wmNotifyChild(Tree.java:7143)
+   ...
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Studio attempted to recursively expand the cicular relationship
+   that leads to the StackOverflowError.
+   
+   The code has been modified to check for and handle this
+   situation so that the StackOverflowError no longer occurs.
+   
+   The fix for this is targeted for inclusion in Fix Pack 3.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ81314
+   
+   
+ * REPORTED COMPONENT NAME
+   SERV REG STUDIO
+   
+   
+ * REPORTED COMPONENT ID
+   5724N7202
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-08-03
+   
+   
+ * CLOSED DATE
+   2010-08-03
+   
+   
+ * LAST MODIFIED DATE
+   2010-08-03
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   SERV REG STUDIO
+   
+   
+ * FIXED COMPONENT ID
+   5724N7202
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R700 PSY
+   UP

@@ -1,0 +1,177 @@
+Title: IBM IV92233: USER PREFERENCE ARE NOT SAVED FOR USERNAME WITH BACKSLASH - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PERMANENT RESTRICTION.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  From the SystemOut.log, these error are seen
+   /opt/ibm/JazzSM/profile/config/cells/JazzSMNode01Cell/applicatio
+   ns/isc.
+   ear/deployments/isc/isclite.war/WEB-INF/isc.dir/nbnco%
+   25backslash_deepumohanmohanakuma/prefs.xml does not exist.
+   
+   But the actual prefs.xml path is as below
+   
+   /opt/ibm/JazzSM/profile/config/cells/JazzSMNode01Cell/applicatio
+   ns/isc.
+   ear/deployments/isc/isclite.war/WEB-INF/isc.dir/nbnco%
+   backslash_deepumohanmohanakuma
+   
+   Troubleshooting Performed and Results:
+   There are 4 DASH/WebGUI nodes in the cluster. These nodes use
+   LDAP
+   server as the user repository. Due to LDAP server configuration,
+   all
+   users' username have the format 'domain\username' ( refer to the
+   screenshot in 'Manager User' page in the screenshot). When the
+   users are
+   created in DASH, prefs.xml files were created. Instead of using
+   '\',
+   DASH replace '\' with '%backslash_' (refer to the second
+   screenshot in
+   the customer's email)
+   
+   /opt/ibm/JazzSM/profile/config/cells/JazzSMNode01Cell/applicatio
+   ns/isc.
+   ear/deployments/isc/isclite.war/WEB-INF/isc.dir/nbnco%
+   backslash_deepumohanmohanakuma
+   
+   This is all good.
+   
+   However when the users are trying to modify and save the
+   preferences,for
+   example, after the user login, go to 'Favorites', upon saving,
+   an error
+   is received (refer to the third screenshot in the customer's
+   email), and
+   the changes are not sync to the other nodes.
+   
+   After investigating SystemOut.log, we found out DASH adds the
+   extra '25'
+   characters in the path when it trys to look for prefs.xml
+   resulting in
+   file unable to be found
+   
+   ---------- SystemOut.log ---------------
+   
+   [12/14/16 11:15:52:385 AEDT] 00000ef1 FileUtil      W
+   com.ibm.isc.ha.stores.file.FileUtil getWritableFile The file
+   /opt/ibm/JazzSM/profile/config/cells/JazzSMNode01Cell/applicatio
+   ns/isc.e
+   ar/deployments/isc/isclite.war/WEB-INF/isc.dir/nbnco%25backslash
+   _deepumo
+   hanmohanakuma/prefs.xml does not exist.
+   
+   In the remote session today, we tested using 'smadmin' user to
+   do the
+   same action and 'smadmin' user doesn't have the problem to save
+   the
+   changes and changes sync to other nodes as expected. 'smadmin'
+   is only
+   user who doesn't have '\' in the username since it is local
+   file-based
+   user. This is confirmed that the problem is caused by the extra
+   '25'                                   too
+   characters in the seraching path.
+   
+   Webgui/DASH L2 is able to reproduce the issue locally on ADL lab
+   env.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Favorites not part of HA. To address the same technote was
+   created
+   http://www.ibm.com/support/docview.wss?uid=swg22001032 [http://www.ibm.com/support/docview.wss?uid=swg22001032]
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Favorites not part of HA. To address the same technote was
+   created
+   http://www.ibm.com/support/docview.wss?uid=swg22001032 [http://www.ibm.com/support/docview.wss?uid=swg22001032]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV92233
+   
+   
+ * REPORTED COMPONENT NAME
+   JAZZ SM TIP DAS
+   
+   
+ * REPORTED COMPONENT ID
+   5724C04JD
+   
+   
+ * REPORTED RELEASE
+   110
+   
+   
+ * STATUS
+   CLOSED PRS
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-01-11
+   
+   
+ * CLOSED DATE
+   2017-03-30
+   
+   
+ * LAST MODIFIED DATE
+   2017-03-30
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

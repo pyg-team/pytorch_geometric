@@ -1,0 +1,59 @@
+Title: IBM Attempting to login to Workplace XT to perform bootstrap configuration fails with error "The JNDI cannot be accessed. Message was: Error getting WsnNameService properties [Code=null]; OMFC/TheNetwork/NoOp//API_UNEXPECTED_JNDI_ERROR" - United States
+
+Text:
+WebSphere; SSL; JNDI; bootstrap TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ After installing and configuring Workplace XT in WebSphere Application Server 8.x, the first attempt to login and perform bootstrap configuration fails with a JNDI exception. 
+
+SYMPTOM
+The error is recorded in the WebSphere ffdc logs: 
+
+FFDC Exception:com.ibm.websphere.servlet.error.ServletErrorReport 
+SourceId:com.ibm.ws.webcontainer.webapp.WebAppRequestDispatcher.dispatch ProbeId:428 
+Reporter:com.ibm.ws.webcontainer.filter.WebAppFilterManagerImpl@713df070
+com.ibm.websphere.servlet.error.ServletErrorReport: com.filenet.wcm.api.RemoteServerException: 
+com.filenet.api.exception.EngineRuntimeException&#59;The JNDI cannot be accessed. Message was: Error getting WsnNameService properties [Code=null]&#59; OMFC/TheNetwork/NoOp//API_UNEXPECTED_JNDI_ERROR
+...
+Caused by: com.filenet.wcm.api.RemoteServerException: com.filenet.api.exception.EngineRuntimeException;The JNDI cannot 
+be accessed. Message was: Error getting WsnNameService properties [Code=null]; 
+OMFC/TheNetwork/NoOp//API_UNEXPECTED_JNDI_ERROR
+at com.filenet.wcm.toolkit.server.base.WcmController.checkLogin(WcmController.java:2880)
+at com.filenet.wcm.toolkit.server.base.WcmController.performLoginTests(WcmController.java:3364)
+at com.filenet.wcm.toolkit.server.base.WcmController.initializeModules(WcmController.java:3596)
+at com.filenet.wcm.toolkit.server.base.WcmController.initializeModules(WcmController.java:3491)
+at com.filenet.wcm.toolkit.server.base.WcmController.handleEvent(WcmController.java:3202)
+at com.filenet.wcm.apps.server.controller.WcmWorkplaceController.handleEvent(WcmWorkplaceController.java:569)
+at com.filenet.wcm.toolkit.server.base.WcmController.handleEvent(WcmController.java:3134)
+at com.ibm._jsp._WcmDefault._jspService(_WcmDefault.java:101)
+... 54 more
+
+The SystemOut logs also contain the following:
+
+00000073 CSIv2Effectiv W 
+JSAS1477W: SECURITY CLIENT/SERVER CONFIG MISMATCH: The client security configuration (sas.client.props or outbound settings in GUI) does not support the server security configuration for the following reasons: 
+ERROR 1: JSAS0809E: The current OID is RSA but this is not an Admin request.
+ERROR 2: JSAS0603E: The server does not support SSL/TLS, but the client is configured to require it.
+
+
+CAUSE
+This error occurs when SSL is configured on the WebSphere Application Server running Workplace XT, but SSL is not configured in the WebSphere Application Server running Content Platform Engine. 
+
+
+As of WebSphere 8.x, SSL is enabled by default in the application server and must be disabled for Workplace XT if not configured for the Content Platform Engine.
+
+
+RESOLVING THE PROBLEM
+In WebSphere Console for the Application Server hosting Workplace XT: 
+
+
+1. Access Security > Global Security
+
+2. Expand RMI/IIOP Security
+
+3. For each of:
+CSIv2 inbound communications
+CSIv2 outbound communications
+verify that the Transport is set to TCP/IP instead of SSL-required
+
+4. Restart the application server

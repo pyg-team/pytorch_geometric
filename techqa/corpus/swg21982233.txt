@@ -1,0 +1,13 @@
+Title: IBM Why does Atlas Extensions is not loading any new HR data ? - United States
+
+Text:
+HRLoader; atlas TECHNOTE (FAQ)
+
+QUESTION
+ Why does Atlas Extensions is not loading any new HR data ? 
+
+CAUSE
+Data is not being populated though the configuration related to Atlas Extensions in the properties files looks correct. This is due to the application server pointing to a database different from the application.
+
+ANSWER
+Verify the data source PolicyAtlasDS used by the application server is pointing to the respective database where you have configured the source tables with data.

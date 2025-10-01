@@ -1,0 +1,53 @@
+Title: IBM Installing IBM Content Navigator Sync Client for Mac OS X - United States
+
+Text:
+ PRODUCT DOCUMENTATION
+
+ABSTRACT
+ This document provides the steps for installing IBM Content Navigator Sync for Mac OS X. 
+
+CONTENT
+To install IBM Content Navigator Sync for Mac OS X, complete the following steps: 
+
+
+ 1. Download the fix pack.  * Go to Fix Central [http://www.ibm.com/support/fixcentral/swg/quickorder?parent=Enterprise+Content+Management&product=ibm/Other+software/Content+Navigator&release=2.0.3&platform=All&function=all&source=fc]. You must log in to continue. 
+     * Select the fix pack download for IBM Navigator Sync Client for Mac OS X. (For Version 2.0.3 Fix Pack 6, the package is named 2.0.3-NSY-FP006-MAC.) 
+     * Save the IBMMacSyncClient.zip file to a temporary directory on the workstation where IBM Content Navigator is installed.
+    
+    
+ 2. Double-click the IBMMacSyncClient.zip file to unpack the IBM Sync Client folder. 
+ 3. Drag theIBM Sync Client folder to the Applications folder. The IBM Sync Client folder contains the following files:  * .app file (IBM Navigator Sync.app) 
+     * Application configuration file (IBMNavigatorConfig.plist) <= default desktop; tracing and logging configuration options; and so on. 
+     * Properties folder containing:  * .swtag (For Version 2.0.3, the file name is IBM_Content_Navigator_Sync-2.0.3.swtag) 
+        * .fxtag (For Version 2.0.3 Fix Pack 6, the file name is IBM_Navigator_Sync_client_2.0.3_Fix_Pack_006-2.0.3.6.fxtag) 
+        *  version.txt
+       
+       
+     * License folder containing license files 
+    
+    
+
+To upgrade IBM Content Navigator Sync for Mac OS X to a newer fix pack, complete the following steps:  1. Stop the IBM Content Navigator Sync for Mac OS X client. 
+ 2.  Remove the existing IBM Sync Client folder from the Applications folder. 
+ 3. From Fix Central, select the fix pack download for IBM Navigator Sync Client for Mac OS X. (For Version 2.0.3 Fix Pack 7, the package is named 2.0.3-NSY-FP007-MAC.) 
+ 4. Save theIBMMacSyncClient.zip file to a temporary directory on the workstation where IBM Content Navigator is installed. 
+ 5. Double-click theIBMMacSyncClient.zip file to unpack the IBM Sync Client folder. 
+ 6. Drag the IBM Sync Client folder to the Applications folder. The IBM Sync Client folder contains the following files: 
+     * .app file (IBM Navigator Sync.app) 
+     * Application configuration file (IBMNavigatorConfig.plist) <= default desktop; tracing and logging configuration options; and so on. 
+     * Properties folder containing:  * .swtag (For Version 2.0.3, the file name is IBM_Content_Navigator_Sync-2.0.3.swtag) 
+        * .fxtag (For Version 2.0.3 Fix Pack 7, the file name is IBM_Navigator_Sync_client_2.0.3_Fix_Pack_007-2.0.3.7.fxtag) 
+        *  version.txt
+       
+       
+     * License folder containing license files 
+    
+    
+ 7. Start the new IBM Content Navigator Sync for Mac OS X fix pack client program. By default, the desktops that were defined for the previous fix pack client are in the new fix pack preference.
+
+
+For more information about syncing content across multiple devices, see http://www.ibm.com/support/docview.wss?uid=swg27047366 [http://www.ibm.com/support/docview.wss?uid=swg27047366]. 
+
+RELATED INFORMATION
+ Syncing content across multiple devices [http://www-01.ibm.com/support/knowledgecenter/SSEUEX_2.0.3/com.ibm.usingeuc.doc/euche045.htm]
+Configuring sync services for IBM Content Navigator [http://www-01.ibm.com/support/knowledgecenter/SSEUEX_2.0.3/com.ibm.installingeuc.doc/eucco111.htm]

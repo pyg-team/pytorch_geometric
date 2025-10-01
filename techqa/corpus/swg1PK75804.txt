@@ -1,0 +1,179 @@
+Title: IBM PK75804: HTTP.NONPROXYHOSTS HAS AN UNCLEAR DESCRIPTION IN THE INFORMATIONCENTER - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The description of the http.nonPorxyHosts custom
+   property in the topic entitled ?HTTP transport custom
+   properties for Web services applications? in the information
+   center for WebSphere Application Server Version 6.0.2, Version
+   6.1, and Version 7.0 does not adequately describe how to
+   specify the values for the custom property using wildcards.
+   Not specifying the values for the property correctly, using
+   wildcards, can result in unexpected results.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  This APAR affects users who are using the   *
+   *                  WebSphere Application Server Version        *
+   *                  6.0.2, Version 6.1.0, or Version 7.0        *
+   *                  Information Center, and are reading ?HTTP   *
+   *                  transport custom properties for Web         *
+   *                  services applications? to learn             *
+   *                  how to correctly specify the                *
+   *                  http.nonProxyHosts custom                   *
+   *                  property.                                   *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: The description of the                  *
+   *                      http.nonPorxyHosts custom property in   *
+   *                      the topic entitled ?HTTP transport      *
+   *                      custom properties for Web services      *
+   *                      applications? in the information        *
+   *                      center for WebSphere Application        *
+   *                      Server Version 6.0.2, Version 6.1,      *
+   *                      and Version 7.0 does not adequately     *
+   *                      describe how to specify the values      *
+   *                      for the custom property using           *
+   *                      wildcards.  Not specifying the values   *
+   *                      for the property correctly, using       *
+   *                      wildcards, can result in unexpected     *
+   *                      results.                                *
+   ****************************************************************
+   * RECOMMENDATION:  Update the description of the               *
+   *                  http.nonPorxyHosts custom                   *
+   *                  property                                    *
+   ****************************************************************
+   The explanation of how to use wildcards in specifying the
+   http.nonProxyHosts custom property, that is included in
+   the topic ?HTTP transport custom properties for Web services
+   applications? in the information center for WebSphere
+   Application Server Version 6.0.2, Version 6.1, or Version 7.0
+   is incomplete.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The ?HTTP transport custom properties for Web services
+   applications? topic in The information center for WebSphere
+   Application Server Version 6.0.2, Version 6.1, or Version 7.0
+   will be updated to add a note clarifying how to use wildcards
+   in specifying the http.nonProxyHosts custom property. The
+   current text is below, followed by the new note.
+   
+   In the following example,
+   
+   http.proxyHost="myproxy.mycompany.com"
+   http.nonProxyHosts="host1.company1.com|host*.company2.com|*.comp
+   any3.com"
+   
+   all requests will be routed through the proxy server,
+   myproxy.mycompany.com, except for the HTTP requests destined
+   for the following hosts:
+   
+   o a single host named host1.company1.com
+   o any host in the company2.com domain whose name starts
+           with host
+   o any host in the company3.com domain
+   
+   Note: Processing the settings for http.nonProxyHosts is
+   performed as pure pattern matching. Host names are not
+   expanded to their fully-qualified form before being matched to
+   the pattern. For example, with http.nonProxyHosts specified in
+   the above example, the string host1 will not match any of the
+   settings specified, and as such, the Web services engine will
+   send the request through the proxy server. In order for the
+   host1 request to not be sent through the proxy server, the
+   http.nonProxyHosts specification would have to include host1
+   somewhere in the specification. An illustration of this
+   specification follows.
+   
+   http.nonProxyHosts="host1.company1.com|host*.company2.com|*.comp
+   any3.com|host1"
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK75804
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBS APP SERV N
+   
+   
+ * REPORTED COMPONENT ID
+   5724H8800
+   
+   
+ * REPORTED RELEASE
+   60A
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-11-17
+   
+   
+ * CLOSED DATE
+   2008-11-26
+   
+   
+ * LAST MODIFIED DATE
+   2008-11-26
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

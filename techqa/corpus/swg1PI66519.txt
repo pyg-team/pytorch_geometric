@@ -1,0 +1,222 @@
+Title: IBM PI66519: AUTOMATIC VERSION IMPORTS RANDOMLY GET STUCK IN EXECUTING STATUS - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  An agent log shows the error: "java.lang.RuntimeException: Error
+   process plugin runtime message" and "Caused by:
+   java.io.IOException: Unable to delete" for [some file
+   path]/stdOut.txt.
+   
+   When an agent has finished executing a process step, the server
+   sends a command to the agent to upload the output log file from
+   the agent to the server. The server also sends a command to the
+   agent to clean-up after the process step, which includes
+   deleting the output log file.  The problem happens when the
+   command to clean-up the process step is sent to the agent before
+   the agent has finished uploading the log file to the server.
+   
+   In this case, the agent cannot delete the file because it is "in
+   use" for the upload to the server, and the agent logs an error
+   message indicating that it cannot delete a file.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * All agents on version 6.2.1.2 and earlier.                   *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * Automatic version imports may become stuck during an import. *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Upgrade to the upcoming release, IBM UCD version 6.2.2.      *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A fix is available in the latest version of IBM UrbanCode Deploy
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI66519
+   
+   
+ * REPORTED COMPONENT NAME
+   UC DEPLOY
+   
+   
+ * REPORTED COMPONENT ID
+   5725M5400
+   
+   
+ * REPORTED RELEASE
+   620
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-07-26
+   
+   
+ * CLOSED DATE
+   2017-02-02
+   
+   
+ * LAST MODIFIED DATE
+   2017-02-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   UC DEPLOY
+   
+   
+ * FIXED COMPONENT ID
+   5725M5400
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R600 PSN
+   UP
+   
+   
+ * R600 PSY
+   UP
+   
+   
+ * R601 PSN
+   UP
+   
+   
+ * R601 PSY
+   UP
+   
+   
+ * R610 PSN
+   UP
+   
+   
+ * R610 PSY
+   UP
+   
+   
+ * R611 PSN
+   UP
+   
+   
+ * R611 PSY
+   UP
+   
+   
+ * R612 PSN
+   UP
+   
+   
+ * R612 PSY
+   UP
+   
+   
+ * R613 PSN
+   UP
+   
+   
+ * R613 PSY
+   UP
+   
+   
+ * R620 PSN
+   UP
+   
+   
+ * R620 PSY
+   UP
+   
+   
+ * R621 PSN
+   UP
+   
+   
+ * R621 PSY
+   UP
+   
+   
+ * R622 PSN
+   UP
+   
+   
+ * R622 PSY
+   UP
+   
+   
+ * R623 PSN
+   UP
+   
+   
+ * R623 PSY
+   UP

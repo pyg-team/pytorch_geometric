@@ -1,0 +1,150 @@
+Title: IBM IV85686: KHU AGENT FAILED TO DISCOVERY RUNNING APACHE SERVER WITHOUT A DEFAULT HTTPD.CONF FILE - United States
+
+Text:
+  A README IS AVAILABLE
+8.1.3.0-IBM-IPM-HTTP-SERVER-AGENT-IF0002 [http://www-01.ibm.com/support/docview.wss?uid=isg400003262]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Environment: APM HTTP Server Agent 8.1.3
+   
+   
+   OS: Linux/AIX
+   
+   Problem Description:
+   KHU agent failed to discovery Apache HTTP server when the server
+   is
+   configurated without a default httpd.conf file
+   
+   Detailed Recreation Procedure:
+   1) Install and start KHU agent.
+   2) Configure Apache server and remove the default httpd.conf
+   file
+   3) Restart Apache.
+   
+   The KHU agent failed to discovery the Apache server due to
+   "httpd -V"
+   error.
+   
+   Related Files and Output: N/A
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  KHU agent failed to discover the running HTTP server when there
+   is no default httpd.conf exist, and no HTTP Server agent would
+   be shown in APM UI dashboard. In <APM agent install
+   dir>/logs/khu-disc.log, there was an error recorded as "Failed
+   to get server version!". And in <APM agent install
+   dir>/tmp/khu/discovery/<md5>/compile_info, there was an error:
+   "httpd: Could not open configuration file
+   /etc/httpd/conf/httpd.conf: No such file or directory"
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix for this APAR is contained in the following maintenance
+   packages:
+     8.1.3.0-IBM-IPM-HTTP_SERVER-AGENT-XLINUX-IF0001
+     8.1.3.0-IBM-IPM-HTTP_SERVER-AGENT-AIX-IF0001
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV85686
+   
+   
+ * REPORTED COMPONENT NAME
+   MONITORING HTTP
+   
+   
+ * REPORTED COMPONENT ID
+   5725U05HS
+   
+   
+ * REPORTED RELEASE
+   104
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-06-13
+   
+   
+ * CLOSED DATE
+   2016-08-01
+   
+   
+ * LAST MODIFIED DATE
+   2016-08-01
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   MONITORING HTTP
+   
+   
+ * FIXED COMPONENT ID
+   5725U05HS
+   
+   
+
+APPLICABLE COMPONENT LEVELS

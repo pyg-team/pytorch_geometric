@@ -1,0 +1,140 @@
+Title: IBM IC96866: DB2DART CRASH IN MEMORY VALIDATION - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+DB2 Version 9.7 Fix Pack 10 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24038641]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  db2dart is crashing when hitting a CHECKSUM or BADPAGE error.
+   The trap happens during checking index object
+   
+   db2dart stack is showing:
+   
+   <StackTrace>
+   
+   -------Frame------ ------Function + Offset------
+   
+   sqloCrashOnCriticalMemoryValidationFailure + 0x34
+   
+   diagnoseMemoryCorruptionAndCrash__13SQLO_MEM_POOLFUlCPCcCb +
+   0x6C
+   
+   diagnoseMemoryCorruptionAndCrash__13SQLO_MEM_POOLFUlCPCcCb@glue7
+   E5 + 0x7C
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * ALL                                                          *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * See Error Description                                        *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Upgrade to V9.7 FP9                                          *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  First fixed in V9.7 FP9
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC96866
+   
+   
+ * REPORTED COMPONENT NAME
+   DB2 FOR LUW
+   
+   
+ * REPORTED COMPONENT ID
+   DB2FORLUW
+   
+   
+ * REPORTED RELEASE
+   970
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-10-14
+   
+   
+ * CLOSED DATE
+   2014-11-10
+   
+   
+ * LAST MODIFIED DATE
+   2014-11-10
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    IC98020 [http://www-01.ibm.com/support/docview.wss?uid=swg1IC98020] IC98022 [http://www-01.ibm.com/support/docview.wss?uid=swg1IC98022]
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   DB2 FOR LUW
+   
+   
+ * FIXED COMPONENT ID
+   DB2FORLUW
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R970 PSY
+   UP

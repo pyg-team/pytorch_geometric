@@ -1,0 +1,33 @@
+Title: IBM JazzSM / TCR for High Availability (HA) environment - United States
+
+Text:
+JazzSM; DASH; TCR; HA TECHNOTE (FAQ)
+
+QUESTION
+ How to implement JazzSM / TCR for HA environment? 
+
+ANSWER
+
+Distributed installation of TCR (with Gateway and Dispatcher on different machines) is not currently supported with TCR 3.x. To enable HA, JazzSM (DASH & TCR) should be installed on all the machines, but by pointing to single Content store database.
+
+For Example:
+Machine 1 -> JazzSM1 (DASH+TCR) -> Connecting to Contentstore db i,e TCRDB1
+Machine 2 -> JazzSM2 (DASH+TCR) -> Connecting to Contentstore db i,e TCRDB1
+
+This is the scenario when one JazzSM machine goes down:
+
+Machine1 (M1)->JazzSM (Dash+TCR )->Configure M2+M3+M4 dispatcher
+Machine2 (M2)->JazzSM (Dash+TCR) ->Configure M1+M3+M4 dispatcher
+Machine3 (M3)->JazzSM (TCR without DASH)
+Machine3 (M4)->JazzSM (TCR without DASH) 
+
+Note: All above JazzSM TCR connects to same Contentstore db 
+
+Enable DASH with high availability -> Considering M1 DASH is down and accessing HA URL, M2 DASH comes up with immediate Cognos dispatcher URL which ever is available at that particular time. 
+
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ Jazz for Service Management
+JazzSM

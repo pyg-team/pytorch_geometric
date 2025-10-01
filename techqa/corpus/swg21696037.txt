@@ -1,0 +1,94 @@
+Title: IBM Security Bulletin: IBM Lotus Protector for Mail Security (CVE-2014-3570, CVE-2014-3571, CVE-2014-3572, CVE-2014-8275, CVE-2015-0204, CVE-2015-0205, CVE-0206) - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ Multiple vulnerabilities in the OpenSSL utilized by IBM Lotus Protector for Mail Security are open to a potential denial of service. 
+
+VULNERABILITY DETAILS
+CVE-2014-3570 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-3570]
+Description: An unspecified error in OpenSSL related to the production of incorrect results on some platforms by Bignum squaring (BN_sqr) has an unknown attack vector and impact.
+CVSS Base Score: 2.600
+CVSS Temporal Score: https://exchange.xforce.ibmcloud.com/vulnerabilities/99710 [https://exchange.xforce.ibmcloud.com/vulnerabilities/99710] for more information
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:H/Au:N/C:N/I:P/A:N)
+
+
+CVE-2014-3571 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-3571]
+Description: OpenSSL is vulnerable to a denial of service, caused by a NULL pointer dereference when handling malicious messages. By sending a specially-crafted DTLS message, a remote attacker could exploit this vulnerability to cause a segmentation fault.
+CVSS Base Score: 5.000
+CVSS Temporal Score: https://exchange.xforce.ibmcloud.com/vulnerabilities/99703 [https://exchange.xforce.ibmcloud.com/vulnerabilities/99703] for more information
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:L/Au:N/C:N/I:N/A:P)
+
+
+CVE-2014-3572 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-3572]
+Description: OpenSSL could provide weaker than expected security. The client accepts a handshake using an ephemeral ECDH ciphersuite with the server key exchange message omitted. An attacker could exploit this vulnerability to launch further attacks on the system.
+CVSS Base Score: 1.200
+CVSS Temporal Score: https://exchange.xforce.ibmcloud.com/vulnerabilities/99705 [https://exchange.xforce.ibmcloud.com/vulnerabilities/99705] for more information
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:L/AC:H/Au:N/C:N/I:P/A:N)
+
+
+CVE-2014-8275 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-8275]
+Description: OpenSSL could allow a local attacker to bypass security restrictions, caused by the modification of the fingerprint without breaking the signature. An attacker could exploit this vulnerability using non-DER or invalid encodings outside the signed portion of a certificate bypass security restrictions and perform unauthorized actions.
+CVSS Base Score: 1.200
+CVSS Temporal Score: https://exchange.xforce.ibmcloud.com/vulnerabilities/99709 [https://exchange.xforce.ibmcloud.com/vulnerabilities/99709] for more information
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:L/AC:H/Au:N/C:N/I:P/A:N)
+
+
+CVE-2015-0204 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-0204]
+Description: OpenSSL could provide weaker than expected security. The client accepts the use of an RSA temporary key in a non-export RSA key exchange ciphersuite. An attacker could exploit this vulnerability to launch further attacks on the system.
+CVSS Base Score: 1.200
+CVSS Temporal Score: https://exchange.xforce.ibmcloud.com/vulnerabilities/99707 [https://exchange.xforce.ibmcloud.com/vulnerabilities/99707] for more information
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:L/AC:H/Au:N/C:N/I:P/A:N)
+
+
+CVE-2015-0205 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-0205]
+Description: OpenSSL could allow a remote authenticated attacker to bypass security restrictions, caused by the acceptance of a DH certificate for client authentication without verification. An attacker could exploit this vulnerability to authenticate without the use of a private key.
+CVSS Base Score: 2.100
+CVSS Temporal Score: https://exchange.xforce.ibmcloud.com/vulnerabilities/99708 [https://exchange.xforce.ibmcloud.com/vulnerabilities/99708] for more information
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:H/Au:S/C:N/I:P/A:N)
+
+
+CVE-2015-0206 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-0206]
+Description: OpenSSL is vulnerable to a denial of service, caused by a memory leak in the dtls1_buffer_record function. By sending repeated DTLS records with the same sequence number, a remote attacker could exploit this vulnerability to exhaust all available memory resources.
+CVSS Base Score: 5.000
+CVSS Temporal Score: https://exchange.xforce.ibmcloud.com/vulnerabilities/99704 [https://exchange.xforce.ibmcloud.com/vulnerabilities/99704] for more information
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:L/Au:N/C:N/I:N/A:P)
+
+AFFECTED PRODUCTS AND VERSIONS
+IBM Lotus Protector for Mail Security 2.8.0.0 
+
+IBM Lotus Protector for Mail Security 2.8.1.0
+
+REMEDIATION/FIXES
+Update to OpenSSL patch package OpenSSL 0.9.8j-0.68.1 or greater via IBM Lotus Protector for Mail Security update mechanism.
+
+WORKAROUNDS AND MITIGATIONS
+There are no workarounds or mitigation methods for this vulnerability
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v2 Guide [http://www.first.org/cvss/v2/guide] 
+On-line Calculator v2 [http://nvd.nist.gov/CVSS-v2-Calculator] 
+
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] 
+
+CHANGE HISTORY
+ 05 February 2015: Original Copy Published 
+06 February 2015: Update with relavent Mitre hyperlinks per CVE 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.

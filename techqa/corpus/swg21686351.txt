@@ -1,0 +1,43 @@
+Title: IBM Does FileNet Content Engine (CE) or Content Platform Engine (CPE) version 5.2 support a SQL Mirroring configuration? - United States
+
+Text:
+SQL mirroring TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Attempting to use the jdbc property "failoverPartner" to accomodate SQL Mirroring for redundancy.
+
+(http://technet.microsoft.com/en-us/library/aa342332%28v=sql.110%29.aspx [http://technet.microsoft.com/en-us/library/aa342332%28v=sql.110%29.aspx]) 
+
+SYMPTOM
+Configuring the WebSphere jdbc property "failoverPartner" to accommodate SQL Mirroring is not working.
+
+
+CAUSE
+Not supported with CE
+
+ENVIRONMENT
+Content Platform Engine 5.2 with WebSphere 8.5 FP2 and MSSQL Server 2008 R2 on Windows 2008
+R2 with the sqljdbc4.jar.
+
+RESOLVING THE PROBLEM
+
+
+
+
+
+IBM does not qualify Microsoft SQL Server Mirroring, and as such, we cannot recommend it, state that we support it, or make any assurances as to whether or how well it works. However, it should be transparent to the Content Engine server, and it is a technology that we can tolerate within a Content Engine configuration, subject to the condition that: 
+
+ 
+
+ 1. If the customer has any issues with SQL Server Mirroring, those will have to be addressed by Microsoft.
+    
+    
+ 2. If IBM support suspects that a customer problem is related to SQL Server Mirroring, we may require that the problem be reproduced in an environment that does not use SQL Server mirroring before we pursue the problem.
+
+
+One issue to be aware of is that SQL Server Mirroring does not fully support the use of distributed transactions when a failover occurs (see http://support.microsoft.com/kb/926150 [http://support.microsoft.com/kb/926150]). Our understanding of the articles on this are that distributed transactions can end up being partially committed, but only when a failover occurs. 
+
+Content Engine can make use of distributed transactions in some circumstances (such as during AddOn installation, when both the GCD and Object Store databases are updated in a transaction). This should be a relatively rare occurrence for most Content Engine customers. Note however, that if an application performs updates across multiple object stores, then distributed transactions would be a common place occurrence. The one application that we know of that has this characteristic is IBM Enterprise Records. For this reason, we would recommend that Microsoft SQL Server Mirroring not be used in an IBM Enterprise Records environment, with automatic failover configured 
+(see http://msdn.microsoft.com/en-us/library/ms189590%28v=sql.105%29.aspx [http://msdn.microsoft.com/en-us/library/ms189590%28v=sql.105%29.aspx] for more details). 
+
+The above information is independent of the CPE and application server version, and applies for all versions MS SQL Server that support SQL Server mirroring. We have not made any changes to support it, and have never tested it, but subject to the distributed transaction issues mentioned, CPE should be able to tolerate this configuration.

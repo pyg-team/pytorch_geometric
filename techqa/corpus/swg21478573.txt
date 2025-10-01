@@ -1,0 +1,41 @@
+Title: IBM How do I "Freeze Panes" or split my data editor window in SPSS Statistics? - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Is it possible to set up just a vertical pane splitter without getting a horizontal splitter at the same time? The SPSS Help has the instructions below, but this method seems to always produce both vertical and horizontal page splitters. I only want the vertical one.
+
+_________________________
+In Data View, you can create multiple views (panes) by using the splitters that are located above the horizontal scroll bar and to the right of the vertical scroll bar.
+
+You can also use the Window menu to insert and remove pane splitters. To insert splitters:
+
+In Data View, from the menus choose:
+
+Window
+Split
+
+Splitters are inserted above and to the left of the selected cell.
+
+If the top left cell is selected, splitters are inserted to divide the current view approximately in half, both horizontally and vertically. 
+
+If any cell other than the top cell in the first column is selected, a horizontal pane splitter is inserted above the selected cell. 
+
+If any cell other than the first cell in the top row is selected, a vertical pane splitter is inserted to the left of the selected cell. 
+
+ANSWER
+To begin with, there's actually a horizontal and vertical splitter present in the data editor window at all times -- the vertical splitter resides to the right of the vertical scroll bar and the horizontal splitter resides below the horizontal scroll bar.
+
+To see this, expand your data editor window fully and then move your cursor to the vertical scroll bar area, somewhere below the actual scroll button. If you keep moving slightly to the right you should see your cursor turn from the arrow pointer to a two-headed arrow when you're over what looks like a border just left of the right edge of the window itself: that's the splitter. Left-click and drag it to the left.
+
+Or, it might be easier to see by doing this: put your cursor somewhere in the middle of the data editor, click on a cell, and select Window->Split. That doesn't actually create the splitters -- it brings them out of hiding. Now take the horizontal splitter you don't want and drag it as far down the window as you can and let go -- you should see it anchor below the horizontal scroll bar
+
+RELATED INFORMATION
+ Need more help? Our Statistics forum is Live! [https://developer.ibm.com/answers/topics/statistics.html?smartspace=predictive-analytics]
+
+
+ 
+
+HISTORICAL NUMBER
+ 68038

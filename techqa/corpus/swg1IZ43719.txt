@@ -1,0 +1,177 @@
+Title: IBM IZ43719: DURING MIGRATION FROM V8.X TO V9.5 DATABASE CONFIGURATIONS ARE  INCORRECTLY SET TO 'AUTOMATIC'. - United States
+
+Text:
+AIX  FIXES ARE AVAILABLE
+DB2 Version 9.5 Fix Pack 5 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24025421]
+DB2 Version 9.5 Fix Pack 6a for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24027747]
+DB2 Version 9.5 Fix Pack 7 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24028731]
+DB2 Version 9.5 Fix Pack 8 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24030302]
+DB2 Version 9.5 Fix Pack 9 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24032087]
+DB2 Version 9.5 Fix Pack 10 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24033308]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  During migration from V8.X to V9.5 the following Database
+   Configuration parameters are incorrectly changed to 'AUTOMATIC':
+   STMTHEAP
+   NUM_IOCLEANERS
+   NUM_IOSERVERS
+   DFT_PREFETCH_SZ
+   MAXAPPLS
+   AVG_APPLS
+   
+   
+   This includes migration through 'db2 migrate database <database
+   name>' as well as a migration that occurs from a restore from a
+   v8.X backup into v9.5.
+   
+   ONLY migrations from V8.X to V9.5 are affected by this APAR.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Manually update the affected database configuration parameters
+   to desired fixed value.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * Users migrating from 8.X to 9.5                              *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * During migration from V8.X to V9.5 the following             *
+   * DatabaseConfiguration parameters are incorrectly changed     *
+   * to'AUTOMATIC':STMTHEAPNUM_IOCLEANERSNUM_IOSERVERSDFT_PREFETCH_
+   * includes migration through 'db2 migrate                      *
+   * database<databasename>' as well as a migration that occurs   *
+   * from a restorefrom av8.X backup into v9.5.ONLY migrations    *
+   * from V8.X to V9.5 are affected by this APAR.                 *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Migrate to 9.5 FP5 or later directly                         *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Migration from 8.X to 9.5 FP5 or later directly will not
+   introduce the problem.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  Manually update the affected database configuration parameters
+   to desired fixed value.
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ43719
+   
+   
+ * REPORTED COMPONENT NAME
+   DB2 UDB ESE AIX
+   
+   
+ * REPORTED COMPONENT ID
+   5765F4100
+   
+   
+ * REPORTED RELEASE
+   950
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-02-11
+   
+   
+ * CLOSED DATE
+   2010-03-12
+   
+   
+ * LAST MODIFIED DATE
+   2010-03-12
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    IC62536 IC62564 [http://www-01.ibm.com/support/docview.wss?uid=swg1IC62564]
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   DB2 UDB ESE AIX
+   
+   
+ * FIXED COMPONENT ID
+   5765F4100
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R810 PSN
+   UP
+   
+   
+ * R820 PSN
+   UP
+   
+   
+ * R910 PSN
+   UP
+   
+   
+ * R950 PSN
+   UP

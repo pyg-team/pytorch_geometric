@@ -1,0 +1,14 @@
+Title: IBM Why does the preview of an archived email is being presented in plain text? - United States
+
+Text:
+ICC TECHNOTE (FAQ)
+
+QUESTION
+ I am using IBM Content Collector for Email to archive emails. When I am trying to view an archived email the email is being presented in plain text with all HTML tags.
+But once i restore the same email to mailbox that email is presented normally. 
+
+CAUSE
+Having an email body with multiple MIME formats like plain/text and plain/html will cause this issue. Because IBM Content Collector for Email can only extract the plain text but not all MIME formats to ensure that no data is lost.
+
+ANSWER
+This is working as expected in this release of IBM Content Collector for Email 2.1.0.2.

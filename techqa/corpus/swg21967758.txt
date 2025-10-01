@@ -1,0 +1,46 @@
+Title: IBM How to move an IBM Content Search Services index area to another location - United States
+
+Text:
+Move CSS index-area; moving index area TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ How to move an IBM Content Search Services (CSS) index-area to a new location. 
+
+CAUSE
+This is necessary if for example the storage device currently hosting the index-area is running out of space.
+
+RESOLVING THE PROBLEM
+Moving an IBM Content Search Services (CSS) index-area. This procedure assumes basic knowledge of IBM Content Search Services and the use of either FileNet Enterprise Manager (FEM) or Administration Console Content Engine (ACCE). This procedure was written with ACCE in mind.
+
+
+
+ 1. Execute the following object store database query and save the results prior to starting this procedure. You can re-run this when done with this procedure to ensure the object store database was correctly updated;
+    
+    select create_date,modify_date,display_name,description,root_directory_path from IndexArea
+    
+    
+ 2. Stop all CSS services configured as Indexing or Index and Search.
+    
+    
+ 3. Backup the text collection(s) in the current index-area location.
+    
+    
+ 4. Create a new index-area directory. Note that all CSS services requires access to this new location.
+    
+    
+ 5. Move the text collection(s) located in the current index-area, to the new index-area location as defined in step 4.
+    
+    
+ 6. Using FEM or ACCE update the object store index-area Root Directory value to reflect the new index-area location as defined in step 4. Press Save then refresh the object store. 
+    
+    
+ 7. Start all CSS services you stopped in step 2. 
+    
+    
+ 8. Re-run the database query defined in step 1 and ensure the root_directory_path was updated to the newly defined index-area location. 
+    
+    
+ 9. Test by adding 1 or a few text documents which will after a few minutes show an increased count for the currently open text collection.
+    
+    
+    Note If using Content Engine and IBM Content Search Services (CSS) 5.1 and each text collection directory contains a 'collection.xml' file, access the following Product Documentation [http://www.ibm.com/support/knowledgecenter/SSNW2F_5.1.0/com.ibm.p8toc.doc/ic-homepage.html] link.

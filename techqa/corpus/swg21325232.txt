@@ -1,0 +1,153 @@
+Title: IBM How to manually uninstall CM Synergy Server on Windows NT - United States
+
+Text:
+KB2065; TB212; Continuus/CM ; CM Synergy ; Telelogic Synergy ; Rational Synergy; uninstall; un-install; registry keys TECHNOTE (FAQ)
+
+QUESTION
+ How do you manually uninstall legacy version of IBM Rational Synergy on Microsoft Windows NT? 
+
+CAUSE
+Using the Add/Remove Software applet in Control Panel, you would select the version of Continuus/CM which you wanted to un-install, and Continuus knows which files and registry entries to remove; however, if the un-install settings are lost, or of the registry portion of the product was partially deleted by mistake, then it may be necessary to remove the rest of the product manually, before re-installing. 
+
+For example:
+
+Open the Microsoft registry editor and navigate to the following key:
+
+HKEY_LOCAL_MACHINE\SOFTWARE\Continuus\ccm\<version#>\Install 
+
+Inspect the value:
+
+Uninstall# : REG_SZ : <path to uninst.exe> -af <path to CCM_HOME\etc\Del*.isu> 
+
+Note: The Del*.isu file contains the instructions to delete CM Synergy which uninst.exe uses if you chose to uninstall the product (perhaps after upgrading to a later version or if moving the server to another machine).
+
+If the .isu file is deleted by mistake, then the instructions to uninst.exe are also lost and users wishing to remove the installation have to perform the following manual steps :
+
+
+ANSWER
+The CM Synergy product has had a number of name changes through the versions, from Continuus/CM to CM Synergy to Telelogic Synergy and Rational Synergy. 
+
+
+This document refers to the legacy versions. 
+
+Note: Later versions have different registry keys and product names. 
+
+
+ 1. Backup your databases
+    
+    It is vital that you backup all required databases to .cpk packfiles before removing the CM Synergy installation. These .cpk files can then be unpacked on the new installation.
+    
+    ccmdb backup <database_path> -to <packfile> 
+    
+    After you have done this you can remove the the filesystem and Informix portions of the databases. with the following command: 
+    
+    ccmdb delete <database_path> 
+    
+    
+ 2. Remove the Informix Database Server
+    
+    Only run this if you do not want to reuse the Informix Database Server.
+    
+    This command will list all the Informix chunkfiles, which you can delete, if required, in step 7 below. 
+    
+    ccmsrv status /dbspace 
+    
+    If possible, run the following command as a member of the Informix-Admin group and a local Administrator:
+    
+    ccmsrv delete 
+    
+    This command (detailed on page 46 of the Administration Handbook for Windows NT-CM Synergy 4.5 or page 63 of the Administration Handbook for Windows - CM Synergy 5.0 and later) removes the Informix Database Server, related Informix keys in the Registry and the Informix chunk files. If you are able to run this command, it will save you having to run the parts of step 4 dealing with the OnLine and MsgServ services, all of step 5b and step 6. If you cannot run this command, perhaps because some of the required Informix files have been removed, then just continue with the steps below. 
+    
+    
+ 3. Remove the files from the filesystem (CCM_HOME)
+    
+    %CCM_HOME% is an environment variable which is set to the installation directory of CM Synergy. 
+    
+    Typically this will be something like C:\Program Files\CM Synergy\ccm51 where the last 2 digits correspond to the version of CM Synergy which you have installed.
+    
+    You should recursively delete all the files and directories from this directory. 
+    If you intend maintaining the data in the Informix chunkfiles, then you should first make a copy of the %CCM_HOME%\informix\etc\ONCONFIG file, otherwise the chunkfile information is lost.
+    
+    
+ 4. Remove the CM Synergy and Informix Services
+    
+    Disclaimer This solution contains information about modifying the system registry. Before making any modifications to the Microsoft Registry Editor, it is strongly recommended that you make a backup of the existing registry. For more information describing how to back up the registry, refer to Microsoft Knowledge Base article 256986 [http://support.microsoft.com/kb/256986]
+    
+    
+     1. Stop the following services either in the Control Panel or at the command line as follows (this example assumes that you are running C/CM 5.1) :
+        
+        net stop ccm5.1_ess 
+        net stop ccm5.1_lmgr 
+        net stop ccm5.1_objreg 
+        net stop ccm5.1_router 
+        net stop MsgServ 
+        net stop OnLine 
+        
+        
+     2. If you have sc.exe (available with the Windows NT Resource Kit), then you can easily delete each service as follows (again assuming C/CM 5.1) :
+        
+        sc delete ccm5.1_ess 
+        sc delete ccm5.1_lmgr 
+        sc delete ccm5.1_objreg 
+        sc delete ccm5.1_router 
+        sc delete MsgServ 
+        sc delete OnLine 
+        
+        otherwise, you will have to delete the following keys and their subkeys from the Registry and then restart the machine:
+        
+        HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\ccm5.1_ess 
+        HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\ccm5.1_lmgr 
+        HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\ccm5.1_objreg 
+        HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\ccm5.1_router 
+        HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\MsgServ 
+        HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\OnLine 
+        
+        Note: Using sc.exe, there is no need to restart.
+        
+        
+    
+    
+ 5. Remove the CM Synergy and Informix Registry Keys
+     1. Remove the following CM SynergyRegistry key and all subkeys: 
+        
+        HKEY_LOCAL_MACHINE\SOFTWARE\CM Synergy 
+        
+        
+     2. If you do not intend using the Informix Server, remove the following Informix Registry keys and their subkeys: 
+        
+        HKEY_LOCAL_MACHINE\SOFTWARE\Informix HKEY_USERS\.DEFAULT\Software\Informix 
+        
+        If there are other keys in the Registry which reference either CM Synergy , ccm or Informix, please check with Rational Client Support before removing them. 
+        
+        
+    
+    
+ 6. Remove the contents of the TEMP and Home directories
+    
+    When you start a CM Synergy session, the last two fields ('Client Information' section) in the logon dialog are used to define directories which are used to hold a copy of the database files (the 'Database Path' field) and also the local work areas of CM Synergy projects (the 'Home Directory' field). You can now delete the C/CM specific contents of these directories. 
+    
+    Note: If you used the directories specified in these fields for other applications, or as general temporary directories, you should determine that there are no files required by other applications in these directories before removing the contents.
+    
+    If for any reason the ccmdb delete <database path> command as listed in step 1 above failed, you can now manually remove the database path (the server Database Path) 
+    
+    
+ 7. Remove the Informix chunkfiles
+    
+    These files are created when you create your Informix Database Server. 
+    If you ran ccmsrv status /dbspace in step 2 above, you will have a list of the Informix chunkfiles. 
+    
+    These files can be deleted providing you have no further use for the Informix Database Server on this machine. 
+    
+    If you were unable to run the ccmsrv status command, then you should look for directories called \ifmxdata containing files of the form:
+    
+    ccm.??? 
+    log.??? 
+    rootdbs.??? 
+    temp.???
+    
+    Note: The temp.??? files are only used from release C/CM 5.0 and later.
+    
+    If you are in any doubt about whether these files should be removed, contact Rational Client Support.
+
+
+Once the above steps have been completed, the CM Synergy Server and Informix Database Server will have been removed from the Windows NT system.

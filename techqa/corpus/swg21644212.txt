@@ -1,0 +1,65 @@
+Title: IBM Logging large numbers of users using RPT scripts into RTC application hangs the WAS server - United States
+
+Text:
+change rate; WAS freeze; RTC login TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Attempts to login large numbers of users using IBM Rational Performance Tester (RPT) script into IBM Rational Team Concert (RTC) application configured on IBM WebSphere Application Server (WAS) results in hanging the IBM WebSphere Application Server. 
+
+SYMPTOM
+The following exception messages are seen in the logs:
+
+0000004a SSLHandshakeE E SSLC0008E: Unable
+to initialize SSL connection. Unauthorized access was denied or
+security settings have expired. Exception is
+javax.net.ssl.SSLException: Received close_notify during handshake
+at com.ibm.jsse2.o.a(o.java:12)
+at com.ibm.jsse2.SSLEngineImpl.a(SSLEngineImpl.java:9)
+at com.ibm.jsse2.SSLEngineImpl.a(SSLEngineImpl.java:464)
+
+00000068 SystemOut O 2013-06-17
+986 RQM [qm: AsynchronousTaskRunner-4] ERROR
+com.ibm.team.repository - CRJAZ2388E Error
+encountered when synchronizing user data between servers in the
+background. The synchronizer will silently continue to attempt to
+synchronize the data.
+CRJAZ1166I The stack trace hash is
+22A59432231301A4C17E782894C53D8B3F00D131.
+com.ibm.team.repository.common.TeamRepositoryException: peer not
+authenticated
+at
+com.ibm.team.repository.service.compatibility.util.http.CrossServerHttpC
+lient.doCommunicate(CrossServerHttpClient.java:196)
+...
+
+Caused by: javax.net.ssl.SSLPeerUnverifiedException: peer not
+authenticated
+at
+com.ibm.jsse2.SSLSessionImpl.getPeerCertificates(SSLSessionImpl.java:79)
+at
+org.apache.http.conn.ssl.AbstractVerifier.verify(AbstractVerifier.java:1
+28)
+.
+
+An additional error was indicated as well:
+.
+00000013 SystemErr R
+java.net.UnknownHostException: pic.dhe.ibm.com
+00000013 SystemErr R at
+java.net.PlainSocketImpl.connect(PlainSocketImpl.java:225)
+
+
+CAUSE
+The Server hangs because the change rate has been set to "0" in RPT scripts forcing all users to Login at the same time into the WAS Server.
+
+RESOLVING THE PROBLEM
+To resolve this issue modify the Login change rate in the RPT Script to a higher value:
+
+
+Examples: 
+
+ * 1 user/per 3 seconds for 25 users 
+ * 1 user/per 6 seconds for 100 users
+
+
+The document Staggering users start times [http://www-01.ibm.com/support/docview.wss?uid=swg21390098] has detailed steps to modify the change rate in RPT.

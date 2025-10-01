@@ -1,0 +1,17 @@
+Title: IBM AIX/VIOS is not affected by the Bash vulnerabilities (CVE-2014-6271, CVE-2014-7169, CVE-2014-7186, CVE-2014-7187, CVE-2014-6277, and CVE-2014-6278) - United States
+
+Text:
+ FLASH (ALERT)
+
+ABSTRACT
+ AIX/VIOS is not vulnerable to the Bash vulnerabilities that have been referred to as “Bash Bug” or “Shellshock” and the two memory corruption vulnerabilities. 
+
+CONTENT
+AIX/VIOS in all editions and all platforms is NOT vulnerable to the Bash vulnerabilities (CVE-2014-6271, CVE-2014-7169, CVE-2014-7186, CVE-2014-7187, CVE-2014-6277, and CVE-2014-6278). 
+
+Note: AIX Toolbox for Linux Applications is affected. Please see the following link for more information.
+http://www.ibm.com/support/docview.wss?uid=isg3T1021272 [http://www-01.ibm.com/support/docview.wss?uid=isg3T1021272]
+
+IBM recommends that you review your entire environment to identify vulnerable releases of Bash including your Operating Systems and take appropriate mitigation and remediation actions. Please contact your Operating System provider for more information.
+
+Change History: 30 September 2014: original document published

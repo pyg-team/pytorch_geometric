@@ -1,0 +1,226 @@
+Title: IBM PK70120: RFT-UnsupportedActionException: Cannot get screen point - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Problem: RFT-UnsupportedActionException: Cannot get screen point
+   Enviroment: RFT 7.0.1.2 iFix01, Windows XP SP2, Internet Explore
+   r 7
+   What, when, where: The following is from the customer:
+   'When I try to select an item in the list box, either by index v
+   alue or
+   by text, the test playback hangs for about 8 minutes, and ends w
+   ith an
+   exception 'Cannot get screen point for subitem'. This error only
+    happens
+   if the large list box is inside a page with HTML frames.
+   
+   When I play the same script back on the same list box but with N
+   O HTML
+   FRAMES, the playback works properly. That makes me believe the '
+   No
+   screen point found' occurs because the list box on the screen is
+    so
+   large it is displaying outside the frame of the HTML page (and a
+   lso
+   outside the 'rectangle' of the browser window).
+   
+   I attached the RFT error log generated when I tried to call the
+   
+   following lines of code:
+   
+   list_terminalSn2().click();
+   
+   list_terminalSn2().click(atIndex(1));  // exception thrown for t
+   his line
+   Again, the same lines of code work with no error if I access the
+    page
+   with no frames (which I cannot do in actual testing).
+   
+   Note about the sample page I sent:
+   
+   I discovered that the sample list box I sent you only has a ~130
+   0
+   element list box, not 5000 elements. (I made a mistake with copy
+    paste.)
+   For your reference, the list box in my application has exactly 5
+   ,941
+   elements, and each element is a 15 character hexadecimal value.
+   These
+   values are sorted from smallest to greatest.
+   
+   Please get back to me if there is a workaround so I can access t
+   he large
+   list box with the frames present.'
+   The sample application is attached.
+   Changes and distinctions: Sent the customer a testfix for this i
+   ssue from DEFECT: RATLC01046503 since their objects were causing
+    an error when it was outside of the HTML browsers frames and sc
+   rolling down to the last listbox, but the customer stated the fo
+   llowing:
+   'Hi,
+   
+   I applied the test fix and wrote a script to access the large li
+   st box
+   twice using the .select('text') method. The test fix appears to
+   be
+   working. I no longer get the exception and RFT is able to succes
+   sfully
+   select an item through the large list box. However, the performa
+   nce on
+   the list box is still very poor, as it tool around 3.5 minutes f
+   or the
+   playback to select an item in the list box. It took even longer
+   (5+
+   minutes) for playback to select an item near the bottom of the l
+   ist box.
+   I copied the DLL files to C:\Program
+   
+   Files\IBM\SDP70\FunctionalTester\bin, and I placed the JAR file
+   in
+   C:\Program Files\IBM\SDP70Shared\plugins. The existing DLL files
+    had to
+   be overwritten, but I did not have to delete or overwrite any .J
+   AR files
+   to install the testfix.' And that when in frames sometimes the s
+   horter listbox do not work correctly 'In my sample application t
+   hat I attached earlier, try the following code
+   in a recorded test script:
+   
+   public void testMain(Object?? args)
+   
+   {
+   
+   list_commandType().click();
+   
+   list_commandType().click(atText('Set Terminal
+   
+   Characteristics'));
+   
+   }
+   
+   This acts on the 'index.html' of my sample, under the 'Command T
+   ype'
+   list box. When I play back this script, IE7 will crash to the de
+   sktop
+   and RFT will report the following exception:
+   
+   Exception occurred during playback of script ?Script1? ?CRFCN001
+   9E:
+   RationalTestScriptException on line 30 of script Script1 -
+   
+   com.rational.test.ft.TargetGoneException: null.?.
+   
+   My JRE also dumps a log file to the desktop, hs_err_pid3776.log
+   (depends
+   on the PID of the running Java). I attached the log file.'
+   Business impact: Need to be able to test their 17 test cases.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Problem of record and playback with the comboboxes in
+   multiple frames in IE7 browser
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Problem of record and playback with the comboboxes in
+   multiple frames in IE7 browser. Handled this scenario
+   properly to handle.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK70120
+   
+   
+ * REPORTED COMPONENT NAME
+   RAT FUNC TESTER
+   
+   
+ * REPORTED COMPONENT ID
+   5724G2503
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-08-05
+   
+   
+ * CLOSED DATE
+   2008-10-08
+   
+   
+ * LAST MODIFIED DATE
+   2008-10-08
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   RAT FUNC TESTER
+   
+   
+ * FIXED COMPONENT ID
+   5724G2503
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R700 PSN
+   UP

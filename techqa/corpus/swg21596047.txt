@@ -1,0 +1,125 @@
+Title: IBM Using IBM eDiscovery Manager, Version 2.2 Fix Pack 4 with multi-part SharePoint documents archived by IBM Content Collector ,Version 3.0 or above - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How can I use IBM® eDiscovery Manager, Version 2.2 Fix Pack 4 with multi-part SharePoint documents that are archived by IBM Content Collector, Version 3.0 or later? 
+
+ANSWER
+This Technote describes how the newly added fixes for multi-part document search and export in IBM eDiscovery Manager, Version 2.2 Fix Pack 4 can be used to search SharePoint items archived by IBM Content Collector Version 3.0 or later. It briefly explains the supported scenarios, configuration steps, and available content search options. 
+
+You can find more information about how SharePoint items and attachments archived by IBM Content Collector V3.0 are represented in IBM Content Manager, Version 8 or FileNet P8 in the documentation for IBM Content Collector. See the IBM Content Collector Indexing Guide, which has detailed information on indexing and field sections.
+
+
+With IBM Content Collector, you can archive all content of a SharePoint list item, including attachments. 
+
+Viewing SharePoint documents 
+
+Files from SharePoint libraries are archived in their own format and viewable if the MIME type is supported by the eDiscovery Manager viewer. SharePoint items from other list types are rendered and archived as HTML in a way that is very similar to the way the item looked in the original SharePoint context. The HTML rendering mirrors the styling in Windows SharePoint Server 3.0 with the following exceptions:
+
+* Images in a page will not display if their source was external and is not available.
+* Dates are displayed in the ISO-8601 format.
+* Users are displayed as both Display name and login name, for example, Joe Smith (DOMAIN\jsmith).
+* Attachment file names are listed but not hyperlinked. To retrieve the attachments, use the export feature or a target repository client that can access the content elements or parts, for example, WorkPlace XT for FileNet P8.
+
+Exporting SharePoint documents 
+
+eDiscovery Manager supports exporting SharePoint files and rendered items with attachments in their native format. 
+
+PDF and TIFF export formats are not supported. 
+
+Searching SharePoint documents
+
+Specific FileNet P8 search configuration 
+
+IBM Content Collector will create a default document class with the following name and properties: 
+
+Document class symbolic name: 
+
+ * ICCSharepointInstance2
+
+
+Document properties:  * Document Title 
+ * ICCCreatedBy 
+ * ICCCreatedDate 
+ * ICCExpirationDate 
+ * ICCFileName 
+ * ICCFilePath 
+ * ICCFolderPath 
+ * ICCExpirationDate 
+ * ICCLastModifiedDate 
+ * ICCLibrary 
+ * ICCModifiedBy 
+ * ICCSharePointGUID 
+ * ICCSharePointVersion 
+ * ICCSite
+
+
+In order to use multi-part content archived from SharePoint by IBM Content Collector 3.0 or above into a IBM FileNet P8 repository with IBM eDiscovery Manager, create a new eDiscovery Manager collection of using the collection type "Microsoft SharePoint - Content Collector". This collection type gives a good starting point which can be modified and extended to create a richer field definition. Initiall the field definitions will have the following fields: 
+
+Collection field Content server property Type Text index EXTERNAL_ID Id String CREATED_DATE ICCCreatedDate Date MODIFIED_DATE ICCLastModifiedDate Date EXPIRATION_DATE ICCExpirationDate String LIBRARY ICCLibrary String SITE ICCSite String SHAREPOINT_VERSION ICCSharePointVersion String FOLDER_PATH ICCFolderPath String FILE_NAME ICCFileName String 
+Delete the definiton for CONTENT and then add the definitions below to get to the full, new field definitions: 
+Collection field Content server property Type Text index Description CONTENT String //icc_content Matches all of the content, including attachments of a SharePoint item. RAW_CONTENT String $FULL_TEXT$ Matches all of the content and XML tags. DOCUMENT String //icc_main Matches primary file content only, whether file or HTML rendering. PRIMARY_FILE_NAME String //icc_main@name Matches primary file file name only. ATTACHMENT String //icc_attachment Matches attachment content only. ATTACHMENT_NAME String /icc_attachment@name Matches attachment file name only. 
+
+Support XPath syntax in field mappings 
+The supported subset of XPath is defined by CSS XML search engines XPath support. It differs from standard XPath in the following ways: 
+
+ * It does not support iteration and ranges in path expressions. 
+ * It eliminates filter expressions: that is, it allows filtering only in the predicate expression, not in the path expression. 
+ * It disallows absolute path names in predicate expressions. 
+ * It implements only one axis (tag) and allows propagation only in the forward direction.
+
+
+The following characters are unsupported in the XML search syntax:  * /* 
+ * //* 
+ * /@* 
+ * //@*
+   
+   
+
+Disregarding of XML namespaces 
+
+Namespace prefixes are not retained in the indexing of XML tag and attribute names. You can search XML documents by using namespaces, but namespace prefixes are discarded during indexing and removed from XML search queries. Numeric values 
+
+Predicates that compare attribute values to numbers are supported. 
+
+Complete match
+
+The operator = (equal sign) with a string argument in a predicate means that a complete match of all tokens in the string with all tokens in the identified text span is required. The order of the tokens is important. 
+
+For more details on the XML search syntax, see the FileNet P8 topic "SQL Syntax Reference" and go to the "XML Search [http://publib.boulder.ibm.com/infocenter/p8docs/v5r1m0/topic/com.ibm.p8.ce.dev.ce.doc/query_sql_syntax_ref.htm#xml_searches_icss]" section.
+
+Specific IBM Content Manager search configuration
+
+IBM Content Collector will create a default item type with the following name and properties: 
+
+Item type name: 
+
+ * ICCSharePointDM
+
+
+Attributes:  * ICCCreatedBy 
+ * ICCCreatedDate 
+ * ICCFileName 
+ * ICCFolderPath 
+ * ICCLastModifiedDate 
+ * ICCLibrary 
+ * ICCModifiedBy 
+ * ICCSharePointGUID 
+ * ICCSharePointVersion 
+ * ICCSite 
+ * ICMDeleteHold
+
+
+In order to use multi-part content archived from SharePoint by IBM Content Collector 3.0 or above into a IBM Content Manager repository with IBM eDiscovery Manager, create a new eDiscovery Manager collection of using the collection type "Microsoft SharePoint - Content Collector". This collection type gives a good starting point which can be modified and extended to create a richer field definition. Initiall the field definitions will have the following fields: 
+
+Collection field Content server property Type Text index EXTERNAL_ID Id String CREATED_DATE ICCCreatedDate Date MODIFIED_DATE ICCLastModifiedDate Date EXPIRATION_DATE ICCExpirationDate String LIBRARY ICCLibrary String SITE ICCSite String SHAREPOINT_VERSION ICCSharePointVersion String FOLDER_PATH ICCFolderPath String FILE_NAME ICCFileName String 
+Delete the definiton for CONTENT and then add the definitions below to get to the full, new field definitions: 
+Collection Field Content Server Property Type Text Index Description CONTENT String document Matches all of the content, including attachments of a SharePoint item. RAW_CONTENT String $FULL_TEXT$ Matches all of the content and XML tags. DOCUMENT String generic_content Matches primary file content only, whether file or HTML rendering. PRIMARY_FILE_NAME String generic_content_name Matches primary file file name only. ATTACHMENT String generic_attachment Matches attachment content only. ATTACHMENT_NAME String generic_attachment_name Matches attachment file name only. 
+Limitations
+
+* FileNet P8 with Verity based search (Legacy Search Service) is not supported for use with SharePoint content that has attachments. 
+* TIFF or PDF export of SharePoint content is not supported. 
+* Dates that are indexed are truncated to a per hour resolution. This means that searches on a subhour resolution are not supported. 
+* Highlighting is not supported.

@@ -1,0 +1,28 @@
+Title: IBM Displaying an exported widget results in error 'Refused to display' - United States
+
+Text:
+content security policy; widget; embedded; export TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Attempts to display a widget exported from IBM Rational Quality Manager (RQM) dashboard in an external web page results in error 
+"
+Refused to display in a frame because an ancestor violates the 
+
+following Content Security Policy directive: frame-ancestors 'self'". 
+
+CAUSE
+By default RQM prevents embedding widgets in web pages served from a domain that is different than the RQM domain. This is done for security reasons.
+
+RESOLVING THE PROBLEM
+Procedure:
+
+
+ 1. Navigate to RQM Advanced Properties page
+    
+ 2. Locate a section called net.jazz.ajax.service.internal.XFrameOptionsService
+    
+ 3. Set the following two properties in that section to false:
+
+ * Prevent clickjacking (Content-Security-Policy) 
+   
+ * Prevent clickjacking (X-Frame-Options)

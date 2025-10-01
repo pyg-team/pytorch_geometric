@@ -1,0 +1,57 @@
+Title: IBM EventPlugin fails to start with ClassCastException - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ EventPlugin fails to start with ClassCastException in a clustered environment. 
+
+SYMPTOM
+In a clustered installation of Decision Server Events, the following ClassCastException exception is generated in SystemOut.log as well as the Rule Execution Server web console: 
+
+00000072 execution I Creates XU plug-in with properties {EventDestinationConnectionFactoryName=jms/WbeTopicConnectionFactory, pluginClass=com.ibm.rules.res.event.plugin.EventPlugin, EventDestinationType=Topic, EventDestinationName=jms/eventDestination} 
+...
+00000072 execution E Cannot start plug-in com.ibm.rules.res.event.plugin.EventPlugin@114bdf64 
+java.lang.ClassCastException: com.ibm.ws.sib.api.jms.impl.JmsQueueImpl incompatible with javax.jms.Topic 
+at com.ibm.rules.res.event.plugin.DecisionEventEmitter.lookupTopicInstance(DecisionEventEmitter.java:295) 
+at com.ibm.rules.res.event.plugin.DecisionEventEmitter.<init>(DecisionEventEmitter.java:102) 
+at com.ibm.rules.res.event.plugin.DecisionEventEmitterFactory.createEventEmitter(DecisionEventEmitterFactory.java:88) 
+at com.ibm.rules.res.event.plugin.EventPlugin.start(EventPlugin.java:124) 
+at ilog.rules.res.xu.plugin.internal.IlrPluginManager.startPlugins(IlrPluginManager.java:344) 
+at ilog.rules.res.xu.plugin.internal.IlrPluginManager.changePlugins(IlrPluginManager.java:215) 
+at ilog.rules.res.xu.plugin.internal.IlrPluginManager.start(IlrPluginManager.java:170) 
+at ilog.rules.res.xu.spi.IlrManagedXUConnectionFactory.createConnectionFactory(IlrManagedXUConnectionFactory.java:626) 
+at ilog.rules.res.xu.spi.IlrManagedXUConnectionFactory.createConnectionFactory(IlrManagedXUConnectionFactory.java:70) 
+at ...
+
+
+
+CAUSE
+By default, the profile augmentation scripts use a JMS topic as the event message destination, which is correct for a typical stand-alone installation of Decision Server Events. The destination is set by the scripts, as shown in the following stack trace: 
+EventDestinationName=jms/eventDestination
+EventDestinationConnectionFactoryName=jms/WbeTopicConnectionFactory
+EventDestinationType=Topic 
+
+However, in a clustered environment, the default destination is a JMS Queue that has jms/eventDestination as the JNDI name and jms/WbeQueueConnectionFactory as the connection factory.
+
+The ClassCastException error occurs in a clustered environment because com.ibm.rules.res.event.plugin.DecisionEventEmitter.lookupTopicInstance is casting the returned JNDI look up result javax.jms.Queue to javax.jms.Topic.
+
+Note: Although some versions of the documentation describe the JNDI name as jms/eventQueue, the JNDI name should be jms/eventDestination.
+
+
+
+RESOLVING THE PROBLEM
+Configure the execution unit (XU) and change the EventDestinationType, EventDestinationName, and EventDestinationConnectionFactoryName as shown in this example: 
+
+EventDestinationName=jms/eventDestination
+EventDestinationConnectionFactoryName= jms/WbeQueueConnectionFactory 
+EventDestinationType=Queue
+
+You can configure the XU using one of these methods: 
+
+ * Edit the ra.xml deployment descriptor file, 
+ * Log in to the WebSphere Application Server administrative console and set custom properties for the XU connection factory.
+
+
+Detailed configuration steps can be found here [http://pic.dhe.ibm.com/infocenter/dmanager/v8r0m1/topic/com.ibm.wodm.dserver.rules.res.managing/topics/tsk_res_config_xu_emitevents.html]. RELATED INFORMATION
+#Configuring XU to send event messages [http://pic.dhe.ibm.com/infocenter/dmanager/v8r0m1/topic/com.ibm.wodm.dserver.rules.res.managing/topics/tsk_res_config_xu_emitevents.html]

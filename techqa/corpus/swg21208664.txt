@@ -1,0 +1,66 @@
+Title: IBM "SERVICE UNAVAILABLE" message  received in TWS dialog or batch program - United States
+
+Text:
+ITWSzOS; TWSZOS; ITWSZ; OPC; 5697wswz01 TECHNOTE (FAQ)
+
+QUESTION
+ In TWSz ISPF dialogs, "SERVICE UNAVAILABLE" is received as an error. The help key (PF1) gives the following extended message : "EQQX134E Requested service is currently not available". What causes this and how can the problem be fixed? 
+
+CAUSE
+various causes (see solution)
+
+ANSWER
+There are a number of possible causes of the SERVICE UNAVAILABLEmessage. These are listed below with some suggestions for correcting the problem. 
+
+(1) No CURRENT PLAN (CP) is available or the CP has expired.
+In this case, extending the CP will correct the problem. If the 6.6 panel
+can be reached in the TWS dialog, it will indicate when the current plan
+expires. If the 6.6 panel cannot be reached, check the status of the last
+CP EXTEND or LTP (long term plan) extend job. If a CP batch job
+failed, correct that problem, then try to access the TWS dialog again,
+
+(2) NEW CURRENT PLAN (NCP, DD name EQQNCPDS) is EMPTY,
+but TWS was started with the CURRPLAN(NEW) parameter. This can occur
+after a migration to a new release of TWS. If the NCP dataset is empty,
+TWS must be started with CURRPLAN(CURRENT).
+
+(3) Duplicate controller subsystem names within a GRS ring --
+The subsystem name of the controller must be UNIQUE within a 
+GRS ring (see APAR PQ59245 for a clarification of this) - if you 
+have 2 controllers with the same subsystem name, one will get the 
+EQQX134E message. If you shut down the OTHER controller with the same 
+name, the controller that had the EQQX134E problem should (temporarily) 
+not have it any more. The permanent fix for this is to change the 
+subsystem name of one of the controllers to avoid the conflict.
+
+(4) If OPERHISTORY(YES) is specified in the OPCOPTS 
+for the controller, and the DB2 subsystem is in some kind of 
+unusable state, the "SERVICE UNAVAILABLE" message will be seen,
+In this case coding OPERHISTORY(NO) will get around 
+the problem temporarily, but the permanent fix is to correct
+the DB2 problem.
+
+(5) The Tivoli Workload Scheduler for z/OS dialogs and programming 
+interface (PIF) can be used on a z/OS system other than the system where the 
+controller is running. An APPC or TCP/IP PIF/DIALOG server started task is
+required, running on the same z/OS system as the controller. 
+The dialogs and the programming interface on the remote z/OS system
+communicate with the CONTROLLER through the server.
+
+If an attempt is made to access TWS (either through the dialog or a
+batch program) on an LPAR which is DIFFERENT from the one
+where the controller is running, AND a PIF/DIALOG server is not
+available, the "SERVICE UNAVAILABLE" message will be
+issued. To avoid this, either set up the server or run the
+TSO dialog or batch job on the same LPAR where the
+controller runs.
+
+(6) If SMP/E maintenance is installed to an SEQQLMD0 library which
+is part of the LNKLST (link list) and the library is (incorrectly) allocated
+to allow secondary extents. then when the LNKLST is refreshed
+(F LLA,REFRESH) the "new"extent of the SEQQLMD0 library will NOT
+be seen by the LLA process, causing load modules to be missing.
+This can cause the "SERVICE UNAVAILABLE" problem. To avoid
+this, temporarily add a STEPLIB to the controller task pointing to the
+SEQQLMD0 library. However, libraries in the LNKLST should either
+be one extent ONLY, or should be allocated as PDS/E.

@@ -1,0 +1,156 @@
+Title: IBM JR56323: DEPLOYING A BPEL MODULE WITH A PROCESS INSTANCE MIGRATION SPECIFICATION MIGHT FAIL IF A SHARED LIBRARY IS USED - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+ DIRECT LINK TO FIX
+8.5.5.0-WS-IID-IFJR56323 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Integration+Designer&fixids=8.5.5.0-WS-IID-IFJR56323&source=SAR]
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Deploying a BPEL module that includes a process instance
+   migration specification always fails when it is deployed with
+   the BPEL module it's being migrated from if both BPEL modules
+   refer to the same shared library, even if there is nothing in
+   the process instance migration specification because there are
+   no differences between the two BPEL processes. The process
+   instance migration specification does not contain errors.
+   
+   
+   PRODUCTS AFFECTED
+   IBM Integration Designer
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  The BPEL process comparison component, which the Process
+   Migration Specification editor uses and which is used during
+   deployment, compares WSDL references by computing an ID for each
+    object. This ID includes the path to the parent project that
+   contains the file.  If a WSDL is in a shared library, during
+   deployment this library is copied, which causes a difference to
+   be reported in the migration specification and the deployment
+   fails.  In Integration Designer, the migration specification
+   does not report the difference because the parent project for
+   the WSDL is the same for both versions of the process.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A fix is available for IBM Integration Designer V8.5.5.0 that
+   updates the BPEL comparison component to omit the parent project
+    path for WSDL files that are referred to because it is
+   irrelevant to run the process. As a result there are no false
+   changes to report.
+   
+   On Fix Central (http://www.ibm.com/support/fixcentral), search
+   for JR56323:
+   
+       1. Select IBM Integration Designer with your edition from
+   the product selector, the installed version to the fix pack
+   level, and your platform and then click Continue.
+       2. Select APAR or SPR, enter JR56323, and click Continue.
+   
+   When you download fix packages, ensure that you also download
+   the readme file for each fix. Review each readme file for
+   additional installation instructions and information about the
+   fix.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR56323
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM ADVANCED
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9400
+   
+   
+ * REPORTED RELEASE
+   855
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-07-19
+   
+   
+ * CLOSED DATE
+   2016-09-01
+   
+   
+ * LAST MODIFIED DATE
+   2016-09-01
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   BPM ADVANCED
+   
+   
+ * FIXED COMPONENT ID
+   5725C9400
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R855 PSY
+   UP

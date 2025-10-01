@@ -1,0 +1,77 @@
+Title: IBM Datacap Taskmaster Capture application paths / connection strings checklist - United States
+
+Text:
+application paths connection strings TECHNOTE (FAQ)
+
+QUESTION
+ Where are application paths and connection strings stored in Datacap Taskmaster 8.0 and later? 
+
+CAUSE
+This is an unofficial checklist of where application paths and connection strings may be stored in IBM Datacap Taskmaster 8.0.0 and later. Because of the highly customizable nature of Taskmaster, specific installations may differ.
+
+ANSWER
+System registry (client machine) 
+
+ * HKEY_LOCAL_MACHINE\SOFTWARE\Datacap\Application\Location\'TopPath'
+   The TopPath registry key does not exist by default
+   Note: Datacap is under HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node on an x64 OS. 
+ * HKEY_LOCAL_MACHINE\SOFTWARE\Datacap\RRS\locations\'RRS'
+
+If Taskmaster is fully installed on client:  1. Run Datacap Studio and close the application prompt. 
+ 2. Click the Settings button in upper-right corner. 
+ 3. The paths can be edited with:  * RRS -> Rulerunner general settings ('RRS') 
+     * DCApp -> Main application management file ('TopPath')
+    
+    
+
+
+Windows DSNs 
+Setup or configure DSNs in Data Sources to point to correct databases. Use %windir%\SysWOW64\odbcad32.exe on an x64 OS to view Data Sources. 
+
+Admin Database  * The DCO table's dco_setup values include a path to the setup hierarchy for each workflow, located in the xml file for the application, located at C:\Datacap\(application)\dco_<workflow>\(workflow).xml 
+ * The Taskmod table's md_params column includes paths to BPPs which ideally are modified through Taskmaster Administrator (Settings -> Modules in Taskmaster Client). 
+ * Batch creation tasks like VScan will have a batch directory path in Settings | Workflow | <Task> | Setup | File, Task Settings.
+   This is in the tasks table under ts_options and generally should not be modified directly in the database
+
+
+Engine Database  * Batch directory paths in the tmbatch table's pb_batchdir column. 
+ * If using a new engine database, the enginfo table's db_index value must match that in the admin database under adminfo table. 
+ * The db_index is used in queue table under qu_admDB.
+
+
+Fingerprint Database  * Connection to the fingerprint database is configurable in Taskmaster Application Manager, Fingerprint Database. Alternatively, the Fingerprint database connection can also be modified in the Zones tab of Datacap Studio by clicking the gear shaped icon below Fingerprint. 
+ * The Template table will have paths to the CCO's and TIFF files in tp_CCOPath and tp_ImagePath
+
+
+DotEdit, DotScan & Taskmaster Web 
+No paths or connection strings, but both have INI files that can specify some settings specific to either client. Some notes:  * INI files for DotEdit  * \Datacap\DotEdit\apps.ini 
+    * \Datacap\DotEdit\DotEdit.ini
+   
+   
+ * INI files for DotScan  * \Datacap\DotScan\apps.ini 
+    * \Datacap\DotScan\DotScan.ini
+   
+   
+ * INI file for Taskmaster Web  * \Datacap\tmweb.net\apps.ini
+   
+   
+ * The DateTimeSeparator, which defaults to pound symbol (#), is changed to an apostrophe (') for SQL and Oracle admin/engine databases. 
+ * Login to an application does not require that the application in question be listed in apps.ini. 
+ * Taskmaster 7.x applications after upgrade & conversion may contain connection strings in apps.ini, 
+
+
+Taskmaster Application's APP File 
+The Taskmaster Application Service can be queried for specific settings stored in the application's .APP (APP) file. All of these settings should be changed/configured using the Taskmaster Application Manager. 
+
+Taskmaster Application's Processing Files 
+All paths in BPP, ICP and INI files in the \Datacap\<app>\dco_<workflow> folder can be modified. Some notes:  * The admin database's DCO table's dco_setup values must be identical to DCOSetup in the BPP if the BPP uses a full, non-relative path to the XML. 
+ * Settings.ini may contain connection strings to fingerprint or other databases for custom actions. 
+ * Where possible, the application service should be used instead.
+
+Taskmaster 7.x applications after upgrade & conversion may contain a FingerprintConn variable in the setup hierarchy (e.g. APT.xml). The application should be updated to remove the variable from the XML and use the application service to query values instead. This also applies to Paths.ini, used by Smart Parameter @PATH(...) in certain actions. Application service is preferred instead. 
+
+Taskmaster Application's Rules 
+Rules are stored in \Datacap\<app>\dco_<workflow>\rules under various rule (RUL) files. Hard-coded paths and/or connection strings in the application rules can be configured through:  * Datacap Studio by going through the various rulesets, or by searching for specific actions like OpenConnection. 
+ * Performing a search and replace against the *.RUL files.
+
+Taskmaster 7.x applications after upgrade & conversion may need to be updated to take advantage of the application service wherever applicable.

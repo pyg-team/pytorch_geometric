@@ -1,0 +1,201 @@
+Title: IBM PM70446: DFHDBAT, DFHEDP AND DFHDBUEX ARE NOT INCLUDED IN A COMPATIBILITY GROUP WHEN UPGRADING A CICS TS 3.2 CSD TO A CICS TS 4.2 CSD - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Customer is running CICS/TS 3.2 regions after upgrading the
+   CSD to CICS/TS 4.2 in preparation for migrating the regions
+   to CICS/TS 4.2. They are using compatibility groups since
+   they are running CICS/TS 3.2 with a CICS/TS 4.2 CSD.
+   The issue is that DFHDBAT, DFHEDP and DFHDBUEX are defined
+   as CONCURRENCY(THREADSAFE) by default by the CICS/TS 4.2
+   supplied definitions for these programs however the CICS/TS
+   3.2 versions of these programs are not defined as such.
+   .
+   Since CICS/TS 4.2 does not have a definition for DFHDBAT in a
+   compatibilitygroup.  This causes CICS/TS 3.2 regionsthat are
+   running with an upgraded CSD to run with program DFHDBAT at
+   CONCURRENCY(THREADSAFE).
+   The 4.2 CONCURRENCYparameters for DFHDBAT, DFHEDP and DFHDBUEX
+   should be aligned with their 3.2 equivalents.
+   KIXREVEPH
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All CICS users running earlier releases of   *
+   *                 CICS with a CICS TS 4.2 CSD.                 *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Non-threadsafe CICS-supplied programs   *
+   *                      defined as threadsafe give              *
+   *                      unpredictable results.                  *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   DFHCCNV, DFHUCNV, DSNTIAC, DSNTIA1, DFHEDP, DFHDBAT and
+   DFHDBUEX were made threadsafe in CICS TS 4.2 but are not
+   included in the DFHCOMPE compatibility group, when the DFHCSDUP
+   UPGRADE command is run against a CSD from an earlier release of
+   CICS TS.  As a consequence unpredictable results may occur in
+   earlier CICS TS releases, when these non-threadsafe programs
+   are run with the threadsafe attribute from a migrated CSD.
+   In the reported case, a CICS region is unable to reconnect
+   to DBCTL because a CICS counter holds a negative value
+   after being decremented by DFHDBAT that is incorrectly defined
+   as threadsafe .
+   Additional keywords: 5655M1500, DBCTL, DFHDB8216, msgDFHDB8216,
+   DB8216
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  1. DFHCURDX has been changed to add DFHCCNV DFHUCNV DSNTIAC
+   DSNTIA1 DFHEDP DFHDBAT DFHDBUEX into compatibility group
+   DFHCOMPE at CICS/TS 4.2.
+   
+   2.CICS Transaction Server for z/OS Version 4 Release 2 Upgrading
+   from CICS TS Version 4.1 GC34-7190-02, page 67, section 'CSD
+   compatibility between different CICS releases' of 'Chapter 17.
+   Upgrade procedures for all CICS regions', table 5 'Contents of
+   compatibility group DFHCOMPE' will be updated to add Resource
+   type 'PROGRAM', with Name 'DFHMIRS DFHCCNV DFHUCNV DSNTIAC
+   DSNTIA1 DFHEDP DFHDBAT DFHDBUEX'.
+   
+   3.CICS Transaction Server for z/OS Version 4 Release 2 Upgrading
+   from CICS TS Version 3.2 GC34-7189-02, page 131, section 'CSD
+   compatibility between different CICS releases' of 'Chapter 18.
+   Upgrade procedures for all CICS regions', table 7 'Contents of
+   compatibility group DFHCOMPE' will be updated to add Resource
+   type 'PROGRAM', with Name 'DFHMIRS DFHCCNV DFHUCNV DSNTIAC
+   DSNTIA1 DFHEDP DFHDBAT DFHDBUEX'.
+   
+   4.CICS Transaction Server for z/OS Version 4 Release 2 Upgrading
+   from CICS TS Version 3.1 GC34-7188-02, page 179, section 'CSD
+   compatibility between different CICS releases' of 'Chapter 19.
+   Upgrade procedures for all CICS regions', table 8 'Contents of
+   compatibility group DFHCOMPE' will be updated to add Resource
+   type 'PROGRAM', with Name 'DFHMIRS DFHCCNV DFHUCNV DSNTIAC
+   DSNTIA1 DFHEDP DFHDBAT DFHDBUEX'.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *              *********
+               * HIPER *
+               *********
+   FIX AVAILABLE BY PTF ONLY
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM70446
+   
+   
+ * REPORTED COMPONENT NAME
+   CICS TS Z/OS V4
+   
+   
+ * REPORTED COMPONENT ID
+   5655S9700
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   YesHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-08-07
+   
+   
+ * CLOSED DATE
+   2012-09-20
+   
+   
+ * LAST MODIFIED DATE
+   2012-10-01
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UK82075
+   
+   
+
+MODULES/MACROS
+ *     DFHCURDX
+   
+   
+    
+   
+   
+
+Publications Referenced GC34719002 GC34718902 GC34718802 FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CICS TS Z/OS V4
+   
+   
+ * FIXED COMPONENT ID
+   5655S9700
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R700 PSY UK82075 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK82075]
+   UP12/09/28 P F209
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

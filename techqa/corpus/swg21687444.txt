@@ -1,0 +1,47 @@
+Title: IBM Security Bulletin: Action required for IBM WebSphere MQ Hypervisor Edition for Red Hat Enterprise Linux Server for the GNU C Library vulnerability - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ Proof of Concept exploit code has been released on August 25th, which uses a flaw in glibc that can allow a local unprivileged user to gain root on Linux machines. 
+
+VULNERABILITY DETAILS
+CVE ID: CVE-2014-5119 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-5119]
+
+DESCRIPTION: The GNU C Library (glibc) is vulnerable to a heap-based buffer overflow, caused by an off-by-one error in the __gconv_translit_find() function. By setting the CHARSET environment variable to a malicious value, a local attacker could exploit this vulnerability to overflow a buffer and execute arbitrary code on the system with root privileges.
+
+CVSS: 
+CVSS Base Score: 7.2
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/95044 [https://exchange.xforce.ibmcloud.com/vulnerabilities/95044] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:L/AC:L/Au:N/C:C/I:C/A:C) 
+
+AFFECTED PRODUCTS AND VERSIONS
+WebSphere MQ Hypervisor Edition Versions 7.0.1 and 7.5
+
+REMEDIATION/FIXES
+IBM strongly recommends that you should contact Red Hat to obtain fixes and install fixes for Red Hat Enterprise Linux (RHEL). 
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v2 Guide [http://www.first.org/cvss/v2/guide] 
+On-line Calculator v2 [http://nvd.nist.gov/CVSS-v2-Calculator] 
+
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] 
+
+CHANGE HISTORY
+ 27 October 2014: Original Copy Published
+28 October 2014: Modified title to make it more clear 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY. 
+
+RELATED INFORMATION
+ A Japanese translation is available [http://www.ibm.com/support/docview.wss?uid=swg21688524]

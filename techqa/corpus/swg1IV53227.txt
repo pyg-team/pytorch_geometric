@@ -1,0 +1,183 @@
+Title: IBM IV53227: NT MONITORING AGENT DOES NOT RECOGNIZE IIS VERSION - United States
+
+Text:
+  A FIX IS AVAILABLE
+IBM Tivoli Monitoring 6.3.0 Fix Pack 3 (6.3.0-TIV-ITM-FP0003) [http://www-01.ibm.com/support/docview.wss?uid=swg24036775]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Problem:
+   "Enterprise Services" workspaces does not populate data
+    for views.
+   
+   The Monitoring Agent for Windows OS attempts to determine
+   the major version of Internet Information Services (IIS)
+   from the following registry key:
+   
+   HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\INetMgr\Parameters\MajorVe
+   rsion
+   
+   This path is not present in all Windows environments.
+   With version 7.5 of IIS, the registry key that contains the
+   MajorVersion / MinorVersion values is:
+   
+   HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\InetStp\MajorVersion
+   
+   Affected Platforms / Versions:
+   This issue affects 6.22, 6.23, 6.3 release of Monitoring agent
+   for Windows OS on 32 and 64 bit.
+   Diagnostics:
+   Enable the following tracing in KNTENV
+   KBB_RAS1=ERROR (UNIT:KNT ALL)
+    The specific trace point is seen with:
+   KBB_RAS1=ERROR (UNIT:KNTLA ALL)
+   In the kntcma RAS1 log:
+   kntlagnt.cpp,304,"LoadAgents") Could not retrieve major IIS
+   version from registry, return code = 2.
+   
+   Initial Impact:
+   Medium, "IIS Statistics" attribute group are not collected
+   
+   Depending on the system configuration, this may affect
+   additional
+   attribute groups:
+    Indexing Service
+    Indexing Service Filter
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Monitoring Agent for Windows OS does not recognize the IIS
+   Version.
+   
+   
+   Monitoring Agent for Windows OS does not populate data for the
+   "Enterprise Services" workspace. The agent attempts to determine
+   the major version of Internet Information Services (IIS) from
+   the following registry key:
+   
+    HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\INetMgr\Parameters\MajorV
+   ersion
+   
+   This path is not present in all Windows environments.  With
+   version 7.5 of IIS, the registry key that contains the
+   MajorVersion / MinorVersion values is:
+   
+    HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\InetStp\MajorVersion
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Windows OS Agent will recognize the IIS version also in the
+   second registry path
+   
+   
+   The fix for this APAR is contained in the following maintenance
+   packages:
+   
+      | fix pack | 6.3.0-TIV-ITM-FP0003
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV53227
+   
+   
+ * REPORTED COMPONENT NAME
+   ITM AGENT WINDO
+   
+   
+ * REPORTED COMPONENT ID
+   5724C040W
+   
+   
+ * REPORTED RELEASE
+   622
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-12-11
+   
+   
+ * CLOSED DATE
+   2014-01-30
+   
+   
+ * LAST MODIFIED DATE
+   2014-08-08
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ITM AGENT WINDO
+   
+   
+ * FIXED COMPONENT ID
+   5724C040W
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R622 PSY
+   UP
+   
+   
+ * R623 PSY
+   UP
+   
+   
+ * R630 PSY
+   UP

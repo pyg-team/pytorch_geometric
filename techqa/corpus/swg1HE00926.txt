@@ -1,0 +1,136 @@
+Title: IBM HE00926: REPLIWEB LICENSE QUESTION - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Documentation Issue :
+   Can you confirm the license can be for free also if customer
+   use 64bit system (as we now support win 2008 server 64bit for
+   example)?
+   If this is confirmed, where to add that in the license
+   request form? Is it needed to generate the license?
+   Please update the documentation In the
+   "V5R20_Hardware_and_Software_Requirements.pdf", section which
+   talks about -
+   SmarTeam Corporation provides a free license for RDS if both
+   the following conditions are fulfilled......
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  empty
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Documentation Issue :
+   Can you confirm the license can be for free also if customer
+   use 64bit system (as we now support win 2008 server 64bit for
+   example)?
+   If this is confirmed, where to add that in the license
+   request form? Is it needed to generate the license?
+   Please update the documentation In the
+   "V5R20_Hardware_and_Software_Requirements.pdf", section which
+   talks about -
+   SmarTeam Corporation provides a free license for RDS if both
+   the following conditions are fulfilled......
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Documentation will be updated as below from V5R20 SP6 and
+   V5R21 GA level onwards -
+   SmarTeam Corporation provides a free license for RDS if both
+   the following conditions are fulfilled:
+   - The platform is either Windows (32bit or 64bit) or Linux
+   Additional Closure Information:
+   -
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   HE00926
+   
+   
+ * REPORTED COMPONENT NAME
+   SMARTEAM NT>XP
+   
+   
+ * REPORTED COMPONENT ID
+   569199970
+   
+   
+ * REPORTED RELEASE
+   520
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-10-12
+   
+   
+ * CLOSED DATE
+   2010-12-21
+   
+   
+ * LAST MODIFIED DATE
+   2010-12-21
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R520 PSN
+   UP

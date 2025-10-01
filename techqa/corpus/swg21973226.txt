@@ -1,0 +1,53 @@
+Title: IBM UTF-8  encoding/decoding problem  in  JDK 8 - United States
+
+Text:
+UTF-8; encoding; decoding; JDK 8; DB2 FIX README
+
+ABSTRACT
+ Decoding ill-formed UTF-8 byte sequence will result in java.nio.charset.MalformedInputException error. 
+
+CONTENT
+Cause:
+Starting from JDK 8 ,the input data to NIO UTF-8 decoder(Java API) should be of pure UTF-8. Till JDK 8 this rule was not strictly implemented and decoder was able to decode ill-formed UTF-8 byte sequence also. Decoder in JDK 1.8 will throw an exception if it encounters non UTF-8 data and the program cannot proceed with the execution.
+
+Following defect is related to this issue:
+http://bugs.java.com/bugdatabase/view_bug.do?bug_id=7096080 [http://bugs.java.com/bugdatabase/view_bug.do?bug_id=7096080]
+
+Oracle JDK 8 is the base for IBM JDK 8 and because of that it has the same behavior .This document talks about how this can fixed with IBM JDK .
+
+
+Stack Trace:
+
+[ibm][db2][jcc][harness][Thread:main][SQLException@3bdd2c34] java.sql.SQLException
+[ibm][db2][jcc][harness][Thread:main][SQLException@3bdd2c34][Thread:main][Throwable@443302df] java.nio.charset.MalformedInputException
+[ibm][db2][jcc][harness][Thread:main][SQLException@3bdd2c34][Thread:main][Throwable@443302df] Message = Input length = 3
+[ibm][db2][jcc][harness][Thread:main][SQLException@3bdd2c34][Thread:main][Throwable@443302df] Stack trace follows
+java.nio.charset.MalformedInputException: Input length = 3
+…....
+at com.ibm.db2.jcc.am.ResultSet.getStringX(Unknown Source)
+at com.ibm.db2.jcc.am.ResultSet.getString(Unknown Source)
+….........
+[ibm][db2][jcc][harness][Thread:main][SQLException@3bdd2c34] SQL state = null
+[ibm][db2][jcc][harness][Thread:main][SQLException@3bdd2c34] Error code = -4220
+[ibm][db2][jcc][harness][Thread:main][SQLException@3bdd2c34] Message = [jcc][1037][12036][4.19.18] Exception occurred during clob conversion. See attached Throwable for details. ERRORCODE=-4220, SQLSTATE=null
+[ibm][db2][jcc][harness][Thread:main][SQLException@3bdd2c34] Stack trace follows
+com.ibm.db2.jcc.am.SqlException: [jcc][1037][12036][4.19.18] Exception occurred during clob conversion. See attached Throwable for details. ERRORCODE=-4220, SQLSTATE=null
+…..................
+…..................
+Caused by: java.nio.charset.MalformedInputException: Input length = 3
+at java.nio.charset.CoderResult.throwException(CoderResult.java:292)
+
+
+Solution: (Does not work for Oracle JDK 8)
+
+In IBM JDK 1.8 we have UTF8J encoding support which is equivalent to UTF8 in JDK 1.7 or below .To overcome this issue user needs an option to use UTF8J under IBM JDK 1.8 
+Oracle JDK does not have an equivalent encoding so this solution will not work .
+
+A new global property db2.jcc.alternateUTF8Encoding is introduced in JCC. This property can have value 1 and 0 ,the default value is 0 . If this property is set to 1 under IBM JDK 1.8 (db2.jcc.alternateUTF8Encoding=1) for UTF8 encoded data ,JCC uses UTF8J to decode .
+This will help to avoid MalformedInputException during decoding. This is a global property and need to be configured in the property file. This property cannot be set using DataSource or Connection and works only with IBM JDK.
+
+We may not hit this issue if we have only limited data .This behavior is because of the way DRDA packs and sends the data above a certain limit.
+
+
+Limitation: 
+This solution works only with IBM JDK.

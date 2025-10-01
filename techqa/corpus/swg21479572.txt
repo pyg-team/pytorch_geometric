@@ -1,0 +1,19 @@
+Title: IBM How do I display commands in SPSS output? - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ I am running SPSS for Windows. I have seen output that displays the commands that I run using an SPSS command file. I'm not seeing that file displayed in my output. How do I get the command file to display itself in the output window? 
+
+ANSWER
+Pull down the Edit menu in SPSS and select Options. From there, select the Viewer tab. Under the column of icons is a check box that says "Display commands in the log". Check that box, then click on the Apply button, then the OK button. You should then see the commands displayed in the output window. This is not retro-active, though, so if you have run any commands prior to changing this setting, you may need to run your commands again to see that syntax in the SPSS output window
+
+RELATED INFORMATION
+ Need more help? Our Statistics forum is Live! [https://developer.ibm.com/answers/topics/statistics.html?smartspace=predictive-analytics]
+
+
+ 
+
+HISTORICAL NUMBER
+ 47856

@@ -1,0 +1,51 @@
+Title: IBM ADMIN_CMD('load from ...') using JDBC in XA transaction gets SQL30090N - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Why does ADMIN_CMD('load from ...') using JDBC in XA transaction get SQL30090N? 
+
+CAUSE
+It is an known current limitation of DB2.
+
+ANSWER
+Here is an example message from a jdbctrace.log 
+
+-------------------
+[jcc] BEGIN TRACE_DIAGNOSTICS
+[jcc][Thread:WebContainer : 0][SQLWarning@2cab0b03] java.sql.SQLWarning
+[jcc][Thread:WebContainer : 0][SQLWarning@2cab0b03][Sqlca@f3177864] DB2 SQLCA from server
+[jcc][Thread:WebContainer : 0][SQLWarning@2cab0b03][Sqlca@f3177864] SqlCode = 20397
+[jcc][Thread:WebContainer : 0][SQLWarning@2cab0b03][Sqlca@f3177864] SqlErrd = { 0, 2, 0, 0, 0, 0 }
+[jcc][Thread:WebContainer : 0][SQLWarning@2cab0b03][Sqlca@f3177864] SqlErrmc = SYSPROC.ADMIN_CMD;SQL30090;^@
+[jcc][Thread:WebContainer : 0][SQLWarning@2cab0b03][Sqlca@f3177864] SqlErrmcTokens = { SYSPROC.ADMIN_CMD, SQL30090, ^@ }
+[jcc][Thread:WebContainer : 0][SQLWarning@2cab0b03][Sqlca@f3177864] SqlErrp = DB2LOAD
+[jcc][Thread:WebContainer : 0][SQLWarning@2cab0b03][Sqlca@f3177864] SqlState = 01H52
+[jcc][Thread:WebContainer : 0][SQLWarning@2cab0b03][Sqlca@f3177864] SqlWarn =
+[jcc][Thread:WebContainer : 0][SQLWarning@2cab0b03] SQL state = 01H52
+[jcc][Thread:WebContainer : 0][SQLWarning@2cab0b03] Error code = 20397
+[jcc][Thread:WebContainer : 0][SQLWarning@2cab0b03] Tokens = SYSPROC.ADMIN_CMD;SQL30090;^@
+[jcc][Thread:WebContainer : 0][SQLWarning@2cab0b03] Stack trace follows
+com.ibm.db2.jcc.am.SqlWarning: DB2 SQL Warning: SQLCODE=20397, SQLSTATE=01H52, 
+SQLERRMC=SYSPROC.ADMIN_CMD;SQL30090;^@, DRIVER=4.19.49
+-------------------
+
+Symptoms:
+- It does not throw any exception and the application finished without any problem but 
+the data is not actually loaded into the table.
+- If the same operation without XA transaction, it is succeeded and loaded data.
+- From jdbctrace, SQL20397W and SQL30090N are logged.
+
+The reason why:
+The cause of the problem is LOAD does internal commit near the beginning of 
+operation. The load internal commit got back SQL30090 error is standard 
+behavior in XA environment. So ADMIN_CMD + LOAD does not work on XA.
+
+Workaround:
+Unfortunately, there is no way to do ADMIN_CMD + LOAD on XA.
+
+RELATED INFORMATION
+ LOAD command using the ADMIN_CMD procedure [https://www.ibm.com/support/knowledgecenter/en/SSEPGG_10.5.0/com.ibm.db2.luw.sql.rtn.doc/doc/r0023577.html ]
+SQL30090N [https://www.ibm.com/support/knowledgecenter/en/SSEPGG_10.5.0/com.ibm.db2.luw.messages.sql.doc/doc/msql30090n.html ]
+A Japanese translation is available [http://www.ibm.com/support/docview.wss?uid=swg21996128]

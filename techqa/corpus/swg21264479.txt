@@ -1,0 +1,132 @@
+Title: IBM How to uninstall the ClearCase Remote Client from a Linux system - United States
+
+Text:
+1264479; ClearCase; ClearCase Remote Client (CCRC); Linux; 2003.06.00; 7.0 TECHNOTE (FAQ)
+
+QUESTION
+ How can you uninstall the IBM® Rational® ClearCase® Remote Client (CCRC) software from a Linux® host? 
+
+ANSWER
+
+In a case where you wish to remove CCRC from a Linux host where it is no longer being used, the ClearCase Remote Client can be uninstalled by executing the uninstall binary following the steps below: 
+
+ 
+
+ 1. Login as root and run ls /opt/IBM/Rational/ClearCase/_uninst
+    
+    In that directory you will find the following directories:
+    
+    uninstall.bin
+    uninstall.dat
+    uninstall.jar
+    
+    
+ 2. While logged in as root run /opt/IBM/Rational/ClearCase/_uninst/uninstall.bin and follow the steps as outlined below.
+    
+    Note: If you are running a GUI desktop like KDE or Gnome, then the uninstaller will run and ask questions. If you are running the uninstall from a telnet session, you will need to add the switch -console to run in command line mode. 
+    
+
+
+Example (telnet session): 
+
+
+[root@host1 _uninst]# ./uninstall.bin -console 
+InstallShield Wizard 
+
+Initializing InstallShield Wizard... 
+
+Searching for Java(tm) Virtual Machine... 
+........ 
+Running InstallShield Wizard... 
+
+------------------------------------------------------------------------- 
+Welcome to the InstallShield Wizard for IBM Rational ClearCase Remote Client V7.0 
+
+The InstallShield Wizard will uninstall IBM Rational ClearCase Remote Client V7.0 from your computer. 
+To continue, choose Next. 
+
+IBM Rational ClearCase Remote Client V7.0 
+
+
+Press 1 for Next, 3 to Cancel or 4 to Redisplay [1] 
+
+------------------------------------------------------------------------- 
+IBM Rational ClearCase Remote Client V7.0 will be uninstalled from the 
+following location: 
+
+/opt/IBM/Rational/ClearCase 
+
+with the following features: 
+
+Rational ClearCase Remote Client 
+
+Press 1 for Next, 2 for Previous, 3 to Cancel or 4 to Redisplay [1] 
+
+
+Uninstalling IBM Rational ClearCase Remote Client V7.0... 
+
+------------------------------------------------------------------------- 
+The InstallShield Wizard has successfully uninstalled IBM Rational ClearCase Remote Client V7.0. Choose Next to continue the wizard. 
+
+Press 1 for Next, 2 for Previous, 3 to Cancel or 4 to Redisplay [1] 
+
+------------------------------------------------------------------------- 
+The wizard requires that you logout and log back in. 
+
+Press 3 to Finish or 4 to Redisplay [3] 
+WARNING: could not delete locked file /opt/IBM/Rational/ClearCase 
+WARNING: could not delete locked file /opt/IBM/Rational 
+WARNING: could not delete locked file /opt/IBM
+
+
+Note: The above warnings can be safely ignored as you are sitting in a directory that it was trying to delete. The warnings can be avoided during the uninstall by calling the path from outside /opt/IBM/Rational/ClearCase/_uninst, then the first 2 directories can be deleted by the uninstall process. 
+
+
+
+
+
+
+In a case where you need to perform a manual cleanup if the uninstaller fails, the CCRC client can be removed as follows: 
+# rm -rf /opt/IBM/Rational/ClearCase701 
+
+# rm -rf /etc/IBM/CCRC701 
+
+ 
+
+If no other components are installed, you can also remove the parents: 
+
+# rm -rf /opt/IBM 
+
+# rm -rf /etc/IBM 
+
+ 
+
+Links to the desktop (Gnome in this example on RHEL) can be found with:
+
+
+# find /usr/share -name *Rational* -print 
+
+/usr/share/gnome/apps/IBM Rational 
+
+/usr/share/gnome/apps/IBM Rational/Rational ClearCase Remote Client V7.0.1.desktop 
+
+/usr/share/applications/Rational ClearCase Remote Client V7.0.1.desktop 
+
+/usr/share/applnk/IBM Rational 
+
+/usr/share/applnk/IBM Rational/Rational ClearCase Remote Client V7.0.1.kdelnk 
+
+ 
+
+Thus, a manual uninstall is fairly simple and should be completed if the uninstaller fails and you are trying to move to a later version.
+
+
+RELATED INFORMATION
+#Manually uninstall ClearCase on Linux [http://www.ibm.com/support/docview.wss?uid=swg21257486]
+
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Software Development Rational ClearCase ClearCase Remote Client (CCRC)

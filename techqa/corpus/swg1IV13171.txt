@@ -1,0 +1,153 @@
+Title: IBM IV13171: VFILER INFORMATION IS UNAVAILABLE - United States
+
+Text:
+  A FIX IS AVAILABLE
+IBM Tivoli Monitoring for Virtual Servers: NetApp 7.1.0-TIV-ITM_NETAPP-IF0001 [http://www-01.ibm.com/support/docview.wss?uid=swg24032275]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  ABSTRACT:          vFiler information is unavailable
+   
+   ENVIRONMENT:
+   
+   IBM Tivoli Monitoring for Virtual Servers: NetApp Agent, Version
+   6.2.3.
+   
+   PROBLEM DESCRIPTION:
+   
+   The Hosts work space show "unavailable" for the Disk Data Read,
+   Disk Data Written, NetData Received and Net Data Sent columns of
+   the Hosts By Data Rate view.
+   
+   RECREATE INSTRUCTIONS:
+   
+   Set up vFilers in the NetApp environment and observe the problem
+   description above.
+   
+   Approver Initials: mw
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   *****
+   * USERS AFFECTED: All users.
+   ****************************************************************
+   *****
+   * PROBLEM DESCRIPTION:  For vfiler host types, the Hosts
+   workspace
+   * shows "unavailable" for the Disk Data Read, Disk Data
+   * Written, NetData Received and Net Data Sent columns of
+   * the Hosts By Data Rate view.
+   ****************************************************************
+   *****
+   * RECOMMENDATION: Apply Interim Fix 7.1.0-TIV-ITM_NETAPP-IF0001.
+   ****************************************************************
+   *****
+   Interim Fix 7.1.0-TIV-ITM_NETAPP-IF0001 resolves the problem by
+   correctly handling vfiler host types.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix for this APAR is contained in the following maintenance
+   package:
+   
+      | interim fix | 7.1.0-TIV-ITM_NETAPP-IF0001
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV13171
+   
+   
+ * REPORTED COMPONENT NAME
+   ITMFE NETAPP ST
+   
+   
+ * REPORTED COMPONENT ID
+   5724L92NA
+   
+   
+ * REPORTED RELEASE
+   710
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-01-13
+   
+   
+ * CLOSED DATE
+   2012-03-30
+   
+   
+ * LAST MODIFIED DATE
+   2012-03-30
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ITMFE NETAPP ST
+   
+   
+ * FIXED COMPONENT ID
+   5724L92NA
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R710 PSY
+   UP

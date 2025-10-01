@@ -1,0 +1,172 @@
+Title: IBM PM75193: DATA COLLECTOR DOES NOT CONNECT TO MANAGING SERVER THROUGH PORT CONSOLIDATOR IF MS IS STARTED AFTER THE APPLICATION SERVER. - United States
+
+Text:
+  FIXES ARE AVAILABLE
+7.1.0.3-TIV-ITCAMAD-IF0005: ITCAM for Application Diagnostics V7.1 FP3 IF5 [http://www-01.ibm.com/support/docview.wss?uid=swg24033938]
+7.1.0.3-TIV-ITCAMAD-IF0004: ITCAM for Application Diagnostics V7.1 FP3 IF6 [http://www-01.ibm.com/support/docview.wss?uid=swg24034668]
+7.1.0.3-TIV-ITCAMAD-IF0008: ITCAM for Application Diagnostics V7.1 FP3 IF8 [http://www-01.ibm.com/support/docview.wss?uid=swg24037994]
+7.1.0-TIV-ITCAMAD-FP0004: ITCAM for Application Diagnostics V7.1 Fix Pack 4 [http://www-01.ibm.com/support/docview.wss?uid=swg24041705]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Problem Description:
+   When the DC using a Port Consolidator is started prior to MS it
+    fails immediately with a ConnectException.  It does not try to
+    reconnect to the MS by checking its availability on a periodic
+    basis.  The following exception is generated once during the
+    first try:
+   
+    <Exception><![CDATA[com.cyanea.kernel.common.KernelException:
+   java.net.ConnectException:<message>
+    at
+   com.cyanea.kernel.common.LookupAgent.init(LookupAgent.java:146)
+    at
+   com.cyanea.kernel.common.LookupAgent.<init>(LookupAgent.java:87)
+    at
+   com.cyanea.kernel.common.LookupAgentFactory.getLookupAgent(Looku
+   pAgentFa
+   ctory.java:32)
+    at com.cyanea.probe.JoinProxyTask.<init>(JoinProxyTask.java:85)
+    at com.cyanea.probe.JoinProxyAgent.join(JoinProxyAgent.java:72)
+    at
+   com.cyanea.probe.ProbeController.setMSMode(ProbeController.java:
+   608)
+    at
+   com.cyanea.probe.ProbeController.start(ProbeController.java:509)
+    at
+   com.cyanea.probe.ProbeController.run(ProbeController.java:326)
+    at java.lang.Thread.run(Thread.java:811)
+   
+   Users Affected:ITCAM for Application Diagnostics Data Collectors
+    (DC) that use Port Consolidator (PC) to connect to the Managing
+    Server (MS).
+   
+   Approvals:
+     L3 : SV
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:
+   *
+   * ITCAM for AD v7.1 users who use port consolidator to
+   * communicate with the ITCAM Managing Server (to reduce the
+   * number of ports that need to be opened through the fire wall).
+   *
+   ****************************************************************
+   *
+   * PROBLEM DESCRIPTION:
+   *
+   * When the Port consolidator and the JVM containing the ITCAM
+   * Data Collector are started before the Managing server is
+   * started, the monitored JVM never connects to the Managing
+   * server.  Only when the Managing server is started first, does
+   * the DC connect correctly.
+   *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix for this APAR is contained in the following maintenance
+   release:
+   
+     | Interim fix | 7.1.0.3-TIV-ITCAMAD-IF0005
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM75193
+   
+   
+ * REPORTED COMPONENT NAME
+   TCAM AD MAN SER
+   
+   
+ * REPORTED COMPONENT ID
+   5724Y92MS
+   
+   
+ * REPORTED RELEASE
+   710
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-10-17
+   
+   
+ * CLOSED DATE
+   2013-01-28
+   
+   
+ * LAST MODIFIED DATE
+   2013-01-28
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TCAM AD MAN SER
+   
+   
+ * FIXED COMPONENT ID
+   5724Y92MS
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R710 PSY
+   UP

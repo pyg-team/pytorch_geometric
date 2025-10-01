@@ -1,0 +1,109 @@
+Title: IBM Collecting Data: Credential Vault for WebSphere Portal - United States
+
+Text:
+mustgatherdocument; mustgather; mustgather; mustgather; PORTSE; Credential; Vault; portal; 6.1; MustGatherDocument; Collecting Data; Collecting Data; Collecting Data RECOMMENDED RESOURCES
+
+ABSTRACT
+ Collecting data for Credential Vault issues with IBM WebSphere Portal. Gathering this information before contacting IBM Support will help to understand the problem and save time analyzing the data. 
+
+CONTENT
+If you already contacted IBM Support or must collect data to determine the nature of a Credential Vault problem in the WebSphere Portal, review the following information as well as Collecting Data: Read first for WebSphere Portal [http://www.ibm.com/support/docview.wss?rs=688&uid=swg21312740]. 
+
+
+Collecting Credential Vault specific information 
+
+The Credential Vault is a portlet service that helps portlets and portal users manage multiple identities. The Credential Vault stores credentials that allow portlets to log in to applications outside the portal realm on behalf of the user. There are two kinds of Credentials - Active and Passive. Active Credentials allow you to establish connections via Basic Authentication, Lightweight Third Party Authentication (LTPA) token authentication or simple form-based user ID/password login challenges. 
+
+
+
+Data Collection
+
+Use the following instructions for collecting the necessary troubleshooting data.
+
+I. Enabling trace logging 
+
+Enable tracing during problem recreation in order to investigate the specific behavior of the component(s). Choose to enable either static or dynamic tracing and proceed with the steps accordingly. For further information regarding logging and tracing in the portal, refer to the System event logging [http://www-01.ibm.com/support/knowledgecenter/SSHRKX_8.5.0/mp/trouble/adsyslog.dita] [http://publib.boulder.ibm.com/infocenter/wpdoc/v6r1m0/index.jsp?topic=/com.ibm.wp.ent.doc/trouble/pd_intr_logs.html] topic in the WebSphere Portal Knowledge Center. 
+
+Option A: Enabling static (extended) tracing
+Static tracing is the recommended method of capturing data, as it collects data from server startup until problem recreation. 
+
+1. Log into the Integrated Solutions Console as the WebSphere Application Server administrator. 
+
+2. Click Troubleshooting->Logs and Trace->WebSphere_Portal->Diagnostic Trace. 
+
+3. On the Configuration tab, ensure Enable Log is selected. On this same tab, ensure you increase the Maximum File Size and and Maximum Number of Historical Files as needed to ensure that the tracing of the problem recreation is not overwritten due to the amount of traffic on the system and output of the tracing itself. 
+
+4. Click Change Log Level Details and enter the following trace string: 
+
+ * 
+ * *=info:com.ibm.wps.sso.credentialvault.*=all:
+ * 
+ * com.ibm.wps.command.credentialvault.*=all:
+ * 
+ * com.ibm.wps.portletservice.credentialvault.*=all:
+ * 
+ * com.ibm.wps.services.credentialvault.*=all:
+ * 
+ * com.ibm.portal.portlet.service.credentialvault.*=all:
+ * 
+ * com.ibm.wps.engine.Servlet.*=all
+ * 
+
+5. Click OK and save the changes. 
+6. Restart the WebSphere_Portal application server. 
+
+Option B: Enabling dynamic tracing 
+Dynamic tracing can be used for situations that do not permit a server restart. 1. Log in as the Portal administrator. 
+
+2. Click Administration->Portal Analysis->Enable Tracing. The Enable Tracing portlet appears. 
+
+3. Type the required trace string into the field Append these trace settings: 
+
+ 
+
+ * *=info:com.ibm.wps.sso.credentialvault.*=all: 
+   com.ibm.wps.command.credentialvault.*=all: 
+   com.ibm.wps.portletservice.credentialvault.*=all: 
+   com.ibm.wps.services.credentialvault.*=all: 
+   com.ibm.portal.portlet.service.credentialvault.*=all:
+ * 
+ * com.ibm.wps.engine.Servlet.*=all
+ * 
+
+4. Click the Add icon. Enable Tracing updates the field Current trace settings. 
+
+Note: Restarting WebSphere Portal will remove traces that were set by using the Enable Tracing Administration portlet. 
+
+Additional Data 
+1. Obtain an XMLAccess export [http://www-01.ibm.com/support/docview.wss?rs=688&uid=swg21260098] of the base or virtual portal where the credential vault data resides. 
+
+
+II. Collecting and submitting logs and configuration data 1. Reproduce the problem. Collect screenshots, userId, and timestamp information as appropriate. 
+
+2. Run the following script from <wp_profile>/PortalServer/bin to collect the data: 
+
+ * Windows: wpcollector.bat 
+ * Linux/Unix/i: wpcollector.sh
+
+
+Note: If you wish to use wpcollector to FTP the files to IBM Support, include the -Dpmr=<pmr_number> parameter to indicate the relevant PMR #. For example: wpcollector.bat -Dpmr=11111,222,333 
+
+3. If you did not FTP your files via wpcollector, locate the "wp.mustgather.zip" file or the "<pmr #>-wp.mustgather-timestamp.zip" file in <wp_profile_root> [https://idoc2.swg.usma.ibm.com/portal/topic/com.ibm.wp.ent.doc_v70/reference/wpsdirstr.html#wpsdirstr__wp_profile_root]/filesForAutoPD/. Send the files to IBM Support by using the instructions outlined in Exchanging information with IBM Technical Support for problem determination [http://www.ibm.com/support/docview.wss?rs=688&uid=swg21201571]. 4. Upload the XMLAccess export of the virtual portal. Send the files to IBM Support by using the instructions outlined in Exchanging information with IBM Technical Support for problem determination [http://www.ibm.com/support/docview.wss?rs=688&uid=swg21201571]. 
+
+ 
+
+ 
+
+ 
+
+Note: When sending in logs for review, include any relevant screenshots, timestamps, userIds, etc. in order to expedite analysis of the issue. 
+
+Related Information 
+
+ * IBM Support Portal: WebSphere Portal Troubleshooting [http://www.ibm.com/support/entry/portal/Troubleshooting/Software/WebSphere/WebSphere_Portal] [http://www.ibm.com/support/docview.wss?rs=688&uid=swg21201571] 
+ * WebSphere Portal Knowledge Center: Troubleshooting [http://www-01.ibm.com/support/knowledgecenter/SSHRKX_8.5.0/mp/trouble/troubleshooting.dita] 
+ * Collecting Data: Read first for WebSphere Portal [http://www.ibm.com/support/docview.wss?rs=688&uid=swg21672901]
+
+ 
+
+Cross reference information Segment Product Component Platform Version Edition Organizational Productivity- Portals & Collaboration WebSphere Portal End of Support Products AIX, HP-UX, IBM i, Linux, Solaris, Windows, z/OS 7.0, 6.1

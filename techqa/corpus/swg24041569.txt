@@ -1,0 +1,26 @@
+Title: IBM CP02: IBM z/OS Connect Enterprise Edition Performance Reports - United States
+
+Text:
+z/OS Connect; Performance; Report DOWNLOADABLE FILES
+
+ABSTRACT
+ SupportPac CP02 provides performance reports for IBM z/OS Connect Enterprise Edition. 
+
+DOWNLOAD DESCRIPTION
+The performance reports in this SupportPac are provided, at no additional charge, for IBM z/OS Connect Enterprise Edition (EE).
+
+
+To read a particular performance report, click on the name of the report in the following table:
+
+
+
+Report number Report name Initial
+release Last
+updated New/Updated Platform z20 z/OS Connect EE V2.0 Performance Summary for API Mapping [http://public.dhe.ibm.com/software/htp/cics/support/supportpacs/individual/zOS-Connect-EE-v20-Performance-apiMapping-v1.1.pdf] 08Jan16 26Aug16 Updated IBM z/OS z21 z/OS Connect EE V2.0 Performance Summary using WOLA [http://public.dhe.ibm.com/software/htp/cics/support/supportpacs/individual/zOS-Connect-EE-v20-Performance-WOLA-v1.0.pdf] 23Aug16 [/support/docview.wss?uid=swg24041569&amp;aid=1] New IBM z/OS z30 z/OS Connect EE V3.0 Performance Summary using the CICS Service Provider [http://public.dhe.ibm.com/software/htp/cics/support/supportpacs/individual/zOS-Connect-EE-v30-Performance-CICSSP-v1.0.pdf] 25May18 [/support/docview.wss?uid=swg24041569&amp;aid=1] New IBM z/OS 
+
+
+
+TECHNICAL SUPPORT
+ The performance reports provided on this page are available at no charge to all licensed users of IBM z/OS Connect Enterprise Edition. These performance reports are provided in good faith and AS-IS. There is no warranty or further service implied or committed and any supplied sample code is not supported via IBM product service channels.
+
+You may submit a question or offer feedback, but please be aware that a response by IBM is NOT guaranteed.

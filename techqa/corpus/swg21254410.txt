@@ -1,0 +1,121 @@
+Title: IBM Minimum JDK requirements for Installing Rational Application Developer v7.0 over an existing Eclipse 3.2.1+ instance - United States
+
+Text:
+SDP desktop; RAD; v7; eclipse; jdk; jre; j2se; version; release; install; IM; installation manager; existing; software requirements; readme; release notes; installation guide; installation; RSA; RSDP; desktop products; ast; websphere; RATLC00299729; 1254410; support; supported; java; extending; extend; existing; language packs; language; 3.3; eclipse 3.3; eclipse 3.2; shell; eclipse shell; EU; eclipse updater; updater TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The Rational® Application Developer (RAD) version 7.0 readme and installation guide did not document the minimum JDK™/J2SE/JRE software requirements for installing over an existing Eclipse® 3.2.1+ instance till RAD v7.0.0.2. This technote, which applies to RAD and other IBM® Rational Software Delivery Platform (SDP) version 7.0 desktop products, provides that information and elaborates further on extending a supported version of an Eclipse instance. 
+
+CAUSE
+The RAD v7.0 software requirements did not document the minimum required JDK/J2SE/JRE version or release when installing over an existing Eclipse 3.2.1+ installation until RAD v7.0.0.2.
+
+RESOLVING THE PROBLEM
+When you install Rational Software Delivery Platform version 7.0 products, you can choose to extend an Eclipse v3.2.1+ Integrated Development Environment (IDE) already installed on your computer. 
+
+ * 
+ * 
+ *  For Windows. [/support/docview.wss?uid=swg21254410&amp;aid=1] IBM 32-bit SDK for Microsoft® Windows, Java™ 2 Technology Edition, version 5.0 service release 3; Sun Java 2 Standard Edition 5.0 Update 9 for Microsoft Windows For Linux. [/support/docview.wss?uid=swg21254410&amp;aid=2] IBM 32-bit SDK for Linux® on Intel® architecture, Java 2 Technology Edition, version 5.0 service release 3; Sun Java 2 Standard Edition 5.0 Update 9 for Linux x86 (not supported for SUSE Linux Enterprise Server [SLES] Version 9) 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * Note:
+ * 
+ * Eclipse 3.2.1 Project Release Notes ... 1. Target Operating Environments
+ * 
+ * Related information
+ * 
+ * 
+ * 
+ * Note: 
+ * 
+ * not supported 
+ * 
+ * .
+ * 
+ * 
+ * 
+ * Help --> Software Updates --> Find and Install
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * eclipse.ini
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * WebSphere® Application Server Toolkit (AST) JRE Requirement:
+ * 
+ * 
+ * 
+ * It mandates that the IBM JDK is used
+ * 
+ * 
+ * 
+ * Obtaining IBM JDK/J2SE(s):
+ * 
+ * 
+ * 
+ * IBM Developer Kits
+ * 
+ * 
+ * 
+ * IBM 32-bit Runtime Environment for Windows 
+ * 
+ * IBM Development Package for Eclipse
+ * 
+ * 
+
+
+Note: RAD v9.1 is the last version to support Extending an existing Eclipse IDE [http://www.ibm.com/support/knowledgecenter/SSRTLW_9.1.0/com.ibm.rad.install.doc/topics/c_plan_consider_eclipse.html]. It is strongly recommended to use the supported IBM Eclipse SDK that RAD installs with by default. 
+RELATED INFORMATION
+ Eclipse 3.2.1 Project Release Notes...Target Opera [http://www.eclipse.org/eclipse/development/readme_eclipse_3.2.1.html#TargetOperatingEnvironments]
+RAD v7.0 Installation - Extending an Existing Eclipse [http://download.boulder.ibm.com/ibmdl/pub/software/rationalsdp/v7/rad/70/docs/install_instruction/html/en/install.html#dqx1c_install_exist_eclipse]
+Installing RAD v7.0 into an existing Eclipse shell [http://www.ibm.com/support/docview.wss?uid=swg21254776]
+RAD91 KC - Extending an existing Eclipse IDE [http://www.ibm.com/support/knowledgecenter/SSRTLW_9.1.0/com.ibm.rad.install.doc/topics/c_plan_consider_eclipse.html]
+
+
+ 
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Software Development Rational Software Architect Install / Migration 7.0, 7.0.0.1 Software Development Rational Software Modeler Install / Migration 7.0, 7.0.0.1 Software Development Rational Functional Tester Install / Migration 7.0, 7.0.0.1 Software Development Rational Performance Tester Install / Migration 7.0, 7.0.0.1

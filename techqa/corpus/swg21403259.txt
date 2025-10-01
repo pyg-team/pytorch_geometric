@@ -1,0 +1,81 @@
+Title: IBM repotools -import command fails due to duplicate attribute identifier - United States
+
+Text:
+1403259; RTC; deferred; operation; failed; duplicate; attribute; identifier; import; migration; Deferred operation failed; CRJAZ0651I Error rebuilding index; RN2.0.0.1; RN2.0 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This technote identifies an issue than can occur when migrating from IBM Rational Team Concert 1.0.x and 2.0.x.. 
+
+SYMPTOM
+The repotools -import command fails some errors found in the import log:
+
+2009-08-27 08:16:57,893 Running post import for "com.ibm.team.workitem" component...
+2009-08-27 08:17:15,934 Deferred operation failed
+com.ibm.team.repository.common.InternalRepositoryException: Deferred operation failed
+
+Caused by: 
+com.ibm.team.repository.common.TeamRepositoryException: Unknown origin
+at com.ibm.team.repository.service.internal.RdbRepositoryDataMediator.wrapWithOrigin(RdbRepositoryDataMediator.java:1597)
+at com.ibm.team.repository.service.internal.RdbRepositoryDataMediator.preCommitNotify(RdbRepositoryDataMediator.java:1557)
+
+SQL Exception #1
+SQL Message: [jcc][t4][102][10040][3.53.70] Non-atomic batch failure. The batch was submitted, but at least one exception occurred on an individual member of the batch.
+Use getNextException() to retrieve the exceptions for specific batched elements. ERRORCODE=-4228, SQLSTATE=null
+SQL State: null
+Error Code: -4228
+SQL Exception #2
+SQL Message: Error for batch element #137: DB2 SQL Error: SQLCODE=-803, SQLSTATE=23505, SQLERRMC=10;MODEL.ATTRIBUTE, DRIVER=3.53.70
+SQL State: 23505
+Error Code: -803
+Exception Details: CRJAZ0250I A violation of the constraint imposed by a unique index or a unique constraint occurred.
+SQL Exception #3
+SQL Message: Error for batch element #138: DB2 SQL Error: SQLCODE=-803, SQLSTATE=23505, SQLERRMC=10;MODEL.ATTRIBUTE, DRIVER=3.53.70
+SQL State: 23505
+Error Code: -803
+Exception Details: CRJAZ0250I A violation of the constraint imposed by a unique index or a unique constraint occurred.
+Class: com.ibm.team.repository.service.internal.dataaccess.write2.Row
+Item Handle: com.ibm.team.workitem.common.internal.model.impl.AttributeImpl@bd10bd1 (stateId: [UUID _DtQu8JM1Ed6WW456sAZV4A], itemId: [UUID _DtO5wZM1Ed6WW456sAZV4A], origin: <unset>, immutable: true) (contextId: [UUID _zn8l0EFyEd60OIXe2EZEvw], modified: 2009-08-27 14:11:35.903, workingCopy: <unset>) (mergePredecessor: null, workingCopyPredecessor: <unset>, workingCopyMergePredecessor: <unset>, predecessor: null) (identifier: com.ibm.gbs.workitem.attribute.risk.title, attributeType: string, displayName: Title, builtIn: false, internal: false, fullTextKind: _meta, readOnly: false)
+
+Caused by: 
+com.ibm.db2.jcc.b.rn: [jcc][t4][102][10040][3.53.70] Non-atomic batch failure. The batch was submitted, but at least one exception occurred on an individual member of the batch.
+Use getNextException() to retrieve the exceptions for specific batched elements. ERRORCODE=-4228, SQLSTATE=null
+at com.ibm.db2.jcc.b.bd.a(bd.java:404)
+
+Alternatively, the following error messages can be encountered:
+2009-07-20 14:50:20,497 Rebuilding indices...
+2009-07-20 14:50:30,307 com.ibm.team.repository.service.internal.db.util.JdbcDB$2: CRJAZ0577I Error preparing or executing statement => CREATE UNIQUE INDEX MODEL.UNIQUE_IDENTIFIER ON MODEL.ATTRIBUTE(PROJECT_AREA_ITEM_ID, IDENTIFIER)
+2009-07-20 14:50:30,308 com.ibm.team.repository.service.internal.db.util.JdbcDB$2: CRJAZ0577I Error preparing or executing statement => CREATE UNIQUE INDEX MODEL.UNIQUE_IDENTIFIER ON MODEL.ATTRIBUTE(PROJECT_AREA_ITEM_ID, IDENTIFIER)
+2009-07-20 14:50:30,784 CRJAZ0651I Error rebuilding index.
+
+Then, the following error notice can be found in the resulting import log:
+##############################################################################################
+2009-08-27 14:15:46,418 ****** Migration Errors ******
+2009-08-27 14:15:46,419 CRJAZ0656I **ERROR** Migration completed with errors. The imported database is in an inconsistent state and should not be used without further analysis.
+Check the migration log "/opt/IBM/XXXXX/server/repotools_import.log" for details.
+2009-08-27 14:15:46,419 ##############################################################################################
+
+CAUSE
+The failure happens because there is a second attribute with the same id in the export file.
+This error has no impact as the attribute was imported once, so it is there.
+More details can be found in the jazz.net work item 88109 [https://jazz.net/jazz/resource/itemName/com.ibm.team.workitem.WorkItem/88109]
+
+DIAGNOSING THE PROBLEM
+- the import command fails during the migration from 1.X to 2.X
+- the import does not early abort, it fails at the end
+- "Deferred operation failed" error message can be found in the import log
+
+RESOLVING THE PROBLEM
+To resolve this issue, upgrade RTC to the 2.0.0.1 version.
+This is the version that includes the fix for jazz.net work item 88109 [https://jazz.net/jazz/resource/itemName/com.ibm.team.workitem.WorkItem/88109]
+
+
+
+
+
+Leverage the Jazz Community Jazz and Rational Team Concert have an active community that can provide you with additional resources. Browse and contribute to the User forums, contribute to the Team Blog and review the Team wiki.
+Refer to technote 1319600 [http://www-01.ibm.com/support/docview.wss?uid=swg21319600] for details and links.
+
+
+
+
+Cross Reference information Segment Product Component Platform Version Edition Rational Team Concert

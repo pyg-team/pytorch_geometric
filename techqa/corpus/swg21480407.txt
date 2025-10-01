@@ -1,0 +1,21 @@
+Title: IBM Error message: All variables in the working file or in the sets in use are inappropriate for this dialog box - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ I recently installed PASW Statistics for Windows and I wish to analyze my data. No matter what procedure I wish to run, I get a pop-up window with a message "All variables in the working file or in the sets in use are inappropriate for this dialog box" pops up, and none of my data show up in the analysis boxes for me to use. 
+
+Why is this occurring? 
+
+RESOLVING THE PROBLEM
+This problem may occur if all the variables in your Statistics data file or your data subset are string variables. That is, the values for the variables may be numeric, but the variable itself may still be defined as a string in the Variable View. Please go to the Variable View tab in the Data Editor window and check the type of your variables. You may change them to Numeric by clicking in the cell, clicking on the grey box on the right of the Type cell, and changing the format to Numeric. You will then see your variables appear in the dialog boxes for the procedures you wish to use
+
+RELATED INFORMATION
+ Need more help? Our Statistics forum is Live! [https://developer.ibm.com/answers/topics/statistics.html?smartspace=predictive-analytics]
+
+
+ 
+
+HISTORICAL NUMBER
+ 64786

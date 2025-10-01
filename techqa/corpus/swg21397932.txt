@@ -1,0 +1,19 @@
+Title: IBM Checking whether a DB2 LUW table was first created as NOT LOGGED INITIALLY - United States
+
+Text:
+db2look; not logged initially; syscat.tables; log_attribute TECHNOTE (FAQ)
+
+QUESTION
+ How can I find out if a table was initially created using the "NOT LOGGED INITIALLY" option?
+
+
+ANSWER
+In DB2 V8.1 the LOG_ATTRIBUTE column in the SYSCAT.TABLES table was used to check if a table was created as NOT LOGGED INITIALLY. In DB2 V9.x this column is no longer being used and will always have a value of 0. Instead, you can use the db2look command to get DDL information on the table which would show you if the table was created as "NOT LOGGED INITIALLY"
+
+
+Example:
+db2look -d <database_name> -t <table_name> -e -o <output_file_name.out>
+
+RELATED INFORMATION
+ DB2 V9.5 SYSCAT.TABLES catalog view [http://publib.boulder.ibm.com/infocenter/db2luw/v9r5/index.jsp?topic=/com.ibm.db2.luw.sql.ref.doc/doc/r0001063.html]
+DB2 statistics and DDL extraction tool command [http://publib.boulder.ibm.com/infocenter/db2luw/v9r5/index.jsp?topic=/com.ibm.db2.luw.admin.cmd.doc/doc/r0002051.html]

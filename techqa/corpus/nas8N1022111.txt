@@ -1,0 +1,112 @@
+Title: IBM Web Query - Software Maintenance and the IBM i Global Support Center - United States
+
+Text:
+WebQuery SWMA 5733WQX 5733WQE 5733WQS Salesforce TECHNOTE (FAQ)
+
+QUESTION
+ How do I get assistance with IBM DB2 Web Query for i?
+
+-also-
+
+You see this message when trying to create a Web Query PMR with Service Request (SR) 
+
+Sorry, there seems to be an issue with your registration request. In order to resolve this please send an e-mail to srhelp@us.ibm.com OR call IBM 1-800-IBM-Help (U.S.) ... 
+
+
+
+CAUSE
+Web Query Software Maintenance is separate from your IBM i Software Maintenance 
+
+You will need to work with your IBM Business Partner to purchase a Software Maintenance for 5733-WQX, 5733-WQE, or 5733-WQS: 
+
+
+IBM Web Query for System i® Standard (5733-WQS)
+IBM Web Query for System i Express (5733-WQE)
+IBM Web Query for System i (5733-WQX) 
+
+
+
+
+
+ANSWER
+Once you have a valid Software Maintenance contract for Web Query, you will be able to open a Case (WebQuery does not use PMRs as of June 26, 2017), etc., and work with the IBM i Global Support Center 
+
+ 
+
+Note: Web Query has transitioned from using PMRs to using Cases (numbers like TS000001234). 
+
+
+Directions for accessing the portal (called Community): 
+
+1. Go to www.ibm.com/mysupport [www.ibm.com/mysupport] 
+
+2. For a personalized experience, you can login with your IBM ID.
+If you do not have an IBM ID, go here to sign up for one 
+https://www.ibm.com/account/us-en/signup/register.html [https://www.ibm.com/account/us-en/signup/register.html] 
+
+ 
+
+Here's a video that introduces this support - https://youtu.be/6zV076n4HKw [https://youtu.be/6zV076n4HKw] 
+
+ 
+
+Here's the June 19, 2017 announcement letter 
+
+
+Subject: Reminder IBM's new Support Portal is live on June 23! 
+
+Greetings
+
+This is a follow-up to our earlier communications in which we described the new Support Portal we plan to implement later this month. The new Support Portal is intended
+to provide you with greater transparency into the ticket resolution process and improved self-service options. This email provides more information on when we plan to transition and what steps you are required to take in order to access the new Support Portal. 
+
+On Friday June 23, we will be transitioning to the new Support Portal and, at 8 P.M. Eastern, you will be able to access the new portal to open a new case (which previously was called a "ticket"). At this time, you will no longer be able to access the current Support Portal for the DB2 Web Query for i solution. Over the weekend, we will migrate your case history, and any active cases to the new Support Portal and on Monday, June 26, at 4 A.M. Eastern, you will be able to see your case history and any cases in process. 
+
+Directions for accessing the portal: 
+1. Go to www.ibm.com/mysupport [www.ibm.com/mysupport] 
+2. For a personalized experience, you can login with your IBM ID.
+If you do not have an IBM ID, go here to sign up for one 
+https://www.ibm.com/account/us-en/signup/register.html [https://www.ibm.com/account/us-en/signup/register.html] 
+
+We encourage you to take advantage of the range of self-service options available to you on our new Support Portal. We know you may have other IBM products, and this change will require you to temporarily access different portals for different products. We will continue to onboard products quickly so that you can have a simple, consistent experience. 
+
+If you are unable to access our Customer Support online, use e-mail or phone to contact us. There will be no change to the process of contacting our Customer Support team through phone or e-mail. 
+If you have questions, please feel free to contact your IBM Support team. 
+
+
+
+ 
+
+Here's the May 29, 2017 announcement letter 
+
+
+We heard you...and we are taking actions to improve your Support experience! 
+
+IBM appreciates the opportunity to have you as a customer.
+
+We always strive to seek new and better ways to improve our communications and support that we offer.
+
+With that in mind, we are implementing a new Support Portal in late June / early July for a select number of IBM products, DB2 Web Query for i being one of them.
+
+Our new portal will provide you enhanced transparency into your ticket resolution workflow along with improved self-service options. 
+
+The e-mail and phone support channels offered to you today will remain unchanged. 
+However, the Web Support Portal access information will change. We will provide you periodic updates and more detailed access information as get we closer to the transition date. 
+
+The new Support Portal will be a “one-stop shop” for Customer Support related information for the DB2 Web Query for i solution, and will offer you the following self-service capabilities: 
+
+
+ * Ticket creation/updates 
+ * 
+ * Ability to attach documents for review by Support
+ * 
+ * Simplified search capability to view ticket history and knowledge base artifacts
+
+
+And much more! 
+
+We will continue to expand this new platform so that all IBM customers will have this new, improved Support Experience. 
+
+Should you have any questions, please contact your DB2 Web Query for i team. 
+
+More details will be announced in the weeks ahead ...

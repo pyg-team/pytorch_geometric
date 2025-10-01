@@ -1,0 +1,67 @@
+Title: IBM Developing and testing an MDB using RAD 7.5, WebSphere Application Server V7 and MQ V7 as JMS Provider - United States
+
+Text:
+develop Developing testing MDB RAD 7.5 WebSphere Application Server V7 MQ V7 JMS Provider WHITE PAPER
+
+ABSTRACT
+ Demonstrate the steps to develop and test a Message Driven Bean (MDB) using Rational Application Developer (RAD) 7.5 and WebSphere Application Server V7, while using WebSphere MQ V7 as Java ™ Messaging Service (JMS) Provider. 
+
+CONTENT
+The document is provided in the attached file: Developing_and_testing_MDB_on_RAD7.pdf
+
+
+This demonstrates the steps required to develop and test a Message Driven Bean (MDB) using Rational Application Developer (RAD) 7.5 and WebSphere Application Server V7, while using WebSphere MQ V7 as the Java Messaging Service (JMS) Provider.
+
+The testing scenario shows how the Listener Port for WebSphere Application Server gets a message from an MQ Queue (Point to Point) and passes it to the MDB, which displays the contents of the text message. This MDB is a simple but functional application.
+
+The following file (available with this techdoc) includes the MDB as it was developed, tested and exported as described in this document:
+EAR file with MDB: SampleMDBEJB.ear 
+
+The document is provided in the attached file: Developing_and_testing_MDB_on_RAD7.doc
+This document shows all the screen shots needed for beginners.
+This document has the following chapters:
+1: RAD 7.5 development of the MDB
+2: RAD 7.5 testing of the MDB using WebSphere Application Server 7
+
+
+Related techdoc 
+It is necessary to configure MQ and WebSphere Application Server with the objects that are used in this scenario. Consult the following techdoc for details:
+
+Using WebSphere MQ V7 as JMS Provider for WebSphere Application Server V7, V8.0 and V8.5 [http://www.ibm.com/support/docview.wss?rs=171&uid=swg27016505]
+Chapter 1: MQ V7 configuration: queue and topic
+Chapter 2: WebSphere Application Server V7 configuration: JNDI objects
+
+Requisite software
+The following software was used: 
+
+ * SUSE Linux Enterprise Server (SLES) 9: 
+ * Rational Application Developer 7.5 
+ * WebSphere Application Server 7.0.0.5 
+ * WebSphere MQ 7.0.0.2 
+ * Firefox (also known as Mozilla)
+
+
+Downloadable files 
+The following files are included as attachments to this techdoc:  * Developing_and_testing_MDB_on_RAD7.pdf 
+ * EAR file with MDB: SampleMDBEJB.ear 
+ * Text file with code excerpt: onMessage.txt
+
+DISCLAIMER: All source code and/or binaries attached to this document are referred to here as "the Program". IBM is not providing program services of any kind for the Program. IBM is providing the Program on an "AS IS" basis without warranty of any kind. IBM WILL NOT BE LIABLE FOR ANY ACTUAL, DIRECT, SPECIAL, INCIDENTAL, OR INDIRECT DAMAGES OR FOR ANY ECONOMIC CONSEQUENTIAL DAMAGES (INCLUDING LOST PROFITS OR SAVINGS), EVEN IF IBM, OR ITS RESELLER, HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES. 
+
+
+Developing_and_testing_MDB_on_RAD7.pdf [/support/docview.wss?uid=swg27016507&aid=2] [/support/docview.wss?uid=swg27016507&aid=1]
+File name: Developing_and_testing_MDB_on_RAD7.pdf
+File size: 2 MB
+
+SampleMDBEJB.ear [/support/docview.wss?uid=swg27016507&aid=4] [/support/docview.wss?uid=swg27016507&aid=3]
+File name: SampleMDBEJB.ear
+File size: 4 KB 
+
+onMessage.txt [/support/docview.wss?uid=swg27016507&aid=6] [/support/docview.wss?uid=swg27016507&aid=5]
+File name: onMessage.txt
+File size: 1 KB
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Application Servers WebSphere Application Server Java Message Service (JMS) AIX, HP-UX, Linux, Solaris 7.0 Software Development Rational Application Developer for WebSphere Software Application Deployment Windows, Linux 7.0 PRODUCT ALIAS/SYNONYM
+ WebSphere MQ WMQ WebSphere Application Server WAS WSAS Rational Application Developer RAD

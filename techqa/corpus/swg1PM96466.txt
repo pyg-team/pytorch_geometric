@@ -1,0 +1,148 @@
+Title: IBM PM96466: UNABLE TO IMPORT PAA ONTO UNIX/LINUX PORTAL EXPORTED FROM WINDOW S based Portal - United States
+
+Text:
+  A FIX IS AVAILABLE
+Fixes integrated in WebSphere Portal 8.0.0.1 Combined Cumulative Fixes [http://www-01.ibm.com/support/docview.wss?uid=swg24034497]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When importing a paa via Site Builder on Linux/Unix based on
+   Portal 8001 where the paa was exported via Site Builder onto a
+   MS Windows based Portal, the import claims it was successful
+   but
+   no new artifacts appears.
+   The issue is in the wp.paa.support code that Site Builder uses
+   to export. The PAA file has zip entries with mixed slashes
+   (i.e. /something\else\here instead of /something/else/here).
+   This causes the zip to be improperly read during import.
+   Opened for release 8001
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Open the PAA files and re-zip it as PAA before importing
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  When importing a paa via Site Builder on Linux/Unix based on
+   Portal 8001 where the paa was exported via Site Builder onto a
+   MS Windows based Portal, the import claims it was successful but
+   no new artifacts appears.
+   The issue is in the wp.paa.support code that Site Builder uses
+   to export. The PAA file has zip entries with mixed slashes
+   (i.e. /something\else\here instead of /something/else/here).
+   This causes the zip to be improperly read during import. Opened
+   for release 8001
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A code fix for this issue is integrated into the WebSphere
+   Portal & WCM Combined Cumulative Fix 08 (PM94847 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM94847]) for Portal
+   8.0.0.1 available from Fix Central:
+   
+   http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent
+   =ibm/WebSphere&product=ibm/WebSphere/WebSphere+Portal&release=Al [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm/WebSphere&product=ibm/WebSphere/WebSphere+Portal&release=Al]
+   l&platform=All&function=aparId&apars=PM94847
+   
+   You might need to type or paste the complete address into your
+   Web browser.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM96466
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSPHERE PORTA
+   
+   
+ * REPORTED COMPONENT ID
+   5724E7600
+   
+   
+ * REPORTED RELEASE
+   800
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-09-05
+   
+   
+ * CLOSED DATE
+   2013-10-25
+   
+   
+ * LAST MODIFIED DATE
+   2013-10-25
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBSPHERE PORTA
+   
+   
+ * FIXED COMPONENT ID
+   5724E7600
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R800 PSY
+   UP

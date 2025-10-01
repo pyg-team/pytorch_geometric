@@ -1,0 +1,44 @@
+Title: IBM SQL DriverConnect: RETCODE=-1, State=08001, Native Error=17 setting up connection - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Customer setting up a connection after copying the database to a new server to replicate a disaster recovery scenario and receives a database error message that the SQL Server does not exist.
+
+
+SYMPTOM
+Error when trying to set up a new connection or performing s schema repository update other: 
+
+An error was encountered with the database. You may have specified a database of unknown origin or a ClearQuest user database 
+
+instead of a ClearQuest Schema Repository. Please specify a valid ClearQuest Schema Repository. 
+
+Database Error Messages: 
+
+SQL DriverConnect: RETCODE=-1, State=08001, Native Error=17 
+
+[Microsoft][ODBC SQL Server Driver]pDNETLIB]SQL Server does not exist, or access denied. 
+
+[Microsoft][ODBC SQL Server Driver][DNETLIB]ConnectionOpen (Connect()).
+
+
+CAUSE
+Customer was not using super user/admin account in the connection settings. Once he used that in the schema repository update other he was able to complete the connection update.
+
+
+ENVIRONMENT
+ClearQuest 7.1.1 
+
+SQL Server 2008 64bit 
+
+Windows XP
+
+
+DIAGNOSING THE PROBLEM
+The customer was able to use PDSQL to connect to the database, and view the tables.
+
+
+
+RESOLVING THE PROBLEM
+Use the admin account in the maintenance tool settings.

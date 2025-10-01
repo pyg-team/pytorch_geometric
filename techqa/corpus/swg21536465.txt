@@ -1,0 +1,24 @@
+Title: IBM Delete old batches in Sterling Connect:Enterprise for UNIX - United States
+
+Text:
+STERLINGPRI TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ How do you delete old batches in Sterling Connect::Enterprise for UNIX? 
+
+RESOLVING THE PROBLEM
+To delete batches that are "X" days old use the cmuerse command along with the parameters that are needed to select the batch. For example, 
+
+cmuerase -i* -FT -E8 
+
+The "-i*" means "all batches"
+"-F" means batches that are marked "transmitted" You can also add other flags such as binary Y flag. 
+-Ex is used for batches created on or before date. x being the number of days. 
+
+For more information see the Sterling Connect:Enterprise for UNIX Admin guide for command and parameter listings.
+
+ 
+
+HISTORICAL NUMBER
+ PRI12694
+SCI24764

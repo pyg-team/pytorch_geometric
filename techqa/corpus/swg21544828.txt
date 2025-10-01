@@ -1,0 +1,32 @@
+Title: IBM How to limit an FTP remote to view only their batches (SCI22966) - United States
+
+Text:
+STERLINGPRI TECHNOTE (FAQ)
+
+QUESTION
+ How to limit an FTP remote to view only their batches (SCI22966) 
+
+ANSWER
+Incorporate the use of the FTP sessions security exit and/or additional security package (aka RACF, ACF2, etc.) definitions for exception security rules for users. Refer to chapter 8 of the User's Guide for security and/or the Application Agents and User Exits Guide for the sessions security exit.
+
+NOTE These still do not prevent a directory view of other mailboxes, just batch access.
+
+ 
+
+HISTORICAL NUMBER
+ PRI21774 
+
+PRODUCT ALIAS/SYNONYM
+ 
+
+Fact
+
+
+CONNECT:Enterprise RDX for OS/390, Release 1.1.00 
+SCI22966
+
+
+Goal
+
+
+FAQ: How to limit an FTP remote to view only their batches

@@ -1,0 +1,65 @@
+Title: IBM IOP-Less Supported Tape and Optical Devices - United States
+
+Text:
+TAPE TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This document lists links to information abour iOS available supported IOP-less tape and optical drives. 
+
+RESOLVING THE PROBLEM
+For the following IOP-less IOA environments, you should use the listed Web sites for a list of supported tape devices and requirements [https://www.ibm.com/developerworks/ibmi/media]: 
+
+o Native IOPLESS (SMART IOA) support for fibre channel, SAS, and SCSI LVD Tape:
+
+https://www.ibm.com/developerworks/community/wikis/home?lang=en#!/wiki/IBM%20Removable%20Media%20on%20IBM%20i/page/Native%20IOPLESS%20%28SMART%20IOA%29%20support%20for%20fibre%20channel%2C%20SAS%2C%20and%20SCSI%20LVD%20Tape [https://www.ibm.com/developerworks/community/wikis/home?lang=en#!/wiki/IBM%20Removable%20Media%20on%20IBM%20i/page/Native%20IOPLESS%20%28SMART%20IOA%29%20support%20for%20fibre%20channel%2C%20SAS%2C%20and%20SCSI%20LVD%20Tape]
+
+o Fibre Channel Tape library devices attached using N Port ID Virtulization (NPIV) with VIOS:
+
+https://www.ibm.com/developerworks/community/wikis/home?lang=en#!/wiki/IBM%20Removable%20Media%20on%20IBM%20i/page/Fibre%20Channel%20Tape%20library%20devices%20attached%20using%20N%20Port%20ID%20Virtulization%20%28NPIV%29%20with%20VIOS [https://www.ibm.com/developerworks/community/wikis/home?lang=en#!/wiki/IBM%20Removable%20Media%20on%20IBM%20i/page/Fibre%20Channel%20Tape%20library%20devices%20attached%20using%20N%20Port%20ID%20Virtulization%20%28NPIV%29%20with%20VIOS]
+
+o Client Virtual Tape Devices:
+
+https://www.ibm.com/developerworks/community/wikis/home?lang=en#!/wiki/IBM%20Removable%20Media%20on%20IBM%20i/page/Client%20Virtual%20Tape%20Devices [https://www.ibm.com/developerworks/community/wikis/home?lang=en#!/wiki/IBM%20Removable%20Media%20on%20IBM%20i/page/Client%20Virtual%20Tape%20Devices]
+
+o Virtual IO Server (VIOS) partition owned SAS and USB Tape Drives:
+
+https://www.ibm.com/developerworks/community/wikis/home?lang=en#!/wiki/IBM%20Removable%20Media%20on%20IBM%20i/page/Virtual%20IO%20Server%20%28VIOS%29%20partition%20owned%20SAS%20and%20USB%20Tape%20Drives [https://www.ibm.com/developerworks/community/wikis/home?lang=en#!/wiki/IBM%20Removable%20Media%20on%20IBM%20i/page/Virtual%20IO%20Server%20%28VIOS%29%20partition%20owned%20SAS%20and%20USB%20Tape%20Drives]
+
+All the above Wiki documents and more can be found at the following Web site for IBM Removable Media on IBM i:
+
+https://www.ibm.com/developerworks/community/wikis/home?lang=en#!/wiki/IBM%20Removable%20Media%20on%20IBM%20i [https://www.ibm.com/developerworks/community/wikis/home?lang=en#!/wiki/IBM%20Removable%20Media%20on%20IBM%20i] 
+
+With Model 520 POWER6+ models, Slot C4 can accept a IOP-Less IOA - 571A, 571B (Optical only). These IOAs can also be put in other slots and will then be associated with an IOP: 
+
+o V5R3M5 = CEC only support for IOP-less.
+o V5R4M0 = CEC and expansion tower support for IOP-less.
+o V6R1M0 = CEC and expansion tower support for IOP-less. 
+
+OPTICAL devices supported in an IOP-less environment:
+
+
+
+6258, 7206 336, 7212 w/FC1108 6258, 7206 336, 7212 w/FC1108 4.7GB DVD-RAM 6330, 6333, 7210-025(6330), 7210-030(6333), 7212-102 w/FC1103(6333), 7212-102 wFC1102(6330) 4.7GB SLIM DVD-RAM 6331 DVD-ROM 6336, 7212 102 w/FC1106(6336) SLIM DVD-ROM 6337 OPTICAL LIBRARIES 399F, 3996 (V5R4M0 + PTFS) 
+If any non-supported model tape or optical device is attached, the following SRC codes may be displayed in the PAL: 
+
+63A03202, 57xx3202 The attached device type is not supported in an IOPLess environment. 63A09020, 57xx9020 This error is reported when one of the following conditions occur: 
+
+o An unsupported device type or model is attached to the system. 
+o Tape and disk drive devices are attached to an I/O Processor or I/O adapter card that does not support both tape and disk devices at the same time. 
+o Tape library requires and arm resource, and no arm resource reported. 
+o Two tape library resources are attempting to allocate the same device description. 
+SRC63A09020 , SRC63A03202, SRC57xx9020, SRC57xx3202 
+
+Ensure that you have the following PTFs applied (or their supersedes): 
+
+o V5R2M0 MF40211 
+o V5R3M0 MF40210 
+o V5R3M5 MF40212 
+o V5R4M0 MF40180 
+
+Note: These PTFS are not on any resave. Therefore, unless you have this PTF applied permanently and create a DVD/CD from a SAVSYS, you will not be able to IPL from it.  
+
+
+Cross reference information Segment Product Component Platform Version Edition Operating System IBM i 7.2 Operating System IBM i 7.1 Operating System IBM i 6.1 Operating System IBM i 7.3 
+HISTORICAL NUMBER
+ 408723697

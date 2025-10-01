@@ -1,0 +1,144 @@
+Title: IBM LI76354: CMCV 211879 - ALLOW UPDATES PRODUCTS WITH MORE THAN 1000 SKU WHEN WORKING WITH ORACLE DATABASE. - United States
+
+Text:
+  DIRECT LINKS TO FIXES
+7.0.0-WS-WCServer-FP009 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FWebSphere+Commerce&fixids=7.0.0-WS-WCServer-FP009&source=SAR]
+WebSphere Commerce Version 7.0.0.5 Fix Pack [http://www-01.ibm.com/support/docview.wss?uid=swg24031380]
+WebSphere Commerce Version 7.0.0.6 Fix Pack [http://www-01.ibm.com/support/docview.wss?uid=swg24032871]
+WebSphere Commerce Version 7.0.0.7 Fix Pack [http://www-01.ibm.com/support/docview.wss?uid=swg24034686]
+WebSphere Commerce Version 7.0.0.8 Fix Pack [http://www-01.ibm.com/support/docview.wss?uid=swg24037075]
+WebSphere Commerce Version 7.0.0.9 Fix Pack [http://www-01.ibm.com/support/docview.wss?uid=swg24038826]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  With Oracle database, If a product has more than 1000 SKUs, when
+   updating the allowed value of classic defining attribute for
+   this product, the following exception will be thrown:
+    ORA-01795: maximum number of expressions in a list is 1000.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  USERS AFFECTED:
+   WebSphere Commerce Management Center users with V6.0 Feature
+   Pack 4 or later or Version 7.0
+   
+   PROBLEM ABSTRACT:
+   Management Center: ORA-01795 error ( maximum number of
+   expressions in a list is 1000) occurred when updating a product
+   with more than 1000 SKUs.
+   
+   BUSINESS IMPACT:
+   User is not able to view product in Management Center when the
+   issue happens.
+   
+   RECOMMENDATION:
+   Applying APAR LI76354 will resolve the issue.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  SQL in the Data Service Layer was rewritten to avoid the error
+   when updating the classic defining attribute allowed value for a
+   product.
+   -------------------------------------------------------------
+   The latest available maintenance information can be obtained
+   from the Recommended Fixes for WebSphere Commerce technote:
+   http://www.ibm.com/support/docview.wss?rs=3046&uid=swg21261296 [http://www.ibm.com/support/docview.wss?rs=3046&uid=swg21261296]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   LI76354
+   
+   
+ * REPORTED COMPONENT NAME
+   WC BUS ED ILINU
+   
+   
+ * REPORTED COMPONENT ID
+   5724I3804
+   
+   
+ * REPORTED RELEASE
+   600
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-07-27
+   
+   
+ * CLOSED DATE
+   2011-09-27
+   
+   
+ * LAST MODIFIED DATE
+   2011-09-27
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WC BUS ED ILINU
+   
+   
+ * FIXED COMPONENT ID
+   5724I3804
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R600 PSY
+   UP

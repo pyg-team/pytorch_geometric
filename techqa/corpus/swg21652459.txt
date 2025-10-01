@@ -1,0 +1,22 @@
+Title: IBM Can I upgrade the Java version on my Information Server machine? - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Can I upgrade the version of Java on the machine where IBM Information Server is installed? 
+
+ANSWER
+Yes, you can upgrade the Java on the IBM Information Server machine so that there are multiple versions of Java installed on the system. This is okay as long as you do not change the Java package that was installed with WebSphere under /ibm/WebSphere/AppServer/java. 
+
+The Engine and Client tiers will also be safe if you do not change the Java package in the /InformationServer/ASBNode/apps/jre directory. 
+
+Information Server 8.1 ships with Java 1.4.2. And applying Fix Pack 1 (8.1.0.1) upgrades the Java level used by Information Server to IBM Java 1.5.0. The level of java within WebSphere Application Server is unaffected by the Information Server 8.1 fix packs so would still be 1.4.2. 
+
+Information Server 8.5 ships with Java 1.6.0. It also requires usage of either WebSphere 6.1.0.29 or 7.0.0.11, each of which contains their own release of java. 
+
+Information Server 8.7 ships with Java 1.6.0. It also requires usage of either WebSphere 7.0.0.11 or 8.0.1 FP1, each of which contains their own release of java. 
+
+Information Server 9.1 ships with Java 1.6.0. It also requires usage of either WebSphere 8.0 FP3, or 8.5, each of which contains their own release of java. 
+
+These versions apply to both the Engine tier and the Client tier, each of which has an InformationServer/ASBNode/apps/jre directory

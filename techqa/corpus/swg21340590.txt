@@ -1,0 +1,75 @@
+Title: IBM Understanding how ReportNet, Cognos 8 and Cognos 10 locate images for PDF and HTML reports - United States
+
+Text:
+picture bitmap image PDF HTML Image black outline box missing jpeg bitmap seen output sourced TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ 
+This document describes how ReportNet and Cognos BI do locate images for use in PDF or HTML reports.
+
+For example, why the image is not render in a PDF document in multiserver environments when the image is specified with a relative path. 
+
+SYMPTOM
+ 
+
+ Image is not render in a PDF document
+
+
+CAUSE
+
+There is a fundamental difference concerning the use of pictures between HTML and PDF. HTML reports only contain the path to the picture. In PDF, the pictures are embedded directly into the document.
+
+
+ENVIRONMENT
+ 
+
+IBM Cognos ReportNet 1.1 or IBM Cognos 8/10 BI
+
+
+RESOLVING THE PROBLEM
+ 
+
+HTML Reports
+
+
+ * 
+
+
+PDF Reports 
+ * 
+ * 
+ * 
+ * 
+ * 
+ *  If a relative location has been specified (i.e. the URL starts with ..) then start at the webcontent directory in the file system and try to locate location and image. 
+ * Example: 
+    * The image URL is ..\samples\images\cognos.jpg 
+    * ReportNet looks for c:\Program Files\Cognos\crn\webcontent\samples\images\cognos.jpg
+   
+   
+ *  If an absolute location has been specified (i.e. the URL starts with anything other than ..), then try to locate the location and image in the bin directory of the file system 
+ * Example: 
+    * The image URL is samples\images\cognos.jpg 
+    * ReportNet looks for c:\Program Files\Cognos\crn\bin\samples\images\cognos.jpg
+      (The directory bin\samples\images does not exist by default. You may need to create this.)
+   
+   
+ *  If the URL starts with \ then the root of the install drive will be used as the starting location. 
+ * Example: 
+    * The image URL is \samples\images\cognos.jpg 
+    * ReportNet looks for c:\samples\images\cognos.jpg
+      (The directory c:\samples\images does not exist by default. You may need to create this.)
+   
+   
+ *  If the file has not been found, the ReportNet / Cognos BI process opens an HTTP connection to the specified URL and try to locate the image that way. Therefore, the correct gateway needs to be defined within Cognos Configuration of the Application Server. 
+
+RELATED INFORMATION
+ How to add an IIS security certificate to the Cognos ke [http://www.ibm.com/support/docview.wss?uid=swg21339082]
+Resolution of images in Cognos 8 and ReportNet [http://www.ibm.com/developerworks/data/library/cognos/page57.html]
+
+
+ 
+
+Cross reference information Segment Product Component Platform Version Edition Business Analytics Cognos 8 Business Intelligence Cognos Connection Business Analytics Cognos 8 Business Intelligence Install and Config Business Analytics Cognos 8 Business Intelligence Query Studio Business Analytics Cognos 8 Business Intelligence Report Studio Linux, Windows, AIX, HP-UX, HP Itanium, Solaris 8.1, 8.2, 8.3, 8.4 Business Analytics Cognos ReportNet ReportNet AIX, HP-UX, Solaris, Windows, Linux 1.1 Business Analytics Cognos 8 Business Intelligence Cognos Viewer AIX, HP-UX, HP Itanium, Linux, Solaris, Windows 10.1, 10.1.1, 8.3, 8.4, 8.4.1 Business Analytics Cognos Business Intelligence 
+HISTORICAL NUMBER
+ 1024743

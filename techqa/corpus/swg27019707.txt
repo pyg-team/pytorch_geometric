@@ -1,0 +1,62 @@
+Title: IBM Detailed System Requirements for WebSphere Decision Server 7.1 on z/OS - United States
+
+Text:
+DSRdoc PRODUCT DOCUMENTATION
+
+ABSTRACT
+ This document contains system requirements for WebSphere Decision Server 7.1 on z/OS. 
+
+CONTENT
+
+
+TAB NAVIGATION
+ *  AIX [http://www.ibm.com/support/docview.wss?uid=swg27019689] - selected tab, 
+ *  HP [http://www.ibm.com/support/docview.wss?uid=swg27019692] 
+ *  IBM i [http://www.ibm.com/support/docview.wss?uid=swg27019690] 
+ *  Linux [http://www.ibm.com/support/docview.wss?uid=swg27019691] 
+ *  Solaris [http://www.ibm.com/support/docview.wss?uid=swg27019693] 
+ *  Windows [http://www.ibm.com/support/docview.wss?uid=swg27019695] 
+ *  z/OS [http://www.ibm.com/support/docview.wss?uid=swg27019707] 
+
+TAB NAVIGATION
+ *  z/OS 
+
+
+
+
+OUTLINE
+ * Software Requirements
+ *  Operating System Databases 
+ * Compatible with (but not required)
+ *  Transaction Servers 
+
+
+
+
+OPERATING SYSTEMS
+Operating System Attributes Applicable Component Notes z/OS Platform listing of supported OS z/OS 1.10 System z Bitness: 31 Bit
+Deployment Role: Server
+Hardware platform: System z WebSphere Business Events Connectors, WebSphere ILOG JRules Rule Execution Server, WebSphere Business Events Runtime z/OS 1.11 System z Bitness: 31 Bit
+Deployment Role: Server
+Hardware platform: System z WebSphere ILOG JRules Rule Execution Server z/OS 1.12 System z Bitness: 31 Bit
+Deployment Role: Server
+Hardware platform: System z WebSphere ILOG JRules Rule Execution Server z/OS 1.13 System z Bitness: 31 Bit
+Deployment Role: Server
+Hardware platform: System z WebSphere ILOG JRules Rule Execution Server z/OS 1.7 System z Bitness: 31 Bit
+Deployment Role: Server
+Hardware platform: System z WebSphere ILOG JRules Rule Execution Server z/OS 1.8 System z Bitness: 31 Bit
+Deployment Role: Server
+Hardware platform: System z WebSphere ILOG JRules Rule Execution Server z/OS 1.9 System z Bitness: 31 Bit
+Deployment Role: Server
+Hardware platform: System z WebSphere Business Events Connectors, WebSphere ILOG JRules Rule Execution Server, WebSphere Business Events Runtime  Back to top 
+
+SOFTWARE REQUIREMENTS
+Group Product Applicable OS Applicable Component Notes Databases DB2 for z/OS Version V9.1 and future mod levels, and their fix packs.(overview) [http://www.ibm.com/software/data/db2/zos/] All Applicable z/OS OS WebSphere Business Events Connectors, WebSphere ILOG JRules Rule Execution Server, WebSphere Business Events Runtime DB2 Universal Database for z/OS Version V8 and future fix packs. All Applicable z/OS OS WebSphere ILOG JRules Rule Execution Server  Back to top 
+
+COMPATIBLE WITH (BUT NOT REQUIRED)
+Group Product Applicable OS Applicable Component Notes Transaction Servers CICS Transaction Server for z/OS V3.1 All Applicable z/OS OS WebSphere Business Events Connectors, WebSphere Business Events Runtime CICS Transaction Server for z/OS V3.2 All Applicable z/OS OS WebSphere Business Events Connectors, WebSphere Business Events Runtime CICS Transaction Server for z/OS V4.1 V4.1 (support) [http://www.ibm.com/support/entry/portal/Overview/Software/Other_Software/CICS_Transaction_Server] All Applicable z/OS OS WebSphere Business Events Connectors, WebSphere Business Events Runtime  Back to top 
+
+NOTES / COMMENTS
+ *  Note #1 : AIX 6.1 TL4-SP2 is our recommended minimum level of AIX 6.1 for WPAR usage 
+ *  Note #2 : For Rule Studio, only headless eclipse mode is supported. 
+ *  Note #3 : Supported in JRules 7.1.1.

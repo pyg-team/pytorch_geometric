@@ -1,0 +1,39 @@
+Title: IBM Job failing with error 28000 [18456] - login failed for user "domain_name\user_name' - United States
+
+Text:
+SDAP SQL Server wire NT authentication error 28000 42000 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ We have set up in our environment a Modeler Admin user who has no permissions for the SQL server database used and a user who has permissions to connect to Modeler Server and the SQL Sevrer database.
+
+We are using LDAP and the IBM SPSS OEM 7.1 SQL Server Wire Protocol.
+
+This driver allows to enable 'NT authentication'.
+
+When running a job in which the Modeler Admin user is used to connect to the database and the 'user' is used for connecting to the ODBC datasource the job fails with.
+
+------------
+
+28000[18456] [IBM SPSS][ODBC SQL Server Driver][SQL Server]Login failed for user 'domain_name\user_name'.
+
+com.spss.psapi.session.SessionException: 28000[18456] [IBM SPSS][ODBC SQL Server Driver][SQL Server]Login failed for user ''domain_name\user_name'. 
+
+SYMPTOM
+A slightly different error can occur using the same SDAP OEM SQL Wire protocol driver
+42000[4060] [IBM SPSS][ODBC SQL Server Driver][SQL Server]Cannot open database "Modeler" requested by the login. The login failed.
+
+
+ENVIRONMENT
+SDAP7.1
+
+RESOLVING THE PROBLEM
+The attached SDAP User Guide document mentions the below :
+---------------- 
+Use NT Authentication: Select the Use NT Authentication check box to specify that the SQL Server Wire Protocol driver request a secure (or trusted) connection to Microsoft SQL Server running on Windows NT, Windows 2000, Windows XP, or Windows Server 2003. Microsoft SQL Server uses integrated login security to establish connections using this data source, regardless of the current login security mode at the server. Any login ID or password supplied is ignored. The Microsoft SQL Server system administrator must have associated your Windows network ID with a Microsoft SQL Server login ID.
+
+When not selected (the default), Microsoft SQL Server uses standard login security to establish connections using this data source. In this case, you must specify a login ID and password for all connection requests.
+---------------------
+If SQL Server native driver is available in the customer's environment, they could decide to use this driver as the issue doesn't occur when using SQL Server native driver.
+
+RELATED INFORMATION
+ Need more help? Our C&DS forum is Live! [https://developer.ibm.com/answers/topics/collaboration.html?smartspace=predictive-analytics]

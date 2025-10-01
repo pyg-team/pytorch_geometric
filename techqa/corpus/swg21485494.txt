@@ -1,0 +1,23 @@
+Title: IBM Error 'Your version of DLA can read files on this disk but you will not be able to edit or add to them' when trying to copy the Statistics 18 installation DVD on my Sony DVD writer - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ I am getting the error 'Your version of DLA can read files on this disk but you will not be able to edit or add to them' when trying to copy the Statistics 18 installation DVD on my Sony DVD writer. How do I eliminate this error? 
+
+RESOLVING THE PROBLEM
+This error is caused by Sonic DLA packed writing software installed on your computer. It causes problems when performing simple tasks with CD's or DVD's. You can disable DLA by doing one of the following things.
+
+1) Open My Computer and right-click the CD-ROM or DVD drive. Uncheck the check box that says Use with DLA.
+
+2) You can also try right-clicking on the CD-ROM or DVD drive and select Properties. Click on the DLA tab and uncheck Enable DLA on your drives.
+
+RELATED INFORMATION
+ Need more help? Our Statistics forum is Live! [https://developer.ibm.com/answers/topics/statistics.html?smartspace=predictive-analytics]
+
+
+ 
+
+HISTORICAL NUMBER
+ 87405

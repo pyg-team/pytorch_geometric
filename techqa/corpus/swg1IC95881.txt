@@ -1,0 +1,227 @@
+Title: IBM IC95881: RESTORE OF SQL SERVER MASTER DATABASE MAY FAIL WHEN USING THE DATA PROTECTION FOR MICROSOFT SQL GUI WITH ACO0005E - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PERMANENT RESTRICTION.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When using Tivoli Storage Manager for Databases: Data
+   Protection for Microsoft SQL Server to restore an SQL
+   server master database, the SQL application must be
+   running in single user mode.
+   
+   However, attempts to perform the restore with the MMC GUI
+   of Data Protection for Microsoft SQL Server may fail with
+   the following error message in tdpsql.log:
+   
+   08/05/2013 09:00:06 Failed to connect to server <InstanceName>
+   08/05/2013 09:00:06 A network-related or instance-specific error
+     occurred while establishing a connection to SQL Server.
+     The server was not found or was not accessible.
+     Verify that the instance name is correct and that
+     SQL Server is configured to allow remote connections.
+     (provider: Named Pipes Provider, error: 40 - Could not
+     open a connection to SQL Server) (HRESULT:0x80131501)
+   
+   or the following messages are witnessed:
+   
+   08/05/2013 07:35:17 Restore of master failed.
+   08/05/2013 07:35:17 ACO0005E Out of memory. Stop other processes
+   and try the operation again.
+   
+   Customer/L2 Diagnostics:
+   The GUI does not end a formerly established connection to the
+   SQL Server while in preparation to restore the master
+   database. Since the SQL Server is in single user mode
+   no additional connections are possible.
+   
+   This might be verified with a logon to the SQL server using the
+   sqlcmd command  while GUI is still running. For example:
+   
+   sqlcmd -E
+   
+   Msg 18461, Level 14, State 1, Server <InstanceName>, Line 1
+   Login failed for user '<InstanceName>\Administrator'.
+   Reason: Server is in single user mode. Only one administrator
+   can connect at this time.
+   
+   
+   This command will also fail to connect to the SQL Server as long
+   as any instance of the Data Protection for Microsoft SQL Server
+   GUI is running.
+   
+   Tivoli Storage Manager Versions Affected:
+   Tivoli Storage Manager for Databases Version 6.4 and 6.4.1:
+   Data Protection for Microsoft SQL Server
+   IBM Tivoli FlashCopy Manager  3.2 and 3.2.1 components on
+   Windows FlashCopy Manager for Microsoft SQL Server
+   
+   Initial Impact:
+   Low
+   
+   
+   Additional Keywords:
+   TSM System Recovery Bare Metal
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Use the command line to perform restore of the master database.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: Users of:                                    *
+   *                 - Data Protection for Microsoft SQL Server   *
+   *                 6.3, 6.4, and 7.1                            *
+   *                 - Tivoli Storage FlashCopy Manager for       *
+   *                 Micrsoft SQL Server 3.1, 3.2, and 4.1        *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: See ERROR DESCRIPTION.                  *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   *
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This issue a permanent restriction of the product. The MMC
+   does not support interactions with a SQL Server that was
+   started in single-user mode. The primary use case for starting
+   a SQL Server instance is to restore the master database. In
+   that case the CLI interface of Data Protection for Microsoft
+   SQL Server or FlashCopy Manager  for Microsoft SQL Server can
+   be used for this purpose.
+   
+   Updates to the the following publications have been made and
+   will be incorporated in the next revision of this publication:
+   Tivoli Storage FlashCopy Manager Installation and User's Guide
+   for Windows
+   Tivoli Storage Manager for Databases: Data Protection for
+   Microsoft SQL Server Installation and User's Guide
+   
+   Additionally, the Documentation Updates tech notes for:
+   Tivoli Storage FlashCopy Manager Version 3.1, 3.2, and 4.1
+   Tivoli Storage Manager for Databases: Data Protection for
+   Microsoft SQL Server 6.3, 6.4, and 7.1
+   
+   detail changes to the currently published versions of the
+   respective installation and user's guife.  Until a new
+   revision of the publication is available, the changes related
+   to this APAR should be viewed in the Documentation Updates
+   tech docs located here:
+   
+   IBM Tivoli Storage FlashCopy Manager Version 3.1 Documentation
+   Updates:
+   http://www-01.ibm.com/support/docview.wss?uid=swg27022407 [http://www-01.ibm.com/support/docview.wss?uid=swg27022407]
+   IBM Tivoli Storage FlashCopy Manager Version 3.2 Documentation
+   Updates:
+   http://www-01.ibm.com/support/docview.wss?uid=swg27035972 [http://www-01.ibm.com/support/docview.wss?uid=swg27035972]
+   IBM Tivoli Storage FlashCopy Manager Version 4.1 Documentation
+   Updates:
+   http://www-01.ibm.com/support/docview.wss?uid=swg27039330 [http://www-01.ibm.com/support/docview.wss?uid=swg27039330]
+   
+   IBM Tivoli Storage Manager for Databases: Data Protection for
+   Microsoft SQL Server 7.1 Documentation Updates
+   http://www.ibm.com/support/docview.wss?uid=swg27039329 [http://www.ibm.com/support/docview.wss?uid=swg27039329]
+   IBM Tivoli Storage Manager for Databases: Data Protection for
+   Microsoft SQL Server 6.4 Documentation Updates
+   http://www.ibm.com/support/docview.wss?uid=swg27035973 [http://www.ibm.com/support/docview.wss?uid=swg27035973]
+   IBM Tivoli Storage Manager for Databases: Data Protection for
+   Microsoft SQL Server 6.3 Documentation Updates
+   http://www.ibm.com/support/docview.wss?uid=swg27022406 [http://www.ibm.com/support/docview.wss?uid=swg27022406]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC95881
+   
+   
+ * REPORTED COMPONENT NAME
+   TDP FOR SQL WIN
+   
+   
+ * REPORTED COMPONENT ID
+   5698DPSAP
+   
+   
+ * REPORTED RELEASE
+   64W
+   
+   
+ * STATUS
+   CLOSED PRS
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-09-11
+   
+   
+ * CLOSED DATE
+   2014-01-31
+   
+   
+ * LAST MODIFIED DATE
+   2014-01-31
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  FCM      MMC
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

@@ -1,0 +1,111 @@
+Title: IBM Lotus Protector for Mail Security - how to block executable
+files - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+How to block executable files with a Lotus Protector for Mail Security system? 
+
+The rule should do the following: 
+
+
+- remove the matching attachment (executable file) from the message
+- store the original message (with attachment) in a special folder in case someone needs this file later
+- adding a disclaimer on top of the message to inform your internal recipient, that the attachment was removed due to company policies
+
+The original message, without the attachment will continue to go through the remaining rules
+
+
+ANSWER
+1. Create a new response with the name: Add Attachment Disclaimer 
+
+Policy Objects – Responses – Add:
+
+[/support/docview.wss?uid=swg21693251&aid=1] [/support/docview.wss?uid=swg21693251&aid=1]
+
+The Text we added is in HTML format. This HTML formatted text is visible in HTML formatted e-Mails. (which are more or less all Mails in the internet)
+To create a HTML formatted text, which should be added to the emails, you can use an HTML editor like Kompozer (it is freeware and ca be found at http://kompozer.sourceforge.net [http://kompozer.sourceforge.net])
+
+You can modify the text to your or your company needs.
+
+<div id="phishingwarning"
+style="border-bottom: 1px solid rgb(153, 153, 153); margin: 0pt; padding: 0pt; background: rgb(221, 228, 235) none repeat scroll 0% 50%; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial; width: 100%; top: 0pt; left: 0pt;"><table
+border="0" width="100%"><tbody><tr><td
+bgcolor="#dd1f1f"><h1
+style="margin: 0pt; padding: 0.1em 2em; background: rgb(221, 31, 31) none repeat scroll 0% 50%; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial; font-family: 'Trebuchet MS',sans-serif; font-style: normal; font-variant: normal; font-weight: bold; font-size: 1.1em; line-height: normal; font-size-adjust: none; font-stretch: normal; text-align: center; color: rgb(255, 255, 255);">Attention—Attachment
+Removed!</h1></td></tr></tbody></table>
+<ul style="margin: 0.5em 0pt 0.5em 3em; list-style-type: square;"><li
+style="background: rgb(221, 228, 235) none repeat scroll 0% 50%; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial; font-family: 'Trebuchet MS',sans-serif; font-style: normal; font-variant: normal; font-weight: normal; font-size: 14px; line-height: normal; font-size-adjust: none; font-stretch: normal; color: rgb(51, 51, 51);">The
+original E-Mail contained an attachment, which was removed due to
+Company Policy.</li><li
+style="background: rgb(221, 228, 235) none repeat scroll 0% 50%; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial; font-family: 'Trebuchet MS',sans-serif; font-style: normal; font-variant: normal; font-weight: normal; font-size: 14px; line-height: normal; font-size-adjust: none; font-stretch: normal; color: rgb(51, 51, 51);">The
+Name of the attachment was: $(REMOVEDATTS)</li>
+<li
+style="background: rgb(221, 228, 235) none repeat scroll 0% 50%; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial; font-family: 'Trebuchet MS',sans-serif; font-style: normal; font-variant: normal; font-weight: normal; font-size: 14px; line-height: normal; font-size-adjust: none; font-stretch: normal; color: rgb(51, 51, 51);">If
+you still think you need this attachment,&nbsp;please contact the
+system administrator&nbsp;</li>
+</ul></div>
+
+Finally, the disclaimer which is added to each affected email will look like this: 
+
+[/support/docview.wss?uid=swg21693251&aid=2] [/support/docview.wss?uid=swg21693251&aid=2]
+
+You can additionally make use of variables in this text, for example: $(REMOVEDATTS) - which will show the name of the removed attachment.
+Since it is also possible to use this disclaimer on plain text email, we need to add the text-only disclaimer also into the TEXT Tab of this Analysis Module
+
+[/support/docview.wss?uid=swg21693251&aid=3] [/support/docview.wss?uid=swg21693251&aid=3]
+
+Text:
+
+Attention—Attachment Removed!
+#############################
+
+* The original E-Mail contained an attachment, which was removed due to Company Policy.
+* The Name of the attachment was: $(REMOVEDATTS)
+* If you still think you need this attachment, please contact the system administrator
+
+2. Create a new separate email store, where all these messages are stored 
+Policy Objects – Email Storages -> Name:Attachment Store 
+
+[/support/docview.wss?uid=swg21693251&amp;aid=4]
+
+3. Create a new Response which stores emails into the new MessageStore 
+
+Policy Objects – Response ->Store in Attachment Store 
+
+[/support/docview.wss?uid=swg21693251&amp;aid=5]
+
+4. Create or modify the Analysis Module Executable Files 
+
+Policy - Analysis Modules
+In this Analysis Module, please check all attachments which are unwanted for your company and should be removed from incoming messages 
+
+[/support/docview.wss?uid=swg21693251&amp;aid=6]
+
+If the view of this Analysis Object does NOT look like the example above, you need to apply an additional patch to "repair" this Analysis Object: Please refer to Technote 1674239 - http://www.ibm.com/support/docview.wss?uid=swg21674239 [http://www.ibm.com/support/docview.wss?uid=swg21674239] or follow the instructions below:
+
+cd /tmp
+wget http://upload.cobion.com/download/pnmss/fw2_8_mediatypes_displayfix.zip [http://upload.cobion.com/download/pnmss/fw2_8_mediatypes_displayfix.zip]
+unzip -o -d / fw2_8_mediatypes_displayfix.zip
+on CLI, run the command 'gsj.sh'
+close and restart the browser (+ delete the Java cache) 
+
+5. Create the Rule 
+
+Policies - add new policy ->below the "Antivirus Check" Ruleandabove the "User based Allow List" ruleand alsoAbove the "Company Allow List" ruleto avoid, that whitelisted senders can send these unwanted attachments
+Name:Block unwanted Attachments
+Senders:[empty]
+Recipients:MYDOMAINS
+Whens:[empty]
+Analysis Module:Executable Files
+Response:Add Attachment Disclaimer
+Remove Matching Attachments
+Store in Attachment Store
+Action:Continue
+
+[/support/docview.wss?uid=swg21693251&aid=7] [/support/docview.wss?uid=swg21693251&aid=7]
+
+It is also possible to send an additional email to the postmaster or administrator in case an email with such an attachment is being received. There is an already existing response you can use and add to the response list: "Notify Admin on Usage Policy" 
+
+[/support/docview.wss?uid=swg21693251&aid=8] [/support/docview.wss?uid=swg21693251&aid=8]

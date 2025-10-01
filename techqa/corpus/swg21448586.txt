@@ -1,0 +1,29 @@
+Title: IBM How to import license keys in Rational License Key Administrator on Windows Vista or Windows 7 - United States
+
+Text:
+LKAD; Win7; Vista; import; license TECHNOTE (FAQ)
+
+QUESTION
+ How do you import license keys in IBM Rational License Key Administrator on the Microsoft Windows Vista or Windows 7 correctly? 
+
+ANSWER
+On Windows Vista or Windows 7, the steps to import license keys are as follows: 
+
+ 1. Click Start > All Programs > IBM Rational > Rational License Key Administrator
+    
+    
+ 2. Right click on Rational License Key Administrator
+    
+    
+ 3. Select Run As Administrator
+    
+    
+ 4. Open Rational License Key Administrator > License Keys > Import License Key 
+    
+    
+ 5. Browse to the directory where the license file is saved and import it
+
+
+Note: If not selecting Run As Administrator to open License Key Administrator, the license key may not be imported into the correct license file. 
+RELATED INFORMATION
+#Use License Key Administrator (LKAD) [http://publib.boulder.ibm.com/infocenter/rational/v0r0m0/topic/com.ibm.rational.license.doc/topics/t_open_lkad.html]

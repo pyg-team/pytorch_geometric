@@ -1,0 +1,28 @@
+Title: IBM How to configure AppScan to handle SSO - United States
+
+Text:
+1298669 TECHNOTE (FAQ)
+
+QUESTION
+ How do you configure IBM Security AppScan Standard, IBM Security AppScan Enterprise to handle SSO (Single Sign On)? 
+
+ANSWER
+If the site is configured to redirect from the application to the SSO, then back to the application after login, follow these steps: 
+
+ *  Set the starting point to the application. Record a login sequence (includes the request to the first page, the redirect to the SSO login page, and the return to the first page). Run the scan.
+   
+ * If the site is configured in such a way that you first need to visit the SSO, then after logging in it redirects you to a page where a link exists for the target application, follow these steps:  1. Set the starting point to the SSO login page. 
+    2. If the SSO is on a different domain, add the target application's domain to the "Additional Servers and Domains" list. 
+    3. Record a login sequence. 
+    4. Restrict the scan in the Scan Configuration to the application you want to test if you do not want the SSO to be included as part of the test phase. 
+    5. If the SSO was excluded in the Scan Configuration, start the scan with a Manual Explore, navigate to your application, then continue with a Full Scan.
+       
+       Note: You can avoid predefining your Exclusions and Inclusions before the explore phase. To do this, start with an explore and when complete, right-click the folders/pages that you would like to "Exclude from scan" or "Include in scan", then continue with the test phase which will respect the changes and only scan what has been included.
+   
+   
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Security IBM Security AppScan Enterprise Authentication 
+HISTORICAL NUMBER
+ 00002123

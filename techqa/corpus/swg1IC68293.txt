@@ -1,0 +1,186 @@
+Title: IBM IC68293: DB2 EDU may keep looping in signal handler and never return when LOAD commands are called from stored procedures - United States
+
+Text:
+z/os  FIXES ARE AVAILABLE
+DB2 Version 9.8 Fix Pack 3 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24028782]
+DB2 Version 9.8 Fix Pack 4 for AIX and Linux [http://www-01.ibm.com/support/docview.wss?uid=swg24030581]
+DB2 Version 9.8 Fix Pack 5 for AIX and Linux [http://www-01.ibm.com/support/docview.wss?uid=swg24032798]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  DB2 EDU first traps due to a SIGSEGV (signal #11), then in
+   signal handler it keeps looping between "pdLogInternal" and
+   "sqlm*" functions and never returns.
+   This problem only occurs when running LOAD commands via
+   routines, e.g. "ADMIN_CMD".
+   
+   Following symptoms can help you identify this issue:
+   -- The trapped EDU never terminates (can be seen in "db2pd -edu"
+   result).
+   -- "FODC_Trap_XXX" directory created, trap file generated, but
+   no dump files.
+   -- In db2diag.log, no information for the trap.
+   -- The correspoding application appears hung.
+      The DB2 instance may also hang if the hanging agent is
+   holding some latches being requested by others.
+   -- The "db2pd -edu" result shows the EDU clocks up a lot of user
+   CPU time.
+   -- In the trap file, you may see "sqlmStopWaitTimeInterval" or
+   "sqlmStartWaitTimeInterval" at the top of the stack trace.
+   -- A series of stack traces for the apparently hung EDU shows
+   movement and "pdLogInternal" and "sqlm* (e.g. sqlmStopInterval)"
+   functions at the top of the stack.
+      To get the stack trace of the EDU, you will need some OS
+   utilities. For example, OS debugger or the "pdump.sh" SHELL
+   script provided by IBM for AIX platform.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  The issue can be avoided by not running LOAD commands via stored
+   procedures such as ADMIN_CMD.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * All users of version 9.8 on Linux, Unix and                  *
+   * Windowsplatforms.                                            *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * DB2 EDU first traps due to a SIGSEGV (signal #11), then      *
+   * insignal handler it keeps looping between "pdLogInternal"    *
+   * and"sqlm*" functions and never returns.This problem only     *
+   * occurs when running LOAD commands viaroutines, e.g.          *
+   * "ADMIN_CMD".Following symptoms can help you identify this    *
+   * issue:-- The trapped EDU never terminates (can be seen in    *
+   * "db2pd-edu" result).-- "FODC_Trap_XXX" directory created,    *
+   * trap file generated,but no dump files.-- In db2diag.log, no  *
+   * information for the trap.-- The correspoding application     *
+   * appears hung.The DB2 instance may also hang if the hanging   *
+   * agent isholding some latches being requested by others.--    *
+   * The "db2pd -edu" result shows the EDU clocks up a lot ofuser *
+   * CPU time.-- In the trap file, you may see                    *
+   * "sqlmStopWaitTimeInterval"or "sqlmStartWaitTimeInterval" at  *
+   * the top of the stacktrace.-- A series of stack traces for    *
+   * the apparently hung EDUshows movement and "pdLogInternal"    *
+   * and "sqlm* (e.g.sqlmStopInterval)" functions at the top of   *
+   * the stack.To get the stack trace of the EDU, you will need   *
+   * some OSutilities. For example, OS debugger or the "pdump.sh" *
+   * SHELLscript provided by IBM for AIX platform.                *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Update to V9.8 FP3 or  avoid  running LOAD commands          *
+   * viastored procedures such as ADMIN_CMD.                      *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  First fixed in DB2 UDB Version 9.8 FixPak 3.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  The issue can be avoided by not running LOAD commands via stored
+   procedures such as ADMIN_CMD.
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC68293
+   
+   
+ * REPORTED COMPONENT NAME
+   DB2 FOR LUW
+   
+   
+ * REPORTED COMPONENT ID
+   DB2FORLUW
+   
+   
+ * REPORTED RELEASE
+   980
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-04-29
+   
+   
+ * CLOSED DATE
+   2011-01-10
+   
+   
+ * LAST MODIFIED DATE
+   2011-01-10
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    IC68163 [http://www-01.ibm.com/support/docview.wss?uid=swg1IC68163]
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   DB2 FOR LUW
+   
+   
+ * FIXED COMPONENT ID
+   DB2FORLUW
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R980 PSN
+   UP

@@ -1,0 +1,34 @@
+Title: IBM Unexpected IWR Error Message - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Unable to open an IWR report over the web.
+
+Error Message - 
+
+An internal error has occurred.
+Please contact your report administrator.
+Error occurred attempting to publish a report
+T:\xxx\xxx\xxx\Report.imr
+
+
+in PDF format. Reason Error: 0, Generic; Process ID: 1236; Thread: 122; Host:
+<server name>;
+Text: Unexpected Error in PDFPublisher::Publish. Please contact your System Administrator.
+Report:
+\\?\T:\xxx\xxx\xxx\Report.imr;
+BackTrace Info: 1.
+File Name: S:\Imp60\ImpromptuServer\app.exe\child.lib\PDFPublisher.cpp;
+Line#:484; Desc.:PDFPublisher::Publish; . 
+
+RESOLVING THE PROBLEM
+Check the disk space for the temp files and output (PDF) files. Verify the environment user variables Temp and Tmp of the user who starts the IWR service.
+
+Also check the swap-file space. Use a hard disk with more free hard disk space. Don't use a network drive or folder for temp- and swap- files.
+
+ 
+
+HISTORICAL NUMBER
+ 119541

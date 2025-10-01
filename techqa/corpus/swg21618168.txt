@@ -1,0 +1,45 @@
+Title: IBM InfoSphere QualityStage Standardization Rules Designer: Session timeout occurs when you import a classification file after you import sample data - United States
+
+Text:
+SRD import error timeout qsrd91relnotes; is91relnotes qs91relnotes TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ A session timeout might occur when you import sample data and then import a classification file in the Standardization Rules Designer. The timeout occurs when Microsoft SQL Server is the repository. 
+
+SYMPTOM
+When you run import a classification file after you import sample data, you might get the following error: 
+
+Request Timed Out.
+
+
+CAUSE
+This error occurs when competing transactions become deadlocked within the Standardization Rules Designer transaction handler.
+
+
+ENVIRONMENT
+This problem is limited to Microsoft SQL Server databases (2005, 2008, and 2012).
+
+
+
+RESOLVING THE PROBLEM
+To resolve this problem, you can activate the READ_COMMITTED_SNAPSHOT property for the SQL Server database that hosts the Standardization Rules Designer repository. 
+
+Note: 
+
+ * The property is set at the database level, and therefore also applies to the IBM InfoSphere Information Server metadata repository (xmeta), if colocated with the Standardization Rules Designer repository. 
+ * It is not recommended that the READ_COMMITTED_SNAPSHOT property be changed to OFF when it has been set to ON. See the following Microsoft link for more information: http://msdn.microsoft.com/en-us/library/ms173763.aspx [http://msdn.microsoft.com/en-us/library/ms173763.aspx]
+
+
+To set the READ_COMMITTED_SNAPSHOT property, ask your IBM InfoSphere Information Server administrator to complete the following steps: 
+
+1. Disconnect all connections to the SQL Server database. This might require that the IBM WebSphere Application Server, the ASB Agent service, and the Logging Agent service be shut down if there are active database connections from these services. 
+
+2. Run the following SQL script: 
+ALTER DATABASE your_database_name SET READ_COMMITTED_SNAPSHOT ON 
+
+3. Restart the SQL Server database that hosts the Standardization Rules Designer repository. 
+
+4. Restart the IBM WebSphere Application Server, the ASB Agent service, and the Logging Agent service, as needed. 
+
+
+Cross reference information Segment Product Component Platform Version Edition Information Management InfoSphere Information Server AIX, HP-UX, Linux, Solaris, Windows 9.1

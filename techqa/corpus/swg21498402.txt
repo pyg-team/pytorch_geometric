@@ -1,0 +1,27 @@
+Title: IBM Cognos BI control access to Business Insight/Workspace, Business Insight Advanced/Workspace Advanced, and Report Studio - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ In Cognos Business Intelligence, Is it possible to restrict access to Business Insight/Workspace, Business Insight Advanced/Workspace Advanced and Report Studio separately? 
+
+ANSWER
+Terminology in different Cognos versions 
+
+10.1 --> Business Insight / Business Insight Advanced 
+
+10.2 --> Workspace / Workspace Advanced 
+
+
+To give users access to Business Insight/Workspace, open IBM Cognos Configuration -> Security tab -> Capabilities and click the Actions icon followed by Properties for the Executive Dashboard capability. Click the Permissions tab, and grant Execute and Traverse permission to only the user groups/roles who should have Business Insight/Workspace access.
+
+Users of both Business Insight Advanced/Workspace Advanced and Report Studio will require the Report Studio capability. Click Actions -> Properties for the Report Studio capability, click the Permissions tab, and grant Execute/Traverse to both sets of users.
+
+To then control which of the two advanced authoring tools these users can open, you need to secure the profiles they have access to from IBM Cognos Administration -> Security -> User Interface Profiles. 
+
+First, click the Properties icon in the top-right toolbar and then in the permissions of the parent "User Interface Profiles" object ensure that all groups/roles/users which require access to either Report Studio or Business Insight Advanced/Workspace Advanced have the Traverse permission granted at this parent level.
+
+Next, open the Professional interface properties, and from the Permissions tab grant Execute/Traverse permission to the groups and roles that should have Report Studio access.
+
+Finally, open the Express interface properties, and grant Execute/Traverse permission for the groups and roles which need Business Insight Advanced/Workspace Advanced access.

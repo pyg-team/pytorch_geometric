@@ -1,0 +1,19 @@
+Title: IBM Informix Servers are not affected by the OpenSSL Heartbleed vulnerability (CVE-2014-0160) - United States
+
+Text:
+ FLASH (ALERT)
+
+ABSTRACT
+ IBM Informix Server products (Online, Informix Dynamic Server, XPS, and SE) are not vulnerable to the CVE-2014-0160 OpenSSL Heartbleed vulnerability. 
+
+CONTENT
+CVE-2014-0160 - Heartbleed Vulnerability 
+IBM Informix Server versions in all editions and all platforms are NOT vulnerable to the OpenSSL Heartbleed vulnerability (CVE-2014-0160) because they do not use an affected version of OpenSSL.
+
+Remediation: No action required.
+
+Change History: 11 April 2014, original document published.
+
+RELATED INFORMATION
+ CVE-2014-0160 [http://web.nvd.nist.gov/view/vuln/detail?vulnId=CVE-2014-0160]
+A Japanese translation is available [http://www.ibm.com/support/docview.wss?uid=swg21670342]

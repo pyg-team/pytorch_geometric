@@ -1,0 +1,25 @@
+Title: IBM Forcing NetServer Traffic to Use a Different IP Address - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This document describes how to force NetServer to use a different interface on the iSeries. 
+
+RESOLVING THE PROBLEM
+This document describes how to force NetServer to use a different interface on the iSeries. 
+
+Hundreds of NetServer users are being added to the iSeries traffic on a system. Is there a way to force all of the NetServer traffic over a different IP address than it currently uses? 
+
+Example: A system has two IP addresses using two different interfaces. One of the interfaces is not currently in use. The unused interface has a higher IP address numerically than the other interface. By default, NetServer will use the lowest IP address if more than one is available. The goal is to move the NetServer traffic to the unused IP address/interface. 
+
+The following steps can be used to force NetServer traffic over a different IP address than it currently uses. 
+
+You should follow the steps below, being sure to save each change: 
+
+1. In the NetServer Properties in IBM System i Navigator, give the NetServer a name different than the system name, and uncheck the box that says Allow i5/OS NetServer access using the system name. 2. Add an IBM i TCP Host Table entry for the NetServer name and the IP address that NetServer is to use. To do so, on an IBM i command line, run the CFGTCP command, select Option 10 Work with TCP/IP host table entries, then use Option 1 to add a Host Table entry. 3. Configure the IBM i to look at the local Host Table first, before checking for a DNS entry. To do so, on an IBM i command line, run the CFGTCP command, select Option 12 Change TCP/IP domain information, and set Host Name Search Priority to *LOCAL. 4. Add the NetServer name to the DNS Server with the new IP address. End and restart NetServer. When NetServer starts, it will locate the new address for the server from the local Host Table. Windows clients will resolve to the server address using LMHOSTS, DNS, or WINS. NetServer will respond to the client requests on the same IP address the request is received on.  
+
+
+Cross reference information Segment Product Component Platform Version Edition Operating System IBM i 6.1 Operating System IBM i 7.1 
+HISTORICAL NUMBER
+ 29504749

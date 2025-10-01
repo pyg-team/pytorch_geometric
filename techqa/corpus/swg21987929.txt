@@ -1,0 +1,22 @@
+Title: IBM Sweep Disposition Load Optimisation - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How do you configure IBM FileNet P8 Enterprise Records (IER) deployed in IBM Content Navigator (ICN), to run on a High Availability (HA) clustered environment? 
+
+ANSWER
+ 
+
+ * The IER FilePlan Object Store (FPOS) in ICN admin desktop has to be connected via the URL as follows:
+   corbaloc:rir:/cell/clusters/your_websphere_cluster_name/FileNet/Engine
+   
+ * Before running the Advance Disposition Task, you need to configure the RecordsManagerSweep.sh or RecordsManagerSweep.bat file for EJB mode and set the naming provider URL as follows: set NAMING_PROVIDER_URL=corbaloc:rir:/cell/clusters/your_websphere_cluster_name
+   
+   
+   
+ * Run the Disposition Sweep through Advance Disposition Tasks in IER desktop deployed in ICN.
+   
+   Some references: Content Platform Engine in an application server cluster by using EJB transport [http://www.ibm.com/support/knowledgecenter/en/SSNW2F_5.2.1/com.ibm.p8.install.doc/p8phx004.htm]
+   Tuning IBM Enterprise Records [http://www.ibm.com/support/knowledgecenter/en/SSNW2F_5.2.0/com.ibm.p8.performance.doc/p8ppt137.htm]

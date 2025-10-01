@@ -1,0 +1,33 @@
+Title: IBM Upgrading IBM Process Federation Server Version 8.5.6.0 to Version 8.5.7.0 or Version 8.5.7.0 to Version 8.5.7 CF2016.09 fails in IBM Business Process Manager - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When you try to upgrade IBM Process Federation Server Version 8.5.6.0 to IBM Process Federation Server Version 8.5.7.0 interactively, using IBM Installation Manager in IBM Business Process Manager, the upgrade fails. The same failure occurs if you try to upgrade IBM Process Federation Server Version 8.5.7.0 to IBM Process Federation Server Version 8.5.7 CF2016.09 (cumulative fix 2016.09). 
+
+SYMPTOM
+You see an error message similar to the following: 
+
+Cannot connect to the following repository:
+-@bpm.fps.updates.service.repo.url@
+-@bpm.fps.extn.service.repo.url@
+-https://www.ib,/com/software/repositorymanager/service/com.ibm.websphere.liberty.IBMJAVA.v70/7.0.8.10
+
+
+CAUSE
+The service.repositories property is not set correctly. If you try to upgrade Process Federation Server Version interactively, Installation Manager does not detect the new version.
+
+
+RESOLVING THE PROBLEM
+To resolve the problem: 
+
+ 1. In Installation Manager, go to File > Preferences and click Add Repository. 
+ 2. Enter the following URL: http://www-912.ibm.com/software/repositorymanager/com.ibm.bpm.pfs.v85/repository.config [http://www-912.ibm.com/software/repositorymanager/com.ibm.bpm.pfs.v85/repository.config] 
+ 3. After you have added the repository, try the upgrade again.
+
+ 
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Business Process Manager Standard Upgrade AIX, Linux, Solaris, Windows 8.5.7 
+PRODUCT ALIAS/SYNONYM
+ BPM

@@ -1,0 +1,168 @@
+Title: IBM JR56813: YOU RECEIVE STACKOVERFLOW AND SOAPACTION ERRORS WHEN YOU USE WEB SERVICE INTEGRATION (SOAP CONNECTOR) - United States
+
+Text:
+  DIRECT LINKS TO FIXES
+bpm.8570.cf2016.12.delta.repository [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Standard&fixids=bpm.8570.cf2016.12.delta.repository&source=SAR]
+8.5.6.2-WS-BPM-IFJR56813 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Standard&fixids=8.5.6.2-WS-BPM-IFJR56813&source=SAR]
+8.5.7.201606-WS-BPM-IFJR56813 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Standard&fixids=8.5.7.201606-WS-BPM-IFJR56813&source=SAR]
+8.5.7.201609-WS-BPM-IFJR56813 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Standard&fixids=8.5.7.201609-WS-BPM-IFJR56813&source=SAR]
+Downloading IBM Business Process Manager V8.5.7 Cumulative Fix 2016.12 [http://www-01.ibm.com/support/docview.wss?uid=swg24043062]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When you use IBM Business Process Manager (BPM) Standard web
+   service integration (SOAP Connector), you might see the
+   StackOverFLowError when processing a very long SOAP fault
+   response:
+   
+   java.lang.StackOverflowError
+   at
+   java.io.ObjectOutputStream$BlockDataOutputStream.write(ObjectOut
+   putStream.java:1880)
+   ...
+   at
+   com.ibm.bpm.ws.jaxws.connector.SOAPConnector.handleFault(SOAPCon
+   nector.java:1265)
+   ...
+   
+   You also might see an error indicating that the given SOAPAction
+   <SOAPAction_Name> does not match an operation error. Web service
+   integration generates the wrong SOAP action field with a double
+   forward slash (//) and gives you this error if the following
+   conditions occur:
+   
+   -The WSDL has a target namespace ending with a forward slash
+   (/).
+   -The WSDL doesn't contain a SOAPAction field or the SOAP action
+   is empty.
+   -You use an Authentication method instead of specifying "None".
+   -You select "Use Basic Security".
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  No additional information is available.
+   
+   PRODUCTS AFFECTED
+   IBM BPM Advanced
+   IBM BPM Standard
+   IBM BPM Express
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A fix that ensures the correct SOAP action is generated and
+   handles large SOAP fault responses will be included in IBM BPM
+   V8.5.7 cumulative fix 2016.12.
+   
+   To determine whether the cumulative fix is available and
+   download it if it is, complete the following steps on Fix
+   Central:
+   
+   1. Select IBM Business Process Manager with your edition from
+   the product selector, the installed version to the fix pack
+   level, and your platform, and then click Continue.
+   2. Select Text, enter ?cumulative fix?, and click Continue.   €€
+   
+   
+   When you download fix packages, ensure that you also download
+   the readme file for each fix. Review each readme file for
+   additional installation instructions and information about the
+   fix.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR56813
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM STANDARD
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9500
+   
+   
+ * REPORTED RELEASE
+   856
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-10-13
+   
+   
+ * CLOSED DATE
+   2016-10-19
+   
+   
+ * LAST MODIFIED DATE
+   2016-10-19
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   BPM STANDARD
+   
+   
+ * FIXED COMPONENT ID
+   5725C9500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R857 PSY
+   UP

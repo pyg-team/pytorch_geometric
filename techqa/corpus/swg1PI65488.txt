@@ -1,0 +1,142 @@
+Title: IBM PI65488: ECLIPSE 4.5.2 (MARS) PROCESS FAILS TO TERMINATE OR RESTART WHEN PLATFORM PLUGIN IS INSTALLED. - United States
+
+Text:
+  A FIX IS AVAILABLE
+IBM Rational Rhapsody 8.2 [http://www-01.ibm.com/support/docview.wss?uid=swg24042928]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  STEPS TO REPRODUCE
+   1. Install Eclipse Mars (4.5.2)
+   2. Start Eclipse and add the Rhapsody 8.1.5 eclipse directory as
+   a repository via Help > Install New Software
+   3. Install the IBM(R) Rational(R) Rhapsody(R) Workflow
+   Integration plugin only
+   4. Create a new Rhapsody project in Eclipse, add a simple output
+   statement.
+   5. Generate the code and add a new Eclipse Cpp project when
+   prompted.
+   6. Build the code and run.
+   7. Go to File menu > Switch Workspace > other and select the
+   current workspace.
+   8. Eclipse will attempt to restart.
+   9. Intermittently Eclipse will fail to restart while the Eclipse
+   process will remain in the process explorer. Therefore, user
+   must manually terminate and restart the Eclipse process.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * Rhapsody 8.1.5 iFix001                                       *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * Eclipse 4.5.2 does not terminate correctly when Rhapsody     *
+   * platform integration plugin is installed.                    *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fixed in Rhapsody 8.2 - Eclipse 4.5.2 terminates correctly when
+   Rhapsody platform integration plugin is installed.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI65488
+   
+   
+ * REPORTED COMPONENT NAME
+   TLOGIC RHAPSODY
+   
+   
+ * REPORTED COMPONENT ID
+   5724V74RP
+   
+   
+ * REPORTED RELEASE
+   814
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-07-07
+   
+   
+ * CLOSED DATE
+   2016-12-05
+   
+   
+ * LAST MODIFIED DATE
+   2016-12-05
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TLOGIC RHAPSODY
+   
+   
+ * FIXED COMPONENT ID
+   5724V74RP
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R815 PSN
+   UP

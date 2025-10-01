@@ -1,0 +1,71 @@
+Title: IBM Maintaining aggregate tables using IBM Cognos Business Intelligence 10.2.1.1 Fix Pack 3 - United States
+
+Text:
+FB 10.2.1.1; near real time; updating aggregate tables; pausing a dynamic cube; pauseCube command; DCAdmin command line tool; startCube command PRODUCT DOCUMENTATION
+
+ABSTRACT
+ When querying an aggregate table for a dynamic cube with near real time updates, in order to determine the correct aggregate value, the query engine checks the fact table for the latest update and combines this result with the aggregate table to obtain a combined value. 
+
+CONTENT
+When using a dynamic cube with near real updates, it is no longer necessary to update fact tables and aggregate tables simultaneously. This reduces the need for frequent aggregate table maintenance cycles. You may choose never to update aggregate tables if they are only accessed by a dynamic cube.
+
+
+If you do choose to update aggregate tables, you have two options:
+
+
+ * Stop the cube.
+   
+   You can then build the aggregates, reset the transaction ID (TID) column value in the fact table to Null and restart the cube. This requires a reload of data caches. 
+   
+   This method is suitable if you are already stopping a dynamic cube for other updates that require you to restart the cube (cube model updates, in-memory aggregate definition updates, cube property updates). 
+ * Pause the cube.
+   
+   When paused, a dynamic cube continues running, so that data caches remain valid, but becomes unavailable for queries by report users.
+   
+   You can then build the aggregates, reset the transaction ID (TID) column value in the fact table to Null and resume the cube with the last TID. There is no need to reload data caches.
+
+
+Note: Before updating an aggregate table, it is recommended that you run an incremental load of fact data up to a specific TID value. You can then update the aggregate table up to the same TID value. This ensures that the maintenance of fact and aggregate tables do not reset to Null the TID value for rows that have not yet been processed. It also ensures consistency between the fact table and aggregate table. 
+
+Even after a cube is paused, all future TID values for fact table updates must follow the rule for TIDs: a future TID value must be higher than all previous TID values even if all previous TID values have been updated in the aggregate table. 
+The following example shows illustrates how to reset TID values, how to resume a dynamic cube with the correct TID value, and how to set the TID value for future fact table updates. 
+
+Suppose, the last incremental load of fact table was for the TID value 3. For consistency, you want to update the aggregate table up to TID value 3. 
+
+Fact table 
+
+Product Sales TID Paper 50 [/support/docview.wss?uid=swg27040458&amp;aid=1] Pen 75 [/support/docview.wss?uid=swg27040458&amp;aid=1] Paper 45 [/support/docview.wss?uid=swg27040458&amp;aid=1] Paper 5 [/support/docview.wss?uid=swg27040458&amp;aid=1] Paper 20 1 Paper 5 1 Paper 25 2 Pen 25 3 Aggregate table (before update) 
+
+Product Aggregate Sales Paper 100 Pen 75 
+After updating the aggregate table, the fact table and aggregate table now look like this: Fact table (all TID values less than 3 reset to Null) 
+
+Product Sales TID Paper 50 [/support/docview.wss?uid=swg27040458&amp;aid=1] Pen 75 [/support/docview.wss?uid=swg27040458&amp;aid=1] Paper 45 [/support/docview.wss?uid=swg27040458&amp;aid=1] Paper 5 [/support/docview.wss?uid=swg27040458&amp;aid=1] Paper 20 [/support/docview.wss?uid=swg27040458&amp;aid=1] Paper 5 [/support/docview.wss?uid=swg27040458&amp;aid=1] Paper 25 [/support/docview.wss?uid=swg27040458&amp;aid=1] Pen 25 [/support/docview.wss?uid=swg27040458&amp;aid=1] When new rows are added to the fact table, the TID value must be 4 or higher, all TID values up to 3 have been updated in the aggregate table, and reset to Null. Aggregate table (after update to TID value 3) 
+
+Product Aggregate Sales Paper 150 Pen 100 When you resume adding rows to the fact table, specify TID value 4 to maintain consistency. 
+
+ 
+
+Rules for updating aggregate tables 
+
+Aggregate table updates must adhere to certain rules: 
+
+ * Any row with a null TID value must be included in all aggregate tables. 
+ * Any row with a non-null TID value must not be included in any aggregate table. 
+ * You cannot update an aggregate table past the point of an incremental load if a dynamic cube is still running. 
+   
+   For example, if you load incremental updates up to TID value 4, you cannot update aggregate tables past TID value 4.
+
+
+Steps to update aggregate tables by pausing a dynamic cube  1. Pause the dynamic cube using the pauseCube command that is available from the DCAdmin command line tool. 
+ 2. Check that the cube has paused using the getCubeState command. 
+ 3. Update the aggregate tables upto a specified TID value.
+    
+    This value can be less than or equal to the TID value used for the last incremental load of fact data. You are recommended to update to the latest TID value, to achieve optimal future performance. 
+ 4. Reset the TID values to Null in the fact table for all rows rolled into the aggregate table. 
+ 5. Resume the cube using the startCube command. 
+ 6. Check that the cube has resumed using the getCubeState command.
+    
+
+For information on using commands from the DCAdmin command line tool, see http://www.ibm.com/support/docview.wss?uid=swg27040451 [http://www.ibm.com/support/docview.wss?uid=swg27040451]. 
+
+For information on near real time updates, see http://www.ibm.com/support/docview.wss?uid=swg27040299 [http://www.ibm.com/support/docview.wss?uid=swg27040299].

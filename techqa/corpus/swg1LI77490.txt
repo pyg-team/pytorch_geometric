@@ -1,0 +1,174 @@
+Title: IBM LI77490: FAILURE_ADDING_APICALL_LOADBALANCER ERROR WHEN ADDING A GATEWAY NODE IN IBM API MANAGEMENT - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When a Gateway node is removed from an IBM API Management
+   environment, there are some scenarios where the configuration
+   of the Gateway node might not be successfully cleaned. If the
+   administrator tries to add the same Gateway node back in to
+   the environment, the following error is displayed.
+   
+   error message key:
+   error message text: "An error ocurred while adding the gateway
+   appliance ''${0}'' to the loadbalancer group used for internal
+   traffic. The error was: ${1}: ${2}"
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  This issue can be resolved by manually removing the load
+   balancer configuration from the Gateway node (DataPower
+   appliance). To manually remove the load balancer, run the
+   following CLI or GUI commands:  (where your
+   DataPower appliance is configured to use the network interface
+   "eth0", and the load balancer group is "123")  By
+   using the CLI:  * ssh <datapower hostname> *
+   enter your login credentials * co * int eth0 * no
+   standby 123 * exit * write mem  By using the
+   DataPower user interface:  Open the Network and
+   Interface folders in the navigation tree. * Click "Ethernet
+   Interface". * Click the relevant interface row in the
+   table. * Select the "Standby Control" tab. * Click X
+   on the relevant table row to delete the load balancing
+   group. * Click "Apply". * Click "Save Config" in the
+   page header.  Also, to prevent any port conflicts,
+   remove all IBM API Management domains from the Gateway node
+   (DataPower appliance) too. The IBM API Management related
+   domains have the format of "APIMgmt_<10 alphanumeric
+   characters>". Otherwise, adding the Gateway node appears to
+   complete successfully but when APIs that are created by using
+   the recreated Management node are accessed, you see 404 errors.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  When a Gateway node is removed from an IBM API Management
+   environment, there are some scenarios where the configuration of
+   the Gateway node might not be successfully cleaned. If the
+   administrator tries to add the same Gateway node back in to
+   the environment, an error is displayed.
+   
+   In particular, this occurs if the Management node(s) of the
+   environment is deleted and recreated without first removing
+   the Gateway node (the Gateway node was never actually removed
+   from the environment).
+   
+   The external symptom of this problem is the error message that
+   is displayed when adding the gateway node.
+   
+   error message key: FAILURE_ADDING_APICALL_LOADBALANCER
+   error message text: "An error ocurred while adding the gateway
+   appliance ''${0}'' to the loadbalancer group used for internal
+   traffic. The error was: ${1}: ${2}"
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The IBM API Management code has been updated to resolve this
+   error.
+   
+   The update has been addressed in IBM API Management V2.0
+   cumulative ifix 002 and will be officially included in IBM API
+   Management fixpack V2.0.0.1
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   LI77490
+   
+   
+ * REPORTED COMPONENT NAME
+   IBM API MANAGEM
+   
+   
+ * REPORTED COMPONENT ID
+   5725L3000
+   
+   
+ * REPORTED RELEASE
+   200
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-07-09
+   
+   
+ * CLOSED DATE
+   2013-07-11
+   
+   
+ * LAST MODIFIED DATE
+   2013-07-11
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   IBM API MANAGEM
+   
+   
+ * FIXED COMPONENT ID
+   5725L3000
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R200 PSY
+   UP

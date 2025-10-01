@@ -1,0 +1,39 @@
+Title: IBM WebSphere Process Server  version 7.0 high-availability and recovery resources - United States
+
+Text:
+v70rnotes NEWS
+
+ABSTRACT
+ This document contains links (URLs) to published technical support articles and information pertaining to high availability (HA) and recovery. Use the information in these links to help you get more value from WebSphere Process Server version 7.x and WebSphere Enterprise Service Bus (WebSphere ESB) version 7.x. 
+
+CONTENT
+This information is intended to help you support and administer your WebSphere Process Server and WebSphere ESB installations. 
+
+Document title (click the title for link) Abstract Configuring high availability and workload sharing of service integration [http://www.ibm.com/support/knowledgecenter/SSAW57_7.0.0/com.ibm.websphere.nd.multiplatform.doc/info/ae/ae/tjt0023_.html?lang=en] This WebSphere Application Server knowledge center topic provides information on configuring HA and workload sharing of service integration.
+
+It provides descriptions for the following tasks:
+ * Creating a policy for messaging engines 
+ * Configuring a policy for messaging engines 
+ * Configuring shared durable subscriptions
+
+Service Integration Bus Explorer - frequently asked questions (FAQ) [http://www.alphaworks.ibm.com/tech/sibexplorer/faq] This FAQ document provides information on Service Integration Bus Explorer.
+
+Service Integration Bus Explorer is a stand-alone tool that allows more natural navigation and monitoring of the messaging components of a Service Integration Bus. Transactional high availability [http://www.ibm.com/support/knowledgecenter/SSAW57_7.0.0/com.ibm.websphere.nd.doc/info/ae/ae/cjta_trans_ha.html?lang=en]
+This WebSphere Application Server knowledge center topic provides conceptual information on transactional HA.
+
+High availability of the transaction service enables any server in a cluster to recover the transactional work for any other server in the same cluster. This facility forms part of the overall WebSphere Application Server HA strategy. Configuring transaction properties for peer recovery [http://publib.boulder.ibm.com/infocenter/wasinfo/v7r0/topic/com.ibm.websphere.nd.multiplatform.doc/info/ae/ae/tjta_cfgpeer.html] This WebSphere Application Server knowledge center topic provides information on configuring transaction properties for peer recovery.
+
+It provides descriptions for the following tasks:
+ * Configuring manual peer recovery for the transaction service. 
+ * Configuring automated peer recovery for the transaction service 
+ * Disabling file locking
+
+High availability (HA) for inbound resource adapters, WebSphere Business Integration adapters. [https://mediacenter.ibm.com/media/t/0_u8ndn2as] This IBM education assistant presentation discusses high availability for inbound resource adapters, WebSphere Business Integration adapters for WebSphere Application Server V7.0 on z/OS. WebSphere Business Process Management V7 Production Topologies [http://www.redbooks.ibm.com/abstracts/sg247854.html?Open] This IBM Redbooks publication describes how to build production topologies for Business Process Management (BPM) solutions. It is aimed at IT Architects and IT Specialists who want to understand and implement these topologies. The WebSphere Contrarian: Run time management high availability options, redux [http://www.ibm.com/developerworks/websphere/techjournal/1001_webcon/1001_webcon.html] This developerWorks article describes how to you provide for failover of the management workload in a Network Deployment cell using IBM WebSphere Application Server Network Deployment version 7. Asynchronous replication of WebSphere Process Server and WebSphere ESB for disaster [http://www.ibm.com/developerworks/websphere/library/techarticles/0809_redlin/0809_redlin.html]
+recovery environments [http://www.ibm.com/developerworks/websphere/library/techarticles/0809_redlin/0809_redlin.html] This developerWorks article describes an environment that is based on using a disk-replication system in asynchronous mode. You can include this environment in a disaster-recovery plan that includes a secondary data center using WebSphere Process Server or WebSphere ESB. Exception handling in WebSphere Process Server and WebSphere ESB [http://www.ibm.com/developerworks/websphere/library/techarticles/0705_fong/0705_fong.html] This developerWorks article explains how error conditions are captured and processed in WebSphere Process Server and WebSphere ESB, and describes problem detection, retry behavior, exception propagation, and reporting. The article assumes that you are familiar with the Service Component Architecture programming model and have experience developing applications with WebSphere Process Server and WebSphere ESB. RELATED INFORMATION
+ HA resources - V6.x [http://www.ibm.com/support/docview.wss?uid=swg21327917]
+
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration WebSphere Enterprise Service Bus Documentation AIX, HP-UX, Linux, Solaris, Windows 7.0.0.2, 7.0.0.1, 7.0

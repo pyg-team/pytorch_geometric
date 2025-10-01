@@ -1,0 +1,146 @@
+Title: IBM PI12672: Rational Developer for System z (RDz): RDz 8.5.1.1, COBOL Editor with Format action incorrectly formats the COBOL file - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Rational Developer for System z Fix Pack 5 (8.5.1.5) for 8.5.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24037777]
+Rational Developer for System z Fix Pack 7 (8.5.1.7) for 8.5.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24042742]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Rational Developer for System z (RDz): RDz 8.5.1.1, COBOL
+   Editor with Format action incorrectly formats the COBOL file
+   ***************************************************************
+   Rational Developer for System z (RDz): 'Format Source Code'
+   option in the 'Save Actions' for COBOL Editor incorrectly
+   formats
+   the COBOL file if executed while initial copybook download in
+   progress. So, comment lines and Value clauses are corrupted
+   because they are wrongly changed to lower or upper case.
+   ***************************************************************
+   Local fix:
+   Do not use the 'Format Source code' option while the editor
+   is still downloading the COBOL copybooks.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  While the Save Action > Format  does wait for the copybooks to
+   get resolved before formatting the file content, it then doesn't
+   wait for the initial document changes made before the save was
+   invoked to also get resolved.  So in effect it is formatting the
+   document as if it didn't have the extra lines of comments in
+   it... which causes the alignment to go off.  The fix is to wait
+   for the both the initial copybooks to be resolved and any
+   unsaved changes to be processed by the parser before attempting
+   to format the document.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The Save Actions > Format behavior has been updated to wait for
+   both the copy statements to get resolved as well as any interim
+   file modifications to also get resolved and integrated into the
+   language model prior to applying any formatting changes to the
+   document.
+   
+   The problem listed in this APAR has been resolved with
+   IBM Rational Developer for System z V8.5.1.5 Fix Pack which
+   is available from the Recommended Fixes support download page:
+   http://www-1.ibm.com/support/docview.wss?rs=2294&uid=swg27006335 [http://www-1.ibm.com/support/docview.wss?rs=2294&uid=swg27006335]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI12672
+   
+   
+ * REPORTED COMPONENT NAME
+   RATL DEV FOR SY
+   
+   
+ * REPORTED COMPONENT ID
+   5724T0700
+   
+   
+ * REPORTED RELEASE
+   850
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-02-27
+   
+   
+ * CLOSED DATE
+   2014-06-27
+   
+   
+ * LAST MODIFIED DATE
+   2014-06-27
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   RATL DEV FOR SY
+   
+   
+ * FIXED COMPONENT ID
+   5724T0700
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R851 PSY
+   UP

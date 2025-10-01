@@ -1,0 +1,190 @@
+Title: IBM IJ04721: CONFIGURING REGISTRY DIRECT API TO USE FEDERATED REPOSITORIES. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The only documentation that we provide on configuring the
+   registry direct API to use federated registries can be found on
+   https://www.ibm.com/support/knowledgecenter/SSPREK_9.0.4/com.ibm [https://www.ibm.com/support/knowledgecenter/SSPREK_9.0.4/com.ibm]
+   .isam.doc/develop/adminj/ameb_adminjava_guide/concept/con_federa
+   ted_ldap.html
+   
+   which says this....
+   "Use the -server option so that you can add individual suffixes
+   of multiple LDAP registries into the IBM¢ Security Access
+   Manager registry. Federated Active Directory suffixes are also
+   supported.
+   Note
+   The -server option is only valid for the attributes that start
+   with fed-server (listed in Configuration options). You do not
+   need to prepend fed to the -server option. This value is added
+   automatically when using the -server option.
+   For more information about using the -server option, see
+   Configuration options."
+   
+   Further clarifications are required.   For one thing it is not
+   clear with which command we should be using the -server option.
+   Only the com.tivoli.pd.rgy.util.RgyConfig is able to accept
+   this.
+   
+   We have NOT updated the SvrSslCfg to accept this option.
+   The documentation should also provide more details as to the
+   process required to configure an application to use Federated
+   Repositories with the Registry Direct API.
+   
+   This consists of....
+   - configure the java runtime to use either only registry Direct
+   API (RgyConfig) or both the regular admin API and the Registry
+   Direct Api (dual mode).   Instructions for this can be found at
+   https://www.ibm.com/support/knowledgecenter/SSPREK_9.0.4/com.ibm [https://www.ibm.com/support/knowledgecenter/SSPREK_9.0.4/com.ibm]
+   .isam.doc/develop/adminj/ameb_adminjava_guide/concept/con_config
+   .html
+   
+   - Run the RgyConfig -server to add all required attributes for
+   the federated directories, defined by the ones starting with
+   fed-server on
+   https://www.ibm.com/support/knowledgecenter/SSPREK_9.0.4/com.ibm [https://www.ibm.com/support/knowledgecenter/SSPREK_9.0.4/com.ibm]
+   .isam.doc/develop/adminj/ameb_adminjava_guide/concept/con_config
+   _opt.html
+   
+   Note that this list is also missing one critical attribute...
+   fed-server.<serverid>.ldap.svrs
+   
+   which uses the same syntax as the ldap.svrs attribute, but is
+   used to define the federated server.
+   
+   
+   So to summarize, what needs to be done is first configure your
+   java runtime to use either ONLY the RDAPI (using RgyConfig) or
+   to use SveSslCfg to set it up in dual mode, for example
+   
+   java com.tivoli.pd.jcfg.SvrSslCfg -action config \
+    -admin_id sec_master \
+    -admin_pwd mypassword \
+    -appsvr_id fedtest \
+    -host myhost.dc.com \
+    -port 7777 \
+    -mode remote \
+    -policysvr pdmgr.dc.com:7135:1 \
+    -authzsvr pdacld.dc.com:7135:1 \
+    -cfg_file /root/FedTest/FedTest.properties \
+    -key_file /root/FedTest/FedTest.jks \
+    -ldap_mgmt true \
+    -ldap_svrs isam_ldap.dc.com:636:readwrite:1 \
+    -ldap_ssl_enable true \
+    -ldap_ssl_truststore isamldap.jks \
+    -ldap_ssl_truststore_pwd keystorepassword
+   
+   Then afterwards you have to add the federated registries...
+   
+   java com.tivoli.pd.rgy.util.RgyConfig \
+    -server ldapfed1 ./FedTest.properties \
+    set "ldap.svrs" "ldapfed1.dc.com:389:readwrite:1"
+   
+   java com.tivoli.pd.rgy.util.RgyConfig \
+    -server ldapfed1 ./FedTest.properties \
+    set "ldap.bind-pwd" password
+   
+   java com.tivoli.pd.rgy.util.RgyConfig \
+    -server ldapfed1 ./FedTest.properties \
+    set "ldap.suffix" "dc=com"
+   
+    <plus any others you need based on your requirements>
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Configuring Registry Direct Java API with Federated
+   Rigistry needs more clarification.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The Knowledge Center describing this issue will be updated
+   in the next ISAM update i.e. ISAM 9.0.6.0
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IJ04721
+   
+   
+ * REPORTED COMPONENT NAME
+   SAM WEB FIRMWAR
+   
+   
+ * REPORTED COMPONENT ID
+   5724C87SW
+   
+   
+ * REPORTED RELEASE
+   900
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2018-03-07
+   
+   
+ * CLOSED DATE
+   2018-07-23
+   
+   
+ * LAST MODIFIED DATE
+   2018-07-23
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

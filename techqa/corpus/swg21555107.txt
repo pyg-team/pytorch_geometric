@@ -1,0 +1,63 @@
+Title: IBM Out of memory during installation of MCSF 8.5 on Unix or Linux, using IBM or JRockit JDKs - United States
+
+Text:
+3rd party Communication; Installation; Operating Environment; STERLINGNFX TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Out of memory during installation of MCSF 8.5 on Unix or Linux, using IBM or JRockit JDKs 
+
+SYMPTOM
+
+
+While installing MCSF 8.5 using IBM or JRockit JDK, it generates an out-of-memory message.
+
+Error Message [java] JVMDUMP006I Processing Dump Event "systhrow", detail "java/lang/OutOfMemoryError" - Please Wait.
+[java] JVMDUMP007I JVM Requesting Snap Dump using '/apps/sterling/sterling85/Foundation/repository/Snap.20091222.122040.10428418.0001.trc'
+[java] JVMDUMP010I Snap Dump written to /apps/sterling/sterling85/Foundation/repository/Snap.20091222.122040.10428418.0001.trc
+[java] JVMDUMP007I JVM Requesting Heap Dump using '/apps/sterling/sterling85/Foundation/repository/heapdump.20091222.122040.10428418.0002.phd'
+[java] JVMDUMP010I Heap Dump written to /apps/sterling/sterling85/Foundation/repository/heapdump.20091222.122040.10428418.0002.phd
+[java] JVMDUMP007I JVM Requesting Java Dump using '/apps/sterling/sterling85/Foundation/repository/javacore.20091222.122040.10428418.0003.txt'
+[java] JVMDUMP010I Java Dump written to /apps/sterling/sterling85/Foundation/repository/javacore.20091222.122040.10428418.0003.txt
+[java] JVMDUMP013I Processed Dump Event "systhrow", detail "java/lang/OutOfMemoryError".
+[java] Exception in thread "main" java.lang.Exception: java.lang.reflect.InvocationTargetException
+[java] at com.sterlingcommerce.woodstock.noapp.NoAppLoader.main(NoAppLoader.java:85)
+[java] Caused by: java.lang.reflect.InvocationTargetException
+[java] at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+[java] at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:79)
+[java] at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+[java] at java.lang.reflect.Method.invoke(Method.java:618)
+[java] at com.sterlingcommerce.woodstock.noapp.NoAppLoader.main(NoAppLoader.java:82)
+
+
+RESOLVING THE PROBLEM
+
+
+From the MCSF 8.5 Installation Guide, Preinstallation Setup for a UNIX or Linux Environment: Note at the bottom that ADDITIONAL_ANT_JAVA_TASK_ARGS should not be configured for IBM and JRockit JDKs.
+
+ADDITIONAL_ANT_JAVA_TASK_ARGS=-XX:MaxPermSize=512m
+
+ADDITIONAL_ANT_COMPILER_TASK_ARGS=-J-Xms256m -J-Xmx1408m
+
+Check the Minimum Memory Requirements for memory parameter values based on your operating system. These parameter values are written to the sandbox.cfg file during installation. After installation, you can tune them if you are seeing Out-of-Memory errors. See the Selling and Fulfillment Foundation: Properties Guide for more information about these parameters.
+
+To Reiterate: The ADDITIONAL_ANT_JAVA_TASK_ARGS property must not be set for IBM and JRockit JDKs.
+
+
+
+HISTORICAL NUMBER
+ NFX8075 
+
+PRODUCT ALIAS/SYNONYM
+ 
+
+Function Area
+
+
+Installation
+JDK
+
+
+Severity
+
+
+Normal

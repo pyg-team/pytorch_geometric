@@ -1,0 +1,165 @@
+Title: IBM PI30429: CSQX438E MESSAGES FOR CLUSTER CHANNELS DURING CHINIT SHUTDOWN - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  CSQX438E messages with MQCC=2 MQRC=2161 (MQRC_Q_MGR_QUIESCING)
+   following a STOP QMGR command for cluster channels.
+   Looks like CSQXADPC should be getting invoked to post the
+   get-waiters, but that isn't happening.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All users of WebSphere MQ for z/OS Version 8 *
+   *                 Release 0 Modification 0.                    *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: When a STOP QMGR command is issued,     *
+   *                      CSQX438E messages with MQRC 2161        *
+   *                      (MQRC_Q_MGR_QUIESCING) are issued for   *
+   *                      cluster-sender channels indicating      *
+   *                      that message reallocation could not     *
+   *                      be started for the channel.             *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   When a channel initiator is stopping because the queue manager
+   is quiescing after a STOP QMGR command has been issued, sender
+   channels that are in a get-wait are not posted until after
+   TCP/IP calls have been cancelled for the process. This means
+   that when the channel attempts to send a heartbeat, the send()
+   fails with RC=00000480 (ECANCELED). Alternatively, if a
+   get-wait expires before TCP/IP calls have been cancelled, the
+   channel's attempt to receive a reply to a heartbeat may fail
+   as uninitialized storage in CSQXADPO can cause the sender
+   channel to be treated as a receiver channel, resulting in the
+   recv() call failing with RC=00000480 (ECANCELED). Either of
+   these failures cause the channel initiator to look up the name
+   of the transmission queue for cluster-sender channels before
+   starting message reallocation, but this fails as the queue
+   manager is quiescing and message CSQX438E with MQRC 2161
+   (MQRC_Q_MGR_QUIESCING) is issued.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  CSQXSPRT has been updated to call CSQXADPC to post channels
+   in a get-wait earlier during channel initiator shutdown when
+   the connection to the queue manager is quiescing.
+   CSQXADPO has been updated to initialize the storage used to
+   indicate whether a sender or a receiver channel is being
+   processed.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI30429
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ Z/OS 8
+   
+   
+ * REPORTED COMPONENT ID
+   5655W9700
+   
+   
+ * REPORTED RELEASE
+   000
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2014-11-26
+   
+   
+ * CLOSED DATE
+   2015-01-05
+   
+   
+ * LAST MODIFIED DATE
+   2015-04-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    PI24496 [http://www-01.ibm.com/support/docview.wss?uid=swg1PI24496]
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UI24207
+   
+   
+
+MODULES/MACROS
+ *  CSQXADPC CSQXADPO CSQXSPRT
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ Z/OS 8
+   
+   
+ * FIXED COMPONENT ID
+   5655W9700
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R000 PSY UI24207 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI24207]
+   UP15/03/10 P F503
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

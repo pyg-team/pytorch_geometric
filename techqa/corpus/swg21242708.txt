@@ -1,0 +1,55 @@
+Title: IBM Errors when setting up LDAP authentication for ClearQuest with Active Directory - United States
+
+Text:
+1242708; CQ; ClearQuest; LDAP; Active Directory; authentication; ldapsearch; ldap_bind_s; Error 525; Improper LDAP configuration; Failed to Bind ldap connection; error code 49 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This technote explains how to resolve errors that might occur when setting up LDAP authentication for IBM Rational ClearQuest. Attempting to use the samAccountName as the Common Name (CN) in a distinguished name works in the Active Directory tools, but generates errors from other LDAP v3 tools. 
+
+SYMPTOM
+ Attempts to validate the user name with the ClearQuest validateldap command fails with an error similar to the following error messages: 
+
+
+Invalid Credentials: Either the login name or the password is incorrect. The LDAP server returned this error: Failed to Bind ldap connection using the account specified by -D cn=adt_admin,ou=users,dc=local -w ***. 
+Please ensure that ClearQuest's LDAP server initialization parameters, including -D and -w, are set correctly.
+Received the following LDAP error message: LDAP operation 'ratl_ldap_simple_bind_s' failed with error code 49. Description: Invalid credentials.
+
+
+OR 
+
+
+Invalid Credentials: Either the login name or the password is incorrect. The LDAP server returned this error: Improper LDAP configuration:
+There are 0 LDAP user accounts that have "(&(objectCategory=person)(sAMAccountName=joeuser)(!(userAccountControl:1.2.840.113556.1.4.803:=2)))". 
+Please contact your CQ Administrator to resolve this issue with your LDAP administrator.
+
+
+Attempting to use dsquery command from the Active Directory server are successful. Microsoft dsquery reference:
+
+dsquery user -o dn ou=users,dc=local -scope subtree -samid adt_admin
+dsquery user -o dn ou=users,dc=local -scope subtree -U adt_admin@local -P password
+
+
+
+RESOLVING THE PROBLEM
+
+The original Distinguished Name "-D cn=adt_admin,dc=local" given to authenticate is incorrect. This should be the full name of that user, not the login name. In this example it should be:
+
+"-D cn=ADT Admin,dc=local"
+
+
+By correcting this value solved the problem. This was initially unclear because, in this case, using Common Name (CN) attribute incorrectly is masked by Active Directory, which is silently handling this error. In the case of more complex -D strings, try putting single quotes around the whole -D string. For example: 
+
+-D cn=cqreader,ou='Service Accounts',ou=IS,ou=Boston,ou=CUsers,dc=CGroup,dc=com -w password
+
+
+Should be changed to: 
+
+-D 'cn=cqreader,ou=Service Accounts,ou=IS,ou=Boston,ou=CUsers,dc=CGroup,dc=com' -w password
+
+
+
+More information can be located in the IBM Education Assistant [http://www.ibm.com/support/knowledgecenter/rational_iea/rational_iea_welcome.html] module that teaches about the configuration of LDAP in ClearQuest: ClearQuest and LDAP Integration [http://www.ibm.com/support/knowledgecenter/api/content/rational_iea/com.ibm.iea.rcq/rcq/7.0/Operations/RCQ_ClearQuest_and_LDAP_Integration/player.html?dmuid=20080604144534947352]
+
+RELATED INFORMATION
+#ClearQuest support for LDAP [http://www.ibm.com/support/docview.wss?uid=swg21213574]
+LDAP support for SSL in ClearQuest [http://www.ibm.com/support/docview.wss?uid=swg21221136]

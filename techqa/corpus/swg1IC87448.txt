@@ -1,0 +1,130 @@
+Title: IBM IC87448: WEB SERVICE PROXY DOESN'T DISPLAY PROCESSING RULE IN WEBGUI. - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Fix packs for DataPower XML Security Gateway version 6.0 [http://www-01.ibm.com/support/docview.wss?uid=swg24034955]
+Fix packs for DataPower B2B Appliance version 6.0 [http://www-01.ibm.com/support/docview.wss?uid=swg24034956]
+Fix packs for DataPower Integration Appliance version 6.0 [http://www-01.ibm.com/support/docview.wss?uid=swg24034957]
+Fix packs for DataPower Low Latency Appliance version 6.0 [http://www-01.ibm.com/support/docview.wss?uid=swg24034958]
+Fix packs for DataPower Service Gateway version 6.0 [http://www-01.ibm.com/support/docview.wss?uid=swg24034959]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  WebSphere DataPower XI50 4.0.2
+   
+   Problem description :
+   The original configuration is created and working fine on
+   firmware version 3.8.0.13. After upgrade or import to firmware
+   version 4.0.2.x, the processing rules showed in Web Service
+   Proxy WebGUI is disappeared. The functionality of policy rules
+   still works fine.
+   
+   Reproduce steps:
+   N/A
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  DataPower customers configuring the Web Service Proxy processing
+   rules using something other than a WSDL Component Type of
+   Fragment Identifier.
+   
+   The Web Service Proxy is not correctly restoring processing
+   rules configured with a WSDL Component Type of something other
+   than Fragment Identifier to the policy tree.
+   
+   Fix will be available in next major releases.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC87448
+   
+   
+ * REPORTED COMPONENT NAME
+   DATAPOWER
+   
+   
+ * REPORTED COMPONENT ID
+   DP1234567
+   
+   
+ * REPORTED RELEASE
+   402
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-10-24
+   
+   
+ * CLOSED DATE
+   2012-12-18
+   
+   
+ * LAST MODIFIED DATE
+   2012-12-18
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R100 PSN
+   UP

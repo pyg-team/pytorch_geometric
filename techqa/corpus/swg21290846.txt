@@ -1,0 +1,41 @@
+Title: IBM http://ipv6 works okay but Installation Manager has IPv6 limitations with ftp addresses and floating license servers - United States
+
+Text:
+RN1.1; SRX; internet protocol; IM; file transfer protocol; RATLC00150302; use EPSV instead; 1290846 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ IBM Installation Manager has IPv6 limitations with FTP addresses and floating license servers. HTTP access using IPv6 is supported. 
+
+SYMPTOM
+Within in the Installation Manager, choosing to add a new repository (File > Preferences > Repositories) with an ftp address using IPv6 will cause an error when attempting to access the repository. Using an IPv6 address for a floating license server will not work (Manage License Wizard). 
+
+CAUSE
+IPv6 is supported for the HTTP repositories but not for FTP or floating license server addresses. 
+
+Additional public information about IPv6 compliance can be found at: 
+
+http://www.ibm.com/software/info/ipv6/compliance.jsp#R [http://www.ibm.com/software/info/ipv6/compliance.jsp#R]
+
+
+DIAGNOSING THE PROBLEM
+You will see error messages similar to: 
+
+ * 
+ * Downloading ftp://[2002:92c:801:17:9:34:114:102]/ftpusers/ipv6/pu/repository/repository.xml.
+ * 
+ * com.ibm.cic.common.transports.commons.net.FtpException: FTP reply=501.501 you are on IPv6 connection, use EPSV instead\n
+ * 
+ * com.ibm.cic.common.transports.commons.net.FTPClientUtil.checkNegativePermanent(FTPClientUtil.java:27)
+
+RESOLVING THE PROBLEM
+Move the repository server to an http:// repository or an ftp:// repository on an IPv4 ftp server. Host the license server on an IPv4 server. 
+
+
+
+
+
+
+
+
+
+Cross Reference information Segment Product Component Platform Version Edition Software Development Rational Application Developer for WebSphere Software Installation Manager Windows, Linux 7.0, 7.0.0.1, 7.0.0.2, 7.0.0.3, 7.0.0.4, 7.0.0.5 Software Development Rational Asset Manager Installation Manager Linux, Windows 7.0, 7.0.0.1, 7.0.0.2 Software Development Rational Business Developer Extension Installation Manager Linux, Windows 7.0, 7.0.0.3, 7.0.0.4 Software Development Rational Functional Tester Installation Manager Linux, Windows 7.0, 7.0.0.1, 7.0.0.2, 7.0.0.3, 7.0.1 Software Development Rational Manual Tester Installation Manager Windows 7.0, 7.0.0.1, 7.0.0.2, 7.0.0.3, 7.0.1 Software Development Rational Method Composer Installation Manager Windows, Linux 7.2 Software Development Rational Modeling Extension for Microsoft .NET Installation Manager Linux, Windows 7.0, 7.0.0.2, 7.0.0.3, 7.0.0.4, 7.0.0.5, 7.0.5 Software Development Rational Performance Tester Installation Manager Windows, Linux 7.0, 7.0.0.1, 7.0.0.2, 7.0.0.3, 7.0.1 Software Development Rational Software Architect Installation Manager Linux, Windows 7.0, 7.0.0.1, 7.0.0.2, 7.0.0.3, 7.0.0.4, 7.0.0.5 Software Development Rational Software Modeler Installation Manager Windows, Linux 7.0, 7.0.0.1, 7.0.0.2, 7.0.0.3, 7.0.0.4, 7.0.5 Software Development Rational Systems Developer Installation Manager Linux, Windows 7.0, 7.0.0.1, 7.0.0.2, 7.0.0.3, 7.0.0.4, 7.0.5 Data & Information Management Rational Data Architect Installation Manager Linux, Windows 7.0, 7.0.0.1, 7.0.0.2, 7.0.0.3, 7.0.0.4

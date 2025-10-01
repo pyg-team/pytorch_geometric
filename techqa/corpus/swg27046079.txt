@@ -1,0 +1,95 @@
+Title: IBM Ask the Experts session: IBM Client Application Access - 28 July 2015 [Audio, Presentation, Q&A, Video] - United States
+
+Text:
+lste_webcast STEwebcastDocument WEBCAST
+
+ABSTRACT
+ IBM hosted an Ask the Experts session with Development and Support Engineers on July 28, 2015. The topic was "IBM Client Application Access (ICAA)" with Billy Ray Dela Cruz from the IBM Notes/Domino team presenting. 
+
+CONTENT
+ 
+
+ * Topic: IBM Client Application Access 
+ * Date: Tuesday, July 28, 2015 
+ * Time: 11:00 AM EDT (15:00 UTC/GMT, UTC-4 hours) for 60 minutes
+
+Presentation ATE_IBMClientAppAccess_072815.pdf [/support/docview.wss?uid=swg27046079&aid=2]ATE_IBMClientAppAccess_072815.pdf [/support/docview.wss?uid=swg27046079&aid=1] 
+
+ * What is IBM Client Application Access? 
+ * ICAA supported environment 
+ * Installing and Configuring ICAA (including Client-side Notes.INI parameters) 
+ * Known issues and caveats
+
+Audio & Video  * Video [https://youtu.be/Erm7Tc47BFc] 
+
+
+ICAA_AsktheExperts_July2015.mp3 [/support/docview.wss?uid=swg27046079&aid=4]ICAA_AsktheExperts_July2015.mp3 [/support/docview.wss?uid=swg27046079&aid=3] 
+ * 15 minutes 10 seconds
+
+Q&A 
+Q1. Why did IBM remove the brand 'Notes' from this product? 
+We looked at a branding change as we are now supporting IBM Verse. So we wanted to have a name which reflects support for IBM SmartCloud, IBM Verse. 
+
+
+Q2. When will see a Safari version (for iPhones/iPads)? 
+ICAA on (for) Mac is available now. 
+
+
+Q3. Does "on Mac" mean Safari and/or iPhones/iPads? 
+This is Mac only; no tablet (iPad support). On Mac, it's a standalone application. Not running inside any browser due to Mac limitation. 
+
+
+Q4. Will we see a version for Safari? 
+Since it's running as a standalone app, support for Safari doesn't matter. Meaning, clicking on a link from Notes web from Safari will open the document in ICAA. 
+
+
+Q5. Does IBM have a plan to support ICAA on iPads or iPhones? 
+ICAA supports working with your Notes/Domino applications. These apps can have lots of native code (LotusScript, Formula. ND Design elements...). Also these require custom code which can't be supported on iPad/iPhone. 
+
+
+Q6. Thanks for the info. So no plans for ICAA "ever" on an iPad/iPhone? 
+No plans as I see at least for the next year for iPad/iPhone. 
+
+
+Q7. Any chance of getting Chrome support any time this decade??? 
+Chrome is not supporting the NPAPI which we use internally. We continue to look at ways for supporting Chrome, but nothing on the immediate horizon. 
+
+
+Q8. Can this be installed on top of a Notes client installation? 
+For Windows, no, as there are some common environment settings/registry used by both. 
+For Mac, yes. 
+
+
+Q9. Is ID vault supported by ICAA? 
+Yes 
+
+
+Q10. Does this support On-Prem? 
+-- This ICAA version 1.0 is for SmartCloud only. 
+-- For on-prem, you can use Notes Browser Plug-in 9.0.1 FP4, which has almost identical functionality (except for Mac support). We are looking at a on-prem version of ICAA release shortly. 
+
+
+Q11. So if you have Notes connected to SmartCloud Notes and using apps, you can use Notes for mails & ICAA for apps on the same computer ? 
+You really don't need both. You need ICAA only if you are using WEB interface for Mail (Notes web, or IBM Verse). If you have Notes Client, there's no need for ICAA. It's giving you Mail + App access . 
+
+
+Q12. I'm using Verse, so I need ICAA. But I'm also using Notes some times, and I'd like to have one installation on 1 computer as i have now with NBP. NBP as an installation option in Notes installation. 
+If you want both there's an option in Notes client installation to install NBP also. Please check my blog, Raj Patil @ https://www.ibm.com/developerworks/community/blogs/rajpatil?lang=en [https://www.ibm.com/developerworks/community/blogs/rajpatil?lang=en] 
+
+
+Q13. Is it possible to switch users? And how? 
+Switch ID is disabled in ICAA inside browsers. You can switch users during login dialog. 
+
+
+About Ask the Experts sessions IBM Collaboration Solutions (Lotus) Support wants to help you take full advantage of your products. "Ask the Experts Q&A" is a program where the main focus of the sessions is having technical experts answer your questions. 
+
+Join us for our Open Mic Webcast series as technical experts share their knowledge and answer your questions. These webcasts are designed to address specific topics and provide an in-depth and focused technical exchange in a convenient online webcast format. For more information about our Open Mic webcasts, visit the IBM Collaboration Solutions Support Open Mics [http://www.ibm.com/software/lotus/support/lotus-open-mics/] page. 
+
+
+
+ORIGINAL PUBLICATION DATE
+ 2015/7/2 
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Messaging Applications IBM Notes Linux, Windows 9.0.1, 9.0

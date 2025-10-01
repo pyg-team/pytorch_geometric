@@ -1,0 +1,150 @@
+Title: IBM How to automate the generation of shared EARs using ANT tasks - United States
+
+Text:
+RAD; RSA4WS; ANT; RATLC01499658; RFE; import; export; EAR; shared; shared EAR; automate TECHNOTE (FAQ)
+
+QUESTION
+ How can you automate the generation of shared EARs using ANT tasks in IBM Rational Application Developer for WebSphere Software and Rational Software Architect for WebSphere Software? 
+
+CAUSE
+In previous versions of Rational Software Architect for WebSphere and Rational Application Developer, you could not use ANT to import or export shared EARs. 
+
+A shared EAR contains binary modules. Binary modules are Java EE modules (for example, EJB, web, connector, application client, and utility jars) that are left in binary state, that is, in a single .jar, .war, or .rar file) within the EAR. Using binary modules instead of source modules improves the product performance.
+
+
+ANSWER
+Starting with version 7.5.5.1, it is possible to automatically import/export shared EARs using ANT tasks. 
+
+The existing ANT Tasks earImport and earExport now have an additional attribute: 
+
+ 
+
+Attribute Name Description Required shared Whether to export or import the EAR project as a Shared EAR (an EAR that contains binary modules). Possible values= "true", "false" No, default is false 
+
+Example usage 1: 
+
+Assuming that you have an EAR project called testShared, the execution of the following ANT Task will export it as a shared EAR: 
+
+
+<projectname="project"default="default">
+<targetname="default">
+<earExportearexportfile="C:\temp\file1.ear"
+earprojectname="testShared"shared="true"/>
+</target>
+</project> 
+
+
+
+
+
+The output will be something like: 
+
+
+
+Buildfile: C:\workspace\TestANT\build.xml
+
+default:
+[earExport] Exporting: testShared (Begin)
+[earExport] EARExport.sharedSource
+[earExport] (Begin)
+[earExport] ... subtask: Exporting archive 'file1.ear'. Refreshing '/testShared'.
+[earExport] ... subtask: Exporting archive 'file1.ear'. Exporting archive 'testSharedEJB.jar'. ejbs/B1Home.class
+[earExport] ... subtask: Exporting archive 'file1.ear'. Exporting archive 'testSharedEJB.jar'. ejbs/B1Bean.class
+[earExport] ... subtask: Exporting archive 'file1.ear'. Exporting archive 'testSharedEJB.jar'. ejbs/B1.class
+[earExport] ... subtask: Exporting archive 'file1.ear'. Exporting archive 'testSharedEJB.jar'. META-INF/MANIFEST.MF
+[earExport] ... subtask: Exporting archive 'file1.ear'. Exporting archive 'testSharedEJB.jar'. ejbs
+[earExport] ... subtask: Exporting archive 'file1.ear'. Exporting archive 'testSharedEJB.jar'. ejbs/B1Bean.java
+[earExport] ... subtask: Exporting archive 'file1.ear'. Exporting archive 'testSharedEJB.jar'. ejbs/B1.java
+[earExport] ... subtask: Exporting archive 'file1.ear'. Exporting archive 'testSharedEJB.jar'. ejbs/B1Home.java
+[earExport] ... subtask: Exporting archive 'file1.ear'. Exporting archive 'testSharedEJB.jar'. META-INF
+[earExport] ... subtask: Exporting archive 'file1.ear'. Exporting archive 'testSharedEJB.jar'. META-INF/ibm-ejb-jar-bnd.xmi
+[earExport] ... subtask: Exporting archive 'file1.ear'. Exporting archive 'testSharedEJB.jar'. META-INF/ejb-jar.xml
+[earExport] ... subtask: Exporting archive 'file1.ear'. META-INF/application.xml
+[earExport] ... subtask: Exporting archive 'file1.ear'. Exporting archive 'testSharedWeb.war'. META-INF/MANIFEST.MF
+[earExport] ... subtask: Exporting archive 'file1.ear'. Exporting archive 'testSharedWeb.war'. WEB-INF/ibm-web-bnd.xmi
+[earExport] ... subtask: Exporting archive 'file1.ear'. Exporting archive 'testSharedWeb.war'. WEB-INF/web.xml
+[earExport] ... subtask: Exporting archive 'file1.ear'. Exporting archive 'testSharedWeb.war'. WEB-INF
+[earExport] ... subtask: Exporting archive 'file1.ear'. Exporting archive 'testSharedWeb.war'. META-INF
+[earExport] ... subtask: Exporting archive 'file1.ear'. Exporting archive 'testSharedWeb.war'. WEB-INF/lib
+[earExport] ... subtask: Exporting archive 'file1.ear'. Exporting archive 'testSharedWeb.war'. WEB-INF/ibm-web-ext.xmi
+[earExport] ... subtask: Exporting archive 'file1.ear'. Exporting archive 'testSharedWeb.war'. WEB-INF/classes
+[earExport] ... subtask: Exporting archive 'file1.ear'. META-INF
+[earExport] ... subtask: Exporting archive 'file1.ear'. .settings/com.ibm.etools.j2ee.teamshare
+[earExport] ... subtask: Exporting archive 'file1.ear'. .settings/org.eclipse.wst.common.component
+[earExport] (Done)
+[earExport] EARExport completed to file1.ear
+BUILD SUCCESSFUL
+Total time: 563 milliseconds 
+
+
+
+
+
+In the above output, you can see that the two following files, characteristic of a shared EAR, have been included in the exported EAR: 
+
+
+.settings/com.ibm.etools.j2ee.teamshare
+.settings/org.eclipse.wst.common.component 
+
+
+
+
+
+Example usage 2: 
+
+To import the EAR exported above into a new empty workspace, you could run this other ANT script: 
+
+
+<?xml version="1.0" encoding="UTF-8"?>
+<projectname="project"default="default">
+
+<targetname="default">
+<earImportearfile="C:\temp\file1.ear"
+earprojectname="testShared"shared="true"/>
+</target>
+</project> 
+
+
+
+
+
+The output would be something like: 
+
+
+Buildfile: C:\workspace\TestANT\build2.xml
+
+default:
+[earImport] Importing: C:\temp\file1.ear (Begin)
+[earImport] (Begin)
+[earImport] ... subtask: Importing archive 'C:/temp/file1.ear'. Opening 'file1'.
+[earImport] ... subtask: Importing archive 'C:/temp/file1.ear'. Refreshing '/file1'.
+[earImport] ... subtask: Importing archive 'C:/temp/file1.ear'. Configuring targeted runtimes...
+[earImport] (SetName)
+[earImport] ... subtask: Importing archive 'C:/temp/file1.ear'. Installing EAR facet...
+[earImport] (Done)
+[earImport] EARImport completed from file C:\temp\file1.ear
+BUILD SUCCESSFUL
+Total time: 1 second 
+
+
+
+
+
+and the project would look like the following screenshot in the Enterprise Explorer: 
+
+
+[/support/docview.wss?uid=swg21428793&amp;aid=1]
+
+
+RELATED INFORMATION
+#Request For Enhancement 4712 [http://www.ibm.com/developerworks/support/rational/rfe/execute?use_case=viewChangeRequest&CR_ID=4712]
+Using binary modules [http://www.ibm.com/developerworks/rational/library/07/0619_karasiuk_sholl/]
+Interactive import/export of shared EARs [http://publib.boulder.ibm.com/infocenter/radhelp/v8/index.jsp?topic=/com.ibm.javaee.doc/topics/timpexbinmod.html]
+earImport Ant Task [http://publib.boulder.ibm.com/infocenter/radhelp/v8/index.jsp?topic=/com.ibm.ant.tasks.doc/topics/tantearImport.html]
+
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Software Development Rational Software Architect for WebSphere Software Ant Windows 7.5.5.1, 7.5.5.2, 7.5.5.3, 7.5.5.4, 7.5.5.5, 8.0, 8.0.1, 8.0.2, 8.0.3, 8.0.4

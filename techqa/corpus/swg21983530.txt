@@ -1,0 +1,13 @@
+Title: IBM MVFS not loaded on Windows Server 2008 R2 and Windows 7 64-bit OS - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Is Clearcase Multiversion File System (MVFS) compatible with Windows Server 2008 R2 and Windows 7 64-bit? 
+
+CAUSE
+Microsoft is deprecating use of SHA-1 signing in favor of SHA-256. New drivers should be signed with a SHA-256 certificate. Unfortunately, WIndows Server 2008 R2 and Windows 7 GA are not compatible with SHA-256; updates should be installed on Windows Server 2008 R2 and Windows 7 64 bit so new drivers can be loaded.
+
+ANSWER
+Clearcase Multiversion File System is compatible with Windows Server 2008 R2 and Windows 7 64-bits, so Windows Server 2008 R2 and Windows 7 64-bit OS should have installed Microsoft updates to enable drivers built with SHA-256 to load. Refer to https://support.microsoft.com/en-us/kb/3033929 [https://support.microsoft.com/en-us/kb/3033929].

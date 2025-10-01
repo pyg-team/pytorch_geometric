@@ -1,0 +1,122 @@
+Title: IBM Collecting Data: WebSphere Portal and eTrust SiteMinder Integration Issues - United States
+
+Text:
+mustgather; mustgather; mustgather; etrust; netegrity; siteminder; wps; portal; authentication; authenticate. site minder; MustGatherDocument; collecting data; collecting data; collecting data RECOMMENDED RESOURCES
+
+ABSTRACT
+ Collecting data if you have an integration issue between IBM® WebSphere® Portal and Computer Associates eTrust SiteMinder™. Gathering this MustGather information before calling IBM Support will help you understand the problem and save time analyzing the data. 
+
+CONTENT
+If you have already contacted Support, begin collecting WebSphere Portal and SiteMinder integration MustGather data. Otherwise, refer to Collecting Data: Read first for IBM WebSphere Portal. [http://www.ibm.com/support/docview.wss?uid=swg21672901] 
+
+Collecting WebSphere Portal/SiteMinder Integration information 
+
+I. Confirm the following information:
+Exact versions of all components involved in the environment. These include: 
+
+ * Operating system 
+ * WebSphere Portal 
+ * WebSphere Application Server (BASE/ND/DMgr components) 
+ * WebSphere Process Server (if deployed) 
+ * SiteMinder (Policy server, webagent, SDK version) 
+ * Database Server 
+ * LDAP server 
+ * HTTP server
+
+Are WebSphere Portal and SiteMinder running on the same machine? 
+Are you using reference material to set up the environment (IBM Redbooks, techdocs, InfoCenter, administration guides, or developerWorks® articles). If you are using a reference such as an IBM Redbook, it can be helpful to include the page number or section where you started experiencing your current issue. 
+What are the steps to reproduce your current issue? 
+Is your goal to have SiteMinder handle only authentication for WebSphere Portal, or both authentication and authorization? 
+
+II. Collect tracing during reproduction of the issue if possible: 
+
+Authentication 
+If experiencing an authentication issue, do the following to enable tracing: 
+
+1. Log in to the WebSphere Administrative Console / Integrated Solutions Console. 
+2. Click: 
+
+(6.1) Security > Secure administration, applications, and infrastructure > ([+] Web Security) > Trust association > Interceptors > SiteMinderTrustAssociationInterceptor > Custom Properties 
+
+or 
+
+(7.0, 8.0, 8.5) Security > Global security > Trust association > Interceptors > SiteMinderTrustAssociationInterceptor > Custom Properties 
+
+and add the following custom property: 
+logtowas=yes 
+
+3. Click OK. 
+
+4. Set WebSphere Security tracing in the WebSphere Administrative Console / Integrated Solutions Console. To do so, use these steps: 
+
+a. Navigate to Troubleshooting > Logs and Trace > WebSphere_Portal > Diagnostic Trace 
+b. Ensure that "Enable Log" is selected (checked) 
+c. Click on "Change Log Detail Levels," and then change trace string to: 
+
+com.ibm.ws.security.web.*=all:com.ibm.wps.engine.commands.*=all: 
+com.ibm.wps.services.authentication.*=all 
+(all on one line, no spaces and colon (:) separated values) 
+
+d. Click on Apply. Save and synchronize your configuration. 
+
+NOTE: If you cannot access the WebSphere Application Server Administrative Console / Integrated Solutions Console, you can specify the trace manually. To do so, use these steps: 
+
+a. Edit the file <wp_profile>\config\cells\<cell>\ 
+nodes\<node>\servers\WebSphere_Portal\server.xml 
+
+b. Specify the value for startupTraceSpecification as : 
+
+*=info:com.ibm.ws.security.web.*=all:com.ibm.wps.engine.commands 
+.*=all:com.ibm.wps.services.authentication.*=all 
+
+c. Save the file. 
+
+5. Modify the SiteMinder asa.properties (WAS/classes). Set the following properties 
+loglevel=”3” 
+logfilename=”full path to new log file” 
+logfile=”Yes” 
+logconsole=”No” 
+logappend=”No” 
+
+6. Edit the WebAgent.conf for the SM TAI, located in the TAI binary installation directory --OR-- locate the Agent Config object in the SiteMinder admin console for the SM TAI 
+Set the following properties: 
+loglevel=”3” 
+logfilename=”full path to (second) log file” 
+logfile=”Yes” 
+logconsole=”No” 
+logappend=”No” 
+
+7. Restart the WebSphere_Portal application server. 
+
+8. Reproduce your issue and document the steps taken to reproduce the problem. 
+
+
+Authorization 
+If experiencing an authorization issue when eTrust SiteMinder is set up to handle authorization for WebSphere Portal, do the following to enable tracing: 
+
+a. Follow same steps 1-4 above in for 'Authentication' to enable trace but instead use the following traceString: 
+
+com.ibm.wps.ac.esm.*=all=enabled:com.ibm.wps.ac.authtable.*=all 
+
+b. Reproduce your issue and document your test case. 
+
+III. Along with the above information, send the following files to IBM WebSphere Portal Support: 
+ * wpcollector [http://www-01.ibm.com/support/knowledgecenter/SSHRKX_8.5.0/mp/trouble/tbl_apdt_over.dita] output 
+ * Archive of <WP_root>/shared/app/config/ directory 
+ * <wp_profile>/config/cells/<cell>/nodes/<node>/resources.xml (or wpcollector will collect this) 
+ * <wp_profile>/config/cells/<cell>/security.xml (or wpcollector will collect this) 
+ * WebAgent.conf or AsaAgent-assertion.conf (if using SiteMinder agent 6.0) 
+ * From <wp_profile>/logs/WebSphere_Portal (or wpcollector will collect these):  * SystemOut.log 
+    * SystemErr.log 
+    * trace.log and historical copies
+   
+   
+
+
+Send the files to IBM Support by using the instructions outlined in Exchanging information with IBM Technical Support for problem determination [http://www.ibm.com/support/docview.wss?rs=688&uid=swg21201571]. Note: When sending in logs for review, include any relevant screenshots, timestamps, userIds, etc. in order to expedite analysis of the issue. 
+
+Related Information 
+
+ * IBM Support Portal: WebSphere Portal Troubleshooting [http://www.ibm.com/support/entry/portal/Troubleshooting/Software/WebSphere/WebSphere_Portal] [http://www.ibm.com/support/docview.wss?rs=688&uid=swg21201571] 
+ * WebSphere Portal Knowledge Center: Troubleshooting [http://www-01.ibm.com/support/knowledgecenter/SSHRKX_8.5.0/mp/trouble/troubleshooting.dita] 
+ * Collecting Data: Read first for WebSphere Portal [http://www.ibm.com/support/docview.wss?rs=688&uid=swg21672901]

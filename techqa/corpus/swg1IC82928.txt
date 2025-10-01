@@ -1,0 +1,199 @@
+Title: IBM IC82928: WEBSPHERE MQ FTE: THE PENDING TRANSFER HANGS IN RECOVERING STATUS WHEN MANY TRANSFERS ARE WRITING TO THE SAME FILE - United States
+
+Text:
+  A FIX IS AVAILABLE
+WebSphere MQ File Transfer Edition V7.0 Fix Pack 7.0.4.2 [http://www-01.ibm.com/support/docview.wss?uid=swg24033115]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  WebSphere MQ FTE:  The pending transfer hangs in recovering
+   status when many transfers are writing to the same destination
+   file.
+   
+   DESCRIPTION:
+   When many transfers are writing to the same file, the agent may
+   hang after an IO exception.
+   
+   There are some I/O errors in the FTE trace, such as:
+   c.i.w.transfer.impl.TransferReceiverRunnable
+   --  d  waitBeforeRecovery data [A recoverable I/O error has
+   occurred - entering recovery]
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  If an IO error occurs when attempting to write chunks of data to
+   a destination file, there is a chance that a timing window will
+   be hit which will cause the agent to hang. After this point no
+   further transfers will be processed.
+   
+   One possible cause of IO errors could be the failure to obtain a
+   file lock. In a system with many transfers writing to the same
+   file there is a high chance such an IO exception will occur due
+   to high contention for the same file lock from multiple
+   transfers.
+   
+   When this problem is encountered javacores will show that for a
+   given transfer ID there will be at least two TransferReceiver
+   threads, at least one with each of the following stacks:
+   
+   "TransferReceiver[THE_TRANSFER_ID]"
+    J9VMThread:0x6B74DD00, j9thread_t:0x6AF38CF8,
+   java/lang/Thread:0x0404BCE8, state:CW, prio=5
+         (native thread ID:0xFF0, native priority:0x5, native
+   policy:UNKNOWN)
+        Java callstack:
+             at java/lang/Object.wait(Native Method)
+             at java/lang/Object.wait(Object.java:167)
+             at
+   com/ibm/wmqfte/transfer/frame/impl/TransferFrameReceiverImpl.wai
+   tForOutstandingIO(TransferFrameReceiverImpl.java:960)
+             at
+   com/ibm/wmqfte/transfer/impl/TransferReceiverRunnable.run(Transf
+   erReceiverRunnable.java:758)
+             at java/lang/Thread.run(Thread.java:736)
+             at
+   com/ibm/wmqfte/thread/FTEThread.run(FTEThread.java:52)
+   
+   "TransferReceiver[THE_TRANSFER_ID]"
+    J9VMThread:0x6B6D3E00, j9thread_t:0x6AD7F41C,
+   java/lang/Thread:0x0583C770, state:CW, prio=5
+         (native thread ID:0x256C, native priority:0x5, native
+   policy:UNKNOWN)
+        Java callstack:
+             at java/lang/Object.wait(Native Method)
+             at java/lang/Object.wait(Object.java:196(Compiled
+   Code))
+             at java/lang/Thread.join(Thread.java:616)
+             at
+   com/ibm/wmqfte/transfer/impl/TransferReceiverImpl.waitForThreadT
+   oEnd(TransferReceiverImpl.java:274)
+             at
+   com/ibm/wmqfte/transfer/impl/TransferReceiverImpl.stop(TransferR
+   eceiverImpl.java:207)
+             at
+   com/ibm/wmqfte/transfer/impl/TransferReceiverRunnable.run(Transf
+   erReceiverRunnable.java:322)
+             at java/lang/Thread.run(Thread.java:736)
+             at
+   com/ibm/wmqfte/thread/FTEThread.run(FTEThread.java:52)
+   
+   Successive javacores will show the state of these threads will
+   never progress beyond this point due to deadlock.
+   
+   USERS AFFECTED:
+   All
+   
+   PLATFORMS AFFECTED:
+   All
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The code has been altered to ensure that the above deadlock
+   condition can no longer occur. If an IO exception occurs, the
+   transfer can enter recovery as normal.
+   
+   The fix for this APAR is currently targeted for inclusion in fix
+   pack 7.0.4.2.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC82928
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ FILE TRANSF
+   
+   
+ * REPORTED COMPONENT ID
+   5724R1000
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-04-25
+   
+   
+ * CLOSED DATE
+   2012-05-28
+   
+   
+ * LAST MODIFIED DATE
+   2012-05-28
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ FILE TRANSF
+   
+   
+ * FIXED COMPONENT ID
+   5724R1000
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R703 PSY
+   UP
+   
+   
+ * R704 PSY
+   UP

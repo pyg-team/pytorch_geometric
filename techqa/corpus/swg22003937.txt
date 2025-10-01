@@ -1,0 +1,28 @@
+Title: IBM Errors in WebSphere Application Server SystemOut.log: SRVE0190E: File not found: /js/datepicker/locales/bootstrap-datepicker.en-US.js - United States
+
+Text:
+report; builder; rs; clm; jrs; jazz; reporting; service; WAS; websphere; logs TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Errors reported in the application server logs for IBM Report Builder indicate that a file called bootstrap-datepicker.en-US.js was not found 
+
+SYMPTOM
+In the WebSphere Application Server SystemOut.log file, you see repeated occurrences of the error below:
+
+
+2/22/17 10:47:47:084 EDT] 000000a9 filter E com.ibm.ws.webcontainer.filter.FilterInstanceWrapper doFilter SRVE8109W: Uncaught exception thrown by filter JRSServletRequestFilter: java.io.FileNotFoundException: SRVE0190E: File not found: /js/datepicker/locales/bootstrap-datepicker.en-US.js
+
+
+
+CAUSE
+This was identified as a product defect under APAR PI62764 [http://www-01.ibm.com/support/docview.wss?uid=swg1PI62764] which was resolved in CLM 6.0.2. 
+
+ENVIRONMENT
+This seems to affect deployments that utilize WebSphere Application Server.
+
+RESOLVING THE PROBLEM
+
+
+
+ 1. Restart the application server profile. 
+ 2. Clear the WebSphere caches as outlined in the How to clear the WebSphere class caches [http://www-01.ibm.com/support/docview.wss?uid=swg21607887] technote.

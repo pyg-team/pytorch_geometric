@@ -1,0 +1,16 @@
+Title: IBM Integration Framework sending the same message twice to an interface table - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Example situation: 2 records were created in an interface table for a single Invoice status change but they have a different TRANSID value for the same status change in a different period of time. 
+
+CAUSE
+Maximo/MIF was writing to the interface table. What happened is that server went down after the interface table entries were updated but before the message in the JMS queue was deleted. When the server was restarted, that JMS message got picked up and reprocessed to the interface table a second time.
+
+RESOLVING THE PROBLEM
+A workaround for this issue could be to implement a unique index on the Message ID column in MXOUT_INTER_TRANS. This ID is from the JMS message. In this case, the second processing of the message would result in a unique constraint error on the insert into that table, unless the customer is purging that table as messages are pulled off the interface table. 
+
+Maximo/MIF should send an email about this error to the administrator; and Maximo should change the message's status to ERROR.
+Users can check and delete the message from the Message Reprocessing application.

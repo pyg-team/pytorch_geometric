@@ -1,0 +1,69 @@
+Title: IBM VMM attempts to incorrectly write to LDAP instead of property extension database - United States
+
+Text:
+vmm; NoPermissionException; property extension; attribute TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+If configured incorrectly, VMM may try to write a property's value to LDAP when it should write it to the property extension database. This can result in LDAP: error code 50.
+
+SYMPTOM
+SystemOut.log contains:
+LdapConnectio 1 com.ibm.ws.wim.adapter.ldap.LdapConnection modifyAttributes(Name name, ModificationItem[] mods) Exception caught: javax.naming.NoPermissionException: [LDAP: error code 50 - Insufficient Access Rights]; remaining name 'CN=WPSADMIN,DC=IBM,DC=COM'
+at com.sun.jndi.ldap.LdapCtx.mapErrorCode(LdapCtx.java:3008)...
+at com.ibm.ws.wim.adapter.ldap.LdapConnection.modifyAttributes(LdapConnection.java:1836)...
+at com.ibm.websphere.wim.ServiceProvider.update(ServiceProvider.java:413)
+...
+
+
+CAUSE
+The Virtual Member Manager (VMM) configuration is incomplete.
+
+
+DIAGNOSING THE PROBLEM
+Enable the tracing specified by the PUMA MustGather. The trace.log will show PUMA's call to VMM and VMM's subsequent processing similar to the following: 
+
+
+...ServiceProvid > com.ibm.websphere.wim.ServiceProvider WIM_API update ENTRY 
+<?xml version="1.0" encoding="UTF-8"?>
+<sdo:datagraph ...>
+...
+<wim:Root>
+<wim:entities xsi:type="wim:PersonAccount">
+<wim:identifier externalName="CN=wpsadmin,DC=IBM,DC=COM" repositoryId="IBM_LDAP" uniqueId="CN=WPSADMIN,DC=IBM,DC=COM" uniqueName="CN=wpsadmin,DC=IBM,DC=COM"/> ... <wim:property1>value1</wim:property1>
+</wim:entities></wim:Root></sdo:datagraph>
+...
+... ProfileManage > com.ibm.ws.wim.ProfileManager containLAProperties(reposId,entity) ENTRY
+... ProfileManage 3 com.ibm.ws.wim.ProfileManager containLAProperties(reposId,entity) needCheck=false, delProNameList=[]
+... ProfileManage 3 com.ibm.ws.wim.ProfileManager containLAProperties(reposId,entity) entity type=PersonAccount, LA props=[property1]
+... ProfileManage 3 com.ibm.ws.wim.ProfileManager containLAProperties(reposId,entity) LA props(after removing repo props)=[]
+... ProfileManage < com.ibm.ws.wim.ProfileManager containLAProperties(reposId,entity) RETURN false
+...
+... LdapConnectio > com.ibm.ws.wim.adapter.ldap.LdapConnection JNDI_CALL modifyAttributes(Name name, ModificationItem[] mods) ENTRY CN=WPSADMIN,DC=IBM,DC=COM [Add attribute: property1: value1]
+...
+... LdapConnectio 1 com.ibm.ws.wim.adapter.ldap.LdapConnection modifyAttributes(Name name, ModificationItem[] mods) Exception caught: javax.naming.NoPermissionException: [LDAP: error code 50 - Insufficient Access Rights]; remaining name 'CN=WPSADMIN,DC=IBM,DC=COM' at com.sun.jndi.ldap.LdapCtx.mapErrorCode(LdapCtx.java:3008)
+... at com.ibm.ws.wim.adapter.ldap.LdapConnection.modifyAttributes(LdapConnection.java:1836)...
+at com.ibm.websphere.wim.ServiceProvider.update(ServiceProvider.java:413)
+
+
+Note that containLAProperties initially recognizes that the property extension database can store values for property1 but then decides that the LDAP can store this property's value as well ("after removing repo props", since property1 is not designated as unsupported by this LDAP) so the property extension database is not required in this case.
+
+
+RESOLVING THE PROBLEM
+Designate all properties to be stored in the property extension database as not supported by the various LDAP repositories participating in the realm. The wp-update-standalone-ldap-attribute-config or wp-update-federated-ldap-attribute-config task can be used to designate an attribute as unsupported per steps 6-8 of the InfoCenter section linked below (WebSphere Portal 6.1.5/AIX). Refer to the appropriate section in the InfoCenter for your environment. 
+
+ 
+
+When property1 is designated as unsupported, <profile>/config/cells/<cell name>/wim/config/wimconfig.xml contains: 
+
+
+<config:repositories xsi:type="config:LdapRepositoryType" ... id="IBM_LDAP" ...>
+...
+<config:attributeConfiguration>
+...
+<config:propertiesNotSupported name="property1" />
+...
+</config:attributeConfiguration>
+
+RELATED INFORMATION
+ InfoCenter: Mapping attributes [http://publib.boulder.ibm.com/infocenter/wpdoc/v6r1/index.jsp?topic=/com.ibm.wp.ent.doc_v615/install/aix_map_attributes.html]
+PUMA MustGather [http://www.ibm.com/support/docview.wss?uid=swg21312818]

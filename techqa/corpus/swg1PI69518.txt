@@ -1,0 +1,189 @@
+Title: IBM PI69518: GROUP SEARCH FAILS WITH A CLASSCAST EXCEPTION AFTER UPGRADE TO 8.5.5.10 - United States
+
+Text:
+  FIXES ARE AVAILABLE
+PI69518:group search fails with a classcast exception after upgrade to 8.5.5.10 [http://www-01.ibm.com/support/docview.wss?uid=swg24042833]
+8.5.5.11: WebSphere Application Server V8.5.5 Fix Pack 11 [http://www-01.ibm.com/support/docview.wss?uid=swg24043005]
+8.5.5.12: WebSphere Application Server V8.5.5 Fix Pack 12 [http://www-01.ibm.com/support/docview.wss?uid=swg24043844]
+8.5.5.13: WebSphere Application Server V8.5.5 Fix Pack 13 [http://www-01.ibm.com/support/docview.wss?uid=swg24044479]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  After upgrade to 8.5.5.10,  there are cases when group
+   search fails from "Users and Groups" -> "Administrative
+   Groups" panel.   When it happens in GUI, the same issue
+   happens with AdminTask listRegistryGroups command.
+   
+   Seeing the following in systemout.log:
+   [9/20/16 15:37:21:077 EDT] 00000076 GroupDetailAc W
+   listRegistryGroups: Command not successful:
+   java.lang.ClassCastException: javax.management.ObjectName
+   incompatible
+   with javax.management.AttributeList
+   
+   **************************************************
+   
+   In traces we see stack:
+   
+   [9/20/16 15:36:05:658 EDT] 00000076 SecurityRealm 3   exception
+   caught
+   java.lang.ClassCastException:
+   javax.management.ObjectName incompatible with
+   javax.management.AttributeList
+   at
+   com.ibm.ws.security.admintask.securityDomain.SecurityRealmProvid
+   er.getLD
+   APProps(SecurityRealmProvider.java:1420)
+   at
+   com.ibm.ws.security.admintask.securityDomain.SecurityRealmProvid
+   er.getLD
+   APList(SecurityRealmProvider.java:1363)
+   at
+   com.ibm.ws.security.admintask.securityDomain.SecurityRealmProvid
+   er.listR
+   egistryGroups(SecurityRealmProvider.java:402)
+   at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+   at
+   sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessor
+   Impl.jav
+   a:95)
+   at
+   sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethod
+   Accessor
+   Impl.java:56)
+   at java.lang.reflect.Method.invoke(Method.java:620)
+   at
+   com.ibm.websphere.management.cmdframework.provider.SimpleCommand
+   Provider
+   .executeReal(SimpleCommandProvider.java:156)
+   at
+   com.ibm.websphere.management.cmdframework.provider.SimpleCommand
+   Provider
+   .execute(SimpleCommandProvider.java:142)
+   at
+   com.ibm.websphere.management.cmdframework.provider.SimpleAdminCo
+   mmand.ex
+   ecute(SimpleAdminCommand.java:57)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  All users of IBM WebSphere Application      *
+   *                  Server                                      *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: java.lang.ClassCastException when       *
+   *                      group search is performed.              *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   There was a bug in the code that uses a registry object that
+   may not contain necessary attributes for the group search and
+   causes ClassCastException.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The bug was fixed in the code to correct the exception.
+   
+   The fix for this APAR is currently targeted for inclusion in
+   fix pack 8.5.5.11.  Please refer to the Recommended Updates
+   page for delivery information:
+   http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI69518
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBS APP SERV N
+   
+   
+ * REPORTED COMPONENT ID
+   5724H8800
+   
+   
+ * REPORTED RELEASE
+   850
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-09-20
+   
+   
+ * CLOSED DATE
+   2016-09-27
+   
+   
+ * LAST MODIFIED DATE
+   2016-10-04
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBS APP SERV N
+   
+   
+ * FIXED COMPONENT ID
+   5724H8800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R850 PSY
+   UP

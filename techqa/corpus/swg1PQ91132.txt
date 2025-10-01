@@ -1,0 +1,119 @@
+Title: IBM PQ91132: If a call to the PRESTORE exit fails, no record is written to th e RM tracking file to clean up the LS. - United States
+
+Text:
+z/os SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DUPLICATE OF ANOTHER APAR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When leaving the zOS RM up for a number of days, the customer
+   stored enough objects that the PRESTOR exit had been called more
+   than 32K times and exceed the load limit.  When the exit started
+   to fail to be loaded, we did get an error saying we had reached
+   the load limit a CSV002I.  But the RM did do the following -
+    When RM failed to execute the PRESTOR it sent back an XML reply
+   to the API with RC = 0 and Reason = 0 instead of the RC for the
+   failure.  Thus, the RC = 0 and Reason = 0 in the XML reply
+   misled the API to think that the STORE was completed
+   successfully, which explains why the EndTrans occurred.  The
+   EndTrans failed with "SQLCODE = 100, NOT FOUND: ROW NOT FOUND
+   FOR...." because the store never occurred and the tracking table
+   was empty.  Since the tracking table was empty, there was
+   nothing to drive the Asynch Recovery to rollback and do the
+   cleanup, which explains why there are invalid entries left
+   behind in the LS tracking table.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Manually delete the records left in the Library Server for the
+   objects not stored.  Also, you can stop and start the zOS RM to
+   avoid the use count limit being reached.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *  This APAR has been fixed under the rollup APAR PQ89900 [http://www-01.ibm.com/support/docview.wss?uid=swg1PQ89900].
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   PQ91132
+   
+   
+ * REPORTED COMPONENT NAME
+   CM390 LIB SER R
+   
+   
+ * REPORTED COMPONENT ID
+   5697H6000
+   
+   
+ * REPORTED RELEASE
+   823
+   
+   
+ * STATUS
+   CLOSED DUB
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2004-07-08
+   
+   
+ * CLOSED DATE
+   2004-11-08
+   
+   
+ * LAST MODIFIED DATE
+   2004-11-08
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

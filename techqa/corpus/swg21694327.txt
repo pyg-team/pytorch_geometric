@@ -1,0 +1,71 @@
+Title: IBM ERROR MESSAGE: "Unable to open Metafile ... " - United States
+
+Text:
+71AMCON-CONF; 71AMCON-TS; 71WRT-CONF; 71WRT-TS; 71TT-CONF; 71TT-TS; 71RRT-CONF; 71RRT-DCOLL; 71ISM-TS; 71ISM-CONF; 71ISM-GEN TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ You see these errors in log files for an ITCAM agent
+
+ERROR MESSAGE: 
+"Unable to open Metafile "/opt/Tivoli/ITM/<arch>/<pc>/hist/<instance>/K<pc>TAB.hdr" " 
+
+CAUSE
+Historical collection for certain attribute groups is not collecting any data.
+Workspace views are empty and the agent log shows messages like: 
+
+
+(54A0F516.0000-B:khdxbase.cpp,332,"setError") 
++54A0F516.0000 Error Type= CTX_MetafileNotfound 
++54A0F516.0000 Severity= CTX_Warning 
++54A0F516.0000 Native Error Code = 0 
++54A0F516.0000 SQL State= NULL 
++54A0F516.0000 Reason Code= 0 
++54A0F516.0000 executing: openMetaFile 
+(54A0F516.0001-B:khdxbase.cpp,335,"setError") 
++54A0F516.0001 ERROR MESSAGE: "Unable to open Metafile "/opt/Tivoli/ITM/aix526/t5/hist/KT5xxx.hdr" "
+
+
+DIAGNOSING THE PROBLEM
+ 
+
+This message appears in the agent log
+54B72405.001B-E80:khdxbase.cpp,339,"setError") 
++54B72405.001B ERROR MESSAGE: "Unable to open Metafile "C:\IBM\ITM\TMAITM6\logs\History\KT5\T5SRVCS.hdr" "
+
+
+ * Check the ITCAM for Transactions Documentation to see what attribute group this table represents
+   http://www.ibm.com/support/knowledgecenter/SS5MD2_7.4.0/com.ibm.itcamt.doc_7.4.0.0/common/histdatacoll_oview.html [http://www-01.ibm.com/support/knowledgecenter/SS5MD2_7.4.0/com.ibm.itcamt.doc_7.4.0.0/common/histdatacoll_oview.html]
+   This is the WRT Server Status table
+   
+   You can find more information about this table here http://www.ibm.com/support/knowledgecenter/SS5MD2_7.4.0/com.ibm.itcamt.doc_7.4.0.0/rt/Attributes/T5_WRT/T5_WRT_overview.html [http://www.ibm.com/support/knowledgecenter/SS5MD2_7.4.0/com.ibm.itcamt.doc_7.4.0.0/rt/Attributes/T5_WRT/T5_WRT_overview.html]
+   
+   
+ * Check the agent (or TEMS) for the historical data collection files. This is where the data is first collected. Here we see there is no collection happening. This is why the message appears in the log.
+   [/support/docview.wss?uid=swg21694327&aid=1] [/support/docview.wss?uid=swg21694327&aid=1]
+   
+ * Look in the Historical Data Collection Configuration through the TEPS to see what is configured:[/support/docview.wss?uid=swg21694327&aid=2] [/support/docview.wss?uid=swg21694327&aid=2]
+   
+ * Now look at the TEPS and see what data is showing. There is no data. In this particular situation the agent is running properly, but the web server it is monitoring is not producing data (there are no transactions.) Hence there is no historical data to collect and the message is produced in the log. 
+   [/support/docview.wss?uid=swg21694327&aid=3] [/support/docview.wss?uid=swg21694327&aid=3]
+
+RESOLVING THE PROBLEM
+
+The attribute group associated with the table is only populated when the specific data for the table is generated.
+
+It is normal for you to have empty workspaces for this attribute group if the web server is not producing transactions or there is no web server configured. If you are concerned about the message
+
+"Unable to open Metafile /opt/IBM/itm/aix523/is/hist/KT5SRVCS.hdr" 
+
+turn off the historical data collection for the attribute associated with the table.
+
+This is a consequence of no rows returned by the data collector since the first attempted historical collection. The message is harmless, but if you want to stop it, turn off historical data collection for the attribute group.
+[/support/docview.wss?uid=swg21694327&aid=4] [/support/docview.wss?uid=swg21694327&aid=4]
+
+RELATED INFORMATION
+ KFWITM217E Request error after installing or upgrading [http://www.ibm.com/support/docview.wss?uid=swg21596654]
+
+
+
+
+PRODUCT ALIAS/SYNONYM
+ itcamft

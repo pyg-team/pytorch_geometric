@@ -1,0 +1,149 @@
+Title: IBM PI52860: IN CONSOLE "ADMINISTRATIVE USER GROUPS" PANEL, GROUP SEARCH DOES NOT SHOW ANY HITS BUT THERE ARE VALID GROUPS - United States
+
+Text:
+  FIXES ARE AVAILABLE
+8.5.5.10: WebSphere Application Server V8.5.5 Fix Pack 10 [http://www-01.ibm.com/support/docview.wss?uid=swg24042150]
+8.5.5.11: WebSphere Application Server V8.5.5 Fix Pack 11 [http://www-01.ibm.com/support/docview.wss?uid=swg24043005]
+8.5.5.12: WebSphere Application Server V8.5.5 Fix Pack 12 [http://www-01.ibm.com/support/docview.wss?uid=swg24043844]
+8.5.5.13: WebSphere Application Server V8.5.5 Fix Pack 13 [http://www-01.ibm.com/support/docview.wss?uid=swg24044479]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When going into the console to try and map administrative group
+   roles, they are unable to see the groups listed.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  All users of IBM WebSphere Application      *
+   *                  Server                                      *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: In "Administrative User Groups" panel,  *
+   *                      group search does not show any hits     *
+   *                      although there are valid groups.        *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   In the "Administrative User Groups" panel, group search does
+   not show any hits although valid groups do exist. The issue
+   only happens when there are multiple user registries
+   configured in the same realm name.  There was a bug that
+   incorrectly selected an inactive user registry when
+   Application Server performed a group search.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The code was fixed so that the group search is performed on
+   the active user registry.
+   
+   The fix for this APAR is currently targeted for inclusion in
+   fix pack 8.5.5.10.  Please refer to the Recommended Updates
+   page for delivery information:
+   http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  The temporary fix is to change the realm name for the inactive
+   user registry to make it different from the active user
+   registry's realm name.
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI52860
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBS APP SERV N
+   
+   
+ * REPORTED COMPONENT ID
+   5724H8800
+   
+   
+ * REPORTED RELEASE
+   850
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2015-11-19
+   
+   
+ * CLOSED DATE
+   2016-01-18
+   
+   
+ * LAST MODIFIED DATE
+   2016-07-11
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBS APP SERV N
+   
+   
+ * FIXED COMPONENT ID
+   5724H8800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R850 PSY
+   UP

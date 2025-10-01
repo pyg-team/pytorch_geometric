@@ -1,0 +1,153 @@
+Title: IBM Procedure for trace of a failing deploy to broker - United States
+
+Text:
+deploy trace MustGather MGDP MGBK; MustGatherDocument TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Use this procedure to capture a IBM Integration Bus (IIB) or WebSphere Message Broker (WMB) trace of a failing deploy to a broker. 
+
+Gathering this information before calling IBM support will help familiarize you with the troubleshooting process and save you time. 
+
+RESOLVING THE PROBLEM
+
+[/support/docview.wss?uid=swg21177049&amp;aid=1] Tracing IIB V9 and WMB V8 or V7
+[/support/docview.wss?uid=swg21177049&amp;aid=1] Tracing WebSphere Message Broker V6.1 #3
+[/support/docview.wss?uid=swg21177049&amp;aid=1] Related Information 
+[/support/docview.wss?uid=swg21177049&amp;aid=1] Submitting Documentation
+
+
+
+
+
+Tracing IIB V9 and WMB V8 or V7 
+Use the following procedure to capture IIB V9 and WMB V8 or V7 deploy traces: 
+
+On the broker server: 
+1. Start tracing of broker agent and execution groups 
+
+mqsichangetrace <brokername> -t -b -l debug 
+mqsichangetrace <brokername> -t -e <egroup> -l debug -r 
+
+where <brokername> is the name of your broker while <egroup> is the name of your execution group 
+
+
+2. Deploy and monitor for errors. 
+
+3. Stop all tracing when deploy errors occur. 
+mqsichangetrace <brokername> -t -b -l none
+mqsichangetrace <brokername> -t -e <egroup> -l none 
+
+
+Format the traces using the commands below: 
+
+4. Retrieve the trace log for the specified component. 
+mqsireadlog <brokername> -t -b agent -f -o agenttrc.xml 
+
+5. Retrieve and format the XML log 
+mqsiformatlog -i agenttrc.xml -o agenttrc.txt 
+
+6. Retrieve the trace log for the specified component. 
+mqsireadlog <brokername> -t -e <egroup> -f -o <egroup>.xml 
+
+7. Format the XML log file 
+mqsiformatlog -i <egroup>.xml -o <egroup>.txt 
+
+8. After a PMR is open, submit the files agenttrc.txt and <egroup>.txt to IBM Support for problem determination. Back to top
+
+
+
+
+
+
+Tracing WebSphere Message Broker V6.1 
+Use this procedure to capture WMB V6.1 deploy traces: 
+
+1. Start Trace 
+ * 
+ * 
+ * mqsichangetrace configmgr -t -b -l debug
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * mqsichangetrace <brokername> -t -b -l debug 
+   mqsichangetrace <brokername> -t -e <egroup> -l debug -r 
+ * 
+ * 
+ * 
+ * <brokername> 
+ * 
+ *  <egroup> 
+ * 
+
+
+
+2. Deploy and monitor for errors. 
+
+3. Stop all tracing when deploy errors occur.  * 
+ * 
+ * 
+ * mqsichangetrace <configmgr name> -t -b -l none
+ * 
+ * 
+ * 
+ * 
+ * mqsichangetrace <brokername> -t -b -l none
+   mqsichangetrace <brokername> -t -e <egroup> -l none
+
+
+
+Format the traces using the commands below: 
+
+On the Configuration Manager server: 
+
+1. Retrieve the trace log for the specified component.  * mqsireadlog <configmgr name> -t -b agent -f -o configtrc.xml
+
+
+2. Format the XML log file  * mqsiformatlog -i configtrc.xml -o configtrc.txt
+
+
+On the broker server: 
+
+3. Retrieve the trace log for the specified component.  * mqsireadlog <brokername> -t -b agent -f -o agenttrc.xml
+
+
+4. Retrieve and format the XML log  * mqsiformatlog -i agenttrc.xml -o agenttrc.txt
+
+
+5. Retrieve the trace log for the specified component.  * mqsireadlog <brokername> -t -e <egroup> -f -o <egroup>.xml
+
+
+6. Format the XML log file  * mqsiformatlog -i <egroup>.xml -o <egroup>.txt
+
+
+7. After a PMR is open, submit the files configtrc.txt, agenttrc.txt and <egroup>.txt to IBM Support for problem determination. 
+Back to top
+
+
+
+
+
+Related Information 
+Related Information 
+For a listing of all technotes, downloads,and educational materials specific to deployment, search the WebSphere Message Broker support site [http://www-306.ibm.com/software/integration/wbimessagebroker/support/]. 
+Back to top
+
+
+
+
+
+Submitting Documentation 
+For information on [http://www-306.ibm.com/software/support/exchangeinfo.html]submitting documentation to IBM Support please refer to the instructions for using the Enhanced Customer Data Repository (ECuRep) [http://www.ibm.com/de/support/ecurep/index.html] 
+[http://www.ibm.com/de/support/ecurep/index.html] Back to top
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Integration Bus Deploy 10.0, 9.0 All Editions 
+PRODUCT ALIAS/SYNONYM
+ WBI Message Broker WBIMB WMQI MQSI

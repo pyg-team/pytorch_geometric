@@ -1,0 +1,160 @@
+Title: IBM PI44237: CDATA SECTION IS NOT PRESERVED DURING PARSING THE SOAP MESSAGE - United States
+
+Text:
+  FIXES ARE AVAILABLE
+8.5.5.8: WebSphere Application Server V8.5.5 Fix Pack 8 [http://www-01.ibm.com/support/docview.wss?uid=swg24041178]
+8.5.5.9: WebSphere Application Server V8.5.5 Fix Pack 9 [http://www-01.ibm.com/support/docview.wss?uid=swg24041819]
+8.5.5.10: WebSphere Application Server V8.5.5 Fix Pack 10 [http://www-01.ibm.com/support/docview.wss?uid=swg24042150]
+8.5.5.11: WebSphere Application Server V8.5.5 Fix Pack 11 [http://www-01.ibm.com/support/docview.wss?uid=swg24043005]
+8.5.5.12: WebSphere Application Server V8.5.5 Fix Pack 12 [http://www-01.ibm.com/support/docview.wss?uid=swg24043844]
+8.5.5.13: WebSphere Application Server V8.5.5 Fix Pack 13 [http://www-01.ibm.com/support/docview.wss?uid=swg24044479]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  In IIB V9003, which packages
+   com.ibm.jaxws.thinclient_8.5.0.jar,
+   com.ibm.jaxws.thinclient_orig inal.jar,
+   com.ibm.ws.lm.aspects.jar
+   the CDATA element is not behaving according to the following
+   documentation:
+   http://www-01.ibm.com/support/knowledgecenter/SSMKHH_9.0.0/com.i
+   bm.etools.mft.doc/ac67174_.htm?lang=en [http://www-01.ibm.com/support/knowledgecenter/SSMKHH_9.0.0/com.ibm.etools.mft.doc/ac67174_.htm?lang=en]
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Unofficial Fix Available
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  WebSphere Application Server users of a     *
+   *                  JAX-WS web service with a CDATA section in  *
+   *                  a SOAP message.                             *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Web service engine's default behavior   *
+   *                      is to create a StAX parser in           *
+   *                      coaelescing mode. This will cause the   *
+   *                      CDATA section to not be preserved.      *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   A JVM property will be added to allow customers to disable
+   coaelescing during StAX parser creation and keep CDATA.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  JVM property com.ibm.ws.websvcs.disableCOALESCING is provided
+   with a default value of false. Set the value to true to keep
+   CDATA section.
+   
+   The following Knowledge Center topic describes how to set a
+   JVM property:
+   http://www- [http://www-]
+   01.ibm.com/support/knowledgecenter/SSAW57_8.5.5/com.ibm.webspher
+   e.nd.doc/ae/trun_jvm.html
+   
+   The fix for this APAR is currently targeted for inclusion in
+   fix pack 8.5.5.8.  Please refer to the Recommended Updates
+   page for delivery information:
+   http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI44237
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBS APP SERV N
+   
+   
+ * REPORTED COMPONENT ID
+   5724H8800
+   
+   
+ * REPORTED RELEASE
+   850
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2015-07-02
+   
+   
+ * CLOSED DATE
+   2015-08-28
+   
+   
+ * LAST MODIFIED DATE
+   2015-08-28
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBS APP SERV N
+   
+   
+ * FIXED COMPONENT ID
+   5724H8800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R850 PSY
+   UP

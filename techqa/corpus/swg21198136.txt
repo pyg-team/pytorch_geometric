@@ -1,0 +1,46 @@
+Title: IBM LDAP searches are terminated after 15 seconds even if the LDAP Timeout Setting = 0 (unlimited) - United States
+
+Text:
+time out; timeout; terminated; ends; stops; ldapsearch; ldap; ldap server; domino ldap; 15 seconds; fifteen TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+You are testing the LDAP server on a Lotus Domino server by using the ldapsearch utility. If the search takes a long time, the search is terminated after 15 seconds. However, you verify that the LDAP Timeout setting in the server's LDAP Configuration document is set to zero for no timeout.
+
+CAUSE
+The ldapsearch utility defaults to a timeout value of 15 seconds. 
+
+The server's LDAP Configuration document controls the settings for the LDAP server. Ldapsearch is an LDAP client that can specify its own value. If both a server and client value are set, then whichever one is lower takes precedence.
+
+
+DIAGNOSING THE PROBLEM
+If you enable debug for LDAP [http://www.ibm.com/support/docview.wss?rs=899&uid=swg21203191], specifically ldapdebug=7, you can see the different timeout settings reported on the console log. 
+
+When you load the LDAP task, the following result appears on the console: 
+
+08:53:28 AM LDAP Server: Started
+08:53:28 AM LDAP Server: Serving Directory C:\Lotus\Domino\data\names.nsf in the Internet Domain
+08:53:28 AM LDAP Server: Maximum entries returned = Unlimited
+08:53:28 AM LDAP Server: Time limit for search = Unlimited seconds <- This is the server timeout
+
+When you perform an ldapsearch query against the Domino server, the following results appears on the console:
+08:53:35.31 AM [09EC:0004-0B2C] LDAP> Search State
+08:53:35.32 AM [09EC:0004-0B2C] LDAP> Scope: SUBTREE
+08:53:35.32 AM [09EC:0004-0B2C] LDAP> Dereference Aliases: 0
+08:53:35.32 AM [09EC:0004-0B2C] LDAP> TimeLimit: 15 <- This is the client timeout
+
+
+RESOLVING THE PROBLEM
+To change the ldapsearch utility timeout, you can specify different time values with the -l switch. For example, the following search sets a timeout of 50 seconds: 
+
+ldapsearch -h <server name> -l 50 cn="*"
+
+
+RELATED INFORMATION
+#Collecting data on LDAP operations [http://www.ibm.com/support/docview.wss?uid=swg21203191]
+A simplified Chinese translation is available [http://www.ibm.com/support/docview.wss?uid=swg27034097]
+
+
+
+
+ * 
+ *

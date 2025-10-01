@@ -1,0 +1,23 @@
+Title: IBM Receiving error: Cannot compute the error degrees of freedom using Satterthwaite's method - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ I'm running a univariate model in GLM or UNIANOVA with random factors. For some effects I do not get F statistics or significance levels. Instead, a footnote is displayed with the following message:
+
+"Cannot compute the error degrees of freedom using Satterthwaite's method."
+
+What does this mean? 
+
+RESOLVING THE PROBLEM
+Satterthwaite's method is used to construct approximate error terms using linear combinations of mean squares when exact error terms are unavailable for a given model. The linear combinations of mean squares generally involve positive coefficients for some mean squares and negatice coefficients for others. In some situations this may produce negative values for error mean squares, which results in the message you're seeing. This will typically occur when the model involves random terms that have very small mean squares, which may indicate that they are null or close to null in the population, and may best be omitted from the model
+
+RELATED INFORMATION
+ Need more help? Our Statistics forum is Live! [https://developer.ibm.com/answers/topics/statistics.html?smartspace=predictive-analytics]
+
+
+ 
+
+HISTORICAL NUMBER
+ 81665

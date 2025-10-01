@@ -1,0 +1,222 @@
+Title: IBM IZ60258: CTGDIK034I CREATING ABAPERRORINFO OBJECT: - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  CTGDIK034I Creating AbapErrorInfo object:
+   
+    We found a new problem for SAP Net Weaver Agent (version 5.0.2
+   with
+   connection reset patch). The PMR# 06602,422,000 is opened for
+   this
+   issue.
+   Issue description:
+   SAP Net Weaver Agent full reconciliation aborted half way
+   without any
+   error or warning message shown in TIM request.
+   According to the agent log, the reconciliation stopped iterating
+   users
+   when it found a user account existed at the beginning but was
+   removed
+   later during reconciliation.
+   
+   In the beginning of agent log, the following info is found:
+   <item><VALUES><![CDATA[U372258]]></VALUES></item>
+   
+   In the end of iterating (before searching support data), the
+   following
+   error message can be found:
+   CTGDIK034I Creating AbapErrorInfo object: message='User U372258
+   does not
+   exist', error number='124', error flag='E'.
+   
+   We think there are two defects in this case:
+   1. If the reconciliation is aborted, the TIM request should not
+   be in
+   "Success" status. It should log down the error message in TIM
+   request
+   with a "Failed" status.
+   2. Error handler should be added to handle the missing account
+   issue. It
+   should be able to skip the missing account and continue to
+   process other
+   accounts left.
+   
+   SAP NetWeaver Agent full reconciliation aborted half way without
+   any
+   error or warning message shown in TIM request.
+   According to the agent log, the reconciliation stopped iterating
+   users
+   when it found a user account existed at the beginning but was
+   removed
+   later during reconciliation.
+   In the beginning of agent log, the following info is found:
+   <item><VALUES><![CDATA[U372258]]></VALUES></item>
+   In the end of iterating (before searching support data), the
+   following
+   error message can be found:
+   CTGDIK034I Creating AbapErrorInfo object: message='User U372258
+   does
+   not exist', error number='124', error flag='E'.
+   We think there are two defects in this case:
+   1. If the reconciliation is aborted, the TIM request should not
+   be in
+   "Success" status. It should log down the error message in TIM
+   request
+   with a "Failed" status.
+   2. Error handler should be added to handle the missing account
+   issue.
+   It should be able to skip the missing account and continue to
+   process
+   other accounts left.
+   .
+   
+   Customr Recreate: yes
+   L2 Support Recreate: n/a
+   
+   Desired Behavior:
+   
+    We think there are two defects in this case:
+   1. If the reconciliation is aborted, the TIM request should not
+   be in
+   "Success" status. It should log down the error message in TIM
+   request
+   with a "Failed" status.
+   2. Error handler should be added to handle the missing account
+   issue. It
+   should be able to skip the missing account and continue to
+   process other
+   accounts left.
+   
+   Steps Duplicate:
+    1. Do the recon
+   Environment:
+   version 5.0.2
+   Solution:  The L3 confirmed that this is a defect for step 1 and
+   2 on
+   desired behavior.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  n/a
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Fix shipped in SAP NW adapter v5.0.4 and 5.1.4
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fix shipped in SAP NW adapter v5.0.4 and
+   5.1.4
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ60258
+   
+   
+ * REPORTED COMPONENT NAME
+   ITIM AGENTS
+   
+   
+ * REPORTED COMPONENT ID
+   5724C34AG
+   
+   
+ * REPORTED RELEASE
+   500
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-09-08
+   
+   
+ * CLOSED DATE
+   2009-09-18
+   
+   
+ * LAST MODIFIED DATE
+   2009-09-18
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  AGENT
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ITIM AGENTS
+   
+   
+ * FIXED COMPONENT ID
+   5724C34AG
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R500 PSY
+   UP
+   
+   
+ * R510 PSY
+   UP

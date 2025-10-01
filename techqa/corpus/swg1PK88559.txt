@@ -1,0 +1,144 @@
+Title: IBM PK88559: MAP THAT WAS CONVERTED FROM 6.7 TO 8.2 RUNS HOURS LONGER IN NEW RELEASE OF WTX ON Z/OS. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  User is working on converting their maps from Mercator 6.7 to
+   WTX 8.2. When they run their batch job using the Mercator 6.7
+   map, the jobs runs in about 1 hour 20 minutes. When they run the
+   same batch
+   job the with WTX 8.2 map, the job is running for several hours
+   before they have to cancel it.
+   
+   The map is using the Extract function.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  WTX00030793
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Problem Description:
+   Performance issue when using EXTRACT function on a large series.
+   WTX would loop though large series too many times.
+   A large series is when then "number of entries" times "size of
+   entries" would exceed the pages of data that can be retained in
+   memory.
+   Performance problem would become noticeable when the EXTRACT had
+   to had to start searching for data pages not in memory.
+   Data Pages would be read from disk into memory, causing
+   excessive I/O.
+   
+   Users Affected:
+   WTX core engine users/runtime using EXTRACT function.
+   
+   Platforms Affected:
+   Windows ALL
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Correctly sets the looping value in EXTRACT when processing a
+   series
+   
+   Delivered in:
+   8.2.0.5, 8.3.0.0
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK88559
+   
+   
+ * REPORTED COMPONENT NAME
+   WSTX
+   
+   
+ * REPORTED COMPONENT ID
+   5724M4000
+   
+   
+ * REPORTED RELEASE
+   820
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2009-06-11
+   
+   
+ * CLOSED DATE
+   2009-07-14
+   
+   
+ * LAST MODIFIED DATE
+   2009-07-14
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    PK90001 [http://www-01.ibm.com/support/docview.wss?uid=swg1PK90001]
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WSTX
+   
+   
+ * FIXED COMPONENT ID
+   5724M4000
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R820 PSY
+   UP

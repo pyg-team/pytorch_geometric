@@ -1,0 +1,72 @@
+Title: IBM Unable to open MS office documents in Daeja Viewer Pro - United States
+
+Text:
+Daeja viewer; Microsoft office; MS office; Daeja Viewer Pro; content_redir.properties TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Unable to open the Microsoft Office documents in Daeja Viewer Pro 
+
+SYMPTOM
+An error occurs when the content_redir.properties properties file does not have the content to open MS office files.
+
+
+CAUSE
+If you are going to be using ViewONE Pro to view and annotate PDF and other document types, then you need to open the content_redir.properties properties file and add additional lines for each new file type that you wish to view in the viewer.
+
+ENVIRONMENT
+There are no environment issues that cause this error.
+
+DIAGNOSING THE PROBLEM
+Install a specific version of Daeja viewer and try to open any MS office documents. An error occurs at that time.
+
+RESOLVING THE PROBLEM
+Add the lines in the content_redir.properties properties file.
+
+Example of a modified .properties file.
+
+# MS Office 2007 format
+#
+application/vnd.openxmlformats-officedocument.wordprocessingml.document=/WcmJavaViewer.jsp?id={OBJECT_ID}&{JSP_QUERY_STRING}
+#
+application/vnd.openxmlformats-officedocument.spreadsheetml.sheet=/WcmJavaViewer.jsp?id={OBJECT_ID}&{JSP_QUERY_STRING}
+#
+application/vnd.openxmlformats-officedocument.presentationml.presentation=/WcmJavaViewer.jsp?id={OBJECT_ID}&{JSP_QUERY_STRING}
+
+application/vnd.openxmlformats-officedocument.wordprocessingml.document=/WcmJavaViewer.jsp?{JSP_QUERY_STRING}
+#
+application/vnd.openxmlformats-officedocument.spreadsheetml.sheet=/WcmJavaViewer.jsp?{JSP_QUERY_STRING}
+#
+application/vnd.openxmlformats-officedocument.presentationml.presentation=/WcmJavaViewer.jsp?{JSP_QUERY_STRING}
+
+
+# MS Office 2003/97 format
+#
+application/msword=/WcmJavaViewer.jsp?id={OBJECT_ID}&{JSP_QUERY_STRING}
+#
+application/vnd.ms-excel=/WcmJavaViewer.jsp?id={OBJECT_ID}&{JSP_QUERY_STRING}
+#
+application/vnd.ms-powerpoint=/WcmJavaViewer.jsp?id={OBJECT_ID}&{JSP_QUERY_STRING}
+
+
+application/msword=/WcmJavaViewer.jsp?{JSP_QUERY_STRING}
+# application/vnd.ms-excel=/WcmJavaViewer.jsp?{JSP_QUERY_STRING}
+# application/vnd.ms-powerpoint=/WcmJavaViewer.jsp?{JSP_QUERY_STRING}
+
+# PDF
+application/pdf=/WcmJavaViewer.jsp?id={OBJECT_ID}&{JSP_QUERY_STRING}
+
+
+The .odt format is: application/vnd.oasis.opendocument....
+
+application/vnd.openxmlformats-officedocument.wordprocessingml.document=/WcmJavaViewer.jsp?id={OBJECT_ID}&{JSP_QUERY_STRING}
+application/vnd.openxmlformats-officedocument.spreadsheetml.sheet=/WcmJavaViewer.jsp?id={OBJECT_ID}&{JSP_QUERY_STRING}
+application/vnd.openxmlformats-officedocument.presentationml.presentation=/WcmJavaViewer.jsp?id={OBJECT_ID}&{JSP_QUERY_STRING}
+application/vnd.sun.xml.writer=/WcmJavaViewer.jsp?id={OBJECT_ID}&{JSP_QUERY_STRING}
+application/vnd.sun.xml.calc=/WcmJavaViewer.jsp?id={OBJECT_ID}&{JSP_QUERY_STRING}
+application/vnd.sun.xml.impress=/WcmJavaViewer.jsp?id={OBJECT_ID}&{JSP_QUERY_STRING}
+application/vnd.oasis.opendocument.text=/WcmJavaViewer.jsp?id={OBJECT_ID}&{JSP_QUERY_STRING}
+application/vnd.oasis.opendocument.spreadsheet=/WcmJavaViewer.jsp?id={OBJECT_ID}&{JSP_QUERY_STRING}
+application/vnd.oasis.opendocument.presentation=/WcmJavaViewer.jsp?id={OBJECT_ID}&{JSP_QUERY_STRING}
+application/x-vnd.oasis.opendocument.text=/WcmJavaViewer.jsp?id={OBJECT_ID}&{JSP_QUERY_STRING}
+application/x-vnd.oasis.opendocument.spreadsheet=/WcmJavaViewer.jsp?id={OBJECT_ID}&{JSP_QUERY_STRING}
+application/x-vnd.oasis.opendocument.presentation=/WcmJavaViewer.jsp?id={OBJECT_ID}&{JSP_QUERY_STRING}

@@ -1,0 +1,23 @@
+Title: IBM Characters truncated from the output of the xmllib->XSLT() function, if the string contains UTF-8 2-byte sequences - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Using the xmllib->XSLT() function in an IBM WebSphere Transformation Extender (WTX) map with UTF-8 strings can result in missing characters and/or string truncation. 
+
+SYMPTOM
+Extended (UTF-8 multi-byte) characters missing from the output and/or character truncation of the output string.
+
+
+CAUSE
+The xmllib->XSLT() function command line expects Native character strings, and when passing in UTF-8 strings one potential symptom is missing characters and/or truncation due to an incorrectly calculated data length. This has been identified as a product defect under APAR PI24655
+
+ENVIRONMENT
+All IBM WebSphere TX execution methods.
+
+DIAGNOSING THE PROBLEM
+Truncation is resolved by removing the UTF-8 multi-byte characters from the source.
+
+RESOLVING THE PROBLEM
+Obtain and apply APAR PI24655 from IBM WebSphere TX Client Support

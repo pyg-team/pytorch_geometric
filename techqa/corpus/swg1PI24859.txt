@@ -1,0 +1,143 @@
+Title: IBM PI24859: CSV002I REQUESTS FOR MODULE CACSX02 EXCEED MAXIMUM USE COUNT - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The Classic CF server reports
+   CSV002I REQUESTS FOR MODULE CACSX02 EXCEED MAXIMUM USE COUNT
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: Classic Fed users.                           *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: An incorrect function was called that   *
+   *                      prevents the Classic server from        *
+   *                      freeing the CACSX0x modules. This was   *
+   *                      specifically reported for CACSX02, the  *
+   *                      SMF exit, and CACSX03, the CPU          *
+   *                      Governor exit.                          *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   CSV002I REQUESTS FOR MODULE CACSX02 EXCEED MAXIMUM USE COUNT
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The code has been changed to call the proper function to free
+   the exit modules.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI24859
+   
+   
+ * REPORTED COMPONENT NAME
+   CLASSIC FED & E
+   
+   
+ * REPORTED COMPONENT ID
+   5697I8200
+   
+   
+ * REPORTED RELEASE
+   B10
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-08-29
+   
+   
+ * CLOSED DATE
+   2014-09-15
+   
+   
+ * LAST MODIFIED DATE
+   2014-10-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UI21361
+   
+   
+
+MODULES/MACROS
+ *  CECCUXAV
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CLASSIC FED & E
+   
+   
+ * FIXED COMPONENT ID
+   5697I8200
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * RB10 PSY UI21361 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI21361]
+   UP14/09/17 P F409
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

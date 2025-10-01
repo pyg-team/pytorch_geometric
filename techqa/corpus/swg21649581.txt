@@ -1,0 +1,73 @@
+Title: IBM A CWLLG2035E error occurs when starting the server for IBM Business Process Manager (BPM) after installing APAR JR44032 - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ You apply the interim fix for APAR JR44032 to an IBM Business Process Manager Version 7.5.1 Fix Pack 1 installation. When you attempt to start the server, you see a CWLLG2035E error in the SystemOut.log file. 
+
+SYMPTOM
+The following text shows the complete information that is provided with the CWLLG2035E error: 
+
+CWLLG2035E: The registry was not initialized. Error: org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'ejbCore.ProcessSearchAPICore' defined in class path resource [registry.xml]: Instantiation of bean failed; nested exception is org.springframework.beans.BeanInstantiationException: Could not instantiate bean class [com.lombardisoftware.server.ejb.api.ProcessSearchAPICore]: Constructor threw exception; nested exception is java.lang.NoSuchMethodError: com/lombardisoftware/core/config/server/PortalConfig.isEnableGroupConstraintForClaimedTasks()Z
+org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'ejbCore.ProcessSearchAPICore' defined in class path resource [registry.xml]: Instantiation of bean failed; nested exception is org.springframework.beans.BeanInstantiationException: Could not instantiate bean class [com.lombardisoftware.server.ejb.api.ProcessSearchAPICore]: Constructor threw exception; nested exception is java.lang.NoSuchMethodError: com/lombardisoftware/core/config/server/PortalConfig.isEnableGroupConstraintForClaimedTasks()Z
+at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.instantiateBean(AbstractAutowireCapableBeanFactory.java:883)
+at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBeanInstance(AbstractAutowireCapableBeanFactory.java:839)
+at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:440)
+at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory$1.run(AbstractAutowireCapableBeanFactory.java:409)
+at java.security.AccessController.doPrivileged(AccessController.java:250)
+
+
+
+The previous error might also cause the following additional error:
+
+CWLLG2229E: An exception occurred in an EJB call. Error: No JTA UserTransaction available - programmatic PlatformTransactionManager.getTransaction usage not supported
+org.springframework.transaction.CannotCreateTransactionException: No JTA UserTransaction available - programmatic PlatformTransactionManager.getTransaction usage not supported
+at org.springframework.transaction.jta.JtaTransactionManager.doGetTransaction(JtaTransactionManager.java:796)
+at org.springframework.transaction.support.AbstractPlatformTransactionManager.getTransaction(AbstractPlatformTransactionManager.java:341)
+at com.lombardisoftware.utility.spring.ProgrammaticTransactionSupport.execute(ProgrammaticTransactionSupport.java:174)
+at com.lombardisoftware.utility.spring.TransactionInterceptor.invoke(TransactionInterceptor.java:50)
+at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:171)
+at com.lombardisoftware.utility.spring.CoreEntryInterceptor.invoke(CoreEntryInterceptor.java:44)
+at com.lombardisoftware.utility.spring.PSCoreEntryInterceptor.invoke(PSCoreEntryInterceptor.java:14)
+at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:171)
+
+After the server startup process is complete, if you attempt to login into the Process Admin Console or Process Portal, a similar JTA UserTransaction error is displayed in the browser. Additionally, if you see these errors on a Process Server, then this server seems to be offline when it is viewed from a Process Center Server.
+
+
+CAUSE
+This problem is seen only in IBM Business Process Manager V7.5.1 Fix Pack 1 environments where the interim fix for APAR JR45915 was installed prior to the installation of the interim fix for APAR JR44032. The interim fix for JR45915 does not enforce a required dependency on the interim fix for JR44032. Without this enforced dependency, you can install the interim fix for JR44032 after you install the interim fix for JR45915. A code change in the interim fix for JR45915 adds an extra method to a class that gets removed after you apply the interim fix for JR44032. This change results in a java.lang.NoSuchMethodError message.
+
+
+RESOLVING THE PROBLEM
+To resolve this issue, complete the following steps: 
+
+ 1. Stop all of the servers.
+    
+    
+ 2. Using Installation Manager, uninstall the interim fix for JR45915, whose repository name is 7.5.1.1-WS-BPM-IFJR45915.
+    
+    
+ 3. If the interim fix for JR44032 is not already installed, complete the following steps:  1. Download the applicable interim fix and readme from Fix Central using one of the following links:  * IBM Business Process Manager Standard [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm/WebSphere&product=ibm/WebSphere/IBM+Business+Process+Manager+Standard&release=All&platform=All&function=fixId&fixids=7.5.1.1-WS-BPM-IFJR44032&includeSupersedes=0] 
+         * IBM Business Process Manager Express [http://www-933.ibm.com/support/fixcentral/swg/quickorder?parent=ibm/WebSphere&product=ibm/WebSphere/IBM+Business+Process+Manager+Express&release=All&platform=All&function=fixId&fixids=7.5.1.1-WS-BPM-IFJR44032&includeSupersedes=0&source=fc] 
+         * IBM Business Process Manager Advanced [http://www-933.ibm.com/support/fixcentral/swg/quickorder?parent=ibm/WebSphere&product=ibm/WebSphere/IBM+Business+Process+Manager+Advanced&release=All&platform=All&function=fixId&fixids=7.5.1.1-WS-BPM-IFJR44032&includeSupersedes=0&source=fc]
+        
+        
+     2. Install the interim fix using the instructions in the readme file, which is called 7.5.1.1-WS-BPM-IFJR44032-readme.txt.
+        
+        
+    
+    
+ 4. Using Installation Manager, reinstall the interim fix for JR45915.
+    
+    
+ 5. Update your profiles described in the Profile update instructions for IBM Business Process Manager (BPM) interim fixes [http://www.ibm.com/support/docview.wss?uid=swg21608414] document.
+    
+    
+ 6. Restart all of the servers.
+
+ 
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Business Process Manager Express Process Server Linux, Linux zSeries, Windows 7.5.1.1 Business Integration IBM Business Process Manager Standard Process Server AIX, Linux, Linux zSeries, Solaris, Windows 7.5.1.1 
+PRODUCT ALIAS/SYNONYM
+ BPM

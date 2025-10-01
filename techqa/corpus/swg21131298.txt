@@ -1,0 +1,96 @@
+Title: IBM Why the OCR is still misreading the text? - United States
+
+Text:
+OCR; text; robot; image; region; 1131298 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Why the OCR is still misreading the text? 
+
+RESOLVING THE PROBLEM
+QUESTION: 
+
+Why is the OCR (Optical Character Recognition) misreading the text?
+
+ANSWER:
+
+Unfortunately, there is nothing more that can be done if the below recommendations are followed.
+Enhancements have been entered in our system to improve this functionality in the future releases.
+27629 Enhancement - Modify baseline of region OCR verification 
+26506 Enhancement: Improvement for the OCR feature of the Image Comparator 
+10167 Better OCR 
+
+For information about OCR Tips, open the online Help and search the index for OCR.
+
+
+From the online help:
+
+
+OCR Tips
+
+The following tips will help you create OCR regions that test well. For
+information on creating OCR regions, see Creating OCR Regions.
+
+
+· To get the best results from an OCR operation - place the region
+rectangle border so that the left side is close to the first character of
+the text to be recognized. If there's a lot of space there, it doesn't
+operate as well, and sometimes the tool may fail to recognize the text. If
+you get an OCR error, use the Zoom commands to zoom in on the area, and move
+the left border closer to the first character. 
+
+· Fit all the borders of the region as tightly as possible around the
+text. 
+
+· When you create an OCR region, it is automatically "read." Check the
+Mask/OCR List to make sure all the text appears that you want to be tested,
+and that no extra text is present. Resize or move the region if necessary.
+To eliminate extraneous marks, you may need to make it smaller. To include
+all the text you want tested, you may need to make it larger. See Moving and
+Resizing OCR Regions.
+
+· If your region contains white or light colored text, use the Light
+text option in the OCR Region dialog box. This box automatically opens when
+you create an OCR region.
+
+· If your region contains text on a gray or dark colored background,
+use the Gray background option in the OCR Region dialog box. This box
+automatically opens when you create an OCR region.
+
+· If the OCR region border accidentally includes some part of a
+graphic or icon, it may fail to recognize the text within the region. Resize
+the region so that you don't include part of a graphic.
+
+· Smaller fonts are harder to recognize. Larger fonts test better.
+Also, bold fonts are easier to recognize.
+
+· If you have a colored font on a colored background, play with the
+option settings in the OCR Region dialog box to see what works best. The
+image is converted to black and white before sending it to be recognized.
+You can check the OCR<number>.BMP in the Windows temp directory to see what
+was actually produced and to use as a guide in these cases. The number in
+this file name corresponds to the number listed in the Mask/OCR List. See
+the note below.
+
+· Unless you're depending on and making decisions in script based on
+the recognized text, it's not necessarily important that all letters of a
+text string are recognized correctly. It's only important that it be done
+the same way during recording and playback, so that the results are
+accurate. If you notice any characters not being picked up, it may not be
+malfunctioning, but may just have a limitation. Chances are it will work
+accurately even if every character is not recognized. 
+
+· When the OCR engine cannot recognize a character based on its
+surroundings, it will insert a '
+~' character. Some characters in 8 point MS Sans Serif (default Windows
+font) are harder to read than others - those with a blocky shape are easier
+than those with angles. This is due to the DPI resolution at which they're
+captured versus what is provided to the recognition engine. The characters
+appear more jagged at the higher DPI if they have curves.
+
+· We recommend 150 DPI for the best operation of OCR. This is the
+default setting found in the Options dialog box.
+
+ 
+
+HISTORICAL NUMBER
+ 145395049

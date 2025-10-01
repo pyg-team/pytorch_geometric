@@ -1,0 +1,30 @@
+Title: IBM Security Bulletin: Security vulnerabilities (CVE-2013-6747, CVE-2014-0963) have been identified in IBM DB2 shipped with IBM Security Privileged Identity Manager components - United States
+
+Text:
+PSIRT SECURITY BULLETIN
+
+SUMMARY
+ IBM Security Access Manager and IBM Security Identity Manager are shipped as components of IBM Security Privileged Identity Manager (ISPIM) and are affected by a vulnerability in IBM® DB2®. Information about the security vulnerabilities affecting IBM Security Access Manager and IBM Security Identity Manager have been published in the below security bulletins. 
+
+VULNERABILITY DETAILS
+Please consult the following security bulletins 
+Security vulnerabilities have been identified in IBM® DB2® shipped with IBM Security Access Manager for Enterprise Single Sign-On (CVE-2013-6747, CVE-2014-0963) [http://www-01.ibm.com/support/docview.wss?uid=swg21674315] 
+and 
+Security vulnerabilities (CVE-2013-6747, CVE-2014-0963) have been identified in IBM® DB2® shipped with IBM Tivoli Identity Manager/IBM Security Identity Manager [http://www-01.ibm.com/support/docview.wss?uid=swg21674351] 
+for vulnerability details.
+
+AFFECTED PRODUCTS AND VERSIONS
+ 
+
+Principal Product and Version(s) Affected Supporting Product and Version ISPIM 1.0 IBM Security Access Manager for Enterprise Single Sign-On 8.2 [http://www-01.ibm.com/support/docview.wss?uid=swg21674315]
+IBM Security Identity Manager 7.0 [http://www-01.ibm.com/support/docview.wss?uid=swg21674351] GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v2 Guide [http://www.first.org/cvss/v2/guide] 
+On-line Calculator v2 [http://nvd.nist.gov/CVSS-v2-Calculator] RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/PSIRT] *The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.

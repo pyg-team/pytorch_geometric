@@ -1,0 +1,292 @@
+Title: IBM PI37394: CUSTOMER CAN NOT MAKE A SNAPSHOT - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Snapshot to Excel failed with following error message: Message
+   from webpage: Ein Fehler ist aufgetreten
+   
+   
+   Environment:
+   Windows 2008 R2
+   TM1 10.2.2 FP2 IF1024
+   Excel 2013
+   IE11
+   German environment
+   
+   Steps to reproduce the behavior
+   
+   1. open TM1 Merck model (StartCockpit will open)
+   2. select and mark Preselection for report
+   3. push button Yearly Planning ( Yearly Planning FCI 2015 - CH
+   sheet open)
+   4. select element Lowest level in picklist Drilldown hierachy -
+   Product
+   5. select element Lowest level in picklist Drilldown hierachy -
+   Country
+   6. select element NO in picklist Zero Suppresion
+   7. push button Refresh Planning Maks
+   8. sheet will be refreshing and you will see all elements
+   9. take snapshot to Excel from current sheet view (export more
+   than 7100 rows's)
+   
+   effect:
+   after few time (in my test after 5:20 minute) you will get the
+   error message
+   "Message from webpage: Ein Fehler ist aufgetreten"
+   
+   
+   Tests with no effects:
+   I modified java heap to 4 GB
+   modified TM1Web_config.xml file
+   delete all IE temp/cookies
+   
+   
+   Test with Firefox and Chrome
+   Snapshot works in Firefox and Chrome, but did take a long time
+   (more than 8 minutes)
+   
+   
+   I made more test with IF1029.
+   After insttall IF1029 I made the same tests.
+   The Snapshot works and takes 2 minutes, second test snapshot
+   takes less than 2 minutes
+   
+   I made more tests with IF1029 and get other issues e.g. loss
+   TM1Websheet format, after export I can not open the snapshot
+   with Excel or can save the snapshot
+   
+   I search in web and found same infromation about Interent
+   Explorer and Tomcat problems.
+   see attached link:
+   http://serverfault.com/questions/274049/apache-tomcat-ie-caching [http://serverfault.com/questions/274049/apache-tomcat-ie-caching]
+   -problem
+   
+   I do not find anything in ClearQuest or DCF
+   
+   Customer is Avantum/Merck.
+   
+   If made the tests on VMware with customer model.
+   The model is very big and have static path's in reports.
+   If you need access to this VMware please ask Markus Kraft
+   (markus.kraft@de.ibm.com)
+   
+   The customer have three other problems with this WebSheet:
+   TM1Web freezing after long splashings
+   and
+   open the TM1Web WebSheet with more than 1250 rows takes a long
+   time
+   and
+   TM1Web sheet freeze after start splashing with more than 12500
+   values
+   
+   
+   Environment:
+   Windows 2008 R2
+   TM1 10.2.2 FP2 IF1024
+   Excel 2013
+   IE11
+   German environment
+   
+   Steps to reproduce the behavior
+   
+   1. open TM1 Merck model (StartCockpit will open)
+   2. select and mark Preselection for report
+   3. push button Yearly Planning ( Yearly Planning FCI 2015 - CH
+   sheet open)
+   4. select element Lowest level in picklist Drilldown hierachy -
+   Product
+   5. select element Lowest level in picklist Drilldown hierachy -
+   Country
+   6. select element NO in picklist Zero Suppresion
+   7. push button Refresh Planning Maks
+   8. sheet will be refreshing and you will see all elements
+   9. take snapshot to Excel from current sheet view (export more
+   than 7100 rows's)
+   
+   effect:
+   after few time (in my test after 5:20 minute) you will get the
+   error message
+   "Message from webpage: Ein Fehler ist aufgetreten"
+   
+   
+   Tests with no effects:
+   I modified java heap to 4 GB
+   modified TM1Web_config.xml file
+   delete all IE temp/cookies
+   
+   
+   Test with Firefox and Chrome
+   Snapshot works in Firefox and Chrome, but did take a long time
+   (more than 8 minutes)
+   
+   
+   I made more test with IF1029.
+   After insttall IF1029 I made the same tests.
+   The Snapshot works and takes 2 minutes, second test snapshot
+   takes less than 2 minutes
+   
+   I made more tests with IF1029 and get other issues e.g. loss
+   TM1Websheet format, after export I can not open the snapshot
+   with Excel or can save the snapshot
+   
+   I search in web and found same infromation about Interent
+   Explorer and Tomcat problems.
+   see attached link:
+   http://serverfault.com/questions/274049/apache-tomcat-ie-caching [http://serverfault.com/questions/274049/apache-tomcat-ie-caching]
+   -problem
+   
+   I do not find anything in ClearQuest or DCF
+   
+   Customer is Avantum/Merck.
+   
+   If made the tests on VMware with customer model.
+   The model is very bis and have static path's in reports.
+   If you need access to this VMware please ask Markus Kraft
+   (markus.kraft@de.ibm.com)
+   
+   The customer have three other problems with this WebSheet:
+   TM1Web freezing after long splashings
+   and
+   open the TM1Web WebSheet with more than 1250 rows takes a long
+   time
+   and
+   TM1Web sheet frezze after start splashing with more than 12500
+   values
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  I made more test with following settings.
+   The export works but only when one user start the snapshot.
+   I search in web and found a interesting information:
+   http://serverfault.com/questions/274049/apache-tomcat-ie-caching [http://serverfault.com/questions/274049/apache-tomcat-ie-caching]
+   -problem
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * All Users                                                    *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * See error description.                                       *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Upgrade to IBM Cognos TM1 10.2.2 FP4                         *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Code Fix
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+ *  This issue has been reviewed and sent for investigation and
+   resolution.  The current target is to address in the next major
+   release.
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI37394
+   
+   
+ * REPORTED COMPONENT NAME
+   TM1 WEB
+   
+   
+ * REPORTED COMPONENT ID
+   5724W49WB
+   
+   
+ * REPORTED RELEASE
+   A22
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-03-19
+   
+   
+ * CLOSED DATE
+   2015-09-17
+   
+   
+ * LAST MODIFIED DATE
+   2015-09-17
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TM1 WEB
+   
+   
+ * FIXED COMPONENT ID
+   5724W49WB
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * RA22 PSN
+   UP

@@ -1,0 +1,69 @@
+Title: IBM LDAP group user is unable to submit from conman - United States
+
+Text:
+AWSBHU076E; AWSDEJ027E; unable; submit; cli TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ AWSBHU076E and AWSDEJ027E errors are received during submission of a job or of a jobstream as an LDAP group user from the conman command line. 
+
+SYMPTOM
+Logon as a user who is a member of an LDAP group. The user is able to perform submit commands from Tivoli Dynamic Workload Console (TDWC), but not from the conman command line.
+
+Sample error. 
+
+ 
+%sbd FTA#Stream 
+AWSBHU076E Conman cannot process the issued command. The following 
+error occurred: AWSDEJ027E Either the user for which authorization is 
+being sought is not defined in the Security file, or it is defined but 
+no associated access rights are defined. The Security file is probably 
+either empty or corrupt. 
+
+If the user is specifically defined in the Tivoli Workload Scheduler (TWS) Security file, then the user is able to submit using the conman command line. However, if the user is not defined specifically in the Security file, the AWSBHU076E and AWSDEJ027E errors are received.
+
+
+CAUSE
+There are two common ways of grouping users in LDAP: 
+
+
+ * objectClass posixGroup 
+ * objectClass groupofNames
+   
+   
+
+posixGroup: Uses the memberUid attribute which contains only the value of the UID of a users full DN. 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+
+
+
+groupofNames: Uses the member attribute which contains the full DN of the user. 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+
+
+
+In this case, the groupofNames format is used. As the posixGroup version is generally used in UNIX environments, Tivoli Workload Scheduler (TWS) expects this method. 
+
+ENVIRONMENT
+LDAP server is Tivoli Directory.
+
+
+
+RESOLVING THE PROBLEM
+To allow the user to submit from the conman command line, you must request that your LDAP administrator add the user to the same group as the TWS_User, but using the posixGroup format instead of the groupofNames format.
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ Maestro
+TWA
+TWS

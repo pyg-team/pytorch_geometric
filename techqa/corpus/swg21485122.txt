@@ -1,0 +1,54 @@
+Title: IBM Collaboration and Deployment Services 4.2 and Decision Management 6.1 messages are still being written to SystemOut - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When installing C&DS and DM6, the log4j.xml file is used to direct all C&DS and DM6 messages to a seperate log file, to keep the systemOut.log file clean. Even message from source SystemOut are being printed in the systemOut.log file , which might indicate that in our source code still System.out.println () are located. 
+
+Here is an example sniplet (small) of the SystemOut
+
+[16-11-10 13:22:42:593 CET] 0000000a WsServerImpl A WSVR0001I: Server server1 open for e-business
+[16-11-10 13:22:42:937 CET] 0000002c ServletWrappe I SRVE0242I: [cr-ws] [/cr-ws] [AxisServlet]: Initialization successful.
+[16-11-10 13:22:43:218 CET] 0000002c ServletWrappe I SRVE0242I: [pev] [/pev] [AxisServlet]: Initialization successful.
+[16-11-10 13:22:43:640 CET] 0000002b ServiceLogger I com.ibm.ws.ffdc.IncidentStreamImpl initialize FFDC0009I: FFDC opened incident stream file D:\Program Files\IBM\WebSphereBase6.1\AppServer\profiles\AppSrv01\logs\ffdc\server1_0000002b_10.11.16_13.22.43_0.txt
+[16-11-10 13:22:43:671 CET] 0000002b ServiceLogger I com.ibm.ws.ffdc.IncidentStreamImpl resetIncidentStream FFDC0010I: FFDC closed incident stream file D:\Program Files\IBM\WebSphereBase6.1\AppServer\profiles\AppSrv01\logs\ffdc\server1_0000002b_10.11.16_13.22.43_0.txt
+[16-11-10 13:23:31:765 CET] 00000026 SystemOut O Invoke getExecutionServer() so recovery code runs
+[16-11-10 13:23:31:796 CET] 00000026 SystemOut O Begin recovery for execution server - host address = 169.254.25.129
+[16-11-10 13:24:21:734 CET] 0000002c ActionServlet I org.apache.struts.action.ActionServlet init inside init....
+[16-11-10 13:24:22:765 CET] 0000002c SessionListen I SessionListener sessionCreated(HttpSessionEvent event) session with session ID=-4RIaicv6Hm56E63quuzB_ggetting created
+[16-11-10 13:24:22:781 CET] 0000002c TilesRequestP I org.apache.struts.tiles.TilesRequestProcessor initDefinitionsMapping Tiles definition factory found for request processor ''.
+[16-11-10 13:25:00:234 CET] 0000002c ServletWrappe I SRVE0242I: [pem] [/pem] [pemupdateServlet]: Initialization successful.
+[16-11-10 13:25:00:234 CET] 0000002c SystemOut O D:\Program Files\IBM\SPSS\Collaboration and Deployment Services Websphere6\4.2\Server\components\pemplugins\update\site.xml
+[16-11-10 13:25:01:734 CET] 0000002c SystemOut O D:\Program Files\IBM\SPSS\Collaboration and Deployment Services Websphere6\4.2\Server\components\pemplugins\update\features\com.spss.mgmt.modeler.feature_4.2.0.jar
+[16-11-10 13:25:02:171 CET] 0000002c SystemOut O D:\Program Files\IBM\SPSS\Collaboration and Deployment Services Websphere6\4.2\Server\components\pemplugins\update\features\com.spss.mgmt.pev.rt.feature_4.2.0.jar
+[16-11-10 13:25:02:234 CET] 0000002c SystemOut O D:\Program Files\IBM\SPSS\Collaboration and Deployment Services Websphere6\4.2\Server\components\pemplugins\update\features\com.spss.reporting.vis.feature_4.2.0.jar
+[16-11-10 13:25:02:281 CET] 0000002c SystemOut O D:\Program Files\IBM\SPSS\Collaboration and Deployment Services Websphere6\4.2\Server\components\pemplugins\update\features\com.spss.mgmt.pev.feature_4.2.0.jar
+
+------------------------------------------------------------------------------------------
+
+
+The pes.log file (using the log4j.xml for websphere) contains the following log entries:
+
+12:08:51,812 INFO [GroupManagementServiceProviderFactory] The server cluster is not detected:com.spss.groupman.internal.providers.GroupManagementServiceProviderFactory$NullGroupManagementServiceProvider@61b261b2
+12:08:53,937 INFO [GroupManagementServiceProviderFactory] The server cluster is not detected:com.spss.groupman.internal.providers.GroupManagementServiceProviderFactory$NullGroupManagementServiceProvider@b5c0b5c
+12:08:54,015 INFO [connection] Setup JNDI default database.
+12:09:03,203 INFO [connection] Setup JNDI default database.
+12:09:03,437 INFO [GroupManagementServiceProviderFactory] The server cluster is not detected:com.spss.groupman.internal.providers.GroupManagementServiceProviderFactory$NullGroupManagementServiceProvider@1b2e1b2e
+12:09:05,171 INFO [GroupManagementServiceProviderFactory] The server cluster is not detected:com.spss.groupman.internal.providers.GroupManagementServiceProviderFactory$NullGroupManagementServiceProvider@22902290
+12:09:07,500 INFO [GroupManagementServiceProviderFactory] The server cluster is not detected:com.spss.groupman.internal.providers.GroupManagementServiceProviderFactory$NullGroupManagementServiceProvider@3ce63ce6
+12:09:07,687 INFO [connection] Setup JNDI default database.
+12:09:18,890 INFO [connection] Setup JNDI default database.
+12:09:18,984 INFO [GroupManagementServiceProviderFactory] The server cluster is not detected:com.spss.groupman.internal.providers.GroupManagementServiceProviderFactory$NullGroupManagementServiceProvider@6e4e6e4e 
+
+RESOLVING THE PROBLEM
+This problem has been reported to SPSS Development and is targeted to be fixed in C&DS 4.2.
+
+RELATED INFORMATION
+ Need more help? Our C&DS forum is Live! [https://developer.ibm.com/answers/topics/collaboration.html?smartspace=predictive-analytics]
+
+
+ 
+
+HISTORICAL NUMBER
+ 92236

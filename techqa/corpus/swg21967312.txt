@@ -1,0 +1,34 @@
+Title: IBM Error when launching Scan task from Datacap Desktop. - United States
+
+Text:
+Desktop; No data; Scan; VScan TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Receiving the following error message when attempting to launch up Scan task from Datacap Desktop:
+"This batch has no data to process. Aborting." 
+
+Then followed by this error: 
+"Unable to run queue." 
+
+DIAGNOSING THE PROBLEM
+The panel for TravelDocs contained a value with all upper-case letter [eg. TRAVELDOCS], which caused the error to occur when attempting to launch the Scan task from Datacap Desktop
+
+RESOLVING THE PROBLEM
+The "Bind DCO type to panel" for Datacap Desktop is case-sensitive. Be sure the DCO name matches as it appears in Datacap Studio (both the spelling and case-sensitivity). 
+
+Logon to TMWeb client. 
+
+Go to Administrator tab 
+
+Select the VScan task from the Workflow. 
+
+Click Setup under Program. 
+
+Then change the value of the Panel to match what is in Datacap Studio. For example "TRAVELDOCS" to "TravelDocs" 
+
+Click Save
+
+[/support/docview.wss?uid=swg21967312&aid=1] [/support/docview.wss?uid=swg21967312&aid=1]
+
+[/support/docview.wss?uid=swg21967312&aid=2] [/support/docview.wss?uid=swg21967312&aid=2]
+[/support/docview.wss?uid=swg21967312&aid=3] [/support/docview.wss?uid=swg21967312&aid=3]

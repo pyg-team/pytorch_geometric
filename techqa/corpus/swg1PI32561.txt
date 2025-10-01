@@ -1,0 +1,219 @@
+Title: IBM PI32561: CCVPACIM CONNECTION FIELD IS PROTECTED WHEN TRYING TO UPDATE CICSCM CONFIGURATION PF8 PFSHOW ON - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  You are using the CICS Configuration Manager for z/OS (CICSCM)
+   ISPF panelid CCVPACIM to manage CICSCM configuration, and the
+   connection field is protected. When you Max and PF8 to the
+   bottom, the last 2 rows on the panel do not display .
+   
+   A terminal emulator that does not display a minimum of 23 lines
+   in the body of the ISPF panel is being used. This can be due to
+   running in ISPF split screen mode on a 24x80 screensize or
+   having PFSHOW ON with 2 rows of PF keys on a 24x80 screen.
+   
+   Additional Symptom(s) Search Keyword(s): KIXREVWJB
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Ensure your screen displays a minimum of 23 rows by doing each
+   of the following:
+   
+   - Configure your 3270 emulator to use a larger screen size that
+   displays more the 23 rows in the body of the ISPF panel.
+   Standard 3270 screen sizes are:
+   
+           24x80
+           32x80
+           43x80
+           27x132
+   
+   - Exit ISPF split screen.
+   - Enter the ISPF PFSHOW OFF command to free up 1 or more
+   display lines if PF keys were displayed.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All users of CICS Configuration Manager      *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: 1. The CICS Configuration definition    *
+   *                         edit panel CCVPACIM fails to         *
+   *                         display connection details when      *
+   *                         the screen size is 24 x 80 and       *
+   *                         PFSHOW is ON.                        *
+   *                      2. CICS Configuration Manager v5.1      *
+   *                         copyright notices require updating   *
+   *                         to reflect year 2015.                *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   1. The CICS Configuration Manager for z/OS ISPF dialog panel
+      CCVPACIM edits CICS Configuration definitions for CSD files.
+      When this panel is displayed on a 24 line, 80 column device
+      with the user function key settings displayed at the bottom
+      of the screen (PFSHOW ON), then only 22 lines of the panel
+      are visible. The list of related Connection definitions
+      commencing on panel line 23 is obscured by the function key
+      display, and it is not possible to make them visible by
+      scrolling or other viewing options.
+   
+   
+   2. For CICS Configuration Manager v5.1, the copyright notices
+      appearing in the ISPF online dialog invocation message, and
+      'About CICS Configuration Manager' online help topic,
+      and stamped into ongoing execution component changes require
+      updating to reflect the change to calendar year 2015.
+      The corresponding changes for CICS Configuration Manager v5.2
+      were made in APAR PI32070 [http://www-01.ibm.com/support/docview.wss?uid=swg1PI32070]
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  1. CICS Configuration Manager for z/OS is corrected. The layout
+      of the ISPF panels used for viewing and editing CICS
+      Configuration definitions is adjusted.
+      The list of Connections in panel CCVPACIM now appears on
+      panel line 21, and is viewable on a 24 x 80 screen device,
+      with PFSHOW set ON.
+   
+   2. The CICS Configuration Manager v5.1 copyright notices have
+       been updated.
+   51EY
+   51KY
+   52EY
+   52KY
+   CCVHABOU
+   CCVI09
+   CCVPACIE
+   CCVPACIM
+   CCVPACIX
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI32561
+   
+   
+ * REPORTED COMPONENT NAME
+   CICS CONFIG MGR
+   
+   
+ * REPORTED COMPONENT ID
+   5697CIC00
+   
+   
+ * REPORTED RELEASE
+   51E
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-01-12
+   
+   
+ * CLOSED DATE
+   2015-02-19
+   
+   
+ * LAST MODIFIED DATE
+   2015-03-03
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UI25284 UI25285 UI25286 UI25287
+   
+   
+
+MODULES/MACROS
+ *  CCVHABOU CCVI09   CCVPACIE CCVPACIM CCVPACIX
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CICS CONFIG MGR
+   
+   
+ * FIXED COMPONENT ID
+   5697CIC00
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R51E PSY UI25284 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI25284]
+   UP15/02/25 P F502
+   
+   
+ * R51K PSY UI25285 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI25285]
+   UP15/02/25 P F502
+   
+   
+ * R52E PSY UI25286 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI25286]
+   UP15/02/25 P F502
+   
+   
+ * R52K PSY UI25287 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI25287]
+   UP15/02/25 P F502
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

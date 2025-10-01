@@ -1,0 +1,134 @@
+Title: IBM WebSphere MQ and MQSeries Jobs for iSeries - United States
+
+Text:
+JOB names jobs mqminfo mq400l2 5724H7206 5724H7226 i5/OS IBMi iSeries AS/400 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ You want to know what the names are for WebSphere MQ and MQSeries jobs for the IBM i platform. 
+
+RESOLVING THE PROBLEM
+Websphere MQ 8.0 jobs:
+AMQALMPX The checkpoint processor that periodically takes journal checkpoints.
+AMQZMUC0 Utility manager. This job executes critical queue manager utilities, for example the journal chain manager.
+AMQZXMA0 The execution controller that is the first job started by the queue manager. 
+It handles MQCONN requests, and starts agent processes to process WebSphere MQ API calls.
+AMQZFUMA Object authority manager (OAM).
+AMQZLAA0 Queue manager agents that perform most of the work for applications that connect to the queue manager using MQCNO_STANDARD_BINDING.
+AMQZLSA0 Queue manager agent.
+AMQZMUF0 Utility Manager
+AMQZMGR0 Process controller. This job is used to start up and manage listeners and services.
+AMQZMUR0 Utility manager. This job executes critical queue manager utilities, for example the journal chain manager.
+AMQFQPUB Queued publish/subscribe daemon.
+AMQFCXBA Broker worker job.
+RUNMQBRK Broker control job.
+AMQRMPPA Channel process pooling job.
+AMQCRSTA TCP/IP-invoked channel responder.
+AMQCRS6B LU62 receiver channel and client connection (see note).
+AMQRRMFA Repository manager for clusters.
+AMQCLMAA Non-threaded TCP/IP listener.
+AMQPCSEA PCF command processor that handles PCF and remote administration requests.
+RUNMQTRM Trigger monitor.
+RUNMQDLQ Dead letter queue handler.
+RUNMQCHI The channel initiator.
+RUNMQCHL Sender channel job that is started for each sender channel.
+RUNMQLSR Threaded TCP/IP listener.
+AMQRCMLA Channel MQSC and PCF command processor.
+
+WebSphere MQ 7.0 jobs:
+AMQZXMA0 - The execution controller 
+AMQALMPX - Checkpoint Job 
+AMQFCXBA - Broker Worker Job 
+AMQFQPUB - Queued PubSub Daemon 
+RUNMQBRK – Broker Control Job 
+AMQPCSEA - Command Server 
+AMQRRMFA - Repository Manager 
+AMQZDMAA - Deferred Message Handler 
+AMQZFUMA - Object Authority Manager 
+AMQZLAA0 - Queue Manager Agent 
+AMQZMGR0 - Process Controller 
+AMQZMUC0 - Utility Manager 
+AMQZMUF0 - Utility Manager 
+AMQZMUR0 - Utility Manager 
+AMQZXMA0 - Execution Controller 
+RUNMQCHL - The Sender Channel jobs 
+RUNMQCHI - The Channel Initiator 
+RUNMQTRM - Application Trigger Monitor
+RUNMQDLQ - Dead Letter queue handler 
+RUNMQLSR - TCP/IP Channel Threaded listener 
+AMQCLMAA - Non-threaded Listener 
+AMQCRSTA - Non threaded channels 
+AMQRMPPA - Channel process pooling job 
+AMQZDMAA - Deferred Message Handler 
+
+WebSphere MQ 6.0 jobs:
+
+AMQZXMA0 - The execution controller 
+AMQZLAA0 - Queue manager agents 
+AMQZFUMA - Authority Manager 
+AMQALMPX - The checkpoint processor
+AMQRRMFA - Repository manager for clusters 
+RUNMQCHL - The Sender Channel jobs
+RUNMQCHI - The Channel Initiator 
+RUNMQTRM - Application Trigger Monitor
+RUNMQDLQ - Dead Letter queue handler
+AMQPCSEA - PCF command processor 
+RUNMQLSR - TCP/IP Channel Threaded listener 
+AMQCLMAA - Non-threaded Listener 
+AMQCRSTA - Non threaded channels 
+AMQRMPPA - Channel process pooling job 
+AMQZDMAA - Deferred Message Handler
+AMQZLAS0 - Pipe bindings queue manager agent 
+AMQZMGR0 – Process Controller
+AMQZMUC0 – Utility Manager (Critical)
+AMQZMUR0 – Utility Manager (Restartable)
+AMQFCXBA – Broker Worker Job
+RUNMQBRK – Broker Control Job
+
+
+WebSphere MQ 5.3 jobs:
+
+STRSBS SBS(QMQM) 
+
+Start QMGR - STRMQM
+
+Queue manager is active if WRKUSRJOB QMQM *ACTIVE shows some or all of
+following jobs:
+
+AMQALMPX .....Checkpoint process
+AMQRRMFA..... Repository mgr for clusters 
+AMQZFUMA......OAM manager (security)
+AMQZLAA0......Agent process
+AMQZXMA0......Execution controller 
+RUNMQCHI .....Channel initiator (Started using SYSTEM.CHANNEL.INITQ)
+AMQZDMAA......Deferred MQPUT processor(Used internally by MQ) 
+
+Other jobs which must be started by way of a command are
+RUNMQLSR......Threaded listener (this is NOT the default) - STRMQMLSR 
+AMQCLMAA......Non-threaded listener (this IS the default) - STRMQMLSR
+RUNMQTRM......Trigger monitor started for triggered appls - STRMQMTRM
+AMQPCSEA......Command server - STRMQMCSVR
+RUNMQCHL......Sender channel - STRMQMCHL
+AMQCRSTA......Receiver channel (Active when non-threaded listener being used)
+
+ENDMQM ENDCCTJOB(*NO)
+NOTE: Will end all jobs except for: RUNMQLSR or the AMQCLMAA jobs must
+issue ENDMQMLSR to end listener jobs after ENDMQM completes
+
+ENDMQM ENDCCTJOB(*YES) 
+NOTE: Will end all jobs including the listeners. 
+
+MQSeries pre-V5.x: 
+AMQHIXK4 - Storage Manager (Housekeeper) 
+AMQMCPRA - Data Store (Object Cache) 
+AMQCLMAA - Listener 
+AMQALMP4 - Check Point Process 
+AMQRMCLA - Sender channel 
+AMQCRSTA - TCP/IP Receiver channel and Client Connection 
+AMQCRS6A - LU62 Receiver channel and Client Connection 
+AMQPCSVA - PCF command processor 
+AMQRIMNA - Channel initiator (trigger monitor to start channel)
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ WebSphere MQ WMQ MQSeries

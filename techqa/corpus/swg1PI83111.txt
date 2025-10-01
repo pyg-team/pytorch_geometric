@@ -1,0 +1,162 @@
+Title: IBM PI83111: MONITOR FUNCTION OF ADMINCENTER DOESN'T DISPLAY THE CORRECT VALUE OF "USED CONNECTIONS" - United States
+
+Text:
+  FIXES ARE AVAILABLE
+17.0.0.3: WebSphere Application Server Liberty 17.0.0.3 [http://www-01.ibm.com/support/docview.wss?uid=swg24044079]
+17.0.0.4: WebSphere Application Server Liberty 17.0.0.4 [http://www-01.ibm.com/support/docview.wss?uid=swg24044285]
+18.0.0.1: WebSphere Application Server Liberty 18.0.0.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24044624]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When we use monitor feature on Liberty, we can monitor the
+   several  counters like "Used", "Free", "Created" and
+   "Destroyed" of  connection pool by using Liberty admin
+   center.
+   If we set "agedTimeout" to "-1" for a connection pool, the
+   existing free connection will be destroyed until the
+   number of existing free connection is equal to minPoolSize.
+   Then, the remaining connection would keep to stay in the
+   free pool because of "agedTimeout=-1".
+   
+   Let's assume the following condition.
+   * agedTimeout=-1
+   * minPoolSize=5
+   
+   Under this condition, if only two connections are created
+   and used, the "Used" and "Created" counter are increased
+   to 2. And when the connections are returned to free pool,
+   "Used" is still "2" although "Free" counter is increased
+   to "2".
+   So the "Used" value doesn't reflect the actual in-use
+   connection.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  All users of IBM WebSphere Application      *
+   *                  Server Liberty - Liberty Administrative     *
+   *                  Center using the Explore Tool with the      *
+   *                  Monitor feature.                            *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: The Used Connections Monitor Graph does *
+   *                      not display the correct value for Used  *
+   *                      Connections.                            *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   The Used Connections Monitor Graph does not display the correct
+   value for Used Connections.  The description on the panel was
+   confusing and the value displayed for 'Used Connections' was
+   incorrect.
+   
+   The wording on the panel was corrected for the Connections from
+   'Used' to 'In Use' and the correct  value is displayed.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The 'Used Connection' text was changed to read 'In Use', and the
+   hover help now properly displays how it is calculated.
+   
+   The fix for this APAR is currently targeted for inclusion in fix
+   pack 17.0.0.3.  Please refer to the Recommended Updates page for
+   delivery information:
+   http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI83111
+   
+   
+ * REPORTED COMPONENT NAME
+   LIBERTY PROFILE
+   
+   
+ * REPORTED COMPONENT ID
+   5724J0814
+   
+   
+ * REPORTED RELEASE
+   CD0
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-06-14
+   
+   
+ * CLOSED DATE
+   2017-10-24
+   
+   
+ * LAST MODIFIED DATE
+   2017-10-24
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   LIBERTY PROFILE
+   
+   
+ * FIXED COMPONENT ID
+   5724J0814
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * RCD0 PSY
+   UP

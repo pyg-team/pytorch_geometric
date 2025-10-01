@@ -1,0 +1,30 @@
+Title: IBM TIP 2.2.0.1 feature pack install failure - United States
+
+Text:
+TIPL2; TIPL2INST; Tivoli Integrated Portal; 2.2.0.1; CTGWA0069E; Not a valid TIP 2.1 Install Location TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Tivoli Integrated Portal 2.2.0.1 feature pack installation failed with the error:
+
+"...00001_TIPInstall_PreCheck-FP1/TIPInstall_PreCheck-FP1.xml:614: CTGWA0069E Not a valid TIP 2.1 Install Location. " 
+
+CAUSE
+The path specified in the response file for the existing TIP install did not match the path recorded in the Deployment Engine database. The customer specified a soft link in the response file, but the DE registry had the literal path.
+
+DIAGNOSING THE PROBLEM
+Check the installation log located in the install user's home directory ("TIPFeaturePackInstaller-00.log") for the following error:
+
+###
+2012-10-05 19:55:15.200+00:00 : STDERR : The following error occurred
+while executing this line:
+<TIP HOME>/_uninst/TIPInstall2201/plan/cheks/MachinePlan_localhost/00001_TIPInstall_PreCheck-FP1/TIPInstall_PreCheck-FP1.xml:614: CTGWA0069E Not a valid TIP 2.1
+Install Location.
+###
+
+Navigate to <DE HOME>/bin directory and execute the de_lsrootiu command (de_lsrootiu.bat or de_lsrootiu.sh)
+
+Check the "discriminant" value which is the path that the DE has recorded for the TIP install. 
+
+
+RESOLVING THE PROBLEM
+Update the TIP 2.2.0.1 response file to reflect the path specified in the "discriminant" attribute in the de_lsrootiu output, and then retry the install

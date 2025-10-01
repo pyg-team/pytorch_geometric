@@ -1,0 +1,76 @@
+Title: IBM How To Migrate Your IBM Integrated Application Server (IAS) Instance From v7.1/v8.1 to v8.5 - United States
+
+Text:
+IAS; Integrated Application Server; v7.1; v8.1; v8.5; migration; upgrade TECHNOTE (FAQ)
+
+QUESTION
+ This document will address how to migrate your IBM Integrated Application Server (IAS) Instance from v7.1/v8.1 to v8.5. 
+
+ANSWER
+There are several different migration paths depending on your needs. Two of the most popular paths are...
+1) Side-by-side migrations where the old and new servers run at the same time on different ports and with different server names until the new server can be fully tested and then switched over to. 
+
+2) In-place migrations where the the old server is decommissioned and the new server is fully migrated to, started, and put in place of the old server using the same ports and server name.
+
+If you choose to perform an in-place migration, you will need to identify the HTTP and Application Server ports used by your IAS v7.1/v8.1 server before you create your new IAS v8.5 server. NOTE: There is no command port for IAS v7.1/v8.1. When creating your new IAS v8.5 server, you will specify a unique command port and then the same HTTP and application server ports as your IAS v7.1/v8.1 server. Before you can start your new IAS v8.5 server, you would need to stop your IAS v7.1/v8.1 server to avoid a port conflict between the servers.
+
+If performing a side-by-side migration (which is the most popular) where your IAS v7.1/v8.1 servers remain active during the migration process; you will not be able to create your new IAS v8.5 servers with the exact same server name and port values as your old IAS v7.1/v8.1 servers. You can, however, change the port values of the new IAS v8.5 server to match the old IAS v7.1/v8.1 server port values when you are ready to fully switch over to the new IAS v8.5 server. 
+
+If you require to keep your server names the same, you will need to save your web services and record the port values from your IAS v7.1/v8.1 servers first and then delete them before you create your IAS v8.5 servers. You cannot have 2 IAS servers (no matter the version) with the exact same server name on the same IBM i partition. If you want to keep your IAS v7.1/v8.1 servers active, you will need to use a different and unique name for your IAS v8.5 servers that is not used by another IAS server.
+
+For a side-by-side migration, here is a high-level overview of the steps required. 
+
+Pre-requisites:
+- IBM i LPP 57xxJV1 Option 17 (JDK 8.0 64 bit) is recommended to be installed.
+
+Refer to the document, Support of Java Development Kit (JDK) 8.0 on the IBM i OS [http://www.ibm.com/support/docview.wss?uid=nas8N1020692], for more information on how to download and install the 57xxJV1 Option 17 LPP.
+
+- It is recommend the latest IBM HTTP Server Group PTF level for your IBM i OS VRM is applied before beginning the migration process.
+
+
+
+IBM i 7.1 SF99368 [http://www.ibm.com/support/docview.wss?uid=nas4SF99368] IBM i 7.2 SF99713 [http://www.ibm.com/support/docview.wss?uid=nas4SF99713] IBM i 7.3 SF99722 [http://www.ibm.com/support/docview.wss?uid=nas4SF99722] 
+1) Create a new IAS v8.5 server to replace your IAS v7.1/v8.1 server. 
+
+You will need to use a different and unique name for your IAS v8.5 servers that does not match any of your IAS v7.1/v8.1 servers.
+
+You will also need to temporarily configure your IAS v8.5 servers with port values different than your IAS v7.1/v8.1 servers so you can have your v7.1/v8.1 and v8.5 IAS servers started "side-by-side" for testing purposes. You will be able to change your v8.5 port values to the same values as your v7.1/v8.1 servers later on in the migration process after you are ready to swap over to your IAS v8.5 servers.
+
+Refer to the section entitled, "Creating an Integrated Web Application Server" in the URL, [https://www-03.ibm.com/systems/resources/systems_i_software_iws_pdf_WebServicesServer_new.pdf]https://www.ibm.com/support/knowledgecenter/en/ssw_ibm_i_73/rzaie/rzaiewebintappserver.htm [https://www.ibm.com/support/knowledgecenter/en/ssw_ibm_i_73/rzaie/rzaiewebintappserver.htm], for detailed information on how to create a new IAS server. 2) (Optional) Switch the newly created IAS v8.5 JVM to use JDK 8.0 64 bit.
+NOTE: With the latest IBM HTTP Group PTF, newly created IAS v8.5 servers will use JDK 8.0 64bit by default if installed.
+
+Refer to the following IBM Software Technical Document for more information on how to do this.
+How To Change The IBM Java Development Kit (JDK) Version Used By an IBM Web Application v8.5 Server (IAS) [ttp://www.ibm.com/support/docview.wss?uid=nas8N1022189] 3) Re-deploy your web applications to your IAS v8.5 servers using the IBM Web Administration GUI.
+
+All web applications deployed to your old IAS v7.1/v8.1 application servers must be manually re-deployed to your new IAS v8.5 server. You will need to ensure you have the necessary WAR or WAB files of your previously installed web application(s) so that they can be deployed to your new IAS v8.5 server instance. 
+
+All resources, properties, and customizations must also be manually re-configured on the new IAS v8.5 server. Thus, why a side-by-side migration is recommended. This will ensure everything is migrated from old IAS instance to the new v8.5 IAS instance and is working properly.
+
+NOTES: 
+- There is no way to export a previously installed web application with IAS v7.1/v8.1. As a result, it is best to use the WAR or WAB file from when the application was last installed to install the web application on the new IAS v8.5 server. In an emergency, you could re-package the contents of the /www/<7.1_8.1_IASServer>/lwi/apps/eclipse/plugins/<application>/ directory into a valid WAR/WAB file and use this to deploy the application to the new IAS v8.5 server, but IBM does not support this process.
+
+- There is no automated migration script or wizard available to automatically migrate your web applications, configurations, and environment. Hence, why the web application, configuration, and environment migration must be performed manually.
+
+Refer to the different FAQs in the URL, [https://www-03.ibm.com/systems/resources/systems_i_software_iws_pdf_WebServicesServer_new.pdf]https://www.ibm.com/support/knowledgecenter/en/ssw_ibm_i_73/rzaie/rzaiewebintappserver.htm [https://www.ibm.com/support/knowledgecenter/en/ssw_ibm_i_73/rzaie/rzaiewebintappserver.htm], for detailed information on how to install a web application and create a database connections for an Integrated Application Server.
+
+Additional FAQs are answered here [http://www-01.ibm.com/support/docview.wss?uid=isg3T1026864] as well. 4) Restart your IAS v8.5 instance, test your IAS v8.5 web applications, and ensure everything is working properly. 5) When you are ready to switch over to your IAS v8.5 servers, you can change your IAS v8.5 port values to be the same as your IAS v7.1/v8.1 servers.
+
+- Record the HTTP and Application Server Port values for your IAS v7.1/v8.1 servers in the IBM Web Administration for i console.
+
+HTTP Server Port
+Manage -> Application Servers -> Select your IAS v7.1/v8.1 server from the Server list -> Server Properties -> View HTTP Servers.
+
+[/support/docview.wss?uid=nas8N1022566&aid=1] [/support/docview.wss?uid=nas8N1022566&aid=1]
+
+IAS v7.1/v8.1 Application Server Port(s)
+Manage -> Application Servers -> Select your IAS v7.1/v8.1 server from the Server list -> Server Properties -> Properties -> Ports
+
+[/support/docview.wss?uid=nas8N1022566&aid=2] [/support/docview.wss?uid=nas8N1022566&aid=2]
+
+- Stop your IAS v7.1/v8.1 servers.
+- Change the IAS v8.5 HTTP and Application Server Port values to be the same as your IAS v7.1/v8.1 servers using the instructions in the document URL below.
+
+How To Change the Ports Used by IBM Integrated Application Servers (IAS) v8.5 and Integrated Web Services (IAS) v8.5 Servers [http://www.ibm.com/support/docview.wss?uid=nas8N1020747] 6) Restart your IAS v8.5 servers to use the new port values and test. Congratulations! You have completed the migration of your web applications to IAS v8.5. 
+
+
+Cross reference information Segment Product Component Platform Version Edition Operating System IBM i 7.3 Operating System IBM i 7.2 Operating System IBM i 7.1

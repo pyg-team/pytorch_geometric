@@ -1,0 +1,50 @@
+Title: IBM Security Bulletin: Insufficient authorization check for project actions in WebSphere Lombardi Edition (CVE-2014-4844) - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ By using WebSphere Lomabrdi Edition (WLE) you can import and export process applications and toolkits. Although this functionality is available only to authorized users, the actual server side code accepts requests from lower privileged users. 
+
+VULNERABILITY DETAILS
+CVE ID: CVE-2014-4844 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-4844]
+CVSS Base Score: 6.0
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/95724 [https://exchange.xforce.ibmcloud.com/vulnerabilities/95724] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:M/Au:S/C:P/I:P/A:P)
+
+WebSphere Lombardi Edition allows importing and exporting process applications and toolkits. While this functionality is only available to authorized users in the user interface, the actual server side code accepts requests from lower privileged users.
+
+AFFECTED PRODUCTS AND VERSIONS
+ 
+
+ * WebSphere Lombardi Edition 7.2
+
+
+If you are using an earlier unsupported release, IBM strongly recommends to upgrade. REMEDIATION/FIXES
+Install the interim fix for APAR JR51286 as appropriate for your current WebSphere Lombardi Edition version. 
+
+
+ *  WebSphere Lombardi Edition [http://www.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~WebSphere&product=ibm/WebSphere/WebSphere+Lombardi+Edition&release=All&platform=All&function=aparId&apars=JR51286] 
+
+WORKAROUNDS AND MITIGATIONS
+None.
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v2 Guide [http://www.first.org/cvss/v2/guide] 
+On-line Calculator v2 [http://nvd.nist.gov/CVSS-v2-Calculator] 
+
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] 
+
+CHANGE HISTORY
+ 2014-12-12- initial version published 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.

@@ -1,0 +1,147 @@
+Title: IBM PM09972: EJB 2.1 bottom up generation from DB2 ZOS v 8 tables is missing columns and primary keys - United States
+
+Text:
+  A FIX IS AVAILABLE
+Rational Application Developer for WebSphere Software, Version 7.5.5.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24026077]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Environment:
+   - Operating System:
+   
+   Windows XP
+    - Product name:
+   Rational Application developer v. 7.5.5
+   
+   Description of problem:
+   
+   When generating EJB 2.1 Entity beans from tables in Database DB2
+    for z/OS and V8 (compatibility mode)
+   the columns and primary keys present in the tables are not gener
+   ated in the EJB Map file and
+   will produce incomplete java code that does not compile.
+   
+   Step to reproduce:
+   
+       - Create a New Physical Data model for Database DB2 for z/OS
+    and V8 (compatibility mode)
+       - Add a table with PK and 1 field
+       - In the JavaEE view , from the Data model make a right clic
+   k and make 'Create EJB from Tables (1.x,2.x)'
+       - Create new project with EJB module version 2.1
+   
+       - The code is generated but in Enterprise there is no column
+   s columns 1 and 2
+       - There is no mapping between the database table and the Ent
+   erprise table generated
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Data model format has added a new column type
+   zSeries:ZSeriesColumn for DB2 on zSeries.  The bottom-up
+   mapping support does not understand this column type and
+   fails with mapping the table columns.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  EJB Mapping now recognizes the new data model type
+   zSeries:ZSeriesColumn and can create mapping accordingly.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM09972
+   
+   
+ * REPORTED COMPONENT NAME
+   RATL APP DEV WI
+   
+   
+ * REPORTED COMPONENT ID
+   5724J1901
+   
+   
+ * REPORTED RELEASE
+   755
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-03-15
+   
+   
+ * CLOSED DATE
+   2010-04-28
+   
+   
+ * LAST MODIFIED DATE
+   2010-04-28
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   RATL APP DEV WI
+   
+   
+ * FIXED COMPONENT ID
+   5724J1901
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R755 PSN
+   UP

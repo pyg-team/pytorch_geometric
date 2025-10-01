@@ -1,0 +1,37 @@
+Title: IBM DFHSO0123 and AEXZ when using SSL when CICS is the client - United States
+
+Text:
+DFHSO0123 RC8 gsk_secure_socket_init SSL Certificate rejected by peer DFHPI0400 DFHPI0504 DFHPI0997 DFHAC2236 AEXZ APIB DFHPIRT 5655M1500 R640 640 R400 400 HCI6400 R650 650 R500 500 HCI6500 5655-M15 5655M15 ; 5655S9700 R660 660 R600 600 HCI6600 R670 670 R700 700 HCI6700 5655-S97 5655S97 ; 5655Y0400 R680 680 R800 800 HCI6800 R690 690 R900 900 HCI6900 R700 700 R000 000 HCI7000 5655Y0401 5655-Y04 5655Y04 KIXINFO TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ You are using CICS Transaction Server for z/OS (CICS TS) as a web services client and your application is sending the request to the server. You are receiving the following messages:
+
+DFHSO0123 Return code 8 received from function 'gsk_secure_socket_init' of System SSL. Reason: Certificate rejected by peer. Peer: nn.nn.nn.nn, TCPIPSERVICE: *NONE*. 
+DFHPI0400 The CICS pipeline HTTP transport mechanism failed to send a request because there was a socket error.
+DFHPI0504 The CICS Pipeline Manager has failed to communicate with a service provider due to an error in the underlying transport. TRANSPORT: HTTP
+DFHPI0997 The CICS pipeline manager has encountered an error: target program unavailable or abended.
+DFHAC2236 Transaction tranid abend AEXZ (or APIB if you are using debug tool) in program DFHPIRT term termid. Updates to local coverable resources will be backed out. 
+
+SYMPTOM
+Message DFHAC2236 will report an abendAPIB [http://www.ibm.com/support/knowledgecenter/SSGMCP_5.3.0/com.ibm.cics.ts.messages.doc/APxx_abend_codes/APIB.html] if you are using Debug Tool instead of abendAEXZ [http://www.ibm.com/support/knowledgecenter/SSGMCP_5.3.0/com.ibm.cics.ts.messages.doc/AExx_abend_codes/AEXZ.html], in program DFHPIRT.
+
+
+CAUSE
+The KEYRING being used does not contain the server's Certificate Authority root certificate.
+
+DIAGNOSING THE PROBLEM
+The trace shows the following exception:
+SO 080C SOSE *EXC* - SYSTEM_SSL_ERROR GSK_RESPONSE(GSK_ERR_CERT_VALIDATION) FUNCTION(SECURE_SOC_INIT) RESPONSE(EXCEPTION) REASON(CLIENT_ERROR) GSK_RETURN_CODE(8) CERTIFICATE_USERID() CIPHER_SELECTED()
+
+RESOLVING THE PROBLEM
+Install the server's Certificate Authority root certificate on the client side.
+
+RELATED INFORMATION
+ Redbooks publication: Securing CICS Web Services [http://www.redbooks.ibm.com/abstracts/sg247658.html?Open]
+DFHSO0123 [http://www.ibm.com/support/knowledgecenter/SSGMCP_5.3.0/com.ibm.cics.ts.messages.doc/DFHSO/DFHSO0123.html]
+
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ CICS/TS CICS TS CICS Transaction Server

@@ -1,0 +1,56 @@
+Title: IBM How do I do a clean restart of the IBM InfoSphere DataStage Engine? - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How do I do a "clean restart" of the IBM InfoSphere DataStage Engine? 
+
+ANSWER
+If you suspect some Client sessions did not cleanly end or disconnect, you can perform a clean restart to make sure the DataStage Engine is starting from scratch. Please make sure all clients are logged off and no jobs are running before performing the below steps. 
+
+Here are the instructions for a clean restart of DataStage Engine: 
+
+ 1. Log on to server as dsadm or root
+    
+ 2. cd $DSHOME
+    
+ 3. source the environment:
+    . ./dsenv --> that is dot space dot slash dsenv
+    
+    
+ 4. Check for DataStage client connections
+    ps -ef | grep dsapi_slave
+    ps -ef | grep dscs
+    
+    If there are any connections found, use kill -9 <process number> to remove them.
+    
+    
+ 5. Check for jobs processes:
+    ps -ef | grep phantom | grep java | grep agentf 
+    
+    If there are any connections found, use kill -9 <process number> to remove them.
+    
+    
+ 6. Check datastage shared memory segments:
+    ipcs -mop | grep ade
+    
+    If there any shared memory segments returned, remove them, use command:
+    
+    ipcrm -m ID , where ID is the number from the second column of ipcs -mop
+    
+    NOTE: On Red Hat Linux, use option "-mp" instead of "-mop".
+    
+    
+ 7. Check if there is any port hung using:
+    netstat -a | grep dsrpc
+    
+    If you get any results and the dsrpc is in WAIT then you need to wait until this it disappears (you can also reboot the machine).
+    
+    
+ 8. At this point you can stop or start the DataStage Engine.
+    bin/uv -admin -stop
+    bin/uv -admin -start
+
+
+When you have cleanly restarted the DataStage Engine, try logging in with the DataStage clients.

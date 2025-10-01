@@ -1,0 +1,143 @@
+Title: IBM IC99883: SSH CLIENT: KILLED BY SIGNAL 15 MESSAGE DISPLAYED WHEN USING SFTP - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Fix packs for DataPower B2B Appliance version 6.0 [http://www-01.ibm.com/support/docview.wss?uid=swg24034956]
+Fix packs for DataPower Integration Appliance version 6.0 [http://www-01.ibm.com/support/docview.wss?uid=swg24034957]
+Fix packs for DataPower Service Gateway version 6.0 [http://www-01.ibm.com/support/docview.wss?uid=swg24034959]
+Fix packs for DataPower Service Gateway version 6.0.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24036407]
+Fix packs for DataPower B2B Appliance version 6.0.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24036409]
+Fix packs for DataPower Integration Appliance version 6.0.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24036410]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When running firmware versions containing APAR IC93084 [http://www-01.ibm.com/support/docview.wss?uid=swg1IC93084] and prior
+   to this APAR, messages similar to the following might be seen in
+   the logs when using SFTP:
+   20140224T155640Z [0x80e005c7][ssh][info] : SSH client:  Killed
+   by signal 15.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Affected are Datapower firmware releases 5.0.0.11-5.0.0.13,
+   6.0.0.3-6.0.0.5 and 6.0.1.0-6.0.1.1 with configurations using
+   SFTP client, i.e. SFTP Poller front-side handler or sftp:
+   backend URLs.
+   
+   An info-level message "SSH client: Killed by signal 15." might
+   be logged for transactions using the SFTP protocol. This message
+   is benign and can be safely ignored.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fix is available in 5.0.0.14, 6.0.0.6 and 6.0.1.2.
+   
+   For a list of the latest fix packs available, please see:
+   http://www-01.ibm.com/support/docview.wss?uid=swg21237631 [http://www-01.ibm.com/support/docview.wss?uid=swg21237631]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC99883
+   
+   
+ * REPORTED COMPONENT NAME
+   DATAPOWER
+   
+   
+ * REPORTED COMPONENT ID
+   DP1234567
+   
+   
+ * REPORTED RELEASE
+   600
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-03-06
+   
+   
+ * CLOSED DATE
+   2014-04-17
+   
+   
+ * LAST MODIFIED DATE
+   2014-05-26
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   DATAPOWER
+   
+   
+ * FIXED COMPONENT ID
+   DP1234567
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R500 PSN
+   UP
+   
+   
+ * R600 PSN
+   UP
+   
+   
+ * R601 PSN
+   UP

@@ -1,0 +1,71 @@
+Title: IBM ITCAM4Tx: RFT test script playback on robotic agent fails - BWMRF0125E error - United States
+
+Text:
+71RRT-RFTPLAN; 71RRT-RFTINS; 71RRT-RFTCONF; 71RRT-RFTREC; 71RRT-RFTUPLOAD; 71RRT-RFTDNLOAD; 71RRT-RFTPLAY; 71RRT-RFTWV; 71RRT-RFTTS; application under test script pback failure unable TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Rational Functional Tester v8.2 test script playback on ITCAM robotic player agent fails with BWMRF0125E error seen in TEP robotic workspace. 
+
+SYMPTOM
+1) BWM/logs/trace-robotic.log shows following errors concerning RFT "TEST" script playback for example :
+
+BWMRF0125E An unknown internal error occurred in the Rational Functional Tester Playback
+
+Bad return code. Expected 0, got return code=111
+
+ftClient.downloadFile() returned a null FileInfo object! 
+
+2) On the AMC (t3) agent, we checked the "depot" directory supposed to store TEST.zip script archive file that was exported from RFT WorkBench.
+Actually the script was not uploaded as expected under <ITM_HOME>\kt1depot\T3\RFT 
+RFT subdirectory actually didn't exist.
+
+3) on the RRT (t6) agent, TEST.zip script archive file content was extracted in ./tmaitm6/app/rft/scripts/TEST directory, but it contains :
+./tmaitm6/app/rft/scripts/TEST/configuration
+and ./tmaitm6/app/rft/scripts/TEST/RFT subdirectories
+which is not right... 
+
+
+it should contains only 
+./tmaitm6/app/rft/scripts/TEST/resources subdirectory. 
+
+
+And all .java .class, .properties and configurations.rftcfg files
+should be located in ./tmaitm6/app/rft/scripts/TEST directory, or more generally in ./tmaitm6/app/rft/scripts/<script name> directory, on the robotic player agent 
+
+good example :
+[/support/docview.wss?uid=swg21636060&aid=1] [/support/docview.wss?uid=swg21636060&aid=1]
+
+bad example:
+[/support/docview.wss?uid=swg21636060&aid=2] [/support/docview.wss?uid=swg21636060&aid=2]
+[/support/docview.wss?uid=swg21636060&aid=3] [/support/docview.wss?uid=swg21636060&aid=3]
+
+
+CAUSE
+RFT script was not created and exported to ITCAM using a valid RFT workspace/ functional test project environment
+
+
+
+ENVIRONMENT
+ITCAM for Transactions V7.3
+Rational Functional Tester V8.2
+ITCAM4tx Robotic Response Time agent v7.3
+ITCAM4tx Application Management Console agent v7.3
+ITCAM4Tx Tivoli Rational Integration v7.3
+
+
+
+DIAGNOSING THE PROBLEM
+see symptoms
+
+
+
+RESOLVING THE PROBLEM
+Solution found that proved successful has been to create a new RFT workspace directory (using RFT workbench "workspace launcher" window (at very beginning of RFT workbench start), 
+and a new Functional Test Project (using File -> New -> Functional Test Project). 
+
+Then record again the script using this new workspace/Functional test project environment, play it back manually, export the script to the AMC agent system;then playback was successful on robotic agent.
+
+
+
+PRODUCT ALIAS/SYNONYM
+ rational functional tester itcam itcam4tx itcamfort itcam4t itcamtx

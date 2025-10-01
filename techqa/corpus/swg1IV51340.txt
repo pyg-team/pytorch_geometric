@@ -1,0 +1,153 @@
+Title: IBM IV51340: Latest Oracle Java 7 u45 or IBM Java 7 SR6 FP1 or IBM Java 6 SR15 FP1 does not allow TADDM Discovery Management Console - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  After installing Oracle Java Update 45, or IBM Java 7 SR6 FP1,
+   or IBM Java 6 SR15 FP1  the product console:
+   
+          1. Displays warning:
+       "This application will run with unrestricted access which
+   may put your computer and personal information at risk. Run this
+    application only if you trust the location and publisher above"
+   
+       2. After clicking RUN button nothing happens and Product
+   Console is not opened.
+   
+   In the java webstart console log the following error appears;
+   
+   Exception in thread "AWT-EventQueue-2"
+   java.lang.IllegalArgumentException: Wrong address
+    at
+   com.collation.gui.util.ServerNameExtractor.extractServerName(Ser
+   verNameExtractor.java:32)
+    at com.collation.gui.client.GuiMain.runIt(GuiMain.java:503)
+   
+   
+   or
+   Security warning indicates "JAR file manifest does not contain
+   the Permissions attribute"
+   
+   And Java console log exception shows "Missing required
+   Permissions manifest attribute in main jar ... guiclient.jar"
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Install an earlier level of Java
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Latest Oracle Java 7 update 45 or IBM Java SR6 FP1 or IBM
+   Java 6 SR15 FP1 does not allow TADDM Discovery Management
+   Console
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix for this APAR is contained in the following maintenance
+   packages:
+   | Fix Pack | 7.2.2-TIV-ITADDM-FP0002
+   | Fix Pack | 7.2.1-TIV-ITADDM-FP0006
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV51340
+   
+   
+ * REPORTED COMPONENT NAME
+   APP DEPENDENCY
+   
+   
+ * REPORTED COMPONENT ID
+   5724N5500
+   
+   
+ * REPORTED RELEASE
+   722
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-10-25
+   
+   
+ * CLOSED DATE
+   2014-05-28
+   
+   
+ * LAST MODIFIED DATE
+   2014-05-28
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   APP DEPENDENCY
+   
+   
+ * FIXED COMPONENT ID
+   5724N5500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R722 PSY
+   UP

@@ -1,0 +1,152 @@
+Title: IBM PM93361: POTENTIAL ABENDS906 WHEN WRITING OUT EXCEPTIONS OR SQL TEXT DURING AN INTERVAL SNAP - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Potential ABENDS906 when writing out exceptions or SQL text
+   during an interval snap.
+   
+   Message CSV002I REQUESTS FOR MODULE IGGCSI00 EXCEED MAXIMUM USE
+   COUNT is issued.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Re-cycle the CQM Collector started task on a daily basis to
+   avoid this problem.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: Users of DB2 Query Monitor.                  *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Potential ABENDS906 when writing out    *
+   *                      exceptions or SQL text during an        *
+   *                      interval snap.                          *
+   *                      Message CSV002I REQUESTS FOR MODULE     *
+   *                      IGGCSI00 EXCEED MAXIMUM USE COUNT is    *
+   *                      issued.                                 *
+   ****************************************************************
+   * RECOMMENDATION: APPLY the PTF.                               *
+   ****************************************************************
+   Code has been changed to correct this condition.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  APPLY the PTF.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM93361
+   
+   
+ * REPORTED COMPONENT NAME
+   DB2 QUERY MONIT
+   
+   
+ * REPORTED COMPONENT ID
+   5655E6701
+   
+   
+ * REPORTED RELEASE
+   310
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   YesHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-07-18
+   
+   
+ * CLOSED DATE
+   2013-08-21
+   
+   
+ * LAST MODIFIED DATE
+   2014-01-15
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UK96912
+   
+   
+
+MODULES/MACROS
+ *  CQMMEXCX CQMTTXTX
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   DB2 QUERY MONIT
+   
+   
+ * FIXED COMPONENT ID
+   5655E6701
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R310 PSY UK96912 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK96912]
+   UP13/08/24 P F308
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

@@ -1,0 +1,62 @@
+Title: IBM OutOfMemory error starting Watson Explorer Application Builder on Linux. - United States
+
+Text:
+ulimit NPROC max user process TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Application Builder fails to start up and throws an OutOfMemory error. Application Builder runs on top of WebSphere Application Servers Liberty Profile (WLP). Sometimes these out of memory errors are due to the number of process limit on Linux. The NPROC ulimit on Linux is a known configuration setting that needs to be modified for WLP. This limit needs to be increased in order for the Application Builder service (and WLP) to start up. 
+
+SYMPTOM
+When starting Application Builder in Linux, it fails to start the JVM, and the error may be similar to 
+
+JVMJ9VM015W: Initialization error for library jclse7b_28(14):jvmj9vm009e j9vmdllmain failed
+
+Reviewing the console.log found in <install_root_directory/AppBuilder/wlp/usr/servers/AppBuilder/logs, you may find similar message to
+Exception in thread "main" java/lang/OutOfMemoryError: Failed to create a thread
+
+
+DIAGNOSING THE PROBLEM
+If a Java core file was created ( usually located in the directory of the executable that crashed or in an operating system or Java specified location), named javacore.number.number.number.number.txt, search for the number of processes limit value in the file, it lists the hard and soft limits -
+USERLIMIT RLIMIT_NPROC number1_here number2_here
+
+Or you can use these Linux commands to view current settings -
+for the hard limit
+ulimit -aH 
+for the soft limit
+ulimit -aS 
+
+ulimit -a (SAMPLE output)
+core file size (blocks, -c) 0
+data seg size (kbytes, -d) unlimited
+scheduling priority (-e) 0
+file size (blocks, -f) unlimited
+pending signals (-i) 62797
+max locked memory (kbytes, -l) 64
+max memory size (kbytes, -m) unlimited
+open files (-n) 65536
+pipe size (512 bytes, -p) 8
+POSIX message queues (bytes, -q) 819200
+real-time priority (-r) 0
+stack size (kbytes, -s) 10240
+cpu time (seconds, -t) unlimited
+max user processes (-u) 65536
+virtual memory (kbytes, -v) unlimited
+file locks (-x) unlimited
+
+
+RESOLVING THE PROBLEM
+You need to increase the ulimit for max user processes value. The command to set the user processes: 
+
+ulimit -u <numerical value here> (-u refers to the maximum number of processes available to a single user)
+
+It can be changed in a configuration file at:
+/etc/security/limits.conf
+search for 'nproc'
+
+Review the following documentation for suggestions:
+
+WAS - Insufficient ulimit Value Causes Native OutOfMemory
+http://www-01.ibm.com/support/docview.wss?uid=swg21648497 [http://www-01.ibm.com/support/docview.wss?uid=swg21648497]
+
+Content Analytics ulimit doc
+https://www.ibm.com/support/knowledgecenter/SS8NLW_11.0.1/com.ibm.discovery.es.in.doc/iiysiulimits.htm [https://www.ibm.com/support/knowledgecenter/SS8NLW_11.0.1/com.ibm.discovery.es.in.doc/iiysiulimits.htm]

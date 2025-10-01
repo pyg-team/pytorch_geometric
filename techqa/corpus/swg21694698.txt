@@ -1,0 +1,18 @@
+Title: IBM DataStage ODBC Connector to HP Vertica V6.x triggers ODBC license warning - United States
+
+Text:
+odbc license; vertica; datastage TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ After setting up DataStage ODBC DSN to HP Vertica as per Technote 1587289, when connecting the ODBC Connector through the Vertica DSN, a warning message "You are not licensed to use this ODBC driver with the DataDirect ODBC Driver Manager under the license you have purchased" 
+
+SYMPTOM
+When connecting the ODBC Connector to the Vertica DSN that calls the ODBC driver provided by Vertica within a DataStage job, an error is thrown in the job log:
+
+ODBC function "SQLExecute" reported: SQLSTATE=HY000: Native Error Code =0: Msg=[DataDirect][ODBC lib] You are not licensed to use this ODBC driver with the DataDirect ODBC Driver Manager under the license you have purchased. If you with to purchase a license, then you may use the Driver Manager for a period of 15 days, during which time you are required to obtain a license. 
+
+
+RESOLVING THE PROBLEM
+Update the DataDirect ODBC drivers to the latest V7.1.x version that is available for the version of DataStage that you are running. 
+
+Please download the latest V7.1.x DataDirect ODBC driver from IBM Fix Central or contact IBM Support to get a copy.

@@ -1,0 +1,137 @@
+Title: IBM IT24543: CONNECT:DIRECT BROWSER USER INTERFACE V1.5.00 USING JETTY V6.1 THE VERSION OF JETTY IN USE DOES NOT SUPPORT TLS 1.2. - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS NEW FUNCTION.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  C:D BUI is using an outdated Jetty server that uses only an SSL
+   connection. Various Security Scanners detect cipher suite
+   vulnerabilities when scanning port 8443.
+   Replace the Jetty version with version 9.4.6 that does support
+   TLS v1.2
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  No workaround available.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Jetty 6.1 currently included in CD BUI does not support TLS 1.2.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Need newer version of Jetty.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  IT24543
+   
+   
+    
+   
+   
+
+COMMENTS
+ *  Updated CD/Browser iFix placed on EcuRep for customer to
+   download and test.
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT24543
+   
+   
+ * REPORTED COMPONENT NAME
+   STR CD BROWSER
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9901
+   
+   
+ * REPORTED RELEASE
+   150
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2018-03-27
+   
+   
+ * CLOSED DATE
+   2018-04-17
+   
+   
+ * LAST MODIFIED DATE
+   2018-04-17
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   STR CD BROWSER
+   
+   
+ * FIXED COMPONENT ID
+   5725C9901
+   
+   
+
+APPLICABLE COMPONENT LEVELS

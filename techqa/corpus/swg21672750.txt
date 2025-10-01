@@ -1,0 +1,18 @@
+Title: IBM Unable to retrieve documents from NLS on IBM FileNet Image Services - United States
+
+Text:
+Centera; CentraStar TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When retrieving NLS documents from EMC Centera storage ( with OS CentraStar Version: 4.1.0) the document archival and retrieval process from EMC Centera storage is slow and hangs. 
+
+SYMPTOM
+When retrieving NLS documents from EMC Centera storage, intermittently, users receive the following NLS trace error :
+Getting document content has failed.<br>com.filenet.api.exception.EngineRuntimeException;Fixed Content Provider open operation failed. Provider: [com.filenet.engine.content.fcprovider.centera.CenteraFCP(21)]SeqN[0] Referral: [version(hex)=10001; checksum(hex)=170a; mode=1; flags=0;contentID={<GUID>}; clipID=<CLIPID>;numContentElements=2;Tag[0]=>ceSeqNum[1];][Code=null]...Object Reference [DOCUMENT:1]ID"{<GUID>}" in ObjectStore "{<OS GUID>}";OMFC/Document/GetContent//CONTENT_FCP_OPERATION_FAILED_ON_OPEN
+
+
+CAUSE
+EMC Centera is known to have memory leak problem on CentraStar version 4.1.x
+
+RESOLVING THE PROBLEM
+Request the EMC support group to upgrade EMC Centera to the CentraStar software version 4.3 or a later version.

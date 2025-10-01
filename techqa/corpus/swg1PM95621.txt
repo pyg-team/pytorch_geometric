@@ -1,0 +1,222 @@
+Title: IBM PM95621: LOCALIZATIONS AND REGIONALIZATIONS NOT CREATED IF CONFIGURATION DOCUMENT AND/OR DOCUMENT PATH IS TOO LONG - United States
+
+Text:
+  A FIX IS AVAILABLE
+Fixes integrated in WebSphere Portal 8.0.0.1 Combined Cumulative Fixes [http://www-01.ibm.com/support/docview.wss?uid=swg24034497]
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  If the name of the MLS configuration document and/or the path to
+   the currently processed document is too long, then MLS
+   localizations and regionalizations will fail to be created and
+   the following error will be seen in the logs:
+   
+   [22/08/13 13:22:20:685 EST] 0000003b MLWork        3
+   MLWork.Run: Unexpected error detected,
+   com.ibm.workplace.wcm.services.WCMServiceUnavailableException:
+   Message: Failed to create SyncUpdate Tracker:
+   SyncUpdateTaskTracker [m_vpId=WWWW, m_projectId=XXXX,
+   m_relativePath=YYYY, m_configName=ZZZZ], Cause:
+   com.ibm.workplace.wcm.util.persistence.service
+   .PersistenceManagerServiceException: java.lang.RuntimeException:
+   com.ibm.db2.jcc.am.SqlDataException: DB2 SQL Error:
+   SQLCODE=-302, SQLSTATE=22001, SQLERRMC=null, DRIVER=4.12.55
+   
+   com.ibm.workplace.wcm.services.WCMServiceUnavailableException:
+   Message: Failed to create SyncUpdate Tracker:
+   SyncUpdateTaskTracker [m_vpId=WWWW, m_projectId=XXXX,
+   m_relativePath=YYYY, m_configName=ZZZZ], Cause:
+   com.ibm.workplace.wcm.util.persistence.service
+   .PersistenceManagerServiceException: java.lang.RuntimeException:
+   com.ibm.db2.jcc.am.SqlDataException: DB2 SQL Error:
+   SQLCODE=-302, SQLSTATE=22001, SQLERRMC=null, DRIVER=4.12.55
+    at com.ibm.workplace.wcm.ml.utils.SyncUpdateTaskTracker
+   .registerTask(SyncUpdateTaskTracker.java:134)
+    at com.ibm.workplace.wcm.ml.workflowactions.service
+   .SyncUpdateWork.&lt;init&gt;(SyncUpdateWork.java:120)
+    at com.ibm.workplace.wcm.ml.workflowactions.service
+   .AbstractSyncUpdateCustomWorkflowActionService
+   .doLibraryProcessing(AbstractSyncUpdateCustomWorkflowActionServi
+   ce.java:579)
+    at com.ibm.workplace.wcm.ml.workflowactions.service
+   .AbstractSyncUpdateCustomWorkflowActionService
+   .processBaseLocaleDocUpdate(AbstractSyncUpdateCustomWorkflowActi
+   onService.java:256)
+    at com.ibm.workplace.wcm.ml.workflowactions.service
+   .AbstractSyncUpdateCustomWorkflowActionService
+   .executeTask(AbstractSyncUpdateCustomWorkflowActionService
+   .java:146)
+    at com.ibm.workplace.wcm.ml.workflowactions.service.MLWork
+   .run(MLWork.java:303)
+    at com.ibm.workplace.wcm.ml.workflowactions.service.MLWork
+   .runInForeground(MLWork.java:95)
+    at com.ibm.workplace.wcm.ml.workflowactions.service
+   .AbstractMLCustomWorkflowActionService
+   .processDocument(AbstractMLCustomWorkflowActionService.java:255)
+    at com.ibm.workplace.wcm.ml.workflowactions
+   .LocalizeMLCustomWorkflowAction.execute(LocalizeMLCustomWorkflow
+   Action.java:79)
+   Opened for release 8001
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Rename MLS configuration document name and/or modify names of
+   items on the document path to be shorter
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  If the name of the MLS configuration document and/or the path to
+   the currently processed document is too long, then MLS
+   localizations and regionalizations will fail to be created and
+   the following error will be seen in the logs:
+   
+   [22/08/13 13:22:20:685 EST] 0000003b MLWork        3
+   MLWork.Run: Unexpected error detected,
+   com.ibm.workplace.wcm.services.WCMServiceUnavailableException:
+   Message: Failed to create SyncUpdate Tracker:
+   SyncUpdateTaskTracker [m_vpId=WWWW, m_projectId=XXXX,
+   m_relativePath=YYYY, m_configName=ZZZZ], Cause:
+   com.ibm.workplace.wcm.util.persistence.service
+   .PersistenceManagerServiceException: java.lang.RuntimeException:
+   com.ibm.db2.jcc.am.SqlDataException: DB2 SQL Error:
+   SQLCODE=-302, SQLSTATE=22001, SQLERRMC=null, DRIVER=4.12.55
+   
+   com.ibm.workplace.wcm.services.WCMServiceUnavailableException:
+   Message: Failed to create SyncUpdate Tracker:
+   SyncUpdateTaskTracker [m_vpId=WWWW, m_projectId=XXXX,
+   m_relativePath=YYYY, m_configName=ZZZZ], Cause:
+   com.ibm.workplace.wcm.util.persistence.service
+   .PersistenceManagerServiceException: java.lang.RuntimeException:
+   com.ibm.db2.jcc.am.SqlDataException: DB2 SQL Error:
+   SQLCODE=-302, SQLSTATE=22001, SQLERRMC=null, DRIVER=4.12.55
+       at com.ibm.workplace.wcm.ml.utils.SyncUpdateTaskTracker
+   .registerTask(SyncUpdateTaskTracker.java:134)
+       at com.ibm.workplace.wcm.ml.workflowactions.service
+   .SyncUpdateWork.&lt;init&gt;(SyncUpdateWork.java:120)
+       at com.ibm.workplace.wcm.ml.workflowactions.service
+   .AbstractSyncUpdateCustomWorkflowActionService
+   .doLibraryProcessing(AbstractSyncUpdateCustomWorkflowActionServi
+   ce.java:579)
+       at com.ibm.workplace.wcm.ml.workflowactions.service
+   .AbstractSyncUpdateCustomWorkflowActionService
+   .processBaseLocaleDocUpdate(AbstractSyncUpdateCustomWorkflowActi
+   onService.java:256)
+       at com.ibm.workplace.wcm.ml.workflowactions.service
+   .AbstractSyncUpdateCustomWorkflowActionService
+   .executeTask(AbstractSyncUpdateCustomWorkflowActionService
+   .java:146)
+       at com.ibm.workplace.wcm.ml.workflowactions.service.MLWork
+   .run(MLWork.java:303)
+       at com.ibm.workplace.wcm.ml.workflowactions.service.MLWork
+   .runInForeground(MLWork.java:95)
+       at com.ibm.workplace.wcm.ml.workflowactions.service
+   .AbstractMLCustomWorkflowActionService
+   .processDocument(AbstractMLCustomWorkflowActionService.java:255)
+       at com.ibm.workplace.wcm.ml.workflowactions
+   .LocalizeMLCustomWorkflowAction.execute(LocalizeMLCustomWorkflow
+   Action.java:79)
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Analysis: The MLS asynchronous tracker stores a generated ID
+   inside a local database which has a limit of 140 characters for
+   the ID
+   
+   Solution: Encode ID when its longer than 140 characters..
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM95621
+   
+   
+ * REPORTED COMPONENT NAME
+   LOTUS WEB CONT
+   
+   
+ * REPORTED COMPONENT ID
+   5724I2901
+   
+   
+ * REPORTED RELEASE
+   800
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-08-22
+   
+   
+ * CLOSED DATE
+   2013-10-09
+   
+   
+ * LAST MODIFIED DATE
+   2013-10-09
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   LOTUS WEB CONT
+   
+   
+ * FIXED COMPONENT ID
+   5724I2901
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R800 PSY
+   UP

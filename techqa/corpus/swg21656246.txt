@@ -1,0 +1,114 @@
+Title: IBM What is the recommended License Manager version for the use with IBM SPSS Statistics 22, what do I need to download and how to install the License Manager on a Windows operating system? - United States
+
+Text:
+LM SPSS Sentinel Statistics 22 8.5 license manager recommended download installtion administrator TECHNOTE (FAQ)
+
+QUESTION
+ I would like to know what License Manager version is recommended for usage with IBM SPSS Statistics 22 release? What package I have to download from IBM webpage? I would like to install the License Manager version on a Microsoft Windows Server operating system, how to do this? 
+
+ANSWER
+Recommended License Manager version:
+For the usage with IBM SPSS Statistics 22 it is recommended to download IBM SPSS Statistics Concurrent User Licensing Server 22.0 English Multiplatform eAssembly (CRNM8EN) package. With this version you can manage network licenses for older IBM SPSS software releases as well and not only Statistics 22 network licenses. It is also possible to manage for example IBM SPSS Modeler 15 or AMOS 22 network licenses. 
+
+We recommend to read the documentation on IBM SPSS Statistics 22 Documentation [http://www-01.ibm.com/support/docview.wss?uid=swg27038407]. Click on your preferred language and read Concurrent_License_Administrator_Guide.pdf and Concurrent_License_User_Installation_Instructions.pdf for the different operating systems 
+
+License Manager download: 
+
+On the IBM download software page there are several versions for the License Manager available depending on what operating system (OS) you would like to install the service. 
+
+If you would like to install the License Manager service and the Administration tool (WlmAdmin tool) to administer the network licenses on a Microsoft Windows OS the only download package you need is: 
+
+IBM SPSS Concurrent Licensing Tools 9.5.0.1 - License Manager Microsoft Windows English (CIP2KEN) - Size 100Mb 
+
+Which is part of the multiple platform package: IBM SPSS Statistics Concurrent User Licensing Server 22.0 English Multiplatform eAssembly (CRNM8EN). 
+
+When you download part number CIP2KEN (file name: spss_clt_9.5.0.1-licmgr_win_en.exe) then you will install both the Sentinel RMS License Manager and the Tools (Sentinel RMS Server Administration = WlmAdmin tool) 
+
+If you would like the Sentinel License Manager Service to run on a non-Windows operating system you need to download one of the other packages below and the separate WlmAdmin tool package to administer your network licenses on a Windows OS. The WlmAdmin tool is not available for non-Windows operating systems. 
+
+For more information on Statistics 22 packages available for download see ‘Downloading Statistics 22 [http://www-01.ibm.com/support/docview.wss?uid=swg24034898]’ webpage. 
+
+Available License Manager packages and tools for download:
+
+
+IBM SPSS Statistics Concurrent User Licensing Server 22.0 English Multiplatform eAssembly (CRNM8EN) Package name: Part number: Operating system: File size: File name: IBM SPSS Concurrent Licensing Tools 9.5.0.1 - License Manager Microsoft Windows CIP2KEN Windows 100 MB spss_clt_9.5.0.1_licmgr_win_en.exe (This is the License Manager for Windows OS including WlmAdmin tool)
+
+IBM SPSS Concurrent Licensing Tools 9.5.0.1 - License Manager Administrator CIP2JEN Windows 11 MB spss_clt_9.5.0.1_licmgr_adm_win_en.exe (This is the separate WlmAdmin tool)
+
+IBM SPSS Concurrent Licensing Tools 9.5.0.1 - License Manager Macintosh CIP2MEN Macintosh 20 MB spss_clt_9.5.0.1-licmgr_32b_mac_en.zip (This is the License Manager for Macintosh OSX)
+
+IBM SPSS Concurrent Licensing Tools 9.5.0.1 – License Manager 64-bit AIX CIP2HEN AIX 88 MB spss_clt_9.5.0.1-limgr_64b_aix_en.tar.gz (This is the License Manager for AIX OS)
+
+IBM SPSS Concurrent Licensing Tools 9.5.0.1 – License Manager 64-bit Linux CIP2IEN Linux 64bit 80 MB spss_clt_9.5.0.1-licmgr_64b_lx_en.tar.gz (This is the License Manager for Linux 64 OS)
+
+IBM SPSS Concurrent Licensing Tools 9.5.0.1 – License Manager 64-bit Oracle Solaris
+
+CIP2LEN Solaris 97 MB spss_clt_9.5.0.1-limgr_64b_sol_en.tar.gz (This is the License Manager for Solaris OS)
+
+IBM SPSS Concurrent Licensing Tools 9.5.0.1 - Hardware Key Microsoft Windows CIP2NEN Windows 10 MB spss_clt_9.5.0.1-hrdky_win_en.exe (You only need this driver when you use Dongles)
+
+IBM SPSS Concurrent Licensing Tools 9.5.0.1 - Hardware Key Linux CIP2PEN Linux 8 MB spss_clt_9.5.0.1-hrdky_lx_en.bin (You only need this driver when you use Dongles)
+
+IBM SPSS Concurrent Licensing Tools 9.5.0.1 - Hardware Key Macintosh CIP2QEN Macintosh 4 MB spss_clt_9.5.0.1-hrdky_mac_en.zip (You only need this driver when you use Dongles)
+
+
+How to install the License Manager on a Windows operating system: On the IBM SPSS Statistics 22 Documentation webpage you will find detailed instructions on how to install the License Manager or how upgrade an existing License Manager installation.
+Please note: You must install the network License Manager on a physical computer. Installing the License
+Manager in a virtualized environment is not supported.
+
+Log onto the Windows machine where you would like to install the License Manager on as Administrator and download spss_clt_9.5.0.1_licmgr_win_en.exe. 
+
+Note: On Microsoft Windows 2008 or 2012 Server, Windows Vista, Windows 7 or Windows 8, you must launch the installer as administrator. When instructed to launch an installer file, right-click the file and choose ‘Run As Administrator’. Ensure that the machine on which you are installing has Java installed. Please note also that if you install the License manager on a desktop OS like Windows 7 and not on a Server OS you must ensure that the machine is available 24 hours, 7 days a week.
+
+After extracting the file content the License Manager Installer dialog will start. Click next on the Introduction page: 
+
+[/support/docview.wss?uid=swg21656246&amp;aid=1]
+On Step 2 read the license agreement and accept the terms, then click next: 
+
+[/support/docview.wss?uid=swg21656246&amp;aid=2]
+By default the Concurrent License Manager and the Administer tool will be installed to: 
+
+C:\Program Files\IBM\SPSS\Concurrent Licensing Tools\9.5.0\License Manager 
+
+On a 64 bit operating system the default path is: 
+
+C:\Program Files (x86)\IBM\SPSS\Concurrent Licensing Tools\9.5.0\License Manager 
+
+You can change the installation folder for the product on the next step, but we recommend installation to the default directory since all documentation including Support Technotes about License Manager refer to this default directory. 
+
+[/support/docview.wss?uid=swg21656246&aid=3] [/support/docview.wss?uid=swg21656246&aid=3]
+After you select the installation directory the next screen list a summary of what will be installed to which path and disk space needed for installation. 
+
+[/support/docview.wss?uid=swg21656246&aid=4] [/support/docview.wss?uid=swg21656246&aid=4]
+[/support/docview.wss?uid=swg21656246&aid=5] [/support/docview.wss?uid=swg21656246&aid=5]
+When installation has finished you will be prompted to license your product with your network license authorization code. An authorization code is a twenty digit alpha-numeric code. This authorization code is used in combination with a hardware specific identifier (lock-code) of the machine on which you are installing the product. 
+
+The authorization code and the lock code will be used to create a 50 to 100 digit license code. This code will be added to your installation via the licensing process into a file named LSERVRC. The license file is required by the software to start and/or allow connections to it. 
+
+- An authorization code looks like this: 
+471dd626dd91534ef616 
+
+- A license code looks like this: 
+O6MKPSEC3MJG7SRD2AD2GLMABCMM4SD9WU7JQXLCVXT5Q69V3YUYXEKF4P2FAJSZ7KY4VN9F8F92U38A7BKI3JCIP7MAAY# "8400" version "90" expires Midnight of Dec 31, 2013,exclusive
+[/support/docview.wss?uid=swg21656246&amp;aid=6]
+[/support/docview.wss?uid=swg21656246&amp;aid=7]
+
+You can enter more than one authorization or license code on the Wizard.
+When all codes are proceeded you will be notified of the authorization status:
+[/support/docview.wss?uid=swg21656246&amp;aid=8]
+
+Once you have successfully licensed your IBM SPSS products the License Manager installation Wizard finish as well:
+
+[/support/docview.wss?uid=swg21656246&aid=9] [/support/docview.wss?uid=swg21656246&aid=9]
+
+On Control Panel - Administrative Tools - Services you can now check if the License Manager service is started. The name of the service is: Sentinel RMS License Manager
+[/support/docview.wss?uid=swg21656246&aid=10] [/support/docview.wss?uid=swg21656246&aid=10]
+With the Start menu you can now open the WlmAdmin toolto administer the licenses. Open the tool with All Programs - IBM SPSS Concurrent Licensing Tools - License Manager 9.5.0 - Sentinel RMS Server Administration
+
+On Subnet Servers you should now see your active concurrent network licenses. The example below displays a code for IBM SPSS Statistics 20 (1200 200), IBM SPSS Statistics 21 (1200 210), IBM SPSS Statistics 22 (1200 220), IBM SPSS Modeler 15 (8400 150) and IBM SPSS AMOS 21 (9005 210), to verify that you can also manage licenses for older Statistics releases and other IBM SPSS products:
+[/support/docview.wss?uid=swg21656246&aid=11] [/support/docview.wss?uid=swg21656246&aid=11]
+
+RELATED INFORMATION
+ Need more help? Our Statistics forum is Live! [https://developer.ibm.com/answers/topics/statistics.html?smartspace=predictive-analytics]
+Need more help? Our Licensing forum is Live! [https://developer.ibm.com/answers/topics/spsslicensing.html]
+Downloading Statistics 22 [http://www-01.ibm.com/support/docview.wss?uid=swg24034898]

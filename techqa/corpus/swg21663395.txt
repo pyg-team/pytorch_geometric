@@ -1,0 +1,52 @@
+Title: IBM LinkageError on a product class when rules are executed or tested - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When I execute or test rules on Rule Execution Server, I get a VerifyError, ClassNotFoundException or NoClassDefFoundError, pointing at an ODM Rule Execution Server class. 
+
+SYMPTOM
+For example, I get the following error when I execute a DVS test:
+
+The version of the application which has generated the ruleset archive /prodra1387398245412_8e4f8b7e_7933_4a17_bd7e_a13543042794/1.0/prodrs1387398245412_8e4f8b7e_7933_4a17_bd7e_a13543042794/1.0 is 8.0.
+IlrExcel2003S E Throwable caught while invoking test ruleset factory
+java.lang.VerifyError:
+ilog/rules/archive/IlrRulesetArchiveBuilderBase.generate()Lilog/rules/archive/IlrRulesetArchive;
+at ilog.rules.dvs.rbtesting.rules.IlrTestRulesetFactory.createTestRulesetArchive(IlrTestRulesetFactory.java:449)
+
+
+CAUSE
+The presence of the Rule Execution Server libraries in the system or server class path, or in the shared lib folder might explain the issue.
+
+RESOLVING THE PROBLEM
+Verify the following points: 
+
+
+ * All Rule Execution Server modules are deployed as indicated in the documentation: the class loading policy should be parent last for all EAR files (see the links further below). 
+ * All client applications are packaged as indicated in the documentation (see the links further below). 
+ * No Rule Execution Server libraries are present in the system or server class path.
+
+
+For example, the following client library JAR files for Rule Execution Server rule sessions must be packaged only inside the client EAR files and not be present anywhere else in the class path: 
+
+ * jrules-res-session-java.jar for POJO, 
+ * jrules-res-session-ejb3-<app server>.jar for EJB3. 
+ * jrules-res-mdb-<app server>.jar for MDB.
+
+
+For DVS tests and hosted transparent decision services (HTDS), all you need to do is deploy the SSP application and the HTDS EAR. 
+
+ 
+
+The execution of the rules requested by all those Rule Execution Server clients is then handled by the Rule Execution Server XU resource adapter. You do not need anything else in the server class path.
+
+RELATED INFORMATION
+#Configuring Rule Execution Server on WAS [http://pic.dhe.ibm.com/infocenter/dmanager/v8r5m1/topic/com.ibm.odm.distrib.config.was/config_ds_res_was8/con_res_was.html]
+Creating a client for Rule Execution Server [http://pic.dhe.ibm.com/infocenter/dmanager/v8r5m1/topic/com.ibm.odm.dserver.rules.res.developing/topics/tpc_res_client_intro.html]
+
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration WebSphere ILOG JRules Modules:Execution Server (BRES / RES) Platform Independent 7.1, 7.0

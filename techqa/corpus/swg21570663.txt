@@ -1,0 +1,101 @@
+Title: IBM Quickr 8.5 install fails with EJPIC0218E exception - United States
+
+Text:
+jcr exception; quickr install issue; failed quickr install; quickr 8.5 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+Quickr 8.5 fails to complete successfully with an EJPIC0218E exception in the wpinstalllog.txt file.
+
+CAUSE
+The WAS and Portal fixes that are bundled with Quickr fail to get deployed. This causes the JCR exceptions to be thrown.
+
+DIAGNOSING THE PROBLEM
+ ConfigTrace.log file fails to initialise Nodes for PZN: 
+
+action-init-pzn-wcm-nodes-prereq.pzn:
+Thu Oct 27 21:18:40 GMT 2011
+Target started: initialize-nodes
+
+initialize-nodes:
+[echo] Calling JCRInitializer for file:
+/opt/IBM/Quickr/PortalServer/pzn/prereq.pzn/config/nodes/pznwcmcontentrc.nodes
+Target finished: initialize-nodes
+Target finished: action-init-pzn-wcm-nodes-prereq.pzn
+Target finished: action-redeploy-pzn-for-quickr
+
+Looking at jcr_cfg.xml line 2781 it mentions:
+
+<java classname="com.ibm.icm.jcr.init.JCRInitializer" fork="yes"
+failoneerror="yes" dir="${WpsInstallLocation}/shared/app"
+output="${EngineInstallLocation}/log/pzninit.log"
+
+Reviewing the pzninit.log, we see this:
+
+Oct 27, 2011 9:18:41 PM com.ibm.icm.jcr.init.JCRInitializer main INFO: Starting to initialize nodes...
+Oct 27, 2011 9:18:41 PM com.ibm.icm.jcr.init.JCRInitializer main INFO: Connecting to "localhost:10040/jcradmin/init/". Please wait...
+Oct 27, 2011 9:18:41 PM com.ibm.icm.jcr.init.JCRInitializer main INFO: Streaming input file to server. Please wait...
+Oct 27, 2011 9:18:41 PM com.ibm.icm.jcr.init.JCRInitializer main INFO: Connection completed with response code 500
+Exception in thread "main" java.lang.Exception: One or more
+initialization step failed. Please check the server log for details.
+at com.ibm.icm.jcr.init.JCRInitializer.remoteInitialize(JCRInitializer.java :621)
+at com.ibm.icm.jcr.init.JCRInitializer.main(JCRInitializer.java:488)
+
+This response means that we are unable to connect to the JCR.
+
+Investigating further we see the following exception in the SystemOut.log:
+
+[10/30/11 20:10:45:134 GMT] 00000053 JCRInitialize E com.ibm.icm.jcr.init.JCRInitializer initNodes com.ibm.icm.jcr.WorkspaceNotFoundException: Workspace RULESWORKSPACE not found in this repository.
+com.ibm.icm.jcr.WorkspaceNotFoundException: Workspace RULESWORKSPACE not found in this repository.
+at com.ibm.icm.jcr.WorkspaceImpl.getWorkspace(WorkspaceImpl.java:314)
+at com.ibm.icm.jcr.TicketImpl.getWorkspace(TicketImpl.java:563)
+at com.ibm.icm.jcr.init.JCRInitializer.getWorkspace(JCRInitializer.java:186)
+.
+.
+.
+Caused by: com.ibm.icm.jcr.WorkspaceNotFoundException: Workspace RULESWORKSPACE not found in this repository.
+at com.ibm.icm.jcr.WorkspaceImpl.getWorkspace(WorkspaceImpl.java:314)
+at com.ibm.icm.jcr.TicketImpl.getWorkspace(TicketImpl.java:563)
+at com.ibm.icm.jcr.init.JCRInitializer.getWorkspace(JCRInitializer.java:186)
+at com.ibm.icm.jcr.init.JCRInitializer.initNodes(JCRInitializer.java:234)
+... 23 more
+
+
+
+This issue should have been prevented by a Portal fix that should have been applied earlier during the Quickr installation. Reviewing the wpinstalllog.txt file we can see that these folders were not found:
+
+(Oct 30, 2011 7:20:13 PM), Quickr.install, com.ibm.wps.install.CopyFileAction, msg1, Not copying, file/directory does not exist: /code/QuickrInstall/IL-Setup/was6_fixes/linux
+(Oct 30, 2011 7:20:13 PM), Quickr.install, com.ibm.wps.install.CopyFileAction, msg1, Not copying, file/directory does not exist: /code/QuickrInstall/IL-Setup/portalfixes
+(Oct 30, 2011 7:20:13 PM), Quickr.install, com.ibm.wps.install.CopyFileAction, msg1, Not copying, file/directory does not exist: /code/QuickrInstall/IL-Setup/wizard
+(Oct 30, 2011 7:20:13 PM), Quickr.install, com.ibm.wps.install.CopyFileAction, msg1, Not copying, file/directory does not exist: /code/QuickrInstall/IL-Setup/dist/license/notices
+
+The installer assumed that no fixes were there as the folders were not copied to the tmp location, so moves on with the install. One of these fixes was for the JCR exception.
+
+Additionally, if there was a permissions issue, we would see something similar to these exceptions:
+
+com.ibm.wps.install.CopyFileAction, err, Error: Cannot copy file: /opt/IBM/WebSphere/code/IL-Setup/was6_fixes/linux /tmp/was6_fixes
+ServiceException: (error code = 315; message = "could not create directory /tmp/was6_fixes/updateinstaller"; severity = 0)
+
+com.ibm.wps.install.CopyFileAction, err, Error: Cannot copy file: /opt/IBM/WebSphere/code/IL-Setup/portalfixes /tmp/portalfixes
+ServiceException: (error code = 315; message = "could not create directory /tmp/portalfixes/maintenance"; severity = 0)
+
+com.ibm.wps.install.CopyFileAction, err, Error: Cannot copy file: /opt/IBM/WebSphere/code/IL-Setup/wizard /tmp/wizard ServiceException:
+(error code = 200; message = "/tmp/wizard/configwizard.sh (Permission denied)"; severity = 0; exception = [java.io.FileNotFoundException:
+/tmp/wizard/configwizard.sh (Permission denied)])
+
+In this case, the installer would again assume that no fixes were available and move on with the install.
+
+
+
+
+RESOLVING THE PROBLEM
+There could be several reasons why these WAS and Portal fixes were never deployed. 
+
+1. Confirm that the correct setup disk was downloaded. 
+
+2. Confirm that the download was not corrupted and the unzipped folder structure is complete. 
+
+3. Ensure the user installing Quickr is ROOT user. This is required for Quickr to install successfully. 
+
+ 
+
+Finally, reinstall Quickr.

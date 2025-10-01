@@ -1,0 +1,213 @@
+Title: IBM JR54601: UPDATE MQ SETUP INFORMATION TO AVOID J2CA0128E AND MQJCA1008 - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+ DIRECT LINKS TO FIXES
+IBM InfoSphere Master Data Management Collaboration Server Version 11.5.0, Fix Pack 7 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FInfoSphere+Master+Data+Management+Collaboration+Server&fixids=11.5.0.7-MDM-CE-FP07IF000&source=SAR]
+IBM InfoSphere Master Data Management Collaboration Server Version 11.5.0, Fix Pack 5 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FInfoSphere+Master+Data+Management+Collaboration+Server&fixids=11.5.0.5-MDM-CE-FP05IF000&source=SAR]
+IBM InfoSphere Master Data Management Collaboration Server Version 11.4.0, Fix Pack 7 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FInfoSphere+Master+Data+Management+Collaboration+Server&fixids=11.4.0-WS-MDMCS-FP007IF000&source=SAR]
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When configuring the product to use WebSphere MQ, you might
+   encounter during Appserver startup errors like
+   [9/18/15 16:05:36:910 CEST] 00000001 RALifeCycleMa E
+   J2CA0128E: An Exception occurred while trying to start
+   ResourceAdapter WebSphere MQ R
+   esource Adapter. The exception is:
+   com.ibm.mq.connector.DetailedResourceAdapterInternalException:
+   MQJCA1008: An incorrect version of the Web
+   Sphere MQ classes for JMS was found. Deployment failed.
+   ...
+   in the Websphere Application Server System.out log file.
+   This happens when WebSphere MQ client version does not match
+   the WebSphere MQ Resource Adapter (RA) shipped with WebSphere
+   Application Server.
+   Infocenter should be updated to document setup approach to
+   avoid this error:
+   at
+   http://www-01.ibm.com/support/knowledgecenter/SSWSR9_11.4.0/com.
+   ibm.pim.trb.doc/pim_ref_issue107.html?lang=en [http://www-01.ibm.com/support/knowledgecenter/SSWSR9_11.4.0/com.ibm.pim.trb.doc/pim_ref_issue107.html?lang=en]
+   ....
+   Resolving the problem
+   WebSphere MQ client jars are required to be included in
+   InfoSphere MDM Collaboration Server classpath. To configure
+   this environment follow the steps as detailed below:
+   1. Ensure that the WebSphere MQ client is installed. The client
+   should be of the same version as the WebSphere MQ server.
+   <additional instruction>
+   If the WebSphere MQ client version does not match the WebSphere
+   MQ Resource Adapter (RA) shipped with WebSphere Application
+   Server , then you should create symbolic links as outlined
+   below, so respective jar files are loaded into the classpath
+   from WAS resource adapter directory. This helps to avoid
+   errors  MQJCA1008: An incorrect version of the WebSphere MQ
+   classes for JMS was found. Deployment failed  during
+   Websphere Application server startup due to MQ version
+   missmatch in between MQ files included in Websphere Application
+   server installation and MQ client installation.
+   ln -s
+   $WAS_HOME/installedConnectors/wmq.jmsra.rar/com.ibm.mq.jar
+   $TOP/jars/com.ibm.mq.jar
+   ln -s
+   $WAS_HOME/installedConnectors/wmq.jmsra.rar/com.ibm.mq.jmqi.jar
+   $TOP/jars/com.ibm.mq.jmqi.jar
+   ln -s
+   $WAS_HOME/installedConnectors/wmq.jmsra.rar/com.ibm.mqjms.jar
+   $TOP/jars/ com.ibm.mqjms.jar
+   </additional instruction>
+   2. Stop all of the InfoSphere MDM Collaboration Server services
+   using the stop script:
+   cd $TOP/bin/go
+     ./abort_local.sh
+   ...
+   at:
+   http://www-01.ibm.com/support/knowledgecenter/SSWSR9_11.4.0/com.
+   ibm.pim.man.doc/t_configuring_de.html [http://www-01.ibm.com/support/knowledgecenter/SSWSR9_11.4.0/com.ibm.pim.man.doc/t_configuring_de.html]
+   ...
+   8.Configure the $TOP/bin/conf/env_settings.ini file to enable
+   MQ:
+   in env_settings.ini:
+   [mq]
+   enabled=yes
+   #home will default to /opt/mqm if not set
+   home=/opt/mqm
+   After you have applied the changes to the env_settings.ini
+   file, ensure that you run the $TOP/bin/configureEnv.sh script.
+   <additional instruction>
+   Please check as well instructions at
+   http://www-01.ibm.com/support/knowledgecenter/SSWSR9_11.4.0/com.
+   ibm.pim.trb.doc/pim_ref_issue107.html?lang=en [http://www-01.ibm.com/support/knowledgecenter/SSWSR9_11.4.0/com.ibm.pim.trb.doc/pim_ref_issue107.html?lang=en] in case installed
+   WebSphere MQ client version does not match the WebSphere MQ
+   Resource Adapter (RA) shipped with WebSphere Application Server
+   </additional instruction>
+   ...
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  see suggested infocenter updates
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * All Master Data Management Collaboration Server              *
+   * implementations are affected by this issue.                  *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * UPDATE MQ SETUP INFORMATION TO AVOID J2CA0128E AND MQJCA1008 *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Customers facing the issue reported by this APAR apply       *
+   * Master Data Management Collaboration Server version 11.4     *
+   * FP07 to gain resolution to this problem.                     *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A fix for this problem has been included in Master Data
+   Management Collaboration Server version 11.4 FP07.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR54601
+   
+   
+ * REPORTED COMPONENT NAME
+   MDM SERVER FOR
+   
+   
+ * REPORTED COMPONENT ID
+   5724V5100
+   
+   
+ * REPORTED RELEASE
+   B40
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2015-10-28
+   
+   
+ * CLOSED DATE
+   2016-09-10
+   
+   
+ * LAST MODIFIED DATE
+   2016-09-10
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   MDM SERVER FOR
+   
+   
+ * FIXED COMPONENT ID
+   5724V5100
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * RB40 PSY
+   UP

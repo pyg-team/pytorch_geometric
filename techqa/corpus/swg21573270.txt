@@ -1,0 +1,74 @@
+Title: IBM How to set the correct permissions for LMT - VMware communication - United States
+
+Text:
+vSphere; incomplete; ESX; ESXi; vm manager; sdk TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ How to enable the communication between LMT and VMware infrastructure. 
+
+SYMPTOM
+Despite the fact that all VM Managers being defined, and in 'OK' status, some agents are still in 'Incomplete' mode. 
+
+The virt.guest table does not contain any information about these agents. 
+
+Some errors concerning data retrieval/user access to VMware infrastructure are visible in the server logs.
+
+CAUSE
+The defined user does not have the right privileges defined in VMware Infrastructure Client. 
+
+The user needs to have read access not only to virtual machines but also to hosts (and potentially to clusters) hosting these VMs. No write access is required. 
+
+
+ENVIRONMENT
+VMware vSphere - VMware ESX (or ESXi) hypervisor and a VMware vCenter server.
+
+
+
+DIAGNOSING THE PROBLEM
+You can verify this by checking whether in VMware Infrastructure Client the user ID has correct access 
+
+privileges for all the components in the hierarchy. 
+
+
+RESOLVING THE PROBLEM
+In order to ensure that the user for sure will have all needed 
+
+privileges customer can follow below steps: 
+
+ 
+
+> Login to VMware Infrastructure Client ( with a user with 
+
+administrator role) 
+
+ 
+
+> Open a "Host & Clusters" view (right click in the left bar and choose 
+
+"Hosts And Clusters" or Ctrl+Shift+H) 
+
+ 
+
+> Go to Permissions tab in "Host & Clusters" view 
+
+ 
+
+> Right click somewhere on the Permissions tab and choose the "Add 
+
+Permission" 
+
+ 
+
+> In "Assign Permissions" panel click "Add..." button and choose the 
+
+user which is defined in ILMT VM Managers panel, click OK 
+
+ 
+
+> Choose "Read-Only" as a "Assigned Role" (so no boxes will be selected) 
+
+> Set the "Propagate to Child Objects" check box 
+
+ 
+
+> Press OK

@@ -1,0 +1,67 @@
+Title: IBM RAM error in RTC: CRJAZ0098I http error 400 with error text -Bad Request - United States
+
+Text:
+jazz; rtc; temp; tmp; RAM TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Cannot modify or add IBM Rational Team Concert (RTC) work flows that are in IBM Rational Asset Manager (RAM) project area. 
+
+SYMPTOM
+RTC throws CRJAZ0098I when it fails to find its tmp folder. 
+
+
+CAUSE
+By default, IBM Rational Asset Manager stores its Rational Team Concert tmp directory in 
+
+<WAS_HOME>/AppServer/profiles/<profile_name>/config/cells/<cells_name>/RTC/server1/v2002iFix6/jazz/server/tmp/. 
+In most cases, this setting will not create a problem when users would like to interact with Rational Team Concert directly. However, on IBM WebSphere Network Deployment system this location can cause a problem when users try to create a custom workflow. Rational Team Concert does not support Network Deploy, and you must configure a stand alone server to host Rational Team Concert on one of the cluster member's node, WebSphere's Synchronized process may delete the Rational Team Concert tmp folder. In order to work around the problem, you need to change the tmp folder location. 
+
+
+RESOLVING THE PROBLEM
+You can redirect the Rational Team Concert temp directories to a different location. 
+
+ *  Note: The owner of WebSphere process must have full permission to this folder. 1. Create a temp directory to store Rational Team Concert temporary data. Note: The user account that runs WebSphere/Tomcat must have full permission to this directory. 
+   
+   2. Use one of the two methods to edit the Rational Team Concert paths. 
+   
+    
+   
+    Method 1 (use a text editor) 
+   
+    1. Go to<WebSphere_Installed_Dir>/profiles/<profile_name>/config/cells/<cells_name>/RTC/server1/v2002iFix6/jazz/server/conf/ramjazz 
+   
+    2. Use a text editor to edit teamserver.properties file 
+   
+    3. Add the new paths to the following settings 
+   
+   com.ibm.team.scm.vcs.tmpdir= 
+   
+   com.ibm.team.scm.tmpdir= 
+   
+   com.ibm.team.repository.tmpdir=[/support/docview.wss?uid=swg21596929&aid=1] [/support/docview.wss?uid=swg21596929&aid=1] 
+   
+    
+   
+    Method 2 (using a web client) 
+   
+    1. Use a web browser to log in to the RTC server: https://<hostname>:9443/ramjazz/admin 
+   
+    2. Server > Advanced Properties [/support/docview.wss?uid=swg21596929&amp;aid=2] 
+   
+   3. Scroll down until you see the following services:com.ibm.team.repository.service.internal.ContentService com.ibm.team.scm.service.internal.content.VersionedContentService com.ibm.team.scm.service.internal.replication.ScmImportContentService 
+   
+   4.Select the Content Temporary Directory for each service and add the new location path.
+   
+   5. Press the Save button to save the changes 
+   
+   
+
+RELATED INFORMATION
+#Service Failing Error related to ContentService [http://www.ibm.com/support/docview.wss?uid=swg21447680]
+
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Software Development Rational Team Concert Integrations: IBM

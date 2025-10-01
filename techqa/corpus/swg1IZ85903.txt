@@ -1,0 +1,133 @@
+Title: IBM IZ85903: ASSERTION VIOLATION WHEN EXPLORING ACTIVITY DETAILS ON MIGRATED PROCESS INSTANCES - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When viewing activity details of a process instance in the BPC
+   Explorer the customer can see this assertion violation.
+   
+   ibm.bpe.util.ProcessAssertionError: Assertion violation !(atid
+   != null) in method >>
+   com.ibm.bpe.database.Tom.getActivityTemplateB(Tom.java:2579) <<
+    at com.ibm.bpe.util.Assert.assertion(Assert.java:70)
+    at com.ibm.bpe.database.Tom.getActivityTemplateB(Tom.java:2579)
+    at
+   com.ibm.bpe.engine.BpelEngineCore.getJumpTargets(BpelEngineCore.
+   java:4415)
+   
+   This occurs for process instances which were migrated from
+   applications deployed prior to 6.1.2.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  If the WPS installation was migrated from a version previous to
+   6.1.2 to a version post 6.1.2 and there were business
+   process instances running during migration then the activity
+   details view of the BPC Explorer does not work
+   correctly for activities contained in these migrated instances.
+   In some cases assertion violation could be
+   observed in the trace files. However only the BPC Explorer was
+   affected these activities could be processed and
+   completed normally.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Problem fixed with V6205
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ85903
+   
+   
+ * REPORTED COMPONENT NAME
+   BUS PRC CHOREOG
+   
+   
+ * REPORTED COMPONENT ID
+   5655FLW11
+   
+   
+ * REPORTED RELEASE
+   620
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-09-28
+   
+   
+ * CLOSED DATE
+   2010-11-17
+   
+   
+ * LAST MODIFIED DATE
+   2010-11-17
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    IZ85901 [http://www-01.ibm.com/support/docview.wss?uid=swg1IZ85901]
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   BUS PRC CHOREOG
+   
+   
+ * FIXED COMPONENT ID
+   5655FLW11
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R620 PSY
+   UP

@@ -1,0 +1,161 @@
+Title: IBM Tivoli Netcool/OMNIbus 8.1.0 Fix Pack 7, 8.1.0-TIV-NCOMNIbus-FP0007 - United States
+
+Text:
+OMNIbus 810; FP0007; OMNIbus 8.1.0; 8.1.0.7 DOWNLOADABLE FILES
+
+ABSTRACT
+ This fix pack is a cumulative fix release and addresses APARs and internally found issues since the release of OMNIbus 8.1.0 fix pack 6. 
+
+DOWNLOAD DESCRIPTION
+The following defect solutions are included in this release:
+
+
+IV78818
+The de-duplication trigger in the configuration for the default
+multi-tier aggregation layer type ObjectServer has been modified
+so that it will not alter the Severity of events that have been
+suppressed by the ITNM root cause analysis (RCA) mechanism.
+
+
+IV80092
+An issue introduced in Tivoli Netcool/OMNIbus Fix Pack 4 meant
+indexes were not used by triggers and procedures at all times.
+This issue has now been fixed.
+
+
+IV80567
+In response to RFE request 81245, additional password checking
+functionality has been added to the ObjectServer.
+The additional checks allow an administrator to specify that
+ObjectServer user passwords cannot contain the user name.
+The checks are configured using the PasswordFormat property,
+which now includes an additional <contains username> field to
+control checks.
+The default behavior is to allow passwords that contain the user
+name. More information about the PasswordFormat property is
+available in the IBM Knowledge Center.
+
+
+IV80895
+The JRE for Tivoli Netcool/OMNIbus V8.1.0 was updated to IBM JRE
+7.0 SR9 FP30 to address possible security issues.
+
+
+IV81216
+The Aggregation layer self-monitoring log file includes entries
+for all alerts that it generates as well as those it receives
+from both AGG_B and any Collection layer ObjectServers.
+Previously it was ambiguous as to which ObjectServer the alerts
+were coming from, with respect to the log messages. This fix
+prepends the ServerName the alert was generated on to the log
+file message to clarify this. Users who have V8.1 fix pack 6 or
+older should apply the following file to address this APAR:
+
+$OMNIHOME/etc/update81fp5to81fp7.sql
+
+The Netcool administrator should review the contents of this file
+before it is applied.
+
+
+IV81225
+The scope-based event grouping code in OMNIbus/extensions has
+been extended with configurable properties that can be used to
+set up the behavior as well as the look and feel of the resulting
+event groups. The properties provide flexibility and also enable
+the "one incident = one ticket" scenario. The properties are
+stored in the master.properties table and can be modified
+dynamically.
+
+The properties include the following features:
+- Propagate Acknowledged status, ticket number, owner UID and GID
+to children
+- Simplify the grouping to a single level for the more simple
+use-cases
+- Customize the look and feel of synthetic parent events
+- Option to populate parent event Node field with Node of first
+child received
+- Propagate attributes of synthetic parent events down to their
+children
+- Propagate detail of priority child events up to the parent
+event
+- Roll up child event details into journal entries in the
+synthetic parent
+- Dismantle any groups that do not have the minimum number of
+events
+
+To upgrade scope-based event grouping to use the new properties,
+see the instructions in the IBM Knowledge Center at
+http://ibm.biz/seg_docs [http://ibm.biz/seg_docs]
+
+PREREQUISITES
+This fix pack installs on the GA release or any fix pack of Tivoli Netcool/OMNIbus 8.1.0.
+
+INSTALLATION INSTRUCTIONS
+IMPORTANT: Before installing this fix, ensure that all Tivoli Network
+Management applications on your computer are shut down.
+
+Installation Manager
+--------------------
+Installation manager can be started in GUI mode by running the application:
+IBMIM
+which can be found in the following locations:
+Windows: install_dir\IBM\Installation Manager\eclipse
+Linux and UNIX: install_dir/IBM/InstallationManager/eclipse
+
+At any stage if you encounter difficulties using Installation Manager
+you can consult the built in help or the latest Installation Manager
+documentation by searching IBM Knowledge Center at 
+https://www.ibm.com/support/knowledgecenter/SSDV2W/im_family_welcome.html [https://www.ibm.com/support/knowledgecenter/SSDV2W/im_family_welcome.html].
+
+Using IBM Passport Advantage(r)
+-------------------------------
+If your computer has internet access and you have an IBM Passport
+Advantage account, you can update packages directly from Passport
+Advantage.
+1. Start Installation Manager.
+2. Under the Preferences option, select Repositories and make
+sure the "Search service repositories during installation
+and updates" is checked.
+3. Start the update and select the "IBM Tivoli Netcool OMNIbus"
+entry from the list of packages to find updates for.
+
+Local Repository
+----------------
+If you are using a repository which is not on the Passport Advantage
+site, you must specify the repository in the preferences before you
+update.
+1. Start Installation Manager.
+2. Under the Preferences option, select Repositories and add a
+new repository. Giving the location of your repository.
+3. Start the update and select the "IBM Tivoli Netcool OMNIbus"
+entry from the list of packages to find updates for.
+
+Electronic Software Delivery(ESD) Zip File
+----------------------------------------------
+If you have downloaded the ESD for Fix Pack 7 then:
+1. Create a directory to store the files and extract the contents
+on the zip file into this.
+2. If you have installed Installation Manager using either
+Administrator or Nonadministrator mode, run the update_gui
+script to launch Installation Manager into the update panel
+without the requirement of configuring the update repository.
+3. If the script fails, or Installation Manager is installed in
+Group mode, or you want to run in console mode, then you must
+configure the update repository as in the Local Repository
+above, with the new repository being the extracted
+OMNIbusRepository/composite directory.
+4. Select the "IBM Tivoli Netcool OMNIbus" entry from the list of
+packages to find updates for.
+
+DOWNLOAD PACKAGE
+
+
+
+
+Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options 
+What is Fix Central(FC)? [https://www.ibm.com/support/fixcentral/help?page=swfaqs] 8.1.0-TIV-NCOMNIbus-FP0007 25 Mar 16 English 999999999 FC [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~Tivoli&product=ibm/Tivoli/Tivoli+Netcool+OMNIbus&release=8.1.0.7&platform=All&function=all] [ ] 
+PRODUCT ALIAS/SYNONYM
+ Tivoli Netcool OMNIbus 
+
+ [/support/docview.wss?uid=swg24041386&aid=1]Problems (APARS) fixed [/support/docview.wss?uid=swg24041386&aid=2]Problems (APARS) fixed
+IV78818, IV80092, IV80567, IV80895, IV81216, IV81225 , IV55784, IV56455, IV56609, IV59634, IV59959, IV60193, IV61491, IV61642, IV62192, IV62891, IV63168, IV63169, IV63203, IV63212, IV63220, IV63222, IV63225, IV63228, IV63229, IV63230, IV63230, IV63234, IV63236, IV63237, IV63248, IV63249, IV63757, IV63758, IV63759, IV51280, IV62328, IV64024, IV64030, IV64823, IV64841, IV65579, IV68196, IV68690, IV68940, IV69161, IV69293, IV69933, IV69934, IV69143, IV70540, IV71122, IV61840, IV67946, IV68107, IV68942, IV72682, IV73109, IV73123, IV73221, IV73279, IV73670, IV73963, IV74587, IV74679, IV74891, IV75451, IV75452, IV75473, IV75482, IV75484, IV75494, IV75501, IV75502, IV75555, IV75641, IV75687, IV75900, IV76107, IV69160, IV75714, IV77594, IV77881, IV78263, IV78277, IV78667, IV78761, IV79182, IV78816, IV79413, IV79952

@@ -1,0 +1,27 @@
+Title: IBM Receiving exception when approving Master Schedule in Atlas - United States
+
+Text:
+schedule; arrayindexoutofbounds TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ After upgrade of WebSphere from 8.0 to 8.5.5.8, Why we are not able to approve Master Schedule when a local schedule is associated to it in Atlas ? 
+
+SYMPTOM
+Approving Master schedules works when there is no local schedule associated to it.
+
+
+CAUSE
+Having incorrect OJDBC6.jar causes this issue.
+
+ENVIRONMENT
+Atlas 6.0.3.3
+
+DIAGNOSING THE PROBLEM
+Atlas PAearlog.log has the following exception.
+
+ERROR WebContainer : 2 ~Exception executing command: Main SQL: INSERT INTO RECORDTYPE (ID, RECORDTYPE, SCHEDULEID, ANNOTATION, PAFIELD1, PAFIELD2, PAFIELD3, PAFIELD4, PAFIELD5, MODIFIEDON, MODIFIEDBY, CREATEDON, CREATEDBY, STATUS, TEMPLATECOPY, PSI, CONFIDENTIAL, INTEGRITY, AVAILABILITY, RISK, MEDIATYPE, SECURITYCLASSIFICATION, DESCRIPTION, DESCRIPTION_ANNOTATION) VALUES (SEQ_RECORDTYPE_ID.NEXTVAL, ?, ?, ?, ?, ?, ?, ?, ?, GETDATE(), ?, GETDATE(), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+
+com.secretseal.policyatlas.dao.DataAccessException: java.lang.ArrayIndexOutOfBoundsException 
+
+RESOLVING THE PROBLEM
+Check and modify the WebSphere datasource PolicyAtlasDS to use Atlas provided OJDBC6.jar.

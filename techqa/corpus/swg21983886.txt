@@ -1,0 +1,33 @@
+Title: IBM Creating Geolocation objects in the Event Filter policy - United States
+
+Text:
+Geolocation objects; Event Filter policy; Network Access policy; NAP TECHNOTE (FAQ)
+
+QUESTION
+ Why can you create Geolocation objects in the Event Filter policy but not use them in the Event Filter policy? 
+
+ANSWER
+The Geolocation object allows or denies network access based on the geographical location of an IP address. Although the Geolocation objects can be created in the Event Filter policy, these objects can only be applied to the Network Access Policy (NAP) rules.
+
+After a Geolocation object object is created in the Event Filter policy, you will notice that they will not display in the Event Filter policy as Available objects. This is by design. 
+
+Example: 
+
+Create Geolocation object in the Event Filter policy.
+
+[/support/docview.wss?uid=swg21983886&amp;aid=1]
+
+The Geolocation object will not display in the Event Filter policy Available objects.
+
+[/support/docview.wss?uid=swg21983886&aid=2] [/support/docview.wss?uid=swg21983886&aid=2]
+
+If you want to use the Geolocation object, it can only be applied to NAP rules. For addition assistance on creating Geolocation objects, see the IBM Knowledge Center - Configure Geolocation objects [http://www.ibm.com/support/knowledgecenter/SSHLHV_5.3.2/com.ibm.alps.doc/tasks/alps_configuring_geo_location_objects.htm].
+
+
+
+
+
+
+[/support/docview.wss?uid=swg21983886&aid=3] [https://ibm.biz/BdHdZx] [/support/docview.wss?uid=swg21983886&aid=4] [http://ibm.biz/InfraSecForumTechnote] [/support/docview.wss?uid=swg21983886&aid=5] [http://ibm.biz/SecSuptUTube] [/support/docview.wss?uid=swg21983886&aid=6] [http://ibm.biz/InfraSecFixes] [/support/docview.wss?uid=swg21983886&aid=7] [http://ibm.biz/FlexLicLogin] [/support/docview.wss?uid=swg21983886&aid=8] [http://ibm.biz/MyNotification] [/support/docview.wss?uid=swg21983886&aid=9] [http://ibm.biz/ContactSecSupport] 
+RELATED INFORMATION
+ A Japanese translation is available [http://www.ibm.com/support/docview.wss?uid=swg21986728]

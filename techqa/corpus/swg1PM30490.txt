@@ -1,0 +1,175 @@
+Title: IBM PM30490: THEMES WITH 'WPS' AS PREFIX OF THE CONTEXT ROOT THROW NULLPOINTEREXCEPTION'S AT APPLICATION START - United States
+
+Text:
+  FIXES ARE AVAILABLE
+6.1.0.6 Download: WebSphere Portal and WCM V6.1.0 fix pack 6 [http://www-01.ibm.com/support/docview.wss?uid=swg24030970]
+7.0.0.2 Download: WebSphere Portal and WCM V7.0 fix pack 2 [http://www-01.ibm.com/support/docview.wss?uid=swg24031676]
+Fixes integrated in WebSphere Portal 7.0.0.1 & 7.0.0.2 Combined Cumulative Fixes [http://www-01.ibm.com/support/docview.wss?uid=swg24029452]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Themes with 'wps' as the prefix of the theme WAR's context root
+   (i.e. wpsMyTheme) throw NullPointerException at application
+   start.
+   
+   SRVE0068E: Uncaught exception thrown in one of the service
+   methods of the servlet: /themes/html/wps_webMain/Default.jsp.
+   Exception thrown : java.lang.NullPointerException
+    at com.ibm._jsp._Default._jspService(_Default.java:1168)
+    at
+   com.ibm.ws.jsp.runtime.HttpJspBase.service(HttpJspBase.java:87)
+    at javax.servlet.http.HttpServlet.service(HttpServlet.java:856)
+    at
+   com.ibm.ws.webcontainer.servlet.ServletWrapper.service(ServletWr
+   apper.java:1146)
+    at
+   com.ibm.ws.webcontainer.servlet.ServletWrapper.handleRequest(Ser
+   vletWrapper.java:592)
+    at
+   com.ibm.ws.wswebcontainer.servlet.ServletWrapper.handleRequest(S
+   ervletWrapper.java:525)
+    at
+   com.ibm.wsspi.webcontainer.servlet.GenericServletWrapper.handleR
+   equest(GenericServletWrapper.java:122)
+    at
+   com.ibm.ws.jsp.webcontainerext.AbstractJSPExtensionServletWrappe
+   r.handleRequest(AbstractJSPExtensionServletWrapper.java:232)
+    at
+   com.ibm.ws.jsp.webcontainerext.AbstractJSPExtensionProcessor.han
+   dleRequest(AbstractJSPExtensionProcessor.java:288)
+    at
+   com.ibm.ws.webcontainer.webapp.WebAppRequestDispatcher.include(W
+   ebAppRequestDispatcher.java:639)
+   ...
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Local workaround is to change the line inside head_setup.jspf
+   from:
+   
+   if (configURL.startsWith(contextPath)) {
+   
+   into
+   
+   if (configURL.startsWith(contextPath + "/")) {
+   
+   This should ensure that we are looking at the /wps/... path of
+   Portal and not a custom WAR file that only starts with /wps...
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  THEMES WITH 'WPS' AS PREFIX OF THE CONTEXT ROOT THROW
+   NULLPOINTEREXCEPTION'S AT APPLICATION START
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A fix is available from Fix Central:
+   
+   http://www-933.ibm.com/support/fixcentral/swg/quickorder?parent=
+   ibm~WebSphere&product=ibm/WebSphere/WebSphere+Portal&release=All [http://www-933.ibm.com/support/fixcentral/swg/quickorder?parent=ibm~WebSphere&product=ibm/WebSphere/WebSphere+Portal&release=All]
+   &platform=All&function=aparId&apars=PM30212&source=fc
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM30490
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSPHERE PORTA
+   
+   
+ * REPORTED COMPONENT ID
+   5724E7600
+   
+   
+ * REPORTED RELEASE
+   615
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-01-13
+   
+   
+ * CLOSED DATE
+   2011-02-22
+   
+   
+ * LAST MODIFIED DATE
+   2011-02-22
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBSPHERE PORTA
+   
+   
+ * FIXED COMPONENT ID
+   5724E7600
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R61C PSY
+   UP
+   
+   
+ * R610 PSY
+   UP

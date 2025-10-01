@@ -1,0 +1,207 @@
+Title: IBM JR56053: RUNNING THE UPDATEPROCESSDATA COMMAND DOES NOT PROCESS ALL REQUESTED APARS - United States
+
+Text:
+  DIRECT LINKS TO FIXES
+bpm.8570.cf2016.09.delta.repository.2of2 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Standard&fixids=bpm.8570.cf2016.09.delta.repository.2of2&source=SAR]
+bpm.8570.cf2016.09.delta.repository.1of2 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Standard&fixids=bpm.8570.cf2016.09.delta.repository.1of2&source=SAR]
+8.0.1.3-WS-BPM-IFJR56053 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Standard&fixids=8.0.1.3-WS-BPM-IFJR56053&source=SAR]
+Downloading IBM Business Process Manager V8.5.7 Cumulative Fix 2016.09 [http://www-01.ibm.com/support/docview.wss?uid=swg24042580]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Running the command upgradeProcessData
+   (upgradeProcessData.bat or upgradeProcessData.sh) lets you
+   perform database changes for multiple interim fixes in one
+   step, but it ignores the changes for some interim fixes.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  No additional information is available.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A fix is available for IBM BPM V8.0.1.3 that applies the
+   required database changes for the interim fixes specified in the
+   -ifix parameter of the upgradeProcessData command.
+   
+   On Fix Central (http://www.ibm.com/support/fixcentral), search
+   for JR56053:
+   
+   1. Select IBM Business Process Manager with your edition from
+     the product selector, the installed version to the fix pack
+     level, and your platform, and then click Continue.
+   
+   2. Select APAR or SPR, enter JR56053, and click Continue.
+   
+   When you download fix packages, ensure that you also download
+   the readme file for each fix. Review each readme file for
+   additional installation instructions and information about the
+   fix.
+   
+   To apply the fix, complete the following steps:
+   
+   1. Perform a controlled shutdown of the IBM Business Process
+     Manager server to ensure that all transactions have completed.
+   2. Extract the compressed file to a directory, such as C:\temp.
+   3. Add the fix pack repository location in IBM Installation
+     Manager:
+     a. In Installation Manager, click File > Preferences >
+       Repositories.
+     b. Click Add Repository.
+     c. Browse to or enter the file path to the repository.config
+       file. The repository.config file is located in the directory
+       where you extracted the compressed files. For example, enter
+       C:\temp\repository.config, and then click OK.
+   4. On the main page of the Installation Manager, click Update.
+   5. After all the fixes have been installed by using Installation
+     Manager, update the database:
+     a. Back up the IBM BPM database.
+     b. For the DB2, MSSQL and Oracle databases, complete the
+       following steps:
+       i. From a command prompt, go to the
+         {SERVER}\BPM\Lombardi\tools\upgrade\UpgradeProcessData
+         directory,
+       ii. Running the following command:
+         - On a stand-alone server
+           - On Windows
+           upgradeProcessData.bat -profileName {PROFILE_NAME} -ifix
+            <interimfix list separated by ,>
+           - On Linux
+           upgradeProcessData.sh -profileName {PROFILE_NAME} -ifix
+            <interimfix list separated by ,>
+         - In a network deployment environment
+           - On Windows
+           upgradeProcessData..bat -profileName {PROFILE_NAME}
+   -nodeName {NODE_NAME} -serverName {SERVER_NAME} -ifix
+   <interimfix list separated by ,>
+           - On Linux
+           upgradeProcessData..sh -profileName {PROFILE_NAME}
+   -nodeName {NODE_NAME} -serverName {SERVER_NAME} -ifix
+   <interimfix list separated by ,>
+   6. Verify that the output of the command states "JR<xxxxx>
+   installed successfully" for all interim fixes of the interimfix
+   list. The output might contain one or more occurrences of the
+   message "Error executing SQL statement". You can ignore this
+   message as long as the command is completed with the success
+   message.
+   
+   7. Restart the IBM BPM server.
+   
+   To remove the fix, complete the following steps:
+   
+   NOTE:  Remove the fixes in the reverse order they were applied.
+   Do not remove a fix unless all fixes that were applied after it
+   were removed first. You may reapply any fix.
+   
+   For example, if your system has fix1, fix2, and fix3 applied in
+   that order and you want to remove fix2, fix3 must be removed
+   first; then you may remove fix2.
+   
+   1. Perform a controlled shutdown of the IBM Business Process
+     Manager server to ensure that all transactions have completed.
+   2. In IBM Installation Manager, cick Uninstall.
+   3. Select the package you want to uninstall and follow the
+     prompts.
+   4. Restart IBM BPM.
+   
+   To reapply the fix, perform steps 1-4 of the procedure to
+   install the fix and then restart the IBM BPM server.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR56053
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM STANDARD
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9500
+   
+   
+ * REPORTED RELEASE
+   801
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-06-09
+   
+   
+ * CLOSED DATE
+   2016-06-15
+   
+   
+ * LAST MODIFIED DATE
+   2016-06-15
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   BPM STANDARD
+   
+   
+ * FIXED COMPONENT ID
+   5725C9500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R801 PSY
+   UP

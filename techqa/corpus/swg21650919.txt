@@ -1,0 +1,126 @@
+Title: IBM FileNet Composite Platform Installation Tool 5.2 Fails at Step 23 of 28 - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When running IBM FileNet Composite Platform Installation Tool (CPIT) 5.2, the installation fails at step 23 of 28 
+
+SYMPTOM
+The following entries will be recorded in cpit_install_stdout.txt: 
+
+==========================================
+OUTPUT>====================
+Process completed with exit code: 0
+
+Install-InvokeDescription: (23/28) configPE.bat
+invokeScript: C:\Program Files (x86)\IBM\cpit\install-scripts\configPE.bat
+
+Cmd: "C:\Program Files (x86)\IBM\cpit\install-scripts\configPE.bat" "C:\Program Files (x86)\IBM\cpit\install-scripts" "C:\Program Files (x86)\IBM\cpit\decompressed" "C:\installs" 64
+
+OUTPUT>--------------------
+OUTPUT>Configuring IBM FileNet Process Engine 4.6 ...
+OUTPUT>09:28 AM
+OUTPUT>"Starting PE Service Manager" 
+ERROR>The service name is invalid.
+ERROR>
+ERROR>More help is available by typing NET HELPMSG 2185.
+ERROR>
+OUTPUT>setdirs running
+OUTPUT>Start setdirs.bat
+OUTPUT>Set the database configuration information
+OUTPUT> 1 file(s) copied.
+OUTPUT> 1 file(s) copied.
+ERROR>log4j:WARN No appenders could be found for logger (filenet.vw.base).
+ERROR>log4j:WARN Please initialize the log4j system properly.
+OUTPUT>Objects created/updated in the GCD:
+OUTPUT> CmDatabaseConnection name: "FNOSDS"
+OUTPUT> ID: "{2EFEFD07-D57E-466A-85FD-B58A3F8CE590}"
+OUTPUT> Data sources: "FNOSDS", "FNOSDSXA"
+OUTPUT> Site: "Initial Site"
+OUTPUT> Schema name: "OSDBUSER"
+OUTPUT> Object Store name: "P8ConfigObjectStore"
+OUTPUT> Isolated Region object:
+OUTPUT> Display name: "P8Region"
+OUTPUT> Isolated Region number: "1"
+OUTPUT> Connection Point name: "P8ConnPt1"
+OUTPUT>
+OUTPUT>Terminated with error:
+OUTPUT>Error: [FNRPE2131090482E]Server is being initialized. Retry the operation.
+OUTPUT> The Process Engine server is not yet initialized. The software automatically retries your operation but if the problem persists, try again.
+OUTPUT>stack:
+OUTPUT> filenet.jpe.rpc.appserver.PEEngineServlet.<clinit>(PEEngineServlet.java:494)
+OUTPUT> java.lang.J9VMInternals.initializeImpl(Native Method)
+OUTPUT> java.lang.J9VMInternals.initialize(J9VMInternals.java:228)
+OUTPUT> java.lang.Class.forNameImpl(Native Method)
+OUTPUT> <unknown class>.<unknown method>(Unknown Source)
+OUTPUT> java.beans.Beans.instantiate(Beans.java:184)
+OUTPUT> java.beans.Beans.instantiate(Beans.java:75)
+OUTPUT> com.ibm.ws.webcontainer.servlet.ServletWrapper$1.run(ServletWrapper.java:1461)
+OUTPUT> com.ibm.ws.security.util.AccessController.doPrivileged(AccessController.java:118)
+OUTPUT> com.ibm.ws.webcontainer.servlet.ServletWrapper.loadServlet(ServletWrapper.java:1450)
+OUTPUT> com.ibm.ws.webcontainer.servlet.ServletWrapper.loadOnStartupCheck(ServletWrapper.java:1329)
+OUTPUT> com.ibm.ws.webcontainer.webapp.WebApp.doLoadOnStartupActions(WebApp.java:588)
+OUTPUT> com.ibm.ws.webcontainer.webapp.WebApp.commonInitializationFinally(WebApp.java:559)
+OUTPUT> com.ibm.ws.webcontainer.webapp.WebAppImpl.initialize(WebAppImpl.java:425)
+OUTPUT> com.ibm.ws.webcontainer.webapp.WebGroupImpl.addWebApplication(WebGroupImpl.java:88)
+OUTPUT> com.ibm.ws.webcontainer.VirtualHostImpl.addWebApplication(VirtualHostImpl.java:169)
+OUTPUT> com.ibm.ws.webcontainer.WSWebContainer.addWebApp(WSWebContainer.java:749)
+OUTPUT> com.ibm.ws.webcontainer.WSWebContainer.addWebApplication(WSWebContainer.java:634)
+OUTPUT> com.ibm.ws.webcontainer.component.WebContainerImpl.install(WebContainerImpl.java:426)
+OUTPUT> com.ibm.ws.webcontainer.component.WebContainerImpl.start(WebContainerImpl.java:718)
+OUTPUT> com.ibm.ws.runtime.component.ApplicationMgrImpl.start(ApplicationMgrImpl.java:1170)
+OUTPUT> com.ibm.ws.runtime.component.DeployedApplicationImpl.fireDeployedObjectStart(DeployedApplicationImpl.java:1370)
+OUTPUT> com.ibm.ws.runtime.component.DeployedModuleImpl.start(DeployedModuleImpl.java:638)
+OUTPUT> com.ibm.ws.runtime.component.DeployedApplicationImpl.start(DeployedApplicationImpl.java:968)
+OUTPUT> com.ibm.ws.runtime.component.ApplicationMgrImpl.startApplication(ApplicationMgrImpl.java:769)
+OUTPUT> com.ibm.ws.runtime.component.ApplicationMgrImpl.start(ApplicationMgrImpl.java:2172)
+OUTPUT> com.ibm.ws.runtime.component.CompositionUnitMgrImpl.start(CompositionUnitMgrImpl.java:445)
+OUTPUT> com.ibm.ws.runtime.component.CompositionUnitImpl.start(CompositionUnitImpl.java:123)
+OUTPUT> com.ibm.ws.runtime.component.CompositionUnitMgrImpl.start(CompositionUnitMgrImpl.java:388)
+OUTPUT> com.ibm.ws.runtime.component.CompositionUnitMgrImpl.access$500(CompositionUnitMgrImpl.java:116)
+OUTPUT> com.ibm.ws.runtime.component.CompositionUnitMgrImpl$CUInitializer.run(CompositionUnitMgrImpl.java:994)
+OUTPUT> com.ibm.wsspi.runtime.component.WsComponentImpl$_AsynchInitializer.run(WsComponentImpl.java:349)
+OUTPUT> com.ibm.ws.util.ThreadPool$Worker.run(ThreadPool.java:1783)
+OUTPUT>ERROR: Failed to initialize the PE region. 
+OUTPUT>ERROR: Make sure WAS is started and the CE is configured and deployed properly.
+OUTPUT>ERROR: Verify http://localhost:9080/FileNet/Engine http://localhost:9080/P8CE/Health
+Process completed with exit code: -1
+ERROR in InvokeScripts-function - Terminate the remaining scripts.
+==========================================
+
+WebSphere Application Server's SystemOut.log will contain an exception: "java.lang.OutOfMemoryError: Java heap space"
+
+
+CAUSE
+WebSphere Application Server instance ran out of Java heap space
+
+
+ENVIRONMENT
+Windows
+
+
+
+DIAGNOSING THE PROBLEM
+Review cpit_install_stdout.txt and SystemOut.log for the aforementioned exceptions and log entries
+
+
+
+RESOLVING THE PROBLEM
+1. Increase the maximum and minimum JVM heap size. 
+
+ - Initial heap size: 512 MB 
+
+ -Maximum heap size: 1024 MB 
+
+2. Delete decompressed software folder to ensure there is enough space to re-run CPIT installation 
+
+ - Go to C:\Program Files (x86)\IBM\cpit\decompressed and delete TDS, CE, WAS, WPXT folders 
+
+ - Clear the recycling bin 
+
+3. Replace the cpit.properties file 
+
+ - Remove the cpit.properties file from the cpit folder where you are running the 5.2.0-CPIT-WIN.exe and replace it with the cpit.properties from C:\Program Files (x86)\IBM\cpit\install-scripts. This will allow the install to start at step 23. 
+
+4. Run 5.2.0-CPIT-WIN

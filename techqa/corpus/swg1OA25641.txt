@@ -1,0 +1,209 @@
+Title: IBM OA25641: HIGH CPU UTILIZATION BY ITM 6.2 ON Z/OS W/ OMEGAMON FOR Z/OS - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  High CPU utilization occurs when the TEMS drives the KM5 data
+   collection probes for the UADVISOR_KM5_VWPR situation.  The
+   problem is due to the TEMS is redriving the KM5 data collection
+   probes excessively.
+   
+   (UNIT:kdsstc1 STATE) tracing enabled shows this behavior and the
+   following trace message can be seen in the TEMS trace log:
+   
+     kdsstc1.c,1911,"ProcessTable") Reset JVAL for 'Or' Index
+   
+   The problem is the result that more indexes are being created
+   in ITM 6.2 causing it to redrive the data collection probes
+   many more time resulting in high CPU utilization and at other
+   times STORAGE QUIESCE conditions.
+   
+   Detailed Recreation Procedure:
+     None available at this time.  The problem is still under
+     investigation.
+   
+   Related Files and Output:
+     State capture SVCDUMP(s) were reviewed when the high CPU
+     condition was occurring.  The following traces were set:
+   
+     KBB_RAS1=ERROR (UNIT:kdssqprs INPUT) (UNIT:kdsstc1 STATE)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Disabling the UADVISOR_KM5_VWPR situation avoids the problem
+   until the defect is corrected.  To do so, complete steps 1-3:
+   
+   1. Create RKANSQLU member SITUPDT
+   
+   UPDATE O4SRV.TSITDESC
+   SET AUTOSTART = '*NO'
+   WHERE SITNAME = 'UADVISOR_KM5_VWPR';
+   
+   2. Run the SQL
+   
+   F tems_name,CTDS START SPUFIL SITUPDT
+   
+   3. Recycle the TEMS
+   
+   Note that reloading/reseeding the KM5 situations regresses the
+   circumvention.
+   
+   In place of the SQL above, you may apply the following ZAP:
+   
+   The following ++APAR is now available to resolve this problem.
+   Select the one (and only one) ++VER statement below with the
+   highest PTF level that is applicable to your system. Delete
+   the other ++VER statements before applying this ++APAR with
+   SMP/E.
+   
+   ++APAR(AA25641) .
+   ++VER(Z038) FMID(HKDS620)              /* ITM 62 Base    */ .
+   ++VER(Z038) FMID(HKDS620) PRE(UA41465) /* ITM 62 FP1     */ .
+   ++VER(Z038) FMID(HKDS620) PRE(UA42517) /* ITM 62 FP1 IF1 */ .
+   ++ZAP(KDSMAIN) .
+     NAME KDSMAIN DSPMF2@
+     VER  1F64 478052E0
+     VER  202E 478053B8
+     REP  1F64 4700
+     REP  202E 4700
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All TEMS users.                              *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: High CPU utilization by TEMS when       *
+   *                      Omegamon for zOS is present.            *
+   ****************************************************************
+   * RECOMMENDATION: Apply this PTF.                              *
+   ****************************************************************
+   High CPU utilization occurs when the TEMS drives the KM5
+   data collection probes for the UADVISOR_KM5_VWPR situation.
+   The TEMS is redriving the KM5 data collection probes
+   excessively.
+   The problem is that more indexes are being created in ITM 6.2
+   (compared to ITM 6.1) causing it to redrive the data
+   collection probes many more times resulting in high CPU
+   utilization and/or STORAGE QUIESCE conditions.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Changes have been made to reduce the number of calls to
+   the KM5 probes.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   OA25641
+   
+   
+ * REPORTED COMPONENT NAME
+   MGMT SERVER DS
+   
+   
+ * REPORTED COMPONENT ID
+   5608A2800
+   
+   
+ * REPORTED RELEASE
+   620
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   YesSpecatt / Pervasive
+   
+   
+ * SUBMITTED DATE
+   2008-06-27
+   
+   
+ * CLOSED DATE
+   2008-10-23
+   
+   
+ * LAST MODIFIED DATE
+   2008-12-01
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  KDSMAIN
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   MGMT SERVER DS
+   
+   
+ * FIXED COMPONENT ID
+   5608A2800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R620 PSY UA44295 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UA44295]
+   UP08/11/05 P F811
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

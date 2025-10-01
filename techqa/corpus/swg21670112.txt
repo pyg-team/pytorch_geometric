@@ -1,0 +1,61 @@
+Title: IBM® DB2® for Linux, Unix and Windows is not directly affected by the OpenSSL Heartbleed vulnerability, IBM DB2 pureScale™ Feature utilizes services from GPFS for which a flash has been published (CVE-2014-0160) - United States
+
+Text:
+DB2 pureScale OpenSSL Heartbleed SSL CVE-2014-0160 FLASH (ALERT)
+
+ABSTRACT
+ IBM DB2 for Linux, Unix and Windows is not directly affected by the OpenSSL HeartBleed vulnerability (CVE-2014-0160), IBM DB2 pureScale Feature utilizes services from GPFS for which a flash has been published. 
+
+CONTENT
+ 
+
+IBM DB2 for Linux, Unix and Windows is not directly affected by the OpenSSL HeartBleed vulnerability (CVE-2014-0160). However, IBM DB2 pureScale Feature utilizes services from GPFS for which a flash has been published here http://www-01.ibm.com/support/docview.wss?uid=isg3T1020713 [http://www-01.ibm.com/support/docview.wss?uid=isg3T1020713]. We strongly suggest you read the flash and take the appropriate actions.
+
+IBM DB2 pureScale Feature is part of the following products. Potential exposure only exists in these products if you are using the pureScale Feature.
+
+IBM DB2 9.8 pureScale Feature for Enterprise Server Edition
+IBM DB2 10.1 pureScale Feature
+IBM DB2 10.5 Advanced Enterprise Server Edition
+IBM DB2 10.5 Advanced Workgroup Server Edition
+IBM DB2 10.5 Developer Edition for Linux, Unix and Windows 
+
+ 
+
+
+The following IBM DB2 for Linux, Unix and Windows products are NOT vulnerable to the OpenSSL Heartbleed vulnerability.
+
+IBM DB2 Express Edition
+IBM DB2 Workgroup Server Edition
+IBM DB2 Enterprise Server Edition
+IBM DB2 Connect™ Application Server Edition 
+IBM DB2 Connect Application Server Advanced Edition 
+IBM DB2 Connect Enterprise Edition
+IBM DB2 Connect Unlimited Edition for System i® 
+IBM DB2 Connect Unlimited Edition for System z®
+IBM DB2 Connect Unlimited Advanced Edition for System z 
+
+ 
+
+When not using IBM DB2 pureScale Feature the following products are not affected.
+
+IBM DB2 10.5 Advanced Enterprise Server Edition
+IBM DB2 10.5 Advanced Workgroup Server Edition
+IBM DB2 10.5 Developer Edition for Linux, Unix and Windows
+
+
+
+Remediation/Fixes:
+If you are using IBM DB2 pureScale Feature then we strongly suggest you read the flash http://www-01.ibm.com/support/docview.wss?uid=isg3T1020713 [http://www-01.ibm.com/support/docview.wss?uid=isg3T1020713] and take the appropriate actions.
+
+
+Change History: 
+11 April 2014: Original document published
+17 April 2014: Added DB2 pureScale Feature/GPFS details.
+22 April 2014: Fix link to GPFS flash.
+
+
+ 
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Information Management DB2 Connect Not Applicable AIX, HP-UX, Linux, Solaris, Windows 9.7, 9.5, 9.1, 8.2, 10.1, 10.5 Application Server, Enterprise Server, Personal, Unlimited for System i, Unlimited for System z

@@ -1,0 +1,84 @@
+Title: IBM Technology Preview: -platform option for Packaging Utility - United States
+
+Text:
+ PRODUCT DOCUMENTATION
+
+ABSTRACT
+ You can use the -platform option to copy repository files for a specific platform or architecture. You can save disk space and network bandwidth by copying only the files that you require. 
+
+
+CONTENT
+This functionality is supported in Installation Manager version 1.5.2, see the IBM Installation Manager Information Center [http://publib.boulder.ibm.com/infocenter/install/v1r5/index.jsp]. 
+
+For IBM Packaging Utility versions 1.5 and 1.5.1, the -platform option is a technology preview.
+
+Information about the -platform option
+
+-platform os=os|arch=arch|os=os,arch=arch
+
+Use the -platform option to specify the platform. When you specify the platform, only the files that are required for the platform are copied. Use the os attribute to specify the operating system and use the arch attribute to specify the architecture. Use -platform with the copy command only.
+
+
+Values for the os and arch attributes 
+
+Attribute Values os aix 
+hpux 
+linux 
+os400 
+solaris 
+win32 
+zos arch ia64
+ia64_32 
+PA_RISC 
+PA_RISC64 
+ppc 
+ppc64 
+s390 
+s390x 
+sparc 
+sparc64 
+x86
+x86_64 
+
+
+
+Copy a package by platform by using th e - platform option 
+
+1. Install IBM Packaging Utility versions 1.5 or 1.5.1 or use the stand-alone version of Packaging Utility versions 1.5 or 1.5.1. 
+
+2. Open a command-line utility. 
+NOTE: The -platform option is available only for the command line. 
+
+3. Open the Packaging Utility directory:  * 
+ * 
+ * 
+
+
+4. Identify the repository that you are copying from. 
+
+5. If you do not know the ID and version for the package, run the listAvailablePackages command: 
+
+PUCL listAvailablePackages -repositories source_repository 
+
+The returned information is a list of packages in the format: 
+packageID_version 
+
+6. Copy the files for a specific platform to a new repository: 
+PUCL copy packageID_version -repositories source_repository -platform os=os,arch=arch -target destination_repository -acceptLicense 
+
+Use the -prompt option if the repository requires authentication. You can use the -keyring and -password options to save the credentials. 
+
+Specify the version of offering if multiple versions exist in the repository. If the version is not specified, the latest version is copied. 
+
+
+Example: 
+
+Windows: PUCL.exe copy com.ibm.package_1.2 -repositories http://server/repository/package -target "C:\IBM\IBM Packages\" -platform os=win32,arch=x86 -acceptLicense 
+
+Linux, UNIX, and z/OS: ./PUCL copy com.ibm.package_1.2 -repositories http://server/repository/package -target /var/ibm/ibm_packages -platform os=linux,arch=s390 -acceptLicense 
+
+After you run the command, a repository is created that contains the files for the specified platform and architecture. 
+
+For information about the PUCL command and options, see the IBM Installation Manager Information Center. [http://pic.dhe.ibm.com/infocenter/install/v1r5/index.jsp] 
+
+For support, follow the normal Customer Support process for your product.

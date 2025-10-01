@@ -1,0 +1,165 @@
+Title: IBM PK55523: slow performance when switching editors - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When working with multiple projects in RSA, which includes a U
+   ML model project with a large fragmented model, having the Java
+   project open while working on different files with multiple edit
+   ors open slows down the switching between editors. There is a pa
+   use that lasts approximately 30 - 40 seconds where the user cann
+   ot do anything. But seems to be alright switching between two di
+   fferent models
+   Inputs:
+   1. A UML model project with a model that is made up of many frag
+   ments (the model used in production contains 4000+ fragments.
+   2. Two or more projects with other file types (E.g., java, xml,
+   text files).
+   Steps to reproduce:
+   Import Project Interchange file TestLargeModel_ProjInt.zip.
+   Import a sample project to the workspace.  Go to Help ? Samples
+   Gallery ? Technology samples ? Java ? Hello World sample
+   Switch to the Modeling Perspective
+   Open the Claims model
+   The Rational Model Editor is now open for Claims.emx
+   Keep the editor open and open another file, this time open a jav
+   a file (HelloWorld.java) under the SimpleHelloWorld example:
+   You will notice that I turned on the Heap monitor, to show that
+   I have set the heap size to use 1200MB.
+   Immediately after double-clicking HelloWorld.java, slowness is a
+   lready experienced.
+   Switch between the two editors open back and forth. There is a l
+   ong pause and nothing can be done during that pause.
+   When the Rational Model Editor is open, working on RSA is extrem
+   ely slow, especially when switching between the open editors.
+   The slowness is also experienced when you have more than 2 edito
+   rs open (as long as the Rational Model Editor is open). For exam
+   ple, when you open another java file and switch between the java
+    files.
+   Try closing the Rational Model Editor (Claims.emx), then switch
+   between the two open java files (the pause is no longer experien
+   ced).
+    Open the Rational Model Editor again (double-click Model0819).
+    Try switching between the files again and the slowness is exper
+   ienced again.
+   Does the customer have a workaround?
+   No
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  It is very slow to open a Java editor after a UML model with
+   a large number of fragments has been opened (4000+
+   fragments).  This defect makes it impractical to do any Java
+   development while such a model is open.
+   When a new file is opened, Eclipse consults the open editors
+   to ask whether or not they match the new editor input. The
+   matching strategy for the UML model editor was very
+   expensive (consuming both memory and time) when there are a
+   lot of fragments in the model.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix is to not run the UML model editor's matching
+   strategy when a new file is opened whose content types are
+   irrelevant to the model editor.
+   Now, opening Java (and other) files when a UML model editor
+   is open has no delay, and switching between editors is not
+   slow.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK55523
+   
+   
+ * REPORTED COMPONENT NAME
+   SW ARCHITECT WI
+   
+   
+ * REPORTED COMPONENT ID
+   5724I7001
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2007-10-26
+   
+   
+ * CLOSED DATE
+   2007-12-11
+   
+   
+ * LAST MODIFIED DATE
+   2007-12-11
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   SW ARCHITECT WI
+   
+   
+ * FIXED COMPONENT ID
+   5724I7001
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R700 PSN
+   UP

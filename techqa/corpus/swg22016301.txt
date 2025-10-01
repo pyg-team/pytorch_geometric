@@ -1,0 +1,76 @@
+Title: IBM InfoSphere Information Server Uninstaller exits with java.lang.UnsupportedClassVersionError - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The Information Server 11.3.x or 11.5.x "uninstall" command fails, making it impossible to uninstall part or all of Information Server. 
+
+SYMPTOM
+When the "uninstall" utility is invoked in the ISHOME/_uninstall directory, it immediately fails with an exception like the following: 
+
+Error : Exception in thread "main" java.lang.UnsupportedClassVersionError: JVMCFRE003 bad major version; class=com/ibm/is/install/ui/web/JettyWebContainer, offset=6
+at java.lang.ClassLoader.defineClassImpl(Native Method)
+at java.lang.ClassLoader.defineClass(ClassLoader.java:331)
+at java.security.SecureClassLoader.defineClass(SecureClassLoader.java:155)
+at java.net.URLClassLoader.defineClass(URLClassLoader.java:712)
+at java.net.URLClassLoader.access$400(URLClassLoader.java:93)
+at java.net.URLClassLoader$ClassFinder.run(URLClassLoader.java:1160)
+at java.security.AccessController.doPrivileged(AccessController.java:452)
+at java.net.URLClassLoader.findClass(URLClassLoader.java:595
+at java.lang.ClassLoader.loadClassHelper(ClassLoader.java:786)
+at java.lang.ClassLoader.loadClass(ClassLoader.java:760)
+at java.net.FactoryURLClassLoader.loadClass(URLClassLoader.java:1198)
+at java.lang.ClassLoader.loadClass(ClassLoader.java:741)
+at com.ibm.is.install.ui.web.WebUI.createWebContainer(WebUI.java:98)
+at com.ibm.is.install.ui.web.WebUI.initialize(WebUI.java:40)
+at com.ibm.is.install.Uninstaller.main(Uninstaller.java:129) 
+
+where ISHOME defaults to C:\IBM\InformationServer on Windows, and /opt/IBM/InformationServer on Linux and AIX platforms.
+
+
+CAUSE
+Update Installers starting with Version 11.7.0.005 have contained, and installed, a Java 8 JVM for use by themselves and the uninstaller. Installing one of these recent Updaters causes the JVM in ISHOME/Updates/_jvm and ISHOME/_uninstall/_jvm to be upgraded to Java 8. This was done to correct a security vulnerability in the embedded Jetty libraries that are used by the Update Installer, Suite Installer, and Uninstaller to display their GUIs. The vulnerability was fixed in a later version of Jetty, but that version of Jetty requires Java 8 to run. (Information Server 11.3.x and 11.5.x were originally delivered with Java 7 JVMs for use by the Update Installer and Uninstaller.)
+
+The problem arises when the Update Installer is upgraded to Version 11.7.0.005 or higher, AND THEN the 11.3.x or 11.5.x Suite Installer (in an is-suite install image) is used to append a product or tier to the installation. Running the suite installer in 11.3.x or 11.5.x has the effect of replacing the JVM under ISHOME/_uninstall/_jvm with a Java 7 JVM. It also copies the old Jetty libraries back into place in ISHOME/_uninstall/server/lib, but without removing the newer Jetty libraries that were put there by the Update Installer upgrade. This causes the ISHOME/_uninstall/server/lib directory to contain a mixture of Java libraries for two different versions of Jetty, some of which require Java 8 to run. When the Uninstaller is invoked, the Java 7-based class loader tries to load libraries that need Java 8, and throws the exception.
+
+
+ENVIRONMENT
+Information Server 11.3.x or 11.5.x, on any platform
+
+
+
+DIAGNOSING THE PROBLEM
+This problem is indicated by three conditions: 
+
+1. Running the ISHOME/_uninstall/uninstall command produced an exception like the one shown in the Symptoms section in the terminal window, instead of the normal URL to connect to the Uninstaller GUI; 
+
+ 
+
+2. The Update Installer has previously been upgraded to Version 11.7.0.005 or higher; 
+
+ 
+
+3. Subsequent to (2), the 11.3.x or 11.5.x Suite Installer was used to add a product, PACK, or tier to the installation.
+
+
+RESOLVING THE PROBLEM
+The problem can be resolved as follows: 
+
+1. In the ISHOME/_uninstall directory, delete the files "jvm.version" and "jetty.version". 
+
+ 
+
+2. In the ISHOME/Updates directory, delete the files "jvm.version" and "jetty.version" 
+
+ 
+
+3. Re-install the latest Update Installer. 
+
+ 
+
+This will have the effect of restoring the JVMs and Jetty libraries in both ISHOME/Updates (the Update Installer) and ISHOME/_uninstall (the Uninstaller) to Java 8 and code compatible with Java 8. 
+
+ 
+
+Note that these steps will have to be repeated any time the Suite Installer for 11.3.x or 11.5.x is used to append a product, PACK, or tier to the installation.

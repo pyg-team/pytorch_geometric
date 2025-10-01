@@ -1,0 +1,69 @@
+Title: IBM Firing a trigger from UNIX or Linux environment on which Cognos is not installed - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Firing a trigger from a UNIX or Linux environment tends to be challenging in part because the list of files necessary to fire a trigger as per the official documentation seems to be incomplete. 
+
+SYMPTOM
+Exception in thread "main" java.lang.NoClassDefFoundError: com/cognos/developer/schemas/bibus/_3/EventManagementService_ServiceLocator 
+at Trigger.<init>(Trigger.java:59) 
+at Trigger.main(Trigger.java:252) 
+Caused by: java.lang.ClassNotFoundException: 
+com.cognos.developer.schemas.bibus._3.EventManagementService_ServiceLocator 
+at java.net.URLClassLoader$1.run(Unknown Source
+
+
+CAUSE
+Missing files from the trigger location
+
+RESOLVING THE PROBLEM
+1) Copy *.jar files from <cognos install path>/webapps/p2pd/WEB-INF/lib to the intended trigger directory on the Linux or Unix environment. Copying all the .jar files is a bit of overkill but it ensures that there are no missing files. Besides the space used by all these files is less than 200MB.
+
+
+2)Copy the Trigger.Class from <cognos install path>/webapps/utilities/trigger to the intended directory on the Linux or Unix environment 
+
+3) Make a copy of trigger.sh found in <cognos install path>/webapps/utilities/trigger, and modify as below. You will need to substitute the JAVA_HOME variable with the appropriate target JRE path on the Linux or UNIX environment 
+
+ 
+
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+
+4) Essentially the modifications ensure that the CLASSPATH and the JAR_HOME is the current directory(target trigger directory) 
+
+5) Ordinarilly, the namespace ID should not have any spaces; however, it if does the modify the last line as follows ${JAVA_HOME}/bin/java -classpath ${CLASSPATH} Trigger ${1} ${2} ${3} "${4}" ${5} 
+
+6) Run the trigger as follows(make sure that the file has rwx permissions) 
+
+./trigger.sh ./trigger.sh"http://hostname:9400/p2pd/servlet/dispatch" username password namepaceid triggername

@@ -1,0 +1,130 @@
+Title: IBM IZ54929: JAVA.IO.UNSUPPORTEDENCODINGEXCEPTION WITH IBM-930A, X-IBM942C,X-IBM943C, X-IBM949C - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Error Message: java.io.UnsupportedEncodingException: x-ibm942c
+   at
+   sun.io.Converters.getConverterClass(Converters.java:320)
+           at sun.io.Converters.newConverter(Converters.java:353)
+           at
+   sun.io.ByteToCharConverter.getConverter(ByteToCharConverter.java
+   :113)
+           at IOPath.main(IOPath.java:9)
+   Similarly the exception thrown for ibm-930a, x-ibm943c and
+   x-ibm949c
+   .
+   Stack Trace: N/A
+   .
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  The problem is due to mistake in alias names
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This defect will be fixed in:
+   5.0.0 SR10
+   .
+   The problem is resolved by correcting the alias names.
+   .
+   To obtain the fix:
+   Install build 20090114 or later
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ54929
+   
+   
+ * REPORTED COMPONENT NAME
+   JAVA 5 CLASS LI
+   
+   
+ * REPORTED COMPONENT ID
+   620500130
+   
+   
+ * REPORTED RELEASE
+   500
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-07-13
+   
+   
+ * CLOSED DATE
+   2009-07-13
+   
+   
+ * LAST MODIFIED DATE
+   2009-07-13
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   JAVA 5 CLASS LI
+   
+   
+ * FIXED COMPONENT ID
+   620500130
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R500 PSN
+   UP

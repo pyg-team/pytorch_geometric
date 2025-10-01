@@ -1,0 +1,109 @@
+Title: IBM Too many open files error(s) received, ulimit is set to 2048, /var/log/messages indicates limit is 1024 - United States
+
+Text:
+Installation;Operating Environment; STERLINGNFX TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Too many open files error(s) received, ulimit is set to 2048, /var/log/messages indicates limit is 1024 
+
+SYMPTOM
+
+
+SUSE Linux Enterprise Server 9 only
+
+When GIS attempts to open a file or network socket during periods of peak load, an IOException (Too many open files) can be thrown. There will also be a log entry in /var/log/messages "Open files rlimit 1024 reached for uid xxxx" where xxxx is the uid of the GIS administrative user. This can occur on clustered systems, as well as non-clustered, but it may not happen on all nodes of a clustered system.
+
+/etc/security/limits.conf has been properly modified with increased limits, logging into the GIS administrative account indicates that the new limits are being used, and /etc/pam.d/login has the line requiring pam_limits.so for sessions.
+
+Customer indicates that GIS is usually invoked by an automatic scheduler, rather than being manually invoked. lsof output indicates that the number of open files at the time of the error is significantly less than the limits configured in limits.conf, although the number of open files is higher than average for any nodes experiencing the issue.
+
+
+
+Error Message /var/log/messages:
+
+Open files rlimit 1024 reached for uid xxxx (xxxx is the GIS admin user) with a time stamp corresponding with an exception below.
+
+Various GIS logs:
+
+[2009-02-05 15:01:53.734] ERROR 000310010057 UTIL.UTIL.ERR_IOException Got IOException in URL.send
+java.net.SocketException: Too many open files
+at java.net.Socket.createImpl(Socket.java(Compiled Code))
+at java.net.Socket.<init>(Socket.java(Compiled Code))
+at java.net.Socket.<init>(Socket.java(Compiled Code))
+at com.sterlingcommerce.woodstock.util.URL.send(URL.java(Compiled Code))
+at com.sterlingcommerce.woodstock.util.URL.fetch(URL.java(Compiled Code))
+at com.sterlingcommerce.woodstock.util.Util.removeCache(Util.java(Compiled Code))
+at com.sterlingcommerce.woodstock.services.translation.ExternalDataImpl.onSelect(ExternalDataImpl.java(Compiled Code))
+at com.sterlingcommerce.woodstock.translator.rules.DBOpcodes.select_I__(DBOpcodes.java(Compiled Code))
+at com.sterlingcommerce.woodstock.translator.rules.DBOpcodes.select_I__(DBOpcodes.java(Compiled Code))
+at sun.reflect.GeneratedMethodAccessor5896.invoke(Unknown Source)
+at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java(Compiled Code))
+at java.lang.reflect.Method.invoke(Method.java(Compiled Code))
+at com.sterlingcommerce.woodstock.translator.rules.ExtendedRuleExecuter.executeRule(ExtendedRuleExecuter.java(Compiled Code))
+at com.sterlingcommerce.woodstock.translator.blockprocessor.BlockSequence.runOnEndExtendedRule(BlockSequence.java(Compiled Code))
+at com.sterlingcommerce.woodstock.translator.blockprocessor.BlockSequence.searchForward(BlockSequence.java(Compiled Code))
+at com.sterlingcommerce.woodstock.translator.blockprocessor.BlockSequence.processFileFormat(BlockSequence.java(Compiled Code))
+at com.sterlingcommerce.woodstock.translator.engine.TranslationEngineImpl.translateInput(TranslationEngineImpl.java(Compiled Code))
+at com.sterlingcommerce.woodstock.translator.engine.TranslationEngineImpl.doTranslation(TranslationEngineImpl.java(Compiled Code))
+at com.sterlingcommerce.woodstock.translator.engine.TranslationEngineImpl.translate(TranslationEngineImpl.java(Compiled Code))
+at com.sterlingcommerce.woodstock.translator.engine.TranslationEngine.translate(TranslationEngine.java(Inlined Compiled Code))
+at com.sterlingcommerce.woodstock.services.edi.deenvelopex12.DeenvelopeX12ServiceImpl.processTransactions(DeenvelopeX12ServiceImpl.java(Compiled Code))
+at com.sterlingcommerce.woodstock.services.edi.deenvelopex12.DeenvelopeX12ServiceImpl.processGroups(DeenvelopeX12ServiceImpl.java(Compiled Code))
+at com.sterlingcommerce.woodstock.services.edi.deenvelopex12.DeenvelopeX12ServiceImpl.processData(DeenvelopeX12ServiceImpl.java(Compiled Code))
+at com.sterlingcommerce.woodstock.workflow.activity.engine.ActivityEngineHelper.invokeService(ActivityEngineHelper.java(Compiled Code))
+at com.sterlingcommerce.woodstock.workflow.activity.engine.ActivityEngineHelper.nextMainLogic(ActivityEngineHelper.java(Compiled Code))
+at com.sterlingcommerce.woodstock.workflow.activity.engine.ActivityEngineHelper.next(ActivityEngineHelper.java(Compiled Code))
+at com.sterlingcommerce.woodstock.workflow.queue.WorkFlowQueueListener.doWork(WorkFlowQueueListener.java(Compiled Code))
+at com.sterlingcommerce.woodstock.workflow.queue.WorkFlowQueueListener.run(WorkFlowQueueListener.java(Compiled Code))
+at com.sterlingcommerce.woodstock.workflow.queue.WorkFlowQueueListener.onMessage(WorkFlowQueueListener.java(Compiled Code))
+at com.sterlingcommerce.woodstock.workflow.queue.WorkFlowQueueListener.onMessage(WorkFlowQueueListener.java(Inlined Compiled Code))
+at com.sterlingcommerce.woodstock.workflow.queue.wfTransporter.run(wfTransporter.java(Compiled Code))
+at com.sterlingcommerce.woodstock.workflow.queue.BasicExecutor$Worker.run(BasicExecutor.java(Compiled Code))
+at java.lang.Thread.run(Thread.java(Compiled Code))
+
+
+RESOLVING THE PROBLEM
+
+
+If GIS is invoked with an automatic scheduler (such as cron or Control-M), the daemons may not be PAM aware, so any changes made to /etc/security/limits.conf are ignored, and the default values for /bin/sh are used.
+
+The most straightforward and least invasive solution is to modify the script being called by the scheduler to start GIS to increase the file descriptor limit by adding the line "ulimit -n 2048" (without the quotes).
+
+
+
+See Novell bulletin 3302273 for further detail.
+
+
+
+
+
+ 
+
+HISTORICAL NUMBER
+ NFX5068 
+
+PRODUCT ALIAS/SYNONYM
+ 
+
+Function Area
+
+
+startup
+
+
+Escalation ID
+
+
+4962281
+
+
+Severity
+
+
+Normal
+
+
+Type
+
+
+NormalFix

@@ -1,0 +1,25 @@
+Title: IBM How to verify the status of virtual SPU's in N3001-001 (Mako Lite) - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ A failover occurred in a N3001-001 and I need to confirm the status of the virtual SPU's 
+
+CAUSE
+After a host fail over how NPS became un-reachable to users
+
+ANSWER
+ 
+
+Please run the nzvm command as root as shown below. The output should show the current status 
+of the virtual spu's
+
+root@minimako-host2 ~]# /nz/kit/bin/adm/nzvm status
+WARNING: Waiting for the permission to go
+spu0101 on ha1 [Running]
+spu0101 disks (33) [OK]
+spu0102 on ha2 [Running]
+spu0102 disks (33) [OK]
+Export HA1->HA2 (16/16) [OK]
+Export HA2->HA1 (16/16) [OK]

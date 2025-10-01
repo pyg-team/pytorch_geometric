@@ -1,0 +1,67 @@
+Title: IBM SOAP Content-type header considerations in CICS - United States
+
+Text:
+PI0401 SO0123 WB 0301 soap containers 5655M1500 R640 640 R400 400 HCI6400 R650 650 R500 500 HCI6500 5655-M15 5655M15 5655S9700 R660 660 R600 600 HCI6600 5655-S97 5655S97 5655S9700 R670 670 R700 700 HCI6700 5655-S97 5655S97 kixinfo TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ There are a number of changes that have occurred in CICS Transaction Server for z/OS (CICS TS) regarding SOAP content-type headers, and you are looking for an explanation of some of these. 
+
+SYMPTOM
+If the requirements of the CICS TS release are not met, you might see various errors and inconsistencies including: 
+
+ * different behavior between CICS TS hosts that communicate with the same client 
+ * INVALID_CLIENT_CODEPAGE errors 
+ * HEADER_NOT_FOUND errors
+
+
+
+CAUSE
+Changes to SOAP requirements over the years, and fewer restrictions on acceptable exchanges, have made the requirements different in successive releases of CICS TS.
+
+
+
+RESOLVING THE PROBLEM
+Content-type header requirements by release: 
+
+ * CICS TS V3.1:
+   A content-type header is required for inbound SOAP requests, with CHARSET specified.
+   Without CHARSET, DFHPI0401, DFHPI0502, and a 500 Internal Server Error might occur.
+   There should also be a SOAPAction header, even if the value is blank.
+   
+   
+ * CICS TS V3.2:
+   After APAR PK58721 [http://www.ibm.com/support/docview.wss?uid=swg1PK58721] (PTF UK34459), with SupportPac CA8K [http://www.ibm.com/support/docview.wss?uid=swg24018619], a content-type header is required for POST and PUT methods. Before the PTF, the content-type header was required for all methods - including GET and DELETE.
+   
+   
+ * CICS TS V4.1 and V4.2:
+   The content-type header is not required.
+   It is also worth noting that in CICS TS 3.2 and later releases, CICS no longer converts the body of an HTTP request to ASCII by default. This change was made to allow CICS to support sending binary objects using outbound HTTP. Specifying the Content-Type header sets this value.
+   
+   
+   
+
+If you set the content-type header:  * For SOAP 1.1 it must be: text/xml
+   
+ * For SOAP 1.2 it must be: application/soap+xml
+   
+   
+   
+
+APARs of interest regarding Content-Type headers:  * CICS TS 3.2:
+   PK56208 [http://www.ibm.com/support/docview.wss?uid=swg1PK56208] corrects content-type header processing with MTOM/XOP
+   
+   
+ * CICS TS 4.1:
+   PM22185 [http://www.ibm.com/support/docview.wss?uid=swg1PM22185] corrects omission of content-type or charset header when CHUNKYES is specified and MEDIATYPE is supplied
+   
+   PM22852 [http://www.ibm.com/support/docview.wss?uid=swg1PM22852] WEB RECEIVE with SRVCONVERT specified does not convert the entity body if there is no HTTP Content-Type header
+
+RELATED INFORMATION
+#500 Internal Server Error [http://www.ibm.com/support/docview.wss?uid=swg21244670]
+Resp 16 Resp2 107 INVOKE WEBSERVICE [http://www.ibm.com/support/docview.wss?uid=swg21398010]
+
+
+
+
+PRODUCT ALIAS/SYNONYM
+ CICS/TS CICS TS CICS Transaction Server

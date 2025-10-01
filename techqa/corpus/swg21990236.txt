@@ -1,0 +1,90 @@
+Title: IBM Security Bulletin:  Multiple security vulnerabilities affect IBM WebSphere Application Server for Bluemix - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ IBM WebSphere Application Server Liberty could allow a remote attacker to conduct phishing attacks, caused by an open redirect vulnerability. An attacker could exploit this vulnerability to redirect a victim to arbitrary Web sites. IBM WebSphere Application Server Liberty is vulnerable to cross-site scripting in OpenID Connect clients caused by improper validation of input. A remote attacker could exploit this vulnerability using a specially-crafted URL to execute script in a victim's Web browser within the security context of the hosting Web site, once the URL is clicked. An attacker could use this vulnerability to steal the victim's cookie-based authentication credentials. There is an Information Disclosure Vulnerability in IBM WebSphere Application Server Liberty. Apache Commons Fileupload vulnerability affects WebSphere Application Server. There is a potential information disclosure in WebSphere Application Server. There are multiple vulnerabilities in the IBM® SDK Java™ Technology Edition that is shipped with IBM WebSphere Application Server. These issues were disclosed in the IBM Java SDK updates in July 2016. These may affect some configurations of Liberty for Java for IBM Bluemix.
+
+
+VULNERABILITY DETAILS
+CVEID: CVE-2016-3040 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2016-3040]
+DESCRIPTION: IBM WebSphere Application Server Liberty could allow a remote attacker to conduct phishing attacks, caused by an open redirect vulnerability. An attacker could exploit this vulnerability to redirect a victim to arbitrary Web sites.
+CVSS Base Score: 6.3
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/114636 [https://exchange.xforce.ibmcloud.com/vulnerabilities/114636] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:N/AC:H/PR:L/UI:N/S:C/C:N/I:H/A:N) 
+CVEID: CVE-2016-3042 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2016-3042]
+DESCRIPTION: IBM WebSphere Application Server - Liberty is vulnerable to cross-site scripting in OpenID Connect clients. This vulnerability allows users to embed arbitrary JavaScript code in the Web UI thus altering the intended functionality potentially leading to credentials disclosure within a trusted session.
+CVSS Base Score: 5.4
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/114638 [https://exchange.xforce.ibmcloud.com/vulnerabilities/114638] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:N/AC:L/PR:L/UI:R/S:C/C:L/I:L/A:N)
+
+CVEID: CVE-2016-0378 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2016-0378]
+DESCRIPTION: IBM WebSphere Application Server Liberty could allow a remote attacker to obtain sensitive information caused by improper handling of exceptions when a default error page does not exist.
+CVSS Base Score: 3.7
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/112240 [https://exchange.xforce.ibmcloud.com/vulnerabilities/112240] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:N/AC:H/PR:N/UI:N/S:U/C:L/I:N/A:N) 
+
+CVEID: CVE-2016-3092 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2016-3092]
+DESCRIPTION: Apache Tomcat is vulnerable to a denial of service, caused by an error in the Apache Commons FileUpload component. By sending file upload requests, an attacker could exploit this vulnerability to cause the server to become unresponsive.
+CVSS Base Score: 5.3
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/114336 [https://exchange.xforce.ibmcloud.com/vulnerabilities/114336] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:L) 
+
+CVEID: CVE-2016-5986 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2016-5986]
+DESCRIPTION: IBM WebSphere Application Server and IBM WebSphere Application Server Liberty could allow a remote attacker to obtain sensitive information, caused by the improper handling of responses under certain conditions. An attacker could exploit this vulnerability to gain server identification information.
+CVSS Base Score: 3.7
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/116556 [https://exchange.xforce.ibmcloud.com/vulnerabilities/116556] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:N/AC:H/PR:N/UI:N/S:U/C:L/I:N/A:N) 
+
+CVEID:CVE-2016-3485 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2016-3485]
+DESCRIPTION:An unspecified vulnerability related to the Networking component has no confidentiality impact, low integrity impact, and no availability impact.
+CVSS Base Score: 2.9
+CVSS Temporal Score: Seehttps://exchange.xforce.ibmcloud.com/vulnerabilities/115273 [https://exchange.xforce.ibmcloud.com/vulnerabilities/115273]for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:L/AC:H/PR:N/UI:N/S:U/C:N/I:L/A:N) 
+
+
+AFFECTED PRODUCTS AND VERSIONS
+All vulnerabilities affect the following versions and releases of IBM WebSphere Application Server: 
+
+ * Version 9.0 
+ * Version 8.5 and 8.5.5 Full Profile and Liberty 
+
+REMEDIATION/FIXES
+To patch an existing service instance refer to the IBM WebSphere Application Server bulletins: Security Bulletin: Open Redirect vulnerability in WebSphere Application Server Liberty (CVE-2016-3040) [http://www.ibm.com/support/docview.wss?uid=swg21986715]
+
+Security Bulletin: Cross-site scripting vulnerability in IBM WebSphere Application Server Liberty Profile (CVE-2016-3042) [http://www.ibm.com/support/docview.wss?uid=swg21986716]
+
+Security Bulletin: Information Disclosure in IBM WebSphere Application Server Liberty (CVE-2016-0378) [http://www.ibm.com/support/docview.wss?uid=swg21981529] 
+
+Security Bulletin: Apache Commons FileUpload Vulnerability affects WebSphere Application Server (CVE-2016-3092) [http://www.ibm.com/support/docview.wss?uid=swg21987864]
+
+Security Bulletin: Multiple vulnerabilities in IBM® Java SDK affects WebSphere Application Server July 2016 CPU (CVE-2016-3485) [http://www.ibm.com/support/docview.wss?uid=swg21988339]
+
+When creating a new service instance, the following maintenance must be manually applied to an IBM WebSphere Application Server Version 8.5.5 and IBM WebSphere Application Server Version 9.0: 
+
+Security Bulletin: Potential Information Disclosure vulnerability in WebSphere Application Server (CVE-2016-5986) [http://www.ibm.com/support/docview.wss?uid=swg21990056]
+
+WORKAROUNDS AND MITIGATIONS
+None
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v3 Guide [http://www.first.org/cvss/user-guide] 
+On-line Calculator v3 [http://www.first.org/cvss/calculator/3.0] IBM Java SDK Security Bulletin [http://www-01.ibm.com/support/docview.wss?uid=swg21986642] RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] CHANGE HISTORY
+ 16 September 2016: original document published 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.

@@ -1,0 +1,30 @@
+Title: IBM A "You are not authorized to see the BPM document content" error message is seen when attempting to access a document in IBM Business Process Manager (BPM) - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When you attempt to access a document that was uploaded by a Business Process Definition (BPD) through a second BPD, you see a "You are not authorized to see the BPM document content" error. 
+
+CAUSE
+This process is working as designed. When a document is attached to a specific BPD instance, you can only see that document if you are allowed to see that specific BPD instance and its related tasks. When a document is passed to a second BPD instance, users who are authorized to work on this second instance might not have access to the first BPD instance. 
+
+This process is not a limitation; it is the authorization system for IBM Business Process Manager documents. A document is part of the BPD instance; therefore, the same authorization scheme as the BPD applies to the document as well. 
+
+By default, IBM Business Process Manager offers the ability to store documents locally and associate them with BPD instances. The security around the documents is governed by the instance and task security for BPDs. If documents are stored in an external document management system, accessing those documents is governed by the security put in place by that third-party system. If you need more flexibility in regard to document security when a document needs to span multiple BPD instances, an external Enterprise Content Management system might be necessary.
+
+
+RESOLVING THE PROBLEM
+To work around this scenario, copy the document in a system task and attach it to the other BPD instance. The "system" user is allowed to see everything. 
+
+
+Caution: 
+
+ * This approach duplicates the document and increases the amount of data in the database by having multiple copies. 
+ * When a document spans two BPDs and users in both instances are allowed to update the document, changes made in one instance might not be reflected in the second instance.
+
+ 
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Business Process Manager Standard Enterprise Content Management AIX, Linux, Linux zSeries, Solaris, Windows 8.5.5, 8.5, 8.0.1, 8.0 Business Integration IBM Business Process Manager Express Enterprise Content Management Linux, Windows 8.5.5, 8.5, 8.0.1, 8.0 
+PRODUCT ALIAS/SYNONYM
+ BPM

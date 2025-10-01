@@ -1,0 +1,32 @@
+Title: IBM How to enter parameters for Exponential Smoothing in Time Series models - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ I wish to estimate an Exponential Smoothing model in IBM SPSS Statistics and specify values for the model parameters, such as the smoothing constant (alpha). I have chosen 
+Analyze->Forecasting->Create Models
+in the menu system and chosen Exponential Smoothing in the Method scrollbar of the "Time Series Modeler" dialog. I then clicked the Criteria button. In the "Exponential Smoothing Criteria" dialog, I can check radio buttons for "Model Type" and "Dependent Variable Transformation", but I see no option to enter smoothing parameter values. There were no apparent keywords for this function in 
+the syntax chart for the TSMODEL command. How can I specify values for parameters in the model? 
+
+ANSWER
+There are no options for user entry of exponential smoothing parameter values in the "Time Series Modeler" dialogs or the TSMODEL syntax. You can specify such parameters by running the EXSMOOTH command from a syntax window. The available parameters are ALPHA (general smoothing parameter or smoothing constant), GAMMA (trend smoothing parameter), DELTA (seasonal smoothing parameter), and PHI (trend modification parameter). 
+The EXSMOOTH command was part of the Trends module in older versions of SPSS. The procedures from the Trends module, including EXSMOOTH, as well as ARIMA, AREG (regression with autocorrelated errors) , and others, are available only through syntax commands in recent releases of SPSS Statistics. The new Forecasting module was introduced in SPSS 14 and the Trends dialogs were removed in SPSS 16. The Trends syntax commands are available now as part of the Statistics Core, so that you have access to the commands if you have SPSS Statiistics (although the Student version of SPSS does not include syntax command processing). If you want to enter the smoothing parameters for exponential smoothing, then you need to run the EXSMOOTH syntax command. Here is an example from the syntax Help pages for EXSMOOTH:
+
+EXSMOOTH VAR2
+/MODEL=LA
+/PERIOD=4
+/SEASFACT=(23 -14.4 7 -15.6)
+/ALPHA=0.20
+/GAMMA=0.20
+/DELTA=0.30
+/INITIAL=(112,17).
+
+This command specifies a Linear trend component with an additive seasonal component (/MODEL=LA). 
+
+To see the syntax help for the EXSMOOTH command, type EXSMOOTH (capitalization is not necessary) into an SPSS Statistics Syntax Editor window and then click the Syntax Help icon in the syntax window toolbar. This icon looks like a sheet of paper with a question mark in the lower left corner. The Trends commands do not appear in the Syntax Reference Guide that is opened by clicking 
+Help->Command Syntax Reference.
+
+
+RELATED INFORMATION
+ Need more help? Our Statistics forum is Live! [https://developer.ibm.com/answers/topics/statistics.html?smartspace=predictive-analytics]

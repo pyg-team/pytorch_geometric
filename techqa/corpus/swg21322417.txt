@@ -1,0 +1,60 @@
+Title: IBM Rational Test Enabler version 7.0.2 and 7.0.3 unavailable - United States
+
+Text:
+RN7.0.1; Robot; Robot 7.0.1.1; Test Enabler; Test Enablers; Enablers; Robot 7.0.2; RN7.0.2; Test Enabler 7.0.1; RN7.0.3; Robot7.0.3; RATLC01269215 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ IBM® Rational® Test Enabler version 7.0.2 and 7.0.3 are unavailable as part of the 7.0.2 and 7.0.3 releases. 
+
+CAUSE
+Rational Test Enabler is not released as a part of the 7.0.2 and 7.0.3 release.
+
+RESOLVING THE PROBLEM
+Install IBM Rational Test Enabler version 7.0.1. 
+
+If you are installing Rational Test Enabler for the first time: 
+
+ 1. Install Rational Robot 7.0.2 or 7.0.3 
+ 2. Install Rational Test Enabler 7.0.1
+
+
+If you have the previous versions of Rational Robot and Rational Test Enabler:  1. Uninstall Rational Robot and Rational Test Enabler. 
+ 2. Install Rational Robot 7.0.2 or 7.0.3. 
+ 3. Install Rational Test Enabler 7.0.1.
+    
+    
+
+
+NOTE 
+You must uninstall all previous versions of Rational Robot before upgrading to the new version. 
+
+
+
+The following steps describes how to download the Rational Test Enabler 7.0.1. 
+
+ 1. Log on to the Rational Release Area Download site [https://www.software.ibm.com/webapp/iwm/web/reg/pick.do?lang=en_US&source=RATL-RATIONAL].
+    
+    
+ 2. Search for IBM Rational Robot V7.0.3 Windows English eAssembly. Then select the radio button.
+    
+    
+    [/support/docview.wss?uid=swg21322417&aid=1] [/support/docview.wss?uid=swg21322417&aid=1]
+    
+    
+ 3. Scroll all the way down to click Continue.
+    
+    
+    
+ 4. Click View license and carefully read the License Agreement. If you agree, select I agree then click
+    I confirm.
+    
+    
+ 5. Select IBM Rational Test Enablers V7.0.1 Windows English. 
+    
+    
+    [/support/docview.wss?uid=swg21322417&aid=2] [/support/docview.wss?uid=swg21322417&aid=2]
+    
+    
+    
+    
+ 6. If you still agree with the license agreement, select I agree, then click I confirm.

@@ -1,0 +1,23 @@
+Title: IBM Error: "com.spss.de.dms.DMSException: SpssioBuffershort 49" when extracting SPSS Statistics .sav file into Text Analytics for Surveys - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ I am using Text Analysis/Analytics for Surveys version 3.0. When I attempt to start a new project using an SPSS Statistics data file as my data source, I see this error message: 
+
+com.spss.de.dms.DMSException: SpssioBuffershort 49
+
+and am not able to continue setting up my project. I am able to open the .sav file using SPSS Statistics 17, and it is a very small data set. Why does this file produce the error? I am able to open any other .sav file successfully. 
+
+RESOLVING THE PROBLEM
+This is due to the length/width of the string variable - Workaround Available
+
+This problem has been traced to the use of very wide variables. The workaround is to open the file using SPSS Statistics then shorten the variable lengths and column widths. Tests have found that if your string variable has a width of 4000 characters, this error will be displayed in Text Analytics for Surveys. However if you shorten this variable to a width of 3999, then the error does not appear and TAfS will allow you to bring the file successfully.
+
+IBM SPSS would like to apologise for any inconvenience caused
+
+
+
+HISTORICAL NUMBER
+ 82722

@@ -1,0 +1,44 @@
+Title: IBM Not seeing Cognos Import nodes in C&DS 6.0 job. - United States
+
+Text:
+WebLogic extensions Cognos BI source node collaboration job cluster script TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Customer has a stream that has a Cognos BI source node. When they save the stream to the repository and place the stream in a C&DS 6.0 job, they do not see the source node under the Import tab of the job. 
+
+SYMPTOM
+Customer has a stream that has a Cognos BI source node. When they save the stream to the repository and place the stream in a C&DS 6.0 job, they do not see the source node under the Import tab of the job. Performed the same action using a XML source node, we do not see the XML source node in the C&DS job either. 
+
+
+CAUSE
+The customer was using a custom startWebLogic.sh to start his C&DS 6.0 WebLogic cluster. The custom script did not have the setCDSEnv.sh in it which we documented in the C&DS Administrators guide. See details below. In this case the Modeler Adapters get called using the setCDS.Env so the modeler extension libraries were not being loaded.
+
+ENVIRONMENT
+Linux
+
+DIAGNOSING THE PROBLEM
+WebLogic
+For single WebLogic server configurations, use the following scripts provided with the repository server
+installation:
+<repository installation directory>/bin/startserver.bat
+© Copyright IBM Corp. 2000, 2013 9
+<repository installation directory>/bin/startserver.sh
+The WebLogic application server can also be started using your preferred mechanism, but you must
+ensure the correct environment variables and Java properties are set. To assist with this process, the
+configuration process creates the following scripts in the toDeploy/current directory:
+v setCDSEnv.cmd or setCDSEnv.sh
+v startCDSWebLogic.cmd or startCDSWebLogic.sh
+v startManagedCDSWebLogic.cmd or startManagedCDSWebLogic.sh
+If you selected automatic deployment during the configuration, the files are also copied to the domain
+and <domain>/bin directory. Inspect these files to determine which environment and Java properties must
+be set. The specific properties will vary depending on installed IBM SPSS adapters. If you are starting
+your server using a startup script, you can call setCDSEnv.cmd/ from that script. If you are
+using node manager or some other mechanism to start the server, make sure to define the equivalent
+settings.setCDSEnv.sh
+
+
+RESOLVING THE PROBLEM
+WebLogic Administrator needed to add the setCDSEnv.sh to his startWebLogic.sh start up script.
+
+RELATED INFORMATION
+ Need more help? Our Modeler forum is Live! [https://developer.ibm.com/answers/topics/modeler/?smartspace=predictive-analytics]

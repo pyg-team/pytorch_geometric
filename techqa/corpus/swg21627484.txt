@@ -1,0 +1,84 @@
+Title: IBM Component Refresh (CR) Installation Fails - Error 112 - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+The installation of a Component Refresh (CR) for a Lotus Connections 3.x and IBM Connections v4.x Application can fail sometimes with an error code 112. Here is an example of the message posted to the corresponding log file of the CR update for the Application: 
+
+File: 
+
+ * 20130305_154245_LO72170-IC4000-CR02-Search_search_install.log 
+   
+   
+
+Message:  * 2013-03-05T09:43:49-06:00 Error 112 -- Return code (1) differs from the expected code (0). 
+
+CAUSE
+This can be caused by invalid data within the following file system directory: 
+
+
+
+Windows: 
+
+ * 
+
+
+Linux:  * 
+
+
+AIX:  * 
+
+ENVIRONMENT
+All Platforms 
+
+Connections 3.x & above.
+
+
+DIAGNOSING THE PROBLEM
+Further inspection of the log file may reveal an exception involving deployment of an EJB: 
+
+
+
+2013-03-05T09:43:48-06:00 [wsadmin] An unexpected exception was thrown. Halting execution.
+2013-03-05T09:43:48-06:00 [wsadmin] Shutting down workbench.
+2013-03-05T09:43:48-06:00 [wsadmin] Error executing deployment: java.lang.IllegalStateException. Errori s Platform not running.
+2013-03-05T09:43:48-06:00 [wsadmin] java.lang.IllegalStateException: Platform not running
+2013-03-05T09:43:48-06:00 [wsadmin] at org.eclipse.core.runtime.adaptor.EclipseStarter.run(EclipseStarter.java:374)
+2013-03-05T09:43:48-06:00 [wsadmin] at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+2013-03-05T09:43:48-06:00 [wsadmin] at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:60)
+2013-03-05T09:43:48-06:00 [wsadmin] at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:37)
+2013-03-05T09:43:48-06:00 [wsadmin] at java.lang.reflect.Method.invoke(Method.java:611)
+2013-03-05T09:43:48-06:00 [wsadmin] at com.ibm.etools.ejbdeploy.batch.impl.BootLoaderLoader.run(BootLoaderLoader.java:494)
+2013-03-05T09:43:48-06:00 [wsadmin] at com.ibm.etools.ejbdeploy.batch.impl.BatchDeploy.execute(BatchDeploy.java:114)
+2013-03-05T09:43:48-06:00 [wsadmin] at com.ibm.etools.ejbdeploy.EJBDeploy.execute(EJBDeploy.java:107)
+2013-03-05T09:43:48-06:00 [wsadmin] at com.ibm.etools.ejbdeploy.EJBDeploy.deploy(EJBDeploy.java:348)
+2013-03-05T09:43:48-06:00 [wsadmin] at com.ibm.etools.ejbdeploy.EJBDeploy.main(EJBDeploy.java:310)
+2013-03-05T09:43:48-06:00 [wsadmin] EJBDeploy level: @build@
+2013-03-05T09:43:48-06:00 [wsadmin] ADMA5008E: The EJBDeploy program failed on file /tmp/app1630292042267050343.ear. Exception: com.ibm.etools.ejbdeploy.EJBDeploymentException: Error executing EJBDeploy
+2013-03-05T09:43:48-06:00 [wsadmin] ADMA0063E: An error occurred during Enterprise JavaBeans (EJB) deployment. Exception: com.ibm.etools.ejbdeploy.EJBDeploymentException: Error executing EJBDeploy
+2013-03-05T09:43:48-06:00 [wsadmin] com.ibm.etools.ejbdeploy.EJBDeploymentException: Error executing EJBDeploy
+2013-03-05T09:43:48-06:00 [wsadmin] at com.ibm.etools.ejbdeploy.EJBDeploy.execute(EJBDeploy.java:252)
+2013-03-05T09:43:48-06:00 [wsadmin] at com.ibm.ejs.util.deployment.deploywrapper.DeployUtil$1.run(DeployUtil.java:316)
+2013-03-05T09:43:48-06:00 [wsadmin] at com.ibm.ws.security.util.AccessController.doPrivileged(AccessController.java:118)
+2013-03-05T09:43:48-06:00 [wsadmin] at com.ibm.ejs.util.deployment.deploywrapper.DeployUtil.deployModule(DeployUtil.java:311)
+2013-03-05T09:43:48-06:00 [wsadmin] at com.ibm.ejs.util.deployment.deploywrapper.DeployUtil.deploy(DeployUtil.java:90)
+2013-03-05T09:43:48-06:00 [wsadmin] at com.ibm.ws.management.application.task.DeployEJBTask.ejbDeploy(DeployEJBTask.java:386)
+2013-03-05T09:43:48-06:00 [wsadmin] at com.ibm.ws.management.application.task.DeployEJBTask.install(DeployEJBTask.java:237)
+2013-03-05T09:43:48-06:00 [wsadmin] at com.ibm.ws.management.application.task.DeployEJBTask.performTask(DeployEJBTask.java:134)
+2013-03-05T09:43:48-06:00 [wsadmin] at com.ibm.ws.management.application.SchedulerImpl.run(SchedulerImpl.java:294)
+2013-03-05T09:43:48-06:00 [wsadmin] at java.lang.Thread.run(Thread.java:738)
+2013-03-05T09:43:48-06:00 [wsadmin] ADMA5011I: The cleanup of the temp directory for application Search is complete.
+2013-03-05T09:43:48-06:00 [wsadmin] ADMA5069E: The installation of application Search failed. This application was in the middle of a full update and therefore is uninstalled from the configuration session. Discard your current configuration session immediately to recover the application. Do not save changes to the WebSphere Application Server configuration repository. The application is not uninstalled from this repository. Until the current configuration session is discarded you do not see this application in the current session.
+
+
+RESOLVING THE PROBLEM
+1. Exit the Update Installer program. 
+
+2. Shutdown the WebSphere Deployment Manager. 
+
+3. Remove the contents of the ejb directory as seen in the path examples above. 
+
+4. Start-up Deployment Manager. 
+
+5. Re-run Update Installer to apply CR2 to the Applications/features.

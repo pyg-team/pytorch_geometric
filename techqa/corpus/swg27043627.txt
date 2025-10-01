@@ -1,0 +1,65 @@
+Title: IBM Cannot connect to Microsoft SharePoint when you create a repository that represents a Microsoft SharePoint site - United States
+
+Text:
+ PRODUCT DOCUMENTATION
+
+ABSTRACT
+ If you specify an incorrect class file path for the isolated shared library on WebSphere Application Server Version 8, and then create a repository that represents a Microsoft SharePoint site, the connection fails. 
+
+CONTENT
+Problem 
+
+When you create a repository that represents a Microsoft SharePoint site, and click Connect, IBM Content Navigator makes a request to connect to the isolated shared library on the WebSphere Application Server. If the class file path was entered incorrectly when the isolated shared library was set up, the JAR files required for the connection cannot be found, the connection fails, and an error occurs. 
+
+Symptom
+The connection fails and an error message is displayed, for example: 
+
+Your request cannot be processed.
+An error occurred on the application server.
+Contact your system administrator with the following information: null
+Additional information about the error is in the web application server log files. For more information about the log files, see “IBM Content Navigator log files” in IBM Knowledge Center.
+
+Cause
+When IBM Content Navigator attempts to connect to the isolated shared library on the WebSphere Application Server, the class file path is incorrect, and the connection fails because the JAR files cannot be found.
+
+Environment 
+WebSphere Application Server Version 8. 
+
+Diagnosing the problem
+WebSphere SystemOut.log contains an invocation target exception error, for example: 
+
+SystemOut O CIWEB Error: [news\Administrator @ 9.##.##.##] com.ibm.ecm.struts.actions.PluginRepositoryAction.execute() java.lang.reflect.InvocationTargetException
+
+Resolving the problem
+If you did not previously configure an isolated shared library, follow the steps to configure an isolated shared library. If you configured an isolated shared library but entered an incorrect class file path, follow the steps to edit the class file path of an isolated shared library. 
+
+To configure an isolated shared library, follow these steps: 
+
+ *  Open the WebSphere Application Server administrative console and click Environment > Shared Libraries. Specify the cell, node, and server that represent the scope of the shared library. For example, if the scope is myRepositoryNode01 on myServer02, the cell is myRepositoryNode01Cell, the node is myRepositoryNode01, and the server is myServer02. Click New and enter a name for the shared library. For example, enter SharePointSharedLib. To include the JAR files in the shared library, specify the class file path where the JAR files are located. The default class file path on Windows is 
+   C:\Program Files\IBM\ECMClient\configure\sharePointLib. Select Use an isolated class loader for this shared library and save your changes. Associate the shared library with the navigator module:  1. Click Application > WebSphere Enterprise Applications > navigator > Shared Library References 
+    2. In the Module section, select the navigator box and click Reference shared libraries. 
+    3. Select the shared library that you created and save your changes.
+   
+   Restart the web application server. After you restart the web application server, your isolated shared library is established. Restart IBM Content Navigator on your WebSphere Application Server. 
+
+
+To edit the class file path of an isolated shared library, follow these steps:  *  Open the WebSphere Application Server administrative console and click Environment > Shared Libraries. Specify the cell, node, and server that represent the scope of the shared library. For example, if the scope is myRepositoryNode01 on myServer02, the cell is myRepositoryNode01Cell, the node is myRepositoryNode01, and the server is myServer02. Select the shared library that you created and click Edit. To include the JAR files in the shared library, specify the correct class file path where the JAR files are located. Select Use an isolated class loader for this shared library and save your changes. Associate the shared library with the navigator module:  1. Click Application > WebSphere Enterprise Applications > navigator > Shared Library References 
+    2. In the Module section, select the navigator box and click Reference shared libraries. 
+    3. Select the shared library that you created and save your changes.
+   
+   Restart the web application server. 
+   Restart IBM Content Navigator on your WebSphere Application Server. 
+
+Then, a successful connection can be established when you use the IBM Content Navigator administration tool to create a new repository that represents a Microsoft SharePoint site or subsite. However, if that does not resolve the problem, you can try the following tasks: 
+
+ * Remove and redefine the isolated shared library file, and reload the Microsoft SharePoint plug-in.  *  On your WebSphere Application Server, remove the shared library reference from the navigator module. Remove the isolated shared library definition from the environment shared libraries. Restart IBM Content Navigator. Redefine the isolated shared library. Add the shared library reference to the navigator module Restart IBM Content Navigator, and reload the sharePointPlugin.jar by using the IBM Content Navigator administration tool. 
+   
+   
+
+ * Remove the isolated shared library, remove the files from the profiles subdirectory, redefine the isolated shared library, and reload the Microsoft SharePoint plug-in.  *  On your WebSphere Application Server, remove the shared library reference from the navigator module. Remove the isolated shared library definition from the environment shared libraries. Restart IBM Content Navigator. Shut down WebSphere. Remove all folders and files in the following directories:  * home_dir\WebSphere\AppServer\profiles\app_server_dir\wstemp 
+       * home_dir\WebSphere\AppServer\profiles\app_server_dir\temp\node_dir\server_dir
+      
+      Start WebSphere. Redefine the isolated shared library. Add the shared library reference to the navigator module. Restart IBM Content Navigator, and reload the sharePointPlugin.jar by using the IBM Content Navigator administration tool. 
+   
+   
+ * Rename the isolated shared library.  *  On your WebSphere Application Server, redefine the isolated shared library and give it a different name. Add the shared library reference to the navigator module, and reference the new name instead of the old name. Restart IBM Content Navigator.

@@ -1,0 +1,22 @@
+Title: IBM Is there an add-on connector for integration with Microsoft Dynamics in Cast Iron? - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Is there an add-on connector for integration with Microsoft Dynamics in Cast Iron? 
+
+ANSWER
+No, there is no add-on connector for Microsoft Dynamics CRM/Great Plains. Cast Iron allows integration with Microsoft Dynamics CRM/Great Plains through a Cast Iron Web Services connector. 
+
+For more information and samples on integration with Microsoft Dynamics CRM/Great Plains, refer to the TIP/PIP’s repository which can be accessed via Cast Iron Studio.
+
+ 
+
+HISTORICAL NUMBER
+ 00001150 
+
+PRODUCT ALIAS/SYNONYM
+ Cast Iron Solution
+Cast Iron Operating System
+Cast Iron Studio

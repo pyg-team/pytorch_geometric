@@ -1,0 +1,199 @@
+Title: IBM IV53352: INSTALLATION FAILS WHEN USER CAN NOT COPY DB LOGS BECAUSE OF LACK OF PERMISSION. - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The installation user does not have permission to read and write
+   the logs created by the db2 user (defined on the properties.CLI
+    file ds.jdbc.user property), which causes the "frs.sh install
+   -type db" command to fail with this message:
+   
+   SEVERE: chmod:
+   /tmp/dis_install/db_install_1379029766192/frsDb2Setup/.
+   /logs: Permission denied
+   Sep 12, 2013 11:50:47 PM com.ibm.frs.cli.DisCli doIt
+   SEVERE: CTJFO0008E The Registry Services CLI command has failed
+   due to
+   an internal error. The specif
+   ic error message is: null
+   Throwable occurred: java.lang.NullPointerException
+           at
+   com.ibm.frs.install.db.BundleMgr.delete(BundleMgr.java:224)
+           at
+   com.ibm.frs.install.db.BundleMgr.delete(BundleMgr.java:225)
+           at
+   com.ibm.frs.install.db.BundleMgr.delete(BundleMgr.java:225)
+           at
+   com.ibm.frs.install.db.BundleMgr.disposeBundle(BundleMgr.
+   java:155)
+           at
+   com.ibm.frs.install.db.DatabaseMgr.install(DatabaseMgr.java:
+   172)
+           at
+   com.ibm.frs.install.cli.InstallCli.installDb(InstallCli.java:
+   314)
+           at
+   com.ibm.frs.install.cli.InstallCli.run(InstallCli.java:174)
+           at com.ibm.frs.cli.DisCli.doIt(DisCli.java:185)
+           at com.ibm.frs.cli.DisCli.main(DisCli.java:85)
+   
+   L2 Diagnostics:
+   Logging that needs to be enabled to gather the necessary
+   tracepoints to confirm the issue
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Possible work arounds.
+   
+   1) Call the installer with root.
+   
+   2) Change the db2 user (defined on the properties.CLI file
+   ds.jdbc.user property) umask to allow the installation user to
+   access the logs created during the installation.
+   For example change the db2 user umask to 022 (command: umask
+   022). With this mask default directory permissions are 775 and
+   default file permissions are 664.
+   (Remember to return the db2 user umask for the default value
+   after the installation)
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   ***********************
+   * USERS AFFECTED: All supported Jazz for Service Management
+   middleware on Linux and AIX platforms.
+   ****************************************************************
+   ***********************
+   * PROBLEM DESCRIPTION: Registry Services database installation
+   fails because Jazz for Service Management installation user does
+   not have the required permission to read log records.
+   *
+   ****************************************************************
+   ***********************
+   * RECOMMENDATION:
+   The permanent fix for this defect to prevent the problem is
+   available in the 1.1.0-TIV-JazzSM-Registry-multi-FP002 package.
+   However, if the problem was identified before the application of
+   Jazz for Service Management FP2, you can change the umask of the
+   DB2 user to grant the Jazz for Service Management installation
+   user with access permission to the log files that are created
+   during the installation process.
+   For example, run the following command:
+   umask 022
+   With this configuration, the default directory permissions are
+   775 and the default file permissions are 664.
+   After completing the database installation process, set the
+   umask of the DB2 user to its default value.
+   ****************************************************************
+   ***********************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Registry code was modified to address the defect.
+   The fix for this APAR  is contained in the following maintenance
+   package:
+   | fix pack | 1.1.0-TIV-JazzSM-Registry-multi-FP002
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV53352
+   
+   
+ * REPORTED COMPONENT NAME
+   JAZZ SM INSTAL
+   
+   
+ * REPORTED COMPONENT ID
+   5724C04JI
+   
+   
+ * REPORTED RELEASE
+   110
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-12-17
+   
+   
+ * CLOSED DATE
+   2013-12-31
+   
+   
+ * LAST MODIFIED DATE
+   2013-12-31
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   JAZZ SM INSTAL
+   
+   
+ * FIXED COMPONENT ID
+   5724C04JI
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R110 PSY
+   UP

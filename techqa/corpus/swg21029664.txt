@@ -1,0 +1,24 @@
+Title: IBM BIP2230E - CWF write tree error when generating an MRM message on output - United States
+
+Text:
+MQIINFO MRM CWF XML BIP2230E BIP2230 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ You attempt to take an XML message as input in WebSphere Message Broker (WMB) or IBM Integration Bus (IIB), and write as output an MRM (CWF) message. When you attempt to process the message you fail with message BIP2230E. 
+
+RESOLVING THE PROBLEM
+You must assign values to all fields in a MRM (CWF) output message. You can not leave any fields NULL or blank. This is a restriction when using CWF. 
+
+You could choose to use the following example instead of leaving the field blank: 
+
+SET OutputRoot.MRM.Main.Field1 = '';
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Integration Bus Broker / EG AIX, HP-UX, Linux, Solaris, Windows 9.0 All Editions 
+HISTORICAL NUMBER
+ 57017 
+
+PRODUCT ALIAS/SYNONYM
+ WMB MB WebSphere Message Broker IBM Integration Bus IIB IBMIB MQ Integrator WBIMB WBI-MB MQSI WMQI

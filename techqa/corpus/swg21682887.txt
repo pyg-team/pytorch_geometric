@@ -1,0 +1,37 @@
+Title: IBM Limiting the Number of Concurrent Requests an IBM Cognos Workspace Dashboard Executes on a Report Server. - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Is it possible to adjust the number of concurrent requests an IBM Cognos Workspace dashboard executes on a Report Server at one time during a dashboard execution? 
+
+CAUSE
+By default, the IBM Cognos Workspace Dashboard will send a single Report Server request for every widget on an IBM Cognos Workspace dashboard. If a dashboard has many widgets, the Report Server may become saturated with requests.
+
+ANSWER
+The number of requests that execute at a time on a Report Server initiated by a dashboard execution can be controlled with the CW_VIEWER_CONCURRENT_OPEN_REQUESTS advanced environment variable. The advanced environment variable requires an integer value greater or equal to one. The integer value represents the number of Report Server requests an IBM Cognos Workspace dashboard can execute before queueing the additional ones. Any queued requests will be executed one at a time as executing widgets complete. 
+
+To set this advanced environment variable: 
+
+Launch IBM Cognos Administration from the Portal. 
+
+Click on the Configuration Tab. 
+
+Click on the left hand Dispatcher and Services link. 
+
+Click on the Set properties-Configuration Icon in the Toolbar. 
+
+Click the Settings tab. 
+
+Click the Edit... link to the right of Advanced settings. 
+
+For the Parameter type in: CW_VIEWER_CONCURRENT_OPEN_REQUESTS 
+
+For the Value type in: 5 
+
+Click OK. 
+
+The setting will be picked up automatically within 15 seconds and will be applied to any IBM Cognos Dashboards that are opened after applying the setting. 
+
+In the above instructions a value of 5 is used as an example. With a value of 5, if an IBM Cognos Workspace dashboard with 7 widgets is executed, 5 widget requests would execute at initial launch and 2 widget requests would be queued. The first queued request would be retrieved from the queue as soon as one of the initial 5 widget requests completes. The final request is retrieved from the queue once another request finishes.

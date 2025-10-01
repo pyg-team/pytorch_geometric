@@ -1,0 +1,67 @@
+Title: IBM Why am I seeing so many "cannot load module" errors in db2diag.log? - United States
+
+Text:
+Attempt to load specific libary failed; Cannot load module; module has an invalid magic number; 64-bit TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ I am using Content Manager Enterprise Edition and my DB2 instance is 64-bit. When I check db2diag.log, I see a large number of errors related to "Attempt to load specific libary failed" and "Cannot load module". This happens to several libraries, for instance, ICMNLSSP or ICMNLSUF. What is causing these errors? 
+
+SYMPTOM
+You see errors similar to the example below in your db2diag.log: 
+
+FUNCTION: DB2 UDB, oper system services, sqloLoadModule, probe:130
+CALLED : OS, -, dlopen
+OSERR : ENOEXEC (8) "Cannot run a file that does not have a valid format."
+MESSAGE : Attempt to load specified library failed.
+DATA #1 : Library name or path, 39 bytes
+/home/db2inst1/sqllib/function/ICMNLSSP
+DATA #2 : shared library load flags, PD_TYPE_LOAD_FLAGS, 4 bytes
+2
+DATA #3 : String, 121 bytes
+0509-022 Cannot load module
+/home/db2inst1/sqllib/function/ICMNLSSP.
+0509-103 The module has an invalid magic number.
+
+...
+FUNCTION: DB2 UDB, oper system services, sqloLoadModule, probe:140
+CALLED : OS, -, dlopen
+OSERR : ENOEXEC (8) "Cannot run a file that does not have a valid format."
+MESSAGE : Attempt to load specified library augmented with object name failed.
+DATA #1 : Library name or path, 49 bytes
+/home/db2inst1/sqllib/function/ICMNLSSP(shr_64.o)
+DATA #2 : shared library load flags, PD_TYPE_LOAD_FLAGS, 4 bytes
+262146
+DATA #3 : String, 132 bytes
+0509-022 Cannot load module
+/home/db2inst1/sqllib/function/ICMNLSSP(shr_64.o).
+0509-152 Member shr_64.o is not found in archive
+. . .
+
+FUNCTION: DB2 UDB, oper system services, sqloAIXLoadModuleTryShr, probe: 140
+CALLED : OS, -, dlopen
+OSERR : ENOEXEC (8) "Cannot run a file that does not have a valid
+format." 
+MESSAGE : Attempt to load specified library augmented with object name 
+failed.
+DATA #1 : Library name or path, 48 bytes 
+/db2/d2ildes1/sqllib/function/ICMNLSUF(shr_64.o) 
+DATA #2 : shared library load flags, PD_TYPE_LOAD_FLAGS, 4 bytes 
+262146 
+
+
+CAUSE
+Prior to Content Manager Enterprise Edition (CMEE) v8.5, CMEE was a 32-bit application. The Content Manager stored procedures, ICMNLSSP, ICMNLSUF, and ICMNWFSP, are 32-bit libraries. In a 64-bit DB2 instance environment, DB2 tries first to load them in a 64-bit fenced-mode process. When this attempt fails, DB2 loads them in a 32-bit fenced-mode process. The indication of the initial failure is recorded in db2diag.log. Starting with CMEE v8.5, CMEE is a 64-bit application however certain modules such as ICMNLSSP, ICMNLSUF, and ICMNWFSP are still 32-bit and can result in the error in the db2diag.log.
+
+
+DIAGNOSING THE PROBLEM
+This type of errors in db2diag.log is expected when Content Manager Enterprise Edition runs in a 64-bit DB2 instance environment. 
+
+
+
+RESOLVING THE PROBLEM
+These errors in the db2diag.log are normal 
+
+
+
+HISTORICAL NUMBER
+ 1391172

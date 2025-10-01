@@ -1,0 +1,39 @@
+Title: IBM Installation of Rational Robot from the Command-Line - United States
+
+Text:
+1171849; Installation; command-line; Robot; silent install; command; path; TEMP; license key; map; drive; silent; installation TECHNOTE (FAQ)
+
+QUESTION
+ This technote provides you with information about silently installing IBM® Rational® Robot from the command line. 
+
+ANSWER
+To run the silent installation on your desktop, your administrator gives you the following information: 
+
+ 1. The path to the site defaults file and the setup.exe executable in the release area or shortcut to the site defaults file (The shortcut will not have a .dat suffix). 
+ 2. The installation directory (where the Rational Setup Wizard will install the files on your desktop). 
+ 3. The license key information, if necessary. 
+ 4. Ensure that you have removed all previous versions of Rational products from your desktop. Users who install silently do not see the warning message to remove previous versions of Rational products. The installation does not proceed until all products are removed. This warning message is saved in your installation log file. See this file if the installation fails. For more information about this file, see Rational_Install Log.
+
+
+To run the site defaults file in silent mode: 
+ 1. Map a local drive to the release area (optional). 
+ 2. Go to Start > Run and enter the following commands: 
+    <local drive>: \setup.exe /g <C:\filename.dat>
+    
+    Where <local drive> is the mapped drive or the path to setup.exe. There is a space between setup.exe and command /g and a space between /g and the path to the filename.dat file which is C:\:filename.dat.
+
+
+The executable installs the product specified in the site defaults file from the source directory to the installation path. The default installation path is C:\Program Files\Rational\<Rational products>. 
+
+If a restart is required, your computer restarts automatically. After the restart, you must log on manually. The installer then re-launches automatically and finishes. When the installation finishes, you do not see an installation complete screen. 
+
+If your administrator did not specify the license server in the site defaults file, you may have to manually configure licensing after the Setup Wizard finishes. 
+
+Note: If the Rational Setup Wizard detects insufficient disk space on the desktop, the Wizard will cancel the installation and note the error in the Rational_install.log in your TEMP directory. The location of the directory depends on the environment variable set on the computer. To find the location, open a command Window and type echo %TEMP% at the DOS prompt. 
+
+
+
+
+
+
+Cross Reference information Segment Product Component Platform Version Edition Software Development Rational Suite Installation Software Development Rational TestManager Installation Windows 2003.06.00, 2003.06.10, 2003.06.12, 2003.06.13, 2003.06.14, 2003.06.15, 2003.06.16, 7.0, 7.0.0.1, 7.0.0.2, 7.0.1, 7.0.1.1, 7.0.1.2

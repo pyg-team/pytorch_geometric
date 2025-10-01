@@ -1,0 +1,34 @@
+Title: IBM Why am I receiving a request for licensing of IBM SPSS Statistics 24 network/concurrent clients after providing the License Manager host hostname or IP address? - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Why am I receiving a request for licensing of IBM SPSS Statistics 24 network/concurrent clients after providing the License Manager host hostname or IP address? 
+
+CAUSE
+'Trial' license file (lservrc) not removed/renamed for Statistics 24 network/concurrent client installations.
+
+ANSWER
+The reported behavior was corrected in an updated version of the Statistics 24 desktop client that was uploaded on June 23, 2016. 
+
+If you are encountering this behavior prior to a mass installation of the product, please download the updated version of the Statistics 24 desktop client and use this version for your installations.
+
+If you are encountering this behavior after a mass installation of the product, the immediate corrective ('work-around') for this behavior is to delete the 'lservrc' present in the installation directory of the Statistics 24 network licensing client. 
+
+If you are using encountering this behavior after a mass installation of the product using automated installation technology to install the product, you could delete the 'lservrc' file as a command line instruction into your deployment script using a command argument such as:
+
+Windows (via Administrator Command Prompt)
+cd C:\Program Files\IBM\SPSS\Statistics\24\&del lservrc&exit
+
+Note: This command argument example assumes the bit-version of both Statistics and the Windows operating system are aligned (i.e. either both 32-bit or both 64-bit, not 32-bit client on 64-bit OS).
+
+Mac (via Terminal)
+cd /Applications/IBM/SPSS/Statistics/24/SPSSStatistics.app/Contents/bin/;sudo rm lservrc;killall Terminal
+
+Linux (via Terminal)
+cd /opt/IBM/SPSS/Statistics/24/bin;sudo rm lservrc;exit
+
+RELATED INFORMATION
+ Need more help? Our Statistics forum is Live! [https://developer.ibm.com/answers/topics/statistics.html?smartspace=predictive-analytics]
+Need more help? Our Licensing forum is Live! [https://developer.ibm.com/answers/topics/spsslicensing.html]

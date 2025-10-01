@@ -1,0 +1,32 @@
+Title: IBM Slow Oracle queries:  how to optimize an Oracle database - United States
+
+Text:
+performance perform very badly first query search takes long time hang dbms_stats runstats reorg rebind analyze TECHNOTE (FAQ)
+
+QUESTION
+ When I do a query against my Oracle library server, it takes 15 or more seconds for a simple query to complete. It did not take that long before. 
+
+CAUSE
+A database table can become fragmented after many updates, causing the query performance to deteriorate. Queries might take longer because index entries in the library server and resource manager are no longer synchronized with the actual data in the database tables.
+
+ANSWER
+For an Oracle database, you can use the tools provided by Oracle to update the indexes and re-order as necessary. Below are the SQL commands that can improve the performance of your system. To use the commands, you must log in as sysdba. You should work with your Oracle DBA to add these SQL commands to a batch process to be run periodically. 
+
+In the following commands, replace ICMADMIN with the library server database administration ID, and replace RMADMIN with your resource manager database administration ID.
+
+Library server: 
+
+ * execute dbms_stats.gather_schema_stats (ownname=>'ICMADMIN', method_opt=>'FOR ALL COLUMNS SIZE 1',granularity=>'ALL', options=>'GATHER', cascade=>TRUE, degree=>16); 
+ * execute dbms_stats.gather_schema_stats (ownname=>'SYS', method_opt=>'FOR ALL COLUMNS SIZE 1',granularity=>'ALL', options=>'GATHER', cascade=>TRUE, degree=>16); 
+ * execute dbms_stats.gather_schema_stats (ownname=>'SYSTEM', method_opt=>'FOR ALL COLUMNS SIZE 1',granularity=>'ALL', options=>'GATHER', cascade=>TRUE, degree=>16);
+
+
+Resource manager:  * execute dbms_stats.gather_schema_stats (ownname=>'RMADMIN', method_opt=>'FOR ALL COLUMNS SIZE 1',granularity=>'ALL', options=>'GATHER', cascade=>TRUE, degree=>16);
+
+
+
+For more details on performance tuning your DB2 ® Content Manager database, see 
+IBM DB2 Content Manager V8.3 Enterprise Edition Performance Monitoring and Maintenance Guide 
+
+
+Cross reference information Segment Product Component Platform Version Edition Enterprise Content Management Content Manager Enterprise Edition DB2 Information Integrator for Content Enterprise Content Management Content Manager DB2 Information Integrator for Content

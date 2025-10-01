@@ -1,0 +1,22 @@
+Title: IBM Could Not Open or Create a Temporary File - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When executing a query against Informix Dynamic Server 7.30 UC3, the following error is reported:
+
+Error number -237:
+
+DMS-E-GENERAL, A general exception has occurred during operation 'asynchronous open'.
+Could not open or create a temporary file. 
+
+RESOLVING THE PROBLEM
+Verify that indexes exist and are enabled on the tables involved in the query.
+
+The error message noted above implies that the server does not have enough space to create the temporary files required to process the query. This problem may be related to database processing of queries which involve tables that have no defined indexes. These queries cause the Informix database server to perform tablescan processing which may fill up available temporary space. Contact Informix for further information.
+
+ 
+
+HISTORICAL NUMBER
+ 84132

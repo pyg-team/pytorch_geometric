@@ -1,0 +1,66 @@
+Title: IBM Print service returns 500 errors upon printing. - United States
+
+Text:
+DB2; 954; 57011; applheapsz; 500; print service; translator server; hang TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+This technote explains how to resolve an issue where the Translator Server print service returns 500 errors on print.
+
+SYMPTOM
+The Translator Server will stop responding for the current user, but will not crash. 
+
+The following error is observed in the logs: 
+
+Error: 
+
+[3/1/12 9:02:52:739 EST] 0000003e CacheCleaner E com.ibm.form.webform.accesscontrol.cache.CacheCleaner$CheckIntervalHasElapsedDBOperation execute com.ibm.form.webform.resources/STRING/ERROR_CLEANING_ACCESS_CONTROL_TABLES 
+
+com.ibm.db2.jcc.am.SqlException: DB2 SQL Error: SQLCODE=-954, SQLSTATE=57011, SQLERRMC=null, DRIVER=3.61.86 
+
+at com.ibm.db2.jcc.am.ed.a(ed.java:679) 
+
+at com.ibm.db2.jcc.am.ed.a(ed.java:60) 
+
+... 
+
+at com.ibm.ws.rsadapter.jdbc.WSJdbcPreparedStatement.executeUpdate(WSJdbcPreparedStatement.java:797) 
+
+at com.ibm.form.webform.accesscontrol.cache.CacheCleaner$CheckIntervalHasElapsedDBOperation.execute(CacheCleaner.java:747) 
+
+at com.ibm.form.webform.db.DBUtils.execute(DBUtils.java:184) 
+
+at com.ibm.form.webform.accesscontrol.cache.CacheCleaner.run(CacheCleaner.java:140) 
+
+at java.lang.Thread.run(Thread.java:735) 
+
+
+CAUSE
+High server load is causing the back-end DB2 database to run out of application heap space.
+
+
+RESOLVING THE PROBLEM
+Looking up the DB2 error the following resolution was found: 
+
+http://publib.boulder.ibm.com/infocenter/db2luw/v8/index.jsp?topic=/com.ibm.db2.udb.doc/core/rsql0900.htm [http://publib.boulder.ibm.com/infocenter/db2luw/v8/index.jsp?topic=/com.ibm.db2.udb.doc/core/rsql0900.htm] 
+
+(search for -954) 
+
+ 
+
+SQL0954C 
+
+Not enough storage is available in the application heap to process the statement. 
+
+Explanation: 
+
+All available memory for the application has been used. 
+
+The statement cannot be processed. 
+
+User Response: 
+
+Terminate the application on receipt of this message. Increase the database configuration parameter ( applheapsz) to allow a larger application heap. 
+
+sqlcode: -954 
+
+sqlstate: 57011

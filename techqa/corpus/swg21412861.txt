@@ -1,0 +1,20 @@
+Title: IBM Restoring documents to a mini view - United States
+
+Text:
+miniview; mini view; restore TECHNOTE (FAQ)
+
+QUESTION
+I've removed multiple documents from one of the mini views and would like to restore them. Where do these documents go when removed from the mini view and how do I restore them to the mini view.
+
+ANSWER
+The documents do not actually go anywhere. Documents are populated in the mini view when the $MiniView field is set equal to 1. In order to have these documents show up in the mini view once again you need to locate each document, select it, and run a simple formula agent containing the following line: 
+
+FIELD $MiniView:="1"
+
+The problem is that this requires you to know which documents were removed so that you can find them and run the agent on them. There is no mini view trash folder to restore them from. The documents are never moved, the flag that causes them to appear in the mini view is simply removed.
+
+
+
+
+ * 
+ *

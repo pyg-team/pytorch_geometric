@@ -1,0 +1,242 @@
+Title: IBM Sample of configuring Ignore Tasks ServerHealth resource model - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Configuring the Ignore Tasks ServerHealth resource model. 
+
+RESOLVING THE PROBLEM
+The following steps were conducted in the lab environment to configure the Ignore Task for SAV process. It was tested on Domino 6.x on Windows 2000 server.
+
+Test#1: 
+
+======
+
+
+From Domino console:
+
+sh task command showed SAV processes running.... 
+
+
+Task Description 
+
+Database Server Perform console commands 
+Database Server Listen for connect requests on TCPIP 
+Database Server Load Monitor is idle 
+Database Server Database Directory Manager Cache Refresher is idle 
+Database Server Organization Name Cache Refresher is idle 
+Database Server Idle task 
+Database Server Idle task 
+Database Server Perform Database Cache maintenance 
+Database Server Idle task 
+Database Server Idle task 
+Database Server Idle task 
+Database Server Idle task 
+Database Server Idle task 
+Database Server Platform Stats is idle 
+SAV Write Scanner Idle 
+SAV Write Scanner Idle 
+SAV Write Scanner Idle 
+SAV Mail Scanner Idle 
+SAV Mail Scanner Idle 
+SAV Mail Scanner Idle 
+SAV Process Running. Use "tell SAV help" for more info. 
+Agent Manager Executive '1': Idle 
+Tivoliv60 Idle 
+Admin Process Idle 
+Schedule Manager Idle 
+Agent Manager Idle 
+Directory Indexer Idle 
+Indexer Idle 
+Calendar Connector Idle 
+Replicator Idle 
+Router Idle 
+Event Monitor Idle 
+
+
+
+notes.ini file showed ntask in ServerTasks line. 
+
+ServerTasks=ntask; Tivoliv60; update; replica; router; amgr; adminp; calconn; sched 
+
+
+
+wtmdcheckhealth os390DominoServer602CF2 
+
+
+Process Name Process State 
+==================================== 
+Schedule Manager Running 
+Calendar Connector Running 
+Admin Process Running 
+Agent Manager Running 
+Router Running 
+Replicator Running 
+Indexer Running 
+Tivoliv60 Running 
+ntask Unknown 
+
+
+
+wdmlseng -e os390 -verbose 
+
+
+os390DominoServer602CF2.ITMMCnewpf01#zeus-region 
+DominoDatabaseManagement :Running 
+Corruption_In_Log 100 % 
+DBCorruption_TivoliAddin_Availability 100 % 
+Domino_Database_Corruption 
+(ObjectLabel=os390DominoServer602CF2; Server_Name=CN=os390/O=IBM; Domain_Name=Ti 
+voli; DBName=C:\Lotus\Domino\Data\null.nsf; ) 0 % 
+DominoServerHealth :Running 
+AvailabilityIndex 100 % 
+ServerHealth_TivoliAddin_Availability 100 % 
+ClusterAvailabilityIndex 100 % 
+Domino_Task 
+(ObjectLabel=os390DominoServer602CF2; Server_Name=CN=os390/O=IBM; Task_Nice_Name 
+=ntask; Domain_Name=Tivoli; ) 0 % 
+
+
+
+---------------- 
+
+Ignore task = blank 
+Task_name = ntask 
+Task_nice_name = SAV Process 
+
+---------------- 
+
+For some reason, this test did not work for ntask keeping showing 0%. I have tried a number of settings for Ignore Task and still returned the same results as the above. 
+
+
+------------------------------------------------------------------------ 
+
+
+Test#2:
+======
+
+Finally, got the Ignore task working in the lab. I did the following : 
+
+1) I stopped the DM engine on the endpoint ( Domino server ). 
+
+wdmcmd -e os390 -stop 
+
+2) Deleted the LCFNEW folder on the endpoint \LCF\DAT\1 folder. 
+
+3) Reconfigured my DM profile Ignore Task as follow: 
+
+
+Ignore Tasks = 
+Task_Name = ntask 
+Task_nice_name = SAV Process 
+
+
+Same as before. 
+
+4) Saved the profile and redistributed again. 
+
+5) I waited a few mins and issued "wdmlseng -e os390 -verbose". 
+
+Returned: 
+
+os390DominoServer602CF2.ITMMCnewpf01#zeus-region 
+DominoDatabaseManagement :Running 
+Corruption_In_Log 100 % 
+DBCorruption_TivoliAddin_Availability 100 % 
+Domino_Database_Corruption 
+(ObjectLabel=os390DominoServer602CF2; Server_Name=CN=os390/O=IBM; Domain_N 
+ame=Ti voli; DBName=C:\Lotus\Domino\Data\null.nsf; ) 0 % 
+DominoServerHealth :Running 
+AvailabilityIndex 100 % 
+ServerHealth_TivoliAddin_Availability 100 % 
+ClusterAvailabilityIndex 100 % 
+Domino_Task 100 % 
+DroppedSession 100 % 
+DominoMailStatisticsMonitor:Retrying (2) 
+DominoMailDead 100 % 
+DominoMailWaiting 100 % 
+Mail_TivoliAddin_Availability 100 % 
+DominoMailTotalPending 100 % 
+DominoServerAvailability :Running 
+Domino_Server_Panic 100 % 
+Domino_ServerAvailability 100 % 
+
+
+Noticed that the Domino_Task is running 100% health. 
+
+
+6) Issued "tell ntask quit" command from Domino Console to stop all SAV processes. 
+
+Task Description 
+
+Database Server Perform console commands 
+Database Server Listen for connect requests on TCPIP 
+Database Server Load Monitor is idle 
+Database Server Database Directory Manager Cache Refresher is idle 
+Database Server Organization Name Cache Refresher is idle 
+Database Server Idle task 
+Database Server Idle task 
+Database Server Perform Database Cache maintenance 
+Database Server Idle task 
+Database Server Idle task 
+Database Server Idle task 
+Database Server Idle task 
+Database Server Idle task 
+Database Server Platform Stats is idle 
+Agent Manager Executive '1': Idle 
+Tivoliv60 Idle 
+Admin Process Idle 
+Schedule Manager Idle 
+Agent Manager Idle 
+Directory Indexer Idle 
+Indexer Idle 
+Calendar Connector Idle 
+Replicator Idle 
+Router Idle 
+Event Monitor Idle 
+
+
+7) Waited for a few mins; issued "wdmlseng -e os390 -verbose". 
+
+
+Returned: 
+
+
+os390DominoServer602CF2.ITMMCnewpf01#zeus-region 
+DominoDatabaseManagement :Running 
+Corruption_In_Log 100 % 
+DBCorruption_TivoliAddin_Availability 100 % 
+Domino_Database_Corruption 
+(ObjectLabel=os390DominoServer602CF2; Server_Name=CN=os390/O=IBM; Domain_N 
+ame=Ti voli; DBName=C:\Lotus\Domino\Data\null.nsf; ) 0 % 
+DominoServerHealth :Running 
+AvailabilityIndex 100 % 
+ServerHealth_TivoliAddin_Availability 100 % 
+ClusterAvailabilityIndex 100 % 
+Domino_Task 
+(ObjectLabel=os390DominoServer602CF2; Server_Name=CN=os390/O=IBM; Task_Nic 
+e_Name =SAV Process; Domain_Name=Tivoli; ) 0 % 
+DroppedSession 100 % 
+DominoMailStatisticsMonitor:Retrying (2) 
+DominoMailDead 100 % 
+DominoMailWaiting 100 % 
+Mail_TivoliAddin_Availability 100 % 
+DominoMailTotalPending 100 % 
+DominoServerAvailability :Running 
+Domino_Server_Panic 100 % 
+Domino_ServerAvailability 100 % 
+
+
+
+Noticed that the Domino_Task showed the Task_nice_name=SAV Process 0% health. 
+
+8) Issued "load ntask" from Domino console to load the SAV processes. 
+The Domino Task returned back 100% health. 
+
+
+--------------------------- 
+
+What I discovered that each time I changed the Ignore task parameter; it 
+seem that I needed to manually delete the DM profile ( LCFNEW folder ) 
+on the endpoint before it can receive a new profile. Otherwise; it keeps using the old profile.

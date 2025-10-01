@@ -1,0 +1,35 @@
+Title: IBM How to change the file extension from .XLS to .CSV for report output format 'Delimited text (CSV)'. - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When a report is run with format 'Delimited text (CSV)' the generated output file extension is still .xls instead of .csv. Also, if the advanced server parameter RSVP.CSV.MIMETYPE is either set to 'application/csv' or 'application/vnd.ms-excel' the report output has no extension. 
+
+SYMPTOM
+Report output extension is blank (no extension) or xls.
+
+
+CAUSE
+There is a typing error in the advanced server parameter value. The IBM Cognos BI software expects applicaton/csv instead of application/csv.
+
+RESOLVING THE PROBLEM
+Set the advanced server parameter RSVP.CSV.MIMETYPE with value applicaton/csv. 
+
+Steps: 
+
+ 1.  Start IBM Cognos Connection. 
+ 2.  In the upper-right corner, click Launch, IBM Cognos Administration. 
+ 3.  On the Status tab, click System. 
+ 4.  In the upper-left corner of the Scorecard pane, click the arrow to view the Change view menu. Click Services, and then click All. 
+ 5.  Click the arrow next to ReportService to display the Actions menu, and then click Set properties. 
+ 6.  Click the Settings tab. 
+ 7.  Click Edit next to Advanced Settings. 
+ 8.  Select Override the settings acquired from the parent entry. 
+ 9.  In the Parameter column, enter: RSVP.CSV.MIMETYPE 
+ 10. In the Value column, enter: applicaton/csv. 
+ 11. Click OK twice. 
+ 12. Redo steps 5 - 11 for the BatchReportService.
+
+RELATED INFORMATION
+ InfoCenter v10.1.1: CSV Properties and Values [http://publib.boulder.ibm.com/infocenter/cbi/v10r1m1/topic/com.ibm.swg.ba.cognos.ug_cra.10.1.1.doc/c_csvpropertiesandvalues.html]

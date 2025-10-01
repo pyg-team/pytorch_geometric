@@ -1,0 +1,13 @@
+Title: IBM Rolling Upgrade Procedure for a TSAMP Automated HADR Environment - United States
+
+Text:
+tsa; tsamp; migration TECHNOTE (FAQ)
+
+QUESTION
+ This whitepaper is written for a DB2 v9.5/9.7 Automated Failover HADR environment. The goal is to show how to keep the database available on one server while maintenance of any sort is carried out on the other server. 
+
+ANSWER
+The attached whitepaper provides a step-by-step approach to preparing each server for planned maintenance activities in a “rolling upgrade” fashion. It is tailored for a DB2 v9.5/9.7 High Availability Disaster Recovery (HADR) environment. This procedure keeps the database accessible throughout the upgrade process, however automated failover and other automated recovery actions would unavailable until all steps were completed.
+The environment used to build this step-by-step guide was a two node cluster using TSAMP v3.2.1.2 and RSCT v3.1.0.4. TSAMP was being used to manage/automate a DB2 v9.7.0.4 HADR environment. However, the same procedure applies to other combinations of the same software set.
+
+Rolling Upgrade Procedure for a TSAMP Automated HADR Environment - Oct 2011.pdf [/support/docview.wss?uid=swg21645805&aid=2]Rolling Upgrade Procedure for a TSAMP Automated HADR Environment - Oct 2011.pdf [/support/docview.wss?uid=swg21645805&aid=1]

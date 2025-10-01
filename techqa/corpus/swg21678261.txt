@@ -1,0 +1,27 @@
+Title: IBM Web Browser Versions Supported by PathWAI Editor for Messages - United States
+
+Text:
+Web Browser Internet Explorer Editor for Messages 5724K3700 5724K3700TR TECHNOTE (FAQ)
+
+QUESTION
+ Which web browser versions are supported by Editor for Messages? 
+
+ANSWER
+Editor for Messages supports Microsoft Internet Explorer only. Mozilla Firefox and Google Chrome are not supported.
+
+Supported IE versions: 
+IE 6, IE 7, IE 8, IE 9 (compatibility view), IE 10(Compatibility view), IE 11(Compatibility view)
+
+Note:
+There are known issues which cause functions not to work correctly with IE 9 or above. For example, the check boxes for queue filters at the right side do not work correctly, and the open queue messages dialog shows in minimum small size. As a workaround, IE compatibility view is recommended. The following explains how to enable it.
+
+1. Enter the URL to connect with Editor for Messages Web Server. In my case, 9.123.109.109 is the server IP. 
+[/support/docview.wss?uid=swg21678261&aid=1] [/support/docview.wss?uid=swg21678261&aid=1]
+Screenshot 1
+
+2. Right click on the menu Tools –> Compatibility View. From now on, all views from this site will be displayed in IE compatibility view. You may also add the IP to the compatibility view setting (see screenshot 2) by selecting Tools -> Compatibility View Settings, then it will open following dialog. Now, input the server IP address to add and click ‘close’ to save.
+
+[/support/docview.wss?uid=swg21678261&amp;aid=2]
+Screenshot 2
+
+After this, you do not need to select the compatibility view every time when IE is launched. IE will open the site automatically in compatibility view.

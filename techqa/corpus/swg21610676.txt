@@ -1,0 +1,29 @@
+Title: IBM WebSphere Application Server Service Integration Bus messaging engine startup 
+fails with ORA-28000 error - United States
+
+Text:
+CWSIS0002E; CWSIS1501E; ORA-28000; DSRA0010E TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ After restarting WebSphere Application Server (WAS), the messaging engine fails to start and throws the following error:
+
+CWSIS0002E: The messaging engine encountered an exception while starting. Exception: com.ibm.ws.sib.msgstore.PersistenceException:CWSIS1501E: The data source has produced an unexpected exception: 
+java.sql.SQLException: ORA-28000: the account is locked 
+DSRA0010E: SQL State = 99999, Error Code = 28,000 
+
+CAUSE
+The oracle account was locked
+
+RESOLVING THE PROBLEM
+Unlock the account. 
+
+To unlock the account, run the following SQL query in Oracle using admin user.
+ALTER USER <username> ACCOUNT UNLOCK
+GRANT CONNECT,RESOURCE to <username>
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration WebSphere MQ Service Integration Technologies /SIB AIX, HP-UX, Linux, Solaris, Windows 7.5, 7.1, 7.0.1, 7.0, 6.0 
+PRODUCT ALIAS/SYNONYM
+ WebSphere Application Server WAS SIB SIBUS SI BUS

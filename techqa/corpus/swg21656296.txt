@@ -1,0 +1,29 @@
+Title: IBM db2haicu does not remove virtual IPs and resources - United States
+
+Text:
+db2haicu -delete TECHNOTE (FAQ)
+
+QUESTION
+ Why db2haicu does not remove all the virtual IPs and resources? 
+
+CAUSE
+You can not delete a virtual IP or resource if you are not the instance owner.
+
+
+
+ANSWER
+Virtual IPs and resources, can only be deleted from the instance where they were created. 
+
+
+When running db2haicu with the -delete parameter, db2haicu immediately deletes the resource groups associated with the current database manager instance, without confirming whether those resource groups are locked.
+To remove resource groups associated with the database manager instances of a DB2 High Availability Disaster Recovery (HADR) primary/standby database, perform the following steps:
+
+
+a) Run db2haicu with the -delete parameter against the database manager instance of the HADR standby database (it should be run first on the standby database).
+b) Run db2haicu with the -delete parameter against the database manager instance of the HADR primary database.
+
+To remove a virtual IP from an HADR resource group using db2haicu, you must remove it from the instance on which it was created.
+
+In case you can not remove it with the db2haicu you can try to remove it via TSA using the command "rmrg":
+
+"rmrg <resource_group_name>"

@@ -1,0 +1,17 @@
+Title: IBM How to Add Confirmation Window when Cancelling Batch in Datacap Navigator - United States
+
+Text:
+cancel confirm "are you sure" scan HOW TO
+
+SUMMARY
+When cancelling out of a batch while running Datacap Navigator, the normal behavior is to exit the batch immediately. Here are steps to add a confirmation window.
+
+STEPS
+
+
+ 1. Run Content Navigator Administrator.
+ 2. In the Desktops section, highlight and edit the desktop that runs the Datacap task.
+ 3. In the Layout tab, highlight Datacap Main Page.
+ 4. In the Feature Configuration section, set Confirmation before releasing batch to Show.
+ 5. Save the settings, then restart WebSphere/WebLogic.
+ 6. If the change does not take effect immediately after restarting, clear the browser cache.

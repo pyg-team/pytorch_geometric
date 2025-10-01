@@ -1,0 +1,91 @@
+Title: IBM Objectserver  encountering "Not enough space" on various operation. - United States
+
+Text:
+not enough space memory allocation E-OBX-102-017 E-AUT-002-006 E-IVM-005-001 memstore TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The objectserver debug log showed "Not enough space" when performing sql commands and execution of triggers. 
+
+SYMPTOM
+- All sessions connected to Primary ObjectServer are disconnected. 
+
+- No able to connect to Object Server. 
+- Sending a query(select top 1000* from alerts.status) give timeout error. 
+These errors is seen in relation to that query
+
+Error: E-OBX-102-019: Failed to execute parsed language command. (12:Not enough space) 
+Error: E-OBX-102-017: Language command from xxxx@yyyy failed. Not enough space on line 1 of statement 'select top 1000 * from alerts.status where StateChange >= 1435712190 AND Class != 10500 AND (Severity <> 5 and ImpactFlag <> 1) order by StateChange ;'
+
+- Other "Not enough space" errors are seen
+
+Error: E-AUT-002-006: Trigger "delete_archived_alarm": action execution failed: Not enough space
+Error: E-OBX-102-019: Failed to execute parsed language command. (12:Not enough space)
+Error: E-IVM-005-001: OpenServer - Fatal Connect Error:16008/15/0:It is impossible to allocate '2524' byte memory on 'srv_descfimt()" for allocating 'SRV__DATAITEM'.
+
+
+CAUSE
+The customer has manually increased the memstore hardlimit of the region and it was set too high.
+
+
+DIAGNOSING THE PROBLEM
+Check output from running this sql command with nco_sql
+select * from catalog.memstores; 
+go
+
+Check the value of the "HardLimit" and compare with the "UsedBytes" value. The HardLimit may be set way too high to what is required.
+
+
+
+
+
+RESOLVING THE PROBLEM
+Reduce the HardLimit and SoftLimit accordingly to a much lower value. 
+The HardLimit cannot be lower using the nco_store_resize tool.
+To reduce the HardLimit it will involve having to export the configuration of your existing objectserver to sql files, edit one sql file to reduce the hardlimit setting and create a new objectserver using those sql files. The old database file is renamed and the new objectserver with the reduced HardLimit renamed to name of the original objectserver. 
+
+Here are the steps to take to reduce the HardLimit of the objectserver. Please make sure to test on your test environment before apply to the production boxes. 
+
+Steps to reduce memstore hardlimit 
+==========================
+1. Backup the objectserver with
+ALTER SYSTEM BACKUP '/tmp/mybackup'
+the .tab files will be created in the /tmp/mybackup directory.
+
+2. Run nco_osreport to back up configuration of objectserver
+eg
+In the $OMNIHOME/bin directory run
+nco_osreport -server myncoms -dbinit -user root -password ''
+
+(replace myncoms with the name of your objectserver)
+(If your password is not blank, type in the correct password)
+A set of .sql will be created in the $OMNIHOME/bin directory.
+
+3. In the $OMNIHOME/bin directory, edit the system.sql
+Change the hard Limit value and the soft limit value to lower values.
+Soft limit value cannot be higher than hard limit.
+
+In the system.sql, at the top of the file are the HardLimit and SoftLimit setting 
+
+-- First create the memstores
+create memstore table_store persistent hard limit 524288000B soft limit 471859200B;
+go
+
+Change hard limit and soft limit accordingly
+(450 MB = 471859200)
+(500 MB = 524288000)
+(550 MB = 600 * 1024 * 1024 = 576716800)
+
+4. Create new objectserver with using all the .sql files and the newly edited system.sql file which would have the reduced HardLimit.
+Making sure to use both -alertsdata -alertsdatafile options.
+eg
+$NCHOME/omnibus/bin/nco_dbinit -server NEW_SERVERNAME -systemfile system.sql -applicationfile application.sql -alertsdata -alertsdatafile alertsdata.sql -desktopfile desktop.sql -automationfile automation.sql -securityfile security.sql
+
+5. The newly created objectserver will need to be rename to the name of your objectserver.
+In the following steps, replace myncoms with the name of your objectserver.
+
+Rename the original database directory from $NCHOME/omnibus/db/myncoms to
+$NCHOME/omnibus/db/old-myncoms
+
+Rename the $NCHOME/omnibus/db/NEW_SERVERNAME to $NCHOME/omnibus/db/myncoms
+
+6. Start your objectserver as normal and it should have the new lower hardlimit and all the alerts.

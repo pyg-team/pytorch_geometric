@@ -1,0 +1,24 @@
+Title: IBM Choosing the correct character encoding format when importing IBM InfoSphere Business Glossary CSV files - United States
+
+Text:
+bg811relnotes; bg812relnotes; bg85relnotes; bg87relnotes; bg91relnotes; UTF-8; locale; CSV; export; import; language PRODUCT DOCUMENTATION
+
+ABSTRACT
+ As of IBM InfoSphere Business Glossary, Version 8.1.1, Fix Pack 2, InfoSphere Business Glossary allows you to choose the character encoding format for exported CSV files, instead of automatically exporting and importing CSV files in UTF-8 format. You can choose whether to export in the same format as the IBM InfoSphere Information Server locale or as UTF-8. Export to the server locale if the application used to open the resulting CSV file does not support UTF-8 (for example, Microsoft® Excel®). 
+
+CONTENT
+When you export business glossary content to a CSV file, you can choose the character encoding format that you want the file to be saved in. The choice UTF-8 encoding - Information Server default is selected by default. 
+
+
+
+Use UTF-8 encoding unless you plan to open the resulting CSV file with an application that does not support UTF-8, such as Microsoft Excel. If you plan to open the file with an application that does not support UTF-8, select Automatic coding - according to server locale or Encoding same as server locale for the export format.
+
+In addition, make sure that the client computer that is running the application used to open the CSV file is set to the same locale setting as that of the InfoSphere Information Server that is running InfoSphere Business Glossary. If the locale settings do not match, the file could appear to be corrupted when opened.
+
+
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Information Management InfoSphere Information Server Not Applicable AIX, HP-UX, Linux, Solaris, Windows 9.1, 8.7, 8.5, 8.1 All Editions

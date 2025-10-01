@@ -1,0 +1,73 @@
+Title: IBM J2CA0027E messages appear in the WebSphere Application Server SystemOut.log containing the error "The method 'xa_end' has failed with errorCode '100'." and "The method 'xa_rollback' has failed with errorCode '-7'" - United States
+
+Text:
+J2CA0027E; xa_end; errorCode; 100 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The following two errors appear in the WebSphere Application Server SystemOut.log file when applications using the WebSphere Application Server WebSphere MQ messaging provider try to commit a transaction:
+
+J2CA0027E: An exception occurred while invoking end on an XA Resource Adapter from DataSource <JMS Connection Factory>, within transaction ID <Transaction Identifier>: javax.transaction.xa.XAException: The method 'xa_end' has failed with errorCode '100'.
+
+J2CA0027E: An exception occurred while invoking rollback on an XA Resource Adapter from DataSource <JMS Connection Factory>, within transaction ID <Transaction Identifier>: javax.transaction.xa.XAException: The method 'xa_rollback' has failed with errorCode '-7'.
+
+
+CAUSE
+The cause of these errors is usually the result of a WebSphere MQ messaging provider JMS Connection being closed off by WebSphere Application Server because the Aged timeout for the Connection has expired. 
+
+JMS Connections are created from a JMS Connection Factory. There is a Connection Pool associated with each Connection Factory, which is divided into two parts - the Active Pool and the Free Pool.
+
+When an application closes off a JMS Connection that it has been using, that Connection is moved into the Free Pool of the Connection Pool for the Connection Factory unless the Aged timeout for that Connection has elapsed, in which case the Connection is destroyed. If the JMS Connection is still involved in an active transaction when it is destroyed, the application server flows an xa_end() to WebSphere MQ, indicating that all of the transactional work on that Connection has completed. 
+
+This causes issues if the JMS Connection had been created inside a transactional message-driven bean that was using either an Activation Specification or a Listener Port to monitor a JMS Destination on a WebSphere MQ queue manager.
+
+In this situation, there is a single transaction that is using 2 connections to WebSphere MQ:
+
+
+ * A connection which is used to get a message from WebSphere MQ and deliver it to the message-driven bean instance for processing. 
+ * A connection that is created within the message-driven bean's onMessage() method.
+
+
+If the second connection is closed by the message-driven bean, and then destroyed as a result of the Aged timeout expiring, then an xa_end() is flown to WebSphere MQ indicating that all of the transactional work has completed. 
+
+When the message-driven bean application finishes processing the message it has been given, the application server needs to complete the transaction. It does this by flowing xa_end() to all of the resources that were involved in the transaction, including WebSphere MQ. 
+
+However, WebSphere MQ has already received an xa_end() for this particular transaction, and so returns an XA_RBROLLBACK (100) error back to WebSphere Application Server, indicating that the transaction has ended and all of the work WebSphere MQ has been rolled back. This causes the application server to report the following error: 
+ * 
+
+
+The application server will then roll back the entire transaction by flowing xa_rollback() to all of the resources that were enlisted in it. When the application server flows xa_rollback() to WebSphere MQ, the following error occurs: 
+ * 
+
+
+This error does not affect the other resources that were enlisted in the transaction. The application will still flow xa_rollback() to these resources, and they will be able to process the rollback request successfully. 
+
+ENVIRONMENT
+Message-driven bean applications that use Activation Specifications or Listener Ports to monitor JMS Destinations hosted on a WebSphere MQ queue manager, and then create a new connection to WebSphere MQ using a JMS Connection Factory from within its onMessage() method, can be affected by this issue.
+
+
+
+RESOLVING THE PROBLEM
+To resolve this issue, ensure that the JMS Connection Factory being used by the application has the Connection Pool property Aged timeout set to zero. This will prevent JMS Connections being closed when they are returned to the Free Pool, and so ensures that any outstanding transactional work can be completed. 
+
+ 
+
+If the application continues to report the error: 
+
+ 
+
+ * 
+
+
+after Aged timeout has been set to zero, then: 
+ * Either the WebSphere Application Server Connection Manager component has closed the JMS Connection as part of "Claim Victim" processing, in order to allow another application using the same Connection Factory to create a new connection to WebSphere MQ. 
+ * Or the WebSphere MQ queue manager has decided to roll back a transaction.
+
+
+In order to determine which of these situations is occurring, collect a WebSphere Application Server Connection Manager and JMS trace using the following trace string: 
+
+*=info:JMSApi=all:JMSServer=all:Messaging=all:JMS_WASTraceAdapter=all:com.ibm.mq.*=all:jmsApi=all:ConnLeakLogic=all:com.ibm.ejs.j2c.*=all 
+
+and contact IBM Support. 
+
+PRODUCT ALIAS/SYNONYM
+ WMQ WebSphere MQ MQSeries

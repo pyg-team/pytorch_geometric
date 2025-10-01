@@ -1,0 +1,165 @@
+Title: IBM IV20896: JAVA.SQL.DRIVERMANAGER.LOADDRIVERS THROWS PATTERNSYNTAXEXCEPTION AFTER APPLYING APAR IV31153 - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Error Message: When JVM initialize java.sql.DriverManager, it
+   will throw a java.util.regex.PatternSyntaxException
+   .
+   Stack Trace: aused by: java.util.regex.PatternSyntaxException:
+   Unexpected
+    internal
+   error near index 1
+   
+   \
+   
+    <HAT>01
+   
+    at java.util.regex.Pattern.error(Pattern.java:1724)
+   
+    at java.util.regex.Pattern.compile(Pattern.java:1477)
+   
+    at java.util.regex.Pattern.<init>(Pattern.java:1144)
+   
+    at java.util.regex.Pattern.compile(Pattern.java:834)
+   
+    at java.lang.String.replaceAll(String.java:1573)
+   
+    at java.sql.DriverManager.loadDrivers(DriverManager.java:199)
+   
+    at java.sql.DriverManager.loadDrivers(DriverManager.java:271)
+   
+    at
+   java.sql.DriverManager.loadDriversFromFiles(DriverManager.java:1
+   82)
+   
+    at
+   java.sql.DriverManager.loadInitialDrivers(DriverManager.java:98)
+   
+    at java.sql.DriverManager.<clinit>(DriverManager.java:89)
+   
+    at java.lang.J9VMInternals.initializeImpl(Native Method)
+   
+    at java.lang.J9VMInternals.initialize(J9VMInternals.java:200)
+   
+    ... 17 more
+   .
+   N/A
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  This problem is due to an invalid regular expression in
+   String.replaceAll
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This defect will be fixed in:
+   6.0.0 SR11
+   6.0.1 SR4
+   .
+   The solution is to replace the invalid regular expression with
+   the correct string
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV20896
+   
+   
+ * REPORTED COMPONENT NAME
+   JAVA CLASS LIBS
+   
+   
+ * REPORTED COMPONENT ID
+   620700130
+   
+   
+ * REPORTED RELEASE
+   600
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-05-10
+   
+   
+ * CLOSED DATE
+   2012-05-18
+   
+   
+ * LAST MODIFIED DATE
+   2012-11-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   JAVA CLASS LIBS
+   
+   
+ * FIXED COMPONENT ID
+   620700130
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R600 PSY
+   UP

@@ -1,0 +1,36 @@
+Title: IBM Jazz for Service Management (JazzSM) install fails with "Prerequisite scan failed with return code 5" - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When installing JazzSM components the prerequisite scanner step fails with "Error" but the result.txt shows a "PASS" 
+for all the components. This causes the install to stop even though all the prerequisites are up to date. 
+
+SYMPTOM
+The deployment.log show the following error code, Prerequisite scan failed with return code 5.
+
+
+CAUSE
+Prerequisite scanner defect
+
+ENVIRONMENT
+JazzSM 1.1; 1.1.0.1; 1.1.0.2; 1.1.0.3
+
+DIAGNOSING THE PROBLEM
+Note the prerequisite scanner version that is currently being used.
+
+RESOLVING THE PROBLEM
+Upgrade the prerequisite scanner to 1.2.0.11 or higher. This defect is fixed at this level.
+
+
+
+
+
+Use the following link on Fix Central to upgrade to the latest prerequisite scanner.
+http://www-01.ibm.com/support/docview.wss?uid=swg24039536 [http://www-01.ibm.com/support/docview.wss?uid=swg24039536]
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Systems and Asset Management Tivoli Components

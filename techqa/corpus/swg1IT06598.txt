@@ -1,0 +1,179 @@
+Title: IBM IT06598: VIRTUAL MACHINE ANS0328E AND ANS1907E MERGE FAILURES FOR -MODE=IFFULL OR -MODE=IFINCR BACKUPS - United States
+
+Text:
+AIX  FIXES ARE AVAILABLE
+IBM Tivoli Storage Manager (TSM) client 7.1.1.x interim fix downloads [http://www-01.ibm.com/support/docview.wss?uid=swg24038694]
+TSM Client 7.1.2 Downloads and READMEs [http://www-01.ibm.com/support/docview.wss?uid=swg24039740]
+TSM Client 6.4.3 Downloads and READMEs [http://www-01.ibm.com/support/docview.wss?uid=swg24040185]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  During a virtual machine (VM) backup, the VM backup may not
+   complete successfully due to the
+   following errors:
+   ANS0328E The specified objects failed the merge test.
+   ANS1228E Sending of object 'VM_NAME' failed.
+   ANS1907E An error occurred while trying to perform an object
+   merge operation on the server.
+   TSM Server will show:
+   ANE4174E (ANE4985I Session: 113559, ANE4986I Node:
+   MYNODENAME)  Full VM backup of VMware Virtual Machine
+   'VM_NAME' failed with RC=45 mode=Incremental Forever -
+   Incremental, target node name='MYNODENAME', data mover
+   node name='MYNODENAME_DM'
+   RC=45 is a merge error on the server.
+   This problem will only occur on -mode=IFFULL and -mode=IFINCR
+   Initial impact: HIGH
+   Platforms affected: Windows & Linux
+   Versions affected: 6.4, 7.1, 7.1.1
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Rename the filespace on the TSM Server for the VM.
+   If you are running TSM server version 6.3.5.x or 7.1.1.x
+   it is no longer possible to rename an existing VM filespace due
+   to apar IC92869 [http://www-01.ibm.com/support/docview.wss?uid=swg1IC92869]. The VM itself would need to be renamed so a new
+   filespace is created on the TSM server.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * Tivoli Storage Manager for Virtual Environments versions     *
+   * 6.3, 6.4 and 7.1 running on all Microsoft Windows and Linux  *
+   * x86_64 platforms                                             *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * See ERROR DESCRIPTION                                        *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * This issue is projected to be fixed in the Tivoli Storage    *
+   * Manager Client on Windows and Linux x86_64  in levels 6.4.3  *
+   * and 7.1.2                                                    *
+   * Note 1: The Tivoli Storage Manager (TSM) Client is a         *
+   * prerequisite to using the Data Protection for VMware. In     *
+   * Data Protection for VMware environments, the TSM Client is   *
+   * also known as the data mover.                                *
+   * Note 2: This is subject to change at the discretion of IBM.  *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The problem has been fixed and no longer occurs.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT06598
+   
+   
+ * REPORTED COMPONENT NAME
+   TSM CLIENT
+   
+   
+ * REPORTED COMPONENT ID
+   5698ISMCL
+   
+   
+ * REPORTED RELEASE
+   64W
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-01-19
+   
+   
+ * CLOSED DATE
+   2015-02-13
+   
+   
+ * LAST MODIFIED DATE
+   2015-02-13
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    IT06647 [http://www-01.ibm.com/support/docview.wss?uid=swg1IT06647]
+   
+   
+
+MODULES/MACROS
+ *  dsmagent
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TSM CLIENT
+   
+   
+ * FIXED COMPONENT ID
+   5698ISMCL
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R71W PSY
+   UP
+   
+   
+ * R71L PSY
+   UP
+   
+   
+ * R64W PSY
+   UP

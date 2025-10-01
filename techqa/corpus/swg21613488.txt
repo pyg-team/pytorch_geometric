@@ -1,0 +1,60 @@
+Title: IBM WAS server startup errors after un-configuration of the DC. - United States
+
+Text:
+java.security.policy server.xml java.security.AccessControlException CAMADALL CAMADINST TECHNOTE (TROUBLESHOOTING)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ US English 
+
+PROBLEM(ABSTRACT)
+ WAS server startup errors after un-configuration of the DC. 
+
+SYMPTOM
+Starting the server after ITCAM for WAS v61 un-configuration gives this error message in the WAS server logs: 
+
+ 
+Exception in thread "main" java.security.AccessControlException: Access denied 
+at java.security.AccessController.checkPermission(AccessController.java:103)
+at java.lang.SecurityManager.checkPermission(SecurityManager.java:558) 
+at java.lang.SecurityManager.checkPropertyAccess(SecurityManager.java:
+1311)
+at java.lang.System.getProperty(System.java:369) 
+at java.lang.System.getProperty(System.java:353) 
+at org.eclipse.core.launcher.Main.run(Main.java:991) 
+at com.ibm.wsspi.bootstrap.WSPreLauncher.launchEclipse(WSPreLauncher. 
+java:339) 
+at com.ibm.wsspi.bootstrap.WSPreLauncher.main(WSPreLauncher.java:94) 
+Exception in thread "Thread-3" java.security.AccessControlException: 
+Access denied (java.io.FilePermission 
+/opt/IBM/WebSphere/AppServer6/profiles/GTSNode6A/temp/osgi_instance_loca
+tion/root/1718520972 read) 
+at java.security.AccessController.checkPermission(AccessController.java:103) 
+at java.lang.SecurityManager.checkPermission(SecurityManager.java:558) 
+at java.lang.SecurityManager.checkRead(SecurityManager.java:897) 
+at java.io.File.isDirectory(File.java:751) 
+at com.ibm.wsspi.bootstrap.WSPreLauncher.deleteEclipseInstanceArea 
+(WSPreLauncher.java:588) 
+at com.ibm.wsspi.bootstrap.WSPreLauncher.onExit(WSPreLauncher.java:579)
+at com.ibm.wsspi.bootstrap.WSPreLauncher$OnExit.run(WSPreLauncher.java:570)
+
+
+CAUSE
+This is caused because of the java.security.policy line in the server.xml file.
+
+
+ENVIRONMENT
+Distributed
+
+
+
+RESOLVING THE PROBLEM
+To resolve the problem, make a backup of your server.xml file first. 
+
+Then open the file in any editor and scroll down to the bottom of the file. Look for a line / system property called java.security.policy. Remove this line. Save the server.xml file and now try to start your WAS server.
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Systems and Asset Management Tivoli Composite Application Manager for WebSphere ITCAM for WebSphere Managing Server AIX, HP-UX, Linux, Solaris, Windows, AIX 64bit, AIX 6.1 6.1 
+PRODUCT ALIAS/SYNONYM
+ ITCAM ITCAM4AD ITCAMfAD ITCAM for App Diag

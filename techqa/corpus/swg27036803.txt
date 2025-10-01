@@ -1,0 +1,43 @@
+Title: IBM Update to the Known Issues section in the 10.2 Release Notes - United States
+
+Text:
+ PRODUCT README
+
+ABSTRACT
+ The Known Issues section in the 10.2 Release Notes file has been updated on the CDM 10.2 Information Center. 
+
+CONTENT
+The Known Issues section in the 10.2 Release Notes file has been updated on the CDM 10.2 Information Center and now reads as follows: 
+
+Known problems for IBM Cognos Disclosure Management are documented in the form of individual articles in the Support knowledge base. As issues are discovered and resolved, the IBM Support team updates the knowledge base. By searching the knowledge base, you can quickly find workarounds or solutions to issues.
+
+You can track issues that are discovered and reported to IBM as a result of a product defect. These APARs (Authorized Program Analysis Reports) remain open until a fix is available. You can find APARs at the Search Support and Downloads site: 
+
+http://www-947.ibm.com/support/entry/portal/search_results/software/cognos/cognos_disclosure_management?sn=spe&q=%20&prod=A364757S28423P09::10.2.0&filter=language:en#q%3D%26filter%3DDC.Type%3ACT741%2CCT748%2Blanguage%3Aen%26prod%3DA364757S28423P09%3A%3A10.2.0%26spew%3Dtrue [http://www-947.ibm.com/support/entry/portal/search_results/software/cognos/cognos_disclosure_management?sn=spe&q=%20&prod=A364757S28423P09::10.2.0&filter=language:en#q%3D%26filter%3DDC.Type%3ACT741%2CCT748%2Blanguage%3Aen%26prod%3DA364757S28423P09%3A%3A10.2.0%26spew%3Dtrue]
+
+Procedure
+
+
+ 1.  Go to ibm.com (http://www.ibm.com [http://www.ibm.com]). 
+ 2.  Click Support & downloads, and then in the Technical support list, click Documentation. 
+ 3.  In the Choose a product pane on the left, click Find a product. 
+ 4.  In the IBM Support Portal: Find a product window, in the text field, type Cognos Disclosure Management and click the search icon. A list of products appears. 
+ 5.  Select the check box for Cognos Disclosure Management. An edit icon and a Version link appear. 
+ 6.  To choose a specific product version, such as 10.2.0, perform the following steps:  1.  Click the Version/OS link for Cognos Disclosure Management. 
+      2.  In the Product versions list, select the check box for your product version. 
+      3.  Click Submit. The product list on the left now displays the product and version that you selected. You can change this selection by clicking Edit and making changes.
+     
+     
+ 7.  Click the add icon to move the product to the My products list on the right. 
+ 8.  In the My products list, select Cognos Disclosure Management. To select more than one product, select the Allow multiple selections check box. 
+ 9.  Click Finish. You return to the Support portal, and now Cognos Disclosure Management appears on the left in the Choose a product pane, and the information on the Support portal is related to Cognos Disclosure Management. 
+ 10. On the right, in the Search support and downloads section, type a space and click the go icon. All documentation that is related to Cognos Disclosure Management appears. 
+ 11. To review APARs for Cognos Disclosure Management, in the Content Type list, select the Authorised program analysis report check box. APARs for Cognos Disclosure Management appear in a list. You can sort this list by date or by relevance. You can also select or clear the check boxes in the Refine search panes to filter the results. 
+ 12. To review known issues for Cognos Disclosure Management, in the Content Type list, select the following check boxes:  * Product documentation 
+      * Product release notes 
+      * Technotes
+     
+     
+
+
+Known issues for Cognos Disclosure Management appear in a list. You can sort this list by date or by relevance. You can also select or clear the check boxes in the Refine search panes to filter the results.

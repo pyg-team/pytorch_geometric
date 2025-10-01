@@ -1,0 +1,120 @@
+Title: IBM IV61934: NOT POSSIBLE TO SEARCH LDAP ON FIRST NAME, LAST NAME, MAIL ADDRESS - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  In Cognos Administration it's not possible to search a user by
+   Name, Last Name or Mail Address. I try to search "Name or
+   description
+   field" and Type = Any. With the User ID (FP11216) it works I
+   get 1
+   result. When I try to search using Name (Julien or Viallon) I
+   get 0
+   result.
+    single computer environment with TCR 2.1.1 FP2.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  2.1.1.2-TIV-TCR-IF03 is uploaded into IBM fix central.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  2.1.1.2-TIV-TCR-IF03 is uploaded into IBM fix central.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV61934
+   
+   
+ * REPORTED COMPONENT NAME
+   TIVOLI COMMON R
+   
+   
+ * REPORTED COMPONENT ID
+   5724T6900
+   
+   
+ * REPORTED RELEASE
+   211
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-06-25
+   
+   
+ * CLOSED DATE
+   2014-09-01
+   
+   
+ * LAST MODIFIED DATE
+   2014-09-01
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TIVOLI COMMON R
+   
+   
+ * FIXED COMPONENT ID
+   5724T6900
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R211 PSY
+   UP

@@ -1,0 +1,45 @@
+Title: IBM How to model instantiated classes with the Rose ANSI C++ add-in - United States
+
+Text:
+parameterized; instantiated; generate; ansi; c++; rose; classes; code; relation; 1120597 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The following technote shows how you can model instantiated classes using the Rational Rose® ANSI C++ add-in. 
+
+RESOLVING THE PROBLEM
+ Using Classic C++, we used to be able to create an instantiated class and an 
+instantiated relation to a Parameterized class. During code generation Rose 
+would generate a typedef for the instantiated class. With ANSI® C++, when we create an instantiated class and an instantiated association to a Parameterized class, no code is generated for the instantiated class. The following example shows how we can model an instantiated class and have the ANSI C++ generate code.
+
+Using the ANSI C++, one need not create an instantiated class or an 
+instantiates association to a parameterized class. To generate code for an 
+instantiated class, perform the following steps: 
+
+ 1. Create a ParameterizedClass, as follows:  1. Right click on the Logical View and select New --> Class and name it ParamClass 
+     2. Right click on the Parameterized class and open the standard specification 
+     3. Go to the General tab in the class specification and change the type to be 
+     4. ParameterizedClass and click on Apply 
+     5. Go to the Detail tab in the class specification and enter a Formal Argument (named for example T) and set Type to "class". 
+    
+    
+ 2. Create a Class  1. Right click on the Logical View and select New --> Class and name it InstClass 
+     2. Right click on the InstClass and open the standard specification 
+     3. Select the General tab in the class specification 
+     4. Change "Stereotype" to "typedef" and click on Apply. 
+     5. Select the ANSI C++ tab in the class specification, and enter the actual declaration and argument in the "ImplementationType" property, for example: 
+    
+     * 
+     * 
+    
+    
+
+Now when code is generated for the InstClass, Rose will generate a header file containing the typedef definition. Note that no association exists between the parameterized class and the instantiated class. Thus all changes, to arguments for example, must be manually updated. 
+
+
+
+
+
+ 
+
+HISTORICAL NUMBER
+ 118751458

@@ -1,0 +1,23 @@
+Title: IBM Education: Webcast on Basic Rulerunner Configuration & Troubleshooting for IBM Datacap Taskmaster Capture - United States
+
+Text:
+ECMSTE_webcast; ECMSTE; STEwebcastDocument; Support Technical Exchange; education; presentation; webcast NEWS
+
+ABSTRACT
+ On Thursday, May 15, 2014, a Connect With the Experts presentation on Basic Rulerunner Configuration & Troubleshooting was delivered by Rick Wilson with an open question and answer session following the presentation. 
+
+CONTENT
+The presentation provided the initial steps needed to set up a Rulerunner Server so that it will reliably process batches. Also included were some basic Rulerunner troubleshooting steps. Optimizing Rulerunner to increase throughput will be covered in a separate session.
+
+Level of Difficulty: Beginner to Intermediate
+
+Presenter: 
+Rick Wilson, Datacap Technical Support Engineer and Datacap 8.1 Certified Solution Designer
+
+A recording of this presentation is available for viewing at:
+ftp://public.dhe.ibm.com/software/is/ecm/techexch/2014_05_15_RRConfig_TS.wmv [ftp://public.dhe.ibm.com/software/is/ecm/techexch/2014_05_15_RRConfig_TS.wmv]
+
+
+Notifications: 
+
+To receive notification on future webcasts, please subscribe to the product page using MyNotifications [https://www-947.ibm.com/systems/support/myview/subscription/css.wss/folders?methodName=listMyFolders].

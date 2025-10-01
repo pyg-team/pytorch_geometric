@@ -1,0 +1,219 @@
+Title: IBM JR39276: ORACLE CONNECTOR UPDATES CAN BE SLOW IF INDEXED VARCHAR COLUMNS ARE USED AS PART OF THE WHERE CLAUSE. - United States
+
+Text:
+  A FIX IS AVAILABLE
+IBM InfoSphere Information Server, Version 8.5 Fix Pack 2 [http://www-01.ibm.com/support/docview.wss?uid=swg24031213]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Oracle Connector might perform full table scan instead of
+   levereging indexes if following conditions apply:
+   
+   1) Oracle database is using a multibyte characterset (e.g.
+   AL32UTF8)
+   
+   2) Connector Import Wizard is used to import table definitions
+   
+   3) Varchar2 columns in Oracle get imported as NVarchar in
+   DataStage.
+   
+   4) Indexed Varchars (seen as nvarchr in DataStage) are used as
+   part of where clause.
+   
+   Full table scans are occurring because the bind that DataStage
+   uses is NChar if DataStage column is NVarchar or Extended
+   Unicoded. NChar binds will not match the Varchar2 type in
+   Oracle, thus the indexes are not utilized.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Change nvarchar columns definitions in DataStage to
+   varchar(lenght * bytes per character)
+   
+   e.g. nvarchar(10) with NLS_LANG set to AL32UTF8 (up to 4 bytes
+   per character) would become varchar(40)
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  For character columns, the Oracle Connector stage was sometimes
+   using an incorrect bind charset form.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  When binding input or output statement parameters, the bind
+   charset form should match the target/source Oracle table
+   character encoding type:
+   Implicit for Database characterset columns (Char, Varchar2)
+   NChar for National characterset columns (NChar, NVarchar2)
+   
+   The Oracle stage was relying only on the Datastage columns grid
+   to determine the bind charset form for each statement parameter.
+   The DataStage columns grid datatypes often did not match the
+   corresponding Oracle table perfectly even if the table was
+   imported with the Connector Import Wizard. Therefore, sometimes
+   the bind form was set incorrectly by the Oracle Connector.
+   
+   There are two symptoms to this incorrect configuration:
+   Performance and Character Corruption
+   
+   Performance:
+   If a character Input parameter is not bound with the correct
+   bind form, then Oracle will not use the index when searching
+   through the database for the correct columns. This will cause a
+   full table scan to occur and increase job run time.
+   
+   Character Corruption:
+   If the Database Characterset cannot contain a character found in
+   the National character set, then binds that should have been
+   NChar, but were Implicit by mistake, could result in character
+   corruption. Fortunately this is not a common scenario.
+   
+   The Solution has 3 parts:
+   For SELECT statements we can always correctly determine the bind
+   form.
+   As of this fix we are doing so.
+   
+   For all auto-generated statements we can always correctly
+   determine
+   the bind form.
+   
+   For all other statements, we will need to use a new environment
+   variable
+   to determine the bind form.
+   
+   The new environment variable is:
+   CC_ORA_BIND_FOR_NCHARS
+   
+   This environment variable should be set to a comma delimited
+   list of
+   DataStage column names that are National character columns in
+   the
+   database. Value '(none)' for no National character columns.
+   Or value '(all)' for all National character columns (without
+   single
+   quotes). For example:
+   
+   CC_ORA_BIND_FOR_NCHARS=(none)
+   
+   Example 1:
+   If in Oracle you have this table:
+   CREATE TABLE TEST1 (C1 DECIMAL, C2 NCHAR(10), C3 VARCHAR2(10));
+   
+   Then the environment variable should be set like this:
+   CC_ORA_BIND_FOR_NCHARS=C2
+   
+   This will cause the C2 column to get bound with NChar bind
+   charset form
+   and column C3 with Implicit.
+   
+   Example 2:
+   If you have no National character columns used in your DataStage
+   jobs
+   then set CC_ORA_BIND_FOR_NCHARS=(none)
+   
+   To Confirm Columns are bound correctly:
+   Set CC_MSG_LEVEL=2 and look in the Job log for these debug
+   statements:
+   CCORA DEBUG:Columns with NChar Bind Charset Form: nch,nvch
+   CCORA DEBUG:Columns with Implicit Bind Charset Form: CH,vh
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR39276
+   
+   
+ * REPORTED COMPONENT NAME
+   WIS DATASTAGE
+   
+   
+ * REPORTED COMPONENT ID
+   5724Q36DS
+   
+   
+ * REPORTED RELEASE
+   850
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-03-29
+   
+   
+ * CLOSED DATE
+   2011-05-19
+   
+   
+ * LAST MODIFIED DATE
+   2011-05-19
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WIS DATASTAGE
+   
+   
+ * FIXED COMPONENT ID
+   5724Q36DS
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R850 PSY
+   UP

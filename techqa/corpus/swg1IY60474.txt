@@ -1,0 +1,201 @@
+Title: IBM IY60474: s13265 - Java Scripts to run properly, customer has to delimit t hem with a backslash - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  ****************************************************************
+   ********
+   Problem description:  Customer recently upgraded to 4.3.5 LA4.
+   They
+   have java scripts in entitlement that have backslashs in them.
+   To get
+   the java scripts to run properly, they have to delimit them with
+   a
+   backslash.
+   
+   So, the java script looks like the following:
+   
+       {var profiledir = "";
+        profiledir = "\\\\WALNUT\\Profiles\\" +
+                     Enrole.getAttributeValue("Account.eruid", "");
+        return profiledir;}
+   
+   This way, the output will look something like:
+   
+        \\WALNUT\Profiles\czoch
+   
+   Well, when they edit existing entitlements, the script is
+   retrieved and
+   displayed as:
+   
+        {var profiledir = "";
+         profiledir = "\\WALNUT\Profiles\" +
+                      Enrole.getAttributeValue("Account.eruid",
+   "");
+         return profiledir;}
+   
+   The Java Script can be edited and then it is saved this way.
+   The
+   problem is, this yields an invalid java script, because the
+   literal gets
+   messed up and you end up getting the following error:
+   
+       unterminated string constant near line 1, column 35
+       in string: '{var profiledir = "";profiledir =
+   "\\DDDEVA44\Profiles\"
+       + Enrole.getAttributeValue("Account.eruid", "");return
+       profiledir;}'.]
+   
+   I've tested this in 4.5.1 FP16 and the retrieval and display of
+   the
+   \'s does not get altered.  No \'s are stripped.
+   
+   Desired Behavior:  Customer would like this to work properly and
+   not
+   strip \'s out of java scripts when retireve and displayed for
+   editing.
+   
+   Steps to Reproduce:  Using any agent and attriube, enter the
+   following
+   java script:
+   
+       {var tst = "\\\\WALNUT\\Profile\" + parameters.eruid[0];
+        return tst;}
+   
+   Save it and then come back and redisplay it and edit it.
+   
+   Environment:
+   
+   ITIM 4.3.5 LA4 on Windows - CLustered
+   SQL Server
+   iPlanet 5.1
+   ****************************************************************
+   ********
+   ****************************************************************
+   The description above is still accurate.  I was waiting to see
+   if they
+   wanted to wait till 4.5.1 or get this fixed on 4.3.5.  They want
+   this
+   fixed on 4.3.5 (made the decision today).
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  13265
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *   This is fixed and shipped in Interim fix
+   4.3.5-TIM-IF08
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  PROBLEM SUMMARY: This is fixed and shipped in Interim fix
+   4.3.5-TIM-IF08
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IY60474
+   
+   
+ * REPORTED COMPONENT NAME
+   IBM TIV IDEN MG
+   
+   
+ * REPORTED COMPONENT ID
+   5724C3400
+   
+   
+ * REPORTED RELEASE
+   435
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2004-08-11
+   
+   
+ * CLOSED DATE
+   2004-10-06
+   
+   
+ * LAST MODIFIED DATE
+   2004-10-06
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *     SERVER
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   IBM TIV IDEN MG
+   
+   
+ * FIXED COMPONENT ID
+   5724C3400
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R435 PSY
+   UP

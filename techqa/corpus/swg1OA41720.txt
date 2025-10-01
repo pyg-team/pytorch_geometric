@@ -1,0 +1,164 @@
+Title: IBM OA41720: JAVA CERTIFICATE REFRESH - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Java certificate refresh for SDA
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Accept warning when starting the TEP
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All OMEGAMON XE for CICS TG on z/OS users.   *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: After June 9, 2013 the Java             *
+   *                      certificate contained in the            *
+   *                      Self-Describing Agent support will      *
+   *                      expire.                                 *
+   ****************************************************************
+   * RECOMMENDATION: Apply the PTF.                               *
+   ****************************************************************
+   After June 9, 2013 the Java certificate contained in the
+   Self-Describing Agent support will expire.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Replacement Self-Describing Agent support is provided with
+   a certificate that will not expire until April 16, 2016
+   
+   After installing this PTF, if you are using the
+   Self-Describing Agent feature to install application
+   support, you must load the RTE where an OMEGAMON XE
+   for CICS TG on z/OS agent is running and then restart
+   the agent.
+   510Y
+   KGWATR
+   KGWBAR
+   KGWCAT
+   KGWDOC
+   KGWJSTMS
+   KGWJSTPS
+   KGWJSTPW
+   KGWMAP
+   KGWMSMAN
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   OA41720
+   
+   
+ * REPORTED COMPONENT NAME
+   OMEG XE CICS TG
+   
+   
+ * REPORTED COMPONENT ID
+   5698A9300
+   
+   
+ * REPORTED RELEASE
+   510
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-03-20
+   
+   
+ * CLOSED DATE
+   2013-03-26
+   
+   
+ * LAST MODIFIED DATE
+   2013-05-03
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    OA41719 [http://www-01.ibm.com/support/docview.wss?uid=swg1OA41719]
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UA68470
+   
+   
+
+MODULES/MACROS
+ *  KGWATR   KGWBAR   KGWCAT   KGWDOC   KGWJSTMS
+   KGWJSTPS KGWJSTPW KGWMAP   KGWMSMAN
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   OMEG XE CICS TG
+   
+   
+ * FIXED COMPONENT ID
+   5698A9300
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R510 PSY UA68470 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UA68470]
+   UP13/05/01 P F304
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

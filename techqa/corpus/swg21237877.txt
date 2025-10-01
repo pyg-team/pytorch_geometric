@@ -1,0 +1,38 @@
+Title: IBM Security issues with using the trusted logon option and the Windows Client - United States
+
+Text:
+trusted; logon; trusted logon; icmconct; connect userid; connect; security; cmbicmenv.ini TECHNOTE (FAQ)
+
+QUESTION
+ If the trusted logon option is enabled for users connecting through a three tier application, but access through two-tier clients, such as the Windows® Client, is also required for the same set of users, it constitutes a security risk.
+
+If the connect user ID (ICMCONCT) is configured to allow user to connect without giving a password and users are granted the "allow trusted logon" privilege and the connect user ID is used for both the two-tier and three-tier environment, users connecting through the two-tier client might be able to logon without a password. This security risk can be avoided by using a second connect user ID. 
+
+CAUSE
+Trusted logon is enabled for the connect userid (ICMCONCT).
+
+ANSWER
+This situation is most common when a trusted logon is required for all users to access Web applications, but the same users need to use a two-tier client, such as the Windows Client. In this situation, the connect user ID must allow users to login without a password and users must be granted the 'AllowTrustedLogon' privilege.
+
+
+The connect user ID and password are stored in the cmbicmenv.ini file that is read by the API when connecting to the database. If the same cmbicmenv.ini file is used for both the Web applications and two-tier applications, users with the 'AllowTrustedLogon' privilege that are connecting through two-tier applications might be able to log on without a password. 
+
+To work around this issue: 
+
+ 1. Create another connect user ID, for example, ICMCONTRUST, and set this ID to allow users to log on without a password.  1. In the System Administration Client, click Tools->Manage Database Connection ID->New Database Connection ID. 
+     2. Enter the name of the new connect user ID and ensure that the password required option is disabled. The new connection user ID is added to the server. 
+     3. Create a database user ID with the same name and password. For more information on adding a database user, see the section entitled 'Connecting to DB2 Using a Shared Connection ID' in the Content Manager System Administration Guide.
+    
+    
+ 2. Ensure that ICMCONCT is configured to not allow users to log in without a password.  1. In the System Administration Client, click Tools->Manage Database Connection ID->Change Shared Database Connection ID and ensure that the password required option is enabled. This changes the cmbicmenv.ini file on the computer where the System Administration Client is running. You must enter the correct password for the user ID and the password is stored in the cmbicmenv.ini file.
+    
+    
+ 3. Use a separate cmbicmenv.ini file for each connect user ID.  1. Run the Server Configuration Utility on a computer where the Web application uses the Content Manager API. This generates a new cmbicmenv.ini file or updates the file if it is already present on the computer. 
+     2. Secure the cmbicmenv.ini file.
+    
+    
+
+The cmbicmenv.ini file for the ICMCONCT userid can be distributed to all Windows client computers without risk of users being able to log on without a password. The cmbicmenv.ini file for ICMCONTRUST, however, must be secure in the three-tier environment because it does not require users to log on with a password. 
+
+
+Cross reference information Segment Product Component Platform Version Edition Enterprise Content Management Content Manager SysAdmin/Configuration Issues AIX, Linux, Solaris, UNIX, Windows 2000, Windows XP, Windows 2003 8.1, 8.2, 8.3 All Editions Enterprise Content Management Content Manager DB2 Information Integrator for Content AIX, Red Hat Linux, Solaris, Windows 8.1, 8.2, 8.3 All Editions

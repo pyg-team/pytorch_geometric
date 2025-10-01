@@ -1,0 +1,111 @@
+Title: IBM Release notes and known problems for IBM Production Imaging Edition Version 5.0 for IBM Content Manager 5.1 - United States
+
+Text:
+ RELEASE NOTES
+
+ABSTRACT
+ This document contains release notes information and a list of known problems for IBM Production Imaging Edition Version 5.0 for IBM Content Manager 5.1. 
+
+CONTENT
+Release notes information 
+
+Hardware and software information:
+
+For information about the prerequisite hardware and software for IBM Production Imaging Edition, see the following resources for the component products: 
+
+ * For IBM FileNet Content Manager, IBM FileNet Business Process Manager, and IBM FileNet Workplace XT requirements, see the detailed system requirements document at http://www.ibm.com/support/docview.wss?uid=swg27013654 [http://www.ibm.com/support/docview.wss?uid=swg27013654]. 
+ * For IBM Datacap Taskmaster Capture requirements, see the Datacap Taskmaster Capture installation guide available at http://www.ibm.com/support/docview.wss?uid=swg27020850 [http://www.ibm.com/support/docview.wss?uid=swg27020850].
+
+
+For IBM Production Imaging Edition Viewer Pro, any additional requirements are generally the same as for the version of IBM FileNet Workplace XT included in the IBM Production Imaging Edition product bundle. Therefore, in addition to the hardware and software requirements listed in the IBM Production Imaging Edition Viewer Pro Installation Guide, see also the hardware and software requirements for IBM FileNet Workplace XT in the detailed system requirements document at http://www.ibm.com/support/docview.wss?uid=swg27013654 [http://www.ibm.com/support/docview.wss?uid=swg27013654]. 
+
+Exceptions to the supported hardware and software for IBM Production Imaging Edition Viewer Pro that do not match the supported hardware and software for IBM FileNet Workplace XT are included in the Known problems information section of this document. 
+
+Known problems information 
+
+The following known problems exist in IBM Production Imaging Edition Version 5.0: 
+ * Software that is not supported with IBM Production Imaging Edition Viewer Pro  * Oracle Solaris 9 Operating System 
+    * Linux on IBM System z 
+    * Windows 2003 Server (Windows 2003 R2 is supported) 
+    * Oracle WebLogic 9.2 and 10.0
+   
+   
+
+ * Update required for Novell SUSE Enterprise Server 9 Installation of the IBM Production Imaging Edition Viewer Pro software on Novell SUSE Enterprise Server 9 requires the installation of the libstdc++.so.6 file. The installation of this file is described in the Novell Knowledgebase article "Optional update for libgcc-4.1,libstdc++-4.1." See the following link:
+   
+   http://support.novell.com/techcenter/psdb/ea8545892a565af183b0f83eeaeb62ad.html [http://support.novell.com/techcenter/psdb/ea8545892a565af183b0f83eeaeb62ad.html]
+   
+   
+   
+   
+ * Limited high availability support In a failover situation, the messages in the IBM Production Imaging Edition Viewer Pro error message dialog boxes do not clearly inform the user that a failover has occurred. The user is required to close and restart the viewer.
+   
+   
+   
+   
+ * Single sign-on (SSO) support for Kerberos/SPNEGO only SSO is supported only for Kerberos/SPNEGO. SSO is not supported with IBM Tivoli Access Manager or CA SiteMinder.
+   
+   
+   
+   
+ * PDF redaction is not supported on HP, AIX or zLinux app server configurations. PDF redaction is supported for installations where the redaction module and Workplace XT 1.1.5.x is installed on Linux (RedHat and SuSe), Solaris or Windows, with the following known issue. 
+   
+   If a user clicks the new window button in the redaction editor, a new redaction editor window opens, but attempting to save redactions in that new window will result in an error. 
+   
+   
+   
+   
+ * Linearize PDF display and paging performance Large linearized PDF documents load very slowly when stepping through page by page.
+   This issue is fixed in Workplace XT V1.1.5 Fix Pack 1.
+   
+   
+
+
+ * Failure viewing Datacap PDF files PDF files created by the Datacap application and ingested into the P8 CE cannot be viewed. 
+   
+   This issue is fixed in Workplace XT V1.1.5 Fix Pack 1.
+   
+   
+
+
+ * No redaction support from Enterprise Content Management (ECM) Widgets If IBM Production Imaging Edition Viewer Pro is installed with a IBM FileNet Workplace XT installation that is also hosting ECM Widgets, then the Redaction > Redact to File menu option is not available from the context menu within ECM Widgets.
+   
+   
+
+
+ * Known problem with redaction and the Sun JRE 1.5 An empty text redaction output file is created when a TIFF document is redacted with the Sun JRE 1.5. To work around this problem, use an application server with the Sun JRE 1.6.
+   
+   
+
+
+ * Removal of IBM Production Imaging Edition Viewer Pro fails in certain environments If IBM Production Imaging Edition Viewer Pro is installed with an installation path that contains double-byte characters, then an attempt to remove the viewer installation will fail. 
+   
+   To work around this problem, do not use double-byte characters in the installation path for the viewer.
+   
+   
+
+
+ * Known issue with the descriptive text for PIEStreamerFolder variable in the XT_silent_install.txt and XT_silent_upgrade.txt files for Workplace XT 1.1.5.
+
+
+ * 
+ * 
+ * The PIEStreamerFolder variable in the Daeja ViewOne Pro configuration section of the silent install answer file, XT_silent_install.txt, specifies the location of the ViewOne Pro streamer and log files. 
+ * The descriptive text in the answer file is incorrect. The issue is with the text around the variable, which is different between Windows and UNIX installs,. The text does not accurately describe how the variable will be used or when it is required. 
+ * If the PIE License files for the ViewONE Pro component have been installed on this system, then this line must be uncommented and set to the appropriate location. 
+ * If the PIE License files for the ViewONE Pro component have not been installed on this system, then this line must be commented out: 
+ * -V PIEStreamerFolder ="/opt/IBM/FileNet/WebClient/ImageViewerPro/streamer"
+
+
+ 
+
+ * Help for IBM Production Imaging Edition Viewer Pro 
+   For information about help resources for IBM Production Imaging Edition Viewer Pro, see the information available at the following link: 
+   
+   http://www.ibm.com/support/docview.wss?uid=swg27020349 [http://www.ibm.com/support/docview.wss?uid=swg27020349].
+   
+   
+
+RELATED INFORMATION
+ Product publications [http://www.ibm.com/support/docview.wss?uid=swg27022361]
+Production Imaging Edition [http://www.ibm.com/support/entry/portal/Overview/Software/Information_Management/Production_Imaging_]

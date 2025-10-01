@@ -1,0 +1,157 @@
+Title: IBM PJ37002: When 'AND and OR' and 'Show Operators' options are to be hidden insearch template definition, options are displayed at run time. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When 'AND and OR' and 'Show Operators' options are specified to
+   be
+   hidden in a search template definition, the options are still
+   displayed in the seach template UI at run time.
+   
+   
+   Steps to Reproduce:
+   1  Create a new search template and clear the Show ANDs and ORs
+   option under the Tools > Options > Search Template tab.
+   2  Browse to the Search Template and select it to open the new
+   Workplace XT UI.
+   
+   Search designers can optionally define the Search Template to
+   hide "AND and OR" and "Show operators" options during runtime
+   from Tools > Options > Search Template Option. However,
+   Workplace XT was not honoring the option and showed "AND and OR"
+   and the search operators to the users although the option was
+   set to hide these criteria.
+   
+   Actual Results:
+   
+   The AND and OR operators are displayed in the search template
+   UI.
+   
+   Expected Results:
+   
+   The AND and OR operators should not be displayed in the search
+   template UI.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * Users running Search Templates with the option to show 'AND  *
+   * and OR' or 'show operators' unchecked.                       *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * Search designers can optionally define the Search Template   *
+   * to hide 'AND and OR' and 'show operators' during runtime     *
+   * from Tools > Options > Search Template Option.               *
+   * However, Workplace XT was not honoring the option and showed *
+   * the operators to the users although the option was set to    *
+   * hide the operators.                                          *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Customers can upgrade to the Workplace XT fix pack           *
+   * 1.1.4.3-WPXT-FP003 or later to fix or avoid the problem.     *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The problem has been fixed in the Workplace XT fix pack
+   1.1.4.3-WPXT-FP003 and the operators will be shown or hidden
+   according to the definition of the Search Template.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PJ37002
+   
+   
+ * REPORTED COMPONENT NAME
+   WORKPLACE XT
+   
+   
+ * REPORTED COMPONENT ID
+   5724R7611
+   
+   
+ * REPORTED RELEASE
+   114
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-10-27
+   
+   
+ * CLOSED DATE
+   2010-01-06
+   
+   
+ * LAST MODIFIED DATE
+   2010-01-06
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WORKPLACE XT
+   
+   
+ * FIXED COMPONENT ID
+   5724R7611
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R114 PSY
+   UP

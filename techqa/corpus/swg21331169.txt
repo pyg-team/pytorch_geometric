@@ -1,0 +1,173 @@
+Title: IBM MustGather: 100% CPU usage problems with WebSphere Application Server on IBM i (i5/OS) - United States
+
+Text:
+MustGather; MustGather; MustGather; MustGatherDocument TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Collecting data for 100% CPU usage problems with IBM® WebSphere® Application Server on the i5/OS operating system. 
+
+RESOLVING THE PROBLEM
+The following documents what is needed to troubleshoot a Java™ Virtual Machine (JVM) that reaches 100% CPU utilization, or an unusually high percentage on IBM i (i5/OS).
+Note: If you are running WebSphere Application server 7.0 or higher the recommended JVM is "IBM Technology for Java". If you are running on older version of the product or have modified your configuration to use the older Classic JVM, please skip to Appendix A. 
+
+
+
+
+ * Collecting data for the IBM Technology for Java VM (J9)
+ * Submitting data to IBM Support
+ * Appendix A: Collecting data for a Classic JVM
+
+
+
+
+
+
+
+
+Collecting data for the IBM Technology for Java VM (J9)
+
+Collect the following information when the application server process (job) is experiencing the problem. 
+
+ 1. Type the following commands to create 5 spool files that can be sent to IBM:
+    
+    
+    WRKPTFGRP (use F6 to print or send a screen shot showing the installed status of PTFs)
+    
+    WRKSYSSTS OUTPUT(*PRINT)
+    
+    WRKSBS OUTPUT(*PRINT)
+    
+    WRKSHRPOOL OUTPUT(*PRINT)
+    
+    DSPJOB JOB(JOBNUMBER/JOBUSER/JOBNAME) OUTPUT(*PRINT) OPTION(*joblog) 
+    
+ 2. Take snapshots of the JVM using the WRKJVMJOB menu:
+    
+    
+
+From the OS command line type WRKJVMJOB <enter> Repeat steps a) and b) 2-3 times. Wait approximately 2 minutes between iterations.
+
+a) Type option '12' and press <enter>
+
+This image shows the list of active JVMs on the system. Option 12 has been typed on the application server job. [/support/docview.wss?uid=swg21331169&aid=1] [/support/docview.wss?uid=swg21331169&aid=1]
+
+b) Type option '13' and press <enter>
+
+This graphic shows the active JVMs on the system. Option 13 has been applied to the application server job to cause the print action. [/support/docview.wss?uid=swg21331169&aid=2] [/support/docview.wss?uid=swg21331169&aid=2]
+
+
+Notes: 
+1) Each dump (option 12) will create a javacore.txt file in the working directory of the application server. For any JVM, you can find the exact location of the core file by viewing the joblog (DSPJOBLOG). The dump files will be part of the websphere collector output which is covered in step 3 below. 
+2) Each print (option 13) will create a spool file in the user's output queue
+
+[/support/docview.wss?uid=swg21331169&amp;aid=3] 3. Run the Collector tool [http://www-01.ibm.com/support/docview.wss?uid=nas8N1016070] 
+
+Back to top
+
+
+
+
+
+
+Submitting data to IBM Support 
+
+Here are a few tips on how to gather the data you created above: 
+ * To retrieve spool files:  1. Open the System i Navigator.
+       
+       
+    2. Expand your system.
+       
+       
+    3. Log in as the user profile who created the spool file.
+       
+       
+    4. Expand Basic Operations.
+       
+       
+    5. Left-click on Printer Output to display the output files. 
+       
+       
+    6. Drag-and-drop the files from System i Navigator to your Desktop. A plain text file will be created.
+       
+       
+   
+   
+ * Follow instructions to send diagnostic information to IBM support [http://www.ibm.com/support/docview.wss?uid=swg21153852]. 
+
+
+Back to top
+
+
+
+Appendix A: Collecting data for a Classic JVM 
+
+ *  - [http://www.ibm.com/i/c.gif] Classic JVM 
+   Collect the following information when the application server process (job) is experiencing the problem: 
+   
+    1. Type the following commands to create 6 spool files that can be sent to IBM.
+       
+       
+       WRKPTFGRP (use F6 to print or send a screen shot showing the installed status of PTFs)
+       
+       WRKSYSSTS OUTPUT(*PRINT)
+       
+       WRKSBS OUTPUT(*PRINT)
+       
+       WRKSHRPOOL OUTPUT(*PRINT)
+       
+       DSPJOB JOB(JOBNUMBER/JOBUSER/JOBNAME) OUTPUT(*PRINT) OPTION(*ALL)
+       Note:This should be done in tandem with step 2 (DMPJVM) 
+       
+       DSPJOB JOB(JOBNUMBER/JOBUSER/JOBNAME) OUTPUT(*PRINT) OPTION(*joblog) 
+       
+    2. Take snapshots (thread dumps) of the JVM using the DMPJVM command.
+       
+       Run the following command:
+       
+       
+       DMPJVM JOB(jobnumber/USER/JVMNAME) 
+       This produces a spool file called QPDMPJVM. Run DMPJVM 2-3 times a few minutes apart so we can see changes in thread activity.
+       
+       Notes:  * Try to run DMPJVM at least once while gathering pex data (See step 3 below). 
+          
+          
+        * DMPJVM can take a few minutes to complete. If the command seems to time out after only a few seconds, increase the default wait time on your interactive job (300 seconds) and re-issue the DMPJVM command. 
+          
+          
+        * DMPJVM will sometimes fail to complete if the JVM heap is very large. In that case, you can get similar thread information by collecting a PROCESSINFO. For detailed instructions on gathering PROCESSINFO, refer to Rochester Support Center knowledge base document 383507103 Processinfo: The Alternative to Viewing Thread Data in DMPJVM [http://www-01.ibm.com/support/docview.wss?uid=nas8N1000038].
+       
+       
+       
+    3. Collect a PEX Trace with *PMCO Events. Run the following commands:
+       
+       
+       ADDPEXDFN DFN(HIGHCPU) TYPE(*TRACE) JOB(JOBNUMBER/JOBUSER/JOBNAME) +
+       MAXSTG(3000000) INTERVAL(1) TRCTYPE(*SLTEVT) SLTEVT(*YES) BASEVT((*PMCO *NONE *FORMAT2))
+       
+       CRTLIB IBMPEX
+       
+       STRPEX SSNID(TRACE) DFN(HIGHCPU) 
+       Wait 4 to 5 minutes. Then, run the following command: 
+       
+       SBMJOB CMD(ENDPEX SSNID(TRACE) DTALIB(IBMPEX)) 
+       
+    4. Collect statistics for the last 500 garbage collection cycles.
+       
+       While the Java job is active, go into system service tools (STRSST) and run the JAVAGCINFO macro.
+       
+       
+       JAVAGCINFO -GCCYCLES <vm address> 
+       Complete instructions for taking JAVAGCINFO -GCCYCLES [http://www-01.ibm.com/support/docview.wss?uid=nas8N1015671] 
+       
+   
+   
+
+
+Back to top
+
+
+
+
+
+RELATED INFORMATION
+ Recording your screen to share with IBM Support [https://www.ibm.com/developerworks/community/blogs/IBMElectronicSupport/entry/recording_your_screen_to_share_with_support?lang=en]

@@ -1,0 +1,62 @@
+Title: IBM Why can't I see the data for the day even though I've restored it? - United States
+
+Text:
+collector guardium aggregator archive backup restore day no data TECHNOTE (FAQ)
+
+QUESTION
+ Why can't I see the data for the day even though I've restored it? 
+
+I've got a data archive of a day for example 15th of September. I've seen data for it. I can show you old reports on that day. Also that day is archived without error. I can also restore it without error.
+
+http://www.ibm.com/support/knowledgecenter/SSMPHH_9.5.0/com.ibm.guardium91.doc/administer/topics/archiving_data.html [http://www.ibm.com/support/knowledgecenter/SSMPHH_9.5.0/com.ibm.guardium91.doc/administer/topics/archiving_data.html] 
+
+ANSWER
+This problem can be caused by different reasons. You need to plan to avoid falling into a few traps. 
+
+Scenario 1) 
+
+If the appliance is a collector then you need to restore all days from the 1st of the month. For example if you want to see the 15th of September then you need to restore the 1st of September, the 2nd of September, etc all days up to and including the 15th of September. 
+
+If you're hit by this specific problem on the collector then you can actually see sessions in reports, for that day, if you make report on sessions as main entity. Report on SQL will not show anything. Reason for this is that SQL that is being reused is archived only the 1st of the month, and then whenever new is coming in. We call that static information. Sessions are archived every day. Sessions are not static. 
+
+ 
+
+A system backup is always backing up everything even full static tables. If you want to keep appliance less than 50% full, and fill up appliance to 50% full within 5 days, so 10 days fill up the appliance fully, then you can't restore 15 days, of data archives, on to same appliance without adding more disk to it. If you fill up guardium appliance within a month I would recommend that you to do daily system backups instead of daily archives. Take note! daily system backup will possibly fail if you got less than 50% free space this is because archive files are created on the appliance disk before being sent away. 
+
+ 
+
+In short to think about: 
+
+- Data Archive give one archive (file) per day, and only on the 1st of the month it gives an archive of all data. You need to restore all days from the first day of the month to see all data for a specific day. 
+
+- Data Archives on aggregators contain all data even static tables. So each daily data archive got all data for that day. So this is not a problem for aggregators. 
+
+- System Backup give one file of everything stored on the collector. It can be very large. If you got more than 50% full database it might fail to do a system backup. 
+
+ 
+
+So what about aggregators? What if I restored day ok on aggregator but I can't see the data? Here are two more scenarios specific for aggregators. 
+
+ 
+
+Scenario 2) 
+
+Appliance is an aggregator. You usually archive older than 1 days data and ignore older than 2 days. Imagine you have export problem from one collector for 5 days. You fix the problem on day 5 or 6. You send over all the data from the collector and some is 5 days old, some is 4 days old. Now unless you change your archive setting, remember you're not archiving data older than 2 days, you will never archive that data that came delayed for some days to aggregator. You will not see this problem in archive logs. Even though you see days archived. You need to redo the archives for the days you had the problem for. 
+
+ 
+
+Scenario 3) 
+
+Appliance is an aggregator. You usually archive older than 1 days data and ignore older than 2 days. Your aggregator got aggregation problem like merge problem. You get support to fix this but it took a couple of days. Now again this is same problem as in scenario 2) you need to understand that you have to remake archives for days during which you had a problem. Even though you see days archived. You need to redo the archives for the days you had the problem for. 
+
+ 
+
+For missing days on aggregators scenario 2) and 3). I hope you have saved old aggregation/archive reports. You can use those reports to see if you had problems with export or merge. Do like this --> 
+
+- Check what date the archive file is created on. If you have problem with that ignore that. Assume it was created the day after the specific day. 
+
+- Check if you have a problem with export, or merge on day of problem. You check it in aggregation/archive reports. Also you can see in the same report when archives were made. If you lost your reports you may have a logged pmr with IBM support where we helped you to fix export or merge problem etc. If that is around the time of problem day it also give us a clue about this. 
+
+ 
+
+Example: If you restored 15th of September and there's no data in it. You have checked the file on the archive server and it says it's created at 03:15:48 on the 16th of September. This fit with that you schedule archive to run at 03:00 every night. You notice in the logs that export was not done from 2 collectors at 01:00 on the 16th of September but usually you export from 5 collectors. Import run ok on the 16th at 02:00. So actually you have got a daily archive that is missing information from two collectors.

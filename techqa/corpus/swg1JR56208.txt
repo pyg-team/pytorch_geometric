@@ -1,0 +1,274 @@
+Title: IBM JR56208: UNEXPECTED DATABASE EXCEPTION OCCURS WHEN YOU REQUEST GROUPS USING REST API AND SQUARE BRACKETS ARE USED IN FILTER - United States
+
+Text:
+  DIRECT LINKS TO FIXES
+bpm.8570.cf2016.09.delta.repository.2of2 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Standard&fixids=bpm.8570.cf2016.09.delta.repository.2of2&source=SAR]
+bpm.8570.cf2016.09.delta.repository.1of2 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Standard&fixids=bpm.8570.cf2016.09.delta.repository.1of2&source=SAR]
+8.5.5.0-WS-BPM-IFJR56208 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Standard&fixids=8.5.5.0-WS-BPM-IFJR56208&source=SAR]
+Downloading IBM Business Process Manager V8.5.7 Cumulative Fix 2016.09 [http://www-01.ibm.com/support/docview.wss?uid=swg24042580]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  You receive an unexpected database exception when you request
+   defined groups by using square brackets in the REST API filter
+   expression and the runtime database is an IBM DB2 database.
+   
+   
+   [6/22/16 13:27:12:638 UTC] 00000109 wle           E
+   CWLLG2229E: An
+   exception occurred in an EJB call.  Error: StatementCallback;
+   SQL
+   [select
+   t0.GROUP_ID,t0.GROUP_NAME,t0.DISPLAY_NAME,t0.GROUP_TYPE,t0.DESCR
+   IPTION,t
+   0.GROUP_STATE,t0.PARENT_GROUP_ID,t0.PARTICIPANT_ID from
+   LSW_USR_GRP_XREF
+    t0 where GROUP_NAME LIKE 'GD\_\[NE1\]
+   ISI-Lojas\_S\_4e3d7766-f757-44f1-bada-948e55d65435.958c0974-c6ef
+   -4850-98
+   d5-370d6661f2b5' ESCAPE '\']; DB2 SQL Error: SQLCODE=-130,
+   SQLSTATE=22025, SQLERRMC=null, DRIVER=4.11.69; nested exception
+   is
+   com.ibm.db2.jcc.am.SqlDataException: DB2 SQL Error:
+   SQLCODE=-130,
+   SQLSTATE=22025, SQLERRMC=null, DRIVER=4.11.69
+   
+   org.springframework.dao.DataIntegrityViolationException:
+   StatementCallback; SQL [select
+   t0.GROUP_ID,t0.GROUP_NAME,t0.DISPLAY_NAME,t0.GROUP_TYPE,t0.DESCR
+   IPTION,t
+   0.GROUP_STATE,t0.PARENT_GROUP_ID,t0.PARTICIPANT_ID from
+   LSW_USR_GRP_XREF
+   t0 where GROUP_NAME LIKE 'GD\_\[NE1\]
+   ISI-Lojas\_S\_4e3d7766-f757-44f1-bada-948e55d65435.958c0974-c6ef
+   -4850-98
+   d5-370d6661f2b5' ESCAPE '\']; DB2 SQL Error: SQLCODE=-130,
+   SQLSTATE=22025, SQLERRMC=null, DRIVER=4.11.69; nested exception
+   is
+   com.ibm.db2.jcc.am.SqlDataException: DB2 SQL Error:
+   SQLCODE=-130,
+   SQLSTATE=22025, SQLERRMC=null, DRIVER=4.11.69
+    at
+   org.springframework.jdbc.support.SQLExceptionSubclassTranslator.
+   translate(SQLExceptionSubclassTranslator.java:63)
+    at
+   org.springframework.jdbc.support.SQLErrorCodeSQLExceptionTransla
+   tor.translate(SQLErrorCodeSQLExceptionTranslator.java:237)
+    at
+   org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.
+   java:407
+   )
+    at
+   org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.ja
+   va:458)
+    at
+   org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.ja
+   va:466)
+    at
+   org.springframework.jdbc.core.simple.SimpleJdbcTemplate.query(Si
+   mpleJdbcTemplate.java:187)
+    at
+   com.lombardisoftware.server.ejb.persistence.dao.UnversionedPODAO
+   .executeQuery(UnversionedPODAO.java:233)
+    at
+   com.lombardisoftware.server.ejb.persistence.dao.UnversionedPODAO
+   .findOrdered(UnversionedPODAO.java:222)
+    at
+   com.lombardisoftware.server.ejb.persistence.dao.UnversionedPODAO
+   .findOrdered(UnversionedPODAO.java:207)
+    at
+   com.lombardisoftware.server.ejb.persistence.dao.UnversionedPODAO
+   .find(UnversionedPODAO.java:203)
+    at
+   com.lombardisoftware.server.ejb.persistence.dao.UserGroupDAO.fin
+   dByFilter(UserGroupDAO.java:109)
+    at
+   com.lombardisoftware.server.core.GroupCore.getGroups(GroupCore.j
+   ava:1293)
+    at
+   com.lombardisoftware.server.ejb.psapi.UserGroupAPIFacadeCore.get
+   UserGroupsByFilter(UserGroupAPIFacadeCore.java:111)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  When you specify a filter containing square brackets like
+   http://localhost:9080/rest/bpm/wle/v1/groups?filter=A[1*, you
+   see an error message like
+   
+   CWTBG0019E: Unexpected exception during execution. Exception
+   information: 'Unexpected database exception'.
+   
+   The error occurs because escaped square brackets are in the SQL,
+   which is sent to the database.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A fix is available for IBM BPM V8.5.5.0 that does not escape
+   square brackets in the filter condition of group requests.
+   
+   On Fix Central (http://www.ibm.com/support/fixcentral), search
+   for JR56208:
+   
+   1. Select IBM Business Process Manager with your edition from
+     the product selector, the installed version to the fix pack
+     level, and your platform, and then click Continue.
+   
+   2. Select APAR or SPR, enter JR56208, and click Continue.
+   
+   When you download fix packages, ensure that you also download
+   the readme file for each fix. Review each readme file for
+   additional installation instructions and information about the
+   fix.
+   
+   To apply the fix, complete the following steps:
+   
+   1. Shut down the IBM BPM server in a controlled and complete
+     manner to ensure that all transactions completed.
+   
+   2. Extract the .zip file to a directory. For example, extract
+     the file to C:\temp.
+   
+   3. Add the fix pack repository location in IBM Installation
+     Manager:
+       a. Start IBM Installation Manager.
+       b. In Installation Manager, select File > Preferences >
+         Repositories.
+       c. Click Add Repository.
+       d. Browse to or enter the file path to the repository.config
+         file. The repository.config file is located in the
+         directory where you extracted the compressed files, for
+         example, enter C:\temp\repository.config. Click OK.
+   
+   4. On the main page of the Installation Manager, click Update.
+   
+   5. Restart the IBM BPM server.
+   
+   
+   To remove the fix, complete the following steps:
+   
+   IMPORTANT NOTE:  Remove fixes in the reverse order than the
+   order in which they were applied. Do not remove a fix unless all
+   fixes applied after it are removed. You may reapply a removed
+   fix.
+   
+   Example:  If your system has fix1, fix2, and fix3 applied in
+   that order and fix2 must be removed, fix3 must be removed first;
+   then fix2 may be removed.
+   
+   1. Shut down the IBM BPM server in a controlled and complete
+   manner to ensure that all transactions completed.
+   
+   2. Start IBM Installation Manager.
+   
+   3. On the main page of the Installation Manager, click
+   Uninstall.
+   
+   4. Select the package to uninstall and follow the prompts on
+   screen.
+   
+   5. Restart the IBM BPM server.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  Not applicable
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR56208
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM ADVANCED
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9400
+   
+   
+ * REPORTED RELEASE
+   857
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-06-27
+   
+   
+ * CLOSED DATE
+   2016-07-08
+   
+   
+ * LAST MODIFIED DATE
+   2016-07-15
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   BPM STANDARD
+   
+   
+ * FIXED COMPONENT ID
+   5725C9500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R855 PSY
+   UP

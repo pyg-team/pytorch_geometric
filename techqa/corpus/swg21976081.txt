@@ -1,0 +1,43 @@
+Title: IBM What does "total disk space? in db2advis outputs mean? - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Db2advis returns the following two lines of disk space related information. What does it mean?
+...
+total disk space needed for initial set [ 0.159] MB
+total disk space constrained to [ 69.215] MB
+...
+
+
+ANSWER
+Here is an example output of db2advis.
+...
+execution started at timestamp 2010-03-16-14.25.57.562000
+Using the default table space name USERSPACE1
+found [47] SQL statements from the input file
+excluding statement [0] from the workload.
+excluding statement [1] from the workload.
+excluding statement [19] from the workload.
+excluding statement [39] from the workload.
+Recommending indexes...
+Recommending MQTs...
+Recommending Multi-Dimensional Clusterings...
+Found 19 user defined views in the catalog table
+Found [17] candidate MQTs
+Getting cost of workload with MQTs
+total disk space needed for initial set [ 0.159] MB
+total disk space constrained to [ 69.215] MB
+...
+
+db2advis will recommend indexes and MQTs etc. The indexes and MQTs etc. will use disk space. "total disk space needed for initial set" is the estimated disk space used by the recommended indexes and MQTs etc. "Initial set" means this is preliminary recommendation. The set will be refined later.
+
+"total disk space constrained to" is the maximum allowed space for the recommended indexes and MQTs etc. db2advis will try to recommend a set of indexes and MQTs etc so that the total space used doesn't exceed this constrain.
+
+Note:
+This behavior might be changed without notice in the future.
+
+
+RELATED INFORMATION
+ db2advis - DB2 Design Advisor command [http://www-01.ibm.com/support/knowledgecenter/SSEPGG_10.5.0/com.ibm.db2.luw.admin.cmd.doc/doc/r0002452.html?lang=en]

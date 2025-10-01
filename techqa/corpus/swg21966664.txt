@@ -1,0 +1,122 @@
+Title: IBM While doing a Portal migration from 7.0 to 8.5 the task generate-
+db-migration-scripts fails with error..."The database
+name component of the object qualifier must be the name of the current
+database." - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+The ConfigTrace.log shows the following... 
+
+action-execute-jcr-migration:
+Target started: action-execute-jcr-migration
+[antcall] executing target: iseries-switch-back
+
+iseries-switch-back:
+Target started: iseries-switch-back
+Target finished: iseries-switch-back
+[echo] Migrating JCR schema from JCR7.0.0.2 to JCR8.5.0.0 ...
+[echo]
+traceDDL=true,ddlscript.name=D:/IBM/WebSphere/wp_profile/PortalServer/DB
+MigrationScripts/sqlserver2005/jcr/sqlserver2005_jcr_dbmig_jcr.sql
+[migrationcontroller] Please refer to log
+File::D:/IBM/WebSphere/wp_profile/ConfigEngine\log\Migration.log [File://:D:/IBM/WebSphere/wp_profile/ConfigEngine/log/Migration.log]
+[migrationcontroller] Please refer to
+File::D:/IBM/WebSphere/wp_profile/PortalServer/DBMigrationScripts/sqlser [File://:D:/IBM/WebSphere/wp_profile/PortalServer/DBMigrationScripts/sqlser]
+ver2005/jcr/sqlserver2005_jcr_dbmig_jcr.sql for Migration ddl statements
+--- Exception Thrown ---
+D:\IBM\WebSphere\PortalServer\jcr\wp.content.repository.install\config\i
+ncludes\jcr.mig_cfg.xml:203: java.lang.Exception:
+org.xml.sax.SAXException: The database name component of the object
+qualifier must be the name of the current database.
+at
+com.ibm.cm.jcr.migrator.MigrationController.execute(MigrationController.
+java:144)
+at
+org.apache.tools.ant.UnknownElement.execute(UnknownElement.java:275)
+at org.apache.tools.ant.Task.perform(Task.java:364)
+at org.apache.tools.ant.Target.execute(Target.java:341)
+
+...
+
+Caused by: java.lang.Exception: org.xml.sax.SAXException: The database
+name component of the object qualifier must be the name of the current
+database.
+at
+com.ibm.cm.jcr.migrator.MigrationUtilityParser.parseDocument(MigrationUt
+ilityParser.java:85)
+at
+com.ibm.cm.jcr.migrator.MigrationController.startDBMigration(MigrationCo
+ntroller.java:88)
+at
+com.ibm.cm.jcr.migrator.MigrationController.execute(MigrationController.
+java:132)
+... 84 more
+
+...
+
+BUILD FAILED
+D:\IBM\WebSphere\PortalServer\jcr\wp.content.repository.install\config\i
+ncludes\jcr.mig_cfg.xml:203: java.lang.Exception:
+org.xml.sax.SAXException: The database name component of the object
+qualifier must be the name of the current database.
+
+Total time: 1 minute 33 seconds
+
+
+From the Migration.log....
+
+2015-09-10 20:55:55 Migration: DEBUG -> Creating index ICMUTSWIDE0IX1
+...
+2015-09-10 20:55:55 Migration: ERROR ->Unable to check index definition
+!!!
+2015-09-10 20:55:55 Migration: ERROR ->Reason :: The database name
+component of the object qualifier must be the name of the current
+database.
+2015-09-10 20:55:55 Migration: ERROR ->Unable to retrieve index info ::
+The database name component of the object qualifier must be the name of
+the current database.
+2015-09-10 20:55:55 MigrationUtilityParser: ERROR ->The database name
+component of the object qualifier must be the name of the current
+database.
+2015-09-10 20:55:55 Migration: ERROR ->org.xml.sax.SAXException: The
+database name component of the object qualifier must be the name of the
+current database.
+2015-09-10 20:55:55 Migration: DEBUG -> org.xml.sax.SAXException: The
+database name component of the object qualifier must be the name of the
+current database.
+java.lang.Exception: org.xml.sax.SAXException: The database name
+component of the object qualifier must be the name of the current
+database.
+at
+com.ibm.cm.jcr.migrator.MigrationUtilityParser.parseDocument(MigrationUt
+ilityParser.java:85)
+at
+com.ibm.cm.jcr.migrator.MigrationController.startDBMigration(MigrationCo
+ntroller.java:88)
+at
+com.ibm.cm.jcr.migrator.MigrationController.execute(MigrationController.
+java:132)
+at
+org.apache.tools.ant.UnknownElement.execute(UnknownElement.java:275)
+
+
+CAUSE
+In this case the problem was because the SQLServer environment was case sensitive in regards to the database names. This customer has the database names in the wkplc.properties files defined as lower case.
+
+
+
+ENVIRONMENT
+Portal migration from 7.0 to 8.5 
+
+Windows 
+
+SQLServer
+
+
+RESOLVING THE PROBLEM
+Change the database names in the wkplc.properties to upper case to match the database name in the SQLServer environment. 
+
+Then re-run the generate-
+db-migration-scripts task

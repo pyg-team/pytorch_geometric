@@ -1,0 +1,39 @@
+Title: IBM How to suppress IHS server version information in ClearQuest Web pages - United States
+
+Text:
+RNCQ8.0.0.1; hiding IBM HTTP Sever version; Rational ClearQuest security issues; Rational ClearQuest Web server configuration; ClearQuest documentation; ClearQuest configuration; SRX; RN7.1.2; RN7.1.2; RN7.1; RN8.0; RNCQ8.0; CQ; CQWeb TECHNOTE (FAQ)
+
+QUESTION
+ How can you suppress IBM HTTP Server (IHS) version information in IBM Rational ClearQuest Web pages? 
+
+CAUSE
+The default settings in the IBM HTTP Server installed with IBM Rational ClearQuest 7.1.x are such that the response messages from the ClearQuest Web server include the HTTP server type and version in their headers.
+
+ANSWER
+Starting in version 7.1, Rational ClearQuest ships with IBM HTTP Server 6.1.x, whose default configuration includes version information when an error is displayed. 
+
+The server configuration parameter ServerTokens can be used to reduce the content to just "IBM_HTTP_Server". 
+
+For example, on Windows, you can add the following lines to the httpd.conf file located in the default directory C:\Program Files\IBM\RationalSDLC\common\IHS\conf\:
+
+##
+## added to hide server info
+##
+ServerTokens ProductOnly
+
+For more information about the ServerTokens directive, see 
+http://publib.boulder.ibm.com/httpserv/manual60/mod/core.html#servertokens [http://publib.boulder.ibm.com/httpserv/manual60/mod/core.html#servertokens]
+
+To keep the server information from appearing in error responses, you can edit the web server error response file bottom.html and remove the reference to the SERVER_SOFTWARE environment variable. 
+
+You can use the following command to search all error response html files that contain SERVER_SOFTWARE on Windows:
+
+findstr /s /i SERVER_SOFTWARE "C:\Program Files\IBM\RationalSDLC\common\IHS\error\*.html"
+
+Server information in error response headers cannot be suppressed completely. 
+For more information about hiding what server is running, see 
+http://publib.boulder.ibm.com/httpserv/ihsdiag/questions.html#ihshideserver [http://publib.boulder.ibm.com/httpserv/ihsdiag/questions.html#ihshideserver]
+
+
+RELATED INFORMATION
+#IBM HTTP Server Configuration: ServerTokens [http://publib.boulder.ibm.com/httpserv/manual60/mod/core.html#servertokens ]

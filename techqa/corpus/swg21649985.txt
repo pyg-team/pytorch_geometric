@@ -1,0 +1,40 @@
+Title: IBM Authentication may hang and eventially connect when configured with LDAP in the InfoSphere Information Server suite. - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Authentication after lack of activity may hang and take 10 minutes or more to complete in InfoSphere Information Server suite. This effects Information Analyzer, Business Glossary, Metadata Workbench, and DataStage as well when WebSphere security is configured with LDAP. 
+
+SYMPTOM
+Performance is impacted as there is a delay of 10 minutes or more when you attempt to connect to the InfoSphere Information Server suite.
+
+
+CAUSE
+This is usually due to a firewall's idle timeout due to Java SDK by default is configured to use context pooling with no timeout configured. Thus every LDAP connection is sharing the same open connection and once the connection sits idle and the firewall times out the connection, all future requests are unable to connect as the Java SDK continue retry attempts until it hits the Java SDK timeout. Then a new connection will be issued which will be successful.
+
+RESOLVING THE PROBLEM
+There are two solutions to this, and both can be configured right from the WebSphere Administration console.
+
+
+
+
+1. Set the Context Pool Times Out setting 
+
+You will need to set this timeout setting smaller than the firewall's idle timeout so that this timeout will trigger before the firewall's idle timeout. But don't set it too small, as that defeats the purpose of pooling the LDAP connections. 
+
+2. Disable Context Pooling 
+
+Uncheck the box next to context pooling, which forces the LDAP calls to use separate sockets for each connection (i.e. no pooling will be performed). This can create additional open connections, depending on your user traffic. 
+
+
+Procedure
+1. Log in to the Integrated Services Console.
+2. Click Security > Global security. 
+3. Click Configure... next to the Available realm definition, which is set to Federated repositories. 
+4. Select your LDAP Repository Identifier link
+5. Select Manage repositories
+6. Select the Repository identifier
+7. Under Additional Properties, click Performance.
+8. Under General Properties Context Pool, check the box for Context pool times out and set to number of seconds less then firewall timeout for option one or uncheck the box next to context pooling for option two. 
+9. Click Apply, and then click Save.

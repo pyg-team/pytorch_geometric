@@ -1,0 +1,51 @@
+Title: IBM Message mapper command fails to properly locate the storeErrorMessages properties file - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ You are using an extended sites store model and using component services to send inbound messages. You notice the wrong store directory is looked up by the MessageMappingCmdImpl when searching for the properties file. 
+
+SYMPTOM
+You see an exception similar to the following appear in the logs:
+
+[8/22/07 12:02:36:395 EDT] 00000047 CommerceSrvr A 
+com.ibm.commerce.ubf.event.BusinessFlowEventListener 
+processActivityEvent The action not allowed either because of a 
+changed state of the object or other reasons, please try to refresh 
+your screen. 
+[8/22/07 12:02:36:435 EDT] 00000047 I 
+com.ibm.commerce.foundation.server.command.soi.MessageMappingCmdImpl 
+invokeCommand(CommandProperty) Getting Exception when retrieve the 
+resource bundle from StoreErrorDB 
+[8/22/07 12:02:36:437 EDT] 00000047 I 
+com.ibm.commerce.foundation.server.command.soi.MessageMappingCmdImpl 
+invokeCommand(CommandProperty) Can't find bundle for base name ConsumerDirect 
+Trading Portal/storeErrorMessages, locale en_US 
+java.util.MissingResourceException: 
+Can't find bundle for base name ConsumerDirect Trading Portal/storeErrorMessages,
+locale en_US 
+at 
+java.util.ResourceBundle.throwMissingResourceException(ResourceBundle.
+java:825) 
+at 
+java.util.ResourceBundle.getBundleImpl(ResourceBundle.java:794) 
+at java.util.ResourceBundle.getBundle(ResourceBundle.java:559)
+at 
+com.ibm.commerce.common.beans.StoreErrorDataBean.populate(StoreErrorDa
+taBean.java:214) 
+at 
+com.ibm.commerce.foundation.server.command.soi.MessageMappingCmdImpl.i
+nvokeCommand(Unknown Source) 
+at 
+
+
+CAUSE
+The component message mapper does not resolve the error message property file in an extended site environment.
+
+RESOLVING THE PROBLEM
+Contact IBM WebSphere Commerce support for APAR JR27642.
+
+ 
+
+Cross reference information Segment Product Component Platform Version Edition Commerce WebSphere Commerce Professional AIX, i5/OS, Linux, Solaris, Windows 6.0

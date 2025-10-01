@@ -1,0 +1,26 @@
+Title: IBM Data Server Manager (DSM) shows "IBM_RTMON_EVMON.EVENT_ACTIVITY" is an undefined name.. SQLCODE=-204, SQLSTATE=42704 error - United States
+
+Text:
+IBM_RTMON_EVMON.EVENT_ACTIVITY 204 DS_System log file SQLCODE=-204; SQLSTATE=42704 SQLCODE -204 DSM TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Data Server Manager (DSM) shows "IBM_RTMON_EVMON.EVENT_ACTIVITY" is an undefined name.. SQLCODE=-204, SQLSTATE=42704 error in DS_System log file 
+
+SYMPTOM
+DSM shows the following error in DS_System log file: 
+
+ERROR SQL Error: Error for batch element #1: "IBM_RTMON_EVMON.EVENT_ACTIVITY" is an undefined name.. SQLCODE=-204, SQLSTATE=42704, DRIVER=3.69.56; SQLState: 42704; Vendor Error Code: -204.
+com.ibm.db2.jcc.am.SqlSyntaxErrorException: Error for batch element #1: "IBM_RTMON_EVMON.EVENT_ACTIVITY" is an undefined name.. SQLCODE=-204, SQLSTATE=42704, DRIVER=3.69.56
+
+
+CAUSE
+During the DSM migration, the IBM_RTMON_EVMON.EVENT_ACTIVITY table was not created successfully.
+
+
+
+RESOLVING THE PROBLEM
+To fix the issue, stop DSM, connect to the DSM Repository Database using the DSM instance owner, and run the following DB2 command to create the missing IBM_RTMON_EVMON.EVENT_ACTIVITY table: 
+
+db2 "create table ibm_rtmon_evmon.event_activity(dbconn_int integer not null, event_id integer unique not null generated as identity)"
+
+Restart DSM after creating the IBM_RTMON_EVMON.EVENT_ACTIVITY table.

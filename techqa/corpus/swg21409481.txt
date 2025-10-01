@@ -1,0 +1,74 @@
+Title: IBM Information Server QualityStage Match Designer Database creation - United States
+
+Text:
+MD Match Designer Matching Match InformationServer QualityStage TECHNOTE (FAQ)
+
+QUESTION
+ How do I configure the Match Designer Database in Information Server? 
+
+ANSWER
+This Technote outlines the following procedures. 
+
+ 1. Prerequisites 
+ 2. What is the Match Database’s purpose? 
+ 3. Setting the database up. 
+ 4. Configuring the Match Designer for use with the Database. 
+ 5. On going maintenance 
+
+
+Prerequisites 
+The following must exist before using the Match Designer functionality.  1. Match Specification built for use in match designer. 
+ 2. Create a data set that contains the data you will run the match analysis on. 
+ 3. Create a corresponding frequency data set to be used in the match analysis. 
+ 4. DSN for local PC 
+ 5. Create Database in which to perform the Match analysis processing. 
+    a) Sizing of Database 
+    b) Character sets required 
+    c) Permission's for users 
+
+
+Additional information is also available with in the WebSphere QualityStage User Guide. 
+
+What it’s the Match Database’s purpose?  1. The results Database is used to test the match specifications (logic) designed for use in match jobs. 
+ 2. This functionality enables the user to get a baseline of how good the match criteria are, based on the match logic developed for use in the application. 
+ 3. The results Database stores statistics and match results based on your data. For Example: How many matches, duplicates, and unmatched records. 
+ 4. This functionality allows developers to change matching logic on the fly and retest within minutes. 
+
+ * There is nothing from this Database that is used in production runs so it should never be created on or moved to a production box. 
+ * The Match Designer is to be used for development purposes only with a "subset" of the full volume data. If additional match modifications are required continue to use a subset of data not conduct testing with full volume data. 
+ * Determining the subset size of data to use in the Match Designer will vary depending on the clients environment and resources. Each client should run several iterations to determine the optimal subset to utilize in the Match Designer step. 
+ * To obtain the most accurate matching thresholds a full volume run should be performed in the DataStage Designer.
+
+
+Creating the Database  1. You should start from an empty Database; using the default XMETA Database is not recommended because it can become corrupt. 
+ 2. There are certain requirements on how the Database is to be created. 
+    a) If Oracle: CHARACTERSET should be set to AL32UTF 
+    b) If SQL: default is fine. 
+    c) If DB2: create as codepage UTF-8 and page size 32K 
+    d) Permission’s - Each user has to have the ability to create tables, write and read rights in the DB. 
+    e) The minimum DB space required will be calculated as follows = Number of Passes in match specification (X) Number of Input Records (X) Input Record Length (+) 100 filler.
+    f) If this is a distributed installation, you need to have ODBC defined in your client and on the server. They must have the same name. 
+
+
+Configuring the Match Designer for use with the Database  1.  Via the DataStage Designer navigate to the your match specification to work with 
+ 2.  Double click and a window will appear indicating: 
+     “The ODBC Data Source Name (xxxxxxx) currently specified for this Match could not be found. Please create a DSN by this name or run a Test Environment Update to configure a different DSN for this Specification.” 
+ 3.  Select the “OK” button 
+ 4.  Select option “Configure Specification” 
+ 5.  From drop down select “Test Environment” 
+ 6.  For “Sample Information” navigate to the location of your data set(s) created for analysis. 
+ 7.  Under “Frequency Information” navigate to the location of your frequency data set(s) created for use. 
+ 8.  Section “Test Results Database” fill the following information in. 
+     a. Select the DSN created for the will allow the connection to the Database. 
+     b. Enter user name required 
+     c. Password required 
+     d. Test Connection 
+     e. Configuration File Location; these are the nodes located in your environment for use. Please make sure this matches the location of where the data sets reside on the server. 
+ 9.  Once connection is established hit the “Update” button. This will populate the Database with the required fields (not data) to populate when you perform the test specification. 
+ 10. The final step is to perform the Test All Passes. Please note this make take a few moments depending on the size of the files used. 
+
+
+Ongoing Maintenance  1. For each new run, results are cleared and rewritten to the DB. 
+ 2. Each user should have their own respective Databases to avoid rewriting over previous results. 
+ 3. There are separate tables holding results for each design. And from one user it is no problem to use a single Database and multiple designs. 
+ 4. Per the recommendation above in "Creating the Database" this database should not be your XMETA database. If you used the XMETA DO NOT RUN THIS STEP. When you are done testing you can drop the DB altogether.

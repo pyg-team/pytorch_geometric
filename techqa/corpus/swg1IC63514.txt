@@ -1,0 +1,166 @@
+Title: IBM IC63514: REPORTS IN ADMINISTRATION CENTER TIVOLI COMMON REPORTING MAY SHOW NO DATA - United States
+
+Text:
+AIX SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Some reports in Tivoli Common Reporting  in Tivoli Storage
+   Manager Administration Center may be returned with no data
+   displayed while a verification from the DB2 warehouse database
+   shows that data was collected for the indicated reports.
+   
+   The problem occurs when the user sets the vacation and shift
+   options in the summarization and pruning agent configuration
+   settings.
+   Basically, the reports are not querying this option correctly.
+   It was also detected that for each generated report those
+   options are not queried consistently.
+   
+   All reports can be potentially affected.
+   
+   
+   Tivoli Storage Manager Versions Affected:
+   
+   6.1 Reporting and Monitoring
+   
+   Customer/L2 Diagnostics (If Applicable)
+   
+   from the Tivoli Enterprise Monitoring Services , right click on
+   "warehouse summarization and pruning agent"  -> Reconfigure ->
+   ok -> ok -> The shift and vacation setting can be seen in the
+   "work days" tab.
+   
+   Initial Impact: Medium
+   
+   Additional Keywords:
+   zz61  zzrm61 vacationperiod shiftperiod  TSM
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Tivoli Storage Manager QUERY  and SELECT commands can be used to
+   monitor activities until apar resolution
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All users running Tivoli Storage             *
+   *                 Manager for Reporting and Monitoring         *
+   *                 version 6.1  and turned on the               *
+   *                 Shift/Vacation option in the                 *
+   *                 Summarization  and pruning agent             *
+   *                 configurations                               *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: See APAR Description                    *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   Some of the reports (Server Resources and Server Usage)
+   do not correctly query when the Shift/Vacation option is
+   set within the Summarization and Pruning agent
+   configuration.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This problem is currently projected to be fixed in level 6.1.3
+   Note that this is subject to change at the discretion of IBM.
+   
+   Affected platforms: AIX,  Linux,  and Windows
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC63514
+   
+   
+ * REPORTED COMPONENT NAME
+   TSM SERVER
+   
+   
+ * REPORTED COMPONENT ID
+   5698ISMSV
+   
+   
+ * REPORTED RELEASE
+   61W
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-10-05
+   
+   
+ * CLOSED DATE
+   2009-10-28
+   
+   
+ * LAST MODIFIED DATE
+   2009-11-10
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TSM SERVER
+   
+   
+ * FIXED COMPONENT ID
+   5698ISMSV
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R61W PSY
+   UP

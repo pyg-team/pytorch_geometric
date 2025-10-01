@@ -1,0 +1,258 @@
+Title: IBM IV52625: JOBPLANID NOT UPDATING IN JOBTASK TABLE AFTER JOBPLAN REVISION - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  PROBLEM:
+   
+   Jobplanid not updating in JOBTASK table after jobplan revision
+   
+   ENVIRONMENT:
+   
+   Core O&G Environment Details:
+   
+   Application Server:    IBM WebSphere Application Server 7.0
+   
+   Version:                         IBM Maximo for Service Provider
+   7.5.0.0 Build BUILD DB Build V7500-16 HFDB Build HF7500-01
+                                            IBM Maximo Linear
+   Management
+   7.5.0.0 Build BUILD DB Build V7500-01
+                                            Tivoli's process
+   automation
+   engine 7.5.0.0 Build 20110413-2230 DB Build V7500-721
+                                            Mobile 7.5.0.0 Build
+   20110421-
+   1725 DB Build V7500-07
+                                            IBM Maximo for E-mail
+   7.1.0.0
+   Build 20110329-2130 DB Build V7100-25
+                                            Maximo Unit Test Tool
+   7.5.0.0
+   Build 20110413-2230 DB Build V7500-01
+                                           IBM Maximo Asset
+   Management
+   Scheduler 7.5.0.0 Build 20110413-2230 DB Build V7500-19
+                                           IBM Maximo for Oil And
+   Gas
+   7.5.0.0 Build 20110418-1031 DB Build V7500-22
+   Server OS:                  Windows XP 5.1 build 2600 Service
+   Pack 3
+   
+   
+   Customer's Production Environment Details:
+   
+   1. Web Appplication Server, OS, plus version.bat or Help/About
+   Maximo
+   in the PMR detailed.
+   
+           Application Server:  IBM WebSphere Application Server
+   7.0
+   
+           Server OS:             Windows Server 2008 R2 6.1 build
+   7601
+   Service Pack 1
+   
+           Server DB:             Oracle 11.2 (Oracle Database 11g
+   Enterprise Edition Release 11.2.0.3.0 - 64bit Production)
+   
+           Version:                       IBM Maximo Asset
+   Management
+   7.5.0.2 Build 20120219-2030 DB Build V7502-00
+                                                    Tivoli's
+   process
+   automation engine 7.5.0.2-IFIX20121213-1330 Build 20120219-2030
+   DB
+   Build V7502-25 HFDB Build HF7502-06
+                                                    WMS Data
+   Factory
+   2.0.1.0 Build WMS_260_BUILD_2013_01_16_B25 DB Build V200-18
+                                                    IBM Maximo
+   Asset
+   Management Scheduler 7.5.0.0 Build BUILD_NUM DB Build V7501-03
+                                                     IBM Maximo
+   Calibration 7.5.0.0 Build BUILD_NUM DB Build V7501-01
+                                                    WMS 2.7.0.0
+   Build
+   WMS_270_BUILD_2013_07_02_B15 DB Build V270-39
+                                                   IBM Maximo for
+   Oil And
+   Gas 7.5.0.0-20120907-1143 Build 20110418-1031 DB Build V7500-22
+   HFDB
+   Build HF7500-00
+   
+   
+   STEPS TO REPRODUCE:
+   
+   1)Create JP 1 and make active
+   
+   2)Create JP2, nest it with job plan JP1 and make active.
+   
+   3) Run the below query:
+   
+   select jpnum,jptask,jobplanid,nestedjpnum,nestedjobplanid from
+   maximo.JOBTASK where jpnum='JP2' ;
+   
+   Note nestedjobplanid shows as 172
+   
+   4)Run the below query:
+   
+   select jpnum,jobplanid,pluscrevnum from maximo.jobplan where
+   jpnum='JP1' and siteid='MCLEAN';
+   
+   Note jobplanid also shows as 172
+   
+   5)Revise the jobplan JP1 .
+   
+   6)After revision , run the same 2 above queries again.
+   
+   7)Note for the 1st query, the nestedjobplanid still shows 172
+   
+   8)Note for the 2nd query, you can see the Job plan ID for
+   nested job plan there are 2 entry's 172 and 174. Out of these ,
+   174  is latest job plan ID which is not updated in first query
+   output . i ,e JOBTASK table
+   
+   9)The Jobplanid is not updated in the JOBTASK table after the
+   jobplan revision is done
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  n/a
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * Maximo users of job plan revisions and nested job plans      *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * JOBTASK.NestedJobPlanId is not maintained with regards to    *
+   * parent job plan status.                                      *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Apply latest fix pack.                                       *
+   ****************************************************************
+   NestedJobPlanId not updating in JOBTASK table when parent job
+   plan is revised.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  NestedJobPlanId updated on JOBTASK when parent job plan revision
+   is made ACTIVE. Only JOBTASKs relating to JOBPLANs (via
+   JOBTASK.JOBPLANID) that have statuses of
+   ACTIVE,DRAFT,PNDREV,INACTIVE are updated. JOBTASKs for job plans
+   with a status of  REVISED or CANCEL are not updated.
+   
+   The fix for this APAR is contained in the following maintenance
+   package:
+    | release\fix pack\interim fix for Release 7.5.0.6 of Base
+   Services
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV52625
+   
+   
+ * REPORTED COMPONENT NAME
+   MAXIMO OIL & GA
+   
+   
+ * REPORTED COMPONENT ID
+   5724R5400
+   
+   
+ * REPORTED RELEASE
+   750
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-11-28
+   
+   
+ * CLOSED DATE
+   2013-12-06
+   
+   
+ * LAST MODIFIED DATE
+   2013-12-06
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  MAXIMO
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   MAXIMO OIL & GA
+   
+   
+ * FIXED COMPONENT ID
+   5724R5400
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R750 PSY
+   UP

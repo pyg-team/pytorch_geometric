@@ -1,0 +1,101 @@
+Title: IBM IC87231: DUMP EVENT "SYSTHROW" (00040000) DETAIL "JAVA/LANG/OUTOFMEMORYER ROR" "FAILED TO CREATE STACK TRACE" RECEIVED - CASE 2 - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS SUGGESTION FOR FUTURE RELEASE.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Dump Event "systhrow" (00040000) Detail
+   "java/lang/OutOfMemoryError" "Failed to
+   create stack trace (most likely due to lack of OS memory)"
+   received,
+      All 3 patterns below cause out of memory condition for Lotus
+   Notes 8.5 FP1
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *  PMR was closed as issue was due to 3rd party software.
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC87231
+   
+   
+ * REPORTED COMPONENT NAME
+   LOTUS EXPEDITOR
+   
+   
+ * REPORTED COMPONENT ID
+   5724R0900
+   
+   
+ * REPORTED RELEASE
+   623
+   
+   
+ * STATUS
+   CLOSED SUG
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-10-15
+   
+   
+ * CLOSED DATE
+   2013-05-10
+   
+   
+ * LAST MODIFIED DATE
+   2013-05-10
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    LO51773
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

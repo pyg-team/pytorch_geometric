@@ -1,0 +1,154 @@
+Title: IBM Is the Sharepoint Connector compatible with Sharepoint 2010? - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Here are a number of questions from a customer related to crawling Sharepoint 2010:
+
+<blockquote>
+Is a connector for SharePoint 2010 available?
+
+I assume we would get the new connector under our maintenance and we would not have to pay for it. Is this correct?
+
+We are currently on Velocity version 7.0. Do we need to be on Velocity 7.5 or 8.0 in order to use the SP 2010 connector?
+
+Would we need to re-crawl using the new connector?
+
+What other changes do we need to make to Velocity so it works with SharePoint 2010?
+
+Is there anything our SharePoint team needs to be aware of in terms of interacting with Velocity with SP 2010?
+
+Are there any other clients using SharePoint 2010? 
+
+What has been their experience with Velocity and SharePoint 2010?
+
+Anything else we need to be aware of?
+</blockquote> 
+
+ANSWER
+
+
+>  
+Is a connector for SharePoint 2010 available?
+
+
+
+
+
+The current SharePoint connector that you are using with Sharepoint 2007 is also compatible with Sharepoint 2010.
+
+
+
+>  
+I assume we would get the new connector under our maintenance and we would not have to pay for it. Is this correct?
+
+
+
+
+
+That is correct... but it doesn't matter since the existing connector works with Sharepoint 2010. (see answer above)
+
+
+
+>  
+We are currently on Velocity version 7.0. Do we need to be on Velocity 7.5 or 8.0 in order to use the SP 2010 connector?
+
+
+
+
+
+It is highly recommended to be on 8.0 as we recently upgraded the connector to use a new Velocity web service which is available from 8.0 onwards. So there is a new Sharepoint connector for 8.0 (and this is included in your maintenance).
+
+
+
+But still, it is possible to be on an older version of Velocity and crawl your SharePoint 2010 repositories. 
+
+
+
+>  
+Would we need to re-crawl using the new connector?
+
+
+
+
+
+If you upgrade your existing Sharepoint 2007 to Sharepoint 2010 and do not upgrade Velocity to 8.0, you do not need to do a full recrawl of your Sharepoint collection. You can continue to do a refresh to get the changes.
+
+
+
+If you upgrade Velocity from your existing 7.0-x version to 8.0 you do not have to re-crawl either. However, it is recommended to recrawl if your Sharepoint site uses extensive Sharepoint Groups and Permissions. If your Sharepoint installation uses a simple hierarchy, for example where subsites and lists simply get their permissions from their parent site, then you don't need to recrawl.
+
+
+
+>  
+What other changes do we need to make to Velocity so it works with SharePoint 2010?
+
+
+
+
+
+No need to make any changes to Velocity. Your Sharepoint administrators will need to follow certain instructions on their SharePoint end, to create Vivisimo Crawl account in SharePoint 2010, for which we have documentation.
+
+
+
+>  
+Is there anything our SharePoint team needs to be aware of in terms of interacting with Velocity with SP 2010?
+
+
+
+
+
+There are not a lot of clients who have upgraded to Sharepoint 2010 or have been crawling it regularly.
+
+
+
+>  
+Are there any other clients using SharePoint 2010? 
+
+
+
+
+
+We have Sharepoint 2010 at Vivisimo and use it as a corporate wide project and content management suite. We have been using our Sharepoint connector with it for some time now and have not run into any issues. We are not aware of other clients who are crawling Sharepoint 2010 at this time.
+
+
+
+>  
+What has been their experience with Velocity and SharePoint 2010?
+
+
+
+
+
+We have been very pleased with the results of crawling Sharepoint 2010 at Vivisimo. We would be happy to set up a demonstration for you to show our crawl working here at Vivisimo.
+
+
+
+>  
+Anything else we need to be aware of?
+
+
+
+
+
+Just to re-iterate, if you upgrade Velocity to 8.0, we do have a new connector. This new connector, as well as your your existing connector, will crawl Sharepoint 2010. We also have a new webservice that goes along with the Velocity 8.0 Sharepoint connector. So if you upgrade Velocity to 8.0 you will need to have the Sharepoint administrators upgrade their webservice using our a simple installation package that we provide. You do not have to re-crawl in any case, but we strongly recommend you do under certain circumstances (see question and answer about recrawling above).
+
+
+
+NOTE: To use new Vivisimo custom webservice, client needs to 'install' or 'upgrade' .Net framework upto 3.5 on Sharepoint server. Along with Connector patch, we will need to use 'patched' crawler.
+
+If they crawl using the old connector there is no available option to crawl 'sharepoint 2010 w/ custom webservice' in the seed. The customer is going to try pointing the old connector at the sharepoint 2010 webservice.
+
+
+
+Can they just use the 'sharepoint 2007 w/ custom webservice' option?
+
+
+
+Once they install VivisimoWebServices for SharePoint 2010 on their SharePoint 2010 server, they could select the option "sharepoint 2007 w/ custom webservice" and crawl 
+
+ 
+
+HISTORICAL NUMBER
+ 1393

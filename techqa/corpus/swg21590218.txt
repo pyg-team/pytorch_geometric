@@ -1,0 +1,52 @@
+Title: IBM Improve Performance of Ruleset Extraction from Decision Center and Rule Team Server (RTS) - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How can I improve the performance of ruleset extraction from WebSphere Operational Decision Management (WODM) Decision Center or WebSphere ILOG Rule Team Server (RTS)? 
+
+ANSWER
+This document addresses how to improve the performance when extracting rules from WODM Decision Center or Rule Team Server (RTS). For the purposes of this document, we will use RTS to refer to both entities, unless explicitly stated otherwise.
+Rules deployment is by definition a time and performance intensive process; it is expected to take long to generate the ruleset archive. The following recommendations can help reduce the time and resources required during ruleset extraction:
+
+
+ * Follow the recommendations to improve RTS performance [http://www.ibm.com/support/docview.wss?uid=swg21584855], especially regarding installation and memory configuration. If possible, migrate to v7.1.1.4 [http://www.ibm.com/support/docview.wss?uid=swg21591798] or later [http://www.ibm.com/support/docview.wss?uid=swg21589725], since certain performance improvements, especially for ruleset extraction and editing, have been incorporated. (If you face compile errors in RTS after migrating, refer to this technote [http://www.ibm.com/support/docview.wss?uid=swg21586358].)
+
+ * "Warm up" ruleset archive generation. Once an archive has been generated for the first time, subsequent ruleset archive generations should be significantly shorter since the RTS cache has been populated.
+
+ * Make sure that the RTS cache is not removed/deleted by system (or other) processes. The RTS cache is located by default in the temp directory. You can move it to another location by specifying the RTS property teamserver.build.path [http://publib.boulder.ibm.com/infocenter/dmanager/v7r5/index.jsp?topic=%2Fcom.ibm.dcenter.bu.rules%2FContent%2FBusiness_Rules%2F_pubskel%2FInfocenter_Primary%2Fps_DCBU_DCenter_Rules2558.html], for example:
+   teamserver.build.path=/webdata/rtscache 
+   
+   If you start the server as root user for example, then RTS will append "_root" to use the following cache location: /webdata/rtscache_root. RTS creates the rtscache_root subfolder in the folder webdata, so make sure that the UNIX user running RTS has permissions on that folder (root will have the necessary permissions, but another user would have to be given access to the /webdata folder). 
+   
+   If you have Java2 Security enabled in the application server, update the META-INF/was.policy file in the RTS ear file to add the following permissions: 
+   permission java.io.FilePermission "${/}webdata", "write";
+   permission java.io.FilePermission "${/}webdata${/}-", "read, write, delete"; 
+
+ * Accelerate ruleset generation by turning on Automatic Build by checking Project > Edit Project options > Build automatically. This will enable RTS to generate the IRL as soon as a rule is saved. If this is turned off, the first time a ruleset is generated, RTS will generate the IRL of the entire ruleset, which can be a performance bottleneck. However this can slow down the time taken to save a rule after editing it.
+
+ * Disable the flag to check the ruleset archive by unchecking Project > Edit project options > Check the ruleset archive. By default, the ruleset archive is checked for syntax errors. You should turn this off only in testing environments to improve performance. If deploying to a production environment it is recommended that the ruleset check is activated. 
+
+ * Reduce the size of the RuleApps by generating multiple smaller rulesets from a rule project.
+
+ * Turn off baseline generation upon RuleApp extraction, if it is not needed.
+
+ * If the ruleset extraction times out, increase the timeout value in the web.xml file of the RTS EAR, and redeploy the EAR. If working with Oracle Weblogic Application Server, you might have to increase the StuckThreadMaxTime value. The following document addresses ruleset extraction timeout in greater detail: Timeout on RuleApp deployment from Rule Team Server [http://www.ibm.com/support/docview.wss?uid=swg21456181].
+
+
+
+If the above recommendations do not help, contact IBM support with the following information:  * Environment details including the application server, JDK, database and operating system. 
+ * RTS server logs, including FFDC logs if working with WebSphere Application Server. 
+ * The typical behavior of RTS users 
+ * The typical load on RTS, including the number of simultaneous users and number of rulesets being generated 
+
+RELATED INFORMATION
+ Improve Performance of RTS and Decision Center [http://www.ibm.com/support/docview.wss?uid=swg21584855]
+Memory and Performance issues while using RTS [http://www.ibm.com/support/docview.wss?uid=swg21430582]
+
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration WebSphere ILOG Rule Team Server Performance Platform Independent 7.1, 7.0, 6.7, 6.6

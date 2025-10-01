@@ -1,0 +1,94 @@
+Title: IBM MustGather: WebSphere DataPower SOA Appliance unexpected reload, reboot, or an unresponsive device. - United States
+
+Text:
+crash; reload; reboot; hang; restart; hung device; throttle; unresponsive TECHNOTE (FAQ)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ English 
+
+QUESTION
+ If a DataPower appliance unexpectedly reloads or reboots, what information is needed to understand the cause? 
+
+CAUSE
+A DataPower appliance may throttle due to multiple reasons from out of memory events, throttling, firmware hang, etc.
+
+ANSWER
+To diagnose an appliance in this state IBM support requires the following information: 
+
+Step 1. Identify and Collect Error Reports and IPMI Sel Events (Hardware Based) related to event
+Step 2. Check and Update Failure Notification Settings for collection of future events
+Step 3. Collect any appliance metrics if available of the event
+Step 4. Collect any device system logs if available of the event
+Step 5. Collect any device latency logs if available of the event
+Step 6. Provide Details of the Environment State, Impacted and Unaffected Devices
+Step 7. Provide Details on type of Environment and also if previous reload or reboot events occurred
+
+
+
+Step 1: Review Status->System->Failure Notification for the latest generated Error Reports. If device inaccessible through WebGUI/BluePrint attempt data collections via SSH/CLI/Serial. 
+
+ * Identify an error report generated at the event or just after the reload/reboot, such as on-startup. Collect the most recent error reports. 
+ * If error report is not available, generate one manually.
+
+In the CLI: 'top; co; save error-report'. 
+In the WebGUI via Control Panel->Troubleshooting->Reporting Section click Generate Error Report. 
+In the Blue Print Console via Menu Button (upper left corner of the browser), use the Troubleshooting link, Reporting Section 'Generate Error Report'. 
+
+There can be a few reasons for an unexpected reload. Throttle - suggesting we triggered throttle settings, low memory - device ran low in memory due to service and/or configuration activity, crash - suggesting an unexpected reload due to a potential defect. Below is an example of a 'throttle' event and the 'location' specifies the error report that ties to that event.
+[/support/docview.wss?uid=swg21459105&aid=1] [/support/docview.wss?uid=swg21459105&aid=1] 
+
+ 
+
+ * If WebGUI and BluePrint Console are unresponsive (500 internal error) Collect the File System Status via SSH or CLI(Serial)
+
+Gather File System Status: 
+in the CLI: 'top; co; show filesystem' 
+
+Free encrypted space: If Exhausted, check local: and config: directories, secure backup directories, logstore: for large logs, former boot partition can also consume this space (former boot partition removed via "co;flash;boot delete" -- warning this command would remove the boot switch ability) 
+Free temporary space: If Exhausted, check temporary: and logtemp: for large files. Also check image: directory for firmware images. "co;flash; shutdown reboot" required to recover from exhausted temporary space 
+Free internal space: If Exhausted, Check probe usage, config imports, use of save checkpoint, check FlashFiles (/drouter/ramdisk2) in error report for large sized files. "co;flash; shutdown reload" required to recover from exhausted internal space . 
+
+ * Collect the CryptoEngineStatus and also if a hardware device collect IPMISelEvents.
+
+Gather Crypto Engine Status 
+CLI: 'top; co; show crypto-engine' 
+WebGUI: Status->Crypto->Crypto Accelerator Status 
+Blueprint Console: Menu Button (upper left corner of the browser), Status->Crypto->Crypto Accelerator Status 
+
+Gather IPMI Status, Hardware Only (Virtual and Docker do not support this command) 
+CLI: 'top; co; show ipmi-sel-events' 
+WebGUI: Status->System->IPMI SEL Events 
+Blueprint Console: Menu Button (upper left corner of the browser), Status->System->IPMI SEL Events 
+
+
+
+Step 2: Assure Failure Notification Settings are properly enabled and collecting the most information possible for future unexpected reload or reboot events 
+https://developer.ibm.com/answers/questions/204407/datapower-best-practices-most-detailed-error-repor.html [https://developer.ibm.com/answers/questions/204407/datapower-best-practices-most-detailed-error-repor.html] 
+
+
+
+Step 3: Collect any appliance metrics of the event if available from remote monitors. Ideally captures of data over time related to CPU, Active Connections, Memory Usage, Load Usage 
+This could also be in the form of CLI captures such as: http://www-01.ibm.com/support/docview.wss?uid=swg21377610 [http://www-01.ibm.com/support/docview.wss?uid=swg21377610] 
+
+
+Step 4: Any service and system logs available, either local or remote log targets files that are leading up and into to the unexpected reload or reboot event
+
+
+
+Step 5: Latency logs related to service traffic on DataPower
+A local log target is ideal for the latency logs to avoid any dropped messages. The log target should be setup for both categories 'extlatency' and 'latency' at the 'info' log level. If further assistance is needed this technote will walk through how to configure a latency log
+Note: this example only shows how to include the latency category, remember to include extlatency as another entry
+http://www-01.ibm.com/support/docview.wss?uid=swg21661599 [http://www-01.ibm.com/support/docview.wss?uid=swg21661599]
+
+
+
+Step 6: If this issue is being experienced on multiple devices or only one device of a group, clarify the state of the environment
+Data from Steps 1 through 5 should be provided from multiple devices if more than one is impacted. If one device, or a few inside a group are impacted, please also provide Steps 1 through 5 from at least one device that is unaffected.
+
+
+
+Step 7: Provide Details on type of Environment and also if previous reload or reboot events occurred
+It is important to note to the support team the environment is test, development, production and the business impact. If the issue has happened more than once, provide the date and times of other events if available. [http://www.ibm.com/support/docview.wss?uid=swg27020562] [http://www.ibm.com/support/docview.wss?uid=swg27018966] [http://www.ibm.com/support/docview.wss?uid=swg27017385] [http://www.ibm.com/support/docview.wss?uid=swg24023611]
+
+Additional Notes:
+This technote may guide you to what caused the problem by looking at the trace: Backtrace May Contain Object Information on what caused the reload [http://www.ibm.com/support/docview.wss?uid=swg21652035]

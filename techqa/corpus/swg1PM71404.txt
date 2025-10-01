@@ -1,0 +1,189 @@
+Title: IBM PM71404: WCM MIGRATION FAILED AT UPDATE-WCM-PROFILE-CATEGORIES TASK - United States
+
+Text:
+  A FIX IS AVAILABLE
+Fixes integrated in WebSphere Portal 7.0.0.1 & 7.0.0.2 Combined Cumulative Fixes [http://www-01.ibm.com/support/docview.wss?uid=swg24029452]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The task of update-wcm-profile-categories failed during
+   update-wcm-data because with below exception:
+   
+   
+        [exec]      [java] The profile categories of:
+   a86def6a-7b53-442a-9d55-fd423f2c38bc was migrated
+   successfully.Tiempo total
+   de procesamiento del elemento: 503 ms.
+        [exec]      [java] tareas totales: 5715
+        [exec]      [java] errores totales: 4
+        [exec]      [java] Tiempo total de procesamiento de todos
+   los elementos: 5983179 ms.
+        [exec]      [java] removing the stateful bean.
+        [exec]      [java] java.lang.Exception: No se han podido
+   procesar 4 elementos. Consulte el archivo de registro para
+   obtener m &#65441;s detalles.
+        [exec]      [java]         at
+   com.ibm.workplace.wcm.app.migration.ejb.MigrationBeanClient
+   .runTask(MigrationBeanClient.java:161)
+        [exec]      [java]         at
+   com.ibm.workplace.wcm.app.migration.ejb.MigrationBeanClient
+   .main(MigrationBeanClient.java:204)
+   
+        [exec] BUILD FAILED
+        [exec] /opt/IBM/WebSphere7/PortalServer/wcm/prereq
+   .wcm/config/includes/mig_cfg.xml:904: The following error
+   occurred
+   while executing this line:
+        [exec] /opt/IBM/WebSphere7/PortalServer/wcm/prereq
+   .wcm/config/includes/mig_cfg.xml:581: The following error
+   occurred
+   while executing this line:
+        [exec] /opt/IBM/WebSphere7/PortalServer/wcm/prereq
+   .wcm/config/includes/prereq.wcm_cfg.xml:3426: Java returned: 1
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Take into consideration of the case when profile category
+   doesn't exist any more.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  WCM migration failed at update-wcm-profile-categories task
+   
+   The task of update-wcm-profile-categories failed during
+   update-wcm-data because with below exception:
+   
+   
+        [exec]      [java] The profile categories of:
+   a86def6a-7b53-442a-9d55-fd423f2c38bc was migrated
+   successfully.Tiempo total de procesamiento del elemento: 503 ms.
+        [exec]      [java] tareas totales: 5715
+        [exec]      [java] errores totales: 4
+        [exec]      [java] Tiempo total de procesamiento de todos
+   los elementos: 5983179 ms.
+        [exec]      [java] removing the stateful bean.
+        [exec]      [java] java.lang.Exception: No se han podido
+   procesar 4 elementos. Consulte el archivo de registro para
+   obtener m &#161;s detalles.
+        [exec]      [java]         at
+   com.ibm.workplace.wcm.app.migration.ejb.MigrationBeanClient
+   .runTask(MigrationBeanClient.java:161)
+        [exec]      [java]         at
+   com.ibm.workplace.wcm.app.migration.ejb.MigrationBeanClient
+   .main(MigrationBeanClient.java:204)
+   
+        [exec] BUILD FAILED
+        [exec] /opt/IBM/WebSphere7/PortalServer/wcm/prereq
+   .wcm/config/includes/mig_cfg.xml:904: The following error
+   occurred while executing this line:
+        [exec] /opt/IBM/WebSphere7/PortalServer/wcm/prereq
+   .wcm/config/includes/mig_cfg.xml:581: The following error
+   occurred while executing this line:
+        [exec] /opt/IBM/WebSphere7/PortalServer/wcm/prereq
+   .wcm/config/includes/prereq.wcm_cfg.xml:3426: Java returned: 1
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Take into consideration of the case when profile category
+   doesn't exist any more.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM71404
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSPHERE PORTA
+   
+   
+ * REPORTED COMPONENT ID
+   5724E7600
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-08-22
+   
+   
+ * CLOSED DATE
+   2012-08-24
+   
+   
+ * LAST MODIFIED DATE
+   2012-08-24
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBSPHERE PORTA
+   
+   
+ * FIXED COMPONENT ID
+   5724E7600
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R700 PSY
+   UP

@@ -1,0 +1,70 @@
+Title: IBM IIS-CONN-ODBC-00004 error when performing column analysis - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Information analyser is receiving the following error when conducting a column analysis. This occurs when selecting 1 or more columns but a single column will sometimes process 
+
+SYMPTOM
+Message ID: IIS-CONN-ODBC-00004pxbridge(6),0: 
+
+ODBC function "SQLExecute" reported: SQLSTATE = HY000: 
+
+Native Error Code = -5: 
+
+Msg = [IBM(DataDirect OEM)][ODBC Oracle Wire Protocol driver][Oracle]Unexpected Network Error. (CC_OdbcDBStatement::executeInsert, file CC_OdbcDBStatement.cpp, line 829) 
+
+
+ODBC function "SQLEndTran(SQL_ROLLBACK)" reported: SQLSTATE = 08S01: 
+
+Native Error Code = -4: 
+
+Msg = [IBM(DataDirect OEM)][ODBC Oracle Wire Protocol driver][Oracle]Connection Dead. (CC_OdbcConnection::rollback,file CC_OdbcConnection.cpp, line 1,239)
+
+
+
+
+CAUSE
+Timeout errors
+
+
+RESOLVING THE PROBLEM
+The below settings were implemented in the IADB Data Source connection to reduce the possibility of a timeout error occurring.
+
+LoginTimeout=30
+QueryTimeout=-1
+ConnectionRetryCount=3
+ConnectionRetryDelay=15
+
+[IADB]
+Driver=/app/IBM/InformationServer/Server/branded_odbc/lib/VMora00.so
+Description=DataDirect Oracle Wire Protocol driver
+ApplicationUsingThreads=1
+ArraySize=60000
+CachedCursorLimit=32
+CachedDescLimit=0
+CatalogIncludesSynonyms=1
+CatalogOptions=0
+DefaultLongDataBuffLen=1024
+DescribeAtPrepare=0
+EnableDescribeParam=0
+EnableScrollableCursors=1
+EnableStaticCursorsForLongData=0
+EnableTimestampWithTimeZone=0
+HostName=punio02l.unix.anz
+LocalTimeZoneOffset=
+LockTimeOut=-1
+LogonID=
+Password=
+PortNumber=1521
+ProcedureRetResults=0
+SID=SNBIS01P
+UseCurrentSchema=1
+ColumnsAsChar=1
+EnableNcharSupport=1
+ColumnSizeAsCharacter=1
+LoginTimeout=30
+QueryTimeout=-1
+ConnectionRetryCount=3
+ConnectionRetryDelay=15

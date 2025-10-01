@@ -1,0 +1,34 @@
+Title: IBM Issue with installing a IBM Datacap Taskmaster Capture Connector on existing Datacap system - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When performing an installation of an extra component the installation fails with error code 1334 
+
+SYMPTOM
+Unable to add one of the available components of Datacap e.g IBM Datacap Taskmaster eDocuments
+
+
+DIAGNOSING THE PROBLEM
+Run in command line setup.exe /V"/log C:\log.txt"
+
+RESOLVING THE PROBLEM
+
+1)Backup all configuration files for the Rulerunner Server (i.e Rulerunner.xml, dc_KTF.xml, screenshots of RR server timeouts/configurations, backup of Taskmaster application if locally on RR server) 
+
+
+2)Perform UnInstall of Datacap
+
+
+3)Restart Server
+
+
+4)Reinstall IBM Datacap Taskmaster along with connectors desired for
+the RR server
+
+
+5)Install Fix Pack update (FP 4 is the latest version)
+
+
+6)Reinstate the security keys from the Taskmaster Server, or use the dc_KTF.xml from the backup, onto the RR server so that RR and TM server can communicate security.

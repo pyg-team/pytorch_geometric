@@ -1,0 +1,46 @@
+Title: IBM Internal error has occurred Please contact your administrator - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Problem:
+
+IWR report fails.
+
+Error Message - 
+
+Internal error has occurred. Please contact your administrator.
+
+
+Event Viewer Error Messages on the server:
+
+SWID=20030207134326703WOTTROBINSS-2KDPID1568TID712 - WOTTROBINSS-2KD, 1080(e24), 2003/02/07 13:43:26.765; Error: 0, Generic; Process ID: 1080; Thread: 3620; Host: WOTTROBINSS-2KD; Text: The following error was sent to the Consumer. Error number: 16 . Error message: Unable to determine if prompts are complete.; BackTrace Info: 1. File Name: Y:\src\iwr\IWR\RequestManager\ReportAccess\iwrreportcmd.cpp; Line#:247; Desc.:The following error was sent to the Consumer. Error number: 16 . Error message: Unable to determine if prompts are complete.; 
+
+OR
+
+machinename, 5276(1498), 2003/02/07 13:43:20.843; Error: 0, Generic; Process ID: 5276; Thread: 5272; Host: machinename; Text: Error connecting to (machinename) on port (9041[*]); BackTrace Info: 1. File Name: 
+Y:\src\impromptu\ImpromptuServer\PDFRenderer\pdfrrenderingvisitor.cpp; Line#:172; Desc.:Error: 859988783, Generic; Process ID: 5276; Thread: 5272; Host: machinename; Text: Error connecting to (machinename) on port (9041[*]); BackTrace Info: 1. File Name: Client/PDFDocument.cpp; Line#:71; Desc.:Error connecting to (machinenames) on port (9041[*]); ; 2. File Name: Y:\src\impromptu\ImpromptuServer\app.exe\child.lib\PDFPublisher.cpp; Line#:355; Desc.:PDFPublisher::Publish; 3. File Name: Y:\src\impromptu\ImpromptuServer\app.exe\ole.lib\APPAUTO.CPP; Line#:8582; Desc.:CAppAuto::ExecuteRunReport Excel; 
+
+Solution:
+
+Open Configuration Manager and expand the services section.
+
+Expand the PDF Server section. Select Distributed PDF Servers. In the right pane, look at the Host section. Ensure the computer name selected is a valid server and is spelled correctly. Select the computer name, click Actions, Apply Selection. 
+
+SYMPTOM
+Unable to determine if prompts are complete.; BackTrace Info: 1. File Name: Y:\src\iwr\IWR\RequestManager\ReportAccess\iwrreportcmd.cpp; Line#:247; Desc.:The following error was sent to the Consumer. Error number: 16 . Error message: Unable to determine if prompts are complete.; 
+
+OR
+
+machinename, 5276(1498), 2003/02/07 13:43:20.843; Error: 0, Generic; Process ID: 5276; Thread: 5272; Host: machinename; Text: Error connecting to (machinename) on port (9041[*]); BackTrace Info: 1. File Name: Y:\src\impromptu\ImpromptuServer\PDFRenderer\pdfrrenderingvisitor.cpp; Line#:172; Desc.:Error: 859988783, Generic; Process ID: 5276; Thread: 5272; Host: machinename; Text: Error connecting to (machinename) on port (9041[*]); BackTrace Info: 1. File Name: Client/PDFDocument.cpp; Line#:71; Desc.:Error connecting to (machinenames) on port (9041[*]); ; 2. File Name: Y:\src\impromptu\ImpromptuServer\app.exe\child.lib\PDFPublisher.cpp; Line#:355; Desc.:PDFPublisher::Publish; 3. File Name: Y:\src\impromptu\ImpromptuServer\app.exe\ole.lib\APPAUTO.CPP; Line#:8582; Desc.:CAppAuto::ExecuteRunReport Excel;
+
+RESOLVING THE PROBLEM
+Open Configuration Manager and expand the services section.
+
+Expand the PDF Server section. Select Distributed PDF Servers. In the right pane, look at the Host section. Ensure the computer name selected is a valid server and is spelled correctly. Select the computer name, click Actions, Apply Selection.
+
+
+
+HISTORICAL NUMBER
+ 119977

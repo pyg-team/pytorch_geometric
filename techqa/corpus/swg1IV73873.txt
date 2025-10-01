@@ -1,0 +1,176 @@
+Title: IBM IV73873: UPDATE THE TCORE DB2 JDBC DRIVER IN THE FUTURE RELEASE - United States
+
+Text:
+  READMES ARE AVAILABLE
+IBM Tivoli Composite Application Manager for SOA 7.2 Interim Fix 5 README 7.2.0.1-TIV-ITCAMSOA-IF0005 [http://www-01.ibm.com/support/docview.wss?uid=isg400002229]
+IBM Tivoli Composite Application Manager for SOA 7.2 Interim Fix 7 README 7.2.0.1-TIV-ITCAMSOA-IF0007 [http://www-01.ibm.com/support/docview.wss?uid=isg400002451]
+IBM Tivoli Composite Application Manager for SOA 7.2 Interim Fix 9 README 7.2.0.1-TIV-ITCAMSOA-IF0009 [http://www-01.ibm.com/support/docview.wss?uid=isg400002627]
+IBM Tivoli Composite Application Manager for SOA 7.2 Interim Fix 12 README 7.2.0.1-TIV-ITCAMSOA-IF0012 [http://www-01.ibm.com/support/docview.wss?uid=isg400003852]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Problem Description -
+   The TCORE DB2 JDBC driver in SOA 7.2.0.1 has an issue that leaks
+   com.ibm.db2.jcc.b.ib objects until the Java heap space is
+   exhausted and java.lang.OutOfMemoryError is thrown.
+   
+   See APAR IZ36247 [http://www-01.ibm.com/support/docview.wss?uid=swg1IZ36247] -
+       http://www-01.ibm.com/support/docview.wss?uid=swg1IZ36247 [http://www-01.ibm.com/support/docview.wss?uid=swg1IZ36247]
+   
+   The DB2 driver should be updated to resolve this issue.
+   
+   Approver -
+    L3: BG
+    L2: IS
+   ---------
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  1) Find the faulty DB2 driver at:
+           TEPSHOME/Products/KD4/latest/tcore/lib/db2jcc.jar
+           TEPSHOME/Products/KD4/tcore/lib/db2jcc.jar
+      and
+   EWASHOME/profiles/ITMProfile/installedConnectors/oal-j2c.rar/db2
+   jcc.jar
+   
+      where TEPSHOME is C:\IBM\ITM\CNPS
+                     or /opt/IBM/ITM/<arch>/cj
+   
+      and   EWASHOME is C:\IBM\ITM\CNPSJ
+                     or /opt/IBM/ITM/<arch>/iw
+   
+   2) Check the version by running:
+       java -cp db2jcc.jar com.ibm.db2.jcc.DB2Jcc -version
+   
+       SOA 7.2.0.1 ships the driver DB2 v9.5 FP3 (3.53.70).
+       The problem was resolved in  DB2 v9.5 FP4 (3.53.95).
+   
+   3) Download the latest fix pack of the same version
+       (e.g. v9.5 FP10):
+       http://www-01.ibm.com/support/docview.wss?uid=swg21363866 [http://www-01.ibm.com/support/docview.wss?uid=swg21363866]
+   
+   4) Stop TEPS
+   
+   5) Replace the affected TCORE JAR files
+   
+   6) Start TEPS
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: Those with TCORE hosted on DB2
+   ****************************************************************
+   * PROBLEM DESCRIPTION: The DB2 driver shipped as part of TCORE
+   * contains a memory leak. This could result in
+   * OutOfMemoryExceptions in the TEPS.
+   ****************************************************************
+   * RECOMMENDATION: Apply 7.2.0.1 IF0005
+   ****************************************************************
+   The DB2 JDBC driver needs to be updated.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  DB2 JDBC driver was updated to v9.5 FP10
+   
+   The fix for this APAR is contained in the following maintenance
+   packages:
+               | interim fix | 7.2.0.1-TIV-ITCAMSOA-IF0005
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV73873
+   
+   
+ * REPORTED COMPONENT NAME
+   ITCAM FOR SOA-D
+   
+   
+ * REPORTED COMPONENT ID
+   5724SOA00
+   
+   
+ * REPORTED RELEASE
+   720
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2015-06-03
+   
+   
+ * CLOSED DATE
+   2015-07-27
+   
+   
+ * LAST MODIFIED DATE
+   2015-10-22
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ITCAM FOR SOA-D
+   
+   
+ * FIXED COMPONENT ID
+   5724SOA00
+   
+   
+
+APPLICABLE COMPONENT LEVELS

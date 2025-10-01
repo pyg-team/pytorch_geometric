@@ -1,0 +1,38 @@
+Title: IBM Documents failing to archive in IBM Content Collector after update of Filenet choice list - United States
+
+Text:
+IBM Content Collector; P8; metadata; E_REQUIRED_VALUE_ABSENT TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Documents are failing to archive in IBM Content Collector (ICC). An error in the logs suggests that there is a required metadata value missing from the document, even though a closer examination of the document shows that the metadata is present.
+Error in logs: A required property value has not been set. Required property DOC_STATUS is missing. 
+
+SYMPTOM
+A sample error message in the ICC blacklist and P8 Connector logs could be as follows, with metadata field "DOC_STATUS" the missing field in question: 
+
+"Status=error; Message='E_REQUIRED_VALUE_ABSENT 
+: A required property value has not been set. Required property 
+DOC_STATUS is missing.'"
+
+
+CAUSE
+A possible root cause that has been observed for this issue is a change in a Filenet P8 choice list during an archival cycle of ICC:
+
+Choice Lists [https://www.ibm.com/support/knowledgecenter/SSNW2F_5.2.0/com.ibm.p8.ce.dev.ce.doc/choicelist_concepts.htm?lang=en]
+
+However the issue can happen if any metadata settings on the P8 server are changed without corresponding configuration changes to the metadata settings on the ICC server.
+
+
+ENVIRONMENT
+IBM Content Collector 
+
+Filenet P8 repository
+
+
+DIAGNOSING THE PROBLEM
+If the above error is shown for any failed documents in ICC, check to see if any changes to metadata settings (such as the example given above) have been made on the P8 server.
+
+
+
+RESOLVING THE PROBLEM
+Any changes to metadata in the repository need to also be made to the associated ICC metadata mapping.

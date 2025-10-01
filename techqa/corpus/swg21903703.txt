@@ -1,0 +1,75 @@
+Title: IBM default flood rules becomes error - United States
+
+Text:
+"Failed to read rules: error in rules file"; "event flood"; registertarget TECHNOTE (FAQ)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ English 
+
+QUESTION
+ how can the customer solve error messages created with default event flood rules 
+
+ANSWER
+
+Default event flood rules becomes error when they are included in a rule file.
+To solve the problem, following statement has to be copied to the main rule.
+
+The default flood rules files are installed in $OMNIHOME/extensions/eventflood/ directory.
+And 2 rule files (flood.config.rules and flood.rules) are seen there.
+User can take advantage of them copying to any directory.
+The sample of the configuration is as below..(ie: eif probe)
+
+<tivoli_eif.props>
+RulesFile : '$OMNIHOME/probes/aix5>/tivoli_eif.rules'
+
+<tivoli_eif.rules>
+######################################################
+# Top of the tivoli_eif.rules
+######################################################
+include "/opt/IBM/tivoli/netcool/omnibus/extensions/eventflood/flood.config.rules"
+include "/opt/IBM/tivoli/netcool/omnibus/extensions/eventflood/flood.rules"
+
+---------------------
+However, these implementation may become error and the probe will terminate too with error message below...
+2015-05-14T03:51:53: Debug: D-UNK-000-000: Including /opt/IBM/tivoli/netcool/omnibus/extensions/eventflood/flood.config.rules 
+2015-05-14T03:51:53: Debug: D-UNK-000-000: Plain text rules file 
+detected. 
+2015-05-14T03:51:53: Error: E-UNK-000-000: Rules file 
+'/opt/IBM/tivoli/netcool/omnibus/extensions/eventflood/flood.config.rule 
+s' line 11: parse error 
+2015-05-14T03:51:53: Debug: D-UNK-000-000: Rules file caching is 
+disabled. 
+2015-05-14T03:51:53: Error: E-UNK-000-000: Failed to read rules: error 
+in rules file
+2015-05-14T03:51:53: Information: I-JPR-104-000: [stderr] tivoli_eif: 
+Opl library error (see previous messages) 
+-----------------------
+
+<<SOLUTION>>
+Revise the rule files as below to avoid the error. 
+<tivoli_eif.props>
+RulesFile : '$OMNIHOME/probes/aix5>/tivoli_eif.rules'
+
+<flood.config.rules>
+# Uncomment the FloodEventOS line and set the backup server name
+# if you wish to divert events once an event flood has been detected.
+#DefaultOS = registertarget( %Server, %ServerBackup, "alerts.status")
+#DefaultOS = registertarget( "NC_YODA", "", "alerts.status")
+#FloodEventOS = registertarget("NCOMS_BK", "", "alerts.status")
+
+<flood.rules>
+default
+
+<tivoli_eif.rules>
+######################################################
+# Top of the tivoli_eif.rules
+######################################################
+DefaultOS = registertarget( %Server, %ServerBackup, "alerts.status")
+include "/opt/IBM/tivoli/netcool/omnibus/extensions/eventflood/flood.config.rules"
+include "/opt/IBM/tivoli/netcool/omnibus/extensions/eventflood/flood.rules"
+
+
+--------------------------------------------------------------------
+The "DefaultOS = registertarget( %Server, %ServerBackup, "alerts.status")" has to be put in the main rule (ie: tivoli_eif.rules)
+
+note: flood.rules can be put wherever the user wants to deploy depends on the customer's requirement.

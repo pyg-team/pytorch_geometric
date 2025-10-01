@@ -1,0 +1,144 @@
+Title: IBM IZ86250: WORK ITEM MIGRATION AND DATA MIGRATION FAIL WHEN THE ORACLE URL WAS SPECIFIED USING THIN-STYLE SERVICE NAME SYNTAX - United States
+
+Text:
+  A FIX IS AVAILABLE
+WebSphere Enterprise Service Bus V7.0.0 Fix Pack 4 (7.0.0.4) [http://www-01.ibm.com/support/docview.wss?uid=swg24030312]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Work item migration and data migration fail when the Oracle URL
+   was specified using thin-style service name sytax
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  When adding support for shared work items as described in the
+   WPS InfoCenter at
+   http://publib.boulder.ibm.com/infocenter/dmndhelp/v7r0mx/topic/c
+   om.ibm.websphere.bpc.doc/doc/bpc/t2mig_shared_work_items.html [http://publib.boulder.ibm.com/infocenter/dmndhelp/v7r0mx/topic/com.ibm.websphere.bpc.doc/doc/bpc/t2mig_shared_work_items.html]
+   the migrateWI.py script will fail with an error like the
+   following if Business Process Choregorapher
+   was configured with an Oracle "thin-style service name" URL:
+   jdbc:oracle:thin:@//<host>:<port>/<service_name>.
+   
+   Set serverName=//mydbserver from
+   URL=jdbc:oracle:thin:@//mydbserver:1521/BPEDB.
+   Set databaseName=1521/BPEDB from
+   URL=jdbc:oracle:thin:@//mydbserver:1521/BPEDB.
+   :
+   Exception received:
+   java.sql.SQLException: The Network Adapter could not establish
+   the connection
+   Caused by oracle.net.ns.NetException: The Network Adapter could
+   not establish the connection
+   Caused by java.net.UnknownHostException: //mydbserver
+   migrateWI.py finished with an error.
+   
+   The data migration script, migrateDB.py will experience a
+   similar failure.
+   
+   After applying this interim fix, the script will be able to
+   parse the "thin-style service name" URL correctly.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Problem fixed
+   iFix available on top V7003
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ86250
+   
+   
+ * REPORTED COMPONENT NAME
+   BUS PRC CHOREOG
+   
+   
+ * REPORTED COMPONENT ID
+   5655FLW11
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-10-06
+   
+   
+ * CLOSED DATE
+   2010-11-17
+   
+   
+ * LAST MODIFIED DATE
+   2010-11-17
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   BUS PRC CHOREOG
+   
+   
+ * FIXED COMPONENT ID
+   5655FLW11
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R700 PSY
+   UP

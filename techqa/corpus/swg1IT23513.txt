@@ -1,0 +1,184 @@
+Title: IBM IT23513: ALLOW OPTION TO OVERRIDE DECISIONSERVICE NODE TEMPLATE RA.XML FILE - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The DecisionService node uses IBM ODM functionality to process
+   rule decisions. This functionality uses an ra.xml file to
+   configure itself and this ra.xml file is included with the
+   product install.
+   To solve some performance and tuning problems with the ODM
+   functionality it may be necessary for a customer to need to
+   modify some properties in the ra.xml file. This APAR will add
+   the option to override the template ra.xml file with a modified
+   copy of the default IIB one.
+   
+   Additional Symptom(s) Search Keyword(s):
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   All users of IBM Integration Bus V10 who use the DecisionService
+   node.
+   
+   
+   Platforms affected:
+   MultiPlatform, z/OS
+   
+   ****************************************************************
+   PROBLEM DESCRIPTION:
+   The DecisionService node uses IBM ODM functionality to process
+   rule decisions. This functionality uses an ra.xml file to
+   configure itself and this ra.xml file is included with the
+   product install.
+   To solve some performance and tuning problems with the ODM
+   functionality it may be necessary for a customer to need to
+   modify some properties in the ra.xml file. This APAR will add
+   the option to override the template ra.xml file with a modified
+   copy of the default IIB one.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Users can now take a copy of the default template ra.xml file
+   from the IBM Integration Bus installation directory, modify it
+   and then configure an Integration Node to use that in place of
+   the default.
+   
+   To use a different template ra.xml
+   
+   1. Users need to copy the IIB template ra.xml from
+     <IIB_Install_Path>/businessrules/config/ra.xml
+   
+   2. Edit as appropriate.
+   
+   3. Set the environment variable
+   MQSI_NODE_DEPLOYED_RULES_RA_LOCATION to point at the directory
+   which contains the copied ra.xml before starting the integration
+   node:
+       eg for Unix
+   &#09;    export MQSI_NODE_DEPLOYED_RULES_RA_LOCATION=<custom
+   path>
+   
+   4. During startup the integration node will process the custom
+   ra.xml template file.
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+   Version    Maintenance Level
+   v10.0      10.0.0.12
+   
+   The latest available maintenance can be obtained from:
+   http://www-01.ibm.com/support/docview.wss?rs=849&uid=swg27006041 [http://www-01.ibm.com/support/docview.wss?rs=849&uid=swg27006041]
+   
+   If the maintenance level is not yet available,information on
+   its planned availability can be found on:
+   http://www-1.ibm.com/support/docview.wss?rs=849&uid=swg27006308 [http://www-1.ibm.com/support/docview.wss?rs=849&uid=swg27006308]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT23513
+   
+   
+ * REPORTED COMPONENT NAME
+   INTEGRATION BUS
+   
+   
+ * REPORTED COMPONENT ID
+   5724J0540
+   
+   
+ * REPORTED RELEASE
+   A00
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-12-14
+   
+   
+ * CLOSED DATE
+   2018-03-21
+   
+   
+ * LAST MODIFIED DATE
+   2018-03-21
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   INTEGRATION BUS
+   
+   
+ * FIXED COMPONENT ID
+   5724J0540
+   
+   
+
+APPLICABLE COMPONENT LEVELS

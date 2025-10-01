@@ -1,0 +1,182 @@
+Title: IBM IZ86887: SAP ADAPTER ENCOUNTERS CTGDIS792I ERROR INDICATING SAP HR PERSONNEL RECORDS ARE LOCKED AND CAN'T BE UPDATED - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Description: We are trying to configure the SAP NetWeaver
+   5.1.4.4005 adapter for ECC system to send 105 record back to
+   ECC. We create an employee through SAP HR(ECC), the employee
+   data is received by Tivoli IdM as an iDoc that's processed by
+   ALE iDoc connector at ITDI. Once Tivoli IdM receives the iDoc,
+   it creates an account for the employee on the same SAP HR(ECC)
+   system and then is supposed to update 105 record(email, userid)
+   back in SAP HR. 105 record update is not happening.
+   
+   Steps to Duplicate:
+   1) Create a user using SAP HR.
+   2) This causes the SAP HR system to generates an IDOC which is
+   sent to  the IDOC interceptor.
+   3) The IDOC interceptor accepts the request.
+   4) The IDOC interceptor sends the request on to ITIM.
+   5) ITIM accepts the request and creates the account within the
+   ITIM environment.
+   6) ITIM sends the request on to the ITIM Adapter for SAP
+   NetWeaver.
+   7) The ITIM Adapter for SAP NetWeaver accepts the Add request
+   and processes it.
+   8) The ITIM Adapter for SAP NetWevaer submits the Add operation
+   against the target SAP server. It then executes the HR linking
+   as part of the operation. This is done as a separate operation
+   after the Add operation.
+   9) The target SAP creates the user and then executes the
+       /TIVSECTY/BAPI_USER_HR_LINK RFC to complete the linking.
+   
+   Desired Behavior: Successful SAP acct creation and update via
+   the process noted above.
+   
+   Environment: ITIM 5.1 FP2, Aix 6.1, Clustered WAS 6.0, TDI
+   hosting SAP NetWeaver 5.1.4.4005 adapter, managed SAP
+   environment is NON CUA and is Unicode
+   
+   
+   Solution: Had customer reinstall the TV1K900754 transport to
+   make it the most recently installed transport. This resolved the
+   initial issue and allowed the SAP adapter to at least function
+   with SAP. The customer then hit a known issue documented in the
+   SAP adapter's Release Notes. This had to do with "personnel
+   number(s)" being locked, and is typically represented by this
+   error response:
+     "CTGDIS792I E: personnel number(s) could not be locked (60)"
+   To address this this locking issue we had them put a
+   sapnw_bapi_transcation_commit.xsl entry in place before the HR
+   linking so that the account is committed before the HR
+   interaction is attempted. This would commit the record in SAP,
+   thereby releasing any locks on the record, before the adapter
+   comes around to attempt the HR linking.
+   APAR being created to get documentation updated to include the
+   commit function so this locking problem can be avoided.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  n/a
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Fix shipped in new GA
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fix shipped in SAP NW adapter v5.0.5 and 5.1
+   .5
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ86887
+   
+   
+ * REPORTED COMPONENT NAME
+   ITIM AGENTS
+   
+   
+ * REPORTED COMPONENT ID
+   5724C34AG
+   
+   
+ * REPORTED RELEASE
+   510
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-10-19
+   
+   
+ * CLOSED DATE
+   2011-06-30
+   
+   
+ * LAST MODIFIED DATE
+   2011-06-30
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  AGENT
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ITIM AGENTS
+   
+   
+ * FIXED COMPONENT ID
+   5724C34AG
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R500 PSY
+   UP
+   
+   
+ * R510 PSY
+   UP

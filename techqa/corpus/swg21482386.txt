@@ -1,0 +1,45 @@
+Title: IBM Database Wizard produces error joining tables - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ I am using SPSS Statistics 17.0.0. I am trying to join multiple tables using the Database Wizard. When I have completed the wizard setup then click Finish, I receive an error such as the following:
+Warning. Command name: GET DATA
+SQLExecDirect failed :[DataDirect][ODBC DB2 Wire Protocol driver][DB2]NULL.id NOT COLUMN OF INSERTED/UPDATED TABLE, OR ANY TABLE IN A FROM CLAUSE.
+CACHE.
+EXECUTE.
+
+Error # 105. Command name: EXECUTE
+This command is not valid before a working file has been defined.
+This command not executed.
+DATASET NAME DataSet2 WINDOW=FRONT
+
+If I compare the pasted syntax with syntax I had from a previous version, I notice the wizard is generating the wrong syntax. 
+
+What is the problem? 
+
+RESOLVING THE PROBLEM
+This problem has been reported to SPSS Development and it is resolved with Statistics 17.0.1. The problem is with the construction of the WHERE clause in the generated SQL. It is possible to workaround this problem by working with the pasted syntax from the final step in the Database Wizard.
+
+Below is an example of relevant syntax from the very end of the SQL pasted from v15 (quotes and continuation '+' removed for ease of reading):
+
+...FROM dbo.bth_ytd T30, dbo.bth_ytd_conf T31 WHERE T31.caseid = T30.caseid 
+
+SPSS Statistics pastes this:
+
+...FROM dbo.bth_ytd T0, dbo.bth_ytd_conf T1 WHERE null.caseid = null.caseid
+
+Rename the specific tables as aliases Tn -- in the first example, T30 and T31, and in the second T0 and T1 (what the alias is really doesn't matter as long as it's consistent). As you can see, however, the example from v17 doesn't refer to the right aliases in the WHERE clause -- instead of the table alias there's the word "null," and that's why the command is failing. All you need to do is find the WHERE clause in SQL shown in the last step of the DataBase Wizard, take note of what aliases it's using, and edit the "null"s accordingly. In this instance, it would be this:
+
+
+...FROM dbo.bth_ytd T0, dbo.bth_ytd_conf T1 WHERE T0.caseid = T1.caseid
+
+RELATED INFORMATION
+ Need more help? Our Statistics forum is Live! [https://developer.ibm.com/answers/topics/statistics.html?smartspace=predictive-analytics]
+
+
+ 
+
+HISTORICAL NUMBER
+ 80168

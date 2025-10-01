@@ -1,0 +1,16 @@
+Title: IBM Acknowledged events show text in black - United States
+
+Text:
+ack events; black font; acknowledged event text TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When alerts are acknowledged in the Active Event List, the text for the alarm is not displayed in a white font, unlike when viewed through a native Event List. 
+
+RESOLVING THE PROBLEM
+Verify that 
+
+ael_user_properties_acknowledge_font_color:white 
+
+./netcool/omnibus_webgui/etc/system/userdefaults.props 
+
+is set.

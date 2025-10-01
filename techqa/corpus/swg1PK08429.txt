@@ -1,0 +1,115 @@
+Title: IBM PK08429: ADMA8019E ERROR ATTEMPTING TO ASSIGN JMS RESOURCE TO APPLICATION DURING DEPLOYMENT - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DUPLICATE OF ANOTHER APAR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  User is using 6.0.0.3 base and trying to deploy application.
+   When defining resource for the application, received ADMA8019E
+   error: "The resources that are assigned to the application are
+   beyond the deployment target scope".  User tried using other
+   levels such as server and application but problem persists.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+ *  Code changes were made and testfix sent to customer.
+   Obtained positive feedback from customer.
+   
+   
+    
+   
+   
+
+COMMENTS
+ *   This is a duplicate of PK09468 [http://www-01.ibm.com/support/docview.wss?uid=swg1PK09468]
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK08429
+   
+   
+ * REPORTED COMPONENT NAME
+   WAS EXPRESS V6
+   
+   
+ * REPORTED COMPONENT ID
+   5724I6300
+   
+   
+ * REPORTED RELEASE
+   60W
+   
+   
+ * STATUS
+   CLOSED DUB
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2005-07-06
+   
+   
+ * CLOSED DATE
+   2005-09-08
+   
+   
+ * LAST MODIFIED DATE
+   2005-10-10
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBS APP SERV N
+   
+   
+ * FIXED COMPONENT ID
+   5724H8800
+   
+   
+
+APPLICABLE COMPONENT LEVELS

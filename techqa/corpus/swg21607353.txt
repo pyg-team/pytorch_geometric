@@ -1,0 +1,88 @@
+Title: IBM Supported operating systems and platforms for the provisioning server - United States
+
+Text:
+ NEWS
+
+ABSTRACT
+ The operating systems and platforms
+that are supported for the provisioning server (product version 7.2.1 Interim Fix 2) are listed. 
+
+CONTENT
+This technote lists the operating systems and platforms that are supported for 
+the provisioning server Version 7.2.1 Interim Fix 2.
+
+Tivoli Provisioning Manager supports specific operating systems and is compatible with other products that are installed together with the base services. Tivoli Provisioning Manager
+is installed on the same computer as the application server, or J2EE
+server. If you are using a multiserver topology, verify the supported
+operating systems and platforms for the software components that you
+are installing on each server in the topology.
+
+IBM Software Support provides support for all fix pack levels for the versions and releases that are identified in the tables.
+
+Supported Windows operating systems and platforms
+
+Note: Cygwin 1.7.7 or later is required on the provisioning server.
+You can install Cygwin either as part of the Tivoli Provisioning Manager installation
+or manually before installing Tivoli Provisioning Manager.
+Because Cygwin cannot be installed correctly in a XEN environment,
+installation of Tivoli Provisioning Manager in a XEN environment is not supported.
+
+
+
+
+OS and Platform Database Application Server Directory server Administrative workstation DB2 9.7 FP4 Oracle IBM WebSphere
+Application Server Network
+Deployment 6.1.0.37 IBM Tivoli
+Directory Server
+6.3 Microsoft Active Directory
+2003 SP2 or 2008 SP2 Microsoft Windows Server 2008 R2 Enterprise Edition (x86 64-bit) Yes No Yes Yes Yes Yes Microsoft Windows Server 2008 R2 Standard Edition (x86 64-bit) Yes No Yes Yes Yes Yes Microsoft Windows Server 2008 Datacenter Edition (x86 64-bit) Yes No Yes Yes Yes Yes Microsoft Windows Server 2008 Enterprise Edition (x86 64-bit) Yes No Yes Yes Yes Yes Microsoft Windows Server 2008 Standard Edition (x86 64-bit) Yes No Yes Yes Yes Yes Microsoft Windows Server 2003 R2 Enterprise Edition SP2 (x86 64-bit) Yes No Yes Yes Yes Yes Microsoft Windows Server 2003 R2 Standard Edition SP2 (x86 64-bit) Yes No Yes Yes Yes Yes Microsoft Windows Server 2003 Enterprise Edition SP2 (x86 64-bit) Yes No Yes Yes Yes Yes Microsoft Windows Server 2003 Standard Edition SP2 (x86 64-bit) Yes No Yes Yes Yes Yes 
+
+Supported AIX operating systems and platforms 
+
+Note: Oracle Real Application Clusters (RAC) is not supported. 
+
+
+OS and Platform Database Application Server Directory server Administrative workstation DB2 9.7 FP4 Oracle IBM WebSphere
+Application Server Network
+Deployment 6.1.0.37 IBM Tivoli
+Directory Server
+6.3 Microsoft Active Directory
+2003 SP2 or 2008 SP2 AIX 7.1 (IBM System p 64-bit) Yes 11g R2 only Yes Yes Yes Yes AIX 6.1 TL3 or later (IBM System p 64-bit) Yes 10.2.0.4g or 11g R1 Yes Yes Yes Yes AIX 5.3 TL10 (IBM System p 64-bit) Yes 10.2.0.4g only Yes Yes Yes Yes 
+
+Supported Red Hat Enterprise Linux operating systems and platforms 
+
+Note: Oracle Real Application Clusters (RAC) is not supported. 
+
+
+OS and Platform Database Application Server Directory server Administrative workstation DB2 9.7 FP4 Oracle IBM WebSphere
+Application Server Network
+Deployment 6.1.0.37 IBM Tivoli
+Directory Server
+6.3 Microsoft Active Directory
+2003 SP2 or 2008 SP2 Red Hat Enterprise Linux 6.1 (x86 64-bit) Yes No Yes On a remote computer only Yes Yes Red Hat Enterprise Linux 6.1 (IBM System z 64-bit) Yes No Yes On a remote computer only Yes Yes Red Hat Enterprise Linux 5 Update 5 or later (x86 64-bit) Yes 10.2.0.4 or 11g R1 Yes Yes Yes Yes Red Hat Enterprise Linux 5 Update 5 or later (IBM System z 64-bit) Yes 10.2.0.4 or 11g R1 Yes Yes Yes Yes Red Hat Enterprise Linux 5 Update 4 (x86 64-bit) Yes 10.2.0.4 or 11g R1 Yes Yes Yes Yes Red Hat Enterprise Linux 5 Update 4 (IBM System z 64-bit) Yes No Yes Yes Yes Yes 
+
+Supported SUSE Linux Enterprise Server operating systems and platforms 
+
+Note: Oracle Real Application Clusters (RAC) is not supported. 
+
+
+OS and Platform Database Application Server Directory server Administrative workstation DB2 9.7 FP4 Oracle IBM WebSphere
+Application Server Network
+Deployment 6.1.0.37 IBM Tivoli
+Directory Server
+6.3 Microsoft Active Directory
+2003 SP2 or 2008 SP2 SUSE Linux Enterprise Server 11 (x86 64-bit) Yes 11g R2 only Yes Yes Yes Yes SUSE Linux Enterprise Server 11 (IBM System z 64-bit) Yes 11g R2 only Yes Yes Yes Yes SUSE Linux Enterprise Server 10 SP3 (x86 64-bit) Yes 10.2.0.4g only Yes Yes Yes Yes SUSE Linux Enterprise Server 10 SP3 (IBM System z 64-bit) Yes 10.2.0.4 or 11g R1 Yes Yes Yes On a separate computer only
+
+On SUSE Linux Enterprise Server 10 SP3 or later (x86 64-bit), or on any supported Windows version 
+
+Supported Solaris operating systems and platforms 
+
+Note: Oracle Real Application Clusters (RAC) is not supported. 
+
+
+OS and Platform Database Application Server Directory server Administrative workstation DB2 9.7 FP4 Oracle 10.2.0.4g or 11g R1 IBM WebSphere
+Application Server Network
+Deployment 6.1.0.37 IBM Tivoli
+Directory Server
+6.3 Microsoft Active Directory
+2003 SP2 or 2008 SP2 Solaris 10 (SPARC) Yes Yes Yes Yes Yes On a separate computer only On any supported Windows version

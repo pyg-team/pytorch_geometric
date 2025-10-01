@@ -1,0 +1,61 @@
+Title: IBM PASE for System i and Syslog / Syslogd - United States
+
+Text:
+PASE; syslog; syslogd; log TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This document provides basic information about syslog and syslogd as it pertains to PASE on System i. 
+
+RESOLVING THE PROBLEM
+The syslog API is used on UNIX systems to log messages regarding system operation. Messages sent using syslog are received by a syslogd daemon running in the background on a local system. The syslogd daemon routes the messages to a destination described by a configuration file. Messages can be logged locally or routed to another system across the network. 
+
+The syslog API and the associated syslogd daemon are provided on IBM i using the PASE for i runtime. The syslogd daemon needs to be manually configured and started to be used. 
+
+The syslog API is described in the AIX Information Center at the following URL:
+
+http://publib.boulder.ibm.com/infocenter/aix/v6r1/topic/com.ibm.aix.basetechref/doc/basetrf2/syslog.htm [http://publib.boulder.ibm.com/infocenter/aix/v6r1/topic/com.ibm.aix.basetechref/doc/basetrf2/syslog.htm]
+
+The configuration of the syslogd daemon is described in the AIX Information Center at the following URL:
+
+http://publib.boulder.ibm.com/infocenter/aix/v6r1/topic/com.ibm.aix.cmds/doc/aixcmds5/syslogd.htm [http://publib.boulder.ibm.com/infocenter/aix/v6r1/topic/com.ibm.aix.cmds/doc/aixcmds5/syslogd.htm]
+
+One deviation from this documentation is that the syslogd configuration file on IBM i is named /QOpenSys/etc/syslog.conf, versus /etc/syslog.conf and must be created (it does not exist by default).
+
+The IBM i operating system does not log system operation messages using the syslog API. 5250 green screen, ftp, iSeries Navigator, and other native IBM i connections will not be logged using syslog. IBM i object authorization errors will not be logged to by syslog either. IBM i logs these types of messages using facilities such as the QSYSOPR message queue and the QAUDJRN security audit journal. Some programs ported to IBM i (such as OpenSSH) will log messages to both syslog and an IBM i facility. There are third-party products available to capture and resend IBM i system operation messages using syslog. For example: 
+
+o The syslog-ng Agent for IBM System i:
+https://syslog-ng.com/log-management-software [https://syslog-ng.com/log-management-software]
+
+o Townsend Security Solutions Alliance LogAgent:
+https://www.townsendsecurity.com/ [https://www.townsendsecurity.com/] and search for LogAgent
+
+o PowerTech Interact:
+https://www.helpsystems.com/product-lines/powertech [https://www.helpsystems.com/product-lines/powertech]
+
+o SafeStone iConnect
+http://www.safestone.com/iConnect [http://www.safestone.com/iConnect]
+
+If the syslogd daemon is not running when the syslog API is used, the system routes message priorities LOG_EMERG, LOG_ALERT and LOG_CRIT to the *REQUESTER message queue (in other words, QSYSOPR for batch jobs, or the user's message queue for an interactive job). LOG_ERR and LOG_WARNING priorities are sent to the joblog as *DIAG messages. LOG_NOTICE, LOG_INFO, and LOG_DEBUG are sent to the joblog as *INFO messages.
+
+The logging priorities used by syslog can be found in the following include file:
+
+/usr/include/sys/syslog.h 
+
+and are noted below:
+
+/* Priorities (these are ordered - smaller number is a higher priority) */
+#define LOG_EMERG 0 /* system is unusable */
+#define LOG_ALERT 1 /* action must be taken immediately */
+#define LOG_CRIT 2 /* critical conditions */
+#define LOG_ERR 3 /* error conditions */
+#define LOG_WARNING 4 /* warning conditions */
+#define LOG_NOTICE 5 /* normal but signification condition */
+#define LOG_INFO 6 /* informational */
+#define LOG_DEBUG 7 /* debug-level messages */
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Operating System IBM i 7.2 Operating System IBM i 7.1 Operating System IBM i 6.1 Operating System IBM i 7.3 
+HISTORICAL NUMBER
+ 518681384

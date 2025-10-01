@@ -1,0 +1,64 @@
+Title: IBM Collecting Data: synchronization between Rule Designer and Decision Center - United States
+
+Text:
+Collecting Data; Collecting Data; Collecting Data; MustGather; MustGather; MustGather; MustGatherDocument TECHNOTE (FAQ)
+
+QUESTION
+ You are having a synchronization problem with IBM Rule Designer and Decision Center. You would like to know what documentation you must collect (MustGather) so that the IBM Operation Decision Manager Support team can diagnose your problem. If you gather this documentation before contacting support it will expedite the troubleshooting process, and save you time. 
+
+ANSWER
+1. Generate a network trace to analyze http requests and responses. 
+For this, in eclipse.iniadd the following arguments each one on a line as below:
+
+-vmargs
+-Djava.util.logging.config.file=logging.properties
+-Djavax.net.debug=all
+
+Create a file logging.properties at the same location than eclipse.ini with the following content
+
+.level=INFO
+handlers=java.util.logging.FileHandler
+java.util.logging.FileHandler.pattern = odmtracehttp-%g.log
+java.util.logging.FileHandler.limit = 5000000
+java.util.logging.FileHandler.count = 10
+java.util.logging.FileHandler.formatter = java.util.logging.SimpleFormatter
+httpclient.wire.level=FINEST
+org.apache.commons.httpclient.level=FINEST 
+
+Run the action that does not work. A series of file odmtracehttp-XX.log will be generated at the same location than eclipse.ini. Include those .log files in the zip to be collected.
+
+2. The Rule Designer workspace logs. You can find these in the file .log in the .metadata folder of the workspace.
+
+3. Decision Center logs. 
+
+These can be found in the logs folder of the Application Server that the decision center is deployed on. If working with WebSphere Application Server, make sure you also retrieve the log files in the logs\ffdc folder.
+
+4. Rule Designer version and configuration
+
+In "Help > About Eclipse SDK", click the "Installation Details" button. Select the Configuration tab and use the button copy to clipboard to save the information. Paste the information to the file rdversion.txt
+
+5. Decision Center version
+
+In the console, click "About" on the top-right of any page. 
+
+ *  
+
+COLLECTING THE DATA
+
+ 1. Network trace. 
+ 2. Application Server logs 
+ 3. Decision Center logs 
+ 4. rdversion.txt and decision center version and its level.
+    
+
+
+Once you have collected this information, you can simply submit the diagnostic data to IBM support. 
+
+For a listing of all technotes, downloads, and educational materials specific to Rule Designer and Event Designer components, visit the IBM ODM Support [http://www.ibm.com/support/entry/portal/overview/software/websphere/ibm_operational_decision_manager] website . RELATED INFORMATION
+ Read first for all IBM ODM Components [http://www-01.ibm.com/support/docview.wss?uid=swg21653691]
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Operational Decision Manager Platform Independent 8.9, 8.8, 8.7, 8.6, 8.5, 7.5 Enterprise

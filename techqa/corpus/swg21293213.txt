@@ -1,0 +1,82 @@
+Title: IBM How does the notes.ini file parameter 'server_session_timeout' affect server performance - United States
+
+Text:
+notes.ini file; notes.ini; ini; .ini; ini file; parameter; server_session_timeout; server; session; timeout; time out; workload; server; performance; cpu; usage; cpu usage; mail server; mail; mailserver; memory; memory usage; increase performance; increase; increases; decrease; decrease performance; decreases TECHNOTE (FAQ)
+
+QUESTION
+The notes.ini parameter, server_session_timeout, is a commonly used setting to manage user workload on a Lotus Domino® server, This document explains how performance is affected by use of this parameter. 
+
+The information below does not attempt to address total server performance. Server_session_timeout should be considered only one piece of server performance and tuning. 
+
+
+ANSWER
+The parameter, server_session_timeout, defines how the server will manage idle client sessions. Client sessions represent memory consumption on a Domino server and Domino has a finite amount of memory available for session management. 
+
+
+The goal when using server_session_timeout is to balance session 'closes' versus increased session 'openings'. 
+
+About memory:
+The amount of memory consumed in a user session varies by workload but 880KB is the minimum memory used by a session. Large complex workloads can expect to see sessions consuming 4MB or more. Depending on the platform and configuration in use, the total available session memory range is 64MB to 1.5 GB. 
+
+To improve performance, Domino allows inactive (idle) user sessions to remain persistent since this reduces the CPU load if the user accesses the server later in the day. Domino session persistence is based on the assumption that the server is not constrained for memory. 
+
+If it is determined that the maximum memory available has been consumed, then the total memory required to support all registered users as active server_session_timeout may be recommended to reduce memory usage (server_session_timeout=xx, where xx is a value in minutes). This forces the server to close a session which has been idle for the "xx" period of time and frees up the session memory used by an otherwise idle session.
+
+Example:
+-- Server_session_timeout=60
+-- User1 opens a session at 9:02 am and at 9:25 am stops working in Lotus Notes.
+-- At 10:25 am, the session is eligible for a close by the server. 
+-- If the user accesses the server prior to 10:25, the idle timer resets to 0. 
+
+The obvious advantage of this setting is the reduction in session memory used by a server to support user workload.
+
+What affects server_session_timeout:
+Many variables affect how much memory usage might be affected by server_session_timeout. The greatest impact can be achieved when users access the server infrequently. If your users consistently access the server and never reach the idle time, the impact on memory can be much lower. 
+
+Single mail server with 1000 users:
+The chart below displays a simple mail server supporting 1000 users. Without server_session_timeout, memory allocated to the session increases throughout the day. However, with the server_session_timeout=60, the total session memory required is 43% less. 
+[/support/docview.wss?uid=swg21293213&amp;aid=1]
+
+Mail server with 650 users:
+The chart below displays usage on a heavy mail server supporting 650 users. Notice the memory allocated in both configurations is nearly the same. A significant numbers of users are not idle for 60 minutes. 
+[/support/docview.wss?uid=swg21293213&amp;aid=2]
+
+In the above workload, if available memory was constrained, the recommendation would be to distribute the users across multiple servers to reduce memory requirements on each server. 
+
+CPU use:
+Memory is only one element affected by server_session_timeout. CPU is also affected. When a user accesses the server after an idle timeout, the server must create a new session for the user. This action requires more CPU than accessing an existing session. 
+
+The delta cost varies based on variables such as the size of the Names & Address Book (NAB), the group membership of the user, and policy usage. A good rule of thumb is that creating a new session is 12 times more expensive to CPU usage than accessing an existing session. 
+
+Understanding how your users use Notes is critical to avoiding CPU issues related to premature session close. 
+
+In the first two charts above, only memory usage was considered. In the chart of the mail server with 650 users, the memory impact of the server_session_timeout=60 was limited. One response would be to reduce the time value to 30 minutes. 
+
+Mail server set to timeout = 30:
+Here is a chart of the same mail server with 650 users and the server_session_timeout=30.
+[/support/docview.wss?uid=swg21293213&amp;aid=3]
+
+It would appear that this setting is much more effective than server_session_timeout=60. However, you must consider the CPU impact of closing the sessions. 
+
+CPU usage with timeout = 30:
+Here is a chart of CPU usage with the server_session_timeout=30. Notice the impact to CPU by setting a 30-minute idle timeout.
+[/support/docview.wss?uid=swg21293213&amp;aid=4]
+
+The impact on CPU is reflected by the increased session creation. If a 30-minute timeout generated no more new sessions to be created than the 60-minute timeout, the CPU impact would be neutral. 
+
+Impact of session timeout:
+Domino statistics are helpful when considering the impact of session timeout. Here are ways to collect these statistics:
+
+-- Consider gathering data for one week from users who list the current status of all active sessions. Use this data to determine average idle time.
+
+-- Consider the longest normal break in user activity as the minimum value. If a lunch hour is 45 minutes, that should be the minimum value used.
+
+-- Closely monitor the impact of changes to CPU and memory. Chart the CPU and peak session counts for a week prior to any change. Compare these values after a change.
+
+Goal: Ideally CPU does not increase but peak session count decreases. 
+
+
+
+
+ * 
+ *

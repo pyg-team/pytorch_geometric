@@ -1,0 +1,51 @@
+Title: IBM PolicyLogger SQL logging - United States
+
+Text:
+netcool; impact; netcool/impact; nci; policy; logger; policylogger; sql; debug; log; file; to; output; append; name; add; logs; logging; logtofile; logwhat; what TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Enabling the PolicyLogger to output SQL statements produced by Policies 
+
+SYMPTOM
+SQL capture or action not occurring as expected
+
+
+RESOLVING THE PROBLEM
+One can enable the PolicyLogger to output the SQL statements being used by the Policies, but it is also advantageous to also split this output on a per Policy basis by selecting: 
+
+ * 
+ * 
+
+
+and: 
+
+ * 
+
+
+For example: 
+ * 
+
+
+And, of course, one would also have to enable: 
+
+ * 
+
+
+This will produce a log file in the directory (Impact 5): 
+
+ * 
+
+
+
+or (Impact 6): 
+
+ * 
+ * s
+
+
+of the format: 
+
+ * 
+
+
+Where [ImpactServerName] is the name of the ImpactServer (for example: NCI) and [PolicyName] is the name of the Policy producing this output (for example: My_Enrichment_Policy) and (.n) are the numbered roll-over log files (between 1 and 10 by default).

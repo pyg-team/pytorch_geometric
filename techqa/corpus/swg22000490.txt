@@ -1,0 +1,19 @@
+Title: IBM CVE-2017-5638 affect on Sterling Connect:Direct - United States
+
+Text:
+security; Apache Struts; CDw CDu C:D TECHNOTE (FAQ)
+
+QUESTION
+ A critical vulnerability in Apache Struts (CVE-2017-5638) has been identified as being actively exploited.
+
+Are IBM Sterling Connect:Direct for Microsoft Windows and IBM Sterling Connect:Direct for Unix affected by this vulnerability?
+
+
+CAUSE
+Apache Struts vulnerability [https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2017-5638] identified. 
+
+ANSWER
+Sterling Connect:Direct for Microsoft Windows and UNIX are unaffected by any vulnerabilities in Apache Struts, because we do not employ that technology in those products.
+
+RELATED INFORMATION
+ Details of vulnerability [https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2017-5638]

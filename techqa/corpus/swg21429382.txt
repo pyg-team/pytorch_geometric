@@ -1,0 +1,27 @@
+Title: IBM WebSphere DataPower MQ QM object causes rapid increase in the number of connections to the Queue Manager when a domain is enabled from its disabled state. - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The DataPower appliance's MQ QM Object may cause a rapid increase in the number of connections to the Queue Manager when a domain is enabled from its disabled state. 
+
+SYMPTOM
+The MQ queue manager shows rapid connection growth during the DataPower appliance's application domain initialization sequence. These connections are closed once the application domain completes its start-up process.
+
+
+RESOLVING THE PROBLEM
+The MQ connection spike can be caused by the interaction of 3 conditions: 
+
+ * Large number of initial connections in the QM Object 
+ * Large number of certificates being used in the validation credentials (as part of the User Agent) for the XML manager that is referenced in the given MQ QM Object 
+ * Enabling an application domain from its disabled state. 
+
+
+When the domain is enabled from its disabled state, the large number of certificates in the validation credential (used as part of the User Agent) are being cached through the XML Manager. Each credential, as it is cached, causes the XML Manager to momentarily go down and come back up. Any object that depends on this XML manager will also go down and back up. The MQ QM object handles this situation by aggressively re-establishing connections. If the initial connection size is large, say 150, it will send 150 connections. When the XML manager momentarily goes down, the MQ QM object will tear down the 150 connections. The teardown takes several seconds to complete, so the original 150 connections remain in various states. This is repeated for all certificates assigned to the User Agent's validation credential of the XML manager. 
+Once the certificates are cached completely in the device, these connections are closed and the MQ QM Object establishes its configured connections. This condition only happens when the domain is brought back to enabled state. If the device is rebooted and the application domain is in enabled state, this connection spike is not visible as all certificates are cached as part of the default domain start-up process. 
+ 
+To resolve this issue, follow these steps as a best practice: 
+
+ 1. Create a dedicated XML manager for the QM Object that must use a dedicated User Agent. 
+ 2. Set the initial connections setting to a lower limit such as 5-10 instead of 50-100 in the MQ QM Object as it can provide connections in milliseconds from the connection pool.

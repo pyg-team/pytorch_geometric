@@ -1,0 +1,35 @@
+Title: IBM Power 8: DSPFMWSTS Errors with Message CPF3580 - No Server Firmware Status to Display - United States
+
+Text:
+CPF4580 firmware ivm standalone stand alone TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ DSPFMWSTS errors with message CPF3580 - No server firmware status to display. 
+
+SYMPTOM
+DSPFMWSTS errors with message CPF3580: 
+
+Message ID . . . . . . . . . : CPF3580 
+Message file . . . . . . . . : QCPFMSG 
+Library . . . . . . . . . : QSYS
+Message . . . . : No server firmware status to display.
+Cause . . . . . : Your hardware model does not support server firmware or there is no firmware data available to display.
+
+
+RESOLVING THE PROBLEM
+You should apply the following PTFs from APAR MA44465:
+
+o R710 MF59969
+o R720 MF59956 
+
+If unable to apply the PTF right away, the following work-around to resolve the CPF3580 message is available as follows: 
+
+1. Issue the STRSST command and sign in. 2. Select Option 1. Start a service tool. 3. Select Option 4. Display/Alter/Dump. 4. Select Option 1. Display/Alater Storage. 5. Select Option 2. Licensed Internal Code (LIC) data. 6. Select Option 14. Advanced analysis. 7. Enter the following data and press Enter:
+
+1LIDFW 8. Enter the following data:
+
+Options: rebuild all 
+Verify the issue has been resolved by issuing the DSPFMWSTS command.  
+
+
+Cross reference information Segment Product Component Platform Version Edition Operating System IBM i 7.2 Operating System IBM i 7.1

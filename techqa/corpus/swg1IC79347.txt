@@ -1,0 +1,237 @@
+Title: IBM IC79347: NAMEVALUEDATA IN WEBSPHERE MQ 7.0.1.6 RFH2 HEADER IS PADDED WITH NULL '0X00' BYTES INSTEAD OF SPACE CHARS - United States
+
+Text:
+  FIXES ARE AVAILABLE
+WebSphere MQ V7.0.1 for i5/OS Fix Pack 7.0.1.8 [http://www-01.ibm.com/support/docview.wss?uid=swg24031775]
+WebSphere MQ V7.0 Fix Pack 7.0.1.8 [http://www-01.ibm.com/support/docview.wss?uid=swg24031774]
+Fix Pack 7.1.0.1 for WebSphere MQ V7.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24032120]
+WebSphere MQ V7.1 for i5/OS Fix Pack 7.1.0.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24032351]
+WebSphere MQ v7.0.1.8 Hypervisor for AIX [http://www-01.ibm.com/support/docview.wss?uid=swg24032802]
+WebSphere MQ v7.0.1.8 Hypervisor for RHEL [http://www-01.ibm.com/support/docview.wss?uid=swg24032809]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  After upgrading to WebSphere MQ V7.0.1.6 or WebSphere MQ
+   V7.1.0.0, the NameValueData in RFH2 headers is seen to be padded
+   out to a 4 byte boundary with 0x00 bytes when messages
+   containing message properties are sent by applications using the
+   WebSphere MQ classes for Java.
+   
+   This causes a problem for WebSphere MQ File Transfer Edition
+   (WMQ FTE) 7.0.4 and onwards because it passes the NameValueData
+   into an XML parser which fails due to the '0x00' bytes after
+   the closing tag.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   This issue affects users of the WebSphere MQ classes for Java
+   that have applications which are reading the MQRFH2 header of a
+   WebSphere MQ message, where the change of space character
+   padded bytes to null padded bytes results in a change of
+   behaviour within the application. For example, using an XML
+   parser to process the received bytes may fail because a null
+   character is an invalid XML character.
+   
+   The includes users of the WebSphere MQ File Transfer Edition
+   V7.0.4 and later.
+   
+   Note that the change to using null byte padding occurs when a
+   message is created and sent to a WebSphere MQ queue.  This
+   means that the version of the WebSphere MQ classes for Java
+   used by the putting application (V7.0.1.6 or later, or V7.1.0.0
+   or later) is the significant version for determining if a users
+   system is affected by this change, and not the version of the
+   application which is receiving the message.
+   
+   Platforms affected:
+   All Distributed (iSeries, all Unix and Windows) +Java +Java zOS
+   ****************************************************************
+   PROBLEM SUMMARY:
+   When an application using the WebSphere MQ V7 classes for Java
+   puts a message containing message properties onto a queue, the
+   WebSphere MQ classes for Java will add an MQRFH2 header to the
+   message in order to store the properties. The MQRFH2 header
+   will be padded out so that the bytes ends on a four byte
+   boundary.
+   
+   Prior to WebSphere MQ V7.0.1.6, the padding was performed using
+   the space character.
+   
+   However, in WebSphere MQ V7.0.1.6, the algorithm used to add
+   the padding to the MQRFH2 headers changed which resulted in the
+   null byte (0x00) being used to pad the MQRFH2 header, instead
+   of a space character byte.
+   
+   This change in behaviour was an issue for users of WebSphere MQ
+   File Transfer Edition.
+   
+   WebSphere MQ File Transfer Edition uses an XML parser to read
+   the contents of any MQRFH2 headers on messages that it
+   receives.  As the null byte (0x00) is not a valid XML
+   character, this parsing of the MQRFH2 header failed.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The WebSphere MQ V7.0 and V7.1 classes for Java have been
+   updated to use the space character to pad out MQRFH2 headers to
+   a four byte boundary. This allows WebSphere MQ File Transfer
+   Edition to treat the contents of the MQRFH2 header as XML data,
+   and parse it successfully.
+   
+   | MDVREGR 7.0.1-WS-MQ-AixPPC64-FP0006       |
+   | MDVREGR 7.0.1-WS-MQ-HpuxIA64-FP0006       |
+   | MDVREGR 7.0.1-WS-MQ-HpuxPaRISC64-FP0006   |
+   | MDVREGR 7.0.1-WS-MQ-LinuxIA32-FP0006      |
+   | MDVREGR 7.0.1-WS-MQ-LinuxPPC64-FP0006     |
+   | MDVREGR 7.0.1-WS-MQ-LinuxS390X-FP0006     |
+   | MDVREGR 7.0.1-WS-MQ-LinuxX64-FP0006       |
+   | MDVREGR 7.0.1-WS-MQ-SolarisSparc64-FP0006 |
+   | MDVREGR 7.0.1-WS-MQ-SolarisX64-FP0006     |
+   | MDVREGR 7.0.1-WS-MQ-Windows-FP0006        |
+   
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+                      v7.0
+   Platform           Fix Pack 7.0.1.8
+   --------           --------------------
+   Windows            U200335
+   AIX                U845856
+   HP-UX (PA-RISC)    U847965
+   HP-UX (Itanium)    U847970
+   Solaris (SPARC)    U847966
+   Solaris (x86-64)   U847972
+   iSeries            7.0.1.8
+   Linux (x86)        U847967
+   Linux (x86-64)     U847971
+   Linux (zSeries)    U847968
+   Linux (Power)      U847969
+   zOS                7.0.1.8
+   
+                      v7.1
+   Platform           Fix Pack 7.1.0.1
+   --------           --------------------
+   Windows            7.1.0.1
+   AIX                7.1.0.1
+   HP-UX (PA-RISC)    7.1.0.1
+   HP-UX (Itanium)    7.1.0.1
+   Solaris (SPARC)    7.1.0.1
+   Solaris (x86-64)   7.1.0.1
+   iSeries            7.1.0.1
+   Linux (x86)        7.1.0.1
+   Linux (x86-64)     7.1.0.1
+   Linux (zSeries)    7.1.0.1
+   Linux (Power)      7.1.0.1
+   zOS                7.1.0.1
+   
+   The latest available maintenance can be obtained from
+   'WebSphere MQ Recommended Fixes'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037]
+   
+   If the maintenance level is not yet available information on
+   its planned availability can be found in 'WebSphere MQ
+   Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC79347
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ WINDOWS V7
+   
+   
+ * REPORTED COMPONENT ID
+   5724H7220
+   
+   
+ * REPORTED RELEASE
+   701
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-10-20
+   
+   
+ * CLOSED DATE
+   2011-12-01
+   
+   
+ * LAST MODIFIED DATE
+   2012-05-29
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ WINDOWS V7
+   
+   
+ * FIXED COMPONENT ID
+   5724H7220
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R701 PSY
+   UP

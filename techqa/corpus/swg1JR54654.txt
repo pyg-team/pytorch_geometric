@@ -1,0 +1,175 @@
+Title: IBM JR54654: WHEN MANY TIMERS ARE SCHEDULED TO FIRE SIMULTANEOUSLY, SOME FAILAND YOU RECEIVE CWLLG ERRORS - United States
+
+Text:
+  DIRECT LINKS TO FIXES
+8.5.6.2-WS-BPM-IFJR54654 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Standard&fixids=8.5.6.2-WS-BPM-IFJR54654&source=SAR]
+8.0.1.3-WS-BPM-IFJR54654 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Standard&fixids=8.0.1.3-WS-BPM-IFJR54654&source=SAR]
+8.5.5.0-WS-BPM-IFJR54654 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Standard&fixids=8.5.5.0-WS-BPM-IFJR54654&source=SAR]
+Version 8.5 Refresh Pack 7 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24041575]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When many timers are scheduled to fire at the same time, not all
+   of them succeed and you receive the following CWLLG errors:
+   
+   CWLLG2103W: The retry limit of 5 was exceeded in
+   ProgrammaticTransactionSupport.
+   CWLLG0185E: An exception occurred while loading task...
+   Error: PreparedStatementCallback; SQL [...]; DB2 SQL Error:
+   SQLCODE=-911, SQLSTATE=40001, SQLERRMC=2, DRIVER=4.13.80; nested
+   exception is
+   com.ibm.db2.jcc.am.SqlTransactionRollbackException: DB2 SQL
+   Error: SQLCODE=-911, SQLSTATE=40001, SQLERRMC=2, DRIVER=4.13.80
+   org.springframework.dao.ConcurrencyFailureException:
+   PreparedStatementCallback; SQL [...]; DB2 SQL Error:
+   SQLCODE=-911, SQLSTATE=40001, SQLERRMC=2, DRIVER=4.13.80; nested
+   exception is com.ibm.db2.jcc.am.SqlTransactionRollbackException:
+   DB2 SQL Error: SQLCODE=-911, SQLSTATE=40001, SQLERRMC=2,
+   DRIVER=4.13.80
+   at org.springframework.jdbc.support.
+     SQLExceptionSubclassTranslator.translate
+     (SQLExceptionSubclassTranslator.java:52)
+   at org.springframework.jdbc.support.
+     SQLErrorCodeSQLExceptionTranslator.translate
+     (SQLErrorCodeSQLExceptionTranslator.java:237)
+   at org.springframework.jdbc.core.JdbcTemplate.
+     execute(JdbcTemplate.java:607)
+   at org.springframework.jdbc.core.JdbcTemplate.
+     query(JdbcTemplate.java:641)
+   at org.springframework.jdbc.core.JdbcTemplate.
+     query(JdbcTemplate.java:670)
+   at org.springframework.jdbc.core.JdbcTemplate.
+     query(JdbcTemplate.java:678)
+   at com.lombardisoftware.server.scheduler.Engine.
+     loadTasksIfOwnerInternal(Engine.java:1475)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  A different cluster member already locked the event manager
+   tasks in the database. As a result, the database throws a
+   deadlock exception and you receive the previously mentioned
+   CWLLG errors. Although IBM BPM tries to release those event
+   manager tasks, they remain locked.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A fix is/will be available for IBM BPM V8.5.5 that solves the
+   deadlock situation by keeping those event manager tasks in the
+   memory to be retried later.
+   
+   On Fix Central (http://www.ibm.com/support/fixcentral), search
+   for JR54654:
+   
+   1. Select IBM Business Process Manager with your edition from
+     the product selector, the installed version to the fix pack
+     level, and your platform, and then click Continue.
+   
+   2. Select APAR or SPR, enter JR54654, and click Continue.
+   
+   When you download fix packages, ensure that you also download
+   the readme file for each fix. Review each readme file for
+   additional installation instructions and information about the
+   fix.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  Not applicable
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR54654
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM ADVANCED
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9400
+   
+   
+ * REPORTED RELEASE
+   855
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2015-11-05
+   
+   
+ * CLOSED DATE
+   2016-01-13
+   
+   
+ * LAST MODIFIED DATE
+   2016-01-13
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   BPM STANDARD
+   
+   
+ * FIXED COMPONENT ID
+   5725C9500
+   
+   
+
+APPLICABLE COMPONENT LEVELS

@@ -1,0 +1,192 @@
+Title: IBM PK87951: UPDATING STATECHART DOES NOT UPDATE SOURCE CODE. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  224956
+   Appending sub-status in a statechart does not update source
+   code.
+   
+   This symptom occurs on the following situation.
+   
+   - There is a class with a statechart (Class1).
+   - Class1 has a sub-class (Class11).
+   - Class11 also has a subclass (Class111).
+   - Both Class11 and Class111 do not override the statechart.
+   - You are appending Cla
+   
+   In this case, Class11 is a child-class of Class1, and Class111
+   is a grand-child-class of Class1.  Rhapsody does not generate
+   source code for the sub-statuses defined in the
+   grand-child-class.  .
+   
+   This symptom can be resolved by 'Code ? Re generate ? Entire
+   project'.  However, any update against the statechart of
+   Class111 will erase the source code.
+   
+   The followings are the steps to reproduce the issue. I will also
+   attach the model created with this operation:
+   
+   (1) Create a new project.
+   (2) Add a class Class1 in the Object Model diagram.
+   (3) Open the statechart for Class1 and create the following
+       state transition:
+   
+           [default connector] -? [state_0] -? [state_1] -?
+               [termination connector]
+   
+       *  Drow [state_1] relatively larger, so that you can
+          create substate within state_1.
+   
+   (4) On the OMD, add Class11 and Class111, and define the
+       following inheritance:
+           Class1 ?-(inherit)-- Class11 ?-(inherit)-- Class111
+   
+   (5) Open statechart of Class111, and define the following state
+       transitions within the state_1 inherited from Class1:
+   
+           [default conntector] -? [state_2] -? [state_3] -?
+               [History connector]
+   
+   (6) Define the following 'Action' for the transition between
+       state_2 to state_3:
+   
+           printf('Hello');
+   
+   ===== The following operation is for control group =====
+   (7) On the OMD, add Class12 and define the following
+       inheritance:
+   
+           Class1 ?-(inherit)-- Class12
+   
+   (8) Open statechart of Class12, and define the following state
+       transition within the state_1 defined in Class1:
+   
+           [default conntector] -? [state_4] -? [state_5] -?
+               [History connector]
+   
+   (9) Define the following 'Action' for the transition between
+       state_4 to state_5:
+   
+           printf('Goodbye');
+   
+   (10) Save the changes by clicking [Save] toolbar button.
+   (11) On the menu, select 'Code ? ReGenerate ? Entire Project'.
+   
+   Open Active Code View Window, and confirm the source code for
+   Class21 and Class111. 'printf('Goodbye');' is generated in
+   Class21.cpp file.   However, 'printf('Hello');' is not generated
+   in Class111.cpp file.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  ReGenerate entire project after updating Statechart.
+   i.e.  Selecting menu Code > Re Generate > Entire Project
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Code in some statecharts can not be generated correctly.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Problem solved by fix given.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK87951
+   
+   
+ * REPORTED COMPONENT NAME
+   TLOGIC RHAPSODY
+   
+   
+ * REPORTED COMPONENT ID
+   5724V74RP
+   
+   
+ * REPORTED RELEASE
+   730
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-06-04
+   
+   
+ * CLOSED DATE
+   2009-12-01
+   
+   
+ * LAST MODIFIED DATE
+   2009-12-01
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TLOGIC RHAPSODY
+   
+   
+ * FIXED COMPONENT ID
+   5724V74RP
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R750 PSY
+   UP

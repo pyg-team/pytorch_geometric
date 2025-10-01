@@ -1,0 +1,23 @@
+Title: IBM What is the difference between SHA256 and SHA-256? - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ What is the difference between SHA256 and SHA-256? 
+
+CAUSE
+While there is no difference in the hashing algorithm some software has implement logic checking for a dash. The original specification ( https://www.ietf.org/rfc/rfc4130.txt [https://www.ietf.org/rfc/rfc4130.txt] ) showed the values that should be used in the AS2 headers:
+The currently supported values for MIC algorithm <micalg> values are:
+
+Algorithm Value Used
+--------- -----------------
+SHA-1 sha1
+MD5 md5
+
+
+As a result the IBM Sterling B2B Integrator software used values without the dash. It continued this methodology with SHA-2. This resulted in an issue http://www-01.ibm.com/support/docview.wss?uid=swg21972763 [http://www-01.ibm.com/support/docview.wss?uid=swg21972763] with the signing algorithm.
+
+
+ANSWER
+There is no technical difference between the SHA256 and SHA-256 hashing algorithm.

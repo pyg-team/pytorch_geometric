@@ -1,0 +1,157 @@
+Title: IBM PI17612: OUTBOUND HTTP CONNECTIONS: COOKIE STORE NOT SERIALIZABLE - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Fixes integrated in WebSphere Portal 8.0.0.1 Combined Cumulative Fixes [http://www-01.ibm.com/support/docview.wss?uid=swg24034497]
+Fixes integrated in WebSphere Portal 8.5.0.0 Combined Cumulative Fixes [http://www-01.ibm.com/support/docview.wss?uid=swg24037786]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Applications that use Outbound HTTP Connections in a clustered
+   environments can cause following error messages:
+   
+   WASSession ETMBuffWrapper getBytes write object exception. e=
+   java.io.NotSerializableException:
+   com.ibm.wps.outbound.cookiestore.CookieInstanceImpl
+   
+   These errors occur if the following conditions occur:
+   1. A clustered environment has been set up.
+   2. An application utilizes the Outbound HTTP Connection
+   Service.
+   3. A policy rule has been defined in the outbound HTTP
+   connection profile for which a cookie handling rule
+   "store-in-session" is set.
+   4. The application connects to the remote server using the
+   outbound HTTP connection service. The HTTP response of the
+   remote site returns a cookie for which the handling type
+   "store-in-session" is defined.
+   Subsequent HTTP requests using Outbound Connection Service may
+   cause the error message listed above.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  None available.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Applications that use Outbound HTTP Connections in a clustered
+   environments can cause following error messages:
+   
+   WASSession ETMBuffWrapper getBytes write object exception. e=
+   java.io.NotSerializableException:
+   com.ibm.wps.outbound.cookiestore.CookieInstanceImpl
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A code fix for this issue is integrated into the WebSphere
+   Portal & WCM Combined Cumulative Fix 13 (PI17735 [http://www-01.ibm.com/support/docview.wss?uid=swg1PI17735]) for Portal
+   8.0.0.1 available from Fix Central:
+   
+   http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent
+   =ibm/WebSphere&product=ibm/WebSphere/WebSphere+Portal&release=Al [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm/WebSphere&product=ibm/WebSphere/WebSphere+Portal&release=Al]
+   l&platform=All&function=aparId&apars=PI17735
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI17612
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSPHERE PORTA
+   
+   
+ * REPORTED COMPONENT ID
+   5724E7600
+   
+   
+ * REPORTED RELEASE
+   800
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-05-09
+   
+   
+ * CLOSED DATE
+   2014-07-31
+   
+   
+ * LAST MODIFIED DATE
+   2014-07-31
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBSPHERE PORTA
+   
+   
+ * FIXED COMPONENT ID
+   5724E7600
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R800 PSY
+   UP
+   
+   
+ * R850 PSY
+   UP

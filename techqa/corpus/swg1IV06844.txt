@@ -1,0 +1,158 @@
+Title: IBM IV06844: TAKE ACTION NOT EXECUTED WITH KLZ FILEINFO ATTRIBUTE - United States
+
+Text:
+  FIXES ARE AVAILABLE
+IBM Tivoli Monitoring: Linux(R) OS Agent 6.2.2.4-TIV-ITM_LINUX-IF0004 [http://www-01.ibm.com/support/docview.wss?uid=swg24030947]
+IBM Tivoli Monitoring 6.2.2 Fix Pack 8 (6.2.2-TIV-ITM-FP0008) [http://www-01.ibm.com/support/docview.wss?uid=swg24031354]
+IBM Tivoli Monitoring 6.2.2 Fix Pack 9 (6.2.2-TIV-ITM-FP0009) [http://www-01.ibm.com/support/docview.wss?uid=swg24032067]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Severity: 2
+   Approver: gdc
+   Compid: 5724C04LN
+   Release: 6.2.2
+   Abstract: Take Action not executed with KLZ FILEINFO attribute
+   Environment: The Monitoring Agent for Linux OS 6.2.2
+   
+   Problem Description:
+   On Linux the Monitoring Agent for Linux OS doesn't
+   executes the TakeAction related to FILEINFO attribute group when
+   there are multiple situations that monitor the same file.
+   (cf. IV06842 [http://www-01.ibm.com/support/docview.wss?uid=swg1IV06842])
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  This problem does not occur when TEMS evaluate the situation.
+   Adding a dummy 'valid formula (tautology)' into the formula to
+   make TEMS evaluate the situation will solve this symptom.
+   
+   Example:
+   ========
+   *IF *VALUE File_Information.Path *EQ '/tmp/'
+     *AND *VALUE Linux_File_Information.File *EQ test.txt
+     *AND *VALUE Linux_File_Information.File_Content_Changed *EQ
+   Yes
+     *AND *COUNT
+   Linux_Machine_Information.Number_of_Physical_Processors *NE 0
+   ========
+   
+   The last term is a dummy to do it.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  On UNIX, the monitoring agent for UNIX OS does not execute the
+   Take Action related to the FILEINFO attribute group when there
+   are multiple situations that monitor the same file.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The UNIX OS agent now correctly executes the Take Action.
+   
+   
+   The fix for this APAR is going to be included in the following
+   maintenance vehicle:
+       | interim fix | 6.2.2.4-TIV-ITM_LINUX-IF0004
+       | fix pack | 6.2.2-TIV-ITM-FP0007
+       | fix pack | 6.2.3-TIV-ITM-FP0001
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV06844
+   
+   
+ * REPORTED COMPONENT NAME
+   ITM AGENT LINUX
+   
+   
+ * REPORTED COMPONENT ID
+   5724C04LN
+   
+   
+ * REPORTED RELEASE
+   622
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-08-25
+   
+   
+ * CLOSED DATE
+   2011-09-30
+   
+   
+ * LAST MODIFIED DATE
+   2012-06-15
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ITM AGENT LINUX
+   
+   
+ * FIXED COMPONENT ID
+   5724C04LN
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R622 PSY
+   UP

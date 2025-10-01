@@ -1,0 +1,156 @@
+Title: IBM PI78873: ABEND USING ITX 9.0.0.1 ON Z/OS BATCH WHERE TO TOP LEVEL MAP CALLS A SUB MAP WITH A RUN() FUNCTION AND SUB MAP USING SINK - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The IBM Transformation Extender (ITX) z.OS Batch Command Server
+   may ABEND when a top level map calls a sub map with a RUN()
+   function, and that sub map has output cards defined to use
+   the SINK adapter.
+   
+   CEE3204S The system detected a protection exception (System
+   Completion
+   Code=0C4).
+             From compile unit
+   WINMVS7:/scm/builds/9.0.0.1/source/64/os390/mvs/mvs.c at entry
+   point
+   addMercfile at statement 2782 at
+             compile unit offset +000000001A3DA8F8 at entry offset
+   +0000000000000480 at address 000000001A3DA8F8.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  WTXRTC - 60394
+   PB / PB
+   No known workaround
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All users of IBM Transformation Extender     *
+   *                 (ITX) V9.0.0                                 *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: ABEND USING ITX 9.0.0.1 ON Z/OS BATCH   *
+   *                      WHERE TO TOP LEVEL MAP CALLS A SUB      *
+   *                      MAP WITH A RUN() FUNCTION AND SUB MAP   *
+   *                      USING SINK                              *
+   ****************************************************************
+   * RECOMMENDATION: Apply this maintenance                       *
+   ****************************************************************
+   ABEND USING ITX 9.0.0.1 ON Z/OS BATCH WHERE TO TOP LEVEL MAP
+   CALLS A SUB MAP WITH A RUN() FUNCTION AND SUB MAP USING SINK
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI78873
+   
+   
+ * REPORTED COMPONENT NAME
+   TX Z/OS
+   
+   
+ * REPORTED COMPONENT ID
+   5655R9900
+   
+   
+ * REPORTED RELEASE
+   900
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-03-27
+   
+   
+ * CLOSED DATE
+   2017-03-29
+   
+   
+ * LAST MODIFIED DATE
+   2017-04-04
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    PI78604
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    PI78953 [http://www-01.ibm.com/support/docview.wss?uid=swg1PI78953] PI78956 [http://www-01.ibm.com/support/docview.wss?uid=swg1PI78956] UI45995
+   
+   
+
+MODULES/MACROS
+ *     DTXCPAXB
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TX Z/OS
+   
+   
+ * FIXED COMPONENT ID
+   5655R9900
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R900 PSY UI45995 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI45995]
+   UP17/03/31 P F703
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

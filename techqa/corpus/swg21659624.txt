@@ -1,0 +1,70 @@
+Title: IBM Upgrade ClearCase: "Unable to find custom install operation" - United States
+
+Text:
+installation upgrade TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Attempts to upgrade IBM Rational ClearCase from 8.0.0.5 to 8.0.1 result in the error "CRIMA1075E". 
+
+SYMPTOM
+The upgrade of IBM Rational ClearCase through IBM Installation Manager stops with the following error. 
+
+
+
+244 INFO 14:20.78 Error occurred in phase: install
+SU: com.ibm.rational.clearcase.ccrc.web.sun5 8.0.5.0000-8-0-0-05-00-2012D-D121129
+IU: com.ibm.rational.clearcase.ccrc.web.deploy.iu.sun5 999.999.999.1950454629->null
+Message: Unable to find custom install operation com.ibm.rational.was.app.utilities.deployments.UndeployWasApplication 
+
+
+245 INFO 14:20.79 Elapsed time 00:02.62 for: Performing "install" phase 
+
+
+246 ERROR CRIMA1075E 14:20.79 Unable to find custom install operation com.ibm.rational.was.app.utilities.deployments.UndeployWasApplication
+java.lang.ClassNotFoundException: com.ibm.rational.was.app.utilities.deployments.UndeployWasApplication
+A package has an issue that cannot be resolved by Installation Manager.
+Identify the package that has the issue by looking at the installation history. In Installation Manager, click File > Installation History. In console mode, enter S: View Installation History. Contact IBM customer support.
+
+
+
+
+
+CAUSE
+The error message refers to a ClearCase package:
+
+
+
+..
+Error occurred in phase: install
+SU: com.ibm.rational.clearcase.ccrc.web.sun5 8.0.5.0000-8-0-0-05-00-2012D-D121129
+..
+
+
+This is ClearCase fixpack 8.0.0.5 with label 2012D-D121129 In other words, the repository for ClearCase 8.0.0.5 is not connected.
+
+
+ENVIRONMENT
+A single client or server running ClearCase.
+
+
+
+DIAGNOSING THE PROBLEM
+Open the error log and follow the instructions given there. Identify the package that has the issue by looking at the installation history.
+
+
+
+RESOLVING THE PROBLEM
+You have two options.
+
+
+
+
+ * Find the missing repository and connect to it.
+   
+   
+ * Uninstall and re-install ClearCase.
+
+
+ * 
+ * Note:
+ *

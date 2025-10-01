@@ -1,0 +1,60 @@
+Title: IBM Release Notes -  IBM Watson Explorer Foundational Components, Version 10.0.0.4 - United States
+
+Text:
+ RELEASE NOTES
+
+ABSTRACT
+ This document provides overview, upgrade, and system requirements for IBM Watson Explorer Version 10.0.0.4. 
+
+CONTENT
+ # 
+
+
+
+
+ *  Overview 
+ *  Upgrading 
+ *  System Requirements 
+ *  Known Issues 
+
+OVERVIEW
+IBM Watson Explorer Version 10.0.0.4 is a fix pack that addresses security issues. See the following Security Bulletins for more information: 
+
+ * Security Bulletin: Vulnerability in OpenSSL affects Watson Explorer (CVE-2016-7055) [http://www.ibm.com/support/docview.wss?uid=swg21999447] 
+ * Security Bulletin: Multiple Vulnerabilities Affect Watson Explorer (CVE-2016-8610, CVE-2016-2177, CVE-2016-2183, CVE-2016-5597, CVE-2016-5542) [http://www.ibm.com/support/docview.wss?uid=swg21995749] For additional information about IBM Watson Explorer Version 10.0, see the Release Notes [http://www.ibm.com/support/docview.wss?uid=swg27042989].
+   
+   
+   
+
+Back to top
+
+
+UPGRADING
+For upgrade instructions, see Upgrading to Watson Explorer Foundational Components Versions 8.2-6, 9.0.0.8, or 10.0.0.4 [http://www.ibm.com/support/docview.wss?uid=swg27049496]. 
+
+
+Back to top
+
+
+
+SYSTEM REQUIREMENTS
+For information about the requirements for installing any Watson Explorer component, see Watson Explorer Version 10.0 system requirements [http://www.ibm.com/support/docview.wss?uid=swg27042947].
+
+ Note: IBM Watson Explorer Versions 8.2.-6, 9.0.0.8, and 10.0.0.4 are not supported on SUSE Linux 11.
+
+
+Back to top
+
+
+KNOWN ISSUES
+ * 
+ * If you upgrade to v10.0.0.4, and later upgrade to v11.0.0.1 or v11.0.1.0, the upgrade would fail because OpenSSL version downgrading is not possible. To work around this issue, ensure that any later upgrade to v11 is at least v11.0.2. For information about upgrading to v11.0.2, see Upgrading to Watson Explorer Foundational Components Version 11.0.2 [http://www.ibm.com/support/docview.wss?uid=swg27048896] 
+ * 
+ * IBM Knowledge Center is no longer included as an installable component of Watson Explorer.
+ * 
+ * If you use an older version of IBM DB2 JDBC driver, you might see a database connection failure with the error code as shown in the following technote: SqlException with message "Caught java.io.CharConversionException." and ERRORCODE=-4220 [http://www.ibm.com/support/docview.wss?uid=swg21684365]. To work around this problem, upgrade the DB2 JDBC driver to Version 9.7 Fix Pack 5 or above [http://www.ibm.com/support/docview.wss?uid=swg21363866].
+ * 
+ * The ASP.NET interface is not supported in IBM Watson Explorer Versions 8.2-6 and 9.0.0.8.
+
+
+Back to top

@@ -1,0 +1,31 @@
+Title: IBM Cleaning Up DCE Disk Partitions - United States
+
+Text:
+l2dce109 dcehint dcehintadmin TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Cleaning Up DCE Disk Partitions 
+
+RESOLVING THE PROBLEM
+Cleaning Up DCE Disk Partitions
+
+
+Maintaining sufficient free space in /opt/dcelocal/var is a crucial part of a DCE administrator's job. This note lists some things you should do to periodically move junk out of that partition. 
+
+
+1. Locate core files via a command like this, as root: 
+
+find /opt/dcelocal/var -name core\* -print
+
+
+If you find a core file, the file command can tell you which daemon dropped it. You may or may not want to report core files to your support representative (depending on how old they are, whether you know you've had troubles that could cause core files, etc.), but you should not let those cores accumulate in /opt/dcelocal/var. Move them somewhere else if you decide to keep them for analysis. 
+
+2. There are several *.log files in /opt/dcelocal/var/svc, named like fatal.log, error.log, and so on. As with core files, you may want to report these to your support representative. In any case, you should periodically move them somewhere else if they become large. (At a time when DCE is down, simply mv them, or copy and remove them.) 
+
+3. Security-server and DTS audit files can surprise you; they can get BIG. secd audit files appear in /opt/dcelocal/var/security, and they have names like sec_audit_trail.1997-11-09-15-08-55 and sec_audit_trail.1997-11-09-15-08-55.md_index. dtsd audit logs appear in /opt/dcelocal/var/adm/time and have names beginning with dts_aud_trail. 
+
+If you don't care about auditing, then set the DCEAUDITOFF environment variable to "1" in the context of secd and/or dtsd; doing so will prevent the generation of audit logs. If you do want to audit, then make certain to move the audit logs out of /opt/dcelocal/var periodically. Or, set the DCEAUDITTRAILWRAP environment variable to "1", which will cause re-use of a single audit-trail file rather than generation of multiple audit trail files. 
+
+4. Periodically run kpurge (on Solaris) or rmxcred (on AIX) to get rid of expired credentials files in /opt/dcelocal/var/security/creds. On other platforms, you can simply do rm /opt/dcelocal/var/security/creds/* as root at a time when DCE is down. 
+
+On DCE client machines, you should probably maintain at least 10 MB free space in /opt/dcelocal/var, to allow for credentials files and the occasional core dump. On servers, you need additional space since CDS servers periodically checkpoint their /opt/dcelocal/var/directory/cds/cellname#clearinghouse.checkpoint files to disk, and security servers periodically checkpoint the data in /opt/dcelocal/var/security/rgy_data. Both kinds of servers leave an old copy on disk until the new copy is fully written (in case of errors during the write), so you need enough disk space to store 2 copies of a CDS server's clearinghouse and 2 copies of a security server's registry. Failure to maintain adequate free space can cause the checkpoint operations to fail, which can crash the CDS or security server. (And that crash can cause a core dump, further reducing the amount of available disk space.)

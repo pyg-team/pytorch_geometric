@@ -1,0 +1,131 @@
+Title: IBM IV32812: Add additional validation to TEP browser client URL checking. - United States
+
+Text:
+  FIXES ARE AVAILABLE
+IBM Tivoli Monitoring 6.2.3 Fix Pack 5 (6.2.3-TIV-ITM-FP0005) [http://www-01.ibm.com/support/docview.wss?uid=swg24035801]
+IBM Tivoli Monitoring 6.2.3 Fix Pack 4 (6.2.3-TIV-ITM-FP0004) [http://www-01.ibm.com/support/docview.wss?uid=swg24034252]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Cross site scripting (XSS) vulnerability identified in the
+   Tivoli Enterprise Portal browser client URL code.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Cross site scripting (XSS) vulnerability identified in the
+   Tivoli Enterprise Portal browser client URL code.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Provided additional JavaScript filtering for the Tivoli
+   Enterprise Portal URL.
+   
+   The fix for this APAR is included in the following maintenance
+   vehicle:
+   
+      | interim fix | 6.2.2-TIV-ITM-FP0009-IV32812
+      | fix pak | 6.2.3-TIV-ITM-FP0003
+      | release | 6.3.0-TIV-ITM
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV32812
+   
+   
+ * REPORTED COMPONENT NAME
+   TEP
+   
+   
+ * REPORTED COMPONENT ID
+   5724C04EP
+   
+   
+ * REPORTED RELEASE
+   622
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-11-30
+   
+   
+ * CLOSED DATE
+   2013-05-22
+   
+   
+ * LAST MODIFIED DATE
+   2013-05-22
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TEP
+   
+   
+ * FIXED COMPONENT ID
+   5724C04EP
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R623 PSY
+   UP
+   
+   
+ * R622 PSN
+   UP

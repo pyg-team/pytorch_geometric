@@ -1,0 +1,50 @@
+Title: IBM Unable to configure Jazz namespace after upgrade to Insight 1.1.1.7 - United States
+
+Text:
+jazz. namespace; httpclient; httpcore; JAR; jar; file; cognos; insight; rational; jazzns; configuration; websphere; clm; jts TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Attempts to configure the Jazz namespace after upgrading to IBM Rational Insight 1.1.1.7 fails with error, Failed to configure the Jazz namespace CRRRA0022E: Cannot connect to the report server. 
+
+SYMPTOM
+When you click the Configure button in the Configure Rational Reporting User Authentication scenario of the Insight setup wizard, it fails on the Starting the Rational Reporting server... step. The error shown says: 
+
+
+Failed to configure the Jazz namespace
+CRRRA0022E: Cannot connect to the report server.
+
+
+In the rrdi_setup.log, you see the error like the one below:
+
+
+INFO com.ibm.rational.rrdi.setup.contents.impl.SetupContentImpl : CRRRA3006E: Unable to connect to the report server with the specified URL, namespace, and credentials.
+ERROR com.ibm.rational.rrdi.setup.steps.ConfigureJazzNamespaceStepService : CRRRA0022E: Cannot connect to the report server.
+
+
+In the cogserver.log, you may see errors like:
+
+1. 
+java.lang.NoSuchMethodError: org/apache/http/impl/client/DefaultHttpClient.execute(Lorg/apache/http/HttpHost;Lorg/apache/http/HttpRequest;)Lorg/apache/http/client/methods/CloseableHttpResponse
+
+
+
+2. 
+java.lang.NoSuchFieldError: org/apache/http/message/BasicHeaderValueParser.INSTANCE
+
+
+
+CAUSE
+This occurs because there are multiple versions of 2 JAR files that are used during the configuration of the Jazz namespace as outlined in Defect 140996: upgrade of Insight 1.1.1.6 to 1.1.1.7 failed because there were 2 versions of httpcore and httpclient libraries [https://jazz.net/jazz02/resource/itemName/com.ibm.team.workitem.WorkItem/140996].
+
+
+RESOLVING THE PROBLEM
+ 
+
+ 1. Go to the directory: [WebSphere_Install]/AppServer/profiles/RationalReportingServer/installedApps/[cellname]/IBM Cognos.ear/p2pd.war/WEB-INF/lib
+    
+ 2. Delete the httpclient-4.1.2.jar and httpcore-4.1.3.jar files. 
+    DO NOT delete the newer files (such as: httpclient-4.3.5.jar and httpcore-4.3.2.jar)
+    
+ 3. Once done, restart both the WebSphere Application Server (WAS) profile for Insight and the setup wizard
+    
+ 4. Try configuring the Jazz namespace again.

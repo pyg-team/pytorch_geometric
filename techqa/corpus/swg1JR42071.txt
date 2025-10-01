@@ -1,0 +1,187 @@
+Title: IBM JR42071: DATE FORMAT USING DD-MMM-YYYY HH:MM CAUSES ERROR IF USED IN INPUT SPEC OF REPORT CONSOLE WITH MULTI-BYTE LANGUAGES - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  In IBM InfoSphere Master Data Management for Product Information
+   Management Version 6.0 the following problem exists:
+   
+   using the following date format "dd-MMM-yyyy HH:mm" in an input
+   spec for a report causes a generic exception window the date
+   value should be saved to the input spec, if the language used is
+   a multi byte character language e.g kyrillic or chinese
+   mandarin and the UI is set to "classic" UI.
+   
+   The same is working for languages such as frensh or spanish.
+   
+   The following steps show how to trigger this issue:
+   
+   - create a simple report using an input spec with a date value
+   in the spec.
+   
+   In my settings specify:
+   - Local for user interface display -> Kyrillic
+   - Local for item and Category Data display -> Russia(Russia)
+   - Datetime Output Format: User Select : dd-MMM-yyyy HH:mm
+   - Datetime Input Format: User Select: dd-MMM-yyyy HH:mm
+   - use classic UI
+   
+   - Go to the Report Console and define the Input Parameter Values
+   and select a date from the calendar picker.
+   - Now click on the Save botton. This causes the error page on UI
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  using new UI e.g. with "simple edit and rich search simplified."
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * All Master Data Management Collaboration Server              *
+   * implementations are affected by this issue.                  *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * In IBM InfoSphere Master Data Management for Product         *
+   * Information                                                  *
+   * Management Version 6.0 the following problem exists:         *
+   *                                                              *
+   * using the following date format "dd-MMM-yyyy HH:mm" in an    *
+   * input                                                        *
+   * spec for a report causes a generic exception window the date *
+   * value should be saved to the input spec, if the language     *
+   * used is                                                      *
+   * a multi byte character language e.g kyrillic or chinese      *
+   * mandarin and the UI is set to "classic" UI.                  *
+   *                                                              *
+   * The same is working for languages such as frensh or spanish. *
+   *                                                              *
+   * The following steps show how to trigger this issue:          *
+   *                                                              *
+   * - create a simple report using an input spec with a date     *
+   * value                                                        *
+   * in the spec.                                                 *
+   *                                                              *
+   * In my settings specify:                                      *
+   * - Local for user interface display -> Kyrillic               *
+   * - Local for item and Category Data display -> Russia(Russia) *
+   * - Datetime Output Format: User Select : dd-MMM-yyyy HH:mm    *
+   * - Datetime Input Format: User Select: dd-MMM-yyyy HH:mm      *
+   * - use classic UI                                             *
+   *                                                              *
+   * - Go to the Report Console and define the Input Parameter    *
+   * Values                                                       *
+   * and select a date from the calendar picker.                  *
+   * - Now click on the Save botton. This causes the error page   *
+   * on UI                                                        *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * IBM recommends that customers facing the issue reported by   *
+   * this APAR apply  Master Data Management Collaboration Server *
+   * version 10.0.0-FP004 to gain resolution to this problem.     *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A fix for this problem has been included in Master Data
+   Management Collaboration Server version 10.0.0-FP004
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR42071
+   
+   
+ * REPORTED COMPONENT NAME
+   MDM SERVER FOR
+   
+   
+ * REPORTED COMPONENT ID
+   5724V5100
+   
+   
+ * REPORTED RELEASE
+   600
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-02-27
+   
+   
+ * CLOSED DATE
+   2013-01-22
+   
+   
+ * LAST MODIFIED DATE
+   2013-01-22
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   MDM SERVER FOR
+   
+   
+ * FIXED COMPONENT ID
+   5724V5100
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * RA00 PSY
+   UP

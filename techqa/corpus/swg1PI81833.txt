@@ -1,0 +1,187 @@
+Title: IBM PI81833: RDZ INTERNAL DEFECTS AND ENHANCEMENTS - United States
+
+Text:
+z/os  FIXES ARE AVAILABLE
+9.5.1.6: PTF UI52246 for Rational Developer for z System Host [http://www-01.ibm.com/support/docview.wss?uid=swg24044334]
+9.5.1.7: PTF UI53397 for Rational Developer for z Systems Host [http://www-01.ibm.com/support/docview.wss?uid=swg24044494]
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  RDz internal defects and enhancements
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: 01.systems programmer invoking CARMA IVP     *
+   *                 02.RDz users who access the CA Endevor       *
+   *                    repository using the IBM supplied RDz     *
+   *                    Endevor RAM.                              *
+   *                 03.All Integrated Debugger users that        *
+   *                    utilize the LE user exit.                 *
+   *                 04.All COBOL V4 Integrated Debugger users.   *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: 01.CARMA IVP does not show actual       *
+   *                         timeout value                        *
+   *                      02.Re-associating an MVS sub-project    *
+   *                         with CARMA repository, does not      *
+   *                         re-associate its elements. Also,     *
+   *                         When an element is extracted to a    *
+   *                         dataset in an MVS sub-project, if a  *
+   *                         CA Endevor Element MOVE is           *
+   *                         performed for the element, the PDS   *
+   *                         member in the MVS sub-project no     *
+   *                         longer has an association with the   *
+   *                         previous element location. This      *
+   *                         causes errors when trying to         *
+   *                         further update the element from the  *
+   *                         RDz/IDz workbench to the CA Endevor  *
+   *                         repository.                          *
+   *                      03.This update matches the fix for IBM  *
+   *                         Debug Tool APAR PI81873 [http://www-01.ibm.com/support/docview.wss?uid=swg1PI81873].             *
+   *                      04.While debugging a program in         *
+   *                         Rational Developer for System z      *
+   *                         V9.5.1, the values of some           *
+   *                         variables cannot be displayed        *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   01.The Developer for z Systems (RDz/IDz) CARMA installation
+      verification program (IVP) mentions the default timeout
+      value in the following message, not the actual value.
+   
+      1. Creating CARMA connection (timeout after 60 seconds)
+   02.Re-associating an MVS sub-project with CARMA repository
+      causes the PDS member in the MVS sub-project to lose its
+      reference to the CA Endevor element on the host.
+   03.This update matches the fix for IBM Debug Tool APAR PI81873 [http://www-01.ibm.com/support/docview.wss?uid=swg1PI81873].
+   04.When debugging COBOL V4, the listing listing reader was not
+      processing some variables correctly.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  01.The CARMA component is updated to show the actual connect
+      timeout value.
+   02.The IBM IDz Endevor integration has been changed to
+      re-associate the PDS member when an association change is
+      detected between the CA Endevor element and the PDS member
+      in the MVS sub-project.
+   03.This update matches the fix for IBM Debug Tool APAR PI81873 [http://www-01.ibm.com/support/docview.wss?uid=swg1PI81873].
+   04.The Integrated Debugger engine was updated to correctly
+      process variables in the COBOL V4 listing, so that variables
+      are displayed.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI81833
+   
+   
+ * REPORTED COMPONENT NAME
+   ID/Z HOST
+   
+   
+ * REPORTED COMPONENT ID
+   5724T0723
+   
+   
+ * REPORTED RELEASE
+   951
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-05-22
+   
+   
+ * CLOSED DATE
+   2017-11-29
+   
+   
+ * LAST MODIFIED DATE
+   2017-12-01
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UI52246
+   
+   
+
+MODULES/MACROS
+ *  AQECIC32 AQECIC41 AQECIC51 AQECTL   AQED3XXT
+   AQEEVDBG AQELDR31 AQELDR64 AQEL3Z3  AQEL3Z6  AQEL6Z3  AQEL6Z6
+   AQEMVS31 AQEMVS64 AQESVC03 AQEW3Z3  AQEW3Z6  AQEXPL31 AQEZPCM
+   CRAMAJAR CRARNDVR FELFT006
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ID/Z HOST
+   
+   
+ * FIXED COMPONENT ID
+   5724T0723
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R951 PSY UI52246 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI52246]
+   UP17/12/01 I 1000
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

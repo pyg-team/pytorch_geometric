@@ -1,0 +1,89 @@
+Title: IBM WebSphere Enterprise Service Bus detailed system requirements - United States
+
+Text:
+WebSphere Enterprise Service Bus; WebSphere ESB; requirements; hardware requirements; operating system; system requirements; Detailed system requirements; SystemRequirementsDocument; prereq; coreq; installation prerequisites; DSRdoc; DSRentry; 6.0.1; 6.0.2; 6.1; 6.1.2; 6.2.0; 7.0.0 PRODUCT DOCUMENTATION
+
+ABSTRACT
+ This document describes the minimum product levels that must be installed before opening a problem report with the IBM WebSphere Enterprise Service Bus support team. 
+
+CONTENT
+Note: Your entitlement to support, if any, depends on your license, your maintenance agreements, or both, for WebSphere Enterprise Service Bus. Support is limited to your use of the relevant prerequisite with a supported WebSphere Enterprise Service Bus product.
+
+
+The following table provides direct links to the detailed system requirements information for the specified release and operating system for the WebSphere Enterprise Service Bus product.
+
+
+TAB NAVIGATION
+ * V7.5.1- selected tab,
+ * V7.5.0
+ * V7.0.0
+ * V6.2.0
+ * V6.1.2
+
+
+WebSphere Enterprise Service Bus 7.5.1 is supported on the following operating systems:  * AIX [http://publib.boulder.ibm.com/infocenter/prodguid/v1r0/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1280141441163&osPlatform=AIX] 
+ * HP-UX [http://publib.boulder.ibm.com/infocenter/prodguid/v1r0/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1280141441163&osPlatform=HP] 
+ * Linux [http://publib.boulder.ibm.com/infocenter/prodguid/v1r0/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1280141441163&osPlatform=Linux] 
+ * Solaris [http://publib.boulder.ibm.com/infocenter/prodguid/v1r0/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1280141441163&osPlatform=Solaris] 
+ * Windows [http://publib.boulder.ibm.com/infocenter/prodguid/v1r0/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1280141441163&osPlatform=Windows] 
+ * z/OS [http://publib.boulder.ibm.com/infocenter/prodguid/v1r0/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1310741557921&osPlatform=z/OS]
+
+
+WebSphere Enterprise Service Bus 7.5 is supported on the following operating systems:  * AIX [http://publib.boulder.ibm.com/infocenter/prodguid/v1r0/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1270542944922&osPlatform=AIX] 
+ * HP-UX [http://publib.boulder.ibm.com/infocenter/prodguid/v1r0/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1270542944922&osPlatform=HP] 
+ * Linux [http://publib.boulder.ibm.com/infocenter/prodguid/v1r0/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1270542944922&osPlatform=Linux] 
+ * Solaris [http://publib.boulder.ibm.com/infocenter/prodguid/v1r0/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1270542944922&osPlatform=Solaris] 
+ * Windows [http://publib.boulder.ibm.com/infocenter/prodguid/v1r0/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1270542944922&osPlatform=Windows] 
+ * z/OS [http://publib.boulder.ibm.com/infocenter/prodguid/v1r0/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1285585448242&osPlatform=z/OS]
+
+ * AIX on Power [http://www.ibm.com/support/docview.wss?uid=swg27016078]
+ * HP-UX on PA-RISC [http://www.ibm.com/support/docview.wss?uid=swg27016260]
+ * HP-UX on IA64 [http://www.ibm.com/support/docview.wss?uid=swg27016261]
+ * Linux on x86 [http://www.ibm.com/support/docview.wss?uid=swg27016262]
+ * Linux on x86-64 [http://www.ibm.com/support/docview.wss?uid=swg27016263]
+ * Linux on POWER [http://www.ibm.com/support/docview.wss?uid=swg27016264]
+ * Linux on IBM System z [http://www.ibm.com/support/docview.wss?uid=swg27016131]
+ * Solaris on SPARC [http://www.ibm.com/support/docview.wss?uid=swg27016265]
+ * Solaris on x86-64 [http://www.ibm.com/support/docview.wss?uid=swg27016266]
+ * Windows on x86 [http://www.ibm.com/support/docview.wss?uid=swg27016128]
+ * Windows on x86-64 [http://www.ibm.com/support/docview.wss?uid=swg27016267]
+ * z/OS [http://www.ibm.com/support/docview.wss?uid=swg27016269]
+
+ * AIX on Power [http://www.ibm.com/support/docview.wss?uid=swg27013455]
+ * HP-UX on PA-RISC [http://www.ibm.com/support/docview.wss?uid=swg27013454]
+ * HP-UX on IA64 [http://www.ibm.com/support/docview.wss?uid=swg27013452]
+ * i5/OS [http://www.ibm.com/support/docview.wss?uid=swg27013451]
+ * Linux on x86 [http://www.ibm.com/support/docview.wss?uid=swg27013450]
+ * Linux on x86-64 [http://www.ibm.com/support/docview.wss?uid=swg27013449]
+ * Linux on POWER [http://www.ibm.com/support/docview.wss?uid=swg27013448]
+ * Linux on IBM System z [http://www.ibm.com/support/docview.wss?uid=swg27013447]
+ * Solaris on SPARC [http://www.ibm.com/support/docview.wss?uid=swg27013446]
+ * Solaris on x86-64 [http://www.ibm.com/support/docview.wss?uid=swg27013445]
+ * Windows on x86 [http://www.ibm.com/support/docview.wss?uid=swg27013444]
+ * Windows on x86-64 [http://www.ibm.com/support/docview.wss?uid=swg27013443]
+ * z/OS [http://www.ibm.com/support/docview.wss?uid=swg27013442]
+
+ * AIX on Power [http://www.ibm.com/support/docview.wss?uid=swg27012537]
+ * HP-UX on PA-RISC [http://www.ibm.com/support/docview.wss?uid=swg27012538]
+ * HP-UX on IA64 [http://www.ibm.com/support/docview.wss?uid=swg27012539]
+ * Linux on x86 [http://www.ibm.com/support/docview.wss?uid=swg27012541]
+ * Linux on x86-64 [http://www.ibm.com/support/docview.wss?uid=swg27012543]
+ * Linux on POWER [http://www.ibm.com/support/docview.wss?uid=swg27012540]
+ * Linux on IBM System z [http://www.ibm.com/support/docview.wss?uid=swg27012542]
+ * Solaris on SPARC [http://www.ibm.com/support/docview.wss?uid=swg27012545]
+ * Solaris on x86-64 [http://www.ibm.com/support/docview.wss?uid=swg27012546]
+ * Windows on x86 [http://www.ibm.com/support/docview.wss?uid=swg27012536]
+ * Windows on x86-64 [http://www.ibm.com/support/docview.wss?uid=swg27012534]
+ * z/OS [http://www.ibm.com/support/docview.wss?uid=swg27012544]
+
+
+RELATED INFORMATION
+ WebSphere Enterprise Service Bus Information Center [http://www.ibm.com/software/integration/wsesb/library/]
+WebSphere Enterprise Service Bus Support Page [http://www.ibm.com/software/integration/wsesb/support/]
+Recommended fixes for WebSphere Enterprise Service Bus [http://www.ibm.com/support/docview.wss?uid=swg27007485]
+
+
+
+
+PRODUCT ALIAS/SYNONYM
+ WESB

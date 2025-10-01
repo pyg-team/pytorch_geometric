@@ -1,0 +1,36 @@
+Title: IBM Using provided subscriptions with WebSphere MQ classes for JMS - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How do I use a subscription manually predefined in the queue manager with a WebSphere MQ classes for JMS client application, running in either JEE or J2SE environments? 
+
+ANSWER
+A WebSphere MQ V7 subscription has two different ways of defining the message destination: Managed or Provided. In the managed destination mode, the queue manager manages the queue used to store messages for the subscriber, automatically removing the queue when it is no longer required, and removing unconsumed messages as necessary. In provided destination mode, an unmanaged queue is provided by the administrator, and messages for the subscriber are placed upon that queue. If a subscription is deregistered, and the queue and messages are no longer required, the administrator needs to remove the queue from the queue manager. 
+
+The WebSphere MQ classes for JMS use the managed destination mode when creating a subscription, and do not provide a way to use a predefined subscription, or allow the application to specify the subscription destination to use. 
+
+ 
+
+To use predefined subscriptions with WebSphere MQ classes for JMS, so that the location of the published messages for the subscriber is known and does not change, a combination of JMS point-to-point messaging, and a WebSphere MQ subscription to a provided queue can be used. This requires a subscription in the queue manager to be defined that places messages onto a provided queue, and then the WebSphere MQ classes for JMS to be configured to directly read messages from that queue in point-to-point mode, using a JMS queue destination. From a JMS application perspective, it is not consuming a message published to a topic, but reading messages from a JMS queue. 
+
+ 
+
+Example steps could include: 
+
+ 
+
+ 1. Define an MQ queue to store the messages on, for example "MySUBQ" 
+ 2. Create a subscription to the required topic that uses a Destination class of PROVIDED, and specify the queue name of "MySUBQ" 
+ 3. Configure the JMS application to read messages from a WebSphere MQ classes for JMS Queue object with the Queue field set to "MySUBQ", defined using a tool such as JMSAdmin. Note that the JMS application should not use the JMS Publish/Subscribe features, and only use the JMS Point-to-Point interfaces.
+
+
+When messages are published to the required topic, the queue manager places a message for the subscription on the destination queue "MySUBQ", and the JMS application reads it from that queue.
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Application Servers WebSphere Application Server Java Message Service (JMS) AIX, HP-UX, i5/OS, IBM i, Linux, Solaris, Windows, z/OS 8.5, 8.0, 7.0 
+PRODUCT ALIAS/SYNONYM
+ WebSphere MQ WMQ WebSphere Application Server WAS

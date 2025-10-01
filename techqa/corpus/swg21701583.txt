@@ -1,0 +1,94 @@
+Title: IBM Security Bulletin: Vulnerability in RC4 stream cipher affects IBM Rational ClearCase (CVE-2015-2808) - United States
+
+Text:
+CVE-2015-2808 SECURITY BULLETIN
+
+SUMMARY
+ The RC4 “Bar Mitzvah” Attack for SSL/TLS affects IBM Rational ClearCase. 
+
+VULNERABILITY DETAILS
+CVEID: CVE-2015-2808 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-2808]
+DESCRIPTION: The RC4 algorithm, as used in the TLS protocol and SSL protocol, could allow a remote attacker to obtain sensitive information. An attacker could exploit this vulnerability to remotely expose account credentials without requiring an active man-in-the-middle session. Successful exploitation could allow an attacker to retrieve credit card data or other sensitive information. This vulnerability is commonly referred to as "Bar Mitzvah Attack".
+CVSS Base Score: 5
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/101851 [https://exchange.xforce.ibmcloud.com/vulnerabilities/101851] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:L/Au:N/C:P/I:N/A:N)
+
+AFFECTED PRODUCTS AND VERSIONS
+IBM Rational ClearCase, versions 7.1.0.x, 7.1.1.x, 7.1.2.x, 8.0.0.x, 8.0.1.x, in the following components: 
+
+ * CCRC WAN server/CM Server component, when configured to use SSL (all platforms) 
+ * Base CC/CQ V2 (Perl trigger-based) integration, when configured to use SSL to communicate with a ClearQuest Web server (all platforms) 
+ * CMI and OSLC integrations, including UCM/ClearQuest integration via OSLC (UNIX/Linux platforms), when configured to use SSL. (Windows CMI/OSLC clients are not affected in the default configuration.) 
+ * CMI/OSLC integration clients (Windows) and automatic view client (Windows), when SSLv3 is enabled (not the default configuration) 
+ * ClearCase remote client: CCRC/CTE GUI, rcleartool, and CMAPI clients, when using SSL to access a CCRC WAN Server/CM Server 
+ * Customer defined uses of SSL from ratlperl scripts
+
+REMEDIATION/FIXES
+All fixes listed below except CCRC WAN server/CM server require the latest published fix pack before applying the rest of the fix. 
+
+Affected Versions Applying the fix 8.0.1 through 8.0.1.7 Install Rational ClearCase Fix Pack 8 (8.0.1.8) for 8.0.1 [http://www.ibm.com/support/docview.wss?uid=swg24039865] 8.0 through 8.0.0.14 Install Rational ClearCase Fix Pack 15 (8.0.0.15) for 8.0 [http://www.ibm.com/support/docview.wss?uid=swg24039863] 7.1.2 through 7.1.2.17 
+7.1.1.x (all fix packs) 
+7.1.0.x (all fix packs) Customers on extended support contracts should install Rational ClearCase Fix Pack 18 (7.1.2.18) for 7.1.2 [http://www.ibm.com/support/docview.wss?uid=swg24039861] CCRC WAN server/CM Server component: 
+
+ * The solution is to apply fixes or mitigations to your WAS and IHS components. If your clients connect to IHS via SSL (which then redirects their connections to WAS), then review this IHS bulletin: Security Bulletin: Vulnerability in RC4 stream cipher affects IBM HTTP Server (CVE-2015-2808) [http://www.ibm.com/support/docview.wss?uid=swg21701072] and apply fixes or remediations to your server. 
+   
+   If your clients connect directly to WAS with SSL, then review this bulletin for instructions on applying a mitigation or fix to your WAS installation and your ClearCase profile:
+   Security Bulletin: Vulnerability in RC4 stream cipher affects WebSphere Application Server (CVE-2015-2808) [http://www.ibm.com/support/docview.wss?uid=swg21701503]. 
+   
+   Depending on your version of ClearCase, you may need additional steps when installing IHS or WAS fixes:
+   
+   
+   
+   Affected Versions Applying the fix 7.1.0.x, 7.1.1.x, and 7.1.2.x Document 1390803 [http://www.ibm.com/support/docview.wss?uid=swg21390803] explains how to update WebSphere Application Server and/or IBM HTTP Server for ClearCase CM Servers at release 7.1.x. Consult those instructions when applying the fix. 8.0.0.x
+   8.0.1.x Apply the appropriate WebSphere Application Server and/or IBM HTTP Server fix directly to your CCRC WAN server host. No ClearCase-specific steps are necessary. 
+
+Base CC/CQ Perl trigger-based (V2) integration: 
+CMI and OSLC change management integrations (UNIX/Linux platforms): 
+ * The solution is to update to the fix pack listed above. 
+   
+
+CMI/OSLC integration clients (Windows) and automatic view client (Windows), when SSLv3 is enabled  * The solution is to update to the fix pack listed above, then restore the default configuration with SSLv3 disabled. 
+   
+   To disable SSLv3, remove the environment variable CCASE_ENABLE_SSLV3 from your configuration. This is not a default configuration, and would only have been set if you needed to temporarily enable SSLv3 support, which was disabled by the fixes listed in Security Bulletin: Vulnerability in SSLv3 affects IBM Rational ClearCase (CVE-2014-3566) [http://www.ibm.com/support/docview.wss?uid=swg21687347]. 
+
+Customer defined uses of SSL from ratlperl scripts  * The solution is to update to the fix pack listed above, then check and modify your ratlperl scripts that use OpenSSL. 
+   
+   Disable any uses of the insecure RC4 cipher when you use IO::Socket::SSL. The SSL_cipher_list setting configures permissible ciphers for use by OpenSSL . You can view the documentation with: 
+   ratlperl -e "use Pod::Perldoc; Pod::Perldoc->run();" IO::Socket::SSL 
+
+ * You can view the Base CC/CQ Perl trigger-based (V2) integration for an example, in the script module <ccase-home-dir>/lib/CQCC/CQWebJavaParser.pm 
+
+ClearCase remote client: CCRC/CTE GUI, rcleartool, CMAPI clients  * The solution is to update to the fix pack listed above. Notes: 
+   
+    * If you use CCRC as an extension offering installed into an Eclipse shell (one not provided as part of a ClearCase release), or you use rcleartool or CMAPI using a Java™ Virtual Machine not supplied by IBM as part of Rational ClearCase, you should update the Java™ Virtual Machine you use to include a fix for the above issues (disabling RC4 by default). Contact the supplier of your Java™ Virtual Machine.
+   
+   
+
+
+You should verify applying this fix does not cause any compatibility issues. The fix disables RC4 stream cipher by default. If you change this setting you will expose yourself to the attack described above. IBM recommends that you review your entire environment to identify other areas where you have enabled the RC4 stream cipher and take appropriate mitigation and remediation actions. 
+
+For unsupported versions, IBM recommends upgrading to a fixed, supported version/release/platform of the product. WORKAROUNDS AND MITIGATIONS
+See above section.
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+IMPORTANT NOTE
+ IBM strongly suggests that all System z customers be subscribed to the System z Security Portal to receive the latest critical System z security and integrity service. If you are not subscribed, see the instructions on the System z Security web site [http://www-03.ibm.com/systems/z/solutions/security_subintegrity.html]. Security and integrity APARs and associated fixes will be posted to this portal. IBM suggests reviewing the CVSS scores and applying all security or integrity fixes as soon as possible to minimize any potential risk. 
+
+REFERENCES
+Complete CVSS v2 Guide [http://www.first.org/cvss/v2/guide] 
+On-line Calculator v2 [http://nvd.nist.gov/CVSS-v2-Calculator] RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/PSIRT] ACKNOWLEDGEMENT
+None 
+
+CHANGE HISTORY
+ * 8 May 2015: Original copy published.
+* 24 June 2015: fix is now included in fix packs 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.

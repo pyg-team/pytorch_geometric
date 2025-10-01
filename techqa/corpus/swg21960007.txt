@@ -1,0 +1,29 @@
+Title: IBM Achieving “Zero Downtime” during the installation of CPE 5.2.1.2 fix pack or higher - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How to achieve “Zero Downtime” during the installation of CPE 5.2.1.2 fix pack or higher? 
+
+ANSWER
+With the release of CPE 5.2.1 FP2, the support for WebSphere Application Edition Management (AEM) feature was introduced lessen the overall impact during the deployment of fix packs. WebSphere AEM (available starting in v8.5) allows multiple editions of the CPE application to be deployed and staged on each server in the CPE cluster. While the current CPE edition is still running, the new CPE edition (i.e., new CPE edition with the fix pack installed) can be rolled out to minimize service loss and interruptions to the end-users. Note that the previous edition can be switched (rolled) back if necessary and/or if an issue is encountered with the new fix pack. Follow the high-level procedure below to ensure “Zero Downtime” during an upgrade of CPE fix packs. 
+Note that for applications which use the CE and PE web service transports to communicate with CPE server, a zero downtime upgrade can be achieved on any application server starting with the 5.2.1 release. In a system with multiple CPE nodes, with a load balancer directing web service based application traffic to these nodes, the individual CPE nodes can be upgraded one at a time. This type of zero downtime upgrade is also supported with this fix pack. 
+
+If you have peripheral components such as RE, CFS, and Centera, then upgrade these components first prior to upgrading CSS and CPE to achieve "Zero Downtime". 
+
+ 
+
+Assumption: CPE is deployed in a WebSphere application server cluster. If there are multiple CPE clusters, then follow the instruction below for each CPE cluster. 
+
+1) Follow the instructions in the readme to install the current CPE fix pack. 
+
+2) After the installation is done, continue with Completing Configuration Manager tasks instructions in the readme. 
+
+3) In the Completing Configuration Manager tasks interactively => Deploying Content Platform Engine step, select “Cluster” for Deployment Type, specify the name of the edition in the WAS Application Edition Management field for that task (for example, “2.0” or “CPE-5.2.1.2”) and execute the task. When the deployment task completed, there will two CPE editions deployed and staged in WebSphere. Note that if the WAS Application Edition Management field is left unchanged (i.e., the default value is “default”), then the Configuration Manager will update the base (current) edition. 
+
+4) Use the Edition Control Center in the WebSphere Integrated Solutions Console (i.e., WebSphere Administrative Console) to rollout the new edition (refer to the Activating an edition [http://www-01.ibm.com/support/knowledgecenter/SSAW57_8.5.5/com.ibm.websphere.nd.doc/ae/twve_appedact.html] topic in the WebSphere 8.5 Knowledge Center for details). 
+
+5) Follow the instructions in the readme to install the CPE client for your client application. 
+
+Note: Some operations from the client application (e.g., IBM Content Navigator) might fail during the rollout of the new edition to each of the CPE node in the cluster. If the operations are retried and the requests are sent to the CPE node that has the new edition rolled out, then the operations will complete successfully. For client application (including custom application) that uses corbaloc URI without the resolve initial references (i.e., "corbaloc:rir:"), the user operations will succeed if the 1st CPE node in the comma-separated URI has been rolled out with the new edition.

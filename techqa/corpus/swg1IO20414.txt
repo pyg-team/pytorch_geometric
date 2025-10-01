@@ -1,0 +1,123 @@
+Title: IBM IO20414: ICN 2.0.2.1 - CANNOT CONVERT TEXT FILES TO PDF ON ZLINUX OS - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Download IBM Content Navigator Version 2.0.2 Fix Pack 5 [http://www-01.ibm.com/support/docview.wss?uid=swg24038083]
+Download IBM Content Navigator Version 2.0.3 [http://www-01.ibm.com/support/docview.wss?uid=swg24038160]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When ICN 2.0.2.1 is installed on a zLinux OS, the users are
+   unable to successfully select the "Download as PDF" function
+   without generating the following error:
+   
+   The tool that is used to transform documents to PDF does not
+   support the .DAT file type. Close this page and try to download
+   the document again without converting it to PDF
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  3rd party library replaced
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  fixed
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IO20414
+   
+   
+ * REPORTED COMPONENT NAME
+   CONTENT NAVIGAT
+   
+   
+ * REPORTED COMPONENT ID
+   ISCONTNAV
+   
+   
+ * REPORTED RELEASE
+   202
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-01-15
+   
+   
+ * CLOSED DATE
+   2014-03-03
+   
+   
+ * LAST MODIFIED DATE
+   2014-03-03
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CONTENT NAVIGAT
+   
+   
+ * FIXED COMPONENT ID
+   ISCONTNAV
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R202 PSY
+   UP

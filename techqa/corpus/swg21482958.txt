@@ -1,0 +1,50 @@
+Title: IBM When licensing my product, I am receiving the message "Error: Failed to add license to 'lservrc'. Make sure you have write access." - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ My computer is owned by an institution (corporate or educational). My SPSS program was recently installed and now I am trying to license my product using the License Authorization Wizard. However, after entering my authorization code, I am receiving the message "Error: Failed to add license to 'lservrc'. Make sure you have write access." and my SPSS program does not work. What can I do? 
+
+RESOLVING THE PROBLEM
+The most likely cause for this problem is indicated in the error message: You do not have write access permissions to the SPSS PASW program installation directory with the user account with which you are currently logged in. 
+
+If your computer is owned/managed by an institution (corporate or educational) you may not have access to administrator permissions on your computer. Contact your institution's technology group to complete the SPSS licensing process. 
+
+(A) 
+If (1) your computer is not owned/managed by and institution, and (2) you are using a Microsoft Windows operating system, the following may resolve the problem you have encountered:
+
+Open a file browser.
+Navigate to your Statistics program installation directory.
+Locate the file labeled 'lservrc'. 
+Right-click on 'lservrc'.
+Select the 'Properties' menu option.
+Select the 'General' tab (top).
+Locate the 'Attributes' section'
+If the 'Read-only' check-box is selected, deselect (un-check) this box.
+Select the 'Apply' button.
+Select the 'OK' button.
+The window should now close.
+Run the License Authorization Wizard and provide your license authorization code when prompted.
+
+(B)
+If (1) your computer is not owned/managed by an institution, and (2) you are using a Macintosh operating system, the following may resolve the problem you are experiencing:
+
+Confirm that the account you are logged in with has Admin privileges:
+Select the 'apple' icon in the upper left corner of the screen.
+Select System Preferences.
+Select Accounts.
+Your login account should be listed here.
+If your login account has administrator privileges, the word 'Admin' will appear underneath the login name.
+If you account does not have 'Admin' underneath the name, you are not logged in with administrator permissions.
+To correct this problem, log in using a different account with 'Admin' permissions and run the License Authorization Wizard using this account
+
+RELATED INFORMATION
+ Need more help? Our Statistics forum is Live! [https://developer.ibm.com/answers/topics/statistics.html?smartspace=predictive-analytics]
+Need more help? Our Licensing forum is Live! [https://developer.ibm.com/answers/topics/spsslicensing.html]
+
+
+ 
+
+HISTORICAL NUMBER
+ 81647

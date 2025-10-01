@@ -1,0 +1,16 @@
+Title: IBM Changing the user name label in the login dialog - United States
+
+Text:
+Login Dialog; Label; User Name; TPAECUSTOMIZATION; TPAESECURITY TECHNOTE (FAQ)
+
+QUESTION
+ How can I change the user name label that appears in the login dialog. 
+
+ANSWER
+The label for user name is set in the maxmessages table. 
+
+You can reference the record with the following statement:
+select * from MAXMESSAGES where MSGGROUP='login' and MSGKEY='username';
+
+You can update the VALUE column with the value you want in order to change the label.
+Once you update the value on the maxmessage record where MSGGROUP='login' and MSGKEY=username', you will need to restart the Maximo application server for the changes to take effect.

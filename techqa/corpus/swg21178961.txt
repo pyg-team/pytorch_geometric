@@ -1,0 +1,29 @@
+Title: IBM WSADMIN issues exception WASX7022E while executing AdminApp export command - United States
+
+Text:
+was app server TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ You notice the WSADMIN tool issues following exception when executing the command : 
+
+./wsadmin.sh -username wpsbind -password wpsbind -c "$AdminApp export wps /tmp/wpsTemp/wps.ear" 
+
+WASX7209I: Connected to process "server1" on node dprtla1 using SOAP connector; The type of process is: UnManagedProcess WASX7022E: Problem running command " export wps /tmp/wpsTemp/wearr" -- exception information: com.ibm.bsf.BSFException: error while eval'ing 
+Jacl expression: invalid command name "export" 
+
+In the above command , wps.ear is an application that we are exporting and /tmp/wpsTemp/wps.ear is the location where we are exporting to. 
+
+CAUSE
+On UNIX®, using wsadmin -c to invoke a command that includes dollar signs results in the shell attempting to do variable substitution.
+
+RESOLVING THE PROBLEM
+This problem appears only in a UNIX environment when running a scripting command as individual command. 
+
+To correct this problem, escape the dollar sign with a backslash. For example: 
+
+
+ * wsadmin -c "\$AdminApp export ..."
+
+ 
+
+Cross reference information Segment Product Component Platform Version Edition Application Servers Runtimes for Java Technology Java SDK

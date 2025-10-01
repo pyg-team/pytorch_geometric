@@ -1,0 +1,17 @@
+Title: IBM How to delete unassigned servers from MS view - United States
+
+Text:
+itcam unassigned TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Need to remove unassigned servers from managing server 
+
+SYMPTOM
+Servers show in unassigned group
+
+
+CAUSE
+un-configured data collectors 
+
+RESOLVING THE PROBLEM
+From Managing Server administration - server management - configured data collectors first "disable" the data collector. Then select and un-configure the data collector.

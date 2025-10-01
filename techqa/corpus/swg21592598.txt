@@ -1,0 +1,63 @@
+Title: IBM Tivoli Monitoring Agent for i5/OS agent log collection document - United States
+
+Text:
+ITM_i5_CONFIG i5/OS OS/400 Agent Log Collection Problem Diagnosis ITM_i5_AGENT TECHNOTE (FAQ)
+
+QUESTION
+ What are the documents and steps required to collect the problem diagnostic information for the Tivoli Monitoring Agent for i5/OS? 
+
+ANSWER
+A. Agent RAS1 logs extended trace setting: 
+
+1) Modify the QAUTOTMP/KMSPARM file (member KBBENV) to set the correct trace parameters using the below steps. Save a copy for the backup purposes before making the changes.
+
+a) Edit the physical file member KBBENV in QAUTOTMP/KMSPARM file using EDTF, STRSEU or other file editing commands.
+
+b) Comment all the lines that start with KBB_RAS1 with by inserting the '*' with out the quotes at the beginning of the line. For example, *KBB_RAS1=ERROR
+
+c) Add a new line KBB_RAS1=ERROR (UNIT:KA4 ALL) (UNIT:KRA ALL) any where in the file or modify the existing line *KBB_RAS1=ERROR (UNIT:KA4 ST) (UNIT:kra ST) to look like KBB_RAS1=ERROR (UNIT:KA4 ALL) (UNIT:KRA ALL)
+IBM Support personnel may recommend different trace parameters based on the symptom(s) of the problem reported. Use the trace parameter recommended by the IBM Support personnel.
+
+d) The number of trace/log files produced can be changed using KBB_RAS1_LOG parameter.
+The default value is 
+(QAUTOTMP/KA4AGENT01 QAUTOTMP/KA4AGENT02 QAUTOTMP/KA4AGENT03) \ INVENTORY=QAUTOTMP/KA4RAS.INV LIMIT=5 PRESERVE=1
+
+This causes the agent to create and keep the trace file QAUTOTMP/KA4AGENT01 always. 
+The agent creates the files QAUTOTMP/KA4AGENT02 and QAUTOTMP/KA4AGENT03 if necessary to log more trace statements. The agent preserves the contents of the file QAUTOTMP/KA4AGENT01 during the active session of the agent. When the size of the file QAUTOTMP/KA4AGENT01 reaches the maximum size defined in the LIMIT parameter, the agent creates the file QAUTOTMP/KA4AGENT02 file. Then agent switches to the trace file QAUTOTMP/KA4AGENT02 and begins to write to it. The agent creates the QAUTOTMP/KA4AGENT03 when the size of the file QAUTOTMP/KA4AGENT02 reaches it's maximum size defined in the LIMIT parameter. The agent switches to the file QAUTOTMP/KA4AGENT03 and begins to write to it. This process continues with the other trace files if more trace files are defined. The agent switches to the second file QAUTOTMP/KA4AGENT02 after all the trace files are written to.
+
+The number of trace files can be increased or decreased by adding or removing file names in KBB_RAS1_LOG parameter. For example, to configure the agent to create up to six trace files, set
+KBB_RAS1_LOG=(QAUTOTMP/KA4AGENT01 QAUTOTMP/KA4AGENT02 \
+QAUTOTMP/KA4AGENT03 QAUTOTMP/KA4AGENT04 QAUTOTMP/KA4AGENT05 \
+QAUTOTMP/KA4AGENT06) INVENTORY=QAUTOTMP/KA4RAS.INV LIMIT=5 PRESERVE=1
+
+Each configuration parameter line must end with '\' with out the quotes except the last line if the configuration parameter value spreads across multiple lines.
+
+The LIMIT parameter defines the maximum size of a trace file in mega bytes. The default size is 5 MB in ASCII format. The actual size of the trace file on a IBM i system can be up to four times larger than the file size set in LIMIT parameter. This is because of the white space padding of the fixed length records by IBM i system. The actual size of the trace file can be up to 20 MB for default value of LIMIT=5
+
+e) Save and exit out of the file. 
+
+f) Stop the agent.
+
+2) Delete all the existing log files whose names start with KA4AGENT in QAUTOTMP library. 
+
+3) Start the agent. 
+
+4) Reproduce the problem.
+
+
+B. Logs and other diagnostic information collection:
+
+Efficient and easy way to collect logs is to run the Pdcollect tool for ITM IBM i OS agent.
+
+Please see the following technote for more information on how to obtain and run Pdcollect tool for ITM IBM i OS agent.
+
+http://www.ibm.com/support/docview.wss?uid=swg21657023 [http://www.ibm.com/support/docview.wss?uid=swg21657023] 
+
+RELATED INFORMATION
+ Pdcollect for IBM i agent [http://www.ibm.com/support/docview.wss?uid=swg21657023 ]
+
+
+
+
+PRODUCT ALIAS/SYNONYM
+ ITM 6.x i5/OS Agent Tivoli Monitoring 5724C04A4 A4 KA4

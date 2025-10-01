@@ -1,0 +1,93 @@
+Title: IBM Security Network Protection XGS Appliance Machine Code Updates for the firmware update 5.3.3. - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ This document provides information on updating the machine codes of the IBM Security Network Protection XGS Appliances 3100/4100/5100/7100 for the firmware update 5.3.3. 
+
+ANSWER
+Important Notices 
+
+SSH remote connection is not supported to update the machine code. Use local console or remote serial connection to install the update. 
+
+Overview 
+
+XGS Appliances running previous versions of machine code may encounter with following defects: 
+
+Model Known Issues XGS 3100  * The speed/duplex parameters of management interface M.1 can not be changed on the appliance running the machine code versions earlier than v1.18. 
+ * Incorrect Inlet and Outlet temperature reading.
+
+XGS 4100  * The speed/duplex parameters of management interface M.1 can not be changed on the appliance running the machine code versions earlier than v1.18. 
+ * Incorrect Inlet and Outlet temperature reading.
+
+XGS 5100  * Incorrect Inlet and Outlet temperature reading.
+
+XGS 7100  * Insufficient power supply unit status, no failure and present detection. 
+ * Unable to identify the type of power supply unit (DC/AC).
+
+
+Machine Code Update Details The latest machine codes address defects from the previous versions with following enhancements: 
+
+Model Rev. Enhancements XGS 3100 v1.22  * Added Speed/Duplex settings to the Management Interfaces page. 
+ * Improved temperature sensors by correcting Upper non-critical and Upper critical temperature thresholds for SYS1-TMP and SYS2-TMP.
+
+XGS 4100 v1.22  * Added Speed/Duplex settings to the Management Interfaces page. 
+ * Improved temperature sensors by correcting Upper non-critical and Upper critical temperature thresholds for SYS1-TMP and SYS2-TMP.
+
+XGS 5100 v1.14  * Improved temperature sensors by correcting the INLET-TMP and SYSTEM_TMP sensor assignments
+
+XGS 7100 v1.12  * Improved Power Supply Units (PSU) failure detection. 
+ * Enabled a function to provide additional diagnostic information on DC/AC PSU to IBM support.
+
+
+Notes  * Hardware Updater option is available on the GRUB menu in the firmware release 5.3.3 and later. 
+ * XGS appliances will go into Hardware bypass when updating the machine code. Ensure the Hardware Bypass Mode on the Protection Interfaces page is NOT set to Fail Closed mode, otherwise XGS appliances will fail to go to into Hardware bypass. For configuration details, see Configuring protection interfaces [http://www.ibm.com/support/knowledgecenter/SSHLHV_5.3.3/com.ibm.alps.doc/tasks/alps_configuring_protection_ports.htm].
+
+
+Update Steps  1. Verify the current Firmware Revision of the machine code in the support file.  1. To generate a support file, see Technote 1688434: Generating a support file on the IBM Security Network Protection appliance (XGS) [http://www-01.ibm.com/support/docview.wss?uid=swg21688434]. 
+     2. Open up the *.support file, and then find Firmware Version in the support .txt under /usr/bin/ipmitool.
+        Example:
+        
+        + /usr/bin/ipmitool mc info
+        Device ID : 47
+        Device Revision : 1
+        Firmware Revision : 1.10
+        IPMI Version : 2.0
+        Manufacturer ID : 10297
+        Manufacturer Name : Unknown (0x2839)
+    
+    
+ 2. A new boot option Hardware Updater will be added to the GRUB menu after IBM Network Security Protection software version 5.3.3 is installed. To update to the latest machine code, select Hardware Updater.
+    [/support/docview.wss?uid=swg21986529&amp;aid=1] 
+ 3. Take one of the three actions:
+    a. Press ENTER to start the update process immediately.
+    b. Wait sixty (60) seconds for the appliance to start update process.
+    c. Power off the appliance to abort the update process. 
+    (WARNING: DO NOT power off the appliance when the update is taking place, otherwise severe damages might be resulted.)
+    [/support/docview.wss?uid=swg21986529&aid=2] [/support/docview.wss?uid=swg21986529&aid=2] 
+ 4. Update progress will be displayed on the console.
+    [/support/docview.wss?uid=swg21986529&aid=3] [/support/docview.wss?uid=swg21986529&aid=3] 
+ 5. The appliance will restart automatically upon completion of the update.
+
+
+Estimated Time for Updating the Machine Code 
+
+ * Model
+
+Approximate time (minutes)  * 
+
+40  * 
+
+40  * 
+
+10  * 
+
+20 
+
+
+
+
+
+
+[/support/docview.wss?uid=swg21986529&aid=4] [http://ibm.biz/KC-SNIPS] [/support/docview.wss?uid=swg21986529&aid=5] [http://ibm.biz/InfraSecForumTechnote] [/support/docview.wss?uid=swg21986529&aid=6] [http://ibm.biz/SecSuptUTube] [/support/docview.wss?uid=swg21986529&aid=7] [http://ibm.biz/InfraSecFixes] [/support/docview.wss?uid=swg21986529&aid=8] [http://ibm.biz/FlexLicLogin] [/support/docview.wss?uid=swg21986529&aid=9] [http://ibm.biz/MyNotification] [/support/docview.wss?uid=swg21986529&aid=10] [http://ibm.biz/ContactSecSupport]

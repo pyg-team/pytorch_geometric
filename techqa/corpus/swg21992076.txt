@@ -1,0 +1,40 @@
+Title: IBM Supportability Licensing Feature: N+1 Licensing - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ I am an IT administrator for an organization. My IBM SPSS Statistics 23.0 client licenses are expiring. I have purchased IBM SPSS Statistics 24.0 client software and licenses, but I am afraid my version 23.0 licenses will expire before I complete my client migrations to Statistics 24.0. How can I keep my end users up and running throughout the migration? 
+
+CAUSE
+License for version N expires before all clients can be upgraded to client software version N+1
+
+ANSWER
+Starting in IBM SPSS Statistics 22.0 we have added what we colloquially call "N+1 Licensing" for this exact problem. Simply put, your Statistics version "N" will use client licenses for Statistics version "N+1". 
+
+Imagine the above scenario. You have IBM SPSS Statistics 23.0 clients deployed and the license period is coming to an end. Your licenses for Statistics 23.0 will expire long before you complete the upgrade of all clients to Statistics 24.0. The solution is to go ahead and deploy your Statistics 24.0 licenses. Statistics 23.0 (version "N") will use a Statistics 24.0 (version "N+1") license. 
+
+This is true for Authorized User licensing. 
+
+This is true for Concurrent User licensing - though as a solution, it really is more suited to this method. 
+
+ 
+
+CAVEATS: 
+
+1) If you are deploying multiple license strings (e.g. A 'base' license plus one or more add-on licenses) the 'base' and 'add-on' license versions must match. 
+
+ For example: You have IBM SPSS Statistics 23.0 client installed. 
+
+You CAN add a version 23.0 IBM SPSS Statistics Advanced Statistics module to your version 23.0 "IBM SPSS Statistics Base" installation
+You CANNOT add a version 24.0 IBM SPSS Statistics Advanced Statistics module to your version 23.0 "IBM SPSS Statistics Base" installation license. 
+
+You CAN add a version 24.0 IBM SPSS Statistics Advanced Statistics module to your version 24.0 "IBM SPSS Statistics Base" installation license. 
+
+2) "N+1 Licensing" will not work with Commuter License tokens. IBM SPSS Statistics version "N" can use an IBM SPSS Statistics "N+1" Concurrent User license token. However, it cannot use the same as a Commuter license token. 
+
+ 
+
+RELATED INFORMATION
+ Need more help? Our Statistics forum is Live! [https://developer.ibm.com/answers/topics/statistics.html?smartspace=predictive-analytics]
+Need more help? Our Licensing forum is Live! [https://developer.ibm.com/answers/topics/spsslicensing.html]

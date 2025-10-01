@@ -1,0 +1,151 @@
+Title: IBM PI54929: CORDOVA ANDROID WHITELIST VULNERABILITY - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS USER ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Android applications created using Apache Cordova that use a
+   remote server contain a vulnerability where whitelist
+   restrictions are not properly applied. Improperly crafted URIs
+   could be used to circumvent the whitelist, allowing for the
+   execution of non-whitelisted JavaScript.
+   
+   For more information:
+   https://mobilefirstplatform.ibmcloud.com/blog/2016/02/24/cve-201 [https://mobilefirstplatform.ibmcloud.com/blog/2016/02/24/cve-201]
+   5-5256-apache-cordova-vulnerable-to-improper-application-of-whit
+   elist-restrictions-on-android/
+   
+   Cordova Announcement:
+   CVE-2015-5256: Apache Cordova vulnerable to improper application
+   of whitelist restrictions on Android
+   
+   Severity: Medium
+   
+   Vendor: The Apache Software Foundation
+   
+   Versions Affected: Cordova Android 3.7.2 and earlier
+   
+   Description: Android applications created using Apache Cordova
+   that use a remote server contain a vulnerability where whitelist
+   restrictions are not properly applied. Improperly crafted URIs
+   could be used to circumvent the whitelist, allowing for the
+   execution of non-whitelisted Javascript.
+   
+   Upgrade path: Developers who are concerned about this should
+   rebuild their applications with Cordova Android 4.1.1.
+   Developers using remote content roots should also use SSL, as
+   well as Content Source Policy to further mitigate this issue.
+   
+   Credit: Muneaki Nishimura of Sony Digital Network Applications,
+   Inc
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *  There is no iFix available for supported versions of MobileFirst
+   Platform Foundation. Users can solve the issue by taking time to
+   make sure good security measures in place that prevent
+   redirection to improperly crafted URLs .
+   
+   The Cordova Whitelist does exactly what it is supposed to do.
+   The problem is that it is not very smart to differentiate
+   redirecting to an improperly crafted URL, so it could redirect
+   to the bad URL. To prevent redirection to bad URLs, all of the
+   allowed URLs must be explicitly added to the whitelist.
+   Whitelist does not handle the wildcard '*' that well, so it is
+   recommended to replace it with more specific URLs if possible.
+   The whitelist will only protect specifically what you tell it
+   to, so if you do add a wildcard, then it will allow any and all
+   URLs that happen to have the same domain.
+   
+   Using CSP and SSL are other ways to mitigate the issue. These
+   are important security measures that can easily be added to your
+   application. More information on these and other recommended
+   mitigation steps can be found here:
+   https://developer.ibm.com/mobilefirstplatform/2016/01/11/cve-201 [https://developer.ibm.com/mobilefirstplatform/2016/01/11/cve-201]
+   5-5256-apache-cordova-vulnerable-to-improper-application-of-whit
+   elist-restrictions-on-android/
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI54929
+   
+   
+ * REPORTED COMPONENT NAME
+   MFPF/WORKLIGHT
+   
+   
+ * REPORTED COMPONENT ID
+   5725I4301
+   
+   
+ * REPORTED RELEASE
+   505
+   
+   
+ * STATUS
+   CLOSED USE
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-01-06
+   
+   
+ * CLOSED DATE
+   2016-01-28
+   
+   
+ * LAST MODIFIED DATE
+   2016-06-22
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

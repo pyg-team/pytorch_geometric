@@ -1,0 +1,62 @@
+Title: IBM JazzSM/DASH replicate customer server environment on a lab server - United States
+
+Text:
+DASHL2; replicate customer environment TECHNOTE (FAQ)
+
+QUESTION
+ How can I replicate a customer's environment for JazzSM/DASH(Dashboard Application Services Hub) on a lab server? 
+
+CAUSE
+Reproduce a customer issue on a local server for investigation purposes.
+
+ANSWER
+To replicate customer's environment ask customer to provide contents of below directories from JazzSM/DASH server. 
+
+1. JazzSM 
+2. WebSphere 
+3. Any products installed under same environment
+4. Directory paths where above components are installed. 
+
+You may not need files from all of these directories depending on the area of investigation. For example; if you are investigating an issue related to JazzSM/DASH then you may not need WebSphere and directories related to the products as long as you have same components (at the same version level) already installed on the lab server. Otherwise you need all of the above.
+
+
+Follow below steps to setup lab environment using files received from customer:
+1. Unzip all the files on the lab server. If possible, use same path as customer has in their environment. But if it is not possible then you can unzip these files into any directory structure but you have to create symbolic links to match path with customer environment. 
+
+
+2. Modify serverindex.xml and update hostname in this file to the lab server's hostname. Look for "host=" and set it to hostname of the lab server. Do not change the lines which has host="*". 
+
+<JazzSM-HOME>/profile/config/cells/JazzSMNode01Cell/nodes/JazzSMNode01/serverindex.xml 
+
+In case you need to change port numbers to avoid any port conflict on lab server see below technote for this. 
+
+http://www-01.ibm.com/support/docview.wss?uid=swg21965029 [http://www-01.ibm.com/support/docview.wss?uid=swg21965029] 
+
+
+3. Update below file to change password of default admin user (typically smadmin) to a known password, unless you know the password customer has used. 
+
+
+<JazzSM-HOME>/profile/config/cells/JazzSMNode01Cell/fileRegistry.xml 
+
+
+Replace line enclosed in <wim:password> </wim:password> tags with below line. Make sure the line you are replacing is associated to admin user (typically smadmin). This should reset the password for this user to smadmin.
+
+<wim:password>U0hBLTE6dmkya2szZXlrZnlnOndwQnR6QlVoYlNTTzVkeWc2RnBXbUZycS9sUT0K</wim:password>
+
+4. Start server using below command:
+cd <JazzSM-HOME>/profile/bin
+startServer.sh server1
+
+If server fails to start then take a look into <JazzSM-HOME>/profile/logs/server1/SystemOut.log to determine the root cause and fix it. 
+
+
+One possible reason for failure may be that customer has configured LDAP repositories in WebSphere and its preventing for server to startup (but its not likely to cause issue). If this is the reason then you may have to manually remove LDAP related entries in wimconfig.xml file manually. This file is located in below dir.
+<JazzSM-HOME>/profile/config/cells/JazzSMNode01Cell/wim/config/wimconfig.xml
+
+Search for the string "participatingBaseEntries". There may be an entry for the defaultWIMFileBasedRealm, and one for the customer's LDAP. Remove the line that represents the customer's LDAP, and then save the file.
+
+5. If server comes up fine but you can not login to DASH then take a look into SystemOut.log to determine the root cause. You may need to disable security so you can login without password. See below technote for details. 
+
+https://www-304.ibm.com/support/docview.wss?uid=swg21405302 [https://www-304.ibm.com/support/docview.wss?uid=swg21405302] 
+
+6. Finally you may need to remove the Federated repositories from Websphere customer had configured and replace these with IBM Internal repositories (such as LDAP, Object server) to match with customer's environment.

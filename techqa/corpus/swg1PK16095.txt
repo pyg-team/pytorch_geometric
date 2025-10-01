@@ -1,0 +1,199 @@
+Title: IBM PK16095: OUTOFMEMORYEXCEPTIONS DUE TO UNCONTROLLED SSLSESSION CACHE - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  OutOfMemoryExceptions were seen recently due to the SSLSession
+   cache in the JSSE security code being unlimited. APAR IY78651
+   to the JDK is adding default limits on the cache; however,
+   WebSphere Application Server v6 administrators should be able
+   to control the cache size and session timeouts through the SSL
+   channel instead of depending on the default JDK values.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  The SSLSession cache size can be controlled through the system
+   property "-Djavax.net.ssl.sessionCacheSize=<numsessions>".
+   There is no system property for the session timeout value.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All WebSphere Application Server version     *
+   *                 6.0.2 users of the SSL channel.              *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Due to the default unconstrained SSL    *
+   *                      session cache in the JDK, out of memory *
+   *                      exceptions were seeing under stress.    *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   The JDK 1.4 had no default limits on the SSL engine cache. There
+   is a system property to limit the number of engines allowed,
+   but no other controls exist except through JSSE programming
+   APIs. There is an upcoming patch to the JSSE code to add default
+   limits; however, controls through WebSphere Application Server
+   itself would be preferable.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The SSL channel now has several mechanisms for controlling and
+   monitoring the SSL engine cache in the JSSE code. These take
+   precedence over the JSSE system properties that might be set,
+   and are unique per channel (instead of system wide like the
+   system properties).
+   
+   name: SSLSessionCacheSize
+   purpose: limit the number of allowed items in the cache. This
+     acts like the -Djavax.net.ssl.sessionCacheSize=<x> property.
+   value: integer
+   default: 100
+   
+   name: SSLSessionTimeout
+   purpose: provide an idle timeout on the sessions in the cache.
+     There is no equivalent System property.
+   value: int (time in milliseconds)
+   default: 86400 (24 hours)
+   
+   name: StatsEnabled
+   purpose: enable monitoring of the cache, requires Tr debug of
+     SSLChannelStats=all to be seen. If this is set to true and
+     the matching Tr debug is enabled, then every 30 seconds a
+     debug will be logged for active SSL channels, printing the
+     current number of active sessions in the cache. If the number
+     has not changed in the last 30 seconds, then no additional
+     debug will printed to avoid excessive logging; however,
+     every 5 minutes, it will print the number no matter what.
+     Thus under rapid changes to the cache, the number will be
+     show at 30 second intervals but under a steady state it will
+     only print every 5 minutes.
+   
+   The fix for this APAR is currently targeted for inclusion in
+   fixpack 6.0.2.7.  Please refer to the Recommended Updates page
+   for delivery information:
+   http://www-1.ibm.com/support/docview.wss?rs=180&context=SSEQTP&
+   uid=swg27004980 [http://www-1.ibm.com/support/docview.wss?rs=180&context=SSEQTP&uid=swg27004980]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK16095
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBS APP SERV N
+   
+   
+ * REPORTED COMPONENT ID
+   5724H8800
+   
+   
+ * REPORTED RELEASE
+   60W
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2005-12-01
+   
+   
+ * CLOSED DATE
+   2005-12-29
+   
+   
+ * LAST MODIFIED DATE
+   2005-12-29
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBS APP SERV N
+   
+   
+ * FIXED COMPONENT ID
+   5724H8800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R60A PSY
+   UP
+   
+   
+ * R60H PSY
+   UP
+   
+   
+ * R60I PSY
+   UP
+   
+   
+ * R60P PSY
+   UP
+   
+   
+ * R60S PSY
+   UP
+   
+   
+ * R60W PSY
+   UP
+   
+   
+ * R60Z PSY
+   UP

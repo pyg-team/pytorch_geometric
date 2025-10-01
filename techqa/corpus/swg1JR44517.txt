@@ -1,0 +1,139 @@
+Title: IBM JR44517: ENHANCE INFOCENTER ON HOW TO DO CASE INSENSITIVE SEARCH IN UI AND Query Language - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  There exists common.properties parameter "search_ignorecase
+   parameter" whether search is case sensitive or not.  This
+   parameter affects only search on String attributes using Rich
+   search in UI. Doing Search using Query Language (QL) is not
+   affected.
+   In order to do case insensitive search using QL, there exists
+   function upper(). The string attribute you want to search then
+   needs to be contained in function upper()  and you will have to
+   convert the matching string yourself to uppercase.
+   e.g. if you want to run case insensitive search on String
+   attribute Displayname,  you would use query like:
+          select item from catalog('My_Catalog') where (
+   upper(item['My_Primary Spec/Displayname'] )  like 'ITEM%' )
+   Category based search is always case sensitive, in both, UI and
+   QL.
+   This along with Query Language sample should be updated in
+   infocenter.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  n/a
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * All Master Data Management Collaboration Server              *
+   * implementations are affected by this issue.                  *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * ENHANCE INFOCENTER ON HOW TO DO CASE INSENSITIVE SEARCH IN   *
+   * UI                                                           *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * IBM recommends that customers facing the issue reported by   *
+   * this APAR look into the InfoSphere Master Data Management    *
+   * Information Center in the Collaboration Server section.      *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A fix for this problem has been included in the InfoSphere
+   Master Data Management Information Center in the Collaboration
+   Server section.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR44517
+   
+   
+ * REPORTED COMPONENT NAME
+   MDM SERVER FOR
+   
+   
+ * REPORTED COMPONENT ID
+   5724V5100
+   
+   
+ * REPORTED RELEASE
+   A00
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-10-24
+   
+   
+ * CLOSED DATE
+   2013-06-24
+   
+   
+ * LAST MODIFIED DATE
+   2013-06-24
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

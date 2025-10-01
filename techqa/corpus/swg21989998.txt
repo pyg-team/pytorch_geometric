@@ -1,0 +1,10 @@
+Title: IBM Maximo 7.6 compatibility with Oracle 12c Standard Edition 2 ( SE2 ) - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Is Oracle 12c Standard edition 2 ( SE2 ) supported with Maximo 7.6 
+
+ANSWER
+Yes, QA Management for Maximo Asset Management has confirmed that IBM Maximo 7.6 supports Oracle 12c SE 2 . The next version of the product support matrix will be updated to reflect this support.

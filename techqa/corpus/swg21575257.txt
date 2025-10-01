@@ -1,0 +1,139 @@
+Title: IBM Understanding hplog - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ What is hplog? 
+
+ANSWER
+The hplog utility allows system administrators to monitor messages in the ProLiant Integrated Management Log (IML). This log is visible on ProLiant servers which have Remote "Lights Out" management capabilities even if the server is powered off. 
+
+NOTE: 
+
+ * You must berootto run the hplog command. 
+ * The hplog command is located in the /sbin directory. 
+ * The hplog command reports on the host to which you are connected. In HA environments, you must be logged in as root on the HA1 host to view the log for that machine and you must log into the HA2 host to view the log for that machine. Also, hplog does not report on the MSA500 shared array.
+
+
+Viewing Log Entries (hplog -v) hplog -v formats and displays the status of the host device. There are four types of log entries: Caution, Repaired, Information, and Critical. Each entry is two lines long. You can ignore the first number. In the Caution log entry below, 0013 means that this was the thirteenth entry in the log. You can also ignore the last number on the first line which is always 0001. 
+
+A Caution log entry often describes a device failure; in this case it shows that a host disk has failed. In all Caution messages, the two dates and times are identical because they show the moment the event occurred. 
+
+0013 Caution 21:31 04/05/2008 21:31 04/05/2008 0001 
+
+LOG: Drive Array Device Failure (Slot 0, Bus 1, Bay 2) 
+
+ 
+
+The following example shows a Repaired log entry that corresponds to the previous Caution log entry. The drive array failure has been repaired so the status has changed to repaired and the second time and date has changed to reflect the date and time of repair. This host drive failed at 21:31 on 04/05/2008 and was replaced at 19:50 on 04/07/2008. 
+
+0016 Repaired 21:31 04/05/2008 19:50 04/07/2008 0001 
+
+LOG: Drive Array Device Failure (Slot 0, Bus 1, Bay 2) 
+
+ 
+
+The following example shows an Information log entry. Depending on the event that has occurred, you may need to intervene. 
+
+0004 Information 09:30 09/29/2006 09:30 09/29/2006 0001 
+
+LOG: CFG2HTML Proliant Server report successfully created 
+
+ 
+
+The following example shows a Critical log entry that requires further investigation. Use the error description and time and date to troubleshoot the problem. 
+
+0003 Critical 09:11 08/31/2006 09:11 08/31/2006 0001 
+
+LOG: An Unrecoverable System Error (NMI) has occurred 
+
+ 
+
+ 
+
+Viewing Temperatures for Components (hplog –t) 
+
+hplog –t displays the current temperature and the threshold levels of all temperature sensors. Use this to check current temperatures for the various parts inside the host and compare those to threshold values. The thresholds are set by HP. If a part exceeds its threshold, the host will automatically initiate a shutdown. 
+
+In the following output example, scan the STATUS column. Nominal means that the temperature is within normal range. 
+
+ID TYPE LOCATION STATUS CURRENT THRESHOLD 
+
+1 ADM1022 CPU (1) Nominal 125F/ 52C 212F/100C 
+
+2 ADM1022 I/O Zone Nominal 100F/ 38C 143F/ 62C 
+
+3 ADM1022 CPU (2) Nominal 127F/ 53C 212F/100C 
+
+4 ADM1022 Processor Zone Nominal 87F/ 31C 140F/ 60C 
+
+5 ADM1022 Pwr. Supply Bay Nominal 84F/ 29C 123F/ 51C 
+
+ 
+
+Viewing the Status of all Fans (hplog –f) 
+
+hplog –f shows the status of all fans inside the host and NOT the fans built into the power supplies. When scanning this output, look for STATUS to be Nominal. Do not be concerned by Low as the FAN SPEED; it is expected. 
+
+ID TYPE LOCATION STATUS REDUNDANT FAN SPEED 
+
+1 Var. Speed Processor Zone Nominal Yes Low ( 18) 
+
+2 Var. Speed Processor Zone Nominal Yes Low ( 18) 
+
+3 Var. Speed I/O Zone Nominal Yes Low ( 18) 
+
+4 Var. Speed I/O Zone Nominal Yes Low ( 18) 
+
+5 Var. Speed Processor Zone Nominal Yes Low ( 18) 
+
+6 Var. Speed Processor Zone Nominal Yes Low ( 18) 
+
+7 Var. Speed Pwr. Supply Bay Nominal Yes Low ( 18) 
+
+8 Var. Speed Pwr. Supply Bay Nominal Yes Low ( 18) 
+
+ 
+
+Viewing the Status of all Power Supplies (hplog –p) 
+
+hplog –p shows the status of all power supplies. Normal power supplies have a Nominal status and the REDUNDANT column is Yes. If a power supply has a failed status, contact HP with the location. 
+
+ID TYPE LOCATION STATUS REDUNDANT 
+
+1 Standard Pwr. Supply Bay Nominal No 
+
+2 Standard Pwr. Supply Bay Failed No 
+
+ 
+
+Clearing hplog 
+
+You can clear the hplog by running the following command as root: 
+
+/sbin/hpasmcli -s "clear iml" 
+
+If successful, the command produces the following message: 
+
+IML Log successfully cleared. 
+
+If you are switching hosts, you may clear the hplog by running a GUI tool as follows:
+1. Change to the /sbin directory.
+2. Run the cpqimview command.
+3. Use the right arrow to select theLogtab.
+4. Use the down arrow to selectClear All Entries.
+5. PressEnter. 
+
+To exit cpqimview: 
+
+1. Scroll back to theFiletab. 
+
+2. Scroll down toExit. 
+
+3. PressEnter.
+
+ 
+
+HISTORICAL NUMBER
+ NZ678089

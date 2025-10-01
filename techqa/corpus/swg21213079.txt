@@ -1,0 +1,76 @@
+Title: IBM AMQ9660: SSL key repository: password stash file absent or unusable - United States
+
+Text:
+client ssl connection AMQ9660 SSL key repository password stash file absent unusable JC062003 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+You attempt to setup an SSL client connection from a WebSphere MQ V6.0 for Windows Client, to a WebSphere MQ V6.0 for Windows Server. The connection works as expected until you add SSL. Now you receive the following error message, and the FDC listed below. 
+
+AMQ9660: SSL key repository: password stash file absent or unusable.
+
+
+
+CAUSE
+SSL configuration problem.
+
+RESOLVING THE PROBLEM
+Once the client-server connection is setup to work without SSL, perform the following steps to make it SSL enabled.
+
+On the server, using IBM Key Management utility: 
+
+ 1. Create a key database say key.kdb (if not already existing) under <instalpath>\WebSphere MQ\qmgrs\qmgrname\ssl by choosing the key database type as CMS. 
+ 2. Enter and confirm password and opt to stash the password to a file. 
+ 3. Create a new self signed certificate. Ensure that the Key Label exactly as follows: ibmwebspheremqxx for a queue manager (where xx is the qmgr name folded to lower case). 
+ 4. Extract the self signed certificate, cert.arm to a local folder. 
+ 5. Copy cert.arm to client machine to a temporary directory. 
+ 6. Alter the svrconn and clntconn channel definitions to add the SSL Cipherspec (example: NULL_MD5) and copy the client channel table file AMQCLCHL.TAB to the client machine.
+
+
+
+On Client Side, using IBM Key Management utility:
+
+ 1. Create a key database(kdb) file as mentioned above and stash the password. 
+ 2. Select signer certificate from the Key database content drop down and use Add to add the .arm file copied from the server machine. Use the same label as used on the server side. 
+ 3. Set the MQCHLLIB and MQCHLTAB environment variables appropriately and unset MQSERVER if it exists. 
+ 4. Set MQSSLKEYR to point to the directory where the key database resides.
+
+
+Additional information 
+
+FDC:
+--------------------------------------------------------------------------------------
+
+Date/Time :- Tue June 21 11:12:30 Eastern Standard Time 2005
+Host Name :- DOSxxxIN6XP (Windows XP Build 2600: Service Pack
+PIDS :- 5724H7200
+LVLS :- 6.0.0.0
+Product Long Name :- WebSphere MQ for Windows
+Vendor :- IBM
+Probe Id :- JC062003
+Application Name :- MQM
+Component :- NativeCalls.getCommandServesStatus
+SCCS Info :- eclipse/common/amqjxtra.c, 1.13
+Line Number :- 609
+Build Date :- May 19 2005
+CMVC level :- p000-L050519
+Build Type :- IKAP - (Production)
+UserID :- cdoconn
+Process Name :- C:\IBM\Eclipse SDK30\eclipse\jre\bin\javaw.exe
+Process :- 00001772
+Thread :- 00000001
+Major Errorcode :- OK
+Minor Errorcode :- OK
+Probe Type :- INCORROUT
+Probe Severity :- 4
+Probe Description :- AMQ6125: An internal WebSphere MQ error has occur
+FDCSequenceNumber :- 0
+Comment1 :-
+com/ibm/mq/commonservices/internal/utils/NativeCalls.wmq_native
+
+
+
+HISTORICAL NUMBER
+66509 442
+
+PRODUCT ALIAS/SYNONYM
+WebSphere MQ WMQ MQSeries

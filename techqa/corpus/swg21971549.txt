@@ -1,0 +1,246 @@
+Title: IBM Impact 7.1 Read First: General Information - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ If you are having a problem with your Impact Server and are unsure of the specific component causing your issue, this article applies to you. 
+
+ANSWER
+
+[/support/docview.wss?uid=swg21971549&amp;aid=1]
+
+
+#generalMustGather__AIX Linux Solaris Windows 
+
+
+AIX 
+1) Enable debug mode on Impact and Impact GUI: 
+1.1) Enable debug mode on Impact server: 
+Edit file $IMPACT_HOME/impact/etc/impactserver.log4j.properties: 
+From: 
+log4j.appender.NETCOOL.threshold=INFO 
+To: 
+log4j.appender.NETCOOL.threshold=TRACE 
+
+From: 
+log4j.appender.NETCOOL.maxBackupIndex=3 
+To: 
+log4j.appender.NETCOOL.maxBackupIndex=10 
+
+From: 
+log4j.category.com.micromuse=INFO,NETCOOL,NETCOOL-ERRORS 
+To: 
+log4j.category.com.micromuse=TRACE,NETCOOL,NETCOOL-ERRORS 
+
+You DO NOT need to restart the Impact server for this changes to be applied. 
+
+1.2) If there is problem with GUI, then enable debug mode on Impact GUI server: 
+Edit file $IMPACT_HOME/impact/etc/impactgui.log4j.properties: 
+From: 
+log4j.appender.NETCOOL.threshold=INFO 
+To: 
+log4j.appender.NETCOOL.threshold=TRACE 
+
+From: 
+log4j.appender.NETCOOL.maxBackupIndex=3 
+To: 
+log4j.appender.NETCOOL.maxBackupIndex=10 
+
+From: 
+log4j.category.com.micromuse=INFO,NETCOOL,NETCOOL-ERRORS 
+To: 
+log4j.category.com.micromuse=TRACE,NETCOOL,NETCOOL-ERRORS 
+
+You DO NOT need to restart the Impact server for this changes to be applied. 
+
+2) Set the PolicyLogger for problem determination, launch Impact GUI interface. Select PolicyLogger under Service Status. Configure with the following options: 
+
+- Highest Log level = 3 
+- Check under Log What: 
+"All SQL Statements / Policy Query Diagnostics", 
+"Parameters for Built in Functions", 
+"Local Variables on Exit of Custom Functions", 
+"Full Current Context on Entry and Exit of Custom Functions", 
+- Check Log Service Log: 
+"Service log (write to file)" 
+"Append Policy Name to log file" 
+
+3) Execute the nci_collect_logs command from the $IMPACT_HOME/bin directory. The logs are created as a zip file in the $IMPACT_HOME/bin directory. The filename has the format "impact_logs_<DATEANDTIME>.zip 
+
+4) Follow the directions at the link below to submit the files to support 
+
+
+Submit diagnostic MustGather data [http://www.ibm.com/support/docview.wss?rs=3120&uid=swg21257908] Linux 
+1) Enable debug mode on Impact and Impact GUI: 
+1.1) Enable debug mode on Impact server: 
+Edit file $IMPACT_HOME/impact/etc/impactserver.log4j.properties: 
+From: 
+log4j.appender.NETCOOL.threshold=INFO 
+To: 
+log4j.appender.NETCOOL.threshold=TRACE 
+
+From: 
+log4j.appender.NETCOOL.maxBackupIndex=3 
+To: 
+log4j.appender.NETCOOL.maxBackupIndex=10 
+
+From: 
+log4j.category.com.micromuse=INFO,NETCOOL,NETCOOL-ERRORS 
+To: 
+log4j.category.com.micromuse=TRACE,NETCOOL,NETCOOL-ERRORS 
+
+You DO NOT need to restart the Impact server for this changes to be applied. 
+
+1.2) If there is problem with GUI, then enable debug mode on Impact GUI server: 
+Edit file $IMPACT_HOME/impact/etc/impactgui.log4j.properties: 
+From: 
+log4j.appender.NETCOOL.threshold=INFO 
+To: 
+log4j.appender.NETCOOL.threshold=TRACE 
+
+From: 
+log4j.appender.NETCOOL.maxBackupIndex=3 
+To: 
+log4j.appender.NETCOOL.maxBackupIndex=10 
+
+From: 
+log4j.category.com.micromuse=INFO,NETCOOL,NETCOOL-ERRORS 
+To: 
+log4j.category.com.micromuse=TRACE,NETCOOL,NETCOOL-ERRORS 
+
+You DO NOT need to restart the Impact server for this changes to be applied. 
+
+2) Set the PolicyLogger for problem determination, launch Impact GUI interface. Select PolicyLogger under Service Status. Configure with the following options: 
+
+- Highest Log level = 3 
+- Check under Log What: 
+"All SQL Statements / Policy Query Diagnostics", 
+"Parameters for Built in Functions", 
+"Local Variables on Exit of Custom Functions", 
+"Full Current Context on Entry and Exit of Custom Functions", 
+- Check Log Service Log: 
+"Service log (write to file)" 
+"Append Policy Name to log file" 
+
+3) Execute the nci_collect_logs command from the $IMPACT_HOME/bin directory. The logs are created as a zip file in the $IMPACT_HOME/bin directory. The filename has the format "impact_logs_<DATEANDTIME>.zip 
+
+4) Follow the directions at the link below to submit the files to support 
+
+
+Submit diagnostic MustGather data [http://www.ibm.com/support/docview.wss?rs=3120&uid=swg21257908] 
+Solaris 
+1) Enable debug mode on Impact and Impact GUI: 
+1.1) Enable debug mode on Impact server: 
+Edit file $IMPACT_HOME/impact/etc/impactserver.log4j.properties: 
+From: 
+log4j.appender.NETCOOL.threshold=INFO 
+To: 
+log4j.appender.NETCOOL.threshold=TRACE 
+
+From: 
+log4j.appender.NETCOOL.maxBackupIndex=3 
+To: 
+log4j.appender.NETCOOL.maxBackupIndex=10 
+
+From: 
+log4j.category.com.micromuse=INFO,NETCOOL,NETCOOL-ERRORS 
+To: 
+log4j.category.com.micromuse=TRACE,NETCOOL,NETCOOL-ERRORS 
+
+You DO NOT need to restart the Impact server for this changes to be applied. 
+
+1.2) If there is problem with GUI, then enable debug mode on Impact GUI server: 
+Edit file $IMPACT_HOME/impact/etc/impactgui.log4j.properties: 
+From: 
+log4j.appender.NETCOOL.threshold=INFO 
+To: 
+log4j.appender.NETCOOL.threshold=TRACE 
+
+From: 
+log4j.appender.NETCOOL.maxBackupIndex=3 
+To: 
+log4j.appender.NETCOOL.maxBackupIndex=10 
+
+From: 
+log4j.category.com.micromuse=INFO,NETCOOL,NETCOOL-ERRORS 
+To: 
+log4j.category.com.micromuse=TRACE,NETCOOL,NETCOOL-ERRORS 
+
+You DO NOT need to restart the Impact server for this changes to be applied. 
+
+2) Set the PolicyLogger for problem determination, launch Impact GUI interface. Select PolicyLogger under Service Status. Configure with the following options: 
+
+- Highest Log level = 3 
+- Check under Log What: 
+"All SQL Statements / Policy Query Diagnostics", 
+"Parameters for Built in Functions", 
+"Local Variables on Exit of Custom Functions", 
+"Full Current Context on Entry and Exit of Custom Functions", 
+- Check Log Service Log: 
+"Service log (write to file)" 
+"Append Policy Name to log file" 
+
+3) Execute the nci_collect_logs command from the $IMPACT_HOME/bin directory. The logs are created as a zip file in the $IMPACT_HOME/bin directory. The filename has the format "impact_logs_<DATEANDTIME>.zip 
+
+4) Follow the directions at the link below to submit the files to support 
+
+
+Submit diagnostic MustGather data [http://www.ibm.com/support/docview.wss?rs=3120&uid=swg21257908] Windows 
+1) Enable debug mode on Impact and Impact GUI: 
+1.1) Enable debug mode on Impact server: 
+Edit file %IMPACT_HOME%\impact\etc\impactserver.log4j.properties: 
+From: 
+log4j.appender.NETCOOL.threshold=INFO 
+To: 
+log4j.appender.NETCOOL.threshold=TRACE 
+
+From: 
+log4j.appender.NETCOOL.maxBackupIndex=3 
+To: 
+log4j.appender.NETCOOL.maxBackupIndex=10 
+
+From: 
+log4j.category.com.micromuse=INFO,NETCOOL,NETCOOL-ERRORS 
+To: 
+log4j.category.com.micromuse=TRACE,NETCOOL,NETCOOL-ERRORS 
+
+You DO NOT need to restart the Impact server for this changes to be applied. 
+
+1.2) If there is problem with GUI, then enable debug mode on Impact GUI server: 
+Edit file %IMPACT_HOME%\impact\etc\impactgui.log4j.properties: 
+From: 
+log4j.appender.NETCOOL.threshold=INFO 
+To: 
+log4j.appender.NETCOOL.threshold=TRACE 
+
+From: 
+log4j.appender.NETCOOL.maxBackupIndex=3 
+To: 
+log4j.appender.NETCOOL.maxBackupIndex=10 
+
+From: 
+log4j.category.com.micromuse=INFO,NETCOOL,NETCOOL-ERRORS 
+To: 
+log4j.category.com.micromuse=TRACE,NETCOOL,NETCOOL-ERRORS 
+
+You DO NOT need to restart the Impact server for this changes to be applied. 
+
+2) Set the PolicyLogger for problem determination, launch Impact GUI interface. Select PolicyLogger under Service Status. Configure with the following options: 
+
+- Highest Log level = 3 
+- Check under Log What: 
+"All SQL Statements / Policy Query Diagnostics", 
+"Parameters for Built in Functions", 
+"Local Variables on Exit of Custom Functions", 
+"Full Current Context on Entry and Exit of Custom Functions", 
+- Check Log Service Log: 
+"Service log (write to file)" 
+"Append Policy Name to log file" 
+
+3) Execute the nci_collect_logs command from the %IMPACT_HOME%\bin directory. The logs are created as a zip file in the $IMPACT_HOME/bin directory. The filename has the format "impact_logs_<DATEANDTIME>.zip 
+
+4) Follow the directions at the link below to submit the files to support 
+
+
+Submit diagnostic MustGather data [http://www.ibm.com/support/docview.wss?rs=3120&uid=swg21257908]

@@ -1,0 +1,62 @@
+Title: IBM Setting up IBM Initiate Master Data Service with DB2 Database - United States
+
+Text:
+UDB TECHNOTE (FAQ)
+
+QUESTION
+ We are preparing to install IBM Initiate Master data Service with DB2 database and were wondering if you had any recommendations on how we should set it up? 
+
+CAUSE
+IBM conducts application testing using a certain DB2 configuration and we recommend similar settings since we know that the product performs well with these settings. The recommendations within this document are to be used as a guideline for the construction of the corresponding instance. IBM Initiate Master Data Service administrators or DB2 DBAs may chose to deviate from the recommendation and customize these settings, but it may lead to performance degradation unless the administrators have done extensive due diligence.
+
+ANSWER
+The recommended way to obtain initial configuration values is through the AUTOCONFIGURE command. For most systems, automatic settings provide better performance than all but the very carefully hand-tuned systems. This is due to the DB2 self-tuning memory manager (STMM), which dynamically tunes total database memory allocation as well as four of the main memory consumers in a DB2 system: the buffer pools, the lock list, the package cache, and the sort heap. Our recommendation is to use STMM whenever possible due to the dynamic nature of the Initiate MDS workload. Following are some of the configuration settings that we explicitly set:
+
+* DB2_ALLOCATION_SIZE=256K
+* MAXAGENTS 100 immediate
+* DFT_MON_UOW ON immediate 
+* DB2COMM=TCPIP
+* DFT_MON_STMT ON immediate
+* DFT_MON_TABLE ON immediate
+* DFT_MON_SORT ON immediate
+* DFT_MON_TIMESTAMP ON immediate
+* DIAGLEVEL 3 immediate
+* DIAGSIZE 75 immediate
+* MAX_QUERYDEGREE 9 immediate
+* INTRA_PARALLEL YES immediate
+* MON_HEAP_SZ 5000 automatic immediate
+* SELF_TUNING_MEM ON immediate
+* DB_MEM_THRESH 100 immediate
+* STMT_CONC LITERALS immediate
+* DATABASE_MEMORY 7340032 automatic immediate
+* PCKCACHESZ 200000 immediate
+* MAXAPPLS 128 immediate
+* MAX_LOG 0 immediate
+* LOGFILSIZ 1024 immediate
+* LOGBUFSZ 2048 immediate
+* LOGPRIMARY 36 immediate
+* LOGSECOND 6 immediate
+* NUM_IOSERVERS 11 automatic immediate
+* DFT_DEGREE -1 immediate
+* DFT_QUERYOPT 2 immediate
+* AUTO_MAINT OFF immediate
+* DB2TCPCONNMGRS=1
+* statement concentrators(STMT_CONC=LITERALS) 
+* Compression - Using compression for all tables and indexes except MPI_MEMBKTD table improves caching efficiency for this key object used during search and match operations. 
+* VOLATILE - Declare queue tables MPI_MEMIQUE, MPI_MEMOQUE, MPI_ENTIQUE_ID, MPI_ENTOQUE_ID, MPI_ENTIQUE_ORG, MPI_ENTOQUE_ORG with CARDINALITY as VOLATILE to prevent excessive logical read activity due to table scanning as the row count in these tables varies.
+* mincommit =1
+* buffpage: Ignore buffpage, and either explicitly set the size of buffer pools that have an entry in SYSCAT.BUFFERPOOLS, or let the STMM tune buffer pool sizes automatically. 
+* Diagpath: The best practice is to override diagpath to a local, non-NFS directory for each partition.
+
+
+
+PRODUCT ALIAS/SYNONYM
+ MDS
+Master Data Service
+MDM
+MDMSE
+Master Data Management
+IBM Infosphere Master Data Service
+MDM Standard Edition
+MDM Hybrid Edition
+Virtual MDM

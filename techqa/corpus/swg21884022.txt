@@ -1,0 +1,40 @@
+Title: IBM Getting error message when browsing an object store in FileNet Workplace XT - United States
+
+Text:
+Workplace XT Addons TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Select an object store to browse in FileNet Workplace XT returns an error, The search failed. Ask your administrator to review the error logs and find the possible cause of the search failing. 
+
+SYMPTOM
+ 
+
+ * Pop up error message while attempting to browse the object store in Workplace XT:
+   
+   The search failed. Ask your administrator to review the error logs and find the possible cause of the search failing.
+   
+ * Similar error also seen when searching the problem object store. 
+ * The issue only happens on certain object store. 
+ * Below errors are logged in the P8_server_error.log:
+   
+   YYYY-04-16T13:08:07.145 4F61B30F ENG FNRCE0002E - ERROR method name: determineBadClassRetry principal name: P8Admin Global Transaction: false User Transaction: false Exception Info: Class "StoredSearch" not found.
+   com.filenet.api.exception.EngineRuntimeException: FNRCE0002E: E_BAD_CLASSID: Class "StoredSearch" not found. at com.filenet.engine.metadatacache.MetadataCacheBase.determineBadClassRetry(MetadataCacheBase.java:240) at com.filenet.engine.retrieve.AdHocStatement.getMergedClassInfo(AdHocStatement.java:4601) at com.filenet.engine.retrieve.AdHocStatement.addFromClass(AdHocStatement.java:820) at com.filenet.engine.retrieve.AdHocStatement.processFromClass(AdHocStatement.java:720) at com.filenet.engine.retrieve.AdHocStatement.processClassReference(AdHocStatement.java:574) at com.filenet.engine.retrieve.AdHocStatement.buildSQLStatement(AdHocStatement.java:363) at com.filenet.engine.retrieve.AdHocClassRetriever.doSearch(AdHocClassRetriever.java:1180)
+   ...................
+   YYYY-04-16T14:42:26.865 2135C072 ENG FNRCR0081E - ERROR method name: processSelectPropertySpec principal name: P8Admin Global Transaction: false User Transaction: false Exception Info: The property ContainerType is not defined. ObjectStore: "ObjectStoreName", SQL: "SELECT [ClassDescription], [FolderName], [Id], [ContainerType], [DateLastModified], [LastModifier] FROM Folder WHERE Parent = Object('{0F1E2D3C-4B5A-6978-8796-A5B4C3D2E1F0}') AND IsHiddenContainer = false ORDER BY FolderName"
+   com.filenet.api.exception.EngineRuntimeException: FNRCR0081E: RETRIEVE_PROPERTY_NOT_DEFINED: The property ContainerType is not defined. ObjectStore: "ObjectStoreName", SQL: "SELECT [ClassDescription], [FolderName], [Id], [ContainerType], [DateLastModified], [LastModifier] FROM Folder WHERE Parent = Object('{0F1E2D3C-4B5A-6978-8796-A5B4C3D2E1F0}') AND IsHiddenContainer = false ORDER BY FolderName" at com.filenet.engine.retrieve.AdHocStatement.processSelectPropertySpec(AdHocStatement.java:1118)
+   ..........................
+
+
+CAUSE
+This issue is caused by some Add-Ons missing on the object store with the problem. The below list is some of the missing Add-Ons:
+
+
+ * 5.2.1 Workplace (Base, Templates, Access Roles, etc) Extensions 
+ * 5.2.1 Workplace XT Extensions 
+ * 5.2.1 Stored Search Extensions 
+
+RESOLVING THE PROBLEM
+Install the required Add-Ons to the object store from the IBM Administration Console for Content Engine (ACCE): 
+
+ 1. Log on to ACCE, right-click on the problem object store and select Install Add-on Features 
+ 2. Select the necessary Add-Ons from the 'Select the add-on features to install' list for Workplace, Workplace XT and Stored Search then click OK to go through the install wizard.

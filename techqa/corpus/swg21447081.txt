@@ -1,0 +1,31 @@
+Title: IBM InfoSphere Discovery Fetched Column Value Truncated - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When running Column Analysis, the task completes with the following error:
+ODBC Error Message [HY000:1406]: [Oracle][ODBC][Ora]ORA-01406: fetched column value was truncated
+
+
+
+CAUSE
+The Oracle driver is returning the wrong byte calculation for multibyte data. This problem occurs when using Oracle 10.1.0.2 for the staging data source or the repository
+
+ENVIRONMENT
+InfoSphere Discovery Repository Database : Oracle 10.1.0.2, InfoSphere Discovery Staging Database: Oracle 10.1.0.2
+
+RESOLVING THE PROBLEM
+Upgrade the staging data source and repository to Oracle 10.1.0.5.
+
+
+
+
+Note: Any machine hosting a database schema used by InfoSphere Discovery 
+(repository, staging data source, data source, etc.) must use a code page that is
+equivalent to Windows-1252. If you are not using a database with 1252 code page, then suggested workaround is as follows: 
+
+ * Navigate to column analysis 
+ * Double the size of all varchar columns 
+ * approve it 
+ * re-run column analysis

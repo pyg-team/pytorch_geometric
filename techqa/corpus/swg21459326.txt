@@ -1,0 +1,103 @@
+Title: IBM DAOS Estimator not working as expected on IBM i, i5/OS, iSeries, Error opening database, 0x103 while using an Indirect (.ind) file - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ English 
+
+PROBLEM
+When running the load daosest command using the IBM Lotus Domino Attachment and Object Service Estimator while using an Indirect (.ind) file, the written results within the .txt file are not clear. An error is seen that states; Error opening database a K ¢ % a ¢ K ¢ : 0x103 
+
+SYMPTOM
+The full data written to the .txt file may look like this: 
+IBM Lotus Domino Attachment and Object Service Estimator, Version 1.4 
+Copyright (c) IBM 2008. All rights reserved. 
+Processing indirect file outfilet.ind 
+Error opening database a K ¢ % a ¢ K ¢ : 0x103 
+
+Summary: 
+Total DB's analyzed: 0 
+Total DB's skipped due to errors: 1 
+Total Size of NSF's Examined: 0.0 KB 
+Total Attachments found: 0 
+Total Duplicate Attachments found: 0 
+Estimated Size of DAOSified NSF's: 0.0 KB 
+Estimate Size of DAOS dir: 0.0 KB 
+Total Disk Savings: 0.0 KB 
+Compression Statistics: 
+None: 0 
+Huffman: 0 
+
+
+CAUSE
+The reason for this is because the IBM Lotus Domino Attachment and Object Service Estimator presumes the .ind file is ASCII, and will not run successfully as if is actually an EBCDIC file. 
+
+
+
+ENVIRONMENT
+Lotus Domino Server, IBM i 
+
+
+
+DIAGNOSING THE PROBLEM
+Unexpected results will be seen, such as "Error opening database a K ¢ % a ¢ K ¢ : 0x103" 
+
+
+
+RESOLVING THE PROBLEM
+ 
+
+You can copy and create a new outfile.ind to call using the load daosest command 
+
+WRKDOMSVR <enter> 
+
+Take an Option 3 (copy) in front of outfile.ind, and prompt with F4 
+
+Change the following fields: (presuming '/notes/data' is the server's data directory) 
+
+
+To object . . . . . . . . . . . ''/notes/data/outfilet.ind' (giving the new outfile.ind a different name; outfilet.ind)
+
+To CCSID . . . . . . . . . . . . 819
+
+Data Format . . . . . . . . . . *TEXT
+
+Owner . . . . . . . . . . . . . *KEEP
+
+<enter> after above changes have been established
+
+
+Using the load daosest command, you may now call the new .ind file that you have changed to ASCII, example: 
+
+load daosest -o YourTextFileName.txt -i outfilet.ind
+
+Results should now be as expected, example: 
+
+
+************Beginning of data************** 
+
+IBM Lotus Domino Attachment and Object Service Estimator, Version 1.4 
+Copyright (c) IBM 2008. All rights reserved. 
+Processing indirect file outfilet.ind 
+
+Database Name Orig NSF New NSF Num Dup DAOS Compr Space DAOS Ob 
+Size Size Files Files Files Size Savings Size 
+================================= ======== ======== ====== ====== ====== ======== ======== ======== 
+mail/jdoe.nsf 12.2 MB 12.2 MB 0 0 0 0.0 KB 0.0 KB 0.0 KB 
+mail/jsmith.nsf 11.5 MB 11.5 MB 0 0 0 0.0 KB 0.0 KB 0.0 KB 
+
+Summary: 
+Total DB's analyzed: 2 
+Total DB's skipped due to errors: 0 
+Total Size of NSF's Examined: 23.8 MB 
+Total Attachments found: 0 
+Total Duplicate Attachments found: 0 
+Estimated Size of DAOSified NSF's: 23.8 MB 
+
+
+
+
+
+RELATED INFORMATION
+ How to create an INDIRECT (.IND) file for Domino on IBM [http://www.ibm.com/support/docview.wss?uid=swg21405726]

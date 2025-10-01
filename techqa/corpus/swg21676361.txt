@@ -1,0 +1,20 @@
+Title: IBM Empty runtime name for WebSphere Application Server 7.0 server runtime environment in Rational Application Developer 9.1.0.1 - United States
+
+Text:
+rad; was TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ If the IBM WebSphere Application Server (WAS) 7.0 Test Environment is installed onto IBM Rational Application Developer (RAD), RAD automatically creates a WAS 7.0 server runtime environment with an empty runtime name upon entering a new workspace 
+
+SYMPTOM
+RAD automatically added a WAS 7.0 server environment runtime with an empty name to your list of server environment runtimes.
+
+
+CAUSE
+Default server runtime environments names are not set properly.
+
+RESOLVING THE PROBLEM
+ 
+
+ 1. When the Runtime environment and profile settings wizard appears for configuring the WAS 7.0 server, ensure Add WebSphere Application Server Version 7.0 configuration to the workspace is unchecked. 
+ 2. Manually add the WAS 7.0 server runtime environment by navigating to Window > Preferences > Server > Runtime Environments > Add.

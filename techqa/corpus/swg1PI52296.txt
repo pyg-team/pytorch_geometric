@@ -1,0 +1,181 @@
+Title: IBM PI52296: ADOBE ACROBAT READER DC 2015 RELEASE CANNOT OPEN STATISTICS 23.PDF, ERROR THAT FILE IS NOT SUPPORTED OR DAMAGED - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS SUGGESTION FOR FUTURE RELEASE.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  You have downloaded the below software package from IBM Passport
+   Advantage (IBM SPSS Statistics 23 for windows 64 bit)
+   IBM SPSS Statistics Desktop 23.0 for Base and all Modules
+   Microsoft Windows Multilingual eAssembly (CRUM4ML)
+   
+   > IBM SPSS Statistics Client 23.0 64-bit Microsoft Windows
+   Multilingual (CN3EEML )
+   
+   You extract the content of SPSSSC_64-BIT_23.0_MW_ML.zip to a
+   local folder
+   On Extracted files you will find IBM SPSS Statistics 23.pdf. You
+   double click on the file to open it with Adobe Acrobat Reader DC
+   2015 release (version 2015.009.20077).
+   
+   However, Adobe Acrobat Reader will not open the file, you will
+   get below error:
+   
+   Adobe Acrobat Reader DC could not open 'IBM SPSS Statistics
+   23.pdf' because it is either not a supported file type or
+   because the file has been damaged (for example, it was sent as
+   an e-mail attachment and wasn't correctly decoded).
+   This was reported to IBM SPSS development.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  In fact, this file is not a documentation file, and it's not a
+   PDF file either. You can open it in any text editor to see its
+   content.
+   This file is created by InstallShield, and the "PDF" full name
+   is Package Definition File. The file will be used to enable end
+   users to run installation as an SMS job. So development can not
+   remove it or rename it.
+   Here's what is in the file:
+   
+   [PDF]
+   Version = 2.0
+   
+   [Package Definition]
+   Name = IBM SPSS Statistics 23
+   Version = 23.0.0.0
+   Publisher = IBM Corp
+   Language = Programs = Setup
+   MifFileName = IBM SPSS Statistics 23.mif
+   MifName = IBM SPSS Statistics 23
+   MifVersion = 23.0.0.0
+   MifPublisher = IBM Corp
+   
+   [Setup]
+   Name = Automated Minimum Installation
+   CommandLine = msiexec /m "IBM SPSS Statistics 23.mif" /qn /I
+   "IBM SPSS Statistics 23.msi"
+   SupportedClients = Win 9x, Win NT (i386)
+   UserInputRequired = False
+   RemoveProgram = True
+   UnInstallKey = {C3BA73A4-2A45-4036-8541-4F5F8146078B}
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *  In fact, this file is not a documentation file, and it's not a
+   PDF file either. You can open it in any text editor to see its
+   content.
+   This file is created by InstallShield, and the "PDF" full name
+   is Package Definition File. The file will be used to enable end
+   users to run installation as an SMS job. So development can not
+   remove it or rename it.
+   Here's what is in the file:
+   
+   [PDF]
+   Version = 2.0
+   
+   [Package Definition]
+   Name = IBM SPSS Statistics 23
+   Version = 23.0.0.0
+   Publisher = IBM Corp
+   Language = Programs = Setup
+   MifFileName = IBM SPSS Statistics 23.mif
+   MifName = IBM SPSS Statistics 23
+   MifVersion = 23.0.0.0
+   MifPublisher = IBM Corp
+   
+   [Setup]
+   Name = Automated Minimum Installation
+   CommandLine = msiexec /m "IBM SPSS Statistics 23.mif" /qn /I
+   "IBM SPSS Statistics 23.msi"
+   SupportedClients = Win 9x, Win NT (i386)
+   UserInputRequired = False
+   RemoveProgram = True
+   UnInstallKey = {C3BA73A4-2A45-4036-8541-4F5F8146078B}
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI52296
+   
+   
+ * REPORTED COMPONENT NAME
+   SPSS STATISTICS
+   
+   
+ * REPORTED COMPONENT ID
+   5725A54ST
+   
+   
+ * REPORTED RELEASE
+   N00
+   
+   
+ * STATUS
+   CLOSED SUG
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-11-11
+   
+   
+ * CLOSED DATE
+   2015-11-19
+   
+   
+ * LAST MODIFIED DATE
+   2015-11-19
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

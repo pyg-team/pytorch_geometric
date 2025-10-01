@@ -1,0 +1,62 @@
+Title: IBM Using WebSphere Application Server version 6.1 with  Rational Application Developer version 8.5 - United States
+
+Text:
+WebSphere Application Server 6.1; installation issue of WebSphere Application Server version 6.; 1 in RAD 8.5 TECHNOTE (FAQ)
+
+QUESTION
+ Why can I not find WebSphere Application Server v6.1 in the Rational Application Developer bundle version 8.5?
+Can I install a WebSphere Application server 6.1 Test environment that was shipped with previous version of Rational Application Developer?
+Can I still test my application in Rational Application Developer version 8.5 using WebSphere Application Server version 6.1?
+
+
+CAUSE
+Rational Application Developer version 8.5 no longer ships with the WebSphere Application Server version 6.1. Test Environment 
+
+ Rational Application Developer version 8.5 no longer supports the installation of any
+WebSphere Application Server version 6.1 Test environment shipped with previous versions of Rational Application Developer.
+
+
+
+
+
+
+ANSWER
+Installation 
+
+ 
+
+ If you try to install a WebSphere Application Server version 6.1 Test environment that was shipped in previous version of Rational Application Developer, you will get into the following error message: 
+
+ 
+[/support/docview.wss?uid=swg21600540&aid=1] [/support/docview.wss?uid=swg21600540&aid=1]
+
+
+ 
+
+Using 
+
+ 
+
+During installation of the Rational Application Developer version 8.5 , if you select the feature " Development tools" under WebSphere Application Server 6.,1 
+
+
+[/support/docview.wss?uid=swg21600540&amp;aid=2] 
+
+ From the Rational Application Developer version 8.5 workbench 
+
+ *  You can connect to a stand-alone WebSphere Application Server version 6.1. 
+ *  You can connect to a previously installed WebSphere Application server version 6.1 Test environment under a previous version of Rational Application Developer. 
+ *  You can publish and debug your application using the WebSphere Application Server version 6.1. instances
+
+
+
+RELATED INFORMATION
+#System Requirements on windows for Rational Applicatio [http://publib.boulder.ibm.com/infocenter/prodguid/v1r0/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1315604112137&osPlatform=Windows]
+System Requirement on Linux for Rational Application De [http://publib.boulder.ibm.com/infocenter/prodguid/v1r0/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1315604112137&osPlatform=Linux]
+
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Software Development Rational Software Architect for WebSphere Software Installation Linux, Windows 8.5

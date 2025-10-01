@@ -1,0 +1,145 @@
+Title: IBM LO50253: NOTESVIEW CLASS GETNEXTDOCUMENT METHOD CANNOT RETURN CORRECT DOC UMENT - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PERMANENT RESTRICTION.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  GetNextDocument method of NotesView class cannot return correct
+   document when
+   time/date functions are used in the view selection formula.
+   
+   Steps:
+   1. I attached reproducible database gettest.nsf. please save it
+   in local data
+   directory.
+   2. Open the database
+   3. Run Agent "Remove Document From TEST(Today)"
+   
+   Result:
+   If the agent run correctly, all documents are removed from
+   TEST(Today) view.
+   However some docs are remained in the view.
+   This problem also occurs in @Now, @Yesterday and @Tomorrow.
+   
+   If this behavior is spec, the customer request us to document
+   about it in
+   Designer Help.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  use @TextToTime("Today") instead of @Today.  or  "view.update =
+   false" in the
+   lotusscript code.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  A programming error was found but will not be corrected. It
+    will be a permanent restriction.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A programming error was found but will not be corrected. It
+    will be a permanent restriction.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+ *  This APAR is associated with SPR# CSAO83Z633.
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   LO50253
+   
+   
+ * REPORTED COMPONENT NAME
+   NOTES CLIENT
+   
+   
+ * REPORTED COMPONENT ID
+   5724E6255
+   
+   
+ * REPORTED RELEASE
+   802
+   
+   
+ * STATUS
+   CLOSED PRS
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-03-28
+   
+   
+ * CLOSED DATE
+   2010-04-09
+   
+   
+ * LAST MODIFIED DATE
+   2010-04-09
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  NA
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

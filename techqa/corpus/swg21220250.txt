@@ -1,0 +1,19 @@
+Title: IBM Multi-part documents with different mime types for parts - United States
+
+Text:
+FixListDocument TECHNOTE (FAQ)
+
+QUESTION
+ If a document that is imported into IBM® DB2® Content Manager contains multiple content parts, and the various parts have different mime types, then the document cannot be viewed consistently. 
+
+CAUSE
+The eClient viewers (viewer applet and the HTML viewer) support a fixed list of mime types that can be viewed. They support each of these mime types individually. Therefore, a multi-part document where all the parts have the same mime type can be viewed properly with the eClient viewers. But if a single document is created that consists of multiple parts of different mime types, it becomes a multi-part/mixed mime type document. The viewer code is currently not capable of supporting such documents. 
+
+For example, the eClient viewers support plain/text and image/TIFF mime types. When you create a document in DB2 Content Manager that has some parts as plain text and others as image/TIFF, it becomes a multi-part/mixed mime type document and cannot be correctly converted and viewed. However, if you create a document that has multiple parts and all of them are image/TIFF, then it can be converted and viewed properly with the eClient viewers.
+
+
+ANSWER
+Read the "Cause" section
+
+RELATED INFORMATION
+ Current list of MIME types supported by the applet view [http://www.ibm.com/support/docview.wss?uid=swg21205487]

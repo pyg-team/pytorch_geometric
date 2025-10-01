@@ -1,0 +1,153 @@
+Title: IBM PM16627: USER FRIENDLY WARNING MESSAGE ON WCM AUTHORING PORTLET WHILE EXECUTING REMOTE ACTIONS. - United States
+
+Text:
+  FIXES ARE AVAILABLE
+6.1.0.5 Download: WebSphere Portal and WCM V6.1.0 fix pack 5 [http://www-01.ibm.com/support/docview.wss?uid=swg24027475]
+6.1.0.6 Download: WebSphere Portal and WCM V6.1.0 fix pack 6 [http://www-01.ibm.com/support/docview.wss?uid=swg24030970]
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  User friendly warning message on WCM authoring Portlet while
+   executing remote actions.
+   
+   If failure occurs while executing the remote action "copy as
+   draft" , following stacktrace is shown in WCM authoring UI.
+   
+   IWKMU1062X: Message: Could not save object in repository.,
+   Cause:
+   javax.jcr.RepositoryException: DB2 SQL Error: SQLCODE=-913,
+   SQLSTATE=57033,
+   SQLERRMC=00C90088;00000304;WPJC8U01.NODEJRTS.X'0000AB'
+   '.X'08', DRIVER=3.51.90Thread 1635410298 : lException: DB2 SQL
+   Error:
+   SQLCODE=-913, SQLSTATE=57033,
+   SQLERRMC=00C90088;00000304;WPJC8U01.NODEJRTS.X'0000AB' '.X'08',
+   DRIVER=3.51.90
+   at com.ibm.db2.jcc.a.wc.a(wc.java:595)
+   at com.ibm.db2.jcc.a.wc.a(wc.java:60)
+   at com.ibm.db2.jcc.a.wc.a(wc.java:127)
+   at com.ibm.db2.jcc.a.fl.b(fl.java:1599)
+   at com.ibm.db2.jcc.a.fl.c(fl.java:1582)
+   at com.ibm.db2.jcc.t4.db.k(db.java:353)
+   at com.ibm.db2.jcc.t4.db.a(db.java:59)
+   at com.ibm.db2.jcc.t4.t.a(t.java:50)
+   at com.ibm.db2.jcc.t4.tb.b(tb.java:200)
+   at com.ibm.db2.jcc.a.gl.Kb(gl.java:2365)
+   at com.ibm.db2.jcc.a.gl.e(gl.java:3143)
+   at com.ibm.db2.jcc.a.gl.Db(gl.java:572)
+   at com.ibm.db2.jcc.t4.l.Db(l.java:120)
+   at com.ibm.db2.jcc.a.gl.executeUpdate(gl.java:555)
+   
+   
+   This APAR avoids this entire stacktrace to be shown on WCM
+   authoring UI and shows following User friendly warning message
+   in case of failure.
+   
+   "IWKMU1062X: Message: Could not save object in repository."
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  When remote actions are used during stress testing a
+   RepositoryException occurs for the end user.
+   The full stack trace is returned as the cause and is seen in the
+   UI.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A change was made to return the simple error string and log the
+   RepositoryException to the Portal log files.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM16627
+   
+   
+ * REPORTED COMPONENT NAME
+   LOTUS WEB CONT
+   
+   
+ * REPORTED COMPONENT ID
+   5724I2900
+   
+   
+ * REPORTED RELEASE
+   615
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-06-17
+   
+   
+ * CLOSED DATE
+   2010-06-17
+   
+   
+ * LAST MODIFIED DATE
+   2010-06-17
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   LOTUS WEB CONT
+   
+   
+ * FIXED COMPONENT ID
+   5724I2900
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R615 PSY
+   UP

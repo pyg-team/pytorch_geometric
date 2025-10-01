@@ -1,0 +1,80 @@
+Title: IBM Incorrect location field in response header for a 301 or 302 redirect - United States
+
+Text:
+F5; WebSphere Edge; BIG-IP; response; 301; 302; redirect TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+Accessing WebSphere Portal through certain proxies (or gateways) may result in incorrect location fields in 301 and 302 response headers. The proxy (or gateway) fails to rewrite the response header. The client cannot follow the 301 or 302 redirect.
+
+SYMPTOM
+This technote addresses the following scenarios: 
+
+1. You access WebSphere Portal via a proxy and navigate through the site. In response to some request, WebSphere Portal returns a 301 or 302 redirect with a location field like: 
+
+ 
+
+http://proxy.ibm.com:10040/wps/... 
+
+ 
+
+where 10040 is WebSphere Portal's internal port. Since the proxy is not listening on this port, when the browser tries to follow the redirect, the request fails. 
+
+ 
+
+ 
+
+2. You access WebSphere Portal via an HTTPS proxy and navigate through the site. In response to some request, WebSphere Portal returns a 301 or 302 redirect with a location field like: 
+
+ 
+
+http://proxy.ibm.com:80/wps/... 
+
+ 
+
+Since the HTTPS proxy services requests on port 443 only, when the browser tries to follow the redirect, the request fails.
+
+
+CAUSE
+A proxy fails to rewrite the location field in the response header before redirecting the client. 
+
+ 
+
+The Internet Engineering Task Force's (IETF) RFC 2616 specifies that the location field should be an absolute URI. WebSphere Portal uses getScheme(), getServerName(), and getServerPort(), as defined by the Java Servlet Specification, in constructing URLs to set in location fields. WebSphere Application Server (WAS) services getServerPort() according to its web server plug-in's AppServerPortPreference. 
+
+ 
+
+This approach assumes: 
+
+A. Any non-direct requests must be made through a supported web server running the WAS plug-in. 
+
+B. If WebSphere Portal is configured for HTTPS, the SSL pipe should terminate at a supported web server running the WAS plug-in.
+
+
+DIAGNOSING THE PROBLEM
+Inspect the HTTP headers for requests and responses using a tool like Fiddler. If 301 or 302 redirects' location fields are unreachable, map the network to determine what proxies stand between the browser and WebSphere Portal. 
+
+ 
+
+Enabling WebSphere Portal engine and WebSphere Application Server security and webcontainer traces may help you identify how the location field is constructed by providing the server's perspective (e.g. doGet request/response, getServerPort() call, HTTP header information): 
+
+
+com.ibm.wps.engine.*=all:
+com.ibm.ws.security.*=all:
+com.ibm.ws.webcontainer.*=all:
+com.ibm.ws.wswebcontainer.*=all
+
+
+RESOLVING THE PROBLEM
+Ensure that the assumptions A and B above have been met. If these conditions cannot be met, additional proxy rules may be required to route requests correctly. 
+
+
+Work with proxy administrators to ensure that the proxy rewrites response headers' location fields, as needed, before forwarding 301 or 302 redirects.
+
+RELATED INFORMATION
+ AppServerPortPreference (WAS) [http://publib.boulder.ibm.com/infocenter/wasinfo/fep/index.jsp?topic=/com.ibm.websphere.nd.multiplatform.doc/info/ae/ae/uwsv_plugin_props1.html]
+IETF RFC 2616 [http://www.ietf.org/rfc/rfc2616.txt]
+Java Servlet 2.4 Specification [http://jcp.org/aboutJava/communityprocess/final/jsr154/index.html]
+Configuring SSL (6.1 InfoCenter) [http://publib.boulder.ibm.com/infocenter/wpdoc/v6r1/index.jsp?topic=/com.ibm.wp.ent.doc_v615/security/ssl_intro.html]
+Configuring SSL (7.0 InfoCenter) [http://www.lotus.com/ldd/portalwiki.nsf/dx/Configuring_SSL_wp7]
+Supported web servers [https://www.ibm.com/support/docview.wss?rs=688&uid=swg27007791]
+Fiddler [http://www.fiddlertool.com/fiddler/]

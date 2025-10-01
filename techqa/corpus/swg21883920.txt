@@ -1,0 +1,12 @@
+Title: IBM Fix List for InfoSphere Streams Version 4.0.0 Fix Pack 1 - United States
+
+Text:
+InfoSphere; Streams; 4.0.0; Fix Pack 1; 4.0.0.1 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This document contains a list of fixes for InfoSphere Streams Version 4.0.0 Fix Pack 1. 
+
+RESOLVING THE PROBLEM
+ 
+
+InfoSphere Streams Version 4.0.0 Fix Pack 1 CVE-2014-6593, CVE-2015-0138, CVE-2015-0410 [http://www.ibm.com/support/docview.wss?uid=swg21700697] Security Bulletin: Multiple vulnerabilities in IBM Java SDK and DB2 client affect InfoSphere Streams (CVE-2014-6593, CVE-2015-0138, CVE-2015-0410) CVE-2015-2808 [http://www.ibm.com/support/docview.wss?uid=swg21702155] Security Bulletin: Vulnerability in RC4 stream cipher affects InfoSphere Streams (CVE-2015-2808)

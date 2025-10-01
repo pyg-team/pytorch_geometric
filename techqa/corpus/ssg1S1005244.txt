@@ -1,0 +1,20 @@
+Title: IBM Leap Second Information for DS8000 - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Is the DS8000 affected by the upcoming leap second addition? 
+
+ANSWER
+
+The DS8000 family has no known exposures to leap second changes, and no issues reported due to previous leap second changes.
+
+These changes usually occur on June 30th or December 31st at midnight UTC when a second is added to adjust time to compensate for the actual rotation of the earth,
+
+The next scheduled leap second adjustment is on Dec 31st 2016.
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Disk Storage Systems System Storage DS8800 Not Applicable Disk Storage Systems System Storage DS8700 Not Applicable Disk Storage Systems DS8880 Not Applicable

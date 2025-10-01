@@ -1,0 +1,38 @@
+Title: IBM Kernel: 2.6.18 required (2.6.9-78.ELsmp detected) - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Why am I receiving Kernel: 2.6.18 required (2.6.9-78.ELsmp detected) when trying to install IDS 11.70 on Redhat 
+
+CAUSE
+Your kernel is out of date or too old
+
+ANSWER
+The 2.6.9-78.ELsmp is for Red Hat 4 
+
+RHEL 4 
+
+
+Red Hat Enterprise Linux 4 (Nahant), 15 February 2005. Uses Linux kernel 2.6.9-5[21]
+4.1, also termed Update 1, 8 June 2005 (kernel 2.6.9-11)[21]
+4.2, also termed Update 2, 5 October 2005 (kernel 2.6.9-22)[21]
+4.3, also termed Update 3, 12 March 2006 (kernel 2.6.9-34)[21]
+4.4, also termed Update 4, 10 August 2006 (kernel 2.6.9-42)[21]
+4.5, also termed Update 5, 1 May 2007 (kernel 2.6.9-55)[21]
+4.6, also termed Update 6, 15 November 2007 (kernel 2.6.9-67)[21]
+4.7, also termed Update 7, 29 July 2008 (kernel 2.6.9-78)[21]
+
+You need a version of RHEL 5 for 11.70.xx
+
+RHEL 5 
+
+Red Hat Enterprise Linux 5 (Tikanga), 14 March 2007. Uses Linux kernel 2.6.18-8[21]
+
+5.6, also termed Update 6, 13 January 2011 (kernel 2.6.18-238)[21]
+5.7, also termed Update 7, 21 July 2011 (kernel 2.6.18-274)[21]
+5.8, also termed Update 8, 20 February 2012 (kernel 2.6.18-308)[21]
+5.9, also termed Update 9, 7 January 2013 (kernel 2.6.18-348)[21]
+5.10, also termed Update 10, 1 October 2013 (kernel 2.6.18-371)[21]
+5.11, also termed Update 11, 16 September 2014 (kernel 2.6.18-398)[21]

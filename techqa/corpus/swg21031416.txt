@@ -1,0 +1,32 @@
+Title: IBM Why does the export metadata process take so long to run, and how can I reduce the run time? - United States
+
+Text:
+export metadata performance TECHNOTE (FAQ)
+
+QUESTION
+ Why does the export metadata process take so long to run, and how can I reduce the run time? 
+
+ANSWER
+ 
+
+When you export metadata, the export utility retrieves all the metadata needed to define the objects you select and all the metadata needed to create the relationships for those objects. Therefore, many objects are exported in addition to those you select. This process ensures that the objects are valid. All of this metadata is exported to a tag language file. 
+
+Most steps are related not only to input and output tables and column mapping objects, but also to other steps (either through task flow relationships or data dependency relationships). These steps and their related objects are also exported to a tag language file, even if they belong to a different process. 
+
+The export utility maintains a list of processed objects which it uses to prevent any object from being exported more than once. As the number of objects on this list increases, performance is impacted. 
+
+Currently, there is no easy way to control which objects get exported to a tag language file. Here are some recommendations to improve performance: 
+
+ * Use more than one tag language file. Tag language files smaller than 5 MB are recommended. Tag language files larger than 10 MB are prohibitive. 
+ * Uncheck the Export dependent source properties box in the Export Metadata window. Use this option only if you are creating a tag language file in order to update metadata and the definition of your warehouse sources is unchanged. This will decrease the size of your tag language file. 
+ * Run export in a maintenance window when no other applications are using the machine. 
+ * Stop the warehouse server and warehouse logger services and run the export utility from the command line. For more information about this, on the command line enter: iwh2exp2 
+ * Increase the virtual memory on the machine where the export is running. A minimum of 200 MB to 300 MB is recommended.
+
+ * Use the RUNSTATS, REORG TABLE, and REORGCHK commands against your Data Warehouse Center control database and the tables within it. These commands are documented in the DB2 Command Reference. 
+   
+   RUNSTATS  * 
+   
+   REORG TABLE  * 
+   
+   REORGCHK  *

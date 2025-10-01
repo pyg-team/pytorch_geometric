@@ -1,0 +1,38 @@
+Title: IBM SCORE shows task in My Work Area for a document which is already steady-state - United States
+
+Text:
+IBM_SCORE; IBM SCORE; tasks; workflow; steady-state TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ It is possible that IBM Solution for Compliance in a Regulated Environment (SCORE) displays a document in the user's My Work Area or Tasks tab even if the document is already in a steady-state. 
+
+CAUSE
+The document seems to be showing up because the process instance of the workflow for that document still exists. The root cause of this behavior is unknown, but customers have reported this behavior happening as a consequence to crashes or outages in the environment.
+
+DIAGNOSING THE PROBLEM
+View the document's Audit History. The most recent entries should show the following: 
+
+ * Promoted to Steady State 
+ * Workflow completed. Status: Success.
+
+
+This document should not be displayed in the user's My Work Area or Tasks tab. 
+RESOLVING THE PROBLEM
+Before attempting this solution, make sure that the document is already in steady-state. 
+
+Business Process Choreographer (BPC) provides some instructions on how to achieve this in the following technote: http://publib.boulder.ibm.com/infocenter/dmndhelp/v6r2mx/topic/com.ibm.websphere.bpc.620.doc/doc/bpc/t7activityforce.html [http://publib.boulder.ibm.com/infocenter/dmndhelp/v6r2mx/topic/com.ibm.websphere.bpc.620.doc/doc/bpc/t7activityforce.html] 
+
+However, the instructions are hard to follow, so here is a better set of instructions on how to achieve this when using SCORE: 
+
+ 1. Enable SCORE trace and gather traces for the user clicking on his Tasks tab 
+ 2. From the traces, determine the Process Instance (_PI) number associated with the document 
+ 3. Login into BPC Explorer 
+ 4. Click on the “New Search” icon for Activity Instances in the Views Tab 
+ 5. Select “Process Instance Filters” and enter your _PI collected in Step 2 
+ 6. Click Search 
+ 7. You will see the SCOREHumanTask (in Ready state) that is still active and causing the problem 
+ 8. Select that task and click Force Complete 
+ 9. On the next screen, click Force Complete
+
+
+The user should not be able to see the task in his My Work Area or Tasks tab anymore.

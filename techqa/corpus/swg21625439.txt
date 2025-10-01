@@ -1,0 +1,18 @@
+Title: IBM Cube Designer insufficient Capabilities - United States
+
+Text:
+metadata insufficientCapabilities TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Attempting to import metadata into Cube Designer results in the error insufficientCapabilities
+
+Attempting to import metadata into Framework Manager results in error BMT-IMP-0002 Failed to execute metadata request. insufficientCapabilities
+
+
+
+
+CAUSE
+End user did not have the capability to import metadata
+
+RESOLVING THE PROBLEM
+Add group/role that the user is a member of to the Import Metadata Capability

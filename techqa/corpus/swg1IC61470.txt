@@ -1,0 +1,142 @@
+Title: IBM IC61470: UNABLE TO LOGON VIA CLI WITH ADMIN PASSWORD - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  IBM WebSphere DataPower SOA appliances where the log targets
+   write to the local appliance raid volume.  The models affected
+   are 9235/9004 with the optional hard drives: XI50 (9235-4BX,
+   9235-4CX, 9235-4DX, 9235-4FX), XS40 (9235-3BX, 9235-3DX), XB60
+   (9235-62x), and  XM70 (9235-6BX) Running firmware: 3.7.1, 3.7.2,
+   3.7.3  or  B2B and LLM at  1.0  or 3.7.3
+   
+   The problem symptoms are the appliance stops responding to
+   network traffic.  When you connect with serial cable, you can
+   enter the admin id, and the password for the admin id.  After
+   entering password, the appliance hangs for a moment, then
+   prompts you to enter a user id again.   You may also experience
+   the symptoms as noted in  APAR IC61429 [http://www-01.ibm.com/support/docview.wss?uid=swg1IC61429] also listed a a critical
+   update in this package.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Use log targets to other backend servers, not log
+   targets to the appliance
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Fix a potential crash/hang when using a hard drive as a log
+   target
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fix a potential crash/hang when using a hard drive as a log
+   target
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC61470
+   
+   
+ * REPORTED COMPONENT NAME
+   DATAPOWER
+   
+   
+ * REPORTED COMPONENT ID
+   DP1234567
+   
+   
+ * REPORTED RELEASE
+   372
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-06-11
+   
+   
+ * CLOSED DATE
+   2009-06-26
+   
+   
+ * LAST MODIFIED DATE
+   2010-01-12
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   DATAPOWER
+   
+   
+ * FIXED COMPONENT ID
+   DP1234567
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R371 PSY
+   UP
+   
+   
+ * R372 PSY
+   UP
+   
+   
+ * R373 PSY
+   UP

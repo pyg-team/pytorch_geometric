@@ -1,0 +1,184 @@
+Title: IBM IT17429: IBM MQ queue manager validation of a certificate against LDAP CRL server fails with AMQ9646 - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  IBM MQ queue manager validation check of a certificate  against
+   an LDAP CRL server fails with an AMQ9646.
+   
+    AMQ9646: Channel 'xyz' could not connect to any LDAP CRL
+   servers.
+   
+    EXPLANATION:
+    LDAP Certification Revocation List (CRL) servers were specified
+   but a connection could not be established to any of them. The
+   channel is 'xyz'; in some cases its name cannot be determined
+     and so is shown as '????'. The channel did not start.
+    ACTION:
+    Check that the LDAP CRL server specifications are correct.   If
+   they are, check that the servers are running and that the
+   networking to access them is working correctly. Fix any errors
+    found and restart the channel.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   All IBM MQ user  with SSL enabled tries to use the Higher  LDAP
+   protocol version.
+   
+   
+   Platforms affected:
+   MultiPlatform
+   
+   ****************************************************************
+   PROBLEM DESCRIPTION:
+   Some CRL servers require that a specific version of the LDAP
+   protocol be used. MQ did not have any provision to ensure that
+   its cryptographic libraries used a specific version of the LDAP
+   protocol.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A new environment variable has been added:
+   AMQ_SSL_LDAP_SERVER_VERSION
+   
+   This variable can be used to ensure that either LDAP v2 or LDAP
+   v3 is used by MQ's cryptographic components.
+   
+   To request that LDAP v2 is used, set
+   AMQ_SSL_LDAP_SERVER_VERSION=2 in the environment used to start
+   the queue manager or channel.
+   
+   To request that LDAP v3 is used, set
+   AMQ_SSL_LDAP_SERVER_VERSION=3 in the environment used to start
+   the queue manager or channel.
+   
+   Details of whether a specific LDAP version is required for
+   connections the CRL server should be obtained from the server
+   owner.
+   
+   This variable does not affect LDAP connections established by
+   the MQ queue manager for user authentication or user
+   authorization.
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+   Version    Maintenance Level
+   v7.5       7.5.0.9
+   v8.0       8.0.0.8
+   v9.0 CD    9.0.4
+   v9.0 LTS   9.0.0.2
+   
+   The latest available maintenance can be obtained from
+   'WebSphere MQ Recommended Fixes'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037]
+   
+   If the maintenance level is not yet available information on
+   its planned availability can be found in 'WebSphere MQ
+   Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT17429
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ BASE MULTIP
+   
+   
+ * REPORTED COMPONENT ID
+   5724H7241
+   
+   
+ * REPORTED RELEASE
+   750
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-10-19
+   
+   
+ * CLOSED DATE
+   2017-06-30
+   
+   
+ * LAST MODIFIED DATE
+   2017-06-30
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ BASE MULTIP
+   
+   
+ * FIXED COMPONENT ID
+   5724H7241
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R750 PSY
+   UP

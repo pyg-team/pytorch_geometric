@@ -1,0 +1,70 @@
+Title: IBM CCWeb logon failures accessing Web server - United States
+
+Text:
+log on locally; logon failure; unknown user; bad password; logon type; Apache; An error occurred while processing this request; the user has not been granted the requested logon type at this computer; unknown user name or bad password; 1118553 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This technote explains why accessing the IBM® Rational® ClearCase® Web interface from an Apache™ based Web server or the Rational Web Platform (RWP) results in a login failure along with steps to resolve the problem. 
+
+SYMPTOM
+ 
+
+One of the following errors results during login from the CCWeb interface that uses an Apache web server or RWP web server.
+
+An error occurred while processing this request: Logon failure: the user has not been granted the requested logon type at this computer.
+
+An error occurred while processing this request: Logon failure: unknown user name or bad password.
+
+CAUSE
+ 
+
+The user's log-in account has not been granted the Log On Locally right to the Web server host. 
+
+
+Note: Apache is supported for use with version 2002.05.00. Later versions of ClearCase only support the Rational Web Platform (RWP) as the CCWeb server host.
+
+
+RESOLVING THE PROBLEM
+ 
+
+ 
+
+As noted in the IBM Rational ClearCase Administrator's Guide, 
+
+... when the Web server runs on a Windows computer, ClearCase Web interface users must be given permission to Log on Locally to the Web Server host. Windows NT Server and Windows 2000 (and 2003) Server do not grant this permission by default.
+
+Allow the user's account the right to Log on Locally to the Web server through either the domain or local policy. 
+
+This right can be granted on the Primary Domain Controller (PDC) for the user account (domain policy) or at the Web server (local policy). 
+
+Note: The error will depend on local vs. domain Log on Locally policies. 
+
+For example, the user's account my be given Log on Locally rights to all computers at the PDC but the local web server policy has been set to override the domain policy. 
+
+
+
+
+
+
+
+The following are the basic steps for setting the Log on Locally policy, however, you should refer to the Microsoft vendor documentation for specific instructions: 
+ 1. Start 
+ 2. Control Panel 
+ 3. Administrative Tools 
+ 4. Local Security Policy 
+ 5. Select User Rights Assignment under Local policies in the left window pane. 
+ 6. In the right pane double click "log on locally" also have seen it displayed as "Allow Log on Locally" 
+ 7. Click "Add User or Group" button and add the group or user you wish to have Local log on rights.
+
+
+
+Refer to Microsoft KB article 234237 [http://support.microsoft.com/kb/234237] Assign "Log On locally" Rights to Windows Domain Controller for additional information. 
+
+
+
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Software Development Rational ClearCase ClearCase Web (CCWeb)

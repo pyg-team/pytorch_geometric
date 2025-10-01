@@ -1,0 +1,60 @@
+Title: IBM AppScan shows a "Warning" message on the Starting URL - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ IBM Security Appscan Enterprise shows a warning triangle on the Starting URL, or after starting the job it shows the "Scan Run Warning" page, while continuing into scanning the job completes correctly.
+
+
+
+SYMPTOM
+This behavior comes in two different forms: 
+
+ 
+
+ 1. On the starting URL (at the What To Scan page), there is a warning triangle (in the Status column), meaning the staring URL is not reachable. 
+    [/support/docview.wss?uid=swg21990868&amp;aid=1]
+    Clicking on the Retest link does not make the warning triangle to go away. If you hover the cursor over the warning triangle you will see this message: 
+    
+    The starting URL is unreachable, possible because of communication issues, or because the starting URL is incorrect. Try to run the scan job.
+    [/support/docview.wss?uid=swg21990868&amp;aid=2]
+    
+    
+ 2. After the scan job is started it goes to the Scan Run Warning page, which may look as in the example below. When clicking on the Run button on the page, the scan completes correctly. 
+    
+    Not available(403)
+    The following scan run warnings were detected: 
+    Retest/Not available
+    The domain specified in the scan URLs or additional domains cannot be reached. The web server hosting the application might be down or cannot be reached. 
+    You can wait to run this scan at a later time when the domain becomes available. Otherwise, ensure the scabn was successful by reviewing the scan run statistics when the job completes.
+    No security permissions
+    The job owner not have permission to test the domain specified in the scan URLs or additional domains. Scan execution will be disabled if the domain is from a starting URL.
+    Reconfigure the scan by removing the relevant starting URLs or additional domains, or contact your Product Administrator to update the job owner's scanning permissions. 
+    
+    [/support/docview.wss?uid=swg21990868&aid=3] [/support/docview.wss?uid=swg21990868&aid=3]
+    [/support/docview.wss?uid=swg21990868&amp;aid=4]
+    
+    After clicking on the Run button, AppScan completes the scan correctly. 
+    
+
+
+
+CAUSE
+ 
+
+ * When you click on the Retest button, the AppScan calls a function to validate the URL. However, the function does not read the scan configuration, such as proxy settings, platform authentication and other settings, which may results that the URL is not validated. 
+
+ * When you Run the scan, if you have security testing turned on, AppScan is also going to call the function to validate the starting URLs, whether:  * AppScan can access the URL 
+    * AppScan has permissions to scan the host(s) 
+    * The user has permissions to scan the host(s) 
+    * The domain(s) are listed in the scan
+   
+   However, the function does not have access to scan configuration, such as proxy settings, platform authentication and other scan settings, which may result that the function may not reach the URLs. 
+
+
+
+RESOLVING THE PROBLEM
+You may ignore the warnings if the scan starts running after clicking the Run button. 
+
+If the scan does not run, then check for the issues listed in Staring a scan results in Scan Run Warning page with "No security permissions" [http://www.ibm.com/support/docview.wss?uid=swg21667519].

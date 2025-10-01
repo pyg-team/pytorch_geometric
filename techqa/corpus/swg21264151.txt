@@ -1,0 +1,227 @@
+Title: IBM Export and Import with Maximo 4 - United States
+
+Text:
+export import; copy database TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ To copy or move Maximo from one Oracle database to another, use the Oracle Export and Import Utilities. You can perform a full or user export. 
+
+RESOLVING THE PROBLEM
+Advisories 
+
+ * 
+ * 
+ * If you wish to perform an export from an Oracle8 (any version) database to Oracle7, please contact Oracle for further instructions. 
+ * If you are performing an export on Machine A to move to Machine B, always move the export file via FTP in binary mode, unless both machines are exactly the same hardware architecture (e.g., Intel to Intel, Sun SPARC to Sun SPARC, RS/6000 to RS/6000). 
+ * For releases prior to Maximo 4.0.2, export and import can corrupt the encrypted Maximo password in the MAXENCRYPT table. Before the export, we recommend using the Maximo Signature Security application to set the password of the user MAXIMO to "MAXIMO". 
+ * WARNING: Do not use any other tool (e.g., SQL*Plus, SQLTalk) to change the password of the user Maximo. 
+ * After the import, run ENCRYPT.SQL, and then use Signature Security to change the password of the user MAXIMO. For more details about changing the password of the user MAXIMO, see the document ORA-01017: "Invalid Username/Password - Login Denied". 
+ *  
+ * Procedures 
+ * If the database contains only objects used by the Maximo application, and you want to move all the users, we recommend a full database export and import. If the database containing Maximo objects also contains objects unrelated to Maximo, and you want to conserve disk space, you may want to perform both the export and the import in user mode. 
+ * To perform the export, use the Oracle Export Utility. To perform the import, use the Oracle Import Utility. The person moving the database objects needs to be familiar with these utilities. You can find detailed information about these utilities in the Oracle8 Server Utilities (or Oracle7 Server Utilities) manual. 
+ * I. Full Database Export and Import 
+ * Full Export
+
+
+Use the Oracle Export Utility to perform a full export. 
+
+Parameters 
+When specifying your parameters for the full export, be sure that FULL = Y. Using the FILE parameter, you must specify the name of the export file you wish to create (e.g., FILE = MAXFULL.EXP). 
+
+Roles and Privileges 
+The Oracle user performing the export needs the EXP_FULL_DATABASE role, which is part of the DBA role. Unless you have revoked the DBA role from the Oracle user MAXIMO, the user MAXIMO can perform a full database export. 
+
+Preparing for the Import 
+
+Before performing the import, prepare the destination database as follows: 
+ * 
+ * Caveat A
+ * 
+ * 
+ * 
+ * 
+ * as the Oracle user SYS
+ * 
+ * .
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * Caveats When Performing a Full Database Import
+ * 
+ * 
+ * Caveat A
+ * 
+ * 
+ * 
+ * exactly
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * Caveat B
+ * 
+ * 
+ * 
+ * 
+ * 
+ * Full Import
+ * 
+ * 
+ * 
+ * preparing the destination database for the full import
+ * 
+ * caveats
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * II. Exporting and Importing in User Mode
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * Creating or Moving Additional Database Users
+ * 
+ * 
+ * 
+ * 
+ * Full Database Export and Import
+ * 
+ * 
+ * 
+ * Exporting the User MAXIMO
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * Preparing to Import the User MAXIMO
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * as the Oracle user SYS
+ * 
+ * .
+ * 
+ * 
+ * 
+ * 
+ * "What is VIEW7.ORA?"
+ * 
+ * 
+ * 
+ * 
+ * a. In the MAXINST subdirectory of your Maximo root directory (e.g. C:\MAX401\MAXINST), find the script CREATMAX.SQL. 
+ * b. Using the editor of your choice (e.g., Notepad), open CREATMAX.SQL. 
+ * c. If your temporary tablespace is not named TEMP, edit the line: 
+ * alter user MAXIMO temporary tablespace temp;
+   so that the statement refers to your temporary tablespace.
+   
+   Otherwise,when running CREATMAX.SQL you may receive the following error: 
+ * ORA-00959: tablespace ‘TEMP’ does not exist 
+ * For example, if your temporary tablespace is TEMPORARY_DATA, you need to edit the line to read:
+   alter user MAXIMO temporary tablespace temporary_data; 
+ * To check the name of your temporary tablespace, connect to SQL*Plus as SYSTEM and issue the following:
+   SELECT * FROM DBA_TABLESPACES;
+   
+   d. Make any other needed changes to CREATMAX.SQL. For example:
+   
+   If the tablespace containing your Maximo objects is not named "MAXIMO," you will need to specify the correct tablespace name in CREATMAX.SQL.
+   
+   If the schema on your source database is not named "MAXIMO," you will need to change references to the user MAXIMO to refer the schema name from your source database .
+   
+   4. Connect to the destination database as SYSTEM and run the CREATMAX.SQL script to create the user MAXIMO, along with the other administrative users for Maximo: SYSADM, SYSSQL, and DEFLT.
+   
+   Creating or Moving Additional Database Users
+   
+   If you need additional users and groups from the source database for use with Maximo, these users must exist on the destination database before the import of the user MAXIMO. If you wait until after importing the user MAXIMO to create the other users and groups, those users and groups will not have the necessary privileges on the Maximo objects.
+   
+   You can either import and export the additional users, or create them directly (using SQL) on the destination database. If you directly execute SQL commands to create the users on the destination database, the passwords from the source database will not be preserved. The only way to transfer both users and their passwords from the old database to the new database is by performing an export and an import for each of the Maximo users and each of the Maximo groups which exist in the source database. To export and import numerous users, use the Export and Import Utilities with parameter files. See your Oracle Server Utilities manual for further information on parameter files.
+   
+   To get a list of the users and groups that exist on the source Maximo database, execute the following query:
+   
+   select usrname from maxusergroups;
+   
+   Create (or import) each of the users stored in the MAXUSERGROUPS table as an Oracle user on the destination database. If you want to use SQL commands to create the users, but you would rather not create these users one at a time, you can generate a SQL script to create all of the users.
+   
+   To generate and run a script to create all of the users and groups (except those created through CREATMAX.SQL):
+   
+   1. Connect to the source database through SQL*Plus as the user MAXIMO.
+   
+   2. Execute the following SQL*Plus commands:
+   
+   set hea off
+   set pagesize 10000
+   
+   3. Use the SQL*Plus spool command to save your output to a script. For example:
+   
+   spool C:\Maximo\Scripts\maxgrants.sql
+   
+   4. Review the "not in" condition of the following statement, add any other users you want to exclude, and execute the statement:
+   
+   select 'grant connect to ' || usrname || ' identified by ' || usrname || ';' 
+   from maxusergroups
+   where usrname not in ('MAXIMO','SYSADM','DEFLT'); 
+   
+   5. Use SQL*Plus to run the generated script. For example:
+   
+   start C:\Maximo\Scripts\maxgrants.sql
+   
+   
+   Importing the User MAXIMO
+   After preparing the destination database for the user import and transferring all the Maximo users and Maximo groups from the source database, use the Oracle Import Utility to import the Maximo user export file (e.g. MAXUSER.EXP) to the destination database.
+   
+   Be sure to import the data into a schema with the same name as the schema from which you exported the data. For example, if your original schema is named MAXPROD, import data into a schema named MAXPROD. Ensure that when you ran CREATMAX.SQL, you replaced references to the user MAXIMO with your schema name (e.g., MAXPROD).
+   
+   Parameters
+   
+   If you have a full or multi-user export and need to extract only one user, specify a value for the FROMUSER parameter (e.g., FROMUSER = MAXIMO). 
+   
+   To avoid running out of extents or space in rollback segments, specify COMMIT = Y.
+   
+   By default, the Oracle Import Utility in user mode will import rows, indexes, and grants
+
+ 
+
+HISTORICAL NUMBER
+ M01747 
+
+PRODUCT ALIAS/SYNONYM
+ MAXIMO

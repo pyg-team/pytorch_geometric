@@ -1,0 +1,130 @@
+Title: IBM Security Bulletin: Power Systems Firmware is affected by vulnerability in OpenSSL (CVE-2014-0160) - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ OpenSSL Heartbleed Vulnerability - April 2014 
+
+VULNERABILITY DETAILS
+CVE-ID: CVE-2014-0160 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-0160] [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2013-4353] 
+
+DESCRIPTION: OpenSSL could allow a remote attacker to obtain sensitive information, caused by an error in the TLS/DTLS heartbeat functionality. An attacker could exploit this vulnerability to expose 64k of private memory and retrieve secret keys. An attacker can repeatedly expose additional 64k chunks of memory. This vulnerability can be remotely exploited, authentication is not required and the exploit is not complex. An exploit can only partially affect the confidentially, but not integrity or availability. 
+
+CVSS Base Score: 5
+CVSS Temporal Score: See http://xforce.iss.net/xforce/xfdb/92322 [http://xforce.iss.net/xforce/xfdb/92322]
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:L/Au:N/C:P/I:N/A:N)
+
+Warning: We strongly encourage you to take action as soon as possible as potential implications to your environment may be more serious than indicated by the CVSS score. 
+
+ 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+
+Disclaimer
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.
+
+AFFECTED PRODUCTS AND VERSIONS
+Versions (770):
+770.00: 01AL770_032
+770.10: 01Ax770_038 
+770.20: 01Ax770_048 
+770.21: 01Ax770_052 
+770.22: 01Ax770_055 
+770.31: 01Ax770_063
+
+Platforms Impacted (770):
+IBM Power 780 (9179-MHC)
+IBM Power 770 (9117-MMC)
+IBM Power 760 (9109-RMD)
+IBM Power 750 (8408-E8D)
+IBM PowerLinux 7R4 (8248-L4T)
+IBM PowerLinux 7R2 (8246-L2D)
+IBM PowerLinux 7R2 (8246-L2T)
+IBM PowerLinux 7R1 (8246-L1D)
+IBM PowerLinux 7R1 (8246-L1T)
+IBM Power 740 (8205-E6D)
+IBM Power 730 (8231-E2D)
+IBM Power 720 (8202-E4D)
+IBM Power 720 (8202-40A)
+IBM Power 710 (8231-E1D)
+IBM Power 710 (8268-E1D)
+
+Version (780):
+780.00: 01Ax780_040 
+780.01: 01Ax780_050
+
+Platforms Impacted (780):
+IBM Power 795 (9117-FHB)
+IBM Power 780 (9179-MHB)
+IBM Power 770 (9117-MMB)
+
+Version (773): 
+773.00: 01AF773_033
+773.10: 01AF773_051
+
+Platforms Impacted (773):
+IBM Flex System p270 (7954-24X)
+IBM Flex System p260 (7895-23X)
+IBM Flex System p260 (7895-23A)
+IBM Flex System p460 (7895-43X)
+IBM Flex System p260 (7895-22X)
+IBM Flex System p460 (7895-42X)
+IBM Flex System p24L (1457-7FL) 
+
+[/support/docview.wss?uid=nas8N1020034&amp;aid=1] REMEDIATION/FIXES
+Customers on Version 770, upgrade to 01Ax770_076 or higher. 
+Customers on Version 780, upgrade to 01Ax780_054 or higher. 
+Customers on Version 773.0 and 773.10, upgrade to 773.11 or higher. 
+
+The fix can be obtained from FixCentral [http://www-933.ibm.com/support/fixcentral/] by providing the MTM and current fix level. 
+
+After applying the fix, additional instructions are needed for CVE-2014-0160.
+
+
+For Flex users only, replace your SSL certificates. After updating all nodes in the chassis, you need to revoke existing SSL certificates and reissue new certificates.
+For information on replacing the SSL certificate see:
+http://www-947.ibm.com/support/entry/portal/docdisplay?lndocid=MIGR-5095143 [http://www-947.ibm.com/support/entry/portal/docdisplay?lndocid=MIGR-5095143] 
+
+ 
+
+Users of network facing applications protected by a vulnerable version of OpenSSL should be forced to reset their passwords and force the user to re-authenticate. 
+
+This includes: 
+
+- All HMC user accounts configured for local authentication as well as those configured for Kerberos and LDAP authentication. 
+
+- Flexible Service Processor (FSP) user accounts for all managed servers. 
+
+- Any operating system user id or application password on a partition managed by the HMC when the partition is enabled for HMC remote virtual terminal (vterm) or remote 5250 console. 
+
+For further information on managing HMC users and passwords see http://pic.dhe.ibm.com/infocenter/powersys/v3r1m5/topic/p7ha1/hmchmcmanagement-administration.htm [http://pic.dhe.ibm.com/infocenter/powersys/v3r1m5/topic/p7ha1/hmchmcmanagement-administration.htm] 
+
+Warning: Your environment may require additional fixes for other products, including non-IBM products. Please replace the SSL certificates and reset the user credentials after applying the necessary fixes to your environment.
+
+WORKAROUNDS AND MITIGATIONS
+None known
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v2 Guide [http://www.first.org/cvss/v2/guide] 
+On-line Calculator v2 [http://nvd.nist.gov/CVSS-v2-Calculator] 
+· On-line Calculator V2 [http://nvd.nist.gov/cvss.cfm?calculator&adv&version=2] 
+· OpenSSL Project vulnerability website [http://www.openssl.org/news/vulnerabilities.html] 
+· Heartbleed [http://heartbleed.com/] RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] IBM Secure Engineering Web Portal [https://www-304.ibm.com/jct03001c/security/secure-engineering/] 
+IBM Product Security Incident Response Blog [https://www.ibm.com/blogs/PSIRT] ACKNOWLEDGEMENT
+None 
+
+CHANGE HISTORY
+ 18th April 2014 Original Copy Published 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.

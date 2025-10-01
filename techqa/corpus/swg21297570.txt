@@ -1,0 +1,94 @@
+Title: IBM MQ for z/OS shutdown hangs when you do STOP QMGR MODE( QUIESCE ) - United States
+
+Text:
+Shutdown Shut down Shutting down Hang Hangs wait Hung End Ending Shutdown Shut down Shutting down Hang Hangs wait Hung End Ending Shutdown Shut down Shutting down Hang Hangs wait Hung End Ending TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ You issue the STOP QMGR command and the CHIN comes down normally, but after several minutes you see the MSTR address space has not shut down. 
+
+CAUSE
+The MSTR address space will not shut down with STOP QMGR MODE(QUIESCE) [https://www.ibm.com/support/knowledgecenter/en/SSFKSJ_9.0.0/com.ibm.mq.ref.adm.doc/q086810_.html] until active threads end. Common reasons for active threads are: 
+
+ * TSO users having an MQ ISPF panel open against the Queue Manager 
+ * a queue Monitor program having a task outstanding against the Queue Manager 
+ * an application still being active
+
+RESOLVING THE PROBLEM
+From SDSF issue the IBM MQ command: 
+
+ * 
+ * /cpf DISPLAY THREAD(*)
+
+where "cpf" is the command prefix for the queue manager, and review the tasks listed. 
+
+This sample output shows user JOHNDOE with the ISPF panels open against MQ01 
+---------------------------------------------------- 
++MQ01 DISPLAY THREAD(*) 
+CSQV401I +MQ01 DISPLAY THREAD REPORT FOLLOWS - 
+CSQV402I +MQ01 ACTIVE THREADS - 994 
+NAME S T REQ THREAD-XREF USERID 
+JOHNDOE T B 61 000000000000000000000000 JOHNDOE 
+DISPLAY ACTIVE REPORT COMPLETE 
+CSQ9022I +MQ01 CSQVDT ' DISPLAY THREAD' NORMAL COM 
+---------------------------------------------------- 
+
+
+Often you can recognize the task name or userid as an MQ user, monitor, or IMS job. 
+
+To allow the shutdown to complete, you can do one of the following:  * Use the appropriate method to end those open tasks.
+   
+   Be sure applications use MQGMO_FAIL_IF_QUIESCING so they will not need to be manually ended.
+
+
+ * Issue the IBM MQ command  * /cpf STOP QMGR MODE(FORCE)
+   
+   either manually or through automation if MODE(QUIESCE) stalls.
+
+
+
+See What happens during termination [https://www.ibm.com/support/knowledgecenter/en/SSFKSJ_9.0.0/com.ibm.mq.pro.doc/q004140_.html] for information about using the SYSTEMAL option of the DISPLAY CONN command. 
+
+
+Additional information 
+If you only have a dump available and cannot issue the DISPLAY THREAD(*) command you can use IPCS to view the Jobnames and the handles open on the threads for those jobs. 
+
+In the sample below there were two 'open task' problems. The first problem is an open IMS jobname IMST. This IMS task should have been shut down prior to the STOP QMGR command. The second problem is that user AB12345 had an ISPF panel open against the Queue Manager. 
+
+In IPCS issue this command to get a list of Jobnames with tasks open against MQ where MQ01 is your ssid. 
+
+VERBX CSQWDPRD 'SUBSYS=MQ01' 
+
+The results show something similar to: 
+... 
+
+Jobname AB12345 Conntype BATCH ASID x0213. 
+EB 210ACBD8 ACE 210ACB78 Jobname AB12345... 
+Jobname IMST Conntype IMS ASID x007A. 
+EB 15BB23F8 ACE 15BB2398 PSID/PSBNAME CONTROL 
+... 
+
+In this example the IMS problem is recognized by the jobname IMST alone. Jobname AB12345 was not recognized as being meaningful and had to be investigated further. The EB displayed for Jobname AB12345 is 210ACBD8 and that is added to the IPCS command as the value seen below: 
+
+VERBX CSQWDPRD 'SUBSYS=MQ01,thr=210ACBD8' 
+
+The results show something similar to the following, note that the Object Name of SYSTEM.CSQOREXX indicates the ISPF panels were open. 
+---------------------------------------------------------------------- 
+EB 210ACBD8 ACE 210ACB78 Jobname AB12345 
+EB Latch Held Mask=x'00000000' 
+Program Traceback 
+***************** 
+Program Unit PU Offset (Base Register) 
+------------ ------------------------- 
+- Handles Open on this Thread 
+*************************** 
+Object Name=SYSTEM.COMMAND.INPUT 
+Open options: 
+MQOO_FAIL_IF_QUIESCING 
+MQOO_OUTPUT 
+Object Name=SYSTEM.CSQOREXX.C1F1E59C77E572C6 
+Open options: 
+MQOO_FAIL_IF_QUIESCING 
+MQOO_INPUT_SHARED 
+
+PRODUCT ALIAS/SYNONYM
+ IBM MQ WebSphere MQ WMQ

@@ -1,0 +1,29 @@
+Title: IBM Cannot connect to the contributor website: Component error: (0x8004056b) - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Cannot connect to the contributor website. 
+
+SYMPTOM
+Component error:
+(0x8004056b)
+Component description:
+Failed HRESULT [0x8004056B] :Unable to connect to the Planning Administration Domain data store during load configuration
+Script catching error:
+planning07.asp::checkLogon:catch
+
+
+RESOLVING THE PROBLEM
+In Contributor Admin Console:
+
+ 1. Click the Datastores container, and select Add Datastore Server.
+ 2. In the wizard that appears, ensure the Datastore Server is correct and that the proper credentials are selected for the sign-on. Make sure it is either Trusted connection or Login.
+ 3. Test the connection. If it fails, the Dataserver is not correct. If it succeeds then try to access the web site planning44.asp page and make sure all the settings are correct. Then proceed to the Contributor web page planning40.asp and you should see the applications now.
+
+ 
+
+Cross reference information Segment Product Component Platform Version Edition Business Analytics Cognos 8 Planning Contributor 8.1 
+HISTORICAL NUMBER
+ 1022188

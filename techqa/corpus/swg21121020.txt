@@ -1,0 +1,78 @@
+Title: IBM How to import null fields in a record in Rational ClearQuest Import Tool - United States
+
+Text:
+1121020; RATLC00736224; RATLC01053216; PK61515; RATLC01271336; PK73991; CQ; ClearQuest; import tool; import; blank; empty; null; record; user database; update; existing; clear TECHNOTE (FAQ)
+
+QUESTION
+ How do you import null fields in a record in IBM Rational ClearQuest Import Tool? 
+
+CAUSE
+What happens if null fields are imported into a user database with the Rational ClearQuest Import Tool when updating existing records? Will the fields be overwritten with no value, or will the import leave the fields as they are?
+
+ANSWER
+The Import Tool will only update records with actual data. The data in existing fields would not be overwritten with null values. 
+
+
+
+You can use the word "BLANK" in the applicable data column(s) and row(s). This will clear out the field in whatever records are updated by the Import Tool. This "BLANK" feature was introduced in ClearQuest version 7.0.0.0. 
+
+ 
+
+Field Type "" " " "BLANK" ATTACHMENT_LIST *1 ignore ignore ignore DATE_TIME ignore invalid value clear value INT ignore invalid value clear value MULTILINE_STRING ignore insert one space *2 clear value REFERENCE ignore ignore clear value *3 REFERENCE_LIST ignore
+(clear value *4*5) ignore invalid value SHORT_STRING ignore clear value clear value STATE ignore invalid value invalid value 
+Note *1: There is no way to clear values in the ATTACHMENT_LIST field type. Note *2: It inserts one space as it is, not null value. 
+
+Note *3: APAR PK73991 [http://ibm.com/support/docview.wss?uid=swg1PK73991] was fixed starting in versions 7.0.0.5 and 7.0.1.4. 
+
+ 
+
+
+
+
+
+
+Note *4: APAR PK71388 [http://ibm.com/support/docview.wss?uid=swg1PK71388] was fixed starting in versions 7.0.0.4 and 7.0.1.3 
+
+Note *5: APAR PM44971 [http://ibm.com/support/docview.wss?uid=swg1PM44971] was fixed starting in versions 8.0.0.7. 
+
+ 
+
+How to clear values in the REFERENCE_LIST field type : 
+
+For version 7.0 : 
+
+
+Set the following behavior flag in order to use "" to clear value in the Reference list.
+
+
+
+Disclaimer This solution contains information about modifying the system registry. Before making any modifications to the Microsoft Registry Editor, it is strongly recommended that you make a backup of the existing registry. For more information describing how to back up the registry, refer to Microsoft Knowledge Base article 256986 [http://support.microsoft.com/kb/256986]
+
+
+ 1. Click Start > Run type regedit and click OK
+    
+    
+ 2. Find HKEY_CURRENT_USER\Software\Rational Software\ClearQuest
+    
+    
+ 3. Create a new key and name it Diagnostic
+    
+    
+ 4. Right click on the Diagnostic key and select New > String Value
+    
+    
+ 5. Name the string Behavior
+    
+ 6.  
+ 7. Double click the Behavior string value and insert for the Value data: REPLACE_REF_LIST=TRUE
+
+
+For version 7.1 : 
+
+The "Replace value" option in Import Tool preference has been added in Rational ClearQuest Eclipse RCP client version 7.1, however, "" does not clear value in reference_list field. 
+
+For version 8.0 : 
+
+The "Replace value" option in Import Tool preference works as expected in Rational ClearQuest Eclipse RCP client version 8.0.0.7 or later. 
+RELATED INFORMATION
+#Import file format for record types [https://publib.boulder.ibm.com/infocenter/cqhelp/v7r1m2/index.jsp?topic=/com.ibm.rational.clearquest.schema.ec.doc/topics/c_fmt_rectyp_impfile.htm]

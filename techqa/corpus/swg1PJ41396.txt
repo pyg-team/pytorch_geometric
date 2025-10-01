@@ -1,0 +1,156 @@
+Title: IBM PJ41396: FILENET ENTERPRISE MANAGER IS UNABLE TO ASSIGN A PROPERTY DEFINI TION TO A CLASS IF TWO PROPERTY TEMPLATES HAVE SAME DISPLAY NAME - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  This issue was raised by the IBM Content Collector (ICC) team
+   during testing for their
+   Legacy Content Search Engine (LCSE) to Content Search Services
+   (CSS) migration scenarios.
+   
+   If you create two Property Templates having the same display
+   name but different Symbolic Names, Filenet Enterprise Manager
+   (FEM) inconsistently creates the Property Definition from the
+   wrong template.
+   
+   1.  Create two Property Templates:
+     - Display Name: ICCFrom, SymbolicName: ICCFrom
+     - Display Name: ICCFrom, SymbolicName: ICCFromSV
+   
+   2.  Note the Property IDs from the two templates created.
+   
+   3.  Run the Add/Remove properties dialog from a selected class.
+   
+   4.  Select the first ICCFrom property in the Available list box.
+   Note the ID of the selected property.
+   
+   5.  Select OK to apply the changes.
+   
+   6.  From the Property Definitions tab, select the newly added
+   property and then the Edit button.
+   
+   7.  Note the Primary ID may not be what was selected above.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * Customers using 5.0.0.2-P8CE-FP002 and prior trying to       *
+   * assign a property definition to a class if two property      *
+   * templates have the same display name.                        *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * User will not be able to assign a property definition to a   *
+   * class if two property templates have the same display name.  *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Upgrade to 5.0.0.3-P8CE-FP003 and higher                     *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fixed in 5.0.0.3-P8CE-FP003 and higher by allowing the user to
+   assign a property definition to a class even if two (or more)
+   property templates have the same display name.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PJ41396
+   
+   
+ * REPORTED COMPONENT NAME
+   CONTENT ENGINE
+   
+   
+ * REPORTED COMPONENT ID
+   5724R8101
+   
+   
+ * REPORTED RELEASE
+   500
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-07-19
+   
+   
+ * CLOSED DATE
+   2015-05-21
+   
+   
+ * LAST MODIFIED DATE
+   2015-05-21
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CONTENT ENGINE
+   
+   
+ * FIXED COMPONENT ID
+   5724R8101
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R500 PSY
+   UP

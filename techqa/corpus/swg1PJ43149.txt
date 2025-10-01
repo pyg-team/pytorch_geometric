@@ -1,0 +1,193 @@
+Title: IBM PJ43149: CONTENT FEDERATION SERVICES FOR IMAGE SERVICES (CFS-IS) RESOURCE LEAK WHEN ENCOUNTERING ZERO-LENGTH FILE DURING FILE UPLOAD - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Content Federation Services for Image Services (CFS-IS):
+   resource leak when
+   encountering zero-length file during file upload process
+   
+   Customer system encountered IS_SSI_8115: : SSI: Short read on
+   content
+   element errors. This error means that the length of the file
+   that the Content
+   Platform Engine (CPE) is attempting to copy from the staging
+   area to the
+   Image Services (IS) server is zero bytes. It is unexpected
+   because the CPE
+   should have already validated that the file exists, is readable
+   and has a
+   non-zero length before attempting to upload it.
+   
+   This error is the probable cause of so many instances of the
+   COR_Listen
+   processing be created on the Image Services server, which
+   ultimately
+   caused it to run out of memory and become unresponsive. In order
+   for
+   the CPE to upload content to the IS server, it must first ask IS
+   to allocate
+   listener to manage the upload. The listener remains allocated
+   until it is
+   either explicitly closed by the CPE or it is reclaimed by the
+   server when it
+   has remained idle too long. When a ?short read? error occurs on
+   the CPE,
+   it abandons the handle to the listener instead of closing it.
+   This causes it
+   to remain allocated on the IS server until its idle time limit
+   has been
+   exceeded. In the meantime, the short read error will be
+   automatically
+   retried by the CPE, causing another listener to be allocated.
+   Since retries
+   occur at a faster rate than idle time expirations, this
+   ultimately leads to
+   resource exhaustion.
+   
+   Software Environment
+   P8 Content Engine Version: 5.1.0.3 Build: dap501.003.019
+   Image Services Version: 4.2.0.42 (fp8)
+   AIX Base OS Release: 6.1.7.0
+   Oracle RDBMS Release: 11.2.0.4
+   WebSphere Platform 7.0.0.31
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * Customers using 5.2.1.0-P8CPE-IF002 and prior performing     *
+   * content upload when using an Image Services Fixed Content    *
+   * Device as the content destination.                           *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * Document creation succeeds, but the content associated with  *
+   * it fails to upload to the Image Services server and remains  *
+   * in the local stage area. Error messages containing the       *
+   * string "IS_SSI_8115: : SSI: Short read on content element"   *
+   * are repeatedly recorded in the p8_error_server.log file when *
+   * the error is automatically retried. Also multiple instances  *
+   * of the COR_Listen process will be created on the Image       *
+   * Services server, one for each retry attempt, which may       *
+   * ultimately cause it to run out of memory and become          *
+   * unresponsive when retry attempts occur faster than abandoned *
+   * instances can be detected and cleaned up by the server       *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Upgrade to 5.2.1.2-P8CE-FP002 or higher                      *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This problem only occurs under very rare circumstances in which
+   the staging area for the Image Services Fixed Content Device is
+   configured to use a misbehaving NFS file system that returns
+   inconsistent and erroneous results to the Java run time
+   environment file system input-output interfaces. The problem was
+   corrected in 5.2.1.2-P8CE-FP002 by modifying the program logic
+   to make sure that it properly closes the client-side reference
+   to the COR_Listen process when it encounters a short read error
+   during a content upload operation before allowing the failed
+   attempt to be retried.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PJ43149
+   
+   
+ * REPORTED COMPONENT NAME
+   CONTENT ENGINE
+   
+   
+ * REPORTED COMPONENT ID
+   5724R8101
+   
+   
+ * REPORTED RELEASE
+   521
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-04-09
+   
+   
+ * CLOSED DATE
+   2015-06-11
+   
+   
+ * LAST MODIFIED DATE
+   2015-06-11
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    PJ43147 [http://www-01.ibm.com/support/docview.wss?uid=swg1PJ43147]
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CONTENT ENGINE
+   
+   
+ * FIXED COMPONENT ID
+   5724R8101
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R521 PSY
+   UP

@@ -1,0 +1,54 @@
+Title: IBM Procedure to capture dbx output of all threads in a process on AIX - United States
+
+Text:
+dbx; MustGather; MGDM; MGEG; MGMF; MustGatherDocument TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Use this procedure to capture dbx output of all threads in a process on AIX when troubleshooting an issue for IBM Integration Bus (IIB) or WebSphere Message Broker (WMB). 
+
+Gathering (Mustgather) this information before calling IBM Support will help familiarize you with the troubleshooting process and save you time. 
+
+RESOLVING THE PROBLEM
+On AIX, dbx is available in /usr/bin/dbx.
+
+1. Type the command script at the shell prompt. This will create a file called typescript in the current directory which record information from commands below.
+
+2. Find out the pid of the DataFlowEngine with the flow that is stuck 
+
+ * 
+ * 
+ * ps -eafl | grep DataFlowEngine
+
+
+3. Attach a debugger to this DataFlowEngine  * 
+ * dbx -a <pid of DataFlowEngine>
+
+
+4. At dbx prompt - Type thread to give you a list of all the threads. 
+ * (dbx) thread
+
+
+5. Please repeat the below information for each thread.  * 
+ * (dbx) thread current <thread number> 
+   (dbx) where 
+ * 
+ * 
+ * 
+
+
+
+6. Type quit to exit dbx. 
+
+7. Type Cntl-D on the command line to end the script command. 
+
+8. The file typescript should now contain a list a list of all the commands and associated information from the above commands. 
+
+9. After a PMR is open, submit the file typescript to IBM Support for problem determination. 
+
+
+For a listing of all technotes, downloads, and educational materials specific to the DataFlowEngine, search the WebSphere Message Broker support portal [http://www.ibm.com/support/entry/portal/Software/WebSphere/WebSphere_Message_Broker].  
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Integration Bus Documentation AIX 9.0 All Editions 
+PRODUCT ALIAS/SYNONYM
+ WMB MB WebSphere Message Broker MQ Integrator WBIMB WBI-MB MQSI WMQI

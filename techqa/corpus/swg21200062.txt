@@ -1,0 +1,27 @@
+Title: IBM SIGNON stops with Top Secret security - United States
+
+Text:
+Computer Associates CA Top Secret signon DFHSNP CSSN TSSPGM01 TSSPGM02 TSSSIGN hang hangs 564805400 RB0P R411 R111 5648-054 5648054 5655M1500 R640 640 R400 400 HCI6400 R650 650 R500 500 HCI6500 5655-M15 5655M15 5655S9700 R660 660 R600 600 HCI6600 5655-S97 5655S97 5655S9700 R670 670 R700 700 HCI6700 5655-S97 5655S97 5655Y0400 R680 680 R800 800 HCI6800 5655-Y04 5655Y04 kixinfo TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ You are using CA Top Secret with CICS and have an application that does a SIGNON and specifies the GMTRAN. You enter the USERID and PASSWORD on the SIGNON screen and the sign on process stops. 
+
+SYMPTOM
+CICS SIGNON processing stops with CA Top Secret.
+
+
+CAUSE
+The SIGNON program has a name of TSSPGM01 or TSSPGM02.
+
+DIAGNOSING THE PROBLEM
+The application is written in command level and issues the EXEC CICS SIGNON command. It works fine as long as you have first done a CESN using DFHSNP as the program. If you specify the application as the gmtran, the sign on process stops on the SIGNON screen after entering a USERID and PASSWORD. If you escape the user transaction and do a CESN, the transaction then works on all terminals.
+
+[/support/docview.wss?uid=swg21200062&amp;aid=1]CA Technologies Top Secret [http://www.ca.com] support said that Top Secret Security (TSS) will call user exit programs by the name, for example TSSPGM01 or TSSPGM02. In this case, after you issued the EXEC CICS SIGNON, TSS tried to issue the TSS messages, Top Secret checks to see if program TSSPGM01 was available, and it was, so links to it. If you change the name of your signon program to TSSSIGN or anything other than TSSPGM01 or TSSPGM02, the problem will be resolved.
+
+RESOLVING THE PROBLEM
+Change the name of your SIGNON program to something other than TSSPGM01 or TSSPGM02.
+
+
+
+PRODUCT ALIAS/SYNONYM
+ CICS/TS CICS TS CICS Transaction Server CICS/VSE VSE z/VSE

@@ -1,0 +1,129 @@
+Title: IBM IWR troubleshooting and configuration guidelines - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ IWR troubleshooting and configuration guidelines 
+
+RESOLVING THE PROBLEM
+This document contains information critical to ensuring a stable and reliable IWR 5.0 application environment. It is based on our experiences with the product at many user sites. Described are required fixes, recommendations for server size and configuration documentation. All of these should be reviewed by all users experiencing [COM or OLE automation errors] in the NT Event log or server busy messages. 
+
+In general, system instability is related to one of three topics: 
+
+1. issues in the NT operating system 
+2. issues in the IWR product 
+3. COM timeouts due to CPU overloading 
+
+This document discusses actions you can take to address these points. 
+
+
+Mandatory Fixes 
+
+NT 4 Service Pack 4 or 5 
+Testing at user sites has revealed that NT 4 Service Pack 3 has several issues which are the cause of major instability in IWR 5.0 resulting in COM, OLE automation and server busy errors appearing in the NT event log, product instability and even entire IWR server lockups. Microsoft has addressed these issues in NT 4 Service Pack 4 and 5. An upgrade of the service pack is mandatory to ensure stability and reliability of IWR 5.0. 
+
+IWR 5.0 Fixes 
+
+
+The most recent generally released RBF is IWR 5.0 (261), (also sometimes called SP2). You may review the fix list to see if this RBF applies to your situation. Additional specific issues have been addressed under our call escalation program, and you should contact worldwide support to verify if a later fix is available for your specific issue. 
+
+Manage the Process Limits 
+
+A common mistake often made is to set the queue process limits in IWR server administration higher than the server can support. This will lead to overuse of the CPU resulting in failures in the COM interface, server busy errors and general instability. You should try to keep the process limits to the minimum to ensure that the operating system is able to time-share CPU resources between ImpServers effectively. Having too few processes is better than having too many. 
+
+Guideline for Configuration 
+
+Assuming you are using only the normal and high (for prompts only) queues, set the process limit to 2 per queue per CPU. Monitor CPU during testing with load representing actual usage. If you still have CPU 'head room' and you are not getting server busy, OLE automation errors or COM errors in the NT event log adjust the limit 1 process higher and re-test. You should err on the low side for process limit to ensure the CPU can respond quickly enough to COM requests to avoid a COM time-out situation. 
+
+Note: NT's architecture is such that even with multiple CPUs, all memory allocation requests are threaded through a single memory management mechanism. This behavior of NT can limit the overall scaleability of the NT server and may hamper your ability to support more than 5 or so ImpServers. This is entirely dependant on the hardware, CPU speed and so on. 
+
+
+Critical Issue: Ensure the Server is Powerful Enough 
+
+CPU is Critical 
+
+No product can provide good performance with too few resources. The critical resource for IWR tends to be CPU. In order to understand CPU loading, you must monitor CPU usage during actual product use and add additional CPUs if the system is under powered. 
+
+When acquiring a server to host IWR, we recommend a high end Pentium II (400 MHz+) system capable of hosting multiple processors. Expandability is a must as your user population grows. 
+
+RAM is Essential 
+
+Here is a simple calculation to determine average RAM consumption. Start with 80 megabytes for NT, add 30 megabytes for IWR core and an additional 15 megabytes per ImpServer process. Performance tests indicate that physical RAM will result in much snappier system performance than virtual memory as the operating system has no requirement to swap to disk. 
+
+If the server is depending on virtual memory, ensure that virtual memory is correctly configured for the amount of real memory. In general the NT Server memory configuration needs tuning if perfmon indicates that more than 40% use of the available virtual memory or peak requests of greater than 70%. 
+
+Avoid Server Busy via Timeout 
+
+The server busy message will often appear when IWR is unable to respond to the user due to a competition for CPU cycles or resource contention i.e. a locked data structure internal to IWR. While the rigorous application of the above mentioned steps will help avoid this issue, the default timeout interval may be too short and should be lengthened. To change the timeout period, set the registry key HKEY_LOCAL_MACHINE\SOFTWARE\Cognos\Impromptu Web Reports\5.0\TryLock to the 35 to 50 range. Try 35 first. This value determines in seconds how long the server will wait if a report entry is busy. Please be sensitive to the fact that regedit allows to you enter both decimal vs. hexadecimal values, and always perform a backup before editing the registry. 
+
+
+Proper IWR Configuration 
+
+Disallow Idle Servers 
+
+Experience has shown that there is little performance gain and the potential to induce instability by allowing idle ImpServers (to have the same ImpServer used to execute several reports). Therefore, our recommendation is to configure IWR to disallow idle ImpServer processes. This is done by stopping IWR, setting the registry key KEY_LOCAL_MACHINE\SOFTWARE\Cognos\Impromptu Web Reports\5.0\ AllowIdleServers to 0 (false). 
+
+Note: This setting does not apply to the prompt queue (by default the high queue). 
+
+Timeout Idle ImpServers 
+
+Set the registry key KEY_LOCAL_MACHINE\SOFTWARE\Cognos\Impromptu Web Reports\5.0\ServerTimeout to 30 to ensure that idle prompt processes are refreshed. Please note that this key is the number of minutes a server will be idle before shutting down. If your database disconnects idle processes automatically, set this to be several minutes less than the database timeout. 
+
+Do not pre-start ImpServers 
+
+The use of disallow idle processes negates any potential (but never realized) benefit of pre-starting ImpServers. 
+
+
+Proper NT Configuration 
+
+Tune NT for Application Processing 
+
+NT Server has options for tuning the operating system for either application or file serving. It is mandatory that the server be tuned for application serving. This option is configured in the Control Panel ->Network ->Services ->Server. 
+
+No Foreground Boost 
+
+At the same time, you should also change NT Server foreground application boost to none. This is done in the Control Panel ->System ->Performance. 
+
+Focus Your Reporting 
+
+Business Intelligence reports should be smaller, more tightly focused reports providing the minimum of required data rather than all of the information for the user to manually sort through. This will not only result in happier users as the reports are more readable, but may also result in a reduction in server resources. 
+
+Additional Items of Note 
+
+Acrobat Reader Byte Serving 
+
+More important in a dial-up environment, the use of byte serving in the Adobe Acrobat Reader will reduce the amount of information being sent to the user's browser. With byte serving enabled, Adobe Reader stops downloading data after it has the table of contents and the first page rather than downloading the entire file. As the user moves about the document, additional pages are downloaded as required. 
+
+To enable byte serving, disable background download in the Acrobat Reader. 
+
+Avoid Invalid Inbox Entries 
+
+IWR issues an HTML directive to the browser not to cache pages which will quickly become out of date. An issue in the Netscape browser causes that directive to be ignored resulting in errors when trying to view reports from the Inbox. If you are using a Netscape browser and you see the message 'The requested report cannot be found. Either the report has been deleted or failed to run. Please contact your report administrator' then you have encountered this issue. A work around to this is to set the browser memory cache to zero which will avoid page caching and therefore out of date pages. 
+
+Disable Netscape Directory Server Access Logging 
+
+The default configuration of the Authenticator/Access Manager LDAP server enables access logging. This will result in large logs being produced by the directory server which are not used. 
+
+To disable this logging 
+
+start Netscape SuiteSpot Administration 
+click on the Authenticator/Access Manager LDAP server (<servername>DSS) 
+select View All Server Preferences 
+scroll down and locate the Access Log line 
+click on the word 'Access Log' 
+delete the associated file name (the field should now be completely blank with no information in it) 
+click 'OK' 
+click the flashing 'Apply' button that appears near the top of the page 
+apply changes 
+Text ODBC Driver for Audit 
+The IWR audit reports require an ODBC driver to access the audit data. Many text ODBC drivers are single thread, i.e. they support only 1 attach or query at a time, or they may become unstable when used in a multiple connection environment. Therefore, you may wish to ensure through the use of dependant execution, events or schedules that the audit reports are run one at a time or a more robust ODBC driver is used. 
+
+Summary 
+
+The occurrence of COM and OLE automation errors in the NT event log or the display of server busy messages to the user is an indication that either there are software issues or that insufficient CPU cycles exist to host the IWR application. The meticulous application of the above points have resulted in dramatically more stable IWR 5.0 environments.
+
+
+
+HISTORICAL NUMBER
+ 79682

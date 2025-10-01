@@ -1,0 +1,71 @@
+Title: IBM Error when create the database tables using the repository tools based on SQL server database in RTC - United States
+
+Text:
+RTC; 1376029; Team Concert Standard; Repository; SQL Server; Database; Repotools; create; table; command; error; location; tables; connection; not; ready TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This technote identifies a problem when attempting to create table based on SQL server database in RTC. 
+
+SYMPTOM
+The following error message was returned when :
+You have set up a SQL Server database to work with your Jazz Team Server and have configured your Jazz team server to connect to the SQL server database. When attempting to create the database tables using repository tools command, the following error was caught and the database tables were not created: 
+
+ * 
+ * Repo Tools, Version 1.0.1 - I20081024-1335
+   Provisioning using "C:\Program Files\IBM\JazzTeamServer\server\\provision_profiles".
+   Rational Jazz Team Server - Standard
+   Loading configuration from "
+ * file:teamserver.properties [file:teamserver.properties]
+ * ".
+   
+   Attempting Initial Database Connection Using
+   Db Name/Location: //localhost:1433;databaseName=jazz;user=xxxxxxxx;password=xxxxxxxx;
+   
+   CRJAZ1093I Service failed to activate.
+   CRJAZ1141I Failed to get the service "com.ibm.team.repository.service.internal.r
+   db.IDatabaseStateService".
+   
+   CRJAZ1203I Could not determine the database location.
+   CRJAZ1306I The Service "com.ibm.team.repository.service.internal.rdb.IDatabaseStateService" is not available.
+   Creating the tables for the database "//localhost:1433;databaseName=jazz;user=xxxxxxxx;password=xxxxxxxx;" with indices.
+   
+   CRJAZ1141I Failed to get the service "com.ibm.team.repository.service.internal.r
+   db.IDatabaseCreationService".
+   CRJAZ1309I The database connectivity service is not ready.
+   
+   The database tables were not created.
+
+
+CAUSE
+The environment variable SQLSERVER_ABSPATH is not configured properly to point to the directory holding the JDBC jar file.
+
+
+
+RESOLVING THE PROBLEM
+To resolve this issue, .
+
+By copying the JDBC drivers JAR file into JazzInstallDir/server/sqlserver directory only will not make repotools recognize the driver. In order to have command repotools -createTables work, setting the environment variable SQLSERVER_ABSPATH point to the directory that contains the JDBC JAR file is a must. 
+
+Follow the steps below to resolve the problem: 
+
+1. Right click on My Computer, choose Properties, Advanced 
+
+2. Click on "Environment Variables" button 
+
+3. Under User Variables for xxxx, click on New 
+
+5. Type in the following info for the variable: 
+
+ Variable Name: SQLSERVER_ABSPATH 
+
+ Variable Value: Location_of JDBC DRIVER for SQL Server Database 
+
+6. Click OK to save the change 
+
+7. Restart your computer to reflect the change 
+
+8. Run the repotools -createTable command again
+
+Note: If the path has a space character somewhere in it, you need to include them with quotation.
+
+For details of how to setup SQL server database to work with Jazz team server, refer to technote: 1376702 [http://ibm.com/support/docview.wss?rs=3488&uid=swg21376702].

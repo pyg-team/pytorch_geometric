@@ -1,0 +1,301 @@
+Title: IBM IV31310: WESBPHERE MQ V7.1 FIX PACK FAILS TO UPGRADE THE JRE OR GSKIT FILESET ON AIX AFTER THE GSKIT HAS BEEN USED - United States
+
+Text:
+  FIXES ARE AVAILABLE
+WebSphere MQ V7.5 Fix Pack 7.5.0.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24034616]
+Fix Pack 7.1.0.3 for WebSphere MQ V7.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24035405]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The WebSphere MQ V7.1 fix pack on AIX is applied to a
+   WebSphere MQ installation, and the update of the JRE fileset
+   fails. The installation error message seen is:
+   
+   
+   installp: APPLYING software for:
+   mqm.jre.rte 7.1.0.2
+   
+   
+   . . . . . << Copyright notice for mqm.jre >> . . . . . . .
+   
+   Licensed Materials - Property of IBM
+   
+   5724H7221
+   (C) Copyright International Business Machines Corp. 1994, 2011.
+   
+   All rights reserved.
+   US Government Users Restricted Rights - Use, duplication or
+   disclosure
+   restricted by GSA ADP Schedule Contract with IBM Corp.
+   
+   
+   . . . . . << End of copyright notice for mqm.jre >>. . . .
+   
+   tar: can't create jre/lib/ppc64/default/libhyprtshim24.so:
+   Text file busy
+   tar: can't create jre/lib/ppc64/default/libhythr.so: Text file
+   busy
+   tar: can't create jre/lib/ppc64/default/libiverel24.so: Text
+   file busy
+   tar: can't create jre/lib/ppc64/default/libj9bcv24.so: Text
+   file busy
+   tar: can't create jre/lib/ppc64/default/libj9dmp24.so: Text
+   file busy
+   tar: can't create jre/lib/ppc64/default/libj9dyn24.so: Text
+   file busy
+   tar: can't create jre/lib/ppc64/default/libj9gc24.so: Text
+   file busy
+   tar: can't create jre/lib/ppc64/default/libj9hookable24.so:
+   Text file busy
+   tar: can't create jre/lib/ppc64/default/libj9jit24.so: Text
+   file busy
+   tar: can't create jre/lib/ppc64/default/libj9jvmti24.so: Text
+   file busy
+   tar: can't create jre/lib/ppc64/default/libj9prt24.so: Text
+   file busy
+   tar: can't create jre/lib/ppc64/default/libj9thr24.so: Text
+   file busy
+   tar: can't create jre/lib/ppc64/default/libj9trc24.so: Text
+   file busy
+   tar: can't create jre/lib/ppc64/default/libj9ute24.so: Text
+   file busy
+   tar: can't create jre/lib/ppc64/default/libj9vm24.so: Text
+   file busy
+   tar: can't create jre/lib/ppc64/default/libj9vrb24.so: Text
+   file busy
+   tar: can't create jre/lib/ppc64/default/libj9zlib24.so: Text
+   file busy
+   tar: can't create jre/lib/ppc64/default/libjclscar_24.so: Text
+   file busy
+   tar: can't create jre/lib/ppc64/default/libjsig.so: Text file
+   busy
+   tar: can't create jre/lib/ppc64/default/libjvm.so: Text file
+   busy
+   tar: can't create jre/lib/ppc64/default/libvmi.so: Text file
+   busy
+   tar: can't create jre/lib/ppc64/j9vm/libjvm.so: Text file busy
+   tar: can't create jre/lib/ppc64/libawt.so: Text file busy
+   tar: can't create jre/lib/ppc64/libfontmanager.so: Text file
+   busy
+   tar: can't create jre/lib/ppc64/libjava.so: Text file busy
+   tar: can't create jre/lib/ppc64/libjpeg.so: Text file busy
+   tar: can't create jre/lib/ppc64/libjsig.so: Text file busy
+   tar: can't create jre/lib/ppc64/libmlib_image.so: Text file
+   busy
+   tar: can't create jre/lib/ppc64/libnet.so: Text file busy
+   tar: can't create jre/lib/ppc64/libnio.so: Text file busy
+   tar: can't create jre/lib/ppc64/libzip.so: Text file busy
+   tar: can't create jre/lib/ppc64/xawt/libmawt.so: Text file
+   busy
+   ERROR: Return code "1" from tar while expanding
+   "/usr/mqm/java/jre64/mq_jre64.tar.Z"
+   instal:  Failed while executing the ./mqm.jre.rte.post_i
+   script.
+   
+   
+   installp:  The installation has FAILED for the "usr" part
+   of the following filesets:
+   mqm.jre.rte 7.1.0.2
+   
+   installp: Cleaning up software for:
+   mqm.jre.rte 7.1.0.2
+   
+   Filesets processed:  22 of 29  (Total time:  3 mins 38 secs).
+   
+   
+   
+   The GSKit fileset then subsequently also fails to install,
+   with the error message:
+   
+   installp: APPLYING software for:
+   mqm.gskit.rte 7.1.0.2
+   
+   
+   installp: The installation of the following filesets will be
+   CANCELED because filesets upon which they depend are
+   not installed (or not completely installed):
+   
+   Fileset mqm.gskit.rte 7.1.0.2 requires:
+   * mqm.jre.rte 7.1.0.2
+   
+   where:
+   "*" indicates a requisite fileset that probably failed to
+   install during this installation session.
+   
+   Filesets processed:  24 of 29  (Total time:  4 mins 13 secs).
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   Users of WebSphere MQ V7.1 on AIX, who have utilised the GSKit
+   component of WebSphere MQ prior to the installation of the Fix
+   Pack.
+   
+   Platforms affected:
+   AIX
+   
+   ****************************************************************
+   PROBLEM SUMMARY:
+   When the GSKit component of the WebSphere MQ installation is
+   used, including the use of the GSKit graphical user interface
+   'IBM Key Management' tool, started through the WebSphere MQ
+   command:
+   
+   /usr/mqm/bin/strmqikm
+   
+   libraries associated with the component are cached within the
+   AIX memory space.  These libraries remain loaded even after
+   the use of the GSKit component has finished, for example by
+   closing the 'IBM Key Management' graphical tool.
+   
+   The consequence of this was that when the fix pack attempted
+   to update the libraries associated with this component, either
+   the GSKit libraries or JRE libraries associated with the
+   graphical tool, the install scripts were unable to overwrite
+   the files, causing the install to fail.
+   
+   When this occurred, the following error message was seen:
+   
+   tar: can't create <filename>: Text file busy.
+   
+   
+   In order to circumvent this problem, the command:
+   
+   /usr/sbin/slibclean
+   
+   can be run prior to the installation of the fix pack.  This
+   command instructs AIX to unload any cached libraries which are
+   not in use, thereby circumventing the issue.
+   
+   This command needs to be run as a privileged user (such as
+   'root') to be effective.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix pack installation scripts have been updated to clear
+   the cached libraries prior to attempting to update the
+   libraries, using the system command:
+   
+   /usr/sbin/slibclean
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+                      v7.1
+   Platform           Fix Pack 7.1.0.3
+   --------           --------------------
+   AIX                7.1.0.3
+   
+   Platform           v7.5
+   --------           --------------------
+   Multiplatforms     7.5.0.1
+   
+   The latest available maintenance can be obtained from
+   'WebSphere MQ Recommended Fixes'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037]
+   
+   If the maintenance level is not yet available information on
+   its planned availability can be found in 'WebSphere MQ
+   Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV31310
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ AIX V7
+   
+   
+ * REPORTED COMPONENT ID
+   5724H7221
+   
+   
+ * REPORTED RELEASE
+   710
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-11-05
+   
+   
+ * CLOSED DATE
+   2012-12-05
+   
+   
+ * LAST MODIFIED DATE
+   2012-12-05
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ AIX V7
+   
+   
+ * FIXED COMPONENT ID
+   5724H7221
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R710 PSY
+   UP

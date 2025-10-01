@@ -1,0 +1,18 @@
+Title: IBM The Refresh button on the Set Hierarchies view fails to reload data - United States
+
+Text:
+mdmrnv110 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Clicking Refresh on the Set Hierarchies view fails to reload the Hierarchy data. 
+
+SYMPTOM
+When viewing a set hierarchy, clicking Refresh causes the hierarchy to disappear. The hierarchy can be reloaded by navigating to another set and then returning. Other operations that would cause a refresh (such as moving nodes in a hierarchy) do not cause this problem.
+
+
+RESOLVING THE PROBLEM
+The hierarchy can be reloaded by navigating to another set and then returning.
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Information Management InfoSphere Master Data Management Reference Data Management Hub

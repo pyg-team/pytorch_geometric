@@ -1,0 +1,31 @@
+Title: IBM Exception message: CEIES0004E No event notifications were sent because the event server could not connect to the JMS destination. - United States
+
+Text:
+mon62relnotes TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When using WebSphere® Business Monitor, the CEI server failed to distribute an event notification. 
+
+SYMPTOM
+The following error appears in the WebSphere Business Monitor server SystemOut.log:
+
+EventDistribu E com.ibm.events.distribution.impl.EventDistribution publishEventNotifications CEIES0011E The event server failed to distribute an event notification.
+Exception message: CEIES0004E No event notifications were sent because the event server could not connect to the Java Message Service (JMS) destination.
+The event group name is All events.
+JMS connection factory Java Naming and Directory Interface (JNDI) name: jms/cei/notification/AllEventsTopicConnectionFactory 
+JMS destination JNDI name: jms/cei/notification/AllEventsTopic 
+
+
+CAUSE
+Security may not be configured for the following factories: QueueConnection Factory, Activation Specifications, and Topic Connection Factories.
+
+RESOLVING THE PROBLEM
+To fix this error, configure security for QueueConnection Factory, Activation Specifications and Topic Connection Factories. 
+
+In the administrative console, click: 
+
+1. Resources -> JMS -> Queue connection factories. Click CommonEventInfrastructure_QueueCF. Scroll down to the Advanced Administrative section and specify an authorization alias for the Component-managed authentication alias.
+
+2. Resources -> JMS -> Activation Specifications. Select the CommonEventInfrastructure_ActivationSpec. Scroll down to the Additional section and specify an authorization alias for the authentication alias.
+
+3. Resources -> JMS -> Topic Connection Factories. Select CommonEventInfrastructure_AllEventsTopicCF. Scroll down to the Advanced Administrative section and specify an authorization alias for the Component-managed authentication alias.

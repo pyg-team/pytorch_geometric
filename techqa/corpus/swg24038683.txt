@@ -1,0 +1,62 @@
+Title: IBM Download IBM InfoSphere Data Replication 11.3 - Q Replication technology - United States
+
+Text:
+ DOWNLOADABLE FILES
+
+ABSTRACT
+ This document helps you determine which images to download for the Q Replication technology in InfoSphere Data Replication. 
+
+DOWNLOAD DESCRIPTION
+
+
+InfoSphere Data Replication has three different technologies. Click a different tab to see the downloadable parts for CDC Replication or SQL Replication. 
+
+THIS TABLE PROVIDES PLATFORM-SPECIFIC DOWNLOAD INFORMATION
+ * CDC Replication [http://www-01.ibm.com/support/docview.wss?uid=swg24038293]
+ * Q Replication [http://www-01.ibm.com/support/docview.wss?uid=swg24038683]- selected tab,
+ * SQL Replication [http://www-01.ibm.com/support/docview.wss?uid=swg24038680]
+
+Downloading the relevant eAssembly images from the Passport Advantage Xtreme Leverage Web site
+
+ 1. Determine the database platform and operating system, and then determine the version of Q Replication that you plan to install.
+ 2. In the tables below, find the assembly part numbers that you need.
+ 3. In the Download package table, follow the link to the Passport Advantage Xtreme Leverage Web site.
+ 4. Sign in to download all of the images that you need. 
+ 5. Unpack each of the parts onto your system.
+
+
+
+REQUIRED: DOWNLOAD YOUR REPLICATION ENGINES
+On Linux, UNIX, and Windows, the Q Replication V10.2.1 engine is part of DB2 for Linux, UNIX, and Windows V10.5. Choose one of these options: 
+
+ * If DB2 Version 10.5 is already installed on your system, you only need to activate the license for Q Replication (see activation kits below).
+ * If you need to install DB2 V10.5, download the InfoSphere Federation Server V10.5 program for your operation system and use its installation program to add DB2 V10.5 to your system. You must also install the latest Federation Server fix pack, available from IBM Fix Central [http://www-933.ibm.com/support/fixcentral/].
+
+Note: If you are replicating to federated targets, you must also download InfoSphere Federation Server.
+
+
+
+AIX Part number IBM InfoSphere Federation Server V10.5 AIX CILG0ML IBM InfoSphere Replication Server V9.7 AIX CZ6CXML IBM InfoSphere Replication Server Developer Edition V9.7 AIX CZ6D8ML Linux Part number IBM InfoSphere Federation Server V10.5 Linux x86Series 64-bit CILF6ML IBM InfoSphere Federation Server V10.5 Linux pSeries CILF7ML IBM InfoSphere Federation Server V10.5 Linux zSeries CILF8ML IBM InfoSphere Replication Server V9.7 Linux pSeries CZ6CUML IBM InfoSphere Replication Server V9.7 Linux x86Series 32-bit CZ5C0ML IBM InfoSphere Replication Server V9.7 Linux x86Series 64-bit CZ6CTML IBM InfoSphere Replication Server Developer Edition V9.7 Linux zSeries CZ66NML IBM InfoSphere Replication Server Developer Edition V9.7 Linux pSeries CZ6D6ML IBM InfoSphere Replication Server Developer Edition V9.7 Linux x86Series 32-bit CZ6D3ML IBM InfoSphere Replication Server Developer Edition V9.7 Linux x86Series 64-bit CZ6D5ML Solaris Part number IBM InfoSphere Federation Server V10.5 Solaris SPARC CILF9ML IBM InfoSphere Replication Server V9.7 Solaris SPARC CZ6CVML IBM InfoSphere Replication Server Developer Edition V9.7 Solaris SPARC CZ6D7ML Windows Part number IBM InfoSphere Federation Server V10.5 Windows 64-bit CILF5ML IBM InfoSphere Federation Server V10.1.0 Windows 32-bit CI85NML IBM InfoSphere Replication Server V9.7 Windows 64-bit CZ6CRML IBM InfoSphere Replication Server V9.7 Windows 32-bit CZ6CQML IBM InfoSphere Replication Server Developer Edition V9.7 Windows 32-bit CZ6D0ML IBM InfoSphere Replication Server Developer Edition V9.7 Windows 64-bit CZ6D1ML REQUIRED: DOWNLOAD THE Q REPLICATION ACTIVATION KIT
+To activate the license for Q Replication, you must download the activation kit for your version. Follow the instructions in the readme that is included in the kit for installing the license.
+
+InfoSphere Data Replication V10.2.1 Activation Kit CIUX7ML IBM InfoSphere Data Replication V10.2 Q and SQL Replication Activation Kit and Product Documentation CI860ML Activation Kit for DB2 pureScale for IBM InfoSphere Rep Server 9.7 and IBM InfoSphere Data Event Publisher 9.7 CZN6YEN REQUIRED: DOWNLOAD THE REPLICATION CENTER AND ASNCLP COMMAND-LINE PROGRAM
+The Replication Center and ASNCLP command-line program that are required for configuring Q Replication are part of the IBM Data Server Client.
+
+IBM Data Server Client (for replication tools) Part number IBM Data Server Client V10.5 for AIX CIW3IML IBM Data Server Client V10.5 for Linux on 32-bit AMD and Intel systems (x86) CIW3EML IBM Data Server Client V10.5 for Linux on AMD64 and Intel EM64T systems (x64) CIW3FML IBM Data Server Client V10.5 for Linux on POWER (System i and System p) systems CIW3GML IBM Data Server Client V10.5 for Linux on System z CIW3HML IBM Data Server Client V10.5 for Solaris on UltraSPARC systems CIW3KML IBM Data Server Client V10.5 for Solaris on x64 systems CIW3LML IBM Data Server Client V10.5 for Windows on 32-bit AMD and Intel systems (x86) CIW3MML IBM Data Server Client V10.5 for Windows on AMD64 and Intel EM64T systems (x64) CIW3NML REQUIRED: DOWNLOAD WEBSPHERE MQ
+WebSphere MQ is required for Q Replication. Choose the WebSphere MQ server for your operating system. Q Replication also supports WebSphere MQ client configurations.
+
+WebSphere MQ version Part number IBM WebSphere MQ for AIX V7.1 CIB7JML IBM WebSphere MQ client for AIX V7.1 CIB7HML IBM WebSphere MQ for Linux on x86 32bit V7.1 CIB7PML IBM WebSphere MQ client for Linux on x86 32bit V7.1 CIB7DML IBM WebSphere MQ for Linux on x86 64 V7.1 CIB7QML IBM WebSphere MQ client for Linux on x86 64 V7.1 CIB7EML IBM WebSphere MQ for Linux on POWER V7.1 CIB7RML IBM WebSphere MQ client for Linux on POWER V7.1 CIB7FML IBM WebSphere MQ for Linux on System z 64bit V7.1 CIB7SML IBM WebSphere MQ client for Linux on System z 64 bit V7.1 CIB7GML IBM WebSphere MQ for Solaris on SPARC V7.1 CIB7LML IBM WebSphere MQ client for Solaris on SPARC V7.1 CIB7AML IBM WebSphere MQ for Solaris on x86 64 V7.1 CIB7MML IBM WebSphere MQ client for Solaris on x86 64 V7.1 CIB7BML IBM WebSphere MQ for Windows V7.1 CIB7IML IBM WebSphere MQ client for Windows V7.1 CIB78ML OPTIONAL: DOWNLOAD ODBC DRIVER FOR CLASSIC REPLICATION
+If you are using InfoSphere Classic Replication and want the Q Apply program to load target tables with data from the source, you must download and install an ODBC driver.
+
+ODBC driver Part number ODBC Drivers for IBM InfoSphere Rep Server V9.7 AIX CZ56TEN ODBC Drivers for InfoSphere Rep Server V9.7 Linux on System z CZ66VEN ODBC Drivers for InfoSphere Rep Server V9.7 Linux x86 32-bit CZ5IIEN ODBC Drivers for InfoSphere Rep Server V9.7 Linux x86 64-bit CZ56IEN ODBC Drivers for InfoSphere Rep Server V9.7 Solaris SPARC CZ56QEN DOCUMENTATION
+Documentation Part number IBM InfoSphere Federation Server V10.5 Quick Start Guide CILF3ML IBM InfoSphere Replication Server and Data Event Publisher V9.7 Quick Start Guide CZ5BXML IBM InfoSphere Replication Server 9.7 PDF Documentation CZ5FLML Network version of the IBM DB2 Information Center for Windows® on 32-bit AMD and Intel systems (x86) CZ1IUML Workstation version of the IBM DB2 Information Center for Windows® on 32-bit AMD and Intel systems (x86) CZ1IWML IBM WebSphere MQ V7.1 Quick Start Guide CI3CCML IBM WebSphere MQ V7.1 Doc for Linux CI56CML IBM WebSphere MQ V7.1 Doc for Linux CI56BML PREREQUISITES
+Follow these links to view detailed system requirements for the Q Replication technology in InfoSphere Data Replication v11.3: Q Replication v10.2.1: http://www-01.ibm.com/support/docview.wss?uid=swg27039669 [http://www-01.ibm.com/support/docview.wss?uid=swg27039669] Q Replication v9.7: http://www-01.ibm.com/support/knowledgecenter/SSDP5R_9.7.5/com.ibm.swg.im.iis.repl.install.doc/topics/iiypirrq-sys.html [http://www-01.ibm.com/support/knowledgecenter/SSDP5R_9.7.5/com.ibm.swg.im.iis.repl.install.doc/topics/iiypirrq-sys.html]
+
+INSTALLATION INSTRUCTIONS
+Installation instructions can be found in the InfoSphere Data Replication v11.3.0 collection in IBM Knowledge Center [http://www-01.ibm.com/support/knowledgecenter/SSTRGZ_10.2.1/com.ibm.swg.im.iis.repl.install.doc/topics/iiypirep-top.html].
+
+DOWNLOAD PACKAGE
+You can download the images from IBM Passport Advantage [https://www-01.ibm.com/software/passportadvantage/].
+
+TECHNICAL SUPPORT
+ For Passport Advantage Online support, see, eCustomer care contact information [http://www.ibm.com/software/howtobuy/passportadvantage/paocustomer/docs/en_US/ecare.html].

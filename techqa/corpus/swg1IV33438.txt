@@ -1,0 +1,160 @@
+Title: IBM IV33438: SCCD MIDDLEWARE INSTALLER CREATES WRONG PASSWORD FOR DB2FENC1 - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  SCCD Middleware installer creates wrong password for db2fenc1
+   
+   PERFORMANCE ISSUE
+   No
+   
+   STEPS TO REPRODUCE:
+   Install DB2 middleware using SCCD launchpad for Middleware
+   1. During configuration parameters, check "Use this password as
+   the value for all subsequent passwords"
+   2. You can see user db2fenc1, dasusr1, ctginst1, ctgfenc1,
+   db2inst1 and maximo have preset password.
+   
+   CURRENT ERRONEOUS RESULT:
+   Once installation is completed, you cannot login to db2fenc1
+   using the password you provided. You can login to other user
+   dasusr1, ctginst1, ctgfenc1, db2inst1 and maximo using the same
+   password.
+   
+   EXPECTED RESULT:
+   You can login to db2fenc1 using the same password
+   
+   ADDITIONAL INFO:
+   db2fenc1 user created with wrong password
+   
+   ENVIRONMENT:
+   - SCCD 7.5
+   - Tpae: 7.5.0.2
+   - OS: Unix/Linux
+   - DB: DB2 9.7
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Once installation is completed, update password for db2fenc1
+   e.g.
+   echo db2fenc1:<password> | /usr/sbin/chpasswd
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  CURRENT ERRONEOUS RESULT:
+   Once installation is completed, you cannot login to db2fenc1
+   using the password you provided. You can login to other user
+   dasusr1, ctginst1, ctgfenc1, db2inst1 and maximo using the same
+   password.
+   
+   EXPECTED RESULT:
+   You can login to db2fenc1 using the same password
+   
+   ADDITIONAL INFO:
+   db2fenc1 user created with wrong password
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+ *  Once installation is completed, update password for db2fenc1
+   e.g.
+   echo db2fenc1:<new password> | /usr/sbin/chpasswd
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV33438
+   
+   
+ * REPORTED COMPONENT NAME
+   MWI
+   
+   
+ * REPORTED COMPONENT ID
+   TIVOMWI00
+   
+   
+ * REPORTED RELEASE
+   750
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-12-13
+   
+   
+ * CLOSED DATE
+   2013-01-18
+   
+   
+ * LAST MODIFIED DATE
+   2013-01-18
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   PRODUCT INSTALL
+   
+   
+ * FIXED COMPONENT ID
+   5724R46IT
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R750 PSN
+   UP

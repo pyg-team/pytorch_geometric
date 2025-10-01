@@ -1,0 +1,163 @@
+Title: IBM IT16514: UPGRADE JRE SHIPPED BY MQ V7.1 TO 6.0.16.30 - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  This APAR updates the Java Runtime Environment (JRE) supplied
+   with WebSphere MQ V7.1.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   The JRE which is embedded into WebSphere MQ 7.1 is used to run
+   the following Java components of the product:
+   
+     WebSphere MQ Explorer
+     GSKit graphical interface
+   
+   
+   Platforms affected:
+   MultiPlatform
+   
+   ****************************************************************
+   PROBLEM DESCRIPTION:
+   This APAR updates the Java Runtime Environment (JRE) supplied
+   with WebSphere MQ V7.1. See below for platforms updated and to
+   which version.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This APAR updates the JRE for WebSphere MQ V7.1 to Java
+   6.0.16.30 plus IV89825 [http://www-01.ibm.com/support/docview.wss?uid=swg1IV89825] and IV89826 [http://www-01.ibm.com/support/docview.wss?uid=swg1IV89826] for the following platforms:
+   
+     AIX
+     HP-UX IA32
+     HP-UX IA64
+     Linux (x86-32)
+     Linux (x86-64)
+     Linux (PPC64)
+     zLinux
+     Solaris (x86-64)
+     Solaris (SPARC)
+     Windows
+   
+   
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+   Version    Maintenance Level
+   v7.1       7.1.0.8
+   
+   The latest available maintenance can be obtained from
+   'WebSphere MQ Recommended Fixes'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037]
+   
+   If the maintenance level is not yet available information on
+   its planned availability can be found in 'WebSphere MQ
+   Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT16514
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ WINDOWS V7
+   
+   
+ * REPORTED COMPONENT ID
+   5724H7220
+   
+   
+ * REPORTED RELEASE
+   710
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-08-08
+   
+   
+ * CLOSED DATE
+   2016-11-03
+   
+   
+ * LAST MODIFIED DATE
+   2017-03-10
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ WINDOWS V7
+   
+   
+ * FIXED COMPONENT ID
+   5724H7220
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R710 PSY
+   UP

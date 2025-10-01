@@ -1,0 +1,38 @@
+Title: IBM FileNet Workplace Site Preferences values change randomly - United States
+
+Text:
+Site Preferences Connection Point TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The FileNet Workplace Site Preferences settings change randomly causing intermittent issues. 
+
+SYMPTOM
+One issue observed is where the Connection Point set in the Site Preferences is intermittently changed, causing errors when transferring workflows.
+
+
+CAUSE
+This problem can occur if the Application Engine (AE) server or Workplace XT server intermittently lose the ability to retrieve the real site preferences XML file from the Content Engine (CPE or CE) server object store. If the storage area used as default for the Preferences Document class is a File Storage Area, that could cause the intermittent behavior if there are any problems or interruptions when accessing the File Store location.
+
+RESOLVING THE PROBLEM
+The preferences files are very small and normally there will not be very many of the files. Using a database storage area for the preferences files is usually much faster and less prone to sync issues. Switching to a database storage area for the Preferences Document class can avoid some of the issues with site preferences.
+
+To switch to a Database Store, do the following:
+
+
+ 1. While still in the Preferences Document class in ACCE, change the Default storage area and Default storage policy to the database storage area. Save the changes. 
+ 2. Open up the Site Preferences for Workplace (Browse > Root Folder > Preferences > select the Site Preferences for Workplace) 
+ 3. On the General tab, change the Document title to a backup name (ex. "saved Site Preferences for Workplace"). 
+ 4. Click Save to save the change. 
+ 5. On the Properties tab, scroll down to find the "Containers" property. 
+ 6. Select the pull down for the Containers Property Value and select the Site Preferences for Workplace, a new tab should open. 
+ 7. Scroll down and find the Containment Name property and change the value (you can use "saved Site Preferences for Workplace" again). 
+ 8. Click Save to save the change.
+
+
+If you Refresh the list of files in Preferences, you should see that "Site Preferences for Workplace" has been replaced by "saved Site Preferences for Workplace".
+
+Open a new browser and login to Workplace. Go to Admin and edit and save the site preferences. This should create a new "Site Preferences for Workplace" in ACCE. You can look at the properties on the new "Site Preferences for Workplace" in ACCE to confirm that the storage area and storage policy now point to the database store. Test to see if the changes made to the site preferences are saved correctly.
+
+If necessary, the previous site preferences can be restored by deleting the latest "Site Preferences for Workplace" in ACCE, then changing the Document Title and Containment Name of the saved copy back to "Site Preferences for Workplace".
+
+This process will do two things. First, it will revert the site preferences file back to the default version that was included in the installation. Second, the site preferences will be moved to a database store instead of a file store which is less prone to issues caused by access to the files.

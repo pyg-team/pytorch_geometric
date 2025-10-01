@@ -1,0 +1,136 @@
+Title: IBM IZ76665: GSR0089E WHEN QUERYING LARGE AMOUNTS OF DATA IN ORACLE - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  If you are using WebSphere Service Registry and Repository with
+   an Oracle database, and have loaded a large amount of user data,
+   when you select 'Service Operations' in the UI, the following
+   exception is seen:
+   
+   A problem occurred executing the query "GSR0089E: An error
+   occurred while dealing with the following query:
+   "getAllUDPsForBsrURIList"" : {1}
+   GSR0089E: An error occurred while dealing with the following
+   query: "getAllUDPsForBsrURIList"
+   GSR0597E: An error occurred when accessing the metadata store.
+   org.springframework.jdbc.BadSqlGrammarException:
+   StatementCallback; bad SQL grammar [SELECT DISTINCT
+   A0.OBJ_TYP_CD, A0.SUBJ_ID, A0.OBJ_TYP_CD, A0.PRED_ID,
+   A0.OBJ_TYP_CD, A0.OBJ_ID FROM w_statement A0 WHERE A0.SUBJ_ID IN
+   (lots of numbers ....)
+   ...
+   maximum number of expressions in a list is 1000
+   java.sql.SQLException: ORA-01795: maximum number of expressions
+   in a list is 1000
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Oracle recommend that long SQL queries are split, this
+   recommendation has been applied.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This fix is expected in 6.3.0.3 and 7.0.0.2
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ76665
+   
+   
+ * REPORTED COMPONENT NAME
+   SERVICE REGISTR
+   
+   
+ * REPORTED COMPONENT ID
+   5724N7200
+   
+   
+ * REPORTED RELEASE
+   630
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-05-28
+   
+   
+ * CLOSED DATE
+   2010-05-28
+   
+   
+ * LAST MODIFIED DATE
+   2010-05-28
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   SERVICE REGISTR
+   
+   
+ * FIXED COMPONENT ID
+   5724N7200
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R630 PSY
+   UP
+   
+   
+ * R700 PSY
+   UP

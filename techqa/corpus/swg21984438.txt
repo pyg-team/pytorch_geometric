@@ -1,0 +1,13 @@
+Title: IBM Why does the Preservation Plan remains in Pending Approval state ? - United States
+
+Text:
+atlas TECHNOTE (FAQ)
+
+QUESTION
+ Atlas Preservation Plan is routed for approval and the approver as noted in Plan has approved the plan but Why does the Preservation Plan remains in "Pending Approval" state ? 
+
+CAUSE
+One possible cause could be using multiple browser tabs in a single browser session.
+
+ANSWER
+Using Multiple browser tabs in a single browser session is not supported in Atlas as it causes issues with session and data.

@@ -1,0 +1,105 @@
+Title: IBM How to find if your tablespace containers are truncated ? - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ DB2 database might crash when any function tries to access a tablespace which has a container that is found to be truncated i.e. missing pages. 
+
+SYMPTOM
+Database crash
+
+
+CAUSE
+A container truncation generally happens outside of DB2. Please check your OS, hardware and file system for any problems during the same time as the crash.
+
+DIAGNOSING THE PROBLEM
+DB2 does not allow the truncation / resizing of a single page, it is always done at the extent level. And in most truncation problems, you will see that the number of pages that are truncated, is not aligned with an extent boundary. 
+
+Thus in most cases you will find that the truncated pages are an odd number of pages i.e. (pages % extentsize) != 0 which suggests that the problem is outside of DB2.
+
+Here is a way to find out if your tablespace containers are truncated (we are using an example to explain) :
+
+1> Execute the following commands :
+db2pd -db xxx -tablespaces
+stat on all tablespace container paths
+
+
+2> Check the "db2pd -db xxx -tablespaces" output, for the total number of pages in that tablespace (TotalPgs) :
+
+Example of db2pd command : 
+
+Tablespace Statistics:
+
+Address Id TotalPgs UsablePgs UsedPgs PndFreePgs FreePgs HWM Max HWM State MinRecTime NQuiescers PathsDropped
+0x00002AAAE2E5E140 5 2048020478 19586 0 892 19586 19586 0x00000000 1348759013 0 No 
+0x00002AAAE2E86A60 6 3072030718 30420 0 298 30420 30420 0x00000000 1351590041 0 No 
+
+3> Next, check the container files for the tablespaces one at a time :
+
+For Tablespace 5 :
+
+> pwd
+/path/NODE00xx/<database>/T0000005 ---> (in tablespace id 5)
+> ls -l
+total 328328
+-rw------- 1 <user details> 335544320 <date : time> C0000000.LRG
+
+For Tablespace 6 :
+
+> pwd
+/path/NODE00xx/<database>/T0000006 ---> (in tablespace id 6)
+> ls -l
+total 487236
+-rw------- 1 <user details> 498434048 <date : time> C0000000.LRG
+
+
+4> Run the stat command against the container files (there may be more than 1 container files, we have 1 in our example) to check the file status and all details about it :
+
+For Tablespace 5 :
+
+> stat C0000000.LRG
+File: `C0000000.LRG'
+Size: 335544320Blocks: 656656 IO Block: 32768 regular file
+Device: 21h/33d Inode: 3803280 Links: 1
+Access: (0600/-rw-------) Uid: ( 3105/ <user>) Gid: ( 3105/<user>)
+Access: yyyy-mm-dd hh:mm:ss.ms +ns
+Modify: yyyy-mm-dd hh:mm:ss.ms +ns
+Change: yyyy-mm-dd hh:mm:ss.ms +ns
+
+The file is 335544320 bytes which is 20480, 16k pages which is the TotalPgs we see in the db2pd -tablespaces output. Thus this container is not truncated.
+Note : Both tablespaces are 16K i.e. all pages in them are of 16K size.
+
+For Tablespace 6 :
+
+> stat C0000000.LRG
+File: `C0000000.LRG'
+Size: 498434048Blocks: 974472 IO Block: 32768 regular file
+Device: 21h/33d Inode: 16506575 Links: 1
+Access: (0600/-rw-------) Uid: ( 3105/ <user>) Gid: ( 3105/<user>)
+Access: yyyy-mm-dd hh:mm:ss.ms +ns
+Modify: yyyy-mm-dd hh:mm:ss.ms +ns
+Change: yyyy-mm-dd hh:mm:ss.ms +ns
+
+The container size is 498434048 bytes which is 30422, 16K pages which does not match with the TotalPgs - 30720, in the db2pd -tablespaces output. Thus this container is truncated, it is missing 298 pages in our example.
+
+5> In case you have more than 1 container in a tablespace, please make sure you add the number of pages in all containers and then check if it matches the TotalPgs for that tablespace in the db2pd -tablespaces output
+
+
+
+RESOLVING THE PROBLEM
+ 
+
+To restore/reset the container back to original size please follow the below steps :
+
+1> If tablespace is created with AUTOMATIC STORAGE, then execute the following 3 steps to restore it:
+i) db2 backup database <database_name> tablespace (<tablespace_name>) online to <path>
+ii) db2 restore database <database_name> tablespace (<tablespace_name>) online from <path>
+iii) db2 rollforward database <database_name> to end of logs and stop tablespace (<tablespace_name>) online
+
+2> If tablespace is NOT created using AUTOMATIC STORAGE, then use the following command to restore it :
+db2 "alter tablespace <tablespace_name> extend (all containers <number of containers>)"
+
+
+RELATED INFORMATION
+ LIST TABLESPACE CONTAINERS command [http://publib.boulder.ibm.com/infocenter/db2luw/v9r7/topic/com.ibm.db2.luw.admin.cmd.doc/doc/r0002002.html]

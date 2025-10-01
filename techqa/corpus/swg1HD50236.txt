@@ -1,0 +1,142 @@
+Title: IBM HD50236: CATALOG PART INSTANTIATION NOT POSSIBLE WITH THE MICROSOFT OFFICE EXCEL VIEWER - United States
+
+Text:
+AIX SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PERMANENT RESTRICTION.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The customer has the Microsoft Office Excel Viewer
+   installed on his machine and is able to open and
+   correctly view .xls design design tables.
+   However, the instantiation of catalog parts fails with
+   the following message:
+   .
+   Error
+   New From Action failed.
+   No Design Table with 'Part Number' column found
+   .
+   Note:
+   If Microsoft Office is installed on the machine, it is
+   possible to instantiate the catalog parts.
+   .
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  CATALOG PART INSTANTIATION NOT POSSIBLE WITH THE MICROSOFT OFFI
+   CE EXCEL VIEWER
+   The customer has the Microsoft Office Excel Viewer
+   installed on his machine and is able to open and
+   correctly view .xls design design tables.
+   However, the instantiation of catalog parts fails with
+   the following message:
+   .
+   Error
+   New From Action failed.
+   No Design Table with 'Part Number' column found
+   .
+   Note:
+   If Microsoft Office is installed on the machine, it is
+   possible to instantiate the catalog parts.
+   .
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  It is not possible to instantiate from catalogs
+   CATParts that reference .xls design tables if only
+   the Microsoft Excel Viewer or OpenOffice Viewer is
+   installed.
+   It is necessary to install Microsoft Excel to use such
+   catalogs.
+   Note:
+   It is also possible to avoid this restriction by
+   using .txt design tables instead of .xls design tables
+   under windows.
+   .
+   THIS PROBLEM IS PERMANENT RESTRICTION
+   .
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   HD50236
+   
+   
+ * REPORTED COMPONENT NAME
+   CATIA V5 NT>XP
+   
+   
+ * REPORTED COMPONENT ID
+   569151000
+   
+   
+ * REPORTED RELEASE
+   514
+   
+   
+ * STATUS
+   CLOSED PRS
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2006-02-28
+   
+   
+ * CLOSED DATE
+   2006-03-02
+   
+   
+ * LAST MODIFIED DATE
+   2006-03-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

@@ -1,0 +1,33 @@
+Title: IBM How can I download a document archived by IBM Content Collector for SAP from Workplace XT? - United States
+
+Text:
+ICC for SAP; ICC4SAP TECHNOTE (FAQ)
+
+QUESTION
+ After a document is archived to FileNet P8 using IBM Content Collector for SAP, how can I download the document from Workplace XT? 
+
+CAUSE
+ 
+
+ * When IBM Content Collector for SAP stores a document into FileNet P8, it is stored into the first content element of the object. The content element file name is always "data" and the mime type is set accordingly. 
+   For example, a PDF document with original file name "sampledocument.pdf" is stored into FileNet P8. The content element file name is set to "data" and the mime type is set to "application/pdf". 
+
+ * When user attempts to view the archived file from Workplace XT, the document can be viewed successfully provided there is an appropriate software on the client system to open the document. The browser knows how to open the document as the mime type of the document is correctly set.
+
+ * However, if user attempts to download the file to local disk first before viewing it, the system may not know how to open the document. This is because the filename stored in P8 is "data" without any extension and with the default download action in Workplace XT, the document will be downloaded also with the name "data." Since there is no file extension, the system does not know how to open it. 
+
+ * This behavior in IBM Content Collector for SAP is working as designed. 
+
+
+
+ANSWER
+To overcome this problem, follow the steps below to download the document in Workplace XT: 
+
+ 1. Select the document you wish to download. Take note of the type of the document. In Workplace XT, different icons are displayed according to the type of the document. 
+ 2. Right-click on the selected document and select More Actions > Advanced Download. 
+ 3. Select Save when prompted to open or save the file. 
+ 4. In the Save As dialog, provide a name and the appropriate extension for the file you are downloading. For example, if Workplace XT shows a PDF icon for the document you are trying to download, in the Save As dialog, append the extension ".pdf" to the file name. 
+ 5. With an extension, the system will know how to open the document downloaded.
+
+RELATED INFORMATION
+ IBM Content Collector for SAP Information Center [http://publib.boulder.ibm.com/infocenter/iccsap/v2r2m0/index.jsp]

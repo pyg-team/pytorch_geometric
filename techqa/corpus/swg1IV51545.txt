@@ -1,0 +1,202 @@
+Title: IBM IV51545: SQL QUERY GENERATED WRONG WITH CTREPORT TRACE - United States
+
+Text:
+  A FIX IS AVAILABLE
+IBM Tivoli Monitoring 6.3.0 Fix Pack 3 (6.3.0-TIV-ITM-FP0003) [http://www-01.ibm.com/support/docview.wss?uid=swg24036775]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Query against S&P tables created incorrectly when
+   (UNIT:ctreport detail)
+   trace is on. It failed with following errors.
+   KFWITM325E The Time Span reuest terminated with the following
+   message:
+   KFWIM217E Request error: IBM CLI Driver DB2 AIX 64 SQL0104N. An
+   unexpected  token ... SQLSTATE=42601 GENEREIC SQLSTATE: 42601
+   ERR -104
+   SLexecDirect rc =-1 SQL_ERROR
+   And the log showed incorrect sql was generated.
+   RECREATE INSTRUCTIONS:
+   1. Turn on the historical collection for any tables.
+      - for example, I turned on the historical collection for
+   'Network
+   Interface' attribute tables in NT agent.
+   2. Turn on the (UNIT:ctreport detail) trace in KBB_RAS1
+   3. Open a tep client window and request S&P data.
+    => It showed the KFWITM325E error and cq log showed the
+   incorrectly
+   generated sql.
+   ITM Warehouse(375): SELECT
+   "NT_Network_Interface_H"."System_Name"
+   "ORIGINNODE",
+   "NT_Network_Interface_H"."Network_Interface_Instance"
+   "UINTFINST", "NT_Network_Interface_H"."IPv6_Global_Address"
+   "GLOBALADDR", "NT_Network_Interface_H"."IPv4_Address" "NETADDR",
+   "NT_Network_Interface_H"."IPv6_Link_Local_Address" "LLOCALADDR",
+   "NT_Network_Interface_H"."Current_Bandwidth" "CURBANDW",
+   "NT_Network_Interface_H"."BANDUTLPCT" "BANDUTLPCT",
+   "NT_Network_Interface_H"."Bytes_Total/sec" "BYTTOTSE",
+   "NT_Network_Interface_H"."Bytes_Received/sec" "BYTRECSE",
+   "NT_Network_Interface_H"."Bytes_Sent/sec" "BYTSNTSE",
+   "NT_Network_Interface_H"."Packets/sec" "PCKTSEC",
+   "NT_Network_Interface_H"."Packets_Received/sec" "PKTRECSE",
+   "NT_Network_Interface_H"."Packets_Sent/sec" "PKTSNTSE",
+   "NT_Network_Interface_H"."Output_Queue_Length" "OUTQLEN",
+   "NT_Network_Interface_H"."Output_Queue_Length_kPackets"
+   "OUTQLENK",
+   "NT_Network_Interface_H"."Packets_Received_Errors" "PKTRECER",
+   "NT_Network_Interface_H"."Packets_Received_Discarded"
+   "PKTRECDS",
+   "NT_Network_Interface_H"."Packets_Received_Unicast/sec"
+   "PKTRCUSE",
+   "NT_Network_Interface_H"."PKTRCNUS" "PKTRCNUS",
+   "NT_Network_Interface_H"."Packets_Received_Unknown" "PKTRECUN",
+   "NT_Network_Interface_H"."Packets_Outbound_Errors" "PKTOUTER",
+   "NT_Network_Interface_H"."Packets_Outbound_Discarded"
+   "PKTOUTDS",
+   "NT_Network_Interface_H"."Packets_Sent_Unicast/sec" "PKTSNUSE",
+   "NT_Network_Interface_H"."Packets_Sent_Non-Unicast/sec"
+   "PKTSNNUS",
+   "NT_Network_Interface_H"."Timestamp" "TIMESTAMP" FROM
+   "NT_Network_Interface_H" WHERE  ) AND (
+   ("NT_Network_Interface_H"."System_Name" = 'Primary:TEST:NT') )
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Incorrect query generation only happened with (UNIT:ctreport
+   detail)
+   trace in KBB_RAS1. Remove that trace from KBB_RAS1. It'll
+   generate the
+   query syntax correctly
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Query against Summarization and Pruning agent tables created
+   incorrectly when (UNIT:ctreport detail) trace is on.
+   
+   
+   Query against Summarization and Pruning agent tables is created
+   incorrectly when (UNIT:ctreport detail) trace is on.  It returns
+   the following errors:
+   
+   KFWITM325E The Time Span request terminated with the following
+   message:
+   KFWIIM217E Request error: [IBM][CLI Driver]...  An unexpected
+   token ...  SQLSTATE=42601 ERR: -104
+                            SLexecDirect rc =-1 SQL_ERROR
+   
+   The log shows incorrect SQL was generated.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Code was changed to correctly handle SQL generation regardless
+   trace setting.
+   
+   The fix for this APAR is contained in the following maintenance
+   packages:
+   | fix pack | 6.3.0-TIV-ITM-FP0003
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV51545
+   
+   
+ * REPORTED COMPONENT NAME
+   TEPS
+   
+   
+ * REPORTED COMPONENT ID
+   5724C04PS
+   
+   
+ * REPORTED RELEASE
+   623
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-11-01
+   
+   
+ * CLOSED DATE
+   2013-11-26
+   
+   
+ * LAST MODIFIED DATE
+   2014-08-08
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TEPS
+   
+   
+ * FIXED COMPONENT ID
+   5724C04PS
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R630 PSY
+   UP
+   
+   
+ * R623 PSY
+   UP

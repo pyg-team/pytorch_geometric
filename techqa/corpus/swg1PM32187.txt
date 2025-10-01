@@ -1,0 +1,196 @@
+Title: IBM PM32187: RHP/GW: nested objects under the wrong header in DOORS - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  With Rhapsody 7.5.2,  I am seeing the following issue when
+   exporting model
+   elements to DOORS.  I have a simple test case model containing
+   two
+   packages with each package containing a single class.    In
+   Gateway I then
+   select to export the model document to DOORS.  For the export
+   'Source' I
+   select the package containing the first class and for the types
+   to be
+   exported I select Operations and Primitive Operation under the
+   Types field.
+   With both the 'Keep children of filtered elements' and 'Do not
+   maintain
+   elements location' options selected, I exported the operations
+   associated
+   with the class in this package to a new module in DOORS.
+   
+   This results in an Operations (Header) object being created in
+   the module
+   containing nested objects representing each of the Operations in
+   the class.
+   I then repeated the export but this time adding the second
+   package to the
+   'Source' list.    The module then contained a second Operations
+   (Header)
+   object with the second class's operation objects nested under
+   it.
+   
+   In the DOORS module I then moved the operations under Header
+   objects that I
+   created to represent different functionalities of my 'test case'
+   system;
+   assigning the operations associated with a class such that some
+   of the
+   operations were assigned to/nested under one functionality while
+   other
+   operations were assigned to/nested under another functionality.
+   
+   The issue I am seeing is that if in Rhapsody, I subsequently add
+   new
+   operations to one of the classes and then export the packages to
+   DOORS,
+   instead of placing the new operations under a generic
+   'Operations' header
+   object so that I can then easily locate these operations and
+   then move them
+   under the desired functionality header object, Gateway is
+   placing the newly
+   exported operations under the existing functionality header
+   objects.    It
+   appear that each newly exported operation for a class is being
+   placed after
+   the existing class operation in the module that alphabetically
+   precedes it
+   (as defined in the Rhapsody model).    In many cases this
+   results in the
+   newly exported operation being placed under the incorrect
+   functionality
+   header object.
+   
+   Gateway actually inserts the object near to another exported one
+   known in the Gateway (either the parent, or the previous sibling
+   object).
+   Consequently, several objects exported at once will be arranged
+   according to the order visible in the Gateway.
+   
+   The check box 'Do not maintain elements location' only disables
+   the reordering of objects that already exists in DOORS.
+   
+   I guess that the customer expects that the export to DOORS must
+   not try to insert objects near to another object that already
+   exist in the DOORS.
+   Instead he wants the export to DOORS to always create new
+   objects starting from the same position, right?
+   Maybe we should provide an option for that?
+   'Always insert objects starting from the top of the module',
+   please suggest something else if the title is not clear.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   RHP/GW: nested objects under the wrong header in DOORS
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fixed in 7.5.3.1
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM32187
+   
+   
+ * REPORTED COMPONENT NAME
+   TLOGIC RHAPSODY
+   
+   
+ * REPORTED COMPONENT ID
+   5724V74RP
+   
+   
+ * REPORTED RELEASE
+   752
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-02-08
+   
+   
+ * CLOSED DATE
+   2011-04-10
+   
+   
+ * LAST MODIFIED DATE
+   2011-04-10
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TLOGIC RHAPSODY
+   
+   
+ * FIXED COMPONENT ID
+   5724V74RP
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R752 PSN
+   UP

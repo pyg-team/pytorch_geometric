@@ -1,0 +1,26 @@
+Title: IBM User wanted to know where to find license information in SPSS/Statistics - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ I've run the license authorization wizard in SPSS, but I would like to know what the license number is that the authorization wizard and code generated. Is there anywhere I can find that? 
+
+RESOLVING THE PROBLEM
+The LSERVRC file contains the actual license code or codes that were generated from the authorization code and wizard. You may open this LSERVRC file in any text editor application. 
+
+The long text string up to but not including the "#" character is the license code. Everything after the # is considered a comment.
+You may get separate license codes for separate modules, and all those codes will be displayed in the LSERVRC file.
+
+The LSERVRC file is located in the installation directory of SPSS/Statistics and in the <install directory>/bin folder of Clementine/Modeler.
+In the Mac OS, the LSERVRC is located in the /bin folder after viewing the Package Contents of the spss16.0.app or paswstatistics18.0.app
+
+RELATED INFORMATION
+ Need more help? Our Statistics forum is Live! [https://developer.ibm.com/answers/topics/statistics.html?smartspace=predictive-analytics]
+Need more help? Our Licensing forum is Live! [https://developer.ibm.com/answers/topics/spsslicensing.html]
+
+
+ 
+
+HISTORICAL NUMBER
+ 58562

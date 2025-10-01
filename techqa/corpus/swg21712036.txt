@@ -1,0 +1,24 @@
+Title: IBM Disable RC4 for DataPower Web management and XML management services - United States
+
+Text:
+ FLASH (ALERT)
+
+ABSTRACT
+ With the recent attention to RC4 “Bar Mitzvah” Attack for SSL/TLS, IBM recommends to disable RC4 in DataPower Web management and XML management services. 
+
+CONTENT
+Disable RC4 ciphers in DataPower configuration referring to the steps below.
+
+If you have not already done so, follow the steps in the Knowledge Center to change the security settings of theWeb management service [http://www-01.ibm.com/support/knowledgecenter/SS9H2Y_7.0.0/com.ibm.dp.xi.doc/networkaccess_webgui_changingsecurityconnectionsettings.html]and theXML management interface [http://www-01.ibm.com/support/knowledgecenter/SS9H2Y_7.0.0/com.ibm.dp.xi.doc/xmi_changingdefaultsecurityhttpsettings.html]. 
+
+ 1. Next, select Objects --> Crypto Configuration --> Crypto Profile in the left navigation pane. 
+ 2. Select the crypto profile objects that are used by the Web management service and the XML management interface custom SSL profiles. 
+ 3. In the "Configure Crypto Profile" page, "Ciphers" parameter, suffix the existing string with a value ":!RC4". Click Apply. 
+    
+    For example, if you have a default configuration, the updates will appear as below:
+    Default cipher string: HIGH:MEDIUM:!aNULL:!eNULL:@STRENGTH
+    RC4 disabled cipher string: HIGH:MEDIUM:!aNULL:!eNULL:@STRENGTH:!RC4
+
+
+You should verify applying this configuration change does not cause any compatibility issues. Not disabling the RC4 stream cipher will expose yourself to the attack described above. IBM recommends that you review your entire environment to identify other areas where you have enabled the RC4 stream cipher and take appropriate mitigation and remediation actions. RELATED INFORMATION
+#Vulnerability in RC4 impacts DataPower [http://www-01.ibm.com/support/docview.wss?uid=swg21702165]

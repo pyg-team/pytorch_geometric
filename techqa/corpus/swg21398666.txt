@@ -1,0 +1,45 @@
+Title: IBM Notes on the ibmslapdcfg.ksf file, ibmslapddir.ksf file and cn=crypto,cn=localhost - United States
+
+Text:
+idsslapdcfg.ksf; idsslapddir.ksf; crypto; AES; cryptosynch; cryptosync; idsslapddir; idsslapdcfg; ksf; cn=crypto; idsgendirksf; gendir; gendirksf TECHNOTE (FAQ)
+
+QUESTION
+ What are the ibmslapdcfg,ksf and ibmslapddir.ksf files used for and how does cn=crypto,cn=localhost apply to this? 
+
+ANSWER
+1) What are the purposes of the ibmslapdcfg.ksf and ibmslapddir.ksf files? 
+The ibmslapdcfg.ksf (configuration key stash file) and ibmslapddir.ksf (directory key stash file) files contain the cryptographic information. Synchronization of the directory cryptographic settings for the server instances gets the best performance during replication. It is also required for AES-encrypted data to load correctly.
+
+The ibmslapdcfg.ksf will dictate the AES encryption settings for the passwords stored in the ibmslapd.conf file. Any administrative user password, database user password or replication bind credentials will be encrypted using the encryption settings in ibmslapdcfg.ksf file. 
+
+The ibmslapddir.ksf will dictate the AES encryption settings for the passwords stored in Directory Server instance.
+
+The idsgendirksf command uses the encryption seed and salt values that were used when creating the instance to regenerate the instance's directory key stash file. The original encryption seed value is the one supplied when the instance was created. The original salt value can be obtained by searching the server instance's "cn=crypto,cn=localhost" entry. The attribute value is ibm-slapdCryptoSalt. These two values regenerate the instance's ibmslapddir.ksf file.
+
+2) Since the second Master or Replica is loaded with a idsbulkload (or idsdb2ldif) with an ldif file from the first Master, is bringing over the cn=crypto,cn=localhost information, correct?
+
+Yes, cn=crypto, cn=localhost will be provided from ldif file exported using the idsdb2ldif command for Directory Server 6.x regardless of whether the -l option is specified.
+
+3) When the second Master (or Replica) is started for the first time, does it load the cryptographic info from ibmslapddir.ksf file into the ibm-slapdcryptosync attribute in LDAP? 
+
+Yes, it will initialize the cn=crypto,cn=localhost entry's ibm-slapdcryptosync value. 
+
+4) What is the difference between the ibm-slapdcryptosync attribute stored in the LDAP and the ibm-slapdcryptosync line in ibmslapd.conf?
+
+The ibm-slapdcryptosync value in cn=crypto,cn=localhost is for the directory where as the ibm-slapdcryptosync in the ibmslapd.conf file is for the configuration file. These will be different.
+
+5) What is the recommended approach for crypto synch?
+
+There are a couple of approaches. 
+
+a) When creating a replication topology, the ibmslapddir.ksf is copied from a first Master to the second Master or Replica. But it can only be done across systems with same endianness. (e.g. Across same OS/hardware, OR from AIX to HP-UX, Solaris(sparc), Linux on i/p Series, Linux on zSeries and vice versa, OR from Linux on x86/x86_64 over to Windows x86/x64 and vice versa).
+Here is a link to the technote with more details: 
+http://www.ibm.com/support/docview.wss?uid=swg21396012 [http://www.ibm.com/support/docview.wss?uid=swg21396012]
+
+b) Use the idsgendirksf command to generate ibmslapddir.ksf file with a known set of seed and salt values. The ibmslapdcfg.ksf and ibmslapddir.ksf files were brought into effect in V6.0 and are applicable in all V6.x releases.
+
+c) Starting with Directory Server v6.1, the idsicrt command provides the -e <encrypt_seed> and -g <encrypt_salt> flags so that at instance creation time you can synchronize the values across your Directory Server servers. As with all Directory Server provided utilities, you can specify a "-?" for additional usage information.
+
+Refer version specific Directory Server Knowledge Center - Reference - Command Reference - Synchronizing two-way cryptography between server instances 
+
+Note that there are restrictions as to when the crypto synchronization can take place. The crypto synchronization needs to be performed before you load the data: using either bulkload or db2ldif and before you start the server for the first time.

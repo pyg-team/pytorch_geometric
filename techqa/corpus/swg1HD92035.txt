@@ -1,0 +1,185 @@
+Title: IBM HD92035: THE LOADING OF THE LATEST VERSION OF AN ASSEMBLY IS NOT TAKEN INTO ACCOUNT BY THE LIFECYCLE OPERATIONS - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Additional Fixes Installed:
+   
+   V5R19SP4 HF27
+   
+   Environment:
+   
+   Client OS and level: Windows XP SP2
+   
+   Server OS and level: Windows Server 2003 SP2
+   
+   Database and level: Oracle 10g2
+   Scenario:
+   
+   1 - Log on to SmarTeam Editor with a user who has full
+   authorizations (for example joe);
+   
+   2 - Checkout an assembly with one part inside of it;
+   
+   3 - Delete this part form the assembly in SolidWorks;
+   
+   4 - Add another part (already saved in SmarTeam) in the
+   assembly;
+   You can use any Checked In or Released SW Part, Copied into
+   work directory
+   5 - Use the reload latest function in the DMT;
+   
+   -> the DMT is up to date
+   Mandatory for reproduction: Do SW Save for the Assembly
+   (Local Save)
+   6 - Check in or Release the assembly.
+   
+   -> the Life Cycle window still shows the deleted part and the
+   assembly is not updated in SmarTeam
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  empty
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Additional Fixes Installed:
+   
+   V5R19SP4 HF27
+   
+   Environment:
+   
+   Client OS and level: Windows XP SP2
+   
+   Server OS and level: Windows Server 2003 SP2
+   
+   Database and level: Oracle 10g2
+   Scenario:
+   
+   1 - Log on to SmarTeam Editor with a user who has full
+   authorizations (for example joe);
+   
+   2 - Checkout an assembly with one part inside of it;
+   
+   3 - Delete this part form the assembly in SolidWorks;
+   
+   4 - Add another part (already saved in SmarTeam) in the
+   assembly;
+   You can use any Checked In or Released SW Part, Copied into
+   work directory
+   5 - Use the reload latest function in the DMT;
+   
+   -> the DMT is up to date
+   Mandatory for reproduction: Do SW Save for the Assembly
+   (Local Save)
+   6 - Check in or Release the assembly.
+   
+   -> the Life Cycle window still shows the deleted part and the
+   assembly is not updated in SmarTeam
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  NOTE THAT THIS PROBLEM WILL ALSO BE FIXED ON V5R19 SP7.
+   NOTE THAT THIS PROBLEM WILL ALSO BE FIXED ON V5R20 SP1.
+   Additional Closure Information:
+   N/A
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   HD92035
+   
+   
+ * REPORTED COMPONENT NAME
+   SMARTEAM NT>XP
+   
+   
+ * REPORTED COMPONENT ID
+   569199970
+   
+   
+ * REPORTED RELEASE
+   519
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-12-17
+   
+   
+ * CLOSED DATE
+   2010-04-08
+   
+   
+ * LAST MODIFIED DATE
+   2010-04-08
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   SMARTEAM NT>XP
+   
+   
+ * FIXED COMPONENT ID
+   569199970
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R519 PSN
+   UP

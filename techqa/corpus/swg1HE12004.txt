@@ -1,0 +1,144 @@
+Title: IBM HE12004: ERROR WHEN RUNNING THE NOTICE DETAILS REPORT. - United States
+
+Text:
+  DIRECT LINKS TO FIXES
+6.0.1-ATLAS-WINDOWS-FP0007 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FGlobal+Retention+Policy+and+Schedule+Management&fixids=6.0.1-ATLAS-WINDOWS-FP0007&source=SAR]
+6.0.1-ATLAS-SOLARIS-FP0007 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FGlobal+Retention+Policy+and+Schedule+Management&fixids=6.0.1-ATLAS-SOLARIS-FP0007&source=SAR]
+6.0.1-ATLAS-LINUX-FP0007 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FGlobal+Retention+Policy+and+Schedule+Management&fixids=6.0.1-ATLAS-LINUX-FP0007&source=SAR]
+6.0.1-ATLAS-FP0007-README.pdf [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FGlobal+Retention+Policy+and+Schedule+Management&fixids=6.0.1-ATLAS-FP0007-README&source=SAR]
+Download IBM Atlas Suite V6.0.1 Fix Pack 7 [http://www-01.ibm.com/support/docview.wss?uid=swg24039392]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When running the Notice Details report, the following exception
+   is seen in the logs. This only happens for some matters:
+   java.lang.NullPointerException
+    at
+   com.secretseal.policyatlas.reports.helper.generator.html.NoticeD
+   etailsHTMLHelper.renderNoticeDetailsHeader(NoticeDetailsHTMLHelp
+   er.java:342)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  After the first Global Hold Reminder is sent, the report
+   will render correctly.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  The Notice Details Report does not render for matters with
+   global hold reminders that have not been sent. A system error
+   is displayed and a Null Pointer Exception is logged.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This fix is available now from FixCentral in fixpack 6.0.1.7.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   HE12004
+   
+   
+ * REPORTED COMPONENT NAME
+   ATLAS EDISCOVER
+   
+   
+ * REPORTED COMPONENT ID
+   5725D7500
+   
+   
+ * REPORTED RELEASE
+   601
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-02-13
+   
+   
+ * CLOSED DATE
+   2015-03-11
+   
+   
+ * LAST MODIFIED DATE
+   2015-03-11
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *     None
+   Report
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ATLAS EDISCOVER
+   
+   
+ * FIXED COMPONENT ID
+   5725D7500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R601 PSY
+   UP

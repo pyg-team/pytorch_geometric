@@ -1,0 +1,37 @@
+Title: IBM How JWL works with JSF2.0 implementation and JSF2.0 version in the projects - United States
+
+Text:
+jwl; jsf; facelet; deprecation; MyFaces 2.0; Sun RI; Sun RI 1.2; JWL; deprecated TECHNOTE (FAQ)
+
+QUESTION
+ What is the difference between JavaServer Faces (JSF) implementation and JSF version used by a Web Project in IBM Rational Application Developer (RAD) and does JSF Widgets Library (JWL) work in JSF2.x projects? 
+
+ANSWER
+What is JSF implementation?
+The JSF API Implementation (based on the JSF specification) is used by the server to run JSF projects. It contains at least the standard components to display any of the available basic HTML elements. The following table contains a relation between the JSF implementations on each WebSphere Application Server (WAS) version
+
+
+
+WAS version SunRI version MyFaces version 7.0 1.2 1.2 8.0 1.2 2.0 8.5 1.2 2.0 
+What are the differences between JSF2.0 implementation and JSF2.0 version in the JWL projects? 
+
+JSF implementation is the API used by the server to run and handle all the JSF life cycle of a given JSF project, resulting in the rendered view displayed in the browser. JSF implementations like JSF 2.0 provide backward compatibility with older versions, making it possible to run JSF projects 2.0 or below; however, it is necessary to consider changes between different JSF specifications (see JavaServer Faces Specifications.) that may break an application. In some cases it may be necessary to revert back to the Sun Runtime Implementation (RI) 1.2. For example, how to do this is documented in the WAS 8.5.5 Knowledge Center topic: - Configuring JavaServer Faces implementation [http://www.ibm.com/support/knowledgecenter/SSAW57_8.5.5/com.ibm.websphere.nd.doc/ae/tweb_jsf.html] . If an application breaks in MyFaces 2.0 and not in SunRI JSF 1.2, it may be necessary to engage IBM WAS web/jsf runtime support to determine if there is a runtime implementation specific problem. If the problems are specific to JWL's implementation, there are no plans to enhance it to work properly with the JSF 2.0 and future implementations. 
+
+The JSF version of a project defines the JSF specification used to configure the project as well as the components and technologies used on it. 
+
+It is important to say that JWL is only supported by JSP pages which is the view mechanism used for JSF 1.1 or 1.2, unlike JSF 2.x that the view mechanism is Facelet. JWL does not support this technology, that is why RAD prevents the creation of JSF 2.0 project with the JWL library. 
+
+
+If you upgrade your project/application from JSF1.x to JSF2.x, should you forget JWL? 
+
+In order to get all the advantages of use JSF 2.0, the main view mechanism to use must be Facelets, even JSF 2.0 continues support JSP files, is strongly recommended to use Facelet instead and choose another third party library to replace JWL components. 
+
+JWL library was not planned nor intended to work with Facelet, and the correct behavior of all its components is not assured in a JSF 2.0 implementation even using JSP files, because of backward compatibility issues between specifications. See the JSF 2.0 specification for what has changed since the last release. For example in the JSF 2.0 specification under Related Information (below) : 
+Appendix B - Change Log: Section 2.1 - Changes Between 1.1 and 1.2 
+
+JWL is now a deprecated library as of RAD v8.5.1 and there are no plans to enhance it to work properly with the JSF 2.0+ implementations. 
+
+
+Note: JWL 3.1.6 was the fist version that contained updates to work with the MyFaces 2.0 implementation, however the JWL Projects should have the latest JWL version available in order to get all the latest fixes. Information on latest JWL versions is in this technote: Resolving JSF Widget Library problems in JSF applications [http://www.ibm.com/support/docview.wss?uid=swg21584996] . RELATED INFORMATION
+ JSR 314: JavaServerTM Faces 2.0 [https://jcp.org/en/jsr/detail?id=314]
+JSR-000314 JavaServer Faces 2.0 Final Release Spec [https://jcp.org/aboutJava/communityprocess/final/jsr314/index.html]

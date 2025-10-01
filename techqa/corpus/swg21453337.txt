@@ -1,0 +1,29 @@
+Title: IBM Receiving error “Internal error: java.lang.IndexOutOfBoundsException” while trying to verify an orchestration - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ In Cast Iron Studio, receiving the error “Internal error: java.lang.IndexOutOfBoundsException” while trying to verify an orchestration
+
+
+
+CAUSE
+One of the possible reasons for this issue could be that the volume of data being processed by the orchestration is large for Studio. 
+
+The Studio ‘Verify’ option must be used for basic testing of orchestration using a small data-set. Processing a large data-set will exceed Studio memory limits which may result in an error or abnormal studio behavior.
+
+
+
+RESOLVING THE PROBLEM
+To resolve this issue, verify the orchestration with a small data-set or run the orchestration in appliance runtime. If the problem persists, submit a service request to Cast Iron support.
+
+
+
+HISTORICAL NUMBER
+ 00000940 
+
+PRODUCT ALIAS/SYNONYM
+ Cast Iron Solution
+Cast Iron Operating System
+Cast Iron Studio

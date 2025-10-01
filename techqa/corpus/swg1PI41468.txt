@@ -1,0 +1,197 @@
+Title: IBM PI41468: U3138 IAM VIDSS224 VSAM DDNAME DOES NOT POINT TO A VSAM FILE - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  CICS VT batch processing of IAM data sets results in abend
+   U3138 after message:
+   
+   VIDSS224 VSAM DDNAME=filename DOES NOT POINT TO A VSAM FILE,
+   SUBSYS=VIDS
+   
+   IEA995I SYMPTOM DUMP OUTPUT
+     USER COMPLETION CODE=3138
+    TIME=hh.mm.ss  SEQ=nnnnn  CPU=0000  ASID=nnnn
+    PSW AT TIME OF ERROR  078D1000   920F0DB6  ILC 2  INTC 0D
+      NO ACTIVE MODULE FOUND
+      NAME=UNKNOWN
+      DATA AT PSW  120F0DB0 - 00181610  0A0D9180  A0B047E0
+      GR 0: 80000000   1: 80000C42
+         2: 000073F8   3: 008AA120
+         4: 008AA000   5: 008AD170
+         6: 00D8D20C   7: 00000000
+         8: 008A7000   9: 00D8D215
+         A: 008A6000   B: 120F1748
+         C: 120F0748   D: 008A8000
+         E: 920F0DA6   F: 00000000
+    END OF SYMPTOM DUMP
+   IEC141I 013-C8,IGG0193K,IAM data set name
+   IEA995I SYMPTOM DUMP OUTPUT
+   SYSTEM COMPLETION CODE=013  REASON CODE=000000C8
+    TIME=hh.mm.ss  SEQ=nnnnn  CPU=0000  ASID=nnnn
+    PSW AT TIME OF ERROR  075C1000   80E52926  ILC 2  INTC 0D
+      NO ACTIVE MODULE FOUND
+      NAME=UNKNOWN
+      DATA AT PSW  00E52920 - 41003038  0A0DB20A  00509808
+      AR/GR 0: 008FF1C0/00E52B34   1: 00000000/A4013000
+            2: 00000000/000073F8   3: 00000000/00E52AFC
+            4: 00000000/008AD410   5: 00000000/00E69000
+            6: 00000000/008AD74C   7: 00000000/008AD7A4
+            8: 00000000/008AD76C   9: 00000000/008A5EC0
+            A: 00000000/00000000   B: 00000000/00E525B2
+            C: 00000000/80E5280E   D: 00000000/7F5F8CE8
+            E: 00000000/00E525B2   F: 00000000/000000C8
+    END OF SYMPTOM DUMP
+   IEF450I jobname stepname - ABEND=S013 U0000 REASON=000000C8
+   
+   
+   
+   Additional Symptom(s) Search Keyword(s): KIXREVWJB
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Contact CICS VT L3 for usermod.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All users of CICS VSAM Transparency          *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Message VIDSS224 is issued when using   *
+   *                      CICS VT DMF with an IAM file.           *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   CICS VT DMF does not recognize an IAM file.
+   
+   Using CICS VT DMF with an IAM file results in message:
+   VIDSS224 VSAM DDNAME DOES NOT POINT TO A VSAM FILE
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Change CICS VT DMF to recognize IAM files and use them for
+   comparison purposes.
+   The method of recognition is:
+   - The dataset name has ½IAM in it
+   - The OWNER field has ½IAM
+   200Y
+   VIDSSM00
+   VIDSSSUB
+   VIDSSUTL
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI41468
+   
+   
+ * REPORTED COMPONENT NAME
+   CICS VSAM TRANS
+   
+   
+ * REPORTED COMPONENT ID
+   5655Y0100
+   
+   
+ * REPORTED RELEASE
+   200
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-05-20
+   
+   
+ * CLOSED DATE
+   2015-06-05
+   
+   
+ * LAST MODIFIED DATE
+   2015-07-01
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UI28339
+   
+   
+
+MODULES/MACROS
+ *  VIDSSM00 VIDSSSUB VIDSSUTL
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CICS VSAM TRANS
+   
+   
+ * FIXED COMPONENT ID
+   5655Y0100
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R200 PSY UI28339 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI28339]
+   UP15/06/13 P F506
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

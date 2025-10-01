@@ -1,0 +1,20 @@
+Title: IBM Object Server shutdown: CreateEvent() failed in srv__spawn_thread - United States
+
+Text:
+nco_objserv; core; stacksize; nco_pad; ulimit; stacksize; CreateEvent failed; srv__spawn_thread TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The Object Server shuts down unexpectedly on Linux. The log indicates an error CreateEvent() failed in srv__spawn_thread. 
+
+SYMPTOM
+11/06/08 06:44:21: Fatal: F-IPCM-005-001: OpenServer - Fatal Error: 16361/20/0: CreateEvent() failed in srv__spawn_thread
+
+
+RESOLVING THE PROBLEM
+This applies only to Omnibus 7.3.1 and prior since Omnibus is a 32 bit application on Linux in 7.3.1 and earlier. In 7.4.0 and later, Omnibus is a 64 bit application. 
+
+For each Object Server connection accepted, a thread will be created. On Linux, there is a virtual memory limit for 32 bit processes which is just under 3 GB. If there is a large number of Object Server connections, this virtual memory limit can be exceeded. 
+
+For example, if there is an Object Server with 400 connections and using the default operating system stack size of 8 MB, that is 3200MB virtual memory used which is just over the limit of 3 GB. As the number of Object Server connections cannot likely be decreased, instead the operating system stack size limit can be decreased to 2 MB. Thus, with 400 Object Server connections and the modified stack size of 2 MB, that is 800 MB which is well below the virtual memory limit. 
+
+To view the current operating system stack size limit, issue "ulimit -s" as the user which starts the Object Server. To set the limit to 2 MB, issue "ulimit -s 2048". This command takes effect only in the current shell. If the Object Server is started by Process Control, modify the PA startup script (such as nco) and add the "ulimit -s 2048" command. Restart the process agent, and the new stack size setting will be in effect for the Process Agent and its child processes.

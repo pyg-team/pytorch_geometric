@@ -1,0 +1,110 @@
+Title: IBM HD52212: INCONSISTANT DMU SEARCH RESULTS BEING RETURNED. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS USER ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Inconsistant DMU Search results being returned
+   .
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *  When we create the customized entities, it is
+   important to provide the Relations in the metadata.
+   The generic metadata should be reffered to view all
+   the relations and the inverse relations.
+   For customized Product Instance, the neccessary
+   customizations are of Product Specification,
+   VPMItemInstance. Please provide relationship of
+   V_PRC in Product Specification entity in metadata
+   and then publish the metadata.
+   The problem is UR in R17 when customization is
+   done as mentioned above.
+   Please let us know if we need to resend the
+   example of the Overloading mechanism.
+   .
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   HD52212
+   
+   
+ * REPORTED COMPONENT NAME
+   ENOVIA LCA NT>X
+   
+   
+ * REPORTED COMPONENT ID
+   569151700
+   
+   
+ * REPORTED RELEASE
+   515
+   
+   
+ * STATUS
+   CLOSED USE
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2006-04-27
+   
+   
+ * CLOSED DATE
+   2006-05-18
+   
+   
+ * LAST MODIFIED DATE
+   2006-05-18
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

@@ -1,0 +1,142 @@
+Title: IBM IZ21982: The SSM should place the log level for each message in the agent log file. - United States
+
+Text:
+  READMES ARE AVAILABLE
+IBM Tivoli 4.0.0-TIV-SSM-FP0010 [http://www-01.ibm.com/support/docview.wss?uid=isg400000146]
+IBM Tivoli 4.0.0-TIV-SSM-FP0011 [http://www-01.ibm.com/support/docview.wss?uid=isg400000348]
+IBM Netcool System Service Monitor SSM 4.0 Fix Pack 12 README 4.0.0-TIV-SSM-FP0012 [http://www-01.ibm.com/support/docview.wss?uid=isg400000771]
+IBM Netcool System Service Monitor SSM 4.0 Fix Pack 13 README 4.0.0-TIV-SSM-FP0013 [http://www-01.ibm.com/support/docview.wss?uid=isg400000776]
+IBM Netcool System Service Monitor SSM 4.0 Fix Pack 14 README 4.0.0-TIV-SSM-FP0014 [http://www-01.ibm.com/support/docview.wss?uid=isg400001529]
+IBM Netcool System Service Monitor SSM 4.0 Interim Fix 1 README 4.0.0.14-TIV-SSM-IF0001 [http://www-01.ibm.com/support/docview.wss?uid=isg400001759]
+IBM Netcool System Service Monitor SSM 4.0 Interim Fix 2 README 4.0.0.14-TIV-SSM-IF0002 [http://www-01.ibm.com/support/docview.wss?uid=isg400001762]
+IBM Netcool System Service Monitor SSM 4.0 Interim Fix 3 README 4.0.0.14-TIV-SSM-IF0003 [http://www-01.ibm.com/support/docview.wss?uid=isg400001838]
+IBM Netcool System Service Monitor SSM 4.0 Interim Fix 4 README 4.0.0.14-TIV-SSM-IF0004 [http://www-01.ibm.com/support/docview.wss?uid=isg400001952]
+IBM Netcool System Service Monitor SSM 4.0 Interim Fix 5 README 4.0.0.14-TIV-SSM-IF0005 [http://www-01.ibm.com/support/docview.wss?uid=isg400002088]
+IBM Netcool System Service Monitor SSM 4.0 Interim Fix 6 README 4.0.0.14-TIV-SSM-IF0006 [http://www-01.ibm.com/support/docview.wss?uid=isg400002120]
+IBM Netcool System Service Monitor SSM 4.0 Interim Fix 7 README 4.0.0.14-TIV-SSM-IF0007 [http://www-01.ibm.com/support/docview.wss?uid=isg400002356]
+IBM Netcool System Service Monitor SSM 4.0 Interim Fix 8 README 4.0.0.14-TIV-SSM-IF0008 [http://www-01.ibm.com/support/docview.wss?uid=isg400002629]
+IBM Netcool System Service Monitor SSM 4.0 Interim Fix 1 README 4.0.0.15-TIV-SSM-IF0001 [http://www-01.ibm.com/support/docview.wss?uid=isg400002829]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Current the level of the log message is not recorded in the log
+   file. This will allow us to monitor the log file for important
+   events while still outputting the more trivial ones in case they
+   are needed for problem resolution.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  There is no facility for getting the log level printed out with
+   a log entry.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Added the facility for causing the agent to output the log
+   level. To do this you need to alter the LogPrefix inivar in
+   init.cfg (while the agent is off) using the "!L" characters
+   i.e.:
+   
+   LogPrefix=%Y-%m-%d!s%H:%M:%S!s(!L)!s
+   
+   The fix for this APAR is contained in the following maintenance
+   packages:
+      | fix pack | 4.0.0-TIV-SSM-FP0004
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ21982
+   
+   
+ * REPORTED COMPONENT NAME
+   NETCOOL SYS SVC
+   
+   
+ * REPORTED COMPONENT ID
+   5724P4300
+   
+   
+ * REPORTED RELEASE
+   400
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2008-05-08
+   
+   
+ * CLOSED DATE
+   2008-05-09
+   
+   
+ * LAST MODIFIED DATE
+   2009-01-05
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   NETCOOL SYS SVC
+   
+   
+ * FIXED COMPONENT ID
+   5724P4300
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R400 PSY
+   UP

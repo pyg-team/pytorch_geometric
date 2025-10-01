@@ -1,0 +1,35 @@
+Title: IBM Ensuring that InfoSphere Metadata Asset Manager imports run without interruption - United States
+
+Text:
+is87renotes; imam87relnotes importing into the repository; import time outs imam91relnotes is91relnotes imam10relnotes imam113relnotes imam115relnotes TECHNOTE (FAQ)
+
+QUESTION
+ How do I ensure that a long-running import operation completes without problem? 
+
+CAUSE
+Different types of system timeouts can cause long-running imports to be interrupted in InfoSphere Metadata Asset Manager. These timeouts can occur during the separate operations that are part of an import: import to the staging area, analysis, preview, and sharing to the metadata repository. System memory limitations may also prevent the successful completion of imports.
+
+ANSWER
+Consider all of the following steps when you plan to perform a long-running import: 
+
+ * Avoid session timeout. Activity in the interface causes interaction with the server and keeps the current session alive. Keep the import wizard dialog open for the duration of a managed import or express import to ensure that the session does not time out during the import. 
+ * Increase session timeout setting. If necessary, ensure that the InfoSphere Information Server Inactive Session Timeout setting (30 minutes by default) is large enough so that any period of interface inactivity does not cause the operation to fail. This is especially important when you are running a managed import and each import action is performed manually. See http://www.ibm.com/support/docview.wss?uid=swg21512248 [http://www-01.ibm.com/support/docview.wss?uid=swg21512248]for details on how to detect and avoid the problem. 
+ * Increase transaction timeout settings. Server container transactions will time out after a configured time period (by default two hours). If any operation is expected to run longer than this, the transaction timeout settings should be increased to appropriate values. See http://www.ibm.com/support/docview.wss?&uid=swg21512492 [http://www.ibm.com/support/docview.wss?&uid=swg21512492] for details on how to detect when this issue occurs or how to change these settings. 
+ * Avoid LTPA security token timeout. While it should not prevent an import operation from completing, an LTPA token timeout (which occurs by default 760 minutes after login) causes interface operations to fail and requires another login. You can avoid this either by logging out and logging back in before you run long imports, or by increasing the LTPA token timeout setting. See WebSphere documentation for details on how to change this setting. 
+ * Ensure proper web server plugin configuration. If WebSphere Application Server has been configured with a front-end web server, it iss recommended to ensure proper web server plugin configuration to avoid HTTP timeout errors and other complications. See http://www-01.ibm.com/support/docview.wss?uid=swg21672275 [http://www-01.ibm.com/support/docview.wss?uid=swg21672275] for details on how to detect and avoid issues with configuring the web server plugin. 
+ * Increase server Java heap space. To avoid OutOfMemory errors, ensure that sufficient maximum heap space has been configured for the WebSphere Application Server JVM. See http://www-01.ibm.com/support/docview.wss?uid=swg21637207 [http://www-01.ibm.com/support/docview.wss?uid=swg21637207] for details on how to detect when this issue occurs or how to change the maximum Java heap size setting. 
+ * Increase heap space for bridges and metadata interchange agent. If performing client-tier bridge-based imports, ensure that sufficient maximum heap space is allocated for the bridges and metadata interchange agent processes. See http://www-01.ibm.com/support/docview.wss?uid=swg21514845 [http://www-01.ibm.com/support/docview.wss?uid=swg21514845] for details on how to detect when OutOfMemory errors occur and how to change maximum heap space settings. 
+ * Ensure proper Connector agent configuration. If performing connector-based imports, to ensure optimal, successful imports, you should ensure proper configuration of cas.agent.timeout and/or cas.import.batchsize properties. See http://www-01.ibm.com/support/docview.wss?uid=swg21637207 [http://www-01.ibm.com/support/docview.wss?uid=swg21637207] for details on how to detect and resolve problems related to these settings.
+
+RELATED INFORMATION
+ IMAM import action fails due to session expiration [http://www.ibm.com/support/docview.wss?uid=swg21512248]
+IMAM GUI has suddenly stopped responding [http://www.ibm.com/support/docview.wss?uid=swg21512104]
+IMAM import action fails due to transaction timeout [http://www.ibm.com/support/docview.wss?uid=swg21512492]
+IMAM shows error during import but continues to run [http://www.ibm.com/support/docview.wss?uid=swg21612937]
+Troubleshooting failures during large connector imports [http://www-01.ibm.com/support/docview.wss?uid=swg21637207]
+IMAM bridge import fails with out-of-memory error [http://www-01.ibm.com/support/docview.wss?uid=swg21514845]
+
+
+ 
+
+Cross reference information Segment Product Component Platform Version Edition Information Management InfoSphere Information Server Information Management IBM BigInsights InfoSphere Data Click Linux Red Hat - xSeries, Linux SUSE - xSeries 2.1.2

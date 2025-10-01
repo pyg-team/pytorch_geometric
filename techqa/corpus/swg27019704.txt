@@ -1,0 +1,51 @@
+Title: IBM Recommended fixes for WebSphere DataPower XC10 Appliance - United States
+
+Text:
+ RELEASE NOTES
+
+ABSTRACT
+ The recommended and generally available (GA) fixes for IBM WebSphere DataPower XC10 Appliance. Tables include firmware and client links available on IBM Fix Central. 
+
+CONTENT
+For a complete list of WebSphere DataPower XC10 Appliance security bulletins, refer to the IBM Support Portal [http://www.ibm.com/support/search.wss?&tc=SSHPHA+SS9H2Y&dc=DD200].
+
+
+Version 2.5
+Version 2.1 
+
+
+
+
+Version 2.5 Installable 
+Fix Central Link Level Released Comments IT24699 [https://www.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~WebSphere&product=ibm/WebSphere/WebSphere+DataPower+XC10+Appliance&release=2.5.0.4&platform=All&function=fixId&fixids=*IT24699&includeSupersedes=0] 2.5 29 MAY 2018 For more information on the security vulnerabilities that are fixed, see the Security Bulletin [http://www.ibm.com/support/docview.wss?uid=swg22016671]. IT19816 [https://www.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~WebSphere&product=ibm/WebSphere/WebSphere+DataPower+XC10+Appliance&release=2.5.0.4&platform=All&function=fixId&fixids=*IT19816&includeSupersedes=0] 2.5 15 AUG 2017 For more information on the security vulnerabilities that are fixed, see the Security Bulletin [http://www.ibm.com/support/docview.wss?uid=swg22005299]. IT19814 [https://www.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~WebSphere&product=ibm/WebSphere/WebSphere+DataPower+XC10+Appliance&release=2.5.0.4&platform=All&function=fixId&fixids=*IT19814&includeSupersedes=0]
+IT19817 [https://www.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~WebSphere&product=ibm/WebSphere/WebSphere+DataPower+XC10+Appliance&release=2.5.0.4&platform=All&function=fixId&fixids=*IT19814&includeSupersedes=0] 2.5 28 APR 2017 For more information on the security vulnerabilities that are fixed, see the Security Bulletin for IT19814 [http://www-01.ibm.com/support/docview.wss?uid=swg22001666]and IT19817 [http://www-01.ibm.com/support/docview.wss?uid=swg22001667]. IT15175 [http://www.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~WebSphere&product=ibm/WebSphere/WebSphere+DataPower+XC10+Appliance&release=2.5.0.4&platform=All&function=fixId&fixids=*IT15175&includeSupersedes=0] 2.5 27 MAY 2016 For more information on the security vulnerabilities that are fixed, see the Security Bulletin [http://www.ibm.com/support/docview.wss?uid=swg21982961].
+
+IMPORTANT: As of APAR IT13446, MD5 signatures are no longer compatible with Java, installing this firmware will make it incompatible with any WebSphere eXtreme Scale clients or other XC10 appliances that are running with an MD5 certificate. 
+
+If any XC10 appliances in your collective are configured with a certificate with an MD5 signature, then those certificates must be replaced on all XC10 appliances before applying this firmware upgrade. In addition, all client truststores must be configured to trust the new certificate prior to restarting the collective. If this is not done the clients and appliances in the collective will fail to connect with each other. 
+
+Planning will be required for this firmware upgrade since the firmware on all of the appliances in the XC10 collective must be upgraded and all of the client truststores properly configured prior to restarting the collective. Client Upgrade [http://www.ibm.com/support/docview.wss?uid=swg27018991] 8.6.0.8 [/support/docview.wss?uid=swg27019704&amp;aid=1] Refer to the Version 8.6 table in the Recommended Fixes page for WebSphere eXtreme Scale [http://www.ibm.com/support/docview.wss?uid=swg27018991]. 
+Back to top
+
+#top 
+
+
+
+Version 2.1 Installable 
+Fix Central Link Level Released Comments IT19816 [https://www.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~WebSphere&product=ibm/WebSphere/WebSphere+DataPower+XC10+Appliance&release=2.1.0.3&platform=All&function=fixId&fixids=*IT19816&includeSupersedes=0] 2.1 15 AUG 2017 For more information on the security vulnerabilities that are fixed, see the Security Bulletin [http://www.ibm.com/support/docview.wss?uid=swg22005299]. IT19814 [https://www.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~WebSphere&product=ibm/WebSphere/WebSphere+DataPower+XC10+Appliance&release=2.1.0.3&platform=All&function=fixId&fixids=*IT19814&includeSupersedes=0]
+IT19817 [https://www.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~WebSphere&product=ibm/WebSphere/WebSphere+DataPower+XC10+Appliance&release=2.1.0.3&platform=All&function=fixId&fixids=*IT19814&includeSupersedes=0] 2.1 28 APR 2017 For more information on the security vulnerabilities that are fixed, see the Security Bulletin for IT19814 [http://www-01.ibm.com/support/docview.wss?uid=swg22001666]and IT19817 [http://www-01.ibm.com/support/docview.wss?uid=swg22001667] IT15175 [http://www.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~WebSphere&product=ibm/WebSphere/WebSphere+DataPower+XC10+Appliance&release=2.1.0.3&platform=All&function=fixId&fixids=*IT15175&includeSupersedes=0] 2.1 27 MAY 2016 For more information on the security vulnerabilities that are fixed, see the Security Bulletin [http://www.ibm.com/support/docview.wss?uid=swg21982961].
+
+IMPORTANT: As of APAR IT13446, MD5 signatures are no longer compatible with Java, installing this firmware will make it incompatible with any WebSphere eXtreme Scale clients or other XC10 appliances that are running with an MD5 certificate. 
+
+If any XC10 appliances in your collective are configured with a certificate with an MD5 signature, then those certificates must be replaced on all XC10 appliances before applying this firmware upgrade. In addition, all client truststores must be configured to trust the new certificate prior to restarting the collective. If this is not done the clients and appliances in the collective will fail to connect with each other. 
+
+Planning will be required for this firmware upgrade since the firmware on all of the appliances in the XC10 collective must be upgraded and all of the client truststores properly configured prior to restarting the collective. Client Upgrade [http://www.ibm.com/support/docview.wss?uid=swg27018991] 8.5.0.3 [/support/docview.wss?uid=swg27019704&amp;aid=1] Refer to the Version 8.5 table in the Recommended Fixes page for WebSphere eXtreme Scale [http://www.ibm.com/support/docview.wss?uid=swg27018991]. 
+Back to top
+
+#top 
+
+
+Change history 
+Last Updated: 14 June 2013  * 14 June 2013: Added 2.5 information. 
+ * 5 December 2011: Added Firmware Upgrade 2.0.0.2 and Client Fix Pack 4 
+ * 15 June 2011: Added Firmware Upgrade 2.0.0.1, Client Fix Pack 3, and Client for Version 2.0.

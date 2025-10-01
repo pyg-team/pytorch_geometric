@@ -1,0 +1,60 @@
+Title: IBM Operator View in TIP: filtering access - United States
+
+Text:
+Impact; Operator View; Tivoli Integrated Portal TECHNOTE (FAQ)
+
+QUESTION
+ Is it possible to filter which valid users accessing Tivoli Integrated Portal have access to an integrated Impact Operator View? 
+
+ANSWER
+This is made possible by adding the Operator View login screen as a page recognised by Tivoli Integrated Portal. Note that the login page itself will not show up due to TIP's single sign-on authentication method, but adding the login page and associated role to TIP will prevent unauthorised users from seeing the Impact Operator View page in their list of available pages after logging in.
+To add the Operatorview Login Page;
+
+1) Edit $TIP_HOME/systemApps/isclite.ear/opview.war/WEB-INF/web.xml
+add the security constraint & Role:
+<security-constraint>
+<web-resource-collection>
+<web-resource-name>NCI Client Protected Area</web-resource-name>
+<url-pattern>/*</url-pattern>
+<http-method>GET</http-method>
+<http-method>POST</http-method>
+</web-resource-collection>
+
+<auth-constraint>
+<role-name>NETCOOL_ADMIN</role-name>
+<role-name>OPVIEW_USER</role-name>
+<role-name>IMPACT_USER</role-name>
+</auth-constraint>
+</security-constraint>
+
+<login-config>
+<auth-method>FORM</auth-method>
+<realm-name>Netcool Login</realm-name>
+<form-login-config>
+<form-login-page>/login.jsp</form-login-page>
+<form-error-page>/login_retry.jsp</form-error-page>
+</form-login-config>
+</login-config>
+
+
+<security-role>
+<role-name>NETCOOL_ADMIN</role-name>
+</security-role>
+
+<security-role>
+<role-name>OPVIEW_USER</role-name>
+</security-role>
+
+<security-role>
+<role-name>IMPACT_USER</role-name>
+</security-role>
+
+2) Undeploy opview.war using this script in your Impact installation
+$NCHOME/impact/integrations/ov_tip/scripts/uninstallOpview.sh (or uninstallOpview.bat on Windows installations)
+
+3) Re-deploy opview.war using this script
+$NCHOME/impact/integrations/ov_tip/scripts/installOpview.sh (or installOpview.bat on Windows installations)
+
+4) Restart TIP
+
+5) Ensure that any user requiring access to your Operator Views is assigned one of the roles listed above.

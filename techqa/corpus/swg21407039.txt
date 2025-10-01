@@ -1,0 +1,100 @@
+Title: IBM DB2 LUW, the log files in the active log path may not appear to be in a sequential order. - United States
+
+Text:
+active logs sequential TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ 
+When observing the log files in your active log path, the timestamps may not appear to be in a sequential order. 
+
+SYMPTOM
+ 
+
+Example:
+
+10/30/2009 10:20a 32,776,192 S0000043.LOG
+10/30/2009 01:30p 32,776,192 S0000044.LOG
+10/25/2009 02:16a 32,776,192 S0000045.LOG
+
+
+CAUSE
+The logging is sequential and working as expected. This is explained in more detail below.
+
+
+RESOLVING THE PROBLEM
+ 
+
+The example shown above can be seen when you have LOGARCHMETH1 set to RETAIN. This is working as designed as the following explanation will show. 
+
+Let's take a further look at a specific hypothetical configuration and active log directory. The outputs below were gathered on a Windows machine. 
+
+ 
+
+Database Configuration: 
+
+=======================================
+Number of primary log files (LOGPRIMARY) = 25
+Number of secondary log files (LOGSECOND) = 10
+First active log file = S0000043.LOG
+
+Log retain for recovery enabled (LOGRETAIN) = RECOVERY
+User exit for logging enabled (USEREXIT) = OFF
+
+First log archive method (LOGARCHMETH1) = LOGRETAIN
+Options for logarchmeth1 (LOGARCHOPT1) = 
+Second log archive method (LOGARCHMETH2) = OFF
+Options for logarchmeth2 (LOGARCHOPT2) = 
+Failover log archive path (FAILARCHPATH) = 
+
+========================================
+
+First, LOGARCHMETH1 is set to LOGRETAIN. This turns on archival logging but does not specify a location for where the log files should be archived. Therefore, DB2 will keep the log files but leaves them in the active log directory. The "archived" logs do not get reused.
+
+Second, LOGPRIMARY is set to 25. This means there will always be 25 primary logs. These will be allocated when the database is first activated (implicitly or explicitly).
+
+Now, let's take a look at a possible active log directory listing. I've highlighted the first active log in
+[/support/docview.wss?uid=swg21407039&amp;aid=1]
+
+All the logs earlier than this do not matter as they are archived logs, highlighted in 
+[/support/docview.wss?uid=swg21407039&amp;aid=2]
+
+DB2 will allocate 25 PRIMARY logs at all times (highlighted in green). You can see there are 25 logs highlighted in
+[/support/docview.wss?uid=swg21407039&amp;aid=3]
+
+
+Active Log Directory: 
+
+====================screen shot====================
+[/support/docview.wss?uid=swg21407039&amp;aid=4] 
+
+==================================================== 
+
+
+The first active log file is S0000043.LOG. This means log files S0000042.LOG and earlier are archived logs. And log files S0000044.LOG and higher are primary logs. 
+
+I've purposely made this example slightly more complex to illustrate another point by having the archived logs remain in the active log path. If you look at the listing above you will see the first active log file is S0000043.LOG and then there are log files S0000044.LOG through S0000068.LOG. 
+
+This is a total of 26 logs. So you may be wondering how there can be 26 logs, when LOGPRIMARY is set to 25. 
+
+Log file S0000043.LOG is actually a full log file that has been "archived" but still contains an active transaction (transaction that has not yet committed). 
+
+
+The first active log will move one-by-one through the log files. Currently, it is at S0000043.LOG which has the most recent timestamp of "10/10/2009 10:20a" because this is when it was most recently "archived". 
+Log file S0000044.LOG is the oldest primary log to be pre-allocated, therefore it has the oldest timestamp of the primary logs, at "10/4/2009 05:10a". Let's say, for example, at 1:30 PM the transaction holding log file S0000043.LOG active is committed, causing the first active log to change to S0000044.LOG. 
+
+At this point there will only be 25 active and primary logs. Then, let's say, 5 minutes later log file S0000044.LOG becomes full and is archived, however, still contains an open transaction (keeping it as the first active log). As a result, DB2 will allocate a new primary log, S0000069.LOG. Then, our "dir" output for the active log directory might look like:
+
+
+====================screen shot====================
+[/support/docview.wss?uid=swg21407039&amp;aid=5] 
+
+==================================================== 
+
+
+Now we can see the first active log increased to S0000044.LOG and the timestamp updated to the time at which it was archived and 5 minutes later DB2 allocated a new log with a timestamp that is current as well. 
+
+In this scenario the timestamps may look confusing but this is mainly because the archived logs are retained in the active log path and the primary logs are pre-allocated. The logging is sequential and DB2 logging is working as expected.
+
+RELATED INFORMATION
+ LOGARCHMETH1 [http://publib.boulder.ibm.com/infocenter/db2luw/v9r7/index.jsp?topic=/com.ibm.db2.luw.admin.config.doc/doc/r0011448.html]
+Log file management through log archiving [http://publib.boulder.ibm.com/infocenter/db2luw/v9r7/index.jsp?topic=/com.ibm.db2.luw.admin.ha.doc/doc/c0006086.html]

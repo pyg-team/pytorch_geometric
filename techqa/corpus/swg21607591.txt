@@ -1,0 +1,32 @@
+Title: IBM Omnibus upgrade fails (replace DE from backup) - United States
+
+Text:
+java.io.FileNotFoundException; Permission denied; Object Server TECHNOTE (FAQ)
+
+QUESTION
+ A Fix Pack implementation on an existing Omnibus v7.3.x installation fails with the following message in the log file:
+
+"Incorrect install location. The path you entered did not have any Netcool/Omnibus
+components installed. Please check and try again" 
+
+CAUSE
+The Omnibus distribution was installed by a different user from the one who is attempting the upgrade.
+
+ANSWER
+At times, it is still possible to install the Fix Pack as the original user after the above failure, however this will not work if the Deployment Engine (DE) has become corrupted. 
+
+If that occurs, the only way to resolve this is to replace DE from the backup ObjectServer host as follows: 
+
+ 
+
+1. Take a backup of DE from the backup server. 
+"<DE_INSTALL_LOCATION>\bin\de_backupdb -bfile backupFile" 
+
+2. Copy the DE "backupFile" from the backup server to the primary server. 
+
+2. Make a backup of the "/usr/ibm/common/acsi/repos" - i.e, copy repos folder to another location on the primary server. 
+
+3. Restore DE backup on the primary server 
+"/usr/ibm/common/acsi/bin/de_restoredb -bfile backupFile" 
+
+Re-try the installation.

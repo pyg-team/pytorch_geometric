@@ -1,0 +1,56 @@
+Title: IBM BIP2667E, BIP2643W with mqrc 2003 - United States
+
+Text:
+backout back out backed out log logs logging circular linear BIP2667 2667 BIP2643 2643 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Your IBM Integration Bus or WebSphere Message Broker flow outputs an error / warning indicating "MQCC=1, MQRC=2003" during an interaction with WebSphere MQ (WMQ). 
+
+SYMPTOM
+BIP2667E: An error occurred in node '' writing message to queue '' on queue manager ''. State = '-1' '<your_qmgr_name>' '2003' 
+
+BIP2643W: Unable to commit a WebSphere MQ transaction; MQCMIT failed;
+queue manager=<your_qmgr_name>, MQCC=1, MQRC=2003.
+
+
+CAUSE
+MQRC 2003 stands for 'MQRC_BACKED_OUT'. Message Broker will report this only when WMQ initiates a backout. The most common cause of WMQ initiated backouts (from a Broker perspective) is due to log space.
+
+If WMQ runs out of space in the running / active logs, then to ensure transactionality, it will back out all active transactions, so that no data is lost. WMB will be notified when it tries to communicate with WMQ, resulting in the messages above.
+
+
+DIAGNOSING THE PROBLEM
+View the Queue Manager's qm.ini file to determine the active log settings. 
+
+By default, they will appear as:
+Log:
+LogPrimaryFiles=3
+LogSecondaryFiles=2
+LogFilePages=1024
+LogType=CIRCULAR
+LogBufferPages=0
+LogPath=/<WMQ_log_directory>/
+
+
+RESOLVING THE PROBLEM
+Increase the number of primary and, or secondary logs, and restart the Queue Manager. This will increase the amount of transaction data that WMQ can store, which should allow Message Broker more time to complete its transaction(s).
+
+It is possible that increasing the log files will not prevent the error. In that case, look at the number of log files again, and determine if it took longer for the errors to occur. It may be that the logs have not been increased enough. The total number of primary and secondary log files cannot exceed 511 on UNIX systems, or 255 on Windows.
+
+The task of tuning a system's recovery logs is based primarily on the size and volume of messages, as well as other activity on that system (such as things that could slow processing or i/o). Therefore, it is not possible for IBM Support to provide a universal size and, or number of logs that would work for every system.
+
+RELATED INFORMATION
+#Queue manager configuration files: qm.ini [http://publib.boulder.ibm.com/infocenter/wmqv7/v7r0/index.jsp?topic=/com.ibm.mq.amqzag.doc/fa12510_.htm]
+Calculating the size of WMQ Active logs [http://publib.boulder.ibm.com/infocenter/wmqv7/v7r0/index.jsp?topic=/com.ibm.mq.amqzag.doc/fa14560_.htm]
+
+
+ 
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Integration Bus Deploy AIX, HP-UX, Linux, Solaris, Windows, z/OS 9.0 All Editions 
+HISTORICAL NUMBER
+ 73202 001 822 
+
+PRODUCT ALIAS/SYNONYM
+ WMB MB WebSphere Message Broker IBM Integration Bus IIB IBMIB MQ Integrator WBIMB WBI-MB MQSI WMQI

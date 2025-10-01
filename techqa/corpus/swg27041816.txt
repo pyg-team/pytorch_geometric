@@ -1,0 +1,41 @@
+Title: IBM Ask the Experts Replay: "WebSphere Application Server System management includes Admin tools , Synchronization , Discovery and Application Management in Full profile" - United States
+
+Text:
+wste_webcast; WSTE; Support Technical Exchange; education; presentation; webcast; STEwebcastDocument; WSTE System Management WEBCAST
+
+ABSTRACT
+ This Session covers questions and issues in Server startup , Synchronization , Discovery , Admin tools ( adminconsole and wsadmin.sh/bat) and Application management areas of WebSphere Application Server V7.x/8.x specifically in Full profile setup. 
+
+CONTENT
+Ask the Experts sessions are conducted in a question and answer format. 
+
+The table below provides a time index (minutes:seconds) to the recording and describes the questions or topics discussed. You can fast forward to any question using the time index, a table containing the panel of experts is also included.
+
+To play or download the audio of this Ask the Experts session, see the Audio Section of this document.
+
+See the Related Information Section of this document for a list of documents referenced during the presentation.
+
+
+
+
+
+
+
+
+Ask the Experts session 
+20 May 2014 - 11:00 a.m. - 12:00 p.m. EDT 
+
+Time Questions asked 00:00 Silence 00:30 General introduction 03:40 Technical introduction 04:47 Can I federate the lower version of an application server profile into the upper version of dmgr ? Are there any limitations with this topology setup? 06:00 Is it recommended/supported starting my nodeagent and application server on a node with 2 different user accounts ? 08:12 My installedApps folder was wiped out. How do I recover it and how do I prevent this from happening in the future? 12:47 My complete deployment manager profile is lost due to some hardware issue and unfortunately no backup taken. Is it possible to recover this dmgr config data from the appserver nodes ? 17:20 If I connect to the nodeagent process from the wsadmin.sh /bat scripting tool in deployment manager, is it okay to make some changes to the configuration? What can be done by connecting to the nodeagent process? 19:14 We use an application server IBM WAS, write scripts for automation jython. Can you offer something for configuration change management? So that you can use instead of urban deploy. 21:39 Are there any tools or utilities available to kill a specific thread inside the JVM process? 22:29 What is the major change brought up in v 8 from 7? 23:15 Will WAS 8.5 DMGR manage a WAS 6.1 node? Also can you provide a link or some info on migrating WAS 6.1 nodes to WAS 8.5 on the same server? 26:06 What kind of software you can recommend to use for configuration change management?Urban deploy plugin for WebSphere needs urban deploy, but we don't need all urban deploy features? 27:54 Can you migrate from V6.1 to V8? If yes, how should we migrate? 30:04 Can applications that use different versions of Java co-exist on same WAS Server. app A on JVM 1 with JDK 6, app B on JVM 2 with JDK7? 31:42 Any plans when Jee7/Java8 will be available in WAS? 32:26 Closing remarks 33:23 End of Call 
+Panel of Experts: Vikram Thommandru WebSphere Application Server L2 Technical Support Kumaran Ayyakutti WebSphere Application Server L2 Technical Support Vishavpal Shergill WebSphere Application Server L2 Technical Support Sangwon Oh WebSphere Application Server L2 Technical Support 
+
+PRESENTATION
+[http://www.ibm.com/i/v16/icons/weblecture.gif]WSTE-05-20-2014-AskTheExperts-WAS-System-Management_v2.pdf [/support/docview.wss?uid=swg27041816&aid=2]WSTE-05-20-2014-AskTheExperts-WAS-System-Management_v2.pdf [/support/docview.wss?uid=swg27041816&aid=1]
+
+Get Adobe Reader [http://www.adobe.com/products/acrobat/readstep2.html] to view PDF
+
+AUDIO
+[http://www.ibm.com/i/v16/icons/aud.gif]To replay the recording of this conference call, click on Download Audio [ftp://public.dhe.ibm.com/software/websphere/techexchange/May-20-2014-Thommandru.mp3] (audio in MP3 format). Right-click and select Save As to store the file on your local computer for later playback. Remember that you can fast forward to any question using the time index.
+
+RELATED INFORMATION
+ WebSphere Support Technical Exchange [http://www.ibm.com/software/websphere/webcast]
+Time Zone Converter [http://www.timeanddate.com/worldclock/converter.html]

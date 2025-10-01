@@ -1,0 +1,127 @@
+Title: IBM IV43873: WSCANHW REPORTS INCORRECT TOTAL NUMBER OF CORES FOR AMD OPTERON WITH INACTIVATED CORES - United States
+
+Text:
+  A FIX IS AVAILABLE
+IBM License Metric Tool Interim Fix 7.5.0-TIV-ILMT-IF0026 [http://www-01.ibm.com/support/docview.wss?uid=swg24032909]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Customer has AMD Opteron processor with 16 cores, but it can't
+   be matched with PVU table and default value of 100 PVU is
+   assigned to it.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ***************************************************************
+   USERS AFFECTED: users running hardware scan on linux
+   ***************************************************************
+   PROBLEM DESCRIPTION: CIT hardware scan reports incorrect total
+   number of cores for AMD Opteron with inactivated cores
+   ***************************************************************
+   RECOMMENDATION: update to CIT version containing the fix (see
+   CONCLUSION)
+   ***************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  CIT hardware scan reports properly total number of cores for AMD
+   Opteron processor on linux after fix.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV43873
+   
+   
+ * REPORTED COMPONENT NAME
+   COMMON INV TECH
+   
+   
+ * REPORTED COMPONENT ID
+   TIVOCIT00
+   
+   
+ * REPORTED RELEASE
+   270
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-06-07
+   
+   
+ * CLOSED DATE
+   2013-09-16
+   
+   
+ * LAST MODIFIED DATE
+   2013-10-14
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   COMMON INV TECH
+   
+   
+ * FIXED COMPONENT ID
+   TIVOCIT00
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R270 PSY
+   UP

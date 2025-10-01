@@ -1,0 +1,65 @@
+Title: IBM How to fix the error "Cannot open database CognosDM requested by the login. The login failed' - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ "Unknown Error" is received when logging into the system after installing CDM 10.2.2 or after changing the system password.The following error is seen in the log files.
+
+FATAL Ibm.CognosDM.Services.WebHost.Global - (null) Exception has been thrown by the target of an invocation. ? ? ? 
+System.Reflection.TargetInvocationException: Exception has been thrown by the target of an invocation. ---> System.Data.SqlClient.SqlException:
+Cannot open database "CognosDM" requested by the login. The login failed. 
+Login failed for user 'NT AUTHORITY\SYSTEM'. 
+at System.Data.SqlClient.SqlInternalConnection.OnError(SqlException 
+exception, Boolean breakConnection) 
+
+CAUSE
+The system password or is not propagated through to the application server after it has changed.
+
+ENVIRONMENT
+Cognos Disclosure Management 10.2.2. 
+
+This also occurs in previous versions of CDM although, the logging may not be generated.
+
+
+DIAGNOSING THE PROBLEM
+Check the log files for the error located on the application server in C:\inetpub\wwwroot\CognosDM-Server\Logs 
+
+The error may also refer to any of the three database CognosDM, CognosDMCache, CognosDMXbrl.
+
+
+RESOLVING THE PROBLEM
+There are three places in CDM where you enter login credentials. 
+
+1. Application Pool 
+If this is set to an account on the system and that account password has
+changed. You may need to go into IIS and set it again. 
+The password change may not have propagated through to IIS. 
+
+Application Pool --> Advance Settings --> Identity 
+(In a 3-tier set up, I usually use the Administrator password) 
+
+Make sure you recycle the application pool before attempting to log in 
+again. 
+
+2. Connection Strings. 
+
+If the Cache database is not attached to the server, you will not be 
+able to log in when the system attempts to connect to the database 
+server. 
+
+- Check that the you can query the Cache database in SQL Server Management studio. 
+- Check the C:\inetpub\wwwroot\CognosDM-Server\Config\ConenctionStrings.config file details are correct. 
+
+Make sure you restart the website before attempting to log in again. 
+
+3. Physical Path Credentials on the web site. 
+
+If this is set to an account on the system and that account password has changed. You may need to go into IIS and set it again. 
+The password change may not have propagated through to IIS. 
+
+
+Right click on the Web site --> Manage Web site --> Advance Settings 
+(In a 3-tier set up, use the Administrator password, Ensure that you include the domain when specifying the user. e.g. <My domain or computer name>\Administrator ) 
+
+Make sure you restart the website before attempting to log in again.

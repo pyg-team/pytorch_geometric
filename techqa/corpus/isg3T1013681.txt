@@ -1,0 +1,16 @@
+Title: IBM How do I run a job exclusively on one host? - United States
+
+Text:
+exclusive job running on hosts TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ How do I run a job exclusively on one host? 
+
+RESOLVING THE PROBLEM
+How do I run a job exclusively on one host?LSF Batch provides an option -x for job submission. Then LSF Batch will put the host running your job into exclusive execution mode. 
+
+In exclusive execution mode, your job runs by itself on a host. It is dispatched only to a host with no other jobs running, and LSF does not send any other jobs to the host until the job completes.
+
+ 
+
+Cross reference information Segment Product Component Platform Version Edition IBM Spectrum Computing IBM Spectrum LSF

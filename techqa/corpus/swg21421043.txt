@@ -1,0 +1,102 @@
+Title: IBM How to determine long running SQL in SQL stored procedure. - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Procedure to determnine long running SQL in SQL stored procedure. 
+
+SYMPTOM
+Stored procedure execution time is longer than expected.
+
+DIAGNOSING THE PROBLEM
+1. Read the following doc for general performance consideration of SQL procedure and improve as needed:
+https://publib.boulder.ibm.com/infocenter/db2luw/v9r5/topic/com.ibm.db2.luw.apdv.routines.doc/doc/c0011922.html [https://publib.boulder.ibm.com/infocenter/db2luw/v9r5/topic/com.ibm.db2.luw.apdv.routines.doc/doc/c0011922.html]
+
+2. Please read the following doc for How to create Explain Plan of DB2 Stored Procedures:
+http://www.db2ude.com/?q=node/85 [http://www.db2ude.com/?q=node/85]
+The article author mentions both db2exfmt and db2expln tool, but we'd suggest to use db2exfmt.
+
+3. How to find the bottle neck SQLs when executing stored procedure:
+If the stored procedure will run to completion, we'd suggest to use event monitor to do so.
+
+Steps illustrated as below. Replace DB/schema/stored procedure and other parameters to your own. You can also adjust the SQLs as needed.
+
+3.1. Use db2evtbl to generate create table based event monitor statement. Table based event monitor is good for calculating and filtering data by SQL.
+
+db2evtbl -schema iidev4 -evm sp_stmt statements>create_evt_mon.sql 
+
+Note: schema name should be changed to your schemaname.
+
+3.2 Monitor data could be excessive, modify create_evt_mon.sql to keep only current test application data. 
+
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+
+3.3 Turn on monitor and call stored procedure  * 
+ * 
+ * 
+ * 
+ * 
+
+
+3.4 Find low performance SQLs in stored procedure  * 
+ * 
+ * 
+ * db2 "select deps.bschema SCHEMA, 
+   procs.routinename PROCEDURE, 
+   deps.bname PACKAGE, 
+   procs.valid VALID 
+   from sysibm.sysdependencies deps, 
+   sysibm.sysroutines procs 
+   where deps.dtype = 'F' 
+   and deps.btype = 'K' 
+   and procs.specificname = deps.dname 
+   and procs.routineschema = deps.dschema 
+   and procs.routinename ='TEST_SP' 
+   order by 1,2" 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+
+
+
+RESOLVING THE PROBLEM
+Use the output of step 3.4.3 finding slow static SQL in the stored procedure, and analyze explain output for the slow SQL generated in step 2 to determine SQL changes needed. 
+
+
+If you can not find way to improve performance, send stored procedure source or identified low SQLs, above analysis outputs, explain output etc. 
+Table base event monitor is not convenient for transferring for review; therefore generate file based event monitor and send output file(eventstmt.txt) if it is not too big.
+
+Example:
+db2 "CREATE EVENT MONITOR STMTFILE FOR STATEMENTS where APPL_ID = '*LOCAL.iidev4.100211042120' WRITE TO FILE '/home/iidev4/stmt' BUFFERSIZE 25 NONBLOCKED MAXFILES 3 MAXFILESIZE 1024 "
+db2 set event monitor STMTFILE state 1
+db2 "call test_sp()"
+db2 set event monitor STMTFILE state 0
+db2evmon -db feddb -evm stmtfile > eventstmt.txt

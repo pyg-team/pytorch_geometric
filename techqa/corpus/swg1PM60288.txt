@@ -1,0 +1,238 @@
+Title: IBM PM60288: STATSENV.SH IS OVERWRITTEN BY AN OLDER FILE WHEN STATISTICS 20 FIXPACK 1 FOR MACINTOSH AND LINUX IS INSTALLED - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  You work with IBM SPSS Statistics 20 with redundant licensing.
+   After installing the IBM SPSS Statistics 20 FixPack 1 the
+   program does not launch anymore on Macintosh and Linux Client
+   operating systems.
+   Only the splash screen with no error message is displayed.
+   
+   The issue was reported to IBM SPSS Development and is already
+   corrected by updating the available Client FixPack's 1 for
+   Macintosh on Linux on 14. March 2012.
+   
+   The problem did not occur with normal network license. The
+   problem occured on
+   redundant licensing with Macintosh and Linux clients only.
+   Windows Clients
+   in redundant environments were not affected.
+   The issue was caused by the file statsenv.sh being replaced by
+   an older version with date 8. Sept 2011 of this file in the
+   installation directory.
+   Therefore the existing redundant server information on LSHOST
+   environment variable was overwritten and replaced with:
+   
+   # Setup LSHOST Variable
+   #export LSHOST=
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  The Fix Pack 1 for IBM SPSS Statistics 20.0 for Macintosh and
+   Linux Clients are already updated and available for download.
+   The file statsenv.sh is no longer overwritten by the installers.
+   Please download the new FixPack's:
+   20.0-IM-S20STATC-Mac-FP001.dmg  and
+   20.0-IM-S20STATC-Linux8632-FP001.bin
+   If you have already installed the older FixPack's prior to 14.
+   March 2012 please use the following workaround:
+   After installing the Statistics 20 FixPack 1 for Macintosh or
+   Linux open the file statsenv.sh on the clients in a
+   text editor and enter the redundant server names (or IP
+   addresses) separated by colon on the export LSHOST row on the
+   bottom of the file and save it.
+   The file statsenv.sh is located on Macintosh in the MacOS folder
+   of the Statistics 20 installation directory:
+   <installation directory>/<product>.app/Contents/MacOS
+   On Linux the file is located in the bin folder of the Statistics
+   20 installation directory:
+   <installation directory>/bin
+   
+   The LSHOST environment variable at the bottom of the file should
+   have the following structure:
+   Export LSHOST= server1:server2:server3
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * Redundant Licensing environment with Macintosh and Linux     *
+   * Client computer                                              *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * You work with IBM SPSS Statistics 20 with redundant          *
+   * licensing.                                                   *
+   * After installing the IBM SPSS Statistics 20 FixPack 1 the    *
+   * program does not launch anymore on Macintosh and Linux       *
+   * Client                                                       *
+   * operating systems.                                           *
+   * Only the splash screen with no error message is displayed.   *
+   *                                                              *
+   * The issue was reported to IBM SPSS Development and is        *
+   * already                                                      *
+   * corrected by updating the available Client FixPack's 1 for   *
+   * Macintosh on Linux on 14. March 2012.                        *
+   *                                                              *
+   * The problem did not occur with normal network license. The   *
+   * problem occured on                                           *
+   * redundant licensing with Macintosh and Linux clients only.   *
+   * Windows Clients                                              *
+   * in redundant environments were not affected.                 *
+   * The issue was caused by the file statsenv.sh being replaced  *
+   * by                                                           *
+   * an older version with date 8. Sept 2011 of this file in the  *
+   * installation directory.                                      *
+   * Therefore the existing redundant server information on       *
+   * LSHOST                                                       *
+   * environment variable was overwritten and replaced with:      *
+   *                                                              *
+   * # Setup LSHOST Variable                                      *
+   * #export LSHOST=                                              *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * The Fix Pack 1 for IBM SPSS Statistics 20.0 for Macintosh    *
+   * and                                                          *
+   * Linux Clients are already updated and available for          *
+   * download.                                                    *
+   * The file statsenv.sh is no longer overwritten by the         *
+   * installers.                                                  *
+   * Please download the new FixPack's:                           *
+   * 20.0-IM-S20STATC-Mac-FP001.dmg  and                          *
+   * 20.0-IM-S20STATC-Linux8632-FP001.bin                         *
+   * If you have already installed the older FixPack's prior to   *
+   * 14.                                                          *
+   * March 2012 please use the following workaround:              *
+   * After installing the Statistics 20 FixPack 1 for Macintosh   *
+   * or                                                           *
+   * Linux open the file statsenv.sh on the clients in a          *
+   * text editor and enter the redundant server names (or IP      *
+   * addresses) separated by colon on the export LSHOST row on    *
+   * the                                                          *
+   * bottom of the file and save it.                              *
+   * The file statsenv.sh is located on Macintosh in the MacOS    *
+   * folder                                                       *
+   * of the Statistics 20 installation directory:                 *
+   * <installation directory>/<product>.app/Contents/MacOS        *
+   * On Linux the file is located in the bin folder of the        *
+   * Statistics                                                   *
+   * 20 installation directory:                                   *
+   * <installation directory>/bin                                 *
+   *                                                              *
+   * The LSHOST environment variable at the bottom of the file    *
+   * should                                                       *
+   * have the following structure:                                *
+   * Export LSHOST= server1:server2:server3                       *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  See above
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM60288
+   
+   
+ * REPORTED COMPONENT NAME
+   SPSS STATISTICS
+   
+   
+ * REPORTED COMPONENT ID
+   5725A54ST
+   
+   
+ * REPORTED RELEASE
+   K00
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-03-13
+   
+   
+ * CLOSED DATE
+   2012-03-20
+   
+   
+ * LAST MODIFIED DATE
+   2012-03-20
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   SPSS STATISTICS
+   
+   
+ * FIXED COMPONENT ID
+   5725A54ST
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * RK00 PSN
+   UP
+   
+   
+ * RK00 PSY
+   UP

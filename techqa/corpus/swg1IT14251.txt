@@ -1,0 +1,187 @@
+Title: IBM IT14251: NOT MAPPING ALL COLUMNS FROM STORED PROCEDURE SYSREF CURSORS - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When using the Database Routine transform in a Graphical Data
+   Map to call an Oracle Stored Procedure that is returning
+   locally relabeled columns in one or more Sys Ref Cursors from
+   table joins the column data may not be mapped correctly giving
+   unexpected null output element values.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  To work with locally relabeled columns the fix must be applied
+   and activated via an environment variable.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   All users of IBM Integration Bus who use the Mapping node with
+   Database Routine transform to call an Oracle Stored Procedure
+   that is returning relabelled columns in a sysref cursor.
+   
+   
+   Platforms affected:
+   MultiPlatform, z/OS
+   
+   ****************************************************************
+   PROBLEM DESCRIPTION:
+   When using the Database Routine transform in a Graphical Data
+   Map to call an Oracle Stored Procedure that is returning locally
+   relabelled columns in one or more Sys Ref Cursors from table
+   joins the column data may not be mapped correctly giving
+   unexpected null output element values.
+   
+   There are a number of resource name changes between WebSphere
+   Message Broker and IBM Integration Bus Version 9.0.  For details
+   visit
+   http://pic.dhe.ibm.com/infocenter/wmbhelp/v9r0m0/topic/com.ibm.e
+   tools.mft.doc/bb23814_.htm [http://pic.dhe.ibm.com/infocenter/wmbhelp/v9r0m0/topic/com.ibm.etools.mft.doc/bb23814_.htm]
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The Graphical Data Map Editor is corrected to ensure that the
+   order in which the user defines the columns in sysref cursors in
+   a Database Routine transform is preserved in the ".map" file.
+   
+   The Graphical Data Map runtime component now provides an
+   environment variable MQSI_MAP_DB_SYSREF_COLPOSINDX which can be
+   set to cause the correlation of data columns from Oracle Stored
+   Procedure sysref cursors to the mapping transforms in the
+   Database Routine Return transform to be made by positional index
+   rather than column names.
+   
+   If MQSI_MAP_DB_SYSREF_COLPOSINDX is set to 'true' this is
+   applied for all sys ref cursors. Alternatively it can be set to
+   a space separated list of  '<sysref cursor parameter name>:true'
+   to only apply the positional correlation to those sysref
+   cursors.
+   
+   To implement the fix the following is required
+   1) Apply this APAR to the Integration Toolkit
+   2) Review, and possibly re-edit the columns in the sysref cursor
+   to ensure all columns returned are preset in the order the
+   stored procedure emits them.
+   3) Apply this APAR to the Integration Server runtime
+   4) Activate the positional correlation mode by setting the
+   environment variable MQSI_MAP_DB_SYSREF_COLPOSINDX
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+   Version    Maintenance Level
+   v10.0      10.0.0.5
+   
+   The latest available maintenance can be obtained from:
+   http://www-01.ibm.com/support/docview.wss?rs=849&uid=swg27006041 [http://www-01.ibm.com/support/docview.wss?rs=849&uid=swg27006041]
+   
+   If the maintenance level is not yet available,information on
+   its planned availability can be found on:
+   http://www-1.ibm.com/support/docview.wss?rs=849&uid=swg27006308 [http://www-1.ibm.com/support/docview.wss?rs=849&uid=swg27006308]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT14251
+   
+   
+ * REPORTED COMPONENT NAME
+   INTEGRATION BUS
+   
+   
+ * REPORTED COMPONENT ID
+   5724J0540
+   
+   
+ * REPORTED RELEASE
+   A00
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-03-10
+   
+   
+ * CLOSED DATE
+   2016-05-25
+   
+   
+ * LAST MODIFIED DATE
+   2016-05-25
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    IT14223 [http://www-01.ibm.com/support/docview.wss?uid=swg1IT14223]
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   INTEGRATION BUS
+   
+   
+ * FIXED COMPONENT ID
+   5724J0540
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * RA00 PSY
+   UP

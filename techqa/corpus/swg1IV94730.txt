@@ -1,0 +1,138 @@
+Title: IBM IV94730: VM MANAGER DATA COLLECTOR LISTENING ON PORT 25001 IS ONLY ACCEPTING TLS1.0 CONNECTIONS. - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The VM manager data collector listening on port 25001 is only
+   accepting TLS1.0 connections. Not able to communicate on TLS 1.2
+   This configuration is hardcoded and can't be changed using
+   java.security settings.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  No workaround
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * ERROR DESCRIPTION:
+   * The VM manager data collector listening on port 25001 is only
+   * accepting TLS1.0 connections. Not able to communicate on TLS
+   1.2.
+   * EXPECTED RESULTS:
+   * The VM Manager data collector should be able to communicate
+   * on TLS 1.2.
+   ****************************************************************
+   * RECOMMENDATION: Apply appropriate update when available.
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix for this APAR is contained in the following maintenance
+   packages:
+    | Update | BFI 9.2.8.0
+    | Update | ILMT 9.2.8.0
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV94730
+   
+   
+ * REPORTED COMPONENT NAME
+   TIV EP MG PLTFM
+   
+   
+ * REPORTED COMPONENT ID
+   5725C43PO
+   
+   
+ * REPORTED RELEASE
+   950
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-03-31
+   
+   
+ * CLOSED DATE
+   2017-04-27
+   
+   
+ * LAST MODIFIED DATE
+   2017-04-27
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   IEM SW USE ANL
+   
+   
+ * FIXED COMPONENT ID
+   5725F57MT
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R950 PSY
+   UP

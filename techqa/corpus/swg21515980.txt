@@ -1,0 +1,62 @@
+Title: IBM Workplace XT logout from SSO Webseal Junction issue on WebSphere - United States
+
+Text:
+Webseal ibm_security_logout ContainerSignout.jsp com.ibm.websphere.security.allowAnyLogoutExitPageHost com.ibm.websphere.security.logoutExitPageDomainList TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ How to configure FileNet WorkplaceXT on WebSphere to redirect to a custom logout page when using in an SSO WebSeal/Tivoli Access Manager environment? 
+
+SYMPTOM
+Upon clicking on the "Logout" link on the main WorkplaceXT page, the user is not logged out. and instead sees the default logout page which shows: 
+
+"Successful Logout"
+
+
+CAUSE
+Workplace XT is always a container-managed application, the expected behavior is to invalidate the session and go back to the context root specified by the app server and let the app server handle the re-authentication automatically. Destroying the session does not invalidate the user credentials. Therefore, any subsequent navigation in the browser creates a new session re-using the existing credentials and the end-user does not see an "effective" logout.
+
+
+ENVIRONMENT
+Workplace XT with WebSeal
+
+
+
+DIAGNOSING THE PROBLEM
+Collect an HTTP trace which shows the following: 
+
+ContainerSignout.jsp is called 
+
+ibm_security_logout servlet is invoked (through ContainerSignout.jsp) 
+
+ContainerSignin.jsp is called
+
+
+RESOLVING THE PROBLEM
+In ContainerSignout.jsp configure the value of the "logoutExitPage" for the "ibm_security_logout" action to redirect to the desired URI. 
+
+Note that with WebSphere V6.0.2.33 or later, V6.1.0.23 or later, or V7 the URI supported must point to a local page. 
+
+It is possible to define one of the following security custom properties to allow for remote pages to be used for redirection: 
+
+com.ibm.websphere.security.allowAnyLogoutExitPageHost=true/false 
+
+When true, the redirection is unrestricted, and the following property is ignored. The default is false. 
+
+com.ibm.websphere.security.logoutExitPageDomainList=<host1|host2|host3> 
+
+This is a list of hosts that are valid targets for the redirection specified by logoutExitPage. The separator is the vertical bar. There is no default. 
+
+
+ 1. Custom Properties can be added through the WebSphere administrative console, 
+    
+    
+ 2. Click Security
+    
+    
+ 3. Global security
+    
+    
+ 4. Custom properties. 
+    
+    
+ 5. Click New to add a new custom property and its associated value.

@@ -1,0 +1,161 @@
+Title: IBM PK68652: The installer for Portal on i5/OS does not recognize WebSphere Application Server level higher than 6.1.0.15. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When installing WebSphere Portal Express v6.1 on System i, onto
+   an existing instance of WebSphere Application Server v6.1.0.17,
+   it prompts the user for the installation CD containing fix pack
+   15 (# I-1) instead of recognizing that fix pack 17 is already
+   installed and supersedes its minimum requirement.
+   
+   This also affects the installation of WebSphere Portal
+   Server, Enable, Extend and Lotus Web Content Management
+   editions.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Installer wrongly confining installation to specific WAS level
+   and not allowing higher levels.  WP 61 MP and WP 61 Express were
+   tested only with WAS 6.1.0.15 along with the necessary WAS
+   iFixes but were not tested with higher version of WAS than
+   6.1.0.15. However, we do allow users to choose existing
+   installation of WAS 6.1.0.15. Installing the required WAS iFixes
+   is the user responsibility.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Users can use this updated installation archive file to specify
+   the WebSphere Application Server version that users want the
+   installer to detect and configure with the WebSphere Portal
+   version 6.1. Installing the required Application Server interim
+   fixes is the user's responsibility.
+   
+    A fix is available for this issue:
+   https://www14.software.ibm.com/webapp/iwm/web/preLogin.do?source
+   =swgwp-fixes&S_PKG=PK68652 [https://www14.software.ibm.com/webapp/iwm/web/preLogin.do?source=swgwp-fixes&S_PKG=PK68652]
+    You may need to type or paste the complete address into your
+    Web browser.
+   
+   **NOTE: this fix is available in three edition-specific
+   versions.  Ensure you are using the correct fix before beginning
+   the installation!
+   
+      1. Using the installation images on writeable media, such as
+         a hard drive or network drive, replace
+         {I-Setup}/dist/wpinstall.jar with the attached jar file,
+         after copying the original wpinstall.jar to a safe
+         location.
+   
+      2. Run either of the following commands to specify for
+         example WAS 6.1.0.17:
+           install400.bat -W setWASHome.wasversion=6.1.0.17
+           install.sh -W setWASHome.wasversion=6.1.0.17
+   
+      3. Follow the screens to complete the installation.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK68652
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSPHERE PORTA
+   
+   
+ * REPORTED COMPONENT ID
+   5724E7600
+   
+   
+ * REPORTED RELEASE
+   610
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-07-07
+   
+   
+ * CLOSED DATE
+   2008-07-10
+   
+   
+ * LAST MODIFIED DATE
+   2008-07-10
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  Install
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBSPHERE PORTA
+   
+   
+ * FIXED COMPONENT ID
+   5724E7600
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R610 PSY
+   UP

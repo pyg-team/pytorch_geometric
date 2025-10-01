@@ -1,0 +1,154 @@
+Title: IBM PK49971: 503 ERRORS TEMPORARILY RETURNED BY ODR FOR HTTPS REQUESTS. - United States
+
+Text:
+  A FIX IS AVAILABLE
+PK49971; 6.1: 503 Errors temporarily returned by ODR for https requests [http://www-01.ibm.com/support/docview.wss?uid=swg24016772]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Under heavy load, the ODR may temporarily return 503 errors for
+   HTTPS requests soon after starting an application server.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All users of WebSphere Application Server    *
+   *                 also running WebSphere Extended Deployment   *
+   *                 6.1.                                         *
+   *                                                              *
+   *                 All users of WebSphere Extended Deployment   *
+   *                 using the On Demand Router.                  *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Status codes of 503 are temporarily     *
+   *                      returned for HTTPS requests by ODR.     *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   Under heavy load after a new server
+   starts, it can take a long time
+   between being notified of the HTTP and
+   the HTTPS transports.  During this
+   interval, 503's are returned for HTTPS
+   requests.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A fix has been put in so that the On demand router does not
+   load balance to a server that does not have an HTTPS transport
+   configured if the received request is for the HTTPS protocol.
+   This will prevent the 503 status codes from being
+   returned.
+   
+   The fix was made available for XD 6.0.2.1 and XD 6.1.0 and
+   will be incorporated into XD 6.0.2.2 and XD 6.1.0.1.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK49971
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBS EXTENDED D
+   
+   
+ * REPORTED COMPONENT ID
+   5724J3400
+   
+   
+ * REPORTED RELEASE
+   60W
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2007-07-27
+   
+   
+ * CLOSED DATE
+   2007-08-13
+   
+   
+ * LAST MODIFIED DATE
+   2007-08-13
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  XDDWLMCL XDLOADBA XDTARGET
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBS EXTENDED D
+   
+   
+ * FIXED COMPONENT ID
+   5724J3400
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R60I PSY
+   UP
+   
+   
+ * R610 PSY
+   UP

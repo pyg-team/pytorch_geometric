@@ -1,0 +1,137 @@
+Title: IBM LO40284: ENHANCEMENT REQUEST: ALLOW ADMINS TO PURGE NOTES CLIENT RELEASE INFORMATION ON PERSON DOCUMENTS TO FORCE UPDATES - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PERMANENT RESTRICTION.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Customer is requesting the ability to ensure the Notes Client
+   version
+   information captured in the Person Document is current without
+   keeping
+   historically client version detail.  This could be achieved
+   several ways:
+   
+   1 - Allow the Notes Client version data to expire, for example
+   after
+   60 days or 90 days (something Admin settable) and the data is
+   removed.
+   The benefit is for those users who have a PC that is replaced,
+   after 60
+   or 90 days the old PC is no longer listed on the person doc.
+   
+   
+   
+   2 - The ability to go in an manually delete a single entry from
+   a specific
+   person document
+   
+   
+   3 - the ability to have the client re-populate the version
+   information.
+   If we are dumping data not modified in the last 60 or 90
+   days, then every 30 days, the client should rewrite the client
+   version.
+   this should be a programmed / scheduled event.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  This problem was resolved as: No Plans to Fix Ever
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This problem was resolved as: No Plans to Fix Ever
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   LO40284
+   
+   
+ * REPORTED COMPONENT NAME
+   NOTES/DOMINO 7X
+   
+   
+ * REPORTED COMPONENT ID
+   5724E6200
+   
+   
+ * REPORTED RELEASE
+   850
+   
+   
+ * STATUS
+   CLOSED PRS
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-05-07
+   
+   
+ * CLOSED DATE
+   2009-05-14
+   
+   
+ * LAST MODIFIED DATE
+   2014-06-01
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  NA
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

@@ -1,0 +1,41 @@
+Title: IBM Minimizing the impact of ruleset parsing on Rule Execution Server (RES) execution requests - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How to minimize the impact of ruleset parsing on RES execution requests? 
+
+ANSWER
+In a number of situations a RES execution request can incur the cost of ruleset parsing: 
+
+1. First time execution : it is recommended to trigger ruleset parsing upon application startup ( for example through a servlet configured with load-on-startup). 
+
+ * In JRules 6.7.x this can be achieved through a dry run execution of the ruleset 
+ * In JRules 7.x and later, the API IlrManagementSession.loadUptodateRuleset() can be used to trigger ruleset parsing without performing an actual execution. See also Making sure that the cached ruleset that is created by the loadUptodateRuleset method is used [http://www-01.ibm.com/support/docview.wss?uid=swg21668133]
+
+
+2. Hot deployment of a new ruleset version : by default any new execution request after the update notification will use the newly deployed ruleset, and will possibly be waiting on the parsing of the new ruleset to complete. The RES execution unit (XU) can be configured to minimize the impact of parsing by modifying a property in the META-INF/ra.xml deployment descriptor.  * In JRules 6.7.x blockingRulesetParsing can be set to false (default is true): only the first new execution request after the update notification will incur the cost of parsing the new ruleset version. Other requests will keep using the older version until the new ruleset is parsed at which point all subsequent requests will be using the new ruleset version. This limits the number of possibly blocking requests upon hot deployment from possibly several to a maximum of 1. 
+ * In JRules 7.x and later, asynchronousRulesetParsing can be set to true (default is false in JRules 7.0.x, true in JRules 7.1.x and later): the first execution request after update notification will trigger parsing of the new ruleset, however the request is executed with the older version while the parsing of the new ruleset happens in a separate thread. Once parsing is complete, all subsequent requests use the new ruleset version. With this setting no execution request is blocked upon a hot deployment.
+
+
+3. Idle time-out exceeded for the XU connections because the ruleset is not requested for some time: the XU uses JCA connection factories managed by the application server and it is typically possible to configure it to avoid such time-outs. Refer to the documentation of the application server for configuration of JCA connection pools. With JRules 7.1 and later versions, it is also possible to force a ruleset to remain in cache, either by implementing a custom ruleset cache [http://pic.dhe.ibm.com/infocenter/brjrules/v7r1/topic/com.ibm.websphere.ilog.jrules.doc/Content/Business_Rules/Documentation/_pubskel/JRules/ps_JRules_Global1011.html], or by configuring the ruleset property ruleset.maxIdleTime [http://pic.dhe.ibm.com/infocenter/resohelp/v7r1/topic/com.ibm.websphere.ilog.jrules.doc/Content/Business_Rules/Documentation/_pubskel/JRules/ps_JRules_Rule_Execution_Server_OH35.html] (see also Managing the XU timeout policy [http://pic.dhe.ibm.com/infocenter/dmanager/v8r0m1/topic/com.ibm.wodm.dserver.rules.res.managing/topics/tsk_res_config_xu_timeout.html]). 4. A ruleset is requested less often than others and all connections in the XU pool are used for other ruleset requests: the JCA connection pool can be configured large enough so that connections are available to support concurrent executions on all the rulesets without causing "eviction" of a less requested ruleset. An alternative option is to use more than one JCA connection factory so that different rulesets can use different connection pools and be better isolated from each other. Refer in the JRules documentation to:
+WebSphere ILOG JRules V7.0 [http://publib.boulder.ibm.com/infocenter/brjrules/v7r0/topic/ilog.rules.jrules.doc/Content/Business_Rules/Documentation/_pubskel/JRules/ps_JRules_Global.html] > Rule Studio online help [http://publib.boulder.ibm.com/infocenter/brjrules/v7r0/topic/ilog.rules.jrules.doc/Content/Business_Rules/Documentation/_pubskel/JRules/ps_JRules_Global287.html] > Managing Rule Execution Server [http://publib.boulder.ibm.com/infocenter/brjrules/v7r0/topic/ilog.rules.jrules.doc/Content/Business_Rules/Documentation/_pubskel/JRules/ps_JRules_Global903.html] > Tasks [http://publib.boulder.ibm.com/infocenter/brjrules/v7r0/topic/ilog.rules.jrules.doc/Content/Business_Rules/Documentation/_pubskel/JRules/ps_JRules_Global910.html] > Administering Rule Execution Server [http://publib.boulder.ibm.com/infocenter/brjrules/v7r0/topic/ilog.rules.jrules.doc/Content/Business_Rules/Documentation/_pubskel/JRules/ps_JRules_Global911.html] > Adding Execution Unit (XU) JCA 1.5 connection factories [http://publib.boulder.ibm.com/infocenter/brjrules/v7r0/topic/ilog.rules.jrules.doc/Content/Business_Rules/Documentation/_pubskel/JRules/ps_JRules_Global925.html] 
+With JRules 7.1 and later versions, it is also possible to force a ruleset to remain in cache, either by implementing a custom ruleset cache [http://pic.dhe.ibm.com/infocenter/brjrules/v7r1/topic/com.ibm.websphere.ilog.jrules.doc/Content/Business_Rules/Documentation/_pubskel/JRules/ps_JRules_Global1011.html], or by configuring the ruleset property ruleset.maxIdleTime [http://pic.dhe.ibm.com/infocenter/resohelp/v7r1/topic/com.ibm.websphere.ilog.jrules.doc/Content/Business_Rules/Documentation/_pubskel/JRules/ps_JRules_Rule_Execution_Server_OH35.html] (see also Managing the XU timeout policy [http://pic.dhe.ibm.com/infocenter/dmanager/v8r0m1/topic/com.ibm.wodm.dserver.rules.res.managing/topics/tsk_res_config_xu_timeout.html]). 
+
+5. Several session clients for a given ruleset are not associated to the same classloader: For example an EJB module and a WEB Application have distinct classloaders in an application server and execution requests for the same ruleset from each application lead to 2 separate parsing of the ruleset. Use a single classloader for the application or make sure that all execution requests are channeled through a service consistently associated with the same classloader. 
+
+ 
+
+Note: Starting with ODM 8.5.1 it is possible to execute rulesets using the Decision Engine [http://pic.dhe.ibm.com/infocenter/dmanager/v8r5m1/topic/com.ibm.odm.dserver.rules.designer.debug/executing_decision_topics/con_decision_engine.html] and by choosing the option to generate the Java Bytecode at ruleset build time, the impact of ruleset initial loading can be very much reduced since in this case the usual parsing step is replaced by loading the Java classes corresponding to the generated bytecode. 
+
+RELATED INFORMATION
+#Decision Engine [http://pic.dhe.ibm.com/infocenter/dmanager/v8r5m1/topic/com.ibm.odm.dserver.rules.designer.debug/executing_decision_topics/con_decision_engine.html]
+loadUptodateRuleset [http://www-01.ibm.com/support/docview.wss?uid=swg21668133]
+
+
+ 
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Operational Decision Manager Platform Independent 8.5, 8.0, 7.5 Enterprise

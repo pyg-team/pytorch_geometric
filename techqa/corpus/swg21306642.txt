@@ -1,0 +1,46 @@
+Title: IBM HPII application is failing with error  <0,0,1058>. Too many sub-batches or MaxSubBatchSize may be too small, on IBM FileNet Image Services - United States
+
+Text:
+MaxSubBatchSize; MRII; Medium-Range TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ HPII application is failing with error 0,0,1058. Too many sub-batches or MaxSubBatchSize is too small, on IBM FileNet Image Services 
+
+SYMPTOM
+HPII application is failing to import batches due to the following error message in Journal Log:
+
+2010/10/10 15:03:50 <fnsw> (1204232) Err <0,0,1058> - Maximum number (4) of sub-batches has been reached. MaxSubBatchSize in the config file may be too small.
+
+
+CAUSE
+The Maximum number of sub-batches has been reached. Therefore the MaxSubBatchSize in the HPII.cfg configuration file may be too small. This must be big enough to hold 1000 documents or 2000 pages. 
+
+ 
+HPII will request this amount as contiguous cache from cache services. If the amount of cache requested is too large, the request may not be satisfied. Equally, setting this number too low will negatively impact performance or could force the sub-batch limit to be exceeded.
+
+
+RESOLVING THE PROBLEM
+MaxSubBatchSize is the disk space required for any given sub-batch in 1 KB units (example: 5120 is 5 MB). This value needs to be large enough to hold an entire batch if the batch will not be subdivided, or large enough to hold an entire sub-batch. The maximum number of sub-batches that can be created is 3. 
+
+
+MaxSubBatchSize is size of batch in 1K units (1024 =1Mb and default =1024).
+
+Example:
+MaxSubBatchSize=102400
+
+So to eliminate the error: 
+
+ 1. Edit HPII.cfg setting MaxSubBatchSize to an appropriate value. 
+ 2. Stop HPII. Use HPII_stop or HPII_stop.exe 
+ 3. Run wal_purge on the UNIX environment. Recycle the Image Services software on a Windows environment. Or can stop and start the tm_daemon service. 
+ 4. Start HPII. Use HPII_start or HPII_start.exe
+
+
+For more information on this setting, please review "Image Import Application HPII MRII Installation and Configuration Guide" linked below and see the section on How to compute the MaxSubBatchSize. RELATED INFORMATION
+ HPII/MRII Installation and Operation Guide [ftp://public.dhe.ibm.com/software/data/cm/filenet/docs/isdoc/im_utils/II_INSTALLCONFIG.pdf]
+
+
+
+
+HISTORICAL NUMBER
+ 10000754

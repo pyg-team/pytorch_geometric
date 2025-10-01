@@ -1,0 +1,61 @@
+Title: IBM Security Bulletin: IBM Tivoli Network Manager - GSKit Security Vulnerabilities (CVE-2013-0169), (CVE-2012-2190) and (CVE-2013-0166) - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ OpenSSL Security Advisory updates Feb 2013: GSKit Lucky 13 TLS CBC Timing Attack - CVE-2013-0169. 
+A vulnerability in relation to Session ID Lengths and SSL/TLS Server has been discovered that impacts GSKit - CVE-2012-2190.
+OpenSSL before 0.9.8y, 1.0.0 before 1.0.0k, and 1.0.1 before 1.0.1d does not properly perform signature verification for OCSP responses, which allows remote OCSP servers to cause a denial of service (NULL pointer dereference and application crash) via an invalid key - CVE-2013-0166 
+
+VULNERABILITY DETAILS
+GSKit advisories: (CVE-2013-0169), (CVE-2012-2190) and (CVE-2013-0166)
+VULNERABILITY DETAILS: 
+
+CVEID: CVE-2012-2190 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2012-2190]
+CVSS Base Score: 5
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/75994 [https://exchange.xforce.ibmcloud.com/vulnerabilities/75994] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:L/Au:N/C:N/I:N/A:P) 
+DESCRIPTION: IBM Global Security Kit (aka GSKit), as used in IBM HTTP Server in IBM WebSphere Application Server (WAS) 6.1.x before 6.1.0.45, 7.0.x before 7.0.0.25, 8.0.x before 8.0.0.4, and 8.5.x before 8.5.0.1, allows remote attackers to cause a denial of service (daemon crash) via a crafted ClientHello message in the TLS Handshake Protocol. 
+
+
+CVE ID: CVE-2013-0166 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2013-0166]
+CVSS:Base Score: 5
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/81904 [https://exchange.xforce.ibmcloud.com/vulnerabilities/81904] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:L/Au:N/C:N/I:N/A:P)
+Description: OpenSSL before 0.9.8y, 1.0.0 before 1.0.0k, and 1.0.1 before 1.0.1d does not properly perform signature verification for OCSP responses, which allows remote OCSP servers to cause a denial of service (NULL pointer dereference and application crash) via an invalid key. 
+
+CVEID: CVE-2013-0169 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2013-0169] 
+CVSS Base Score: 4.3
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/81902 [https://exchange.xforce.ibmcloud.com/vulnerabilities/81902]
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:M/Au:N/C:P/I:N/A:N)
+Description: The TLS protocol 1.1 and 1.2 and the DTLS protocol 1.0 and 1.2, as used in OpenSSL, OpenJDK, PolarSSL, and other products, do not properly consider timing side-channel attacks on a MAC check requirement during the processing of malformed CBC padding, which allows remote attackers to conduct distinguishing attacks and plaintext-recovery attacks via statistical analysis of timing data for crafted packets, aka the "Lucky Thirteen" issue. 
+
+
+AFFECTED PRODUCTS AND VERSIONS
+Tivoli Network Manager 3.8 and 3.9
+
+
+REMEDIATION/FIXES
+Tivoli Network Manager 3.8 FP7 released in 3Q2013 and 3.9 FP4 released in April 2014 contains fixes for following GSKit advisories:
+CVE-2012-2190 CVE-2013-0169 and CVE-2013-0166. 
+REMEDIATION: Users can go to the following location and download the Fix packs available from Tivoli Network Manager to remediate the issue. 
+
+Product VRMF APAR Remediation/First Fix ITNM 3.8.0.7 IV47446 http://www-01.ibm.com/support/docview.wss?uid=swg24030251 [http://www-01.ibm.com/support/docview.wss?uid=swg24030251] ITNM 3.9.0.4 IV55034 http://www-01.ibm.com/support/docview.wss?uid=swg24034724 [http://www-01.ibm.com/support/docview.wss?uid=swg24034724] GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v2 Guide [http://www.first.org/cvss/v2/guide] 
+On-line Calculator v2 [http://nvd.nist.gov/CVSS-v2-Calculator] 
+
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.

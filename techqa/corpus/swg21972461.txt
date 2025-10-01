@@ -1,0 +1,15 @@
+Title: IBM How to Hide Thumbnail Navigation Pane in Daeja Virtual Viewer? - United States
+
+Text:
+thumbnail; navigation; navigate; pane; hide; daeja; virtual TECHNOTE (FAQ)
+
+QUESTION
+ The thumbnail navigation pane shown at the right of the viewer appears to be a feature for Virtual Viewer only. How to disable this navigation pane? 
+
+CAUSE
+There is a undocumented parameter which allows users to disable the thumbnail navigation pane.
+
+ANSWER
+To disable the thumbnail navigation pane, apply the following parameter on HTML or JSP.
+
+quickNavigateView = false

@@ -1,0 +1,45 @@
+Title: IBM Why server time can be different for the same RPT script on different hosts - United States
+
+Text:
+server time; client time; network time; response time; performance; 71GEN-TS; 71RRT-RPTPLAN; 71RRT-RPTTS TECHNOTE (FAQ)
+
+QUESTION
+ Why does the same Rational Performance Tester (RPT) script generate different server times for the same application and application server when you run the script on different client hosts? 
+
+ANSWER
+
+It is important to understand that RPT scripts are not actual end-user clients. The client time metric does not represent an actual response time that an end user experiences. The client time largely represents the script overhead for RPT verification points and script initialization.
+
+However, because the RRT (Robotic Response Time) metrics are measured at the client end, network times are embedded in various measurements.
+
+Server time actually includes the interval from the time the client makes a request, to the time all of the files that satisfy the request have been downloaded to the client.
+
+Note: When you compare server times for the same script, it is important to monitor the server times that are reported at the same monitoring intervals. 
+
+In light of the way server time is measured, the following issues can explain differences in the server time reported by the same script running on different hosts, even though the scripts access the same web server or application server.
+
+- Different network path to the server from the RRT host.
+Do a ping/tracert test between the RRT host and the web server or application server host. If these
+tests show significant variance, it would explain the differences in server time. The slow client host might be a geographically different data center and/or it might use a particularly slow network path.
+
+- Performance difference between the two RRT hosts.
+CPU, available memory, memory utilization, and load differences can explain performance differences. Here, the client time differences would be in the ability of a host to receive the files that are being downloaded. 
+
+RELATED INFORMATION
+ Script TIMEOUT for transactions and subtransactions [http://www.ibm.com/support/docview.wss?uid=swg21508027]
+Robotic script runtime does not coincide with the agent [http://www.ibm.com/support/docview.wss?uid=swg21497785]
+Reconcile Response time measurements [http://www.ibm.com/support/docview.wss?uid=swg21574123]
+Reporting "delay" time in RPT http playbacks [http://www.ibm.com/support/docview.wss?uid=swg21500899 ]
+Performance Thresholds for Robotic Playbacks [http://www.ibm.com/support/docview.wss?uid=swg21588725]
+Calculating Last Run Duratoin [http://www.ibm.com/support/docview.wss?uid=swg21449266]
+Robotic response times in RPT [http://www.ibm.com/support/knowledgecenter/#!/SS5MD2_7.4.0/com.ibm.itcamt.doc_7.4.0.0/rt/Install_Guide/rrt_http_response_time_breakdown.html]
+
+
+
+
+HISTORICAL NUMBER
+ 25687.082.000 
+
+PRODUCT ALIAS/SYNONYM
+ ITCAMfT
+T7.4

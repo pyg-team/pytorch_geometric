@@ -1,0 +1,153 @@
+Title: IBM LO78391: NEW MAIL RECEIVED, INBOX UNREAD COUNT CHANGES BUT INBOX VIEW DOE S NOT DISPLAY NEWLY ARRIVED MAIL - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When new mail received, inbox unread count changes but inbox
+   view does not
+   display newly arrived mail. To reproduce you have to set all
+   settings mentioned
+   above, no new mail received today and lotus notes
+   client reopened. Issue can not be reproduced when File -
+   Preferences - Mail -
+   Sending and Receiving - Alerts has different setting.
+   Also to reproduce the issue you must be at least two group by
+   date like
+   Yesterday and Rest of Week. There should be no messages received
+   today.
+   Yesterday group should be closed and Rest of Week or any next
+   group
+   expanded/open. Rest of Week group must contain messages that it
+   will not fit
+   into screen and scroll bar should be seen. After sending message
+   from different
+   client or window unread count for inbox view
+   updated and scroll bar position changed. Today is not shown and
+   I was unable to
+   scroll up to see new message. Refresh view also does not help.
+   Just selecting
+   different view/folder and going back to inbox view
+   showed new message and Today group.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  unknown
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  New Mail not shown in Today Categoryin Grop By Date
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  New Mail not shown in Today Categoryin Grop By Date
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+ *  This APAR is associated with SPR# PBAO9EGN7B.
+   New Mail not shown in Today Categoryin Grop By Date
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   LO78391
+   
+   
+ * REPORTED COMPONENT NAME
+   NOTES CLIENT
+   
+   
+ * REPORTED COMPONENT ID
+   5724E6255
+   
+   
+ * REPORTED RELEASE
+   853
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-12-17
+   
+   
+ * CLOSED DATE
+   2014-09-11
+   
+   
+ * LAST MODIFIED DATE
+   2014-09-11
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   NOTES CLIENT
+   
+   
+ * FIXED COMPONENT ID
+   5724E6255
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R853 PSN
+   UP

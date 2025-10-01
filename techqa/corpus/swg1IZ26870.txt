@@ -1,0 +1,196 @@
+Title: IBM IZ26870: LDAP CONNECTION MESSAGE DURING TEPS CONFIG 6.2FP1 UPGRADE - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Environment:
+   
+   ITM 6.1 (FP4-FP7) with TEPS extensions installed upgraded to ITM
+   6.2 FP1
+   on Windows Server 2003 x64 Standard Edition
+   
+   
+   Problem Description:
+   
+   During upgrade to ITM TEPS 6.2 FP1, you receive the following
+   message during TEPS configuration:
+   
+   ***************************
+   Response file information
+   Callpoint postconfig response file content:
+   Tivoli Portal Server
+   LDAP connection cannot be configured - verify firewall setting
+   and
+   LDAP connection parameters.To configure with updated LDAP
+   parameters,
+   reconfigure the Tivoli Entreprise Server.
+   Tivoli Entreprise Browser client
+   INST_COMP_PLUGIN_RETURN_CODE:000
+   ----- WebHelp to Eclipse Help Converter -----
+   
+   After clicking OK, the user is still able to proceed with the
+   installation.  The user may see the message two more times
+   before
+   the installation moves on.  The TEPS does configure and start
+   after the upgrade.
+   
+   The message will occur regardless of the LDAP checkbox settings
+   in the
+   TEPS (or TEMS) configuration boxes.
+   
+   In the event this message occurs, the embedded WAS does not
+   upgraded
+   as it should.  The version of eWAS contained in ITM 6.2 FP1 is
+   6.1.0.13.
+   
+   To verify the version of eWAS, perform the following steps:
+   
+   - From a DOS Prompt, navigate to <ITM_HOME>\CNPSJ\BIN folder.
+   - Run the "versionInfo.bat" file.
+   - The current version of eWAS will display.  If the version
+   still
+   displays 6.1.0.3, eWAS was not upgraded.
+   
+   
+   Detailed Recreation Procedure:
+   
+   Logon as a Windows Administrator, a member of the local
+   Administrators group. The following procedure information
+   assumes
+   that you have a working ITM 6.1 FP4 - FP7 environment with
+   TEPS extensions installed.
+   
+   1) Upgrade to ITM 6.2 FP1 and make sure TEPS is selected.
+   2) During the TEPS configuration progress dialog, the LDAP
+   connection
+   message should be displayed.
+   
+   Related Files and Output:
+   n/a
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  The EWAS upgrade fails because the Update Installer operating
+   system prerequisites are not met.
+   
+   When TEPS is being upgraded from version 6.2 to 6.2 fp1, the
+   TEPS extension component (eWAS) has to be upgraded to 6.1.0.13.
+   The TEPS extension component (eWAS) is being upgraded by Update
+   Installer.  Update Installer 6.1.0.13 incorrectly recognizes a
+   few operation systems as unsupported.
+   
+   Operating systems recognized as unsupported include the
+   following:
+   
+   - RedHat 5.1
+   - Win 2003 SE 64bit SP2
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The code was modified as follows:
+   1. The operating systems prerequisites checking during Update
+   Installer installation was disabled.
+   2. A Message is displayed when the TEPS extension upgrade fails.
+   
+   
+   The fix for this APAR is contained in the following maintenance
+   packages:
+    | fix pack | 6.2.0-TIV-ITM-FP0002
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ26870
+   
+   
+ * REPORTED COMPONENT NAME
+   OMEG DIST INSTA
+   
+   
+ * REPORTED COMPONENT ID
+   5608A41CI
+   
+   
+ * REPORTED RELEASE
+   620
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-07-14
+   
+   
+ * CLOSED DATE
+   2008-10-30
+   
+   
+ * LAST MODIFIED DATE
+   2009-06-30
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   OMEG DIST INSTA
+   
+   
+ * FIXED COMPONENT ID
+   5608A41CI
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R620 PSY
+   UP

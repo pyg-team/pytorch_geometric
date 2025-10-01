@@ -1,0 +1,57 @@
+Title: IBM Security Bulletin: Security Bulletin: Vulnerability in Diffie-Hellman ciphers affects IBM Endpoint Manager for Security and Compliance - Security Compliance Analytics (CVE-2015-4000) - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ The Logjam Attack on TLS connections using the Diffie-Hellman (DH) key exchange protocol affects IBM Endpoint Manager for Security and Compliance - Security Compliance Analytics. 
+
+VULNERABILITY DETAILS
+CVEID: CVE-2015-4000 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-4000]
+DESCRIPTION: The TLS protocol could allow a remote attacker to obtain sensitive information, caused by the failure to properly convey a DHE_EXPORT ciphersuite choice. An attacker could exploit this vulnerability using man-in-the-middle techniques to force a downgrade to 512-bit export-grade cipher. Successful exploitation could allow an attacker to recover the session key as well as modify the contents of the traffic. This vulnerability is commonly referred to as "Logjam".
+CVSS Base Score: 4.3
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/103294 [https://exchange.xforce.ibmcloud.com/vulnerabilities/103294] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:M/Au:N/C:P/I:N/A:N) 
+
+AFFECTED PRODUCTS AND VERSIONS
+IBM Endpoint Manager for Security and Compliance – Security Compliance Analytics (IEM for SCM – SCA): Version 1.6
+
+REMEDIATION/FIXES
+None
+
+WORKAROUNDS AND MITIGATIONS
+You should verify applying this configuration change does not cause any compatibility issues. If you change the default setting after applying the fix, you will expose yourself to the attack described above. IBM recommends that you review your entire environment to identify other areas where you have enabled the Diffie-Hellman key-exchange protocol used in TLS and take appropriate mitigation and remediation actions. 
+
+1. On the IBM Endpoint Manager for Security and Compliance – Security Compliance Analytics server, edit the java.security file. 
+
+Windows operating system
+[INSTALLDIR]\java\jre\lib\security\java.security
+
+Linux operating system
+[INSTALLDIR]/java/jre/lib/security/java.security
+
+where [INSTALLDIR] is the server installation directory
+
+2. Add DH and DHE to the jdk.tls.disabledAlgorithms line.
+
+For example,
+jdk.tls.disabledAlgorithms=SSLv3, RC4, DH, DHE
+
+3. Restart the server service. DH and DHE ciphers are disabled from the JDK for both inbound (HTTPS) connections and outbound (database, LDAPS) encrypted connections.
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v2 Guide [http://www.first.org/cvss/v2/guide] 
+On-line Calculator v2 [http://nvd.nist.gov/CVSS-v2-Calculator] 
+
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.

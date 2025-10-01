@@ -1,0 +1,256 @@
+Title: IBM PK27087: PROXY SERVER INCORRECTLY ROUTING WEB SERVICE REQUESTS - United States
+
+Text:
+  FIXES ARE AVAILABLE
+6.1.0.1: WebSphere Application Server V6.1.0 Fix Pack 1 for HP-UX [http://www-01.ibm.com/support/docview.wss?uid=swg24012899]
+6.1.0.1: WebSphere Application Server V6.1.0 Fix Pack 1 for AIX [http://www-01.ibm.com/support/docview.wss?uid=swg24012944]
+6.1.0.1: WebSphere Application Server V6.1.0 Fix Pack 1 for Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24012919]
+6.1.0.1: WebSphere Application Server V6.1.0 Fix Pack 1 for Linux [http://www-01.ibm.com/support/docview.wss?uid=swg24012900]
+6.1.0.1: WebSphere Application Server V6.1.0 Fix Pack 1 for i5/OS [http://www-01.ibm.com/support/docview.wss?uid=swg24012945]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  I then configure a new WS-Notification service on bus
+   "DevelopBus" which spans all
+   these servers. I create a WS-Notification service point to
+   handle incoming
+   requests, and use the pre-configured EPL. This is confirmed by
+   the WSDL published
+   by the WS-Notification service:
+   
+   http;//blade207/wsgwsoaphttp1/soaphttpengine/
+   DevelopBus%2FWSNServiceNotificationBroker%2
+   FWSNServicePointHTTPNotificationBrokerPort
+   
+   However, when I poll the WSDL for this service through a
+   browser using the
+   following URL:
+   
+   http;//blade207/wsgwsoaphttp1/soaphttpengine/
+   DevelopBus%2FWSNServiceNotificationBroker%2
+   FWSNServicePointHTTPNotificationBrokerPort?wsdl
+   
+   I only get the WSDL returned 2/3 times approximately; the
+   other requests failed.
+   This suggested there was a possible problem with the proxy, so
+   I collected trace.
+   Looking through this, it seems (if I'm interpreting the trace
+   correctly) that some
+   of the invocations are routed to blade110 (i.e. *not* a
+   cluster member), which was
+   causing the problems:
+   
+                                    <null>
+   [10/05/06 12:19:23:948 BST] 0000002a TargetDescrip 3   <init>
+                                    CFEndPoint: name =
+   WCInboundDefault
+          vhostArray =
+                 default_host
+          port = 9080
+          address = blade110.hursley.ibm.com/9.20.127.97
+          accessor = interface
+   com.ibm.wsspi.http.channel.outbound.HttpOutboundServiceContext
+          vcf = Outbound VCF: chain = chain_1, refCount = 1
+          isSSLEnabled = false
+          isLocal = false
+          Channels:
+   
+   This is incorrect; the HTTP requests should only be routed to
+   servers hosting the
+   EPL application, i.e. blade207 and blade209. I've confirmed
+   that the application
+   backing the EPL is not installed on blade110 (although there
+   is a further EPL
+   application on this server).
+   
+   The cause appears to be because of a second endpoint listener
+   installed on the
+   appserver "transportServer1". This shared the same context URL
+   with the endpoint
+   listener on the cluster, so my first thought was that this was
+   causing the problem
+   (i.e., the proxy server assumed that my service requests
+   should be routed to the
+   both EPLs). However, on creating a second EPL on the cluster,
+   with a different
+   context root (URL root: http;//blade207/WSNSVT/) and rerunning
+   my test, I still
+   found my requests being sent to both the cluster *and*
+   transportServer1
+   when I attempted a wsdl lookup through a browser:
+   
+   http;//blade207/WSNSVT/soaphttpengine/
+   DevelopBus%2FWSNServiceNotificationBroker%2
+   FWSNServicePointHTTP2NotificationBrokerPort?wsdl
+   
+   However, when I stopped the EPL application on
+   transportServer1, this fixed the
+   problem - or at least it's a workaround to get my specific
+   test running.
+   
+   One final point: when I make this change, it's evident that
+   requests are only being
+   routed to one of the cluster members (server1) rather than all
+   four.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: Websphere Application Server version 6.1     *
+   *                 users who use a Proxy.                       *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Proxy was routing to servers without    *
+   *                      the requested application installed     *
+   *                      on them if they had an application      *
+   *                      with a similar name installed on them.  *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   Proxy was routing to servers without the requested application
+   installed on them if they had an application with a similar
+   name installed on them.  This occured because the proxy
+   server was not uniquely qualifying the application name.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Additional qualifying information was added when
+   proxy was serving requests.  This information allowed
+   the proxy server to differentiate between different
+   applications with the same name.
+   
+   The fix for this APAR is currently targeted for inclusion
+   in fixpack 6.1.0.1.
+   Please refer to the recommended updates page for delivery
+   information:
+   http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK27087
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBS APP SERV N
+   
+   
+ * REPORTED COMPONENT ID
+   5724H8800
+   
+   
+ * REPORTED RELEASE
+   61W
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2006-06-23
+   
+   
+ * CLOSED DATE
+   2006-07-20
+   
+   
+ * LAST MODIFIED DATE
+   2009-04-06
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  WLM
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBS APP SERV N
+   
+   
+ * FIXED COMPONENT ID
+   5724H8800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R61A PSY
+   UP
+   
+   
+ * R61H PSY
+   UP
+   
+   
+ * R61I PSY
+   UP
+   
+   
+ * R61P PSY
+   UP
+   
+   
+ * R61S PSY
+   UP
+   
+   
+ * R61W PSY
+   UP
+   
+   
+ * R61Z PSY
+   UP

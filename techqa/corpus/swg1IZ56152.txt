@@ -1,0 +1,169 @@
+Title: IBM IZ56152: CAN'T INSTALL LANGUAGE PACK OF ITM4DB TO TEPS ON 64BIT AIX - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Severity:         2
+   Approver:        DL
+   Reported Release:620
+   Compid:          5608A41CI Distributed Installer
+   Abstract:        Can't install Language Pack of ITM4DB to TEPS
+                    on 64bit AIX
+   
+   Environment:
+   ITM 6.2.1 TEPS running on AIX 5.3 64 bit
+   ITM for Database 6.2 Language Pack (P/N:C17L5ML)
+   
+   Problem Description:
+   This is a known defect of CVMC#80104.  I open this APAR to get
+   the fix in the future MDV.
+   
+   Japanese translated resource files, i.e. lp_db_ja.jar, wasn't
+   installed to TEPS running on 64bit AIX even though the
+   installation of ITM for DB Language Pack was completed
+   successfully.   Because localized resource files can't be copied
+   to $CANDLEHOME/aix536/cw directory, the customer cannot see
+   Japanese messages on TEP Browser or TEP Java Web Start.
+   
+   Workaround:
+   None.
+   
+   Detailed Recreation Procedure:
+   1. Install TEMS(64bit) and TEPS(64bit) to 64bit AIX 5.3
+   2. Configure TEMS (itmcmd config -S -t HUB_name, itmcmd support)
+   3. Configure TEPS (itmcmd config -A cq)
+   4. Install ITM for DB support files (need to issue itmcmd
+      support command)
+   5. Install Japanese language pack of ITM for DB ... completed
+   successfully
+   6. Reconfigure TEPS (itmcmd config -A cq)
+   7. Launch TEP (Java WebStart) or Browser TEP
+      --> ITM for DB related resources are displayed in English.
+      --> There is no translated resources (e.g. lp_db_ja.jar)
+          under /opt/IBM/ITM/aix536 directory
+   
+   Related Files and Output:
+   N/A
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Japanese translated resource files, i.e. lp_db_ja.jar, was not
+   installed to the portal server running on 64bit AIX even though
+   the installation of IBM Tivoli Monitoring for DB Language Pack
+   was completed successfully. Because localized resource files
+   cannot be copied to $CANDLEHOME/aix536/cw directory, the
+   customer cannot see Japanese messages in portal client browser
+   or portal client Java Web Start.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Added the proepr IAX 64 bit platform to include for this
+   Japanese language
+   
+   The fix for this APAR is included in the following maintenance
+   vehicle:
+       | fix pack | 6.2.1-TIV-ITM-FP0002
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ56152
+   
+   
+ * REPORTED COMPONENT NAME
+   OMEG DIST INSTA
+   
+   
+ * REPORTED COMPONENT ID
+   5608A41CI
+   
+   
+ * REPORTED RELEASE
+   621
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-07-28
+   
+   
+ * CLOSED DATE
+   2010-03-01
+   
+   
+ * LAST MODIFIED DATE
+   2010-04-14
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   OMEG DIST INSTA
+   
+   
+ * FIXED COMPONENT ID
+   5608A41CI
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R621 PSY
+   UP

@@ -1,0 +1,24 @@
+Title: IBM Is using a monitored JBoss Application Server with ITCAM for J2EE supported in a Windows service? - United States
+
+Text:
+J2EE JBoss server Windows service LA2 fix TECHNOTE (FAQ)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ US English 
+
+QUESTION
+ Is using a monitored JBoss Application Server with ITCAM for J2EE supported in a Windows service? 
+
+ANSWER
+When you configure the JBoss Application Service to run as a Windows service, you will download the JBoss native connectors [http://jbossweb.jboss.org/downloads/jboss-native-2-0-10] and modify the service.bat file. 
+
+The JBoss service is not available to run as a Windows service when configured with the ITCAM for J2EE agent/DC because this involves changes to the JBoss native connector files and this is currently not supported. Additionally, there's no option to specify the Service name when configuring the JBoss server during the configuration steps. 
+
+If you are using JBoss AS 7.1 or JBoss EAP 6.1.0 or 6.2.0 or 6.3.0, then you will need the to use the latest patch first, [https://developer.ibm.com/answers/questions/208313/how-do-i-download-the-new-itcam-for-j2ee-711-la-if.html]then run the standalone.bat (or domain.bat) program from the command-line after successful configuration. 
+
+Note: If you have a Tomcat server, then you will be able to use that server in a Service, the technote is here. [http://www.ibm.com/support/docview.wss?uid=swg21961542]
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ ITCAM for J2EE

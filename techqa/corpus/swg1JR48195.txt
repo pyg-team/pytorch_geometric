@@ -1,0 +1,231 @@
+Title: IBM JR48195: RUNNING BOOTSTRAPPROCESSSERVERDATA UTILITY IS NOT REQUIRED FOR ADVANCED-ONLY PROCESS SERVER KIND OF DEPLOYMENT ENV TOPOLOGY - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Version 8.5.0 Fix Pack 1 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24035702]
+Version 8.5 Refresh Pack 5 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24037683]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  In Business Process Manager v 8.5 , once the customer
+   configures a "Advanced-Only Process Server " IBM BPM Deployment
+   Environment Type and creates the ND environment by deferring
+   the database configuration (by unchecking the create tables
+   option in the db configuration panel) , the customer is
+   directed to run the steps outlined in the "Deferred
+   Configuration" panel :
+   
+   Admin console > Servers > Deployment Environments > [DE_Name ]
+   > Deferred Configuration [seen under "Additional Properties"
+   section in this panel]
+   
+   For an Advanced-Only Process Server BPM Deployment Environment
+   the "Deferrred Configuration" panel suggests the customer to
+   run the "bootstrapProcessServerData" script as shown below :
+   
+   "Run the bootstrapProcessServerData utility from the command
+   line. The utility is found in the Deployment manager profile
+   directory : BPM_Installation_root/profiles/Dmgr_name/bin. More
+   information, please visit IBM Business Process Manager
+   Information Center. "
+   
+   
+   And if the customer runs the bootstrapProcessServerData script
+   as per the suggestion, the customer will see the following err
+   :
+   
+   
+   
+   -----------
+   
+   
+   WASX7357I: By request, this scripting client is not connected
+   to any
+   server process. Certain configuration and application
+   operations will
+   be available in local mode.
+   java.lang.NullPointerException
+           at
+   com.ibm.bpm.bootstrap.BootstrapProcessServerDataHelper.
+   determineClusterMember(BootstrapProcessServerDataHelper.java:828
+   )
+           at
+   com.ibm.bpm.bootstrap.BootstrapProcessServerDataHelper.init
+   (BootstrapProcessServerDataHelper.java:135)
+           at
+   com.ibm.bpm.bootstrap.BootstrapProcessServerDataHelper.
+   bootstrapData(BootstrapProcessServerDataHelper.java:213)
+           at com.ibm.bpm.bootstrap.BootstrapHelper.execute
+   
+   
+   
+   -------
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  -----
+   For a "Advanced-only Process Server" BPM Development
+   environment the user need not run the
+   bootstrapProcessServerData script. The user can skip the
+   bootstrapProcessServerData script and execute the rest of steps
+   suggested in the Admin console > Servers > Deployment
+   Environments > [DE_Name ]> Deferred Configuration  panel.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  IBM BPM V8.5 Advanced-Only Process Server   *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: The deployment environment type is      *
+   *                      not acknowledged; therefore, the        *
+   *                      wrong suggestion is given for the       *
+   *                      Advanced-Only Process Server            *
+   *                      deployment environment, which does      *
+   *                      not need to run                         *
+   *                      bootstrapProcessServerData utility in   *
+   *                      the deferred configuration step         *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   You are asked to run the bootstrapProcessServerData utility
+   from the command line after you create an Advanced-Only
+   Process Server deployment environment and database
+   configuration is delayed; however, the
+   bootstrapProcessServerData utility is not appropriate for the
+   Advanced-Only Process Server deployment environment to run
+   and, therefore, you will get the following error:
+   WASX7357I: By request, this scripting client is not connected
+   to any server process. Certain configuration and application
+   operations will be available in local mode.
+   java.lang.NullPointerException
+   at
+   com.ibm.bpm.bootstrap.BootstrapProcessServerDataHelper.
+   determineClusterMember(BootstrapProcessServerDataHelper.java:828
+   )
+   at
+   com.ibm.bpm.bootstrap.BootstrapProcessServerDataHelper.init
+   (BootstrapProcessServerDataHelper.java:135)
+   at
+   com.ibm.bpm.bootstrap.BootstrapProcessServerDataHelper.
+   bootstrapData(BootstrapProcessServerDataHelper.java:213)
+   at com.ibm.bpm.bootstrap.BootstrapHelper.execute
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A fix for IBM BPM V8.5 is available so that no message is
+   shown in Advanced-only cases.
+   
+   On Fix Central (http://www.ibm.com/support/fixcentral), search
+   for JR48195:
+   
+   1. Select the product group, product, installed version, and
+   platform, and click Continue.
+   2. Select APAR or SPR, enter JR48195, and click Continue.
+   
+   When downloading fix packages, ensure that you also download
+   the readme file for each fix. Review each readme file for
+   additional installation instructions and information about the
+   fix.
+   
+   After you apply the fix, restart the Deployment Manager.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR48195
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM ADVANCED
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9400
+   
+   
+ * REPORTED RELEASE
+   850
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-10-23
+   
+   
+ * CLOSED DATE
+   2014-01-16
+   
+   
+ * LAST MODIFIED DATE
+   2014-01-16
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   BPM ADVANCED
+   
+   
+ * FIXED COMPONENT ID
+   5725C9400
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R800 PSY
+   UP

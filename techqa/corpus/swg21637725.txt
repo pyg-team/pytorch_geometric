@@ -1,0 +1,20 @@
+Title: IBM Detailed System Requirements for ITCAM Agent for DataPower - United States
+
+Text:
+CAMDPALL CAMDPENV Detailed Requirement System Agent Data Power "Agent for Data Power" Software Hardware BN TECHNOTE (FAQ)
+
+QUESTION
+ The supported version of Operating Systems and Data Power appliances (for ITCAM Agent for Data Power) 
+
+ANSWER
+ 
+
+ * Supported Operating Systems and Supported versions of WebSphere DataPower Appliance - ITCAM Agent for Data Power Version Link to the documentation Version 7.1 http://publib.boulder.ibm.com/infocenter/tivihelp/v24r1/index.jsp?topic=%2Fcom.ibm.itcama.doc_7.1%2Fprerequisites%2Fitcamfapps71_reqs.htm [http://publib.boulder.ibm.com/infocenter/tivihelp/v24r1/index.jsp?topic=%2Fcom.ibm.itcama.doc_7.1%2Fprerequisites%2Fitcamfapps71_reqs.htm] 
+   
+   note: Click on the tab "DataPower Monitoring Agent" to access the info. Version 6.3 
+   (EXPIRED, Not in support) http://publib.boulder.ibm.com/infocenter/tivihelp/v24r1/index.jsp?topic=%2Fcom.ibm.itcamsoa.doc_6.2.2%2Frequirements.htm&path=3_7_6_0 [http://publib.boulder.ibm.com/infocenter/tivihelp/v24r1/index.jsp?topic=%2Fcom.ibm.itcamsoa.doc_6.2.2%2Frequirements.htm&path=3_7_6_0] 
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ ITCAM for SOA Platform ITCAM for Data Power

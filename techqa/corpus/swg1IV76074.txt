@@ -1,0 +1,174 @@
+Title: IBM IV76074: REDUNDANT ALERTS SENT FROM SITUATIONS ON THE FILE CHANGE ATTRIBUTE GROUP - United States
+
+Text:
+  A FIX IS AVAILABLE
+IBM Tivoli Monitoring 6.3.0 Fix Pack 6 (6.3.0-TIV-ITM-FP0006) [http://www-01.ibm.com/support/docview.wss?uid=swg24040390]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Problem:
+   The Windows OS Agent can wrongly send the same alert twice when
+   evaluating  situations defined on the File Change attribute
+   group, if  the situation is defined with an associated reflex
+   action.
+   Note that in general it can happen to receive more than one
+   alert  after a single external modification to a file monitored
+   by a situation  on File Change, depending on the number of
+   notifications the agent  receives from the Windows operating
+   system, that may map the external  action on the file into a
+   set of internal changes.
+   
+   The bug that will be fixed by this APAR is instead a real
+   duplication  of alerts being sent for the very same kind of
+   file change.
+   
+   Affected Platforms / Versions:
+   This issue affects all of the Windows OS agent versions and
+   does not  depend on the Windows operating system version.
+   
+   Diagnostics:
+    RAS1 logs at (UNIT:KRA ALL)(UNIT:knt all) are needed and the
+    definitions of all the situations on the File Change group.
+   
+   Approved by:
+   
+   Paolo Baratti
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Duplicate alerts triggered by situations on the File Change
+   attribute group.
+   
+   
+   Situations on the File Change attribute group of the Monitoring
+   Agent for Windows OS may send duplicate alerts when the
+   condition evaluates true, if a reflex action is defined.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Code fixed to avoid sending duplicated alerts.
+   
+   The fix for this APAR will be contained in the following
+   maintenance packages:
+   
+   | FixPack    | 6.3.0-TIV-ITM-FP0006
+   | InterimFix | 6.2.2.2-TIV-ITM_WIN-IF0005
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV76074
+   
+   
+ * REPORTED COMPONENT NAME
+   ITM AGENT WINDO
+   
+   
+ * REPORTED COMPONENT ID
+   5724C040W
+   
+   
+ * REPORTED RELEASE
+   630
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-08-16
+   
+   
+ * CLOSED DATE
+   2015-09-29
+   
+   
+ * LAST MODIFIED DATE
+   2015-12-10
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ITM AGENT WINDO
+   
+   
+ * FIXED COMPONENT ID
+   5724C040W
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R622 PSY
+   UP
+   
+   
+ * R623 PSY
+   UP
+   
+   
+ * R630 PSY
+   UP
+   
+   
+ * R610 PSN
+   UP
+   
+   
+ * R620 PSN
+   UP
+   
+   
+ * R621 PSN
+   UP

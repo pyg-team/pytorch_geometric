@@ -1,0 +1,90 @@
+Title: IBM Existing DataType no longer visible through GUI client - United States
+
+Text:
+netcool; impact; netcool/impact; nci; data; type; types; datatype; datatypes; missing; vanish; vanished; gone; deleted; disappear; disappeared; it is an ex-datatype TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Error produced in netcool.log and netcool-errors.log:
+ERROR [TaskPaneServlet] Could not get DataTypes for DataSource: <DataSourceName> 
+
+SYMPTOM
+The DataType is not visible in GUI and the Client is unable to save any new DataTypes that are subsequently created.
+
+
+CAUSE
+Corruption of the existing DataType has occurred (potentially as a result of an ungracious shutdown during editing) and this means the ImpactServer GUI cannot load the corrupted .type file and this also prevents saving of new DataTypes.
+
+DIAGNOSING THE PROBLEM
+Examine the .type file of the DataType in question for any missing properties or values or incomplete lines.
+
+RESOLVING THE PROBLEM
+The DataTypes are corrupted and require a manual rebuild to resolve. This must be performed while the ImpactServer or the Cluster (if there is more than one ImpactServer) is shutdown.
+
+
+
+
+
+The DataType .type files reside in the directory:
+
+
+
+ * 
+
+
+Comparison with similar DataType .type files greatly aids this operation. Use default, zero or blank values where possible in the manual reconstruction phase - these can be altered later through the GUI when the DataType is visible and editable in the configuration client. 
+
+The most troublesome property is USERPARAMETERS as this lists the target table fields and properties/parameters. Rather than trying to list all the fields in the manual reconstruction phase, it is far more efficient to list just one field (and properties/parameters) and, again, the full field list can be rediscovered later through the GUI when the DataType is visible and editable in the configuration client. 
+
+An example "bare bones" Impact 6 ObjectServer DataType .type file might look like: 
+
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * [n]
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * {'Identifier', LONG_STRING, 'Identifier', 'Identifier', 'Identifier', 'true', 'false', '', '', FALSE, FALSE}
+ * 
+
+
+Where [DataTypeName] is the name of the DataType and DATASOURCENUM= [n] is the identifying number of the DataSource the DataType is linked to - this is available from the datasourcelist file in $NCHOME/impact/etc. The above example lists only one field in the USERPARAMETERS property and this field is then also used in the DISPLAYNAMEFIELD and KEYFIELDS.1 properties. 
+
+A consideration regarding the USERPARAMETERS property is covered in the TechNote "DataType incorrect on Secondary" [link below] for correct replication of the property (and thereby the DataType itself) when the value is particularly long. 
+RELATED INFORMATION
+ DataType incorrect on Secondary [http://www-01.ibm.com/support/docview.wss?uid=swg21598417]

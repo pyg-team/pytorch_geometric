@@ -1,0 +1,42 @@
+Title: IBM After upgrading from DB2 Content Manager V8.2 to DB2 Content Manager V8.3 Fix Pack 4, I get an error to rebind LSDB for certain packages - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ You upgraded from DB2® Content Manager V8.2 to DB2 Content Manager V8.3 Fix Pack 4, and you receive error messages that some packages did not succeed to rebind.
+
+Examples of the errors messages:
+
+Package 'ICMADMIN.ICM0VG02' of database 'CMLS01' did not succeed
+to rebind. UniqueID = 334178744E524B56 
+sqlcode = -204; sqlerrmc = ICMADMIN; sqlrrp = SQLNQ1FB. 
+SQL0204N "ICMADMIN.ICMUT01132001" is an undefined name. 
+SQLSTATE=42704 
+
+Package 'ICMADMIN.ICM0VH02' of database 'CMLS01' did not succeed
+to rebind. UniqueID = 704179744E524B56 
+sqlcode = -204; sqlerrmc = ICMADMIN; sqlrrp = SQLNQ1FB. 
+SQL0204N "ICMADMIN.ICMUT01133001" is an undefined name. 
+SQLSTATE=42704 
+
+CAUSE
+The error is caused by the fact that the tables used by these packages have been deleted. This is because these packages belong to DB2 Content Manager V8.2. In DB2 Content Manager V8.3, external packages (access modules) such as these are no longer used and can be discarded. You can ignore this error message. 
+APAR IO06211 has been opened so that DB2 Content Manager V8.2 access modules will be removed when upgrading to future fix packs and releases of DB2 Content Manager V8.3. 
+
+
+ANSWER
+If the failed packages start with "ICM0" or "ICM1", they are DB2 Content Manager V8.2 old access modules. To avoid the error, complete the following steps: 
+
+ 
+
+ 1. Connect to <LSDB Name> user <ICMADMIN> using <password for ICMADMIN> 
+ 2. Select pkgname from syscat.packages 
+    where ( pkgname like 'ICM0%' or pkgname like 'ICM1%') and pkgschema = 'ICMADMIN'
+    
+ 3. For each package name returned, issue the following command:
+    
+    drop package ICMADMIN.<package name>
+
+
+Note that ICMADMIN is the DB2 Content Manager library server administrator ID.

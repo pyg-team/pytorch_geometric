@@ -1,0 +1,31 @@
+Title: IBM Files for one or more tenants might not be ingested by IBM Water Operations for Waternamics - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Data ingestion files for one or more tenants might not be processed by IBM Water Operations for Waternamics. Instead, the files remain indefinitely in the input directory on the web server. 
+
+CAUSE
+Each IBM Integration Bus execution group that runs on the analytics server opens an ssh session with the web server. The execution group uses the ssh session to monitor for new input files and to transfer new input files from the web server to the analytics server. By default, Red Hat Enterprise Linux™ (RHEL) is configured to allow a maximum of 10 open ssh sessions. If more than 10 execution groups are defined on the analytics server, then one or more of these execution groups cannot open an ssh session and so cannot process input files. 
+
+DIAGNOSING THE PROBLEM
+Examine the contents of the /var/log/messages file on the analytics server for recent Secure File Transfer Protocol (SFTP) related error messages. For example, 
+
+ Oct 28 22:38:45 exmpvm1 IIB[8338]: IBM Integration Bus v10003 (WIH_BROKER.VDS_COBAS) [Thread 9516] (Msg 1/1) BIP3380E: File node 'WO File Input' in message flow 'WOProcessing' could not connect to remote 'SFTP' server
+
+
+RESOLVING THE PROBLEM
+To resolve the problem, change the configured maximum open ssh sessions on the web server and the analytics server to a number larger than the number of execution groups. For example, complete the following steps to increase the maximum open ssh session from 10 to 20: 
+
+ 1. Log on to the web server as aroot user. 
+ 2. Open the /etc/ssh/sshd_config file. 
+ 3. Replace the #MaxSessions 10 entry with MaxSessions 20 
+ 4. Replace the #MaxStartups 10:30:100 entry with MaxStartups 20:30:100 
+ 5. Save the updated file. 
+ 6. Enter the following command to restart the sshd daemon:
+    service sshd restart 
+ 7. Repeat steps 1-6 on the analytics server. 
+ 8. Enter the following command as a root user on the analytics server to restart WebSphere MQ:
+    su - mqmconn -c "source /opt/IBM/IIB10/server/bin/mqsiprofile; 
+    mqsistop WIH_BROKER -i; mqsistart WIH_BROKER"

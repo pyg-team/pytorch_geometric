@@ -1,0 +1,11 @@
+Title: IBM Integrate the FEA module into RiskWatch. - United States
+
+Text:
+What is this document:
+This document has the abstract of a technical article that is available to authorized users after you have logged on. Please use the link to actual document below to access the full document. You will be asked to log on if you are not already logged in. After log in, if you do not have the right authorization for this document, there will be instructions on what to do next.
+
+abstract text
+How do I integrate the FEA module into RiskWatch? I also receive the following error as well, how can I resolve it? ERROR -1: : /opt/AlgoSuite/rw-v4.6.1/lib/feaenergy20.so loading error liberg.so: cannot open shared object file: No such file or directory
+
+link to actual document
+http://www.ibm.com/support/docview.wss?uid=swg21699946 [http://www.ibm.com/support/docview.wss?uid=swg21699946]

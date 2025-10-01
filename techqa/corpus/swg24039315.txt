@@ -1,0 +1,130 @@
+Title: IBM Security Directory Server, Version 6.4 – Download Document (Linux) - United States
+
+Text:
+ DOWNLOADABLE FILES
+
+ABSTRACT
+ This document describes how to download IBM Security Directory Server, Version 6.4 using the Passport Advantage Online website for each supported operating system. 
+
+DOWNLOAD DESCRIPTION
+
+
+IBM Security Directory Server is the IBM implementation of Lightweight Directory Access Protocol (LDAP) for the following supported operating systems. To obtain download information about specific operating system, click the operating system tab that you want.
+
+You can download IBM Security Directory Server, Version 6.4 from the IBM Passport Advantage Online [http://www-01.ibm.com/software/howtobuy/passportadvantage/pao_customers.htm] website.
+
+ 1. Download the parts that you need for your operating system, which are described in the tabbed sections of this document.
+ 2. Do one of the following:  * If the .iso part is available for your platform, download the .iso part and use the file to create an installation DVD.
+     * Download the .zip or .tar part for your platform and unpack the part into a temporary directory on your system.
+    
+    
+ 3. Install the product on your system using the information in the links under Installation Instructions of this document.
+ 4. Install the premium feature activation [http://www.ibm.com/support/knowledgecenter/SSVJJU_6.4.0/com.ibm.IBMDS.doc_6.4/ds_ig_featureentitlement.html] package, which enables the use of the premium features in IBM Security Directory Server, Version 6.4
+
+Note:The Web Administration Tool of IBM Security Directory Server needs to be deployed in WebSphere Application Server. However, WebSphere Application Server is not provided with the IBM Security Directory Server installation package. You must download WebSphere Application Server, Version 8.5.5 from Passport Advantage and install it separately. For more information, see theIBM Knowledge Center for WebSphere Application Server [http://www.ibm.com/support/knowledgecenter/SSEQTP/mapfiles/product_welcome_was.html]. 
+
+To access a wide variety of technical resources, see the IBM Knowledge Center for IBM Security Directory Server, Version 6.4 [http://www.ibm.com/support/knowledgecenter/SSVJJU_6.4.0/com.ibm.IBMDS.doc_6.4/welcome.html].
+
+TAB NAVIGATION
+ * AIX [http://www-01.ibm.com/support/docview.wss?uid=swg24039313]
+ * Linux [http://www-01.ibm.com/support/docview.wss?uid=swg24039315]
+ * Solaris [http://www-01.ibm.com/support/docview.wss?uid=swg24039316]
+ * Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24039314]
+
+IBM Security Directory Server, Version 6.4 consists of the eAssembly packages that contain the e-images required to run the offering on a supported operating system. Each eAssembly package contains several parts. The following table provides details about each part.
+
+Parts for server (including client) for Linux i/pSeries
+
+The following eAssembly contains the parts for Linux i/pSeries: 
+
+CRV3KML: IBM Security Directory Server, Version 6.4 for Linux i/pSeries eAssembly for server (includes client). 
+
+Part number Description CN47HML IBM Security Directory Server, Version 6.4 for Linux i/pSeries Includes full server, proxy server, and client.
+
+File name: sds64-linux-ppc64-base.tar
+
+CN47IML IBM Security Directory Server, Version 6.4 for Linux i/pSeries Includes the following components: 
+
+IBM Security Directory Server — full server, proxy server, and client IBM Installation Manager, Version 1.8.0 IBM SDK Java™ Technology Edition, Version 6 SR 16 DB2, Version 10.5.0.4 GSKit, Version 8.0.50.34 
+
+File name: sds64-linux-ppc64.iso
+
+Parts for server (including client) for Linux zSeries (64-bit)
+
+The following eAssembly contains the parts for Linux zSeries (64-bit): 
+
+CRV3LML: IBM Security Directory Server, Version 6.4 for Linux zSeries (64-bit) eAssembly for server (includes client).
+
+Part number Description CN47JML IBM Security Directory Server, Version 6.4 for Linux zSeries (64-bit). Includes full server, proxy server, and client.
+
+File name: sds64-linux-s390x-base.tar
+
+CN47KML IBM Security Directory Server, Version 6.4 for Linux zSeries (64-bit) Includes the following components: 
+
+IBM Security Directory Server — full server, proxy server, and client IBM Installation Manager, Version 1.8.0 IBM SDK Java™ Technology Edition, Version 6 SR 16 DB2, Version 10.5.0.4 GSKit, Version 8.0.50.34
+
+File name: sds64-linux-s390x.iso
+
+Parts for server (including client) for Linux x86-64 (64-bit)
+
+The following eAssembly contains the parts for Linux x86-64 (64-bit): 
+
+CRV3MML: IBM Security Directory Server, Version 6.4 for Linux x86-64 (64-bit) eAssembly for server (includes client).
+
+Part number Description CN47LML IBM Security Directory Server, Version 6.4 for Linux x86-64 (64-bit). Includes full server, proxy server, and client.
+
+File name: sds64-linux-x86-64-base.tar
+
+CN47MML IBM Security Directory Server, Version 6.4 for Linux x86-64 (64-bit) Includes the following components: 
+
+IBM Security Directory Server — full server, proxy server, and client IBM Installation Manager, Version 1.8.0 IBM SDK Java™ Technology Edition, Version 6 SR 16 DB2, Version 10.5.0.4 GSKit, Version 8.0.50.34 
+
+File name: sds64-linux-x86-64.iso
+
+Client-only parts for Linux i/pSeries, Linux zSeries, Linux x86-64 (64-bit) and Linux x86 (32-bit)
+
+The following eAssembly contains the client-only part for supported varieties of Linux:
+
+CRV3QML: IBM Security Directory Server, Version 6.4 eAssembly for client only.
+
+Part number Description CN47WML IBM Security Directory Server, Version 6.4 for Linux i/pSeries — Client-Only File name: sds64-linux-ppc64-client.tar
+
+CN47XML IBM Security Directory Server, Version 6.4 for Linux zSeries — Client-Only File name: sds64-linux-s390x-client.tar
+
+CN47UML IBM Security Directory Server, Version 6.4 for Linux x86-64 (64-bit) — Client-Only File name: sds64-linux-x86-64-client.tar
+
+CN47VML IBM Security Directory Server, Version 6.4 for Linux x86 (32-bit) — Client-Only File name: sds64-linux-x86-client.tar
+
+IBM WebSphere Application Server, Version 8.5.5 Base (multiplatform and multilingual)
+
+The following eAssembly contains the parts for IBM WebSphere Application Server, Version 8.5.5 base :
+
+CRV3RML: IBM Websphere Application Server v8.5.5 Base for IBM Security Directory Server, Version 6.4, Multiplatform, Multilingual, eAssembly.
+
+Part number Description CIK1QML IBM WebSphere Application Server V8.5.5 (1 of 3) for Multiplatform Multilingual CIK1RML IBM WebSphere Application Server V8.5.5 (2 of 3) for Multiplatform Multilingual CIK1SML IBM WebSphere Application Server V8.5.5 (3 of 3) for Multiplatform Multilingual CIK1VML IBM WebSphere Application Server V8.5.5 Supplements (1 of 3) for Multiplatform Multilingual CIK1WML IBM WebSphere Application Server V8.5.5 Supplements (2 of 3) for Multiplatform Multilingual CIK1XML IBM WebSphere Application Server V8.5.5 Supplements (3 of 3) for Multiplatform Multilingual CIK1YML IBM Installation Manager V1.6.2 for AIX PowerPC, Multilingual (required to install WebSphere Application Server V8.5.5) CIK20ML IBM Installation Manager V1.6.2 for Linux PowerPC, Multilingual (required to install WebSphere Application Server V8.5.5) CIK21ML IBM Installation Manager V1.6.2 for Linux s390, Multilingual (required to install WebSphere Application Server V8.5.5) CIK23ML IBM Installation Manager V1.6.2 for IBM i, Multilingual (required to install WebSphere Application Server V8.5.5) CIK24ML IBM Installation Manager V1.6.2 for Solaris SPARC, Multilingual (required to install WebSphere Application Server V8.5.5) CIL0DML IBM Installation Manager V1.6.2 for Windows x86_64, Multilingual (required to install WebSphere Application Server V8.5.5) CIK2GML IBM Installation Manager V1.6.2 for Linux x86_64, Multilingual (required to install WebSphere Application Server V8.5.5) IBM Security Directory Server, Version 6.4 Premium activation package for all supported operating systems
+
+The following eAssembly contains the premium activation package that is required to enable the premium features in IBM Security Directory Server, Version 6.4:
+
+CRV3IML: IBM Security Directory Server, Version 6.4 Premium Feature Activation Package for all operating systems
+
+PREREQUISITES
+System Requirements [http://www.ibm.com/support/knowledgecenter/SSVJJU_6.4.0/com.ibm.IBMDS.doc_6.4/c_po_SDS_sysreq.html] 
+
+Installation prerequisites [http://www.ibm.com/support/knowledgecenter/SSVJJU_6.4.0/com.ibm.IBMDS.doc_6.4/c_ig_InstallationPrerequisites.html]
+
+INSTALLATION INSTRUCTIONS
+To get started with the installation, see the IBM Security Directory Server, Version 6.4 Quick Start Guide [http://www.ibm.com/support/knowledgecenter/SSVJJU_6.4.0/com.ibm.IBMDS.doc_6.4/ds_qsg.pdf], which is also available in the eAssembly.
+
+For more information about installation, see the Installing and configuring [http://www.ibm.com/support/knowledgecenter/SSVJJU_6.4.0/com.ibm.IBMDS.doc_6.4/ds_ig_home.html] section of the IBM Knowledge Center for IBM Security Directory Server, Version 6.4.
+
+
+
+
+
+
+TECHNICAL SUPPORT
+ 
+
+Passport Advantage support [http://www.ibm.com/software/howtobuy/passportadvantage/paocustomer/docs/en_US/ecare.html]
+
+IBM Security Directory Server support [http://www.ibm.com/software/sysmgmt/products/support/IBMDirectoryServer.html]

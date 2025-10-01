@@ -1,0 +1,38 @@
+Title: IBM Information needed for IBM Mantra support - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Before requesting support, what information should I gather about my IBM Mantra issue? 
+
+ANSWER
+When you contact IBM Support for assistance, be prepared to provide a concise problem description and various system files to assist in debugging. For information on using SCP to move files off of the IBM Mantra appliance, refer to "How do I SCP files off of the IBM Mantra appliance?"
+You may be requested to provide one or more of the following items: 
+
+1.Message logs, including the current active log and some number of archived logs. Message logs can be found in/var/log. Refer to "How do I retrieve a message log? [https://sharepoint.netezza.com/sites/cskb/Pages/NZ331913.aspx]" 
+
+2.The latest health check, which provides a collection of performance information about the IBM Mantra appliance. Health checks are located in /var/opt/tms/sysdumps. Refer to "How do I create an IBM Mantra health check?" [https://sharepoint.netezza.com/sites/cskb/Pages/NZ337016.aspx] 
+
+3.The current IBM Mantra appliance software version. You can determine this by running theshow versioncommand from the command line.
+
+host> show versionProduct name: IBM Mantra Product release: 7.5 Build ID: #1-dev Build date: 2010-02-25 04:24:25 Target arch: i386 Built by: root@eng.netezza.com Actual tizordb: 18.3 Expected tizordb: 18.3 CLI command set: 137.0.0 
+
+Uptime: 16h 23m 1.328s 
+
+Product model: tz1850 Host ID: 2ac20a424924 System memory: 242 MB used / 703 MB free / 945 MB total Swap: 0 MB used / 2055 MB free / 2055 MB total Number of CPUs: 4 CPU load averages: 0.00 / 0.00 / 0.00
+
+
+
+
+4. The last snapshot filecreated on the appliance. Snapshot files contain system events, alarm events, and other information that is useful to Technical Support for debugging. They can be found in /var/opt/tms/snapshots. Refer to the "Mantra System Events" table in the Netezza Mantra Administration Guidefor a complete list of Mantra events. 
+
+RELATED INFORMATION
+ How do I retrieve the message log? [http://www.ibm.com/support/docview.wss?uid=swg21573400]
+How do I create a Mantra health check? [http://www.ibm.com/support/docview.wss?uid=swg21573405]
+
+
+
+
+HISTORICAL NUMBER
+ NZ737661

@@ -1,0 +1,165 @@
+Title: IBM SE36370: MQM400 Inconsistencies noticed for the SSLPEER attribute of     CHGMQMCHL - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  SSL Peer name (SSLPEER) parameter of the CHGMQMCHL command
+   sometimes shows additional unwanted characters at the end of
+   the specified string. However the DSPMQMCHL will show the
+   correct values specified for SSL Peer name (SSLPEER).
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Use MQSC ALTER command to change the channel and add the
+   SSLPEER data
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  SSL Peer name (SSLPEER) parameter of the CHGMQMCHL command
+   sometimes shows additional unwanted characters at the end of
+   the specified string. However the DSPMQMCHL will show the
+   correct values specified for SSL Peer name (SSLPEER).
+   
+   Users Affected: All WMQ users on System i platform using SSL
+   and specifying the value for SSLPEER.
+   
+   Platforms Affected: iSeries
+   
+   The SSL peer name was not null terminated and buffer was not
+   initialized properly.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Code changes were carried out to initialize the buffer and to
+   null  terminate the string.
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+                      v6.0
+   Platform           Fix Pack 6.0.2.4
+   --------           --------------------
+   iSeries            SI31813
+   
+                      v7.0
+   Platform           Fix Pack 7.0.0.1
+   --------           --------------------
+   iSeries            tbc
+   
+   The latest available maintenance can be obtained from
+   'Websphere MQ Recommended Fixes'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037]
+   
+   If the maintenance level is not yet available, information on
+   its planned availability can be found in 'Websphere MQ
+   Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   SE36370
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ ISERIES V7
+   
+   
+ * REPORTED COMPONENT ID
+   5724H7226
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-12-17
+   
+   
+ * CLOSED DATE
+   2008-12-17
+   
+   
+ * LAST MODIFIED DATE
+   2009-02-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    SE30379 [http://www-01.ibm.com/support/docview.wss?uid=swg1SE30379]
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  RCHMGR
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ ISERIES V7
+   
+   
+ * FIXED COMPONENT ID
+   5724H7226
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R700 PSY SI33784
+   UP I

@@ -1,0 +1,135 @@
+Title: IBM PI97408: GENERATION OF MARSHALLER JAR FOR RULE PROJECT WITH COBOL XOM FAILS - United States
+
+Text:
+z/os SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Generation of marshaller jar for rule project with COBOL XOM
+   fails when XOM path contains a Java XOM which depends on the
+   COBOL XOM.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  1. create a new rule project
+   2. declare the COBOL XOM in this new rule project
+   3. remove the COBOL XOM from the original rule project
+   4. create a dependency of the original rule project to the
+   new rule project
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  The  generation of marshaller jar for rule project with cobol
+   xom fails
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The code was fixed.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI97408
+   
+   
+ * REPORTED COMPONENT NAME
+   WS ODM FOR Z/OS
+   
+   
+ * REPORTED COMPONENT ID
+   5655Y1700
+   
+   
+ * REPORTED RELEASE
+   800
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2018-05-02
+   
+   
+ * CLOSED DATE
+   2018-05-21
+   
+   
+ * LAST MODIFIED DATE
+   2018-05-21
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  999
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WS ODM FOR Z/OS
+   
+   
+ * FIXED COMPONENT ID
+   5655Y1700
+   
+   
+
+APPLICABLE COMPONENT LEVELS

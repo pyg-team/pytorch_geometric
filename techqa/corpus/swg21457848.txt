@@ -1,0 +1,58 @@
+Title: IBM Product fresh install fails during TIP install step - United States
+
+Text:
+TIPL2; TIPL2INST; underscore; failure; failed; fail; installation; Tivoli Integrated Portal; WCMD0003E; hostname TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Products which include Tivoli Integrated Portal (TIP) fail to install when the target host has an underscore character in the hostname 
+
+SYMPTOM
+The product installation fails during the TIP install step with the following error: 
+
+step with the following message: 
+
+java.io.FileNotFoundException: java.io.FileNotFoundException: C:\Program 
+
+Files\IBM\Tivoli\tip\bin\ltpakeys (The system cannot find the file 
+
+specified.) 
+
+
+CAUSE
+The Websphere profile creation step does not support host names with an underscore character.
+
+
+DIAGNOSING THE PROBLEM
+The IA log (IA-TIPInstall-00.log) contained the following error:
+
+
+Warning: Could not find file C:\Program Files\IBM\Tivoli\tip\profiles\TIPProfile\installedApps\TIPCell\iAuthz.ear\iAuthzEJB.jar to copy.
+
+
+Typically, after a successful deployment, the ear should be located in the InstalledApps directory. Absent another problem with the installer, the iAuthz.ear simply did not get deployed successfully. Examining the deployiAuthzear.out found in <tip_home>/logs directory reveals the the following message:
+
+
+WCMD0003E: The specified profile "TIPProfile" cannot be found. If a default profile exists and you wish to use it, the -profileName parameter is not required
+
+
+To determine what problem may have occurred with the TIPProfile creation, check the manageprofiles logs to see if something went wrong there. Looking in <tip_home>/logs/manageprofiles/TIPProfile_create.log, We see errors related to the host name:
+
+
+Validation Error for hostName: {0} is not a properly formed host name. 
+
+And then ending with:
+
+
+<message>Returning with return code: INSTCONFFAILED</message>
+
+
+RESOLVING THE PROBLEM
+To address the issue, you must configure the server with a new host name that includes no "underscore" characters. More information about the underscore issue can be found in the following technote publication: 
+
+http://www-01.ibm.com/support/docview.wss?uid=swg21338432 [http://www-01.ibm.com/support/docview.wss?uid=swg21338432] 
+
+
+
+
+In addition to addressing the host name issue, some cleanup of the failed installation may be required before retrying the product installation. Review the product installation guide, release notes, and technical notes published in the IBM Support Portal for the product in question. The IBM Support Portal is accessible from the following link:
+IBM Support Portal [http://www-947.ibm.com/support/entry/portal/Overview/Software/Software_support_%28general%29?cm_re=masthead-_-supdl-_-sbp-software]

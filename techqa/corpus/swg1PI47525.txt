@@ -1,0 +1,130 @@
+Title: IBM PI47525: RUNNING A PROMOTED JOB FAILS IF A RESOURCE ALREADY EXISTS WITH A DIFFERENT ID BUT SAME NAME - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  I have a job on System 1. I have promoted it on System 2, which
+   is configured for 'Recommended', meaning 'Promote resource
+   definitions where no identifier or name conflicts exist in the
+   target repository.'
+   
+   When I run the job on System 2, it fails with error:
+   
+   java.util.MissingResourceException: Can't find resource for
+   bundle java.
+   util.PropertyResourceBundle, key
+   39000037308173520000014eca05dae23673
+   
+   This happens if a Server Definition or an ODBC credential has
+   the same name on source & destination systems. In the case of
+   the ODBC credential, the job will show as being in a a
+   conflicting state from the start. (which usually occurs when the
+   user modifies a job step without saving)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Point to the resource definition with the same name on the
+   destination system, instead of the promoted resource definition.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * All                                                          *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * See above                                                    *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Upgrade to the latest version of Modeler                     *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI47525
+   
+   
+ * REPORTED COMPONENT NAME
+   SPSS MODELER SV
+   
+   
+ * REPORTED COMPONENT ID
+   5725A65MS
+   
+   
+ * REPORTED RELEASE
+   G00
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2015-08-25
+   
+   
+ * CLOSED DATE
+   2016-12-27
+   
+   
+ * LAST MODIFIED DATE
+   2016-12-27
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * RG00 PSN
+   UP

@@ -1,0 +1,128 @@
+Title: IBM IT12763: PUREAPPLICATION SYSTEM: PURESYSTEMS MANAGER "CWZIP9604W: SERVICE60 FAILED" EVENT OCCURS AND DOES NOT RECOVER - United States
+
+Text:
+  A FIX IS AVAILABLE
+IBM PureApplication System Version 2.2.0.0 [http://www-01.ibm.com/support/docview.wss?uid=swg24041903]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  If the user removes the external IBM Installation Manager
+   Repository and does not remove the corresponding URL from the
+   vsys.im plugin, the PureSystems Manager service60 will crash
+   and the system becomes unusable.
+   
+   The event generated is:
+   CWZIP9604W: Service60 failed. The high availability component
+   will attempt to recover the service.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  The code has been updated to check for the proxy host and
+   check that the external repository is available before
+   proceeding with Installation Manager operations.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A code fix is being provided in PureApplication System
+   version 2.1.2.1 in the Foundation Pattern Type version
+   2.1.5.2 and PureApplication System version 2.2.0.0
+   in the Foundation Pattern Type version 2.1.6.0.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT12763
+   
+   
+ * REPORTED COMPONENT NAME
+   PAPP SYS 8382 I
+   
+   
+ * REPORTED COMPONENT ID
+   5725G3200
+   
+   
+ * REPORTED RELEASE
+   211
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2015-12-14
+   
+   
+ * CLOSED DATE
+   2016-02-16
+   
+   
+ * LAST MODIFIED DATE
+   2016-02-24
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   PAPP SYS 8382 I
+   
+   
+ * FIXED COMPONENT ID
+   5725G3200
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R220 PSY
+   UP

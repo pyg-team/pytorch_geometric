@@ -1,0 +1,52 @@
+Title: IBM Chapter 6:  Reviewing resources available from IBM to help you use our product - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Chapter 6 of Setting up your IBM WebSphere DataPower Appliance 
+
+ANSWER
+This technote is one of a series of technotes arranged in chapter format to provide information on setting up your IBM WebSphere DataPower SOA Appliance Machine Type 9235, 7199 and 7198. 
+Here are the links to the chapters: 
+
+ 1. Introduction to your WebSphere DataPower SOA Appliance Machine Type 9235, 7199, and 7198 [http://www.ibm.com/support/docview.wss?uid=swg21468463] 
+ 2. Planning for installation of your IBM WebSphere DataPower SOA Appliance MT/9235, 7199 and 7198 [http://www.ibm.com/support/docview.wss?uid=swg21468883] 
+ 3. Planning worksheet for setting up your IBM WebSphere DataPower Appliance MT/9235, 7199, and 7198 [http://www.ibm.com/support/docview.wss?uid=swg21468885] 
+ 4. Placing in the Rack, initial configuration of your IBM WebSphere DataPower SOA Appliance M/T 9235 [http://www.ibm.com/support/docview.wss?uid=swg21468886] 
+ 5. More on the initial configuration (startup command, manual configuration, and upgrading firmware (first time upgrade)) for your IBM WebSphere DataPower SOA Appliance M/T 9235, 7199 and 7198 [http://www.ibm.com/support/docview.wss?uid=swg21469023] 
+ 6. Reviewing resources available from IBM to help you use your IBM WebSphere DataPower SOA Appliance 
+ 7. Operations Planning [http://www.ibm.com/support/docview.wss?uid=swg21469163] 
+ 8. Working with IBM Support to solve a problem when using your IBM WebSphere DataPower SOA Appliance. [http://www.ibm.com/support/docview.wss?uid=swg21469164] 
+
+
+Chapter 6: Reviewing resources available from IBM to help you use our product 
+
+At this point you have the appliance in the cabinet, configured on your network, and the firmware upgraded to prevent critical problems. 
+
+IBM WebSphere DataPower Information Center: 
+
+You will want to review the IBM WebSphere DataPower SOA Appliance Information Center. These information centers and other information can be found on the product library page. [http://www.ibm.com/software/integration/datapower/library/documentation]Select the Information Center link, then expand the section in the information center for the product you purchased. 
+
+
+Additional product books are available.  * IBM WebSphere DataPower Redbooks [http://www.redbooks.ibm.com/redbooks.nsf/searchsite?SearchView&query=datapower] 
+ * IBM WebSphere DataPower SOA Appliance Handbook [http://www.ibmpressbooks.com/bookstore/product.asp?isbn=0137148194] published by IBM Press is available from book retailers. 
+ * IBM Developer works [http://www.ibm.com/developerworks/] 
+
+Hint and tips  * Visit our IBM WebSphere DataPower Support site [http://www.ibm.com/software/integration/datapower/support/]. You will find links to DataPower Flashes and Technotes. 
+ * Listen to our WebSphere Technical Exchange [http://www.ibm.com/software/websphere/support/supp_tech.html]presentations on DataPower 
+ *  [http://www.ibm.com/support/docview.wss?uid=swg21285991]Ask a question on the developerWorks Answers Q&A forum [https://developer.ibm.com/answers/topics/datapower/]. Look for questions tagged with "DataPower" 
+
+Information from IBM Support  * Review our Critical updates for IBM WebSphere DataPower SOA Appliances [http://www.ibm.com/support/docview.wss?rs=2362&uid=swg21390112] to pro-actively prevent system outages 
+ * You can keep informed about the latest support information with My Notifications [https://www-947.ibm.com/account/userservices/jsp/login.jsp?persistPage=true&page=/systems/support/myview/subscription/css.wss/folders%3FmethodName%3DlistMyFolders&PD-REFERER=http://www-947.ibm.com/support/entry/portal/Overview/Software/WebSphere/WebSphere_DataPower_SOA_Appliances&error=] 
+ * Follow IBM WebSphere DataPower Support on Twitter [http://twitter.com/IBMDataPower]. Our team posts important news and links to new Technotes and flashes to keep you up-to-date on the latest technical information. 
+ * IBM WebSphere Electronic Support Tools and Resources Training [http://www.ibm.com/software/websphere/support/d2w.html] 
+ * Welcome to IBM WebSphere DataPower SOA Appliance Support [http://www.ibm.com/support/docview.wss?rs=2362&uid=swg21260903] 
+ * Contacting IBM WebSphere DataPower SOA Appliance Support [http://www.ibm.com/support/docview.wss?uid=swg21236322] 
+ * Supported firmware versions and recommended upgrade levels for IBM WebSphere DataPower SOA Appliances [http://www.ibm.com/support/docview.wss?uid=swg21237631] 
+ * IBM WebSphere DataPower Support Lifecycle [http://www.ibm.com/support/docview.wss?rs=2362&uid=swg21246298] 
+ * IBM Software Support Handbook [http://www14.software.ibm.com/webapp/set2/sas/f/handbook/home.html]
+
+
+
+Proceed to Chapter 7 Working with IBM support to solve a problem when using your IBM WebSphere DataPower SOA Appliance [http://www.ibm.com/support/docview.wss?uid=swg21469163]

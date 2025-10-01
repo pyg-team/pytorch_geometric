@@ -1,0 +1,63 @@
+Title: IBM GIS 4.3 - LDAP authentication (case-insensitive) does not work with GIS on SQL Server 2005, GIS post a failed logon - United States
+
+Text:
+STERLINGNFX TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ GIS 4.3 - LDAP authentication (case-insensitive) does not work with GIS on SQL Server 2005, GIS post a failed logon 
+
+SYMPTOM
+
+
+When a user tries to authenticate to LDAP through GIS, user receives an error suggesting that their username or password is incorrect, even though it is correct. What appears to be the problem is the casing on the username -- in LDAP are case-insensitive, while the userids defined in the GIS database are case-sensitive, so GIS will fail the logon if the typed userid is not the exact casing as the userid defined in GIS.
+
+Customer feels that all of the following usernames should work in GIS, but they don't: 
+MYGISID 
+mygisid 
+MyGISID 
+MyGisId 
+MygisiD
+
+From the Authentication.log, it does it appear that even though you have selected an External account (using LDAP for auth), the authentication is first looking up the userid against the GIS DB where the userid is case sensitive, and GIS fails the authentication as ‘User is not defined in GIS .’ 
+
+
+Error Message ‘User is not defined in GIS ’ 
+
+
+
+RESOLVING THE PROBLEM
+
+
+GIS Level 3 specifies that GIS is 'working as designed'. The casing of the GIS userid is totally depended upon if the Database is case sensitive or case insensitive. In regards to the DBs that are supported with the GIS product, MySQL is the only DB that is case insensitive, all of the other DBs; ie Oracle, MS SQL Server 2005, etc. are case sensitive. The collation that we have recommended in our GIS requirements doc is to have the SQL Server 2005 database case sensitive and that is how the database is working. There was no GIS code change for this issue, but the customer will submit an enhancement request to Product Management to request GIS userid to be case-insensitive.
+
+
+ 
+
+HISTORICAL NUMBER
+ NFX6748 
+
+PRODUCT ALIAS/SYNONYM
+ 
+
+Function Area
+
+
+External Userid - LDAP Authentication
+
+
+Escalation ID
+
+
+78075
+
+
+Fix ID
+
+
+QC196458
+
+
+Severity
+
+
+Normal

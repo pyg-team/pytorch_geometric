@@ -1,0 +1,71 @@
+Title: IBM Fix Pack 7.0.0.2 fails with 'license not found' - United States
+
+Text:
+license directory not found FP 2 upgrade Portal 7 Fix Pack 7.0.0.2 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+The 7.0.0.2 Fix Pack executes a ConfigEngine script called 'action-set-license-home-mp'. This script checks to see if the license directory is present and sets a property for this during the upgrade. If the Portal server does not have this directory, then the upgrade may fail at this point.
+
+SYMPTOM
+Fix Pack 7.0.0.2 fails with this error in the ConfigTrace:
+========================================= 
+action-set-license-home-mp:
+Target finished: action-set-license-home-mp
+Fri Mar 09 06:20:01 PST 2012
+Target started: action-set-license-home-i5
+
+action-set-license-home-i5:
+Target finished: action-set-license-home-i5
+Fri Mar 09 06:20:01 PST 2012
+Target started: action-post-apply-PTF-applyPTF7002-wp.config
+
+action-post-apply-PTF-applyPTF7002-wp.config:
+Target finished: action-post-apply-PTF-applyPTF7002-wp.config
+Target finished: post-apply-PTF
+Target finished: action-config-7002-ConfigEngine
+Target finished: CONFIG-WP-PTF-7002
+isIseries currently set to: null
+uploading registry
+Target started: update-registry-sync-property
+update-registry-sync-property:
+[echo] updated RegistrySynchronized in file wkplc.properties with
+value: true
+Target finished: update-registry-sync-property
+BUILD FAILED
+/opt/IBM/WebSphere/PortalServer/installer/wp.config/config/includes/
+wp_ptf_7002.xml:35: The following error occurred while executing this line:
+/opt/IBM/WebSphere/PortalServer/installer/wp.config/config/includes/
+wp_ptf_7002.xml:219: The following error occurred while executing this line:
+/opt/IBM/WebSphere/PortalServer/installer/wp.config/config/includes/
+wp.config.fp_cfg.xml:26:
+/opt/IBM/WebSphere/PortalServer/license not found.
+Total time: 18 minutes 0 seconds
+========================================= 
+
+ 
+
+License directory will be missing at this location: 
+
+/opt/IBM/WebSphere/PortalServer/license
+
+CAUSE
+Installing Portal Enable/Extend using a silent install allows for the option to set "server" as the entitlement agreement. This option is not available through the GUI for Portal Enable/Extend. It should only be used for the Portal server offering if you set it for a silent install..
+
+
+
+DIAGNOSING THE PROBLEM
+Check if the license directory is missing at this location: 
+
+/opt/IBM/WebSphere/PortalServer/license
+
+
+
+RESOLVING THE PROBLEM
+Copy the license directory over from another Portal 7 environment. It does not necessarily have to match the exact version of the current Portal 7 environment. If there is not one available, contact IBM support to supply one for you.
+
+
+
+
+
+ * 
+ *

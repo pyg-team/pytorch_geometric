@@ -1,0 +1,123 @@
+Title: IBM Open Mic Webcast: Updating and Migrating IBM Connections - 16 April 2014 [presentation + recording + Q&A attached] - United States
+
+Text:
+open-mic; connections; lste_webcast; STEwebcastDocument WEBCAST
+
+ABSTRACT
+ Greg Presayzen and Carlo Garcia and others from the IBM Connections team discussed updating and migrating IBM Connections.
+
+IBM Collaboration Solutions (Lotus) support wants to help you take full advantage of your products. Join us for our Open Mic webcasts as technical experts share their knowledge and answer your questions.
+
+These webcasts are designed to address specific topics and provide an in-depth and focused technical exchange in a convenient online webcast format. 
+
+CONTENT
+Topic: Updating and Migrating IBM Connections 
+
+For more information about our Open Mic webcasts, visit the IBM Collaboration Solutions Support Open Mics [http://www.ibm.com/software/lotus/support/lotus-open-mics/] page.
+
+
+
+Presentation 
+UpdatingandMigratingOpenMic.pdf [/support/docview.wss?uid=swg27041409&aid=2]UpdatingandMigratingOpenMic.pdf [/support/docview.wss?uid=swg27041409&aid=1] 
+
+
+Q&A Transcript 
+URLs from the presentation: 
+
+The slide presentation is available here as a PDF file and an audio recording of the presentation will be attached a few days after the live event: 
+http://www-01.ibm.com/support/docview.wss?uid=swg27041409 [http://www-01.ibm.com/support/docview.wss?uid=swg27041409] 
+
+Slide 5: 
+Fix list for IBM Connections 4.5 CR4: https://ibm.biz/BdRgaG [https://ibm.biz/BdRgaG] 
+
+Slide 6: 
+Download CR4: https://ibm.biz/BdRgab [https://ibm.biz/BdRgab] 
+
+Slide 6: 
+Apply iFixes LO74499, LO74629, and 5.2.0.0-P8CPE-IF001 to IBM Connections 4.5: https://ibm.biz/BdRgae [https://ibm.biz/BdRgae] 
+
+Slide 7: 
+New functions included in IBM Connections 4.5 CR4: https://ibm.biz/BdRga8 [https://ibm.biz/BdRga8] 
+
+Slide 12: 
+Directory path conventions: https://ibm.biz/BdRgah [https://ibm.biz/BdRgah] 
+
+Slide 13: 
+File Sync for Mobile demo: https://ibm.biz/BdRgaA [https://ibm.biz/BdRgaA] 
+
+Configuring Push Notifications: https://ibm.biz/BdRgaC [https://ibm.biz/BdRgaC] 
+
+Slide 14: 
+Backing up IBM Connections: https://ibm.biz/BdRgaQ [https://ibm.biz/BdRgaQ] 
+
+Slide 25: 
+Updating the IBM Connections 4.5 databases to the required schema versions for Cumulative Refresh 4 (CR4): https://ibm.biz/BdRga3 [https://ibm.biz/BdRga3] 
+
+Slide 31: 
+Information on updating FileNet 5.2.0 for use with IBM Connection Content Manager (CCM): https://ibm.biz/BdRgaw [https://ibm.biz/BdRgaw] 
+
+Slide 32: 
+Step-by-Step directions for applying CR2, CR3, or CR4 for Connections 4.5 with Connections Content Manager: https://ibm.biz/BdRgat [https://ibm.biz/BdRgat] 
+
+Information on updating FileNet 5.2.0 for use with IBM Connection Content Manager (CCM): https://ibm.biz/BdRgaw [https://ibm.biz/BdRgaw] (Note: same as previous slide) 
+
+Open Mic Webcast: Install, Deploy and Troubleshoot IBM Connections Content Manager - 12 March 2014 [Slides and Q&A attached]: https://ibm.biz/BdRga5 [https://ibm.biz/BdRga5] 
+
+Slide 36: 
+Migration instructions: https://ibm.biz/BdRgi2 [https://ibm.biz/BdRgi2] 
+
+Export instructions: https://ibm.biz/BdRgiz [https://ibm.biz/BdRgiz] 
+
+Import instructions: https://ibm.biz/BdRgiq [https://ibm.biz/BdRgiq] 
+
+Slide 54: 
+Infocenter: Migrating to IBM Connections 4.5: https://ibm.biz/BdRgKK [https://ibm.biz/BdRgKK] 
+
+IBM Redbooks: Making the move to IBM Connections 4.5 and IBM Connections Content Manager “Zero to Hero” styled documentation: https://ibm.biz/BdRgKp [https://ibm.biz/BdRgKp] 
+
+Service Requests: https://ibm.biz/BdRgGD [https://ibm.biz/BdRgGD] 
+
+GENERAL INFORMATION 
+
+To stay informed about all upcoming Open Mic Webcasts, Like our page on Facebook 
+http://www.facebook.com/IBMLotusSupport [http://www.facebook.com/IBMLotusSupport] 
+
+follow us on Twitter @IBM_ICSsupport: 
+https://twitter.com/IBM_ICSsupport [https://twitter.com/IBM_ICSsupport] 
+
+Visit the IBM Connections Support page for the full knowledgebase of technical support content and resources https://ibm.biz/BdRgQ4 [https://ibm.biz/BdRgQ4] 
+
+The next Connections Open Mic is scheduled for May 14th. Here is the Technote for it: https://ibm.biz/BdRhDG [https://ibm.biz/BdRhDG] 
+
+QUESTIONS AND ANSWERS 
+
+Question 1:Are we not talking about FileNet? Applying CR4 includes patching FileNet and Cognos 
+Answer 1:This Open Mic is in regard to Migration/Upgrade. We had an open Mic on CCM/Filenet last month, but, yes, part of the upgrade to cr4 is to upgrade filenet components. Here's a link to the previous Open Mic with the slides and Q&A: https://ibm.biz/BdRga5 [https://ibm.biz/BdRga5] 
+
+Question 2: This is the first time I got this invite....how can i get notified of future web casts related to connections 
+Answer 2: http://www-01.ibm.com/software/lotus/support/lotus-open-mics/ [http://www-01.ibm.com/software/lotus/support/lotus-open-mics/] 
+Did you receive the invitation through an email? If so, you are on the mailing list and will receive future invitations 
+The next Connections Open Mic is scheduled for May. Here is the Technote for it: https://ibm.biz/BdRhDG [https://ibm.biz/BdRhDG] 
+For more information about our Open Mic webcasts, visit the IBM Collaboration Solutions Support Open Mics page: http://www.ibm.com/software/lotus/support/lotus-open-mics/ [http://www.ibm.com/software/lotus/support/lotus-open-mics/] 
+
+Question 3: In side-by-side strategy, the data migration can't occur until production is shut down, right? 
+Answer 3: That's correct 
+
+Question 4: When applying CR4, does that affect how the Interim Feature releases are applied? Or are those applied independently? Wondering what the install order would be for a brand new install. Connections 4.5 + CR4 + IF1 and IF2? 
+
+Answer 4: It's the same as per CR3. I believe for IFR2, this is done through the customization directory, when applying Ephox, so this should not impact anything during the application of a CR. Best practice would be to upgrade, and re-apply an IFR. no changes in CR4 with regards to FileNet versions. you need 5.2.0.2 CE, instead of 5.2.0.1 
+
+QUALITY SURVEY 
+
+To help shape the future of IBM software, and at the conclusion of this Open Mic, take this quality survey and share your opinion of IBM software used within your organization. https://ibm.biz/BdxqB2 [https://ibm.biz/BdxqB2] 
+
+
+AUDIO
+[http://www.ibm.com/i/v16/icons/aud.gif]Updating and Migrating IBM Connections Open Mic Apr 16 2014 (edited).mp3 [/support/docview.wss?uid=swg27041409&aid=4]Updating and Migrating IBM Connections Open Mic Apr 16 2014 (edited).mp3 [/support/docview.wss?uid=swg27041409&aid=3]
+
+
+
+
+
+ORIGINAL PUBLICATION DATE
+ 2014/2/12

@@ -1,0 +1,131 @@
+Title: IBM HD94719: CROSS-SITE SCRIPTING (XSS) VULNERABILITY IN WEBEDITOR/AUTHENTICATION/LOGINPAGE.ASPX - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PERMANENT RESTRICTION.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The following reference has been posted on the National
+   Vulnerability Database
+   http://web.nvd.nist.gov/view/vuln/detail?vulnId=CVE-2010-0959 [http://web.nvd.nist.gov/view/vuln/detail?vulnId=CVE-2010-0959]
+   Overview
+   Cross-site scripting (XSS) vulnerability in
+   WebEditor/Authentication/LoginPage.aspx in ENOVIA SmarTeam 5
+   allows remote attackers to inject arbitrary web script or
+   HTML via the errMsg parameter.
+   We would like to know,
+   ??? Has the issue been defined as a defect?
+   ??? If so, what is the target fix version and date?
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  empty
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  The following reference has been posted on the National
+   Vulnerability Database
+   http://web.nvd.nist.gov/view/vuln/detail?vulnId=CVE-2010-0959 [http://web.nvd.nist.gov/view/vuln/detail?vulnId=CVE-2010-0959]
+   Overview
+   Cross-site scripting (XSS) vulnerability in
+   WebEditor/Authentication/LoginPage.aspx in ENOVIA SmarTeam 5
+   allows remote attackers to inject arbitrary web script or
+   HTML via the errMsg parameter.
+   We would like to know,
+   ??? Has the issue been defined as a defect?
+   ??? If so, what is the target fix version and date?
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  THIS PROBLEM IS PERMANENT RESTRICTION IN I-PLM Collaborative
+   Innovation
+   Additional Closure Information:
+   .
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   HD94719
+   
+   
+ * REPORTED COMPONENT NAME
+   SMARTEAM NT>XP
+   
+   
+ * REPORTED COMPONENT ID
+   569199970
+   
+   
+ * REPORTED RELEASE
+   519
+   
+   
+ * STATUS
+   CLOSED PRS
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-03-19
+   
+   
+ * CLOSED DATE
+   2010-03-23
+   
+   
+ * LAST MODIFIED DATE
+   2010-03-23
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

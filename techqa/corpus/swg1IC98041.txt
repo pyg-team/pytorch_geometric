@@ -1,0 +1,206 @@
+Title: IBM IC98041: DMPMQCFG FAILS WITH AMQ9518 WHEN USING SSL TO CONNECT TO REMOTE QUEUE MANAGER. - United States
+
+Text:
+  A FIX IS AVAILABLE
+WebSphere MQ V7.5 Fix Pack 7.5.0.4 [http://www-01.ibm.com/support/docview.wss?uid=swg24038252]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The dmpmqcfg utility program is being used to dump definitions
+   on a remote queue manager.
+   
+   The user supplies the -c parameter to pass the client channel
+   and connection information to connect to the remote queue
+   manager.
+   
+   The program connects successfully with non-SSL channels but
+   fails using SSL channels with "AMQ9518: File
+   '/var/mqm/AMQCLCHL.TAB' not found."
+   
+   The AMQCLCHL.TAB file should not be required since the user
+   did not want any Certificate Revocation checking to be
+   performed, and the client channel information was supplied
+   with the "mqsc -c" parameter.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  If the user wants no certificate revocation checks, copy a blank
+   CCDT to /var/mqm on the client.
+   
+   If the user wants certificate revocation checks, ensure the CCDT
+   is correctly populated with the information needed, and make
+   it available in /var/mqm.
+   
+   Remember that alternative locations for the CCDT can be given
+   via MQCHLLIB and MQCHLTAB environment variables.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   Users of dmpmqcfg via an SSL client channel, but who want no
+   Certificate Revocation checking to be done, and do not want to
+   supply a Client Channel Definition Table to the client to
+   configure this.
+   
+   
+   Platforms affected:
+   MultiPlatform
+   
+   ****************************************************************
+   PROBLEM SUMMARY:
+   The client connection code running in the WebSphere MQ library
+   code in the client application was initializing, and as part
+   of this it was trying to initialize its certificate revocation
+   checking component. Because the CLNTCONN definition supplied
+   by the program did not include any certificate revocation
+   information, the WebSphere MQ code tried to load the Client
+   Channel Definition Table (CCDT) file to check for that
+   information. The file did not exist. The initialization
+   therefore failed, and the connection attempt to the queue
+   manager was abandoned.
+   
+   However, the user did not want certificate revocation checking
+   to be performed for this application. There was no easy way
+   for them to assert this to the WebSphere MQ code, though.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A new parameter has been added to the mqclient.ini file, to
+   enable a user to opt out of the certificate revocation
+   initialization, if that is what they want to do:
+   
+   SSL stanza:
+   
+   ClientRevocationChecks
+   
+   Description: this setting determines if, and how, the
+   WebSphere MQ client attempts to configure certificate revocation
+   checking in the event of client connect call which uses an
+   SSL/TLS channel:
+   Acceptable values:
+   - REQUIRED (this is the default): attempt to load certificate
+   revocation configuration from the CCDT. The MQCONN fails if
+   WebSphere MQ cannot open the CCDT.
+   - DISABLED: do not configure certificate revocation checking
+   at all
+   - OPTIONAL: attempt to load certificate revocation configuration
+   from the CCDT, but no error is reported if WebSphere MQ fails to
+   open the CCDT - for example, if there is no CCDT file.
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+   Version    Maintenance Level
+   v7.5       7.5.0.4
+   
+   The latest available maintenance can be obtained from
+   'WebSphere MQ Recommended Fixes'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037]
+   
+   If the maintenance level is not yet available information on
+   its planned availability can be found in 'WebSphere MQ
+   Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC98041
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ BASE MULTIP
+   
+   
+ * REPORTED COMPONENT ID
+   5724H7241
+   
+   
+ * REPORTED RELEASE
+   750
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-12-02
+   
+   
+ * CLOSED DATE
+   2014-01-23
+   
+   
+ * LAST MODIFIED DATE
+   2014-01-23
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ BASE MULTIP
+   
+   
+ * FIXED COMPONENT ID
+   5724H7241
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R750 PSY
+   UP

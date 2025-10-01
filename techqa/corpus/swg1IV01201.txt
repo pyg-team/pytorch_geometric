@@ -1,0 +1,162 @@
+Title: IBM IV01201: SYSROUTE OF IZ97199: IMPORT NEW KEYSTORES VIA THE COMMAND LINE FAILS. - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Tivoli Federated Identity Manager 6.2.0 Fixpack 9 (6.2.0-TIV-TFIM-FP0009) [http://www-01.ibm.com/support/docview.wss?uid=swg24029497]
+Tivoli Fed Id Mgr Business Gateway v6.2.0, Fix Pack 9, 6.2.0-TIV-TFIMBG-FP0009 [http://www-01.ibm.com/support/docview.wss?uid=swg24029498]
+Tivoli Federated Identity Manager 6.2.0 Fixpack 13 (6.2.0-TIV-TFIM-FP0013) [http://www-01.ibm.com/support/docview.wss?uid=swg24032915]
+Tivoli Fed Id Mgr Business Gateway v6.2.0, Fix Pack 13, 6.2.0-TIV-TFIMBG-FP0013 [http://www-01.ibm.com/support/docview.wss?uid=swg24035012]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Customer is  unable to use the wsadmin commands to import and
+   export keys from TFIM.
+    The keys are being used as part of federations and I am able to
+   import  new keystores, but we are seeing a 500 error when trying
+   to export any  keystore.
+   Like I said above I am able to import new keystores via the UI
+   but the  command I'm trying to use fails:
+   AdminTask.manageItfimKeys(["-fimDomainName", "OCS_TFIM",
+   "-operation",    "import", "-keystoreName", "LotusLivePartners",
+   "-keystorePassword",
+   "passw0rd", "-fileId",
+   "/opt/ll/apps/tfim62.config/default-tfimconfig/etc/jks/LotusLive
+   Partners jks", "-keystoreFormat", "JKS"])
+   
+   java.lang.ClassCastException: java.lang.ClassCastException:
+   java.lang.String incompatible with java.lang.Boolean
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Key export operation using the Command Line
+   
+   fails due to ClassCastException and CommandException, and
+   keystore import operation using the Command Line fails due
+   to ClassCastException.
+   
+   
+   The ClassCastException when exporting a key happens when the
+   parameter "exportPrivateKey" is not specified, or when it is
+   specified with value "false". The ClassCastException when
+   importing a keystore happens when the parameter
+   "trustedKeystore" is not specified, or when it is specified
+   with value "false".
+   
+   The CommandException when exporting a key
+   happens when the parameter "exportPrivateKey" is
+   specified with no value, or when it is specified with value
+   "true".
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix for this APAR is contained in the following maintenance
+   
+   packages:
+   | fix pack | 6.2.0-TIV-TFIM-FP0009
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  Perform the key export and keystore import operation using
+   
+   TFIM Console.
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV01201
+   
+   
+ * REPORTED COMPONENT NAME
+   TIV FED ID MGR
+   
+   
+ * REPORTED COMPONENT ID
+   5724L7300
+   
+   
+ * REPORTED RELEASE
+   620
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-06-01
+   
+   
+ * CLOSED DATE
+   2011-06-01
+   
+   
+ * LAST MODIFIED DATE
+   2011-06-01
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    IZ97199 [http://www-01.ibm.com/support/docview.wss?uid=swg1IZ97199]
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TIV FED ID MGR
+   
+   
+ * FIXED COMPONENT ID
+   5724L7300
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R620 PSY
+   UP

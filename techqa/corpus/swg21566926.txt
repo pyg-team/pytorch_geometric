@@ -1,0 +1,56 @@
+Title: IBM Taskmaster Application Manager crashes when updating one or more fields in IBM Datacap Taskmaster Capture - United States
+
+Text:
+Taskmaster Application Manager TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Taskmaster Application Manager crashes when updating one or more fields with the message box stating "Debug Error! [...]" is displayed. 
+
+SYMPTOM
+Fields in Taskmaster Application Manager are disabled. Editing fields causes the following "Microsoft Visual C++ Debug Library" message box: 
+
+"Debug Error! \ Program: C:\Datacap\tmclient\DCOrchard.exe \ abnormal program termination \ (Press Retry to debug the application) 
+
+Pointing to a Datacap.xml in another environment may work.
+
+
+CAUSE
+The application file, <app_name>.app, is locked
+
+
+RESOLVING THE PROBLEM
+First confirm that this Technote applies to your situation. See other Technotes for other scenarios where similar but not exactly identical behavior may apply. Some of those resolutions include: 
+
+- Installing Datacap Studio on the machine running Taskmaster Application Manager 
+
+- Installing IBM Datacap Taskmaster Capture 8.x on UAC-enabled PC's using Run as Administrator 
+
+- Installing Microsoft.NET Framework 3.5.1 
+
+ 
+
+Second, confirm that your problem is not resolved when right-clicking and running the Taskmaster Application Manager shortcut or executable using the Run As Administrator command. 
+
+ 
+
+Third, confirm that all following paths point to the correct locations: 
+
+1. Path to datacap.xml file as indicated in Service tab of Taskmaster Application Manager: 
+
+- x64: HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node\Datacap\Application\Location\'TopPath' 
+
+- x86: HKEY_LOCAL_MACHINE\SOFTWARE\Datacap\Application\Location\'TopPath' 
+
+2. Path to the general Datacap application folder inside the datacap.xml file 
+
+- This is inside the "ref" tag, which generally defaults to a local path or folder 
+
+ 
+
+Fourth, ensure that the Windows user has full sharing and security permissions to the application file. Try creating a file or folder where the application file is located. 
+
+ 
+
+Lastly, see if using the Taskmaster Application Manager when pointed to another environment works and/or if there are locks against the application file in question using a program such as Microsoft's Process Explorer. 
+
+Note: In case the application file is locked, try rebooting the server on which the application file is hosted. If this is the Taskmaster Server, this will affect all clients, including Rulerunners, Taskmaster Client and Taskmaster Web. Alternatively, try using a program such as Process Explorer to detect and kill any unnecessary file locks. The latter must be done carefully and is not generally recommended.

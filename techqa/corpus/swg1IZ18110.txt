@@ -1,0 +1,177 @@
+Title: IBM IZ18110: SQL1131N ERROR WHEN INVOKING MICRO FOCUS COBOL STORED PROCEDURE THAT PERFORMS I/O OPERATION ON AIX. - United States
+
+Text:
+AIX  FIXES ARE AVAILABLE
+DB2 Version 9.5 Fix Pack 3b for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24022591]
+DB2 Version 9.5 Fix Pack 4 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24023213]
+DB2 Version 9.5 Fix Pack 3a for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24021838]
+DB2 Version 9.5 Fix Pack 3 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24021563]
+DB2 Version 9.5 Fix Pack 4a for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24024215]
+DB2 Version 9.5 Fix Pack 5 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24025421]
+DB2 Version 9.5 Fix Pack 6a for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24027747]
+DB2 Version 9.5 Fix Pack 7 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24028731]
+DB2 Version 9.5 Fix Pack 8 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24030302]
+DB2 Version 9.5 Fix Pack 9 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24032087]
+DB2 Version 9.5 Fix Pack 10 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24033308]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When invoking Micro Focus COBOL stored procedure that performs
+   I/O operation on AIX, customer will get SQL1131N error.
+   
+   SQL1131N DARI (Stored Procedure) process has been terminated
+   abnormally.
+   SQLSTATE=38503
+   
+   In the db2diag.log file, there will be the following entry.
+   .....
+   2006-07-12-18.18.21.645088+540 I9383874C401       LEVEL: Warning
+   PID     : 3915854              TID  : 1           PROC :
+   db2agent (SDB00A) 0
+   INSTANCE: db2inst1             NODE : 000         DB   : DDB00A
+   APPHDL  : 0-938                APPID: GA21186C.EF07.018C82091904
+   MESSAGE : Removing FMP from pool
+   DATA #1 : Hexdump, 12 bytes
+   0x2FF14EA8 : 3015 00F4 0008 7088 0000 0000
+   0.....p.....
+   .....
+   
+   It will be caused by getting the runtime system error 198 when
+   dynamically loading the COBOL libraries for I/O operation.
+   
+   In order to resolve the whole issue,
+   a) Apply IZ18110 (integrated into V9.5 FP1)
+   b) Compile the stored procedure using cob -y instead of cob -x
+   c) Apply the MF Cobol Hotfix
+      (AIX 5.3: RPI 1059747. AIX 5.2: RPI 1060932, and AIX
+   Concluding Service Pack 5200-09-CSP.)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Not available
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Users affected: All who use Micro Focus COBOL stored procedure
+   that performs I/O operation on AIX.
+   
+   Problem Description: As same as Error description.
+   
+   Problem Summary: As same as APAR abstract.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Problem was first fixed in Version 9.5 Fix Pack 3 (s081118).
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ18110
+   
+   
+ * REPORTED COMPONENT NAME
+   DB2 UDB ESE AIX
+   
+   
+ * REPORTED COMPONENT ID
+   5765F4100
+   
+   
+ * REPORTED RELEASE
+   950
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-03-25
+   
+   
+ * CLOSED DATE
+   2009-11-14
+   
+   
+ * LAST MODIFIED DATE
+   2009-11-14
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    IZ07457 [http://www-01.ibm.com/support/docview.wss?uid=swg1IZ07457]
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   DB2 UDB ESE AIX
+   
+   
+ * FIXED COMPONENT ID
+   5765F4100
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R810 PSN
+   UP
+   
+   
+ * R820 PSN
+   UP
+   
+   
+ * R910 PSN
+   UP
+   
+   
+ * R950 PSN
+   UP

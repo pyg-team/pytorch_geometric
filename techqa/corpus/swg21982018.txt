@@ -1,0 +1,30 @@
+Title: IBM Microsoft Internet Explorer 8, 9, and 10 on Maximo - United States
+
+Text:
+TPAEUI; Internet Explorer NEWS
+
+ABSTRACT
+ Limited Support Announcement for Internet Explorer (IE) 8, 9, and 10 when used with IBM Maximo Asset Management. 
+
+CONTENT
+Effective immediately, compatibility support between Maximo Asset Management and older versions of Internet Explorer will be limited. Any problems that are encountered on older versions of IE must be reproduced on IE11 (in standard mode), Firefox, or Chrome to be considered as a defect. Any fixes will be implemented in IE11 only and may not be compatible with older IE versions.
+
+In January 12, 2016, Microsoft discontinued support for older IE versions. IE users must upgrade to IE11 in order to continue receiving security updates and technical support. Maximo Asset Management added full support for IE11 in versions 7.5.0.8 and 7.6.0.0. Customers who are running Maximo Asset Management 7.5 with IE clients are encouraged to update to Maximo Asset Management 7.5.0.8 or a later version in order maintain compatibility with IE.
+For Microsoft end support for older versions of Internet Explorer, see https://www.microsoft.com/en-us/WindowsForBusiness/End-of-IE-support [https://www.microsoft.com/en-us/WindowsForBusiness/End-of-IE-support]
+
+For full support of Maximo on IE11 in 7.5.0.8 and 7.6, see http://www.ibm.com/support/docview.wss?uid=swg21701568 [http://www-01.ibm.com/support/docview.wss?uid=swg21701568]
+
+Additionally, the update the related technote (1701568) to contain the following statement: 
+
+BIRT and Cognos reporting tools may require additional configurations steps for IE 11 compatibility, as noted in the Product Configuration Matrix at http://www.ibm.com/support/docview.wss?uid=swg27014419 [http://www-01.ibm.com/support/docview.wss?uid=swg27014419]
+
+RELATED INFORMATION
+ Support for older versions of Internet Explorer ended [https://www.microsoft.com/en-us/WindowsForBusiness/End-of-IE-support]
+Maximo Support for IE 11 [http://www.ibm.com/support/docview.wss?uid=swg21701568]
+Production Configuration Matrix [http://www.ibm.com/support/docview.wss?uid=swg27014419]
+
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Systems and Asset Management Control Desk Systems and Asset Management Maximo Asset Management

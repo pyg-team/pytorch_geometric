@@ -1,0 +1,155 @@
+Title: IBM PI16379: JAVA CORE DUMP USING -BPC 2 PARAMETER WITH JALE CONNECTIONS WHEN GATEWAY IS BROUGHT DOWN FOR A PERIOD OF TIME - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  This issue is similar to APAR PM56811 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM56811], but affects later WTX SAP
+   Packs that use JCo3 (instead of JCo2).
+   
+   When using the -BPC or -BPC 2 parameter for JALE connections
+   with the WTX Launcher, a core dump can occur after a period of
+   time if the SAP Gateway cannot be reached.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  WTXCQ - WTX00044737
+   PB / PB
+   Circumvention: Ensure that Launcher is stopped if the SAP
+   Gateway is to be brought down for maintenance.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Users Affected:
+   IBM WebSphere Transformation Extender Pack for SAP users
+   
+   Problem Description:
+   Java memory leak when SAP gateway down and using -BPC
+   
+   Platforms Affected:
+   All
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fixed memory leak in JALE adapter and JNI layer
+   
+   Applies to:
+   SAP EP 8.3.2.1
+   
+   Fixed in the next service packs and releases.
+   
+   To obtain the fix for this APAR:
+   
+   To see if the next service pack or product release is available,
+   check the WebSphere Transformation Extender Downloads page:
+   http://www.ibm.com/support/entry/portal/product/other_software/t [http://www.ibm.com/support/entry/portal/product/other_software/t]
+   ransformation_extender
+   
+   If the service pack or product release is available, download it
+   from PassportAdvantage:
+   http://www.ibm.com/software/howtobuy/passportadvantage/pao_custo
+   mers.htm [http://www.ibm.com/software/howtobuy/passportadvantage/pao_customers.htm]
+   
+   If the service pack or product release is not available and you
+   require the APAR fix immediately, request a Limited Availability
+   Interim Fix (LAIF) by opening a PMR:
+   https://www.ibm.com/support/servicerequest/Home.action [https://www.ibm.com/support/servicerequest/Home.action]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI16379
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSPHERE LAUNC
+   
+   
+ * REPORTED COMPONENT ID
+   5724M4011
+   
+   
+ * REPORTED RELEASE
+   840
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2014-04-21
+   
+   
+ * CLOSED DATE
+   2014-05-23
+   
+   
+ * LAST MODIFIED DATE
+   2016-07-05
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBSPHERE LAUNC
+   
+   
+ * FIXED COMPONENT ID
+   5724M4011
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R830 PSY
+   UP

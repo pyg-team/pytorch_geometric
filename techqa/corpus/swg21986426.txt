@@ -1,0 +1,55 @@
+Title: IBM Does REORG hold up log files leading to "SQL0964C Transaction log for database is full" condition in DB2 ? - United States
+
+Text:
+auto reorg; reorg; force; SQL0964C TECHNOTE (FAQ)
+
+QUESTION
+ We have hit the "SQL0964C Transaction log for database is full" condition and see that a REORG is holding up/spanning many transaction log files. How does REORG hold up so many log files? How can we kill/cancel an AUTO REORG? 
+
+CAUSE
+
+DB2 gets SQL0964C Transaction log for database is full error. 
+In the DB2 recovery history file, we see this REORG INDEXES CLEANUP record details: 
+
+Op Obj Timestamp+Sequence Type Dev Earliest Log Current Log Backup ID 
+-- --- ------------------ ---- --- ------------ ------------ -------------- 
+G I 20160513143211 N S0531575.LOG S0531610.LOG 
+---------------------------------------------------------------------------- 
+Table: "SCHEMANAME "."TABLENAME" 
+
+---------------------------------------------------------------------------- 
+Comment: REORG INDEXES CLEANUP ALL 
+Start Time: 20160513143211 
+End Time: 20160513151701 
+Status: A 
+
+------------------------------------------------------------------------
+
+Does this mean that REORG spans 35 logs files from S0531575.LOG - S0531610.LOG ?
+
+
+ANSWER
+1. LOG files are not held up by REORG : 
+
+In the above db2 recovery history record, it shows that the Earliest log is S0531575.LOG and the 
+current log is S0531610.LOG. 
+This does NOT mean that the REORG is using, spanning or holding 35 log files for its operation. 
+The log file in which the REORG started is S0531575.LOG and so it pinned that log as start 
+LSN (log sequence number). These 35 logs till current log S0531610.LOG, will have other normal 
+db2 operations logging in them. 
+
+2. Cancel AUTO REORG :
+The only way you can cancel a running AUTO REORG is using the FORCE APPLICATION command (force off application ID of the reorg process). Even if FORCE application is executed, it might take some time to force/kill it. APAR IT03540 (v10.5) made it faster but still it depends on which phase the REORG is and what it is processing at the time.
+
+3. Recovering from "SQL0964C Transaction log for database is full" condition :
+You can address this situation using following methods :
+i> Cancel/commit any ongoing trasactions if you can which will free up the log space. You can also identify the Application id holding the oldest transaction which is responsible for keeping oldest log files in active log path and force it to recover that log space.
+Reference Technote :
+http://www-01.ibm.com/support/docview.wss?uid=swg21664899 [http://www-01.ibm.com/support/docview.wss?uid=swg21664899]
+ii> Increase disk space and adjust LOGFILSIZ, LOGPRIMARY, LOGSECOND cfg parameters to suit your db operations and setup. This will require a database recyle (start/stop).
+Reference Technote :
+http://www-01.ibm.com/support/docview.wss?uid=swg21472442 [http://www-01.ibm.com/support/docview.wss?uid=swg21472442]
+
+RELATED INFORMATION
+ How to get immediate relief when log space get full [www-01.ibm.com/support/docview.wss?uid=swg21664899]
+Resolving "The transaction log for the database is full [www-01.ibm.com/support/docview.wss?uid=swg21121437]

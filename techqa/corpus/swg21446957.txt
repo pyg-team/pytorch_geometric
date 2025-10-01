@@ -1,0 +1,261 @@
+Title: IBM DB2 SSL - How to install GSKit V7 Tool Package on a stand alone client machine. - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ What are the steps required to install the GSKit V7 on a sperate client machine such that I can configure SSL to connect to a DB2 server? 
+
+This document describes how to install the GSKit V7 libraries in the "IBM DB2 Support Files for SSL Functionality" and also lists the platforms which support SSL for DB2. The GSKit V7 libraries are supported starting with DB2 Version 9.1 FP5 and 9.5 FP2. 
+
+NOTE: DB2 Version 9.7 only supports the GSKit Version 8 libraries. The GSKit Version 7 libraries are supported with DB2 9.5 and DB2 9.1. 
+
+ANSWER
+This document contains information on the different platforms that support SSL for the DB2 client Versions 9.1 FP5 and V9.5 FP2 as well as the process on how to unpack and install the GSKit V7 libraries, on a client machine from the "IBM DB2 support Files for SSL Feature" available on Passport Advantage. The DB2 Client in DB2 V9.5 Fix Pack 2 or later is supported on these platforms: 
+
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ *  
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+
+
+
+The DB2 Client in DB2 9.1 Fix Pack 5 or later is supported on these platforms:  * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ *  
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+
+
+Installation: 
+The installation on UNIX platforms must be performed as the user ‘ root’. 
+The installation on Windows platforms must be performed using a userid with Administrator privileges. 
+
+Instructions on how to unpack and install the GSKit V7 are listed for each platform. 
+
+AIX  * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+
+
+
+HP-UX  * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * location of gsk7bas32/gsk7bas64
+ * 
+ * 
+ * 
+ * Example:
+ * 
+ * 
+ * 
+
+
+Linux  * 
+ * 
+ * 
+ * rpm_file
+ * 
+ * 
+ * Example:
+ * 
+ * 
+
+
+
+Solaris  * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * location of gsk7bas/gsk7bas64
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * Example:
+ * 
+ * 
+ * 
+ * 
+ * Support for Solaris Zones (Solaris 10 Sun)
+ * 
+ * 
+ * 
+ * 
+ * <base install location for GSKit files>
+ * 
+ * 
+ * <location to write sym links for GSKit executables>
+ * 
+ * 
+ * <location to write sym links for GSKit shared libraries>
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * Note: 
+ * 
+
+
+
+
+Windows Platforms 
+
+Windows 32 bit:  * 
+ * SSL-Partnum.exe
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * path
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * path
+ * 
+ *  
+ * 
+ * 
+ * 
+
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * BookManager (v9510) 
+   (C) Copyright IBM Corporation. 1989, 1995. 
+   All Rights Reserved. Licensed Materials. 
+   
+   GSK7BAS.EXE: [d:]outpath [/Q] [/D] [/V] 
+   
+   outpath - The destination for the files 
+   /Q - Quiet 
+   /D - Create directories 
+   /V - Create volume label 
+
+ * 
+ * <path>
+ * 
+ * DO NOT
+ * 
+ * 
+ * 
+ * 
+ * path
+ * 
+
+ * Where; 
+   DB2 is the name of your application and will be registered as a registered user of GSKit under the Windows registry key : 
+   HKEY_LOCAL_MACHINE\SOFTWARE\IBM\GSK7\CurrentVersion\REGAPPS 
+   
+   < path> is the path where you want GSKit installed. Note that the installation program appends \ibm\gsk7 to the Windows directory "Program Files" where the GSKit libraries will be loacted. 
+   
+   -s is to run the setup in silent mode. 
+   
+   -f1 extracted file location\setup.iss specifies the response file needed to run the setup in the silent mode. Note that there is no space between -f1 and the beginning of the extracted file location 
+
+
+Windows 64 bit:  * 
+ * 
+ * 
+ * 
+ * 
+   
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+
+RELATED INFORMATION
+ DB2 SSL - part numbers for the GSKit in Passport Advant [http://www.ibm.com/support/docview.wss?uid=swg21432998]
+DB2 SSL - How to download the "IBM DB2 Support Files fo [http://www.ibm.com/support/docview.wss?uid=swg21433407]

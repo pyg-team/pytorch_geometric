@@ -1,0 +1,158 @@
+Title: IBM PM24779: RQM: Pasting data into the desription field causes formatting issues - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Customer is using a Windows machine, Word 2003, and RQM 2.0.1. I
+   was able to reproduce the problem on my windows XP SP3, Word
+   2007, and RQM 2.0.1 ifix4.
+   
+   When you copy a sentence or word from Microsoft word document
+   (the customers document included, and one of my own documents)
+   on to a RQM testcase, in description, once saved the word starts
+   to shows the encoding. The customer is copying the sentence from
+   the document 'Enter a CD for a CMIA cash deposit'.
+   
+   If I take that sentence from a word document, and copy and paste
+   it to a text editor, and then to descriptions field in RQM this
+   problem does not occur.
+   
+   Thanks
+   
+   I have included the document the customer is using, and one of
+   my document, screen shoots of both before the save, and of both
+   after saving.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   Customer is using a Windows machine, Word 2003, and RQM
+   2.0.1. I was able to reproduce the problem on my windows XP
+   SP3, Word 2007, and RQM 2.0.1 ifix4.
+   
+   When you copy a sentence or word from Microsoft word
+   document (the customers document included, and one of my own
+   documents) on to a RQM testcase, in description, once saved
+   the word starts to shows the encoding. The customer is
+   copying the sentence from the document "Enter a CD for a
+   CMIA cash deposit".
+   
+   If I take that sentence from a word document, and copy and
+   paste it to a text editor, and then to descriptions field in
+   RQM this problem does not occur.
+   
+   Thanks
+   
+   I have included the document the customer is using, and one
+   of my document, screen shoots of both before the save, and
+   of both after saving.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fixed the problem by changing back to use a plain HTML
+   textarea. Any formatted paste text now shows correctly in
+   the area with the text content only.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM24779
+   
+   
+ * REPORTED COMPONENT NAME
+   RQM STD ED
+   
+   
+ * REPORTED COMPONENT ID
+   5724V1001
+   
+   
+ * REPORTED RELEASE
+   201
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-10-19
+   
+   
+ * CLOSED DATE
+   2010-11-22
+   
+   
+ * LAST MODIFIED DATE
+   2010-11-22
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   RQM STD ED
+   
+   
+ * FIXED COMPONENT ID
+   5724V1001
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R201 PSN
+   UP

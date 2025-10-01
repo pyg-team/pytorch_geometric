@@ -1,0 +1,50 @@
+Title: IBM Authentication failure, on logging into a Sametime Gateway ISC with valid credentials - United States
+
+Text:
+Gateway; DB2; Connectivity TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+When logging into a the Sametime Gateway ISC [ https:// <FullyQualifiedDomainName>:9043/ibm/console/ ] with valid credential is showing an authentication failure.
+
+On the GW server: you will see the following error message:
+
+[16/10/11 10:24:59:544 IST] 0000002b SystemErr R java.sql.SQLException: [ibm][db2][jcc][t4][2043][11550] Exception java.net.ConnectException: Error opening socket to server dslvm829.mul.ie.ibm.com/9.161.83.246 on port 50,000 with message: Connection refused: connect.DSRA0010E: SQL State = null, Error Code = -4,499 
+
+Troubleshooting steps 
+
+· Checking the DB2 server was up and the DBs were active.
+· Check the /etc/services file on the DB2 server to confirm the port that the DB2 was listening on [by default this is port 50000]
+· Confirm that the DB connections on the Sametime Gateway were trying to connect on this port [the error message shows the port the gateway is using]
+· Test a telnet connection to the DB2 server port 50000 from the DB2 server -> If this works
+· Test a telnet connection from the Sametime Gateway server to the DB2 server port 50000 -> this failed. 
+
+At this point it is not a Gateway or DB2 fault, this then looked like a network issue. 
+
+The Sametime gateway will by default use the DNS to resolve the DB2 hostname, and you may have network connectivity issues if using a DNS server out side the network used by the Sametime Gateway and DB2 servers. 
+
+
+RESOLVING THE PROBLEM
+
+Preferred solution:
+
+Configure a DNS within the private network to resolve the private IP addresses. 
+
+Alternative solution:
+
+In the situation outline above with your Gateway and DB2 server within a private domain and DNS server in a seperate domain you can edited the etc/host file on the DB2 and GW servers to make sure local host is resolved locally and the private IP address of the server you wish to connect to is listed
+
+The host file is found in [for example in windows 2008] C:\Windows\System32\drivers\etc
+
+Make sure the local host line is not commented and add the IP address for the DB2 server. Note similar change will be needed on the DB2 server to route back to the gateway.
+
+For example change the host file to
+
+
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ *

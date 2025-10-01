@@ -1,0 +1,72 @@
+Title: IBM How to obtain the MQ Base Java trace via the JVM method tracing from WebSphere Application Server - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ You want to obtain the MQ Base Java™ trace using the JVM method tracing from WebSphere Application Server 
+
+ANSWER
+Before using MQ Base Java trace, you should consider this caveat about using MQ Base Java on WebSphere Application Server: Using WebSphere MQ Java Interfaces in J2EE/JEE Environments [https://www.ibm.com/support/docview.wss?uid=swg21266535]
+This technote explains why "WebSphere MQ classes for Java Message Service" is the API best suited for use in J2EE/JEE environments. It also describes the restrictions and design considerations that must be taken into account before using "WebSphere MQ classes for Java" in J2EE/JEE. 
+
+
+
+Follow these steps to obtain the MQ Base Java trace via the JVM method tracing from WebSphere Application Server:
+
+1: Ensure to have at least one MQ JMS Administered Object in the WebSphere Application Server.
+If you do not have such an object, follow this sequence to define one:
+
+Using the WebSphere Application Server Administrative Console, create an MQ JMS Administered Object. We recommend to create a ConnectionFactory. This object does not need to be used, nor even have valid values.
+
+A Connection Factory can be created as follows:
+Resources -> JMS -> Connection factories -> New -> WebSphere MQ messaging provider
+
+You need to supply any value for the 'Name' and 'JNDI name' fields, and click the 'OK' button at the bottom of the panel. Save the configuration. 
+Any time you create or modify a JMS object, you will need to restart the application server.
+Do not restart it yet, because few more things need to be configured.
+
+2: Setup the WAS JMS tracing string by following the instructions from the technote:
+
+Enabling JMS trace for releases of WebSphere Application Server [http://www.ibm.com/support/docview.wss?rs=171&uid=swg21199176]
+
+The JMS tracing string should be set to:
+*=info:JMSApi=all:JMSServer=all:Messaging=all:JMS_WASTraceAdapter=all:com.ibm.mq.*=all:jmsApi=all:ConnLeakLogic=all:com.ibm.ejs.j2c.*=all
+
+3: Setup the JVM Method Trace
+
+From the Administrative Console, expand the Servers entry in the left hand tree view, and click on the Application Servers link.
+The Application Servers panel will now appear, containing a list of application servers. Click on the desired application server.
+Expand "Java and Process Management" (under "Server Infrastructure") and click on the link for "Process Definition"
+The Process Definition panel should now appear. Click on the link "Java Virtual Machine". 
+In the "Generic JVM arguments" field, enter the following in a single line: 
+-DMQJMS_TRACE_LEVEL=base "-Xtrace:methods={com/ibm/mq.*},print=mt,buffers=5m,output=trace.log"
+
+This will turn on the JMS Client tracing and the JVM method tracing.
+The output will be send to the "trace.log" in the location of the other logs from the server, such as:
+/opt/IBM/WebSphere/AppServer/profiles/AppSrv01/logs/server1
+
+Click OK, and save the configuration changes. 
+
+4: Logoff from the Administrative Console.
+5: Restart the Application Server for which trace has been enabled. 
+6: Ensure that the application that uses the MQ Base Java is started. Do the appropriate action to connect to an MQ queue manager, or put/get a message, etc.
+7: The trace.log should capture the tracing activity of the MQ Base Java code. You can search the trace.log for the following string to verify:
+javabase
+
+Example:
+The following entries show the version of the MQ Base Java and a reason code (2009):
+
+[12/15/10 15:29:10:523 EST] 00000051 3 UOW= source=JMS_WASTraceAdapter class=com.ibm.mqservices.MQInternalException method= org=IBM prod=WebSphere component=IBM WebSphere JMSApi thread=[WebContainer : 0]
+@(#) javabase/com/ibm/mq/MQException.java, java, j600, j600-204-080509 1.83.1.7 08/01/15 15:31:40
+[12/15/10 15:29:10:524 EST] 00000051 3 UOW= source=JMS_WASTraceAdapter class=com.ibm.mqservices.MQInternalException method= org=IBM prod=WebSphere component=IBM WebSphere JMSApi thread=[WebContainer : 0]
+cc = 2
+[12/15/10 15:29:10:524 EST] 00000051 3 UOW= source=JMS_WASTraceAdapter class=com.ibm.mqservices.MQInternalException method= org=IBM prod=WebSphere component=IBM WebSphere JMSApi thread=[WebContainer : 0]
+rc = 2009
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Application Servers WebSphere Application Server Java Message Service (JMS) AIX, HP-UX, Linux, Solaris, Windows 8.5, 8.0, 7.0, 6.1 Business Integration IBM MQ 
+PRODUCT ALIAS/SYNONYM
+ WMQ WebSphere MQ MQSeries

@@ -1,0 +1,177 @@
+Title: IBM IZ64716: WMQ V7: EXIT DATA NOT INITIALISED FOR MULTIPLEXED CONVERSATIONS - United States
+
+Text:
+  FIXES ARE AVAILABLE
+WebSphere MQ V7.0 Fix Pack 7.0.1.2 [http://www-01.ibm.com/support/docview.wss?uid=swg24026518]
+WebSphere MQ V7.0.1 for i5/OS Fix Pack 7.0.1.2 [http://www-01.ibm.com/support/docview.wss?uid=swg24026566]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  In WebSphere MQ V7, with a security exit installed on a
+   SVRCONN channel, an MQI channel with SHARECNV attribute set to
+   a value greater than zero (0) may fail to start.
+   
+   The following error messages will be recorded in the queue
+   manager error logs:
+   AMQ9181: The response set by the exit is not valid.
+   AMQ9190: Channel stopping because of an error in the exit.
+   AMQ9999: Channel program ended abnormally.
+   
+   Additionally, FFSTs with Probe Id "XC130003" from "amqrmppa"
+   process reporting SIGSEGV inside rriCALL_EXIT function are
+   reported.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   Multi-threaded client applications connecting to WebSphere MQ
+   V7 queue manager using the WebSphere MQ V7 client may encounter
+   this problem when:
+   (a) the CLNTCONN-SVRCONN channels are configured with SHARECNV
+   set to a value > 0
+   (b) a security exit is installed on the SVRCONN channel
+   
+   Platforms affected:
+   All Distributed (iSeries, all Unix and Windows)
+   ****************************************************************
+   PROBLEM SUMMARY:
+   When multiplexing is enabled (SHARECNV > 0), exit data is also
+   stored in a structure called the primary session. This
+   information is used during exit termination. However,
+   initialised exit data was not stored in the primary session
+   structure during channel-multiplexing. This information was
+   therefore not restored during exit termination, thereby causing
+   segmentation violation in the channel pooler process.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Code changes were made to store the exit data in the primary
+   session structure when channel multiplexing is enabled.
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+                      v7.0
+   Platform           Fix Pack 7.0.1.2
+   --------           --------------------
+   Windows            U200316
+   AIX                U829807
+   HP-UX (PA-RISC)    U829678
+   HP-UX (Itanium)    U829681
+   Solaris (SPARC)    U829806
+   Solaris (x86-64)   U829680
+   iSeries            tbc_p700_0_1_2
+   Linux (x86)        U829677
+   Linux (x86-64)     U829676
+   Linux (zSeries)    U829682
+   Linux (Power)      U829679
+   
+   The latest available maintenance can be obtained from
+   'WebSphere MQ Recommended Fixes'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037]
+   
+   If the maintenance level is not yet available, information on
+   its planned availability can be found in 'WebSphere MQ
+   Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ64716
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ SOL SPARC
+   
+   
+ * REPORTED COMPONENT ID
+   5724H7223
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-11-06
+   
+   
+ * CLOSED DATE
+   2009-11-30
+   
+   
+ * LAST MODIFIED DATE
+   2009-11-30
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ SOL SPARC
+   
+   
+ * FIXED COMPONENT ID
+   5724H7223
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R700 PSY
+   UP

@@ -1,0 +1,54 @@
+Title: IBM No data appears in the Worklight console Analytics tab - all sections just show "No data available" - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ There is no data available in the IBM Worklight console Analytics tab after attempting to enable analytics with IBM SmartCloud Analytics Embedded or IBM Worklight Analytics Platform. 
+
+SYMPTOM
+After specifying the analytics using the following settings, no data is available:
+
+1. Specify wl.analytics.logs.forward setting to "true" 
+2. Set the wl.analytics.url 
+3. Restart the server
+
+You don't see any data in the Worklight console Analytics tab. All sections just show "No data available".
+
+
+CAUSE
+There may be an incorrect value for the wl.analytics.url property in the worklight.properties file.
+
+RESOLVING THE PROBLEM
+For IBM Worklight versions 6.0 and 6.1: 
+
+Be sure that the string "worklight" does not appear in the modified URL that you specify in the wl.analytics.url property in the worklight.properties file (the "worklight" string exists on the direct URL noted while installing IBM SmartCloud Analytics Embedded, but it is not placed in the property URL). Here is an example of a value for the wl.analytics.url property for Worklight V6.0 and V6.1:
+http://<IP>:80/iwap/v1/events/_bulk. 
+
+
+Review the Configuring Worklight Server for analytics [http://www.ibm.com/support/knowledgecenter/SSZH4A_6.0.0/com.ibm.worklight.help.doc/install_config/t_configure_wl_server_for_analytics.html] (version 6.0) / Configuring Worklight Server for analytics [http://www.ibm.com/support/knowledgecenter/SSZH4A_6.1.0/com.ibm.worklight.installconfig.doc/install_config/t_configure_wl_server_for_analytics.html] (version 6.1) topic in the IBM Knowledge Center regarding the differences between the direct URL and properties URL.
+
+
+For IBM Worklight Foundation version 6.2 or MobileFirst Platform Foundation version 6.3 and later :
+
+IBM Worklight Analytics Platform replaces IBM SmartCloud Analytics Embedded used in earlier versions of IBM Worklight. Review the Migrating IBM SmartCloud Analytics Embedded to IBM Worklight Analytics Platform [http://www.ibm.com/support/knowledgecenter/SSZH4A_6.2.0/com.ibm.worklight.upgrade.doc/monitor/t_migrating_iwap_to_analytics_platform.html?lang=en] (version 6.2) topic in the IBM Knowledge Center for details.
+
+Ensure that the wl.analytics.url property in the worklight.properties file points to the deployed analytics.war file. 
+
+Here is an example of a value for the wl.analytics.url property for IBM Worklight Foundation V6.2:
+http://<hostname>:<port>/<context-root>/data 
+
+
+Review an example of setting this value in the Configuring the Worklight Server for the IBM Worklight Analytics Platform [http://www.ibm.com/support/knowledgecenter/SSZH4A_6.2.0/com.ibm.worklight.installconfig.doc/monitor/t_configuring_op_analytics.html?lang=en] (version 6.2) topic in the IBM Knowledge Center for details.
+
+
+For all IBM Worklight and MobileFirst versions:
+
+After changing the wl.analytics.url property, the server must be restarted for this new value to be used. 
+
+Note: Allow a period of time to pass for the data to be populated after restarting the server and using the application.
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Cloud and Virtualization Management IBM MobileFirst Platform Foundation AIX, Linux, Solaris, Windows 6.3, 7.0, 7.1 Consumer, Enterprise

@@ -1,0 +1,161 @@
+Title: IBM PK62364: SITEUTILS RETURNING URL = NULL / NULL URL WHEN AN ANONYMOUS USER ACCESSES CONTENT WITH A RTE THAT INCLUDES SECURED LINKS - United States
+
+Text:
+  FIXES ARE AVAILABLE
+6.1.0.1 Download: WebSphere Portal and Web Content Management V6.1, fix pack 1 [http://www-01.ibm.com/support/docview.wss?uid=swg24020387]
+6.1.0.2 Download: WebSphere Portal and Web Content Management V6.1, fix pack 2 [http://www-01.ibm.com/support/docview.wss?uid=swg24022898]
+6.1.0.3 Download: WebSphere Portal and WCM V6.1 fix pack 3, 6.1.5 feature pack [http://www-01.ibm.com/support/docview.wss?uid=swg24025054]
+6.1.0.4 Download: WebSphere Portal and WCM V6.1.0 fix pack 4 & 6.1.5 fix pack 1 [http://www-01.ibm.com/support/docview.wss?uid=swg24026394]
+6.1.0.5 Download: WebSphere Portal and WCM V6.1.0 fix pack 5 [http://www-01.ibm.com/support/docview.wss?uid=swg24027475]
+6.1.0.6 Download: WebSphere Portal and WCM V6.1.0 fix pack 6 [http://www-01.ibm.com/support/docview.wss?uid=swg24030970]
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When a piece of content has a Rich Text Element that includes
+   links to both anonymous content and secured content SiteUtils
+   returns a null URL for links to secured content.
+   ..
+   Steps to recreate:
+   (1) Create a new piece of test content with only a Rich Text Ele
+   (2) Using Insert Link in the RTE create two links one to anonymo
+       content and the other to secure content.
+   (3) Assign anonymous user access to the new content.
+   (4) Render the content (preview) drag mouse over both links and
+       will see in the lower left the address is as expected.
+   (5) Logout
+   (6) Render the new content as anonymous user and you will find t
+        http://www.TESTXXX.com:10038/tuttle/wcm/connect/ [http://www.TESTXXX.com:10038/tuttle/wcm/connect/]
+        outrageousoutput1/River+Bend/Contact/Test
+       secure link ends at /connect/ like:
+        http://www.TESTXXX.com:10038/tuttle/wcm/connect [http://www.TESTXXX.com:10038/tuttle/wcm/connect]
+   ..
+   .
+   The trace shows the following:
+   Line1 00000045 SiteUtils     > SiteUtils getSiteURL() ENTRY
+   Line2 SiteUtils     3   Returning SiteURL for ID
+         [{d16e8380458ba7c597f2d715d17bf09a, com.aptrix.pluto.
+         content.Content}] using MaintainCase [false]
+   Line3 00000045 SiteUtils     3   Returning URL= null
+   ..
+   As you can see SiteUtils returns a null url.  This appears to be
+   beacuse the content the link points to is secure.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  When the anonymous user viewing a content contain the link to
+   none anonymous user access content, the link is broken (missing
+   the "Library/Site/SiteArea/Content" part.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  When system are trying to find the node for secured content in
+   the repository, the workspace is not system workspace, which may
+   through security exception, then the path for the content will
+   be null which caused the broken link. Change to use the system
+   workspace to make sure the path is correct.
+   
+   An interim fixe for this APAR is available from Fix Central at:
+   
+   6.0.1.3
+   
+   http://www.ibm.com/eserver/support/fixes/fixcentral/swgquickorde
+   r?brandid=2&productid=Workplace%20Web%20Content%20Management&fix [http://www.ibm.com/eserver/support/fixes/fixcentral/swgquickorder?brandid=2&productid=Workplace%20Web%20Content%20Management&fix]
+   es=6.0.1.3-WCM-PK62364
+   
+   You will need to cut/paste the entire URL into a browser to
+   resolve the address.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK62364
+   
+   
+ * REPORTED COMPONENT NAME
+   WRKPLC WEB CON
+   
+   
+ * REPORTED COMPONENT ID
+   5724I2900
+   
+   
+ * REPORTED RELEASE
+   60G
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-03-06
+   
+   
+ * CLOSED DATE
+   2008-03-11
+   
+   
+ * LAST MODIFIED DATE
+   2009-11-04
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WRKPLC WEB CON
+   
+   
+ * FIXED COMPONENT ID
+   5724I2900
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R60G PSY
+   UP

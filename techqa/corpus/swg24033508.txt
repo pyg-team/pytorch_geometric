@@ -1,0 +1,113 @@
+Title: IBM WebSphere Application Server 6.1 Test Environment Update v6.1.0.45 - United States
+
+Text:
+WTE update; WTE 61045 DOWNLOADABLE FILES
+
+ABSTRACT
+ IBM WebSphere Application Server Version 6.1, Feature Pack for Web Services and Feature Pack for EJB 3.0 Fix Pack 45 (v6.1.0.45) for an installed test environment extension. 
+
+DOWNLOAD DESCRIPTION
+This update includes:
+
+
+ * Version 6.1.0.45 IBM WebSphere Application Server, as well as Web Services Feature Pack Fix Pack 45 and EJB 3.0 Feature Pack Fix Pack 45 for the WebSphere Application Server v6.1 Test Environment extension included with Rational Software Delivery Platform products.
+
+
+For details about this update, such as known issues, view the WebSphere Application Server 6.1.0.45 readme at http://www-01.ibm.com/support/docview.wss?uid=swg27035922 [http://www-01.ibm.com/support/docview.wss?uid=swg27035922] 
+ * WebSphere Application Server Feature Pack for Web 2.0 v1.0.1.1 
+ * WebSphere Application Server Feature Pack for Web 2.0 and Mobile v1.1.0.1 (Note: This is available only when installing with version 8.0.x.)
+
+
+
+For more information on feature packs for WebSphere Application Server, see http://www-01.ibm.com/support/docview.wss?uid=swg27008534&wv=1#was61 [http://www-01.ibm.com/support/docview.wss?uid=swg27008534&wv=1#was61] PREREQUISITES
+You must have the WebSphere Application Server v6.1 Test Environment extension installed. 
+
+ * You need up to 3.85 GB of disk space to install the fix pack. To download and extract the compressed installation files, you need an additional 5.8 GB of disk space.
+
+INSTALLATION INSTRUCTIONS
+
+
+Important: By default, you do not need to download the compressed files that contain the update; the update is downloaded and installed by IBM Installation Manager directly from the IBM update repository.
+
+For instructions on installing this update using Installation Manager, see the topic "Updating Installed Product Packages" in the information center for your product: 
+
+ * Rational Application Developer for WebSphere Software, version 7.5.x [http://publib.boulder.ibm.com/infocenter/radhelp/v7r5/topic/com.ibm.rad.install.doc/topics/t_update.html] 
+ * Rational Application Developer for WebSphere Software, version 8.0.x [http://publib.boulder.ibm.com/infocenter/radhelp/v8/topic/com.ibm.rad.install.doc/topics/t_update.html]
+
+
+To download and install the update from the compressed files, complete the following steps: 
+
+
+ 1. 
+ 2. Download the update files from Fix Central by following the link listed in the download table below.
+ 3. 
+ 4. Extract the compressed files in an appropriate directory. For example, choose to extract to C:\temp\update
+ 5. 
+ 6. 
+ 7. Add the update's repository location in IBM Installation Manager:
+     1.  
+     2.  Start IBM Installation Manager.
+     3.  
+     4.  On the Start page of Installation Manager, click File > Preferences, and then click Repositories. The Repositories page opens.
+     5.  
+     6.  On the Repositories page, click Add Repository.
+     7.  
+     8.  In the Add repository window, browse to or enter the file path to the diskTag.inf file, which is located in the disk1 sub-directory in the directory where you extracted the compressed files and then click OK. For example, enter C:\temp\updates\disk1\diskTag.inf.
+     9.  
+     10. Click OK to close the Preference page.
+     11. 
+    
+    
+    
+ 8. Install the update as described in the the topic "Updating Installed Product Packages" in the information center for your product and version. 
+ 9. 
+
+
+DOWNLOAD PACKAGE
+You can download the fix pack from Fix Central using either Download Director, HTTP or FTP. 
+
+ 1. Click the link in the table that follows to access Fix Central. 
+ 2. On the Select Fixes page, select Interim fix: 7.5.5.5iFix001-Rational-RAD-groupfixpack (IBM Rational Application Developer for WebSphere Software, Version 7.5.5.5 iFix001). 
+ 3. Click Show contained fixes. 
+ 4. From the list of contained fixed, select one of the following options:  * (For 64-bit) fix pack: 6.1.0.45-Rational-WAS61_64-fixzippack (WebSphere Application Server v61 64bit Extension version 6.1.0.45 update pack) 
+     * (For 32-bit) fix pack: 6.1.0.45-Rational-WAS61-fixzippack (WebSphere Application Server v61 Extension version 6.1.0.45) update pack 
+    
+    
+ 5. Click Continue and follow the prompts to download the update.
+
+
+Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options 
+What is Fix Central(FC)? [https://www.ibm.com/support/fixcentral/help?page=swfaqs] Update 6.1.0.45 24 Sep 2012 English 1 FC [http://www-933.ibm.com/support/fixcentral/swg/quickorder?parent=ibm~Rational&product=ibm/Rational/IBM+Rational+Application+Developer+for+WebSphere+Software&release=7.5.5.5&platform=All&function=all&source=fc] [ ] 
+TECHNICAL SUPPORT
+ IBM Rational Software Support
+
+
+TAB NAVIGATION
+ * General Support Information- selected tab,
+ * Support Portal [http://www-947.ibm.com/support/entry/portal/Overview/Software/Rational/Rational_Application_Developer_for_WebSphere_Software]
+ * developerWorks [http://www.ibm.com/developerworks/rational/products/rad/]
+
+
+
+
+IBM Rational Software Support Communities 
+
+ * Support Portal: Click the Support Portal tab above to begin configuring your support portal experience to review FAQs, lists of known problems, fixes, and a wealth of important support information. 
+ * developerWorks: Click the developerWorks tab above to access an online collection of tutorials, sample code, standards, forums and other resources provided by experts at IBM to assist software developers using Rational tools including access to the IBM RFE Community [http://www.ibm.com/developerworks/rfe/]. 
+
+
+
+
+HELPFUL HINTS FOR OBTAINING TECHNICAL ASSISTANCE:
+Before you contact IBM Rational Software Support, gather the background information that you need to describe the problem. When you describe a problem to an IBM software support specialist, be as specific as possible and include all relevant background information so that the specialist can help you solve the problem efficiently. To save time, know the answers to these questions: 
+
+ * What software versions were you running when the problem occurred? 
+ * Do you have logs, traces, or messages that are related to the problem? 
+ * Can you reproduce the problem? If so, what steps do you take to reproduce it? 
+ * Is there a workaround for the problem? If so, be prepared to describe the workaround. 
+
+If you have helpful information to diagnose or identify the problem on your system, you can provide this data by following the instructions to exchange information with IBM Technical Support [http://www.ibm.com/software/support/exchangeinfo.html]. 
+
+ 
+
+Follow IBM Rational Client Support on Twitter [http://twitter.com/rationalsupport] | Facebook [http://facebook.com/rationalsupport] | YouTube [http://www.youtube.com/ibmrationalsupport] | devWorks Blog [https://www.ibm.com/developerworks/mydeveloperworks/blogs/nfrsblog/?lang=en]

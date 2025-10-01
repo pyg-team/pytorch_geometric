@@ -1,0 +1,43 @@
+Title: IBM The report requested is too wide alert message when attempting to run Reports on string variables with a width of more than 255 characters in SPSS - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ I am trying to run some Reports on my string data under Analyze->Reports->Report Summaries in Rows in SPSS 13.0.x and later. My variables are open-ended questions where the text may contain between 500 to 1000 characters. When I try to run this report I receive an alert message:
+
+"The report requested is too wide. It requires a width of nnn characters but the report area width within the specified margins is 255 characters. The maximum width is 255 characters."
+
+I then click OK and no output is created.
+
+I have attempted to change my margins by going under Edit->Options, Viewer tab, but even the Custom Settings under "Text Output Page Size" will not allow me to go above 255 characters.
+
+If SPSS now allows string variables to be more than 255 characters shouldn't I be able to obtain output on them under the Reports option? 
+
+RESOLVING THE PROBLEM
+This issue has been noted and has been filed with SPSS Development as a feature request that Report allow more than 255 characters in the output.
+
+One way of obtaining a report-like output on your wide string responses is to use the Summarize command with the Output Management System (OMS) and saving the file out as a Text (.txt) file.
+
+The syntax below is an example of how you may do this. Please note that it is not necessary to edit the resulting SPSS Output. Simply open the newly created .txt file (longstring.txt in this example) in Notepad to view your responses:
+
+OMS /select tables /destination format=text outfile = 'c:\temp\longstring.txt'
+/if labels = 'Case Summaries'
+.
+SUMMARIZE
+/TABLES=yourvariable
+/FORMAT=LIST NOCASENUM NOTOTAL
+/TITLE='Case Summaries'
+/MISSING=VARIABLE
+/CELLS=NONE.
+
+omsend .
+
+RELATED INFORMATION
+ Need more help? Our Statistics forum is Live! [https://developer.ibm.com/answers/topics/statistics.html?smartspace=predictive-analytics]
+
+
+ 
+
+HISTORICAL NUMBER
+ 55674

@@ -1,0 +1,294 @@
+Title: IBM PK31566: V6.0.2.13 DMGR (AND NODES AT V6.0.2.11) CONSUMING HIGH CPU DURING START UP, PROBLEM GOES AWAY, IF DMGR IS AT V6.0.2.11 - United States
+
+Text:
+  FIXES ARE AVAILABLE
+6.1.0.7: WebSphere Application Server V6.1 Fix Pack 7 for Solaris [http://www-01.ibm.com/support/docview.wss?uid=swg24014824]
+6.1.0.7: WebSphere Application Server V6.1 Fix Pack 7 for HP-UX [http://www-01.ibm.com/support/docview.wss?uid=swg24014827]
+6.1.0.7: WebSphere Application Server V6.1 Fix Pack 7 for Linux [http://www-01.ibm.com/support/docview.wss?uid=swg24014826]
+6.1.0.7: WebSphere Application Server V6.1 Fix Pack 7 for Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24014825]
+6.1.0.7 WebSphere Application Server V6.1 Fix Pack 7 for AIX [http://www-01.ibm.com/support/docview.wss?uid=swg24014799]
+6.1.0.7: WebSphere Application Server V6.1 Fix Pack 7 for i5/OS [http://www-01.ibm.com/support/docview.wss?uid=swg24014873]
+Java SDK 1.5 SR8 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24020073]
+Java SDK 1.5 SR8 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24021203]
+Java SDK 1.5 SR10 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24024201]
+6.1.0.31: Java SDK 1.5 SR11 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24026453]
+6.1.0.33: Java SDK 1.5 SR12 FP1 Cumulative Fix for WebSphere [http://www-01.ibm.com/support/docview.wss?uid=swg24027786]
+6.1.0.29: Java SDK 1.5 SR11 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24025191]
+6.1.0.35: Java SDK 1.5 SR12 FP2 Cumulative Fix for WebSphere [http://www-01.ibm.com/support/docview.wss?uid=swg24028574]
+6.1.0.37: Java SDK 1.5 SR12 FP3 Cumulative Fix for WebSphere [http://www-01.ibm.com/support/docview.wss?uid=swg24029525]
+6.1.0.39: Java SDK 1.5 SR12 FP4 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24030426]
+6.1.0.41: Java SDK 1.5 SR12 FP5 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24031035]
+6.1.0.43: Java SDK 1.5 SR13 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24031963]
+6.1.0.45: Java SDK 1.5 SR14 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24033270]
+6.1.0.47: WebSphere Application Server V6.1 Fix Pack 47 [http://www-01.ibm.com/support/docview.wss?uid=swg24035508]
+6.1.0.47: Java SDK 1.5 SR16 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24035649]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Prob Desc : Customer upgraded Dmgr to V6.0.2.13 while the nodes
+   are running at V6.0.2.11,  Customer noticed High CPU utilization
+   during  startup.
+   
+   -- customer uninstalled the FP and the problem has gone away
+   
+   
+   The following exceptions are seen in the Dmgr SystemOut.log
+   ----------------------------------------------------------------
+   
+   
+   1)
+   
+   [9/14/06 13:43:13:512 EDT] 00000481 CoordinatorCo W   HMGR0152W:
+   CPU  Starvation detected. Current thread scheduling delay is 8
+   seconds.
+   
+   [9/14/06 13:55:42:048 EDT] 00000481 CoordinatorCo W   HMGR0152W:
+   CPU Starvation detected. Current thread scheduling delay is 530
+   seconds.
+   
+   [9/14/06 13:55:44:107 EDT] 0000000f ApplicationMo W   DCSV0004W:
+   DCS Stack DefaultCoreGroup at Member devcell1\devcell1\dmgr: Did
+   not receive adequate CPU time slice. Last known CPU usage time
+   at 13:4
+   
+   
+   2)
+   
+   [9/14/06 14:17:06:266 EDT] 00000732 ThreadMonitor W   WSVR0605W:
+   Thread "SoapConnectorThreadPool : 150" (000006b8) has been
+   active for 652266 milliseconds and may be hung.  There is/are 1
+   thread(s) in total in the server that may be hung.
+   
+   
+   
+   [9/14/06 14:18:16:983 EDT] 000006b8 ThreadMonitor W   WSVR0606W:
+   Thread "SoapConnectorThreadPool : 150" (000006b8) was previously
+   reported to be hung but has completed.  It was active for
+   approximately 722982 milliseconds.  There is/are 0 thread(s) in
+   total in the server that still may be hung.
+   
+   
+   3)
+   websphere.discovery.process.foundms: 300000
+   [9/14/06 12:03:06:230 EDT] 00000072 NotificationD E   ADME0005E:
+   The following notification listener was removed because it did
+   not handle a notification within
+   websphere.discovery.process.foundms: 300000
+   
+   [9/14/06 12:03:06:480 EDT] 00000080 NotificationD E   ADME0005E:
+   The  following notification listener was removed because it did
+   not handle a notification within websphere.process.runningms:
+   300000
+   
+   ----------------------------------------------------------------
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  no workaround
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: Websphere Application Server Network         *
+   *                 Deployment version 6 users with large        *
+   *                 topologies.                                  *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: High CPU utilization occurs during      *
+   *                      deployment manager startup.             *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   You see the following statements in SystemOut.log of
+   DeploymentManager:
+   
+   [9/14/06 13:43:13:512 EDT] 00000481 CoordinatorCo WHMGR0152W:
+   CPU  Starvation detected. Current thread scheduling delay is 8
+   seconds.
+   [9/14/06 13:55:42:048 EDT] 00000481 CoordinatorCo WHMGR0152W:
+   CPU Starvation detected. Current thread scheduling delay is
+   530 seconds.
+   [9/14/06 13:55:44:107 EDT] 0000000f ApplicationMo WDCSV0004W:
+   DCS Stack DefaultCoreGroup at Member devcell1\devcell1\dmgr:
+   Did not receive adequate CPU time slice. Last known CPU usage
+   time at 13:4
+   [9/14/06 14:17:06:266 EDT] 00000732 ThreadMonitor WWSVR0605W:
+   Thread "SoapConnectorThreadPool : 150" (000006b8) has been
+   active for 652266 milliseconds and may be hung.  There is/are
+   1 thread(s) in total in the server that may be hung.
+   [9/14/06 14:18:16:983 EDT] 000006b8 ThreadMonitor W
+   WSVR0606W:
+   Thread "SoapConnectorThreadPool : 150" (000006b8) was
+   previously reported to be hung but has completed. It was
+   active for approximately 722982 milliseconds. There is/are 0
+   thread(s) in total in the server that still may be hung.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Optimized the Statuscache code which was cuasing the High CPU.
+   
+   The fix for this APAR is currently targeted for inclusion in
+   fixpack  6.0.2.19 and 6.1.0.7.
+   Please refer to the recommended updates page for delivery
+   information:
+   http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK31566
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBS APP SERV N
+   
+   
+ * REPORTED COMPONENT ID
+   5724H8800
+   
+   
+ * REPORTED RELEASE
+   60I
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2006-09-18
+   
+   
+ * CLOSED DATE
+   2006-12-11
+   
+   
+ * LAST MODIFIED DATE
+   2007-02-27
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    PK32106
+   
+   
+
+MODULES/MACROS
+ *  ADMINJMX
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBS APP SERV N
+   
+   
+ * FIXED COMPONENT ID
+   5724H8800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R60A PSY
+   UP
+   
+   
+ * R60H PSY
+   UP
+   
+   
+ * R60I PSY
+   UP
+   
+   
+ * R60P PSY
+   UP
+   
+   
+ * R60S PSY
+   UP
+   
+   
+ * R60W PSY
+   UP
+   
+   
+ * R60Z PSY
+   UP
+   
+   
+ * R61A PSY
+   UP
+   
+   
+ * R61H PSY
+   UP
+   
+   
+ * R61I PSY
+   UP
+   
+   
+ * R61P PSY
+   UP
+   
+   
+ * R61S PSY
+   UP
+   
+   
+ * R61W PSY
+   UP
+   
+   
+ * R61Z PSY
+   UP

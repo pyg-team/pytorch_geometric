@@ -1,0 +1,49 @@
+Title: IBM WCDE: setup.bat fails with java.lang.NoClassDefFoundError and OutOfMemoryError - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ While restoring (restoreDefault.bat) the toolkit, the setup.bat fails with java.lang.NoClassDefFoundError followed by OutOfMemoryError while running configureServer task
+
+
+
+SYMPTOM
+configureServer: 
+
+BUILD FAILED
+C:\IBM\WCDE_E~2\setup\setup.xml:76: The following error occurred while executing this line:
+C:\IBM\WCDE_E~2\setup\setup.xml:167: java.lang.NoClassDefFoundError: org.eclipse.wst.common.internal.emf.utilities.EncoderDecoderAdapter
+
+Total time: 41 minutes 58 seconds
+HeadlessWorkspaceSettings: RESTORED autoBuild=true maxFile=1048576
+JVMDUMP039I Processing dump event "systhrow", detail "java/lang/OutOfMemoryError" at 2016/05/13 15:33:02 - please wait.
+JVMDUMP032I JVM requested Heap dump using 'C:\IBM\WCDE_E~2\bin\heapdump.20160513.153302.52208.0001.phd' in response to an event
+JVMDUMP010I Heap dump written to C:\IBM\WCDE_E~2\bin\heapdump.20160513.153302.52208.0001.phd
+JVMDUMP032I JVM requested Java dump using 'C:\IBM\WCDE_E~2\bin\javacore.20160513.153302.52208.0002.txt' in response to an event
+UTE430: can't allocate buffer
+UTE437: Unable to load formatStrings for j9mm
+JVMDUMP010I Java dump written to C:\IBM\WCDE_E~2\bin\javacore.20160513.153302.52208.0002.txt
+JVMDUMP032I JVM requested Snap dump using 'C:\IBM\WCDE_E~2\bin\Snap.20160513.153302.52208.0003.trc' in response to an event
+UTE001: Error starting trace thread for "Snap Dump Thread": -1
+JVMDUMP010I Snap dump written to C:\IBM\WCDE_E~2\bin\Snap.20160513.153302.52208.0003.trc
+JVMDUMP013I Processed dump event "systhrow", detail "java/lang/OutOfMemoryError".
+
+
+CAUSE
+The java.lang.NoClassDefFoundError occurs because java process fails to load plugins jar due to insufficient memory. 
+
+
+RESOLVING THE PROBLEM
+Specify a maximum heap size -Xmx property value that provides about 45% free memory, and a minimum heap size -Xms property value of approximately 50% of the maximum heap size.
+
+
+For Example: -Xmx1024m -Xmn512m 
+
+Backup and update setup.bat as follows:
+
+%ECLIPSE_ANT% -Xmx1024m -Xmn512m -data %WORKSPACE_DIR% -Dworkspace=%WORKSPACE_DIR% -Dwctoolkit=%WCTOOLKIT% -Dwas_home=%WAS_HOME% -buildfile %WCTOOLKIT%\setup\setup.xml >%LOG_FILE% 2>&1 
+
+ 
+
+Note: You may increase the heapsize as needed.

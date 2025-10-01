@@ -1,0 +1,82 @@
+Title: IBM SOA : TEP Workspace shows several same node names - United States
+
+Text:
+CAMSOAALL CAMSOATEPDATA same node leaf delete SOA TEPS workspace entry TECHNOTE (TROUBLESHOOTING)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ US English 
+
+PROBLEM(ABSTRACT)
+ Need to remove the nodes with same name (there are several node names which is the same) and leave only 1 node name in TEPS tree view. 
+
+SYMPTOM
+Several different causes can result in the following issues. 
+
+Issue A : Same node names exist and you want to remove all the same-named nodes and leave only 1 in tree. 
+
+Issue B : Individual leaf (node) names for different devices. The individual leaf nodes are with the same name and only one of which reports activity. 
+
+
+CAUSE
+Issue B : Mostly it is due to the too long hostnames /long and similar starting server names.
+
+
+RESOLVING THE PROBLEM
+ 
+
+Issue A. (see symptom above for description) 
+
+ Here is how to remove/trim the same node name down to 1 node (with the name) left in TEPS view. 
+
+
+1. Stop the SOA Agent. 
+2. Click (with 2nd mouse) the subnode that you want to remove, and choose "Clear offline entry" 
+3. From KD4.dc.properties file, remove all the entry about the host/server that you deleted from TEPS and save it. 
+
+ Example : If you deleted the entry related to Data Power, the related entry (to be removed) looks like this.
+8.<DP hostname>.monitor=on
+8.<DP hostname>.log=error
+8.<DP hostname>.trace=off
+8.<DP hostname>.control.count=1
+8.<DP hostname>.control.1=*;*;*;*;*;none
+8.<DP hostname>.filter.control.count=0 
+
+ 
+4. Remove (windows: <ITM_HOME>\TMAITM6\KD4\logs\KD4.DCA.CACHE\persist, unix: <ITM_HOME>/<platform>/d4/KD4/logs/KD4.DCA.CACHE\persist) directory. 
+
+ 
+5. Restart SOA Agent. 
+6. From TEPS view, you should be able to see the deleted entry is gone. 
+
+ 
+
+Issue B. (see symptom above for description) 
+
+1. Change the file KD4.dc.properties (windows: <ITM_HOME>\TMAITM6\KD4\config, unix: <ITM_HOME>/<platform>/d4/KD4/config) 
+
+Change kd4.ira.useCTIRAHostname=0 to 1. 
+
+2. Change the Hostname to shorter name (ex: from "IBMHostname5" to "B5") - so that the remaining field of the whole node name will be filled with more characters of front portion of server name - by following description below - 
+
+(in ManageTivoli Enterprise Monitoring Services (MTEMS) 
+
+ a. Stop SOA Agent -> click right mouse on "SOA Agent". 
+
+ b. Click "Advanced" -> "Edit Variables" 
+
+ c. The screens will show as below (ITCAM for SOA: Override Local Variable Settings). 
+
+ d. Choose "CTIRA_HOSTNAME" and click "Edit" as shown. 
+
+ e. The "Edit Environment Setting Override" screen will pop up. Change the name to shorter hostname, preferrably that hostname length of 2) -> click OK. 
+
+
+[/support/docview.wss?uid=swg21645365&aid=1] [/support/docview.wss?uid=swg21645365&aid=1] 
+
+3. Perform all the steps in Issue A. 
+
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ ITCAM4SOA ITCAM for SOA

@@ -1,0 +1,14 @@
+Title: IBM What's the minimum size of the partition table in RTM - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ What's the miminum size of the partition table in RTM? 
+
+ANSWER
+The default minimum size of RTM partition table size is one day. The setting can be checked from Console/Configuration/Grid Settings/Maint/Partition Size. 
+
+If you want a partition size of less than 1 day, you can make table partition manually by referring to the steps below:
+Log on to the RTM host as root and go to <RTM_TOP>/cacti/plugins/grid and run this command:
+#php -q poller_grid.php -fr -fm

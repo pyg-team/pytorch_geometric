@@ -1,0 +1,19 @@
+Title: IBM What should I do to get port 8444 to use TLS v1.2? - United States
+
+Text:
+IBM Security Guardium Data Encryption GDE port 8444 TLS 1.2 1.0 1.1 agents TECHNOTE (FAQ)
+
+QUESTION
+ I'm using the IBM Security Guardium Data Encryption product. I have noticed that the port 8444 on the DSM is not using TLS v1.2 even though it supports TLS v1.2. What should I do to get port 8444 to use TLS v1.2?
+
+
+
+ANSWER
+Use DSM of version 5.3 or later.
+Port 8444 is used for agents to upload logs to the DSM, it supports TLS v1.2. For backward compatibility it also supports TLS v1.1 and v1.0. If newer agents communicate with DSM, TLS v1.2 will be used, and if older agents communicate with DSM, TLS v1.1, or v1.0, will be used. For the agents to use TLS v1.2 to communicate to DSM on port 8444 you should use agents of v5.2.2, or higher.
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ IBM Security Guardium Data Encryption
+GDE

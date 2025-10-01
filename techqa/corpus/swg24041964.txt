@@ -1,0 +1,56 @@
+Title: IBM PI53566:on demand router memory leak when upgrading applications under load - United States
+
+Text:
+PI53566; PI53566; PI53566; ve im oom odr DOWNLOADABLE FILES
+
+ABSTRACT
+ An Out Of Memory error can be seen on the On Demand Router because HttpRouteAction objects can accumulate. 
+
+DOWNLOAD DESCRIPTION
+PI53566 resolves the following problem:
+
+ERROR DESCRIPTION: 
+The On Demand Router (ODR) has a memory leak related to HttpRouteAction objects such that when the system is under load and there are configuration changes such as uninstalling and installing applications it is possible that multiple, redundant HttpRouteAction objects can be created with registered listeners for ODC tree changes but never removed. This will eventually fill up the available heap space and cause an Out Of Memory issue on the ODR. Restarting the ODR will correct the 
+problem. 
+
+LOCAL FIX: 
+Restart the ODR. 
+
+PROBLEM SUMMARY
+
+USERS AFFECTED:
+All users of IBM WebSphere Application Server Intelligent Management using the java On Demand Router (ODR).
+
+PROBLEM DESCRIPTION:
+An Out Of Memory error can be seen on the On Demand Router because HttpRouteAction objects can
+accumulate.
+
+RECOMMENDATION:
+None
+
+There is a code bug where HttpRouteAction objects can accumulate because they are not freed. This is particularly noticeable when there are routing rules present, many applications installed, and multiple configuration changes happening on the system (such as installing or removing applications). Over time this can cause exhaustion of the available heap and an Out Of Memory error for the On Demand
+Router.
+
+PROBLEM CONCLUSION: 
+The area of code was corrected to release the HttpRouteAction objects. This fix supercedes PI51978. 
+
+The fix for this APAR is currently targeted for inclusion in fix pack 8.5.5.9. Please refer to the Recommended Updates page for delivery information: 
+http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+
+PREREQUISITES
+None
+
+INSTALLATION INSTRUCTIONS
+Please review the readme.txt for detailed installation instructions.
+
+URL LANGUAGE SIZE(Bytes) V85 Readme [ftp://public.dhe.ibm.com/software/websphere/appserv/support/fixes/PI53566/8.5.5.8/readme.txt] US English 4058 
+DOWNLOAD PACKAGE
+
+
+Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options 
+What is Fix Central(FC)? [https://www.ibm.com/support/fixcentral/help?page=swfaqs] 8.5.5.3-WS-WASND-IFPI53566 03-10-2016 US English 277676 HTTP [http://www-933.ibm.com/eserver/support/fixes/fixcentral/swgquickorder?fixes=8.5.5.3-WS-WASND-IFPI53566&productid=WebSphere%20Application%20Server&brandid=5] 
+TECHNICAL SUPPORT
+ Contact IBM Support using SR (http://www.ibm.com/software/support/probsub.html [http://www.ibm.com/software/support/probsub.html]), visit the WebSphere Application Server support web site (http://www.ibm.com/software/webservers/appserv/was/support/ [http://www.ibm.com/software/webservers/appserv/was/support/]), or contact 1-800-IBM-SERV (U.S. only). 
+
+ [/support/docview.wss?uid=swg24041964&aid=1]Problems (APARS) fixed [/support/docview.wss?uid=swg24041964&aid=2]Problems (APARS) fixed
+PI45639, PI47114, PI50672, PI51978, PI53566

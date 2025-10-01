@@ -1,0 +1,27 @@
+Title: IBM The ServiceDeploy command for WebSphere Enterprise Service Bus (WESB) does not include promoted properties from user-authored primitives - United States
+
+Text:
+sca-module-properties.xml TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When a mediation module is built using the serviceDeploy command, the mediation module properties file does not contain promotable properties of user-authored primitives. 
+
+CAUSE
+The WebSphere Enterprise Service Bus code for the serviceDeploy command was not upgraded to use 'human readable' format for its EMF model when the model changed. It uses a conversion that does not support promoted properties of user-authored primitives. 
+
+RESOLVING THE PROBLEM
+The <ProjectAPP.ear>/META_INF/ibmconfig/cells/defaultCell/applications/defaultApp/deployments/defaultApp/sca-module-properties.xml file holds the promotable properties.
+
+
+As a workaround, complete the following steps: 
+
+ 1. Build the module with IBM Integration Developer and save the sca-module-properties.xml file, which contains the promoted properties. 
+ 2. Build the module with the serviceDeploy command. 
+ 3. Replace the empty sca-module-properties.xml file, which is created by the serviceDeploy command, with the file version that was created by IBM Integration Designer.
+
+ 
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Integration Designer Mediation Flow Editor Windows, Linux 7.5.1, 7.5 
+PRODUCT ALIAS/SYNONYM
+ WESB
+IID

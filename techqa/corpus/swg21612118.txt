@@ -1,0 +1,57 @@
+Title: IBM SQL1652N  File I/O error received after issuing UNQUIESCE command. - United States
+
+Text:
+SQL1652N TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ SQL1652N might be thrown when UNQUIESCE command is run on an instance or database which is already QUIESCEed. 
+
+SYMPTOM
+The following errors might be reported: 
+
+ * 
+ * 
+
+ *  $ db2 UNQUIESCE INSTANCE DB2INST1 
+   SQL1652N File I/O error occurred. 
+   
+   $ db2 "UNQUIESCE database" 
+   SQL1652N File I/O error occurred. 
+
+
+CAUSE
+Read permission accidentially removed by user for Quiesce Lock Files "<database_name>.dck" and "<instance_name>.ick". 
+
+DIAGNOSING THE PROBLEM
+Check if owner executing UNQUIESCE command has read permission on Quiesce Lock Files "<database_name>.dck" and "<instance_name>.ick" 
+
+ 
+
+ * 
+
+ *  $ ls -ltr /home/db2inst1/sqllib/ctrl/*.dck 
+   -- w-rw-r-- 1 db2inst1 build 17 Sep 24 02:49 SAMPLE.dck 
+   
+   $ ls -ltr /home/db2inst1/sqllib/ctrl/*.ick 
+   -- w-rw-r-- 1 db2inst1 build 17 Sep 24 02:49 db2inst1.ick 
+
+RESOLVING THE PROBLEM
+When QUIESCE command is issued against instance or database, the Quiesce Lock file SAMPLE.dck is created with the database name, and db2inst1.ick, is created with the instance name. These files are read by UNQUIESCE command when executed. So owner executing this command should have "r"ead and "w"rite access i.e 664 on both of these files to avoid hitting with such errors. 
+
+ 
+
+ * 
+
+ *  $ ls -ltr /home/db2inst1/sqllib/ctrl/*.dck 
+   - rw-rw-r-- 1 db2inst1 build 17 Sep 24 02:49 SAMPLE.dck 
+   
+   $ ls -ltr /home/db2inst1/sqllib/ctrl/*.ick 
+   - rw-rw-r-- 1 db2inst1 build 17 Sep 24 02:49 db2inst1.ick 
+   
+   $ db2 "UNQUIESCE database" 
+   DB20000I The QUIESCE DATABASE command completed successfully. 
+
+RELATED INFORMATION
+ SQL1652N [http://pic.dhe.ibm.com/infocenter/db2luw/v10r1/topic/com.ibm.db2.luw.messages.sql.doc/doc/msql01652n.html]
+QUIESCE command [http://pic.dhe.ibm.com/infocenter/db2luw/v10r1/topic/com.ibm.db2.luw.admin.cmd.doc/doc/r0008635.html]
+UNQUIESCE command [http://pic.dhe.ibm.com/infocenter/db2luw/v10r1/topic/com.ibm.db2.luw.admin.cmd.doc/doc/r0008636.html]

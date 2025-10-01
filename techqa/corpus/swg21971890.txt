@@ -1,0 +1,41 @@
+Title: IBM Unable to obtain a license for RiskWatch - United States
+
+Text:
+riskwatch; license; 52003; invalid; RLM_LICENSE TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ A customer has cloned their $ALGO_HOME from a development environment to a UAT environment, then used IIM to install three patches, now Riskwatch will not startup due to a license error.
+
+
+
+The customer treied to uninstall the license packages in IIM and reinstalled them but it made no difference, the same error was generated.
+
+
+SYMPTOM
+Unable to obtain a license for RiskWatch,
+ERROR: = -52003,
+REASON: = LicenseMgr contains an invalid job handle.
+INTERNAL LICENSE MANAGER ERROR (optional): = .
+
+
+CAUSE
+Riskwatch is unable to read the license file correctly, and therefore unable to obtain a license key to use the Riskwatch functionality, therefore Riskwatch is unable to start. The cause is normally that the path specified in $RLM_LICENSE is incorrect, e.g. the directory path does not exist.
+
+ENVIRONMENT
+test
+
+DIAGNOSING THE PROBLEM
+All the Riskwatch licenses are stored in a file (obtained from IBM and downloaded with the AlgoOne product), that license file is referenced using the $RLM_LICENSE variable, which Riskwatch checks when it tries to start up. Normally the $RLM_LICENSE variable points to one license file but it can point to a directory that contains multiple Riskwatch license files. E.g:
+
+RLM_LICENSE=$ALGO_HOMElicenses/rlm/license.lic
+RLM_LICENSE=$ALGO_HOMElicenses/rlm
+
+1) Ensure the license file is valid by contacting IBM Support
+2) Check that the correct file is being referenced. Edit $ALGO_TOP/cfg/environment.properties and set it to your license file. e.g.
+RLM_LICENSE=$ALGO_HOME/licenses/rlm/IBMAlgoOneFoundation.lic
+3) Refresh CFG server so it knows about the above change: $ALGOSECURITY_HOME/bin/refresh-cfgserver
+4) Try to run RW: $RW_HOME/bin/Gui
+5) If it fails again, please send the Riskwatch console output and also the license files to IBM Support for analysis
+
+RESOLVING THE PROBLEM
+The customer tried all of the above steps and still had the same error. However, upon further investigation it was revealed the clone of $ALGO_HOME was incorrectly executed. The customer reinstalled AlgoOne using IIM, adding the patches with IIM and the problem disappeared.

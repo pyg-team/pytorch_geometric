@@ -1,0 +1,83 @@
+Title: IBM Application Pool Settings when both Controller and CDM are on the same box - United States
+
+Text:
+Controller CDM application pool cannot access server controller cannot launch TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Customer has installed both Cognos Controller and Cognos Disclosure management (CDM) on the same application server. Controller uses .NETFramework V2.0 while CDM uses .NETFramework V4.0. 
+
+SYMPTOM
+In one specific example, when Customer was trying to launch Controller they were receiving the following Error message
+
+Error: "An error occurred while trying to access the server. http:
+//spibm-contsb/ibmcognos/contollerserver"
+
+Error details.
+
+Client found response content type of 'text/html', but expected
+'text/xml'.
+The request failed with the error message:
+--
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "
+http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd [http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd]">
+
+<html xmlns="
+http://www.w3.org/1999/xhtml [http://www.w3.org/1999/xhtml]">
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"
+/>
+<title>500 - Internal server error.</title>
+<style type="text/css">
+<!--
+body{margin:0;font-size:.7em;font-family:Verdana, Arial, Helvetica,
+sans-serif;background:#EEEEEE;}
+fieldset{padding:0 15px 10px 15px;}
+h1{font-size:2.4em;margin:0;color:#FFF;}
+h2{font-size:1.7em;margin:0;color:#CC0000;}
+h3{font-size:1.2em;margin:10px 0 0 0;color:#000000;}
+#header{width:96%;margin:0 0 0 0;padding:6px 2% 6px 2%;font-family:"
+trebuchet MS", Verdana, sans-serif;color:#FFF;
+background-color:#555555;}
+#content{margin:0 0 0 2%;position:relative;}
+.content-container{background:#FFF;width:96%;margin-top:8px;padding:
+10px;position:relative;}
+-->
+</style>
+</head>
+<body>
+<div id="header"><h1>Server Error</h1></div>
+<div id="content">
+<div class="content-container"><fieldset>
+<h2>500 - Internal server error.</h2>
+<h3>There is a problem with the resource you are looking for, and it
+cannot be displayed.</h3>
+</fieldset></div>
+</div>
+</body>
+</html>
+
+--.
+. 
+
+[/support/docview.wss?uid=swg21960504&aid=1] [/support/docview.wss?uid=swg21960504&aid=1]
+
+
+CAUSE
+The Application Pool that Controller was using was on an incorrect version of .NETFramework.
+In one specific example, Customer was having issues with CDM and to resolve the issue. .NETFramework V4.0 was registered through CMD which caused all Application Pools (including the Controller Application Pool) to change its .NETFramework version to V4.0
+Below is the screenshot with the INCORRECT configuration.
+[/support/docview.wss?uid=swg21960504&aid=2] [/support/docview.wss?uid=swg21960504&aid=2]
+
+
+RESOLVING THE PROBLEM
+Always make sure that the Application Pool used by Controller is set to use .NETFramework V2.0.
+To revert back to V2.0, follow the steps below.
+To resolve the issue, the following steps were followed.
+- Go to IIS
+- Go to Application Pools
+- Go to DefaultAppPool
+- Go to Advanced Setting
+- Change the .Net Framework version to V2.0 
+
+[/support/docview.wss?uid=swg21960504&aid=3] [/support/docview.wss?uid=swg21960504&aid=3]

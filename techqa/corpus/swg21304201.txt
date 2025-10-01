@@ -1,0 +1,45 @@
+Title: IBM Maximo checks MAXUSER.LOGINID column for matching username - United States
+
+Text:
+TPAELDAP; Security; LDAP Authentication; Role; Authenticate; Flowchart; Troubleshoot; Login; Authorize; Multi; Directory Server TECHNOTE (FAQ)
+
+QUESTION
+ LDAP Troubleshooting Multipart Document - part 9 of 11
+
+What is the next step in the LDAP troubleshooting flow chart? 
+
+CAUSE
+Enhanced documentation
+
+ANSWER
+After 
+
+ *  
+   The user enters a URL to Maximo 
+ * The JEE server is configured for JEE server security 
+ * The requested resource is protected 
+ * The JEE server requests security authentication 
+ * The browser displays the authentication dialog 
+ * The LDAP server authenticates the user 
+ * The JEE Server checks user for membership in authorized group 
+ * The JEE server passes the username to Maximo
+
+
+Once the user has been authenticated, the JEE server passes the username to Maximo. Maximo uses the passed username to match a username in the LOGINID column of the MAXUSER table. Note that the username passed is case sensitive. If the username passed is in upper or mixed case but the value in the MAXUSER.LOGINID column is lower, the match will fail and a Maximo error page will be displayed. 
+
+ 
+
+The screen shot below shows the LOGINID column of the MAXUSER table containing the LOGINID of wilson. When the username passed from the JEE server to Maximo matches, the login process continues. 
+
+
+[/support/docview.wss?uid=swg21304201&aid=1] [/support/docview.wss?uid=swg21304201&aid=1] 
+
+ 
+
+
+
+
+[/support/docview.wss?uid=swg21304201&amp;aid=2] [/support/docview.wss?uid=swg21304201&amp;aid=3] [/support/docview.wss?uid=swg21304201&amp;aid=4] LDAP Troubleshooting Multipart Document 8 of 11 – JEE Server passes authenticated user to Maximo [http://www-1.ibm.com/support/docview.wss?rs=3214&context=SSLKT6&uid=swg21304203&loc=en_US&cs=utf-8&lang=en] [/support/docview.wss?uid=swg21304201&amp;aid=5] [http://www.mytest.com/_] LDAP Troubleshooting Multipart Document 10 of 11 – Maximo checks user for configured Start Center [http://www-1.ibm.com/support/docview.wss?rs=3214&context=SSLKT6&uid=swg21304200&loc=en_US&cs=utf-8&lang=en]  
+
+
+Cross reference information Segment Product Component Platform Version Edition Systems and Asset Management Tivoli Asset Management for IT All Systems and Asset Management Maximo Asset Management Essentials All Systems and Asset Management Control Desk Systems and Asset Management Tivoli Service Request Manager Systems and Asset Management Maximo Asset Management Systems and Asset Management Tivoli Change and Configuration Management Database Systems and Asset Management Tivoli Change and Configuration Management Database Systems and Asset Management Tivoli Change and Configuration Management Database

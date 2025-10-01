@@ -1,0 +1,146 @@
+Title: IBM A "Cannot calculate next primary key" error occurs when running Lombardi Teamworks or WebSphere Lombardi Edition processes - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Instances and tasks cannot process. In addition, the "Cannot calculate next primary key" error is seen in the tw-error.log file. Lombardi Teamworks and WebSphere Lombardi Edition calculate primary keys independent of the database using the PKGenerator routine. 
+
+SYMPTOM
+The following errors are seen in the tw-error.log file: 
+
+2011-08-12 11:31:17,638 [nasrvca10003 Heartbeat thread] ERROR com.lombardisoftware.server.ejb.pk.PKGeneratorBean - Exception in EJB call
+java.rmi.RemoteException: Cannot calculate next primary key
+at com.lombardisoftware.server.ejb.pk.PKGeneratorCore.getNextHigh(PKGeneratorCore.java:95)
+at com.lombardisoftware.server.ejb.pk.PKGeneratorBean$1.execute(PKGeneratorBean.java:51)
+at com.lombardisoftware.server.ejb.EjbServerUtils.handleEjbCall(EjbServerUtils.java:89)
+at com.lombardisoftware.server.ejb.pk.PKGeneratorBean.handleEjbCall(PKGeneratorBean.java:43)
+at com.lombardisoftware.server.ejb.pk.PKGeneratorBean.getNextHigh(PKGeneratorBean.java:49)
+at sun.reflect.GeneratedMethodAccessor187.invoke(Unknown Source)
+at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+at java.lang.reflect.Method.invoke(Method.java:585)
+at org.jboss.invocation.Invocation.performCall(Invocation.java:359)
+at org.jboss.ejb.StatelessSessionContainer$ContainerInterceptor.invoke(StatelessSessionContainer.java:237)
+at org.jboss.resource.connectionmanager.CachedConnectionInterceptor.invoke(CachedConnectionInterceptor.java:158)
+at org.jboss.ejb.plugins.StatelessSessionInstanceInterceptor.invoke(StatelessSessionInstanceInterceptor.java:169)
+at org.jboss.ejb.plugins.CallValidationInterceptor.invoke(CallValidationInterceptor.java:63)
+at org.jboss.ejb.plugins.AbstractTxInterceptor.invokeNext(AbstractTxInterceptor.java:121)
+at org.jboss.ejb.plugins.TxInterceptorCMT.runWithTransactions(TxInterceptorCMT.java:404)
+at org.jboss.ejb.plugins.TxInterceptorCMT.invoke(TxInterceptorCMT.java:181)
+at org.jboss.ejb.plugins.SecurityInterceptor.invoke(SecurityInterceptor.java:168)
+at org.jboss.ejb.plugins.LogInterceptor.invoke(LogInterceptor.java:205)
+at org.jboss.ejb.plugins.CleanShutdownInterceptor.invoke(CleanShutdownInterceptor.java:278)
+at org.jboss.ejb.plugins.ProxyFactoryFinderInterceptor.invoke(ProxyFactoryFinderInterceptor.java:136)
+at org.jboss.ejb.SessionContainer.internalInvoke(SessionContainer.java:648)
+at org.jboss.ejb.Container.invoke(Container.java:954)
+at sun.reflect.GeneratedMethodAccessor185.invoke(Unknown Source)
+at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+at java.lang.reflect.Method.invoke(Method.java:585)
+at org.jboss.mx.interceptor.ReflectedDispatcher.invoke(ReflectedDispatcher.java:155)
+at org.jboss.mx.server.Invocation.dispatch(Invocation.java:94)
+at org.jboss.mx.server.Invocation.invoke(Invocation.java:86)
+at org.jboss.mx.server.AbstractMBeanInvoker.invoke(AbstractMBeanInvoker.java:264)
+at org.jboss.mx.server.MBeanServerImpl.invoke(MBeanServerImpl.java:659)
+at org.jboss.invocation.local.LocalInvoker$MBeanServerAction.invoke(LocalInvoker.java:169)
+at org.jboss.invocation.local.LocalInvoker.invoke(LocalInvoker.java:118)
+at org.jboss.invocation.InvokerInterceptor.invokeLocal(InvokerInterceptor.java:209)
+at org.jboss.invocation.InvokerInterceptor.invoke(InvokerInterceptor.java:195)
+at org.jboss.proxy.ejb.RetryInterceptor.invoke(RetryInterceptor.java:176)
+at org.jboss.proxy.TransactionInterceptor.invoke(TransactionInterceptor.java:61)
+at org.jboss.proxy.SecurityInterceptor.invoke(SecurityInterceptor.java:70)
+at org.jboss.proxy.ejb.StatelessSessionInterceptor.invoke(StatelessSessionInterceptor.java:112)
+at org.jboss.proxy.ClientContainer.invoke(ClientContainer.java:100)
+at $Proxy154.getNextHigh(Unknown Source)
+at com.lombardisoftware.server.core.PKGeneratorVersion1.getNextPK(PKGeneratorVersion1.java:60)
+at com.lombardisoftware.server.scheduler.Heartbeat.attemptReconnect(Heartbeat.java:279)
+at com.lombardisoftware.server.scheduler.Heartbeat.access$500(Heartbeat.java:34)
+at com.lombardisoftware.server.scheduler.Heartbeat$3.execute(Heartbeat.java:246)
+at com.lombardisoftware.utility.db.DbUtils.executeWithConnection(DbUtils.java:42)
+at com.lombardisoftware.utility.db.DbUtils$2.doInTransaction(DbUtils.java:89)
+at com.lombardisoftware.server.core.TXCommand.doInTransactionInternal(TXCommand.java:112)
+at com.lombardisoftware.server.core.TXCommand.executeInDeadlockRetryLoop(TXCommand.java:222)
+at com.lombardisoftware.utility.db.DbUtils.executeInTransaction(DbUtils.java:86)
+at com.lombardisoftware.server.scheduler.Heartbeat.beat(Heartbeat.java:242)
+at com.lombardisoftware.server.scheduler.Heartbeat.run(Heartbeat.java:218)
+at java.lang.Thread.run(Thread.java:595)
+
+
+CAUSE
+The cause of this issue depends on database vendor. 
+
+ * Microsoft SQL - The global setting of NOCOUNT is set to true. 
+ * IBM DB2 - The transaction log space is full. 
+ * Oracle - There are multiple possible solutions
+
+RESOLVING THE PROBLEM
+To resolve this issue, complete the following steps for the database in your environment: 
+
+ * Microsoft SQL  1. Shut down the Lombardi Teamworks or WebSphere Lombardi Edition servers.
+       
+       
+    2. Clear (set to false) the NOCOUNT option for the server.
+       
+       
+    3. Restart the Microsoft SQL server.
+       
+       
+    4. Restart the Lombardi Teamworks or WebSphere Lombardi Edition servers.
+   
+   
+ * IBM DB2  1. Shut down the Lombardi Teamworks or WebSphere Lombardi Edition servers.
+       
+       
+    2. Run the following query on the process server database:
+       
+       
+       db2 get snapshot for all on <processDatabseName> 
+       
+       
+       The result is a large query set. Look for the section with the following information:
+       
+       
+       Log space available to the database (Bytes)= 1285443744
+       Log space used by the database (Bytes) = 94048
+       
+       
+       In this example, there is enough space. If these numbers are very close, increase the transaction size.
+       
+       
+       The result will show the database is running low on available log space. 
+       db2 update db cfg for <processDatabaseName> using logsecond X
+       
+       
+       where X is the number of extra transaction log files, such as 12.
+       
+       
+    3. Restart DB2 server.
+       
+       
+    4. Start the WebSphere Lombardi Edition servers.
+       
+       
+   
+   
+ * Oracle 
+   The "cannot calculate next primary key" message stems from various root causes. One or more of the following resolutions might apply:  * Check the Lombardi XML [www.ibm.com/support/docview.wss?uid=swg21439614] files to ensure that the online process server <repository-prefix> is set to the proper URL process center for all nodes. For example, http://bpmProcessCenter.company.com:9080/ProcessCenter 
+      
+      
+    * For process centers, check to see that the <repository-server-interval> setting is set to -1.
+      
+      
+    * A system under extreme stress with CPU starvation [https://www.ibm.com/developerworks/community/blogs/WebSphere_Process_Server/entry/hungry_cpu] can exhibit this error.
+      
+      
+    * Under high volume servers, there are cases where the internal primary key generator can become exhausted. The following APAR code fixes are available for this issue: JR42463 [http://www.ibm.com/support/docview.wss?uid=swg1JR42463](IBM Business Process Manager V7.5) and IC78452 [http://www.ibm.com/support/docview.wss?uid=swg1IC78452] (WebSphere Lombardi Edition)
+      
+      
+    * Java virtual machines (JVM) for WebSphere Application Server can hang under certain conditions. This issue is fixed in WebSphere Application Server V7.0.0 Fix Pack 13 and later with PM10959 [http://www.ibm.com/support/docview.wss?uid=swg1PM10959]. WebSphere Lombardi Edition V7.1 and 7.2 ship with WebSphere Application Server V7.0.0 Fix Pack 7. WebSphere Lombardi Edition supports more recent fix packs. For more information, see IBM WebSphere Lombardi Edition Versions 7.1.0 and 7.2.0 support uplevel fix pack versions of IBM WebSphere Application Server Version 7.0 [http://www.ibm.com/support/docview.wss?uid=swg21457363]. IBM Business Process Manager 7.5.1.0 ships with WebSphere Application Server V7.0.0 Fix Pack 17
+   
+   
+
+ 
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Business Process Manager Standard Databases AIX, Linux, Windows 7.5.1 Business Integration IBM Business Process Manager Advanced Databases AIX, Linux, Windows 7.5.1 
+PRODUCT ALIAS/SYNONYM
+ Lombardi
+bpm

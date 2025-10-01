@@ -1,0 +1,67 @@
+Title: IBM Mismatching records in one-to-many merge - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ I am using PASE and have some mismatched records in my data files. I want to perform a one to many merge with these mismatching records so that all the information appears in one file. How can I do this? 
+
+RESOLVING THE PROBLEM
+SPSS handles the inclusion of mismatched records in a one to-many merge differently than a one-to-one merge. Remember that in a one-to-many merge, there is a file that has one observation that matches to many observations in the other file; let us refer to these as the one file and the many file. If there are observations in the one file that do not match to the many file, then these observations will not appear in the merged file at all. If you would like mismatched records from the one and many file to both appear in the merged file, then you can use the matching strategy outlined below.
+
+Below we use our example to merge dads with kids, and in this example we have mismatched records in both files. Below we match the files to include all mismatched records in the merged file. The parts that are different are indicated in red.
+
+DATA LIST LIST / famid * name (A4) inc.
+BEGIN DATA.
+2 Art 22000
+1 Bill 30000
+3 Paul 25000
+4 Karl 95000
+END DATA.
+SAVE OUTFILE = "dads.sav".
+
+DATA LIST LIST / famid * kidname (A4) birth age wt * sex (A1).
+BEGIN DATA.
+1 Beth 1 9 60 f
+1 Bob 2 6 40 m
+1 Barb 3 3 20 f
+2 Andy 1 8 80 m
+2 Al 2 6 50 m
+2 Ann 3 2 20 f
+3 Pete 1 6 60 m
+3 Pam 2 4 40 f
+3 Phil 3 2 20 m
+5 Ted 1 4 35 m
+5 Tess 2 2 18 f
+END DATA.
+SAVE OUTFILE="kids.sav".
+
+GET FILE="kids.sav".
+SORT CASES BY famid.
+SAVE OUTFILE="kids2.sav".
+
+GET FILE="dads.sav".
+SORT CASES BY famid.
+SAVE OUTFILE="dads2.sav".
+SAVE OUTFILE="dadid.sav" /KEEP=famid.
+
+MATCH FILES FILE="kids2.sav" /IN=inkid
+/FILE="dadid.sav"
+/BY famid .
+LIST.
+SAVE OUTFILE="temp.sav".
+
+MATCH FILES FILE="temp.sav"
+/TABLE="dads2.sav" /IN=dads
+/BY famid.
+
+LIST.
+
+RELATED INFORMATION
+ Need more help? Our Statistics forum is Live! [https://developer.ibm.com/answers/topics/statistics.html?smartspace=predictive-analytics]
+
+
+ 
+
+HISTORICAL NUMBER
+ 88416

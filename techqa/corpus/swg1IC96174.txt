@@ -1,0 +1,164 @@
+Title: IBM IC96174: The appliance might allow unauthenticated access to administrative operations and data. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The appliance might allow unauthenticated access because of a
+   security vulnerability.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  All users of the IBM WebSphere DataPower    *
+   *                  XC10 Appliance, Version 2.0 or higher.      *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: A user can obtain access with           *
+   *                      administrative privileges to the        *
+   *                      data grid without authentication.       *
+   ****************************************************************
+   * RECOMMENDATION:  Install a firmware level containing this    *
+   *                  APAR.                                       *
+   ****************************************************************
+   VULNERABILITY DETAILS:
+   CVE-2013-5403 - A knowledgeable user can obtain access to the
+   machine with administrative privileges without authentication.
+   CVSS Base Score: 10.0
+   CVSS Temporal Score: See
+   http://xforce.iss.net/xforce/xfdb/87299 [http://xforce.iss.net/xforce/xfdb/87299]
+   for the current score
+   CVSS Environmental Score*: Undefined
+   CVSS Vector: (AV:N/AC:L/AU:N/C:N/I:C/A:C)
+   AFFECTED PRODUCTS AND VERSIONS:
+   All fix pack and interim fix levels of the following versions
+   are affected:
+   WebSphere DataPower XC10 Appliance version 2.0
+   WebSphere DataPower XC10 Appliance version 2.1
+   WebSphere DataPower XC10 Appliance version 2.5
+   REMEDIATION:
+   WebSphere DataPower XC10 Appliance users running 2.0 versions
+   of the firmware must apply one of the version 2.1 firmware
+   upgrades.
+   For WebSphere DataPower XC10 Appliance 2.1 on appliance
+   9235-92X apply the Version 2.1 Fix Pack 3 firmware upgrade
+   (APAR IC96174).
+   For WebSphere DataPower XC10 Appliance 2.1 on appliance
+   7199-92X apply the Version 2.1 Fix Pack 3 firmware upgrade
+   (APAR IC96174).
+   For WebSphere DataPower XC10 Appliance 2.5 on appliance
+   7199-92X apply the Version 2.5 Fix Pack 1 firmware upgrade
+   (APAR IC96174).
+   For WebSphere DataPower XC10 Appliance V2.5 virtual image,
+   apply the Version 2.5 Fix Pack 1 firmware upgrade (APAR
+   IC96174).
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The firmware was corrected to prevent this issue from
+   occurring. The APAR in available in the following firmware
+   versions: V2.1 Fix Pack 3 and V2.5 Fix Pack 1.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC96174
+   
+   
+ * REPORTED COMPONENT NAME
+   WSDATAPOWER XC1
+   
+   
+ * REPORTED COMPONENT ID
+   5765H4200
+   
+   
+ * REPORTED RELEASE
+   250
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-09-23
+   
+   
+ * CLOSED DATE
+   2013-09-30
+   
+   
+ * LAST MODIFIED DATE
+   2013-09-30
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WSDATAPOWER XC1
+   
+   
+ * FIXED COMPONENT ID
+   5765H4200
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R200 PSY
+   UP
+   
+   
+ * R210 PSY
+   UP
+   
+   
+ * R250 PSY
+   UP

@@ -1,0 +1,192 @@
+Title: IBM PK20640: PREREQ CHECKING FAILURE CAUSES FURTHER FAILURES IN UPDATE INSTALLER - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Prereq checking support for WBI prereqing WAS was just added.
+   Here is the
+   failure scenario.  WPS 6.011 FP prereqs the WAS 6.027 FP.  If
+   I try and
+   install the WPS 6.011 FP without first installing the WAS
+   6.027 FP I get
+   the expected prereq failure screens.  Now, if I press the BACK
+   button and
+   now choose to install the WAS 6.027 FP it seems to install
+   fine.  I now
+   relaunch the UPDI and try to install WPS 6.011 FP and it once
+   again fails
+   the prereq check.  If instead of hitting back I quit and
+   restart the UPDI
+   and install the WAS 6.027 FP first and then relaunch and
+   install the WPS
+   6.011 FP everything works fine.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: Othe IBM products who are using the          *
+   *                 UpdateInstaller version 6.0.2.x to install   *
+   *                 fixpacks for their products, and the fixpack *
+   *                 requires a specific level of WebSphere       *
+   *                 Application Server to be installed.          *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: During the installation of fixpacks     *
+   *                      for WebSphere's stack product, the      *
+   *                      prereq checking might fail even though  *
+   *                      the correct prereq level has been       *
+   *                      installed.                              *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   During the installation of fixpacks for WebSphere's stack
+   product, such as WebSphere Business Integration, the fixpack
+   instructed the UpdateInstaller to do a prereq check to see if
+   a specific level of Application Server is installed. Once this
+   prereq check is done, the version information is cached. If
+   the user clicks the BACK button on the UpdateInstaller,
+   installs the required level of Application Sever and then
+   clicks NEXT, the prereq checking is still failing.
+   
+   The version information is cached once the prereq checking is
+   done. When the UpdateInstaller retrieves the Application
+   Server version information again, the cached value is always
+   returned.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Added a new method in the wasproduct component so that the
+   UpdateInstaller prereq checking code can call this new method
+   to clean up the cache before getting the version information
+   again.
+   
+   The fix for this APAR is currently targeted for inclusion
+   in fixpack 6.0.2.9.
+   Please refer to the recommended updates page for delivery
+   information:
+   http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK20640
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBS APP SERV N
+   
+   
+ * REPORTED COMPONENT ID
+   5724H8800
+   
+   
+ * REPORTED RELEASE
+   60W
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2006-03-01
+   
+   
+ * CLOSED DATE
+   2006-03-24
+   
+   
+ * LAST MODIFIED DATE
+   2006-04-04
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  WASPROD
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBS APP SERV N
+   
+   
+ * FIXED COMPONENT ID
+   5724H8800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R60A PSY
+   UP
+   
+   
+ * R60H PSY
+   UP
+   
+   
+ * R60I PSY
+   UP
+   
+   
+ * R60P PSY
+   UP
+   
+   
+ * R60S PSY
+   UP
+   
+   
+ * R60W PSY
+   UP

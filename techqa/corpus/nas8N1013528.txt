@@ -1,0 +1,56 @@
+Title: IBM Why My Logical File is Journaled at V610 - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This document explains why the operating system started to journal logical files. Starting in IBM i 6.1, logical files, SQL views, and SQL indexes will be journaled, even if you do not change your environment. 
+
+RESOLVING THE PROBLEM
+This document explains why the operating system started to journal logical files. Starting in IBM i 6.1, logical files, SQL views, and SQL indexes will be journaled, even if you do not change your environment. 
+
+Why Is My Logical File Journaled?
+
+Abstract
+
+Starting in IBM i 6.1, logical files, SQL views, and SQL indexes will be journaled, even if you do not change your environment. Why did the operating system starting journaling my logical files? Why are some journaled and some not journaled? How can I end journaling for some of them or start journaling for others? This document will address these questions and more.
+
+
+The history of logical file journaling -- from STRJRNAP to V5R1 to 6.1
+
+Users have been able to journal logical files (including DB/400 logical files, SQL views, and SQL indexes) for many releases. No, you can not specify a logical file on the Start Journal Physical File (STRJRNPF) command; however, if a logical file's underlying physical file is journaled and the logical file contains access paths built over that physical file, you can use the Start Journal Access Paths (STRJRNAP) command to start journaling the logical file. Note that a logical file has two parts: the logical file object, which is the external *FILE object that appears in a library, and an underlying part called an access path that maps the records of a physical file (or multiple physical files). The STRJRNAP command journals both the access paths and the logical file object itself. Normally, you would only use this command if you wanted to journal your access paths; access paths usually change much more often than the logical file objects, so most of the journal entries you would see would be for the access paths. There are reasons to explicitly journal access paths; however, it is usually better to allow the system to journal them implicitly using SMAPP (System-Managed Access Path Protection).
+
+Since V5R1M0, the operating system has been behaving as if logical files built over journaled physical files are also journaled, even if their access paths are not journaled. These logical files are not actually journaled; they do not appear as journaled on Work with Journal Attributes (WRKJRNA) or the Retrieve Journal Information (QjoRetrieveJournalInformation) API. These logical files also do not show as journaled using the Display Object Description (DSPOBJD) command. Journal entries are written for these objects to the same journal to which the underlying physical file is journaled. This includes journal entries such as Create File (journal entry subtype CT), Grant Authority (GT), and other operations that affect the logical file. Since these logical files are not actually journaled in releases prior to V6R1, the journal entries deposited on their behalf do not have any object names or journal identifiers (JIDs) associated with them.
+
+Starting in 6.1, the operating system automatically journals logical files. This is not the same journaling you would get from STRJRNAP; the access paths are not journaled, only the logical file. At any given time, a logical file may or may not be journaled. When a change occurs to a logical file, such as a grant authority operation, the operating system automatically starts "covert journaling" on that file. The Grant Authority (GT) journal entry is still written to the journal like before; however, now that the file is actually journaled, the journal entry has an object name and a JID. 
+
+How can I tell if a logical file is covertly journaled?
+
+If you use the Work with Journal Attributes (WRKJRNA) command, logical files will now appear in the list of journaled files. Journaled logical files will also be returned for the Retrieve Journal Information (QjoRetrieveJournalInformation) API. If you look at the file using the Display Object Description (DSPOBJD) command or the Display Object Description (QUSROBJD) API, the file will be journaled. Note that if you use the Display File Description (DSPFD) command and the Display Database File Description (QDBRTVFD) API, the access path journaled field will not indicate journaling unless you explicitly journaled the access paths using the STRJRNAP command.
+
+How can I influence covert journaling?
+
+In general, you can not directly affect whether or not a logical file is covertly journaled. Covert journaling is started when a change occurs for a logical file and one of the logical file's underlying physical files is journaled. The logical file automatically starts covert journaling to the same journal that the first underlying journaled physical file is journaled to. If all of the physical files that a logical file is built over end journaling, the logical file also ends journaling. Simply put, the operating system only starts covert journaling when it needs to, and only ends covert journaling when it needs to.
+
+Note: Message CPF7032 is issued if you try to end the covert journaling.
+
+
+What does covert journaling do for me?
+
+First, as mentioned above, those journal entries for logical files which did not have object names or JIDs in prior releases now will. This can be useful for auditing and debugging. After all, it is not very helpful to know what operation occurred, but not know what object was involved.
+
+More importantly, the Apply Journaled Changes (APYJRNCHG) command is now able to apply changes to these logical files. The Apply Journaled Changes Extend (APYJRNCHGX) command has always been able to apply logical file journal entries, even when they did not have an object name or JID. However, to be able to do that, APYJRNCHGX has much tighter restrictions over which objects you are allowed to specify on the command. APYJRNCHG gives you complete freedom in specifying which objects you want to apply to; however, it requires objects to truly be journaled. Specifically, it decides which entries to apply and which not to apply by the JIDs in the journal entries. Use the Apply changes to logical files (APYLF) parameter to determine whether or not to apply entries to the logical files built over the physical files you specified.
+
+Summary
+
+While it may be surprising to have logical files appearing as journaled in IBM i 6.1, it should not be cause for alarm. The operating system automatically journals logical files when it needs to and ends journaling automatically when appropriate. This allows for more user-friendly journal entries and enhanced support for Apply Journaled Changes (APYJRNCHG).
+
+More information can be found at:
+http://www.redbooks.ibm.com/abstracts/tips0677.html?Open [http://www.redbooks.ibm.com/abstracts/tips0677.html?Open]
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Operating System IBM i 7.2 Operating System IBM i 7.1 Operating System IBM i 6.1 Operating System IBM i 7.3 
+HISTORICAL NUMBER
+ 495948661

@@ -1,0 +1,133 @@
+Title: IBM PM73464: CAN NOT GET BROWSERS TO TIMEOUT IF SHELF IS OPEN - United States
+
+Text:
+  A FIX IS AVAILABLE
+Fixes integrated in WebSphere Portal 7.0.0.1 & 7.0.0.2 Combined Cumulative Fixes [http://www-01.ibm.com/support/docview.wss?uid=swg24029452]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  - change session id timeout to 2 minutes via WAS Admin console
+   -> server -> portal -> session mgmt
+   - restart server
+   - login and open toolbar via 'edit'
+   - wait for session timeout
+   - click something in the toolbar - e.g. content tab
+   - A new session will be created that will never timeout.
+   Note:  If this condition is occurring the session count in the
+   Portal server will gradually rise.  If anonymous sessions are
+   enabled the count will rise more quickly.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Can not get browsers to timeout if shelf is open
+   
+   - change session id timeout to 2 minutes via WAS Admin console
+   -> server -> portal -> session mgmt
+   - restart server
+   - login and open toolbar via 'edit'
+   - wait for session timeout
+   - click something in the toolbar - e.g. content tab
+   - now the user has a session that will not timeout anymore!
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Take care of session timeout.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM73464
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSPHERE PORTA
+   
+   
+ * REPORTED COMPONENT ID
+   5724E7600
+   
+   
+ * REPORTED RELEASE
+   800
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-09-24
+   
+   
+ * CLOSED DATE
+   2012-09-24
+   
+   
+ * LAST MODIFIED DATE
+   2013-01-18
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBSPHERE PORTA
+   
+   
+ * FIXED COMPONENT ID
+   5724E7600
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R800 PSY
+   UP

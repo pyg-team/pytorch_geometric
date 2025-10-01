@@ -1,0 +1,21 @@
+Title: IBM SSO(Single Sign-on), C&DS and job steps utilizing ODBC - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ We have a IBM SPSS Modeler stream using ODBC data sources. That stream is stored to SPSS C&DS and used within a job as a job step.
+
+If configuring C&DS for SSO, and signing into IBM SPSS Deployment Manager client then running that job as noted above, will the signed in user's credentials be substituted for the job steps ODBC credentials?
+
+
+
+CAUSE
+Determine implementation of SSO.
+
+ANSWER
+No. If C&DS is configured for an SSO environment, this applies to the immediate SPSS C&DS environment and not outside of C&DS. In this case the datasource (Database) is external to C&DS as it is being used as source data within the SPSS Modeler stream. 
+
+The ODBC data source credentials used by the job step must be predefined within C&DS Resource definitions for reference during unattended operation. For example when jobs are scheduled and run unattended, this information is extracted from the C&DS repository database and used by the Modeler stream to access some source data. 
+
+No option exists to substitute active user credentials for ODBC data sources defined within a job step when signed into SPSS C&DS Deployment Manager client.

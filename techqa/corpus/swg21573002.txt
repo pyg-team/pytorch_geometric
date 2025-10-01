@@ -1,0 +1,63 @@
+Title: IBM Polling not working - United States
+
+Text:
+CNcpOracleSth.cc line 381: (Error 3135) ORA-03135: connection lost contact; ncpolldata; ncp_poller TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Poll policies take a long time to update in GUI when enabling them and sometimes they don't become enabled. Other times they become enabled after some time but then there is no polling of discovered devices. 
+
+SYMPTOM
+The following errors can be seen in the ncp_model.log with debug 4 enabled: 
+
+2011-11-01T17:38:56: Warning: W-RIV-002-206: [3954944912t] CPollDataPruner.cc(444) A database 'execute' operation has failed : CNcpOracleSth.cc line 381: (Error 3135) ORA-03135: connection lost contact
+Process ID: 18463
+Session ID: 139 Serial number: 43722
+( statement: ' SELECT COUNT(POLLTIME) AS ROW_COUNT FROM pollData' )
+2011-11-01T18:38:56: Warning: W-DB-001-014: [3954944912t] Disconnection state '3114' detected
+2011-11-01T18:38:56: Warning: W-DB-001-002: [3954944912t] DB connection to 'ncpolldata' lost
+2011-11-01T18:38:56: Information: I-DB-001-003: [3954944912t] Successfully reconnected to DB 'ncpolldata'
+2011-11-01T19:54:22: Warning: W-RIV-002-206: [3954944912t] CPollDataPruner.cc(444) A database 'execute' operation has failed : CNcpOracleSth.cc line 381: (Error 3135) ORA-03135: connection lost contact
+
+&
+
+2011-11-15T20:14:44: Information: I-DB-001-003: [3952151440t] 
+Successfully reconnected to DB 'ncim' 
+2011-11-15T20:14:44: Warning: W-RIV-002-128: [3952151440t] 
+CSqlTableCopier.cc(104) Cannot synchronise record - insert failed. 
+Record is { 
+ENTITYID=32753, 
+ACCESSIPADDRESS='10.111.128.35' 
+} 
+2011-11-15T20:14:44: Warning: W-RIV-002-206: [3952151440t] 
+CPollDataMgr.cc(787) A database 'execute' operation has failed : 
+CNcpOracleSth.cc line 381: (Error 2291) ORA-02291: integrity constraint 
+
+
+CAUSE
+Firewall between ITNM and Oracle is set to kill any idle connections every 15 mins. Ncp_poller gets disconnected from ncpolldata db and then reconnects but is not able to fully recover so there is essentially no connection to ncpolldata.
+
+
+ENVIRONMENT
+ITNM 3.9 and NCIM on remote Oracle server. 
+
+APAR IZ89825 which is supposed to be included in FP1 seemed to be the key issue here as this appeared to be issue with ncp_poller not reconnecting. However, the changes in IZ89825 were backported to 3.9 GA version and we can actually see ncp_poller reconnecting to ncpolldata.
+
+
+RESOLVING THE PROBLEM
+Turn on sqlnet.expire_time parameter to set a time interval, in minutes, to determine how often a probe should be sent verifying that client/server connections are active. 
+
+
+To set up this feature you can simply edit a sqlnet.ora file. You can do so by following these steps:
+
+Set ORACLE_HOME to 
+/opt/IBM/tivoli/netcool/platform/linux2x86/oracleInstantClient11.1 
+
+then create a directory structure: 
+
+mkdir -p $ORACLE_HOME/network/admin 
+
+In there place the file sqlnet.ora with the following contents: 
+
+SQLNET.EXPIRE_TIME = 10 
+
+(the expire time setting will need to be less than the firewall setting)

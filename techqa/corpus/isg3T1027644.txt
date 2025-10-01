@@ -1,0 +1,110 @@
+Title: IBM WebSphere Application Server for IBM i - Version 8.5.5 Overview - United States
+
+Text:
+ 
+ 
+
+ * Overview [http://www.ibm.com/support/docview.wss?uid=isg3T1027644]
+ * PTFs [http://www.ibm.com/support/docview.wss?uid=isg3T1027702]
+ * Fix packs [http://www.ibm.com/support/docview.wss?uid=isg3T1027698]
+
+Websphere Application Server V8.5.5 is an application foundation tailored for single server to moderately sized configurations of departmental or large-scale, dynamic web applications requiring web tier clustering and failover across up to five application server instances, and a variety of pricing alternatives. Centralized administration of WebSphere Application Server is available through the Flexible Management feature of WebSphere Application Server Network Deployment. It includes both the Liberty profile and the full profile WebSphere Application Server. The Liberty Profile capabilities include a superset of those found in WebSphere Application Server Liberty Core, providing additional programming models such as Web Services and Java Message Service. Liberty profile servers can be members of collectives, enabling them to be managed by a collective controller from a Network Deployment installation.
+
+WebSphere Application Server, Version 8.5.5, is installed on IBM i as option 2 of licensed program 5733W85, WebSphere Application Server V8.5 for IBM i.
+
+Standard and For Developers
+
+ * New features [http://www.ibm.com/support/knowledgecenter/en/SSEQTP_8.5.5/com.ibm.websphere.base.doc/ae/welc6topnew.html]
+ * Prerequisites [http://www.ibm.com/support/knowledgecenter/SSEQTP_8.5.5/com.ibm.websphere.installation.base.iseries.doc/ae/cins_is_prqsvr.html]
+ * Samples [http://www.ibm.com/support/knowledgecenter/en/SSEQTP_8.5.5/com.ibm.websphere.base.doc/ae/covr_samples.html]
+ * Performance considerations [http://www.ibm.com/support/knowledgecenter/en/SSEQTP_8.5.5/com.ibm.websphere.base.doc/ae/welc6toptuning.html]
+ * Migration and Coexistence [http://www.ibm.com/support/knowledgecenter/en/SSEQTP_8.5.5/com.ibm.websphere.base.doc/ae/welc6topmigrating.html]
+
+Network Deployment
+
+ * New features [http://www.ibm.com/support/knowledgecenter/en/SSAW57_8.5.5/com.ibm.websphere.nd.multiplatform.doc/ae/welc6topnew.html]
+ * Prerequisites [http://www.ibm.com/support/knowledgecenter/SS7K4U_8.5.5/com.ibm.websphere.installation.nd.iseries.doc/ae/cins_is_prqsvr.html?cp=SSAW57_8.5.5]
+ * Samples [http://www.ibm.com/support/knowledgecenter/en/SSAW57_8.5.5/com.ibm.websphere.nd.iseries.doc/ae/covr_samples.html]
+ * Performance considerations [http://www.ibm.com/support/knowledgecenter/en/SSAW57_8.5.5/com.ibm.websphere.nd.iseries.doc/ae/welc6toptuning.html]
+ * Migration and Coexistence [http://www.ibm.com/support/knowledgecenter/en/SSAW57_8.5.5/com.ibm.websphere.nd.multiplatform.doc/ae/welc6topmigrating.html]
+
+Express
+
+ * New features [http://www.ibm.com/support/knowledgecenter/en/SS7JFU_8.5.5/com.ibm.websphere.express.doc/ae/welc6topnew.html]
+ * Prerequisites [http://www.ibm.com/support/knowledgecenter/en/SS7JFU_8.5.5/com.ibm.websphere.installation.express.iseries.doc/ae/cins_is_prqsvr.html]
+ * Samples [http://www.ibm.com/support/knowledgecenter/en/SS7JFU_8.5.5/com.ibm.websphere.express.doc/ae/covr_samples.html]
+ * Performance considerations [http://www.ibm.com/support/knowledgecenter/en/SS7JFU_8.5.5/com.ibm.websphere.express.doc/ae/welc6toptuning.html]
+ * Migration and Coexistence [http://www.ibm.com/support/knowledgecenter/en/SS7JFU_8.5.5/com.ibm.websphere.express.doc/ae/welc6topmigrating.html]
+
+Liberty Core
+
+ *  Prerequisites [http://www.ibm.com/support/docview.wss?uid=swg27038218]
+   
+   
+
+STANDARD PACKAGING, MEDIA PACK
+ * Quick Start
+ * WebSphere Application Server V8.5.5
+ * WebSphere Application Server Liberty V8.5.5
+ * WebSphere Application Server V8.5.5 Supplements
+ * IBM Rational Agent Controller V8.3.7
+ * IBM Tivoli Directory Server V6.3
+ * IBM Tivoli Access Manager for e-business V6.1.1
+ * IBM Rational Application Developer Trial, V9.0
+
+ * IBM Assembly and Deploy Tools for WebSphere Administration V8.5.1
+ * IBM WebSphere Application Server Web 2.0 and Mobile Toolkit V1.1.0.4
+ * WebSphere Adapters V7.5.0.1
+ * IBM Installation Manager V1.6.2
+ * Firefox V3.5.13 (AIX 64 bit)
+
+ORDERING INFORMATION
+This product is only available via Passport Advantage. Installs as PID 5733W85 on the IBM i system.
+
+Note: You must also order the IBM WebSphere Application Server Version 8.5 Group PTF for your IBM i release. The Group PTF updates IBM WebSphere Application Server Version 8.5.x and must be applied immediately after installing the product on IBM i.
+
+IBM Passport Advantage [http://www.ibm.com/software/howtobuy/passportadvantage/]
+
+ Standard 
+Product Group: WebSphere 
+Product Identifier Description (PID): 5724-J08 
+DVD Media Pack: BA16AML 
+
+ For Developers 
+Product Group: WebSphere 
+Product Identifier Description (PID): 5724-H89 
+DVD Media Pack: BA16DML 
+
+ Network Deployment 
+Product Group: WebSphere 
+Product Identifier Description (PID): 5724-H88 
+DVD Media Pack: BA16CML 
+
+ Liberty Core 
+Product Group: WebSphere 
+Product Identifier Description (PID): 5725-L29 
+DVD Media Pack: BA168ML 
+
+ Express 
+
+WebSphere Application Server – Express for IBM i is provided at no additional charge as a feature of Web Enablement for IBM i. To acquire one or more versions, contact your IBM i Authorized Business Partner or call 1-800-IBM-CALL (1-800-426-2255).
+
+Special delivery features Expedite -- Customer expense 3446 Supply features WebSphere Application Server Express 7.0 (CDs) 5909 WebSphere Express V8.0 (DVDs) 5910 WebSphere Express V8.5.5 (DVDs) 5912 Delivery options Electronic Software Delivery 3450 Ship Media Only 3470 MORE INFORMATION
+ *  Announcement [http://www.ibm.com/common/ssi/cgi-bin/ssialias?subtype=ca&infotype=an&appname=iSource&supplier=897&letternum=ENUS213-137] 
+ *  Release notes [http://www.ibm.com/support/search.wss?tc=SSEQTP&atrn=SWPlatform&atrv=IBM%20i&q=WASV855RNotes] 
+
+ * Entitled Software Support (ESS) [http://www.ibm.com/servers/eserver/ess/index.wss]
+ * Software maintenance for IBM i [https://www-01.ibm.com/software/passportadvantage/software_subscription_support_ov.html]
+
+ * Supported hardware and software [http://www.ibm.com/support/docview.wss?uid=swg27038218]
+ * Support Life Cycle [http://www.ibm.com/software/info/supportlifecycle]
+
+GET INSIGHTS AND SUPPORT
+[http://www.ibm.com/support/resources/systems_power_hardware_knowledgecenter_icon_80x89.png]  IBM KNOWLEDGE CENTER [HTTP://WWW.IBM.COM/SUPPORT/KNOWLEDGECENTER/SSEQTP_8.5.5/AS_DITAMAPS/WAS855_WELCOME_BASE_DIST_ISERIES.HTML] 
+ Find answers quickly in official IBM product documentation [http://www.ibm.com/support/knowledgecenter/SSEQTP_8.5.5/as_ditamaps/was855_welcome_base_dist_iseries.html] 
+
+[http://www.ibm.com/support/resources/systems_power_hardware_support_icon_80x89.png]  PRODUCT SUPPORT [HTTPS://WWW.IBM.COM/SUPPORT/ENTRY/PORTAL/PRODUCT/WEBSPHERE/WEBSPHERE_APPLICATION_SERVER?PRODUCTCONTEXT=1218842953] 
+ Get help today for the IBM Power Systems and software you own [https://www.ibm.com/support/entry/portal/product/websphere/websphere_application_server?productContext=1218842953] 
+
+[http://www.ibm.com/support/resources/systems_power_hardware_devworks_techinfo_icon_80x89.png]  REDBOOKS [HTTP://WWW.REDBOOKS.IBM.COM/REDBOOKS.NSF/SEARCHSITE?SEARCHVIEW&QUERY=WEBSPHERE+AND+APPLICATION+AND+SERVER+AND+V8.5.5&SEARCHORDER=1&SEARCHFUZZY=] 
+ Explore a collection of in-depth information for this product [http://www.redbooks.ibm.com/redbooks.nsf/searchsite?SearchView&query=websphere+AND+application+AND+server+AND+v8.5.5&SearchOrder=1&SearchFuzzy=]

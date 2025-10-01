@@ -1,0 +1,56 @@
+Title: IBM EJPSG0002E error during Portal startup when searching for Portal administrative group in Domino - United States
+
+Text:
+EJPSG0002E; admin group; group; domino; baseDN; base DN; base entry; baseentries; startup; ldap TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ 
+After configuring security between WebSphere Portal and Lotus Domino LDAP, the following error occurs in the SystemOut.log during startup of WebSphere Portal:
+
+[7/7/09 16:04:49:611 CDT] 00000016 Servlet E 
+com.ibm.wps.engine.Servlet init EJPFD0016E: Initialization of service failed. 
+com.ibm.wps.ac.DomainAdministratorNotFoundException: EJPSB0107E: Exception occurred while retrieving the identity of the domain admin user/admingroup CN=wpsadmins. 
+. . . 
+Caused by: com.ibm.portal.puma.MemberNotFoundException: EJPSG0002E: Requested Member does not exist.CN=wpsadmins/null 
+
+ENVIRONMENT
+WebSphere Portal configured to Lotus Domino LDAP
+
+DIAGNOSING THE PROBLEM
+ 
+
+By default, Lotus Domino uses a flat naming convention for its groups (e.g. cn=wpsadmins) as opposed to hierarchical (e.g. cn=wpsadmins,o=ibm). Thus, if the Portal administrative group follows the flat naming convention, it is important to ensure that the value specified for the baseDN (i.e. standalone.ldap.baseDN for standalone LDAP or federated.ldap.baseDN for federated LDAP) when configuring security is left blank, so that it will be inclusive of the Portal administrative group.
+
+
+RESOLVING THE PROBLEM
+ 
+
+Rather than re-running any configuration task, the following steps can be performed to resolve the issue: 
+
+1) Edit wimconfig.xml located under <wp_profile>/config/cells/<cellname>/wim/config 
+
+In a clustered environment, perform the edit on the deployment manager node. 
+
+2) Search for the following entries: 
+
+<config:repositories
+<config:baseEntries name="<your baseDN>" nameInRepository="<your baseDN>"/>
+. . . . 
+<config:realms 
+<config:participatingBaseEntries name="<your baseDN>"/> 
+
+ 
+
+3) Modify the above entries to remove the search base: 
+
+<config:repositories
+<config:baseEntries name="" nameInRepository=""/>
+. . . . 
+<config:realms 
+<config:participatingBaseEntries name=""/> 
+
+4) Restart the server for the change to take effect. In a clustered environment, synchronize the changes prior to restarting the cluster.
+
+RELATED INFORMATION
+ Preparing a Domino Directory Server [http://publib.boulder.ibm.com/infocenter/wpdoc/v6r1m0/index.jsp?topic=/com.ibm.wp.ent.doc_v6101/install/win_prep_dom.html]
+Understanding Portal and Domino security configuration [http://www-10.lotus.com/ldd/portalwiki.nsf/dx/understanding-the-websphere-portal-6.1-security-configuration-stand-alone-ldap-using-domino-8]

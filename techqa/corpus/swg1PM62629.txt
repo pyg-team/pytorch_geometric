@@ -1,0 +1,151 @@
+Title: IBM PM62629: COPYACSETTINGSCOMMAND FAILS ON NON-EXISTING OWNER - United States
+
+Text:
+  A FIX IS AVAILABLE
+Fixes integrated in WebSphere Portal 7.0.0.1 & 7.0.0.2 Combined Cumulative Fixes [http://www-01.ibm.com/support/docview.wss?uid=swg24029452]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  If the owner of the source does no longer exist copy of owner
+   command is failing.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  None available.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  A code fix for this issue is integrated into the WebSphere
+   Portal & WCM Combined Cumulative Fix 14 (PM63009 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM63009]) for Portal
+   7.0.0.1 and into the WebSphere Portal & WCM Combined Cumulative
+   Fix 14 (PM63010 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM63010]) for Portal 7.0.0.2 available from Fix Central:
+   
+   7.0.0.1:
+   http://www.ibm.com/eserver/support/fixes/fixcentral/swg/quickord
+   er?productid=WebSphere%20Portal&brandid=5&apar=PM63009 [http://www.ibm.com/eserver/support/fixes/fixcentral/swg/quickorder?productid=WebSphere%20Portal&brandid=5&apar=PM63009]
+   
+   7.0.0.2:
+   http://www.ibm.com/eserver/support/fixes/fixcentral/swg/quickord
+   er?productid=WebSphere%20Portal&brandid=5&apar=PM63010 [http://www.ibm.com/eserver/support/fixes/fixcentral/swg/quickorder?productid=WebSphere%20Portal&brandid=5&apar=PM63010]
+   
+   You might need to type or paste the complete address into your
+   Web browser.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A code fix for this issue is integrated into the WebSphere
+   Portal & WCM Combined Cumulative Fix 14 (PM63009 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM63009]) for Portal
+   7.0.0.1 and into the WebSphere Portal & WCM Combined Cumulative
+   Fix 14 (PM63010 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM63010]) for Portal 7.0.0.2 available from Fix Central:
+   
+   7.0.0.1:
+   http://www.ibm.com/eserver/support/fixes/fixcentral/swg/quickord
+   er?productid=WebSphere%20Portal&brandid=5&apar=PM63009 [http://www.ibm.com/eserver/support/fixes/fixcentral/swg/quickorder?productid=WebSphere%20Portal&brandid=5&apar=PM63009]
+   
+   7.0.0.2:
+   http://www.ibm.com/eserver/support/fixes/fixcentral/swg/quickord
+   er?productid=WebSphere%20Portal&brandid=5&apar=PM63010 [http://www.ibm.com/eserver/support/fixes/fixcentral/swg/quickorder?productid=WebSphere%20Portal&brandid=5&apar=PM63010]
+   
+   You might need to type or paste the complete address into your
+   Web browser.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM62629
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSPHERE PORTA
+   
+   
+ * REPORTED COMPONENT ID
+   5724E7600
+   
+   
+ * REPORTED RELEASE
+   610
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-04-17
+   
+   
+ * CLOSED DATE
+   2012-05-25
+   
+   
+ * LAST MODIFIED DATE
+   2012-05-25
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBSPHERE PORTA
+   
+   
+ * FIXED COMPONENT ID
+   5724E7600
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R700 PSY
+   UP

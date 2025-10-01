@@ -1,0 +1,126 @@
+Title: IBM MustGather:  Data collection for Hang or Performance related issues on AIX® - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ What data to collect on AIX® for an application (multi threaded application) hang or performance related issues? 
+
+ANSWER
+ 
+
+Steps to collect valid data to analyze the application hang or performance related issues -
+
+
+
+
+
+1. No response / Hang or Performance related issues  * 1.1 Deadlocks narrowed down to an issue with the pthread library 
+ * 1.2 MustGather for other hang/performance
+
+2. Memory Leak 3. High CPU Usage 4. General Information 5. Submitting data to IBM Support 
+
+
+1 No response / Hang or Performance related issues
+
+If the issues are narrowed down to hang/ deadlocks with the pthread library then enable the thread debug options as specified in (1.1), else follow the instructions in (1.2).
+
+
+1.1 Deadlocks narrowed down to an issue with the pthread library
+
+Enable the below thread debug options . These will provide information about mutex and conditional variables, which are necessary for the finding the cause of hang.
+
+[/support/docview.wss?uid=isg3T1011956&aid=1] [/support/docview.wss?uid=isg3T1011956&aid=1]
+
+Re-run the multithread application, and follow the steps in (1.2). 
+
+Note: 
+The pthreads library maintains a list of active mutexes, condition variables and rw locks for use by the debugger.
+
+If the environment variables mentioned earlier are set to ON, then the appropriate debugging list will be enabled. While debugging the core, the dbx command (or any debugger using the pthread debug library) will be able to get the details of all the mutexes, condition variables and rw locks.
+
+Impacts after enabling the above enivornment variables:
+If the application contains a large number of active mutexes, condition variables or rw locks and creates or destroys them frequently, setting these variables ON might have an overhead of maintaining those lists. Setting the variable to OFF will disable the list.
+
+
+
+1.2 MustGather for other hang/performance
+
+1.2.1. Collect output from hung process using the below script:
+[/support/docview.wss?uid=isg3T1011956&aid=2] [/support/docview.wss?uid=isg3T1011956&aid=2]
+
+
+
+1.2.2. Steps to collect pdump
+
+Once you re-create the hang, run the pdump.sh [</font>ftp://ftp.software.ibm.com/aix/tools/javatools/diagnostic/pdump.sh] script with the process id of the hung process. Collect 3 sets of pdump optput at an interval of 2 minutes.
+
+
+[/support/docview.wss?uid=isg3T1011956&aid=3] [/support/docview.wss?uid=isg3T1011956&aid=3]
+
+It creates an output file “pdump.ProcessName.PID.DDMMMYYYY-hh.mm.ss.out” in the current directory.
+
+1.2.3. Steps to create core files using “gencore”
+ * Enable the system to produce full core Refer to the below link:  * http://www-01.ibm.com/support/docview.wss?uid=isg3T1011816
+   
+   
+
+ * To collect a complete snapshot of the hung process, generate 3 sets of core files at an interval of 2 minutes each using gencore.
+
+[/support/docview.wss?uid=isg3T1011956&aid=4] [/support/docview.wss?uid=isg3T1011956&aid=4]
+ *  Gather snapcore of all the 3 core files. Refer to the below link:  * http://www-01.ibm.com/support/docview.wss?uid=isg3T1011865
+   
+   
+
+
+1.2.4. General Information
+
+
+2 Memory Leak
+
+A memory leak can be detected with the svmon command, by looking for processes whose working segment continually grows. 
+
+2.1 Steps to collect svmon output
+
+
+[/support/docview.wss?uid=isg3T1011956&aid=5] [/support/docview.wss?uid=isg3T1011956&aid=5]
+
+2.2 Run ps command in a while loop
+
+[/support/docview.wss?uid=isg3T1011956&aid=6] [/support/docview.wss?uid=isg3T1011956&aid=6]
+
+
+2.3 General Information
+
+
+3 High CPU Usage 
+
+3.1. Collect CPU usage statistics as follows:
+
+[/support/docview.wss?uid=isg3T1011956&aid=7] [/support/docview.wss?uid=isg3T1011956&aid=7]
+
+3.2. General Information
+
+
+
+4. General information to collect
+
+4.1 History of the Problem  * Since when is the problem been observed? Any software/hardware upgradation prior to problem report. 
+ * Is this a production system problem? 
+ * What is the frequency of failures? 
+ * Are there any recreate test setups available? 
+ * How much time is needed to recreate the problem? 
+
+
+4.2 Collect system information through “snap” utility.
+
+[/support/docview.wss?uid=isg3T1011956&aid=8] [/support/docview.wss?uid=isg3T1011956&aid=8]
+
+
+
+5.Submitting data to IBM Support
+
+Instructions to upload the testcase to ftp server 
+
+
+[/support/docview.wss?uid=isg3T1011956&aid=9] [/support/docview.wss?uid=isg3T1011956&aid=9]

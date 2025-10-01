@@ -1,0 +1,155 @@
+Title: IBM IV61620: EVENT TYPE DETAILS NEEDED FOR PLAYBACK EVENTS IN USER'S GUIDE - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When a verification point failure occurs in an RRT (Robotic
+   Response Time) script, the Verification Point Failures workspace
+    provides information about the failure. The Event Type column
+   in this workspace describes the type of event that occurred.
+   These event types are enumerated in the following technote and
+   in the ITCAM for Transactions User's Guide.
+   
+   http://www-01.ibm.com/support/docview.wss?uid=swg21614794 [http://www-01.ibm.com/support/docview.wss?uid=swg21614794]
+   
+   Event Type values:
+   
+   Authentication Failure
+   Component Failure
+   Content Failure
+   Content Size,
+   Custom Failure
+   Expected Data Failure
+   Expected Image Failure
+   Expected Property
+   Expected Text Failure
+   Failure
+   Generic Failure
+   HTTP Return Code
+   Page
+   Return Code
+   Timeout
+   Title Failure
+   URL Unavailable Failure
+   Verification Point Failure
+   
+   Note that the "Event Type" is an attribute of the following
+   attribute groups:
+   
+   _ RRT Robotic Playback Events
+   _ RRT Robotic Playback Events Sampled
+   
+   Customer needs a description of each of these Event Type values,
+   not just the existing enumeration. For example, the description
+   of the Current Run Status on page 394 in the V7.3.0.1 User's
+   Guide would be a good template.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  REQUEST TO UPDATE DOCUMENTATION
+   ****************************************************************
+   * USERS AFFECTED:  RRT AGENT USERS
+   ****************************************************************
+   * PROBLEM DESCRIPTION: DOC APAR TO UPDATE DOCS TO LIST EVENT
+   TYPE VALUES
+   ****************************************************************
+   * RECOMMENDATION: DOCS UPDATED
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  DOCS UPDATED ACCORDINGLY
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV61620
+   
+   
+ * REPORTED COMPONENT NAME
+   ITCAM TRANSACT
+   
+   
+ * REPORTED COMPONENT ID
+   5724S79RR
+   
+   
+ * REPORTED RELEASE
+   730
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-06-17
+   
+   
+ * CLOSED DATE
+   2015-02-13
+   
+   
+ * LAST MODIFIED DATE
+   2015-02-13
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

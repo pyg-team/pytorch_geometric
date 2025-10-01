@@ -1,0 +1,116 @@
+Title: IBM Chapter 7:  Operations planning - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Chapter 7 of Setting up your IBM WebSphere DataPower Appliance 
+
+ANSWER
+This technote is one of a series of technotes arranged in chapter format to provide information on setting up your IBM WebSphere DataPower SOA Appliance Machine Type 9235, 7199 and 7198. 
+Here are the links to the chapters: 
+
+ 1. Introduction to your WebSphere DataPower SOA Appliance Machine Type 9235, 7199, and 7198 [http://www.ibm.com/support/docview.wss?uid=swg21468463] 
+ 2. Planning for installation of your IBM WebSphere DataPower SOA Appliance MT/9235, 7199 and 7198 [http://www.ibm.com/support/docview.wss?uid=swg21468883] 
+ 3. Planning worksheet for setting up your IBM WebSphere DataPower Appliance MT/9235, 7199, and 7198 [http://www.ibm.com/support/docview.wss?uid=swg21468885] 
+ 4. Placing in the rack and initial configuration of your IBM WebSphere DataPower SOA Appliance M/T 9235, 7199 and 7198 [http://www.ibm.com/support/docview.wss?uid=swg21468886] 
+ 5. More on the initial configuration (startup command, manual configuration, and upgrading firmware (first time upgrade)) for your IBM WebSphere DataPower SOA Appliance M/T 9235, 7199, and 7198 [http://www.ibm.com/support/docview.wss?uid=swg21469023] 
+ 6. Reviewing resources available from IBM to help you use your IBM WebSphere DataPower SOA Appliance [http://www.ibm.com/support/docview.wss?uid=swg21469157] 
+ 7. Operations Planning 
+ 8. Working with IBM Support to solve a problem when using your IBM WebSphere DataPower SOA Appliance [http://www.ibm.com/support/docview.wss?uid=swg21469164]
+
+
+Chapter 7: Operations planning 
+
+Consult the IBM WebSphere DataPower SOA Appliance Support [http://www-947.ibm.com/support/entry/portal/Overview/Software/WebSphere/WebSphere_DataPower_SOA_Appliances] page for hints, tips and suggestions along with the WebSphere Technical Exchange [http://www.ibm.com/software/websphere/support/supp_tech.html]presentations on DataPower for more ideas. Here are a few operations topics. 
+
+Administration 
+
+Review this Redbook: DataPower SOA Appliance Administration, Service Planning, Implementation, and Best Practices [http://www.redbooks.ibm.com/redpieces/abstracts/sg247943.html?Open] 
+
+Production, Test, Development. 
+
+IBM WebSphere DataPower SOA appliances, are purpose built business solutions, thus one should not run production, test, and development activities on the same appliance. Separate the activities on different appliances to prevent one activity affecting another activity. For example one would not want load testing or development activities to consume resources needed by production work to avoid possible outages. 
+
+Appliances: 
+
+Calculate the number of appliances you need with your IBM WebSphere Sales Representative including adding appliances for your disaster recovery plans. 
+
+Tracing 
+
+Turn off the probe and debug levels of tracing when the appliance is in production or when load testing. The probe is designed for the application developer to debug a discrete transaction. The probe directs resources away from normal appliance throughput. 
+
+Defining Application Domains 
+
+Create unique domains for your business solutions rather than create services in the default domain. Using application domains, you will be able to enable and disable domains when developing and testing your business solution. 
+
+Host Alias 
+
+Use host alias, as noted in the product publications, so you can migrate your application domains from development, test and then to production using this feature. This is described in the Administrators Guide. 
+
+Reviewing Error Messages 
+
+Review the system logs for messages. Resolve messages. Messages of problems you know about but have not resolved can fill up message logs and message log targets. 
+
+Testing. 
+
+Before load testing you should check the following items. 
+
+ * Confirm that the probe is off. 
+ * Confirm that there are no developers accessing or changing the system during the testing. 
+ * Check the back end systems, databases and log targets. 
+ * Confirm that back end systems exist and are accessible from the appliance. 
+ * Confirm the back end systems used during testing can manage the same load as production systems. 
+ * Disable any back end systems not used during testing to prevent the appliance from attempting to continue to connect during the test. 
+ * Confirm that all user ids and passwords to back end systems and resources are correct. 
+ * Confirm all the user ids and passwords defined in the appliance are correct for the test environment. 
+ * Confirm the network connections are appropriate for the testing and simulate the production network (i.e bandwidth and processing power). 
+ * Disable any application domains not used for the test. 
+   
+   
+
+Back up the appliance To back up your appliance or an application domain review the Best Practices for Backing up and importing the configuration of an IBM WebSphere DataPower SOA Appliance. [http://www.ibm.com/support/docview.wss?uid=swg21416135] 
+
+Maintenance 
+
+Review the IBM WebSphere DataPower Administrators Guide and Problem Determination and Service Guide in our information center [http://www.ibm.com/support/knowledgecenter/SS9H2Y_7.0.0/kc_gen/com.ibm.dp.doc-gen1.html]. 
+
+Management and Monitoring 
+
+Logging and monitoring using SNMP are available with the IBM WebSphere DataPower appliances. The Administrators Guide has information on configuring the appliance's SNMP features. Also reference: IBM Developerworks: Monitoring WebSphere DataPower SOA Appliances [http://www.ibm.com/developerworks/websphere/library/techarticles/1003_rasmussen/1003_rasmussen.html]. 
+
+IBM WebSphere Application Management Center [http://www.ibm.com/software/integration/wamc/] provides management of the Machine Type 9234, 7199 and 7198 
+
+Monitor for important news 
+
+You can keep informed about the latest support information with My Notifications [https://www-947.ibm.com/account/userservices/jsp/login.jsp?persistPage=true&page=/systems/support/myview/subscription/css.wss/folders%3FmethodName%3DlistMyFolders&PD-REFERER=http://www-947.ibm.com/support/entry/portal/Overview/Software/WebSphere/WebSphere_DataPower_SOA_Appliances&error=] 
+
+Follow IBM WebSphere DataPower Support on Twitter [http://twitter.com/IBMDataPower]. Our team posts important news and links to new Technotes and flashes to keep you up-to-date on the latest technical information. 
+
+IBM developerWorks information on DataPower [http://www.ibm.com/developerworks/websphere/zones/businessintegration/dp.html]. 
+
+Keep your firmware current and pro-actively prevent problems. 
+
+Review our Critical updates for IBM WebSphere DataPower SOA Appliances [http://www.ibm.com/support/docview.wss?rs=2362&uid=swg21390112] to pro-actively prevent system outages. 
+
+Follow the upgrade instructions in our firmware upgrade technote [http://www.ibm.com/support/docview.wss?rs=2362&uid=swg27015333]. 
+
+The firmware life cycle is described in our IBM WebSphere DataPower Support Lifecycle [http://www.ibm.com/support/docview.wss?rs=2362&uid=swg21246298] 
+
+Review the IBM WebSphere DataPower SOA Appliances End of Service dates [http://www-01.ibm.com/support/docview.wss?rs=2362&uid=swg21317845] for the end of service dates on the M/T 9235/9004 
+
+Change the battery every two years for M/T 9235. 
+
+The appliance will post a message every two years noting that the battery needs to be changed. Our flash on changing the battery [http://www.ibm.com/support/docview.wss?rs=2362&uid=swg21322505] provides more information on buying and replacing a battery. 
+
+Considerations for appliances used in development 
+
+If the appliance has been used in development of a project or several projects. You might want to consider reinitializing the appliance to avoid overlapping objects from the previous work into the new work. Review our technote on reinitializing the appliance [http://www.ibm.com/support/docview.wss?uid=swg21244384]. 
+
+To speed up re-deployment after a reinitializing use the secure back up function described in our technote [http://www.ibm.com/support/docview.wss?uid=swg21416135] (if you have enabled this feature at initialization). For example: 
+
+ * You can create an appliance with only the basic configuration you need for development, then create a secure back up. You then can use this secure back up file after you reinitialize the appliance. 
+ * You can create a secure back up of any projects or development environments as needed for quick recovery after re-initialization. 
+
+
+Proceed to Chapter 8 Working with IBM support to solve a problem when using your IBM WebSphere DataPower SOA Appliance [http://www.ibm.com/support/docview.wss?uid=swg21469164]

@@ -1,0 +1,129 @@
+Title: IBM IT08713: PUREAPPLICATION SYSTEM: IMPROVE LARGE SCRIPT ARCHIVE FILE SUPPORT IN NEW ARCHITECTURE VIRTUAL SYSTEM PATTERNS - United States
+
+Text:
+  A FIX IS AVAILABLE
+IBM PureApplication System Version 2.1.0.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24040112]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Deploy IBM Content Foundation Small pattern  failed with
+   Java.net.SocketTimeoutException due to  taking over a minute to
+   get basic script information from ICF Parts
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  A problem in the method used to handle archive file transfers
+   caused the deployment to timeout in the pattern after it was
+   promoted to the new architecture virtual system format.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  PROBLEM CONCLUSION
+   A fix is being provided in the Foundation Pattern type version
+   2.1.3.0 being released with PureApplication System version
+   2.1.0.1.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT08713
+   
+   
+ * REPORTED COMPONENT NAME
+   PAPP SYS 8382 I
+   
+   
+ * REPORTED COMPONENT ID
+   5725G3200
+   
+   
+ * REPORTED RELEASE
+   200
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-05-04
+   
+   
+ * CLOSED DATE
+   2015-05-27
+   
+   
+ * LAST MODIFIED DATE
+   2015-05-27
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   PAPP SYS 8382 I
+   
+   
+ * FIXED COMPONENT ID
+   5725G3200
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R210 PSY
+   UP

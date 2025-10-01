@@ -1,0 +1,161 @@
+Title: IBM IV95647: TNM.FIPS.MODE SET TO FALSE FOR MD5 OPTION AVAILABLE. - United States
+
+Text:
+  DIRECT LINKS TO FIXES
+4.2.0-TIV-ITNMIP-zLinux-FP0004 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Network+Manager+IP+Edition&fixids=4.2.0-TIV-ITNMIP-zLinux-FP0004&source=SAR]
+4.2.0-TIV-NOIHD-zLinux-FP0004 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Network+Manager+IP+Edition&fixids=4.2.0-TIV-NOIHD-zLinux-FP0004&source=SAR]
+4.2.0-TIV-ITNMIP-AIX-FP0004 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Network+Manager+IP+Edition&fixids=4.2.0-TIV-ITNMIP-AIX-FP0004&source=SAR]
+4.2.0-TIV-ITNMIP-Linux-FP0004 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Network+Manager+IP+Edition&fixids=4.2.0-TIV-ITNMIP-Linux-FP0004&source=SAR]
+4.2.0-TIV-NOIHD-AIX-FP0004 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Network+Manager+IP+Edition&fixids=4.2.0-TIV-NOIHD-AIX-FP0004&source=SAR]
+4.2.0-TIV-NOIHD-Linux-FP0004 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Network+Manager+IP+Edition&fixids=4.2.0-TIV-NOIHD-Linux-FP0004&source=SAR]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Environment:?
+   -----------------------------------
+   Product: Tivoli Network Manager 4.2
+   Component:?5724S4500 ?
+   Redhat Linux 6.x
+   
+   
+   Symptoms:
+   -----------------------------------
+   In our Document, it mentions:
+   "The MD5 encryption option is not available if you are running a
+   FIPS 140-2 installation of Network Manager."
+   
+   https://www.ibm.com/support/knowledgecenter/en/SSSHRK_4.2.0/itnm
+   /ip/wip/disco/task/nmip_dsc_confdeviceaccessusinggui.html [https://www.ibm.com/support/knowledgecenter/en/SSSHRK_4.2.0/itnm/ip/wip/disco/task/nmip_dsc_confdeviceaccessusinggui.html]
+   
+   But document does not mention tnm.fips.mode need set to false if
+   you expect MD5 option available in the GUI.
+   
+   An dwanswer has explained, while a Document enhancement is
+   worthy.
+   https://developer.ibm.com/answers/questions/260739/md5-is-missin [https://developer.ibm.com/answers/questions/260739/md5-is-missin]
+   g-as-an-option-when-setting-up-passwo.html#answer-260741
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Dwanswer has been created:
+   https://developer.ibm.com/answers/questions/260739/md5-is-missin [https://developer.ibm.com/answers/questions/260739/md5-is-missin]
+   g-as-an-option-when-setting-up-passwo.html#answer-260741
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * ITNM 4.2 version doc                                         *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * "The MD5 encryption option is not available if you are       *
+   * running a                                                    *
+   * FIPS 140-2 installation of Network Manager."                 *
+   * But document does not mention tnm.fips.mode need set to      *
+   * false if                                                     *
+   * you expect MD5 option available in the GUI.                  *
+   *                                                              *
+   * An dwanswer has explained, while a Document enhancement is   *
+   * worthy.                                                      *
+   * https://developer.ibm.com/answers/questions/260739/md5-is-mi *
+   * ssin                                                         *
+   * g-as-an-option-when-setting-up-passwo.html#answer-260741     *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * fix pack | 4.2.0-ITNMIP-FP0004                               *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Document will be updated in 4.2 Fixpack 4.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV95647
+   
+   
+ * REPORTED COMPONENT NAME
+   TIV NETWK MGR I
+   
+   
+ * REPORTED COMPONENT ID
+   5724S4500
+   
+   
+ * REPORTED RELEASE
+   390
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-05-03
+   
+   
+ * CLOSED DATE
+   2017-05-11
+   
+   
+ * LAST MODIFIED DATE
+   2017-05-11
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

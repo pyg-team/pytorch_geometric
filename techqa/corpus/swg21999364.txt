@@ -1,0 +1,73 @@
+Title: IBM FileNet Enterprise Manager throws error when connecting to Content Engine over TLS 1.2 - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ After configuring a Content Engine application server to only accept TLS 1.2 connections, FileNet Enterprise Manager (FEM) and other .NET client applications fail to connect, throwing this error:
+
+"The underlying connection was closed: An unexpected error occurred on a receive. Unable to read data from the transport connection: An existing connection was forcibly closed by the remote host." 
+
+CAUSE
+Because FileNet .NET clients rely on the operating system configuration in combination with the Content Engine application server configuration to specify the communication protocol, you must configure Microsoft Windows to use TLS 1.2 as the default communication protocol for .NET clients when the application server is configured to only allow TLS 1.2.
+
+ENVIRONMENT
+You must be running one of the following Microsoft Windows versions: 
+
+Windows 7 SP1 or higher
+Windows 2008 R2 SP1 or higher
+Windows 8 & 8.1
+Windows 2012 & 2012 R2
+
+
+DIAGNOSING THE PROBLEM
+Your application server is configured to only use TLS 1.2, and your FileNet .NET client throws the above error.
+
+
+
+RESOLVING THE PROBLEM
+Note: You will be modifying the Windows registry during this procedure. Serious problems could occur if you modify the registry incorrectly. Back up the registry before you modify it, so that you can restore the registry if a problem occurs. 
+
+
+1. Verify that you have installed your SSL certificate from the Content Engine application server into the "Trusted People" certificate store.
+
+2. Verify that you have installed Microsoft .NET Framework 4.5.x.
+
+3. Configure the following registry settings to force .NET 4.5.x applications to use TLS 1.2 instead of TLS 1.0:
+[HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\.NETFramework\v4.0.30319]
+"SchUseStrongCrypto"=dword:00000001
+[HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node\Microsoft\.NETFramework\v4.0.30319]
+"SchUseStrongCrypto"=dword:00000001
+
+Configure the following registry settings to enable the Windows Security Support Provider to use TLS 1.2:
+[HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\TLS 1.2]
+[HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\TLS 1.2\Client]
+[HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\TLS 1.2\Client]
+"DisabledByDefault"=dword:00000000
+[HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\TLS 1.2\Client]
+"Enabled"=dword:00000001
+[HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\TLS 1.2\Server]
+[HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\TLS 1.2\Server]
+"DisabledByDefault"=dword:00000000
+[HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\TLS 1.2\Server]
+"Enabled"=dword:00000001
+
+4. Install the following Microsoft Windows update that matches your operating system where FileNet Enterprise Manager is installed. This update enables .NET Framework 3.5.1 and 2.0 to use the Windows Security Support Provider defaults.
+
+KB3154518 – Reliability Rollup HR-1605 – Win7 SP1/Win 2008 R2 SP1 [https://support.microsoft.com/en-us/help/3154518]
+KB3154519 – Reliability Rollup HR-1605 – Win8 RTM/Win 2012 RTM [https://support.microsoft.com/en-us/help/3154519]
+KB3154520 – Reliability Rollup HR-1605 – Win8.1RTM/Win 2012 R2 RTM [https://support.microsoft.com/en-us/help/3154520]
+
+5. Configure the SystemDefaultTlsVersions registry settings to force .NET 2.0 applications to use the operating system default:
+[HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\.NETFramework\v2.0.50727]
+"SystemDefaultTlsVersions"=dword:00000001
+[HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node\Microsoft\.NETFramework\v2.0.50727]
+"SystemDefaultTlsVersions"=dword:00000001 
+
+6. Reboot.
+
+FileNet Enterprise Manager (and other FileNet .NET API clients) should now connect and operate over TLS 1.2.
+
+RELATED INFORMATION
+ FileNet Enterprise Manager network error using SSL [http://www-01.ibm.com/support/docview.wss?uid=swg21670040]
+TLS/SSL Settings - See TLS 1.2 subkey [https://technet.microsoft.com/en-us/library/dn786418%28v=ws.11%29.aspx#bkmk_schanneltr_tls12]

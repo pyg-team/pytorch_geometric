@@ -1,0 +1,193 @@
+Title: IBM JR35814: MONITOR MODEL CONTAINING STRING AND NUMERIC ROOT INSTANCE IDS   WITH TIME BASED TRIGGERS CAN CAUSE EVENT PROCESSING TO FAIL - United States
+
+Text:
+  FIXES ARE AVAILABLE
+WebSphere Business Monitor development toolkit V7.0 Fix Pack 3 (7.0.0.3) [http://www-01.ibm.com/support/docview.wss?uid=swg24027550]
+WebSphere Business Monitor development toolkit V7.0 Fix Pack 5 [http://www-01.ibm.com/support/docview.wss?uid=swg24032632]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  If a monitor model meets the following conditions:
+   
+   1) It has at least one top level monitoring context with a root
+   instance ID of type string (all key metrics in the
+   monitoring context are of type String)
+   2) It has at least one top level monitoring context with a root
+   instance ID of type "numeric" (all key metrics in the
+   monitoring context are of type Decimal or Integer)
+   3) A top level monitoring context with a numeric root instance
+   ID contains at least one recurring wait time trigger (time based
+   trigger)
+   
+   processing of any of the time based trigger(s) from condition 3)
+   above will result in errors similar to the following:
+   
+   000000f9 BaseEventEntr E com.ibm.
+   wbimonitor.mm.MyModel.20100303120000.mc.BaseEventEntryMessageMC
+   :2
+   handleExecutionThrowable CWMRT0094E: An error occurred while
+   correlating instances.  No related events will be processed
+   until this
+   event is successfully processed.  In certain modes, this event
+   and
+   related events can be managed from the error queue.
+    Monitoring Model ID: MyModel
+    Monitoring Model Version: 20100303120000
+    Monitoring Context Name: MyNumericMC
+    Monitoring Context ID: MyNumericMC
+    Inbound Event Name: MessageEvent
+    Inbound Event ID: MessageEvent
+    Table Name: null
+    Correlation Expression: WBISESSION_ID =
+   MessageEvent/BaseData/wbi:
+   eventHeaderData/wbi:WBISESSION_ID
+    Event ID: CEF26B1FC3CA2C9B0DA1DF257C8D44C130
+    Caused by: com.ibm.wbimonitor.server.common.exception.
+   OMRuntimeException:
+   com.ibm.websphere.ce.cm.StaleConnectionException:
+   DB2 SQL Error: SQLCODE=-551, SQLSTATE=42501,
+   SQLERRMC=TGDNWE1U;SELECT;
+   MYMODEL.MCT_MYNUMERICMC_20100303120000, DRIVER=3.53.95
+     Caused By: com.ibm.websphere.ce.cm.StaleConnectionException:
+   DB2 SQL
+   Error: SQLCODE=-551, SQLSTATE=42501,
+   SQLERRMC=TGDNWE1U;SELECT;MYMODEL.
+   MCT_MYNUMERICMC_201003031200000, DRIVER=3.53.95
+      Next Exception: com.ibm.db2.jcc.b.eo: DB2 SQL Error:
+   SQLCODE=-551,
+   SQLSTATE=42501, SQLERRMC=TGDNWE1U;SELECT;GDN03MM1.
+   MCT_MESSAGEMC_20100303120000, DRIVER=3.53.95
+      Next Exception: com.ibm.db2.jcc.b.SqlException: DB2 SQL
+   Error:
+   SQLCODE=-516, SQLSTATE=26501, SQLERRMC=null, DRIVER=3.53.95
+      Next Exception: com.ibm.db2.jcc.b.SqlException: DB2 SQL
+   Error:
+   SQLCODE=-514, SQLSTATE=26501, SQLERRMC=SQL_CURLN200C1,
+   DRIVER=3.53.95
+   
+   Although the error occurs during time based trigger
+   processing, it can result in the stoppage of all event
+   processing for the monitor model.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  1) Edit the monitor model (in the Monitor Model Editor in
+   WebSphere Business Monitor development toolkit).
+   2) In each monitoring context that has a numeric root instance
+   ID and at least one time based trigger, change all of the key
+   metrics to type String.
+   3) Generate J2EE projects for the monitor model and export the
+   model application projects to an EAR file.
+   4) On the Monitor server, remove all existing versions of the
+   monitor model and deploy the newly generated model.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  This problem exists in WebSphere Business Monitor development
+   toolkit Version 6.2 and Version 7.0, and in WebSphere
+   Integration Developer Version 7.0 (Monitor model editor
+   feature).
+   
+   For Version 6.2 customers, this problem will be resolved in
+   WebSphere Business Monitor development toolkit V6.2 Fix Pack 3
+   (6.2.0.3).
+   
+   For Version 7.0 customers, this problem will be resolved in
+   WebSphere Business Monitor development toolkit V7.0 Fix Pack
+   3 (7.0.0.3), and in WebSphere Integration Developer V7.0 Fix
+   Pack 3 (7.0.0.3).
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR35814
+   
+   
+ * REPORTED COMPONENT NAME
+   WEB BUS MONITOR
+   
+   
+ * REPORTED COMPONENT ID
+   5724M2400
+   
+   
+ * REPORTED RELEASE
+   620
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-03-03
+   
+   
+ * CLOSED DATE
+   2010-04-27
+   
+   
+ * LAST MODIFIED DATE
+   2010-04-27
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R620 PSY
+   UP
+   
+   
+ * R700 PSY
+   UP

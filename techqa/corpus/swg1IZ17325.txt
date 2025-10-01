@@ -1,0 +1,183 @@
+Title: IBM IZ17325: ITM6.2UA - //SOURCE TRAP NOT WORKING; SNMP TRAPS DO NOT REDIRECT - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Environment:
+   
+   The UA is running on an AIX server named svcatte.  The OS
+   version is
+   5.3.0.0.  The UA version is 6.2.
+   
+   The UA reports directly to the Hub TEMS, which runs on a server
+   named
+   hq1atvs01.  The OS version is 5.3.0.0.  The Hub is running 6.2.
+   
+   The TEPS is also on an AIX server.  The TEPS server, wdcatvs01,
+   is also
+   at 5.3.0.0 and the TEPS is running 6.2.
+   
+   Problem Description:
+   
+   Trying to forward SNMP traps to an application other than SNMP-
+   MANAGER.  Traps appear to be processed and appear in the TRAP
+   attribute
+   group of SNMP-MANAGER, with as much label substitution in the
+   Value
+   List as I can manage.  But they are not being forwarded on to
+   the
+   attribute group or application listed in the MDL.
+   
+   The User's Guide for the UA provides instructions on how to
+   modify the mdl to redirect traps.
+   
+   The following tracing has been set:
+   
+   
+   KUMP_OUTPUT_DEBUG=Y
+   KUMP_SNMP_DEBUG_TRAP=Y
+   KUMP_SNMP_MONITOR_TRAP=Y
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Using SNMP data provider and UA 6.2 feature for
+   redirecting SNMP traps, per //SOURCE TRAP, is not working.
+   SNMP Traps are being processed and appear in TRAP attribute
+   group of SNMP-MANAGER, but traps are not being forwarded to
+   UA application,attribute group as declared in application
+   metafile.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  PROBLEM CONCOLUSION:  Here are the key messages in the customer
+   log that tell the story:
+   (1) Shortly after their metafile is loaded:
+   kumdchsv.cpp,1849,"DCHserver::dp_online") Warning: deleting
+   duplicate attrInfoList<@207419F8> with handle 1376583691 for
+   applName<B02VCS_CLUSTER> attrGroup<VCS_CLUSTER_TRAPS>
+   srcName<svcatte>
+   (2) Then later when a trap is received and we attempt to
+   redirect the trap to the //SOURCE TRAP table:
+   kumdchsv.cpp,2131,"DCHserver::dp_data") Error: unable to locate
+   attribute with handle 1376583691
+   kumpdchc.c,509,"KUMP_DCHclientRoutine") *** dp_data failed.
+   status -1 for source <svcatte> table <VCS_Cluster_Traps> handle
+   1376583691
+   
+   Researched why there's a duplicate dp_online being issued for
+   the VCS_CLUSTER_TRAPS attribute group, looking at metafile
+   parser logic (at roughly line 5200 in kumpcadm.c) and how it
+   creates a default SNMPType SourceEntry for the local host if one
+   doesn't already exist.  The problem is that for a TrapType
+   source, this logic should not be run because then we'll end up
+   with two SourceEntry's for the same table, a TrapType source and
+   an SNMPtype source.  The SNMPtype source is the last to go
+   through online processing and therefore its dp_online deletes
+   the "duplicate" DCH attribute handle for the TrapType source,
+   which was the important one that we didn't want to delete.
+   
+   The fix for this APAR will be included in the following
+   maintenance vehicles:
+   
+   | fix pack | 6.2.0-TIV-ITM-FP0001
+   
+   Note: Search the IBM Technical support web site for maintenance
+   package availability
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ17325
+   
+   
+ * REPORTED COMPONENT NAME
+   UNIVERSAL AGENT
+   
+   
+ * REPORTED COMPONENT ID
+   5724K1000
+   
+   
+ * REPORTED RELEASE
+   620
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-03-10
+   
+   
+ * CLOSED DATE
+   2008-05-22
+   
+   
+ * LAST MODIFIED DATE
+   2008-05-22
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   UNIVERSAL AGENT
+   
+   
+ * FIXED COMPONENT ID
+   5724K1000
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R620 PSY
+   UP

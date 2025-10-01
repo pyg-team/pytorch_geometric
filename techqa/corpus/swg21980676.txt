@@ -1,0 +1,62 @@
+Title: IBM Security Bulletin: Multiple vulnerabilities in Network Time Protocol(NTP) affect WebSphere DataPower XC10 Appliance (CVE-2016-5300, CVE-2015-7704, CVE-2015-8138) - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ There are multiple vulnerabilities in Network Time Protocol(NTP) implementation that is used by WebSphere DataPower XC10 Appliance. These vulnerabilities addressed include the ability to disable the NTP client and bypass security restrictions to bypass the timestamp validation check. 
+
+VULNERABILITY DETAILS
+CVEID: CVE-2015-5300 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-5300]
+DESCRIPTION: Network Time Protocol (NTP) could allow a remote attacker to bypass security restrictions, caused by the failure to correctly implement the threshold limitation for the '-g' option. An attacker could exploit this vulnerability using man-in-the-middle techniques to intercept NTP traffic and make multiple steps larger than the panic threshold.
+CVSS Base Score: 4.3
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/107594 [https://exchange.xforce.ibmcloud.com/vulnerabilities/107594] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:N/AC:L/PR:N/UI:R/S:U/C:N/I:L/A:N)
+
+
+CVEID: CVE-2015-7704 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-7704]
+DESCRIPTION: Network Time Protocol (NTP) is vulnerable to a denial of service, caused by an error in the rate-limiting mechanism. By sending spoofed Kiss-o'-Death packets, an attacker could exploit this vulnerability to disable NTP at a victim client.
+CVSS Base Score: 7.5
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/107446 [https://exchange.xforce.ibmcloud.com/vulnerabilities/107446] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H) 
+
+CVEID: CVE-2015-8138 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-8138]
+DESCRIPTION: NTP could allow a remote attacker to bypass security restrictions. By sending a specially crafted packet with an origin timestamp of zero, an attacker could exploit this vulnerability to bypass the timestamp validation check.
+CVSS Base Score: 5.3
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/110025 [https://exchange.xforce.ibmcloud.com/vulnerabilities/110025] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:L/A:N) 
+
+AFFECTED PRODUCTS AND VERSIONS
+WebSphere DataPower XC10 Appliance Version 2.1
+WebSphere DataPower XC10 Appliance Version 2.5
+
+REMEDIATION/FIXES
+Apply an interim fix, according to the table below. Interim fixes are associated with the original APAR that is documented in the table. Because these APAR references might be updated to more recent APARs, see the links in the table for the most recent interim fix information. 
+
+This interim fix contains a new default SSL certificate, as the previous default SSL certificate, which was never intended for production use, has an MD5 signature and is no longer compatible with Java. The result is that installing this interim fix will make it incompatible with any WebSphere Datapower XC10 appliances that are running with an MD5 certificate, including the default SSL certificate that was shipped prior to this interim fix. If the appliance is configured with a custom keystore and certificate with an MD5 signature, it must be replaced prior to upgrading to this interim fix or the 'clear-tls-config' command must be run on the appliance before or after performing the upgrade. Failing to do so will result in the appliance failing to start. Note that changing the active certificate for an appliance collective does require that the cache be reloaded and client truststores must be configured to trust the new certificate.
+
+
+
+Product Version APAR Link to interim fix WebSphere DataPower XC10 Appliance V2.1 on appliance 9235-92X 2.1 IT14471 Refer to the Version 2.1 table in Recommended fixes for WebSphere DataPower XC10 Appliance [http://www-01.ibm.com/support/docview.wss?uid=swg27019704]. WebSphere DataPower XC10 Appliance V2.1 on appliance 7199-92X 2.1 IT14471 Refer to the Version 2.1 table in Recommended fixes for WebSphere DataPower XC10 Appliance [http://www-01.ibm.com/support/docview.wss?uid=swg27019704]. WebSphere DataPower XC10 Appliance V2.5 on appliance 7199-92X
+Version 2.5
+
+Important: See More information [http://www-01.ibm.com/support/docview.wss?uid=swg21682625] link and follow instructions to determine if you have an old or newer SSD driver on your appliance using the show ssd-version command. IT14471 Refer to the Version 2.5 table in Recommended fixes for WebSphere DataPower XC10 Appliance [http://www-01.ibm.com/support/docview.wss?uid=swg27019704]. WebSphere DataPower XC10 Appliance V2.5 virtual image 2.5 IT14471 Refer to the Version 2.5 table in Recommended fixes for WebSphere DataPower XC10 Appliance [http://www-01.ibm.com/support/docview.wss?uid=swg27019704]. WORKAROUNDS AND MITIGATIONS
+There is no workaround. The interim fix must be applied to correct the problem.
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v3 Guide [http://www.first.org/cvss/user-guide] 
+On-line Calculator v3 [http://www.first.org/cvss/calculator/3.0] RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/PSIRT] CHANGE HISTORY
+ 29 Apr 2016: Original version published 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.

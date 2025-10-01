@@ -1,0 +1,139 @@
+Title: IBM IV58011: DOUBLE BYTE CHARACTERS INVALID WHEN MSSQL USED FOR TEPS DB - United States
+
+Text:
+  A FIX IS AVAILABLE
+IBM Tivoli Monitoring 6.3.0 Fix Pack 4 (6.3.0-TIV-ITM-FP0004) [http://www-01.ibm.com/support/docview.wss?uid=swg24037653]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  PROBLEM DESCRIPTION:
+   When using MSSQL server and authenticating users with LDAP,
+   double byte characters show as ??? in the distinguished name
+   field.
+   
+   RECREATE INSTRUCTIONS:
+   Setup ITM630FP2 TEPS using MSSQL server as the TEPS database on
+   windows 2008 or 2012. Authenticate users at the TEPS using
+   LDAP,  the LDAP vendor and version does not seem to matter.
+   
+   Create UID's in ldap using double byte characters. Then logon to
+   the TEP client and create a new user and assign it a
+   distinguished name from the LDAP list which contains double byte
+   charaters. In this particular case hebrew characters were being
+   used but any other double byte language character will work.
+   
+   Save the userid in the tep client, the distinguished name will
+   not correctly show the double byte character, it will display a
+   question mark for each double byte character.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Details pending.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Details pending.
+   
+   The fix for this APAR is contained in the following maintenance
+   packages:
+   
+     | fix pack | 6.3.0-TIV-ITM-FP0004
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV58011
+   
+   
+ * REPORTED COMPONENT NAME
+   TEPS
+   
+   
+ * REPORTED COMPONENT ID
+   5724C04PS
+   
+   
+ * REPORTED RELEASE
+   630
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-03-28
+   
+   
+ * CLOSED DATE
+   2014-08-29
+   
+   
+ * LAST MODIFIED DATE
+   2014-08-29
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TEPS
+   
+   
+ * FIXED COMPONENT ID
+   5724C04PS
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R630 PSY
+   UP

@@ -1,0 +1,194 @@
+Title: IBM PM83483: END-USER IS ABLE TO LOG INTO DEPLOYMENT MANAGER WITH A BLANK, EMPTY, NULL PASSWORD WHEN ACTIVE DIRECTORY SECURITY IS USED - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When Active Directory is used as the security provider, IBM SPSS
+   Collaboration and Deployment Services (C&DS) 5.0 will allow you
+   to log into Deployment Manager when leaving the password field
+   as blank/empty.
+   
+   Entering an incorrect password will display the message:
+   "Login failed
+   Reason:
+   Invalid user id or password."
+   
+   Once logged in (without entering a password), the end-user is
+   able to execute tasks that their roles permit. This includes,
+   but not limited to, creating, executing and deleting jobs. This
+   is a serious breach of security for all customers using C&DS.
+   
+   This issue is currently on C&DS 5.0 GA and 5.0 Fix Pack 1.
+   This behaviour is not expected and C&DS should restrict access
+   to the repository to those who enter a valid username (id) and
+   password.
+   
+   In the C&DS Deployment Manager 5.0 logs (spssemgr.log), entering
+   an invalid password will display:
+   [main] ERROR com.spss.mgmt.content.ui.views.RepositoryView  -
+   Login failed
+   com.spss.mgmt.common.core.model.ConnectionException: Invalid
+   user id or password.
+   
+   But entering a blank/empty password, the logs will display:
+   [Thread-9] WARN
+   com.spss.mgmt.common.core.update.FeatureInstaller  - Install
+   operation start
+   [Thread-9] WARN
+   com.spss.mgmt.common.core.update.FeatureInstaller  - Archive
+   location is http://<servername>:8080/pem/update [http://<servername>:8080/pem/update]
+   [Thread-9] WARN
+   com.spss.mgmt.common.core.update.FeatureInstaller  - Searching
+   for updated features at http://<servername>:8080/pem/update [http://<servername>:8080/pem/update]
+   [Thread-9] WARN
+   com.spss.mgmt.common.core.update.FeatureInstaller  - Local site
+   configured site file: C:\Program
+   Files\IBM\SPSS\Deployment\5.0\DeploymentManager
+   [Thread-9] WARN
+   com.spss.mgmt.common.core.update.FeatureInstaller  - Target site
+   for install is file:/C:/Program
+   Files/IBM/SPSS/Deployment/5.0/DeploymentManager/
+   [Thread-9] WARN
+   com.spss.mgmt.common.core.update.FeatureInstaller  - Going
+   through the feature list.
+   [Thread-9] WARN
+   com.spss.mgmt.common.core.update.FeatureInstaller  - No features
+   to install
+   [Thread-9] WARN
+   com.spss.mgmt.common.core.update.FeatureInstaller  - Install
+   operation complete
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  This issue has been reported to the IBM SPSS Collaboration and
+   Deployment Services development team and will be addressed in
+   the next Fix Pack. Please refer to the Fix Pack schedule at
+   http://www-01.ibm.com/support/docview.wss?uid=swg21599157 for
+   information on upcoming Fix Packs.
+   
+   At this stage, there are no known workarounds.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * All C&DS end users are affected by this problem.             *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * END-USER IS ABLE TO LOG INTO DEPLOYMENT MANAGER WITH A       *
+   * BLANK, EMPTY, NULL PASSWORD WHEN ACTIVE DIRECTORY SECURITY   *
+   * IS USED                                                      *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Please upgrade to IBM SPSS Collaboration and Deployment      *
+   * Services 5.0 Fix Pack 2.                                     *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This problem has been resolved in IBM SPSS Collaboration and
+   Deployment Services 5.0 Fix Pack 2.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM83483
+   
+   
+ * REPORTED COMPONENT NAME
+   SPSS CADS
+   
+   
+ * REPORTED COMPONENT ID
+   5725A72CD
+   
+   
+ * REPORTED RELEASE
+   500
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-02-24
+   
+   
+ * CLOSED DATE
+   2013-05-29
+   
+   
+ * LAST MODIFIED DATE
+   2013-05-29
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   SPSS CADS
+   
+   
+ * FIXED COMPONENT ID
+   5725A72CD
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R500 PSN
+   UP
+   
+   
+ * R500 PSY
+   UP

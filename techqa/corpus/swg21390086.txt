@@ -1,0 +1,78 @@
+Title: IBM Instructions for ignoring WS-I BP violations in a DataPower Web Service Proxy WSDL - United States
+
+Text:
+DataPower WS-I BP Status Violation WSP Web Service Proxy WSDL TECHNOTE (FAQ)
+
+QUESTION
+ How do I ignore WS-I BP Violations during WSDL compilation on a DataPower Web Service Proxy? 
+
+CAUSE
+When adding a WSDL to a Web Service Proxy, which, in turn, compiles the WSDL, DataPower will check for WS-I Basic Profile conformance. 
+
+A WSDL that is not formatted to WS-I Basic Profile standards will display a violation as shown below:
+
+
+[/support/docview.wss?uid=swg21390086&aid=1] [/support/docview.wss?uid=swg21390086&aid=1]
+
+
+
+Clicking the Violation will show the exact location/description of the violation.
+
+ANSWER
+1) In some circumstances, it may be necessary to ignore this violation despite non-conformance to WS-I Basic Profile standards.
+
+
+a) To Ignore the violation at compilation time, go to the:
+
+"Objects" --> "Compile Options Policy" 
+on the side navigation bar of the WEBGUI under the "XML Processing" heading.
+
+[/support/docview.wss?uid=swg21390086&amp;aid=2]
+
+
+b) Also, the "Compile Options Policy" can be reached through the 
+Web Service Proxy "Proxy Settings" tab by clicking on the "XML Manager":
+
+[/support/docview.wss?uid=swg21390086&aid=3] [/support/docview.wss?uid=swg21390086&aid=3]
+
+
+2) Add a new policy or click an existing policy to edit.
+
+a) After clicking "Compile Options Policy" from the Navigation Side Bar: 
+
+
+[/support/docview.wss?uid=swg21390086&aid=4] [/support/docview.wss?uid=swg21390086&aid=4]
+
+
+b) Or from the clicking the "XML Manager":
+
+
+[/support/docview.wss?uid=swg21390086&amp;aid=5]
+
+
+
+3) Click on the "WSDL Compiler Options" tab in the "Configure Compile Options Policy" page.
+
+4) Select your preferred options and click Apply. 
+
+For example, to ignore WS-I BP Validation at compile time, select "Ignore" for the "WS-I Basic Profile Validation" as shown below:
+
+
+[/support/docview.wss?uid=swg21390086&amp;aid=6]
+
+5) In your Web Service Proxy, under the "Proxy Settings" tab, verify that the "XML Manager" which is selected also has selected the proper "Compile Options Policy" that was just previously configured to Ignore WS-I BP Violations.
+
+After clicking Apply and saving, the violation should be gone.
+
+
+NOTE: WS-I Conformance for Operations can be controlled in the Web Service Proxy Policy. 
+
+In your Web Service Proxy, click the "Proxy" tab and expand the "Web Service Proxy Policy Tree".
+
+Clicking on the gray "WS-I Conformance" link will allow an "Operation Conformance Policy" to be created/edited. 
+
+This can be configured to allow requests/responses to be allowed (not be rejected) despite WS-I non-conformance.
+
+ 
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration WebSphere DataPower XML Security Gateway XS40 Not Applicable Firmware 3.7.3, 3.7.2, 3.7.1 Edition Independent

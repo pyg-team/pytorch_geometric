@@ -1,0 +1,166 @@
+Title: IBM Rational Lifecycle Integration Adapters Tasktop Edition 1.1.3 - United States
+
+Text:
+service release; modpack; mod pack; upgrade; refresh; refresh pack DOWNLOADABLE FILES
+
+ABSTRACT
+ IBM Rational Lifecycle Integration Adapters Tasktop Edition 1.1.3 has been made generally available and contains new features as well as fixes for client-reported defects. 
+
+DOWNLOAD DESCRIPTION
+ 
+
+Table of Contents Sections Description  * What's new
+
+The Change history section provides an overview on what is new in this release with a description of any new functions or enhancements when applicable.
+
+ * Impact assessment
+
+The How critical is this fix section provides information related to the impact of this release to allow you to assess how your environment may be affected.
+
+ * Prerequisites
+
+The Prerequisites section provides important information to review prior to the installation of this release.
+
+ * Download package
+
+The Download package section provides the direct link to obtain the download package for installation in your environment.
+
+ * Installation instructions
+
+The Installation instructions section provides the installation instructions necessary to apply this release into your environment.
+
+ * Known problems
+
+The Known side effects section contains a link to the known problems (open defects) identified at the time of this release.
+
+Supporting Documentation Document Description  * Detailed System Requirements [http://www.ibm.com/software/products/us/en/ratlia#tab_othertab1]
+
+Click to review the detailed system requirements information for a complete list of hardware requirements, supported operating systems, prerequisites and optional supported software, with component-level details and operating system restrictions.
+
+ * Product documentation [http://help.tasktop.com/help/topic/com.tasktop.sync.help/userguide/Tasktop%20Sync%20User%20Guide.html]
+
+You can view, browse, and search online information related to the product.
+
+ * Fix List [http://www.ibm.com/support/docview.wss?uid=swg27037966]
+
+Click to review a complete list of the defects (APARs) resolved in this release including a list of resolved defects for the entire version family.
+
+ * developerWorks [http://www.ibm.com/developerworks/rational/products/lifecycleintegrationadapters]
+
+Find technical developer content and resources.
+
+PREREQUISITES
+ 
+
+Prerequisites include: No prerequisites required.
+
+Back to top
+
+INSTALLATION INSTRUCTIONS
+ 
+
+Back to top
+
+Review the Installation [http://help.tasktop.com/help/topic/com.tasktop.sync.help/userguide/Installation.html] documentation. DOWNLOAD PACKAGE
+ 
+
+Download options Access type Description  * Passport Advantage [https://www.ibm.com/software/howtobuy/softwareandservices/passportadvantage]
+
+Passport Advantage and Passport Advantage Express clients are required to sign in to download the software package.
+
+Back to top
+
+HOW CRITICAL IS THIS FIX?
+ 
+
+Impact Assessment Impact Description Recommended This is a service release. It contains new features as well as fixes for client-reported and internally found defects.
+
+Test Results
+
+Close [x]
+
+DEFINITIONS
+Regression: An error in the Maintenance Delivery Vehicle [http://www.ibm.com/support/docview.wss?uid=swg27008656] (MDV) that produces incorrect or unexpected behavior causing a supported feature to stop functioning as designed. 
+This includes: 
+
+ * Coding errors that cause a regression
+ * Documentation or packaging problems that cause a regression
+ * Errors reported in a new function delivered in a MDV that cause a regression
+
+Incomplete: An error in the MDV has not regressed, but does not work as designed. 
+This includes: 
+
+ * Fixed APARs which did not solve the original problem but did not break anything new
+ * APARs reporting documentation errors, such as readme errors, that cause problems applying an MDV but do not lead to a regression
+
+
+
+
+Notes:  * Regression and incomplete APARs are considered fix-in-error or MDV-in-error
+ * Definitions above apply only to valid APARs that result in product fixes (APARs returned as working-as-designed are not assessed for being fix-in-error)
+ * Issues in major releases due to new functionality do not apply in this definition
+
+There are no known regressions to report.
+
+Back to top
+
+PROBLEMS SOLVED
+ 
+
+Defects resolved Click the Fix List link in the table of contents above to review a list of the problems solved in this release.
+
+KNOWN SIDE EFFECTS
+ 
+
+The following defects were not resolved in this release: No known issues to report.
+
+Back to top
+
+CHANGE HISTORY
+ 
+
+What's new For information about the new features and enhancements in Rational Lifecycle Integration Adapters Tasktop Edition, review the New & Noteworthy [https://sync-support.tasktop.com/customer/portal/articles/1794582-tasktop-sync-4-0-0] page as well as the Tasktop Sync 4.0.1 (IBM RLIA TE 1.1.3) [https://sync-support.tasktop.com/customer/portal/articles/1794644-tasktop-sync-4-0-1-ibm-rlia-te-1-1-3-] release notes.
+
+Back to top
+
+TECHNICAL SUPPORT
+ 
+
+TAB NAVIGATION
+ * General Support Information- selected tab,
+ * Support Resources [http://www.ibm.com/support/docview.wss?uid=swg27020747]- selected tab,
+
+
+
+
+IBM Rational Software Support Communities 
+
+ * Visit the IBM Support Portal [http://www.ibm.com/support/entry/portal/Overview/Software/Rational/product] to configure your support portal experience and review FAQs, lists of known problems, fixes, and a wealth of important support information.
+   
+   
+ * Visit developerWorks [http://www.ibm.com/developerworks/rational/] to access an online collection of tutorials, sample code, standards, forums and other resources provided by experts at IBM to assist software developers using Rational tools including access to the IBM RFE Community [http://www.ibm.com/developerworks/rfe/].
+   
+   
+ * Visit the Jazz Community [http://jazz.net/] if you use a Rational product created using the Jazz platform to interact directly with the Jazz development team and other community members, download product trials and betas and track developement progress. 
+
+
+
+
+HELPFUL HINTS FOR OBTAINING TECHNICAL ASSISTANCE:
+Before you contact IBM Rational Software Support, gather the background information that you need to describe the problem. When you describe a problem to an IBM software support specialist, be as specific as possible and include all relevant background information so that the specialist can help you solve the problem efficiently. To save time, know the answers to these questions: 
+
+ * What software versions were you running when the problem occurred? 
+ * Do you have logs, traces, or messages that are related to the problem? 
+ * Can you reproduce the problem? If so, what steps do you take to reproduce it? 
+ * Is there a workaround for the problem? If so, be prepared to describe the workaround. 
+
+If you have helpful information to diagnose or identify the problem on your system, you can provide this data by following the instructions to exchange information with IBM Technical Support [http://www.ibm.com/software/support/exchangeinfo.html]. 
+
+ 
+
+Follow IBM Rational Client Support on Twitter [http://twitter.com/rationalsupport] | Facebook [http://facebook.com/rationalsupport] | YouTube [http://www.youtube.com/ibmrationalsupport] | devWorks Blog [https://www.ibm.com/developerworks/mydeveloperworks/blogs/nfrsblog/?lang=en]
+
+
+
+
+ Back to top

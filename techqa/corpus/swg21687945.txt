@@ -1,0 +1,24 @@
+Title: IBM Vulnerability in SSLv3 ( POODLE attack) affects IBM Cast Iron Cloud Integration (CVE-2014-3566) - United States
+
+Text:
+POODLE attack; SSLv3 Vulnerability FLASH (ALERT)
+
+ABSTRACT
+ Vulnerability in SSLv3 ( POODLE attack) affects IBM Cast Iron Cloud Integration (CVE-2014-3566) 
+
+CONTENT
+SSLv3 contains a vulnerability that has been referred to as the Padding Oracle On Downgraded Legacy Encryption (POODLE) attack. SSLv3 is used for Client/Server communication via Cast Iron Cloud Integration connectors.
+
+Affected Products and Versions:
+
+This vulnerability affects all versions and releases of Cast Iron Cloud Integration which does not have the APAR LI77282. [http://www-01.ibm.com/support/docview.wss?uid=swg1LI77282]
+
+Workarounds and Mitigations:
+
+1. Upgrade to one of the latest Interim Fixes: 
+6.1.0.12IF004
+6.1.0.15IF001
+6.3.0.1IF009. 
+6.4.0.1
+7.x
+2. Contact IBM Support to get the SSLv3, protocol disabled for Web Management Console.

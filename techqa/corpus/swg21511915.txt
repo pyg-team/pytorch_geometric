@@ -1,0 +1,130 @@
+Title: IBM Changes are not saved in Management Center due to DB2 JCC exceptions - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When attempting to save work in Management Center, the work is not saved and DB2 JCC exceptions are thrown in the SystemOut.log. The problem occurs while using DB2 V9.7 prior to Feature Pack 4. 
+
+SYMPTOM
+Some save actions in Management Center are unable to complete, while others save with no problems. Messages similar to these are thrown in the SystemOut.log files when work is not saved: 
+
+8/15/11 15:07:08:763 CEST] 0000007f WSJccConnecti W DSRA8650W: Error closing a JDBC child wrapper, com.ibm.ws.rsadapter.jdbc.WSJccPreparedStatement@64526452 
+
+com.ibm.db2.jcc.am.SqlException: [jcc][10120][10943][4.11.77] Invalid operation: statement is closed. ERRORCODE=-4470, SQLSTATE=null 
+
+at com.ibm.db2.jcc.am.gd.a(gd.java:660) 
+
+at com.ibm.db2.jcc.am.gd.a(gd.java:60) 
+
+at com.ibm.db2.jcc.am.gd.a(gd.java:103) 
+
+at com.ibm.db2.jcc.am.jn.yb(jn.java:4086) 
+
+at com.ibm.db2.jcc.am.jn.a(jn.java:1630) 
+
+at com.ibm.db2.jcc.am.jn.getMoreResults(jn.java:1085) 
+
+... 
+
+[8/15/11 15:07:08:774 CEST] 0000007f ConnectionEve A J2CA0056I: The Connection Manager received a fatal connection error from the Resource Adapter for resource jdbc/dswcs. The exception is: com.ibm.db2.jcc.am.DisconnectNonTransientConnectionException: [jcc][t4][2030][11211][4.11.77] A communication error occurred during operations on the connection's underlying socket, socket input stream, 
+
+or socket output stream. Error location: Reply.fill() - insufficient data (-1). Message: Insufficient data. ERRORCODE=-4499, SQLSTATE=08001 
+
+[8/15/11 15:07:08:863 CEST] 0000007f bod E com.ibm.commerce.foundation.server.command.bod.BusinessObjectDocumentProcessor processBusinessObjectDocument(BusinessObjectDocumentType, String) [Ljava.lang.StackTraceElement;@25982598 
+
+com.ibm.commerce.context.exception.BusinessContextException: Generic business context system exception: "com.ibm.websphere.ce.cm.StaleConnectionException: [jcc][t4][10335][10366][4.11.77] Invalid operation: Connection is closed. ERRORCODE=-4470, SQLSTATE=08003" 
+
+... 
+
+[8/15/11 15:07:09:112 CEST] 0000007f WSRdbManagedC W DSRA0180W: Exception detected during ManagedConnection.destroy(). The exception is: com.ibm.ws.exception.WsException: DSRA0080E: An exception was received by the Data Store Adapter. See original exception message: [jcc][t4][10335][10366][4.11.77] Invalid operation: Connection is closed. ERRORCODE=-4470, SQLSTATE=08003. with SQL State : 08003 SQL Code : -4470 
+
+at com.ibm.db2.jcc.am.gd.a(gd.java:666) 
+
+at com.ibm.db2.jcc.am.gd.a(gd.java:60) 
+
+at com.ibm.db2.jcc.am.gd.a(gd.java:120) 
+
+at com.ibm.db2.jcc.am.lb.ec(lb.java:5331) 
+
+at com.ibm.db2.jcc.am.lb.q(lb.java:1156) 
+
+at com.ibm.db2.jcc.am.lb.rollback(lb.java:1145) 
+
+at com.ibm.db2.jcc.am.df.rollback(df.java:176) 
+
+... 
+
+[8/15/11 15:07:10:694 CEST] 0000007f webapp E com.ibm.ws.webcontainer.webapp.WebApp logServletError SRVE0293E: [Servlet Error]-[ActionServlet]: java.lang.RuntimeException: com.ibm.websphere.ce.cm.ObjectClosedException: DSRA9110E: Statement is closed. 
+
+at com.ibm.commerce.foundation.client.facade.bod.AbstractBusinessObjectDocumentFacadeClient.sendBusinessObjectDocument(AbstractBusinessObjectDocumentFacadeClient.java:463) 
+
+at com.ibm.commerce.catalog.facade.client.AbstractCatalogFacadeClient.processCatalog(AbstractCatalogFacadeClient.java:212) 
+
+...
+
+CAUSE
+If the extender indicator is enabled (JCC driver is enabled by default) DB2 could be crashed on the following callstacks in a DB2 trap log: 
+
+
+<StackTrace>
+-----FUNC-ADDR---- ------FUNCTION + OFFSET------
+0x00002BA0802F793F ossDumpStackTraceEx + 0x01ef
+(/home/db2inst1/sqllib/lib64/libdb2osse.so.1)
+0x00002BA0802F2706 _ZN11OSSTrapFile6dumpExEmiP7siginfoPvm +
+0x00cc
+(/home/db2inst1/sqllib/lib64/libdb2osse.so.1)
+0x00002BA07D60CE0D sqlo_trce + 0x03fb
+(/home/db2inst1/sqllib/lib64/libdb2e.so.1)
+0x00002BA07D6513FB sqloEDUCodeTrapHandler + 0x0243
+(/home/db2inst1/sqllib/lib64/libdb2e.so.1)
+0x00000030AB60EB10 address: 0x00000030AB60EB10 ; dladdress:
+0x00000030AB600000 ; offset in lib: 0x000000000000EB10 ;
+(/lib64/libpthread.so.0)
+0x00002BA07D904E8A
+_Z27sqlraExtIndCheckColAuthPrivP8sqlrr_cbP25sqlra_sql_context_si
+bling
++ 0x0128
+(/home/db2inst1/sqllib/lib64/libdb2e.so.1)
+0x00002BA07C1F0E3F _Z29sqlrr_process_execute_requestP8sqlrr_cbi
++ 0x1a73
+(/home/db2inst1/sqllib/lib64/libdb2e.so.1)
+
+or
+
+<StackTrace>
+-------Frame------ ------Function + Offset------
+0x0900000010B5CB90
+sqlraExtIndCheckColAuthPriv__FP8sqlrr_cbP25sqlra_sql_context_sib
+ling + 0x264
+0x090000000F4D2D68 sqlrr_process_execute_request__FP8sqlrr_cbi +
+0x3D0
+0x09000000129D9C08
+.sqlrr_execute.fdpr.clone.1979__FP14db2UCinterfaceP9UCstpInfo +
+0xB8
+0x09000000129D994C
+.sqljs_ddm_excsqlstt.fdpr.clone.224__FP14db2UCinterfaceP13sqljDD
+MObject + 0xA94
+0x09000000129D87A4
+sqljsParseRdbAccessed__FP13sqljsDrdaAsCbP13sqljDDMObjectP14db2UC
+interface + 0xE8
+0x09000000129D8C24
+.sqljsParse.fdpr.clone.136__FP13sqljsDrdaAsCbP14db2UCinterfaceP8
+sqeAgentb + 0x260
+0x0900000012934450 @64@sqljsSqlam__FP14db2UCinterfaceP8sqeAgentb
++ 0xB44
+0x0900000012B95E98
+@64@sqljsDriveRequests__FP8sqeAgentP14db2UCconHandle + 0xA0
+0x0900000012B95C5C
+@64@sqljsDrdaAsInnerDriver__FP18SQLCC_INITSTRUCT_Tb + 0x268
+0x0900000012B95688 sqljsDrdaAsDriver__FP18SQLCC_INITSTRUCT_T +
+0xE4
+0x0900000012B29CC0 RunEDU__8sqeAgentFv + 0x7C
+0x0900000012B21898 EDUDriver__9sqzEDUObjFv + 0xDC
+0x0900000012B2177C sqlzRunEDU__FPcUi + 0x14
+0x0900000012B1C58C sqloEDUEntry + 0x264
+</StackTrace>
+
+
+RESOLVING THE PROBLEM
+Refer to DB2 APAR IC71365 [https://www.ibm.com/support/docview.wss?uid=swg1IC71365] for fix information and a local fix.

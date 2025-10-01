@@ -1,0 +1,150 @@
+Title: IBM PP54171: AE PP50641 FIX COMPLETION END OF ABSTRACT - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  AE APAR FOR FIX COMPLETION OF PP50641 [http://www-01.ibm.com/support/docview.wss?uid=swg1PP50641].  ERROR IN SOURCE CODE
+   DISCOVERED AFTER APAR CLOSE AND PRIOR TO PTF COR CLOSE.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: ALL DCF CMS USERS                            *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: AE PP50641 [http://www-01.ibm.com/support/docview.wss?uid=swg1PP50641] FIX COMPLETION               *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   AE APAR FOR FIX COMPLETION OF PP50641 [http://www-01.ibm.com/support/docview.wss?uid=swg1PP50641].  ERROR IN SOURCE CODE
+   DISCOVERED AFTER APAR CLOSE AND PRIOR TO PTF COR CLOSE.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  MODULE DSMTFARP WILL BE CORRECTED TO RESOLVE THIS PROBLEM.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PP54171
+   
+   
+ * REPORTED COMPONENT NAME
+   5748 DOC COMP F
+   
+   
+ * REPORTED COMPONENT ID
+   5748XX900
+   
+   
+ * REPORTED RELEASE
+   130
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   1986-03-17
+   
+   
+ * CLOSED DATE
+   1986-04-21
+   
+   
+ * LAST MODIFIED DATE
+   1987-06-01
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UP75939 UP75940 UP75941 UP75942
+   
+   
+
+MODULES/MACROS
+ *  DSMTFARP
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   5748 DOC COMP F
+   
+   
+ * FIXED COMPONENT ID
+   5748XX900
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * RH85 PSY UL05209 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UL05209]
+   UP86/12/03 I 076A
+   
+   
+ * R130 PSY UP75942 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UP75942]
+   UP86/05/06 P 8605
+   
+   
+ * R302 PSY UP75941 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UP75941]
+   UP86/05/09 P F605
+   
+   
+ * R701 PSN UL05210 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UL05210]
+   UP86/12/02 I 1000
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

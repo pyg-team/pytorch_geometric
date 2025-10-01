@@ -1,0 +1,170 @@
+Title: IBM LO62456: INOTES: CONTENT-TRANSFER-ENCODING IS SET TO QUOTED-PRINTABLE WITH JAPANESE - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Environment:
+   Domino 8.5.2
+   
+   Use settings as follows:
+   Server configuration document
+   [MIME] tab - [Settings by Character Set Groups] tab
+   MIME settings by character set group: Japanese
+   Header: Character Set: ISO-2022-JP, Encoding:Base64
+   Body: Character Set: ISO-2022-JP, Encoding: None
+   
+   Steps to reproduce:
+   1. Access mail DB via browser
+   2. Create new message using Japanese for body
+   3. Use Format - Rich Text
+   4. Send the message to outbound
+   5. In MIME source, there is the description as follows
+   
+   Content-Transfer-Encoding: quoted-printable
+   Content-Type: text/html;
+      charset=ISO-2022-JP
+   
+   6. Create new message using Japanese for body again
+   7. Use Format - Plain Text
+   8. Send the message to outbound
+   9. In MIME source, there is the description as follows
+   
+   Content-Transfer-Encoding: quoted-printable
+   Content-Type: text/plain;
+      charset=ISO-2022-JP
+   
+   In iNotes 8.5.1 and 8.5.2, Content-Transfer-Encoding is set to
+   quoted-printable.
+   But if the MIME message is sent from Notes client and Plain Text
+   Format with iNotes 8.5.0 or 8.0.2, Content-Transfer-Encoding is
+   not set.
+   
+   ISO-2022-JP is 7bit so it dose not necessary to use
+   quoted-printable encoding.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  A programming error was found and will be corrected in a future
+    release.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A programming error was found and will be corrected in a future
+    release.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+ *  This APAR is associated with SPR# TSHI8JX8V2.
+   when inotes sends an html text part with binary encoding, it
+    does not include any line breaks.  this fix adds the init
+    setting, MIMEInsertHTMLLineBreaks=1, to force the part to be
+    7bit encoding and to insert line breaks at appropriate places
+    in the html text to insure that the lines do not exceed the
+    SMTP line length limit off 998.    previously, we used
+    quoted-printable encoding to force line breaks into long
+    single line html parts, but some customers were unhappy with
+    this approach.
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   LO62456
+   
+   
+ * REPORTED COMPONENT NAME
+   DOMINO SERVER
+   
+   
+ * REPORTED COMPONENT ID
+   5724E6200
+   
+   
+ * REPORTED RELEASE
+   852
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-07-20
+   
+   
+ * CLOSED DATE
+   2012-08-10
+   
+   
+ * LAST MODIFIED DATE
+   2012-08-10
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   DOMINO SERVER
+   
+   
+ * FIXED COMPONENT ID
+   5724E6200
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R852 PSN
+   UP

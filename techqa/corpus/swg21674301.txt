@@ -1,0 +1,47 @@
+Title: IBM The Latest Scan Import column is not updated in Computers view? - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ The Latest Scan Import column is not updated in Computers view? 
+
+CAUSE
+The Latest Scan Import column is not updated in Computers view on a regular basis.
+[/support/docview.wss?uid=swg21674301&amp;aid=1]
+
+
+ANSWER
+The Latest Scan Import column in the Computers view will always get updated after the following tasks are done for the first time: 
+
+ 
+
+From IEM console: 
+
+- Initiate Software Scan 
+
+- Upload Software Scan Results 
+
+ 
+
+From ILMT console: 
+
+- Either done by the scheduled import or manual import task. 
+
+ 
+
+However, if there is nothing changed on the ILMT agent such as NO new IBM Product is installed after the first software scan is done, no software scan results will be uploaded back to ILMT server. There is no point to keep uploading the software scan results back when there is nothing changed regardless how many times the above tasks are done. Same thing for hardware scan as well. Prior initiate the upload scan results action, the comparison is done against the last software scan results for any differences. If no differences are found, no upload is required. 
+
+ 
+
+Once a new IBM product is installed on the ILMT agent and the above tasks are performed, this column will get updated. See screen shot attached for ILMT90RELAY1 computer name as example after a new IBM product is installed. 
+
+
+[/support/docview.wss?uid=swg21674301&amp;aid=2]
+
+A doc APAR IV60784 is opened to add such information in the documentation.
+
+Note: There is another defect APAR IV59196 to address another issue as described below:
+
+
+When opening a Computers view, it shows a list of computers with Latest Scan Import column showing the date. However, if going into each computers, this Latest Scan Import field is showing <none>.

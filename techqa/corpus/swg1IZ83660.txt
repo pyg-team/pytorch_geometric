@@ -1,0 +1,242 @@
+Title: IBM IZ83660: DISPLAY OPTION CONDITION IS OUTPUT TO MAXIMO LOGGER ON RESULTPORTLET, NO WAY TO SWITCH OFF OUTPUT TO LOGGER. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  ***Overview
+   
+   Setting up a display option on a resultset portlet causes the
+   conditional attribute to be outputed to the maximo logger,
+   appears to be no way of switching it off.
+   
+   
+   ***Steps to Reprod
+   
+   1. setup a resultset portlet on SR, created a simple saved query
+   and setup the display option condition on STATUS.
+   
+   2. Switch all loggers only to ERROR. When logging into Maximo it
+   displays.
+   
+   
+   04 Aug 2010 10:51:14:265 [INFO] BMXAA7019I - The total memory is
+   532807680 and the memory available is 389419624.
+   
+   STATUS
+   
+   
+   3. Remove the startcenter result portlet to see if logon the
+   message will not be displayed
+   
+   Result: STATUS didn't display,So appears result portlet is
+   producing the output.
+   
+   
+   4. Then setup a new statcenter result portlet but the display
+   option was set on OWNER. When logging in and out of Maximo OWNER
+   would be outputed.
+   
+   
+   04 Aug 2010 10:57:14:312 [INFO] BMXAA7019I - The total memory is
+   532807680 and the memory available is 372557504.
+   
+   OWNER
+   
+   
+   Client wants a way to switch this off, escalated to L3 they
+   asked me to create a APAR.
+   ______________________________________________
+   
+   Further investigating
+   
+   5. I updated via backend, to mark all loggers as inactive, and
+   then updated logger properties via logging application, but
+   still received the message as to display options.
+   
+   I removed the internal logger called RSCONFIG, which I found
+   couldn't be deleted via frontend end.
+   
+   
+   
+   The cause could be some other logger, I also feel a few
+   enhancements (FITS) are needed for logging application.
+   
+   1. Action to globally switch off all loggers, and return it to
+   the base level.
+   
+   2. Ability to make loggers inactive via the GUI, doesn't appear
+   possible.
+   
+   3. Message key in logger output so the logger causing the output
+   can be identified more easierly as to which logger is producing
+   the output.
+   
+   
+   ***Testing (BS 7116) NO HOTFIX
+   
+   
+   _____________________
+   
+   **L3 Escalation.
+   
+   What is expected from this request for assistance?
+   
+   Is this a APAR (ie bug) is there someway to switch it off?
+   
+   ____________________
+   
+   Developer response (KD Singh Arneja):-
+   
+   If you were able to create the issue and turning off logging did
+   not help then please take an APAR.
+   
+   my reply:
+   
+   I add a APAR but also was after if this was something
+   configurable and something which could be switched off.
+   
+   Developer:
+   
+   No, the only thing configurable is the logger which they have
+   tried.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: Those who use a result set with a condition  *
+   *                 in start center                              *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: When you have a result set portlet with *
+   *                      a condition attribute set up in start   *
+   *                      center, it gets displayed to the        *
+   *                      console whenever thestrat center is     *
+   *                      shown.                                  *
+   *                                                              *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   *                                                              *
+   *                                                              *
+   *                                                              *
+   ****************************************************************
+   When you have a result set portlet with a condition attribute
+   set up in start center, it gets displayed to the console
+   whenever thestrat center is shown.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Commented out the extraneous debug line in resultsetportlet.jsp
+   
+   
+   
+   
+   
+   The fix for this APAR is contained in the following maintenance
+   package:
+   
+     REL 7.1.1.6 - BS
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ83660
+   
+   
+ * REPORTED COMPONENT NAME
+   CONFIG START CT
+   
+   
+ * REPORTED COMPONENT ID
+   5724R46CY
+   
+   
+ * REPORTED RELEASE
+   710
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-08-26
+   
+   
+ * CLOSED DATE
+   2010-10-25
+   
+   
+ * LAST MODIFIED DATE
+   2010-10-25
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  MAXIMO
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CONFIG START CT
+   
+   
+ * FIXED COMPONENT ID
+   5724R46CY
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R710 PSY
+   UP

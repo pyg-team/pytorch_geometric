@@ -1,0 +1,53 @@
+Title: IBM Generic TMF814 probe : Compatibility with devices - United States
+
+Text:
+u2000; tmf814; TMF814; CORBA Framework TECHNOTE (FAQ)
+
+QUESTION
+ Generic TMF814 probe : What devices can it connect to? 
+
+ANSWER
+ 
+
+It is recommended that the device specific probes are used to connect to TMF814 interface, whenever they are available. 
+
+ 
+
+You can use the Generic TMF814 probe to connect to various devices provided they support the TM814 interface. Make sure that the latest supporting packages are also installed, such as the CORBA Framework and non-native probe. 
+
+ 
+
+Customers have reported the following devices can be connected to using the Generic TMF814 probe: 
+
+ 
+
+ * Huawei U2000 V200 R001 C00SP C300 
+ * Huawei U2000 V100 R006
+
+
+To check the TMF814 interface name, use the dumpns tool: 
+e.g. 
+
+dumpns <name server> 12001 
+
+TMF_MTNM.Class/ 
+HUAWEI.Vendor/ 
+Huawei\/U2000.EmsInstance/ 
+2\.0.Version/ 
+Huawei\/U2000.EmsSessionFactory_I 
+
+Naming Context: TMF_MTNM.Class/HUAWEI.Vendor/Huawei\/U2000.EmsInstance/2\.0.Version/Huawei\/U2000.EmsSessionFactory_I  
+
+So the properties would be:
+NamingServiceHost : '<name server>'
+NamingServicePort : 12001
+NamingContextPath :'TMF_MTNM.Class/HUAWEI.Vendor/Huawei\\/U2000.EmsInstance/2\\.0.Version/Huawei\\/U2000.EmsSessionFactory_I'
+ORBCharEncoding : 'ISO8859_1'
+ORBWCharDefault : 'UTF16' 
+
+ 
+
+Note that the TMF814 interface does not use the same details as the 3GPP interface, which uses Alarm and Notification IRP's.
+
+RELATED INFORMATION
+ Support's Guide to IBM CORBA probes [http://www-01.ibm.com/support/docview.wss?uid=swg21614208]

@@ -1,0 +1,107 @@
+Title: IBM Update Installer for WebSphere Application Server V6.1 and V6.0.2.21 (onward) - United States
+
+Text:
+update installer; update installer; update installer; updateinstaller; updateinstaller; updateinstaller; UPDI; UPDI DOWNLOADABLE FILES
+
+ABSTRACT
+ You can use the Update Installer V6.1.0.19 to install maintenance and updates for both IBM® WebSphere® Application Server V6.1 and V6.0.2.21 onwards with some exceptions.
+
+
+DOWNLOAD DESCRIPTION
+In order to enhance usability and provide a smaller tooling footprint, there is a new strategy for the Update Installer that eliminates the need to install multiple instances of the tool. A single instance of the V6.1 Update Installer can now apply maintenance to all WebSphere Application Server V6.1.0 (any fix level) and any newer maintenance from WebSphere Application Server V6.0.2.21 onward. 
+
+See the Supported platforms table for information on Update Installer V6.1 compatibility with WebSphere Application Server V6.0.2 platforms.
+
+
+Features 
+
+The Update Installer V6.1.0.19 has the following functionality: 
+
+ * A GUI and a command-line Update Installer
+ * 
+ * Installation and removal of individual and/or multiple code updates
+ * 
+ * Logging, recovery features and prerequisite handling
+ * 
+ *  Compatibility with previous releases in certain cases
+
+
+Readme To install maintenance through a Graphical User Interface (GUI) or through a command line interface, follow the instructions that are included in the Installation instructions section of this document or in the Readme file, which is available in the install directory: 
+
+ * <updateInstall_home>/docs/readme_updateinstaller.html 
+ * 
+ * <updateInstall_home>/docs/readme_updateinstaller.pdf
+
+
+
+Supported platforms for Update Installer V6.1.0 (any fix level) and V6.0.2 (any fix level) release 
+The V6.1 Update Installer works with most V6.0.2 platforms except where noted in this table of V6.0.2 platforms. There are no changes to the supported platforms with the Update Installer shipped within the same version. For example, the V6.1 Update Installer will work with any supported platform with V6.1 release. Similarly, the V6.0.2 Update Installer will work with any supported platform with V6.0.2 release. 
+
+Platform & Operating System Update Installer 6.0.2 Update Installer 6.1.0 All supported Application Server V6.0.2 operating systems (except where noted below) Available Available for Application Server 6.0.2.21 and newer Fix Packs AIX® 5.1 Available Not available HP-UX 11iv1 Available Not available Sun Solaris 8 Available Not available SuSE Linux® Enterprise Server 8 Available Not available Windows® Intel Itanium Available Not available Linux Intel Itanium Available Not available 
+Note: If the V6.1 Update Installer is not available for your application, then use the V6.0.2 Update Installer. You can download the V6.0.2 Update Installer from the V6.0.2 Support Site. 
+
+Previous releases
+See the following link for WebSphere Application Server V6.0 Update Installer releases: 
+
+
+
+Update Installer for WebSphere Application Server V6.0 
+
+Known Issues None. 
+
+
+Change history  * 
+ * Sep 15, 2008: Updated for launch of Update Installer V6.1.0.19.
+ * 
+ * Jun 03, 2008: Updated with the document link to the tar.gz format for Update Installer V6.1.0.17 downloads.
+ * 
+ * Jun 03, 2008: Updated for launch of Update Installer V6.1.0.17.
+ * 
+ * May 14, 2008: Revised the document and Added a table about supported platforms
+ * 
+ * Mar 10, 2008: Updated for launch of Update Installer V6.1.0.15.
+ * 
+ * Nov 21, 2007: Updated for launch of Update Installer V6.1.0.13.
+ * 
+ * Sep 07, 2007: Updated for launch of Update Installer V6.1.0.11.
+ * 
+ * Jul 20, 2007: Updated to include Support for V6.0.2.21 onwards.
+ * 
+ * Jun 15, 2007: Updated for Update Installer V6.1.0.9 release.
+ * 
+ * Feb 19, 2007: Added download for Solaris 64-bit AMD Opteron/Intel.
+ * 
+ * Feb 07, 2007: Updated for Fix Pack1 (6.1.0.1).
+ * 
+ * Apr 13, 2007: Include Build level
+ * 
+ * Feb 07, 2007: 6.1.0.7 Java SDK Cumulative Fix Published.
+ * 
+ * Jun 19, 2006: Original draft published.
+
+PREREQUISITES
+None.
+
+INSTALLATION INSTRUCTIONS
+Before you begin: Note that only one copy of the Update Installer should be installed on your system for use with all Version 6.1 products. 
+
+
+ 1. Ensure that you have stopped all WebSphere Application Server and related processes. The product to be updated must not be running while you apply maintenance. 
+ 2. Download the most recent Update Installer package that matches your platform from the Download package section of this page. 
+ 3. Extract the downloaded Update Installer package (ZIP file) to a temporary directory. 
+ 4. Navigate to the UpdateInstaller subdirectory. 
+ 5. Use the installation wizard to install the Update Installer by running the install or install.exe executable. 
+
+
+For more information refer to the instructions found in the WebSphere Application Server Information Center topic on Installing the Update Installer for WebSphere Software [http://www14.software.ibm.com/webapp/wsbroker/redirect?version=pix&product=was-nd-dist&topic=tins_updi_install]. DOWNLOAD PACKAGE
+The Update Installer installation packages can be downloaded in the zip format by using FTP and DD links in the table below. To download the Update Installer installation packages in tar.gz format go to this Link [http://www.ibm.com/support/docview.wss?rs=0&uid=swg24019305].
+
+
+
+
+Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options 
+What is DD? [http://www6.software.ibm.com/dldirector/doc/DDfaq_en.html] AIX® 15/09/2008 US English 82871154 FTP [ftp://public.dhe.ibm.com/software/websphere/appserv/support/tools/UpdateInstaller/6.1.x/AixPPC32/download.updii.61019.aix.ppc32.zip] DD AIX® - 64 bit 15/09/2008 US English 83107175 FTP [ftp://public.dhe.ibm.com/software/websphere/appserv/support/tools/UpdateInstaller/6.1.x/AixPPC64/download.updii.61019.aix.ppc64.zip] DD HP-UX 09/15/2008 US English 80863022 FTP [ftp://public.dhe.ibm.com/software/websphere/appserv/support/tools/UpdateInstaller/6.1.x/HpuxPaRISC/download.updii.61019.hpux.parisc.zip] DD HP-UX - 64-bit 09/15/2008 US English 93794456 FTP [ftp://public.dhe.ibm.com/software/websphere/appserv/support/tools/UpdateInstaller/6.1.x/HpuxIA64/download.updii.61019.hpux.ia64.zip] DD Linux® for AMD/Intel 15/09/2008 US English 81045819 FTP [ftp://public.dhe.ibm.com/software/websphere/appserv/support/tools/UpdateInstaller/6.1.x/LinuxIA32/download.updii.61019.linux.ia32.zip] DD Linux® for AMD/Intel - 64-bit 15/09/2008 US English 82993985 FTP [ftp://public.dhe.ibm.com/software/websphere/appserv/support/tools/UpdateInstaller/6.1.x/LinuxAMD64/download.updii.61019.linux.amd64.zip] DD Linux for i/pSeries® 09/15/2008 US English 87604664 FTP [ftp://public.dhe.ibm.com/software/websphere/appserv/support/tools/UpdateInstaller/6.1.x/LinuxPPC32/download.updii.61019.linux.ppc32.zip] DD Linux for i/pSeries® - 64-bit 15/09/2008 US English 87114261 FTP [ftp://public.dhe.ibm.com/software/websphere/appserv/support/tools/UpdateInstaller/6.1.x/LinuxPPC64/download.updii.61019.linux.ppc64.zip] DD Linux for zSeries® 09/15/2008 US English 83040523 FTP [ftp://public.dhe.ibm.com/software/websphere/appserv/support/tools/UpdateInstaller/6.1.x/LinuxS390/download.updii.61019.linux.s390.zip] DD Linux for zSeries® - 64-bit 09/15/2008 US English 83057176 FTP [ftp://public.dhe.ibm.com/software/websphere/appserv/support/tools/UpdateInstaller/6.1.x/LinuxS390/download.updii.61019.linux.s390_64.zip] DD Linux® United 15/09/2008 US English 80201384 FTP [ftp://public.dhe.ibm.com/software/websphere/appserv/support/tools/UpdateInstaller/6.1.x/LinuxUnited/download.updii.61019.linux.united.zip] DD i5/OS® 09/15/2008 US English 88659079 FTP [ftp://public.dhe.ibm.com/software/websphere/appserv/support/tools/UpdateInstaller/6.1.x/OS400/download.updii.61019.os400.ppc64.zip] DD Solaris 09/15/2008 US English 79920716 FTP [ftp://public.dhe.ibm.com/software/websphere/appserv/support/tools/UpdateInstaller/6.1.x/Solaris/download.updii.61019.solaris.sparc.zip] DD Solaris - 64 - bit 09/15/2008 US English 89111268 FTP [ftp://public.dhe.ibm.com/software/websphere/appserv/support/tools/UpdateInstaller/6.1.x/Solaris/download.updii.61019.solaris.sparc64.zip] DD Solaris 64-bit AMD/Intel 15/09/2008 US English 80874542 FTP [ftp://public.dhe.ibm.com/software/websphere/appserv/support/tools/UpdateInstaller/6.1.x/Solaris/download.updii.61019.solaris.x86_64.zip] DD Windows® 09/15/2008 US English 92486372 FTP [ftp://public.dhe.ibm.com/software/websphere/appserv/support/tools/UpdateInstaller/6.1.x/WinIA32/download.updii.61019.windows.ia32.zip] DD Windows® 64-bit AMD/Intel 15/09/2008 US English 87368403 FTP [ftp://public.dhe.ibm.com/software/websphere/appserv/support/tools/UpdateInstaller/6.1.x/WinAMD64/download.updii.61019.windows.amd64.zip] DD 
+TECHNICAL SUPPORT
+ 1-800-IBM-SERV (U.S. Calls Only) 
+
+Cross reference information Segment Product Component Platform Version Edition Application Servers Runtimes for Java Technology Java SDK

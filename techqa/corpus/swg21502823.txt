@@ -1,0 +1,41 @@
+Title: IBM Errors in a successful C&DS setup log - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The Collaboration and Deployment Services (C&DS) setup.log is filled with errors when attempting to deploy C&DS 4.2 into WebLogic 11G application server. 
+
+SYMPTOM
+There are many errors that are seen within our setup.log after attempting to deploy C&DS 4.2 into a WebLogic application server. The setup reports that it completes. However, the errors that are being seen would indicate the opposite.
+
+Customer is attempting to install C&DS 4.2 into a Solaris 10, WebLogic 11G and Oracle 10G database.
+
+All messages appear to be INFO messages. Here is a listing of some of the errors seen:
+
+---------------------------------------------------------
+Jun 08 2011 11:35:19 INFO : Deploy Tool: step: Process Deployables: [WLServer CADS_SERVER] <Jun 8, 2011 11:35:19 AM CDT> <Error> <Socket> <BEA-000438> <Unable to load performance pack. Using Java I/O instead. Please ensure that a native performance library is in: '/usr/jdk/jdk1.6.0_25/jre/lib/sparc/server:/usr/jdk/jdk1.6.0_25/jre/lib/sparc:/usr/jdk/jdk1.6.0_25/jre/../lib/sparc:/usr/jdk/jdk1.6.0_25/jre/lib/sparcv9/server:/usr/jdk/jdk1.6.0_25/jre/lib/sparcv9:/usr/jdk/jdk1.6.0_25/jre/../lib/sparcv9:/usr/jdk/packages/lib/sparc:/lib:/usr/lib'
+
+---------------------------------------------------------
+Jun 08 2011 11:35:56 INFO : Deploy Tool: step: Process Deployables: [WLServer CADS_SERVER] <Jun 8, 2011 11:35:56 AM CDT> <Warning> <Deployer> <BEA-149124> <Failures were detected while initiating remove task for application 'indexer.ear'. Error is: '[Deployer:149001]No application named 'indexer.ear' exists for operation undeploy'> 
+
+NOTE: This is seen for each application that we deploy.
+
+---------------------------------------------------------
+
+Jun 08 2011 11:36:33 INFO : Deploy Tool: step: Process Deployables: [WLServer CADS_SERVER] Ignoring: unable to load class:java.lang.ClassNotFoundException: com.spss.er.webreport.servlet.WebReportServlet at: weblogic.xml.schema.binding.util.ClassUtil.loadClass(ClassUtil.java:76)
+
+---------------------------------------------------------
+
+Jun 08 2011 11:38:10 INFO : Deploy Tool: step: Process Deployables: [WLServer CADS_SERVER] 11:38:10,926 FATAL [InternalException] Exception:
+Jun 08 2011 11:38:10 INFO : Deploy Tool: step: Process Deployables: [WLServer CADS_SERVER] org.apache.axis.ConfigurationException: org.apache.axis.ConfigurationException: No engine configuration file - aborting!configuration file - aborting!
+
+
+CAUSE
+C&DS development has confirmed these messages are noise and can be ignored. 
+
+RESOLVING THE PROBLEM
+C&DS development has confirmed these messages are noise and can be ignored.
+
+RELATED INFORMATION
+ Need more help? Our C&DS forum is Live! [https://developer.ibm.com/answers/topics/collaboration.html?smartspace=predictive-analytics]

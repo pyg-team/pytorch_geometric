@@ -1,0 +1,16 @@
+Title: IBM Redirect only RPT workbench-created files - United States
+
+Text:
+Redirect; "Hyades.TestModel.AnnotationDir"; temp file; 1314982 TECHNOTE (FAQ)
+
+QUESTION
+ This technote provides a way to redirect only IBM® Rational® Performance Tester (RPT) workbench-created files (Hyades.TestModel.AnnotationDir, XMLSaveNNNN.tmp, envNNNN.tmp, ...). 
+
+ANSWER
+If you want to redirect only RPT workbench-created files (Hyades.TestModel.AnnotationDir, XMLSaveNNNN.tmp, envNNNN.tmp, ...), you can do so by defining a value for "java.io.tmpdir" in the RPT eclipse.ini (C:\Program Files\IBM\SDPxx\eclipse.ini) file. For example, if you wanted to use "C:\RPT Temp Files" as the location for these files, you would add the following line to the end of the eclipse.ini:
+
+-Djava.io.tmpdir=C:\RPT Temp Files
+
+Make this change when RPT is not running and make sure this directory already exists and you have write permission for it.
+
+Alternatively, if you set the Windows environment variable TMP, you can redirect where the Hyades.TestModel.AnnotationDir directories (and other workbench files) are created. You'll need to restart RPT after making this change. Note that other programs also use TMP variable, so setting this environment variable will impact them as well.

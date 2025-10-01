@@ -1,0 +1,138 @@
+Title: IBM PJ33525: CASE INSENSITIVE SEARCH SETTING CAUSE ERROR IN WORKPLACE XT WHEN MULTI-SELECTING ITEMS - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When case insensitive search is set on an object store a and a
+   user does a multi-select action in Workplace XT user receives
+   error
+   Steps to Reproduce:
+   1) To force case insensitive searches for an object store
+   2) Log on as object store administrator.
+   3) Select and right-click the object store and select
+   Properties.
+   4) Go to the Query tab.
+   5) Select the Force Case Insensitive Search checkbox.
+   6) Click OK or Apply when you are done.
+   In Workplace XT go to the OS where the case insensitive search
+   is enabled.  Multi Select two items right click and from the
+   menu choose any option.  An error is produced.
+   Actual Results: Error received
+   Expected Results: For multi-select to works
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Workplace XT users with 'case insensitive' search enabledWhen ca
+   Steps to Reproduce:
+   1) To force case insensitive searches for an object store
+   2) Log on as object store administrator.
+   3) Select and right-click the object store and select
+   Properties.
+   4) Go to the Query tab.
+   5) Select the Force Case Insensitive Search checkbox.
+   6) Click OK or Apply when done.
+   In Workplace XT go to the OS where the case insensitive search i
+   Actual Results: Error received
+   Expected Results: For multi-select to worksResolved in Workplace
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Resolved in Workplace XT 1.1.1.4
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PJ33525
+   
+   
+ * REPORTED COMPONENT NAME
+   WORKPLACE XT
+   
+   
+ * REPORTED COMPONENT ID
+   5724R7611
+   
+   
+ * REPORTED RELEASE
+   110
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-05-01
+   
+   
+ * CLOSED DATE
+   2008-05-16
+   
+   
+ * LAST MODIFIED DATE
+   2008-05-16
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WORKPLACE XT
+   
+   
+ * FIXED COMPONENT ID
+   5724R7611
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R110 PSY
+   UP

@@ -1,0 +1,157 @@
+Title: IBM Using the new Publish/Subscribe features in MQ V7 to route messages to Queues based on a message property - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How can you route MQ messages to Queues based on a message property?
+
+You would like to route messages that arrive on a queue to another queue, based on a message property. For example, if the message property in the message is: 
+color = 'blue'
+then the message is routed to queue:
+COLOR.BLUE 
+
+CAUSE
+WebSphere MQ does not have a feature that does routing of messages based on a message property.
+
+ANSWER
+ 
+
+Notes: 
+- One of the goals for this technote is to show a concrete example on how define subscribers with Selectors and how to specify a runtime a message property and its value when publishing a message.
+- For an example using Message Broker, see the bottom section.
+
+
+An alternative solution is explored in this technote using the new Publish/Subscribe features in MQ V7.
+
+The technique in this technote shows an approach that requires minimal programming efforts from your part: you only need to worry about the application that puts/publishes a message, by adding message properties. Then, by doing MQ configuration tasks, the queue manager will do the rest: identify the message property from the incoming message and then create an (almost) "clone" of the message (with a different message id) and place the cloned message into the appropriate target queue.
+
+The arriving queue (named QR in the scenario below) would be an alias to a Topic. In that way, the application that puts messages is still thinking that it is handling Point to Point. The C sample amqsstm is used to put a message into a queue, while specifying a message name-value pair.
+Unix: Source: /opt/mqm/samp/amqsstma.c
+Executable: /opt/mqm/samp/bin/amqsstm
+
+For Java, see sample code:
+
+Sample Java code to create a message property "color": SampleJMSMsgProperty.java [http://www.ibm.com/support/docview.wss?uid=swg27016581&aid=7]
+
+The Pub/Sub engine in MQ V7 will publish the message arriving to the Topic (using the queue alias).
+Several subscribers will be created with a message selector and a destination "provided" which is a local queue. The applications that read messages from the destination queues think that it is Point to Point.
+
+In this scenario a place-holder topic (named "qrouter" for 'queue router') is used in order to have several subscribers and each subscriber will have a SELECTOR for the message property "color". Based on the value of this property, the message will be routed to a specific queue. For example, if the value is "red" then the message will be sent to the queue "COLOR.RED".
+
++++ CAVEAT when using runmqsc and the SELECTOR attribute!!! 
+
+During the DEFINE statement, it is CRITICAL to ensure that the whole string for the selector, which specifies the name-value pair has a leading single quote and a trailing single quote:
+SELECTOR('name=value')
+When the value is in turn a string, then this becomes tricky, because the value needs to be placed between a leading set of 2 single quotes and a trailing set of 2 single quotes. Do NOT enter a single double quote to replace the 2 single quotes!
+To show that it is very easy to get confused, the following examples use a proportional font:
+Correct (using 2 single quotes to surround the value red): SELECTOR('color=''red''')
+Incorrect (using double quotes to surround the value red): SELECTOR('color="red"')
+Hopefully, when using a monospaced font, it will be easier to see that the correct version does NOT use a double quote, but a pair of single quotes:
+Correct: SELECTOR('color=''red''')
+** **
+Incorrect: SELECTOR('color="red"')
+* *
+
+Note: The syntax for the Selector is based on the SQL92
+WebSphere MQ > Developing applications > Using WebSphere MQ classes for JMS > Writing WebSphere MQ classes for JMS applications > JMS messages
+Message selectors in JMS [http://www.ibm.com/support/knowledgecenter/SSFKSJ_7.5.0/com.ibm.mq.dev.doc/q031980_.htm]
+
+A message selector is a String, with syntax that is based on a subset of the SQL92 conditional expression syntax. 
+.
+For example, if you want a selector for 'color' that has either value of 'red' or 'blue', then use the boolean OR keyword to combine the logical statements, for example:
+SELECTOR('color=''red'' OR color=''blue''')
+The following includes extra spaces to differentiate the outer set of single quotes:
+SELECTOR(' color=''red'' OR color=''blue'' ')
+
++++ Scenario
+
+Notice that the topic string is NOT important. However, to reduce confusion try to use something that will not be easily used by other applications at your site.
+
+1: Define the players.
+
+runmqsc
+define topic(QROUTER) topicstr('qrouter')
+
+define qlocal(COLOR.BLUE)
+define qlocal(COLOR.RED)
+define qalias(QR) target(QROUTER) targtype(topic)
+
+define sub(COLOR.RED) topicstr('qrouter') dest(COLOR.RED) SELECTOR('color=''red''')
+define sub(COLOR.BLUE) topicstr('qrouter') dest(COLOR.BLUE) SELECTOR('color=''blue''')
+
+#Verify that the SELECTOR is properly shown. Notice that when displaying the attributes, that the queue manager does NOT include the leading and trailing single quote. These single quotes are ONLY needed during a DEFINE in order to delimiter the whole string for the name-value pair.
+SELECTOR(color='red')
+SELECTOR(color='blue')
+
+display sub(COLOR.RED) selector
+10 : display sub(COLOR.RED) selector
+AMQ8096: WebSphere MQ subscription inquired.
+SUB(COLOR.RED) SELECTOR(color='red')
+display sub(COLOR.BLUE) selector
+11 : display sub(COLOR.BLUE) selector
+AMQ8096: WebSphere MQ subscription inquired.
+SUB(COLOR.BLUE) SELECTOR(color='blue')
+
+end
+
+2: Use the amqsstm sample that puts a message into a queue and allows for the specification of the name-value pair for a message property. 
+
+You need to install the samples file set. For example, in Linux it is:
+MQSeriesSamples-7.0.1-3.*.rpm
+
+Source code: /opt/mqm/samp/amqsstma.c
+Executable: /opt/mqm/samp/bin/amqsstm
+
+This sample amqsstm is designed to handle multiple message properties: each name-value pair is handled in sequence; to end the section for the properties, press ENTER at the prompt "Enter property name", then you can proceed to enter the text for the message.
+
+> The following message is sent to the queue COLOR.RED
+
+$ amqsstm QR
+Sample AMQSSTMA start
+target queue is QR
+Enter property name
+color
+Enter property value
+red
+Enter property name
+<Note: press Enter to skip this prompt and go to the prompt to enter text>
+Enter message text
+using amqsstm queue QR color red
+Sample AMQSSTMA end
+
+> The following message is sent to the queue COLOR.BLUE
+
+$ amqsstm QR
+Sample AMQSSTMA start
+target queue is QR
+Enter property name
+color
+Enter property value
+blue
+Enter property name
+<Note: press Enter to skip this prompt and go to the prompt to enter text>
+Enter message text
+using amqsstm queue QR color blue
+Sample AMQSSTMA end
+
+> The following messages will be successfully published, BUT because there are NOT subscribers that are defined to receive them, then these messages will NOT be placed in any of the queues defined so far.
+Notice that these messages will NOT be sent to the SYSTEM.DEAD.LETTER.QUEUE because the publishing was successful. The fact that there are no subscribers for them, it does not mean that the DLQ needs to be involved.
+
+Name Value
+------ -----
+color black
+sports golf
+
+
+3) Another way to specify the property is by using a Java/JMS application and specifying:
+
+message.setStringProperty("color", color);
+
+
+4) When using WebSphere Message Broker, you can define a custom property within the MQRFH2 header. For user-defined properties, you may want to define it in the usr folder. For example: SET OutputRoot.MQRFH2.usr.color='red';
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ WebSphere MQ WMQ

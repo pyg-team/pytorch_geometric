@@ -1,0 +1,36 @@
+Title: IBM Scheduled reports failing after upgrade - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Scheduled reports failing with error:
+
+UDA-SQL-0107 A general exception has occurred during the operation 
+
+ORA-06502: PL/SQL: numeric or value error: hex to raw conversion error 
+
+ORA-06512: at "OpenPages.OP_CRYPT_MGR" line 70 ORA-06512: at line 1 
+
+CAUSE
+After an upgrade from OpenPages 6.x to 7.x, custom reports that resided outside of the standard OpenPages folders were not automatically upgraded to the new Cognos version. 
+
+eg. Standard report folders are OpenPages Platform V6 and OpenPages Solutions V6. Reports in Custom Reports folders were not updated.
+
+[/support/docview.wss?uid=swg21975054&aid=1] [/support/docview.wss?uid=swg21975054&aid=1]
+
+
+RESOLVING THE PROBLEM
+Run the report manually inside Cognos, which should prompt the user that the report is old and needs to be upgraded to the latest version. Select yes to upgrade the report, and the report will now run successfully via the scheduler. 
+
+ 
+
+Steps: 
+
+1. Launch Report Studio from within the Cognos Portal 
+
+2. Open the report that is having the issue 
+
+3. Click on the blue triangle icon to run the report
+[/support/docview.wss?uid=swg21975054&amp;aid=2]
+4. If a prompt pops up saying the report is old and needs to be upgraded to the latest version, select yes. The report will now be upgraded.

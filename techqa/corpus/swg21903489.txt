@@ -1,0 +1,37 @@
+Title: IBM User to perform APMUI console integration in DASH - United States
+
+Text:
+5724G70UITR TECHNOTE (FAQ)
+
+QUESTION
+ Which roles must a user have to integrate APMUI console in DASH? 
+
+CAUSE
+The DASH admin user may be defined on a different user repository from the APMUI user registry. For APMUI console integration to succeed, the DASH admin user must be defined in a common user repository for both APMUI and DASH servers. 
+
+ANSWER
+Below steps can be used to give administrative roles to a user from the APMUI user registry, and then log into DASH as this user to perform the console integration steps. 
+
+1) Define user repository of APMUI in DASH. 
+2) Identify a user from APMUI user repository to be granted admin role in DASH (the example below uses apmadmin user)
+3) Follow these steps to assign admin roles to the user:
+
+3.1 Log into DASH as a user with administrator privileges, select Console Settings->User Roles option.
+
+[/support/docview.wss?uid=swg21903489&aid=1] [/support/docview.wss?uid=swg21903489&aid=1]
+
+3.2 On the User Roles page, type the ID of APMUI user (for example, apmadmin) and then click the "Search" button. Click the link for the user in returned search results.
+
+[/support/docview.wss?uid=swg21903489&aid=2] [/support/docview.wss?uid=swg21903489&aid=2]
+
+
+3.3 Select the "administrator" and "iscadmins" roles and then click "Save".
+
+[/support/docview.wss?uid=swg21903489&aid=3] [/support/docview.wss?uid=swg21903489&aid=3]
+
+4) Use this administrative user to perform console integration steps.
+
+RELATED INFORMATION
+ Integrating APMUI with DASH [http://www-01.ibm.com/support/knowledgecenter/SSATHD_7.7.0/com.ibm.apm.doc_77/apm_ui_docs/apmui_77/integrate_APMUI_with_DASH.html]
+DASH - Adding the LDAP user registry as a federated rep [http://www-01.ibm.com/support/knowledgecenter/SSEKCU_1.1.1.0/com.ibm.psc.doc_1.1.1.0/config/psc_t_config_add_ldap_rep.html]
+DASH - Configuring the LDAP federated repository [http://www-01.ibm.com/support/knowledgecenter/SSEKCU_1.1.1.0/com.ibm.psc.doc_1.1.1.0/config/psc_t_config_fed_rep.html?lang=en]

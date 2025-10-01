@@ -1,0 +1,38 @@
+Title: IBM NullPointerException while deploying a ruleApp using the IlrDeploymentFacility.deployRuleAppArchive(...) API - United States
+
+Text:
+NullPointerException ; deployRuleAppArchive; setWorkingBaseline; "current baseline"; empty; "decision table" TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Why do I get a NullPointerException when deploying a ruleApp using the IlrDeploymentFacility.deployRuleAppArchive(...) API in 7.1.1.5 while this was working correctly in earlier versions ? The NullPointerException only seems to occur when a ruleset contains an error or a warning, as is the case if there is an empty decision table for example. Why is there a NullPointerException in such situations? 
+
+SYMPTOM
+ilog.rules.teamserver.model.IlrRuleAppException
+at ilog.rules.teamserver.ejb.service.IlrSessionFacadeImpl.deployRuleAppArchive(IlrSessionFacadeImpl.java:3280)
+at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+at java.lang.reflect.Method.invoke(Method.java:597) at ilog.rules.teamserver.transaction.IlrTransactionalInvocationHandler.invoke(IlrTransactionalInvocationHandler.java:37)
+at $Proxy162.deployRuleAppArchive(Unknown Source)
+... 
+
+...
+Caused by: java.lang.NullPointerException at ilog.rules.teamserver.ejb.service.IlrSessionFacadeImpl.deployRuleAppArchive(IlrSessionFacadeImpl.java:3227)
+... 74 more
+
+
+CAUSE
+There was a defect in 7.1.1.4 and earlier versions reported under APAR RS00845: "RTS does not deploy ruleapp after omitting erroneous rules" [http://www-01.ibm.com/support/docview.wss?uid=swg27023767#7502Decision_Center]. It was fixed in 7.1.1.5 and in order to use the correct level (Warning/Error/Never) at which an archive generation should be canceled, it is necessary for the RTS session to be have a working baseline set to that of the rule project where this build option can be retrieved from. 
+
+
+
+RESOLVING THE PROBLEM
+Starting from WebSphere ILOG JRules 7.1.1.5, prior to invoking the API IlrDeploymentFacility.deployRuleAppArchive(), it is necessary to set a working baseline on the RTS session with the API IlrSession.setWorkingBaseline(), as in: 
+
+
+IlrRuleProject ruleProject = (IlrRuleProject) IlrSessionHelper.getProjectNamed(session, "MyRuleProject");
+baseline = IlrSessionHelper.getCurrentBaseline(session, ruleProject);
+session.setWorkingBaseline(baseline);
+
+
+In case warnings or errors are found within the ruleapp, the ruleapp deployment routine can then use the working baseline rule project to retrieve the build level that is configured and determine whether the deployment should proceed or be stopped.

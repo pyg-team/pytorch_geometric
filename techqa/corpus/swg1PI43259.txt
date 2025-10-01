@@ -1,0 +1,180 @@
+Title: IBM PI43259: PRECONDITIONING CODE FOR NEW FUNCTION - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  PRECONDITIONING CODE FOR NEW FUNCTION
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * IMS V14 users of DDL with GSAM databases are affected.       *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * The universal drivers need a way to access a table or root   *
+   * segment for a GSAM database.  We need to allow GSAM to have  *
+   * a root segment be defined with fields.                       *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * INSTALL CORRECTIVE SERVICE FOR APAR/PTF                      *
+   ****************************************************************
+   The IMS data definition language (DDL) for a GSAM database does
+   not allow tables or columns to be created.  Users are able to
+   map the contents of their GSAM databases using COBOL copybooks.
+   Using IMS Enterprise Suite Explorer for Development (E4D) and
+   the IMS Universal JDBC drivers, users need a method to import
+   their COBOL copybooks for a GSAM database and have them stored
+   in the IMS catalog.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  DFS3ACH was modified to correct the length declaration for
+   constants CATA_MCRPOOL1 and CATA_WORKPOOL.
+   
+   DFS3DST0 was modified to add a new flag in the DBDBLOCK work
+   area to identify to the catalog decoder is processing a GSAM DBD
+   that has a SEGM defined.
+   
+   DFS3DBDG was modified so it can translate a record from the IMS
+   catalog that represents a GSAM database that also contains
+   segment and field information.
+   
+   DFSSQLA was modified to add a field to save the database os
+   access type.
+   
+   DQFHSM4B was modified to change the maximum record length that
+   can be specified on the CREATE TABLESPACE statement from 64K to
+   32K.
+   
+   DFSDDL10 was modified to validate the record length values
+   specified on the CREATE TABLESPACE statement.
+   
+   DFSDDL20 was modified to allow one table space to be created for
+   a GSAM database.  Validation added to only allow the CCSID and
+   IN keywords to be specified on a GSAM table.  Validation also
+   added to only allow column and map definitions on a GSAM table.
+   
+   DFSSQL10 was recompiled to pick up changes implemented in
+   DQFHSM4B.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI43259
+   
+   
+ * REPORTED COMPONENT NAME
+   IMS V14
+   
+   
+ * REPORTED COMPONENT ID
+   5635A0500
+   
+   
+ * REPORTED RELEASE
+   400
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2015-06-17
+   
+   
+ * CLOSED DATE
+   2015-07-07
+   
+   
+ * LAST MODIFIED DATE
+   2015-10-19
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UI29187
+   
+   
+
+MODULES/MACROS
+ *  DFS3DBDG DFS3ACH  DQFHSM4B DFSDDL20 DFSDDL10 DFSSQL10
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   IMS V14
+   
+   
+ * FIXED COMPONENT ID
+   5635A0500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R400 PSY UI29187 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI29187]
+   UP15/07/11 P F507
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

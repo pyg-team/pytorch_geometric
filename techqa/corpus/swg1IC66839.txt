@@ -1,0 +1,203 @@
+Title: IBM IC66839: INSTANCE ABEND DUE TO STACK OVERFLOW WITH FUNCTION              NOTPD_TRAVERSE__9SQLNQ_PIDFP9SQLNQ_OPRI - United States
+
+Text:
+z/os  FIXES ARE AVAILABLE
+DB2 Version 9.7 Fix Pack 3 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24027906]
+DB2 Version 9.7 Fix Pack 3a for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24028306]
+DB2 Version 9.7 Fix Pack 4 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24029745]
+DB2 Version 9.7 Fix Pack 5 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24031181]
+DB2 Version 9.7 Fix Pack 6 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24032754]
+DB2 Version 9.7 Fix Pack 7 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24033685]
+DB2 Version 9.7 Fix Pack 8 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24034634]
+DB2 Version 9.7 Fix Pack 9a for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24037559]
+DB2 Version 9.7 Fix Pack 9 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24036646]
+DB2 Version 9.7 Fix Pack 10 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24038641]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  During SQL/XQuery compilation, a query being compiled may cause
+   
+   the DB2 instance to abend due to a stack overflow exception.
+   
+   Although new behaviour in DB2 Version 9.5 should ideally cause
+   
+   the DB2 agent to dump an sqlcode SQL0973N upon detecting such a
+   
+   scenario, this may not happen when a very large predicate,
+   
+   e.g., deeply nested series of NOTs, etc., is present in the
+   
+   query. The stack trace from such an abend will look
+   
+   like:
+   
+   
+   
+   -------Frame------ ------Function + Offset------
+   
+   0x0900000005740BEC
+   notpd_traverse__9sqlnq_pidFP9sqlnq_opriPbT3CP3loc + 0x14
+   
+   0x090000000574164C
+   notpd_traverse__9sqlnq_pidFP9sqlnq_opriPbT3CP3loc + 0xA74
+   
+   0x090000000574164C
+   notpd_traverse__9sqlnq_pidFP9sqlnq_opriPbT3CP3loc + 0xA74
+   
+   0x090000000574164C
+   notpd_traverse__9sqlnq_pidFP9sqlnq_opriPbT3CP3loc + 0xA74
+   
+   ...
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  In DB2 Version 9.5, users have the ability to control the size
+   of the runtime stack used by a DB2 agent.
+   Consequently,increasing the value for the "agent_stack_sz"
+   database configuration  parameter will help workaround the
+   issue.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * INSTANCE ABEND DUE TO STACK OVERFLOW WITH                    *
+   * FUNCTIONNOTPD_TRAVERSE__9SQLNQ_PIDFP9SQLNQ_OPRI              *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * INSTANCE ABEND DUE TO STACK OVERFLOW WITH                    *
+   * FUNCTIONNOTPD_TRAVERSE__9SQLNQ_PIDFP9SQLNQ_OPRIDuring        *
+   * SQL/XQuery compilation, a query being compiled maycause the  *
+   * DB2 instance to abend due to a stack overflowexception.      *
+   * Although new behaviour in DB2 Version 9.7 shouldideally      *
+   * cause the DB2 agent to dump an sqlcode SQL0973N              *
+   * upondetecting such a scenario, this may not happen when a    *
+   * verylarge predicate, e.g., deeply nested series of NOTs,     *
+   * etc.,is present in the query. The stack trace from such an   *
+   * abendwill looks like:-------Frame------ ------Function +     *
+   * Offset------0x0900000005740BECnotpd_traverse__9sqlnq_pidFP9sql
+   * +                                                            *
+   * 0x140x090000000574164Cnotpd_traverse__9sqlnq_pidFP9sqlnq_opriP
+   * +                                                            *
+   * 0xA740x090000000574164Cnotpd_traverse__9sqlnq_pidFP9sqlnq_opri
+   * +                                                            *
+   * 0xA740x090000000574164Cnotpd_traverse__9sqlnq_pidFP9sqlnq_opri
+   * + 0xA74...                                                   *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Customers running into this problem should upgrade to        *
+   * DB2LUW version 9.7 fp3                                       *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This APAR is fixed in DB2 LUW version 9.7 fp3
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  In DB2 Version 9.7, users have the ability to control the size
+   
+   of the runtime stack used by a DB2 agent.
+   Consequently,increasing the value for the "agent_stack_sz"
+   
+   database configuration parameter will help workaround the
+   issue.
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC66839
+   
+   
+ * REPORTED COMPONENT NAME
+   DB2 FOR LUW
+   
+   
+ * REPORTED COMPONENT ID
+   DB2FORLUW
+   
+   
+ * REPORTED RELEASE
+   970
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-03-04
+   
+   
+ * CLOSED DATE
+   2010-09-27
+   
+   
+ * LAST MODIFIED DATE
+   2010-09-27
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    IZ44736 [http://www-01.ibm.com/support/docview.wss?uid=swg1IZ44736]
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R970 PSN
+   UP
+   
+   
+ * R970 PSY
+   UP

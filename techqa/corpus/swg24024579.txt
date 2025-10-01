@@ -1,0 +1,54 @@
+Title: IBM PK93170; 6.1.0.5: ProcessCPU only monitor usage for 512 threads. - United States
+
+Text:
+PK93170; PK93170; PK93170 DOWNLOADABLE FILES
+
+ABSTRACT
+ PROCESS_ID_MAX_SIZE is too small is repeatedly logged in the log file native_stdout.log 
+
+DOWNLOAD DESCRIPTION
+PK93170 resolves the following problem:
+
+ERROR DESCRIPTION: 
+ERROR: ProcessCPU getCPU(timeval) PROCESS_ID_MAX_SIZE is too small is repeatedly loged in the native_stdout.log 
+
+LOCAL FIX: 
+N/A 
+
+PROBLEM SUMMARY
+
+USERS AFFECTED:
+All users of WebSphere Extended Deployment on the operating system of Linux
+
+PROBLEM DESCRIPTION:
+PROCESS_ID_MAX_SIZE is too small is repeatedly logged in the log file native_stdout.log
+
+RECOMMENDATION:
+Apply PK93170
+
+ProcessCPU only monitor usage for 512 threads. When this limit is breached the message "PROCESS_ID_MAX_SIZE IS TOO SMALL IS REPEATLY LOGGED" is logged in the log file native_stdout.log.
+
+PROBLEM CONCLUSION: 
+The code was updated to log a max of 10 messages to prevent log flood. The code was modified to monitor usage for 1,024 threads per process. 
+
+Refer to the Recommended Updates page for delivery information: 
+http://www.ibm.com/support/docview.wss?rs=3023&uid=swg27005709 [http://www.ibm.com/support/docview.wss?rs=3023&uid=swg27005709]
+
+PREREQUISITES
+Download the UpdateInstaller below to install this fix.
+
+URL LANGUAGE SIZE(Bytes) UpdateInstaller [http://www.ibm.com/support/docview.wss?rs=180&uid=swg24012718] US English 7250000 
+INSTALLATION INSTRUCTIONS
+Review the readme.txt for detailed installation instructions.
+
+URL LANGUAGE SIZE(Bytes) Readme [ftp://public.dhe.ibm.com/software/websphere/extended/support/fixes/PK93170/readme.txt] US English 4493 
+DOWNLOAD PACKAGE
+
+
+Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options 
+What is DD? [http://www6.software.ibm.com/dldirector/doc/DDfaq_en.html] 6.1.0.5-WS-WXD-IFPK93170 09-22-2009 US English 111681 FTP [ftp://public.dhe.ibm.com/software/websphere/extended/support/fixes/PK93170/6.1.0.5-WS-WXD-IFPK93170.pak] DD 
+TECHNICAL SUPPORT
+ Contact IBM Support using SR (http://www.ibm.com/software/support/probsub.html [http://www.ibm.com/software/support/probsub.html]), visit the WebSphere Extended Deployment Support Web site (http://www.ibm.com/software/webservers/appserv/extend/support/ [http://www.ibm.com/software/webservers/appserv/extend/support/]), or contact 1-800-IBM-SERV (U.S. only). 
+
+ [/support/docview.wss?uid=swg24024579&aid=1]Problems (APARS) fixed [/support/docview.wss?uid=swg24024579&aid=2]Problems (APARS) fixed
+PK93170

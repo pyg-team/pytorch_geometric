@@ -1,0 +1,69 @@
+Title: IBM DWC upgrading failed with error "HA: Unable to get the lock" - United States
+
+Text:
+tws;iws;install;upgrade TROUBLESHOOTING
+
+PROBLEM
+DWC upgrading failed.
+
+SYMPTOM
+IM logs/native/yyyymmdd_hhmm.log shows
+
+
+Execute:Java13CommandLauncher: Executing '/software/iws/IWS/JazzSM/profile/bin/wsadmin.sh' with arguments:
+'-tracefile'
+'/software/iws/IWS/TWAUI/TDWC/xml/${installLocation}/logs/wsadmin.log'
+'-appendtrace'
+'true'
+'-connType'
+'NONE'
+'-lang'
+'jython'
+'-f'
+'/software/iws/IWS/TWAUI/TDWC/scripts/install_webui.py'
+'-war'
+'/opt/IBM/WebSphere/AppServer/systemApps/isclite.ear/TWSWebUI.war'
+'-contenturi'
+'TWSWebUI.war'
+'-contextroot'
+'/ibm/TWSWebUI'
+'-serverName'
+'server1'
+'-operation'
+'delete'
+
+The ' characters around the executable and arguments are
+not part of the command.
+WASX7357I: By request, this scripting client is not connected to any server process. Certain configuration and application operations will be available in local mode.
+Deleting war
+Getting tasks for: isc
+com.ibm.isclite.DeployBundleActivator.start(BundleContext context) Entry
+WASX7411W: Ignoring the following provided option: [server]
+ADMA5078I: Update of isc has started.
+com.ibm.websphere.management.exception.AdminException: HA: Unable to get the lock!
+
+CAUSE
+A Globle.lock file wrongly created under <JazzSM installation dir>/profile/config/cells/<cellname>/applications/isc.ear/isclite.war/WEB-INF during the upgrading process.
+
+DIAGNOSING THE PROBLEM
+First allocate the detail error by using the method int the Relate URL section.
+
+Secondly checking if there is a Globel .lock created.
+
+1) under <JazzSM installation dir> profile looks for the executable tipcli.sh
+2) from Shell DOS launches tipcli.sh Unlock--username <JazzSM admin> --Password <password>
+3) stop the WAS of DWC
+4) go to <JazzSM installation dir>/profile/config/cells/<cellname>/applications/isc.ear/isclite.war/WEB-INF
+5) check and see no Global.Lock is listed
+6) Restart the WAS of the DWC
+
+
+RESOLVING THE PROBLEM
+Make sure the HA is not enabled for the local box.
+
+Rerun the TDWC install, keep monitoring the above procedure step 4) dir, refresh it every 1 minute or so.
+
+Once find Global.lock is created, go ahead and delete it right away. The upgrading process will continue to run without interrupt.
+
+RELATED INFORMATION
+How to analyze IWS or DWC installation/upgrading logs [http://www.ibm.com/support/docview.wss?uid=ibm10716821]

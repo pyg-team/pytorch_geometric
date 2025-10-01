@@ -1,0 +1,216 @@
+Title: IBM PJ39552: DUPLICATE IDS BEING GENERATED FROM CONTENT ENGINE 4.X JAVA API WHEN CREATING CUSTOM OBJECT - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When calling the CE 4.x Java API's
+   Factory.CustomObject.createInstance(objectStore,
+   "SomeCustomObject") method, duplicate Ids would be generated
+   occasionally.  When an attempt was made to save the custom
+   object, the following type of exception was thrown:
+   
+   [9/13/11 9:27:21:445 GMT-06:00] 0000004e LocalExceptio E
+   CNTR0020E: EJB threw an unexpected (non-declared) exception
+   during invocation of method "executeChanges" on bean
+   "BeanId(FileNetEngine#Engine-ejb-ws.jar#EngineCore, null)".
+   Exception data:
+   com.filenet.api.exception.EngineRuntimeException: DB_NOT_UNIQUE:
+   The update or insert failed due to an attempt to create a
+   duplicate value in a unique index.
+   ...
+   Caused by: com.ibm.websphere.ce.cm.DuplicateKeyException:
+   ORA-00001: unique constraint (ECMW01P_02.SYS_C0023224) violated
+   
+       at
+   sun.reflect.GeneratedConstructorAccessor66.newInstance(Unknown
+   Source)
+       at
+   sun.reflect.DelegatingConstructorAccessorImpl.newInstance(Delega
+   tingConstructorAccessorImpl.java:39)
+   
+       at
+   java.lang.reflect.Constructor.newInstance(Constructor.java:527)
+       at
+   com.ibm.websphere.rsadapter.GenericDataStoreHelper.mapExceptionH
+   elper(GenericDataStoreHelper.java:605)
+   
+   ...
+   
+   For the usual case, when applications do not supply values for
+   the ID of a newly created object, the CE Java API internally
+   creates a GUID using bytes of random bits supplied by the
+   standard Java java.security.SecureRandom class.  Since 122 of
+   the 128 bits in a GUID are supplied by a pseudo-random number
+   generator, the odds of producing duplicates should be
+   vanishingly small.  However, that depends on the implementation
+   of SecureRandom.  The implementation is pluggable and so varies
+   from JRE to JRE.  Most implementations use completely
+   deterministic algorithms to generate statistically scattered
+   values, but they rely on being seeded with an unpredictable
+   value chosen from a large set of possibilities (typically the
+   range of seeds is 2^64 values).
+   
+   The CE Java API class for creating GUIDs
+   (com.filenet.api.util.Id) was using the default seeding for
+   SecureRandom.  In "non-FIPS mode" in WAS, the default seeding
+   has a large dependency on generally unpredictable things about
+   the local system environment.  That includes the system clock.
+   By coincidence, different instances of SecureRandom were getting
+   the same seed value.  This was probably due to running identical
+   applications on multiple JVMs on the same physical server, where
+   those JVMs were started at about the same time.
+   
+   On the advice of the IBM JDK security development team, we
+   modified our class to supply additional seeding information to
+   the SecureRandom instances.  The additional seeding information
+   supplements the original default seeding, modifying the internal
+   state of the SecureRandom instance.  Even SecureRandom instances
+   with the same default seeding would then produce different
+   sequences of random bytes.
+   
+   Another workaround for this problem would be to enable WAS "FIPS
+   mode".  When "FIPS mode" is enabled, the IBM implementation of
+   SecureRandom uses a stronger default seeding algorithm that
+   greatly reduces the probability of a seeding collision.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * Users of the Content Engine Java API on all platforms. The   *
+   * problem is more likely to occur in multi-JVM environments.   *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * GUID-based object identifiers are generated using            *
+   * pseudo-random numbers. The process takes place within the CE *
+   * Java API. Under rare circumstances, the pseudo-random number *
+   * generators for different threads or even different JVMs can  *
+   * be initialized similarly. When that happens, there are       *
+   * collisions in the GUIDs that are created. Those collisions   *
+   * are detected by the CE server and result in failed object    *
+   * creation requests.                                           *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * The surest resolution is to apply the CE Java API software   *
+   * fix in 4.5.1.8-P8CE-FP001 or higher. There are two temporary *
+   * workarounds that can be used until the fix can be applied.   *
+   * First, since this is a problem of initialization and depends *
+   * on chance, the problem can often be immediately (but         *
+   * temporarily) resolved by restarting the JVM or JVMs of the   *
+   * client applications. Second, if the client application is    *
+   * using an IBM JRE, the Java Cryptography Extension (JCE)      *
+   * provider IBMJCEFIPS can be configured as the default         *
+   * provider of the SecureRandom implementation. (If the client  *
+   * application runs in WebSphere Application Server, that can   *
+   * be achieved by configuring the application server to run in  *
+   * "FIPS mode".)                                                *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fix is contained in 4.5.1.8-P8CE-FP008 and higher. Although
+   there can be no absolute guarantee that this problem will not
+   occur, the provided fix greatly reduces the changes that the
+   similar initializations will happen.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PJ39552
+   
+   
+ * REPORTED COMPONENT NAME
+   PROCESS ENGINE
+   
+   
+ * REPORTED COMPONENT ID
+   5724R7607
+   
+   
+ * REPORTED RELEASE
+   451
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-10-07
+   
+   
+ * CLOSED DATE
+   2014-04-23
+   
+   
+ * LAST MODIFIED DATE
+   2014-04-23
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    PJ39561 PJ39562 [http://www-01.ibm.com/support/docview.wss?uid=swg1PJ39562] PJ39570 [http://www-01.ibm.com/support/docview.wss?uid=swg1PJ39570]
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CONTENT ENGINE
+   
+   
+ * FIXED COMPONENT ID
+   5724R8101
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R451 PSY
+   UP

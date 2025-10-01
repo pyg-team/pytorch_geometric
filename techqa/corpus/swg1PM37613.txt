@@ -1,0 +1,146 @@
+Title: IBM PM37613: NULLPOINTEREXCEPTION WHEN ISSUING WCM_WORKSPACE.CONTENTSEARCH - United States
+
+Text:
+  FIXES ARE AVAILABLE
+7.0.0.2 Download: WebSphere Portal and WCM V7.0 fix pack 2 [http://www-01.ibm.com/support/docview.wss?uid=swg24031676]
+Fixes integrated in WebSphere Portal 7.0.0.1 & 7.0.0.2 Combined Cumulative Fixes [http://www-01.ibm.com/support/docview.wss?uid=swg24029452]
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When using WCM_Workspace.contentSearch from anonymous workspace,
+   null pointer exception occurs:
+   
+   [23-3-11 11:13:23:601 CET] 00000056 webapp        E com.ibm.ws.
+   webcontainer.webapp.WebApp logServletError SRVE0293E: [Servlet
+   Error]-
+   [BpwRedirectServlet]: java.lang.NullPointerException
+    at com.presence.connect.wmmcomms.PrincipalInformationManager
+   .get
+   (PrincipalInformationManager.java:131)
+    at com.presence.connect.wmmcomms.PrincipalInformationManager
+   .get
+   (PrincipalInformationManager.java:117)
+    at com.ibm.workplace.wcm.services.query.CoreQueries.
+   3
+   performContentSearch(CoreQueries.java:4845)
+    at com.ibm.workplace.wcm.api.WCM_APICoreQueries
+   .performContentSearch
+   (WCM_APICoreQueries.java:1441)
+    at com.ibm.workplace.wcm.api.WCM_Workspace
+   .contentSearch(WCM_Workspace.
+   java:3534)
+    at com.ibm.workplace.wcm.api.WCM_Workspace
+   .contentSearch(WCM_Workspace.
+   java:3464)
+    at com.ibm.workplace.wcm.api.WCM_Workspace
+   .contentSearch(WCM_Workspace.
+   java:3452)
+    at com.ibm.workplace.wcm.api.WCM_Workspace
+   .contentSearch(WCM_Workspace.
+   java:3444)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  WCM throwing nullpointerexception during
+   WCM_Workspace.contentSearch if user is anonymous
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  WCM changed to resolve the issue.  Getting current user was
+   returning when no logged in user was existing.  This is by
+   design, but the code making the call wasn't handling.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM37613
+   
+   
+ * REPORTED COMPONENT NAME
+   LOTUS WEB CONT
+   
+   
+ * REPORTED COMPONENT ID
+   5724I2900
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-04-21
+   
+   
+ * CLOSED DATE
+   2011-04-22
+   
+   
+ * LAST MODIFIED DATE
+   2011-04-22
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   LOTUS WEB CONT
+   
+   
+ * FIXED COMPONENT ID
+   5724I2900
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R700 PSY
+   UP

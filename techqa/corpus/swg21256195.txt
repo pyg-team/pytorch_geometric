@@ -1,0 +1,34 @@
+Title: IBM WebGUI session time out on IBM WebSphere DataPower appliance - United States
+
+Text:
+datapower; timeout; session ; logoff; disable; expired; timing; drop; active users; active sessions; session; sessions; 7993; 7993; 7993; machine type 7993 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Your web browser session times out and you are logged off the IBM WebSphere DataPower appliance WebGUI session. 
+
+CAUSE
+The IBM WebSphere DataPower appliance WebGUI default session time-out value is 600 seconds.
+
+RESOLVING THE PROBLEM
+You may change the default WebGUI session time-out or disable it: 
+
+ 1. Log-in using a user with administrative or "privileged" access. 
+ 2. Select Network on the Navigation Bar. 
+ 3. Select Web Management Service 
+ 4. Scroll down to the "Idle Timeout" field. Click in the field and set time in seconds for the desired time-out value. If set to "0" it will disable the time-out session value and users will no longer be prompted to log-in after an extended period of inactivity. 
+
+
+Consequences of disabling the session time out: 
+
+Note: It is not recommended to disable the time-out. 
+
+If the time-out session value is disabled and a WebGUI session is terminated by closing the browser without logging out, the session will be kept active. You will then notice that the list of active users on the device will get longer which may lead to slow responses as the number of active connections increase. 
+
+To prevent this from happening it is recommended that you:  1. Set an appropriate time-out value for your environment to ensure inactive sessions are cleaned up. 
+ 2. Always close a WebGUI session with a clean exit by clicking on the "Logout" button. 
+
+
+Note: Rebooting the device will also clean out all of the active connections. 
+
+To check the connections, from the Navigation Bar select Status -> Active Users. 
+From here, you can see all the active management connections and if desired manually disconnect unused connections.

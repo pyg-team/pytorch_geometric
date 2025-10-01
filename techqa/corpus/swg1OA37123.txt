@@ -1,0 +1,140 @@
+Title: IBM OA37123: WHEN ITCAM FOR SOA/CICS CORRELATIONS PROCESSING IS IN EFFECT, SOAP MESSAGES LARGER THAN 16 MEGABYTES IN SIZE ARE TRUNCATED. - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When ITCAM for SOA/CICS correlations processing is in effect,
+   SOAP messages larger than 16 megabytes in size are truncated.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All ITCAM for SOA on z/OS in CICS users.     *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Correlations truncates SOAP             *
+   *                      messages larger than 16mg.              *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   When correlations tracking is active, SOAP messages larger
+   than 16mg in size are truncated.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  ITCAM for SOA/CICS is changed to correlate SOAP messages
+   larger than 16mg in size without truncations.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   OA37123
+   
+   
+ * REPORTED COMPONENT NAME
+   ITCAM FOR SOA-Z
+   
+   
+ * REPORTED COMPONENT ID
+   5698SOA00
+   
+   
+ * REPORTED RELEASE
+   711
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-07-25
+   
+   
+ * CLOSED DATE
+   2011-10-18
+   
+   
+ * LAST MODIFIED DATE
+   2011-11-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UA62697
+   
+   
+
+MODULES/MACROS
+ *  KD4HAND
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ITCAM FOR SOA-Z
+   
+   
+ * FIXED COMPONENT ID
+   5698SOA00
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R711 PSY UA62697 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UA62697]
+   UP11/10/21 P F110
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

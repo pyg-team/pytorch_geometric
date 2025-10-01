@@ -1,0 +1,134 @@
+Title: IBM IZ80505: IMPACT CLUSTER IS CONFIGURED WITH 4 IMPACT SERVERS INSTALLED - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Impact Cluster is configured with 4 Impact Servers installed
+   over 4 Linux servers. When all four Impact Servers are started,
+   each server can be accessed by the web admin tool, and each
+   server correctly points to IMP_A as the primary server.
+   
+   However, when IMP_A is stopped, the other 3 servers fail to
+   select a new primary, and instead still point to IMP_A as the
+   primary.
+   
+   I have repeated this test many times, and once they correctly
+   failed over, setting IMP_D as the primary, However when I
+   stopped IMP_D, the remaining 2 servers continued to point to
+   IMP_D as the primary.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Impact with 4 clsuter members configured result in last
+   secondary server is not able to convert itself to be primary. As
+   result, if all other 3 clusters are stopped, the 4th one will
+   stay secondary and not processing events
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This issue is fixed in IBM Netcool/Impact 5.1.0.1 Interim Fix
+   0005 5.1.0.1-TIV-NCI-IF0005
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ80505
+   
+   
+ * REPORTED COMPONENT NAME
+   NETCOOL/IMPACT
+   
+   
+ * REPORTED COMPONENT ID
+   5724O59IS
+   
+   
+ * REPORTED RELEASE
+   510
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-07-20
+   
+   
+ * CLOSED DATE
+   2010-08-27
+   
+   
+ * LAST MODIFIED DATE
+   2010-08-27
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   NETCOOL/IMPACT
+   
+   
+ * FIXED COMPONENT ID
+   5724O59IS
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R510 PSY
+   UP

@@ -1,0 +1,65 @@
+Title: IBM Case Manager Page Builder returns error PLDMG1002E - United States
+
+Text:
+pages; access; administrator TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Opening or closing Page Builder in IBM Case Builder results in "The information for the actions that are configured for a widget on this page cannot be found." 
+
+SYMPTOM
+When Page Builder is opened or closed the following error is displayed. 
+
+[/support/docview.wss?uid=swg21972170&amp;aid=1]
+
+
+CAUSE
+This error will occur when Case Builder cannot access the IBM Content Navigator context-root specified in the Case Manager Configuration tool profile used to configure the server.
+
+[/support/docview.wss?uid=swg21972170&aid=2] [/support/docview.wss?uid=swg21972170&aid=2]
+
+
+ENVIRONMENT
+Case Manager 5.2.1
+
+
+
+DIAGNOSING THE PROBLEM
+First, open the Case Manager configuration profile properties and determine the IBM Context Navigator server context root that was used to configure the application. In the example above it is navigator_icm. Then try to reach the corresponding URL in a browser and make sure it opens the Case Manager desktop set as the default ICN desktop. 
+
+Example: 
+
+http://<Your ICN Server>:<port>/navigator_icm 
+
+Next, check the cbConfig.properties file. It exists in two places. In the deployed CaseBuilder.ear and in the install files used to build the ear.
+
+Deployed location example:
+C:\IBM\WebSphere\AppServer\profiles\AppSrv01\installedApps\ECMDEMO1Node01Cell\CaseBuilder.ear\CaseBuilder.war\WEB-INF 
+
+Install location example:
+C:\IBM\CaseManagement\configure\exploded_apps\builder\cbwar\WEB-INF 
+
+Open the deployed location file in a text editor and locate the NEXUS_URL property. This is the property that determines which Content Navigator server context root is used by the currently deployed Case Builder application. 
+
+If you are using ICM version 5.2.1.2 or higher and want to use a non-default context root then it needs to be specified in the NEXUS_URL. It should match what is in the profile properties. 
+
+If you are using 5.2.1.1 or lower, using a non-default Content Navigator context root is not supported and ICN and the ICM configuration profile need to be set to use the default Content Navigator server context root "navigator" 
+
+
+RESOLVING THE PROBLEM
+Page Designer is programmed to use a NEXUS_URL of /navigator when it is unable to reach the context root specified in the cbConfig.properties file. Therefore, entering a valid context root should stop the error. There are two ways of doing this. The first is temporary and can be used to confirm the solution. 
+
+1. Edit the NEXUS_URL property in the deployed cbconfig.properties file.
+
+Change from this:
+NEXUS_URL = /navigator 
+
+
+To the desired non-default context root.
+NEXUS_URL = /navigator_icm
+
+Next, stop the application server, clear all the cached folders that may retain the previous settings (e.g. WebSphere temp and wstemp folders), then restart and test.
+
+2. If that resolves the error, make the change permanent by editing the install location version of the cbConfig.properties file in the same way and then run the Create Case Manager Applications and Deploy Case Manager Builder tasks in the Case Manager configuration tool.
+
+RELATED INFORMATION
+ PJ42973: CASE MANAGER DOES NOT SUPPORT CONFIGURABLE (NO [http://www-01.ibm.com/support/docview.wss?uid=swg1PJ42973]

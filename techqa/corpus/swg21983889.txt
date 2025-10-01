@@ -1,0 +1,21 @@
+Title: IBM HTTP 500 Internal Server Error when accessing the Security Network Protection (XGS) Local Management Interface (LMI) - United States
+
+Text:
+http; 500; internal; XGS; LMI; certificates TECHNOTE (FAQ)
+
+QUESTION
+ How do you resolve the HTTP 500 Internal Server Error, message when accessing the Security Network Protection (XGS) Local Management Interface (LMI)? 
+
+CAUSE
+This issue can occur if current certificates expire and the appliance automatically regenerate it. As it requires some time, it can give a HTTP 500 Internal Server Error in between the expiration and the regeneration moments.
+
+ANSWER
+The HTTP 500 Internal Server Error is resolved in the XGS 5.3.2.2. firmware updates. The certificate is regenerated prior to the expiration date. 
+
+ 
+
+
+
+
+
+[/support/docview.wss?uid=swg21983889&aid=1] [https://ibm.biz/BdHdZx] [/support/docview.wss?uid=swg21983889&aid=2] [http://ibm.biz/InfraSecForumTechnote] [/support/docview.wss?uid=swg21983889&aid=3] [http://ibm.biz/SecSuptUTube] [/support/docview.wss?uid=swg21983889&aid=4] [http://ibm.biz/InfraSecFixes] [/support/docview.wss?uid=swg21983889&aid=5] [http://ibm.biz/FlexLicLogin] [/support/docview.wss?uid=swg21983889&aid=6] [http://ibm.biz/MyNotification] [/support/docview.wss?uid=swg21983889&aid=7] [http://ibm.biz/ContactSecSupport]

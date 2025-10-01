@@ -1,0 +1,64 @@
+Title: IBM Guardium backup CM does not appear when designating backup CM - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When using the "Designate Backup CM" function in the Central Manager GUI you either get an error message "No candidate for Backup CM found", or the backup CM you want to use does not appear in the list.
+
+
+
+
+SYMPTOM
+When you click the "Designate Backup CM" function in the Central Manager GUI (Admin Console > Central Management > Central Management > "Designate Backup CM") you do not see your backup CM as an option, or you get the following error message: 
+
+[/support/docview.wss?uid=swg21986019&aid=1] [/support/docview.wss?uid=swg21986019&aid=1]
+
+
+CAUSE
+All patches installed after the latest GPU in the primary CM needs to be the same on the backup CM. 
+
+
+The order of the installed patches after the latest GPU does not matter, as long as the list is the same on both CMs.
+
+
+
+
+DIAGNOSING THE PROBLEM
+To check this you need to do the following: 
+
+ 
+
+ * 
+ *   * support must_gather patch_install_issues
+   
+   
+ * 
+ * 
+ * 
+ * 
+ * 
+ * TIMESTAMP 
+ * 
+ * 
+ * 
+ * Note
+ * :
+ * 
+ * 
+ * For example, as in the below screenshot of INSTALLED_PATCH.csv, if health check patch 9997 is installed before each GPU, a new entry is not made in this log file, but the timestamp is updated. 
+   [/support/docview.wss?uid=swg21986019&aid=2] [/support/docview.wss?uid=swg21986019&aid=2] 
+
+RESOLVING THE PROBLEM
+To resolve this there are two options: 
+
+ * 
+ * 
+ * TIMESTAMP 
+ * 
+ * 2. If you are not able to install all patches again on the backup CM appliance or have installed older patches, log a PMR including patch install must gathers from both the primary and backup CMs. Support will be able to manually change the TIMESTAMP variable on the backup CM. 
+ * 
+
+
+RELATED INFORMATION
+ Guardium - Central Manager Redundancy [https://www.ibm.com/support/knowledgecenter/SSMPHH_9.5.0/com.ibm.guardium95.doc/aggregation_cm/topics/central_management.html]

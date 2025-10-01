@@ -1,0 +1,60 @@
+Title: IBM "ORA-00001: unique constraint (schemaname.PKNC_XDBnn) violated" caused by unsupported Oracle character set - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ User clicks "Company - Data Entry - Reported Values". User receives errors. 
+
+SYMPTOM
+Screen:
+Source: ControllerForms12
+Description: System.Web.Services.Protocols.SoapException: Server was unable to process request. ---> System.Runtime.InteropServices. COMException (0x800A0005): Invalid procedure call or argument at FrDataEntryRepValBT.DataEntryRepValTClass.SaveDataEntryForm 
+
+Event Viewer (Application Log):
+The VB Application identified by the event source logged this Application FrSrvFunc: Thread ID: 5396 ,Logged: Error occured at 7/31/2013 12:04:07 PM in FrSrvFunc, Error No=-2147217873, Source=Server function:Dbp_ExecuteImmediate(..) , Description=ORA-00001: unique constraint (COGNOSCT.PKNC_XDB14) violated, HelpFile= HelpContext=0 
+
+
+CAUSE
+Customer using unsupported Oracle character set (for its application repository database) 
+
+ 
+More Information:
+Controller only supports a non-unicode character set for its application repository. 
+
+ * This is different from the 'ContentStore' (report server) database which must be Unicode.
+
+
+Specifically, IBM has always recommended the use of the following character set:  * NLS_CHARACTERSET = WE8MSWIN1252. 
+
+This problem is caused by temporary tables in Oracle. Modern version of Controller (e.g. 10.1.1 FP2) use Oracle temporary tables in a different way from older versions of Controller (e.g. 8.x).  * This means that functions that may have worked OK in previous versions of Controller (despite using an unsupported database character set) will now no longer work in later versions of Controller.
+
+ENVIRONMENT
+Controller application repository database hosted on Oracle database server that uses unsupported character set. 
+
+ * TIP: In one real-life case, the customer only received the problems after upgrading to Controller 10.1.1 FP2.
+
+DIAGNOSING THE PROBLEM
+Use the following script to find the character set values of the relevant Oracle database: 
+
+ 
+Connect system/<password>@<database_name> AS SYSDBA
+select * from nls_database_parameters; 
+
+For full details, see separate IBM Technote #1347750.
+
+
+RESOLVING THE PROBLEM
+Move the Controller application repository to an Oracle database which is using the correct/supported Oracle character set. 
+
+ * Afterwards, you must also delete the existing unsupported (e.g. UTF8) encoded temporary tables (currently in the database) by using the server preference "ORA_DYNAMIC_TEMP OPTIMIZE".
+
+
+Steps: 
+
+For full details, see separate IBM Technote #1648810.
+
+
+RELATED INFORMATION
+#1648810 - "Standard error 5 ... Client found response.. [http://www.ibm.com/support/docview.wss?uid=swg21648810]
+1347750 - How to check the Oracle database character se [http://www.ibm.com/support/docview.wss?uid=swg21347750]

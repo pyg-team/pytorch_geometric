@@ -1,0 +1,49 @@
+Title: IBM Updating configuration batch and script files for WebSphere Application Server v7.0 - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ To reflect your environment, you need to update a number of script and batch files before you can enable application security. 
+
+SYMPTOM
+The Web Services Security Management Guide provides an example for updating configuration batch and script files for WebSphere Application Server version 6.1 but not version 7.0.
+
+RESOLVING THE PROBLEM
+ 
+
+Run configuration batch and script files against WebSphere Application Server V6.0.2 and V7.0. WebSphere Application Server V6.0.2 and V7.0 have different classpaths. You must specify the WebSphere Application Server classpath before you run your script using commenting. 
+
+In the following example, the wsdl2tam.sh script is set to run against WebSphere Application Server V6.1:
+
+ # The required WAS 6.0.2 jars.
+
+ #export WAS_JARS=$WAS_HOME/lib/j2ee.jar:$WAS_HOME/lib/wsdl4j.jar
+
+# The required WAS 6.1 jars. 
+
+ 
+
+export WAS_JARS=$WAS_HOME/lib/j2ee.jar:$WAS_HOME/plugins/com.ibm.ws.runtime_6.1.0.jar
+
+ # The required WAS 7.0 jars.
+
+ #export WAS_JARS=$WAS_HOME/lib/j2ee.jar:$WAS_HOME/plugins/com.ibm.ws.prereq.wsdl4j.jar
+
+To run this script against WebSphere Application Server V7.0, comment the earlier WAS-JARS export line and uncomment the current WAS_JAR export line; for example:
+
+ # The required WAS 6.0.2 jars. 
+
+#export WAS_JARS=$WAS_HOME/lib/j2ee.jar:$WAS_HOME/lib/wsdl4j.jar 
+
+ # The required WAS 6.1 jars.
+
+ #export 
+
+ #WAS_JARS=$WAS_HOME/lib/j2ee.jar:$WAS_HOME/plugins/com.ibm.ws.runtime_6.1.0.jar 
+
+# The required WAS 7.0 jars. 
+
+export WAS_JARS=$WAS_HOME/lib/j2ee.jar:$WAS_HOME/plugins/com.ibm.ws.prereq.wsdl4j.jar 
+
+Note: If you installed the Web services security management component on z/OS, the HFS in which these files were installed might be read-only. Before making the changes, copy the files that require updates from the read-only location (such as /usr/lpp/FIM/wssm/etc) to your own Tivoli Federated Identity Manager directory.

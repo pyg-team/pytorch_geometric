@@ -1,0 +1,99 @@
+Title: IBM Salesforce as a data source to Cognos Analytics: FAQ - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ 1. Can the Cognos server connect directly to Salesforce?
+2. How can Salesforce data be used in Cognos Analytics reports and dashboards?
+3. What web service URL do I use in the data source connection?
+4. What credentials do I use for a connection?
+5. Do I need a security token?
+6. Do I need to enable the web services API in my Salesforce permissions?
+7. When I test the data source I get: ‘Failed XQE-CM-0005 Unable to logon to namespace…’
+8. When I test the data source I get: ‘CAM-CRP-1072 The certificate with the DN …<salesforce>….is not trusted’
+9. Why am I getting an error about a field that cannot be grouped when executing a report? 
+
+ANSWER
+1. Can the Cognos server connect directly to Salesforce?
+Yes, as of version 10.2.0, Cognos reports can query the Salesforce cloud directly.
+
+
+2. How can Salesforce data be used in Cognos Analytics reports and dashboards?
+First you need to create a data source connection in Cognos Administration (From Manage, click on Administration Console to get to Cognos Administration). 
+
+Then you need to publish a package using the Salesforce data source with Framework Manager. 
+
+Reports can be created directly using that package.
+
+Packages with Salesforce data cannot be used in dashboards or data modules directly - you can create a data set [https://www.ibm.com/communities/analytics/cognos-analytics-blog/grab-a-slice-of-data-cognos-analytics-11-0-4-unveils-data-sets/] from the package and then use that data set in a data module or dashboard.
+
+
+3. What web service URL do I use in the data source connection?
+All instances are hosted on the Salesforce cloud infrastructure. By default, when creating a new salesforce data source connection in Cognos Administration the URL will be the production systems at:https://www.salesforce.com:443/services/Soap/u/20.0 
+
+
+For test systems the URL can be changed to:https://test.salesforce.com/services/Soap/u/20.0 
+
+
+
+4. What credentials do I use for a connection?
+You use the same credentials used to log into the Salesforce website.
+
+
+5. Do I need a security token?
+Yes, if security tokens are enabled for your login you to need append your token to the password string as part of configuring the data source connection in Cognos Administration. For example, if your password to SFDC is ibm@123#123 and your Salesforce security token is abcdefg, then you need to enter ibm@123#123abcdefg in the password field of the data source signon in Cognos Administration.
+
+For information on generated tokens and resetting them with Salesforce, please see
+https://login.salesforce.com/help/doc/en/user_security_token.htm [https://login.salesforce.com/help/doc/en/user_security_token.htm] 
+
+
+6. Do I need to enable the web services API in my Salesforce.com permissions?
+Yes, API access is based on your subscription level. Ensure you have access to the Salesforce API with your Salesforce system administrator. To be able to successfully connect to Salesforce with Cognos you must set “API Enabled” in the user system permissions for the user ID you are using to login with.
+
+
+7. When I test the data source I get: ‘Failed XQE-CM-0005 Unable to logon to namespace…’
+In the properties of the salesforce data source connection, verify that authentication is set to ‘The signons of this connection.’
+
+[/support/docview.wss?uid=swg21614133&amp;aid=1]
+
+
+
+8. When I test the data source I get: ‘CAM-CRP-1072 The certificate with the DN …<salesforce>….is not trusted’
+You must import both the salesForce.com rootCA and intermediate certificates in order to establish trust with the salesforce SSL endpoint. Use your browser to view and copy the rootCA and intermediate certificates to Base-64 encoded X.509 format. Place both cer files into the Cognos bin directory and then proceed with the following:
+
+http://www-01.ibm.com/support/knowledgecenter/?lang=en#!/SSEP7J_10.2.1/com.ibm.swg.ba.cognos.inst_cr_winux.10.2.1.doc/t_enablessl.html%23EnableSSL [http://www-01.ibm.com/support/knowledgecenter/?lang=en#!/SSEP7J_10.2.1/com.ibm.swg.ba.cognos.inst_cr_winux.10.2.1.doc/t_enablessl.html%23EnableSSL]
+
+
+
+9. Why am I getting an error about a field that cannot be grouped when executing a report?
+Example error:
+[{"message":"\nFROM Opportunity GROUP BY Name, Description LIMIT 2000\n ^\nERROR at Row:1:Column:59\nfield \u0027Description\u0027 can not be grouped in a query call","errorCode":"MALFORMED_QUERY"}]" .
+
+This error is resulting from a documented limitation in the Salesforce API whereby the Group By clause is not permitted on certain fields such as 'Description'. 
+
+You can prevent Cognos from instructing Salesforce to perform a Group By for a particular field by wrapping it with a function in Framework Manager that Cognos will perform locally. All string functions are performed locally so there are many for you to choose from like
+
+Cast:
+cast ( <c1> as char(n)) 
+cast ( <c1> as varchar(n))
+
+Note you need to know what the precision of n needs to be to avoid truncating <c1>
+
+Lower/upper(<c1>) 
+
+Ideal when you don't care about the case of the data
+
+Trim(<c1>)
+
+Ideal when spaces are not important to you
+
+Entering such a function on the fields that are giving you the "can not be grouped in a query" error will prevent the Group By from being issued to Salesforce, so this will allow you avoid those errors without disabling Group By for all Salesforce. Note that there may be cases where you don't want Salesforce to group on the column but you do want it to filter on the column. For such cases you would you would need to publish a package that has two data items pointing to the same column, one of which is not wrapped in an expression and so should be used for filters. 
+
+Which operations are permitted on each of the Salesforce fields is documented here:
+http://www.salesforce.com/us/developer/docs/api/Content/sforce_api_objects_account.htm [http://www.salesforce.com/us/developer/docs/api/Content/sforce_api_objects_account.htm]
+
+RELATED INFORMATION
+ Salesforce.com connection parameters in Cognos 10.2 [http://pic.dhe.ibm.com/infocenter/cbi/v10r2m0/index.jsp?topic=%2Fcom.ibm.swg.ba.cognos.dyn_query.10.2.0.doc%2Fc_vvm_salesforce_datasource.html]
+SFDC SQL Grammar [http://www.salesforce.com/us/developer/docs/soql_sosl/index.htm]
+SFDC API Operations per Field [http://www.salesforce.com/us/developer/docs/api/Content/sforce_api_objects_account.htm ]

@@ -1,0 +1,59 @@
+Title: IBM License error while installing ISIM 6.0 Fixpack 2 or higher - United States
+
+Text:
+fixpack install license TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The installation fails and the following error is seen in updatelog.txt:
+CWUPI0013E: A configuration action failed. The failing configuration action is:
+LAPandSUIAcceptancePrompt. 
+
+CAUSE
+The LAPandSUIAcceptancePrompt is a new license panel added to the fixpack installation starting in FP2. It was compiled with Java 1.6, and will not work with UpdateInstaller installations using Java 1.5.
+
+DIAGNOSING THE PROBLEM
+Check the $ISIM_HOME/logs/update/<FP_dir>/updatelog.txt to see which component failed. If the failure is due to this error, then this technote applies: 
+
+Install, com.ibm.ws.install.ni.ismp.actions.InstallNIFMaintenance, err,
+com.ibm.ws.install.ni.framework.NIFException: CWUPI0013E: A
+configuration action failed. The failing configuration action is:
+LAPandSUIAcceptancePrompt.
+
+
+RESOLVING THE PROBLEM
+There are two known causes for this component to fail: 
+
+A. The UpdateInstaller is using Java 1.5 rather than 1.6. 
+
+B. A prior fixpack installation failed, and the license directory no longer exists. 
+
+ 
+
+To determine the source of the error, please check the following: 
+
+1. What is the output of "$UPDATE_INSTALL_HOME/java/jre/bin/java -fullversion"?
+
+2. What is the output of "$WAS_HOME/AppServer/java/bin/java -fullversion"?
+
+3. Does the directory "$ISIM_HOME/license" exist?
+
+If the result of item 1 is Java 1.5, and the result from item 2 is Java 1.6, then the solution is to modify the update.sh/bat to use the WebSphere Java. This problem has most commonly been seen with UpdateInstaller v7.0.0.31. Simply change the first command in this line at the bottom:
+
+"$updiJAVAHOME"/bin/java -cp "$currentDir"/update.jar -Xms48m -Xmx384m
+$JVM_ARGS run $ISMP_ARGS
+
+to
+
+/opt/IBM/WebSphere/AppServer/java/bin/java -cp "$currentDir"/update.jar
+-Xms48m -Xmx384m $JVM_ARGS run $ISMP_ARGS
+
+Be sure to use the location of your WebSphere installation in place of "/opt/IBM/WebSphere" in the command.
+
+If the results of item 1 and 2 both show Java 1.6, but the /license directory does not exist, then next check if there is a directory named "old_license". If there is, rename it "license", then run the installer again.
+
+If none of these apply, or the problem remains, the next step is to review the entries in $ISIM_HOME/logs/update/<FP_dir>/updateconfig.log.gz to see exactly what the problem is. At this point, please open a PMR for IBM Support to help investigate this.
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ enrole itim tim isim sim

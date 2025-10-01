@@ -1,0 +1,29 @@
+Title: IBM Restructure Data Wizard running Variables to Cases and step 3 does not allow clicking next button - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ I am running the Restructure Data Wizard and choosing Variables to Cases and I get to step 3 and select all of the variables, but the Next button is grayed out and I cannot click on it and go to step 4. For example I have entered that I have three variable groups (variables score1 to score 3) in my data and on step 3 of the Wizard I have entered on single variable in each of the resulting three trans groups. After that I have selected some other variables and clicked them into the fixed variables area but I cannot click on the next button and cannot go to step 4 of the Wizard, why is this? 
+
+RESOLVING THE PROBLEM
+If you enter 3 groups on the second step of the wizard, SPSS expects to have at least TWO variables in each trans group but since you have only entered one variable in each trans group in step 3 this is the reason why the next button is not active. SPSS is still waiting for the second variable for each trans group. The next button on step 3 is not valid until at least two variables are in each trans group.
+
+So you need to enter ONE group on step 2 of the wizard so that you have only one trans group and then, enter all three score variables into this group and all others as fixed. SPSS will create a case id variable for this, syntax would be for example: 
+
+VARSTOCASES
+/ID=id
+/MAKE trans1 FROM score1 score2 score3 
+/INDEX=Index1(3) 
+/KEEP= var1 var2 var3
+/NULL=KEEP
+/COUNT=count.
+
+RELATED INFORMATION
+ Need more help? Our Statistics forum is Live! [https://developer.ibm.com/answers/topics/statistics.html?smartspace=predictive-analytics]
+
+
+ 
+
+HISTORICAL NUMBER
+ 84147

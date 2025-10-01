@@ -1,0 +1,12 @@
+Title: IBM Fix Pack 7.0.0.6 (V7.0 Fix Pack 6) for WebSphere Message Broker - United States
+
+Text:
+ NEWS
+
+ABSTRACT
+ Fix Pack 7.0.0.6 (V7.0 Fix Pack 6) for WebSphere Message Broker Version 7.0 is now available. 
+
+CONTENT
+Fix Pack 6 is now available on all supported platforms. Further details can be found at the following links: 
+
+[/support/docview.wss?uid=swg21644208&amp;aid=1] WebSphere Message Broker Fix Pack 7.0.0.6 [http://www.ibm.com/support/docview.wss?&uid=swg24035349] [/support/docview.wss?uid=swg21644208&amp;aid=2] WebSphere Message Broker Explorer Fix Pack 7.0.0.6 [http://www.ibm.com/support/docview.wss?&uid=swg24035366]

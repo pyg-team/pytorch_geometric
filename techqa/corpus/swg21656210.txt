@@ -1,0 +1,34 @@
+Title: IBM InfoSphere CDC : Update and delete might be fail on keyless target table when some journal control fields used in derived column. - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ As monitored in InfoSphere CDC 6.5.x and 10.2 version, update or delete at the target instance can fail if some journal control fields like &TIMESTAMP used in derived column definition and the target table does not have primary key or unique indexes. 
+
+SYMPTOM
+Example : Use &TIMESTAMP as derived column mapping to DB2INST1.TESTKEYS.CREATETIME column. 
+
+In the target table corresponding record as below:
+ID NAME COST CREATETIME
+------ -------------------- ------ --------------------------------
+1 Jane 1100 2013-11-12-23.26.07.061000000000
+
+When update 'Jane' to 'Jane11' from source CDC will receive the below error from event log:
+Failed to update a row in table DB2INST1.TESTKEYS. ID: [1] NAME: [Jane11] COST: [1100] CREATETIME: [2013-11-12-23.28.00.000000] . 
+IBM InfoSphere Change Data Capture applied a batch of 1 rows and the JDBC driver reported back that 0 rows have been updated for entry 0 from the batch. This may mean that the row from the batch could not be found in the database. Please review the documentation and turn off batching or reduce the batch size and retry the operation to narrow down to the rows that are failing to be applied.
+
+
+CAUSE
+Journal control fields mainly provide information about the log entry on the source system, due to different transaction from source, the journal control fields information could be different.
+When there is no primary key or unique constraints on the target table, InfoSphere CDC includes all source columns including the derived column in the Where clause for update or insert statement, update and delete can fail.
+
+
+RESOLVING THE PROBLEM
+- Alter the target table adding primary key or unique index. 
+
+ - Or remove the problematic journal control field like &TIMESTAMP from derived column definition
+- Or consider LiveAudit mapping type for auditing purpose
+
+RELATED INFORMATION
+ Replication fails with an error "Failed to update a row [http://www-01.ibm.com/support/docview.wss?uid=swg21614463]

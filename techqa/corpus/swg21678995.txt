@@ -1,0 +1,67 @@
+Title: IBM QRadar Network Security IQNS (XGS) does not apply all currently entitled licenses after it is registered with SiteProtector - United States
+
+Text:
+security; network; protection; xgs; license; install TECHNOTE (FAQ)
+
+QUESTION
+ What can cause the IQNS (XGS) not to download and apply the IP Reputation, SSL Inspection, and Identity and Application Control licenses after it is registered with SiteProtector? 
+
+CAUSE
+Licenses from SiteProtector are only downloaded and applied if the feature controlled by that license is actively configured to be used. If the feature is in an inactive state, the license will not be fetched from SiteProtector.
+
+ANSWER
+For each licensable component, the following configurations should be in place for each of the features to ensure that IQNS (XGS) pulls the license information from SiteProtector after registration.
+
+
+Firmware and XPU
+
+Firmware and XPU licenses are pulled automatically and do not require additional configuration.
+
+Identity and Application Control
+
+A Network Access Policy having an identity or application object needs to be configured on the agent locally, or actively deployed to the SiteProtector agent. The use of non-web application objects will not cause a license to download.
+
+IP Reputation
+
+This is activated by enabling IP reputation database option.
+
+Configuring in LMI
+
+
+ 1. Connect to the appliance Local Management Interface (LMI).
+    
+    
+ 2. Browse to Manage System Settings > Updates and Licensing > Application Database Settings.
+    
+    
+ 3. Enable the Include IP Reputation Info option.
+
+
+Configuring in SiteProtector 
+
+ 1. Open the Manage Application Databases policy.
+    
+    
+ 2. Enable the Include IP Reputation Info option.
+    
+    
+ 3. Save and deploy this policy.
+
+
+Also, the IP Reputation module can be activated by adding the following object types to your Network Objects list and adding them to a Network Access Policy rule : 
+ * Address > Geolocation 
+ * Application > IP Reputation Category
+
+
+SSL Inspection 
+
+The SSL Decryption or Outbound SSL Decryption policies need to be actively deployed. Additionally, at least one of the previously mentioned policies should have at least one rule with an Action set to Decrypt. If only Ignore rules exist, the decryption module will not be loaded. 
+
+
+
+
+[/support/docview.wss?uid=swg21678995&aid=1] [https://ibm.biz/BdHdZx] [/support/docview.wss?uid=swg21678995&aid=2] [http://ibm.biz/InfraSecForumTechnote] [/support/docview.wss?uid=swg21678995&aid=3] [http://ibm.biz/SecSuptUTube] [/support/docview.wss?uid=swg21678995&aid=4] [http://ibm.biz/InfraSecFixes] [/support/docview.wss?uid=swg21678995&aid=5] [http://ibm.biz/FlexLicLogin] [/support/docview.wss?uid=swg21678995&aid=6] [http://ibm.biz/MyNotification] [/support/docview.wss?uid=swg21678995&aid=7] [http://ibm.biz/ContactSecSupport] 
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Security IBM Security Network Protection Licensing and Updates (LUM) Firmware 5.3.1, 5.3.2, 5.3.3

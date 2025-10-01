@@ -1,0 +1,87 @@
+Title: IBM The upgradeProcessData or upgrade7x command for IBM Business Process Manager (BPM) fails with an AM_TASKS error - United States
+
+Text:
+AM_TASKS ; SQLCODE=-204; upgradeProcessData; migration; upgrade; 801 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When you attempt to upgrade IBM Business Process Manager from previous version using the upgradeProcessData or upgrade7x command, you might encounter a SQLCODE=-204, SQLSTATE=42704, SQLERRMC=<usrName>.AM_TASKS error. 
+
+SYMPTOM
+The upgradeProcessData log file contains the following exceptions: 
+
+
+"select * from syscat.tables where TABNAME " contain AM_TASKS 
+
+Mar 26, 2013 1:25:11 PM FINE:
+com.lombardisoftware.tools.dbupgrade.UpgradeDatabase - DB2 SQL Error:
+SQLCODE=-204, SQLSTATE=42704, SQLERRMC=WSADMIN.AM_TASKS, DRIVER=4.11.69
+com.ibm.db2.jcc.am.SqlSyntaxErrorException: DB2 SQL Error: SQLCODE=-204,
+SQLSTATE=42704, SQLERRMC=WSADMIN.AM_TASKS, DRIVER=4.11.69
+
+
+Mar 26, 2013 1:25:11 PM FINE: com.lombardisoftware.ant.JULDefaultLogger - Class com.ibm.db2.jcc.am.xm loaded from ant loader
+Mar 26, 2013 1:25:11 PM FINE: com.lombardisoftware.tools.dbupgrade.UpgradeDatabase - DB2 SQL Error: SQLCODE=-204, SQLSTATE=42704, SQLERRMC=WSADMIN.AM_TASKS, DRIVER=4.11.69
+com.ibm.db2.jcc.am.SqlSyntaxErrorException: DB2 SQL Error: SQLCODE=-204, SQLSTATE=42704, SQLERRMC=WSADMIN.AM_TASKS, DRIVER=4.11.69
+at com.ibm.db2.jcc.am.gd.a(gd.java:676)
+at com.ibm.db2.jcc.am.gd.a(gd.java:60)
+at com.ibm.db2.jcc.am.gd.a(gd.java:127)
+at com.ibm.db2.jcc.am.jn.c(jn.java:2561)
+at com.ibm.db2.jcc.am.jn.d(jn.java:2549)
+at com.ibm.db2.jcc.am.jn.b(jn.java:1965)
+at com.ibm.db2.jcc.t4.cb.h(cb.java:224)
+at com.ibm.db2.jcc.t4.cb.b(cb.java:47)
+at com.ibm.db2.jcc.t4.q.b(q.java:38)
+at com.ibm.db2.jcc.t4.rb.h(rb.java:114)
+at com.ibm.db2.jcc.am.jn.hb(jn.java:1960)
+at com.ibm.db2.jcc.am.jn.a(jn.java:3066)
+at com.ibm.db2.jcc.am.jn.e(jn.java:1036)
+at com.ibm.db2.jcc.am.jn.execute(jn.java:1020)
+at com.lombardisoftware.tools.dbupgrade.steps.LOBLoggingEnablement$ViewEntry.execute(LOBLoggingEnablement.java:365)
+at com.lombardisoftware.tools.dbupgrade.steps.LOBLoggingEnablement.execute(LOBLoggingEnablement.java:163)
+at com.lombardisoftware.tools.dbupgrade.steps.LOBLoggingEnablement.execute(LOBLoggingEnablement.java:132)
+at com.lombardisoftware.tools.dbupgrade.steps.LOBLoggingEnablement.execute(LOBLoggingEnablement.java:125)
+at com.lombardisoftware.tools.dbupgrade.UpgradeDatabase.upgradeDatabase(UpgradeDatabase.java:274)
+at com.lombardisoftware.tools.dbupgrade.UpgradeDatabase.main(UpgradeDatabase.java:260)
+
+
+
+CAUSE
+A program error occurs if the syscat.tables contain views that owned by the Process Server database user, but the schema name is different. For example, see the TABSCHEMA and OWNER columns for the last three rows in the following table.
+
+
+
+TABSCHEMA TABNAME OWNER OWNERTYPE TYPE SYSIBM SYSTASKS SYSIBM S T BPMADMIN LSW_TASK_SENDER BPMADMIN U T BPMADMIN LSW_TASK_SENDER_EXVAR BPMADMIN U T BPMADMIN LSW_TASK BPMADMIN U T SYSTOOLS AM_BASE_TASKS BPMADMIN U T SYSTOOLS AM_BASE_TASK_RPTS BPMADMIN U T SYSTOOLS AM_TASKS BPMADMIN U T 
+RESOLVING THE PROBLEM
+The problem has been resolved using the APAR JR45550. It is included in IBM Business Process Manager Version 8.0.1 Fix Pack 1. Complete the following steps: 
+
+ 
+
+ 1. Install the interim fix or the fix pack.  * Install the interm fix for APAR JR45550 if you are using the upgrade7x command with IBM Business Process Manager v8.0.0. Use one of the following links:  * IBM Business Process Manager Standard [http://www-933.ibm.com/support/fixcentral/swg/quickorder?parent=IBM+Business+Process+Manager&product=ibm/WebSphere/IBM+Business+Process+Manager+Standard&release=8.0.0.0&platform=All&function=aparId&apars=JR45550&source=fc] 
+        * IBM Business Process Manager Express [http://www-933.ibm.com/support/fixcentral/swg/quickorder?parent=IBM+Business+Process+Manager&product=ibm/WebSphere/IBM+Business+Process+Manager+Express&release=8.0.0.0&platform=All&function=aparId&apars=JR45550&source=fc] 
+        * IBM Business Process Manager Advanced [http://www-933.ibm.com/support/fixcentral/swg/quickorder?parent=IBM+Business+Process+Manager&product=ibm/WebSphere/IBM+Business+Process+Manager+Advanced&release=8.0.0.0&platform=All&function=aparId&apars=JR45550&source=fc]
+       
+       
+     * Install IBM Business Process Manager V8.0.1 Fix Pack 1 [http://www.ibm.com/support/docview.wss?uid=swg24034495] if you are using IBM Business Process Manager V8.0.1.
+       
+       
+    
+    
+ 2. Restore the Process Server and Performance Data Warehouse database.
+    
+    
+ 3. Run the appropriate command to upgrade the database again.
+
+
+
+You can also work around the problem by modifying the owner for all the views that do not match the schema name. You can change the owner to some other database administrative user. RELATED INFORMATION
+ Version 8.0 Refresh Pack1 Fix list [http://www.ibm.com/support/docview.wss?uid=swg27036594#fp801 ]
+V8.0.1: Upgrading existing databases [http://pic.dhe.ibm.com/infocenter/dmndhelp/v8r0m1/index.jsp?topic=/com.ibm.wbpm.imuc.doc/upgrade/topic/upgrading_existing_dbs_8011.html]
+V8.0.0: Upgrading existing databases [http://pic.dhe.ibm.com/infocenter/dmndhelp/v8r0mx/index.jsp?topic=/com.ibm.wbpm.imuc.doc/upgrade/topic/upgrading_existing_dbs_80.html]
+
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Business Process Manager Standard Migration Linux, Linux zSeries, Windows 8.0.1, 8.0 Business Integration IBM Business Process Manager Express Migration Linux, Linux zSeries, Windows 8.0.1, 8.0 
+PRODUCT ALIAS/SYNONYM
+ BPM

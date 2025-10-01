@@ -1,0 +1,119 @@
+Title: IBM LO88160: SCROLL BAR IS DISAPPEARED IN MAIL THREAD BY CHANGING IE WINDOW. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS RETURNED (APAR CANNOT BE RESOLVED WITHOUT ADDITIONAL INFO FROM IBM OR CUSTOMER.)
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  There is a Scroll bar in Mail thread in iNotes.
+   However, when a user changes the size of Internet Explorer
+   Window, the Scroll bar is disappeared.
+   
+   (Steps to reproduce)
+   1. Setup Domino 9.0.1 FP5 and register 2 users (User1 and
+   User2, User2 is iNotes user with Internet Explorer 11 or 8.)
+   2. User1 sends a mail to User2.
+   3. User2 reply it to User1.
+   4. Repeat Step 2 and 3 with more 12 times in each user. (There
+   are more 24 threads.)
+   5. User2 select the last mail from User1.
+   6. Click to open or collapse preview pane.
+   7. Click "Threads"
+   8. You can see the scroll bar in the right side in Mail Threads.
+   9. If you change the size of Internet Explorer Window, the
+   scroll bar is disappeared. <- Reproduced
+   
+   After reproduction, if you choose other mail, the scroll bar is
+   appeared again in the Mail Threads.
+   
+   If you use Firefox, this problem is not reproduced.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *  This APAR is associated with SPR# TKAAA7MEKY.
+   The record was returned to the person who created it for more
+    information.
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   LO88160
+   
+   
+ * REPORTED COMPONENT NAME
+   DOMINO SERVER
+   
+   
+ * REPORTED COMPONENT ID
+   5724E6200
+   
+   
+ * REPORTED RELEASE
+   900
+   
+   
+ * STATUS
+   CLOSED RET
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-03-01
+   
+   
+ * CLOSED DATE
+   2016-03-18
+   
+   
+ * LAST MODIFIED DATE
+   2016-03-18
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

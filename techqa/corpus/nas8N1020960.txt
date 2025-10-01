@@ -1,0 +1,103 @@
+Title: IBM Callhome on HMC Serviceable Events is Disabled on vHMC - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Callhome for serviceable events with a failing MTMS of the virtual HMC appliance are not called home to IBM hardware service. The virtual HMC appliance is a software only offering with no associated hardware as provided in the HMC hardware appliance. Serviceable events reported against the vHMC appliance can be reported manually to IBM software support by phone or the IBM service web site. 
+
+Callhome for serviceable events on the managed servers and partitions, which will have "Failing MTMS" of the server, works the same on the virtual HMC as on the hardware appliance.
+
+
+RESOLVING THE PROBLEM
+Background 
+
+Starting with HMC Version 8 Release 8.4 (V8R8.4.0), the HMC product introduces a new "virtual HMC" offering. The HMC can now be ordered as the traditional hardware appliance (which includes a server and the HMC firmware) or as a new virtual appliance. The virtual offering allows the HMC firmware to be run in a customer-supplied virtual machine. The hardware appliance offering includes support for both the HMC hardware and the HMC firmware. The virtual offering includes only software support for the HMC firmware. 
+
+
+HMC Serviceable events
+Serviceable events reported by the HMC include a "Failing MTMS" property which identifies the failing machine. The failing machines include the HMC itself as well as the servers (and server frames and enclosures) managed by the HMC. 
+
+Serviceable events with a failing MTMS of the HMC itself fall into two general categories: a) hardware errors on underlying appliance and b) errors detected in the HMC firmware. The first classification of errors cannot occur on the virtual HMC. The second classification can occur regardless of the type of HMC appliance (virtual or hardware). The "Failing MTMS" is listed in the manage service event output. The virtual HMC appliance has a model/type that starts with the letter "V" followed by a unique identifier in the format of "Vmmm-ttt". A "VM-" precedes the model and type in the Manage Serviceable Events listing.
+
+This example shows three serviceable events, all reported against the virtual HMC model/type of "V8d7-f9d":
+
+Manage Serviceable Events [/support/docview.wss?uid=nas8N1020960&aid=1] [/support/docview.wss?uid=nas8N1020960&aid=1] 
+
+ 
+
+Callhome on HMC Serviceable events
+Callhome for serviceable events with a failing MTMS of a virtual HMC appliance are not called home to IBM hardware service. Automatic callhome will not occur. Attempts to call home a problem manually or submit a test PMR on the vHMC itself will show they are successfully submitted; however, they will not be processed.
+
+The following is an example of manual callhome attempt. Note that although it shows successfully "submitted", the actual callhome will be blocked: 
+
+Service Focal Point Message [/support/docview.wss?uid=nas8N1020960&aid=2] [/support/docview.wss?uid=nas8N1020960&aid=2]
+
+The view console event log will show no attempt at callhome; only a service event notify:
+
+[/support/docview.wss?uid=nas8N1020960&aid=3] [/support/docview.wss?uid=nas8N1020960&aid=3]
+
+Note: The setting in "Enable Electronic Service Agent" shows Enabled even though it is disabled based on machine model and type: 
+
+[/support/docview.wss?uid=nas8N1020960&aid=4] [/support/docview.wss?uid=nas8N1020960&aid=4]
+
+Notifications and service transmission
+Other call home related functions, including scheduled service information transmission and, if enabled, customer notifications (e-mail or SNMP traps) function the same as on the hardware HMC. 
+
+Callhome for serviceable events on the managed servers and partitions, which will have "Failing MTMS" of the server, works the same on the virtual HMC as on the hardware appliance.
+
+
+Determining the type of HMC appliance 
+To determine if the HMC is a virtual machine image or hardware appliance, you should view the HMC model and type.
+
+From the command line, issue the lshmc -v command and check the *TM field for a model starting with "V" and/or the presence of the *UVMID fields: 
+
+ * *TM V
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * *UVMID 8d7f:9dfa:6aa6:e3fc
+
+
+In the legacy GUI: From the Welcome panel, hover the mouse over HMC Version link or from the Updates panel under the HMC Code Level section: 
+
+[/support/docview.wss?uid=nas8N1020960&aid=5] [/support/docview.wss?uid=nas8N1020960&aid=5] 
+
+In the enhanced GUI, click Help (the "circle ?" in the upper right) > About: 
+
+[/support/docview.wss?uid=nas8N1020960&amp;aid=6] 
+
+Contacting IBM support for vHMC Serviceable events 
+
+Serviceable events reported against the vHMC appliance firmware can be reported manually to IBM software support.
+
+The IBM Support Portal is your gateway to technical support. This includes IBM Electronic Support tools and resources, for software and hardware, to help save time and simplify support. The Electronic Support tools can help you find answers to questions, download fixes, troubleshoot, automate data collection, submit and track problems through the Service Request online tool, and build skills. All these tools are made available through your IBM support agreement. You can find information about the Electronic Support portfolio of tools at the following URL:
+
+http://ibm.com/electronicsupport [http://ibm.com/electronicsupport]
+
+Access the IBM Support Portal at the following URL:
+
+http://ibm.com/support [http://ibm.com/support]
+
+Access the online Service Request tool at the following URL:
+
+http://ibm.com/support/servicerequest [http://ibm.com/support/servicerequest] 
+
+When contacting IBM support by phone, you should select the option for "software" support. You will need to supply the vHMC product identifier (5765-HMV) in place of a serial number, as well as the typical information such as the preferred operating system on the managed server partitions (AIX/Linux or IBM i).

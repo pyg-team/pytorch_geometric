@@ -1,0 +1,84 @@
+Title: IBM Oracle connector with Bulk Load to partitioned tables throws OCIDirPathLoadStream returned status -1 error in DataStage - United States
+
+Text:
+direct path operations; SQL Loader; partitioned tables; parallel query; ORA-14776; ORA-39776 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When trying to load to a partitioned table using Oracle connector with Bulk Load, the following error is seen:
+<Table_Name>: The OCI function OCIDirPathLoadStream returned status -1. Error code: 39776, Error message: ORA-39776: fatal
+Direct Path API error loading table <Schema>.<Table_Name> ORA-14766: Unable to obtain a stable metadata snapshot. 
+
+CAUSE
+This applies to: Oracle Server - Enterprise Edition - Version 11.2.0.1 and later 
+
+Information in this document applies to any platform.
+Symptoms:
+The following errors are being reported in the SQL*Loader log:
+
+SQL*Loader: Release 11.2.0.3.0 - Production on Wed Oct 26 15:11:29 2011
+Copyright (c) 1982, 2011, Oracle and/or its affiliates. All rights reserved.
+Load completed - logical record count 2000000.
+
+SQL*Loader: Release 11.2.0.3.0 - Production on Wed Oct 26 15:11:29 2011
+
+Copyright (c) 1982, 2011, Oracle and/or its affiliates. All rights reserved.
+
+Load completed - logical record count 2000000.
+ORA-39776: fatal Direct Path API error loading table "<Schema>"."<Table_Name>"
+ORA-14766: Unable to obtain a stable metadata snapshot
+ORA-39776: fatal Direct Path API error loading table "<Schema>"."<Table_Name>"
+SQL*Loader-2026: ORA-14766: Unable to obtain a stable metadata snapshot
+the load was aborted because SQL Loader cannot continue.
+
+Cause
+This issue is due to unpublished Oracle Bug 13334875 and is closed as duplicate of Base Bug 13446912.
+
+Affects:
+Range of versions believed to be affected - Versions BELOW 12.1 
+Versions confirmed as being affected - 11.2.0.3 & 11.2.0.2
+
+Platforms affected Generic (all / most platforms affected) 
+
+Symptoms:
+•Error May Occur
+•ORA-14766
+
+Related To:
+•Direct Path Operations
+•SQL*Loader
+•Partitioned Tables
+•Parallel Query (PQO)
+
+Description:
+ORA-14766 errors may occur during direct path loads using sqlldr especially for partitioned tables.
+eg:
+ORA-39776: fatal Direct Path API error loading table "<Schema>"."<Table_Name>"
+ORA-14766: Unable to obtain a stable metadata snapshot
+
+Interval partitioned tables are particularly likely to be affected when concurrent loads are being performed.
+
+Note:
+Even with this fix, there are valid scenarios where an ORA-14766 error might be signaled.
+
+Please note: The above is a summary description only. Actual symptoms can vary. Matching to any symptoms here does not confirm that you are encountering this problem. For questions about this bug please consult Oracle Support.
+
+
+RESOLVING THE PROBLEM
+To resolve this issue, please contact Oracle Corporation Support to request bug 13446912. 
+
+ 1. If available for your platform and version, download and apply Patch 13446912.
+    Or 
+ 2. Upgrade to the future Patch set 11.2.0.4 or future release 12.1 where the issue is fixed.
+    
+
+
+Bug 13446912 - ORA-14766 during SQLLOADER data loading with parallelism (Doc ID 13446912.8) 
+
+This note gives a brief overview of bug 13446912. 
+The content was last updated on: September 3, 2013 
+
+Fixed: 
+This issue is fixed in 
+•12.1.0.1 (Base Release) 
+•11.2.0.4 (Server Patch Set) 
+•11.2.0.3 Patch 20 on Windows Platforms Note: It has been suggested by Oracle that perhaps this workaround might help. Do bulk load to a temporary identical table without partitions and then use the EXCHANGE PARTITION command from Oracle to load into the target table.

@@ -1,0 +1,180 @@
+Title: IBM How to remove COBOL sequence numbers using RDz Extensibility - United States
+
+Text:
+RDz; Extensibility; numbering; COBOL TECHNOTE (FAQ)
+
+QUESTION
+ How do you remove COBOL sequence numbers from both the left and right columns using IBM Rational Developer for System Z (RDz) Extensibility? 
+
+CAUSE
+
+There is a request for enhancement (RFE) to reduce the number of steps needed to remove all sequence numbers. Please see the Related information section below for a link to this RFE .
+
+In the current implementation you have to manually remove the sequence numbers from each side.
+
+
+
+ANSWER
+You can perform the following manual steps to remove sequence numbers from either columns 1-6 and/or columns 73-80 in a COBOL program using the COBOL editor: 
+
+
+Follow these steps to remove the Right sequence numbers (columns 73-80): 
+
+ 1. Right click in COBOL program 
+ 2. select Source > Sequence Numbers > Unnumber
+
+
+
+Next, remove Left sequence numbers (columns 1-6) following these steps:  1. Select Source > Sequence Numbers > Preferences 
+ 2. Check the checkbox "Start numbering at column 1" under Numbering Options 
+ 3. Right click in source 
+ 4. Select "Source > Sequence Numbers > Unnumber" 
+
+
+To programmatically remove the sequence numbers from both right and left with one click you can implement this sample plugin to alter the actions of Source > Sequence > Unnumber. 
+
+Disclaimer All source code and/or binaries attached to this document are referred to here as "the Program". IBM is not providing program services of any kind for the Program. IBM is providing the Program on an "AS IS" basis without warranty of any kind. IBM WILL NOT BE LIABLE FOR ANY ACTUAL, DIRECT, SPECIAL, INCIDENTAL, OR INDIRECT DAMAGES OR FOR ANY ECONOMIC CONSEQUENTIAL DAMAGES (INCLUDING LOST PROFITS OR SAVINGS), EVEN IF IBM, OR ITS RESELLER, HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
+
+ 
+
+The new custom action will be available on the COBOL editor through the context menu: 
+
+
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+
+<!--
+******************************************
+* The custom command *
+****************************************** 
+-->
+<extension point="org.eclipse.ui.commands">
+<command
+categoryId="com.ibm.support.rdz.mycoboleditor.commands.category"
+id="com.ibm.support.rdz.mycoboleditor.commands.myUnnumberCommand"
+name="Unnumber">
+</command> 
+
+
+</extension>
+<!--
+******************************************
+* Context menu on the COBOL editor *
+****************************************** 
+-->
+<extension
+point="org.eclipse.ui.menus">
+<menuContribution
+locationURI="popup:#TextEditorContext?after=additions">
+<menu
+id="com.ibm.support.rdz.mycoboleditor.menus.myUnnumberMenu"
+label="My sequence number"
+mnemonic="M">
+<command
+commandId="com.ibm.support.rdz.mycoboleditor.commands.myUnnumberCommand"
+id="com.ibm.support.rdz.mycoboleditor.menus.myUnnumberCommand"
+mnemonic="S">
+<visibleWhen
+checkEnabled="false">
+<with
+variable="activePartId">
+<equals
+value="com.ibm.systemz.cobol.editor.jface.editor.CobolEditorID">
+</equals>
+</with>
+</visibleWhen>
+</command>
+</menu>
+</menuContribution> 
+</extension>
+<!--
+******************************************
+* Handler implementing the command *
+****************************************** 
+-->
+<extension
+point="org.eclipse.ui.handlers">
+<handler
+class="com.ibm.support.rdz.mycoboleditor.handlers.MyUnnumberHandler"
+commandId="com.ibm.support.rdz.mycoboleditor.commands.myUnnumberCommand">
+</handler>
+</extension>
+
+</plugin>
+The command removes right numbering then left: 
+
+
+public class MyUnnumberHandler extends AbstractHandler {
+/**
+* The constructor.
+*/
+public MyUnnumberHandler() {
+}
+
+/**
+* the command has been executed, so extract extract the needed information
+* from the application context.
+*/
+public Object execute(ExecutionEvent event) throws ExecutionException {
+//should be the ResourceBundle from com.ibm.systemz.cobol.editor.jface
+//but in fact it is not needed... as far as I can se
+ResourceBundle pluginResourceBundle = ResourceBundle.getBundle("plugin");
+SeqnumUnnumberAction suAction = new SeqnumUnnumberAction(pluginResourceBundle, "SEQNUM_UNNUMBER."); //$NON-NLS-1$
+//suAction.setActionDefinitionId(CommonSourceEditor.SEQNUM_UNNUMBER_CMD);
+suAction.setActionDefinitionId("com.ibm.support.rdz.mycoboleditor.commands.myUnnumberCommand");
+IEditorPart editor = HandlerUtil.getActiveEditor(event);
+suAction.setEditor((ITextEditor) editor);
+<br>
+//remove right numbering
+suAction.setStartIndex(72);
+suAction.setWidth(8);
+suAction.run();
+<br>
+//remove left numbering
+suAction.setStartIndex(0);
+suAction.setWidth(6);
+suAction.run();
+<br>
+return null;
+}
+} 
+
+Complete plugin project source code is attached below. 
+
+ 
+
+
+To use the sample plugin:
+
+Edit a COBOL program in COBOL editor, right-click on the editor and select menu My Sequence number > Unnumber
+
+[/support/docview.wss?uid=swg21903148&aid=1] [/support/docview.wss?uid=swg21903148&aid=1]
+
+[/support/docview.wss?uid=swg21903148&aid=2] [/support/docview.wss?uid=swg21903148&aid=2]
+
+To install the Sample plugin:
+
+
+ 1. unzip the attached com.ibm.support.rdz.mycoboleditor.updatesite 
+ 2. From RDz 9.1.x, install the plugin from menu Help > Install New Software
+
+
+[/support/docview.wss?uid=swg21903148&aid=3] [/support/docview.wss?uid=swg21903148&aid=3] 
+
+
+To uninstall the Sample plugin:  1.  
+ 2. From menu Help > About > Installation Details 
+ 3. On tab "Installed Software", select com.ibm.support.rdz.mycoboleditor.feature and click on Uninstall
+
+
+[/support/docview.wss?uid=swg21903148&aid=4] [/support/docview.wss?uid=swg21903148&aid=4] RELATED INFORMATION
+#RFE to improve unnumbering in Cobol editor [https://www.ibm.com/developerworks/rfe/execute?use_case=viewRfe&CR_ID=68691]
+
+
+
+
+Disclaimer All source code and/or binaries attached to this document are referred to here as "the Program". IBM is not providing program services of any kind for the Program. IBM is providing the Program on an "AS IS" basis without warranty of any kind. IBM WILL NOT BE LIABLE FOR ANY ACTUAL, DIRECT, SPECIAL, INCIDENTAL, OR INDIRECT DAMAGES OR FOR ANY ECONOMIC CONSEQUENTIAL DAMAGES (INCLUDING LOST PROFITS OR SAVINGS), EVEN IF IBM, OR ITS RESELLER, HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
+
+
+com.ibm.support.rdz.mycoboleditor.updatesite.zip [/support/docview.wss?uid=swg21903148&aid=6]com.ibm.support.rdz.mycoboleditor.updatesite.zip [/support/docview.wss?uid=swg21903148&aid=5] com.ibm.support.rdz.mycoboleditor.source.zip [/support/docview.wss?uid=swg21903148&aid=8]com.ibm.support.rdz.mycoboleditor.source.zip [/support/docview.wss?uid=swg21903148&aid=7]

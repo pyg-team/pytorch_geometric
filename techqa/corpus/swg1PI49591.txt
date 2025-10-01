@@ -1,0 +1,177 @@
+Title: IBM PI49591: RELEASE 23 FP2 COMMUTER DIALOG BUTTONS ONLY SHOW GARBLED CHARACTERS ON JAPANESE OS - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  You installed IBM SPSS Statistics 23 Fixpack 2 Client on for
+   example a
+   Mac OS X Yosemite (10.10.5) under Japanese System Locale system
+   as network
+   installation with network license pointing to an existing
+   Sentinel License Manager installation (Concurrent Licensing
+   Tools 9.5.x)
+   The installation went fine. You would like to check out a
+   commuter dialog and click on Start - All Programs - SPSS
+   Statistics 23 - SPSS Statistics 23 Commuter Utility
+   However, although are available licenses are displayed you only
+   see garbled Japanese characters on all buttons of the commuter
+   Utility dialog.
+   The functionality is not affected: You can click on the buttons
+   and will be able to check out and check in a commuter license
+   but the garbled characters are not readable on Japanese OS.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  This issue will be addressed in the next Fix Pack. Please
+   refer to the Fix Pack schedule at
+   http://www.ibm.com/support/docview.wss?uid=swg21599157 for
+   information on upcoming Fix Packs.
+   
+   If you encounter the issue described above please open a Service
+   Request with IBM SPSS Technical Support. An Interim Fix was
+   developed for customers who need the fix prior to the next
+   upcoming Fix Pack.
+   
+   Please contact Technical Support with reference to APAR PI49591
+   and technote # 1971033
+   about Interim Fix 004 for Statistics 23.0 FP2 Mac OS X
+   platforms.
+   
+   Note: Interim fixes are limited corrections to specific issues
+   reported by one or more customers. They are normally sent only
+   to customers who have reported one of the corrected problems,
+   and who require an immediate correction. Interim Fixes do not
+   address customer enhancement requests, and not all defect
+   corrections can be delivered as Interim Fixes. Due to their
+   urgency Interim Fixes undergo only targeted testing of specific
+   fixes, not full regression testing. If the fix is not urgently
+   required, you may prefer to wait for a scheduled Fix Pack
+   Release, which will be fully regression tested. Interim Fix
+   corrections, once fully regression tested, are automatically
+   included in a future Fix Pack.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * Users of IBM SPSS Statistics 23.0 for Mac OS X               *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * RELEASE 23 FP2  COMMUTER DIALOG BUTTONS ONLY SHOW GARBLED    *
+   * CHARACTERS ON JAPANESE OS                                    *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Please upgrade to IBM SPSS Statistics 24.0                   *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This issue has been resolved for IBM SPSS Statistics 24.0
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI49591
+   
+   
+ * REPORTED COMPONENT NAME
+   SPSS STATISTICS
+   
+   
+ * REPORTED COMPONENT ID
+   5725A54ST
+   
+   
+ * REPORTED RELEASE
+   N00
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2015-09-29
+   
+   
+ * CLOSED DATE
+   2016-04-19
+   
+   
+ * LAST MODIFIED DATE
+   2016-04-19
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   SPSS STATISTICS
+   
+   
+ * FIXED COMPONENT ID
+   5725A54ST
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * RO00 PSN
+   UP
+   
+   
+ * RO00 PSY
+   UP

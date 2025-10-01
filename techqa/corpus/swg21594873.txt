@@ -1,0 +1,38 @@
+Title: IBM Why do dots appear when I convert an FSR generated word document to PDF using PDF converter? - United States
+
+Text:
+PDF; PDF generation; dots in PDF TECHNOTE (FAQ)
+
+QUESTION
+ Why do dots appear when I convert an FSR generated Word document to PDF using a PDF converter or generate to PDF in FSR? 
+
+CAUSE
+Conversion and rendering can be an issue between products and technologies. Some have noted that the dots often appear near merged cells.
+
+ANSWER
+The dot issue is an example of this. 
+
+[/support/docview.wss?uid=swg21594873&amp;aid=1]
+
+(Screen shot of the extra dots appearing below the horizontal lines in a PDF file generated from Microsoft Word).
+
+The dot issue is a product issue that lies between Microsoft and Adobe. When Microsoft Word renders the document to PDF format there are visible artifacts produced in the PDF file.
+
+Here are the simple steps to reproduce the issue...
+· Create a table with multiple columns and rows in a Word document
+· Remove the border lines of all columns
+· Ensure that the width of border lines of all/some rows are set to any points that are not whole numbers (e.g. 0.5, 1.5, 2.25).
+· Save the file to PDF.
+· The dots will appear where the column border lines would have been if they were set.
+
+We understand that this dot issue can surface with FSR reports depending on the reporting option selected. There are FSR reporting options where the dot issue is not surfaced including....
+· PDF rendering using Aspose.Word (new rendering option introduced in FSR 6.5.1)
+· Rendering to Microsoft Word and optionally saving the file as XPS
+
+Alternatively the Word document can be converted to PDF using the FSR command-line console application which uses the latest PDF rendering option. This will yield the same results as if the document was rendered as PDF from FSR but gives the user the opportunity to alter the Word document as in intermediary step.
+
+Notes:
+· The dot issue does not appear in the newer PDF rendering option (Aspose) but it did in the prior rendering option which explains why customers of the past had this issue (any customer that has configured FSR to still use Wind2PDF will have this problem too).
+· The dot issue does not appear when generating the PDF from Microsoft Excel.
+
+* There may be some instances where you still see 'dots' after using the Aspose PDF conversion method, and generally, we are noting that if you print that PDF you will not see the same dots or artifacts. Also, if you zoom out of the pdf the dots will 'disappear' as well. Aspose is the default on FSR 6.6+ as of this writing.

@@ -1,0 +1,58 @@
+Title: IBM How to create an application data manager in GENTRAN:Server for UNIX 5.4 (SCI2033) - United States
+
+Text:
+STERLINGPRI TECHNOTE (FAQ)
+
+QUESTION
+ How to create an application data manager in GENTRAN:Server for UNIX 5.4 (SCI2033) 
+
+ANSWER
+1) The .ddf file which describes the application data being processed must have a field in the header record called TPCODE (all in caps)
+
+2) The input file (flat file) has to have the trading partner code in the header record, in the position as designated in the .ddf file
+
+The application data manager will use the .ddf file to find the trading partner code. It will process each partner's data according to this trading partner code, allowing the input data for different trading partners to be written into different file names or even different directories for processing by other data managers.
+
+3) Set up an application data manager with the following configuration record values:
+
+ROUTING_METHOD 2 (This will make the data manager process each set of input data separately, so data from several different trading partners in the filewill be processed separately)
+
+INPUT_FN_APP_TP 0 (This requires the input file to be named for the .ddf file)
+
+4) Create one or more configuration records for the trading partner(s) you wish to process, either manually or by using a pattern:
+For example:
+Trading Partner Code: TPCODE1
+Destination directory: destdir1
+Destination file name: destfile1
+
+Trading Partner Code: TPCODE2
+Destination directory: destdir2
+Destination file name: destfile2
+
+Trading Partner Code: TPCODE3
+Destination directory: destdir3
+Destination file name: destfile3
+
+
+
+HISTORICAL NUMBER
+ PRI36065 
+
+PRODUCT ALIAS/SYNONYM
+ 
+
+Fact
+
+
+GENTRAN:Server for UNIX 5.4 
+Data manager 
+Outbound 
+Application 
+data manager 
+SCI2033
+
+
+Goal
+
+
+How to create an application data manager in GENTRAN:Server for UNIX 5.4

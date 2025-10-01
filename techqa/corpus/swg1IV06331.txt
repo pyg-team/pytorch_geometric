@@ -1,0 +1,169 @@
+Title: IBM IV06331: SAP PROFILE IS CREATING ENDLESS LOOP WHEN LOGON - United States
+
+Text:
+  A FIX IS AVAILABLE
+Access Manager for Enterprise Single Sign-On, Enterprise Software Profile [http://www-01.ibm.com/support/docview.wss?uid=swg24029132]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Problem:
+   The User Enters the correct SAP Server, the Access Agent submits
+   the
+   credentials
+   You see SAP gives an error message (Password logon no longer
+   possible)
+   And Access Agent will try to re-logon like it is looping
+   
+   The SAP Application is configured in AccessAgent to
+   Automatically logon
+   
+   Changes the Default automatic sign-on password entry option to
+   Always
+   helps for new SAP credentials.
+   Most users change the password entry option in their wallet to
+   "Automatic logon" because of it's easier and faster to use...
+   
+   So this is not an solution we can use because we want the
+   Automatic
+   logon functionality.
+   
+   The profile just needs to check if a failed logon happen and ask
+   if the
+   user want to relogon or retry to logon again.
+   
+   An endless loop is not an acceptable situation!
+   
+   
+   Steps to Duplicate:
+   
+   Business Justification:
+   
+   Desired Behavior: For this to be integrated  into the profile so
+   that Customer does not get the loop
+   
+   Environment:
+   Windows Server 2008 R2
+   TAMESSO 8.1 FP3
+   Websphere 7.0.0.5
+   
+   Windows XP SP3
+   Access Agent 8.1.0.0.130
+   
+   SAP 7200.2.5.1057
+   
+   
+   
+   RTC 25862
+   
+   This is an issue related to another component in TAMESSO.
+   Therefore, that component has to be fixed before the profile can
+   'Prompt for relogin'.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  The SAP profile will enter a loop if the provided password is
+   incorrect and the password entry option is 'Automatic Logon'.
+   This is due to an AccessAgent defect (handled in a separate
+   APAR), hence the problem can not be addressed in the profile
+   itself. This temporary limitation has not been documented in the
+   profile release notes.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The reported SAP AccessProfile limitation will be documented in
+   a tech note.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV06331
+   
+   
+ * REPORTED COMPONENT NAME
+   SSO ACCESS AGEN
+   
+   
+ * REPORTED COMPONENT ID
+   5724V67AG
+   
+   
+ * REPORTED RELEASE
+   810
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-08-16
+   
+   
+ * CLOSED DATE
+   2011-08-26
+   
+   
+ * LAST MODIFIED DATE
+   2011-08-26
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

@@ -1,0 +1,28 @@
+Title: IBM Receiving the error "Rhapsody cannot create socket..." when starting IBM Rhapsody - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ I am receiving the error "Rhapsody cannot create socket..." when starting IBM Rhapsody. 
+
+CAUSE
+When more than one Rhapsody instance is started, the following message appears: "Rhapsody cannot create socket Check for another copy of Rhapsody running Animation will be disabled!!! Do you want to continue?" When using batch mode, this pop-up window stops the whole batch process until manually a button is pressed.
+
+ANSWER
+You could use the -noanimation command line option to avoid this pop-up message. Alternatively, if you require animation, you could use a script that would configure the animation port for multiple instances. The animation port is set in the rhapsody.ini file. When Rhapsody is started, it will use the animation port specified in the .ini file line: AnimationPortNumber=1234 You can create a copy of the rhapsdoy.ini file for each instance of Rhapsody that will be opened and have each file specify a different animation port. In your script, you could then overwrite the original rhapsody.ini file with a different copy for each instance of Rhapsody is started. 
+
+If you want the product to locate an open port automatically for animation, change the values of the following variables in the [General] section of the rhapsody.ini file: 
+
+ * AnimationPortNumber defines the port to try first 
+ * AnimationPortRange specifies the number of ports to test, in addition to AnimationPortNumber, before giving up
+
+
+
+These changes set up the search to start with the AnimationPortNumber and increment by one until either an open port is found or until the number of tries equals the value of AnimationPortRange + 1. 
+For example, if AnimationPortNumber = 5000 and AnimationPortRange = 100, The product first attempts to establish a connection on port 5000. If that fails, then it tries port 5001. If that fails, then it tries port 5002. This search continues until either an open port is found or until it finally tests port 5100. If port 5100 fails, then no animation can be performed for that instance of IBM® Rational® Rhapsody®.
+
+
+
+HISTORICAL NUMBER
+ 10355

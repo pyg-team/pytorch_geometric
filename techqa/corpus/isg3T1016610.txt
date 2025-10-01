@@ -1,0 +1,31 @@
+Title: IBM Job state displayed in Jobs tab do not match Job Data tab - United States
+
+Text:
+Job status - Job Data tab - Jobs - database trigger - ENABLE_EVENT_STREAM TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Job state displayed in Jobs tab do not match Job Data tab 
+
+RESOLVING THE PROBLEM
+PAC shows a job as Running or Finished in the Jobs tab, but shows the same job in Pending status in By Job tab.
+
+
+To fix the inconsistency ensure that you have enabled data logging for lsb.stream and reapply the trigger that makes PAC update job status:
+
+ 1.  Make sure data logging for lsb.stream is enabled by checking for ENABLE_EVENT_STREAM parameter in lsb.params file:
+    
+    $ grep ENABLE_EVENT_STREAM $LSF_ENVDIR/lsbatch/ /configdir/lsb.params 
+    ENABLE_EVENT_STREAM = y 
+    If it is not enabled, set ENABLE_EVENT_STREAM=y in lsb.params and reconfigure LSF:
+    $ badmin reconfig 
+    
+    
+ 2.  Reapply the trigger as shown below: 
+    
+    [root@lsfmasterh configdir]# mysql    Welcome to the MySQL monitor.  Commands end with ; or \g.    Your MySQL connection id is 2    Server version: 5.0.77 Source distribution    Type 'help;' or '\h' for help. Type '\c' to clear the buffer.    mysql> use pac    Reading table information for completion of table and column names    You can turn off this feature to get a quicker startup with -A    Database changed    mysql> drop trigger TRI_JOB_DATA_U;    mysql> DELIMITER |;    mysql> CREATE TRIGGER TRI_JOB_DATA_U    -> AFTER INSERT ON LSB_EVENTS    -> FOR EACH ROW    -> BEGIN    -> UPDATE JOB_DATA set JOB_STATUS_STR = NEW.JOB_STATUS_STR, END_TIME = NEW.END_TIME WHERE (NEW.JOB_STATUS_STR is not null) and CLUSTER_NAME = NEW.CLUSTER_NAME and JOB_ID = NEW.JOB_ID and JOB_ARRAY_INDEX = NEW.JOB_ARRAY_INDEX and JOB_STATUS_STR != NEW.JOB_STATUS_STR;    -> UPDATE JOB_DATA set EXEC_CWD = NEW.EXEC_CWD WHERE CLUSTER_NAME = NEW.CLUSTER_NAME and JOB_ID = NEW.JOB_ID and JOB_ARRAY_INDEX = NEW.JOB_ARRAY_INDEX and NEW.EVENT_TYPE = 'JOB_EXECUTE';    -> UPDATE JOB_DATA set EXEC_HOSTS = NEW.EXEC_HOSTS, START_TIME = NEW.EVENT_TIME  WHERE CLUSTER_NAME = NEW.CLUSTER_NAME and JOB_ID = NEW.JOB_ID and JOB_ARRAY_INDEX = NEW.JOB_ARRAY_INDEX and NEW.EVENT_TYPE = 'JOB_START';    -> END;    -> |;    Query OK, 0 rows affected (0.00 sec)    mysql> DELIMITER ;    mysql> quit    
+    
+    
+
+ 
+
+Cross reference information Segment Product Component Platform Version Edition IBM Spectrum Computing IBM Spectrum LSF Application Center

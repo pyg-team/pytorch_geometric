@@ -1,0 +1,183 @@
+Title: IBM IV90338: ADD PROBE WATCH EVENT FOR MASTER SLAVE TRANSITION IN PEER TO PEER - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Tivoli Netcool/OMNIbus 7.4.0 Fix Pack 14, 7.4.0-TIV-NCOMNIbus-FP0014 [http://www-01.ibm.com/support/docview.wss?uid=swg24043837]
+Tivoli Netcool/OMNIbus 7.4.0 Fix Pack 15, 7.4.0-TIV-NCOMNIbus-FP0015 [http://www-01.ibm.com/support/docview.wss?uid=swg24043958]
+Tivoli Netcool/OMNIbus 8.1.0 Fix Pack 15, 8.1.0-TIV-NCOMNIbus-FP0015 [http://www-01.ibm.com/support/docview.wss?uid=swg24044023]
+Tivoli Netcool/OMNIbus 7.4.0 Fix Pack 16, 7.4.0-TIV-NCOMNIbus-FP0016 [http://www-01.ibm.com/support/docview.wss?uid=swg24044022]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The Mode is internal to the probe, and is one of "master",
+   "slave", or
+   "standard" if not using failover.
+   
+   Summarizing what I discussed in a chat with Steven, this is the
+   proposed fix:
+   
+   1. when master and slave lose contact with each other, the slave
+   is
+   going to change its internal mode to "master" because it thinks
+   the
+   master failed
+   2. I plan on adding a probewatch event for when the mode changes
+   from
+   "master" to "slave" or vice versa (Core OMNIbus APAR requested)
+   3. I intend for the customer to use the probewatch event to
+   clear the
+   slave events when the slave probe mode changes back to "slave"
+   (i.e.
+   they reestablish contact)
+   
+   This is the simplest and most customizable solution for them -
+   they can
+   handle the probewatch event however they want in their rules and
+   triggers in step 3.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  The Local Fix is to Manually Remove Extra Events Created by the
+   Ping Probe
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * Probes running in slave mode in a peer-to-peer probe         *
+   * failover configuration                                       *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * Probes running in slave mode cache, and then discard all     *
+   * alerts, including ProbeWatch alerts. The ProbeWatch alerts   *
+   * report useful status information about a particular probe.   *
+   * Therefor the suppression of ProbeWatch alerts result in      *
+   * useful information being lost. For example, if a slave probe *
+   * is struggling to read its rules file, the end user is not    *
+   * informed about it.                                           *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Apply the maintenance vehicles listed in the Problem         *
+   * Conclusion.                                                  *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix for this APAR is contained in the following maintenance
+   package:
+       &#160;| fix pack | 7.4.0-TIV-NCOMNIbus-FP0014 &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160;
+   
+   &#160; &#160; &#160;| fix pack | 8.1.0-TIV-NCOMNIbus-FP0015
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV90338
+   
+   
+ * REPORTED COMPONENT NAME
+   NETCOOL/OMNIBUS
+   
+   
+ * REPORTED COMPONENT ID
+   5724O4800
+   
+   
+ * REPORTED RELEASE
+   740
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-11-03
+   
+   
+ * CLOSED DATE
+   2017-08-10
+   
+   
+ * LAST MODIFIED DATE
+   2017-12-15
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   NETCOOL/OMNIBUS
+   
+   
+ * FIXED COMPONENT ID
+   5724O4800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R740 PSN
+   UP
+   
+   
+ * R740 PSY
+   UP
+   
+   
+ * R810 PSN
+   UP
+   
+   
+ * R810 PSY
+   UP

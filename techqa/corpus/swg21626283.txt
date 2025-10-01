@@ -1,0 +1,50 @@
+Title: IBM Installation Manager does not restart after you update to a later version - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ You update IBM Installation Manager from version 1.6.1 or earlier to version 1.6.2. After the update completes, Installation Manager does not restart automatically. The restart of Installation Manager fails with the error:
+"An error has occurred. See the log file
+/opt/IBM/InstallationManager/eclipse/configuration/log_file_name.log." 
+
+SYMPTOM
+This issue occurs when the following steps are taken: 
+
+1. Install Installation Manager version 1.6.1 or earlier.
+2. Start the installed instance of Installation Manager.
+3. Go to File > Preferences. 
+
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+
+4. Click Install. 
+5. You are prompted to update Installation Manager to a later version. Click Yes. 
+6. After the update completes, you are prompted to restart Installation Manager. Click OK. Installation Manager updates to the later version but does not restart. In the log file, you see messages similar to the following entries: 
+
+!MESSAGE Bundle org.eclipse.equinox.launcher.gtk.aix.ppc_1.1.100.vYYYYMMDD-1822 [610] was not resolved.
+!SUBENTRY 2 org.eclipse.equinox.launcher.gtk.aix.ppc 2 0 YYYY-MM-DD 13:56:26.647 
+!MESSAGE Platform filter did not match: (& (osgi.ws=gtk) (osgi.os=aix) (osgi.arch=ppc))
+
+CAUSE
+Installation Manager version 1.6.2 uses the GTK window system. Installation Manager versions 1.6.1 and earlier use the Motif window system. Because of differences in the window systems, a restart does not occur after Installation Manager version 1.6.2 is installed. 
+
+
+
+RESOLVING THE PROBLEM
+To work around this issue, manually start Installation Manager after the update completes. 
+
+For information about installing required GTK system libraries, see Required gtk libraries for Installation Manager on AIX [http://www-01.ibm.com/support/docview.wss?uid=swg21631478] and Required gtk libraries for Installation Manager on HP-UX Itanium [http://www-01.ibm.com/support/docview.wss?uid=swg21634676]. 
+
+
+
+RELATED INFORMATION
+#Required gtk libraries for Installation Manager on HP-U [http://www.ibm.com/support/docview.wss?uid=swg21634676]
+Required gtk libraries for Installation Manager on AIX [http://www.ibm.com/support/docview.wss?uid=swg21631478]

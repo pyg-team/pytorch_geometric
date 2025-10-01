@@ -1,0 +1,153 @@
+Title: IBM Security Bulletin: Vulnerability in IBM Java SDK affects IBM® DB2® LUW (CVE-2015-7575) - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ There is a vulnerability in IBM® SDK Java™ Technology Edition, Version 6.0 and 7.0 that is used by DB2 LUW. This vulnerability, commonly referred to as “SLOTH”, was disclosed as part of the IBM Java SDK updates in January 2016. 
+
+VULNERABILITY DETAILS
+CVEID: CVE-2015-7575 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-7575]
+DESCRIPTION: The TLS protocol could allow weaker than expected security caused by a collision attack when using the MD5 hash function for signing a ServerKeyExchange message during a TLS handshake. An attacker could exploit this vulnerability using man-in-the-middle techniques to impersonate a TLS server and obtain credentials. This vulnerability is commonly referred to as “SLOTH”. 
+
+CVSS Base Score: 7.1
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/109415 [https://exchange.xforce.ibmcloud.com/vulnerabilities/109415] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:N/AC:L/PR:N/UI:R/UI:U/C:H/I:L/A:N) 
+
+AFFECTED PRODUCTS AND VERSIONS
+Customers who have Java stored procedures using Secure Sockets Layer (SSL) API from IBM JDK are affected. 
+
+All fix pack levels of IBM DB2 V9.7, V10.1 and V10.5 editions listed below and running on AIX, Linux, HP, Solaris or Windows are affected. 
+
+IBM® DB2® Express Edition
+IBM® DB2® Workgroup Server Edition
+IBM® DB2® Enterprise Server Edition
+IBM® DB2® Advanced Enterprise Server Edition
+IBM® DB2® Advanced Workgroup Server Edition
+IBM® DB2® Connect™ Application Server Edition 
+IBM® DB2® Connect™ Enterprise Edition
+IBM® DB2® Connect™ Unlimited Edition for System i® 
+IBM® DB2® Connect™ Unlimited Edition for System z®
+
+IBM® DB2® pureScale™ Feature for Enterprise Server Edition, V9.8, running on AIX or Linux is affected. 
+
+REMEDIATION/FIXES
+The recommended solution is to apply the appropriate fix for this vulnerability. 
+
+The fix for this vulnerability is in latest version of IBM JDK. Customers running any vulnerable fixpack level of an affected Program, V9.7, V9.8, V10.1 or V10.5 can download the latest version of IBM JDK from Fix Central [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~Information%2BManagement&product=ibm/Information+Management/DB2&release=All&platform=All&function=fixId&fixids=*Java*&includeSupersedes=0].
+
+Refer to the table below to determine the IBM JDK level required. Then follow the instructions below to perform the JDK installation.
+
+
+
+
+Platform 10.5.x JDK Version 10.1.x JDK Version 9.8.x JDK Version 9.7.x JDK Version AIX64 7.0.9.30 7.0.9.30 6.0.16.20 6.0.16.20 SUN SPARC 64 7.0.9.30 7.0.9.30 N/A 6.0.16.20 SUN AMD64/EM64T 7.0.9.30 7.0.9.30 N/A 6.0.16.20 HPIPF64 7.0.9.30 6.0.16 .20 N/A 6.0.16.20 Linux IA32 7.0.9.30 7.0.9.30 N/A 6.0.16.20 Linux PPC64LE 7.1.3.30 N/A N/A N/A Linux PPC64 7.0.9.30 7.0.9.30 N/A 6.0.16.20 Linux S390 64-bit 7.0.9.30 7.0.9.30 N/A 6.0.16.20 Linux AMD64/EM64T 7.0.9.30 7.0.9.30 6.0.16.20 6.0.16.20 Windows IA32 7.0.9.30 [http://www-933.ibm.com/support/fixcentral/swg/doSelectFixes?options.selectedFixes=7.0.9.30-JavaSE-SDK-Windowsx8632&continue=1] 7.0.9.30 N/A 6.0.16.20 Windows x86-64 7.0.9.30 7.0.9.30 N/A 6.0.16.20 Inspur K-UX 6.0.16.20 N/A N/A N/A 
+Instruction for IBM JDK Installation on UNIX 
+1) Create a new temporary JDK directory, i.e. jdk64, to store the extracted install files. 
+
+2) Run the following command to extract all the files from the IBM JDK install image tar file into the temporary JDK directory created in step 1 above. 
+
+tar -xvf <IBM JDK install image tar file> -C jdk64 
+
+3) Stop all DB2 instances for the installation. 
+
+4) As root user, create a new JDK directory. 
+
+Create a new JDK directory jdk64 under /opt/IBM/db2. 
+E.g. 
+mkdir /opt/IBM/db2/jdk64 
+
+5) As root user, copy the extracted files from the temporary JDK directory created in step 1 to the new JDK directory. 
+
+E.g. 
+cp -R <Temporary JDK directory>/* /opt/IBM/db2/jdk64/ 
+
+All the files in the /opt/IBM/db2/jdk64/ directory should have r-x permission. 
+
+6) Change the group and owner for all the files in the new JDK directory to bin. 
+E.g. 
+
+chgrp -R bin /opt/IBM/db2/jdk64/ 
+chown -R bin /opt/IBM/db2/jdk64/ 
+
+7) Configure DB2 to use the new JDK. 
+
+E.g. 
+db2 update dbm cfg using JDK_PATH /opt/IBM/db2/jdk64/ 
+
+
+Instruction for IBM JDK Installation on Windows 
+1) Stop all DB2 instances 
+
+2) Go to the DB2 installation directory 
+E.g 
+C:\Program Files (x86)\IBM\SQLLIB\java\jdk 
+
+Rename the following folders: 
+ * bin to bin_old 
+ * include to include_old 
+ * lib to lib_old 
+ * properties to properties_old 
+ * jre to jre_old
+
+This might not work as you might get the error of folder in-use. If that happens, try the following steps: 
+ * cd to C:\Program Files (x86)\IBM\SQLLIB\java\jdk\jre folder 
+ * rename bin to bin_old 
+ * copy lib as lib_old 
+ * cd to lib directory, delete all the files except the fonts folder (which might be held by windows svchost.exe process and might not be renamed)
+
+
+3) Unzip the new java files and copy all the extracted java files under the jdk directory. 
+
+
+Notes: 
+1) With this update, the metadata of the new JDK is not being recorded with the installer. Hence, for fix pack update in the same installation path, execution of the db2val utility (i.e. the tool that validate files laid down by the DB2 installer at the system level, instance level, or database level after new installation) may fail . Fix pack update to new installation path is not affected. 
+
+2) Uninstall will not be able to remove the jdk64 and jdk64_old folder, user will have to remove it manually. WORKAROUNDS AND MITIGATIONS
+For CVE-2015-7575: 
+
+Users of Java 7 and later can address the issue by updating the java.security file as follows (both steps are required). The java.security file can be found in the following directory: 
+
+Windows:
+<DB2 Installation Path >\java\jdk\jre\lib\security\java.security
+
+Linux/Unix:
+/opt/IBM/db2/jdk64/jre/lib/security/java.security 
+
+ * Add MD5 to the jdk.certpath.disabledAlgorithms property e.g. jdk.certpath.disabledAlgorithms=MD2, RSA keySize < 1024, MD5 
+   
+   
+ * Add MD5withRSA to the jdk.tls.disabledAlgorithms property e.g. jdk.tls.disabledAlgorithms=SSLv3, RC4, DH keySize < 768, MD5withRSA
+   
+   
+
+
+Java 6 requires code changes in the JSSE component in addition to the java.security file modifications, so upgrading JDK is the only solution. GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v3 Guide [http://www.first.org/cvss/user-guide] 
+On-line Calculator v3 [http://www.first.org/cvss/calculator/3.0] 
+
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] 
+
+ACKNOWLEDGEMENT
+CVE-2015-7575 was reported to IBM by Karthikeyan Bhargavan at INRIA in Paris, France 
+
+CHANGE HISTORY
+ February 9, 2016 :Original version published
+March 16, 2016: Updated with Java fix info
+February 2, 2017: Update Unix/Linux upgrade instructions. 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Information Management DB2 Connect 9.7, 10.1, 10.5

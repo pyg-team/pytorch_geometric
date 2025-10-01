@@ -1,0 +1,67 @@
+Title: IBM How to configure Rulerunner Web Service remote file access with IBM Datacap Taskmaster Capture - United States
+
+Text:
+wrrs remote file access permissions TECHNOTE (FAQ)
+
+QUESTION
+ How can the Rulerunner Web Service be configured so that it can access the image and data files as required by the application Rules? 
+
+CAUSE
+Rulerunner Web Service (WRRS) requires read and write access to the image and data files that the Rules work on. If these files are located on a local file volume on the WRRS computer, it is sufficient that the local ASP.NET account can access them. If the files reside on another computer, the account used by ASP.NET must be configured to explicitly grant it access to the files.
+
+ANSWER
+Resolution 
+
+There are two alternative methods. ASP.NET can be configured to use any domain account that is valid on both computers (method 1), or local ASP.NET accounts can be set up on both computers with identical passwords (method 2).
+
+
+ * Method 1 – Run ASP.NET as a privileged Domain user:
+
+ 1. Edit the file C:\WINDOWS\Microsoft.NET\Framework\v2.0.50727\CONFIG\machine.config (If using a different version of DotNet Framework, modify the path as needed). 
+ 2. Locate the line <system.web> and the next line starting with <processModel … 
+ 3. Update the username and password in this line to reflect the desired domain account (see below for a way to encrypt this information). The line should now look like this:
+    <processModel autoConfig="true" enable="true" userName="MYDOMAIN\someAccount" password="someAccountPassword"/> 
+ 4. Save the changes to machine.config and quit the editor. 
+ 5. Verify that this domain account has permission to read, write, and create files in the batches folder where the data and image files are stored, and in the RRS folder where Rulerunner and Datacap Studio access rules and task profiles.
+
+ * Method 2 – Create mirrored local accounts for ASP.NET:
+
+ 1.  Login as an Administrator to the computer that hosts Rulerunner Web Service. 
+ 2.  Choose Start/Control Panel/User Accounts. 
+ 3.  Select the local ASP.NET account and click on Reset Password. 
+ 4.  Type a new password (twice) and note this password for future use, and then click OK twice. 
+ 5.  Edit the file C:\WINDOWS\Microsoft.NET\Framework\v2.0.50727\CONFIG\machine.config. 
+ 6.  Locate the line <system.web> and the next line starting with <processModel … 
+ 7.  Update the password in this line to the password entered in step 4. (see below for a way to encrypt this information). The line should now look like this:
+     <processModel autoConfig="true" enable="true" userName="ASPNET" password="newPassword"/> 
+ 8.  Save the changes to machine.config and quit the editor. 
+ 9.  Perform steps 1-4 on the file server computer where the Taskmaster batches will be stored. The password for the local ASP.NET account on this computer must match the password for the local ASP.NET account on the WRRS computer. 
+ 10. If the RRS folder where Rulerunner and Datacap Studio store rules and task profiles is on a third computer, perform steps 1-4 on that computer as well. 
+ 11. Verify that the local ASP.NET account has permission to read, write, and create files in the batches folder where the data and image files are stored, AND in the RRS folder where Rulerunner and Datacap Studio access rules and task profiles. 
+
+
+Encrypting Passwords 
+
+The settings in machine.config can reference encrypted registry keys. To configure this, follow these steps: 
+ 1. Download from Microsoft the ASP.NET registry tool ASPNET_SETREG.EXE. 
+ 2. Run this program from a Command prompt with the following command line parameters:
+    aspnet_setreg -k:SOFTWARE\Datacap\WRRS\identity -u:"<domain\user>" -p:"<password>"
+    Example:
+    aspnet_setreg -k:SOFTWARE\Datacap\WRRS\identity -u:"aDomain\someUID" 
+    -p:"somePWD"
+    This will generate the registry key:
+    HKEY_LOCAL_MACHINE\SOFTWARE\Datacap\WRRS\identity\ASPNET_SETREG
+    with encrypted values for someUID and somePWD. 
+ 3. Run regedit and navigate to HKEY_LOCAL_MACHINE\SOFTWARE\Datacap\WRRS\identity. 
+ 4. Right click on it and go to Permissions... 
+ 5. On the security tab add the ASP.NET account (for method 2, otherwise use the domain account used for Method 1) with read permissions and make sure that these settings are copied (in advanced settings) to all child objects. This will allow the ASP.NET user to access these values. 
+ 6. Edit the machine.config file as described in Method 1 or Method 2, and modify the processModel line. However, instead of entering the actual account user name and password, use:
+    userName="registry:HKLM\SOFTWARE\Datacap\WRRS\
+    identity\ASPNET_SETREG,username"
+    password="registry:HKLM\SOFTWARE\Datacap\WRRS\
+    identity\ASPNET_SETREG,password"
+
+
+Troubleshooting 
+
+If the batch folder is created and tasks can create logs, but Actions and Rules are not able to access the files, examine the Event Viewer, Security log on the computer where the files are located. Any failures involving the ASP.NET account will indicate the problem.

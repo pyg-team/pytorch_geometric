@@ -1,0 +1,30 @@
+Title: IBM Dynamic Problem Determination Tool for WebSphere Message Broker - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ If you have a problem in WebSphere Message Broker (WMB) with Broker startup you now have a new tool in your toolbox that will help you resolve your problem more quickly and help you understand the reasons for the problem so you can avoid it in the future. 
+
+RESOLVING THE PROBLEM
+The new Dynamic Problem Determination Tool for WebSphere Message Broker offers a quick and informative way to find the solution to your problem. 
+
+Check out this new Tool at - 
+
+
+
+ * Dynamic Problem Determination Tool for WebSphere Message Broker V8 [https://www.ibm.com/developerworks/community/blogs/c7e1448b-9651-456c-9924-f78bec90d2c2/entry/try_a_dynamic_guide_to_help_with_troubleshooting_message_broker?lang=en]
+
+
+We would love to hear your input and your feedback - 
+
+ * What other areas would you like to see in this Tool ? 
+ * Do you find this tool helpful ? 
+
+
+Simply add your comments in the "Comments" box either at the bottom or right hand side of this page.
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ WMB MB WebSphere Message Broker IBM Integration Bus IIB IBMIB MQ Integrator WBIMB WBI-MB MQSI WMQI

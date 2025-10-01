@@ -1,0 +1,138 @@
+Title: IBM PM82877: WebSphere Virtual Enterprise V8.5 missed a jvm setting "agentlib:HeapDetect" - United States
+
+Text:
+  A FIX IS AVAILABLE
+8.5.0.2: WebSphere Application Server V8.5 Fix Pack 2 [http://www-01.ibm.com/support/docview.wss?uid=swg24034672]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  WebSphere Virtual Enterprise V8.5 missed a JVM setting
+   "agentlib:HeapDetect" in the server.xml of On-Demand Router
+   (ODR) and Virtual Enterprise server templates.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  All users of IBM WebSphere Application      *
+   *                  Server on zOS running Virtual Enterprise    *
+   *                  ODR server WVE dynamic cluster.             *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Missed a JVM setting                    *
+   *                      "agentlib:HeapDetect" in server.xml     *
+   *                      of ODR and WVE server templates.        *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   To fix this issue in a created profile on zOS a server
+   start post install config action is required to update the
+   configuration and set "agentlib:HeapDetect".
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A server start post install config action is added to
+   the zOS V8.5.0.2 fixpack to update the configuration and set
+   "agentlib:HeapDetect".
+   
+   The fix for this APAR is currently targeted for inclusion in
+   fix pack 8.5.0.2.  Please refer to the Recommended Updates
+   page for delivery information:
+   http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM82877
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBS APP SERV N
+   
+   
+ * REPORTED COMPONENT ID
+   5724H8800
+   
+   
+ * REPORTED RELEASE
+   850
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-02-15
+   
+   
+ * CLOSED DATE
+   2013-03-06
+   
+   
+ * LAST MODIFIED DATE
+   2013-03-06
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBS APP SERV N
+   
+   
+ * FIXED COMPONENT ID
+   5724H8800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R850 PSY
+   UP

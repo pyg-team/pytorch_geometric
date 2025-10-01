@@ -1,0 +1,222 @@
+Title: IBM PK57434: ABEND04E RC00C90101 DSNICPOS ERQUAL53A3 - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Abend04e rc00c90101 in dsnicpos at erqual53a3 vrace53a3 53a3 ,
+   and ctclue 1 while doing a fetch from a result set cursor at a
+   different site. The cursor has been declared as a rowset cursor
+   and a positioned fetch request has been issued prior to leaving
+   the stored procedure .
+   ( Insensitive scroll cursor with rowse positioning with return )
+   Save flow:
+   DSNXERD -> DSNXERT -> DSNXEBR -> DSNXRFN -> DSNICPOS
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All DB2 R810 and R910 Users.                 *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: An ABEND04E RC00C90101 occurs at        *
+   *                      DSNICPOS:53A3 when fetching a row from  *
+   *                      a ROWSET using a SCROLLABLE cursor      *
+   *                      inside a stored procedure from a        *
+   *                      distributed client.                     *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   An ABEND04E rc00C90101 occurs at location DSNICPOS:53A3 when a
+   client application fetches a row from a ROWSET using a
+   scrollable cursor inside a stored procedure from a distributed
+   environment.
+   
+   The following example illustrates the problem.
+   
+   (1). Create a table and insert 4 rows.
+   
+        CREATE TABLE TST (NAME CHAR VARYING(40),
+                          EMPNO CHAR VARYING(20));
+   
+   (2). Create a stored procedure with a scrollable cursor.
+   
+        CREATE PROCEDURE CTEST ()
+          LANGUAGE SQL
+          DYNAMIC RESULT SETS 1
+          WLM ENVIRONMENT WLMENV1
+         BEGIN
+          DECLARE CS1 INSENSITIVE SCROLL CURSOR
+           WITH ROWSET POSITIONING
+           WITH RETURN FOR
+           SELECT NAME FROM TST
+           FETCH FIRST 3 ROWS ONLY;
+   
+           OPEN CS1;
+           FETCH AFTER FROM CS1;
+           FETCH BEFORE FROM CS1;
+         END;
+   
+   (3). Create a simple JAVA application to call the CTEST stored
+        procedure, then fetch rows.
+   
+        // Code to make a remote database connection here
+   
+        try{
+            java.sql.CallableStatement stmt =
+                          con.prepareCall("{CALL CTEST()}");
+            stmt.execute(); // execute the call SP statement
+   
+            // get the result set from SP
+            ResultSet rs = stmt.getResultSet();
+            while(rs.next())
+            {
+              String s = rs.getString(1);
+              System.out.println("Name: " + s);
+            }
+          }catch (SQLException e) {
+              System.out.println(e.getMessage());
+         }
+   
+        // Code to close a remote database connection
+        // and clean up here.
+   
+   In this example, after 3 rows have been fetched from ResultSet,
+   and an SQLCODE100 or SQLCODE +100 is returned from DB2, an
+   ABEND04E occurs if an additional fetch is requested from the
+   client.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  DB2 code has been modified to correct the problem causing the
+   ABEND to occur.
+   
+   Please note.
+   With the fix for JCC T4 Driver included with DB2 LUW Version 9
+   Fixpack 5, with or without PK57434, the reported problem will
+   no longer occur.
+   
+   Without the fix for JCC T4 Driver included, and with PK57434
+   applied, the ABEND will no longer occur.
+   
+   We recommend having both fixes applied although having at least
+   one of the listed fixes will prevent the ABEND from occurring.
+   
+   Additional Keywords: SQLSCROLL SQLSTOREDPROC  SQLSP
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK57434
+   
+   
+ * REPORTED COMPONENT NAME
+   DB2 OS/390 & Z/
+   
+   
+ * REPORTED COMPONENT ID
+   5740XYR00
+   
+   
+ * REPORTED RELEASE
+   810
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2007-12-03
+   
+   
+ * CLOSED DATE
+   2008-01-24
+   
+   
+ * LAST MODIFIED DATE
+   2008-03-03
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UK33222 UK33223
+   
+   
+
+MODULES/MACROS
+ *  DSNXEBR
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   DB2 OS/390 & Z/
+   
+   
+ * FIXED COMPONENT ID
+   5740XYR00
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R810 PSY UK33222 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK33222]
+   UP08/02/09 P F802
+   
+   
+ * R910 PSY UK33223 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK33223]
+   UP08/02/09 P F802
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

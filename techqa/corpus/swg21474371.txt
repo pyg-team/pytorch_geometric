@@ -1,0 +1,36 @@
+Title: IBM WebSphere Process Server profile creation process fails with JDBC driver does not exist error messsage - United States
+
+Text:
+CWLDB0555E:; CWLDB0543I:; dbJDBCClasspath; manageprofile.sh TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Setting the dbJDBCClasspath paremeter to the Java archive (JAR) file instead of the expected directory results in the following error: CWLDB0555E: CWLDB0543I: The location of JDBC driver files "/app/Oracle/ojdbc6.jar" do not exists or not valid. 
+
+SYMPTOM
+The manageprofiles.sh --dbJDBCClasspath /app/Oracle/ojdbc6.jar command produces an error even though the file is valid and readable. 
+
+The following validation errors are present with the command-line arguments:
+
+dbJDBCClasspath: CWLDB0555E: CWLDB0543I: The location of JDBC driver files "/app/Oracle/ojdbc6.jar" do not exists or not valid.
+
+
+Starting the profile might also report Derby (default) database errors in the SystemOut.log file. For example: 
+
+[date] 0000000a ContainerHelp E WSVR0501E: Error creating component com.ibm.wbiserver.commondb.impl.CommonDBComponentImpl@2ad965ea
+com.ibm.ws.exception.RuntimeWarning: Common database is not configured or is not available
+...
+Caused by: org.apache.derby.client.am.DisconnectException: Insufficient data while reading from the network - expected a minimum of 6 bytes and received only -1 bytes. The connection has been terminated.
+
+
+CAUSE
+The parameter requires a directory.
+
+
+RESOLVING THE PROBLEM
+Do not include the jdbc .jar file name. Set the -dbJDBCClasspath parameter to the directory location of the Java database connectivity (JDBC) driver class path files.
+
+RELATED INFORMATION
+ Information Center [http://publib.boulder.ibm.com/infocenter/dmndhelp/v7r0mx/index.jsp?topic=/com.ibm.websphere.wps.doc/doc/cins_manageprofiles_parms_db.html]
+Oracle cluster [http://www.ibm.com/support/docview.wss?uid=swg27018621]
+Database design tool example [http://publib.boulder.ibm.com/infocenter/dmndhelp/v7r0mx/index.jsp?topic=/com.ibm.websphere.wps.doc/doc/cins_db_ddt_example.html]
+Configuring with Oracle [http://publib.boulder.ibm.com/infocenter/dmndhelp/v7r0mx/index.jsp?topic=/com.ibm.websphere.wps.doc/doc/cins_db_ddt_example.html]

@@ -1,0 +1,27 @@
+Title: IBM Unable to authenticate with CLM application when LDAP referral parameter is set to true - United States
+
+Text:
+ldap; authentication; global catalog port; authentication; jts; clm; SEVERE: Exception performing authentication Throwable occurred: javax.naming.PartialResultException [Root exception is javax.naming.CommunicationException: xxx.com:389 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Unable to authenticate with IBM Rational Collaborative Lifecycle Management (CLM) applications when LDAP referral parameter is set to true. 
+
+SYMPTOM
+ 
+
+Your CLM applications are configured to run on Apache Tomcat to authenticate with LDAP user ids in Microsoft Windows Active directory successfully, and users are able to login with their LDAP IDs. However, you sometimes notice that the following severe authentication error is reported and whenever it does, your users are NOT able to login to the CLM applications anymore. They will receive an invalid user id or password error from the UI. 
+
+ 
+
+SEVERE: Exception performing authentication Throwable occurred: javax.naming.PartialResultException [Root exception is javax.naming.CommunicationException: xxx.com:389
+
+CAUSE
+ 
+
+The LDAP server is configured to re-direct connection requests to other LDAP servers, the referral parameter has to be set to true. However, there is some limitation in the Tomcat application server when getting referrals, whereby, if the LDAP server connection is through the default LDAP port (389), the above severe error will be thrown to the application server log. The consequence is that LDAP users will not be able to login.
+
+
+RESOLVING THE PROBLEM
+ 
+
+To resolve the problem, change the LDAP server connection port to the global catalog port (3268 by default). This will avoid the serve authentication error when connecting through the default 389 port, thus avoiding the login issue.

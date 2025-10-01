@@ -1,0 +1,164 @@
+Title: IBM IV02036: NEED DOCUMENTATION ON PROBE SUPPORTING SPECTRUM V9.X - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Spectrum Corba v9 probe need to update for probe supporting
+   Spectrum version 9.x instead of fixed 9.0.
+   
+   User now will required to copy the Spectrum dependencies jars to
+   $OMNIHOME/probes/java/nco_p_spectrum_corba_v9/ before running
+   the probe.
+   
+   Spectrum jars now not packaged with the probe anymore.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  NA
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * All users of the IBM Tivoli Netcool/OMNIbus Probe for CA     *
+   * Spectrum 9.0 (CORBA).                                        *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * The current published version of the probe reference guide   *
+   * does not state that the probe supports 9.x versions of CA    *
+   * Spectrum. Running the probe with a 9.x version of CA         *
+   * Spectrum also requires the user to copy several .jar         *
+   * dependencies from their CA Spectrum installation directory   *
+   * to the probe's Java directory.                               *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * The updated product documentation will be published with the *
+   * next release of the probe.                                   *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The -Summary- and -Setting environment variables- sections of
+   the probe reference guide will be updated.
+   
+   1) The -Summary section will be updated to state that the probe
+   supports 9.x versions of CA Spectrum. The additional .jar files
+   currently listed as supplied with the probe will be removed.
+   
+   2) The -Setting environment variables- section will be updated
+   as follows:
+   
+   The probe requires access to the following .jar files that are
+   supplied with CA Spectrum and installed to the  <$SPECROOT>/lib
+   directory:
+   - jsafeJCEFIPS.jar
+   - global9<x>.jar
+   - sanct6.jar (only required for probe installations on Linux
+   operating systems)
+   - sanctuary.jar (only required for probe installations on Linux
+   operating systems)
+   - ssorb9<x>.jar
+   - ssorbutil9<x>.jar
+   - util9<x>.jar
+   - utilapp9<x>.jar
+   - utilnet9<x>.jar
+   - utilsrv9<x>.jar
+   - vbhelper9<x>.jar
+   
+   where <$SPECROOT> represents the main directory where CA
+   Spectrum is installed and 9<x> is the version of CA Spectrum you
+   are running.
+   
+   Before running the probe, you must copy these files to the
+   following directory:
+   $OMNIHOME/probes/java/nco_p_spectrum_corba_v9/
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV02036
+   
+   
+ * REPORTED COMPONENT NAME
+   APRISMA SPECTRU
+   
+   
+ * REPORTED COMPONENT ID
+   5724P09AS
+   
+   
+ * REPORTED RELEASE
+   100
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-06-16
+   
+   
+ * CLOSED DATE
+   2011-06-23
+   
+   
+ * LAST MODIFIED DATE
+   2011-06-23
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+Publications Referenced SC27272201 FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

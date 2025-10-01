@@ -1,0 +1,39 @@
+Title: IBM SRVE0293E NewsEventServlet exception when trying to generate thumbnail during file upload - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+After installing IBMDocs2.0 CR1, when uploading a file, users cannot see its thumbnail without previewing it. There is a NewsEventServlet error in SystemOut.log like the following one: 
+
+[8/4/16 9:49:27:006 EDT] 000000f8 webapp E com.ibm.ws.webcontainer.webapp.WebApp logServletError SRVE0293E: [Servlet Error]-[NewsEventServlet]: java.lang.NullPointerException
+at java.util.regex.Matcher.getTextLength(Matcher.java:1151)
+at java.util.regex.Matcher.reset(Matcher.java:302)
+at java.util.regex.Matcher.<init>(Matcher.java:222)
+at java.util.regex.Pattern.matcher(Pattern.java:899)
+at com.ibm.concord.viewer.services.servlet.NewsEventServlet.doPost(NewsEventServlet.java:63) 
+at javax.servlet.http.HttpServlet.service(HttpServlet.java:595)
+at javax.servlet.http.HttpServlet.service(HttpServlet.java:668) 
+at com.ibm.ws.webcontainer.servlet.ServletWrapper.service(ServletWrapper.java:1232)
+at com.ibm.ws.webcontainer.servlet.ServletWrapper.handleRequest(ServletWrapper.java:781)
+at com.ibm.ws.webcontainer.servlet.ServletWrapper.handleRequest(ServletWrapper.java:480) 
+at com.ibm.ws.webcontainer.servlet.ServletWrapperImpl.handleRequest(ServletWrapperImpl.java:178) at com.ibm.ws.webcontainer.filter.WebAppFilterChain.invokeTarget(WebAppFilterChain.java:136) 
+at com.ibm.ws.webcontainer.filter.WebAppFilterChain.doFilter(WebAppFilterChain.java:97)
+at com.ibm.concord.viewer.filters.CacheControlFilter.doFilter(CacheControlFilter.java:78)
+at com.ibm.ws.webcontainer.filter.FilterInstanceWrapper.doFilter(FilterInstanceWrapper.java:195)
+at com.ibm.ws.webcontainer.filter.WebAppFilterChain.doFilter(WebAppFilterChain.java:91)
+at com.ibm.concord.viewer.lc3.auth.LotusConnectionsAuth.doFilter(LotusConnectionsAuth.java:290) 
+at com.ibm.concord.viewer.lc3.auth.LotusConnectionsAuth.doFilter(LotusConnectionsAuth.java:178) 
+at com.ibm.concord.viewer.platform.auth.AuthenticationComponentImpl.doFilter(AuthenticationComponentImpl.java:231)
+at com.ibm.concord.viewer.filters.SessionUserFilter.doFilter(SessionUserFilter.java:102)
+
+
+CAUSE
+The com.ibm.concord.viewer.lcfiles.daemon.jar file is not the latest one.
+
+
+
+RESOLVING THE PROBLEM
+ 
+
+ *  Log into the WebSphere console with your WAS admin account. Select Environment > Shared Libraries > ViewerDaemonLib. Get the [Classpath], for example, /home/LCData/shared/library/com.ibm.concord.viewer.lcfiles.daemon.jar. Back up the com.ibm.concord.viewer.lcfiles.daemon.jar file in [Classpath] and then remove it. Find the com.ibm.concord.viewer.lcfiles.daemon.jar in <Docs2.0 CR1 package>\ViewerLCCustomizeApp\ and then copy it to [Classpath]. Go to Applications > Application Types > WebSphere enterprise applications, and restart the News app.

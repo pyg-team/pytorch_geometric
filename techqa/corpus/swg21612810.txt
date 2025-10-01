@@ -1,0 +1,37 @@
+Title: IBM Unable to connect to IBM Business Monitor V8.0 on Red Hat Enterprise Linux 6.x - United States
+
+Text:
+monitor; unable connect; connect; connection; linux; redhat TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The IBM Business Monitor V8.0 server is running but users are unable to connect to it via a web browser. 
+
+SYMPTOM
+The startServer.log shows that the server has started: 
+
+ADMU3000I: Server server1 open for e-business; process id is 10943 
+
+ 
+
+The SystemOut.log shows that a FFDC Incident was emitted during startup along with exception message: 
+
+WSVR0501E: Error creating component com.ibm.ws.channelfw.secure.FirstChannelActions 
+
+java.lang.NoClassDefFoundError: com.ibmws.process.linuxutil.ThreadUtil (initialization failure) 
+
+ 
+
+The FFDC file shows:
+FFDC Exception:java.lang.NoClassDefFoundError SourceId:null ProbeId:1011 Reporter:com.ibm.ws.runtime.component.ContainerHelper@81c1141
+java.lang.NoClassDefFoundError: com.ibm.ws.process.linuxutil.ThreadUtil (initialization failure)
+Caused by: java.lang.UnsatisfiedLinkError: Ws60ProcessManagement (/opt/IBM/MonV8/cognos/bin64/libfreebl3.so: version `NSSRAWHASH_3.12.3' not found (required by /lib64/libcrypt.so.1))
+
+
+CAUSE
+The libfreebl3.so file shipped with Cognos V10.1.1 is not compatible with Red Hat Enterprise Linux 6.x. The IBM Business Monitor server fails to start because Cognos fails to start.
+
+
+RESOLVING THE PROBLEM
+Add the following like to the .profile, .bashrc, or appropiate login initialization script for the Cognos user account: 
+
+export LD_PRELOAD=/lib64/libfreebl3.so

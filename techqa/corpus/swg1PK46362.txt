@@ -1,0 +1,168 @@
+Title: IBM PK46362: MEMORY LEAK DETECTED - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  memory leak in JSP code
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: IBM WebSphere Application Server version     *
+   *                 6.0.2 users who make use of a lot of tags    *
+   *                 and have more users                          *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: An 'OutOfMemory' error is thrown for    *
+   *                      certain applications when the           *
+   *                      application is being tested for more    *
+   *                      users. This problem is due to the fact  *
+   *                      that the tag pool maintained by the     *
+   *                      JspEngine is not being cleaned up       *
+   *                      when threads are destroyed              *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   Given the default web container thread pool settings of a min:
+   10 threads and max: 50 threads, any workload that grows the
+   threads beyond 10, will result in these additional threads
+   being removed to get back down to the min of 10. The
+   creation/deletion cycle coupled with the fact that the JSP tag
+   pool does not listen for thread destroy events, causes any
+   caches created for these threads to remain forever, since the
+   only way to destroy the cache is to stop and start the
+   application. Eventually the heap size increases causing an
+   'OutOfMemory' condition and crashing the server
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The JspEngine now fixes the problem by having the tag pool
+   listen to thread destroyed events and clear up the tags for
+   the particular thread. This fix is already present in version
+   6.1 and higher.
+   The fix for this problem has been targetted for inclusion in
+   fixpack 6.0.2.23.
+   Please refer to the recommended updates page for delivery
+   information:
+   http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK46362
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSPH APP SERV
+   
+   
+ * REPORTED COMPONENT ID
+   5724J0800
+   
+   
+ * REPORTED RELEASE
+   60W
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2007-06-04
+   
+   
+ * CLOSED DATE
+   2007-06-15
+   
+   
+ * LAST MODIFIED DATE
+   2007-06-15
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  JSP
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBSPH APP SERV
+   
+   
+ * FIXED COMPONENT ID
+   5724J0800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R60A PSY
+   UP
+   
+   
+ * R60H PSY
+   UP
+   
+   
+ * R60I PSY
+   UP
+   
+   
+ * R60S PSY
+   UP
+   
+   
+ * R60W PSY
+   UP

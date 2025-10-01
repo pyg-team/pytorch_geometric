@@ -1,0 +1,48 @@
+Title: IBM Troubleshooting import failures during connector imports of very large amounts of metadata - United States
+
+Text:
+imam113relnotes TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When you import huge amount of metadata by using connectors in InfoSphere Metadata Asset Manager, imports can fail with "session time out" or "out of memory" errors. This can happen at varying stages of the import. 
+
+SYMPTOM
+The import might fail in the following ways: 
+
+ * During the import to staging area, with one of the following messages:  *  "Failed to receive response from the handler. Request timed out." "Java heap size/Out of Memory" 
+   
+   
+ * During the preview stage, with a session timeout or out-of-memory error.
+
+ * While sharing to the repository, with a session timeout or out-of-memory error.
+
+
+You can determine the type of error by viewing the SystemOut.log or messages.log of IBM WebSphere Application Server. For example, the default location for SystemOut.log is "IBM\WebSphere\AppServer\profiles\InfoSphere\logs\server1" and messages.log is "IBM\InformationServer\wlp\usr\servers\iis\logs" (this is valid only if IBM InfoSphere Information Server is deployed on IBM WebSphere Application Server Liberty). 
+CAUSE
+Errors can have the following causes: 
+
+
+ * Failed to receive response from the handler. Request timed out.
+   The connector is unable to import the metadata in the predefined amount of time. Connectors are configured by default to import all the metadata in single cycle of communication with the database within two minutes. That amount of time can be too short for very large imports. This issue is specific to connectors that support bulk import. 
+   
+ * Java heap size/Out of Memory
+   The connector and InfoSphere Metadata Asset Manager require increased WebSphere Application Server heap size.
+
+ * Session has expired/Session has timed out
+   By default, transaction timeout is set at two hours. The import can fail if that time exceeds. This error can also occur due to user inactivity during import. By default, inactive session timeout is set at one hour.
+
+RESOLVING THE PROBLEM
+To resolve these errors, take the following steps: 
+
+
+ * Failed to receive response from the handler. Request timed out.
+   Increase the timeout value for connectors and define how much metadata to import in one cycle of communication with the database.  * To increase the timeout value, use the following command: IBM/InformationServer/ASBServer/bin/iisAdmin.(sh/bat) -set -key cas.agent.timeout -value <time-in-secs> 
+    * To define the number of objects that are imported in one cycle, use the following command: IBM/InformationServer/ASBServer/bin/iisAdmin.(sh/bat) -set -key cas.import.batchsize -value <batchsize>
+      
+   
+   
+ * Java heap size/Out of Memory
+   Increasing the WebSphere Application Server heap size. At a minimum, allocate 4096 MB memory to the WebSphere java process for a large import. See the IBM WebSphere Application Server documentation for information on allocating more heap memory to the java process.
+   
+ * Session has expired/Session has timed out
+   See the following technote to resolve the error: http://www.ibm.com/support/docview.wss?uid=swg21512490 [http://www.ibm.com/support/docview.wss?uid=swg21512490]

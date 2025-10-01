@@ -1,0 +1,24 @@
+Title: IBM Navigator for i Monitors-Configuration and Setup - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How do I configure System and Message monitors in IBM Navigator for i? 
+
+CAUSE
+New function in IBM Navigator for i
+
+ANSWER
+The following is the link to the step by step process of creating System and Message Monitors. 
+
+https://www.ibm.com/developerworks/community/wikis/home?lang=en#!/wiki/IBM%20i%20Technology%20Updates/page/System%20Monitors [https://www.ibm.com/developerworks/community/wikis/home?lang=en#!/wiki/IBM%20i%20Technology%20Updates/page/System%20Monitors]
+
+**IBM Navigator for i does not have Job Monitors**
+
+The QINAVMNSRV job in the QSYSWRK subsystem is the monitor job that runs on the iSeries. 
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Operating System IBM i 7.3 Operating System IBM i 7.2 Operating System IBM i 7.1

@@ -1,0 +1,267 @@
+Title: IBM PM52877: 600 BACKWARDS MIGRATION FROM 710 AND COEXISTENCE WITH 710 - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS NEW FUNCTION.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Allow a V600 queue-manager backwards migration from V710, and
+   coexistence with a V710 queue-manager in a queue-sharing group.
+   .
+   Additional keywords:
+   MQ0710C/K
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All users of WebSphere MQ for z/OS Version 6 *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Enable backward migration to version 6  *
+   *                      after a queue manager has been started  *
+   *                      with version 7.1.0 code.                *
+   *                                                              *
+   *                      Enable version 6 and version 7.1.0      *
+   *                      queue managers to coexist in a queue    *
+   *                      sharing group.                          *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   This APAR provides the backward migration PTF referred to in the
+   MQ V7.1 InfoCenter section "z/OS: Planning for migration from
+   WebSphere MQ version 6.0 to WebSphere MQ version 7.1", mi67108.
+   
+   This APAR also provides the coexistence PTF, documented in the
+   MQ V7.1 InfoCenter section "z/OS: Queue sharing group
+   coexistence", mi21420.
+   
+   Attempting to restart a queue manager, which has been run with
+   version 7.1.0 libraries, at V6 without this PTF will result in
+   abnormal termination of the queue manager with reason code
+   00C90D01.
+   
+   When reverting to Version 6 after running a queue manager at
+   version 7.0.1 or 7.1.0 the following should be considered. (In
+   the following bullets, reference to V7 means the point is
+   applicable to backward migration from either V701 or V710)
+   
+   - Message CSQR034I will be issued when backward migration is
+     detected.
+   - AUTHINFO AUTHTYPE(OCSP) objects will not be visible at V6, but
+     will reappear (unless they have been deleted at V6) if the
+     queue manager is subsequently restarted at V7
+   - It will NOT be possible to backwards migrate to V6 from V7 if
+     the new functions available in V7 have been activated by the
+     new OPMODE parameter. Refer to the WebSphere MQ Version 7.1
+     infocenter section b
+     manager to version 6.0b
+     has been started with OPMODE=NEWFUNC then any attempt to
+     restart the queue manager at V6 will result in abnormal
+     termination of the queue manager with reason code 00C90D01.
+   - It is not possible to backward migrate a queue manager, newly
+     created at V7 to a prior release.
+   - A queue manager migrated forward to V7 'remembers' where it
+     was migrated from and it is only possible to fallback to that
+     'remembered' prior version.
+   - When backwards migrating from V7 to V6, any retained
+     publications or durable subscriptions on the
+     SYSTEM.RETAINED.PUB.QUEUE & SYSTEM.DURABLE.SUBSCRIBER.QUEUE
+     queues will be removed.
+   - TOPIC objects will not be visible at V6, but will reappear if
+     the queue manager is subsequently restarted at V7.
+   - QALIAS objects with TARGTYPE(TOPIC) will be deleted by the
+     backward migration process. Message CSQI968I will be issued
+     for each such QALIAS deleted by backward migration.
+   - Any messages MQPUT at V7 are stored in a new format
+     containing message properties. The backward migration process
+     will attempt to convert these into a format readable by V6.
+     Any message properties will be placed in an MQRFH2 structure
+     compatible with V6 JMS applications.
+     Messages CSQR965I, CSQI966I and CSQI967I will be issued for
+     each pageset which contains V7 format messages indicating the
+     success or failure of this backward migration process.
+     In the event of failure, CSQI966I is issued, and that pageset
+     is left offline at V6.
+   - The message conversion process is only possible if there are
+     no indoubt units of work during restart after reverting to
+     V6. If indoubt units of work are found at restart message
+     CSQR020I will provide information, and you will be prompted by
+     message CSQR021D to commit indoubt units of work.
+     If you choose not to commit indoubt units of work, V6
+     queue manager startup will be terminated with reason code
+     00D99104.
+   - The message conversion process can only be performed at queue
+     manager restart time. If an attempt is made to add a pageset,
+     which has been used in a V7 queue manager, after restart with
+     a DEFINE PSID command, then message CSQI969I will be issued
+     and the DEFINE PSID command will fail to add the pageset to
+     the V6 queue manager.
+   - The message conversion process is not able to convert messages
+     which have been either:
+     MQPUT at V7 and containing floating point properties when the
+     property has been the subject of a subscriber's selection
+     string.
+     or, MQPUT at V7 with properties provided from an MQSETMP API
+     with a CCSID not supported in an MQRFH2 header at V6.
+     If such messages are found, conversion of the pageset will be
+     terminated, message CSQI966I issued, and the pageset will be
+     left offline at V6.
+   - New object attributes introduced in V7 will not be present in
+     V6, and when you subsequently migrate to V7 they will be reset
+     to the default values for that release.
+   - Any CLUSTER TOPIC records found during V6 restart will be
+     removed from the SYSTEM.CLUSTER.REPOSITORY.QUEUE.
+   - Any commands relating to clustered topics found on the
+     SYSTEM.CLUSTER.COMMAND.QUEUE will be silently ignored and
+     removed from the queue.
+   - If the queue manager is a cluster repository queue manager,
+     then after backward migration, any other V7 queue managers in
+     the cluster will not receive information about new or changed
+     cluster topics or V7 attributes on clustered queues and queue
+     managers from this full repository.
+   - Clustered Alias Queues of Targtype(TOPIC) will be restored to
+     the cache even though the underlying object will have been
+     removed by the data manager. The effect of this is that a
+     queue manager may forward messages to a remote QM which have
+     no meaningful destination on arrival. This is a limitation and
+     should be avoided by deleting any such aliases prior to
+     backwards migration, otherwise these messages will either be
+     placed on the dead letter queue where available, or cause the
+     cluster channel to back out and stop processing.
+   - If you are using the MQ Explorer to administer your queue
+     manager then after migration between releases the following
+     Explorer actions must be performed.
+     o Remove the migrated z/OS queue manager
+       (From the V6 Explorer, the queue manager must be hidden
+        before it can be removed)
+     o Add Remote Queue Manager
+     These actions ensure that the Explorer's cached view of queue
+     manager attributes, including the command level are correctly
+     refreshed after the migration.
+   
+   In addition to the above points when backward migrating from
+   V710 to version 6 the following points apply:
+   
+   - CHLAUTH objects are stored on the SYSTEM.CHLAUTH.DATA.QUEUE.
+     They will not be visible at V6 but will reappear when the
+     queue manager is subsequently restarted at V710
+   
+   This APAR also provides coexistence aspects when migrating queue
+   sharing groups to V710.
+   
+   The coexistence aspects of this APAR allow a V6 queue
+   manager in a queue sharing group to handle DISPLAY command
+   responses from a V7 queue manager that contain new
+   attributes that exist only in V7.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM52877
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ Z/OS V6
+   
+   
+ * REPORTED COMPONENT ID
+   5655L8200
+   
+   
+ * REPORTED RELEASE
+   000
+   
+   
+ * STATUS
+   CLOSED UR1
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-11-25
+   
+   
+ * CLOSED DATE
+   2012-03-05
+   
+   
+ * LAST MODIFIED DATE
+   2012-04-25
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UK76721
+   
+   
+
+MODULES/MACROS
+ *     CSQECONN CSQIECUR CSQIERS3 CSQIINTC CSQIPUTO
+   CSQOKYTB CSQOXATR CSQUDEFS CSQUXPRM CSQXRFIC CSQ45BPL CSQ45GEX
+   CSQ5AUOB CSQ5PLNU CSQ5PQSG CSQ5ROBJ CSQ5U600
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ Z/OS V6
+   
+   
+ * FIXED COMPONENT ID
+   5655L8200
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R000 PSY UK76721 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK76721]
+   UP12/03/22 P F203
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

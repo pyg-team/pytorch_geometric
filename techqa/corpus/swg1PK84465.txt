@@ -1,0 +1,189 @@
+Title: IBM PK84465: COMPILED MAP IN KANJI NAMED FOLDER CANNOT BE OPENED UP VIA IFD. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Compiled map in Kanji named folder cannot be opened up via IFD.
+   The actual issue with the Eclipse Design Studio and not with the
+   Integration Flow Designer. Internally, Integration Flow Designer
+   generates a command line to invoke ExtenderStudio.exe with the
+   map source file name as the parameter. The ExtenderStudio.exe
+   inturn creates a process that makes use of ExtenderStudio.bat
+   with the map source file name as parameter and launches the
+   Design Studio. If the Design Studio is already up and running
+   and user invokes 'Open Map Designer' option on a map component,
+   then the file name needs to be opened passed to the Eclipse
+   Design Studio through socket communication that listens on 15866
+   port. So, Design Studio opens a port on 15866 for this purpose.
+   This is common to type tree files opened from Integration Flow
+   Designer.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  WTXCQ - WTX00029879
+   LV / LV
+   Circumvention: None
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  The actual issue with the Eclipse Design Studio and not with the
+   Integration Flow Designer. Internally, Integration Flow Designer
+   generates a command line to invoke ExtenderStudio.exe with the
+   map source file name as the parameter. The ExtenderStudio.exe in
+   turn creates a process that makes use of ExtenderStudio.bat with
+   the map source file name as parameter and launches the Design
+   Studio. If the Design Studio is already up and running and user
+   invokes 'Open Map Designer' option on a map component, then the
+   file name needs to be opened passed to the Eclipse Design Studio
+   through socket communication that listens on the port.
+   
+   Japanese paths will have the DBCS characters. Each character
+   could be either a single byte or double byte character. It is
+   always required that the file paths should be treated as
+   platform-specific paths (using platform encoding). In the case
+   of sending the file name through Socket stream (in the case
+   where the Design Studio is already running and user tries to
+   open up the referenced map source file from Integration Flow
+   Designer), the socket stream should be treated as Platform
+   string (SJIS for Japanese windows) and not as UTF-8.
+   There is one more change required in the StartUp plug-in where
+   it was not working fine with japanese paths when using
+   System.getProperty. The japanese characters are eliminated when
+   returning the string. The ExtenderStudio.bat file sends the path
+   as part of -DDTX_CMD enclosing them in double quotes. Modified
+   this to work with the japanese paths by changing the call to
+   System.getenv and instead of -DDTX_CMD as JVM argument, used set
+   DTX_CMD=%*  (This makes it as an environment variable).
+   
+   Even if customer receives a patch
+   (com.ibm.websphere.dtx.startup_8.2.0.0.jar), they need to make
+   the following changes to the ExtenderStudio.bat file, as it is
+   an install script file:
+   
+   Original statement in the batch file:
+   
+   set WTXCMD=%WTXCMD% -DDTXHOME="%DTXHOME%"
+   -Dorg.eclipse.emf.ecore.EPackage.Registry.INSTANCE=org.eclipse.e
+   mf.ecore.impl.EPackageRegistryImpl -DDTX_CMD="%*"
+   
+   
+   Modified statement follows:
+   
+   set WTXCMD=%WTXCMD% -DDTXHOME="%DTXHOME%"
+   -Dorg.eclipse.emf.ecore.EPackage.Registry.INSTANCE=org.eclipse.e
+   mf.ecore.impl.EPackageRegistryImpl
+   
+   set DTX_CMD=%*
+   
+   So, one statement has changed to two statements if noticed.
+   With the next service pack, this is corrected automatically
+   during installation. But, for customers with 8204 or prior
+   versions, this manual changes in the batch file is required
+   along with the latest startup binary to work with the Japanese
+   paths.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fixed a problem with Design Studio where it does not open the
+   map source or type tree files if the path contains japanese
+   characters when invoked from Integration Flow Designer.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK84465
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSPHERE DESIG
+   
+   
+ * REPORTED COMPONENT ID
+   5724M4008
+   
+   
+ * REPORTED RELEASE
+   820
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2009-04-09
+   
+   
+ * CLOSED DATE
+   2009-04-27
+   
+   
+ * LAST MODIFIED DATE
+   2009-04-27
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBSPHERE DESIG
+   
+   
+ * FIXED COMPONENT ID
+   5724M4008
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R820 PSY
+   UP

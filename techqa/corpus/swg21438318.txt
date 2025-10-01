@@ -1,0 +1,31 @@
+Title: IBM Mixed case password support not working when UCTRAN is YES if using ACF2 - United States
+
+Text:
+mixed case password support ; upper case translation ; translating; 5655M1500 R640 640 R400 400 HCI6400 R650 650 R500 500 HCI6500 5655-M15 5655M15 ; 5655S9700 R660 660 R600 600 HCI6600 5655-S97 5655S97 KIXINFO HCI6700 R700 R670 700 5655Y0400 R800 R900 HCI6800 HCI6900 HCI7000 R690 R690 R000 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ You are testing strong password specifically for mixed case passwords. You are unable to logon to CICS when you specify UCTRAN(YES). The CICS documentation says the UCTRAN option is temporarily set to NO if support for mixed case passwords is active. With UCTRAN set to NO, the mixed case password is accepted. You are using CA ACF2 for your external security manager . 
+
+SYMPTOM
+Section CESN - sign on [http://www.ibm.com/support/knowledgecenter/SSGMCP_5.3.0/com.ibm.cics.ts.systemprogramming.doc/transactions/cesn/dfha71k.html?lang=en] [https://publib.boulder.ibm.com/infocenter/cicsts/v4r1/topic/com.ibm.cics.ts.doc/dfha7/transactions/cesn/dfha71k.html]in the CICS Transaction Server documentation states: 
+
+
+For mixed case passwords to be supported, ensure the PROFILE for the signon transaction CESN/CESL is specified UCTRAN(NO). Otherwise, user IDs and passwords that are specified in the CESN transaction are converted to uppercase. However, if support for mixed case passwords is active in the external security manager, CICS saves the value of the UCTRAN option and temporarily sets it to UCTRAN(NO) while the user is prompted to enter a userid and password. CESN then uppercases the userid but leaves the password in the case entered by the user. When the CESN transaction completes, the UCTRAN attribute is restored to its original value. If the user disconnects from the terminal before the CESN transaction is completed, the terminal might be left with the UCTRAN(NO) attribute set.
+
+
+CAUSE
+The supplied ACF2 exit, ACFAEUSC, does not mimic the CICS supplied DFHSNP. DFHSNP has special code to turn upper casing off and preserve the mixed case passwords:
+
+EXEC CICS INQUIRE TERMINAL(EIBTRMID) UCTRANST(UCTRANSAVE);
+EXEC CICS SET TERMINAL(EIBTRMID) NOUCTRAN;
+
+DFHSNP will later restore it to its original value.
+
+
+RESOLVING THE PROBLEM
+Modify the ACF2 signon program, ACFAEUSC, to mimic the changes to UCTRANST made by IBM provided DFHSNP. Contact CA Technologies [http://www.ca.com] for additional assistance. 
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ CICS/TS CICS TS CICS Transaction Server

@@ -1,0 +1,53 @@
+Title: IBM SQL Server agent, TCR report returns error - United States
+
+Text:
+5724B96MOTR; Cognos; Exchange; 5724B98EO; 5724B98EOTR; 5724C0SPA; sharepoint; 5724C0SPATR; IBM; tivoli; 5724B98EOTR; 5724C71AOTR; Active Directory TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ TCR report returns error: CM-REQ-4069 The property "na" is unknown. 
+
+SYMPTOM
+This applies to all agents in ITCAM for Microsoft Applications product. 
+
+When TCR report is run in Report Studio, following message pops up:
+Report Studio
+
+CM-REQ-4158 The search path "/content/package/[@name='ITCAMMA SQL Server V... Cognos Report']/report[@na#e='Free Space Availability report']" is invalid.
+Details:
+CM-REQ-4069 The property "na" is unknown. Replace it with a valid property. 
+
+
+
+CAUSE
+The prerequisite tables and views required for the report are not available.
+
+
+RESOLVING THE PROBLEM
+Release 6.3.1 of SQL agent includes a SQL Agent Reports Prerequisites Scanner Report. This report provides the availability status of tables and views in the Tivoli Data Warehouse for each predefined report. Refer to the Reference guide for ITCAM for Microsoft Applications agents, V6.3.1 for details. 
+
+ 
+
+Another way is to check the prerequisites for a report in "Tivoli Common Reporting for the monitoring agent" section of the agent documentation. 
+
+1) In Tivoli Enterprise Portal, open History collection configuration window, verify the following. 
+
+- History collection is enabled for the attribute group required for the specific TCR report. 
+
+- History collection setting is distributed to agent Managed System or Managed System Group. 
+
+- Summarization is enabled for the history collection setting to generate view or table required by the report. 
+
+2) If historical data collection and summarization are enabled, check if the tables and views required for the TCR report exist in the warehouse database. (These tables and views are automatically generated at the first time interval for history collection and summarization, and do not have to be manually created). Open the Warehouse database and check if the required tables and views are present. 
+
+For example, for the "Free Space Availability report", "Tables/Views Used" is listed as MS_SQL_Database_Summary_HV. To ensure that the view MS_SQL_Database_Summary_HV is created, following steps are required: 
+
+i. Enable history collection for MS SQL Availability Database Summary attribute group with collection interval less than or equal to 1 hour. 
+
+ii. Summarization should be set for Hourly interval, which causes the MS_SQL_Database_Summary_HV view to be generated. (The _HV suffix implies "Hourly summary View") 
+
+Note: 
+
+- The same problem and solution also apply to TCR reports for other agents of ITCAM for Microsoft Applications, such as Exchange or SharePoint Server monitoring agents.
+
+RELATED INFORMATION
+ ITCAM for Microsoft Applications agents Reference Guide [https://www.ibm.com/support/knowledgecenter/SSDKXQ_6.3.1/com.ibm.itcamms.doc_6.3.1/sql/fac_landing_ref.html]

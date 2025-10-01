@@ -1,0 +1,143 @@
+Title: IBM JR41076: TYPCIALL INSTALLATION: BPM 7.5 STANDARD MANAGEPROFILES COMMAND - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  4.Creating profiles using the manageprofiles command-line
+   utility
+   :http://publib.boulder.ibm.com/infocenter/dmndhelp/v7r5mx/topic/
+   com.ibm.wbpm.imuc.sbpm.doc/topics/ccnfg_select_config.html
+   5.I would change the link for "Prerequisites for creating or
+   augmenting profiles." to something like Database prerequisites
+   for creating or augmenting profiles.  This would encourage
+   someone to click the link which has a lot of usefull and needed
+   information.  Otherwise they might skip it thinking its another
+   link to the same system pre-reqs that they have already read.
+   6.Not quite sure about APAR for this part as the information is
+   there and linked.
+   7.In this general section "Creating profiles using the
+   manageprofiles command-line utility" I do not see anything
+   (examples or otherwise) that helps me cerate the profile using
+   the file created by the database design tool.  To find this
+   information I have to read though everything including the
+   examples then click the link (Related information
+   manageprofiles parameters ) to find out how to specify the file
+   created by the database design tool.
+   8.When using the database design tool you do not need almost any
+   of the variables used in the command line / response file that
+   are associated to the database as the generated file contains
+   all of these values.  I also belive that you would not need to
+   add the -adminUserName adminUser_IDetc parameters in the
+   response as this is indicated in the generated file from the
+   database design tool
+   9.APAR this to add complete explanation and example of how to
+   run the manage profile commmand using the file created from the
+   database design tool.
+   10.Noteable -- in this same section we are using the
+   profilemanagement tool to create profiles, we have customers
+   that need to specify ports as they have security concerns (CIA
+   for example).  They need a way to be able to specify ports that
+   will be used during profile creation.  I believe you can specify
+   this in the profiletemplate directory but I am not sure.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  n/a
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  TYPCIALL INSTALLATION: BPM 7.5 STANDARD MANAGEPROFILES COMMAND
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  InfoCenter v7.5 and v7.5.1 have been updated with changes.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR41076
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM STANDARD
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9500
+   
+   
+ * REPORTED RELEASE
+   750
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-10-31
+   
+   
+ * CLOSED DATE
+   2012-08-16
+   
+   
+ * LAST MODIFIED DATE
+   2012-08-16
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

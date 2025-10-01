@@ -1,0 +1,40 @@
+Title: IBM ITCAM Agent for WebSphere DataPower Appliance v6.3 discards some SNMP Traps sent by the DataPower appliances - United States
+
+Text:
+ITCAM DataPower TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The agent discards some types of SNMP traps sent by DataPower appliances.
+
+Some SNMP traps are not displayed in the DataPower Events workspace on TEP. The agent log contains the following message:
+
+No event class matches the received trap: generic=6 specific=2 oid=1.3.6.1.4.1.14685.3.3.2
+
+
+SYMPTOM
+Some SNMP traps are not displayed in the DataPower Events workspace on TEP.
+
+
+CAUSE
+The agent discards SNMP traps of oid 1.3.6.1.4.1.14685.3.3.2.0.2.
+
+RESOLVING THE PROBLEM
+1. Stop the agent. 
+
+2. Locate the kbn.ref file in the agent installation folder.
+
+3. Back up the kbn.ref file.
+
+4. On Windows, copy the attached kbn_Win.ref file to the directory where the kbn.ref file is located. Remove kbn.ref, then rename kbn_Win.ref to kbn.ref.
+kbn_Win.ref [/support/docview.wss?uid=swg21614591&aid=2]kbn_Win.ref [/support/docview.wss?uid=swg21614591&aid=1]
+
+5. On UNIX or Linux, copy the attached kbn_Linux_UNIX.ref file to the directory where the kbn.ref file is located. Remove kbn.ref, then rename kbn_Linux_UNIX.ref to kbn.ref.
+kbn_Linux_UNIX.ref [/support/docview.wss?uid=swg21614591&aid=4]kbn_Linux_UNIX.ref [/support/docview.wss?uid=swg21614591&aid=3]
+
+6. Start the agent.
+
+
+
+
+PRODUCT ALIAS/SYNONYM
+ ITCAM for WDP

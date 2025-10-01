@@ -1,0 +1,30 @@
+Title: IBM BMXAA4153E error when logging in to Maximo start center - United States
+
+Text:
+BMXAA4153E; TPAESECURITY TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ BMXAA4153E will occur when trying to login to the Maximo Start Center. 
+
+SYMPTOM
+When logging in to Maximo as any user (ie. maxadmin) after inputting the username and password on the login screen and pressing Login, the error shown below occurs: 
+
+"BMXAA4153E - XXXX is not a valid site. Enter a valid Site value as defined in the Organization Application."
+
+
+CAUSE
+Login user is associated with an inactive site.
+
+
+RESOLVING THE PROBLEM
+1. To show the list of valid SiteID values: 
+
+select siteid from site where active=1; 
+
+2. To show the value of mxe.adminuser: 
+select propname,propvalue from maxpropvalue where propname = 'mxe.adminuserid'; 
+
+3. Once you have a valid SiteID and adminuser, run the following Update statement to correct the issue: 
+update maxuser set defsite='your_valid_site_id' where userid = 'your mxe.adminuser'; commit; 
+
+Users can then login to the Maximo Start Center.

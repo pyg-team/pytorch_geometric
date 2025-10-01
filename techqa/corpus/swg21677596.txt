@@ -1,0 +1,51 @@
+Title: IBM JDBC connections are not rerouted to other DB2 pureScale member with ERRORCODE=-4499, SQLSTATE=08001 error in client affinity configuration on Weblogic - United States
+
+Text:
+pureScale client affinity TECHNOTE (FAQ)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ English 
+
+QUESTION
+ Why do applications in Weblogic get the 'ERRORCODE=-4499, SQLSTATE=08001' even client affinity configurations are set ? 
+
+ANSWER
+For enabling the client affinity and ACR(Automatic client rerouting), relevant JDBC properties should be set and these are case sensitive. 
+
+For example, the property 'clientRerouteAlternateServerName' provides the DB2 pureScale member server list separated by commas. 
+In case of setting this configuration name as 'clientRerouteAlternateServername' using lower case 'n' for 'name', following errors are recorded to application log without rerouting to other pureScale member. 
+
+
+<Error Log> 
+
+<Jun 23, 2014 4:24:10 PM EST> <Warning> <JDBC> <BEA-001129> <Received exception while creating connection for pool "sample": 
+[jcc][t4][2043][11550][3.67.27] Exception java.net.ConnectException: Error opening socket to server db2ps3.au.ibm.com/192.168.153.68 on port 61,118 with message:
+Connection refused. ERRORCODE=-4499, SQLSTATE=08001>
+
+Therefore, the configuration should be set carefully with exact case-sensitive property name.
+Following DB2 JCC JDBC properties are the examples where client affinity with ACR work successfully in Weblogic JDBC Datasource setting console. 
+This is the DB2 JCC JDBC property setting example of Weblogic datasource configuration console where the client affinity with ACR works successfully. 
+
+<Configuration example> 
+
+enableClientAffinitiesList=1
+retryIntervalForClientReroute=2
+affinityFailbackInterval=300
+user=psinst2
+enableSeamlessFailover=true
+clientRerouteAlternateServername=db2ps3.au.ibmcom,db2ps2.au.ibm.com
+databaseName=sample
+maxRetriesForClientReroute=3
+clientRerouteAlternatePortNumber=61118,61118
+driverType=4
+currentSchema=psinst2 For the detail of each properties, please refer the following link and set those appropriately depending on application environment.
+
+RELATED INFORMATION
+#Configuration of client affinities for Java clients for [http://www-01.ibm.com/support/knowledgecenter/?lang=en#!/SSEPGG_9.7.0/com.ibm.db2.luw.apdv.java.doc/src/tpc/imjcc_c0056257.html]
+
+
+ 
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Information Management DB2 for Linux- UNIX and Windows

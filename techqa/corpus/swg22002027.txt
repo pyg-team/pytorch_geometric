@@ -1,0 +1,10 @@
+Title: IBM Does SPSS Modeler or SPSS C&DS support Oracle 12c Multitenant feature? - United States
+
+Text:
+multitenant feature Oracle 12 c Multi-tenant Multi tenant spss cads cnds collaboration and deployment services repository database odbc progress data direct TECHNOTE (FAQ)
+
+QUESTION
+ Does SPSS Modeler or SPSS C&DS support Oracle 12c Multitenant feature? 
+
+ANSWER
+No, currently neither SPSS Modeler or SPSS C&DS support the Multitenant feature of Oracle 12c

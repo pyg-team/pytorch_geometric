@@ -1,0 +1,222 @@
+Title: IBM PM39777: ADMINISTRATIVE THIN CLIENT USING SOAP CONNECTOR AND SUN JDK DOES NOT WORK - United States
+
+Text:
+  FIXES ARE AVAILABLE
+8.0.0.1: WebSphere Application Server V8.0 Fix Pack 1 [http://www-01.ibm.com/support/docview.wss?uid=swg24030916]
+8.0.0.2: WebSphere Application Server V8.0 Fix Pack 2 [http://www-01.ibm.com/support/docview.wss?uid=swg24031368]
+8.0.0.3: WebSphere Application Server V8.0 Fix Pack 3 [http://www-01.ibm.com/support/docview.wss?uid=swg24032315]
+8.0.0.4: WebSphere Application Server V8.0 Fix Pack 4 [http://www-01.ibm.com/support/docview.wss?uid=swg24033190]
+8.0.0.5: WebSphere Application Server V8.0 Fix Pack 5 [http://www-01.ibm.com/support/docview.wss?uid=swg24033754]
+8.0.0.6: WebSphere Application Server V8.0 Fix Pack 6 [http://www-01.ibm.com/support/docview.wss?uid=swg24034673]
+8.0.0.7: WebSphere Application Server V8.0 Fix Pack 7 [http://www-01.ibm.com/support/docview.wss?uid=swg24035457]
+8.0.0.8: WebSphere Application Server V8.0 Fix Pack 8 [http://www-01.ibm.com/support/docview.wss?uid=swg24036729]
+8.0.0.9: WebSphere Application Server V8.0 Fix Pack 9 [http://www-01.ibm.com/support/docview.wss?uid=swg24037574]
+8.0.0.10: WebSphere Application Server V8.0 Fix Pack 10 [http://www-01.ibm.com/support/docview.wss?uid=swg24039242]
+8.0.0.11: WebSphere Application Server V8.0 Fix Pack 11 [http://www-01.ibm.com/support/docview.wss?uid=swg24040425]
+8.0.0.12: WebSphere Application Server V8.0 Fix Pack 12 [http://www-01.ibm.com/support/docview.wss?uid=swg24041590]
+8.0.0.13: WebSphere Application Server V8.0 Fix Pack 13 [http://www-01.ibm.com/support/docview.wss?uid=swg24042746]
+8.0.0.14: WebSphere Application Server V8.0 Fix Pack 14 [http://www-01.ibm.com/support/docview.wss?uid=swg24044096]
+8.0.0.15: WebSphere Application Server V8.0 Fix Pack 15 [http://www-01.ibm.com/support/docview.wss?uid=swg24044734]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Administrative Thin Client using SUN JDK will give this error:
+   Exception caught: java.lang.NoClassDefFoundError:
+   com/ibm/CORBA/iiop/ORB
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  All WebSphere Administrative Thin Client    *
+   *                  Version 8 users that use SOAP Connector     *
+   *                  and SUN JDK.                                *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Using Administrative Thin Client with   *
+   *                      SUN JDK will give this error:           *
+   *                      Exception caught:                       *
+   *                      java.lang.NoClassDefFoundError:         *
+   *                      com/ibm/CORBA/iiop/ORB                  *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   Using Administrative Thin Client with SUN JDK to connect to a
+   server will fail with the following exception:
+   Exception caught:java.lang.NoClassDefFoundError:
+   com/ibm/CORBA/iiop/ORB
+   java.lang.NoClassDefFoundError: com/ibm/CORBA/iiop/ORB
+   at java.lang.Class.forName0(Native Method)
+   at java.lang.Class.forName(Unknown Source)
+   at
+   com.ibm.ws.util.PlatformHelperFactory.getBackupHelper(PlatformHe
+   lperFactory.java:106)
+   at
+   com.ibm.ws.util.PlatformHelperFactory.getPlatformHelper(Platform
+   HelperFactory.java:79)
+   at
+   com.ibm.ws.pmi.server.PmiRegistry.<clinit>(PmiRegistry.java:75)
+   at
+   com.ibm.wsspi.pmi.factory.StatsFactory.isPMIEnabled(StatsFactory
+   .java:86)
+   at
+   com.ibm.ws.security.auth.ContextManagerImpl.<init>(ContextManage
+   rImpl.java:512)
+   at
+   sun.reflect.NativeConstructorAccessorImpl.newInstance0(Native
+   Method)
+   at
+   sun.reflect.NativeConstructorAccessorImpl.newInstance(Unknown
+   Source)
+   at
+   sun.reflect.DelegatingConstructorAccessorImpl.newInstance(Unknow
+   n Source)
+   at java.lang.reflect.Constructor.newInstance(Unknown Source)
+   at java.lang.Class.newInstance0(Unknown Source)
+   at java.lang.Class.newInstance(Unknown Source)
+   at
+   com.ibm.ws.security.core.ContextManagerFactory.createInstance(Co
+   ntextManagerFactory.java:416)
+   at
+   com.ibm.ws.security.core.ContextManagerFactory.getInstance(Conte
+   xtManagerFactory.java:147)
+   at
+   com.ibm.websphere.management.AdminClientFactory.getCacheKey(Admi
+   nClientFactory.java:1372)
+   at
+   com.ibm.websphere.management.AdminClientFactory.createAdminClien
+   tPrivileged(AdminClientFactory.java:234)
+   at
+   com.ibm.websphere.management.AdminClientFactory.access$000(Admin
+   ClientFactory.java:122)
+   at
+   com.ibm.websphere.management.AdminClientFactory$1.run(AdminClien
+   tFactory.java:203)
+   at
+   com.ibm.ws.security.util.AccessController.doPrivileged(AccessCon
+   troller.java:63)
+   at
+   com.ibm.websphere.management.AdminClientFactory.createAdminClien
+   t(AdminClientFactory.java:199)
+   at ThinMin.main(ThinMin.java:60)
+   Caused by: java.lang.ClassNotFoundException:
+   com.ibm.CORBA.iiop.ORB
+   at java.net.URLClassLoader$1.run(Unknown Source)
+   at java.security.AccessController.doPrivileged(Native Method)
+   at java.net.URLClassLoader.findClass(Unknown Source)
+   at java.lang.ClassLoader.loadClass(Unknown Source)
+   at sun.misc.Launcher$AppClassLoader.loadClass(Unknown Source)
+   at java.lang.ClassLoader.loadClass(Unknown Source)
+   at java.lang.ClassLoader.loadClassInternal(Unknown Source)
+   ... 22 more
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Added java environment variable
+   com.ibm.websphere.thinclient=true when launching the
+   administrative thin client so the code can check to find out
+   what environment it is running from. If it is running from
+   administrative thin client then the code will use the client
+   code that is not required to have IBM JDK classes.
+   
+   The fix for this APAR is currently targeted for inclusion in
+   fix pack 8.0.0.1. Please refer to the recommended updates page
+   for delivery information:
+   http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM39777
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSPHERE APP S
+   
+   
+ * REPORTED COMPONENT ID
+   5724J0800
+   
+   
+ * REPORTED RELEASE
+   800
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-05-20
+   
+   
+ * CLOSED DATE
+   2011-06-14
+   
+   
+ * LAST MODIFIED DATE
+   2011-06-14
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBSPHERE APP S
+   
+   
+ * FIXED COMPONENT ID
+   5724J0800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R800 PSY
+   UP

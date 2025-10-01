@@ -1,0 +1,169 @@
+Title: IBM PM66170: Editing the column name in Table Object does not follow window standards - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Headline:
+   Editing the column name in Table Object does not follow window
+   standards
+   
+   APAR Error Description:
+   Abstract: Attempts to edit column names of the grid elements
+   does not follow windows standards
+   Problem: Cannot see where cursor is when editing column name
+   
+   
+   When editing an Attribute Name or Data (Data Element name) (in
+   Logical Data Model) or Column Name (in Physical Data Model) or
+   some other properties in the Grid
+   view of Attribute List, the highlight and cursor are not
+   windows standard
+   
+   Problem is that the text remains all highlighted even when
+   editing the text
+   
+   
+   The bigger issue is that when you try to highlight a part of the
+   text to copy or to delete it, you cannot see which part is
+   highlighted and therefore will be copied/ deleted   it all shows
+   as highlighted. This is contrary to how a normal Windows
+   text-type control behaves.
+   
+   Steps to Reproduce:
+   
+   1. Open any encyclopedia containg LDM/PDM for E.g. Samples
+   2. I have used samples at my end. Open the PDM called Hotel
+   Reservation System
+   3. Edit any Table object
+   4. Under the Columns Tab try to edit the Column called Name and
+   notice thst it does not follow windows standards.
+   
+   
+   
+   Local fix:
+   No Known Workaround
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   As described, the problem is that a text string within a
+   cell of SA's edit grid is initially displayed with the
+   entire string in a "selected" state. Furthermore, it stays
+   fully selected even while manual mouse or keyboard
+   selections are attempted.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This problem was introduced when SA was upgraded to support
+   the bi-directional languages of Hebrew and Arabic.
+   
+   The error was traced to a single line of code that was
+   inadvertently deleted during SA's "bidi" upgrade. That line
+   was restored with this fix.
+   
+   Interestingly, the problem shows up only when Windows is set
+   to work in English, but not when set to work in Hebrew.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM66170
+   
+   
+ * REPORTED COMPONENT NAME
+   TLOGIC SYS ARCH
+   
+   
+ * REPORTED COMPONENT ID
+   5724V68SA
+   
+   
+ * REPORTED RELEASE
+   B40
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-06-05
+   
+   
+ * CLOSED DATE
+   2013-06-14
+   
+   
+ * LAST MODIFIED DATE
+   2013-06-14
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TLOGIC SYS ARCH
+   
+   
+ * FIXED COMPONENT ID
+   5724V68SA
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * RB40 PSN
+   UP

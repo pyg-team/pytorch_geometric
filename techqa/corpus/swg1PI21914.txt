@@ -1,0 +1,220 @@
+Title: IBM PI21914: UNABLE TO REPLY TO FORUM TOPICS USING SOCIAL RENDERING INTEGRATION - United States
+
+Text:
+  A FIX IS AVAILABLE
+Fixes integrated in WebSphere Portal 8.5.0.0 Combined Cumulative Fixes [http://www-01.ibm.com/support/docview.wss?uid=swg24037786]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When using the social rendering feature to render a forum topic
+   that is hosted on a remote IBM Connections server in the
+   context of portal pages trying to create a new reply fails if
+   the title of the forum topic contains certain special character
+   i.e a single quote.
+   
+   The following error can be observered in the javascript console
+   of the browser:
+   
+   SyntaxError: missing ) after argument list
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  The fix is automatically deployed as part of a cumulative fix
+   installation. To install the fix manually run the the
+   ConfigEngine task "apply-wcm-library-update-PI21914"
+   
+   This fix makes sure that all parameters are encoded before
+   passing on to the javascript function that creates the forum
+   topic reply.
+   
+   The deployment of this fix automatically modifies the
+   corresponding web content HTML component under
+   "Fragments/Replies/Reply Body" in the web content library
+   "Social Lists 1.0" in the base Portal.
+   
+   The update cannot be done automatically in case this HTML
+   component was changed, renamed, or moved to another location.
+   If you are uncertain if you have modified this component
+   please review the ConfigTrace.log in the
+   wp_profile_root/ConfigEngine/log directory.
+   
+   Open the ConfigTrace.log file and search for all occurrences
+   of "[PI21914]". Verify that you see the following success
+   message.
+   
+   [PI21914]: The update was applied successfully to the web
+   content library "Social Lists 1.0".
+   
+   If you cannot find this message in the ConfigTrace.log the
+   HTML component could not be modified automatically or the fix
+   has already been installed. To manually apply the fix, replace
+   all occurrences of the following text in the mentioned HTML
+   component using the Web Content Authoring Portlet.
+   
+   Search for:
+   <a href="javascript:wp_sr_util.replyTopic('[Plugin:Portlet
+   key="namespace" compute="once"]_[Plugin:ListRenderingContext
+   action="getAttribute" key="topicID"]_nested',
+   '[AttributeResource attributeName="id" separator=","]',
+   '[AttributeResource attributeName="rawEntryLink"
+   separator=","]', '[AttributeResource
+   attributeName="rawRepliesLink" separator=","]',
+   '[AttributeResource attributeName="title" separator=","]',
+   [Component id="57cfc4aa-83c5-410a-a0c5-
+   9bf148f6180e:NC9zb2NpYWwgbGlzdHMgMS4wL2ZyYWdtZW50cy9yZXBsaWVzL
+   3JlcGx5IGlkIHN1ZmZpeGVz" name="social lists
+   1.0/fragments/replies/reply id suffixes" htmlencode="false"],
+   '[Plugin:TextProvider provider="Social Lists 1.0"
+   key="SR_COMPONENT_REPLYBOX_CANCEL_MSG" compute="once"]');">
+   [Plugin:TextProvider provider="Social Lists 1.0"
+   key="SR_COMPONENT_REPLIES_REPLY" compute="once"]</a>
+   
+   Replace all occurrences with:
+   <a href="javascript:wp_sr_util.replyTopic('[Plugin:Portlet
+   key="namespace" compute="once"]_[Plugin:ListRenderingContext
+   action="getAttribute" key="topicID"]_nested',
+   '[AttributeResource attributeName="id" separator=","]',
+   '[AttributeResource attributeName="rawEntryLink"
+   separator=","]', '[AttributeResource
+   attributeName="rawRepliesLink" separator=","]',
+   '[Plugin:jsencode enc="jsxml" value="[AttributeResource
+   attributeName='rawTitle' separator=',']"]', [Component
+   name="social lists 1.0/fragments/replies/reply id suffixes"
+   htmlencode="false"], '[Plugin:TextProvider provider="Social
+   Lists 1.0" key="SR_COMPONENT_REPLYBOX_CANCEL_MSG"
+   compute="once"]');">[Plugin:TextProvider provider="Social
+   Lists 1.0" key="SR_COMPONENT_REPLIES_REPLY" compute="once"]
+   </a>
+   
+   In case the web content library was modified automatically by
+   this fix a backup of the previous content of the web content
+   library was exported into the
+   wp_profile_root/PortalServer/wcm/ilwwcm/system/export
+   directory.
+   
+   To restore the backup unpack the exported file and import the
+   library using  the "export-wcm-data" task. For more
+   information please see the topic "Exporting and importing a
+   web content library" in the product documentation.
+   
+   If you have syndicated the web content library to another
+   virtual portal please syndicate the updated library again
+   after the changes have been applied.
+   
+   In case you created copies of the web content library please
+   make sure to also manually apply the fix to these copies.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A code fix for this issue is integrated into the WebSphere
+   Portal & WCM Combined Cumulative Fix 03 (PI24620 [http://www-01.ibm.com/support/docview.wss?uid=swg1PI24620]) for Portal
+   8.5.0.0 available from Fix Central:
+   
+   http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent
+   =ibm/WebSphere&product=ibm/WebSphere/WebSphere+Portal&release=Al [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm/WebSphere&product=ibm/WebSphere/WebSphere+Portal&release=Al]
+   l&platform=All&function=aparId&apars=PI24620
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI21914
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSPHERE PORTA
+   
+   
+ * REPORTED COMPONENT ID
+   5724E7600
+   
+   
+ * REPORTED RELEASE
+   850
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-07-12
+   
+   
+ * CLOSED DATE
+   2014-10-27
+   
+   
+ * LAST MODIFIED DATE
+   2014-10-27
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBSPHERE PORTA
+   
+   
+ * FIXED COMPONENT ID
+   5724E7600
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R850 PSY
+   UP

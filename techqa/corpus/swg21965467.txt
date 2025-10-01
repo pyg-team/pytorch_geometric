@@ -1,0 +1,76 @@
+Title: IBM AMPUI  Expiring key.jks - United States
+
+Text:
+5724G70UITR; scapm TECHNOTE (FAQ)
+
+QUESTION
+ How do we extend the certificates for APMUI servers? 
+
+CAUSE
+Our WebSphere admin has determined that the security certificate is soon expiring for the following APMUI servers:
+/opt/IBM/APMUI/usr/servers/apmui/resources/security/key.jks 
+/opt/IBM/APMUI/usr/servers/scr/resources/security/key.jks 
+/opt/IBM/APMUI/usr/servers/scrderby/resources/security/key.jks 
+
+ANSWER
+APMUI servers are WebSphere Liberty Profile servers. The security certificates can be renewed by using securityUtility tool provided by Liberty: 
+https://www-01.ibm.com/support/knowledgecenter/SSEQTP_8.5.5/com.ibm.websphere.wlp.doc/ae/rwlp_command_securityutil.html?cp=SSEQTP_8.5.5%2F1-3-11-0-4-1-2-0&lang=en [https://www-01.ibm.com/support/knowledgecenter/SSEQTP_8.5.5/com.ibm.websphere.wlp.doc/ae/rwlp_command_securityutil.html?cp=SSEQTP_8.5.5%2F1-3-11-0-4-1-2-0&lang=en] 
+
+
+For APMUI servers, follow these steps: 
+
+1) Manually delete existing key.jks file. 
+
+For apmui server, this file is located in following directory: 
+
+<APMUI Home>/usr/servers/apmui/resources/security 
+
+For scr server, the location is: 
+
+<APMUI Home>/usr/servers/scr/resources/security 
+
+
+2) cd <APMUI Home>/bin where securrityUtility is located. 
+
+For example: 
+
+cd /opt/IBM/APMUI/bin
+
+3) Regenerate security key with desired validity period. Following example will generate certificate with validity period of 1825 days. The default password apmpass is used in this example for apmui server. 
+
+Use the password which you have previously set.
+
+./securityUtility createSSLCertificate --server=apmui --password=apmpass --validity=1825 --passwordEncoding=aes 
+
+4) After executing successfully, you will see message like below: 
+
+Creating keystore 
+/opt/IBM/APMUI/usr/servers/apmui/resources/security/key.jks 
+
+Created SSL certificate for server apmui 
+
+Add the following lines to the server.xml to enable SSL: 
+
+<featureManager> 
+<feature>ssl-1.0</feature> 
+</featureManager> 
+<keyStore id="defaultKeyStore" 
+password="{aes}AEfymS5nuyjEjde25ppd5sKVHjx6niR2vjl86KGKXj3/" /> 
+
+5) Edit /opt/IBM/APMUI/usr/servers/apmui/server.xml and find the line shown below:
+<keyStore id="defaultKeyStore" password="............." />
+Replace the password with the encrypted one as shown in the output of securityUtility command.
+For example:
+<keyStore id="defaultKeyStore" password="{aes}AEfymS5nuyjEjde25ppd5sKVHjx6niR2vjl86KGKXj3/" />
+
+
+Note that "<feature>ssl-1.0</feature>" is already included in the server.xml of APMUI servers.
+
+6) Similarly, use following commands (after deleting the corresponding key.jks file) for the scr and scrderby servers. Note that the default password for scr and scrderby servers is defaultPWD.
+
+./securityUtility createSSLCertificate --server=scr --password=defaultPWD --validity=1825 --passwordEncoding=aes
+
+./securityUtility createSSLCertificate --server=scrderby --password=defaultPWD --validity=1825 --passwordEncoding=aes
+
+
+7) Restart servers.

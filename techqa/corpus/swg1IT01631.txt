@@ -1,0 +1,137 @@
+Title: IBM IT01631: UPDATE WEBSPHERE EXTREME SCALE CLIENT VERSION IN BPM. - United States
+
+Text:
+ 
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  WXS mediation primitives require WXS client jar file
+   wsogclient.jar to communicate with WXS cache.
+   The client jar file currently packaged with BPM/WESB is back
+   level and has known memory leak.
+   
+   BPM should package latest WXS client jar v8.6.0.4 for future
+   releases and produce and iFix that replaces the back-level
+   client with 8.6.0.4 for current BPM installs.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  n/a
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   Users of Business Process Manager v8 who use the WebSphere
+   eXtreme Scale client jar file shipped with BPM.
+   
+   ****************************************************************
+   PROBLEM DESCRIPTION:
+   Problems related to Out of Memory instances that can be traced
+   back to the WXS code can be seen. These issues are resolved in
+   the WXS code.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Users of the full WebSphere eXtreme Scale client should download
+   the latest version of that client to resolve these issues.
+   Users of the client jar file that ships with BPM should upgrade
+   the client to at least v8.6.0.4. This is available on Fix
+   Central as described at
+   https://developer.ibm.com/answers/questions/29041/websphere-ente [https://developer.ibm.com/answers/questions/29041/websphere-ente]
+   rprise-service-bus-and-business-process-manager-support-for-webs
+   phere-extreme-scale/
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT01631
+   
+   
+ * REPORTED COMPONENT NAME
+   WESB IN BPM
+   
+   
+ * REPORTED COMPONENT ID
+   AIMCMFC00
+   
+   
+ * REPORTED RELEASE
+   801
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-05-09
+   
+   
+ * CLOSED DATE
+   2014-10-21
+   
+   
+ * LAST MODIFIED DATE
+   2014-10-21
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WESB IN BPM
+   
+   
+ * FIXED COMPONENT ID
+   AIMCMFC00
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R801 PSY
+   UP

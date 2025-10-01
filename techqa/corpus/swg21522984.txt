@@ -1,0 +1,47 @@
+Title: IBM Connect:Enterprise UNIX:   Cannot load module libc.a(shr.o). (SCI61849) - United States
+
+Text:
+STERLINGPRI TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Connect:Enterprise UNIX: Cannot load module libc.a(shr.o). (SCI61849) 
+
+SYMPTOM
+exec(): 0509-036 Cannot load program /ceunix/aix/bin/cmuexitd because of the following errors:
+
+
+CAUSE
+LIBPATH is not set up in the users environment
+
+RESOLVING THE PROBLEM
+
+
+Add: LIBPATH=$LIBPATH:/usr/lib To Test do the following: 
+
+
+
+env | grep LIB
+SHLIB_PATH=/users/l2/ce13/aix/lib
+LD_LIBRARY_PATH=/users/l2/ce13/aix/lib
+LIBPATH=/users/l2/ce13/aix/lib
+
+ 
+
+HISTORICAL NUMBER
+ PRI11141 
+
+PRODUCT ALIAS/SYNONYM
+ 
+
+Fact
+
+
+Connect:Enterprise UNIX, Release 2.2.00 
+0509-150 Dependent module 
+libc.a(shr.o) could not be loaded 
+0509-022 Cannot load module 
+libc.a(shr.o). 
+0509-026 System error: A file or directory in the path 
+name does not exist 
+SCI61849 
+AIX

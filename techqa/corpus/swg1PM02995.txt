@@ -1,0 +1,126 @@
+Title: IBM PM02995: WHILE CREATING A NEW DOCUMENT, THE LANGUAGE OF THIS DOCUMENT IS NOT THE PREFERRED LANGUAGE OF THE CREATOR. - United States
+
+Text:
+ 
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Abstract:-
+   
+   While creating a new document, the language of this document is
+   NOT the preferred
+   language of the creator, if the preferred language is Simplified
+   Chinese. Instead it defaults to Arabic.
+   
+   Issue Description and Cause :-
+    When the user has Simplified Chinese as their locale the locale
+   identifier zh can be passed through to PDM, however only zh_CN
+   is handled at the server side by PDM. This led to the first
+   locale in the stored list being assigned which is Arabic.
+   
+   Exception/Symptoms :-
+   The output of the session locale in PDM showed zh which did not
+   have a corresponding entry in the list of locales within PDM. No
+   log exceptions - default was to insert Arabic as a fail-over
+   case.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Handle correctly locales within PDM on document creation - eg zh
+   correctly mapped to Portal JVM language.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Changes packaged for Portal version used in Quickr 8.1.1.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM02995
+   
+   
+ * REPORTED COMPONENT NAME
+   LOTUS WEB CONT
+   
+   
+ * REPORTED COMPONENT ID
+   5724I2900
+   
+   
+ * REPORTED RELEASE
+   60E
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-12-09
+   
+   
+ * CLOSED DATE
+   2010-05-27
+   
+   
+ * LAST MODIFIED DATE
+   2010-05-27
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   LOTUS WEB CONT
+   
+   
+ * FIXED COMPONENT ID
+   5724I2900
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R60E PSY
+   UP

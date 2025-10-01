@@ -1,0 +1,48 @@
+Title: IBM Operational Decision Manager V8.8.1.3: Interim Fix 76 - United States
+
+Text:
+ DOWNLOADABLE FILES
+
+ABSTRACT
+ This interim fix provides a solution for several APARs. 
+
+DOWNLOAD DESCRIPTION
+The following list shows the component in Operational Decision Manager that is directly affected by this interim fix:
+
+
+ * Decision Center 
+
+
+You can find more information on the problems in the following APAR description:  * RS02878 [http://www.ibm.com/support/docview.wss?uid=swg1RS02878]: [EC] PROJECT DEPENDENCIES INCORRECT ON DC (DECISION SERVICE PROJECTS) 
+ * RS02880 [http://www.ibm.com/support/docview.wss?uid=swg1RS02880]: DEPLOYING RULE ARCHIVE DOESN'T COMPLETE (OR GENERATE ERROR) 
+ * RS02881 [http://www.ibm.com/support/docview.wss?uid=swg1RS02881]: BOM PATH ENTRIES ARE NOT ALWAYS RETURNED IN THE RIGHT ORDER 
+ * RS02887 [http://www.ibm.com/support/docview.wss?uid=swg1RS02887]: PERMISSION SETTINGS SOMETIMES FAIL TO FILTER DECISION SERVICES LIST 
+ * RS02907 [http://www.ibm.com/support/docview.wss?uid=swg1RS02907]: ERROR IN DECISION CENTER WHEN OPENING "SUBBRANCHES AND BASELINES " 
+ * RS02909 [http://www.ibm.com/support/docview.wss?uid=swg1RS02909]: PERMISSION SETTINGS SOMETIMES FAIL TO FILTER DECISION SERVICES LIST 
+ * RS02913 [http://www.ibm.com/support/docview.wss?uid=swg1RS02913]: PERFORMANCE ISSUE WHILE RETRIEVING THE HISTORY OF AN ELEMENT IN THE EC WHEN THE REPOSITORY CONTAINS A LARGE NUMBER OF BASELINES 
+ * RS02922 [http://www.ibm.com/support/docview.wss?uid=swg1RS02922]: AN ILRBUILDEXCEPTION IS THROWN WHEN A RULE WITH ERRORS/WARNINGS IS BUILT USING DE WHEN IT WAS PREVIOUSLY BUILT WITH CRE 
+ * RS02926 [http://www.ibm.com/support/docview.wss?uid=swg1RS02926]: UNABLE TO DELETE A TEST REPORT 
+ * RS02927 [http://www.ibm.com/support/docview.wss?uid=swg1RS02927]: BUSINESS CONSOLE USER/GROUPS MANAGEMENT: THE SORT ON THE GROUPS COLUMN IN USER TAB FAILS 
+ * RS02929 [http://www.ibm.com/support/docview.wss?uid=swg1RS02929]: Customer recieved an error when including a dependency to a missing baseline. 
+ * RS02934 [http://www.ibm.com/support/docview.wss?uid=swg1RS02934]: PERMISSION SETTINGS SOMETIMES FAIL TO FILTER DECISION SERVICES LIST 
+ * RS02944 [http://www.ibm.com/support/docview.wss?uid=swg1RS02944]: MERGE OPERATION MAY DETECT UPDATED ELEMENT AS A NEW ELEMENT. 
+ * RS02947 [http://www.ibm.com/support/docview.wss?uid=swg1RS02947]: DUPLICATE OF RS02926: UNABLE TO DELETE A TEST REPORT
+
+
+SEE ALSO
+Operational Decision Manager Interim Fixes [http://www.ibm.com/support/docview.wss?uid=swg21640630] 
+
+INSTALLATION INSTRUCTIONS
+Follow the instructions in the readme.
+
+URL LANGUAGE SIZE(Bytes) Readme [http://download4.boulder.ibm.com/sar/CMA/WSA/07a3i/0/Readme.html] English 1791 
+DOWNLOAD PACKAGE
+
+
+
+
+Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options 
+What is Fix Central(FC)? [https://www.ibm.com/support/fixcentral/help?page=swfaqs] 
+What is DD? [http://www6.software.ibm.com/dldirector/doc/DDfaq_en.html] 8.8.1.3-WS-ODM_DC-IF076 17-Nov-17 Language Independent 30660000 FC [https://www-945.ibm.com/support/fixcentral/swg/downloadFixes?parent=ibm%2FWebSphere&product=ibm/WebSphere/WebSphere+Operational+Decision+Management&release=All&platform=All&function=fixId&fixids=8.8.1.3-WS-ODM_DC-IF076&includeRequisites=1&includeSupersed] [ ] DD 
+ [/support/docview.wss?uid=swg24044308&aid=1]Problems (APARS) fixed [/support/docview.wss?uid=swg24044308&aid=2]Problems (APARS) fixed
+RS02878 RS02880 RS02881 RS02887 RS02907 RS02909 RS02913 RS02922 RS02926 RS02927 RS02929 RS02934 RS02944 S02947

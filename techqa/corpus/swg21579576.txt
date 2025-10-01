@@ -1,0 +1,50 @@
+Title: IBM The db2stop force command hangs during HACMP cluster switch over. - United States
+
+Text:
+db2stop force; hang; db2iupdt; db2gfc TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The 'db2stop force' command may hang during HACMP cluster switching. Attempts to kill DB2 processes 
+with the "db2gfc -k" command do not succeed. However 'db2stop2' does bring the DB2 instance offline. 
+This problem may happen often during db2stop when done by the HACMP cluster swtich. 
+
+CAUSE
+Common reasons are: 
+
+1. Primary instance has problems which causes the db2stop process to post irrelevant waitpost messages to the db2diag.log file.
+
+2. The user data limit (ulimit) settings for the DB2 instance owner are not set to the recommended values.
+
+3. The database is still activated using the loopback alias. Loopback connection is a type of remote connection where the connection is configured from a DB2 instance (the client) to the same DB2 instance (the server).
+
+
+
+DIAGNOSING THE PROBLEM
+Check if the database is still active using below link: 
+
+
+http://publib.boulder.ibm.com/infocenter/db2luw/v9r7/topic/com.ibm.db2.luw.admin.cmd.doc/doc/r0001953.html [http://publib.boulder.ibm.com/infocenter/db2luw/v9r7/topic/com.ibm.db2.luw.admin.cmd.doc/doc/r0001953.html]
+
+
+
+RESOLVING THE PROBLEM
+1) If the 'db2stop' process is posting irrelevant waitposts, use the 'db2iupdt' command to resolve the hang issue. Running db2iupdt will resolve the hang issue. 
+
+
+To update an instance with db2iupdt, you must first stop all processes that are running for the instance. You should have root user authority on UNIX and Linux operating systems or Local Administrator on Windows operating systems.
+
+2) For 64-bit DB2 on AIX, "unlimited" is a recommended user data limit setting for the DB2 instance owner .
+
+NOTE: When DB2 is started/stopped, it uses the current 'ulimit' settings of the user who starts/stops DB2 to create/close the needed DB2 processes. So you need to be sure you have the right 'ulimit' settings when DB2 is started/stopped.
+
+
+3) Make sure the database is deactivated before you issue "db2stop force". Once the database is deactivated then "db2stop force" works fine.
+
+Example : Refer below link to deactivate the database.
+
+http://publib.boulder.ibm.com/infocenter/db2luw/v9r7/topic/com.ibm.db2.luw.admin.cmd.doc/doc/r0002039.html [http://publib.boulder.ibm.com/infocenter/db2luw/v9r7/topic/com.ibm.db2.luw.admin.cmd.doc/doc/r0002039.html]
+
+RELATED INFORMATION
+ db2gcf - Control DB2 instance command [http://publib.boulder.ibm.com/infocenter/db2luw/v9/topic/com.ibm.db2.udb.admin.doc/doc/r0010986.htm]
+db2stop [http://publib.boulder.ibm.com/infocenter/db2luw/v9r7/topic/com.ibm.db2.luw.admin.cmd.doc/doc/r0001983.html]
+db2iupdt - Update instances command [http://publib.boulder.ibm.com/infocenter/db2luw/v9r7/topic/com.ibm.db2.luw.admin.cmd.doc/doc/r0002060.html]

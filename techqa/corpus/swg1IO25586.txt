@@ -1,0 +1,122 @@
+Title: IBM IO25586: UNABLE TO VIEW MS OFFICE DOCUMENTS INGESTED AS 'APPLICATION/OCTATE-STREAM' AFTER UPGRADING ICN - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Unable to view MS Office documents ingested as
+   'application/octate-stream' after upgrading ICN to V2.0.3.8.
+   When downloading, ICN associates these documents with .bin.  The
+   same documents can be opened using ICN V2.0.3.6
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  When a user downloads a document as original, the file is
+   downloaded with a .bin or .dat file extension or without the
+   expected extension.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This has been addressed in IBM Content Navigator V2.0.3.8
+   LA013, V3.0 LA010, V3.0.1 LA003, and V3.0.2.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IO25586
+   
+   
+ * REPORTED COMPONENT NAME
+   CONTENT NAVIGAT
+   
+   
+ * REPORTED COMPONENT ID
+   ISCONTNAV
+   
+   
+ * REPORTED RELEASE
+   203
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-08-23
+   
+   
+ * CLOSED DATE
+   2017-10-16
+   
+   
+ * LAST MODIFIED DATE
+   2017-10-16
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CONTENT NAVIGAT
+   
+   
+ * FIXED COMPONENT ID
+   ISCONTNAV
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R203 PSY
+   UP

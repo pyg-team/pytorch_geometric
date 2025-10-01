@@ -1,0 +1,66 @@
+Title: IBM Steps to deploy an Argus related fix on a TWS environment - United States
+
+Text:
+TIPL2CONF; TIPL2CUST; argus; tws TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ You may have received a jar file which the IBM Support team have asked you to deploy into plugins folder of your environment. This technote outlines the steps. 
+
+SYMPTOM
+In this example - here are the actions that lead to determining the correct steps to deploy the jar file fix into the environment : 
+
+i) You are not able to delete the Users Roles using the TDWC, you try with tws user and tws webuiadimn (tws_admin). 
+ii) Argus/TIP team provide a fix for you to deploy in the form of a jar file which needs to be deployed into the plugins folder. Example a jar file named com.ibm.sec.authz.jaccplus_7.3.1.jar has to be deployed into the plugins folder usually located at <TIPHOME>/plugins
+iii) The complete steps to do this is covered here in this technote.
+
+
+
+RESOLVING THE PROBLEM
+Here are the steps to gracefully deploy any jar type fix to the plugins folder in a TWS environment. 
+
+1.Gracefully shutdown the eWAS using the command below : 
+
+conman "stopappserver;wait" 
+
+Expect the ";wait" to make the command wait until the processes have stopped before returning to the command prompt. For further reference you can also review this page 
+
+
+http://publib.boulder.ibm.com/infocenter/tivihelp/v47r1/topic/com.ibm.tivoli.itws.doc_8.6.0.3/distr/src_ad/awsadwasstartstop.htm [http://publib.boulder.ibm.com/infocenter/tivihelp/v47r1/topic/com.ibm.tivoli.itws.doc_8.6.0.3/distr/src_ad/awsadwasstartstop.htm] 
+
+
+Also note that it may be necessary to run the <TWShome> tws_env.cmd command file before running conman commands if the environment PATH and so on is already appropriately configured. The <TWShome> directory is <installation or TWAhome>\TWS. 
+
+2. There should be no need to launch services.exe to stop eWAS, it should be stopped by this point, instead simply confirm that the java and appservman processes have both stopped. Skip steps 3 to 6 as these should only be used as last resort. 
+
+*Skip in normal scenarios* 3. If there is any error or for confirmation purposes then check if server1.pid file exists and open the server1.pid from <TIPHOME>/profiles/TIPProfile/logs/server1 and check what the value is (If no server1.pid file exists then open the startServer.log from <TIPHOME>/profiles/TIPProfile/logs/server1 and see what is the pid the server has started with. 
+
+
+*Skip in normal scenarios* 4. Open the TASK Manager and see if a java process is still running with that pid mentioned in the server1.pid(if exists) or from the startServer.log 
+
+ 
+
+ *Skip in normal scenarios* 5. If java process found, Kill the java.exe using the End Process option 
+
+
+*Skip in normal scenarios* 6. Delete the server1.pid from <TIPHOME>/profiles/TIPProfile/logs/server1 if found 
+
+7. Take a backup of the old jar from the plugins folder usually located at <TIPHOME>/plugins
+8. Replace the old jar with the new jar 
+9. Remove all temp and wstemp directory from <TIPHOME>/profiles/TIPProfile 
+10. Run the command below to start the appserver 
+
+conman "startappserver" 
+
+11. If the above does not start as expected after allowing it sufficient time. Start the TIP server using the services.exe if there is a issue in starting then try using the <TIPHOME>/profiles/TIPProfile/bin/startServer.bat server1 
+
+12. Verify if the original issue still exists 
+
+ 
+
+For further in depth information of which scenario will need to adhere to these steps, you can always refer to IBM Support.
+
+
+
+
+PRODUCT ALIAS/SYNONYM
+ TWS

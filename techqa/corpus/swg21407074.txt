@@ -1,0 +1,58 @@
+Title: IBM Collect troubleshooting data for business rules problems in WebSphere Process Server (WPS) - United States
+
+Text:
+business rules mustgather; v602rnotes; v61rnotes; v612rnotes; v62rnotes; MustGatherDocument TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ You are having a business rules problem in WebSphere Process Server. You would like to know what documentation you must collect (MustGather) so that the WebSphere Process Server Support team can diagnose your problem. If you gather this documentation before contacting support it will expedite the troubleshooting process, and save you time. 
+
+RESOLVING THE PROBLEM
+Collect the MustGather information for problems with business rules in WebSphere Process Server. Gathering this information before calling IBM support helps in understanding the problem and saves time when analyzing the data. [http://www-01.ibm.com/support/docview.wss?rs=3455&uid=swg24020510]
+
+
+
+Setting the trace string Set the following trace strings, then reproduce the problem. For instructions, see the main WebSphere Process Server MustGather document [http://www.ibm.com/support/docview.wss?uid=swg21239895#instructions]. 
+
+
+*=info: 
+com.ibm.wbiserver.brules.*=all:
+com.ibm.wbiserver.common.*=all:
+com.ibm.wbiserver.customization.*=all:
+com.ibm.wbiservers.common.*=all:
+com.ibm.wbiservers.customization.*=all 
+
+
+Note: Enabling the trace might slow down your system. This delay can lead to transaction timeouts and errors. 
+
+Required diagnostic information 
+Gather the following information and files: 
+
+General diagnostic information  * Problem description 
+ * Environment description 
+ * Server logs: All files from the following directories:
+   profile_root/profile_name/logs/server_name
+   profile_root/profile_name/ffdc 
+ * Project interchange (PI) or enterprise archive (EAR) file from the relevant applications
+
+
+IBM Support Assistant Automated data collectors are available in IBM Support Assistant to improve accuracy of complete data collection. Use ISA Lite to automate the gathering the needed log files. 
+
+Note: In addition, gather a detailed problem description, environment description, and other requested materials, such as a PI file, when using ISA Lite. 
+
+IBM Support Assistant Lite IBM Support Assistant Workbench [/support/docview.wss?uid=swg21407074&amp;aid=1] [/support/docview.wss?uid=swg21407074&amp;aid=2] Download [http://www.ibm.com/support/docview.wss?uid=swg24020510] | Learn more [http://www.ibm.com/support/docview.wss?rs=3455&uid=swg27015867] Download [http://www.ibm.com/software/support/isa/download.html] A special offering that contains only the data collector component of the IBM Support Assistant Workbench For a full range of problem-solving features, the workbench contains all of the data-collection capability of ISA Lite plus much more! 
+Instructions for collecting the diagnostic information 
+For instructions on collecting the general diagnostic information, see the "Manually collect troubleshooting information" section in Collecting troubleshooting data for WebSphere Process Server Version 6 [http://www.ibm.com/support/docview.wss?uid=swg21239895#instructions]. The server logs and part of the environment details can be collected with ISA Lite [http://www.ibm.com/support/docview.wss?uid=swg24020510]. 
+
+What to do next 
+ 1. Review the logs and traces at the time of the problem to try to determine the source of the problem.
+    
+    
+ 2. Use IBM Support Assistant [http://www.ibm.com/software/support/isa/] to search for known problems in the information center, forums, and technotes.
+    
+    
+ 3. If you cannot find related problems or cannot solve the problem, send the information you have collected to IBM by following the instructions in Exchanging Information with IBM Technical Support. [http://www.ibm.com/software/support/exchangeinfo.html]
+    
+    
+
+
+For a listing of all technotes, downloads, and educational materials that are specific to WebSphere Process Server , search the WebSphere Process Server [http://www.ibm.com/software/integration/wps/support/] support page.

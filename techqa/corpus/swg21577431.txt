@@ -1,0 +1,47 @@
+Title: IBM Using a multi-character delimiter when creating external table - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How do I use a multi-character delimiter when creating an external table? 
+
+ANSWER
+As of NPS 4.0, NPS interprets a character such as 'Ç' as a multi character delimiter. In prior releases, nzload/NPS ignored the second character of multi character delimiters and used the first character as the delimiter. NPS 4.0 and later have the following error message, "Delimiter must be one character long". 
+
+If you are using a multi-character delimiter when creating a table, you can follow this example: 
+
+The value 199 is the ASCII representation of the special character 'Ç'. (You can find the extended values for other multi characters at:http://www.lookuptables.com/ [http://www.lookuptables.com/]) 
+
+ANONYMOUS(ADMIN)=> create external table multi_char_ext sameas orders using ( DATAOBJECT ('/tmp/multi_char_ext.dat') DELIMITER 199); 
+
+CREATE EXTERNAL TABLE 
+
+ANONYMOUS(ADMIN)=> \d orders 
+
+Table "ORDERS" 
+
+Attribute | Type | Modifier | Default Value 
+
+---------+----+----------+--------------- 
+
+COL1 | INTEGER | | 
+
+COL2 | CHARACTER VARYING(100) | | 
+
+Distributed on hash: "COL1" 
+
+ANONYMOUS(ADMIN)=> insert into multi_char_ext values (3, 'Delimiter test'); 
+
+INSERT 0 1 
+
+ANONYMOUS(ADMIN)=> \q 
+
+[nz@spubox ~]$ more /tmp/multi_char_ext.dat 
+
+3ÇDelimiter test
+
+
+
+HISTORICAL NUMBER
+ NZ042170

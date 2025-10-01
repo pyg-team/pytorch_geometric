@@ -1,0 +1,14 @@
+Title: IBM Changing scan timeout in 7.2.0 - United States
+
+Text:
+sw_scan_timeout; ILMT; agent; scan TECHNOTE (FAQ)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ English 
+
+QUESTION
+ How do I change sw_scan_timeout in ILMT 7.2.0 
+
+ANSWER
+For agents version 7.2.0 or less this "sw_scan_timeout" can not
+be adjusted. Please upgrade the agent to version 7.2.1 or higher.

@@ -1,0 +1,160 @@
+Title: IBM PK50889: LIBRARYDELETEMODULE FAILS WITH PATHNOTFOUNDEXCEPTION IF RUN WITH INCOMPLETE LIBRARY - United States
+
+Text:
+ 
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  LibraryDeleteModule fails with PathNotFoundException if run with
+   incomplete library
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Problem Summary: LibraryDeleteModule fails with
+   PathNotFoundException if run with incomplete library
+   
+   Detailed Problem Description:
+   
+   If the LibraryDeleteModule does not run to completion when
+   attempting to delete a library, subsequent attempts to delete
+   the library fail.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Problem Analysis:
+   
+   When the LibraryDeletionModule does not run to completion a
+   library can be left in an unexpected state where some of the
+   default folders are deleted and others are not.  This failure
+   could be caused by an unexpected exception in the
+   LibraryDeleteModule, or by an external event like a power outage
+   or Portal being stopped or restarted while the module is
+   running.  Once the library is in this state, LibraryDeleteModule
+   will fail because it can not find all of the expected folders.
+   
+   
+   Failing Module: WCM - Web Content Management (General)
+   
+   Problem Solution:
+   
+   Change LIbraryDeleteModule so that it will correctly handle any
+   case where a folder can not be found.  Since the library is
+   being deleted, missing folders should not cause a problem.
+   
+   
+   Affected Users: All Users
+   
+   An Interim Fix is available for this APAR on Fix Central at:
+   
+   6.0.1.1
+   
+   http://www.ibm.com/eserver/support/fixes/fixcentral/swgquickorde
+   r?brandid=2&productid=Workplace%20Web%20Content%20Management&fix [http://www.ibm.com/eserver/support/fixes/fixcentral/swgquickorder?brandid=2&productid=Workplace%20Web%20Content%20Management&fix]
+   es=6.0.1.1-WCM-PK50889
+   
+   You will need to cut/paste the entire URL into a browser to
+   resolve the address
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK50889
+   
+   
+ * REPORTED COMPONENT NAME
+   WRKPLC WEB CON
+   
+   
+ * REPORTED COMPONENT ID
+   5724I2900
+   
+   
+ * REPORTED RELEASE
+   601
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2007-08-13
+   
+   
+ * CLOSED DATE
+   2007-08-30
+   
+   
+ * LAST MODIFIED DATE
+   2008-06-13
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WRKPLC WEB CON
+   
+   
+ * FIXED COMPONENT ID
+   5724I2900
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R601 PSY
+   UP
+   
+   
+ * R60A PSY
+   UP
+   
+   
+ * R60C PSY
+   UP
+   
+   
+ * R60E PSY
+   UP

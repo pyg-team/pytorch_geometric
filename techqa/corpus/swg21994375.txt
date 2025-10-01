@@ -1,0 +1,69 @@
+Title: IBM Security Bulletin:  IBM® DB2® LUW is vulnerable to Sweet32 Birthday Attack (CVE-2016-2183) - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ GSKit is an IBM component that is used by IBM DB2 for SSL support. The GSKit that is shipped with IBM DB2 is vulnerable to the Sweet32 Birthday attack. By default, DB2 does not use SSL for client-server communication and therefore DB2 is vulnerable only if SSL is enabled and a Triple-DES cipher is selected. 
+
+VULNERABILITY DETAILS
+CVEID: CVE-2016-2183 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2016-2183]
+DESCRIPTION: OpenSSL and GSKit could allow a remote attacker to obtain sensitive information, caused by an error in the Triple-DES on 64-bit block cipher, used as a part of the SSL/TLS protocol. By capturing large amounts of encrypted traffic between the SSL/TLS server and the client, a remote attacker able to conduct a man-in-the-middle attack could exploit this vulnerability to recover the plaintext data and obtain sensitive information. This vulnerability is known as the SWEET32 Birthday attack.
+CVSS Base Score: 3.7
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/116337 [https://exchange.xforce.ibmcloud.com/vulnerabilities/116337] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:N/AC:H/PR:N/UI:N/S:U/C:L/I:N/A:N) 
+
+AFFECTED PRODUCTS AND VERSIONS
+All fix pack levels of IBM DB2 V9.7, V10.1, V10.5 and V11.1 editions listed below and running on AIX, Linux, HP, Solaris or Windows are affected 
+IBM® DB2® Express Edition
+IBM® DB2® Workgroup Server Edition
+IBM® DB2® Enterprise Server Edition
+IBM® DB2® Advanced Enterprise Server Edition
+IBM® DB2® Advanced Workgroup Server Edition
+IBM® DB2® Direct Advanced Edition
+IBM® DB2® Direct Standard Edition
+IBM® DB2® Connect™ Application Server Edition 
+IBM® DB2® Connect™ Enterprise Edition
+IBM® DB2® Connect™ Unlimited Edition for System i® 
+IBM® DB2® Connect™ Unlimited Edition for System z®
+
+REMEDIATION/FIXES
+No code fix is required. Future fixpacks will prevent Triple-DES cipher from being selected and used. 
+
+Release Fix pack APAR V9.7 TBD IT17531 [https://www-304.ibm.com/support/entdocview.wss?uid=swg1IT17531] V10.1 FP6 [http://www-01.ibm.com/support/docview.wss?uid=swg24043366] IT17645 [https://www-304.ibm.com/support/entdocview.wss?uid=swg1IT17645] V10.5 FP9 [http://www-01.ibm.com/support/docview.wss?uid=swg24044110] IT17646 [https://www-304.ibm.com/support/entdocview.wss?uid=swg1IT17646] V11.1.2 FP2 [http://www-01.ibm.com/support/docview.wss?uid=swg24043789] IT17647 [https://www-304.ibm.com/support/entdocview.wss?uid=swg1IT17647] WORKAROUNDS AND MITIGATIONS
+The database manager configuration parameter SSL_CIPHERSPECS specifies the cipher suites that the server allows for incoming connection requests when using SSL protocol. The following are the Triple-DES ciphers allowed by the server:
+
+TLS_ECDHE_RSA_WITH_3DES_EDE_CBC_SHA
+TLS_ECDHE_ECDSA_WITH_3DES_EDE_CBC_SHA
+TLS_RSA_WITH_3DES_EDE_CBC_SHA
+
+If the SSL_CIPHERSPECS parameter have one or more of the above Triple-DES ciphers and no other ciphers then corrective action need to be taken. To prevent a Triple-DES cipher from being used by the server, choose one or more ciphers allowed that is not a Triple-DES cipher. The list of allowed ciphers can be found in the DB2 Knowledge Cente [http://www.ibm.com/support/knowledgecenter/en/SSEPGG_11.1.0/com.ibm.db2.luw.admin.config.doc/doc/r0053617.html]r.
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v3 Guide [http://www.first.org/cvss/user-guide] 
+On-line Calculator v3 [http://www.first.org/cvss/calculator/3.0] 
+
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] 
+
+CHANGE HISTORY
+ December 15, 2016: Original version published.
+January 6, 2017: Corrected APAR URLs.
+June 22, 2017: Update V10.1 and V11.1 URL
+October 11, 2017: Update V10.5 URL 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY. 
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Information Management DB2 Connect

@@ -1,0 +1,34 @@
+Title: IBM How to set the SSL or TLS version used with TM1Web and TM1 Applications - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ It's possible to set the SSL or TLS version used with the TM1Web and TM1 Applications. This assumes that SSL has already been enabled with TM1Web and TM1 Applications. 
+
+Instructions to configure SSL can be found here: http://www-01.ibm.com/support/docview.wss?uid=swg21902547 [http://www-01.ibm.com/support/docview.wss?uid=swg21902547]
+
+This document applies to TM1 Applicaitons in TM1 10.1.1, but not TM1Web 10.1.1. 
+
+ANSWER
+Edit the C:\Program Files\ibm\cognos\tm1_64\tomcat\conf\server.xml file with a text editor. Look for the Connector section. It should appear as follows:
+<Connector port="9514" protocol="HTTP/1.1" maxThreads="500" enableLookups="true" acceptCount="500" debug="0" connectionTimeout="60000" disableUploadTimeout="true" maxHttpHeaderSize="16384" URIEncoding="UTF-8" maxProcessors="500" minProcessors="5" useURIValidationHack="false" scheme="https" secure="true" SSLEnabled="true" SSLImplementation="com.cognos.accman.jcam.crypto.coyote.JSSEImplementation"/> 
+
+Add an sslProtocol attribute corresponding to the desired SSL version. To force TLS use the following:
+
+sslProtocol="TLSv1,TLSv1.1,TLSv1.2" 
+
+The Connector entry in the server.xml file should now look like this:
+
+<Connector port="9514" protocol="HTTP/1.1" maxThreads="500" enableLookups="true" acceptCount="500" debug="0" connectionTimeout="60000" disableUploadTimeout="true" maxHttpHeaderSize="16384" URIEncoding="UTF-8" maxProcessors="500" minProcessors="5" useURIValidationHack="false" scheme="https" secure="true" SSLEnabled="true" sslProtocol="TLSv1,TLSv1.1,TLSv1.2" SSLImplementation="com.cognos.accman.jcam.crypto.coyote.JSSEImplementation"/> 
+
+To use only TLS 1.2 use the following:
+
+sslProtocol="TLSv1.2" 
+
+The Connector entry in the server.xml file should now look like this:
+
+<Connector port="9514" protocol="HTTP/1.1" maxThreads="500" enableLookups="true" acceptCount="500" debug="0" connectionTimeout="60000" disableUploadTimeout="true" maxHttpHeaderSize="16384" URIEncoding="UTF-8" maxProcessors="500" minProcessors="5" useURIValidationHack="false" scheme="https" secure="true" SSLEnabled="true" sslProtocol="TLSv1.2" SSLImplementation="com.cognos.accman.jcam.crypto.coyote.JSSEImplementation"/> 
+
+
+Save the server.xml file and restart the IBM Cognos TM1 Applications service.

@@ -1,0 +1,97 @@
+Title: IBM Newsletter archive for December, 2017: ILMT and BigFix Inventory Customer Support Newsletter - United States
+
+Text:
+self help; newsletter; troubleshooting; FAQs; administration; problem solving; documentation; install; configuration; BFI NEWSLETTER
+
+ABSTRACT
+ Client self assist - Technical Support Information for IBM License Metric Tool and IBM BigFix Inventory
+issue for December, 2017. 
+
+
+CONTENT
+
+
+This newsletter contains links to technical support documents and other information. It is intended to help you be proactive in the support and administration of your software. 
+New for you
+ *  New online Support experience for IBM Security is now live! [https://ibm.biz/Bdj8Ah] 
+   In addition to the recently announced dW Answers forum process for IBM License Metric Tool, we are excited to announce that IBM launched a new online Support experience. This new tool replaces the way PMRs were handled. Most IBM Security products, including LMT and BigFix Inventory went live with this new technology on October 30. To access the Community directly, go to www.ibm.com/mysupport [www.ibm.com/mysupport] and log in with your IBM ID for a personalized experience. 
+   
+   Clarification on the move of ILMT to dW Answers forum [https://www.ibm.com/developerworks/community/blogs/ilmt/entry/Updates_on_the_move_of_ILMT_to_dW_Answers_forum?lang=en&acss=danl_5057_email] 
+   IBM's responsibility and ownership remain the same as if an IBM Support Community case was opened. Each forum post tagged with the "ILMT" tag is "owned" by an IBM Engineer and this Engineer has the responsibility to work the reported issue to a satisfactory close. When confidential data is required to investigate a forum question, the data will be conveyed to IBM via a secure communication layer, and customers will not be asked to to expose this data in the forum post. 
+   
+   License Metric Tool version 9.2.10 [http://ibm.biz/lmt_update_9210] 
+   The new version of License Metric Tool provides a number of new features including REST API for retrieving information about utilization of license metrics and thresholds. It also provides fixes for APARs and defects found in the previous versions as well as serviceability improvements including optimization of the import of data. 
+   
+   BigFix Inventory version 9.2.10 [http://ibm.biz/bfi_update_9210] 
+   The new version of BigFix Inventory provides a number of new features including reporting usage of products such as Microsoft Office at suite level or measuring utilization of SAP license metrics. It also provides fixes for APARs and defects found in the previous versions as well as serviceability improvements such as optimization of the import of data. 
+   
+   December 2017 Software Catalog update for ILMT 9.x - 2017-12-18 [http://www.ibm.com/support/docview.wss?uid=swg24037801&acss=danl_5057_email] 
+   Extended capability of discovering IBM software in IBM License Metric Tool version 9.x 
+   
+   December, 2017 - BigFix products technical support newsletter [http://www.ibm.com/support/docview.wss?uid=swg27027063&acss=danl_5057_email] 
+   The most recent IBM BigFix Support newsletter 
+   
+
+
+Learn more
+ *  LMT and BFI Support Open Mic replays and short videos [https://www.youtube.com/playlist?list=PLFip581NcL2VJq76uy25y96dk9Hz0kkUV] 
+   LMT and BFI Technical Support hosted 12 informative Open Mic webcasts in 2017! Replays of those are available on the IBM Security Support YouTube channel. We also caught up on the backlog of Open Mic videos from prior years. Here is the playlist of all the Open Mic replays, as well as other LMTand BFI Support videos. 
+   
+   Support Technical Exchanges for IBM Security [https://www.ibm.com/support/home/exchanges-listing/K527788Q35237V48/IBM_Security_support_(general)/product?acss=danl_5057_email] 
+   Past and future Open Mics hosted by IBM Security Support 
+   
+   The IBM Security Learning Academy [https://www.securitylearningacademy.com/] 
+   We invite you to take full advantage of a FREE resource by visiting the IBM Security Learning Academy to start building your security skills today! 
+   
+   ILMT and BigFix Inventory courses in the Academy [http://ibm.biz/SecLearningAcademyILMT] 
+   
+
+
+
+
+
+Get help
+ *  BigFix Inventory and License Metric Tool tags for use in dWAnswers [http://www.ibm.com/support/docview.wss?uid=swg27048450&acss=danl_5057_email] 
+   Be sure to use these tags while submitting questions so Support agents will see them and help when they are able: "ilmt" or "bigfix-inventory" 
+   
+   The IBM Support online experience is at "My Support" [https://www.ibm.com/mysupport?acss=danl_5057_email] 
+   License Metric Tool is at http://ibm.biz/LMT-MySupport [http://ibm.biz/LMT-MySupport] 
+   BigFix Inventory is at http://ibm.biz/BFI-MySupport [http://ibm.biz/BFI-MySupport] 
+   
+   RFE Community for IBM Security products [https://www.ibm.com/developerworks/rfe/execute?use_case=changeRequestLanding&BRAND_ID=301&acss=danl_5057_email] 
+   Look for existing requests for enhancement or log a new one here for IBM License Metric Tool or IBM BigFix Inventory 
+   
+
+ 
+
+Stay connected with support
+ *  Sign up to get My Notifications [http://www.ibm.com/software/support/einfo.html?acss=danl_5057_email] 
+   My Notifications is an IBM Support email subscription notification service. You will be notified immediately by email or RSS when the PSIRT team announces new product vulnerabilities and solutions. You can be notified in a daily or weekly digest. 
+   
+   IBM License Metric Tool (ILMT) 9.x blog [https://www.ibm.com/developerworks/community/blogs/ilmt?lang=en&acss=danl_5057_email] 
+   Follow our expert Support Agent's blog to get in-depth information about releases, events, and Support news. 
+
+
+[/support/docview.wss?uid=swg27050826&aid=1] [https://www.facebook.com/pages/IBM-Security-Support/221766828033861][/support/docview.wss?uid=swg27050826&aid=2] [https://twitter.com/AskIBMSecurity][/support/docview.wss?uid=swg27050826&aid=3] [https://www.youtube.com/user/IBMSecuritySupport] 
+
+
+
+
+
+To be on the mailing list that gets newsletters, as well as invitations to Security Support's Open Mic webcasts, send an e-mail to isssprt@us.ibm.com [isssprt@us.ibm.com?subject=snl%20subscribe%20Endpoint%20And%20Mobility%20Management] with the exact subject line: 
+snl subscribe ILMT2017
+
+
+
+
+
+ORIGINAL PUBLICATION DATE
+ 2017/12/31 
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Security IBM BigFix Inventory PRODUCT ALIAS/SYNONYM
+ IBM BigFix Inventory
+IBM License Metric Tool
+LMT
+ILMT

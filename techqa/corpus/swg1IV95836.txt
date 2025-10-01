@@ -1,0 +1,159 @@
+Title: IBM IV95836: MAXMESSAGE ENTRY MISSING FOR OSLC#STABLERESOURCENOTFOUND ERROR - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  There is no maxmessage defined for the error
+   oslc#stableresourcenotfound
+   
+   Steps to reproduce
+   
+   The error occurs when the stableid can't be found when querying
+   through multiple pages of OSLC data.
+   
+   When the error occurs the logs print the message
+   oslc#stableresourcenotfound instead of an associated maxmessage
+   entry describing the cause of the issue.
+   
+   Open Database Configuration and select messages, then filter
+   for stableresourcenotfound and no results will be returned as
+   the Message Group and Key are not defined for the error.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * Maximo integration OSLC users                                *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * There is no maxmessage defined for the error                 *
+   * oslc#stableresourcenotfound.                                 *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   Steps to reproduce
+   
+   The error occurs when the stableid can't be found when querying
+   through multiple pages of OSLC data.
+   
+   When the error occurs the logs print the message
+   oslc#stableresourcenotfound instead of an associated maxmessage
+   entry describing the cause of the issue.
+   
+   Open Database Configuration and select messages, then filter
+   for stableresourcenotfound and no results will be returned as
+   the Message Group and Key are not defined for the error.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix for this APAR is contained in the following maintenance
+   package:
+   	  Release 7.6.0.9 of Base Services
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV95836
+   
+   
+ * REPORTED COMPONENT NAME
+   MAXIMO SYSTEMS
+   
+   
+ * REPORTED COMPONENT ID
+   5724R46AV
+   
+   
+ * REPORTED RELEASE
+   760
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-05-04
+   
+   
+ * CLOSED DATE
+   2017-08-14
+   
+   
+ * LAST MODIFIED DATE
+   2017-08-14
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   MAXIMO SYSTEMS
+   
+   
+ * FIXED COMPONENT ID
+   5724R46AV
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R760 PSY
+   UP

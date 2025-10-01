@@ -1,0 +1,37 @@
+Title: IBM Sterling Connect:Direct Server Run Task Service Usage with two parameters - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How to configure CD Server Run Task Service in the below scenario.
+Copy a file to remote CD Windows node and then run a task with two parameters. 
+- Remote Run Task: D:\TESTDIR\PROGRAM\COPY.EXE
+- Remote Run Task Param 1: (filename just copied)
+- Remote Run Task Param 2: CONNECT 
+
+ANSWER
+Use the below example.
+<operation name="CD Server Run Task Service"> 
+<participant name="CDServerRunTask"/> 
+<output message="CDServerRunTaskServiceTypeInputMessage"> 
+<assign to="Program" from="concat(&apos;pgm(D:\TESTDIR\PROGRAM\COPY.EXE) args(&apos;,/ProcessData/RemoteFileName/text(),&apos; CONNECT)&apos;)"></assign>
+<assign to="SessionToken" from="//BeginSessionResults/SessionToken/node()"></assign>
+<assign to="." from="*"></assign> 
+</output> 
+<input message="inmsg"> 
+<assign to="." from="*"></assign> 
+</input> 
+</operation> 
+
+Also while configuring please note:- 
+
+1) Configure the CD Server Run Task Service through GPM. This is preferable to avoid issues with special characters. 
+It is recommended the CD Server Run Task service for the BP is edited using the graphic process modeler, which will ensure that the BPML is coded correctly 
+
+2) Do not enclose the value specified for SystemOpts in double quotes. 
+
+3) Both executable and command line can not be specified at the same time. 
+
+pgm() is used to specify a real executable, i.e. a file that exists on disk. C:D will then run this executable.
+cmd() is used to specify a command line or an internal shell command like dir or del. C:D will run CMD.exe (the Windows Shell) and pass along the cmd() value as command line.

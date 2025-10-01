@@ -1,0 +1,176 @@
+Title: IBM PI13561: BIPEDIT DOES NOT PROVIDE FULL POSIX NOTATION FOR ++TIMEZONE++ VARIABLE - United States
+
+Text:
+z/os SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  z/OS does not support the Olson timezone format, so we are
+   restricted to specifying the POSIX format for the TZ environment
+   variable. However, we should be setting the full POSIX format,
+   i.e., the time zone and daylight saving time (DST) rules. For
+   example, in the UK, we should set the TZ environment variable as
+   follows:
+   
+   TZ=GMT0BST,M3.5.0/1,M10.5.0/2
+   
+   This states that DST comes into effect on the last Sunday of
+   March at 01:00 am GMT and ends on the last Sunday of October at
+   01:00 am GMT.
+   (Note that the TZ environment variable is expressed in local
+   time, so 01:00 GMT is set above as 02:00 BST).
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  If customers experience problems with inaccurate local time
+   values in returned TIMESTAMP variables, then they should update
+   their Brokers ENVFILE TZ environment variable to use the
+   full POSIX notation, e.g., GMT0BST,M3.5.0/1,M10.5.0/2. The
+   Broker will
+   need to be restarted to pick up the change.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   All users of WebSphere Message Broker V8.0 and IBM Integration
+   Bus V9.0 on z/OS.
+   
+   
+   Platforms affected:
+   z/OS
+   
+   ****************************************************************
+   PROBLEM DESCRIPTION:
+   z/OS does not support the Olson timezone format, so we are
+   restricted to specifying the POSIX format for the TZ environment
+   variable. If the full POSIX format is not specified and the
+   default daylight saving time (DST) rules are not valid for your
+   timezone, then it is possible to experience inaccurate local
+   time values in returned TIMESTAMP variables during periods in
+   the year when the default DST values are in effect.
+   
+   
+   There are a number of resource name changes between WebSphere
+   Message Broker and IBM Integration Bus Version 9.0. For details
+   visit
+   www.ibm.com/support/knowledgecenter/SSMKHH_9.0.0/com.ibm.etools.
+   mft.doc/bb23814_.htm.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  BIPEDIT now specifies the full POSIX format for the UK as a
+   default value for the TZ environment variable.
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+   Version    Maintenance Level
+   v8.0       8.0.0.5
+   v9.0       9.0.0.3
+   
+   The latest available maintenance can be obtained from:
+   http://www-01.ibm.com/support/docview.wss?rs=849&uid=swg27006041 [http://www-01.ibm.com/support/docview.wss?rs=849&uid=swg27006041]
+   
+   If the maintenance level is not yet available, information on
+   its planned availability can be found on:
+   http://www-1.ibm.com/support/docview.wss?rs=849&uid=swg27006308 [http://www-1.ibm.com/support/docview.wss?rs=849&uid=swg27006308]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI13561
+   
+   
+ * REPORTED COMPONENT NAME
+   WEB MB Z/OS
+   
+   
+ * REPORTED COMPONENT ID
+   5697P4400
+   
+   
+ * REPORTED RELEASE
+   800
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-03-12
+   
+   
+ * CLOSED DATE
+   2014-05-30
+   
+   
+ * LAST MODIFIED DATE
+   2014-05-30
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEB MB Z/OS
+   
+   
+ * FIXED COMPONENT ID
+   5697P4400
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R800 PSY
+   UP

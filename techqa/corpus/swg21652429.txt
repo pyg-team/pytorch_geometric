@@ -1,0 +1,36 @@
+Title: IBM How to solve error "java.lang.OutOfMemoryError: Java heap space" - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When trying to run a job set from Workbench (Generate Threshold Analysis Pairs was the job in this particular case) the job failed, giving the following error message:
+"Analysis results size exceeds available memory, try modifying input parameters to achieve a smaller result. "
+
+The following error was found in the engine log:
+
+[10/5/13 7:47:47:349 CDT] 00000079 SystemErr R Exception in thread "[Timer] - Main Queue Handler" java.lang.OutOfMemoryError: Java heap space
+[10/5/13 7:47:47:349 CDT] 00000079 SystemErr R at org.eclipse.equinox.internal.util.impl.tpt.threadpool.ThreadPoolFactoryImpl.execute0(ThreadPoolFactoryImpl.java:94)
+[10/5/13 7:47:47:350 CDT] 00000079 SystemErr R at org.eclipse.equinox.internal.util.impl.tpt.timer.TimerImpl.run(TimerImpl.java:110)
+[10/5/13 7:47:47:350 CDT] 00000079 SystemErr R at java.lang.Thread.run(Thread.java:773)
+[10/5/13 7:47:47:368 CDT] 00000010 SystemErr R java.lang.OutOfMemoryError: Java heap space
+[10/5/13 7:47:47:368 CDT] 000000de SystemErr R Exception in thread "sib.LockThread-D49454E18DE5331D" java.lang.OutOfMemoryError: Java heap space
+[10/5/13 7:47:47:368 CDT] 000000de SystemErr R at com.ibm.ws.rsadapter.jdbc.WSJdbcConnection.prepareStatement(WSJdbcConnection.java:2779)
+[10/5/13 7:47:47:368 CDT] 000000de SystemErr R at com.ibm.ws.rsadapter.jdbc.WSJdbcConnection.prepareStatement(WSJdbcConnection.java:2742)
+[10/5/13 7:47:47:368 CDT] 000000de SystemErr R at com.ibm.ws.sib.msgstore.persistence.impl.ConnectionWrapper.prepareStatement(ConnectionWrapper.java:260)
+[10/5/13 7:47:47:368 CDT] 000000de SystemErr R at com.ibm.ws.sib.msgstore.persistence.impl.MEInnerOwnerTable.readOwningME(MEInnerOwnerTable.java:248)
+[10/5/13 7:47:47:369 CDT] 000000de SystemErr R at com.ibm.ws.sib.msgstore.persistence.lock.DBLockingThread.waitAndRefreshLock(DBLockingThread.java:1183)
+[10/5/13 7:47:47:369 CDT] 000000de SystemErr R at com.ibm.ws.sib.msgstore.persistence.lock.DBLockingThread.run(DBLockingThread.java:250)
+
+How can this issue be solved?
+
+
+
+CAUSE
+The Java Heap size is not set high enough.
+
+RESOLVING THE PROBLEM
+Follow the steps discussed in http://publib.boulder.ibm.com/infocenter/irm/v8r5m0/index.jsp?topic=/com.ibm.installingirm.doc/rminst0232.htm [http://publib.boulder.ibm.com/infocenter/irm/v8r5m0/index.jsp?topic=/com.ibm.installingirm.doc/rminst0232.htm]
+
+
+These steps help increase the JVM max heap size from the default of 1 GB.

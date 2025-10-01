@@ -1,0 +1,141 @@
+Title: IBM IV73474: WSRR instancePrefix not included in URL for "GETPOLICYBSRURI" (POLICYEXPRESSION) QUERIES during DETACH - United States
+
+Text:
+  READMES ARE AVAILABLE
+IBM Tivoli Composite Application Manager for SOA 7.2 Interim Fix 5 README 7.2.0.1-TIV-ITCAMSOA-IF0005 [http://www-01.ibm.com/support/docview.wss?uid=isg400002229]
+IBM Tivoli Composite Application Manager for SOA 7.2 Interim Fix 7 README 7.2.0.1-TIV-ITCAMSOA-IF0007 [http://www-01.ibm.com/support/docview.wss?uid=isg400002451]
+IBM Tivoli Composite Application Manager for SOA 7.2 Interim Fix 9 README 7.2.0.1-TIV-ITCAMSOA-IF0009 [http://www-01.ibm.com/support/docview.wss?uid=isg400002627]
+IBM Tivoli Composite Application Manager for SOA 7.2 Interim Fix 12 README 7.2.0.1-TIV-ITCAMSOA-IF0012 [http://www-01.ibm.com/support/docview.wss?uid=isg400003852]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  In SOA's WSRR client code there are two executeQuery calls. One
+   takes a query fragment and builds the URL itself, there is a
+   hardcoded "/WSRR/" in there so it will not include the instance
+   prefix.
+   
+   This problematic executeQuery code only seems to be used for
+   "getPolicyBsrURI" (PolicyExpression) queries. You've seen the
+   DETACH rule is involved, other monitoring policy rules may also
+   be impacted.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: WSRR integrations with multiple instances
+   ****************************************************************
+   * PROBLEM DESCRIPTION: The WSRR instancePrefix was not used in
+   * some WSRR queries via HTTP from the TEPS
+   ****************************************************************
+   * RECOMMENDATION: Apply 7.2.0.1 IF0005
+   ****************************************************************
+   Under most circumstances a prebuilt WSRR URL is used, but some
+   queries build their own URL each time. Some of these queries
+   mistakenly omitted the WSRR instancePrefix information from the
+   URL.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  WSRRClientBase.getWSRRUriFragment() will now incorporate the
+   server's instancePrefix
+   
+   The fix for this APAR is contained in the following maintenance
+   packages:
+               | interim fix | 7.2.0.1-TIV-ITCAMSOA-IF0005
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV73474
+   
+   
+ * REPORTED COMPONENT NAME
+   ITCAM FOR SOA-D
+   
+   
+ * REPORTED COMPONENT ID
+   5724SOA00
+   
+   
+ * REPORTED RELEASE
+   720
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2015-05-22
+   
+   
+ * CLOSED DATE
+   2015-07-27
+   
+   
+ * LAST MODIFIED DATE
+   2015-07-27
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ITCAM FOR SOA-D
+   
+   
+ * FIXED COMPONENT ID
+   5724SOA00
+   
+   
+
+APPLICABLE COMPONENT LEVELS

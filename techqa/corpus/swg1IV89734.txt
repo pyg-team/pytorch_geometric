@@ -1,0 +1,144 @@
+Title: IBM IV89734: ITNM 4.2 NOT STORING 64BIT DATA - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Env:
+   ITNM 4.2  using DB2 database
+   Seeing this message in poller logging:
+   
+   
+   2016-09-14 05:44:39: Node eval(long64,'&SNMP.VALUE.ifOutOctets')
+   evaluated to 3703206701
+   CDbDataDest::SetItemValue: Cannot cast to int from 64-bit
+   Integer
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * users polling for 64 bit counter data and wanting to store   *
+   * it                                                           *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * When polling for 64 bit data and the data exceeds the 32 bit *
+   * max nothing is stored in the database.  Previously we would  *
+   * store a record with an error code set and log message to     *
+   * trace file if debug 4 is set.  This has been fixed to behave *
+   * as it did in previous release.                               *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * | fix pack | 4.2.0-ITNMIP-FP0002                             *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The poller will store 64 bit data until it reaches the 32 bit
+   max, then it will store an error code and write message to trace
+   file (if debug=4)
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV89734
+   
+   
+ * REPORTED COMPONENT NAME
+   TIV NETWK MGR I
+   
+   
+ * REPORTED COMPONENT ID
+   5724S4500
+   
+   
+ * REPORTED RELEASE
+   420
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-10-06
+   
+   
+ * CLOSED DATE
+   2016-10-26
+   
+   
+ * LAST MODIFIED DATE
+   2016-10-26
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TIV NETWK MGR I
+   
+   
+ * FIXED COMPONENT ID
+   5724S4500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R420 PSN
+   UP
+   
+   
+ * R420 PSY
+   UP

@@ -1,0 +1,67 @@
+Title: IBM Unable to create a FileNet Content Platform Engine P8 domain - United States
+
+Text:
+SELECT 1 FROM FNGCD for update with RS; unable to create P8 domain TECHNOTE (TROUBLESHOOTING)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ English 
+
+PROBLEM(ABSTRACT)
+ After installing P8 5.2.1 and FP2, and the prerequisite software, the creation of the P8 domain fails. 
+
+SYMPTOM
+Login to Administration Console Content Engine (ACCE) and receive the domain a name, but then the next action just causes a spinning wheel. 
+
+An error log is created in the .........\IBM\WebSphere\AppServer\profiles\AppSrv01\FileNet\server1 directory. 
+
+ 
+
+The specific exception is;
+
+"The database access failed with the following error: ErrorCode -4,203, Message '[jcc][t4][2041][11392][4.15.100] Error executing XAResource.start(). Server returned XAER_PROTO. ERRORCODE=-4203, SQLSTATE=null' SQL: "SELECT 1 FROM FNGCD for update with RS"
+
+
+CAUSE
+Incompatible / un-supported DB2 JDBC driver version.
+
+
+ENVIRONMENT
+WebSphere 8.5.5.0
+DB2 10.5.3
+P8 Content Platform Engine 5.2.1.2
+
+
+
+
+DIAGNOSING THE PROBLEM
+Review the following for details; 
+
+
+http://www-969.ibm.com/software/reports/compatibility/clarity-reports/report/html/prereqsForProduct?deliverableId=1313767706422#prereqs-1 [http://www-969.ibm.com/software/reports/compatibility/clarity-reports/report/html/prereqsForProduct?deliverableId=1313767706422#prereqs-1]
+
+
+DB2 JDBC drivers
+
+
+http://www-01.ibm.com/support/docview.wss?uid=swg21363866 [http://www-01.ibm.com/support/docview.wss?uid=swg21363866]
+
+
+Minimum JDBC version 3.66.46 or 4.16.53. 
+
+JDBC Drivers 3.67.26 and 4.17.28 are not supported with DB2 10.5 FP2 because the following error occurs when creating a P8 domain: 
+
+The database access failed with the following error: ErrorCode -4,203, Message '[jcc][t4][2041][11392][4.15.100] Error executing XAResource.start(). Server returned XAER_PROTO. ERRORCODE=-4203, SQLSTATE=null' SQL: ""SELECT 1 FROM FNGCD for update with RS""
+
+
+RESOLVING THE PROBLEM
+Which the above specific versions of Content Platform Engine and DB2, review the following; 
+
+If using JDBC 3 JDBC Driver 3.67.26 is not supported 
+If using JDBC 4 JDBC Driver 4.17.28 is not supported 
+
+Use this link and download/install the JDBC version prior to the non-supported version 
+
+DB2 JDBC drivers 
+
+
+http://www-01.ibm.com/support/docview.wss?uid=swg21363866 [http://www-01.ibm.com/support/docview.wss?uid=swg21363866]

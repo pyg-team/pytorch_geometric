@@ -1,0 +1,164 @@
+Title: IBM IV36658: AGENT CONFIGURATION CAUSES INCORRECT KOQ_NAMED_INSTANCE SETTING - United States
+
+Text:
+  A FIX IS AVAILABLE
+ITCAM for Microsoft (R) App : SQL Server 6.3.0-TIV-ITM_SQL-IF0004 [http://www-01.ibm.com/support/docview.wss?uid=swg24036766]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Severity: 3
+   Approver: Hua Ming Zhong
+   Compid: 5724B96MO
+   Abstract: Agent configuration results in incorrect
+   KOQ_NAMED_INSTANCE
+    setting
+   
+   Environment:
+   All windows versions
+   All Microsoft SQL Server versions
+   Microsoft SQL Server Agent 6.3
+   
+   Problem Description: After the monitoring agent for Microsoft
+   SQL Server is configured and started for the default instance,
+   the agent displays no data in Tivoli Enterprise Portal.
+   
+   Detailed Re-creation Procedure:
+   1) Install SQL Server Agent 6.3.
+   2) Remove registry key:
+      HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\MSSQLServer\Setup
+   3) Configure the agent instance for the default SQL Server
+   instance.
+   4) Start the agent.
+   5) Check Tivoli Enterprise Portal (TEP).
+   There is no data in the agent workspaces.
+   
+   Related Files and Output:
+   <host>_OQ_<instance>_col.out
+   CML1526I (092231) (10712)Checking 'MSSQL$<instance>' service
+   status.
+   CML1525I (092231) (10712)Error in
+   check_service_status:OpenServiceA()
+    Error Code: 1060
+   CML1526I (092331) (10712)waiting for 'MSSQL$<instance>' service
+   to start from '1' minutes.....
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Edit following registry key to set KOQ_NAMED_INSTANCE to 0:
+   HKEY_LOCAL_MACHINE\SOFTWARE\Candle\KOQ\610\<Server>\environment
+   
+   "KOQ_NAMED_INSTANCE"="0"
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  AGENT CONFIGURATION CAUSES INCORRECT KOQ_NAMED_INSTANCE SETTING
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Now the correct values are set for KOQ_NAMED_INSTANCE.
+   
+   The fix for this APAR is contained in the following maintenance
+   packages:
+      | interim fix | 6.3.0-TIV-ITM_MSAPP-FP0001
+      | interim fix | 6.2.3.1-TIV-ITM_SQL-IF0004
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV36658
+   
+   
+ * REPORTED COMPONENT NAME
+   TIV MON MS SQL
+   
+   
+ * REPORTED COMPONENT ID
+   5724B96MO
+   
+   
+ * REPORTED RELEASE
+   622
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-02-12
+   
+   
+ * CLOSED DATE
+   2013-03-19
+   
+   
+ * LAST MODIFIED DATE
+   2013-04-12
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TIV MON MS SQL
+   
+   
+ * FIXED COMPONENT ID
+   5724B96MO
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R630 PSY
+   UP

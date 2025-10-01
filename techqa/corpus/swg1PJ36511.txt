@@ -1,0 +1,178 @@
+Title: IBM PJ36511: Slow performance occurs when adding property criteria to a search template definition. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Poor performance occurs when using the Search Designer function
+   of Workplace XT to create or modify a search that contains a
+   large set of custom property criteria.
+   
+   Steps to Reproduce:  Setting Search Template Criteria
+   1. Create 50 custom property templates in an object store.
+   2. Create several choice lists and associate same with your
+   Property Templates
+   3. Create or edit an existing Doc Class and add 20 of your new
+   custom properties to you Doc Class, ensuring several have the
+   choice lists associated with same.
+   4. Use Workplace XT to open Search Template designer and create
+   a new Search Template.
+   5. Specify the following in the designer:
+    a) The Object Store you have used for the properties and for
+   the Doc Class.
+    b) For the object Type - Specify the Doc Class used above and
+   set the view value to hidden.
+    c) Go to the Search Criteria tab and add 20 associated custom
+   properties to the criteria.
+   6. Leave the rest as default and add the new search template to
+   your object store.
+   Expected Results: Setting the search template criteria should
+   complete in a timely manner.
+   Actual Results:  Setting the search template criteria has a
+   longdelay (approximately 5 minutes).
+   
+   Steps to Reproduce:  Check out a Search Template
+   1. Open the Search Designer using Workplace XT.
+   2. Select the Open/Checkout menu item from the File menu to
+   check out a search template.
+   3. Browse to a folder where the template was saved and select a
+   search template to open it with the Checkout option selected.
+   Expected Results: The checkout process should complete in a
+   timely manner.
+   Actual Results:  The checkout process has a long delay.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * WorkplaceXT user who uses Search Designer                    *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * Use of Search Designer via WorkplaceXT is extremely slow in  *
+   * responsiveness.                                              *
+   *                                                              *
+   * Checkout along with other functions of Search Designer takes *
+   * a long time to complete simple functions.                    *
+   *                                                              *
+   * Example: Creation of a new Search Template, the criteria     *
+   * tab, when adding a custom property.                          *
+   * The real delay is seen when you have taken the time to       *
+   * create a new Search Template via WorkplaceXT  and added X    *
+   * number of custom                                             *
+   * properties to the criteria (takes a fair bit of time to add  *
+   * 20 custom properties via XT and Search Designer),  this same *
+   * search                                                       *
+   * template is then needed to be modified and you go to Search  *
+   * Designer to checkout the template for modification.          *
+   * The check out takes over 5 minutes just to get to the point  *
+   * where you can start working on the template.                 *
+   * Then making modifications, such as deletion/removing a       *
+   * custom property from the Search Criteria tab takes may take  *
+   * another bit of                                               *
+   * a delay to complete.                                         *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Upgrade to Workplace XT version 1.1.3.7-WPXT-FP007           *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The error condition is fixed in Workplace XT version 1.1.3.7 and
+   there is no change in the behavior.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PJ36511
+   
+   
+ * REPORTED COMPONENT NAME
+   WORKPLACE XT
+   
+   
+ * REPORTED COMPONENT ID
+   5724R7611
+   
+   
+ * REPORTED RELEASE
+   113
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-07-02
+   
+   
+ * CLOSED DATE
+   2009-10-07
+   
+   
+ * LAST MODIFIED DATE
+   2010-06-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WORKPLACE XT
+   
+   
+ * FIXED COMPONENT ID
+   5724R7611
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R113 PSY
+   UP

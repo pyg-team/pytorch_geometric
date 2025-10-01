@@ -1,0 +1,38 @@
+Title: IBM Changing the WAREHOUS data pruning settings - United States
+
+Text:
+monitoring reporting WAREHOUSE summarization pruning historical configuration attribute group TECHNOTE (FAQ)
+
+QUESTION
+ How do you change the WAREHOUS data pruning settings for Tivoli Storage Manager for Tivoli Storage Manager? 
+
+ANSWER
+Before you change the pruning options, you must decide how much historical data is needed. You must determine how long the detailed and summarization data needs to be retained.
+Any of the pruning option values can be modified to meet your requirements. You must apply the pruning settings to each attribute group individually. For example, if you want to change the pruning setting for the Yearly summarized data from 7 years to 3 years, you must update the yearly pruning setting for each attribute group individually. 
+
+Note: Every attribute group is associated with a workspace in the Tivoli Enterprise Portal. 
+
+The following list displays the default pruning settings for the Tivoli Monitoring for Tivoli Storage Manager V6.3.4 attribute groups. 
+
+· Yearly: 7 years
+· Quarterly: 2 years 
+· Monthly: 2 years 
+· Weekly: 6 months 
+· Daily: 2 months 
+· Hourly: 14 days 
+· Detailed: 3 months
+
+
+To update the pruning settings for each attribute group, complete the following steps: 
+
+1.Start the Tivoli Enterprise Portal. 
+2. Click Edit > Historical Configuration and click the Tivoli Storage Manager node to highlight it.
+3. Select the attribute group that you want to update under the Group column.
+4. Update the pruning options in the Pruning section of the window. 
+
+You can repeat this procedure for the remaining attribute groups.
+Note: The attribute groups that has the blue icon to the left of the name means that data is being collected for that attribute group. By default, not every attribute group is collecting data. 
+
+In the following example, the pruning setting for Client Node Storage attribute group has been updated to keep 2 years worth of data instead of 7 years. This can help to keep the size of the WAREHOUS database down. 
+
+[/support/docview.wss?uid=swg21660319&aid=1] [/support/docview.wss?uid=swg21660319&aid=1]

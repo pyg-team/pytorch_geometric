@@ -1,0 +1,212 @@
+Title: IBM PK71909: ABEND5C6-00C51039 IN CSQESTE DURING SHUTDOWN/RESTART OF ALL THE QUEUE MANAGERS IN THE QSG AT THE SAME TIME - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Title: CSQ1,ABN=5C6-00C51039,U=SYSOPR  ,C=F1000.531.CFM -
+   CSQESTE ,M=CSQGFRCV,LOC=CSQELPLM.CSQESTE +2346
+   .
+   00C51039 = CSQE_Unexpected_Error_from_IxlUsync.
+   00000C48 = IXLRSNCODESUBJCONNNOTDEFINED
+                (IXL_RSN_CODE from REG3)
+   .
+   In CSQESTE, the sequence of routines is Process_PeerFailure ->
+   Queue_Usync_Request -> Issue_ProxyResponse_Usync.
+   .
+   The abend happened during mass shutdown/re-start of all queue
+   managers for time change IPLs. 10 queue managers in the Queue
+   Sharing Group (QSG) stopped within 50 seconds. 8 started within
+   a 10-second period, and the other 2 started 4 minutes later.
+   .
+   In a CPU constrained environment (as exists during an IPL
+   sequence) the communication between the queue managers is slow.
+   Requests are queued while others are busy waiting for responses
+   from other queue managers.  Proxy responses can be issued and
+   can fail because another queue manager has already issued the
+   proxy response and the connector is then no longer defined. The
+   problem is the ABEND when the proxy response fails.
+   *
+   *
+   Because all members of the QSG were stopped at the same time,
+   there was no surviving queue manager to handle the Peer Level
+   Recovery (PLR) events at that time. The events remained queued
+   in the CF until the queue managers started again.
+   .
+   It is preferable to leave one queue manager up to handle all the
+   PLR requests, so that when the queue managers are re-started
+   they will only have to do recovery for themselves. This will
+   speed up the process rather than having every queue manager
+   handle recovery for every other queue manager.
+   *
+   Additional keywords:
+   ABEND5C6 ABENDS5C6 5C6 S5C6 S05C6 00C51039 shared queues PLR
+   shutdown shut down restart
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All users of WebSphere MQ for z/OS Version 6 *
+   *                 with a Queue Sharing Group                   *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: A QMGR ABN=5C6-00C51039 occurs after    *
+   *                      a return code of                        *
+   *                      IxlRsnCodeSubjConnNotDefined is         *
+   *                      returned from a proxy IXLUSYNC request  *
+   *                      issued on behalf of a Peer Level        *
+   *                      Recovery subject connection when PLR is *
+   *                      already active for a different event    *
+   *                      for the same structure and the subject  *
+   *                      connection is no longer active.         *
+   *                      This is a very rare error and can only  *
+   *                      occur when multiple QMGRs in a QSG are  *
+   *                      stopped at the same time.               *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   Code exists in module csqeste in the Issue_ProxyResponse_Usync
+   procedure to set rc=0 rsn=0 on receiving a reason code of
+   IxlRsnCodeSubjConnNotDefined from the IXLUSYNC proxy call when
+   ALL the following conditions exist :-
+   1: we are currently in PLR Phase 1 for a Usync which occurred
+   at connect time..
+   2: A new Recover Peer Event occurred.
+   3: The new event is an Existing Connection event.
+   4: The current Event Sequence is the SAME as that in PLR Phase 1
+   These conditions are too restrictive because the dump for THIS
+   problem shows that the new event received while we were in PLR
+   Phase 1 is from a DIFFERENT qmgr and has a different event
+   sequence number.
+   The QMGR that was the source of this event has clearly
+   disconnected as the subject connector is no longer valid, so we
+   should not abend on this condition.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Module csqeste has been changed such that
+   IxlRsnCodeSubjConnNotDefined will not cause an Abend when
+   processing a proxy IXLUSYNC response for any Recover Peer Event.
+   000Y
+   CSQESTE
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  *********
+   * HIPER *
+   *********
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK71909
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ Z/OS V6
+   
+   
+ * REPORTED COMPONENT ID
+   5655L8200
+   
+   
+ * REPORTED RELEASE
+   000
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   YesHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-09-10
+   
+   
+ * CLOSED DATE
+   2009-03-11
+   
+   
+ * LAST MODIFIED DATE
+   2009-04-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    PK82134 [http://www-01.ibm.com/support/docview.wss?uid=swg1PK82134] UK44787
+   
+   
+
+MODULES/MACROS
+ *     CSQESTE
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ Z/OS V6
+   
+   
+ * FIXED COMPONENT ID
+   5655L8200
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R000 PSY UK44787 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK44787]
+   UP09/03/27 P F903
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

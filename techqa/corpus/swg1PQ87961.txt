@@ -1,0 +1,258 @@
+Title: IBM PQ87961: PROVIDE REPORTS FOR INDIVIDUAL PARTITIONS IN HD UNLOAD/RELOAD - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS NEW FUNCTION.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Currently HD Unload/Reload reports are not done for individual
+   partitions.  It is desirable to have detailed reports by
+   partition, and a summary report for the entire job.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: Users of IMS V9R1 HALDB databases and        *
+   *                 HD Unload and Reload utilities (DFSURGU0     *
+   *                 and DFSURGL0) are affected.                  *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: HD Unload and Reload reports do not     *
+   *                      generate statistics for each HALDB      *
+   *                      partition.  They contain statistics     *
+   *                      only for the entire HALDB database.     *
+   ****************************************************************
+   * RECOMMENDATION: INSTALL CORRECTIVE SERVICE FOR APAR/PTF      *
+   ****************************************************************
+   Logic needs to be coded to keep track of statistics by
+   partition in HD Unload.  In HD Reload, code needs to be added
+   to read partition statistics in the unload file and to support
+   concatenated unload files.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *  Modules DFSURGU0, DFSURGL0 and DFSDLR00 have been changed to
+   generate HD unload and reload statistics report for HALDB
+   partitions.  This function is enabled when users issue STAT=DET
+   in the SYSIN control statement of HD Unload utility.
+   This is also the default setting.
+   To disable HD Unload/Reload statistics by partition, users
+   need to code STAT=SUM in the SYSIN control statement of HD
+   Unload utility.
+   .
+   When FALLBACK=YES exists in the SYSIN control statement,
+   no partition statistics report will be generated as it is not
+   applicable.  Only the database summary statistics are generated.
+   .
+   Following are more detailed descriptions of code changes in
+   each module:
+   .
+   DFSDLR00
+   ========
+   DFSDLR00 has been modified to return a new status code, "NP"
+   (JCBPTLNP bit set), for new partition if the caller is DFSURGU0
+   (JCBPTSTC bit set) and the call is unqualified GN.  This status
+   code is returned with no data transferred if the database is
+   partitioned HD, and it is either the first call or a new
+   partition is selected in processing the call.  The partition
+   name is placed in the I/O area.  A succeeding GN call will
+   return the first segment of the new partition or another NP
+   status code if the partition is empty.
+   .
+   DFSURGU0
+   ========
+   DFSURGU0 has been modified to add partition name to the output
+   report.  It also adds the phrase 'EMPTY PARTITION' if there are
+   no records in a partition.  And it prints the statistics for the
+   previous partition whenever a status code of NP is returned,
+   except the NP on the first call.  The statistics are rolled into
+   a summary set and the current values zeroed.  The final summary
+   report is printed after the last partition has been processed
+   and the statistics for the last partition have been printed.
+   The unload file contains statistics records of the values
+   printed on the report.  Statistics records will be furnished
+   for each partition.
+   .
+   DFSURGL0
+   ========
+   DFSURGL0 has been modified to expect statistics records by
+   partition in the input file.  After processing the statistics
+   records the search for new records will resume.  Thus
+   concatenated files from separate unload runs will be correctly
+   processed as well as unloads of multiple partitions in a single
+   step.
+   .
+   IMS V9 Utilities Reference: Database and Transaction Manager
+   (ZES1-2358-01) are updated with the following changes:
+   .
+   In Chapter 5 HD Reorganization Unload Utility (DFSURGU0)
+   under the section DFSURGU0 Utility Control Statements,
+   1. Add a line below  ,NUMBER=nn   that reads:
+                        ,STAT=ccc
+   2. Add a paragraph after the paragraph on NUMBER=:
+      STAT=
+        Specifies whether to generate partition statistics.
+        Partition statistics are generated if STAT=DET.
+        Partition statistics are not generated if STAT=SUM.
+        The default setting is STAT=DET.
+   .
+   In Chapter 5 HD Reorganization Unload Utility (DFSURGU0)
+   under the section DFSURGU0 Output Messages and Statistics,
+   3. Add the following paragraph immediately after Figure 14:
+   .
+      Note: For STAT=DET, there will be output statistics
+      report for each HALDB partition in addition to the
+      database statistics shown above.  Each partition
+      statistics shows the partition name and the same fields
+      as the database statistics.
+   .
+   In Chapter 5 HD Reorganization Unload Utility (DFSURGU0)
+   under the section DFSURGU0 Output Messages and Statistics,
+   and the heading AVERAGE COUNT PER DATABASE RECORD,
+   4. Delete the following sentence:
+   .
+      When variable-length segments are involoved, the calculation
+      of the average database record length is based on the maximum
+      possible segment length.
+   .
+   In Chapter 6 HD Reorganization Reload Utility (DFSURGL0)
+   under the section Restrictions,
+   5. Add a bullet at the end of the section:
+   .
+      . Concatenated unload files cannot be used as input files
+        to HD Reorganization Reload utility if they were
+        created using MIGRATE, MIGRATX or FALLBACK by the
+        HD Reorganization Unload utility.
+   .
+   In Chapter 6 HD Reorganization Reload Utility (DFSURGL0)
+   under the section DD Statements, DFSUINPT DD heading,
+   6. Add the following sentences at the end of the paragraph:
+   .
+      For HALDB databases, two or more data sets can be
+      concatenated to be reloaded by HD Reorganization Reload
+      utility.  When using concatenated files, it is recommended
+      that they be in partition selection order.  Otherwise,
+      unpredictable results could occur.
+   .
+   In Chapter 6 HD Reorganization Reload Utility (DFSURGL0)
+   under the section Output Messages and Statistics,
+   7. Add a paragraph immediately after Figure 18:
+   .
+      If HD Reorganization Unload utility was run using STAT=DET
+      in the SYSIN control statement, there will be one output
+      statistics for each HALDB partition as well as for the
+      entire database.  In the case of concatenated input
+      data sets to the HD Reorganization Reload utility, you
+      will see output statistics from each input file.
+      The detailed reports from HD Reorganization Reload utility
+      reflect the unloaded data, not the reloaded data.  They
+      do not specify partition names due to possible key range
+      changes, consolidation or expansion as a result of running
+      HD Reorganization Reload utility.
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   PQ87961
+   
+   
+ * REPORTED COMPONENT NAME
+   IMS V9
+   
+   
+ * REPORTED COMPONENT ID
+   5655J3800
+   
+   
+ * REPORTED RELEASE
+   900
+   
+   
+ * STATUS
+   CLOSED UR1
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2004-04-23
+   
+   
+ * CLOSED DATE
+   2004-08-12
+   
+   
+ * LAST MODIFIED DATE
+   2005-06-07
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    PQ75592
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UQ91728 UQ91729
+   
+   
+
+MODULES/MACROS
+ *  DFSDLR00 DFSJCB   DFSURGL0 DFSURGU0
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   IMS V9
+   
+   
+ * FIXED COMPONENT ID
+   5655J3800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R900 PSY UQ91728
+   UP04/08/17 P F408
+   
+   
+ * R901 PSY UQ91729
+   UP04/08/17 P F408

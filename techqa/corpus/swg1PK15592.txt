@@ -1,0 +1,226 @@
+Title: IBM PK15592: ABEND6C6 AFTER RRS IS RECYCLED WITH A LARGE NUMBER OF URS OUTSTANDING. MQ ISSUES CSQ3014I FOR EACH INDOUBT UR THEN ABENDS - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  CSQ3RIND presents an invalid completion code to ATRPDUE in the
+   case of an AGNT block not being found for an indoubt UR. The
+   ATRPDUE therefore gives RC 379, which causes CSQ3RIND to issue
+   abend 5C6 00F30095
+   During EOT processing for the CSQ3RRSC service task,
+   CSQVEOT1 detects that a latch ( SSAM latch ) is still held,
+   and hence the queue-manager is abended with S6C6
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All users of WebSphere MQ for z/OS Version   *
+   *                 6 Release 0.                                 *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: After restart of RRS, MSGCSQ3014I is    *
+   *                      issued unexpectedly. ABENDS5C6          *
+   *                      RC00F30095 is then issued by CSQ3RIND.  *
+   *                      Queue-manager then abends ABENDS6C6     *
+   *                      RC00E50705.                             *
+   ****************************************************************
+   * RECOMMENDATION: Apply PTF.                                   *
+   ****************************************************************
+   An application program, in this case a DB2 stored procedure,
+   using the MQ RRS batch adapter issues an MQCONN. AGNT and ACE
+   control blocks are created for the application program's TCB.
+   The application program then issues an in-syncpoint MQPUT.
+   During processing of the MQPUT, an ACE is created for the RRS
+   context associated with the TCB and the recoverable work for
+   the MQPUT is recorded under this ACE and it's associated URE.
+   The queue-manager expresses interest in the UR and specifies
+   the URID of the MQ UR for its persistent interest data.
+   
+   The application then requests that RRS commits the recoverable
+   work. RRS therefore invokes the queue-manager for Prepare
+   processing and then logs that the Prepare phase has completed
+   OK.
+   
+   The RRS address space is then stopped and started.
+   
+   The queue-manager is notified that RRS is available again and
+   initiates resynchronization processing. CSQ3RRSR issues the RRS
+   ATRIRNI service to retrieve any incomplete URs that the queue-
+   manager is interested in. The ATRIRNI returns the UR associated
+   with the application above together with the queue-manager's
+   persistent interest data, that is, the URID. CSQ3RRSR tries to
+   find an AGNT control block which refers to the URID. However,
+   no such AGNT exists and so message CSQ3014I is issued. CSQ3RRSR
+   then starts a CSQ3RRSC service task to wait for RRS to instruct
+   the queue-manager to commit or backout the UR.
+   
+   RRS invokes the queue-manager to Backout its recoverable work
+   associated with the UR, which results in CSQ3RRSC invoking
+   CSQ3RIND to perform the backout. CSQ3RIND obtains the AMGSLTCH
+   and tries to find an AGNT for the URID. However, as an AGNT
+   cannot be found CSQ3RIND issues RRS service ATRPDUE with
+   invalid completion code atr_ur_resolved_by_installation. The
+   ATRPDUE therefore fails with return code x379. CSQ3RIND detects
+   the failure and issues abend S5C6 return code 00F30095.
+   
+   CSQ3RIND's FRR is invoked for the abend and has code for
+   releasing the AMGSLTCH. However, due to a code addressability
+   problem the FRR returns immediately to RTM and the latch is not
+   released. During termination processing of the CSQ3RRSC service
+   task CSQVEOT1 detects that a latch is still held and requests
+   that the queue-manager is abended S6C6 with reason code
+   00E50705. This is reported by message CSQV086E.
+   
+   Note that the above problem may also occur after a restart of
+   the queue-manager when it has interest in indoubt RRS URs, and
+   MQ command 'RESOLVE INDOUBT' is issued to resolve the indoubts
+   before RRS instructs the queue-manager to commit or backout.
+   
+   
+   Additional keywords :
+   5C6 6C6 ABEND5C6 0C4 ABEND0C4
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  CSQ3RRSR has been changed so that if an AGNT cannot be found
+   with the URID specified in the persistent interest data from
+   the ATRIRNI service, the URE chains are searched. If an
+   matching URE is found, then an AGNT control block is created and
+   normal UR resolve processing continues. To support this, a new
+   field has been added to the URE which contains the address of
+   associated ACE and CSQRUB01 has been changed to set this field.
+   
+   The FRRs in CSQ3RIND and CSQ3RRSR have been changed to
+   establish addressability to the code correctly.
+   
+   CSQ7CBV, which provides the URE output for the LMC option of
+   CSQWDPRD, has been changed to provide the address of the ACE
+   associated with a URE.
+   000Y
+   CSQDURE
+   CSQRUB01
+   CSQ3RIND
+   CSQ3RRSR
+   CSQ7CBV
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  *********
+   * HIPER *
+   *********
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK15592
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBS MQ FOR ZOS
+   
+   
+ * REPORTED COMPONENT ID
+   5655L8200
+   
+   
+ * REPORTED RELEASE
+   000
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   YesHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2005-11-22
+   
+   
+ * CLOSED DATE
+   2005-11-30
+   
+   
+ * LAST MODIFIED DATE
+   2006-01-04
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    PK07691 [http://www-01.ibm.com/support/docview.wss?uid=swg1PK07691]
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UK09526
+   
+   
+
+MODULES/MACROS
+ *     CSQDURE  CSQRUB01 CSQ3RIND CSQ3RRSR CSQ7CBV
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBS MQ FOR ZOS
+   
+   
+ * FIXED COMPONENT ID
+   5655L8200
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R000 PSY UK09526 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK09526]
+   UP05/12/08 P F512
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

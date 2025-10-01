@@ -1,0 +1,53 @@
+Title: IBM License agreement acceptance during firmware update is required after upgrading to the 5.0 firmware for the DataPower appliances - United States
+
+Text:
+accept license 500change xa xs xg xi xb xm firmware upgrade downgrade update FLASH (ALERT)
+
+ABSTRACT
+ After installing 5.0.0.0 or later releases, you are required to explicitly accept the terms of the license agreements when updating the firmware. 
+
+CONTENT
+After installing firmware 5.0.0.0 or later releases, you are required to explicitly accept the terms of the license agreements when updating the firmware. This affects all methods used to update the firmware: WebGUI, CLI, SOMA, and AMP. 
+
+Only customers that have 5.0.0.0 or later firmware releases installed are required to accept the license when updating the firmware. This is also true if the 5.0.0.0 or later firmware is installed and you are downgrading to an earlier major release (such as 4.0.2).
+Examples: 
+
+ * You have 4.0.2 or earlier firmware installed and are moving to 5.0. You do not have to accept the license. 
+ * You have 5.0.0.0 installed and are moving to an earlier major release, such as 4.0.2. You do have to accept the license.
+
+
+
+To accept the license using the WebGUI, do the following:  1. Log in to the default domain. 
+ 2. From the Control Panel, click the System Control icon. 
+ 3. Navigate to the Boot Image area. 
+ 4. From the Firmware File list, select the newly transferred firmware image. 
+ 5. Select the I accept the terms of the license agreements check box. 
+ 6. Click Boot Image and follow the prompts. 
+ 7. Click Close to boot the appliance.
+
+
+To accept the license from the command line, use the boot image command in the Flash configuration mode with the accept-license parameter:  * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * accept-license
+ * <imagename>
+ * 
+ * 
+ * 
+ * 
+
+
+If using SOMA, use the <ApplyPatch> element containing the <AcceptLicense/> element. 
+
+If using AMP, use the following element containing the <dp:AcceptLicense/> element: 
+
+<dp:SetFirmwareRequest xmlns:dp="http://www.datapower.com/schemas/appliance/management/2.0"> 
+
+Many customers run scripts to update the firmware. To minimize the impact to these customers, there is an alternative mechanism for accepting the license. 
+To use your existing scripts without changes, place an empty file named " license.accepted" in the temporary:// directory ( temporary://license.accepted) before running the current upgrade scripts. Note: This is a temporary file, and it is not persisted after a reboot. Therefore, it is needed prior to any upgrade after the 5.0.0.0 firmware is installed.

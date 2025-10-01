@@ -1,0 +1,27 @@
+Title: IBM Setting Maximum  and Initial  Heap Size in WebSphere Application Server - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How do I set the maximum or initial heap size for WebSphere Application Server? 
+
+ANSWER
+
+1. log on to the administrative console. For example: systemname:9090/ibm/console/.
+2. Navigate to the Java virtual machine settings. 
+a. Expand Servers > Server Types and select WebSphere application servers.
+b. Click the name of your server.
+c. Under the Server Infrastructure group, click to expand Java and Process Management.
+d. Click Process Definition.
+e. Under the Additional Properties group, click Java Virtual Machine.
+3. The following are recommendations for 32 bit JVM. 
+
+ * Initial Heap Size: 512 
+ * Maximum Heap Size: 1024
+
+4. Click OK. 
+5. In the messages box, click Save. 
+6. Click OK. 
+7. In the messages box, click Save. 
+8. Restart the WebSphere Application Server.

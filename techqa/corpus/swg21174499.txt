@@ -1,0 +1,18 @@
+Title: IBM Creating custom business functions in JD Edwards to enable event notifications for the JD Edwards adapter - United States
+
+Text:
+JDE; JD Edward; JD Edwards; OneWorld; One World; Event; Create Event; Business Function; BF; EXE; exe. TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ To enable event notification in OneWorld, custom business components must be created. The Related URL section provides links to documents that provide step by step instructions for creating and deploying event custom business components. 
+
+
+RESOLVING THE PROBLEM
+These components are required by the adapter for polling from the application. IBM® also provides some sample EXE and C source files for event creation. Sample files are shipped with the adapter. If you decide to use the samples, work with your JDE specialist to customize the sample EXE files to suit your JDE implementation. 
+
+See the Related URL section for links to step by step instructions for creating and deploying custom business functions in a customer's OneWorld environment.
+
+
+RELATED INFORMATION
+#Document for Creating Components [ftp://public.dhe.ibm.com/software/ts/cw/adapters/AdapterForOneWorld/IBM_Event_Package.doc]
+Document for Building and Deployment of components [ftp://public.dhe.ibm.com/software/ts/cw/adapters/AdapterForOneWorld/Packging_and_Deployment.doc]

@@ -1,0 +1,109 @@
+Title: IBM A "message for key: [xxx] is not found" error shows on the Process Portal Console after upgrading to the IBM Business Process Manager (BPM) 7.5.1 products - United States
+
+Text:
+upgrade; process portal; JR41549 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ After you upgrade the database from IBM Business Process Manager Version 7.5.0.x to 7.5.1, you might find some messages that are similar to "messge for key: [scoreboard.MyPerf.name] is not found" in the left panel of Process Portal Console under the"My ScoreBoards" tab. 
+
+SYMPTOM
+You see the following problem in the Process Portal Console after you upgrade the database to Version 7.5.1: 
+
+[/support/docview.wss?uid=swg21577551&amp;aid=1]
+
+
+ENVIRONMENT
+This problem does not occur in a new Version 7.5.1 installation or in a database that is created for new profiles.
+
+
+
+RESOLVING THE PROBLEM
+See the following options that resolve this issue: 
+
+ 
+
+This problem is addressed in IBM Business Process Manager V7.5.1 Fix Pack 1. If you upgrade your environment from IBM Business Process Manager Version 7.5.0.x to 7.5.1 Fix Pack 1, you do not need to install JR41549, which is referenced in the other resolutions within this document. 
+
+You can use the IBM Business Process Manager 7.5.1 Fix Pack 1 [http://www.ibm.com/support/docview.wss?uid=swg24033036] images to upgrade from IBM Business Process Manager Version 7.5.0,x. Continue to follow instructions in the Upgrading from IBM Business Process Manager V7.5 [http://pic.dhe.ibm.com/infocenter/dmndhelp/v7r5m1/index.jsp?topic=/com.ibm.wbpm.imuc.doc/topics/tmig_upgrading_bpm.html] document within the product documentation to complete the profile, clusters, and database upgrade.
+
+
+
+
+
+
+
+
+If you have installed Version 7.5.1 using either IBM Installation Manager or the silent installation method, but you have not run the upgrade_7x.bat or upgrade_7x.sh script to upgrade the Process Server database, complete the following steps: 
+
+ 1. Install Interim Fix JR41549.  * IBM Business Process Manager Standard [http://www-933.ibm.com/support/fixcentral/swg/quickorder?parent=ibm~WebSphere&product=ibm/WebSphere/IBM+Business+Process+Manager+Standard&release=7.5.1.0&platform=All&function=fixId&fixids=7.5.1.0-WS-BPM-MultiOS-IFJR41549-STD&includeSupersedes=0&source=fc] 
+     * IBM Business Process Manager Express [http://www-933.ibm.com/support/fixcentral/swg/quickorder?parent=ibm~WebSphere&product=ibm/WebSphere/IBM+Business+Process+Manager+Express&release=7.5.1.0&platform=All&function=fixId&fixids=7.5.1.0-WS-BPM-MultiOS-IFJR41549-EXP&includeSupersedes=0&source=fc] 
+     * IBM Business Process Manager Advanced [http://www-933.ibm.com/support/fixcentral/swg/quickorder?parent=ibm~WebSphere&product=ibm/WebSphere/IBM+Business+Process+Manager+Advanced&release=7.5.1.0&platform=All&function=fixId&fixids=7.5.1.0-WS-BPM-MultiOS-IFJR41549-ADV&includeSupersedes=0&source=fc]
+       
+       
+    
+    
+ 2. Upgrade the database using the upgrade_7x.bat or upgrade_7x.sh scripts. You can find the upgrade instructions in the Upgrading from IBM Business Process Manager V7.5 to IBM Business Process Manager V7.5.1 [http://publib.boulder.ibm.com/infocenter/dmndhelp/v7r5m1/index.jsp?topic=/com.ibm.wbpm.imuc.doc/topics/tmig_upgrading_bpm.html] topic in the product documentation.
+
+
+
+
+
+
+
+If you already installed binary to 7.5.1 and upgraded the database and see the problem in the Process Portal Console, complete the following steps: 
+
+ 1. Stop the server.
+    
+    
+ 2. Install the Interim Fix JR41549.  * IBM Business Process Manager Standard [http://www-933.ibm.com/support/fixcentral/swg/quickorder?parent=ibm~WebSphere&product=ibm/WebSphere/IBM+Business+Process+Manager+Standard&release=7.5.1.0&platform=All&function=fixId&fixids=7.5.1.0-WS-BPM-MultiOS-IFJR41549-STD&includeSupersedes=0&source=fc] 
+     * IBM Business Process Manager Express [http://www-933.ibm.com/support/fixcentral/swg/quickorder?parent=ibm~WebSphere&product=ibm/WebSphere/IBM+Business+Process+Manager+Express&release=7.5.1.0&platform=All&function=fixId&fixids=7.5.1.0-WS-BPM-MultiOS-IFJR41549-EXP&includeSupersedes=0&source=fc] 
+     * IBM Business Process Manager Advanced [http://www-933.ibm.com/support/fixcentral/swg/quickorder?parent=ibm~WebSphere&product=ibm/WebSphere/IBM+Business+Process+Manager+Advanced&release=7.5.1.0&platform=All&function=fixId&fixids=7.5.1.0-WS-BPM-MultiOS-IFJR41549-ADV&includeSupersedes=0&source=fc]
+       
+       
+    
+    
+ 3. Backup the ${server_root}/BPM/base/profile/actions/bootstrapData.ant file.
+    
+    
+ 4. In the bootstrapData.ant file, find the "main" target, and comment out the following ant calls: "importSystemToolkit", "importProcessPortal", "importSamples"
+    
+    For example:
+    
+    <target name="main" depends="init.config">
+    <bootstrap>
+    <!--
+    <antcall target="importSystemToolkit"/>
+    <antcall target="importProcessPortal"/>
+    -->
+    <antcall target="importRBGs"/>
+    <!--
+    <antcall target="importSamples"/>
+    -->
+    </bootstrap>
+    </target>
+    
+    
+ 5. Run the BootstrapProcessServerData command. For more information on this command, see the Loading the database with system information [http://publib.boulder.ibm.com/infocenter/dmndhelp/v7r5m1/index.jsp?topic=/com.ibm.wbpm.imuc.ebpm.doc/topics/tcnfg_bootstrap.html] topic in the product documentation.
+    
+    
+ 6. Start the server.
+    
+    
+ 7. Confirm that the problem has been resolved.
+    
+    
+ 8. Restore the backup of the bootstrapData.ant file that you saved in step 3 .
+
+
+Note: The bootstrapData.ant file is used while loading the system data into the database. It is very important that you restore the original bootstrapData.ant file. If you do not restore this file, you will see a failure next time you create a new profile or when you run the bootstrapProcessServerData command to load the system data. 
+
+RELATED INFORMATION
+ V7.5.1 Profile upgrade instructions [http://publib.boulder.ibm.com/infocenter/dmndhelp/v7r5m1/index.jsp?topic=/com.ibm.wbpm.imuc.doc/topics/tmig_upgrading_bpm.html]
+bootstrapProcessServerData.sh command help [http://publib.boulder.ibm.com/infocenter/dmndhelp/v7r5m1/index.jsp?topic=/com.ibm.wbpm.imuc.ebpm.doc/topics/tcnfg_bootstrap.html]
+Interim Fix JR41549 [http://www.ibm.com/support/docview.wss?uid=swg1JR41549]
+
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Business Process Manager Standard Installation / Configuration AIX, Linux, Linux zSeries, Solaris, Windows 7.5.1 Business Integration IBM Business Process Manager Express Installation / Configuration Linux, Windows 7.5.1

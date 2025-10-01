@@ -1,0 +1,26 @@
+Title: IBM The mhntlog probe starts up and then exits - United States
+
+Text:
+mhntlog probe host mhntlog.hosts monitor exit stopped running TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The mhntlog probe starts up and not long after that, it will stop. 
+
+SYMPTOM
+No error in the debug log and except for this message: 
+"Information: I-UNK-000-000: Probewatch: Going Down"
+
+
+CAUSE
+The probe has not been correctly configured.
+
+DIAGNOSING THE PROBLEM
+Check that the configuration of the probe is correctly done.
+
+RESOLVING THE PROBLEM
+The mhntlog.hosts file has not been configured to monitor any host. The probe start up and when it does not have any hosts to monitor it stops running.
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ OMNIbus

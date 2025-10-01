@@ -1,0 +1,170 @@
+Title: IBM HC71334: SHTMETAL.CANNOT CREATE A BEND, WHEN CLICK 'AUTOMATIC BENDS' ICON - United States
+
+Text:
+AIX SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  PROB : Cannot create a bend, when click 'Automatic bends' icon.
+   However we can create the bends with 'Bend' icon.
+   < scenario >
+    1.File-Open : "FFC-holder_iss5.CATPart" select.
+    2.Change workbench to SheetMetal Design if needed.
+    3.Click "Update All" icon.
+    4.In the specification tree, "Automatic Bends1"causes error.
+        ( Reference "xxxx_1060_001.bmp" )
+    5.Delete "Automatic Bends1" with MB3 ( mouse button three )
+      in the specification tree.
+      Then create ( like Bend5,Bend6,Bend7,Bend8,Bend9) each one by
+   one.
+      No error occured.
+       ( Reference "xxxx_1060_002.bmp" )
+      Delete "Bend5 to Bend9", and tried to create "Automatic
+   Bends" again,
+      then error occured.
+   < Customer request >
+     The customer wants to create the bends with 'Automatic bends'
+   icon
+     since we can create the bends with 'Bend' icon.
+   .
+   * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+   * * * *
+   Hello DS,
+   We have above problem. Could you please investigate?
+                   Thank you and regards,   UKKEY
+   ukkey0918
+   * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+   * * * *
+   
+   Update From DENIS Christophe                      ==>
+   $$RSPMNT=CDS$$ <=
+   The File is available under:
+   AIX.: /s/maint5/db/c760/pmr76001124.692
+   Best Regards, Christophe DENIS.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *   SHTMETAL.CANNOT CREATE A BEND, WHEN CLICK 'AUTOMATIC BENDS
+   ICON
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  THIS PROBLEM WILL BE FIXED ON
+     CATIA VERSION 5 RELEASE 7 GA level.
+   
+   Note
+   Delete all bend ad automatic bend
+   Click on Automatic Bend
+   => automatic bends are correctly performed
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   HC71334
+   
+   
+ * REPORTED COMPONENT NAME
+   CATIA V5 NT_INT
+   
+   
+ * REPORTED COMPONENT ID
+   569151000
+   
+   
+ * REPORTED RELEASE
+   504
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2000-09-19
+   
+   
+ * CLOSED DATE
+   2001-05-18
+   
+   
+ * LAST MODIFIED DATE
+   2005-11-04
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *     FILE
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CATIA V5 NT_INT
+   
+   
+ * FIXED COMPONENT ID
+   569151000
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R504 PSN
+   UP
+   
+   
+ * R505 PSN
+   UP
+   
+   
+ * R506 PSN
+   UP

@@ -1,0 +1,24 @@
+Title: IBM How is the Keyword property used in IBM FileNet Content Services? - United States
+
+Text:
+keyword; custom property TECHNOTE (FAQ)
+
+QUESTION
+ How is the Keyword property used in Content Services? 
+
+CAUSE
+Documents can be assigned keywords that are be used to help locate documents by searching. Keywords should not be confused with text searches, which search for words in the body of the document.
+
+ANSWER
+To configure the Keyword property: 
+
+ 1. Run CS Explorer. 
+ 2. From the Tools pull down menu, select Document Class. 
+ 3. Highlight the DocClass associated with documents that will use keywords and select Edit DC. 
+ 4.  Select Keyword in the left window and select ->. 
+ 5. Select Done to save changes.
+
+
+To use the Keyword property:  * When adding a document, type in the keywords associated with that document when setting the Properties. 
+ * Change Keywords by right clicking on the document, selecting Properties, and clicking on the Properties tab. 
+ * Search for Keywords by selecting the Keyword property, selecting is equal to, then entering the keyword to search for. Not equal to can also be used as an operator, but no other operators are supported. Keyword searches are not case sensitive.

@@ -1,0 +1,41 @@
+Title: IBM Sametime Connect client intermittently crashes with "JVM terminated with error 8096" - United States
+
+Text:
+Sametime ; 8.0.1; Connect Client ; intermittent ; crash ; JVM ; 8096 ; J9Generic_Signal_Number ; J9VM24.dll TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+A Lotus Sametime Connect 8.0.1 client intermittently crashes with the following error: 
+
+ * 
+ * 
+
+
+The problem typically occurs when Sametime is started. 
+SYMPTOM
+These crashes are random, though typically occur when the Sametime Connect client is started. The following characteristics exist: 
+
+ 
+
+ * The crash occurs only once and can be temporarily resolved by closing and restarting the Sametime client 
+ * Users are configured for single or dual community 
+ * Crashes occur on newly installed clients as well as upgrades 
+ * Crashes occur with users that do not use remote software 
+ * The following error is logged to javacore dump:
+   
+   Suspect Module: J9VM24.dll 
+   
+   1XHEXCPCODE J9Generic_Signal_Number: 00000004 
+   1XHEXCPCODE ExceptionCode: C0000005 
+   1XHEXCPCODE ExceptionAddress: 7FF12FCD 
+   1XHEXCPCODE ContextFlags: 0001003F 
+   1XHEXCPCODE Handler1: 7FF189A0 
+   1XHEXCPCODE Handler2: 7FEF8CB0 
+   1XHEXCPCODE InaccessibleAddress: FFFFFFF0 
+   NULL 
+   1XHEXCPMODULE Module: C:\Program Files\IBM\Lotus\Sametime 
+   Connect\rcp\eclipse\plugins\com.ibm.rcp.jcl.desktop.win32.x86_6.2.0.2008
+   03200905\jre\bin\J9VM24.dll
+
+
+RESOLVING THE PROBLEM
+While the crash with error 8096 can occur for various reasons, this particular crash occurs on a J9 thread. This issue has been reported to Quality Engineering as SPR# VROI7GBRPR and was addressed in the 8.0.2 Connect client.

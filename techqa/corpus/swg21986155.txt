@@ -1,0 +1,39 @@
+Title: IBM API Management Version 4.0.4.3 is now available - United States
+
+Text:
+ NEWS
+
+ABSTRACT
+ IBM API Management Version 4.0.4.3 addresses important APARs, and includes product enhancements. 
+
+CONTENT
+
+
+
+TAB NAVIGATION
+ * Overview [http://www.ibm.com/support/docview.wss?uid=swg21986155]- selected tab,
+ * Included Fixes [http://www.ibm.com/support/docview.wss?uid=swg27048377]
+ * Known Issues [http://www.ibm.com/support/docview.wss?uid=swg27048376]
+ * Download Links [http://www.ibm.com/support/docview.wss?uid=swg24042459]
+
+
+
+
+IBM API Management Version 4.0.4.3 is available for download. 
+
+IBM API Management Version 4.0.4.3 delivers important APAR fixes to users. 
+See the Included Fixes tab for details of the APARs that are resolved by IBM API Management Version 4.0.4.3. 
+
+How critical is this feature pack? 
+Critical/Highly recommended. 
+
+Recommended Gateway server version: 
+Use DataPower version 7.2, 7.1.0.x, 7.0.0.x, 6.0.0.7, or 6.0.1.3 (or higher) with IBM API Management Version 4.0.4.3. 
+
+Support Lifecycle Policy for API Management Version 4.0.4.3: 
+IBM API Management Version 4.0.4.x is a Maintenance Support Release and provides predictable support through regular, cumulative, in-place iFixes for a minimum period of two years. 
+
+A Maintenance Support Release is a recommended product level for which support, including defect and security updates, will be provided over a specified period of time. A Maintenance Support Release is intended for customers that may need a longer term deployment for their environment. 
+
+Change History: 
+28 June 2016: IBM API Management Version 4.0.4.3 released.

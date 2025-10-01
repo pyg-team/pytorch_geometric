@@ -1,0 +1,152 @@
+Title: IBM OW51654: CAN'T REGISTER CICS TRANSACTIONS WITH JCONSOLE - United States
+
+Text:
+AIX SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  I am using the Java Console to access the TBSM system. There I
+   am looking for the place to register CICS Transactions.
+   With the Classic Console I do it the following way:
+   On an LoB containing CICS Transaction objects (e.g. LoB: LOBC ->
+   Business System DB Trader -> LoB: DB Trader CICS Components -> L
+   Trader CICS Transactions; using the Deutsche Bank database) I vi
+   ew "Transaction Status".
+   For a transaction shown that way, I select to see the "Propertie
+   s"
+   There I find a frame called "Additional" with a listbox named
+   "Registration Status". There I can choose between the values
+   "Registered" and "Unregistered".
+   
+   Using the Java Console the "Properties" window for a transaction
+   not offer the "Registration Status" to change.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All TBSM V1R5 users.                         *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: CAN'T REGISTER CICS TRANSACTIONS WITH J *
+   *                      CONSOLE                                 *
+   ****************************************************************
+   ****************************************************************
+   I am using the Java Console to access the TBSM system. There I
+   am looking for the place to register CICS Transactions.
+   With the Classic Console I do it the following way:
+   On an LoB containing CICS Transaction objects (e.g. LoB: LOBC
+   ->
+   Business System DB Trader -> LoB: DB Trader CICS Components ->
+   L
+   Trader CICS Transactions; using the Deutsche Bank database) I
+   vi
+   ew "Transaction Status".
+   For a transaction shown that way, I select to see the "Propert
+   ie
+   s"
+   There I find a frame called "Additional" with a listbox named
+   "Registration Status". There I can choose between the values
+   "Registered" and "Unregistered".
+   Using the Java Console the "Properties" window for a transacti
+   on
+   not offer the "Registration Status" to change.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This problem is fixed with patch 1.5-BSM-0024 plus the platform
+   specific JAVA GUI patch (1.5-BSM-0025, 1.5-BSM-0026).
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   OW51654
+   
+   
+ * REPORTED COMPONENT NAME
+   TIVOLI BSM OS/
+   
+   
+ * REPORTED COMPONENT ID
+   5698BSM00
+   
+   
+ * REPORTED RELEASE
+   20D
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2001-10-11
+   
+   
+ * CLOSED DATE
+   2001-12-11
+   
+   
+ * LAST MODIFIED DATE
+   2001-12-11
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TIVOLI BSM OS/
+   
+   
+ * FIXED COMPONENT ID
+   5698BSM00
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R20D PSY
+   UP

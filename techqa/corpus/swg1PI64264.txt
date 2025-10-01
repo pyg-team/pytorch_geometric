@@ -1,0 +1,148 @@
+Title: IBM PI64264: UNABLE TO SET TLSV1.2 IN UCD BP WEB CONTAINER - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  By default, TLSv1.1 and TLSv1.2 are not enabled in UCD BP Web
+   Container.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  To workaround, follow the step below to enable TLSv1.2 at UCD BP
+   web container.
+   1) Open <UCD BP server install dir>/opt/tomcat/conf/server.xml
+   2) Navigate to  Connector port="8443"
+   3) Add a line with sslEnabledProtocols="TLSv1,TLSv1.1,TLSv1.2"
+   4) Restart UCD BP server instance for the change to take effect.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * Users using UCD Deploy with Patterns                         *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * To workaround, follow the step below to enable TLSv1.2 at    *
+   * UCD BP                                                       *
+   * web container.                                               *
+   * 1) Open <UCD BP server install                               *
+   * dir>/opt/tomcat/conf/server.xml                              *
+   * 2) Navigate to  sslProtocol="TLS"                            *
+   * 3) Change "TLS" to "SSL_TLSv2", which will enable all SSL    *
+   * v3.0                                                         *
+   * and TLS v1.0, v1.1 and v1.2 protocols. In case you want to   *
+   * only                                                         *
+   * enable TLS, please specify "TLSv1, TLSv1.1, TLSv1.2".        *
+   * 4) Restart UCD BP server instance for the change to take     *
+   * effect.                                                      *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fixed in 6.2.1 and above
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI64264
+   
+   
+ * REPORTED COMPONENT NAME
+   UC DEPLOY
+   
+   
+ * REPORTED COMPONENT ID
+   5725M5400
+   
+   
+ * REPORTED RELEASE
+   620
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-06-15
+   
+   
+ * CLOSED DATE
+   2017-07-27
+   
+   
+ * LAST MODIFIED DATE
+   2017-07-27
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   UC DEPLOY
+   
+   
+ * FIXED COMPONENT ID
+   5725M5400
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R620 PSY
+   UP

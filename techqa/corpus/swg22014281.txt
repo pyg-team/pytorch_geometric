@@ -1,0 +1,117 @@
+Title: IBM Multi-Client Manager command-line support for switching DataStage Clients - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How to use DataStage Multi-Client Manager (MCM) to switch clients at the Windows command prompt, or by using custom scripting? 
+
+ANSWER
+Release 11.7 introduces the new MCM command-line utility called MultiClientSwitcher.exe
+This utility allows users to list client installations, switch clients, and query the currently active installation version. 
+
+Unlike the GUI variant, MultClientSwitcher.exe is designed to be run from the Windows command-prompt and is offered as a console application, which can be used to automate client switching by calling from batch scripts. 
+
+The MultiClientSwitcher.exe can be found in x:\IBM\InformationServer\MCM folder along with the GUI variant MultiClientManager.exe 
+
+ 
+
+Syntax 
+
+MULTICLIENTSWITCHER –LIST | -SHOW | -SWITCH <PATHNAME> | -SWITCHA <ALIAS> | -REREGISTER 
+
+Primary command options: 
+
+-LIST Lists known client installations 
+
+-SHOW Show current client installation 
+
+-SWITCH Switch to client installation specified by directory 
+
+-SWITCHA Switch to client installation specified by Alias 
+
+-REREGISTER Re-registers the current installation 
+
+Global switches: 
+
+/B Uses bare format (no heading information or summary) 
+
+ 
+
+ 
+
+Examples 
+
+1) To list known client installations without making changes: 
+
+MultiClientSwitcher.exe -list 
+
+Known installations: 
+
+1: C:\IBM\InformationServer\Clients\Classic 11.7.0.0 * 
+
+2: C:\IBM\IS_11_5_0_2\Clients\Classic 11.5.0.2 
+
+Note: The currently active client installation is indicated by a trailing asterisk character ‘*’ in this output listing. 
+
+ 
+
+2) To show the current active client installation without listing all installations: 
+
+MultiClientSwitcher.exe -show 
+
+Current installation: 
+
+C:\IBM\InformationServer\Clients\Classic 11.7.0.0 
+
+ 
+
+3) Switching client installation to c:\ibm\is_11_5_0_2\clients\classic: 
+
+MultiClientSwitcher.exe –switch c:\IBM\IS_11_5_0_2\Clients\classic 
+
+Client installation: C:\IBM\IS_11_5_0_2\Clients\Classic 11.5.0.2 
+
+Switching can take a few minutes to complete 
+
+Please wait... 
+
+RESULT = SUCCESS 
+
+ 
+
+The utility also supports the notion of Aliases to identify client installations. To use the alias feature, you must create a text file in the MCM directory called MultiClientSwitcher.ini which contains name/pathname pairs of alias names and their respective installation pathnames. These mappings must be created in a section called “[Aliases]”. 
+
+The following MCM\MultiClientSwitcher.ini example describes two installations: 
+
+[Aliases] 
+
+PROD = C:\IBM\IS_11_5_0_1_prod\Clients\Classic 
+
+DEV = C:\IBM\IS_11_5_0_1_dev\Clients\Classic 
+
+ 
+
+Having created the aliases, switching clients using the alias “PROD” or “DEV” is a simple matter of specifying the command line argument -SwitchA <ALIAS> as follows: 
+
+MultiClientSwitcher.exe -SwitchA PROD 
+
+This will cause the “PROD” client in C:\IBM\IS_11_5_0_1_prod to be switched in and made active. 
+
+ 
+
+When specifying client installation pathnames for any of the primary commands, the utility expects the full pathname to include \Clients\Classic. For example, to specify the client installation in C:\IBM\InformationServer you would specify C:\IBM\InformationServer\Clients\Classic. 
+
+To allow for easier scripting – the utility also supports a non-verbose display mode which removes headers and unnecessary console output. This is enabled by specifying /B (bare mode) and can be used with all primary commands (LIST, SHOW, SWITCH, etc). 
+
+MultiClientSwitcher.exe writes the same log information and diagnostics as the regular MCM GUI application. For more information on collecting this information: http://www-01.ibm.com/support/docview.wss?uid=swg21689464 [http://www-01.ibm.com/support/docview.wss?uid=swg21689464] 
+
+ 
+
+ 
+
+Return codes 
+
+When executing MultiClientSwitcher.exe, the utility will return one of the following possible return codes: 
+
+Return Code Description Remedy 0 Operation was successful [/support/docview.wss?uid=swg22014281&amp;aid=1] 1 Fatal initialization error Contact IBM technical support for assistance 2 Invalid command line arguments have been specified Run MultiClientSwitcher.exe /? for usage information 3 Invalid installation directory Check the pathname is a valid installation directory including \Clients\Classic 4 Alias not found, or alias configuration error Alias name cannot be found in MultiClientSwitcher.ini or the configuration file is incorrect 5 No DataStage clients are installed Error should in theory never happen, but included for completeness 6 DataStage Client Switcher Service not running Ensure the MCM service is running in the Control Panel 7 Client switching failure See log for more information

@@ -1,0 +1,92 @@
+Title: IBM System Requirements for IBM InfoSphere Guardium v9.0/9.1 - United States
+
+Text:
+ PRODUCT DOCUMENTATION
+
+ABSTRACT
+ This document summarizes the recommended hardware and supported databases and operating system platforms for IBM® InfoSphere® Guardium® v9.0/9.1. 
+
+CONTENT
+The Guardium products related to the specifications are: Database Activity Monitor; Advanced Compliance Workflow Automation; Enterprise Integrator; Vulnerability Assessment (VA), Entitlement Reports, Data-Level Access Control; and, Central Manager and Aggregator. 
+
+Cross-Platform Security 
+
+Guardium’s cross-platform solution is ideal for heterogeneous environments because it supports all major DBMS data sources and protocols running on all major operating systems. 
+
+This table shows all data sources and versions currently supported in v9.0/9.1. 
+
+
+
+Data source Supported Versions Oracle (including ASO/SSL) 9i, 10g (r1, r2), 11gR1, 11gR2, 12c (12c Restrictions: Monitoring support for Windows, Linux, Solaris, HP-UX, AIX only. No support for SSL encryption. ASO support available only on Linux and Solaris.) Oracle RAC (including ASO/SSL) 10g, 11g, 11gR2, 12c (12c Restrictions: Monitoring support for Windows, Linux, Solaris, HP-UX, AIX only. No support for SSL encryption. ASO support available only on Linux and Solaris.) Oracle Exadata (including ASO/SSL) 11gR2, 12c Microsoft SQL Server MS SQL Cluster, 2000, 2005, 2008, 2008 R2, 2012, 2014 Microsoft SharePoint 2007, 2010 IBM DB2 (Linux, UNIX) 9.1, 9.5, 9.7, 10.1, 10.5 (including BLU acceleration) IBM DB2 (Windows) 9.1, 9.5, 9.7, 10.1, 10.5 IBM DB2 Purescale 9.8, 10.1, 10.5 IBM PureData System for Transactions [/support/docview.wss?uid=swg27039049&amp;aid=1] IBM PureData System for Operational Analytics [/support/docview.wss?uid=swg27039049&amp;aid=1] IBM PureData Systems for Analytics [/support/docview.wss?uid=swg27039049&amp;aid=1] IBM DB2 for z/OS 10, 11, 12 S-TAP Prerequisites for DB2 for z/OS V12: 
+
+Version 10 S-TAP: PTF UI36827 (APAR PI58287); Version 9.1 S-TAP PTF UI36830 (APAR PI58287); Version 9.0 S-TAP does not support DB2 for z/OS v12. 
+
+Common Collector (CQC 1.1) requires PTF UI36781 (APAR PI58175). 
+
+For more information on S-TAP and collector level compatibility, see: http://www-01.ibm.com/support/docview.wss?uid=swg21699982 [http://www-01.ibm.com/support/docview.wss?uid=swg21699982]
+
+IBM DB2 for i 6.1, 7.1, 7.2 IMS 11, 12. 13 VSAM see OS version support, part of z/OS (not separately versioned) IBM Informix 11.50, 11.70,12.10 Sun MySQL and MySQL Cluster 5.0, 5.1, 5.5, 5.6 Sybase ASE 15, 15.5, 15.7 Sybase IQ 15.0, 15.1, 15.2, 15.3, 15.4, 16 IBM Netezza 4.6, 4.6.8, 5,0, 6.0, 6.02, 7.0, 7.1, 7.2 PostgreSQL 8, 9, 9.1, 9.2 Teradata 12, 13, 13.10, 14, 14.10, 15 IBM InfoSphere BigInsights 1.4, 2.0, 2.1, 2.1.2, 3.0 Cloudera CDH3 Update 2, 3, 4
+CDH4.x, CDH5.x Aster 5, 6 Cassandra 1.2.x CouchDB 1.2.x Greenplum DB 4.0, 4.1, 4.2 Greenplum (Pivotal) HD 1.2, 1.5 Horton Works 1.x, 2.x MariaDB 5.5 MongoDB 2.0, 2.2, 2.4 SAP HANA 1.0 FTP [/support/docview.wss?uid=swg27039049&amp;aid=1] Window File Share (WFS) Windows 2003, 2008 Hadoop 1.x is used with the following distributions: Cloudera 4.x
+Hortonworks 1.x 
+IBM BigInsights 2.1
+Pivotal (Greenplum) HD 1.2 Hadoop 2.x is used with the following distributions: Cloudera 5.x
+Hortonworks 2.x
+BigInsights 2.1.2 and 3.0
+Pivotal 1.5 
+Host-Based Monitoring 
+
+Unique in the industry, S-TAPs are lightweight software probes that monitor both network and local database protocols (shared memory, named pipes, etc.) at the OS level of the database server. S-TAPs minimize any effect on server performance by relaying all traffic to separate Guardium appliances for real-time analysis and reporting, rather than relying on the database itself to process and store log data. S-TAPs are often preferred because they eliminate the need for dedicated hardware appliances in remote locations or available SPAN ports in your data center. 
+
+This table shows all OS platforms and versions for which S-TAPs are currently available. 
+
+OS Type Version 32-Bit & 64-Bit AIX 5.3 Both (Note: DB2 SHM and Informix SHM on 32-bit AIX not supported) 6.1, 7.1 64-Bit z/OS 2.1.x, 2.2.x [/support/docview.wss?uid=swg27039049&amp;aid=1] HP-UX 11.11, 11.23, 11.31 Both Red Hat Enterprise Linux (includes 
+Oracle Linux) 4, 5, 6 Both Red Hat Enterprise Linux for System z 5.4, 6.x 64-bit SuSE Enterprise Linux 9, 10, 11, 12 Both SuSE Enterprise Linux for System z 9, 10, 11 [/support/docview.wss?uid=swg27039049&amp;aid=1] Solaris - SPARC 9, 10, 11 Both Solaris - Intel 10, 11 10-Both, 11-64-Bit only Windows Server 2003, 2008, 2012 Both IBM i 6.1, 7.1, 7.2 Ubuntu 10.4 (SP3 & 4), 12.4 PostgreSQL only 
+* Supports network activity monitoring, local activity via Enterprise Integrator 
+
+End of Service 
+
+Guardium supports database and operating system versions up to their End-of-Service (EOS), Premier, or Mainstream support end dates. For IBM, they are published in http://www-01.ibm.com/software/support/lifecycle/ [http://www-01.ibm.com/software/support/lifecycle/] . For other vendors, contact your vendor representative to confirm their support end dates. IBM offers optional extended service support after EOS. Contact your IBM representative for further information. Guardium will support the hardware system it is running on up to the End-of Marketing (EOM) date plus 5 years or end of support date, whichever is sooner. 
+
+Flexible Deployment 
+
+Guardium is available as a hardware or software offering, ensuring the solution can be easily deployed in a wide variety of environments. As a hardware offering, the solution is delivered with licensed software fully loaded and tested on a physical appliance provided by IBM (hardware appliance), When delivered as a software offering, the solution is delivered as software images ready to be deployed by the user on their own hardware (software appliance), either directly or as virtual appliances. While the software images can be installed on any VMware product, the VMware ESX server is the recommended platform for a virtual solution. VMware only is supported by Guardium. 
+
+The following table summarizes major hardware requirements for software appliances. The Guardium solution is designed to work on i86 Intel-based or AMD-based platforms (for example, i686, x86_64). Only platforms and hardware that are officially supported by RedHat Linux 5. (32-bit or 64-bit) can be used as Guardium platforms, however, not all officially supported RedHat Linux 5.8 platforms can be used. Platforms that require additional drivers or specialized post-install configuration are not supported at this time. 
+
+Recommended Resources per software/virtual appliance 
+
+Resource Required Range* Comments Physical CPUs 4-16 cores x86 (Intel-based or AMD-based) processors required Virtual CPUs Minimum 4 vCPUs [/support/docview.wss?uid=swg27039049&amp;aid=1] RAM (32-bit) 8 GB (min) to 16 GB (max) 
+
+With quick search enabled, it is recommended to use 16 GB 
+
+(64-bit) 
+
+16 GB (min) to motherboard max 
+
+With quick search enabled, it is recommended to use 24 GB
+
+With quick search enabled, more RAM than minimum recommended for better experience using this function. Ports (NICs) 1 Gbit per second card recommended 
+
+1-4 Each port can be an actual NIC, or a virtual switch that can be configured to use multiple NICs, optionally with failover IP teaming. Optional: The third port may also be configured to team with the primary interface in order to provide failover IP teaming. Alternatively, the last port on the device may be configured as a secondary management interface with a different IP, NETMASK and GW from the primary. 
+
+When using Inspection Engines to capture traffic (not 
+S-TAPs) on software appliances, additional ports may be required. Note that this collection method is not applicable for virtual appliances. 
+
+Multiple network interfaces is supported only on a Guardium hardware appliance. Guardium software appliance only supports one network interface.
+
+Disk Size 300 GB to <2 TB Using RAID is recommended. RAID-0, RAID-1, RAID 0+1, RAID 1+0 are supported. 
+
+Note: Larger disks may hold more audit records for longer periods of time, but are more likely to impact performance. 
+
+At least 9 GB of free disk space on the /var partition is required.
+
+Disk Speed 7200 RPM to 15,000 RPM With 7200 RPM, scale back the sizing ratio by 70% DVD Drive 1 [/support/docview.wss?uid=swg27039049&amp;aid=1] * Refer to IBM x2000 high end configuration table for physical ranges (See Software Appliance 9.0 Technical Requirements) 
+
+Application Monitoring 
+
+InfoSphere Guardium identifies potential fraud by tracking activities of end-users who access critical tables via multi-tier enterprise applications rather than direct access to the database. This is especially important for applications that use connection pooling where all user traffic is aggregated within a few database connections, thereby masking the identity of end-users. 
+
+Guardium offers out-of-the-box support for the major off-the-shelf enterprise applications (see table below), and provides built-in tools to configure and add end-user identification for niche application and home-grown applications. Note: for most applications, some basic configuration is needed, to tailor the solution to your environment. 
+
+Supported Enterprise Applications Supported Application Server Platforms
+(for other enterprise & custom developed applications) Oracle E-Business Suite IBM WebSphere PeopleSoft BEA WebLogic Siebel Oracle Application Server (AS) SAP JBoss Enterprise Application Platform Cognos + Others based on customer demand Business Objects Web Intelligence [/support/docview.wss?uid=swg27039049&amp;aid=1] + Others based on customer demand [/support/docview.wss?uid=swg27039049&amp;aid=1]

@@ -1,0 +1,31 @@
+Title: IBM ICM search: Only retrieve options populate the DKDDOs returned from Query - United States
+
+Text:
+query retrieve; search retrieve TECHNOTE (FAQ)
+
+QUESTION
+ When I perform a search specifying attributes in my criteria, the DKDDO returned does not have any attributes retrieved. When I perform a search using a specific attribute, that attribute is nowhere to be found in the DKDDOs returned. 
+
+CAUSE
+A common mistake made is not coordinating the retrieve options specified in your query to match the query conditions, if you want the data to be retrieved in memory in the DKDDO objects returned. 
+
+Using attributes, or any other data structure information in your query string (search string), is in no way related to what is retrieved into the DKDDOs in memory. 
+
+For example, suppose you place a condition based on a specific attribute in your query string. Suppose you want the root component for all items based on the item type "Book" that have the title "Application Programming Guide". You issue the following query string: 
+
+ * 
+ * /Book[@Title="Application Programming Guide"]
+
+
+Suppose two versions of this book exist, matching the query string above, that you have access to. The query returns two DKDDO objects that represent the root component of those matching item versions. The DKDDO objects are populated with data based on the retrieve options specified to query. If you do not specify a retrieve option that includes root level attributes, attributes on the root component DKDDO objects that are returned will not be retrieved into the DKDDO object in memory. This only means that you chose not to retrieve attributes, perhaps because you did not need them in memory at this time and instead specified the DK_CM_CONTENT_IDONLY retrieve option. This does not mean that the attribute does not exist for the particular item version. Based on the query condition, you know that at the time of the query the attribute existed and was set to the value specified in the query string.
+
+
+ANSWER
+When you invoke a query, the following two actions take place: 
+
+ *  Query evaluates your search string based on all conditions specified and creates a list of DKDDO objects with PID information only (similar to retrieve option DK_CM_CONTENT_IDONLY). Query calls multi-item retrieve on your behalf using the retrieve options that you specified. If none are specified, a default retrieve option is used that involves the root level attributes only (DK_CM_CONTENT_ATTRONLY). Therefore, by default, you should get root level attributes. If they are not retrieved, you probably specified another retrieve option that limits the retrieved data, such as the DK_CM_CONTENT_IDONLY retrieve option. 
+
+If you want any data other than the default retrieved into the DKDDO objects returned from your search, specify the retrieve options as shown in the SSearchICM API education sample. Refer to the SItemRetrievalICM API education sample for more information on retrieve options. 
+
+
+Cross reference information Segment Product Component Platform Version Edition Enterprise Content Management Content Manager Usage AIX, Linux, Solaris, UNIX, Windows 2000, Windows NT, Windows XP 8.1, 8.2

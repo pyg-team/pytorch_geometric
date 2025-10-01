@@ -1,0 +1,314 @@
+Title: IBM PI73213: PROVIDE CLIENT IDLE CONNECTION TIMEOUT SUPPORT TO IMS CONNECT - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  This enhancement introduces a new idle timeout value that
+   controls the amount of time that IMS Connect waits for a new
+   message from the client before it terminates the socket
+   connection due to inactivity.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * All IMS V15 QPP users of IMS Connect.                        *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * Provide port connection idle timeout support                 *
+   * to IMS Connect.                                              *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * INSTALL CORRECTIVE SERVICE FOR APAR/PTF                      *
+   ****************************************************************
+   Provide port connection idle timeout support  to IMS Connect.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This enhancement introduces a new idle timeout value
+   that controls the amount of time that IMS Connect waits
+   for a new message from the client before it terminates
+   the socket connection due to inactivity.  There are
+   global-level and port-level idle timeout values.
+   
+   Global=level idle timeout:
+   The global idle timeout value applies to all ports defined
+   in the PORT= and PORTID= parameters in the TCPIP statement.
+   It is specified in the IDLETO= parameter of the TCPIP
+   statement in the IMS Connect HWSCFGxx configuration member
+   of the IMS PROCLIB data set.
+   
+   This IDLETO= parameter specifies the global-level amount
+   of time open socket connections can remain idle (in RECV
+   state) waiting for the next message before they are
+   terminated due to inactivity. The timeout interval is in
+   hundredths of seconds. Timeout values can be from 0 to
+   2,147,483,647 (X'7FFFFFFF'). A value of 0 disables this
+   timeout function which prevents inactive connections from
+   timing out.
+   
+   This parameter is optional and applies only to persistent
+   socket connections. The default value is 0.
+   
+   Port-level idle timeout:
+   The port specific idle timeout value overrides the global
+   timeout value and is specified in the IDLETO= parameter in
+   the PORT= parameter of the TCPIP statement in the IMS
+   Connect HWSCFGxx configuration member of the IMS PROCLIB
+   data set.
+   
+   This IDLETO= parameter specifies the port-level amount of
+   time open socket connections can remain idle (in RECV state)
+   waiting for the next message before they are terminated
+   due to inactivity. The timeout interval is in hundredths
+   of seconds. Timeout values can be from 0 to 2,147,483, 647
+   (X'7FFFFFFF'). A value of 0 disables this timeout function
+    which prevents inactive connections from timing out.
+   
+   This parameter is optional and applies only to persistent
+   socket connections. If this parameter is omitted, the port-
+   level connection idle timeout value will be set to -1, and
+   the global-level idle timeout value specified in the TCPIP
+   statement will be used.
+   
+   The idle timeout is only active after IMS Connect has
+   processed the initial message from the client.
+   
+   The following IMS Connect type-2 commands are enhanced to
+   support the new IDLETO= parameter:
+   
+   The QUERY IMSCON TYPE(PORT) command is enhanced to display
+   the idle timeout values.
+   
+   example: QUERY IMSCON TYPE(PORT) SHOW(IDLETO)
+   
+   The QUERY IMSCON TYPE(CONFIG) is enhanced to display the
+   the idle timeout values.
+   
+   example: QUERY IMSCON TYPE(CONFIG) SHOW(IDLETO)
+   
+   The UPDATE IMSCON TYPE(PORT) command is enhanced to allow
+   updates to the port-level idle timeout values.
+   Timeout values can be from -1 to 2,147,483,647 (X'7FFFFFFF').
+   A value of 0 disables this timeout function which prevents
+   inactive connections from timing out.
+   A value of -1 resets the port-level idle timeout value,
+   and the global-level idle timeout value will be used.
+   
+   example: UPDATE IMSCON TYPE(PORT) SET(IDLETO(1000))
+   
+   The UPDATE IMSCON TYPE(CONFIG) command is enhanced to allow
+   updates to the global-level idle timeout values.
+   Timeout values can be from 0 to 2,147,483,647 (X'7FFFFFFF').
+   A value of 0 disables this timeout function which prevents
+   inactive connections from timing out.
+   
+   example: UPDATE IMSCON TYPE(CONFIG) SET(IDLETO(1000))
+   
+   The CREATE IMSCON TYPE(PORT) command is enhanced to allow
+   setting the port-level idle timeout value.
+   Specifies the amount of time open socket connections can
+   remain idle (in RECV state) waiting for the next message
+   before they are terminated due to inactivity. The timeout
+   interval is in hundredths of seconds.
+   Timeout values can be from 0 to 2 147 483 647 (X'7FFFFFFF').
+   A value of 0 disables this timeout function which prevents
+   inactive connections from timing out.
+   This port-level idle timeout value overrides the global-level
+   idle timeout value.
+   This parameter is optional and defaults to the global-level
+   idle timeout value.
+   If this parameter is omitted, the port-level connection idle
+   timeout value will be set to -1, and the global-level idle
+   timeout value will be used.
+   This parameter is valid only when the PORTTYPE(REG) keyword
+   is specified.
+   
+   example: CREATE IMSCON TYPE(PORT) SET(PORTTYPE(REG)
+   IDLETO(1000))
+   
+   HWSCQ010 is enhanced to show the global-level IDLETO value.
+   
+   HWSCRCT0 is modified to add texts for 2 new reason codes
+   HRSN_ITO and HRSN_RANGE.
+   
+   HWSCU010 is enhanced to update the global-level IDLETO value.
+   
+   HWSFM20 is recompiled for HWSHSCT change.
+   
+   HWSFM060 is recompiled for HWSHCDB change.
+   
+   HWSGNEVT is modified to add &NAME5 to event 03.
+   
+   HWSHCDB is modified to define HCDB_IDLTO and HCDBPT_IDLETO.
+   
+   HWSHSCT is modified to define SCT_IDLETO and SCT_COM_PTIDLETO.
+   
+   HWSHRR is modified to add 2 new reason codes  HRSN_ITOINV
+   and HRSN_RANGE.
+   
+   HWSOCBLK is modified to define CIC_IDLETO and UIC_IDLETO.
+   
+   HWSOCM00 is enhanced to add the grammar for CREATE PORT,
+   QUERY PORT|CONFIG, and UPDATE PORT|CONFIG.
+   
+   HWSRSIB  is modified to add ATR_TCP_IDLETO_L, ATR_TCP_IDLETO_EL,
+   ATR_PORT_IDLETO_L, and ATR_PORT_IDLETO_EL.
+   
+   HWSSC010 is enhanced to specify the IDLETO when creating a
+   new regular port.
+   
+   HWSSDOTD is enhanced to add NAME5 to event 03.
+   
+   HWSSDRCV is enhanced to set the timer when a persistent socket
+   connecting to a regular port is in RECV state and the port
+   connection
+   idle timeout is enabled.
+   
+   HWSSQ010 is enhanced to show the port-level IDLETO value.
+   
+   HWSSU010 is enhanced to update the port-level IDLETO value.
+   
+   HWSVDB03 is enhanced to add a new field NAME5 to the event 03
+   for the IMS Connect event recorder exit routine HWSTECL0.
+   The following table identifies the parameter list
+   contents associated with the Support task created
+   event.
+   Table 3. Support task created event
+   Parameter list item  Content                 Length in bytes
+   VAR_IDLETO           Port idle timeout                         4
+   
+   HWSXCFG0 is enhanced to process the IDLETO paramter in PORT
+   and TCPIP statements of the IMS Connect configuration member.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  GEN: POSTREQ PI77200 [http://www-01.ibm.com/support/docview.wss?uid=isg1PI77200]
+   
+   
+    
+   
+   
+
+COMMENTS
+ *  REPINNED RP17/03/08 (ATXT) TO ADD POSTREQ PI77200 [http://www-01.ibm.com/support/docview.wss?uid=isg1PI77200] INFO.
+    **** PE17/03/08 PTF IN ERROR. SEE APAR PI77200 [http://www-01.ibm.com/support/docview.wss?uid=isg1PI77200] DESCRIPTION.
+   
+   &#215;**** PE17/02/24 FIX IN ERROR. SEE APAR PI77200 [http://www-01.ibm.com/support/docview.wss?uid=isg1PI77200]  FOR DESCRIPTION
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI73213
+   
+   
+ * REPORTED COMPONENT NAME
+   IMS V15
+   
+   
+ * REPORTED COMPONENT ID
+   5635A0600
+   
+   
+ * REPORTED RELEASE
+   500
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-12-03
+   
+   
+ * CLOSED DATE
+   2017-02-08
+   
+   
+ * LAST MODIFIED DATE
+   2017-10-06
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UI44506 PI83616 [http://www-01.ibm.com/support/docview.wss?uid=isg1PI83616]
+   
+   
+
+MODULES/MACROS
+ *  HWSSQ010 HWSOCM00 HWSSDOTD HWSCU010 HWSXCFG0 HWSHRR   HWSCQ010
+   HWSSU010 HWSSC010 HWSVDB03 HWSSDRCV HWSRSIB  HWSCRCT0 HWSFM020
+   HWSFM060
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   IMS V15
+   
+   
+ * FIXED COMPONENT ID
+   5635A0600
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R500 PSY UI44506 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI44506]
+   UP17/02/13 P F702
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

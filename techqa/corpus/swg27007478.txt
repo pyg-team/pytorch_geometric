@@ -1,0 +1,164 @@
+Title: IBM WebSphere MQ V5.3 for Linux for zSeries support for SuSE Linux Enterprise Server 8 (SLES8) - United States
+
+Text:
+kernel setting suse sles requirements zos zeries requirement PRODUCT README
+
+ABSTRACT
+ This document provides information on using WebSphere MQ V5.3 for Linux for zSeries on SuSE Linux Enterprise Server 8. 
+
+CONTENT
+ Support for SuSE Linux Enterprise Server 8 (SLES8)
+
+
+ 
+Testing of WebSphere MQ for Linux for zSeries, V5.3 has been performed using SuSE Linux Enterprise Server 8.
+
+Prerequisites of support for SuSE Linux Enterprise Server 8:
+
+The following statement applies specifically to support of WebSphere MQ on SuSE Linux Enterprise Server 8. General support information for WebSphere MQ for Linux for zSeries, V5.3 is available from:
+
+http://www.ibm.com/support/docview.wss?&uid=swg27006287 [http://www.ibm.com/support/docview.wss?&uid=swg27006287]
+
+
+ * Applications using the C++ Bindings for WebSphere MQ must be linked to the new libraries supplied in /opt/mqm/lib/3.2 in order to use the GCC 3.2 compiler and runtime libraries supplied with SuSE Linux Enterprise Server 8.  * To make the GCC 3.2 libraries the default libraries for WebSphere MQ C++ applications, issue the following command (as root):
+      
+      ln -sf /opt/mqm/lib/3.2/* /opt/mqm/lib
+   
+   
+
+
+Support for Red Hat Enterprise Linux 3.0 (RHEL3) AS/ES/WS 
+
+
+Testing of WebSphere MQ for Linux for zSeries, V5.3 has been performed using Red Hat Enterprise Linux 3.0 AS (Update 1). 
+
+Prerequisites of support for Red Hat Enterprise Linux 3.0: 
+
+The following statements apply specifically to support of WebSphere MQ on Red Hat Enterprise Linux 3.0. General support information for WebSphere MQ for Linux for zSeries, V5.3 is available from: 
+
+http://www.ibm.com/support/docview.wss?&uid=swg27006287 [http://www.ibm.com/support/docview.wss?&uid=swg27006287] 
+ * The AS/ES/WS variants of Red Hat Enterprise Linux 3.0 are supported. 
+ * Update 1 or higher must be applied to the Red Hat Enterprise Linux 3.0 installation. 
+ * Fix pack 9 or later must be applied to the WebSphere MQ installation. 
+ * The following JRE/JDKs are supported when running Java™ applications and clients:
+   
+   IBM JRE/JDK 1.3.1-6 or later
+   IBM JRE/JDK 1.4.1-1 or later
+   IBM JRE/JDK 1.4.2-1 or later
+   
+ * The instructions in this document must be followed when installing WebSphere MQ on Red Hat Enterprise Linux 3.0 (see Installation section below). 
+ * The environment variable LD_ASSUME_KERNEL=2.4.19 (see NPTL section below) must be exported from any shell when,  * Any WebSphere MQ RPM packages are being installed, 
+    * Any WebSphere MQ control commands are issued, or 
+    * Any WebSphere MQ applications (including clients) are run.
+   
+   
+ * When installing RPM packages the additional environment variable RPM_FORCE_NPTL=1 must be exported. 
+ * Applications using the C++ Bindings for WebSphere MQ must be linked to the new libraries supplied in /opt/mqm/lib/3.2 in order to use the GCC 3.2 compiler and runtime libraries supplied with Red Hat Enterprise Linux 3.0. 
+ * Step 9 in the installation steps below will make these the default libraries for WebSphere MQ C++ applications.
+
+
+Important information for use of WebSphere MQ for Linux for zSeries on Red Hat Enterprise Linux 3.0 
+
+
+NPTL: 
+
+The Red Hat Enterprise Linux 3.0 Kernel is based on a Linux 2.4 core with certain Linux 2.6 features. These features include the Native Linux Posix Thread Library (NPTL) threading implementation, which is NOT SUPPORTED by WebSphere MQ for Linux for zSeries, V5.3. 
+
+An environment variable is provided by the operating system to enable a LinuxThread threading implementation. This environment variable is detailed in the release notes for the operating system, and must be set as follows for WebSphere MQ: 
+
+export LD_ASSUME_KERNEL=2.4.19 
+
+WebSphere MQ requires that this environment variable is exported from any shell where installation is performed, WebSphere MQ control commands are issued or WebSphere MQ applications are executed. 
+
+Commands executed during installation of WebSphere MQ RPM packages also require a LinuxThreads threading implementation, but the RPM command itself requires an NPTL threading implementation on these operating systems. As discussed in Red Hat advisory RHEA-2004:010-03, environment variables must be set as follows prior to installation of WebSphere MQ RPM packages: 
+
+export LD_ASSUME_KERNEL=2.4.19 
+export RPM_FORCE_NPTL=1 
+
+** Notice ****************************************************** 
+* * 
+* WebSphere MQ for Linux (x86), V6.0 supports both the * 
+* NPTL and LinuxThreads threading implementations. * 
+* * 
+* As such it is NOT AFFECTED by the issues described in * 
+* this section, and benefits from the increased performance * 
+* of the NPTL threading implementation. * 
+* * 
+**************************************************************** 
+
+Installation: 
+
+A replacement for mqlicense.sh shipped on the WebSphere MQ CDROM is supplied with this fix pack. It is called mqlicense_lnx.sh. It has the same parameters as mqlicense.sh but will run on Red Hat Enterprise Linux 3.0. To run, it requires a version 1.4.1 JVM or later to be installed. 
+
+The following process must be followed when installing WebSphere MQ for Linux for zSeries on Red Hat Enterprise Linux 3.0: 
+ 1. Extract the fix pack to a known location.
+    
+    The location /tmp/csd9 is assumed in these instructions.
+    
+ 2. Become root. For example:
+    
+    su -
+    
+ 3. Change directory to the location where the WebSphere MQ installation RPMs are available. 
+    For example:
+    
+    cd /mnt/cdrom
+    
+ 4. Export the environment variable JAVA_HOME to point to the location of an existing Java installation (v1.4.1 or later).
+    
+    For example;
+    
+    export JAVA_HOME=/opt/IBMJava2-141
+     * An IBM JRE (version 1.4.1) is supplied on an 'Extras' CD with the Red Hat Enterprise Linux 3.0 Operating system.
+    
+    
+ 5. Execute the mqlicense_lnx.sh script, and follow the on-screen instructions to accept the license. For example:
+    
+    /tmp/csd9/mqlicense_lnx.sh
+     * You must ensure that the following environment variables have been exported before proceeding with installation of the WebSphere MQ RPM packages:
+       
+       export LD_ASSUME_KERNEL=2.4.19
+       export RPM_FORCE_NPTL=1
+       
+    
+    
+ 6. Proceed with the installation of the required WebSphere MQ RPM packages, using the instructions in the Quick Beginnings Guide manual (for Server installs), which can be downloaded from this location if required.
+    
+    http://www.ibm.com/software/integration/wmq/library/library53.html [http://www.ibm.com/software/integration/wmq/library/library53.html]
+    
+    or the instructions in the Clients manual (for client installs). This manual can be found at this location if required.
+    
+    http://www.ibm.com/software/integration/wmq/library/library53.html [http://www.ibm.com/software/integration/wmq/library/library53.html]
+     * You must ensure that the environment variable LD_ASSUME_KERNEL=2.4.19 has been set before proceeding with installation of the WebSphere MQ RPM packages.
+       
+    
+    
+ 7. Change directory to the location where the fix pack has been extracted. For example:
+    
+    cd /tmp/csd9
+    
+    
+ 8. Proceed with the installation of the required fix pack RPM packages, using the instructions in the Quick Beginnings Guide.  * You must ensure that the following environment variables have been exported before proceeding with installation of the WebSphere MQ RPM packages:
+       
+       export LD_ASSUME_KERNEL=2.4.19
+       export RPM_FORCE_NPTL=1
+       
+    
+    
+ 9. Execute the following command to create softlinks to the new C++ libraries installed bg this fix pack for use with GCC 3.2 as supplied with the operating system:
+    
+    ln -sf /opt/mqm/lib/3.2/* /opt/mqm/lib
+
+
+FAQ for Red Hat Enterprise Linux 3.0 and SuSE Linux Enterprise Server 8 
+
+
+This section contains solutions to possible problems you may encounter when installing or using WebSphere 5.3 on Red Hat Enterprise Linux 3.0 or SuSE Linux Enterprise Server 8. 
+
+Q1. When running a Java program on Red Hat Enterprise Linux 3.0 the JVM traps giving an error message such as "Segmentation fault" or "Killed". This can also be seen when running 'java -version'. 
+
+A1. This indicates that an unsupported Java JDK/JRE is being used, or that the LD_ASSUME_KERNEL=2.4.19 environment variable is not set, as is required by WebSphere MQ. Please see the Prerequisites of support section for the operating system above for a list of IBM JDK/JRE versions which are supported for use with WebSphere MQ. 
+
+
+PRODUCT ALIAS/SYNONYM
+ WMQ MQ

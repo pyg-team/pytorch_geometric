@@ -1,0 +1,45 @@
+Title: IBM Case Analyzer installer fails to connect to the specified database. - United States
+
+Text:
+missing; wrong TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ After filling out the Database Instance Name and the Database Port Number on the Database Information page and clicking next, "Database Connection Failure" is returned. 
+
+CAUSE
+There is more than one instance of SQL Server installed on the server. The Case Analyzer (CA) installer defaults to port 1433, regardless of what is specified in the Database Port Number field. 
+
+ENVIRONMENT
+Microsoft SQL Server 2008
+
+DIAGNOSING THE PROBLEM
+The CA installer has 2 fields on the "Local Database Configuration Parameters" screen. Database Instance Name and Database Port Number.
+
+
+
+
+
+This works:
+Database Instance: SQLEXPRESS
+Database Port Number: 1433
+
+This fails with "Database Connection Failure":
+Database Instance: MSSQLSERVER
+Datbase Port Number:1435 
+
+ 
+
+Use the SQL server client to determine the full name required to connect to the database. The SQL client command will only connect when the port number is specified.
+sqlcmd -E -S <servername>\MSSQLSERVER,1435
+
+Based on this, add the port number to the end of the database instance name in the CA installer:
+Database Instance MSSQLSERVER,1435
+Database Port Number:1435
+
+This should allow the installer to find the database an move on to the next screen.
+
+
+
+
+RESOLVING THE PROBLEM
+When there is more than one instance of SQLSERVER installed, the database port must be specified in the instance name. The name needs match what is displayed in SQL Server Management Studio in order for the CA installer to verify the connection. The Case Analyzer installer does not append the port specified in the Database Port Name field to the value entered in the Database Instance field. Therefore, the SQL Server Browser service will not be able to locate the database without the port number.

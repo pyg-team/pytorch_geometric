@@ -1,0 +1,39 @@
+Title: IBM Empty DBRMLIB member after compiling with Enterprise COBOL using the CoProcessor and DB2 V8 - United States
+
+Text:
+1239703; PMR60697_487_000; codepage 037 37 ccsid TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The user gets the following error trying to bind after compiling a DB2/SQL program using the Enterprise COBOL CoProcessor: 
+DSNT256I ? DBRM MEMBER MYPROG IS EMPTY, PACKAGE CANNOT BE BOUND 
+DSNT233I ? UNSUCCESSFUL BIND FOR PACKAGE = DB2X.MYPKG.XXX.() 
+The member name is created in DBRMLIB, but it appears empty when viewed. 
+The COBOL compiler is using DB2 V8R1 and has specified the compiler parameter of SQL("CCSID(0037)") to match the DB2 table definitions. 
+He is also using the default of CODEPAGE(1140). 
+He does not get this expected message from DB2. 
+IGYDS0208-I DSNH4764I SQL OPTION "CCSID(0037)" IS IN EFFECT 
+
+CAUSE
+There is a mismatch between the COBOL compiler CODEPAGE option and the DB2 CCSID setup.
+
+RESOLVING THE PROBLEM
+When the compiler option CODEPAGE(037) is used, the correct DBRM member and this message occur: 
+
+ IGYDS0208-I DSNH4764I SQL OPTION "CCSID(0037)" IS IN EFFECT 
+Using the COBOL compiler SQL("CCSID(0037)") option is not necessary in this case since that is what is set as his DB2 default, however, the CODEPAGE option setting should match the DB2 CCSID. 
+
+Also see Chapter 4 of the Enterprise COBOL for zOS Customization Guide V3R4 (GC27-1410) for additional information about setting Unicode tables for the DB2 interface for zOS 1.7 or earlier. 
+The command /D UNI, ALL from the z/OS console will display the table settings.
+
+Also please read the text of APAR PK31411 [http://www-01.ibm.com/support/docview.wss?uid=swg1PK31411]. It describes an alternative to the CODEPAGE change. It documents the new SQLCCSID NOSQLCCSID option. 
+
+RELATED INFORMATION
+#Customization Guide [http://www-306.ibm.com/software/awdtools/cobol/zos/library]
+
+
+ 
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Data & Information Management DB2 for z/OS Application Programming z/OS 8.0 
+HISTORICAL NUMBER

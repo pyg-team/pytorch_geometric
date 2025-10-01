@@ -1,0 +1,232 @@
+Title: IBM IV93834: DEBUG MESSAGES SHOWN IN THE SYSTEMOUT LOG FILE CAUSED BY HELP FUNCTIONALITY - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  ERROR DESCRIPTION:
+   
+   Debug messages shown in the SystemOut log file caused by Help
+   functionality.
+   
+   
+   PROBLEM:
+   
+   Debug messages appear in SystemOut.log whenever a user navigates
+   between any applications or the Start Center. This only occurs
+   when
+   help is set to use the IBM Knowledge Center (default since
+   7605). No
+   active loggers are set to use 'DEBUG' log level.
+   
+   Is there a way to stop this message from being logged every
+   time a user
+   navigates to a new application?
+   
+   SystemOut messages:
+   [2/9/17 15:11:12:238 CST] 000010c4 SystemOut     O Debug :No
+   Help
+   Taxonomy found for product: com.ibm.mam.doc/overview
+   [2/9/17 15:11:15:808 CST] 0000a0e2 SystemOut     O Debug :No
+   Help
+   Taxonomy found for product: com.ibm.mam.doc/overview
+   [2/9/17 15:11:23:826 CST] 0000a0e2 SystemOut     O Debug :No
+   Help
+   Taxonomy found for product: com.ibm.mam.doc/overview
+   [2/9/17 15:11:33:941 CST] 0000a0e2 SystemOut     O Debug :No
+   Help
+   Taxonomy found for product: com.ibm.mam.doc/overview
+   [2/9/17 15:13:01:923 CST] 0000a80c SystemOut     O Debug :No
+   Help
+   Taxonomy found for product: com.ibm.mam.doc/overview
+   [2/9/17 15:13:06:355 CST] 0000a0e2 SystemOut     O Debug :No
+   Help
+   Taxonomy found for product: com.ibm.mam.doc/overview
+   [2/9/17 15:14:49:808 CST] 0000a0e2 SystemOut     O Debug :No
+   Help
+   Taxonomy found for product: com.ibm.mam.doc/overview
+   [2/9/17 15:14:53:428 CST] 000012a4 SystemOut     O Debug :No
+   Help
+   Taxonomy found for product: com.ibm.mam.doc/overview
+   [2/9/17 15:15:08:670 CST] 000012a4 SystemOut     O Debug :No
+   Help
+   Taxonomy found for product: com.ibm.mam.doc/overview
+   [2/9/17 15:15:10:350 CST] 0000a0e2 SystemOut     O Debug :No
+   Help
+   Taxonomy found for product: com.ibm.mam.doc/overview
+   [2/9/17 15:15:24:635 CST] 0000a0e2 SystemOut     O Debug :No
+   Help
+   Taxonomy found for product: com.ibm.mam.doc/overview
+   [2/9/17 15:15:27:776 CST] 0000a0e2 SystemOut     O Debug :No
+   Help
+   Taxonomy found for product: com.ibm.mam.doc/overview
+   [2/9/17 15:17:34:326 CST] 000012a3 SystemOut     O Debug :No
+   Help
+   Taxonomy found for product: com.ibm.mam.doc/overview
+   
+   System Properties:
+   mxe.help.host: www.ibm.com
+   mxe.help.maximohelplink: com.ibm.mam.doc,welcome.html
+   mxe.help.path: /support/knowledgecenter/
+   mxe.help.useKCHelp: 1
+   
+   
+   PERFORMANCE ISSUE: No.
+   
+   STEPS TO REPRODUCE:
+   
+   Navigate in Maximo
+   The DEBUG messages will show in the logs.
+   
+   
+   CURRENT ERRONEOUS RESULT:
+   
+   Navigate in Maximo
+   The DEBUG messages will show in the logs.
+   
+   
+   EXPECTED RESULT:
+   
+   Navigate in Maximo
+   The DEBUG messages should not show in the logs.
+   
+   
+   ENVIRONMENT (SYSTEM INFO):
+   
+   Tivoli's process automation engine 7.6.0.6 Build 20161019-0100
+   DB Build
+   V7606-50
+   IBM TPAE Integration Framework 7.6.0.6 Build 20161014-1504 DB
+   Build
+   V7606-24
+   IBM Maximo Asset Management Work Centers 7.6.0.1 Build
+   20161014-1326 DB
+   Build V7601-41
+   IBM Maximo Asset Management 7.6.0.6 Build 20161019-0100 DB
+   Build V7604-
+   01
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  n/a
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * N/A                                                          *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * DEBUG MESSAGES SHOWN IN THE SYSTEMOUT LOG FILE CAUSED BY     *
+   * HELP  FUNCTIONALITY                                          *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Added code in WebClientRuntime.java to suppress the debug
+   message
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV93834
+   
+   
+ * REPORTED COMPONENT NAME
+   SYSTEM CONFIG
+   
+   
+ * REPORTED COMPONENT ID
+   5724R46S1
+   
+   
+ * REPORTED RELEASE
+   760
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-03-01
+   
+   
+ * CLOSED DATE
+   2017-04-04
+   
+   
+ * LAST MODIFIED DATE
+   2017-04-04
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   SYSTEM CONFIG
+   
+   
+ * FIXED COMPONENT ID
+   5724R46S1
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R760 PSY
+   UP

@@ -1,0 +1,89 @@
+Title: IBM Rational Application Developer Support Policy for 64 bit technology - United States
+
+Text:
+RSM; RSD; RSA; RAD; caspian64 bit; 64-bit; RAD 7 64 bit; RAD 7 OS; operating system; Rational Application Developer; X64; Windows 64 bit; supported OS; AMD; PMR #13878; 379; 000; 13878379000; 1263677; 64bit; 64 bit; 32 bit; 32bit; 32-bit; 64-bit; O/S; OS; requirements; system requirements; 8.0.3; 8.0; 7.5; v8.0.3; v7.5; v7.0; v8.0; v7.5.4; 803; windows 7; server; profile; websphere; test environment; create profile; button; greyed; Run Profile Management Tool ; disabled; IBM Software Development Kit; SDK; JRE; Program Files(x86); WAS; websphere application server; clearcase; scm; clearcase scm adapter; rational requisitepro; reqpro; heap size; jvm; max os x; os x; osx; mac TECHNOTE (FAQ)
+
+QUESTION
+ What is the support policy for using IBM Rational Application Developer for WebSphere Software, IBM Rational Software Architect, IBM Rational Software Modeler or IBM Rational Systems Developer version 7.x and 8.x with 64-bit operating systems for Microsoft Windows or Linux? 
+
+CAUSE
+The 7.0.0.x, v7.5.x and v8.0 to 8.0.2 versions of these applications were not designed to take advantage of 64 bit computing and only use 32-bit technology.
+
+ANSWER
+The following IBM Rational Software version 7.x products are only supported on specified 64 bit operating systems running in 32 bit mode: 
+
+ * Rational Application Developer for WebSphere Software 
+ * Rational Software Architect 
+ * Rational Software Modeler 
+ * Rational Systems Developer
+
+
+Similarly, Rational Application Developer (RAD) and Rational Software Architect (RSA) version 8.0 to 8.0.2 are only supported on specified 64 bit operating systems running in 32 bit mode. Rational Application Developer v8.0.3+ is available as a 64-bit application install on specified 64-bit operating systems, in addition to a 32-bit application install.
+There is only one installation package. When installing RAD/RSA using IBM Installation Manager, on the Location page , if your operating system is 64-bit, then select 64-bit or 32-bit to install the product in the corresponding bit mode. 
+
+ 
+
+These products will be referred to generically as Rational Software Development Platform (RSDP) based products. For example, WebSphere Integration Developer v6.x/7.x is RSDP based. 
+
+Examples of some 64 bit Operating Systems: 
+
+ * Microsoft Windows XP Professional x64 Edition (running on an AMD or Intel processor) 
+ * Microsoft Windows 7 Professional 64-bit 
+ * Red Hat Linux Enterprise Server 4+ running on x86-64 bit 
+ * RAD 9.0 under 9.0.1 introduced support for Mac OS x - Lion 10.7 32 bit (with Oracle JDK for Mac OS X 7.0 Update 40) and Mountain Lion 10.8 - 32 bit. Likewise for RSA for WebSphere 9.0.0.1.
+   RAD 9.0.1.1 introduced support for 64-bit exploit on Mac OS x Mavericks 10.9 ( with Oracle JDK for Mac OS X 7.0 Update 71)
+   RSA 9.1.2 introduced support for 64-bit exploit on Mac OS X Yosemite 10.10 and OS X El Capitan 10.11 (with Oracle JDK 7.0 Update 75 for OS X)
+
+
+
+Note: RSDP 32-bit JVM based products, do not require any additional or special set-up on a supported 64-bit operating system (O/S). 
+They run on the provided/supported 32-bit JVM for that RSDP product, as is. 
+
+Review the following documents for more details on the system requirements: 
+ * (7014264) Rational Application Developer System Requirements List [http://www.ibm.com/support/docview.wss?uid=swg27014264] 
+ * (7014274) Rational Software Architect Family System Requirements List [http://www.ibm.com/support/docview.wss?uid=swg27014274] 
+ * (7014269) Rational Software Modeler System Requirements List [http://www.ibm.com/support/docview.wss?uid=swg27014269]
+   
+
+
+The above items such as the Rational Application Developer System Requirements List cover latest versions and operating systems such as Windows Vista and Windows 7. Support is limited to 32 bit mode on 64 bit operating systems on all versions prior to Rational Application Developer 8.0.3. For more information consult: 
+Known problems and limitations to installing 64-bit Rational Application Developer [http://www.ibm.com/support/docview.wss?uid=swg21499482] 
+as referred to by the above Rational Application Developer System Requirements List. The following technote: 
+- Benefits, requirements, limitations, and known issues for Rational Software Architect products running as 64-bit applications starting from v8.0.3 [http://www-01.ibm.com/support/docview.wss?uid=swg27021665] 
+, especially Benefits, describes what is possible with a larger heap size with the 64-bit JVM. 
+
+In deciding if you want a 64-bit install of RAD/RSA, it is useful to know that the ClearCase SCM Adapter and the Rational RequisitePro integration features/plugins are not supported or provided. These are only available as 32-bit eclipse plugins. 
+
+If you have any further questions, contact IBM Support for Rational Application Developer, or the appropriate IBM RSDP product support team. 
+
+
+WebSphere Servers that are shipped with RSDP products: 
+
+The various WebSphere Application Server v6.x/7.x servers shipped with Rational Application Developer or Rational Software Architect {for WebSphere} prior to v8.0.4 are only provided as 32 bit editions. As of Rational Application Developer or Rational Software Architect {for WebSphere} v8.0.4+, 64 bit editions of WebSphere Application Server v6.x/7.x servers are shipped in addition to the 32 bit editions. 
+
+The WebSphere Application Server v8.x (not beta) server shipped with Rational Application Developer or Rational Software Architect {for WebSphere} v8.0.3+ is provided as one edition, and there is an installation option to install either the 32 bit or 64 bit JVM/JRE (IBM Software Development Kit (SDK)). Any 64 bit edition or 64-bit JVM requires a supported 64 bit operating system. This IBM Education Assistant Module/PDF : IBM WebSphere Application Server V8 Distributed platform installation [http://publib.boulder.ibm.com/infocenter/ieduasst/v1r1m0/topic/com.ibm.iea.was_v8/was/8.0/Installation/WASV8_dist_install.pdf] , demonstrates selecting a 32-bit or 64-bit SDK as part of a WAS v8.0 install using IBM Installation manager. If the WAS v8.0 installation is on a 32-bit operating system, this feature choice between IBM 32-bit SDK Java 6.0 or IBM 64-bit SDK Java 6.0 is not available and the installation will automatically default to the IBM 32-bit SDK Java 6.0. 
+
+The shipped WebSphere Portal Server v6.x/7.x servers are 32 bit or 64 bit editions. depending on whether you chose the IBM WebSphere Application Server Network Deployment, 32-bit or 64-bit server to install on. 
+
+Note: It is possible to work with any 64 bit remotely accessible or local stand-alone WebSphere Application Server v6.x/7.x/8.x. In Rational Application Developer 8.0.3+ be aware of the Info Center topic: Creating profiles for WebSphere Application Server on a 64-bit machine [Creating%20profiles%20for%20WebSphere%20Application%20Server%20on%20a%2064-bit%20machine] and see this APAR opened against RAD 8.5.1/8.5.5 : PI06339: A 64-bit install of the WebSphere Application Server Profile Management Tool may not launch on Windows 7. RELATED INFORMATION
+ Benefits for RSA v8.0.3 products running as 64-bit app [http://www.ibm.com/support/docview.wss?uid=swg27021665]
+Internet Explorer v9+ required if using 64-bit Bit Mode [http://www.ibm.com/support/docview.wss?uid=swg21502701]
+RAD 8.0.3+ IC: Creating profiles for WAS on a 64-bit ma [http://publib.boulder.ibm.com/infocenter/radhelp/v8/index.jsp?topic=/com.ibm.servertools.doc/topics/rbitmachine.html]
+Rational ClearCase SCM adapter not available for 64-bit [http://www.ibm.com/support/docview.wss?uid=swg21502974]
+Cannot install the Java Visual Editor in RAD 64 bit [http://www.ibm.com/support/docview.wss?uid=swg21499219]
+RAD64bit Known problems to install or run [http://www.ibm.com/support/docview.wss?uid=swg21499482]
+WAS V8.0 & V8.5 64-bit Install offer Program Files (x86 [https://developer.ibm.com/answers/questions/175210/why-does-was-v80-and-v85-offer-program-files-x86-a.html]
+About SCM Adapter support on 64 Bit [http://www.ibm.com/support/docview.wss?uid=swg21460547]
+Conversion of 32 bit to 64 bit WAS on the same machine [http://www.ibm.com/support/docview.wss?uid=swg21625930]
+RAD901: Installing RAD for WebSphere Software [http://www-01.ibm.com/support/knowledgecenter/SSRTLW_9.0.1/com.ibm.rad.install.doc/topics/t_install_product.html]
+RAD 9.0.x: new features and enhancements-9.0.1-new_OSup [http://www-01.ibm.com/support/docview.wss?uid=swg27038836#whatsnew_901_OSupdates]
+RAD 9.0.1 System Requirements - O/S [http://www-969.ibm.com/software/reports/compatibility/clarity-reports/report/html/osForProduct?deliverableId=1374678040873#osFamily-1]
+RSA(4WS) 9.0.x: new features and enhancements [http://www.ibm.com/support/docview.wss?uid=swg27038488]
+RSA 9.1.2: new features and enhancements - jdk [http://www-01.ibm.com/support/docview.wss?uid=swg27041555#whatsnew_912_JTE]
+A simplified Chinese translation is available [http://www.ibm.com/support/docview.wss?uid=swg21504145]
+
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Software Development Rational Software Architect Documentation Linux, Windows 7.0, 7.0.0.1, 7.0.0.2, 7.0.0.3, 7.0.0.4, 7.0.0.5, 7.0.0.6, 7.0.0.7, 7.0.0.8 Software Development Rational Software Modeler Documentation Windows, Linux 7.0, 7.0.0.1, 7.0.0.2, 7.0.0.3, 7.0.0.4 Software Development Rational Systems Developer Documentation Linux, Solaris, Windows 7.0, 7.0.0.1, 7.0.0.2, 7.0.0.3, 7.0.0.4 Software Development Rational Software Architect for WebSphere Software General Information Linux, Windows 7.5, 7.5.1, 7.5.2

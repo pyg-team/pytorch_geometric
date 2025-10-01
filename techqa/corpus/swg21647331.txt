@@ -1,0 +1,88 @@
+Title: IBM High memory ncp_poller usage what to collect. - United States
+
+Text:
+MustGatherDocument; diagnostics; pd-psi TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Diagnostic data to categorize memory usage of the Poller process. 
+
+SYMPTOM
+Poller is using memory at a rate that is a cause for concern.
+
+
+DIAGNOSING THE PROBLEM
+This document lists information required by Support in order to assist in diagnosing problems related to memory usage by the Network Manager Poller process (ncp_poller). 
+
+These are the questions that Support will attempt to assess;
+
+
+ * What are the characteristics of the memory increase? 
+ * What is the current load on the Poller? 
+ * Is there any unexpected behaviour with regards to memory usage?
+
+
+In order to answer those question this is the data Support will initially require; 
+ * Audit memory usage of the Poller process. 
+ * Statistics on the number of monitors configured. 
+ * Configuration and log files.
+
+
+
+Audit memory usage of the Poller process. 
+
+On Unix one method is to write a shell script that periodically records the memory usage, for example; 
+
+while true; do ps -p [pid] -o vsz=,cpu= >> /tmp/ps.out; sleep 300; done 
+
+Replace [pid] with the process ID of the ncp_poller process. 
+
+In the above, the size of the poller in virtual memory and the cpu is appended to a file called /tmp/ps.out every 5 minutes. 
+No header information is written so it is easy to graph the results. 
+
+On Windows, use the Perfmon tool to record Private Bytes for the ncp_poller process. 
+
+Screen shots on creating a new Data collector set for Private Bytes used by the ncp_poller process in Windows Perfmon.exe 
+[/support/docview.wss?uid=swg21647331&aid=1] [/support/docview.wss?uid=swg21647331&aid=1] [/support/docview.wss?uid=swg21647331&aid=2] [/support/docview.wss?uid=swg21647331&aid=2] 
+
+The most valuable data to capture is that represents the nature of the problem. 
+If the problem is a gradual or rapid increase, then we need a representative sample of that memory increase. The more data you can collect the more representative it will be. Hours or days of data are more useful than seconds or minutes. 
+
+If the problem is spiking or persistently high memory usage then try to capture periods that demonstrate this behaviour. 
+
+Even more valuable is capturing this data from the start up of the poller process so we can see how memory behaves from initialization onwards. 
+
+
+Is there any unexpected behaviour with regards to memory usage? 
+
+Ideally, restart the Poller with -messagelevel debug and -debug 4. You can edit the CtrlServices.<domain>.cfg file and alter the command line properties for the ncp_poller process if you plan to restart, but bear in mind that this change must be reverted once the data is collected and the poller restarted. 
+
+If you cannot restart the Poller, use the kill -USR1|2 method to increase poller log and trace to '4' and 'debug' respectively. See Related Information on how to use the kill signals. 
+
+Ensure that the memory usage and debug poll data are captured in parallel so that the data can be used for comparison. Avoid sending log files from one session and memory usage information from a different session. 
+
+
+Statistics on the number of monitors configured. 
+To assist Support in assessing the load the Poller is under, please capture the following output 
+
+ncp_oql -domain <domain> -service SnmpPoller "" -query "select * from monitors.current;" 
+Note that the result set from this command is likely to be large so please redirect it to a file. 
+
+ncp_oql -domain <domain> -service SnmpPoller -query "select * from profiling.policy;" 
+ncp_oql -domain <domain> -service SnmpPoller -query "select * from profiling.icmp;" 
+ncp_oql -domain <domain> -service SnmpPoller -query "select * from profiling.snmp;" 
+ncp_oql -domain <domain> -service SnmpPoller -query "select * from profiling.engine;" 
+
+Replace <domain> with your ITNM domain name in each case of the above. 
+
+Once you have the memory audit, the oql data, the logs and trace files, please compress them along with the following: 
+
+$NCHOME/var/precision/Store.Cache.kernel.activeModel.<domain> 
+$NCHOME/var/precision/MonitorPolicies.<domain>.xml 
+$NCHOME/etc/precision/* 
+
+The above can be used to attempt to replicate the memory usage. 
+
+Send the entire archive, compressed, to IBM. See the Related Information section on how to send data to IBM. 
+RELATED INFORMATION
+ Increasing Polller debug level without restart [http://publib.boulder.ibm.com/infocenter/tivihelp/v8r1/topic/com.ibm.networkmanagerip.doc_3.9/itnm/ip/wip/admin/task/nmip_adm_chngloglevrunpr.html]
+Submitting information to Support [http://www-01.ibm.com/support/docview.wss?uid=swg21153852]

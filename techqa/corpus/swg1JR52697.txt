@@ -1,0 +1,145 @@
+Title: IBM JR52697: BPMN IMPORT FROM 3RD PARTY FAILS BUT WORKS THROUGH BLUE WORKS LIVE - United States
+
+Text:
+  A FIX IS AVAILABLE
+Version 8.5 Refresh Pack 7 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24041575]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  If you export a .bpm model from 3rd party process modeling tool
+   (e.g. BizzDesign) and try to import it into PD 8.5.5 a
+   nullpointer exception is fired
+   
+   exception from ae.log:
+   ----------------------
+   2015-02-13 10:21:14,433 [main] ERROR
+   com.lombardisoftware.client.ae.core.TWAbstractPlugin  - An error
+   has occurred.
+   com.lombardisoftware.core.TeamWorksException: An error occurred
+   while processing the "Y:\tmp\AJ\ArchiSurance Claims_with.zip"
+   file: An error occurred while processing the
+   "Y:\tmp\AJ\ArchiSuranceClaims_with.zip"
+   file: Error 500: javax.servlet.ServletException:
+   com.lombardisoftware.client.delegate.BusinessDelegateException:
+   java.lang.NullPointerException
+    at
+   com.lombardisoftware.client.ae.library.ImportJob.doServerOperati
+   on(ImportJob.java:97)
+    at
+   com.lombardisoftware.client.ae.library.ImportJob.doServerOperati
+   on(ImportJob.java:42)
+    at
+   com.lombardisoftware.client.ae.server.TWServerJob.run(TWServerJo
+   b.java:131)
+    at org.eclipse.core.internal.jobs.Worker.run(Worker.java:54)
+   
+   PRODUCTS AFFECTED:
+   IBM Business Process Manager (BPM) Advanced
+   IBM BPM Standard
+   IBM BPM Express
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  * import .bpm model into BlueWorks Live first
+   * import from BW Live into PD
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  No additional information is available.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A fix will be incorporated into a later release.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR52697
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM ADVANCED
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9400
+   
+   
+ * REPORTED RELEASE
+   855
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-03-04
+   
+   
+ * CLOSED DATE
+   2015-03-16
+   
+   
+ * LAST MODIFIED DATE
+   2015-03-16
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R856 PSN
+   UP

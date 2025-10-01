@@ -1,0 +1,17 @@
+Title: IBM crm_mon command lacking output - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Why is there no output when I run the crm_mon command? 
+
+ANSWER
+The crm_mon command allows you to monitor your cluster's status and configuration. Its output includes the number of nodes, uname, uuid, status, the resources configured in your cluster, and the current status of each.
+
+This command must be run as root. If you run it as another user, no information will be displayed about the cluster. Instead the message, "Not connected: Refresh in 30s..." appears.
+
+
+
+HISTORICAL NUMBER
+ NZ099218

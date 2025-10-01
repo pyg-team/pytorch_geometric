@@ -1,0 +1,22 @@
+Title: IBM Monitoring the Update task performance in Domino - United States
+
+Text:
+update; task; performance; statistics; stats; monitor; monitoring; pending; delayed; troubleshooting; full-text; full; text; compact; table of commands to update statistics TECHNOTE (FAQ)
+
+QUESTION
+How can you monitor and/or troubleshoot the performance of the Update task in Lotus Domino®?
+
+ANSWER
+If a server has a high update rate due to heavy application database use, a large number of mail users, or a large volume of mail, the default resource usage configuration can cause the updater queues to become large, typically indicating that views and full text indexes are not up to date.
+To determine whether the updater queues are large, examine the queue length statistics that are available in Domino 7 releases, using the following command on the Domino server console:
+
+> show stat update
+
+The following table shows all the available statistics which can be invoked directly from the console in Domino. For example: > show stat Update.DeferredList
+
+
+
+Statistic Definition Update.DeferredList Number of requests for view updating or full text indexing on the deferred queue Update.DeferredList.Duplicates Number of requests for view updating or full text indexing avoided because they were already waiting on the deferred queue Update.DeferredList.Max Maximum number of requests waiting for view updating or full text indexing on the deferred queue Update.DeferredList.Processed.AllViews Number of all view updates processed from the deferred queue Update.DeferredList.Processed.Compactions Number of compactions processed from the deferred queue Update.DeferredList.Processed.SingleViews Number of single view updates processed from the deferred queue Update.FullTextList Number of requests on the full text index queue Update.FullTextList.Duplicates Number of requests for full text indexing avoided because they were waiting on the full text index queue Update.FullTextList.Max Maximum number of requests waiting for full text indexing Update.FullTextList.Processed Number of full text indexing requests processed Update.NAB.Updates Number of Domino Directory view updates processed Update.PendingList Number of requests for view updating or full text indexing on the immediate queue Update.PendingList.Max Maximum number of requests waiting for view updating or full text indexing on the immediate queue Update.PendingList.Processed.AllViews Number of all view updates processed from the immediate queue Update.PendingList.Processed.Compactions Number of compactions processed from the immediate queue Update.PendingList.Processed.SingleView Number of single view updates processed from the immediate queue 
+NOTE: Since deferred updates are delayed 15 minutes by design, it is important to monitor the Update.Deferred* statistics over time, instead of acting on a single set of data. RELATED INFORMATION
+#Domino 7 Performance Tuning Best Practices [http://www.redbooks.ibm.com/abstracts/redp4182.html]
+A simplified Chinese translation is available [http://www.ibm.com/support/docview.wss?uid=swg21604080]

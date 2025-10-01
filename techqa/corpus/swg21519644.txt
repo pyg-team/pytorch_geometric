@@ -1,0 +1,15 @@
+Title: IBM Do I need run db_optimization_tool to rebuild index if I use Oracle 10 g? - United States
+
+Text:
+STERLINGFAQ TECHNOTE (FAQ)
+
+QUESTION
+ Do I need run db_optimization_tool to rebuild index if I use Oracle 10 g? 
+
+ANSWER
+
+
+No, you don’t have to run db_optimization_tool from GIS to rebuild index if you use Oracle 10 g database for GIS. Oracle 10g has a job created automatically to collect the statistics on the schema objects. If that job is enabled and running, it will also rebuild indexes similar to the db_optimization_tool option from GIS.  
+
+HISTORICAL NUMBER
+ FAQ2337

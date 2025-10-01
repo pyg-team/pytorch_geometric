@@ -1,0 +1,73 @@
+Title: IBM HMGR0152W: CPU Starvation detected messages in SystemOut.log - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ New system is working properly but HMGR warning messages are being logged in the SystemOut.log file. 
+
+SYMPTOM
+[10/25/05 16:42:27:635 EDT] 0000047a CoordinatorCo W HMGR0152W: CPU Starvation detected. Current thread scheduling delay is 9 seconds.
+
+
+CAUSE
+The HMGR0152W message is an indication that JVM thread scheduling delays are occurring for this process.
+
+The WebSphere® Application Server high availability manager component contains thread scheduling delay detection logic, that periodically schedules a thread to run and tracks whether the thread was dispatched and run as scheduled. By default, a delay detection thread is scheduled to run every 30 seconds, and will log a HMGR0152W message if it is not run within 5 seconds of the expected schedule. The message will indicate the delay time or time differential between when the thread was expected to get the CPU, and when the thread actually got CPU cycles.
+
+The HMGR0152W message can occur even when plenty of CPU resource is available. There are a number of reasons why the scheduled thread might not have been able to get the CPU in a timely fashion. Some common causes include the following: 
+
+ * The physical memory is overcommitted and paging is occurring.
+   
+ * The heap size for the process is too small causing garbage collection to run too frequently and/or too long, blocking execution of other threads.
+   
+ * There might simply be too many threads running in the system, and too much load placed on the machine, which might be indicated by high CPU utilization. 
+
+
+
+RESOLVING THE PROBLEM
+The HMGR0152W message is attempting to warn you that a condition is occurring that might lead to instability if it is not corrected. Analysis should be performed to understand why the thread scheduling delays are occurring, and what action(s) should be taken. Some common solutions include the following: 
+
+ * Adding more physical memory to prevent paging. 
+ * Tuning the JVM memory (heap size) for optimal garbage collection. 
+ * Reducing the overall system load to an acceptable value.
+
+
+If the HMGR0152W messages do not occur very often, and indicate that the thread scheduling delay is relatively short (for example, < 20 seconds), it is likely that no other errors will occur and the message can safely be ignored. 
+
+The high availability manager thread scheduling delay detection is configurable by setting either of the following 2 custom properties.  * IBM_CS_THREAD_SCHED_DETECT_PERIOD determines how often a delay detection thread is scheduled to run. The default value of this parameter is 30 (seconds). 
+   
+ * IBM_CS_THREAD_SCHED_DETECT_ERROR determines how long of a delay should be tolerated before a warning message is logged. By default this value is 5 (seconds).
+
+
+These properties are scoped to a core group and can be configured as follows:  1. In the administrative console, click Servers > Core groups > Core groups settings and then select the core group name. 
+    
+    
+ 2. Under Additional Properties, click Custom properties > New.
+    
+    
+ 3. Enter the property name and desired value.
+    
+    
+ 4. Save the changes.
+    
+    
+ 5. Restart the server for these changes to take effect.
+
+
+While it is possible to use the custom properties mentioned above to increase the thread-scheduling-detect-period until the HMGR0152W warning messages no longer occur, this is not recommended. The proper solution is to tune the system to eliminate the thread scheduling delays. 
+
+RELATED INFORMATION
+ MustGather: High CPU issues [http://www.ibm.com/support/search.wss?tc=SSCMPB9+SSCMP9J&q=MustGatherDocument]
+Tuning operating systems [http://publib.boulder.ibm.com/infocenter/wasinfo/v6r1/index.jsp?topic=/com.ibm.websphere.base.doc/info/aes/ae/tprf_tuneopsys.html]
+Tuning the Application Server Environment [http://publib.boulder.ibm.com/infocenter/wasinfo/v6r1/index.jsp?topic=/com.ibm.websphere.nd.doc/info/ae/ae/tprf_tuneprf.html]
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Application Servers Runtimes for Java Technology Java SDK 
+HISTORICAL NUMBER
+ 02025
+7TD
+000

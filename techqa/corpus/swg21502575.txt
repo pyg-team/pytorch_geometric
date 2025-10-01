@@ -1,0 +1,29 @@
+Title: IBM Education: How to Successfully Set Up the WebSphere ILOG Rule Team Server - United States
+
+Text:
+ NEWS
+
+ABSTRACT
+ This presentation outlines the most common issues and questions encountered when setting up the WebSphere® ILOG Rule Team Server. It touches on many different aspects of the product, such as installation, migration, configuration and synchronization.
+
+
+CONTENT
+ 
+
+Find the Webcast replay here:
+How to Successfully Set Up the WebSphere ILOG Rule Team Server [http://www.ibm.com/support/docview.wss?uid=swg27022069]
+
+
+ 
+
+Presented by: Franck Delporte & Alain Robert
+
+Please join the conference and the e-meeting 10 minutes prior to the beginning of the event. 
+
+Date & time: 13 Jul 2011 at 11:00 EDT (24-hour time, GMT−04:00)
+
+ 
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration WebSphere ILOG Decision Validation Services Business Integration WebSphere ILOG Rule Team Server Business Integration WebSphere ILOG Rule Solutions for Office Business Integration WebSphere ILOG Rules for .NET Business Integration IBM Operational Decision Manager Platform Independent 7.5 Enterprise

@@ -1,0 +1,89 @@
+Title: IBM ORA-01400: cannot insert NULL into ACT_AUTHENTICATE - United States
+
+Text:
+Extensions; Adapters; STERLINGNFX TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ ORA-01400: cannot insert NULL into ACT_AUTHENTICATE 
+
+SYMPTOM
+
+
+Customer receives the ORA-01400 on ACT_AUTHENTICATE table error in the Visibiilty log. Tested and found issue is when the bp Connect Direct Server Begin Session service does not use the RemoteUserId and instead uses proxy to set a userid.
+
+Error Message [2007-11-14 18:38:07.826] ERROR SQL Error Code: 1400
+[2007-11-14 18:38:07.826] ERROR SQL State: 23000
+java.sql.SQLException: ORA-01400: cannot insert NULL into ("GIS_USER"."ACT_AUTHENTICATE"."PRINCIPAL")
+
+at oracle.jdbc.driver.DatabaseError.throwSqlException(DatabaseError.java:112)
+at oracle.jdbc.driver.T4CTTIoer.processError(T4CTTIoer.java:331)
+at oracle.jdbc.driver.T4CTTIoer.processError(T4CTTIoer.java:288)
+at oracle.jdbc.driver.T4C8Oall.receive(T4C8Oall.java:743)
+at oracle.jdbc.driver.T4CPreparedStatement.doOall8(T4CPreparedStatement.java:216)
+at oracle.jdbc.driver.T4CPreparedStatement.executeForRows(T4CPreparedStatement.java:955)
+at oracle.jdbc.driver.OracleStatement.doExecuteWithTimeout(OracleStatement.java:1168)
+at oracle.jdbc.driver.OraclePreparedStatement.executeInternal(OraclePreparedStatement.java:3316)
+at oracle.jdbc.driver.OraclePreparedStatement.execute(OraclePreparedStatement.java:3422)
+at sun.reflect.GeneratedMethodAccessor170.invoke(Unknown Source)
+at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+at java.lang.reflect.Method.invoke(Method.java:324)
+at com.sterlingcommerce.woodstock.mailbox.db.SQLWrapper.forwardMethod(SQLWrapper.java:65)
+at com.sterlingcommerce.woodstock.mailbox.db.StatementWrapper.invoke(StatementWrapper.java:144)
+at $Proxy1.execute(Unknown Source)
+at com.sterlingcommerce.woodstock.dmi.visibility.db.DmiVisEventWarehouse$1.body(DmiVisEventWarehouse.java:281)
+at com.sterlingcommerce.woodstock.mailbox.db.DatabaseOperation._runInTransaction(DatabaseOperation.java:301)
+at com.sterlingcommerce.woodstock.mailbox.db.DatabaseOperation.runInTransaction(DatabaseOperation.java:152)
+at com.sterlingcommerce.woodstock.dmi.visibility.db.DmiVisEventWarehouse$Worker.executeState
+
+
+RESOLVING THE PROBLEM
+
+
+Please apply Gentran Integration Suite, Release 4.2 Build 4212 or later.
+Please apply Gentran Integration Suite, Release 4.3 Build 4309 or later.
+
+ 
+
+Cross reference information Segment Product Component Platform Version Edition Commerce Sterling B2B Integrator Adapters 
+HISTORICAL NUMBER
+ NFX2257 
+
+PRODUCT ALIAS/SYNONYM
+ 
+
+Function Area
+
+
+Connect Direct Interop
+
+
+Escalation ID
+
+
+1368326
+
+
+Fix ID
+
+
+44713
+38806
+
+
+Severity
+
+
+Normal
+
+
+Type
+
+
+NormalFix
+
+
+Build
+
+
+4212
+4309

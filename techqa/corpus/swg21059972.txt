@@ -1,0 +1,20 @@
+Title: IBM Improving the performance of WebSphere MQ Workflow with DB2 - United States
+
+Text:
+DB2; tuning; performance; stealing an agent TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ What can I do to increase the performance of DB2 for WebSphere MQ Workflow? 
+
+RESOLVING THE PROBLEM
+Separate the DB2 log files from the Workflow data. You can do this after successfully installing WebSphere MQ Workflow, by changing the newlogpath parameter of the DB2 database configuration, so that it points to a different physical device. 
+
+On UNIX systems: 
+
+ *  create a new file system on a separate physical drive (the fastest and least-used drive) mount that file system somewhere with a suitable path db2 connect to <dbname> db2 update db cfg for <dbname> using newlogpath '<fully_qualified_new_path>' shut down WebSphere MQ Workflow and the Workflow queue manager stop DB2 with the command db2stop restart DB2 with the commanddb2start restart the queue manager, trigger monitor and WebSphere MQ Workflow. 
+
+
+Adjust the number of DB2 I/O servers to reflect the number of physical drives:  *  db2 connect to <dbname> db2 update db cfg for <dbname> using num_ioservers <#_of_physical_drives +2> shut down WebSphere MQ Workflow and the Workflow queue manager stop DB2 with the command db2stop restart DB2 with the commanddb2start restart the queue manager, trigger monitor and WebSphere MQ Workflow. 
+
+
+If the db2diag.log often shows '...stealing an agent ...' and '...prefetch queue full' and '...max fixed pages hit ...', then additional parameters have to be changed:  *  Double the value ofmax_agents , for example, from 200 to 400. At least double the value ofnum_pool, for example, from 26 to 52 or even 70. Increase the maximum value of active applications, for example, from 40 to 50. Make sure that the average number of active applications is much greater than 1, for example, 30. If you are using a multi-processor machine, the degree of parallelism shown should match the number of processors.

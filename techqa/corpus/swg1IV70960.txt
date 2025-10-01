@@ -1,0 +1,226 @@
+Title: IBM IV70960: 7.5 CAN'T ATTACH FILES TO APPLICATIONS WHEN USING A CUSTOM DOMAIN - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  7.5.0.7
+   
+   1. Create a Custom ALN-Domain (Upper(20)
+   2. insert some example items into the domain
+   3. modify the Object DOCLINKS:- attach the attribute DOCUMENT
+   to the created domain
+   4. configDB
+   5. modify  LIBRARY.xml
+   - search for line 7364:
+   <multiparttextbox dataattribute="document"
+   descdataattribute="description" id="addnewattachments_file_1_4"
+   label="
+   Dokument benennen"/>
+   - insert the red marked options
+                   <multiparttextbox dataattribute="document"
+   descdataattribute="description" id="addnewattachments_file_1_4"
+   lookup="
+   valuelist" inputmode="REQUIRED" label="Dokument benennen"/>
+   6.import the changed LIBRARY.xml
+   
+   Go to PR Application,try to attach a document you will have the
+   option to select the value from the field but no results
+   displayed for the domain values.
+   
+   
+   The following Errormessage is in the logs:
+   
+   [ERROR] [MXServer] [] BMXAA6713E - The MBO fetch operation
+   failed in the mboset with the SQL error code -206. The record
+   could not be retrieved from the database. See the log file for
+   more details about the
+   error.com.ibm.db2.jcc.am.SqlSyntaxErrorException: "DOCTYPE" is
+   not valid in the context where it is used.. SQLCODE=-206,
+   SQLSTATE=42703,
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  No workaround
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * Maximo users of linked documents who have attached a domain  *
+   * to DOCLINKS.DOCUMENT                                         *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * BMXAA6713E - The MBO fetch operation failed in the mboset    *
+   * with the SQL error code -206. The record                     *
+   * could not be retrieved from the database. See the log file   *
+   * for more details about the error.                            *
+   *                                                              *
+   * com.ibm.db2.jcc.am.SqlSyntaxErrorException: "DOCTYPE" is not *
+   * valid in the context where it is used.. SQLCODE=-206,        *
+   * SQLSTATE=42703                                               *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Apply latest fix pack.                                       *
+   ****************************************************************
+   Reproduced in 7.5.0.6 and 7.5.0.7
+   
+   1. Create a Custom ALN-Domain (Upper(20))
+   2. Insert some example items into the domain
+   3. In Database Configuration, modify the DOCLINKS object by
+   attaching the new domain to the DOCUMENT attribute.
+   4. Configure this change.
+   5. Modify  LIBRARY.xml
+    a) Search for id="addnewattachments_file_1_4"
+      <multiparttextbox dataattribute="document"
+   descdataattribute="description" id="addnewattachments_file_1_4"
+   label="Name the document"/>
+   
+    b) Modify this line as follows:
+      <multiparttextbox dataattribute="document"
+   descdataattribute="description" id="addnewattachments_file_1_4"
+   lookup="valuelist" inputmode="REQUIRED" label="Name the
+   document"/>
+   
+   6. Import the changed LIBRARY.xml
+   
+   Go to PR Application,try to attach a document you will have the
+   option to select the value from the field but no results
+   displayed for the domain values.
+   
+   The following error message is in the logs: BMXAA6713E - The MBO
+   fetch operation failed in the mboset with the SQL error code
+   -206.
+   The record could not be retrieved from the database. See the log
+   file for more details about the error.
+   
+   com.ibm.db2.jcc.am.SqlSyntaxErrorException: "DOCTYPE" is not
+   valid in the context where it is used..
+   SQLCODE=-206,SQLSTATE=42703
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Error message "BMXAA6713E - The MBO fetch operation failed in
+   the mboset with the SQL error code -206. The record could not be
+   retrieved from the database. See the log file for more details
+   about the error.
+   com.ibm.db2.jcc.am.SqlSyntaxErrorException: "DOCTYPE" is not
+   valid in the context where it is used..
+   SQLCODE=-206,SQLSTATE=42703" is no longer encountered when a
+   domain is attached to DOCLINKS.DOCUMENT.
+   
+   The fix for this APAR is contained in the following maintenance
+   package:
+     | release\fix pack\interim fix for Release 7.5.0.9 and Release
+   7.6.0.1 of Base Services
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV70960
+   
+   
+ * REPORTED COMPONENT NAME
+   INTEGRATION
+   
+   
+ * REPORTED COMPONENT ID
+   5724R46I1
+   
+   
+ * REPORTED RELEASE
+   750
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-03-12
+   
+   
+ * CLOSED DATE
+   2015-04-14
+   
+   
+ * LAST MODIFIED DATE
+   2015-04-14
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  MAXIMO
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   INTEGRATION
+   
+   
+ * FIXED COMPONENT ID
+   5724R46I1
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R750 PSY
+   UP

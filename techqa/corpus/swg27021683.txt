@@ -1,0 +1,88 @@
+Title: IBM Documentation updates for IBM Content Collector Text Search Support V2.2 - United States
+
+Text:
+ PRODUCT DOCUMENTATION
+
+ABSTRACT
+ This document contains corrections and additions to the text search support sections in the information center for IBM Content Collector Version 2.2. 
+
+CONTENT
+You can view the text search support documentation in the IBM Content Collector V2.2 information center on the web at Enabling an IBM Content Manager repository for search [http://publib.boulder.ibm.com/infocenter/email/v2r2m0/topic/com.ibm.content.collector.doc/text-indexer/t_afu_textsearch_in_cm8.htm]. 
+
+
+This document contains the following corrections and additions to the online version of the information center:
+
+
+ * Update 1: Enabling item types that were not created in Content Collector
+ * Update 2: Indexing items that were archived by using IBM CommonStore
+ * 
+
+
+
+
+
+
+ 
+
+Update 1: Enabling item types that were not created in Content Collector
+Updated topic: Enabling IBM CommonStore item types for processing by the indexer for text search [http://publib.boulder.ibm.com/infocenter/email/v2r2m0/index.jsp?topic=/com.ibm.content.collector.doc/text-indexer/t_afu_enable_cs_itemtypes.htm]
+
+The description at the beginning of the topic before the tool syntax is explained in detail was changed as follows to include how the TIEFLAG value is now used in Content Collector: 
+
+Item types that were created directly in IBM Content Manager for archiving in IBM CommonStore, or for other purposes, must be enabled for indexing in IBM Content Collector before items can be index in these item types.
+
+These item types cannot be enabled using the IBM Content Collector set-up tools. You must run the afuEnableItemType command line tool to enable indexing in Content Collector.
+
+All items that are processed by the indexer for text search in IBM Content Collector are added to the table of completed tasks with an IDXRC value indicating whether the item was successfully indexed. The fast indexer or the standard IBM Content Manager indexer, on the other hand, do not use this concept of monitoring the status of processed items and do not set an IDXRC value.
+
+When you enable an item type for indexing in IBM Content Collector, the table of completed tasks is filled with all the items that have been indexed. As the fast indexer or the standard IBM Content Manager indexer did not set IDXRC values for any items, the IDXRC value that is assigned to each item correlates with the TIEFLAG value that was used in the item types during indexing using the fast indexer or the standard IBM Content Manager indexer.
+
+TIEFLAG is the predefined name of a column in the IBM Content Manager Library Server. The TIEFLAG value determines what parts of a document are indexed by Net Search Extender. The fast indexer also used the TIEFLAG value to indicate whether an item could be indexed or not.
+
+The TIEFLAG value can be a value of between 10 and 19. Normally all items in an item type are assigned the same TIEFLAG value. Which TIEFLAG value is set is dependent on the CommonStore archpro server configuration and can be checked in the item type component table in IBM Content Manager. In most cases, the TIEFLAG value is 17 which means that the IDXRC value in the table of completed tasks for the items that were archived using CommonStore will also be 17 after indexing.
+
+If the TIEFLAG value of an item in the IBM Content Manager item type component table is between 10 and 19, it means that the item was indexed. In this case, the item is assigned a new IDXRC with the original TIEFLAG value (a value between 10 and 19) in the table of completed tasks.
+
+If the TIEFLAG value of an item in the IBM Content Manager item type component table is greater than 10 000, it means that the item was not indexed. In this case, the item is assigned a new IDXRC of 180 (ERR_ITEMTYPE_TIEFLAG_ERROR) in the table of completed tasks.
+
+Filling the table of completed tasks enables tracking items that could not be indexed successfully by the fast indexer or the standard IBM Content Manager indexer for example.
+
+If you are not sure whether all of the items were indexed correctly, you can check what was indexed by running afuIndexTool with the -opValidate -deepvalidation arguments, or alternatively you can reindex items using the afuIndexer tool.
+
+
+
+
+
+Update 2: Indexing items that were archived by using IBM CommonStore
+New topic: Indexing items that were archived by using IBM CommonStore
+
+This is a new topic that explains the steps to take to index items that were archived by using CommonStore.
+
+Use the IBM Content Collector indexer for text search to index items in item types that were archived using IBM CommonStore. 
+
+Because of its markedly improved performance and other processing advantages, you should use the Content Collector indexer for text search to regularly index all newly archived items instead of using the fast indexer or the standard IBM Content Manager indexer with the IBM Text Search user exit available in IBM CommonStore.
+
+The following prerequisites apply: 
+
+ * Only items in IBM CommonStore item types for the document model BUNDLED can currently be indexed using the IBM Content Collector indexer for text search. 
+ * IBM Content Collector Text Search Support must be installed on the IBM Content Manager server. No other IBM Content Collector components need to be installed.
+
+
+Before you can begin indexing items in Content Collector that were archived by using IBM CommonStore, you must enable the CommonStore item types for indexing in Content Collector. 
+
+After a CommonStore item type has been enabled, you can still archive to the item type by using IBM CommonStore but you cannot index items by using the fast indexer or the standard IBM Content Manager indexer. You can only index items by using the indexer for text search in IBM Content Collector. 
+
+To index items in an IBM CommonStore item type using the indexer for text search:  1. Stop archiving to the IBM CommonStore item type. 
+ 2. Run the fast indexer or the standard IBM Content Manager indexer with the IBM Text Search user exit to complete processing all items that have been queued for indexing. 
+ 3. Enable the IBM CommonStore item type for indexing [http://publib.boulder.ibm.com/infocenter/email/v2r2m0/topic/com.ibm.content.collector.doc/text-indexer/t_afu_enable_cs_itemtypes.htm] using the Content Collector indexer for text search. 
+ 4. Start archiving to the item type in IBM CommonStore again. 
+ 5. Create an index configuration [http://publib.boulder.ibm.com/infocenter/email/v2r2m0/topic/com.ibm.content.collector.doc/text-indexer/t_afu_creating_new_configuration.htm] for the enabled item type. 
+ 6. Schedule to run the afuIndexer script [http://publib.boulder.ibm.com/infocenter/email/v2r2m0/topic/com.ibm.content.collector.doc/text-indexer/t_afu_indexing.htm] on the enabled item type.
+
+
+
+
+
+
+RELATED INFORMATION
+ Text Search Support documentation [http://publib.boulder.ibm.com/infocenter/email/v2r2m0/topic/com.ibm.content.collector.doc/text-indexer/t_afu_textsearch_in_cm8.htm]

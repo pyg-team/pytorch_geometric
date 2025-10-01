@@ -1,0 +1,48 @@
+Title: IBM "No backslash ("\") prior to the SQL token was found" when running syntax that uses FILE HANDLE - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ I am coding one syntax for import data from MS Access database. Using the traditional syntax to open a database file works fine: 
+
+GET DATA /TYPE=ODBC /CONNECT= 
+'DSN=MS Access Database;DBQ=<filepath>\Data.mdb;DriverId=25;FIL=MS'+ 
+' Access;MaxBufferSize=2048;PageTimeout=5;' 
+/ SQL = 'SELECT lookup_value, description, sla_code, SLA_Desc, LGA_cd, '+ 
+' LGA_Desc, RegnRes_Code, RegnRes_Desc, State_Code, ' 
+'State_Desc FROM tblPCODE_SUBURB_SLA' 
+/ASSUMEDSTRWIDTH=50. 
+CACHE. 
+
+However, when I use global variable for the connection, such as: 
+
+Step 1. Define an global variable that contains the database Path shown below: 
+FILE HANDLE reference_files /NAME = 'C:\SPSS Syntax\Reference files'. 
+
+Step 2. Modify the GET DATA syntax above. There is only one part, DBQ string is changed shown below: 
+GET DATA /TYPE=ODBC 
+/CONNECT = 'DSN=MS Access Database;DBQ=' & reference_files & '/Reference Data.mdb;' & 
+'DriverId=25;FIL=MS Access;MaxBufferSize=2048;PageTimeout=5;' 
+/SQL = 'SELECT lookup_value, description, sla_code, SLA_Desc, LGA_cd, LGA_Desc, RegnRes_Code,' & 
+'RegnRes_Desc, State_Code, State_Desc ' & 
+' FROM tblPCODE_SUBURB_SLA ' 
+/ASSUMEDSTRWIDTH=50. 
+CACHE. 
+
+I've used the same technique to connect MS Access or SQL for improving flexibility. However, SPSS gives me an Error: 
+"No backslash ("\") prior to the SQL token was found"
+
+What could be the problem? 
+
+RESOLVING THE PROBLEM
+The FILE HANDLE command is intended to be used with the the GET DATA command. It can only be used with the subcommands of: FILE, OUTFILE, MATRIX, or WRITE of various procedures. Since the GET DATA command does not make use of these subcommands, the FILE DATA will not have any effect and will produce the "No backslash ("\") prior to the SQL token was found" error message
+
+RELATED INFORMATION
+ Need more help? Our Statistics forum is Live! [https://developer.ibm.com/answers/topics/statistics.html?smartspace=predictive-analytics]
+
+
+ 
+
+HISTORICAL NUMBER
+ 85600

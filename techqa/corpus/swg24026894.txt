@@ -1,0 +1,44 @@
+Title: IBM PM08492: Provision of 1.6.0_19-rev-b07 to resolve heap corruption - United States
+
+Text:
+ DOWNLOADABLE FILES
+
+ABSTRACT
+ Provision of 1.6.0_19-rev-b07 to resolve heap corruption 
+
+DOWNLOAD DESCRIPTION
+PM08492 resolves the following problem:
+
+ERROR DESCRIPTION: 
+Provision of 1.6.0_19-rev-b07 to resolve heap corruption issues. Version information: java version "1.6.0_19-rev" Java(TM) 2 Runtime Environment, Standard Edition (IBM build 1.6.0_19-rev-b07 27_Apr_2010_08_19 solaris sparcv9 (SR7)) Java HotSpot(TM) 64-Bit Server VM (build 16.2-b07, mixed mode) IBM Java ORB build orb60-20091127.00 XML build XL TXE Java 1.0.20 XML build IBM JAXP 1.4.5 XML build XML4J 4.5.11 
+
+LOCAL FIX: 
+N/A 
+
+PROBLEM SUMMARY
+
+USERS AFFECTED:
+All users of IBM WebSphere Application Server 7.0
+
+PROBLEM DESCRIPTION:
+Heap corruption
+
+RECOMMENDATION:
+None
+
+PROBLEM CONCLUSION: 
+Apply this i-fix to resolve heap corruption issues. 
+
+Please refer to the Recommended Updates page for delivery information: 
+http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+
+URL LANGUAGE SIZE(Bytes) UpdateInstaller [http://www.ibm.com/support/docview.wss?rs=180&uid=swg21205991] English 725000 
+URL LANGUAGE SIZE(Bytes) Readme [ftp://public.dhe.ibm.com/software/websphere/appserv/support/fixes/PM08492/readme.txt] English 2524 
+DOWNLOAD PACKAGE
+
+
+Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options 
+What is Fix Central(FC)? [https://www.ibm.com/support/fixcentral/help?page=swfaqs] 
+What is DD? [http://www6.software.ibm.com/dldirector/doc/DDfaq_en.html] Solaris 64-bit SPARC 5/21/2010 English 107515198 FC [http://www.ibm.com/support/fixcentral/quickorder?fixids=7.0.0.0-WS-WASJavaSDK-SolarisSparc64-IFPM08492&source=dbluesearch&product=ibm%2FWebSphere%2FWebSphere+Application+Server] FTP [ftp://public.dhe.ibm.com/software/websphere/appserv/support/fixes/PM08492/7.0.0.0-WS-WASJavaSDK-SolarisSparc64-IFPM08492.pak] DD 
+ [/support/docview.wss?uid=swg24026894&aid=1]Problems (APARS) fixed [/support/docview.wss?uid=swg24026894&aid=2]Problems (APARS) fixed
+PM08492

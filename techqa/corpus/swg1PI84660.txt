@@ -1,0 +1,147 @@
+Title: IBM PI84660: RATIONAL DEVELOPER FOR SYSTEM Z (RDZ) CLIENT MAY HANG DURING A PUSH TO CLIENT INSTALL UPDATE - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Rational Developer for System z Fix Pack 5 (9.5.1.6) for 9.5.1. [http://www-01.ibm.com/support/docview.wss?uid=swg24044335]
+Rational Developer for z Systems Fix Pack 7 (9.5.1.7) for 9.5.1. [http://www-01.ibm.com/support/docview.wss?uid=swg24044493]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  IBM Rational Developer for System z - RDz / IDz
+   
+   Attempts to use Push to client to install a client update
+   may cause the client to hang.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Check the <workspace>\.metadata\.plugins\
+   com.ibm.ftt.resources.zos.folder to see what has been
+   downloaded from the host for installation.
+   
+   The client may already have the necessary files downloaded.
+   The following files will be in com.ibm.ftt.resources.zos :
+   runinstallation.bat
+   runrestart.bat
+   
+   If so, you can manually shutdown the RDz/IDz client.
+   Then, start the installation by executing the
+   runinstallation.bat file.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  The workbench may hang when push-to-client is attempting to
+   update a product version because the update needs to disconnect
+   from the host before shutting down the workbench at the same
+   time that the initial connect which triggered the update is
+   trying to complete.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The solution is to move the disconnect and shutdown off the main
+    thread.
+   
+   The problem listed in this APAR has been resolved with
+   IBM Rational Developer for z Systems V9.5.1.6 Fix Pack which
+   is available from the Recommended Fixes support download page:
+   http://www-1.ibm.com/support/docview.wss?rs=2294&uid=swg27006335 [http://www-1.ibm.com/support/docview.wss?rs=2294&uid=swg27006335]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI84660
+   
+   
+ * REPORTED COMPONENT NAME
+   DEV FOR Z SYS
+   
+   
+ * REPORTED COMPONENT ID
+   5724T0700
+   
+   
+ * REPORTED RELEASE
+   951
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-07-18
+   
+   
+ * CLOSED DATE
+   2017-11-30
+   
+   
+ * LAST MODIFIED DATE
+   2017-11-30
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   DEV FOR Z SYS
+   
+   
+ * FIXED COMPONENT ID
+   5724T0700
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R951 PSY
+   UP

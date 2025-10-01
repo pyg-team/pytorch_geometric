@@ -1,0 +1,97 @@
+Title: IBM MultiSite Administration Web Console reports error when server upgrades are not applied correctly - United States
+
+Text:
+rgy_upgrade clearcase multisite administration console web server; 1192503 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This technote explains why not upgrading all replica servers in an IBM® Rational® ClearCase MultiSite® environment can cause problems with the new ClearCase MultiSite Administration Web server features. 
+
+CAUSE
+ 
+
+If you do not upgrade your ClearCase registry server, or if you upgrade only some replica servers in a family, you may see one or more of the following problems while using the MultiSite Administration Web Console:
+
+
+ * syncreplica –import commands fail with the following error:
+   
+   msweb: Error: Potential packet file pathname: Result: msweb: Error: Replica is not managed by the synchronization manager.
+
+ * Attempts to view remote host properties fail because the remote host is not visible.
+
+ * Attempts to view remote replica properties fail with the following error: 
+   
+   An error occurred while fetching replica properties: Error detected by ClearCase subsystem Msweb: Error: Error from VOB database: "remote-vob-tag" Msweb: Error: Trouble opening VOB database: "remote-vob-tag"
+
+ * Generating synchronization health status for a family causes the following error: 
+   
+   multitool: Error: See albd_log or syncmgr_log on host hostname. multitool: Error: Problem starting/contacting sync manager on host hostname. 
+   
+   msadm_rmtadm_get_replica_epochs_V1: RPC: Procedure unavailable multitool: Warning: Failed to retrieve epoch status from host hostname: incompatible versions of ClearCase software and/or databases ERROR: error executing ".\bin\multitool familysyncstatus -generate \vob-tag"
+
+ * The Site Config Properties page displayed by selecting "Local Site Properties" is not displaying the Site name:
+   -----
+   MultiSite Site Properties for: (None specified)
+   ------ 
+ * The multitool lssetting –site –inquire command is not displaying the site name. The ms_site_name value should display the registry server hostname (refer to verification information listed below).
+   
+   # ./multitool lssetting -site -inquire
+   ms_vob_max_parallel_replica_imports=1 (default)
+   ms_vob_max_parallel_host_imports=1073741824 (default)
+   ms_max_parallel_host_exports_unix=1073741824 (default)
+   ms_max_parallel_host_exports_win=1073741824 (default)
+   ms_vob_max_import_attempts=3 (default)
+   ms_vob_import_retry_frequency=120 (default)
+   * ms_site_name= (default)
+   * ms_sync_status_summary_host= (default)
+   ms_vob_sync_status_time_window=168 (default)
+
+RESOLVING THE PROBLEM
+ 
+
+
+Verifying successful ClearCase MultiSite installation:
+
+In some cases, you may have installed ClearCase MultiSite Version 2003.06.14 or later on your registry and replica servers, but the installation may not have completed successfully. 
+To verify that the ClearCase MultiSite Version 2003.06.14 or later installation completed successfully on your ClearCase registry server, perform the following steps: 
+
+
+ 1. Run a cleartool hostinfo –long command and record the name of the ClearCase registry server machine.
+    
+    
+ 2. Run a multitool lssetting –site –inquire command and verify that ms_site_name is set to Site_registry-server-name. If the ms_site_name setting is not available, your ClearCase registry server was not upgraded correctly.
+
+
+To verify that the ClearCase MultiSite Version 2003.06.14 installation completed successfully on a ClearCase replica server, run a cleartool lsvob –host command and verify that all replicated VOBs have the (replicated ) flag set. If the (replicated) flag is not present, your ClearCase replica server was not upgraded correctly. 
+
+
+Fixing an unsuccessful ClearCase MultiSite installation: 
+
+On Microsoft® Windows®: 
+If the ClearCase MultiSite Version 2003.06.14 installation did not complete successfully on either your registry server or one or more replica servers, you must do one of the following: 
+ 1. On your ClearCase registry server, run the following command: 
+    
+    ccase–home–dir\bin\rgy_upgrade.exe -site
+    
+    
+ 2. On a ClearCase replica server, run the following command for each replicated VOB: 
+    
+    ccase–home–dir\bin\rgy_upgrade.exe -tag vob-tag [...]
+
+
+
+On UNIX® and Linux®: 
+If the ClearCase MultiSite Version 2003.06.00 installation did not complete successfully on either your registry server or one or more replica servers, you must do one of the following: 
+ 1. On your ClearCase registry server, run the following command: 
+    
+    ccase–home–dir/etc/rgy_upgrade -site
+    
+    
+ 2. On a ClearCase replica server, run the following command for each replicated VOB: 
+    
+    ccase–home–dir/etc/rgy_upgrade -tag vob-tag [...]
+
+
+
+
+RELATED INFORMATION
+ Registry requirements for using new ClearCase MultiSite [http://www.ibm.com/support/docview.wss?uid=swg21217236]

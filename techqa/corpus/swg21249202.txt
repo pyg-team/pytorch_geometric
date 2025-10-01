@@ -1,0 +1,79 @@
+Title: IBM URGENT Actions Required:  Changes to Daylight Saving Time will affect IBM NetView for z/OS and its associated Operating Systems - United States
+
+Text:
+DST2007 FLASH (ALERT)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ English 
+
+ABSTRACT
+ Information about the impact of the US Energy Policy Act of 2005, which changes the effective dates of US Daylight Saving Time (DST) in 2007 for the US. Actions are required to address this issue in NetView® for z/OS®. 
+
+CONTENT
+The passage of the Energy Policy Act of 2005 alters the Daylight Saving Time (DST) start and stop dates by four weeks. Extended Daylight Saving Time will begin in March of 2007. As a result of this change, APARs, maintenance, or actions will be required for NetView for z/OS and operating systems. Information about the Energy Policy Act can be found on the US Department of Energy Web site. [http://www.eere.energy.gov/buildings/appliance_standards/news_detail.html/news_id=9273] 
+The Energy Policy Act changes the effective dates of DST. Beginning in 2007, DST start and end dates will be: 
+
+ * Start date: Second Sunday of March 
+ * End date: First Sunday of November
+
+
+Note: These NetView for z/OS fixes deliver the changes to the time zones taking effect in March, 2007, in the United States. However, further similar DST changes taking place in the time zones of Canada (and elsewhere in North America) in March, 2007, are not covered by the fixes listed in this Flash, at this time. Further detailed information on those additional DST fixes will be furnished (here) in the near future. 
+
+How do I know if my systems could be affected? All NetView for z/OS releases will be affected by this DST change. In addition, your Operating Systems may also be affected. 
+
+What could happen if I do not update my systems? Any US time zone-based application that uses time will be affected, in particular during the additional weeks of extended Daylight Saving Time in March and November starting in 2007. 
+
+The following typical scenarios and operations will produce incorrect results, as a consequence of using the time offset by one hour.  * Time format and display. 
+ * Time zone name display. 
+ * Operations that check whether a particular date is in daylight savings. 
+ * Computations and/or business logic based on daylight savings time, etc. 
+ * Any of the above that run on a system whose time is set to a time zone other than a US time zone, but does computations based on a US time zone.
+
+
+What do I need to do to protect my NetView for z/OS systems? Most of NetView for z/OS (including the base z/OS component) does not require NetView for z/OS maintenance, but relies on maintenance supplied as a part of the operating system. Install all operating system DST fixes on any system that is running a NetView for z/OS component. 
+
+The NetView for z/OS components that are installed on a WebSphere Application Server require the application server to be updated for DST changes. Refer to the maintenance provided for the WebSphere Application Server [http://www.ibm.com/software/webservers/appserv/was/support/] for more information on the DST changes. 
+
+Note: NetView for z/OS ships an embedded version of the WebSphere Application Server in release 5.2, and an embedded version of the Jetty application server in release 5.1. DST changes associated with these embedded application servers are provided as a part of NetView for z/OS Web Application maintenance. 
+
+NetView for z/OS also bundles IBM Tivoli NetView. If you are using IBM Tivoli NetView in conjunction with NetView for z/OS, refer to the maintenance provided for IBM Tivoli Netview [http://www.ibm.com/software/sysmgmt/products/support/IBMTivoliNetView.html] for more information on DST changes. [http://www-306.ibm.com/software/sysmgmt/products/support/IBMTivoliNetView.html] 
+
+The components listed below represent the NetView for z/OS components that require a NetView for z/OS maintenance update for the DST changes. In all cases, the maintenance update is for an embedded version of Java. 
+
+
+DST Fixes for NetView for z/OS V5R2: NetView for z/OS Component Action required NMC Console
+
+Note: The NMC Server does not require new maintenance for the DST change. However, if the NMC Console is upgraded to a new maintenance level, it will be overlaid by the current level of the NMC console contained within the NMC server. To prevent the overlay, you must either install the new level of the NMC Server, or start the NMC Console with the -s option. Take one of the following actions: Apply NMC Console maintenance 5.2.0.5, which includes Java fixes for the DST change (available January 15, 2007).
+* If you apply the maintenance, you obtain more than just the fixes for the DST change. Refer to the maintenance APAR list in the component readme file to see the full list of APAR fixes included in the maintenance.  * 
+
+Apply the IBM Java SDK fix using the Java Time Zone Update tool. [http://www-128.ibm.com/developerworks/java/jdk/dst/index.html]
+* Use this method if you want to patch only the Java Time Zone data. It allows you to make minimum changes to address the DST change. NetView Web Application
+
+Note 1: The 5.2.0.2 version of this maintenance is required only if you are using the embedded WebSphere Application Server - Express as your application server. If you are not using the embedded application server, refer to the maintenance for your application server for more information on DST updates. 
+
+Note 2: The Java plug-in that your web browser is using may also require an update. Refer to the provider of your web browser for more information on DST updates. Take one of the following actions: Apply NetView Web Application maintenance 5.2.0.2, which includes Java fixes for the DST change (available January 25, 2007).
+* If you apply the maintenance, you obtain more than just the fixes for the DST change. Refer to the maintenance APAR list in the component readme file to see the full list of APAR fixes included in the maintenance.  * 
+
+Apply the IBM Java SDK fix using the Java Time Zone Update tool. [http://www-128.ibm.com/developerworks/java/jdk/dst/index.html]
+* Use this method if you want to patch only the Java Time Zone data. It allows you to make minimum changes to address the DST change. Note: The above maintenance applies to all platforms on which the NetView for z/OS component operates. 
+
+
+DST Fixes for NetView for z/OS V5R1: NetView for z/OS Component Action required NMC Console
+
+Note: The NMC Server does not require new maintenance for the DST change. However, if the NMC Console is upgraded to a new maintenance level, it will be overlaid by the current level of the NMC console contained within the NMC server. To prevent the overlay, you must either install the new level of the NMC Server, or start the NMC Console with the -s option. Take one of the following actions: Apply NMC Console maintenance 5.1.0.17, which includes Java fixes for the DST change (available January 15, 2007).
+* If you apply the maintenance, you obtain more than just the fixes for the DST change. Refer to the maintenance APAR list in the component readme file to see the full list of APAR fixes included in the maintenance.  * 
+
+Apply the IBM Java SDK fix using the Java Time Zone Update tool. [http://www-128.ibm.com/developerworks/java/jdk/dst/index.html]
+* Use this method if you want to patch only the Java Time Zone data. It allows you to make minimum changes to address the DST change. NetView Web Application
+
+Note: The 5.1.0.3 version of this maintenance in required only if you are using the embedded Jetty server as your application server. If you are not using the embedded application server, refer to the maintenance for your application server for more information on DST updates. Take one of the following actions: Apply NetView Web Application maintenance 5.1.0.3, which includes Java fixes for the DST change (available February 7, 2007).
+* If you apply the maintenance, you obtain more than just the fixes for the DST change. Refer to the maintenance APAR list in the component readme file to see the full list of APAR fixes included in the maintenance.  * 
+
+Apply the IBM Java SDK fix using the Java Time Zone Update tool. [http://www-128.ibm.com/developerworks/java/jdk/dst/index.html]
+* Use this method if you want to patch only the Java Time Zone data. It allows you to make minimum changes to address the DST change. Note: The above maintenance applies to all platforms on which the NetView for z/OS component operates. 
+
+
+DST Fixes for NetView for z/OS V1R4: NetView for z/OS Component Action required NMC Console
+
+Contact your IBM support representative for further information regarding DST updates for the NMC Console. 
+Change History 20 Oct 2006 Initial draft created 10 Oct 2006 Updated content and republished. 19 Dec 2006 Added JTZU tool reference, maintenance dates 5 Jan 2007 Updated content and republished 24 Jan 2007 Added V1R4, updated availability dates 6 Feb 2007 Added V5R1 Web App date, op system info

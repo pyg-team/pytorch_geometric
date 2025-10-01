@@ -1,0 +1,52 @@
+Title: IBM How to create an automated SQL backup of the FSR database with Scheduled Tasks? - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How can a systems administrator or a database administrator create an automated backup of the FSR database using Scheduled Tasks? 
+
+CAUSE
+There is a need for scheduled backups of the database at specific time periods.
+
+ANSWER
+The database backup process for FSR is similar to backing up any other SQL database. If you need additional details about backing up your SQL database, please contact Microsoft support.
+
+
+To setup the schedule backup you will need to perform the following: 
+
+1. Go in to SQL Server Management Studio; 
+
+2. Expand Databases and right click the database that you would like to backup; 
+
+3. Go to Tasks>Backup; 
+
+4. Select the location where to store the file and the other details for the backup; 
+
+5. Select Script>Script Action to file and save the file on your hard drive (e.g C:\FSRBackup.sql); 
+
+6. Go to Control Panel>Scheduled Tasks and click Add Scheduled Task; 
+
+7. Select the application that you want to run. For our purposes we will be using SQLCMD.EXE. In order to find SQLCMD.EXE you will need to click on the Browse... button 
+
+You should be able to find this in the following directory "C:\Program Files\Microsoft SQL Server\90\Tools\Binn"; 
+
+8. Give the scheduled task a name and specify when to perform the task; 
+
+9. Specify the time that this should be run; 
+
+10. Finish and save the task. One thing you want to do is click on the "Open advanced properties" so you can edit the command. 
+
+11. The advanced properties screen will appear. You will need to change the "Run" command to the following: 
+
+sqlcmd -S serverName -E -i C:\FSRBackup.sql
+
+
+This is broken down as follows: 
+
+ * sqlcmd 
+ * -S (this specifies the server\instance name for SQL Server) 
+ * serverName (this is the server\instance name for SQL Server) 
+ * -E (this allows you to make a trusted connection) 
+ * -i (this specifies the input command file) 
+ * C:\FSRBackup.sql (this is the file that we created above with the command steps)

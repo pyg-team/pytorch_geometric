@@ -1,0 +1,198 @@
+Title: IBM PM08705: UNABLE TO SAVE CONTENT IF SITEAREA CANNOT BE RETRIEVED - United States
+
+Text:
+  FIXES ARE AVAILABLE
+6.1.0.4 Download: WebSphere Portal and WCM V6.1.0 fix pack 4 & 6.1.5 fix pack 1 [http://www-01.ibm.com/support/docview.wss?uid=swg24026394]
+Recommended Updates for WebSphere Portal and Web Content Management V6.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24023835]
+6.1.0.5 Download: WebSphere Portal and WCM V6.1.0 fix pack 5 [http://www-01.ibm.com/support/docview.wss?uid=swg24027475]
+Fixes integrated in WebSphere Portal V7.0 Combined Cumulative Fix [http://www-01.ibm.com/support/docview.wss?uid=swg24027254]
+6.1.0.6 Download: WebSphere Portal and WCM V6.1.0 fix pack 6 [http://www-01.ibm.com/support/docview.wss?uid=swg24030970]
+7.0.0.2 Download: WebSphere Portal and WCM V7.0 fix pack 2 [http://www-01.ibm.com/support/docview.wss?uid=swg24031676]
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  After upgrade saving content fails with errors similar to :
+   [2/22/10 10:52:07:747 CET] 00000061 LibraryServic E   Echec de
+     lextraction de la biblioth&#65479;&#65529;que pour le noeud de lidentit&#65479;&#65464;
+     d18787004ef118bc9b96ff5a3432260f.
+        com.ibm.icm.jcr.access.AccessDeniedException:
+        L'op&#65479;&#65464;ration requise ne respecte pas une ou plusieurs
+        contraintes d'acc&#65479;&#65529;s.
+    at
+   com.ibm.icm.jcr.NodeImpl.checkPermissions(NodeImpl.java:6072)
+    at com.ibm.icm.jcr.WorkspaceImpl.getNodeByUuid
+       (WorkspaceImpl.java:1164)
+    at com.ibm.icm.jcr.WorkspaceImpl.getNodeByUuid
+       (WorkspaceImpl.java:1056)
+    at com.ibm.workplace.wcm.services.repository.RepositoryService
+       Impl.getNodeByUUID(RepositoryServiceImpl.java:441)
+    at com.ibm.workplace.wcm.services.library.LibraryServiceImpl.
+       getLocalizedLibraryForID(LibraryServiceImpl.java:2453)
+    at com.ibm.workplace.wcm.services.library.LibraryServiceImpl.
+       getLocalizedLibraryForID(LibraryServiceImpl.java:2379)
+    at com.ibm.workplace.wcm.services.library.LibraryServiceImpl.
+       getLocalizedLibraryForID(LibraryServiceImpl.java:2361)
+    at com.ibm.workplace.wcm.app.ui.portlet.command.SaveNewContent
+   CommandContributor.doCommand(SaveNewContentCommandContributor.
+       java:176)
+   
+   The problem only occurs when adding specific SiteAreas to the
+   list of SiteAreas the user can store the content item .  If one
+   of these SiteAreas is listed, the user only notices that the
+   page is refreshed .
+   
+   The AccessDeniedExceptions are thrown for SiteArea / Worklfow /
+   WorkflowStage which the user does not have access to, however
+   access should to these items should not be required to be able
+   to select a SiteArea for saving the content .
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  n/a
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Problem Summary:
+   PM08705 NullPointerException in SaveNewContentCommandContributor
+   when saving content.
+   
+   Detailed Problem Description:
+   When saving content customer's who have selected a list of
+   approved site areas in the authoring template may encounter a
+   NullPointerException in SaveNewContentCommandContributor.
+   
+   Problem Analysis:
+   When saving content customer's who have selected a list of
+   approved site areas in the authoring template may encounter a
+   NullPointerException in SaveNewContentCommandContributor.  This
+   can happen if a user does not have access to one of the site
+   areas that have been selected in the authoring template.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Problem Solution:
+   Test and skip entries that result in a null being returned.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  Update the authoring template or site area
+   permissions to avoid this issue.
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM08705
+   
+   
+ * REPORTED COMPONENT NAME
+   LOTUS WEB CONT
+   
+   
+ * REPORTED COMPONENT ID
+   5724I2900
+   
+   
+ * REPORTED RELEASE
+   610
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-03-01
+   
+   
+ * CLOSED DATE
+   2010-04-26
+   
+   
+ * LAST MODIFIED DATE
+   2010-04-26
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  WCM
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   LOTUS WEB CONT
+   
+   
+ * FIXED COMPONENT ID
+   5724I2900
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R610 PSY
+   UP
+   
+   
+ * R61A PSY
+   UP
+   
+   
+ * R61B PSY
+   UP
+   
+   
+ * R61C PSY
+   UP

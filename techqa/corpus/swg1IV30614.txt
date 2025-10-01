@@ -1,0 +1,205 @@
+Title: IBM IV30614: WEBSPHERE MQ DOUBLE BYTE CHARACTER SET DATA CONVERSION ISSUE - United States
+
+Text:
+  FIXES ARE AVAILABLE
+WebSphere MQ V7.5 Fix Pack 7.5.0.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24034616]
+WebSphere MQ V7.0 Fix Pack 7.0.1.10 [http://www-01.ibm.com/support/docview.wss?uid=swg24034145]
+WebSphere MQ V7.0.1 for i5/OS Fix Pack 7.0.1.10 [http://www-01.ibm.com/support/docview.wss?uid=swg24034909]
+Fix Pack 7.1.0.3 for WebSphere MQ V7.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24035405]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When performing an MQGET of DBCS characters with MQGMO_CONVERT,
+   shift-out (0x0E) and shift-in (0x0F) characters remain if a
+   shift-in character appears immediately after a shift-out
+   character.
+   
+   For example, suppose WebSphere MQ is trying to convert the
+   following byte sequence from CCSID 5026 to CCSID 943:
+   
+   d1 e6 0e 42d1 42e6 0f 0e 0f
+   
+   WebSphere MQ incorrectly converts this to:
+   
+   4a 57 8269 8276 0e 0f
+   
+   (note the trailing 0e/0f SO/SI bytes)
+   
+   The expected result is:
+   
+   4a 57 8269 8276
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   Users who pass around data containing null SO/SI sequences are
+   affected by this issue.
+   
+   Platforms affected:
+   HP-UX (Itanium),HP-UX (PA-RISC),Linux (Power),Linux (s390x),
+   Linux (x86),Linux (x86-64),Linux (zSeries),Solaris (SPARC),
+   Solaris (x86-64),Windows,iSeries
+   
+   ****************************************************************
+   PROBLEM SUMMARY:
+   When data includes DBCS characters in host codes, the DBCS
+   string must be preceded by 0x0E (shift-out character) and
+   followed by 0x0F (shift-in character). The rule is common to
+   all DBCS host codes for Japanese, Korean, Chinese and others.
+   
+   After converting the DBCS-host string to other codepages such as
+   DBCS-PC, Extended UNIX (EUC) and Unicode (UTF-16, UTF-8),
+   shift-out and shift-in characters must be deleted because they
+   are invalid in DBCS-PC, EUC and Unicode.
+   
+   WebSphere MQ was not deleting these characters and was instead
+   converting them to the destination codepage.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The WebSphere MQ code is changed so that it skips over any
+   SO/SI byte sequences when converting.
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+                      v7.0
+   Platform           Fix Pack 7.0.1.10
+   --------           --------------------
+   Windows            U200352
+   HP-UX (PA-RISC)    U853082
+   HP-UX (Itanium)    U853087
+   Solaris (SPARC)    U853083
+   Solaris (x86-64)   U853089
+   iSeries            7.0.1.10
+   Linux (x86)        U853084
+   Linux (x86-64)     U853088
+   Linux (zSeries)    U853085
+   Linux (Power)      U853086
+   
+                      v7.1
+   Platform           Fix Pack 7.1.0.3
+   --------           --------------------
+   Windows            7.1.0.3
+   HP-UX (Itanium)    7.1.0.3
+   Solaris (SPARC)    7.1.0.3
+   Solaris (x86-64)   7.1.0.3
+   iSeries            7.1.0.3
+   Linux (x86)        7.1.0.3
+   Linux (x86-64)     7.1.0.3
+   Linux (zSeries)    7.1.0.3
+   Linux (Power)      7.1.0.3
+   
+   Platform           v7.5
+   --------           --------------------
+   Multiplatforms     7.5.0.1
+   
+   The latest available maintenance can be obtained from
+   'WebSphere MQ Recommended Fixes'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037]
+   
+   If the maintenance level is not yet available information on
+   its planned availability can be found in 'WebSphere MQ
+   Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV30614
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ LIN X86 V7
+   
+   
+ * REPORTED COMPONENT ID
+   5724H7224
+   
+   
+ * REPORTED RELEASE
+   701
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-10-21
+   
+   
+ * CLOSED DATE
+   2012-12-16
+   
+   
+ * LAST MODIFIED DATE
+   2012-12-16
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ LIN X86 V7
+   
+   
+ * FIXED COMPONENT ID
+   5724H7224
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R701 PSY
+   UP

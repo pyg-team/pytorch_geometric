@@ -1,0 +1,164 @@
+Title: IBM IC50351: NULLPOINTEREXCEPTION AFTER CWSXM0054E EXPERIENCED ON RESPONSE PROCESSING IN ND7 TYPE WEBSPHERE ENTERPRISE SERVICE BUS TOPOLOGY - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  During the invocation of a WebSphere Enterpise Service Bus
+   (WESB) Mediation Flow a NullPointerException (NPE) is generated
+   following a CWSXM0054E. The mediation receives a message from a
+   JMS queue via an SCA export and invokes a SOAP/HTTP web service
+   via an SCA import. It is invoked as a two way interaction.  The
+   web service returns some data but a problem occurs during
+   response processing, possibly during correlation. This mediation
+   has been tested in a development environment and works as
+   expected but the pre-production ND7 type topology sees this
+   problem.
+   
+   The NPE appears to occur after this exception:
+   Caused by:
+   com.ibm.wsspi.sibx.mediation.flow.action.FlowActionException:
+   com.ibm.wsspi.sibx.context.KeyNotFoundException: CWSXM0054E: Key
+   _5bKpkS1LEduyL50x4E4iiQ not found in context store when locating
+   correlation information for module
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: Users of WebSphere Enterprise Service Bus    *
+   *                 v6.0.1 and WebSphere Process Server v6.0.1   *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Asynchronous invocation of a Mediation  *
+   *                      Flow fails, with the exception:         *
+   *                      com.ibm.wsspi.sibx.mediation.flow.      *
+   *                      action.FlowActionException:             *
+   *                      com.ibm.wsspi.sibx.context.             *
+   *                      KeyNotFoundException: CWSXM0054E: Key   *
+   *                      XXXXXXX not found in context store      *
+   *                      when locating correlation information   *
+   *                      for module                              *
+   ****************************************************************
+   * RECOMMENDATION: If this problem is experienced it is         *
+   *                 recommended that the user upgrades to        *
+   *                 v6.0.1 fix pack 2 or later.                  *
+   ****************************************************************
+   When invoking a Mediation Flow asynchronously, in some server
+   configurations a ClassCastException is thrown in:
+   com.ibm.ws.sibx.context.impl.ContextStoreDestinationImpl.
+   loadPersistentKeys(ContextStoreDestinationImpl.java:503)
+   
+   This prevents a persistent key from being saved, the result
+   of which is that on the corresponding response flow, a
+   KeyNotFoundException is thrown when the runtime fails to
+   locate the key on the context store, resulting in a
+   NullPointerException with the message:
+   
+   Caused by:
+   com.ibm.wsspi.sibx.mediation.flow.action.FlowActionException:
+   com.ibm.wsspi.sibx.context.KeyNotFoundException: CWSXM0054E:
+   Key XXXXXXXX not found in context store when locating
+   correlation information for module
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The method by which persistent keys are saved has been
+   modified to prevent the ClassCastException from occuring.
+   V6.0.1 Fix Pack 2 and beyond contains this code update.
+   Installing this fix resolves the problem.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC50351
+   
+   
+ * REPORTED COMPONENT NAME
+   WEB ESB FOR WIN
+   
+   
+ * REPORTED COMPONENT ID
+   5724I8200
+   
+   
+ * REPORTED RELEASE
+   100
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2006-08-22
+   
+   
+ * CLOSED DATE
+   2006-09-27
+   
+   
+ * LAST MODIFIED DATE
+   2006-09-27
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEB ESB FOR WIN
+   
+   
+ * FIXED COMPONENT ID
+   5724I8200
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R100 PSY
+   UP

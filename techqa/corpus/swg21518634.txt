@@ -1,0 +1,40 @@
+Title: IBM Questions regarding Asset images in Sterling Business Center and PCA. - United States
+
+Text:
+STERLINGFAQ TECHNOTE (FAQ)
+
+QUESTION
+ Questions regarding Asset images in Sterling Business Center and PCA. 
+
+ANSWER
+
+
+1) Will we be able to see the image on the SBC? Yes 
+2) How to add an image? 
+
+To add an asset to an item:
+1. Log in to Business Center™ as an administrator.
+2. From the Item menu, select Find Item. Alternatively, click the Find Item hyperlink in the home page. 
+3. From the Item Search screen that is displayed, enter the search criteria, and then click Search to view a list of all the available items. Alternatively, use either the Basic Search or the Advanced Search option to narrow down the list of items displayed. 
+4. In the Items panel that is displayed, click the Item ID hyperlink. Alternatively, double-click the row containing the Item ID. 
+5. The Primary Information screen is displayed. In the Related Tasks panel, click Manage Assets.
+6. In the Assets panel that is displayed, click Add. 
+7. The Asset Detail dialog box is displayed. Perform the following steps: 
+a. In the Asset ID* box, enter a unique identifier (ID) for the asset. 
+b. In the Short Description* box, enter a brief description of the asset.
+c. In the Long Description box, enter a detailed description of the asset. 
+d. From the Server drop-down list, select the server on which this asset type is located. The drop-down list is either populated by all the available server locations, or the codes that are configured in the Applications Manager. 
+e. From the Type drop-down list, select the asset type. If the selected asset type pertains to an image, the preview of the corresponding image is displayed in the Assets panel after the server and the filename have been specified. 
+f. In the File box, enter the name of the file.
+g. Click Save. 
+Note: * indicates that the field is mandatory.
+The asset is added to the item.
+
+3) Will they be able to see the image on the PCA? 
+
+Currently, the asset images are not being used in the PCA. They can be viewed on the Web Channel (MCS) as well as the SBC.
+
+
+
+HISTORICAL NUMBER
+ FAQ3345

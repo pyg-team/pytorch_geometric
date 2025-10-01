@@ -1,0 +1,49 @@
+Title: IBM During single-server installation of FileNet P8 Platform, you must close the Tivoli Directory Server administration window to prevent time-out errors - United States
+
+Text:
+ RELEASE NOTES
+
+ABSTRACT
+ On an AIX platform without a Common Desktop Environment (CDE), if you use VNC to connect to the X desktop to launch the Composite Platform Installation Tool (CPIT) in interactive or silent mode, you might experience a time-out error. 
+
+CONTENT
+The Installation Complete window in CPIT displays this message: Errors occurred during the installation. See the installation log for more information. 
+
+The IBM/cpit/cpit_install_log_5.0.0.txt log displays a message similar to:
+
+***IllegalThreadStateException - Timeout Error in monitorProcess: (12/23) installCE.sh. java.lang.IllegalThreadStateException: process hasn't exited
+ERROR in InvokeScripts-function - Terminate the remaining scripts.
+***Aborting InvokeScripts-Install function.
+
+Causes
+
+During the automatic installation and configuration of FileNet P8 Platform on AIX, the IBM Tivoli® Directory Server Instance Administration Tool launches a grid-like window. You must click this window to access the IBM Tivoli Directory Server Instance Administration Tool interface. In the interface, you must close this window by using the Close button and confirming the exit when prompted. If you do not close this window during the installation, the process times out and the FileNet P8 Platform installation is unsuccessful.
+
+Resolving the problem
+
+You can prevent the time-out issue by changing to one of the following approaches:
+
+
+ *  Install Common Desktop Environment (CDE) before you run the installation 
+ *  Use a utility other than VNC to connect to the AIX server 
+ *  Use telnet to run the installation in silent mode
+
+
+To recover from an unsuccessful installation caused by a time-out issue: 
+
+If you created a backup of the server where you planned to run the installation, including all the downloaded software packages, you can restore the backup image and restart the installation. During the installation process, click the grid window to activate the IBM Tivoli Directory Server Instance Administration Tool window, and close the administration tool window by using the Close button. 
+
+
+If you do not have a backup of the server, you can undo the installation to the point of the time-out issue, and rerun the installation: 
+ 1.  Uninstall Content Engine Server by running /opt/IBM/FileNet/ContentEngine/ce_uninstaller and deleting the /opt/IBM/FileNet/ContentEngine directory. 
+ 2.  Open the /opt/IBM/cpit/install-scripts/cpit.properties file for editing. 
+ 3.  Change all instances of .tar.gz file extensions to .tar. 
+ 4.  Set all values for the parameters PROCESSED_1 through PROCESSED_11 to YES. 
+ 5.  Set all values for the parameters PROCESSED_12 through PROCESSED_23 to NO. 
+ 6.  Save your changes to the /opt/IBM/cpit/install-scripts/cpit.properties file. 
+ 7.  Make a backup copy of the CDRoot/cpit.properties file. 
+ 8.  Copy the edited /opt/IBM/cpit/install-scripts/cpit.properties file to the CDRoot directory, overwriting the cpit.properties file in that location. 
+ 9.  Set the permission of the /opt/IBM/cpit/install-scripts directory to 777. 
+ 10. Restart the CPIT installation program. 
+ 11. When a grid-like screen displays, click the screen to activate the IBM Tivoli Directory Server Instance Administration Tool. 
+ 12. Close the tool by using the Close button, then clicking Yes on the exit confirmation window.

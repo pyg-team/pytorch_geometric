@@ -1,0 +1,164 @@
+Title: IBM PI56344: Multiple vulnerabilites in IBM WebSphere SDK Java Technology edition affects WebSphere eXtreme Scale(includes SLOTH fix). - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Multiple vulnerabilites in IBM WebSphere SDK Java Technology
+   edition affects WebSphere eXtreme Scale(includes SLOTH fix).
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  All users of WebSphere eXtreme Scale        *
+   *                  version 7.1.0.                              *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Multiple vulnerabilities in IBM Java    *
+   *                      Runtime affect WebSphere eXtreme        *
+   *                      Scale (CVE-2016-0475, CVE-2015-7575,    *
+   *                      CVE-2016-0448)                          *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   CVEID: CVE-2016-0475
+   DESCRIPTION: An unspecified vulnerability in Oracle Java SE
+   Java SE Embedded and Jrockit related to the Libraries
+   component has partial confidentiality impact, partial
+   integrity impact, and no availability impact.
+   CVSS Base Score: 5.8
+   CVSS Temporal Score: See
+   https://exchange.xforce.ibmcloud.com/vulnerabilities/109946 [https://exchange.xforce.ibmcloud.com/vulnerabilities/109946]
+   for the current score
+   CVSS Environmental Score*: Undefined
+   CVSS Vector: (AV:N/AC:M/Au:N/C:P/I:P/A:N)
+   CVEID: CVE-2015-7575
+   DESCRIPTION: The TLS protocol could allow weaker than expected
+   security caused by a collision attack when using the MD5 hash
+   function for signing a ServerKeyExchange message during a TLS
+   handshake. An attacker could exploit this vulnerability using
+   man-in-the-middle techniques to impersonate a TLS server and
+   obtain credentials. This vulnerability is commonly referred to
+   as  óÔé¼ ôSLOTH óÔé¼  ¢.
+   CVSS Base Score: 7.1
+   CVSS Temporal Score: See
+   https://exchange.xforce.ibmcloud.com/vulnerabilities/109415 [https://exchange.xforce.ibmcloud.com/vulnerabilities/109415]
+   for the current score
+   CVSS Environmental Score*: Undefined
+   CVSS Vector: (CVSS:3.0/AV:N/AC:L/PR:N/UI:R/S:U/C:H/I:L/A:N)
+   CVEID: CVE-2016-0448
+   DESCRIPTION: An unspecified vulnerability in Oracle Java SE
+   and Java SE Embedded related to the JMX component could allow
+   a remote attacker to obtain sensitive information resulting in
+   a partial confidentiality impact using unknown attack vectors.
+   CVSS Base Score: 4
+   CVSS Temporal Score: See
+   https://exchange.xforce.ibmcloud.com/vulnerabilities/109949 [https://exchange.xforce.ibmcloud.com/vulnerabilities/109949]
+   for the current score
+   CVSS Environmental Score*: Undefined
+   CVSS Vector: (AV:N/AC:L/Au:S/C:P/I:N/A:N)
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  See recommended fixes page for Websphere eXtreme Scale at:
+   http://www-01.ibm.com/support/docview.wss?uid=swg27018991 [http://www-01.ibm.com/support/docview.wss?uid=swg27018991]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI56344
+   
+   
+ * REPORTED COMPONENT NAME
+   XD EXTREME SCAL
+   
+   
+ * REPORTED COMPONENT ID
+   5724J3402
+   
+   
+ * REPORTED RELEASE
+   710
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-02-01
+   
+   
+ * CLOSED DATE
+   2016-03-03
+   
+   
+ * LAST MODIFIED DATE
+   2016-08-30
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   XD EXTREME SCAL
+   
+   
+ * FIXED COMPONENT ID
+   5724J3402
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R710 PSY
+   UP

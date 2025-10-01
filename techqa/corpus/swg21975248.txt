@@ -1,0 +1,27 @@
+Title: IBM New Module introduced in Maximo 7.6 - Analytics - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ What does this module consist of and what are the application within the module. 
+
+ANSWER
+Cognos reporting
+You can install and integrate Cognos reporting to enable powerful and flexible data analysis for your users. Administrators access Cognos reporting to maintain the Cognos reporting server, define security settings, and manage users. Report developers use Cognos reporting to develop and maintain enterprise reports. Power and business users use Cognos reporting to run and view reports, and create ad hoc reports. Application users use Cognos reporting to run and view reports. Users can see and access Cognos reports from within applications and Cognos reports are displayed in a separate browser session within the Cognos reporting application.
+
+
+Viewing scheduled reports
+
+You can view scheduled reports that might be too large to send by email.
+
+After you schedule a report, you receive a link to that report to view it in the Report Viewer application.
+
+
+Monitoring performance
+
+You monitor KPIs to track the success of business factors that your work contributes toward. If a KPI is performing poorly, it might indicate an area of your work that requires attention.
+
+To quickly view KPIs outside of the Start Center, go to the KPI Viewer application. On the List tab, you can see the KPIs that track your work, in particular, the areas that most need improvement. On the KPI tab, you can see more information about KPIs, for example, you can see details about the factors that affect the KPIs. In the Historical Trends tab, you can track the performance of the KPIs over time. In the Log tab, you can enter information about KPIs and see a record of actions that are associated with the KPIs.
+
+You can access the modules from the Go To menu in the Navigation toolbar of the user interface.

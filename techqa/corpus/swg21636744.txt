@@ -1,0 +1,60 @@
+Title: IBM WebSphere Application Server Network Deployment 8.0 fails to install. - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ I followed the install steps in the IBM Security Access Manager for Web Version 7.0 Installation Guide at,
+
+http://www-01.ibm.com/support/knowledgecenter/SSPREK_7.0.0.1/com.ibm.isam.doc_80/ameb_install_guide/task/tsk_linux_sms.html?lang=en [http://www-01.ibm.com/support/knowledgecenter/SSPREK_7.0.0.1/com.ibm.isam.doc_80/ameb_install_guide/task/tsk_linux_sms.html?lang=en]
+
+but receive errors. 
+
+SYMPTOM
+The following errors may be seen, 
+
+CRIMA1154E ERROR: Error installing.
+ERROR: The silent installation process does not support installing packages that are contained on multiple media discs.
+
+The 64-bit version of Installation Manager checks each package for 64-bit support. If a package does not support the 64-bit version, you receive a warning.
+
+Use a 32-bit version of Installation Manager to install the package. 
+
+
+CAUSE
+WebSphere Application Server Network Deployment 8.0 requires the 32-bit installer on Linux 64-bit.
+
+
+RESOLVING THE PROBLEM
+Download the latest 32-bit installer for Linux from IBM Installation Manager page located at http://www-947.ibm.com/support/entry/portal/All_download_links/Software/Rational/IBM_Installation_Manager [http://www-947.ibm.com/support/entry/portal/All_download_links/Software/Rational/IBM_Installation_Manager] 
+
+
+Install the necessary 32-bit libraries as documented in the TechNote titled Unable to install Installation Manager on RHEL 6.0/6.1 (64-bit) located at http://www.ibm.com/support/docview.wss?uid=swg21459143 [http://www.ibm.com/support/docview.wss?uid=swg21459143]
+
+In summary, the steps are,
+
+1) Install 32-bit installer. For example,
+
+Unzip agent.installer.linux.gtk.x86_1.6.1000.20121109_1537.zip to /WASND/installer
+cd /WASND/installer
+./install
+
+2) Use the 32-bit installer launched from the Applications tab.
+
+3) Register a repository in the installation manager GUI. by following,
+
+Preferences ->
+Repositories ->
+Add ->
+Navigate to where you unzipped all the WAS 8.0 ZIP files and select repository.config.
+
+4) From the main GUI select,
+
+install -> WAS 8.0
+
+Follow the prompts to install.
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ ISAM WAS

@@ -1,0 +1,149 @@
+Title: IBM PM89701: DFT Rhp include definition is changed by RT depending on component file. - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Rational Rhapsody 8.0.5 [http://www-01.ibm.com/support/docview.wss?uid=swg24036550]
+Rational Rhapsody Fix Pack 5 (7.6.1.5) for 7.6.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24036587]
+Rational Rhapsody 8.0.6 [http://www-01.ibm.com/support/docview.wss?uid=swg24037021]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  RT changes include definition of whether specification or
+   implementation depending on existence of component file.
+   
+   Scenario 1:
+   When component is RO(read only) and write include statement in
+   cpp file, RT adds the header information to ImpIncludes
+   property.
+   Also when write include statement in .h file, RT adds it to
+   SpecIncludes property, as mentioned online help..
+   
+   However, when component file(header file) is already existing as
+   RO(read only), RT adds include information to only SpecIncludes
+   property, though write the statement in cpp file.
+   
+   Scenario 2:
+   When write include statement in cpp file (component is not RO),
+   normally RT adds a dependency under .cpp SourceArtifact with
+   usage 'Implementation'
+   Also when write include statement in .h file, RT adds the
+   dependency with usage 'Specification'
+   
+   However, when componentfile(header file) is already existing, RT
+   adds a dependency with usage 'Specification', though write the
+   statement in cpp file.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   DFT Rhp include definition is changed by RT depending on
+   component file.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fixed in 8.0.5
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM89701
+   
+   
+ * REPORTED COMPONENT NAME
+   TLOGIC RHAPSODY
+   
+   
+ * REPORTED COMPONENT ID
+   5724V74RP
+   
+   
+ * REPORTED RELEASE
+   761
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-05-23
+   
+   
+ * CLOSED DATE
+   2013-12-13
+   
+   
+ * LAST MODIFIED DATE
+   2013-12-13
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TLOGIC RHAPSODY
+   
+   
+ * FIXED COMPONENT ID
+   5724V74RP
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R761 PSN
+   UP

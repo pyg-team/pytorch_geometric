@@ -1,0 +1,138 @@
+Title: IBM PI63837: PYTHON SCRIPTING: SETPRINTOPTIONS METHODS FAIL - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  You are automating the cleanup of an SPSS Statistics Output
+   Viewer file via Python scripting.  You are specifically trying
+   to change the Print Options for the Output Viewer page as a
+   whole by automating the   SetPrintOptions methods.
+   
+   You note that the orientation methods successfully changes the
+   Page from Portrait to Landscape.  But the other methods (for
+   setting page margins) seem never to take effect.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  This issue will be addressed in the next Fix Pack. Please
+   refer to the Fix Pack schedule at
+   https://www-01.ibm.com/software/analytics/support/fixes/pbi_sche
+   dule.html [https://www-01.ibm.com/software/analytics/support/fixes/pbi_schedule.html]  for
+   information on upcoming Fix Packs.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * All users of IBM SPSS Statistics using Python Programming    *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * You are automating the cleanup of an SPSS Statistics Output  *
+   * Viewer file via Python scripting.  You are specifically      *
+   * trying                                                       *
+   * to change the Print Options for the Output Viewer page as a  *
+   * whole by automating the   SetPrintOptions methods.           *
+   *                                                              *
+   * You note that the orientation methods successfully changes   *
+   * the                                                          *
+   * Page from Portrait to Landscape.  But the other methods (for *
+   * setting page margins) seem never to take effect.             *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * This issue has been resolved for Statistics 24.0 FP1 and     *
+   * 25.0.  Please upgrade to  Statistics 24.0 FP1 or 25.0.       *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI63837
+   
+   
+ * REPORTED COMPONENT NAME
+   SPSS STATISTICS
+   
+   
+ * REPORTED COMPONENT ID
+   5725A54ST
+   
+   
+ * REPORTED RELEASE
+   O00
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-06-08
+   
+   
+ * CLOSED DATE
+   2017-05-03
+   
+   
+ * LAST MODIFIED DATE
+   2017-05-03
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * RO00 PSN
+   UP
+   
+   
+ * RO00 PSY
+   UP

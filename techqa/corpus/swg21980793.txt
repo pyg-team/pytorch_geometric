@@ -1,0 +1,37 @@
+Title: IBM Will IBM TRIRIGA Platform 3.4.2 work with Microsoft IE running on Compatibility Mode? - United States
+
+Text:
+TRIUI; TRIBROWSER; TRICLIENT; IE; Compatibility; Mode; support; 342 TECHNOTE (FAQ)
+
+QUESTION
+ Will IBM TRIRIGA Platform 3.4.2 work with Microsoft IE running on Compatibility Mode? 
+
+CAUSE
+Want to know if I can run Microsoft Internet Explorer in Compatibility Mode if using IBM TRIRIGA 3.4.2.
+
+ANSWER
+For IBM TRIRIGA Platform 3.4.2 version, the Microsoft Internet Explorer (IE) is not supported if running in Compatibility Mode. See the Compatibility Matrix [https://www.ibm.com/developerworks/community/wikis/home?lang=en#!/wiki/IBM%20TRIRIGA1/page/Archive%20of%20IBM%20TRIRIGA%20Support%20Matrices] for supported technology.
+
+This is known, documented and expected limitation for our IBM TRIRIGA 3.4.2 platform code, deployed due to security reasons.
+
+This is documented on the Release Notes [https://www.ibm.com/developerworks/community/wikis/home?lang=en-us#!/wiki/IBM%20TRIRIGA1/page/Release%20Notes] PDF document for IBM TRIRIGA 3.4.2 version:
+
+Known Limitations
+
+The following items are known limitations concerning the IBM TRIRIGA Application Platform for this release:
+
+[...]
+Area of Impact Description
+============== ============
+Support Internet Explorer is no longer supported if Compatibility View Settings are enabled
+
+
+There is no plan for supporting this compatibility mode back in. 
+
+There are some alternatives for this scenario:
+
+(Option 1) Use a supported version of Firefox when accessing IBM TRIRIGA. Leave MS IE in Compatibility Mode for other products.
+
+(Option 2) Use a supported version of Chrome when accessing TRIRIGA. Leave MS IE in Compatibility Mode for other products.
+
+(Option 3) Use a supported version of IE when accessing TRIRIGA. Leave MS IE in Compatibility Mode when accessing the applications that need it. Disable MS IE's Compatibility Mode when using TRIRIGA. Try not to be using the applications that require compatibility mode and IBM TRIRIGA at the same time.

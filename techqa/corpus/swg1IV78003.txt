@@ -1,0 +1,178 @@
+Title: IBM IV78003: IF RUN ANALYZER FILTER IN A READER IT WILL FAIL, IF FILTER EXPRESSION CONTAINS A FUNCTION - United States
+
+Text:
+  A FIX IS AVAILABLE
+IBM Tivoli Netcool/Impact V7.1.0 Fix Pack 4(7.1.0-TIV-NCI-FP0004) [http://www-01.ibm.com/support/docview.wss?uid=swg24041269]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  product: Impact
+   Release; 7.1.0
+   (also older versions 5.1.1, 6.1.0, 6.1.1 same)
+   
+   problem;
+    create database eventreader or objectserver everntreader
+   
+    Then create a filter expression that includes a function
+    [for exmple function like:  GetDate(), or Now() ]
+   
+    Next try running the alalyzer filter against the
+    filter expression
+   
+    the analyzer will fail.
+   
+    Next manually add both the following properties
+    to your EventReader's props file, i.e. within the
+    IMPACT_HOME/etc/<server>_<eventreader>.props file
+   
+   
+   --------------------
+   impact.<readername>.uselikeoperator=true
+   impact.<readername>.consolidatefilters=false
+   --------------------
+   
+   restart impact after manually modifying the props file
+   for the change to take affect.
+   
+   This will get the filter working in your eventreader
+   (which is the most important thing).
+   
+   However, if you try using the Analyze Filter button it will
+   still fail!
+   
+   
+   even though the analyzer filter complains
+   the reader and policy work as expected.
+   
+   
+   need Impact documentation to note this limitation in
+   the analyzer filter = fails when filter expression contains a
+   function
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * All Impact Users                                             *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * A number of Impact users have opened PMRs that have required *
+   * clarification on the usage of the function getdate in        *
+   * Filter expressions for Event Mapping. The following          *
+   * apar(IV11728 [http://www-01.ibm.com/support/docview.wss?uid=swg1IV11728]) was implemented to allow the usage of 1        *
+   * occurrence                                                   *
+   * of the getdate function per filter provided the supporting   *
+   * property is also in the eventreader props file. The          *
+   * documentation                                                *
+   * did not state this clearly.                                  *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The behaviour of the OMNIbus event reader service, event mapping
+   was changed by the following APAR.
+   IV11728 [http://www-01.ibm.com/support/docview.wss?uid=swg1IV11728]: [Code]: USING EVENTREADER PARSERESTRICTIONFILTER TO
+   ALLOW THE USE OF GETDATE():
+   IV11728 [http://www-01.ibm.com/support/docview.wss?uid=swg1IV11728] updated the eventfilter class to enable the usage of 1
+   occurrence of the function getdate in a
+   filter. The documentation has been updated to detail that if
+   getdate is used in a filter, a syntax error will be
+   generated on the front end but the getdate will be evaluated
+   correctly provided the supporting
+   property is added to the event reader properties file. This
+   detail has been added tothe page for:
+   OMNIbus event reader service Event Mapping tab
+   Table 2. Actions on the Event Mapping tab
+   Analyze Event Mapping Table -> Click to analyze the filters in
+   the Event Mapping table.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV78003
+   
+   
+ * REPORTED COMPONENT NAME
+   NETCOOL/IMPACT
+   
+   
+ * REPORTED COMPONENT ID
+   5724O59IS
+   
+   
+ * REPORTED RELEASE
+   710
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-10-14
+   
+   
+ * CLOSED DATE
+   2015-11-25
+   
+   
+ * LAST MODIFIED DATE
+   2015-11-25
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+Publications Referenced SC27492302 FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

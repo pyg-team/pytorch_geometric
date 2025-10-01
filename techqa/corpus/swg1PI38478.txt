@@ -1,0 +1,207 @@
+Title: IBM PI38478: LOG OUT AND QUICKLY LOG BACK IN, THE RAM TOKEN LICENSE IS NOT RELEASED ON THE LOGOUT. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Log out and quickly log back in again, the log out explicitly
+   causes RAM to still regards the user as not logged out.
+   This causes the user's token license to not be taken back.
+   
+   
+   ------
+   
+   This is seen in such a situation:
+      1.the user logged out and then quickly logged in, the time
+   period could be really short ,like 0.03s.
+      2.Then the user explicitly logged out ,for e.g, close the
+   browser without log out.
+        Although some users have had this token licence not
+   released scenario when they have logged out.
+   
+   How to reproduce this :
+   
+   It is very hard to reproduce this using the web client.
+   
+   You can write a RAM API code java applicaton ,try to connect to
+   a ram repository, then not release the connection with the
+   exceptions not being handled well.
+   When using API to connect to RAM, it will actually log in two
+   times.
+   The user will always still show as having a use count in the
+   license manager report csv file downloaded ,and not see the user
+   logged out for longer than the session time out in the user log
+   out audit report.
+   
+   This is because , when the user logged out and then quickly
+   logged in ,somehow it will still see the user as registered.
+   This forces to remove the current session and then add a new
+   session. but forgets to bind the WARSessionID with the userid.
+   So when the user has not explicitly logged out for the last log
+   in , their session will be removed by the web component when it
+   times out ,but when RAM listened to that session being
+   destroyed, it tries to log out the user but can not find the
+   userid.
+   So a null is returned but not handled , causing RAM to still
+   regards the user as not logged out.
+   This could cause the user's license not been take back.
+   
+   Besides RAM api application scenarios causing this, it's
+   possible this could also happen in custom policies with RAM
+   session handling code.
+   
+   Also recorded as IBM RAM internal Jazz WI/Defect 133250
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * web                                                          *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * Log out and quickly log back in again, the log out           *
+   * explicitly                                                   *
+   * causes RAM to still regards the user as not logged out.      *
+   * This causes the user's token license to not be taken back.   *
+   *                                                              *
+   *                                                              *
+   * ------                                                       *
+   *                                                              *
+   * This is seen in such a situation:                            *
+   *    1.the user logged out and then quickly logged in, the     *
+   * time                                                         *
+   * period could be really short ,like 0.03s.                    *
+   *    2.Then the user explicitly logged out ,for e.g, close the *
+   * browser without log out.                                     *
+   *      Although some users have had this token licence not     *
+   * released scenario when they have logged out.                 *
+   *                                                              *
+   * How to reproduce this :                                      *
+   *                                                              *
+   * It is very hard to reproduce this using the web client.      *
+   *                                                              *
+   * You can write a RAM API code java applicaton ,try to connect *
+   * to                                                           *
+   * a ram repository, then not release the connection with the   *
+   * exceptions not being handled well.                           *
+   * When using API to connect to RAM, it will actually log in    *
+   * two                                                          *
+   * times.                                                       *
+   * The user will always still show as having a use count in the *
+   * license manager report csv file downloaded ,and not see the  *
+   * user                                                         *
+   * logged out for longer than the session time out in the user  *
+   * log                                                          *
+   * out audit report.                                            *
+   *                                                              *
+   * This is because , when the user logged out and then quickly  *
+   * logged in ,somehow it will still see the user as registered. *
+   * This forces to remove the current session and then add a new *
+   * session. but forgets to bind the WARSessionID with the       *
+   * userid.                                                      *
+   * So when the user has not explicitly logged out for the last  *
+   * log                                                          *
+   * in , their session will be removed by the web component when *
+   * it                                                           *
+   * times out ,but when RAM listened to that session being       *
+   * destroyed, it tries to log out the user but can not find the *
+   * userid.                                                      *
+   * So a null is returned but not handled , causing RAM to still *
+   * regards the user as not logged out.                          *
+   * This could cause the user's license not been take back.      *
+   *                                                              *
+   * Besides RAM api application scenarios causing this, it's     *
+   * possible this could also happen in custom policies with RAM  *
+   * session handling code.                                       *
+   *                                                              *
+   * Also recorded as IBM RAM internal Jazz WI/Defect 133250      *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI38478
+   
+   
+ * REPORTED COMPONENT NAME
+   RATL ASSET MGR
+   
+   
+ * REPORTED COMPONENT ID
+   5724R4200
+   
+   
+ * REPORTED RELEASE
+   752
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-04-06
+   
+   
+ * CLOSED DATE
+   2015-07-05
+   
+   
+ * LAST MODIFIED DATE
+   2015-07-05
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R752 PSY
+   UP

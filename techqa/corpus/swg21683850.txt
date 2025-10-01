@@ -1,0 +1,21 @@
+Title: IBM Unable to get email Listener to work with SSL - United States
+
+Text:
+TPAEEL TECHNOTE (FAQ)
+
+QUESTION
+ I am able to use IMAP without SSL and it works fine so we know the account and destination
+address are working. However, the organization standard is SSL 
+
+CAUSE
+The error is: 
+javax.mail.MessagingException: Server chose SSLv3, but that protocol version is not enabled or not supported by the client.;nested exception is:
+javax.net.ssl.SSLHandshakeException: Server chose SSLv3, but that protocol version is not enabled or not supported by the client.
+
+
+ANSWER
+Add the following property & value via the Maximo System Properties application. A reboot of the MXServer instance will likely be required as this is a JVM level JavaMail property. 
+
+
+property: mail.imaps.ssl.protocols
+value: SSLv3

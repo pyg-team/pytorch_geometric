@@ -1,0 +1,56 @@
+Title: IBM Fix list for CICS VSAM Recovery for z/OS 5.1 - United States
+
+Text:
+apar apars ; fixes by version; fixlists; fix lists ; ptfs ; preventive service planning ; plan hiper pe hyper ; CICS VR : CICSVR ; CICS VSAM Recovery for z/OS ; FixListDocument zOS; 5.1 ; 5655Y2400 R510 R51C R51E R51K 5655-Y24 ; 5655Y24 FMID HCCV510 JCCV51E JCCV51K PRODUCT DOCUMENTATION
+
+ABSTRACT
+ This document contains a table of APARs for CICS VSAM Recovery for z/OS (CICS VR) V5.1. A comma separated values (CSV) file containing all the fields for each APAR is also included as an attachment. You can use the CSV file to import the list of APARs into a spreadsheet or database for sorting or downloading. 
+
+CONTENT
+IBM updates this Fix list the first week of every month if there is a change to the APARs for this product. The fix list is available in two formats:
+
+ * Fix list table
+ * CSV file
+
+
+Click on the Fixes by version document [http://www.ibm.com/support/docview.wss?uid=swg27008833] to see Fix lists for other version, release, and modification (VRM) levels of currently supported CICS products. 
+
+
+
+Fix list
+Open APARs are at the top of the Fix list table followed by closed APARs, ordered by close date. There might be a few days after the APAR closes before the table and CSV file are updated with the close date and PTF(s).
+
+Click on an APAR number in the Fix list table to display the APAR. You will need to enter your IBM ID and password when displaying open APARs. See Ordering CICS products and maintenance [http://www.ibm.com/support/docview.wss?uid=swg21049360] for the options that are available to order CICS PTF(s).
+
+Latest update: 6 February 2017 
+
+Fix list for CICS VSAM Recovery for z/OS V5.1 APAR CLOSE
+DATE PTF(s) Fixing APAR
+if PE HIPER? Abstract PI61436 [http://www-1.ibm.com/support/docview.wss?rs=3526&context=SSQJMU&q=&uid=swg1PI61436&loc=en_US&cs=utf-8&lang=en+en] 17_Jan 
+2017 UI43971 [https://www14.software.ibm.com/webapp/ShopzSeries/ShopzSeries.jsp?action=orderPTFs&openv=z/OS&ptf=UI43971] [/support/docview.wss?uid=swg27036875&amp;aid=1] [/support/docview.wss?uid=swg27036875&amp;aid=1] MESSAGE DWW282I AFTER APPLYING UI21582 TO CICSVR AND BATCH LOGGING STOPPED. PI70498 [http://www-1.ibm.com/support/docview.wss?rs=3526&context=SSQJMU&q=&uid=swg1PI70498&loc=en_US&cs=utf-8&lang=en+en] 21_Nov 
+2016 UI42778 [https://www14.software.ibm.com/webapp/ShopzSeries/ShopzSeries.jsp?action=orderPTFs&openv=z/OS&ptf=UI42778] [/support/docview.wss?uid=swg27036875&amp;aid=1] [/support/docview.wss?uid=swg27036875&amp;aid=1] REPLICATION LOGGING ONE VSAM SPHERE FOR MULTIPLE NON-CICS ADDRESS SPACES PI33213 [http://www-1.ibm.com/support/docview.wss?rs=3526&context=SSQJMU&q=&uid=swg1PI33213&loc=en_US&cs=utf-8&lang=en+en] 3_Feb 
+2015 UI24907 [https://www14.software.ibm.com/webapp/ShopzSeries/ShopzSeries.jsp?action=orderPTFs&openv=z/OS&ptf=UI24907] [/support/docview.wss?uid=swg27036875&amp;aid=1] HIPER UNDOLOG ENTRIES DELETED BEFORE AUTOMATIC DEREGISTRATION TIME PI22190 [http://www-1.ibm.com/support/docview.wss?rs=3526&context=SSQJMU&q=&uid=swg1PI22190&loc=en_US&cs=utf-8&lang=en+en] 18_Sep 
+2014 UI21582 [https://www14.software.ibm.com/webapp/ShopzSeries/ShopzSeries.jsp?action=orderPTFs&openv=z/OS&ptf=UI21582] [/support/docview.wss?uid=swg27036875&amp;aid=1] HIPER ABEND 92A RSN 18 RUNNING CICS BATCH WORKLOADS, S878 ABENDS PI13574 [http://www-1.ibm.com/support/docview.wss?rs=3526&context=SSQJMU&q=&uid=swg1PI13574&loc=en_US&cs=utf-8&lang=en+en] 28_Apr 
+2014 UI17467 [https://www14.software.ibm.com/webapp/ShopzSeries/ShopzSeries.jsp?action=orderPTFs&openv=z/OS&ptf=UI17467] [/support/docview.wss?uid=swg27036875&amp;aid=1] [/support/docview.wss?uid=swg27036875&amp;aid=1] ABEND0F4 CICSVR DWW259I RC 00000024 RSN 717053D2 EOT PI10486 [http://www-1.ibm.com/support/docview.wss?rs=3526&context=SSQJMU&q=&uid=swg1PI10486&loc=en_US&cs=utf-8&lang=en+en] 18_Mar 
+2014 UI15921 [https://www14.software.ibm.com/webapp/ShopzSeries/ShopzSeries.jsp?action=orderPTFs&openv=z/OS&ptf=UI15921] [/support/docview.wss?uid=swg27036875&amp;aid=1] [/support/docview.wss?uid=swg27036875&amp;aid=1] BATCHBACK COMMAND FAILS DWW1728W UNDO END NOT FOUND PM95451 [http://www-1.ibm.com/support/docview.wss?rs=3526&context=SSQJMU&q=&uid=swg1PM95451&loc=en_US&cs=utf-8&lang=en+en] 18_Sep 
+2013 UK97736 [https://www14.software.ibm.com/webapp/ShopzSeries/ShopzSeries.jsp?action=orderPTFs&openv=z/OS&ptf=UK97736] [/support/docview.wss?uid=swg27036875&amp;aid=1] [/support/docview.wss?uid=swg27036875&amp;aid=1] PREVENT INCORRECT RPLDDDD FEEDBACK AT LOGGING TO REPLICATION LOG FOR BATCH BACKOUT UTILITY PM89649 [http://www-1.ibm.com/support/docview.wss?rs=3526&context=SSQJMU&q=&uid=swg1PM89649&loc=en_US&cs=utf-8&lang=en+en] 10_Jul 
+2013 UK95711 [https://www14.software.ibm.com/webapp/ShopzSeries/ShopzSeries.jsp?action=orderPTFs&openv=z/OS&ptf=UK95711] 
+UK95712 [https://www14.software.ibm.com/webapp/ShopzSeries/ShopzSeries.jsp?action=orderPTFs&openv=z/OS&ptf=UK95712] [/support/docview.wss?uid=swg27036875&amp;aid=1] HIPER CICS VR 4.2 TOLERATING VR 5.1 RCDS 
+Back to top
+
+
+
+CSV file
+See CSV file usage hints and tips [http://www.ibm.com/support/docview.wss?uid=swg21254674] if you would like to know how you can use a CSV file with Microsoft Excel or Lotus spreadsheets. 
+
+cicsvr51_fixlist.csv [/support/docview.wss?uid=swg27036875&aid=3] - cicsvr51_fixlist.csv [/support/docview.wss?uid=swg27036875&aid=2] 
+Back to top
+
+
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Host Transaction Processing CICS Transaction Server File Control z/OS 5.1 PRODUCT ALIAS/SYNONYM
+ CICSVR CICS VR CICS/VR

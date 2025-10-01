@@ -1,0 +1,163 @@
+Title: IBM JR56320: ISSUE WITH ACCESS TO WSDL file in IIS 11.5.x USING WAS LIBERTY. WSDL File is not found after an ISD Service deployment. - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  After successful deployment of an ISD SOAP service,
+   accessing the WSDL file shows an error that the WSLD
+   file cannot be found.
+   The issue in only encountered when using WAS Liberty
+   with the following installations:
+   IS 11.5.0.0
+   IS 11.5.0.1
+   IS 11.5.0.2, but only when upgraded from IS 11.5.0.x
+   
+   System works correctly when using a WAS ND installation,
+   or in IS 11.3.x., or after a Suite Installation of
+   IS 11.5.0.2
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  If using WebSphere Liberty 8.5.5.5 (as installed by IS 11.5.x),
+   you have 2 options to fix the issue:
+   
+   OPTION 1.: Install ISF Patch JR56320:
+       this patches the installation of WebSphere Liberty version
+       8.5.5.5 under <IS_HOME>/wlp, in IS 11.5.0.0, IS 11.5.0.1,
+       and IS 11.5.0.2 (migrated from IS 11.5.x) with the
+       installation of the missing WAS Liberty file
+       wlp-extended-8.5.5.5.jar
+   
+   OPTION 2.: Upgrade the WebSphere Liberty to version 8.5.5.8
+   or later version.
+   
+   
+   After the patch installation or the upgrade of WAS Liberty,
+   you can try accessing your initial WSDL file from the already
+   deployed ISD Service (if it was already deployed) or you can
+   deploy again the ISD service.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  After successful deployment of an ISD SOAP service,
+   accessing the WSDL file shows an error indicating that
+   the WSLD file cannot be found.
+   The issue in only encountered when using WAS Liberty
+   with the following installations:
+   IS 11.5.0.0
+   IS 11.5.0.1
+   IS 11.5.0.2 (but only when upgraded from IS 11.5.0.x)
+   
+   System works correctly when using a WAS ND installation,
+   or in IS 11.3.x., or after a Suite Installation of
+   IS 11.5.0.2
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  In the IIS installations in error, the WebSphere Liberty
+   installation (version 8.5.5.5 under <IS-HOME>/wlp) is
+   missing the WebSphere Liberty package wlp-extended-8.5.5.5.jar
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR56320
+   
+   
+ * REPORTED COMPONENT NAME
+   INFO SRVR PLATF
+   
+   
+ * REPORTED COMPONENT ID
+   5724Q3612
+   
+   
+ * REPORTED RELEASE
+   B50
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-07-15
+   
+   
+ * CLOSED DATE
+   2017-09-17
+   
+   
+ * LAST MODIFIED DATE
+   2017-09-17
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   INFO SRVR PLATF
+   
+   
+ * FIXED COMPONENT ID
+   5724Q3612
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * RB50 PSY
+   UP

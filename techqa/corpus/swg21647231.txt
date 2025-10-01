@@ -1,0 +1,76 @@
+Title: IBM When to enable Conversation Sharing in DataPower MQ Queue Manager (mq-qm) object - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When to enable Sharing Conversations in DataPower MQ Queue Manager (mq-qm) object along with SHARECNV attribute of the MQ SVRCONN channel? 
+
+RESOLVING THE PROBLEM
+IBM WebSphere MQ server version 7.0 and later releases provide sharing conversations (SHARECNV) attribute on SVRCONN channel that specifies the maximum number of conversations that can share each TCP/IP channel instance. This feature can be configured in DataPower as it uses client connection with queue manager SVRCONN channel. 
+The default setting of sharing conversations (SHARECNV) value is zero in DataPower mq-qm object. The same default value for MQ SVRCONN channel is 10. The sharing conversations value is 
+negotiated between MQ server and DataPower and the lower value takes effect. However, in current versions of the DataPower firmware, the sharing conversations setting of 1 is treated as 0 when negotiating with MQ server.
+
+There are three use cases to configure Sharing Conversations in DataPower mq-qm object: 
+
+Case #1 : The negotiated sharing conversations value is 0 - The channel runs in a mode similar to WebSphere MQ V6 and does not uses features such as
+
+· Administrator stop-quiesce
+· Heartbeating 
+· Read ahead 
+· Client asynchronous consume
+
+Set a value of 0 or 1 on the Sharing Conversations attribute of the mq-qm object in DataPower to disable sharing conversations regardless of the IBM WebSphere MQ SVRCONN setting.
+
+Case #2: The negotiated sharing conversations value is 1 - The channel supports IBM WebSphere MQ V7 and later release features as outlined in case #1, but each TCP/IP channel instance has a single conversation.
+
+Set a value of 1 on the Sharing Conversations attribute and select "on" in Share Single Conversation attribute of the mq-qm object in DataPower as shown in the following picture and a value of 1 on IBM WebSphere MQ SVRCONN setting.
+
+The Share Single Conversation attribute is only visible when "Sharing Conversations" is configured with value of "1" and then <RETURN> key is entered. For values greater than 1, the "Share Single Conversation" attribute is hidden in the mq-qm object.
+[/support/docview.wss?uid=swg21647231&aid=1] [/support/docview.wss?uid=swg21647231&aid=1] 
+
+Case #3: The negotiated sharing conversations value is 2 or more - The channel supports IBM WebSphere MQ 7 and later release features and each TCP/IP channel instance supports 2 or more conversations.
+
+Set a value of 2 or more on the Sharing Conversations attribute of the mq-qm object in DataPower and on the MQ SVRCONN channel.
+
+On average, processing of messages from client applications is 15 percent slower when using SHARECNV(10) as compared to SHARECNV(0). Please refer to Performance Implications of Sharing [http://www.ibm.com/support/knowledgecenter/SSFKSJ_7.0.1/com.ibm.mq.csqzaf.doc/mi12240_.htm]
+Conversations on Client-connection Channels. [http://www.ibm.com/support/knowledgecenter/SSFKSJ_7.0.1/com.ibm.mq.csqzaf.doc/mi12240_.htm].
+
+Since DataPower uses a connection pool in processing MQ messages, there are no additional benefits of using sharing conversations with the mq-qm object. However, in situations when mixed message sizes are used by the same mq-qm object, using case #2 will benefit mq-qm object as it will use new buffer management feature of IBM WebSphere MQ Version 7 when making MQGET API call.
+
+When using a negotiated shared conversations value of 0 as in case #1, mq-qm object uses maximum message size as the buffer pool for the MQGET API call. However, when mixed message sizes are processed by the same MQ Front Side Handler (FSH), it requests buffer pool based on maximum message size configured in the mq-qm object. The use of fixed buffer pool for small and large messages can deplete MQ server's allocated buffer and contribute to unexpected termination of MQ SVRCONN channel instance and may terminate the queue manager. In such a situation, using a negotiated sharing conversations value of 1 as in case #2 will benefit DataPower mq-qm object as it will use IBM WebSphere MQ Version 7 Read Ahead feature and the new buffer management feature for MQGET API call. IBM WebSphere MQ V8 release provides enhanced performance for case #2, when the negotiated sharing conversations value is 1.
+
+For DataPower firmware releases 7.0.0.x, 7.1.0.x, 7.2.0.x and earlier, one should follow case #1 and use a negotiated sharing conversations value of 0. If you configure these firmware versions with case #2 or case #3, DataPower device may reload or hang due to connection instability and generate many MQ errors with Reason Code - 2009 and 2059. 
+
+Cases #2 and #3 can be used in firmware releases 7.5.0.x, 7.5.1.x and later. We suggest to use a value of 10 or less in Sharing Conversations attribute of the mq-qm object and verify the configuration empirically to make sure that IBM WebSphere MQ server can sustain load from DataPower with the negotiated Sharing Conversations of 10.
+
+Note: In order to use sharing conversations, make sure you have applied APAR IV24821 [http://www.ibm.com/support/docview.wss?uid=swg1IV24821] ("Client C application process hangs after cancelling thread") to the IBM WebSphere MQ server. IV24821 is included in IBM WebSphere MQ V7.0.1.10 and later, IBM WebSphere MQ V7.1.0.3 and later, IBM WebSphere MQ V7.5.0.1 and later, and IBM WebSphere MQ V8.
+
+In order to identify the negotiated Sharing Conversations status, the following MQ commands are used in the distributed platform.
+
+runmqsc <qmgr>
+display chs(CHANNEL3) maxshcnv curshcnv
+
+display chs(CHANNEL3) maxshcnv curshcnv
+1 : display chs(CHANNEL3) maxshcnv curshcnv
+AMQ8417: Display Channel Status details.
+CHANNEL(CHANNEL3) CHLTYPE(SVRCONN)
+CONNAME(9.x1.x2.x3) CURRENT
+STATUS(RUNNING) SUBSTATE(RECEIVE)
+CURSHCNV(1) MAXSHCNV(1) <---- Negotiated Sharing Conversations value of 1
+AMQ8417: Display Channel Status details.
+CHANNEL(CHANNEL3) CHLTYPE(SVRCONN)
+CONNAME(9.y1.y2.y31) CURRENT
+STATUS(RUNNING) SUBSTATE(RECEIVE)
+CURSHCNV(0) MAXSHCNV(0) <---- Negotiated Sharing Conversations value of 0
+
+end
+--------------------------------------------------------------------------------------------------------------------------------------------
+In order to identify the negotiated Sharing Conversations status, the following MQ commands are used in the z/OS System.
+
+
+
+connect to <qmgr>
+On z/OS system, options for issuing the commands are described at http://www-01.ibm.com/support/knowledgecenter/SSFKSJ_8.0.0/com.ibm.mq.ref.adm.doc/q085120_.htm [http://www-01.ibm.com/support/knowledgecenter/SSFKSJ_8.0.0/com.ibm.mq.ref.adm.doc/q085120_.htm]. 
+/+RTP8 DIS CHSTATUS(channel_name) MAXSHCNV CURSHCNV
+where "+RTP8" is the command prefix.

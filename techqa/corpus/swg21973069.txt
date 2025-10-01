@@ -1,0 +1,159 @@
+Title: IBM Security Bulletin: Vulnerability in Spring Framework for Java Deserialization in Rational Test Control Panel in Rational Test Workbench and Rational Test Virtualization Server (CVE-2015-7450) - United States
+
+Text:
+security; vulnerability; psirt SECURITY BULLETIN
+
+SUMMARY
+ A Spring Framework vulnerability for handling Java object deserialization was addressed by Rational Test Control Panel in Rational Test Workbench and Rational Test Virtualization Server. This vulnerability does not have its own CVE number, but is linked to CVE-2015-7450. 
+
+VULNERABILITY DETAILS
+CVEID: CVE-2015-7450 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-7450]
+DESCRIPTION: Apache Commons Collections could allow a remote attacker to execute arbitrary code on the system, caused by the deserialization of data with Java InvokerTransformer class. By sending specially crafted data, an attacker could exploit this vulnerability to execute arbitrary Java code on the system.
+CVSS Base Score: 9.8
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/107918 [https://exchange.xforce.ibmcloud.com/vulnerabilities/107918] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H)
+
+AFFECTED PRODUCTS AND VERSIONS
+Rational Test Control Panel component in Rational Test Workbench and Rational Test Virtualization Server versions between 8.6 to 8.7.1.1.
+
+REMEDIATION/FIXES
+The fixes for the CVE(s) mentioned above have been incorporated into an interim fix available on Fix Central (http://www-933.ibm.com/support/fixcentral/ [http://www-933.ibm.com/support/fixcentral/]).
+Apply this fix to your installation using the instructions below:
+
+
+1. Identify the version of Rational Test Control Panel that you have installed. This can be discovered from IBM Installation Manager (click File -> View Installed Packages) or by clicking Help -> About in the Rational Test Control Panel web application UI.
+
+2. On the IBM Fix Central website, locate either the Rational Test Workbench or Rational Test Virtualization Server products. For your version of Rational Test Control Panel, download the fix identified in the list below for the product you selected. (If your version is not listed, please upgrade to the latest fixpack first).
+
+8.6.0.4: RTCP-Spring.war-86.zip 
+
+8.7.0.3: RTCP-Spring.war-870.zip 
+
+8.7.1.1: RTCP-Spring.war-871.zip 
+
+
+3. Stop Rational Test Control Panel.
+
+Any virtual services that were previously started through Rational Test Control Panel will continue to run, and the rules they created on any proxies or intercepts will continue to be applied. However, no new virtual services will be able to be started in Rational Test Control Panel while the server is not running, and any virtual services started in Rational Integration Tester during this time will not be able to send rules to the intercepts and proxies, therefore they will not be able to dynamically configure routing to the virtual services from the test environment. 
+
+4. Go to the Rational Test Control Panel workspace.
+
+On Windows this is usually:
+
+C:\IBM\RTCP-Workspace\
+
+On AIX, Linux or Solaris this is usually:
+
+/var/rtcp/
+
+or on those platforms if the installer was not run as the root user then it is usually:
+
+$HOME/var/rtcp/
+
+5. Copy (do not move) the following files to a safe backup location, in case you need to revert this fix: 
+
+sch_db.h2.db
+sch_db.lock.db (If it is present)
+sch_db.trace.db (If it is present)
+
+6. Go to the Rational Test Control Panel installation directory.
+
+On Windows this is usually:
+
+64 bit installation: C:\Program Files\IBM\RationalTestControlPanel\
+32 bit installation: C:\Program Files (x86)\IBM\RationalTestControlPanel\
+
+On AIX, Linux and Solaris this is usually:
+
+/opt/IBM/RationalTestControlPanel/
+
+7. Navigate to the following directory inside the installation directory:
+
+usr/servers/RTCPServer/apps/RTCP.war/WEB-INF/classes
+
+8. Copy all files that end ".server.properties" to a safe location so that you can restore them after applying the patch, as they contain configuration information specific to your installation.
+
+9. Navigate to the following directory inside the installation directory:
+
+usr/servers/RTCPServer/apps/
+
+10. Move (do not copy) the directory called "RTCP.war" into a safe backup location, in case you need to revert this fix. Make sure this directory no longer exists in the "apps" directory before proceeding to the next step.
+
+11. Unzip the zip file included in the fix into the current directory ("apps"). This will install a fixed version of the "RTCP.war" directory. 
+
+12. Navigate to the following directory inside the installation directory:
+
+usr/servers/RTCPServer/apps/RTCP.war/WEB-INF/classes
+
+13. Find the copies that you took in step 8, and move them back into this "classes" directory, overwriting any files that already exist there. 
+
+14. Start Rational Test Control Panel.
+
+
+TO REVERT THIS FIX:
+
+1. Stop Rational Test Control Panel.
+
+See step 1 of the installation instructions for this fix for details on how this will affect running virtual services.
+
+2. Go to the Rational Test Control Panel installation directory.
+
+On Windows this is usually:
+
+64 bit: C:\Program Files\IBM\RationalTestControlPanel\
+32 bit: C:\Program Files (x86)\IBM\RationalTestControlPanel\
+
+On AIX, Linux and Solaris this is usually:
+
+/opt/ibm/RationalTestControlPanel/
+
+3. Navigate to the following directory inside the installation directory: 
+
+usr/servers/RTCPServer/apps/
+
+4. Delete the directory called "RTCP.war".
+
+5. Restore the directory called "RTCP.war" from the safe backup location that you copied it to in step 10 of the fix's installation instructions. 
+
+6. Go to the Rational Test Control Panel workspace.
+
+On Windows this is usually:
+
+C:\IBM\RTCP-Workspace\
+
+On AIX, Linux and Solaris this is usually:
+
+/var/RTCP/
+
+7. Restore files that you copied in step 5 of the fix's installation instructions back from the safe backup location.
+
+General notes:
+When updating an installation to a later version of Rational Test Control Panel, check the later version's release notes to verify that this fix has been included in that version. This fix is not appropriate for any versions other than the exact ones specified in this fix's installation instructions.
+
+When removing an installation that has had the security fix applied, IBM Installation Manager may not remove all the files, and some files may have to be removed manually. To remove those files, delete the Rational Test Control Panel installation directory after the uninstallation process in IBM Installation Manager has been completed.
+
+IBM recommends that you review your entire environment to identify vulnerable releases of the open-source Apache Commons Collections and take appropriate mitigation and remediation actions.
+
+WORKAROUNDS AND MITIGATIONS
+None.
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v3 Guide [http://www.first.org/cvss/user-guide] 
+On-line Calculator v3 [http://www.first.org/cvss/calculator/3.0] RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/PSIRT] CHANGE HISTORY
+ Original Version Published: 21 December 2015 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Software Development Rational Test Virtualization Server Rational Test Control Panel AIX, Linux, Solaris, Windows 8.6, 8.6.0.1, 8.6.0.2, 8.6.0.3, 8.6.0.4, 8.7, 8.7.0.1, 8.7.0.2, 8.7.0.3, 8.7.1, 8.7.1.1

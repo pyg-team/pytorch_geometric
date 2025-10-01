@@ -1,0 +1,257 @@
+Title: IBM OA50607: STORAGE QUIESCE WITH MQ V8 AND MQI MONITORING AND CICS - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  MQ Monitoring agent will eventually terminate due to storage
+   quiesce.  The following message will be in agent log:
+   KLVSQ000 QUIESCE MODE HAS BEEN ENTERED FOR CARVED EXTENDED
+     STORAGE
+   The dump will show an accumulation of KMQYMQAO control blocks.
+   The number of in use and total blocks of size(993-1024) will
+   increase.
+   KLVSD004       SIZE(993-1024) USE(38674) TOTAL(38910)
+   KLVSD004       SIZE(993-1024) USE(43074) TOTAL(43620)
+   KLVSD004       SIZE(993-1024) USE(43316) TOTAL(43620)
+   KLVSD004       SIZE(993-1024) USE(47625) TOTAL(47627)
+   This problem is due to changes in MQ V8 for CICS transactions,
+   CICS fast deallocate performance enhancement.  CICS end thread
+   will not always go through deallocate broadcast for end thread
+   in V8.  KMQ agent code currently relies on this deallocate call
+   to clear the CICS active task block so without this call these
+   active task blocks will not be freed.
+   .
+   NOTE:  Please pay careful attention to the ++HOLD in the PTF for
+   this APAR.  Failure to complete the HOLDDATA instructions may
+   have adverse effects on MQ and/or CICS regions due to the
+   interaction between OMEGAMON and these products.  If WebSphere
+   MQ Monitoring Subsystem is defined, updated KMQAMHST module
+   needs to be put in APF-authorized library in current linklist.
+   Additionally, after the PTF is applied, either an IPL is needed
+   (to update the existing WebSphere MQ Monitoring Subsystem), OR
+   a new Subsystem needs to be defined, initialized and used by
+   the agent (LLA refresh, SETSSI and agent SET SUBSYSTEM).  See
+   the ++HOLD for additional steps and details.  Once the PTF is
+   applied, ++HOLD actions are required regardless of whether the
+   workaround is in effect or not.
+   .
+   Possible symptoms of not following ++HOLD instructions may
+   may include error message in the WebSphere MQ CHIN joblog:
+   - ABN= 5C6-00E7014F,C=W9700.800.CHIN,LOC=CSQXADPM.CSQXADPM+051DE
+   or, if DAE has begun suppressing dumps for this symptom:
+   - CSQY291E CSQXDMPS SDUMPX FAILED, RC=00000208,ssid,
+     ABN= 5C6-00E7014F,LOC=CSQXADPM.CSQXADPM+05268
+   In the dump for the 5C6-00E7014F, VERBX LOGDATA does not show
+   an abend as the cause of the 00E7014F.  In the output of
+     SUMM FORMAT JOBNAME(chinjob)
+   do a find for 00E7014F.  It is in Register 0 for a linkage stack
+   which contains 00001F44 in Register 2.
+     .
+     WMQ component id 5655W9700
+     ABEND5C6 ABENDS5C6 S5C6 S05C6
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Issue the MQ command
+     RECOVER QMGR(TUNE CICSFastDealloc OFF)
+   (prefix it with "/cpf" without the quotes in SDSF, where "cpf"
+   is the command prefix for the queue manager).
+   
+   This setting will not survive a queue manager restart, so
+   include the command in a member in the CSQINP2 concatenation.
+   
+   Setting CICSFastDealloc OFF will disable a performance
+   optimization introduced in MQ V8 which comes into play when
+   CICS tasks and channels start and end.
+   
+   Once the command has been issued it will have immediate effect.
+   Issuing the following command will revert back to the V8 way of
+   doing things:
+     RECOVER QMGR(TUNE CICSFastDealloc ON)
+   .
+   Note: This local fix is not a work-around for the symptoms
+   experienced if the PTF hold data is not fully carried out.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All IBM Tivoli OMEGAMON XE for Messaging:    *
+   *                 WebSphere MQ Monitoring users.               *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: MQ Monitoring agent will eventually     *
+   *                      terminate due to storage quiesce.  The  *
+   *                      following message will be in agent log: *
+   *                      KLVSQ000 QUIESCE MODE HAS BEEN ENTERED  *
+   *                      FOR CARVED EXTENDED STORAGE  The dump   *
+   *                      will show an accumulation of KMQYMQAO   *
+   *                      control blocks. The number of in use    *
+   *                      and total blocks of size(993-1024) will *
+   *                      increase.  KLVSD004                     *
+   *                      SIZE(993-1024) USE(38674) TOTAL(38910)  *
+   *                      KLVSD004       SIZE(993-1024)           *
+   *                      USE(43074) TOTAL(43620) KLVSD004        *
+   *                      SIZE(993-1024) USE(43316) TOTAL(43620)  *
+   *                      KLVSD004       SIZE(993-1024)           *
+   *                      USE(47625) TOTAL(47627)  This problem   *
+   *                      is due to changes in MQ V8 for CICS     *
+   *                      transactions, CICS fast deallocate      *
+   *                      performance enhancement.  CICS end      *
+   *                      thread will not always go through       *
+   *                      deallocate broadcast for end thread in  *
+   *                      V8.  KMQ agent code currently relies on *
+   *                      this deallocate call to clear the CICS  *
+   *                      active task block so without this call  *
+   *                      these active task blocks will not be    *
+   *                      freed.                                  *
+   ****************************************************************
+   * RECOMMENDATION: Apply this PTF.                              *
+   ****************************************************************
+   Storage Quiesce when MQIMONITOR installed with MQ V8 and
+   CICS Transaction Workload.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This problem is due to changes in MQ V8 for CICS
+   transactions, CICS fast deallocate performance enhancement.
+   CICS end thread will not always go through deallocate
+   broadcast for end thread in V8.  KMQ agent code currently
+   relies on this deallocate call to clear the CICS active task
+   block so without this call these active task blocks will not
+   be freed.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  *********
+   * HIPER *
+   *********
+   
+   
+    
+   
+   
+
+COMMENTS
+ *  ×**** PE16/11/03 PTF IN ERROR. SEE APAR OA51219 [http://www-01.ibm.com/support/docview.wss?uid=swg1OA51219]  FOR DESCRIPTION
+   ×**** PE16/11/03 PTF IN ERROR. SEE APAR OA51271 [http://www-01.ibm.com/support/docview.wss?uid=swg1OA51271]  FOR DESCRIPTION
+   ×**** PE16/11/03 PTF IN ERROR. SEE APAR OA51219 [http://www-01.ibm.com/support/docview.wss?uid=swg1OA51219]  FOR DESCRIPTION
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   OA50607
+   
+   
+ * REPORTED COMPONENT NAME
+   OMG XE MSG ZOS
+   
+   
+ * REPORTED COMPONENT ID
+   5608A1100
+   
+   
+ * REPORTED RELEASE
+   730
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   YesHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-06-03
+   
+   
+ * CLOSED DATE
+   2016-07-06
+   
+   
+ * LAST MODIFIED DATE
+   2017-01-13
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UA82149 UA82155
+   
+   
+
+MODULES/MACROS
+ *     KMQAMHST KMQAMQSB
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   OMG XE MSG ZOS
+   
+   
+ * FIXED COMPONENT ID
+   5608A1100
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R710 PSY UA82149 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UA82149]
+   UP16/08/03 P F608 Ž
+   
+   
+ * R730 PSY UA82155 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UA82155]
+   UP16/08/02 P F608 Ž
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

@@ -1,0 +1,47 @@
+Title: IBM Tivoli Monitoring Embedded WebSphere Application Server Upgrade (
+6.X.X-TIV-ITM_EWAS_ALL-8.00.11.02) - United States
+
+Text:
+ DOWNLOADABLE FILES
+
+ABSTRACT
+ This fix upgrades the embedded WebSphere Application Server (eWAS) that is provided with IBM Tivoli Monitoring portal server version..
+
+
+DOWNLOAD DESCRIPTION
+This fix upgrades the embedded WebSphere Application Server (eWAS) which is shipped as part of the IBM Tivoli Monitoring portal server, to version 8.0.0.11 plus additional Interim Fixes referred to as Interim Fix Block 2. The Interim Fixes included as part of Interim Fix Block 2 include:
+
+
+ * PI55780 
+ * PI45266 - included in Interim Fix Block 1 (8.00.11.01) 
+ * PI52103 - included in Interim Fix Block 1 (8.00.11.01)
+
+PREREQUISITES
+The prerequisite level for this fix is as follows: 
+- IBM Tivoli Monitoring, version 6.3.0 Fix Pack 2 (6.3.0-TIV-ITM-FP0002)
+- OR - 
+- IBM Tivoli Monitoring, version 6.3.0 Fix Pack 3 (6.3.0-TIV-ITM-FP0003)
+- OR - 
+- IBM Tivoli Monitoring, version 6.3.0 Fix Pack 4 (6.3.0-TIV-ITM-FP0004)
+- OR - 
+- IBM Tivoli Monitoring, version 6.3.0 Fix Pack 5 (6.3.0-TIV-ITM-FP0005)
+- OR - 
+- IBM Tivoli Monitoring, version 6.3.0 Fix Pack 6 (6.3.0-TIV-ITM-FP0006)
+
+URL LANGUAGE SIZE(Bytes) 6.3.0-TIV-ITM-FP0002 [http://www.ibm.com/support/fixcentral/swg/quickorder?parent=ibm~Tivoli&product=ibm/Tivoli/IBM+Tivoli+Monitoring&platform=All&release=6.3.0&function=fixId&fixids=6.3.0-TIV-ITM-FP0002] English 1 6.3.0-TIV-ITM-FP0003 [http://www.ibm.com/support/fixcentral/swg/quickorder?parent=ibm~Tivoli&product=ibm/Tivoli/IBM+Tivoli+Monitoring&platform=All&release=6.3.0&function=fixId&fixids=6.3.0-TIV-ITM-FP0003] English 1 6.3.0-TIV-ITM-FP0004 [http://www.ibm.com/support/fixcentral/swg/quickorder?parent=ibm~Tivoli&product=ibm/Tivoli/IBM+Tivoli+Monitoring&platform=All&release=6.3.0&function=fixId&fixids=6.3.0-TIV-ITM-FP0004] English 1 6.3.0-TIV-ITM-FP0005 [http://www.ibm.com/support/fixcentral/swg/quickorder?parent=ibm~Tivoli&product=ibm/Tivoli/IBM+Tivoli+Monitoring&platform=All&release=6.3.0&function=fixId&fixids=6.3.0-TIV-ITM-FP0005] English 1 6.3.0-TIV-ITM-FP0006 [http://www.ibm.com/support/fixcentral/swg/quickorder?parent=ibm~Tivoli&product=ibm/Tivoli/IBM+Tivoli+Monitoring&platform=All&release=6.3.0&function=fixId&fixids=6.3.0-TIV-ITM-FP0006] English 1 
+INSTALLATION INSTRUCTIONS
+Refer to the README file located in Fix Central for additional information.
+
+DOWNLOAD PACKAGE
+
+
+
+CHANGE HISTORY
+2016-04-21: Original publish date
+
+
+
+Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options 
+What is Fix Central(FC)? [https://www.ibm.com/support/fixcentral/help?page=swfaqs] 6.X.X-TIV-ITM_EWAS_ALL-8.00.11.02 8 Apr 2016 English 1 FC [http://www.ibm.com/support/fixcentral/swg/quickorder?parent=ibm~Tivoli&product=ibm/Tivoli/IBM+Tivoli+Monitoring&platform=All&release=6.3.0.4&function=fixId&fixids=6.X.X-TIV-ITM_EWAS_ALL-8.00.11.02] [ ] 
+PRODUCT ALIAS/SYNONYM
+ ITM

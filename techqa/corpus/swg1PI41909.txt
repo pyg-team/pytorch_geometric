@@ -1,0 +1,214 @@
+Title: IBM PI41909: CUMULATIVE MAINTENANCE FIXPACK 8.0.0.4 FOR THE JMS FEATURE OF IBM MQ FOR Z/OS VERSION 8.0.0. - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Fixpack 8.0.0.4 for IBM MQ for z/OS Version 8.0.0
+   provides fixes for the problems described in this APAR.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All users of WebSphere MQ for z/OS Version 8 *
+   *                 Release 0 Modification 0 with the MQ Java    *
+   *                 Feature.                                     *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Service offering 8.0.0.4 for WebSphere  *
+   *                      MQ for z/OS V8.0.0 provides fixes for   *
+   *                      the problems described in this APAR.    *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   IT04776 [http://www-01.ibm.com/support/docview.wss?uid=swg1IT04776] - UNNECESSARY NATIVE TRACE POINTS APPEAR WITHIN
+             WEBSPHERE MQ CLASSES FOR JAVA TRACE
+   IT06084 [http://www-01.ibm.com/support/docview.wss?uid=swg1IT06084] - UNABLE TO CONFIGURE SEPARATE CONNECTION POOLS FOR THE
+             WEBSPHERE MQ BASE CLASSES FOR JAVA
+   IT07964 [http://www-01.ibm.com/support/docview.wss?uid=swg1IT07964] - WEBSPHERE MQ 7.0.1.12: JAVA CLIENT APPLICATION THROWS
+             NULLPOINTEREXCEPTION AT JMQICONNECT
+   IT08444 [http://www-01.ibm.com/support/docview.wss?uid=swg1IT08444] - MQCONNECTIONFACTORYFACTORY.GETOBJECTINSTANCE() FFSTS
+             AND THROWS NPE IF PASSED UNREFERENCED OBJECT
+   IT08520 [http://www-01.ibm.com/support/docview.wss?uid=swg1IT08520] - STARTUPRETRYCOUNT SET TO 10 INSTEAD OF 0 WHEN DEFAULT
+             VALUE USED
+   IT08889 [http://www-01.ibm.com/support/docview.wss?uid=swg1IT08889] - A WEBSPHERE MQ JMS CLIENT REPORTS A MQJMS3023
+             EXCEPTION WHEN THE QUEUE MANAGER HAS ENDED ABRUPTLY
+   IT08928 [http://www-01.ibm.com/support/docview.wss?uid=swg1IT08928] - WMQ 7.5 -  JMS MESSAGE PROPERTY VALUE STARTING WITH
+             SLASH ("7") PROBLEMS WHEN BROWSED
+   IT09423 [http://www-01.ibm.com/support/docview.wss?uid=swg1IT09423] - IN WEBSPHERE MQ 7.5 JAVA CLIENT CLASSES, ALLOW SSLV3
+             CIPHERS WITH NON-IBM JRES.
+   IT09749 [http://www-01.ibm.com/support/docview.wss?uid=swg1IT09749] - JMSMESSAGEID DESERIALISED TO A VALUE OF NULL VS
+             ORIGINAL MESSAGE.
+   IT09802 [http://www-01.ibm.com/support/docview.wss?uid=swg1IT09802] - MQ BASE JAVA CLIENT V 8.0, FIRST CONNECTION TO A QUEUE
+             MANAGER TAKES LONGER THAN WEBSPHERE MQ BASE JAVA
+             CLIENT V 7.0 OR 7.1.
+   IT10170 [http://www-01.ibm.com/support/docview.wss?uid=swg1IT10170] - IBM MQ V8: JMS SELECTOR LOST AFTER FAIL-OVER ON MULTI
+             INSTANCE QUEUE MANAGER.
+   IT10730 [http://www-01.ibm.com/support/docview.wss?uid=swg1IT10730] - JMS PERFORMANCE ISSUES REPORTED AFTER MIGRATING MQ JMS
+             CLIENT 701.11 TO 800.2.
+   IT11534/PI49764 - V8: JAVA APPLICATION ISSUES AN MQGET WITH
+             MQMO_MATCH_MSG_ID AND MQMO_MATCH_CORREL_ID.
+             IT RECEIVES FIRST MESSAGE FROM QUEUE.
+   PI45236 [http://www-01.ibm.com/support/docview.wss?uid=swg1PI45236] - SUPPORT MQ CLASSES FOR JMS IN IMS SERVERS.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Java level info:
+   
+   Name:        WebSphere MQ classes for Java
+   Version:     8.0.0.4
+   Level:       V800-PI41909-L151023
+   Build Type:  Production
+   
+   
+   JMS level info:
+   
+   Name:        Java Message Service Client
+   Version:     8.0.0.4
+   Level:       V800-PI41909-L151023
+   Build Type:  Production
+   
+   Name:        WebSphere MQ classes for Java Message Service
+   Version:     8.0.0.4
+   Level:       V800-PI41909-L151023
+   Build Type:  Production  Built on IBM Corporation
+                            pmz6470sr5-20130619_01 (SR5) z/OS
+   
+   Name:        IBM WebSphere MQ JMS Provider
+   Version:     8.0.0.4
+   Level:       V800-PI41909-L151023 mqjbnd=V800-PI41909-L151023
+   Build Type:  Production
+   
+   Name:        Common Services for Java Platform, Standard Edition
+   Version:     8.0.0.4
+   Level:       V800-PI41909-L151023
+   Build Type:  Production
+   000Y
+   008Y
+   CSQQXTUB
+   CSQ8JTR1
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  *********
+   * HIPER *
+   *********
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI41909
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ Z/OS 8
+   
+   
+ * REPORTED COMPONENT ID
+   5655W9700
+   
+   
+ * REPORTED RELEASE
+   008
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   YesHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2015-05-28
+   
+   
+ * CLOSED DATE
+   2015-10-26
+   
+   
+ * LAST MODIFIED DATE
+   2015-11-03
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UI32355 UI32356
+   
+   
+
+MODULES/MACROS
+ *  CSQQXTUB CSQ8JTR1
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ Z/OS 8
+   
+   
+ * FIXED COMPONENT ID
+   5655W9700
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R000 PSY UI32355 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI32355]
+   UP15/10/29 P F510 ¢
+   
+   
+ * R008 PSY UI32356 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI32356]
+   UP15/10/29 P F510 ¢
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

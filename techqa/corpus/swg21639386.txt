@@ -1,0 +1,45 @@
+Title: IBM com.ibm.cic.agent package not found during installation of Rational Asset Analyzer 6.1 - United States
+
+Text:
+install.xml; com.ibm.cic.agent TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The com.ibm.cic.agent package is not found during installation of IBM Rational Asset Analyzer (RAA) 6.1 resulting in a failed install. 
+
+SYMPTOM
+When installing RAA on a Microsoft Windows server that has not previously had IBM Installation Manager (IM) installed on it, a message specifying that a Problem Occurred similar to the following may appear: 
+
+The com.ibm.cic.agent 1.4.1000.20100810_1125 package specified in the C:\temp\RAAINS~1\InstallerImage_win32\install.xml file cannot be found. 
+
+ 
+
+image
+[/support/docview.wss?uid=swg21639386&amp;aid=1]
+
+CAUSE
+One of the internal installer files (install.xml) references an older version of IM that RAA no longer ships. RAA now ships IM 1.6.2.
+
+
+
+RESOLVING THE PROBLEM
+Procedure: 
+
+ 
+
+ 1. Open InstallerImage_win32\install.xml
+    
+    
+ 2. Find the following line in the file:
+    
+    <offering features='agent_core,agent_jre' id='com.ibm.cic.agent' version='1.4.1000.20100810_1125'/>
+    
+    
+ 3. Replace this line with the following text:
+    
+    <offering features='agent_core,agent_jre' id='com.ibm.cic.agent'/>
+    
+    
+ 4. Save the file
+    
+    
+ 5. Restart the launchpad.

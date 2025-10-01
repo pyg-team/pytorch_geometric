@@ -1,0 +1,88 @@
+Title: IBM Omnibus installation fails as server reboots in the middle of install - United States
+
+Text:
+Omnibus; server; reboot; installation TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Unable to install Omnibus 7.x on Windows 2003 server with service pack 2. During the installation of Process Agent and Probe support, the Windows box reboots automatically around 85 percent completed. 
+
+SYMPTOM
+ Windows Event viewers recorded the following: 
+Product: omnibus. The file C:\WINDOWS\winsxs\x86_Microsoft.VC80. CRT_1fc8b3b9a1e18e3b_8.0.50727.42_x-ww_0de06acd\msvcr80.dll is being held in use by the following process Name: wmiprvse , Id 5984. 
+
+Product: omnibus. The file C:\WINDOWS\winsxs\x86_Microsoft.VC80. CRT_1fc8b3b9a1e18e3b_8.0.50727.42_x-ww_0de06acd\msvcp80.dll 
+
+The Windows Installer initiated a system restart to complete or continue the configuration of 'omnibus'. 
+
+
+ENVIRONMENT
+Omnibus 7.3 on Windows 2003 server with service pack 2
+
+
+DIAGNOSING THE PROBLEM
+The event log message indicates that one part of MSI installer had a problem. This installs some Microsoft supplied system dlls, sets up the file types, etc. The event log message indicates that something went wrong during the installation of the Microsoft dlls. 
+
+The MSI installer is run by COI as part of the Common step. 
+
+ In OMNIbus/plan/install/MachinePlan_localhost/00005_Common/logs/[INSTALL_05 05_13.13]/Common.log, you will see the output generated as it does this: 
+
+ 
+
+doWindowsMSI: 
+
+ [mkdir] Created dir: 
+
+C:\IBMTivoli\Netcool\omnibus\platform\win32\install 
+
+ [copy] Copying 2 files to 
+
+C:\IBMTivoli\Netcool\omnibus\platform\win32\install 
+
+ [exec]- 
+
+ [exec] 
+
+C:\IBMTivoli\Netcool\_uninst\OMNIbus\plan\install\MachinePlan_localhost\00005_Common>rem Script to run the omnibus.msi installer fragment- 
+
+ [exec]- 
+
+ [exec] 
+
+C:\IBMTivoli\Netcool\_uninst\OMNIbus\plan\install\MachinePlan_localhost\00005_Common>if not "" == "remove" (msiexec /i "C:\IBMTivoli\Netcool\omnibus\platform\win32\install\omnibus.msi" 
+
+ /lv "C:\IBMTivoli\Netcool\omnibus\platform\win32\install\omnibus.log" 
+
+ /passive NCHOME.INSTALLDIR="C:\IBMTivoli\Netcool" ) 
+
+else (msiexec /x C:\IBMTivoli\Netcool\omnibus\platform\win32\install\omnibus.msi" 
+
+ /lv "C:\IBMTivoli\Netcool\omnibus\platform\win32\install\omnibus.log" 
+
+ /passive NCHOME.INSTALLDIR="C:\IBMTivoli\Netcool" )- 
+
+[exec] Result: 1641 
+
+ 
+The result code indicates that the a reboot has been scheduled after the installation of the common libraries rather than at the end of the full installation. The reboot occurs shortly after the installation of the GSKit packaged has started.
+
+
+RESOLVING THE PROBLEM
+Following can be used as a work around to complete installation. These instructions assume that the installer has been unpacked into C:\Temp\CZ9C9ML, the paths given should be adjusted if another directory has been used. 
+
+1. Edit the following file and insert 'echo ' before the first 'msiexec' (on the same line) so that the MSI installer is not run. 
+
+C:\Temp\CZ9C9ML\COI\PackageSteps\Common\FILES\omnibus.bat. 
+
+2. Run the installation as normal as described the Omnibus Installation guide. The server will reboot at the end of the installation process as expected. 
+
+3. Run below command to complete installation. 
+
+cd C:\Temp\CZ9C9ML\COI\PackageSteps\Common\FILES 
+
+msiexec /i omnibus.msi /lv omnibus.log NCHOME.INSTALLDIR="%NCHOME%" 
+
+If above command runs fine then the installation should be considered successful. 
+
+4. You may need to create five empty directories manually under %NCHOME%\omnibus if these are missing: log, tsm, var, etc, ini 
+
+5 After the msiexec command has been run the machine should be rebooted again.

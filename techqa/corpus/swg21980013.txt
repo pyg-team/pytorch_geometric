@@ -1,0 +1,27 @@
+Title: IBM How can I see the number of Real-Time Scoring Requests - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ I want to evaluate the utilization of Real-Time Scoring requests in our C&DS environment. How can I do this? 
+
+CAUSE
+C&DS no longer logs each scoring request with the Audit tables because 
+of volume and performance. Scores are aggregated when the Scoring 
+Configuration is paused or restarted.
+
+RESOLVING THE PROBLEM
+SELECT SUM(CAST(B.Value AS INT)) 
+FROM [CnDS7].[dbo].[SPSSAUDIT_EVENTS] A, [CnDS7].[dbo].[SPSSAUDIT_PARAMETERS] B 
+where A.SERIAL = B.SERIAL and TITLE ='Scoring Test' and NAME = 'Total Score Change'
+
+Change both [CnDS7] values to the name of your C&DS repository database. 
+Change 'Scoring Test' to the name of your scoring config. 
+
+
+
+This query can be modified/iterated for each scoring config you have or want to see.
+
+RELATED INFORMATION
+ Need more help? Our C&DS forum is Live! [https://developer.ibm.com/answers/topics/collaboration.html?smartspace=predictive-analytics]

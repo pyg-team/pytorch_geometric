@@ -1,0 +1,29 @@
+Title: IBM External authentication and authorization system integration with JRules - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How do I integrate an external authentication and authorization system with JRules? 
+
+CAUSE
+Use existing user authentication system to authenticate users for JRules.
+
+ANSWER
+The users for JRules modules or products like Rule Execution Server (RES), Rule Team Server (RTS), Rule Scenario Manager (RSM), Decision Validation Services (DVS) can be authenticated using an external authentication and authorization system like LDAP, Site Minder, custom DB and so on. 
+
+All JRules applications depend on the application server to perform the authentication and authorization. 
+
+The user should have the required credentials as well as a valid role to access JRules. Those defined in the external authentication and authorization system should have their roles correspond to the JRules product or module being accessed. And the external system must be configured with the application server so that the user credentials and roles are available to the application server. 
+
+ 
+
+For example, consider an LDAP server integrated with WebSphere Application Server: 
+
+
+JRules RES is deployed on this application server, so a user in the LDAP server must have a role that correspond to RES, like resAdministrator, to access RES.
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Operational Decision Manager Platform Independent 7.5 Enterprise

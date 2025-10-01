@@ -1,0 +1,41 @@
+Title: IBM Including long descriptions in the Maximo Enterprise Adapter - United States
+
+Text:
+long description; ldkey; hasld; MEA; TPAEINTEGRATION TECHNOTE (FAQ)
+
+QUESTION
+ How do I include long descriptions when sending data in using the Maximo Enterprise Adapter (MEA) or Maximo Integration Framework (MIF)? 
+
+ANSWER
+ 
+
+Maximo 6.x MEA 
+
+1. Go To Integration -> Integration Object 
+
+On the Persistent Fields tab, exclude HASLD
+On the Non-Persistent Fields tab, include DESCRIPTION_LONGDESCRIPTION 
+
+Maximo 7.x MIF
+
+1. Go To Integration -> Object Structures 
+
+Click Select Action -> Exclude/Include Fields 
+
+On the Persistent Fields tab, exclude HASLD
+On the Non-Persistent Fields tab, include DESCRIPTION_LONGDESCRIPTION 
+
+Maximo 6.x/7.x XML
+
+Add the long description tag to the inbound XML:
+
+<DESCRIPTION_LONGDESCRIPTION>xxxxx</DESCRIPTION_LONGDESCRIPTION> 
+
+Do not include the HASLD tag. This column will be set automatically.
+
+The same process will work for sending data in using flat files and interface tables, however, you must use an alias for DESCRIPTION_LONGDESCRIPTION on DB2 and SQL Server since the column name is longer than 18. If your object structure has multiple MBOs with long descriptions, you will have to use an alias to identify each column name uniquely.
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Systems and Asset Management Maximo Enterprise Adapter Not Applicable

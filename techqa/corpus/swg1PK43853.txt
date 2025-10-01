@@ -1,0 +1,191 @@
+Title: IBM PK43853: SQLCODE -104 SQLCODE104 ILLEGAL SYMBOL IN SQLPA WHEN KOREAN CCSID 933 IS IN USE. - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  SQLCODE104 when SQLPA encounters Korean characters in CCSID
+   933.
+   DSNT408I SQLCODE = -104, ERROR:  ILLEGAL SYMBOL " ". SOME
+   SYMBOLS THAT
+   MIGHT BE LEGAL ARE: VALID GRAPHIC STRING
+   DSNT418I SQLSTATE   = 42601 SQLSTATE RETURN CODE
+   DSNT415I SQLERRP    = DSNHTOKR SQL PROCEDURE DETECTING ERROR
+   DSNT416I SQLERRD    = 502  0  0  -1  306  0 SQL DIAGNOSTIC
+   INFORMATION
+   DSNT416I SQLERRD    = X'000001F6'  X'00000000'  X'00000000'
+   X'FFFFFFFF'
+   X'00000132'  X'00000000' SQL DIAGNOSTIC INFORMATION
+   ADDITIONAL SYMPTOMS
+   1. ANLCAT does not function the same as ANLSTAT when
+      specifying multiple COLLECT statements. The following
+      messages are issued:
+      ANL8013I NO INDEX FOUND FOR TABLE
+      ANL8014I NO COLUMN STATS FOR TABLE
+      ANL8016I NO COLUMN DIST STATS
+   2) Loop in SQLPA online ( under ISPF interface )
+      when specify "Define output files.... YES"
+      and the CLIST ANLLOOP from member hiqual.SANLVCLS
+      is executed.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: Users of SQL Performance Analyzer.           *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: SQLCODE104 when SQLPA encounters Korean *
+   *                      characters in CCSID 933.                *
+   *                      DSNT408I SQLCODE = -104, ERROR:         *
+   *                      ILLEGAL SYMBOL " ". SOME SYMBOLS THAT   *
+   *                      MIGHT BE LEGAL ARE: VALID GRAPHIC       *
+   *                      STRING                                  *
+   *                      DSNT418I SQLSTATE   = 42601 SQLSTATE    *
+   *                      RETURN CODE                             *
+   *                      DSNT415I SQLERRP    = DSNHTOKR SQL      *
+   *                      PROCEDURE DETECTING ERROR               *
+   *                      DSNT416I SQLERRD    = 502  0  0  -1     *
+   *                      306  0 SQL DIAGNOSTIC INFORMATION       *
+   *                      DSNT416I SQLERRD    = X'000001F6'       *
+   *                      X'00000000'  X'00000000' X'FFFFFFFF'    *
+   *                      X'00000132'  X'00000000' SQL            *
+   *                      DIAGNOSTIC INFORMATION                  *
+   *                      ADDITIONAL SYMPTOMS                     *
+   *                      1. ANLCAT does not function the same    *
+   *                      as ANLSTAT when specifying multiple     *
+   *                      COLLECT statements. The following       *
+   *                      messages are issued:                    *
+   *                      ANL8013I NO INDEX FOUND FOR TABLE       *
+   *                      ANL8014I NO COLUMN STATS FOR TABLE      *
+   *                      ANL8016I NO COLUMN DIST STATS           *
+   *                      2. Loop in SQLPA online ( under ISPF    *
+   *                      interface ) when specify                *
+   *                      "Define output files.... YES" and the   *
+   *                      CLIST ANLLOOP from member               *
+   *                      hiqual.SANLVCLS is executed.            *
+   ****************************************************************
+   * RECOMMENDATION: APPLY the PTF.                               *
+   ****************************************************************
+   Code has been changed to correct this condition.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  APPLY the PTF.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK43853
+   
+   
+ * REPORTED COMPONENT NAME
+   DB2 SQL PERF AN
+   
+   
+ * REPORTED COMPONENT ID
+   5697F5701
+   
+   
+ * REPORTED RELEASE
+   220
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2007-04-23
+   
+   
+ * CLOSED DATE
+   2007-05-25
+   
+   
+ * LAST MODIFIED DATE
+   2007-06-05
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UK25547 UK25548
+   
+   
+
+MODULES/MACROS
+ *     ANLCAT22 ANLLOOP  ANLPGME7 ANLPGME8 ANLPGM31
+   ANLPRC3C ANLPRC3R ANLPRE3C ANLPRE3R ANLQMF31
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   DB2 SQL PERF AN
+   
+   
+ * FIXED COMPONENT ID
+   5697F5701
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R220 PSY UK25547 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK25547]
+   UP07/06/01 P F705
+   
+   
+ * R310 PSY UK25548 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK25548]
+   UP07/05/31 P F705
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

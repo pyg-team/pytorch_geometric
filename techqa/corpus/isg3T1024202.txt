@@ -1,0 +1,22 @@
+Title: IBM HTTPS access to PAC portal failed through IBM HTTP server in HA configuration - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Why is HTTPS access not working through gateway node in PAC 9.1.5 HA configuration? "Internal error" message is displayed in browser. There are following messages in PAC log file - message.log:
+"Unable to initialize SSL connection. Unauthorized access was denied or security settings have expired." 
+
+CAUSE
+In case of PAC 9.1.5 for Linux on Power, IBM HTTP server version 8.5.5.7 has changed security checking feature that has compatibility issue to PAC server.
+
+ANSWER
+Modify HTTP server configuration by adding "AutoSecurity="false" to plugin-cfg.xml file. This is to tell IBM HTTP Server to use regular security checking to talk to PAC server. This is the same security level as in version 8.5.5.6 and before. 
+
+More information can be found in 
+https://developer.ibm.com/answers/questions/258474/gsk-error-bad-certgsk-rc-414-in-web-server-plug-in.html [https://developer.ibm.com/answers/questions/258474/gsk-error-bad-certgsk-rc-414-in-web-server-plug-in.html]
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition IBM Spectrum Computing IBM Spectrum LSF Application Center

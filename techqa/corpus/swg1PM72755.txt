@@ -1,0 +1,155 @@
+Title: IBM PM72755: DB2 ADMINISTRATION TOOL FOR Z/OS SETS SCHEMA NAME INCORRECTLY DURING DROP/CREATE TRIGGER RESULTS IN SQLCODEN204 FFA20 PM72882 - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  DB2 Administration Tool for z/OS sets SCHEMA name incorrectly
+   during drop/create TRIGGER that results in SQLCODEN204
+   .
+   Additional symptoms:
+   DSNT408I SQLCODE = -204, ERROR:  schema_name.table_name
+   IS AN UNDEFINED NAME
+    DSNT418I SQLSTATE   = 42704 SQLSTATE RETURN CODE
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: Users of the DB2 Object Comparison Tool      *
+   *                 for z/OS who compare DB2 triggers and use    *
+   *                 the 'Run SQLID' option on panel GOC5         *
+   *                 'Generate Compare Jobs'.                     *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: A CREATE TRIGGER statement can be       *
+   *                      preceded with a SET CURRENT SCHEMA =    *
+   *                      CURRENT_SQLID rather than a SET         *
+   *                      CURRENT SCHEMA = CURRENT_SCHEMA.        *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   A CREATE TRIGGER statement preceded with a SET CURRENT SCHEMA =
+   CURRENT_SQLID  will result in a SQLCODEN204 / SQLCODE=-204 if
+   there are any unqualified objects in the trigger body:
+   
+   DNT408I SQLCODE = -204, ERROR:
+   >object_name< IS AN UNDEFINED NAME
+   DSNT418I SQLSTATE   = 42704
+   SQLSTATE RETURN CODE
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Problem has been resolved.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM72755
+   
+   
+ * REPORTED COMPONENT NAME
+   DB2 ADMIN TOOL
+   
+   
+ * REPORTED COMPONENT ID
+   568851500
+   
+   
+ * REPORTED RELEASE
+   A10
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-09-12
+   
+   
+ * CLOSED DATE
+   2012-09-25
+   
+   
+ * LAST MODIFIED DATE
+   2012-10-01
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UK82092
+   
+   
+
+MODULES/MACROS
+ *     ADBCDTS
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   DB2 ADMIN TOOL
+   
+   
+ * FIXED COMPONENT ID
+   568851500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * RA10 PSY UK82092 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK82092]
+   UP12/09/27 P F209
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

@@ -1,0 +1,55 @@
+Title: IBM Why is the Description entered over multiple lines saved/shown as a single line? - United States
+
+Text:
+ANYWHERE; MULTIPLE LINES; RICH TEXT TECHNOTE (FAQ)
+
+QUESTION
+ Why is the Description entered over multiple lines in the Maximo Anywhere app saved/shown as a single line? 
+
+ANSWER
+Steps to replicate: 
+1. Go to the Service Requests app on the mobile device.
+
+2. Create a new Request record.
+Summary : Test
+Enter multiple lines in the Description field.
+For example :
+TESTLINE1
+TESTLINE2
+TESTLINE3
+
+Click on the 'Create' button. New SR 1208 will then be created.
+
+Open 1208 SR. In the Service Request Details, you can see the description correctly with 
+multiple lines entered.
+
+
+3. Go to the Service Request application in Maximo Desktop.
+Open the Service Request #1208.
+If you look at the Details field, you will notice the Description data is displayed with one line.
+
+TESTLINE1 TESTLINE2 TESTLINE3
+
+
+4. Please create an SR in the Service Requests application in Maximo Desktop.
+SR : 1211
+Enter multiple lines for the Detail field like :
+TEST1
+TEST2
+TEST3
+
+Save the SR record.
+
+5. Go to the Service Requests app on the mobile device.
+Open 1211
+Description is shown as 
+<div>TEST1</div><div>TEST2</div><div>TEST3</div><!--RICH TEST -->
+
+
+
+Why is the Description entered over multiple lines in the Maximo Anywhere app saved/shown as a single line?
+According to our Maximo Development team's confirmation, this is a limitation in Maximo Anywhere. 
+
+Please submit a Request for Enhancement. Your request will be assessed by the product architects in terms of relevance for future releases. [http://www.ibm.com/developerworks/rfe/?BRAND_ID=90]
+[http://www.ibm.com/developerworks/rfe/?BRAND_ID=90]
+http://www.ibm.com/developerworks/rfe/?BRAND_ID=90 [http://www.ibm.com/developerworks/rfe/?BRAND_ID=90]

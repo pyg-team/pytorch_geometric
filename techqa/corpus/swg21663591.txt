@@ -1,0 +1,28 @@
+Title: IBM What is the latest Systems Director agent (D9) version? - United States
+
+Text:
+latest version TECHNOTE (FAQ)
+
+QUESTION
+ What is the latest Systems Director agent (D9) version? 
+
+ANSWER
+The most current release of the Tivoli Monitoring Agent for System Director (D9) is the 6.2.2 FP2 release.
+
+This agent has not had a newer version released, the information in the Information Center or Tivoli Monitoring guides is incorrect to indicate there is a 6.2.3 version of the agent.
+
+
+The part numbers for the 6.22 FP2 package to download from Passport Advantage are 
+
+CZF82EN : IBM Tivoli Monitoring Agent for IBM Systems Director base Multiplatform, English
+
+CZH3NEN : IBM Tivoli Monitoring Agent for Systems Director base Support Files V6.2.3, Multiplatform, English (CD)
+
+CZF84ML : IBM Tivoli Monitoring Systems Director base Language Pack Multiplatform, Multilingual
+
+6.2.2 FP2 level of the agent does not support Self Describing Agent (SDA) feature because SDA feature was introduced first in Tivoli Monitoring 6.2.3 release.
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ ITM System Director base agent

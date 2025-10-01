@@ -1,0 +1,57 @@
+Title: IBM TEPS eWAS component fails to start and shows CWPKI0312E error - United States
+
+Text:
+tepsldap TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ TEPS does not start completely. The "KfwServices" process will be running, but the java corresponding to the eWAS component will not be running. The eWAS SystemOut.log shows a CWPKI0312E error. 
+
+CAUSE
+One possibility is that the TEPS was configured to use LDAP via SSL, but the LDAP server certificate has expired.
+
+ENVIRONMENT
+TEPS configured to use LDAP via SSL
+
+DIAGNOSING THE PROBLEM
+Review the SystemOut.log. Look for CWPKI0679I or CWPKI0312E errors similar to the following:
+
+*** CERTIFICATES THAT ARE BEYOND THE EXPIRATION THRESHOLD ***
+
+CWPKI0679I: Signer certificate alias "freepenguin" in KeyStore "NodeDefaultTrustStore" expired on August 4, 2012.
+
+[8/7/12 10:37:08:457 CDT] 0000000a WSX509TrustMa E CWPKI0312E: The certificate with subject DN CN=freepenguin, O=OrgTest Certificate has an end date Sat Aug 04 12:55:41 CDT 2012 which is no longer valid.
+
+The TEPS RAS1 trace log ($CANDLEHOME/logs/<hostname>_cq_*.log) will show that it is trying to start the eWAS JVM component:
+
+(50213C15.0068-1:ctserver.cpp,828,"CTServer::startServerDll") KFW1002I Starting Service: 'JVM v1.0'
+
+But it will never get the corresponding "Started" message for the JVM component. Also, there may be multiple repeating GSKit error messages at the end of the log:
+
+(50213C15.0070-4:kdebeal.c,81,"ssl_provider_open") GSKit error 420: GSK_ERROR_SOCKET_CLOSED
+(50213C15.0071-4:kdebeal.c,81,"ssl_provider_open") GSKit error 420: GSK_ERROR_SOCKET_CLOSED
+
+
+RESOLVING THE PROBLEM
+When the TEPS is configured to use LDAP, and the LDAP connection is configured to use SSL, the TEPS eWAS component will connect to the SSL-based LDAP server and store the LDAP server certificate in the TEPS local trust store. On startup, the server checks the trust store, and if the certificate has expired, it will report it using the above error codes. 
+
+Fixing the problem would require either:
+
+1. Using a new, unexpired certificate on the LDAP server. The next time the TEPS tries to connect to the LDAP server via SSL, it would load and use the new certificate. OR...
+
+2. Reconfiguring the TEPS eWAS configuration to use LDAP without SSL. Normally this would be done via the ISC / Integrated Solutions Console in a browser; however, when this problem happens, eWAS does not start, and the ISC is not available. Instead, you would need to manually edit the wimconfig.xml file on the TEPS eWAS server to force it to not use SSL, and to use the correct non-SSL LDAP port. For example, in wimconfig.xml on an affected system:
+
+<config:ldapServers authentication="simple" bindDN="cn=BlahCN,ou=People,dc=pjpanda,dc=com"
+bindPassword="{xor}N2wzLzJsN2wzLzJs" connectionPool="false" connectTimeout="0"
+derefAliases="always" referal="ignore" sslEnabled="true">
+<config:connections host="ldaphostname123.com" port="636"/>
+
+Change the "sslEnable" value from "true" to "false". Also, change the "port" value to the correct non-SSL LDAP port for your LDAP server (default is 389):
+
+<config:ldapServers authentication="simple" bindDN="cn=BlahCN,ou=People,dc=pjpanda,dc=com"
+bindPassword="{xor}N2wzLzJsN2wzLzJs" connectionPool="false" connectTimeout="0"
+derefAliases="always" referal="ignore" sslEnabled="false">
+<config:connections host="ldaphostname123.com" port="389"/>
+
+Option #1 above is the best choice to address the issue since it will help any application that needs to use that LDAP via SSL (not just the TEPS eWAS configuration). 
+
+Option #2 is suitable if you don't have access to the LDAP server, or the timing for requesting/creating/receiving/loading a new certificate on the LDAP server is too long, and you need a quick temporary fix.

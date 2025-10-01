@@ -1,0 +1,54 @@
+Title: IBM Extended Oracle agent (rz) connection problem when instance is using SSL authentication - United States
+
+Text:
+5724V09ORTR; rz TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ ITCAM Extended Oracle agent does not connect to Oracle instance when the instance is using SSL authentication, ORA-28759 error occurs. 
+
+SYMPTOM
+Extended Oracle agent is unable to attach to SSL authenticated Oracle instance:
+host_rz_<instance>_krzstart_*_01.log shows ORA-28759 error.
+
+(53AC13E3.001E-2:krzocidb.cpp,174,"Ora_Database::innerConnect") env is 100D7510, Connection string is:(DESCRIPTION = (ADDRESS = (PROTOCOL = TCPS)(Host = host)(Port = 1922)) (CONNECT_DATA = (SERVICE_NAME = ORCL.ibm.com) ) ), UserID is:tivmon, error pointer is 1015DF08
+(53AC13E3.001F-2:krzocibase.cpp,659,"Ora_ErrorMsg::printOCIError") Oracle error at ServerAttach, Instance is ORCL
+(53AC13E3.0020-2:krzocibase.cpp,660,"Ora_ErrorMsg::printOCIError") Status code is -1
+(53AC13E3.0021-2:krzocibase.cpp,666,"Ora_ErrorMsg::printOCIError") Oracle error at ServerAttach, error code is:28759, error message is:ORA-28759: failure to open file
+(53AC13E3.0022-2:krzocibase.cpp,670,"Ora_ErrorMsg::printOCIError") SQL content is:NULL
+(53AC13E3.0023-2:krzreqprocess.cpp,376,"buildIntervalSQLInfo") The database connection for subnode INST-host is not established, database type unknown yet.
+
+
+CAUSE
+Extended Oracle agent (v6.3.1 FP1 and above) uses sqlnet.ora from its own ITM installation directory by default. 
+Before v6.3.1 FP1, the Extended Oracle agent used sqlnet.ora from Oracle by default. This causes sqlnet.log to fill up with error messages returned by Oracle, if some of the aliases in tnsnames.ora are not available. This affects Oracle database because sqlnet.log size become too big due to errors logged by agent running tnsping to check status of services. 
+
+Extended Oracle agent (v6.3.1 FP1 and above) changes this behavior as follows:
+If TNS_ADMIN is not set by user, Extended Oracle agent sets TNS_ADMIN as agent installation directory and creates self-defined sqlnet.ora in following directory: 
+<ITM_HOME>/logs/<host>_rz_<agent_instance_name>
+
+With the agent self-defined sqlnet.ora, when agent monitors NET aliases, all Oracle returned detailed error messages are directed to <ITM_HOME>/logs/<host>_rz_<instance>/krzsqlnet.log file. This way the agent does not fill up sqlnet.log in Oracle database environment, and does not affect Oracle database. 
+
+However, this change in default setting of TNS_ADMIN is causing the agent to fail when it connects to the SSL authenticated Oracle instance. 
+
+
+ENVIRONMENT
+Extended Oracle agent 6.3.1 FP1 and higher.
+
+
+
+RESOLVING THE PROBLEM
+To resolve the problem the agent needs to use Oracle TNS_ADMIN directory. Use following steps to resolve the problem. 
+
+1) In ITM_HOME/config/rz_<instance>.config file, set following variable: 
+
+TNS_ADMIN=<ORACLE_HOME>/network/admin 
+
+For example, in /opt/IBM/ITM/config/rz_ORCL.config file, add following setting: 
+TNS_ADMIN=/opt/oracle/product/11.2.0/dbhome_1/network/admin 
+
+2) The TNS_ADMIN can cause the sqlnet.log to grow large as described in above in the 'Cause' section. Upgrade the agent to 6.3.1 FP2 (6.3.1-TIV-ITM_KRZ-FP0002) or higher. At this level you can define the environment variable KRZ_REDIRECT_TNS='true' in ITM_HOME/config/rz_<instance>.config file. With this setting the agent checks whether the TNS_ADMIN environment variable is set during agent startup, then copies files that include listener.ora, tnsnames.ora, and sqlnet.ora to the agent log directory and redirects the TNS_ADMIN to the agent log directory ITM_HOME/logs/<host>_rz_<instance>. Any errors returned by Oracle are also redirected to krzsqlnet.log file in that same directory. 
+
+Restart the agent.
+
+RELATED INFORMATION
+ Environment variables for the agent [http://www.ibm.com/support/knowledgecenter/SS3JRN_7.2.1/com.ibm.itcama.doc_7.2.1/oracleextended/fac_config_agentspecific_setenvars.html ]

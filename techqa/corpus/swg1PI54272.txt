@@ -1,0 +1,157 @@
+Title: IBM PI54272: SPSS 23 SERVER SINGLE SIGN-ON: KERBEROS TICKET DOESN'T RENEW AUTOMATICALLY, ALTHOUGH RENEWABLE IS DEFINED - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DUPLICATE OF ANOTHER APAR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  You work with IBM SPSS Statistics 23 FP2 Server installed on
+   Windows 2008 Server R2 64 bit and Statistics 23 FP2 Client
+   installed as 32 bit app on Win 7 Enterprise SP1, 32 bit using an
+   Active Directory Domain.
+   You like to enable Single Sign-on with Kerberos for Statistics
+   23 Server. When you run kinit.exe whit &#150;R parameter, you are
+   able to generate a "RENEWABLE" ticket.
+   But this, apparently, has no effect. As the ticket only last 10
+   hours. You expect the ticket to renew automatically.
+   For the ticket created for Statistics server no renew date is
+   displayed. And when it expires, you have to run kinit again in
+   order to authenticate.
+   By configuring single sign-on you thought it would not be
+   necessary to type the active directory password every day.
+   
+   You followed the SPSS instructions on
+   http://www-01.ibm.com/support/knowledgecenter/SSLVMB_23.0.0/spss [http://www-01.ibm.com/support/knowledgecenter/SSLVMB_23.0.0/spss]
+   /server/srv_users_sso_config_server.dita
+   
+   Chapter:
+   SPSS Statistics 23.0.0 > SPSS Statistics Server>Server
+   Administrator's Guide > Supporting End Users>Authentication
+   > Configuring Single Sign-On (SSO) > Configuring the Server for
+   Single Sign-On
+   
+   You ensured that the Windows server machine is a member of the
+   Active Directory (AD) domain. In the IBM SPSS Statistics Server
+   installation location, you locate the folder called config. In
+   the config folder, you create a subfolder called sso.
+   In the sso folder, you create a krb5.conf file. Instructions for
+   how to create the krb5.conf file can be found at
+   http://web.mit.edu/kerberos/krb5-current/doc/admin/conf_files/kr [http://web.mit.edu/kerberos/krb5-current/doc/admin/conf_files/kr]
+   b5_conf.html.
+   
+   After that the single sign on works fine for the default
+   duration of the ticket, which is 10 hours. After this, the
+   Kerberos ticket doesn't renew automatically, even if they run
+   kinit -R parameter.
+   
+   This was reported to IBM SPSS development.
+   This issue has multiple pieces.
+   1) When the kinit command is submitted, it must request a
+   renewable ticket.
+   2) The Kerberos server must be configured to allow renewable
+   tickets and have an appropriate renewable ticket time out
+   defined.  Typically 1 to 4 weeks.
+   3) Statistics software must detect that a ticket has expired and
+   request that it be renewed by the Kerberos server.
+   As long as it is within the renewable ticket time out, it should
+   get renewed.
+   
+   The problem is that Stats currently does not have the code for
+   3) to automatically renew the ticket.
+   That code would have to be written and delivered in a future
+   release.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  This issue will be addressed in a future release of IBM SPSS
+   Statistics Server.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *  This APAR is a duplicate of PI54273 [http://www-01.ibm.com/support/docview.wss?uid=swg1PI54273]
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI54272
+   
+   
+ * REPORTED COMPONENT NAME
+   SPSS STATS SVR
+   
+   
+ * REPORTED COMPONENT ID
+   5725A56SS
+   
+   
+ * REPORTED RELEASE
+   N00
+   
+   
+ * STATUS
+   CLOSED DUA
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2015-12-16
+   
+   
+ * CLOSED DATE
+   2017-05-03
+   
+   
+ * LAST MODIFIED DATE
+   2017-05-03
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

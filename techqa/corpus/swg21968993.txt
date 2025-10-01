@@ -1,0 +1,41 @@
+Title: IBM Selecting a DTXPlugin node from an existing message flow and clicking the open button in the Basic section of the Properties window crashes with a Java error - United States
+
+Text:
+Message Broker WTX Websphere Transformation Extender MB Toolkit IIS TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Selecting a DTXPlugin node from an existing Message Broker or IBM Integration Bus message flow, and clicking the open button in the Basic section of the Properties window, crashes with a Java error. 
+
+SYMPTOM
+Java Platform SE binary has stopped working.
+
+
+CAUSE
+The PATH environment variable (java.library.path under the eclipse Java environment) used by the Message Broker Toolkit (MBT) 8 or IBM Integration Toolkit (IIT) 9 contains more than one WebSphere Transformation Extender version installation directory. 
+
+For example, the PATH may contain the following order with the WebSphere Transformation Extender (WTX) 8.3 directory first.
+
+C:\IBM\WebSphere Transformation Extender 8.3;C:\IBM\WebSphere Transformation Extender 8.4.1; 
+
+The WTX 8.3 directory should not be first in the PATH if the Message Broker Toolkit (MBT) 8 or IBM Integration Toolkit (IIT) 9 is being launched, as this will cause a problem since the WTX 8.4.1 directory should be used. The PATH is set by the MBT / IIT launcher.bat file, which calls the mqsiprofile.cmd batch file, which calls all of the *.cmd files located in the %MQSI_WORKPATH%\common\profiles directory (usually the C:\ProgramData\IBM\MQSI\common\profiles directory on Windows).
+
+Since both WebSphere Transformation Extender for Integrator Servers (WTX for IS) 8.3 and WTX for IS 8.4.1 were installed, both of their dtxwmqi*.cmd files are stored in the above directory. The WTX 8.3 version, if it is first one in the PATH, will encounter a problem when used with Message Broker Toolkit (MBT) 8 or IBM Integration Toolkit (IIT) 9.
+
+
+ENVIRONMENT
+Windows, WTX 8.3, and WTX 8.4.x
+
+
+
+DIAGNOSING THE PROBLEM
+From the Message Broker Toolkit or the IBM Integration Toolkit, select Help > About IBM Integration Toolkit (About WebSphere Message Broker Toolkit), then select Installation Details button, then select the Configuration tab (wait for Retrieving System Information... to complete), then under the System properties section, view the java.library.path environment variable to determine if it contains two different version WTX installation directories, similar the following. 
+
+
+C:\IBM\WebSphere Transformation Extender 8.3;C:\IBM\WebSphere Transformation Extender 8.4.1; 
+
+
+
+RESOLVING THE PROBLEM
+To prevent loading the WTX for IS 8.3 in the PATH, the dtxwmqi.cmd file created by the WTX for IS 8.3 install should be moved or renamed with a different file extension (other than .cmd). Then restart Message Broker Toolkit (MBT) 8 or IBM Integration Toolkit (IIT) 9 and the problem should be resolved. 
+
+Note: The latest WTX for IS 8.3.0.6 Fix Pack includes logic in the dtxwmqi.cmd file to check the version of Message Broker / IBM Integration Bus before setting the environment variables, such as PATH.

@@ -1,0 +1,55 @@
+Title: IBM datetotime() function usage - United States
+
+Text:
+rules file; function; timetodate TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Fail to parse date string error in non-'C' locale for datetotime() function in rules file. 
+
+SYMPTOM
+Steps on recreating the symptoms: 
+
+1) Edit probe rules file with the following lines: 
+$tmp_time = "Tue DEC 19 18:33:11 JST 2010"
+$date= datetotime ($tmp_time,"%a %b %e %T %Y")
+log(debug,"string " + $tmp_time + " to " + $date)
+2) Set locale to ja_JP on probe host
+3) Start the ObjectServer
+4) Start the probe
+
+The following message is written to the probe debug log file, and the string is not converted correctly: 
+
+2011-03-24T11:08:49: Error: E-ETC-102-036: Fail to parse date string: Tue DEC 19 18:33:11 JST 2010 using format: %a %b %e %T %Y. Error code: U_PARSE_ERROR
+2011-03-24T11:08:49: Warning: W-UNK-000-000: Failed to convert "Tue DEC 19 18:33:11 JST 2010" to DATETIME using format "%a %b %e %T %Y" - using current time
+2011-03-24T11:08:49: Debug: D-UNK-000-000: string Tue DEC 19 18:33:11 JST 2010 to 1300936129 
+
+
+CAUSE
+From version 7.3.0, the old POSIX style date/time formats ( $tmp_time,"%a %b %e %T %Y") have been deprecated.
+
+When using datetotime function in a probe rules file for OMNIbus 7.3.0 or later, then you need to use the ICU formats that support all locales. 
+
+More details can be found in the OMNIbus 7.4 Release notes here:
+https://www.ibm.com/support/knowledgecenter/SSSHTQ_7.4.0/com.ibm.netcool_OMNIbus.doc_7.4.0/omnibus/wip/relnotes/omn_relnotes.html [https://www.ibm.com/support/knowledgecenter/SSSHTQ_7.4.0/com.ibm.netcool_OMNIbus.doc_7.4.0/omnibus/wip/relnotes/omn_relnotes.html]
+
+Search for:
+"Date and time formatting and parsing"
+
+ICU formats are described here:
+http://userguide.icu-project.org/formatparse/datetime [http://userguide.icu-project.org/formatparse/datetime]
+
+
+
+RESOLVING THE PROBLEM
+Using the example above, you should change the call for datetotime function to resemble the following: 
+
+
+$tmp_time = "Tue DEC19 18:33:11 JST 2010"
+$date= datetotime ($tmp_time,"E MMM dd HH:mm:ss V yyyy")
+log(debug,"string " + $tmp_time + " to " + $date)
+
+That is because the formats mean the following:
+E - locale specific abbreviation for the day of the week.
+MMM - locale specific abbreviation for the name of the month
+
+Note : "Tues" and "DEC" should be replaced by their Japanese equivalents.

@@ -1,0 +1,105 @@
+Title: IBM Call Home, Email Alert, and Inventory Configuration for IBM FlashSystem Products - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ US English 
+
+QUESTION
+ How do I configure IBM® Call Home, Email Alert and Inventory on the IBM FlashSystem™ family of products? 
+
+CAUSE
+Warning received about non-configuration of Call Home and Inventory when running the Test Upgrade Utility Script prior to a code upgrade.
+
+ANSWER
+Overview
+
+
+IBM highly encourages all clients to take advantage of the following settings to allow you and IBM to partner for your success. With the Call Home feature enabled, your system is effectively monitored 24x7x365. As an IBM client, you will enjoy faster response times, faster problem determination, and effectively reduced risk over an un-monitored system. In the future, IBM plans to use inventory report data to directly notify customers that are affected by known configuration or code issues. Please see the sections below for a more detailed explanation, followed by instructions on configuring Call Home. The configuration setup is a simple process and only take a few minutes to complete. While configuration is recommended during initial setup, this can also be completed after initial setup. Instructions detailed in this document explain how to configure and enable Call Home after initial setup. 
+
+Call Home 
+
+The Call Home function opens a service alert if a serious error occurs on the system, automatically sending details of the error and contact information to IBM service personnel. If the system is entitled for support, a Problem Management Record (PMR) is automatically created and assigned to the appropriate IBM service personnel. The information provided to IBM in this case is an excerpt from the event log containing the details of the error and your contact information from the system. This allows IBM service personnel to contact you and arrange service on the system. This can greatly improve the speed of problem resolution by removing the need for you to detect the error. 
+
+Email Alert 
+
+Automatic email alerts can be generated and sent to an appropriate client system administrator or distribution list. Email alerts are effectively the same as Call Home, but they allow you to be notified about error, warning, or informational messages when they occur, as well to receive inventory emails. You can refer to the Knowledge Center documentation for your specific IBM FlashSystem product to determine if a particular event is classified as either error, warning, or informational. Look for the notification type for each error to determine which messages you wish to receive. Maximum flexibility is provided as you can customize this based on the individual preference. 
+
+Inventory 
+
+Rather than reporting a problem, an email is sent to IBM that describes your system hardware and critical configuration information. Object names and other potentially sensitive information, such as IP addresses are not sent. In the future, IBM plans to use inventory report data to directly notify indicated contacts who are affected by known configuration or code issues. Please see the attached document below for a sample of what is included in an inventory email to IBM. IBM recommends that the system inventory be sent on a 1 or 7 day interval for maximum benefit. 
+
+Configuration Instructions
+
+
+Use the following instructions to guide you through the configuration process for the systems listed below. 
+
+ * IBM FlashSystem 840 
+ * IBM FlashSystem 900 
+ * IBM FlashSystem V840 
+ * IBM FlashSystem V9000
+
+
+Note: Some views will look different depending on the system and firmware version that is used to configure Call Home. For the FlashSystem V840, you must configure Call Home on both the control enclosures and the storage enclosure. Perform the following steps to configure Call Home, Email alert and Inventory: 
+
+1. From the home page of the GUI, hover over the Settings image to open up the menu, then select Notifications. 
+
+[/support/docview.wss?uid=ssg1S1004840&amp;aid=1]
+
+2. Select Enable Notifications under the Email tab. 
+[/support/docview.wss?uid=ssg1S1004840&aid=2] [/support/docview.wss?uid=ssg1S1004840&aid=2]
+
+
+2. Click Next as instructed by the Call Home wizard. 
+
+[/support/docview.wss?uid=ssg1S1004840&aid=3] [/support/docview.wss?uid=ssg1S1004840&aid=3]
+
+
+3. Enter system location information in the fields, as instructed. 
+
+[/support/docview.wss?uid=ssg1S1004840&aid=4] [/support/docview.wss?uid=ssg1S1004840&aid=4]
+
+
+4. Enter the contact details for the person who is responsible for the system. A window comes up indicating that the specified settings are being configured. Once complete, the window indicates "Task completed." To view details, click the drop down arrow that indicates "View more details." 
+
+[/support/docview.wss?uid=ssg1S1004840&aid=5] [/support/docview.wss?uid=ssg1S1004840&aid=5]
+
+
+5. The next window prompts for information about your company's email server. To add or remove fields for email servers, click the plus or minus sign. A window comes up to show you the progress of the configuration process for the email server. You may view details of the process by clicking on the drop down that indicates "View more details." 
+
+[/support/docview.wss?uid=ssg1S1004840&aid=6] [/support/docview.wss?uid=ssg1S1004840&aid=6] 
+
+
+6. Now configure email notification. To add each recipient, click the plus (+) icon. Select the drop down to choose what types of notifications each user will receive. 
+
+Note: The IBM Support email address for Call Home should already be filled in. If it isn't the case use the following guidelines: For FlashSystem products located in North America, Latin America, South America, or the Caribbean Islands, use flash-sc1@vnet.ibm.com. For FlashSystem products located anywhere else in the world, use flash-sc2@vnet.ibm.com. 
+
+[/support/docview.wss?uid=ssg1S1004840&aid=7] [/support/docview.wss?uid=ssg1S1004840&aid=7]
+
+
+7. Lastly, verify that the configuration details on the summary page match your contact, system, email server, and event notification preferences. Click Finish once you have verified the information is correct. Now that the set up wizard for notification settings is complete, you can edit or disable notifications by revisiting Settings → Notifications → Email. 
+
+[/support/docview.wss?uid=ssg1S1004840&aid=8] [/support/docview.wss?uid=ssg1S1004840&aid=8]
+
+
+Test Call Home 
+
+To verify the settings are working correctly, upload your contact information to IBM, you can send a test email. 
+
+1. Go to Settings → Notifications → Email and click Edit. 
+
+[/support/docview.wss?uid=ssg1S1004840&aid=9] [/support/docview.wss?uid=ssg1S1004840&aid=9]
+
+
+2. Click Test in the Call Home section. The system contacts your mail server and sends a test email notification. A window pops up to show you the status of this task. Click Close to close this window. 
+
+[/support/docview.wss?uid=ssg1S1004840&aid=10] [/support/docview.wss?uid=ssg1S1004840&aid=10]
+
+3. Click Cancel to disable the test button. 
+[/support/docview.wss?uid=ssg1S1004840&aid=11] [/support/docview.wss?uid=ssg1S1004840&aid=11]
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Flash Storage IBM FlashSystem V840 Platform Independent Version Independent Flash Storage IBM FlashSystem 900 Platform Independent Version Independent Flash Storage IBM FlashSystem V9000 Platform Independent Version Independent

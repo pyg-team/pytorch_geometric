@@ -1,0 +1,32 @@
+Title: IBM CKQC hangs and unable to initiate transactions using the MQ trigger - United States
+
+Text:
+CKQC HANGS HUNG hanging; No MQ TRIGGER ; MAXOPENTCBS DFHMQ0351 CICS-MQ Adapter ; CICS MQ Adapter ; 5655M1500 R650 650 R500 500 HCI6500 5655-M15 5655M15 5655S9700 R660 660 R600 600 HCI6600 5655-S97 5655S97 5655S9700 R670 670 R700 700 HCI6700 5655-S97 5655S97 kixinfo TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The CICS-MQ Adapter does not function properly after you upgrade your region to CICS Transaction Server for z/OS (CICS TS) V3.2 or higher. 
+
+When you enter a CKQC transaction to attempt to see the status of the connection to WebSphere MQ, the CKQC transaction just hangs and never responds to the terminal. You are also unable to initiate transactions in CICS TS using the MQ trigger. 
+
+CAUSE
+Insufficient open transaction environment (OTE) TCBS because the MAXOPENTCBS [http://publib.boulder.ibm.com/infocenter/cicsts/v4r2/topic/com.ibm.cics.ts.doc/dfha2/parameters/dfha2_maxopentcbs.html] system initialization table (SIT) parameter is too low.
+
+The CICS TS shipped CICS-MQ adapter has been enhanced to use multiple TCBs in the same way as the CICS-DB2 adapter. With CICS TS 3.2 and higher, MAXOPENTCBS controls the total number of L8 and L9 mode TCBs that the CICS region can have in operation at any time. L8 TCBs are used for CICSKEY OPENAPI task related user exits. This means they are used by the CICS-DB2 Attachment facility and the CICS-MQ Adapter.
+
+DIAGNOSING THE PROBLEM
+Messages show that the connection to MQ was made successfully:
+
++DFHMQ0336 I <applid> CONNECT received from a PLT program.
++DFHMQ0351 I <applid> Unable to LOAD API exit CSQCAPX. Program is disabled.
++DFHMQ0307 I <applid> Successful connection to queue manager MQT2. 
++DFHSI8441I <applid> Connection to MQ MQT2 successfully completed. 
+
+RESOLVING THE PROBLEM
+Check what you have specified for MAXOPENTCBS, if it is a low number then increase it to at least 8.
+
+To determine a suitable setting for MAXOPENTCBS use the guidelines described in the CICS TS V4.2 information center in topic: Setting MAXOPENTCBS [http://publib.boulder.ibm.com/infocenter/cicsts/v4r2/topic/com.ibm.cics.ts.performance.doc/topics/dfht3u0.html].
+
+
+
+PRODUCT ALIAS/SYNONYM
+ CICS/TS CICS TS CICS Transaction Server

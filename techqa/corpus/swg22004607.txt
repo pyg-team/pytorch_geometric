@@ -1,0 +1,54 @@
+Title: IBM The import task failed with "INFO: Upload replication check failed with error: getservbyname_r failed (Java::JavaLang::RuntimeException)" after patching BigFix/ILMT RedHat Linux server. - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ The import task failed with "INFO: Upload replication check failed with error: getservbyname_r failed (Java::JavaLang::RuntimeException)" after patching BigFix/ILMT RedHat Linux server. 
+
+CAUSE
+TEMA version: 9.2.2.0-20151209-1636
+After patching BigFix/ILMT Redhat Linux server, the import task started to fail with the following error in the import log:
+
+[/support/docview.wss?uid=swg22004607&aid=1] [/support/docview.wss?uid=swg22004607&aid=1] 
+
+
+
+
+The following commands confirm the glibc library installed:
+
+
+rpm -qa | grep -i glibcd.
+
+glibc-2.12-1.192.el6.x86_64 
+glibc-headers-2.12-1.192.el6.x86_64 
+compat-glibc-headers-2.5-46.2.x86_64 
+compat-glibc-2.5-46.2.x86_64 
+glibc-devel-2.12-1.192.el6.x86_64 
+glibc-common-2.12-1.192.el6.x86_64 
+glibc-2.12-1.192.el6.i686 
+
+
+find / -name glibc* 
+/usr/share/man/overrides/ru/man7/glibc.7.gz /usr/share/man/man7/glibc.7.gz /usr/share/doc/glibc-2.12 /usr/share/doc/glibc-common-2.12 /usr/sbin/glibc_post_upgrade.x86_64 /usr/sbin/glibc_post_upgrade.i686 
+
+find / -name getservbyname* 
+/usr/share/man/man3p/getservbyname.3p.gz /usr/share/man/overrides/ru/man3/getservbyname.3.gz /usr/share/man/overrides/ru/man3/getservbyname_r.3.gz /usr/share/man/man3/getservbyname.3.gz /usr/share/man/man3/getservbyname_r.3.gz 
+
+The $PATH environment variable shows:
+
+
+echo $PATH 
+
+/usr/lib64/qt-3.3/bin:/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin:/root/bin 
+
+Even re-installing the glibc 32-bit library rpm package again and rebooting the RedHat server as well, it won't resolve the issue.
+
+Note: same error will occur when modifying the datasource setting as well as described in the above technote link.
+
+
+ANSWER
+The problem is resolved after upgrading to ILMT 9.2.7 and the import task continues to work successfully. Most likely this is due to the ILMT 9.2.2 application expecting a specific version of glibc 32-bit library file and it won't work if a newer version is found after the patching the RedHat Linux server.
+
+RELATED INFORMATION
+#

@@ -1,0 +1,51 @@
+Title: IBM Connection to SQL Server fails when the server is configured to use TLS 1.2 but no encryption - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When the SQL Server machine is configured to disable TLS 1.0 and 1.1, only allowing TLS 1.2, Cognos must make a TLS 1.2 connection to it even if SQL Server is not forcing encryption and there is no certificate involved.
+
+
+RESOLVING THE PROBLEM
+To get the Content Store connection working: 
+
+- Edit install_location\bin64\startwlp.bat (Windows) to add the following lines after the line set JVM_ARGS=-Xmx4096m -XX:MaxNewSize=2048m -XX:NewSize=1024m %DEBUG_OPTS%:
+
+set JVM_ARGS="-Dcom.ibm.jsse2.overrideDefaultTLS=true" %JVM_ARGS%
+
+- Edit install_location\bin64\bootstrap_wlp_os_version.xml to add the following lines after the line <param condName="${java_vendor}" condValue="IBM">-Xscmaxaot4m</param>:
+
+<param>"-Dcom.ibm.jsse2.overrideDefaultTLS=true"</param>
+
+- Edit install_location\bin64\cogconfig.bat (Windows) to add the following lines after the line set J_OPTS=%DD_OPTS% %J_OPTS%:
+
+set J_OPTS="-Dcom.ibm.jsse2.overrideDefaultTLS=true" %J_OPTS%
+
+- Start Cognos Configuration using cogconfig.bat you modified in the previous step. Important: You must start IBM Cognos Configuration using cogconfig.bat
+
+
+To get the SQL Server Native Client Connection:
+
+Download a version of the Native Client that supports TLS 1.2 as per Microsoft's KB Article: https://support.microsoft.com/en-ca/help/3135244/tls-1-2-support-for-microsoft-sql-server [https://support.microsoft.com/en-ca/help/3135244/tls-1-2-support-for-microsoft-sql-server]
+
+
+
+To get the JDBC data source connection working:
+
+- Go to Cognos Administration -> Configuration tab -> Dispatchers and Services
+- Click on the dispatcher server to drill down to the services
+- Beside the QueryService, click the Set Properties button
+- Go to the Settings tab
+- Add the following the Additional JVM Arguments for the QueryService setting
+
+-Dcom.ibm.jsse2.overrideDefaultTLS=true
+
+- Click OK
+- Click on the Status tab
+- Select System
+- Click on the server to drill down to the services
+- Beside QueryService, click the drop down arrow
+- Select "Stop immediately"
+- Wait 30 seconds for it to fully stop
+- Click the drop down again and select "Start immediately"

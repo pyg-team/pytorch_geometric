@@ -1,0 +1,27 @@
+Title: IBM Gateway for Object Server logs failover or failback failure - United States
+
+Text:
+gateway; fail; failover; failover gateway; configure gateway; configuration; failback TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Errors in gateway log file indicating failover failure when object server gateway connects two single object servers. 
+
+SYMPTOM
+Tue Mar 6 23:55:44 2007 Error: E-NGTK-102-109: [ngtk]: ObjectServerB: 'Writer' component has aborted its wait for the 'Reader' component to complete its part of the 'failback' operation, as the operation failed. 
+
+Tue Mar 6 23:55:44 2007 Error: E-NGTK-102-117: [ngtk]: ObjectServerB: Reader component has failed to fail back.
+
+
+CAUSE
+FailbackEnabled and FailbackTimeout should not be used when connecting two single object servers since failover is not possible.
+
+
+
+RESOLVING THE PROBLEM
+ 
+
+The Object Server gateway failover properties are used when one or both of the object server connections are not a single object server. An object server pair, virtual object server pair, is required to configure failover. For example, a bidirectional gateway would need to connect a virtual object server pair to a virtual object server pair or a virtual object server pair to a single object server. If the primary object server of the virtual pair on one end of the bidirectional gateway goes down, the gateway would "failover" to the backup of the virtual pair. If the gateway is connecting two single object servers, failover is not possible and the above error would be seen in the gateway log.
+
+If you are connecting two single object servers, set FailbackEnabled to False and remove the FailbackTimeout property. Gateway failover is not possible when connecting two single object servers.
+
+If you are connecting two virtual pairs or a single object server to a virtual pair, set FailbackEnabled to True and set the FailbackTimeout property.

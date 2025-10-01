@@ -1,0 +1,170 @@
+Title: IBM PI94445: CSV002I REQUESTS FOR MODULE {alias} EXCEED MAXIMUM USE COUNT when fetching Enterprise PL/I program linked with an ALIAS - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  If a fetchable module linked RENT is called repeatedly (ie. more
+   that 32767 times) via an alias, the use count for the alias is
+   exceeded, though the base module's count remains at 1.
+   
+   The somewhat misleading message
+   
+       IBM0590S ONCODE=9250 The fetchable procedure with entry
+           {alias} could not be found.
+   
+   will be generated as a result of the failure; the CSV002I
+   message can be seen in the joblog.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Avoid using aliases for fetchable modules.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All Enterprise PL/I for z/OS users of the    *
+   *                 FETCH facility                               *
+   *                                                              *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: CSV002I IBM0590S messages issued when   *
+   *                      a fetchable module linked RENT is       *
+   *                      called repeatedly via an alias.         *
+   *                                                              *
+   ****************************************************************
+   * RECOMMENDATION: Apply the PTF for this APAR.                 *
+   *                                                              *
+   ****************************************************************
+   The Enterprise PL/I for z/OS run-time library was not keeping
+   track of reentrant routines with alias names correctly. This
+   led to the unnecessary reloading of the routine, which would
+   eventually lead to the use count being exceeded.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The Enterprise PL/I for z/OS run-time library has been modified
+   to correct the problem.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI94445
+   
+   
+ * REPORTED COMPONENT NAME
+   LE VA PL/I
+   
+   
+ * REPORTED COMPONENT ID
+   568819806
+   
+   
+ * REPORTED RELEASE
+   7A0
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2018-02-28
+   
+   
+ * CLOSED DATE
+   2018-03-08
+   
+   
+ * LAST MODIFIED DATE
+   2018-03-13
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UI54331 UI54346 UI54347
+   
+   
+
+MODULES/MACROS
+ *  IBMPFR
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   LE VA PL/I
+   
+   
+ * FIXED COMPONENT ID
+   568819806
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R790 PSY UI54347 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI54347]
+   UP18/03/13 I 1000
+   
+   
+ * R7A0 PSY UI54346 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI54346]
+   UP18/03/13 I 1000
+   
+   
+ * R7B0 PSY UI54331 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI54331]
+   UP18/03/10 I 1000
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

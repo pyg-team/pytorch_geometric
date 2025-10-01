@@ -1,0 +1,72 @@
+Title: IBM Hardware Resource Management (HRM) Trace - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This document provides information on the Hardware Resource Management LIC (HRM) trace. 
+
+RESOLVING THE PROBLEM
+This document provides information on the Hardware Resource Management LIC (HRM) trace. 
+
+A hardware resource trace may be recommended to help diagnose suspected tape performance-related problems. This trace is usually used for more complex backup/recovery performance problems. To automatically trace, add the TRCINT commands to the beginning and the end of the backup. The TRCINT SET(*END) will ensure that the traces are separated from the previous trace if running more than once.
+
+Before the save or restore operation
+
+TRCINT SET(*END) TRCTBL('HRM TRACE') <- This is not needed for the very first trace
+TRCINT SET(*ON) TRCTBL('HRM TRACE') SIZE(100 *MB) TRCFULL(*WRAP) TRCTYPE(*HDWRSC) RSRCNAME(TAPxx) 
+
+Note, under no circumstances should the size be set larger than 100MB.
+Each 100 MB of trace data results in at least 1 GB of spooled output. Spool files larger than 1 GB are too large for our diagnostic tools to process. 
+
+After the save or restore operation
+
+TRCINT SET(*OFF) TRCTBL('HRM TRACE')
+
+Prepare the data to send to IBM
+
+CRTLIB PMRXXXXX where xxxxx is the first 5 digits of your open problem record number
+
+Create an output queue in the library created above:
+
+CRTOUTQ OUTQ(PMRXXXXX/HRMTRC)
+
+Copy HRM trace spooled files into the OUTQ created above. These steps may need to be repeated if multiple hardware resources were traced. Each resource trace should have it's own output:
+
+- Do a WRKJOB for the job that ran the TRCINT SET(*OFF)
+
+- From the 'Work with Job' menu select option '4. Work with spooled files'
+
+- Next to the 'QPCSMPRT' file that is the output from the TRCINT SET(*OFF) put option '2=Change' in the option column and hit F4 to prompt and page down. Change the Output Queue and Library as follows:
+
+Output queue . . . . . . . . . . HRMTRC
+Library . . . . . . . . . . . PMRXXXXX 
+
+Create a save file to contain the PMR library:
+
+CRTSAVF FILE(QGPL/PMRXXXXX)
+
+Save the PMR library in to the save file created above:
+
+SAVLIB LIB(PMRXXXXX) DEV(*SAVF) SAVF(QGPL/PMRXXXXX) SPLFDTA(*ALL) DTACPR(*YES)
+
+Send the data to IBM:
+
+See 'MustGather: Instructions for Sending Data to IBM i Support' for instructions for various methods for sending the data to IBM. A link to this document is provided below:
+
+http://www-01.ibm.com/support/docview.wss?uid=nas8N1019224 [http://www-01.ibm.com/support/docview.wss?uid=nas8N1019224]
+
+
+Notes:
+
+
+ 1. TRCINT must be run against the individual tape hardware resources and not the MLB. 
+ 2. The hardware resource name does not necessarily match the name of a device description associated with the hardware resource. 
+ 3. A separate TRCINT must be run for each HW resource being traced. Different trace tables must also be used. There is nothing special about the trace table name of 'HRM TRACE' so a table name of something like 'HRM TRACE - TAPXX' could be used for each separate resource where 'TAPXX' is the name of the hardware resource being traced. Do not combine them into one TRCINT. 
+ 4. A separate table should be created for each resource being traced in a MLB that has multiple resources.
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Operating System IBM i 7.2 Operating System IBM i 7.1 Operating System IBM i 6.1 Operating System IBM i 7.3 
+HISTORICAL NUMBER
+ 498845388

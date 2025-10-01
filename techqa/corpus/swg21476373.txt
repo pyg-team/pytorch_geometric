@@ -1,0 +1,19 @@
+Title: IBM Need a driver for Oracle 11.2 - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The SPSS drivers download site has only SPSS Data Access Pack 6.0 Service Pack 1 drivers. Specifically, this is sufficient for Oracle Wire Protocal 11g R1 (11.1). I have Oracle 11g R2 (11.2). According to the Data Direct Web site I need the Oracle Wire protocol 6.0 Service Pack 2 drivers for this. Will the SPSS Data Access Pack pick up the version 6 Service Pack 2 driver for Oracle 11.2? 
+
+RESOLVING THE PROBLEM
+This problem has been reported to SPSS Development and new driver will be package with the next Statistics release. We are really apologizing for any inconvenience - No Workaround Available
+
+RELATED INFORMATION
+ Need more help? Our Statistics forum is Live! [https://developer.ibm.com/answers/topics/statistics.html?smartspace=predictive-analytics]
+
+
+ 
+
+HISTORICAL NUMBER
+ 89086

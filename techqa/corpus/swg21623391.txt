@@ -1,0 +1,48 @@
+Title: IBM Tivoli Monitoring agent not warehousing due to timeout errors - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ No warehouse data is found in the database for a particular agent, and timeout errors are seen in the agent logs. 
+
+SYMPTOM
+There is no data seen in the IBM Tivoli Monitoring workspaces for the agent in question, and there is no data (or no current data) in the database for the table in question. 
+
+In the example below, the customer was not seeing data for his AIX Premium agent (px).
+
+
+CAUSE
+The cause in this instance was that the hdr files used by the 2 tables (KPX26DISKS and KPX30FILES) were zero bytes in length:
+-rwxr-xr-x 1 root system 39444080 Aug 21 17:31 KPX26DISKS 
+-rwxr-xr-x 1 root system 0 Aug 21 17:45 KPX26DISKS.hdr 
+-rwxr-xr-x 1 root system 5428896 Aug 21 17:31 KPX30FILES 
+-rwxr-xr-x 1 root system 0 Aug 21 17:45 KPX30FILES.hdr 
+
+All of the other tables and hdr files had a current date/time and the *.hdr files had a size of greater than zero. Here are a couple of examples from the same directory: 
+-rw-r--r-- 1 root system 12416 Jan 24 10:45 KPX20VIRTU 
+-rwxr-xr-x 1 root system 499 Jan 24 10:45 KPX20VIRTU.hdr 
+-rw-r--r-- 1 root system 10476 Jan 24 10:45 KPX23PROCE 
+-rwxr-xr-x 1 root system 362 Jan 24 10:45 KPX23PROCE.hdr
+
+
+DIAGNOSING THE PROBLEM
+Here is a sample error message seen for the KPX26DISKS table, These lines were logged in the *_ux_khdxprtj_*.log file: 
+
+
+(50F9A588.0000-82:khdxbase.cpp,336,"setError") 
++50F9A588.0000 Error Type= CTX_ServerTimeout 
++50F9A588.0000 Severity= CTX_Critical 
++50F9A588.0000 Native Error Code = 0 
++50F9A588.0000 SQL State= NULL 
++50F9A588.0000 Reason Code= 0 
++50F9A588.0000 executing: endProcessSample 
+(50F9A588.0001-82:khdxbase.cpp,339,"setError") 
++50F9A588.0001 ERROR MESSAGE: "Sample data rejected for timeout reason at stage COMMIT EXPORT"
+(50F9A588.0002-82:khdxdaex.cpp,622,"processExport") Error 217 happened in endProcessSample for originnode nimmstl:PX and object KPX_DISKS (table KPX26DISKS appl KPX)
+
+Look at the binary files where the agent data is being collected and check for any *.hdr files with a file size of zero.
+
+
+RESOLVING THE PROBLEM
+ If you find any *.hdr files with a size of zero, delete the file. It will get re-created the next time there is data to write to the binary file.

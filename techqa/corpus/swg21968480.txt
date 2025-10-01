@@ -1,0 +1,29 @@
+Title: IBM Default paths for core files in IBM PuraData System for Operational Analytics (PDOA) - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ What are the default paths for core files in IBM PuraData System for Operational Analytics (PDOA) ? 
+
+ANSWER
+The following tables addresses PDOA V1 and V1.1, but it is not inclusive of every process run on the system. It covers the primary applications, DB2, GPFS, TSA/RSCT.
+
+
+Node Component Path Additional comments All Nodes GPFS /usr/lpp/mmfs/bin (mmksh)
+
+and
+
+/tmp/mmfs mmksh is not gathered by mmfs.snap.
+
+/tmp/mmfs/* is gathered by mmfs.snap. TSA/RSCT /var/ct/mgmtdomain/log TSA/RSCT will dump cores in mc, cthats,cthags. These are gathered by getsadata. Director, cim processes /core One example of processes that could use /core. Management Node System Director DB2 /home/dirinst1/sqllib/db2dump/ db2support will collect this core file. System Director Server /opt/IBM/TPC/device/apps/was/profiles/deviceServer/ (PDOA V1)
+
+
+/opt/ibm/director/lwi/runtime/core/ Collected as part of System Director support. Console: DB2 /pscfs/db2psc/db2dump/ db2support will collect this core file. Console Applications /usr/IBM/applmgmt/isas.<servername> Gathered as part of PDOA console support. Management and Management Standby Warehouse Tools: DB2 /db2home/dweadmin/db2dump
+or
+/usr/IBM/dwe/appserver_001/home/dweadmin/db2dump db2support will collect this core file. Warehouse Tools: WAS /usr/IBM/dwe/appserver_001/appServer_10/profiles/AppSrv01 or
+/usr/IBM/dwe/appserver_001/appServer_10.5/profiles/AppSrv01 Gathered as part of ISW or WAS support procedures. DPM: DB2 /db2home/db2opm/db2dump
+or
+/opmfs/home/db2opm/db2dump db2support will collect this core file. DPM: Application servers /opmfs/IBM/OPM/
+and
+/opmfs/IBM/OPM/RepositoryServer/bin/ Gathered as part of OPM support processes.

@@ -1,0 +1,56 @@
+Title: IBM Technical Support (TS) Chat is Now Available For Enterprise Content Management (ECM) products! - United States
+
+Text:
+technical support chat; chat RECOMMENDED RESOURCES
+
+ABSTRACT
+ Technical Support (TS) Chat is Now Available! 
+
+CONTENT
+At IBM, we strive to look for ways to enhance and improve our Customer Support experience. If you are a client of the following: 
+
+ * IBM Datacap, 
+ * IBM FileNet Image Services 
+ * FileNet Content Manager Suite, 
+ * Content Manager Multiplatform, 
+ * IBM Content Collector, 
+ * Case Manager/Foundation, 
+ * Atlas eDiscovery Process Management products,
+
+
+we are excited to announce Technical Support (TS) Chat-- a whole new way to interact with our world class Technical Support L2 Team! With Technical Support Chat, our customers are able to engage our L2 Teams via chat, for brief question and answer sessions, for URL or Reference requests, or for quick responses to clarify hardware and software compatibility requirements. The aforementioned are just some examples on how our customers can benefit from TS Chat. And because we know that every Service Request (SR) is unique, at any time during the chat, the customer or the Support Engineer can seamlessly transition to one of our more conventional communication methods, such as phone or email.
+
+Ready to get started?
+If you are a client of IBM Datacap, IBM FileNet Image Services (IS), Case Manager/Foundation, FileNet Content Manager Suite, Content Manager Multiplatform, IBM Content Collector or Atlas eDiscovery Process Management products, try Technical Support Chat on your next Service Request for new or existing PMRs. 
+
+
+Additionally, the chat option is also available when you're reviewing a Technical Note or when perusing the Datacap, IS and Case Manager/Foundation Support Portals. Simply clicking on the following Technical Support Chat links enable our customers to engage our Datacap, IS and Case Manager/Foundation Support Teams. It's that easy! 
+
+
+TC from Support Portal (except CF and CM):
+
+TC from Service Request: TC from Technical Note (except CF and CM):
+
+
+[/support/docview.wss?uid=swg27045851&amp;aid=1] 
+[/support/docview.wss?uid=swg27045851&amp;aid=2] 
+
+[/support/docview.wss?uid=swg27045851&amp;aid=3] 
+IBM DataCap Support Portal: http://www.ibm.com/support/entry/portal/product/enterprise_content_management/datacap?productContext=1845589096 [https://www-947.ibm.com/support/entry/portal/product/enterprise_content_management/datacap?productContext=1845589096] 
+IBM FileNet Image Services Support Portal:http://www.ibm.com/support/entry/portal/product/enterprise_content_management/filenet_product_family/filenet_image_services?productContext=-83248388 [https://www-947.ibm.com/support/entry/portal/product/enterprise_content_management/filenet_product_family/filenet_image_services?productContext=-83248388]
+
+Case Foundation Portal:
+https://www-947.ibm.com/support/entry/portal/product/enterprise_content_management/case_foundation?productContext=581690305 [https://www-947.ibm.com/support/entry/portal/product/enterprise_content_management/case_foundation?productContext=581690305]
+
+Case Manager Portal:
+https://www-947.ibm.com/support/entry/portal/product/enterprise_content_management/case_manager?productContext=-1017567207 [https://www-947.ibm.com/support/entry/portal/product/enterprise_content_management/case_manager?productContext=-1017567207]
+
+
+
+NOTE: Technical Support (TS) Chat is currently in a pilot phase and available for USA-based clients only. IBM reserves the right to modify and/or discontinue Technical Support (TS) Chat at any time . 
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Enterprise Content Management Datacap Enterprise Content Management Datacap Taskmaster Capture Enterprise Content Management FileNet Image Services Enterprise Content Management Case Foundation Enterprise Content Management Case Manager Enterprise Content Management Atlas eDiscovery Process Management Enterprise Content Management Content Collector Enterprise Content Management Content Manager OnDemand for Multiplatforms Enterprise Content Management FileNet Content Manager

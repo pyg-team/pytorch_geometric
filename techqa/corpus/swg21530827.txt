@@ -1,0 +1,36 @@
+Title: IBM What is the maximum number of mailboxes that Gentran:Server can manage? (SCI68720) - United States
+
+Text:
+STERLINGPRI TECHNOTE (FAQ)
+
+QUESTION
+ What is the maximum number of mailboxes that Gentran:Server can manage? (SCI68720) 
+
+ANSWER
+
+
+Gentran:Server for Windows can theoretically support approximately 4 billion (size of a 32-bit integer) mailboxes. 
+
+
+
+The practical limitation will be much lower depending on how fast the Gentran:Server is, how fast the SQL Server is, and other factors. The more mailboxes that are created, the slower the Mailbox Client GUI will run. 
+
+ 
+
+HISTORICAL NUMBER
+ PRI19590 
+
+PRODUCT ALIAS/SYNONYM
+ 
+
+Fact
+
+
+Gentran:Server for Windows, All Releases 
+SCI68720
+
+
+Goal
+
+
+FAQ: What is the maximum number of mailboxes that Gentran:Server can manage?

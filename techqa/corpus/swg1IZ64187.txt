@@ -1,0 +1,153 @@
+Title: IBM IZ64187: IN EXCHANGE AGENT UNDER REACHABILITY WORKSPACE THE VALUES IN REACHABILITY TEST RUNTIME AND SERVER TIME STAMP DOES NOT MATCH - United States
+
+Text:
+  FIXES ARE AVAILABLE
+IBM Tivoli Monitoring for Microsoft Exchange Server 6.2.0-TIV-ITM_EXCHG-IF0003 [http://www-01.ibm.com/support/docview.wss?uid=swg24025714]
+IBM Tivoli Monitoring for Microsoft Exchange Server 6.2.0-TIV-ITM_EXCHG-FP0002 [http://www-01.ibm.com/support/docview.wss?uid=swg24026720]
+IBM Tivoli Monitoring for Microsoft Exchange Server 6.2.0-TIV-ITM_EXCHG-IF0004 [http://www-01.ibm.com/support/docview.wss?uid=swg24026722]
+IBM Tivoli Monitoring for Microsoft Exchange Server 6.2.0.2-TIV-ITM_EXCHG-IF0002 [http://www-01.ibm.com/support/docview.wss?uid=swg24028375]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Product: Exchange Agent
+   Release: 6.2.0
+   Severity: 2
+   Approver: Steven Barnett
+   Compid: 5724B98EO
+   
+   
+   In Exchange Agent under reachability workspace the values in
+   
+   reachability test runtime and server time Stamp does not match.
+   The
+   value in
+   "Reachability test runtime" is retrieved in GMT format where as
+   the
+   server
+   "Time Stamp" value is retrieved in Local time format.
+   
+   Detailed Recreation Procedure:
+   Install and configure Microsoft Exchange Monitoring agent 6.2.0.
+   Select Server navigation item and then open Reachability
+   workspace.
+   Observe the values of reachability test run time field and
+   timestamp
+   field under Reachability workspace.
+   
+   Related Files and Output:
+   We can also Observe the output in
+   MailBox_Reachability_Results.log
+   at the location <%CANDLE_HOME%>\IBM\ITM\TMAITM6\logs.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  IN EXCHANGE AGENT UNDER REACHABILITY WORKSPACE THE VALUES IN
+   REACHABILITY TEST RUNTIME AND SERVER TIME STAMP DOES NOT MATCH
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Now Reachability test runtime and Server Time Stamp values
+   matches.
+   
+   The fix for this APAR is contained in the following maintenance
+   packages:
+                        | interim fix | 6.2.0-TIV-ITM_EXCHG-IF0003
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ64187
+   
+   
+ * REPORTED COMPONENT NAME
+   ITMF MC EXCHANG
+   
+   
+ * REPORTED COMPONENT ID
+   5724B98EO
+   
+   
+ * REPORTED RELEASE
+   611
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-11-02
+   
+   
+ * CLOSED DATE
+   2010-02-02
+   
+   
+ * LAST MODIFIED DATE
+   2010-02-24
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ITMF MC EXCHANG
+   
+   
+ * FIXED COMPONENT ID
+   5724B98EO
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R620 PSY
+   UP

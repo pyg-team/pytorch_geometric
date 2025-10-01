@@ -1,0 +1,89 @@
+Title: IBM Creating a silent installer for Forms Viewer - United States
+
+Text:
+silent; install; installation; installshield; viewer; pureedge; msi TECHNOTE (FAQ)
+
+QUESTION
+How can a silent installer be created for the Lotus Forms Viewer?
+
+ANSWER
+** The silent install procedure prevents the end user from ever seeing and agreeing to product license information. As such, it is an IBM legal requirement that this procedure be used for internal applications only, and that an authorized representative of an organization agree to the license using the standard click-through procedure, before the silent install is put in place. **
+
+
+
+
+
+Silent Install for 2.6.1, 2.6.1.1, 2.7.0, 3.0, 3.0.1, 3.5, 3.5.1, 4.0 Viewer
+
+Additional details can be found on the InstallShield Web site [http://helpnet.installshield.com/], within the topic "Silent installations" in the InstallShield DevStudio Help Library.
+
+NOTE: There are spaces between the switch events below. ie.. /s /x /v
+
+Installing the Viewer in the Default Location
+
+Run the following command to execute the installer in the default directory (C:\Program Files\IBM\Lotus Forms\Viewer\3.5):
+
+
+ * 
+
+
+Uninstalling the Viewer in the Default Location 
+
+Run the following command to uninstall with the default selections: 
+ * 
+
+
+Installing the Viewer in a Customized Location 
+
+If you want to install into a different directory than default: 
+ * 
+
+
+In this example, we have specified to install the Viewer into C:\IBM. Take care to completely mimic the syntax here if you are customizing the installation. 
+
+Uninstalling the Viewer in a Customized Location 
+
+If you customized the install, then you have to specify where the Viewer is located when conducting the uninstall. Uninstalling a customized install: 
+ * 
+
+
+
+
+
+
+Silent Install for 6.4, 6.5, and 2.5.0 Viewer 
+
+The older viewers are bundled with an older version of InstallShield that require you to build a response file to perform a silent install. 
+
+How Response file Silent Installations work 
+A normal (non-silent) installation receives the necessary input from the user in the form of responses to dialog boxes. However, a silent installation does not prompt the user for input and must get its user input from a different source. That source is the InstallShield Silent Response File (.iss file). A response file contains information similar to that which an end user would enter as responses to dialog boxes when running a normal setup. InstallShield reads the necessary input from the response file at run time while performing a silent installation. 
+
+The format of a response file resembles that of an .ini file, but response files have .iss extensions. A response file is a plain text file consisting of sections containing data entries. 
+
+The InstallShield installations can be invoked with the -s parameter to run silently. The Workplace Forms Viewer installations can be run in interactive or silent mode. 
+
+You can create an iss file, which captures the choices made by the user the first time the installation is performed. After that, you can use the iss file to have subsequent installations be completely silent. 
+
+Creating a Response (.iss) File 
+From the cmd line, run the Viewer executable with a few extra command line parameters. For example, "WFViewer_250_Win32.exe -a -r -f1c:\WFsetup.iss" 
+
+This will initiate the install procedure; next, complete the software install as normal. All of the selections made during the install will be recorded in the .iss file. 
+
+Once you have completed the install, uninstall the Viewer using "Add/Remove Programs." Then run the install procedure with the .iss file as a reference to the decisions to be made. 
+
+After you have created the response file, you are ready to run the installation in silent mode using InstallShield Silent. When running an installation in silent mode, be aware that no messages are displayed. Instead, you can ask for a log file to be created to record installation information, including if the installation was successful. You can review the log file to determine the result of the installation. 
+
+Running a Silent Install 
+From the cmd line, run the Viewer executable with a few extra command line parameters. For example, "WFViewer_250_Win32.exe -s -a -s -f1c:\WFsetup.iss" 
+
+If you want to obtain a log file describing the install, use the additional flag "-f2filename.log". This will cause the log to be written to the filename.log file. For example: 
+
+WFViewer_250_Win32.exe -s -a -s -f1C:\WFsetup.iss -f2C:\WFsetup.log To verify if a silent installation succeeded, look at the ResultCode value in the [ResponseResult] section of setup.log. InstallShield writes an appropriate return value after the ResultCode keyname. 
+
+Note that there should be no space between the -f1 or -f2 flag and the following filename. 
+
+
+** The silent install mechanism will still require the user to accept the IBM License agreement for the 2.6.0 Viewer, but the rest of the install will be done silently. **
+
+RELATED INFORMATION
+ Link to Article Q101901 on Installshield Support Site [http://support.installshield.com/kb/view.asp?articleid=Q101901]

@@ -1,0 +1,81 @@
+Title: IBM Login to SPSS C&DS  fails with Java.lang.NullPointerException - United States
+
+Text:
+AD Active Directory LDAP null login fail TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Attempts to log in to IBM SPSS Collaboration and Deployment Services with an Active Directory user fail with
+
+"Login failed java.lang.NullPointerException"
+
+
+
+
+
+
+SYMPTOM
+The log in fails from both the Deployment Manager thick client and Web Client. Local admin user can log in successfully but Active Directory users fail. Once logged in as the local admin user, Active Directory users can be pulled back when searching Users and Groups from the Roles.
+
+
+
+CAUSE
+LDAP Security Provider was not configured to use Context Bind.
+
+DIAGNOSING THE PROBLEM
+Collect the logs: 
+
+
+ * Delete the logs (see Troubleshooting Guide for log locations based on application server). 
+ * Make sure the Security logging is still set to debug (see the the Repository Server Installation and Configuration Guide for steps). 
+ * Start the server. 
+ * First log in as the failing AD user. 
+ * Then log in as local admin user. 
+ * Stop the server and send the logs
+
+
+CDS.log 
+
+Shows fetched results but then sets SecurityToken to null 
+
+ 
+13:00:39,836 DEBUG [LDAPPagedQueryV2] Fetched 1 results in 63 milliseconds
+13:00:39,836 DEBUG [LDAPPagedQueryV2] Records per second: 15.873016
+13:00:39,836 DEBUG [LDAPPagedQueryV2] Records per second: 15.873016
+13:00:39,836 DEBUG [LDAPProviderV2] Searching using DN [OU=xxxx,DC=xxxx,DC=xx,DC=xxxx,DC=com] filter [(&(objectCategory=user)(sAMAccountName=xxxx))]
+13:00:39,836 DEBUG [LDAPProviderV2] Searching using DN [OU=xxxx,DC=xxxx,DC=xx,DC=xxxx,DC=com] filter [(&(objectCategory=user)(sAMAccountName=xxxx))]
+13:00:39,836 DEBUG [LDAPProviderV2] Comparing password
+13:00:39,836 DEBUG [LDAPProviderV2] Comparing password
+13:00:39,867 DEBUG [JaxwsContext] No Subject available
+13:00:39,867 DEBUG [JaxwsContext] No Subject available
+13:00:39,867 DEBUG [ThreadContextMap] setSecuritySubject: null
+13:00:39,867 DEBUG [ThreadContextMap] setSecuritySubject: null
+13:00:39,867 DEBUG [JaxwsContext] No SecurityToken available
+13:00:39,867 DEBUG [JaxwsContext] No SecurityToken available
+13:00:39,867 DEBUG [ThreadContextMap] setSecurityToken: null
+13:00:39,867 DEBUG [ThreadContextMap] setSecurityToken: null
+
+spssemgr.log
+Mar 21 2014 18:28:55 [main] ERROR com.spss.mgmt.common.admin.ui.views.ServerAdminView - Login failed
+com.spss.mgmt.common.core.model.ConnectionException: java.lang.NullPointerException
+
+
+
+
+
+
+RESOLVING THE PROBLEM
+Ensure the Activity Directory security provider is using Context Bind
+
+
+ *  Log into Deployment Manager as the local admin user. 
+ *  Edit the LDAP Security provider. 
+ *  On the 4th screen in there is a check box that says "Use Context Bind". Check this box. 
+ * Click the Finish button to save the change. 
+ * The server does not need to be restarted. 
+ * Log out of the Deployment Manager client. 
+ * Log in the Deployment Manager with the LDAP user. 
+ * NOTE: Context bind is a term that essentially means that you establish a connection with a server. Here we connect to an Active Directory or the OpenLDAP server etc. Our code sends whatever the user supplies during login - id, domain, password etc. to the LDAP server. If we can successfully connect the user, then we say that a context has been established. Only when a context is established, are you allowed to login to C&DS.
+
+
+In the other approach (compare password), we don't actually connect to the LDAP server, but merely compare some hidden attribute (password) that we retrieve from the server. If the compare is successful then we allow login to C&DS. RELATED INFORMATION
+ Need more help? Our C&DS forum is Live! [https://developer.ibm.com/answers/topics/collaboration.html?smartspace=predictive-analytics]

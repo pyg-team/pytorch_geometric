@@ -1,0 +1,35 @@
+Title: IBM Can I use IBM FileNet P8 Content Engine APIs to associate an entry template with a folder? - United States
+
+Text:
+Entry Template Association Programmatically API TECHNOTE (FAQ)
+
+QUESTION
+ A folder can be created using one of the IBM FileNet P8 Content Engine API sets.
+Once the folder is created, I want to programmatically associate an entry template with that folder. 
+
+ANSWER
+To first demonstrate the concept of how entry templates are associated to a folder, this example uses the out of the box IBM Workplace XT and IBM FileNet Enterprise Manager to show how a folder is associated to an entry template: 
+
+ 1. Presume we already have an entry template and folder created but not yet associated. 
+ 2. Associate the entry template with the folder: In IBM Workplace XT, right-click the folder -> Preferences -> Associate Entry Templates..., then choose the entry template you created, click the Add button, then click okay.
+    Optionally, test adding a document / folder to ensure that the entry template is used. 
+ 3. Open IBM FileNet Enterprise Manager and browse to the entry template, right-click -> Properties -> Properties tab -> All Properties option -> click the property value area for the "Version Series" property:
+    [/support/docview.wss?uid=swg21504453&amp;aid=1]
+    In the Version Series Properties dialog -> Properties tab, make note of the id property:
+    [/support/docview.wss?uid=swg21504453&amp;aid=2] 
+ 4. In IBM FileNet Enterprise Manager, browse to the folder to which the entry template was associated. Right-click -> Properties -> Annotations tab. You should see an annotation on the folder:
+    [/support/docview.wss?uid=swg21504453&amp;aid=3]
+    Choose View Content, and note that the Version Series Id matches the version series id for our entry template:
+    [/support/docview.wss?uid=swg21504453&aid=4] [/support/docview.wss?uid=swg21504453&aid=4]
+
+
+The concept of entry templates is a feature of the IBM Workplace XT software. Other than the automatically created document class for "Entry Template", the IBM FileNet P8 Content Engine has no concept of entry template functionality. The IBM FileNet P8 Content Engine is simply storage for the entry template xml content and the metadata that associates a folder to it's entry template. Unfortunately IBM Workplace XT does not offer an API set for such integration. The IBM P8 Content Engine API does have access to the content (folder / entry template objects) and metadata (entry template's version series id, folder's annotation) needed to accomplish creating association. However since the entry template's association is a Workplace XT concept, the Content Engine API does not have any way to validate the XML syntax for the association (folder annotation's xml content) . 
+
+Since there is no official schema or documentation on the XML content needed to create the entry template association, there is no guarantee the syntax will remain constant in the future, If this functionality is required, an enhancement request should be submitted to the Workplace XT product. For anyone that needs this functionality and is not concerned with accomplishing it through a validated schema / API, hopefully this guide can help understand the concepts required.
+
+
+
+PRODUCT ALIAS/SYNONYM
+ IBM Worplace XT
+WPXT
+XT

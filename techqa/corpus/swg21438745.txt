@@ -1,0 +1,36 @@
+Title: IBM Unable to login to the Managing Server console. - United States
+
+Text:
+Unable login MS console EXT_USER octigate Managing Server console USERS octigate table CAMADALL CAMADINST TECHNOTE (TROUBLESHOOTING)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ US English 
+
+PROBLEM(ABSTRACT)
+ Unable to login to the Managing Server console. 
+
+SYMPTOM
+Not able to login to the Managing Server console and the SystemOut.log logfile shows the wrong user being authenticated. 
+
+
+CAUSE
+This problem can happen due to a variety of reasons. One reason may be that the user in the USERS table has the wrong user for the EXT_USER field.
+
+DIAGNOSING THE PROBLEM
+The problem may happen because of the wrong ext_user in the USERS table in the octigate database for the user being used to login to the MS console.
+
+RESOLVING THE PROBLEM
+To resolve the problem, please update the EXT_USER field in the USERS table to the right user name. It must be the same name as the user being used to login to the Managing Server console.
+
+
+
+
+(Note: If you are using the Oracle client (see screenshot here) you must Commit (use the small icon marked in the small red box in the screenshot here) or if you are using DB2, do 'db2 update' command if you have made changes to the EXT_USER field.)
+[/support/docview.wss?uid=swg21438745&aid=1] [/support/docview.wss?uid=swg21438745&aid=1]
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Systems and Asset Management Tivoli Composite Application Manager for Application Diagnostics ITCAM for APPLICATION DIAGNOSTICS Managing Server AIX, AIX 64bit, AIX 6.1, HP-UX, Linux, Solaris, Windows 7.1 All Editions 
+PRODUCT ALIAS/SYNONYM
+ ITCAMAD ITCAM4AD ITCAM for App Diagnostics

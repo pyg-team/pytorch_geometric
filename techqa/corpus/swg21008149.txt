@@ -1,0 +1,14 @@
+Title: IBM How can I specify or change the page size of a DB2 table, given that I cannot specify the page size in the CREATE TABLE and ALTER TABLE statements? - United States
+
+Text:
+page size; buffer pool; table space; buffer pool name; buffer pool size TECHNOTE (FAQ)
+
+QUESTION
+ How can I specify or change the page size of a DB2 table, given that I cannot specify the page size in the CREATE TABLE and ALTER TABLE statements? 
+
+ANSWER
+The page size of a table is determined by the size of the buffer pool of the table space in which the table resides. In the CREATE TABLESPACE statement, the name you specify for the buffer pool determines the size of the buffer pool and therefore the page size of the table space. 
+After a table space is created, you cannot change its buffer pool size. If you want to change the
+page size of a table, drop the table space and re-create it using a buffer pool name that determines the page size you want.
+
+For information about naming buffer pools, see the DB2 SQL Reference. You can view this book for all supported versions of DB2 at the DB2® for z/OS™ and OS/390® library [http://www.ibm.com/software/data/db2/os390/library.html] Web site.

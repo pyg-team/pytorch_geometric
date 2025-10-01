@@ -1,0 +1,102 @@
+Title: IBM Using an MDB that always rolls back a message to test the handling of poison messages (WebSphere MQ V7.x, V8, V9, and WebSphere Application Server V7, V8.x, V9) - United States
+
+Text:
+ WHITE PAPER
+
+ABSTRACT
+ Demonstrate the use of a simple Message Driven Bean (MDB) in WebSphere Application Server V7, which interacts with WebSphere MQ V7 as the Java™ Messaging Service (JMS) provider. This MDB always rolls back a message and therefore indicating it as a “poison message”. This MDB can be used to better understand the handling of poison messages by the WebSphere Application Server and MQ. 
+
+CONTENT
+The document is provided in the attached file: WAS7_MQ7_MDB_PoisonMessages.pdf 
+
+This demonstrates the use of a simple Message Driven Bean (MDB) in WebSphere Application Server V7 and later, which interacts with WebSphere MQ as the Java Messaging Service (JMS) provider. 
+
+Shipped version of MQ RA with WAS:
+- WAS 7.x and 8.0 ship MQ 7.0 Resource Adapter
+- WAS 8.5 ships MQ 7.1 Resource Adapter
+- The MQ V7.5 and V8 JMS clients are NOT shipped with any version of WAS.
+- WAS 9.0 ships MQ 9.0 Resource Adapter.
+
+This MDB always rolls back a message and the transaction does not complete successfully. This action indicates that the message is a “poison message”. This MDB can be used to better understand the handling of poison messages by the WebSphere Application Server and MQ.
+
+Furthermore, with this MDB you can experiment with the different parameters of WebSphere Application Server and WebSphere MQ.
+
+WebSphere Application Server: 
+Listener Port: Maximum retries (default is 0)
+Activation Specification: Number of sequential delivery failures before suspending endpoint (default is 0)
+
+WebSphere MQ: 
+Queue: Backout Threshold => BOTHRESH (default is 0)
+Backout Queue => BOQNAME (default is null)
+
++ What is new in this update:
+
+- On May-2013, the procedures in this techdoc were successfully tested with a queue manager running on MQ 7.5.0.1 and a WAS server 8.5.0.2 (using MQ RA 7.1.0.2).
+
+- On Aug-2016, the procedures were tested with a queue manager running on MQ 9.0.0.0 and a WAS server 9.0.0.0 (using MQ RA 9.0.0.0)
+
+
+This document has the following chapters:
+
+Using Listener Port
+
+Scenario 1 
+
+ *  Setup for Scenario 1: using defaults for Listener Port and Queue 
+ *  Testing of the Scenario 1: using defaults for Listener Port and Queue
+
+
+Scenario 2  * Setup for Scenario 2: using “Maximum retries” (2) for LP and backout queue and backout threshold (1) for Queue 
+ * Testing of the Scenario 2: using “Maximum retries” (2) for LP and backout queue and backout threshold (1) for Queue
+
+
+
+Using Activation Specification 
+
+Scenario 3  * Setup for Scenario 3: using defaults for Activation Specification and Queue 
+ * Testing of the Scenario 3: using defaults for Activation Specification and Queue
+
+
+Scenario 4  * Setup for Scenario 4: using “delivery failures ” (1) for ActSpec and backout queue and backout threshold (1) for Queue 
+ * Testing of the Scenario 4: using “delivery failures” (1) for ActSpec and backout queue and backout threshold (1) for Queue
+
+
+
+Related techdocs and articles  * This techdoc is based on the configuration, deployment and test steps described in the following techdoc: [http://www.ibm.com/support/docview.wss?rs=171&uid=swg27016505]Using WebSphere MQ V7 as JMS Provider for WebSphere Application Server V7, V8.0, and V8.5, and MQ V9.0 for WAS V9.0 
+   
+ * The MDB was created with Rational Application Developer (RAD) 7.5 and the Enterprise Archive File (EAR) file which contains the MDB can be downloaded from this techdoc. For more details on how to create and test this MDB, see the following techdoc: Developing and testing an MDB using RAD 7.5, WebSphere Application Server V7 and MQ V7 as JMS Provider [http://www.ibm.com/support/docview.wss?rs=171&uid=swg27016507] 
+   
+ * Excellent article on Poison Messages: How WebSphere Application Server V6 handles poison messages [http://www.ibm.com/developerworks/websphere/library/techarticles/0803_titheridge/0803_titheridge.html]. This article describes how poison JMS messages can be handled by JMS provided with WebSphere Application Server, how the default behavior can be modified, and how the behavior changes if WebSphere MQ is used as the message service provider. 
+
+
+
+Requisite software  * SUSE Linux Enterprise Server (SLES) 9: 
+ * WebSphere Application Server 7.0.0.5 or later 
+ * WebSphere MQ 7.0.0.2 or later 
+ * Firefox (also known as Mozilla)
+
+
+Downloadable files  * WAS7_MQ7_MDB_PoisonMessages.pdf 
+ * EAR file with MDB: SamplePoisonMsgMdbEjbEAR.ear 
+ * Text file with code excerpt: onMessage-setRollbackOnly.txt
+
+DISCLAIMER: All source code and/or binaries attached to this document are referred to here as "the Program". IBM is not providing program services of any kind for the Program. IBM is providing the Program on an "AS IS" basis without warranty of any kind. IBM WILL NOT BE LIABLE FOR ANY ACTUAL, DIRECT, SPECIAL, INCIDENTAL, OR INDIRECT DAMAGES OR FOR ANY ECONOMIC CONSEQUENTIAL DAMAGES (INCLUDING LOST PROFITS OR SAVINGS), EVEN IF IBM, OR ITS RESELLER, HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES. 
+
+
+WAS7_MQ7_MDB_PoisonMessages.pdf [/support/docview.wss?uid=swg27016582&aid=2]WAS7_MQ7_MDB_PoisonMessages.pdf [/support/docview.wss?uid=swg27016582&aid=1]
+
+File name: WAS7_MQ7_MDB_PoisonMessages.pdf
+File size: 500 KB
+
+SamplePoisonMsgMdbEjbEAR.ear [/support/docview.wss?uid=swg27016582&aid=4] [/support/docview.wss?uid=swg27016582&aid=3]
+File name: SamplePoisonMsgMdbEjbEAR.ear
+File size: 4 KB
+
+onMessage-setRollbackOnly.txt [/support/docview.wss?uid=swg27016582&aid=6] [/support/docview.wss?uid=swg27016582&aid=5]
+File name: onMessage-setRollbackOnly.txt
+File size: 2 KB
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Application Servers WebSphere Application Server Java Message Service (JMS) AIX, HP-UX, Linux, Solaris 9.0.0.0, 8.5, 8.0, 7.0 Business Integration IBM MQ PRODUCT ALIAS/SYNONYM
+ WebSphere MQ WMQ Application Server WAS WSAS

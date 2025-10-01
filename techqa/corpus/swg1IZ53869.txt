@@ -1,0 +1,147 @@
+Title: IBM IZ53869: BMXAA4210E - DATABASE ERROR NUMBER 1795 HAS OCCURRED. ORA-01795: MAXIMUM NUMBER OF EXPRESSIONS IN A LIST IS 1000 - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  SRM Catalog search gets this error:
+   
+   BMXAA4210E - Database error number 1795 has occurred.
+   ORA-01795: maximum number of expressions in a list is 1000
+   
+   SystemErr.log shows:
+   --------------------------(begin)-------------------------------
+   [6/18/09 10:32:20:996 CDT] 00000060 SystemErr     R
+   java.sql.SQLException: ORA-01795: maximum number of expressions
+   in a list is 1000
+   
+   [6/18/09 10:32:21:002 CDT] 00000060 SystemErr     R  at
+   oracle.jdbc.driver.DatabaseError.throwSqlException(DatabaseError
+   .java:112)
+   ---------------------------(end)--------------------------------
+   
+   Development looked into this and determined the error was
+   because the ServiceCatalog search is hitting an Oracle
+   limitation that our search should have coded a check.  For
+   ServiceDesk the search just displays the first 500 objects or
+   the value set in Maximo property GlobalSearch.maxCount.
+   ServiceCatalog's search does not have the limitation check for
+   this error message and needs to work the same way as the
+   ServiceDesk search.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  The work-around is simple.  When you get this error it means
+   your search is too broad and would take too long.  So, add to
+   your search string.  You can add using the + sign as this is
+   the AND operator.  That is, if you did a search for "equipment
+   + server" and get this error, then narrow the search with
+   something like "equipment + server + error".
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  BMXAA4210E - DATABASE ERROR NUMBER 1795 HAS OCCURRED.
+   ORA-01795: MAXIMUM NUMBER OF EXPRESSIONS IN A LIST IS 1000
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix for this APAR will be delivered via TSRM 7.1.0.5.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ53869
+   
+   
+ * REPORTED COMPONENT NAME
+   TIV SERVICE CAT
+   
+   
+ * REPORTED COMPONENT ID
+   5724S85C0
+   
+   
+ * REPORTED RELEASE
+   710
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-06-23
+   
+   
+ * CLOSED DATE
+   2009-07-08
+   
+   
+ * LAST MODIFIED DATE
+   2009-11-16
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TIV SERVICE DES
+   
+   
+ * FIXED COMPONENT ID
+   5724S85D0
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R710 PSY
+   UP

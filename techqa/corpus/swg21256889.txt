@@ -1,0 +1,35 @@
+Title: IBM How to open a .dnx file in Rational Software Modeler - United States
+
+Text:
+rsa; rsm; rad; diagram; visualized; java; open; import; migrate; share; rsd; harvest; 45938; 1256889 TECHNOTE (FAQ)
+
+QUESTION
+ How can you open a visualized Rational® Application Developer for WebSphere® Software diagram (.dnx) file in IBM® Rational Software Modeler? 
+
+CAUSE
+Rational Software Modeler (RSM) does not have the visualize capability, so you cannot open a .dnx file directly in RSM.
+
+ANSWER
+Below are the steps you will need to perform: 
+
+ 
+
+ 1. Install Rational Software Architect (RSA) or Rational System Developer (RSD) on a computer 
+    
+    Note: You can install the trial version of RSA or RSD by getting either from the Trials and demos site: http://www14.software.ibm.com/webapp/download/brand.jsp?b=Rational [http://www14.software.ibm.com/webapp/download/brand.jsp?b=Rational]
+    
+ 2. Bring the Rational Application Developer project into RSA or RSD
+    
+ 3. Perform a Harvest on the code by following technote 1237770: How to harvest Java code into Rational Software Architect [http://www.ibm.com/support/docview.wss?rs=2044&uid=swg21237770] 
+    
+ 4. Bringing the .emx from RSA or RSD, launch RSM; go to File > Import > File System and import the .emx file.
+
+
+
+
+
+
+
+
+
+Cross Reference information Segment Product Component Platform Version Edition Software Development Rational Software Architect Harvesting Software Development Rational Systems Developer Harvesting Software Development Rational Application Developer for WebSphere Software Modeling

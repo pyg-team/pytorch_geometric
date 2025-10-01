@@ -1,0 +1,109 @@
+Title: IBM LDAP User Password Expiry Issue - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ English 
+
+PROBLEM(ABSTRACT)
+ LDAP User Password Expiry Issue 
+
+SYMPTOM
+Why does my LDAP user's password expire when maxage is set?
+
+
+CAUSE
+AIX did not handle password aging correctly for LDAP users when maxage is set 
+
+locally in /etc/security/user file.
+
+
+ENVIRONMENT
+AIX prior to 7100-04
+
+
+
+DIAGNOSING THE PROBLEM
+Typically with a non-AIX LDAP server, such as Windows ADS, it will only support a subset of native AIX attributes so many security attributes 
+like maxage will be obtained from the default stanza in the /etc/security/user file.
+
+Earlier levels of AIX did not enforce password aging for LDAP users when maxage was obtained locally. 
+
+
+After applying the patches, AIX will attempt to enforce password aging and will fail now if it is not set up correctly.
+
+To calculate if a password has expired using native AIX maxage attribute, the following information is needed:
+- current date
+- date when password was last updated
+- how much time password will be valid
+
+For local users:
+- last update info is found in the /etc/security/passwd file
+- password duration is determined by maxage in /etc/security/user file
+
+For LDAP users:
+- last update is obtained from LDAP user entry based on the user map file (user.map)
+note the following line:
+lastupdate SEC_INT shadowLastChange s days yes
+
+The map entry above tells AIX to attempt to find the last update value in the LDAP user entry by looking up the value of the shadowLastChange 
+attribute.
+Furthermore, if the value of shadowLastChange is found, interpret that value as days since Unix epoch.
+
+- maxage is mapped as follows
+maxage SEC_INT shadowMax s na yes
+AIX will attempt checking the LDAP user entry for a shadowMax attribute, and if found, will set the user's maxage to value 0 shadowMax.
+
+If shadowMax is not found, then AIX will attempt to look up the default value of maxage, which can be on LDAP or in the local 
+/etc/security/user file.
+
+Non-AIX servers don't typically have a default user entry, so AIX will get maxage from the local /etc/security/user file.
+
+For example, the ldap user can have shadowmax or shadowlastchange attributes, but maxage is set in the local default stanza, so AIX 
+will properly expire the user.
+
+If the user entry does have shadowlastchange attribute and valid value set, then maxage should work properly.
+If there is a similar attribute that represents when the password was last updated, then the user map file can be changed to look at the 
+alternate value.
+
+However, Windows ADS and other non-AIX LDAP servers typically have their own password policies and may not have user attributes that are 
+compatible with AIX.
+
+In such cases, it would be best to set maxage to zero for all LDAP users.
+
+
+RESOLVING THE PROBLEM
+Knowing that maxage can be obtained from three different places -- user entry on LDAP, default user entry on LDAP, default user entry in 
+
+/etc/security/user file -- here are the possible solutions:
+
+1) Populate each LDAP user entry with shadowMax attribute and set it to zero.
+The user specific entry will override any default entries.
+
+2) Add a default user entry on LDAP server and set shadowMax to zero in default entry
+Here's an example of what a user entry might look like on Windows:
+dn: CN=default,CN=Users,DC=iceweb1,DC=ice,DC=dhs,DC=gov
+objectClass: top
+objectClass: person
+objectClass: organizationalPerson
+objectClass: user
+cn: default
+sn: default
+distinguishedName: CN=default,CN=Users,DC=iceweb1,DC=ice,DC=dhs,DC=gov
+shadowmin: 0
+shadowmax: 0
+...
+
+You would need to check with Windows support to see how to add the default user.
+
+3) Set maxage (and minage) to zero in default stanza in /etc/security/user file
+Obviously this would also affect all local users so you would have to set minage/maxage to desired values for the local users in the user
+
+specific stanza.
+For example, for local user bob:
+bob:
+SYSTEM =compat
+registry = files
+minage = 2
+maxage = 10

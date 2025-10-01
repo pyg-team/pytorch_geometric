@@ -1,0 +1,74 @@
+Title: IBM How To Generate an Authorization or License Key for your SPSS product - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How to create an Authorization Code or License Key to activate the installation of SPSS products. 
+
+CAUSE
+Do not have an authorization code or license key for SPSS software
+
+ANSWER
+ 
+
+To generate an authorization code or license key for your SPSS product, you will need to access the License Key Center. If you do not have access, please refer to the Accessing the License Key Center documentation (#1968941) [http://www.ibm.com/support/docview.wss?uid=swg21968941] 
+
+Generating an Authorization code: 
+
+Once logged in to the license key center, select the product and version you want to generate an authorization code for 
+
+1 - You will see Quantity Purchased and Quantity Available 
+
+2 - If Quantity = 0, it means the code(s) have already been generated. Select the 'view codes' link to view your code(s) 
+
+3 - If there is Quantity Available select Generate 
+
+4 - Choose desired quantity 
+
+5 - Select 'Create Multiple codes' or 'One code' for quantity requested, click Next 
+
+6 - Confirm Quantity, click Next 
+
+7 - Choose New License or Add a feature radio button (See Examples above your choice), click Next 
+
+8 - Confirm installation type Selection, click Next 
+
+9 - Add features if you want (and are) available, click Next 
+
+10 - Select Dongle option (do not check), click Next 
+
+11 - Choose expiration date or leave blank for default, click Next 
+
+12 - Add comments (not needed, only used for internal tracking) 
+
+13 - Select Create Authorization code 
+
+Generating a license key from your authorization code: 
+
+Some installations require a license key rather than an authorization code. Such situations are: 
+
+- your system does not have internet access 
+
+- your company's security protocols do not allow your system to access the internet to generate a license key for your software. In this case you will need to generate a license key for your software. 
+
+Once you have generated an authorization code for your requested version: 
+
+1 - Select the code 
+
+2 - Enter end user's Lock code (the lock code is found by drilling down into the installation files and double clicking on the echoid.exe file) 
+
+3 - Select Activate 
+
+- Copy and paste the resulting license into the License Authorization Wizard to license the software.
+
+RELATED INFORMATION
+ Get more Statistics answers [https://developer.ibm.com/answers/topics/spsslicensing.html]
+Welcome to IBM SPSS Help and Support [https://www.ibm.com/analytics/us/en/spss/spss-support/]
+How to Access the IBM License Key Center for your SPSS [http://www.ibm.com/support/docview.wss?uid=swg21968941]
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Analytics SPSS Amos Business Analytics SPSS Text Analytics for Surveys Business Analytics SPSS Modeler Business Analytics SPSS Statistics Business Analytics SPSS SamplePower Business Analytics SPSS Visualization Designer

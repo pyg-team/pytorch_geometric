@@ -1,0 +1,123 @@
+Title: IBM PJ39412: CHANGING THE CONTENT ENGINE CONTEXT ROOT FROM THE DEFAULT VALUE CAUSES THE FILENET P8 HEALTH PAGE TO FAIL. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  For Customer is upgrading from 4.5.1.0-P8CE to 5.0.0.0-P8CE,  if
+   you change the Content Engine Context
+   Root from the default, it will cause the P8Health Page to fail
+   to initialize or display any information.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * All users for Content Engine (CE) 5.0.0.0-P8CE.              *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * For a Content Engine (CE) 5.0.0.x-P8CE system, if you change *
+   * the Content Engine Context                                   *
+   * Root from the default, it will cause the P8 Health Page to   *
+   * fail to initialize or display any information.               *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Upgrade to product version 5.0.0.1-P8CE-FP001 or later       *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Content Engine (CE) 5.0.0.1-P8CE-001 and higher: Web Tools -
+   Health/Perf/Ping
+   Now the context path is retrieved dynamically at runtime using
+   HttpServletRequest object. Replaced all hard-coded paths in JSPs
+   and Health Servlet.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PJ39412
+   
+   
+ * REPORTED COMPONENT NAME
+   CONTENT ENGINE
+   
+   
+ * REPORTED COMPONENT ID
+   5724R8101
+   
+   
+ * REPORTED RELEASE
+   500
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-09-08
+   
+   
+ * CLOSED DATE
+   2012-07-30
+   
+   
+ * LAST MODIFIED DATE
+   2012-07-30
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R500 PSY
+   UP

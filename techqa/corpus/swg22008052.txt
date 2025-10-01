@@ -1,0 +1,11 @@
+Title: IBM Where do I find the documentation so that I can modify CDC metadata tables? - United States
+
+Text:
+CDC; metadata tables TECHNOTE (FAQ)
+
+QUESTION
+ Where do I find the documentation so that I can modify CDC metadata tables? 
+
+ANSWER
+The CDC metadata tables are not documented. The metadata tables are created and maintained by CDC. Q Rep allows the modification of the metadata for configuration etc, but that is not an allowed practice for CDC. The external interfaces such as the Management Console (MC), CHCCLP, and MC Java APIs are the supported interfaces to the engines (agents) which will modify the metadata. The APIs have maintained compatibility over the years, whereas the metadata has changed many times.
+Notes: Above information is for your reference. Contact IBM support if you find other information or observe some symptom which cannot be explained by above. This information may be changed in future release.

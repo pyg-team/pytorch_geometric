@@ -1,0 +1,25 @@
+Title: IBM Operational Decision Manager on Cloud - Detailed System Requirements - United States
+
+Text:
+ DETAILED SYSTEM REQUIREMENTS
+
+ABSTRACT
+ This page provides links to the detailed system requirements (DSR) of IBM Operational Decision Manager (ODM) on Cloud, and information on the product's compatibility with the on-premises Operational Decision Manager. 
+
+CONTENT
+IBM ODM on Cloud is a web-based environment for developing rule-based applications. It uses a set of components that include Rule Designer, Rule Execution Server, and the Decision Center Business and Enterprise consoles.
+
+
+
+
+To view the system requirements for IBM ODM on Cloud, see IBM Operational Decision Manager on Cloud Detailed System Requirements [http://www-969.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=63981920903B11E49803C6F06C4301C6]. 
+
+For information on the compatibility of IBM ODM on Cloud with the on-premises IBM Operational Decision Manager, see IBM Operational Decision Manager on Cloud Compatibility [http://www.ibm.com/support/docview.wss?uid=swg21966923].
+
+Note: Your entitlement to support, if any, is dependent upon your license and maintenance agreements for IBM ODM on Cloud and its components.
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Operational Decision Manager Not Applicable Platform Independent 8.9.0.3, 8.9.0.2, 8.9.0.1, 8.9, 8.8.1.3, 8.8.1.2, 8.8.1.1, 8.8.1.0, 8.8.0.1, 8.8, 8.7.1.2, 8.7.1.1, 8.7.1 Business Integration IBM Operational Decision Manager Advanced Platform Independent 8.9.0.3, 8.9.0.1, 8.9, 8.8.1.3, 8.8.1.2, 8.8.1.1, 8.8.1.0, 8.8.0.1, 8.8, 8.7.1.2, 8.7.1.1, 8.7.1 Business Integration IBM Operational Decision Manager Express Not Applicable Platform Independent 8.9.0.3, 8.9.0.1, 8.9, 8.8.1.3, 8.8.1.2, 8.8.1.1, 8.8.1.0, 8.8.0.1, 8.8, 8.7.1.2, 8.7.1.1, 8.7.1

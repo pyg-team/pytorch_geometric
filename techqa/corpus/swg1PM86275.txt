@@ -1,0 +1,141 @@
+Title: IBM PM86275: JAVA.LANG.CLASSNOTFOUNDEXCEPTION RUNNING SECURITYUTILITY AND PRO DUCTINFO COMMANDS - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The securityUtility and productInfo commands are not able to
+   deal with paths that contain spaces. An exception is thrown
+   with the following stack trace
+   
+   Exception in thread "main" java.lang.ClassNotFoundException:
+   com.ibm.ws.security.utility.SecurityUtility
+   at
+   java.net.URLClassLoader.findClass(URLClassLoader.java:423)
+   at java.lang.ClassLoader.loadClass(ClassLoader.java:660)
+   at java.lang.ClassLoader.loadClass(ClassLoader.java:626)
+   at
+   com.ibm.ws.kernel.boot.cmdline.Main.main(Main.java:135)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  All users of IBM WebSphere Application      *
+   *                  Server Liberty Profile                      *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: The productInfo and securtityUtility    *
+   *                      commands do not work properly when      *
+   *                      installed into a path containing a      *
+   *                      space.                                  *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   The productInfo and securtityUtility commands do not work
+   properly when installed into a path containing a space.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The productInfo and securityUtility commands were updated to
+   cope with being installed into a path that contains a space.
+   
+   The fix for this APAR is currently targeted for inclusion in
+   fix pack 8.5.5.0. Please refer to the Recommended Updates page
+   for delivery information:
+   http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM86275
+   
+   
+ * REPORTED COMPONENT NAME
+   LIBERTY PROFILE
+   
+   
+ * REPORTED COMPONENT ID
+   5724J0814
+   
+   
+ * REPORTED RELEASE
+   850
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-04-04
+   
+   
+ * CLOSED DATE
+   2013-06-05
+   
+   
+ * LAST MODIFIED DATE
+   2013-06-05
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   LIBERTY PROFILE
+   
+   
+ * FIXED COMPONENT ID
+   5724J0814
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R850 PSY
+   UP

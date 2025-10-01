@@ -1,0 +1,33 @@
+Title: IBM Non-Admin users are unable to show Change Requests - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Non-Admin users are unable to show Change Requests 
+
+ANSWER
+
+
+ This issue usually shows the following behavior. When a user who does not have the pt_admin role logs into Change (4.5 or higher) he would be unable to do a show of any CR 
+
+The user may encounter the error: >  "(red x) Change Request does not exist" 
+or the following error during a query: >   "No matches found" when the user queried for an existing CR. 
+
+
+However, the CR does appear if the user has PT_Admin/CCM_Admin privileges.  This behavior is usually caused by new feature called ACL's (Access Control Lists) in Telelogic Change (starting from 4.5 and higher). If this option has been accidentally set, users may encounter the above error. 
+
+ 
+
+To correct this:  1.  Login to Telelogic Change with Admin role 
+ 2.  Go to ACL's tab 
+ 3.  Click 'Edit' in front of Change Request check box 
+ 4.  In the Manage Access Control Lists -> Change Requests window change access from 'deny' to 'allow' for 'All unmatched change requests'. 
+ 5.  Click 'save' 
+
+ Users should be able to re-login and view these CRs after this step. If the error persists please contact Telelogic Technical Support with the necessary logs for further diagnosis of other possible causes. 
+
+4.5, 4.6, 4.6.1, 4.7AnswerProduct versionPartner ContentInternal ContentCategoryReference IDAutho 
+
+HISTORICAL NUMBER
+ 11201

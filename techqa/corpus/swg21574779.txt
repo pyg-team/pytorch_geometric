@@ -1,0 +1,61 @@
+Title: IBM Application server hang occurs after period of server idleness - United States
+
+Text:
+ldap; timeout; WTRN0006W; WTRN0124I; socket; hang; poolTimeout TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+After the WebSphere Portal server sits idle for a period of time which exceeds the firewall and/or LDAP connection timeout, the application server can hang and users may be unable to interact with the application server.
+
+SYMPTOM
+ The application server hangs and users are unable to interact with the server.
+
+
+ENVIRONMENT
+Firewall between WebSphere Portal and LDAP servers
+
+DIAGNOSING THE PROBLEM
+Collect the following information from the server hang 
+
+- thread dumps as documented in the Collecting Data [http://www.ibm.com/support/docview.wss?rs=688&uid=swg21316528] document for the applicable platform
+- application server trace using the following trace string:
+com.ibm.ws.security.*=all:com.ibm.ws.wim.*=all:
+com.ibm.websphere.wim.*=all:com.ibm.wsspi.wim.*=all
+
+search the SystemOut.log for these messages: 
+
+[datestamp] 00000009 TimeoutManage I WTRN0006W: Transaction [ID #] has timed out after 120 seconds.
+
+[datestamp] 00000009 TimeoutManage I WTRN0124I: When the timeout occurred the thread with which the transaction is, or was most recently, associated was Thread[WebContainer : 6,5,main]. The stack trace of this thread when the timeout occurred was: 
+java.net.PlainSocketImpl.socketConnect(Native Method)
+java.net.PlainSocketImpl.doConnect(PlainSocketImpl.java:352)
+java.net.PlainSocketImpl.connectToAddress(PlainSocketImpl.java:214)
+java.net.PlainSocketImpl.connect(PlainSocketImpl.java:201)
+java.net.SocksSocketImpl.connect(SocksSocketImpl.java:378)
+java.net.Socket.connect(Socket.java:537)
+java.net.Socket.connect(Socket.java:487)
+java.net.Socket.<init>(Socket.java:384)
+java.net.Socket.<init>(Socket.java:198) 
+com.sun.jndi.ldap.Connection.createSocket(Connection.java:364) 
+
+
+RESOLVING THE PROBLEM
+Update the LDAP configuration via the Integrated Solutions Console to introduce a context pool timeout value greater than 0 but less then the LDAP and/or firewall connection timeout(s) in order to remove idle context instances. See the Related information for further details. 
+
+Note: The end result will be that the wimconfig.xml under <profile>/config/cells/<cellname>/wim/config/ is updated for the 'poolTimeout' parameter: 
+
+<config:repositories xsi:type="config:LdapRepositoryType" ... id="repositoryid" ...>
+...
+<config:contextPool enabled="true" initPoolSize="1" maxPoolSize="20" poolTimeOut="120"poolWaitTime="3000" prefPoolSize="3"/>
+...
+
+
+RELATED INFORMATION
+#Limiting LDAP connections [http://www-01.ibm.com/support/docview.wss?uid=swg21392092]
+Tuning access to the LDAP server [http://pic.dhe.ibm.com/infocenter/wasinfo/v7r0/topic/com.ibm.websphere.wim.doc/tuningtheaccesstotheldapserver.html]
+LDAP performance settings [http://pic.dhe.ibm.com/infocenter/wasinfo/v7r0/topic/com.ibm.websphere.zseries.doc/info/zseries/ae/uwim_ldapperfsettings.html]
+
+
+
+
+ * 
+ *

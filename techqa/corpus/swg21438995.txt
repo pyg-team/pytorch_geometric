@@ -1,0 +1,40 @@
+Title: IBM Special characters like ampersand in LDAP Bind Password can cause installation failure during Federated Repository Configuration step - United States
+
+Text:
+install fail repository ldap password bind ampersand TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+When you are installing the Sametime Meeting server, the installation fails during the Federated Repository configuration step with the following error noted in the log: 
+
+"ERROR
+[exec] [wplc-create-federated-ldap-server] [Fatal Error] :1:21: The reference to entity "athird1" must end with the ';' delimiter." 
+
+The installation stalls, and you are unable to proceed.
+
+
+CAUSE
+This error is caused by a special character in the LDAP bind Password, for example, an ampersand (&).
+
+
+
+DIAGNOSING THE PROBLEM
+You can collect and review installation logs to determine the problem cause. 
+
+1. Make sure you have the appropriate debug enabled, then refer to "Log file locations" [http://publib.boulder.ibm.com/infocenter/sametime/v8r5/topic/com.ibm.help.sametime.v85.doc/trouble/trbl_intro_log_collection.html] to collect the entire install logs. 
+
+2. Review the logs specifically in the ant and native folders. 
+
+3. In this case, the following error was captured in the logs: 
+
+"[exec] [wplc-create-federated-ldap-server] [Fatal Error] :1:21: The reference to entity "athird1" must end with the ';' delimiter."
+
+
+RESOLVING THE PROBLEM
+This issue was reported as SPR# TPAE86QSXY [http://www.lotus.com/ldd/stfixlist.nsf/SPR/TPAE86QSXY], and has been fixed in Sametime 8.5.2. 
+
+
+For earlier versions, because the LDAP plan is already federated by the Sametime System Console, (SSC) you cannot update the password if it is changed. Use one of the following options as a workaround:
+
+
+ * Use a bind account that does not have an "&" in the password, or use anonymous bind 
+ * Install the server(s) without SSC, and then register them manually. See "Registering an upgraded Community Server with the System Console." [http://publib.boulder.ibm.com/infocenter/sametime/v8r5/index.jsp?topic=/com.ibm.help.sametime.v85.doc/migrate/upgr_st_registerserver_winux.html]

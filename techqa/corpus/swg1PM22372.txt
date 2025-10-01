@@ -1,0 +1,179 @@
+Title: IBM PM22372: SQQMNAME(IGNORE) MAY NOT WORK AS INTENDED IF THE LOCAL AND      REMOTE QUEUE MANAGERS ARE PART OF A CLUSTER - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The QMGR attribute SQQMNAME controls how the ObjectQmgrName is
+   treated for puts to shared queues. This attribute defaults to
+   'USE', which means that the ObjectQmgrName will be used in name
+   resolution and the appropriate transmission queue will be used.
+   See the Name Resolution chart at
+   http://publib.boulder.ibm.com/infocenter/wmqv7/v7r0/topic/com.ib
+   m.mq.csqzal.doc/fg12170_.htm [http://publib.boulder.ibm.com/infocenter/wmqv7/v7r0/topic/com.ibm.mq.csqzal.doc/fg12170_.htm]
+   The resolved name might be SYSTEM.CLUSTER.TRANSMIT.QUEUE or
+   SYSTEM.QSG.TRANSMIT.QUEUE
+   .
+   The alternative is to set it to 'IGNORE'.  This means that the
+   ObjectQmgrName will be ignored, and the put will be performed
+   locally if the queue is shared and ObjectQmgrName specifies a
+   queue manager in the same Queue Sharing Group (QSG).
+   .
+   This attribute does not (and should not) apply to cluster
+   queues.  However, the check on whether the queue is a cluster
+   queue also incorrectly catches the case where the queue is not
+   clustered, but the route to the remote queue manager that has
+   been found is a cluster channel. For such cases the default
+   behavior will still be used, regardless of the setting of
+   SQQMNAME.
+   .
+   If SQQMNAME(IGNORE) works correctly, messages are put directly
+   to the shared queue, which may improve performance slightly over
+   sending the messages over a channel.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All users of WebSphere MQ for z/OS Version 7 *
+   *                 Release 0 Modification 1.                    *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Messages put to a shared queue using a  *
+   *                      fully qualified remote name are not     *
+   *                      put directly to the queue when SQQMNAME *
+   *                      is set to IGNORE.                       *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   When putting to a remote queue on a qmgr in the same qsg as the
+   local qmgr, messages should be put directly to the shared queue
+   by the local qmgr instead of being sent via channels/IGQ if the
+   qmgr object specifies SQQMNAME(IGNORE).
+   If there is no default xmitq for the remote qmgr (i.e. a queue
+   with the same name as the remote qmgr), and both qmgrs belong
+   to the same cluster, CSQMOPEN will open the cluster transmit
+   queue and use the existing cluster channel to put the message.
+   If SQQMNAME(IGNORE) is set, it incorrectly assumes that the
+   queue must be clustered, and so cannot be put to directly and
+   continues to send the message over the channel.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  CSQMOPEN is changed to allow SQQMNAME(IGNORE) to take effect
+   when putting to non-clustered shared queues on another qmgr in
+   the qsg, even if the qmgrs are in a cluster.
+   010Y
+   CSQMOPEN
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM22372
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ Z/OS V7
+   
+   
+ * REPORTED COMPONENT ID
+   5655R3600
+   
+   
+ * REPORTED RELEASE
+   010
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-09-13
+   
+   
+ * CLOSED DATE
+   2010-09-30
+   
+   
+ * LAST MODIFIED DATE
+   2010-11-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    PM22462 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM22462] UK61047
+   
+   
+
+MODULES/MACROS
+ *  CSQMOPEN
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ Z/OS V7
+   
+   
+ * FIXED COMPONENT ID
+   5655R3600
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R010 PSY UK61047 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK61047]
+   UP10/10/15 P F010
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

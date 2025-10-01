@@ -1,0 +1,35 @@
+Title: IBM Alternate IPL from Fibre-Attached Tape Drives - United States
+
+Text:
+fibre; INSTALL; scratch install TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This document provides requirements to IPL from fibre-attached tape resources. 
+
+RESOLVING THE PROBLEM
+This document provides requirements to IPL from fibre-attached tape resources. 
+
+You can do an alternate IPL from a fibre-attached tape drive, if the following conditions are met:
+
+o The system is POWER6, POWER7, or POWER8 hardware.
+o The system is HMC-managed.
+o The system is running IBM i 6.1.0 or higher of the IBM i operating system.
+o The tape drive is attached to an IOP-less IOA.
+
+Notes: 
+
+1. Refer to the IBM i DeveloperWorks wiki for more information on IOP-less IOA support for various tape devices and required PTFs for IOP-less attachment: IBM Removable Media on IBM i [https://www.ibm.com/developerworks/community/wikis/home?lang=en#/wiki/IBM%20Removable%20Media%20on%20IBM%20i] 
+http://www.ibm.com/developerworks/community/wikis/home?lang=en#!/wiki/IBM%20Removable%20Media%20on%20IBM%20i/page/Alternate%20restart%20%28D-IPL%29%20device%20rules [https://www.ibm.com/developerworks/community/wikis/home?lang=en#!/wiki/IBM%20Removable%20Media%20on%20IBM%20i/page/Alternate%20restart%20%28D-IPL%29%20device%20rules] 2. Refer to IBM Knowledge Center Info:
+
+V6R1: http://www.ibm.com/support/knowledgecenter/en/ssw_ibm_i_61/rzarm/rzarmusaid.htm [http://www.ibm.com/support/knowledgecenter/en/ssw_ibm_i_61/rzarm/rzarmusaid.htm]
+
+V7R1: http://www.ibm.com/support/knowledgecenter/en/ssw_ibm_i_71/rzarm/rzarmenabaid.htm [http://www.ibm.com/support/knowledgecenter/en/ssw_ibm_i_71/rzarm/rzarmenabaid.htm]
+
+V7R2: http://www.ibm.com/support/knowledgecenter/en/ssw_ibm_i_72/rzarm/rzarmenabaid.htm [http://www.ibm.com/support/knowledgecenter/en/ssw_ibm_i_72/rzarm/rzarmenabaid.htm]
+
+V7R3: http://www.ibm.com/support/knowledgecenter/en/ssw_ibm_i_73/rzarm/rzarmusaid.htm [http://www.ibm.com/support/knowledgecenter/en/ssw_ibm_i_73/rzarm/rzarmusaid.htm] 3. When using a fibre switch and there are multiple tape drives in the same zone on the fibre switch with the IOA, the IOA is able to see all of the drives and the system will search for any installation media; the system may find the wrong tape if there is installation media loaded on more than one drive. It is recommended to either use a direct-attached drive or create a zone on the fibre switch that only has the one drive in it for installing from fibre channel attached tape. 
+
+
+Cross reference information Segment Product Component Platform Version Edition Operating System IBM i 7.2 Operating System IBM i 7.1 Operating System IBM i 6.1 Operating System IBM i 7.3 
+HISTORICAL NUMBER
+ 548707652

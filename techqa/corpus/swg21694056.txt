@@ -1,0 +1,114 @@
+Title: IBM WMB/IIB MustGather: Problems with Hangs, High CPU and Performance - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ You are experiencing High CPU and Performance problems in IBM Integration Bus (IIB) or WebSphere Message Broker (WMB). You would like to know what documentation you must collect (MustGather) so that the IBM Integration Bus / WebSphere Message Broker Support team can diagnose your problem. If you gather this documentation before contacting support it will expedite the troubleshooting process, and save you time. 
+
+RESOLVING THE PROBLEM
+
+
+
+STEP 1: SELF-GUIDED TROUBLESHOOTING
+
+ 1. Message flow accounting and statistics [http://www.ibm.com/developerworks/websphere/library/techarticles/0710_piatek/0710_piatek.html] can be started and viewed in IBM Integration Explorer to monitor the message flows processing messages when such a problem is experienced. Also check the following example in the Knowledge Center. [http://www.ibm.com/support/knowledgecenter/SSMKHH_9.0.0/com.ibm.etools.mft.doc/ac19050_.htm] 
+    By reviewing the data, you can isolate the problem down to a specific message flow node where the problem may be occurring. For example: average elapsed time (in milliseconds), average CPU time and the number of times a node is invoked can help you identify a particular node that may be a bottleneck. 
+ 2. 
+ 3. Check for known issues:
+    IIB diagnostic tools guide [http://www.ibm.com/support/knowledgecenter/en/SSKM8N/pdguides/clientDiagnostics.html?sc=_latest]
+    How to use the flow analysis to find further performance problems [https://developer.ibm.com/integration/blog/2014/03/20/how-to-use-the-flow-analysis-to-find-further-performance-problems/]
+    IIB and WMB FAQ for memory [http://www.ibm.com/support/docview.wss?uid=swg21665926&acss=dakc]
+    Dynamic guide to help troubleshooting Message Broker [https://developer.ibm.com/integration/docs/ibm-integration-bus/troubleshooting/dynamic-problem-determination-guides/]
+    Troubleshooting performance problems [http://www.ibm.com/support/knowledgecenter/SSMKHH_9.0.0/com.ibm.etools.mft.doc/bj28660_.htm?lang=en]
+    Message splitter pattern [http://www.ibm.com/support/knowledgecenter/SSMKHH_9.0.0/com.ibm.etools.mft.pattern.mbi.doc/mbi/ms/overview.htm?lang=en]
+    [http://www.ibm.com/software/htp/cics/tserver/support/]IBM Integration Bus support site [https://www-947.ibm.com/support/entry/myportal/product/websphere/ibm_integration_bus?productContext=-1766202334]
+    
+
+
+
+STEP 2: COLLECT DATA
+
+ 1.  mqsidc
+     See: mqsidc usage instructions [http://www.ibm.com/support/knowledgecenter/SSMKHH_9.0.0/com.ibm.etools.mft.doc/bu46012_.htm]
+      * This command line tool is only available for WMB 7.0.0.5+, WMB 8.0.0.1+, IIB 9.0.0.0+, and IIB 10.0.0.0+.
+      * When running the tool, select the option for 'Broker Collector', when prompted.
+     
+     
+ 2.  
+ 3.  
+ 4.  Message flow accounting and statistics
+     See: Procedure for collecting accounting and statistics data as XML messages [http://www.ibm.com/support/docview.wss?uid=swg21678313] [http://www.ibm.com/support/docview.wss?uid=swg21678312] 
+ 5.  
+ 6.  
+ 7.  Stack dump In hang situations, collect 4-5 stack dumps of the threads running in the DataFlowEngine with a gap of about 10 seconds each.
+     Use these commands, where <PID> is the process ID of the DataFlowEngine:
+     
+     
+      * procstack <PID> (On AIX)
+      * pstack <PID> (On Linux, Solaris)
+     
+     
+     
+     
+ 8.  
+ 9.  
+ 10. Project Interchange files for the problematic flow/set/ESQL/model
+      * You can export your Message Flow and Message Set project(s) into an archive file for easy transmission to IBM Support.
+        See: Exporting files from the Workbench [http://www.ibm.com/support/knowledgecenter/SSMKHH_9.0.0/com.ibm.etools.mft.doc/ax20230_.htm?cp=SSMKHH_9.0.0%2F1-2-4] 
+     
+     
+ 11. 
+ 12. 
+ 13. Traces If the problem occurs during a runtime test or with the Toolkit test facility, WMB execution group traces [http://www.ibm.com/support/docview.wss?rs=849&uid=swg21177321] can be used to gain a better understanding of the problem.  * A service level trace [http://www.ibm.com/support/docview.wss?rs=849&uid=swg21177321#2] is intended to be provided to IBM Support to assist in the diagnosis of your issue. Please run the service level trace independently and not while the above other items are being collected
+     
+     
+ 14. 
+ 15. 
+ 16. General Broker information
+     If the mqsidc tool was not run, then capture this information manually  * Record the IBM Integration Bus or WebSphere Message Broker version, release, and maintenance level.
+        This can be captured using the command 'mqsiservice -v'..
+      * Record the operating system version, release, and maintenance level.
+      * Record the version, release, and maintenance level of any related products and components for the problematic application.
+      * Collect the local error log. On UNIX and Linux systems, the local error log is the syslog. The location of your syslog is configured in the syslog daemon.
+        See: Configuring the syslog daemon [http://www.ibm.com/support/knowledgecenter/SSMKHH_9.0.0/com.ibm.etools.mft.doc/an04230_.htm]
+      * Collect the Standard Output/Error logs.
+        WMB writes information to both STDOUT and STDERR. These files are located under the Message Broker workpath.
+        See: Standard System Logs [http://www.ibm.com/support/knowledgecenter/SSMKHH_9.0.0/com.ibm.etools.mft.doc/au14165_.htm]
+     
+     
+ 17. 
+ 18. 
+ 19. Additional information  * Output of command: mqsilist -r -d2 
+     
+     
+
+
+
+ATTENTION: A good problem description is one of the most important tools IBM needs to analyze your data!
+When sending data to IBM, be sure to update your PMR or send a note with the following information:
+
+ *  Tell us what errors you saw, where you saw them, and what time they happened Let us know if you made any changes to WebSphere Message Broker or the system before the problem Share any other observations which you think will help us to better understand the problem 
+
+
+
+STEP 3: SUBMIT DATA TO IBM
+
+ * Use IBM Service Request [http://www.ibm.com/support/servicerequest/] to open or view a problem record with IBM.
+ * Send your data to IBM [http://www.ibm.com/support/docview.wss?uid=swg21392217] for further analysis.
+
+
+
+
+
+Please see the IBM Software Support Handbook [http://www14.software.ibm.com/webapp/set2/sas/f/handbook/home.html] for more information on working with IBM support.
+
+
+
+Back to top
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration WebSphere Message Broker Performance AIX, HP-UX, Linux, Solaris, Windows 8.0 All Editions

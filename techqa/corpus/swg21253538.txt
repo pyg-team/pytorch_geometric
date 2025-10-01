@@ -1,0 +1,47 @@
+Title: IBM DFHZC2455 followed by terminals hanging or CICS abending - United States
+
+Text:
+assist GTAUHLP hangs hung abend 0c4 AKEA abend0C4 DFHZC2417E DFHZARQ 198C DFHTCXDF D34 DFHTFP 216 5655M1500 R640 640 R400 400 HCI6400 5655-M15 5655M15 5697E9300 R630 630 R300 300 HCI6300 5697-E93 5697E93 KIXINFO retention31 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+You receive message: DFHZC2455 E 016B XXXX In CA mode - Task attached. ((1) Module name: DFHZATT). If you are running CICS V3.1, the terminals that you receive this message for hang. If you are running CICS V2.3, your CICS region abends. You are using GT Software ASSIST/TS.
+
+CAUSE
+Vendor product manipulating the TCTTE control block
+
+DIAGNOSING THE PROBLEM
+You have terminals that are hung, and when you review the message log pertaining to these terminals you find:
+DFHZC2455 E YK11 XXXX In CA mode - Task attached. ((1) Module name: DFHZATT)
+DFHZC3437 I YK11 CSNE Node yyyyyyyy action taken:CLSDST NEG RESP ABTASK ABSEND ABRECV SIMLOGON ((1) Module name: DFHZNAC)
+DFHZC2410 E YK11 ZZZZ Node Unrecoverable. VTAM LOSTERM Error Code X'14' ((4) Module name:DFHZLTX)
+DFHZC3424 E YK11 ZZZZ Session failure. Session terminated immediately ((1) Module name:DFHZNSP)
+DFHZC3437 I YK11 CSNE Node UG1T0375 action taken: NOCREATE CLSDST ABTASK ABSEND ABRECV SIMLOGON ((1) Module name: DFHZNAC) 
+
+
+Note, there is no DFHZC3462 session terminated message. The terminal is now hung forever. 
+A dump at this time shows that there is a task and TCA associated with this terminal, that is now stuck in a ZCIOWAIT in Dispatcher. Review of internal trace showed program GTAZCIX ran prior to the terminal hang, and appears to be manipulating the TCTTE control block. If you turn off GT/Assist, the problem does not occur. 
+
+If you are running CICS V2.3, you receive message DFHZC2455 E then CICS abends with the following messages. GT/Assist provided the same fix:
+
+DFHAP0001 An abend (code 0C4/AKEA) has occurred at offset X'0000198C' in module DFHZARQ 
+DFHDU0001 An abend (code 0C4/AKEA) has occurred at offset X'0D34' in module DFHTCXDF 
+DFHAP0001 An abend (code 0C4/AKEA) has occurred at offset X'00000216' in module DFHTFP 
+DFHAP0001 An abend (code 0C4/AKEA) has occurred at offset X'0000146E' in module DFHEEI 
+DFHTF0001 An abend (code 0C4/AKEA) has occurred at offset X'0512' in module DFHTFRF 
+DFHAP0001 An abend (code 0C1/AKEA) has occurred at offset X'0236' in module DFHLTRC 
+DFHRM0002 A severe error (code X'020C') has occurred in module DFHRMUW. 
+
+Additional symptoms:
+DFHME0110 Optional value 00 is missing from insert 03 for message DFHZC2417 
+DFHZC2305I Termination of VTAM sessions beginning 
+
+
+RESOLVING THE PROBLEM
+Contact [/support/docview.wss?uid=swg21253538&amp;aid=1]GT Software [http://www.gtsoftware.com/] for ASSIST/TS RELEASE 7.1.0 MVS (PTF 2881).
+
+
+
+
+
+PRODUCT ALIAS/SYNONYM
+CICS/TS CICS TS CICS Transaction Server

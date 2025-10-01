@@ -1,0 +1,32 @@
+Title: IBM Concurrent licence manager is not found. - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Sentinel RMS Licence Manager is installed, running and the licence codes have been added.
+
+When the client machine tries to obtain a licence on starting IBM SPSS products you receive a message stating:
+
+Error 2070
+Specific Symptom 5
+Unable to communicate properly with the License Server
+
+The SPSSPROD.INF file has been checked and tested with FQDN as well as with the IPv4 address, both have the same result.
+
+The client machine can ping the IP or the server name and the Sentinel service is started. 
+
+SYMPTOM
+Error 2070
+Specific Symptom 5
+Unable to communicate properly with the License Server
+
+
+CAUSE
+In this specific case the problem was that the anti virus application was started prior to the Sentinel service and we believe that it was preventing communication on port 5093 UDP. It was not a firewall issue and believe the listener was being affected so the remote clients could not connect.
+
+DIAGNOSING THE PROBLEM
+Disabling the anti virus application and restarting the sentinel service allowed licences to be used by clients connecting.
+
+RESOLVING THE PROBLEM
+Ensure the anti virus application allows all Sentinel communication and Sentinel applications to run.

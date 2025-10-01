@@ -1,0 +1,41 @@
+Title: IBM After upgrading to ICC 4.0.1, Task route Error 0x1838 Microsoft hotfix KB2732673 - United States
+
+Text:
+Hotfix; ICC; Filesystem; KB2732673 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ After upgrading to ICC 4.0.1,and while testing the existing ICC 
+Task Routes, the following error occurs:
+
+
+
+Error 0x1838 Microsoft hotfix KB2732673 for Windows 2008 R2 is not 
+installed. Without this hotfix, the Win32 API function DeleteFile might 
+fail silently. Therefore, the file system connector will ignore any
+
+task route service requests. 
+
+SYMPTOM
+2017-06-14T11:23:22Z Error 0x1838 Microsoft hotfix KB2732673 for Windows 2008 R2 is not installed. Without this hotfix, the Win32 API function DeleteFile might fail silently. Therefore, the file system connector will ignore any task route service requests. To ensure that the hotfix is installed, Windows 2008 R2 Service Pack 1 or later must be installed and the version of <system32>\drivers\rdbss.sys must be equal to or greater than 6.1.7601.22377. ibm::ctms::filesystem_connector::IsValidOSInstall (validatewindows2008r2.cpp:221)
+
+
+CAUSE
+Missing some Microsoft Windows Server 2008 R2 Hotfixes needed by ICC for FileSystem
+
+ENVIRONMENT
+Windows Server 2008 R2 Enterprise 64 bit Operating System. Service Pack1
+Target Repository: FileNet Content manager 5.1.0.3 dap 501.003.019
+ICC Version : Upgraded to ICC 4.0.1
+
+RESOLVING THE PROBLEM
+The mentioned Microsoft hotfix KB2732673 is part of ICC 4.0.1 prerequisites. 
+
+http://www-01.ibm.com/support/docview.wss?uid=swg27042658 [http://www-01.ibm.com/support/docview.wss?uid=swg27042658] 
+check the Required Software section under ICC Server software prerequisites.
+Especially the following ones listed for File System connector:
+Microsoft Windows Server 2008 R2 SP1 hotfix KB 2732673 - http://support.microsoft.com/kb/2732673 [http://support.microsoft.com/kb/2732673]
+Microsoft Windows Server 2008 R2 SP1 hotfix KB 2728738 - http://support.microsoft.com/kb/2728738 [http://support.microsoft.com/kb/2728738]
+Microsoft Windows Server 2008 R2 SP1 hotfix KB 2831013 - http://support.microsoft.com/kb/2831013 [http://support.microsoft.com/kb/2831013]
+Microsoft Windows Server 2008 R2 hotfix KB 2831154 - http://support.microsoft.com/kb/2831154 [http://support.microsoft.com/kb/2831154]
+
+Along with the one-KB2732673 in question, the other listed hot-fixes are also required for file system connector.

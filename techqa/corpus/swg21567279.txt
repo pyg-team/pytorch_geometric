@@ -1,0 +1,40 @@
+Title: IBM Fixing incomplete Data Type Map for Physical to Logical transformation of MySQL Physical Data Model in InfoSphere Data Architect (IDA) - United States
+
+Text:
+IDA; MySQL; CHAR(10); default data type; physical; logical TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Data Type Map for Physical to Logical transformation of MySQL Physical Data Model in IDA is incomplete: some data types either are missing or lack length/precision settings. 
+
+SYMPTOM
+ 
+
+ * Some data types of MySQL Physical Data Model get unexpectedly transformed into CHAR(10) during Physical to Logical transformation.
+   
+   Output page of Transform To Logical Data Model wizard reports the following problems encountered during the transformation:
+   
+   "Attribute <COLUMN> - could not resolve data type <TYPE>. Using default data type."
+   where <COLUMN> is the fully qualified name of a table column and <TYPE> is the data type which was transformed into CHAR(10).
+
+ * When browsing the resulting Logical Data Model which was produced via Physical to Logical transformation of MySQL Physical Data Model, an attempt to open Type tab of Properties view for some attribute of an Entity raises java.lang.NumberFormatException.
+
+
+CAUSE
+The following data types are missing from Data Type Map for Physical to Logical transformation of MySQL Physical Data Model: INT, REAL, LONGTEXT, ENUM, YEAR, LONGBLOB, FLOAT UNSIGNED, BIGINT UNSIGNED, INTEGER UNSIGNED, DECIMAL UNSIGNED, MEDIUMINT UNSIGNED, TINYINT UNSIGNED, DOUBLE UNSIGNED, SMALLINT UNSIGNED, REAL UNSIGNED. The following data types lack length/precision settings in Data Type Map for Physical to Logical transformation of MySQL Physical Data Model: BLOB, TINYBLOB, MEDUIMBLOB, TEXT, TINYTEXT, MEDIUMTEXT.
+
+
+RESOLVING THE PROBLEM
+1. Download the attached IDA preference file: MySQL-DataType-Mapping.epf 
+
+2. Invoke File / Import menu item to launch Import wizard 
+
+3. Select General / Preferences option and press Next 
+
+4. Press Browse to select MySQL-DataType-Mapping.epf preference file and press Finish 
+
+5. Restart IDA
+
+MySQL-DataType-Mapping.epf [/support/docview.wss?uid=swg21567279&aid=2]MySQL-DataType-Mapping.epf [/support/docview.wss?uid=swg21567279&aid=1]
+
+PRODUCT ALIAS/SYNONYM
+ Rational Data Architect

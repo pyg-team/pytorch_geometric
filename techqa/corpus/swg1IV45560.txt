@@ -1,0 +1,176 @@
+Title: IBM IV45560: RTC 89264 AE FIX COMPLETION FOR IV38353 - INCORRECT BEHAVIOR WHEN DIRECTLY ACCESSING FORGOT YOUR PASSWORD LINK. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  PROBLEM: When Forgot your password link is directly accessed as:
+   http://<hostname>/itim/self/Login/ChallengeResponse.do?command=l
+   oad&j_username=<user> [http://<hostname>/itim/self/Login/ChallengeResponse.do?command=load&j_username=<user>]
+   then  for the first time the request is forwarded to Self
+   Service UI Logon page with the error as:
+   CTGIMU566E:A required field does not have a specified value.
+   Whereas subsequent calls to this url works properly and request
+   is forwarded to "Forgot your password" page.
+    STEPS TO DUPLICATE:
+   1. Close all browser windows (Internet Explorer or Firefox).
+   2. Open a new browser window.
+      Put:
+   http://<hostname>/itim/self/Login/ChallengeResponse.do?command=l
+   oad&j_username=<user> [http://<hostname>/itim/self/Login/ChallengeResponse.do?command=load&j_username=<user>]
+      into the URL field (insert your ISIM server address and a
+      valid username) and press enter.
+   3. The request is forwarded to  the Self Service UI Logon page
+      with the error that value for the "User ID" is missing:
+      ---
+      CTGIMU566E
+      A required field does not have a specified value.
+      ---
+   4. Open a new browser tab and close the first one. Try the same
+      scenario. This time the "Forgot Your Password" page is
+      displayed.
+   
+   DESIRED BEHAVIOR: When Forgot your password link is directly
+   accessed as:
+   http://<hostname>/itim/self/Login/ChallengeResponse.do?command=l
+   oad&j_username=<user> [http://<hostname>/itim/self/Login/ChallengeResponse.do?command=load&j_username=<user>]
+   then for the first time request should be forwarded to "Forgot
+   your password" page.
+   This problem may also cause the failure when
+   resetting the password through WebSeal.
+   Steps to reproduce:
+   1. Create one user in ISIM withe two accounts, an
+   ITIM and SAM.  The ITIM account should be enabled as change
+   password with next logon.
+   2. Try to login to ISIM self service UI through WebSeal.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  While calling 'Forgot your password' link the from a custom
+   page, pass the additional parameter 'browserOffset' in query
+   string as below:
+   http://<hostname>/itim/self/Login/ChallengeResponse.do?command=l
+   oad&j_username=<user>&browserOffset=<offsetvalue> [http://<hostname>/itim/self/Login/ChallengeResponse.do?command=load&j_username=<user>&browserOffset=<offsetvalue>]
+   
+   The value of browserOffset will be the time difference between
+   the GMT and client's local timezone in minutes.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Users affected:
+   customers accessing the forgot password link directaly at:
+   http://<hostname>/itim/self/Login/ChallengeResponse.do?command=l
+   oad&j_username=<user> [http://<hostname>/itim/self/Login/ChallengeResponse.do?command=load&j_username=<user>]
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This fix for this APAR is contained in the
+   following maintenance packages:
+   | Interim Fix | 6.0.0.1-ISS-SIM-IF0003
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV45560
+   
+   
+ * REPORTED COMPONENT NAME
+   SEC IDENTITY MG
+   
+   
+ * REPORTED COMPONENT ID
+   5724C3406
+   
+   
+ * REPORTED RELEASE
+   600
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-07-12
+   
+   
+ * CLOSED DATE
+   2013-08-29
+   
+   
+ * LAST MODIFIED DATE
+   2013-08-29
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  SERVER
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   SEC IDENTITY MG
+   
+   
+ * FIXED COMPONENT ID
+   5724C3406
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R600 PSY
+   UP

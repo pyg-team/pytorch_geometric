@@ -1,0 +1,23 @@
+Title: IBM HMC Server in "Incomplete" & LPAR in "Not Available" state - United States
+
+Text:
+CEC HMC Incomplete LPAR Not Available TECHNOTE (FAQ)
+
+QUESTION
+ Why does the TEP show the CEC Agent (PK) incomplete & wrong data? 
+
+CAUSE
+This may be seen following a HMC reset which causes the agent to loose connection.
+
+ANSWER
+After HMC is reset or restarted be sure to restart the agent to get correct data. 
+
+ 
+
+HISTORICAL NUMBER
+ 70745
+227
+000 
+
+PRODUCT ALIAS/SYNONYM
+ ITM System P CEC Agent

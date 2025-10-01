@@ -1,0 +1,38 @@
+Title: IBM Script TIMEOUT for transactions and subtransactions - United States
+
+Text:
+timed out timeout maximum; minimum; 71RRT-RPTREC; 71RRT-RPTPLAY; 71RRT-RPTWV; 71RRT-RPTTS; 71RRT-CONF; 71RRT-PLAY; 71RRT-WV; 71RRT-TS TECHNOTE (FAQ)
+
+QUESTION
+ Why does a RRT transaction timeout but all the subtransactions run within the defined time? 
+
+ANSWER
+
+The timeout value for any script is defined in the profile(s) which runs the script. The timeout value represents the amount of time allowed for the entire script to run before a TIMEOUT status is set for the script. Once the 'timeout' time is reached, the script continues to run, and the TIMEOUT status is displayed in the TEPS, and Last Run Duration contains the time it took for the script to complete (or be timed out by some other system mechanism.)
+
+When the script execution completes (including any retries) the last run duration value displays the total execution time. In the case of a timeout, the Last Run Duration contains a value greater than the timeout value set in the profile.
+
+Subtransactions can also exceed a time limit. Subtransaction status is recorded separately from the main transaction and their 'time limit' does not cause a transaction to fail.
+
+[/support/docview.wss?uid=swg21508027&aid=1] [/support/docview.wss?uid=swg21508027&aid=1]
+
+
+[/support/docview.wss?uid=swg21508027&aid=2] [/support/docview.wss?uid=swg21508027&aid=2]
+
+Subtransactions can complete in time, and the overall transaction can be slow.
+[/support/docview.wss?uid=swg21508027&aid=3] [/support/docview.wss?uid=swg21508027&aid=3]
+
+
+Subtransactions can be slow
+[/support/docview.wss?uid=swg21508027&aid=4] [/support/docview.wss?uid=swg21508027&aid=4]
+
+Max response time threshold (seconds) 
+The maximum acceptable slow response time, in seconds, for a single transaction instance during the data interval. If a transaction exceeds this response time value, it is considered to be a failed transaction. 
+
+Min. response time threshold (seconds) 
+The maximum acceptable response time, in seconds, for a single transaction instance during the data interval. If a transaction exceeds this response time value, it is considered to be a slow transaction. 
+
+
+
+PRODUCT ALIAS/SYNONYM
+ itcamft

@@ -1,0 +1,58 @@
+Title: IBM Changing CCSID value of the queue manager - United States
+
+Text:
+CCSID; locale TECHNOTE (FAQ)
+
+QUESTION
+ You altered the CCSID value for a WebSphere MQ (WMQ) queue manager from 819 to 1208 and you want to know if the change is permanent.
+
+You want to know if the value will remain the same at the next restart of the queue manager and reboot of the machine. 
+
+ANSWER
+Yes, the CCSID for the queue manager is permanent and it is not affected by a queue manager restart or a reboot.
+When you stop the queue manager and restart it, the CCSID will NOT be modified by the MQ code. The same applies when stopping the machine and rebooting it. Furthermore, after the queue manager is created, if the value of LANG is changed for the MQ administrator, then the value of the CCSID field for the queue manager is not changed.
+
+To change this value, the MQ administrator must explicitly use runmqsc or MQ Explorer to alter it.
+Thus, to change the value to 1208, you can run the following command under runmqsc:
+alter qmgr CCSID(1208)
+
+
+Additional information:
+When a queue manager is created, the CCSID field is setup to match the corresponding CCSID of the national language locale of the session of the user who ran the crtmqm command. For example, if the value of LANG is as shown below for the MQ administrator:
+LANG=en_US
+
+In Linux, the corresponding CCSID is 819 and this is the value used during the creation of the queue manager.
+
+By the way, other LANG values that have similar CCSID 819 are: <null>, C, POSIX
+
+To display the value of LANG, you can type the following UNIX command:
+locale
+The output should look like this:
+LANG=en_US
+LC_CTYPE="en_US"
+LC_NUMERIC="en_US"
+<... more locale LC_* variables >
+
+To display the value for the MQ queue manager you can issue the following command in UNIX:
+echo "display qmgr ccsid" | runmqsc QueueManagerName
+In Windows, the command should not include double quotes:
+echo display qmgr ccsid | runmqsc QueueManagerName
+
+The output looks like this, for a queue manager named QM_VER: 
+1 : display qmgr ccsid
+AMQ8408: Display Queue Manager details.
+QMNAME(QM_VER) CCSID(819)
+
+If you want all new queue managers that are created to have the CCSID value of 1208, then the value of the LANG variable needs to be changed in the profile of the MQ administrator to the following locale whose CCSID is 1208 (assuming English locale):
+export LANG=en_US.UTF-8
+
+For more information, please consult the following technote
+
+How to find the CCSID value associated with the coded character set for a locale in a UNIX session [http://www.ibm.com/support/docview.wss?uid=swg21233177]
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM MQ 
+PRODUCT ALIAS/SYNONYM
+ WebSphere MQ WMQ

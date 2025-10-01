@@ -1,0 +1,66 @@
+Title: IBM System Requirements for WebSphere Application Server Network Deployment V8.0 - United States
+
+Text:
+DSRDoc; DetailedSystemRequirementsDocument PRODUCT DOCUMENTATION
+
+ABSTRACT
+ The table below provides the system requirements for IBM WebSphere Application Server v8.0 Network Deployment in different levels and organization of detail. 
+
+This document describes the minimum product levels that need to be installed before opening a problem report with the WebSphere Application Server Support team. Because other products frequently ship fixes, updates, and new releases, testing every configuration is not possible. In general, you can install and run with updates to supported products if those updates are forward compatible. 
+
+CONTENT
+ 
+
+[/support/docview.wss?uid=swg27021061&amp;aid=1] Back to all WebSphere Application Server detailed system requirements [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27006921]  
+
+
+*Requirements by type **Requirements by platform  * Operating Systems [http://publib.boulder.ibm.com/infocenter/prodguid/v1r0/clarity-reports/report/html/osForProduct?deliverableId=1121441746890] 
+ * Software [http://publib.boulder.ibm.com/infocenter/prodguid/v1r0/clarity-reports/report/html/prereqsForProduct?deliverableId=1121441746890] 
+
+ * AIX [http://publib.boulder.ibm.com/infocenter/prodguid/v1r0/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1121441746890&osPlatform=AIX] 
+ * HP [http://publib.boulder.ibm.com/infocenter/prodguid/v1r0/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1121441746890&osPlatform=HP] 
+ * IBM i [http://publib.boulder.ibm.com/infocenter/prodguid/v1r0/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1121441746890&osPlatform=IBM i] 
+ * Linux [http://publib.boulder.ibm.com/infocenter/prodguid/v1r0/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1121441746890&osPlatform=Linux] 
+ * Solaris [http://publib.boulder.ibm.com/infocenter/prodguid/v1r0/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1121441746890&osPlatform=Solaris] 
+ * Windows [http://publib.boulder.ibm.com/infocenter/prodguid/v1r0/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1121441746890&osPlatform=Windows] 
+
+
+ For each supported platform, there are both 32-bit and 64-bit versions available, with two exceptions: WebSphere Application Server Network Deployment is provided exclusively as a 64-bit application on HP-UX on IA64 and Solaris on x86. 
+
+
+
+Virtualization support for WebSphere Application Server Network Deployment Load Balancer [http://www-01.ibm.com/support/docview.wss?uid=swg21265712] 
+
+Notes: 
+Load Balancer for IPv4 and IPv6  * Load Balancer for IPv4 and IPv6 is supported on 32-bit and 64-bit for each platform below except HP-UX and Solaris.
+
+
+Load Balancer for IPv4  * Load Balancer for IPv4 runs a 64-bit kernel with a 32-bit java to allow compatibility with Caching Proxy on HP-UX. 
+ * Load Balancer for IPv4 has a single installation distribution that will run on 32-bit or 64-bit architectures on AIX. It contains a 32-bit java. 
+ * Load Balancer for IPv4 has a single installation distribution that will run on 32-bit or 64-bit Solaris SPARC. It contains a 32-bit java.
+
+
+Caching Proxy  * Caching Proxy runs a 32-bit application on the 64-bit platforms listed in the Caching proxy tab.
+
+
+Proxy Server, Edge and DMZ Secure Proxy Server Components:  * Licensee is authorized to use any of the Edge components, the Proxy Server components and the DMZ Secure Proxy Server components of the Program with non-IBM WebSphere back-end servers. Licensee may be entitled to warranty support for such usage provided the problem is common to both the IBM WebSphere and non-IBM WebSphere back-end servers or, if otherwise, you agree to recreate the problem in an IBM WebSphere Application Server environment.
+
+
+
+****************************************************************************************************************** 
+SPCR tool available for all software products: 
+The generic link to the IBM Software Product Compatibility Reports (SPCR) tool is below. You can access the tool for any product and obtain the supported operating systems, system requirements, and optional supported software for your product version . 
+
+Click the link below to reach the front page of SPCR: 
+IBM Software Product Compatibility Reports (SPCR) [http://publib.boulder.ibm.com/infocenter/prodguid/v1r0/clarity/index.html] 
+
+Then choose the following options to obtain the supported operating systems, system 
+requirements, and optional supported software for your product version. 
+
+1. Select the desired product. 
+2. Select the desired version. 
+3. Select your operating system. 
+
+
+*Requirements by type - The list of supported operating systems and software.
+**Requirements by platform - The complete lists of hardware requirements, supported operating systems, prerequisites and optional supported software, with component-level details and operating system restrictions.

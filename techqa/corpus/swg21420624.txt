@@ -1,0 +1,49 @@
+Title: IBM Load Balancing and Redirection with WebSphere and the HTTP Server - United States
+
+Text:
+TPAEPERFORMANCE; TPAEWEBSPHERE; TPAEHA; TPAECONFIG; Performance; Fault Tolerance; Load Balance; HTTP; redirect; URL forwarding; plugin; Apache; Web Server; High Availability; Troubleshooting TECHNOTE (FAQ)
+
+QUESTION
+ What is the default approach to load balancing when using the IBM WebSphere Application Server with IBM HTTP Server (IHS) for Maximo? What is the troubleshooting procedure? 
+
+ANSWER
+When WebSphere is installed per the Maximo and related application installation instructions there are two applications installed (even though you may have expected to only install one).
+A) WebSphere Application Server (WAS)
+B) IBM HTTP Server (IHS)
+
+WAS is the middleware application used to deploy the Java Virtual Machine (JVM) application and to manage JVMs once deployed.
+
+IHS is an IBM's implementation of Apache Web Server [https://httpd.apache.org/]. This middleware application is used as a standard web server to serve http requests for attached documents and respond to standard http requests.
+
+In order to support High Availability (HA), Fault Tolerance (FT), and Load Balancing (LB), IHS is configured with an interface and plug-in to provide load balancing to clusters configured in WAS.
+
+In a typical clustering configuration, a Maximo application will be deployed in WAS to a cluster of multiple JVMs running on ports 9080, 9081, 9082, etc. IHS is configured to listen on port 80, the default http port. Client requests are sent to http://servername/context (note: since no port number is included in the URL, the default port is 80). IHS receives the request, uses the context, plug-in, and load-balancing algorithm to determine which JVM to direct the login, and forwards the request to that application port (9080, 9081, etc…)
+
+To follow the path of redirection in a WAS / IHS environment, note the following files:
+
+A) In the IHS conf sub-directory, the file httpd.conf contains the configuration information for the http server. By default, near the bottom of this file are the entries to configure the plug-in and the path to the WAS plugin-cfg.xml file.
+
+
+[/support/docview.wss?uid=swg21420624&aid=1] [/support/docview.wss?uid=swg21420624&aid=1] 
+B) In the WAS sub-directory structure (path shown in httpd.conf file above), the file plugin-cfg.xml contains application deployment and load balancing algorithm information for redirecting requests received by the IHS. 
+
+The process follows the following logic: 
+
+A) The user enters a URL into their browser similar to http://servername/context (where servername is the host name or IP address of the server where the IHS server is running. Note: the context part of the URL is commonly /maximo) 
+B) The IHS receives the request on port 80 
+C) IHS uses the context passed in the request to look up WAS JVMs that are running using the requested context. 
+D) IHS forwards the request to the server determined to be the next server in the load-balancing algorithm. 
+E) The WAS application (JVM) receives the request and responds 
+
+Troubleshooting this process confirms: 
+
+A) That both IHS is running on the correct port and the WAS JVMs are running on the correct ports. 
+B) The httpd.conf file is configured with the correct plug-in and plugin-cfg.xml path. 
+C) The WAS virtual host is correctly configured (this is used to automatically configure the plugin-cfg.xml) 
+D) That the plugin-cfg.xml is properly populated and formatted (this will require additional understanding of XML and tagging) 
+E) When a deployment is saved, the option to synchronize is selected. 
+
+When you deploy two or more stand-alone servers or clusters using the same context, the plug-in is unable to determine which service is being requested and will return an internal server error.  
+
+
+Cross reference information Segment Product Component Platform Version Edition Systems and Asset Management Maximo Asset Management Essentials Systems and Asset Management Tivoli Asset Management Systems and Asset Management Tivoli Asset Management for IT Systems and Asset Management Tivoli Change and Configuration Management Database Systems and Asset Management Tivoli Service Request Manager Systems and Asset Management Control Desk

@@ -1,0 +1,115 @@
+Title: IBM LO44810: VIEWER IS TRUNCATING LABELS OF A REPEAT TABLE. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS VENDOR SOLUTION.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  PROBLEM DESCRIPTION
+   ===========================
+   Using a repeat table, a label being displayed by the Viewer
+   causes truncation on the last row.
+   
+   
+   PRODUCTS AFFECTED
+   ===========================
+   Lotus Forms Viewer 3.5.1 GA
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  In the repeat structure add a check to see if the value is
+   empty, ie. [testValue != ''] to
+   nodeset="instance('test')/rows/row[testValue != '']
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *  The Viewer is properly handling tables.  In this particular case
+   the table rows had a negative padding and empty rows were being
+   added to the table which is what caused the truncation.  There
+   is no error in the IBM Viewer code.
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   LO44810
+   
+   
+ * REPORTED COMPONENT NAME
+   LOTUS FORMS VIE
+   
+   
+ * REPORTED COMPONENT ID
+   5724N0700
+   
+   
+ * REPORTED RELEASE
+   351
+   
+   
+ * STATUS
+   CLOSED ISV
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-10-05
+   
+   
+ * CLOSED DATE
+   2010-01-18
+   
+   
+ * LAST MODIFIED DATE
+   2010-01-18
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

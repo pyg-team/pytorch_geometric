@@ -1,0 +1,82 @@
+Title: IBM Running wp-modify-ldap-security task fails with CWWIM5024E error - United States
+
+Text:
+configtrace.log; log; missing; realmConfiguration; realm; configuration; wimconfig.xml; task; wp-modify-ldap-security; fail; fails TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ A missing realmConfiguration in the wimconfig.xml file in IBM WebSphere Portal results in the wp-modify-ldap-security task failing. 
+
+SYMPTOM
+The ConfigTrace.log contains the following: 
+
+...
+Target started: wp-create-realm
+
+wp-create-realm:
+...
+[wplc-create-realm] ... MISSING_REALM_CONFIGURATION
+[wplc-create-realm] com.ibm.websphere.wim.exception.WIMConfigurationException: CWWIM5024E Realm configuration does not exist.
+[wplc-create-realm] at com.ibm.ws.wim.config.ConfigUtils.getRealmConfig(ConfigUtils.java:350)
+[wplc-create-realm] at com.ibm.ws.wim.config.RealmConfigHelper.listIdMgrRealms(RealmConfigHelper.java:284)
+[wplc-create-realm] at com.ibm.ws.wim.config.commands.RealmConfig.listIdMgrRealms(RealmConfig.java:110)
+[wplc-create-realm] at com.ibm.ws.wim.config.commands.IdMgrRealmConfigCommandsProvider.listIdMgrRealms(IdMgrRealmConfigCommandsProvider.java:92)
+[wplc-create-realm] at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+[wplc-create-realm] at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:79)
+[wplc-create-realm] at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+[wplc-create-realm] at java.lang.reflect.Method.invoke(Method.java:618)
+[wplc-create-realm] at com.ibm.websphere.management.cmdframework.provider.SimpleCommandProvider.executeReal(SimpleCommandProvider.java:147)
+[wplc-create-realm] at com.ibm.websphere.management.cmdframework.provider.SimpleCommandProvider.execute(SimpleCommandProvider.java:133)
+[wplc-create-realm] at com.ibm.websphere.management.cmdframework.provider.SimpleAdminCommand.execute(SimpleAdminCommand.java:57)
+[wplc-create-realm] at com.ibm.wplc.deploy.tasks.impl.BaseSecurityModify.getRealmNames(BaseSecurityModify.java:119)
+[wplc-create-realm] at com.ibm.wplc.deploy.tasks.impl.BaseSecurityModify.realmExists(BaseSecurityModify.java:147)
+[wplc-create-realm] at com.ibm.wplc.deploy.tasks.impl.RealmCreateImpl.execute(RealmCreateImpl.java:35)
+...
+[wplc-create-realm] Querying WIM realms failed.
+[wplc-create-realm] com.ibm.websphere.management.cmdframework.CommandException: com.ibm.websphere.wim.exception.WIMConfigurationException: CWWIM5024E Realm configuration does not exist.
+[wplc-create-realm] at com.ibm.wplc.deploy.tasks.impl.BaseSecurityModify.getRealmNames(BaseSecurityModify.java:130)
+[wplc-create-realm] at com.ibm.wplc.deploy.tasks.impl.BaseSecurityModify.realmExists(BaseSecurityModify.java:147)
+[wplc-create-realm] at com.ibm.wplc.deploy.tasks.impl.RealmCreateImpl.execute(RealmCreateImpl.java:35)
+...
+[wplc-create-realm] at com.ibm.wps.config.launch.WpsConfigLauncher.main(WpsConfigLauncher.java:459)
+[wplc-create-realm] Caused by: com.ibm.websphere.wim.exception.WIMConfigurationException: CWWIM5024E Realm configuration does not exist.
+[wplc-create-realm] at com.ibm.ws.wim.config.ConfigUtils.getRealmConfig(ConfigUtils.java:350)
+[wplc-create-realm] at com.ibm.ws.wim.config.RealmConfigHelper.listIdMgrRealms(RealmConfigHelper.java:284)
+[wplc-create-realm] at com.ibm.ws.wim.config.commands.RealmConfig.listIdMgrRealms(RealmConfig.java:110)
+[wplc-create-realm] at com.ibm.ws.wim.config.commands.IdMgrRealmConfigCommandsProvider.listIdMgrRealms(IdMgrRealmConfigCommandsProvider.java:92)
+...
+[wplc-create-realm] at com.ibm.wplc.deploy.tasks.impl.BaseSecurityModify.getRealmNames(BaseSecurityModify.java:119)
+[wplc-create-realm] ... 47 more
+Target finished: wp-create-realm
+...
+BUILD FAILED
+<wp_profile>/ConfigEngine/config/actions/wp_security_pub.xml:113: The following error occurred while executing this line:
+<wp_profile>/ConfigEngine/config/actions/wp_security_internal.xml:674: The following error occurred while executing this line:
+<wp_profile>/ConfigEngine/config/actions/wp_security_pub.xml:724: Create realm failed.
+
+
+CAUSE
+The VMM configuration file, wimconfig.xml, is corrupt. The CWWIM5024E error occurs because the VMM configuration file contains no realmConfiguration stanza.
+
+
+RESOLVING THE PROBLEM
+To correct the problem 
+
+
+1. Make a backup copy of the following file: 
+
+ * 
+
+
+2. Edit the wimconfig.xml file by adding add the following stanza. Place the stanza immediately after "</config:repositories>": 
+ * 
+ * <config:realms delimiter="/" name="defaultWIMFileBasedRealm" 
+ * 
+ * </config:realms> 
+ * 
+
+
+3. Save the wimconfig.xml file. 
+
+4. Make sure Portal is stopped. 
+
+5. Run the ConfigEngine wp-modify-ldap-security task again.

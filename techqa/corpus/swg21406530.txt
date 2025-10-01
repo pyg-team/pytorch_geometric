@@ -1,0 +1,54 @@
+Title: IBM Creating a swap file to install the Oracle database. - United States
+
+Text:
+swap space file Oracle 11g mkswap swapon dd ITCAM PRVF-7573 CAMADALL TECHNOTE (TROUBLESHOOTING)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ US English 
+
+PROBLEM(ABSTRACT)
+ How to create a swap file to allow installation of the Oracle database. 
+
+DIAGNOSING THE PROBLEM
+Oracle 11gR2 or higher uses a swap file in addition to the partition defined on the RHEL5 system. When installing the Oracle database, you will get this message if the swap file has not been created or is of insufficient size. 
+
+[/support/docview.wss?uid=swg21406530&aid=1] [/support/docview.wss?uid=swg21406530&aid=1]
+
+
+
+
+
+
+RESOLVING THE PROBLEM
+ 
+
+From the error message above, you can see that the Oracle requires a minimum swap space of 2.97GB (31132520KB). 
+
+Hence, to create a swap file with this space, you first need to define to a count. 
+
+Simply divide the 2.97GB by 1024 to get the count in MB. So this works out to 31132520 / 1024 = 3041 (rounded up) 
+
+Use this count value of '3041' in the dd command as follows. 
+
+dd if =/dev/zero of=/oraswap bs=1M count=3041 
+
+This command creates an input file (if) initialized to zero and an external output swap file (of) /oraswap. The "bs" indicates byte size and the count is 3041 (rounded up.) This dd command with the above parameters will create the /oraswap swap space file. 
+
+(Note: The dd command will take approximately 2 minutes to complete and will create a file called "/oraswap" in your / directory.) 
+
+Once the /oraswap swap file has been created, you need to use the mkswap command and then the swapon command to tell Oracle to use the /oraswap swap file as follows: 
+
+mkswap /oraswap 
+
+swapon /oraswap 
+
+Now do a "ls -ltr" in the / directory and you'll see the /oraswap file. Note the byte size of the file. This is the swap space that Oracle uses during the installation. You can also do the "df -h" or "free" commands to see the space available with the swap turned on. 
+
+Now that you have the swap space file created successfully, you can continue installing the Oracle database software and you should get past this error in the GUI.
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Systems and Asset Management Tivoli Composite Application Manager for J2EE ITCAM J2EE ORACLE Linux 7.1.1 
+PRODUCT ALIAS/SYNONYM
+ ITCAM for WAS ITCAM for WebSphere

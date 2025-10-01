@@ -1,0 +1,81 @@
+Title: IBM PK71355; 6.1.0.19: Virtual Member Manager Federation Adapter Not Working - United States
+
+Text:
+PK71355; PK71355; PK71355 DOWNLOADABLE FILES
+
+ABSTRACT
+ After migration, there is an EntityNotFoundException thrown when getting an attribute with extID in EntryMapping repository. 
+
+DOWNLOAD DESCRIPTION
+PK71355 resolves the following problem:
+
+ERROR DESCRIPTION: 
+With a freshly migrated IBM WebSphere Member Manager (WMM) to Virtual Member Manager (VMM) multiple-ldap setup, virtual member manager (VMM) does not find the user correctly specified extID if the extID is the "virtual extID" not the LDAP extID. After the user was queried in an alternative way (e.g. with LDAP extID or uniqueName), the lookup works. 
+
+LOCAL FIX: 
+none 
+
+PROBLEM SUMMARY:
+
+USERS AFFECTED:
+All users of IBM WebSphere Application Server V6.1 who use federated repositories
+(Virtual Member Manager).
+
+PROBLEM DESCRIPTION:
+After migration, there is an EntityNotFoundException thrown when getting an attribute with extID in
+EntryMapping repository.
+
+RECOMMENDATION:
+None
+
+In EntryMapping repository, the extID is different with uniqueId. When trying to get an entity with extID, virtual member manager incorrectly takes the uniqueId in the EntryMapping repository as the extID to get attributes in LDAP, which causes EntityNotFoundException.
+
+[8/30/08 1:05:48:032 EST] 0000004b exception 1
+com.ibm.ws.wim.adapter.ldap.LdapConnection getAttributesByExtId CWWIM4001E The 'a54886d0-6f30-11dd-a4da-892848acde1c' entity was not found.
+[8/30/08 1:05:48:032 EST] 0000004b exception 1
+com.ibm.ws.wim.adapter.ldap.LdapConnection getAttributesByExtId
+
+com.ibm.websphere.wim.exception.EntityNotFoundException:
+CWWIM4001E The 'a54886d0-6f30-11dd-a4da-892848acde1c' entity was not found.
+at com.ibm.ws.wim.adapter.ldap.LdapConnection.getAttributesByExtId( LdapConnection.java:2088)
+at com.ibm.ws.wim.adapter.ldap.LdapConnection.getEntityByIdentifier (LdapConnection.java:2305)
+at com.ibm.ws.wim.adapter.ldap.LdapConnection.getEntityByIdentifier (LdapConnection.java:2227)
+at com.ibm.ws.wim.adapter.ldap.LdapAdapter.get(LdapAdapter.java:1348)
+at com.ibm.ws.wim.ProfileManager.retrieveEntityFromRepository(ProfileManager.java:2431)
+at com.ibm.ws.wim.ProfileManager.retrieveEntity(ProfileManager.java:2577)
+at com.ibm.ws.wim.ProfileManager.getImpl(ProfileManager.java:1345)
+at com.ibm.ws.wim.ProfileManager.genericProfileManagerMethod(ProfileManager.java:283)
+at com.ibm.ws.wim.ProfileManager.get (ProfileManager.java:332)
+
+PROBLEM CONCLUSION: 
+The problem has been fixed. After entry mapping repositoy migration from WebSphere Member Manager (WMM) to Virtual Member Manager (VMM), there is no EntityNotFoundException when getting entity with extID. 
+
+The fix for this APAR is currently targeted for inclusion in fix pack 6.1.0.23 and 7.0.0.3. 
+
+
+
+
+Please refer to the Recommended Updates page for delivery information: 
+http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+
+PREREQUISITES
+Please download the UpdateInstaller below to install this fix.
+
+URL LANGUAGE SIZE(Bytes) UpdateInstaller [http://www.ibm.com/support/docview.wss?rs=180&uid=swg21205991] US English 7250000 
+INSTALLATION INSTRUCTIONS
+Please review the readme.txt for detailed installation instructions.
+
+URL LANGUAGE SIZE(Bytes) Readme [ftp://public.dhe.ibm.com/software/websphere/appserv/support/fixes/PK71355/readme.txt] US English 8900 
+DOWNLOAD PACKAGE
+
+
+
+
+Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options 
+What is Fix Central(FC)? [https://www.ibm.com/support/fixcentral/help?page=swfaqs] 
+What is DD? [http://www6.software.ibm.com/dldirector/doc/DDfaq_en.html] 6.1.0.15-WS-WAS-IFPK71355 9/11/2008 US English 42059 FC [http://www.ibm.com/support/fixcentral/quickorder?fixids=6.1.0.15-WS-WAS-IFPK71355&product=ibm%2FWebSphere%2FWebSphere%20Application%20Server&source=dbluesearch] FTP [ftp://public.dhe.ibm.com/software/websphere/appserv/support/fixes/PK71355/6.1.0.15-WS-WAS-IFPK71355.pak] DD 6.1.0.19-WS-WAS-IFPK71355 9/11/2008 US English 42031 FC [http://www.ibm.com/support/fixcentral/quickorder?fixids=6.1.0.19-WS-WAS-IFPK71355&product=ibm%2FWebSphere%2FWebSphere%20Application%20Server&source=dbluesearch] FTP [ftp://public.dhe.ibm.com/software/websphere/appserv/support/fixes/PK71355/6.1.0.19-WS-WAS-IFPK71355.pak] DD 7.0.0.0-WS-WAS-IFPK71355 4/22/2009 US English 42376 FC [http://www.ibm.com/support/fixcentral/quickorder?fixids=7.0.0.0-WS-WAS-IFPK71355&product=ibm%2FWebSphere%2FWebSphere%20Application%20Server&source=dbluesearch] FTP [ftp://public.dhe.ibm.com/software/websphere/appserv/support/fixes/PK71355/7.0.0.0-WS-WAS-IFPK71355.pak] DD 6.1.0.21-WS-WAS-IFPK71355 4/22/2009 US English 42388 FC [http://www.ibm.com/support/fixcentral/quickorder?fixids=6.1.0.21-WS-WAS-IFPK71355&product=ibm%2FWebSphere%2FWebSphere%20Application%20Server&source=dbluesearch] FTP [ftp://public.dhe.ibm.com/software/websphere/appserv/support/fixes/PK71355/6.1.0.21-WS-WAS-IFPK71355.pak] DD 
+TECHNICAL SUPPORT
+ Contact IBM Support using SR (http://www-306.ibm.com/software/support/probsub.html [http://www-306.ibm.com/software/support/probsub.html]), visit the WebSphere Application Server Support Web site (http://www.ibm.com/software/webservers/appserv/was/support/ [http://www.ibm.com/software/webservers/appserv/was/support/]), or contact 1-800-IBM-SERV (U.S. only). 
+
+ [/support/docview.wss?uid=swg24020439&aid=1]Problems (APARS) fixed [/support/docview.wss?uid=swg24020439&aid=2]Problems (APARS) fixed
+PK71355

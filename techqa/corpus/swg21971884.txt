@@ -1,0 +1,82 @@
+Title: IBM Intermittent "AAA-AUT-0013: The user is already authenticated..." when using Controller - United States
+
+Text:
+AAA-AUT-0013 CAM-AAA-0135 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ User has been working for a while (for example 20 minutes, or maybe even 3 or 4 hours) successfully. Suddenly an error appears. 
+
+SYMPTOM
+AAA-AUT-0013: The user is already authenticated in all available namespaces
+
+
+CAUSE
+There are several different possible causes for seeing this error when first launching Controller. 
+
+ * For examples, see separate IBM Technote #1346138.
+
+
+This Technote specifically relates to the scenario where the problem does not occur immediately during logon.  * Instead, the problem occurs intermittently at a seemingly-random time after launching the Controller client. 
+ * In this scenario, the cause is triggered by an IIS application pool timeout.
+
+
+More Information 
+When the IIS application pool encounters a timeout, it will try to re-authenticate with the Cognos CAM (BI) subsystem. If this process fails (for example there is a network/active directory issue/timeout) then the user will receive an error message.  * Therefore, in some environments, it is necessary to increase the IIS application pool's timeout so that no user receives such a message/problem.
+
+ENVIRONMENT
+In one real-life customer example, the customer was configured as follows: 
+
+ * Cognos BI (report service) configured to have an 'Inactivity timeout in seconds' value of 14400 (4 hours):
+
+[/support/docview.wss?uid=swg21971884&aid=1] [/support/docview.wss?uid=swg21971884&aid=1]  * Four separate IIS Application pools were in use (in other words, the number of applications >0), and each of them had 'Idle Time-out (minutes)' set to the default (20 minutes):
+
+[/support/docview.wss?uid=swg21971884&aid=2] [/support/docview.wss?uid=swg21971884&aid=2] 
+RESOLVING THE PROBLEM
+Modify each and every one of the IIS application pools so that their idle time-out is longer than the session length of the user (for example 10 hours). 
+
+ 
+
+Steps:
+The exact steps will vary depending on the operating system (for example Windows 2008 or 2012) of the application server. 
+
+ * Therefore, some of the following steps may look slightly different on your system.
+
+
+1. Logon to the relevant application server  * TIP: For most customers, this is a single 'all-in-one' (Controller and BI Report Service) application server 
+ * However, for some customers, they may have a 'distributed' environment (where they have several different application servers, typically one for Controller and one for the BI Report server), so the process will need to be performed on all application servers.
+
+
+2. Launch 'Internet Information Services (IIS) Manager' 
+3. Browse to and open the section ' Application Pools' 
+
+4. The next steps depend on what operating system you are using, and if you are using the default settings.  * The following instructions assume that you have the default application pool names. 
+ * Therefore, you may need to modify these instructions if you have any non-default application pools created.
+
+
+Windows 2008  * Right-click on 'DefaultAppPool' and choose 'Advanced Settings':
+
+[/support/docview.wss?uid=swg21971884&aid=3] [/support/docview.wss?uid=swg21971884&aid=3]  * Under 'Process Model', change the setting for 'Idle Time-out (minutes)' from the default (20) to a much larger value (for example 600 minutes, which is 10 hours). 
+ * Repeat these steps for any other non-default application pools (for example custom ones that you have created perviously) that are hosting any 'applications'
+
+
+Windows 2012  * Right-click on '.NET v2.0' and choose 'Advanced Settings':
+
+[/support/docview.wss?uid=swg21971884&aid=4] [/support/docview.wss?uid=swg21971884&aid=4]  * Under 'Process Model', change the setting for 'Idle Time-out (minutes)' from the default (20) to a much larger value (for example 600 minutes, which is 10 hours). 
+ * Repeat these steps for the application pool called 'DefaultAppPool'
+
+ * Also, if you have any other non-default application pools (for example custom ones that you have created perviously that are hosting any 'applications') then repeat the steps for those custom application pools  * For example, in the following screen there are 4 separate application pools that are in use 
+    * The 3 whose name begin with 'ibmcognos' are custom-created application pools:
+      [/support/docview.wss?uid=swg21971884&aid=5] [/support/docview.wss?uid=swg21971884&aid=5]
+   
+   
+
+
+NOTE: In some environments, it is necessary to *also* alter the ' Application Pool Defaults' settings.  * Specifically, right-click on the white/blank background and choose 'Set Application Pool Defaults...':
+   [/support/docview.wss?uid=swg21971884&amp;aid=6]
+   
+ * Change the value of 'Idle Time-out' from the current (20)...
+   [/support/docview.wss?uid=swg21971884&aid=7] [/support/docview.wss?uid=swg21971884&aid=7]
+
+
+...to something much larger (for example 600) and save the changes. RELATED INFORMATION
+ 1346138 - ** Troubleshooting** error message when loggi [http://www.ibm.com/support/docview.wss?uid=swg21346138]

@@ -1,0 +1,80 @@
+Title: IBM mksysb Can Not Be Used To Backup The SFS Volumes - United States
+
+Text:
+txseries; cics; cicscp TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The customer physically moved from one machine another. According to their experts on the SP2, they had to back up the machine via makesysb then restore it after the move. After doing the restore, the SFS server wouldn't come up. They were trying to warm start the region but would get the following messages:
+ERZ036191E/0454: Both /var/cics_servers/SSD/cics/sfs/wdcapp01/restart
+and /var/cics_servers/SSD/cics/sfs/wdcapp01/restart.bak
+are missing for Encina server '/.:/cics/sfs/wdcapp01'
+ERZ036007E/0469: Unable to start server '/.:/cics/sfs/wdcapp01'
+
+The missing files are created by a cold start of the SFS server. It turns out that they had tried to cold start at one point, but that cold start failed. Either the makesysb or that cold start must have wiped out those files. So, we were required to cold start the server.
+
+They also saw:
+
+ERZ038072E/0514: Server '/.:/cics/sfs/wdcapp01' unable to read/write
+to logicalvolume '/dev/log_Swdcapp0' using Id 'Swdcapp0'.
+ERZ036007E/0469: Unable to start server '/.:/cics/sfs/wdcapp01'
+
+
+RESOLVING THE PROBLEM
+You can not back up the SFS via a mksysb. The mksysb command cannot backup raw logical devices, which is what the rsfs_xxx and rlog are. The customer needs to either use the dd command or look into using "sysback".
+
+The mksysb will restore the logical volumes used by SFS, it just will not restore the data. It will change the ownership and permissions of the /dev/ files. It is IMPORTANT to note that this will initialize the datafiles (destroy them, make them disappear). If you are using SFS for more than the CICS default files, you will need to backup and restore the data using the dd command.
+
+The error messages above indicate that the log files for the SFS server didn't have the correct ownership or permissions. I went to the /dev directory and found that the owner:group was root:system. This must have been set by the makesysb build. I did a chown to change the uid (userid) to be the same as the server's name and the gid (group id) to be cics on the log_xxxx and rlog_xxxx files, where xxxx was the name of the server:
+chown xxxx:cics log_xxxx
+chown xxxx:cics rlog_xxxx 
+
+*Note: Starting with V6.2 the owner and group of the SFS is now cics:cics. Use this owner and group when reassigning the ownership. 
+
+
+
+Changing the ownership of the log files then showed that the SFS data files had the same problem. We got these messages:
+
+1 21502 a0042c27 W Call to vol_MapLogicalVol failed with status
+ENC-vol-0007: User is not permitted to access the disk.
+ERZ038073E/0533: Unable to create logical volume 'sfs_Swdcapp0' for
+server '/.:/cics/sfs/wdcapp01'.
+ERZ036152E/0468: Encina server '/.:/cics/sfs/wdcapp01' started,
+but has not been initialized
+
+In /dev I looked for all of the files with the server's name in them and found four: 2 log files and two data files. The two data files had the same problem as the log files. I did the same thing for them as I did for the log files.
+
+The SFS server then came up cleanly.
+
+
+
+Here is a step by step list of what to do to recover when CICS default files are wiped out by a makesysb restore:
+
+To restore access to the files, first, you need to change the ownership of the four files used by CICS for each SFS server. There are 2 sfs and 2 log files named:
+sfs_SFS_SERV
+rsfs_SFS_SERV
+log_SFS_SERV
+rlog_SFS_SERV
+
+Use the following command, substituting the correct information. With V6.2 and later the sfs user id and group is now "cics" for both:
+chown sfs_user_id .cics sfs_data_files
+
+Next you have to change the permissions with the chmod command:
+chmod 660 sfs_data_files
+
+Now you will have to COLD start the SFS server. You can do that through the smit(ty) panels or with the following command:
+cicssfscold sfs_server_name
+
+The sfs_server_name should look something like:
+/.:/cics/sfs/kix .
+
+You will come to a spot where you have to type the word:
+continue
+to confirm that you really want to COLD start the server. Any data that was saved will be restored after the server has been initialized by the COLD start.
+
+In order to set up the CICS regions' default files, run the command:
+cicssfsconf -R wc region_name DefaultFileServer= sfs_server_name
+
+You are now ready to start COLD start the CICS region either via smit(ty) or with the following command:
+cicscp start region region_name StartType=cold
+
+This should be what you need to recover the SFS and region after a makesysb.

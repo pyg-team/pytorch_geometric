@@ -1,0 +1,27 @@
+Title: IBM 不推荐将DB2客户端版本8.x和DB2服务器版本9.x的实例运行在同一台Windows机器上 - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+问题（摘要）
+ DB2服务器版本9.x作为先决条件与Publishing Server一起安装。安装过程没有任何问题，但是之后你会遇到连接DB2数据库的错误。 
+
+症状
+当你启动安装好的Publishing Server，并登录Business Space的时候，下面的错误会显示： 
+
+[/support/docview.wss?uid=swg21619237&aid=1] [/support/docview.wss?uid=swg21619237&aid=1]
+在SystemOut.log里，你会看到如下异常信息：
+java.net.ConnectException: Error opening socket to server localhost/127.0.0.1 on port 50,000 with message: Connection refused: connect. ERRORCODE=-4499, SQLSTATE=08001DSRA0010E: SQL State = 08001, Error Code = -4,499
+
+原因
+这个问题的原因是因为DB2客户端版本8.x和DB2服务器版本9.x的实例运行在同一台Windows机器上。
+
+
+
+解决问题
+不要将DB2客户端和DB2服务器运行在同一台机器上。
+
+
+
+相关信息
+#An US English translation is available [http://www.ibm.com/support/docview.wss?uid=swg21315111]

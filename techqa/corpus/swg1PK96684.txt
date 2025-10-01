@@ -1,0 +1,185 @@
+Title: IBM PK96684: THREAD HANGING IN JAVA.UTIL.HASHMAP - United States
+
+Text:
+  FIXES ARE AVAILABLE
+6.1.0.3 Download: WebSphere Portal and WCM V6.1 fix pack 3, 6.1.5 feature pack [http://www-01.ibm.com/support/docview.wss?uid=swg24025054]
+6.1.0.4 Download: WebSphere Portal and WCM V6.1.0 fix pack 4 & 6.1.5 fix pack 1 [http://www-01.ibm.com/support/docview.wss?uid=swg24026394]
+6.1.0.5 Download: WebSphere Portal and WCM V6.1.0 fix pack 5 [http://www-01.ibm.com/support/docview.wss?uid=swg24027475]
+6.1.0.6 Download: WebSphere Portal and WCM V6.1.0 fix pack 6 [http://www-01.ibm.com/support/docview.wss?uid=swg24030970]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When using certain PUMA group attributes in a high load
+   situation, several threads may hang in java.util.HashMap due to
+   unsynchronized access to the collection class. The following
+   stack trace appears in trace.log:
+   
+   10:09:44:471 CEST] 0000002a ThreadMonitor W WSVR0605W: Thread
+   "WebContainer : 10" (00000050) has been active for 702661
+   milliseconds
+   and may be hung. There is/are 2 thread(s) in total in the server
+   that
+   may be hung.
+   at java.util.HashMap.findNonNullKeyEntry(HashMap.java:526)
+   at java.util.HashMap.putImpl(HashMap.java:622)
+   at java.util.HashMap.put(HashMap.java:605)
+   at
+   com.ibm.wps.um.GroupImpl.extractAttributes(GroupImpl.java:228)
+   at com.ibm.wps.um.GroupImpl.setVmmPrincipal(GroupImpl.java:181)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  When using certain PUMA group attributes in a high load
+   situation, several threads may hang in java.util.HashMap due to
+   unsynchronized access to the collection class. The following
+   stack trace appears in trace.log:
+   
+   10:09:44:471 CEST] 0000002a ThreadMonitor W WSVR0605W: Thread
+   "WebContainer : 10" (00000050) has been active for 702661
+   milliseconds and may be hung. There is/are 2 thread(s) in total
+   in the server that may be hung.
+   at java.util.HashMap.findNonNullKeyEntry(HashMap.java:526)
+   at java.util.HashMap.putImpl(HashMap.java:622)
+   at java.util.HashMap.put(HashMap.java:605)
+   at
+   com.ibm.wps.um.GroupImpl.extractAttributes(GroupImpl.java:228)
+   at com.ibm.wps.um.GroupImpl.setVmmPrincipal(GroupImpl.java:181)
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Although the PUMA code appears to be read-only code, it does
+   access a java collection (HashMap) by writing to it in order to
+   perform a lazy initialization. This code path needs to be
+   synchronized.
+   
+   Manual Steps:
+      None
+   
+   Failing Module(s):
+      Portal Access Control
+   
+   Affected Users:
+      All end users
+   
+   Version Information:
+       Portal Version(s): 6.1.0.1
+        Pre-Requisite(s): PK86483 [http://www-01.ibm.com/support/docview.wss?uid=swg1PK86483]
+         Co-Requisite(s): ---
+   
+       Portal Version(s): 6.1.0.2
+        Pre-Requisite(s): PK86483 [http://www-01.ibm.com/support/docview.wss?uid=swg1PK86483]
+         Co-Requisite(s): ---
+   
+   Platform Specific:
+      This fix applies to all platforms.
+   
+   A fix is available from Fix Central:
+   
+   http://www.ibm.com/eserver/support/fixes/fixcentral/swgquickorde
+   ?apar=PK96684&productid=WebSphere%20Portal&brandid=5 [http://www.ibm.com/eserver/support/fixes/fixcentral/swgquickorde?apar=PK96684&productid=WebSphere%20Portal&brandid=5]
+   
+   You might need to type or paste the complete address into your
+   Web browser.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK96684
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSPHERE PORTA
+   
+   
+ * REPORTED COMPONENT ID
+   5724E7600
+   
+   
+ * REPORTED RELEASE
+   610
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-09-21
+   
+   
+ * CLOSED DATE
+   2009-10-21
+   
+   
+ * LAST MODIFIED DATE
+   2010-01-04
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBSPHERE PORTA
+   
+   
+ * FIXED COMPONENT ID
+   5724E7600
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R61A PSY
+   UP
+   
+   
+ * R61B PSY
+   UP

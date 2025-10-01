@@ -1,0 +1,27 @@
+Title: IBM How to get cumulative Runtime Analysis results - United States
+
+Text:
+1143171; rtrt; test_rt; testrt; coverage; separated; cumulative; concatenate; append; 186142938; Test RealTime; Runtime Analysis; Coverage; .tio; tio; Memory Profiling; .tpf; tpf; Performance Profiling; .tqf; tqf; .tdf; tdf; UML Sequence Diagram viewer TECHNOTE (FAQ)
+
+QUESTION
+ This technote explains how to get cumulative Runtime Analysis results with IBM® Rational® Test RealTime® (TestRT). Some of the Runtime Analysis tools create cumulative trace files. 
+
+ANSWER
+The Runtime Observation Tools: Code Coverage, Memory Profiling and Performance Profiling can show cumulative execution data in the report. The Unified Modeling Language (UML) Sequence Diagram viewer, however, cannot show cumulative execution data in the report.
+When you use the Graphical User Interface, the report viewers automatically show the cumulative results. The individual results for each are still available. For Code Coverage report you need to go to the Code Coverage menu. Then you choose Test by Test to show the coverage results for one or more tests.
+
+When you run the compiled tester, TestRT writes a so-called dynamic trace dump file to disk. This name of this file is typically atl_out.spt. This file serves as input toatlsplit. atlsplit is an executable file in TestRT. This tool writes out a separate trace file for each runtime observation type. 
+
+ 
+
+Runtime observation type trace file Coverage .tio Memory Profiling .tpf Performance Profiling .tqf UML Sequence Diagram viewer .tdf 
+
+The first three files open in append mode. The tool concatenates the traces to the already existing traces. For the last one, the .tdf file, this does not apply. 
+
+In the Report viewer this cumulative mode applies. For example you see a full code coverage as 100% code coverage, when the coverage is the result of several executions. There is an option in the viewer menu to reset the trace files. You can use this option, if you only want to see the results of the next run. 
+
+
+ 
+
+HISTORICAL NUMBER
+ 186142938

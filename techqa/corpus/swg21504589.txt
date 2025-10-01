@@ -1,0 +1,13 @@
+Title: IBM Why am I seeing Autolink-SS and not Autolink-MS? - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Why does Inspector show a linkage type of Autolink-SS and not Autolink-MS? There is a record that is linking into an Entity as a result of a Member from a different source and does not score high enough with another record from the same source. 
+
+ANSWER
+If there are any members in the Entity from the same source you will get an Autolink-SS even if the target Member linking is from a different source because a same source link exists within the Entity.
+
+RELATED INFORMATION
+ Best Match Linking - Wrong Link Type? [http://eclient.lenexa.ibm.com:9082/DocFetcher/source/InitiateIMS/1980]

@@ -1,0 +1,208 @@
+Title: IBM IV83538: NCM CONFIG MODELLING PROBLEM ON CISCO 29XX - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Problem title
+   NCM config modelling problem on Cisco 29xx
+   .
+   Problem description and business impact
+   Using ITNcM v 6.4 on Linux platform we see modelling issue for
+   Cisco 29xx with OS C2900-UNIVERSALK9-M-15.0(1)M7 using driver
+   cisco_router_isrg2_15.x_v20130223.062211. We see issue with
+   smartmodel in the interface section.
+   
+   We have the following configuration
+   
+   interface GigabitEthernet0/0
+   description To_
+    ip address
+   ip verify unicast source reachable-via rx allow-self-ping
+   ip flow ingress
+   duplex auto
+   speed auto
+   no cdp enable
+   standby 1 ip
+   standby 1 timers 1 4
+   standby 1 priority 105
+   standby 1 preempt delay minimum 120
+   standby 1 authentication md5 key-chain HSRP1
+   standby 1 name
+   standby 1 track 1 decrement 10
+   !
+   interface GigabitEthernet0/1
+   description To_
+   ip address
+   ip verify unicast source reachable-via rx allow-default
+   allow-self-ping
+   ip flow ingress
+   duplex auto
+   speed auto
+   no cdp enable
+   standby 2 ip
+   standby 2 timers 1 4
+   standby 2 priority 105
+   standby 2 preempt delay minimum 60
+   standby 2 authentication md5 key-chain HSRP1
+   standby 2 name Vendor
+   standby 2 track 2 decrement 10
+   !
+   
+   On interface Gig0/0, ITNcM models the configuration properly,
+   however on  Gig0/1 interface, it doesn't model properly on the
+   following section "ip verify unicast source reachable-via rx
+   allow-default allow-self-ping"
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  No workaround.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * ITNCM users using the cisco_router_isrg2_15.x smartmodel     *
+   * driver                                                       *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * NCM CONFIG MODELLING PROBLEM ON CISCO 29XX                   *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * The Interim FixId is IV83538_20160413                        *
+   * 1. Go to FixCentral ITNCM "Identify Fixes" at URL -          *
+   * http://www-933.ibm.com/support/fixcentral/swg/identifyFixes? *
+   * query.parent=ibm~Tivoli&query.product=ibm~Tivoli~Tivoli%20Ne *
+   * tcool%20Configuration%20Manager&query.release=All&query.plat *
+   * form=All                                                     *
+   * 2. Select the "Individual fix IDs" radio button and search   *
+   * for "IV83538_20160413:Access key" (without the quotes)       *
+   * 3. Select Continue                                           *
+   *                                                              *
+   * File details:                                                *
+   * CiscoRouterISRG215x.bin                                      *
+   * Actual Size = 96,098,479 bytes    TML Size = 96,098,479      *
+   * bytes                                                        *
+   * Cisco_Router_ISRG2_15.x_InterimFix_README_IV83538.html       *
+   * Actual Size =     17,019 bytes    TML Size =     17,019      *
+   * bytes                                                        *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fixed unmodeled commands.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV83538
+   
+   
+ * REPORTED COMPONENT NAME
+   N/C CONFIG MGR(
+   
+   
+ * REPORTED COMPONENT ID
+   5724Z3100
+   
+   
+ * REPORTED RELEASE
+   640
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-04-07
+   
+   
+ * CLOSED DATE
+   2016-04-14
+   
+   
+ * LAST MODIFIED DATE
+   2016-04-14
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   N/C CONFIG MGR(
+   
+   
+ * FIXED COMPONENT ID
+   5724Z3100
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R630 PSY
+   UP
+   
+   
+ * R640 PSY
+   UP
+   
+   
+ * R641 PSY
+   UP
+   
+   
+ * R642 PSY
+   UP

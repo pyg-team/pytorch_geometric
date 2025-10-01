@@ -1,0 +1,56 @@
+Title: IBM DB2 HADR configuration logs fill up the file system - United States
+
+Text:
+DB2; HADR; OPENSTAC TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ For IBM SmartCloud Orchestrator and IBM Cloud Orchestrator, the DB2 log files of the OPENSTAC database fills the file system. 
+
+SYMPTOM
+You have to constantly perform a manual cleanup of the DB2 log files to ensure that the file system does not reach 100% capacity and impact the IBM SmartCloud Orchestrator or IBM Cloud Orchestrator functionality.
+
+
+CAUSE
+A lot of data is written to the OPENSTAC database.
+
+DIAGNOSING THE PROBLEM
+The following command shows which directories occupy the most space: 
+
+[db2inst1@ibmsrv002 NODE0000]$ pwd /home/db2inst1/db2inst1/NODE0000
+[db2inst1@ibmsrv002 NODE0000]$ du -sh *
+
+Result:
+4.3G BPMDB
+577M CMNDB
+3.8G OPENSTAC
+834M PDWDB
+769M RAINMAKE
+1.2G SCCMDB
+7.0K SQL000002
+14G SQL00001
+6.6G SQL00002
+1.6G SQL00003
+551M SQL00004
+3.0M SQL00005
+3.0M SQL00006
+970M SQL00007
+24K sqldbdir
+961M STORHOUS
+
+As you can see, the OpenStack database (OPENSTAC), which is used by IBM Cloud Orchestrator, occupies significance space.
+
+
+RESOLVING THE PROBLEM
+The IBM SmartCloud Orchestrator Version 2.3: Capacity Planning, Performance, and Management Guide [http://www.ibm.com/software/brandcatalog/ismlibrary/details?catalog.label=1TW10SO7P] document provides the steps for backup management, DB2 reorganization, archive management, and maintenance automation. This guide provides guidance on DB2 maintenance and configuration specifically for IBM Cloud Orchestrator. Although the document is based on IBM SmartCloud Orchestrator V2.3, it also applies to IBM Cloud Orchestrator V2.4. 
+
+
+Management of the DB2 log files is determined by the Log Archive parameters in the Database Configuration (LOGARCHMETH1). Run the following DB2 command to determine the value to which this parameter is set:
+db2 get db cfg or you can run db2 get db cfg | grep LOGARCH
+
+Consider the following information to determine whether LOGARCHMETH1 is set appropriately for your environment: 
+
+ * Set LOGARCHMETH1 to OFF so that circular logging is used. Then, only a specify the number of log files that will be used. 
+ * Set LOGARCHMETH1 to DISK:/path/logarchive so that the log files are archived to this specified location. Then, use the PRUNE HISTORY with the AND DELETE parameter to purge the old log files.
+
+
+Note: If you have a HADR set up for High Availability/Disaster Recovery, you cannot set LOGARCHMETH1 to OFF. With HADR, you cannot use circular logging. However, you can archive the log files to a common location that both servers can access. With archive logging, you cannot automatically remove these log files other than to run the PRUNE command.

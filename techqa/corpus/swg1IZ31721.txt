@@ -1,0 +1,162 @@
+Title: IBM IZ31721: PURGE UNKNOWN SERVERS BASED ON AGE - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  need to make a configurable option, to purge the unknowns
+   based on age so that they are available for a few days but do
+   not accumulate large numbers.
+   The OOMs occur because there are so many unknowns to delete in
+   one commit. We need to purge on age intervals rather than
+   whenever customer decides to turn on purge=true and the
+   commits need to be done in batches. These are all
+   changes to the current design.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  manually delete unknowns if there are too many for topology to
+   do.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Purge unknown servers based on age and run in batches. This
+   defect adds scaling capability to deletion
+   of logical connections such that topology builder does not run
+   out of memory trying to perform many deletes if
+   com.collation.topobuilder.purgeunknownservers=true. With this
+   fix, If com.collation.topobuilder.purgeunknownservers=false,
+   unknowns will be deleted after n days, which is configurable as
+   noted below. Building up logical connections can cause
+   topology build to run longer, and subsequent deletes will also
+   take longer if there are large amounts, hence by default
+   these connections will be cleaned up after 5 days.
+   
+   After applying this patch, the first three topology builds after
+   the patch will likely take longer as a result of
+   the additional cleanup if the connections were not already being
+   purged. However, after the first three discoveries topology
+   builder will be faster then prior to this patch if unknowns were
+   not previously being cleaned up.
+   
+   This change introduces the following new property;
+   
+   
+   com.collation.topobuilder.RuntimeGcUnknownServerRetentionSpan
+   This new parameter specifies how long in days unknowns should be
+   kept. The default is 5. Customers need unknowns
+   to determine what to setup CSTs for, but the problem in this
+   apar is that the unknowns build up over time and
+   eventually cause topology performance issues.
+   
+   The deletes are processed over the course of several discoveries
+   as follows;
+   run 1, unknowns are deleted
+   run 2, logicalconnections associated with unknowns from run1 are
+   marked for deletion
+   run 3, logicalconnections from run 2 are deleted
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix for this APAR is contained in the following
+   maintenance packages:
+   | Interim Fix | 7.1.0.0-TIV-ITADDM-IF0008
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ31721
+   
+   
+ * REPORTED COMPONENT NAME
+   APP DEPENDENCY
+   
+   
+ * REPORTED COMPONENT ID
+   5724N5500
+   
+   
+ * REPORTED RELEASE
+   710
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-09-09
+   
+   
+ * CLOSED DATE
+   2008-09-27
+   
+   
+ * LAST MODIFIED DATE
+   2008-09-27
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   APP DEPENDENCY
+   
+   
+ * FIXED COMPONENT ID
+   5724N5500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R710 PSY
+   UP

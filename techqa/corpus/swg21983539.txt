@@ -1,0 +1,159 @@
+Title: IBM Switching to using SHA-2 based certificates in Information Server - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How do I switch to using SHA-2 based certificates in InfoSphere Information Server? 
+
+CAUSE
+At one time SHA-1 based signatures were the standard for certificates. 
+Prior to “PI41557: CHANGE DEFAULT CERTIFICATE TO BE SHA256WITHRSA CERTIFICATES" (http://www-01.ibm.com/support/docview.wss?uid=swg1PI41557 [http://www-01.ibm.com/support/docview.wss?uid=swg1PI41557]) (WebSphere 7.0.0.41, 8.0.0.12, 8.5.5.7, etc.), the default signature algorithm for the WebSphere root certificate and the default certificate chained to it was SHA1withRSA. SHA-1 was also commonly used as the signature algorithm by most Certificate Authorities.
+
+SHA-1 signed certificates have now been deprecated by many organizations and security experts as they are no longer considered secure. It is recommended that you migrate to SHA-2 based certificates. 
+
+
+
+ANSWER
+
+
+
+CHECKING CURRENT CERTIFICATES FOR SHA-1 SIGNATURES
+
+
+
+To check if you currently have SHA-1 certificates you can examine them via the WebSphere Administrative Console. Examine each of the following certificates for their 'Signature algorithm':
+
+
+ * WebSphere default certificate:
+ * 
+ * 
+ * 
+ * WebSphere root certificate:
+ * 
+ * 
+ * 
+ * IIS certificate:
+ * 
+ * 
+
+If any of these certificates are using a SHA-1 signed certificate, for example SHA1withRSA, it is recommended that you upgrade your certificates to ones signed with SHA-2. 
+
+Note: If you have previously replaced your certificates, the aliases for your certificates may be different those above. 
+
+
+
+SHA-2 PREREQUISITES
+
+
+You must ensure you have InfoSphere Information Server and WebSphere Java JDKs/SDKs patched to a level that supports SHA-2 encryption before attempting to replace your current certificates with SHA-2 certificates. 
+
+The IBM JDK levels required are:  * Java 1.6:
+ * 
+ * 
+ * Java 1.7:
+ * 
+
+
+NOTE: These are minimum requirements for SHA-2 compatibility. It is always advisable to apply the latest available JDK levels for InfoSphere Information Server and WebSphere so that you will have the latest security fixes. 
+
+For InfoSphere Information Server 11.3 and 11.5, these minimum JDK levels will be met by the base level install. Installing WebSphere 8.5.5 Fix Pack 9 (v8.5.5.9) or higher requires the InfoSphere Information Server prerequisite patch JR55924 ( https://www.ibm.com/support/entdocview.wss?uid=swg1JR55924 [https://www.ibm.com/support/entdocview.wss?uid=swg1JR55924] ). 
+
+For InfoSphere Information Server 8.7 and 9.1, you may be required to patch your InfoSphere Information Server and WebSphere JDKs to meet the minimum requirements. 
+
+WEBSPHERE JAVA SDK PATCHES
+
+Patch WebSphere up to the following Fix Pack levels, making sure to install the WebSphere JDK patch that corresponds to the base FP patch. 
+
+InfoSphere Information Server 8.7:  * WebSphere 7.0:
+ * 
+ * 
+ * WebSphere 8.0:
+ * 
+
+
+InfoSphere Information Server 9.1:  * WebSphere 8.0:
+ * 
+ * 
+ * WebSphere 8.5.5:
+ * 
+
+
+Note: 
+WebSphere packages their Java SDK patches separately from the WebSphere Application Server patches. 
+
+For example, if you are installing WebSphere 8.5.5 Fix Pack 8, the Fix Pack download page is here: http://www-01.ibm.com/support/docview.wss?uid=swg24041178 [http://www-01.ibm.com/support/docview.wss?uid=swg24041178]. But it might not be readily apparent that you need at least 2 patches from the download page. The WebSphere Application Server Full Profile or Liberty Profile patch, AND the “IBM WebSphere SDK Java Technology Edition V7.0 for Full Profile and Liberty” patch for your OS platform. Additional WebSphere patches may also be required if you have the Edge Components, Server Supplements, or other optional WebSphere components installed. 
+
+Be sure to install the Java SDK patch that corresponds to the WebSphere patch! 
+
+INFOSPHERE INFORMATION SERVER JDK PATCHES
+
+For the InfoSphere Information Server JDK, install the latest JDK security patch, JR55158 ( https://www-304.ibm.com/support/docview.wss?uid=swg21976231 [https://www-304.ibm.com/support/docview.wss?uid=swg21976231]) or later. 
+
+
+
+REPLACING THE CERTIFICATES
+
+Once you have WebSphere and InfoSphere Information Server JDKs that can support SHA-2 signatures, you are ready to replace or upgrade the certificates. 
+
+
+CERTIFICATE AUTHORITY CERTIFICATES
+
+If you have obtained your certificates from a Certificate Authority, you will need to request a new SHA-2 certificate from them or another Certificate Authority. See the WebSphere documentation “Securing communications” section. It contains sub-sections on how to create a new CA request, how to receive the resulting certificate, how to correctly update your signer certificates, etc. 
+
+For example, for WebSphere 8.5.5, the “Securing communications” section can be found here: 
+[http://www-01.ibm.com/support/knowledgecenter/SSEQTP_8.5.5/com.ibm.websphere.base.doc/ae/tsec_securecomm.html?cp=SSEQTP_8.5.5%2F1-8-2-31-4&lang=en] 
+http://www-01.ibm.com/support/knowledgecenter/SSEQTP_8.5.5/com.ibm.websphere.base.doc/ae/tsec_securecomm.html?cp=SSEQTP_8.5.5%2F1-8-2-31-4&lang=en [http://www-01.ibm.com/support/knowledgecenter/SSEQTP_8.5.5/com.ibm.websphere.base.doc/ae/tsec_securecomm.html?cp=SSEQTP_8.5.5%2F1-8-2-31-4&lang=en] 
+
+The following TechNote also contains useful information about WebSphere CA requests: http://www-01.ibm.com/support/docview.wss?uid=swg21965777 [http://www-01.ibm.com/support/docview.wss?uid=swg21965777] 
+
+CERTIFICATES SIGNED BY WEBSPHERE’S SELF-SIGNED ROOT CERTIFICATE
+
+The initial WebSphere certificate configuration uses a self-signed root certificate. The default certificate is a chained certificate signed by that root certificate. These certificates can be 'upgraded' to SHA-2 using a built-in tool WebSphere provides. 
+
+In the WebSphere Administrative Console: 
+Security > SSL certificate and key management > Manage FIPS > Related Items > click on 'Convert certificates'  * · Select Algorithm Strict = SHA256withRSA 
+   · Select New certificate key size = 2048 
+   · Click OK. 
+   · Save directly to the master configuration. 
+
+
+This will replace the existing SHA-1 certificates with new SHA-2 certificates containing the same information. 
+
+
+UPDATING THE REQUIRED TRUSTSTORES AFTER CERTIFICATE REPLACEMENT
+
+After the certificates are replaced with new CA signed certificates or by the WebSphere upgrade tool, you will need to update your truststores with the new certificates. Follow the instructions 5 and 6 in the "Replacing WebSphere Application Server certificates" topic in the InfoSphere Information Server Knowledge Center: 
+
+8.7: https://www.ibm.com/support/knowledgecenter/SSZJPZ_8.7.0/com.ibm.swg.im.iis.productization.iisinfsv.install.doc/topics/wsisinst_config_sslenablecertificateoverride.html [https://www.ibm.com/support/knowledgecenter/SSZJPZ_8.7.0/com.ibm.swg.im.iis.productization.iisinfsv.install.doc/topics/wsisinst_config_sslenablecertificateoverride.html] 
+
+9.1: https://www.ibm.com/support/knowledgecenter/SSZJPZ_9.1.0/com.ibm.swg.im.iis.productization.iisinfsv.install.doc/topics/wsisinst_config_sslenablecertificateoverride.html [https://www.ibm.com/support/knowledgecenter/SSZJPZ_9.1.0/com.ibm.swg.im.iis.productization.iisinfsv.install.doc/topics/wsisinst_config_sslenablecertificateoverride.html] 
+
+11.3: https://www.ibm.com/support/knowledgecenter/SSZJPZ_11.3.0/com.ibm.swg.im.iis.productization.iisinfsv.install.doc/topics/wsisinst_config_sslenablecertificateoverride.html [https://www.ibm.com/support/knowledgecenter/SSZJPZ_11.3.0/com.ibm.swg.im.iis.productization.iisinfsv.install.doc/topics/wsisinst_config_sslenablecertificateoverride.html] 
+
+11.5: 
+https://www.ibm.com/support/knowledgecenter/SSZJPZ_11.5.0/com.ibm.swg.im.iis.productization.iisinfsv.install.doc/topics/wsisinst_config_sslenablecertificateoverride.html [https://www.ibm.com/support/knowledgecenter/SSZJPZ_11.5.0/com.ibm.swg.im.iis.productization.iisinfsv.install.doc/topics/wsisinst_config_sslenablecertificateoverride.html] 
+
+And then follow the “Running UpdateSignerCerts after enabling SSL or changing SSL settings.“ instructions in the "What to do next" section of the Knowledge Center article. 
+
+
+VERIFYING THE NEW CERTIFICATES ARE USING SHA-2 SIGNATURES
+
+You can verify whether the certificates have been updated to SHA-2 from WebSphere Administrative Console following the same steps as in the ‘Checking Current Certificates for SHA-1 Signatures’ section above: 
+
+ * WebSphere default certificate:
+ * 
+ * 
+ * 
+ * WebSphere root certificate:
+ * 
+ * 
+ * 
+ * IIS certificate:
+ * 
+ * 
+ * 
+
+In all cases the signature algorithm should be a SHA-2 algorithm, for example: 
+
+ *

@@ -1,0 +1,123 @@
+Title: IBM Metadata Asset Manager import fails due to transaction timeout - United States
+
+Text:
+is87relnotes metadata asset manager imam87relnotes imam91relnotes is91relnotes imam113relnotes imam115relnotes TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ In IBM InfoSphere Metadata Asset Manager, long-running import operations for large imports can fail if they exceed the defined container-timeout period. The default timeout period is two hours. 
+
+SYMPTOM
+A long-running operation fails to complete successfully in IBM InfoSphere Metadata Asset Manager. A general failure message is displayed that indicates there was an error with saving the results. For example, this message might appear for an import to staging operation: 
+
+ * 
+ * com.ascential.xmeta.exception.ServiceException: Error saving the given EObjects to the persistent store
+ * 
+
+
+If the failure is caused by a transaction timeout, the WebSphere Application Server log displays a message such as the following immediately before the failure:  * TimeoutManage I WTRN0006W: Transaction 000001321D4848DF00000001000005FF95012BC39891C7FBE3AABCC2A4F50648A1B598D5000001321D4848DF00000001000005FF95012BC39891C7FBE3AABCC2A4F50648A1B598D500000001 has timed out after 7200 seconds.
+
+
+CAUSE
+A long-running WebSphere transaction has timed out or the client has been inactive too long.
+
+DIAGNOSING THE PROBLEM
+Analyze log messages and stack trace details of the WebSphere Application Server log at the time of the error.
+
+
+
+RESOLVING THE PROBLEM
+Increase the transaction and client inactivity timeout. 
+
+
+If you have InfoSphere Information Server deployed on IBM WebSphere Application Server Network Deployment, then follow the steps below.
+
+
+ * 
+ * 
+ * 
+ * 
+ * Servers > Server Types
+ * 
+ * WebSphere Application Servers.
+ * 
+ * 
+ * 
+ * Application servers
+ * 
+ * server1
+ * 
+ * 
+ * 
+ * 
+ * Configuration
+ * 
+ *  Container settings
+ * 
+ * Container Services 
+ * 
+ * Transaction service
+ * 
+ * 
+ * 
+ * 
+ * General Properties
+ * 
+ * Total transaction lifetime timeout
+ * 
+ * Client inactivity timeout
+ * 
+ * Maximum transaction timeout
+ * 
+ * 
+ * 
+ * 
+ * save 
+ * 
+ * 
+ * 
+ * 
+
+
+If you have installed Information Server 11.3 or higher using the WebSphere Application Server Liberty Core, then follow the steps below. 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * IS_HOME/ASBServer/wlp/usr/servers/iis/server.xml
+ * 
+ * 
+ * 
+ * transaction 
+ * 
+ * 
+ * <
+ * transaction 
+ * clientInactivityTimeout
+ * ="3600" propogatedOrBMTTranLifetimeTimeout="7200" 
+ * totalTranLifetimeTimeout
+ * ="7200" transactionLogDirectory="${server.config.dir}/tranlog/"/>
+ * 
+ * 
+ * 
+ * clientInactivityTimeout
+ * 
+ * totalTranLifetimeTimeout
+ *  
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+
+RELATED INFORMATION
+ IMAM import action fails due to session expiration [http://www.ibm.com/support/docview.wss?uid=swg21512248]
+Ensuring IMAM imports run without interruption [http://www.ibm.com/support/docview.wss?uid=swg21512490]
+
+
+ 
+
+Cross reference information Segment Product Component Platform Version Edition Information Management InfoSphere Information Server IBM InfoSphere Metadata Asset Manager

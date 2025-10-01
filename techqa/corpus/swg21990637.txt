@@ -1,0 +1,85 @@
+Title: IBM Unable to send data to remote web server that has TLS 1.2 only enabled - United States
+
+Text:
+enable TLS1 and TLS1.2 and supported ciphers; SSLHelloProtocol; TLS1-TLS1.2; security.properties; customer_overrides.properties TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Using Sterling B2B Integrator 5.2.4.2+, 5.2.5+ build systems with SSL enabled, customer is unable to send data to the remote web server that has TLS 1.2 enabled.
+
+Both SB2BI, 5.2.4.2+ and 5.2.5+ builds support TLS 1.2 communication per the following Technote 1648432.
+
+And
+
+Customer requires to send data to various business partners that require both TLS 1.0 and TLS 1.2.
+Customer has then enabled the following parameter in customer_overrides.properties file:
+
+# A set of valid useful property values for SSLHelloProtocol are as follows
+# SSL3-TLS1.2 for any protocol higher or equal to SSL3
+# SSL3-TLS1.1 for anything from SSL3 to TLS1.1
+# TLS1.2-ONLY for TLS1.2 only
+# TLS1-TLS1.2 for TLS1.0, TLS1.1 and TLS1.2
+# TLS1.1-TLS1.2 for TLS1.1 and TLS1.2
+# 
+
+security.SSLHelloProtocol=TLS1-TLS1.2
+
+to enable TLS 1 and TLS 1.2 communication. However, the communication session can't be established and customer encountered the HANDSHAKE_FAILURE. 
+
+SYMPTOM
+httpclient.log:
+
+[2016-09-10 01:45:54.055] DEBUG <-1038065086> CustomConnectAgent.handleFailure() - Starting with failure message [Connection was closed from the perimeter side with error: CloseCode.HANDSHAKE_FAILURE] 
+
+[2016-09-10 01:45:54.055] ERROR <-1038065086> CustomConnectAgent.closed(CC)encountered error due to [Connection was closed from the perimeter side with error: CloseCode.HANDSHAKE_FAILURE]
+
+Perimeter.log:
+
+[2016-09-10 01:45:54.051] ERROR <708980102> HTTP_CLIENT_EXTERNAL_HTTPClientAdapter_node1-Thread-22075317349com.sterlingcommerce.perimeter.api.conduit.SSLByteDataConduit@c4a6f305:Got exception doing SSL
+[2016-09-10 01:45:54.051] ERROR <708980102> [1473471954051] FATAL Alert:HANDSHAKE_FAILURE - The handshake handler was unable to negotiate an acceptable set of security parameters.
+
+
+CAUSE
+Customer's Business Process, or Adapter setup, or AS2 setup has specified to use Strong Cipher and the additional TLS 1.2 cipher suites, that remote web server is expecting, are not configured / added to the default StrongCipherSuite in either security.properties or customer_overrides.properties file. Thus, due to the missing cipher suites, the remote web server is rejecting the connection and the SSL Handshake failed.
+
+
+DIAGNOSING THE PROBLEM
+Tested with security.SSLHelloProtocol=TLS1.2-ONLY and the handshake is successful. 
+
+But, setting to security.SSLHelloProtocol=TLS1-TLS1.2, error occurs. 
+
+Network packet trace, or sniffer trace, or tcpdump is needed in order to see what cipher suites and TLS versions are sent in the client hello message to the server. 
+
+Comparing the success and failure network packet capture traces revealed that the missing cipher suites.
+
+
+RESOLVING THE PROBLEM
+1. Please ensure the following TLS1.2 only cipher suites, in bold, are added to the StrongCipherSuite listing in the <install_directory>/properties/customer_overrides.properties file: 
+
+For example: 
+
+# A set of valid useful property values for SSLHelloProtocol are as follows
+# SSL3-TLS1.2 for any protocol higher or equal to SSL3
+# SSL3-TLS1.1 for anything from SSL3 to TLS1.1
+# TLS1.2-ONLY for TLS1.2 only
+# TLS1-TLS1.2 for TLS1.0, TLS1.1 and TLS1.2
+# TLS1.1-TLS1.2 for TLS1.1 and TLS1.2
+#
+
+security.SSLHelloProtocol=TLS1-TLS1.2
+
+security.StrongCipherSuite=TLS_RSA_WITH_RC4_128_SHA,TLS_RSA_WITH_AES_128_CBC_SHA,TLS_RSA_WITH_AES_256_CBC_SHA,TLS_RSA_WITH_3DES_EDE_CBC_SHA,TLS_RSA_WITH_3DES_EDE_CBC_MD5,TLS_RSA_WITH_RC4_128_MD5,TLS_RSA_WITH_AES_128_CBC_SHA256,TLS_RSA_WITH_AES_256_CBC_SHA256 
+
+ 
+
+2. Save the file and Restart SB2BI.
+
+RELATED INFORMATION
+ Technote 1648432 [http://www-01.ibm.com/support/docview.wss?uid=swg21648432]
+
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ Sterling B2B Integrator 
+SB2BI
+SI

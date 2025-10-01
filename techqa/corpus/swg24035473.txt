@@ -1,0 +1,42 @@
+Title: IBM SPSS Statistics 22.0 Interim Fix 2 - United States
+
+Text:
+ DOWNLOADABLE FILES
+
+ABSTRACT
+ This Interim Fix addresses an important product correction for SPSS Statistics 22.0.0.0 
+
+DOWNLOAD DESCRIPTION
+This interim fix applies to Statistics Desktop 22.0.0.0.
+
+
+Platforms affected: Windows 32, Windows 64, Mac OSX, Linux 64
+[https://www.ibm.com/support/entdocview.wss?uid=swg1PM94702]
+PM94702 [https://www.ibm.com/support/entdocview.wss?uid=swg1PM94702] - IN JAPANESE, IBM SPSS STATISTICS 22.0 MISTRANSLATES "SURVIVAL"
+AS "CUMULATIVE SURVIVAL PROBABILITY" INSTEAD OF "SURVIVAL ASSAY"
+
+You are using IBM SPSS Statistics 22.0 and have changed the Language options to display in Japanese. 
+You are performing a Survival Analysis and notice that there is a mistranslation:
+what should have been translated as "Survival Assay (Seizon Bunseki)" is shown instead as
+"Cumulative Survival Probability (Ruiseki Seizon Kakuritsu)".
+
+This issue has been addressed in IBM SPSS Statistics 22.0 Interim Fix 2.
+
+
+Issues corrected: [http://www.ibm.com/support/docview.wss?uid=swg27039213]Fix List [http://www.ibm.com/support/docview.wss?uid=swg27039318] 
+
+PREREQUISITES
+IBM SPSS Statistics 22.0.0.0 must be installed prior to applying this interim fix.
+
+INSTALLATION INSTRUCTIONS
+Download the installer and choose the path for the install.
+
+DOWNLOAD PACKAGE
+
+
+
+
+Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options 
+What is Fix Central(FC)? [https://www.ibm.com/support/fixcentral/help?page=swfaqs] SPSS Stats Client 22.0 IF2 Linux 64 13 Aug 2013 Language Independent 113246208 FC [http://www.ibm.com/support/fixcentral/swg/quickorder?parent=ibm~Information+Management&product=ibm/Information+Management/SPSS+Statistics&function=fixId&fixids=22.0-IM-S22STATC-Linux8664-IF002&source=fc] [ ] SPSS Stats Client 22.0 IF2 Mac 13 Aug 2013 Language Independent 20971520 FC [http://www.ibm.com/support/fixcentral/swg/quickorder?parent=ibm~Information+Management&product=ibm/Information+Management/SPSS+Statistics&function=fixId&fixids=22.0-IM-S22STATC-MAC-IF002&source=fc] [ ] SPSS Stats Client 22.0 IF2 Windows 13 Aug 2013 Language Independent 94371840 FC [http://www.ibm.com/support/fixcentral/swg/quickorder?parent=ibm~Information+Management&product=ibm/Information+Management/SPSS+Statistics&function=fixId&fixids=22.0-IM-S22STATC-Win-IF002&source=fc] [ ] 
+ [/support/docview.wss?uid=swg24035473&aid=1]Problems (APARS) fixed [/support/docview.wss?uid=swg24035473&aid=2]Problems (APARS) fixed
+PM94702

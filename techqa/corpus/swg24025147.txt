@@ -1,0 +1,48 @@
+Title: IBM Rational Agent Controller, Version 8.2.1.1 - United States
+
+Text:
+RAC; Rational Agent Controler; Version 8.2.1.1; version 8.2.1.1; V8.2.1.1; v8.2.1.1; download DOWNLOADABLE FILES
+
+ABSTRACT
+ This document describes how to download the installation files for IBM Rational Agent Controller, Version 8.2.1.1 
+
+DOWNLOAD DESCRIPTION
+IMPORTANT: For information about other available versions of Agent Controller, see: 
+
+ http://www-01.ibm.com/support/docview.wss?uid=swg27013420 [http://www-01.ibm.com/support/docview.wss?uid=swg27013420]
+
+
+IBM Rational Agent Controller is a daemon process that enables client applications to launch host processes and interact with agents that coexist within host processes. 
+
+Rational Agent Controller, Version 8.2.1.1 supports the following platforms: 
+
+ * IBM z/OS 1.9 64-bit 
+ * IBM z/OS 1.10 64-bit 
+ * Sun Solaris, version 10 32-bit x86 
+ * Sun Solaris, version 10 32-bit x86
+
+
+For complete details about supported platforms and system prerequisites, see the Installation Instructions file for your operation systems attached below . 
+Rational Agent Controller, Version 8.2.1.1 can be used to profile applications running in the following versions of IBM WebSphere Application Server:  * V6.1 and service releases 
+ * V7.0 and service releases 
+
+
+Note: Profiling applications on WebSphere Application Server, V6.0, is not supported for Rational Agent Controller V8.2.1.1 on z/OS or Solaris x86.. 
+For support of profiling on with WebSphere Application Server, Version 6.0, on z/OS, use Rational Agent Controller v7.x, which is available at: http://www-01.ibm.com/support/docview.wss?uid=swg27013420 [http://www-01.ibm.com/support/docview.wss?uid=swg27013420]. INSTALLATION INSTRUCTIONS
+Follow the installation instructions for your operating system provided below: 
+
+ * Installation instructions for z/OS: rac_install_8211_zos.html [/support/docview.wss?uid=swg24025147&aid=2] [/support/docview.wss?uid=swg24025147&aid=1] 
+ * Installation instructions for Solaris x86: rac_install_8211_solaris.html [/support/docview.wss?uid=swg24025147&aid=4] [/support/docview.wss?uid=swg24025147&aid=3]
+
+DOWNLOAD PACKAGE
+From the table below, download all files labeled for your operating system. 
+
+1. Extract the contents of the compressed files to the same directory. Ensure that you preserve the directory paths for the extracted files. 
+
+2. To install Rational Agent Controller, refer to the Installation instructions file above that corresponds to your operating system.
+
+
+
+Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options 
+What is DD? [http://www6.software.ibm.com/dldirector/doc/DDfaq_en.html] Solaris x86 12/18/2009 English 256212549 FTP [ftp://public.dhe.ibm.com/software/rationalsdp/v8/rac/8211/solaris_x86/zips/rac_solarisx86.v8.2.1.1.disk1.zip] DD z/OS 64-bit 12/18/2009 English 130067090 FTP [ftp://public.dhe.ibm.com/software/rationalsdp/v8/rac/8211/zOS_64bit/zips/rac.zos.64bit_V8.2.1.1.zip] DD 
+Cross reference information Segment Product Component Platform Version Edition Software Development Rational Software Architect for WebSphere Software Agent Controller Linux, Windows 7.5, 7.5.1, 7.5.2, 7.5.3, 7.5.4, 7.5.5

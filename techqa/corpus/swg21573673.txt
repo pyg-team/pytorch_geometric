@@ -1,0 +1,98 @@
+Title: IBM Summarization and Pruning Error - Non atomic batch failure - United States
+
+Text:
+ITCAMfAD; KYN; KYJ; KHT; summarization; ITM; S&P TECHNOTE (TROUBLESHOOTING)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ US English 
+
+PROBLEM(ABSTRACT)
+ After upgrade or migration ITCAM for Web Resources or ITCAM for J2EE or ITCAM for Application Diagnostics, or ITCAM for Web Servers (agents KYN, KYJ, KHT) ITM Summarization and Pruning Agent fails. 
+
+SYMPTOM
+No data is summarized. 
+
+
+CAUSE
+Summarization and Pruning agent discovers changes of agent attributes and modifies Warehouse summarization tables if needed. When the parameter *AGTIM is changed to Y, the internal column WRITETIME is no longer used by Summarization and Pruning agent. Unfortunately, the column WRITETIME is marked as Not Null, what causes SQL error each time the agent adds a new row to affected table.
+
+DIAGNOSING THE PROBLEM
+In TEP, In the node "Summarization and Prunning Agent", subnode Statistics, table Errors, an errors, like below may be found:
+
+
+== 1668 t=work4 com.ibm.db2.jcc.c.ri: [ibm][db2][jcc][102][10040] Non-atomic batch failure. The batch was submitted, but at least one exception occurred on an individual member of the batch.
+Use getNextException() to retrieve the exceptions for specific batched elements.
+at com.ibm.db2.jcc.c.p.a(p.java:433)
+at com.ibm.db2.jcc.c.lh.a(lh.java:2823)
+at com.ibm.db2.jcc.c.lh.b(lh.java:2654)
+at com.ibm.db2.jcc.c.lh.executeBatch(lh.java:1498)
+at com.tivoli.twh.ksy.agg.BatchManager.executeBatch(BatchManager.java:406)
+at com.tivoli.twh.ksy.agg.BatchManager.commit(BatchManager.java:518)
+at com.tivoli.twh.ksy.agg.BatchManager.checkCommit(BatchManager.java:620)
+at com.tivoli.twh.ksy.agg.RawTable.aggregateData(RawTable.java:2372)
+at com.tivoli.twh.ksy.agg.Originnode.aggregateDataForNode(Originnode.java:188)
+at com.tivoli.twh.ksy.agg.RawTable.createAggregatesAndPrune(RawTable.java:3330)
+at com.tivoli.twh.ksy.agg.Worker.run(Worker.java:99)
+
+
+ 
+
+Log files for Summarization and Pruning Agent (agent sy) contains exceptions like:
+
+== 299953 t=work4 com.ibm.db2.jcc.c.SqlException: Error for batch element #107: Assignment of a NULL value to a NOT NULL column "TBSPACEID=3, TABLEID=372, COLNO=6" is not allowed.
+at com.ibm.db2.jcc.b.db.a(db.java:450)
+at com.ibm.db2.jcc.b.db.a(db.java:68)
+at com.ibm.db2.jcc.b.t.a(t.java:59)
+at com.ibm.db2.jcc.b.tb.a(tb.java:207)
+at com.ibm.db2.jcc.c.lh.a(lh.java:1848)
+at com.ibm.db2.jcc.c.lh.b(lh.java:2984)
+at com.ibm.db2.jcc.c.lh.a(lh.java:2765)
+at com.ibm.db2.jcc.c.lh.b(lh.java:2654)
+at com.ibm.db2.jcc.c.lh.executeBatch(lh.java:1498)
+at com.tivoli.twh.ksy.agg.BatchManager.executeBatch(BatchManager.java:406)
+at com.tivoli.twh.ksy.agg.BatchManager.commit(BatchManager.java:518)
+at com.tivoli.twh.ksy.agg.BatchManager.checkCommit(BatchManager.java:620)
+at com.tivoli.twh.ksy.agg.RawTable.aggregateData(RawTable.java:2372)
+at com.tivoli.twh.ksy.agg.Originnode.aggregateDataForNode(Originnode.java:188)
+at com.tivoli.twh.ksy.agg.RawTable.createAggregatesAndPrune(RawTable.java:3330)
+at com.tivoli.twh.ksy.agg.Worker.run(Worker.java:99)
+
+or, for Oracle database:
+
+== 1208400 t=work1 java.sql.BatchUpdateException: ORA-01400: cannot insert NULL into ("ITMUSER"."RRT_Application_Status_H"."WRITETIME") 
+
+
+RESOLVING THE PROBLEM
+The package ITCAMfAD_SP_regenerator_20111130.zip contains a tool, helping 
+
+in a regeneration of tables, containing a summarized data of ITM agents, in particular: 
+KYN 6.2, 7.1
+KHT 6.2, 7.1
+KYJ 6.2.
+
+During ITM agent life, each agent update may change attributes set,
+by adding, removing or modifying attributes, what may cause a changes
+in ITM Warehouse tables structure. Some types of changes results in
+that some columns or indexes are not used, some other types cause 
+Summarization and Pruning Agent to fail, for example changes to 
+the attribute *AGTIM.
+
+This support tool helps in a refresh of Summarization and Pruning
+Agent tables structure, what may cause performance improvement, and 
+a correction of Summarization and Pruning Agent table structure updates.
+
+Read the file ITCAMfAD_SP_regenerator.README from the package.
+
+Initial version:
+ITCAMfAD_SP_regenerator_20111130: ITCAMfAD_SP_regenerator_20111130.zip [/support/docview.wss?uid=swg21573673&aid=2]ITCAMfAD_SP_regenerator_20111130.zip [/support/docview.wss?uid=swg21573673&aid=1]
+
+
+Support for Oracle database, rename table issue fixed.
+ITCAMfAD_SP_regenerator_20121116: ITCAMfAD_SP_regenerator_20121116.zip [/support/docview.wss?uid=swg21573673&aid=4]ITCAMfAD_SP_regenerator_20121116.zip [/support/docview.wss?uid=swg21573673&aid=3]
+
+
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ ITCAM for AD

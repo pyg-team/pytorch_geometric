@@ -1,0 +1,51 @@
+Title: IBM Listener processes (amqcrsta) are orphaned when the remote target queue is full - United States
+
+Text:
+queue full; CLUSSDR; amqcrsta; MRTRY; MRTMR 2053 0x00000805 MQRC_Q_FULL TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Several applications running on different WebSphere MQ (WMQ) queue managers are putting messages to the same queue that is shared in the cluster. A problem occurs when the target cluster queue fills. The messages are routed to the dead letter queue (DLQ). Then the DLQ also fills. The resulting MCA failure causes the cluster sender channels to go to RETRY processing. The retry processing causes redundant amqcrsta processes to be spawned and this results in a serious machine overload. 
+
+2053 0x00000805 MQRC_Q_FULL 
+
+CAUSE
+A message is sent over a channel, and arrives at the remote end. The amqcrsta (listener process) attempts to deliver the message to the destination queue. If the queue is full, it tries MRTRY (message retry) times to put the message waiting MRTMR (message retry timer) milliseconds between each attempt. If this does not work (because the queue is full on each attempted put) it closes the destination queue, opens the QMGR object and inquires the QMGR object to check for a dead letter queue. It then closes the QMGR object. If a dead letter queue exists the amqcrsta process then repeats the process of attempting to put the message a number of times. During this time the channel is in 'PAUSED' status and the remote end of the channel (that started the conversation) is in RUNNING status. If the put failed (because the dead letter queue is also full) the amqcrsta process sends a message to the conversation initiator to say that the put failed and the channel should be retried. The amqcrsta then ends. 
+A number of factors caused this problem which resulted in a serious machine overload. The trace supplied shows that amqcrsta processes are ending, however they cannot end fast enough. As the machine's CPUs are working so hard, serving thousands of processes, amqcrsta processes do not stop in time before the RETRY interval on the conversation initiator side has started another channel and therefore another amqcrsta. Now there are even more processes to give a slice of CPU time to. This situation gets exponentially worse with more and more processes using more and more CPU time which causes the problem. 
+
+There are a number of architectural changes that can be made to the system to prevent this situation from becoming the serious problem, which it has been seen to be.
+
+
+RESOLVING THE PROBLEM
+ The best course of action is to prevent the problem from happening. 
+
+ * Determine why the messages are not being removed from the queue 
+ * Increase the MAXDEPTH(integer) for the cluster queue and dead letter queue
+
+
+ WebSphere MQ is capable of holding many messages on deep queues, if required. Although it is not a good design to rely on queues being deep on a regular basis, it is useful for these exceptional circumstances. I would suggest the queue depth is increased to cope with deeper queues in case of a similar failure in the future. Another equally important thing to do is investigate why the getting application was not performing MQGETs. If there is a problem with the application this needs to be addressed. 
+
+Although prevention of the problem would be the ideal option it is obviously not always possible to guarantee this so MQ can be tuned to cope better with this type of problem in the future... 
+
+ 
+
+Tuning recommendations 
+
+1. Reduce MRTRY and MRTMR 
+
+As described above when a channel attempts to put a message to a target queue it tries this a number of times waiting a specified time interval between each attempted MQPUT. Both of these values are configurable. If the length of time we wait between each put and the number of times we attempt the put is reduced the channel program (amqcrsta) will give up and end sooner. This means that the opportunity for multiple amqcrsta processes for the same channel to be started simultaneously is decreased (because the amqcrsta's have a better chance of ending before another one is started). Under normal circumstance (the target queue is not full) decreasing this value will have no effect - the put to the target queue will succeed on the first attempt. Altering this value would only have an affect when the target queue is full. 
+
+2. Increase SHORTTMR and/or decrease SHORTRTY. 
+
+This will change the length of time the sender side waits before trying to start the conversation again. MQ has two types of retrying mode - the short retry and the long retry. First of all, we try short retries. This means MQ attempts to start the conversation at small intervals of time a few times over. By default, it tries to start the channel every 60 seconds 10 times over. If none of these 10 attempts were successful we switch to long retries where we attempt to restart the channel once every 20 minutes. If the length of time waited between 'short' attempts was increased and possibly the number of 'short' attempts were decreased it would give the amqcrsta processes more time to stop before another one is started up. Combined with recommendation 1 this could be configured to give each amqcrsta plenty of opportunity to stop which should prevent the QMGR from becoming over loaded in this way again. 
+
+3. Use runmqlsr instead of inetd. 
+
+Using runmqlsr instead of inetd would have a benefit of running channels as threads within amqrmppa (the channel pooling process) in which we use a much more light weight approach. This would have less of an impact on system resources giving the amqcrsta processes more of a chance of stopping in a timely manner. 
+
+ 
+
+HISTORICAL NUMBER
+ 15854 499 000 
+
+PRODUCT ALIAS/SYNONYM
+ wmq/mq

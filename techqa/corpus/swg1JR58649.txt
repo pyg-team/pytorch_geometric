@@ -1,0 +1,159 @@
+Title: IBM JR58649: THE PROCESS INSTANCE DETAULS UI PAGE DOES NOT LOAD IN IBM PROCESS PORTAL - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+ DIRECT LINK TO FIX
+bpm.8600.cf2017.12.delta.repository [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Standard&fixids=bpm.8600.cf2017.12.delta.repository&source=SAR]
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  After you change the Default Details UI client-side human
+   service to a process in the web IBM Process Designer, you
+   receive the following error when you try to view the instance
+   details in IBM Process Portal:
+   
+   Error: The JavaScript in the "Init Data Change Support"
+   (2025.e6675aeb-fe1b-4c1c-8578-fac5a15202dc) script task refers
+   to an undefined variable or method. See your browser console
+   for more information. Correct the JavaScript and try again.
+   
+   PRODUCTS AFFECTED
+   IBM BPM
+   IBM BPM Express
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  To avoid this issue, disable the Process Portal performance
+   optimizations:
+   1. In a web browser, go to the WebSphere Admin console:
+   https://<server>:<secure-port>/ibm/console [https://<server>:<secure-port>/ibm/console]
+   2. From the left navigation tree, select Resources > Resource
+   Environment > Resource Environment Providers.
+   3. In the table, click Mashups_ConfigService.
+   4. In the Additional Properties section, click "Custom
+   properties".
+   5. Click New.
+   6. Type com.ibm.bpm.portal.disableCFJSAPIInvocation for the
+   name.
+   7. Type true for the value.
+   8. Click Apply and then save.
+   9. Restart the server.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  The "Init Data Change Support" script uses generic script
+   injection to load a JavaScript file that is stored as a managed
+   asset. The configuration of the require statement affects
+   whether the functions defined in the JavaScript file are
+   available to the script. In this case, the configuration does
+   not make them available, which results in the error.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A fix that prevents the JavaScript exception after you change
+   the Default Details UI client-side human service will be
+   available in a future release of IBM BPM.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR58649
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM
+   
+   
+ * REPORTED COMPONENT ID
+   5737A5700
+   
+   
+ * REPORTED RELEASE
+   860
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-10-27
+   
+   
+ * CLOSED DATE
+   2017-10-30
+   
+   
+ * LAST MODIFIED DATE
+   2017-10-31
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   BPM
+   
+   
+ * FIXED COMPONENT ID
+   5737A5700
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R860 PSY
+   UP

@@ -1,0 +1,60 @@
+Title: IBM Best Practice of installing SQL Extensions Toolkit to save storage space in a PDA (
+Netezza) appliance and cross-reference from across NPS databases - United States
+
+Text:
+SQL Extension Toolkit; Netezza; PureData for Analytics (PDA) TECHNOTE (FAQ)
+
+QUESTION
+ Do we need to install the SQL Extensions Toolkit in every NPS database to reference functions like nz_ddl, encrypt etc. ? 
+
+ANSWER
+Typically a followed practice is to install the SQL Extensions Toolkit in every NPS database on a PDA (Netezza) appliance to make it easy to reference.
+However, the toolkit would account for ~ 500 MB of space to store the associated functions/files, so installing it in each and every database would create multiple copies of all those functions/files. 
+
+This would take up (~500 MB x No. of Databases), which can add up to a lot. 
+Having a bigger (than necessary) catalog also adversely affects other regular activities such as nzupgrade, nzhostbackup, nz_manual_vacuum, nzbackup etc..
+
+Instead, one can choose to install it in just ONE database and easily reference it from any other database. So you have only one copy. 
+A good practice is to have an empty database set aside that ONLY contains these functions (and no tables).
+
+An added benefit is when you next upgrade the SQL Extensions Toolkit, it would be easier to do it once (for one database) than for multiple databases.
+
+So, for example, have one database created (lets call it SQL_EXTENSIONS_TOOLKIT) which is where you install all the functions. 
+
+Below is an example of how to cross reference it:
+
+// SQL_EXTENSIONS_TOOLKIT is the database where the functions reside in this example.
+// So, to reference them explicitly, pre-pend the function with the database name.
+
+SYSTEM.ADMIN(ADMIN)=> select SQL_EXTENSIONS_TOOLKIT..encrypt('abcde', '12345');
+ENCRYPT
+---------
+1W[I
+(1 row)
+
+Or to make it simpler, add the below line
+
+search_path = 'SQL_EXTENSIONS_TOOLKIT'
+
+To the file
+
+/nz/data/postgresql.conf
+
+// Now since we have it set up in the search_path, we don't need to explicitly pre-pend the database name.
+
+SYSTEM.ADMIN(ADMIN)=> select encrypt('abcde', '12345');
+ENCRYPT
+---------
+1W[I
+(1 row)
+
+To accomplish the above, one will have to grant permissions** to all users that may need to access the toolkit.. 
+
+So, connect to the database which has the kit installed and then give everyone access to those 3 classes of objects
+
+\c SQL_EXTENSIONS_TOOLKIT
+grant list,execute on FUNCTION to public;
+grant list,execute on AGGREGATE to public;
+grant list,execute on LIBRARY to public;
+
+** Refer to the PDA SQL Extension kit user guide for more details on permissions required to access/modify the extension kit functions.

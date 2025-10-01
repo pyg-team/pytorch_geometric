@@ -1,0 +1,62 @@
+Title: IBM How do I find out the disk space usage of the Managing Server octigate database tables? - United States
+
+Text:
+DB2 disk space usage compress top tables octigate database MS Managing Server CAMADALL CAMADINST TECHNOTE (FAQ)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ US English 
+
+QUESTION
+ How do I find out the disk space usage of the Managing Server octigate database tables? 
+
+ANSWER
+If you have been using the ITCAM Managing Server (MS) for few years to store your monitored Data Collectors (DC), and if you have not used your datatrim script regularly to trim the octigate database tables, then its likely that your tables may have grown over time. So how do you find out which tables are using up the most space? 
+
+Here are the steps to find out: 
+
+1. First connect to the database with the schema id you used to create the tables. In my case, its the default schema db2inst1 shown here:
+[/support/docview.wss?uid=swg22003010&aid=1] [/support/docview.wss?uid=swg22003010&aid=1]
+
+2. Next do a db2 list tables and you will see 68 tables in the octigate database.
+
+[/support/docview.wss?uid=swg22003010&aid=2] [/support/docview.wss?uid=swg22003010&aid=2]
+
+3. If you want to find out which tables have the most number of records, you can do something like this:
+select count(*) from <table_name> where you will substitute the <table_name> with the actual table.
+
+For example,
+
+[/support/docview.wss?uid=swg22003010&aid=3] [/support/docview.wss?uid=swg22003010&aid=3]
+
+4. Now while this shows the number of records in the table, it doesn't really tell you how big the table is and how much disk space it occupies. This information is stored in the SYSIBMADM.ADMINTABINFO table. You will have to query this table and extract out the disk space from here.
+
+So first find out how the table looks like (its "schema"):
+[/support/docview.wss?uid=swg22003010&aid=4] [/support/docview.wss?uid=swg22003010&aid=4]
+
+5. So now you will create a query that will only get you the tables where the TABSCHEMA equals the schema you used to create the octigate tables. In my case its db2inst1 so I will use this query to see only the tables owned by the db2inst1 schema userid.
+
+[/support/docview.wss?uid=swg22003010&aid=5] [/support/docview.wss?uid=swg22003010&aid=5]
+
+6. So now that you have all the tables with the db2inst1 schema userid from the SYSIBMADM.ADMINTABINFO system table, you can now write a query that will calculate the total physical disk space and dump it to a file sorted by the highest usage. The total physical size is the sum of all the DATA, INDEX, LONG, LOB and XML object physical sizes.
+
+The db2 command to do that is as shown here (in case you want to cut-n-paste). Make sure your DB2 Schema userid is correct, the example shown here is db2inst1.
+
+db2 "SELECT SUBSTR(TABSCHEMA,1,15) as SCHEMA, SUBSTR(TABNAME,1,20) as TABLENAME,
+> DATA_OBJECT_P_SIZE ,INDEX_OBJECT_P_SIZE , LONG_OBJECT_P_SIZE, LOB_OBJECT_P_SIZE,
+> XML_OBJECT_P_SIZE, (DATA_OBJECT_P_SIZE + INDEX_OBJECT_P_SIZE + LONG_OBJECT_P_SIZE +
+> LOB_OBJECT_P_SIZE + XML_OBJECT_P_SIZE ) as TOTAL_P_SIZE
+> from SYSIBMADM.ADMINTABINFO 
+> where TABSCHEMA='DB2INST1' 
+> order by TOTAL_P_SIZE desc" >> /tmp/db2sizes.sorted.out
+
+[/support/docview.wss?uid=swg22003010&aid=6] [/support/docview.wss?uid=swg22003010&aid=6]
+
+7. Open up the /tmp/db2sizes.out file and you will now see the total physical size (see the last column) sorted in descending order. This gives you an idea of your top tables that consume the most disk space. I've also attached my db2sizes.out file here from my test system if you want to take a look.
+[/support/docview.wss?uid=swg22003010&aid=7] [/support/docview.wss?uid=swg22003010&aid=7]
+
+Note: This was written for the ITCAM Managing Server octigate database but you can use the same methodology to look at your other DB2 databases. For example, the ITM Tivoli Data Warehouse (TDW) historical database will be a good one to check disk usage at it usually stores larger amounts of historical data.
+
+db2sizes.sorted.out [/support/docview.wss?uid=swg22003010&aid=9]db2sizes.sorted.out [/support/docview.wss?uid=swg22003010&aid=8]
+
+PRODUCT ALIAS/SYNONYM
+ ITCAM ITCAM4AD ITCAMfAD

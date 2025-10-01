@@ -1,0 +1,39 @@
+Title: IBM How do you use a run task to execute a Power Shell script. - United States
+
+Text:
+Connect:Direct Windows RunTask Powershell TECHNOTE (FAQ)
+
+QUESTION
+ How do you write a process to execute a run task that will execute a batch file which in turn executes a Power Shell script? 
+
+CAUSE
+This will give the customer the ability to use Connect:Direct's run task command to execute Power Shell scripts.
+
+ANSWER
+This is an example of the Connect:Direct process, the batch file and the Powershell script.
+The Connect:Direct process:
+/*BEGIN_REQUESTER_COMMENTS 
+$PNODE$="HAZELR.CD460" $PNODE_OS$="Windows" 
+$SNODE$="HAZEL2008.CD460" $SNODE_OS$="Windows" 
+$OPTIONS$="WDOS" 
+END_REQUESTER_COMMENTS*/
+
+EXECPS1 PROCESS 
+SNODE=HAZEL2008.CD460
+
+STEP10 RUN TASK SNODE (PGM=Windows)
+SYSOPTS="pgm(c:\batches\execPowerShell.cmd)"
+
+PEND 
+
+
+The execPowerShell.cmd:
+powershell -executionpolicy Unrestricted -file c:\batches\execPowerShell.ps1
+
+The execPowerShell.ps1:
+# PowerShell While Loop
+$i =1
+While ($i -le 12) {copy c:\cdfawatch\testfile.txt c:\cdfawatch\testfile$i.txt; $i++} 
+
+
+In this example the batch file and the Power Shell script have the same name, this is not a requirement. It is simply a convenience for the example.

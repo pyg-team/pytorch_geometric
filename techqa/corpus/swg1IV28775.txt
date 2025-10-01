@@ -1,0 +1,163 @@
+Title: IBM IV28775: XMS V2.0 MESSAGE LISTENER HANGS AFTER RE-ESTABLISHING CONNECTION TO A WMQV6 QUEUEMANAGER - United States
+
+Text:
+  A FIX IS AVAILABLE
+Fix Pack 7.1.0.3 for WebSphere MQ V7.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24035405]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Error Description?
+   A Message Service Client (XMS) .NET v2.0  or above application
+   loses connection to a WebSphere MQ (WMQ) v6 queue manager due
+   to a network problem, and receives the expected
+   MQRC_CONNECTION_BROKEN (2009) errors.After
+   re-establishing the connection,there's a
+   message delivery hang observed while all the connections and
+   asynchronous consumers are Active.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   Applications using XMS.NET 2.0 or Above and Connecting to a WMQ
+   v6 Queue Manager only
+   
+   Platforms affected:
+   Windows
+   
+   ****************************************************************
+   PROBLEM SUMMARY:
+   A XMS .NET v2.0 or above application connecting to a WMQ v6.0+
+   Queuemanager upon reconnecting followed by a connect failure,
+   observes that intermittently one or many of the Asynchronous
+   message consumers hang/stop receiving messages.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  It has been observed that after application successfuly
+   reconnected to the queue manager, the asynchrnous message
+   listener thread was going out of scope as its original
+   parent(Session) instance has been re-instantited. We have fixed
+   the code for Async listener thread reference updates.
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+                      v7.0
+   Platform           Fix Pack 7.0.1.10
+   --------           --------------------
+   Windows            7.0.1.10
+   
+                      v7.1
+   Platform           Fix Pack 7.1.0.3
+   --------           --------------------
+   Windows            7.1.0.3
+   
+   The latest available maintenance can be obtained from
+   'WebSphere MQ Recommended Fixes'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037]
+   
+   If the maintenance level is not yet available information on
+   its planned availability can be found in 'WebSphere MQ
+   Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV28775
+   
+   
+ * REPORTED COMPONENT NAME
+   MSG SRVCS CL .N
+   
+   
+ * REPORTED COMPONENT ID
+   5724M2100
+   
+   
+ * REPORTED RELEASE
+   200
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-09-26
+   
+   
+ * CLOSED DATE
+   2012-10-11
+   
+   
+ * LAST MODIFIED DATE
+   2012-10-11
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   MSG SRVCS CL .N
+   
+   
+ * FIXED COMPONENT ID
+   5724M2100
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R200 PSY
+   UP

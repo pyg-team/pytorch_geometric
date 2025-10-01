@@ -1,0 +1,160 @@
+Title: IBM PI26466: RATIONAL DEVELOPER FOR SYSTEM Z (RDZ) 9.1 AND DATA STUDIO 4.1.1 CANNOT BE INSTALLED IN THE SAME PACKAGE GROUP - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Rational Developer for System z 9.1.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24039079]
+Rational Developer for System z Interim Fix 1 for 9.1.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24039177]
+Rational Developer for System z Interim Fix 2 for 9.1.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24039625]
+Rational Developer for System z Fix Pack 1 (9.1.1.1) for 9.1.1. [http://www-01.ibm.com/support/docview.wss?uid=swg24039635]
+Rational Developer for System z Interim Fix 1 for 9.1.1.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24040387]
+Rational Developer for System z Interim Fix 2 for 9.1.1.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24040483]
+Rational Developer for System z Fix Pack 1 (9.1.1.2) for 9.1.1. [http://www-01.ibm.com/support/docview.wss?uid=swg24040962]
+Rational Developer for System z Interim Fix 1 for 9.1.1.2 [http://www-01.ibm.com/support/docview.wss?uid=swg24041307]
+Rational Developer for System z Interim Fix 2 for 9.1.1.2 [http://www-01.ibm.com/support/docview.wss?uid=swg24041657]
+Rational Developer for System z Fix Pack 1 (9.1.1.3) for 9.1.1. [http://www-01.ibm.com/support/docview.wss?uid=swg24041789]
+Rational Developer for System z Interim Fix 1 for 9.1.1.3 [http://www-01.ibm.com/support/docview.wss?uid=swg24042181]
+Rational Developer for System z Fix Pack 1 (9.1.1.4) for 9.1.1. [http://www-01.ibm.com/support/docview.wss?uid=swg24042820]
+Rational Developer for System z Fix Pack 1 (9.1.1.5) for 9.1.1. [http://www-01.ibm.com/support/docview.wss?uid=swg24043244]
+Rational Developer for System z Fix Pack 1 (9.1.1.6) for 9.1.1. [http://www-01.ibm.com/support/docview.wss?uid=swg24044103]
+Rational Developer for System z Fix Pack 1 (9.1.1.7) for 9.1.1. [http://www-01.ibm.com/support/docview.wss?uid=swg24044796]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Errors prevent installation of Rational Developer for System z
+   (RDz) 9.1 and Data Studio 4.1.1 on Windows in the same package
+   group. During the install using the IBM Installation Manager,
+   the following error messages would occur and installing RDZ 9.1
+   in the same package group as Data Studio 4.1.1 is not allowed:
+   
+   CRIMA1161E: Failed to find required installation files.
+   CRIMC1020E: feature
+   com.ibm.datatools.base.linux_2.1.200.v20131217_2357 not found
+   CRIMC1020E: feature
+   com.ibm.datatools.base.linux64_1.0.0.v20131217_2357 not found
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  1)Install Data Studio version 4.1.0.1 instead of 4.1.1 with RDz
+   9.1.
+   2) Download Data Studio 4.1.1 for Linux
+   (http://www-01.ibm.com/support/docview.wss?uid=swg24037681),
+   unzip and add the following to the IBM Installation Manager
+   repository before attempting to install Data Studio 4.1.1 and
+   RDz 9.1 in the same install package group:
+   <DS411_Linux_unzipped folder>\disk1\diskTag.inf
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Windows and Linux only features were always being installed
+   instead of installing based on the operating system.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Windows and Linux specific features were not being installed
+   based on the operating system.
+   
+   The problem listed in this APAR has been resolved with
+   IBM Rational Developer for System z V9.1.1.0 Refresh Pack which
+   is available from the Recommended Fixes support download page:
+   http://www-1.ibm.com/support/docview.wss?rs=2294&uid=swg27006335 [http://www-1.ibm.com/support/docview.wss?rs=2294&uid=swg27006335]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI26466
+   
+   
+ * REPORTED COMPONENT NAME
+   RATL DEV FOR SY
+   
+   
+ * REPORTED COMPONENT ID
+   5724T0700
+   
+   
+ * REPORTED RELEASE
+   910
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-09-25
+   
+   
+ * CLOSED DATE
+   2014-12-11
+   
+   
+ * LAST MODIFIED DATE
+   2014-12-11
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   RATL DEV FOR SY
+   
+   
+ * FIXED COMPONENT ID
+   5724T0700
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R911 PSY
+   UP

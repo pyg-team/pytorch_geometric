@@ -1,0 +1,153 @@
+Title: IBM Security Bulletin: Vulnerability in RC4 stream cipher affects IBM Endpoint Manager for Remote Control (CVE-2015-2808) - United States
+
+Text:
+CVE-2015-2808; RC4; FREAK SECURITY BULLETIN
+
+SUMMARY
+ The RC4 “Bar Mitzvah” Attack for SSL/TLS affects IBM Endpoint Manager for Remote Control. 
+
+VULNERABILITY DETAILS
+CVEID: CVE-2015-2808 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-2808]
+DESCRIPTION: The RC4 algorithm, as used in the TLS protocol and SSL protocol, could allow a remote attacker to obtain sensitive information. An attacker could exploit this vulnerability to remotely expose account credentials without requiring an active man-in-the-middle session. Successful exploitation could allow an attacker to retrieve credit card data or other sensitive information. This vulnerability is commonly referred to as "Bar Mitzvah Attack".
+CVSS Base Score: 5
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/101851 [https://exchange.xforce.ibmcloud.com/vulnerabilities/101851] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:L/Au:N/C:P/I:N/A:N)
+
+AFFECTED PRODUCTS AND VERSIONS
+IBM Endpoint Manager for Remote Control versions 9.1.0 and 9.0.1.
+
+REMEDIATION/FIXES
+To specifically resolve this issue, upgrade your server, broker and controller components. The fix pack can be downloaded from Fix Central. 
+
+Product VRMF APAR Remediation/First Fix IBM Endpoint Manager for Remote Control 9.1.0 IV72075 [http://www-01.ibm.com/support/docview.wss?uid=swg1IV72075] IBM Endpoint Manager for Remote Control Interim Fix pack 9.1.0-TIV-IEMRC910-IF0007. 
+For more information about 9.1.0-TIV-IEMRC910-IF0007, see http://www-01.ibm.com/support/docview.wss?uid=swg24040013 [http://www-01.ibm.com/support/docview.wss?uid=swg24040013]
+
+Fix pack 9.1.0-TIV-IEMRC910-IF0007 will be released 3rd June 2015. IBM Endpoint Manager for Remote Control 9.0.1 IV72075 [http://www-01.ibm.com/support/docview.wss?uid=swg1IV72075] IBM Endpoint Manager for Remote Control Interim Fix pack 9.0.1-TIV-IEMRC901-IF0007. 
+For more information about 9.0.1-TIV-IEMRC901-IF0007, see http://www-01.ibm.com/support/docview.wss?uid=swg24040014 [http://www-01.ibm.com/support/docview.wss?uid=swg24040014]
+
+Fix pack 9.0.1-TIV-IEMRC901-IF0007 will be released 3rd June 2015. 
+WORKAROUNDS AND MITIGATIONS
+
+Alternatively you can apply the following workaround on fix packs prior to IF0007. 
+
+You should verify applying this configuration change does not cause any compatibility issues. Not disabling the RC4 stream cipher will expose yourself to the attack described above. IBM recommends that you review your entire environment to identify other areas where you have enabled the RC4 stream cipher and take appropriate mitigation and remediation actions. 
+
+ 
+
+Version 9.1.0
+In IBM Endpoint Manager for Remote Control 9.1.0, RC4 is disabled by default in all components, but it can be re-enabled through configuration.
+
+To check if RC4 is enabled in your server configuration, follow these steps:
+
+1. If IBM Endpoint Manager for Remote Control is configured for compliance with FIPS 140-2 or NIST SP800-131a, then RC4 cannot be re-enabled.
+
+2. On the IBM Endpoint Manager for Remote Control server, open the following file
+
+Windows operating system
+[INSTALLDIR]\java\jre\lib\security\java.security
+
+Linux operating system
+[INSTALLDIR]/java/jre/lib/security/java.security
+
+where [INSTALLDIR] is the server installation directory
+
+check that jdk.tls.disabledAlgorithms contains RC4.
+
+For example:
+jdk.tls.disabledAlgorithms=SSLv3, RC4
+
+3. If there are IBM Endpoint Manager for Remote Control brokers in your environment, open the broker configuration file, trc_broker.properties, and check DefaultTLSCipherList, and DefaultHTTPSCipherList as well as any TLSCipherList or HTTPSCipherList properties that are defined as part of a connection. The cipher list should always contain !RC4 which disables all cipher suites that use RC4.
+
+For example,
+DefaultTLSCipherList = ALL+AES+HIGH\:\!SSLv2\:\!aNULL\:\!eNULL\:\!3DES\:\!MD5\:\!RC4\:@STRENGTH
+DefaultHTTPSCipherList = AES\:3DES\:\!SSLv2\:\!aNULL\:\!eNULL\:\!3DES\:\!RC4\:@STRENGTH
+
+Inbound.1.ConnectionType = Inbound
+Inbound.1.TLSCipherList = ALL+AES+HIGH\:\!SSLv2\:\!aNULL\:\!eNULL\:\!3DES\:\!MD5\:\!RC4\:@STRENGTH
+
+Inbound.2.ConnectionType = InboundHTTPS
+Inbound.2.HTTPSCipherList = AES\:3DES\:\!SSLv2\:\!aNULL\:\!eNULL\:\!3DES\:\!RC4\:@STRENGTH
+
+
+Version 9.0.1
+
+In IBM Endpoint Manager for Remote Control 9.0.1, RC4 is disabled by default in all components except when using the IBM Endpoint Manager for Remote Control broker as a reverse proxy. It can be re-enabled through configuration.
+
+If you have the reverse proxy function configured in the broker, complete the following steps to disable RC4. If the broker is configured for compliance with FIPS 140-2, then RC4 is not enabled and these steps are not required.
+
+1. Open the broker configuration file:
+Windows: C:\ProgramData\IBM\Tivoli\Remote Control\Broker\trc_broker.properties
+Linux: /etc/trc_broker.properties
+
+2. If necessary, add the DefaultHTTPSCipherList property if it is not there already.
+
+3. Change the value for the DefaultHTTPSCipherList property so that \!RC4 is included in the list. Items in the list are separated with colons. 
+For example:
+
+DefaultHTTPSCipherList = TLSv1\:\!SSLv2\:\!aNULL\:\!eNULL\:\!DES\:\!RC4\:@STRENGTH
+
+4. Check for InboundHTTPS or InboundHTTPS6 connections that override the default HTTPSCipherList. Apply the same change if necessary.
+For example:
+
+Inbound1.ConnectionType = InboundHTTPS
+Inbound1.HTTPSCipherList = TLSv1\:\!SSLv2\:\!aNULL\:\!eNULL\:\!DES\:\!RC4\:@STRENGTH
+
+5. Stop and restart the broker service.
+
+
+
+To check if RC4 is enabled in your server configuration, complete the following steps:
+
+1. If IBM Endpoint Manager for Remote Control is configured for compliance with FIPS 140-2, then RC4 can not be re-enabled.
+
+2. On the IBM Endpoint Manager for Remote Control server, open the following file
+
+Windows operating system
+[INSTALLDIR]\java\jre\lib\security\java.security
+
+Linux operating system
+[INSTALLDIR]/java/jre/lib/security/java.security
+
+where [INSTALLDIR] is the server installation directory.
+
+Check that jdk.tls.disabledAlgorithms contains RC4. 
+
+For example:
+jdk.tls.disabledAlgorithms=SSLv3, RC4
+
+3. If there are IBM Endpoint Manager for Remote Control brokers in your environment, open the broker configuration file, trc_broker.properties, and check DefaultTLSCipherList, and DefaultHTTPSCipherList as well as any TLSCipherList or HTTPSCipherList defined as part of a connection. The cipher list should always contain !RC4 which disables all cipher suites that use RC4.
+
+For example,
+DefaultTLSCipherList = TLSv1+HIGH\:\!SSLv2\:\!aNULL\:\!eNULL\:\!3DES\:\!DES\:\!RC4\:@STRENGTH
+DefaultHTTPSCipherList = TLSv1\:\!SSLv2\:\!aNULL\:\!eNULL\:\!DES\:\!RC4\:@STRENGTH 
+
+
+In version 9.1.0 and 9.0.1
+It is also recommended to disable RC4 in the Java Run-time Environment used with the IBM Endpoint Manager for Remote Control Controller. This can be done by adding RC4 to the jdk.tls.disabledAlgorithms property in the java.security file on the controller system. 
+
+Windows operating system
+[JAVA_HOME]\lib\security\java.security 
+
+Linux operating system
+[JAVA_HOME]/lib/security/java.security 
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v2 Guide [http://www.first.org/cvss/v2/guide] 
+On-line Calculator v2 [http://nvd.nist.gov/CVSS-v2-Calculator] 
+
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] 
+
+CHANGE HISTORY
+ 3rd June 2015: Fix pack details added to Remediation/Fixes section.
+10th April 2015: Original Version Published 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.

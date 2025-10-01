@@ -1,0 +1,81 @@
+Title: IBM Cannot start the Rational Team Concert Eclipse client - United States
+
+Text:
+Eclipse; java.lang.ClassNotFoundException; SDPShared; IMShared; permissions TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Attempts to start the IBM Rational Team Concert Eclipse client results in an error and failure to start the eclipse client. 
+
+SYMPTOM
+The following error message will be seen when trying to open the Rational Team Concert eclipse client: 
+
+!SESSION Mon Jan 31 18:57:08 BRST 2011 ----------------------------------------- 
+
+!ENTRY org.eclipse.equinox.launcher 4 0 2011-01-31 18:57:08.317 
+
+!MESSAGE Exception launching the Eclipse Platform: 
+
+!STACK 
+
+java.lang.ClassNotFoundException: org.eclipse.core.runtime.adaptor.EclipseStarter 
+
+ at java.net.URLClassLoader.findClass(URLClassLoader.java:497) 
+
+ at java.lang.ClassLoader.loadClass(ClassLoader.java:639) 
+
+ at java.lang.ClassLoader.loadClass(ClassLoader.java:605) 
+
+ at org.eclipse.equinox.launcher.Main.invokeFramework(Main.java:546) 
+
+ at org.eclipse.equinox.launcher.Main.basicRun(Main.java:504) 
+
+ at org.eclipse.equinox.launcher.Main.run(Main.java:1236)
+
+
+
+CAUSE
+This occurs because you do not have permissions to access the SDPshared folder. 
+
+
+This shared directory is the common part that will be loaded and provisioned by any Rational Eclipse based toolkit and act as a plug-in cache. 
+
+
+RESOLVING THE PROBLEM
+To resolve this issue:
+
+
+ 1. Navigate to C:\Program Files\IBM\SDPShared directory 
+    
+    Note: In some cases, the SDPShared folder could be named as IMShared. For more details, please see [http://www-01.ibm.com/support/docview.wss?uid=swg21444138]Technote 1444138. [http://www-01.ibm.com/support/docview.wss?uid=swg21444138]
+    
+    
+ 2. Right-click and click Properties
+    
+    
+ 3. Click the Security tab
+    
+    
+ 4. Select your user name in the Permission entries window. 
+    
+    
+ 5. Click Edit 
+    
+ 6. Select the following permissions:  * Read & Execute 
+     * List Folder Contents 
+     * Read
+       
+       
+    
+    
+ 7. Click OK
+
+
+
+Note: To change permissions, you must be the owner or have permission to change permissions by the owner. 
+
+Leverage the Jazz Community Jazz and Rational Team Concert have an active community that can provide you with additional resources. Browse and contribute to the User forums, contribute to the Team Blog and review the Team wiki.
+Refer to technote 1319600 [http://ibm.com/support/docview.wss?uid=swg21319600] for details and links.
+
+
+RELATED INFORMATION
+#Changing File and Folder Permissions [http://www.microsoft.com/resources/documentation/windows/xp/all/proddocs/en-us/acl_set_permissions.mspx?mfr=true]

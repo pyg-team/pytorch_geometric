@@ -1,0 +1,24 @@
+Title: IBM InfoSphere Information Server users fail on script execution. - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Linux users created with the Information Server Installation are failing on executing custom, non-product developed scripts.
+
+"source .bashrc" command results in error :
+
+"-sh: source: .bashrc : file not found"
+
+
+CAUSE
+Users created with Information Server are created with "bourne shell" type for compatibility reasons.
+This is a pure Linux shell issue when invoking bash scripts "Bourne Again Shell".
+
+ANSWER
+In order to invoke bash shell scripts, invoke previously a "bash" shell with command "bash" or force the script to use it using a "Shebang" as this is the usage in shell scripting. 
+
+Example :
+#!/bin/bash 
+
+At the beginning of the script.

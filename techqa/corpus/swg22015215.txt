@@ -1,0 +1,82 @@
+Title: IBM Security Bulletin:  Vulnerabilities in OpenSSL affect IBM InfoSphere Information Server (CVE-2017-3735, CVE-2017-3736, CVE-2017-3738) - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ OpenSSL vulnerabilities were disclosed on November 02, 2017 by the OpenSSL Project. OpenSSL is used by IBM InfoSphere Information Server. IBM InfoSphere Information Server has addressed the applicable CVEs. 
+
+VULNERABILITY DETAILS
+CVEID: CVE-2017-3735 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2017-3735]
+DESCRIPTION: OpenSSL could allow a remote attacker to obtain sensitive information, caused by an error while parsing an IPAdressFamily extension in an X.509 certificate. An attacker could exploit this vulnerability to trigger an out-of-bounds read, resulting in an incorrect text display of the certificate.
+CVSS Base Score: 4.3
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/131047 [https://exchange.xforce.ibmcloud.com/vulnerabilities/131047] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:N/AC:L/PR:N/UI:R/S:U/C:L/I:N/A:N) 
+
+CVEID: CVE-2017-3736 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2017-3736]
+DESCRIPTION: OpenSSL could allow a remote attacker to obtain sensitive information, caused by a carry propagation flaw in the x86_64 Montgomery squaring function bn_sqrx8x_internal(). An attacker with online access to an unpatched system could exploit this vulnerability to obtain information about the private key.
+CVSS Base Score: 5.9
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/134397 [https://exchange.xforce.ibmcloud.com/vulnerabilities/134397] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:N/A:N)
+
+CVEID: CVE-2017-3738 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2017-3738]
+DESCRIPTION: OpenSSL could allow a remote attacker to obtain sensitive information, caused by an overflow bug in the AVX2 Montgomery multiplication procedure used in exponentiation with 1024-bit moduli. An attacker could exploit this vulnerability to obtain information about the private key. Note: In order to exploit this vulnerability, the server would have to share the DH1024 private key among multiple clients, which is no longer an option since CVE-2016-0701.
+CVSS Base Score: 3.1
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/136078 [https://exchange.xforce.ibmcloud.com/vulnerabilities/136078] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:N/AC:H/PR:L/UI:N/S:U/C:L/I:N/A:N) 
+
+AFFECTED PRODUCTS AND VERSIONS
+The following products, running on all supported platforms, are affected:
+IBM InfoSphere Information Server: versions 9.1, 11.3, 11.5 and 11.7
+IBM InfoSphere Information Server on Cloud: version 11.5
+
+REMEDIATION/FIXES
+ 
+
+Product VRMF APAR Remediation/First Fix InfoSphere Information Server 11.7 JR59108 [http://www.ibm.com/support/docview.wss?uid=swg1JR59108] --Upgrade to DataDirect ODBC drivers version 7.1.6 [http://www.ibm.com/support/fixcentral/swg/quickorder?&product=ibm/Information+Management/IBM+InfoSphere+Information+Server&release=11.7&function=fixId&fixids=is_ddodbc_7.1.6_server*]
+--Use TechNote [http://www-01.ibm.com/support/docview.wss?uid=swg21980217] to choose which OpenSSL version the drivers will use
+--Use TechNote [http://www-01.ibm.com/support/docview.wss?uid=swg21679867] to follow additional post installation configuration steps InfoSphere Information Server, Information Server on Cloud 11.5 JR59108 [http://www.ibm.com/support/docview.wss?uid=swg1JR59108] --Upgrade to DataDirect ODBC drivers version 7.1.6 [http://www.ibm.com/support/fixcentral/swg/quickorder?&product=ibm/Information+Management/IBM+InfoSphere+Information+Server&release=11.5&function=fixId&fixids=is_ddodbc_7.1.6_server*]
+--Use TechNote [http://www-01.ibm.com/support/docview.wss?uid=swg21980217] to choose which OpenSSL version the drivers will use
+--Use TechNote [http://www-01.ibm.com/support/docview.wss?uid=swg21679867] to follow additional post installation configuration steps InfoSphere Information Server 11.3 JR59108 [http://www.ibm.com/support/docview.wss?uid=swg1JR59108] --Upgrade to DataDirect ODBC drivers version 7.1.6 [http://www.ibm.com/support/fixcentral/swg/quickorder?&product=ibm/Information+Management/IBM+InfoSphere+Information+Server&release=11.3.1&function=fixId&fixids=is_ddodbc_7.1.6_server*]
+--Use TechNote [http://www-01.ibm.com/support/docview.wss?uid=swg21980217] to choose which OpenSSL version the drivers will use
+--Use TechNote [http://www-01.ibm.com/support/docview.wss?uid=swg21679867] to follow additional post installation configuration steps InfoSphere Information Server 9.1 JR59108 [http://www.ibm.com/support/docview.wss?uid=swg1JR59108] --Upgrade to a new release 
+
+For IBM InfoSphere Information Server version 9.1, IBM recommends upgrading to a fixed, supported version/release/platform of the product. 
+
+Contact Technical Support: In the United States and Canada dial 1-800-IBM-SERV 
+View the support contacts for other countries [http://www.ibm.com/planetwide/] outside of the United States. 
+Electronically open a Service Request [http://www.ibm.com/software/support/probsub.html] with Information Server Technical Support.
+
+WORKAROUNDS AND MITIGATIONS
+None
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v3 Guide [http://www.first.org/cvss/user-guide] 
+On-line Calculator v3 [http://www.first.org/cvss/calculator/3.0] 
+
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] 
+
+ACKNOWLEDGEMENT
+None 
+
+CHANGE HISTORY
+ 20 April 2018: Original Version Published 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY. 
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Information Management InfoSphere Information Server AIX, HP-UX, Linux, Solaris, Windows 9.1, 11.5, 11.3, 11.7

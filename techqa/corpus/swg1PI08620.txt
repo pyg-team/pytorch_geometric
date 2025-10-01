@@ -1,0 +1,157 @@
+Title: IBM PI08620: ABEND (CODE 0C4/AKEA) HAS OCCURRED IN EXIT PROGRAM CIUXCCO1 AT EXIT POINT XEIIN. - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Route of APAR PI05492 [http://www-01.ibm.com/support/docview.wss?uid=swg1PI05492]
+   CICS IA 5.1 ABEND0C4 abends.
+   
+   orginal error
+   
+   DFHAP0001 xxxxxxxx An abend (code 0C4/AKEA) has occurred at
+   offset X'000000F2' in module CIUXCCO1.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All CICS Interdependency Analyzer V510       *
+   *                 users.                                       *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: INQUIRE WORKREQUEST and SET WORKREQUEST *
+   *                      CICS commands issued by programs        *
+   *                      running in the CICS region cause an     *
+   *                      abend (code 0C4/AKEA) when you are      *
+   *                      collecting Interdependency data.        *
+   ****************************************************************
+   * RECOMMENDATION: Apply the PTF.                               *
+   ****************************************************************
+   During XEIIN/XEIOUT processing the CIUXCCO1 exit program gets
+   control. After execution of the TRT instruction
+   (offset X'D8') register 2 contains an incorrect value when
+   INQUIRE WORKREQUEST(X'B802') or SET WORKREQUEST(X'B804') CICS
+   command is processed.  Later a CLC instruction at offset X'F2'
+   causes an abend (code 0C4/AKEA) because of incorrect address of
+   the first operand evaluated based on register 2.
+   The Translate table (TRT_TAB) in the CIUXCCOD copy needs to be
+   corrected (offset  X'B8').
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The Translate table (TRT_TAB) in the CIUXCCOD copy has been
+   corrected at offset  X'000000B8' to avoid an abend (code
+   0C4/AKEA) in the CIUXCCO1 exit program.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI08620
+   
+   
+ * REPORTED COMPONENT NAME
+   CICS IA V5
+   
+   
+ * REPORTED COMPONENT ID
+   5655Y2200
+   
+   
+ * REPORTED RELEASE
+   510
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-12-23
+   
+   
+ * CLOSED DATE
+   2013-12-29
+   
+   
+ * LAST MODIFIED DATE
+   2014-02-05
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UI13954
+   
+   
+
+MODULES/MACROS
+ *  CIUXCCO1
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CICS IA V5
+   
+   
+ * FIXED COMPONENT ID
+   5655Y2200
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R510 PSY UI13954 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI13954]
+   UP14/01/14 P F401
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

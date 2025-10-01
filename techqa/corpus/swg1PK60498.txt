@@ -1,0 +1,167 @@
+Title: IBM PK60498: CONFIGURING MULTIPLE JVMS EITHER THROUGH GUI OR SILENT INSTALL APPENDS MULTIPLE JVM NAMES TO GC_LOG_PATH - United States
+
+Text:
+  A FIX IS AVAILABLE
+ITCAM for WebSphere 6.1, Fixpack 4, 6.1.0-TIV-ITCAMfWAS_MP-FP0004 [http://www-01.ibm.com/support/docview.wss?uid=swg24021856]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Configuring multiple jvms either through GUI or silent install
+   appends
+   multiple jvm names to GC_LOG_PATH.  Here is a short description:
+   Since the dcInputs.txt file is both input to and output from the
+   config
+   tool, there are some interesting effects.  I ran a config with
+   just
+   three JVMs, but the gc log file string was still very long.
+   I figured that the config tool was reading the GC_LOG_PATH from
+   dcInputs.txt, and just keeping it.  I tried manually removing
+   this line
+   from dcInputs.txt, and it after running config_dc, it put the
+   entry
+   back in there again.   including more than just the three JVMs I
+   configured, but less than the 19 that were already configured:
+   GC_LOG_PATH=${LOG_ROOT}/pin_01_native_stderr.mbr_utilities_01.mk
+   tgrt_01.
+   low_impact_01.life_01.imco_invest_01.imco_01.gen_utilities_01.
+   ent_logon_emp_01.ent_logon_01.ent_home_01.ent_common_01.ent_acco
+   unts_01.
+   log
+   Configured JVMS were pin_01, mbr_utilities_01, mktgrt_01,
+   low_impact_01, life_01, imco_invest_01, imco_01,
+   gen_utilities_01,
+   ent_logon_emp_01, ent_logon_01, ent_home_01, ent_common_01,
+   ent_accounts_01, bkoffice_01, ent_services_01, crm56_svcs_01,
+   ent_edd_01, bk_preapps_01, rip_01
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Hotfix created.
+   
+   Note
+   
+   1. The hotfix contain a README file and config_DC.jar which need
+   to be
+   used to replace the existing FP3_iFix2 version of config_DC.jar
+   
+   2. The hotfix contain the code fix for the problem that GC log
+   file name
+   will be appended with server name even if user do not choose the
+   GC log
+   redirect check box during DC configuration.
+   
+   3. The GC log settings exist in the generic JVM arguments before
+   the DC
+   configure will not be removed by configurator by design as
+   configurator
+   will take it as the customer customized option.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  CONFIGURING MULTIPLE JVMS EITHER THROUGH GUI OR SILENT INSTALL
+   APPENDS MULTIPLE JVM NAMES TO GC_LOG_PATH
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This is fixed by FP4
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK60498
+   
+   
+ * REPORTED COMPONENT NAME
+   ITCAM WAS DIST
+   
+   
+ * REPORTED COMPONENT ID
+   5724L6200
+   
+   
+ * REPORTED RELEASE
+   610
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-02-05
+   
+   
+ * CLOSED DATE
+   2008-03-31
+   
+   
+ * LAST MODIFIED DATE
+   2008-04-23
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ITCAM WAS DIST
+   
+   
+ * FIXED COMPONENT ID
+   5724L6200
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R610 PSY
+   UP

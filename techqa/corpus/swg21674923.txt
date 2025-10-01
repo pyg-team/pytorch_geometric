@@ -1,0 +1,42 @@
+Title: IBM Using a report object variable to apply note numbering in Cognos Disclosure Management - United States
+
+Text:
+Cognos Disclosure Management; CDM; cognos disclosure management; cdm; customizing report object properties; Microsoft Excel objects; Microsoft Word objects; configuring note numbering FIX README
+
+ABSTRACT
+ In IBM® Cognos® Disclosure Management. you can customize report object properties to specify the appearance of note numbers. You use report object variables to add numbered notes to a report to provide details about an item. 
+
+CONTENT
+You can manually enter note numbering variables or configure note numbering to update automatically.
+Restrictions:
+Users with the appropriate permissions can do this task.
+
+About this task:
+You can either configure variables to automatically update note numbering or assign a manual number 
+to each note. Manual note numbers must be kept up to date if changes occur but they allow you to 
+use a customized note numbering method as opposed to basic incremental numbering when you choose automatic note numbering. 
+For example, if you want to use a manual combination of letters and numbers to change the way the note renders (F.1, F.2, F.3)
+
+Procedure:
+1. Open the report that you want to work with.
+2. In the report, determine the location of where you want to add note numbering.
+3. In the Report pane, open and check out the Microsoft Excel or Word object where you want to apply note numbering.
+4. Click the Section View Mode icon on the status bar of the application window.
+5. In the report object properties, choose either automatic or manual note numbering.
+Note: Note numbering by default is not enabled. This is shown by the value N/A in the Note Type 
+field. 
+6. For automatic numbering select Automatic from the Note Type drop-down menu and enter a unique 
+variable to be used, for example ##CshNote, in the Note Variable field. For manual note numbering, 
+select Manual from the Note Type drop-down menu, enter a unique variable in the Note Variable field, 
+and enter a number in the Note Number field. 
+7. Save your changes.
+8. In the work area for the Excel or Word object, type the variable name using the correct syntax. 
+You must type the variable where you want the note number to appear in the report. 
+For example, ##CshNote. Cash 
+where:
+- ##CshNote is the uniquely named note numbering variable.
+- The period ( . ) is a period that occurs after the number and Cash is the title of the note number 
+to be displayed.
+9. Save your changes in the Excel or Word object.
+10. Click the Default View Mode icon on the status bar of the application window.
+11. Save your changes to the report and check in the Excel or Word object.

@@ -1,0 +1,41 @@
+Title: IBM Case Accent Insensitive search verity oracle mssql properties and content - United States
+
+Text:
+Case Accent Insensitive search verity oracle mssql properties and content TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Case Accent Insensitive search verity oracle mssql properties and content 
+
+RESOLVING THE PROBLEM
+Steps 
+Created data object store. 
+Within the data object store, selected the folder FILE STORES and creatd a new file store. 
+Selected Data object store and configured it for Full Text Indexing. 
+Created a Database index with 1 index and Universal for the language. 
+Created a File Store index with 1 index and Universal for the language. 
+Select Property Level Indexing and goto Class Definitions\Document\Indexable Properties and double click on Document Title to create an index on this property. 
+Create a directory on the object store and add the documents. 
+It will take a couple of minutes for the documents and its properties to be indexed. 
+
+Create a new search in Search Designer and select the newly indexed object store in the object stores tab. 
+Select Search Criteria tab and goto the Properties and Content conditions section. Select Editable in View and VQL in Modifiers. 
+Save the search criteria to the object store you have just indexed. 
+Close Search Designer and launch the Search Template. Search on the word finde. 
+
+Document Title Search: 
+I created an object store and index it on the document title and the content. I added 4 files with the following titles, but different content: 
+
+finde.doc qwerty 
+findÃ©.doc 67890 
+findÃª.doc 123456 
+test.doc finde 
+
+When I carried out a search on these documents with my search template using the word finde. The search returned all 4 documents. I believe this should answer you questions regarding case insensitive searching for both content and document properties. One final note, when I installed the SQL database, I made sure it was Case/Accent insensitive with codepage 125252
+
+
+
+HISTORICAL NUMBER
+ 20001650 
+
+PRODUCT ALIAS/SYNONYM
+ P8 CONTENT ENGINE

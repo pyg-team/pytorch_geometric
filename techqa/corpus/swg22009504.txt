@@ -1,0 +1,77 @@
+Title: IBM Learning more about WebSphere Compute Grid - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Learning more about WebSphere Compute Grid is the first step in the troubleshooting process. This document provides you with educational information that can help you learn more about this topic. 
+
+RESOLVING THE PROBLEM
+ 
+
+TAB NAVIGATION
+ * Learning more [http://www.ibm.com/support/docview.wss?uid=swg22009504]- selected tab,
+ * Troubleshooting [http://www.ibm.com/support/docview.wss?uid=swg22009505]
+ * Collect data [http://www.ibm.com/support/docview.wss?uid=swg21625403]
+
+Getting background information on WebSphere Compute Grid 
+
+What is WebSphere Compute Grid?
+WebSphere Compute Grid is a Java batch execution runtime and programming framework that operates within the WebSphere Application Server Java EE environment. The Java batch function of WebSphere Compute Grid V8 was incorporated into the WebSphere Application Server V8.5 offering. Therefore, with WAS V8.5 and later versions you have access to all the functions found in Compute Grid V8. 
+
+WebSphere Compute Grid is a product offering supported on all operating system platforms supported by WebSphere Application Server itself. That includes Windows, AIX, HP,Linux, solaris and z/OS .
+
+Components of the Compute Grid model
+
+1.WebSphere Application Server Runtime
+The Java batch function is built upon the foundation of WebSphere Application Server. All of the functional services offered by WAS itself are functional services available to Compute Grid and, by extension, Java batch applications running in the Compute Grid environment.
+
+2.xJCL-Job Declaration XML
+Compute Grid relies on an XML document submitted by the user to understand the nature and elements of the Java batch job to process. This document is called the "xJCL" because it provides the same conceptual elements JCL has for decades --information about the job, job steps, source of input and output, substitution variables and many other piece of information.
+
+3.Job Dispatching Function
+The xJCL document is submitted to the Job Dispatching Function, which interrogates the submitted xJCL, determines where the requested Java batch class files reside, and prepares the environment to dispatch and launch the batch program.
+
+4.Job Dispatch Function Interface
+The Job Dispatching Function accepts the xJCL through one of many programmatic interfaces:HTTP, web services, command line, RMI and MDB. This set of interfaces makes integration of the Compute Grid function with other processes easier.
+
+5.Batch Execution Endpoint function
+The Dispatching Function determines where the Java batch program class files reside and signals to the Batch Execution Endpoint Function to execute the class file. Multiple endpoints may exist, and they may be clustered for availability or scalability.
+
+6.Compute Grid Job information relational database tables
+The Dispatching Function and the Endpoint Functions maintain information about jobs and the job states in a set of relational tables.
+
+7.Batch Applications
+The Java batch logic is developed and deployed as WAS applications deployed into the endpoint server. These applications are written as POJOs using Eclipse-based tooling such as IBM's Rational Application Developer.
+
+8.Development Tooling Support
+The development tooling makes use of a set of development class libraries supplied with the Compute Grid function. In the case of IBM's Rational Application Developer at Version 8.0.1 or above, the 
+tooling support is included.
+
+9.Cobol Container Function(Z/OS only)
+On z/OS, if the batch application needs to make use of existing COBOL modules for its execution, it may invoke those COBOL modules by using the COBOL Container function. This container consists of IBM-written JNI and native code that creates a separate z/OS LE environment, which operates inside the WAS z/OS server servant region address space.
+
+10.Parallel Job Manager Function
+If the xJCL indicates the job is to be processed in parallel, then the Parallel Job Manager is called to partition the top-job into a set of sub-jobs and dispatch those sub-jobs to endpoint servers. 
+The Parallel Job Manager monitors execution of all the sub-jobs andreports on the status of the top-job.
+
+11.WSGRID Function
+Finally, the WSGRID function is a means of integrating enterprise scheduler functions with the Compute Grid function. WSGRID is a messaging program, invoked as a job using normal JCL, that places a job submission message on a queue which is picked up by an MDB function in the Dispatcher Function. The WSGRID program stays active for the duration of the batch job within Compute Grid. Job log output from the batch job executing in Compute Grid is sent back to WSGRID 
+in a series of messages placed on an output queue. To the enterprise scheduler function, WSGRID is the batch job, but behind WSGRID the Compute Grid function is executing the Java batch job.
+
+
+Additional resources:
+WebSphere Extended Deployment Compute Grid detailed system requirements [http://www-01.ibm.com/support/docview.wss?uid=swg27021569]
+
+Blogs:
+WebSphere Java Batch common issues and how to troubleshoot [https://www.ibm.com/developerworks/community/blogs/aimsupport/entry/websphere_java_batch_common_issues_and_how_to_troubleshoot?lang=en]
+How to Configure Java Batch environment in WebSphere V8.5 [https://www.ibm.com/developerworks/community/blogs/aimsupport/entry/how_to_configure_java_batch_environment_in_webSphere_application_server85?lang=en]
+
+WSTE:
+Webcast: WebSphere Application Server Java Batch concepts, configuration, troubleshooting and common issues [http://www-01.ibm.com/support/docview.wss?uid=swg27045733]
+Webcast Replay: Overview of Batch features in WebSphere V8.5.x [http://www-01.ibm.com/support/docview.wss?uid=swg27038587]
+
+SupportTV videos:
+How to configure Compute Grid in WebSphere Application Server V8.5.5 and later versions [https://www.youtube.com/watch?v=X1RE5fRqhzw]
+How do I configure WSGrid in WebSphere Application Server v8.5.5 and later versions? [https://www.youtube.com/watch?v=B-ytURyeVsQ]
+Configuring the Java batch job scheduler through the admin console in WAS [https://www.youtube.com/watch?v=vVBhWyS5hac]

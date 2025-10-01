@@ -1,0 +1,41 @@
+Title: IBM "Shadow file rename failed"  Error - United States
+
+Text:
+Shadow File ; Shadow; WTX; TX; DSTX; DataSatge TX ; WebSphere Transformation Extender TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Map returns "Adapter failed to put data on output" or "Target Not Available" due to Shadow file rename error when writing the output to a file from IBM WebSphere® Transformation Extender Launcher or Command Server. 
+
+CAUSE
+The "Shadow file rename failed" error can occur when the file adapter tries to rename the temporary file created during processing to the actual file name specified in the output card, but is locked or made unavailable by another user/application.
+
+RESOLVING THE PROBLEM
+The "shadow file rename" error is displayed in a map audit log similar to the following. 
+
+<MapAudit StartTime="10:51:44 October 7, 2006">
+
+<Platform>Launcher for Windows - Version 8.1(84)</Platform>
+
+<ExecutionSummary MapStatus="Error" mapreturn="76" ElapsedSec="20.3431" BurstRestartCount="0">
+<Message>Adapter failed to put data on output</Message>
+<CommandLine>C:\shadow_test\test.mmc</CommandLine>
+
+<TargetReport card="1" adapter="File" bytes="9000000" adapterreturn="-99998">
+<Message>Shadow file rename failed</Message>
+<Settings>C:\shadow_test\out.txt</Settings>
+</TargetReport>
+
+</ExecutionSummary>
+
+</MapAudit>
+
+This error occurs when the temporary file created by the file adapter is to be renamed to the actual name given in the output card but something interferes with the process. The file adapter creates a temporary file when writing output files. The map starts committing the results for each card when all of the output card data has been prepared. This is the point when all temporary files are renamed to the actual file names specified in the map or the Integration Flow Designer. 
+
+The "shadow file rename failed" can happen when the temporary file being renamed is locked or made unavailable by another user or application. It also can happen when the application is designed with one map writing or appending to a flat file which also serves as a source for another map or application that would read and delete the file. Usually, in these scenarios, the better design is to echo the data to the input card of the called map. To diagnose the error it will be required to find out what process is locking these files.
+
+
+
+
+
+PRODUCT ALIAS/SYNONYM
+ Ascential DataStage TX Mercator

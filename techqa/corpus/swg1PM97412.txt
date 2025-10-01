@@ -1,0 +1,154 @@
+Title: IBM PM97412: WEBSPHERE PORTAL ISSUE DEPLOYING PORTLET - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Fixes integrated in WebSphere Portal 8.0.0.1 Combined Cumulative Fixes [http://www-01.ibm.com/support/docview.wss?uid=swg24034497]
+Fixes integrated in WebSphere Portal 7.0.0.1 & 7.0.0.2 Combined Cumulative Fixes [http://www-01.ibm.com/support/docview.wss?uid=swg24029452]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Issue upgrading or installing a specific portlet using the
+   portaladministration console.We fixed the problem by
+   having the customer manually add "wps.appserver.name" to the
+   DeploymentService properties with the Cluster Name in it.
+   Question remains as to why this must be manually set.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  add the wps.appserver.name=ClusterName entry to
+   wp_profile/PortalServer/config/DeploymentService.properties
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Issue upgrading or installing a specific portlet using the
+   portaladministration console.We fixed the problem by
+   having the customer manually add "wps.appserver.name" to the
+   DeploymentService properties with the Cluster Name in it.
+   Question remains as to why this must be manually set.
+   .
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A code fix for this issue is integrated into the WebSphere
+   Portal & WCM Combined Cumulative Fix 25 (PM96258 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM96258]) for Portal
+   7.0.0.2 available from Fix Central:
+   
+   http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent
+   =ibm~WebSphere&product=ibm/WebSphere/WebSphere+Portal&release=7. [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~WebSphere&product=ibm/WebSphere/WebSphere+Portal&release=7.]
+   0.0.2&platform=All&function=aparId&apars=PM96258
+   
+   and into the WebSphere Portal & WCM Combined Cumulative Fix 09
+   (PM98649 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM98649]) for Portal 8.0.0.1 available from Fix Central:
+   
+   http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent
+   =ibm/WebSphere&product=ibm/WebSphere/WebSphere+Portal&release=Al [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm/WebSphere&product=ibm/WebSphere/WebSphere+Portal&release=Al]
+   l&platform=All&function=aparId&apars=PM98649
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM97412
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSPHERE PORTA
+   
+   
+ * REPORTED COMPONENT ID
+   5724E7600
+   
+   
+ * REPORTED RELEASE
+   610
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-09-19
+   
+   
+ * CLOSED DATE
+   2014-03-18
+   
+   
+ * LAST MODIFIED DATE
+   2014-03-18
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBSPHERE PORTA
+   
+   
+ * FIXED COMPONENT ID
+   5724E7600
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R700 PSY
+   UP
+   
+   
+ * R800 PSY
+   UP
+   
+   
+ * R610 PSN
+   UP

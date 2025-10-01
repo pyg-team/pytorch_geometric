@@ -1,0 +1,14 @@
+Title: IBM FileNet Composite Platform Installation Tool (CPIT) 5.2.1 is not supported on RedHat Enterprise Linux 7 - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ I am receiving errors when trying to install a FileNet Content Manager 5.2.1 environment on RedHat Enterprise Linux 7 or above using the Composite Platform Installation Tool (CPIT) 5.2.1. The installation is breaking when trying to install IBM Tivoli Directory Server (ITDS) 6.3 which is required for the installation to complete successfully. 
+
+ANSWER
+Unfortunately ITDS 6.3 is not supported on RHEL 7 as per the IBM Software Product Compatibility Reports for the product. Consequently, as CPIT 5.2.1 requires ITDS 6.3, running CPIT 5.2.1 on RHEL 7 is not a supported configuration.
+
+RELATED INFORMATION
+ CPIT 5.2.0 not supported on RHEL 6 [http://www.ibm.com/support/docview.wss?uid=swg21683906]
+IBM Software Product Compatibility Reports [http://www.ibm.com/software/reports/compatibility/clarity/index.html]

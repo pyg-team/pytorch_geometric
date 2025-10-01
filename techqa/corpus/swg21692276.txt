@@ -1,0 +1,67 @@
+Title: IBM How to connect to SAP HANA using DataStage - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How can I connect to SAP HANA using DataStage? 
+
+ANSWER
+Connectivity for HANA is provided via ODBC. HANA provides a ODBC/JDBC driver and this is the standard and only way SAP provides third party access to HANA at the moment.
+Note: The SAP Pack cannot connect to HANA database through SAP ABAP/BAPI/IDOC interfaces.
+
+Here are the steps to configure connectivity to HANA:
+
+1. Add an entry to uvodbc.config: 
+
+[ODBC DATA SOURCES] 
+<localuv> 
+DBMSTYPE = UNIVERSE 
+network = TCP/IP 
+service = uvserver 
+host = 127.0.0.1 
+
+<HANA_DEV> 
+DBMSTYPE = ODBC
+---------------------- 
+2. The HANA ODBC driver is not a "clientless" driver, i.e. it requires installation of a HANA client on the DataStage server. After you install SAP HANA client, you will find the following driver name/library name:
+Windows (32-bit) HDBODBC32/LIBODBCHDB32.dll 
+Windows (64-bit) HDBODBC/LIBODBCHDB.DLL 
+UNIX (64-bit) HDBODBC/libodbcHDB.so
+
+Note: DataStage on Windows requires the 32 bit driver.
+
+3. In general, connection to HANA is the following URL:
+
+For Windows use 32 bit driver:
+"DRIVER=HDBODBC32; UID=<user>; PWD=<password>; SERVERNODE=<host1>:30015; <host2>:30015; <host3>:30015; DATABASE=xxx" 
+
+On Unix/Linux use 64 bit driver:
+"DRIVER=HDBODBC; UID=<user>; PWD=<password>; SERVERNODE=<host1>:30015; <host2>:30015; <host3>:30015; DATABASE=xxx" 
+----------------------------------------------------
+For UNIX:
+Ensure that the client is installed and libraries are added to the library path in the <InformationServer>/Server/DSEngine/dsenv file.
+LIBPATH on AIX,
+LD_LIBRARY_PATH on Solaris, Linux and HP-UX Itanium 
+
+Note: Restart the Node Agents and DataStage Engine to pick up the change. 
+
+Consider using the following stanza in odbc.ini: 
+[HANA_DEV] 
+Driver=/opt/SAPHANA/libodbcHDB.so 
+UID=ISAPPUSR01 
+PWD= 
+SERVERDB=DH2 
+SERVERNODE=<server host>:30015 
+DriverUnicodeType=1
+
+Ensure the path to the libodbcHDB.so driver in the DSN is correct.
+Verify the host port number, the default is 30015. Try to telnet to the port to check port access:
+telnet host port 
+---------------------------------------------------------
+For Windows:
+Ensure that the SAP HANA client is installed. Use the 32 bit ODBC Data Source Administrator, i.e. C:\Windows\SysWOW64\odbcad32.exe, to create a connection to the HANA database:
+- Create a shortcut or directly run C:\Windows\SysWOW64\odbcad32.exe
+- Add a DSN based on "HDBODBC32"
+- Enter the DSN name and Server:Port combination
+- Test connection.

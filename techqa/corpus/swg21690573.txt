@@ -1,0 +1,37 @@
+Title: IBM Uninstall WebSphere MQ Client jar files from IBM Sterling B2B Integrator - United States
+
+Text:
+ISBI; SI; Sterling; B2B; WebSphere; MQ; WMQ; jar; libs; uninstall TECHNOTE (FAQ)
+
+QUESTION
+ When you install WebSphere MQ (WMQ) Client jar files to IBM Sterling B2B Integrator (ISBI) there might be unexpected behaviour due to already installed WMQ Client jar files in a different version.
+How can this be avoided? 
+
+CAUSE
+Multiple versions of WMQ Client jars files installed and loaded at the same time may cause incompatibility issues.
+
+ANSWER
+Remove previously installed WebSphere MQ Client prior to install new jar files. 
+
+For this, proceed as follows: 
+
+ 1.  Make a backup of <si-install>/properties/dynamicclasspath.cfg (e.g. to <si-install>/properties/dynamicclasspath.cfg.<timestamp>) 
+ 2.  Make a backup of <si-install>/jar (e.g. to <si-install>/tmp/jar.<timestamp>) 
+ 3.  Open <si-install>/properties/dynamicclasspath.cfg and 
+ 4.  Locate all references to jar files that are WebSphere MQ related (do not change the file dynamicclasspath.cfg manually as this is a generated file) 
+ 5.  Ensure that the list of found WMQ Client jars does not contain jar files that are related to other message queueing products like Active MQ or WMQ FTE; files for ActiveMQ, WebSphere MQ FTE etc. may not be removed in this procedure 
+ 6.  A valid selection of WMQ Client jar files may be for example all jar files that are in the folder that also contains com.ibm.mq.jar 
+ 7.  The full path filename is build up with the pattern <si-install>/jar/<Name>/<Version>/<file>.jar 
+ 8.  To uninstall the selected WMQ Client jar files change on command line to the folder <si-install>/bin and execute:  * on Linux/UNIX:
+        ./install3rdParty.sh <Name> <Version> -j <si-install>/jar/<Name>/<Version>/*.jar -uninstall 
+      * on Windows:
+        install3rdParty.cmd <Name> <Version> -j <si-install>\jar\<Name>\<Version>\*.jar -uninstall
+     
+     
+ 9.  Verify that the uninstalled WMQ Client jar files are no longer listed in <si-install>/properties/dynamicclasspath.cfg 
+ 10. Verify that no other version of WMQ Client jar files are installed (check <si-install>/properties/dynamicclasspath.cfg) → restart at step 4. if needed 
+ 11. Now you may install the WMQ Client jar files in the desired version (see IBM Technote "How to get and install new WebSphere MQ Client jar files for Sterling B2B Integrator" [http://www.ibm.com/support/docview.wss?uid=swg21670087])
+
+
+Restart ISBI for the changes to take effect. RELATED INFORMATION
+ How to get and install new WMQ Client jar files [http://www.ibm.com/support/docview.wss?uid=swg21670087]

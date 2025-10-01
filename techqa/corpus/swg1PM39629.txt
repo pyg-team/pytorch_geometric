@@ -1,0 +1,141 @@
+Title: IBM PM39629: HEALTHCENTER DEFAULT COMMUNICATION METHOD CHANGED FROM JRMP TO IIOP - United States
+
+Text:
+z/os SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  HealthCenter recently changed it's default communication
+   behavior to using an ORB for communication. This change in
+   behavior interferes with applications that run a customized
+   ORB, such as WebSphere Application Server on z/OS.
+   
+   This APAR will document the changes in the HealthCenter
+   documentation in the Info Center, which includes setting the
+   following JVM customer property in a WebSphere Application
+   Server on z/OS environment:
+   
+   com.ibm.java.diagnostics.healthcenter.agent.transport=jrmp
+   
+   This APAR will also document the Service Refresh level in both
+   Java 5 and Java 6 that introduce the change in default behavior.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  In order to use the Health Center (level 1.3.0 and up) with
+   WebSphere on z/OS, the following environment variable must be
+   set:
+   
+   com.ibm.java.diagnostics.healthcenter.agent.transport=jrmp
+   
+   This value can be set in the healthcenter.properties file.
+   
+   The 1.3.0 level of the Health Center changed the default
+   behavior to use an ORB instead of JRMP by default. The ORB
+   created by the Health Center conflicts with the customized ORB
+   required by WebSphere Application Server for z/OS. This property
+   instructs the Health Center to use JRMP, which will avoid the
+   creation or use of an ORB.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Health Center version 1.3.0 Requires:
+   
+   com.ibm.java.diagnostics.healthcenter.agent.transport=jrmp
+   
+   The 1.3.0 level of the Health Center is shipped by default with
+   the following versions of Java:
+   Java 6 SR 9
+   Java 5 SR 12 FP 4
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM39629
+   
+   
+ * REPORTED COMPONENT NAME
+   JAVA 6 Z/OS 31
+   
+   
+ * REPORTED COMPONENT ID
+   620700105
+   
+   
+ * REPORTED RELEASE
+   600
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-05-19
+   
+   
+ * CLOSED DATE
+   2011-06-06
+   
+   
+ * LAST MODIFIED DATE
+   2011-06-07
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

@@ -1,0 +1,55 @@
+Title: IBM QRadar: WinCollect: Incomplete Event Payload - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Why are my WinCollect payloads incomplete or truncated? 
+
+CAUSE
+Events are being forwarded with UDP which has a payload size of 1024 bytes. When using UDP, WinCollect can send payloads larger than QRadar can collect. The default TCP payload size QRadar will accept is 4096 bytes.
+
+ANSWER
+To resolve this issue, change the protocol used from UDP to TCP. 
+
+Note: When changing the protocol used from UDP to TCP, it is necessary to confirm that the TCP port 514 is open for communication from the Wincollect Agent to the target event collector. 
+
+ * WinCollect Managed:  1. Log in to the QRadar UI. 
+    2. Click on the Admin Tab > Log Sources icon. 
+    3. Using Search For Name from the pull down enter the name of the WinCollect Log Source. 
+       
+       [/support/docview.wss?uid=swg21991090&amp;aid=1] 
+    4.  Scroll down to Target Internal Destinations and change the Event Collector to TCP. 
+       [/support/docview.wss?uid=swg21991090&aid=2] [/support/docview.wss?uid=swg21991090&aid=2] 
+    5. Click Save.
+   
+   
+
+ * WinCollect Stand-alone  1. Open WinCollect Configuration Console 
+    2.  Under Destinations, right click Syslog TCP > Add New Destination
+       [/support/docview.wss?uid=swg21991090&amp;aid=3]
+       
+    3.  Enter a new Destination name.
+       [/support/docview.wss?uid=swg21991090&amp;aid=4] 
+    4. Click on the Destination name and enter the Hostname in the Basic Configurations Window.
+       [/support/docview.wss?uid=swg21991090&amp;aid=5]
+       
+    5. Scroll down to Devices and click the Log Source.
+       [/support/docview.wss?uid=swg21991090&amp;aid=6] 
+    6. Scroll down on the Log Source Properties > click Add > Select the new Destination for TCP and remove the old Destination for UDP
+       
+       [/support/docview.wss?uid=swg21991090&amp;aid=7] 
+    7. Right click on any Icon > Click Deploy Changes.
+       [/support/docview.wss?uid=swg21991090&amp;aid=8]
+   
+   
+   Result: payloads are now sending events using TCP Protocol. 
+   
+   
+
+
+
+
+
+
+[/support/docview.wss?uid=swg21991090&aid=9] [http://ibm.biz/QRadar-KC] [/support/docview.wss?uid=swg21991090&aid=10] [https://ibm.biz/qradarforums] [/support/docview.wss?uid=swg21991090&aid=11] [http://ibm.biz/qradarknowledge] [/support/docview.wss?uid=swg21991090&aid=12] [http://ibm.biz/SecSuptUTube] [/support/docview.wss?uid=swg21991090&aid=13] [http://ibm.biz/InfraSecFixes] [/support/docview.wss?uid=swg21991090&aid=14] [http://ibm.biz/MyNotification] [/support/docview.wss?uid=swg21991090&aid=15] [http://ibm.biz/SuptRegQuikStart]

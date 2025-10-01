@@ -1,0 +1,64 @@
+Title: IBM High Availability caching with Out of the Box WSRR Nodes in IIB flows - United States
+
+Text:
+ WHITE PAPER
+
+ABSTRACT
+ This paper documents the build and test of a high availability scenario in an IIB message flow. Aiming to achieve cache lookups from one of a series of WSRR nodes in a cluster. IIB runtime lookups of WSRR data solve important business problems such as dynamic endpoint routing and message throttling according to agreements defined between the consumer and provider of a service. However, in a production environment it is preferable to solve these business problems whilst taking advantage of both caching the results from WSRR and ensuring high availability failover if a WSRR node goes down. 
+
+CONTENT
+Authors: James Hook, John Barbesgaard, David Crighton, Chris Phillips
+
+
+
+
+Introduction
+Presented is a method and configuration by which an IIB message flow can query a clustered WSRR to ensure both high availability and high performance through caching the results, updating only when necessary when there has been a change in WSRR. 
+
+A typical WSRR setup is a deployed application across a WAS cluster i.e. a deployment manager and two or more custom nodes fronted by one or more IBM HTTP Servers to provide load balancing and failover. An IIB Integration server needs to be configured such that its defined service registry capability endpoint address routes to the IHS endpoint and the caching address routes to one of several possible WSRR nodes. Thus, if one WSRR node is inaccessible, the message flow can simply use one of the other available nodes for cache lookup.
+
+
+Design
+In order to query the WSRR cache, an IIB node has defined a JNDI binding property using an iiop protocol. This takes the form of iiop://<wsrr-hostname>:<jms port>/. However, in order to specify multiple cache locations, a corbaloc style URI must be used. corbaloc URIs take the form of:
+
+
+corbaloc:iiop:host1:port,iiop:host2:port 
+The relevant ports for these can be found by looking up each of the servers on the deployment manager and finding the ORB_LISTENER_PORT on the ports list for each server. Additionally, IIB checks for URIs separated by commas and select only the first URI mentioned. In order to specify more than one WSRR cache location, escaped quotes must be used. Thus, the following command stores the multiple cache locations as the JNDI location in IIB. 
+
+ 
+
+Unix
+
+
+mqsichangeproperties IBNODE -c ServiceRegistries -o DefaultWSRR -n locationJNDIBinding -v \“corbaloc:iiop:host1:port,iiop:host2:port \ ” 
+Windows 
+mqsichangeproperties IBNODE -c ServiceRegistries -o DefaultWSRR -n locationJNDIBinding -v \““corbaloc:iiop:host1:port,iiop:host2:port”\” 
+In order to enable the cache fully, the below additional commands must be run: 
+
+
+mqsichangeproperties IBNODE -c ServiceRegistries -o DefaultWSRR -n needCache -v true mqsichangeproperties IBNODE -c ServiceRegistries -o DefaultWSRR -n enableCacheNotification -v true 
+
+mqsisetdbparms IBNODE -n jms::DefaultWSRR@jms/SRConnectionFactory -u userid -p password
+
+
+These commands respectively enable the cache, enable notifications to the cache from WSRR and authenticate over the secure JMS connection using the JMS usernames and passwords within WAS. 
+Test of the cache
+Using some example flows and data from the following series of developerworks articles: http://www.ibm.com/developerworks/views/websphere/libraryview.jsp?search_by=Integrating+IBM+Integration+Bus+with+WebSphere+Service+Registry+and+Repository [http://www.ibm.com/developerworks/views/websphere/libraryview.jsp?search_by=Integrating+IBM+Integration+Bus+with+WebSphere+Service+Registry+and+Repository] 
+
+The tests were performed by setting up an IIB flow that performs runtime lookups of Service Level Agreements (SLAs), allowing the request if it is valid and rejecting it if the SLA is invalid. Toggling the validity of this SLA enables the verification of the cache functionality. 
+
+The tests with this flow consisted of disabling one or both of the two WSRR nodes and toggling the SLA to confirm: 
+
+1. Caching of the latest data is working correctly by assessing the time it takes for queries before and after there has been a change in the WSRR SLA data
+2. High availability is working correctly by assessing the successfulness of the cache lookup by disabling one of the two nodes (in which case the cache lookup should still perform correctly as in 1.) and disabling all nodes (in which case the cache lookup should fail as there are no further WSRR nodes to query).
+The results of the tests were successful - the cache lookup correctly fails over to a different node specified in the corbaloc URI if the first node in the corbaloc URI is down.
+
+
+Further remarks 
+Upon the disabling of a node that has been specified, IIB disconnects from the entire corbaloc URI despite the fact that one of the defined caches is still available. The connection is re-established automatically after approximately one second. Thus, there is a brief period of downtime on the cache look-up when the status of a node changes. 
+
+SSL over JMS connections in IIB is not available by default. If IIB has trouble establishing the JMS connection, there is a possibility that the WAS servers have SSL-required transport enabled. This setting can be changed in the global security IIOP settings menu.
+
+
+Conclusion
+This paper has presented a method by which IIB can query a multi-location cache in WSRR to ensure that runtime lookups on message flows can be queried efficiently and with high availability. The trade-off is a small period of down time when the cache status changes.

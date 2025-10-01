@@ -1,0 +1,164 @@
+Title: IBM IY92878: ASSIGNING ACCELERATOR KEYS TO ITEMS IN A SUBMENU - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Description: can assign a tool an accelerator key in the admin
+   config and it will show on the client menu but if it is
+   not in the main menu the accelerator key will not function.  If
+   I have the tool under the main menu it works fine.
+   Procedure used:
+   Assigning the keys in the Menus portion of the admin config gui.
+   I have made the updates to the name using the & sign and the
+   updates to the database tools.menu_items.  if I have the tool
+   off the main menu in a sub- menu it will not work.  Now if I
+   take the same tool and move it back into the main menu it works
+   fine use the accelerator key.
+   Functionality customer wants to achieve:
+   I just wanted to make it work, in my tests I have been using a
+   copy of the Windows ping tool.  The question came up about the
+   accelerator keys after a customer wished to know why they did
+   not work on sub-menus.
+   After replicating the issue, the development Team have verified
+   that  this is a bug in the Event List.
+   However, it only exists in the Windows Event List and that the
+   UNIX event list correctly responds to accelerator
+   (hot keys) on sub-menu's.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  no work around for windows, required functionality not
+   working..
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: Users who are trying to use Administrator to *
+   *                 add accelerator keys to the Tools in         *
+   *                 sub-menu of Windows EventList                *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: For Windows EventList the accelerator   *
+   *                      keys added to Tools in sub-menu don't   *
+   *                      work.                                   *
+   ****************************************************************
+   * RECOMMENDATION: N/A                                          *
+   ****************************************************************
+   Windows EvenList only support accelerator keys added to Tools
+   in top level menu(main menu).  Accelerator keys added to sub
+   memus are not processed.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A change has been made to handle all the accelerator key
+   settings from submenus along with the parent top level menu.
+   After the change users can assign accelerator  keys to Tools in
+   any level of menu and use the accelerator key to invoke the
+   Tools directly.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IY92878
+   
+   
+ * REPORTED COMPONENT NAME
+   NETCOOL/OMNIBUS
+   
+   
+ * REPORTED COMPONENT ID
+   5724O4800
+   
+   
+ * REPORTED RELEASE
+   710
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2007-01-10
+   
+   
+ * CLOSED DATE
+   2007-02-20
+   
+   
+ * LAST MODIFIED DATE
+   2007-02-20
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *     NETCOOL
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   NETCOOL/OMNIBUS
+   
+   
+ * FIXED COMPONENT ID
+   5724O4800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R710 PSY
+   UP

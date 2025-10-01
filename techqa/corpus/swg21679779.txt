@@ -1,0 +1,68 @@
+Title: IBM Security Bulletin: Java.policy file change in Default Socket Permissions for WebSphere Application Server - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ IBM® SDK Java™ Technology Edition released by IBM and Oracle JDKs have made a change to the default socket permissions in the java.policy file. 
+
+VULNERABILITY DETAILS
+IBM® SDK Java™ Technology Edition released by IBM and the Oracle JDK's have made a change to the default socket permissions in the java.policy file. These changes are documented by Oracle in the Change in Default Socket Permissions section of the Release Notes at the following location:http://www.oracle.com/technetwork/java/javase/7u51-relnotes-2085002.html [http://www.oracle.com/technetwork/java/javase/7u51-relnotes-2085002.html]
+The java policy file has changed as indicated below: 
+
+Old java.policy file:
+permission java.net.SocketPermission "localhost:1024-", "listen";
+
+New java.policy file:
+permission java.net.SocketPermission "localhost:0", "listen";
+permission java.net.SocketPermission "localhost:1099", "listen";
+
+These changes affect WebSphere Application Server in the following ways: 
+
+ * For IBM i  * WebSphere Application Server on IBM i uses the system SDK. After updating to the specified SDK, and if Java 2 security is enabled, and if WebSphere Application Server or its applications open a socket with a port number greater than 1024, you may now see a java.security.AccessControlException.
+   
+   
+ * For all other platforms  *  WebSphere Application Server has a locally owned SDK. The java.policy file changes were not made to Application Server's SDK. No action is needed to continue with the same behavior. See the remediation section for more details. 
+   
+   
+
+AFFECTED PRODUCTS AND VERSIONS
+These changes affect the following IBM Java SDK releases that WebSphere Application Server ship: 
+IBM Java SDK Version 7R1 Service Refresh 1 or later - shipped with WebSphere Application Server Version 8.5.5 
+IBM Java SDK Version 7 Service Refresh 7 or later - shipped with Websphere Application Server Version 8.5.5 
+IBM Java SDK Version 6R1 Service Refresh 8 or later - shipped with WebSphere Application Server Version 8.5.5 and 8.0
+IBM Java SDK Version 6 Service Refresh 16 or later - shipped with WebSphere Application Server Version 7.0
+IBM Java SDK Version 5 Service Refresh 16 Fix Pack 6 or later - shipped with WebSphere Application Server Version 6.1 
+
+REMEDIATION/FIXES
+
+For IBM i - you may do one of the following: 
+
+ *  You may add specific permissions to the Application Servers server.policy file. This policy file, located in /WAS_HOME/properties/ , is merged with the system wide java.policy file to define permissions for JVMs started by WebSphere Application Server. 
+
+Or  *  You may revert the changes in the java.policy file, which would affect all JVMs started with the system wide SDK. 
+
+For all other platforms - you may do the following:  *  If you would like to restrict the Application Server's socket permissions to the same level as the IBM and Oracle SDKs, you may update the Application Server's java.policy file with the new permissions 
+ * 
+
+For more information on policy files and Java 2 security, including how these files should be updated, please see the following knowledge center article.  * http://www-01.ibm.com/support/knowledgecenter/SS7K4U_8.5.5/com.ibm.websphere.nd.multiplatform.doc/ae/csec_rsecmgr2.html?cp=SSAW57_8.5.5&lang=en
+ * 
+ * 
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+IMPORTANT NOTE
+ IBM strongly suggests that all System z customers be subscribed to the System z Security Portal to receive the latest critical System z security and integrity service. If you are not subscribed, see the instructions on the System z Security web site [http://www-03.ibm.com/systems/z/solutions/security_subintegrity.html]. Security and integrity APARs and associated fixes will be posted to this portal. IBM suggests reviewing the CVSS scores and applying all security or integrity fixes as soon as possible to minimize any potential risk. 
+
+REFERENCES
+Complete CVSS v2 Guide [http://www.first.org/cvss/v2/guide] 
+On-line Calculator v2 [http://nvd.nist.gov/CVSS-v2-Calculator] RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/PSIRT] CHANGE HISTORY
+ 06 August 2014: original document published 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.

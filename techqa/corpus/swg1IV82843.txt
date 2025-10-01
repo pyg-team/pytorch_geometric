@@ -1,0 +1,171 @@
+Title: IBM IV82843: ATTEMPTING TO ADD A WORKSTATION TO A POOL RESULTS INERROR AWSUI3074E - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When attempting to add a workstation to a pool, the following
+   error is encountered:
+   .
+     AWSUI3074E The following action cannot be performed on worksta
+   tion <ws>: Edit.
+   Reason: AWSJCS011E An internal error has occurred. The error
+     is the following: "AWSJZC099E The HTTP request failed because
+     of the following
+     error: "Error 500: javax.servlet.ServletException:
+     com.ibm.scheduling.rest.exception.RestTransportException:
+     AWSRES003E The REST service cannot be contacted. Check the
+     existence of firewall rules or some issues on the dns side
+     resolving the server hostname that could prevent contacting
+     the service. The internal error message is: Content is not
+     allowed in trailing section..
+   .
+   The WAS SystemOut.log contains ...
+   .
+     [4/8/15 18:13:30:028 EEST] 00000069 servlet       E com.ibm.ws
+     .webcontainer.servlet.ServletWrapper service SRVE0014E: Uncaug
+     ht service() exception root cause JobSchedulerServlet: javax.s
+     ervlet.ServletException: com.ibm.scheduling.rest.exception.Res
+     tTransportException: AWSRES003E The REST service cannot be con
+     tacted. Check the existence of firewall rules or some issues o
+     n the dns side resolving the server hostname that could preven
+     t contacting the service. The internal error message is: Conte
+     nt is not allowed in trailing section..
+             at com.ibm.scheduling.jobmanager.rest.JobSchedulerServ
+     let.service(JobSchedulerServlet.java:136)
+             at javax.servlet.http.HttpServlet.service(HttpServlet.
+     java:668)
+             at com.ibm.ws.webcontainer.servlet.ServletWrapper.serv
+     ice(ServletWrapper.java:1224)
+   .
+   Using a Dynamic Domain Manager and DWC conneting via a
+   zConnector to a TWS/z Master.
+   .
+   Issue only occurs when the agents ComputerSystemDisplayName
+   contains exactly 14 characters.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Avoid using agents with 14 character long
+   ComputerSystemDisplayName.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  The error that happens while adding the workstation to the pool
+   is caused by a very rare condition: the xml file containing the
+   Logical Resource is corrupted (a coupple of wrong characters are
+   presente at the end). An additioanl check to validate the xml
+   needs to be added on zOS connector component.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The apar will be fixed in DWC 9.2 fp03, 9.3 fp03
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  See Local fix
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV82843
+   
+   
+ * REPORTED COMPONENT NAME
+   TIV DYN WKLD CN
+   
+   
+ * REPORTED COMPONENT ID
+   TIVOWEBUI
+   
+   
+ * REPORTED RELEASE
+   920
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-03-21
+   
+   
+ * CLOSED DATE
+   2016-05-17
+   
+   
+ * LAST MODIFIED DATE
+   2016-05-17
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TIV DYN WKLD CN
+   
+   
+ * FIXED COMPONENT ID
+   TIVOWEBUI
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R920 PSY
+   UP

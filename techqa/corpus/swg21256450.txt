@@ -1,0 +1,31 @@
+Title: IBM EQQPH25E, EQQPH26E - messages may be confusing. - United States
+
+Text:
+5697WSZ01; 5697-WSZ; 5698-A17; TIVOJSC83; TIVOJSCS84; TIVOWEBUI TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Messages EQQPH25E and EQQPH26E are issued when the TWSz TCP SERVER started task receives a request from an unknown DWC USER or an unknown TWS zConnector. 
+
+CAUSE
+SECURITY SETUP on the TWSz mainframe for DWC USERS is incomplete or incorrect.
+
+RESOLVING THE PROBLEM
+When a DWC user opens an ENGINE, the TWS z/OS CONNECTOR (embedded WebSphere Application Server), performs a security check on the supplied userid and password. 
+
+The EWAS verifies the credentials of the user, then passes the fully qualified userid to the TWSz TCP SERVER started task on the mainframe LPAR where the TWSZ CONTROLLER runs. The SERVER uses one of two techniques to determine whether the supplied information defines a user with authority to perform the requested action within TWSz. 
+
+If the server's initialization options include a the USERMAP keyword, the received value is matched against the USER entries in the indicated EQQPARM member. If an EXACT match is found (case sensitive), the request is passed to the TWSz CONTROLLER under the associated RACFUSER userid and RACFGROUP (if specified). 
+
+If this technique is used, and the userid received from the zConnector does not match any entry in the USERMAP, message EQQPH26E is issued. This message may appear in the EQQMLOG dataset of the TCP SERVER, and in a popup-error message displayed to the DWC user. It will also be logged in the DWC and CONNECTOR logs. 
+
+The other DWC security option is to define DWC users directly to the mainframe security package via the TMEADMIN security resource class. In this case, the map of DWC USERIDs to TSO USERIDs is maintained within the secure RACF (or ACF/2 or TopSecret) databases rather than in the TWSz EQQPARM parameter library. An advantage to this technique is that the lists can be updated dynamically via command to the security product without need to stop and restart the TCP SERVERs. 
+
+If this technique is used, and an incoming request is made by a DWC user for which there is no matching entry in the TMEADMIN resource class, message EQQPH25E is issued. This message may appear in the EQQMLOG dataset of the TCP SERVER and in a popup-error message displayed to the DWC user. It will also be logged in the DWC and CONNECTOR logs. 
+
+If either message EQQPH25E or EQQPH26E is issued, the corrective action is documented in the TWSz MESSAGES AND CODES manual. It basically consists of cutting and pasting the missing userid from the error message (CASE SENSITIVE) into either the USERMAP (MSG EQQPH26E) or a command to update the TMEADMIN class (MSG EQQPH25E), and if the USERMAP is used, to stop and restart the TCP SERVER to force it to re-read its parameter library members. 
+
+Further information is available on this topic in the TWSz CUSTOMIZATION AND TUNING guide, in the TIVOLI REDBOOK "IBM TIVOLI WORKLOAD SCHEDULER FOR z/OS BEST PRACTICES END-to-END and MAINFRAME Scheduling", SG24-7156-01. 
+
+DOC APAR PK91233 clarifies the requirement that the initial handshake between the z/Connector and the TWSz SERVER started task is done under the TWSUSER userid -- The ID under which the connector itself executes. Thus this userid must be included in the definitions discussed above. 
+
+Also, you may want to refer to DOC APAR PK03441 which clarifies that the USERMAP and TMEADMIN techniques are mutually exclusive. If a USERMAP entry exists at all, the TCP SERVER started task will not make any attempt to check the TMEADMIN resource class, and all users defined there will be refused access.

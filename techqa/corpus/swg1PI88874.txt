@@ -1,0 +1,157 @@
+Title: IBM PI88874: RAN OUT OF INTERNAL RESOURCES WHEN PERFORMING RULEBASED ANALYSIS. - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When RuleBased Analysis is executed on all the resources with
+   some rules an insufficient resource error occurs.
+   When selecting about 100 programs, there are no problems.  But
+   when selecting all sources (more than 20,000 COBOL programs),
+   this error results:
+   "The query processor ran out of internal resources and could
+   not produce a query plan. This is a rare event and only
+   expected for extremely complex queries or queries that
+   reference a very large number of tables or partitions. Please
+   simplify the query. If you believe you have received this
+   message in error, contact Customer Support Services for
+   more information."
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Run the RuleBased Analysis with less number of sources.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: Users of Application Discovery RuleBased
+   * Analysis
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Ran out of internal resources when
+   * performing RuleBased Analysis.
+   ****************************************************************
+   * RECOMMENDATION: Apply 5.0.2 or higher when available
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix for this APAR is contained in the following maintenance
+   packages:
+       | fixpack | AD 5.0.2
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  Run the RuleBased Analysis with less number of sources.
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI88874
+   
+   
+ * REPORTED COMPONENT NAME
+   APPL DISCOVERY
+   
+   
+ * REPORTED COMPONENT ID
+   5737B1600
+   
+   
+ * REPORTED RELEASE
+   502
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-10-16
+   
+   
+ * CLOSED DATE
+   2017-10-16
+   
+   
+ * LAST MODIFIED DATE
+   2017-10-16
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  N/A
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   APPL DISCOVERY
+   
+   
+ * FIXED COMPONENT ID
+   5737B1600
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R502 PSY
+   UP

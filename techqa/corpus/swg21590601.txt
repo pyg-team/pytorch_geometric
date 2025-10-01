@@ -1,0 +1,49 @@
+Title: IBM How to change the default size of an image displayed in the Image Viewer for FileNet Business Process Framework - United States
+
+Text:
+Daeja Viewer; display; size TECHNOTE (FAQ)
+
+QUESTION
+ How to change the default size of an image displayed in the Image Viewer for FileNet Business Process Framework 
+
+ANSWER
+The default image display size is set in the WcmJavaViewer.jsp file in the “UI-INF/jsp/ui” folder of the deployed Workplace application.
+In the WcmJavaViewer.jsp file, the following code sets the default display size:
+writeParam('scale', 'ftow');
+
+The “ftow” scale setting enables the "fit to window width" icon on the toolbar of the Image Viewer as shown in the screen capture below.
+
+[/support/docview.wss?uid=swg21590601&amp;aid=1]
+
+The image display scale parameter is defined in the “ViewONE HTML and Installation Manual, Version 3.0” document.
+
+For attachment display, the display scale parameter has the following settings.
+
+Parameter: Scale
+<PARAM NAME=“scale” value=“best”> …or…
+<PARAM NAME=“scale” value=“ftow”> …or…
+<PARAM NAME=“scale” value=“ftoh”>
+
+The scale parameter specifies the scaling algorithm to be used when displaying pages. Optional values are:
+
+“best”:
+The page is scaled to fit into the window area so that all of the page is visible.
+
+“ftow”:
+The page is scaled so that the width of the page matches the width of the window area.
+This may result in the visible page height exceeding the available window height in which case a vertical scroll bar appears automatically.
+
+“ftoh”:
+The page is scaled so that the height of the page matches the height of the window area.
+This may result in the visible page width exceeding the available window width in which
+case a horizontal scroll bar appears automatically.
+
+Modifying the parameter setting from 
+writeParam('scale', 'ftow');
+to
+writeParam('scale', 'best');
+will cause the default page display from “ftow” (fit to window width) to “best” (fit to window).
+
+The Viewer can then display the entire image to fit the window, and the "Fit to windows" icon on the toolbar will be enabled as shown in the screen capture below.
+
+[/support/docview.wss?uid=swg21590601&amp;aid=2]

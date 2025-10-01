@@ -1,0 +1,30 @@
+Title: IBM Missing "META-INF/default_ra.xml"  when executing a rules application in a J2SE environment - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When executing a J2SE application which uses rules, the following exception is seen:
+
+ilog.rules.res.session.IlrSessionCreationException: An error occurred while the rule session was created.: 
+ilog.rules.res.session.IlrSessionCreationException: ilog.rules.res.session, Message code: 10044 
+ilog.rules.res.util.IlrRemoteException: Missing "META-INF/default_ra.xml" 
+
+
+
+CAUSE
+This error usually occurs if jrules-res-execution.jar is not packaged in your J2SE application.
+
+RESOLVING THE PROBLEM
+ 
+
+When invoking rules in a J2SE environment, make sure you package executionserver\lib\jrules-res-execution.jar in your application, as detailed in the documentation under WebSphere ILOG JRules BRMS V7.1 > Rule Execution Server > Introducing Rule Execution Server > Rule Execution Server basics > Execution > Execution patterns [http://publib.boulder.ibm.com/infocenter/brjrules/v7r1/index.jsp?topic=/com.ibm.websphere.ilog.jrules.doc/Content/Business_Rules/Documentation/_pubskel/JRules/ps_JRules_Global933.html] 
+
+For detailed information on packaging applications for JRules, you can refer to WebSphere ILOG JRules Execution Server Packaging Applications [http://www.ibm.com/support/docview.wss?uid=swg27019540].
+
+Note: If this error occurs when using the JSR94 implementation in Rule Execution Server (RES), refer to the following document: Configuration of the JSR94 environment type and res_jsr94.conf file [http://www.ibm.com/support/docview.wss?uid=swg21445173].
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Operational Decision Manager Platform Independent 7.5 Enterprise

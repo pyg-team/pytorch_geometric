@@ -1,0 +1,157 @@
+Title: IBM IT01770: MEMORY USAGE FOR LOGGING AT HIGH LEVELS IS NOT CONSTRAINED - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When logging is set to high levels, it is possible for the
+   memory consumption of the logging procedures to become very
+   large.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   This issue affects users of the IBM MessageSight appliance who
+   have logging set to a high level while there is a high volume of
+   messaging occurring.
+   
+   ****************************************************************
+   PROBLEM DESCRIPTION:
+   When log messages are being generated at a very high rate, the
+   logging routines are designed to limit the number of log entries
+   that can be queued for writing to the log file. The intention of
+   this is to limit the amount of memory that can be consumed by
+   queued log entries when the system is under heavy load and the
+   logging level is high. There was an error in the logging routine
+   that resulted in new log entries always being queued, regardless
+   of how many were already queued. Under certain circumstances,
+   the rate at which new entries are queued can exceed the rate at
+   which they can be processed and written to the log files. when
+   this happens, the memory usage of the logging component can
+   become very large.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The logging routines have been updated to ensure that when the
+   maximum threshold for queued log entries has been reached, new
+   entries are discarded. This continues until enough of the
+   previously queued log entries have been processed and the number
+   of queued entries is reduced to a lower threshold.
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+   Version    Maintenance Level
+   v1.1       1.1.0.1
+   
+   The latest available maintenance can be obtained from
+   'WebSphere MQ Recommended Fixes'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037]
+   
+   If the maintenance level is not yet available information on
+   its planned availability can be found in 'WebSphere MQ
+   Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT01770
+   
+   
+ * REPORTED COMPONENT NAME
+   MESSAGESIGHT
+   
+   
+ * REPORTED COMPONENT ID
+   5725F9600
+   
+   
+ * REPORTED RELEASE
+   110
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-05-13
+   
+   
+ * CLOSED DATE
+   2014-06-23
+   
+   
+ * LAST MODIFIED DATE
+   2014-06-23
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   MESSAGESIGHT
+   
+   
+ * FIXED COMPONENT ID
+   5725F9600
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R110 PSY
+   UP

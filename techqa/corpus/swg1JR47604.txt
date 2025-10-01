@@ -1,0 +1,192 @@
+Title: IBM JR47604: THE REST APIS FOR STARTING A PROCESS OR SERVICE DO NOT CURRENTLY HAVE A WAY TO START A NON-DEFAULT TRACK'S TIP INSTANCE. - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Version 8.0.1 Fix Pack 2 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24035701]
+Version 8.5.0 Fix Pack 1 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24035702]
+Version 8.5 Refresh Pack 5 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24037683]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  On Process Center, REST APIs for starting a process or service
+   do not currently have a way to start a non-default track's TIP
+   instance. This can lead to unexpect behavior in process portal
+   when a track TIP item is started from the launch menu.
+   This would not affect Process Server environments since tracks
+   and the TIP concept does not apply there.
+   The main behavior would be if you have track1 and track2 with
+   track1 being the default. Click either track's link shown
+   in the launch page for Process Portal would start an instance
+   for track1.
+   
+   These are the two REST apis which can start tip instance related
+   items via their start method:
+   POST /rest/bpm/wle/v1/process/
+   POST /rest/bpm/wle/v1/service/
+   
+   There needs to be a new parameter added to the APIs to allow for
+   a specific branch ID(track) to be specfied without a specific
+   snapshot so that TIP instances can be created.
+   
+   When the snapshot ID is provided then it should not create TIP
+   instances.
+   
+   I would expect this to work the same way as items started in
+   Process Designer.
+   
+   JR47726 [http://www-01.ibm.com/support/docview.wss?uid=swg1JR47726] will also be needed with this one to correct issues with
+   Process Portal usage of this REST API.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Use Process Designer to start the instance for a non-default
+   track.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  Users of Process Center and the REST API.   *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: The "start process" REST API does not   *
+   *                      provide a way for the caller to         *
+   *                      specify the use of the "tip" snapshot   *
+   *                      contained within a non-default track    *
+   *                      of a process app.   This would          *
+   *                      require the user to pass the            *
+   *                      "branchId" parameter on the "start      *
+   *                      process" REST API, but this parameter   *
+   *                      is not yet supported (currently only    *
+   *                      the processAppId and snapshotId         *
+   *                      parameters are supported).              *
+   *                      The main side-effect of this            *
+   *                      shortcoming is that the user would      *
+   *                      receive a link within Process Portal    *
+   *                      that refers specifically to the         *
+   *                      snapshot which happened to be the tip   *
+   *                      of the non-default track at that        *
+   *                      time, but would not be able to refer    *
+   *                      symbolically to that track's tip        *
+   *                      snapshot in the future.                 *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   The "start process" REST API doesn't allow user to start a BPD
+   instance within the tip snapshot of a non-default track of a
+   process application.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  With this iFix, we've added support for the "branchId"
+   parameter within the "start process" REST API.   This
+   parameter can be used to specify the "tip" snapshot of the
+   specified non-default track.   In addition, the "exposed
+   processes" REST API has been modified to detect the presence
+   of an exposed BPD within the tip of a non-default track, and
+   will compute a startURL value which uses the new "branchId"
+   parameter.
+   
+   The interim fix on BPM v8.0.1.1 is available to download from
+   Fix Central. This fix will be integrated into the next fix pack.
+   Please reference to the README file for installation
+   instruction.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR47604
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM ADVANCED
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9400
+   
+   
+ * REPORTED RELEASE
+   801
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-08-26
+   
+   
+ * CLOSED DATE
+   2013-10-17
+   
+   
+ * LAST MODIFIED DATE
+   2013-11-06
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   BPM ADVANCED
+   
+   
+ * FIXED COMPONENT ID
+   5725C9400
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R800 PSY
+   UP

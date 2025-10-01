@@ -1,0 +1,32 @@
+Title: IBM Problem exporting reports in AppScan Enterprise - United States
+
+Text:
+XLS; XML; Export report; Blank dialog window TECHNOTE (FAQ)
+
+QUESTION
+ Attempts to export to any of the available formats like XLS or XML with IBM Security AppScan Enterprise results in the export dialog window popping up blank with no option to save the file. 
+
+CAUSE
+This problem is caused by a restriction in the user's permission in the instance. Note that all user roles, except for No Access, should be able to see the reports and export them.
+
+ANSWER
+You need to ensure the Users group has these permissions Read, Read&Execute, and List Folder Contents on the instance. 
+
+Login into the Control Center machine and set these permissions through IIS or through the file system in Windows Explorer as follows: 
+
+ * In IIS 6.0, follow these steps:  1. Bring up IIS. 
+    2. Expand the Default Website and right-click on the ASE instance name. 
+    3. Select Permissions. 
+    4. Highlight the Users group. 
+    5. Put a check in the Allow column for Read, Read&Execute, and List Folder Contents. 
+    6. Save the change.
+   
+   
+   
+ * In Windows Explorer, follow these steps:  1. Go to the ASE install folder, by default c:\program files\ibm\Rational ASE. 
+    2. Right-click the WebApp folder. 
+    3. Select Sharing and Security. 
+    4. Go to Security tab. 
+    5. Highlight the Users group. 
+    6. Put a check in the Allow column for Read, Read&Execute, and List Folder Contents. 
+    7. Save the change.

@@ -1,0 +1,161 @@
+Title: IBM IV29618: JUNIPER/FIREWALL/NETSCREEN-2000/5.X IMPORTS FAIL WITH ERRORCODE=-4470 - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When attempting to import Juniper/Firewall/NetScreen-2000/5.x
+   into NCM running with DB2 database
+   the UOW fails with:
+   
+   (24) [Caused by: The transaction has been rolled back.  See the
+   nested exceptions for details on the errors that occurred.
+   (RollbackException)]
+   (25) [Caused by: The transaction has been rolled back.  See the
+   nested exceptions for details on the errors that occurred.
+   (PersistenceException)]
+   (26) [Caused by: [jcc][10120][10943][4.12.55] Invalid operation:
+   statement is closed. ERRORCODE=-4470, SQLSTATE=null
+   (PersistenceException)]
+   (27) [Caused by: [jcc][10120][10943][4.12.55] Invalid operation:
+   statement is closed. ERRORCODE=-4470, SQLSTATE=null
+   (SqlException)]
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Run the following sql
+   ALTER TABLE DEVICECONFIGPAGED ALTER COLUMN LINES SET DATA TYPE
+   CLOB(10M);
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * Users using ITNCM 6.3.0.4 or earlier or ITNCM 6.4.0.0        *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * When attempting to import                                    *
+   * Juniper/Firewall/NetScreen-2000/5.x into NCM running with    *
+   * DB2 database the following DB2 error code is received and    *
+   * the import fails.                                            *
+   *                                                              *
+   * (27) [Caused by: [jcc][10120][10943][4.12.55] Invalid        *
+   * operation:                                                   *
+   * statement is closed. ERRORCODE=-4470, SQLSTATE=null          *
+   * (SqlException)]                                              *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Upgrade to (ITNCM 6.3.0.5 or ITNCM 6.4.0.1) when available   *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Increased side of DB2 database column. The
+   Juniper/Firewall/NetScreen-2000/5.x should now import fine
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV29618
+   
+   
+ * REPORTED COMPONENT NAME
+   N/C CONFIG MGR(
+   
+   
+ * REPORTED COMPONENT ID
+   5724Z3100
+   
+   
+ * REPORTED RELEASE
+   630
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-10-06
+   
+   
+ * CLOSED DATE
+   2012-11-29
+   
+   
+ * LAST MODIFIED DATE
+   2012-11-29
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   N/C CONFIG MGR(
+   
+   
+ * FIXED COMPONENT ID
+   5724Z3100
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R630 PSY
+   UP
+   
+   
+ * R640 PSY
+   UP

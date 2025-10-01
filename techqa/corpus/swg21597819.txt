@@ -1,0 +1,39 @@
+Title: IBM No users or groups listed in the TADDM Administration panels. - United States
+
+Text:
+LDAP VMM Administration TECHNOTE (FAQ)
+
+QUESTION
+ No users or groups appear in the TADDM Administration panels even though I'm signed in as the administrator user. Additionally, the Create User and Create Group buttons are not active. 
+
+CAUSE
+TADDM is configured to use either LDAP or VMM as the User Registry:
+com.collation.security.usermanagementmodule=ldap
+or 
+com.collation.security.usermanagementmodule=vmm
+
+
+ANSWER
+When TADDM is configured to use either LDAP or VMM as the User Registry, the Users and User Groups panel will list no users and groups as these are actually stored in the LDAP or VMM user registry rather than in TADDM. As well, the Create User and Create Group buttons will not be active when using these user registries. When you are using LDAP or VMM, Users and Groups are create and deleted in these User Registries rather than in TADDM. However, you do still need to assign the LDAP/VMM users and groups authorization (roles) in TADDM for them to be able to access TADDM. To do this, use the "Search Users" and/or "Search User Group" options at the top of the User and Group panels respectively, to locate users/groups in these registries. Use of a wild card (*) is allowed in the search field as permitted by these user registries. Note also that you may wish to update the com.collation.security.auth.searchResultLimit property in the <dist>/etc/collation.properties file based on the number of search results you wish to allow returned from the user registry search. Once you locate the users and/or groups as desired, you can select them and assign the desired TADDM roles to them. 
+
+Refer to the following Users and User Groups print screens and notice the following: 
+
+1) Create User, Create Group, and Delete buttons are not available. 
+
+2) Users and Groups from the LDAP or VMM registries are located using the Search function at the top of the panel. 
+
+3) Search Users and Groups allows use of asterisk (*) for wildcard. 
+
+4) Notice searching for "A*" may return users or groups beginning with both upper and lower case "a". This is completely controlled by whether the LDAP/VMM user registry is case sensitive or not. TADDM simply shows the search results as returned by the user registry. 
+
+5) Once a user or group is selected, the "Edit" button is available to use to assign TADDM roles to that user or group as desired. 
+
+ [/support/docview.wss?uid=swg21597819&aid=1] [/support/docview.wss?uid=swg21597819&aid=1] 
+
+
+[/support/docview.wss?uid=swg21597819&aid=2] [/support/docview.wss?uid=swg21597819&aid=2]
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ TADDM

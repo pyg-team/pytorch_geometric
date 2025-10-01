@@ -1,0 +1,42 @@
+Title: IBM Security Bulletin: Vulnerability in IBM Java Runtime affects the Enterprise Common Collector component of the IBM Tivoli zEnterprise Monitoring Agent (CVE-2015-0138) - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ The “FREAK: Factoring Attack on RSA-EXPORT keys" TLS/SSL client and server vulnerability affects IBM® Runtime Environment Java™ Technology Edition, Version 6 that is used by the Enterprise Common Collector (a component of IBM Tivoli zEnterprise Monitoring Agent, a component of IBM Tivoli Monitoring). 
+
+VULNERABILITY DETAILS
+CVEID:CVE-2015-0138 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-0138]
+DESCRIPTION:A vulnerability in various IBM SSL/TLS implementations could allow a remote attacker to downgrade the security of certain SSL/TLS connections. An IBM SSL/TLS client implementation could accept the use of an RSA temporary key in a non-export RSA key exchange ciphersuite. This could allow a remote attacker using man-in-the-middle techniques to facilitate brute-force decryption of TLS/SSL traffic between vulnerable clients and servers. 
+This vulnerability is also known as the FREAK attack.
+CVSS Base Score: 4.3
+CVSS Temporal Score: Seehttp://exchange.xforce.ibmcloud.com/#/vulnerabilities/100691 [http://exchange.xforce.ibmcloud.com/#/vulnerabilities/100691] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:M/Au:N/C:N/I:P/A:N)
+
+AFFECTED PRODUCTS AND VERSIONS
+Enterprise Common Collector 1.1.0 (a component of IBM Tivoli zEnterprise Monitoring Agent, a component of IBM Tivoli Monitoring v6.2.3 and v6.3.0)
+
+REMEDIATION/FIXES
+ 
+
+Product VRMF Operating System Remediation/First Fix IBM Tivoli zEnterprise Monitoring Agent (Enterprise Common Collector v1.1.0 component) v6.2.3 AIX® Fix Central link [http://www.ibm.com/support/fixcentral/swg/selectFixes?parent=Tivoli%2BComposite%2BApplication%2BManager&product=ibm/Tivoli/IBM+Tivoli+Monitoring&release=All&platform=All&function=fixId&fixids=1.1.0.5-TIV-ITM-ECC-JRE-AIX-IF0003&includeSupersedes=0] Linux® on System z® Fix Central link [http://www.ibm.com/support/fixcentral/swg/selectFixes?parent=Tivoli%2BComposite%2BApplication%2BManager&product=ibm/Tivoli/IBM+Tivoli+Monitoring&release=All&platform=All&function=fixId&fixids=1.1.0.5-TIV-ITM-ECC-JRE-Linuxz-IF0003&includeSupersedes=0] Linux® on Intel® 32-bit Fix Central link [http://www.ibm.com/support/fixcentral/swg/selectFixes?parent=Tivoli%2BComposite%2BApplication%2BManager&product=ibm/Tivoli/IBM+Tivoli+Monitoring&release=All&platform=All&function=fixId&fixids=1.1.0.5-TIV-ITM-ECC-JRE-Linuxx32-IF0003&includeSupersedes=0] Linux® on Intel® 64-bit Fix Central link [http://www.ibm.com/support/fixcentral/swg/selectFixes?parent=Tivoli%2BComposite%2BApplication%2BManager&product=ibm/Tivoli/IBM+Tivoli+Monitoring&release=All&platform=All&function=fixId&fixids=1.1.0.5-TIV-ITM-ECC-JRE-Linuxx64-IF0003&includeSupersedes=0] 32-bit Windows® Fix Central link [http://www.ibm.com/support/fixcentral/swg/selectFixes?parent=Tivoli%2BComposite%2BApplication%2BManager&product=ibm/Tivoli/IBM+Tivoli+Monitoring&release=All&platform=All&function=fixId&fixids=1.1.0.5-TIV-ITM-ECC-JRE-Windows32-IF0003&includeSupersedes=0] 64-bit Windows® Fix Central link [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=Tivoli%2BComposite%2BApplication%2BManager&product=ibm/Tivoli/IBM+Tivoli+Monitoring&release=All&platform=All&function=fixId&fixids=1.1.0.5-TIV-ITM-ECC-JRE-Windows64-IF0003&includeSupersedes=0] 
+You should verify applying this fix does not cause any compatibility issues. GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v2 Guide [http://www.first.org/cvss/v2/guide] 
+On-line Calculator v2 [http://nvd.nist.gov/CVSS-v2-Calculator] 
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] ACKNOWLEDGEMENT
+The vulnerability was reported to IBM by Karthikeyan Bhargavan of the PROSECCO team at INRIA 
+
+CHANGE HISTORY
+ 01 April 2015: Original Version Published 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.

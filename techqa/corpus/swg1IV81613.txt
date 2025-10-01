@@ -1,0 +1,185 @@
+Title: IBM IV81613: NCI_TRIGGER REPORTS SUCCESS WHEN INCORRECTLY RUN AGAINST A NON-EXISTENT POLICY - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+ DIRECT LINKS TO FIXES
+7.1.0-TIV-NCI-ZLINUX-FP0006 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=7.1.0-TIV-NCI-ZLINUX-FP0006&source=SAR]
+7.1.0-TIV-NCI-WINDOWS-FP0006 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=7.1.0-TIV-NCI-WINDOWS-FP0006&source=SAR]
+7.1.0-TIV-NCI-SOLARIS-FP0006 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=7.1.0-TIV-NCI-SOLARIS-FP0006&source=SAR]
+7.1.0-TIV-NCI-LINUX-FP0006 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=7.1.0-TIV-NCI-LINUX-FP0006&source=SAR]
+7.1.0-TIV-NCI-AIX-FP0006 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=7.1.0-TIV-NCI-AIX-FP0006&source=SAR]
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Introduced with Impact 7.1.0 Fix Pack 2:
+   
+   The use of nci_trigger against a none existent Policy does not
+   report an error to the screen or the ImpactServer log.  There
+   is an error recorded in the PolicyLogger and if the
+   PolicyLogger is configured to append the Policy name a new
+   PolicyLogger log file is created for the name of the none
+   existent Policy containing the error (that the Policy can't be
+   found).
+   
+   In testing in Impact 7.1.0 it was found that this is not the
+   case and it does produce the error to the screen and in the
+   ImpactServer log file.  So the behaviour is produced in Impact
+   7.1.0 Fix Pack 2 onwards.
+   
+   The observed adverse behaviour
+   
+   $IMPACT_HOME/bin/nci_trigger NCI impactadmin/xxx
+   some_undefined_policy
+   some_undefined_policy Policy completed successfully
+   
+   The logs contain one successful and one error entry:
+   
+   impactserver.log:
+   INFO [ImpactServerLibertyBean] Policy 'some_undefined_policy'
+   executed successfully
+   
+   NCI_policylogger.log:
+   [some_undefined_policy] [pool-3-thread-22]Unable to find policy:
+   some_undefined_policy
+   
+   Expectation:
+   nci_trigger should return an error, if the policy is not
+   defined.
+   
+   Level 3 Support reports:
+   
+   "There was a change made in FP2 that logs that the policy does
+   not exist but fails to send a failed result back to
+   nci_trigger. Since the result nci_trigger gets back is 0, it
+   shows success instead of failure."
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * All Impact 71x Users                                         *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * When nci_trigger is run against a non-existent policy, it    *
+   * shows success instead of failure.                            *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   Since the result nci_trigger gets back is 0, it shows success
+   instead of failure.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix is to return a result = 1 so nci_trigger can show
+   failure.
+   The Fix for this APAR is contained in the following maintenance
+   package:
+   |Fix Pack | 7.1.0-TIV-NCI-FP0006
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV81613
+   
+   
+ * REPORTED COMPONENT NAME
+   NETCOOL/IMPACT
+   
+   
+ * REPORTED COMPONENT ID
+   5724O59IS
+   
+   
+ * REPORTED RELEASE
+   710
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-02-18
+   
+   
+ * CLOSED DATE
+   2016-03-25
+   
+   
+ * LAST MODIFIED DATE
+   2016-03-25
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   NETCOOL/IMPACT
+   
+   
+ * FIXED COMPONENT ID
+   5724O59IS
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R710 PSY
+   UP

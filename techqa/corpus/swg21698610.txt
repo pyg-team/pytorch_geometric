@@ -1,0 +1,50 @@
+Title: IBM Security Bulletin: Multiple vulnerabilities in IBM Java SDK affect InfoSphere Data Replication Dashboard (CVE-2014-6593, CVE-2015-0410) - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ There are multiple vulnerabilities in IBM® Runtime Environment Java™ Technology Edition, Version 7.1.2 that is used by InfoSphere Data Replication Dashboard. These issues were disclosed as part of the IBM Java SDK updates in January 2015. 
+
+VULNERABILITY DETAILS
+CVEID: CVE-2014-6593 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-6593]
+DESCRIPTION: An unspecified vulnerability related to the JSSE component has partial confidentiality impact, partial integrity impact, and no availability impact.
+CVSS Base Score: 4
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/100153 [https://exchange.xforce.ibmcloud.com/vulnerabilities/100153] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:H/Au:N/C:P/I:P/A:N) 
+
+CVEID: CVE-2015-0410 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-0410]
+DESCRIPTION: An unspecified vulnerability related to the Security component could allow a remote attacker to cause a denial of service.
+CVSS Base Score: 5
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/100151 [https://exchange.xforce.ibmcloud.com/vulnerabilities/100151] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:L/Au:N/C:N/I:N/A:P) 
+
+AFFECTED PRODUCTS AND VERSIONS
+Versions 11.3, 10.2.1, 10.2, 10.1 and 9.7 of InfoSphere Data Replication Dashboard are affected.
+
+REMEDIATION/FIXES
+The recommended solution is to upgrade the product to the latest version. InfoSphere Data Replication Dashboard supports only the latest version so customers must install the latest version. The vulnerability fixes require upgrading the product to version 11.3.3.0-b254 or higher. Download the latest version of InfoSphere Data Replication Dashboard from http://www-01.ibm.com/support/docview.wss?uid=swg24023065 [http://www-01.ibm.com/support/docview.wss?uid=swg24023065]
+
+WORKAROUNDS AND MITIGATIONS
+None
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v2 Guide [http://www.first.org/cvss/v2/guide] 
+On-line Calculator v2 [http://nvd.nist.gov/CVSS-v2-Calculator] 
+IBM Java SDK Security Bulletin [http://www-01.ibm.com/support/docview.wss?uid=swg21695474] 
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] 
+
+CHANGE HISTORY
+ 13 March 2015: Original version published 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.

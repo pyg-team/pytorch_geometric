@@ -1,0 +1,28 @@
+Title: IBM How to enable Flash Player on Windows Server 2012/2012R2 - United States
+
+Text:
+AppScan Enterprise; Internet Explorer 11; Windows Server 2012; Windows Server 2012R2 TECHNOTE (FAQ)
+
+QUESTION
+ How do you enable Flash Player on Windows Server 2012/2012R2 to have it available while scaning with IBM Security AppScan Enterprise? 
+
+CAUSE
+AppScan Enterprise requires that a Flash Player *.ocx file be installed on the scanning servers so that it can execute Flash during a scan. In Internet Explorer 11, the Flash Player *.ocx file comes with the browser. However, it’s not available by default on Windows Server 2012/2012R2. 
+
+ANSWER
+On Windows 2012 or Windows 2012R2 where the AppScan Enterprise Dynamic Analysis Scanners are installed perform as follows: 
+
+
+ 1.  Open Server Manager. 
+ 2.  In the Configure this local server section, click Add roles and features. 
+ 3.  Click through the wizard to the Features page. 
+ 4.  Expand User Interfaces and Infrastructure (installed), and select Desktop Experience. 
+ 5.  Finish the wizard and reboot the server. 
+ 6.  Open Internet Explorer 11. 
+ 7.  Open the page that has the rich media content in Internet Explorer. 
+ 8.  Click the tools menu in the upper-right corner of Internet Explorer. 
+ 9.  From the tools menu, choose Manage Add-ons. 
+ 10. Select Shockwave Flash Object from the list.
+     
+     Note: Ensure that your current website has rich media content. If the current website does not contain rich media content, Shockwave Flash Object doesn't appear in the list. 
+ 11. Click Enable, and then click Close.

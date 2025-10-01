@@ -1,0 +1,32 @@
+Title: IBM Content Collector Web Application on external Websphere Application Server (WAS) isAlive.jsp NullPointer - United States
+
+Text:
+ICC Web Application; Websphere; certificates; SSL; isAlive.jsp; servlet; NullPointerException TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The attempted verification of the https: //<web_application_host>:11443/AFUWeb/isAlive.jsp URL after installation and configuration of IBM Content Collector (ICC) Web Application fails with a Null Pointer Exception. 
+
+SYMPTOM
+The exception; 
+
+00000080 ServletWrappe E com.ibm.ws. 
+webcontainer.servlet.ServletWrapper service SRVE0068E: An exception was 
+thrown by one of the service methods of the servlet [/isAlive.jsp] in 
+application [afu_web]. Exception created : [java.lang. 
+NullPointerException 
+
+
+occurs when trying to verify the ICC Web Application configuration with the isAlive.jsp URL packaged with the ICC Web Application.
+
+
+CAUSE
+This issue is likely due to misconfigured Websphere certificates for external Websphere Application Server (WAS) and ICC Web Application. 
+
+
+DIAGNOSING THE PROBLEM
+Verify that the Websphere Secure Socket Layer (SSL) certificates and ICC Web Application have been issued, and check if they are signed and issued to the correct URLs.
+
+
+
+RESOLVING THE PROBLEM
+If the certificates are invalid, remove the existing certificates from Websphere and ICC Web Application, reissue new, correctly configured certificates and re-import them into Websphere and ICC Web Application. This should solve the problem and the isAlive.jsp URL should return the expected results.

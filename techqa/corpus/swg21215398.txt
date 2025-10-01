@@ -1,0 +1,34 @@
+Title: IBM Web Rooms and Resources database: Author cannot delete reservation via Web - United States
+
+Text:
+web; owner; manager; database; db; r&r; author; Rooms and Resources; web; delete; edit TECHNOTE (FAQ)
+
+QUESTION
+You are the author, and you can edit a reservation from the Rooms and Resources database via the Web, but you cannot delete a reservation via the Web if the room or resource is with the owner. 
+
+When you attempt to delete the reservation, a page appears with the following error:
+
+
+ * 
+
+
+Steps to reproduce:  1. The author directly books a reservation via the Web. The room or resource is with the owner. 
+ 2. The owner accepts the request via Notes. 
+ 3. Via the Web, the author selects the reservation. 
+ 4. The author clicks the Move To Trash button, and a trash icon displays before the reservation. 
+ 5. The author clicks the Empty Trash button.
+
+ANSWER
+This issue has been reported to Quality Engineering as SPR# YFWI6CP8YA, and is under consideration for a future maintenance release. 
+
+ 
+
+To work around the issue, use one of the following options: 
+
+ * The author can use Notes to delete the reservation directly from the Rooms and Resources database. 
+ * The room/resource owner or Database Manager can delete the reservation from the Web.
+
+
+
+ * 
+ *

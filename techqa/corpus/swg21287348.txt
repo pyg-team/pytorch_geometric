@@ -1,0 +1,63 @@
+Title: IBM Error when starting the integrated WebSphere Application Server v6.0 in debug mode - United States
+
+Text:
+debug; debugging; RSA; RAD; debugger; WAS 6.0; WebSphere Application Server v6.0; JIT: FullSpeedDebug: ignoring countString; debugger port unavailable: 7777; server status; 4011133; 1287348; The server named WebSphere v6.0 Server @ localhost did not start correctly; Check the Console for error messages TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When attempting to start the integrated WebSphere Application Server v6.0 (WAS 6.0) in debug mode, from Rational Application Developer (RAD) or Rational Software Architect (RSA), you may encounter the error "Error received while starting the server". 
+
+SYMPTOM
+Here is a list of symptoms you might observe:
+
+
+ 1. You receive the following error dialog:
+    
+    
+    Error received while starting the server
+    Reason: The server named WebSphere v6.0 Server @ localhost did not start correctly. Check the Console for error messages.
+    
+    [/support/docview.wss?uid=swg21287348&amp;aid=1]
+    
+    
+ 2. In the Servers view, the status of WAS 6.0 shows Debugging
+    [/support/docview.wss?uid=swg21287348&aid=2] [/support/docview.wss?uid=swg21287348&aid=2]
+    [/support/docview.wss?uid=swg21287348&aid=3] [/support/docview.wss?uid=swg21287348&aid=3]
+    
+    but in the Debug view there is no debug target displayed.
+    
+    
+    
+ 3. When you check the content of 
+    {ProductInstallRoot}\runtimes\base_v6\profiles\default\logs\server1\native_stdout.log
+    you see the following messages:
+     * 
+       
+     * <JIT: FullSpeedDebug: ignoring countString>
+     * 
+     * <debugger port unavailable: 7777>
+     * 
+       
+    
+    
+
+
+CAUSE
+This kind of issue is likely caused by the IBM Java SDK that is used to run the WebSphere Application Server v6.0. 
+
+RESOLVING THE PROBLEM
+Follow the suggested workaround steps below to verify if the issue can be resolved: 
+
+ 1. Double-click on the WebSphere v6.0 Server in the Servers view. 
+ 2. From the Server Overview page, uncheck the Enable hot method replace in debug mode checkbox. 
+ 3. Save your changes to the Server Overview, and restart the integrated WAS 6.0 in debug mode.
+
+
+If the workaround resolves the issue, this indicates that you need to update the IBM Java SDK packaged inside the integrated WAS 6.0. The complete resolution will involve applying the IBM WebSphere Application Server Java SDK latest Interim Fix for V6.0, which can be done by following the instructions specified in the document linked under Related information.
+
+
+
+ 
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Software Development Rational Software Architect Integrated Test Environment Windows

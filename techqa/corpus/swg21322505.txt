@@ -1,0 +1,141 @@
+Title: IBM Installed battery is nearing end of life message for IBM WebSphere DataPower SOA Appliances  M/T 9235 (9004) - United States
+
+Text:
+battery batteries cr2 WSDPCRU TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ If you receive a "[system][critic] : Installed battery is nearing end of life." message, the battery in the appliance needs to be replaced. 
+
+RESOLVING THE PROBLEM
+
+Critical Action: Prevent the M/T 9235 appliance from becoming unusable. 
+
+Note: M/T 9235 batteries are consumable parts are not covered by the service contracts and will need to be purchased. 
+
+Summary: 
+
+Changing the battery every 2 years is critical. The material linked from this technote describes that if the battery does not have sufficient charge and the appliance loses power, the appliance will consider this a physical threat and no longer function. The battery should be changed within 30 days of the first occurrence of the message. 
+
+The battery for the M/T 9235 is a consumable part and are not covered by the IBM Statement of Limited Warranty. For information about the terms of warranty, see the IBM Statement of Limited Warranty document on the IBM WebSphere DataPower SOA Appliances. 
+
+This document describes how you can buy and replace a battery including the battery specifications and IBM Part number. 
+
+Details: 
+Part 1: Learning about buying and replacing a battery.
+Part 2: Commands to check the battery and reset the battery life cycle clock for the M/T 9235
+Part 3: Hints and tips for replacing the battery
+Part 4: Additional information on purchasing a battery
+
+
+Part 1: Learning about buying and replacing a battery.
+
+
+
+1.1. Determine your machine type:
+
+On the WebGui on the appliance, select Administration > System Settings. If the Product ID includes: "9235", you have a M/T 9235. 
+
+1.2. Access the product publications which describe the safety instructions and instructions on how to replace a battery. 
+
+M/T 9235 IBM WebSphere DataPower SOA Appliances: Type 9235/9004 Service Guide. 
+The M/T 9235 Installation and Users Guide is located in the information centers by firmware release. The information centers accessed from the product library page. 
+
+
+
+ *  Access the product library page [http://www.ibm.com/software/integration/datapower/library/documentation/v5.0.0/index.html]. Chose the firmware level Click on the Information Center link Expand DataPower SOA Appliances Expand Installation and Upgrade Chose the appropriate book based on machine type. 
+   
+   
+
+
+
+Part 2: Commands to check the battery and reset the battery life cycle clock for M/T 9235 
+
+The following part describes the updated commands to check and reset the battery clock. Use these commands when following the steps noted in the product publications. 
+
+2.1. You need to be logged in with the "admin" user id and in configuration mode. 
+
+These commands run in Global configuration mode. If you are not in Global configuration mode you may see this incorrect output: 
+
+"xi50# service battery-installed 
+Printing diag log: 
+
+Printing burnin log:" 
+
+To change to Global configuration mode enter: 
+xi50# config 
+Global configuration mode 
+xi50(config)# 
+
+
+2.2. Commands for the M/T 9235: 
+
+show battery returns the installation date of the battery 
+service battery-installed restarts the battery lifecycle clock 
+
+You can check the state of the battery using: 
+co 
+test hardware 
+exit 
+
+An example of output from the show battery command (remember to be in global configuration mode): 
+Battery installation date: Mon Aug 6 12:10:25 2007 
+
+If the battery has not been changed in 2 years the message is presented and the battery needs to be changed as noted in the books linked in Part 1 in this document. 
+
+
+Part 3: Hint and tips for replacing the battery: 
+
+This part lists very important hints and tips to consider when replacing the battery. 
+
+ * 
+ *  Make sure the battery orientation is correct before placing in the appliance. This can cause the appliance to move to an unresponsive state and need to be replaced. Double check the orientation of the positive and negative terminals of the existing battery in the battery holder. Insert the positive terminal into the holder first. The battery will fit tightly in the battery holder. 
+   
+ * When replacing the battery follow all the information on product safety and replacement instructions in the product publication and additional information in this document. 
+   
+ *  Before you replace the battery, you should make sure you have a back up of the configuration of the appliance. See Backing up, exporting and importing the configuration of an IBM WebSphere DataPower SOA Appliance. [http://www.ibm.com/support/docview.wss?uid=swg21416135]
+   
+ *  You should plan to replace the CR2 3.0V battery within one month of when the message first appears. Also check the battery installation date, if the two-year lifecycle of the battery has expired, replace the battery. 
+   
+ * The battery is hot-swappable as described in the books 
+   
+ * If the output of the sensor displays or CLI commands to test hardware show 0 for Voltage Battery, the battery is not seated correctly in the device. 
+   
+ * If after changing the battery, the Alarm LED and the Battery LED do not turn off, and the CLI commands:
+   config
+   test hardware
+   Do not show the battery is missing then power off the appliance, unplug the electrical connection for 60 seconds, reconnect the electrical connection, power on the appliance. The LEDs show now be off. 
+   
+
+
+Part 4: Additional information on purchasing a battery: 
+
+In this part, additional information how to purchase a battery is provided to supplement the books linked in Part 1. 
+
+Consumable parts are not covered by the IBM Statement of Limited Warranty. For information about the terms of warranty, see the IBM Statement of Limited Warranty document on the IBM WebSphere DataPower SOA Appliances. Also consumable parts are not covered by the service contracts. 
+
+This is a CR2 3.0V battery can be purchased from IBM or other sources without affecting your warranty. 
+
+The part number for the CR2 3.0V battery for M/T 9235 is 44X0512 
+
+To order a battery from IBM use the www.ibm.com website (the following example is for the USA, the webpages, the web pages for other countries are similar): 
+ 1. 
+ 2. Go to http://www.ibm.com [http://www.ibm.com]. 
+    
+ 3. From the Products menu, 
+    
+ 4. Click All Products, 
+    
+ 5. Then click Upgrades, accessories & parts. 
+    
+ 6. Click Obtain maintenance parts (depending on your country and language the link will be different to direct you to buying parts).
+    
+ 7. Follow the instructions noted on that web page. 
+    
+
+
+
+If you need help with your order, call the toll-free number, or use the other contact methods listed on the web page to reach the IBM parts contact for your country. You can also contact your local IBM representative for assistance. 
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration WebSphere DataPower Integration Appliance XI50 Firmware 4.0.1, 3.8, 3.7.3, 3.7.2, 3.7.1 All Editions Business Integration WebSphere DataPower B2B Appliance XB60 Firmware 4.0.1, 3.8, 3.7.3, 1.0 All Editions Business Integration WebSphere DataPower Low Latency Appliance XM70 Firmware 4.0.1, 3.8, 3.7.3, 1.0 All Editions Business Integration WebSphere DataPower XML Security Gateway XS40 Firmware 4.0.1, 3.8, 3.7.3, 3.7.2, 3.7.1 All Editions Business Integration WebSphere DataPower XML Accelerator XA35 Firmware 4.0.1, 3.8, 3.7.3, 3.7.2, 3.7.1 All Editions Business Integration IBM CloudBurst Firmware 2.0 All Editions

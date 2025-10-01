@@ -1,0 +1,37 @@
+Title: IBM Images missing from Tivoli Integrated Portal after applying a fixpack - United States
+
+Text:
+TIPL2; TIPL2MUSTG; Tivoli Integrated Portal; TIP; images; icons; pictures missing; red x's; web.xml; WEB-INF TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Images and pictures are displayed as red x's in Tivoli Integrated Portal (TIP) after applying an upgrade or fix pack. 
+
+CAUSE
+The WAS Update Installer (UPDI) program was run manually to apply and/or remove a Websphere fixpack. The manual run of UPDI incorrectly updates the file required by Tivoli Integrated Portal to display the application icons and images. 
+
+Note: Applying WAS maintenance manually to a TIP instance is not supported and can result in installation failure of TIP upgrades and fixpacks.
+
+
+DIAGNOSING THE PROBLEM
+Check the web.xml file located in the following path: 
+
+<tip_home>/profiles/TIPProfile/config/cells/TIPCell/applications/isclite.ear/deployments/isclite/isclite.war/WEB-INF
+Verify the file contains the following line:
+
+
+<servlet><servlet-name>ISCProxy</servlet-name><servlet-class>com.ibm.isclite.proxy.ISCProxyServlet</servlet-class></servlet> 
+If that line is missing, the file was likely incorrectly updated by applying or removing a WAS fixpack manually using the WAS UPDI. You can check the logs under the WAS UPDI installation path to see the most recent activity. 
+
+RESOLVING THE PROBLEM
+Check the copy of the web.xml file located in the following path:
+<tip_home>/systemApps/isclite.ear/isclite.war/WEB-INF 
+
+If it contains the "ISCProxyServlet" line, you can copy it to the following path to fix the issue:
+<tip_home>/profiles/TIPProfile/config/cells/TIPCell/applications/isclite.ear/deployments/isclite/isclite.war/WEB-INF. 
+Note: Make a backup of the original file in that directory before replacing it.
+If both copies of the web.xml file are missing the "ISCProxyServlet" line, you can copy the file from another TIP server that is at the same release level and has the same IBM application(s) deployed. Copy the good file to both directories on the affected server: 
+
+ * <tip_home>/profiles/TIPProfile/config/cells/TIPCell/applications/isclite.ear/deployments/isclite/isclite.war/WEB-INF 
+ * <tip_home>/systemApps/isclite.ear/isclite.war/WEB-INF
+
+Restart the TIP server process for the new web.xml file to be picked up.

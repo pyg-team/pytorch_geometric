@@ -1,0 +1,56 @@
+Title: IBM StaleConnectionException occurring in Telecom Web Service Server V7.1 - United States
+
+Text:
+StaleConnectionException; Oracle; SocketException; broken pipe TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ During testing it was found that a "StaleConnectionException" may occur due to "IO exception: Broken pipe" in WebSphere Application Server (WAS) logs. This can occur when the TWSS MMS Web service implementation, running on AIX platform, attempts to insert a large-size SOAP attachment into an Oracle (11.2.0.1.0 or 10.2.0.2.0) database back-end server running on a supported Linux platform. 
+
+SYMPTOM
+TWSS-MMS Web service implementation, running on WebSphere Application Server (6.1.x or 7.0.x) on AIX 5.3 / AIX 6.1 can some times throw a “StaleConnectionException” when it tries to insert a large SOAP attachment (greater than or equal to 91200 bytes) into Oracle (11.2.0.1.0 or 10.2.0.2.0) database server hosted on a Linux server. 
+
+In the SystemOut/Trace log file, users may see error messages similar to the error message below:
+
+java.sql.SQLRecoverableException: IO Error: Broken pipe:java.net.SocketException: Broken pipe 
+
+The stack trace reveals that this has occurred due to an Oracle thin driver issue. Here is the stack trace found in the trace:
+
+[2/25/10 14:22:15:448 GMT+05:30] 00000046 OracleDataSto > findMappingClass for : Entry
+java.sql.SQLException: Io exception: Broken pipe
+at oracle.jdbc.driver.DatabaseError.throwSqlException(DatabaseError.java:112)
+at oracle.jdbc.driver.DatabaseError.throwSqlException(DatabaseError.java:146)
+at oracle.jdbc.driver.DatabaseError.throwSqlException(DatabaseError.java:255)
+at oracle.jdbc.driver.T4CPreparedStatement.executeForRows(T4CPreparedStatement.java:977)
+at oracle.jdbc.driver.OracleStatement.doExecuteWithTimeout(OracleStatement.java:1168)
+
+
+CAUSE
+The exception occurs because of a TCP packet with the RST (Reset) flag set is received from the Oracle database server running on default port 1521 at TWSS MMS Web service implementation. 
+
+
+
+ENVIRONMENT
+This affects users of the TWSS MMS Web service implementation with WebSphere Application Server (WAS, version 6.1.x or 7.x) on AIX 5.3 or AIX 6.1 and using an Oracle database hosted on a Linux machine.
+
+
+
+RESOLVING THE PROBLEM
+The issue can be resolved by reconfiguring the Oracle listener port to any non-reserved and available port (for example, 2483) and restarting the Oracle listener/database server and also restarting the WAS servers. 
+
+
+Reconfiguring the existing Oracle listener port:
+1. Log in as an Oracle user.
+2. Launch 'Oracle Net Services Configuration' using Oralce_HOME/bin/netca
+3. Select the radio button "Listener configuration" and click Next.
+4. Select the radio button "Reconfigure" and click Next. 
+5. Select the listener you want to reconfigure, and click Next.
+6. Select the appropriate protocol and click Next.
+7. Select the radio button "Use another port" and provide the new port number, for example 2483.
+8. Select the radio button "No" for "Would you like to configure another listener" and click Next.
+9. Click Next to complete the configuration.
+10. Click Finish to exit
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ TWSS

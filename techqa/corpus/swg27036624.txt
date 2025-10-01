@@ -1,0 +1,22 @@
+Title: IBM Basic Overview Netcool/OMNIbus Web GUI 7.3.1 - United States
+
+Text:
+tste_webcast; STEwebcastDocument; training; education; free; online; support; web seminar; IBM Tivoli Netcool/OMNIbus WEBCAST
+
+ABSTRACT
+ All Level Support, Services, GTS, Business Partners, Customers
+
+This STE will cover basic installation and overview of some major components of Netcool/OMNIbus Web GUI 7.3.1. It is designed for users who are new to Netcool.
+
+Date: December 7, 2012
+11:00 to 13:00 Eastern US Time
+
+Presented by: Stanford Madriaga
+
+
+CONTENT
+ 
+
+This is the presentation file used for the live session: 
+
+2012_12_06_STE_Tivoli Netcool OMNIBus WebGUI Basic Overview.pdf [/support/docview.wss?uid=swg27036624&aid=2]2012_12_06_STE_Tivoli Netcool OMNIBus WebGUI Basic Overview.pdf [/support/docview.wss?uid=swg27036624&aid=1]

@@ -1,0 +1,59 @@
+Title: IBM Unable import .pfx system certificate error Size constraint violated: 1 <= 0 <= 2,147,483,647 - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When importing a pfx certificate in Sterling B2B Integrator an error appears :Size constraint violated: 1 <= 0 <= 2,147,483,647 
+
+SYMPTOM
+Error in system.log
+
+[2012-11-27 08:41:42.123] ERROR Exception caught
+[2012-11-27 08:41:42.123] ERROR [1354002102123] Size constraint violated: 1 <= 0 <= 2,147,483,647
+[2012-11-27 08:41:42.123] ERRORDTL [1354002102123]com.trustpoint.asn.AsnException: Size constraint violated: 1 <= 0 <= 2,147,483,647
+at com.trustpoint.asn.AsnSizeConstraint.check(AsnSizeConstraint.java:110)
+
+
+
+CAUSE
+password too long or strange characters
+
+RESOLVING THE PROBLEM
+Import the .pfx certificate file into Internet Explorer and export it out then try to import the new file into SI again, see below how to import and export the certificate file into Internet Explorer.
+
+
+How to import/export the PKCS12 certificate using Internet Explorer:
+
+
+1.In Internet Explorer, click on Tools > Internet Options
+
+2.Select the Content tab
+
+3.Click on Certificates... button
+
+4.Click on Import... button, click Next 
+
+5.Browse to the certificate and select it, Click Next 
+
+6.Type in the password used to encrypt the private key and check the box next to 'Mark the private key as exportable', click Next
+
+7.Select 'Automatically select the certificate store based on the type of certificate', click Next
+
+8.Click Finish
+
+9.System Response "The import was successful.", click OK
+
+10.Click on the certificate to highlight and click Export... , click Next
+
+11.Select 'Yes, export the private key', click Next
+
+12.Uncheck "Enable strong protection (requires IE 5.0, NT 4.0 SP4 or above)", click Next
+
+13.Type in the password used to encrypt the private key twice, click Next. Do not put strange characters in the password and do not make it too long.
+
+14.Give the new certificate a new file name with the .pfx extension (you can click browse to choose the destination), click Next
+
+15.Click Finish
+
+16.System Response "The export was successful.", click OK

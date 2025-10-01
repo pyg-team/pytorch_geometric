@@ -1,0 +1,21 @@
+Title: IBM WebService Proxy endpoint URIs ending with the form "[?.](xsd|ns)\d+" are used internally by IBM DataPower Gateways appliances. - United States
+
+Text:
+DataPower; WSP; WebService Proxy; internal; URI; WSDL; schema TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ WSDL or schema data cannot be requested via the web browser when the WSP local endpoint URI ends with a question mark or a dot followed by either "xsd" or "ns", and followed by one or more digits.
+
+
+
+
+RESOLVING THE PROBLEM
+Following are examples of WSP local endpoint URIs that cannot be used: 
+
+ *  http://.../somename.ns1 
+ *  http://.../somename.xsd1 
+ *  http://.../somename?ns1 
+ *  http://.../somename?xsd1 
+
+
+This is working as designed in that this syntax is used internally by the DataPower appliance firmware.

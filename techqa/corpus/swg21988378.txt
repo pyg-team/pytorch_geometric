@@ -1,0 +1,124 @@
+Title: IBM 100% CPU being used by the Sterling B2B Integrator java process. - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ While doing an inbound transaction (file was coming into Sterling B2B Integrator) using the Connect:Direct Server Adapter protocol in Sterling B2B Integrator, it caused the CPU to rise up to 100% while the transfer was occurring. This was not a new implementation as this transfer had worked for years. 
+
+SYMPTOM
+There was no error reported in the logs. . 
+The file was about 80 MB in size. 
+The Connect:Direct Server Adapter was set to Document Storage: File system.
+The target folder where the file was copied to was mounted on a NAS.
+
+
+
+
+
+
+CAUSE
+The NAS folder had extra options that were not necessary. 
+
+ENVIRONMENT
+Sterling B2B Integrator running on 5.2.1 but this can theoretically occur in any version of the product.
+
+
+DIAGNOSING THE PROBLEM
+During the file transfer, take around 3 thread dumps (javacores) about 2 minutes apart. 
+
+
+
+
+Capture the output of the "top -H" command as this was running on linux/unix. 
+
+The top -H command will show the native java PIDs that are taking the most CPUs. Those PIDs can be seen as "native thread ID" in the thread dump(javacore) when the number is converted to a HEX value. 
+
+Here are the threads in the thread dump that took the most CPU cycles during the issue: 
+
+Thread 1: 
+
+
+3XMTHREADINFO "Thread-13636" J9VMThread:0x00002ADC7069C000, j9thread_t:0x000000001D774980, java/lang/Thread:0x00002ADA8779BA30, state:CW, prio=5
+
+3XMTHREADINFO1 (native thread ID:0xD26, native priority:0x5, native policy:UNKNOWN)
+
+3XMTHREADINFO2 (native stack address range from:0x00002ADC820EB000, to:0x00002ADC8212C000, size:0x41000)
+
+3XMTHREADINFO3 Java callstack:
+
+4XESTACKTRACE at java/io/RandomAccessFile.writeBytes(Native Method)
+
+4XESTACKTRACE at java/io/RandomAccessFile.write(RandomAccessFile.java:477(Compiled Code))
+
+4XESTACKTRACE at com/sterlingcommerce/woodstock/cdinterop/impl/serverImpl/IRandomAccessFileImpl.write(IRandomAccessFileImpl.java:62(Compiled Code))
+
+4XESTACKTRACE at com/sterlingcommerce/woodstock/cdinterop/impl/serverImpl/DocumentWritingConduitImpl$DocRAF_FSWriter.write(DocumentWritingConduitImpl.java:344(Compiled Code))
+
+4XESTACKTRACE at com/sterlingcommerce/woodstock/cdinterop/impl/serverImpl/DocumentWritingConduitImpl.write(DocumentWritingConduitImpl.java:157(Compiled Code))
+
+4XESTACKTRACE at com/sterlingcommerce/woodstock/cdinterop/impl/serverImpl/TwoWayDocumentConduitImpl.write(TwoWayDocumentConduitImpl.java(Compiled Code))
+
+4XESTACKTRACE at com/sterlingcommerce/woodstock/cdinterop/impl/serverImpl/copy/CopyHandler.write(CopyHandler.java(Compiled Code))
+
+4XESTACKTRACE at com/sterlingcommerce/cd/oemglue/GISFileSystem.write(GISFileSystem.java:201(Compiled Code))
+
+4XESTACKTRACE at com/sterlingcommerce/cd/cdjava/ACdCopier.recvData(ACdCopier.java:958(Compiled Code))
+
+4XESTACKTRACE at com/sterlingcommerce/cd/cdjava/CdCopier.doSnodeCopy(CdCopier.java:953)
+
+4XESTACKTRACE at com/sterlingcommerce/cd/cdjava/CdCopier.copySnode(CdCopier.java:417)
+
+4XESTACKTRACE at com/sterlingcommerce/cd/cdjava/CdSnApi.handleFM71Copy(CdSnApi.java:1243)
+
+4XESTACKTRACE at com/sterlingcommerce/cd/cdjava/CdSnApi.handleFM71(CdSnApi.java:919)
+
+
+Second thread:
+
+
+3XMTHREADINFO "Thread-13629" J9VMThread:0x00002ADC84007B00, j9thread_t:0x000000001C1F68A0, java/lang/Thread:0x00002ADA8726B0F0, state:CW, prio=5
+
+3XMTHREADINFO1 (native thread ID:0xC5A, native priority:0x5, native policy:UNKNOWN)
+
+3XMTHREADINFO2 (native stack address range from:0x00002ADC7B473000, to:0x00002ADC7B4B4000, size:0x41000)
+
+3XMTHREADINFO3 Java callstack:
+
+4XESTACKTRACE at java/io/RandomAccessFile.writeBytes(Native Method)
+
+4XESTACKTRACE at java/io/RandomAccessFile.write(RandomAccessFile.java:477(Compiled Code))
+
+4XESTACKTRACE at com/sterlingcommerce/woodstock/cdinterop/impl/serverImpl/IRandomAccessFileImpl.write(IRandomAccessFileImpl.java:62(Compiled Code))
+
+4XESTACKTRACE at com/sterlingcommerce/woodstock/cdinterop/impl/serverImpl/DocumentWritingConduitImpl$DocRAF_FSWriter.write(DocumentWritingConduitImpl.java:344(Compiled Code))
+
+4XESTACKTRACE at com/sterlingcommerce/woodstock/cdinterop/impl/serverImpl/DocumentWritingConduitImpl.write(DocumentWritingConduitImpl.java:157(Compiled Code))
+
+4XESTACKTRACE at com/sterlingcommerce/woodstock/cdinterop/impl/serverImpl/TwoWayDocumentConduitImpl.write(TwoWayDocumentConduitImpl.java(Compiled Code))
+
+4XESTACKTRACE at com/sterlingcommerce/woodstock/cdinterop/impl/serverImpl/copy/CopyHandler.write(CopyHandler.java(Compiled Code))
+
+4XESTACKTRACE at com/sterlingcommerce/cd/oemglue/GISFileSystem.write(GISFileSystem.java:201(Compiled Code))
+
+4XESTACKTRACE at com/sterlingcommerce/cd/cdjava/ACdCopier.recvData(ACdCopier.java:958(Compiled Code))
+
+4XESTACKTRACE at com/sterlingcommerce/cd/cdjava/CdCopier.doSnodeCopy(CdCopier.java:953)
+
+4XESTACKTRACE at com/sterlingcommerce/cd/cdjava/CdCopier.copySnode(CdCopier.java:417)
+
+4XESTACKTRACE at com/sterlingcommerce/cd/cdjava/CdSnApi.handleFM71Copy(CdSnApi.java:1243)
+
+4XESTACKTRACE at com/sterlingcommerce/cd/cdjava/CdSnApi.handleFM71(CdSnApi.java:919)
+
+4XESTACKTRACE at com/sterlingcommerce/cd/cdjava/CdSnApi.handleSteps(CdSnApi.java:890)
+
+4XESTACKTRACE at com/sterlingcommerce/cd/cdjava/CdSnApi.handleProcesses(CdSnApi.java:775) 
+
+ 
+
+Another test can be to change the Document Storage on the adapter to the Database (DB) temporarily as a test to see if the performance improves. When this test was done, the file transfer was done in seconds and no CPU issues were observed. 
+
+
+RESOLVING THE PROBLEM
+The NAS team removed the extra options on the mounted folders and the issue was resolved.

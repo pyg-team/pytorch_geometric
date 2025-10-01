@@ -1,0 +1,53 @@
+Title: IBM Login Screen appears again even with a valid Domino user name and password - United States
+
+Text:
+lotus domino web server; rolling logon; rolling login prompt; log in; log-in; log-on; log on; reappears; prompts; Internet; web server; authenticate; authentication; credentials; prompted; session-based authentication; sso; login screen appears again; rolling login; login problems TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+When you authenticate with a Lotus® Domino® server using a Web browser, the authentication screen appears again and again, even if you enter a valid user name and password. No extra information is displayed in the browser like "invalid user name or password" or "you are not authorized," just the same login page comes up again and again. You cannot authenticate with the server. 
+
+If you enter an invalid user name or password, however, the proper error page appears.
+
+
+CAUSE
+Your administrator has enabled Single Sign-on (SSO) for the Domino server and SSO requires the Fully qualified Internet hostname, not just the serve name or IP address.
+
+
+RESOLVING THE PROBLEM
+This behavior can occur if you specify only the server name in the URL, for example, http://<server name>. When using Single Sign-on, you must specify the fully qualified domain name in the URL to successfully authenticate, as follows: 
+
+ * 
+ * 
+ * 
+
+
+Another approach is using a Server's Short Name for Access when SSO Is Enabled. It is possible to configure your Domino server such that a server's short name can be used. To do so, add the fully qualified host name used for SSO in the "Home URL" field in the Server document on the Internet Protocols -> HTTP tab. 
+
+Example: 
+
+You want Web users to enter "Server1" in the browser to reach the server. The fully qualified host name of the server is "Server1.domain.com." 
+
+In the "Home URL" field, you add the following:
+http:// Server1.domain.com/homepage.nsf?open 
+
+When users enter "server1" as the address in a Web browser, then that URL address is replaced by the fully qualified host name (as long as the DNS references the correct IP address). 
+
+Note: This setup works only for a direct reference to the base server. So, using the above example, users could successfully use one of the following addresses:
+http:// server1
+server1 
+
+The following URL entry would fail: 
+
+http:// server1/names.nsf
+
+
+Supporting Information:
+
+Excerpt from Domino/Notes Release Notes and Domino Administrator Help:
+
+
+ * URLs issued to servers configured for Single Sign-on must specify the full DNS server name, not the host name or IP address. For browsers to be able to send cookies to a group of servers, the DNS domain must be included in the cookie. The DNS domain in the cookie must match the URL. This is why cookies cannot be used across TCP/IP domains.
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Messaging Applications Lotus Domino Web Access Browser Linux, Mac OS X, Windows 8.0, 7.0, 6.5

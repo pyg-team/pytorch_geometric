@@ -1,0 +1,64 @@
+Title: IBM "Either BOF or EOF is True, or the current record has been deleted ... (0x800A0BCD): Application-defined or object-defined error (Error occured within method=RunConsol in the module with progid=FrMiscBT.ConsBusinessT)" when running a consolidation for on - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ User launches "Group - Consolidate with Status". User chooses some values which only include a single period (e.g. 1301). User runs the consolidation. Afterwards, user opens the 'batch queue' and sees that the consolidation has 'finished with error'. Opening the job details (and scrolling to the bottom) reveals the detailed error message. 
+
+SYMPTOM
+Inside the batch queue: 
+
+[/support/docview.wss?uid=swg21617674&aid=1] [/support/docview.wss?uid=swg21617674&aid=1] 
+
+Either BOF or EOF is True, or the current record has been deleted. Requested operation requires a current record. 
+
+ 
+
+Inside the Event Viewer ("Application Log") on the application server:
+Event Type: Warning
+Event Source: Cognos Controller
+Event Category: None
+Event ID: 0
+Date: 16/11/2012
+Time: 10:36:06
+User: N/A
+Computer: SERVERNAME
+Description:
+Standard Error
+Number: 5
+Source: ControllerProxyClient
+Description: System.Web.Services.Protocols.SoapException: Server was unable to process request. ---> System.Runtime.InteropServices.COMException (0x800A0BCD): Application-defined or object-defined error (Error occured within method=RunConsol in the module with progid=FrMiscBT.ConsBusinessT)
+at FrBatchBT.clsBatchTClass.Batch(String sGuid, String sUser, Int16 iProcessId, String sJobName, String sParams, Int32 lRegDate, Int32 lRegTime, Int32 lSchedDate, Int32 lSchedTime, Int16 iScheduleType, String sUdl, Int32 lDependentBy, String sTimeChain, Boolean bBatchMode)
+at Cognos.Controller.Proxy.CCRWS.clsBatchT_Batch(String sGuid, String sUser, Int16 iProcessId, String sJobName, String sParams, Int32 iRegDate, Int32 iRegTime, Int32 iSchedDate, Int32 lSchedTime, Int16 iScheduleType, String sUdl, Int32 iDependentBy, String sTimeChain, Boolean bBatchMode)
+--- End of inner exception stack trace ---
+at Cognos.Controller.ControllerSoapHttpClientProtocol.Invoke(String methodname, Object[] parameters)
+at Cognos.Controller.Proxy.FrBatchBT.WSFrBatchBT.clsBatchT_Batch(String sGuid, String sUser, Int16 iProcessId, String sJobName, String sParams, Int32 iRegDate, Int32 iRegTime, Int32 iSchedDate, Int32 lSchedTime, Int16 iScheduleType, String sUdl, Int32 iDependentBy, String sTimeChain, Boolean bBatchMode)
+at Cognos.Controller.Direct.Batch.Batch(Int16 iProcessId, String sJobName, String sParam, Int32 iRegDate, Int32 iRegTime, Int32 iSchedDate, Int32 iSchedTime, Int16 iScheduleType, Int32 iDependentBy, String& sTimeChain, Boolean bBatchMode)
+at Cognos.Controller.Forms.Form.frmConsolidate.IRun_DoRun()
+
+Event Type: Warning
+Event Source: VBRuntime
+<....>
+Description:
+The VB Application identified by the event source logged this Application FrBatchBT: Thread ID: 2548 ,Logged: Error occured at 16/11/2012 10:36:06 in FrBatchBT, Error No=3021, Source=FrBatchBT, Description=Application-defined or object-defined error (Error occured within method=RunConsol in the module with progid=FrMiscBT.ConsBusinessT), HelpFile= HelpContext=0
+
+The VB Application identified by the event source logged this Application FrMiscBT: Thread ID: 2548 ,Logged: Error occured at 16/11/2012 10:36:06 in FrMiscBT, Error No=3021, Source=FrMiscBT.ConsBusinessT.RunConsol, Description=Either BOF or EOF is True, or the current record has been deleted. Requested operation requires a current record., HelpFile= HelpContext=0 
+
+CAUSE
+Code production problem (APAR PM80824) in Controller.
+
+
+
+RESOLVING THE PROBLEM
+Fix: 
+
+Upgrade to a later version of Controller (when available) which contains a fix to this problem. 
+
+ * TIP: To be automatically notified of when this version is available, subscribe to APAR PM80824.
+
+
+Workaround: 
+When running the consolidation, choose more then one period (e.g. 1301 to 1303). 
+RELATED INFORMATION
+#APAR PM80824 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM80824]

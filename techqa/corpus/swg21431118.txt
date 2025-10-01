@@ -1,0 +1,70 @@
+Title: IBM How can I connecting to Passport Advantage directly from Packaging Utility? - United States
+
+Text:
+Package Utility TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ There is an option to connect to 'Passport Advantage' from the IBM Packaging Utility. If you select this option, nothing happens. 
+
+CAUSE
+The IBM Rational Team Products don't offer this functionality. 
+
+Here are the products that will allow you to download pacakges from PA:
+
+Rational Application Developer v7 
+Rational Application Developer v7.5 
+Rational Asset Manager Client 
+Rational Asset Manager Server 
+Rational Business Developer v7 
+Rational Business Developer v75 
+Rational Business Developer Extension 
+Rational Data Architect v7 
+Rational Data Architect v7.5 
+Rational Functional Tester v7 
+Rational Functional Tester v8 
+Rational Functional Tester Extension v7 
+Rational Manual Tester v7 
+Rational Method Composer v7 
+Rational Method Composer v7.5 
+Rational Modeling Extension v7.5 
+Rational Performance Tester v7 
+Rational Performance Tester for SOA 
+Rational Professional Bundle 
+Rational Quality Manager Express edition 
+Rational Quality Manager Standard Edition 
+Rational Requirements Composer Client 
+Rational Requirements Composer Server 
+Rational Robot 
+Rational Service Tester 
+Rational SOA Tester 
+Rational Softare Architect v7 
+Rational Software Architect for WebSphere v7.5 
+Rational Software Architect Standard Edition v7.5 
+Rational Software Modeler v7 
+Rational Software Modeler v7.5 
+Rational System Developer v7 
+Rational Test Manager 
+Product bundle that consists of Rational Software Modeler and Rational Data Architect 
+
+DIAGNOSING THE PROBLEM
+Here's what you'll see if you login to Passport Advantage via Packaging Utility: 
+
+Packaging Utility Screenshots - Unable to use Passport Advantage to Copy Packages locally: 
+
+[/support/docview.wss?uid=swg21431118&aid=1] [/support/docview.wss?uid=swg21431118&aid=1]
+
+Here is what you will see in the Information Center that can be a bit misleading. A documentation Defect will be filed by a CAG member.
+
+[/support/docview.wss?uid=swg21431118&aid=2] [/support/docview.wss?uid=swg21431118&aid=2]
+
+
+
+[/support/docview.wss?uid=swg21431118&aid=3] [/support/docview.wss?uid=swg21431118&aid=3]
+
+
+
+
+
+
+RESOLVING THE PROBLEM
+For ClearQuest, and other Team Products, you must go to Passport Advantage via a Web Browser, login and download the packages locall first. You can then import them using the Package Utility

@@ -1,0 +1,267 @@
+Title: IBM IV36656: UNABLE TO SET SUID FOR SNMP TRAP PROBE (14.0) DUE TO MISSING INFORMATION IN THE DOCUMENTATION - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  There are 2 sections which are ambiguous
+   
+   
+   1) Prerequisites
+   Before running the probe as suid root, you must copy the
+   following
+   libraries from the Netcool/OMNIbus library directory to the
+   /usr/lib or
+   /lib directory:
+   
+   On my RHEL 6.1 64 bit installation  also have /lib64 and
+   /usr/lib64.
+   Should we copy the libraries to these directories instead?  It
+   doesn't
+   tell me if we have a 64 bit OS system then we should still copy
+   the
+   libraries to /usr/lib or /lib.
+   
+   2) You must also create symbolic links (symlinks, or soft links)
+   to the
+   following libraries:
+   
+       libnetcool_r.so
+       libOpl_r.so
+       libPa_r.so
+       libtre.a
+   
+   Presumably  we  are creating these links in /usr/lib or /lib??
+   But it
+   doesn't specifically state that
+   
+   
+   Here is a summary of the problems in the documentation (
+   http://publib.boulder.ibm.com/infocenter/tivihelp/v8r1/topic/com [http://publib.boulder.ibm.com/infocenter/tivihelp/v8r1/topic/com]
+   .ibm.netcool_OMNIbus.doc/probes/snmp/snmp/wip/reference/snmp_sui
+   d.html ):
+   
+   1) libsybunic.so or libsybblk_ro.so do not exist in $NCHOME.
+    (These are libraries listed as needing to be copied to /lib or
+   /usr/lib
+   2) libtre.a does not exist (need to create a symbolic link to
+   this library, libtre.so does exist though).
+   3) On my RHEL 6.1 64 system, /usr/lib/secure does not exist.
+    Therefore  we cannot complete the necessary steps to configure
+   the probe to run as setuid root.
+   
+   This is in addition to the ambiguous statement of copying
+   OMNIbus libraries to /usr/lib or /lib without making the
+   distinction of between what to do on a 32 bit versus 64 bit OS.
+   
+   Additional detail including my system specs and mttrapd version
+   =======================================================
+   
+   The following libraries are in $NCHOME//platform/linux2x86/lib:
+   libsybtcl_r.so
+   libsybsrv_r.so
+   libsybintl_r.so
+   libsybct_r.so
+   libsybcs_r.so
+   libsybcomn_r.so
+   libslclient_r.so
+   Could not find the following libraries: libsybunic.so or
+   libsybblk_ro.so in $NCHOME (/opt/IBM/tivoli)
+   
+   [root@bobafett netcool]# cd /opt/IBM/tivoli/
+   [root@bobafett tivoli]# ls
+   netcool  tipv2  tipv2Components
+   [root@bobafett tivoli]# find . -name 'libsybblk_r.so'
+   [root@bobafett tivoli]#
+   
+   [root@bobafett tivoli]# pwd
+   /opt/IBM/tivoli
+   [root@bobafett tivoli]# find . -name 'libsybunic.so'
+   [root@bobafett tivoli]#
+   
+   [root@bobafett tivoli]# pwd
+   /opt/IBM/tivoli
+   [root@bobafett tivoli]# ls
+   netcool  tipv2  tipv2Components
+   [root@bobafett tivoli]# find . -name 'libsybblk.*'
+   [root@bobafett tivoli]# find . -name 'libsybunic.*'
+   [root@bobafett tivoli]# find . -name 'libsybunic*'
+   [root@bobafett tivoli]# find . -name 'libsybblk*'
+   [root@bobafett tivoli]#
+   
+   Additionally, according to the documentation users are supposed
+   to create symbolic links to libtre.a.  This does not exist:
+   
+   [root@bobafett lib]# ls
+   /opt/IBM/tivoli/netcool/platform/linux2x86/lib/libtre.*
+   /opt/IBM/tivoli/netcool/platform/linux2x86/lib/libtre.so
+   /opt/IBM/tivoli/netcool/platform/linux2x86/lib/libtre.so.4
+   /opt/IBM/tivoli/netcool/platform/linux2x86/lib/libtre.so.4.2.2
+   
+   After this point, and assuming the documentation meant libtre.so
+   and not libtre.a, we have this in /lib
+   
+   -r-xr-xr-x.  1 root root  137736 Jan 18 08:15 libsybtcl_r.so
+   -r-xr-xr-x.  1 root root  404512 Jan 18 08:15 libsybsrv_r.so
+   -r-xr-xr-x.  1 root root   27984 Jan 18 08:15 libsybintl_r.so
+   -r-xr-xr-x.  1 root root  440308 Jan 18 08:15 libsybct_r.so
+   -r-xr-xr-x.  1 root root   60444 Jan 18 08:15 libsybcs_r.so
+   -r-xr-xr-x.  1 root root  440760 Jan 18 08:15 libsybcomn_r.so
+   -r-xr-xr-x.  1 root root    7074 Jan 18 08:15 libslclient_r.so
+   lrwxrwxrwx.  1 root root      62 Jan 18 09:18 libnetcool_r.so ->
+   /opt/IBM/tivoli/netcool/platform/linux2x86/lib/libnetcool_r.so
+   lrwxrwxrwx.  1 root root      58 Jan 18 09:19 libOpl_r.so ->
+   /opt/IBM/tivoli/netcool/platform/linux2x86/lib/libOpl_r.so
+   lrwxrwxrwx.  1 root root      56 Jan 18 09:21 libtre.so ->
+   /opt/IBM/tivoli/netcool/platform/linux2x86/lib/libtre.so
+   
+   if the customer follow the instructions and then fail at this
+   piece:
+   
+   Run the following command to register the Netcool/OMNIbus
+   library directory as a trusted directory:
+   crle -s /usr/lib/secure:/opt/netcool/omnibus/platform/arch/lib
+   
+   On RHEL 6.x 64 bit system, there is no /usr/lib/secure or
+   /lib/secure or /usr/lib64/secure or /lib64/secure (there is
+   /lib/security and /lib64/security).
+   
+   System Config: RHEL 6.1 64 bit
+   
+   [root@bobafett lib64]# uname -a
+   Linux bobafett 2.6.32-279.19.1.el6.x86_64 #1 SMP Sat Nov 24
+   14:35:28 EST 2012 x86_64 x86_64 x86_64 GNU/Linux
+   
+   OMNIbus 7.4
+   
+   root@bobafett probes]# ./nco_p_mttrapd -version
+   Netcool/OMNIbus MTTrapd probe - Version 7.4.0 64-bit
+   (C) Copyright IBM Corp. 1994, 2012
+   
+   Netcool/OMNIbus Probe API Library Version 7.4.0 64-bit
+   Release ID: 14.0.14
+   API Release ID: 5.40.23
+   Software Compile Date: Wed Nov 14 08:19:14 UTC 2012 on
+   rhat5es-build1.hursley.ibm.com (Linux 2.6.18-274.17.1.el5 #1 SMP
+   Wed Jan 4 22:45:44 EST 2012)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  The documentation needs to be updated.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * All users of the IBM Tivoli Netcool/OMNIbus SNMP Probe       *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * Unable to run the SNMP probe as suid root due to incomplete  *
+   * information in the Reference Guide                           *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * The product documentation will be updated with the next      *
+   * release of the probe.                                        *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The procedure for running a probe as suid root will be removed
+   from this guide and transferred  to the main Netcool/OMNIbus
+   documentation, since it applies to all probes. In the meantime,
+   the incomplete information will be replaced to the following
+   TechNotes that provide information for AIX, Linux, and Solaris:
+   
+   AIX: http://www-01.ibm.com/support/docview.wss?uid=swg21296292 [http://www-01.ibm.com/support/docview.wss?uid=swg21296292]
+   Linux: http://www-01.ibm.com/support/docview.wss?uid=swg21328188 [http://www-01.ibm.com/support/docview.wss?uid=swg21328188]
+   Solaris:
+   http://www-01.ibm.com/support/docview.wss?uid=swg21291414 [http://www-01.ibm.com/support/docview.wss?uid=swg21291414]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV36656
+   
+   
+ * REPORTED COMPONENT NAME
+   NC/OBUS MTTRAPD
+   
+   
+ * REPORTED COMPONENT ID
+   5724P03MT
+   
+   
+ * REPORTED RELEASE
+   100
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-02-12
+   
+   
+ * CLOSED DATE
+   2013-04-17
+   
+   
+ * LAST MODIFIED DATE
+   2013-04-17
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    IV36113
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+Publications Referenced SC11772804 FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

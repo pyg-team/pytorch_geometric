@@ -1,0 +1,28 @@
+Title: IBM Tuning the NFS mount on the DataPower and B2B - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ If I need to use NFS access on my device, what parameters should be tuned? 
+
+ANSWER
+The following parameters should be tuned on the device when using NFS mount points. Tuning and testing these parameters can help to reduce connectivity issues, blocking conditions, and other interoperability issues.
+Consider when using NFS static mounts in firmware 5.0 and up, change the Mount Type from the default setting "Hard" to "Soft". If "Hard" mounts are used, it is recommended that the device be quiesced to perform administration tasks as an alternative to disabling the interface designated for NFS traffic.
+
+
+
+ 1.  Changing the NFS Client Settings Mount Refresh Time to 1 second will help detect network or connectivity issues. Even in worst case conditions with dozens of NFS mounts, the only noticeable resource impact possible could be a slight CPU impact on the device. 
+ 2.  Try to use dpnfs:// calls. Do not access the mount via nfs-name:/// calls. 
+ 3.  Ensure that network connectivity is solid and reliable. When connectivity is questionable, remember that there are a few possible layers or sources such as ARP, DNS, Network issues, possible dropped persistent connections (closed idle connections), Ethernet link layer issues (such as collisions), or routing issues. Any of these sources can result in an unreliable network link while trying to read or write files to a remote NFS file system. 
+ 4.  If possible, avoid using DNS resolution of the NFS static mount. Use an IP address to prevent any failures due to DNS look up. DNS look up failure is a common source of concern and easy to remove from the configuration. 
+ 5.  Only use NFS log targets when required. Use NFS log targets for diagnostic purposes, only when you need fast access to log messages. 
+ 6.  If you plan to test capacity of a device (load testing and so forth), disable the NFS client mount to prevent issues such as trying to write a file that results in a blocking activity. 
+ 7.  Use NFSv4 when ever possible. 
+ 8.  Within the NFS static mount consider increasing the NFS read and write buffer sizes whenever possible. 
+ 9.  Within the NFS static mount consider tuning the Retransmission timeout and the Maximum Retransmissions. Allow the NFS mount to fail sooner. 
+ 10. Disable the Local Filesystem Access option and only use it for debugging NFS configuration issues. Once the NFS is working, disable this feature. 
+ 11. The device is limited to 255 mounts.
+     The cli command show nfs-static-mount can be run from the root shell. 
+ 12. Each NFS mount on the DataPower device needs a free TCP or UDP port in the range from 513 to 1024. If there are services listening in that port range it can lead to a shortage of "privileged" source ports that NFS protocol requires resulting in down NFS mounts. The error "NFS mount, binding reserved port failed, code 260" may be seen in the default domain logs.
+     The cli command show tcp or the webgui TCP Port Status page will show the ports currently in use.

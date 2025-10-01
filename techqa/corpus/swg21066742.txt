@@ -1,0 +1,19 @@
+Title: IBM How can I use the 'kill' command on a Windows fileserver? - United States
+
+Text:
+kill; afskill; logging TECHNOTE (FAQ)
+
+QUESTION
+ Debugging an AFS fileserver problem often requires the gathering of extended filelogging, which is accomplished by using the kill -TSTP command, and/or the collection of callback dumps, which are gathered with the kill -XCPU command. How can this be done on a Windows fileserver, which doesn't have the kill command? 
+
+ANSWER
+The AFS binary suite for Windows includes an 'afskill' command, which functions similarly to the UNIX kill command:
+
+C:\>afskill
+usage: afskill [-signal] [pid] ...
+afskill -l
+
+C:\>afskill -l
+HUP INT QUIT ILL ABRT FPE KILL SEGV TERM USR1 USR2 CLD CHLD TSTP
+
+The process IDs can be found in the task manager by enabling the PID column under the processes tab.

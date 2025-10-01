@@ -1,0 +1,53 @@
+Title: IBM Replay of ILMT & BigFix Inventory Open Mic: iSeries: How to install and configure Disconnected Scanner (Presentation is attached) 27 June 2018 - United States
+
+Text:
+endpoint-open-mic; ilmt-open-mic; ISS_OPEN_MIC OPEN_MIC; STEwebcastDocument; WEBCASTS
+
+ABSTRACT
+The IBM License Metric Tool and BigFix Inventory Support team hosted an Open Mic webcast about How to install and configure Disconnected Scanner (IBM iSeries) 
+
+CONTENT
+IBM iSeries - Disconnected Scanner - How to install and configure
+Topics covered, which included two demonstrations:
+
+ * Disconnected scanner package
+ * Scalability
+ * Scan frequency
+ * Limitations
+ * Disconnected scanner requirements for IBM i
+ * Adding a new data source for disconnected scans
+ * Preparing installation files for disconnected scans for IBM i
+ * Installing the scanner and gathering initial data on IBM i systems
+ * Running software scans and gathering scan results on IBM i systems
+ * Importing scan results from IBM i systems to IBM License Metric Tool
+
+Web conference and calendar file Topic: Disconnected Scanner
+Date: Wednesday, 27 June 2018
+Time: 11:00 AM Eastern US time
+
+By participating in this call, you give your irrevocable consent to IBM to record any statements that you may make during the call, as well as to IBM's use of such recording in any and all media, including for video postings on YouTube. If you object, please do not connect to this call.
+
+Audio Replay A recording of the session is available on the IBM Security Support YouTube channel [https://www.youtube.com/IBMSecuritySupport] at https://youtu.be/Y2agyvg3ZDA [https://youtu.be/Y2agyvg3ZDA] 
+and it soon will be in the IBM Security Learning Academy [https://www.securitylearningacademy.com].
+
+How to ask questions Post your question at the bottom of this document and it will be answered in the dW Answers forum [https://developer.ibm.com/answers/topics/ilmt.html]!
+
+About Open Mic Webcasts IBM Security Support wants to help you take full advantage of your products. Join us for our Open Mic Webcast series as technical experts share their knowledge and answer your questions. These webcasts are designed to address specific topics and provide an in-depth and focused technical exchange in a convenient online webcast format.
+Visit the Support technical exchanges for IBM Security [https://support.podc.sl.edst.ibm.com/support/home/exchanges-listing/K527788Q35237V48/IBM_Security_support_(general)/product] page to see lists of all scheduled and past Open Mic events.
+
+Get notified of future Open Mic sessions by subscribing to your product's "Webcasts" document type at My Notifications [http://www-01.ibm.com/software/support/einfo.html].
+We welcome you to follow us on Twitter [http://bit.ly/1jZ80d3]@AskIBMSecurity [http://bit.ly/1jZ80d3].
+
+PRESENTATION
+Disconnected Scanner slides:
+
+Disconnected%20scanner_OpenMic2018-06-27.pdf [https://www-prd-trops.events.ibm.com/sites/default/files/inline-files/Disconnected%20scanner_OpenMic2018-06-27.pdf]
+
+COPYRIGHT DATE
+2018 
+
+ORIGINAL PUBLICATION DATE
+2018-06-21
+
+
+Cross reference information Product Component Platform Version Edition IBM BigFix Inventory Platform Independent All Versions

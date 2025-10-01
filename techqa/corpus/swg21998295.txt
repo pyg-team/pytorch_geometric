@@ -1,0 +1,38 @@
+Title: IBM QRadar: How do enhanced X-Force Rules interact with the X-Force server - United States
+
+Text:
+X-Force Bennefits; X-Force methodology; X-Force methods TECHNOTE (FAQ)
+
+QUESTION
+ How do enhanced X-Force Rules interact with the X-Force server? 
+
+ANSWER
+When configuring enhanced X-Force rules, IBM X-Force Exchange provides a set of URLs to safely test the rules and actions chosen. With regards to the X-Force server and how the URL information provided by the Device Support Module (DSM) or Custom Event Property (CEP) to the Rule will be parsed, the X-Force server is not limited to "exact URL matches". For instance, if you search for catjogger.win, which is currently categorized as malware, you will find that every host or URL having catjogger.win as its base URL will also receive the categorization as malware such as the following URLs in the list below:
+catjogger.win/test/123 http://xyz.catjogger.win/test/123
+mail.catjogger.win
+
+In these cases, catjogger.win passes on its categorization to anything else with the same base URL "catjogger.win" that the X-Force Exchange has not directly categorized yet.
+
+In another example, if we investigate http://www.xforce-security.com [http://www.xforce-security.com/] which is categorized as "Software / Hardware, IT Security / IT Information and General Business", we already know that the base URL xforce-security.com is not passing on its categorization to http://www.xforce-security.com/policy-check/url/ [http://www.xforce-security.com/policy-check/url/] because these URLs have been explicitly categorized to reflect our categories to numbers.
+
+Therefore, based on the examples provided, the following can be stated as the X-Force server's behavior when categorizing URLs: 
+
+ * A base URL receives a categorization and passes it on to any unknown URL with the same base URL. 
+ * If a categorization for a URL is different from the base URL category, then X-Force had explicitly set that new category for a reason to delineate the base from other pages.
+   
+
+
+When reviewing records on https://exchange.xforce.ibmcloud.com/ [https://exchange.xforce.ibmcloud.com/] you may find DNS Records within the update. What you see in the DNS Records is similar to an nslookup which returns A, AAAA, PTR and MX records. These results are a mixture of live requests and requests to the X-Force database. Most commonly, you will not see a URL in the DNS entry if you query for "regular" URLs like [http://host.domain.tld/] [http://host.domain.tld/]http://host.domain.tld. A URL such as the example mail.catjogger.win which is an MX record, will usually only be found for domain.tld searches. This is due to how DNS functions within the RFCs that govern its behavior. 
+
+DNS Records are not looked at in X-Force Exchange, because the X-Force server SDK does not perform DNS live requests and is based on URLs only. 
+QRadar: Verification that X-Force server database updates are current [http://www-01.ibm.com/support/docview.wss?uid=swg21999043] 
+
+QRadar: Testing X-Force Rules [http://www-01.ibm.com/support/docview.wss?uid=swg21999044] 
+
+ 
+Where do you find more information? 
+
+
+
+
+[/support/docview.wss?uid=swg21998295&aid=1] [http://ibm.biz/QRadar-KC] [/support/docview.wss?uid=swg21998295&aid=2] [https://ibm.biz/qradarforums] [/support/docview.wss?uid=swg21998295&aid=3] [http://ibm.biz/qradarknowledge] [/support/docview.wss?uid=swg21998295&aid=4] [http://ibm.biz/SecSuptUTube] [/support/docview.wss?uid=swg21998295&aid=5] [http://ibm.biz/qradarsoftware] [/support/docview.wss?uid=swg21998295&aid=6] [http://ibm.biz/MyNotification] [/support/docview.wss?uid=swg21998295&aid=7] [http://ibm.biz/SuptRegQuikStart]

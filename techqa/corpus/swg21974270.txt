@@ -1,0 +1,74 @@
+Title: IBM Security Bulletin: A vulnerability in the GSKit component of IBM Rational ClearCase (CVE-2016-0201) - United States
+
+Text:
+CVE-2016-0201 SECURITY BULLETIN
+
+SUMMARY
+ A vulnerability has been addressed in the GSKit component of IBM Rational ClearCase. 
+
+VULNERABILITY DETAILS
+CVEID: CVE-2016-0201 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2016-0201]
+DESCRIPTION: IBM GSKit could allow a remote attacker to obtain sensitive information, caused by an MD5 collision. An attacker could exploit this vulnerability to obtain authentication credentials.
+CVSS Base Score: 5.9
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/109310 [https://exchange.xforce.ibmcloud.com/vulnerabilities/109310] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:N/A:N)
+
+AFFECTED PRODUCTS AND VERSIONS
+CCRC WAN Server: 
+Rational ClearCase versions from 7.1.2.9 through 7.1.2.18, 8.0 through 8.0.0.17, and 8.0.1 through 8.0.1.10, all platforms.
+
+CMI and OSLC integrations:
+
+Rational ClearCase versions from 7.1.2.9 through 7.1.2.18, 8.0.0.4 through 8.0.0.17, and 8.0.1 through 8.0.1.10, Windows only.
+
+The IBM GSKit is used if ClearCase on Windows platforms is configured to integrate with IBM Rational ClearQuest, Rational Team Concert, or Jira with communication over SSL (https). This applies to any integration using Change Management Interface (CMI), and to non-CMI based UCM-enabled CQ integration via OSLC. If your ClearCase deployment is not using these integrations, or not using SSL with the integrations, then your deployment is not sensitive to this attack.
+
+The UCM-enabled CQ integration without using OSLC (SQUID) is not sensitive to this attack.
+
+CMI and OSLC integrations
+
+
+
+ClearCase Windows Client or WAN server Version Status 8.0.1 through 8.0.1.10 Affected if you use CMI or OSLC integrations, or CCRC WAN server 8.0.0.4 through 8.0.0.17 Affected if you use CMI or OSLC integrations, or CCRC WAN server 8.0 through 8.0.0.3 Affected only if you use CCRC WAN server 7.1.2.9 through 7.1.2.18 Affected if you use CMI or OSLC integrations, or CCRC WAN server 7.1.2 through 7.1.2.8 Not affected 7.1.0.x, 7.1.1.x Not affected REMEDIATION/FIXES
+CCRC WAN Server:
+Apply an IHS fix for the issue: 
+
+ 1. Determine the IHS version used by your CCRC WAN server. Navigate to the IBM HTTP Server installation directory (typically /opt/ibm/HTTPServer or C:\Program Files (x86)\IBM\HTTPServer), then execute the script: bin/versionInfo.sh (UNIX) or bin\versionInfo.bat (Windows). The output includes a section "IBM HTTP Server for WebSphere Application Server". Make note of the version listed in this section. 
+ 2. Review the following IHS security bulletin for the available fixes: Security Bulletin:Vulnerabilities in the GSKit component of IBM HTTP Server (CVE-2016-0201 and CVE-2015-7420) [http://www.ibm.com/support/docview.wss?uid=swg21974507]. Note: there may be newer security fixes for IBM HTTP Server. Follow the link below (in the section "Get Notified about Future Security Bulletins") to subscribe to WebSphere product support alerts for additional security fixes. 
+ 3. Apply the relevant fixes to your IBM HTTP Server installation used on your CCRC WAN server host. No ClearCase-specific steps are necessary.
+
+
+CMI and OSLC integrations: 
+The solution is to install a newer, fixed version of the GSKit runtime component. 
+
+Affected Versions Applying the fix 8.0.1 through 8.0.1.10 Install Rational ClearCase Fix Pack 11 (8.0.1.11) for 8.0.1 [http://www.ibm.com/support/docview.wss?uid=swg24042128] 8.0.0.4 through 8.0.0.17 Install Rational ClearCase Fix Pack 18 (8.0.0.18) for 8.0 [http://www.ibm.com/support/docview.wss?uid=swg24042126] 7.1.2.x (all fix packs) 
+7.1.1.x (all fix packs) 
+7.1.0.x (all fix packs) Customers on extended support contracts should contact Customer Support. For affected 7.1.x and 7.0.x releases, IBM recommends upgrading to a fixed, supported version of the product.
+
+WORKAROUNDS AND MITIGATIONS
+None
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+IMPORTANT NOTE
+ IBM strongly suggests that all System z customers be subscribed to the System z Security Portal to receive the latest critical System z security and integrity service. If you are not subscribed, see the instructions on the System z Security web site [http://www.ibm.com/systems/z/solutions/security_subintegrity.html]. Security and integrity APARs and associated fixes will be posted to this portal. IBM suggests reviewing the CVSS scores and applying all security or integrity fixes as soon as possible to minimize any potential risk. 
+
+REFERENCES
+Complete CVSS v3 Guide [http://www.first.org/cvss/user-guide] 
+On-line Calculator v3 [http://www.first.org/cvss/calculator/3.0] RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/PSIRT] CHANGE HISTORY
+ * 28 January 2016: Original version published
+* 27 May 2016: Revised for new fix packs 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Software Development Rational ClearCase CCRC WAN Server AIX, HP-UX, Linux, Solaris, Windows 7.1.2.10, 7.1.2.11, 7.1.2.12, 7.1.2.13, 7.1.2.14, 7.1.2.15, 7.1.2.16, 7.1.2.17, 7.1.2.18, 7.1.2.19, 7.1.2.9, 8.0, 8.0.0.1, 8.0.0.10, 8.0.0.11, 8.0.0.12, 8.0.0.13, 8.0.0.14, 8.0.0.15, 8.0.0.16, 8.0.0.17, 8.0.0.2, 8.0.0.3, 8.0.0.4, 8.0.0.5, 8.0.0.6, 8.0.0.7, 8.0.0.8, 8.0.0.9, 8.0.1, 8.0.1.1, 8.0.1.10, 8.0.1.2, 8.0.1.3, 8.0.1.4, 8.0.1.5, 8.0.1.6, 8.0.1.7, 8.0.1.8, 8.0.1.9

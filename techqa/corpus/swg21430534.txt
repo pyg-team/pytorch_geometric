@@ -1,0 +1,44 @@
+Title: IBM Display complex Java objects as output parameters in DVS Excel Scenario spreadsheet - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The output parameter of my ruleset, which is of a complex Java type, is not displayed in the Expected Results sheet in the generated Decision Validation Services (DVS) Excel Scenario spreadsheet. How can I display output parameters that are of complex types? 
+
+RESOLVING THE PROBLEM
+When generating an Excel Scenario template spreadsheet, the columns in the Expected Results sheet are based on the output ruleset parameters and contents of the Business Object Model (BOM). 
+
+If the output parameter is of a simple Java type (that is: int, float, java.lang.String) then it is automatically displayed in the Expected Results sheet. 
+
+When the output parameter is of a complex type, then it is displayed in the Expected Results sheet if the corresponding BOM class meets the following conditions: 
+
+- The BOM class contains verbalized attributes. Only the verbalized attributes of the BOM class will be displayed in the Expected Results sheet. If the BOM class does not have any verbalized attributes, the output parameter of that type will not be part of the Expected Results sheet. 
+
+- If an attribute is a collection of a complex type, or a map, it is not displayed in the Expected Results sheet. If you want to use this attribute in the Expected Results sheet, you must modify the BOM class to add a virtual attribute of a simple type, which maps to the value you want displayed. 
+
+- If an attribute is a collection of simple types, then a domain must be defined for this collection, for the attribute to be displayed in the Expected Results sheet. 
+
+ 
+
+In addition, the following rules apply for the attributes of the BOM class for an input or output parameter: 
+
+- If the "Ignore for DVS" flag for the attribute has been checked, a column will not be generated for this attribute in the Excel Scenario spreadsheet. 
+
+- Only an attribute that is non-static and readable ("read/write" or "read only") can be used to create columns. 
+
+ 
+
+For more information, refer to the documentation at: 
+
+Rule Studio > Testing, validating, and auditing rules > Concepts > Relationship between the BOM and the Excel file [http://publib.boulder.ibm.com/infocenter/brjrules/v7r0m2/topic/com.ibm.websphere.ilog.jrules.doc/Content/Business_Rules/Documentation/_pubskel/JRules/ps_JRules_Global740.html] 
+
+Rule Studio > Testing, validating, and auditing rules > Tasks > Adding or removing columns from the Excel file [http://publib.boulder.ibm.com/infocenter/brjrules/v7r0m2/index.jsp?topic=/com.ibm.websphere.ilog.jrules.doc/Content/Business_Rules/Documentation/_pubskel/JRules/ps_JRules_Global744.html]
+
+
+ 
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Operational Decision Manager Platform Independent 8.0, 7.5 Enterprise

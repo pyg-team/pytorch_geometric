@@ -1,0 +1,299 @@
+Title: IBM PK12364: ADDING EJB REFERENCE RESULTS IN JAVA JAR DEPENDENCIES( MANIFEST.MF) ADDED AS DUPLICATES TO JAVA BUILD PATH (.CLASSPATH) - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  pmr 25256,49R,000
+   Defect:
+   .
+   "Adding an EJB Reference results in  Java Jar Dependencies
+   ( MANIFEST.MF) added as duplicates to the Java Build Path
+   (.classpath)"
+   .
+   Background:
+   - Developers use the
+   same CLASSPATH "EAR_ROOT" variable location for many
+   similar EAR projects on different workstations.
+   - The EAR_ROOT refers to the lib/log4j.jar (among other jars)
+   in the root directory of one specific "base" EAR.
+   - All the other similar EARs specify a "Common"
+   utilities java project that requires the log4j.jar among
+   other jars in the EAR_ROOT directory.
+   - The "Common" java project uses EAR_ROOT on its build path.
+   The lib/*.jar files are also required by other modules in
+   the EAR(s) at runtime.
+   .
+   The "base" EAR and the Common java project are archived in
+   an SCM (e.g. ClearCase) for sharing across workbenches
+   to build other similar EARs with variations in function.
+   .
+   The "EAR_ROOT/lib/log4j.jar" is in
+   the Java Build Path (.classpath) of the modules of
+   almost identical  other EAR projects.
+   The projects using this have a .classpath entry:
+   .
+   <classpathentry kind="var" path="EAR_ROOT/lib/log4j.jar"/>
+   .
+   ..
+   ..
+   Wether or not this is the best way to manage things or even
+   a good practice is not the issue.
+   ..
+   ..
+   Originally it was reported:
+   .
+   "..
+   2) ....The concern is if this would conflict with or
+   confuse  J2EE Tooling when it updates .classpath with the
+   ejb project when an ejb resource reference is
+   added?
+   .
+   3) Somehow adding an EJB Resource Reference resulted in
+   the  loss of required projects in  .project and
+   especially in  .classpath
+    ..."
+   On support recommendation they started using Java Jar
+   Dependencies, since they also need them at runtime , and
+   did not necessarily want these jar in the  WEB-INF/lib
+   directory of each web module/project. It was then reported
+   that things "mostly" improved:
+   .
+   //=== start
+   ...
+   , I tried out adding the MANIFEST.MF file in the web
+   project (CSEWEB). I added all the entries in the
+   CSEOnlineEAR/lib directory, as well as references to all
+   utility Java projects, to the manifest. ...
+   .
+   When I edited the manifest, RAD added all the libraries in
+   /CSEOnlineEAR/lib that I specified in the manifest to my
+   .classpath file. Since we are already referencing these
+   same jars via the EAR_ROOT classpath variable, I undid
+   those changes.
+   .
+   Now, when I add an EJB reference, RAD no longer removes
+   entries for Java projects &/or third party jars, because
+   they are specified in the manifest. This is an improvement.
+   However, it does still attempt to add the duplicate entries
+   for the third party libraries to the classpath, which we do
+   not want.
+   .
+   Recreate:
+   Workspace with:
+   - EAR with lib/log4j.jar and EAR_ROOT classpath variable
+   pointing to the lib directory.
+   - simple web and ejb project
+   - Common utilty java project (added to EAR module)
+   illustrats the problem. To reproduce:
+   .
+   1. Open the "Web" project
+   2. Open the .classpath file for "Web"
+   3. Note that the only entry for log4j.jar looks like this:
+   .
+   <classpathentry kind="var" path="EAR_ROOT/lib/log4j.jar"/>
+   .
+   4. Open WebContent/WEB-INF/web.xml
+   5. Select the "references" tab, and add an EJB reference to
+   BasicService in the BasicEJB project.
+   6. Now look at "Web" project's .classpath again. In
+   addition to the above entry for log4j.jar, RAD has added
+   this one:
+   <classpathentry exported="true"
+   sourcepath="/BasicEAR/lib/log4j.jar" kind="lib"
+   path="/BasicEAR/lib/log4j.jar"/>
+   //=== end
+   .
+   .
+   *** Using RAD v6.0.1 support discovered these steps are NOT
+   sufficient to demonstrate the problem. ***
+   .
+   Prior to steps 4. and 5. (adding the "BasicService" EJB
+   reference to the Web project),
+   it is necessary to first remove any dependency  on the
+   BasicService EJB in the Web project:RC>Properties>Java Jar
+   Dependencies (i.e. MANIFEST.MF) page. Then you can add the
+   reference to the  ejb.
+   .
+   Note-1: ... this "runtime" ejb java jar dependency
+   existed from being manually added earlier .
+   If you are going to add an ejb reference it is not
+   necessary to first add the ejb
+   to the web project jar dependency. Adding the EJB reference
+   will do this by default.
+   .
+   Note-2a: Any item/jar added as a Java Jar Dependency of a
+   J2EE project ( Web in this case), results in  it and its
+   dependencies being  automatically synchronized (i.e. added)
+   to the project's Java Build Path (i.e. the .classpath
+   file). For this reason it is NOT normally recommend adding
+   jars/projects to the Java Build Path ( == .classpath) if
+   they are also going to be specified as a Java Jar
+   Dependency.
+   .
+   Note-2b: In this case ejb project BasicService and its java
+   jar dependency: lib/log4j.jar were synchronized/added to
+   .classpath of the Web project.
+   The classpath variable EAR_ROOT was used in .classpath  to
+   point to a common set of jars used by all the EAR(s) in
+   this development team for build purposes.
+   .
+   .
+   Adding the  reference to the  ejb, resulted in the
+   additional  logically duplicate .classpath entry:
+   .
+   <classpathentry exported="true"
+   sourcepath="/BasicEAR/lib/log4j.jar" kind="lib"
+   path="/BasicEAR/lib/log4j.jar"/>
+   .
+   This looks like a "defect" in that J2EE Tooling
+   "Java Jar Dependency" function
+   is not able to recognize
+   that there is an existing "logically equivalent" entry:
+   .
+   <classpathentry kind="var" path="EAR_ROOT/lib/log4j.jar"/>
+   .
+   Summary:
+   =======
+   An EJB Reference was added to a Web project.
+   This adds the ejb project and its dependencies
+   to the Web Java Jar Dependencies. In turn,
+   the Java Jar Dependency function adds jars to the
+   to Java Build Path ( == .classpath) without checking
+   for duplicates and
+   providing some warning and/or asking the user if they want
+   this before doing so or just not adding it at all.
+   .
+   The Java Jar Dependency behaves in a similar maaner when used
+   on its own. It does not check for duplicate .classpath entries
+   using a classpath variable.
+   .
+   Note: this duplication does  not result in any build errors,
+   but is not desired as it could lead to build problems.
+   .
+   
+   Internal defect RATLC01099410
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  manually remove duplicate entries
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Adding EJb  Reference  results in a  duplicate entry being added
+    in  the  .classpath
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fixed  the problem by adding check  to see if there is already a
+   n entry  in the .classpath which is pointing to the library,  wh
+   en an attempt is made  to
+   add an entry in  the .classpath  either by adding reference or s
+   etting the Java jar dependency,  in that case no entry is added
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK12364
+   
+   
+ * REPORTED COMPONENT NAME
+   APP DEV V6 WIN
+   
+   
+ * REPORTED COMPONENT ID
+   5724J1901
+   
+   
+ * REPORTED RELEASE
+   600
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2005-09-22
+   
+   
+ * CLOSED DATE
+   2006-01-16
+   
+   
+ * LAST MODIFIED DATE
+   2006-01-16
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  na
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   APP DEV V6 WIN
+   
+   
+ * FIXED COMPONENT ID
+   5724J1901
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R600 PSN
+   UP

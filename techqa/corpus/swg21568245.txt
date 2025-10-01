@@ -1,0 +1,117 @@
+Title: IBM Collecting data for: Read first for Tivoli Integrated Portal - United States
+
+Text:
+TIPL2; TIPL2MUSTG; MustGatherReadFirstDocument; Tivoli Integrated Portal; mustgather; readfirst; collecting data TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Use this document to quickly find the appropriate items for issues in Tivoli Integrated Portal. A separate collection guide is provide for each of the following areas: General Issues, Installation, Performance, and Security 
+
+CAUSE
+For every problem, collecting data can aid in problem determination and save time resolving Problem Management Records (PMRs), particularly if the data is gathered before opening the PMR with IBM® Support.
+
+RESOLVING THE PROBLEM
+Collecting data early, even before opening the PMR, helps IBM® Support quickly determine if: 
+
+
+
+
+ * Symptoms match known problems (rediscovery). 
+ * There is a non-defect problem that can be identified and resolved. 
+ * There is a defect that identifies a workaround to reduce severity. 
+ * Locating root cause can speed up a development code fix.
+
+
+Collecting info for: table of contents: 
+[http://www.ibm.com/i/v14/rules/dotted_blue_rule_443.gif]  
+
+[/support/docview.wss?uid=swg21568245&amp;aid=1] Gathering General Information [/support/docview.wss?uid=swg21568245&amp;aid=2] Gathering Component Specific Information  * General Issues
+ * 
+ * Installation Issues
+ * 
+ * Security Issues
+ * 
+ * 
+ * Performance Issues
+ * 
+ * TIP Stop/Start Issues
+
+[/support/docview.wss?uid=swg21568245&amp;aid=3] Sumitting Information to IBM Support [/support/docview.wss?uid=swg21568245&amp;aid=4] On-line Self-Help Resources [/support/docview.wss?uid=swg21568245&amp;aid=5] [/support/docview.wss?uid=swg21568245&amp;aid=5] [http://www.ibm.com/i/v14/rules/dotted_blue_rule_443.gif] 
+
+Gathering general information Providing the following general items is useful to IBM Support for any issue reported in Tivoli Integrated Portal: 
+
+Environment Data: 
+Update the PMR with the output of the following: 
+
+1) A clear, specific problem description, including specific usage information and error scenario on how to recreate the problem you encountered. 
+
+2) Output of “ java –version” command. 
+
+3) The installed product listing from the Deployment Engine listIU command. Save the output to a file and include the file when opening or updating the PMR: 
+
+[/support/docview.wss?uid=swg21568245&amp;aid=6] 
+Collect the output of the following commands: 
+C:\Program Files\IBM\Common\acsi\bin\de_version.cmd 
+C:\Program Files\IBM\Common\acsi\bin\listIU.cmd 
+C:\Program Files\IBM\Common\acsi\bin\de_lsrootiu.cmd 
+
+
+[/support/docview.wss?uid=swg21568245&amp;aid=7] 
+For root install :
+Collect the output of the following commands: 
+/usr/ibm/common/acsi/bin/de_version 
+/usr/ibm/common/acsi/bin/listIU.sh 
+/usr/ibm/common/acsi/bin/de_lsrootiu.sh 
+
+Non-root install : 
+Collect the output of the following commands: 
+<Install User's HOME>/.acsi_<install_username>/bin/de_version 
+<Install User's HOME>/.acsi_<install_username>/bin/listIU.sh 
+<Install User's HOME>/.acsi_<install_username>/bin/de_lsrootiu.sh 
+
+Where <Install User's HOME> is the home directory for the OS user used to install TIP, and <install_username> is the OS user ID used to install TIP. 
+#top 
+Back to top Gathering Component Specific Information Click the appropriate link below to access the associated Collecting info for: document for the problem you are experiencing in Tivoli Integrated Portal. 
+
+General Issues 
+Enabling tracing for Tivoli Integrated Portal [https://www-304.ibm.com/support/docview.wss?uid=swg21437655] 
+Setting the trace level in TIP from the comand line [https://www-304.ibm.com/support/docview.wss?uid=swg21449291] 
+
+
+Install Issues 
+Collecting info for:: for Tivoli Integrated Portal (TIP) - Installation failure [https://www-304.ibm.com/support/docview.wss?uid=swg21468983] 
+Collecting info for:: Read First for Deployment Engine (DE) [http://www-01.ibm.com/support/docview.wss?uid=swg21439183] 
+
+
+Security Issues 
+Collecting info for:: for Tivoli Integrated Portal (TIP) - Role/authorization problems [http://www.ibm.com/support/docview.wss?uid=swg21624086] 
+Collecting info for:: for Tivoli Integrated Portal (TIP) - Security Problems [https://www-304.ibm.com/support/docview.wss?uid=swg21502184] 
+Collecting info for:: Tivoli Integrated Portal Secure Sockets Layer (SSL) problems [https://www-304.ibm.com/support/docview.wss?uid=swg21474117]  * 
+ * 
+ * 
+ * Disable security for Tivoli Integrated Portal
+
+
+
+Performance Issues 
+Enable verboseGC for Tivoli Integrated Portal [https://www-304.ibm.com/support/docview.wss?uid=swg21458419] 
+Collecting info for:: Tivoli Integrated Portal Crash on Solaris [https://www-304.ibm.com/support/docview.wss?uid=swg21567808] 
+Collecting info for:: Performance, hang, or high CPU issues in TIP run on Solaris [https://www-304.ibm.com/support/docview.wss?uid=swg21567809] 
+Collecting info for:: Performance, hang, or high CPU issues on Linux [https://www-304.ibm.com/support/docview.wss?uid=swg21567807] 
+Collecting info for:: Performance, hang, or high CPU issues on AIX [http://www.ibm.com/support/docview.wss?uid=swg21690349] 
+Collecting info for:: OutOfMemory errors in TIP running on AIX, Linux, or Windows [https://www-304.ibm.com/support/docview.wss?uid=swg21567805] 
+
+
+TIP Stop/Start Issues 
+Collecting info for:: for Tivoli Integrated Portal (TIP) - Start and stop problems [https://www-304.ibm.com/support/docview.wss?uid=swg21504076] 
+Back to top 
+
+Submitting Information to IBM Support [http://www-306.ibm.com/software/support/exchangeinfo.html?ibmsst=allSupport] 
+Exchanging information with IBM Technical Support [http://www-306.ibm.com/software/support/exchangeinfo.html?ibmsst=allSupport] 
+If using SR [http://www-306.ibm.com/software/sysmgmt/products/support/probsub.html], update the PMR to indicate that data has been sent. 
+#top 
+Back to top 
+
+Online Self-Help Resources  * Utilize the IBM Service Request (SR) [http://www-306.ibm.com/software/sysmgmt/products/support/probsub.html] tool to access the Tivoli Storage Manager Support team, when requiring assistance from IBM.
+
+
+Back to top

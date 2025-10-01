@@ -1,0 +1,197 @@
+Title: IBM PM74259: A JAVA.LANG.LINKAGEERROR WILL OCCUR WHEN TRYING TO CREATE A FRIEND SERVER - United States
+
+Text:
+  FIXES ARE AVAILABLE
+8.5.0.2: WebSphere Application Server V8.5 Fix Pack 2 [http://www-01.ibm.com/support/docview.wss?uid=swg24034672]
+8.0.0.6: WebSphere Application Server V8.0 Fix Pack 6 [http://www-01.ibm.com/support/docview.wss?uid=swg24034673]
+8.0.0.7: WebSphere Application Server V8.0 Fix Pack 7 [http://www-01.ibm.com/support/docview.wss?uid=swg24035457]
+8.0.0.8: WebSphere Application Server V8.0 Fix Pack 8 [http://www-01.ibm.com/support/docview.wss?uid=swg24036729]
+8.0.0.9: WebSphere Application Server V8.0 Fix Pack 9 [http://www-01.ibm.com/support/docview.wss?uid=swg24037574]
+8.0.0.10: WebSphere Application Server V8.0 Fix Pack 10 [http://www-01.ibm.com/support/docview.wss?uid=swg24039242]
+8.0.0.11: WebSphere Application Server V8.0 Fix Pack 11 [http://www-01.ibm.com/support/docview.wss?uid=swg24040425]
+8.0.0.12: WebSphere Application Server V8.0 Fix Pack 12 [http://www-01.ibm.com/support/docview.wss?uid=swg24041590]
+8.0.0.13: WebSphere Application Server V8.0 Fix Pack 13 [http://www-01.ibm.com/support/docview.wss?uid=swg24042746]
+8.0.0.14: WebSphere Application Server V8.0 Fix Pack 14 [http://www-01.ibm.com/support/docview.wss?uid=swg24044096]
+8.0.0.15: WebSphere Application Server V8.0 Fix Pack 15 [http://www-01.ibm.com/support/docview.wss?uid=swg24044734]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When Rational Asset Manager is on WebSphere Application Server
+   V8, if you try to create a new friend server, it will fail
+   with the following stack trace in the log...
+   
+   [09/18/12 10:56:13 EDT] CRRAM0001E  45512513 ERROR web
+   pagecode.error.
+   Error - 852F935A-5D19-5998-49E9-CE9AB7A4B4E8 -
+   URL:http://localhost:9080/ram/internal/binding/jfs.RootServices?
+   ajax=true&oauth=false&url=https%3A//localhost:9443/qm/rootservic
+   es -
+   java.lang.LinkageError:
+   org/apache/http/client/HttpClient.execute
+   (Lorg/apache/http/client/methods/HttpUriRequest;)
+   Lorg/apache/http/HttpResponse;
+   at
+   com.ibm.ram.repository.internal.jazz.JazzHttpClientHelper.execut
+   e(JazzHttpClientHelper.java:127)
+   at
+   com.ibm.ram.repository.internal.jazz.JazzHttpClientHelper.execut
+   e(JazzHttpClientHelper.java:58)
+   at
+   com.ibm.ram.repository.internal.xml.binding.XmlBindingHelper.get
+   Resource(XmlBindingHelper.java:133)
+   at
+   com.ibm.ram.repository.internal.xml.binding.XmlBindingHelper.cre
+   ateBinding(XmlBindingHelper.java:63)
+   ...
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  Users of Rational Asset Manager running on  *
+   *                  IBM WebSphere Application Server            *
+   *                  versions 8.0 and 8.5                        *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: A java.lang.LinkageError will occur     *
+   *                      when trying to create a friend server   *
+   ****************************************************************
+   * RECOMMENDATION:  Install a fix pack that includes this APAR  *
+   ****************************************************************
+   When trying to create a friend server in Rational Asset
+   Manager on WebSphere Application Server V8, the following
+   error will be seen:
+   CRRAM0001E  45512513 ERROR web
+   pagecode.error.
+   Error - 852F935A-5D19-5998-49E9-CE9AB7A4B4E8 -
+   URL:http://localhost:9080/ram/internal/binding/jfs.RootServices?
+   ajax=true&oauth=false&url=https%3A//localhost:9443/qm/rootservic
+   es -
+   java.lang.LinkageError:
+   org/apache/http/client/HttpClient.execute
+   (Lorg/apache/http/client/methods/HttpUriRequest;)
+   Lorg/apache/http/HttpResponse;
+   at
+   com.ibm.ram.repository.internal.jazz.JazzHttpClientHelper.execut
+   e(JazzHttpClientHelper.java:127)
+   at
+   com.ibm.ram.repository.internal.jazz.JazzHttpClientHelper.execut
+   e(JazzHttpClientHelper.java:58)
+   at
+   com.ibm.ram.repository.internal.xml.binding.XmlBindingHelper.get
+   Resource(XmlBindingHelper.java:133)
+   at
+   com.ibm.ram.repository.internal.xml.binding.XmlBindingHelper.cre
+   ateBinding(XmlBindingHelper.java:63)
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The classloader was loading httpclient classes from both
+   Rational Asset Manager and WebSphere Application Server,
+   causing the linkage error to occur. This has been corrected.
+   
+   The fix for this APAR is currently targeted for inclusion in
+   fix packs 8.0.0.6 and 8.5.0.2.  Please refer to the
+   Recommended Updates page for delivery information:
+   http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM74259
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBS APP SERV N
+   
+   
+ * REPORTED COMPONENT ID
+   5724H8800
+   
+   
+ * REPORTED RELEASE
+   800
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-10-03
+   
+   
+ * CLOSED DATE
+   2012-11-08
+   
+   
+ * LAST MODIFIED DATE
+   2013-02-28
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBS APP SERV N
+   
+   
+ * FIXED COMPONENT ID
+   5724H8800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R800 PSY
+   UP
+   
+   
+ * R850 PSY
+   UP

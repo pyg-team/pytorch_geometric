@@ -1,0 +1,62 @@
+Title: IBM SSL Encryption Error when trying to access the IBM Sterling B2B Integrator REST API - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When trying to access the REST API in the IBM Sterling B2B Integrator using an Internet Browser a error is displayed on the browser window. The displayed error is the following:
+This page can t be displayed.
+Turn on TLS1.0, TLS1.1, and TLS1.2 in Advanced settings and try connecting to the server again. If this error persists, it is possible that this site uses an unsupported protocol or cipher suite such as RC4 (link for the details), which is not considered secure. Please contact your site administrator. 
+
+SYMPTOM
+In the Liberty Server messages.log one can see the following: 
+
+ECWWKO0801E: javax.net.ssl.SSLHandshakeException: Client requested protocol SSLv3 not enabled or not supported
+at com.ibm.jsse2.ab.B(ab.java:421)
+at com.ibm.jsse2.nc.b(nc.java:423)
+at com.ibm.jsse2.nc.c(nc.java:42)
+at com.ibm.jsse2.nc.wrap(nc.java:457)
+at javax.net.ssl.SSLEngine.wrap(SSLEngine.java:39)
+at com.ibm.ws.channel.ssl.internal.SSLUtils.handleHandshake(SSLUtils.java:660)
+at com.ibm.ws.channel.ssl.internal.SSLConnectionLink.readyInbound(SSLConnectionLink.java:546)
+at com.ibm.ws.channel.ssl.internal.SSLConnectionLink.ready(SSLConnectionLink.java:319)
+at com.ibm.ws.tcpchannel.internal.NewConnectionInitialReadCallback.sendToDiscriminators(NewConnectionInitialReadCallback.java:174)
+at com.ibm.ws.tcpchannel.internal.NewConnectionInitialReadCallback.complete(NewConnectionInitialReadCallback.java:83)
+at com.ibm.ws.tcpchannel.internal.WorkQueueManager.requestComplete(WorkQueueManager.java:504)
+at com.ibm.ws.tcpchannel.internal.WorkQueueManager.attemptIO(WorkQueueManager.java:574)
+at com.ibm.ws.tcpchannel.internal.WorkQueueManager.workerRun(WorkQueueManager.java:929)
+at com.ibm.ws.tcpchannel.internal.WorkQueueManager$Worker.run(WorkQueueManager.java:1018)
+at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor .java:1157)
+at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:627)
+at java.lang.Thread.run(Thread.java:798)
+
+Caused by: javax.net.ssl.SSLHandshakeException: Client requested protocol SSLv3 not enabled or not supported
+at com.ibm.jsse2.j.a(j.java:9)
+at com.ibm.jsse2.nc.a(nc.java:556)
+at com.ibm.jsse2.ab.a(ab.java:133)
+at com.ibm.jsse2.ab.a(ab.java:304)
+at com.ibm.jsse2.cb.a(cb.java:611)
+at com.ibm.jsse2.cb.a(cb.java:244)
+at com.ibm.jsse2.ab.t(ab.java:74)
+at com.ibm.jsse2.ab$1.a(ab$1.java:2)
+at com.ibm.jsse2.ab$1.run(ab$1.java:3)
+at
+java.security.AccessController.doPrivileged(AccessController.java:456)
+at com.ibm.jsse2.ab$c_.run(ab$c_.java:4)
+at com.ibm.ws.channel.ssl.internal.SSLUtils.handleHandshake(SSLUtils.java:718)
+...11 more
+
+
+RESOLVING THE PROBLEM
+In the server.xml file of the Liberty Server (found at the <SI>/install/liberty/wlp/usr/servers/SIServer directory) one can see the following line:
+
+<ssl id="FGSystem" keyStoreRef="FGSystem" clientAuthentication="true" sslProtocol="TLSv1.2" />
+
+The issue is that the clientAuthentication="true" parameter is enabled, therefore the Liberty Server is also expecting to
+receive a certificate from the Internet browser when the SSL secured connection is started, causing the browser to display the error.
+
+In order to resolve the issue one should change this line to:
+
+<ssl id="FGSystem" keyStoreRef="FGSystem" sslProtocol="TLSv1.2"/>
+
+After this restart the Libery Server and retry to connect.

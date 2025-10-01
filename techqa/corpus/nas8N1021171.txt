@@ -1,0 +1,94 @@
+Title: IBM Security Bulletin: Vulnerabilities in glibc affect Power Hardware Management Console (CVE-2015-7547, CVE-2014-9761, CVE-2015-8776, CVE-2015-8777, CVE-2015-8778, CVE-2015-8779) - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ glibc is used by Power Hardware Management Console (HMC). HMC has addressed the applicable CVEs. 
+
+VULNERABILITY DETAILS
+
+CVEID: CVE-2015-7547 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-7547]
+DESCRIPTION: GNU C Library (glibc) is vulnerable to a stack-based buffer overflow, caused by improper bounds checking by the nss_dns backend for the getaddrinfo() function when performing dual A/AAAA DNS queries. By sending a specially crafted DNS response, a remote attacker could overflow a buffer and execute arbitrary code on the system or cause the application to crash.
+CVSS Base Score: 8.1
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/110662 [https://exchange.xforce.ibmcloud.com/vulnerabilities/110662] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:H/A:H) 
+
+CVEID: CVE-2014-9761 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-9761]
+DESCRIPTION: GNU C Library (glibc) is vulnerable to a stack-based buffer overflow, caused by improper bounds checking by the nan function. By sending an overly long string, a remote attacker could overflow a buffer and execute arbitrary code on the system or cause the application to crash.
+CVSS Base Score: 5.6
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/111085 [https://exchange.xforce.ibmcloud.com/vulnerabilities/111085] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:N/AC:H/PR:N/UI:N/S:U/C:L/I:L/A:L) 
+
+CVEID: CVE-2015-8776 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-8776]
+DESCRIPTION: GNU C Library (glibc) is vulnerable to a denial of service. By passing out-of-range time values to the strftime function, a remote attacker could exploit this vulnerability to cause a segmentation fault or obtain sensitive information.
+CVSS Base Score: 6.5
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/110675 [https://exchange.xforce.ibmcloud.com/vulnerabilities/110675] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:N/A:L) 
+
+CVEID: CVE-2015-8777 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-8777]
+DESCRIPTION: GNU C Library (glibc or libc6) could allow a local attacker to bypass security restrictions, caused by an error in elf/rtld.c. By using a zero value of the LD_POINTER_GUARD environment variable, an attacker could exploit this vulnerability to bypass access restrictions.
+CVSS Base Score: 5.1
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/109775 [https://exchange.xforce.ibmcloud.com/vulnerabilities/109775] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:L/AC:L/PR:N/UI:N/S:U/C:L/I:L/A:N) 
+
+CVEID: CVE-2015-8778 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-8778]
+DESCRIPTION: GNU C Library (glibc) could allow a remote attacker to execute arbitrary code on the system, caused by an integer overflow in hcreate and hcreate_r. An attacker could exploit this vulnerability to trigger an out-of-bound memory access and execute arbitrary code on the system or cause the application to crash.
+CVSS Base Score: 5.6
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/111086 [https://exchange.xforce.ibmcloud.com/vulnerabilities/111086] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:N/AC:H/PR:N/UI:N/S:U/C:L/I:L/A:L) 
+
+CVEID: CVE-2015-8779 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-8779]
+DESCRIPTION: GNU C Library (glibc) is vulnerable to a stack-based buffer overflow, caused by improper bounds checking by the catopen function. By sending an overly long string, a remote attacker could overflow a buffer and execute arbitrary code on the system or cause the application to crash.
+CVSS Base Score: 5.6
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/111087 [https://exchange.xforce.ibmcloud.com/vulnerabilities/111087] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:N/AC:H/PR:N/UI:N/S:U/C:L/I:L/A:L)
+
+AFFECTED PRODUCTS AND VERSIONS
+ 
+
+Power HMC V7.9.0.0
+
+The following versions are affected by only CVE-2015-7547 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-7547]
+Power HMC V8.1.0.0
+Power HMC V8.2.0.0
+Power HMC V8.3.0.0
+Power HMC V8.4.0.0
+
+REMEDIATION/FIXES
+ 
+
+The following fixes are available on IBM Fix Central
+
+
+
+Product VRMF APAR Remediation/Fix Power HMC V7.7.9.0 SP3 MB03898 Apply eFix MH01610 [http://www-933.ibm.com/support/fixcentral/main/selectFixes?parent=powersysmgmntcouncil&product=ibm/hmc/9100HMC&release=V7R7.9.0&platform=All&function=all] Power HMC V8.8.1.0 SP3 MB03933 Apply eFix MH01611 [http://www-933.ibm.com/support/fixcentral/main/selectFixes?parent=powersysmgmntcouncil&product=ibm/hmc/9100HMC&release=V8R8.1.0&platform=All&function=all] Power HMC V8.8.2.0 SP2 MB03739 Apply eFix MH01607 [http://www-933.ibm.com/support/fixcentral/main/selectFixes?parent=powersysmgmntcouncil&product=ibm/hmc/9100HMC&release=V8R8.2.0&platform=All&function=all] Power HMC V8.8.3.0 SP2 MB03979 Apply Service Pack 2 MH01584 [http://www-933.ibm.com/support/fixcentral/main/selectFixes?parent=powersysmgmntcouncil&product=ibm/hmc/9100HMC&release=V8R8.3.0&platform=All&function=all] Power HMC V8.8.4.0 MB04001 Apply eFix MH01615 [http://www-933.ibm.com/support/fixcentral/main/selectFixes?parent=powersysmgmntcouncil&product=ibm/hmc/9100HMC&release=V8R8.4.0&platform=All&function=all] WORKAROUNDS AND MITIGATIONS
+None
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v3 Guide [http://www.first.org/cvss/user-guide] 
+On-line Calculator v3 [http://www.first.org/cvss/calculator/3.0] 
+
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] 
+
+CHANGE HISTORY
+ 13 July 2016: Added CVE-2014-9761, CVE-2015-8776, CVE-2015-8777, CVE-2015-8778, CVE-2015-8779 for V7.7.9 only.
+16 March 2016: Corrected the V8.8.3 PTF and APAR numbers
+15 March 2016: First publish
+
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.

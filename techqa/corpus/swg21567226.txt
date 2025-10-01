@@ -1,0 +1,41 @@
+Title: IBM Use of INSTANCE name for SQL server on Linux or UNIX causes General network error - United States
+
+Text:
+1567226; PM49352; CQ; Instance; SQL Server; UNIX; Linux; General network error; Connection profile TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This technote identifies a "General network error" issue that can occur in IBM Rational ClearQuest when using a Microsoft SQL Server database. 
+
+SYMPTOM
+You are using SQL Server database Named Instance. You have configured Rational ClearQuest to connect with either the Hostname field set to:
+
+
+<SERVER HOST>\<INSTANCE NAME>
+
+Or your Connect Options are set to: 
+
+INSTANCE=<INSTANCE NAME>
+
+
+When connecting, this error occurs: 
+
+
+SQLDriverConnect: RETCODE=-1, State=08001, Native Error=11
+[IBM Rational DataDirect][ODBC SQL Server Driver][libssclient24]General network error. Check your network documentation.
+[IBM Rational DataDirect][ODBC SQL Server Driver][libssclient24]ConnectionOpen (Hostname and server name not provided or found()).
+A network trace reveals that the server host and instance names are separated and re-joined as an invalid hostname. 
+
+
+
+CAUSE
+This was identified as a product defect under APAR PM49352, but determined to be a permanent restriction.
+
+
+
+ENVIRONMENT
+Rational ClearQuest is installed on Linux or UNIX. Database vendor is SQL Server.
+
+
+
+RESOLVING THE PROBLEM
+See technote 1261609 [http://www.ibm.com/support/docview.wss?uid=swg21261609] for a workaround and information about this issue on Linux and UNIX platforms.

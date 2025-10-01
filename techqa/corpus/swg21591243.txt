@@ -1,0 +1,54 @@
+Title: IBM Network Time Protocol (NTP) configuration error during DB2 10.1 instance creation with pureScale feature on SLES11 SP2 - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ During an instance creation on DB2 10.1 with pureScale feature on SLES11 SP2, db2isetup or db2icrt returns with a minor error. A detailed examination of the install log shows an error in the NTP configuration component during instance creation. The instance and other components however are created or configured successfully. 
+
+SYMPTOM
+During an instance creation on DB2 10.1 with pureScale feature on SLES11 SP2, db2isetup or db2icrt returns with a minor error. An examination of the install log reveals: 
+
+ERROR: The Network Time Protocol (NTP) daemon configuration failed on the following hosts: "pq103.torolab.ibm.com". NTP was not found, and, an error occurred during an attempt to configure and start the daemon. See the log file "/tmp/ntpcfg.log.000" on the affected hosts for more details. To ensure that clock-sensitive operations (such as, error-logging, monitoring and point-in-time recovery) run optimally across a distributed environment, the NTP service must be synchronized across all members. Ensure NTP is installed and configured correctly before using DB2 pureScale. For detail, please see Required steps in Post Install Recommendations.
+Register NTP :.......Failure
+
+All other components were installed and configured successfully.
+
+Further analysis of the ntpcfg log file reveals:
+
+:::: VALIDATING PLATFORM ::::
+SuSE Linux detected.
+:::: VALIDATING PORT ENTRY FOR NTP ::::
+ERROR: Port reservation for NTP does not exist in /etc/services.
+
+
+CAUSE
+This is a program defect related to the ntpcfg script packaged with DB2 10.1.0.0 on SLES11 SP2. 
+
+
+
+RESOLVING THE PROBLEM
+To prevent this NTP error from occurring, follow these steps: 
+
+1. Ensure that the DB2 program files are installed in each and every machine for the DB2 pureScale cluster. This can be accomplished via db2setup. Do not configure or create any instances at this time.
+
+2. Go to the DB2 installation's instance subdirectory, where you will find the ntpcfg script file. Make a backup copy of this file using the following command (running as root):
+
+
+ * 
+ * 
+
+
+3. Run the following command to edit the ntpcfg script (assuming the default installation path for DB2 /opt/ibm/db2/V10.1 is used) 
+ * 
+
+
+
+4. Repeat steps 2 and 3 for all machines in the DB2 pureScale cluster. 
+
+5. Execute db2isetup (as found in the instance subdirectory of the DB2 installation path) to create and configure the DB2 pureScale instance. 
+
+If the instance has already been created, the user can either choose to drop the instance and use the work around as above, or can follow the manual steps to set up a NTP server and configure each machine in the DB2 pureScale cluster as NTP clients in the DB2 information center. RELATED INFORMATION
+ Configuring hosts as Network Time Protocol clients [http://publib.boulder.ibm.com/infocenter/db2luw/v10r1/topic/com.ibm.db2.luw.qb.server.doc/doc/t0054921.html]
+Setting up Network Time Protocol [http://publib.boulder.ibm.com/infocenter/db2luw/v10r1/topic/com.ibm.db2.luw.qb.server.doc/doc/c0059821.html]
+Setting up a Network Time Protocol server [http://publib.boulder.ibm.com/infocenter/db2luw/v10r1/topic/com.ibm.db2.luw.qb.server.doc/doc/t0054920.html]

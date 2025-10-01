@@ -1,0 +1,19 @@
+Title: IBM Upgrading WebSphere Application Server Liberty - Express Version 8.5.5 might be blocked if WebSphere SDK Java Technology Edition Version 6.0 for Liberty is installed - United States
+
+Text:
+WASV855RNotes TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ If you install the WebSphere Application Server Liberty - Express Version 8.5.5 offering with the WebSphere SDK Java Technology Edition Version 6.0 for Liberty extension offering and then try to upgrade to WebSphere Application Server Liberty or WebSphere Application Server Liberty Network Deployment, you might be blocked with the following message:
+
+Package IBM WebSphere SDK Java Technology Edition Version 6.0 for Liberty 6.0.5.1 can not be installed in the selected package group. 
+
+RESOLVING THE PROBLEM
+To resolve this issue, perform the following actions: 
+
+ 1. Uninstall WebSphere SDK Java Technology Edition Version 6.0 for Liberty. 
+ 2. Upgrade WebSphere Application Server Liberty - Express. 
+ 3. Reinstall WebSphere SDK Java Technology Edition Version 6.0 for Liberty.
+
+RELATED INFORMATION
+ WebSphere Application Server Version 8.5 release notes [http://www14.software.ibm.com/webapp/wsbroker/redirect?version=phil&product=was-nd-mp&topic=relnotes]

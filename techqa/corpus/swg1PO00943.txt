@@ -1,0 +1,165 @@
+Title: IBM PO00943: SUPPORT FOR PROVIDING ACCESS TO NON-ENCRYPTED PASSWORD IN SECURITYSTRATEGY - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  IBM Curam Universal Access customers who are implementing
+   SecurityStrategy as part of an effort to integrate with
+   external authentication systems may encounter the following
+   scenario.
+   
+   A user attempts a login via the Universal Access Logon Screen
+   but enters an incorrect password. The desired behavior is that
+   the user remains on the logon page and an error is displayed
+   informing the user that their username or password is
+   incorrect. Instead of this there are some circumstances where
+   their session is terminated and they are redirected to a
+   generic logonerror.jsp page. A user half way through entering
+   information will, therefore lose their work.
+   
+   This falls outside of the clients expected UA user experience.
+   
+   To prevent this a customer might consider updating their
+   SecurityStrategy logic to call their external authentication
+   system webservice to authenticate the user rather than just
+   verifying their existence.
+   
+   At present this solution is not possible because the password
+   passed into SecurityStrategy is currently encrypted.
+   
+   In this scenario a customer would require a plain text password
+   be passed.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  A user attempts a login via the Universal Access Logon Screen
+   but enters an incorrect password. The desired behavior is that
+   the user remains on the logon page and an error is displayed
+   informing the user that their username or password is
+   incorrect. Instead of this there are some circumstances where
+   their session is terminated and they are redirected to a
+   generic logonerror.jsp page. A user half way through entering
+   information will, therefore lose their work.
+   To prevent this a customer might consider updating their
+   SecurityStrategy logic to call their external authentication
+   system webservice to authenticate the user rather than just
+   verifying their existence.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This has been addressed in V6.0.4.0 iFix9.
+   Release Note:
+   Two new objects have been added to the transaction scope (via
+   TransactionInfo.setFacadeScopeObject) for login processing.
+   The two objects are:
+       A boolean object with the value "true" and a key of
+   SecurityStrategy.kCuramCWIsLoginPage.
+       A String object with a value of the user provided password
+   and a key of SecurityStrategy.kCuramCWNonEncryptedPassword.
+   A custom implementation of SecurityStrategy can access these
+   object via the TransactionInfo.getInfo().getFacadeScopeObject
+   key.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PO00943
+   
+   
+ * REPORTED COMPONENT NAME
+   CURAM UNIVERSAL
+   
+   
+ * REPORTED COMPONENT ID
+   5725H2614
+   
+   
+ * REPORTED RELEASE
+   604
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-03-07
+   
+   
+ * CLOSED DATE
+   2013-04-04
+   
+   
+ * LAST MODIFIED DATE
+   2013-04-08
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  IS
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R604 PSY
+   UP

@@ -1,0 +1,50 @@
+Title: IBM WebSphere DataPower Type 7199 and  Type 7198 appliances might incorrectly report  hardware failures - United States
+
+Text:
+500limitation xg xi xb hardware sensors components failure fans i TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The IBM WebSphere DataPower Type 7199 and Type 7198 appliances might incorrectly report hardware failures, such as for the fan modules, in the log. These messages do not indicate an actual problem. 
+
+SYMPTOM
+Immediately after a reboot, all hardware sensors might show incorrect values, and you might see errors in the log similar to the following messages: 
+
+June 29 08:24:08 [system][critic] trans(991): Internal cooling fan has stopped.
+June 29 08:24:13 [system][critic] trans(991): Chassis cooling fan 'Tray 1 Fan 1' operating too slowly
+June 29 08:24:13 [system][critic] trans(991): Chassis cooling fan 'Tray 2 Fan 1' operating too slowly
+June 29 08:24:13 [system][critic] trans(991): Internal cooling fan has stopped.
+June 29 08:24:13 [system][critic] trans(991): Internal cooling fan has stopped.
+June 29 08:24:13 [system][critic] trans(991): Chassis cooling fan 'Tray 3 Fan 1' operating too slowly
+June 29 08:24:13 [system][critic] trans(991): Internal cooling fan has stopped.
+June 29 08:24:14 [ipmi][debug] trans(783): IPMI sensor polling pass starting
+June 29 08:24:14 [ipmi][info] trans(783): IPMI Get Sensor Reading Response sensor not present completion code 0xCB for sensor number 19
+June 29 08:24:14 [ipmi][info] trans(783): IPMI Get Sensor Reading Response sensor not present completion code 0xCB for sensor number 23
+.
+.
+.
+June 29 08:24:14 [ipmi][debug] trans(783): IPMI sensor polling pass finished
+June 29 08:24:19 [ipmi][info] trans(927): BMC SEL polling cycle starting
+June 29 08:24:19 [ipmi][debug] trans(927): BMC SEL: No records to read, done
+June 29 08:24:19 [system][critic] trans(991): Chassis cooling fan 'Tray 1 Fan 1' operating too slowly
+June 29 08:24:19 [system][critic] trans(991): Internal cooling fan has stopped.
+
+
+ENVIRONMENT
+This issue might occur on machine Type 7198 and Type 7199 appliances.
+
+
+DIAGNOSING THE PROBLEM
+You enter the test hardware command and the hardware sensors show failures for all hardware components. This is a known issue. The problem does not affect the operation of the appliance.
+
+
+
+RESOLVING THE PROBLEM
+This issue was reported as APAR IC89622: MT 7198/7199: SENSORS MIGHT BE INCORRECT AFTER RESTART. The fix is available in firmware versions 5.0.0.9 and 6.0.0.0. 
+
+
+To temporarily resolve this issue, power off the appliance and power it back on. 
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration WebSphere DataPower Integration Appliance XI52 5.0.0 Business Integration WebSphere DataPower B2B Appliance XB62 5.0.0

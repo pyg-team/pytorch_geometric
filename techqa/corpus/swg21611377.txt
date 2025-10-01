@@ -1,0 +1,52 @@
+Title: IBM Support's Guides for Netcool/OMNIbus Integrations : online documentation - United States
+
+Text:
+support's; supports guide; example; examples; worked examples; integrations; netcool; omnibus TECHNOTE (FAQ)
+
+QUESTION
+ Support Guides : Which Support Guides are available? 
+
+CAUSE
+Users find it useful to have a list of all available guides
+
+ANSWER
+A list of the available Support Guides is given in the links below. 
+
+The Support Guides documentation is mostly a collection of technical documentation that supplements the main user reference guides for specific integrations. 
+
+Within these guides there are worked examples for at least one UNIX platform, and recommended configurations. 
+
+The rest of the documentation provides examples of specific tasks, such as event replication and the controlled re-synchronisation of events. 
+
+NOTE: You can use the search text "Support's Guide [product]" to see if anything is available if you find you need to get to the link outside of this FAQ. 
+
+For example, "Support's Guide" will list all of the guides when entered into the Netcool/OMNIbus search portal.
+
+RELATED INFORMATION
+ Support's Guide to the JDBC Gateway [http://www-01.ibm.com/support/docview.wss?uid=swg21608681]
+Support's Guide to the ODBC Gateway [http://www-01.ibm.com/support/docview.wss?uid=swg21607700]
+Support's Guide to the Oracle Gateway [http://www-01.ibm.com/support/docview.wss?uid=swg21588025]
+Support's Guide to Historical Reporting gateways [http://www-01.ibm.com/support/docview.wss?uid=swg21637022]
+Support's Guide to the SNMP Gateway [http://www-01.ibm.com/support/docview.wss?uid=swg21622160]
+Support's Guide to the Message Bus Integration [http://www-01.ibm.com/support/docview.wss?uid=swg21622274]
+Support's Guide to production triggers [http://www-01.ibm.com/support/docview.wss?uid=swg21615136]
+Support's Guide to sub-second triggers [http://www-01.ibm.com/support/docview.wss?uid=swg21591539]
+Support's Guide to Probe Event Replication [http://www-01.ibm.com/support/docview.wss?uid=swg21607694]
+Support's Guide to the SNMP [MTTrapd] probe [http://www-01.ibm.com/support/docview.wss?uid=swg21607690]
+Support's Guide to the Nortel IEMS Probe [http://www-01.ibm.com/support/docview.wss?uid=swg21607701]
+Support's Guide to the Multi-Headed NT Log File Probe [http://www-01.ibm.com/support/docview.wss?uid=swg21607710]
+Support's guide to the ODBC Probe [http://www-01.ibm.com/support/docview.wss?uid=swg21607732]
+Support's guide to the Tivoli EIF Probe [http://www-01.ibm.com/support/docview.wss?uid=swg21622152]
+Support's guide to the SCOM 2007 R1 Probe on Windows [http://www-01.ibm.com/support/docview.wss?uid=swg21618671]
+Support's Guide to the Alcatel 5620 SAM Probe [http://www-01.ibm.com/support/docview.wss?uid=swg21614211]
+Support's Guide to IBM CORBA probes [http://www-01.ibm.com/support/docview.wss?uid=swg21614208]
+Support's Guide to Sub-second Events in a Multitier Env [http://www-01.ibm.com/support/docview.wss?uid=swg21967283]
+Support's Guide to the EIF MUX [http://www-01.ibm.com/support/docview.wss?uid=swg21957943]
+Support's Guide to the Ping Probe [http://www-01.ibm.com/support/docview.wss?uid=swg21682130]
+Support's Guide to Q3 Probes [http://www-01.ibm.com/support/docview.wss?uid=swg21697361]
+Support's guide to Netcool/OMNIbus performance tuning [http://www-01.ibm.com/support/docview.wss?uid=swg21978376]
+Support's Guide to the Tivoli EIF Gateway [http://www-01.ibm.com/support/docview.wss?uid=swg21994650]
+Netcool Support's Guide to Object Server Backup and Rec [http://www-01.ibm.com/support/docview.wss?uid=swg22002788]
+Support's Guide to rules file processing [http://www-01.ibm.com/support/docview.wss?uid=swg21903536]
+Support's Guide to the SOCKET Probe and Gateway [http://www-01.ibm.com/support/docview.wss?uid=swg21971139]
+Support's Guide to the Syslog probe [http://www-01.ibm.com/support/docview.wss?uid=swg21987143]

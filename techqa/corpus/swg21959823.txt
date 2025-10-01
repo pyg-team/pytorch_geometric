@@ -1,0 +1,67 @@
+Title: IBM Check SSL/TLS communication status in Tivoli Storage Manager - United States
+
+Text:
+TSM SSL TLS12 ANR8592I ANR0406I TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ How to check if the communication between Client and Server is SSL/TLS protected? 
+
+SYMPTOM
+When SSL/TLS is configured correctly in the Tivoli Storage Manager Client / Server there is no 
+
+immediate message that would confirm that the SSL/TLS protocol is used for communication.
+
+
+RESOLVING THE PROBLEM
+There are several ways to check if the communication between Client and Server is SSL/TLS protected: 
+
+1. Check the activity log on the Tivoli Storage Manager Server and look for message ANR8592I and ANR0406I. The messages indicate the protocol and the cypher being used for the connection. 
+
+For example, in a Tivoli Storage Manager environment set up for communication via TLS12, the following messages are issued in the activity log after a successful Tivoli Storage Manager client connection: 
+
+ANR8592I Session 8 connection is using SSL version TLSV12, cipher specification AES-256 certificate serial number 3c:63:60:96:cf:a2:23:19. 
+ANR0406I Session 8 started for node RH64TSM71 (Linux x86-64) (SSL 10.0.2.15(36290)).
+
+The message ANR8592I states the used protocol SSL/TLS12 with Cypher AES-256 and the message ANR0406I confirms that a session using the SSL protocol has been started successfully.
+
+2. Running a "query session" on Client side.
+For example here we have a TLS12 secured communication:
+[root@rh64tsm71 bin]# dsmc q session
+...
+TSM Server Connection Information
+
+Home Server Name........: RH64TSM71
+Server Type.............: Linux/x86_64
+Archive Retain Protect..: "No"
+Server Version..........: Ver. 7, Rel. 1, Lev. 1.0
+Last Access Date........: 06/12/2015 09:50:59
+Delete Backup Files.....: "No"
+Delete Archive Files....: "Yes"
+Deduplication...........: "Server Only"
+Node Name...............: RH64TSM71
+User Name...............: root
+SSL Information.........: TLSv1.2 AES-256
+
+Secondary Server Information
+Not configured for failover
+
+3. Running a "query session f=d" command on the Tivoli Storage Manager Server.
+
+For example here a sesison SSL protected on the TivolI Storage Manager Server:
+tsm: RH64TSM71>q session f=d
+
+Sess Number: 74
+Comm. Method: SSL
+Sess State: Run
+Wait Time: 0 S 
+Bytes Sent: 466
+Bytes Recvd: 266
+Sess Type: Admin
+Platform: Linux x86-64
+Client Name: ADMIN
+Media Access Status: 
+User Name: 
+Date/Time First Data Sent: 
+Proxy By Storage Agent: 
+Actions: 
+Failover Mode: No

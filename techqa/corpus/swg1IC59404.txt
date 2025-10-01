@@ -1,0 +1,248 @@
+Title: IBM IC59404: DOCUMENT MIGRATION PROCEDURES FOR WEBSPHERE MQ VERSION 5.3 TO 6.0 WHEN USING JMS APPLICATIONS USE THE TARGETCLIENT PROPERTY - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Problems were discovered with an application running inside of
+   WebSphere Application Server Version 6.0.2 after migrating from
+   WMQ 5.3 to 6.0 when using the TARGETCLIENT property. Trace
+   showed that the queue name in the JMSReplyTo field had:
+   
+   ?targetClient=1
+   
+   added to the end of the string.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Customer changed code to set TargetClientMatching = NO.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   This issue affects all users running Java Message Service (JMS)
+   applications who migrate from WebSphere MQ Version 5.3 to
+   Version 6.0.
+   
+   Platforms affected:
+   All Distributed (iSeries, all Unix and Windows) +Java
+   ****************************************************************
+   PROBLEM SUMMARY:
+   The WebSphere MQ Version 6 Migration Information manual did not
+   document the fact that the JMSReplyTo field had changed to be a
+   string in a Uniform Resource Identifier (URI) format.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The following section needs to be added to the "Additional
+   Migration Information" chapter of the WebSphere MQ Version
+   6 "Migration Information" manual:
+   
+   JMSReplyTo format
+   -----------------
+   This section gives information in relation the format of the
+   JMSReplyTo field.
+   
+   In WebSphere MQ Version 6, the JMSReplyTo field in message
+   headers has changed to be a Uniform Resource Identifier (URI),
+   in the form:
+   
+      queue://<qmgrName>/<queueName>?[name-value pairs]
+   
+   where:
+   
+    - qmgrName is the name of the queue manager on which the queue
+      resides.
+    - queueName is the name of the queue.
+    - [name-value pairs] is an optional list of name-value pairs
+      that specifies JMS properties for the queue.  If no
+      additional properties are required (i.e. the list of
+      name-value pairs is empty), then the ? is omitted from the
+      URI.
+   
+   More information about the format of the URI used by the
+   JMSReplyTo field, and details of the name-value pairs that can
+   be used, can be found in the "Sending a message" section of the
+   "Writing WebSphere MQ JMS applications" chapter in the
+   WebSphere MQ "Using Java" manual
+   (http://publib.boulder.ibm.com/infocenter/wmqv6/v6r0/index.jsp?
+   topic=/com.ibm.mq.csqzaw.doc/uj24420_.htm)
+   
+   This change has implications when messages for JMS applications
+   are sent to Queue destinations from non-JMS clients.
+   
+   When the JMS application picks up the message, the JMSReplyTo
+   field will, by default, look like this:
+   
+     queue://<qmgrName>/<queueName>?targetClient=1
+   
+   The ?targetClient=1 value tells the WebSphere MQ classes for
+   JMS not to include an RFH2 header in any reply, as they are
+   being sent to a non-JMS application.
+   
+   To prevent the ?targetClient=1 value from appearing at the end
+   of the JMSReplyTo  field, the connection factory object used by
+   the JMS application should have the TARGCLIENTMATCHING property
+   set to NO.
+   
+   
+   In addition, the "Mapping JMS messages onto WebSphere MQ
+   messages" section of the "Using Java" manual also needs to be
+   updated to include the following information:
+   
+   Mapping JMS messages onto WebSphere MQ messages
+   -----------------------------------------------
+   :   :   :   :   :   :   :   :   :   :   :   :   :   :   :   :
+   WebSphere MQ messages are composed of three components:
+   
+     - The WebSphere MQ Message Descriptor (MQMD)
+     - A WebSphere MQ MQRFH2 header
+     - The message body
+   
+   The MQRFH2 is optional, and its inclusion in an outgoing
+   message is governed by the TARGCLIENT property for the JMS
+   Destination that the message is being sent to. This property
+   has two possible values:
+   
+     - JMS
+       The message is being sent to is a JMS application, so an
+       MQRFH2 header will be included.
+     - MQ
+       The outgoing message is being sent to a non-JMS WebSphere
+       MQ application, so the MQRFH2 will not be included.
+   
+   Because the MQRFH2 carries JMS-specific information, always
+   include it in the outgoing message when the sender knows that
+   the receiving destination is also a JMS application.  Normally,
+   omit the MQRFH2 when sending a message directly to a non-JMS
+   application.  This is because such an application does not
+   expect an MQRFH2 in its WebSphere MQ message.
+   
+   If an incoming message does not have an MQRFH2 header, the
+   JMSReplyTo header field of the message will look like this:
+   
+     queue://<qmgrName>/<queueName>?targetClient=1
+   
+   and the Queue or Topic object derived from this field will have
+   the TARGCLIENT property set to MQ, so that a reply message sent
+   to the queue or topic also does not have an MQRFH2 header.
+   
+   It is also possible to switch off the behaviour of
+   automatically including an MQRFH2 header in a reply message if
+   the original message has an MQRFH2 header.  To do this, the
+   TARGCLIENTMATCHING property of the connection factory used by
+   the sending application should be set to the value NO.
+   
+   Setting TARGCLIENTMATCHING to NO also has an effect on the
+   JMSReplyTo field of an incoming message. If the application
+   receiving the message is using a connection factory that has
+   the TARGCLIENTMATCHING property set to NO, the JMSReplyTo field
+   will look like this:
+   
+     queue://<qmgrName>/<queueName>
+   
+   Figure 2 shows how the structure of a JMS message is
+   transformed to a WebSphere MQ message and back again.
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+   The latest available maintenance can be obtained from
+   'Websphere MQ Recommended Fixes'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037]
+   
+   If the maintenance level is not yet available, information on
+   its planned availability can be found in 'Websphere MQ
+   Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC59404
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ WINDOWS V6
+   
+   
+ * REPORTED COMPONENT ID
+   5724H7200
+   
+   
+ * REPORTED RELEASE
+   600
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-01-08
+   
+   
+ * CLOSED DATE
+   2009-02-27
+   
+   
+ * LAST MODIFIED DATE
+   2009-02-27
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

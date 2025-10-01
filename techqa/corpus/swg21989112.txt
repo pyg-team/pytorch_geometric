@@ -1,0 +1,32 @@
+Title: IBM How to troubleshoot when action status of client is "Not Reported" but the last report time is the latest on console? - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Why the action status is always "Not Reported" though the last report time is the latest on console? 
+
+SYMPTOM
+When running an action for a computer, I found the action status remains "Not Reported" but the last report time of the client is the latest on console.
+In this situation, why the action status remains "Not Reported"?
+
+
+CAUSE
+This problem may be caused by console cache is outdated or FillDB is overloaded.
+
+RESOLVING THE PROBLEM
+1) Check if there is such sentence in the besclient log(BESClient installation folder\__BESData\__Global\Logs): 
+
+GatherHashMV command received
+If no, then UDP may be blocked in client side so that it couldn't receive the UDP notification from server. 
+
+2) If UDP is not blocked, please run this sql command to see if the action status has been sent to database:
+select * from BFEnterprise.dbo.fixletresults where id =<the problematic action id> and computerid=<the problematic client computer id>
+3) If the action status has been written to database, then something may be wrong with console. You will need to clear console cache. Please click on "File"->"Preferences" and click on "clear cache", then re-open console to see if the action status will change.
+4) If the action status is not written to database, then please check if FillDB is overloaded by inputting the link http://127.0.0.1:52311/relaydiagnostics<⁄font> in the web browser of its higher level relays and bigfix server. If the FillDB File Size Limit and FillDB File Count Limit under "Relay Status Information" are over 100%, then the additional client reports will be discarded. 
+
+[/support/docview.wss?uid=swg21989112&aid=1] [/support/docview.wss?uid=swg21989112&aid=1]
+
+RELATED INFORMATION
+ How to Troubleshoot if FillDB is overloaded [http://www-01.ibm.com/support/docview.wss?uid=swg21595524]
+Why do my BigFix clients report " " for ev [http://www-01.ibm.com/support/docview.wss?uid=swg21505835]

@@ -1,0 +1,130 @@
+Title: IBM Recommended fixes for WebSphere Process Server and WebSphere Enterprise Service Bus Version 6.1.2 - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This document details the download and installation instructions of critical fixes for WebSphere® Process Server, version 6.1.2 and WebSphere Enterprise Service Bus, version 6.1.2. 
+
+RESOLVING THE PROBLEM
+
+You must install critical fixes on your system after you perform either of the following: 
+
+ * A full installation of WebSphere Process Server, version 6.1.2 
+ * A full installation of WebSphere Enterprise Service Bus, version 6.1.2
+
+
+This technote includes instructions on how to install these critical fixes and links for downloading the critical fix .zip files. 
+INSTALLING THE CRITICAL FIXES FOR VERSION 6.1
+ 
+
+ 1. Back up the configuration files.
+    
+    
+ 2. Stop all Java™ processes that are running in the IBM Java 2 Runtime, which is included in the WebSphere Enterprise Service Bus or WebSphere Process Server product. 
+    
+    Stop all WebSphere Enterprise Service Bus or WebSphere Process Server processes on the server onto which you plan to install the critical fixes. This includes the node agent process, the deployment manager process, and all server processes that belong to serviceable products, such as the IBM HTTP Server. 
+    
+    Note: If you install the critical fixes for version 6.1 while a WebSphere Enterprise Service Bus or WebSphere Process Server related process is running, then the installed product might not continue to run successfully.
+    
+    
+ 3. Install the IBM Update Installer for WebSphere Software 6.1.0.17, which is included on the WebSphere Process Server or WebSphere Enterprise Service Bus CD1, DVD, or electronic software delivery (ESD) image. 
+    
+    You can install the Update Installer from the launchpad or by running the install command from the UpdateInstaller directory on the installation media. The Update Installer can be installed anywhere on your system; remember where you installed it for the remaining installation steps.
+    
+    
+ 4. Download the appropriate critical fixes for version 6.1.2 to a temporary location on your system. 
+    
+    
+ 5. Extract the package to the following directory:
+    
+    
+    <update_install_root>/maintenance
+    
+    
+    For example, for Linux systems, if the Update Installer installation location is the default ( /opt/IBM/WebSphere/UpdateInstaller) and you saved the WebSphere Process Server downloaded file to /tmp, use the following commands to extract the package: 
+    
+    
+    cd /opt/IBM/WebSphere/UpdateInstaller/maintenance
+    unzip /tmp/6.1.2-WS-WPS-CritFixes.zip
+    
+    
+ 6. If the unzip command is unavailable, you can substitute the command jar -xvf, using the JAR binary file that is located in the Java 2 software development kit (SDK) installation, which is supplied with WebSphere Enterprise Service Bus or WebSphere Process Server.
+    
+    Note: After you extract the downloaded .zip file, you might need to delete it to free up space.
+    
+    
+ 7. Install the critical fixes using the Update Installer with graphical user interface or the Update Installer in silent mode. For the i5/OS system, use the Update Installer in silent mode)
+
+
+USING THE UPDATE INSTALLER
+
+To use the Update Installer, follow these steps: 
+
+ 1. Change directories to <update_install_root> and run the update binary file to start the Update Installer.
+    
+    
+ 2. On the Product Selection screen, enter the installation location of the WebSphere Process Server or WebSphere Enterprise Service Bus installation that you are updating and click Next. 
+    
+    
+ 3. On the Maintenance Operation Selection screen, choose to "install maintenance package" and click Next. 
+    
+    
+ 4. On the Maintenance Package Directory Selection screen, keep the default location (<update_install_root>/maintenance) and click Next. 
+    
+    
+ 5. On the Available Maintenance Package to Install screen, all of the fixes should be selected for installation. Click Next. 
+    
+    
+ 6. On the Installation Summary screen, click Next to begin the installation of the critical fixes.
+
+
+The following list of fixes are being installed:  * 6.1.2.0-WS-WBI-IFJR29592.pak 
+ * 6.1.2.0-WS-WBI-IFJR29597.pak 
+ * 6.1.2.0-WS-WBI-IFJR29599.pak 
+   
+
+USING THE UPDATE INSTALLER IN SILENT MODE
+
+To perform a silent installation, follow these steps: 
+
+ 1. Change to the following directory:
+    
+    
+    <update_install_root>
+    
+    
+ 2. Run the following command:
+    
+    
+    update -W maintenance.package="<update_install_root>/maintenance" -W product.location="<install_root>" -silent
+    
+    
+    Where:
+    <update_install_root> is where the Update Installer is installed
+    <install_root> is the location of the WebSphere Process Server or WebSphere Enterprise Service Bus installation
+    
+    
+    Refer to the following files for detailed information about using the update command:
+    
+    
+    <update_install_root>/docs/readme_updateinstaller.html
+    <update_install_root>/docs/readme_updateinstaller.pdf 
+    
+    
+    
+    
+
+DOWNLOAD PACKAGES
+
+
+
+Download Release 
+Date Language Size (Bytes) Download Options Critical Fixes for WebSphere Process Server and WebSphere Enterprise Service Bus 6.1.2 12/21/2007 US English 25822 FTP [ftp://public.dhe.ibm.com/software/websphere/cw/process_server/FP/612/install_zips/6.1.2-WS-WPS-CritFixes.zip] 
+Back to top
+
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration WebSphere Enterprise Service Bus 6.1.2

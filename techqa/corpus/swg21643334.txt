@@ -1,0 +1,71 @@
+Title: IBM Spectrum Protect for Workstations V7.1.X Hardware and Software Requirements - United States
+
+Text:
+CDP; FastBack for Workstations; FastBack; Tivoli Storage Manager TECHNOTE (FAQ)
+
+QUESTION
+ What are the hardware and software requirements for IBM Spectrum Protect for Workstations V7.1.X? 
+
+ANSWER
+Tip: Beginning with Version 7.1.3, Tivoli Storage Manager FastBack for Workstations is now IBM Spectrum Protect for Workstations. Some applications such as the software fulfillment systems and IBM License Metric Tool use the new product name. However, the software and its product documentation continue to use the Tivoli Storage Manager product name. To learn more about the rebranding transition, see http://www.ibm.com/support/docview.wss?uid=swg21963634. [http://www.ibm.com/support/docview.wss?uid=swg21963634] 
+
+Hardware, Software, and Browser Support 
+
+
+Client: Desktop and laptop systems only 
+
+ * 
+ * Hardware requirements
+ * 
+ * 
+ *  
+ * 
+ * 
+ *  CPU: Clock speed 1.66 GHz or higher RAM capacity: 1 GB or greater Free disk space total of the following amounts:  * 250 MB 
+    * User configured amount of additional space for local file repository
+   
+   
+ * Software requirements
+ * 
+ * 
+ * 
+ *  Microsoft Windows 7 Starter Edition (x86-32) Microsoft Windows 7 Home Premium (x86-32, x86-64) Microsoft Windows 7 Professional (x86-32, x86-64) Microsoft Windows 7 Ultimate (x86-32, x86-64) Microsoft Windows 7 Ultimate with USGCB (x86-32, x86-64) Microsoft Windows 7 Enterprise (x86-32, x86-64) Microsoft Windows 8 (x86-32, x86-64) Microsoft Windows Server 2008 R2 SP1 (x64) Microsoft Windows Server 2012 (x64) 
+ * 
+ * 
+ *  Microsoft Windows 8.1 Microsoft Windows Server 2012 R2 (x64) 
+ * 
+ *  Microsoft Windows 10 (Secure Boot not supported) 
+ * 
+ * Supported browsers
+ * 
+ * 
+ * Version 7.1.1:  *  Microsoft Internet Explorer V9, V10, V11 Mozilla Firefox V29, V30, V31 Google Chrome V34, V35, V36 
+   
+   Version 7.1.2:  *  Microsoft Internet Explorer V9, V10, V11 Mozilla Firefox V32 - V36 Google Chrome V37 - V41 
+   
+   
+
+
+Central Administration Console  * Hardware requirements
+ * 
+ * 
+ * 
+ *  CPU: Dual core CPU with a clock speed of 3 GHz or higher RAM: 8 GB capacity or greater Free disk space total of the following amounts:  * 50 GB on the installation drive 
+    * 2 GB of temporary space during the installation on the system drive
+   
+   
+ * Software requirements
+ * 
+ * 
+ * 
+ *  Microsoft Windows Server 2008 Standard, SP1 (x86 32 & 64 bit) Microsoft Windows Server 2008 Enterprise, SP1 (x86 32 & 64 bit) Microsoft Windows Server 2008 Standard R2 (x86-64) Microsoft Windows Server 2008 Enterprise R2 (x86-64) 
+ * 
+ * 
+ *  Microsoft Windows Server 2012 (x86-x64) Microsoft Windows Server 2012 R2 (x64) 
+ * 
+ * Supported browsers
+ * 
+ * 
+ * Version 7.1.1:  *  Microsoft Internet Explorer V9, V10, V11 Mozilla Firefox V29, V30, V31, 24 ERS 
+   
+   Version 7.1.2:  *  Microsoft Internet Explorer V9, V10, V11 Mozilla Firefox V34, V35, V36, V31 ERS

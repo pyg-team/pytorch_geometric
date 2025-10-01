@@ -1,0 +1,274 @@
+Title: IBM PK37506: JNIREADER THREADS HANG WHEN READ FAILS DUE TO NETWORK PROBLEMS - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Java SDK 1.5 SR8 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24020073]
+Java SDK 1.5 SR8 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24021203]
+Java SDK 1.5 SR10 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24024201]
+6.1.0.31: Java SDK 1.5 SR11 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24026453]
+6.1.0.33: Java SDK 1.5 SR12 FP1 Cumulative Fix for WebSphere [http://www-01.ibm.com/support/docview.wss?uid=swg24027786]
+6.1.0.29: Java SDK 1.5 SR11 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24025191]
+6.1.0.35: Java SDK 1.5 SR12 FP2 Cumulative Fix for WebSphere [http://www-01.ibm.com/support/docview.wss?uid=swg24028574]
+6.1.0.37: Java SDK 1.5 SR12 FP3 Cumulative Fix for WebSphere [http://www-01.ibm.com/support/docview.wss?uid=swg24029525]
+6.1.0.39: Java SDK 1.5 SR12 FP4 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24030426]
+6.1.0.41: Java SDK 1.5 SR12 FP5 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24031035]
+6.1.0.43: Java SDK 1.5 SR13 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24031963]
+6.1.0.45: Java SDK 1.5 SR14 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24033270]
+6.1.0.47: WebSphere Application Server V6.1 Fix Pack 47 [http://www-01.ibm.com/support/docview.wss?uid=swg24035508]
+6.1.0.47: Java SDK 1.5 SR16 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24035649]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Network connection outages may cause JNIReader threads to hang.
+   
+     ESR: ORB threads hanging at
+     java.net.SocketOutputStream.socketWrite0
+     (Native Method).
+     "ORB.thread.pool : 2" (TID:0x30582A00,
+     sys_thread_t:0x7D6EA2A8, state:R, native ID:0x4DE5) prio=5
+         at java.net.SocketOutputStream.socketWrite0(Native Method)
+         at
+     java.net.SocketOutputStream.socketWrite(SocketOutputStream.jav
+     a (Compiled Code))
+         at
+     java.net.SocketOutputStream.write(SocketOutputStream.java
+     (Compiled Code))
+         at com.ibm.rmi.util.buffer.SequentialByteBuffer.flushTo
+     (SequentialByteBuffer.java(Compiled Code))
+         at
+     com.ibm.rmi.iiop.IIOPOutputStream.writeTo(IIOPOutputStream.jav
+     a (Compiled Code))
+        at
+     com.ibm.rmi.iiop.Connection.sendReply(Connection.java(Compiled
+     Code))
+         at
+     com.ibm.rmi.iiop.Connection.doWork(Connection.java(Compiled
+     Code))
+         at
+     com.ibm.rmi.iiop.WorkUnitImpl.doWork(WorkUnitImpl.java(Compile
+     d
+     Code))
+         at
+     com.ibm.ejs.oa.pool.PooledThread.run(ThreadPool.java(Compiled
+     Code))
+         at
+     com.ibm.ws.util.ThreadPool$Worker.run(ThreadPool.java(Compiled
+     Code))
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  recycle server
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: IBM Websphere Application Server version 6   *
+   *                 (appservers, nodeagents, dmgrs) users using  *
+   *                 JNIReaders                                   *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: JNIReader threads hang when read        *
+   *                      fails due to network problems           *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   Since a JNIReader thread handles up to 1024 different
+   connections, when the read for a particular connection becomes
+   hung (due to a network issue or abrupt non-programmtic
+   disconnect from the client) the whole JNIReader becomes hung
+   for all the other connections it was servicing
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Added 2 new properties which allow the setting of a read
+   timeout and also to allow keepalive setting on the server
+   socket to clean up connections which become orphaned under
+   these conditions.
+   
+   
+   
+   The following 2 new ORB properties have been added, the
+   default settings of which will ensure original behavior:
+   
+   com.ibm.CORBA.JNIReadTimeout (set in milliseconds, default is 0)
+   
+   
+   com.ibm.CORBA.EnableServerKeepAlive (true or false, default
+   false)
+   
+   When the JNIReadTimeout is set to a positive number, the
+   JNIReader thread for each connection will set to a read timeout
+   to that value, causing a timeout to occur should there be a
+   break in the connection during the read and all data is not
+   read before the timeout period.
+   
+   When EnableServerKeepAlive is set to "true", and a client
+   disconnects from the server by powering off or when network
+   issues arise such that the server is unable to detect that the
+   client connetion has been broken, the server will be able to
+   clean up the "orphaned" connections via the tcp keepalive OS
+   setting, and thus connections will not build up continually on
+   the server between recycles.
+   
+   
+   
+   This apar is targeted for fixpacks 6.0.2.19 and 6.1.0.9.
+   Please see the following for Recommended fixes for Websphere
+   Application Server:
+   http://www-1.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www-1.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK37506
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBS APP SERV N
+   
+   
+ * REPORTED COMPONENT ID
+   5724H8800
+   
+   
+ * REPORTED RELEASE
+   60A
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2007-01-16
+   
+   
+ * CLOSED DATE
+   2007-03-30
+   
+   
+ * LAST MODIFIED DATE
+   2007-03-30
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  ORB
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBS APP SERV N
+   
+   
+ * FIXED COMPONENT ID
+   5724H8800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R60A PSY
+   UP
+   
+   
+ * R60H PSY
+   UP
+   
+   
+ * R60I PSY
+   UP
+   
+   
+ * R60P PSY
+   UP
+   
+   
+ * R60S PSY
+   UP
+   
+   
+ * R60W PSY
+   UP
+   
+   
+ * R61A PSY
+   UP
+   
+   
+ * R61H PSY
+   UP
+   
+   
+ * R61I PSY
+   UP
+   
+   
+ * R61P PSY
+   UP
+   
+   
+ * R61S PSY
+   UP
+   
+   
+ * R61W PSY
+   UP
+   
+   
+ * R61Z PSY
+   UP

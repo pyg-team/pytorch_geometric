@@ -1,0 +1,131 @@
+Title: IBM PM88840: WPLC-REMOVE-RES-ENV-CUSTOM-PROPERTY TASK MAY CAUSE MIGRATION TO FAIL - United States
+
+Text:
+  A FIX IS AVAILABLE
+Fixes integrated in WebSphere Portal 8.0.0.1 Combined Cumulative Fixes [http://www-01.ibm.com/support/docview.wss?uid=swg24034497]
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  During a migration from 61x to 8001, an attempt to remove
+   existing resource environment properties may fail during the
+   'wplc-remove-res-env-custom-property' target.
+   
+   The following errors may be seen in the logs.
+   [wplc-remove-res-env-custom-property] No Resource Environment
+   Provider with name: WCM_WCMConfigService exists.
+   
+   [wplc-remove-res-env-custom-property] No Resource Environment
+   Provider with name: WP SearchConfigService exists.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  During a migration from 61x to 8001, an attempt to remove
+   existing resource environment properties may fail during the
+   'wplc-remove-res-env-custom-property' target.
+   
+   The following errors may be seen in the logs.
+   [wplc-remove-res-env-custom-property] No Resource Environment
+   Provider with name: WCM_WCMConfigService exists.
+   
+   [wplc-remove-res-env-custom-property] No Resource Environment
+   Provider with name: WP SearchConfigService exists.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The migration tasks was updated to ensure the resources are
+   being removed correctly when applicable.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM88840
+   
+   
+ * REPORTED COMPONENT NAME
+   LOTUS WEB CONT
+   
+   
+ * REPORTED COMPONENT ID
+   5724I2900
+   
+   
+ * REPORTED RELEASE
+   800
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-05-12
+   
+   
+ * CLOSED DATE
+   2013-06-04
+   
+   
+ * LAST MODIFIED DATE
+   2013-06-04
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   LOTUS WEB CONT
+   
+   
+ * FIXED COMPONENT ID
+   5724I2900
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R800 PSY
+   UP

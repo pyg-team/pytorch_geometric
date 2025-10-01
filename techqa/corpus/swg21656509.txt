@@ -1,0 +1,52 @@
+Title: IBM TransformServiceConfigurationException causes stylesheet compilation to fail in IBM Business Process Manager (BPM) Advanced - United States
+
+Text:
+mediation; stack overflow; TransformServiceConfigurationException; XML map TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Server execution halts with an error caused by an XML map while executing a mediation module on a WebSphere Process Server or a WebSphere Enterprise Service Bus. 
+
+SYMPTOM
+During execution of a mediation module the program halts and the following error is found in the FFDC files of the server profile: 
+
+[10/7/13 18:16:29:382 EDT] FFDC Exception:java.security.PrivilegedActionException 
+SourceId:com.ibm.ws.sibx.mediation.primitives.xslt.CachingTemplateFactory ProbeId:146
+java.security.PrivilegedActionException:
+com.ibm.wbiserver.transform.exceptions.TransformServiceConfigurationException: An error occurred while attempting to obtain a transformer 
+at java.security.AccessController.doPrivileged(AccessController.java:331) 
+at com.ibm.ws.sibx.mediation.primitives.xslt.CachingTemplateFactory.requestTransformer(CachingTemplateFactory.java:133) 
+at com.ibm.ws.sibx.mediation.primitives.xslt.XSLTMediation.obtainTransformer(XSLTMediation.java:1506)at com.ibm.ws.sibx.mediation.primitives.xslt.XSLTMediation.init(XSLTMediation.java:654) 
+... 
+Caused by:
+com.ibm.wbiserver.transform.exceptions.TransformServiceConfigurationException: An error occurred while attempting to obtain a transformer 
+... 
+
+
+CAUSE
+An error was thrown because the stylesheet could not compile successfully when the project was deployed. The compilation can fail when the XML map or the customer data structures (XSD and WSDL files) are too complex. 
+
+
+A log message is generated and an exception occurs while deploying the mediation:
+Caused by: com.ibm.wbiserver.transform.exceptions.TransformServiceConfigurationException: Failed to compile stylesheet: xsltcl:/xslt/ResponseMapping_res_1.xsl
+
+This is caused by the deploy error:
+[10/22/13 22:25:00:907 PDT] 000124a7 Optimizer E com.ibm.xltxe.rnm1.xylem.Optimizer optimizeFunction IXJXE0678E: [ERR 0614] The processor has encountered an internal error condition. Please report the problem and provide the following information: Stack Overflow caught optimizing 
+com.ibm.compiledxsl.E3C5A56901414000E0000E94096F651F$main_xci 
+
+
+DIAGNOSING THE PROBLEM
+When the symptom is observed in the log file at run time, look for the error message that caused the problem in the log at the time the project was deployed.
+
+
+
+RESOLVING THE PROBLEM
+To resolve this issue you will have to give the thread running the XSLT compiler more stack space. The following Java™ virtual machine option will set the thread stack size to 1 MB: -Xss1m. The default value depends on the architecture, and is around 300k or 600k. 
+
+ 
+
+It is important to note that this setting could affect memory available for other tasks in the Java virtual machine. Choosing a value for the stack size must be made with the total system performance in mind.
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ BPM

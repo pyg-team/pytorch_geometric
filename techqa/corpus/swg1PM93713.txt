@@ -1,0 +1,142 @@
+Title: IBM PM93713: DEPLOY-PAA TASK FAILS DUE TO SERVER START FAILURE - United States
+
+Text:
+  A FIX IS AVAILABLE
+Fixes integrated in WebSphere Portal 8.0.0.1 Combined Cumulative Fixes [http://www-01.ibm.com/support/docview.wss?uid=swg24034497]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When jar files are included in the
+   components/componentName/shared/app directory of a paa file and
+   the paa file is deployed on a cluster, if after the paa file is
+   installed on the primary node, subsequent nodes fail to start as
+   the jar file is missing from the class-path. This fix adds the
+   jar file to the solution installer shared library prior to
+   starting the server for credential verification, during the
+   deployment of the paa file on the secondary node.
+   Opened for release 8001
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  When jar files are included in the
+   components/componentName/shared/app directory of a paa file and
+   the paa file is deployed on a cluster, if after the paa file is
+   installed on the primary node, subsequent nodes fail to start
+   as
+   the jar file is missing from the class-path. This fix adds the
+   jar file to the solution installer shared library prior to
+   starting the server for credential verification, during the
+   deployment of the paa file on the secondary node.
+   Opened for release 8001
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A code fix for this issue is integrated into the WebSphere
+   Portal & WCM Combined Cumulative Fix 08 (PM94847 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM94847]) for Portal
+   8.0.0.1 available from Fix Central:
+   
+   http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent
+   =ibm/WebSphere&product=ibm/WebSphere/WebSphere+Portal&release=Al [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm/WebSphere&product=ibm/WebSphere/WebSphere+Portal&release=Al]
+   l&platform=All&function=aparId&apars=PM94847
+   
+   You might need to type or paste the complete address into your
+   Web browser.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM93713
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSPHERE PORTA
+   
+   
+ * REPORTED COMPONENT ID
+   5724E7600
+   
+   
+ * REPORTED RELEASE
+   800
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-07-24
+   
+   
+ * CLOSED DATE
+   2013-10-17
+   
+   
+ * LAST MODIFIED DATE
+   2013-10-17
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBSPHERE PORTA
+   
+   
+ * FIXED COMPONENT ID
+   5724E7600
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R800 PSY
+   UP

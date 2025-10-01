@@ -1,0 +1,48 @@
+Title: IBM An assign statement is throwing an error when node name starts with a number. - United States
+
+Text:
+STERLINGNFX TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ An assign statement is throwing an error when node name starts with a number. 
+
+SYMPTOM
+
+
+The following assign statement throws an error
+
+<assign name="Assign" to="/ProcessData/1STQuote" from="concat(string('dcxsubmit -se 44270N -pw 1K1BGAFN -re LOOPTEST -fn '),/ProcessData/FinalFileName/text())"></assign>
+
+Error Message Status Report:
+
+org.w3c.dom.DOMException: INVALID_CHARACTER_ERR: An invalid or illegal XML character is specified. 
+at org.apache.xerces.dom.CoreDocumentImpl.createElement(Unknown Source) 
+at com.sterlingcommerce.woodstock.xpathutil.XPathHelper.createNode(XPathHelper.java :1445) 
+at com.sterlingcommerce.woodstock.xpathutil.XPathHelper.createTargetContext(XPathHe lper.java:1119) 
+at com.sterlingcommerce.woodstock.xpathutil.XPathHelper.createTargetContext(XPathHe lper.java:1031) 
+at com.sterlingcommerce.woodstock.workflow.WFCUtil.setDataInTree(WFCUtil.java:1090) 
+at com.sterlingcommerce.woodstock.workflow.SystemWorkFlowContext.setWFContent(Syste mWorkFlowContext.java:402) 
+at com.sterlingcommerce.woodstock.workflow.services.AssignService.processData(Assig nService.java:195) 
+at com.sterlingcommerce.woodstock.workflow.activity.engine.ActivityEngineHelper.inv okeService(ActivityEngineHelper.java:1734) 
+at com.sterlingcommerce.woodstock.workflow.activity.engine.ActivityEngineHelper.nex tMainLogic(ActivityEngineHelper.java:591) 
+at com.sterlingcommerce.woodstock.workflow.activity.engine.ActivityEngineHelper.nex t(ActivityEngineHelper.java:344) 
+at com.sterlingcommerce.woodstock.workflow.queue.WorkFlowQueueListener.doWork(WorkF lowQueueListener.java:324) 
+at com.sterlingcommerce.woodstock.workflow.queue.WorkFlowQueueListener.run(WorkFlow QueueListener.java:202) 
+at com.sterlingcommerce.woodstock.workflow.queue.WorkFlowQueueListener.onMessage(Wo rkFlowQueueListener.java:163) 
+at com.sterlingcommerce.woodstock.workflow.queue.WorkFlowQueueListener.onMessage(Wo rkFlowQueueListener.java:150) 
+at com.sterlingcommerce.woodstock.workflow.queue.wfTransporter.run(wfTransporter.ja va:355) 
+at com.sterlingcommerce.woodstock.workflow.queue.BasicExecutor$Worker.run(BasicExec utor.java:496) 
+at java.lang.Thread.run(Thread.java:810)
+
+
+RESOLVING THE PROBLEM
+
+
+A node name CANNOT start with a NUMBER. It is invalid according to the XML specification. The node name can be changed as follows in this case:
+
+<assign name="Assign" to="/ProcessData/FIRSTQuote" from="concat('dcxsubmit -se 44270N -pw 1K1BGAFN -re LOOPTEST -fn ',/ProcessData/FinalFileName/text())"></assign>
+
+ 
+
+HISTORICAL NUMBER
+ NFX10688

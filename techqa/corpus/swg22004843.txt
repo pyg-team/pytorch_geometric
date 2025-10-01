@@ -1,0 +1,43 @@
+Title: IBM DETAILS ON ISAM GSKIT FIX FOR SWEET32 BIRTHDAY ATTACK - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Does the fix for the Sweet32 Birthday vulnerability described in the following technote: 
+
+http://www-01.ibm.com/support/docview.wss?uid=swg22003559 [http://www-01.ibm.com/support/docview.wss?uid=swg22003559]
+
+cause gskit to disable the DES ciphers? 
+
+CAUSE
+This has been identified as a product defect under APAR IV97251
+
+ANSWER
+In order to address the vulnerabilities exploited by the
+SWEET32 Birthday attack (CVE-2016-2183), ISAM GSKIT implemented
+a limit on the amount of data which can be downloaded from a
+single connection (32GB). The support for the DES ciphers is NOT affected. 
+This means that if you have a scan tool which only checks to see if these
+ciphers are enabled, you could end up with a false positive for
+this issue.
+
+If you want to disable the ciphers, you can Disable the DES ciphers as per: 
+
+
+http://www-01.ibm.com/support/docview.wss?uid=swg21698249 [http://www-01.ibm.com/support/docview.wss?uid=swg21698249] 
+
+ 
+
+After the 32GB limit is reached, the connection will be broken and an error will be logged such as
+
+2017-05-05-12:10:01.647+10:00I----- 0x38AD5425 webseald ERROR wiv socket WsSslListener.cpp 1867 0x7f88fc161700 -- DPWIV1061E
+Could not write to socket (445)
+
+445 is GSK_ERROR_BYTECOUNT_EXHAUSTED
+
+If requests/applications are negatively effected by the the GSK_ERROR_BYTECOUNT_EXHAUSTED (445) error, the best solution would be to disable the Sweet32 ciphers either in the application logging the error (recommended if possible in your environment) or if this is not possible then disabling them in the other application sharing this connection
+
+For example if WebSEAL is logging the error:
+
+http://www-01.ibm.com/support/docview.wss?uid=swg21698249 [http://www-01.ibm.com/support/docview.wss?uid=swg21698249]

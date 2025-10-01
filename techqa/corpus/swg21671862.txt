@@ -1,0 +1,104 @@
+Title: IBM Security Bulletin: IBM Initiate Master Data Service is affected by vulnerabilities in Apache Tomcat (CVE-2013-4286, CVE-2014-0033, CVE-2013-4322) - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ When using Apache Tomcat as an application server for IBM Initiate Master Data Service, security vulnerabilities discovered in Apache Tomcat affect IBM Initiate Master Data Service. 
+
+VULNERABILITY DETAILS
+
+CVE-ID: CVE-2013-4286 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2013-4286] 
+
+DESCRIPTION: 
+Apache Tomcat is vulnerable to HTTP request smuggling, caused by an incomplete fix related to the handling of malicious request. By sending a specially-crafted request in a Transfer-Encoding: chunked header and a Content-length header to the Apache HTTP server that will be reassembled with the original Content-Length header value, an attacker could exploit this vulnerability to poison the web cache, bypass web application firewall protection, and conduct XSS attacks.
+
+CVSS Base Score: 4.3
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/91426 [https://exchange.xforce.ibmcloud.com/vulnerabilities/91426]
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:M/Au:N/C:N/I:P/A:N) 
+
+
+CVE-ID: CVE-2014-0033 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-0033] 
+
+DESCRIPTION: 
+Apache Tomcat could allow a remote attacker to hijack a valid user's session, caused by an error even when disableURLRewriting is enabled. By persuading a victim to visit a specially-crafted link and log into the application, a remote attacker could exploit this vulnerability to hijack another user's account and possibly launch further attacks on the system.
+
+CVSS Base Score: 4.3
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/91423 [https://exchange.xforce.ibmcloud.com/vulnerabilities/91423]
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:M/Au:N/C:N/I:P/A:N)
+
+
+CVE-ID: CVE-2013-4322 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2013-4322] 
+
+DESCRIPTION: 
+Apache Tomcat is vulnerable to a denial of service, caused by an incomplete fix related to the processing of chunked transfer coding without properly handling a large total amount of chunked data or whitespace characters in an HTTP header value. A remote attacker could exploit this vulnerability to cause a denial of service.
+
+CVSS Base Score: 5
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/91625 [https://exchange.xforce.ibmcloud.com/vulnerabilities/91625]
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:M/Au:N/C:N/I:P/A:N)
+
+AFFECTED PRODUCTS AND VERSIONS
+ 
+
+These vulnerabilities are known to affect the following offerings when using Apache Tomcat:
+
+·IBM Initiate Master Data Service versions 8.5, 9.0, 9.2, 9.5, 9.7, 10.0, 10.1 
+
+·IBM Initiate Master Data Service Patient Hub versions 9.5, 9.7 
+
+·IBM Initiate Master Data Service Provider Hub versions 9.5, 9.7 
+
+·IBM InfoSphere Master Data Management Patient Hub version 10.0 
+
+·IBM InfoSphere Master Data Management Provider Hub version 10.0
+
+
+REMEDIATION/FIXES
+For IBM Initiate Master Data Service V8.5, 9.0, 9.2, 9.5, 9.7: 
+· Upgrade to Apache Tomcat 6.0.39 or later [http://tomcat.apache.org/security-6.html] 
+
+For IBM Initiate Master Data Service Patient Hub V9.5, 9.7: 
+· Upgrade to Apache Tomcat 6.0.39 or later [http://tomcat.apache.org/security-6.html] 
+
+For IBM Initiate Master Data Service Provider Hub V9.5, 9.7: 
+· Upgrade to Apache Tomcat 6.0.39 or later [http://tomcat.apache.org/security-6.html] 
+
+For IBM InfoSphere Master Data Management Patient Hub V10.0: 
+· Upgrade to Apache Tomcat 7.0.50 or later [http://tomcat.apache.org/security-7.html] 
+
+For IBM InfoSphere Master Data Management Provider Hub V10.0: 
+· Upgrade to Apache Tomcat 7.0.50 or later [http://tomcat.apache.org/security-7.html] 
+
+For IBM Initiate Master Data Service V10.0, 10.1: 
+· Upgrade to Apache Tomcat 7.0.50 or later [http://tomcat.apache.org/security-7.html] 
+
+WORKAROUNDS AND MITIGATIONS
+None known 
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v2 Guide [http://www.first.org/cvss/v2/guide] 
+On-line Calculator v2 [http://nvd.nist.gov/CVSS-v2-Calculator] 
+Complete CVSS v3 Guide [http://www.first.org/cvss/user-guide] 
+On-line Calculator v3 [http://www.first.org/cvss/calculator/3.0] 
+
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] 
+
+ACKNOWLEDGEMENT
+
+None 
+
+CHANGE HISTORY
+ 30 April 2014 Original publish date 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.

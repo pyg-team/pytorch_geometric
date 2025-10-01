@@ -1,0 +1,202 @@
+Title: IBM MustGather: WebSphere Application Server Community Edition OutOfMemory errors on Windows - United States
+
+Text:
+mustgather; MustGather; Windows; OOM; OutOfMemory; Out of memory; ce; wasce; community edition; MustGatherDocument; WAS CE; WAS CE; WAS CE; WASCE; WASCE; WASCE; JBoss; JBoss; JBoss; Glassfish; Glassfish; Glassfish; App Server; App Server; WebSphere CE; WebSphere CE; WebSphere CE; WebSphere Community Edition; WebSphere Community Edition; WebSphere Community Edition; IBM CE; IBM CE; IBM CE; Open Source; Open Source; Open Source TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Collecting data for OutOfMemory errors with WebSphere Application Server Community Edition on the Microsoft Windows platform. Gathering this MustGather information before calling IBM support will help familiarize you with the troubleshooting process and save you time. 
+
+RESOLVING THE PROBLEM
+This document details the MustGather setup and data to be collected for WebSphere Application Server Community Edition when IBM Java 1.5 or IBM Java 1.6 Runtime faces OutOfMemory errors on the Windows operating system. 
+
+Setup for OutOfMemory data collection on Windows
+The information below will allow you to ensure that the required settings are in place to generate data files.
+
+Ensure the generation of heapdumps 
+
+ * Java Virtual Machine (JVM) settings
+   When an OutOfMemoryError occurs due to exhaustion of the Java heap, the most important diagnostic data to obtain is the Heapdump file.
+   
+   In order to ensure this is generated the relevant settings must be in place. Although they are set by default it is possible that the default setting has been changed so it is important to check that the correct settings are in place.
+   
+   Check that the JVM is set to produce heapdumps, run the following:
+   
+   java -Xdump:what 
+   The preceding command should produce the following:
+   
+   dumpFn=doHeapDump
+   events=uncaught
+   filter=java/lang/OutOfMemory
+   label=c:\sdk\jre\bin\heapdump.%Y%m%d.%H%M%S.%pid.dmp
+   range=1..4
+   priority=40
+   request=exclusive+prepwalk 
+   The preceding values are the default settings. At least events=uncaught and filter=java/lang/OutOfMemoryError must be in place in order to generate a heapdump file for uncaught OutOfMemoryErrors. 
+   
+   Options can be changed and/or set using the command line option:
+   
+   -Xdump:heap[:=, ...] 
+   More information about using the -Xdump option is available here [http://www.ibm.com/support/docview.wss?uid=swg21242497].
+
+ * Available disk space
+   It is also important to ensure that there is enough disk space to write the heapdump file. The JVM allows the heapdump file to be written to any directory that is specified in the label option. In order for the heapdump file to be written to this location, there must be sufficient disk space (up to 500MB may be required), and the correct permission for the Java process to write to that location. 
+   
+   
+ * Null References
+   When a heap contains a large number of null references, the heap analysis can give misleading results, as the size of the null references is not taken into account. This could happen for example when some very large arrays are created and only a few of their values are filled in. 
+   
+   In these circumstances, the environment variable IBM_JAVA_HEAPDUMP_TEXT should be set before calling java. This causes the heapdump to be generated in a different format, which does record the null references.  * Create a system environment variable namely IBM_JAVA_HEAPDUMP_TEXT
+      
+      
+    * Set the variable value to TRUE
+   
+   
+
+
+Enable verbose GC logging 
+Verbose GC logging gives an insight into the actions that the Garbage Collector is taking. This allows an application to be monitored and better tuned for performance, in addition to being vital for diagnosing memory problems. 
+
+However, Verbose GC logging is not enabled by default, and can be done by one of the following ways.  * Enabling the generation of Verbose GC logging is done to direct the Verbose GC logging output to a single file using the following command line option:
+   
+   -Xverbosegclog:[DIR_PATH][FILE_NAME] 
+   Where: [DIR_PATH] is the directory where the file should be written [FILE_NAME] is the name of the file to write the logging to 
+   For example: 
+   java -Xverbosegclog:C:\temp\verbose_output.xml 
+   
+ * The logging can also be done in a circular fashion to a series of files, this is carried out using the following command line option:
+   
+   -Xverbosegclog:[DIR_PATH][FILE_NAME],X,Y 
+   Where: [DIR_PATH] is the directory where the file should be written [FILE_NAME] is the name of the file to write the logging to X is the number of files to write to Y is the number of GC cycles a file should contain 
+   
+
+The parameter needs to be set in the setenv.bat located under the following directory: 
+
+<WAS CE Installation Directory>/bin 
+Edit the setenv.bat, file and locate the " set JAVA_OPTS=" line. Append the parameter to the existing list 
+
+For example: 
+
+set JAVA_OPTS=-Xms32m -Xmx256m -Xverbosegclog:C:\temp\verbose-ouput.xml 
+
+Process size monitoring 
+The PerfMon tool is packaged as part of the Windows operating system and can be used to monitor a wide variety of counters, including those related to the process size and virtual address space usage. 
+ * Launch PerfMon
+   PerfMon can usually be started by typing perfmon on the command line. Alternatively, PerfMon can be activated by navigating to Control Panel > Administrative Tools > Performance.
+   
+   
+ * Activating PerfMon Logging  1. Expand Performance logs and alerts.
+       
+       
+    2. Right-click on Counter Logs and select New Log Settings. 
+       
+       
+    3. Enter a name for the log and click OK. 
+       
+       
+    4. This causes any output to immediately start logging to the log file specified above. 
+   
+   
+
+ * Monitoring the Process Size
+   Monitoring the process size makes it possible to collect the memory usage statistics, which might be helpful in cases where GC threads are involved in high CPU usage.
+   
+   The following instructions allow the process size to be monitored.  1. Select the + button on the toolbar.
+       
+       
+    2. Select the Process performance object 
+       
+       
+    3. Select Virtual Bytes from the counters list
+       
+       
+    4. Select the instance for the Java process to monitor
+       
+       
+    5. Select Add and then Close
+   
+   
+
+ * Monitoring the CPU Usage
+   It is often useful to be able to monitor the CPU usage of a Java application, or indeed for the machine on which the Java application is running, to be able to determine performance problems.
+   
+   The information below will allow you to monitor and log information on CPU usage.  1. Select the + button on the toolbar.
+       
+       
+    2. Select the Thread performance object.
+       
+       
+    3. Select the following counters from the list:  * % Processor Time 
+        * ID Process 
+        * ID Thread 
+          
+          
+       
+       
+    4. Select the instance of the Java process to monitor.
+       
+       
+    5. Ensure that you select all of the Java threads.
+       
+       
+    6. Select Add and then Close.
+   
+   
+
+ * Monitoring the Paging Usage
+   It is often useful to be able to monitor the paging usage on a machine, as this will have a direct effect on the performance of a Java application working on that machine. The information below will allow you to monitor and log information on paging usage.  1. Select the + button on the toolbar.
+       
+       
+    2. Select the Memory performance object.
+       
+       
+    3. Select the Pages/sec counter.
+       
+       
+    4. Select Add and then Close.
+       
+       
+    5. Stopping PerfMon Logging.
+   
+   
+
+
+In order to stop logging and obtain the log file, the following needs to be done:  1. Right-click Log Name in the counter window.
+    
+    
+ 2. Click Stop.
+
+
+The log file is referenced in the Log File Name column. 
+
+
+MustGather collection 
+Having ensured that Windows is properly setup for MustGather collection, follow these steps to collect the data files:  * Total physical memory, Java heap settings on the machine
+   Provide the total physical memory of the machine where the problem is encountered. Also provide the minimum and maximum(Xms and Xmx) heap sizes set in the Java Virtual Machine.
+   
+   
+ * Collect any heapdump.phd file
+   This should be in the location detailed against the label field in the -Xdump:what output as shown the in setup or in the current working directory of Java Runtime
+   
+   
+ * Collect the verbose gc output
+   This should be in the location specified during the setup
+   
+   
+ * Collect the process size monitoring
+   This should be as named during the setup and located as specified by PerfMon
+   
+   
+ * Collect the OutOfMemory javacore files
+   OutOfMemory would trigger javacore text files automatically. These files will be located on the same location as heapdumps or in the current working directory of Java Runtime
+
+
+
+Additional information  * Recent changes to the server before the problem occurrence 
+ * Brief description of the applications running problem occurrence 
+ * Load on the applications running 
+ * Collect general information of the server as discussed here [http://www.ibm.com/support/docview.wss?uid=swg21231419#generalMustGather]
+
+
+These data files should then be submitted to IBM Support. 
+RELATED INFORMATION
+#Submitting diagnostic data to IBM [http://www.ibm.com/support/docview.wss?uid=swg21153852]

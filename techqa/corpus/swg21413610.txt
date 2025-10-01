@@ -1,0 +1,58 @@
+Title: IBM Unable to login the server when using UTF-8 characters - United States
+
+Text:
+rtc; wrong; userid; password; url; accent; RTC TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The user is unable to log in IBM Rational Team Concert using a browser when the password is using accented characters or characters not in the regular ASCII. 
+
+SYMPTOM
+The user receives a wrong userid password message when attempting to connect to the WEB UI. 
+
+The browser shows ?redirectPath= in the URL
+
+
+
+CAUSE
+Rational Team Concert provides two distinct form login that look the same: 
+
+ * The form login from /jazz/admin or /jazz/web can handle UTF-8 Request 
+ * The other form login (from /jazz) cannot handle UTF-8 and relies on the Application Server to so that. 
+
+
+The second form login is executed when the 'redirect' URL is executed (when we see ?redirectPath=/ in the URL) 
+
+ENVIRONMENT
+Rational Team Concert 2.0, 2.0.0.1, 2.0.0.2
+
+
+
+DIAGNOSING THE PROBLEM
+ 
+
+ * User unable to log in on the web when connecting to a URL that redirects 
+ * User is able to connect to the jazz server when using /jazz/admin or /jazz/web URL 
+ * User is able to connect to jazz server using Rational Team Concert rich client 
+ * The userid or password contains non ASCII characters like accented character
+
+RESOLVING THE PROBLEM
+To resolve this issue, 
+
+Either connect to /jazz/admin or /jazz/web using the browser instead of the /jazz URL or enable the Application Server to manage non-ASCII characters as follow
+
+
+ * in TOMCAT, open the file server\tomcat\conf\Catalina\localhost\jazz.xml replace
+   <Valve className="org.apache.catalina.authenticator.FormAuthenticator" securePagesWithPragma="false" />
+
+with 
+<Valve className="org.apache.catalina.authenticator.FormAuthenticator" characterEncoding="UTF-8" securePagesWithPragma="false" /> 
+ * in WebSphere Application Server setup with following Java Virtual Machine system property: default.client.encoding=UTF-8.
+   Search for the topic "Configuring application servers for UCS Transformation Format" in the WebSphere Application Server Infocenter for more information on how to perform this change.
+
+
+Leverage the Jazz Community Jazz and Rational Team Concert have an active community that can provide you with additional resources. Browse and contribute to the User forums, contribute to the Team Blog and review the Team wiki.
+Refer to technote 1319600 [http://www-01.ibm.com/support/docview.wss?uid=swg21319600] for details and links.
+
+
+RELATED INFORMATION
+#jazz.net work item 96861 [https://jazz.net/jazz/resource/itemName/com.ibm.team.workitem.WorkItem/96861]

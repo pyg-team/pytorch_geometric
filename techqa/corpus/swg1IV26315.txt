@@ -1,0 +1,261 @@
+Title: IBM IV26315: ONLY SOME QUERIES ENDING BY ORDER BY DOESN'T SEEM TO WORK IN RESULSET PORTLET IN TPAE 7.5.0.2 - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Problem Title
+   
+   =============
+   Only some queries ending by order by doesn't seem to work in
+   Resulset
+   portlet in TPAE 7.5.0.2
+   
+   Problem details:
+   =================
+   We installed patch 7.5.0.2 recently and since then we are unable
+   to use
+   result set queries with an order by on the Start center. Here is
+   a
+   description from the developer working on this:
+   The issue is Maximo is trying to append a query at the end of
+   our query
+   which is to check whether the user has access to site and
+   application
+   before showing the records.
+   
+   
+   
+   Maxadmin user logs into Maximo and gets PLANNER template and
+   create a
+   query against Workorder SP i.e ((woclass = 'WORKORDER' or
+   woclass =
+   'ACTIVITY') and historyflag = 0 and istask = 0 ) order by
+   reportdate
+   desc
+   
+   Configure the Resulset portlet in Start Center, and the query is
+   displayed in Resulset portlet. Now another user = planner from
+   another
+   group logs into Maximo and click on update start center.
+   
+   But the query doen't get displayed but it displays The portlet
+   cannot
+   open.
+   BMXAA6712E - Database connection failed and the record was not
+   retrieved.
+   
+   Furthermore during the remote session I have found out the
+   following
+   queries which have been created by maxadmin user don't seem to
+   work when
+   planner user update start center.
+   
+   New workorder portlet query
+   ==========================
+   ((status = 'NEW' or status = 'REJECTED') and (woclass =
+   'WORKORDER' or
+   woclass = 'ACTIVITY') and historyflag = 0 and istask = 0) and (
+   workorderid in (select ownerid from wfassignment where
+   ownertable='WORKORDER' and
+   wfassignment.ownerid=workorder.workorderid
+   and assignstatus in (select value from synonymdomain where
+   domainid='WFASGNSTATUS' and maxvalue='ACTIVE') and assigncode in
+   (select
+   respparty from persongroupteam where persongroup='PLANNERS')))
+   order by
+   reportdate desc
+   
+   Accepted Workorder portlet query
+   ================================
+   (status = 'ACCEPTED' and (woclass = 'WORKORDER' or woclass =
+   'ACTIVITY')
+   and historyflag = 0 and istask = 0) and (workorderid in (select
+   ownerid
+   from wfassignment where  ownertable='WORKORDER' and
+   wfassignment.ownerid=workorder.workorderid and assignstatus in
+   (select
+   value from synonymdomain where domainid='WFASGNSTATUS' and
+   maxvalue='ACTIVE') and assigncode in (select respparty from
+   persongroupteam where persongroup='PLANNERS'))) order by
+   reportdate desc
+   
+   Workorder assigned to Field services portlet query
+   ==================================================
+   ((woclass = 'WORKORDER' or woclass = 'ACTIVITY') and historyflag
+   = 0 and
+   istask = 0 and xrespparty = 'FS') order by reportdate desc
+   
+   Application effected
+   
+   ====================
+   Start Center - Resulset portlet
+   
+   
+   Product Version #
+   =================
+   TPAE 7.5.0.2
+   
+   Step by Step used by L2 support to reproduce the same
+   behaviour as the customer in TPAE 7502
+   
+   1. Created a group called PLANNER by logging as maxadmin user.
+   2. I setup a restriction against that group.
+   3. Only one User (WILSON) against this group
+   4. Added BEDFORD site to the Planner group
+   5. I then created a query against workorder with maxadmin ending
+      by order by reportdate desc
+   
+   ((woclass = 'WORKORDER' or woclass = 'ACTIVITY') and historyflag
+   = 0 and istask = 0 ) order by reportdate desc
+   
+   6.  I also created a new template for only PLANNER group
+   
+   When maxadmin user update the start center the PLANNER portlet
+   created displays the query results properly on the Resulset
+   portlet.
+   
+   PROBLEM: But here is the problem when the restricted user WILSON
+   logins who belongs to only Planner
+   group and click on Update the start center he gets "The query
+   doen't get displayed but it displays The portlet cannot open
+   BMXAA6712E - Database connection failed and the record was not
+   retrieved.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * Maximo                                                       *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * Some queries with Order By clause do not work in result set  *
+   * portlet                                                      *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Upgrade to Maximo 7.5.0.4 release                            *
+   ****************************************************************
+   Queries where the Order By clause was proceeded by a new line or
+   tab character would fail in result set portlet with error
+   BMXAA6712E - Database connection failed and the record was not
+   retrieved.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Queries ending with Order By clause will now work in result set
+   portlet.
+   
+   The fix for this APAR is contained in the following maintenance
+   package:
+     | release\fix pack | Interim Fix for Release 7.5.0.4 Maximo
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV26315
+   
+   
+ * REPORTED COMPONENT NAME
+   SYSTEM CONFIG
+   
+   
+ * REPORTED COMPONENT ID
+   5724R46S1
+   
+   
+ * REPORTED RELEASE
+   750
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-08-16
+   
+   
+ * CLOSED DATE
+   2012-10-30
+   
+   
+ * LAST MODIFIED DATE
+   2012-10-30
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  MAXIMO
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   SYSTEM CONFIG
+   
+   
+ * FIXED COMPONENT ID
+   5724R46S1
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R750 PSY
+   UP

@@ -1,0 +1,291 @@
+Title: IBM PM18089: MESSAGE DFHUS0002 A SEVERE ERROR (CODE X'030C') HAS OCCURRED IN DFHUSAD IS RECEIVED AND CICS TERMINATES. - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  You receive MSGDFHUS0002  A severe error (code X'030C') has
+   occurred in DFHUSAD and your CICS region terminates.  You are
+   running CICS 4.1 under z/OS 1.11.
+   The exception trace entry in the dump looks as follows:
+   US 030C USAD  *EXC* - User-not-in-directory - FUNCTION(NOTIFY)
+   DOMAIN_TOKEN(00000000 , 1D226100)
+   TASK-TI    KE_NUM-001F TCB-QR   /00BF8128 RET-966F9254
+   TIME-17:10:38.6360610014 INTERVAL-00.0000213906        =001953=
+   .
+   On another instance of the problem, the exception trace entry
+   appeared as follows:
+   US USAD  *EXC* - User-not-in-directory - FUNCTION(DELETE_USER)
+   SIGNOFF_TYPE(DEFERRED_SIGN_OFF) USER_TOKEN(00000415)
+   TASK-XM    KE_NUM-00A2 TCB-QR   /00BC0D90 RET-96A54198
+   .
+   In another instance of this problem, the following trace entry
+   occurs:
+    TI  QR  US 0316 USAD  *EXC* Del-expired-failed
+                          NOTIFY,00000000 , nnnnnnnn
+   .
+   This problem only occurs on z/OS 1.11 or higher as it relates
+   to the ENF notifications that CICS now receives from RACF when a
+   userid is added to or removed from a group.
+   What happens is as follows:
+   .
+   - An ENF notification is received for a userid currently in use
+   in CICS. That userid is running a non-terminal task.
+   - This is processed by notify_userid in DFHUSAD
+   - usud_notify_received gets turned on
+   - Before the currently in use userid gets to DELETE_USER
+   processing an identical non-terminal signon is done.
+   This gets handled by the add_user processing in DFHUSAD
+   - usud_notify_received is turned on so process_expired_users
+   gets called.
+   - If the user was on the timeout queue then it would just be
+   deleted
+   - In our case the userid is in use so it gets removed from
+   the USD1 directory and usud_deleted_from_dirkey gets set on.
+   - The new user is now added to USD2 (new entry) and USD1 (same
+   entry as was just removed except references a new USUDB).
+   - This new task finishes and DELETE_USER adds the userid to the
+     timeout queue.
+   Eventually the original task finishes.
+   - DELETE_USER processing is done.
+   - This finds usud_notify_received turned on so deletes the user
+   instead of putting on to the timeout queue.
+   - The USD2 entry is deleted.
+   - The USD1 entry was deleted earlier by the new task.  However,
+   the usud_deleted_from_dirkey bit is not checked so the NEW
+   USD1 entry gets deleted.
+   *** This leaves our new user on the timeout queue without a USD1
+       entry.
+   - USRDELAY time expires an DFHUSAD is called to process the
+   timeout queue.
+   - The new user is found on the queue so gets deleted.
+   - It is located in the USD2 directory which means it is still
+   valid and eligible for deletion.
+   - The user is removed from USD2.
+   - The attempt to remove from USD1 fails with DDDI_NOT_FOUND.
+   - Message DFHUS0002 with code x'030C' is issued and CICS
+   terminates.
+   Additional Symptom(s) Search Keyword(s):
+   KIXREVSWM  kixdcfzos111 030C MSGDFHUS0002
+   MSGDFHUS0001 (code X'0316') 0316 DFHUS0002 x'0316'
+   An additional symptom that is resolved by this APAR includes:
+   DFHSN0002 A severe error (code X'2088') has occurred in program
+   DFHSNTU.  Looking at the dump, it appears that the SNEX has
+   been overlaid.  This is actually a symptom of the second problem
+   described above.
+   .
+   In the second problem described by PM18089, you end up with a
+   USRDELAY UTQE (user timeout queue entry) addressing a USUDB
+   block which has been freemained. The trigger for this is which
+   event notification processing for a RACF USERID when this
+   USERID is either revoked or has its group status altered
+   (by removing the USERID from a RACF group for example).
+   If this USERID is signed on as a non-terminal user and this its
+   non-terminal USERID is inactive at the time of the event
+   notification then you will (eventually) end up with a UTQE
+   timeout element addressing a freemained USUDB block.
+   If this USUDB blocks is subsequently getmained when a terminal
+   signon occurs, you now have a potential problem.
+   At some point, the UTQE for the earlier non-terminal USERID
+   will timeout. When this happens, the directory entries for the
+   USUDB and the USUDB itself get deleted. The terminal knows
+   nothing about this because timeout processing for a UTQE is
+   designed to timeout non-terminal users.
+   Eventually, when the terminal USER signs off explicitly or
+   when a terminal timeout occurs, the DFHSN0002 severe error
+   code 2088 will be received.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All CICS Users                               *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: When running CICS on z/OS v1.11 or      *
+   *                      above it is possible to receive         *
+   *                      message DFHUS0002 code x'030C' and      *
+   *                      CICS terminates, or message DFHUS0002   *
+   *                      code x'0316' and a system dump is       *
+   *                      taken.                                  *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   When running CICS on z/OS 1.11 or higher RACF will notify CICS
+   via ENF of events relating to userids such as revocation or
+   being connected or removed from groups.
+   
+   There are two problems in DFHUSAD's processing of the
+   notification.  The effects depend on whether the userid was in
+   use at the time of receiving the notification.
+   
+   For the first problem a user is running a non-terminal task
+   (such as a request using CICS Web Support).  A notification is
+   received for that userid and DFHUSAD turns on
+   USUD_NOTIFY_RECEIVED.  Before this current task can complete
+   another task starts up for the same userid from the same source
+   (another CICS Web Support request in this case).  The userid is
+   found in the USD1 directory and as USUD_NOTIFY_RECEIVED is
+   turned on the userid is removed from the USD1 directory and
+   USUD_DELETED_FROM_DIRKEY is turned on.  The new signon
+   continues and adds the user into the USD1 directory (identical
+   to what was just removed except the USUDB reference is
+   different) and into the USD2 directory.  When the first task
+   completes it removes its USD2 entry.  It doesn't check
+   USUDB_DELETED_FROM_DIRKEY so goes and removes the USD1 entry.
+   This is actually the entry for the second task.  That second
+   task now has only a USD2 entry.  It does not have a USD1 entry.
+   When that second task completes, the userid is placed on the
+   timeout queue.  When USRDELAY time expires the user is deleted.
+   The USD2 entry is removed.  Then the USD1 entry is removed.
+   This doesn't exist so DFHUSAD issues message DFHUS0002 with
+   code x'030C' and terminates CICS because its directories are no
+   longer in a consistent state.
+   
+   For the second problem the userid is on the timeout queue when
+   a notification arrives.  A new non-terminal task for that userid
+   arrives.  USUD_NOTIFY_RECEIVED is on and the userid is on the
+   timeout queue so the user is removed from the US domain
+   directories.  However, the userid is not removed from the
+   timeout queue.  The new signon happens to get allocated the
+   same USUDB block as was just freed.  This means it has the same
+   USD2 entry.  The signon was identical to the previous one for
+   this userid (another CICS Web Support request) so the USD1
+   entry is also identical.  At the end of the task the userid is
+   put on the timeout queue so is now on that queue twice.  When
+   the first entry expires the USD1 and USD2 entries are removed
+   and the USUDB freed.  When the second entry expires the user
+   cannot be located in the USD2 directory so DFHUSAD issues
+   message DFHUS0002 with code x'0316'.
+   
+   Additional keywords:
+   MSGDFHUS0002  US0002  DDDI_NOT_FOUND
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  DFHUSAD has been changed so that USUD_DELETED_FROM_DIRKEY is
+   checked before attempting to remove a USD1 entry.  It has also
+   been changed to remove the user from the timeout queue when the
+   user is removed from the US domain directories after a
+   notification has been received.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *              *********
+               * HIPER *
+               *********
+   FIX AVAILABLE BY PTF ONLY
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM18089
+   
+   
+ * REPORTED COMPONENT NAME
+   CICS TS Z/OS V4
+   
+   
+ * REPORTED COMPONENT ID
+   5655S9700
+   
+   
+ * REPORTED RELEASE
+   600
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   YesHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-07-08
+   
+   
+ * CLOSED DATE
+   2010-09-17
+   
+   
+ * LAST MODIFIED DATE
+   2011-07-14
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UK60598
+   
+   
+
+MODULES/MACROS
+ *     DESUSAD  DESUSCM  DFHUSAD
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CICS TS Z/OS V4
+   
+   
+ * FIXED COMPONENT ID
+   5655S9700
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R600 PSY UK60598 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK60598]
+   UP10/09/23 P F009
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

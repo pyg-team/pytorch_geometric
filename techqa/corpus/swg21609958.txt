@@ -1,0 +1,22 @@
+Title: IBM Hide left menu pane for specific application - United States
+
+Text:
+TPAESCCD; menu; navigation; hide; disabled; systemnav TECHNOTE (FAQ)
+
+QUESTION
+ How to disable the left navigation pane menu of an application? 
+
+ANSWER
+You can include systemnav="false" in the application presentation XML in order to disable the left navigation pane. 
+
+The following changes in the incident.xml file will disable the left navigation menu pane of the Incident application. 
+
+Edit the incident.xml from :- 
+
+<presentation apphelp="com.ibm.tusc.doc,incident/incident.html" beanclass="com.ibm.tsd.pminc.webclient.beans.PmIncidentAppBean" id="incident" mboname="INCIDENT" orderby="TICKETID" resultstableid="results_showlist" version="7.1.0.0"> 
+
+to :- 
+
+<presentation apphelp="com.ibm.tusc.doc,incident/incident.html" beanclass="com.ibm.tsd.pminc.webclient.beans.PmIncidentAppBean" id="incident" mboname="INCIDENT" orderby="TICKETID" resultstableid="results_showlist" version="7.1.0.0" systemnav="false">
+
+Import back the incident.xml and save. With this configuration, the left Navigation Pane menu is no longer visible in the Incident application.

@@ -1,0 +1,52 @@
+Title: IBM Good morning transaction CESN in CICS/VSE 2.3 not showing GMTEXT message - United States
+
+Text:
+IUI II ICCF IESIES01 IEGM Good Morning PQ93266 SIT GMTRAN GMTEXT CICS 2.3.0 568602601 R14X R14V R14W R230 5686-026 5686026 KIXINFO retentionVSE23 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ You are using CICS/VSE V2.3 and the good morning transaction CESN does not show the good morning text (GMTEXT) message like it does in CICS Transaction Server for VSE/ESA (CICS TS) V1.1.1. CSGM shows the message, but you have to enter CESN to get the signon screen. 
+
+CAUSE
+In VSE/ESA V2.3 and earlier CICS releases on VSE, transaction IEGM was used to LOGON. The screen included USERID and PASSWORD verification and could be easily modified. It was used to identify the currently used CICS (for example, TESTCICS, PRODCICS) to the end user using this screen. 
+
+Since CICS TS was implemented, ICCF (IUI) can no longer be used under CICS/VSE V2.3. The only way to confirm the USERID and PASSWORD verification is to use CESN. However, if you use CESN there is no way to tailor the LOGON screen to identify the CICS region being used. When using CSGM, the end user must type in the CESN transaction id to get to the LOGON-screen.
+
+RESOLVING THE PROBLEM
+CESN is working as designed. However, APAR PQ93266 (which closed with a status of CAN or cancel) provides the code shown below. The patch is being supplied as a workaround with no warranty implied. It will display the GMTEXT in the message area of the CESN signon screen. For example, if the GMTEXT was "VSE ESA CICSOLD" then and CESN will result in following screen layout: 
+
+ 
+CICS Signon
+VSE ESA CICSOLD 
+
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+
+
+Following is the fix or PATCH (Save the original DFHSNP before applying the PATCH): 
+
+* $$ JOB JNM=SNPGMT,CLASS=0,DISP=D 
+// JOB SNPGMT 
+* CICS/VSE CESN - SIGN ON WITH GOOD MORNING TEXT DISPLAYED 
+* 1.SAVE DFHSNP.PHASE IN DFHSNP.ORIPHASE 
+// EXEC LIBR 
+CON S=PRD2.CICSOLDP:PRD2.CICSOLDP 
+COP DFHSNP.PHASE:DFHSNP.ORIPHASE REP=YES 
+/* 
+* 2.PATCH DFHSNP WITH THIS JOB 
+* 3.ACTIVATE IN CICS: CEMT SET PROG(DFHSNP) NEW 
+// EXEC MSHP 
+PATCH S=PRD2.CICSOLDP 
+AFFECTS PHASE=DFHSNP 
+ALT 1B0A 45E04960:58E0D08C 
+ALT 1B12 91B2:E532 
+/* 
+/& 
+* $$ EOJ 
+
+
+PRODUCT ALIAS/SYNONYM
+ CICS/VSE CICS VSE

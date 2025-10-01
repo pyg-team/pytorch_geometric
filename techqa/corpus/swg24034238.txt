@@ -1,0 +1,49 @@
+Title: IBM Download WebSphere Message Broker Connectivity Pack for Healthcare V8.0 - United States
+
+Text:
+ DOWNLOADABLE FILES
+
+ABSTRACT
+ This document describes how to download IBM WebSphere Message Broker Connectivity Pack for Healthcare V8.0 eAssembly images from the Passport Advantage website. 
+
+DOWNLOAD DESCRIPTION
+
+
+Terminology
+
+IBM WebSphere Message Broker Connectivity Pack for Healthcare V8.0 is supplied in an eAssembly. The eAssembly contains the Quick Start Guide and the product code. 
+Related product documentation 
+For information about tasks you must complete before you install the product, and about the installation process itself, see the IBM WebSphere Message Broker Connectivity Pack for Healthcare V8.0 Installation Guide that is supplied with the product, or see the WebSphere Message Broker Connectivity Pack for Healthcare V8.0 Information Center [http://publib.boulder.ibm.com/infocenter/wmbhelp/v8r0m0/index.jsp].
+
+The most up-to-date information can be found in the IBM WebSphere Message Broker Connectivity Pack for Healthcare V8.0 readme file at http://www.ibm.com/support/docview.wss?&uid=swg27006913 [http://www.ibm.com/support/docview.wss?rs=171&uid=swg27006913]. 
+
+
+
+Downloading the relevant eAssembly images from the Passport Advantage website
+
+ 1. Find the IBM WebSphere Message Broker Connectivity Pack for Healthcare V8.0 images for your platform in the following eAssemblies table.
+ 2. Go to the "Download package" section of this document, and follow the link to the Passport Advantage website. 
+ 3. Sign in to download the images that you need.
+ 4. Unpack each of the parts onto your system by following the instructions in the Installation Guide.
+
+
+
+
+eAssemblies table 
+
+eAssembly or eImage Description eAssembly or eImage Part Number WebSphere Message Broker Connectivity Pack for Healthcare V8.0 eAssembly CRLS5ML WebSphere Message Broker Connectivity Pack for Healthcare V8.0 Quick Start Guide eImage CIH8MML WebSphere Message Broker Connectivity Pack for Healthcare V8.0 for Windows 32/64bit eImage CIH8NML WebSphere Message Broker Connectivity Pack for Healthcare V8.0 for Linux 32/64bit eImage CIH8PML URL LANGUAGE SIZE(Bytes) System requirements [http://www.ibm.com/software/integration/wbimessagebroker/requirements/] English 1 
+URL LANGUAGE SIZE(Bytes) WebSphere Message Broker information center [http://publib.boulder.ibm.com/infocenter/wmbhelp/v8r0m0/index.jsp] English 1 
+DOWNLOAD PACKAGE
+
+
+
+
+
+Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options 
+What is Fix Central(FC)? [http://www.ibm.com/systems/support/fixes/en/fixcentral/help/faq_sw.html] IBM Passport Advantage Online 28 Mar 2013 English 1 FC [http://www.ibm.com/software/howtobuy/passportadvantage/pao_customers.htm] [ ] 
+TECHNICAL SUPPORT
+ For Passport Advantage Online support, see:
+http://www.ibm.com/software/howtobuy/passportadvantage/paocustomer/docs/en_US/ecare.html [http://www.ibm.com/software/howtobuy/passportadvantage/paocustomer/docs/en_US/ecare.html]
+
+To see latest information and technotes, go to the WebSphere Message Broker support website:
+http://www.ibm.com/software/integration/wbimessagebroker/support/ [http://www.ibm.com/software/integration/wbimessagebroker/support/]

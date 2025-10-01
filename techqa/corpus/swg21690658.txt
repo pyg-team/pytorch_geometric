@@ -1,0 +1,58 @@
+Title: IBM Setting a big session time-out value in DASH causes session lock-out - United States
+
+Text:
+DASHL2; session; time-out; timeout; cannot login; locked out ; 2147483647; security.xml TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Using a big value (2147483647) for the session timeout setting in DASH, to achieve the maximum time between timeouts, is causing users to be locked out completely. 
+
+SYMPTOM
+After entering the user ID and password in the login page, and then pressing the "continue" button,
+the login page does not change, stuck at "processing" and then returns to the login page again." 
+
+All users get essentially locked out completely from DASH sessions.
+
+
+CAUSE
+In order to maximize the time between session timeouts, the customer is setting the timeout parameter in the security.xml file to 2147483647.
+
+This timeout parameter used in the security.xml file is a WAS setting, but DASH is using a javascript call (settimeout), which causes a condition that prevents a login, if the timeout value is really big. 
+
+
+Note: 2147483647 is the maximum positive value for a 32-bit signed binary integer in computing.
+
+
+RESOLVING THE PROBLEM
+This condition that prevents logins can be averted by setting the custom property LTPAFIX in the consoleProperties.xml to "false". 
+
+
+Please follow this steps: 
+
+1. On DASH server, navigate to <JazzSM Home>/profile/config/cells/JazzSMNode01Cell/applications/isc.ear/deployments/isc/isclite.war/WEB-INF 
+
+ 
+2. Take a backup of consoleProperties.xml 
+
+ 
+3. Open consoleProperties.xml in edit-mode. 
+
+ 
+4. Search for "LTPAFIX" and change the value from "true" to "false". 
+
+
+Example: 
+
+Before 
+===== 
+<consoleproperties:console-property id="LTPAFIX" value="true"/> 
+</consoleproperties:ibm-portal-consoleproperties> 
+
+After 
+==== 
+<consoleproperties:console-property id="LTPAFIX" value="false"/> 
+</consoleproperties:ibm-portal-consoleproperties> 
+
+5. Save the file. 
+
+ 
+6. Restart DASH server.

@@ -1,0 +1,61 @@
+Title: IBM Security Bulletin: A security vulnerability has been identified in WebSphere Application Server that ships with Rational Asset Manager (CVE-2017-1151, CVE-2017-1137, CVE-2017-1194) - United States
+
+Text:
+CVE-2017-1151; CVE-2017-1137; CVE-2017-1194 SECURITY BULLETIN
+
+SUMMARY
+ WebSphere Application Server is shipped as a component of Rational Asset Manager. Information about security vulnerability affecting the WebSphere Application Server is published in this security bulletin. 
+
+VULNERABILITY DETAILS
+You must refer to the following security bulletins for vulnerability details and information about fixes: 
+
+ * Security Bulletin: Information Disclosure in IBM WebSphere Application Server (CVE-2017-1151) [http://www-01.ibm.com/support/docview.wss?uid=swg21999293]
+
+ * Security Bulletin: Potential security vulnerability in WebSphere Application Server Administrative Console (CVE-2017-1137) [http://www-01.ibm.com/support/docview.wss?uid=swg21998469]
+
+ * Security Bulletin: Cross-site request forgery in WebSphere Application Server (CVE-2017-1194) [http://www-01.ibm.com/support/docview.wss?uid=swg22001226]
+
+AFFECTED PRODUCTS AND VERSIONS
+ IBM Rational Asset Manager 7.5, 7.5.1, 7.5.2, and 7.5.3.
+
+
+REMEDIATION/FIXES
+You must refer to the appropriate security bulletin for fix pack releases or an iFix listed in the following table and apply it. 
+
+ 
+
+RAM Embedded WAS? WAS 7.0 WAS 8.0 WAS 8.5 7.5  * 
+
+See the Security Bulletin - CVE-2017-1194 [http://www-01.ibm.com/support/docview.wss?uid=swg22001226] for fix.  * 
+
+ * 
+
+7.5.1 See the Security Bulletin - CVE-2017-1151 [http://www-01.ibm.com/support/docview.wss?uid=swg21999293], Security Bulletin CVE-2017-1137 [http://www-01.ibm.com/support/docview.wss?uid=swg21998469] and Security Bulletin - CVE-2017-1194 [http://www-01.ibm.com/support/docview.wss?uid=swg22001226] for fix. 7.5.2  * 
+
+ * 
+
+See the Security Bulletin - CVE-2017-1151 [http://www-01.ibm.com/support/docview.wss?uid=swg21999293], Security Bulletin CVE-2017-1137 [http://www-01.ibm.com/support/docview.wss?uid=swg21998469] and Security Bulletin - CVE-2017-1194 [http://www-01.ibm.com/support/docview.wss?uid=swg22001226] for fix. 7.5.3 
+WORKAROUNDS AND MITIGATIONS
+None.
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v2 Guide [http://www.first.org/cvss/v2/guide] 
+On-line Calculator v2 [http://nvd.nist.gov/CVSS-v2-Calculator] 
+
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] 
+
+ACKNOWLEDGEMENT
+None 
+
+CHANGE HISTORY
+ * 16 May 2017: Original copy published 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.

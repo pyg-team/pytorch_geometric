@@ -1,0 +1,94 @@
+Title: IBM How to configure Rational Performance Tester Virtual Tester Pack floating license and Activation Kit together - United States
+
+Text:
+Rational Performance Tester; RPT 8.x; activation kit; Virtual Tester ; floating license key; configuration TECHNOTE (FAQ)
+
+QUESTION
+ How do you configure the activation kit and Virtual Tester Pack floating license together with IBM Rational Performance Tester 8.x version? 
+
+CAUSE
+For IBM Rational Performance Tester 8.x, Activation kit and Virtual Tester Pack floating license can be deployed together.
+
+ANSWER
+You can configure 'Activation Kit' and 'Virtual Tester Pack floating license' as follows;
+
+Activation Kit:
+
+
+ 1. Click Start > All Programs > IBM Installation Manager > IBM Installation Manager 
+    
+ 2. Click [Manage Licenses] > Select Rational Performance Tester > Check [Import product Activation kit] 
+    
+    
+ 3. Click Next
+    
+    
+ 4. Select the activation kit license (.jar file) to import by browsing in repository field
+    
+    
+ 5. Click Next
+    
+    
+ 6. Check [I accept the terms in the license agreements] and click Next
+    
+    
+ 7. Finish IBM Installation Manager
+
+
+ Back to top 
+
+
+
+
+Virtual Tester Pack floating license: 
+
+ 1.  Click Start > All Programs > IBM Rational > License Key Administrator 8.1.x on the Rational Performance Tester client machine
+     
+     
+ 2.  Navigate to Settings > Client/Server configuration
+     
+     
+ 3.  Check use License Server
+     
+     
+ 4.  Click on [Add Server]
+     
+     
+ 5.  In the Settings, type actual hostname of the license server machine as Server Name Values
+     
+     
+ 6.  Port Value is 27000 and click OK
+     
+     
+ 7.  Close License Key Administrator 8.1.x
+     
+     
+ 8.  Click Start > All Programs > IBM Installation Manager > IBM Installation Manager
+     
+     
+ 9.  Select Manage licenses
+     
+     
+ 10. Check Configure Floating license support and click Next
+     
+     
+ 11. Check [I accept the terms in the license agreements] and click Next
+     
+     
+ 12. Click + sign which is at the top right
+     
+     
+ 13. In the Name filed enter the Hostname of the license server machine
+     
+     
+ 14. In the port mention 27000
+     
+     
+ 15. Then select [Disable floating license enforcement]
+     
+     
+ 16. Click Finish
+
+RELATED INFORMATION
+#A Japanese translation is available [http://www.ibm.com/support/docview.wss?uid=swg21570214]
+A simplified Chinese translation is available [http://www.ibm.com/support/docview.wss?uid=swg21570534]

@@ -1,0 +1,26 @@
+Title: IBM Virtual machine instrumentation categories - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ IBM® Tivoli® Storage Manager virtual machine (VM) instrumentation reports the
+elapsed times for many process categories. 
+
+SYMPTOM
+The following table lists the virtual machine instrumentation categories that are
+
+tracked and the activity that is timed.
+
+Category Activity VM Snapshot Time that is spent generating and removing a VM guest snapshot by using the VMware Infrastructure Software Development Kit (VI SDK). Some of the work is completed asynchronously, for example, snapshot delete. VM Send Data Time that is spent sending data to the Tivoli Storage Manager server. The time that is spent includes client-side data deduplication processing and the Network Send phase. VM Get Data Time that is spent retrieving data from the Tivoli Storage Manager server. This category includes the following time that is spent: * Retrieving control files from the Tivoli Storage Manager server during incremental backup.
+ * Buffering data that is received during VM guest restore that are then written out by using VM I/O writes to VMware.
+
+VM Query Time that is spent querying the Tivoli Storage Manager server to determine whether data deduplication and compression, or both, are enabled and file space queries for nodes on virtual machines are used. VM Query VE Time that is spent querying whether VMware VM guest disks are changed. This category uses the VMware VI SDK to identify a set of changed blocks. VM Assign Time that is spent assigning file groups to the Tivoli Storage Manager server, by using the DsmGroupHandler function. VM VCM Lock Time that is spent locking a semaphore during Volume Control Manager (VCMLIB) API calls. The time is spent on the following functions: * Locking for volume control data reads or updates.
+ * Manipulating data by block control.
+ * Retrieving megablocks in a volume.
+
+VM Transaction Time that is spent processing transactions with the Tivoli Storage Manager server. VM I/O Time that is spent reading and writing data to and from the VIX Disk Library for Virtual Disk Development Kit (VDDK) disks for a VM. Performance can vary depending on the following uses: * Thin or thick-provisioned disks.
+ * Disks are lazy zeroed.
+
+VM Control File I/O Time that is spent reading and writing VM guest control (CTL) files during VM guest backup and restore operations. Thread waitTime that is spent opening and closing VDDK disks on Tivoli Storage Manager for Virtual Environments clients.
+Opening and closing of VM disks is serialized for a Tivoli Storage Manager client instance. The time that it takes to open and close the VM disks includes the time that is taken to mount the disk on the client or proxy system.

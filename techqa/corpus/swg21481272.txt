@@ -1,0 +1,27 @@
+Title: IBM Frequencies output and IGraph percentages do not match on weighted data. - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ I'm using weighted data to make interactive stacked bar charts in SPSS, but I've noticed that the percentages in my frequencies table do not match those in the charts. What is wrong. 
+
+RESOLVING THE PROBLEM
+If you are using fractional weights, this may account for the discrepancy. There are several ways SPSS can deal with fractional weights. It can:
+
+1. Round the cell counts
+2. Truncate the cell counts
+3. Round the case weights
+4. Truncate the case weights
+5. Make no adjustments
+
+In the Crosstabs procedure, unlike other procedures in SPSS, you get to choose the method used. In Frequencies, SPSS makes no adjustments. IGraphs, on the other hand, truncate the case weights. This will affect the counts and thus, the percentages as compared with Frequencies. For more information on using fractional weights, see resolution 25507
+
+RELATED INFORMATION
+ Need more help? Our Statistics forum is Live! [https://developer.ibm.com/answers/topics/statistics.html?smartspace=predictive-analytics]
+
+
+ 
+
+HISTORICAL NUMBER
+ 71650

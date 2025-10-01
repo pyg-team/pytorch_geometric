@@ -1,0 +1,17 @@
+Title: IBM Netcool Probe for Alcatel-Lucent 5620 SAM support for SAM Release 12.0 - United States
+
+Text:
+probe nco-p-alcatel-5620-sam-v10-3_0 5620 sam release 12 TECHNOTE (FAQ)
+
+QUESTION
+ Does the Probe for Alcatel-Lucent 5620 SAM support SAM Release 12.0? 
+
+ANSWER
+The probe nco-p-alcatel-5620-sam-v10-2_0 only supports Alcatel 5620 SAM v10 and Alcatel 5620 SAM v11.
+Use probe nco-p-alcatel-5620-sam-v10-3_0 which supports Alcatel-Lucent 5620 SAM Release 12.
+
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ OMNIbus

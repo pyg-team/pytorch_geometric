@@ -1,0 +1,59 @@
+Title: IBM 5.3.0.6-ISS-XGS-All-Models-IF0003 - United States
+
+Text:
+5.3.0.6-ISS-XGS-All-Models-IF0003; 5.3.0.6; IF3; AllModels; XGS TECHNOTE (FAQ)
+
+QUESTION
+ What fixes are included in 5.3.0.6-ISS-XGS-All-Models-IF0003? 
+
+ANSWER
+Abstract
+
+IBM Security Network Protection (XGS)
+Interim Fix version: IF0003
+Applicable versions: 5.3.0.6
+
+Problems resolved
+
+Disables Rollback for fixpacks as it is not supported currently. 
+
+Updates NTP package and adds ntpd.slewmode.enabled parameter to allow the usage of slew mode when ntpd is enabled, default value is false. 
+
+APAR IV74056 - Fixes issue in which LCD panel shows garbage after numerous reboots. 
+
+APAR IV73743 - Fixes the condition where event emails would not always be sent when more than 3 recipients were specified. Also corrects for the same recipient list being duplicated upon policy reload which created an erroneously high recipient count that would also cause this high recipient count failure.
+
+APAR IV73393 - Fixes the issue where syslog_sshd crashes with sig6
+
+APAR IV73399 - Fixes an issue where XGS cannot add management address and shows it as invalid value.
+
+APAR IV73264 - Fixes the issue where static routing table entry is removed from the active table after reboot.
+
+APAR IV73274 - Fixes automatic reboot on XGS where captive portal is being used.
+
+Fixes an issue where alpsd crash with signal 49 - watchdog may erroneously cause a timeout and make alpds crash with signal 49 due to an inconsistency in the way the timeout time delta was calculated.
+
+Disables IBM HTTP Server RC4 Cipher by default. Includes advance tuning parameter to enable if necessary. 
+
+e.g lmi.security.RC4 = true
+
+Modules impacted
+
+- alpsd, dpdk, mesa_config, mesa_eventsd, mesa_syslogd, XGS_53.war, GLG_events, mesa_lcd, mesa_control, pktcapd, ntpd
+
+Known Issues
+
+There are no known issues with this patch.
+
+Notes
+
+- After applying fixpack, a reboot is required for the changes made by the fixpack to apply
+- Clear the browser cache on any browsers used to manage the appliance.
+- If the Event Id GLGSY0038W appears in your System Events Event Log, then the operating system is experiencing a temporary failure. However, the appliance is still protecting your network. Contact IBM Support for assistance. 
+
+
+
+
+
+
+[/support/docview.wss?uid=swg21960785&aid=1] [https://ibm.biz/BdHdZx] [/support/docview.wss?uid=swg21960785&aid=2] [http://ibm.biz/InfraSecForumTechnote] [/support/docview.wss?uid=swg21960785&aid=3] [http://ibm.biz/SecSuptUTube] [/support/docview.wss?uid=swg21960785&aid=4] [http://ibm.biz/InfraSecFixes] [/support/docview.wss?uid=swg21960785&aid=5] [http://ibm.biz/FlexLicLogin] [/support/docview.wss?uid=swg21960785&aid=6] [http://ibm.biz/MyNotification] [/support/docview.wss?uid=swg21960785&aid=7] [http://ibm.biz/ContactSecSupport]

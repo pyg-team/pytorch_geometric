@@ -1,0 +1,158 @@
+Title: IBM RS01552: BIGINTEGER AND BIGDECIMAL ARE NOT SUPPORTED IN JRULES TO .NET - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When using a BigInteger and a BigDecimmal as ruleset
+   parameters. during the translation of the ruleset to the .NET
+   dll we receive this following errors:
+   
+    [exec] Unhandled Exception: IBM.Rules.RVE.Util.Issue.
+   IlrErrorException: Cannot find execution class 'java.util.
+   Random' for translating business class 'java.util.Random'
+    [exec] Cannot find execution class 'java.math.MathContext' for
+   
+   translating business class 'java.math.MathContext'
+    [exec] Cannot find execution class 'java.math.RoundingMode'
+   for translating business class 'java.math.RoundingMode'
+    [exec] Mismatch of member type, type 'System.Double' is
+   returned by member 'System.Int64.Pow(System.Int64,System.Int32)
+   ', whereas the type 'System.Int64' or a subclass is expected.
+    [exec] Mismatch of static modifier between 'java.lang.Float.
+   NaN' and 'System.Single.NaN'
+    [exec] Mismatch of static modifier between 'java.lang.Double.
+   NaN' and 'System.Double.NaN'
+    [exec] at IBM.Rules.RVE.Util.Issue.IlrDefaultIssueHandler.
+   ThrowException() in D:
+   \work\Repositories\JRules\engine\jrules2dotnet\src\JRules2DotNet
+   
+   Engine\src\fromSharedBase\IlrDefaultIssueHandler.cs:line 95
+    [exec] at IBM.Rules.RVE.Outline.EngineOutlineImpl.
+   ApplyModelRewriters(SemObjectModel om, GenerationConfiguration
+   conf) in D:
+   \work\Repositories\JRules\engine\jrules2dotnet\src\JRules2DotNet
+   
+   Engine\Generated\Tools\Outline\EngineOutlineImpl.cs:line 297
+    [exec] at JRules2DotNet.EntryPoint.Migrate() in D:
+   \work\Repositories\JRules\engine\jrules2dotnet\src\JRules2DotNet
+   
+   \EntryPoint.cs:line 258
+    [exec] at JRules2DotNet.EntryPoint.Main(String[] args) in D:
+   \work\Repositories\JRules\engine\jrules2dotnet\src\JRules2DotNet
+   
+   \EntryPoint.cs:line 103
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  The support for BigInteger and BigDecimal is not implemented in
+   the jrules to .net engine.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The engine is modified to include support for those java types.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   RS01552
+   
+   
+ * REPORTED COMPONENT NAME
+   WS DECISION SVR
+   
+   
+ * REPORTED COMPONENT ID
+   5725B6901
+   
+   
+ * REPORTED RELEASE
+   801
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-02-27
+   
+   
+ * CLOSED DATE
+   2014-03-28
+   
+   
+ * LAST MODIFIED DATE
+   2014-03-28
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  999
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WS DECISION SVR
+   
+   
+ * FIXED COMPONENT ID
+   5725B6901
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R801 PSY
+   UP

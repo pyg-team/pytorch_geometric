@@ -1,0 +1,94 @@
+Title: IBM 【セキュリティ情報】: IBM WebSphere MQ & TLS Heartbleed (CVE-2014-0160) - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ オープンソースの暗号通信ライブラリであるOpenSSL に、情報漏洩のセキュリティ脆弱性が報告されました。
+この脆弱性に関するWebSphereMQの影響を記載します。
+
+
+VULNERABILITY DETAILS
+CVE ID: CVE-2014-0160 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-0160]
+DESCRIPTION:
+Open SSL 1.0.1 (1.0.1g以前)のTLSおよびDTLSの実装は、適切にハートビートExtensionパケットを処理しないため、リモートの攻撃者が工作したパケットによりバッファーあふれを発生させ、メモリーから機密情報(例：秘密鍵、ユーザー名、パスワード、暗号化されたトラフィックの内容など）を入手できる可能性があります。この問題は、Heartbleed Bug としても知られています。
+
+
+CVSS:
+CVSS Base Score: 7.8
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/92322 [https://exchange.xforce.ibmcloud.com/vulnerabilities/92322] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:L/Au:N/C:C/I:N/A:N)
+
+AFFECTED PRODUCTS AND VERSIONS
+この脆弱性は、次のコンポーネント(サポート・パック/Eclipseプロジェクト)を使用されている場合、影響があります。 
+
+ * Support Pac MAT1 - WebSphere MQ client for HP Integrity NonStop Server 
+ * Eclipse Paho MQTT C Client - Linux & Windows
+
+
+下記の製品では、プラットフォーム、バージョン、リリースに関わらず影響がありません。  * IBM WebSphere MQ Client 
+ * IBM WebSphere MQ Server 
+ * IBM WebSphere MQ Managed File Transfer 
+ * IBM WebSphere MQ Advanced Message Security
+
+
+IBM Java JSSE は、OpenSSLを使用しておりません。 REMEDIATION/FIXES
+WebSphere MQ client for HP Integrity NonStop Server と Paho MQTT C clients for Linux and Windows ともに脆弱性の修正を含んだOpenSSL 1.0.1gを使用するように変更されました。 
+
+ * A refreshed install image for the HP Integrity NonStop Server MQ client のリフレッシュ・イメージはFixセントラル ここ [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?product=ibm/WebSphere/WebSphere+MQ&release=7.1&platform=All&function=fixId&fixids=MQ-7100-hpns-ia64-OpenSSL101g&includeSupersedes=0]からダウンロードできます。 
+ * A refreshed zip file containg the Paho MQTT C client のリフレッシュ・ファイルは、Fixセントラルここ [http://www-933.ibm.com/support/fixcentral/swg/quickorder?product=ibm/WebSphere/WebSphere+MQ&release=7.5&platform=All&function=fixId&fixids=1.0.0.3-WS-MQCP-MA9B-OpenSSL101g&includeSupersedes=0] からダウンロードできます。
+
+
+修正を導入後、CVE-2014-0160では追加のステップの実行が推奨されています。 
+
+1) SSL証明書の置き換え 
+あなたは、既存のSSL証明書を取り消して、新しい証明書を再発行する必要があります。 
+古いプライベートキーを使用して新しい証明書を生成するのではなく、新しいプライベートキー(例えば、"openssl genrsa"を使用)を使用して、新しい証明書署名要求(CSR)を作成するために、新しいプライベートキーを使用する必要があります。 
+
+2) 証明書のリセット 
+脆弱なOpenSSLのバージョンで保護されているネットワークのアプリケーション・ユーザーは、OpenSSLのアップグレード前にパスワードのリセット、認証もしくはセッションに関連したクッキーの取り消しが強制される必要があり、 
+その後、再認証する必要があります。 
+
+注意： 
+あなたの環境は、他の製品（非IBM製品を含む）のために、更なる修正を必要とするかもしれません。 
+SSL証明書に代わって、必要な修正をあなたの環境に適用した後に、ユーザー証明書をリセットしてください。 WORKAROUNDS AND MITIGATIONS
+なし 
+
+サポートパック MA9B で提供されているCクライアントライブラリーでは、OpenSSL 1.0.1.gを使用するようにソースからリビルドできます。 instructions [http://pic.dhe.ibm.com/infocenter/wmqv7/v7r5/topic/com.ibm.mm.tc.doc/tc10155_.htm]を参照ください。
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v2 Guide [http://www.first.org/cvss/v2/guide] 
+On-line Calculator v2 [http://nvd.nist.gov/CVSS-v2-Calculator] 
+[IBMサイト] この文書は、米国 IBM 社の資料を翻訳した参考文書です。翻訳元の文書は、以下のリンクよりご参照ください。
+Security Bulletin: IBM WebSphere MQ & TLS Heartbleed (CVE-2014-0160) [http://www.ibm.com/support/docview.wss?uid=swg21669839]
+
+公開済みのフィックスパックについては、以下のサイトよりご利用いただけます。
+Recommended fixes for WebSphere MQ [http://www-01.ibm.com/support/docview.wss?rs=171&uid=swg27006037]
+
+フィックス・パックの公開予定については、以下のサイトよりご確認いただけます。
+WebSphere MQ planned maintenance release dates [http://www-01.ibm.com/support/docview.wss?rs=171&uid=swg27006309]
+
+[CVSS情報]
+独立行政法人 情報処理推進機構: 共通脆弱性評価システムCVSS概説 [http://www.ipa.go.jp/security/vuln/CVSS.html]
+JVN iPedia: CVSS計算ソフトウェア日本語版 [http://jvndb.jvn.jp/cvss/ja.html]
+
+
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] 
+【お問合せ先】
+技術的な内容に関して、サービス契約のあるお客様はIBMサービス・ラインにお問い合わせください。
+IBM サービス・ライン [http://www.ibm.com/jp/news/20070420001.html]
+
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY. 
+
+関連情報
+ An US English translation is available [http://www.ibm.com/support/docview.wss?uid=swg21669839]

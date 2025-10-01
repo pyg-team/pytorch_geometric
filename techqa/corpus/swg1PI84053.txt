@@ -1,0 +1,138 @@
+Title: IBM PI84053: UPDATE IBM WEBSPHERE MQ JCA RESOURCE ADAPTER TO VERSION 9.0.0.1 - United States
+
+Text:
+  FIXES ARE AVAILABLE
+9.0.0.5: WebSphere Application Server traditional V9.0 Fix Pack 5 [http://www-01.ibm.com/support/docview.wss?uid=swg24044067]
+9.0.0.6: WebSphere Application Server traditional V9.0 Fix Pack 6 [http://www-01.ibm.com/support/docview.wss?uid=swg24044242]
+9.0.0.7: WebSphere Application Server traditional V9.0 Fix Pack 7 [http://www-01.ibm.com/support/docview.wss?uid=swg24044620]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  UPDATE IBM WEBSPHERE MQ JCA RESOURCE ADAPTER TO VERSION 9.0.0.1
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  All users of IBM WebSphere Application      *
+   *                  Server                                      *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: The IBM WebSphere MQ JCA Resource       *
+   *                      Adapter shipped with IBM WebSphere      *
+   *                      Application Server needs updating.      *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   The WebSphere MQ JCA Resource Adapter shipped within WebSphere
+   Application Server is used by all applications connecting to
+   WebSphere MQ from within the application server. WebSphere
+   Application Server now ships a new version of WebSphere MQ fix
+   pack 9.0.0.1.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Update IBM WebSphere MQ JCA Resource Adapter to latest version
+   of 9.0.0.1.
+   
+   The fix for this APAR is currently targeted for inclusion in
+   fix pack 9.0.0.5.  Please refer to the Recommended Updates
+   page for delivery information:
+   http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI84053
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSPHERE APP S
+   
+   
+ * REPORTED COMPONENT ID
+   5724J0800
+   
+   
+ * REPORTED RELEASE
+   900
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-07-06
+   
+   
+ * CLOSED DATE
+   2017-08-30
+   
+   
+ * LAST MODIFIED DATE
+   2017-08-30
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBSPHERE APP S
+   
+   
+ * FIXED COMPONENT ID
+   5724J0800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R900 PSY
+   UP

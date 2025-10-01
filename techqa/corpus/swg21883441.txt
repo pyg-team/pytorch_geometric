@@ -1,0 +1,56 @@
+Title: IBM Event Gateway fails to start - United States
+
+Text:
+ncp_g_event ; ItncmEventMaps.cfg TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When a domain is cloned that has ITNCM integration, EventGateway (ncp_g_event) is failing to start - how to address it? 
+
+SYMPTOM
+$NCHOME/log/precision/ncp_g_event.<DOMAIN>.log when run in '-messagelevel' as 'debug', will contain the following: 
+
+2015-04-22T09:05:28: Information: I-DB-001-001: [1t] Created handle 1 of 5 in pool to DB 'NCMONITOR'
+2015-04-22T09:05:28: Information: I-VER-001-006: [1t] Reading schema from file: /opt/IBM/tivoli/netcool/etc/precision/EventGatewaySchema.IBM_NETWORK.cfg
+2015-04-22T09:05:28: Information: I-EVE-004-010: [1t] Successfully parsed schema file 'EventGatewaySchema'
+2015-04-22T09:05:28: Information: I-VER-001-006: [1t] Reading schema from file: /opt/IBM/tivoli/netcool/etc/precision/NcoGateInserts.IBM_NETWORK.cfg
+2015-04-22T09:05:28: Information: I-EVE-004-010: [1t] Successfully parsed schema file 'NcoGateInserts'
+2015-04-22T09:05:28: Information: I-RIV-002-115: [1t] CGwStoreMgr.cc(248) File is currently unavailable. Failed to parse schema file /opt/IBM/tivoli/netcool/etc/precision/ItncmEventMaps.cfg which was listed in the gwSchemaFiles directory as 'ItncmEventMaps'
+2015-04-22T09:05:28: Warning: W-RIV-002-128: [1t] CGwApplication.cc(262) Schema file parsing failed
+2015-04-22T09:05:28: Warning: W-RIV-002-128: [1t] Main.cc(107) Failed to initialise the Event Gateway. Please check that the configured NCIM database is accessible, using script ncp_db_access.pl
+2015-04-22T09:05:28: Information: I-VER-001-003: [1t] ncp_g_event shutting down
+2015-04-22T09:05:28: Information: I-MOM-001-047: [1t] Terminating message broker session...
+2015-04-22T09:05:28: Information: I-BAS-001-013: [1t] Joined thread [1800t] to current thread [1t]
+2015-04-22T09:05:28: Debug: D-DB-001-011: [1t] Destroying DB handle pool
+2015-04-22T09:05:28: Information: I-VER-001-015: [1t] Gracefully terminated
+
+
+CAUSE
+By default, when you clone a domain that has ITNCM integrated, it'll have 'ITNCM' plug-in enabled, but even after disabling plug-in it's still expecting the schema file 'ItncmEventMaps.cfg' to exist under $NCHOME/etc/precision. 
+
+# ncp_perl /opt/IBM/tivoli/netcool/precision/scripts/perl/scripts/ncp_gwplugins.pl -domain IBM_NETWORK
+|--------------------|------------|
+| Plugin name | Is enabled |
+|--------------------|------------|
+| Adaptive Polling | true |
+| Disco | false |
+| Failover | true |
+| ITNCM | false |
+| PostNcimProcessing | true |
+| RCA | true |
+| SAE IP Path | true |
+| SAE ITNM Service | true |
+| SAE MPLS VPN | true |
+| zNetView | false |
+|--------------------|------------|
+
+
+RESOLVING THE PROBLEM
+Since we can't drop the plug-in when using a shared NCIM with another domain that has 'ITNCM' plug-in enabled, you can workaround it using the following: 
+
+1) Optional step - Disable 'ITNCM' plug-in for a specific domain (if not required):
+#ncp_perl /opt/IBM/tivoli/netcool/precision/scripts/perl/scripts/ncp_gwplugins.pl -domain IBM_NETWORK -plugin ITNCM -disable
+
+2) Mandatory step - Copy or create $NCHOME/etc/precision/ItncmEventMaps.cfg with the following context:
+// Configuration file for ITNCM Gateway plugin
+insert into config.eventMaps (EventMapName, Stitcher) values ("ItncmResourceEvent", "LookupEntityId");
+insert into config.precedence values (0,"ItncmResourceEvent","SNMPTRAP-ibm-ITNCM-MIB-itncmResourceDeviceActivityTrap");

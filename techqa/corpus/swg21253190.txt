@@ -1,0 +1,53 @@
+Title: IBM Stale OLR state files might cause online table reorganization to fail with SQL0911N - United States
+
+Text:
+ADM9504W; OLR; reorg; online; SQL0911N; rollback; sqldOLRLoadStateFile TECHNOTE (FAQ)
+
+QUESTION
+ Online table reorganization might fail with an SQL0911N error ("The current transaction has been rolled back because of a deadlock or timeout"). The messages that appear in the db2diag.log are ADM9504W "Online index reorganization on table failed" and "Error verifying OLR state file". 
+
+CAUSE
+This can happen when stale online reorganization (OLR) files are present, which prevents new online reorganizations from being performed on a specific database object. 
+
+
+Problem Details
+
+
+Messages similar to the following will appear in the db2diag.log: 
+
+
+2005-10-14-07.04.25.490110+120 E5635579C642 LEVEL: Warning 
+PID : 5988360 TID : 1 PROC : db2agent (DEFSER_P) 0 
+INSTANCE: db2inst1 NODE : 000 DB : SAMPLE 
+APPHDL : 0-166 APPID: *LOCAL.db2inst1.051014050007 
+FUNCTION: DB2 UDB, relation data serv, sqlrreorg_indexes, probe:92 
+MESSAGE : ADM9504W Online index reorganization on table 
+"CLASSIFICATION" (ID "4") and table space "USERSPACE1" (ID "2") failed 
+on this node with SQLCODE "-911" reason code "68". To resolve this problem, re-submit the REORG INDEXES command on the failing node(s). 
+
+...
+2006-04-20-09.46.59.895093+120 I7317190C562 LEVEL: Warning 
+PID : 4898958 TID : 1 PROC : db2agent 
+(CLASS_P) 0 
+INSTANCE: db2inst1 NODE : 000 DB : SAMPLE 
+APPHDL : 0-132 APPID: *LOCAL.db2inst1.060420074650 
+FUNCTION: DB2 UDB, data management, sqldOLRLoadStateFile, probe:12723 
+MESSAGE : Error verifying OLR state file /NODE0000/SQL00001/00000003.OLR - Reason Code: 1 
+DATA #1 : Hexdump, 4 bytes 
+0x2FF14834 : 8004 00F9 .... 
+
+
+
+
+In this example, the stale online reorganization file is /NODE0000/SQL00001/00000003.OLR 
+
+
+ANSWER
+If no online reorganizations are currently running on the database object, you might resolve the issue by deleting the specified OLR file (/NODE0000/SQL00001/00000003.OLR in the earlier example). 
+
+To find out which table is referenced by the OLR file, use the name of the OLR file. The first 4 digits of the file name represent the pool ID (for example, tablespace ID 0000) and the last four digits represent the object ID (for example, table ID 0003).
+
+RELATED INFORMATION
+ Reorganizing tables online [http://publib.boulder.ibm.com/infocenter/db2luw/v9/topic/com.ibm.db2.udb.admin.doc/doc/t0024775.htm]
+Choosing a reorganization method [http://publib.boulder.ibm.com/infocenter/db2luw/v9/topic/com.ibm.db2.udb.admin.doc/doc/c0024850.htm]
+Inplace Table Reorganization [http://publib.boulder.ibm.com/infocenter/db2luw/v9/topic/com.ibm.db2.udb.admin.doc/doc/c0024854.htm]

@@ -1,0 +1,59 @@
+Title: IBM Security Bulletin: IBM License Metric Tool v9 and IBM Endpoint Manager for Software Use Analysis v2.2 and v9 are vulnerable to Padding Oracle On Downgraded Legacy Encryption  (POODLE) attack on SSLv3 connections (CVE-2014-3566) - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ SSLv3 protocol used to secure a number of connection paths in IBM License Metric Tool and IBM Endpoint Manager for Software Use Analysis is vulnerable to POODLE attack. This attack enables a man-in-the-middle attacker to decrypt and intercept communications, including user-server and agent-server messages. You are not vulnerable, if your environment is already FIPS or SP800-131 compliant. 
+
+VULNERABILITY DETAILS
+IBM License Metric Tool and IBM Endpoint Manager for Software Use Analysis use SSLv3 protocol to secure connections between user interfaces (WebUI, API) and server, and to secure connections to associated IBM Endpoint Manager server(s). By manipulating SSL handshake, an attacker placing himself between server and one of the given elements can cause the connection to use a cipher suite which is easily to break, and in the result decrypt communications into plain text.
+For the attack to be performed, the attacker needs to be able to read network requests exchanged between environment components and send to them his own requests (man-in-the-middle). An exploit would impact the confidentiality of data.
+
+CVE-ID: CVE-2014-3566 [https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-3566]
+DESCRIPTION: Product could allow a remote attacker to obtain sensitive information, caused by a design error when using the SSLv3 protocol. A remote user with the ability to conduct a man-in-the-middle attack could exploit this vulnerability via a POODLE (Padding Oracle On Downgraded Legacy Encryption) attack to decrypt SSL sessions and access the plaintext of encrypted connections.
+CVSS Base Score: 4.3
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/97013 [https://exchange.xforce.ibmcloud.com/vulnerabilities/97013] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:M/Au:N/C:P/I:N/A:N)
+
+AFFECTED PRODUCTS AND VERSIONS
+IBM License Metric Tool v9, IBM Endpoint Manager for Software Use Analysis v2.2, IBM Endpoint Manager for Software Use Analysis v9
+
+REMEDIATION/FIXES
+Code fixes will be available with the following releases (note that even with the fixed releases you still have to apply fixes for IBM Endpoint Manager Server, as described in Workaround and Mitigations)
+2.2 patch 8
+9.0.2
+
+WORKAROUNDS AND MITIGATIONS
+There is no mitigation for Software Use Analytics v2.2. You have to install patch 8 as soon as it is available. 
+In order to mitigate the vulnerability in IBM License Metric Tool v9 and Software Use Analysis v9, you need to enable enhanced security for the product's application server and apply relevant fixes to IBM Endpoint Manager server, as outlined below.
+◦ Enable FIPS or SP800-131 standard on the application server (WebSphere) cell used by the product: 
+
+ * 
+ * http://www-01.ibm.com/support/knowledgecenter/SSKLLW_9.1.0/com.ibm.tivoli.tem.doc_9.1/SUA_9.1/com.ibm.license.mgmt.doc/security/t_configure_fips_compliance.html?lang=en-us
+ * 
+ * 
+ * http://www-01.ibm.com/support/knowledgecenter/SSKLLW_9.1.0/com.ibm.tivoli.tem.doc_9.1/SUA_9.1/com.ibm.license.mgmt.doc/security/c_sp800-131_compliance.html?lang=en
+
+◦ Apply fixes for IBM Endpoint Manager Server(s):  * ▪ https://www.ibm.com/developerworks/community/blogs/a1a33778-88b7-452a-9133-c955812f8910/entry/fixlet_messages_available_for_ssl_version_3_0_vulnerability_cve_2014_3566_aka_poodle?lang=en
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v2 Guide [http://www.first.org/cvss/v2/guide] 
+On-line Calculator v2 [http://nvd.nist.gov/CVSS-v2-Calculator] 
+
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY. 
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Security IBM BigFix Inventory

@@ -1,0 +1,156 @@
+Title: IBM IV86435: JIT INCORRECTLY OPTIMIZES LOCKS CAUSING GC ASSERT - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Error Message: The snap trace describes a failed assertion:
+   
+   ** ASSERTION FAILED ** at ParallelScavenger.cpp:2993:
+   ((MM_StackSlotValidator(MM_StackSlotValidator::NOT_ON_HEAP,
+   *slotPtr, stackLocation, walkState).validate(_env)))
+   .
+   Stack Trace: java/nio/HeapByteBuffer.<init>(II)V
+   java/nio/ByteBuffer.allocate(I)Ljava/nio/ByteBuffer;
+   org/apache/cassandra/utils/memory/SlabAllocator.getRegion()Lorg/
+   apache/cassandra/utils/memory/SlabAllocator$Region;
+   org/apache/cassandra/utils/memory/SlabAllocator.allocate(ILorg/a
+   pache/cassandra/utils/concurrent/OpOrder$Group;)Ljava/nio/ByteBu
+   ffer;
+   Customer may experience other similar call stack.
+   .
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  dontInline={org/apache/cassandra/utils/concurrent/Locks.monitorE
+   nterUnsafe*,org/apache/cassandra/utils/concurrent/Locks.monitorE
+   xitUnsafe*}
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  This is a problem with JIT live monitor metadata. The
+   optimization incorrectly made some assumption which is untrue in
+   this corner case. The problem could appear on x, power, or z.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  JIT has been updated to handle this special case.
+   .
+   This APAR will be fixed in the following Java Releases:
+      7 R1 SR3 FP50  (7.1.3.50)
+      6 R1 SR8 FP30  (6.1.8.30)
+      8    SR3 FP10  (8.0.3.10)
+      7    SR9 FP50  (7.0.9.50)
+   .
+   Contact your IBM Product's Service Team for these Service
+   Refreshes and Fix Packs.
+   For those running stand-alone, information about the available
+   Service Refreshes and Fix Packs can be found at:
+              https://www.ibm.com/developerworks/java/jdk/ [https://www.ibm.com/developerworks/java/jdk/]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV86435
+   
+   
+ * REPORTED COMPONENT NAME
+   JIT
+   
+   
+ * REPORTED COMPONENT ID
+   620700124
+   
+   
+ * REPORTED RELEASE
+   130
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-06-30
+   
+   
+ * CLOSED DATE
+   2016-06-30
+   
+   
+ * LAST MODIFIED DATE
+   2016-07-01
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   JIT
+   
+   
+ * FIXED COMPONENT ID
+   620700124
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R130 PSY
+   UP
+   
+   
+ * R260 PSY
+   UP

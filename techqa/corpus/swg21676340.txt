@@ -1,0 +1,79 @@
+Title: IBM GIS 4.3 Connect Direct adapter appears to be stuck on starting state. The adapter startup was changed to cold, from a warm start. - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ (Gentran Integration Suite) GIS 4.3 Connect Direct adapter appears to be stuck on starting state. The adapter startup was changed to cold, from a warm start. 
+
+SYMPTOM
+The CD adapter appeared to be stuck (not starting up) while it is doing the cleanup process and it is taking longer time.The adapter startup was changed to cold, from a warm start. No errors were posted, as expected. 
+
+
+CDinterop log displayed the following entries:
+[2014-05-21 23:29:04.359] DEBUG 000000000000 GLOBAL_SCOPE
+CDServerFactory.createNonWeblogicCDServer() CDServer constructor
+finished
+[2014-05-21 23:29:04.359] DEBUG 000000000000 GLOBAL_SCOPE CDServer.
+startup() - Node [R-b2bbaclear-as1-p] - Entering - StartChoice [Cold]
+[2014-05-21 23:29:04.359] DEBUG 000000000000 GLOBAL_SCOPE CDServer.
+startup() - CDServer: Node [R-b2bbaclear-as1-p] bp map=
+{/somedir/subdir/processes/pull.
+cdp=/businessprocess/CopyFromSomewhereBP}
+[2014-05-21 23:29:04.359] DEBUG 000000000000 GLOBAL_SCOPE CDServer
+(ML_CD_Replication_CDSERVER_ADAPTER_node2) changing from Stopped to
+Starting
+[2014-05-21 23:29:04.359] DEBUG 000000000000 GLOBAL_SCOPE Page 4 of 20
+CDServerAdapterLittleAImpl.update() - Adapter:
+ML_CD_Replication_CDSERVER_ADAPTER_node2 received cdserver starting
+notification
+[2014-05-21 23:29:04.36] DEBUG 000000000000 GLOBAL_SCOPE CDServer.
+startup() - CDServer: Node [R-b2bbaclear-as1-p] is cold started
+[2014-05-21 23:29:04.36] DEBUG 000000000000 GLOBAL_SCOPE RepositoryDB.
+removeRestartCkPt() - BEGIN REMOVING RESTART VECTOR for Node: [R-
+b2bbaclear-as1-p]
+
+
+CAUSE
+The customer stopped and restarted this GIS 4.3 CDSA adapter, but they had changed it to start up as COLD, instead of WARM. So for a COLD startup it took much time to clean up activity on the database tables CD_CKPT_REST and CD_CKPT_INFO.
+The logs indicated:
+
+[2014-05-21 23:29:04.36] DEBUG 000000000000 GLOBAL_SCOPE RepositoryDB.removeRestartCkPt() - BEGIN REMOVING RESTART VECTOR for Node: [R-b2bbaclear-as1-p]
+
+Their CDSA had not restarted for long time, meaning it had accumulated a large number of records on CD_CKPT tables.
+
+
+DIAGNOSING THE PROBLEM
+We determined the CDSA adapter was actually starting up fine. The problem was that they were unable to do meaningful work because it was so busy purging checkpoint records due to the adapter was started up cold. 
+
+We had the customer change the CDSA startup up mode from COLD to WARM to bypass the purging process. We recommended WARM startup mode as a best practice. 
+
+In addition to this, we recommended to the customer to set 'ckptRemoveDate' to 1 to keep the checkpoint database table from growing over time (see how below).
+
+
+
+Answers to customer's side questions regarding this reported issue:
+
+1. What is the best practice while restarting the CD adapter? Anything which need to be taken care before stopping and starting?
+Insure all sessions are complete before disabling, otherwise, there is nothing unusual.
+
+2. What are the best steps to be taken when they get into such a situation and how to overcome it?
+Configure WARM startup option and set 'ckptRemoveDate' to 1 to keep the checkpoint table from growing over time. (See below)
+
+
+Configuring Checkpoint Record Lifespan
+Checkpoint record lifespan is configured by setting the 'ckptRemoveDate' property in the noapp.properties property file located in the properties subdirectory of the GIS installation directory.
+
+The 'ckptRemoveDate' property has the following syntax:
+
+ckptRemoveDate=<days>
+
+Where
+'days' is a non-negative integer in the range of 0..N representing the number of days to keep
+checkpoint information associated with a failed transfer for the purpose of restarting it. 
+The default is 30 days.
+
+
+
+RESOLVING THE PROBLEM
+Restart the GIS 4.3 CDSA adapter with a WARM start up to avoid this reported issue.

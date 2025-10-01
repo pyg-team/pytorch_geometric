@@ -1,0 +1,126 @@
+Title: IBM Managing Server Scalability Enhancements in ITCAM AD 7.1.0.3 - United States
+
+Text:
+ITCAMAD; Managing Server; MS NEWS
+
+ABSTRACT
+ Significant enhancements to the ITCAM Managing Server and Data Collector in V 7.1.0.3 offer increased throughput, reduced overhead and new scalability options with the potential to manage up to 1,000 JVMs with a single Managing Server. 
+
+CONTENT
+The Managing Server component in ITCAM for Application Diagnostics is responsible for the management and storage of real-time and historical application performance data from Data Collectors deployed in the application servers. Communication between the Managing Server and the Data Collectors uses a combination of Java RMI and low-level TCP/IP streams. 
+
+ At the heart of the Managing Server, the Kernel is responsible for managing connections between the Data Collectors and the various Managing Server components (such as the Publish Server and Archive Agent). The Kernel acts as a location registry for these components, manages the relationships between them and also acts as a Code Base Server for dynamic RMI-based services. 
+
+It has always been a feature of the Managing Server to allow for multiple Kernels and multiple instances of other Managing Server components to be distributed over multiple hosts providing failover, redundancy and load balancing in large ITCAM deployments. The enhancements in ITCAM AD 7.1.0.3 make this easier to configure and provide fine-grained tuning options to optimize the environment. 
+
+
+Contract Monitor Defensive Ping Disablement 
+
+A feature of the Java RMI protocol used to monitor availability of Data Collectors (and hence the monitored application server) includes a "Contract Monitor". A "heartbeat" function in the Data Collector periodically informs the Kernel it is alive by renewing a contract object established at initial connection time. If the contract is not renewed within a certain amount of time, the Contract Monitor in the Kernel attempts to contact the Data Collector by "pinging" the Data Collector. If the Contract Monitor fails to contact the Data Collector after three successive contract renewal failures, it is then considered unavailable. During this time the Kernel maintains a reference to the Data Collectors in its registry. With modern networks and more reliable TCP/IP stacks, this activity does not really serve any purpose. In fact it increases the stress on the Kernel by requiring parallel remote procedure calls when clients are not responding. This raises the memory and CPU requirements on the Kernel. In ITCAM Managing Server 7.1.0.3 this behavior no longer occurs by default. Now, if a contract is not renewed in time, defensive pinging no longer occurs and the contract is removed from the Kernel registry. If a client renews the contract a later time, it is added back into the Kernel registry so disabling defensive pings poses no risk. This new behavior is configurable. If requested by Tivoli Technical Support, you can re-enable defensive ping by specifying a property in a Kernel properties file (e.g kl1.properties):
+enable.defensive.pings=true 
+
+Defining Kernel Processes as Code Base Servers 
+
+As described above, one of the Kernel's roles is to act as a Code base Server for Java RMI clients. In this role, Data Collectors (and other Managing Server components) act as RMI clients and when they "join" the Kernel they will download the necessary interface code need to communicate with the different Managing Server components. This addresses the typical client/server dilemma and allows clients to be at different versions of code and still be able to communicate with the server. Having a Kernel that supports multiple roles as Registry, Join Manager and Code Base Server can impact performance. With ITCAM 7.1.0.3, customers can now configure multiple Kernels, one providing the registry and join services and others defined only to serve as Code Base Servers. To define a Kernel without Code Base Server capability the following property should be defined in a Kernel properties file (e.g. kl1.properties);
+disable.codebase.server=true 
+
+It is of course vital that at least one Kernel process be defined with code base server capability. Such a kernel can be defined to operate solely as a Code Base Server with the Kernel RMI stub and Availability Manager services disabled by setting the following properties (for example in kl2.properties):
+disable.avm.reporter=true 
+
+disable.rfs.server=true 
+
+Defining Multiple Code Base Servers 
+
+To specify which Kernel hosts and ports are to be used a Code Base Servers (dedicated or otherwise), specify the hosts and ports, separated by commas, in the following property in file MS_HOME/etc/ms.properties: 
+
+
+kernel.codebase.hosts=blade4.mycompany.com:9122,blade5.mycompany.com:9122 
+
+Heartbeat Optimization 
+
+Prior to ITCAM AD 7.1.0.3 there are two threads per DC per Kernel performing heart beat at contract renewal. If there are 1,000 Data Collectors then each Kernel gets 2,000 heartbeat calls every contract duration. If there are multiple Kernels, then each DC must contact each Kernel for every contract renewal. Contract renewal was done by a separate thread for each Kernel by both the Probe Controller and the Command Agent in each Data Collector requiring additional RMI threads. With ITCAM 7.1.0.3 Kernel enhancements, all contract renewals are performed on a single thread, regardless of the number of Kernels. If there are multiple kernels, the order in which heartbeats are made is randomized. Dynamic RMI Code Base download is also randomized to maintain even load across all available Code base Server Kernels. In addition, reverse RMI calls made by the Kernel to the Data Collectors at Kernel Join have been eliminated, further reducing the overhead on the Kernel and the Data Collectors. 
+
+These enhancements are realized just by using Managing Server 7.1.0.3 even if the Data Collectors are at an earlier release level because the optimized code is in the dynamic RMI code downloaded from the Code Base Server in the Kernels. The single threaded heartbeat also benefits Data Collectors because it eliminates repeated download of the same code by different threads using different Java class loaders. 
+
+These optimization options are dictated by the Managing Server by specifying properties in file MS_HOME/etc/ms.properties. However, any of these properties can be overridden by Data Collectors by specifying the option in the Data Collector file dc.java.properties. This gives Data Collectors flexibility to override any MS behavior and provides a more granular control if the circumstance warrants. 
+
+ 
+
+Managing Server Heartbeat Optimization Properties in ms.properties: 
+
+
+# Multiple rfs ports can be specified separated by comma delimiters
+kernel.rfs.hosts=htpcvm.mycompany.com:9120,nvwvm.mycompany.com:9120
+
+# This property when set to true will do heart beat with all kernels 
+# single thread. When set to false, one thread is started on client side for # each kernel
+enable.single.thr.heartbeat=true
+
+# When set to false, kernel order is not changed. When set to true, 
+# helps distribute the RMI load across kernels instead of all clients 
+# hitting the first kernel all the time
+enable.random.kernel.order=true
+
+# When set to false, Code Base Server (CBS) order is not changed.
+# When set to true, CBS requests are distributed across multiple CBS servers
+# instead of all clients hitting sane kernel all the time
+enable.random.cbs.order=true
+
+
+
+Data Collector Enhancements 
+
+The following enhancements are only realized if the Data Collectors are upgraded to ITCAM AD 7.1.0.3. 
+
+
+
+
+
+
+Combined ProbeController and CommandAgent Heart beat
+
+
+
+
+Prior to ITCAM 7.1.0.3, all Probe Controller (PPECONTROLLER) and Command Agent (PPEPROBE) contract renewal heartbeats were performed by separate threads in parallel for each configured Kernel. Two threads are started for each Kernel and 2 RMI calls are made for each Kernel. Having two components in the same process reporting availability is unnecessary. With ITCAM Data Collector 7.1.0.3 RMI calls for ProbeController and CommandAgent are combined into one call on one thread. This automatically reduces RMI calls to the Managing Server by 50%.
+
+
+
+
+Note that in order to use single-threaded RMI calls from the Data Collector, the Managing Server must also be at version 7.1.0.3 or higher, and the necessary properties set in the ms.properties file. The feature is known as Secondary Join and the property that enables it is defined in the Data Collector runtime file dc.java.properties:
+enable.probe.secondary.join=true 
+
+The same property must be defined in the Managing Server file MS_HOME/etc/ms.properties to support this feature. 
+
+enable.probe.secondary.join=true 
+
+ 
+
+When you enable this feature you will no longer get a separate message CYNK002I for the PPEPROBE. join. Instead, you will see a join message for the controller and a new message showing that a single threaded join is being used for both the PPECONTROLLER and PPEPROBE: 
+
+
+CYNK0001I <PPECONTROLLER, f12cc4ae-927b-e201-8406-e1e31432281f.89, 192.42.9.163> Successfully joined Kernel myserver.mycompany.com:9120
+. . . 
+## Combined single threaded join for Controller: <PPECONTROLLER, f12cc4ae-927b-e201-8406-e1e31432281f.89, ZOS, 192.42.9.163, 8300> Probe: <PPEPROBE, f22cc4ae-927b-e201-8406-e1e31432281f.89, ZOS, 192.42.9.163, 8200> 
+
+ 
+
+ Prior to this release (or if enable.probe.secondary.join=false), two messages are issued:
+CYNK0001I <PPECONTROLLER, 110a4a17-9a74-e201-9dcc-f3dd5b206f16.64, 192.42.9.163> Successfully joined Kernel myserver.mycompany.com:9120
+CYNK0002I <PPEPROBE, 71121fcc-2e75-e201-8963-65026a6d32ab.372882, 192.42.9.163> Successfully joined Kernel myserver.mycompany.com:9120 
+
+ 
+
+ 
+
+Nigel Williams 
+
+IBM Agoura Hills, CA 91301
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ ITCAMAD
+ITCAMWAS
+ITCAMJ2EE
+ITCAM

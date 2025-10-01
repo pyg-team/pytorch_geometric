@@ -1,0 +1,31 @@
+Title: IBM How do I install an additional IBM SPSS Statistics module or function to an existing Statistics product installation? - United States
+
+Text:
+module add addon install statistics spss TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ How do I install an additional IBM SPSS Statistics module or function to an existing Statistics product installation? 
+
+SYMPTOM
+How do I install an additional IBM SPSS Statistics module or function to an existing Statistics product installation?
+
+
+CAUSE
+How do I install an additional IBM SPSS Statistics module or function to an existing Statistics product installation?
+
+ENVIRONMENT
+All versions of IBM SPSS Statistics. All operating environments supported by IBM SPSS Statistics. 
+
+DIAGNOSING THE PROBLEM
+How do I install an additional IBM SPSS Statistics module or function to an existing Statistics product installation?
+
+RESOLVING THE PROBLEM
+No additional software is required to add Statistics functions/modules to an existing Statistics product.
+
+The availability of Statistics functions/modules is determined by licensing.
+
+Please license your product using the license authorization code for the Statistics functions/modules you wish to add using the product's License Authorization 
+Wizard.
+
+RELATED INFORMATION
+ Need more help? Our Statistics forum is Live! [https://developer.ibm.com/answers/topics/statistics.html?smartspace=predictive-analytics]

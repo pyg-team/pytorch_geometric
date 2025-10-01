@@ -1,0 +1,194 @@
+Title: IBM PI74635: AUDIT CREATE PLAN HELPER DOES NOT WORK USING INTERNET 11, BUT DOES WORK USING CHROME - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When using IE11, the Audit Create Helper hangs after clicking on
+   the Find Auditor link
+   The Date widget to enter the Start Date and End Dates do not
+   display,  but you are able to paste in the dates prior to
+   clicking Find Auditor link.
+   Date Widget does display correctly when using Chrome and
+   Firefox. NOTE that FireFox is NOT a supported browser.
+   
+   Workaround:
+   Use FireFox or Chrome to create Audit Plans using the Helper
+   
+   Prerequisites:
+   OpenPages 7.2.0.2 with Solutions
+   
+   Associate OpenPages Modules 7.2 Master profile to
+   OpenPagesAdministrator user
+   1)	Using a supported browser access the OP URL
+   (http://serverhost:10108/openpages)
+   2)	On top menu navigate to Administration > Users, Groups and
+   Domains
+   3)	Click on System Administrator-OpenPagesAdministrator  and
+   then click the Edit button
+   4)	In the Profile field dropdown, select OpenPages Modules 7.2.0
+   Master and click Save button
+   
+   Create Business Entity > Audit Entity > Audit hierarchy
+   1)	Click the Add New link on top right of page and select
+   Business Entity
+   2)	Enter Ent01 in the name field and click Save button
+   3)	Click the Add New link on top right of page and select
+   Auditable Entity
+   4)	Under Select Parents, click the Search tab and enter Ent01
+   and then select it and click Next button
+   5)	Enter AE01 in the name field and click Save button
+   6)	 Click the Add New link on top right of page and select Audit
+   7)	Under Select Parents, click the Search tab and enter AE01 and
+   then select it and click Next button
+   8)	Enter Audit01 in the name field and click Save button
+   
+   Steps to Reproduce:
+   1.	Using IE11,  access the OP URL
+   (http://serverhost:10108/openpages)
+   2.	On top menu, click on Audit Management > Audits
+   3.	Enter Audit01 in the filter and hit Return
+   4.	Click on Audit01 in the Filtered List View to display the
+   detail page
+   5.	In the Plans field, click on the Add or Modify Plans link
+   6.	In the new Create Plans window,  click on Add New
+   7.	Under Scheduling : Scheduled ,  confirm that clicking on the
+   date widget does not display a calendar
+   8.	Type Dec 01,2016 in NotePad and copy that string and paste
+   into the Start Date and End Date
+   9.	Click on the Find Auditor link and confirm that it hangs,
+   the progress bar on lower left of pages just loops forever.
+   10.	 Repeat Steps using Firefox or Chrome to confirm that it
+   will not hang.
+   
+   Expected Results:
+   The Calendar Widget should display and allow you to fill in date
+   fields using it.
+   Clicking the Find Audit link should not hang
+   
+   Actual Results:
+   Calendar Widget does not display and clicking on Find Audit link
+   hangs.
+   
+   Error Message:
+   
+   None
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * OpenPages Users                                              *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * AUDIT CREATE PLAN HELPER DOES NOT WORK USING IE11, BUT DOES  *
+   * WORK USING CHROME                                            *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * This was a problem in our code with IE specifically.  We     *
+   * made some changes to correct this in the 7.3 release         *
+   *                                                              *
+   * Customers should download OpenPages 7.3 from Passport        *
+   * Advantage. See the following document for details on         *
+   * obtaining OpenPages 7.3:                                     *
+   * http://www.ibm.com/support/docview.wss?uid=swg24042596       *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI74635
+   
+   
+ * REPORTED COMPONENT NAME
+   OPENPAGES GRC
+   
+   
+ * REPORTED COMPONENT ID
+   5725D5100
+   
+   
+ * REPORTED RELEASE
+   720
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-01-09
+   
+   
+ * CLOSED DATE
+   2017-01-11
+   
+   
+ * LAST MODIFIED DATE
+   2017-01-11
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   OPENPAGES GRC
+   
+   
+ * FIXED COMPONENT ID
+   5725D5100
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R730 PSY
+   UP

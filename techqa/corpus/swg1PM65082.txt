@@ -1,0 +1,133 @@
+Title: IBM PM65082: Obfuscator plugin not working in 7.5.3.1, 7.6.1 - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Rational Rhapsody Fix Pack 2 (7.6.1.2) for 7.6.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24032856]
+Rational Rhapsody 8.0 [http://www-01.ibm.com/support/docview.wss?uid=swg24032982]
+Rational Rhapsody 8.0.6 [http://www-01.ibm.com/support/docview.wss?uid=swg24037021]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Added Obfuscator plugin to Rhapsody 7.5.3.1 and 7.6.1.
+   
+   I was able to add the ?ObfuscatorPluginProfile.sbs? into my
+   model as a Reference. Next, I was able to find
+   ?ObfuscatorPlugin? under the ?Tools? menu. But when I click on
+   ?ObfuscatorPlugin?, no pop up message appears. Actually,
+   Rhapsody didn?t do anything at all. I checked my Task Manager,
+   and I don?t see anything that shows the plugin is running.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   Obfuscator plugin not working in Rational Rhapsody 7.5.3.1,
+   7.6.1
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fixed in 7.6.1.2
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM65082
+   
+   
+ * REPORTED COMPONENT NAME
+   TLOGIC RHAPSODY
+   
+   
+ * REPORTED COMPONENT ID
+   5724V74RP
+   
+   
+ * REPORTED RELEASE
+   761
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-05-21
+   
+   
+ * CLOSED DATE
+   2012-07-01
+   
+   
+ * LAST MODIFIED DATE
+   2012-07-01
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TLOGIC RHAPSODY
+   
+   
+ * FIXED COMPONENT ID
+   5724V74RP
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R761 PSN
+   UP

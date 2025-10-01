@@ -1,0 +1,184 @@
+Title: IBM IV79867: COMMAND LINE METHOD TO DELETE IMPACT ITEM (POLICY/SERVICE) IS NOT WORKING - United States
+
+Text:
+  DIRECT LINKS TO FIXES
+7.1.0-TIV-NCI-ZLINUX-FP0006 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=7.1.0-TIV-NCI-ZLINUX-FP0006&source=SAR]
+7.1.0-TIV-NCI-WINDOWS-FP0006 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=7.1.0-TIV-NCI-WINDOWS-FP0006&source=SAR]
+7.1.0-TIV-NCI-SOLARIS-FP0006 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=7.1.0-TIV-NCI-SOLARIS-FP0006&source=SAR]
+7.1.0-TIV-NCI-LINUX-FP0006 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=7.1.0-TIV-NCI-LINUX-FP0006&source=SAR]
+7.1.0-TIV-NCI-AIX-FP0006 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=7.1.0-TIV-NCI-AIX-FP0006&source=SAR]
+7.1.0-TIV-NCI-ZLINUX-FP0005 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=7.1.0-TIV-NCI-ZLINUX-FP0005&source=SAR]
+7.1.0-TIV-NCI-LINUX-FP0005 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=7.1.0-TIV-NCI-LINUX-FP0005&source=SAR]
+7.1.0-TIV-NCI-WINDOWS-FP0005 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=7.1.0-TIV-NCI-WINDOWS-FP0005&source=SAR]
+7.1.0-TIV-NCI-SOLARIS-FP0005 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=7.1.0-TIV-NCI-SOLARIS-FP0005&source=SAR]
+7.1.0-TIV-NCI-AIX-FP0005 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=7.1.0-TIV-NCI-AIX-FP0005&source=SAR]
+IBM Tivoli Netcool/Impact V7.1.0 Fix Pack 5(7.1.0-TIV-NCI-FP0005) [http://www-01.ibm.com/support/docview.wss?uid=swg24041270]
+IBM Tivoli Netcool/Impact V7.1.0 Fix Pack 6(7.1.0-TIV-NCI-FP0006) [http://www-01.ibm.com/support/docview.wss?uid=swg24042426]
+IBM Tivoli Netcool/Impact V7.1.0 Fix Pack 7(7.1.0-TIV-NCI-FP0007) [http://www-01.ibm.com/support/docview.wss?uid=swg24042688]
+IBM Tivoli Netcool/Impact V7.1.0 Fix Pack 8(7.1.0-TIV-NCI-FP0008) [http://www-01.ibm.com/support/docview.wss?uid=swg24042885]
+IBM Tivoli Netcool/Impact V7.1.0 Fix Pack 9(7.1.0-TIV-NCI-FP0009) [http://www-01.ibm.com/support/docview.wss?uid=swg24043378]
+IBM Tivoli Netcool/Impact V7.1.0 Fix Pack 10(7.1.0-TIV-NCI-FP0010) [http://www-01.ibm.com/support/docview.wss?uid=swg24043588]
+IBM Tivoli Netcool/Impact V7.1.0 Fix Pack 11(7.1.0-TIV-NCI-FP0011) [http://www-01.ibm.com/support/docview.wss?uid=swg24043858]
+IBM Tivoli Netcool/Impact V7.1.0 Fix Pack 12 (7.1.0-TIV-NCI-FP0012) [http://www-01.ibm.com/support/docview.wss?uid=swg24044312]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  product; Netcool/Impact
+   release: 7.1.0
+   
+   problem:
+   
+    delete policy, service or data source from the IMPACT
+    GUI works fine. but attempted to find a command line
+    method to delete an impact item, and there is nothing
+    documented?
+   
+   
+    Using the command line service there is a SQL command
+    (delete from <datasource where <filter>)
+   
+   that can be run to delete data from Impact.
+   
+   L3 update :
+    Unfortunately, testing this command it appears that it is
+    broken.  L2, please open an APAR so that we can fix this
+    command and document it.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  use the Impact gui until fix is available
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * All Impact Users                                             *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * Unable to delete services or policies from the command line  *
+   * service.                                                     *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * NONE                                                         *
+   ****************************************************************
+   When using the SQL commands to delete service or polices using
+   the command line service, the command will fail.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fixed command line service to allow the deletion of policies and
+   services using the DELETE SQL command.
+   
+   The fix for this APAR is contained in the following maintenance
+   packages:
+   
+   |Fix Pack| 7.1.0-TIV-NCI-FP0005
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV79867
+   
+   
+ * REPORTED COMPONENT NAME
+   NETCOOL/IMPACT
+   
+   
+ * REPORTED COMPONENT ID
+   5724O59IS
+   
+   
+ * REPORTED RELEASE
+   710
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2015-12-22
+   
+   
+ * CLOSED DATE
+   2016-03-11
+   
+   
+ * LAST MODIFIED DATE
+   2016-03-11
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  UNKNOWN
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   NETCOOL/IMPACT
+   
+   
+ * FIXED COMPONENT ID
+   5724O59IS
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R710 PSY
+   UP

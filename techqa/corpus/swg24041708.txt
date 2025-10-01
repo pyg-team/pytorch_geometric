@@ -1,0 +1,76 @@
+Title: IBM Tivoli Monitoring 6.3.0-TIV-ITM-FP0006-IV80660 - United States
+
+Text:
+GSKit CPU DOWNLOADABLE FILES
+
+ABSTRACT
+ This patch provides an update to the Basic Services component to provide mitigation to the security vulnerability listed below. 
+
+DOWNLOAD DESCRIPTION
+The following patch is provided to provide a workaround for the security vulnerability listed in the IBM Tivoli Monitoring (ITM) Security Bulletin http://www.ibm.com/support/docview.wss?uid=swg21976125 [http://www.ibm.com/support/docview.wss?uid=swg21976125]. 
+
+
+
+
+Note: The patch disables the use of TLS 1.2 and can be used until a newer release of GSKit is provided, 
+
+ 
+
+ 
+
+To use this workaround, the patch needs to be installed on each portal server, distributed management server (hub and remote), and ITM distributed agent systems. 
+
+
+Distributed Agents 
+For distributed agent systems, the patch updates the IBM Tivoli Monitoring Shared Libraries (ax component on UNIX/Linux) or Tivoli Enterprise Monitoring Agent Framework (GL component on Windows). The technote Upgrading Shared Components for IBM Tivoli Monitoring Agents [http://www.ibm.com/support/docview.wss?uid=swg21673490] provides information on how shared libraries are used. 
+
+For Agents running on distributed environments, if the patch cannot be installed, the HTTP Server can be disabled using the steps below to remediate the vulnerability. 
+
+NOTE: Disabling the service console using the steps below will result in the following functions to be disabled for that agent : 
+
+ *  SOAP requests tacmd commands dynamic trace 
+
+For this reason, HTTP_SERVER:N should be configured on agent endpoints ONLY (not on portal or management servers) and only if these functions are not needed by the user or agents installed on that system. 
+
+These these steps will need to be done for each agent and agent instance on the system. 
+
+Windows:  * From the MTEMS, right-click on the agent or agent instance and select Advanced..Edit Variables. 
+ * Select KDC_FAMILIES. Add "HTTP_SERVER:N" to the beginning. For example,  * 
+    * 
+    * 
+   
+   
+ * Restart the agent or agent instance.
+
+
+UNIX/Linux::  * Update the <pc>.ini file and locate the line 'KDC_FAMILIES'. Add "HTTP_SERVER:N" to the front of the line. For example, if the default line looks like:  * 
+    * 
+    * 
+    * 
+    * 
+   
+   
+ * For multi-instance agents, if the <pc>_<instance>.config file exists, edit it and locate the 'KDC_FAMILIES'. Add "HTTP_SERVER:N" to the front of the line. For example, if the default line looks like:  * 
+   
+   Change it to the following:  * 
+   
+   
+ * Restart the agent or agent instance
+
+PREREQUISITES
+The prerequisite level for this fix is as follows: 
+- IBM Tivoli Monitoring, version 6.3.0 Fix Pack 6 (6.3.0-TIV-ITM-FP0006)
+
+URL LANGUAGE SIZE(Bytes) 6.3.0-TIV-ITM-FP0006 [http://www.ibm.com/support/fixcentral/swg/quickorder?parent=ibm~Tivoli&product=ibm/Tivoli/IBM+Tivoli+Monitoring&platform=All&release=6.3.0&function=fixId&fixids=6.3.0-TIV-ITM-FP0006] English 1 
+DOWNLOAD PACKAGE
+
+
+
+
+Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options 
+What is Fix Central(FC)? [https://www.ibm.com/support/fixcentral/help?page=swfaqs] 6.3.0-TIV-ITM-FP0006-IV80660 29 Feb 2016 English 1 FC [http://www.ibm.com/support/fixcentral/swg/quickorder?parent=ibm~Tivoli&product=ibm/Tivoli/IBM+Tivoli+Monitoring&platform=All&release=6.3.0.6&function=fixId&fixids=6.3.0-TIV-ITM-FP0006-IV80660] [ ] 
+PRODUCT ALIAS/SYNONYM
+ ITM 
+
+ [/support/docview.wss?uid=swg24041708&aid=1]Problems (APARS) fixed [/support/docview.wss?uid=swg24041708&aid=2]Problems (APARS) fixed
+IV80660

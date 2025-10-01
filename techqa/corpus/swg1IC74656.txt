@@ -1,0 +1,147 @@
+Title: IBM IC74656: TRACKING GROUP WITH SAME NAME IN A TOOLKIT AND PROCESS APP BREAKS SEND DEFINITIONS - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  If you have a tracking group in both a Process App and a Toolkit
+   with the same name, and tracked data exists, the Send
+   Definitions process breaks for your entire Library.
+   
+   Repro steps (I am not sure if all of these are necessary but I
+   could NOT reproduce this just by having an identically named TG
+   in a Process App and Toolkit):
+   
+   1. In a toolkit, create a tracking group, "wleTG". Give it at
+   least one tracked field.
+   2. Create a snapshot for the toolkit.
+   3. In a Process App, create a tracking group, "wleTG". Give it
+   the same tracked fields as the toolkit's (may not be necessary).
+   4. Add dependency on the toolkit's snapshot created in step 2.
+   5. Create a new BPD, modeled like: Start -> Activity -> wleTG ->
+   End
+   6. Either use local variables or manually entered data to give
+   the tracked fields values in the TG's Implementation tab.
+   7. Complete an instance.
+   8. Send definitions. The TG_ table will be created with the
+   appropriate columns. In my case, no data was added to the table.
+   9. Send definitions again. Data still will not be added to the
+   table but you will see that the columns for the tracked fields
+   have now been duplicated. For example, if your fields are "foo"
+   and "bar", after the second Send Defs, you will have columns
+   named "foo", "bar", "foo2", and "bar2". This will continue to
+   happen until your table hits the maximum 1024 columns.
+   ** Other tracking groups will no longer get any data written to
+   their tables.
+   ** No errors in tw-perf.log
+   ** LSW_LOAD_TRACE indicates a successful send
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  I tried to workaround the issue by archiving the toolkit and
+   process app, renaming the tracking groups, remapping the
+   tracking groups, taking the tracking groups out of any usage,
+   deleting the TGs from PA and toolkit, and giving new snapshots
+   to my PA and toolkit. None of these approaches fixed the
+   environment though renaming the TG allowed some data to be sent
+   but columns were still duplicated.
+   
+   The only workaround was to actually remove the TG_ table, the
+   View, and the associated records from LSW_COLUMN, LSW_TABLE, and
+   LSW_VIEW on the perf database.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  If you have a tracking group in both a
+   Process App and a Toolkit
+   with the same name, and tracked data exists, the Send
+   Definitions process breaks for your entire Library.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC74656
+   
+   
+ * REPORTED COMPONENT NAME
+   WS LOMBRDI EDTN
+   
+   
+ * REPORTED COMPONENT ID
+   5725A3600
+   
+   
+ * REPORTED RELEASE
+   710
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-02-24
+   
+   
+ * CLOSED DATE
+   2011-05-09
+   
+   
+ * LAST MODIFIED DATE
+   2011-05-09
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R710 PSN
+   UP

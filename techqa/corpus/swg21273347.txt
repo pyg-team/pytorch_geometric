@@ -1,0 +1,27 @@
+Title: IBM Setting up SSH for CLI copy using SFTP - United States
+
+Text:
+datapower; ssh; sftp; key; cert; copy; CLI copy; password; password:; ssh-keygen; keygen; User Agent ; Pubkey-Auth Policy; 7993; 7993; 7993; machine type 7993 TECHNOTE (FAQ)
+
+QUESTION
+ You would like to use the WebSphere® DataPower® CLI copy command to copy a file from a DataPower directory, such as export:, to an SFTP (Secured File Transfer Protocol) URL.
+
+For example:
+
+xi50(config)# copy export:///somefile.zip sftp://someuser@somehost/something
+
+You have this working using password authentication when connecting to "somehost", but the documentation indicates that you can set up key-based authentication so that you don't need to use a password: parameter. How is this done? 
+
+ANSWER
+Log into the host box with the userid you want to target and create a DSA key/cert pair with the following command where the paramenter "-t dsa" specifies the key type as DSA: 
+
+ * 
+ * ssh-keygen -t dsa
+
+
+On the host, the cert (id_dsa.pub) is appended to "authorized_keys". Copy the private key (id_dsa) to the cert: directory in the default domain on DataPower and wrap it in a Crypto Key object. Install it in the "default" User Agent in the default domain in the Pubkey-Auth Policy tab using a URL match expression like "sftp://userid@hostname/*". 
+For additional information on user agents and Pubkey-Auth Policy, see the DataPower documentation portal [http://www.ibm.com/software/integration/datapower/library/documentation/].
+
+
+RELATED INFORMATION
+#CLI copy command for IBM DataPower appliance [http://www.ibm.com/support/docview.wss?uid=swg21250655]

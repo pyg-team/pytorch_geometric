@@ -1,0 +1,49 @@
+Title: IBM QRadar: Verifying HA crossover connections - United States
+
+Text:
+Testing HA; Testing Data synchronization; Testing Cossover connections TECHNOTE (FAQ)
+
+QUESTION
+ Is there a way to test the high-availability (HA) crossover connection? 
+
+CAUSE
+You are seeing a higher that usual load on the management port and want to verify if the crossover connection is working.
+
+ANSWER
+To test the HA crossover connection, here are some commands to verify that your crossover is working and sending data.
+
+
+To test the crossover status:
+QRadar 7.3.0 and above /opt/qradar/ha/bin/qradar_nettune.pl crossover
+QRadar 7.2.8 and prior/opt/qradar/bin/qradar_nettune.pl crossover status
+
+[/support/docview.wss?uid=swg21994485&aid=1] [/support/docview.wss?uid=swg21994485&aid=1]
+
+To test the crossover heartbeat:
+Qradar 7.3.0 and above /opt.qradar/ha/bin/qradar_nettune.pl crossover test link
+Qradar 7.2.8 and prior/opt/qradar/bin/qradar_nettune.pl crossover test link
+
+[/support/docview.wss?uid=swg21994485&aid=2] [/support/docview.wss?uid=swg21994485&aid=2]
+QRadar synchronization uses SSH. To test if you can move data between nodes, SSH between the nodes. If you can SSH from each node and back on the crossover connection, data can be synchronized.
+
+[root@QRadar-727-1-primary ~]# ssh 169.254.1.2
+Last login: Mon Nov 21 09:30:18 2016 from 169.254.1.1
+This server has QRadar 7.2.7.20161017135129 installed on Tue Nov 8 14:18:53 EST 2016.
+[root@QRadar-727-1-secondary ~]#
+
+You can test the link using the cstate command:
+QRadar 7.3.0 and above /opt/QRadar/ha/bin/ha cstate
+QRadar 7.2.8 and prior /opt/qradar/ha2/bin/ha cstate
+
+[/support/docview.wss?uid=swg21994485&aid=3] [/support/docview.wss?uid=swg21994485&aid=3]
+In this example, a 1.0 status equals pass and 0.0 would be fail. LSN refers to the locale node, which is primary at this moment and RSN is the Remote node. 
+
+Results: All tests indicate that crossover is working. 
+
+
+Where do you find more information? 
+
+
+
+
+[/support/docview.wss?uid=swg21994485&aid=4] [http://ibm.biz/QRadar-KC][/support/docview.wss?uid=swg21994485&aid=5] [https://ibm.biz/qradarforums][/support/docview.wss?uid=swg21994485&aid=6] [http://ibm.biz/qradarknowledge][/support/docview.wss?uid=swg21994485&aid=7] [http://ibm.biz/SecSuptUTube][/support/docview.wss?uid=swg21994485&aid=8] [http://ibm.biz/qradarsoftware][/support/docview.wss?uid=swg21994485&aid=9] [http://ibm.biz/MyNotification][/support/docview.wss?uid=swg21994485&aid=10] [http://ibm.biz/SuptRegQuikStart]

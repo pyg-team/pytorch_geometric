@@ -1,0 +1,28 @@
+Title: IBM RDi will not launch due to JVM error - United States
+
+Text:
+RDi; RDp; Java Error; Java; launch; virtual machine; virtual; create; JVMSHRC287E; Persistent; eclipse; returned exit code=1; started; IBM; Citrix; start TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ IBM Rational Developer for i (RDi) displays Java Virtual Machine Launcher error at startup on a Citrix environment. 
+The user experienced the following error:
+Error: Could not create the Java Virtual Machine.
+Error: A fatal exception has occurred. Program will exit.
+
+The user would also receive a eclipse pop-up error:
+Java was started but returned exit code=1 
+
+DIAGNOSING THE PROBLEM
+Check the Windows Event Viewer for any Java related errors. 
+
+ JVMSHRC287E Persistent cache cannot be located on a networked file system. Either select "nonpersistent" or a different cacheDir.
+
+
+RESOLVING THE PROBLEM
+To resolve this issue follow the steps below. 
+
+ 1. Modify the eclipse.ini file (C:\Program Files\IBM\SDP). 
+
+ 2. Change the line:
+-Xshareclasses:name=IBMSDP_%u to be -Xshareclasses:none
+3. Save the changes and now start RDi.

@@ -1,0 +1,42 @@
+Title: IBM Embedded HTTP Server in the WebSphere Test Environment Servers and support for the IBM HTTP Server - United States
+
+Text:
+WSAD; 5.0; WTE; HTTP; server; embedded; rochestertntfaq; v5.1_accepted; 1064208; apache; IHS; web server; http server; RAD; WAS TECHNOTE (FAQ)
+
+QUESTION
+ Can you use an HTTP server such as IBM HTTP Server (IHS) with the WebSphere Application Server v5/6x/7x/8x in the Rational Application Developer for WebSphere Software server tools, when publishing an application? 
+
+CAUSE
+This technote answers the question of whether you can replace the embedded HTTP server within the WebSphere Test Environment server included in WebSphere Studio Application Developer 5.x or in Rational Application Developer for WebSphere Software. 
+
+You are not able to replace the embedded hypertext transfer protocol (HTTP) server which is part of the WebSphere Test Environment (WTE)/WebSphere Application Server(s). The servers are complete copies of the corresponding WebSphere Application Servers and are therefore subject to the same restraints. 
+
+
+ * IBM HTTP Server (IHS) ships with any purchased stand-alone WebSphere Application Servers v6.x/7.x/8.x. 
+ * Rational Application Developer/Rational Software Architect (for WebSphere) v6/7x/8x ship with a true WebSphere Application Server "Base Edition" servers but do not include IHS. 
+ * The WTE servers include just the Application Server with its embedded HTTP server/web server, and do not include a separate web server such as the IBM HTTP Server which would normally be part of a WebSphere Application Server installation and would be connected using the HTTP plugin. 
+
+ANSWER
+The Rational Application Developer server tools do not support IHS. 
+
+
+J2EE/JEE Web Applications in Rational Application Developer are deployed to the specified WebSphere Application Server. There is an HTTP plugin between WebSphere Application Server and any HTTP server front end. The Rational Application Developer server tools will not support any synchronization of changes between the two on publish, as they only publish to the Application Server.
+
+Note(s):
+
+
+ 1. The above information should not be confused with using a static web server in Rational Application Developer as per, Rational Application Developer v7.5 Info Center items:  * Publishing static Web projects to a static Web publishing server [http://publib.boulder.ibm.com/infocenter/radhelp/v7r5/topic/com.ibm.etools.publishing.server.doc/topics/tstatsrv.html]
+       or 
+     * Testing on an HTTP Preview server [http://publib.boulder.ibm.com/infocenter/radhelp/v7r5/topic/org.eclipse.wst.server.ui.astrxd.doc.user/topics/thttppreview.html] which does not involve the WebSphere Application Server servers in Rational Application Developer.
+       
+       
+       
+    
+    
+ 2. You should be able to use IHS with the WebSphere Application Server server outside of/separate from Rational Application Developer. Since IHS is based off of Apache, the web server is provided free. The mots recent IHS versions can be downloaded from this reference: IBM HTTP Server [http://www.ibm.com/software/webservers/httpservers]. Refer to the "IBM HTTP Server Information Centers [http://www.ibm.com/software/webservers/httpservers/library/]" for more information on IHS. IBM WebSphere Application Server support will only provide support for IHS if the backend is a WebSphere Application Server. Contact IBM WebSphere Application Server support if you need assistance with IHS.
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Software Development Rational Application Developer for WebSphere Software Integrated Test Environment Windows, Linux 6.0, 6.0.0.1, 6.0.1.0, 6.0.1.1, 7.0, 7.0.0.1

@@ -1,0 +1,45 @@
+Title: IBM QRadar: Sending OpenStack component audit logs to QRadar - United States
+
+Text:
+Incident Event Monitoring; QRadar New Audit TECHNOTE (FAQ)
+
+QUESTION
+ How do I send CADF events from my OpenStack implementation to QRadar? 
+
+
+ANSWER
+Openstack is an Open Source clouding platform for cloud computing usually deployed as an infrastructure as a service (IAAS) to control pools of computing, storage, and network resources.
+
+OpenStack can send CADF events to QRadar using the Ceilometer audit collector component. 
+
+Ceilometer is a collector designed to collect measurements within OpenStack for the purpose of monitoring and metering data in OpenStack.
+
+As of the Kilo version of OpenStack, the component can monitor and send events from various OpenStack services. 
+
+These are: 
+
+
+ * Keystone, an OpenStack project that provides Identity, Token, Catalog, and Policy services for use specifically by projects in the OpenStack family. 
+ * Neutron, an OpenStack project to provide networking as a service between interface devices such as vNICs managed by other Openstack services. For example, nova.
+   
+ * Swift, a highly available, distributed, eventually consistent object/blob store. 
+ * Cinder, the open source project to develop OpenStack Block Storage, the block based storage component of the OpenStack platform for cloud computing. 
+   
+ * Glance, a project which provides a service where users can upload and discover data assets that are meant to be used with other services.
+   
+ * Trove, a Database as a Service for OpenStack. 
+
+
+Make sure you are on version Kilo and above on the Ceilometer. Our guide for configuration of Ceilometer to QRadar is below: 
+Configuring OpenStack to communicate with QRadar [http://www.ibm.com/support/knowledgecenter/SS42VS_7.2.4/com.ibm.dsm.doc/t_dsm_guide_openstack_enable_comm.html?lang=en] 
+
+QRadar’s New Audit and Security Incident Event Monitoring for OpenStack [https://securityintelligence.com/qradars-new-audit-and-security-incident-event-monitoring-for-openstack/] 
+
+To send audit logs from other modules you would need to configure them to send to Ceilometer. 
+
+
+
+Where do you find more information? 
+
+
+[/support/docview.wss?uid=swg21971027&aid=1] [http://ibm.biz/QRadar-KC] [/support/docview.wss?uid=swg21971027&aid=2] [https://ibm.biz/qradarforums] [/support/docview.wss?uid=swg21971027&aid=3] [http://ibm.biz/qradarknowledge] [/support/docview.wss?uid=swg21971027&aid=4] [http://ibm.biz/SecSuptUTube] [/support/docview.wss?uid=swg21971027&aid=5] [http://ibm.biz/qradarsoftware] [/support/docview.wss?uid=swg21971027&aid=6] [http://ibm.biz/MyNotification] [/support/docview.wss?uid=swg21971027&aid=7] [http://ibm.biz/SuptRegQuikStart]

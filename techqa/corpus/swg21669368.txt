@@ -1,0 +1,35 @@
+Title: IBM Unable to remove routing association between system group and workload when using CICS Explorer 5.2 - United States
+
+Text:
+migration migrating upgrade CICS Explorer 5.2 5655Y0400 R690 690 R900 900 HCI6900 5655-Y04 5655Y04 KIXINFO kixdcfcic690 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When you use the Workload Specification editor introduced in CICS Explorer V5.2, you experience problems removing the workload routing association from a system group. You edit a Workload Specification and remove a system group from being associated with the workload as a router. When you save the Workload Specification, you receive the message "Unable to remove the routing association from a system group. See the Error Log view for more information." 
+
+SYMPTOM
+The Error Log explains that "The version of CICS you are connected to does not support the API that is required to remove the workload routing association from a system group. You must upgrade your version of CICS to complete this task."
+
+
+CAUSE
+This is due to a limitation in the Java™ Virtual Machine (JVM) preventing CICS Explorer from correctly invoking the CICS management client interface application programming interface (CMCI API).
+
+
+To delete the link object representing a system group as a workload router, Explorer must issue a CMCI request using the HTTP DELETE method and providing an XML payload. The limitation in the Java class library implementation prevents an application from providing an XML payload when making a DELETE request (See Oracle Java bug 7167360 [http://bugs.java.com/bugdatabase/view_bug.do?bug_id=7157360] for more details).
+
+In response to this limitation, CICS Explorer will attempt to make the request as a POST request, using an override to indicate to CMCI that a DELETE is required. Only certain versions of CICS TS support this override.
+
+
+RESOLVING THE PROBLEM
+Do one of the following so you will be able to remove the workload routing association from a system group when using CICS Explorer V5.2: 
+
+ * Download the CICS Explorer V5.2 for Microsoft Windows or for Linux zip or tar.gz file. This download contains a specific Java Runtime Environment that has a fix for the client-side problem. 
+ * Upgrade to CICS Transaction Server for z/OS (CICS TS) V5.2 or higher, or apply the PTFs for PI15826 [http://www.ibm.com/support/docview.wss?uid=swg1PI15826] (CICS TS V4.1 and V4.2) or PI15827 [http://www.ibm.com/support/docview.wss?uid=swg1PI15827] (CICS V5.1). These fixes contain a server-side workaround.
+
+RELATED INFORMATION
+ CICS Explorer downloads page [http://www.ibm.com/support/docview.wss?uid=swg24033579]
+
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ CICS/TS CICS TS CICS Transaction Server

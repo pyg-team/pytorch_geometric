@@ -1,0 +1,282 @@
+Title: IBM PK83178: WEBSPHERE SECURE PROXY V7: INFOCENTER UDPATED TO PROVIDE        INFORMATION ON FINDING PLUGIN-CFG.XML AFTER AUTO-GENERATION - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  WebSphere Application Server Secure Proxy Server, Version 7.0
+   -------------------------------------------------------------
+   
+   More information about the automatic plug-in generation, and the
+   use of the static routing file of secure proxy needs to
+   be added to the Version 7 Information Centers.
+   
+   More  specifically, we need to tell users where the
+   plugin-cfg.xml file will be located after it is generated,
+   and explain the dynmic nature of the generation of this
+   file. More information also needs to be added to document the
+   merger of all the static files that are placed in the
+   <profie-home>/staticRoutes directory of a secure proxy server.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  All users of WebSphere Application Server   *
+   *                  who use a Web server in combination with a  *
+   *                  proxy server to route requests.             *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: The WebSphere Application Server        *
+   *                      Version 7.0 Information Centers do      *
+   *                      not provide sufficient information      *
+   *                      about the plugin-cfg.xml file that is   *
+   *                      used with a proxy server and the        *
+   *                      proxy server static routing file.       *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   More information about the automatic plug-in generation for a
+   proxy server needs to be added to the Version 7.0 Information
+   Centers. Users need to know where the plugin-cfg.xml file will
+   be located after it is generated. User's also need to
+   understand the automatic regeneration process for this file.
+   
+   More information about the proxy server static routing file
+   also needs to be added to these Information Centers.
+   Specifically, users need to know into which proxy server
+   directory they need to place a static routing file. Users also
+   need to understand how multiple static files can be placed in
+   the same directory, and how the proxy server merges the
+   content of these files.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The following changes will be made to the WebSphere
+   Application Server Version 7.0 Information Center:
+   
+   Step 8, in the "Routing requests from a plug-in to a proxy
+   server" topic, will be updated to read:
+   
+   8. Stop and restart the proxy server.
+   
+   The plugin-cfg.xml file will be in the
+   {WAS_ROOT}/profiles/profilename/etc directory unless your
+   plug-in was generated for the server scope. If you generated
+   the plug-in for the server scope, the plugin-cfg.xml file will
+   be in the {WAS_ROOT}/profiles/profilename/etc/server_name
+   directory. If you do not have a script in the Plugin config
+   change script field, manually copy the plugin-cfg.xml file to
+   the plug-in.
+   
+   Avoid trouble: During the plugin-cfg.xml generation process
+   temporary plugin-cfg-xxxx.xml files are created. If you notice
+   any of these temporary files in the same directory as the
+   plugin-cfg.xml file, you can either ignore them, or manually
+   delete them.
+   
+   Also, the following Results section will be added to this topic:
+   
+   Results
+   After a plugin-cfg.xml file is initially generated, it is
+   automatically regenerated whenever the On Demand Configuration
+   (ODC) changes, For example, the plugin-cfg.xml file is
+   regenerated whenever an application is installed or
+   uninstalled, or the weights assigned to one or more proxy
+   server cluster members changes.
+   
+   The description of the Static routing file directory field, in
+   the  "Proxy server settings" topic, will be updated to read:
+   Static routing file directory
+   Specifies the directory on the proxy server where the static
+   routing file is located.
+   Data type :     String
+   Default:       profile_home/staticRoutes
+   
+   Steps 3 and 4 in the "Configure secure routing for a DMZ
+   Secure Proxy Server for IBM WebSphere Application Server"
+   topic will be updated to read:
+   
+   3. Invoke the exportTargetTree method on the TargetTree mbean
+   to a specified XML file.
+   
+   AdminControl.invoke(mbean, 'exportTargetTree',
+   '/opt/IBM/WebSphere/AppServer/targetTree.xml')
+   
+   The static routing file is a special type of routing file that
+   the proxy server uses to route requests from the proxy server
+   Web server plug-in to the proxy server. It is not used to
+   route requests from the plug-in to an application server.
+   
+   4. Using the deployment manager command line, transfer the
+   targettree.xml file from the deployment manager to the
+   profile_home/staticRoutes directory for the proxy server.
+   The file is transferred from the deployment manager to the
+   proxy server by FTP or some other protocol.
+   
+   If your secure proxy server is interfacing with multiple
+   cells, you can add the static routing file for each cell to
+   the profile_home/staticRoutes directory. The secure proxy
+   server considers any xxx.xml file that is included in the in
+   the profile_home/staticRoutes directory a static routing file.
+   The file does not have to be named targetTree.xml.
+   
+   When you add multiple xxx.xml files to the
+   profile_home/staticRoutes directory for a secure proxy server,
+   the secure proxy server merges the content of all of these
+   files. The result of this merge is a single static routing
+   file that the secure proxy server can use to route requests to
+   servers in any of the cells.
+   
+   Avoid trouble: The merger process does not include any files
+   in subdirectories of the profile_home/staticRoutes directory.
+   Therefore the secure proxy server does not use any content
+   that is contained in files located in any subdirectory when it
+   routes requests to a servers.
+   
+   Any attribute change that affects the content of the static
+   routing file, such as a virtual host change, addition or
+   deletion of a proxy server cluster member, a change in weight
+   of a proxy server cluster member, or the installation or
+   uninstallation of an application, automatically regenerates
+   the static routing file.
+   
+   User Affected:
+   [Instructions: Who is likely to see this problem? This text
+   will help our customers determine whether this fix might
+   really apply to their situation. For example, "This APAR
+   affects users who are reading the documentation for the XYZ
+   command in the Information Centers for WebSphere Application
+   Server Versions 5.1, 6.0.x, and 6.1."]
+   
+   
+   Problem Description:
+   [Instructions: What is the problem? This description should be
+   a brief high-level description of the problem from the
+   customer's perspective. What is the situation that the
+   customer is likely to be encountering? For example, "If you
+   use the -AppServer parameter with the XYZ command, you might
+   encounter a non-existent parameter error message."]
+   
+   
+   Problem Summary:
+   [Instructions: Why did the problem happen? This section must
+   contain a detailed description of the problem; containing
+   information such as exceptions that are thrown and steps that
+   are done to reproduce the problem. The Summary field cannot
+   contain the same info as the Description field. It should also
+   contain a Why? In other words, what was wrong with our
+   documentation that led to this problem? This information is
+   from the IBM perspective. For example, "The "XYZ command"
+   topic in the Version 5 and 6 information centers incorrectly
+   states that you can use the -AppServer server_name parameter
+   with the XYZ command."]
+   
+   
+   Problem Conclusion:
+   [Instructions: How did you fix the documentation? This would
+   be a high-level description of how the documentation was
+   changed to fix the problem. Do not just say that the problem
+   is fixed. For example, "The -AppServer server_name parameter
+   in the "XYZ command" topic has been changed. The correct
+   parameter is: -applicationserver server_name
+   
+   Make sure that you include the following text at the end of
+   the Problem conclusion section and insert the date of the next
+   external update.]
+   
+   Note: Periodically, we update the documentation in our
+   information centers. Thus, the changes might exist in the
+   current documentation before you read this text. To access the
+   latest on-line documentation, go to the product library page
+   at http://www.ibm.com/software/webservers/appserv/library and
+   select the version and product that is appropriate for your
+   WebSphere Application Server environment.
+   
+   The modified documentation will be available in the
+   April, 2009 update to the Information Centers.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK83178
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBS APP SERV N
+   
+   
+ * REPORTED COMPONENT ID
+   5724H8800
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-03-24
+   
+   
+ * CLOSED DATE
+   2009-03-30
+   
+   
+ * LAST MODIFIED DATE
+   2009-03-30
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

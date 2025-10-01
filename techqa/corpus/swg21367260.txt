@@ -1,0 +1,55 @@
+Title: IBM Metric Store initialization fails with error: CMM-APP-3268, CMM-APP-3250 - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Attempts to initialize a metric store fail with error, even though the datasource connection tests successfully. 
+
+SYMPTOM
+CMM-APP-3268 Could not connect to the specified Data Source. Ensure that the Connection and Signon settings are correct and that the database server is running.
+CMM-APP-3250 The data source "Datasource" does not reference an existing database. 
+
+
+'Failed Logon:com.jnetdirect.jsql.g: Login failed for user 'Domain\username'. url:jdbc:JS QLConnect://wottcs-viciaxdp/database=Delete' [%22jdbc://jsqlconnect://wottcs-viciaxdp/database=Delete'%22]
+WHILE CMM-APP-3268 Could not connect to the specified Data Source. Ensure that the Connection and Signon settings are correct and that the database server is running.
+WHILE creating DBInstance for connection=com.cognos.cpms.database.DBConnectionInfo@29098d [%22mailto://connection=com.cognos.cpms.database.DBConnectionInfo@29098d&qu/]
+WHILE getting user DBAccessor
+WHILE CMM-APP-3250 The data source "Datasource" does not reference an existing database.
+WHILE executing Java call...
+
+
+
+CAUSE
+This error will occur if the option to use an external namespace as a datasource signon is used, as this is not supported for Metric Studio. It is a requirement that a specific database logon be defined for the data source to be used as the metric store.
+
+
+
+RESOLVING THE PROBLEM
+Modify the signon properties of the datasource to use a specified login. 
+
+
+Steps: 
+
+ 1.  From Cognos Connection, go to Tools --> Directory. 
+ 2.  Click on the Data Sources tab. 
+ 3.  Click on the datasource used by the metric package. 
+ 4.  Click on the Set Properties button. 
+ 5.  Click on Edit the Connection String (the pencil icon). 
+ 6.  Click on the radio button next to the signons of this connection. 
+ 7.  Click OK. 
+ 8.  Click on the datasource connection. 
+ 9.  Click on New Signon. 
+ 10. Enter a name for the new signon and click Next. 
+ 11. Enter a valid database login for the User ID and password fields, and click Next. 
+ 12. Click the Add button and navigate to the specific users/groups/roles that will have access to use this signon. 
+ 13. Click OK. 
+ 14. Click Finish. 
+
+
+
+
+
+Cross Reference information Segment Product Component Platform Version Edition Business Analytics Cognos 8 Business Intelligence Metrics Studio 
+HISTORICAL NUMBER
+ 1028392

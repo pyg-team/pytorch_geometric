@@ -1,0 +1,31 @@
+Title: IBM Managing Cryptographic Master Keys during Save and Restore - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ How to manage (save and restore) the Cryptographic Master Keys. The Cryptographic Master Keys can be used by BRMS to provide Software Encryption or may be used by other i processes. The keys can be recovered during a BRMS Recovery or Native Save (GO SAVE 21) Recovery 
+
+ENVIRONMENT
+Concepts: Cryptographic services key management for the IBM i operating system allows you to store and manage master keys and keystores. Cryptographic services securely stores the master keys within the IBM i Licensed Internal Code (LIC). 
+
+Eight general purpose master keys are used to encrypt other keys which can be stored in keystore files. In addition to the eight general purpose master keys, cryptographic services supports two special purpose master keys. The ASP master key is used for protecting data in the Independent Auxiliary Storage Pool (in the Disk Management, GUI is known as an Independent Disk Pool). The save/restore master key is used to encrypt the other master keys when they are saved to media using a Save System (SAVSYS) operation. The save/restore master key comes with a worldwide default value and therefore must be loaded and set on each system to be active.
+
+
+RESOLVING THE PROBLEM
+Saving: There are two methods of saving/backing up the system master keys: 
+
+1. Save the individual passphrases: The master keys can be re-entered on any system if the passphrase(s) used to create the master keys is known. Keep this information in a "safe" place. Note: This is the only method available to save the SAVE/RESTORE Master Key. 2. Save the master keys during a SAVSYS operation: Only the eight MASTER KEYS are saved during the SAVSYS. The Save/Restore Master Key is not saved during a SAVSYS and cannot be saved to any media. Restoring: There are two methods of restoring/recovering the system master keys: 1. Re-enter the MASTER KEYS manually using the correct passphrases. Use the ADDMSTPART and SETMSTKEY command or use Navigator for i to enter the keys just like originally performed when the KEYS were first set up. 2. Restore from SAVSYS media using only a full SCRATCH install of LIC process to the new system or system being recovered. Only a scratch install with Option 2 to INSTALL LIC and INITIALIZE the SYSTEM can be used for this restore/recovery of the MASTER KEYS. A simple slip install of LIC using Option 1 RECOVER LIC will not restore the MASTER KEYs from SAVSYS media. Note: If the SAVE RESTORE MASTER KEY has been changed from its default value, the SAVE RESTORE MASTER KEY must be entered using ADDMSTPART and SETMSTKEY to unlock the restored MASTER KEYS. If this is not done, the MASTER KEYS will stay in a PENDING status. 
+SYSTEM RECOVERY 
+If using BRMS to recover or migrate a system, the BRMS RECOVERY REPORT includes a step to set the SAVE RESTORE MASTER KEY if the key has been changed from the default. Note: This requires using ADDMSTPART and SETMSTKEY command or Navigator for i. 
+
+If using native commands to recover or migrate a system that uses MASTER KEYS and the SAVE RESTORE MASTER KEY, the MASTER KEYS will be restored when the LIC is scratch installed on the system and then the SAVE RESTORE MASTER KEY must be entered using ADDMSTPART and SETMSTKEY or Navigator for i to unlock the restored MASTER KEYS. 
+
+Reference Information about Master Keys can be found in the IBM Knowledge Center: 
+V6R1: http://www.ibm.com/support/knowledgecenter/ssw_ibm_i_61/rzajc/rzajcmanagemasterkeys.htm [http://www.ibm.com/support/knowledgecenter/ssw_ibm_i_61/rzajc/rzajcmanagemasterkeys.htm] 
+V7R1: http://www.ibm.com/support/knowledgecenter/ssw_ibm_i_71/rzajc/rzajcmanagemasterkeys.htm [http://www.ibm.com/support/knowledgecenter/ssw_ibm_i_71/rzajc/rzajcmanagemasterkeys.htm] 
+V7R2: http://www.ibm.com/support/knowledgecenter/ssw_ibm_i_72/rzajc/rzajcmanagemasterkeys.htm [http://www.ibm.com/support/knowledgecenter/ssw_ibm_i_72/rzajc/rzajcmanagemasterkeys.htm] 
+V7R3: http://www.ibm.com/support/knowledgecenter/ssw_ibm_i_73/rzajc/rzajcmanagemasterkeys.htm [http://www.ibm.com/support/knowledgecenter/ssw_ibm_i_73/rzajc/rzajcmanagemasterkeys.htm] 
+
+
+Cross reference information Segment Product Component Platform Version Edition Operating System IBM i 7.3 Operating System IBM i 7.2 Operating System IBM i 7.1 Operating System IBM i 6.1

@@ -1,0 +1,260 @@
+Title: IBM IT10730: MQ-JMS PERFORMANCE PROBLEM WHEN CONSUMING MESSAGES USING THE IBM MQ V8.0 CLASSES FOR JMS - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  After migrating a WebSphere MQ v7 classes for JMS application to
+   the IBM MQ v8 classes for JMS, the application experiences
+   decreased performance when connecting to pre-IBM MQ v8 queue
+   managers using the CLIENT transport mode where the SHARECNV
+   property on the server-connection channel in use has a value
+   greater than 1.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Set the channel property "SHARECNV" to have the value '1' for
+   the channel which the application is using to communicate with
+   the queue manager.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   Users of the IBM MQ classes for JMS v8.0 which are:
+   
+   (a) Communicating with a queue manager that predates version 8.0
+   
+   (b) Using a channel to establish a TCP/IP connection where the
+   channel's SHARECNV property is set to a value greater than 1
+   
+   (c) Creating a total number of JMS Connections and JMS Sessions
+   which exceeds the value of the SHARECNV property as defined on
+   the channel.
+   
+   
+   Platforms affected:
+   MultiPlatform, AIX, HP-UX Itanium, IBM iSeries, Linux on Power,
+   Linux on S390, Linux on x86, Linux on x86-64, Linux on zSeries,
+   Solaris x86-64, Solaris SPARC, Windows, z/OS
+   
+   ****************************************************************
+   PROBLEM DESCRIPTION:
+   A performance optimisation in the IBM MQ v8.0 product is
+   utilised by an IBM MQ v8.0 classes for JMS application such that
+   with a specific configuration (primarily when a channel's
+   SHARECNV value is set to the value '1'), a request for messages
+   by the application are translated into a synchronous MQ-API call
+   to the queue manager.
+   
+   When this is used, the queue manager channel instance process
+   uses a dedicated thread to carry out the attempted retrieval of
+   a message.
+   
+   For example, if a JMS application makes the method call:
+   
+     MessageConsumer.receive(30000);
+   
+   it is requesting to wait 30,000ms (or 30 seconds) for a message
+   from a queue. When this v8.0 performance optimisation is in
+   operation, the dedicated channel instance thread will receive
+   the request from the application over TCP/IP, and make a
+   synchronous MQGET call to the queue manager. While the thread
+   does this, it cannot be used to service any other requests which
+   are made over the channel instance. This synchronous method
+   should only be used when SHARECNV=1, such that there will be no
+   other requests over the channel instance from a client
+   application.
+   
+   
+   However, a program defect within the IBM MQ v8.0 classes for JMS
+   meant that under a specific circumstance, this synchronous
+   optimisation could be activated when communicating with a queue
+   manager version earlier than v8.0 and where the SHARECNV value
+   on the channel was greater than '1'.
+   
+   
+   The consequence of this was that if multiple requests are being
+   made over the same TCP/IP socket, the dedicated thread
+   associated with the channel instance would service one after the
+   other, meaning that the second and subsequent requests would be
+   delayed until the previous was complete.
+   
+   For example, consider that two JMS Sessions are using the same
+   TCP/IP socket to communicate with the queue manager. A
+   MessageConsumer has been created from each Session, to consume
+   messages from different queues on the queue manager.
+   
+   If the queue that "MessageConsumer_1" was consuming messages
+   from contains no messages and requests a 30 second wait time on
+   the receive call, "MessageConsumer_2" which makes a receive call
+   to the different queue (which contains messages) must wait the
+   30 seconds for the first operation to complete, eg:
+   
+   00:00:00 MessageConsumer_1.receive(30000)
+   00:00:01 MessageConsumer_2.receive(30000)
+   00:00:30 MessageConsumer_1 completes, returning no messages
+   00:00:30 MessageConsumer_2 returns a message from the second
+   queue
+   
+   
+   
+   To understand how JMS Sessions might share a TCP/IP connection
+   and trigger this performance problem, we need to look at how
+   MQ-JMS objects use 'hconns'.
+   
+   A 'hconn' is the object that is used by a thread to communicate
+   with the queue manager. The number of 'hconns' which fit over a
+   TCP/IP socket is that which is specified by the SHARECNV channel
+   property.
+   
+   For example, for a default channel the SHARECNV value is 10.
+   This means that 10 'hconns' can use the same TCP/IP socket. If
+   an 11th 'hconn' is required, a new TCP/IP socket is created.
+   
+   For the MQ-JMS API, every JMS Session and JMS Connection use one
+   'hconn'. The performance problem described by this APAR is only
+   triggered when a JMS Session is created which triggers the
+   generation of a new TCP/IP socket to a queue manager version
+   which is less than v8.0.
+   
+   For example, consider the following application:
+   
+   SHARECNV=10
+   
+   (1) Application creates a JMS Connection (1 'hconn')
+   (2) Application creates nine JMS Sessions from this Connection
+   (9 'hconns').
+   
+   Now the TCP/IP socket is 'full'. The next JMS Connection or
+   Session created will require a new TCP/IP socket.
+   
+   (3) Application creates a further 2 JMS Sessions from the above
+   Connection.
+   
+   The first of these incorrectly negotiates with the queue manager
+   to use this synchronous performance enhancement, and now all
+   'hconns' created which use this TCP/IP socket will be affected
+   by the single threading behaviour of the channel instance for
+   the socket.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The IBM MQ classes for JMS have been updated to ensure that this
+   new synchronous requesting performance feature is not enabled
+   for a queue manager which is at a version less than v8.0.
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+   Version    Maintenance Level
+   v8.0       8.0.0.4
+   
+   The latest available maintenance can be obtained from
+   'WebSphere MQ Recommended Fixes'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037]
+   
+   If the maintenance level is not yet available information on
+   its planned availability can be found in 'WebSphere MQ
+   Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT10730
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ BASE MULTIP
+   
+   
+ * REPORTED COMPONENT ID
+   5724H7251
+   
+   
+ * REPORTED RELEASE
+   800
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-08-17
+   
+   
+ * CLOSED DATE
+   2015-08-25
+   
+   
+ * LAST MODIFIED DATE
+   2015-08-25
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ BASE MULTIP
+   
+   
+ * FIXED COMPONENT ID
+   5724H7251
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R800 PSY
+   UP

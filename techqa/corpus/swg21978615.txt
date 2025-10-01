@@ -1,0 +1,15 @@
+Title: IBM Integration Designer (IID) stops responding when publishing a large project to Process Center - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ You may experience a slow response time when publishing a large project to Process Center. 
+
+RESOLVING THE PROBLEM
+To reduce response times when publishing, ensure that large projects are not being shared between IBM Integration Designer (IID) and Process Center. However, if you are publishing a larger project, do not set the flag for Open Synchronize Dialog when publishing to Always (Preferences->Business Integration->Process Center->Open Synchronize Dialog when publishing->Always).
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ IID

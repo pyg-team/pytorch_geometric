@@ -1,0 +1,33 @@
+Title: IBM IDM DT 4.0 P4, Unable to display jpeg images, tiffs are fine. - United States
+
+Text:
+IDM Desktop viewer jpeg 2003 server TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ IDM DT 4.0 P4, Unable to display jpeg images, tiffs are fine. 
+
+RESOLVING THE PROBLEM
+In our testing, we found that the application functions properly in Windows XP, but not Windows Server 2003. After further review, it was confirmed that XP has different default policy settings (not as restrictive) than server 2003 which explained why it was not affected. Additional testing confirmed that disabling the NX bit for the IDM application resulted in the application working properly both in our labs and at Filenet. I have also verified that when I tighten the policy on Windows XP, IDM is flagged and exhibits the same behavior as we were seeing in Server 2003. 
+
+The next step is to have you make the appropriate modification to confirm that this rectifies your issue. Here is the procedure that should be followed to disable the NX bit for the IDM application:
+
+Â· Right click on your Â¿computerÂ¿ in the start menu
+Â· Select Properties to get to System Properties
+Â· Click the Advanced tab
+Â· Click on the top Â¿SettingsÂ¿ button (in the Performance group)
+Â· Click the Â¿Data Execution ProtectionÂ¿ tab
+Â· Click the Â¿Add...Â¿ button
+Â· Browse to IDMView.exe in the C:\FileNet\IDM directory. Select it.
+Â· Ensure it is in the list and the checkbox is selected
+Â· Click Apply
+Â· Click OK
+Â· Rerun the viewer and load your jpg.
+Â· Alternatively, click Â¿Turn on DEP for essential Windows programs and services onlyÂ¿ and reboot to disable DEP for all apps other than Windows.for all apps other than Windows.
+
+
+
+HISTORICAL NUMBER
+ 20007258 
+
+PRODUCT ALIAS/SYNONYM
+ IDM DESKTOP

@@ -1,0 +1,136 @@
+Title: IBM PI29944: GETTING ERROR 2070 SYMPTOM 5 WHEN TRYING TO RETRIEVE A NETWORK LICENSE TOKEN USING IPV6 ADDRESSES - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DUPLICATE OF ANOTHER APAR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  You work with IBM SPSS Statistics 22 FP1 installed with network
+   license. The Sentinel License Manager version 8.5.0.0021 is
+   installed on a Windows server and all your Clients get a license
+   token from the server when the client computer are located at
+   company site using IPv4 addresses upon connection to License
+   Server.
+   Howver, for your users who are offsite you use Microsoft Direct
+   Access to connect to applications your company is using. For
+   this connections IPv6 addresses are used. However, when your
+   clients who work offsite using Microsoft Direct Access would
+   like to work with IBM SPSS Statistics 22 using a network license
+   it does not work.
+   When on IPV6 addresses they get the below error when they launch
+   SPSS Statistics 22:
+   
+   Error # 2070
+   The application is unable to communicate properly with the
+   license server.
+   The license server may be down, or there may be other
+   network-related communication or DNS issues interfering.
+   This command is not executed.
+   Execution of this command stops.
+   Specific symptom number: 5
+   
+   This was reported to IBM SPSS Development. Although Sentinel
+   Licensing mechanism (which is a third party product) allows IPV6
+   addresses  for their product this is currently not working
+   together with IBM SPSS Statistics licensing. As a workaround
+   please enable an amount of your license tokens for commuter, so
+   your users who are offline can check out a commuter license for
+   the work with IBM SPSS Statistics independent of network
+   connections and IP addresses.
+   Please see chapter 'Configuring commuter licenses' on Concurrent
+   License Administrator’s Guide.pdf on information how to enable
+   commuter licenses on Licensing server.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  This issue will be addressed in a future release.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *  This APAR is a duplicate of PI29945 [http://www-01.ibm.com/support/docview.wss?uid=swg1PI29945]
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI29944
+   
+   
+ * REPORTED COMPONENT NAME
+   SPSS STATISTICS
+   
+   
+ * REPORTED COMPONENT ID
+   5725A54ST
+   
+   
+ * REPORTED RELEASE
+   M00
+   
+   
+ * STATUS
+   CLOSED DUA
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2014-11-19
+   
+   
+ * CLOSED DATE
+   2017-05-03
+   
+   
+ * LAST MODIFIED DATE
+   2017-05-03
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

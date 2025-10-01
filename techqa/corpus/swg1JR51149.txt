@@ -1,0 +1,129 @@
+Title: IBM JR51149: PUBLISHING COGNOS BI CUBES CAN FAIL WHEN YOU USE FINE-GRAINED SECURITY WITH A LARGE NUMBER OF USERS - United States
+
+Text:
+  DIRECT LINK TO FIX
+8.0.1.3-WS-WBM-IFJR51149 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Monitor&fixids=8.0.1.3-WS-WBM-IFJR51149&source=SAR]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When you try to publish Cognos BI cubes in an IBM Business
+   Monitor environment that has fine-grained security configured,
+   the process might fail if there are more than 1000 users. If
+   cubes are published, you might notice a slow response from the
+   Cognos BI report when you use the Report Viewer widget, which
+   might also be caused by environmental factors (such as machine
+   resources) and differences in cube complexity.
+   
+   PRODUCT AFFECTED:
+   IBM Business Monitor
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Use groups with fine-grained security to significantly reduce
+   the number of users where fine-grained security rules must apply
+    to Cognos BI cubes.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Cognos BI cube publishing and operations were not optimized when
+    IBM Business Monitor fine-grained security was used with a
+   large number of users.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A fix will be incorporated into a later release that allows
+   Cognos BI cubes to publish successfully when fine-grained
+   security is used with a large number of users.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR51149
+   
+   
+ * REPORTED COMPONENT NAME
+   WEB BUS MONITOR
+   
+   
+ * REPORTED COMPONENT ID
+   5724M2400
+   
+   
+ * REPORTED RELEASE
+   801
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-08-29
+   
+   
+ * CLOSED DATE
+   2014-10-28
+   
+   
+ * LAST MODIFIED DATE
+   2014-10-28
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R801 PSN
+   UP

@@ -1,0 +1,74 @@
+Title: IBM Collect troubleshooting data for out-of-memory and high RAM usage problems with WebSphere Enterprise Service Bus (WESB) and WebSphere Process Server (WPS) - United States
+
+Text:
+OOM RAM ; Out Of Memory; heapdump; WESB; Mustgatherdocument. Mustgather TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ You are having an out-of-memory or high RAM usage problem with the WebSphere Enterprise Service Bus or WebSphere Process Server products. You would like to know what documentation you must collect (MustGather) so that the support team can diagnose your problem. If you gather this documentation before contacting support, it will expedite the troubleshooting process and save you time. 
+
+DIAGNOSING THE PROBLEM
+Capturing WebSphere Enterprise Service Bus trace does not help much in these situations as it exacerbates performance problems and increases live-set.
+
+RESOLVING THE PROBLEM
+There are a number of APARs that you should apply to resolve known out-of-memory issues. Details on these including download links can be found in the following document: 
+
+Out-of-memory Issues with WebSphere Enterprise Service Bus [http://www.ibm.com/support/docview.wss?uid=swg21454351]
+
+If an out-of-memory error occurs unexpectedly, attempt to capture as much information as possible at the time.
+
+Determine the version information using the following commands:
+
+
+ * On UNIX-based operating systems:
+   
+   
+   ./versionInfo.sh -maintenancePackages
+   
+   
+ * On Microsoft Windows operating systems:
+   
+   
+   .\versionInfo -maintenancePackages
+
+
+Capture the following information:  * Heapdump - This information shows classes and objects that are allocated in the Java™ heap. 
+ * Javacore - This information shows the stack frames for all of the threads at the time that the out-of-memory error occurred. 
+ * Server logs that give some indication of what was going on at the time. 
+ * Project Interchange (PI) file of the flow including sub projects of the deployed application 
+ * If possible, provide an example of the message that caused the problem or a description of the workload at the time of the out-of-memory error.
+
+
+Determine what is happening at the time of the failure. Do you have any of the following situations?: 
+ * Individual large messages 
+ * Concurrent processing of a large number of messages (lots of clients) 
+ * Iterating over elements in a message. (FanIn/FanOut, Flat file adapters) 
+ * Lots of subflows
+
+
+When analyzing these documents, its very helpful to have a picture of what has been happening on the system. Timestamps indicating significant activity helps to diagnose the root cause. For example, it is helpful to have the time stamps of server restarts or new application installs or increased load. 
+
+It is unusual to have a complete set of this information when an out-of-memory error occurs. If, for example, all you have is a heapdump, then you have a snapshot of the Java heap at the time- but IBM Support needs further information to find out how you arrived at that point. 
+
+Prepare for a reoccurrence of the problem: 
+ 1. Enable verbose garbage collecting - This information is a very lightweight mechanism that saves garbage collection information in the system log files. 
+ 2. Configure the system log files to be larger or to save more copies - These files are often wrapped and do not always include the time when the out-of-memory event occurred. 
+ 3. Save the configuration 
+ 4. Stop the server 
+ 5. Delete/backup system log files and cores 
+ 6. Start the server
+
+
+If the problem is reproducible, capture several heapdumps as the memory leak is occurring. Refer to the Generating Heapdump topic [http://www.ibm.com/support/knowledgecenter/SSEQTP_7.0.0/com.ibm.websphere.base.doc/info/aes/ae/tprf_generatingheapdumps.html] in the product documentation Generating heap dumps manually triggers a garbage collection before the heap dump so the dump contains only live objects that cannot be garbage collected. 
+
+Comparison between a succession of dumps taken in this is the best opportunity to identify leaks. 
+
+Refer to the Best Practices and Tuning Advice at the following links: 
+
+V7 Performance Tuning Redbooks publication [http://www.redbooks.ibm.com/redpapers/pdfs/redp4664.pdf] 
+
+V6 Performance Tuning Redbooks publication [http://www.redbooks.ibm.com/redpapers/pdfs/redp4551.pdf]  
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration WebSphere Process Server General AIX, HP-UX, Linux, Solaris, Windows, z/OS 7.0, 6.2 
+PRODUCT ALIAS/SYNONYM
+ WESB

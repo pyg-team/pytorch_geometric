@@ -1,0 +1,143 @@
+Title: IBM PK91446: ESIINVALIDATORSERVLET PROCESS TAKING LONG TIME AND REPORTED AS HUNG. - United States
+
+Text:
+z/os SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DUPLICATE OF ANOTHER APAR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  ESIInvalidatorServlet process taking long time and reported as
+   hung. Problem occurs in a stress run scenario.
+   
+   The javacores show there are many webcontainer threads held up
+   by the ESIProcessor. These threads are the result of a post to
+   the ESIInvalidatorServlet.
+   ----------------------------------------------------
+   [4/20/09 3:37:45:852 EDT] 0000001d ThreadMonitor W   WSVR0605W:
+   Thread "WebContainer : 2987" (00000bfe) has been active for
+   646783 milliseconds and may be hung.
+   
+   There is/are 29 thread(s) in total in the server that may be
+   hung
+   ----------------------------------------------------
+   3XMTHREADINFO      "WebContainer : 1078" (TID:0x0C371E00,
+   sys_thread_t:0x0C346FEC, state:CW, native ID:0x0000641D) prio=5
+   4XESTACKTRACE          at java/lang/Object.wait(Native Method)
+   4XESTACKTRACE          at
+   java/lang/Object.wait(Object.java:199(Compiled Code>>
+   4XESTACKTRACE          at
+   com/ibm/ws/cache/servlet/ESIProcessor.listen(ESIProcessor.java:3
+   36)
+   4XESTACKTRACE          at
+   com/ibm/ws/cache/servlet/ESIProcessor.run(ESIProcessor.java:49)
+   4XESTACKTRACE          at
+   com/ibm/websphere/servlet/cache/ESIInvalidatorServlet.doPost(ESI
+   InvalidatorServlet.java:48)
+   4XESTACKTRACE          at
+   javax/servlet/http/HttpServlet.service(HttpServlet.java:763(Comp
+   iledCode))
+   4XESTACKTRACE          at
+   javax/servlet/http/HttpServlet.service(HttpServlet.java:856(Comp
+   iledCode))
+   4XESTACKTRACE          at
+   com/ibm/ws/cache/servlet/ServletWrapper.serviceProxied(ServletWr
+   apper.java:282(Compiled Code))
+   4XESTACKTRACE          at
+   com/ibm/ws/cache/servlet/CacheHook.handleFragment(CacheHook.java
+   :337(Compiled Code))
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *  PK91446 is a sysroute of APAR PK86245 [http://www-01.ibm.com/support/docview.wss?uid=swg1PK86245]. PK91446 is being closed
+   DUP of APAR PK94726 [http://www-01.ibm.com/support/docview.wss?uid=swg1PK94726] because PK94726 [http://www-01.ibm.com/support/docview.wss?uid=swg1PK94726] documents the delivery
+   of APAR PK86245 [http://www-01.ibm.com/support/docview.wss?uid=swg1PK86245] in Service Level (Fix Pack) 6.1.0.27 of
+   WebSphere Application Server V6.1.0 for z/OS.
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK91446
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSPHERE FOR Z
+   
+   
+ * REPORTED COMPONENT ID
+   5655I3500
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED DUA
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-07-15
+   
+   
+ * CLOSED DATE
+   2009-09-25
+   
+   
+ * LAST MODIFIED DATE
+   2009-09-25
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    PK86245 [http://www-01.ibm.com/support/docview.wss?uid=swg1PK86245]
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

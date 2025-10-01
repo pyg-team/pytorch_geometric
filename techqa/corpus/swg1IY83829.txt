@@ -1,0 +1,188 @@
+Title: IBM IY83829: 17289 - SAP RECON HANGS AGENT, AGENT MUST BE RESTARTED - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  ********************************
+   Environment
+      Operating System  : Windows 2000
+      enrole/ITIM version  :  4.5.1
+      interim release installed:
+      Database server   :  DB2
+      Directory server  :  IDS
+      WebServer         :  WAS
+      Java Version         :
+      Other software?      :
+      Agent(s) installed?  :  SAP 4.5.10
+   ********************************
+   ****************************************************************
+   ********
+   
+   Title:
+   SAP recon hangs agent, agent must be restarted.
+   
+   
+   Problem Description:
+   the agent is firing a request on one of the SAP tables that has
+   3
+   million records. The agent log file is attached. I worked with
+   an SAP
+   person and he said that the exact query fired by the agent was:
+   
+   SELECT * FROM "ADRC" WHERE "CLIENT" = ? FOR FETCH ONLY
+   
+   The table ADRC  has 3 million records. The SAP servers have a
+   timeout of
+   10 minutes for an operation to complete - and looks like in
+   this case, the operation gets rolled back by the SAP server and
+   the
+   server returns an error message to the agent - the agent is not
+   able
+   to handle that. The log file is attached.
+   
+   When the agent hangs [lines 5299 to 5324],the request Get
+   SAPCompList
+   [line 5256] was fired by the agent at 15:14:29. The error
+   messages start at 15:24:24 - 10 minutes after the request to Get
+   SAPCompList..
+   
+   Customer Recreate:
+   Customer can recreate at will by reconciling the service above.
+   
+   Desired Behavior:
+   The recon should complete successfully.
+   
+   Steps to Duplicate:
+   This is as a result of the customer system volume.  Cannot be
+   recreated
+   in house.
+   
+   
+   ****************************************************************
+   ********
+   BUG - AGENT.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  17289
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *   Agent attempts to perform a join query to the a
+   ddress table with 3+ millions rows. Query restructured.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *   Fix shipped in SAP Agent for Win v4.5.12
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IY83829
+   
+   
+ * REPORTED COMPONENT NAME
+   ITIM AGENTS
+   
+   
+ * REPORTED COMPONENT ID
+   5724C34AG
+   
+   
+ * REPORTED RELEASE
+   451
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2006-04-11
+   
+   
+ * CLOSED DATE
+   2006-05-16
+   
+   
+ * LAST MODIFIED DATE
+   2006-05-16
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *     AGENT
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ITIM AGENTS
+   
+   
+ * FIXED COMPONENT ID
+   5724C34AG
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R451 PSY
+   UP
+   
+   
+ * R460 PSY
+   UP

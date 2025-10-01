@@ -1,0 +1,173 @@
+Title: IBM OA48125: JVMJ9VM007E COMMAND-LINE OPTION UNRECOGNISED: -XOSS256K - United States
+
+Text:
+z/os  DIRECT LINKS TO FIXES
+HOD-11.0.14.0-SPLBLD-Linux-for-zSeries-refresh-pack [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FRational%2FIBM+Host+On-Demand&fixids=HOD-11.0.14.0-SPLBLD-Linux-for-zSeries-refresh-pack&source=SAR]
+HOD-11.0.14.0-SPLBLD-OS400-refresh-pack [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FRational%2FIBM+Host+On-Demand&fixids=HOD-11.0.14.0-SPLBLD-OS400-refresh-pack&source=SAR]
+HOD-11.0.14.0-SPLBLD-Solaris-refresh-pack [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FRational%2FIBM+Host+On-Demand&fixids=HOD-11.0.14.0-SPLBLD-Solaris-refresh-pack&source=SAR]
+HOD-11.0.14.0-OS400-refresh-pack [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FRational%2FIBM+Host+On-Demand&fixids=HOD-11.0.14.0-OS400-refresh-pack&source=SAR]
+HOD-11.0.14.0-Linux-for-zSeries-refresh-pack [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FRational%2FIBM+Host+On-Demand&fixids=HOD-11.0.14.0-Linux-for-zSeries-refresh-pack&source=SAR]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  HOD server 11.09  SM.zip command -Xoss256k does not work and
+   gives the following error message
+   
+   In z/OS V2.1 and JAVA 7.1, this parameter gives this message :
+   JVMJ9VM007E Command-line option unrecognised: -Xoss256k  804
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Edit the  "ServiceManager.sh" and replace -Xoss256k with
+    oss256k that comes with installation files
+   
+   Modify as follows:
+   Modify "ServiceManager.sh" that comes with installation files
+   and just  uncomment one line:
+   
+    <ServiceManager.sh-snip>
+    # This line is for problem determination and outputs to
+   HOD.stdout in the private directory
+   
+    # java -verbose -mx32m -oss256K -Djava.compiler=off -classpath
+   .:sm.zip:
+    ibmjndi.jar:jndi.jar:jsdk.jar:ods.jar:jt400.jar:$CLASSPATH c
+     # This line is for running with increased Java heap  size.
+   
+       java -mx32m -oss256k
+   -classpath.:sm.zip:ibmjndi.jar:jndi.jar:jsdk.
+   jar:ods.jar:jt400.jar:$CLASSPATH com.ibm.eNetwork.HODUtil.servi
+   
+    </ServiceManager.sh-snip>
+    The parameter is present on two lines, so modify both lines.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  When zOS HOD Admin changes the Java heap size for Host On
+   Demand Service Manager using "-Xoss" parameter, starting HOD
+   results in this message :
+    JVMJ9VM007E Command-line option unrecognized
+   This problem was happening because "-Xoss" parameter is
+   deprecated.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The start script for the zOS HOD server was modified to replace
+   the deprecated parameter to -oss instead of -Xoss
+   Fix scheduled to be in HOD 11.0.14 Refresh Pack
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  Edit the  "ServiceManager.sh" and replace -Xoss256k with
+    oss256k that comes with installation files
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   OA48125
+   
+   
+ * REPORTED COMPONENT NAME
+   HOD MVS
+   
+   
+ * REPORTED COMPONENT ID
+   5733A5900
+   
+   
+ * REPORTED RELEASE
+   B09
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2015-06-11
+   
+   
+ * CLOSED DATE
+   2015-07-03
+   
+   
+ * LAST MODIFIED DATE
+   2015-07-03
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  NCServic
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   HOD MVS
+   
+   
+ * FIXED COMPONENT ID
+   5733A5900
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * RB0B PSY
+   UP

@@ -1,0 +1,85 @@
+Title: IBM Security Bulletin:  One vulnerability in IBM FileNet Content Manager and IBM Content Foundation (CVE-2013-5452) - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ A security vulnerability exists in IBM FileNet Content Manager and IBM Content Foundation. See the vulnerability description below for the details.
+
+
+VULNERABILITY DETAILS
+CVEID: CVE-2014-5452 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2013-5452]
+DESCRIPTION: 
+
+The IBM FileNet Content Manager and IBM Content Foundation products are vulnerable to an XML external entity attack. A remote attacker could exploit this vulnerability to obtain sensitive information, which could be used to launch further attacks against the system. 
+
+CVSS Base Score: 3.5
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/88192 [https://exchange.xforce.ibmcloud.com/vulnerabilities/88192] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:M/Au:S/C:P/I:N/A:N) 
+
+AFFECTED PRODUCTS AND VERSIONS
+FileNet Content Manager 4.5.1, 5.0.0, 5.1.0, 5.2.0, 5.2.1
+IBM Content Foundation 5.2.0, 5.2.1
+
+REMEDIATION/FIXES
+The vulnerability resolution consists of two parts. First, install one of the releases below according the Readme instructions, and then second, add the JVM argument specified below. 
+
+ 
+
+Product VRMF APAR Remediation/First Fix FileNet Content Manager 4.5.1
+5.0.0
+5.1.0
+5.2.0
+5.2.1 PJ43032
+PJ43033
+PJ43028
+PJ43031
+PJ43031 4.5.1.8-P8CE-IF001 - Aug 14, 2015
+5.0.0.3-P8CE-FP003 - May 19, 2015
+5.1.0.6-P8CE-FP006 - July 31, 2015
+5.2.0.4-P8CPE-FP004 - Aug 31, 2015
+5.2.1.2-P8CPE-FP002 - June 10, 2015 IBM Content Foundation 5.2.0
+5.2.1 PJ43031
+PJ43031 5.2.0.4-P8CaseFoundation-FP004 - Aug 31, 2015
+5.2.1.2-P8CaseFoundation-FP002 - June 10, 2015 
+Releases available from Fix Central: http://www.ibm.com/support/fixcentral/ [http://www.ibm.com/support/fixcentral/] 
+
+For the releases listed above, you must set the following JVM argument in the Content Engine application server startup script: 
+-Dcom.ibm.xml.xlxp.support.dtd.compat.mode=false 
+
+Future Fix Pack releases will automatically set the JVM argument, so the manual setting step will not be needed. This Security Bulletin will be updated as these releases become available. 
+WORKAROUNDS AND MITIGATIONS
+None
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+IMPORTANT NOTE
+ IBM strongly suggests that all System z customers be subscribed to the System z Security Portal to receive the latest critical System z security and integrity service. If you are not subscribed, see the instructions on the System z Security web site [http://www.ibm.com/systems/z/solutions/security_subintegrity.html]. Security and integrity APARs and associated fixes will be posted to this portal. IBM suggests reviewing the CVSS scores and applying all security or integrity fixes as soon as possible to minimize any potential risk. 
+
+REFERENCES
+Complete CVSS v2 Guide [http://www.first.org/cvss/v2/guide] 
+On-line Calculator v2 [http://nvd.nist.gov/CVSS-v2-Calculator] 
+
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] 
+
+ACKNOWLEDGEMENT
+None 
+
+CHANGE HISTORY
+ 29 May 2015 Original Copy Published 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY. 
+
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Enterprise Content Management Content Foundation

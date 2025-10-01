@@ -1,0 +1,146 @@
+Title: IBM IJ00728: ANYWHERE WON'T SYNC CHANGES BACK TO SERVER AFTER LTPA TOKEN TIME OUT - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When using LDAP, if LTPA token times out the device is not
+   aware of that and keeps running without warning users. It
+   causes records created on device will never be synchonized to
+   server (they will keep as local records forever).
+   
+   
+   On MobileFirst trace you'll see errors:
+   - SECJ0371W: Validation of the LTPA token failed because the
+   token expired with the following info: Token expiration Date:
+   Thu Sep 28 12:11:00 BRT 2017, current Date: Thu Sep 28 14:31:30
+   BRT 2017 Token attributes:  port=XXX,
+   username=user:defaultWIMFileBasedRealm/uid=wasadmin,o=defaultWIM
+   FileBasedRealm, hostname=HOSTNAME.
+   
+   - authLogout() HTTP STATUS: 401 [Unauthorized]
+   
+   And you may see error 500 on device logs.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * Maximo Anywhere App Users                                    *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * LTPA Token not handled on authentication header              *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fixed authentication header to resolve this issue
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IJ00728
+   
+   
+ * REPORTED COMPONENT NAME
+   ANYWHERE APPS
+   
+   
+ * REPORTED COMPONENT ID
+   5725M39MA
+   
+   
+ * REPORTED RELEASE
+   761
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-10-13
+   
+   
+ * CLOSED DATE
+   2018-01-08
+   
+   
+ * LAST MODIFIED DATE
+   2018-01-08
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ANYWHERE APPS
+   
+   
+ * FIXED COMPONENT ID
+   5725M39MA
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R761 PSY
+   UP

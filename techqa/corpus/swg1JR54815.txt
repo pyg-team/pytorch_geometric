@@ -1,0 +1,162 @@
+Title: IBM JR54815: AFTER APPLYING IBM BPM V8.5.6.0 CF01, YOU SEE AN ERROR WHEN THE DEPLOYMENT MANAGER STARTS - United States
+
+Text:
+  A FIX IS AVAILABLE
+Version 8.5 Refresh Pack 7 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24041575]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The first time you start the deployment manager after applying
+   the IBM Business Process Manager (BPM) V8.5.6.0 cumulative fix
+   1, the server does not start and SQLCODE=-952 database errors
+   like the following errors are logged in the
+   <profile_root>/logs/BPMUpdateSystemApp*.log file:
+   
+   org.springframework.dao.TransientDataAccessResourceException:Sta
+   tementCallback; SQL [ DELETE FROM BPM_COACH_VIEW_CONFIG_OPTION
+   WHERE VERSION_ID NOT IN(SELECT PO_VERSION_ID FROM
+   LSW_PO_VERSIONS WHERE PO_TYPE = 66)]; DB2 SQL Error:
+   SQLCODE=-952, SQLSTATE=57014,SQLERRMC=null, DRIVER=4.18.60;
+   nested exception iscom.ibm.db2.jcc.am.SqlTimeoutException: DB2
+   SQL Error: SQLCODE=-952,SQLSTATE=57014, SQLERRMC=null,
+   DRIVER=4.18.60
+   at
+   org.springframework.jdbc.support.SQLExceptionSubclassTranslator.
+   translate(SQLExceptionSubclassTranslator.java:58) at
+   org.springframework.jdbc.support.SQLErrorCodeSQLExceptionTransla
+   tor.translate(SQLErrorCodeSQLExceptionTranslator.java:237)...
+   Caused by: com.ibm.db2.jcc.am.SqlTimeoutException: DB2 SQL
+   Error:SQLCODE=-952, SQLSTATE=57014, SQLERRMC=null,
+   DRIVER=4.18.60
+   at com.ibm.db2.jcc.am.kd.a(kd.java:749)at
+   com.ibm.db2.jcc.am.kd.a(kd.java:66)
+   at com.ibm.db2.jcc.am.kd.a(kd.java:135)at
+   com.ibm.db2.jcc.am.bp.c(bp.java:2788)...
+   
+   
+   PRODUCTS AFFECTED
+   IBM BPM Advanced
+   IBM BPM Standard
+   IBM BPM Express
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  If you have many entries in the LSW_PO_VERSIONS table of the IBM
+    Process Server database, a value that is too small for the Java
+    maximum heap size is set when the BPMUpdateSystemApp admin
+   command runs to update the IBM BPM toolkits and process
+   applications.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A fix will be incorporated into an IBM BPM V8.5.6.0 cumulative
+   fix that increases the Java maximum heap size for running the
+   BPMUpdateSystemApp admin command.
+   
+   NOTE: This fix might not work all your DEs. A fix that applies
+   to all DEs will be available later.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR54815
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM ADVANCED
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9400
+   
+   
+ * REPORTED RELEASE
+   856
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-11-26
+   
+   
+ * CLOSED DATE
+   2015-12-15
+   
+   
+ * LAST MODIFIED DATE
+   2015-12-15
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   BPM ADVANCED
+   
+   
+ * FIXED COMPONENT ID
+   5725C9400
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R856 PSY
+   UP

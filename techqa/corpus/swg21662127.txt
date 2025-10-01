@@ -1,0 +1,59 @@
+Title: IBM Fixes fail after applying a Cumulative Release for IBM Connections, Update Installer can no longer install or uninstall fixes - United States
+
+Text:
+Connections: update installer; org.xml.sax.SAXParseException; XML document structures must start and end within the same entity; org.apache.xerces.util.ErrorHandlerWrapper.createSAXParseException(Unkno wn Source); org.apache.xerces.util.ErrorHandlerWrapper.fatalError(Unknown Source); org.apache.xerces.impl.XMLErrorReporter.reportError(Unknown Source); org.apache.xerces.impl.XMLErrorReporter.reportError(Unknown Source) TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+Customer can no longer install or uninstall fixes using the Connections update installer. 
+
+An error is returned when trying to run the update installer:
+org.xml.sax.SAXParseException: XML document structures must start and
+end within the same entity.
+at
+org.apache.xerces.util.ErrorHandlerWrapper.createSAXParseException(Unkno
+wn Source)
+at org.apache.xerces.util.ErrorHandlerWrapper.fatalError(Unknown Source)
+at org.apache.xerces.impl.XMLErrorReporter.reportError(Unknown Source)
+at org.apache.xerces.impl.XMLErrorReporter.reportError(Unknown Source)
+
+
+CAUSE
+The event.history file in the Connections install folder has been corrupt and can no longer be read.
+
+
+ENVIRONMENT
+Connections 4.x
+
+
+
+DIAGNOSING THE PROBLEM
+Customer tried upgrading the update installer and reinstalling it. Then tried running the install in silent mode:
+updateSilent.bat -fix -installDir e:\ibm\connections -fixDir e:\ibm\connections\updateInstaller\fixes -install -fixes LOxxxxx -IC4500-CR0x-Common -wasUserId lcadmin -wasPassword password -featureCustomizationBackedUp yes -databaseSchemaUpdatesHaveBeenCompleted yes 
+
+Error that is returned:
+org.xml.sax.SAXParseException: Premature end of file. 
+at org.apache.xerces.util.ErrorHandlerWrapper.createSAXParseException(Un 
+known Source) 
+at org.apache.xerces.util.ErrorHandlerWrapper.fatalError(Unknown Source) 
+
+at org.apache.xerces.impl.XMLErrorReporter.reportError(Unknown Source) 
+at org.apache.xerces.impl.XMLErrorReporter.reportError(Unknown Source) 
+at org.apache.xerces.impl.XMLVersionDetector.determineDocVersion(Unknown 
+Source) 
+at org.apache.xerces.parsers.XML11Configuration.parse(Unknown Source) 
+at org.apache.xerces.parsers.XML11Configuration.parse(Unknown Source) 
+at org.apache.xerces.parsers.XMLParser.parse(Unknown Source) 
+at org.apache.xerces.parsers.AbstractSAXParser.parse(Unknown Source) 
+at com.ibm.websphere.product.xml.BaseFactory.load(Unknown Source) 
+at com.ibm.websphere.product.xml.BaseFactory.load(Unknown Source) 
+at com.ibm.websphere.product.history.WASHistory.loadHistory(Unknown Sour 
+ce) 
+at com.ibm.websphere.product.history.WPHistory.initialize(Unknown Source
+
+
+
+RESOLVING THE PROBLEM
+Providing a new copy of the event.history from a server at the same level helped to resolve the problem. 
+
+Event.history is located in the following directory by default:
+<>IBM\Connections\version\history

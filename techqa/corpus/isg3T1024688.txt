@@ -1,0 +1,55 @@
+Title: IBM Enable Encryption in Symphony WEBGUI - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ US English 
+
+QUESTION
+ How to enable Encryption in Symphony WEBGUI? 
+
+CAUSE
+In order to enhance the security of WEBGUI service, you may need to enable encryption on its HTTPS connection.
+
+ANSWER
+Following is a procedure to enable 4 protocols: SSL3.0, TLS1.0, TLS1.1, and TLS1.2. 
+
+1. Stop WEBGUI service 
+-- egosh service stop WEBGUI 
+-- egosh service list 
+
+2. Modify kernel/conf/wsm.conf as below, and pay attention to the parameter of Dhttps.protocols 
+"-Dcom.ibm.jsse2.disableSSLv3=false 
+"JVM_ARGS="-Xmx4096m -Xshareclasses:nonpersistent 
+-Dhttps.protocols=SSL_TLSv2 
+-Dcom.ibm.jsse2.disableSSLv3=false 
+-Djava.library.path=../3.3/${BINARY_TYPE}/lib/jni:../soam/7.1.1/${BINARY_TYPE}/lib64:../3.3/${BINARY_TYPE}/lib -DKC_HOME=3.3/kcci" 
+
+3. Modify gui/conf/server_gui.xml as below 
+<ssl id="defaultSSLSettings" keyStoreRef="defaultKeyStore" sslProtocol="${https.protocols}" /> 
+<sslDefault sslRef="defaultSSLSettings"/> 
+
+4. Modify jre/3.3/linux-x86_64/lib/security/java.security 
+-- jdk.tls.disabledAlgorithms=RC4, DH keySize < 768 
+
+5. Restart service WEBGUI 
+-- egosh service list 
+-- egosh service start WEBGUI 
+
+6. Verfication step 
+1) Use IE 11, "Internet options" > "Advanced" > Remove other ciphers, only select "SSL3.0". The browser can access the WEBGUI service. 
+2) And one by one try with all of the other protocols: TLS 1.0, TLS 1.1, TLS 1.2. 
+
+
+Note: following is a list of the value can be configured in step 2. 
+
+1) TLSv1.2 Enables TLS v1.2 protocol only 
+2) SSL_TLS Enables all SSL V3.0 and TLS 1.0 protocols 
+3) SSL_TLSv2 Enables all SSL V3.0 and TLS 1.0, 1.1 and 1.2 protocols 
+
+ 
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Platform Computing Platform Symphony

@@ -1,0 +1,24 @@
+Title: IBM Stopping forced reload of user forms when configuration files are loaded - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ In IBM Rational Change, when configuration files are loaded by the administrator, I am forced to reload the forms, and all my changes in the forms that I am working on are lost. How do I stop forced reload of user forms when configuration files are loaded? 
+
+CAUSE
+When the configuration files are reloaded, the user forms need to be updated with the configuration entries. Hence, you are forced to reload the forms.
+
+ANSWER
+You can override the forced reload of forms by making the following changes: 
+
+1. In the pt.cfg file, add the following entry: 
+
+CCM_SYSTEM][RELOAD_FORMS_ON_CONFIGURATION_LOAD]false[/RELOAD_FORMS_ON_CONFIGURATION_LOAD][/CCM_SYSTEM]
+
+
+By setting this entry to "false", the user forms are not reloaded when configuration files are reloaded. Setting the entry to "true" or removing this entry will reload the user forms when configuration files are reloaded.
+
+2. From Admin login, reload the configuration files. Go to System Administration> General> Configuration Data and click Load.
+
+By enabling this feature, the current user forms will not get the updated configuration entries as the forms are not reloaded. However, if you refresh the form or open any other form, the new configuration entries are available in those forms.

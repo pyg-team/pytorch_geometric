@@ -1,0 +1,96 @@
+Title: IBM 8.5.0.1: IBM Integration Designer V8.5.0 Fix Pack 1 for Linux - United States
+
+Text:
+iid; integration designer; 8501; fp1 DOWNLOADABLE FILES
+
+ABSTRACT
+ This document describes how to download and assemble IBM Integration Designer (IID) V8.5.0 Fix Pack 1 (8.5.0.1). 
+
+DOWNLOAD DESCRIPTION
+
+
+TAB NAVIGATION
+ * Windows [http://www.ibm.com/support/docview.wss?uid=swg24035812]- selected tab,
+ * Linux [http://www.ibm.com/support/docview.wss?uid=swg24035814]
+
+
+
+
+
+
+
+[http://www.ibm.com/i/c.gif] IBM Integration Designer V8.5.0 Fix Pack 1 contains updates for the following: 
+ * Assembly
+ * Business Process
+ * Human Task
+ * Integration Test Client
+ * Mediation Flow
+ * Process Center
+ * Project Build
+ * XML Mapping
+
+
+
+Operating systems:  * Linux on Intel  * Red Hat Enterprise Linux (RHEL) 5 WS
+    * Red Hat Enterprise Linux (RHEL) 6 WS
+    * Red Hat Enterprise Linux (RHEL) 5 Desktop
+    * Red Hat Enterprise Linux (RHEL) 6 Desktop
+    * SuSE Linux Enterprise Server 10
+    * SuSE Linux Enterprise Server 11
+    * SuSE Linux Enterprise Desktop 10
+    * SuSE Linux Enterprise Desktop 11
+   
+   
+
+[http://www.ibm.com/i/c.gif] 
+
+
+
+To access a wide variety of technical resources for this product, see the IBM Integration Designer information center. [http://pic.dhe.ibm.com/infocenter/dmndhelp/v8r5m0/topic/com.ibm.wbpm.wid.main.doc/prodoverview/topics/ctechprodovr.html] [http://publib.boulder.ibm.com/infocenter/dmndhelp/v7r0mx/topic/com.ibm.wbit.help.mainwelcome.doc/topics/welcome.html] 
+
+PREREQUISITES
+Prior to applying this refresh pack, you must have IBM Integration Designer 8.5 or higher installed. Also, ensure that you have the IBM Installation Manager [http://www.ibm.com/support/docview.wss?uid=swg24032641] 1.6 or higher installed.
+
+URL LANGUAGE SIZE(Bytes) Detail System Requirements [http://www.ibm.com/support/docview.wss?uid=swg27022441] English 72342 Release Notes for V8.5.0 Fix Pack 1 [http://www.ibm.com/support/docview.wss?uid=swg27038753] English 2223 
+INSTALLATION INSTRUCTIONS
+It is recommended that you install the fix pack directly from the IBM update server; however, it is also available for download. You might want to download and install the refresh pack in the following situations: 
+
+
+ * You have a slow or unstable Internet connection and want to use a download manager that can resume the download. 
+ * 
+ * You have difficulty accessing the live IBM update servers from behind a firewall. 
+ * 
+ * You prefer to download the fix pack and install it later. 
+
+
+If you choose to download the fix, then perform the following steps: 
+ 1. Download Fix Pack 1 disk 1 (iid8501_fixpack.zip). 
+ 2. 
+ 3. Extract the Fix pack to a temporary directory, such as C:\temp\. 
+ 4. 
+ 5. For installation instructions, click on the link below.
+
+
+For installation instructions of IBM Business Process Manager V8.5.0 Fix Pack 1 [http://www.ibm.com/support/docview.wss?uid=swg24035702], please refer to this link [http://www.ibm.com/support/docview.wss?uid=swg27039247]. 
+
+For installation instructions for IBM Integration Designer V8.5.0 Fix Pack 1, please refer to the link in the table below. URL LANGUAGE SIZE(Bytes) Installation instructions [http://pic.dhe.ibm.com/infocenter/dmndhelp/v8r5m0/topic/com.ibm.wbpm.wid.imuc.doc/topics/tupdating_inter.html] English 3158 
+DOWNLOAD PACKAGE
+
+
+
+
+HOW CRITICAL IS THIS FIX?
+Recommended
+
+
+
+PROBLEMS SOLVED
+IBM Integration Designer V8.5.0 Fix Pack 1 provides new fixes and cumulative fixes from previous IBM Integration Designer V8.5.0 release. For details, see the Fix list for IBM Integration Designer V8.5.0 Fix Pack 1. [http://www.ibm.com/support/docview.wss?uid=swg27039718]
+
+
+
+
+Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options 
+What is Fix Central(FC)? [https://www.ibm.com/support/fixcentral/help?page=swfaqs] Fix Pack 1 15 Nov 2013 English 1679740725 FC [http://www.ibm.com/support/fixcentral/quickorder?source=dbluesearch&product=ibm/WebSphere/IBM+Integration+Designer&release=All&platform=All&function=fixId&fixids=IID-8.5.0-Fix-Pack-001] [ ] 
+ [/support/docview.wss?uid=swg24035814&aid=1]Problems (APARS) fixed [/support/docview.wss?uid=swg24035814&aid=2]Problems (APARS) fixed
+IC91684, IC94588, IC95721, JR46238, JR46501, JR46571, JR46663, JR46777, JR46850, JR46939, JR46950, JR47072, JR47157, JR47240, JR47413, JR47556, JR47569, JR47644, JR47751, JR47811, JR47856, JR48008, PM86249

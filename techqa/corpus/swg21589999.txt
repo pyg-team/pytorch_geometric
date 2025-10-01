@@ -1,0 +1,31 @@
+Title: IBM Operative system permission's required for IBM Content Search Services? - United States
+
+Text:
+CSS permission's; Content Search Services user permissions TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Using IBM Content Search Services with FileNet Content Manager, what user permission's does the defined Content Engine user need on the IndexArea? What permission's does the defined CSS user need on the storage-area (file-store)? 
+
+SYMPTOM
+Installation and Configuration related information needed.
+
+
+CAUSE
+Installation and Configuration related information required for a successful implementation of IBM Content Search Services.
+
+DIAGNOSING THE PROBLEM
+This should be reviewed if IBM Content Search Services indexing is pending indefinitely for example. Confirming this configuration should be part of default troubleshooting in anything related to IBM Content Search Services indexing.
+
+RESOLVING THE PROBLEM
+
+
+
+ 1. The operating system user that is running the Content Engine application server needs read access to the share specified as the root directory on the index area.
+    
+    
+ 2. The IBM Content Search Services user needs no access to the storage-area (file-store) since Content Engine extracts the text from the content first on the Content Engine server, then sends the extracted content to Content Search Services. 
+    However since IBM Content Collector (ICC) is often used and it extracts the text from the content on the IBM Content Search Services server, that would mean the IBM Content Search Services user would need read access to the storage area (file-store), so it would be best practise to ensure this user does have read access to the storage-area.
+    
+    
+    
+ 3. The operating system user running the CSS servers (for search or indexing) needs write access to the index area root directories.

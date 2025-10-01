@@ -1,0 +1,32 @@
+Title: IBM NUM_IOSERVERS=AUTOMATIC behaviour is changed from 10.5FP7 - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ After updating to 10.5FP7 from an older fixpack level, I noticed that AUTOMATIC value for NUM_IOSERVERS is changed even though any settings are not changed. Is it expected bahavior? 
+
+ANSWER
+Yes, it is expected. Due to IT09990, we changed the fomula for calculating the number of prefetchers to start at database activation time.
+Until 10.5FP6, we use following fomula:
+number of prefetchers =
+max( max( max over all table spaces( parallelism setting ),
+number of cores * number of SMT threads ), 16 )
+
+Starting from 10.5FP7, we use following fomula:
+number of prefetchers =
+max( max( max over all table spaces( parallelism setting ),
+number of cores * number of SMT threads ), 12 )
+
+So you can see the following output in 10.5FP6 and FP7:
+
+FP6:
+$ db2 get db cfg | grep NUM_IOSERVERS
+Number of I/O servers (NUM_IOSERVERS) = AUTOMATIC(16)
+
+FP7
+$ db2 get db cfg | grep NUM_IOSERVERS
+Number of I/O servers (NUM_IOSERVERS) = AUTOMATIC(12)
+
+RELATED INFORMATION
+ num_ioservers - Number of I/O servers configuration par [http://www.ibm.com/support/knowledgecenter/SSEPGG_10.5.0/com.ibm.db2.luw.admin.config.doc/doc/r0000333.html]

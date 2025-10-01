@@ -1,0 +1,43 @@
+Title: IBM Unable to issue bin/uv command without parameters to start UV shell - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ In DataStage, the command: bin/uvsh is normally used to start the command shell, while bin/uv command is normally called with additional parameters (i.e. bin/uv -admin -start). 
+
+If bin/uv is called with no parameters, it will attempt to launch the UV shell, but that request will usually fail with errors reporting libraries not found. 
+
+For example on AIX user may see: 
+exec(): 0509-036 Cannot load program bin/uv because of the following errors:
+0509-150 Dependent module libicwrapper.so could not be loaded.
+0509-022 Cannot load module libicwrapper.so.
+0509-026 System error: A file or directory in the path name does not exist
+
+While on Linux the error may be:
+bin/uv: error while loading shared libraries: libdsplugin.so: cannot open shared object file: No such file or directory
+
+Depending on release and platform, the failing library name could also be libodbc.so, libodbcinst.so, or additional libraries.
+
+
+
+CAUSE
+The bin/uvsh program runs under the userid that invokes it and thus will use the environment already established for user session via the command: 
+. ./dsenv 
+
+
+The bin/uv program is owned by root and has ownerid permission 'rws' (not rwx). This means that the program will actually run under the root userid and will not have access to the dsenv environment settings used by the calling userid. 
+Thus the bin/uv command will fail unless the userid invoking program is "root" (and has also run . ./dsenv to setup environment), or unless the root userid has default profile which runs dsenv.
+
+Use the command "bin/uvsh" instead of "bin/uv" to start the uvsh command shell.
+
+
+
+RESOLVING THE PROBLEM
+The correct method to start the uvsh command shell from the DSEngine directory is to issue the following commands: 
+
+ cd /opt/IBM/InformationServer/Server/DSEngine (adjust to match your DSEngine location)
+. ./dsenv
+bin/uvsh
+
+Do not use bin/uv (with no parameters). That is an undocumented method for accessing the uvsh shell which may have worked in older versions but does not work in v8.x.

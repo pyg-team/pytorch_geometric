@@ -1,0 +1,184 @@
+Title: IBM PM56902: CORRECTIONS ARE NEEDED TO THE DOCUMENTATION IN THE INFORMATION CENTER FOR IBM WEBSPHERE APPLICATION SERVER VERSION 6.1 - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  This APAR describes the issues that customers encountered with
+   IBM WebSphere Application Server Version 6.1. These issues were
+   resolved as information center updates in March 2012.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  This APAR provides a cumulative list of     *
+   *                  the documentation issues for February,      *
+   *                  2012                                        *
+   *                  that affect users of IBM WebSphere          *
+   *                  Application Server Version 6.1.             *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: The Information Centers for WebSphere   *
+   *                      Application Server Version 6.1          *
+   *                      need to reflect customer                *
+   *                      enhancement requests received in        *
+   *                      problem management records (PMRs).      *
+   *                      These enhancements can include fixing   *
+   *                      technical inaccuracies or clarifying    *
+   *                      vague information.                      *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   See the Problem conclusion section for a description of the
+   issues, which are described in customer PMRs, and the
+   documentation change or changes that will address these issues.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Note: We update our information centers monthly. The
+   following Version 6.1 modifications will be available in the
+   March, 2012 update to the Information Centers. To access the
+   latest on-line documentation, go to the product library page
+   at http://www.ibm.com/software/webservers/appserv/library and
+   select the version and product that is appropriate for your
+   WebSphere Application Server environment.
+   
+   The following Version 6.1 issues will be addressed:
+   
+   ID: PM56902
+   Problem: The descriptions of the com.ibm.websphere.security
+   ldap.retryBind and
+   com.ibm.websphere.security.registry.ldap.singleLDAP properties
+   in the information center are incomplete.
+   Resolution: The following information will be added to the
+   topics " Updating LDAP binding information" and "Security
+   failover among multiple LDAP servers":
+   
+   When LDAP failover is configured by associating a single
+   hostname to multiple IP addresses, entering an invalid
+   password can cause multiple LDAP bind retries. With the
+   default settings, the number of LDAP bind retries is equal to
+   one more than the number of associated IP addresses. This
+   means a single invalid login attempt can cause
+   the LDAP account to be locked. If the
+   com.ibm.websphere.security.registry.ldap.singleLDAP custom
+   property is set to false, LDAP bind calls are not retried.
+   
+   When LDAP failover is configured by registering backend LDAP
+   server  hostnames using wsadmin command, set the
+   com.ibm.websphere.security.ldap.retryBind property to false.
+   
+   This information will also be added to the same topics in the
+   Version 7.0 and 8.0 Information Centers.
+   
+   ----------
+   ID: 729181
+   
+   Problem:
+   A server might not start correctly after you run the
+   osgiCfgInit script.
+   
+   Resolution:
+   Running the osgiCfginit script clears the cache, and if the
+   server is running when you run the script, there can be
+   problems when the server tries to read or update the cache. To
+   avoid these problems, stop the server before
+   you run this script.
+   
+   The "osgiCfgInit script" topic in the WebSphere Application
+   Server Version 6.1 Information Center will be updated. The
+   following note will be added:
+   
+   Avoid trouble: Before you run the osgiCfgInit script, stop the
+   server on which the script will be run. If you run this script
+   on a server that is active, the server might have problems
+   trying to read or update the cache after the script is finished.
+   
+   This update will also be applied to the Information Centers for
+   Version 7.0 and Version 8.0.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM56902
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBS APP SERV N
+   
+   
+ * REPORTED COMPONENT ID
+   5724H8800
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-01-30
+   
+   
+ * CLOSED DATE
+   2012-02-29
+   
+   
+ * LAST MODIFIED DATE
+   2012-03-15
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

@@ -1,0 +1,134 @@
+Title: IBM IV40120: ADD UPGRADE SUPPORT TO LAUNCHPAD INSTALLER - United States
+
+Text:
+  FIXES ARE AVAILABLE
+IBM Tivoli Monitoring 6.3.0 Fix Pack 1 (6.3.0-TIV-ITM-FP0001) [http://www-01.ibm.com/support/docview.wss?uid=swg24034843]
+IBM Tivoli Monitoring 6.3.0 Fix Pack 2 (6.3.0-TIV-ITM-FP0002) [http://www-01.ibm.com/support/docview.wss?uid=swg24035402]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Allow launchpad for JazzSM-installed ITM components to support
+   upgrade as well as fresh install for 6.3.0 FP1.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Server dashboards for ITM 6.3 FP1 can be installed as pristine
+   or upgrade.  ITM 6.3 FP1 introduces upgrade scenario for server
+   dashboards. In ITM 6.3, when launchpad starts IBM Installation
+   Manager (IIM), it goes directly to the feature tree for pristine
+    installation. To perform upgrade, user has to start IIM already
+    installed on OS, configure it with ITM 6.3 FP1 offering
+   location, then perform upgrade.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Launchpad base installation scenario was modified.  When user
+   starts installation, main IIM panel is displayed and user can
+   decide if he or she wants to perform pristine or upgrade
+   installation. IIM is preconfigured with ITM 6.3 FP1 dashboard
+   offering location so user can go directly to perform the desired
+    operation (install or upgrade).
+   
+   The fix for this APAR is included in the following maintenance
+   vehicle:
+   
+      | fix pack | 6.3.0-TIV-ITM-FP0001 |
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV40120
+   
+   
+ * REPORTED COMPONENT NAME
+   OMEG DIST INSTA
+   
+   
+ * REPORTED COMPONENT ID
+   5608A41CI
+   
+   
+ * REPORTED RELEASE
+   630
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-04-17
+   
+   
+ * CLOSED DATE
+   2013-05-08
+   
+   
+ * LAST MODIFIED DATE
+   2013-05-08
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   OMEG DIST INSTA
+   
+   
+ * FIXED COMPONENT ID
+   5608A41CI
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R630 PSY
+   UP

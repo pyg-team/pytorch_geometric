@@ -1,0 +1,157 @@
+Title: IBM IV09124: CHINESE CHARACTERS IN AEN EVENT IN "HISTORICAL DATA VIEWER" DOESN'T SHOW CORRECTLY - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  ObjectServer Operating System: Linux
+   Client Operating System: Windows 7 Chinese edition
+   OMNIbus: 7.3.1 (Code Revision: 5.21.27)
+   
+   Chinese characters in AEN event in "Historical Data Viewer"
+   doesn't show correctly. Login to AEN client, right-click AEN
+   icon, then click 'History...', all Chinese characters are
+   displayed as square.
+   
+   The issue only happens on "Historical Data Viewer" in AEN
+   client. Real-time AEN events are good. Other Chinese characters
+   in nco_event, WebGUI are all good.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  set the following property: system.List.font=courier,BOLD,11 in
+   aen props file 'aen.properties' which is located in C:\Documents
+   and Settings\<username>\.netcool\nco_aen_settings directory
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * Users wanting to view the Accelerated Event Notification     *
+   * client, specifically the Historical Data Viewer window, in   *
+   * locales with national characters, e.g. Simplified Chinese.   *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * National characters did not resolve correctly.               *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * If the accelerated event contains some national language     *
+   * characters, those characters might not be rendered correctly *
+   * in the historical view window. For example, those characters *
+   * are displayed as square boxes. This can be resolved by       *
+   * adjusting the font used by the historical view window in AEN *
+   * property file.                                               *
+   *                                                              *
+   * The steps to set the font are:                               *
+   * a) Open the AEN property file                                *
+   * The property file is in the following locations:             *
+   *     * UNIX:                                                  *
+   * userhome/.netcool/nco_aen_settings/aen.properties            *
+   *     * Windows:                                               *
+   * userhome\.netcool\nco_aen_settings\aen.properties            *
+   *                                                              *
+   * b) Add a line to the end of the file in this format:         *
+   * system.List.font=font name, font style, font size            *
+   *                                                              *
+   * For example, to display Simplified Chinese characters        *
+   * correctly you can add a line like as:                        *
+   * system.List.font=courier,BOLD,11                             *
+   *                                                              *
+   * c) Save the change made in b), close the file.               *
+   *                                                              *
+   * d) Restart AEN to allow the property change to take effect.  *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Documentation updated with a recommendation to make the change
+   above if the national characters do not resolve.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV09124
+   
+   
+ * REPORTED COMPONENT NAME
+   NETCOOL/OMNIBUS
+   
+   
+ * REPORTED COMPONENT ID
+   5724O4800
+   
+   
+ * REPORTED RELEASE
+   731
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-10-13
+   
+   
+ * CLOSED DATE
+   2011-11-01
+   
+   
+ * LAST MODIFIED DATE
+   2011-11-01
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

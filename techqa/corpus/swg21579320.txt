@@ -1,0 +1,150 @@
+Title: IBM Knowledge Collection: WebSphere Portal API/WPF/Mashups - United States
+
+Text:
+knowledge collection; faq; portlet; development TECHNOTE (FAQ)
+
+QUESTION
+Knowledge Collection: WebSphere Portal API, Websphere Portlet Factory and Mashups
+
+ANSWER
+Migration
+Please refer to the following whitepaper for migration from v6.1 to v7.0:
+http://www.ibm.com/support/docview.wss?uid=swg27021370&aid=1 [http://www.ibm.com/support/docview.wss?uid=swg27021370&aid=1]
+
+Note: Cumulative Fix 11 or later is a requirement for migration to v7.0.0.1 or v7.0.0.2.
+
+Portlet development
+1. Why doesn't my Struts portlet work in WPS v6.1 or later? It worked fine in v6.0.
+You must install PK92740 AND modify your war file according to the readme. For more details, please refer to the following technote: 
+
+ * http://www-01.ibm.com/support/docview.wss?uid=swg1PK92740
+
+
+2. Why doesn't my custom portlet display the default view when navigating away and then pack to the portlet? 
+If pagination in the portlet is controlled via render parameters, you must set the following property in the StateManagerService:  * 
+
+
+Theme and skin development 
+1. Why doesn't my custom theme render when it is deployed in a separate war file. It works fine when deployed as a directory in wps.ear. 
+There are a few reasons that this may happen. Please check the following:  * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+
+
+2. Why do I get issues when accessing Portal through a web server, but not when accessing Portal directly (ie. port 10039)? 
+Ensure you have regenerated and propagated the plugin-cfg.xml file. 
+
+3. Why is my custom theme which uses Dojo no longer working after upgrading to WPS 6.1.0.3 (6.1.5.0) or later? 
+Starting in v 6.1.0.3 (6.1.5.0), the new Version 1.3.2 of Dojo is provided in its own EAR file. Its Web path is /portal_dojo. The previously used Version 1.1.1 of Dojo is unchanged from portal V 6.1. Its Web path is /wps/themes/dojo/portal_dojo . 
+
+Please refer to the following documentation:  * http://www-10.lotus.com/ldd/portalwiki.nsf/dx/Using_and_migrating_Dojo_versions_with_WebSphere_Portal_themes
+
+
+4. Can I use a different version of Dojo than what is provided by Portal by default? 
+Yes, however, please note that it is not officially supported. Please refer to the following documentation:  * http://www-10.lotus.com/ldd/portalwiki.nsf/dx/Customizing_Dojo_in_IBM_Portal
+
+
+5. Why doesn't my web 2.0 based theme work in IE 9? 
+There are known issues with IE 9 and web 2.0 based themes. Please refer to the following documentation:  * http://www.ibm.com/support/docview.wss?uid=swg21496054
+
+
+6. Why doesn't my custom theme work in WPS 7.0.0.0? 
+WPS 7.0.0.1 or later is required for custom theme development. Please refer to the following documentation:  * http://www-01.ibm.com/support/docview.wss?uid=swg21469821
+
+
+7. How do I get the generated java source for a JSP file? Why don't I see the generated java files after I enable the keepgenerated flag? 
+Please refer to option #3 in the following documentation:  * http://www-01.ibm.com/support/docview.wss?uid=swg21232487
+
+
+The java files will be named the same as the JSP file with a preceding an underscore character (_). They are located in the WebSphere_Home/wp_profile/temp folder. For example, the Default.jsp file for the out of the box Page Builder theme in v7 is located here: 
+
+<portal_home>/WebSphere/wp_profile/temp/wps61/WebSphere_Portal/PageBuilder2_Theme/PageBuilder2.war/themes/html/_Default.java 
+
+There are a few reasons that you may not see the generated java source files after enabling this feature. Please check the following:  * 
+ * 
+ * 
+
+
+
+8. How do I enable JSP reloading? Why don't I see my theme changes after enabling jsp reloading? 
+Please refer to the following documentation:  * http://publib.boulder.ibm.com/infocenter/wasinfo/v6r1/topic/com.ibm.websphere.wsfep.multiplatform.doc/info/ae/ae/uweb_jspreload.html
+
+
+There are a few reasons that you may not see your theme changes after enabling JSP reloading. Please check the following:  * 
+ * 
+ * 
+ * 
+ * 
+
+
+WAI 
+1. Why doesn't my WAI work with my custom theme? 
+WAI is only supported with a theme that is deployed within wps.war. Ensure you have deployed your custom theme as part of wps.war. 
+
+Mashups 
+1. How do I collect ISA data for Mashups? 
+Please refer to the following technote: http://www-10.lotus.com/ldd/mashupswiki.nsf/dx/IBM_Lotus_Mashups_Collecting_ISA_Data [http://www-10.lotus.com/ldd/mashupswiki.nsf/dx/IBM_Lotus_Mashups_Collecting_ISA_Data] 
+
+2. How do I maintain page IDs when importing spaces? 
+Please refer to the following technote: http://www-10.lotus.com/ldd/mashupswiki.nsf/dx/Maintaining_page_IDs_when_importing [http://www-10.lotus.com/ldd/mashupswiki.nsf/dx/Maintaining_page_IDs_when_importing] 
+
+3. How do I add a custom widget to Mashups? 
+Please refer to the following technote: http://www-10.lotus.com/ldd/mashupswiki.nsf/dx/Adding_a_custom_widget_to_the_mashup_builder [http://www-10.lotus.com/ldd/mashupswiki.nsf/dx/Adding_a_custom_widget_to_the_mashup_builder] 
+
+4. How do I migrate skins from Mashups v2 to v3.0.0.1? 
+Please refer to the following technote: http://www-10.lotus.com/ldd/mashupswiki.nsf/dx/Skin_migration_from_Mashup_V2_to_V3.0.0.1 [http://www-10.lotus.com/ldd/mashupswiki.nsf/dx/Skin_migration_from_Mashup_V2_to_V3.0.0.1] 
+
+5. How do I hide selected mashups menu items? 
+Please refer to the following technote: http://www-10.lotus.com/ldd/mashupswiki.nsf/dx/Hiding_selected_Mashups_menu_items [http://www-10.lotus.com/ldd/mashupswiki.nsf/dx/Hiding_selected_Mashups_menu_items] 
+
+6. Where can I find documentation on widget programming? 
+Please refer to the following technote: http://www-10.lotus.com/ldd/mashupswiki.nsf/dx/widget-programming-guide [http://www-10.lotus.com/ldd/mashupswiki.nsf/dx/widget-programming-guide] 
+
+WebSphere Portlet Factory (WPF) 
+1. How can I enhance WebSphere Portlet Factory application performance? 
+Please refer to the following technote: https://www-304.ibm.com/support/docview.wss?uid=swg21268497 [https://www-304.ibm.com/support/docview.wss?uid=swg21268497] 
+
+2. How can I create a datasource to work with WebSphere Portlet Factory? 
+Please refer to the following technote: 
+http://www-01.ibm.com/support/docview.wss?uid=swg21290171 [http://www-01.ibm.com/support/docview.wss?uid=swg21290171] 
+
+3. Where can I find samples which use some of the Dojo, Ajax, and rich user interface features of IBM WebSphere Portlet Factory version 7.0? 
+Please refer to the following technote: 
+http://www-10.lotus.com/ldd/pfwiki.nsf/dx/Rich_Web_User_Interface_Sample [http://www-10.lotus.com/ldd/pfwiki.nsf/dx/Rich_Web_User_Interface_Sample] 
+
+4. Where can I find a Rich User Interface (Web 2.0) Sample for WPF? 
+Please refer to the following technote: 
+http://www-10.lotus.com/ldd/pfwiki.nsf/dx/12152009110902AMWEBLXP.htm [http://www-10.lotus.com/ldd/pfwiki.nsf/dx/12152009110902AMWEBLXP.htm] 
+
+5. How can I use IBM® WebSphere® Portlet Factory to implement inter-portlet communication? 
+Please refer to the following technote: 
+http://www-10.lotus.com/ldd/pfwiki.nsf/dx/ibm-using-inter-portlet-communication [http://www-10.lotus.com/ldd/pfwiki.nsf/dx/ibm-using-inter-portlet-communication] 
+
+6. How can I use IBM WebSphere Portlet Factory to integrate IBM Lotus Connections with IBM WebSphere Portal? 
+Please refer to the following technote: 
+http://www.ibm.com/developerworks/lotus/library/connections-portlet-factory/ [http://www.ibm.com/developerworks/lotus/library/connections-portlet-factory/] 
+
+7. How can I use IBM WebSphere Portlet Factory to integrate IBM Lotus Quickr with IBM WebSphere Portal? 
+Please refer to the following technote: 
+http://www.ibm.com/developerworks/lotus/library/quickr-portal-wspf/ [http://www.ibm.com/developerworks/lotus/library/quickr-portal-wspf/] 
+
+8. How do I add a certificate to WAS 6.0? 
+Please refer to the following technote: 
+http://www-10.lotus.com/ldd/pfwiki.nsf/dx/adding-a-certificate-to-was-6.0.x-portal-6.0.x [http://www-10.lotus.com/ldd/pfwiki.nsf/dx/adding-a-certificate-to-was-6.0.x-portal-6.0.x] 
+
+9. How do I handle file attachments using IBM WebSphere Portlet Factory? 
+Please refer to the following technote: 
+http://www-10.lotus.com/ldd/pfwiki.nsf/dx/Handling_file_attachments_using_IBM_WebSphere_Portlet_Factory [http://www-10.lotus.com/ldd/pfwiki.nsf/dx/Handling_file_attachments_using_IBM_WebSphere_Portlet_Factory] 
+
+10. How do I create a custom builder to send e-mail messages? 
+Please refer to the following technote: http://www-10.lotus.com/ldd/pfwiki.nsf/dx/creating-a-custom-builder-to-send-e-mail-messages [http://www-10.lotus.com/ldd/pfwiki.nsf/dx/creating-a-custom-builder-to-send-e-mail-messages] 
+
+
+ * 
+ *  Cross reference information Segment Product Component Platform Version Edition Organizational Productivity- Portals & Collaboration WebSphere Portal End of Support Products AIX, HP-UX, Linux, Solaris, Windows, z/OS, IBM i 6.0 
+ * 
+ *

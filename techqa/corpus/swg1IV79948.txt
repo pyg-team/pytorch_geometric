@@ -1,0 +1,149 @@
+Title: IBM IV79948: SETTING SESSION TIMEOUT VALUE TO NO TIMEOUT IN WAS CONSOLE PREVENTS SUCCESSFUL LOGIN TO SKLM GUI - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+ DIRECT LINKS TO FIXES
+2.5.0-ISS-SKLM-FP0007 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FIBM+Tivoli+Key+Lifecycle+Manager&fixids=2.5.0-ISS-SKLM-FP0007&source=SAR]
+2.6.0-ISS-SKLM-FP0001 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FIBM+Tivoli+Key+Lifecycle+Manager&fixids=2.6.0-ISS-SKLM-FP0001&source=SAR]
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  If you follow these steps to set the session timeout to
+   "No timeout" at this link:
+   .
+   http://www-01.ibm.com/support/knowledgecenter/SSWPVP_2.5.0.3/com [http://www-01.ibm.com/support/knowledgecenter/SSWPVP_2.5.0.3/com]
+   .ibm.sklm.doc_2.5.0.3/install_guide/tsk/tsk_insguide_tklm_postin
+   stall_setkeepalive.html?lang=en
+   .
+   You will run into an issue where when you try to login to the
+   SKLM GUI you will received a message that you session has
+   become invalid and it will kick you out of the GUI.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Until fix is available set the session timeout to some setting
+   other than No Timeout.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: SKLMv2.5 users
+   ****************************************************************
+   * PROBLEM DESCRIPTION: SETTING SESSION TIMEOUT VALUE TO
+   * NO TIMEOUT IN WAS CONSOLE PREVENTS SUCCESSFUL LOGIN TO
+   * SKLM GUI.
+   ****************************************************************
+   *
+   * RECOMMENDATION: Apply 2.5.0-ISS-SKLM-FP0007 or above
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix for this APAR is contained in the following maintenance
+   packages:
+   
+   | fix pack | 2.5.0-ISS-SKLM-FP0007
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV79948
+   
+   
+ * REPORTED COMPONENT NAME
+   TKLM DISTRIBUTE
+   
+   
+ * REPORTED COMPONENT ID
+   5724T6000
+   
+   
+ * REPORTED RELEASE
+   250
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2015-12-24
+   
+   
+ * CLOSED DATE
+   2016-05-24
+   
+   
+ * LAST MODIFIED DATE
+   2016-05-24
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TKLM DISTRIBUTE
+   
+   
+ * FIXED COMPONENT ID
+   5724T6000
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R250 PSY
+   UP

@@ -1,0 +1,358 @@
+Title: IBM IV30877: MXSERVER (TSAM APPLICATION) TAKING TOO LONG TO START/INITIALIZE. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  PROBLEM:  MXServer (TSAM Application) taking too long to
+   start/initialize:
+   
+   Following are the times the server is started:
+   
+   [8/18/12 8:16:39:105 EDT]
+   [8/19/12 12:59:37:137 EDT]
+   [8/27/12 1:09:54:354 EDT]
+   [9/2/12 1:10:35:520 EDT]
+   
+   Following are the times we get "open for business" for each
+   server start:
+   [8/18/12 8:37:58:528 EDT]
+   [8/19/12 13:18:58:007 EDT]
+   [8/27/12 1:32:15:642 EDT]
+   [9/2/12 1:32:46:231 EDT]
+   
+   As you can see, each start takes approx 20 minutes for mxserver
+   to initialize.
+   
+   Time when dmserver is available. Looks like this is around when
+   TSAM environment is fully up and initialized:
+   [8/18/12 8:46:46:787 EDT]
+   [8/19/12 13:28:12:328 EDT]
+   [8/27/12 1:41:24:073 EDT]
+   [9/2/12 1:41:54:158 EDT]
+   
+   If we add up the total time it takes, it's about 30 minutes.
+   
+   Of the 20 minutes it takes to see the message "open for...",
+   following exception is seen
+   
+   [8/19/12 13:00:37:825 EDT] 00000019 resourcemgmt  E
+   com.ibm.tivoli.prism.serviceorder.resourcemgmt.MaximoHelper
+   getVRPools
+   CTJZI1554W Skipping resource pool NACSWDLVMCLDBS because it is
+   not
+   enabled.
+   [8/19/12 13:11:41:244 EDT] 0000000d ThreadMonitor W   WSVR0605W:
+   Thread
+   "server.startup : 0" (00000019) has been active for 710847
+   milliseconds
+   and may be hung.  There is/are 1 thread(s) in total in the
+   server that
+   may be hung.
+    at java.net.SocketInputStream.socketRead0(Native Method)
+    at java.net.SocketInputStream.read(SocketInputStream.java:155)
+    at com.ibm.db2.jcc.t4.ab.b(ab.java:195)
+    at com.ibm.db2.jcc.t4.ab.c(ab.java:243)
+    at com.ibm.db2.jcc.t4.ab.c(ab.java:354)
+    at com.ibm.db2.jcc.t4.ab.v(ab.java:1139)
+    at com.ibm.db2.jcc.t4.db.a(db.java:37)
+    at com.ibm.db2.jcc.t4.t.a(t.java:32)
+    at com.ibm.db2.jcc.t4.sb.h(sb.java:141)
+    at com.ibm.db2.jcc.b.fm.bb(fm.java:1923)
+    at com.ibm.db2.jcc.b.fm.a(fm.java:2781)
+    at com.ibm.db2.jcc.b.fm.a(fm.java:604)
+    at com.ibm.db2.jcc.b.fm.executeQuery(fm.java:588)
+    at psdi.mbo.MboSet.getNextRecordData(MboSet.java:2916)
+    at psdi.mbo.MboSet.fetchMbosActual(MboSet.java:2591)
+    at psdi.mbo.MboSet.fetchMbos(MboSet.java:2557)
+    at psdi.mbo.MboSet.fetchNext(MboSet.java:2515)
+    at
+   com.ibm.tivoli.tpm.maximo.mbo.AbstractBaseDomainObjectMboSet.toC
+   ollectio
+   nOfDomainObjects(AbstractBaseDomainObjectMboSet.java:231)
+    at
+   com.ibm.tivoli.tpm.maximo.dao.AbstractBaseDomainObjectDAO.findDo
+   mainObje
+   ctCollection(AbstractBaseDomainObjectDAO.java:276)
+    at
+   com.thinkdynamics.kanaha.datacentermodel.maximo.ClusterDAO.findB
+   yApplica
+   tionId(ClusterDAO.java:67)
+    at
+   com.thinkdynamics.kanaha.datacentermodel.Cluster.findByApplicati
+   on(Clust
+   er.java:232)
+    at
+   com.thinkdynamics.kanaha.datacentermodel.Application.getClusters
+   (Applica
+   tion.java:196)
+    at
+   com.thinkdynamics.kanaha.datacentermodel.ResourceProvisioningHel
+   per.getR
+   esourcesReservedForPeriod(ResourceProvisioningHelper.java:2292)
+    at
+   com.thinkdynamics.kanaha.datacentermodel.ResourceProvisioningHel
+   per.getF
+   loatingOrFixedReservationsForPeriod(ResourceProvisioningHelper.j
+   ava:2030
+   )
+    at
+   com.thinkdynamics.kanaha.datacentermodel.ResourceProvisioningHel
+   per.getF
+   loatingOrFixedReservationsForPeriodForOnePool(ResourceProvisioni
+   ngHelper
+   .java:2010)
+    at
+   com.ibm.tivoli.prism.serviceorder.resourcemgmt.RMSOAPImpl.fitReq
+   uestsToP
+   ool(RMSOAPImpl.java:4936)
+    at
+   com.ibm.tivoli.prism.serviceorder.resourcemgmt.RMSOAPImpl.fitReq
+   uestsToP
+   ool(RMSOAPImpl.java:5138)
+    at
+   com.ibm.tivoli.prism.serviceorder.resourcemgmt.RMSOAPImpl.summar
+   izeAvail
+   ableResources(RMSOAPImpl.java:4659)
+    at
+   com.ibm.hipods.tpmpc.rm.ResourceManagementHelper.summarizePoolAv
+   ailabili
+   ty(ResourceManagementHelper.java:1021)
+    at
+   com.ibm.hipods.tpmpc.ajax.AjaxServlet.updateRMVersion(AjaxServle
+   t.java:8
+   8)
+    at
+   com.ibm.hipods.tpmpc.cloud.CloudStatusListener.contextInitialize
+   d(CloudS
+   tatusListener.java:34)
+    at
+   com.ibm.ws.wswebcontainer.webapp.WebApp.notifyServletContextCrea
+   ted(WebA
+   pp.java:653)
+    at
+   com.ibm.ws.webcontainer.webapp.WebApp.commonInitializationFinish
+   (WebApp.
+   java:378)
+    at
+   com.ibm.ws.wswebcontainer.webapp.WebApp.initialize(WebApp.java:2
+   93)
+    at
+   com.ibm.ws.wswebcontainer.webapp.WebGroup.addWebApplication(WebG
+   roup.jav
+   a:93)
+    at
+   com.ibm.ws.wswebcontainer.VirtualHost.addWebApplication(VirtualH
+   ost.java
+   :162)
+    at
+   com.ibm.ws.wswebcontainer.WebContainer.addWebApp(WebContainer.ja
+   va:673)
+    at
+   com.ibm.ws.wswebcontainer.WebContainer.addWebApplication(WebCont
+   ainer.ja
+   va:626)
+    at
+   com.ibm.ws.webcontainer.component.WebContainerImpl.install(WebCo
+   ntainerI
+   mpl.java:335)
+    at
+   com.ibm.ws.webcontainer.component.WebContainerImpl.start(WebCont
+   ainerImp
+   l.java:551)
+    at
+   com.ibm.ws.runtime.component.ApplicationMgrImpl.start(Applicatio
+   nMgrImpl
+   .java:1274)
+    at
+   com.ibm.ws.runtime.component.DeployedApplicationImpl.fireDeploye
+   dObjectS
+   tart(DeployedApplicationImpl.java:1137)
+    at
+   com.ibm.ws.runtime.component.DeployedModuleImpl.start(DeployedMo
+   duleImpl
+   .java:572)
+    at
+   com.ibm.ws.runtime.component.DeployedApplicationImpl.start(Deplo
+   yedAppli
+   cationImpl.java:816)
+    at
+   com.ibm.ws.runtime.component.ApplicationMgrImpl.startApplication
+   (Applica
+   tionMgrImpl.java:945)
+    at
+   com.ibm.ws.runtime.component.ApplicationMgrImpl$AppInitializer.r
+   un(Appli
+   cationMgrImpl.java:2120)
+    at
+   com.ibm.wsspi.runtime.component.WsComponentImpl$_AsynchInitializ
+   er.run(W
+   sComponentImpl.java:342)
+    at com.ibm.ws.util.ThreadPool$Worker.run(ThreadPool.java:1551)
+   [8/19/12 13:18:07:437 EDT] 00000019 PrivExAction  W   J2CA0144W:
+   No
+   mappingConfigAlias found for connection factory or datasource
+   jdbc/tcDB.
+   [8/19/12 13:18:07:439 EDT] 00000019 PrivExAction  W   J2CA0114W:
+   No
+   container-managed authentication alias found for connection
+   factory or
+   datasource jdbc/tcDB.
+   [8/19/12 13:18:07:452 EDT] 00000019 InternalDB2Un I   DSRA8203I:
+   Database product name : DB2/AIX64
+   [8/19/12 13:18:07:456 EDT] 00000019 InternalDB2Un I   DSRA8204I:
+   Database product version : SQL09075
+   [8/19/12 13:18:07:457 EDT] 00000019 InternalDB2Un I   DSRA8205I:
+   JDBC
+   driver name  : IBM DB2 JDBC Universal Driver Architecture
+   [8/19/12 13:18:07:458 EDT] 00000019 InternalDB2Un I   DSRA8206I:
+   JDBC
+   driver version  : 3.53.70
+   [8/19/12 13:18:07:458 EDT] 00000019 InternalDB2Un I   DSRA8212I:
+   DataStoreHelper name is:
+   com.ibm.websphere.rsadapter.DB2UniversalDataStoreHelper@3240324.
+   
+   Steps to reproduce:  Issue tio.sh start to bring up TSAM
+   environment (MXServer).
+   
+   Current Erroneous Results:  Too long to start/initialize
+   application.
+   
+   Expected result:  Should not take 30+ minutes to
+   start/initialize application.
+   
+   Additional Info:
+   
+   ENVIRONMENT:
+   - TSAM 7222 / TPM 721
+   - DB2 95
+   - Management Server: Red Hat 5.5
+   - Admin Server: n/a
+   - Hypervisor info: VMWare
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  n/a
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All users of Tivoli Service Automation Manager
+   7.2.2.2
+   ****************************************************************
+   * PROBLEM DESCRIPTION:
+   Performance issue depending on the software catalog load
+   ****************************************************************
+   * RECOMMENDATION:
+   You may install LA fix 7.2.2.2-TIV-TSAM-LA0012 to fix this
+   issue.
+   
+   For permanent resolution apply the below release (or later) for
+   Tivoli Service Automation Manager.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Introducing a cache which prevents loading the software catalog
+   several times.
+   
+   The fix for this APAR is contained in the following package:
+   | mod level | TivSAM 7.2.4
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV30877
+   
+   
+ * REPORTED COMPONENT NAME
+   TSAM (& INSTALL
+   
+   
+ * REPORTED COMPONENT ID
+   5724W7800
+   
+   
+ * REPORTED RELEASE
+   722
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-10-26
+   
+   
+ * CLOSED DATE
+   2013-03-01
+   
+   
+ * LAST MODIFIED DATE
+   2013-03-01
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TSAM (& INSTALL
+   
+   
+ * FIXED COMPONENT ID
+   5724W7800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R724 PSY
+   UP

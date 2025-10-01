@@ -1,0 +1,41 @@
+Title: IBM Is the Domino Web Server SSL engine FIPS 140-2 compliant? - United States
+
+Text:
+FIPS 140-2; SSL; compliance; compliant; Domino Webserver; Web server; engine TECHNOTE (FAQ)
+
+QUESTION
+You need to know if the Lotus® Domino® Web server SSL engine is FIPS 140-2 compliant for the purposes of abiding by those security and certification requirements. 
+
+Information about FIPS requirements can be found at the following address:
+http://csrc.nist.gov/publications/fips/index.html [http://csrc.nist.gov/publications/fips/index.html]
+
+
+ANSWER
+The cryptographic module used by the Domino Web server for SSL is not FIPS 140-2 compliant. Domino uses RSA BSAFE for many cryptographic operations; however, the version implemented in Domino is earlier than the first version that RSA submitted for FIPS 140-2 validation. 
+
+Beginning with 8.0.1, a second cryptographic module that is FIPS 140-2 certified has been added to Notes/Domino 8.0.1 on Microsoft Windows (Win32). In 8.0.1, FIPS 140-2 can be configured for Notes e-mail, document, and user ID encryption. It is also used for SSO with the Ltpa Token2; the Ltpa Token2 format is new in 8.0; this format only uses FIPS 140-2 approved algorithms. 
+
+To achieve FIPS 140-2 compliance with the Web server, IBM Lotus recommends the use of a FIPS 140-2 proxy. 
+
+
+Setting up an IBM(R) Lotus(R) Domino(R) 8.0.2 or 8.5 Web server to comply with FIPS 140-2 over SSL
+This technote describes how to set up an IBM(R) Lotus(R) Domino(R) Release 8.0.2 or 8.5 Web server to comply with Federal Information Processing Standard (FIPS) 140-2 over SSL. To achieve this goal, you set up an intermediate, FIPS-compliant, IBM(R) WebSphere(R) Edge Components Version 7 reverse proxy server to handle the requests to the Domino HTTP server. 
+
+1. Perform the following steps to Install IBM(R) Websphere(R) Edge Components, Version 7 on the computer you will use as the reverse proxy server. For more information, see "Edge Components, Version 7.0 -> Concepts, Planning, and Installation for Edge Components -> Installing Edge Components" - in the IBM WebSphere Information Center [http://publib.boulder.ibm.com/infocenter/wasinfo/v7r0/topic/com.ibm.websphere.edge.doc/concepts/concepts.htm]. 
+
+a) Double-click launchpad.bat under the Edge installation source folder and follow the screen prompts. 
+b) When you see the Component Selection windows, select Caching Proxy.
+c) When installation is complete, click Finish to restart the computer.
+
+2. Set up the Caching Proxy to connect to the Domino HTTP server:
+
+a) Start the Caching Proxy, as described in "Edge Components, Version 7.0 -> Caching Proxy Administration Guide in the WebSphere Information Center [http://publib.boulder.ibm.com/infocenter/wasinfo/v7r0/topic/com.ibm.websphere.edge.doc/cp/admingd.html]. 
+b) Use the Caching Proxy Configuration Wizard to set up a connection from the Domino HTTP server to the Caching Proxy. See the topic "Using the Configuration Wizard" in the Caching Proxy Administration Guide. As you run the wizard you are prompted for the following information:
+- The port the proxy server uses to listen for requests. 80 is the default port, but you can use a different port. 
+- The Target Web Server (URL of the Domino HTTP server)
+- A new name and password for the proxy server administrator account.
+c) Define a mapping rule to require Internet clients to connect over HTTPS rather than HTTP. See "Using the Configuration Wizard" for more information. 
+3. Turn on the FIPSEnable directive to enable the use of FIPS approved ciphers in SSL connections. For more information on directives and the FIPSEnable directive specifically, see the topic "Overview of directives" and "Catching proxy directives" in the Caching Proxy Administration Guide.
+
+RELATED INFORMATION
+ Deploying FIPS 140-2 certified ID and document encrypti [http://www-10.lotus.com/ldd/dominowiki.nsf/dx/deploying-fips-140-2-certified-id-and-document-encryption]

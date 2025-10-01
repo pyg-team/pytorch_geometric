@@ -1,0 +1,64 @@
+Title: IBM CCM not working after upgrading IBM Connections - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+After upgrading IBM Connections Filenet is not functioning and the administrator is unable to login to the ACCE administrative console. 
+
+SYMPTOM
+After upgrading IBM Connections Filenet is not functioning and the administrator is unable to login to the ACCE administrative console. 
+
+The error generated within the ACCE is:
+FNRAC1008E:
+Unable to get data from server
+FNRACA0032 The JNDI cannot be accessed
+Message was Some object reference in the name Filenetengine relative to the context is invalid.
+Some possible causes include a context binding in the name which refers to a destroyed context or an object binding which contains an invalid EJBHome reference.
+
+Withn the Systemout.log for filenet, the following was reported:
+Error 
+
+============
+[5/9/18 15:53:22:444 EDT] 000001f0 EJBMDOrchestr E CNTR0075E: The user-provided class "com.filenet.apiimpl.transport.ejbstubs.EJSRemoteStatelessEngine_2e64c374" needed by the EnterpriseBean could not be found or loaded.
+[5/9/18 15:53:22:444 EDT] 000001f0 SharedEJBRunt E WSVR0068E: Attempt to start EnterpriseBean FileNetEngine#Engine-ejb-ws.jar#Engine failed with exception: com.ibm.ejs.container.EJBConfigurationException: Bean class com.filenet.apiimpl.transport.ejbstubs.EJSRemoteStatelessEngine_2e64c374 could not be found or loaded
+at com.ibm.ws.metadata.ejb.EJBMDOrchestrator.loadGeneratedImplementationClasses(EJBMDOrchestrator.java:4919)
+at com.ibm.ws.metadata.ejb.EJBMDOrchestrator.finishBMDInitWithReferenceContext(EJBMDOrchestrator.java:1077)
+at com.ibm.ws.ejbcontainer.runtime.AbstractEJBRuntime.finishBMDInit(AbstractEJBRuntime.java:1659)
+at com.ibm.ws.ejbcontainer.runtime.AbstractEJBRuntime.initializeDeferredEJBImpl(AbstractEJBRuntime.java:1597)
+at com.ibm.ws.ejbcontainer.runtime.SharedEJBRuntimeImpl.initializeDeferredEJBImpl(SharedEJBRuntimeImpl.java:547)
+at com.ibm.io.async.ResultHandler$2.run(ResultHandler.java:905)
+at com.ibm.ws.util.ThreadPool$Worker.run(ThreadPool.java:1892)
+Caused by: java.lang.ClassNotFoundException: com.filenet.apiimpl.transport.ejbstubs.EJSRemoteStatelessEngine_b1482fb3
+at java.net.URLClassLoader.findClass(URLClassLoader.java:457)
+at com.ibm.ws.bootstrap.ExtClassLoader.findClass(ExtClassLoader.java:243)
+
+
+CAUSE
+The SDK java versions were incompatible between the Dmgr and the application servers. 
+
+The DMGR was running with Java 1.8 while the application servers were running with Java 1.6 
+
+
+ENVIRONMENT
+IBM Connections 5.5 on Windows
+
+
+
+DIAGNOSING THE PROBLEM
+Inspect the exception within the systemout log for FileNet for reports of errors similar to the following: 
+
+[5/9/18 15:53:22:444 EDT] 000001f0 EJBMDOrchestr E CNTR0075E: The user-provided class "com.filenet.apiimpl.transport.ejbstubs.EJSRemoteStatelessEngine_2e64c374" needed by the EnterpriseBean could not be found or loaded.
+.
+.
+Caused by: java.lang.ClassNotFoundException: com.filenet.apiimpl.transport.ejbstubs.EJSRemoteStatelessEngine_b1482fb3
+at java.net.URLClassLoader.findClass(URLClassLoader.java:457)
+
+Inspect the java versions of the WAS application servers as well as the DMGR for mismatching SDK versions.
+
+
+
+RESOLVING THE PROBLEM
+Downgrade the Dmgr java version to 1.6. 
+
+If the WAS version has a bundled/embeded SKD, then reinstall WAS and select the appropriate SDK version of 1.6.

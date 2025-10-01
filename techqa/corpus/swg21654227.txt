@@ -1,0 +1,33 @@
+Title: IBM Adding connector libraries, importing a certificate from a file, uploading projects, importing a repository, and upgrading the appliance using Web Management Console (WMC) - United States
+
+Text:
+Cast Iron; Web Management Console; WMC; file upload failed; par file; upgrade Cast Iron; import certificate; import repository TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ In Cast Iron Cloud Integration appliance Version 7.0 and above (for both physical and virtual appliances), you can face issues with particular browsers/versions when you perform the following tasks in Web Management Console(WMC):
+
+1. Adding vendor connector libraries for connectors like SAP, Siebel, PeopleSoft, JDE, Database, JMS and Oracle E-Business Suite.
+2. Adding external certificates to the appliance by importing from the certificate files.
+3. Upgrading Cast Iron Operating System (upgrading the appliance versions) using WMC.
+4. Importing a Cast Iron project repository.
+5. Uploading projects (.par files) from WMC.
+
+
+SYMPTOM
+The browsers and the versions where the issue were found are: 
+
+ * Mozilla Firefox version 17.x.x and 24.x.x 
+ * Internet Explorer version 8.x.x, 9.x.x, 10.x.x with only TLS v1.0 selected ( and TLS v1.1 and TLS v1.2 not selected)
+   
+
+
+When you use the browsers/versions mentioned above, the file upload fails and the following errors are thrown:  * With Firefox, a message dialog is displayed to try the same step using Internet Explorer. 
+ * With Internet Explorer and with only TLS version 1.0 selected, the error message displayed is "empty file".
+
+
+RESOLVING THE PROBLEM
+The following solutions can be used as a workaround: 
+
+ * Use Google Chrome version 30 or above. 
+ * If you are using Internet Explorer, disable TLS v1.0 and use other available protocols (TLS v1.2 or TLS v1.1 or SSL v3.0). To do this, complete the following:  1. In Internet Explorer, go to Tools > Internet Options > Advanced tab. 
+    2. Under Security clear the Use TLS 1.0 option, and ensure any/all of these options ("Use SSL 3.0" , "Use TLS 1.1", or "Use TLS 1.2") are selected.

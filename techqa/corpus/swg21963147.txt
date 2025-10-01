@@ -1,0 +1,94 @@
+Title: IBM Collecting Data: Migration for WebSphere Portal 8.5 - United States
+
+Text:
+Collecting Data; Collecting Data; Collecting Data; MustGather; MustGather; MustGather; MustGatherDocument; DS; Migration RECOMMENDED RESOURCES
+
+ABSTRACT
+ Collecting troubleshooting data for migration issues with IBM® WebSphere® Portal 8.5 expedites time to resolution by enabling IBM Support to provide informed problem analysis. 
+
+CONTENT
+If you have already contacted IBM Support and must collect data to determine the nature of a problem in WebSphere Portal, review the information below for the available methods of data collection. Otherwise, review Collecting Data: Read first for WebSphere Portal 8.5 [http://www-01.ibm.com/support/docview.wss?uid=swg21672901]. 
+
+Collecting Migration information
+Migration issues can occur for various reasons including incorrect configuration values or failures to follow all of the steps in the documentation. 
+
+Provide the following information about the migration: 
+
+1) Portal Server Information :
+a. What is the exact version of Portal Server on the Source Environment which you are migrating from?
+b. What is the exact version of Portal Server on the Target Environment which you want to migrate to?
+
+2) Operation System (OS) and Database :
+a. Are the Source and Target Environment using the same OS? If yes, then what is the OS?
+b. What database are you using on Source and Target Environments?
+
+3) LDAP Information :
+a. How is your LDAP configured with the Source Environment? Is it a stand-alone or federated LDAP?
+b. Describe how you have configured Target Environment.
+
+4) Are you doing same machine or remote machine migration?
+
+5) Run the following on the Target environment -- 
+
+<wp_profile>/PortalServer/bin/wpcollector.sh | bat 
+
+and it should create a zip file -- <wp_profile>/filesforAutoPD/wp.mustgather.zip 
+
+Provide the wp.mustgather.zip file (see "Automated collection of troubleshooting data" below)
+
+6) Is the source environment clustered or standalone?
+
+7) What are the things you have completed so far in regards to migration?
+
+8) What is the exact command you are executing which is failing?
+
+
+ 
+
+Option A: Automated collection of troubleshooting data 
+
+Automated log collection is the recommended method for improving accuracy of the data collection. Follow the steps below to run the wpcollector tool for automated log collection. 
+
+1. Run the following script from <wp_profile>/PortalServer/bin to collect the data: 
+
+ Windows: wpcollector.bat 
+
+ Linux/Unix/i: wpcollector.sh
+
+Note: If you wish to use wpcollector to FTP the files to IBM Support, include the -Dpmr=<pmr_number> parameter to indicate the relevant PMR #. For example: wpcollector.bat -Dpmr=11111,222,333 
+
+
+2. If you did not FTP your files via wpcollector, locate the "wp.mustgather.zip" file or the
+"<pmr #>-wp.mustgather-timestamp.zip" file in <wp_profile_root> [https://idoc2.swg.usma.ibm.com/portal/topic/com.ibm.wp.ent.doc_v70/reference/wpsdirstr.html#wpsdirstr__wp_profile_root]/filesForAutoPD/. 
+Send the files to IBM Support by using the instructions outlined in Exchanging information with IBM Technical Support for problem determination [http://www-01.ibm.com/support/docview.wss?rs=688&uid=swg21201571]. 
+
+Note: When sending in logs for review, include any relevant screenshots, timestamps, userIds, etc. in order to expedite analysis of the issue. 
+
+ 
+
+Option B: Manual collection of troubleshooting data 
+
+If you are unable to use wpcollector for WebSphere Portal for automatic log collection, use the following instructions for manually collecting the necessary information.
+
+Provide the following files from the Target environment:
+
+-<wp_profile>\PortalServer\log\*
+-<wp_profile>\logs\WebSphere_Portal\*
+-<wp_profile>\ConfigEngine\log\*
+-<wp_profile>\ConfigEngine\properties\*
+-<AppServer>\profiles\cw_profile\logs\* 
+
+-Entire backup directory one used while running the migration task. For instance – in below example – one 
+needs to provide backup_dir 
+
+WASPreUpgrade.bat backup_dir source_WasHome -traceString trace_spec -traceFile trace_file -oldProfile wp_profile_name
+
+
+Send the files to IBM Support by using the instructions outlined in Exchanging information with IBM Technical Support for problem determination [http://www-01.ibm.com/support/docview.wss?rs=688&uid=swg21201571]. 
+
+
+Related Information 
+
+ * IBM Support Portal: WebSphere Portal Troubleshooting [http://www.ibm.com/support/entry/portal/Troubleshooting/Software/WebSphere/WebSphere_Portal] [http://www.ibm.com/support/docview.wss?rs=688&uid=swg21201571] 
+ * WebSphere Portal Knowledge Center: Troubleshooting [http://www-01.ibm.com/support/knowledgecenter/SSHRKX_8.5.0/mp/trouble/troubleshooting.dita] 
+ * Collecting Data: Read first for WebSphere Portal [http://www.ibm.com/support/docview.wss?rs=688&uid=swg21672901]

@@ -1,0 +1,23 @@
+Title: IBM ITCAM4Tx : Tx Collector, "create another" situation falls into 'all managed systems' - United States
+
+Text:
+71TT-CONF; 71TT-GEN; 71GEN-TEPWV TECHNOTE (FAQ)
+
+QUESTION
+ Using ITM TEP Situation Editor, I select existing Transaction Collector 'ktu_Transport_Queue_full' situation, then I use the "create another" option to create a new situation. I add some attributes, save it.
+
+When I check again the situation list using ITM TEP Situation Editor, I can see that my newly created situation falls into the 'All Managed Systems' group of situations, and not under the 'Transaction Collector' group as I would expect. why? 
+
+CAUSE
+'ktu_Transport_Queue_full' situation is actually using 'Tx collector dropped events' attribute item that is coming from/ associated with the 'Universal Messages' attribute group; so it's not specific to Transaction Collector agent as such; if you re-use it with the "Create Another" option it will fall into 'All Managed Systems' group automatically.
+
+If you use the TEP Situation Editor, and select Transaction Collector -> "Create New" option as well,
+and then in the attribute group, you select an attribute item from 'Universal Messages' group, the created situation will also fall into the 'All Managed Systems' situations group.
+
+ANSWER
+If you want to obtain, using TEP Situation Editor, your newly created situation to fall under 'Transaction Collector' situation group, you will need to select an attribute that would be specific to this agent type; like for example from 'Data Collector Information' attribute group, select one of the available attribute item, like 'Connection Count' attribute item.
+
+
+
+PRODUCT ALIAS/SYNONYM
+ itcam itcam4tx itcamfortrans transaction-tracking

@@ -1,0 +1,297 @@
+Title: IBM LO60232: INCORRECT ADDRESS RESOLUTION CAUSES AN NDR REPORT - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS UNREPRODUCIBLE.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Murray included me on an email on the cc list.  At that point my
+   address is
+   fine.  Su-Ju then replied to all with Mime set as the
+   preference.  My email was
+   changed to
+    Robert_W_Ryder/Lexington/IBM%IBMUS@us.ibm.com.   I was still
+   able to receive
+   the email.   I then replied to all and 2 things went wrong.
+   
+   When I sent the email my address was changed to
+   Robert_W_Ryder/Lexington/IBM%IBMUS<CN=Robert_W_Ryder/OU=Lexingto
+   n/O=IBM%IBMUS@us
+   .ibm.com> after I hit send,  as was Paul Hantman so issue 1 and
+   2 are not
+   related.
+   I then received an NDR
+   
+   Before I create an SPR can we talk about it and determine the
+   root cause?
+   
+   Thanks
+   
+   
+   Delivery Failure Report
+   Your message: Re: Fw: Retain.nsf assigned pmr: 43498,999,858
+   was not delivered to:
+   Robert_W_Ryder/Lexington/IBM%IBMUS<CN=Robert_W_Ryder/OU=Lexingto
+   n/O=IBM%IBMUS@us
+   .ibm.com>
+   because: User Robert_W_Ryder/Lexington/IBM
+   (Robert_W_Ryder/Lexington/IBM@us.ibm.com) not listed in Domino
+   Directory
+   
+   What should you do?
+   You can resend the undeliverable document to the recipients
+   listed above by
+   choosing the Resend button or the Resend command on the Actions
+   menu.
+   Once you have resent the document you may delete this Delivery
+   Failure Report.
+   If resending the document is not successful you will receive a
+   new failure
+   report.
+   Unless you receive other Delivery Failure Reports, the document
+   was
+   successfully delivered to all other recipients.
+   
+   
+   D01ML255/01/M/IBM, D01ML255/01/M/IBM
+   
+   
+   To:   Su-Ju Chen/Westford/IBM@Lotus
+   
+   cc:    Lisa Mallahan/Westford/IBM@Notes, Murray
+   Hurvitz/Westford/IBM@Lotus,
+   Paul_C_Hantman/Lexington/IBM%IBMUS@us.ibm.com,
+   Robert_W_Ryder/Lexington/IBM%IBMUS@us.ibm.com
+   
+   Date:   02:17:15 PM Today
+   
+   Subject:   Re: Fw: Retain.nsf assigned pmr: 43498,999,858
+   would Mike Reed know if/where we have a system
+   
+   
+   
+   
+   From:        Su-Ju Chen/Westford/IBM@Lotus
+   To:        Murray Hurvitz/Westford/IBM@Lotus
+   Cc:        Lisa Mallahan/Westford/IBM@Notes,
+   Paul_C_Hantman/Lexington/IBM%IBMUS@us.ibm.com,
+   Robert_W_Ryder/Lexington/IBM%IBMUS@us.ibm.com Date:
+   12/15/10 01:48 PM
+   Subject:        Re: Fw: Retain.nsf assigned pmr: 43498,999,858
+   
+   
+   
+   
+   I don't think we have this environment installed here now.  Jack
+   Dam from
+   Calendar team used do some Globalization test, since we no
+   longer have him, so
+   I don't know if anyone took over the task.
+   suju
+   
+   
+   
+   From:        Murray Hurvitz/Westford/IBM@IRIS
+   To:        Robert W Ryder/Lexington/IBM@IBMUS, Lisa
+   Mallahan/Westford/IBM@Notes, Su-Ju Chen/Westford/IBM@Notes, Paul
+   C
+   Hantman/Lexington/IBM@IBMUS Date:        12/15/2010 12:28 PM
+   Subject:        Fw: Retain.nsf assigned pmr: 43498,999,858
+   
+   
+   To help figure out where this SEV 1 PMR belongs I need a system
+   running
+   Traditional Chinese Windows XP.    So does anyone know who might
+   have a
+   Traditional Chinese install of Windows XP or where I could get
+   one?
+   Thanks,
+   
+   Murray
+   
+   
+   
+   ----- Forwarded by Murray Hurvitz/Westford/IBM on 12/15/2010
+   12:18 PM -----
+   
+   
+    Retain.nsf assigned pmr: 43498,999,858
+   
+   
+   
+   
+    Vikas Shivpuriya
+    to:
+    Murray Hurvitz
+    12/14/2010 09:20 AM
+   
+   
+   
+   
+   
+   
+    Cc:
+    Vikas Shivpuriya
+   
+   
+   
+   
+   
+   
+   
+   
+   PMR link: Link
+   Update link: Link
+   
+   This database is on Rolling/Iris in support/retain.nsf.
+   See private note:
+   Assigning PMR to: Murray Hurvitz because ... [please type
+   reason].
+   
+   Bob Ryder is getting some errors doing the retain pmr
+   reassignment, reassigning
+   as per ST discussion:
+   
+   
+   My earlier update to Bob R.
+   ----------------------------------
+   Hi Bob
+   This issue is associated to the PMR assigned to Murray. Can you
+   please have it
+   reviewed and provide updates. The severity of the SPR has been
+   increased to 1.
+    SPRID  State  Sv  Description   QA  Dev  Orig Codestream
+   Link ACHG8AEBR8  Pending  3 GVT: OOO Error: Type Mismatch On
+   Module: Resetdatetime
+   Molly Chang  Murray Hurvitz  V85
+   
+   ================================================================
+   ================
+   =======
+   Su-Ju
+   Reproducing step:
+   Select the mail sent from Murray from the attachment db
+   Suju has location set up to 'direct to internet' in 'Mail
+   tab\Sent outgoing
+   mail' field
+   Suju Reply to All  --> Bob and Paul 's addr is still right as in
+   Pic 1
+   When Bob or Paul Open my mail --> Their addr will get changed to
+   like
+   'Paul_C_Hantman/Lexington/IBM%IBMUS@us.ibm.com, '
+   When they reply my mail ---> Their addr will be like
+   'Paul_C_Hantman/Lexington/IBM%IBMUS@us.ibm.com, '
+                                                    --> then they
+   will recieve NDR
+                                                    ---> yet,  I
+   can still receive
+   the mail sent by Paul, when I open that mail it's display w/
+   ''Paul_C_Hantman/Lexington/IBM%IBMUS@us.ibm.com, ' in CC field,
+   Sender field
+   is OK  ( as in Pic 2)
+   
+   *** I also sent new msgs to Paul, either using his Notes addr,
+   or email addr
+   'pchantma@us.ibm.com' through SMTP server as well, he can reply
+   it successfully.
+           Send a new msg to
+   'Paul_C_Hantman/Lexington/IBM%IBMUS@us.ibm.com' will
+   get NDR .
+   
+   I've attached the mail I received from Murray, and the msg from
+   my Sent folder
+   that I did 'Reply to All' on Murray's mail, into a Sample db
+   'RyderNDR.nsf'.
+   And attached this db to the spr attachement db.  The Addrss of
+   Bob and Paul,
+   looks right in those two mail.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *  This APAR is associated with SPR# RWRR8C6S34.
+   The change team could not reproduce the problem or determined
+    that the problem has already been corrected.
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   LO60232
+   
+   
+ * REPORTED COMPONENT NAME
+   NOTES CLIENT
+   
+   
+ * REPORTED COMPONENT ID
+   5724E6255
+   
+   
+ * REPORTED RELEASE
+   852
+   
+   
+ * STATUS
+   CLOSED UR5
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-04-19
+   
+   
+ * CLOSED DATE
+   2011-05-19
+   
+   
+ * LAST MODIFIED DATE
+   2011-05-19
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

@@ -1,0 +1,39 @@
+Title: IBM ITCAM4Tx : TEP AMCE Help : "failed to connect" to <host>:9999 - United States
+
+Text:
+71AMCE-GEN; 71GEN-ITM; 71GEN-TEPWV TECHNOTE (FAQ)
+
+QUESTION
+ Using ITCAM for Tx, after starting AMCE from TEP, when clicking on the 'Help' button, I get error : 
+
+Application Management Configuration Editor Assistance : 
+Failed to connect
+
+The connection was refused when attempting to contact <host>:9999. 
+
+CAUSE
+Possible cause is that the "Eclipse Help Server" is not running.
+
+ANSWER
+As documented here, tcp port "9999" is the ITM default port used by the Eclipse Help Server : 
+http://www-01.ibm.com/support/knowledgecenter/SSTFXA_6.2.3.1/com.ibm.itm.doc_6.2.3fp1/adminuse/teps_kfwenv_list.htm?lang=en [http://www-01.ibm.com/support/knowledgecenter/SSTFXA_6.2.3.1/com.ibm.itm.doc_6.2.3fp1/adminuse/teps_kfwenv_list.htm?lang=en] 
+
+ 
+For reference on how to start/stop Eclipse Help server : 
+http://www-01.ibm.com/support/knowledgecenter/SSTFXA_6.2.3.1/com.ibm.itm.doc_6.2.3fp1/trouble/td-teps_15r_trouble.htm?lang=en [http://www-01.ibm.com/support/knowledgecenter/SSTFXA_6.2.3.1/com.ibm.itm.doc_6.2.3fp1/trouble/td-teps_15r_trouble.htm?lang=en] 
+
+
+This Eclipse Help server (component 'kf') is installed and running on same server as the TEPS component. 
+
+Make sure "Eclipse Help Server" is running, then try again to access : 
+
+ TEP -> AMCE -> Help 
+
+or 
+
+TEP -> Help -> Content and Index (http://<teps>:9999/help/index.jsp)
+
+
+
+PRODUCT ALIAS/SYNONYM
+ itcam itcam4tx itcamfortx Application Management Console Configuration

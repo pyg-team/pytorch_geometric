@@ -1,0 +1,20 @@
+Title: IBM Fix Pack 3.0.0.1 (V3.0 Fix Pack 1) for IBM Integration Bus Healthcare Pack - United States
+
+Text:
+ NEWS
+
+ABSTRACT
+ Fix Pack 3.0.0.1 (V3.0 Fix Pack 1) for IBM Integration Bus Healthcare Pack is now available. 
+
+CONTENT
+Fix Pack 1 is now available on all supported platforms. 
+The fix pack provides the following enhancements:
+
+* Support for parsing and writing HIPAA EDI documents
+* A configurable timeout for HL7 output nodes when the destination application is not available
+* Improved handling of empty fields in HL7 messages
+* Improved responsiveness in the web user interface
+
+For details about how to download the fix pack, click the following link:
+
+IBM Integration Bus Healthcare Pack v3.0.0.1 [http://www.ibm.com/support/docview.wss?&uid=swg24038163]

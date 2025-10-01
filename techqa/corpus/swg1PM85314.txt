@@ -1,0 +1,163 @@
+Title: IBM PM85314: CWSIS1501E WHEN USING MICROSOFT SQL SERVER 2005 FOR SIB MESSAGING ENGINE DATA STORE - United States
+
+Text:
+  FIXES ARE AVAILABLE
+8.5.5.1: WebSphere Application Server V8.5.5 Fix Pack 1 [http://www-01.ibm.com/support/docview.wss?uid=swg24035935]
+8.5.5.2: WebSphere Application Server V8.5.5 Fix Pack 2 [http://www-01.ibm.com/support/docview.wss?uid=swg24037250]
+8.5.5.3: WebSphere Application Server V8.5.5 Fix Pack 3 [http://www-01.ibm.com/support/docview.wss?uid=swg24038133]
+8.5.5.4: WebSphere Application Server V8.5.5 Fix Pack 4 [http://www-01.ibm.com/support/docview.wss?uid=swg24038539]
+8.5.5.5: WebSphere Application Server V8.5.5 Fix Pack 5 [http://www-01.ibm.com/support/docview.wss?uid=swg24039425]
+8.5.5.6: WebSphere Application Server V8.5.5 Fix Pack 6 [http://www-01.ibm.com/support/docview.wss?uid=swg24040035]
+8.5.5.7: WebSphere Application Server V8.5.5 Fix Pack 7 [http://www-01.ibm.com/support/docview.wss?uid=swg24040533]
+8.5.5.8: WebSphere Application Server V8.5.5 Fix Pack 8 [http://www-01.ibm.com/support/docview.wss?uid=swg24041178]
+8.5.5.9: WebSphere Application Server V8.5.5 Fix Pack 9 [http://www-01.ibm.com/support/docview.wss?uid=swg24041819]
+8.5.5.10: WebSphere Application Server V8.5.5 Fix Pack 10 [http://www-01.ibm.com/support/docview.wss?uid=swg24042150]
+8.5.5.11: WebSphere Application Server V8.5.5 Fix Pack 11 [http://www-01.ibm.com/support/docview.wss?uid=swg24043005]
+8.5.5.12: WebSphere Application Server V8.5.5 Fix Pack 12 [http://www-01.ibm.com/support/docview.wss?uid=swg24043844]
+8.5.5.13: WebSphere Application Server V8.5.5 Fix Pack 13 [http://www-01.ibm.com/support/docview.wss?uid=swg24044479]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  A Service Integration Bus (SIB) Message Engine fails to start
+   when using Microsoft SQL Server 2005 for the data store.
+   SibMessage    E   ME name ] CWSIS0002E: The messaging engine
+   encountered an exception while starting.
+   
+   Exception: com.ibm.ws.sib.msgstore.PersistenceException:
+   CWSIS1501E: The data source has produced an unexpected
+   exception:com.microsoft.sqlserver.jdbc.SQLServerException:
+   Column,parameter, or variable #5: Cannot find data type
+   DATETIME2.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  Users of the default messaging provider     *
+   *                  for IBM WebSphere Application Server        *
+   *                  version 8.5.                                *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Messaging engine (ME) cannot start in   *
+   *                      if Microsoft SQL Server 2005 is         *
+   *                      configured as a datastore.              *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   Messaging engine (ME) fails to start in WebSphere Application
+   Server V8.5 if Microsoft SQL Server 2005 database is
+   configured as a datastore. This is due to incompatible
+   datatype "DATETIME2" which is valid from SQLServer 2008
+   version and above. "DATETIME2" datatype for SQLServer was
+   introduced in WebSphere Application Server V8.5 to store the
+   ME's last database updated timestamp.
+   This problem is only applicable with WebSphere Application
+   Server V8.5 with Microsoft SQL Server version 2005 database.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Source code has been modified to change the data type as
+   "DATETIME" which is compatible with SQL Server 2005 version
+   and above versions.
+   
+   The fix for this APAR is currently targeted for inclusion in
+   fix pack 8.5.5.1.  Please refer to the Recommended Updates
+   page for delivery information:
+   http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM85314
+   
+   
+ * REPORTED COMPONENT NAME
+   WAS SIB & SIBWS
+   
+   
+ * REPORTED COMPONENT ID
+   620800101
+   
+   
+ * REPORTED RELEASE
+   300
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-03-21
+   
+   
+ * CLOSED DATE
+   2013-06-11
+   
+   
+ * LAST MODIFIED DATE
+   2013-06-11
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WAS SIB & SIBWS
+   
+   
+ * FIXED COMPONENT ID
+   620800101
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R850 PSY
+   UP

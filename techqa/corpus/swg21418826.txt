@@ -1,0 +1,66 @@
+Title: IBM Rational Application Developer v7.5 does not support Network Deployed WebSphere Application Servers in Server Tools - United States
+
+Text:
+WAS; ND; Dmgr; network deployed; network deployment; node; cluster; RAD; RSA; v7.5; portal; stand-alone; standalone; profile; RAC; publishing; publish; profiling; process server; Check Network Deployment settings in the server editor; managed server; V16LongStringValue TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+Attempts to start, stop and publish to a Network Deployed cell using IBM Rational Application Developer for WebSphere Software v7.5 results in unexpected behavior and errors.
+
+SYMPTOM
+The following issues were encountered: 
+
+
+ 1. When specifying the Soap port to the dmgr server node, it is possible to do a Start on the portal server, but the Rational Application Developer v7.5 for the WebSphere Application Server v7 "server configuration" is not able to check whether the portal server is started and stays in the "Starting..." status until timeout and then reverts back to "stopped" status even though the portal server is actually started.
+    
+    
+ 2. When specifying the Soap port for the portal server node, the "server configuration" is able to check the server status is "started"; however, it is not possible to publish any code and receive the following pop-up error:
+    
+    ----
+    'Publishing to WebSphere Portal v6.1WAS7.1 at localhost...' has
+    encountered a problem.
+    Check Network Deployment settings in the server editor.
+    The settings that have been configured do not match those required for
+    the current running target server.
+    ----
+    
+    Other users, in similar circumstances with WebSphere Application Server v6.1 ND also reported:
+    
+    ----
+    An error occurred during publishing:
+    Could not publish to the server.
+    
+    The problem may be caused by one of the following reasons:
+    
+    Check Network Deployment settings in the server editor. The settings
+    that have been configured do not match those required for the current
+    running target server.
+    ----
+
+
+CAUSE
+Unsupported configuration. 
+
+
+You can either point the SOAP port to the Portal Server's SOAP port (10025) or the Deployment Manager's SOAP port (8879), but not both.
+
+
+ENVIRONMENT
+ 
+
+ * WebSphere Portal Server was configured on WebSphere Application Server ND (Network Deployment) configuration in the Server view of Rational Application Developer. 
+ * Rational Application Developer (7.5.4) points to a clustered portal server with a single managed node. 
+ * The WebSphere Portal (6.1.0.2+) WebSphere Application Server (7.0.0.76) ND server is local to the same machine as Rational Application Developer on a Windows 2003 platform.
+
+RESOLVING THE PROBLEM
+As of Rational Application Developer v7.5.0, Network Deployed servers (using a Deployment manager == DMgr ==dmgr) is not supported in the Server Tools, whether it is WebSphere Application Server v6.x or 7.0 ND or any specialized server such as WebSphere Portal Server (WP) 6.1 on a WebSphere Application Server v6.1 or 7.0 ND managed node. 
+
+This is documented in this Rational Application Developer v7.5 Information Center under the section Testing and publishing on your server [http://publib.boulder.ibm.com/infocenter/radhelp/v7r5/index.jsp?topic=/org.eclipse.wst.server.ui.astrxd.doc.user/topics/cwover.html]. Here is a snippet from the documentation:
+
+Supported runtime environments
+"... 
+
+The workbench no longer supports tooling for WebSphere Application Server v5.1 or WebSphere Application Server managed Network Deployment environment. However, for WebSphere Application Server Network Deployment you can continue run the Profile Management Tool from the workbench to create and augment profiles.
+..." 
+
+
+If you consider this an important feature, vote on the open RFE (Request for Enhancement) for this issue: RFE 1431 [http://www.ibm.com/developerworks/support/rational/rfe/execute?use_case=viewChangeRequest&CR_ID=1431].

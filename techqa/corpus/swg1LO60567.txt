@@ -1,0 +1,150 @@
+Title: IBM LO60567: SUBTASKS DO NOT INHERIT MAIN TASK'S ACTIVATION AND EXPIRATION DATES. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS SUGGESTION FOR FUTURE RELEASE.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Expeditor server admistrators may notice an inability to finely
+   control the dates on copied tasks and subtasks.  Specifically,
+   an admin may copy a previously executed task in order to
+   re-execute the same task and subtasks in the future.
+   When the copy and submission occurs, the subtasks' expiration
+   dates reflect the original subtasks' date.  Because these
+   were run in the past, the current subtasks are expired and
+   fail to be run.
+   
+   A solution is to apply the parent task's date, which is
+   set by the administrator prior to submission, to all
+   subtasks.
+   
+   The following describes in detail how the problem may be
+   reproduced:
+   
+   1. Create a new task.  I created a Run command task.
+   
+   2. Choose the task to be New Chained Task.
+   3. Type in a name and then the command in the next screen (for
+   example
+   ipconfig).
+   4. Then type the subtask name and create.
+   5. Create a new Run command task.
+   6. Select Add to Existing chained task and select the task from
+   step 2.
+   7. Add a command (for example dir) then the name and select
+   create.
+   8. Now go to pending tasks.
+   9. Submit the task from step 1 (you might have to refresh to see
+   it).
+   10. Accept defaults on failure and permenant settings screen.
+   11. Add a client.
+   12. Set a date for the task.  I set the start and expire date to
+   the
+   same date and only put 5 minutes between start and expire.  So
+   it starts
+   @ 10:30 and then expires @ 10:35 on April 18, 2011.
+   13. In submitted tasks view, copy the previously run task in
+   step 9.
+   14. Add a client.
+   15. Set a date for the task.  I set the start to be 10:40 on
+   April 18,
+   2011 to the same time on April 18, 2012.
+   16. Now review the sub tasks in the copied task.  They reflect
+   the
+   original subtasks' dates and not the date we assigned in step
+   15.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Create an entirely new task and subtask set.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *   PMR was closed and customer was provided a work around.
+   respective PMR not available in archive
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   LO60567
+   
+   
+ * REPORTED COMPONENT NAME
+   EXPEDITOR SERVE
+   
+   
+ * REPORTED COMPONENT ID
+   5724R0907
+   
+   
+ * REPORTED RELEASE
+   622
+   
+   
+ * STATUS
+   CLOSED SUG
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-05-03
+   
+   
+ * CLOSED DATE
+   2013-04-25
+   
+   
+ * LAST MODIFIED DATE
+   2013-04-25
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

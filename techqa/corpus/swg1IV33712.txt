@@ -1,0 +1,184 @@
+Title: IBM IV33712: EMPTY KFWHISTDATA CAUSES DUPLICATE UADVISOR - United States
+
+Text:
+  FIXES ARE AVAILABLE
+IBM Tivoli Monitoring 6.2.3 Fix Pack 5 (6.2.3-TIV-ITM-FP0005) [http://www-01.ibm.com/support/docview.wss?uid=swg24035801]
+IBM Tivoli Monitoring 6.2.3 Fix Pack 4 (6.2.3-TIV-ITM-FP0004) [http://www-01.ibm.com/support/docview.wss?uid=swg24034252]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  PROBLEM DESCRIPTION:
+   
+   When running multiple TEPS connected to the same HUB and
+   importing the TEPS database from a primary TEPS to a "read only"
+   TEPS appears to cause duplicate UADVISOR situations on the HUB.
+   
+   RECREATE INSTRUCTIONS:
+   1.  With 2 TEPS connected to the same HUB.
+   2.  Run migrate-export to backup the primary TEPS that has no
+   KFWHISTDATA table.
+   3.  Take the saveexport.sql output from that and use it as input
+   to a migrate-import on a secondary "read only" TEPS.
+   4.  After completion of the migrate-import, the TEPS database on
+   the "read only" TEPS will have an empty KFWHISTDATA table.
+   
+   It is still unclear how this causes duplicate UADVISOR
+   situations, but customer insists this is the result.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Update export.parms to remove the KFWHISDATA table definition.
+   
+   
+   Under the TEPS sqllib directory:
+   1) Edit the export.parms file and change all references for
+   KFWHISTDATA to KFWHISTDATABAK.
+   
+   2) Edit the export.parms file changing the two KFWHISTDATA
+   entries to KFWHISTDATABAK,
+   
+   3) Edit the seed-4.sql file changing the one table name entry
+   for KFWHISTDATA to KFWHISTDATABAK.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  After running migrate-import, the KFWHISTDATA table is
+   recreated.  This table in most environments, is not needed and
+   its recreation can cause confusion since at some previous point,
+   the information in that table has been migrated to the
+   WAREHOUSESUMPRUNE table of the WAREHOUSE database.
+   
+   
+   Starting in IBM Tivoli Monitoring version 6.22 FP2, the
+   KFWHISTDATA table is no longer used to maintain summarization
+   and pruning settings for application attribute groups.  The
+   summarization and pruning setting are maintained in the
+   WAREHOUSESUMPRUNE table of the WAREHOUSE database.
+   Unfortunately, the KFWHISTDATA can still get recreated during
+   migrate-export processing and even when maintenance has been
+   applied.  This is source of confusion for the customer.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The migrate-export scripts have been modified to NOT generate a
+   CREATE KFWHISTDATA SQL statement in the saveexport.sql file
+   which would cause the KFWHISTDATA to be recreated.
+   
+   
+   The fix for this APAR is included in the following maintenance
+   vehicle:
+     | fix pack | 6.2.3-TIV-ITM-FP0004
+     | fix pack | 6.3.0-TIV-ITM-FP0001
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  Manually drop the KFWHISTDATA table after maintenance has been
+   applied or remove the CREATE KFWHISTDATA SQL staement from
+   saveexport.sql before running the migrate-import script.
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV33712
+   
+   
+ * REPORTED COMPONENT NAME
+   TEPS
+   
+   
+ * REPORTED COMPONENT ID
+   5724C04PS
+   
+   
+ * REPORTED RELEASE
+   622
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-12-18
+   
+   
+ * CLOSED DATE
+   2013-02-28
+   
+   
+ * LAST MODIFIED DATE
+   2013-10-10
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TEPS
+   
+   
+ * FIXED COMPONENT ID
+   5724C04PS
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R622 PSY
+   UP
+   
+   
+ * R623 PSY
+   UP

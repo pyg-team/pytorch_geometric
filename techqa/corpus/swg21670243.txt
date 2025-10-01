@@ -1,0 +1,37 @@
+Title: IBM The IBM Integration Designer (IID), Process Designer (PD), WebSphere Integration Developer (WID), and WebSphere Business Modeler (WBM) products are not affected by the OpenSSL Heartbleed vulnerability (CVE-2014-0160) - United States
+
+Text:
+ FLASH (ALERT)
+
+ABSTRACT
+ These products are not vulnerable to the CVE-2014-0160 OpenSSL Heartbleed vulnerability. 
+
+CONTENT
+The following product editions and platforms are NOT vulnerable to the OpenSSL Heartbleed vulnerability (CVE-2014-0160): 
+
+ * IBM Integration Designer
+   
+   
+   
+ * IBM Process Designer
+   
+   
+   
+ * WebSphere Integration Developer
+   
+   
+   
+ * WebSphere Business Modeler
+
+
+
+Remediation: No action is required.  
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration WebSphere Business Modeler Windows 7.0.0.4, 6.2.0.1, 6.0.2.1, 6.0.2, 6.0.1, 6.0, 5.1, 7.0 Advanced, Basic, Publishing Server Business Integration IBM Integration Designer Windows, Linux 7.5, 7.5.0.1, 7.5.1, 7.5.1.1, 7.5.1.2, 8.0, 8.0.1, 8.0.1.1, 8.0.1.2, 8.5, 8.5.0.1, 8.5.1.1, 8.5.1.2 All Editions Business Integration WebSphere Integration Developer Linux, Windows 7.0.0.5, 7.0.0.4, 7.0.0.3, 7.0.0.2, 7.0.0.1, 7.0, 6.2.0.3, 6.2.0.2, 6.2.0.1, 6.2, 6.1.2, 6.1.0.1, 6.1, 6.0.2.2, 6.0.2, 6.0.1.2, 6.0.1.1, 6.0.1, 6.0 All Editions 
+PRODUCT ALIAS/SYNONYM
+ IID
+PD
+WID
+Modeler

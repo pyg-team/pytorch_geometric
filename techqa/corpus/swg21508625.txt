@@ -1,0 +1,75 @@
+Title: IBM Failed to open Pool to Centera device error when trying the Test Connection in FileNet Enterprise Manager - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When attempting to configure a Centera fixed content device in FileNet Content Engine Enterprise Manager (FEM) a Failed to open Pool to Centera device error is encountered. 
+
+CAUSE
+The default port 3218 was only open for TCP.
+
+DIAGNOSING THE PROBLEM
+The FEM Test Connection Error: 
+
+
+ * 
+ * 
+   
+ * File = .\FnFCSMgr.cpp, Line = 359, Rev. = $Revision: 1.20 $
+ * The [connect] operation on the fixed content provider 
+ * [com.filenet.engine.content.fcprovider.centera.CenteraFCP(13)] failed. 
+ * content device. Adaptor: 
+ * The fixed content provider could not establish a connection to the fixed 
+ * [com.filenet.engine.content.fcprovider.centera.CenteraAdaptor]. Failed 
+ * to open Pool to Centera device. no primary cluster found. 
+
+
+The corresponding error in the SystemOut.log file: 
+
+ 
+
+ * [
+ * MM/DD/YY H:MM:SS:772 EDT] 0000004a LocalExceptio E CNTR0020E: EJB threw an unexpected (non-declared) exception during invocation of method "executeChanges" on bean "BeanId(FileNetEngine#Engine-ejb-ws.jar#EngineCore, null)". Exception data: com.filenet.api.exception.EngineRuntimeException: FNRCC0110E: CONTENT_FCP_OPERATION_FAILED: The [connect] operation on the fixed content provider [com.filenet.engine.content.fcprovider.centera.CenteraFCP(0)] failed. failedBatchItem=0 errorStack={
+ * 
+ *  at com.filenet.engine.content.fcprovider.centera.CenteraFCP.connect(CenteraFCP.java:223)
+ * 
+ *  at com.filenet.engine.content.fcprovider.BaseFixedContentProvider.adminConnect(BaseFixedContentProvider.java:73)
+ * 
+ *  at com.filenet.engine.content.FixedContentProviderCache.getProviderForCreate(FixedContentProviderCache.java:144)
+ * 
+ *  at com.filenet.engine.persist.FixedContentDevicePersister.validateProperties(FixedContentDevicePersister.java:170)
+ * 
+ * ...
+ * 
+ * ...
+ * 
+ * Caused by: com.filenet.api.exception.EngineRuntimeException: FNRCC0074E: CONTENT_FCP_CONNECTION_FAILED: The fixed content provider could not establish a connection to the fixed content device. Adaptor: [com.filenet.engine.content.fcprovider.centera.CenteraAdaptor]. failedBatchItem=0
+ * 
+ *  at com.filenet.engine.content.fcprovider.centera.CenteraAdaptor.openPool(CenteraAdaptor.java:219)
+ * 
+ *  at com.filenet.engine.content.fcprovider.centera.CenteraFCP.connect(CenteraFCP.java:216)
+ * 
+ *  ... 49 more
+ * 
+ * Caused by: com.filenet.api.exception.EngineRuntimeException: FNRCC0064E: CONTENT_FCP_CENTERA_OPEN_POOL_FAILED: Failed to open Pool to Centera device. failedBatchItem=0
+ * 
+ *  at com.filenet.engine.content.fcprovider.centera.CenteraPoolCache.createNewPool(CenteraPoolCache.java:326)
+ * 
+ *  at com.filenet.engine.content.fcprovider.centera.CenteraPoolCache.openPool(CenteraPoolCache.java:94)
+ * 
+ *  at com.filenet.engine.content.fcprovider.centera.CenteraAdaptor.openPool(CenteraAdaptor.java:215)
+ * 
+ *  ... 50 more
+ * 
+ * Caused by: com.filepool.fplibrary.FPLibraryException: no primary cluster found failedBatchItem=0
+ * 
+ *  at com.filepool.fplibrary.FPPool.<init>(Unknown Source)
+ * 
+ *  at com.filenet.engine.content.fcprovider.centera.CenteraPoolCache.createNewPool(CenteraPoolCache.java:323)
+ * 
+ *  ... 52 more
+
+
+RESOLVING THE PROBLEM
+Open TCP and UDP in the firewall for the default port 3218 from the Content Engine to the Centera Pool IP addresses

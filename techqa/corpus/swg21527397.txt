@@ -1,0 +1,29 @@
+Title: IBM 'Error: Message: Caught XML parser fatal error - The reference to entity "J" must end with the ';' delimiter' when importing an XML file through Resource Manager. - United States
+
+Text:
+STERLINGPRI TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ 'Error: Message: Caught XML parser fatal error - The reference to entity "J" must end with the ';' delimiter' when importing an XML file through Resource Manager. 
+
+SYMPTOM
+Error: Message: Caught XML parser fatal error - The reference to entity "J" must end with the ';' delimiter' when importing an XML file through Resource Manager.
+
+
+CAUSE
+The import file contains characters that are pre-defined entities in XML and the characters are not in their entity format. 
+
+RESOLVING THE PROBLEM
+
+
+There are five pre-defined entities in XML: Ampersand (&), Quote ("), Apostrophe ('), Less than (<), and Greater Than (>). These characters must appear in their entity format when used in an XML file and are not used as markup.
+
+Modify the XML file and change the characters to the entity format.
+
+ 
+
+Character Entity Format & &amp; " &quot; ' &apos; < &lt; > &gt;  
+
+HISTORICAL NUMBER
+ PRI9801
+SCI66062

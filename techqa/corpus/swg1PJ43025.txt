@@ -1,0 +1,164 @@
+Title: IBM PJ43025: WHEN PA IS ENABLED, VWLOG TOOL DOES NOT CLEAN UP TYPE 550 EVENTS THAT DO NOT HAVE A CORRESPONDING TYPE 165 TERMINATION EVENT - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The Case Manager Client creates a 550 event when user goes to
+   the "add task" page.  On that page, the user has option to
+   cancel out of that page.  If that is done, that means the 550
+   event will have been created, but since the workflow was not
+   actually launched (because of the Cancel), no corresponding
+   165 (completion) event will have been created.
+   This keeps vwlog from cleaning up the 550 event log records.
+   
+   Since the 165 event is never created for these items, the
+   550 event items will remain in the system indefinitely.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Manually delete the 550 events from the
+   database that are over a few days old.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * Customers using 5.2.0.3-P8CPE-IF006 or 5.2.1.2-P8CPE-FP002   *
+   * and prior trying to prune PE logs records.                   *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * Case Manager Client creates a 550 event (advanced            *
+   * reservation event) when a user goes to the "add task" page.  *
+   * On that page, a user has option to cancel out of the task    *
+   * later.  If that is done, the 550 event has been logged, and  *
+   * since the workflow was not actually launched (because of the *
+   * Cancel), no corresponding 165 (completion) event will be     *
+   * logged.                                                      *
+   *                                                              *
+   * pelog was designed to allow clean up of log events           *
+   * associated with a completed workflow (165 event) and as      *
+   * such, events associated with  cancelled workflow will remain *
+   * in the system indefinitely.                                  *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Upgrade to 5.2.0.4-P8CPE-FP004 or 5.2.1.2-P8CPE-FP002 and    *
+   * higher                                                       *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fixed in 5.2.0.4-P8CPE-FP004 and 5.2.1.2-P8CPE-FP002 and higher.
+   This problem was resolved by allowing pelog to clean up 'old'
+   500 events. pelog will NOT delete 550 events that are within
+   2hrs from the current time. 550 events are reservation events to
+   ensure that NO duplicate reservations are made. These events can
+   be safely deleted when the reservations are abandoned after 2
+   hrs.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PJ43025
+   
+   
+ * REPORTED COMPONENT NAME
+   PROCESS ENGINE
+   
+   
+ * REPORTED COMPONENT ID
+   5724R7607
+   
+   
+ * REPORTED RELEASE
+   520
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-02-26
+   
+   
+ * CLOSED DATE
+   2015-06-15
+   
+   
+ * LAST MODIFIED DATE
+   2015-06-15
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    PJ42823 [http://www-01.ibm.com/support/docview.wss?uid=swg1PJ42823]
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   PROCESS ENGINE
+   
+   
+ * FIXED COMPONENT ID
+   5724R7607
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R520 PSY
+   UP
+   
+   
+ * R521 PSY
+   UP

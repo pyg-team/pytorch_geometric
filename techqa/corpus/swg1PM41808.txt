@@ -1,0 +1,199 @@
+Title: IBM PM41808: WRONG SERVLET-NAME IN SERVLET-MAPPING IN WEB.XML CAUSES NPE - United States
+
+Text:
+  FIXES ARE AVAILABLE
+8.0.0.1: WebSphere Application Server V8.0 Fix Pack 1 [http://www-01.ibm.com/support/docview.wss?uid=swg24030916]
+8.0.0.2: WebSphere Application Server V8.0 Fix Pack 2 [http://www-01.ibm.com/support/docview.wss?uid=swg24031368]
+8.0.0.3: WebSphere Application Server V8.0 Fix Pack 3 [http://www-01.ibm.com/support/docview.wss?uid=swg24032315]
+8.0.0.4: WebSphere Application Server V8.0 Fix Pack 4 [http://www-01.ibm.com/support/docview.wss?uid=swg24033190]
+8.0.0.5: WebSphere Application Server V8.0 Fix Pack 5 [http://www-01.ibm.com/support/docview.wss?uid=swg24033754]
+8.0.0.6: WebSphere Application Server V8.0 Fix Pack 6 [http://www-01.ibm.com/support/docview.wss?uid=swg24034673]
+8.0.0.7: WebSphere Application Server V8.0 Fix Pack 7 [http://www-01.ibm.com/support/docview.wss?uid=swg24035457]
+8.0.0.8: WebSphere Application Server V8.0 Fix Pack 8 [http://www-01.ibm.com/support/docview.wss?uid=swg24036729]
+8.0.0.9: WebSphere Application Server V8.0 Fix Pack 9 [http://www-01.ibm.com/support/docview.wss?uid=swg24037574]
+8.0.0.10: WebSphere Application Server V8.0 Fix Pack 10 [http://www-01.ibm.com/support/docview.wss?uid=swg24039242]
+8.0.0.11: WebSphere Application Server V8.0 Fix Pack 11 [http://www-01.ibm.com/support/docview.wss?uid=swg24040425]
+8.0.0.12: WebSphere Application Server V8.0 Fix Pack 12 [http://www-01.ibm.com/support/docview.wss?uid=swg24041590]
+8.0.0.13: WebSphere Application Server V8.0 Fix Pack 13 [http://www-01.ibm.com/support/docview.wss?uid=swg24042746]
+8.0.0.14: WebSphere Application Server V8.0 Fix Pack 14 [http://www-01.ibm.com/support/docview.wss?uid=swg24044096]
+8.0.0.15: WebSphere Application Server V8.0 Fix Pack 15 [http://www-01.ibm.com/support/docview.wss?uid=swg24044734]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Wrong servlet-name in servlet-mapping in web.xml causes
+   NullPointerException
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  All users of IBM WebSphere Application      *
+   *                  Server Version 8.0                          *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: A java.lang.NullPointerException is     *
+   *                      thrown instead of a helpful exception   *
+   *                      when an incorrect servlet-name          *
+   *                      element exists in the servlet-mapping   *
+   *                      element in the web.xml.                 *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   A java.lang.NullPointerException is thrown if there is a
+   servlet-name value that does not map to an existing servlet
+   definition.  The exception needs to be more helpful. An
+   example of code which causes this exception is:
+   <?xml version="1.0" encoding="UTF-8"?>
+   
+   <web-app id="WebApp_ID" version="3.0">
+     <display-name>Test</display-name>
+     <description>This is a servlet designed to test.</description>
+   
+     <servlet id="Default">
+       <servlet-name>MyServlet</servlet-name>
+       <display-name>MyServlet</display-name>
+       <description>MyServlet</description>
+       <servlet-class>myPackage.myServlet</servlet-class>
+       <load-on-startup></load-on-startup>
+     </servlet>
+   
+     <servlet-mapping id="ServletMapping_Default">
+       <servlet-name>MyIncorrectServletName</servlet-name>
+       <url-pattern>/myServlet</url-pattern>
+     </servlet-mapping>
+   </web-app>
+   The exception that can be seen:
+   [6/7/11 14:45:44:507 EDT] 0000001f SystemErr     R Caused by:
+   java.lang.NullPointerException
+   [6/7/11 14:45:44:507 EDT] 0000001f SystemErr     R     at
+   com.ibm.ws.webcontainer.webapp.WebAppConfiguration.addServletMap
+   ping(WebAppConfiguration.java:1087)
+   [6/7/11 14:45:44:507 EDT] 0000001f SystemErr     R     at
+   com.ibm.ws.webcontainer.webapp.WebAppConfigurationHelper.constru
+   ctServletMappings(WebAppConfigurationHelper.java:749)
+   [6/7/11 14:45:44:507 EDT] 0000001f SystemErr     R     at
+   com.ibm.ws.webcontainer.webapp.WebAppConfigurationHelper.createC
+   onfiguration(WebAppConfigurationHelper.java:230)
+   [6/7/11 14:45:44:507 EDT] 0000001f SystemErr     R     at
+   com.ibm.ws.webcontainer.metadata.WebMetaDataFactory.createMetaDa
+   ta(WebMetaDataFactory.java:214)
+   [6/7/11 14:45:44:507 EDT] 0000001f SystemErr     R     at
+   com.ibm.ws.runtime.component.MetaDataMgrImpl.createMetaDataFromF
+   actories(MetaDataMgrImpl.java:228)
+   [6/7/11 14:45:44:507 EDT] 0000001f SystemErr     R     at
+   com.ibm.ws.runtime.component.MetaDataMgrImpl.createMetaData(Meta
+   DataMgrImpl.java:411)
+   [6/7/11 14:45:44:507 EDT] 0000001f SystemErr     R     at
+   com.ibm.ws.runtime.component.DeployedModuleImpl.start(DeployedMo
+   duleImpl.java:630)
+   [6/7/11 14:45:44:507 EDT] 0000001f SystemErr     R     at
+   com.ibm.ws.runtime.component.DeployedApplicationImpl.start(Deplo
+   yedApplicationImpl.java:967)
+   [6/7/11 14:45:44:507 EDT] 0000001f SystemErr     R ... 89 more
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Webcontainer code changes have been made to throw an exception
+   which points you to this servlet-mapping element.
+   
+   The fix for this APAR is currently targeted for inclusion in
+   fix pack 8.0.0.1.  Please refer to the Recommended Updates
+   page for delivery information:
+   http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM41808
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSPHERE APP S
+   
+   
+ * REPORTED COMPONENT ID
+   5724J0800
+   
+   
+ * REPORTED RELEASE
+   800
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-06-16
+   
+   
+ * CLOSED DATE
+   2011-06-30
+   
+   
+ * LAST MODIFIED DATE
+   2011-07-13
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBSPHERE APP S
+   
+   
+ * FIXED COMPONENT ID
+   5724J0800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R800 PSY
+   UP

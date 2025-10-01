@@ -1,0 +1,183 @@
+Title: IBM IO11664: THE WEBI JAVA APPLET VIEWER HANGS WHEN VIEWING A MULTI-PART     DOCUMENT, WHEN THE 2ND (OR GREATER) PART HAS MIMETYPE TEXT/PLAIN - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The WEBi Java Applet Viewer hangs when viewing a multi-part
+   document, when the 2nd (or greater) part has mimetype
+   text/plain.
+   
+   This problem is limited to WEBi's interaction with Content
+   Manager backends, not OnDemand backends, because OnDemand does
+   not have the identical concept of multi-part documents.
+   
+   Furthermore, this problem is limited to when the parts of the
+   multi-part document are not all of the same mimetype.
+   
+   For example, consider a 2-part document, the first-part having
+   mimetype "image/tiff", and the second-part having mimetype
+   "text/plain".
+   
+   The WEBi Java Applet Viewer will successfully render the
+   first-part, but when it attempts to render the second-part (the
+   part with mimetype "text/plain"), the following exception is
+   generated (as shown in the Java Console for the plugin):
+   
+   com.ibm.mm.wc.applets.viewer.DocServicesCallbacks.trace
+   CMBStellentViewerEngine: dispatchThread started Document:
+   14463035
+   
+    com.ibm.mm.wc.applets.viewer.DocServicesCallbacks.trace
+   CMBStellentViewerEngine: loadDocument: created stellent window
+   Document: 14463035
+   
+    com.ibm.mm.wc.applets.viewer.DocServicesCallbacks.trace
+   CMBStellentViewerEngine: loadDocument: part copied to temp file
+   Document: 14463035
+   
+    com.ibm.mm.wc.applets.viewer.DocServicesCallbacks.trace Engine
+   throwing exception getting number of pages:
+   
+   com.ibm.mm.viewer.CMBDocumentEngineException: Stellent OIVT: No
+   filter is available for this file type (rc = 4)
+   
+    com.ibm.mm.wc.applets.viewer.DocServicesCallbacks.trace
+   Document page count:0
+   ....
+   ....
+   
+   
+   This pattern continues indefinitely, until the JRE, in which the
+   applet is running, runs out of memory, due to the fact that it
+   cannot create any more threads. Moreover, as the applet is doing
+   this, it hangs (from an end-user pespective; the applet is
+   still running, infinitely looping trying to process the
+   document part that has mimetype "text/plain", but the applet is
+   not responsive to any end-user clicks or actions) and has to be
+   restarted.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  IBM Content Manager systems only.
+   If a user opens an IBM Content Manager document in the applet
+   viewer and the document contains multiple parts and one of the
+   parts is a plain text file, IBM WEBi cannot display the
+   document.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  IBM WEBi Version 1.0.4 can display documents with multiple parts
+   when one of the parts is a plain text file.
+   Important: The method that IBM WEBi Version 1.0.4 uses to render
+   documents with multiple parts when one of the parts is a plain
+   text file is not consistent with:
+   The method that IBM WEBi uses to render a single part plain text
+   document
+   The method that other clients use to render documents with
+   multiple parts
+   The different methods for rendering the document can cause
+   problems if the document contains annotations. For example, if a
+   document with multiple parts contains annotations that were
+   created with another client, such as the eClient, the
+   annotations might render incorrectly or display in the wrong
+   location in IBM WEBi. However, if the annotations are created
+   with the same client that is used to view the document, the
+   annotations will display correctly.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IO11664
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBI
+   
+   
+ * REPORTED COMPONENT ID
+   5765H0400
+   
+   
+ * REPORTED RELEASE
+   103
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-11-17
+   
+   
+ * CLOSED DATE
+   2010-04-08
+   
+   
+ * LAST MODIFIED DATE
+   2010-04-08
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBI
+   
+   
+ * FIXED COMPONENT ID
+   5765H0400
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R104 PSY
+   UP

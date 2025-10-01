@@ -1,0 +1,27 @@
+Title: IBM Poor image quality after PDF to TIFF conversion with IBM Datacap Taskmaster Capture - United States
+
+Text:
+image quality convert PDF TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Image quality is poor after converting PDF files to TIFFs. 
+
+SYMPTOM
+Image quality is downgraded on TIFF files compared to source PDFs.
+
+
+CAUSE
+This issue may be caused by a few main factors: 
+
+ * If the PDF itself has questionable quality, most visible when zooming into the document at 150% or 200% zoom, then the converted TIFF will follow suit. 
+ * When converting from color or grayscale to black and white, there is loss of information due to the reduced bit depth, which in some cases may visibly impact the converted images. 
+ * Post-conversion actions such as image enhancement may yield undesirable results if not tweaked and tested properly over a variety of documents from a large sample set.
+
+RESOLVING THE PROBLEM
+Generally, such results are subjective and often specific to the source documents themselves. There is not necessarily one solution that will be universally ideal for all PDFs. Multiple solutions may need to be applied in a case-by-case basis. Thus it is best to find a configuration that works for a large percentage of work (e.g. 95% of batch files). 
+
+ * Check the source PDF files. If they are not of reasonable quality then steps will need to be taken to improve the quality prior to any configuration changes within Datacap Taskmaster. 
+ * Try converting color PDFs to grayscale images first before converting the output to black and white. Scanning PDFs in grayscale or black and white is one way to accomplish this. 
+ * Test using scanner settings that perform image processing functions such as background color removal. Performing these functions at scan time can lead to better results over performing image enhancement within Datacap Taskmaster. 
+ * For invoices or claims that do not work well with the overall application, consider using a separate job in which batches of problematic documents can be run using different rules/application/image enhancement logic. This is especially notable for files with dot matrix text. 
+ * When using DCPDF actions, the action to use an alternate conversion method should be tested by calling it prior to PDF conversion. The action may improve conversion quality at the slight expense of performance.

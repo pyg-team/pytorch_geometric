@@ -1,0 +1,44 @@
+Title: IBM Configure Dynatrace with the Analytic server 2.0v - United States
+
+Text:
+dynatrace liberty analytic server TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Customer using Dynatrace, looking for configuration settings to work with Analytic Server 2.0 
+
+SYMPTOM
+The configuration change needs to be made in WebSphere, see the information/links provided by the Liberty team below.
+
+
+CAUSE
+Customer using Dynatrace, looking for configuration settings to work with Analytic Server 2.0
+
+ENVIRONMENT
+WebSphere 8.0 or 8.5
+
+DIAGNOSING THE PROBLEM
+See resolution below.
+
+RESOLVING THE PROBLEM
+The customer needs to configure WAS as described in 
+https://community.dynatrace.com/community/display/DOCDT60/WebSphere+Application+Server#WebSphereApplicationServer-WebSphere8.0%E2%80%938.5 [https://community.dynatrace.com/community/display/DOCDT60/WebSphere+Application+Server#WebSphereApplicationServer-WebSphere8.0%E2%80%938.5]
+
+
+The above document describes how to configure dynaTrace to diagnose 
+applications on WebSphere 8.0 or 8.5 full profile. 
+The configuration is done through Generic JVM arguments. 
+In Liberty profile the configuration is different, please, see 
+"Setting generic JVM arguments in the WebSphere Application Server V8.5 
+Liberty profile" - 
+http://www-01.ibm.com/support/docview.wss?uid=swg21596474 [http://www-01.ibm.com/support/docview.wss?uid=swg21596474]
+
+
+Please set the parameter in the jvm.options file as described in the 
+above document. 
+The parameter should be: 
+-agentpath:<DT_HOME>/agent/lib/libdtagent.so=name=<AgentName>,server=<dy
+naTraceCollectorName> 
+
+
+RELATED INFORMATION
+ Need more help? Our Analytic Server forum is Live! [https://developer.ibm.com/answers/search.html?f=&type=question&redirect=search%2Fsearch&sort=relevance&q=%2B[spss]%2B[modeler]%2B[bigdata]]

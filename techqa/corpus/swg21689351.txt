@@ -1,0 +1,184 @@
+Title: IBM action- PM76033-fix-duplicate-portletinstances-wp.script task fails while applying WP 8.0.0.1 CFs - United States
+
+Text:
+CONFIG-WP-PTF-CF action- PM76033-fix-duplicate-portletinstances-wp.script TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+During the installation of a new Cumulative Fix (CF), a BUILD FAILED is reported while running the action- PM76033-fix-duplicate-portletinstances-wp.script subtask.
+
+SYMPTOM
+From the ConfigTrace.log we see:
+.....
+Thu Oct 16 12:07:33 CDT 2014
+Target started: action- PM76033-fix-duplicate-portletinstances-wp.script
+
+action- PM76033-fix-duplicate-portletinstances-wp.script:
+[wsadmin] *sys-package-mgr*: processing modified jar,
+'/....../WebSphere/PortalServer/base/wp.script/lib/wp.script
+.jar'
+[wsadmin] *sys-package-mgr*: processing modified jar,
+'/......./WebSphere/PortalServer/base/wp.script/shared/app/sc
+ripting/wp.link.jar'
+[wsadmin] *sys-package-mgr*: processing modified jar,
+'/....../WebSphere/PortalServer/base/wp.script/bin/scripting
+/wp.scrext.jar'
+[wsadmin] *sys-package-mgr*: processing modified jar,
+'/....../WebSphere/PortalServer/base/wp.model.api/shared/app
+/wp.model.api.jar'
+[wsadmin] *sys-package-mgr*: processing modified jar,
+'/....../WebSphere/PortalServer/base/wp.user.api/shared/app/
+wp.user.api.jar'
+[wsadmin] *sys-package-mgr*: processing modified jar,
+'/....../WebSphere/PortalServer/base/wp.cmd.base/shared/app/
+wp.cmd.base.jar'
+[wsadmin] *sys-package-mgr*: processing modified jar,
+'/....../WebSphere/PortalServer/installer/wp.config/bin/wp.c
+onfig.jar'
+[wsadmin] WASX7209I: Connected to process "dmgr" on node
+<<DmgrNodeName>> using SOAP connector; The type of process is:
+DeploymentManager
+[wsadmin] WASX7303I: The following options are passed to the
+scripting environment and are available as arguments that are stored in
+the argv variable:
+"[/......./WebSphere/AppServer/profiles/wp_profile/ConfigEngine, <<UserId>>, <<Password>>]"
+[wsadmin] length of parameters 3
+[wsadmin] found 2 MBeans
+[wsadmin] logged in as "cn=<<UserId>>,ou=<<group>>,ou=<<>>,o=<<>>"
+[wsadmin] WASX7017E: Exception received while running file
+"/......./WebSphere/PortalServer/base/wp.script/config/scripts/fix_duplicate_portlet_entities.py"; exception information:
+com.ibm.bsf.BSFException: exception from Jython:
+[wsadmin] Traceback (innermost last):
+[wsadmin] File "<string>", line 15, in ?
+[wsadmin] java.rmi.RemoteException:
+com.ibm.wps.command.CommandFailedException: EJPEB0004E: An unknown
+exception occurred: PortalExecuteCommandImpl.execute(input, output)
+[wsadmin] WrappedException is: java.lang.ClassNotFoundException:
+com.ibm.wps.scripting.cmdifce.portlets.PM76033CleanupCommand
+[wsadmin] at
+com.ibm.wps.scripting.server.WPScriptMBean.doThrowRemoteException(WPScri
+ptMBean.java:1169)
+[wsadmin] at
+com.ibm.wps.scripting.server.WPScriptMBean.executeCommand(WPScriptMBean.
+java:898)
+.....
+[wsadmin] java.rmi.RemoteException: java.rmi.RemoteException:
+com.ibm.wps.command.CommandFailedException: EJPEB0004E: An unknown
+exception occurred: PortalExecuteCommandImpl.execute(input, output)
+[wsadmin] WrappedException is: java.lang.ClassNotFoundException:
+com.ibm.wps.scripting.cmdifce.portlets.PM76033CleanupCommand
+
+--- Exception Thrown ---
+/....../WebSphere/PortalServer/base/wp.script/config/includes/wp.script.fp_cfg.xml:35: Java returned: 105
+at org.apache.tools.ant.taskdefs.Java.execute(Java.java:87)
+......
+Target finished: action- PM76033-fix-duplicate-portletinstances-wp.script
+......
+BUILD FAILED
+/...../WebSphere/PortalServer/installer/wp.update/config/in
+cludes/cumulative_fix.xml:59: The following error occurred while
+executing this line:
+/....../WebSphere/PortalServer/installer/wp.update/config/in
+cludes/wp.update.fix_cfg.xml:194: The following error occurred while
+executing this line:
+/....../WebSphere/PortalServer/base/wp.script/config/include
+s/wp.script.fp_cfg.xml:35: Java returned: 105
+Total time: 36 minutes 11 seconds
+.....
+
+
+
+CAUSE
+This has been identified as a product defect under APAR PI25731
+
+ENVIRONMENT
+WP 8.0.0.1 CF 09 or newer.
+
+DIAGNOSING THE PROBLEM
+Checking the ConfigTrace.log, search for the error noted in Symptom section. In specific, this line is the key:
+.....
+[wsadmin] File "<string>", line 15, in ?
+.....
+
+If this says:
+.....
+[wsadmin] File "<string>", line 8, in ?
+......
+
+The issue is different, and this technote will not apply.
+
+RESOLVING THE PROBLEM
+A code fix for this issue is integrated into the WebSphere Portal & WCM Combined Cumulative Fix 14 ( PI22800) for Portal 8.0.0.1 available from Fix Central:
+http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm/WebSphere&product=ibm/WebSphere/WebSphere+Portal&release=All&platform=All&function=aparId&apars=PI22800 [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm/WebSphere&product=ibm/WebSphere/WebSphere+Portal&release=All&platform=All&function=aparId&apars=PI22800]
+
+If this issue is seen with CF13, please follow this technote:
+http://www-01.ibm.com/support/docview.wss?uid=swg21685734 [http://www-01.ibm.com/support/docview.wss?uid=swg21685734]
+
+If, however, you cannot restore back to a point prior to the failure, you will need to perform these steps for all nodes experiencing the failure:
+.....
+Stop your portal server(s):
+1. Exit Installation Manager if it is running.
+2. Edit the Installation Manager configuration file, found at:
+
+* Windows: C:\Program Files\IBM\InstallationManager\eclipse\configuration\config.ini
+* Linux or Unix root user:
+/opt/IBM/InstallationManager/eclipse/configuration/config.ini
+* Linux or Unix non-root user:
+/home/<userhome>/opt/IBM/InstallationManager/eclipse/configuration/config.ini
+
+3. Add the following line to this file:
+WP_UPDATE_SKIP_CONFIG=true
+
+4. Save the file and run the portal installation again.
+
+IIM should run to completion and update all product binary files, but the profile config step needs to be done later.
+
+At this point you need to modify this config file
+
+..../PortalServer/base/wp.script/config/includes/wp.script.fp_cfg.xml
+
+Within this file replace this line
+
+<target name="action-deploy-portlets-applyPTFStatic-wp.script" depends="action- PM76033-fix-duplicate-portletinstances-wp.script"/>
+
+with this line
+
+<target name="action-deploy-portlets-applyPTFStatic-wp.script"/>
+
+Save the changes.
+
+When ready, run the profile config manually:
+
+1. Run:
+<profile_root>/ConfigEngine/ConfigEngine.sh -uninstall -offeringListPortalServer -unregisterOnly
+
+2. Run:
+<profile_root>/ConfigEngine/ConfigEngine.sh -install
+-offeringRootportal_install_root -installPath portal_install_root -expandBinaries false
+
+3. Run:
+<profile_root>/ConfigEngine/ConfigEngine.sh CONFIG-WP-PTF-CF -DPortalAdminPwd=<password> -DWasPassword=<password>
+
+Once the upgrade is complete, you can remove the 'WP_UPDATE_SKIP_CONFIG' line from your config.ini file.
+
+Once the task is complete run these 2 ConfigEngine scripts:
+
+action- PM76033-fix-duplicate-portletinstances-wp.script
+action- PM76033-check-duplicate-portletinstances-wp.script
+
+They should run successful and the 'check' script should not report any leftover duplicate portlet instances.
+
+Now, reset the wp.script.fp_cfg.xml file to its original content:
+
+..../PortalServer/base/wp.script/config/includes/wp.script.fp_cfg.xml
+
+Within this file replace this line
+
+<target name="action-deploy-portlets-applyPTFStatic-wp.script"/>
+
+with this line
+
+<target name="action-deploy-portlets-applyPTFStatic-wp.script" depends="action- PM76033-fix-duplicate-portletinstances-wp.script"/>
+
+Save the changes.
+
+Once complete, move on to the next affected node.

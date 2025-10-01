@@ -1,0 +1,189 @@
+Title: IBM PI33760: SHA-2 SIGNATURE ALGORITHM CANNOT BE SPECIFIED FOR SAML TOKEN IN SAMLISSUERCONFIG.PROPERTIES OR WS-SECURITY BINDINGS - United States
+
+Text:
+  FIXES ARE AVAILABLE
+8.5.5.6: WebSphere Application Server V8.5.5 Fix Pack 6 [http://www-01.ibm.com/support/docview.wss?uid=swg24040035]
+8.0.0.11: WebSphere Application Server V8.0 Fix Pack 11 [http://www-01.ibm.com/support/docview.wss?uid=swg24040425]
+8.5.5.7: WebSphere Application Server V8.5.5 Fix Pack 7 [http://www-01.ibm.com/support/docview.wss?uid=swg24040533]
+7.0.0.39: WebSphere Application Server V7.0 Fix Pack 39 [http://www-01.ibm.com/support/docview.wss?uid=swg24041013]
+8.5.5.8: WebSphere Application Server V8.5.5 Fix Pack 8 [http://www-01.ibm.com/support/docview.wss?uid=swg24041178]
+8.0.0.12: WebSphere Application Server V8.0 Fix Pack 12 [http://www-01.ibm.com/support/docview.wss?uid=swg24041590]
+8.5.5.9: WebSphere Application Server V8.5.5 Fix Pack 9 [http://www-01.ibm.com/support/docview.wss?uid=swg24041819]
+7.0.0.41: WebSphere Application Server V7.0 Fix Pack 41 [http://www-01.ibm.com/support/docview.wss?uid=swg24041931]
+8.5.5.10: WebSphere Application Server V8.5.5 Fix Pack 10 [http://www-01.ibm.com/support/docview.wss?uid=swg24042150]
+8.5.5.11: WebSphere Application Server V8.5.5 Fix Pack 11 [http://www-01.ibm.com/support/docview.wss?uid=swg24043005]
+8.0.0.13: WebSphere Application Server V8.0 Fix Pack 13 [http://www-01.ibm.com/support/docview.wss?uid=swg24042746]
+7.0.0.43: WebSphere Application Server V7.0 Fix Pack 43 [http://www-01.ibm.com/support/docview.wss?uid=swg24043400]
+8.5.5.12: WebSphere Application Server V8.5.5 Fix Pack 12 [http://www-01.ibm.com/support/docview.wss?uid=swg24043844]
+8.0.0.14: WebSphere Application Server V8.0 Fix Pack 14 [http://www-01.ibm.com/support/docview.wss?uid=swg24044096]
+8.5.5.13: WebSphere Application Server V8.5.5 Fix Pack 13 [http://www-01.ibm.com/support/docview.wss?uid=swg24044479]
+7.0.0.45: WebSphere Application Server V7.0 Fix Pack 45 [http://www-01.ibm.com/support/docview.wss?uid=swg24044551]
+8.0.0.15: WebSphere Application Server V8.0 Fix Pack 15 [http://www-01.ibm.com/support/docview.wss?uid=swg24044734]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS NEW FUNCTION.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Allow signing of a self-issued SAML token using the SHA-2
+   signature algorithm.
+   
+   Although this is arelady supported, its use is only externalized
+   through APIs.
+   
+   This option should be available through the
+   SAMLIssuerConfig.properties file and WS-Security policy
+   bindings.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  IBM WebSphere Application Server users of   *
+   *                  WS-Security enabled JAX-WS web services     *
+   *                  and SAML                                    *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Expose properties to sign SAML token    *
+   *                      using SHA-2 signature algorithm         *
+   ****************************************************************
+   * RECOMMENDATION:  Install a fix pack that contains this       *
+   *                  APAR.                                       *
+   ****************************************************************
+   There is currently support to sign a SAML token using the
+   SHA-2 signature algorithm,
+   http://www.w3.org/2001/04/xmldsig-more#rsa-sha256.  However,
+   you can only do this using the WSS APIs.  There needs to be a
+   way to do this using the SAMLIsseuerConfig.properties file or
+   the WS-Security policy bindings.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The WS-Security runtime is updated so that you can specify in
+   the SAMLIssuerConfig.properties file or WS-Security policy
+   bindings to use the SHA-2 signature algorithm when signing a
+   SAML token.
+   
+   The following property is added to SAMLIssuerConfig.properties
+   file:
+   
+   UseSha2ForSignature
+   
+   The following property is added to the WS-Security policy
+   bindings and should be set in the SAML token generator
+   callback handler.  This property can only be used on WebSphere
+   Application Server v8 and later.
+   
+   com.ibm.wsspi.wssecurity.saml.config.issuer.UseSha2ForSignature
+   
+   The values for these properties are true and false.  They
+   default to false.
+   
+   The fix for this APAR is currently targeted for inclusion in
+   fix packs 7.0.0.39, 8.0.0.11 and 8.5.5.6.  Please refer to the
+   Recommended Updates page for delivery information:
+   http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+   
+   Keywords: IBMWL3WSS, WSSEC, SAMLWSSEC
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI33760
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBS APP SERV N
+   
+   
+ * REPORTED COMPONENT ID
+   5724H8800
+   
+   
+ * REPORTED RELEASE
+   850
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2015-01-29
+   
+   
+ * CLOSED DATE
+   2015-02-16
+   
+   
+ * LAST MODIFIED DATE
+   2015-09-24
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBS APP SERV N
+   
+   
+ * FIXED COMPONENT ID
+   5724H8800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R700 PSY
+   UP
+   
+   
+ * R800 PSY
+   UP
+   
+   
+ * R850 PSY
+   UP

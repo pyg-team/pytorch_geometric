@@ -1,0 +1,16 @@
+Title: IBM Infosphere CDC Replication fails with an exception  "SQL error code is '-104'. The SQL   state is: 42601" - United States
+
+Text:
+SQL error code is '-104'. The SQL state is: 42601 TROUBLESHOOTING
+
+PROBLEM
+When replicating tables target DB2 database , subscription fails with the following error message, Database operation failed. A SQL exception has occurred. The SQL error code is '-104'. The SQL state is: 42601. The error message is: DB2 SQL Error: SQLCODE=-104, SQLSTATE=42601, SQLERRMC=END-OF-STATEMENT;TION_TIME" = ? WHERE;, DRIVER=3.64.114 A SQL exception has occurred. The SQL error code is '-727'. The SQL state is: 56098. The error message is: DB2 SQL Error: SQLCODE=-727, SQLSTATE=56098, SQLERRMC=2;-104;42601;END-OF-STATEMENT|TION_TIME" = ? WHERE|, DRIVER=3.64.114
+
+CAUSE
+This occurs , when CDC is unable to find values for key columns . When you have an identity column defined as primary key, with " generated always" option. The values on the target table would be different and CDC will not be able to find the values for the identity column. As a result CDC will not be able to use the identity column as the key column on the target table.
+
+
+
+
+RESOLVING THE PROBLEM
+In situations where there is no unique index or primary key on the target table, besides the identity column. You will be required to select key columns ( in MC) on the source table which will guarantee uniqueness, whilst allowing to exclude the identity column as the primary keyed column.

@@ -1,0 +1,57 @@
+Title: IBM Considerations for capacity planning to avoid OutOfMemory (OOM) errors - United States
+
+Text:
+OOM; OutOfMemory; high CPU; "intense garbage collection"; capacity; "capacity planning" TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ A common misconception is to allocate JVM memory occupancy as a multiple of its maximum heap size. 
+
+SYMPTOM
+Getting OutOfMemory error, or even if not reaching that far, then still getting high CPU due to intense garbage collection activity.
+
+
+CAUSE
+Incorrect capacity planning, by not taking into consideration JVM (and possibly application's) native memory needs.
+
+ENVIRONMENT
+JVM 
+
+DIAGNOSING THE PROBLEM
+Need to be aware of how many JVMs are running on a single box.
+
+RESOLVING THE PROBLEM
+ As an example of this problem: let's say that one plans running 4 JVMs on one box, and each JVM is planned to have a 4GB maximum heap, then the misconception is to calculate that 4x4GB = 16GB and to conclude that the box will be provided with 16GB RAM.
+
+The problem with this calculation is that it doesn't take into consideration the fact that a JVM uses system memory not only for the heap, but also for native memory for its own use.
+Usually the JVM runtime can take an additional 1GB or more, to load system libraries and using various internal buffers, for creating and managing threads, internal JIT usage etc. and additionally it also depends on application needs as some communications protocols make use of DirectByteBuffers which are allocated from native memory rather than heap.
+
+Here is one example of JVM memory occupancy calculations:
+
+"Troubleshooting native memory issues"
+http://www.ibm.com/support/docview.wss?rs=180&uid=swg21373312 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg21373312]
+
+Here is more on native memory considerations (even though this is specific to AIX, but native memory is used in any JVM on any OS.)
+
+"Thanks for the memory"
+http://www.ibm.com/developerworks/aix/library/j-nativememory-aix/index.html [http://www.ibm.com/developerworks/aix/library/j-nativememory-aix/index.html]
+
+So in order to have proper capacity planning when deciding on how many JVMs can run on a machine, one has to take into consideration JVM heap size as well as native memory needs.
+This is to avoid running into situations like e.g. starting the first three JVMs successfully but when starting the fourth one it gets into OutOfMemory error causing consternation since all four were having same configuration...
+
+RELATED INFORMATION
+ Native memory issues [http://www.ibm.com/support/docview.wss?rs=180&uid=swg21373312]
+Thanks for the memory [http://www.ibm.com/developerworks/aix/library/j-nativememory-aix/index.html]
+
+
+ 
+
+HISTORICAL NUMBER
+ 01753
+L6Q
+000 30117
+999
+000 68489
+7TD
+000 31665
+L6Q
+000

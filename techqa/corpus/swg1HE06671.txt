@@ -1,0 +1,149 @@
+Title: IBM HE06671: IBM Content Collector does not process clear signed Microsoft Exchange messages if "Ignore encrypted items" is selected - United States
+
+Text:
+  A FIX IS AVAILABLE
+IBM Content Collector V2.2 Fix Pack 2 [http://www-01.ibm.com/support/docview.wss?uid=swg24031075]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  IBM Content Collector does not support stubbing of digitally
+   signed Microsoft Exchange messages.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  n/a
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  If you used IBM Content Collector to archive Microsoft Exchange
+   messages and you configured the EC Collect Email by Rules
+   collector or the EC Create Email Stub task to ignore encrypted
+   items, both encrypted items and clear signed items were
+   excluded from processing. The EC Create Email Stub task marked
+   the messages as being stubbed, even though the content of the
+   message was not stubbed.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Starting with this fix, messages that are signed with the
+   Secure/Multipurpose Internet Mail Extensions (SMIME) protocol
+   (messages of class IPM.Note.SMIME.MultipartSigned) are
+   recognized as being clear signed and are no longer considered
+   encrypted. The stubbing option "Remove nothing and add text" is
+   not supported for clear signed messages. The stubbing options
+   "Remove attachments", "Remove attachments and cut body", and
+   "Remove attachments and body" change the message class to
+   IPM.Note, so that the icon that is displayed for the message in
+   Outlook and Outlook Web App changes and the stub is no longer
+   signed. Clear signed messages that were marked as being stubbed
+   before this fix was applied are not reprocessed automatically.
+   To remove content according to the stubbing lifecycle, restore
+   the message, so that it is selected for stubbing by the EC
+   Process Email Stubbing Life Cycle collector.
+   
+   If you use the offline repository feature or if Content
+   Collector is configured to retrieve and display message when
+   opened, you must install the fix pack 2.2.0.1-IBM-ICC-OE-FP001
+   to ensure proper handling of clear signed messages that were
+   stubbed after applying this fix.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   HE06671
+   
+   
+ * REPORTED COMPONENT NAME
+   ICC FOR EMAIL
+   
+   
+ * REPORTED COMPONENT ID
+   5724V5700
+   
+   
+ * REPORTED RELEASE
+   220
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-05-15
+   
+   
+ * CLOSED DATE
+   2011-11-25
+   
+   
+ * LAST MODIFIED DATE
+   2011-11-25
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ICC FOR EMAIL
+   
+   
+ * FIXED COMPONENT ID
+   5724V5700
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R220 PSN
+   UP

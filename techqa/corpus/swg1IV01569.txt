@@ -1,0 +1,190 @@
+Title: IBM IV01569: BMXAA4214E - AN UNKNOWN ERROR HAS OCCURRED. PLEASE CONTACT YOUR SYSTEM ADMINISTRATOR FOR ASSISTANCE. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Tested the Following on Maximo 7117 and 7118
+   
+   
+   Go to Inventory app
+   Press enter on the List Tab to see all items
+   Go to Select Action and Choose Inventory Adjustment> Physical
+   Count
+   Now select the Calendar besides the Physical Count Date field
+   and Choose
+   any Date, when you press on OK
+   The Screen refreshes and updates the Count Date accordingly,
+   however if
+   you do not notice the Date being updated and press on REFRESH
+   you will
+   receive the following error
+   
+   BMXAA4214E - An unknown error has occurred.
+   Please contact your system administrator for assistance.
+   
+   Client did notice that it does update the Count Date on the
+   screen and
+   is okay with Removing the REFRESH button at this point
+   
+   Tested in Maximo 7.5 and when choosing the Date and pressing on
+   OK, it
+   does NOT refresh and the REFRESH button needs to be pressed in
+   order to
+   see the count Date Change
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Remove the REFRESH BUTTON
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: Users of Inventory                           *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Go to Inventory app                     *
+   *                                                              *
+   *                      Press enter on the List Tab to see all  *
+   *                      items                                   *
+   *                                                              *
+   *                      Go to Select Action and Choose          *
+   *                      Inventory Adjustment> Physical Count    *
+   *                                                              *
+   *                      Now select the Calendar besides the     *
+   *                      Physical Count Date field and Choose    *
+   *                      any Date, when you press on OK          *
+   *                                                              *
+   *                      The Screen refreshes and updates the    *
+   *                      Count Date accordingly, however if you  *
+   *                      do not notice the Date being updated    *
+   *                      and press on REFRESH you will receive   *
+   *                      the following error BMXAA4214E - An     *
+   *                      unknown error has occurred. Please      *
+   *                      contact your system administrator for   *
+   *                      assistance.                             *
+   *                                                              *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   *                                                              *
+   *                                                              *
+   *                                                              *
+   ****************************************************************
+   Inventory Adjustment> Physical Count
+   
+   press on REFRESH you will receive the following error
+   BMXAA4214E - An unknown error has occurred. Please contact your
+   system administrator for assistance.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix for this APAR is contained in the following maintenance
+   package:
+   
+     REL 7.1.1.9 - BS
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV01569
+   
+   
+ * REPORTED COMPONENT NAME
+   INVENTORY
+   
+   
+ * REPORTED COMPONENT ID
+   5724R46IN
+   
+   
+ * REPORTED RELEASE
+   711
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-06-07
+   
+   
+ * CLOSED DATE
+   2011-06-15
+   
+   
+ * LAST MODIFIED DATE
+   2011-06-15
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  MAXIMO
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   INVENTORY
+   
+   
+ * FIXED COMPONENT ID
+   5724R46IN
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R711 PSY
+   UP

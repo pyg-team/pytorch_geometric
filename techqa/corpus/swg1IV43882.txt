@@ -1,0 +1,141 @@
+Title: IBM IV43882: WHEN QUERYING JOBSTREAMS WITH THE TDWC, SAME JOBSTREAMS ARE DISPLAYED MULTIPLE TIMES IF YOU SELECT ALL STATUSES. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  At TDWC 8.6.0.2 level, when querying jobstreams with the TDWC
+   the same jobstreams
+   are displayed multiple times if you select all statuses.
+   When you starting from the   Welcome tdwc panel choose:
+   workload scheduler -> workload -> monitor -> Monitor Job Streams
+   Task
+   (z/OS): MonitorJobstreams_1
+   and then checkmark: all Status ( Waiting, Successful, Running,
+   Error,
+   Canceled),
+   then the problem occurs.
+   The error occurs only when you select all statuses and
+   for Multiple Engines Task Monitor.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  At TDWC 8.6.0.2 level, when querying jobstreams with the TDWC
+   the same jobstreams
+   are displayed multiple times if you select all statuses.
+   When you starting from the   Welcome tdwc panel choose:
+   workload scheduler -> workload -> monitor -> Monitor Job Streams
+   When performing a multiple engine query against a z/OS
+   engine selecting all job status as filter the result
+   contains multiple instance of the same jobstream.
+   
+   The error occurs only when you select all statuses and
+   for Multiple Engines Task Monitor.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This apar will be fixed   8.6.0-TIV-TWS-FP0003 and
+   9.1.0-TIV-TWS-FP0001
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV43882
+   
+   
+ * REPORTED COMPONENT NAME
+   TIV DYN WKLD CN
+   
+   
+ * REPORTED COMPONENT ID
+   TIVOWEBUI
+   
+   
+ * REPORTED RELEASE
+   860
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-06-07
+   
+   
+ * CLOSED DATE
+   2013-07-31
+   
+   
+ * LAST MODIFIED DATE
+   2013-07-31
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TIV DYN WKLD CN
+   
+   
+ * FIXED COMPONENT ID
+   TIVOWEBUI
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R860 PSY
+   UP

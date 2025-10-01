@@ -1,0 +1,59 @@
+Title: IBM Using the Script Adaptor widget to change property attributes in IBM Case Manager - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How do I use the Script Adaptor widget to change property attributes in IBM Case Manager V5.2.0.1 and later? 
+
+ANSWER
+You can use the IBM Case Manager JavaScript API in the Script Adaptor widget to change property attributes. For best results, use the following topics in the coordination step for page widgets: 
+
+ * LOADWIDGET
+
+Indicates that the widget should now load its content. All initialization is completed and the widget is in the ready state. 
+ * AFTERLOADWIDGET
+
+Indicates that all page widgets that participate in a LOADWIDGET step are in ready state. In the context of the step, the widgetLoadTime attribute tell the exact time the widgets were in the ready state. 
+
+The following example shows the use of these coordination topics in the Script Adaptor widget. 
+
+Important: This code does not work in IBM Case Manager V5.2.0. To use this approach, you must be using IBM Case Manager V5.2.0.1 or later 
+ 
+require(["icm/base/Constants", "icm/model/properties/controller/ControllerManager"], 
+function(Constants, ControllerManager) {
+   /* Get the coordination and editable objects from the event payload. */
+   var solutionPrefix = payload.caseType.getSolution().getPrefix();
+   var coordination = payload.coordination;
+   var editable = payload.caseEditable;
+
+   /* Use the LOADWIDGET coordination topic handler to obtain the controller binding */
+   /* for the editable and to update the properties. */
+   coordination.participate(Constants.CoordTopic.LOADWIDGET, function(context, complete, abort) {
+      /* Obtain the controller binding for the editable. */
+      var collectionController = ControllerManager.bind(editable);
+
+      /* Start a batch of changes. */
+      collectionController.beginChangeSet();
+
+      /* Make the updates to the properties. */
+      collectionController.getPropertyController(solutionPrefix + "_CustomerID").set("value", "123456789");
+      collectionController.getPropertyController(solutionPrefix + "_CustomerName").set("value", "Joe Customer");
+      collectionController.getPropertyController(solutionPrefix + "_CustomerID").set("readOnly", true);
+
+      /* Complete a batch of changes. This tells all subscribed widgets to refresh. */
+      collectionController.endChangeSet();
+
+      /* Call the coordination completion method. */
+      complete();
+   });
+   /* Use the AFTERLOADWIDGET coordination topic handler to release the controller binding for the editable. */
+   coordination.participate(Constants.CoordTopic.AFTERLOADWIDGET, function(context, complete, abort) {
+      /* Release the controller binding for the editable. */
+      ControllerManager.unbind(editable);
+
+      /* Call the coordination completion method. */
+      complete();
+   });
+
+});

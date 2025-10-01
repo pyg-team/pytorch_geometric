@@ -1,0 +1,84 @@
+Title: IBM Security Bulletin: Tivoli Workload Dynamic Console Vulnerability exposure in Tivoli Integrated Portal component - United States
+
+Text:
+PM44303 WebSphere TIP 1.1.1.19 TIP 2.2.0.9 TDWC FLASH (ALERT)
+
+ABSTRACT
+ New versions of Tivoli Integrated Portal are available (versions TIP 1.1.1.19 and/or TIP 2.2.0.9) containing security fixes for the following security Advisories. 
+"653: IEHS - XSS issue on Search control box",
+"474: Potential security exposure with IBM WebSphere application server after installing PM44303", 
+"216: Apache Tomcat hash denial of service - apache-tomcat-hash-dos (72016)" 
+
+CONTENT
+VULNERABILITY DETAILS: 
+Advisory: 653
+CVEID: CVE-2013-0464
+CVSS: 4.3
+X-Force: https://exchange.xforce.ibmcloud.com/vulnerabilities/81060 [https://exchange.xforce.ibmcloud.com/vulnerabilities/81060]
+CVSS Vector: (AV:N/AC:M/Au:N/C:N/I:P/A:N)
+
+Advisory: 216
+CVEID: CVE-2011-4858
+CVSS: 5.0
+X-Force: https://exchange.xforce.ibmcloud.com/vulnerabilities/72016 [https://exchange.xforce.ibmcloud.com/vulnerabilities/72016]
+CVSS Vector: (AV:N/AC:L/Au:N/C:N/I:N/A:P)
+
+Advisory: 474
+CVEID: CVE-2012-3325
+CVSS: 6.0
+X-Force: https://exchange.xforce.ibmcloud.com/vulnerabilities/77959 [https://exchange.xforce.ibmcloud.com/vulnerabilities/77959]
+CVSS Vector: (AV:N/AC:M/Au:S/C:P/I:P/A:P)
+
+
+DESCRIPTION: Tivoli Dynamic Workload Console as consumer of Tivoli Integrated Portal should pickup the newest version versions TIP 1.1.1.19 and/or TIP 2.2.0.9.
+These TIP versions contain security fixes for the following security advisories: 
+"653: IEHS - XSS issue on Search control box" 
+"474: Potential security exposure with IBM WebSphere application server after installing PM44303"
+"216: Apache Tomcat hash denial of service - apache-tomcat-hash-dos (72016)" 
+
+The Tivoli Integrated Portal security exposures apply to Tivoli Dynamic Workload Console because Tivoli Integrated Portal is part of TDWC starting from 8.6.0.0 release.
+
+
+AFFECTED PRODUCTS AND VERSIONS: 
+Tivoli Dynamic Workload Console 8.6.0.0
+Tivoli Dynamic Workload Console 8.6.0.1
+
+REMEDIATION: 
+New version of Tivoli Integrated Portal has been included in 
+Tivoli Dynamic Workload Console 8.6.0.2. 
+Tivoli Dynamic Workload Console 8.6.0.2 is available on FixCentral for download starting from December 2012.
+
+Workaround(s): 
+None
+
+Mitigation(s): 
+None
+
+REFERENCES: 
+· On-line Calculator V2 [http://nvd.nist.gov/cvss.cfm?calculator&adv&version=2] 
+· CVE-2013-0464 (http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2013-0464 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2013-0464])
+· CVE-2012-3325 (http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2012-3325 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2012-3325])
+· CVE-2011-4858 (http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2011-4858 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2011-4858])
+· X-Force:https://exchange.xforce.ibmcloud.com/vulnerabilities/81060 [https://exchange.xforce.ibmcloud.com/vulnerabilities/81060]
+· X-Force: https://exchange.xforce.ibmcloud.com/vulnerabilities/77959 [https://exchange.xforce.ibmcloud.com/vulnerabilities/77959]
+· X-Force: https://exchange.xforce.ibmcloud.com/vulnerabilities/72016 [https://exchange.xforce.ibmcloud.com/vulnerabilities/72016]
+
+
+RELATED INFORMATION: 
+IBM Secure Engineering Web Portal [https://www-304.ibm.com/jct03001c/security/secure-engineering/]
+IBM Product Security Incident Response Blog [https://www.ibm.com/blogs/PSIRT]
+
+
+ACKNOWLEDGEMENT
+None
+
+CHANGE HISTORY
+20 September, 2013: Original Copy Published
+
+
+
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Flash. 
+
+
+Note: According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY

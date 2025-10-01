@@ -1,0 +1,222 @@
+Title: IBM IT18095: WMQ V6 ON OPENVMS ALPHA & ITANIUM AFFECTED BY CROSS-PROTOCOL ATTACK ON TLS USING DES: CVE-2016-2183(SWEET32) - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+ DIRECT LINKS TO FIXES
+6.0.2.13-WS-MQ-HpOVMSIA64-LAIT18095B (HPE SSL V1) [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FWebSphere+MQ&fixids=6.0.2.13-WS-MQ-HpOVMSIA64-LAIT18095B&source=SAR]
+6.0.2.13-WS-MQ-HpOVMSIA64-LAIT18095A (HP SSL 1.4) [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FWebSphere+MQ&fixids=6.0.2.13-WS-MQ-HpOVMSIA64-LAIT18095A&source=SAR]
+6.0.2.13-WS-MQ-HpOVMSALPHA-LAIT18095 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FWebSphere+MQ&fixids=6.0.2.13-WS-MQ-HpOVMSALPHA-LAIT18095&source=SAR]
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  IBM WebSphere MQ V-6.0 on HP OpenVMS platforms using
+   HP SSL V1.4-XXX and above could be vulnerable to attack
+   on older block cipher algorithms (DES). OpenSSL could
+   allow a remote attacker to obtain sensitive information,
+   caused by an error in the in the Triple-DES on 64-bit
+   block cipher, used as a part of the SSL/TLS protocol.
+   By capturing large amounts of encrypted traffic between
+   the SSL/TLS server and the client, a remote attacker
+   able to conduct a man-in-the-middle attack could exploit
+   this vulnerability to recover the plaintext data and obtain
+   sensitive information. This vulnerability is known as the
+   SWEET32 Birthday attack.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  IBM WebSphere MQ V-6.0 on HP OpenVMS
+   platforms using HP SSL V1.4-XXX and
+   above could be vulnerable to attack
+   on older block cipher algorithms (DES).
+   OpenSSL could allow a remote attacker
+   to obtain sensitive information,
+   caused by an error in the in
+   theTriple-DES on 64-bit block cipher,
+   used as a part of the SSL/TLS
+   protocol.By capturing large amounts of
+   encrypted traffic between the SSL/TLS
+   server and the client, a remote attacker
+   able to conduct a man-in-the-middle
+   attack could exploit this vulnerability
+   to recover the plaintext data and obtain
+   sensitive information. This vulnerability
+   is known as the SWEET32 Birthday attack.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The IBM WebSphere MQ Fix Packs releases
+   on HP OpenVMS platforms including
+   WMQ-V6.0.2.13 using HP SSL V1.4-XXX and
+   HPE SSL1 version prior to 1.0.2i
+   are affected.
+   For more information, please refer to
+   he following URL.
+   .
+   https://www.openssl.org/blog/blog/2016 [https://www.openssl.org/blog/blog/2016]
+   /08/24/sweet32/
+   .
+   Solution: -
+   The corrections are made to the existing
+   MQ SSL Libraries
+   Fix has the following pre-requisites.
+   1.fix pack  level WMQ-V6.0.2.13  for Alpha
+   2.fix pack  level WMQ-V6.0.2.13  for
+   Itanium
+   .
+   With this fix applied, by default,
+   DES based ciphers and the previously known
+   vulnerable ciphers will be blocked, thus
+   allowing only AES based TLS ciphers by
+   default .The code '3DES' indicate cipher
+   suites that use triple DES encryption and
+   hence they are also disabled for security.
+   .
+   (With the APAR fix applied)
+   .
+   Supported Cipher Specs enabled by
+   default for both client and servers:
+   .
+   In case of (HPE SSL version 1.4XXX)
+   .
+   TLS_RSA_WITH_AES_256_CBC_SHA
+   TLS_RSA_WITH_AES_128_CBC_SHA
+   .
+   In case of HPE SSL1 1.0.2X
+   .
+   TLS_RSA_WITH_AES_128_CBC_SHA256
+   TLS_RSA_WITH_AES_128_GCM_SHA256
+   TLS_RSA_WITH_AES_256_CBC_SHA256
+   TLS_RSA_WITH_AES_256_GCM_SHA384
+   TLS_RSA_WITH_AES_256_CBC_SHA
+   TLS_RSA_WITH_AES_128_CBC_SHA
+   .
+   To enable the ciphers which are not part
+   of the default list, the environment
+   variable (named AMQ_SSL_CIPHER_LIST) is
+   introduced. The usage of the environment
+   variable is described in detail in
+   README.TXT file bundled with fix binaries.
+   .
+   For example:
+   .
+   To enable TRIPLE_DES_SHA_US cipher and to
+   enable SSLv3 protocol, define the logical
+   as below:
+   .
+   $ define /system AMQ_SSL_CIPHER_LIST
+   "DES-CBC3-SHA"
+   and configure the channel cipher spec
+   attribute with the value
+   "TRIPLE_DES_SHA_US.
+   .
+   The below set of logicals has been
+   removed, as a part of this APAR fix,
+   to simplify the user administration
+   on enabling and disabling weak
+   ciphers and protocols :
+   .
+   AMQ_SSL_V3_ENABLE  (APAR IT05182 )
+   AMQ_SSL_RC4_CIPHERS_ENABLE(APAR IT08302)
+   AMQ_SSL_RSA_EXPORT_ENABLE(APAR  IT07850)
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT18095
+   
+   
+ * REPORTED COMPONENT NAME
+   MQSERIES OVMS I
+   
+   
+ * REPORTED COMPONENT ID
+   5724A3802
+   
+   
+ * REPORTED RELEASE
+   600
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-11-23
+   
+   
+ * CLOSED DATE
+   2016-12-14
+   
+   
+ * LAST MODIFIED DATE
+   2016-12-14
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   MQSERIES OVMS I
+   
+   
+ * FIXED COMPONENT ID
+   5724A3802
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R600 PSY
+   UP

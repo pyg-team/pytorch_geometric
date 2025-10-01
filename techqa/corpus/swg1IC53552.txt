@@ -1,0 +1,136 @@
+Title: IBM IC53552: OAM USES GETGRENT() WHEN IT DOESN'T NEED TO SLOWING DOWN QUEUE MANAGER STARTUP ON TANDEM NSK - United States
+
+Text:
+  FIXES ARE AVAILABLE
+WebSphere MQ for HP NonStop Server v5.3.1, Fix Pack 5.3.1.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24017102]
+WebSphere MQ for HP NonStop Server V5.3.1 fix pack 5.3.1.6 [http://www-01.ibm.com/support/docview.wss?uid=swg24025461]
+WebSphere MQ for HP NonStop Server V5.3.1 fix pack 5.3.1.7 [http://www-01.ibm.com/support/docview.wss?uid=swg24027369]
+WebSphere MQ for HP NonStop Server V5.3.1 fix pack 5.3.1.8 [http://www-01.ibm.com/support/docview.wss?uid=swg24030009]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Calls to getgrent() on NonStop are very inefficient -
+   especially in environments with large number of groups defined.
+   There is an acknowledged problem with the HP implementation
+   which is under consideration by HP for a fix.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Usually not feasible, but reducing the number of user groups
+   is effective at reducing the startup time.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *   strmqm is slow when a customers environment
+   contains many groups. The OAM is making calls to getgrent
+   that are not required.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *   Modify the MQ code to remove redundant
+   callfor group checking. The call was checking every group on
+   the system.
+   The HP OSS/Safeguard implementation and audit logging is also
+   inefficient which HP are reviewing for future change.
+   Change released in V5.3.1.1
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC53552
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBS MQ NSS MIP
+   
+   
+ * REPORTED COMPONENT ID
+   5724A3901
+   
+   
+ * REPORTED RELEASE
+   530
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2007-08-20
+   
+   
+ * CLOSED DATE
+   2007-08-21
+   
+   
+ * LAST MODIFIED DATE
+   2007-10-09
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBS MQ NSS MIP
+   
+   
+ * FIXED COMPONENT ID
+   5724A3901
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R530 PSY
+   UP

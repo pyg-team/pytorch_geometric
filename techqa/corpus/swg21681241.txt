@@ -1,0 +1,38 @@
+Title: IBM Logon to WorkplaceXT results in System Error - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ After patching, logging on to IBM Workplace XT results in Cannot update preferences document error 
+
+SYMPTOM
+Unable to log on to WorkplaceXT. Error to client is "System Error" with no details.
+
+WebSphere SystemOut.log shows:
+RVE0068E: Uncaught exception created in one of the service methods of the servlet /WcmDefault.jsp in application WorkplaceXT. Exception created : com.ibm.websphere.servlet.error.ServletErrorReport: Cannot update preferences document: com.filenet.api.exception.EngineRuntimeException&#59;An unexpected error occured accessing JNDI.
+
+FFDC logs show:
+FFDC Exception:java.net.UnknownHostException SourceId:com.ibm.ws.naming.util.DefaultHostnameNormalizer.normalizeHostname ProbeId:151 Reporter:java.lang.Class@5cb25cb2
+java.net.UnknownHostException: filenet-ce.com: filenet-ce.com
+
+FFDC Exception:org.omg.CORBA.INTERNAL SourceId:com.ibm.ISecurityLocalObjectBaseL13Impl.SecurityConnectionInterceptor.getHostfromProfile ProbeId:2750 Reporter:java.lang.Class@2dcb2dcb
+org.omg.CORBA.INTERNAL: java.net.UnknownHostException: filenet-ce.com vmcid: IBM minor code: 5B6 completed: Maybe
+
+
+
+CAUSE
+The IBM Content Engine (CE) host name reported in the error (filenet-ce.com) included a typo (should have been filenetce.com.) One of the WcmConfig.properties files contained the invalid CE host name.
+
+RESOLVING THE PROBLEM
+Correct the typo:
+
+
+ 1. Undeploy WorkplaceXT 
+ 2. Locate all copies of WcmApiConfig.properties and correct the typo 
+ 3. Clear the application server temp files 
+ 4. Follow the product documentation to redeploy WorkplaceXT
+
+
+RELATED INFORMATION
+ Redeploying Workplace XT [http://www-01.ibm.com/support/knowledgecenter/SSNW2F_5.1.0/com.ibm.p8.installingxt.doc/wxtip042.htm]

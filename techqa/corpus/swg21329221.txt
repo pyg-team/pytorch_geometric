@@ -1,0 +1,53 @@
+Title: IBM Users cannot navigate to DST start/end date when Calendar displays One Day view in Brazil and Argentina time zone - United States
+
+Text:
+daylight saving time; dst; daylight savings time; RELNOTE85 TECHNOTE (FAQ)
+
+QUESTION
+In the Notes 8.5 Standard Configuration client, users cannot navigate to the following dates when the calendar application displays the One Day view using the date picker or date navigator. This occurs in cases where the time zone in use has revised its Daylight Saving Time (DST) rules since the Notes release was shipped. 
+
+
+For example this has been observed when using the Brasilia or Buenos Aires time zone settings. 
+
+
+
+For Brazil:
+The user cannot navigate to the DST start date: October 19 2008
+The user cannot navigate to the DST end date: February 15 2009
+
+
+
+For Argentina:
+The user cannot navigate to the DST start date: October 19 2008
+The user cannot navigate to the DST end date: March 15 2009
+
+
+
+When the user selects a DST start or end date, rather than the date selected the previous date is displayed.
+
+
+
+CAUSE
+This issue is not unique to the Brazil or Argentina time zones. The issue will be experienced with any time zone which revises its rules after the Notes release was shipped. The issue may additionally be partially related to the time at which the time zone shifts from and to Daylight time.
+
+
+
+ANSWER
+This issue has been reported to Quality Engineering as SPR# FJFJ7LJC36. The only known workaround is to use a different view. 
+
+
+
+The following issue is also applicable to Notes/Domino on the first day of Daylight time: 
+Scheduled agents and tasks execute an hour later than expected on the first day of Daylight Saving Time (DST) (#1256479) [http://www.ibm.com/support/docview.wss?uid=swg21256479] 
+
+
+The following issue affects the Notes 8.x Basic Configuration, and earlier Notes releases:
+Meeting times off by one hour in Two Day and One Work Week views (#1167716) [http://www.ibm.com/support/docview.wss?uid=swg21167716] 
+
+
+
+
+
+
+ * 
+ *

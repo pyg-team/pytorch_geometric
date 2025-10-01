@@ -1,0 +1,72 @@
+Title: IBM MQC91:  IBM MQ Clients - United States
+
+Text:
+ DOWNLOAD
+
+ABSTRACT
+This SupportPac contains all the IBM MQ V9.1 client components. 
+
+DOWNLOAD DESCRIPTION
+An IBM MQ client is part of the product that can be installed on its own, on a separate machine from the base product and server. You can run an IBM MQ application on an IBM MQ client and it can interact, by means of a communications protocol, with one or more IBM MQ servers and connect to their queue managers. The servers to which the client connects may or may not be part of a cluster.
+
+IBM MQ Family Platforms provides a list of which platforms are supported as IBM MQ Clients and/or Servers.
+
+An application that you want to run in the IBM MQ client environment must first be linked with the relevant client library. When the application issues an MQI call, the IBM MQ client code directs the request to a queue manager, where it is processed and from where a reply is sent back to the client. The link between the application and the client code is established dynamically at run time. The MQI is available to applications running on the client platform; the queues and other IBM MQ objects are held on a queue manager that you have installed on a server machine.
+
+Possible Uses 
+• Why use IBM MQ clients?
+» Using IBM MQ clients is an efficient way of implementing IBM MQ messaging and queuing.
+» You can have an application that uses the MQI running on one machine and the queue manager running on a different machine, either physical or virtual. The benefits of doing this are:
+- There is no need for a full IBM MQ implementation on the client machine.
+- Hardware requirements on the client system are reduced.
+- System administration requirements are reduced.
+- An IBM MQ application, running on a client, can connect to multiple queue managers on different systems.
+- Alternative channels using different transmission protocols can be used.
+
+• What applications run on an IBM MQ client?
+» The full MQI is supported in the client environment and this enables almost any IBM MQ application to be relinked to run on an IBM MQ client. Link the application on the IBM MQ client to the MQIC library, rather than to the MQI library. The exceptions are:
+- An application that uses global transactions; that is, it requires sync point coordination with resource managers other than the queue manager.
+- Get(signal) on z/OS.
+» Applications which are built using various programming languages including C, C++, .NET (Windows systems only), COBOL, Java and JMS.
+» Applications running within application servers that are certified as having passed the JEE 7 Compatibility Test Suite can use the IBM MQ resource adapter provided in the SupportPac. For more information see IBM MQ resource adapter v9.1 statement of support.
+
+Note: An application running on an IBM MQ client can connect to more than one queue manager concurrently, or use a queue manager name with an asterisk (*) on an MQCONN or MQCONNX call. If you want to link to the queue manager libraries instead of the client libraries, you have to modify the application to enable this.
+
+Skill Level Required 
+
+Users should be familiar with the IBM MQ product family in general and have particular skills on the platform for which this client is intended.
+
+Details 
+Author: IBM MQ Development, Hursley
+Category: 3
+Released: 23Jul18
+Current Version: 9.1.0.0
+»Please note that the version number shown in the right-hand pane is the version of the IBM MQ product that this SupportPac applies to. The date is the last web page refresh.
+
+To view the complete portfolio of IBM MQ SupportPacs please visit the IBM MQ SupportPacs homepage.
+
+PREREQUISITES
+This client will interoperate with all the currently supported IBM MQ server products, provided the functions used are common to the release of server and client.
+
+INSTALLATION INSTRUCTIONS
+To install a Unix Client:
+1. Logon as root, create an empty directory (with sufficient space to receive the download file) and make it current.
+2. Download 9.1.0.x-IBM-MQC-<Platform> to this directory. (Where 'platform' is replaced with a specific platform name e.g. AIX, Linux-x86)
+3. Uncompress 9.1.0.x-IBM-MQC-<Platform> .
+4. Execute tar -xvf 9.1.0.x-IBM-MQC-<Platform>.
+5. Execute rm 9.1.0.x-IBM-MQC-<Platform>.
+6. To complete the installation of the client, follow the instructions provided for IBM MQ V9.1 in Knowledge Center.
+
+To install the client on a Windows machine, download the zip file and extract the content. From the Windows subdirectory that has been created, run the setup.exe program.
+
+Redistributable clients
+Please note any files named '9.1.0.x-IBM-MQC-Redist-<Platform>' can be redistributed as per the terms of the MQ license.
+
+
+Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options IBM MQ V9.1 LTS Clients 23 Jul 2018 US English 111 HTTP [http://ibm.biz/mq9100clients] 
+TECHNICAL SUPPORT
+Category 3 IBM MQ SupportPacs are supplied under the standard terms and conditions provided by the International Program License Agreement (IPLA) and thus, carry program defect service for IBM MQ customers. Please read the IPLA and LI files that accompany the SupportPac, to ensure you understand the conditions under which the SupportPac is provided.
+
+If you encounter what you believe to be a defect with the SupportPac, and you have a current license for an IBM MQ server product, you may request Program Services by reporting the problem through the same defect reporting channel you employ for the IBM MQ server products on which you are using the SupportPac. No proof of entitlement is required to use this SupportPac.
+
+Service is available for the V9 version of this SupportPac for as long as the IBM MQ V9.1 server product is supported by service. Refer to the WebSphere product lifecycle pages for the relevant service information. This SupportPac is only supported with IBM MQ platforms that are themselves supported.

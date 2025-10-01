@@ -1,0 +1,36 @@
+Title: IBM How do I upgrade my installation of Tivoli Endpoint Manager? - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The preferred way to upgrade each Tivoli Endpoint Manager component is to use the Fixlet messages in the Support Fixlet site, but you can also upgrade the components manually. 
+
+RESOLVING THE PROBLEM
+
+
+The preferred way to upgrade each Tivoli Endpoint Manager component is to use the Fixlet messages in the BES Support site, but you can also upgrade the components manually.
+
+To upgrade the components using Fixlet messages: 
+
+ 1. Open the Console and look at the Support Fixlet site. If you have an older version of any component, you will see a Fixlet message that will tell you to upgrade to the latest version. 
+    Note: You will only see the upgrade Fixlet message for TEM Server and Console if you have the TEM Client installed on the Server or Console computer. If you do not have the TEM Client installed on the Server or Console computers, you can install the Client on those computers or follow the manual upgrade instructions.
+ 2. Run the TEM Server and TEM Console upgrade Fixlet message. You should target this Fixlet message to every computer running the Server or Console. If you do not update all Consoles and the Server at the same time, you will not be able to connect with the outdated component. (For example, if you update the Server, but not the Console, you will receive an error message telling you to upgrade the Console when you try to connect to the Server. If this happens, you can upgrade manually.)
+ 3. If the TEM Console is open during the TEM Console upgrade, a dialog box will appear asking you to close the Console so it can complete the upgrade. You should then close the Console and press the "Retry" button.
+ 4. After the Console and Server upgrades complete, open the Console and connect to TEM as usual.
+ 5. Go to the Support Fixlet site again and open the Client upgrade Fixlet message.
+ 6. Deploy the Client upgrade to all your Clients.
+ 7. If other upgrade Fixlets are available on the Support site for the Installation Generator, Relay, or other components, follow the instructions in the Fixlet message to upgrade those components.
+
+If for any reason you cannot upgrade using the Fixlet messages, you can follow the manual upgrade instructions to upgrade the TEM components.
+
+To upgrade the TEM components manually, please follow the instructions at:
+How do I manually upgrade TEM [https://www.ibm.com/developerworks/mydeveloperworks/wikis/home/wiki/Tivoli%20Endpoint%20Manager/page/Upgrading?lang=en]. 
+
+To upgrade a remote database please review instructions:
+How do I upgrade a TEM Server component if I am using a remote database? [http://www-01.ibm.com/support/docview.wss?uid=swg21506063]
+
+ 
+
+HISTORICAL NUMBER
+ 108

@@ -1,0 +1,53 @@
+Title: IBM Running catalog upgrade after changing UID for nz user - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ How do I run a catalog upgrade after changing the 'nz' user's Linux UID? 
+
+SYMPTOM
+Error occurs when you run a catalog upgrade after changing the UID for the nz user account.
+
+
+ENVIRONMENT
+This article applies to systems that have not upgraded to NPS 4.5 or later. It provides instructions for updating your catalog and it assumes that you have already done the following: 
+
+ * changed the UID for the Linux user 'nz' 
+ * changed file ownership accordingly 
+ * updated the NPS software to a version that requires a catalog upgrade so that you do not have to reinitialize
+
+RESOLVING THE PROBLEM
+ 
+
+1. Run the nzupdatedb command as prompted by nzstart.
+
+This will create an nzdumpdir-##### directory in /tmp where ##### is a unique identifier.
+
+2. After the catalog upgrade stops due to an error referencing the old UID, find the nzdump directory that was just created and write down the unique identifier number.
+
+3. Edit the following two files and replace instances of the old UID with the new UID.
+
+/tmp/nzdumpdir-#####/1/1260
+/tmp/nzdumpdir-#####/1/1262
+
+4. Change to the administrative commands directory as follows:
+cd /nz/kit/bin/adm
+
+5. Upgrade the catalog by entering the following command where ##### identifies the directory.
+
+nzloadcat -D /nz/data.1.0 -K /nz/kit -S /tmp/nzdumpdir-#####/
+
+6. Start the Netezza system by running the nzstart command.
+
+7. Run the following queries to update the admin UID in the catalog. In the following example, 490 is the old UID for user nz and 500 is the new UID for user nz. Replace 490 and 500 with your respective UID numbers.
+
+nzsql -c "update _t_object set objowner = 500 where objowner = 490;"
+nzsql -c "update _t_object set objmodifier = 500 where objmodifier = 490;" 
+
+
+
+ 
+
+HISTORICAL NUMBER
+ NZ782767

@@ -1,0 +1,24 @@
+Title: IBM ABEND0C4 during initialization of OMEGAMON DB2 - United States
+
+Text:
+startup start-up initialize initialization abends0c4 abend0c4 TECHNOTE (FAQ)
+
+QUESTION
+ During start up of OMEGAMON DB2 (OMPE) I am seeing an 0C4 abend reason code 11 with no active module found. This abends occurs with in the first couple of seconds of starting the DB2 monitor. What is causing this? 
+
+CAUSE
+PDSMAN from CA see PDSMAN ptf RO94289 for resolution 
+
+ANSWER
+OMPE is issuing a LOAD. PDSMAN intercepts the load. An abend occurs in PDSMAN that is propagated to OMPE. Both products recover from the abend and continue to process as usual. 
+
+RELATED INFORMATION
+ PDSMAN Service list [https://support.ca.com/phpdocs/0/8319/CARS1703/PDSM77.pdf]
+
+
+
+
+HISTORICAL NUMBER
+ 90390
+442
+000

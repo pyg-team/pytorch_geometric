@@ -1,0 +1,39 @@
+Title: IBM Security Bulletin: Multiple security vulnerabilities have been identified in IBM HTTP Server bundled with WebSphere Dynamic Process Edition - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ WebSphere Business Modeler, WebSphere Integration Developer, WebSphere Business Services Fabric, WebSphere Process Server and WebSphere Business Monitor are shipped as components of WebSphere Dynamic Process Edition. WebSphere Application Server is the base for the server side products in the bundle and is often used with IBM HTTP Server.
+Information about security vulnerabilities affecting IBM HTTP Server have been published in security bulletins. 
+
+VULNERABILITY DETAILS
+AFFECTED PRODUCTS AND VERSIONS
+WebSphere Dynamic Process Edition V7.0 
+
+If you are using an unsupported version, IBM strongly recommends to upgrade.
+
+REMEDIATION/FIXES
+Please consult the security bulletins 
+
+ * Security Bulletin: HTTP Request smuggling vulnerability may affect IBM HTTP Server (CVE-2015-3183) [http://www.ibm.com/support/docview.wss?uid=swg21963361] 
+ * Security Bulletin: Denial of service may affect IBM HTTP Server (CVE-2015-1283) [http://www.ibm.com/support/docview.wss?uid=swg21964428]
+
+for vulnerability details and information about fixes. WORKAROUNDS AND MITIGATIONS
+None
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v2 Guide [http://www.first.org/cvss/v2/guide] 
+On-line Calculator v2 [http://nvd.nist.gov/CVSS-v2-Calculator] 
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] CHANGE HISTORY
+ 2015-10-01- inital version published 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.

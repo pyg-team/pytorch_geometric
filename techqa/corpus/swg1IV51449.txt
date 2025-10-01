@@ -1,0 +1,137 @@
+Title: IBM IV51449: ORB THREADS MAY HANG WHILE CONNECTING TO AN INVALID HOSTNAME. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Error Message: ORB threads may hang when trying to connect to an
+   invalid hostname.
+   .
+   Stack Trace: <OSB>10/24/13 23:35:48:349 EDT<CSB> 000000b1
+   ThreadMonitor W   WSVR0605W: Thread "WebContainer : 1"
+   (000000b5) has been active for 660077 milliseconds and may be
+   hung.  There is/are 1 thread(s) in total in the server that may
+   be hung.
+    at java.lang.Object.wait(Native Method)
+    at java.lang.Object.wait(Object.java:167)
+    at
+   com.ibm.rmi.iiop.Connection.waitForStateChange(Connection.java:7
+   40)
+    at
+   com.ibm.rmi.iiop.Connection.checkEstablished(Connection.java:336
+   1)
+    at com.ibm.rmi.iiop.Connection.send(Connection.java:2313)
+   .
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  The ORB thread failed to exit when trying to connect to an
+   invalid host name.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This defect will be fixed in:
+   7.0.0 SR7
+   6.0.1 SR8
+   6.0.0 SR16
+   5.0.0 SR16FP5
+   .
+   The ORB code has been fixed to ensure that the ORB thread exits
+   gracefully while trying to connect to an invalid host name.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV51449
+   
+   
+ * REPORTED COMPONENT NAME
+   JAVA 5 ORB
+   
+   
+ * REPORTED COMPONENT ID
+   620500123
+   
+   
+ * REPORTED RELEASE
+   500
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-10-30
+   
+   
+ * CLOSED DATE
+   2013-11-01
+   
+   
+ * LAST MODIFIED DATE
+   2013-11-01
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    IX90131 [http://www-01.ibm.com/support/docview.wss?uid=swg1IX90131]
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   JAVA 5 ORB
+   
+   
+ * FIXED COMPONENT ID
+   620500123
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R500 PSY
+   UP

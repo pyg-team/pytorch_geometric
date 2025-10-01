@@ -1,0 +1,117 @@
+Title: IBM Security Bulletin: Vulnerability in SSLv3 affects IBM Data Studio Web Console (CVE-2014-3566) - United States
+
+Text:
+ FLASH (ALERT)
+
+ABSTRACT
+ SSLv3 contains a vulnerability that has been referred to as the Padding Oracle On Downgraded Legacy Encryption (POODLE) attack. SSLv3 is enabled in IBM Data Studio Web Console. 
+
+CONTENT
+Vulnerability Details
+CVE-ID: CVE-2014-3566 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-3566]
+
+DESCRIPTION: IBM Data Studio Web Console could allow a remote attacker to obtain sensitive information, caused by a design error when using the SSLv3 protocol. A remote user with the ability to conduct a man-in-the-middle attack could exploit this vulnerability via a POODLE (Padding Oracle On Downgraded Legacy Encryption) attack to decrypt SSL sessions and access the plaintext of encrypted connections.
+
+CVSS Base Score: 4.3
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/97013 [https://exchange.xforce.ibmcloud.com/vulnerabilities/97013] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:M/Au:N/C:P/I:N/A:N)
+
+Affected Products and Versions
+
+IBM Data Studio Web Console for DB2 on Linux, UNIX and Window version 2.2, 3.1 and 3.1.1
+
+IBM Data Studio Web Console for DB2 on Linux, UNIX, and Windows version 3.2
+
+IBM Data Studio Web Console for DB2 on Linux, UNIX, and Windows version 4.1.0 and 4.1.1
+
+
+Remediation/Fixes 
+
+Select one of the following fixes, depending on the version of DSWC you have installed.
+
+A. For DSWC versions 3.2, 4.1.0 and 4.1.1: Go to Fix Central [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~Information%2BManagement&product=ibm/Information+Management/IBM+Data+Studio&release=4.1.1&platform=All&function=all] for instructions on how to download the patch and apply to the product.
+
+The fix patch changes the DSWC server configuration to disable the SSLv3 protocol, permitting only TLS 1.0 or higher for HTTPS connections. After applying the fix patch it is still possible to re-enable the SSLv3 protocol. 
+
+If you need to re-enable the SSLv3 protocol for HTTPS connections to the DSWC server, edit the server.xml file that can be found in this location under the DSWC installation directory
+
+wlp/usr/servers/dsweb/server.xml
+
+Remove the following line and save the file.
+
+<include optional="true" location="./TLSOnlyConfig.xml"/>
+
+A restart is not required for this change to take effect.
+
+IBM recommends that you review your entire environment to identify areas that enable the SSLv3 protocol and take appropriate mitigation and remediation actions. The most immediate mitigation action that can be taken is disabling SSLv3.
+
+B. For DSWC versions 2.2, 3.1 and 3.1.1: These versions require the upgrade of the IBM Java Runtime that is installed with DSWC. 
+
+Install one of the following IBM Java Runtime versions:
+
+
+IBM Runtime Environment Java Technology Edition, Version 5 Service Refresh 16 FP8 and later IBM Runtime Environment Java Technology Edition, Version 6 Service Refresh 16 FP2 and later IBM Runtime Environment Java Technology Edition, Version 6R1 Service Refresh 8 and later IBM Runtime Environment Java Technology Edition, Version 7 Service Refresh 8 and later IBM Runtime Environment Java Technology Edition, Version 7R1 Service Refresh 2 and later
+
+Detailed instructions are provided in the tech-note: Updating the IBM Runtime Environment, Java™ Technology Edition for IBM Data Studio web console [http://www-01.ibm.com/support/docview.wss?&uid=swg21684744].
+
+
+Workarounds and Mitigations
+
+
+IBM Data Studio Web Console (DSWC) relies on IBM WebSphere Application Server (WAS) to manage the SSL protocol used for secure network connections. DSWC 3.2, 4.1.0 and 4.1.1 use WAS Liberty Profile. 
+
+Please refer to the Workarounds and Mitigations section in this Security Bulletin: Vulnerability in SSLv3 affects IBM WebSphere Application Server (CVE-2014-3566) [http://www-01.ibm.com/support/docview.wss?uid=swg21687173]. The following steps outline how to apply these mitigations to DSWC 3.2 through 4.1.1.
+
+Edit the SSLConfig.xml file to specify the default SSL configuration to be used by IBM Data Studio Web Console. The SSLConfig.xml file can be found in this location under the IBM Data Studio Web Console installation directory: 
+
+wlp/usr/servers/dsweb/SSLConfig.xml
+
+Before making any changes the contents of the SSLConfig.xml file should look like this: 
+
+<server>
+<keyStore id="defaultKeyStore" password="password"/>
+</server>
+
+A 'ssl' element can be added to specify the minimal level of security for the SSL protocol. Setting the “sslProtocol” attribute to ”TLS” ensures that SSLv3 will no longer be used. 
+
+After making these changes, the contents of the SSLConfig.xml file may look like this:
+
+<server>
+
+<ssl id="defaultSSLConfig" 
+keyStoreRef="defaultKeyStore"
+sslProtocol="TLS" />
+
+<keyStore id="defaultKeyStore" password="password"/>
+
+</server>
+
+If an 'ssl' element already exists, ensure that it includes the attribute sslProtocol="TLS". There is no need to modify the 'keyStore' entry, if you have customized it, for example to point to your own key store location, you can retain the entry as is. It is not required to restart the web console server after this update.
+
+
+Reference
+· Complete CVSS Guide [http://www.first.org/cvss/v2/guide]
+· On-line Calculator V2 [http://nvd.nist.gov/cvss.cfm?calculator&adv&version=2] 
+
+
+
+Related Information
+IBM Secure Engineering Web Portal [https://www-304.ibm.com/jct03001c/security/secure-engineering/]
+IBM Product Security Incident Response Blog [https://www.ibm.com/blogs/PSIRT]
+Subscribe to Security Bulletins [http://www.ibm.com/support/mynotifications/]
+
+
+Acknowledgement
+None
+
+Change History
+21 October 2014: Original Version Published
+07 November 2014: Updated Remediation/Fixes
+12 November 2014: Updated older DSWC version info
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+
+Disclaimer
+
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.

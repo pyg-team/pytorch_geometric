@@ -1,0 +1,39 @@
+Title: IBM DGL5161A error received in IBM Content Manager System Administration Client - United States
+
+Text:
+DGL5161A TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Error DGL5161A occurs when attempting to access the IBM Content Manager (CM) Resource Manager (RM) database from the CM administration client. When this error occurs, the RM cannot be accessed to make any changes.
+
+This issue may occur after upgrading the version of IBM Websphere (WAS). 
+
+SYMPTOM
+Error in the CM administration client: 
+
+DGL5161A: Get output stream for connection to resource manager failed
+
+Error in the RM log:
+ICMRM:ERROR 2016-02-03 13:42:40.713000 context: [icmrm_RMTimerManager.Alarm Pool : 1] - com.ibm.mm.icmrm.exceptions.RMDataNotFoundException: Servers not found., Return Code: 9722 - performReconciliation(RMTransactionReconciliationController.java:173)
+com.ibm.mm.icmrm.exceptions.RMDataNotFoundException: Servers not found., Return Code: 9722
+
+Error in the WAS SystemOut log:
+[03/02/16 13:43:20:508 GMT] 00000035 SSLHandshakeE E SSLC0008E: Unable
+to initialize SSL connection. Unauthorized access was denied or
+security settings have expired. Exception is
+javax.net.ssl.SSLHandshakeException: Client requested protocol SSLv3 not
+enabled or not supported
+
+
+CAUSE
+In CM V8.4 fix level 008_84304tf (8.4.03.408) or lower, the CM administration client uses SSLv3 to connect to the RM application deployed within WAS.
+
+Newer versions of WAS have disabled SSLv3.
+
+
+RESOLVING THE PROBLEM
+Please contact IBM CM Support and request CM fix level 009_84304tf (8.4.03.409) or higher. This will allow the CM administration client to use the more secure Transport Layer Security (TLS) protocols. The security details are outlined in the WAS SSLv3 Vulnerabilities document below: 
+
+Security Bulletin: Vulnerability in SSLv3 affects IBM WebSphere Application Server (CVE-2014-3566) [http://www-01.ibm.com/support/docview.wss?uid=swg21687173]
+
+Note: The fix mentioned above must be loaded on top of CM 8.4.3 Fix Pack 4. Please upgrade to Fix Pack 4 before applying the fix.

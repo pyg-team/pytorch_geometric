@@ -1,0 +1,201 @@
+Title: IBM IV34112: PRIMARY METER CHECKBOX TICKED WHEN CREATING A NEW RECORD IN QUICK REPORTING TR - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Prob. Description:      In the Quick Reporting (Tr) application,
+   the
+   Primary Meter Entered
+   checkbox is supposed to only become check when a primary meter
+   reading
+   is entered through the work order application. The checkbox is
+   not
+   functioning correctly
+   
+   Steps to replicate:
+   I can replicate in their version of Tr 7110 and also Tr 7.5
+   maxdemo
+   
+   1. Navigate to the Quick Reporting (Tr) application (Go To ?
+   Work Orders
+   ? Quick Reporting (Tr)).
+   2. Click on the New Work Order (via Quick Reporting) icon.
+   3. A new work order is created:
+   
+   4. go to the asset field, click on the arrow and select go to
+   asset Tr
+   application
+   bring up any asset that is in operating status
+   click the meters tab
+   click new row
+   enter a continuous meter e.g. RUNHOURS
+   Average Calculation Method = ALL
+   tick Primary meter checkbox
+   save the asset after attaching a continuous meter
+   click return with value to hyperlink back to quick reporting Tr
+   
+   click the icon on the far right to maximize the primary meter
+   section
+   populate the New Reading and New Reading Date fields before
+   saving:
+   
+   5. The Select Work Orders and PMs pop-up displays after hitting
+   save and
+   click OK
+   
+   6. After the record is saved, the Primary Reading Entered
+   checkbox is
+   checked
+   
+   7. Change the status of the work order to complete
+   
+   8. Click on the New Work Order (via Quick Reporting) icon and
+   the
+   Primary Reading Entered checkbox is still checked even though an
+   asset
+   hasn? been selected
+   
+   9. The Primary Reading Entered checkbox remains checked even
+   when an
+   asset without a meter is selected
+   
+   
+   
+   
+   Environment
+   7118 Tr 7110
+   
+   Action Taken
+   
+   replicated in Tr 7110 maxdemo
+   replicated in Tr 7.5 maxdemo
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  n/a
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * All users that use Maximo for Transportation 7.1.1.0         *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * PRIMARY METER CHECKBOX NOT WORKING AND UNABLE TO SAVE NEW    *
+   * RECORD IN QUICK REPORTING TR                                 *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * There is no recommendation.                                  *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The field class was changed to fix this case.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV34112
+   
+   
+ * REPORTED COMPONENT NAME
+   MX TRANSPORTATI
+   
+   
+ * REPORTED COMPONENT ID
+   5724R5500
+   
+   
+ * REPORTED RELEASE
+   711
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-01-07
+   
+   
+ * CLOSED DATE
+   2013-04-03
+   
+   
+ * LAST MODIFIED DATE
+   2013-04-03
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  UNKNOWN
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   MX TRANSPORTATI
+   
+   
+ * FIXED COMPONENT ID
+   5724R5500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R711 PSY
+   UP

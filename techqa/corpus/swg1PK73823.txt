@@ -1,0 +1,116 @@
+Title: IBM PK73823: InvocationTargetException when packaging with product with Packa ge Utility - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  InvocationTargetException when packaging Rational Data Arechitec
+   t V7.5 using Package Utility V1.2
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  See Error Description.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A fix was made in the to gather the artifacts in a way that
+   is consistent between the offering creation process and the
+   Packaging Utility.
+   Fix delivered in Package Utility V1.2.1
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK73823
+   
+   
+ * REPORTED COMPONENT NAME
+   IBM INSTALL MGR
+   
+   
+ * REPORTED COMPONENT ID
+   RATLIMG00
+   
+   
+ * REPORTED RELEASE
+   100
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-10-15
+   
+   
+ * CLOSED DATE
+   2009-07-20
+   
+   
+ * LAST MODIFIED DATE
+   2009-07-20
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   IBM INSTALL MGR
+   
+   
+ * FIXED COMPONENT ID
+   RATLIMG00
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R100 PSN
+   UP

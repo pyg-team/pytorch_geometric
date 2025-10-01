@@ -1,0 +1,169 @@
+Title: IBM Troubleshooting MQ channels - United States
+
+Text:
+Troubleshooting Guide; Troubleshooting; Trouble; Shooting; Guide; Channels; Channel; Listener TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Your IBM MQ system is having problems with channels and you need to know how to troubleshoot the problem. This document describes several common channel problems and how to address them. 
+
+RESOLVING THE PROBLEM
+
+
+ * Listener Problems
+ * Channel Configuration
+ * Network Connectivity
+ * Performance
+ * In-Doubt Channels
+ * Additional Information
+
+
+
+LISTENER PROBLEMS
+ * If you have configured the listener as an MQ object, make sure it is configured properly and is running. Show the listener attributes and status, and if necessary start it:
+   
+   DISPLAYING AND STARTING LISTENERS
+   DISPLAY LISTENER(B.LISTENER) ALL
+   DISPLAY LSSTATUS(B.LISTENER) ALL
+   START LISTENER(B.LISTENER)
+   
+   
+   
+
+ * If you are starting the listener manually, make sure the listener process is active and listening. For example, list the processes on your system and make sure "runmqlsr" is present.
+
+
+ * List network status on your system to ensure the listener process is active on the proper port. On IBM i you can run WRKTCPSTS, while on other platforms run "netstat -an".
+
+
+ * If you are using inetd or xinetd on Linux or UNIX, make sure your configuration files are set up properly (for example: /etc/services, /etc/inetd.conf, or /etc/xinetd.conf).
+
+
+ * If the MQ port is already in use by another program, on UNIX and Linux you can use the lsof program to determine who is using it. For example, run "lsof -i tcp:1414".
+
+
+ * Make sure the MQ queue manager is running. The listener (runmqlsr/inetd/xinetd) may be running even when the receiving queue manager is shut down.
+
+
+Back to top
+
+
+
+CHANNEL CONFIGURATION
+ * The channel definitions on the sending and receiving side must match. Use runmqsc to display these definitions and the channel status on both sides:
+   
+   DISPLAYING CHANNELS AND THEIR STATUS
+   DISPLAY CHANNEL(A.TO.B) ALL
+   DISPLAY CHSTATUS(A.TO.B) ALL
+   
+   
+   
+   
+
+ * The channel names must match exactly, and case matters. Be sure to use single quotes around lower- or mixed-case channel names in runmqsc. For example: DEFINE CHANNEL('a.to.b')...
+
+
+ * Make sure you used the right channel type on both sides. For example, SENDER/RECEIVER, SERVER/REQUESTER, and CLUSSDR/CLUSRCVR channels are compatible, but a SENDER/SENDER pair is not valid.
+
+
+ * If your channel definition relies on the default port value of 1414, try specifying the port number explicitly. The default of 1414 will not apply if you define a TCP service called "MQSeries" on a different port number.
+
+
+ * Make sure the receiving channel has not been disabled. If you stopped a receiver channel with a command like STOP CHANNEL(A.TO.B) as opposed to STOP CHANNEL(A.TO.B) STATUS(INACTIVE), then that channel is disabled and cannot be started by the sending side. You will need to run START CHANNEL(A.TO.B) against the receiver channel to reenable it, then START CHANNEL(A.TO.B) on the sending side to get the channel running.
+
+
+ * Review SupportPac MD0C - Keeping Channels Up and Running [http://www.ibm.com/support/docview.wss?uid=swg24006699] for configuring and tuning advice in order to keep MQ channels up and running across multiple platforms.
+
+
+Back to top
+
+
+
+NETWORK CONNECTIVITY
+ * Use the 'ping' command to test network connectivity between the two systems.
+
+
+ * Use telnet to test the MQ port on the remote system. For example: 'telnet machineb 1414'.
+
+
+ * If your channel definition uses host names instead of IP addresses, make sure they resolve to the expected address. For example, use the 'nslookup' or 'dig' commands, where available, to ensure your DNS servers are providing the right address information. Test with IP addresses in your channel definition if you are not sure whether DNS is at fault.
+
+
+ * If you have a firewall between the systems, make sure it is configured to allow MQ traffic. If necessary, you can use the LOCLADDR attribute on sending channels to ensure the MQ channel uses ports which the firewall will allow.
+
+
+ * If you have a firewall, NAT device, or other network equipment which may terminate idle connections, follow the instructions in the Information Center to enable TCP/IP KeepAlive for the queue manager and reduce the KeepAlive timeout from its default of two hours to something on the order of 5-10 minutes.
+
+
+ * If you are running MQ 7.0 or later, alter your SVRCONN channels to use SHARECNV(1) or higher. This will ensure that MQ sends heartbeats whenever the channel is otherwise idle, which will prevent firewalls from terminating the connection due to inactivity.
+
+
+Back to top
+
+
+
+PERFORMANCE
+ 
+
+ * z/OS V1.13 users should apply TCP/IP APAR PM73355 [http://www.ibm.com/support/docview.wss?uid=swg1PM73355] to address an issue which can cause slow throughput for MQ channels or any applications that tend to send data in large bursts. Other symptoms of this issue include:
+
+ *  High numbers of messages per second hitting the XMITQ and resulting in latency spikes. SMF data (types 115 and 116 for queue managers) showing long PUT times, buffer pools getting full, and high number of pages per I/O. RMF III reports showing high CPU usage (ca. 60-70%) in the CHIN address space in 10-second intervals for spikes in messages and latency. RMF III reports showing significant CPU delays (more than 10%) for the CHIN address space. 
+
+Back to top
+
+
+
+IN-DOUBT CHANNELS
+ * MQ channels can show an "in doubt" status when the sending side does not know whether a previous batch of messages was received. In most cases starting the channel is sufficient to clear this status, but sometimes you may need to check manually to see whether the receiving side received the last batch of messages. After doing so, follow these steps on the sending side:
+   
+   RESOLVING INDOUBT CHANNELS
+   STOP CHANNEL(A.TO.B)
+   RESET CHANNEL(A.TO.B) SEQNUM(1)
+   RESOLVE CHANNEL(A.TO.B) ACTION(BACKOUT or COMMIT)
+   START CHANNEL(A.TO.B)
+   
+   
+   
+   
+
+ * On IBM i, you can use the CL commands ENDMQMCHL, RSTMQMCHL, RSVMQMCHL and STRMQMCHL to accomplish the same tasks.
+
+
+Back to top
+
+
+
+ADDITIONAL INFORMATION
+
+IBM MQ V8.0
+
+ * Problem determination in Distributed Queueing Management (DQM) [http://www.ibm.com/support/knowledgecenter/SSFKSJ_8.0.0/com.ibm.mq.tro.doc/q114600_.htm]
+ * Problem determination on z/OS [http://www.ibm.com/support/knowledgecenter/SSFKSJ_8.0.0/com.ibm.mq.tro.doc/q039770_.htm]
+
+WEBSPHERE MQ V7.5
+
+ * Problem determination in Distributed Queueing Management (DQM) [http://www.ibm.com/support/knowledgecenter/SSFKSJ_7.5.0/com.ibm.mq.tro.doc/q114600_.htm]
+
+
+WEBSPHERE MQ V7.1
+
+ * Problem determination in Distributed Queueing Management (DQM) [http://www.ibm.com/support/knowledgecenter/SSFKSJ_7.1.0/com.ibm.mq.doc/ic19400_.htm]
+ * Problem determination on z/OS [http://www.ibm.com/support/knowledgecenter/SSFKSJ_7.1.0/com.ibm.mq.doc/zx00028_.htm]
+
+WEBSPHERE MQ V7.0
+
+ * Problem determination in Distributed Queueing Management (DQM) [http://www.ibm.com/support/knowledgecenter/SSFKSJ_7.0.1/com.ibm.mq.csqzae.doc/ic19400_.htm]
+ * Problem determination on z/OS [http://www.ibm.com/support/knowledgecenter/SSFKSJ_7.0.1/com.ibm.mq.csqsaq.doc/zp10120_.htm]
+
+
+WEBSPHERE MQ V6.0
+
+ * SC34-6587-00: WebSphere MQ Intercommunication (6.99MiB) [http://www.ibm.com/e-business/linkweb/publications/servlet/pbi.wss?CTY=US&FNC=PBL&PBL=SC34-6587-00]
+ * GC34-6600-00: WebSphere MQ for z/OS Problem Determination Guide (1.52MiB) [http://www.ibm.com/e-business/linkweb/publications/servlet/pbi.wss?CTY=US&FNC=PBL&PBL=GC34-6600-00]
+
+
+Back to top
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ WebSphere MQ WMQ

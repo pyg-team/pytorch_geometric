@@ -1,0 +1,27 @@
+Title: IBM Missing some events from the SNMP Probe - United States
+
+Text:
+mttrapd TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Some traps appear to be dropped from the SNMP probe due to RPF and unavailable reverse routes. 
+
+SYMPTOM
+Some traps are not being processed by the probe. In this case a packet capture was made of the UDP traffic. The traps in question were present in the packet capture. 
+
+When running the probe with -raw the traps are missing from the RawCapture file suggesting that they have been dropped somewhere. 
+
+There are no "dropped trap" messages in the probe's debug log file.
+
+
+CAUSE
+Reverse Path Forwarding (RPF) was being used on the routers. A function of RPF is that packets are dropped if no reverse path is available from the incoming interface to the source.
+
+
+DIAGNOSING THE PROBLEM
+If RPF is being used, check that the route from the source to the router is via the same as the path from the router to the source.
+
+
+
+RESOLVING THE PROBLEM
+In this case the packet was coming in on one interface and the route back to the source was via a second interface. The routing tables needed to be updated to ensure a reverse path was available.

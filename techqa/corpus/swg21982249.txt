@@ -1,0 +1,20 @@
+Title: IBM Newly added LDAP users are not able to login to Atlas application. - United States
+
+Text:
+LDAP ; atlas TECHNOTE (FAQ)
+
+QUESTION
+ I have add new LDAP users in to Atlas application but why does those users are not able to login to Atlas ? 
+
+CAUSE
+You will notice the following error in Atlas log PAearlog.log.
+
+javax.naming.CommunicationException: simple bind failed
+CAUSED BY: CertPathBuilderException: PKIXCertPathBuilderImpl could not build a valid CertPath.
+
+ANSWER
+ 
+
+For an LDAPS or HTTPS connection, the java runtime needs to use the respective SSL certificate for creating a secured connection with the server at the other end. For picking up the SSL certificate from its keystore, the certificate should first be installed in the Java Key store. 
+
+Please work with LDAP administrator to resolve this issue.

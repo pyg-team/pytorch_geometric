@@ -1,0 +1,204 @@
+Title: IBM PK21700: RUNTIME DB2 ERROR SQLCODE -333 WHEN UPDATING "FOR BIT DATA" DB2 COLUMN IF ENT COBOL COPROCESSOR WAS USED FOR PROGRAM COMPILATION - United States
+
+Text:
+z/os SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  A COBOL program updating a DB2 database column defined with
+   "FOR BIT DATA" gets a SQLCODE -333 when the host variable
+   used to update the column was not declared with
+   "EXEC SQL DECLARE VARIABLE :hv FOR BIT DATA".
+   When this database column is updated by a COBOL program
+   compiled with the Ent COBOL 3.x CoProcessor, the program fails
+   at runtime with the SQLCODE -333 error.  The complete text is
+   DSNT408I SQLCODE = -333, ERROR: THE SUBTYPE OF A STRING VARIABLE
+            IS NOT THE SAME AS THE SUBTYPE KNOWN AT BIND TIME AND
+            THE DIFFERENCE CANNOT BE RESOLVED BY TRANSLATION.
+   If that same program is compiled after using the SQL
+   pre-compiler, the execution completes without error.
+   
+   The reason the SQLCODE -333 error occurs is because the Ent.
+   COBOL compiler will always associate a CCSID to every CHAR host
+   variable.  When data moves from a host variable that has a CCSID
+   to a database column that is defined to contain BIT DATA, data
+   conversion occurs, which leads to DB2 returning SQLCODE -333,
+   because BIT data should not be converted.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  1) The solution for the user is to add
+        DECLARE VARIABLE xxx FOR BIT DATA
+      if compiling with the COBOL SQL Coprocessor.
+      .
+      A coding example is:
+      If there is an :HV used with column N_ID_NUM
+        ( CHARACTER(13)  FOR  BIT DATA  NOT NULL ) :
+       :N-ID-NUM
+      After coding the following DCL in WORKING-STORAGE SECTION:
+            EXEC SQL DECLARE :N-ID-NUM VARIABLE
+                       FOR BIT DATA    END-EXEC.
+      the program executes successfully.
+   *
+   2) OR use the SQL Precompiler where one does not need to have
+      the FOR BIT DATA declaration because the CCSID is not passed.
+   *
+   *
+   ADDITIONAL SEARCHWORDS:
+   SQLCODE333 333 MSGDSNT408IMSGDSNT408 DSNT408
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: Users of Enterprise COBOL with DB2           *
+   *                 coprocessor using an EXEC SQL statement to   *
+   *                 update a column in a table that is defined   *
+   *                 to be FOR BIT DATA from a host variable      *
+   *                 that was not declared FOR BIT DATA.          *
+   *                                                              *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: When executing an EXEC SQL statement    *
+   *                      in a COBOL program compiled             *
+   *                      with the DB2 coprocessor, DB2 returns   *
+   *                      SQLCODE -333 when updating a            *
+   *                      column that was defined as CHAR FOR     *
+   *                      BIT DATA with a host variable that was  *
+   *                      *not* defined FOR BIT DATA via an EXEC  *
+   *                      SQL DECLARE VARIABLE statement.         *
+   *                                                              *
+   *                      The complete text for the SQLCODE -333  *
+   *                      error message is the following:         *
+   *                      DSNT408I SQLCODE = -333, ERROR: THE     *
+   *                        SUBTYPE OF A STRING VARIABLE IS NOT   *
+   *                        THE SAME AS THE SUBTYPE KNOWN AT BIND *
+   *                        TIME AND THE DIFFERENCE CANNOT BE     *
+   *                        RESOLVED BY TRANSLATION.              *
+   *                                                              *
+   ****************************************************************
+   * RECOMMENDATION: Add an EXEC SQL DECLARE :hv VARIABLE FOR     *
+   *                 BIT DATA statement to convey to DB2 that     *
+   *                 the data in the host variable should be      *
+   *                 treated as BIT DATA and no translation       *
+   *                 should be performed on the data.             *
+   *                                                              *
+   ****************************************************************
+   When using the COBOL DB2 coprocessor with DB2 V8, CCSID
+   information for host variables is communicated between COBOL
+   and DB2. In the case of a column defined as CHAR FOR BIT DATA,
+   there is no CCSID information associated with the data. If the
+   host variable in the COBOL program is *not* declared with FOR
+   BIT DATA, COBOL treats the data as character data that is
+   associated with a CCSID. The SQLCODE -333 occurs because COBOL
+   provides CCSID information for the host variable, but DB2 is
+   not expecting any CCSID information because the column is
+   defined as BIT data.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Add the following new entries to Migration Guide Appendix K and
+   Programming Guide Chapter 21:
+   
+   Bit data host variables
+   Precompiler: A COBOL alphanumeric data item can be used as a
+   host variable to hold DB2 character data that has subtype FOR
+   BIT DATA.  An explicit EXEC SQL DECLARE VARIABLE statement that
+   declares the host variable in question as FOR BIT DATA is not
+   required with the precompiler.
+   
+   Coprocessor: A COBOL alphanumeric data item can be used as a
+   host variable to hold DB2 character data having subtype FOR BIT
+   DATA only if an explicit EXEC SQL DECLARE VARIABLE statement
+   for the host variable is specified in the COBOL program.  For
+   example:
+   
+   EXEC SQL DECLARE :HV1 VARIABLE FOR BIT DATA END-EXEC.
+   
+   PUBS CLOSING CODE: DEVCHNG
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK21700
+   
+   
+ * REPORTED COMPONENT NAME
+   ENT COBOL FOR Z
+   
+   
+ * REPORTED COMPONENT ID
+   5655G5300
+   
+   
+ * REPORTED RELEASE
+   330
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2006-03-16
+   
+   
+ * CLOSED DATE
+   2006-03-30
+   
+   
+ * LAST MODIFIED DATE
+   2006-03-30
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+Publications Referenced GC27140904 SC27141204 FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

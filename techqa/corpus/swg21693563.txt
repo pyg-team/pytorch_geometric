@@ -1,0 +1,35 @@
+Title: IBM Attempts to launch RFT results in the eclipse  error  An error has occurred see the log file - United States
+
+Text:
+RFT; Citrix ; Launch; eclipse TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Attempts to launch IBM Rational Functional Tester ( RFT) result in eclipse error An error has occurred see the log file 
+
+SYMPTOM
+ 
+
+ 1.  Launch the Eclipse IDE from an non Admin user profile. 
+ 2. Below error is reported : 
+
+
+"An error has occurred. see the log file "  Content of log file : Exception launching the eclipse platform : Java .lang.ClassNotFoundException
+
+
+CAUSE
+Non Admin user unable to use RFT 
+
+
+
+ENVIRONMENT
+ 
+
+Citrix Xenapp 5.x
+RFT 8.5.x
+
+
+RESOLVING THE PROBLEM
+You need complete access to following folders : 
+
+ * RFT/SDP, usually located in your RFT installation directory at the path :< C:\Program Files (x86)>\IBM\SDP 
+ * IBMIMShared usually located in your RFT installation directory at the path <C:\Program Files (x86)>\IBM\IMShared

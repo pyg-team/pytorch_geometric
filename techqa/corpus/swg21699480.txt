@@ -1,0 +1,33 @@
+Title: IBM How can the "Is Value Required field"  be changed on a property in ACCE - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How can the "Is Value Required" field be changed on a property that is part of a class in FileNet Content Engine Administration Console for Content Platform Engine (ACCE) changed. 
+
+ANSWER
+ 
+
+ 1. Access ACCE
+    
+    
+ 2. Click on the Class where the property resides
+    
+    
+ 3. Click on the Properties Tab
+    
+    
+ 4. In the Property Name Column go to Property Definitions
+    
+    
+ 5. Click the drop down arrow and scroll and choose the Property where the value needs to be changed
+    
+    
+ 6. This will then change to the Properties of the Property value chosen in #5
+    
+    
+ 7. In the Property Name column find Is Value Required
+    
+    
+ 8. Change the Value from either True or False

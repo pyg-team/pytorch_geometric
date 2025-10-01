@@ -1,0 +1,191 @@
+Title: IBM HE12084: After upgrading to Exchange Server 2013, legacy messages cannot be restored in IBM Content Collector - United States
+
+Text:
+  DIRECT LINKS TO FIXES
+4.0.0.3-IBM-ICC-FP003 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FContent+Collector&fixids=4.0.0.3-IBM-ICC-FP003&source=SAR]
+IBM Content Collector V4.0 Fix Pack 3 [http://www-01.ibm.com/support/docview.wss?uid=swg24039003]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  After upgrading to Microsoft Exchange Server 2013, the IBM
+   Content Collector legacy task cannot be started. The following
+   message is written to the console:
+   
+       [<timestamp>]  <taskname>: Initialization failure: Could not
+          initialize JNI object for CSXJobFolder.
+          Reason: Failed to open public store.
+          MAPI return code: MAPI_E_NOT_FOUND
+   
+   In addition, requests to restore legacy messages fail. The
+   following message is displayed:
+   
+       The selected messages could not be restored.
+   
+   The web application log file afu_webapplication_sysout_<n>.log
+   includes the following messages:
+   
+       [<date>]T[<time>]Z <num>   Restore-worker-MAPI- SEVERE
+         Exception caught, exception class
+   java.net.UnknownHostException
+       [<date>]T[<time>]Z <num>   Restore-worker-MAPI- SEVERE
+         No job folder configuration available for <server DN>
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Microsoft Exchange 2013 introduced a change in the communication
+    protocol. While earlier Exchange versions allowed communication
+    using RPC, communication with Exchange 2013 must be done using
+   RPC over HTTP. Therefore, the Outlook profile that is used by
+   the legacy task must be updated to enable communication with
+   Exchange 2013.
+   
+   The failure to restore legacy messages is caused by an
+   architectural change in Exchange 2013. While Outlook clients
+   connected to a server FQDN in all previous versions of Exchange,
+   Outlook now uses Autodiscover to create a new connection point
+   comprised of mailbox GUID, @ symbol, and the domain portion of
+   the user?s primary SMTP address. When IBM Content Collector
+   processes a legacy restore request, it incorrectly interprets
+   the Outlook connection point that is passed by the client as
+   server DN. Therefore, the restore request fails.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Starting with IBM Content Collector 4.0.0 Fix Pack 3, connection
+    points that are provided by Outlook clients accessing a mailbox
+    on an Exchange 2013 server can be used to look up the correct
+   server host name in Active Directory, so that legacy messages
+   can be restored.
+   
+   To be able to start the legacy task, you must manually update
+   the Outlook profile to use RPC over HTTP. To do so:
+   
+   1. Log on to the machine that runs the legacy task. Use the
+   credentials of the account that runs the legacy task.
+   2. Set the environment variable CSXNOPROFILEDELETE to 1 to
+   prevent the existing profile being replaced by a new one when
+   restarting the legacy task.
+   3. Open the control panel. Select "Mail (32-bit)".
+   4. In the Mail window, select the profile for the legacy task
+   (named csxl_<taskname>) and click "Properties".
+   5. In the Mail setup window, click "E-mail Accounts".
+   6. In the Account Settings window, click "Repair".
+   7. In the Repair Account window, enter the email address of the
+   IBM Content Collector user account and click "Next" to start
+   automatic configuration of the profile.
+   8. When automatic configuration has completed, click "Finish"
+   and close all open dialogs by clicking "Close" or "OK".
+   9. Open Outlook with the repaired profile.
+   10. Access the public folder to add the public folder store to
+   the profile.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  IBM Content Collector 4.0.0.2 LA002
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   HE12084
+   
+   
+ * REPORTED COMPONENT NAME
+   ICC FOR EMAIL
+   
+   
+ * REPORTED COMPONENT ID
+   5724V5700
+   
+   
+ * REPORTED RELEASE
+   400
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-05-19
+   
+   
+ * CLOSED DATE
+   2014-12-29
+   
+   
+ * LAST MODIFIED DATE
+   2014-12-29
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ICC FOR EMAIL
+   
+   
+ * FIXED COMPONENT ID
+   5724V5700
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R400 PSY
+   UP

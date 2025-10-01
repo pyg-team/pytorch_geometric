@@ -1,0 +1,25 @@
+Title: IBM Stored Procedures and Object Management - United States
+
+Text:
+rnmobj TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This document discusses what stored procedures are and how they are used and maintained. 
+
+RESOLVING THE PROBLEM
+What is a stored procedure? 
+
+In simple terms, a stored procedure is a program that can be called using the SQL CALL statement. Parameters can be passed to and from stored procedures. If a stored procedure is registered with SQL using the CREATE PROCEDURE statement, the system files (SYSPROCS and SYSPARMS) are updated to reflect information about the stored procedure, such as the name, parameters passed, parameters returned, and so on.
+
+You can define a procedure as an SQL procedure or an external procedure. 
+
+o An external procedure can be any supported high-level language program object (except IBM System/36 programs and procedures), or an IBM REXX procedure. The procedure does not need to contain SQL statements, but it can contain SQL statements. Most of these types of procedures are registered; however, they do not have to be. o An SQL procedure is defined entirely in SQL and can contain SQL statements that include SQL control statements. These types of procedures must be created and registered using the CREATE PROCEDURE statement. Once registered, the information in the system catalog (SYSPROCS and SYSPARMS) exists independently of the program. For example, the program can be deleted without losing the information in the system files. It is also possible for SQL registration information to be removed without the program being deleted. 
+
+What happens when someone uses object commands against the program object that was registered as a stored procedure? The action takes place against the program object and does not change the registration in SYSPROCS and SYSPARMS. The exception to this is the restore commands. If a registered stored procedure is restored, the registration information is added to SYSPROCS and SYSPARMS. For example, if I create a stored procedure in library A and restore it to library B, a new registration will be added for the object in library B. (This is comparable to doing a CRTDUPOBJ on the program to library B, then doing a CREATE PROCEDURE to register the stored procedure.) 
+
+If someone is using a rollover tool to move objects, the following steps are recommended: 1. Identify the program objects that must be updated. These will be the registered stored procedures in the non-production library. 2. Save the program objects (SAVOBJ) in the non-production library. 3. Issue a DROP PROCEDURE SQL statement for the procedures in the production library. 4. Restore the program objects into the production library. References: o IBM DB2 for AS/400 SQL Reference (SC41-5612) under the heading CREATE PROCEDURE. o DB2/400 Advanced Database Functions (SG24-6503-02), Section 4.6, Deleting or replacing an SQL procedure. Notes: 1. There are no SQL statements that move a stored procedure from one library to another. The procedure should be dropped and created. 2. The difference between calling a registered stored procedure and an unregistered stored procedure is in the way that parameters are passed. For example, if passing a packed numeric value to a non-registered stored procedure, the parameter will be passed with a declaration of length 15 and 5 decimal positions. If the user program has the variable declared with a length of 7 and 0 decimal positions, then this will cause problems. In this case, the stored procedure should be registered using the CREATE PROCEDURE SQL statement. 3. The same information discussed in this document applied to User defined functions. 
+
+
+Cross reference information Segment Product Component Platform Version Edition Operating System IBM i 7.2 Operating System IBM i 7.1 Operating System IBM i 6.1 
+HISTORICAL NUMBER
+ 18524136

@@ -1,0 +1,33 @@
+Title: IBM Guardium S-TAP installation is failing on a Windows server where S-TAP was previously uninstalled - United States
+
+Text:
+S-TAP; Windows; uninstall; install; manual; drivers TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Windows S-TAP installation is not completing on a server where S-TAP was previously uninstalled. 
+
+CAUSE
+It is important to reboot Windows after uninstalling an S-TAP. If Windows is not rebooted, and then installation of a new S-TAP is attempted, the remaining drivers from old install prevent the new installation from completing. If this occurs, the S-TAP should be manually uninstalled with the below process so that a new S-TAP can be installed as a fresh install. 
+
+The manual uninstall process should only be used when the normal uninstall process [https://www.ibm.com/support/knowledgecenter/SSMPHH_10.1.0/com.ibm.guardium.doc.stap/stap/stap_win_upgrade_remove.html] does not work. For example in the scenario outlined above.
+
+
+RESOLVING THE PROBLEM
+To manually uninstall Windows S-TAP: 
+
+1. Stop any running Guardium services from the Windows Services screen
+2. Prepare the Windows S-TAP installer (by running “cd /<Guardium install dir>”) and run “setup.exe /s /zREMOVE-ALL”
+3. Check for ‘IBM Security Guardium Windows S-TAP' in Uninstall or change a program on the Control Panel. If it exists, uninstall it.
+4. Check that an S-TAP install directory does not exist (e.g. C:\Program Files\Guardium\GUARDIUM_STAP). If it does exist, delete it.
+5. Check that these files do not exist. Delete them if they do exist: 
+
+ * 
+ * 
+ * 
+
+6. Check that there are no drivers installed with the driverquery Proxy and Date commands, and remove any drivers found: 
+[/support/docview.wss?uid=swg21999564&aid=1] [/support/docview.wss?uid=swg21999564&aid=1] 
+7. Reboot the system RELATED INFORMATION
+ Installing Windows S-TAP [https://www.ibm.com/support/knowledgecenter/SSMPHH_10.1.0/com.ibm.guardium.doc.stap/stap/stap_win_install.html]
+Removing Windows S-TAP [https://www.ibm.com/support/knowledgecenter/SSMPHH_10.1.0/com.ibm.guardium.doc.stap/stap/stap_win_upgrade_remove.html]
+IBM Guardium - When to Restart When to Reboot [http://www-01.ibm.com/support/docview.wss?uid=swg21644770]

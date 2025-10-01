@@ -1,0 +1,160 @@
+Title: IBM IT22982: With ChlAuthEarlyAdopt, a client application authenticating with invalid credentials or authority may receive RC 2009 - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  With ChlAuthEarlyAdopt, a client application attempting to
+   authenticate with a bad username/password combination may
+   receive a 2009 (MQRC_CONNECTION_BROKEN) error response, together
+   with an unexpected AMQ9777 message in the queue manager log
+   files.
+   This unexpected error condition may also occur whilst using
+   ChlAuthEarlyAdopt, when a user is blocked as a result of an
+   Object Authority Manager (OAM) rule (for example, if '+connect'
+   is not specified for the user).
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   Users of IBM MQ with queue managers configured with the
+   "ChlauthEarlyAdopt=y" setting.
+   
+   
+   Platforms affected:
+   MultiPlatform
+   
+   ****************************************************************
+   PROBLEM DESCRIPTION:
+   With ChlAuthEarlyAdopt, a logic error meant that the failed
+   authentication error state was incorrectly being handled as a
+   broken connection.
+   
+   In this case it would be expected to receive a 2035
+   (MQRC_NOT_AUTHORIZED) error response, together with a more
+   appropriate AMQ5534 message in the queue manager log files.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  In the event of an authentication error with ChlAuthEarlyAdopt,
+   MQ has been corrected so a 2035 (MQRC_NOT_AUTHORIZED) error is
+   returned and the AMQ9777 message is no longer reported in the
+   queue manager log files.
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+   Version    Maintenance Level
+   v8.0       8.0.0.9
+   v9.0 CD    9.0.5
+   v9.0 LTS   9.0.0.3
+   
+   The latest available maintenance can be obtained from
+   'WebSphere MQ Recommended Fixes'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037]
+   
+   If the maintenance level is not yet available information on
+   its planned availability can be found in 'WebSphere MQ
+   Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT22982
+   
+   
+ * REPORTED COMPONENT NAME
+   IBM MQ BASE MP
+   
+   
+ * REPORTED COMPONENT ID
+   5724H7251
+   
+   
+ * REPORTED RELEASE
+   800
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-10-31
+   
+   
+ * CLOSED DATE
+   2017-11-30
+   
+   
+ * LAST MODIFIED DATE
+   2018-02-28
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    IT22912
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   IBM MQ BASE MP
+   
+   
+ * FIXED COMPONENT ID
+   5724H7251
+   
+   
+
+APPLICABLE COMPONENT LEVELS

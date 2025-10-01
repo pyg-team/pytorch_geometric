@@ -1,0 +1,37 @@
+Title: IBM How to create response file for install and silent install & uninstall of Classic clients - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ For the Classic ODBC/JDBC clients...
+
+1) How can I create response file for install?
+
+2) How can I use command prompt to perform silent install?
+
+3) How can I use command prompt to perform silent uninstall?
+
+
+
+ANSWER
+(1) create response file template
+
+installation_program -i console -r <path><properties.txt> 
+example
+cac101wn.exe -i console -r c:\temp\cacv101\properties.txt
+
+note: replace console with silent if you want to run without prompts. 
+
+(2) initiate the silent install template
+
+installation_program -i silent 
+example 
+cac101wn.exe -i silent 
+
+(3) initiate the silent uninstall.
+
+a) cd to where the uninstall program was installed. In my case 
+cd c:\Program Files (x86)\IBM\ISClassic101 
+b) execute the uninstall exec. 
+_uninst\uninstaller.bin

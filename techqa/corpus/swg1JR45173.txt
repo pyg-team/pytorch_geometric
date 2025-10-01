@@ -1,0 +1,204 @@
+Title: IBM JR45173: MIGRATING THE DATABASE TO 801 EXCEPTION TWOBJECTINDEXEDMAP SHOULD HAVE A PERSISTED ANNOTATION - United States
+
+Text:
+  A FIX IS AVAILABLE
+Version 8.0.1 Fix Pack 1 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24034495]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  migrating the database from 7.5.0 to 801 and see the following
+   exception when he run the  upgradeProcessData command ..
+   
+   27/11/2012 18:51:34 SEVERE:
+   com.lombardisoftware.tools.dbupgrade.utils.SerializationHelper -
+   Error occurred when writing object back
+   java.lang.IllegalStateException: Lombardi class
+   com.lombardisoftware.core.TWObjectIndexedMap should have a
+   Persisted annotation
+    at
+   com.lombardi.serialization.ClassDescription.checkPersistedAnnota
+   tion(ClassDescription.java:733)
+    at
+   com.lombardi.serialization.ClassDescription.lookup(ClassDescript
+   ion.java:396)
+    at
+   com.lombardi.serialization.Writer.writeGenericObject(Writer.java
+   :997)
+    at
+   com.lombardi.serialization.Writer.writeObject0(Writer.java:678)
+    at
+   com.lombardi.serialization.Writer.writeObject(Writer.java:139)
+    at
+   com.lombardi.serialization.handlers.RealArrayListHandler.writeOb
+   ject(RealArrayListHandler.java:46)
+    at
+   com.lombardi.serialization.Writer.writeSerialData(Writer.java:10
+   67)
+    at
+   com.lombardi.serialization.Writer.writeOrdinaryObject(Writer.jav
+   a:981)
+    at
+   com.lombardi.serialization.Writer.writeObject0(Writer.java:680)
+    at
+   com.lombardi.serialization.Writer.defaultWriteFields(Writer.java
+   :1119)
+    at
+   com.lombardi.serialization.Writer.defaultWriteObject(Writer.java
+   :162)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  work around by editing the ant script and disable the validation
+   for PersistedAnnotation .  This will not have negative impact on
+   migration result.
+   
+   Edit the following file
+   C:\IBM\BPMv8\GM\BPM\Lombardi\tools\upgrade\UpgradeProcessData\up
+   grade.xml and add the property checkPersistedAnnotation value
+   false
+   
+   Here is a sample Sample:
+   
+   1. Search and find the following line
+    ...
+   <sysproperty key="reloadSerializedForm" value="false" />
+   
+   2. add the following line after the above line  and save the
+   file
+   
+   <sysproperty key="checkPersistedAnnotation" value="false" />
+   
+   3. If you had already run the upgrade command, restore your
+      PSDB and PDWDB
+   
+   4. Run the upgradeProcessData again following instructions
+      in the information center with appropriate options.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  Business Process Manager v8.0.1.0 users     *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: IllegalStateException: Lombardi class   *
+   *                      com.lombardisoftware.core.TWObjectIndex *
+   *                      edMap should have a Persisted           *
+   *                      annotation when running the             *
+   *                      upgradeProcessData command              *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   When migrate the database from 7.5.0 to 8.0.1 and while
+   running the &#130; &#160;upgradeProcessData command, an
+   IllegalStateException occurs as some object that need to be
+   serialized to the database are missing persistence annotation.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The problem is resolved by updating the TWObjectIndexedMap
+   class to provide persistence annotation.
+   
+   Install/Dependency information is available in the readme.txt
+   on FixCentral. When the user goes to the download files page
+   in FixCentral, the readme will be available with the fix
+   package as a separate download.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR45173
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM STANDARD
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9500
+   
+   
+ * REPORTED RELEASE
+   801
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-12-15
+   
+   
+ * CLOSED DATE
+   2013-03-25
+   
+   
+ * LAST MODIFIED DATE
+   2013-03-25
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   BPM STANDARD
+   
+   
+ * FIXED COMPONENT ID
+   5725C9500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R800 PSY
+   UP

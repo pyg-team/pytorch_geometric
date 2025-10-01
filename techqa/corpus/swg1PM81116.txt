@@ -1,0 +1,229 @@
+Title: IBM PM81116: WMQ 7.0.1 SHARED STATUS ENTRY LEFT ORPHANED IF THE LAST CONVERSATION TO END IS NOT THE PRIMARY CONVERSATION - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  WMQ Client using shared conversation connect to the queue
+   manager through the shared listener . An entry (row) is
+   added into the shared channel status table CSQ.ADMIN_B_SCST .
+   The shared status entry will be orphaned (not deleted)
+   if the last conversation to end is not the primary
+   conversation (the primary conversation has
+   rriSession.pSharedStatus set, but the other conversations
+   do not).
+   When the last conversation ends, rriFreeSess is invoked
+   with rriWork.pSess containing the address of the conversation
+   being ended. If this is not the primary conversation, i.e.
+   the first conversation that started, then the shared status
+   entry will not be deleted from DB2.
+   .
+   Additional symptoms:
+   - You see high CPU and delayed response from
+      DISPLAY CHSTATUS() SHORT
+     This may be done from the command line or the CSQOREXX panel.
+     Additionally, the channel status count is high, e.g.
+      CSQN205I   COUNT=  149862, RETURN=00000000, REASON=00000000
+     or the CSQOLCAA List Channels panel has a status of
+      149862 RUN
+   - CSQX489E CSQXRESP Maximum instance limit 50 exceeded
+     because the stop of the current channels is taking so long to
+     complete (CSQXSTPC / CSQXSTOP / CSQXISTC / CSQMRM5F)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  To prevent orphaned status entries, do one of the following:
+   - Do not connect WMQ clients through a shared listener
+     as advised at
+     http://publib.boulder.ibm.com/infocenter/wmqv7/v7r0/topic/com [http://publib.boulder.ibm.com/infocenter/wmqv7/v7r0/topic/com]
+     .ibm.mq.csqsat.doc/zc10560_.htm
+   - Specify SHARECNV(0) in the SVRCONN channel definition
+     See the "Performance implications of sharing conversations
+     on client-connection channels" at
+     http://publib.boulder.ibm.com/infocenter/wmqv7/v7r0/topic/com. [http://publib.boulder.ibm.com/infocenter/wmqv7/v7r0/topic/com.]
+     ibm.mq.csqzaf.doc/mi12240_.htm
+   - Obtain a ++APAR from the support center.
+   .
+   These work-arounds will not clean up entries that were
+   already orphaned.  There are a few clean-up options, but they
+   could take a while like the DIS CHSTATUS did:
+   .
+   - Restart the CHIN. Deletion of the orphaned entries will take
+     place while the CHIN is terminating, so there may be a delay
+     before it can be started again.
+   .
+   - Run a SPUFI command:
+      DELETE FROM CSQ.ADMIN_B_SCST WHERE CHLNAME='<channelname>'
+      AND QSGNAME='<qsgname>';
+     where <channelname> and <qsgname> are replaced as appropriate
+     for your system.
+     .
+     There may be contention for the table.
+     .
+     You will get CSQX485E "Shared channel status error" and an
+     FFST if a client ends after its entry has been deleted. These
+     will not be a big impact if there are not too many active
+     clients at the time.
+   .
+   - Delete and redefine the SVRCONN channel.  This option will
+     have more overhead than the SPUFI option due to the
+     involvement of the MSTR and CHIN jobs in doing the clean-up.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All users of WebSphere MQ for z/OS Version 7 *
+   *                 Release 0 Modification 1 and Version 7       *
+   *                 Release 1 Modification 0.                    *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Orphaned shared channel status entries  *
+   *                      cause performance problems.             *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   When issuing a DISPLAY CHSTATUS(*) SHORT command there is a
+   delayed response and high CPU in that qmgr.
+   Similar performance problems when trying to STOP a SVRCONN
+   channel which connects to clients over a shared listener.
+   This is caused by a large number of orphaned entries in the
+   shared channel status table CSQ.ADMIN_B_SCST.
+   These have been created when a WMQ client connects to a qmgr
+   by a channel which is capable of running multiple conversations
+   (SHARECNV > 1 in the SVRCONN definition) over a shared
+   listener (defined with INDISP (GROUP)).
+   When the last conversation ends the shared status entry should
+   be deleted, but it is not deleted if the last conversation to
+   end is not the first conversation to be started.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  CSQXMMSA (CMQXRMSA at V710) has been updated to make sure the
+   primary conversation points to the shared status entry.
+   CSQXRCSI has been updated to use the primary conversation when
+   deleting the shared status entry, if the pSharedStatus for the
+   current session is null.
+   010Y
+   100Y
+   CMQXRMSA
+   CSQXRCSI
+   CSQXRMSA
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM81116
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ Z/OS V7
+   
+   
+ * REPORTED COMPONENT ID
+   5655R3600
+   
+   
+ * REPORTED RELEASE
+   010
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-01-22
+   
+   
+ * CLOSED DATE
+   2013-02-26
+   
+   
+ * LAST MODIFIED DATE
+   2013-05-06
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UK92011 UK92012
+   
+   
+
+MODULES/MACROS
+ *  CMQXRMSA CSQXRCSI CSQXRMSA
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ Z/OS V7
+   
+   
+ * FIXED COMPONENT ID
+   5655R3600
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R010 PSY UK92011 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK92011]
+   UP13/04/04 P F304
+   
+   
+ * R100 PSY UK92012 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK92012]
+   UP13/04/04 P F304
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

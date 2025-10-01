@@ -1,0 +1,148 @@
+Title: IBM IZ11261: IMPACT READS ALL THE EVENTS IF IT FINDS THE NUMBER OF EVENTS PER SECOND MORE THAN THE MAXEVENTSPERQUERY - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Impact tries to reduce the number of events to read so that it
+   doesn't exceed its queue size but then reads the whole lot in
+   anyway.
+   
+   The problem is that Impact reads all the events if it finds the
+   number of events per second more than the maxeventsperquery.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Increase the event threshold to a high value (e.g. something
+   over 5,000 if sending through 25,000 events in 5 seconds)
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All IBM Netcool/Impact users monitoring the  *
+   *                 events per seconds                           *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: IMPACT READS ALL THE EVENTS IF IT FINDS *
+   *                      THE NUMBER OF EVENTS PER SECOND MORE    *
+   *                      THAN THE MAXEVENTSPERQUERY              *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   *                                                              *
+   ****************************************************************
+   Replication Steps:
+   
+   1. Configure the EventReader - uncheck Get Updates , 2. Stop
+   the EventReader. 3. Send lots of events to the Object Server
+   while EventReader is down 4. Then start the EventReader 5.
+   Impact will read all events.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fixed in 4.0.2-TIV-NCI-IF0001
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ11261
+   
+   
+ * REPORTED COMPONENT NAME
+   NETCOOL/IMPACT
+   
+   
+ * REPORTED COMPONENT ID
+   5724O59IS
+   
+   
+ * REPORTED RELEASE
+   400
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2007-12-17
+   
+   
+ * CLOSED DATE
+   2008-04-23
+   
+   
+ * LAST MODIFIED DATE
+   2008-04-23
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  NETCOOL
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   NETCOOL/IMPACT
+   
+   
+ * FIXED COMPONENT ID
+   5724O59IS
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R400 PSY
+   UP

@@ -1,0 +1,64 @@
+Title: IBM JR29663; Reduce the SCA destination to improve the ME failover time - United States
+
+Text:
+JR29663; ME Failover; v602readme; v612readme DOWNLOADABLE FILES
+
+ABSTRACT
+ On a clustered environment the Messaging Engine (ME) failover causes a long delay which varies from 20 to 40 minutes to switch over to the next available Messaging Engine. 
+
+DOWNLOAD DESCRIPTION
+JR29663 resolves the following problem:
+
+ERROR DESCRIPTION: 
+Delayed Messaging Engine failover in a clustered setup.
+
+
+
+LOCAL FIX: 
+None. 
+
+USERS AFFECTED:
+WebSphere Process Server 6.0.2.x, 6.1.0.x and 6.1.x users
+
+PROBLEM SUMMARY:
+The Service Component Architecture (SCA) creates the destination and queue points on the System Integration bus which are configured for the active Messaging Engine. 
+
+When the active Messaging engine (ME) goes down a failover happens during which the standby ME cluster member is made active and the SCA destinations are reconfigured. Due to the increase number of SCA destinations the context switching was causing a long delay in processing the inflow transactions.
+
+RECOMMENDATION:
+None
+
+PROBLEM CONCLUSION: 
+This interim fix reduces the number of queues that get created for the SCA components and has few destinations that need to be reconfigured during a failover and reduces the failover time.
+
+
+ADDITIONAL INFORMATION:
+Note: This interim fix deals with reduction of SCA destinations that get created on the System Integration Bus (SIB). To leverage the interim fix, all SCA applications must be uninstalled before applying this interim fix and reinstalled after applying the interim fix.. However, if you cannot uninstall all of the applications for any reason other than what is listed below, there is a script that can be run after applying the interim fix that would delete all the unnecessary destinations.
+
+a) Long Running Business Process Execution Language (BPEL) instances 
+b) You incur an overhead to uninstall all the applications.
+
+Follow this link that includes the script to delete destinations:
+http://www.ibm.com/support/docview.wss?uid=swg27014010 [http://www.ibm.com/support/docview.wss?uid=swg27014010]
+
+PREREQUISITES
+JR29484 is a prerequisite for the 6.0.2.4 version of the interim fix
+
+URL LANGUAGE SIZE(Bytes) Update Installer [http://www.ibm.com/support/docview.wss?uid=swg21205991] US English 7250000 
+INSTALLATION INSTRUCTIONS
+Review the readme.txt for detailed installation instructions.
+
+URL LANGUAGE SIZE(Bytes) Readme [ftp://public.dhe.ibm.com/software/websphere/cw/support/fixes/JR29663/readme.txt] US English 3370 
+DOWNLOAD PACKAGE
+
+
+
+
+
+Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options 
+What is DD? [http://www6.software.ibm.com/dldirector/doc/DDfaq_en.html] 6.0.2.4-WS-WBI-IFJR29663 8/15/2008 US English 47474 FTP [ftp://public.dhe.ibm.com/software/websphere/cw/support/fixes/JR29663/6.0.2.4-WS-WBI-IFJR29663.pak] DD 6.1.0.1-WS-WBI-IFJR29663 08-15-2008 US English 44551 FTP [ftp://public.dhe.ibm.com/software/websphere/cw/support/fixes/JR29663/6.1.0.1-WS-WBI-IFJR29663.pak] DD 6.1.2.0-WS-WBI-IFJR29663 08-15-2008 US English 44551 FTP [ftp://public.dhe.ibm.com/software/websphere/cw/support/fixes/JR29663/6.1.2.0-WS-WBI-IFJR29663.pak] DD 
+TECHNICAL SUPPORT
+ Contact IBM Support using ESR (http://www-306.ibm.com/software/support/probsub.html [http://www-306.ibm.com/software/support/probsub.html]), visit the WebSphere Process Server Support Web site (http://www.ibm.com/software/integration/wps/support/ [http://www.ibm.com/software/integration/wps/support/]), or contact 1-800-IBM-SERV (U.S. only). 
+
+ [/support/docview.wss?uid=swg24020194&aid=1]Problems (APARS) fixed [/support/docview.wss?uid=swg24020194&aid=2]Problems (APARS) fixed
+JR29663

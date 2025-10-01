@@ -1,0 +1,186 @@
+Title: IBM Page is forbidden when accessing WebSphere Commerce tools (HTTP Error 403) - United States
+
+Text:
+HTTP Error 403; Forbidden; Permission denied TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When trying to access the WebSphere Commerce tools such as WebSphere Commerce Accelerator, the following message is displayed:
+
+You are not authorized to view this page
+HTTP Error 403 - Forbidden
+
+In the Web server's error log, you see a message similar to this:
+[Fri Jun 16 08:38:24 2006] [error] [client ip] (3401)Permission denied.: ZSRV_MSG064B: access to /adminconsole denied
+
+You might also see any of these other symptoms:
+
+Missing images in your store pages
+Missing images in the tools logon pages
+Javascript errors in the tools logon pages such as:
+Error: "XBEvent" is undefined
+Error: "URLParser" is undefined 
+
+CAUSE
+This error is caused by incorrect file permissions in the WebSphere Commerce EAR file. 
+
+The root cause could be one of the following issues: 
+
+Applies to WebSphere Commerce Version V6.0 users: 
+
+ 1. iFix 6.0.2.5-WS-WAS-IFWC-file-permission was not installed prior to creating a WebSphere Commerce instance or installing a WebSphere Commerce Fix Pack. 
+    
+    
+ 2. Your system does not have the required amount of memory for WebSphere Commerce. This caused the code that sets file permission to fail. 
+    
+    
+ 3. A partial application update was performed, followed by a full update without restarting your server (stand-alone environment) or node agents (managed environment) in between the updates. 
+ 4. WebSphere Commerce is running on WebSphere Application Server Version V6.1 and the WebSphere Commerce V6.0 instance is created before applying WebSphere Commerce fix pack 6. 
+
+Applies to WebSphere Commerce Version 6.0 and 7.0 users: 
+
+ 5. The application distribution process during Fix Pack installation was delayed for some reason. 
+    
+    
+ 6. The WebSphere Commerce instance is clustered on multiple WebSphere Nodes. 
+    
+     Examples of a partial update: 
+    
+     * Deploying your own customizations 
+     * Enabling an iFeature 
+     * Publishing a store 
+    
+     Examples of a full update: 
+    
+     * Installing a WebSphere Commerce Fix Pack 
+     * Installing a WebSphere Commerce Interim Fix (Interim Fix, APAR) 
+    
+    
+
+
+
+RESOLVING THE PROBLEM
+ 
+
+Ensure that your system meets or exceeds the memory requirements as outlined in IBM WebSphere Commerce Version 6.0 hardware prerequisites [http://www-1.ibm.com/support/docview.wss?rs=3046&uid=swg27007428] and in IBM WebSphere Commerce Version 7.0 hardware prerequisites. [http://publib.boulder.ibm.com/infocenter/wchelp/v7r0m0/topic/com.ibm.commerce.install.doc/refs/rigsrvhwprereq.htm] 
+
+ 
+
+Ensure that iFix 6.0.2.5-WS-WAS-IFWC-file-permission has been installed as outlined in the Required Maintenance [http://www-1.ibm.com/support/docview.wss?&uid=swg21232042] documentation. After installing this Interim Fix, you must stop and restart your server before moving to the recovery steps listed below. This applies to WebSphere Commerce V6.0 only; in V7.0 file permissions are handled differently and an Interim Fix is not required. 
+
+ 
+
+ 
+
+For root causes #1 and #2 and #3: 
+
+These cases only apply to WebSphere Commerce V6.0. 
+
+If you created the WebSphere Commerce V6.0 instance before installing this Interim Fix. if your system did not meet the memory requirements for WebSphere Commerce or if you did a full application update (such as fixpack installation) after a partial application update, follow these instructions to correct the file permissions in the WebSphere Commerce EAR file. 
+
+ 
+
+ 1. For root cause 5, you must restart your server1 (stand-alone environment) or your node agents (managed environment) before performing these steps. This is not required for the other root causes. 
+ 2. Open the WebSphere Administrative Console. 
+ 3. Stop the WebSphere Commerce instance:  1. Expand Applications and click Enterprise Applications. 
+     2. Select the WC_instance_name application from the list of installed applications, where instance_name is the name of your WebSphere Commerce instance. 
+     3. Click Stop Application.
+    
+    
+ 4. Save the EAR file to your hard disk:  1. Select the WC_instance_name application from the list of installed applications. 
+     2. Click Export. 
+     3. Follow the directions to save the EAR file to your hard disk. Note the location where you save the EAR file.
+    
+    
+ 5. Update your WebSphere Commerce instance:  1. Expand Applications and click Enterprise Applications. 
+     2. Select the WC_instance_name application from the list of installed applications. 
+     3. Click Update. Select Full Application and Local File System. 
+     4. Click Browse and select the EAR file that you saved in step 4c. Click Next. 
+     5. Select Generate Default Bindings and click Next. 
+     6. Click Continue. 
+     7. Click Step 16 -- Summary. Click Finish. 
+     8. After the update is complete, scroll down and click Save to Master Configuration. 
+     9. Click Save.
+    
+    
+ 6. As the root user, set the file permissions:  1. After the changes are complete, set the file permission on the EAR directory to 755. For example, 
+        chmod 755 /opt/IBM/WebSphere/AppServer/profiles/demo/WC_demo_cell/WC_demo.ear
+    
+    
+ 7. Restart your WebSphere Commerce instance:  1. Expand Applications and click Enterprise Applications. 
+     2. Select the WC_instance_name application from the list of installed applications. 
+     3. Click Start Application to start WebSphere Commerce.
+    
+    
+
+ 
+
+For root cause #4: 
+
+If using WebSphere Application Server Version 6.1 complete the following steps: 
+
+ 1. Install WebSphere Commerce Fix Pack 6 or higher. 
+ 2. Navigate to WC_installdir/bin directory. 
+ 3. Depending on your operating system, run one of the following commands:
+    config_ant.sh -DinstanceName=instance_name SetEARProperties (run as the non-root user)
+    config_ant.bat -DinstanceName=instance_name SetEARProperties 
+ 4. Restart your WebSphere Commerce instance.
+
+
+Where:  * WC_installdir is the path to your WebSphere Commerce installation. 
+ * instance_name is the name of your WebSphere Commerce instance.
+
+
+For root causes #5 and #6: 
+
+These cases apply to both WebSphere Commerce V6.0 and V7.0. 
+
+The Web server needs access to the Enterprise Application directory and all parent directories to serve the static Web content such as HTML or images. Each directory in the path to the EAR file must have read and execute permission for the user running the Web server. 
+
+ 
+
+In some cases, the Fix Pack installer might not set the permission correctly or you might have introduced a new node in your cluster with a Web server accessing static content on that node. 
+
+ 
+
+The path to the WebSphere Commerce EAR file is WC_profileDir/installedApps/WC_instance_name_cell/WC_instance_name.ear 
+
+ 
+
+Where: 
+
+ * WC_profileDir is the path to your WebSphere Application Server profile for this WebSphere Commerce instance. 
+ * instance_name is the name of your WebSphere Commerce instance.
+
+
+An example path is /opt/IBM/WebSphere/AppServer/profiles/demo/installedApps/WC_demo_cell/WC_demo.ear 
+
+ 
+
+To correct the problem, ensure that each directory in this path has file permission 755. As the root user, you can set the file permission using the following commands for the example path listed above: 
+
+ 
+
+chmod 755 /opt 
+
+chmod 755 /opt/IBM 
+
+chmod 755 /opt/IBM/WebSphere 
+
+chmod 755 /opt/IBM/WebSphere/AppServer 
+
+chmod 755 /opt/IBM/WebSphere/AppServer/profiles 
+
+chmod 755 /opt/IBM/WebSphere/AppServer/profiles/demo 
+
+chmod 755 /opt/IBM/WebSphere/AppServer/profiles/demo/installedApps 
+
+chmod 755 /opt/IBM/WebSphere/AppServer/profiles/demo/installedApps/WC_demo_cell 
+
+chmod 755 /opt/IBM/WebSphere/AppServer/profiles/demo/installedApps/WC_demo_cell/WC_demo.ear 
+
+ 
+
+Note: For i5/OS, these commands must be run from Q-Shell.
+
+RELATED INFORMATION
+ Required Maintenance for WebSphere Commerce V6.0 [http://www.ibm.com/support/docview.wss?rs=3046&uid=swg21232042]

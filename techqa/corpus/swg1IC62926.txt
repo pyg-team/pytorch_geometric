@@ -1,0 +1,146 @@
+Title: IBM IC62926: MEMORY LEAK CAN OCCUR WHILE RUNNING REORG ON A TABLE WITH A     COMPRESSED XDA OBJECT - United States
+
+Text:
+z/os  FIXES ARE AVAILABLE
+DB2 Version 9.7 Fix Pack 1 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24023357]
+DB2 Version 9.7 Fix Pack 2 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24026928]
+DB2 Version 9.7 Fix Pack 3 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24027906]
+DB2 Version 9.7 Fix Pack 3a for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24028306]
+DB2 Version 9.7 Fix Pack 4 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24029745]
+DB2 Version 9.7 Fix Pack 5 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24031181]
+DB2 Version 9.7 Fix Pack 7 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24033685]
+DB2 Version 9.7 Fix Pack 9a for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24037559]
+DB2 Version 9.7 Fix Pack 6 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24032754]
+DB2 Version 9.7 Fix Pack 8 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24034634]
+DB2 Version 9.7 Fix Pack 9 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24036646]
+DB2 Version 9.7 Fix Pack 10 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24038641]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  In DB2 v9.7 a small amount of memory from the database heap may
+   be leaked during a REORG.  For the leak to occur, the
+   reorganized table must be compressed and must contain at least
+   one XML column.  Some of the XML documents must be stored in the
+   XML storage object and be compressed.
+   
+   Symptoms of this memory leak include:
+   - Continuous increase of memory usage both inside the DB2
+   process and on the system overall
+   - Out-of-memory errors reported by the database manager
+   - Side effects such as the inability to connect to DB2 databases
+   - System memory or paging space exhaustion
+   
+   This memory is allocated from the database heap, and will be
+   reported by DB2 memory monitoring tools (db2pd, db2mtrk,
+   snapshot).
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Increasing the size of the database heap via the 'dbheap' memory
+   configuration parameter may help prevent the symptoms of this
+   memory leak.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * Any                                                          *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * MEMORY LEAK CAN OCCUR WHILE RUNNING REORG ON A TABLE WITH A  *
+   * COMPRESSED XDA OBJECT                                        *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Upgrade to V9.7 FP1                                          *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC62926
+   
+   
+ * REPORTED COMPONENT NAME
+   DB2 FOR LUW
+   
+   
+ * REPORTED COMPONENT ID
+   DB2FORLUW
+   
+   
+ * REPORTED RELEASE
+   970
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-09-01
+   
+   
+ * CLOSED DATE
+   2010-02-04
+   
+   
+ * LAST MODIFIED DATE
+   2010-02-04
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R970 PSN
+   UP

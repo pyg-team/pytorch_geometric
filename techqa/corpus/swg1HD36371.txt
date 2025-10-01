@@ -1,0 +1,159 @@
+Title: IBM HD36371: POSSIBLE TO RUN SMARTEAM WITHOUT LICENCE AFTER HF TO - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  if the user continues to work a new license is not
+   taken !!!
+   PMR 27236,110,846 Hotfix for R12 SP8 for cust
+   was installed in November.
+   I don't know if this HF has something to do with the
+   current problem but I mentioned that we have
+   installed it for your information.
+   Additionally: The problem does not affect the
+   users, but as licence usage is being measured and
+   result is the base for charging the divisions using
+   SmarTeam, it is impossible to charge correctly.
+   The problem is considered very severe at cust
+   (economical issue).
+   .
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Possible to run SmarTeam without licence after HF to
+   HD26841 [http://www-01.ibm.com/support/docview.wss?uid=swg1HD26841] HAL LUM problem is applied Hotfix request for
+   R12SP10
+   if the user continues to work a new license is not
+   taken !!!
+   PMR 27236,110,846 Hotfix for R12 SP8 for Volvo
+   was installed in November.
+   I don't know if this HF has something to do with the
+   current problem but I mentioned that we have
+   installed it for your information.
+   Additionally: The problem does not affect the
+   users, but as licence usage is being measured and
+   result is the base for charging the divisions using
+   SmarTeam, it is impossible to charge correctly.
+   The problem is considered very severe at Volvo
+   (economical issue).
+   .
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  THIS PROBLEM WILL BE FIXED ON SMARTEAM
+   VERSION 5 RELEASE 17 GA level.
+   NOTE THAT THIS PROBLEM WILL ALSO BE FIXED
+   ON V5R14SP10.
+   also
+   NOTE THAT THIS PROBLEM WILL ALSO BE FIXED
+   ON V5R16SP06.
+   also
+   NOTE THAT THIS PROBLEM WILL ALSO BE FIXED
+   ON V5R14SP09 HF3.
+   .
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   HD36371
+   
+   
+ * REPORTED COMPONENT NAME
+   SMARTEAM NT>XP
+   
+   
+ * REPORTED COMPONENT ID
+   569199970
+   
+   
+ * REPORTED RELEASE
+   512
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2005-03-10
+   
+   
+ * CLOSED DATE
+   2006-07-13
+   
+   
+ * LAST MODIFIED DATE
+   2009-06-24
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   SMARTEAM NT>XP
+   
+   
+ * FIXED COMPONENT ID
+   569199970
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R514 PSN SP51408
+   UP05/12/16 N 1000
+   
+   
+ * R515 PSN
+   UP
+   
+   
+ * R516 PSN
+   UP

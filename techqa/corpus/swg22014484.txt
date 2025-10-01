@@ -1,0 +1,31 @@
+Title: IBM Where are my authorization codes for IBM SPSS VizDesigner? - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Where are my authorization codes for IBM SPSS VizDesigner? 
+
+RESOLVING THE PROBLEM
+IBM SPSS VizDesigner is not supported by IBM SPSS Technical Support. Please see the following link for IBM's policy on the support life cycle. 
+
+https://www-01.ibm.com/software/support/lifecycle/lc-policy.html [https://www-01.ibm.com/software/support/lifecycle/lc-policy.html] 
+
+ 
+
+You can visit the IBM Support forum and post questions at this location. 
+
+
+https://developer.ibm.com/predictiveanalytics/forums/ [https://developer.ibm.com/predictiveanalytics/forums/]
+
+
+If this question is related to your authorization code or licensing, we have provided untethered authorization codes for your use below 
+
+Viz Designer 
+
+Authorized: 5e5b04c2348a66e7e79e 
+
+Concurrent: 5011162e3cf0e4a1b5fd 
+
+
+Please note. We do not distribute installation files for these products any longer. The customer must have their own installation in order to use the products.

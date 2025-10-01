@@ -1,0 +1,58 @@
+Title: IBM Security Bulletin: Security vulnerabilities have been identified in multiple components shipped with IBM Intelligent Operations Center (May 2015) - United States
+
+Text:
+ SECURITY BULLETIN
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ Language Independent 
+
+SUMMARY
+ Multiple components are shipped with IBM Intelligent Operations Center. Information about security vulnerabilities that affect some components has been published in security bulletins. 
+
+VULNERABILITY DETAILS
+Consult the following security bulletins for vulnerability details: 
+
+ * Vulnerability in Dojo Toolkit affects WebSphere Application Server (CVE-2014-8917) [http://www.ibm.com/support/docview.wss?uid=swg21697284] 
+ * Fixes are available for Security Vulnerabilities in Dojo that affect IBM WebSphere Portal (CVE-2014-8917) [http://www.ibm.com/support/docview.wss?uid=swg21694652] 
+ * Vulnerability with RSA Export Keys may affect IBM WebSphere Application Server (CVE-2015-0138) [http://www.ibm.com/support/docview.wss?uid=swg21698613] 
+ * Vulnerability in RC4 stream cipher affects WebSphere Application Server (CVE-2015-2808) [http://www.ibm.com/support/docview.wss?uid=swg21701503] 
+ * Vulnerability in RC4 stream cipher affects IBM WebSphere Portal (CVE-2015-2808) [http://www.ibm.com/support/docview.wss?uid=swg21882563] 
+ * IBM Websphere Message Broker and IBM Integration Bus are affected by SSLv3 Vulnerability (CVE-2014-3566 and CVE-ID: CVE-2014-3568) [http://www.ibm.com/support/docview.wss?uid=swg21687678] 
+ * IBM Integration Bus and WebSphere Message Broker: Multiple security vulnerabilities in IBM JREs 6 & 7 [http://www.ibm.com/support/docview.wss?uid=swg21690741] 
+ * Multiple vulnerabilities in IBM Java SDK affect IBM Notes and Domino [http://www.ibm.com/support/docview.wss?uid=swg21692733] 
+ * Multiple Vulnerabilities in the IBM Java SDK affect IBM Notes and Domino (Oracle January 2015 Critical Patch Update) [http://www.ibm.com/support/docview.wss?uid=swg21698222] 
+ * Fixes for Multiple Security Vulnerabilities in IBM Security Identity Manager available (CVE-2014-6110, CVE-2014-6098, CVE-2014-6096, CVE-2014,6105, CVE-2014-6107, CVE-2014-6095) [http://www.ibm.com/support/docview.wss?uid=swg21689779] 
+ * Vulnerabilities in GSKit affect IBM Tivoli/Security Directory Integrator (CVE-2015-0138) [http://www.ibm.com/support/docview.wss?uid=swg21701302] 
+ * IBM Tivoli/Security Directory Integrator can be affected by a vulnerability in the current IBM SDK for Java (CVE-2014-3566) [https://www.ibm.com/support/docview.wss?uid=swg21690583]
+
+AFFECTED PRODUCTS AND VERSIONS
+ 
+
+Affected Product and Version(s) Product and Version shipped as a component IBM Intelligent Operations Center version 1.6.0.3  * IBM WebSphere Portal CF15 
+ * IBM WebSphere Application Server 8 fixes (PI33012 + PI36563 + PI38186) 
+ * IBM WebSphere Application Server 7 fixes (PI36563 + PI37013) + UpdateInstaller 7.0.0.37 
+ * IBM WebSphere Web 2.0 and Mobile Feature Pack Fix - PI34238 (IBM WebSphere Application Server Version 7 and IBM WebSphere Application Server Version 8) 
+ * IBM Message Broker 8.0.0.5 + IT06830 + IT07249 
+ * Lotus Domino 8.5.3 Fix Pack 6 + Interim Fix 6 
+ * Lotus Domino - Java JRE Version 6 Service Refresh 16 Fix Pack 3 
+ * IBM Security Identity Manager 6 Fix Pack 5 
+ * Tivoli Directory Integrator 7.1.1 Fix Pack 4 + LA0023 (POODLE) + LA0025 (FREAK) 
+ * IBM Java v7r1 SR2-FP10 
+ * SPSS Modeler 15 - IBM JRE 6.0 Service Refresh 16 Fix Pack 3 iFix 
+ * HTTP Server (configuration update to address the "Bar Mitzvah Attack" issue)
+
+REMEDIATION/FIXES
+Download and install IBM Intelligent Operations Center version 1.6.0.3 interim fix PO04697 [http://www.ibm.com/support/docview.wss?uid=swg24039899]. 
+Security fixes are not cumulative. You must install all earlier security fixes in addition to the current fix.
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v2 Guide [http://www.first.org/cvss/v2/guide] 
+On-line Calculator v2 [http://nvd.nist.gov/CVSS-v2-Calculator] RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/PSIRT] *The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.

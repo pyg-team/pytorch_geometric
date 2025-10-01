@@ -1,0 +1,168 @@
+Title: IBM UrbanCode Deploy 6.2 - United States
+
+Text:
+service release; modpack; mod pack; upgrade; refresh; refresh pack; download; update; install; installation DOWNLOADABLE FILES
+
+ABSTRACT
+ IBM UrbanCode Deploy 6.2 has been made generally available and contains new features as well as fixes for client-reported and internally found defects. 
+
+DOWNLOAD DESCRIPTION
+ 
+
+Table of Contents Sections Description  * What's new
+
+The Change history section provides an overview on what is new in this release with a description of any new functions or enhancements when applicable.
+
+ * Impact assessment
+
+The How critical is this fix section provides information related to the impact of this release to allow you to assess how your environment may be affected.
+
+ * Prerequisites
+
+The Prerequisites section provides important information to review prior to the installation of this release.
+
+ * Download package
+
+The Download package section provides the direct link to obtain the download package for installation in your environment.
+
+ * Installation instructions
+
+The Installation instructions section provides the installation instructions necessary to apply this release into your environment.
+
+ * Known problems
+
+The Known side effects section contains a link to the known problems (open defects) identified at the time of this release.
+
+Supporting Documentation Document Description  * Detailed System Requirements [http://www.ibm.com/support/docview.wss?uid=swg27038801]
+
+Click to review the detailed system requirements information for a complete list of hardware requirements, supported operating systems, prerequisites and optional supported software, with component-level details and operating system restrictions.
+
+ * IBM Knowledge Center [http://www.ibm.com/support/knowledgecenter/SS4GSP/welcome]
+
+IBM Knowledge Center provides an entry point to product documentation. You can view, browse, and search online information related to the product.
+
+ * Fix List [http://www.ibm.com/support/docview.wss?uid=swg27038759]
+
+Click to review a complete list of the defects (APARs) resolved in this release including a list of resolved defects for the entire version family.
+
+ * Deprecated or removed functions [http://www.ibm.com/support/docview.wss?uid=swg27046773]
+
+Click to review a list of deprecated functions in IBM UrbanCode Deploy.
+
+ * UrbanCode Deploy [https://developer.ibm.com/urbancode/products/urbancode-deploy/]
+
+Click to visit the IBM UrbanCode Deploy: Application Deployment Automation site on IBM developerWorks.
+
+PREREQUISITES
+ 
+
+Review the Plan & Prepare [https://developer.ibm.com/urbancode/products/urbancode-deploy/whats-new/6-2-0-0/getting-started/] section on the Getting Started tab on IBM developerWorks. Back to top
+
+INSTALLATION INSTRUCTIONS
+ 
+
+Review the Install the server [https://developer.ibm.com/urbancode/products/urbancode-deploy/whats-new/6-2-0-0/getting-started/] section on the Getting Started tab on IBM developerWorks. Direct link provided to the Installing servers and agents [http://www.ibm.com/support/knowledgecenter/SS4GSP_6.2.0/com.ibm.udeploy.install.doc/topics/install_ch.html] topic in the IBM Knowledge Center.
+
+Back to top
+
+DOWNLOAD PACKAGE
+ 
+
+Download options Access type Description  * Passport Advantage [https://www.ibm.com/software/howtobuy/softwareandservices/passportadvantage]
+
+Passport Advantage and Passport Advantage Express clients are required to sign in to download the software package.
+
+If you are entitled for IBM UrbanCode Deploy and need to download your software from Passport Advantage, perform the following steps: 
+
+ 1. Logon to Passport Advantage [https://www.ibm.com/software/howtobuy/softwareandservices/passportadvantage].
+ 2. Select Software Downloads and Media Access.
+ 3. Select the Download Finder.
+ 4. Select Find by description or part number.
+ 5. Select the Product Description and All radio buttons and enter IBM UrbanCode Deploy in the description field. 
+ 6. Select Continue.
+ 7. Expand the eAssemblies and you will see your entitled software.
+
+ * Fix Central
+
+Fix Central provides fixes and updates for your system's software, hardware, and operating system.
+
+Back to top
+
+HOW CRITICAL IS THIS FIX?
+ 
+
+Impact Assessment Impact Description Recommended This is a service release. It contains new features as well as fixes for client-reported and internally found defects.
+
+Test Results
+
+Close [x]
+
+DEFINITIONS
+Regression: An error in the Maintenance Delivery Vehicle [http://www.ibm.com/support/docview.wss?uid=swg27008656] (MDV) that produces incorrect or unexpected behavior causing a supported feature to stop functioning as designed. 
+This includes: 
+
+ * Coding errors that cause a regression
+ * Documentation or packaging problems that cause a regression
+ * Errors reported in a new function delivered in a MDV that cause a regression
+
+Incomplete: An error in the MDV has not regressed, but does not work as designed. 
+This includes: 
+
+ * Fixed APARs which did not solve the original problem but did not break anything new
+ * APARs reporting documentation errors, such as readme errors, that cause problems applying an MDV but do not lead to a regression
+
+
+
+
+Notes:  * Regression and incomplete APARs are considered fix-in-error or MDV-in-error
+ * Definitions above apply only to valid APARs that result in product fixes (APARs returned as working-as-designed are not assessed for being fix-in-error)
+ * Issues in major releases due to new functionality do not apply in this definition
+
+There are no known regressions to report.
+
+Back to top
+
+PROBLEMS SOLVED
+ 
+
+Review the Fixes in this release [https://developer.ibm.com/urbancode/products/urbancode-deploy/whats-new/6-2-0-0/release-notes/] section of the Release Notes tab on IBM developerWorks. Click the Fix List link in the table of contents above to review the cumulative list of the problems solved in the product family.
+
+KNOWN SIDE EFFECTS
+ 
+
+Review the Known Problems and Workarounds [https://developer.ibm.com/urbancode/products/urbancode-deploy/whats-new/6-2-0-0/release-notes/] section of the Release Notes tab on IBM developerWorks. KNOWN ISSUES
+
+
+ * Cannot create or save blueprints in the IBM UrbanCode Deploy Blueprint Designer [http://www.ibm.com/support/docview.wss?uid=swg21969854]
+ * Display of blueprint names in the IBM UrbanCode Deploy Blueprint Designer [http://www.ibm.com/support/docview.wss?uid=swg21969853]
+ * Resource templates that are used in an application template environment template cannot be imported from cloud connections [http://www.ibm.com/support/docview.wss?uid=swg21970039]
+ * Cannot provision to Softlayer in IBM UrbanCode Deploy [http://www.ibm.com/support/docview.wss?uid=swg21969805]
+
+OPEN DEFECTS
+Review the following list of open defects for IBM UrbanCode Deploy [http://www-947.ibm.com/support/entry/portal/search_results/rational/ibm_urbancode_deploy?sn=spe&q=%22APAR%20status%22%20OPEN&prod=M567705J24621V45&filter=language:en&productContext=-39824909#q%3D%22APAR%20status%22%20OPEN%26filter%3DDC.Type%3ACT748%2Blanguage%3Aen%26prod%3DM567705J24621V45] on the IBM Support Portal.
+
+Review technote 1461170: Open APARs for IBM products available on the Web [http://www.ibm.com/support/docview.wss?uid=swg21461170] for information on how to configure your MyNotifications subscription account and subscribe to the APARs you are interested in following.
+
+Back to top
+
+CHANGE HISTORY
+ 
+
+Review the What's new [https://developer.ibm.com/urbancode/products/urbancode-deploy/whats-new/6-2-0-0/] tab on IBM developerWorks. Back to top
+
+Click the link in the Download Options column:
+
+Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options UrbanCode Deploy downloads 27 Oct 2015 English 1 HTTP [http://www.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~Rational&product=ibm/Rational/IBM+UrbanCode+Deploy&release=All&platform=All&function=all] 
+TECHNICAL SUPPORT
+ 
+
+Follow IBM Cloud Support on Twitter [https://twitter.com/ibm_cts] | devWorks Blog [https://www.ibm.com/developerworks/community/blogs/ibmcloudsupport/?lang=en] Review the IBM Cloud Support BLOG article Enhance your IBM Cloud Support Experience [https://www.ibm.com/developerworks/community/blogs/ibmcloudsupport/entry/ibm_cloud_support_resources] for a complete list of the different support offerings along with a brief description on the best way to use each resource to improve your experience using IBM Cloud products and services.
+
+Forums [https://www.ibm.com/developerworks/community/blogs/ibmcloudsupport/entry/ibm_cloud_support_resources?lang=en#FORUM] | Communities [https://www.ibm.com/developerworks/community/blogs/ibmcloudsupport/entry/ibm_cloud_support_resources?lang=en#COM] | Documentation [https://www.ibm.com/developerworks/community/blogs/ibmcloudsupport/entry/ibm_cloud_support_resources?lang=en#DOC] | Contacting Support [https://www.ibm.com/developerworks/community/blogs/ibmcloudsupport/entry/ibm_cloud_support_resources?lang=en#SPT] | Helpful Hints [https://www.ibm.com/developerworks/community/blogs/ibmcloudsupport/entry/ibm_cloud_support_resources?lang=en#HELP]
+
+Back to top
+
+
+
+ [/support/docview.wss?uid=swg24040549&aid=1]Problems (APARS) fixed [/support/docview.wss?uid=swg24040549&aid=2]Problems (APARS) fixed
+PI48403, PI49168, PI46038, PI37987, PI45772, PI45099, PI47209, PI45398, PI19546, PI47033, PI43904, PI46169, PI45312, PI36521, PI42574, PI47280, PI41860, PI47837, PI20708, PI49325, PI45938, PI48810, PI48434, PI46272, PI36431, PI47579, PI47021, PI40597, PI46073, PI42227, PI36696, PI33748, PI51309, PI49468, PI50510, PI49816

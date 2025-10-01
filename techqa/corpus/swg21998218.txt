@@ -1,0 +1,28 @@
+Title: IBM Windows Security Prompt when using IBM Cognos Analysis for Excel 10.2.2 FP6 - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ After upgrading to TM1 10.2.2 FP6 a Windows Security Prompt to select certificates is displayed when using IBM CAfE 10.2.2 FP6 against a SSL secured TM1 Applications Web. 
+
+SYMPTOM
+Windows Security Prompt in IBM CAfE 
+
+[/support/docview.wss?uid=swg21998218&aid=1] [/support/docview.wss?uid=swg21998218&aid=1]
+
+
+CAUSE
+IBM CAfE 10.2.2 FP6 uses TLS 1.2 to establish a secured connection to the TM1 Application Server. When the TM1 Application Server configuration is not compatible with TLS 1.2, this security prompt is present.
+
+
+ENVIRONMENT
+IBM CAfE 10.2.2 FP6
+
+
+
+RESOLVING THE PROBLEM
+There can be multiple configurations leading to this scenario, all in relation to the SSL configuration not allowing TLS 1.2 - possible examples below: 
+
+ * the Signature Algorithm of the certificates is not compatible with TLS 1.2 
+ * SSL configuration has been performed by adjusting the server.xml, not allowing TLS 1.2 as sslProtocol (ie. sslProtocol="SSLv3,TLSv1,TLSv1.1")

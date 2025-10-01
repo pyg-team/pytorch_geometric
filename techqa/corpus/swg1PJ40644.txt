@@ -1,0 +1,160 @@
+Title: IBM PJ40644: FIXED CONTENT DEVICE CONTENT MIGRATION FAILS TO DELETE CONTENT FILES WITH THE NEW NAMING CONVENTION FOR FOLDER DISTRIBUTION - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Fixed content device content migration fails to delete files
+   that use the new content file naming convention.
+   
+   Content Engine Fix Pack 5.1.0.1-P8CE-FP001 implemented a
+   new format for naming documents within the storage area.
+   The naming change was made to address a problem with
+   storage distribution of files across the storage area folder
+   hierarchy.
+   
+   A problem occurs when during the FINALIZE operations, where
+   the system first moves files from inbound to content and then
+   copies from content to the Fixed  Content Device (FCD). After
+   the copy to the FCD is successul, the system attempts to the
+   delete content but this fails.  The content files will
+   accumulate
+   since there is no abandoned cleanup processing on the content
+   folder.
+   
+   The accumulation of files causes the risk that the system could
+   run out of disk space causing content processing to halt.
+   
+   There is no workaround for this problem since there is no way
+   to tell if a file is "stale" and eligible to be removed.  For
+   instance
+   in a production environment reservation objects could persist
+   for
+   many days and thus the date/time stamp on the file is not a good
+   indicator of whether items have successfully migrated.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * Customers using Content Engine 5.1.0.1-P8CE-FP001 and using  *
+   * a fixed content device                                       *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * Content files are left behind in the fixed storage area      *
+   * staging directory after they have already been migrated to   *
+   * the fixed content device.  Normally these files are deleted  *
+   * after a successful migration to the fixed content device.    *
+   * If the fixed storage area staging directory is not sized to  *
+   * handle this additional content, it can eventually lead to a  *
+   * disk full error, preventing further content from being added *
+   * to the fixed content device.                                 *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Upgrade to Content Engine Fix Pack 5.1.0.2-P8CE-FP002 or     *
+   * higher.                                                      *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Content Engine Fix Pack 5.1.0.2-P8CE-FP002 and higher will
+   resolve this problem by deleting the content files in the
+   staging directory after they have successfully migrated to the
+   fixed content device.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PJ40644
+   
+   
+ * REPORTED COMPONENT NAME
+   CONTENT SEARCH
+   
+   
+ * REPORTED COMPONENT ID
+   5724R8109
+   
+   
+ * REPORTED RELEASE
+   510
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-10-04
+   
+   
+ * CLOSED DATE
+   2013-01-03
+   
+   
+ * LAST MODIFIED DATE
+   2013-01-03
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    PJ40645 [http://www-01.ibm.com/support/docview.wss?uid=swg1PJ40645]
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CONTENT SEARCH
+   
+   
+ * FIXED COMPONENT ID
+   5724R8109
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R510 PSY
+   UP

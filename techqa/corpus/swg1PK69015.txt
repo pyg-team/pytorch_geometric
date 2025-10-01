@@ -1,0 +1,280 @@
+Title: IBM PK69015: IA EXPLORER CONNECTION FAILED: NO IA TABLES FOUND FOR DATABASE - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  You installed the IA Explorer on a Windows 2003 server machine
+   and your individual users access the IA Explorer remotely.
+   Users without DB2 SYSADM authority on z/OS receive the following
+   message text in the Explorer when connecting to the database:
+   .
+   'Connection failed: No IA tables found for database yyyyyyyy'
+   .
+   where yyyyyyyy is the database name.
+   .
+   If you click the Help->About IA Explorer and then click the
+   'Configuration Details'button and then click the
+   'View Error Log' button, you will see the following exception
+   message at the end of the log:
+   .
+   !ENTRY com.ibm.cics.ia.runtime 4 4 yyyy-mm-dd hh:mm:ss.sss
+   !MESSAGE Unable to execute SELECT DISTINCT OBJECT FROM
+   CIU.CIU_RESOURCE WHERE TYPE = 'TRANSID' ORDER BY OBJECT
+   !STACK 0
+   com.ibm.cics.ia.runtime.ConnectionException: Connection failed:
+   No IA tables found for database yyyyyyyy
+    at com.ibm.cics.ia.runtime.Host.getDB2Connection(Host.java:223)
+    at com.ibm.cics.ia.runtime.Host.runQuery(Host.java:296)
+    at
+   com.ibm.cics.ia.commands.SQLCommand.ensureResultSetExists(SQLCom
+   mand.java:73)
+    at
+   com.ibm.cics.ia.commands.SQLCommand$1.run(SQLCommand.java:184)
+    at
+   com.ibm.cics.ia.commands.SQLCommand.start(SQLCommand.java:215)
+    at
+   com.ibm.cics.ia.ui.ResourceExplorer$5.run(ResourceExplorer.java:
+   229)
+    at org.eclipse.core.internal.jobs.Worker.run(Worker.java:55)
+   .
+   IA Explorer Host.java runtime issues a query using the
+   SYSIBM.SYSTABLES catalog table.  If this results in an
+   SQLException, the return is an empty schema and the resultant
+   No IA tables found message.  If the IA Explorer config.ini file
+   is edited to include the following property file setting, a
+   jdbc driver trace will provide additional information on the
+   failure.
+   .
+   db2.jcc.override.traceFile=myjdbc.trace
+   .
+   In this instance, the jdbc driver trace file had the following:
+   .
+   DB2 SQLCA from server
+   SqlCode = -551
+   SqlErrd = { -210, 0, 0, -1, 0, 0 }
+   SqlErrmc = userid;EXECUTE PACKAGE;NULLID.SYSLH200
+   SqlErrmcTokens = { userid, EXECUTE PACKAGE, NULLID.SYSLH200 }
+   SqlErrp = DSNXEAAL
+   SqlState = 42501
+   SqlWarn =
+   SQL state = 42501
+   Error code = -551
+   Tokens = userid;EXECUTE PACKAGE;NULLID.SYSLH200
+   DB2 SQL error: SQLCODE: -551, SQLSTATE: 42501, SQLERRMC:
+   userid;EXECUTE
+   PACKAGE;NULLID.SYSLH200
+   .
+   where userid is the userid that receives the 'No IA Tables'
+   message.
+   .
+   The tokens field indicates the userid did not have EXECUTE
+   authority to the jdbc package NULLID.SYSLH200.
+   .
+   Additional Symptom(s) Search Keyword(s):
+   IAExplorer SQL SELECT DB2 CIU CIU_ SYSIBM SYSTABLES
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Have the DB2 Administrator GRANT EXECUTE access to the JDBC
+   Driver packages as well as SELECT access to the SYSIBM.SYSTABLES
+   catalog tables.
+   .
+   This will only solve problems where the DB2 JDBC driver packages
+   have already been bound to the z/OS DB2 database.
+   KIXREVPAA
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All CICS IA V2.2 users who are using the IA  *
+   *                 Explorer interface.                          *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: The IA Explorer connection failed with  *
+   *                      the following message:                  *
+   *                                                              *
+   *                      "Connection failed: No IA tables found  *
+   *                      for database yyyyyyyy".                 *
+   *                                                              *
+   *                      where yyyyyyyy is the database name.    *
+   *                                                              *
+   *                      Other symptoms can include the          *
+   *                      following SQL return codes:             *
+   *                      -552 , -805                             *
+   *                                                              *
+   ****************************************************************
+   * RECOMMENDATION: Review the Temporary Fix section.            *
+   ****************************************************************
+   If you are receiving -551 errors or the message that indicates
+   that there are no IA tables then this can be caused by the
+   user not having EXECUTE authority to the JDBC package
+   NULLID.SYSLH200. There may also need other packages that you
+   require access to. The solution to this is to GRANT EXECUTE
+   authority to the JDBC driver package.
+   
+   The -805 errors can be caused if the DB2 Universal Driver (JCC)
+   has not been bound in to the z/OS DB2 database. You will need
+   to bind the DB2 Universal Driver (JCC) in to DB2.
+   
+   A solution to this problem is described in the Temporary Fix
+   section.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+ *  If you are receiving -551 errors or the message that indicates
+   that there are no IA tables then this can be caused by the
+   user not having EXECUTE authority to the JDBC package
+   NULLID.SYSLH200. There may also need other packages that you
+   require access to. The solution to this is to GRANT EXECUTE
+   authority to the JDBC driver package. See the JCL below.
+   
+   If you are receiving -805 errors then these can be caused if the
+   DB2 Universal Driver (JCC) has not been bound in the z/OS
+   database. You will need to bind the DB2 Universal Driver (JCC)
+   in to the required DB2 database.
+   This can be done in 2 ways:
+   
+   1.
+   Setup the DB2 Universal Driver (JCC) environment as per the
+   README that is supplied with the DB2 Universal Driver (JCC)
+   HFS. Then bind the driver from USS using:
+   java com.ibm.db2.jcc.DB2Binder
+        -url jdbc:db2://server_name:port_number/location_name
+        -user YOUR_USERID_IN_CAPS
+        -password YOUR_PASSWORD_IN_CAPS
+        -action repl -size 20
+   
+   2.
+   Extract the drivers from the CICSIA directory.
+   In the ECLIPSE directory of the IA Explorer install and locate
+   the PLUGINS directory. In the PLUGINS directory locate the file
+   com.ibm.cics.ia.db2.runtime_2.2.0.jar. Copy this to a different
+   location on your hard drive, then use a too to extract the
+   contents. Locate the file DB2JCC.JAR in the contents of the
+   extracted folder.
+   Set up the USS environment variables to include the extracted
+   DB2 Universal Driver (JCC) and then bind the driver from USS
+   using:
+        -url jdbc:db2://server_name:port_number/location_name
+        -user YOUR_USERID_IN_CAPS
+        -password YOUR_PASSWORD_IN_CAPS
+        -action repl -size 20
+   
+   Then for CICS users we create a plan called DSNJCC and bind
+   the packages etc into it using the following sample JCL:
+   
+   //JOBLIB   DD  DISP=SHR,DSN=SYS2.DB2.SDSNLOAD
+   //BINDJDBC EXEC PGM=IKJEFT01,DYNAMNBR=20
+   //DBRMLIB  DD  DISP=SHR,DSN=DSN.DBRMLIB.DATA
+   //SYSTSPRT DD  SYSOUT=*
+   //SYSPRINT DD  SYSOUT=*
+   //SYSUDUMP DD  SYSOUT=*
+   //SYSTSIN  DD  *
+    DSN SYSTEM(DB2)
+    BIND PLAN(DSNJCC) -
+         PKLIST(      -
+         NULLID.*, SQLJ1.* )
+    RUN  PROGRAM(DSNTEP2) PLAN(DSNTEP2) -
+         LIB('DSN.RUNLIB.LOAD')
+    END
+   //SYSIN    DD  *
+    GRANT EXECUTE ON PLAN DSNJCC TO PUBLIC ;
+   /*
+   
+   
+    
+   
+   
+
+COMMENTS
+ *  This will be fixed in the next release.
+   See Temporary Fix.
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK69015
+   
+   
+ * REPORTED COMPONENT NAME
+   CICS INTER ANAL
+   
+   
+ * REPORTED COMPONENT ID
+   5697J2300
+   
+   
+ * REPORTED RELEASE
+   220
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2008-07-14
+   
+   
+ * CLOSED DATE
+   2008-09-16
+   
+   
+ * LAST MODIFIED DATE
+   2008-09-16
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R220 PSN
+   UP

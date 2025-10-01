@@ -1,0 +1,145 @@
+Title: IBM IV76003: ITCAM FOR SOA KD4AGENT CAN FAIL TO REPORT ALL DATAPOWER FAULTS TO THE FAULT LOG TABLE - United States
+
+Text:
+  READMES ARE AVAILABLE
+IBM Tivoli Composite Application Manager for SOA 7.2 Interim Fix 7 README 7.2.0.1-TIV-ITCAMSOA-IF0007 [http://www-01.ibm.com/support/docview.wss?uid=isg400002451]
+IBM Tivoli Composite Application Manager for SOA 7.2 Interim Fix 9 README 7.2.0.1-TIV-ITCAMSOA-IF0009 [http://www-01.ibm.com/support/docview.wss?uid=isg400002627]
+IBM Tivoli Composite Application Manager for SOA 7.2 Interim Fix 12 README 7.2.0.1-TIV-ITCAMSOA-IF0012 [http://www-01.ibm.com/support/docview.wss?uid=isg400003852]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Information supplied to kd4agent from DataPower Data Collector
+   identifies fault records. Service Inventory contains a count of
+   fault records ( Services_Inventory_610.Fault_Count ) and the
+   Fault Log contains individual fault records (
+   Fault_Log_Table_610 ). It has been observed that there are
+   missing individual fault records from the Fault Log, which is
+   caused by the kd4agent removing them prior to historical
+   collection. The records are removed to keep the in-memory count
+   within the configured kd4.ira.maxMetricsRecords limit.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: Users of the Fault Log (Fault_Log_Table_610).
+   ****************************************************************
+   * PROBLEM DESCRIPTION: When the number of records in memory
+   * exceed the configured kd4.ira.maxMetricsRecords limit the
+   * oldest records are removed. If these records are faults they
+   * are also removed even if they have not been added to the
+   * history. This is not ideal.
+   *
+   * Interim Fix 7 fixes this, by prioritizing faults contained in
+   * memory that haven't yet been added to the history. Faults
+   * that have been collected in the historical take sample may be
+   * deleted. Faults that haven't been added to history may be
+   * deleted if and only if all the records contained in memory
+   * are faults that haven't been added to history.
+   ****************************************************************
+   * RECOMMENDATION: Apply IFix 7 when available.
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Apply the IFix when it is available.
+   
+   The fix for this APAR is contained in the following maintenance
+   packages:
+   | interim fix | 7.2.0.1-TIV-ITCAMSOA-IF0007
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV76003
+   
+   
+ * REPORTED COMPONENT NAME
+   ITCAM FOR SOA-D
+   
+   
+ * REPORTED COMPONENT ID
+   5724SOA00
+   
+   
+ * REPORTED RELEASE
+   720
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2015-08-17
+   
+   
+ * CLOSED DATE
+   2015-11-12
+   
+   
+ * LAST MODIFIED DATE
+   2015-11-12
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ITCAM FOR SOA-D
+   
+   
+ * FIXED COMPONENT ID
+   5724SOA00
+   
+   
+
+APPLICABLE COMPONENT LEVELS

@@ -1,0 +1,155 @@
+Title: IBM MustGather: Enterprise JavaBeans, Workload Management  (WLM) problems with WebSphere Application Server - United States
+
+Text:
+MustGatherDocument; mustgather; must gather; wlm; ejb; autopd TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Collecting data for problems with the IBM WebSphere Application Server enterprise bean, workload management (WLM) component. Gathering this MustGather information before calling IBM support will help you understand the problem and save time analyzing the data. 
+
+RESOLVING THE PROBLEM
+
+
+TAB NAVIGATION
+ * Learning more [http://www.ibm.com/support/docview.wss?uid=swg21993597]
+ * Troubleshooting [http://www.ibm.com/support/docview.wss?uid=swg21993688]
+ * Collecting data- selected tab,
+
+Collecting data for problems with the IBM® WebSphere® Application Server enterprise bean, workload management (WLM) component. Gathering this MustGather information before calling IBM support will help you understand the problem and save time analyzing the data. 
+
+COLLECTING DATA MANUALLY
+
+Enterprise JavaBeans WLM specific MustGather information
+
+ 1. Run the collector tool to gather all configuration files from your Deployment Manager profile
+    
+    Collector output from the Deployment Manager profile is very important for the initial investigation because most WLM problems are related to configuration issues. 
+    
+    You must run collector on the node that hosts the Dmgr profile so that the configuration for the entire cell is collected. 
+    
+    1. To run the collector script please create a temp directory on your operating system
+    
+    2. Enter the /temp directory
+    
+    3. Run the collector-script:
+    
+    For Linux/Unix use command:
+    /temp>./<DMGR-profile-root>/bin/collector.sh
+    
+    For example:
+    /temp> ./opt/IBM/WebSphere/AppServers/profiles/Dmgr/bin/collector.sh
+    
+    For Windows use command:
+    C:\temp> C:\<DMGR-profile-root>\bin\collector.bat
+    
+    For example:
+    C:\temp> C:\IBM\Websphere\AppServers\profiles\Dmgr\bin\collector.bat 
+    
+    4. The command will create a jar-file in the temp directory. Please send us the output jar file. 
+    
+    If you need further assistance with the collector-tool, please read:
+    Running the collector tool [https://www.ibm.com/support/knowledgecenter/SSEQTP_8.5.5/com.ibm.websphere.nd.doc/ae/ttrb_runct.html] 
+    
+    
+    
+ 2. Enterprise JavaBeans WLM Server trace:
+    
+    Enable and collect Application Server traces with the trace specification.
+    
+    For version 7.0, 8.0, 8.5 and 9:
+    
+    WLM*=all:ORBRas=all
+    
+    If Object Request Broker (ORB) communication trace is required please check detailed instructions in document:
+    MustGather: Object Request Broker (ORB) problems with WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg21157005]
+    (section: Collecting data manually -> Enabling Comm Trace)
+    
+    For detailed instructions on enabling trace, see How to setup a Trace [http://www.ibm.com/support/docview.wss?rs=180&uid=swg21254706].
+    
+    
+ 3. Enterprise JavaBeans WLM Client Trace: 
+    Enable client side WLM, Naming and ORB traces.
+    
+    Use the Enterprise JavaBeans WLM Server trace instructions above if the client is an application server. If the client is a J2EE or a Thin application client, then use the instructions below:
+     * From a Thin application client:
+       In the file install_root\properties\TraceSettings.properties file, replace the trace string with following:
+       
+       WLM*=all:ORBRas=all
+       
+       Start your client program with the following JVM arguments to specify the trace settings:
+       
+       -Dcom.ibm.CORBA.Debug=true 
+       -DtraceSettingsFile=TraceSettings.properties <clientProgram> 
+       
+       
+     * From a J2EE application client using launchclient utility:
+       Start your launchClient with the following trace-option:
+       
+       -Dcom.ibm.CORBA.Debug=true
+       -Dcom.ibm.CORBA.CommTrace=true
+       -CCtrace=WLM*=all:ORBRas=all
+       -CCtraceMode=basic
+       
+       For example:
+       install_root/bin/launchClient.sh <ear_file> -JVMOptions="-Dcom.ibm.CORBA.Debug=true -Dcom.ibm.CORBA.CommTrace=true" -CCtrace=WLM*=all:ORBRas=all-CCtracefile=orbtrace.txt -CCtraceMode=basic
+       
+       For more details, please check document:
+       MustGather: WebSphere Application Server Client problems in 8.5, 8.0, 7.0, 9.0 [http://www-01.ibm.com/support/docview.wss?uid=swg21138435]
+       
+       
+       
+    
+    
+ 4. Collect the following information:
+    
+
+ * collector output from the Deployment Manager profile.
+   filename: host_name-cell_name-node_name-profile_name.jar
+   
+ * all log- and trace-files located in folder:
+   profile_root/logs/server_name/
+   
+ * all ffdc-files located in folder:
+   profile_root/logs/ffdc folder
+   
+   Follow instructions to send diagnostic information to IBM support [http://www.ibm.com/support/docview.wss?rs=180&uid=swg21153852].
+
+ 
+
+ 
+
+For a listing of all technotes, downloads, and educational materials specific to the Workload Management (WLM) component, search the WebSphere Application Server support site [http://www.ibm.com/software/webservers/appserv/was/support/].
+
+Related information [http://www.ibm.com/support/docview.wss?rs=180&uid=swg21153852]
+Submitting information to IBM support [http://www.ibm.com/support/docview.wss?rs=180&uid=swg21153852]
+Steps to getting support for WebSphere Application Server [http://www.ibm.com/developerworks/websphere/support/appserver_support.html]
+MustGather: Read first for WebSphere Application Server [http://www.ibm.com/support/docview.wss?rs=180&uid=swg21145599]
+Troubleshooting guide for WebSphere Application Server [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27005324] 
+EXCHANGING DATA WITH IBM SUPPORT
+To diagnose or identify a problem, it is sometimes necessary to provide Technical Support with data and information from your system. In addition, Technical Support might also need to provide you with tools or utilities to be used in problem determination. You can submit files using one of following methods to help speed problem diagnosis: 
+
+ * IBM Support Assistant (ISA) 
+ * Service Request (SR)
+ * E-mail 
+ * FTP to the Enhanced Customer Data Repository (ECuRep)
+
+
+
+
+Instructions for exchanging information with IBM Support [http://www.ibm.com/support/docview.wss?uid=swg21153852]
+
+READ FIRST AND RELATED MUSTGATHERS
+MustGather: Read first for WebSphere Application Server [http://www.ibm.com/support/docview.wss?uid=swg21145599]
+
+
+
+
+ ORB Problem [http://www.ibm.com/support/docview.wss?uid=swg21157005] 
+
+RELATED INFORMATION
+ Recording your screen to share with IBM Support [https://www.ibm.com/developerworks/community/blogs/IBMElectronicSupport/entry/recording_your_screen_to_share_with_support?lang=en]
+
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Application Servers Runtimes for Java Technology Java SDK

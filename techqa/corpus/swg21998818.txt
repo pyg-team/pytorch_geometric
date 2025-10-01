@@ -1,0 +1,69 @@
+Title: IBM Address field values not getting updated - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ The out of box updateParty transaction works just fine as expected with these tags and produces the correct results. But the out of the box code is not blanking out some
+
+of the fields such as address line 2, address line 3, etc that were passed as blank to the out of the box code. This situation happens when someone moved out from an apartment to a house where the address line 2/3 need to make the apartment number as blank. The out of the box code is keeping the old values along with new address.
+
+
+
+What is the logic by which the out of the box code will understand that the blanked out fields are really change of address and it needed to be blanked (null) in database. Here is what we have tried:
+
+Do not pass the following tags in the request XML for the updateParty transaction, they have a different meaning in XML notation.
+
+<AddressLineTwo></AddressLineTwo> <AddressLineThree></AddressLineThree>
+
+
+
+Pass these tags instead.
+
+<AddressLineTwo/>
+
+<AddressLineThree/>
+
+
+
+However, this gave the same unwanted result. Setps to reprodue the issue in local: 
+
+1. Run addPerson.xml to add party 1 (only one partyaddress) 
+
+"<AddressLineOne>BEVERLY HEALTH CARE</AddressLineOne>
+
+<AddressLineTwo>6735 W BRADLEY RD</AddressLineTwo>" 
+
+Result: a). address 1 (AddressLineOne = BEVERLY HEALTH CARE; AddressLineTwo =6735 W BRADLEY RD ) is created b). partyaddress1 is created
+
+
+
+2. Run updatePerseon.xml with
+
+<AddressLineOne>7 GARDEN DR</AddressLineOne>
+
+
+
+Result: a). Address 2 (AddressLineOne = 7 GARDEN DR; AddressLineTwo =6735 W BRADLEY RD ) was created b). partyaddress 2 is created. c). partyaddress 1 is end of date 
+
+CAUSE
+This behavior is expected and is working as designed. For update transactions, we require usage empty tag if you want to set a field to NULL in database; omitting a tag will result the system to persist the record with the previous value (before image).
+
+ANSWER
+You may create an enhancement request to add on to this feature or subscribe and vote for an existing enhancement request if it meets your needs.
+Link to RFE Community: http://www.ibm.com/developerworks/rfe/ [http://www.ibm.com/developerworks/rfe/] 
+Creating and Managing Enhancement Requests: http://www-01.ibm.com/support/docview.wss?uid=swg21298482 [http://www-01.ibm.com/support/docview.wss?uid=swg21298482] 
+
+
+
+PRODUCT ALIAS/SYNONYM
+ MDM
+MDM AE
+MDM SE
+Master Data Management
+Master Data Management Advanced Edition
+Master Data Management Standard Edition
+MDM Server
+PME
+DWL
+Probabilistic Matching Engine

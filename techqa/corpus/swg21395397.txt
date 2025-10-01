@@ -1,0 +1,56 @@
+Title: IBM Receiving multicast errors in FFDC logs for the nodeagent(s) startup even though configured for TCP (or UDP) only - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Nodeagents are configured to only use TCP(or UDP) for their discovery protocols. Howerver, on startup they are showing multicast errors in the FFDC logs trying to find their servers. While not causing an outage as the nodes do discovery successfully over TCP as well, it may cause concern to customers to see failures on startup. It is also possible that SOAP errors get generated due to the failed connection attempts too which may also be of concern to customers. 
+
+SYMPTOM
+Nodeagents will still work okay but the errors in the FFDC will persist (at startup) until the configuration is changed. 
+
+systemout.log will show something like this...
+
+[time_stamp] 0000000a JMXConnectors W ADMC0051W: Failed 
+to do a multicast-based process discovery; trying MBean discovery 
+instead... 
+
+FFDC log will show something like this...
+
+Stack Dump = java.net.SocketTimeoutException: Receive timed out 
+
+Stack Dump = java.io.IOException: ADMD0003E: The multicast socket cannot be opened to join multicast group: /ff01:0:0:0:0:0:0:1 
+
+Exception = org.omg.CORBA.BAD_OPERATION 
+Source = com.ibm.ws.naming.jndicos.CNContextImpl.isLocal 
+probeid = 3510 
+Stack Dump = org.omg.CORBA.BAD_OPERATION: The delegate has not been set! 
+vmcid: 0x0 minor code: 0 completed: No 
+at org.omg.CORBA.portable.ObjectImpl._get_delegate(ObjectImpl.java:80) 
+
+Source = com.ibm.ws.management.component.JMXConnectors.MulticastVerifier 
+probeid = 959 
+Stack Dump = java.net.SocketException: Invalid argument 
+at java.net.PlainDatagramSocketImpl.join(Native Method) 
+at 
+java.net.PlainDatagramSocketImpl.join(PlainDatagramSocketImpl.java:172) 
+
+Caused by: 
+com.ibm.websphere.management.exception.ConnectorNotAvailableException: 
+com.ibm.websphere.management.exception.ConnectorNotAvailableException: 
+ADMC0016E: The system cannot create a SOAP connector to connect to host 
+YOURSERVERS_HOST.COM at port 8879.
+
+
+CAUSE
+There are still entries in the serverindex.xml for multicast discovery on IPv4, IPv6 or both.
+
+Even though the nodeagents are configured in the console to use only TCP or even UDP and not multicast. If the multicast entries are not disabled and removed from the serverindex.xml then WebSphere will still use those protocols on startup to broadcast for discovery.
+
+
+RESOLVING THE PROBLEM
+If your network has multicast disabled (please consult with your network administrator to confirm) then neither IPv4 or IPv6 multicast discovery protocols need be enabled for WebSphere Application Server. They need to be disabled here... 
+
+ http://publib.boulder.ibm.com/infocenter/wasinfo/v6r1/index.jsp?topic=/com.ibm.websphere.nd.doc/info/ae/ae/tagt_multicast_ipv4_ipv6.html [http://publib.boulder.ibm.com/infocenter/wasinfo/v6r1/index.jsp?topic=/com.ibm.websphere.nd.doc/info/ae/ae/tagt_multicast_ipv4_ipv6.html] 
+
+If you are using IPv4 or IPv6 (but not both) you may still receive this message and should disable the other unused protocol per the link above.

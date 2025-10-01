@@ -1,0 +1,235 @@
+Title: IBM PQ51154: FTP CLIENT INCORRECTLY PARSES COMMAND LINE WHEN IT CONTAINS INTERNAL QUOTES AND SPACES - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When doing a PUT or GET using the client and the foreign file
+   contains internal quotes and spaces, the command gets parsed
+   incorrectly.  An example of this is:
+   put 'my.file' '$$ ID=ELCI01 BID='E TQ FTQ027 PRUEBA''
+   The getCommand function will not parse this into 3 parameters
+   as expected.  It is the quote in BID='E that is parsed
+   incorrectly as the end of the parameter.
+   When this is tried, you get the following message:
+   EZA1542I Usage: PUT localfile <foreignname>
+   .
+   VERIFICATION STEPS:
+   A FTP client trace will show
+   EZA1460I Command:
+   EZA1736I put 'my.file'
+   EZA1736I     '$$ ID=ELCI01 BID='E TQ FTQ027 PRUEBA''
+   PC0395 Input to parCmd is :
+   PC0397 parseCmd: Number of parameters is 6
+   PC0400 parseCmd: parameter 0 is put
+   PC0400 parseCmd: parameter 1 is 'my.file'
+   PC0400 parseCmd: parameter 2 is '$$ ID=ELCI01 BID='E
+   PC0400 parseCmd: parameter 3 is TQ
+   PC0400 parseCmd: parameter 4 is FTQ027
+   PC0400 parseCmd: parameter 5 is PRUEBA''
+   Note that the number of parameters parsed is 6, where there
+   should only be 3.
+   .
+   KEYWORDS:
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All users of the Communications Server       *
+   *                 OS/390 Release 8 and 10 IP, and z/OS         *
+   *                 Version 1 Release 2 IP: FTP Client           *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: When doing a PUT or GET using the       *
+   *                      FTP client and the foreign file         *
+   *                      contains internal quotes and spaces,    *
+   *                      the command is parsed incorrectly.      *
+   *                      An example of this is:                  *
+   *                                                              *
+   *                      put 'my.file'                           *
+   *                      '$$ ID=ELCI01 BID='E TQ FTQ027 PRUEBA'' *
+   *                                                              *
+   *                      The getCommand function will not parse  *
+   *                      this into 3 parameters as expected.     *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   EZAFTPCU, getCommand() is not correctly parsing a file name
+   that contains imbedded quotes and blanks.  It should handle
+   imbedded quotes and blanks if they are enclosed in double
+   quotes.
+   +-------------------------------------------------------------+
+   + Please check our Communications Server for OS/390 homepages +
+   + for common networking tips and fixes.  The URL for these    +
+   + homepages can be found in Informational APAR II11334 [http://www-01.ibm.com/support/docview.wss?uid=isg1II11334].       +
+   +-------------------------------------------------------------+
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  EZAFTPCU, getCommand() has been changed to read the input data
+   delimited by double quotes, and to treat everything between the
+   double quotes as a single parameter.  The double quotes are
+   always stripped off before sending the file name on.
+   
+   In addition, single quote processing has been changed so that
+   input data delimited by single quotes will be treated as one
+   parameter and the single quotes will be stripped if that file
+   name contained any characters that are not valid for MVS data
+   set names.  The quotes are not stripped if it appears that
+   the parameter is a valid MVS data set name.
+   
+   The following manual will be updated:
+   
+   IBM Communications Server
+   IP Diagnosis Guide
+   
+   GC31878201  V1R2
+   SC31852104  V2R10
+   SC31852103  V2R8
+   
+   In the Diagnosing File Transfer Protocol (FTP) Problems; FTP
+   Client; section "Naming Considerations" add the following note:
+   
+   NOTE:
+   1) If an HFS file name contains single quotes,  the name must be
+   enclosed in double quotes.  The double quotes on the outside of
+   the HFS name will always be stripped off prior to the transfer.
+   2) If an HFS file name contains any double quotes, the name must
+   be enclosed in single quotes.  The single quotes on the outside
+   of the HFS name are stripped off,  if the HFS name contains any
+   characters that are not valid for MVS data set names (such as
+   double quotes, blanks etc).  However, the outside single quotes
+   will be left on the name, if it is a valid MVS data set name.
+   This is because our server uses single quotes to signal an
+   MVS data set name.
+   
+   * Cross Reference between External and Internal Names
+   PREFTPCX (EZAFTPCX)  PREFTPCX (EZAFTPCX)  PREFTPCX (EZAFTPCX)
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+ *  &#215;**** PE01/11/06 FIX IN ERROR. SEE APAR PQ54420 [http://www-01.ibm.com/support/docview.wss?uid=isg1PQ54420]  FOR DESCRIPTION
+   &#215;**** PE02/02/05 FIX IN ERROR. SEE APAR PQ54420 [http://www-01.ibm.com/support/docview.wss?uid=isg1PQ54420]  FOR DESCRIPTION
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   PQ51154
+   
+   
+ * REPORTED COMPONENT NAME
+   TCP/IP V3 MVS
+   
+   
+ * REPORTED COMPONENT ID
+   5655HAL00
+   
+   
+ * REPORTED RELEASE
+   380
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2001-08-02
+   
+   
+ * CLOSED DATE
+   2001-10-01
+   
+   
+ * LAST MODIFIED DATE
+   2002-02-05
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UQ58300 UQ58301 UQ58302
+   
+   
+
+MODULES/MACROS
+ *  EZAFTPCU EZAFTPCX
+   
+   
+    
+   
+   
+
+Publications Referenced GC31878201 SC31852104 SC31852103 FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TCP/IP V3 MVS
+   
+   
+ * FIXED COMPONENT ID
+   5655HAL00
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R120 PSY UQ58300 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UQ58300]
+   UP01/10/29 P F110
+   
+   
+ * R380 PSY UQ58301 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UQ58301]
+   UP01/10/29 P F110
+   
+   
+ * R50A PSY UQ58302 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UQ58302]
+   UP01/10/29 P F110
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

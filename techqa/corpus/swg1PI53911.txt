@@ -1,0 +1,155 @@
+Title: IBM PI53911: DOCUMENTATION NEEDS TO INCLUDE INFORMATION FOR CONFIGURING SSL FOR COGNOS ON IBM HTTP SERVER (IHS) - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Description:
+   
+   The OpenPages documentation currently only includes information
+   on configuring SSL for Cognos on Apache and IIS.  We need to
+   include information for configuring SSL for Cognos with IBM HTTP
+   Server (IHS).
+   
+   Page 523 of the OpenPages Administrators Guide starts the
+   section for Configuration SSL with IIS/Apache on Cognos.  We
+   need similar information in the guide for Cognos SSL on IHS.
+   http://public.dhe.ibm.com/software/data/cognos/documentation/ope
+   npages/en/7.1.0/administrators_guide.pdf [http://public.dhe.ibm.com/software/data/cognos/documentation/openpages/en/7.1.0/administrators_guide.pdf]
+   
+   Prerequisites:
+   
+   OpenPages 7.1 Administrators Guide
+   
+   Expected Results:
+   
+   If we support IHS we should have steps in the OpenPages
+   documentation on how to configure SSL with this product.  This
+   information is available for both IIS and Apache already.
+   
+   Actual Results:
+   
+   There is no information related to configuring SSL on IHS for
+   Cognos.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Workaround:
+   
+   There are two pieces of documentation available that go over
+   configuration Cognos with SSL on IHS:
+   http://www-01.ibm.com/support/docview.wss?uid=swg21179559 [http://www-01.ibm.com/support/docview.wss?uid=swg21179559]
+   
+   http://www-01.ibm.com/support/knowledgecenter/SSEP7J_10.2.1/com. [http://www-01.ibm.com/support/knowledgecenter/SSEP7J_10.2.1/com.]
+   ibm.swg.ba.cognos.inst_cr_winux.10.2.1.1.doc/c_configuringthessl
+   protocol.html%23ConfiguringtheSSLProtocol
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * OpenPages 7.1                                                *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * Some customers use IBM HTTP Server as a web server for       *
+   * Cognos but we do not have the instructions to configure SSL  *
+   * in IBM HTTP Server for Cognos. The closest topic we have is  *
+   * Configure SSL in IHS for load balancer in which the steps    *
+   * are a bit different.                                         *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Add topic: SSL Configuration for IBM HTTP Server             *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Updated 7.1 OPP, 7.1 OPoC, and 7.2 versions of the Admin Guide.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI53911
+   
+   
+ * REPORTED COMPONENT NAME
+   OPENPAGES GRC
+   
+   
+ * REPORTED COMPONENT ID
+   5725D5100
+   
+   
+ * REPORTED RELEASE
+   710
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2015-12-10
+   
+   
+ * CLOSED DATE
+   2016-04-11
+   
+   
+ * LAST MODIFIED DATE
+   2016-04-11
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

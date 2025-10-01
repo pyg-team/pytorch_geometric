@@ -1,0 +1,70 @@
+Title: IBM Installing ITM 6.1 and ITM 6.2 based Agents into a Windows 64-bit Environment (GSKit and Java considerations) - United States
+
+Text:
+ITM ITCAM GSKit Java fail install 64-bit hardware TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When installing ITM based Agents into a Windows 64-bit environment, problems may occur during the GSKit or Java feature installs causing the overall Agent install to fail. 
+
+SYMPTOM
+You may see one or both of the following symptoms during the install of ITM 6.1 or ITM 6.2 based Agents: 
+
+1. The install may abort relatively early and create an Abort log under the InstallITM\ subdirectory of your install path.
+2. The install may abort later after a failed attempt of installing Java and/or GSkit features, failing to find the required files in the target directories.
+
+CAUSE
+GSKit and Java features attempt to install into C:\Program Files by default, and this directory is reserved for 64-bit applications on 64-bit Windows systems. GSKit and Java features are 32-bit applications and as such should be installed into C:\Program Files (x86). ITM 6.1 and ITM 6.2 based Agents do not support installation into the directory C:\Program Files (x86) without manual intervention.
+
+
+
+ENVIRONMENT
+ITM 6.1 and ITM 6.2 based Agents on Windows 64-bit hardware.
+
+
+
+DIAGNOSING THE PROBLEM
+Directories C:\Program Files\IBM\Java142, C:\Program Files\ITM\Java50, and/or C:\Program Files\IBM\GSK7 may contain a directory structure but no files.
+
+
+
+RESOLVING THE PROBLEM
+To resolve this problem, the GSKit and Java features can be installed manually using GUI or silent install as described below, forcing them into the 32-bit directory structure. This is strictly for local installations. Remote install is currently not supported with this method. 
+
+GUI: 
+
+GSKit: 
+
+ * From the media, run the Windows\InsGSKit\setup.exe installer:
+   setup.exe ITM61
+   When prompted, change the target directory for GSKit from Program Files\IBM\GSK7 to Program Files (x86)\IBM\GSK7.
+
+
+Java:  * From the media, run the Windows\InIBMJRE\ibm-java2-jre*.exe installer:
+   When prompted, change the target directory for Java from Program Files\IBM\Java... to Program Files (x86)\IBM\Java...
+
+
+Silent: To install GSKit and Java silently as 32-bit applications into the 32-bit C:\Program Files (x86) directory structure, this will require copying the media for the Agent to a writeable network drive or local drive. 
+
+The following are steps to modify ITM or ITM based Agents to install GSKit and/or Java into C:\Program Files (x86)\ : 
+
+ 1. Prior to installing, copy the Agent media to a writeable drive. 
+ 2. Java - Modify InIBMJRE\setup.iss as follows:
+
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+   For ITM 6.1 based Agents,
+   szDir=C:\Program Files\IBM\Java142\
+   to 
+   szDir=C:\Program Files (x86)\IBM\Java142\ 
+ *  
+ * 1. GSKit - Modify InsGSKit\setup.iss as follows:
+   szDir=C:\Program Files\IBM\GSK7
+   to
+   szDir=C:\Program Files (x86)\IBM\GSK7 
+ * 2. Start the silent install from the updated copy of the Agent media, passing the required silent install parameters as described in the ITM based Agent documentation.

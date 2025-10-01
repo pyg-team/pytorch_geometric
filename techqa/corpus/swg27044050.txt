@@ -1,0 +1,108 @@
+Title: IBM SCA-PI how to send same Predictive Insight anomaly events to more than one ObjectServer - United States
+
+Text:
+PI event forwarding ; Predictive Insights anomaly ; PI Integration WHITE PAPER
+
+ABSTRACT
+ User would like to see PI events in AEL on more than one Omnibus deployments across the network 
+
+CONTENT
+Use following steps to implement PI event forwarding simultaneously to more than one ObjectServer. 
+
+Naming convention : 
+First AEL host : PI Omnibus server_name_PI 
+Second AEL host : NOC Omnibus: server_name_NOC 
+PI probe host : PI_probe
+Note : These instructions are only for forwarding events to the second instance of the object server/AEL and not the full functionality for view PI charts in the second instance of AEL for view such as ServiceDiagnosis 
+
+
+Part: 1
+Steps on PI Omnibus ObjectServer (OS) server:
+
+Step1.1 
+Configure on Omnibus PI OS server omni.dat with second NOC OS name 
+Note : In case if second OS server name are the same make unique alias name 
+Typical location of omni.dat on PI OS host /opt/IBM/tivoli/netcool/etc 
+
+As user that installed OS for example scadmin edit omni.dat 
+$vi omni.dat
+[NCOMS]
+{
+Primary: server_name_PI 4100
+}
+[NCO_PA]
+{
+Primary: server_name_PI 4200
+
+# second NOC OS 
+[NCOMS_NOC ]
+{
+Primary: server_name_NOC 4100
+
+} 
+[NCO_PA_NOC]
+{
+Primary: server_name_NOC 4200
+
+} 
+
+
+Step :1.2/ 
+Interface file on PI OS server_name_PI 
+Generate the Omnibus Interface File on PI Omnibus server as scadmin using nco_igen Typically located on PI Omnibus server /opt/IBM/tivoli/netcool/bin 
+$nco_igen 
+
+Step 1.3/
+
+Copy newly created file “interfaces.linux2x86” to the PI probe server “PI_probe” as user that installed PI for example scadmin 
+
+Typical location on PI_probe server /opt/IBM/scanalytics/analytics/probe/etc
+
+Note : this steps MUST be done before probe restart of PI probe 
+
+Part 2. 
+Steps on PI_probe host :
+
+Step 2.1 /
+The configuration of the stdin-tasp.rules files on PI_probe system 
+As user that installed PI for example scadmin add two statement at the start of the rules file, 
+That typically located in /opt/IBM/scanalytics/analytics/probe/omnibus/probes/linux2x86
+
+DefaultAlerts = registertarget ( "NCOMS", "", "alerts.status" )
+DuplicatedAlerts = registertarget ("NCOMS_NOC", "", "alerts.status")
+:
+:
+And this statement must be the last line at the end of file 
+genevent(DuplicatedAlerts) 
+
+Step 2.2/
+Run nco_p_syntax script located on Omnibus Server server_name _PI to make sure that syntax is correct 
+
+/opt/IBM/tivoli/netcool/omnibus/platform/linux2x86/probes64/nco_p_syntax
+Make backup of original file stdin-tasp.rules 
+$cp stdin-tasp.rules stdin-tasp.rules .orig
+
+Replace original file stdin-tasp.rules on PI_host with new stdin-tasp.rules. 
+
+Step 2.3/
+In order to load changes in probe rules files run on PI_probe server command 
+to find PID or running probe $ps –ef | grep nco_p_std
+Sample output : 
+[scadmin@severname taspa linux2x86]$ ps -ef | grep nco_p
+scadmin 2253414 2252857 0 Oct07 ? 00:00:36 /opt/IBM/scanalytics/analytics/probe/omnibus/probes/linux2x86/nco_p_stdin -name GrangerDetectionTopic2FwProbe -propsfile /opt/IBM/scanalytics/analytics//probe/omnibus/probes/linux2x86/taspprobe.props -processescapes
+scadmin 2263796 2263194 0 Oct07 ? 00:02:38 /opt/IBM/scanalytics/analytics/probe/omnibus/probes/linux2x86/nco_p_stdin -name GrangerDetectionTopic1FwProbe -propsfile /opt/IBM/scanalytics/analytics//probe/omnibus/probes/linux2x86/taspprobe.props –processescapes
+
+
+Step 2.4/
+Use kill –HUP <PID> for probe to re-read and reload new rules 
+
+Or restart streams /opt/IBM/scanalytics/analytics/bin
+$stop.sh 
+$start .sh 
+If restart was done using stop.sh 
+
+Step 2.5/
+Restart extraction with out providing startime or endtime 
+$ admin.sh run_extractor_instance 
+
+After this step events that will be generated on PI_probe server will be forwarded to server_name NOC and simultaneously will be displayed in PI Omnibus AEL and NOC Omnibus AEL

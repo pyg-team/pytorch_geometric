@@ -1,0 +1,47 @@
+Title: IBM Rational ClearQuest Web interface does not show the list of registered databases after rolling back to versions 8.0.0.1 or 8.0.0.0 - United States
+
+Text:
+CQ; CQWeb; empty; blank; roll back; rollback; ClearQuest Web; jazzop23:33210 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Attempts to roll back IBM Rational ClearQuest to version 8.0.0.0 or 8.0.0.1 after using IBM Installation Manager on UNIX and Linux platforms results in the inability to log in to Rational ClearQuest Web client. 
+
+SYMPTOM
+The Rational ClearQuest Web client does not show a list of registered databases for you to choose. 
+
+If you manually type the database name in the Rational ClearQuest Web client login form, the following message is displayed and the database is not connected:
+
+Failed to retrieve a list of databases for the selected repository
+
+CAUSE
+During rollback to Rational ClearQuest 8.0.0.0 or 8.0.0.1, a configuration step is not correctly performed. 
+
+As a result, the Rational ClearQuest Web interface is not updated with the available database connections.
+
+This issue has been resolved on rollbacks to Rational ClearQuest 8.0.0.3 and newer.
+
+
+RESOLVING THE PROBLEM
+To enable Rational ClearQuest to list and connect to the available databases after the Installation Manager has completed the rollback operation, complete the following procedure. 
+
+ 
+
+ 1. Stop the Rational ClearQuest Web profile:
+    
+    $CQWEB_PROFILE_PATH/bin/stopServer.sh server1
+    
+    
+ 2. After the profile stops, run the following command:
+    
+    $CQWEB_PROFILE_PATH/bin/wsadmin.sh -profile $INSTALL_LOCATION/clearquest/cqweb/scripts/teamAdminUtils.jacl -c configureEmbeddedConnectorModule {$INSTALL_LOCATION/clearquest/cqweb/bin} {$INSTALL_LOCATION} -c enableStartupBeanService
+    
+    Example:
+    
+    /opt/ibm/RationalSDLC/clearquest/cqweb/cqwebprofile/bin/wsadmin.sh -profile /opt/ibm/RationalSDLC/clearquest/cqweb/scripts/teamAdminUtils.jacl -c configureEmbeddedConnectorModule {/opt/ibm/RationalSDLC/clearquest/cqweb/bin} {/opt/ibm/RationalSDLC} -c enableStartupBeanService
+    
+    Replace thevariables $CQWEB_PROFILE_PATH and $INSTALL_LOCATION to match the ones used on your environment.
+    
+    
+ 3. Start the Rational ClearQuest Web profile:
+    
+    $CQWEB_PROFILE_PATH/bin/startServer.sh server1

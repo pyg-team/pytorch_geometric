@@ -1,0 +1,38 @@
+Title: IBM DASH folder icons cannot be selected when creating a new Folder - United States
+
+Text:
+DASHL2CONF; Folder; icon; select; New Folder TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When creating new folders, or changing an existing Folder icon, the list of New folder icons can't be selected when Browser is set to any non-english language. The icon's will be shaded out. 
+
+SYMPTOM
+If Browser is set to any non-english language, navigating to Console Settings -> Pages -> New Folder, the icons can't be selected.
+
+
+CAUSE
+This is a bug and will be fixed in a future DASH Cumulative Patch.
+
+ENVIRONMENT
+This manifests itself on any platform.
+
+DIAGNOSING THE PROBLEM
+Set the Browser to any language other than English, navigate to "Console Settings" -> Pages -> "New Folder". the icons listed can't be selected ( shaded out ).
+
+
+[/support/docview.wss?uid=swg21992007&aid=1] [/support/docview.wss?uid=swg21992007&aid=1]
+
+
+
+RESOLVING THE PROBLEM
+The current work around when you see this issue, is to select the "+" icon in the upper right of the DASH display, which will open a new tab 
+
+ 
+[/support/docview.wss?uid=swg21992007&amp;aid=2]
+
+
+after the new tab is opened, go back to the tab where you are trying to select a folder icon, and they will be selectable. 
+
+[/support/docview.wss?uid=swg21992007&aid=3] [/support/docview.wss?uid=swg21992007&aid=3]
+
+The fix is scheduled to be release in DASH 3.1.2.1 Cumulative Patch 6, but this may change.

@@ -1,0 +1,109 @@
+Title: IBM MXServer startup errors BMXAA6473E BMXAA6538E and java.rmi.UnmarshalException - United States
+
+Text:
+TPAEWEBLOGIC; TPAEWEBSPHERE; TPAEUI; UnmarshalException TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Under certain circumstances, when starting up Maximo in WebSphere, these errors will be written to the SystemOut.log. The stack trace following the error has information that can be used to determine what is causing the startup error. 
+
+SYMPTOM
+In WebSphere console, Maximo server shows as started, but users cannot log in. 
+
+SystemOut.log shows the following at startup:
+
+[4/14/15 12:58:47:661 UTC] 0000001a SystemOut O 14 Apr 2015 12:58:47:660 [INFO] [MXServer] [] BMXAA6348I - The SECURITY service is starting.
+[4/14/15 12:58:47:699 UTC] 0000001a SystemOut O 14 Apr 2015 12:58:47:699 [INFO] [MXServer] [] BMXAA6348I - The SIGNATURE service is starting.
+[4/14/15 12:58:48:752 UTC] 0000001a SystemOut O 14 Apr 2015 12:58:48:752 [INFO] [MXServer] [] class com.ibm.tsd.pmsurvey.app.SurveyService SurveyService INFO In SurveyService ctor
+[4/14/15 12:59:21:733 UTC] 0000001a SystemOut O 14 Apr 2015 12:59:21:730 [FATAL] [MXServer] [] BMXAA6473E - The MXSERVER server could not be started. Check the log file for other errors to determine the cause.
+java.rmi.UnmarshalException: Error unmarshaling return header; nested exception is: 
+java.net.SocketException: Connection reset
+...
+[4/14/15 12:59:21:735 UTC] 0000001a SystemOut O 14 Apr 2015 12:59:21:733 [ERROR] [MXServer] [] BMXAA6538E - Failed to initialize MAXIMO business object services.
+java.rmi.UnmarshalException: Error unmarshaling return header; nested exception is: 
+java.net.SocketException: Connection reset
+...
+
+or it might throw a different error code:
+
+13 Apr 2015 10:37:04:974 [FATAL] BMXAA6466E - The registry could not be bound. 
+java.rmi.UnmarshalException: Error unmarshaling return header; nested exception is: 
+java.io.EOFException
+...
+java.lang.RuntimeException: java.rmi.UnmarshalException: Error unmarshaling return header; nested exception is: 
+java.io.EOFException
+
+
+CAUSE
+The Remote Method Invocation (RMI) registry port is held by hung java process.
+
+
+DIAGNOSING THE PROBLEM
+The problem is with availability of the Remote Method Invocation (RMI) registry port. In this case, while the starting MXServer web application server has found an available RMI registry port at port 13400, it cannot connect to it. 
+
+
+To determine what process is using port 13400, in Windows, start an elevated command prompt. Run the following command
+
+netstat -p TCP -o -n -a | find "13400"
+
+[/support/docview.wss?uid=swg21882864&aid=1] [/support/docview.wss?uid=swg21882864&aid=1]
+
+Here it shows that the process ID is 7464.
+
+Start Task Manager. On the Processes tab, make sure that Show processes from all users is checked. Under View, select Select Columns... Check the box next to PID (Process Identifier) and click OK.
+
+[/support/docview.wss?uid=swg21882864&amp;aid=2]
+
+Here it shows that PID 7464 is held by java.exe. You can't tell from Task Manager what this java process is doing. You can find out the command line used to start this java process by running Windows Management Instrumentation Command-line (wimc) in a command prompt:
+
+wmic process where processid=<pid> get commandline
+
+In this case, replace processid with the one that you found in your environment. Below is the end of the result querying PID 7464:
+
+[/support/docview.wss?uid=swg21882864&aid=3] [/support/docview.wss?uid=swg21882864&aid=3]
+
+It shows that it is running the Maximo web application server called MXO75WS.
+
+In WebSphere Integrated Solutions Console, under Servers, expand Server Types. Click on WebSphere application servers. On the right side, you will see your Maximo servers.
+
+[/support/docview.wss?uid=swg21882864&aid=4] [/support/docview.wss?uid=swg21882864&aid=4]
+
+In this example, while Windows shows that the java process for MXO75WS is still active, WebSphere is reporting its status as stopped. You will probably not be able to log into the stopped server.
+
+
+RESOLVING THE PROBLEM
+To fix this problem, you can restart the server running WebSphere, but it may not be practicable to do so if you have other servers running at the same time. Instead, as MXO75WS is not actually running, kill the processid. In Windows Server, you can do this from the Task Manager. Right click on the java.exe at the PID (7464 in this case) and select End Process Tree. 
+
+
+From the command prompt, run netstat -p TCP -o -n -a | find "13400" again to see if 13400 is still being held. If it is available, shut down the application server that is unable to start up and restart it. It should now create the RMI registry port at 13400. You can also restart the "hung" application server.
+
+This kind of error, while rare, can occur under the following conditions: 
+
+ * Multiple Maximo web application servers are running on a single WebSphere instance 
+ * The RMI Registry war is not running or has not been installed 
+ * Two or more servers have mxe.registry.port set to 13400 in the <SMP_HOME>\maximo\applications\maximo\properties\maximo.properties file 
+ * The Maximo server that bound the RMI connection at port 13400 is running as a process, but not shows as not started in the WAS console
+
+
+The resolution provided above will fix the startup error in this particular case. Troubleshooting why the "hung" application server stopped working is a separate problem and is not addressed here. 
+
+
+
+
+
+Preventing the problem 
+
+To prevent this from reoccurring, separate the RMI Registry functionality from being tied to any specific Maximo web application server instance. On any WebSphere instance that is hosting more than one Maximo application server, deploy the RMI Registry war for WebSphere Application Server following this technote [http://www.ibm.com/support/docview.wss?uid=swg21598724]. 
+
+The same errors can arise using Oracle WebLogic as your web application server. Instructions on deploying the RMI Registry war in WebLogic 9.2 or later may be found here [http://www.ibm.com/support/docview.wss?uid=swg21451075]. 
+
+
+
+
+
+Other Maximo RMI-related startup error technotes 
+
+BMXAA6466E - The registry could not be found [http://www.ibm.com/support/docview.wss?uid=swg21499751] 
+Maximo won't start following reboot, rmi port taken [www.ibm.com/support/docview.wss?uid=swg21373402]  
+
+
+Cross reference information Segment Product Component Platform Version Edition Systems and Asset Management Maximo Asset Management System Related Platform Independent Version Independent Systems and Asset Management Control Desk AIX, HP-UX, Linux, Solaris, Windows 7.5, 7.5.1, 7.5.1.1, 7.5.1.2, 7.5.3, 7.6.0, 7.6.0.1

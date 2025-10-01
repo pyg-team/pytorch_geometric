@@ -1,0 +1,67 @@
+Title: IBM Reducing the size of the Tivoli Storage Manager database - United States
+
+Text:
+reduce space database size alter tablespace TECHNOTE (FAQ)
+
+QUESTION
+ How do you reduce the size of the Tivoli Storage Manager database? 
+
+ANSWER
+If a significant amount of data has been deleted from the database, consider reducing the database size. Generally, you have to complete offline reorganization of the large tables in the database before you can reduce the database size. For more information, see Technote 1452146 at: http://www.ibm.com/support/docview.wss?uid=swg21452146 [http://www.ibm.com/support/docview.wss?uid=swg21452146]. 
+Databases that are created with Tivoli Storage Manager V6.2 or later have DB2 9.7 tablespaces with reclaimable space enabled. If you created a database with V6.1, you have DB2 9.5 tablespaces even if you upgraded your Tivoli Storage Manager server to 6.2 or later.
+
+Procedure
+To reduce the size of the database and release space to the operating system for DB2 9.7 tablespaces, complete the following steps. If you formatted a server with Tivoli Storage Manager V7.1 or later, complete the instructions in step 3. Otherwise, complete the instructions in steps 1 and 2:
+
+1. To determine whether the database table space is DB2 9.7, issue the following commands from a DB2 command-line window:
+
+
+
+
+db2 connect to tsmdb1 
+db2 set schema tsmdb1
+db2 "select cast(TBSP_NAME as char(30)), reclaimable_space_enabled from
+table(mon_get_tablespace('',-1)) where TBSP_NAME in
+('USERSPACE1','IDXSPACE1','LARGESPACE1','LARGEIDXSPACE1')" 
+
+For DB2 9.7 tablespaces, the values in the RECLAIMABLE_SPACE_ENABLED column are 1. For DB2 9.5 tablespaces, the values are 0. 
+Important: Databases that were formatted with Tivoli Storage Manager servers V6.2 and later have DB2 9.7 tablespaces. 
+
+In the following example, the value in each row of the RECLAIMABLE_SPACE_ENABLED column is 1. This value indicates that the server is using DB2 9.7 tablespaces. 
+
+RECLAIMABLE_SPACE_ENABLED
+-------------------------
+1
+1
+1
+1
+
+4 record(s) selected. 
+
+Important: If you have DB2 9.5 tablespaces, you cannot release storage to the operation system. 
+
+2. To reduce the size of the database with DB2 9.7 tablespaces, issue the following commands from a DB2 command-line window: 
+
+db2 connect to tsmdb1
+db2 set schema tsmdb1
+db2 ALTER TABLESPACE USERSPACE1 REDUCE MAX
+db2 ALTER TABLESPACE IDXSPACE1 REDUCE MAX
+db2 ALTER TABLESPACE LARGESPACE1 REDUCE MAX 
+db2 ALTER TABLESPACE LARGEIDXSPACE1 REDUCE MAX 
+Restriction: These commands start separate processes in DB2 that release space. The commands can increase I/O activity, and might affect server performance. To minimize the impact, issue the next ALTER TABLESPACE command after the previous command is completed. 
+
+3. If you installed the Tivoli Storage Manager server V7.1 or later, complete the following task: 
+
+There is a new table and tablespace implementation in DB2 10.5. The tablespaces are still DB2 9.7, but each of the large tables are placed into a distinct tablespace for the data and a distinct tablespace for the indices for that table. The following table indicates the assignments: 
+
+Table Name DB2 Tablespace for Data DB2 Tablespace for Indices ARCHIVE_OBJECTS ARCHOBJDATASPACE ARCHOBJIDXSPACE BACKUP_OBJECTS BACKOBJDATASPACE BACKOBJIDXSPACE BF_AGGREGATED_BITFILES BFABFDATASPACE BFABFIDXSPACE BF_BITFILE_EXTENTS BFBFEXTDATASPACE BFBFEXTIDXSPACE 
+If you perform offline reorganization for any of these four tables, issue the DB2 ALTER TABLESPACE REDUCE MAX command on the two associated tablespaces for that table. For example, if you did an offline reorganization on BF_AGGREGATED_BITFILES, issue the following commands: 
+
+db2 connect to tsmdb1
+db2 set schema tsmdb1
+db2 ALTER TABLESPACE BFABFDATASPACE REDUCE MAX
+db2 ALTER TABLESPACE BFABFIDXSPACE REDUCE MAX 
+
+What to do next 
+If you did not perform offline reorganization and if the process does not reduce the size of your database, consider running offline table reorganization on the large tables in the DB2 database and complete steps 1 - 3 again. 
+See the Offline Table Reorganization section of Technote 1452146 at: http://www-01.ibm.com/support/docview.wss?uid=swg21452146 [http://www-01.ibm.com/support/docview.wss?uid=swg21452146].

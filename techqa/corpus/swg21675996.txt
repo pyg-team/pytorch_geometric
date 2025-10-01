@@ -1,0 +1,66 @@
+Title: IBM Creating a new user in IBM Smart Analytics System cluster - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How to create a new user in IBM Smart Analytics System cluster ? 
+
+ANSWER
+When you create new users in the system cluster, take the following guidelines into consideration :
+
+1. All operating system users must have the same user ID (UID) on all nodes in the cluster. Verify that a UID is available on all nodes before you create an operating system user. To ensure a consistent UID across the cluster, create the user on the management node first, and then create the users on all nodes in the cluster.
+
+2. Define the same home directory for a user on all nodes. The home directory '/dwhome' is persistent and exists on all of the nodes.
+
+Before you create a user, consider the home directory requirements for the user.
+
+1. Core warehouse DB2 users: The DB2 instance owner (bculinux), DB2 fenced user (bcufenc), InfoSphere Warehouse administrative user (dweadmin), and the Optim Performance Manager user (db2opm) have their home directories under the '/db2home' instance home directory. The instance home directory is GPFS mounted across the management node, administration node, data nodes, and standby nodes. Extra DB2 users define their home directory under the '/db2home' directory.
+
+2. Core warehouse users that do not use the DB2 database: Extra non-database users are recommended to define their home directory under the '/dwhome' directory. The /home directory is only a local directory and not persistent across all of the core warehouse nodes.
+
+3. Warehouse tools users: Define their home directory under the '/dwhome' directory which is persistent and exists across all of the nodes.
+
+To create new users, you require root authority.
+
+Here is the procedure to create a new user :
+
+1. From the management node, identify the next available UID by running the following command:
+
+cat /etc/passwd | cut -d: -f 3 | sort -n
+
+The third colon delimited field that represents the UID for each user in the passwd file is picked out and sorted to produce a list of ascending user IDs. In the following example output you can see that the highest UID is 1002. The next available UID is therefore 1003.
+...
+1000
+1001
+1002
+
+2. If the user is a core warehouse DB2 user or non-database user that will have a home directory under the '/dwhome' directory:
+
+a. Create the user and their home directory on the management node. Specify the -m flag to create the local home directory on the shared /dwhome file system, as shown in the following sample command:
+
+useradd -d /dwhome/user02 -m -u 1003 user02
+
+where user02 represents the user name.
+
+b. Create the user on the core warehouse nodes. Do not specify the -m flag because the home directory is already created on the /dwhome file system, as shown in the following sample command:
+
+xdsh bcucore "useradd -d /dwhome/user02 -u 1003 user02"
+
+where user02 represents the user name.
+
+3. After you created the user, set the initial password or force the user to change the password the next time they log in.
+
+- To set the initial password on the management node for the new user, issue the following command:
+
+passwd user02
+
+where user02 represents the user name. Alternately, the user can log in to the management node and change the password.
+
+- To force the user to change their password the next time they log in, issue the following command:
+
+passwd –e user02
+
+where user02 represents the user name.
+
+4. After the password is changed on the management node, synchronise the password across the cluster.

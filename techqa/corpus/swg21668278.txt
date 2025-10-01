@@ -1,0 +1,19 @@
+Title: IBM Importing a report object template - United States
+
+Text:
+ FIX README
+
+ABSTRACT
+ After you have edited the report object template in Microsoft(tm) Office, you can
+import it back into IBM® Cognos® Disclosure Management. This procedure replaces the procedure in the user guides for Cognos Disclosure management 10.2.2. 
+
+CONTENT
+Before you begin
+Make sure that you have completed the changes to the template in Microsoft Office. 
+Procedure
+1. Click the Home tab and, in the Navigation pane, click Administration.
+2. Under Resources, double-click Report Object Templates.
+3. Click the Home tab, click the Edit icon.
+4. Select Use custom template, browse to where you have saved the edited
+template, and click Open.
+5. Click OK to save the template for use in Cognos Disclosure Management.

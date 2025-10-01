@@ -1,0 +1,324 @@
+Title: IBM PK15550: REFACTOR/MOVE IN PROJECT EXPLORER DOES NOT UPDATE FOREIGN KEY RELATIONSHIPS, THAT ARE NO LONGER DRAWN ON IE DIAGRAMS - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Environment:
+   - OS (name, language, version or SP)
+   Microsoft&#65449; Windows&#65449; XP SP1
+    - Product name (Build ID or version/patch level)
+   IBM&#65449; Rational&#65449; Software Architect 6.0.1 + Interim Fix1
+   Reproducible Y/N:  Y
+   Description of problem:
+   
+   Refactor/move in Project Explorer does not update Foreign Key
+   relationships, that are no longer drawn on IE diagrams when
+   dropping the tables on a new diagram and when invoking Show/Hide
+   relationship.
+   The user may independently want to refactor, but may also be
+   induced to do so because the
+   Create Table wizard invoked from the Palette by default places
+   the Database and
+   the Schema definitions in different folders. It also places by
+   default the first table with the schema and the second table
+   with the database.
+   
+   Steps to reproduce:
+   
+   1. Create a new EJB Project with an EAR Project and no Client
+   Project.
+   
+   2. Add new->Other->Modeling->ER Modeling->IE Diagram to the root
+   of the Project
+   
+   3. Open the diagram and select the Database Palette
+   
+   4. Drop a Table on the Diagram
+   
+   Note the default Folder:
+   
+   /ProjectName/ejbModule/META-INF/backends/CLUDSCAPE_V51_1
+   
+   and the checkbox:
+   
+   Use default schema folder for EJB Projects
+   
+   is checked
+   
+   Change DataBase vendor type to Oracle91
+   
+   The Folder becomes:
+   
+   /ProjectName/ejbModule/META-INF/backends/ORACLE_V9_1
+   
+   Enter Database name: O1
+   
+   5. say yes to the message:
+   
+   Folder /ProjectName/ejbModule/META-INF/backends/ORACLE_V9_1
+   does not exist. Create?
+   
+   6. Schema definition:
+   
+   The folder and Database are pre-populated and cannot be changed
+   (Browse button grayed out)
+   Folder: /ProjectName (field is gray and browse is disabled)
+   Database: O1       (field is gray and browse is disabled)
+   SchemaName: Schema1 (fieled is white, can be changed)
+   
+   7. Table definition:
+   
+   The folder is pre-populated and cannot be changed (Browse button
+   grayed out)
+   Folder: /ProjectName (field is gray and browse is disabled)
+   Database: O1     (field is gray by browse is active)
+   Table name: Table1 (field is white, can be changed)
+   
+   7. Table Columns
+   
+   Add COL1 of type INTEGER, key column
+   
+   8. Finish
+   
+   You get the repeated message:
+   Folder /ProjectName/ejbModule/META-INF/backends/ORACLE_V9_1
+   does not exist. Create?
+   Say Yes
+   
+   9. Look at the Project Explorer
+   
+   There are the following files:
+   
+   DataBase:
+   EJB
+   Projects/ProjectName/ejbModule/META-INF/backends/ORACLE_V9_1/O1.
+   dbxmi
+   
+   Schema:
+   
+   EJB Projects/ProjectName/ejbModule/ProjectName/O1_Schema1.schxmi
+   
+   Table:
+   
+   EJB
+   Projects/ProjectName/ejbModule/ProjectName/O1_Schema1_Table11.tb
+   lxmi
+   
+   10. Drop a second table on the same diagram from the Database
+   Palette
+   
+   Folder: /ProjectName/ejbModule/META-INF/backends/ORACLE_V9_1
+   (gray field, browse disabled)
+   Database/schema O1.SCHEMA1 (gray field, browse enabled)
+   Table 2 (white field, editable)
+   
+   11. Add Columns
+   
+   Add COL1 of type INTEGER, key column
+   Add COL2 of type INTEGER
+   
+   12. Add Foreign Key
+   
+   Table2.Col2 references Table1.Col1
+   
+   13. Finish and look at Project Explorer. The following file was
+   added:
+   EJB
+   Projects/ProjectName/ejbModule/META-INF/backends/ORACLE_V9_1/O1_
+   Schema1_Table12.tblxmi
+   
+   So by following all defaults, the two tables have been placed
+   into two different folders,
+   the first table is with the schema, the second table is with the
+   database.
+   
+   In Project Explorer, move the table Table1 that is the target of
+   the Foreign Key relationship
+   
+   EJB
+   Projects/ProjectName/ejbModule/ProjectName/O1_Schema1_Table11.tb
+   lxmi
+   
+   into the folder:
+   
+   EJB Projects/ProjectName/ejbModule/META-INF/backends/ORACLE_V9_1
+   
+   where the Table2 is.
+   
+   You will see the message:
+   
+   Resource move or copy
+   Moves a resource by default. Hold the Control key down to copy
+   
+   14. Create a new IE Diagram in the EJB project root
+   
+   15. Drop
+   
+   EJB
+   Projects/ProjectName/ejbModule/META-INF/backends/ORACLE_V9_1/O1_
+   Schema1_Table11.tblxmi
+   
+   EJB
+   Projects/ProjectName/ejbModule/META-INF/backends/ORACLE_V9_1/O1_
+   Schema1_Table12.tblxmi
+   
+   on the diagram: no Foreign Key is drwn automatically
+   
+   16. Right click Table2 on the diagram
+   
+   17. Choose: Filters->Show/Hide relationships->All
+   Relationships|Table|Foreign Key Table
+   
+   18. No Foreign key is drawn
+   
+   19. If you open:
+   
+   
+   EJB
+   Projects/ProjectName/ejbModule/META-INF/backends/ORACLE_V9_1/O1_
+   Schema1_Table12.tblxmi
+   
+   with a text editor you can see that the drag and drop of Table1
+   in Project explorer has not updated the
+   foreign key reference, which remains:
+   
+     <namedGroup xmi:type="RDBSchema:RDBReferenceByKey" ....
+       <target
+   href="ProjectName/O1_SCHEMA1_TABLE1.tblxmi#C8848444"/>
+   
+   20. At this point, if you were to Right click Table2 on the
+   diagram and choose:
+   Filters->Show related elements->Show all relationships
+   This would draw a new view of Table1 and connect it to Table2
+   showing the Foreign Key relationship
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Delete the relationship and recreate it after having moved the
+   table.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  When the user first time creates a table under an ejb
+   project, t
+   he table and schema  files get created under
+   different directory
+   .
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  When a new table gets created under an EJB project first
+   time, the schema and the table files get created into
+   different directories (than the database file). To fix this
+   issue the user tried to move the files manually which broke
+   all references. Since the data model viz does not have any
+   refactoring feature, we fixed the defect by preventing the
+   creation of files in different directory
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK15550
+   
+   
+ * REPORTED COMPONENT NAME
+   SW ARCHITECT V6
+   
+   
+ * REPORTED COMPONENT ID
+   5724I7001
+   
+   
+ * REPORTED RELEASE
+   600
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2005-11-22
+   
+   
+ * CLOSED DATE
+   2006-06-15
+   
+   
+ * LAST MODIFIED DATE
+   2006-06-15
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  na
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   SW ARCHITECT V6
+   
+   
+ * FIXED COMPONENT ID
+   5724I7001
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R600 PSN
+   UP

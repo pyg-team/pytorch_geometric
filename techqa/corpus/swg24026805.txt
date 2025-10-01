@@ -1,0 +1,91 @@
+Title: IBM PM08761; 6.1.0.31: A WSWS7054E error occurs while starting a JAX-WS application. - United States
+
+Text:
+PM08761; PM08761; PM08761 DOWNLOADABLE FILES
+
+ABSTRACT
+ If a JAX-WS web service references the com.ibm.websphere.security.WSException class, a WSWS7054E error may occur. 
+
+DOWNLOAD DESCRIPTION
+PM08761 resolves the following problem:
+
+ERROR DESCRIPTION: 
+The following error may occur when starting a JAX-WS application. 
+
+javax.xml.ws.WebServiceException: WSWS7054E: The Web Services 
+Description Language (WSDL) file could not be generated for the 
+sample.MyServiceSoapBindingImpl Web 
+service implementation class because of the following error: 
+java.lang.NoClassDefFoundError: 
+com/ibm/websphere/security/WSSecurityException 
+
+
+Note: The error was reported for an IBM WebSphere Application Server running on the Solaris operating system. 
+
+LOCAL FIX: 
+none 
+
+PROBLEM SUMMARY
+
+USERS AFFECTED:
+IBM WebSphere Application Server Feature Pack for Web Services users of JAX-WS
+
+PROBLEM DESCRIPTION:
+If a JAX-WS web service references the com.ibm.websphere.security.WSException class, a WSWS7054E error may occur.
+
+RECOMMENDATION:
+Install a fixpack containing this APAR.
+
+The following error may occur when starting a JAX-WS application:
+
+javax.xml.ws.WebServiceException: WSWS7054E: The Web Services
+Description Language (WSDL) file could not be generated for the
+sample.MyServiceSoapBindingImpl Web
+service implementation class because of the following error:
+java.lang.NoClassDefFoundError:
+com/ibm/websphere/security/WSSecurityException
+
+Note: The error was reported for an IBM WebSphere Application Server running on the Solaris operating system. 
+
+
+
+
+
+Note: The class that is not found (com.ibm.websphere.security.WSSecurityException) is present in the WebSphere Application Server runtime.
+
+Note: Most customers do not have web service classes that reference the WSSecurityException class.
+
+PROBLEM CONCLUSION: 
+The JAX-WS runtime did not include the runtime jar in its classpath when it generated the wsdl for the customer's web service. As a result, the WSSecurityException class was not 
+found. 
+
+The JAX-WS runtime is changed to include the runtime jar when it generates the wsdl. 
+
+This problem is already corrected in GM version of the V7 WebSphere Application Server. 
+
+The fix for this APAR is currently targeted for inclusion in 
+fix pack 6.1.0.33. Please refer to the Recommended Updates 
+page for delivery information: 
+http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+
+PREREQUISITES
+Please download the UpdateInstaller below to install this fix.
+
+URL LANGUAGE SIZE(Bytes) UpdateInstaller [http://www.ibm.com/support/docview.wss?rs=180&uid=swg21205991] US English 7250000 
+INSTALLATION INSTRUCTIONS
+Please review the readme.txt for detailed installation instructions.
+
+URL LANGUAGE SIZE(Bytes) Readme [ftp://public.dhe.ibm.com/software/websphere/appserv/support/fixes/PM08761/readme.txt] US English 9300 
+DOWNLOAD PACKAGE
+
+
+
+
+Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options 
+What is Fix Central(FC)? [https://www.ibm.com/support/fixcentral/help?page=swfaqs] 
+What is DD? [http://www6.software.ibm.com/dldirector/doc/DDfaq_en.html] 6.1.0.27-WS-WASWebSvc-IFPM08761 5/13/2010 US English 177221 FC [http://www.ibm.com/support/fixcentral/quickorder?fixids=6.1.0.27-WS-WASWebSvc-IFPM08761&product=ibm%2FWebSphere%2FWebSphere%20Application%20Server&source=dbluesearch] FTP [ftp://public.dhe.ibm.com/software/websphere/appserv/support/fixes/PM08761/6.1.0.27-WS-WASWebSvc-IFPM08761.pak] DD 6.1.0.29-WS-WASWebSvc-IFPM08761 5/13/2010 US English 29435 FC [http://www.ibm.com/support/fixcentral/quickorder?fixids=6.1.0.29-WS-WASWebSvc-IFPM08761&product=ibm%2FWebSphere%2FWebSphere%20Application%20Server&source=dbluesearch] FTP [ftp://public.dhe.ibm.com/software/websphere/appserv/support/fixes/PM08761/6.1.0.29-WS-WASWebSvc-IFPM08761.pak] DD 
+TECHNICAL SUPPORT
+ Contact IBM Support using SR (http://www.ibm.com/software/support/probsub.html [http://www.ibm.com/software/support/probsub.html]), visit the WebSphere Application Server support web site (http://www.ibm.com/software/webservers/appserv/was/support/ [http://www.ibm.com/software/webservers/appserv/was/support/]), or contact 1-800-IBM-SERV (U.S. only). 
+
+ [/support/docview.wss?uid=swg24026805&aid=1]Problems (APARS) fixed [/support/docview.wss?uid=swg24026805&aid=2]Problems (APARS) fixed
+PK83337, PK96989, PM08761

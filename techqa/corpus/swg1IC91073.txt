@@ -1,0 +1,196 @@
+Title: IBM IC91073: COPY POOL VOLUME(S) CAN BE MOUNTED DURING LAN-FREE RESTORE OF VM CONTROL FILE DATA WHEN PRIMARY VOLUME(S) HAS NO LANFREE PATH - United States
+
+Text:
+AIX  FIXES ARE AVAILABLE
+IBM Tivoli Storage Manager (TSM) Client 7.1.0 Downloads [http://www-01.ibm.com/support/docview.wss?uid=swg24036670]
+IBM Tivoli Storage Manager (TSM) Client 6.3.2 Downloads and READMEs [http://www-01.ibm.com/support/docview.wss?uid=swg24036718]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  In a lan-free environment, the following can occur, when
+   VM control file data located in a primary storage pool
+   that does not have a lan-free path is required ;
+   
+   1.   A client asks for a file to be restored.  Since this goes
+   through the storage agent, the first request will ignore disk
+   storage pool volumes.
+   2.   If the file is available through a lan-free path we will
+   restore it from there, that is why a copy pool volume mount can
+   occur if there is no lanfree path to a primary storage pool is
+   available.
+   3.   If the file is not available through a lan-free path but
+   available on a LAN accessible storage pool then
+   the data  will be proxied over the lan from the server through
+   the storage agent to the client.
+   
+   
+   So, if VM backup data is organized the following way :
+   
+   1. disk primary pool for CTL data
+   2. sequential lan-free accessible primary storage pool for the
+   VM data
+   3. lan-free accessible copy pool for the data of both previous
+   pools
+   
+   In case a backup VM or restore VM process needs CTL data and all
+   primary pools data has a copy in the copypool, then we will
+   mount a copypool volume to get that CTL data since the primary
+   diskpool is not lan-free accessible.
+   
+   
+   Tivoli Storage Manager Versions Affected:
+   Tivoli Storage Manager client   6.1, 6.2,  6.3 and 6.4
+   
+   Initial Impact:
+   Low
+   
+   Additional Keywords:
+   TSM zz61 zz62 zz63 mount copypool primary pool stgpool restore
+   VM CTL control file data
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Use a copy pool that has no lan-free path
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: Backup-archive client versions 6.2, 6.3      *
+   *                 and 6.4 running on all Microsoft Windows     *
+   *                 and Linux platforms.                         *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: See ERROR DESCRIPTION                   *
+   ****************************************************************
+   * RECOMMENDATION: Apply fixing level when available. This      *
+   *                 problem is currently projected to be fixed   *
+   *                 in levels 6.3.2 and 6.4.2. Note that until   *
+   *                 the fixing levels are available, this        *
+   *                 information is subject to change at the      *
+   *                 discretion of IBM.                           *
+   ****************************************************************
+   *
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  CTL files are now restored over LAN even if lanfree is used.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC91073
+   
+   
+ * REPORTED COMPONENT NAME
+   TSM CLIENT
+   
+   
+ * REPORTED COMPONENT ID
+   5698ISMCL
+   
+   
+ * REPORTED RELEASE
+   63W
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-03-24
+   
+   
+ * CLOSED DATE
+   2013-07-02
+   
+   
+ * LAST MODIFIED DATE
+   2013-09-05
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  DSMAGENT
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TSM CLIENT
+   
+   
+ * FIXED COMPONENT ID
+   5698ISMCL
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R63L PSY
+   UP
+   
+   
+ * R63W PSY
+   UP
+   
+   
+ * R64L PSY
+   UP
+   
+   
+ * R64W PSY
+   UP

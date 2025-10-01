@@ -1,0 +1,35 @@
+Title: IBM Server to Server SSL connection failure - United States
+
+Text:
+s2s TSM TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Why is my Protect STGpool failing on the SSL defined port when Non-SSL sessions work? 
+
+CAUSE
+APAR IT19872 
+
+DIAGNOSING THE PROBLEM
+After following the configuration of Self Signed Certificate for Sever To Server communications, (See link "Set up two servers to use SSL to communicate") the Protect STGpool fails with these messages: 
+
+ANR2017I Administrator ADMIN issued command: PROTECT STGPOOL pool_name
+ANR0454E Session rejected by server server-name, reason: 201 - Communication Failure. (SESSION: xxxx)
+
+
+RESOLVING THE PROBLEM
+Upgrade both Source and Target server to the V8.1.1.0 or above. 
+
+
+In the reported case, the Source server was at V8.1.0 and the Target server was at V8.1.1.0. The sessions generated from the Target server to the Source server worked as it had the fix. Once both servers were at the fix level, all SSL sessions work both directions.
+
+RELATED INFORMATION
+ Server to Server SSL connection failure [http://www.ibm.com/support/knowledgecenter/SSEQVQ_8.1.0/srv.reference/r_cmd_server_define.html]
+
+
+
+
+HISTORICAL NUMBER
+ 
+
+PRODUCT ALIAS/SYNONYM
+ TSM ITSM ADSM

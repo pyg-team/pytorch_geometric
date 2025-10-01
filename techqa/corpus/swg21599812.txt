@@ -1,0 +1,33 @@
+Title: IBM Content Navigator known limitation: Adding a document or folder to a repository by dragging it from an external location is not supported by some browsers - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ You cannot add a document or folder to a repository by dragging either item from an external location. 
+
+SYMPTOM
+Dragging a document is not supported by some browsers 
+
+If you are using Microsoft Internet Explorer 8 or Internet Explorer 9, you cannot add a document or documents by dragging them from an external location, such as your computer desktop, to a repository.
+
+If you want to add documents by dragging them from an external location to the repository, you can use one of the following web browsers:
+
+ * Mozilla Firefox
+ * Apple Safari
+ * Internet Explorer 10 or later
+ * Google Chrome
+   
+   Important: Ensure that you are using a supported web browser for the version of IBM Content Navigator that you are using. For the latest support information, see the Hardware and software requirements for IBM Content Navigator [http://www.ibm.com/support/docview.wss?uid=swg27042879] [http://www.ibm.com/support/docview.wss?uid=swg27037865] and select the tab for the version that you are using. 
+
+
+Dragging a folder is not supported The Microsoft Internet Explorer, Mozilla Firefox, Apple Safari, and Google Chrome browsers do not support adding a folder by dragging it from an external location, such as your computer desktop, to a repository.
+
+To work around this issue, create a new folder in the repository by using the New Folder action. You may then multi-select the files within the external folder and drag them to the new repository folder.
+
+ * 
+ * Important:
+ * 
+
+
+Adding multiple documents is not supported by some browsers If you are using Microsoft Internet Explorer 8 or Internet Explorer 9, you cannot add multiple documents to a repository at one time.

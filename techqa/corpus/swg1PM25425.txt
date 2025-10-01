@@ -1,0 +1,238 @@
+Title: IBM PM25425: DYNAMIC UI IS BROKEN IN 7 INDEPENDENTLY FROM THE USES THEME - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Fixes integrated in WebSphere Portal V7.0 Combined Cumulative Fix [http://www-01.ibm.com/support/docview.wss?uid=swg24027254]
+Recommended Updates for WebSphere Portal and IBM Web Content Manager V7.0 [http://www-01.ibm.com/support/docview.wss?uid=swg24027857]
+7.0.0.2 Download: WebSphere Portal and WCM V7.0 fix pack 2 [http://www-01.ibm.com/support/docview.wss?uid=swg24031676]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Dynamic UI pages do not render. The log shows the following
+   exception:
+   
+   [07.09.10 15:11:29:347 CEST] 0000002f SystemOut     O
+   java.lang.ClassCastException: com.ibm.wps.transformation
+   .pagelaunching.model.TransientTheme incompatible with
+   com.ibm.wps.model.admin.ThemeDescriptorProvider
+   [07.09.10 15:11:29:362 CEST] 0000002f SystemOut     O  at
+   com.ibm.wps.model.admin.skin.AbstractSkinList
+   .extract(AbstractSkinList.java:116)
+   [07.09.10 15:11:29:362 CEST] 0000002f SystemOut     O  at
+   com.ibm.wps.model.admin.skin.SkinListImpl
+   .getAllInTheme(SkinListImpl.java:214)
+   [07.09.10 15:11:29:362 CEST] 0000002f SystemOut     O  at
+   com.ibm.wps.model.admin.skin.SkinListImpl
+   .getAllInTheme(SkinListImpl.java:152)
+   [07.09.10 15:11:29:362 CEST] 0000002f SystemOut     O  at
+   com.ibm.wps.engine.templates.skins.Default
+   .isSkinAllowedInTheme(Default.java:298)
+   [07.09.10 15:11:29:362 CEST] 0000002f SystemOut     O  at
+   com.ibm.wps.engine.templates.skins.Default
+   .getSkinForLayoutNode(Default.java:412)
+   [07.09.10 15:11:29:362 CEST] 0000002f SystemOut     O  at
+   com.ibm.wps.engine.templates.skins.Default
+   .getSkinForLayoutNode(Default.java:352)
+   [07.09.10 15:11:29:362 CEST] 0000002f SystemOut     O  at
+   com.ibm.wps.engine.templates.skins.Default.render(Default
+   .java:192)
+   [07.09.10 15:11:29:362 CEST] 0000002f SystemOut     O  at
+   com.ibm.wps.engine.templates.skins.Default.render(Default
+   .java:147)
+   [07.09.10 15:11:29:362 CEST] 0000002f SystemOut     O  at
+   com.ibm.wps.engine.templates.SkinTemplate.render(SkinTemplate
+   .java:68)
+   [07.09.10 15:11:29:362 CEST] 0000002f SystemOut     O  at
+   com.ibm.wps.transformation.pagelaunching.util.Renderer
+   .render(Renderer.java:173)
+   [07.09.10 15:11:29:362 CEST] 0000002f SystemOut     O  at
+   com.ibm.wps.transformation.pagelaunching.model
+   .TransientLayoutModel.render(TransientLayoutModel.java:89)
+   [07.09.10 15:11:29:362 CEST] 0000002f SystemOut     O  at
+   com.ibm.wps.model.wrappers.LayoutModelWrapperFactoryImpl$LayoutM
+   odelWrapperImpl.render(LayoutModelWrapperFactoryImpl.java:275)
+   [07.09.10 15:11:29:362 CEST] 0000002f SystemOut     O  at
+   com.ibm.wps.engine.tags2.PageRenderTag.doStartTag(PageRenderTag
+   .java:534)
+   [07.09.10 15:11:29:362 CEST] 0000002f SystemOut     O  at
+   com.ibm._jsp._Home._jspService(_Home.java:100)
+   [
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Add com.ibm.wps.admin.skin.checkifskinallowedintheme = false to
+   "WP ConfigService"
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Dynamic UI pages do not render. The log shows the following
+   exception:  [07.09.10 15:11:29:347 CEST] 0000002f SystemOut
+   O java.lang.ClassCastException:
+   com.ibm.wps.transformation.pagelaunching.model.TransientTheme
+   incompatible with
+   com.ibm.wps.model.admin.ThemeDescriptorProvider [07.09.10
+   15:11:29:362 CEST] 0000002f SystemOut     O  at
+   com.ibm.wps.model.admin.skin.AbstractSkinList.extract(AbstractSk
+   inList.java:116) [07.09.10 15:11:29:362 CEST] 0000002f SystemOut
+       O  at
+   com.ibm.wps.model.admin.skin.SkinListImpl.getAllInTheme(SkinList
+   Impl.java:214) [07.09.10 15:11:29:362 CEST] 0000002f SystemOut
+     O  at
+   com.ibm.wps.model.admin.skin.SkinListImpl.getAllInTheme(SkinList
+   Impl.java:152) [07.09.10 15:11:29:362 CEST] 0000002f SystemOut
+     O  at
+   com.ibm.wps.engine.templates.skins.Default.isSkinAllowedInTheme(
+   Default.java:298) [07.09.10 15:11:29:362 CEST] 0000002f
+   SystemOut     O  at
+   com.ibm.wps.engine.templates.skins.Default.getSkinForLayoutNode(
+   Default.java:412) [07.09.10 15:11:29:362 CEST] 0000002f
+   SystemOut     O  at
+   com.ibm.wps.engine.templates.skins.Default.getSkinForLayoutNode(
+   Default.java:352) [07.09.10 15:11:29:362 CEST] 0000002f
+   SystemOut     O  at
+   com.ibm.wps.engine.templates.skins.Default.render(Default.java:1
+   92) [07.09.10 15:11:29:362 CEST] 0000002f SystemOut     O  at
+   com.ibm.wps.engine.templates.skins.Default.render(Default.java:1
+   47) [07.09.10 15:11:29:362 CEST] 0000002f SystemOut     O  at
+   com.ibm.wps.engine.templates.SkinTemplate.render(SkinTemplate.ja
+   va:68) [07.09.10 15:11:29:362 CEST] 0000002f SystemOut     O  at
+   com.ibm.wps.transformation.pagelaunching.util.Renderer.render(Re
+   nderer.java:173) [07.09.10 15:11:29:362 CEST] 0000002f SystemOut
+       O  at
+   com.ibm.wps.transformation.pagelaunching.model.TransientLayoutMo
+   del.render(TransientLayoutModel.java:89) [07.09.10 15:11:29:362
+   CEST] 0000002f SystemOut     O  at
+   com.ibm.wps.model.wrappers.LayoutModelWrapperFactoryImpl$LayoutM
+   odelWrapperImpl.render(LayoutModelWrapperFactoryImpl.java:275)
+   [07.09.10 15:11:29:362 CEST] 0000002f SystemOut     O  at
+   com.ibm.wps.engine.tags2.PageRenderTag.doStartTag(PageRenderTag.
+   java:534) [07.09.10 15:11:29:362 CEST] 0000002f SystemOut     O
+    at com.ibm._jsp._Home._jspService(_Home.java:100)
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Adopted page launching.
+   
+   Failing Module(s):
+      Engine: Page Assembly
+   
+   Affected Users:
+      Dynamic UI Users
+   
+   Version Information:
+      Portal Version(s): 7.0.0.0
+       Pre-Requisite(s): ---
+        Co-Requisite(s): ---
+   
+   Manual Steps:
+      None
+   
+   Platform Specific:
+      This fix applies to all platforms.
+   
+   PM25425 is part of PM25191 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM25191] (CF001 for Portal 7000).
+   
+   You can retrieve the download from the link on the Recommended
+   Updates page for WP/WCM V7.0, here:
+   http://www.ibm.com/support/docview.wss?uid=swg24027857 [http://www.ibm.com/support/docview.wss?uid=swg24027857]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM25425
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSPHERE PORTA
+   
+   
+ * REPORTED COMPONENT ID
+   5724E7600
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-10-28
+   
+   
+ * CLOSED DATE
+   2010-12-17
+   
+   
+ * LAST MODIFIED DATE
+   2010-12-17
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBSPHERE PORTA
+   
+   
+ * FIXED COMPONENT ID
+   5724E7600
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R700 PSY
+   UP

@@ -1,0 +1,115 @@
+Title: IBM WMB/IIB MustGather: problems with Adapters on Windows - United States
+
+Text:
+Extensions (MBFE; TX); MustGather; MustGathers; Must Gather; Collect Troubleshooting Data; MustGatherDocument; Collecting; Trouble; Shooting TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ You are experiencing problems with Adapters in WebSphere Message Broker (WMB) or IBM Integration Bus (IIB).
+This mustgather document explains how to troubleshoot this problem by yourself, how to generate diagnostic data when the problem is happening, how to collect the available data from your system, and how to share that data with IBM support.
+
+
+ENVIRONMENT
+These instructions are for WebSphere Message Broker or IBM Integration Bus on Windows systems.
+Return to the WebSphere Message Broker MustGather index [http://www-01.ibm.com/support/docview.wss?uid=swg21209857] for other systems.
+
+RESOLVING THE PROBLEM
+
+
+
+STEP 1: SELF-GUIDED TROUBLESHOOTING
+
+ 1. Consider Using the Test Client in trace and debug mode [http://www.ibm.com/support/knowledgecenter/en/SSMKHH_10.0.0/com.ibm.etools.mft.doc/af52260_.htm].
+ 2. 
+ 3. A user level trace [http://www-01.ibm.com/support/docview.wss?rs=849&uid=swg21177321#1] is intended to assist users with understanding how their ESQL is processed.
+    It will also show a high level view of the message flow behavior.
+ 4. 
+ 5. Check for known issues: WebSphere Adapter nodes [http://www.ibm.com/support/knowledgecenter/SSMKHH_10.0.0/com.ibm.etools.mft.doc/ac37160_.htm]
+    Transport and connectivity samples [http://pic.dhe.ibm.com/infocenter/wmbhelp/v9r0m0/topic/com.ibm.etools.mft.doc/ax20230_.htm]
+    Integrating WMB with SAP [http://www-01.ibm.com/support/docview.wss?uid=swg27018476&aid=1]
+    [http://www.ibm.com/software/htp/cics/tserver/support/]IBM Integration Bus support site [https://www-947.ibm.com/support/entry/myportal/product/websphere/ibm_integration_bus?productContext=-1766202334]
+    
+    
+    
+
+
+
+STEP 2: COLLECT DATA
+
+ 1. mqsidc
+    See: mqsidc usage instructions [http://www.ibm.com/support/knowledgecenter/en/SSMKHH_9.0.0/com.ibm.etools.mft.doc/bu46012_.htm]
+     * This command line tool is only available for WMB 7.0.0.5+, WMB 8.0.0.1+, and IIB 9.0.
+     * When running the tool, select the option for 'Broker Collector', when prompted.
+    
+    
+ 2. 
+ 3. Project Interchange files for the problematic flow/set/ESQL/model
+     * You can export your Message Flow and Message Set project(s) into an archive file for easy transmission to IBM Support.
+       See: Exporting files from the Workbench [https://www.ibm.com/support/knowledgecenter/SSMKHH_10.0.0/com.ibm.etools.mft.doc/an27100_.htm] 
+    
+    
+ 4. 
+ 5. Refer to Adapter troubleshooting mustgathers [http://www-01.ibm.com/support/docview.wss?uid=swg21438193] 
+ 6. Traces If the problem occurs during a runtime test or with the Toolkit test facility, WMB execution group traces [http://www-01.ibm.com/support/docview.wss?rs=849&uid=swg21177321] can be used to gain a better understanding of the problem.  * A user level trace [http://www-01.ibm.com/support/docview.wss?rs=849&uid=swg21177321#1] is intended to assist users with understanding how their ESQL is processed. It will also show a high level view of the message flow behavior.
+     * A service level trace [http://www-01.ibm.com/support/docview.wss?rs=849&uid=swg21177321#2] is intended to be provided to IBM Support to assist in the diagnosis of your issue.
+     * RFC traces:
+       Steps to enable and collect the RFC Traces:
+       1. Launch the Adapter Connection Wizard ,and proceed to the 'Service Generation and Deployment Configuration' window. In the SAP RFC trace configuration section:
+       -Set the RFCTraceOn property to 'true' 
+       -Set the RFC Trace Level property to '8' , which outputs verbose debug messages, full 
+       execution path, info messages, errors and warnings
+       -Set the Folder for RFC trace files property to the directory location where the RFC Traces
+       are created
+       
+       2. Recreate the issue.
+       
+       3. Collect the RFC trace files generated.
+       
+       Note: The trace files are created in the directory where the adapter process has been started by default. The trace file has a .trc file extension and the file name will start with the letters rfc followed by a unique identifier. For example, rfc03912_02220.trc. 
+    
+    
+ 7. 
+ 8. General Broker information
+    If the mqsidc tool was not run, then capture this information manually  * Record the WebSphere Message Broker version, release, and maintenance level.
+       This can be captured using the command 'mqsiservice -v'..
+     * Record the operating system version, release, and maintenance level.
+     * Record the version, release, and maintenance level of any related products and components for the problematic application.
+     * Collect the local error log. On Windows, the local error log is the Windows Event viewer application log. 
+       See: Windows Event viewer application logs [http://www.ibm.com/support/knowledgecenter/SSMKHH_10.0.0/com.ibm.etools.mft.doc/an04090_.htm]
+     * Collect the console.txt
+       WMB writes information to console.txt. This file is located under the Message Broker workpath.
+       See: Standard System Logs [http://www.ibm.com/support/knowledgecenter/SSMKHH_10.0.0/com.ibm.etools.mft.doc/au14165_.htm]
+       
+       
+    
+    
+
+
+
+ATTENTION: A good problem description is one of the most important tools IBM needs to analyze your data!
+When sending data to IBM, be sure to update your PMR or send a note with the following information:
+
+ *  Tell us what errors you saw, where you saw them, and what time they happened Let us know if you made any changes to WebSphere Message Broker or the system before the problem Share any other observations which you think will help us to better understand the problem 
+
+
+
+STEP 3: SUBMIT DATA TO IBM
+
+ * Use IBM Service Request [http://www.ibm.com/support/servicerequest/] to open or view a problem record with IBM.
+ * Send your data to IBM [http://www.ibm.com/support/docview.wss?uid=swg21392217] for further analysis.
+
+
+
+
+Please see the IBM Software Support Handbook [http://www14.software.ibm.com/webapp/set2/sas/f/handbook/home.html] for more information on working with IBM support.
+
+
+
+Back to top
+
+ 
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration WebSphere Message Broker Windows 8.0 All Editions 
+PRODUCT ALIAS/SYNONYM
+ WMB MB WebSphere Message Broker IBM Integration Bus IIB IBMIB MQ Integrator WBIMB WBI-MB MQSI WMQI

@@ -1,0 +1,132 @@
+Title: IBM PI42682: RDZ 9.1.1 DEBUGGING USING RDZ INTEGRATED DEBUGGER WITH MANY EXEC CICS LINK CAUSES TRANSACTION ABEND - United States
+
+Text:
+z/os  FIXES ARE AVAILABLE
+Rational Developer for z Systems 9.5 [http://www-01.ibm.com/support/docview.wss?uid=swg24040713]
+Rational Developer for z Systems Interim Fix 1 for 9.5 [http://www-01.ibm.com/support/docview.wss?uid=swg24041308]
+Rational Developer for z Systems Refresh Pack 9.5.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24041501]
+Rational Developer for z Systems Refresh Pack 9.5.1 - Host Options and Utilities [http://www-01.ibm.com/support/docview.wss?uid=swg24041502]
+Rational Developer for z Systems Interim Fix 1 for 9.5.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24041629]
+9.5: PTF UI34563 for Rational Developer for z Systems Host Options [http://www-01.ibm.com/support/docview.wss?uid=swg24041630]
+Rational Developer for z Systems Interim Fix 2 for 9.5.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24041634]
+Rational Developer for System z Fix Pack 1 (9.5.1.1) for 9.5.1. [http://www-01.ibm.com/support/docview.wss?uid=swg24042313]
+Rational Developer for z Systems Interim Fix 1 for 9.5.1.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24042438]
+Rational Developer for z Systems Interim Fix 2 for 9.5.1.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24042571]
+Rational Developer for z Systems Interim Fix 4 for 9.5.1.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24042815]
+Rational Developer for System z Fix Pack 2 (9.5.1.1) for 9.5.1. [http://www-01.ibm.com/support/docview.wss?uid=swg24042922]
+Rational Developer for System z Fix Pack 3 (9.5.1.1) for 9.5.1. [http://www-01.ibm.com/support/docview.wss?uid=swg24043053]
+Rational Developer for System z Fix Pack 4 (9.5.1.4) for 9.5.1. [http://www-01.ibm.com/support/docview.wss?uid=swg24043315]
+Rational Developer for System z Fix Pack 5 (9.5.1.5) for 9.5.1. [http://www-01.ibm.com/support/docview.wss?uid=swg24043583]
+Rational Developer for System z Fix Pack 5 (9.5.1.6) for 9.5.1. [http://www-01.ibm.com/support/docview.wss?uid=swg24044335]
+Rational Developer for z Systems Fix Pack 7 (9.5.1.7) for 9.5.1. [http://www-01.ibm.com/support/docview.wss?uid=swg24044493]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When attempting to use Rational Developer for System z (RDz)
+   9.1.1 and the Integrated Debugger to debug CICS transactions
+   that contain, or execute, many EXEC CICS LINK statements, the
+   transaction is abnormally terminated.
+   This can occur at any time when stepping over, or into an EXEC
+   CICS LINK statement.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Integrated Debugger was modified so that EXEC CICS LINK and EXEC
+   CICS XCTL are handled differently. LINK now behaves like a
+   function call, and XCTL behaves like exec() on UNIX systems.
+   
+   This APAR is being closed FIN with concurrence from the
+   submitting customer. This means that a fix to this APAR is
+   expected to be delivered from IBM in a release which is being
+   developed at the time that the APAR was closed. The latest
+   release of the product to exit development at the time this
+   APAR was closed was: Rational Developer for z Systems V9.5.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI42682
+   
+   
+ * REPORTED COMPONENT NAME
+   RD/Z HOST
+   
+   
+ * REPORTED COMPONENT ID
+   5724T0723
+   
+   
+ * REPORTED RELEASE
+   900
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-06-09
+   
+   
+ * CLOSED DATE
+   2015-09-18
+   
+   
+ * LAST MODIFIED DATE
+   2015-09-18
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R950 PSY
+   UP

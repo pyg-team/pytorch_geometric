@@ -1,0 +1,24 @@
+Title: IBM Best practices for managing quota enforcement keys - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ What are the best practices for managing quota enforcement keys? 
+
+CAUSE
+Improper key management strategy can impact the memory footprint and the performance of quota enforcement enabled services. 
+
+ANSWER
+Quota enforcement keys are generated to maintain thresholds, the threshold associated metadata, and related status of a particular traffic type. Every key belongs to the domain where it was created. You can follow these rules when managing quota enforcement keys: 
+
+ 1. You must be aware that keys are not deleted when the associated domain is deleted. Keys must be explicitly deleted. Otherwise, keys are stored in data storage permanently. Keys can only be deleted on the master when quota enforcement works in the peer group mode.
+    Note: You cannot delete keys when the peer member is taking traffic. If you delete keys in this situation, temporary quota enforcement failures can occur. Therefore, the quota enforcement server should be taken offline when keys are deleted. 
+ 2. You can view the quota enforcement thresholds and counters by using Quota Enforcement Rate-based Threshold Status, Quota Enforcement Token Bucket Threshold Status, or Quota Enforcement Counter Status. 
+    When data storage contains a large volume of keys in one domain, such as more than 1000 keys, the display of results can take some time. For example, displaying results of 1000 keys can take 10 seconds, displaying results of 10000 keys can take around 3 minutes, and displaying results of 20000 keys can take around 8 minutes. To avoid waiting for time, you can use commands (show ratelimit-rate-status, show ratelimit-tokenbucket-status, and show ratelimit-count-status) to retrieve these key information. You should come up with a good strategy to evenly distribute keys across multiple domains to avoid too many keys in one domain. 
+ 3. You can change the configuration of a key at runtime, such as, change the threshold or interval. However, changing the interval type can reset the threshold associated with the key, which is not the expected result in some cases. When you want to change the interval type of a key, try one of the following methods:  * You can create a new threshold with different interval type with a new key. 
+     * Before changing the interval type, you must first retrieve the current threshold of the key. Then set the threshold to proper value after changing the interval type.
+    
+    
+
+For details, see the Quota enforcement topic in Knowledge Center [http://www.ibm.com/support/knowledgecenter/SS9H2Y/welcome].

@@ -1,0 +1,330 @@
+Title: IBM Guide to properly setting up SSL within the IBM HTTP Server - United States
+
+Text:
+ssl; handshake; secure socket layer; handshake failed; enable; ssl config; ssl setup; setup; IHS; crl; revocation; ssl; ssl; ssl; configure; config; config; config TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The following information can be used as a guide for setting up the Secure Sockets Layer (SSL) within the IBM HTTP Server. This document covers information on setting up SSL virtualhosts, creating keyfiles, certificates along with how to protect access to directories and URLs to specific ciphers. Also, included is documentation on how to trace and record SSL traffic between a client browser and the Web server. 
+
+RESOLVING THE PROBLEM
+The following steps help guide you through the proper set up of SSL within the IBM HTTP Server: 
+
+ 1. Confirm that the Global Security Kit (GSKit) is installed and meets the minimum requirements
+    
+    
+ 2. Create a key database file and certificates needed to authenticate the Web server during an SSL handshake
+    
+    
+ 3. Enable SSL directives within the IBM HTTP Server configuration file (httpd.conf)
+    
+    
+ 4. Other considerations when enabling SSL directives within the IBM HTTP Server configuration file (httpd.conf)
+    
+    
+ 5. Information that IBM WebSphere® Support needs to debug SSL configuration and certificate issues related to the IBM HTTP Server
+
+
+
+
+
+
+ 1. Confirm that the Global Security Kit is installed and meets the minimum requirements
+    
+    The Global Security Kit (GSKit) is a required component for the Secure Sockets Layer (SSL) enablement within the IBM HTTP Server. Therefore, it is important to confirm that a supported version of the Global Security Kit is installed prior to enabling SSL.
+    
+    For a complete listing of IBM HTTP Server releases and corresponding Global Security Kit versions, click IBM HTTP Server: Global Security Kit (GSKit) supported versions [http://www.ibm.com/support/docview.wss?rs=177&context=SSEQTJ&uid=swg21173214].
+    
+    
+    
+ 2. Create a key database file and certificates needed to authenticate the Web server during an SSL handshake
+    
+    The iKeyman GUI, which is included within the IBM HTTP Server distribution, can be used to create a key database file (for example: key.kdb) needed to store personal server certificates required by the client browser during an SSL handshake.
+    
+    For quick information on how to create a key database file and personal server certificates, refer to the technote IKEYMAN, How do I...? [http://www.ibm.com/support/docview.wss?rs=177&context=SSEQTJ&uid=swg21006430] 
+    
+    More extensive information on using the iKeyman GUI to create key database files and certificates is located here:  * For releases of IBM HTTP Server v7.0 [http://pic.dhe.ibm.com/infocenter/wasinfo/v7r0/index.jsp?topic=%2Fcom.ibm.websphere.ihs.doc%2Finfo%2Fihs%2Fihs%2Fwelc_ikeymangui.html] 
+     * For releases of IBM HTTP Server v8.0 [http://pic.dhe.ibm.com/infocenter/wasinfo/v8r0/index.jsp?topic=%2Fcom.ibm.websphere.ihs.doc%2Finfo%2Fihs%2Fihs%2Fwelc_ikeymangui.html] 
+     * For releases of IBM HTTP Server v8.5 [http://www-01.ibm.com/support/knowledgecenter/SSD28V_8.5.5/com.ibm.websphere.ihs.doc/ihs/welc_ikeymangui.html] 
+     * For releases of IBM HTTP Server v9.0 [https://www.ibm.com/support/knowledgecenter/SSAW57_9.0.0/com.ibm.websphere.ihs.doc/ihs/welc_ikeymangui.html] 
+       
+       
+    
+    
+ 3. Enable SSL directives within the IBM HTTP Server's configuration file (httpd.conf)
+     1. Verify that the SSL modules are uncommented
+         * For Microsoft® Windows®:
+           
+           
+           LoadModule ibm_ssl_module modules/mod_ibm_ssl.so [/support/docview.wss?uid=swg21179559&amp;aid=1]
+           
+           
+         * For UNIX® platforms:
+           
+           
+           LoadModule ibm_ssl_module modules/mod_ibm_ssl.so [/support/docview.wss?uid=swg21179559&amp;aid=2]
+           
+           
+        
+        
+     2. Create an SSL virtualhost stanza using the following examples and directives
+        
+        If you are enabling one Web site for SSL, and the hostname is the same as the one already defined in the Global Scope for non-SSL (port 80), you can enable SSL as follows. This virtualhost uses the default hostname defined by the ServerName directive in the Global Scope and the IP address associated with it.
+        
+        http://www.mycompany.com (non-SSL) 192.168.1.102 https://www.mycompany.com (SSL) 192.168.1.102
+        
+        Example 1:
+        
+        Listen 80
+        ServerName www.mycompany.com
+        
+        <Directory "c:/Program Files/IBM HTTP Server/htdocs">
+        Options Indexes
+        AllowOverride None
+        order allow,deny
+        allow from all
+        </Directory>
+        
+        DocumentRoot "c:/program files/ibm http server/htdocs"
+        DirectoryIndex index.html
+        
+        Listen 443
+        <VirtualHost :443>
+        SSLEnable
+        SSLClientAuth None
+        </VirtualHost>
+        
+        SSLDisable
+        KeyFile "c:/program files/ibm http server/key.kdb"
+        SSLV2Timeout 100
+        SSLV3Timeout 1000 [/support/docview.wss?uid=swg21179559&amp;aid=3]
+        
+        If you are enabling one Web site for SSL and the ServerName is different than the ServerName already defined in the Global Scope for non-SSL (port 80), you can enable SSL as follows. Both hostnames must be registered in DNS to a separate IP address, and both IP addresses must be configured on local network interface cards.
+        
+        http://www.mycompany.com (non-SSL) 192.168.1.102 http://www.mycompany2.com (non-SSL) 192.168.1.103 https://www.mycompany2.com (SSL) 192.168.1.103
+        
+        Example 2:
+        
+        Listen 80
+        ServerName www.mycompany.com
+        
+        <Directory "c:/Program Files/IBM HTTP Server/htdocs">
+        Options Indexes
+        AllowOverride None
+        order allow,deny
+        allow from all
+        </Directory>
+        
+        DocumentRoot "c:/program files/ibm http server/htdocs"
+        DirectoryIndex index.html
+        
+        <VirtualHost 192.168.1.103:80>
+        ServerName www.mycompany2.com
+        <Directory "c:/Program Files/IBM HTTP Server/htdocs2">
+        Options Indexes
+        AllowOverride None
+        order allow,deny
+        allow from all
+        </Directory>
+        DocumentRoot "c:/program files/ibm http server/htdocs2"
+        DirectoryIndex index2.html
+        </VirtualHost>
+        
+        Listen 443
+        <VirtualHost 192.168.1.103:443>
+        ServerName www.mycompany2.com
+        SSLEnable
+        SSLClientAuth None
+        <Directory "c:/Program Files/IBM HTTP Server/htdocs2">
+        Options Indexes
+        AllowOverride None
+        order allow,deny
+        allow from all
+        </Directory>
+        DocumentRoot "c:/program files/ibm http server/htdocs2"
+        DirectoryIndex index2.html
+        </VirtualHost>
+        
+        SSLDisable
+        KeyFile "c:/program files/ibm http server/key.kdb"
+        SSLV2Timeout 100
+        SSLV3Timeout 1000 
+        If you are enabling multiple Web sites for SSL, you can enable SSL as follows. All hostnames must be registered in DNS to a separate IP address. Also, all the IP addresses must be configured on a local network interface card. You must use the SSLServerCert directive to identify which personal server certificate in the key database file is passed to the client browser during the SSL handshake for each Web site. If the SSLServerCert directive is not defined, the IBM HTTP Server passes whatever certificate in the key database file is marked(*) as the "default key".
+        
+        For more information on why different IP addresses are required when enabling multiple Web sites for SSL: IP-Based Virtual Hosting must be used if configuring multiple SSL Virtual Host [http://www.ibm.com/support/docview.wss?rs=177&context=SSEQTJ&uid=swg21045922]http://www.mycompany.com (non-SSL) 192.168.1.102 https://www.mycompany.com (non-SSL) 192.168.1.102 http://www.mycompany2.com (non-SSL) 192.168.1.103 https://www.mycompany2.com (SSL) 192.168.1.103 http://www.mycompany3.com (non-SSL) 192.168.1.104 https://www.mycompany3.com (SSL) 192.168.1.104
+        
+        Example 3:
+        
+        Listen 80
+        ServerName www.mycompany.com
+        
+        <Directory "c:/Program Files/IBM HTTP Server/htdocs">
+        Options Indexes
+        AllowOverride None
+        order allow,deny
+        allow from all
+        </Directory>
+        
+        DocumentRoot "c:/program files/ibm http server/htdocs"
+        DirectoryIndex index.html
+        
+        <VirtualHost 192.168.1.103:80>
+        ServerName www.mycompany2.com
+        <Directory "c:/Program Files/IBM HTTP Server/htdocs2">
+        Options Indexes
+        AllowOverride None
+        order allow,deny
+        allow from all
+        </Directory>
+        DocumentRoot "c:/program files/ibm http server/htdocs2"
+        DirectoryIndex index2.html
+        </VirtualHost>
+        
+        <VirtualHost 192.168.1.104:80>
+        ServerName www.mycompany3.com
+        <Directory "c:/Program Files/IBM HTTP Server/htdocs3">
+        Options Indexes
+        AllowOverride None
+        order allow,deny
+        allow from all
+        </Directory>
+        DocumentRoot "c:/program files/ibm http server/htdocs3"
+        DirectoryIndex index3.html
+        </VirtualHost>
+        
+        Listen 443
+        <VirtualHost 192.168.1.102:443>
+        ServerName www.mycompany.com
+        SSLEnable
+        SSLClientAuth None
+        SSLServerCert mycompany
+        <Directory "c:/Program Files/IBM HTTP Server/htdocs">
+        Options Indexes
+        AllowOverride None
+        order allow,deny
+        allow from all
+        </Directory>
+        DocumentRoot "c:/program files/ibm http server/htdocs"
+        DirectoryIndex index.html
+        </VirtualHost>
+        
+        <VirtualHost 192.168.1.103:443>
+        ServerName www.mycompany2.com
+        SSLEnable
+        SSLClientAuth None
+        SSLServerCert mycompany2
+        <Directory "c:/Program Files/IBM HTTP Server/htdocs2">
+        Options Indexes
+        AllowOverride None
+        order allow,deny
+        allow from all
+        </Directory>
+        DocumentRoot "c:/program files/ibm http server/htdocs2"
+        DirectoryIndex index2.html
+        </VirtualHost>
+        
+        <VirtualHost 192.168.1.104:443>
+        ServerName www.mycompany3.com
+        SSLEnable
+        SSLClientAuth None
+        SSLServerCert mycompany3
+        <Directory "c:/Program Files/IBM HTTP Server/htdocs3">
+        Options Indexes
+        AllowOverride None
+        order allow,deny
+        allow from all
+        </Directory>
+        DocumentRoot "c:/program files/ibm http server/htdocs3"
+        DirectoryIndex index3.html
+        </VirtualHost>
+        
+        SSLDisable
+        KeyFile "c:/program files/ibm http server/key.kdb"
+        SSLV2Timeout 100
+        SSLV3Timeout 1000 
+        
+        
+    
+    
+ 4. Other considerations when enabling SSL directives within the IBM HTTP Server configuration file (httpd.conf).
+    
+     * How to rewrite HTTP (port 80) requests to HTTPS (port 443)
+       The rewrite module (mod_rewrite.c) provided with the IBM HTTP Server can be used as an effective way to automatically rewrite all HTTP requests to HTTPS. For complete information click How to rewrite HTTP (port 80) requests to HTTPS (port 443) [http://www.ibm.com/support/docview.wss?rs=177&context=SSEQTJ&uid=swg21114864].
+       
+       
+     * Logging SSL request information in the access log for IBM HTTP Server
+       The IBM HTTP Server implementation provides Secure Sockets Layer (SSL) environment variables that are configurable with the LogFormat directive in httpd.conf. For complete information click Logging SSL request information in the access log for IBM HTTP Server [http://www.ibm.com/support/docview.wss?rs=177&context=SSEQTJ&uid=swg21176455].
+       
+       
+     * Enabling Certificate Revocation Lists (CRL) in the IBM HTTP Server
+       Certificate revocation provides the ability to revoke a client certificate given to the IBM HTTP Server by the browser when the key is compromised or when access permission to the key is revoked. CRL represents a database that contains a list of certificates revoked before their scheduled expiration date. For complete information:  * For releases of IBM HTTP Server v7.0 [http://pic.dhe.ibm.com/infocenter/wasinfo/v7r0/index.jsp?topic=%2Fcom.ibm.websphere.ihs.doc%2Finfo%2Fihs%2Fihs%2Fcihs_crlinssl.html] 
+        * For releases of IBM HTTP Server v8.5 [http://www-01.ibm.com/support/knowledgecenter/SSD28V_8.5.5/com.ibm.websphere.ihs.doc/ihs/cihs_crlinssl.html] 
+        * For releases of IBM HTTP Server v8.0 [http://pic.dhe.ibm.com/infocenter/wasinfo/v8r0/index.jsp?topic=%2Fcom.ibm.websphere.ihs.doc%2Finfo%2Fihs%2Fihs%2Fcihs_crlinssl.html]
+          
+       
+       
+    
+    
+ 5. Information that IBM WebSphere Support needs to debug SSL configuration and certificate issues related to the IBM HTTP Server
+     * MustGather: SSL handshake and configuration problems [http://www.ibm.com/support/docview.wss?rs=177&context=SSEQTJ&uid=swg21141302]
+       
+     * MustGather: CMS key database (.kdb) and certificate problems [http://www.ibm.com/support/docview.wss?rs=177&context=SSEQTJ&uid=swg21141303]
+    
+    
+
+ * 
+ * Brief description of the SSL directives discussed in this document
+ * 
+   
+   Listen
+ * 
+ * 
+ * 
+ * 
+ * SSLEnable
+ * 
+ * 
+ * 
+ * 
+ * SSLClientAuth None
+ * 
+ * 
+ * 
+ * 
+ * SSLDisable
+ * 
+ * 
+ * 
+ * 
+ * KeyFile
+ * 
+ * 
+ * 
+ * 
+ * SSLV2Timeout
+ * 
+ * 
+ * 
+ * 
+ * SSLV3Timeout
+ * 
+ * 
+ * 
+ * 
+ * SSLServerCert
+ * 
+ * 
+ * 
+ * 
+ * SSLCipherSpec
+ * 
+ * 
+ * 
+ * 
+ * SSLCipherRequire
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ *  For releases of IBM HTTP Server v7.0 [http://pic.dhe.ibm.com/infocenter/wasinfo/v7r0/index.jsp?topic=%2Fcom.ibm.websphere.ihs.doc%2Finfo%2Fihs%2Fihs%2Frihs_ssldirs.html] For releases of IBM HTTP Server v8.0 [http://pic.dhe.ibm.com/infocenter/wasinfo/v8r0/index.jsp?topic=%2Fcom.ibm.websphere.ihs.doc%2Finfo%2Fihs%2Fihs%2Frihs_ssldirs.html] For releases of IBM HTTP Server v8.5 [http://www-01.ibm.com/support/knowledgecenter/SSAW57_8.5.5/com.ibm.websphere.ihs.doc/ihs/rihs_ssldirs.html] For releases of IBM HTTP Server v9.0 [https://www.ibm.com/support/knowledgecenter/SSAW57_9.0.0/com.ibm.websphere.ihs.doc/ihs/rihs_ssldirs.html]

@@ -1,0 +1,22 @@
+Title: IBM Configure Tivoli Common Reporting 3.1.2.1 installation path before using FastBack Reporting - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The installation path for Tivoli Common Reporting 3.1.2.1 must be set correctly to ensure Fastback Reporting works for Tivoli Storage Manager FastBack version 6.1 or later. 
+
+RESOLVING THE PROBLEM
+If you use Tivoli Storage Manager FastBack 6.1.12.1, or earlier, with Tivoli Common Reporting 3.1.2.1 installed 
+or 
+if you use Tivoli Storage Manager Fastback 6.1.12.2 and Tivoli Common Reporting 3.1.2.1 is not installed in the C:\Program Files\IBM\JazzSM\reporting directory, 
+then you need to complete the following steps before you can use Fastback Reporting: 
+
+1. Open the setPaths.cmd file. The default path for the files is C:\Program Files (x86)\Tivoli\TSM\FastBack\reporting\bin. 
+
+2. Set the TCR_Path variable to the Tivoli Common Reporting installation path. For example, if Tivoli Common Reporting is installed in the path C:\Program Files\JazzSM\reporting, update the variable as follows: 
+SET TCR_Path=C:\Program Files\JazzSM\reporting
+
+3.Save and close the setPaths.cmd file.
+
+You do not need to update the setPaths.cmd if you use Tivoli Storage Manager Fastback 6.1.12.2 with Tivoli common Reporting 3.1.2.1 installed in the default location (C:\Program Files\IBM\JazzSM\reporting).

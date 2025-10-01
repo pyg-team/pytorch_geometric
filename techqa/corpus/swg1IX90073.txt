@@ -1,0 +1,220 @@
+Title: IBM IX90073: A CLASSNOTFOUNDEXCEPTION IS THROWN INTERMITTENTLY IN AN ORB COLL OCATED SCENARIO - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Error Message: In a z/WAS setup, jobs are started in restartable
+   mode. Intermittently, a ClassNotFoundException is thrown for
+   objects which are loaded properly most of the times.
+   .
+   Stack Trace: in server thread; nested exception is:
+     java.rmi.MarshalException: CORBA MARSHAL 0x4942f8b0 No; nested
+   exception is:
+     org.omg.CORBA.MARSHAL: com.ibm.ws.longrun.impl.CGJobImpl
+   vmcid: IBM  minor code: 8B0  completed: No
+     at
+   com.ibm.CORBA.iiop.UtilDelegateImpl.wrapException(UtilDelegateIm
+   pl.java:757)
+     at javax.rmi.CORBA.Util.wrapException(Util.java:296)
+     at
+   com.ibm.ws.ci._CIController_Stub.startJob(_CIController_Stub.jav
+   a:278)
+     at
+   com.ibm.ws.batch.GridDispatcher._dispatchInJ2EEMode(GridDispatch
+   er.java:179)
+     at
+   com.ibm.ws.batch.GridDispatcher.dispatch(GridDispatcher.java:89)
+     at
+   com.ibm.ws.gridcontainer.impl.PortableGridKernelImpl._dispatchGr
+   idWork(PortableGridKernelImpl.java:337)
+     at
+   com.ibm.ws.gridcontainer.impl.PortableGridKernelImpl._dispatchWo
+   rk(PortableGridKernelImpl.java:301)
+     at
+   com.ibm.ws.gridcontainer.impl.PortableGridKernelImpl.scheduleJob
+   (PortableGridKernelImpl.java:81)
+     at
+   com.ibm.ws.gridcontainer.services.impl.GridWork.run(PGCControlle
+   rImpl.java:529)
+     at
+   com.ibm.ws.asynchbeans.J2EEContext$RunProxy.run(J2EEContext.java
+   :268)
+     at
+   java.security.AccessController.doPrivileged(AccessController.jav
+   a:203)
+     at
+   com.ibm.ws.asynchbeans.J2EEContext.run(J2EEContext.java:768)
+     at
+   com.ibm.ws.asynchbeans.WorkWithExecutionContextImpl.go(WorkWithE
+   xecutionContextImpl.java:222)
+     at
+   com.ibm.ws.asynchbeans.ABWorkItemImpl.run(ABWorkItemImpl.java:20
+   6)
+     at
+   com.ibm.ws.asynchbeans.WLMABWorkItemImpl.run(WLMABWorkItemImpl.j
+   ava:68)
+     at com.ibm.ws.util.ThreadPool$Worker.run(ThreadPool.java:1620)
+    Caused by: java.rmi.MarshalException: CORBA MARSHAL 0x4942f8b0
+   No; nested exception is:
+     org.omg.CORBA.MARSHAL: com.ibm.ws.longrun.impl.CGJobImpl
+   vmcid: IBM  minor code: 8B0  completed: No
+     at
+   com.ibm.CORBA.iiop.UtilDelegateImpl.mapSystemException(UtilDeleg
+   ateImpl.java:277)
+     at javax.rmi.CORBA.Util.mapSystemException(Util.java:84)
+     at com.ibm.rmi.util.ProxyUtil.copyObjects(ProxyUtil.java:205)
+     at
+   com.ibm.CORBA.iiop.UtilDelegateImpl.copyObjects(UtilDelegateImpl
+   .java:815)
+     at javax.rmi.CORBA.Util.copyObjects(Util.java:315)
+     at
+   com.ibm.ws.ci._CIController_Stub.startJob(_CIController_Stub.jav
+   a:271)
+     ... 13 more
+    Caused by: org.omg.CORBA.MARSHAL:
+   com.ibm.ws.longrun.impl.CGJobImpl  vmcid: IBM  minor code: 8B0
+   completed: No
+     at
+   com.ibm.rmi.util.FastPathForCollocated.getTargetClass(FastPathFo
+   rCollocated.java:261)
+     at
+   com.ibm.rmi.util.FastPathForCollocated.deepCopy(FastPathForCollo
+   cated.java:157)
+     at
+   com.ibm.rmi.iiop.ObjectCopierFactory$DeepObjectArrayCopier.doWor
+   k(ObjectCopierFactory.java:507)
+     at
+   com.ibm.rmi.iiop.ObjectCopierFactory$AbstractCopier.waitForCompl
+   etion(ObjectCopierFactory.java:165)
+     at com.ibm.rmi.util.ProxyUtil.copyObjects(ProxyUtil.java:201)
+     ... 16 more
+    Caused by: java.lang.ClassNotFoundException:
+   com.ibm.ws.longrun.impl.CGJobImpl     <---- root exception
+     at
+   com.ibm.CORBA.iiop.UtilDelegateImpl.loadClass(UtilDelegateImpl.j
+   ava:672)
+     at javax.rmi.CORBA.Util.loadClass(Util.java:252)
+     at
+   com.ibm.rmi.util.FastPathForCollocated.getTargetClass(FastPathFo
+   rCollocated.java:259)
+     ... 20 more
+     com.ibm.ws.batch.GridDispatcher._dispatchInJ2EEMode
+   .
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  A ClassNotFoundException is thrown intermittently in an ORB
+   collocated scenario
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This defect will be fixed in:
+   6.0.1 GA FP1
+   .
+   The code has been changed to fix a bug in the stack walking
+   code.
+   .
+   To obtain the fix:
+   Install build 20110407 or later
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IX90073
+   
+   
+ * REPORTED COMPONENT NAME
+   ORB
+   
+   
+ * REPORTED COMPONENT ID
+   620700123
+   
+   
+ * REPORTED RELEASE
+   260
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-06-17
+   
+   
+ * CLOSED DATE
+   2011-06-17
+   
+   
+ * LAST MODIFIED DATE
+   2011-06-17
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ORB
+   
+   
+ * FIXED COMPONENT ID
+   620700123
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R260 PSY
+   UP

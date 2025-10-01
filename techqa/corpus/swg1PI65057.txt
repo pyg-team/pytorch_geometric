@@ -1,0 +1,193 @@
+Title: IBM PI65057: UNABLE TO INSTALL REFRESHED MEDIA FOR RELEASE 24 ON JAPANESE OS,GETTING ERROR ABOUT TRANSFORM PATH - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+ DIRECT LINKS TO FIXES
+24 GA: Interim Fix 009 for ECM00220225 / APAR PI65057 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FSPSS+Statistics&fixids=24.0-IM-S24STATC-WIN64-TRIAL-IF009&source=SAR]
+24 GA: Interim Fix 009 for ECM00220225 / APAR PI65057 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FSPSS+Statistics&fixids=24.0-IM-S24STATC-WIN64-IF009&source=SAR]
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  You downloaded the refreshed media package IBM SPSS Statistics
+   24 64 bit onto a Windows 7 or 10 machine with Japanese operating
+   system language:
+   
+   IBM SPSS Statistics Client 64-bit 24.0 Microsoft Windows
+   Multilingual (CND2CML) date posted 23. June 2016
+   
+   You run the installer by right click on the *.exe file
+   SPSS_Statistics_24_win64.exe and select run as administrator.
+   Wait a while and you will get an error in Japanese language
+   about transform paths and the installation fails:
+   
+   "Error applying transforms. Verify that the specified transform
+   paths are valid"
+   
+   On install log you see that the installation failed. On the
+   bottom of the log file you see some text that Installation
+   failed:
+   
+   Text in Japanese translated to:
+   Error applying transforms. Verify that the specified transform
+   paths are valid
+    Product installed by Windows Installer. Product Name: IBM SPSS
+   Statistics 24, Version:24.0.0.0 Product Language: 1033,
+   Manufacturer: IBM Corp.
+   The installation state whether installation was success or
+   failed: 1624
+   
+   This was reported to IBM SPSS Development. As a workaround and
+   if possible for you you could use the ISO image instead to
+   install on Japanese operating system.
+   
+   IBM SPSS Statistics Client 24.0 Microsoft Windows Multilingual
+   (ISO Version) (CND2DML )
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  The new refreshed media for Statistics 24 for Windows 64 bit has
+   been posted on Passport Advantage on August 1 2016. Please
+   download from part number CNE2AML (Posted August 1 2016,
+   download size 847MB)
+   IBM SPSS Statistics Client 64-bit 24.0 Microsoft Windows
+   Multilingual (CNE2AML )
+   Additionally the same installer is also posted as Interim fix
+   009 on IBM Fixcentral:
+   http://www.ibm.com/support/fixcentral [http://www.ibm.com/support/fixcentral]
+   The refreshed media is a full installer *.exe file and should be
+   used when you would like to install on Japanese operating
+   system.
+   Go to fixcentral - search for Product SPSS Statistics
+   Installed version: 24.0.0.0, plat form Windows 64 bit. click
+   next and then Browse for fixes.
+   Download:
+   24.0-IM-S24STATC-WIN64-IF009
+   24 GA: Interim Fix 009 for ECM00220225 / APAR PI65057
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * see APAR text                                                *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * The new media installer was posted to Passport Advantage on  *
+   * 22. September 2016                                           *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * The new media installer was posted to Passport Advantage on  *
+   * 22. September 2016                                           *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The new media installer was posted to Passport Advantage on 22.
+   September 2016
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI65057
+   
+   
+ * REPORTED COMPONENT NAME
+   SPSS STATISTICS
+   
+   
+ * REPORTED COMPONENT ID
+   5725A54ST
+   
+   
+ * REPORTED RELEASE
+   O00
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-06-29
+   
+   
+ * CLOSED DATE
+   2016-09-27
+   
+   
+ * LAST MODIFIED DATE
+   2016-09-27
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   SPSS STATISTICS
+   
+   
+ * FIXED COMPONENT ID
+   5725A54ST
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * RO00 PSN
+   UP
+   
+   
+ * RO00 PSY
+   UP

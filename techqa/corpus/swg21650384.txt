@@ -1,0 +1,91 @@
+Title: IBM HTDS fails to execute after migration - United States
+
+Text:
+HTS; NPE; NullPointerException; IlrUserRuntimeException; DecisionID; outputString; web service; RES TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ My Hosted Transparent Decision Service (HTDS) fails to execute rules after we migrated to a new version.
+
+
+SYMPTOM
+My HTDS was executing fine in the previous version but now fails to excute since we have migrated to a new version.
+
+For example, the following error was seen in Message Broker:
+
+BIP5025E: XML schema validation error ''cvc-complex-type.2.4.a: Expecting element with local name "ilog.rules.outputString" but saw "DecisionID".'' on line '1' column '461' when parsing element ''/XMLNSC/http://schemas.xmlsoap.org/soap/envelope/:Envelope/http://schemas.xmlsoap.org/soap/envelope/:Body/http://www.ibm.com/rules/decisionservice/MyRuleApp/MyRuleset:MyRulesetResponse''. Internal error codes: 5004, 2.
+This error was reported by the XMLNSC parser. The XML document being parsed is not valid according to the message definitions in the message set.
+The XML document has violated the rules expressed in the message definition files in the message set.
+
+In another configuration, a 500 error showed on the client side with an IlrUserRuntimeException and/or NullPointerException in the Rule Execution Server logs.
+
+
+CAUSE
+Not running the same version for HTDS and other Rule Execution Server components (consoles and XUs) might result in unexpected behaviors.
+
+Also, from one version to another, the default signature of the HTDS web service might have changed. Therefore, if you do not update your client accordingly, failures are likely to occur.
+
+Note that changing the RuleApp or ruleset name also modifies the web service signature in the WSDL file. Therefore, you need to update client code/configuration to generate the proper input SOAP message and target the right web service endpoint.
+
+DIAGNOSING THE PROBLEM
+First ensure that you have upgraded both HTDS and all other Rule Execution Server components (consoles and XUs) to exactly the same version. See Find the version of JRules/WODM components [http://www.ibm.com/support/docview.wss?uid=swg21400738].
+
+If the issue still occurs, review the logs on both the client and the Rule Execution Server sides.
+
+If the logs do not allow you to isolate the problem, increase the log level of HTDS, as indicated in technote Change the log level of the hosted transparent decision service [http://www.ibm.com/support/docview.wss?uid=swg21497154].
+
+
+Use the log information to find out whether: 
+
+ * the URL used to target the web service is appropriate (see solution below). 
+ * the input values are properly set in the input SOAP message.
+   
+
+
+If the HTDS log in DEBUG mode does not show the input SOAP message nor the URL used to call HTDS, see technote Hosted Transparent Decision Service request and response XML [http://www.ibm.com/support/docview.wss?uid=swg21650641] to get the input SOAP message and enable the server HTTP log to get the URL information. 
+
+
+If you work on WebSphere Application Server, proceed as follows:  1. Enable the HTTP logs from the administrative console: click "Servers > Server Types > WebSphere application servers > <server hosting HTDS/RES> > NCSA access and HTTP error logging" and enable both "Enable logging service at server start-up" and "Enable access logging". 
+ 2. Restart the server.
+    The http_access.log file is generated under the root log folder (or as defined in the above WAS admin page) where you should find a line like the following one for every HTDS call:
+    
+    "POST /DecisionService/ws/MyRuleApp/MyRuleset/v7113 HTTP/1.1" 200 -
+
+RESOLVING THE PROBLEM
+If all components are at the same version, you can either 
+
+ * regenerate your client with the WSDL file from the RuleApp/ruleset that is generated in the new version 
+ * use one of the compatibility flags provided.
+
+
+
+You can specify the flag in the Rule Execution Server console when you view or download the WSDL, see Operational Decision Manager V8.5 > Decision Server Rules > Rule Execution Server console online help > Viewing and managing transparent decision services > Viewing or downloading an HTDS description file [http://pic.dhe.ibm.com/infocenter/dmanager/v8r5/topic/com.ibm.wodm.dserver.rules.res.console/topics/tsk_rescons_tds_downld_wsdl_wadl.html].
+
+You can also set the Compatibility parameter in the web.xml file of the HTDS EAR: 
+
+<context-param>
+<param-name>Compatibility</param-name>
+<param-value>7.0</param-value>
+</context-param>
+
+
+You will then use the link for the HTDS web service end point as it is generated in the WSDL file, looking like the following (if you select last RuleApp/ruleset version and the 7.1.1.3 flag): 
+
+ * 
+ * http://<hostname>:<port>/DecisionService/ws/<RuleApp name>/<Ruleset name>/v7113
+ * 
+
+
+If the web service client code/configuration remains the same after migration, you will need to use one of the following compatibility flags:  * same flag used in the previous version, if any 
+ * 7.0 if you are migrating from 7.0.X 
+ * 7.1 if you are migrating from 7.1.1.2 or earlier fix pack, and did not use a flag then 
+ * 7.1.1.3 if you are migrating from 7.1.1.3 or later fix pack, and did not use a flag then
+
+RELATED INFORMATION
+#Change the log level of the HTDS [1497154]
+Get HTDS request and response XML [1650641]
+Removing DecisionID from a decision service signature [1592934]
+
+
+ 
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration WebSphere ILOG JRules Modules:Execution Server (BRES / RES) Platform Independent 7.1

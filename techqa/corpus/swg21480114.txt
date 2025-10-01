@@ -1,0 +1,27 @@
+Title: IBM Error message: JCAdapter not yet initialized in IBM SPSS Statistics - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ I have installed IBM SPSS Statistics 19 on a non-English operating system and would like to run my scripts with the menu Utilities - Run script as I did in prior releases. After selecting a script and click on the run button I get an error message on a new window: JCAdapter not yet initialized. I click on the OK button but nothing happens. What is the reason? 
+
+RESOLVING THE PROBLEM
+A problem was found with installation of spsscom.ini. 
+
+On English operating systems this file is located on C:\Documents and Settings\All Users\Application Data\SPSS\ but on non-English OS this file should be located in the equivalent translated folder of 'Application Data' (depending on the language of your OS). 
+
+
+As a workaround copy the folder SPSS with spsscom.ini in it from C:\Documents and Settings\All Users\Application Data to the equivalent folder on your operating system. 
+
+Please make sure to copy the folder, do not cut or delete it. The path in spsscom.ini should also be pointing to the correct SPSS installation directory. To verify right click on spsscom.ini, open it with a text editor and check if the PATH shows the correct installation directory.
+After changing that you should not get the error message again.
+
+
+For example if you have a Spanish operating system copy from:
+'C:\Documents and Settings\All Users\Application Data' 
+and then paste it in the directory 
+'C:\Documents and Settings\All Users\Datos de Programa'.
+
+RELATED INFORMATION
+ Need more help? Our Statistics forum is Live! [https://developer.ibm.com/answers/topics/statistics.html?smartspace=predictive-analytics]

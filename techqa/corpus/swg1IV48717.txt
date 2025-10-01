@@ -1,0 +1,196 @@
+Title: IBM IV48717: IBM I OS AGENT FAILS TO INSTALL OR UNINSTALL IN SOME CODEPAGE ENVIRONMENTS - United States
+
+Text:
+  A FIX IS AVAILABLE
+IBM Tivoli Monitoring 6.2.3 Fix Pack 5 (6.2.3-TIV-ITM-FP0005) [http://www-01.ibm.com/support/docview.wss?uid=swg24035801]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Problem:
+   IBM i OS agent fails to install on Japanese Katakana/Kanji
+   system when user follows install instructions in the
+   documentation.  The user documentation does not provide guidance
+   that the user may need to change the CCSID of the job before
+   running the install or uninstall commands on affected systems.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  In a Japanese Katakana/Kanji environment and job CCSID 5026,
+   there is a need to configure the codepage for the job execution
+   environment by issuing the CHGJOB command before performing the
+   RSTLICPGM commands.
+   
+   For example, this is a Japanese Kanji DBCS environment where the
+   install failed:
+   
+      Primary Language:     2962 (Japanese Kanji DBCS)
+      Secondary Language:   none
+   
+   The job CCSID of the job running the install needs to be
+   configured before performing the RSTLICPGM as follows:
+   
+       CHGJOB CCSID(5035)
+   
+   followed by the documented steps for RSTLICPGM which are:
+   
+       RSTLICPGM LICPGM(5724C04) DEV(*SAVF) RSTOBJ(*PGM)
+   SAVF(CCCINST/A4520CMA)"
+       RSTLICPGM LICPGM(5724C04) DEV(*SAVF) RSTOBJ(*LNG) LANG(2924)
+   SAVF(CCCINST/A4520CMA) LNGLIB(5724C04)"
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  IBM i OS agent fails to install or uninstall on Japanese
+   Katakana/Kanji system in some codepage environments.  The
+   install or uninstall program may not work correctly on systems
+   where the job CCSID is 5026 or 290, which are typical Japanese
+   Katakana/Kanji systems.  Other languages (job CCSID's) that may
+   be affected are:  Simplified Chinese (935, 1388), Traditional
+   Chinese (937), or Korean (933).
+   
+   The CCSID of the job that runs the install or uninstall program
+   determines if this problem occurs.  CCSID's where the lowercase
+   a-z are not in the same location as CCSID 37 will cause the
+   install or uninstall to fail.  The job CCSID can be changed to
+   CCSID 37 before running the install or uninstall command to
+   avoid this problem.
+   
+   Having English installed or not installed as a secondary
+   language does not affect this problem.
+   
+   Symptoms of the failed install or uninstall include:  messge id
+   CPF3D95, messages in the job log that indicate "object not
+   found", or an IFS directory that has incorrect characters in the
+   path name.
+   
+   The user documentation does not provide guidance that the user
+   may need to change the CCSID of the job before running the
+   install or uninstall commands on affected systems.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The install and uninstall programs have been changed
+   so that the job will be changed to CCSID 37.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  The following steps can be used to change the job CCSID before
+   running the install or uninstall commands and then restore the
+   original job CCSID after the install or uninstall commands are
+   complete.
+   
+   1. Note the current job CCSID and default CCSID using DSPJOB,
+   option 2. For example:
+   Coded character set identifier . . . . . : xxxx
+   Default coded character set identifier . : yyyy
+   
+   2. Change the job CCSID.
+   CHGJOB CCSID(37)
+   
+   3. Run the install / uninstall command.
+   
+   4. Restore the original CCSID with the following commands. It is
+   important to change to the default job CCSID before
+   changing to the original job CCSID so that the IGC job attribute
+   is properly reset.
+   CHGJOB CCSID(yyyy)
+   CHGJOB CCSID(xxxx)
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV48717
+   
+   
+ * REPORTED COMPONENT NAME
+   ITM AGENT ISERI
+   
+   
+ * REPORTED COMPONENT ID
+   5724C04A4
+   
+   
+ * REPORTED RELEASE
+   623
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-09-16
+   
+   
+ * CLOSED DATE
+   2013-09-27
+   
+   
+ * LAST MODIFIED DATE
+   2014-05-06
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R623 PSY
+   UP
+   
+   
+ * R630 PSY
+   UP

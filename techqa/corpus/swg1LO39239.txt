@@ -1,0 +1,133 @@
+Title: IBM LO39239: ENHANCEMENT REQUEST TO RUN LOTUS TUTORIAL VIDEO IN NOTES HELP US ING IE 7 BROWSER - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS RETURNED (APAR CANNOT BE RESOLVED WITHOUT ADDITIONAL INFO FROM IBM OR CUSTOMER.)
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  IBM Learning Tutorial video does not run via IE 7 (but does via
+   
+   Notes embedded Browser)
+   
+   When a user clicks on Help > Internet Resources > Learning
+   Resources >
+   Internet Explorer is launched (see issue 3) > Whats new in IBM
+   Lotus
+   Notes 8 (video)
+   
+   A screen is displayed "The launch process is complete.  You may
+   close
+   this window"
+   
+   Closing the window finishes the process and no video is ran
+   
+   If this process if followed with Notes preference set to run
+   Notes
+   embedded Browser the video plays correctly without issue.
+   
+   I have tested the issue using my Notes Client 8.5 and have the
+   same results.
+   
+   If followed with Notes preference set to run Notes
+   embedded Browser the video plays correctly without issue.
+   
+   If set to run browser using OS fault I've got the message:
+   
+   "The launch process is complete.  You may close this windows"
+   
+   This happens to IE7 or Firefox 3.0.8
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Use Notes embedded browser
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *  This APAR is associated with SPR# DLUI7QPVZL.
+   This problem was resolved as: Not Reproducible
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   LO39239
+   
+   
+ * REPORTED COMPONENT NAME
+   NOTES/DOMINO 7X
+   
+   
+ * REPORTED COMPONENT ID
+   5724E6200
+   
+   
+ * REPORTED RELEASE
+   702
+   
+   
+ * STATUS
+   CLOSED RET
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-04-01
+   
+   
+ * CLOSED DATE
+   2009-05-29
+   
+   
+ * LAST MODIFIED DATE
+   2009-05-29
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

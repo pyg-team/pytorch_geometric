@@ -1,0 +1,39 @@
+Title: IBM ITCAM Data Collector for WebSphere is included with ITCAMfT 7.4.x. - United States
+
+Text:
+ITCAM Data Collector for WebSphere. data collector; WAS; WebSphere Application Server; YN; licensing; installation; configuration; 71TT-PLAN; 71TT-INS; 71TT-CONF; 71TT-GEN; 71GEN-ARM; 71GEN-DCOLL TECHNOTE (FAQ)
+
+QUESTION
+ Do you need an ITCAM for WAS license in order to install the ITCAM Data Collector for WebSphere? 
+
+ANSWER
+Depending on your environment, use one of the following methods to track WebSphere Application Server: 
+
+ * ITCAM Data Collector for WebSphere, the preferred method in most environments. 
+ * ITCAM for Application Diagnostics, if you already have this product deployed. 
+ * WebSphere Application Server Transaction Tracking (WASTT) to exploit ARM. Use if you have custom ARM instrumentation or an older version of WebSphere Application Server that is not supported by ITCAM Data Collector for WebSphere.
+
+
+The ITCAM Data Collector for WebSphere is the same data collector that is packaged with ITCAM for WebSphere Applications V7.2, product code YN. 
+
+The data collector gathers data for applications like ITCAM for SOA, ITCAM for WAS, and ITCAM for Transactions. The data collector ships with ITCAM for Transactions so that you do not need a separate license for ITCAM for WebSphere Applications. 
+
+The data collector is packaged with ITCAM for WAS 6.x. The product name changed in V7.x to ITCAM for WAS Advanced Diagnostics, and later changed to ITCAM for WebSphere Applications. 
+
+See the topic "Tracking WebSphere Application Server" in the V7.4 and V7.4.0.1 Installation Guides for prerequisites, supported request types, and installation instructions. 
+
+The Transaction Tracking installation media includes the ITCAM Data Collector for WebSphere. The installer for the data collector resides in the root directory of the Transaction Tracking installation image. The filename is itcam_gdc_201306281119. For example, in the installation image for the AIX platform, the filename is itcam_gdc_201306281119.tar.gz. 
+
+The IBM Knowledge Center article "Preparing ITCAM Data Collector for WebSphere" provides the relevant installation and configuration information, see the link in Related URLs. RELATED INFORMATION
+ Tracking WebSphere Application Server [http://www.ibm.com/support/knowledgecenter/SS5MD2_7.4.0.1/com.ibm.itcamt.doc/tt/dita/concept/kto_dom_was.html]
+Preparing ITCAM Data Collector for WebSphere [http://www.ibm.com/support/knowledgecenter/SS5MD2_7.4.0.1/com.ibm.itcamt.doc/tt/dita/concept/kto_dom_cam_was_enable.html]
+
+
+ 
+
+HISTORICAL NUMBER
+ 24921.004.000 
+
+PRODUCT ALIAS/SYNONYM
+ ITCAMfT
+T7.4

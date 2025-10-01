@@ -1,0 +1,95 @@
+Title: IBM Invalid or incomplete message collection input can cause the WTX Map node to create unacceptable output message tree content - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Invalid or incomplete message collection input can cause the WTX Map node to create unacceptable output message tree content 
+
+SYMPTOM
+When using WebSphere Transformation Extender (WTX) with WebSphere Message Broker (WMB), the WMB Collector node is the standard method used to gather multiple input messages from a WMB message flow into a single WTX Map node.
+
+The WTX Map node expects a message collection to be similar to the message collection created by a Collector node.
+
+The first input of the message collection is used by the WTX Map node for the properties of the message tree(s) created on the output terminal(s) of the WTX Map node.
+
+The first input of the message collection is required to contain a valid Properties attribute which will be used to build the WTX Map node output message tree(s).
+
+If a valid and complete message collection input is not used, the WTX Map node may create unacceptable and / or invalid output message tree content.
+
+The following is an example error message that may occur if invalid message tree content from the WTX Map node output is sent to a ResetContentDescriptor node:
+
+"DTXMB1003E: WTX for WMB error for <Map Node Name>: *ERR: Exception thrown in ImbResetContentDescNode::evaluate"
+
+In case of the above error, enable the Message Broker service trace and review the service trace output for exceptions similar to the following with the error message 'Message has no properties folder': 
+
+2010-01-29 13:26:24.828479 6688 >> ImbResetContentDescNode::evaluate IBM_test#FCMComposite_1_3 ComIbmResetContentDescriptorNode , 'Throwing exception', 'F:\build\S610_P\src\DataFlowEngine\BasicNodes\ImbResetContentDescNode.cpp', 394, '0000', 'Message has no properties folder', 'Collection', IBM_test.ResetContentDescriptor3
+
+>> +cciUserTrace file: line:0 message:1003.txmsgv82 IBM_test#FCMComposite_1_1 ComIbmCniNode 'general trace' , '*ERR: Exception thrown in ImbResetContentDescNode::evaluate - (F:\build\S610_P\src\DataFlowEngine\BasicNodes\ImbResetContentDescNode.cpp 609)', IBM_test.WTX Map1
+2010-01-29 13:26:24.829170 6688 >> UserTrace DTXMB1003E: WTX for WMB error for IBM_test.WTX Map1
+'*ERR: Exception thrown in ImbResetContentDescNode::evaluate - (F:\build\S610_P\src\DataFlowEngine\BasicNodes\ImbResetContentDescNode.cpp 609)'
+Fix the error and restart the flow.
+
+In the following example Trace node output, the first input of the Collection does not include a Properties attribute which would cause the problem:
+
+...
+(0x01000000:Name):Collection = ( ['COLLECTION' : 0x1f3d800]
+(0x03000000:NameValue):CollectionName = 'collection1' (CHARACTER)
+(0x01000000:Name ):input1 = (
+(0x01000000:Name ):Properties = (
+(0x03000000:NameValue):MessageSet = 'Test_MessageSet' (CHARACTER)
+(0x03000000:NameValue):MessageType = '' (CHARACTER)
+(0x03000000:NameValue):MessageFormat = '' (CHARACTER)
+(0x03000000:NameValue):Encoding = 273 (INTEGER)
+(0x03000000:NameValue):CodedCharSetId = 819 (INTEGER)
+(0x03000000:NameValue):Transactional = TRUE (BOOLEAN)
+(0x03000000:NameValue):Persistence = FALSE (BOOLEAN)
+(0x03000000:NameValue):CreationTime = GMTTIMESTAMP '2010-02-09 21:47:42.240' (GMTTIMESTAMP)
+(0x03000000:NameValue):ExpirationTime = -1 (INTEGER)
+(0x03000000:NameValue):Priority = 0 (INTEGER)
+(0x03000000:NameValue):ReplyIdentifier = X'000000000000000000000000000000000000000000000000' (BLOB)
+(0x03000000:NameValue):ReplyProtocol = 'MQ' (CHARACTER)
+(0x03000000:NameValue):Topic = NULL
+(0x03000000:NameValue):ContentType = '' (CHARACTER)
+(0x03000000:NameValue):IdentitySourceType = '' (CHARACTER)
+(0x03000000:NameValue):IdentitySourceToken = '' (CHARACTER)
+(0x03000000:NameValue):IdentitySourcePassword = '' (CHARACTER)
+(0x03000000:NameValue):IdentitySourceIssuedBy = '' (CHARACTER)
+(0x03000000:NameValue):IdentityMappedType = '' (CHARACTER)
+(0x03000000:NameValue):IdentityMappedToken = '' (CHARACTER)
+(0x03000000:NameValue):IdentityMappedPassword = '' (CHARACTER)
+(0x03000000:NameValue):IdentityMappedIssuedBy = '' (CHARACTER)
+)
+...
+
+In the following example Trace node output, the first input of the Collection now includes a Properties attribute which would resolve the problem:
+
+... 
+(0x01000000:Name):Collection = ( ['COLLECTION' : 0x1f3e430]
+(0x03000000:NameValue):CollectionName = 'collection1' (CHARACTER)
+(0x01000000:Name ):input1 = (
+(0x01000000:Name ):Properties = ( ['MQPROPERTYPARSER' : 0x2021b90]
+(0x03000000:NameValue):MessageSet = 'Test_MessageSet' (CHARACTER)
+(0x03000000:NameValue):MessageType = '' (CHARACTER)
+(0x03000000:NameValue):MessageFormat = '' (CHARACTER)
+(0x03000000:NameValue):Encoding = 273 (INTEGER)
+(0x03000000:NameValue):CodedCharSetId = 819 (INTEGER)
+(0x03000000:NameValue):Transactional = TRUE (BOOLEAN)
+(0x03000000:NameValue):Persistence = FALSE (BOOLEAN)
+(0x03000000:NameValue):CreationTime = GMTTIMESTAMP '2010-02-10 14:20:57.210' (GMTTIMESTAMP)
+(0x03000000:NameValue):ExpirationTime = -1 (INTEGER)
+(0x03000000:NameValue):Priority = 0 (INTEGER)
+(0x03000000:NameValue):ReplyIdentifier = X'000000000000000000000000000000000000000000000000' (BLOB)
+(0x03000000:NameValue):ReplyProtocol = 'MQ' (CHARACTER)
+(0x03000000:NameValue):Topic = NULL
+(0x03000000:NameValue):ContentType = '' (CHARACTER)
+(0x03000000:NameValue):IdentitySourceType = '' (CHARACTER)
+(0x03000000:NameValue):IdentitySourceToken = '' (CHARACTER)
+(0x03000000:NameValue):IdentitySourcePassword = '' (CHARACTER)
+(0x03000000:NameValue):IdentitySourceIssuedBy = '' (CHARACTER)
+(0x03000000:NameValue):IdentityMappedType = '' (CHARACTER)
+(0x03000000:NameValue):IdentityMappedToken = '' (CHARACTER)
+(0x03000000:NameValue):IdentityMappedPassword = '' (CHARACTER)
+(0x03000000:NameValue):IdentityMappedIssuedBy = '' (CHARACTER)
+)
+...

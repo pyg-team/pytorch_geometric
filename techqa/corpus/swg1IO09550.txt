@@ -1,0 +1,191 @@
+Title: IBM IO09550: ABNORMAL AL TERMINATION ON NULL POINTER EXCEPTION - United States
+
+Text:
+z/os  FIXES ARE AVAILABLE
+6.1.1-TIV-TDI-FP0007 [http://www-01.ibm.com/support/docview.wss?uid=swg24023425]
+6.1.1-TIV-TDI-FP0008 [http://www-01.ibm.com/support/docview.wss?uid=swg24024337]
+6.1.1-TIV-TDI-FP0009 [http://www-01.ibm.com/support/docview.wss?uid=swg24025546]
+6.1.1-TIV-TDI-FP0010 [http://www-01.ibm.com/support/docview.wss?uid=swg24028798]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Abnormal AL Termination on Null pointer exception
+   *********************************************
+   Problem Description: Reconnect rules unable to
+   handle null pointer exception.
+   
+   Abnormal AL termination with the following stack..
+   
+   13:04:48  [GetMatchedSoftware] CTGDIJ101I Set value of attribute
+   'SIG_ID': '42,479'. The class type of the attribute is
+   'java.lang.Long'.
+   13:04:48  [GetMatchedSoftware] CTGDIJ081I Retrieving attribute
+   value
+   based on the column name 'SWARE_DESC'.
+   13:04:49  [GetMatchedSoftware] CTGDIS495I handleException ,
+   lookup,
+   com.ibm.db2.jcc.c.SqlException
+   13:04:49  [GetMatchedSoftware] CTGDIS809E handleException -
+   cannot
+   handle exception , loop
+   java.lang.NullPointerException
+         at
+   java.util.regex.Matcher.getTextLength(Matcher.java:1143)
+         at java.util.regex.Matcher.reset(Matcher.java:300)
+         at java.util.regex.Matcher.<init>(Matcher.java:221)
+         at java.util.regex.Pattern.matcher(Pattern.java:913)
+         at java.util.regex.Pattern.matches(Pattern.java:956)
+         at
+   com.ibm.di.server.ReconnectRuleEngine$ReconnectRule.matchErrorSi
+   tuation(
+   Unknown Source)
+         at
+   com.ibm.di.server.ReconnectRuleEngine.findMatchingRule(Unknown
+   Source)
+         at
+   com.ibm.di.server.ReconnectRuleEngine.getReconnectChoice(Unknown
+   Source)
+         at
+   com.ibm.di.server.AssemblyLineComponent.handleException(Unknown
+   Source)
+         at
+   com.ibm.di.server.LoopComponent.checkConnectorInit(Unknown
+   Source)
+         at com.ibm.di.server.LoopComponent.willExecute(Unknown
+   Source)
+         at
+   com.ibm.di.server.AssemblyLine.msExecuteNextConnector(Unknown
+   Source)
+         at com.ibm.di.server.AssemblyLine.executeMainStep(Unknown
+   Source)
+         at com.ibm.di.server.AssemblyLine.executeMainLoop(Unknown
+   Source)
+         at com.ibm.di.server.AssemblyLine.executeMainLoop(Unknown
+   Source)
+         at com.ibm.di.server.AssemblyLine.executeAL(Unknown
+   Source)
+         at com.ibm.di.server.AssemblyLine.run(Unknown Source)
+   
+   Customer Recreate: Yes
+   
+   Desired Behavior: No
+   
+   
+   Steps to Duplicate: Bad DB2 data, triggered it
+   but simulated in labs by code sample.
+   
+   Environment: TDI 6.1.1 FP3+IF 8
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  n/a
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Reconnect rule engine unable to handle a null pointer exception.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This is a defect in the product and a formal fix would be
+   available in 6.1.1-TIV-TDI-FP0005.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IO09550
+   
+   
+ * REPORTED COMPONENT NAME
+   ITDI
+   
+   
+ * REPORTED COMPONENT ID
+   5724D9960
+   
+   
+ * REPORTED RELEASE
+   611
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-10-02
+   
+   
+ * CLOSED DATE
+   2008-12-22
+   
+   
+ * LAST MODIFIED DATE
+   2008-12-22
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ITDI
+   
+   
+ * FIXED COMPONENT ID
+   5724D9960
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R611 PSY
+   UP

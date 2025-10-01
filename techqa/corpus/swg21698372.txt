@@ -1,0 +1,46 @@
+Title: IBM Traveler HA Servers are not starting and cannot connect to the DB2 Enterprise Server - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+Traveler Task will not able to start and when attempting to load manually it will not initialize. 
+
+[0A10:0002-09A0] 03/02/2015 04:29:50 PM Traveler: Server starting...
+[0A10:0002-09A0] 03/02/2015 04:29:55 PM Traveler: Server stopped.
+
+
+CAUSE
+Traveler servers cannot connect to the DB2 server.
+
+
+
+
+RESOLVING THE PROBLEM
+1. Check the NTSError log for the following error messages:
+
+
+
+02/19 13:13:07.508] SEVERE main-d58 *system PersistentStore.checkDBExistence#1010 Unable to connect to database. Verify the database is running and that the database configuration is correct. Use travelerUtil to modify configuration parameters as necessary. Exception Thrown: com.ibm.db2.jcc.am.DisconnectNonTransientConnectionException: [jcc][t4][2043][11550][4.12.55] Exception java.net.ConnectException: Error opening socket to server <hostname>/9.
+com.ibm.db2.jcc.am.DisconnectNonTransientConnectionException: [jcc][t4][2043][11550][4.12.55] Exception java.net.ConnectException: Error opening socket to server <hostname>/<IP Address> on port 50,000 with message: Connection timed out: connect. ERRORCODE=-4499, SQLSTATE=08001
+at com.ibm.db2.jcc.am.hd.a(hd.java:319) 
+
+
+
+2. Check the DB connection between the Traveler Server and the DB2 database by using the travelerutil command, travelerUtil db check, to verify that the configuration allows database connections to be made. 
+
+You will see messages like these if the server cannot connect to the DB2 Database:
+
+Checking database connection to: jdbc:db2://<hostname>:50000/<databasename>
+Unable to connect to database: [jcc][t4][2043][11550][4.12.55] Exception java.ne
+t.ConnectException: Error opening socket to server <hostname>/<IP Add> on port 50,000 with message: Connection timed out: connect. ERRORCODE=-4499,
+SQLSTATE=08001 
+
+3. Check to determine if there are any aliases on the database by opening the db2 command line on the DB2 server and execute the following commands and retest:
+
+- db2 list database directory (get the database alias of the database of your server that connects to HA servers)
+- db connect to <database alias>
+
+
+
+In the event that you are receiving the behavior as listed above, TCP/IP may also not be properly enabled on your DB2 Database server. Review this DB2 technote to verify and retest the connection. [https://www-304.ibm.com/support/docview.wss?uid=swg21403644]

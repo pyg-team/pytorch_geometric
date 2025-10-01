@@ -1,0 +1,88 @@
+Title: IBM Security Bulletin: Vulnerabilities in Mozilla NSS affect the IBM FlashSystem model V840 - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ There are vulnerabilities in Mozilla Network Security Services (NSS) to which the IBM® FlashSystem™ V840 is susceptible. An exploit of these vulnerabilities (CVE-2016-2834, CVE-2016-5285, and CVE-2016-8635) could allow a remote attacker to execute arbitrary code, to recover private keys, to crash a TLS/SSL server, or to cause a denial of service. 
+
+VULNERABILITY DETAILS
+CVEID: CVE-2016-2834 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2016-2834]
+DESCRIPTION: Mozilla Network Security Services (NSS), as used in Mozilla Firefox, could allow a remote attacker to execute arbitrary code on the system, caused by memory safety bugs within the browser engine. By persuading a victim to visit a specially-crafted Web site, a remote attacker could exploit this vulnerability using unknown attack vectors to execute arbitrary code on the vulnerable system or cause a denial of service.
+CVSS Base Score: 8.8
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/113870 [https://exchange.xforce.ibmcloud.com/vulnerabilities/113870] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:N/AC:L/PR:N/UI:R/S:U/C:H/I:H/A:H) 
+
+CVEID: CVE-2016-5285 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2016-5285]
+DESCRIPTION: Mozilla Network Security Services (NSS), as used in Mozilla Firefox, is vulnerable to a denial of service, caused by a NULL pointer dereference in PK11_SignWithSymKey / ssl3_ComputeRecordMACConstantTime when handling invalid Diffie-Hellman keys. A remote attacker could exploit this vulnerability to crash a TLS/SSL server.
+CVSS Base Score: 5.3
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/119189 [https://exchange.xforce.ibmcloud.com/vulnerabilities/119189] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:L) 
+
+CVEID: CVE-2016-8635 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2016-8635]
+DESCRIPTION: Mozilla Network Security Services (NSS), as used in Mozilla Firefox, could allow a remote attacker to obtain sensitive information, caused by a small subgroup confinement attack in Diffie Hellman Client key exchange handling. By confining the client DH key to small subgroup of the desired group, a remote attacker could exploit this vulnerability to recover private keys.
+CVSS Base Score: 5.3
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/119190 [https://exchange.xforce.ibmcloud.com/vulnerabilities/119190] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:N/A:N)
+
+AFFECTED PRODUCTS AND VERSIONS
+Affected Products and Versions of FlashSystem V840’s two node types
+
+Storage Node 
+· Machine Type Models (MTMs) affected include 9846-AE1 and 9848-AE1
+· Code versions affected include supported VRMFs:
+o 1.4.0.0 – 1.4.5.1
+o 1.3.0.0 – 1.3.0.6
+
+Controller Node 
+· MTMs affected include 9846-AC0, 9848-AC0, 9846-AC1, and 9848-AC1 
+· Code versions affected include supported VRMFs:
+o 7.7.0.0 – 7.7.1.5
+o 7.8.0.0 – 7.8.0.1
+
+REMEDIATION/FIXES
+
+
+V840 MTMs VRMF APAR Remediation/First Fix Storage nodes:
+9846-AE1 & 
+9848-AE1
+
+Controller nodes: 
+9846-AC0,
+9846-AC1,
+9848-AC0, &
+9848-AC1 Code fixes are now available, the minimum VRMF containing the fix depends on the code stream:
+
+Storage Node VRMF 
+1.4 stream: 1.4.6.0 
+1.3 stream: 1.3.0.7
+
+Controller Node VRMF 
+7.7 stream: 7.7.1.6
+7.8 stream: 7.8.0.2 N/A FlashSystem V840 fixes [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=Flash%2Bhigh%2Bavailability%2Bsystems&product=ibm/StorageSoftware/IBM+FlashSystem+V840&release=1.0&platform=All&function=all] for storage and controller node are available @ IBM’s Fix Central WORKAROUNDS AND MITIGATIONS
+None
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v3 Guide [http://www.first.org/cvss/user-guide] 
+On-line Calculator v3 [http://www.first.org/cvss/calculator/3.0] 
+
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] 
+
+ACKNOWLEDGEMENT
+None 
+
+CHANGE HISTORY
+ 13 April 2017 Original Version Published 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.

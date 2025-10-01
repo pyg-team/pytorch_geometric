@@ -1,0 +1,209 @@
+Title: IBM PI30454: WI: 339247: ERROR "CRJAZ0368E' WHEN RUNNING REPOTOOLS-CCM REBUIL TTEXTINDICES ON A REPOSITORY WITH MORE THAN 1000 PROJECT AREAS - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Collaborative Lifecycle Management Interim Fix 2 for 5.0.2 [http://www-01.ibm.com/support/docview.wss?uid=swg24039306]
+Rational Team Concert Interim Fix 2 for 5.0.2 [http://www-01.ibm.com/support/docview.wss?uid=swg24039308]
+Collaborative Lifecycle Management Interim Fix 3 for 5.0.2 [http://www-01.ibm.com/support/docview.wss?uid=swg24039505]
+Rational Team Concert Interim Fix 3 for 5.0.2 [http://www-01.ibm.com/support/docview.wss?uid=swg24039509]
+Collaborative Lifecycle Management Interim Fix 4 for 5.0.2 [http://www-01.ibm.com/support/docview.wss?uid=swg24039643]
+Rational Team Concert Interim Fix 4 for 5.0.2 [http://www-01.ibm.com/support/docview.wss?uid=swg24039646]
+Collaborative Lifecycle Management Interim Fix 5 for 5.0.2 [http://www-01.ibm.com/support/docview.wss?uid=swg24039881]
+Rational Team Concert Interim Fix 5 for 5.0.2 [http://www-01.ibm.com/support/docview.wss?uid=swg24039938]
+Rational Team Concert Interim Fix 5 for 5.0.2 with Quick Planner iFeature [http://www-01.ibm.com/support/docview.wss?uid=swg24039933]
+Collaborative Lifecycle Management Interim Fix 6 for 5.0.2 [http://www-01.ibm.com/support/docview.wss?uid=swg24040165]
+Rational Team Concert Interim Fix 6 for 5.0.2 [http://www-01.ibm.com/support/docview.wss?uid=swg24040166]
+Rational Team Concert Interim Fix 6 for 5.0.2 with Quick Planner iFeature [http://www-01.ibm.com/support/docview.wss?uid=swg24040206]
+Rational Team Concert Interim Fix 6 for 4.0.7 [http://www-01.ibm.com/support/docview.wss?uid=swg24040239]
+Rational Team Concert 6.0 [http://www-01.ibm.com/support/docview.wss?uid=swg24040255]
+Collaborative Lifecycle Management Interim Fix 7 for 5.0.2 [http://www-01.ibm.com/support/docview.wss?uid=swg24040461]
+Copy of Rational Team Concert Interim Fix 8 for 5.0.2 [http://www-01.ibm.com/support/docview.wss?uid=swg24041060]
+Collaborative Lifecycle Management Interim Fix 9 for 5.0.2 [http://www-01.ibm.com/support/docview.wss?uid=swg24041059]
+Rational Team Concert Interim Fix 10 for 5.0.2 [http://www-01.ibm.com/support/docview.wss?uid=swg24041358]
+Rational Team Concert Interim Fix 11 for 5.0.2 [http://www-01.ibm.com/support/docview.wss?uid=swg24041486]
+Collaborative Lifecycle Management Interim Fix 12 for 5.0.2 [http://www-01.ibm.com/support/docview.wss?uid=swg24041652]
+Rational Team Concert Interim Fix 12 for 5.0.2 [http://www-01.ibm.com/support/docview.wss?uid=swg24041655]
+Collaborative Lifecycle Management Interim Fix 9 for 4.0.7 [http://www-01.ibm.com/support/docview.wss?uid=swg24041595]
+Rational Team Concert Interim Fix 9 for 4.0.7 [http://www-01.ibm.com/support/docview.wss?uid=swg24041608]
+Collaborative Lifecycle Management Interim Fix 13 for 5.0.2 [http://www-01.ibm.com/support/docview.wss?uid=swg24042213]
+Rational Team Concert Interim Fix 13 for 5.0.2 [http://www-01.ibm.com/support/docview.wss?uid=swg24042216]
+Collaborative Lifecycle Management Interim Fix 14 for 5.0.2 [http://www-01.ibm.com/support/docview.wss?uid=swg24042217]
+Rational Team Concert Interim Fix 14 for 5.0.2 [http://www-01.ibm.com/support/docview.wss?uid=swg24042220]
+Collaborative Lifecycle Management Interim Fix 10 for 4.0.7 [http://www-01.ibm.com/support/docview.wss?uid=swg24042221]
+Rational Team Concert Interim Fix 10 for 4.0.7 [http://www-01.ibm.com/support/docview.wss?uid=swg24042224]
+Collaborative Lifecycle Management Interim Fix 15 for 5.0.2 [http://www-01.ibm.com/support/docview.wss?uid=swg24042250]
+Rational Team Concert Interim Fix 15 for 5.0.2 [http://www-01.ibm.com/support/docview.wss?uid=swg24042253]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Description:
+   When running repotools-ccm rebuildTextIndices command in IBM
+   Rational Team Concert (RTC), the command fails with error
+   CRJAZ0368E. The following ORA-01795 error is found in
+   repotools-ccm_rebuiltTextIndices.log:
+   
+   2014-11-22 10:50:28,209     Error rebuilding text indices
+   com.ibm.team.repository.common.InternalRepositoryException:
+   CRJAZ0368E A database query could not run on the server.
+      stmt = select distinct COUNT(*) from RTC.MODEL_WORK_ITEM t1
+   where t1.PROJECT_AREA_ITEM_ID  in(?, ?, ?, ..., ?)
+       at
+   com.ibm.team.repository.service.internal.dataaccess.FetchRows.ex
+   ecuteQuery(FetchRows.java:253)
+       ...
+       Caused by: java.sql.SQLSyntaxErrorException: ORA-01795 :
+   ORA-01795 maximum number of expressions in a list is 1000
+   
+   The error occurs in the repository that has more than 1000
+   project areas.
+   
+   What is the expected output?
+   Repotools -rebuiltTextIndices command runs successfully.
+   
+   What do you see instead?
+   Repotools -rebuiltTextIndices command fails with CRJAZ0368E
+   error.
+   
+   Refer to the following work item on Jazz.net for further
+   details:
+   https://jazz.net/jazz/resource/itemName/com.ibm.team.workitem.Wo [https://jazz.net/jazz/resource/itemName/com.ibm.team.workitem.Wo]
+   rkItem/339247
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * ORA-01795 maximum number of expressions in a list is 1000    *
+   * during CCM rebuildTextIndices                                *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * When running repotools-ccm rebuildTextIndices command in IBM *
+   * Rational Team Concert (RTC), the command fails with error    *
+   * CRJAZ0368E. The following ORA-01795 error is found in        *
+   * repotools-ccm_rebuiltTextIndices.log:                        *
+   *                                                              *
+   * 2014-11-22 10:50:28,209     Error rebuilding text indices    *
+   * com.ibm.team.repository.common.InternalRepositoryException:  *
+   * CRJAZ0368E A database query could not run on the server.     *
+   *    stmt = select distinct COUNT(*) from RTC.MODEL_WORK_ITEM  *
+   * t1                                                           *
+   * where t1.PROJECT_AREA_ITEM_ID  in(?, ?, ?, ..., ?)           *
+   *     at                                                       *
+   * com.ibm.team.repository.service.internal.dataaccess.FetchRow *
+   * s.ex                                                         *
+   * ecuteQuery(FetchRows.java:253)                               *
+   *     ...                                                      *
+   *     Caused by: java.sql.SQLSyntaxErrorException: ORA-01795 : *
+   * ORA-01795 maximum number of expressions in a list is 1000    *
+   *                                                              *
+   * The error occurs in the repository that has more than 1000   *
+   * project areas.                                               *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This issue has been addressed in version 6.0
+   See Jazz workitem for additional details
+   https://jazz.net/jazz/web/projects/Rational%20Team%20Concert#act
+   ion=com.ibm.team.workitem.viewWorkItem&id=339247 [https://jazz.net/jazz/web/projects/Rational%20Team%20Concert#action=com.ibm.team.workitem.viewWorkItem&id=339247]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI30454
+   
+   
+ * REPORTED COMPONENT NAME
+   RATL TEAM CONCE
+   
+   
+ * REPORTED COMPONENT ID
+   5724V0400
+   
+   
+ * REPORTED RELEASE
+   405
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-11-26
+   
+   
+ * CLOSED DATE
+   2015-07-28
+   
+   
+ * LAST MODIFIED DATE
+   2015-07-28
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   RATL TEAM CONCE
+   
+   
+ * FIXED COMPONENT ID
+   5724V0400
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R502 PSY
+   UP

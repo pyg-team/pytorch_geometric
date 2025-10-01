@@ -1,0 +1,72 @@
+Title: IBM Exporting and importing the InfoSphere Business Glossary development glossary in Version 9.1, Fix Pack 1 and later - United States
+
+Text:
+bg; business glossary; development glossary; business glossary 9.1; bg 9.1.0.1; bg91relnote; export; devglossary; dev PRODUCT DOCUMENTATION
+
+ABSTRACT
+ As of InfoSphere Business Glossary Version 9.1, Fix Pack 1, you can export and re-import the content of the development glossary, in addition to the content of the published glossary. 
+
+CONTENT
+If your implementation of InfoSphere Business Glossary uses the workflow feature, you can choose whether to export the development glossary or the published glossary. Prior to version 9.1, Fix Pack 1, when you exported glossary content, the results included only content in the published glossary.
+
+
+You can export the development glossary to an XML or CSV file. 
+
+The workflow feature must be turned on. 
+
+From the web browser (graphical user interface) 
+
+If workflow is turned on, when you select Export glossary content, the first window of the export wizard asks whether you want to export the development glossary or the published glossary. 
+
+
+[/support/docview.wss?uid=swg27036984&amp;aid=1] 
+
+ 
+
+Select Published Glossary or Development Glossary, then click Next to proceed with the rest of the export process. All other remaining selections in the export wizard are the same, regardless of which glossary you select. 
+
+ 
+
+From the command line 
+
+ 
+
+You can use the -devglossary or -dev option with the istool glossary export command to export the development glossary.
+
+NOTE: You must have patch_JR45260_bg_all_9100-1 or a later roll-up patch or release installed for the -devglossary option to work. Without this patch or a later release, use the -dev option.
+
+
+ * 
+ * Example
+ * 
+ * The following command exports development glossary content, including content in all categories and including policies and rules, to a CSV file:
+   
+   glossary export -devglossary –domain localhost –user mary –password passwd -format CSV –file C:\export.csv -allcategories -includepoliciesrules
+   
+   Using the short form of all options:
+   
+   glossary export -dev –dom localhost –u mary –p passwd -fm CSV –f C:\export.csv -all -incpolrul
+   
+   
+
+Using the glossary export command without the -devglossary option exports content from the published glossary. 
+
+You can export either the content of the development glossary or the content of the published glossary; you cannot export the content of both the development glossary and the published glossary to a single file. 
+
+
+Workflow status in exported files 
+
+The XML schema and the format of the CSV file have been updated to include workflow information so that you can review this information outside of InfoSphere Business Glossary. However, the workflow information in the file is ignored by the import process. 
+
+Workflow status of assets in imported files 
+
+If workflow is enabled when you import a business glossary file that you have modified offline, then, in general, changes to assets are put into the development glossary in draft state. If the file is an XML file, the merge option that you select determines what assets are actually changed, and any assets that overwrite existing assets on the server are put into draft state. If the file is a CSV file, changes to any asset result in that asset being put in draft state. 
+
+If workflow is not enabled when you import a file that was originally exported from the development glossary, the content in the file is written to the published glossary. For XML files, the selected merge options apply. For CSV files, changes in the file overwrite existing content in the published glossary. 
+
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Information Management InfoSphere Information Server AIX, HP-UX, Linux, Solaris, Windows 9.1.0.1

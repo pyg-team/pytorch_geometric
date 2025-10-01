@@ -1,0 +1,32 @@
+Title: IBM XML Digital Signature Service failed with Out_Of_Memory exception - United States
+
+Text:
+XML Digital Signature Service TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Sterling B2B Integrator failed with Out Of Memory Exception when it tried to sign 135MB of XML payload by using XML Digital Signature Service.
+
+Log shows following error:
+
+JVMDUMP039I Processing dump event "systhrow", detail
+
+"java/lang/OutOfMemoryError" at 2016/08/10 14:40:12 - please wait. 
+
+SYMPTOM
+Java is configured with maximum heap size of 3200MB.
+Log shows following error:
+JVMDUMP039I Processing dump event "systhrow", detail
+"java/lang/OutOfMemoryError" at 2016/08/10 14:40:12 - please wait.
+
+
+CAUSE
+The XML Digital Signature Service requires about 2.7 GB of memory to sign 135MB XML payload files. This is because it's using DOM API which requires a lot of memory by nature. This heap usage is quite linear so it can be used for extrapolation purpose, i.e. 270MB XML payload will require about 5.4GB of memory.
+
+DIAGNOSING THE PROBLEM
+You can profile the java heap memory usage during the service execution.
+
+RESOLVING THE PROBLEM
+Potentially there are 2 options:
+1. Increase the maximum heap settings on SI
+or
+2. Break the XML payload file into smaller chunks before signing.

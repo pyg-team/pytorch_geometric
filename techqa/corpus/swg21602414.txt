@@ -1,0 +1,43 @@
+Title: IBM BIRT Base Services reports - Silent print functionality on Fire Fox explained - United States
+
+Text:
+DP; DPA; Direct Print; Direct Print with Attachments; Silent Print; SP ; BIRT; 2.1.2; 2.3.2 ; reports; reporting ; Fire Fox; TPAEREP TECHNOTE (FAQ)
+
+QUESTION
+ Why do BIRT Base Services reports only work on certain Fire Fox browser versions and in certain circumstances? 
+
+ANSWER
+There are 2 types of silent printing as follows:
+1. Direct Print (DP) - - Prints the report only.
+2. Direct Print with Attachments (DPA) -- Prints the report and any attachments on the record.
+
+Active X controls are only used in the 2nd type of silent printing - and only if the attachment is a Microsoft Office document (like .doc, .xls or ppt). 
+Users can attach other files, so if you use a non-Microsoft file ,e.g .PDF or .JPG -- Active X controls are not used and so DPA can execute from a Firefox Browser .
+
+Summarizing:
+
+Direct Printing with Attachments (DPA) does not work in a Fire fox browser in the following conditions - 
+
+a. If you are using Direct Printing with Attachments and your Attachments are Microsoft Documents
+
+b. Also, only certain Fire Fox versions are a supported browser to be used with Maximo and Birt as shown here in the matrix :
+
+[/support/docview.wss?uid=swg21602414&aid=1] [/support/docview.wss?uid=swg21602414&aid=1]
+
+For further information on supported browsers with Maximo Base Services and BIRT reporting, please see the IBM Maximo matrix here [http://www-01.ibm.com/support/docview.wss?rs=3214&context=SSLKT6&q1=language&uid=swg27014419&loc=en_US&cs=utf-8&lang=en]:
+
+
+
+Further information on this topic and more can be found for V7.5 here:
+
+http://www-304.ibm.com/support/docview.wss?uid=swg21498665 [http://www-304.ibm.com/support/docview.wss?uid=swg21498665]
+
+Further information on this topic and more can be found for V7.1 here:
+
+http://www-304.ibm.com/support/docview.wss?uid=swg21370440 [http://www-304.ibm.com/support/docview.wss?uid=swg21370440]
+
+ 
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Systems and Asset Management Control Desk AIX, HP-UX, Linux, Solaris, Windows 7.5 Systems and Asset Management Tivoli Service Request Manager AIX, Linux, Solaris, Windows 2003 server, Windows 2008 server 7.1, 7.1.2, 7.2, 7.2.1, 7.5 Systems and Asset Management Tivoli Change and Configuration Management Database AIX, Linux, Windows, Solaris, HP-UX 6.2.7, 6.2.8, 7.1, 7.1.2, 7.2, 7.2.1, 7.5 Systems and Asset Management Tivoli Asset Management for IT AIX, HP-UX, Linux, Solaris, Windows 6.2.7, 6.2.8, 7.1, 7.1.1, 7.2, 7.2.1, 7.5

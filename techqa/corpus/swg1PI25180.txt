@@ -1,0 +1,198 @@
+Title: IBM PI25180: ABEND AEXZ ISSUED BY DFHESN INVALIDLY - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  An application issues an EXEC CICS VERIFY PASSWORD command
+   which causes DFHESN to call DFHUSAD for new function
+   VERIFY_PASSWORD.  DFHUSAD invokes DFHXSPW for function
+   INQUIRE_PASSWORD_DATA which invokes DFHXSSB to call the
+   external security manager (ESM).  The ESM fails the request
+   with return codes of:
+   .
+   SAF_RESPONSE(8) SAF_REASON(0)
+   ESM_RESPONSE(30) ESM_REASON(0)
+   .
+   The return codes mean  'not authorized to the port of entry' .
+   Although the return codes are valid, they are not expected by
+   DFHXSSB so an exception is raised for UNKNOWN_ESM_RESPONSE.
+   .
+   Trace shows:
+   .
+   XS FE04 XSSB  *EXC* FUNCTION(INQUIRE_PASSWORD_DATA)
+   RESPONSE(EXCEPTION) REASON(UNKNOWN_ESM_RESPONSE)
+   SAF_RESPONSE(8) SAF_REASON(0)
+   ESM_RESPONSE(30) ESM_REASON(0) FASTPATH_AUTH(NO)
+   .
+   DFHESN is eventually returned to for handling of the EXCEPTION
+   response. However, DFHESN checks for XSPW_UNKNOWN_ESM_ERROR
+   (as it did in earlier releases when DFHXSPW was used for the
+   INQUIRE_PASSWORD_DATA function) and  should be checking for
+   USAD_UNKNOWN_ESM_RESPONSE.  Because DFHESN is unable to map
+   XSPW_UNKNOWN_ESM_ERROR to proper EIBRESP and EIBRESP2
+   values, he abends with AEXZ abend code.  DFHESN should return
+   to the application,  EIBRESP=16 (INVREQ) and EIBRESP2=13
+   (unknown return code from the ESM).
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   Additional Symptom(s) Search Keyword(s): KIXREVRJL
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All CICS users                               *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: EXEC CICS VERIFY PASSWORD fails with    *
+   *                      ABENDAEXZ for an unknown return code    *
+   *                      in ESMRESP from the ESM.                *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   An EXEC CICS VERIFY PASSWORD is issued which fails a RACROUTE
+   VERIFYX call with an ESM response of X'30'. CICS has no specific
+   error handling for this type of error so DFHUSAD returns an
+   exception of USAD_UNKNOWN_ESM_RESPONSE to DFHESN.
+   DFHESN should fail the EXEC CICS VERIFY PASSWORD command with an
+   INVREQ with RESP2=13. However, DFHESN fails to handle the
+   USAD_UNKNOWN_ESM_RESPONSE correctly and issues abend AEXZ.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  DFHESN has been changed to return INVREQ with RESP2=13 when an
+   EXEC CICS VERIFY PASSWORD call fails with a
+   USAD_UNKNOWN_ESM_RESPONSE exception.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  *********
+               * HIPER *
+               *********
+   FIX AVAILABLE BY PTF ONLY
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI25180
+   
+   
+ * REPORTED COMPONENT NAME
+   CICS TS Z/OS V5
+   
+   
+ * REPORTED COMPONENT ID
+   5655Y0400
+   
+   
+ * REPORTED RELEASE
+   800
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   YesHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-09-05
+   
+   
+ * CLOSED DATE
+   2014-09-24
+   
+   
+ * LAST MODIFIED DATE
+   2015-03-19
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UI21740 UI21741
+   
+   
+
+MODULES/MACROS
+ *  DFHESN
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CICS TS Z/OS V5
+   
+   
+ * FIXED COMPONENT ID
+   5655Y0400
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R800 PSY UI21740 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI21740]
+   UP14/10/08 P F410 ½
+   
+   
+ * R900 PSY UI21741 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI21741]
+   UP14/10/08 P F410 ½
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

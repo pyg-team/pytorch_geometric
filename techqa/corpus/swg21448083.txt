@@ -1,0 +1,61 @@
+Title: IBM Mail signature reverts to old value after template upgrade to 8.5.2 - United States
+
+Text:
+sig file; email signature; sig; HTML; upgrade; template TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+After upgrading Notes/Domino mail files to the 8.5.2 version of the mail85 template, users may find their email signature has changed to an old value or Notes may throw a "File not found" error.
+
+SYMPTOM
+The mail signature is showing old data, an old format or is blank.
+
+
+CAUSE
+ 
+
+Some Notes releases prior to Notes 8.5.0 and Notes 8.5.1 provided users with the mail signature option "Use an HTML or image file." In both Notes 8.5.0 and 8.5.1, the Notes Mail Preference signature options were enhanced to allow the mail signature to roam with users. To deliver this change, the option "Use an HTML or image file" was hidden from the Notes UI. Settings already stored in the Calendar Profile from Notes releases prior to Notes 8.5.0 and 8.5.1 remained set in the database; however, they could be viewed only via NotesPeek. In Notes releases 8.5.0 and 8.5.1, only rich text email signatures were used; HTML signatures were not accessible via the Notes UI . 
+
+
+Beginning with In Notes 8.5.2, the plain text and HTML mail signature options were reintroduced. These options are visible via the Notes UI. Notes users who used an HTML or image file as their mail signature preference when this option was available in earlier releases may find their mail signature has reverted to the older HTML or plain text signature used prior to Notes 8.5.0/8.5.1. If the HTML file is no longer available, Notes may return the error "File not found."
+
+
+RESOLVING THE PROBLEM
+ 
+
+This issue has been reproduced in Notes 8.5.3 and was reported as SPR# JADS89JREF.
+
+
+ 
+
+Workarounds: 
+
+Option 1: From the Mail database -> select More - Preferences from the Inbox and set the email signature to Rich Text. 
+
+ 
+
+Option 2: Send the affected users an email with a button in it that will fix the issue for them 
+
+
+IMPORTANT NOTE: This script is only a sample to illustrate one way to approach this issue. IBM Support will not be able to customize this script for a customer's own configuration. 
+
+
+Create an email with a button in it and have the following code behind it.
+
+Sub Click()
+Dim sess As New NotesSession
+Dim mailfile As NotesDatabase
+Dim pathName As String, fileName As String
+Dim profiledoc As NotesDocument
+Dim selection As NotesItem
+Dim rtitem As NotesRichTextItem
+
+
+
+Set mailfile = sess.Currentdatabase
+Set profiledoc = mailfile.GetProfileDocument("CalendarProfile")
+Set rtitem = profiledoc.Getfirstitem("Signature_Rich")
+If rtitem.Text <> "" Then
+Set selection = profiledoc.Replaceitemvalue("SignatureOption", "3")
+Call profiledoc.Save(True, False)
+End If
+End Sub

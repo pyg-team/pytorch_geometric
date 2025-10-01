@@ -1,0 +1,31 @@
+Title: IBM ATTRIBUTE GROUP RETURNED NULL for AGENTLOG object - United States
+
+Text:
+tsm itm teps reporting agent TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The Availability workspace under the Tivoli Storage Manager section in the Tivoli Enterprise Portal shows an INACTIVE status for the AGENTLOG object. 
+
+CAUSE
+Working as designed
+
+DIAGNOSING THE PROBLEM
+Log on to the Tivoli Enterprise Portal. Expand the appropriate system being monitored. Expand the Tivoli Storage Manager section. Select the Availability workspace. The Agent Status window on the right reports an INACTIVE status for the AGENTLOG. For example : 
+
+[/support/docview.wss?uid=swg21407117&aid=1] [/support/docview.wss?uid=swg21407117&aid=1]
+
+Also, selecting the AGENTLOG workspace will report "This view has not been defined".
+
+
+RESOLVING THE PROBLEM
+ 
+
+It is normal for an object to show a status of INACTIVE with Error Code of "ATTRIBUTE GROUP RETURNED NULL" when there is no data available for the specific object.
+
+In this case, it indicates that there is no data available for the AGENTLOG. The AGENTLOG is used for logging specific events of the Reporting Agent. Currently, the following conditions are logged: 
+
+ 1. Client_Missed_Files returns too much data from tsm server (more than 50000 by default) 
+ 2. Node_Activity returns too much data from tsm server (more than 50000 by default)
+    
+
+If neither of the above conditions are met, no data is logged for the Reporting Agent. Because no data is logged, and it is normal for the AGENTLOG status to be inactive.

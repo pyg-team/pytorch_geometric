@@ -1,0 +1,43 @@
+Title: IBM DC Configuration fails on Webphere Portal Server 8.0.x - United States
+
+Text:
+ITCAM; WPS; Data Collector; installation; installer; CAMADALL; CAMADPORTDC TECHNOTE (FAQ)
+
+QUESTION
+ DC Graphical configuration from MTEMS fails and exits at the step "Generating Configuration Template". Is WPS 8.0.x supported? 
+
+CAUSE
+WPS 8.0.x is not currently supported with ITCAM for AD v7.1 version.
+
+You can see the excerpt below from the itm_config.trc:
+
+2013-05-07 10:50:36.979+01:00 com.ibm.tivoli.itcam.install.framework. configurator.ct.CTWorker doTask __ERROR__ (traceKey:
+1367916636979)
+com.ibm.tivoli.itcam.install.framework.configurator.was.
+WasConfigException: 
+
+at com.ibm.tivoli.itcam.install.was.config.applyconfig. GenConcreteConfig.generateConfigFile(GenConcreteConfig.java:96) at com.ibm.tivoli.itcam.install.was.config.actions.
+GenConfigfileAction.execute(GenConfigfileAction.java:87)
+at com.ibm.tivoli.itcam.install.framework.configurator.ct. CTWorker.doTask(CTWorker.java:142)
+at com.ibm.tivoli.itcam.install.framework.configurator.ct. CTWorker.run(CTWorker.java:97)
+
+2013-05-07 10:50:37.036+01:00 com.ibm.tivoli.itcam.install.framework. configurator.ct.CTWorker run __ERROR__ (traceKey:1367916637036) com.ibm.tivoli.itcam.install.framework.configurator.was.
+WasConfigException: 
+
+at com.ibm.tivoli.itcam.install.was.config.applyconfig. GenConcreteConfig.generateConfigFile(GenConcreteConfig.java:96) at com.ibm.tivoli.itcam.install.was.config.actions.
+GenConfigfileAction.execute(GenConfigfileAction.java:87)
+at com.ibm.tivoli.itcam.install.framework.configurator.ct. CTWorker.doTask(CTWorker.java:142)
+at com.ibm.tivoli.itcam.install.framework.configurator.ct. CTWorker.run(CTWorker.java:97)
+
+ANSWER
+WPS 8.0.x is not supported yet with ITCAM for AD 7.1 DC.
+
+This can be checked on Clarity site.
+The latest supported version for Websphere Portal Server is 7.0.
+
+On the other hand, Websphere Portal Server 8.0.x is supported with ITCAM Agent for Websphere Applications v7.2, as you can see on the same Clarity site.
+
+There are no plans at the moment to introduce WPS 8.x support in v7.1 maintenance stream.
+
+RELATED INFORMATION
+ Clarity SW compatibility reports [http://www-969.ibm.com/software/reports/compatibility/clarity/index.html]

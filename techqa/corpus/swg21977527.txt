@@ -1,0 +1,10 @@
+Title: IBM Transport Layer Security encryption compatibility in IBM i2 iBase - United States
+
+Text:
+ibase;ssl;tls QUESTION/ANSWER
+
+QUESTION
+What versions of Transport Layer Security (TLS) encryption are supported for use with an iBase SQL Server database?
+
+ANSWER
+As of version 8.9.12, TLS 1.0, 1.1 and 1.2 are supported in iBase.

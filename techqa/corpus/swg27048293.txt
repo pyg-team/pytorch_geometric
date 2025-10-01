@@ -1,0 +1,168 @@
+Title: IBM Determing the number of Virtual Processor Cores (VPC) to license for IBM Direct Standard and Advanced Editions - United States
+
+Text:
+ PRODUCT DOCUMENTATION
+
+ABSTRACT
+ 
+With the DB2 Direct Standard and Advanced editions you can now deploy hybrid cloud database environments. Both editions support a new subscription model for maximum licensing flexibility. 
+
+The pricing of DB2 Direct Editions is based on the number of Virtual Processor Cores (VPC) your server uses. A VPC is a processor core in a non-partitioned physical server, or a virtual core assigned to a virtual server. VPC’s are used as the unit of measurement by which you must license your program. You must license each virtual processor made available to the program. 
+
+This technote instructs you on how to determine the number of VPC’s you must license for your program. The methods for this are different for virtual servers and physical servers. 
+
+CONTENT
+Determining the number of VPC’s to license for Virtual Servers 
+
+If your program is installed on a virtual machine or Virtual Cloud Server, you must pay for the number of virtual cores. The number of virtual cores will be equivalent to the number of VPC’s used by the program. You can determine the number of virtual cores in four ways: 
+
+ *  The IBM License Metric Tool (ILMT) db2pd -OSINFO command db2diag command DB2 Env_Get_System_Resources environment variable 
+
+Using ILMT to determine the number of VPC’s to license 
+
+The ILMT reports the CPU Core Sub capacity count for each virtual server. This defines the number of VPC’s you must license. 
+
+Using the DB2pd command to determine the number of VPC’s to license 
+
+1. Run the “db2pd –osinfo” command to return the server’s environment variables. If you have multiple servers, you must run the command on each server. 
+
+2. If you have an HMTDegree value of ‘1’, the OnlineCPU value is equivalent to the number of VPC’s you must license. Virtual machines will always have an HMTDegree value of ‘1’. 
+
+The number of VPC’s to license is equivalent to the OnlineCPU value. 
+
+[/support/docview.wss?uid=swg27048293&aid=1] [/support/docview.wss?uid=swg27048293&aid=1] 
+
+Using the db2diag command to determine the number of VPC’s to license 
+
+1. If you are on windows, run the following command: 
+
+db2diag -g data:=“System Info” 
+
+If you are on Linux/Unix, run the following command: 
+
+db2diag -g data:= [data:=] 'System Info‘ 
+
+ 
+
+2. Similar to the db2pd command, this command will return the number of online CPU’s and the HMT degree, displayed below as “Threading degree per core”: 
+
+[/support/docview.wss?uid=swg27048293&aid=2] [/support/docview.wss?uid=swg27048293&aid=2] 
+
+3. The number of online CPU’s is equivalent to the number of VPC’s you must license. 
+
+ 
+
+Using the DB2 Env_Get_System_Resources Monitor to determine the number of VPC’s to license 
+
+The DB2 Env_Get_System_Resources Monitor is a table function that you can run via SQL. If you want to find the resources for each member in a Standard DB2 or PureScale Cluster, complete the following steps: 
+
+1. Enter the query: 
+
+Select MEMBER, varchar(HOST_NAME,12) as HOST_NAME, CPU_TOTAL,CPU_online, CPU_HMT_Degree from table(SYSPROC.ENV_GET_SYSTEM_RESOURCES()) order by MEMBER 
+
+2. Use the CPU_Online and CPU_HMT_degree values to determine the number of VCP’s you must license. 
+
+ 
+
+Determining the number of VPC’s to license for physical servers 
+
+There are three ways to determine the number of VPC’s to license on a physical server: 
+
+ *  Determine the number of physical cores on the machine db2pd -OSINFO command db2diag command 
+
+Using the number of physical cores to determine the number of VPC’s to license The number of physical cores on your physical server will be equivalent to the number of VPC’s used by the program. You may License a physical Server whether it is single bare metal host or running multiple virtual machines. 
+
+For hybrid environments, you can either license the number of physical cores on the machine or you can license the sum of the virtual cores used on the machine. Choose whichever results in the lesser number. 
+
+Using the DB2pd command or db2diag to determine the number of VPC’s to license 
+
+Follow the same procedure as for virtual servers to determine the number of online CPU’s and HMT Degree. Use the following formula to find the number of VPC’s you must license: 
+
+Number of VPC’s to license = OnlineCPU/HMTDegree 
+
+ 
+
+Examples 
+
+Scenario 1 - cloud virtual machine deployment 
+
+[/support/docview.wss?uid=swg27048293&amp;aid=3] 
+
+If you purchase a Virtual Cloud Server on an private cloud or a managed service provider (MSP) such as Softlayer, and an 8-core virtual CPU, take the following steps to find the number of VPCs: 
+
+ 
+
+1. Run the “db2pd -osinfo” command. An HMTDegree of 1 and an OnlineCPU of 8 will be returned. 
+
+2. License eight VPCs for this environment. 
+
+ 
+
+Scenario 2 - physical server deployment 
+
+[/support/docview.wss?uid=swg27048293&aid=4] [/support/docview.wss?uid=swg27048293&aid=4] 
+
+If you set up a windows server in the following environment: 
+
+ *  It is deployed on a two-socket server with eight cores per processor and hyper-threading turned on to a degree of 2 (16 physical cores). The operating system shows 32 CPUs available. 
+
+Take the following steps to find the number of VPCs: 1. Run the “db2pd -osinfo” command. An HMTDegree of 2 and an OnlineCPU of 32 will be returned. 
+
+2. License 16 VPCs for this environment. 
+
+Note: The actual number of cores is determined by: VPC = OnlineCPU/HMTDegree = 32/2 = 16 
+
+ 
+
+Scenario 3 - single VM environment on a physical server 
+
+[/support/docview.wss?uid=swg27048293&aid=5] [/support/docview.wss?uid=swg27048293&aid=5] 
+
+If you set up a DB2 instance for six VPCs in the following environment: 
+
+ *  The VMware is deployed on a two-socket server with eight cores per processor and hyper-threading turned on to a degree of 2 (32 virtual cores or 16 physical cores). The VMware reports 6 virtual processors. 
+
+Take the following steps to find the number of VPCs: 1. Run the “db2pd-osinfo” command. An HMTDegree of 1 and an OnlineCPU of 6 will be returned. 
+
+2. License six VPCs for this environment. 
+
+ 
+
+Scenario 4 - Heavy virtualization on a single machine 
+
+[/support/docview.wss?uid=swg27048293&aid=6] [/support/docview.wss?uid=swg27048293&aid=6] 
+
+If you deploy multiple VMware hosts on a server to run DB2 with the following environment: 
+
+ *  DB2 is running on a two-socket server with eight cores per processor and hyper-threading turned on to a degree of 2 (16 physical cores). Three of the VM images report 16 virtual cores, and the other two VM images report 8 virtual cores Take the following steps to find the number of VPCs: 
+
+1. Run the “db2pd-osinfo” command across all VMware hosts. The VMware hosts will return an HMTDegree of 1 for each virtual machine and a total OnlineCPU of 64 across the five virtual machines. 2. License 16 VPCs for this environment. 
+
+ *  Since the hardware can be physically identified as a 16-core server, you only have to pay for 16 VPCs, not 64. VPC allows you to apply the lower of the total number of physical cores on a machine or the sum of the virtual cores used on the machine. 
+
+Scenario 5 - power virtualization and sub-capacity 
+
+[/support/docview.wss?uid=swg27048293&aid=7] [/support/docview.wss?uid=swg27048293&aid=7] 
+
+If you deploy a Power VM sub-capacity environment on a 20-core server with the following characteristics: 
+
+ *  There are multiple Power VM processors and LPARs. There is one connection pool of 12 cores with two DB2 VMs capped and one DB2 VM uncapped. There is one DB2 LPAR. 
+
+If an LPAR is uncapped you must license the total number of virtual cores allocated. You can purchase PVU Licensing or VPC: 
+
+ *  PVU Sub-Capacity Licensing  * You need to license a total of 15 cores (4 + 8 + 2 + 3 = 15 cores).
+   
+   VPC  * You need to license 20 physical cores or 38 virtual cores (16 + 8 + 8 + 6 = 38 cores).
+   
+   
+
+Many customers using the Power VM processor pool capabilities will choose PVU Licensing over VPC as it allows for greater cost optimization.
+
+Note that there are more VPCs than actual physical cores. For hybrid environments, you can either license the number of physical cores on the machine or you can license the sum of the virtual cores used on the machine. Hence, you only need to pay for the 20 physical cores.
+
+
+
+
+
+ORIGINAL PUBLICATION DATE
+ 2016/6/24

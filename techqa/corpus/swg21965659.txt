@@ -1,0 +1,71 @@
+Title: IBM How to configure MobileFirst Server to enable TLS V1.2 - United States
+
+Text:
+jre; security; TLSV12; ssl; sslEnabledProtocols TECHNOTE (FAQ)
+
+QUESTION
+ How do you configure the IBM MobileFirst Platform Foundation Server to communicate with devices that support only TLS V1.2? 
+
+ANSWER
+The steps to configure MobileFirst Server to enable TLS V1.2 depend on how your MobileFirst Server connects to devices: 
+
+ * If your MobileFirst Server is behind a reverse proxy that decrypts SSL-encoded packets from devices before passing the packets to the application, you must enable TLS V1.2 support on your reverse proxy. If you are using IBM HTTP Server as your reverse proxy, see Securing IBM HTTP Server [http://www.ibm.com/support/knowledgecenter/SSEQTP_8.5.5/com.ibm.websphere.ihs.doc/ihs/welc6top_securing_ihs_container.html] in the IBM Knowledge Center for instructions.
+   
+   
+ * If your MobileFirst Server communicates directly with devices, the steps to configure MobileFirst Server to enable TLS V1.2 depend on the application server that you use.
+    * 
+    * WebSphere Application Server Full Profile
+    *  Confirm that your JRE supports TLS V1.2.
+      
+      Ensure that your IBM Java SDK is patched for the POODLE vulnerability. You can find the minimum IBM Java SDK versions that contain the patch for your version of WebSphere Application Server in Security Bulletin: Vulnerability in SSLv3 affects IBM WebSphere Application Server (CVE-2014-3566) [http://www.ibm.com/support/docview.wss?uid=swg21687173]. 
+      
+      Note: You can use the versions listed in the security bulletin or newer versions.
+      
+      Open the WebSphere administrative console, and click Security > SSL certificate and key management > SSL configurations.
+      
+      For each SSL configuration listed, modify the configuration to enable TLS V1.2:  1. Select an SSL configuration and then, under Additional Properties, click Quality of protections (QoP) settings. 
+       2. From the Protocol list, select SSL_TLSv2. 
+       3. Click Apply, then click Save.
+      
+      
+    * 
+      
+      WebSphere Application Server Liberty Profile
+    *  Confirm that your JRE supports TLS V1.2.  * If you use an IBM Java SDK, ensure that your IBM Java SDK is patched for the POODLE vulnerability. You can find the minimum IBM Java SDK versions that contain the patch for your version of WebSphere Application Server in Security Bulletin: Vulnerability in SSLv3 affects IBM WebSphere Application Server (CVE-2014-3566) [http://www.ibm.com/support/docview.wss?uid=swg21687173]. 
+         
+         Note: You can use the versions listed in the security bulletin or newer versions.
+         
+         
+       * If you use an Oracle Java SDK, ensure that you have one of the following versions, depending on your version of MobileFirst Platform Foundation:  * For MobileFirst Server V7.1 or newer, use one of the following JRE versions:  * Oracle JRE 1.7.0_75 or newer 
+             * Oracle JRE 1.8.0_31 or newer
+            
+            
+          * For MobileFirst Server V7.0 or older, use Oracle JRE 1.7.0_75 or newer.
+            
+            
+         
+         
+      
+      If you use an IBM Java SDK, edit the server.xml file and make the following changes:  1. Add the following line:
+          
+          <ssl id="defaultSSLConfig" keyStoreRef="defaultKeyStore" sslProtocol="SSL_TLSv2"/>
+          
+       2. Add the sslProtocol="SSL_TLSv2" attribute to all existing <ssl> elements.
+      
+      
+    * 
+      
+      Apache Tomcat
+    *  Confirm that your JRE supports TLS V1.2.
+      
+      Ensure that you have one of the following JRE versions, depending on your version of MobileFirst Platform Foundation:  * For MobileFirst Server V7.1 or newer, use one of the following JRE versions:  * Oracle JRE 1.7.0_75 or newer 
+          * Oracle JRE 1.8.0_31 or newer
+         
+         
+       * For MobileFirst Server V7.0 or older, use Oracle JRE 1.7.0_75 or newer.
+         
+         
+      
+      Edit the conf/server.xml file and modify the <Connector> element that declares the HTTPS port so that the sslEnabledProtocols attribute has the following value:
+      
+      sslEnabledProtocols="TLSv1.2,TLSv1.1,TLSv1,SSLv2Hello"

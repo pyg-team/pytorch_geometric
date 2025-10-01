@@ -1,0 +1,32 @@
+Title: IBM Known Limitation:  Performance issues when accessing IBM Content Navigator with Internet Explorer 8 - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ If you use Microsoft Internet Explorer 8 to access IBM Content Navigator, you might experience a slow response for common operations. 
+
+SYMPTOM
+If you use Microsoft Internet Explorer 8 to access IBM Content Navigator, you might experience a slow response for common operations, including, but not limited to: 
+
+ * Loading the initial login screen 
+ * Browsing in repositories with a large number of folders 
+ * Browsing in folders with a large number of documents 
+ * Opening saved search templates 
+ * Running searches 
+ * Accessing search forms 
+ * Editing documents
+   
+
+Users might notice significantly slower response times when accessing search forms or editing documents that leverage an external data service (EDS) to integrate external choice lists in to the content authoring experience. 
+CAUSE
+IBM Content Navigator is a powerful, dynamic web application built on modern web technologies such as HTML5, Cascading Style Sheets version 3 (CSS3), and JavaScript. 
+
+The HTML rendering engine in Microsoft Internet Explorer 8 does not process complex HTML pages well, and the Microsoft Internet Explorer 8 JavaScript engine does not process JavaScript efficiently. These limitations of Internet Explorer 8 can severely degrade the performance of IBM Content Navigator in many scenarios.
+
+
+RESOLVING THE PROBLEM
+You can improve the performance of IBM Content Navigator and other modern web applications by upgrading to a more modern web browser platform such as Microsoft Internet Explorer 11, Mozilla Firefox, Google Chrome, or Safari.
+
+RELATED INFORMATION
+ IBM Case Manager with Microsoft Internet Explorer 8 [http://www.ibm.com/support/docview.wss?uid=swg21584679]

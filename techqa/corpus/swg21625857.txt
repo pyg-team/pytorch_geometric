@@ -1,0 +1,106 @@
+Title: IBM WMB/IIB Mustgather: problems with FTE for UNIX and Linux - United States
+
+Text:
+FTE Node; MustGather; MustGathers; Must Gather; Collect Troubleshooting Data; MustGatherDocument; Collecting; Trouble; Shooting TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ You are experiencing a problem with the WebSphere MQ File Transfer Edition (WMQFTE / WMQ FTE) Node with WebSphere Message Broker (WMB) or IBM Integration Bus (IIB) on UNIXes and Linux.
+
+This mustgather document explains how to troubleshoot this problem by yourself, how to generate diagnostic data when the problem is happening, how to collect the available data from your system, and how to share that data with IBM support. 
+
+ENVIRONMENT
+These instructions are for WebSphere Message Broker or IBM Integration Bus on AIX, HP-UX, Linux, and Solaris systems.
+Return to the WebSphere Message Broker MustGather index [http://www-01.ibm.com/support/docview.wss?uid=swg21209857] for other systems.
+
+RESOLVING THE PROBLEM
+
+
+
+STEP 1: SELF-GUIDED TROUBLESHOOTING
+
+ 1. Consider Using the Test Client in trace and debug mode [http://publib.boulder.ibm.com/infocenter/wmbhelp/v8r0m0/topic/com.ibm.etools.mft.doc/af52260_.htm].
+ 2. 
+ 3. Preparing the environment for WebSphere MQ File Transfer Edition nodes [http://pic.dhe.ibm.com/infocenter/wmbhelp/v9r0m0/topic/com.ibm.etools.mft.doc/bc34035_.htm] 
+ 4. Preparing the environment for MQFTE nodes [http://publib.boulder.ibm.com/infocenter/wmbhelp/v9r0m0/topic/com.ibm.etools.mft.doc/bc34035_.htm]
+ 5. Managed file transfers using WebSphere MQ File transfer Edition [http://publib.boulder.ibm.com/infocenter/wmbhelp/v9r0m0/topic/com.ibm.etools.mft.doc/bc34031_.htm]
+ 6. 
+ 7. Check for known issues:
+    Resolving problems when developing message models [http://publib.boulder.ibm.com/infocenter/wmbhelp/v9r0m0/index.jsp?topic=/com.ibm.etools.mft.doc/au16520_.htm]
+    Resolving problems when developing message flows [http://publib.boulder.ibm.com/infocenter/wmbhelp/v9r0m0/topic/com.ibm.etools.mft.doc/au16530_.htm]
+    [http://www.ibm.com/software/htp/cics/tserver/support/]WebSphere Message Broker support site [http://www.ibm.com/support/entry/portal/Overview/Software/WebSphere/WebSphere_Message_Broker]
+    
+
+
+
+STEP 2: COLLECT DATA
+
+ 1. mqsidc See: mqsidc usage instructions [http://publib.boulder.ibm.com/infocenter/wmbhelp/v8r0m0/index.jsp?topic=%2Fcom.ibm.etools.mft.doc%2Fbu46012_.htm]
+    
+    
+     * This command line tool is only available for WMB 7.0.0.5+, WMB 8.0.0.1+, and IIB 9.0.
+     * When running the tool, select the option for 'Broker Collector', when prompted.
+    
+    
+ 2. 
+ 3. Project Interchange files for the problematic flow/set/ESQL/model
+     * You can export your Message Flow and Message Set project(s) into an archive file for easy transmission to IBM Support.
+       See: Exporting files from the Workbench [http://publib.boulder.ibm.com/infocenter/wmbhelp/v8r0m0/index.jsp?topic=/org.eclipse.platform.doc.user/tasks/tasks-57.htm] 
+    
+    
+ 4. 
+ 5. Traces If the problem occurs during a runtime test or with the Toolkit test facility, WMB execution group traces [http://www-01.ibm.com/support/docview.wss?rs=849&uid=swg21177321] can be used to gain a better understanding of the problem.  * A user level trace [http://www-01.ibm.com/support/docview.wss?rs=849&uid=swg21177321#1] is intended to assist users with understanding how their ESQL is processed. It will also show a high level view of the message flow behavior.
+     * A service level trace [http://www-01.ibm.com/support/docview.wss?rs=849&uid=swg21177321#2] is intended to be provided to IBM Support to assist in the diagnosis of your issue.
+    
+    
+ 6. 
+ 7. General Broker information
+    If the mqsidc tool was not run, then capture this information manually  * Record the IBM Integration Bus or WebSphere Message Broker version, release, and maintenance level.
+       This can be captured using the command 'mqsiservice -v'..
+     * Record the operating system version, release, and maintenance level.
+     * Record the version, release, and maintenance level of any related products and components for the problematic application.
+     * On UNIX and Linux systems, the local error log is the syslog. Where syslog messages are sent depends on how you configure your UNIX or Linux system
+       See: Configuring the syslog daemon [http://publib.boulder.ibm.com/infocenter/wmbhelp/v8r0m0/index.jsp?topic=%2Fcom.ibm.etools.mft.doc%2Fan04230_.htm] 
+     * Collect the Standard Output/Error logs.
+       WMB writes information to both STDOUT and STDERR. These files are located under the Message Broker workpath.
+       See: Standard System Logs [http://publib.boulder.ibm.com/infocenter/wmbhelp/v8r0m0/index.jsp?topic=%2Fcom.ibm.etools.mft.doc%2Fau14165_.htm]
+     * Output of command: mqsireportproperties <broker name> -e <EG name> -o FTEAgent -r 
+     * Screen shot of Transfer log in MQ Explorer captured as follows: a. Expand the coordination qmgr in MQ Explorer
+       b. Click on Transfer Log and expand (click on + sign) the failed transactions in the Transfer Log
+       c. Capture a screen shot and send it to support 
+       
+       
+     * A directory listing of your <workpath>/common/FTE
+    
+    
+
+
+
+ATTENTION: A good problem description is one of the most important tools IBM needs to analyze your data!
+When sending data to IBM, be sure to update your PMR or send a note with the following information:
+
+ *  Tell us what errors you saw, where you saw them, and what time they happened Let us know if you made any changes to WebSphere Message Broker or the system before the problem Share any other observations which you think will help us to better understand the problem 
+
+
+
+STEP 3: SUBMIT DATA TO IBM
+
+ * Use IBM Service Request [http://www.ibm.com/support/servicerequest/] to open or view a problem record with IBM.
+ * Send your data to IBM [http://www.ibm.com/support/docview.wss?uid=swg21392217] for further analysis.
+
+
+
+
+Please see the IBM Software Support Handbook [http://www14.software.ibm.com/webapp/set2/sas/f/handbook/home.html] for more information on working with IBM support.
+
+
+
+Back to top
+
+ [http://www.ibm.com/software/htp/cics/tserver/support/] [http://www.ibm.com/support/entry/portal/Overview/Software/WebSphere/WebSphere_Message_Broker] [http://publib.boulder.ibm.com/infocenter/wmbhelp/v8r0m0/index.jsp?topic=%2Fcom.ibm.etools.mft.doc%2Fbu03830_.htm] [http://publib.boulder.ibm.com/infocenter/wmbhelp/v8r0m0/topic/com.ibm.etools.mft.doc/bc34035_.htm] [http://publib.boulder.ibm.com/infocenter/wmbhelp/v8r0m0/topic/com.ibm.etools.mft.doc/bc34031_.htm] [http://www.ibm.com/software/integration/wbimessagebroker/library/] [http://www-306.ibm.com/software/integration/wmq/library/] [http://www.redbooks.ibm.com/abstracts/SG246583.html?Open] [http://www.ibm.com/support/docview.wss?rs=1083&context=SSGMGV&uid=swg21392217] [http://www.ibm.com/support/servicerequest/] [http://www.ibm.com/planetwide/]
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration WebSphere Message Broker AIX, HP-UX, Linux, Solaris 8.0 All Editions 
+PRODUCT ALIAS/SYNONYM
+ WMB MB WebSphere Message Broker IBM Integration Bus IIB IBMIB MQ Integrator WBIMB WBI-MB MQSI WMQI

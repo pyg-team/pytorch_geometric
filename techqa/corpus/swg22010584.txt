@@ -1,0 +1,15 @@
+Title: IBM User Session time-out does not occur when the RAM application page is idle after HTTP session time expires - United States
+
+Text:
+User Session Time-out TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The user login session does not invalidate after the RAM application that is hosted on the WebSphere Application Server remains idle beyond the time value defined in the HTTP session time-out.
+
+In this scenario, the user session does not log out from the RAM application and the WebSphere Application Server retains critical user data information.
+
+
+RESOLVING THE PROBLEM
+Configuring custom properties in the WebSphere Application Server. 
+
+For more information on the configuration, refer to the section "Users are not logged out after the HTTP session timer expires" on the knowledge center page https://www.ibm.com/support/knowledgecenter/en/SSEQTP_8.5.5/com.ibm.websphere.base.doc/ae/rtrb_httpsessprobs.html [https://www.ibm.com/support/knowledgecenter/en/SSEQTP_8.5.5/com.ibm.websphere.base.doc/ae/rtrb_httpsessprobs.html].

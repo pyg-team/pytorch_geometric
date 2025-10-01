@@ -1,0 +1,25 @@
+Title: IBM Content Navigator known problem: FileNet viewer issues occur with JRE version 1.7.0_45-b18 (7u45) - United States
+
+Text:
+37022 PRODUCT DOCUMENTATION
+
+ABSTRACT
+ Several issues can occur in the IBM Content Navigator FileNet viewer if your Java Runtime Environment (JRE) is at version level 1.7.0_45-b18 (7u45). Specifically, the Next and Previous buttons do not work, and you are not prompted to save annotations. 
+
+CONTENT
+The following problems can occur with JRE version 1.7.0_45: 
+
+
+
+
+ * When you open an image (for example, graphic1.tif) and click Next, the file name of the next image (graphic2.tif) is displayed, but that image is not displayed in the viewer. Instead, the first image that you opened,graphic1.tif, continues to be displayed in the viewer. 
+ * You open a document and add an annotation. When you close the document, you are not prompted to save annotations, and the new annotation is lost. 
+
+
+Resolving the problem 
+
+These problems do not occur with JRE version 1.7.0_51 (7u51). To resolve this issue, install the current JRE version.
+
+
+RELATED INFORMATION
+ Oracle JRE update release notes [http://www.oracle.com/technetwork/java/javase/7u-relnotes-515228.html]

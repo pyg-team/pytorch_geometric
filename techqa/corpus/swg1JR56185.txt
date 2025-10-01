@@ -1,0 +1,141 @@
+Title: IBM JR56185: IBM PROCESS PORTAL DOES NOT INDEX SOME BPEL TASKS - United States
+
+Text:
+  DIRECT LINKS TO FIXES
+pfs.8570.delta.cf2016.09.repository [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Standard&fixids=pfs.8570.delta.cf2016.09.repository&source=SAR]
+bpm.8570.cf2016.09.delta.repository.2of2 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Standard&fixids=bpm.8570.cf2016.09.delta.repository.2of2&source=SAR]
+bpm.8570.cf2016.09.delta.repository.1of2 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Standard&fixids=bpm.8570.cf2016.09.delta.repository.1of2&source=SAR]
+pfs.8570.delta.cf2016.07.repository [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Standard&fixids=pfs.8570.delta.cf2016.07.repository&source=SAR]
+Downloading IBM Business Process Manager V8.5.7 Cumulative Fix 2016.09 [http://www-01.ibm.com/support/docview.wss?uid=swg24042580]
+IBM Business Process Manager - Process Federation Server 8.5.7.0 Cumulative Fix 2016.09 (8.5.7.0 CF2016.09) [http://www-01.ibm.com/support/docview.wss?uid=swg24042749]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Because IBM Process Federation Server does not index some tasks
+   from BPEL processes running on federated IBM Business Process
+   Manager (BPM) systems, you cannot see all BPEL tasks if IBM
+   Process Portal is configured for a federated IBM Business
+   Process Manager (BPM) environment.
+   
+   PRODUCTS AFFECTED
+   IBM BPM Advanced
+   IBM BPM Standard
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  No additional information is available.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A fix is available for IBM Business Process Manager - Process
+   Federation Server V8.5.7.0 cumulative fix 2016.07 (8.5.7.0
+   CF201607) that indexes the previously skipped BPEL process
+   tasks. For download and installation instructions, see "IBM
+   Business Process Manager - Process Federation Server 8.5.7.0
+   Cumulative Fix 2016.07 (8.5.7.0 CF2016.07)" at
+   http://www.ibm.com/support/docview.wss?uid=swg24042498. [http://www.ibm.com/support/docview.wss?uid=swg24042498.]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  Not applicable
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR56185
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM ADVANCED
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9400
+   
+   
+ * REPORTED RELEASE
+   857
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-06-22
+   
+   
+ * CLOSED DATE
+   2016-08-31
+   
+   
+ * LAST MODIFIED DATE
+   2016-08-31
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   BPM ADVANCED
+   
+   
+ * FIXED COMPONENT ID
+   5725C9400
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R857 PSY
+   UP

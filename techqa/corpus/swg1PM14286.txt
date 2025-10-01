@@ -1,0 +1,178 @@
+Title: IBM PM14286: APPLIX REGISTRY KEYS NOT CREATED WHEN USING SILENT INSTALL METHOD - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When using the Silent Install method to install the TM1 Clients,
+   the registry key for Applix (as well as child keys, etc) are not
+   created/set in the registry (under My
+   Computer\HKEY_LOCAL_MACHINE\SOFTWARE\).    This normally should
+   not be a problem, however when this Silent Install method is
+   used to install the TM1 client applications onto a machine where
+   Cognos 8 requires it, you receive the following error:
+   TM1-ERR-0050 An Attempt to initialize the TM1 API failed
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  This issue can be resolved by using the manual install method to
+    install the TM1 client applications required by Cognos 8 onto t
+   hose Cognos 8 servers (*instead of* the Silent Install method).
+       The following alternative solution (to manually create the m
+   issing registry entries) should also resolve the problem.:
+    Here are the steps to create that particular registry entry [In
+   stallDir] starting with the Applix registry key...       As alwa
+   ys when working with the registry, you should make a backup of e
+   xisting registry just in case you need to restore it.         On
+    one of the target machines (where you have Cognos component ins
+   talled that requires the Tm1 client application installed, and y
+   ou used the Silent Install method)...       Start > Run > regedi
+   t         1)  Navigate to:  My Computer\HKEY_LOCAL_MACHINE\SOFTW
+   ARE\         2)  Right click on "SOFTWARE" and select:  New > Ke
+   y       Name this new key:  Applix       To keep things consiste
+   nt with how keys would be generated with a normal install...
+      With that key still selected, double click the Name ("(Defaul
+   t)" ) in the right hand pane of Registry Editor, put a space in
+   the "Value Data" field, click "OK", then do it again, this time
+   clearing that space out of the "Value Data" field.         3)  R
+   ight click on the "Applix" key you just created, and select:  Ne
+   w > Key       Name this new key:  Install       To keep things c
+   onsistent with how keys would be generated with a normal install
+   ...       With that key still selected, double click the Name ("
+   (Default)" ) in the right hand pane of Registry Editor, put a sp
+   ace in the "Value Data" field, click "OK", then do it again, thi
+   s time clearing that space out of the "Value Data" field.
+     4)  Right click on the "Install" key you just created, and sel
+   ect:  New > Key       Name this new key:  9.0       To keep thin
+   gs consistent with how keys would be generated with a normal ins
+   tall...       With that key still selected, double click the Nam
+   e ("(Default)" ) in the right hand pane of Registry Editor, put
+   a space in the "Value Data" field, click "OK", then do it again,
+    this time clearing that space out of the "Value Data" field.
+         5)  Right click on the "9.0" key you just created, and sel
+   ect:  New > Key       Name this new key:  9.0       To keep thin
+   gs consistent with how keys would be generated with a normal ins
+   tall...       do not clear the "Value Data" field as described i
+   n above steps.         6)  Right click on the "9.0" key you just
+    created, and select:  New > String Value       Name this String
+    Value:  InstallDir       Double click the Name ("InstallDir") i
+   n the right hand pane of Registry Editor and enter the "Value Da
+   ta".  This will be the path to which the TM1 client application(
+   s) were installed, by default:       C:\Program Files\Cognos\TM1
+   \
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * All Users                                                    *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * See error description.                                       *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Upgrade to IBM Cognos TM1 9.5.2 FP2 or IBM Cognos TM1 10.1   *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Code Fix
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM14286
+   
+   
+ * REPORTED COMPONENT NAME
+   TM1 PERSPECTIVE
+   
+   
+ * REPORTED COMPONENT ID
+   5724W49PE
+   
+   
+ * REPORTED RELEASE
+   941
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-05-11
+   
+   
+ * CLOSED DATE
+   2012-06-05
+   
+   
+ * LAST MODIFIED DATE
+   2012-06-05
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TM1 PERSPECTIVE
+   
+   
+ * FIXED COMPONENT ID
+   5724W49PE
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R952 PSN
+   UP

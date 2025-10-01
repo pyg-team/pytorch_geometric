@@ -1,0 +1,200 @@
+Title: IBM JR55399: YOU RECEIVE A NULLPOINTEREXCEPTION WHEN YOU TRY TO TERMINATE A MIGRATED INSTANCE - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+ DIRECT LINKS TO FIXES
+bpm.8570.cf2016.06.delta.repository.2of2 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Standard&fixids=bpm.8570.cf2016.06.delta.repository.2of2&source=SAR]
+bpm.8570.cf2016.06.delta.repository.1of2 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Standard&fixids=bpm.8570.cf2016.06.delta.repository.1of2&source=SAR]
+8.5.5.0-WS-BPM-IFJR55399 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Standard&fixids=8.5.5.0-WS-BPM-IFJR55399&source=SAR]
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  After you migrate business process definition (BPD) instances to
+   IBM Business Process Manager (BPM) V8.5.5, you might receive a
+   NullPointerException when you terminate one of those instances.
+   The following stack trace is a typical example of what you might
+   see:
+   
+   com.ibm.bpm.wle.api.ActionHandlerUnexpectedFailureException:
+   CWTBG0025E: Unexpected failure occurred while performing the
+   'terminate' action.  The reported failure is: '&#228;1&#252;':
+   com.lombardisoftware.client.delegate.BusinessDelegateException:
+   java.lang.NullPointerException
+   com.lombardisoftware.core.TeamWorksException:
+   java.lang.NullPointerException
+   ...
+   java.lang.NullPointerException
+    at com.lombardisoftware.bpd.runtime.engine.st.A
+   bstractBPDSymbolTable.getInstanceCorrelationValues
+   (AbstractBPDSymbolTable.java:502)
+    at com.lombardisoftware.bpd.component.flowcomponent.
+     activity.worker.SubBPDExecutionTreeNode.
+     cleanupLocalSymbolTable(SubBPDExecutionTreeNode.java:348)
+    at com.lombardisoftware.bpd.component.flowcomponent.activity.
+     worker.SubBPDExecutionTreeNode.doCancelJobWithoutChildren
+     (SubBPDExecutionTreeNode.java:137)
+    at com.lombardisoftware.bpd.runtime.engine.
+     BPDExecutionTreeNode.doTerminateJobWithoutChildren
+     (BPDExecutionTreeNode.java:477)
+    at com.lombardisoftware.bpd.component.flowcomponent.activity.
+     worker.SubBPDExecutionTreeNode.doTerminateJobWithoutChildren
+     (SubBPDExecutionTreeNode.java:334)
+    at com.lombardisoftware.bpd.runtime.engine.
+     BPDExecutionTreeNode.terminateJob(BPDExecutionTreeNode.
+     java:472)
+    at com.lombardisoftware.bpd.runtime.engine.
+     BPDExecutionTreeNode.terminateChildren(BPDExecutionTreeNode.
+     java:489)
+    at com.lombardisoftware.bpd.runtime.engine.
+     BPDExecutionTreeNode.terminateJob(BPDExecutionTreeNode.
+     java:471)
+    at com.lombardisoftware.bpd.runtime.engine.
+     FlowObjectExecutionTreeNode.terminateJob
+     (FlowObjectExecutionTreeNode.java:1411)
+    at com.lombardisoftware.bpd.runtime.engine.
+     BPDExecutionTreeNode.terminateChildren(BPDExecutionTreeNode.
+     java:489)
+    at com.lombardisoftware.bpd.runtime.engine.
+     RootBPDExecutionTreeNode.terminateJob
+     (RootBPDExecutionTreeNode.java:140)
+    at
+     com.lombardisoftware.bpd.runtime.engine.
+     BPDExecutionContext.terminate(BPDExecutionContext.java:705)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  The problem occurs when a BPD instance is terminated and its
+   correlation information should be cleared but isn?t. IBM BPM
+   expects the correlation information to be included in the local
+   symbol table, but migrated instances might not contain the
+   correlation information. If a migrated instance does not contain
+   the correlation information in its local symbol table, you
+   receive the NullPointerException.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A fix is available for IBM BPM V8.5.5. With the fix applied, IBM
+   BPM no longer expects the correlation information to be included
+   in the local symbol table.
+   
+    On Fix Central (http://www.ibm.com/support/fixcentral), search
+   for JR55399:
+   
+   1. Select IBM Business Process Manager with your edition from
+     the product selector, the installed version to the fix pack
+     level, and your platform, and then click Continue.
+   
+   2. Select APAR or SPR, enter JR55399, and click Continue.
+   
+   When you download fix packages, ensure that you also download
+   the readme file for each fix. Review each readme file for
+   additional installation instructions and information about the
+   fix.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  Not applicable
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR55399
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM ADVANCED
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9400
+   
+   
+ * REPORTED RELEASE
+   855
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-02-25
+   
+   
+ * CLOSED DATE
+   2016-04-27
+   
+   
+ * LAST MODIFIED DATE
+   2016-11-09
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   BPM STANDARD
+   
+   
+ * FIXED COMPONENT ID
+   5725C9500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R855 PSY
+   UP

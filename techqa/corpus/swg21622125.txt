@@ -1,0 +1,37 @@
+Title: IBM Gathering WebSphere DataPower CPU and memory information - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Is there a very simple method to collect basic information on DataPower CPU utilization and memory usage? 
+
+ANSWER
+You can capture CPU and memory information that is recorded every 5-10 seconds using a logging target and the existing logtemp:///usage-log in the default domain.
+
+In the Web GUI, in the default domain 
+
+ 1. Choose Administration from the navigation list on the left, and then look under heading Device 
+ 2. Choose Statistics Settings and make sure statistics are enabled. 
+ 3. Choose Throttle Settings and turn the Status Log option on by clicking on the On radio button 
+ 4. Create a logging target in the default domain with event subscription: system debug. A File type log target with a file name in the logtemp folder or on the RAID drive is recommended to allow log entries to be written locally to the appliance with very low overhead.
+    
+
+
+The logging target will contain message 0x80400051 showing CPU information. The CPU message is logged every ten seconds. 
+Thu Jan 10 2013 13:59:47 [system][debug] : tid(127): cpu usage: 1%(10 sec) 0%(1 min) 0%(10 min) 1%(1 hour) 1%(1 day)
+
+
+logtemp:///usage-log will contain message 0x804000a1 showing memory information. This message is logged every 5 to 10 seconds:
+
+1,20130110T185950Z,default,usage,info,throttle,Throttler,0,,0x0,,,"Memory(3772621/4194304kB 89.9% free) Pool(236901) Ports(31815/31850) Temporary-FS(215/242MB 88.8% free) File(OK)"
+
+1,20130110T185950Z,default,usage,info,throttle,Throttler,0,,0x0,,,"XML-Names Prefix(118/65535 99.8% free) URI(138/65535 99.8% free) Local(13635/65535 79.2% free)" 
+
+
+See the Related Information section for other options for collecting DataPower statistics.
+
+RELATED INFORMATION
+#DataPower SOA Appliance statistics gathering [http://www.ibm.com/support/docview.wss?uid=swg21377610]
+Monitoring Datapower [http://www.ibm.com/developerworks/websphere/library/techarticles/1003_rasmussen/1003_rasmussen.html]
+ITCAM Agent for DataPower Overview [http://www.ibm.com/developerworks/wikis/display/tivolimediagallery/ITCAM+Agent+for+WebSphere+DataPower+Appliance+Overview]

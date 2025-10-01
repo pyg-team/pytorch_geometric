@@ -1,0 +1,43 @@
+Title: IBM QEWSD entry is consistently added to .odbc.ini file in IBM InfoSphere DataStage - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Job aborts with the error:
+
+Warning: 
+[DataDirect][ODBC SQL Server Driver][SQL Server]You are not licensed to use this DataDirect Technologies ODBC Driver under the license you have purchased. If you wish to purchase a license for use with this application, then you may use this driver for a period of 15 days, during which time you are required to obtain a license. You can order a license for a DataDirect Technologies ODBC Driver for use with this application by calling DataDirect Technologies at 800-876-3101 in North America and +44 1727 812812 elsewhere. Thank you for your cooperation. Reason Code: 2000000000000001 
+
+SYMPTOM
+Additional symptoms include the following variations of 6060 / 6062 errors in job log for failing job which occur due to QEWSD lines in the datasource entry: 
+
+ODBC function "SQLPrepare" reported: SQLSTATE=60,CODE=6060,[DataStage][SQL Client][ODBC][DataDirect][ODBC 20101 driver]6060
+
+ODBC function "SQLPrepare" reported: SQLSTATE=60,CODE=6062,[DataStage][SQL Client][ODBC][DataDirect][ODBC 20101 driver]6062
+
+"ODBC function "SQLPrepare" reported: SQLSTATE = 60: Native Error Code = 6060: Msg = [DataDirect][ODBC 20101 driver]6060
+
+ODBC function "SQLPrepare" reported: SQLSTATE = 60: Native Error Code = 6062: Msg = [DataDirect][ODBC 20101 driver]6062 (CC_OdbcDBStatement:: dbsPrepare, file CC_OdbcDBStatement.cpp, line 347)" 
+
+
+
+DIAGNOSING THE PROBLEM
+After removing the QEWSD=xxxxx (where x is a number) entry from the .odbc.ini file, the job runs successfully. However, during the job run the QEWSD=xxxxx entry is added in .odbc.ini again causing the job to fail on the subsequent run.
+
+
+
+RESOLVING THE PROBLEM
+Please ensure the following environment variables are set correctly: 
+
+ 
+
+ * $ODBCINI points to the location of the .odbc.ini file
+   
+ * *PATH points to the <path to>/branded_odbc/lib directory, refer to list below:
+   $LIBPATH on AIX
+   $SHLIB_PATH on HP-UX and HP Itanium
+   $LD_LIBRARY_PATH on Linux (RedHat and SUSE) and Solaris
+
+
+Also confirm that the DataDirect drivers are not being called directly from programs outside of DataStage which can cause the QEWSD license error lines to be added back to .odbc.ini file.

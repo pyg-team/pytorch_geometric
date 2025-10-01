@@ -1,0 +1,271 @@
+Title: IBM IV89129: SYBASE DATATYPE CONFIG DOES NOT WORK PROPERYLY UNDER IMPACT 7.1 WITH FIXPACK6. - United States
+
+Text:
+  DIRECT LINKS TO FIXES
+7.1.0-TIV-NCI-LINUX-FP0009 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=7.1.0-TIV-NCI-LINUX-FP0009&source=SAR]
+7.1.0-TIV-NCI-ZLINUX-FP0009 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=7.1.0-TIV-NCI-ZLINUX-FP0009&source=SAR]
+7.1.0-TIV-NCI-WINDOWS-FP0009 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=7.1.0-TIV-NCI-WINDOWS-FP0009&source=SAR]
+7.1.0-TIV-NCI-SOLARIS-FP0009 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=7.1.0-TIV-NCI-SOLARIS-FP0009&source=SAR]
+7.1.0-TIV-NCI-AIX-FP0009 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=7.1.0-TIV-NCI-AIX-FP0009&source=SAR]
+IBM Tivoli Netcool/Impact V7.1.0 Fix Pack 9(7.1.0-TIV-NCI-FP0009) [http://www-01.ibm.com/support/docview.wss?uid=swg24043378]
+IBM Tivoli Netcool/Impact V7.1.0 Fix Pack 10(7.1.0-TIV-NCI-FP0010) [http://www-01.ibm.com/support/docview.wss?uid=swg24043588]
+IBM Tivoli Netcool/Impact V7.1.0 Fix Pack 11(7.1.0-TIV-NCI-FP0011) [http://www-01.ibm.com/support/docview.wss?uid=swg24043858]
+IBM Tivoli Netcool/Impact V7.1.0 Fix Pack 12 (7.1.0-TIV-NCI-FP0012) [http://www-01.ibm.com/support/docview.wss?uid=swg24044312]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  After upgrade from 7101 to 7106 could not  discover schema for
+   table
+   Sybase. With same database same table, it is working fine on
+   7101.
+   
+   In 7106, after create data source, then create datatype, when
+   click
+   Refresh Fields, there is error popup :
+   
+   "Could not discover schema for table 'iams.RootLevel'. Please
+   check the
+   database type, location, username and password. For more
+   information,
+   consult the documentation. It is also possible that the
+   specified
+   database is not compatible with auto schema discovery."
+   
+   Error in impactserver-error.log:
+   
+   Could not discover schema for table 'iams.AlertSource'. Please
+   check
+   the database type, location, username and password. For more
+   information, consult the documentation. It is also possible
+   that the
+   specified database is not compatible with auto schema discovery.
+   com.micromuse.response.common.RespException: Could not discover
+   schema
+   for table 'iams.AlertSource'. Please check the database type,
+   location,
+   username and password. For more information, consult the
+   documentation.
+   It is also possible that the specified database is not
+   compatible with
+   auto schema discovery.
+       at
+   com.micromuse.response.common.SQLSchemaDiscoverer$1GetSchemaTran
+   sBlock.d
+   oit(SQLSchemaDiscoverer.java:266)
+       at
+   com.micromuse.common.util.TimedExecutor$CallableTransBlockAdapte
+   r.call(T
+   imedExecutor.java:112)
+       at
+   com.micromuse.common.util.concurrent.NamedDelegatingCallable.cal
+   l(NamedD
+   elegatingCallable.java:71)
+       at java.util.concurrent.FutureTask.run(FutureTask.java:274)
+       at
+   com.micromuse.common.util.concurrent.TrackingExecutor$1.run(Trac
+   kingExec
+   utor.java:105)
+       at
+   java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExec
+   utor.jav
+   a:1157)
+       at
+   java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExe
+   cutor.ja
+   va:627)
+       at java.lang.Thread.run(Thread.java:798)
+   Caused by:
+   com.micromuse.common.datasource.SQLDataSourceException: Syntax,
+   Duplicate or Resync Error...
+       at
+   com.micromuse.common.datasource.JDBCVirtualStatement.tryAndRetry
+   (JDBCVir
+   tualStatement.java:391)
+       at
+   com.micromuse.common.datasource.JDBCVirtualStatement.executeQuer
+   y(JDBCVi
+   rtualStatement.java:511)
+       at
+   com.micromuse.common.datasource.JDBCVirtualStatement.executeQuer
+   y(JDBCVi
+   rtualStatement.java:495)
+       at
+   com.micromuse.common.datasource.JDBCVirtualStatement.executeQuer
+   y(JDBCVi
+   rtualStatement.java:489)
+       at
+   com.micromuse.response.common.SQLSchemaDiscoverer$1GetSchemaTran
+   sBlock.d
+   oit(SQLSchemaDiscoverer.java:259)
+       ... 7 more
+   Caused by:
+   com.sybase.jdbc3.jdbc.SybSQLException: iams.AlertSource not
+   found.
+   Specify owner.objectname or use sp_help to check whether the
+   object
+   exists (sp_help may produce lots of output).
+   
+       at com.sybase.jdbc3.tds.Tds.processEed(Unknown Source)
+       at com.sybase.jdbc3.tds.Tds.nextResult(Unknown Source)
+       at com.sybase.jdbc3.jdbc.ResultGetter.nextResult(Unknown
+   Source)
+       at com.sybase.jdbc3.jdbc.SybStatement.nextResult(Unknown
+   Source)
+       at com.sybase.jdbc3.jdbc.SybStatement.nextResult(Unknown
+   Source)
+       at com.sybase.jdbc3.jdbc.SybStatement.queryLoop(Unknown
+   Source)
+       at com.sybase.jdbc3.jdbc.SybStatement.executeQuery(Unknown
+   Source)
+       at com.sybase.jdbc3.jdbc.SybStatement.executeQuery(Unknown
+   Source)
+       at
+   com.micromuse.common.datasource.JDBCVirtualStatement$ResultSetEx
+   ecutor.d
+   oit(JDBCVirtualStatement.java:259)
+       ... 7 more
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  No local fix.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * All Impact Users                                             *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * In Impact 7106, after create Sybase data source, then create *
+   * datatype, when                                               *
+   * click Refresh Fields, there is error popup :                 *
+   *                                                              *
+   * "Could not discover schema for table 'schema.table'. Please  *
+   * check the database type, location, username and password.    *
+   * For more                                                     *
+   * information, consult the documentation. It is also possible  *
+   * that the                                                     *
+   * specified database is not compatible with auto schema        *
+   * discovery."                                                  *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Single dot is use for separator between schema and table, but
+   Sybase is double dot instead, so change separator  to double
+   dot.
+   
+   The fix for this APAR is contained in the following
+   maintenance packages:
+   | Fix Pack | 7.1.0-TIV-NCI-FP0009
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV89129
+   
+   
+ * REPORTED COMPONENT NAME
+   NETCOOL/IMPACT
+   
+   
+ * REPORTED COMPONENT ID
+   5724O59IS
+   
+   
+ * REPORTED RELEASE
+   710
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-09-13
+   
+   
+ * CLOSED DATE
+   2017-01-05
+   
+   
+ * LAST MODIFIED DATE
+   2017-01-05
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  UNKNOWN
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   NETCOOL/IMPACT
+   
+   
+ * FIXED COMPONENT ID
+   5724O59IS
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R710 PSY
+   UP

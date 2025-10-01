@@ -1,0 +1,26 @@
+Title: IBM A FORCE ARM of the TCP/IP address space can cause DB2 distributed server threads to HANG and then ABEND if an attempt is made to CANCEL a hung thread - United States
+
+Text:
+ABEND04E S004E AB04E 00D31108 RC00D31108 DSNLIDDC DSNLIDDC:0002 00D3001A RC00D3001A 00D3003B RC00D3003B TECHNOTE (FAQ)
+
+QUESTION
+ DB2 server threads with TCP/IP connections to the client can hang in response to a FORCE TCPIP,ARM command. An attempt to cancel a hung thread can result in an ABEND04E in DSNLIDDC:0002 with reason code 00D31108. 
+
+ANSWER
+Symptom: If you enter a FORCE TCPIP,ARM command, DB2 server threads with TCP/IP connections to the client are not terminated and are left hanging. If you then attempt to cancel one of these hung server threads, the symptoms depend on how you try to cancel the threads: 
+If you use the CANCEL THREAD command, the reason code is 00D3001A.
+
+If you use the Idle Thread Timeout detection, the reason code is 00D3003B.
+
+Cause: The server thread hangs because UNIX System Services (USS) does not drive DB2's ASYNC IO exit routine for each outstanding ASYNC IO call. A FORCE ARM of the TCP/IP address space prevents an "orderly" termination of TCP/IP.
+
+The abend 04E in DSNLIDDC:0002 with reason code 00D31108 occurs because USS does not drive DB2's ASYNC IO exit routine when DB2 calls USS to cancel the outstanding ASYNC IO call if TCP/IP has been terminated with the FORCE option. This is a defect in USS, which is corrected by APAR OW34704.
+
+Action: If you need to terminate TCP/IP, you should first try using the OS/390 PURGE command ("P TCPIP"). This causes an "orderly" termination of TCP/IP, which causes USS to drive ASYNC IO exit routines, thereby allowing DB2 server threads to immediately terminate. You should only use the FORCE TCPIP,ARM command if you have first issued the PURGE option of TCP/IP ("P TCPIP") and if the TCP/IP address space does not complete its termination in a reasonable amount of time.
+
+To prevent the abend 04E in DSNLIDDC:0002 with RC00D31108, apply the appropriate PTF for your version of DB2; you can find the list of PTFs by version in APAR OW34704. 
+
+
+
+HISTORICAL NUMBER
+ APAR: II11451

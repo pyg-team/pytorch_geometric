@@ -1,0 +1,160 @@
+Title: IBM PM65957: ITM SHOWS AN INCORRECT 'UNCONFIGURED' STATUS AFTER STOPPING WAS - United States
+
+Text:
+  FIXES ARE AVAILABLE
+7.1.0.3-TIV-ITCAMAD-IF0004: ITCAM for Application Diagnostics V7.1 FP3 IF4 [http://www-01.ibm.com/support/docview.wss?uid=swg24033735]
+7.1.0.3-TIV-ITCAMAD-IF0005: ITCAM for Application Diagnostics V7.1 FP3 IF5 [http://www-01.ibm.com/support/docview.wss?uid=swg24033938]
+7.1.0.3-TIV-ITCAMAD-IF0004: ITCAM for Application Diagnostics V7.1 FP3 IF6 [http://www-01.ibm.com/support/docview.wss?uid=swg24034668]
+7.1.0.3-TIV-ITCAMAD-IF0008: ITCAM for Application Diagnostics V7.1 FP3 IF8 [http://www-01.ibm.com/support/docview.wss?uid=swg24037994]
+7.1.0-TIV-ITCAMAD-FP0004: ITCAM for Application Diagnostics V7.1 Fix Pack 4 [http://www-01.ibm.com/support/docview.wss?uid=swg24041705]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  ITM shows an incorrect WebSphere status as Unconfigured after
+   stopping WAS.
+   It happens when DC 7.2 connects to TEMA 7.1
+   
+   Steps to reproduce:
+   
+   1. install WAS
+   2. install AD7.1
+   3. config DC 7.2 with WAS server
+   4. stop WAS
+   5. view its status in the workspace of ITM
+   
+   
+   
+   Users Affected:
+   Server configured with ITCAM DC for WebSphere 7.2 connects TEMA
+   7.1
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ***************************************************************
+   * USERS AFFECTED: Users of ITCAM for Application Diagnostics
+   * 7.1 used with ITCAM for WebSphere 7.2 Data Collector.
+   ***************************************************************
+   * PROBLEM DESCRIPTION:
+   * TEP shows an incorrect WebSphere status "Unconfigured"
+   * after stopping monitored WebSphere server. The correct status
+   * should be "Disconnected".
+   ***************************************************************
+   * RECOMMENDATION: Use ITCAM for AD 7.1.0.3 interim fix 3
+   * (7.1.0.3-TIV-ITCAMfAD-IF0003) or newer to resolve this issue.
+   ***************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  WebSphere agent checks configuration status by reading files
+   from Data Collector directory. Those files are stored in
+   agent's directory tree: <ITM_HOME>/<platform>/yn/wasdc.
+   ITCAM for WebSphere 7.2 Data Collector's files are stored
+   outside WAS agent directory tree and DC disconnection was
+   treated as it's configuration was removed.
+   
+   The fix for this APAR provides correct handling of ITCAM for
+   WebSphere 7.2 DC disconnecting.
+   
+   The fix for this APAR is contained in the following maintenance
+   packages:
+   
+     | interim fix | 7.1.0.3-TIV-ITCAMAD-IF0003
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM65957
+   
+   
+ * REPORTED COMPONENT NAME
+   TCAM AD WAS TEM
+   
+   
+ * REPORTED COMPONENT ID
+   5724Y92WD
+   
+   
+ * REPORTED RELEASE
+   710
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-06-01
+   
+   
+ * CLOSED DATE
+   2012-10-25
+   
+   
+ * LAST MODIFIED DATE
+   2012-10-25
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TCAM AD WAS TEM
+   
+   
+ * FIXED COMPONENT ID
+   5724Y92WD
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R710 PSY
+   UP

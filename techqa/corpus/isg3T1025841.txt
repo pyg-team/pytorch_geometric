@@ -1,0 +1,365 @@
+Title: IBM Java for Linux MustGather: Data collection procedure for automatically generated process core (binary) dumps - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ IBM Java for Linux MustGather: Data collection procedure for automatically generated process core (binary) dumps 
+
+ANSWER
+ 
+
+This document provides step-by-step instructions for collecing data for the IBM Java for Linux for automatically generated Linux (process) core dumps, collecting other required diagnostic files, and instructions for uploading the data to an IBM upload server. Collecting and uploading this information at the time the IBM support call is opened, will help expedite the resolution of the issue being reported. Jump to section: ( Prepare Environment) ( Collect Data) ( Confirm Data) ( Package Data) ( Upload Data) The instructions in this document make references to generic terms in Italics that will need to be replaced with information specific to the support call and the environment. It is very important that consistent and accurate values be used in place of the Italicized generic terms when collecting the data to ensure the prompt and correct delivery of the data when uploaded. Generic Term Replace with USERID The Linux userid running the Java process (e.g. wasadmin or root). TMP_PATH A temporary directory with a minimum of 10 (actual size my vary based on the maximum Java heap size) GB of free space (e.g. /large_fs). MM-DD The current month (MM) and day (DD) (e.g. ,01-31). PMR The full IBM PMR number (e.g. , PMR12345.678.000). JAVA_PATH
+JAVA_PID The parent Java installation directory (e.g., /opt/ibm/java-ppc64-80). 
+The process id of the active Java process (e.g. use "ps" command to check the PID column to identify the process). CORE_PATH The full path (including the file name) for the Linux (process) core dump file from the Java process (e.g., /opt/myapp/core.20150131.010101.1234512.001.dmp) JAVA_COMMAND The full path (including the file name) for the Java command used for the application (e.g., /opt/ibm/java-ppc64-80/jre/bin/java). NEW_PATH An alternate path or directory where diagnostic files will be created. Overview Step-by-Step Instructions Examples / Tips / Hints / Comments / Descriptions 
+
+
+
+Step 1: 
+
+Prepare To prepare for these data collection procedures, the process environment needs to be configured to enable the creation of complete Linux (process) core dumps.
+
+A. Enable the system and the user environment for full core dumps
+
+From a command prompt, and while logged in as the user id running the application, execute the following commands to enable full core dumps for the process/session environment.
+
+Set the core file size to unlimited:
+# ulimit -c unlimited 
+
+Set the process data segment size to unlimited:
+# ulimit -d unlimited 
+
+Set the file size to unlimited:
+# ulimit -f unlimited 
+(sets the file size limit to unlimited)
+
+For setting the ulimits at a global level, you would need to edit the /etc/security/limits.conf file to change the core and file ulimit settings.
+
+B. Check Disk Space
+
+Check your filesystems where the Java Application resides and make sure there is enough space for the dump to be produced. Usually an error message will be seen in the native_stderr.log that indicates if the core was unable to be written.
+
+To check all of your filesystems, execute this command (the -k is for kilobytes):
+
+# df -k
+
+If there is not enough disk space in the filesystem into which the files are getting written into, please increase it appropriately.
+
+C. Restart your application
+
+Perform the following actions inorder for the changes to take effect:
+- Stop the application (and node agent/manager, if applicable)
+
+- If setting ulimits globally or for a specific user on the system in /etc/security/limits.conf file, then relogin to the system as root/specific user for which the ulimits have been set, for the ulimits to take effect.
+
+- Confirm that full core is enabled and the new ulimits are in effect by executing the command:
+
+# ulimit -a
+
+- Restart the application (e.g., node agent/manager) from the same command line session
+
+A. When the ulimits are not enabled and the core dumps are uploaded, in most cases, the core dumps will be incomplete or truncated. Not setting the ulimits will prevent the support specialist from analyzing the data and will also delay the resolution of the reported issue.
+
+When using J2E (or J2EE) application servers such as IBM WebSphere or Oracle WebLogic, for the changes to take effect, both the node agent (manager) and the application (manager) servers have to be stopped and restarted (and relogin before restarting).
+
+The diagnostic data(javacore.*.txt, Snap.*trc, heapdump.*phd and core.*.dmp files) is generated into the current working directory of the process. To find the current working directory of the process, execute the command:
+
+# pwdx JAVA_PID
+
+To direct javacore, heapdump, snap trace and Linux(process) core files to specific directories instead of the default current working directory of the process, set environment variables:
+
+# export IBM_COREDIR=NEW_PATH
+# export IBM_JAVACOREDIR=NEW_PATH
+# export IBM_HEAPDUMPDIR=NEW_PATH
+
+to specify an alternate location for the javacore.*.txt and heapdump.*.dmp files.
+
+The IBM_COREDIR, IBM_JAVACOREDIR and IBM_HEAPDUMPDIR variables have to be configured for the process prior to it being started (i.e., as part of its startup procedure and the process has to be restarted).
+
+
+
+
+
+Step 2: 
+
+Collect Once the application has failed and a core dump is produced, from a command prompt, and while logged in as the root user, execute the following commands to collect the required diagnostic data:
+
+# mkdir -p /TMP_PATH/PMR/MM-DD-/data
+# cd /TMP_PATH/PMR/MM-DD/data
+
+# cat /etc/*release* > release.out 2>&1
+# uname -a > uname-a.out 2>&1
+# uname -r > uname-r.out 2>&1
+# cat /proc/meminfo > meminfo.out 2>&1
+# cat /proc/cpuinfo > cpuinfo.out 2>&1
+# rpm -qa > rpm-qa.out 2>&1
+# free -mt > free-mt.out 2>&1
+# ps aux --sort -rss > ps.out 2>&1
+# JAVA_COMMAND -version > java-version.out 2>&1
+
+For Red Hat, execute the following command:
+
+# cat /etc/redhat-release > redhat-release.out 2>&1
+# sosreport > sosreport.out 2>&1
+
+{Copy the javacore.*.txt files to the data directory.}
+{Copy any Snap.*.trc files to the data directory.}
+{Copy any heapdump.*.phd files to the data directory.}
+{Copy any jitdump.*.dmp files to the data directory}
+{Copy application log files to the data directory.}
+
+Collect libraries associated with core file using jextract, which generates a core.*.dmp.zip file:
+
+# JAVA_PATH/jre/bin/jextract CORE_PATH
+
+{Copy core.*.dmp.zip files to the data directory.}
+
+Examples of commands to be executed:
+
+** Do not copy and paste AS-IS, these are only examples **
+
+# mkdir -p /large_fs/12345.123.000/01-31/data
+# cd /large_fs/12345.123.000/01-31/data
+
+# /opt/ibm/java-ppc64-80/bin/java -version > java-version.out
+
+# cp /opt/myapp/javacore*txt ./
+# cp /opt/myapp/Snap*trc ./
+# cp /opt/myapp/heapdump*phd ./
+# cp /opt/myapp/jitdump*dmp ./
+# cp /opt/myapp/myapp*logs ./
+
+# /opt/ibm/java-ppc64-80/jre/bin/jextract
+/opt/myapp/core.20150131.010101.1234512.001.dmp
+
+
+
+
+
+Step 3: 
+
+Confirm ** Mandatory **
+
+Prior to packaging and uploading, confirm that the following files have been saved in the temporary directory:
+
+1. core.*.dmp.zip
+
+2. javacore.*.txt files
+
+3. heapdump.*.phd files (if available)
+
+4. Snap.*.trc files (if available)
+
+5. jitdump.*.dmp files (if available)
+
+6. All of the *.out files generated in Step 2
+
+7. Application log files
+
+Sending incomplete data or data other than the requested data may delay the resolution of the reported issue.
+
+Examples of commands to execute:
+
+** Do not copy and paste AS-IS, these are only examples **
+
+# cd /large_fs/12345.123.000/01-31/data
+
+# ls core*zip snapcore* javacore* *.out 
+
+# ls heapdump* Snap*
+
+# ls *.logs
+
+
+
+
+
+Step 4: 
+
+Package Packaging the files may simplify the upload of the diagnostic data collected. From the command line, and while logged in as the root user, execute the commands:
+
+# cd /TMP_PATH/PMR/MM-DD
+
+# tar -czvf PMR.MM-DD.tar.gz data
+
+Examples of commands to execute:
+
+** Do not copy and paste AS-IS, these are only examples **
+
+# cd /large_fs/12345.123.000/01-31
+
+# tar -czvf 12345.123.000.01-31.tar.gz data
+
+
+
+
+
+Step 5: 
+
+Upload Upload the packaged data or individual files to an IBM secured server using one of upload options provided on the "MustGather: How to upload diagnostic data and testcases to IBM" web page:
+
+http://www-01.ibm.com/support/docview.wss?uid=isg3T1022619 [http://www-01.ibm.com/support/docview.wss?uid=isg3T1022619]
+
+
+
+
+
+
+
+Step 6: 
+
+Upload 
+
+
+
+
+
+
+
+Step 7: 
+
+ACTION 
+
+
+
+
+
+
+
+Step 8: 
+
+ACTION 
+
+
+
+
+
+
+
+Step 9: 
+
+ACTION 
+
+
+
+
+
+
+
+Step 10: 
+
+ACTION 
+
+
+
+
+
+
+
+Step 11: 
+
+ACTION 
+
+
+
+
+
+
+
+Step 12: 
+
+ACTION 
+
+
+
+
+
+
+
+Step 13: 
+
+ACTION 
+
+
+
+
+
+
+
+Step 14: 
+
+ACTION 
+
+
+
+
+
+
+
+Step 15: 
+
+ACTION 
+
+
+
+
+
+
+
+Step 16: 
+
+ACTION 
+
+
+
+
+
+
+
+Step 17: 
+
+ACTION 
+
+
+
+
+
+
+
+Step 18: 
+
+ACTION 
+
+
+
+
+
+
+
+Step 19: 
+
+ACTION 
+
+
+
+
+
+
+
+Step 20: 
+
+ACTION 
+
+
+
+
+
+
+
+Step 21: 
+
+ACTION 
+
+
+
+Document Type: Instruction Content Type: Mustgather Hardware: all Power/X86 Operating System: all Linux Versions IBM Java: all Java Versions Author(s): Vidya Makineedi Reviewers: Rama Tenjarla Click here [javaix_feedback@wwpdl.vnet.ibm.com?Subject=Feedback: IBM Java for Linux MustGather: Data collection procedure for automatically generated process core dumps] to submit feedback for this document.

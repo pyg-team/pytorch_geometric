@@ -1,0 +1,100 @@
+Title: IBM Potential limitations and considerations when downloading static content from the
+WebSphere Application Server - United States
+
+Text:
+ESI; webserver; esicache; edge side includes; dynacache; dynamic cache; plugin; http_plugin.log; plugin log; error; message; cache size; IIS; IHS; caching WHITE PAPER
+
+ABSTRACT
+ There are some potential limitations and considerations that must be carefully weighed when deciding whether to serve static content from the WebSphere Application Server when esiEnable is set to true. 
+
+CONTENT
+
+
+
+Background information 
+When the WebSphere Application Server is used to serve static content, such as images and HTML from the application server, the URIs are also cached in the ESI processor on the Web server plug-in side when esiEnable in the plugin-cfg.xml is set to true. The maximum allowable size of the cache on the plug-in side is controlled by esiMaxCacheSize in the plugin-cfg.xml. 
+
+<Property Name="esiEnable" Value="true"/>
+<Property Name="esiMaxCacheSize" Value="1024"/> 
+Where esiMaxCacheSize is the maximum size of the cache in 1K byte units. The default maximum size of the cache is 1 megabyte (1024K). If the cache is full, the first entry to be evicted from the cache is the entry that is closest to expiration. 
+
+For additional information, see the ESI processor [http://publib.boulder.ibm.com/infocenter/wasinfo/v6r1/index.jsp?topic=/com.ibm.websphere.nd.doc/info/ae/ae/tdyn_esiedgecaching.html] documentation. 
+
+
+Potential limitations and performance considerations 
+There are some potential limitations and considerations that must be carefully weighed when deciding whether to serve static content from the WebSphere Application Server when esiEnable is set to true. 
+
+First, as noted in the above document, esi cache is a memory cache and not a disk cache and therefore large static files cached could require a large amount of memory heap on the web server side be allocated to the ESI processor running in the plug-in depending on the size of the static file. 
+
+For example, If downloading a large static file from the WebSphere Application Server with a content-length of 100M bytes, the ESI processor on the Web server plug-in side will attempt to cache the entire response into memory, thus requiring 100M bytes of memory be allocated to the ESI processor for that one file. esiMaxCacheSize controls the maximum allowable size of the cache and therefore must be set high enough to allow the caching of the entire file. 
+
+In addition, if many clients are attempting to download large static files at the same time from the WebSphere application server, the value of esiMaxCacheSize, must be large enough to cache all the content being downloaded during that request cycle. 
+
+For example, if 10 clients are downloading 100M byte static files from the application server at the same time, esiMaxCacheSize must be set to obtain 1000M bytes of memory or just under 1GB. 
+
+(10 x 100M bytes = 1000M bytes) (1024M bytes = 1G byte) 
+
+The ability of the ESI processor to obtain the memory needed is also dependent on the operating system available memory allocated to the Web server memory heap. If there is not enough memory available in the heap, the ESI processor would fail to cache the response and record the following message in the http_plugin.log when Trace is enabled. 
+
+[Fri Apr 03 09:53:42 2009] 00001270 000001c4 - TRACE: ESI: esiResponseReadBody: response is too big to get cached |100000000| 
+Also, the ESI processor running in the web server plug-in will attempt to read the entire response from the WebSphere Application Server and cache it before writing the assembled file back to the client. This is normal behavior when using the ESI processor, since ESI is designed to look for all nested includes in the entire response first. 
+
+It is important to note, there will be no data blocks written back to the client on the Web server connection (client<----no data----Web server) while the ESI processor running in the Web server plug-in is reading the response from the WebSphere Application Server (plug-in<----data----WebSphere) and therefore the potential for premature client closures based on TCP time-outs or premature client aborts are possible during large static content downloads. 
+
+If the connection between the client and Web server is prematurely closed the plug-in will fail during the write operation back to the client and record the following message in the log, signaling the connection between the client<----Web server was closed before the response was written completely. 
+
+[Fri Apr 3 09:53:49 2009] 00001270 000002d8 - WARNING: iis_plugin: cb_write_body: Response write failed, OS err: 10054
+[Fri Apr 3 09:53:49 2009] 00001270 000002d8 - TRACE: ESI: esiResponseWriteBody: write body error: rc = 1
+[Fri Apr 3 09:53:49 2009] 00001270 000002d8 - TRACE: ESI: esiResponseWrite: failed to write body 
+Note: This is not a Web server plug-in defect, since the plug-in did attempt to write the response and was simply unable to because the client<--->Web server connection was already closed. 
+
+Description: OS err: 10054
+#########################################
+WSAECONNRESET 10054 Connection reset by peer.
+An existing connection was forcibly closed by the remote host. This normally results if the 
+peer application on the remote host is suddenly stopped, the host is rebooted, the host or remote 
+network interface is disabled, or the remote host uses a hard close (see setsockopt for more 
+information on the SO_LINGER option on the remote socket). This error may also result if a 
+connection was broken due to keep-alive activity detecting a failure while one or more 
+operations are in progress. Operations that were in progress fail with WSAENETRESET. 
+Subsequent operations fail with WSAECONNRESET.
+######################################### 
+Next, since the large static content initially resides on the WebSphere Application Server there is additional overheard in making TCP connections to a backend application server by the Web server plug-in to retrieve the content on the first attempt. This will increase the need for additional worker threads within the Web container and would tie up those threads during the initial downloading of the content. These threads could be tied up for several minutes depending on the speed of the network connection between the plug-in<---->WebSphere and the size of the file being downloaded. 
+
+
+Recommendations and Best Practices 
+The main benefit achieved by caching static content on the Web server side using the ESI processor, is so the file can be served from the Web server side next time the file is requested, instead of from the WebSphere Application Server. 
+
+However, from an overall Web site implementation strategy and performance perspective, it is not a Best Practice implementation to utilize the ESI processor to cache large static files. 
+
+Instead, a more appropriate solution would be to have your Web server serve the large static files from the Web server disk, instead of relying on the ESI processor to hold these cached objects in memory. This would require moving larger static content to the Web server instead of serving them from the WebSphere Application Server. 
+
+The benefits of serving large static content from the web server disk..
+########################################################  1. prevents additional overhead of the plug-in having to make additional TCP connections to WebSphere to GET the file on first client attempts.
+    
+    
+ 2. reduces the overhead of the jvm, by preventing it from tying up worker threads for the duration of the static file downloads
+    
+    
+ 3. prevents large amounts of memory requirements on the web server machine
+    
+    
+ 4. reduces the total processing time it takes to serve each download
+    
+    
+ 5. reduces the chances of premature client closures due to I/O TCP time-outs while waiting for the response to be written.
+
+####################################################### 
+From a Best Practices perspective, IBM recommends using the ESI processor in the Web server plug-in, primarily for caching dynamic content fragments and smaller static content served from the WebSphere Application Server. 
+
+IBM also recommends moving larger static content to the Web server so the Web server can be responsible for serving this content from disk instead of trying to serve these files from the ESI processor memory cache handled by the Web server plug-in. 
+
+Lastly, if it is not possible to move large static content to the Web server, then IBM recommends disabling the ESI Processor in the Web server plug-in's config file ( plugin-cfg.xml) so content is not cacheable. 
+
+<Property Name="esiEnable" Value="false"/> 
+And then consider implementing a second Web server instance with ESI Processor enabled in the plug-in to handle the caching of dynamic content fragments and smaller static content served from the WebSphere Application Server. 
+
+
+
+
+Cross Reference information Segment Product Component Platform Version Edition Application Servers IBM HTTP Server Runtime AIX, HP-UX, Linux, Linux pSeries, Linux Red Hat - pSeries, Linux zSeries, Solaris, Windows 7.0, 6.1, 6.0, 2.0.47

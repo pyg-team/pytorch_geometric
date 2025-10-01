@@ -1,0 +1,59 @@
+Title: IBM Req Field Option Lists: Steps to Perform the Workbench Import (Power User Access) - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Detailed instructions for Power Users to perform Req Field Option List imports via Workbench. 
+
+ANSWER
+1. Export the current Option List: Tools > Forms > Reqs > Req Forms > Click the “Define custom req fields” or “Define standard req fields” button (depending on what type of field your option list is associated to) > Click the Administer field options icon > Click Export to Excel > Name your export > Click Launch > Access the Task Manager (Tools > Task Manager) to access your spreadsheet.)
+2. Prepare your spreadsheet by adding/modifying the Options that you would like to import.
+3. Go to Tools > Import > Profiles
+4. Create a New Import Profile OR use an existing Import Profile to import your spreadsheet:
+(a) Creating a new Import Profile (It is not required that a new profile be created every time there is an import to run. We recommend creating one profile per Import Type.)
+§ Click Add new profile
+[/support/docview.wss?uid=swg21989949&amp;aid=1]
+§ Fill out the Import Profile page
+1 – Name your Profile. This can be anything you would like, but it’s recommended that you name the profile the type of import you are planning to run. 
+2 – Select “Sharing” if you would like other Workbench users to see your Import Profile.
+3a/3b – Select “Options (Req custom)” if you are importing options for a custom req field. Select “Options (Req standard)” if you are importing options for a standard req field.
+4 – Select your file.
+5 – Click Next
+[/support/docview.wss?uid=swg21989949&amp;aid=2]
+§ Fill out the Map Import Profile page
+1 – The “Column Name” shows standard option import columns necessary for the import.
+2 – The “Map To” column shows the column headers that are present in your excel sheet. We recommend that you review the Map To column to ensure that there is a column header for each of each of the standard option import columns. As mentioned previously, it is recommended that you do an initial export of the current Option List to get the layout needed to be imported. Having the proper column headers on your spreadsheet will ensure that your Map To column will align correctly.
+3 – The “Overwrite” column allows you to select the fields you would like to overwrite the option data for. Selecting the “All” button will check each box automatically.
+4 – Click Finish
+[/support/docview.wss?uid=swg21989949&amp;aid=3]
+§ If you would like to complete the Import process select the “Launch” button. If you would like to come back later to complete the steps, click “Close”.
+[/support/docview.wss?uid=swg21989949&amp;aid=4]
+§ Selecting Launch will direct you the following screen. 
+1 – Select the field you want to upload the options list for.
+2 – Re-select your spreadsheet
+3 – Click Launch
+[/support/docview.wss?uid=swg21989949&amp;aid=5]
+§ The system will process the spreadsheet and send you an email when the import is complete.
+§ Skip to STEP 5 for the remaining steps.
+(b) Launching an existing Import Profile 
+§ It is not necessary to create a new profile every time there is an import needed. We recommend creating one profile per Import Type. Should you already have an import profile created, double check the settings and the mapping of the profile and use that for your future imports.
+§ Select the existing profile and click Launch.
+[/support/docview.wss?uid=swg21989949&aid=6] [/support/docview.wss?uid=swg21989949&aid=6]
+§ Selecting Launch will direct you the following screen. 
+1 – Select the field you want to upload the options list for.
+2 – Re-select your spreadsheet
+3 – Click Launch
+[/support/docview.wss?uid=swg21989949&amp;aid=7]
+§ The system will process the spreadsheet and send you an email when the import is complete.
+5. Navigate to the Task Manager to see the results of the import. (Tools > Task Manager)
+6. On the Task Manager page, there is a Status column which will indicate the status of your import. There are 5 potential Statuses you may encounter:
+o Pending = The import is waiting in line to be processed.
+o Running = The import is currently being processed. You may use the “Refresh display” link to watch the progress. (Number of rows will increase as the file is processed.)
+o Completed = The import has completed without errors. It is important however, to open the file (via the binoculars icon [/support/docview.wss?uid=swg21989949&amp;aid=8]) to review the results. 
+o Completed with Errors = The import has completed and has errors that will need to be resolved. Open the results file via the binoculars icon [/support/docview.wss?uid=swg21989949&amp;aid=9], review the errors, correct them in the original file and reload the file. (You may reload the entire original file, with the corrections, or just the options that had to be corrected.)
+o Failed = The import failed completely. This may be an issue with the extension of the excel file you attempted to import, an overall system error/issue, or that the file was too large and timed out. Troubleshooting tips can be found below.
+
+Jump to: 
+
+TOPIC LINK Table of Contents Click Here [http://www.ibm.com/support/docview.wss?uid=swg21989946] Preparing the Req Field Option List Spreadsheet for Import into Workbench Click Here [http://www.ibm.com/support/docview.wss?uid=swg21989948] Performing the Req Field Option List Import (Tier 5 User Access) Click Here [http://www.ibm.com/support/docview.wss?uid=swg21989949] Reading the Req Field Option List Results File Click Here [http://www.ibm.com/support/docview.wss?uid=swg21989953] Common Req Field Option List Import Errors and Resolutions Click Here [http://www.ibm.com/support/docview.wss?uid=swg21989954]

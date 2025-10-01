@@ -1,0 +1,204 @@
+Title: IBM PI20391: Z/OS SYSTEM HANG DUE TO MQ 14/06/20 PTF PECHANGE - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The z/OS system hung, and an IPL was required. A standalone dump
+   showed that many jobs, including *MASTER*, DMPSRV, CONSOLE,
+   OMVS, JES2, and user jobs such as brokers, were in an ENQ wait
+   for resource NAME=MAJOR=NETMAGDB (a resource for a 3rd party
+   product).  The ENQ was held by a broker job that was going
+   through MEMTERM processing due to an ABENDS40D.
+   .
+   The dump of the *MASTER* address space showed that the TCB for
+   memterm processing for the ENQ owner was waiting in MQ. SYSTRACE
+   of the *MASTER* address space showed that the MEMTERM TCB was in
+   a loop of WAIT, STORAGE RELEASE, and STORAGE OBTAIN  every
+   second. The WAIT PSW was in CSQ3RRSX+x'185C' (UK94940) in
+   routine SETDIE.  It was called from EBACTL_RETRY2 to wait for 1
+   second at a time for EBACTL to be turned on for a thread for the
+   broker job. The TCB for that thread was alrady gone.
+   .
+   The MQ change team found that the code added by PM75418 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM75418] can
+   cause memterm processing to hang indefinitely. Presumably the
+   fact that memterm processing hung prevented subsequent memterm
+   processing by z/OS from releasing the NETMAGDB ENQ.
+   .
+   Additional Symptom(s) Search Keyword(s):
+   hang MQ NETMAGDB looping ABEND40D S40D ABEND 40D SAD
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All users of WebSphere MQ for z/OS Version 7 *
+   *                 Release 0 Modification 1 and Release 1       *
+   *                 Modification 0.                              *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: After applying the PTF for PM75418 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM75418],     *
+   *                      UK91873 / UK91874, MEMTERM processing   *
+   *                      for an address space connected to MQ is *
+   *                      hanging.                                *
+   *                      The LPAR may potentially become         *
+   *                      unresponsive.                           *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   The connected address space has experienced abends, and has then
+   been MEMTERM'ed with S40D. During MEMTERM processing, context
+   services has invoked CSQ3RRSX for END_CONTEXT processing. The
+   ACE associated with the context has EBACTL set off, indicating
+   that it is in MQ code. CSQ3RRSX therefore waits for EBACTL to be
+   set back on.
+   However, EBACTL will never get set back on as the address space
+   that it was running under has been MEMTERM'ed.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The code was changed to not wait for EBACTL to be turned back on
+   if the connected address space has been MEMTERM'ed, preventing
+   the hang from occurring.
+   010Y
+   100Y
+   CSQARIB
+   CSQMCLMT
+   CSQMCTXE
+   CSQMCTXS
+   CSQ3AAES
+   CSQ3AMT3
+   CSQ3RRSF
+   CSQ3RRSI
+   CSQ3RRSM
+   CSQ3RRSR
+   CSQ3RRSX
+   CSQ3RRXF
+   CSQ5CONN
+   CSQ5MONR
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  *********
+   * HIPER *
+   *********
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI20391
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ Z/OS V7
+   
+   
+ * REPORTED COMPONENT ID
+   5655R3600
+   
+   
+ * REPORTED RELEASE
+   010
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   YesPE
+   
+   
+ * HIPER
+   YesHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-06-19
+   
+   
+ * CLOSED DATE
+   2014-07-10
+   
+   
+ * LAST MODIFIED DATE
+   2014-08-04
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UI19493 UI19494
+   
+   
+
+MODULES/MACROS
+ *  CSQARIB  CSQMCLMT CSQMCTXE CSQMCTXS CSQ3AAES
+   CSQ3AMT3 CSQ3RRSF CSQ3RRSI CSQ3RRSM CSQ3RRSR CSQ3RRSX CSQ3RRXF
+   CSQ5CONN CSQ5MONR
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ Z/OS V7
+   
+   
+ * FIXED COMPONENT ID
+   5655R3600
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R010 PSY UI19493 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI19493]
+   UP14/07/22 P F407 ®
+   
+   
+ * R100 PSY UI19494 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI19494]
+   UP14/07/22 P F407 ®
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

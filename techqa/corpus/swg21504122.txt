@@ -1,0 +1,60 @@
+Title: IBM Modified/Reduced Trace Spooling setup - Less storage required - United States
+
+Text:
+trace; spooling; trace spooling; rsct; tsamp; tsa; trace.conf TECHNOTE (FAQ)
+
+QUESTION
+ Trace Spooling can require a significant amount of storage. Is there a way to take advantage of the multiple round-robin trace files without the actual spooling of trace files to another storage location ? 
+
+ANSWER
+Trace Spooling can be setup in a cluster but with the actual spooling disabled. This allows you to have multiple trace files for each Resource Manager, and a user defined size for each trace file, thus some control over the amount of historical trace data without the full investment needed for the spooling of trace files to a remote filesystem/directory. 
+
+Standard Trace Spooling setup provides for multiple trace files located in the default location "/var/ct/<domain_name>/log/mc/<Daemon_Name>/" 
+
+ 
+
+For example, if we setup 3 files for IBM.RecoveryRM for each of the trace files we would have a listing like this:
+-rw------- 1 root root 4096000 Jun 28 17:42 trace.1.sp
+-rw------- 1 root root 4096000 Jun 28 17:42 trace.2.sp
+-rw------- 1 root root 4096000 Jun 28 17:42 trace.3.sp
+-rw------- 1 root root 4096000 Jun 28 17:42 trace_pub.1.sp
+-rw------- 1 root root 4096000 Jun 28 17:42 trace_pub.2.sp
+-rw------- 1 root root 4096000 Jun 28 17:42 trace_pub.3.sp
+-rw------- 1 root root 4096000 Jun 28 17:42 trace_summary.1.sp
+-rw------- 1 root root 4096000 Jun 28 17:42 trace_summary.2.sp
+-rw------- 1 root root 4096000 Jun 28 17:42 trace_summary.3.sp
+
+Normally, Trace Spooling you would include a Spool Directory (dest) where the active round robin trace files would be copied to before they are overwritten. The challenge is that without crontab jobs, the Spool Directory would eventually fill up the filesystem, no matter how large it was. 
+
+The alternative is to disable just the spooling functionality. When defining the /var/ct/cfg/trace.conf, you can turn off the spool but leave the rest in place. For example, here is the IBM.RecoveryRM trace.conf stanza for the full trace file:
+
+recrm_spool:
+pat=/var/ct/.*/log/mc/IBM.RecoveryRM/trace
+spooling = OFF
+pages = 9
+dest = /spool_test/trc/
+size = 4096000 
+
+ 
+
+Each line explained: 
+
+pat = the pattern to match to spool, the file and directory of the source spool file 
+
+spooling = On or Off 
+
+pages = Number of files in the default trace location 
+
+dest = Where is the spool written if enabled 
+
+size = size in bytes of each of the spool files 
+
+ 
+
+So the above stanza would allow for 3 files created for the IBM.RecoveryRM trace file that would collect trace information in a FIFO round robin fashion, but none of the trace files would ever be written to the spool directory because spooling is turned off. 
+
+ 
+
+A sample trace.conf is included below, to use this file you would need to rename it to "trace.conf" and copy it to /var/ct/cfg/ while logged in as the root user on every node.
+
+sample_trace.conf [/support/docview.wss?uid=swg21504122&aid=2]sample_trace.conf [/support/docview.wss?uid=swg21504122&aid=1]

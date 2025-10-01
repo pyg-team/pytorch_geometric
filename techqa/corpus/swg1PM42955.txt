@@ -1,0 +1,152 @@
+Title: IBM PM42955: HIGHER MEMORY USAGE THAN EXPECTED DURING PERIODS OF NO ACTIVITY - United States
+
+Text:
+z/os SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When a WebSphere Enterprise Service Bus or WebSphere Process
+   Server runtime has processed a message in a Mediation Flow
+   Component and subsequent messages  do not immediately occur
+   on the same thread, some of the associated memory for the
+   previous request is not freed up until the next message
+   arrives. This can mean in some situations that a higher than
+   expected memory foot print is seen during quiet periods.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   
+   * USERS AFFECTED: Users of WebSphere Enterprise Service Bus    *
+   *                 and WebSphere Process Server v6.2 who see    *
+   *                 higher than expected memory usage from a     *
+   *                 flow containing a mediation module that is   *
+   *                 not under load.                              *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: A WebSphere Enterprise Service Bus or   *
+   *                      WebSpshere Process Server mediation     *
+   *                      module will retain in memory a copy     *
+   *                      of the message passing through each     *
+   *                      primitive in the mediation module.      *
+   *                      Under low load this can lead to a       *
+   *                      higher than expected memory foot        *
+   *                      print for the flow.                     *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   As a message passes through a mediation module a copy of the
+   message is stored in memory as it leaves each primitive. This
+   is not released for garbage collection by the JVM until the
+   next message has entered the module.
+   Under periods of low load this may not happen immediately
+   resulting in the messages being stored for a longer period and
+   a higher than expected memory foot print being seen.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The code was modified such that the stored messages are
+   released for garbage collection earlier.
+   
+   There are no known side effects associated with this fix.
+   There is no known alternative workaround should you encounter
+   this problem.
+   
+   This code fix was targeted to be included in the following fix
+   packs:
+        6.2.0 Fix Pack 4 (v6.2.0.4)
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM42955
+   
+   
+ * REPORTED COMPONENT NAME
+   WEB PROC SRVR F
+   
+   
+ * REPORTED COMPONENT ID
+   5655N5300
+   
+   
+ * REPORTED RELEASE
+   620
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-07-05
+   
+   
+ * CLOSED DATE
+   2011-12-14
+   
+   
+ * LAST MODIFIED DATE
+   2015-04-29
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    IC66137 [http://www-01.ibm.com/support/docview.wss?uid=swg1IC66137]
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEB PROC SRVR F
+   
+   
+ * FIXED COMPONENT ID
+   5655N5300
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R620 PSY
+   UP

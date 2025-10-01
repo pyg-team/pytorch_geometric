@@ -1,0 +1,194 @@
+Title: IBM PM10497: DOCUMENTATION: Weight Distribution in test suite result: no slid ersWeight Distribution in test suite result: no sliders - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  In the Rational Quality client the result screen of a test suite
+   does have a section Weight Distribution, but no sliders.
+   
+   In the test result screen of a suite, you don't see the sliders
+   although the help in the question mark icon says that you can
+   use the sliders.
+   
+   You can see the sliders in a test case result screen.
+   
+   
+   When you click on the question mark icon, a help screen opens.
+   It says:
+   
+   Use the sliders in this section to manually edit weight
+   distributions for execution outcomes. For instance, even if a
+   test fails, you might want to track that 80% of the test
+   actually passed. If the test case has a weight of 100 points,
+   you record that 80 points passed, while 20 points failed.
+   The following formulas are used to calculate the combined weight
+   distributions for tests:
+   
+       * Pass + Fail + Inconclusive <= Total Weight
+       * Pass + Blocked <= Total Weight
+       * Attempted >= Pass + Fail + Inconclusive
+   
+   Note: Weight is a measure of execution effort and can be based
+   on tester hours, units of work, or priority. For example, a test
+   case that requires twice as much time to execute could have
+   double the weight as another test case. Reports that measure
+   your progress take the weight value into account when
+   determining status.
+   
+   The Test Suite results page does not have sliders. That is by
+   design. The Suite Result points are rolled up from the
+   individual testcase results for the suite.
+   However, the Help details are incorrect. The help is the same as
+   the Testcase results page which is a defect.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   In the Rational Quality client the result screen of a test
+   suite does have a section Weight Distribution, but no
+   sliders.
+   
+   In the test result screen of a suite, you don't see the
+   sliders although the help in the question mark icon says
+   that you can use the sliders.
+   
+   You can see the sliders in a test case result screen.
+   
+   
+   When you click on the question mark icon, a help screen
+   opens. It says:
+   
+   Use the sliders in this section to manually edit weight
+   distributions for execution outcomes. For instance, even if
+   a test fails, you might want to track that 80% of the test
+   actually passed. If the test case has a weight of 100
+   points, you record that 80 points passed, while 20 points
+   failed.
+   The following formulas are used to calculate the combined
+   weight distributions for tests:
+   
+       * Pass + Fail + Inconclusive ?= Total Weight
+       * Pass + Blocked ?= Total Weight
+       * Attempted ?= Pass + Fail + Inconclusive
+   
+   Note: Weight is a measure of execution effort and can be
+   based on tester hours, units of work, or priority. For
+   example, a test case that requires twice as much time to
+   execute could have double the weight as another test case.
+   Reports that measure your progress take the weight value
+   into account when determining status.
+   
+   The Test Suite results page does not have sliders. That is
+   by design. The Suite Result points are rolled up from the
+   individual testcase results for the suite.
+   However, the Help details are incorrect. The help is the
+   same as the Testcase results page which is a defect.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This is fixed from the UI perspective and the csHelp is
+   changed to rqm_suite_weight_dist.html.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM10497
+   
+   
+ * REPORTED COMPONENT NAME
+   RQM STD ED
+   
+   
+ * REPORTED COMPONENT ID
+   5724V1001
+   
+   
+ * REPORTED RELEASE
+   201
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-03-22
+   
+   
+ * CLOSED DATE
+   2010-11-19
+   
+   
+ * LAST MODIFIED DATE
+   2010-11-19
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   RQM STD ED
+   
+   
+ * FIXED COMPONENT ID
+   5724V1001
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R201 PSN
+   UP

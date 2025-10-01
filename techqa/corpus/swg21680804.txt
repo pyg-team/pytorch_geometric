@@ -1,0 +1,118 @@
+Title: IBM ** Troubleshooting ** "Internal Error ... No driver found - dbType is invalid..." when launching JAVA-based functionality - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ User launches any JAVA-related functions (e.g. "Group - Command Center"). An error appears. 
+
+SYMPTOM
+[/support/docview.wss?uid=swg21680804&aid=1] [/support/docview.wss?uid=swg21680804&aid=1] 
+
+Internal error:
+
+Details:
+com.ibm.cognos.ccr.integration.IntegrationFacadeException: org.eclipse.core.runtime.adaptor.EclipseStarter failed!
+at com.ibm.cognos.ccr.integration.IntegrationServiceAdapter$MyEclipseStarter.run(IntegrationServiceAdapter.java:170)
+at java.lang.Thread.run(Thread.java:781)
+Caused by: com.ibm.cognos.ccr.common.FatalException: Failed to launch!
+at com.ibm.cognos.ccr.integration.application.internal.IntegrationApplication.start(IntegrationApplication.java:101)
+at org.eclipse.equinox.internal.app.EclipseAppHandle.run(EclipseAppHandle.java:196)
+at org.eclipse.core.runtime.internal.adaptor.EclipseAppLauncher.runApplication(EclipseAppLauncher.java:110)
+at org.eclipse.core.runtime.internal.adaptor.EclipseAppLauncher.start(EclipseAppLauncher.java:79)
+at org.eclipse.core.runtime.adaptor.EclipseStarter.run(EclipseStarter.java:353)
+at com.ibm.cognos.ccr.integration.IntegrationServiceAdapter$MyEclipseStarter.run(IntegrationServiceAdapter.java:168)
+... 1 more
+Caused by: com.ibm.cognos.ccr.common.NoSuchModelException: Unable to find instance of model of type: configproperty[ConfigPropertyModel]
+at com.ibm.cognos.ccr.common.DefaultModelContext.throwNewNoSuchModelException(DefaultModelContext.java:417)
+at com.ibm.cognos.ccr.common.DefaultModelContext.getModelByIdentifier(DefaultModelContext.java:382)
+at com.ibm.cognos.ccr.common.DefaultModelContext.getModel(DefaultModelContext.java:257)
+at com.ibm.cognos.ccr.common.util.LocalizationUtils.getPresentationLocale(LocalizationUtils.java:222)
+at com.ibm.cognos.ccr.integration.application.internal.IntegrationApplication.start(IntegrationApplication.java:91)
+... 6 more
+Caused by: com.ibm.cognos.ccr.common.WebServiceConnectionException: exceptionId=ERR.ANY.WEBSERVICECONNECTIONEXCEPTION.SERVICE_FAILED, argument(s)=[url=http://VBRACONT8AP9/ibmcognos/controllerserver/CCRWS.asmx, passport=MTswMTA6YmIyY2NmZWYtNGQxYy00ZTYwLTEyOGQtMDBkZDY1NWJkMzgwOjM5MzAzODAwMDc7MDszOzA7, request=executeTask(com.ibm.cognos.ccr.common.ws.ServerTask: beanID=inConfigpropertyModelDAO, methodName=getLatestSequenceNumber, args.length=0, args=[])]
+at com.ibm.cognos.ccr.ccrws.JAXWSClient.processResponse(JAXWSClient.java:88)
+at com.ibm.cognos.ccr.ccrws.JAXWSClient.executeTask(JAXWSClient.java:134)
+at com.ibm.cognos.ccr.ccrws.persistence.RemoteDao.executeTask(RemoteDao.java:97)
+at com.ibm.cognos.ccr.ccrws.persistence.RemoteDao.getLatestSequenceNumber(RemoteDao.java:63)
+at com.ibm.cognos.ccr.common.persistence.caching.CachingDao.getLatestSequenceNumber(CachingDao.java:94)
+at com.ibm.cognos.ccr.common.persistence.caching.CachingDao.isDifferentModelVersion(CachingDao.java:200)
+at com.ibm.cognos.ccr.common.persistence.caching.CachingDao.needsRefresh(CachingDao.java:196)
+at com.ibm.cognos.ccr.common.persistence.caching.CachingDao.load(CachingDao.java:101)
+at com.ibm.cognos.ccr.common.AbstractModel.load(AbstractModel.java:561)
+at com.ibm.cognos.ccr.common.AbstractModel.load(AbstractModel.java:551)
+at com.ibm.cognos.ccr.common.AbstractModelFactory.getNewModel(AbstractModelFactory.java:81)
+at com.ibm.cognos.ccr.common.AbstractModelFactory.getSharedModel(AbstractModelFactory.java:93)
+at com.ibm.cognos.ccr.common.DefaultModelContext.getModelByIdentifier(DefaultModelContext.java:379)
+... 9 more
+Caused by: com.ibm.cognos.ccr.common.ResponseException: FAIL:java.lang.IllegalArgumentException: No driver found - dbType is invalid:com.ibm.cognos.ccr.common.DbConfiguration$DbType,SQL_SERVER='MS SQLServer' (provider=SQLNCLI10.1)
+at com.ibm.cognos.ccr.common.WebServiceConnectionException.<init>(WebServiceConnectionException.java:69)
+... 22 more
+
+
+CAUSE
+Controller's Java Windows service ("IBM Cognos Controller Java Proxy" on the Controller application server) cannot locate the required JDBC connector (JAR) file.
+
+
+ * Scenario #1 (most likely) - The JDBC connector (JAR) file is missing (not present on the Controller application server).
+
+ * Scenario #2 (unlikely) - The JDBC connector (JAR) file exists (on the Controller application server), but the NTFS (Windows file) permissions are incorrect, so it cannot read it.
+
+ * Scenario #3 (rare) - The file 'ccr-dbTypes.properties' has some wrong entries in it.  * For more details, see separate IBM Technote #2006798.
+   
+   
+
+DIAGNOSING THE PROBLEM
+More Information: 
+
+Some Controller functions use JDBC connectivity to access the Controller databases. Controller does not ship with a JDBC driver in the software itself, so you must download a suitable JDBC driver from the relevant database provider’s website.
+
+For example:
+
+Database Server Description Filename Microsoft SQL JDBC driver sqljdbc4.jar Oracle JDBC thin driver varies* (for example ojdbc5.jar)
+
+IBM DB2 DB2 driver db2jcc.jar 
+*There are several different possible file names/versions that can be used for Oracle (for example ojdbc5.jar). For full details, see separate IBM Technote #1988891. 
+RESOLVING THE PROBLEM
+Scenario #1 (most likely) - The JDBC connector (JAR) file is missing (not present on the Controller application server) 
+
+Copy the required JDBC connectors onto the Controller application server.
+
+Steps:
+The following is based on Controller 10.2.0 installed into the default location. 
+
+ * Therefore the instructions may need to be modified slightly for your environment.
+
+
+1. Download the relevant JAR file for your database platform. 
+
+TIP:  * sqljdbc4.jar - see here: http://www-01.ibm.com/support/docview.wss?uid=swg21500432 [http://www-01.ibm.com/support/docview.wss?uid=swg21500432] 
+ * ojdbc5.jar - There are several different possible file names/versions that can be used for Oracle (for example ojdbc5.jar). For full details, see separate IBM Technote #1988891  * 
+   
+   
+ * db2jcc.jar - Assuming you have installed the DB2 10.5 client in the default location, then you can find this (on the Controller application server) here: C:\Program Files\ibm\SQLLIB\java 
+
+
+2. Copy the JDBC driver(s) (see earlier in this document for more details) into the 'Integration', ‘ Lib’ and ‘ c10’ folders. TIP: By default, the folders are located here: 
+
+1. C:\Program Files\ibm\cognos\ccr_64\server\Integration 
+
+2. C:\Program Files\ibm\cognos\ccr_64\server\FAP\lib 
+
+3. C:\Program Files\ibm\cognos\ccr_64 
+
+ 
+Scenario #2 (unlikely) - The JDBC connector (JAR) file exists (on the Controller application server), but the NTFS (Windows file) permissions are incorrect, so it cannot read it.
+Modify the NTFS permissions on the relevant file (for example 'sqljdbc4.jar') so that the local group 'Everyone' has at least 'read' access to the file. 
+
+ * For example:
+
+[/support/docview.wss?uid=swg21680804&aid=2] [/support/docview.wss?uid=swg21680804&aid=2] 
+
+Scenario #3 (rare) Reset the file 'ccr-dbTypes.properties' to the default settings. 
+
+ * TIP: For more details, see separate IBM Technote #2006798.
+
+RELATED INFORMATION
+ 1988891 - What is the correct / best OJDBC JAR file to [http://www.ibm.com/support/docview.wss?uid=swg21988891]
+2006798 - "No driver found - dbType is invalid" when la [http://www.ibm.com/support/docview.wss?uid=swg22006798]

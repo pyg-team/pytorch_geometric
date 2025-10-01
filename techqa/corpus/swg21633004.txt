@@ -1,0 +1,87 @@
+Title: IBM Collecting data for: Read first for DASH for JazzSM - United States
+
+Text:
+TIPL2; DASHL2MUSTG; MustGatherReadFirstDocument; Tivoli Integrated Portal; mustgather; readfirst; collecting data; MustGatherReadFirstDocument; MustGatherDocument TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Use this document to quickly find the appropriate MustGather for issues in the DASH service in Jazz for Service Management. A separate collection guide is provided for each of the following areas: General Issues, Installation, Performance, and Security 
+
+CAUSE
+For every problem, collecting data can aid in problem determination and save time resolving Problem Management Records (PMRs), particularly if the data is gathered before opening the PMR with IBM® Support.
+
+RESOLVING THE PROBLEM
+Collecting MustGather data early, even before opening the PMR, helps IBM® Support quickly determine if: 
+
+
+
+
+ * Symptoms match known problems (rediscovery). 
+ * There is a non-defect problem that can be identified and resolved. 
+ * There is a defect that identifies a workaround to reduce severity. 
+ * Locating root cause can speed up a development code fix.
+
+
+MustGather table of contents: 
+[http://www.ibm.com/i/v14/rules/dotted_blue_rule_443.gif]  
+
+[/support/docview.wss?uid=swg21633004&amp;aid=1] Gathering Component Specific Information  * General Issues
+ * 
+ * Installation Issues
+ * 
+ * Tivoli Widget Library (TWL)
+ * 
+ * Security Issues
+ * 
+ * 
+ * Performance Issues
+ * 
+ * Stop/Start Issues
+
+[/support/docview.wss?uid=swg21633004&amp;aid=2] Submitting Information to IBM Support [/support/docview.wss?uid=swg21633004&amp;aid=3] On-line Self-Help Resources [/support/docview.wss?uid=swg21633004&amp;aid=4] [/support/docview.wss?uid=swg21633004&amp;aid=4] [http://www.ibm.com/i/v14/rules/dotted_blue_rule_443.gif] 
+
+Gathering Component Specific Information Click the appropriate link below to access the associated MustGather document for the problem you are experiencing in DASH. 
+
+General Issues 
+Enabling tracing for DASH service in Jazz for Service Management [https://www-304.ibm.com/support/docview.wss?uid=swg21632844] 
+Setting the trace level in DASH for JazzSM from the command line [https://www-304.ibm.com/support/docview.wss?uid=swg21632851] 
+
+
+Install Issues 
+MustGather: for DASH for JazzSM - Installation failure [https://www-304.ibm.com/support/docview.wss?uid=swg21632880] 
+
+
+Tivoli Widget Library (TWL) Issues 
+MustGather: for TWL for JazzSM - Tivoli Widget Library [http://www-01.ibm.com/support/docview.wss?uid=swg21671904] 
+
+
+Security Issues 
+DASH leverages Websphere Application Server security functions. The following Websphere Application Server technical notes should be used for security related issues: 
+MustGather: for Websphere Application Server - Security Problems [https://www-304.ibm.com/support/docview.wss?uid=swg21470063] 
+MustGather: for Websphere Application Server - Secure Sockets Layer (SSL) problems [https://www-304.ibm.com/support/docview.wss?uid=swg21162961] 
+Troubleshooting security issue may require disabling security. The following technical includes the instructions to disable security. [https://www-304.ibm.com/support/docview.wss?uid=swg21405302] 
+Disable security for Websphere Application Server [https://www-304.ibm.com/support/docview.wss?uid=swg21405302] 
+
+
+Performance Issues 
+Enable verboseGC for Websphere Application Server [https://www-304.ibm.com/support/docview.wss?uid=swg21114927] 
+MustGather: Performance, hang, or high CPU issues in Websphere Application Server run on AIX [https://www-304.ibm.com/support/docview.wss?uid=swg21052641] 
+MustGather: Websphere Application Server Crash on AIX [https://www-304.ibm.com/support/docview.wss?uid=swg21055387] 
+MustGather: Websphere Application Server Crash on Linux [http://www-01.ibm.com/support/docview.wss?uid=swg21104706] 
+MustGather: OutOfMemory errors in Websphere Application Server running on AIX, Linux, or Windows [https://www-304.ibm.com/support/docview.wss?uid=swg21138587] 
+
+
+Websphere Application Server Stop/Start Issues 
+MustGather: for Websphere Application Server - Start and stop problems [https://www-304.ibm.com/support/docview.wss?uid=swg21201014] 
+Back to top 
+
+Submitting Information to IBM Support [http://www-306.ibm.com/software/support/exchangeinfo.html?ibmsst=allSupport] 
+Exchanging information with IBM Technical Support [http://www-306.ibm.com/software/support/exchangeinfo.html?ibmsst=allSupport] 
+If using SR [https://www-947.ibm.com/support/servicerequest/Home.action], update the PMR to indicate that data has been sent. 
+#top 
+Back to top 
+
+Online Self-Help Resources  * Utilize the IBM Service Request (SR) [http://www-306.ibm.com/software/sysmgmt/products/support/probsub.html] tool to access the Tivoli Storage Manager Support team, when requiring assistance from IBM.
+
+
+Back to top RELATED INFORMATION
+ A simplified Chinese translation is available [http://www.ibm.com/support/docview.wss?uid=swg21660086]

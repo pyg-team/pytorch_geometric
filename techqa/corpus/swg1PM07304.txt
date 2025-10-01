@@ -1,0 +1,226 @@
+Title: IBM PM07304: AFDK ABENDAFDK ON READONLY NSR FILES IN A TRANISO ENVIRONMENT - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  You are migrating to CICS TS 4.1.  You find that you have a
+   lot of ABENDAFDK abends.  You have been running with
+   TRANISO=YES in your CICS TS 3.1 region without a problem,
+   even though this is not a supported environment.
+   A new abend code (AFDK) has been introduced in CICS TS 4.1 to
+   abend transactions that are running TRANISO and accessing NSR
+   files.
+   An extra check for the SERVREQ indicating a READONLY file
+   needs to be made in DFHFCVS before the
+   FCFR_NSR_RUN_WITH_TRANISO reason code is set.
+   Additional Symptom(s) Search Keyword(s): LSR LSRPOOL TRANSISO
+   ISOLATION ISOLATE BROWSE
+   KIXREVEAA
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Change files definitions so that they are LSR or RLS
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All CICS Users.                              *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: CICS encountered abend AFDK during      *
+   *                      processing of a File Control request.   *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   An attempt was made to access an NSR file using Transaction
+   Isolation. This is an unsupported configuration as it may
+   result in unpredictable results in VSAM (e.g. abend0C4).
+   Under CICS TS Version 4 Release 1, abend code AFDK was
+   introduced to prevent all file control requests against NSR
+   files where Transaction Isolation is used.
+   
+   Additional keywords: abendS0C4 S0C4 0C4
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  DFHFCVS has been amended such that the AFDK abend will only be
+   issued for operations that try to modify an NSR file using
+   Transaction Isolation. This is since read only requests
+   against NSR files with Transaction Isolation active are not
+   expected to fail unpredictably.
+   
+   
+   The following three updates need to be added to the
+   following manuals for CICS Transaction Server
+   for z/OS Version 4 Release 1:
+   Upgrading from CICS TS Version 3.2 (GC34-6998-00)
+   Upgrading from CICS TS Version 3.1 (GC34-6997-00)
+   Upgrading from CICS TS Version 2.3 (GC34-6996-00)
+   
+   The passage below will be added as a new
+   chapter to the end of Part 2 :
+   
+   "Upgrading File Definitions
+   
+   NSR files are not supported with transaction isolation.
+   This has been documented in previous releases of CICS.
+   In CICS TS 4.1 any attempt to issue a file control write or
+   update request against an NSR file with transaction isolation
+   active will result in an AFDK abend. Requests such as READ,
+   or STARTBR, which do not attempt to update the file in
+   any way, will not result in an AFDK abend.
+   
+   If transaction isolation is required, consider converting the
+   file to use LSR pools or RLS. However, if transaction isolation
+   is not required, change the transaction definition to specify
+   ISOLATE(NO) which will cause that individual transaction to
+   be run without transaction isolation.
+   
+   See also abend AFDK in the table 'New abend codes in
+   CICS Transaction Server for z/OS, Version 4 Release 1'
+   in the 'New abend codes' section."
+   
+   
+   The description of the AFDK abend in the table 'New abend
+   codes in CICS Transaction Server for z/OS, Version 4 Release 1'
+   in the 'New abend codes' section should be updated to read:
+   
+   A file control update request was made against an NSR file
+   while transaction isolation was active for the task. Using NSR
+   files with transaction isolation active is not supported. The
+   TRANISO system initialization parameter is YES and the
+   transaction definition has ISOLATE set to YES.
+   
+   
+   Finally, the explanation of the AFDK abend in the CICS
+   Messages and Codes manual (GC34-7035-00) in Chapter 3,
+   section 'AFxx abend codes' should be updated to read
+   as follows:
+   
+   Explanation: A file control update request was made against an
+   NSR file whilst transaction isolation was active for the
+   task. Using NSR files with transaction isolation active is
+   not supported. The TRANISO SIT parm is YES and the
+   transaction definition has ISOLATE set to YES.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  FIX AVAILABLE BY PTF ONLY
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM07304
+   
+   
+ * REPORTED COMPONENT NAME
+   CICS TS Z/OS V4
+   
+   
+ * REPORTED COMPONENT ID
+   5655S9700
+   
+   
+ * REPORTED RELEASE
+   600
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-02-10
+   
+   
+ * CLOSED DATE
+   2010-03-10
+   
+   
+ * LAST MODIFIED DATE
+   2010-04-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UK55020
+   
+   
+
+MODULES/MACROS
+ *  CHAPT023 DFHFCVS  DFH07304
+   
+   
+    
+   
+   
+
+Publications Referenced GC34699800 GC34699700 GC34699600 GC34703500 FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CICS TS Z/OS V4
+   
+   
+ * FIXED COMPONENT ID
+   5655S9700
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R600 PSY UK55020 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK55020]
+   UP10/03/12 P F003
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

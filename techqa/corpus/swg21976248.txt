@@ -1,0 +1,30 @@
+Title: IBM User unable to login to WebGUI using user Id from object server. - United States
+
+Text:
+webgui; WWIM5020E; user not able to login TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Users are not able to login to WebGUI using user Id from object server but they can login using default file based user (typically smadmin). 
+
+SYMPTOM
+The SystemOut.log logs shows below errors:
+
+com.ibm.tivoli.tip.vmm4ncos.ObjectServerAdapter getEntity CWWIM5020E Could not connect to the NetCool OMNIbus ObjectServer repository using properties: NCOS VMM plug-in could not connect to the primary ObjectServer
+
+Caused by: java.sql.SQLException: NCOS VMM plug-in could not connect to the primary ObjectServer.
+at com.ibm.tivoli.ncw.ncosvmm.sql.FailBackDataSourceSelector.getDataSource(FailBackDataSourceSelector.java:128) 
+
+
+RESOLVING THE PROBLEM
+This issue can occur if WebGUI server is not able to connect to the Object server which is configured as a user repository in WEBGUI/DASH/TIP.
+
+Please check that why WebGUI can not connect to the Object server. Once possible reason is that a firewall is blocking the connection or there is some configuration issue.
+
+
+Following URL shows how to configure Object server in WebGUI 8.1 version.
+https://www-01.ibm.com/support/knowledgecenter/SSSHTQ_8.1.0/com.ibm.netcool_OMNIbus.doc_8.1.0/webtop/wip/task/web_con_silentmode.html [https://www-01.ibm.com/support/knowledgecenter/SSSHTQ_8.1.0/com.ibm.netcool_OMNIbus.doc_8.1.0/webtop/wip/task/web_con_silentmode.html]
+
+If you need help from IBM please open a PMR and provide following files:
+SystemOut.log
+wimconfig.xml
+omnibus_webgui/etc/datasources/ncwDataSourceDefinitions.xml

@@ -1,0 +1,26 @@
+Title: IBM ICR/P error #-2147418113 with IBM Datacap Taskmaster Capture - United States
+
+Text:
+ICR/P -2147418113 ICRP Parascript TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The ICR/P Parascript option gives an error when recognizing a field and the batch aborts. The error text is:
+
+ICR/P error #-2147418113: ICR_P: Incorrect field type, or this field type is not registered in a system. 
+
+CAUSE
+Taskmaster cannot locate field type information.
+
+RESOLVING THE PROBLEM
+To resolve: 
+
+ 1. 1. Edit the registry by adding a new Key HKLM\SOFTWARE\Parascript\FieldScript 3.0 (Parascript should already exist; do not name the key FieldScript 4.0; or FieldScript 4.1). 
+ 2. Edit the registry by adding a new Key HKLM\SOFTWARE\Parascript\FieldScript 3.0\FieldTypes. 
+ 3. Edit the registry under the newly created key Field Types by adding a new String Value called Directory. 
+ 4. Update value of (STRING) Directory to point to C:\Datacap\dcshared\ICRP\FieldScript4.1\FieldTypes 
+ 5. In Command Prompt (use Run as Administrator to start the program if UAC is enabled) the following command:
+    C:\Datacap\dcshared\ICRP\FieldScript4.1\BIN\FieldTypeInstaller.exe /ia
+    /d"C:\Datacap\dcshared\ICRP\FieldScript4.1\FieldTypes"
+
+
+Note: A valid SoftKey must be installed on the machine running ICR/P recognition.

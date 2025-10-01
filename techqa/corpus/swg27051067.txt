@@ -1,0 +1,74 @@
+Title: IBM Content Manager OnDemand for Multiplatforms V10.1 publication library - United States
+
+Text:
+Content Manager OnDemand for Multiplatforms V10.1; publication library; cmod for mp 10.1; cmod documentation PRODUCT DOCUMENTATION
+
+ABSTRACT
+ This document contains links to the most important and most frequently used documents for IBM® Content Manager OnDemand Version 10.1. In this document, you can find links to the Content Manager OnDemand documentation in IBM Knowledge Center, announcement information, and product system requirements. You can also access documentation for related products. 
+
+CONTENT
+ 
+
+ANCHOR LINKS
+ * What's new?
+ * 
+ * Getting started
+ * Product documentation
+ * 
+ * Related libraries
+ * Community
+
+
+
+
+
+
+WHAT'S NEW?
+Learn about new features and changes that were introduced in the current release of Content Manager OnDemand for Multiplatforms. 
+
+Document Format V10.1 announcement [http://www.ibm.com/common/ssi/cgi-bin/ssialias?subtype=ca&infotype=an&supplier=897&letternum=ENUS217-069] HTML What's new in Content Manager OnDemand for Multiplatforms [http://www.ibm.com/support/docview.wss?uid=swg27021523] HTML Back to top
+
+
+GETTING STARTED
+Learn how to download and install the product and get an overview of important product concepts.
+
+Document Format Hardware and software requirements [http://www.ibm.com/support/docview.wss?uid=swg27049167] HTML Back to top
+
+
+
+
+
+
+
+PRODUCT DOCUMENTATION
+Access the documentation that is delivered with the product in multiple formats and languages.
+
+
+IBM KNOWLEDGE CENTER
+All of the information that is included in the PDF documentation is also included in IBM Knowledge Center, where you can easily search across all documentation. In IBM Knowledge Center, the documentation will be displayed in your language (if it has been translated into that language) based on your browser locale setting. IBM Knowledge Center is updated more often than the PDF documentation.
+
+Document Format Content Manager OnDemand documentation in IBM Knowledge Center [http://www.ibm.com/support/knowledgecenter/SSEPCD_10.1.0/com.ibm.ondemandtoc.doc/ondemandmp_10.1.0.htm] HTML 
+PDF DOCUMENTATION 
+
+
+
+English Introduction and Planning Guide (SC19-3351-02) [http://www.elink.ibmlink.ibm.com/publications/servlet/pbi.wss?CTY=US&FNC=SRX&PBL=SC19-3351-02] PDF Installation and Configuration Guide (GC19-3342-02) [http://www.elink.ibmlink.ibm.com/publications/servlet/pbi.wss?CTY=US&FNC=SRX&PBL=GC19-3342-02] PDF Administration Guide (SC19-3352-02) [http://www.elink.ibmlink.ibm.com/publications/servlet/pbi.wss?CTY=US&FNC=SRX&PBL=SC19-3352-02] PDF Indexing Reference (SC19-3354-02) [http://www.elink.ibmlink.ibm.com/publications/servlet/pbi.wss?CTY=US&FNC=SRX&PBL=SC19-3354-02] PDF Web Enablement Kit Implementation Guide (SC19-3353-02) [http://www.elink.ibmlink.ibm.com/publications/servlet/pbi.wss?CTY=US&FNC=SRX&PBL=SC19-3353-02] PDF Content Manager OnDemand Distribution Facility Installation and Reference (SC19-3358-02) [http://www.elink.ibmlink.ibm.com/publications/servlet/pbi.wss?CTY=US&FNC=SRX&PBL=SC19-3358-02] PDF Enhanced Retention Management Guide (SC19-3362-02) [http://www.elink.ibmlink.ibm.com/publications/servlet/pbi.wss?CTY=US&FNC=SRX&PBL=SC19-3362-02] PDF Windows Client Installation Guide (SC19-3355-02) [http://www.elink.ibmlink.ibm.com/publications/servlet/pbi.wss?CTY=US&FNC=SRX&PBL=SC19-3355-02] PDF Windows Client Customization Guide (SC19-3357-02) [http://www.elink.ibmlink.ibm.com/publications/servlet/pbi.wss?CTY=US&FNC=SRX&PBL=SC19-3357-02] PDF Messages and Codes (SC19-3356-02) [http://www.elink.ibmlink.ibm.com/publications/servlet/pbi.wss?CTY=US&FNC=SRX&PBL=SC19-3356-02] PDF Back to top
+
+
+ 
+
+
+RELATED LIBRARIES
+Access the documentation for prerequisite and corequisite products.
+
+ 
+
+
+
+Document Format DB2 for Linux, Unix, and Windows, V10.5 documentation [http://www.ibm.com/support/knowledgecenter/SSEPGG_10.5.0/com.ibm.db2.luw.kc.doc/welcome.html] HTML IBM Content Navigator, V3.0.3 documentation [http://www-01.ibm.com/support/knowledgecenter/SSEUEX_3.0.3/KC_ditamaps/contentnavigator.htm] HTML Back to top
+
+
+COMMUNITY
+Share your experiences, expertise, and feedback with other product users and IBM.
+
+Document Format OnDemand User's Group [http://www.odusergroup.org/] HTML Code sample exchange site [https://www.ibm.com/developerworks/mydeveloperworks/?categoryID=24] HTML Back to top

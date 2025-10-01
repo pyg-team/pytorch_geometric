@@ -1,0 +1,96 @@
+Title: IBM Do CVE-2014-6271 and CVE-2014-7169 apply to QSHELL, PASE, IBM WebSphere Application Server running on IBM i? - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Do CVE-2014-6271 and CVE-2014-7169 apply to QSHELL, PASE or IBM WebSphere Application Server running on IBM i? 
+
+ANSWER
+No. IBM i PASE product does not ship any open source products by default, including BASH. Also, QSHELL is similarly unaffected by these vulnerabilities since it is ported from the Korn shell. This does not mean that products running on the IBM i cannot be affected. If you have installed any non-standard packages, you may need to look at those individually. IBM products shipped out of box such as IBM WebSphere Application Server and the Apache HTTP Server are also NOT vulnerable to these CVEs. 
+Please refer to the following individual product documentation for more information regarding these CVEs.
+
+IBM i Portable Application Solutions Environment
+
+PASE for i is not vulnerable because it only ships the following three shells: Korn, Bourne, and C shell and it does not ship the Bash shell. 
+
+OpenSSH on IBM i is not vulnerable because of the absence of the GNU Bash shell in PASE by default. 
+If an IBM i system has the Bash shell installed, the client has manually installed it on their system via available open source binaries downloadable from the Web. In the case Bash was manually installed by a client, there is a high probability their systems are now exposed to CVE-2014-6271 and CVE-2014-7169 in both PASE and OpenSSH depending on which version of Bash was installed. Our recommendation should be to install a newer version of Bash that has been patched for both CVE-2014-6271 and CVE-2014-7169.
+
+
+IBM WebSphere Application Server
+
+WebSphere Application Server: Flashes
+
+- TITLE: IBM HTTP Server and IBM WebSphere Application Server (CVE-2014-6271, CVE-2014-7169)
+- URL: http://www.ibm.com/support/docview.wss?uid=swg21685433&myns=swgws&mynp=OCSSEQTP&mynp=OCSSEQTJ&mync=E [http://www.ibm.com/support/docview.wss?uid=swg21685433&myns=swgws&mynp=OCSSEQTP&mynp=OCSSEQTJ&mync=E]
+- ABSTRACT: IBM HTTP Server and WebSphere Application Server are not vulnerable to CVE-2014-6271 or CVE-2014-7169 Bash vulnerability as shipped out of the box.
+
+For information on other IBM products, please subscribe to IBM Security Bulletins. More information can be found at the URL, http://www-03.ibm.com/security/secure-engineering/bulletins.html [http://www-03.ibm.com/security/secure-engineering/bulletins.html] .
+
+
+How to find if Bash exists in my environment?
+
+Search for the 'bash' binary by doing the following to invoke an interactive PASE session:
+
+CALL QP2TERM 
+
+From the interactive PASE session, run the following commands. 
+Note: The find command will probably take some time to run. 
+
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ *  find . -type d -name QSYS.LIB -prune -o -name bash -print 
+
+Example: the find command returned this result: 
+
+./QOpenSys/usr/bin/bash 
+
+Conclusion: Bash is found here on my system: /QOpenSys/usr/bin/bash 
+
+Note: This could be a symlnk to a different location containing the bash binary. 
+
+How to test if the installed Bash binary is vulnerable: 
+
+Return to the IBM i command line and run the following steps for each occurrence of a bash binary found above (i.e. the results of the find command): 
+
+1) CALL PGM(QP2TERM) PARM('/QOpenSys/usr/bin/bash') change the parm path depending on which bash binary you are trying to verify for this bash vulnerability. 
+
+Note: This starts an interactive PASE session running the bash shell found in /QOpenSys/usr/bin/bash. 
+
+2) Run the following command from the displayed interactive PASE session. 
+
+env x='() { :;}; echo vulnerable' bash -c "echo this is a test" 
+
+3) Verify whether or not the following output is experienced: 
+
+vulnerable 
+this is a test 
+
+If the output in step 3 above is found then that bash binary is vulnerable to the reported bash security vulnerability. If you receive output similar to the following then that bash binary is not vulnerable: 
+
+bash: warning: x: ignoring function definition attempt 
+bash: error importing function definition for `x' 
+this is a test 
+
+Additional references: 
+
+IBM Secure Engineering 
+http://www-03.ibm.com/security/secure-engineering/process.html [http://www-03.ibm.com/security/secure-engineering/process.html] 
+
+IBM i is not affected by the Bash vulnerabilities (CVE-2014-6271, CVE-2014-7169, CVE-2014-7186, CVE-2014-7187, CVE-2014-6277, and CVE-2014-6278) Flash (Alert) 
+https://www-304.ibm.com/support/docview.wss?uid=nas8N1020274 [https://www-304.ibm.com/support/docview.wss?uid=nas8N1020274] 
+
+
+[https://techsupport.rchland.ibm.com/c_dir/cps.nsf/Alldocs/?OpenDocument]  
+
+
+Cross reference information Segment Product Component Platform Version Edition Operating System IBM i 7.2 Operating System IBM i 7.1 Operating System IBM i 6.1 Operating System IBM i 7.3

@@ -1,0 +1,20 @@
+Title: IBM i PTF Requirements Before Installing IBM i OS Agent - United States
+
+Text:
+5724C04 A4 OS/400 i5/OS IBMi i PTF Install Requirements Prerequisites FLASH (ALERT)
+
+ABSTRACT
+ This tech note contains important updates regarding IBM i PTFs required before installing the IBM i OS agent. 
+
+CONTENT
+IMPORTANT: This document contains important updates regarding IBM i PTFs required before installing the IBM i OS agent.
+The IOA Cache Battery function was introduced in ITM 6.2.3 and requires IBM i PTFs to be installed. The QSMRTVBTC API is used to retrieve IOA cache battery information. Important PTF's have been released by IBM i to update the QSMRTVBTC API to ensure appropriate requisite PTFs are on the system. These PTF's addressed a condition where incorrect output caused a severe problem and were released as high impact pervasive (HIPER) PTF's. The following table lists the HIPER PTF's that are required before installing the IBM i OS agent. This table supersedes the information found in the ITM 6.3 IBM i OS Agent user documentation for installation requirements.
+
+
+
+IBM i release PTFs 5.4.0 5722SS1 SI47618, 5722999 MF54647 5.4.5 5722SS1 SI47618, 5722999 MF54646 6.1.0 5761SS1 SI47616, 5761999 MF54555 6.1.1 5761SS1 SI47616, 5761999 MF54553 7.1.0 5770SS1 SI41680, 5770999 MF51664  
+
+PRODUCT ALIAS/SYNONYM
+ ITM IBM i agent
+ITM i5/OS agent
+ITM OS/400 agent

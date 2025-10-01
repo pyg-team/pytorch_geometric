@@ -1,0 +1,162 @@
+Title: IBM IT23600: IT IS NOT POSSIBLE TO DEPLOY JDBC DRIVERS TO AN EG - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Currently JDBC drivers must be located either in the
+   shared-classes directory, or in a jarsURL set on the JDBC
+   configurable service. This means that an application developer
+   must have administrative access to the filesystem in order to
+   enable a JDBC driver on a system.
+   
+   This APAR introduces a new property on the JDBC configurable
+   service names useDeployedJars. When set to true this allows the
+   JDBC manager to use the EgSharedClassLoader to access JDBC
+   drivers which include access to both deployed jars and jars in
+   the shared classloader / jarsURL.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   All users of IBM Integration Bus version 10 or higher using
+   JDBC.
+   
+   
+   Platforms affected:
+   MultiPlatform
+   
+   ****************************************************************
+   PROBLEM DESCRIPTION:
+   Currently JDBC drivers must be located either in the
+   shared-classes directory, or in a jarsURL set on the JDBC
+   configurable service. This means that an application developer
+   must have administrative access to the filesystem in order to
+   enable a JDBC driver on a system.
+   
+   This APAR introduces a new property on the JDBC configurable
+   service names useDeployedJars. When set to true this allows the
+   JDBC manager to use the EgSharedClassLoader to access JDBC
+   drivers which include access to both deployed jars and jars in
+   the shared classloader / jarsURL.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This APAR adds the property "usedDeployedJars" to the
+   JDBCProvider configurable service definition. If this is set to
+   true then the classloader containing deployed classes will be
+   searched when attempting to load the JDBC client jars.
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+   Version    Maintenance Level
+   v10.0      10.0.0.12
+   
+   The latest available maintenance can be obtained from:
+   http://www-01.ibm.com/support/docview.wss?rs=849&uid=swg27006041 [http://www-01.ibm.com/support/docview.wss?rs=849&uid=swg27006041]
+   
+   If the maintenance level is not yet available,information on
+   its planned availability can be found on:
+   http://www-1.ibm.com/support/docview.wss?rs=849&uid=swg27006308 [http://www-1.ibm.com/support/docview.wss?rs=849&uid=swg27006308]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT23600
+   
+   
+ * REPORTED COMPONENT NAME
+   INTEGRATION BUS
+   
+   
+ * REPORTED COMPONENT ID
+   5724J0540
+   
+   
+ * REPORTED RELEASE
+   A00
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2018-01-10
+   
+   
+ * CLOSED DATE
+   2018-03-22
+   
+   
+ * LAST MODIFIED DATE
+   2018-03-22
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   INTEGRATION BUS
+   
+   
+ * FIXED COMPONENT ID
+   5724J0540
+   
+   
+
+APPLICABLE COMPONENT LEVELS

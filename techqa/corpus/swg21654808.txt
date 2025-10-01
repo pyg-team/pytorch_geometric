@@ -1,0 +1,40 @@
+Title: IBM Java 7 update 45 causes security warning issue in IBM Web Content Manager - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+Since Java 7 update 45, signed Java applets will experience a significant delay in startup time when instantiated on environments without external Internet access. 
+
+This occurs as a result of a new security mechanism that has been added by Oracle to validate the security certificate against an external host whenever the applet is instantiated. While the certificate is being validated, the browser cannot be used until the check is complete or times out. 
+
+This is unfortunately an issue with the recent Oracle Java updates. They have changed the way signed applets are handled. And the only way to disable this is to change the configuration option on the client machine within the Java console. 
+
+
+RESOLVING THE PROBLEM
+The security certificate check can be disabled within Java if required on networks without external internet access: 
+
+. 
+http://www.oracle.com/technetwork/java/javase/7u25-relnotes-1955741.html#certrev [http://www.oracle.com/technetwork/java/javase/7u25-relnotes-1955741.html#certrev]
+
+options are to: 
+
+1. Allow external access (which is not an acceptable workaround) 
+2. Configure Java on the client machine to disable the certificate check 
+3. Downgrade to an earlier Java update 
+4. In some cases the 64 bit browser do not experience the delay if an older version of Java is being used (ie: Java 7 update 15)
+
+However during our investigation it was found that the console still says that Permission and Codebase attributes are missing from the jar manifest
+but it seems that the solution could be adding the attributes: 
+
+Permissions 
+sandbox 
+Codebase
+
+as documented in 
+
+http://docs.oracle.com/javase/7/docs/technotes/guides/jweb/security/manifest.html [http://docs.oracle.com/javase/7/docs/technotes/guides/jweb/security/manifest.html]
+
+So other alternative is by having a signed jar with this changes in the manifest and see if this solves the problem. 
+
+The above solution has been tested and APAR has been created PM99566

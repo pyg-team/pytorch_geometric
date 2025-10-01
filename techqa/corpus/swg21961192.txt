@@ -1,0 +1,37 @@
+Title: IBM Unable start ITCAM for Agent (YN and HT) with KCIIN0198E - United States
+
+Text:
+KCIIN0198E CAMADALL CAMADINST CAMADUSE Agent start TECHNOTE (TROUBLESHOOTING)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ US English 
+
+PROBLEM(ABSTRACT)
+ After T5 setup, the YN and HT agents does not start on AIX with message:
+KCIIN0198E Unable to start agent. 
+
+SYMPTOM
+From YN and/or HT logs, you should be able to see message like this - 
+
+(558AA8C1.0018-1:kwjjvm.cpp,509,"KwjJvm::load") Loading JVM 
+/opt/IBM/ITM/JRE/aix523/bin/j9vm/libjvm.so 
+(558AA8C1.0019-1:kwjjvm.cpp,315,"KwjJvm::start") ERROR[-4]: 
+JNI_CreateJavaVM() failed: not enough memory 
+(558AA8C1.001A-1:kwjagent.cpp,310,"KwjAgent::start") ERROR: internal 
+exception in src/bridge/jni/kwjjvm.cpp at line 316 
+(558AA8C1.001B-1:kwjagent.cpp,312,"KwjAgent::start") Agent stopped 
+
+
+CAUSE
+This ITM jre is corrupted: /opt/IBM/ITM/JRE/aix523 
+
+
+RESOLVING THE PROBLEM
+1. If you have a working system with the $ITM_HOME/JRE/aix523 directory, you can copy the 'lib' and 'bin' sub-dirs from a working system and overwrite the 'lib' and 'bin' directories. The agents will start after that. 
+
+2. Your second option is to simply reinstall the YN agent again.
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ ITCAM for App Diagnostics

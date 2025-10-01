@@ -1,0 +1,35 @@
+Title: IBM Upgrade from FSM 4.5 FP3 to ECM SM 5.1 GA fails - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Running the IBM Enterprise Content Management System Monitor 5.1 GA level installer to upgrade an existing FileNet System Monitor 4.5.0-FP003 system fails. This problem is specific to FileNet System Monitor 4.5.0-FP003. FileNet System Monitor 4.5 environments on a prior fix pack level (GA included) upgrades successfully.
+
+This issue, as well as the work-around, is mentioned in the FileNet System Monitor 4.5.0-FP003 readme file that is included with the FP3 installation program on IBM Fix Central. However, the readme does not explicitly state that if you attempted to upgrade without the work-around and encountered an error, you can still use the work-around after the failed attempt and perform the upgrade again. 
+
+SYMPTOM
+Running the IBM Enterprise Content Management System Monitor 5.1 GA level installer to upgrade a FileNet System Monitor 4.5.0-FP003 system fails during the part of the installation where database changes occur. The installation fails with a non-zero exit code. The FileNet System Monitor server is then in a condition that you cannot use since the database is in a semi-upgraded state.
+
+
+CAUSE
+When IBM Enterprise Content Management System Monitor 5.1 GA level was released, there was a specific check for FileNet System Monitor 4.5.0-FP002 during the upgrade. The system did not check for a level of FP2 or higher. The installer stopped after it checked for fix pack 4.5.0-FP002.
+
+ENVIRONMENT
+All FileNet System Monitor 4.5.0-FP003 environments
+
+DIAGNOSING THE PROBLEM
+You are on FileNet System Monitor 4.5.0-FP003, you did not perform the work-around prior to attempting the IBM Enterprise Content Management System Monitor upgrade, and the upgrade failed.
+
+RESOLVING THE PROBLEM
+Complete the following steps to resolve a failed upgrade from FileNet System Monitor 4.5.0-FP003 to IBM Enterprise Content Management System Monitor 5.1 GA level:
+
+
+
+
+
+ 1. Modify <FSM server install directory>/.prodinfo/.prod-version. Set PATCH_LEVEL=450002000. 
+ 2. Run the installer again to upgrade. The IBM Enterprise Content Management System Monitor 5.1 GA level installer does not exit with an error since it thinks it is upgrading an FileNet System Monitor 4.5.0-FP002 system. After you pass the initial screens that contain the installation parameters, the upgrade resumes where it left off after the initial, failed attempt.
+
+
+Note You do not have to have a failed attempt to then use the work-around to successfully upgrade your FileNet System Monitor 4.5.0-FP003 system to IBM Enterprise Content Management System Monitor 5.1 GA level. You can proactively modify the .prod-version file before you run the IBM Enterprise Content Management System Monitor 5.1 GA level installer. Your upgrade completes.

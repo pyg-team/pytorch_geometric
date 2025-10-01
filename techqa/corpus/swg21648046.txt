@@ -1,0 +1,139 @@
+Title: IBM Disk space questions regarding installation of MQ Fix Packs in UNIX - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ You have installed WebSphere MQ 7.5.0.0 on a Linux server and it is the only version installed (that is, you are not exploiting the multi-version capabilities introduced in MQ 7.1). You have questions related to installing Fix Packs and disk space. 
+
+ANSWER
+In order to provide concrete examples, MQ 7.5.0.0 was installed on a Linux x86 32-bit machine, and then Fix Packs 7.5.0.1 and 7.5.0.2 were installed.
+The overall comments apply equally to AIX, HP-UX and Solaris, and they are also applicable to 7.0, 7.0.1 and 7.1.
+
+++ Overview
+
+1) The files from the Fix Pack were downloaded into their own directory, such as: 
+/downloads/mq/7.5.0.1 
+7.5.0-WS-MQ-LinuxIA32-FP0001.tar.gz file size 339,553,402 
+/downloads/mq/7.5.0.2 
+7.5.0-WS-MQ-LinuxIA32-FP0002.tar.gz file size 351,009,657 
+
+2) Then the rpm files were extracted from the tar.gz files. 
+Thus, we have now both the tar.gz files and the rpm file in each directory. 
+The total amount of file space used by each directory is: 
+$ cd /downloads/mq 
+$ du -ks 7.5.0.1 7.5.0.2 
+667,764 7.5.0.1 
+690,560 7.5.0.2 
+
+3) For completeness sake, we have multiple versions of MQ installed in that machine, thus, we need to perform an extra step to prepare for crtmqfp and this generates another set of rpm files: 
+/var/tmp/mq_rpms/2/i386 
+This directory now has both the adjusted rpm files for 7.5.0.1 and 7.5.0.2 and the total size used by that directory is: 
+$ du -ks /var/tmp/mq_rpms/2/i386 
+987,900 /var/tmp/mq_rpms/2/i386 
+
+4) All the rpm filesets were installed, with the exception of the message catalogs MQSeriesMsg* 
+
+5) In order to be able to backout an installed Fix Pack, it is necessary for the operating system to keep a backup for restore purposes. 
+This backup is stored in the "maintenance" directory under /opt/mqm (or the appropriate top directory referred to by MQ_INSTALLATION_PATH). There is one subdirectory under "maintenance" for each fix pack that was installed. 
+For example, in the test system, MQ 7.5 was installed under /opt/mqm75 
+
+6) This is the current amount of disk space taken by the appropriate directory structures: 
+
+$ du -ks /opt/mqm75 
+1,676,780 /opt/mqm75 
+
+$ du -ks /opt/mqm75/maintenance 
+930,112 /opt/mqm75/maintenance 
+
+$ du -ks /opt/mqm75/maintenance/7.5.0.1 
+489,952 /opt/mqm75/maintenance/7.5.0.1 
+
+$ du -ks /opt/mqm75/maintenance/7.5.0.2 
+440,156 /opt/mqm75/maintenance/7.5.0.2 
+
+Notice that the fix pack 7.5.0.2 includes the changes in 7.5.0.1. 
+Thus, if you have 7.5.0.0 and then apply 7.5.0.2, you will not need to download/install 7.5.0.1 prior to installing 7.5.0.2. 
+That is, you can go directly from 7.5.0.0 to 7.5.0.2. 
+This means that you will not need to use additional space for 7.5.0.1 in this scenario. 
+
+++ Now here are questions and the answers: 
+
+Question 1: When its time to apply the 7.5.0.2 Fix pack, how much disk space will a typically Fix Pack require? 
+ANSWER 1: 
+There are up to 3 places that need to be taken into account: 
+
+1.a) Downloaded tar.gz file and expanded rpm filesets: 
+/download/mq 
+667,764 7.5.0.1 
+690,560 7.5.0.2 
+1.b) If using multi-installation, then the adjusted rpm file sets will take space: 
+/var/tmp/mq_rpms/2/i386 
+480,000~ aprox 7.5.0.1 
+480.000~ aprox 7.5.0.2 
+1.c) The backup images for maintenance:
+489,952 /opt/mqm75/maintenance/7.5.0.1 
+440,156 /opt/mqm75/maintenance/7.5.0.2 
+1.d) Finally, some actual executables or share libraries could have changed in file size due to fixes. 
+
+
+Question 2: Is that amount of disk space cumulative? Meaning every time you apply a new Fix pack (7.5.0.2, 7.5.0.3, 7.5.0.4, etc) they will each need this much space? 
+ANSWER 2: Yes. See Answer 1. 
+
+
+Question 3: If 7.5.0.0 is the only install on the server, can you apply the 7.5.0.2 Fix Pack so that it is a second parallel installation, and we can then choose to run at 7.5.0.0 or 7.5.0.2? 
+ANSWER 3: Assuming that you want to have: 
+/opt/mqm7500 => 7.5.0.0 
+/opt/mqm7502 => 7.5.0.2 You will need to install 7.5.0.0 first in /opt/mqm7502 and then apply the fix pack 7.5.0.2. 
+Actually, a full 7.5.0.1 version can now be downloaded from Passport Advantage. 
+Thus, you can install full 7.5.0.1 first /opt/mqm7502 and then apply the delta for 7.5.0.2 
+
+Question 3.a: If the answer to 3 is yes, does that mean a Fix Pack actually contains the entire MQ installation on its own? 
+ANSWER 3.a: 
+It depends. Let me explain. 
+
++ If you download code from IBM Passport Advantage, then you will get the FULL install. The MQ Change Team sometimes refreshes the full code on this web site to include the original 7.x.0.0 product plus a fix pack. 
+For example, 7.5.0.0 (the FULL code) was placed in Passport Advantage. 
+Then Fix Pack 7.5.0.1 was made available and a combined 7.5.0.0 and 7.5.0.1 was refreshed in Passport Advantage. 
+Thus, if you download 7.5.0.1, you would get the FULL install. That is, you would NOT have to download 7.5.0.0 and then apply 7.5.0.1. 
+
++ If you download code from IBM Fix Central, then you will get ONLY a DELTA that needs to be installed on top of a FULL system. 
+You cannot do a FULL install on a pristine system, if you have only the DELTA code. 
+There are DELTA fix packs for 7.5.0.1 and 7.5.0.2. 
+Thus, if you have 7.5.0.0 already installed (FULL), then you can download 7.5.0.2 DELTA and apply it to 7.5.0.0. 
+
+Question 3.b: If the answer to 3 was yes, does that change the answer to #1 
+and #2 as to how much space a Fix pack needs? 
+ANSWER 3.b: Yes, if you can download the latest FULL code from IBM Passport Advantage (FULL 7.5.0.1), then you can avoid dealing with the original 7.5.0.0 and intermediate fix packs (DELTA 7.5.0.1), and you will only need to download the DELTA 7.5.0.2. 
+
+
+Question 4: Can you delete the tar.gz files and the rpm files from /downloads/mq/ once the upgrade is complete, to save disk space? What if we have multiple installations and we need to use the crtmqfp command? Can the rpms in /var/tmp/mq_rpms/*/i386 be removed once the upgrade is complete, again to release space on the server? 
+ANSWER 4: Yes, you can delete the rpms in /var/tmp/mq_rpms after using them. 
+
+Scenario, there are 3 versions of MQ installed in the system:
+Installation #1 is in /opt/mqm75a with 7.5.0.0
+Installation #2 is in /opt/mqm75b with 7.5.0.1
+Installation #3 is in /opt/mqm75c with 7.5.0.2
+
+Question 5.a: When Fix Pack 7.5.0.3 comes out, can you apply it directly to any one of these 3 existing installations and not affect the others? 
+ANSWER 5.a: Yes, when Fix Pack 7.5.0.3 comes out, you can apply it directly to any one of these 3 existing installations and the others will not be affected. 
+
+Question 5.b: Could you create /opt/mqm75d, install 7.5.0.1 FULL there and apply 7.5.0.3 DELTA only to /opt/mqm75d? 
+ANSWER 5.b: Yes, if you have the need to maintain a separate installation for each fix pack, then you can add a 4th one as you mentioned: 
+Create /opt/mqm75d, install 7.5.0.1 FULL there and apply 7.5.0.3 DELTA only to /opt/mqm75d. 
+
+
+Question 6: Space is getting low. Can Installation#1 be removed which will release all the space consumed by /opt/mqm75a without impacting Installation #2 and #3, ? 
+ANSWER 6: Yes, each installation is independent of the others. In fact in MQ 7.1, in order to ensure that there were no common/shared files between installations, there was a repackaging done to some files that were installed in MQ 7.0 in directories OUTSIDE the /opt/mqm directory structure, such as the GSKit and the message catalogs. Now, all the files pertaining to each installation are included under the same directory structure. That is, you could remove /opt/mqm75c without affecting the others. 
+
+++ NOTE:
+Before you remove a particular installation, it is a good idea to reassign the queue managers that used that particular installation, to another installation that will not be deleted. You can use the following MQ command to identify the installation associated with a queue manager: 
+dspmq -o installation 
+
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM MQ 
+PRODUCT ALIAS/SYNONYM
+ WebSphere MQ WMQ

@@ -1,0 +1,70 @@
+Title: IBM Security Bulletin: Vulnerability in Diffie-Hellman ciphers affects  IBM GPFS  for Windows (CVE-2015-4000) - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ The Logjam Attack on TLS connections using the Diffie-Hellman (DH) key exchange protocol affects IBM GPFS for Windows V3.5 
+
+VULNERABILITY DETAILS
+CVEID: CVE-2015-4000 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-4000]
+DESCRIPTION: The TLS protocol could allow a remote attacker to obtain sensitive information, caused by the failure to properly convey a DHE_EXPORT ciphersuite choice. An attacker could exploit this vulnerability using man-in-the-middle techniques to force a downgrade to 512-bit export-grade cipher. Successful exploitation could allow an attacker to recover the session key as well as modify the contents of the traffic. This vulnerability is commonly referred to as "Logjam".
+CVSS Base Score: 4.3
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/103294 [https://exchange.xforce.ibmcloud.com/vulnerabilities/103294] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:M/Au:N/C:P/I:N/A:N) 
+
+AFFECTED PRODUCTS AND VERSIONS
+OpenSSH for GPFS V3.5 for Windows
+
+REMEDIATION/FIXES
+None
+
+WORKAROUNDS AND MITIGATIONS
+
+On the Windows node running GPFS V3.5, login with Administrator privileges and perform the following steps from an elevated SUA Korn Shell (ksh):
+
+1. Issue the commands:
+
+awk '{ if ($5 <= 2000) printf "#"; print }' /usr/lpp/mmfs/platform/etc/moduli > /tmp/large_moduli
+cp /tmp/large_moduli /usr/lpp/mmfs/platform/etc/moduli
+cp /tmp/large_moduli /usr/local/etc/moduli
+
+2. Edit the file /usr/local/etc/sshd_config and append the following line at the end. Make sure that all algorithm names are comma separated in a single line, without any intervening spaces or tabs.
+
+KexAlgorithms 
+curve25519-sha256@libssh.org,ecdh-sha2-nistp256,ecdh-sha2-nistp384,ecdh-sha2-nistp521,diffie-hellman-group14-sha1,diffie-hellman-gr
+oup-exchange-sha1,diffie-hellman-group-exchange-sha256
+
+3. Edit the file /usr/local/etc/ssh_config and append the following line at the end. Make sure that all algorithm names are comma separated in a single line, without any intervening spaces or tabs.
+
+KexAlgorithms
+curve25519-sha256@libssh.org,ecdh-sha2-nistp256,ecdh-sha2-nistp384,ecdh-sha2-nistp521,diffie-hellman-group14-sha1
+
+4. To generate any missing keys, issue:
+
+/usr/lpp/mmfs/platform/bin/ssh-keygen -A
+
+5. To verify the configuration files, issue:
+
+/usr/lpp/mmfs/platform/sbin/sshd -T
+
+Make sure that there are no error messages and that kexalgorithms matches as specified in (2).
+
+6. Restart the sshd daemon or reboot the node so that the modified configuration takes effect.
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v2 Guide [http://www.first.org/cvss/v2/guide] 
+On-line Calculator v2 [http://nvd.nist.gov/CVSS-v2-Calculator] 
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] ACKNOWLEDGEMENT
+Reported to IBM by The WeakDH team at https://weakdh.org [https://weakdh.org] 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.

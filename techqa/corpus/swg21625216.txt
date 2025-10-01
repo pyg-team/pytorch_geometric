@@ -1,0 +1,45 @@
+Title: IBM "The import failed due to an out of memory error on the server" when using "Import Data" - United States
+
+Text:
+Please try to narrow the selections during export of dat TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ User is trying to import a data file (.FZD) via the "Import Data" menu. User receives error message. 
+
+SYMPTOM
+Error 
+
+X The import failed due to an out of memory error on the server. 
+Please try to narrow the the selections during export of data.
+[OK]
+
+[/support/docview.wss?uid=swg21625216&amp;aid=1]
+
+CAUSE
+The amount of data to be imported has exceeded the amount that the Controller client is capable of importing.
+
+
+
+RESOLVING THE PROBLEM
+There are several possible solutions: 
+
+(1) Exit Controller, and re-launch the Controller client. Re-try. 
+
+ * Sometimes this can free enough memory (on the client device) so that the import now works OK.
+
+
+(2) Reduce the amount of data that you chose to export, and re-export/import 
+
+ * In other words, re-export from your 'source'. However, this time (when asked what to export) do not tick/select/choose as much data  * In other words, re-export the data in several (smaller) chunks (i.e. not all at once).
+   
+   
+ * Afterwords, import these smaller chunks individually.
+
+
+or (3) Modify the Controller client executable (CCR.EXE) to be able to handle more memory (convert to LAA). 
+
+ * TIP: This will only cure the problem if the client operating system is 64-bit (it will have no effect on 32-bit operating systems). 
+ * For more details, see separate Technote #1579579.
+
+RELATED INFORMATION
+#1579579 - How to convert Controller client application [http://www.ibm.com/support/docview.wss?uid=swg21579579]

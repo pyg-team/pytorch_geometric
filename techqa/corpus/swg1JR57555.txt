@@ -1,0 +1,163 @@
+Title: IBM JR57555: YOU RECEIVE A NULLPOINTEREXCEPTION WHEN VALIDATING YOUR DEPLOYMENT ENVIRONMENT AFTER MANUALLY CHANGING ORACLE DATABASE URLs - United States
+
+Text:
+  DIRECT LINKS TO FIXES
+bpm.8570.cf2017.03.delta.repository [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Standard&fixids=bpm.8570.cf2017.03.delta.repository&source=SAR]
+Downloading IBM Business Process Manager V8.5.7 Cumulative Fix 2017.03 [http://www-01.ibm.com/support/docview.wss?uid=swg24043252]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  After you manually change the Oracle database URLs for the IBM
+   Business Process Manager (BPM) data sources instead of using the
+   "BPMConfig -update -dataSource" command and the database name
+   (service name or system ID) in the customized URL uses a
+   different capitalization than was originally used in the
+   configuration properties file, you receive a
+   NullPointerException like the following example when running the
+   "BPMConfig -validate" command (or when using the Health Center
+   in the WebSphere administrative console):
+   
+   [1/19/17 11:33:57:394 AEDT] 00000001 BPMConfig     E
+   com.ibm.bpm.config.BPMConfig main <Null Message>
+                                    java.lang.NullPointerException
+    at java.util.ArrayList.addAll(ArrayList.java:571)
+    at
+   com.ibm.bpm.config.capability.ProvisionDe.healthCheck(ProvisionD
+   e.java:535)
+    at
+   com.ibm.bpm.config.BPMConfig.healthCheck(BPMConfig.java:3761)
+    at
+   com.ibm.bpm.config.BPMConfig$Actions.healthCheck(BPMConfig.java:
+   4992)
+    at
+   com.ibm.bpm.config.cli.ValidateAction.runInner(ValidateAction.ja
+   va:178)
+    at
+   com.ibm.bpm.config.cli.AbstractConfigAction.run(AbstractConfigAc
+   tion.java:129)
+    at
+   com.ibm.bpm.config.cli.ValidateAction.run(ValidateAction.java:37
+   )
+    at com.ibm.bpm.config.BPMConfig.main(BPMConfig.java:293)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Manually update the Oracle database name in the IBM BPM data
+   source URLs to exactly match their capitalization in the
+   cell-bpm.xml file.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  The Oracle database name (service name or system ID) is stored
+   in two different configuration files. The validation code did a
+   case-sensitive comparison of the database names when searching
+   for data sources and, therefore, couldn't match database names
+   with different capitalization. Not finding a required data
+   source caused a NullPointerException.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A fix will be available in IBM BPM V8.5.7 cumulative fix 2017.03
+   that updates the validation code to match Oracle database names
+   in a case insensitive manner.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR57555
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM STANDARD
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9500
+   
+   
+ * REPORTED RELEASE
+   857
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-03-08
+   
+   
+ * CLOSED DATE
+   2017-03-29
+   
+   
+ * LAST MODIFIED DATE
+   2017-03-29
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   BPM STANDARD
+   
+   
+ * FIXED COMPONENT ID
+   5725C9500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R857 PSY
+   UP

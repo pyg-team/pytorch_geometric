@@ -1,0 +1,18 @@
+Title: IBM System Requirements: Hardware and Software Requirements for IBM Datacap FastDoc Capture Version 1.2 - United States
+
+Text:
+ PRODUCT DOCUMENTATION
+
+ABSTRACT
+ This page describes the minimum system requirements to operate IBM Datacap FastDoc Capture Version 1.2. 
+
+Given the wide range of computer hardware available, and the continuous introduction of new processors, these guidelines are for the minimum hardware recommended to operate FastDoc Capture. The table lists processor configurations that work well. The memory, disk, and networking configurations affect the performance of IBM Datacap FastDoc Capture software as well. Any configuration that is "better" than these recommendations should result in better performance. 
+
+CONTENT
+ 
+
+Station Type CPU/equiv RAM (GB) Available Disk (GB) Display Adapter FastDoc Capture Workstation Pentium Dual Core E2160 (1.80GHz) AMD Athlon™ or Sempron™ 2 10 Dedicated video card w/ min. 128MB RAM and DirectX 9.0 support for best performance File Server (optional, to store images) Intel® Core™ 2 Duo T7500 (2.20GHz) 
+AMD Opteron™, Athlon™ or Sempron™ 3 100(fast) N/A 
+Notes:  * Network is assumed to be Ethernet with TCP/IP running Microsoft file servers. 
+ * FastDoc Capture should be installed on Windows XP and Windows 7 (32-bit and 64-bit environments). 
+ * Storage space needed for images is dependent upon image size and volume.

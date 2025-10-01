@@ -1,0 +1,123 @@
+Title: IBM FTP A/C logging bug. Using BCHSEP=OPT3 to transmit multiple batches, DP timeout on 2nd batch and FC=140 is set until we get 426, then it's set to FC=000 (SCI97109) - United States
+
+Text:
+STERLINGPRI TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ FTP A/C logging bug. Using BCHSEP=OPT3 to transmit multiple batches, DP timeout on 2nd batch and FC=140 is set until we get 426, then it's set to FC=000 (SCI97109) 
+
+SYMPTOM
+FTP A/C logging bug. Using BCHSEP=OPT3 to transmit multiple batches, DP timeout on 2nd batch and FC=140 is set until we get 426, then it's set to FC=000 
+FTP A/C transmit using BCHSEP=OPT3 
+FC=140 cleared to FC=000 after receiving 426 reply
+
+
+RESOLVING THE PROBLEM
+
+
+Apply Post 1.3.00 fix 36024. Contact Customer Support for details.
+
+
+FIX 36024 SR 1349191,1356166
+
+
+Improve performance of C:E FTP Client PUT processing by eliminating
+
+
+unneeded VCF reads and stop reading VPF when transmitted batches
+
+
+encountered.
+
+
+This fix also corrects the following issues:
+
+
+1. S0C4 Abend when more than 3276 batches per STOR command.
+
+
+2. BCHSEP=OPT3 logging issues. After this fix, BCHSEP=OPT3 logging
+
+
+will do one PUT NEW and one PUT UPDATE per batch (previously did
+
+
+one PUT NEW and multiple PUT UPDATEs).
+
+
+3. Transmission counts not being counted in CMB044I Auto Connect
+
+
+summary message when failure occurs on PORT or PASV command.
+
+
+Changed Failure Code Description: FC=171
+
+
+Description: An FTP file transmission using BCHSEP=OPT3 failed for
+
+
+one of the batches in the concatenation. The batch
+
+
+with FC=171 was successfully transmitted but one of
+
+
+the other batches in the concatenation failed for
+
+
+some reason. The reason for the ultimate failure
+
+
+can be found on the last detail REQ log record or the
+
+
+Disconnect log record. No batches in the concatenation
+
+
+will be marked transmitted.
+
+
+Action: Retry session. If failure repeats, contact server
+
+
+administrator.
+
+
+CICS/ISPF ADMINISTRATION MESSAGE FILE SOURCE UPDATED: CIMSGFLE
+
+
+MODULES UPDATED: STFC170 STFTPC05 STFTPC10 STFTPC35 STFTPC41
+
+
+STFTPC45 STFTPC50 STFTPC70 STFTPS40 STFTPC80
+
+
+MACRO UPDATED: M$BCHLST M$LOGLST M$SMTCB M$FCWA S$FC170
+
+
+LOAD MODULES AFFECTED: STFC140 STFC170 STFTPC05 STFTPC10 STFTPC35
+
+
+STFTPC41 STFTPC45 STFTPC50 STFTPC70 STFTPS40
+
+
+STFTPC80
+
+
+? 
+
+ 
+
+HISTORICAL NUMBER
+ PRI25596 
+
+PRODUCT ALIAS/SYNONYM
+ 
+
+Fact
+
+
+Connect:Enterprise OS/390
+Release 1.2.00 
+SCI97109

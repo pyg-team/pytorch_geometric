@@ -1,0 +1,141 @@
+Title: IBM JR50250: RULE BASED MAPPING WITH MORE THAN 1000 TABLES HIT AN ERROR: ORA-01795: MAX NUMBER OF EXPRESSIONS IN A LIST IS 1000 - United States
+
+Text:
+  A FIX IS AVAILABLE
+Fix list for IBM InfoSphere Change Data Capture [http://www-01.ibm.com/support/docview.wss?uid=swg24029318]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When we map (rule based mapping) more than 1000 tables in a
+   single subscription, then we hit the oracle error as follows:
+   [Oracle JDBC Driver][Oracle]ORA-01795: maximum number of
+   expressions in a list is 1000
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Have only 1000 mapings (rule based) in a single subscription.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  IIDR 10.2.1 for Oracle Redo fails with the following error:
+   [Oracle JDBC Driver][Oracle]ORA-01795: maximum number of
+   expressions in a list is 1000 - while using a rule based
+   subscriptions which results on more than 1000 tables in the
+   subscription.
+   
+   This issue affects users running IIDR 10.2.1 Interim Fix 2 for
+   Oracle Redo (and below).
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This issue is fixed by applying the following interim fixes
+   depending on the product version:
+   - IIDR 10.2.1 Interim Fix 3 for Oracle Redo; or
+   - IIDR 10.2 Interim Fix 16 for Oracle Redo; or
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  Only map 1000 tables in a rule-based subscription.
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR50250
+   
+   
+ * REPORTED COMPONENT NAME
+   IS CDC ORACLE
+   
+   
+ * REPORTED COMPONENT ID
+   5725E30OR
+   
+   
+ * REPORTED RELEASE
+   A21
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-05-14
+   
+   
+ * CLOSED DATE
+   2014-06-18
+   
+   
+ * LAST MODIFIED DATE
+   2014-06-18
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   IS CDC ORACLE
+   
+   
+ * FIXED COMPONENT ID
+   5725E30OR
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * RA21 PSY
+   UP

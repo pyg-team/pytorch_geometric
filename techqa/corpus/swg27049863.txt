@@ -1,0 +1,35 @@
+Title: IBM System requirements for IBM InfoSphere Data Replication for DB2 for z/OS Version 11.4 - United States
+
+Text:
+ DETAILED SYSTEM REQUIREMENTS
+
+ABSTRACT
+ This document describes the system requirements for IBM InfoSphere Data Replication for DB2 for z/OS V11.4. 
+
+CONTENT
+
+
+PRODUCT DESCRIPTION
+IBM InfoSphere Data Replication for DB2 for z/OS consist of three technologies:
+
+ * CDC Replication
+ * Q Replication
+ * SQL Replication
+
+For more information about IBM InfoSphere Data Replication for DB2 for z/OS, see the product overview [http://www-03.ibm.com/software/products/en/infosphere-data-replication-db2-z].
+
+TABLE OF SUPPORTED SYSTEM REQUIREMENTS
+The links in the table below are located in the IBM Software Product Compatibility Reports (SPCR) tool and go directly to the supported operating systems, prerequisites, system requirements, and optional supported software for the specific operating system.
+
+IBM InfoSphere Data Replication for DB2 for z/OS V11.4 InfoSphere Data Replication for DB2 for z/OS (CDC) [https://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=E5678D706BCF11E6865BC3F213DB63F7&osPlatforms=z/OS&duComponentIds=S001&optionalCapIds=9|223]  * Management Console [http://www-969.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=E3FF6980B5DF11E686D823753F804D5F&osPlatforms=Windows&duComponentIds=D013&optionalCapIds=9]
+ * Access Server [http://www-969.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=E3FF6980B5DF11E686D823753F804D5F&osPlatforms=AIX|Linux|Windows&duComponentIds=D014&optionalCapIds=9]
+
+InfoSphere Data Replication for DB2 for z/OS (Q Replication) [https://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=ECE64DD06BCE11E6865BC3F213DB63F7&osPlatforms=z/OS&duComponentIds=S000&optionalCapIds=9] InfoSphere Data Replication for DB2 for z/OS (SQL Replication) [https://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=282108606BCD11E6865BC3F213DB63F7&osPlatforms=z/OS&duComponentIds=S000&optionalCapIds=9] For the Linux, UNIX, and Windows version of this product, see System requirements for IBM Data Replication Version 11.4 and IBM InfoSphere Data Replication V11.4 [http://www.ibm.com/support/docview.wss?uid=swg27049164].
+
+SPCR TOOL AVAILABLE FOR ALL SOFTWARE PRODUCTS
+IBM has created a Software Product Compatibility Reports (SPCR) tool where you can locate and find complete lists of supported operating systems, system requirements, prerequisites, and optional supported software for your product version.
+
+ 1. Click the following link to reach the front page of SPCR: Detailed system requirements for a specific product in SPCR [http://publib.boulder.ibm.com/infocenter/prodguid/v1r0/clarity/softwareReqsForProduct.html] 
+ 2. Then choose the following options to obtain the supported operating systems, system requirements, and optional supported software for your product version.  1. Select the desired product.
+     2. Select the desired version.
+     3. Select your operating system or your product component.

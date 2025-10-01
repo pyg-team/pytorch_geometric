@@ -1,0 +1,186 @@
+Title: IBM PI89422: UNEXPECTED ERROR "FWLSE0803E" KEEP SHOWING IN MPF SERVER LOG - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Product components impacted: MFP server
+   Affected mobile development environments: N/A
+   Mobile Devices Operating Systems impacted: N/A
+   User roles impacted: Administrator
+   Distribution: Fix Central
+   Versions affected: 8.0
+   When adapter is connecting with backend and while processing
+   with the response, the following exception would occur in
+   server log:
+   [8/28/17 14:08:59:533 WIB] 0005a003
+   com.ibm.mfp.server.js.adapter.internal.http.HTTP             E
+   FWLSE0803E: Cannot find message for id 'contentTypeMismatch' in
+   bundle
+   'com.ibm.mfp.server.core.shared.messages'" + ". Error:'Can't
+   find
+   resource for bundle java.util.PropertyResourceBundle, key
+   contentTypeMismatch'.
+   java.util.MissingResourceException: Can't find resource for
+   bundle
+   java.util.PropertyResourceBundle, key contentTypeMismatch
+       at
+   java.util.ResourceBundle.getObject(ResourceBundle.java:450)
+       at
+   java.util.ResourceBundle.getString(ResourceBundle.java:407)
+       at
+   com.ibm.mfp.server.core.shared.logging.MFPServerLogger.getMessag
+   e(MFPSer
+   verLogger.java:260)
+       at
+   com.ibm.mfp.server.core.shared.logging.MFPServerLogger.logFromBu
+   ndle(MFP
+   ServerLogger.java:302)
+   This is because MPF detects that the expected content type of
+   the response is differing from actual content type of the
+   response. The exception indict the problem between
+   communication of adapter and the backend.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * Those who use HTTP adapter with backend connection           *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * When using Http adapter that connects to backend, the server *
+   * will try to log a warning message if the response type       *
+   * mismatch is detected. In MFPF 8.0, it is observed that the   *
+   * message that is supposed to be printed was missing from the  *
+   * resource bundle that results in the following error in the   *
+   * server log:                                                  *
+   *                                                              *
+   * "com.ibm.mfp.server.js.adapter.internal.http.HTTP            *
+   * E                                                            *
+   * FWLSE0803E: Cannot find message for id 'contentTypeMismatch' *
+   * in bundle                                                    *
+   * 'com.ibm.mfp.server.core.shared.messages'" + ". Error:'Can't *
+   * find                                                         *
+   * resource for bundle java.util.PropertyResourceBundle, key    *
+   *                                                              *
+   * contentTypeMismatch'.                                        *
+   *                                                              *
+   * java.util.MissingResourceException: Can't find resource for  *
+   * bundle java.                                                 *
+   * util.PropertyResourceBundle, key contentTypeMismatch"        *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Added the missing resource for the warning message that is
+   supposed to be printed when response type mismatch is detected
+   in http adapters.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI89422
+   
+   
+ * REPORTED COMPONENT NAME
+   MOBILE1ST PLATF
+   
+   
+ * REPORTED COMPONENT ID
+   5725I4301
+   
+   
+ * REPORTED RELEASE
+   800
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-10-26
+   
+   
+ * CLOSED DATE
+   2017-12-07
+   
+   
+ * LAST MODIFIED DATE
+   2017-12-07
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   MOBILE1ST PLATF
+   
+   
+ * FIXED COMPONENT ID
+   5725I4301
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R800 PSY
+   UP

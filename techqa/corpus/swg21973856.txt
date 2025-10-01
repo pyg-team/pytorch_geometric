@@ -1,0 +1,114 @@
+Title: IBM How to change wall ip address - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ NPS host's wall IP address can be changed by following the steps below:
+
+
+ANSWER
+Collect the following information
+- old HA1, HA2, and VIP (wall-ip) interface names
+- new HA1, HA2, and VIP (wall-ip) interface IP addresses/netmask
+- new default gateway IP address
+- new DNS server IP address (if any)
+
+In the following steps, I assume HA1 is the active host and HA2 is the standby host.
+Also I used xxxxx as the HA1/2 interface. Replace it with the right interface name accordingly. (for example bond3)
+
+HA1 IP address change
+1. Log into the HA2 directly and become ROOT user
+(do not use VIP address to connect to the machine).
+
+2. SSH to HA1 from HA2
+# ssh ha1
+
+3. Check if heartbeat and drbd is working fine
+# service drbd status
+# service heartbeat status
+# crm_mon -1
+
+4. Stop the NPS and disable nps resource
+HA1$ nzstop (by NZ user)
+HA1# crm_resource -r nps -p target_role -v stopped
+
+After running the crm_resource command, run "crm_mon -1" command to check the cluster status.
+Once the nps resource is completely stopped, the output should look like this:
+####################################
+[root@host1 ~]# crm_mon -1
+============
+Last updated: Tue Oct 6 10:50:27 2015
+Current DC: host2 (f50281f2-eca0-453a-890e-f6db3b9f8318)
+2 Nodes configured.
+3 Resources configured.
+============
+
+Node: host2 (f50281f2-eca0-453a-890e-f6db3b9f8318): online
+Node: host1 (0db1abd6-a627-49c6-9756-6abe0ef36aa9): online
+
+fencing_route_to_ha1 (stonith:apcmastersnmp): Started host2
+fencing_route_to_ha2 (stonith:apcmastersnmp): Started host1
+[root@host1 ~]#
+####################################
+
+If the output looks different from this, or the nps resource does not stop after 10 minutes, reboot the host and repeat the steps. The following step is brief description of rebooting both hosts.
+4-1. disable heartbeat auto-start by running the following command
+HA1# chkconfig heartbeat off
+HA2# chkconfig heartbeat off
+4-2. stop the heartbeat service (standby host first)
+HA2# service heartbeat stop
+HA1# service heartbeat stop
+4-3. restart the host
+HA1# reboot
+HA2# reboot
+4-4. Once both hosts come back, start heartbeat on HA1 and HA2 manually
+HA1# service heartbeat start
+HA2# service heartbeat start
+4-5. Repat the step 4 from the beginning
+
+5. Stop the HA1/VIP interface by running the following command:
+# ifdown xxxxx
+
+6. Open the network configuration file for editing and change the GATEWAY declaration:
+# vi /etc/sysconfig/network
+#########
+NETWORKING=yes
+NOZEROCONF=yes
+HOSTNAME=host1
+GATEWAY=192.168.1.1 <================ update this line with the new gateway IP address
+# NPS setup -- do not edit below this line -- resolv
+RESOLVCONF=/etc/resolv.conf.upstream
+# NPS setup -- do not edit above this line -- resolv
+#########
+
+7. Open the following file for editing and update it with the new IP address and netmask address:
+# vi /etc/sysconfig/network-scripts/ifcfg-xxxxx
+
+8. Update /etc/hosts's HA1/HA2/VIP entries
+# vi /etc/hosts
+
+9. Change the wall IP address by running the following commands: (this step should be run only once in HA1, the primary host)
+a) cd /nzlocal/scripts
+b) ./heartbeat_admin.sh –-change-wall-ip –-ip <new VIP address> --mask <new netmask> --dev xxxxx
+c) cibadmin -Q | grep <new VIP address>
+
+10. Restart the host interface on HA1.
+# ifup xxxxx
+
+11. Repeat the change except for step#9 in HA2.
+12. Update DNS record on the host if needed
+# service nzresolv update
+
+This command opens a vi session. You can update the "nameserver" lines with the new DNS IP address
+
+################################
+# !!! Edit this file to contain your site's resolv.conf data
+# !!! All lines starting '# !!!' will be removed.
+# !!!
+domain ibm.com
+search ibm.com
+nameserver 192.168.1.50 <=============== update this line with the new DNS server. If you have multiple DNS servers, you can create multiple lines
+################################
+
+Once you finish, exit with :wq (same as a vi session).

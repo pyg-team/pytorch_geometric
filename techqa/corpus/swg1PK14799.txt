@@ -1,0 +1,291 @@
+Title: IBM PK14799: TOPOLOGY JOINS ARE SLOW DUE TO CMAS MAXTASK CONDITION XLST TSG2 - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Topology joins may not occur immediately in all CMASes due to
+   the CMAS being in a maxtask condition.  The maxtask is due to
+   hundreds of XLST tasks waiting for work.  These XLST tasks
+   will remain waiting until work arrives for them or they timeout
+   after 10 minutes.  The TSSJ (Topology CICS System Join Event)
+   transactions are waiting on MXT and cannot run until the XLST
+   tasks timeout and free up a task slot.
+   .
+   Additional Symptom(s) Search Keyword(s): EENDJOIN TSLG TSG2
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All CICSPlex/SM V3R1M0 Users                 *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Various errors may occur when a CMAS    *
+   *                      encounters a MAXTASK condition.         *
+   *                                                              *
+   *                      An external symptom of this may be an   *
+   *                      approximately 10 minute delay for other *
+   *                      connected CMASes to JOIN MASes that are *
+   *                      connected to the CMAS that incurs the   *
+   *                      MAXTASK condition.                      *
+   ****************************************************************
+   * RECOMMENDATION: After applying the PTF that resolves this    *
+   *                 APAR, all CMASes must be restarted.  Note    *
+   *                 that the restarts do not need to occur at    *
+   *                 the same time.                               *
+   ****************************************************************
+   A CMAS keeps a pool of XLST tasks to handle most requests that
+   are received by the CMAS.  After processing a request, an XLST
+   task will go into a wait state for 10 minutes.  If no
+   subsequent request is received by the task, it will terminate.
+   
+   When a request is made, module EYU9XLCI (EUI requests) or method
+   EYU0XLNC (all other requests) will look for a waiting XLST task,
+   and if found will associate the request with that task.  If no
+   XLST task is available when a request is made, module EYU9XLEV
+   (EUI requests) or method EYU0XLNC (all other requests) will
+   request that an XLST task be STARTed to handle a request.
+   
+   There is no limit to the number of XLST tasks a CMAS will START.
+   If a large number of concurrent requests are received by a CMAS
+   it is possible that some of the XLST tasks started will be
+   placed in a MAXTASK wait.  When XLST tasks that were able to
+   execute complete processing their request, they will go into
+   their wait.  This will result in the XLST tasks waiting on
+   MAXTASK to wait at least 10 minutes for other XLST tasks to end.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Updates have been made such that when an XLST task completes
+   processing a request, it will determine if another non-EUI
+   request is waiting because its XLST task did not start due to
+   MAXTASK (EUI requests remain tied to the XLST task that was
+   started to process that request).  If so, the active XLST task
+   will process the waiting request.  When the MAXTASK held task
+   does start, it will recognize that its request was satisfied by
+   another XLST task and terminate.  If there are no additional
+   requests for a completing XLST task to process, it will
+   determine if the CMAS is at or near MAXTASK.  If so, the XLST
+   task will terminate.  Otherwise, the XLST task will enter its
+   wait for work.
+   
+   To affect these changes, the following updates have been made:
+   
+   -  the parameter list (MAL - method argument list) for method
+      EYU0XLST (XLST), EYUZXLST, has been updated to allow the
+      caller to indicate whether the request being made is for the
+      EUI or for other processing.
+   
+   -  module EYU9XLEV has been updated to indicate in the XLST MAL
+      that the request is an EUI request.
+   
+   -  method EYU0XLNC has been updated to indicate in the XLST MAL
+      that the request is not an EUI request.
+   
+   -  method EYU0XLST (XLST), which is the controlling method for
+      the XLST task, will check the request type on entry.  If it
+      is an EUI request, XLST will process it immediately.  If it
+      is not an EUI request, XLST will determine if the request has
+      already been processed, and if so, it will terminate.
+   
+      After XLST processes a request, whether it was an EUI request
+      or not, it will determine if there are any non-EUI requests
+      available to process, and if so, it will process the request.
+      If there are no non-EUI requests to process, XLST will
+      determine if the CMAS is at or near MAXTASK.  If so, XLST
+      will terminate.  If not, XLST will go into its wait for work.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  FIX AVAILABLE BY PTF ONLY
+   
+   
+    
+   
+   
+
+COMMENTS
+ *  Various errors may occur when a CMAS
+   encounters a MAXTASK condition.
+   
+   An external symptom of this may be an
+   approximately 10 minute delay for other
+   connected CMASes to JOIN MASes that are
+   connected to the CMAS that incurs the
+   MAXTASK condition.
+   
+   
+   A CMAS keeps a pool of XLST tasks to handle most requests that
+   are received by the CMAS.  After processing a request, an XLST
+   task will go into a wait state for 10 minutes.  If no
+   subsequent request is received by the task, it will terminate.
+   
+   When a request is made, module EYU9XLCI (EUI requests) or method
+   EYU0XLNC (all other requests) will look for a waiting XLST task,
+   and if found will associate the request with that task.  If no
+   XLST task is available when a request is made, module EYU9XLEV
+   (EUI requests) or method EYU0XLNC (all other requests) will
+   request that an XLST task be STARTed to handle a request.
+   
+   There is no limit to the number of XLST tasks a CMAS will START.
+   If a large number of concurrent requests are received by a CMAS
+   it is possible that some of the XLST tasks started will be
+   placed in a MAXTASK wait.  When XLST tasks that were able to
+   execute complete processing their request, they will go into
+   their wait.  This will result in the XLST tasks waiting on
+   MAXTASK to wait at least 10 minutes for other XLST tasks to end.
+   
+   
+   Updates have been made such that when an XLST task completes
+   processing a request, it will determine if another non-EUI
+   request is waiting because its XLST task did not start due to
+   MAXTASK (EUI requests remain tied to the XLST task that was
+   started to process that request).  If so, the active XLST task
+   will process the waiting request.  When the MAXTASK held task
+   does start, it will recognize that its request was satisfied by
+   another XLST task and terminate.  If there are no additional
+   requests for a completing XLST task to process, it will
+   determine if the CMAS is at or near MAXTASK.  If so, the XLST
+   task will terminate.  Otherwise, the XLST task will enter its
+   wait for work.
+   
+   To affect these changes, the following updates have been made:
+   
+   -  the parameter list (MAL - method argument list) for method
+      EYU0XLST (XLST), EYUZXLST, has been updated to allow the
+      caller to indicate whether the request being made is for the
+      EUI or for other processing.
+   
+   -  module EYU9XLEV has been updated to indicate in the XLST MAL
+      that the request is an EUI request.
+   
+   -  method EYU0XLNC has been updated to indicate in the XLST MAL
+      that the request is not an EUI request.
+   
+   -  method EYU0XLST (XLST), which is the controlling method for
+      the XLST task, will check the request type on entry.  If it
+      is an EUI request, XLST will process it immediately.  If it
+      is not an EUI request, XLST will determine if the request has
+      already been processed, and if so, it will terminate.
+   
+      After XLST processes a request, whether it was an EUI request
+      or not, it will determine if there are any non-EUI requests
+      available to process, and if so, it will process the request.
+      If there are no non-EUI requests to process, XLST will
+      determine if the CMAS is at or near MAXTASK.  If so, XLST
+      will terminate.  If not, XLST will go into its wait for work.
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK14799
+   
+   
+ * REPORTED COMPONENT NAME
+   CPSM CICS 3.1
+   
+   
+ * REPORTED COMPONENT ID
+   5655M1501
+   
+   
+ * REPORTED RELEASE
+   100
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2005-11-08
+   
+   
+ * CLOSED DATE
+   2006-01-11
+   
+   
+ * LAST MODIFIED DATE
+   2006-06-05
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    PK15080 UK10708 PK25861
+   
+   
+
+MODULES/MACROS
+ *     EYUQXLST EYURXLEB EYURXLST EYUTRKNL EYUTXLPD
+   EYUUXLST EYUYXLST EYUZXLST EYU0XLBV EYU0XLNC EYU0XLST EYU9XLEV
+   EYU9XLRU EYU9XLR3 EYU9XLR4 EYU9XLR5 EYU9XLR6
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CPSM CICS 3.1
+   
+   
+ * FIXED COMPONENT ID
+   5655M1501
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R100 PSY UK10708 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK10708]
+   UP06/01/13 P F601
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

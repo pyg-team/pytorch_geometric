@@ -1,0 +1,51 @@
+Title: IBM WebServices do not place response message on MQ Outbound Queues - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ A return message does not appear on any queue when sending an inbound message using WebServices and WebSphere MQ. A return message is not placed on the error queue in the event of a bad message. 
+
+CAUSE
+Response messages are not automatically placed in any queue when using WebServices. The queue must be specified for Commerce to know where to place the message. The client must specify the outbound queue for Commerce to know where to look for the response.
+
+DIAGNOSING THE PROBLEM
+Turn on the following trace string to check if your JMS headers have been set: 
+
+ 1. Enable WebSphere Commerce webservices trace.
+    Follow instructions here [http://publib.boulder.ibm.com/infocenter/wchelp/v6r0m0/index.jsp?topic=/com.ibm.commerce.admin.doc/refs/rlslogging.htm]to enable the following trace specification: 
+    com.ibm.commerce.webservices.engine.*=all 
+    
+ 2. Reproduce the issue 
+    Send a sample inbound webservice message and wait for Commerce to process it.
+    
+ 3. Open up the trace logs 
+    Commerce trace files
+    <WAS_HOME>\profiles\<profile>\logs\server1\trace.log
+    
+ 4. Find the trace entry similar to:
+    [9/11/07 13:04:45:062 EDT] 0000004d > com.ibm.commerce.webservices.engine.JMSListenerMDB
+    onMessage(javax.jms.Message) ENTRY
+    JMS Message class: jms_text
+    JMSType: null
+    JMSDeliveryMode: 1
+    JMSExpiration: 0
+    JMSPriority: 0
+    JMSMessageID: ID:414d5120766d7761726530312e716d201cc6e64620002902
+    JMSTimestamp: 1189530284960
+    JMSCorrelationID:null
+    JMSDestination: null
+    JMSReplyTo: null 
+    JMSRedelivered: false
+    JMS_IBM_PutDate:20070911
+    JMSXAppID:30\eclipse\jre\bin\javaw.exe
+    JMS_IBM_Format:MQSTR
+
+RESOLVING THE PROBLEM
+The JMS message header must be set for Commerce to know where to place the response message when there are any responses or in the event of an error. In this example, the JMSReplyTo queue is set as null. When generating the message, the client is responsible for specifying the queue in which to place the response. Set the JMS headers when generating the message to set the JMSReplyTo field to a valid queue. By default, the JMSReplyTo field in the JMS header is only set for messages that are sent using the sendReceiveImmediate method. This value is set using the inQueue parameter. If the custom command does not set this parameter, the default inQueue value defined in the wc-server.xml file is used. 
+
+ 
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Commerce WebSphere Commerce Enterprise Customization / Application Development AIX, i5/OS, Linux, Solaris, Windows 6.0, 6.0.0.1, 6.0.0.2, 6.0.0.3 Commerce WebSphere Commerce Professional Customization / Application Development AIX, i5/OS, Linux, Solaris, Windows 6.0, 6.0.0.1, 6.0.0.2, 6.0.0.3, 6.0.0.4

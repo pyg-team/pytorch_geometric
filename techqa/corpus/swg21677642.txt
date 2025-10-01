@@ -1,0 +1,20 @@
+Title: IBM Logging in to multiple portals on the same server by using the same browser at the same time causes unexpected behaviour - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ If you are logged in to one portal and then switch to another portal, in the same browser and on the same server, without logging out, you might experience unexpected behavior. 
+
+SYMPTOM
+After logging in to multiple portals at same time, you experience unexpected behavior.
+
+
+CAUSE
+Browser session handling causes issues when your are logged in to multiple portals at the same time.
+
+ENVIRONMENT
+IBM API Management V3.0.0.1
+
+RESOLVING THE PROBLEM
+Sign out from all portals and then log back in to only one portal.

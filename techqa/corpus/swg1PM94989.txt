@@ -1,0 +1,150 @@
+Title: IBM PM94989: WASX7120E ERROR ON WEBDAV-DEPLOY-ZIP-FILE - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Fixes integrated in WebSphere Portal 8.0.0.1 Combined Cumulative Fixes [http://www-01.ibm.com/support/docview.wss?uid=swg24034497]
+Fixes integrated in WebSphere Portal 7.0.0.1 & 7.0.0.2 Combined Cumulative Fixes [http://www-01.ibm.com/support/docview.wss?uid=swg24029452]
+Fixes integrated in WebSphere Portal 8.5.0.0 Combined Cumulative Fixes [http://www-01.ibm.com/support/docview.wss?uid=swg24037786]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Every time the ConfigEngine webdav-deploy-zip-file task
+   is running, it includes the WASX7120E error code with
+   no description. This ONLY occurs on a managed node, not on a
+   standalone situation.
+   Example:  [wsadmin] WASX7209I:
+   Connected to process "PORTAL_SERVER01" on nodeWPNode01 using
+   SOAP connector;  The type of process is: ManagedProcess
+   [wsadmin] WASX7303I: The following options are passed to
+   the scripting environment and are available as arguments that
+   are stored inthe argv variable:
+   "[/software/IBM/WP70/01/wp_profile/ConfigEngine,members,
+   ZipFileClassPath=${ZipFileClassPath},ZipFilePath=/software/I
+   BM/WP70/01/builds/buildname/Theme/YourCustomTheme.zip,
+    TargetURI=dav:fs-type1/themes/, UpdateMode=merge]"
+   [wsadmin] false  [wsadmin] logged in as
+   "uid=wpsadmin,ou=ibm,c=us" to virtualportal
+   members  [wsadmin] [04/05/13 12:54:21.920 EDT]
+   EJPXD0001I  [wsadmin] [04/05/13 12:55:33.592 EDT]
+   WASX7120E  [wsadmin] [04/05/13 12:55:33.595 EDT] WASX7120E
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Every time the ConfigEngine webdav-deploy-zip-file task
+   is running, it includes the WASX7120E error code with
+   no description. This ONLY occurs on a managed node, not on a
+   standalone situation.
+   .
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A code fix for this issue is integrated into the WebSphere
+   Portal & WCM Combined Cumulative Fix 24 (PM93215 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM93215]) for Portal
+   7.0.0.2 available from Fix Central:
+   
+   http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent
+   =ibm~WebSphere&product=ibm/WebSphere/WebSphere [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~WebSphere&product=ibm/WebSphere/WebSphere]
+   +Portal&release=7.0.0.2&platform=All&function=aparId&apars=PM932
+   15
+   
+   You might need to type or paste the complete address into your
+   Web browser.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM94989
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSPHERE PORTA
+   
+   
+ * REPORTED COMPONENT ID
+   5724E7600
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-08-13
+   
+   
+ * CLOSED DATE
+   2013-10-10
+   
+   
+ * LAST MODIFIED DATE
+   2013-10-10
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBSPHERE PORTA
+   
+   
+ * FIXED COMPONENT ID
+   5724E7600
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R700 PSY
+   UP

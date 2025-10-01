@@ -1,0 +1,39 @@
+Title: IBM Launching Text Analytics for Surveys will display this error: Can't find ressource bundle java.util.PropertyResourceBundle, key 313 - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When launching Text Analytics for Surveys (TAfS) I receive the error:
+
+Java.util.MissingResourceException: Can't find resource for bundle java.util.PropertyResourceBundle, key 313 
+
+DIAGNOSING THE PROBLEM
+Verify the authorization code is the correct type for the installation of the software. e.g. Concurrent vs. Authorized User type. 
+
+Verify the authorization code is not expired. 
+
+Verify the authorization code is for the correct version of TAFs.
+
+
+RESOLVING THE PROBLEM
+The error indicated that your license code is incorrect.
+
+The problem will be resolved when you enter a valid license code for the product. 
+
+ 
+
+If you do not know your license code, please contact Client Care (you can find out how to contact them by going to http://www.ibm.com/planetwide [http://www.ibm.com/planetwide] 
+
+
+[IBM SPSS Client Care]
+Support for licensing problems/questions/requests are managed by IBM SPSS Client Care.
+Please contact IBM SPSS Client Care to request service regarding licensing issue(s).
+[Phone] 877-426-6006
+[E-Mail] tsmail@us.ibm.com
+IBM SPSS Client Care will get back to you within 24 business hours.
+
+[/support/docview.wss?uid=swg21475087&aid=2]TAFs-ErrorMessage-TechNote 1475087.png [/support/docview.wss?uid=swg21475087&aid=1] 
+
+HISTORICAL NUMBER
+ 93514

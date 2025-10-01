@@ -1,0 +1,32 @@
+Title: IBM System health check reports heartbeat issue SHC 921 - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ What is a SHC 921 error and how to fix it 
+
+CAUSE
+SHC 921 reports 
+
+ANSWER
+The Heartbeat Cluster is not active. Unless it has been disabled on 
+
+purpose.
+
+To fix it you can manually restart the hearbeat services..
+
+1- Check if the heartbeat service is running in both hosts
+
+
+service heartbeat status
+ssh ha2 service heartbeat status
+
+2- Start the heartbeat 
+
+service heartbeat start
+ssh ha2 service heartbeat start
+
+3- Confirm the cluster resources are started
+
+crm_mon

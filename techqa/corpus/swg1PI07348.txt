@@ -1,0 +1,179 @@
+Title: IBM PI07348: LICENSE AUTHORIZATION WIZARD DOES NOT LAUNCH, AND OUR INSTALLER SAYS NOTHING ABOUT IT - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  You have attempted to install Statistics 22.0 client for Linux
+   (64-bit) on Scientific Linux (https://www.scientificlinux.org/)
+   or another Redhat derivative.
+   You have elected to license the product as "Authorized User",
+   but you are given no chance during the installation to supply an
+   authorization code.  When you try to launch the License
+   Authorization Wizard or license directly with
+   'licenseactivator', these fail with various errors referencing
+   the echoid command and seeming 32-bit dependencies.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Scientific Linux is an untested and unsupported variant of RHEL.
+   The 64-bit distribution is seemingly 64-bit pure, having no
+   32-bit libraries installed by default.  Our current 'echoid'
+   executable references 32-bit libraries that are included on our
+   supported platform, RHEL 5.x and 6.x 64-bit.  Please see
+   http://publib.boulder.ibm.com/infocenter/prodguid/v1r0/clarity/i
+   ndex.html [http://publib.boulder.ibm.com/infocenter/prodguid/v1r0/clarity/index.html]  for the compatibility reports and supported operating
+   systems for this product.
+   
+   In the above instance, the issue was resolved by installing the
+   32-bit glibc: sudo yum install glibc.i686
+   
+   A similar issue has been encounterd on Debian and Ubuntu. The
+   simple workaround there will be to install the ia32-libs
+   package.
+   From command line:
+   sudo apt-get update
+   sudo apt-get install ia32-libs
+   
+   For Ubuntu 12.04 LTS and 14.04 LTS:
+   sudo apt-get install lib32z1 lib32ncurses5 lib32bz2-1.0
+   
+   This behavior will be addressed in a future release of IBM SPSS
+   Statistics
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * Customers of SPSS Statistics for Linux                       *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * You have attempted to install Statistics 22.0 client for     *
+   * Linux                                                        *
+   * (64-bit) on Scientific Linux                                 *
+   * (https://www.scientificlinux.org/)                           *
+   * or another Redhat derivative.                                *
+   * You have elected to license the product as "Authorized       *
+   * User",                                                       *
+   * but you are given no chance during the installation to       *
+   * supply an                                                    *
+   * authorization code.  When you try to launch the License      *
+   * Authorization Wizard or license directly with                *
+   * 'licenseactivator', these fail with various errors           *
+   * referencing                                                  *
+   * the echoid command and seeming 32-bit dependencies.          *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Please upgrade to  IBM SPSS Statistics 24.0 Linux            *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This issue is resolved for  IBM SPSS Statistics 24.0 Linux
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI07348
+   
+   
+ * REPORTED COMPONENT NAME
+   SPSS STATISTICS
+   
+   
+ * REPORTED COMPONENT ID
+   5725A54ST
+   
+   
+ * REPORTED RELEASE
+   M00
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2013-12-03
+   
+   
+ * CLOSED DATE
+   2016-04-04
+   
+   
+ * LAST MODIFIED DATE
+   2016-04-04
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   SPSS STATISTICS
+   
+   
+ * FIXED COMPONENT ID
+   5725A54ST
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * RO00 PSN
+   UP
+   
+   
+ * RO00 PSY
+   UP

@@ -1,0 +1,71 @@
+Title: IBM Why the SFS Log Volume Fills Up and Resolution - United States
+
+Text:
+crash; recovery; full; fail; failure; logvol; datavol TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The SFS msg file has messages "ENC-log-0258 log volume is out of space" and "Compressing data on log volume 1 (log_Ssfs_svr) for space reclamation". 
+
+CAUSE
+An incident occurred that caused a transaction not to finish in the SFS. The incident could be a CICS region crash or a batch program abend.
+
+RESOLVING THE PROBLEM
+In my experience, the problem with the log volume becoming full 
+
+and causing the (SFS and RQS) server to crash always has the root cause
+of the presence of a transaction being in the commitcomplete state.
+A transaction is in the commitcomplete state when all participants
+have agreed to commit, and then one of the participants has failed to
+actually perform its commit. I will now explain why even one such
+transaction can cause the log to fill up.
+
+As log records are written to the log, the log will continue to become
+more full. The log regularly checks itself to see how much free space it has.
+When the percent of free space is sufficiently small, say 25%, it will check
+to see if it can throw away old records. When you see the log go from 75% full
+to 1% full, that's because the oldest record for any transaction that is still alive
+is quite recent, and virtually all of the records in the log can be thrown away and their
+space reclaimed. When a transaction is in the commitcomplete state, as far as the
+log is concerned, that transaction is still alive. Therefore none of the log records
+put in the log since that transaction can be thrown away, and the log will fill up
+until the server crashes.
+
+In other words, the log filling up is not really caused by too much work being
+done now, but rather because there is an old unfinished transaction clogging up the log.
+
+The normal method of handling the log filling up to a dangerous level is 2 steps:
+1) tkadmin list transaction
+
+Then examine the output and see if there are any transactions in the commitcomplete state.
+If there are any, then for all of them, perform step 2
+
+2) tkadmin force transaction <tid> -finish
+
+If this command succeeds, then the transaction which was stuck is now dead.
+The next time the log tries to throw away old records and reclaim space,
+it will detect that this oldest record for the stuck transaction is dead, and reclaim
+all the space for all records until a live transaction record is reached, Usually the log
+will now have most of its space free.
+
+However, the force tran -finish does not explicitly reclaim space, so the log may
+still appear to be full.
+
+In some cases bringing down the CICS region may help to determine which transactions to perform the force on. 
+
+3) tkadmin force checkpoint
+
+Now the log checks its oldest record, sees that the tran for that record is dead, and
+reclaims space as discussed above.
+
+
+
+
+Other DCF documents to review - 
+Resolving a Stuck Transaction: 
+http://www.ibm.com/support/docview.wss?uid=swg21045910 [http://www-01.ibm.com/support/docview.wss?uid=swg21045910]
+
+Expanding CICS volumes on UNIX systems 
+http://www.ibm.com/support/docview.wss?uid=swg21616731 [http://www-01.ibm.com/support/docview.wss?uid=swg21616731]
+
+Expanding CICS volumes - Windows Edition
+https://developer.ibm.com/answers/questions/165307/how-can-i-expand-the-txseries-sfs-volumes-on-windo.html [https://developer.ibm.com/answers/questions/165307/how-can-i-expand-the-txseries-sfs-volumes-on-windo.html]

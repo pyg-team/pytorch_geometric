@@ -1,0 +1,162 @@
+Title: IBM PM07682: CLEARCASE RWP FAILS TO INSTALL IHS DUE TO LACK OF DISK SPACE, TH OUGH THERE IS AMPLE SPACE AVAILABLE - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PERMANENT RESTRICTION.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  ClearCase RWP fails to install IHS due to lack of disk space,
+   though there is ample space available
+   
+   
+   AIX 5.3
+   
+   ClearCase 7.0.1.7 RWP
+   
+   
+   To Reproduce:
+   
+   Reproduction is only possible if the ?df -k? command returns ?A
+   file, file system or message queue is no longer available.? for
+   any mount point, regardless if that specific mount point is
+   involved with the installation path(s) used by ClearCase.  The
+   output resembles the following within the EmbeddedExpress logs:
+   
+   ***   ***   ***   *** ***   ***   ***
+   (Jan 22, 2010 8:35:02 PM), UpdateInstaller,
+   com.ibm.ws.install.ni.ismp.actions.MaintenancePrereqCheckAction,
+   err, CWUPI0025E:
+   There is insufficient free disk space on the system:
+   
+   /opt/rational/common/rwp/EmbeddedExpress:
+         Required: -1 MB
+         Available: -1 MB
+   
+   /tmp/:
+         Required: -1 MB
+         Available: -1 MB
+   
+   Please ensure there is enough free disk space on all required
+   filesystems and retry the operation.
+   
+   (Jan 22, 2010 8:35:02 PM), UpdateInstaller,
+   com.ibm.ws.install.ni.ismp.actions.SetExitCodeAction, msg1,
+   CWUPI0000I: EXITCODE=1
+   (Jan 22, 2010 8:35:02 PM), UpdateInstaller,
+   com.ibm.ws.install.ni.ismp.actions.ISMPLogSuccessMessageAction,
+   msg1, INSTCONFFAILED
+   ***   ***   ***   *** ***   ***   ***
+   
+      NOTE:  The disk space shown is -1 for both ?Required? and
+   ?Available?.
+   
+   
+   Workaround:  Clean up all ?stale? mount points that report as ?A
+   file, file system or message queue is no longer available.?
+   within the ?df -k? output.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   ClearCase RWP fails to install IHS due to lack of disk
+   space, though there is ample space available.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Closing this APAR as No Plans To Fix because (1) It has a
+   workaround documented in the technote:
+   http://www-01.ibm.com/support/docview.wss?uid=swg21428482. [http://www-01.ibm.com/support/docview.wss?uid=swg21428482.]
+   (2) this issue cannot be addressed within the next 6 to 9
+   months without neglecting issues of higher severity.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM07682
+   
+   
+ * REPORTED COMPONENT NAME
+   CLEARCASE UNIX
+   
+   
+ * REPORTED COMPONENT ID
+   5724G2901
+   
+   
+ * REPORTED RELEASE
+   701
+   
+   
+ * STATUS
+   CLOSED PRS
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-02-16
+   
+   
+ * CLOSED DATE
+   2010-09-03
+   
+   
+ * LAST MODIFIED DATE
+   2010-09-03
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

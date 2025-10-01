@@ -1,0 +1,16 @@
+Title: IBM Unable to See Page/List Headers in Excel Format - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When publishing reports from IWR with headers, in PDF format the headers show, but not in Excel format. 
+
+RESOLVING THE PROBLEM
+The headers are free forms which the Excel file format cannot translate, hence you are unable to see them in the browser. If you were to save the file in Impromptu client as an Excel file you will get the same result.
+
+ 
+
+Cross reference information Segment Product Component Platform Version Edition Business Analytics Cognos Series 7 Impromptu Business Analytics Cognos Series 7 Impromptu Web Reports 
+HISTORICAL NUMBER
+ 86016

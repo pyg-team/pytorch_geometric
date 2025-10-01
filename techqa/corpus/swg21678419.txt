@@ -1,0 +1,39 @@
+Title: IBM The messaging engine XXXXYYYYZZZ cannot be started as there is no runtime
+initialized for it yet, retry the operation once it has initialized. - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ The messaging engine XXXXYYYYZZZ cannot be started as there is no runtime
+initialized for it yet, retry the operation once it has initialized. 
+
+CAUSE
+By looking at the systemout.log, we have something like:
+.
+
+[6/24/14 15:05:32:488 EDT] 0000001e SibMessage E [XXXXYYYYZZZ] CWSIS1561E: The messaging engine's unique id does not match that found in the file store. ME_UUID=BPE98764B8E93CB4, ME_UUID(FS)=4587F87990047458
+.
+These are the messaging engine UUID mismatch scenarios: 
+. 
+. 
+1) When the data store or file store of different messaging engine is pointed to the current one. 
+. 
+2) A backup of the data store or file store taken at an earlier time was restored. 
+. 
+3) You have deleted the messaging engine and recreated the Messaging Engine with the same name and trying to use the previous file store which was associated with the old messaging engine(UUID). 
+
+
+ANSWER
+To resolve the issue you will have to delete the file store for this Messaging Engine: . 
+
+XXXXYYYYZZZ 
+. 
+Delete the existing file stores for this messaging engine and restart the JVM. 
+This action will create the new file store for the new UUID's.
+
+Note1: You must treat the log file, the temporary store file, and the permanent store file as one unit; that is, delete operation must be performed on all three files.
+Note2:By performing the suggested action, all the messages in the filestore will be lost.
+
+RELATED INFORMATION
+ Deleting files following removal of a messaging engine [http://www-01.ibm.com/support/knowledgecenter/SSAW57_7.0.0/com.ibm.websphere.nd.multiplatform.doc/info/ae/ae/tjm1060_.html]

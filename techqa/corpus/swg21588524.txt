@@ -1,0 +1,74 @@
+Title: IBM Open Mic "Troubleshooting & Best Practices for Read/Unread Marks", Feb 29, 2012 - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+Presentation and Q&A session for Open Mic "Troubleshooting & Best Practices for Read/Unread Marks", Feb 29, 2012
+
+ANSWER
+IBM hosted an Open Mic session on topic "Troubleshooting & Best Practices for Read/Unread Marks" on 29th Feb 2012. In this Open Mic, the presenter walked through a 30 minute presentation followed by Q&A session. 
+
+Q. What are the recommended things to take care while moving users from one server in cluster to another server in cluster? 
+
+A: If you moving via AdminP process, then there is no need to do any special things. AdminP process will take care of everything required. 
+
+************************************************************************************************************************** 
+
+Q. Can we use the parameter "REPL_SYNC_ALL_UNREAD=1" in Notes Client or is it just a Domino server parameter ? 
+
+A: You can use this parameter in Notes Client also and then it will push the Unread table from local replica to server copy. Make sure that, your local replica is showing correct unread marks and server copy has incorrect unread marks. Then only use this parameter in client side. 
+
+************************************************************************************************************************** 
+
+Q. While upgrading our Domino server , do we need the parameter "REPL_SYNC_ALL_UNREAD=1" or not ? 
+
+A; No you don't need this parameter while upgrading. Use this parameter only if you are already facing unread marks problems like one server showing different unread marks than another. 
+
+************************************************************************************************************************** 
+
+Q. I have tried renaming cache.ndk multiple times for one user but the unread marks problems are still faced by user. I also tried marking all mails as read. What could be the problem ? 
+
+A: The database might be corrupt. Try running fixup -f, compact -c and updall -r on database and then replace design. From this server copy, create a new replica on another server in cluster and new replica on local machine. 
+
+************************************************************************************************************************** 
+
+Q. Is the parameter "ADMINP_EXCHANGE_ALL_UNREAD_MARKS = 1" required to be present in every server ? 
+
+A: No. This parameter needs to be present in server which initiates the process of creating new replicas on secondary server. So its fine, if you just add this parameter to primary server. 
+
+************************************************************************************************************************** 
+
+Q. Can I remove the parameter "ADMINP_EXCHANGE_ALL_UNREAD_MARKS = 1" once all the replicas are created on secondary server ? 
+
+A: Yes, you can, but leaving the parameter there will not harm as well. If you are creating any new replica on secondary server for say new user, then its recommended to have this parameter set on primary server. 
+
+************************************************************************************************************************** 
+
+Q. Can I know, at what time the particular document has been read by user ? 
+
+A: This is possible by taking the dump of unread activity logs. Unread activity logs will show you the time when the document was read by user. It needs some special tools to take the dump. Please contact IBM support if you want to take the dump of unread activity logs. 
+
+************************************************************************************************************************** 
+
+Q. Is it possible to have the same unread marks seen by boss and his secretary ? 
+
+A: If they are using different ID files, then it is not possible. Unread marks are maintained per user. 
+
+************************************************************************************************************************** 
+
+Q. We are facing unread mark issues with Traveler server. Mails read in Traveler are not displayed as read in Notes Client. How to do further troubleshooting on this ? 
+
+A: Please use the debug parameter "Debug_Unread=xx" and collect the server logs for further troubleshooting. 
+
+ 
+
+Download presentation PDF- 
+
+Open Mic_Read Unread marks_29Feb2012.pdf [/support/docview.wss?uid=swg21588524&aid=2]Open Mic_Read Unread marks_29Feb2012.pdf [/support/docview.wss?uid=swg21588524&aid=1]
+
+
+
+
+ * 
+ *

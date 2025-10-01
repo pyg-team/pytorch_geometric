@@ -1,0 +1,23 @@
+Title: IBM Allocation of a DDNAME failed when using VSAMREC CICS VR function - United States
+
+Text:
+VSAMREC error ; Allocation of a DDNAME failed ; 4.2 5655P3000 R420 R42E R42K R430 R43E R43K 5655-P30 5655P30 FMID HCCV420 JCCV42E JCCV42K HCCV430 JCCV43E JCCV43K ; 5655Y2400 R510 R51E R51K R520 R52E R52K 5655-Y24 ; 5655Y24 FMID HCCV510 JCCV51E JCCV51K HCCV520 JCCV52E JCCV52K TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ You are using VSAMREC and receive an error stating that an allocation of a DDNAME failed. VSAMREC is the name of a list command and line operator that can be issued from the ISMF data set list. It is a function of CICS VSAM Recovery for z/OS (CICS VR). 
+
+CAUSE
+A data set allocation in VSAMREC might be specified incorrectly or the data set might not exist or might not be cataloged.
+
+RESOLVING THE PROBLEM
+Enter VSAMREC with the list parameter to create a list of every command (or subcommand) executed by VSAMREC along with any information messages that are issued:
+
+
+VSAMREC LIST(YES) 
+
+This will help you determine the cause of the allocation error. In addition, you can enter the ISRDDN command from ISPF to display a list of current data sets allocated to your current TSO sessions. ISRDDN [http://www.ibm.com/support/knowledgecenter/SSLTBW_2.1.0/com.ibm.zos.v2r1.f54ug00/addn.htm] is a built-in TSO service that lets you examine your dataset allocations.
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ CICSVR CICS VR CICS/VR

@@ -1,0 +1,46 @@
+Title: IBM Datacap Taskmaster 8.1.0 Clients: User Level Privileges - United States
+
+Text:
+ PRODUCT DOCUMENTATION
+
+ABSTRACT
+ Certain client components of Taskmaster 8.1 have been qualified and support Launch and Activation Permissions with user level (account) privileges. 
+
+CONTENT
+Under the conditions as noted, the following client components of Taskmaster 8.1 are qualified and support Launch and Activation Permissions for service accounts that DO NOT require local workstation administrator privileges. 
+
+Client component Conditions DotScan With an operator logged onto the machine with a user level account, DotScan successfully ran the APT Vscan and BatchProfiler task profiles. DotEdit With an operator logged onto the machine with a user level account, DotEdit successfully ran Verify. Taskmaster Web (client browser) With an operator logged onto the machine with a user level account, Taskmaster Web successfully ran Scan and Verify tasks. TMserver service Not applicable Web Client service Web Client Service used a user level account and successfully uploaded batches Fingerprint service Fingerprint Service used a user level account for the app pool identity and successfully matched fingerprints. RV2 (client browser) RV2 used a user level account for the app pool identity and successfully generated reports. Oracle AppUser The Oracle AppUser account hosted and managed the Taskmaster Admin, Engine and Fingerprint databases. APT successfully ran the VScan and Upload tasks. DotScan successfully ran the Batch Profiler and Verify task profiles. Rulerunner When running RuleRunner with an account for Rulerunner Service that is not part of the Administrators group of the local machine which hosts Rulerunner Service, recognition fails. 
+
+IMPORTANT: 
+Rulerunner account permissions on the RRServer 
+You must grant the Rulerunner domain/Windows account the appropriate permissions on its host RRServer by using DCOM Config. 
+ 1.  From the RRServer Windows Start menu, select Administrative Tools > Component Services > Computers > My Computer > DCOM Config. 
+ 2.  In the middle pane, locate and right-click the DCOProcessor application, then select Properties. 
+ 3.  Click the Security tab. 
+ 4.  Under Launch and Activate Permissions, select Customize, then click Edit. 
+ 5.  Add the Rulerunner domain/Windows account and set Local Launch and Local Activation to Allow. 
+ 6.  Click OK (twice). 
+ 7.  In the middle pane, locate and right-click the RRProcessor application, then select Properties. 
+ 8.  Click the Security tab. 
+ 9.  Under Launch and Activate Permissions, select Customize, then click Edit. 
+ 10. Add the Rulerunner domain/Windows account and set Local Launch and Local Activation to Allow. 
+ 11. Click OK (twice). 
+ 12. Close the Component Services window.
+
+
+For OCR_S recognition to work correctly, user level rights for Read, Write and Delete must be given to the C:\Windows\Temp\IBM folder. Rulerunner must first be run with the account in the administrators group, but it can be taken out of the group for subsequent runs. 
+
+EXCEPTIONS 
+The following client components of Taskmaster 8.1 are NOT supported to run under user level accounts. That is, they DO require local workstation administrator privileges: 
+
+Client Component Comments Rulerunner Manager Must be run with Admin privileges Taskmaster Server Manager Must be run with Admin privileges Web Server Configurator Must be run with Admin privileges Web Client Configurator Must be run with Admin privileges NENU Nenu Config must be started as an administrator. 
+
+Nenu.exe: The following argument is required to run Nenu.exe, which cannot be run without prompting for an administrator account: 
+
+c:\Datacap\Taskmaster>NENU.exe c:\Datacap\Settings.xml
+
+A fix for this limitation is targeted for a future release. OCR/A (Abbyy) RecognizePageOCR_A on the APT application cancels the batch with the following error: 
+
+"Access to C:\Windows\ was denied."
+
+A fix for this error is targeted for a future release.

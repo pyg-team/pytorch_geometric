@@ -1,0 +1,176 @@
+Title: IBM PI41980: ANALYZE FAILS WITH SQLINTEGRITYCONSTRAINTVIOLATIONEXCEPTION WHEN UPDATING COLUMN STATISTICS - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Analyze fails with SqlIntegrityConstraintViolationException when
+   updating column statistics
+   
+   This is the error from the log
+   2015-05-26 22:07:42,111 ERROR
+   com.ibm.biginsights.biga.udf.SqlReturn
+   [Thread-560] : [BSL-0-593c4dd9f]: Internal error: DB2 SQL Error:
+   SQLCODE=-1227, SQLSTATE=23521, SQLERRMC= 9\x07f\x13)\x0C \x10{3
+   ;
+   HIGH2KEY;3, DRIVER=4.18.60
+   The SQL statement failed because of a non-severe system error.
+   Subsequent SQL statements can be processed. (Reason DB2 SQL
+   Error:
+   SQLCODE=-1227, SQLSTATE=23521, SQLERRMC= 9\x07f\x13)\x0C \x10{3
+   ;
+   HIGH2KEY;3, DRIVER=4.18.60.)
+   at
+   com.ibm.biginsights.biga.udf.AnalyzeTool.doETL(AnalyzeTool.java:
+   937)
+   at
+   com.ibm.biginsights.biga.udf.AnalyzeTool.analyze(AnalyzeTool.jav
+   a:
+   460)
+   at
+   com.ibm.biginsights.biga.udf.AnalyzeTool.analyze(AnalyzeTool.jav
+   a:
+   353)
+   at com.ibm.biginsights.biga.udf.BIGSQL_DDL.doAnalyzeStatement
+   (BIGSQL_DDL.java:571)
+   at
+   com.ibm.biginsights.biga.udf.BIGSQL_DDL.processDDL(BIGSQL_DDL.ja
+   va:
+   235)
+   Caused by:
+   com.ibm.db2.jcc.am.SqlIntegrityConstraintViolationException:
+   DB2 SQL Error: SQLCODE=-1227, SQLSTATE=23521, SQLERRMC=
+   9\x07f\x13)
+   \x0C \x10{3  ;HIGH2KEY;3, DRIVER=4.18.60
+   at com.ibm.db2.jcc.am.kd.a(kd.java:743)
+   at com.ibm.db2.jcc.am.kd.a(kd.java:66)
+   at com.ibm.db2.jcc.am.kd.a(kd.java:135)
+   at com.ibm.db2.jcc.am.bp.b(bp.java:2439)
+   at com.ibm.db2.jcc.am.bp.c(bp.java:2422)
+   at com.ibm.db2.jcc.t4.bb.l(bb.java:408)
+   at com.ibm.db2.jcc.t4.bb.a(bb.java:62)
+   at com.ibm.db2.jcc.t4.p.a(p.java:50)
+   at com.ibm.db2.jcc.t4.wb.b(wb.java:220)
+   at com.ibm.db2.jcc.am.cp.tc(cp.java:3555)
+   at com.ibm.db2.jcc.am.cp.b(cp.java:4528)
+   at com.ibm.db2.jcc.am.cp.lc(cp.java:814)
+   at com.ibm.db2.jcc.am.cp.executeUpdate(cp.java:788)
+   at com.ibm.biginsights.biga.udf.AnalyzeTool.updateColumnStats
+   (AnalyzeTool.java:1652)
+   at
+   com.ibm.biginsights.biga.udf.AnalyzeTool.etlStatistics(AnalyzeTo
+   ol.
+   java:1106)
+   at
+   com.ibm.biginsights.biga.udf.AnalyzeTool.doETL(AnalyzeTool.java:
+   924)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  See Error Description
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This problem is fixed in Version 3.0.0.2+customer fix and later
+   fix packs
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI41980
+   
+   
+ * REPORTED COMPONENT NAME
+   INFO BIGINSIGHT
+   
+   
+ * REPORTED COMPONENT ID
+   5725C0900
+   
+   
+ * REPORTED RELEASE
+   300
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-05-29
+   
+   
+ * CLOSED DATE
+   2015-07-27
+   
+   
+ * LAST MODIFIED DATE
+   2015-07-27
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   INFO BIGINSIGHT
+   
+   
+ * FIXED COMPONENT ID
+   5725C0900
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R300 PSY
+   UP

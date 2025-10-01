@@ -1,0 +1,199 @@
+Title: IBM IV60077: RTC - 108432 - AN ATTEMPT TO PROVISION A ROLE ACCESS TO SELF BY ISIM WEBSERVICES FAILS WITH CTGIMS009E ERROR - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  PRODUCT VERSION
+   ITIM 6.0.0.2
+   
+   PROBLEM DESCRIPTION
+   The customer experiences the following exception in logs:
+   com.ibm.itim.apps.ApplicationException: CTGIMS009E You do not
+   have the authority to perform this operation
+     at
+   com.ibm.itim.apps.ejb.organization.PersonManagerBean.modifyPerso
+   n(PersonManagerBean.java:1325)
+     at
+   com.ibm.itim.apps.ejb.organization.PersonManagerBean.modifyPerso
+   n(PersonManagerBean.java:1220)
+     at
+   com.ibm.itim.apps.ejb.organization.EJSRemoteStatelessenroleejb_P
+   ersonManagerHome_98299293.modifyPerson(Unknown Source)
+     at
+   com.ibm.itim.apps.ejb.organization._PersonManager_Stub.modifyPer
+   son(_PersonManager_Stub.java:920)
+     at
+   com.ibm.itim.apps.provisioning.AccessManager$1.run(AccessManager
+   .java:160)
+     at
+   com.ibm.itim.apps.provisioning.AccessManager$1.run(AccessManager
+   .java:158)
+     at
+   java.security.AccessController.doPrivileged(AccessController.jav
+   a:362)
+     at javax.security.auth.Subject.doAs(Subject.java:573)
+     at
+   com.ibm.websphere.security.auth.WSSubject.doAs(WSSubject.java:19
+   5)
+     at
+   com.ibm.websphere.security.auth.WSSubject.doAs(WSSubject.java:15
+   2)
+     at
+   com.ibm.itim.apps.impl.websphere.WebSpherePlatformContextImpl.do
+   As(WebSpherePlatformContextImpl.java:97)
+     at
+   com.ibm.itim.apps.provisioning.AccessManager.createAccess(Access
+   Manager.java:157)
+     at
+   com.ibm.itim.ws.services.impl.WSAccessServiceSoapBindingImpl.cre
+   ateAccess(WSAccessServiceSoapBindingImpl.java:118)
+     ................
+   when WSAccessServiceService/createAccess of ISIM web services is
+   invoked to provision a role access to self.
+   The exception is caused by the lack of modify permission on
+   person which is not granted to self by the default ACIs.
+   However this operation can be completed through the SSUI
+   (request role access) given the default ACIs.
+   
+   STEPS TO DUPLICATE
+   1. Log into ISIM, create an organizational role and enable an
+      access on it.
+   2. Login to ISIM through WSSessionService using non-admin user
+   3. Request a role access for the role created in step 1 using
+      WSAccessService/createAccess web service.
+   4. You will see that this operation fails with
+      ?com.ibm.itim.apps.ApplicationException: CTGIMS009E You do
+      not have the authority to perform this operation
+      reported in the ISIM trace.
+   
+   DESIRED BEHAVIOR
+   When WSAccessServiceService/createAccess of ISIM web services is
+   invoked, non-admin user should be able to provision a role
+   access to self without any exception (with default ACIs).
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  NA
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *   users affected:
+   Users provisioning role access to self using ISIM Web services.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *   This fix for this APAR is contained in the
+   following maintenance packages:
+   | Interim Fix | 6.0.0.3-ISS-SIM-IF0011
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV60077
+   
+   
+ * REPORTED COMPONENT NAME
+   SEC IDENTITY MG
+   
+   
+ * REPORTED COMPONENT ID
+   5724C3406
+   
+   
+ * REPORTED RELEASE
+   600
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-05-06
+   
+   
+ * CLOSED DATE
+   2014-06-26
+   
+   
+ * LAST MODIFIED DATE
+   2014-06-26
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *     SERVER
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   SEC IDENTITY MG
+   
+   
+ * FIXED COMPONENT ID
+   5724C3406
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R600 PSY
+   UP

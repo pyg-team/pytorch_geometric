@@ -1,0 +1,167 @@
+Title: IBM IC96090: IN IE8 A PAGE IN PROCESS ADMIN CONSOLE CAN NOT BE DISPLAYED PROPERLY WHEN DATA REQUEST URL IS TO LONG. - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Version 8.0.1 Fix Pack 2 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24035701]
+Version 7.5.1 Fix Pack 2 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24036462]
+Version 8.5 Refresh Pack 5 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24037683]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When logged into Process Admin Console using IE8 or less and
+   working for example on the "Bulk User Attribute Assignments"
+   panel, it does not load properly and the following error is
+   displayed on the page: "Internet Explorer cannot display
+   webpage".
+   
+   The reason for the problem is the limited number of 2048
+   characters allowed in an URL for IE8. Requests to the server
+   with URLs longer then the limit are not transferred by the
+   browser and the page can not be displayed with the proper data.
+   Thus when there are a lot of User Attributes defined the URL
+   includes all these data and reaches the limit.
+   
+   The problem can also occur on other panels of the Process Admin
+   Console if the URL send to the server is longer then 2048
+   Characters.
+   
+   The problem can be avoided by sending the necessary data not in
+   the URL with a GET request but in the request header as a POST.
+   The limit only counts for the URL not the request header.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  In IE8 a page in Process Admin Console cannot be displayed
+   properly when data request URL is too long.
+   
+   PROBLEM DETAILED DESCRIPTION:
+   When logged into Process Admin Console using IE8 (or lower)
+   and working for example on the "Bulk User Attribute Assignments"
+   panel, it does not load properly and the following error is
+   displayed on the page: "Internet Explorer cannot display
+   webpage".
+   
+   The reason for the problem is the limited number of 2048
+   characters allowed in an URL for IE8. Requests to the server
+   with URLs longer than the limit are not transferred by the
+   browser and the page cannot be displayed with the proper data.
+   When there are a lot of User Attributes defined, the URL
+   includes all these data and reaches the limit.
+   
+   The problem can also occur on other panels of the Process Admin
+   Console if the URL sent to the server is longer than 2048
+   Characters.
+   
+   The problem can be avoided by sending the necessary data not in
+   the URL with a GET request but in the request header as a POST.
+   The limit only counts for the URL not the request heade
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Do not make a POST to a GET when the URL is longer than 2047
+   and IE8/IE7 is used.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC96090
+   
+   
+ * REPORTED COMPONENT NAME
+   WS LOMBRDI EDTN
+   
+   
+ * REPORTED COMPONENT ID
+   5725A3600
+   
+   
+ * REPORTED RELEASE
+   720
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-09-19
+   
+   
+ * CLOSED DATE
+   2013-12-16
+   
+   
+ * LAST MODIFIED DATE
+   2013-12-16
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    JR47873 [http://www-01.ibm.com/support/docview.wss?uid=swg1JR47873]
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WS LOMBRDI EDTN
+   
+   
+ * FIXED COMPONENT ID
+   5725A3600
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R720 PSY
+   UP

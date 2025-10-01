@@ -1,0 +1,45 @@
+Title: IBM Unable to use Information Server due to expired passwords for WAS, xmeta or isadmin users - United States
+
+Text:
+xmeta isadmin dsadm wasadmin was password change TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ A password change for any of the following users is causing Information Server to either not start or users are unable to login:
+
+WAS administrator
+xmeta database user
+Information Server admin user 
+
+RESOLVING THE PROBLEM
+The following commands can be used to reset the passwords. Make sure to match these to your new passwords for the particular user. These commands should be run with the dsadm/isadmin user: 
+
+Note: For Unix/Linux users 
+
+When running the AppServerAdmin command with -was option it does try to update security.xml in addition to our internal stored password. Similarly when running the AppServerAdmin command with -db option, it updates WAS also, to communicate the xmeta password, as well as the internal stored password. If these files under WebSphere only have write permission for root, then the command would need to run as root. 
+
+The DirectoryAdmin on the other hand updates the registry within xmeta (if using internal registry), therefore dsadm user is all that is necessary for this command.  * Windows:
+   
+   Replace the WAS administrator user/password:
+   <Info Server>\ASBServer\bin\AppServerAdmin.bat -was -user <new user name> -password <new password>
+   
+   Replace the xmeta database user/password:
+   <Info Server>\ASBServer\bin\AppServerAdmin.bat -db -user <new user name> -password <new password>
+   
+   Add a user to the Information Server internal directory (-admin gives it administration privileges):
+   <Info Server>\ASBServer\bin\DirectoryAdmin.bat -user -admin -userid <user name> -password <password>
+   
+   Where:
+   <Info Server> is the path of the Information Server directory, e.g. C:\IBM\InformationServer 
+ * Unix:
+   
+   Replace the WAS administrator user/password:
+   <Info Server>/ASBServer/bin/AppServerAdmin.sh -was -user <new user name> -password <new password>
+   
+   Replace the xmeta database user/password:
+   <Info Server>/ASBServer/bin/AppServerAdmin.sh -db -user <new user name> -password <new password>
+   
+   Add a user to the Information Server internal directory (-admin gives it administration privileges):
+   <Info Server>/ASBServer/bin/DirectoryAdmin.sh -user -admin -userid <user name> -password <password>
+   
+   Where:
+   <Info Server> is the path of the Information Server directory, e.g. /IBM/InformationServer

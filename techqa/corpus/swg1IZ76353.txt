@@ -1,0 +1,190 @@
+Title: IBM IZ76353: MQ SITUATION NOT FIRING WHEN USING ENUM VALUE - United States
+
+Text:
+  FIXES ARE AVAILABLE
+IBM Tivoli Monitoring 6.2.2 Fix Pack 8 (6.2.2-TIV-ITM-FP0008) [http://www-01.ibm.com/support/docview.wss?uid=swg24031354]
+IBM Tivoli Monitoring 6.2.2 Fix Pack 9 (6.2.2-TIV-ITM-FP0009) [http://www-01.ibm.com/support/docview.wss?uid=swg24032067]
+IBM Tivoli Monitoring 6.2.2 Fix Pack 6 (6.2.2-TIV-ITM-FP0006) [http://www-01.ibm.com/support/docview.wss?uid=swg24030135]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  APAR Type:            Field
+   Approver Initials:    BS
+   Severity:             2
+   Reported Release:     621
+   Compid:               5724C04EP Tivoli Enterprise Portal
+   ABSTRACT:             MQ situation not firing when using enum
+   value
+   PROBLEM DESCRIPTION:
+   
+   When a situation uses an enumerated value the tems is not
+   generating an
+   alert when the situation data shows it to be true.
+   .
+   
+   RECREATE INSTRUCTIONS:
+   1) Code a situation which is testing on "Time to Full Msgs
+   (Sec)" ==
+      "Zero Put Get Rates"
+   2) In the Queue Statistics workspace look at the column "Time to
+   Full
+      Msgs (Sec)" and in my case I had 13 queues that met this
+   criteria
+   3) Wait for situation to fire and you will find it wont fire
+   4) Code a situation which is testing on "Time to Full Msgs (Sec)
+   !=
+      "Zero Put Get Rates"
+   5) In the Queue Statistics workspace look at the column "Time to
+   Full
+      Msgs (Sec)" and in my case all 13 queues had "Time to Full
+   Msgs
+      (Sec)" set to "Zero Put Get Rates"
+   6) Wait for situation to fire and 13 instances of the event are
+      incorrectly raised.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  An MQ agent situation authored using the Queue Statistics
+   attribute "Time to Full Queue (Sec)" does not raise when
+   expected.
+   
+   The following is a specific example of this:
+   
+   Author a situation to test
+   
+   "Time to Full Queue (Sec)" EQUAL (EQ, ==) "Zero Put Get Rates".
+   
+   The formula would be as follows:
+   
+   *IF *VALUE Queue_Statistics.Time_to_Full_Queue *EQ
+   Zero_Put_Get_Rates
+   
+   A situation with the formula above will not raise when the
+   condition is met.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The code in the Tivoli Enterprise Monitoring Server has been
+   changed to accept a new attribute keyword ("nose" NO Scale Enum)
+   to direct it not to apply SCALE on a value that's set from an
+   ENUM.
+   
+   This APAR has a co-requisite APAR IZ79111 that is needed for the
+   specific MQ situation to raise when the condition is met.
+   IZ79111 is in a separate release for the MQ Agent and needs to
+   be installed when that is available.
+   
+   
+   The fix for this APAR is contained in the following maintenance
+   packages:
+   
+     | fix pack | 6.2.1-TIV-ITM-FP0004
+     | fix pack | 6.2.2-TIV-ITM-FP0004
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  A workaround can be done by removing the "scal 2" attribute
+   keyword and value from a specific attribute when the behavior
+   mentioned above is occurring. This workaround will only work if
+   an ENUM vale/vali value is used for a situation.
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ76353
+   
+   
+ * REPORTED COMPONENT NAME
+   TEP
+   
+   
+ * REPORTED COMPONENT ID
+   5724C04EP
+   
+   
+ * REPORTED RELEASE
+   621
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-05-23
+   
+   
+ * CLOSED DATE
+   2010-08-26
+   
+   
+ * LAST MODIFIED DATE
+   2011-03-14
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    OA34904 [http://www-01.ibm.com/support/docview.wss?uid=swg1OA34904] OA35863 [http://www-01.ibm.com/support/docview.wss?uid=swg1OA35863]
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TEMS
+   
+   
+ * FIXED COMPONENT ID
+   5724C04MS
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R622 PSY
+   UP

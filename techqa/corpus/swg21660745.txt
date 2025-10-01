@@ -1,0 +1,16 @@
+Title: IBM Export RuleApp from RES using API - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How to export RuleApp from Rule Execution Server (RES) as a jar file? 
+
+ANSWER
+There is no API to directly generate the jar from the ruleapp deployed on RES. However we can start from the jmxremote sample that shows how to use the IlrJMXRuleAppMBean to manage ruleapp from the RES. 
+
+The sample can be found at:
+WebSphere ILOG JRules BRMS V7.1 > Samples > Rule Execution Server samples >> [http://pic.dhe.ibm.com/infocenter/brjrules/v7r1/topic/com.ibm.websphere.ilog.jrules.doc/Content/Business_Rules/Documentation/_pubskel/JRules/ps_JRules_Global1756.html]
+Automated ruleset management sample [http://pic.dhe.ibm.com/infocenter/brjrules/v7r1/topic/com.ibm.websphere.ilog.jrules.doc/Content/Business_Rules/Documentation/_pubskel/JRules/ps_JRules_Global1756.html]
+
+From there, we will make use of the export() [http://pic.dhe.ibm.com/infocenter/brjrules/v7r1/topic/com.ibm.websphere.ilog.jrules.doc/html/api/html/ilog/rules/res/model/mbean/IlrJMXRuleAppMBean.html#export()] method of IlrJMXRuleAppMBean to get the content of the ruleapp as a byte[]. Once you have the content, you can write into a jar using FileOutputStream.

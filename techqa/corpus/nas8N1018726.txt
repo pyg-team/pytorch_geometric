@@ -1,0 +1,77 @@
+Title: IBM How to Install the Web Services Feature Pack Using a Response File - United States
+
+Text:
+WAS TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This document describes the steps necessary to install the Web Services Feature Pack for WebSphere 6.1 using a response file. 
+
+RESOLVING THE PROBLEM
+1. Download the Web Services Feature Pack image from the following URL: 
+
+http://www-1.ibm.com/support/docview.wss?rs=180&uid=swg21264563 [http://www-1.ibm.com/support/docview.wss?rs=180&uid=swg21264563]
+
+2. Copy the .zip file to a convenient and logical location on your Integrated File System. In this example, I copied it here:
+Example: /QIBM/ProdData/WebSphere/UpdateInstaller/V61/UPDI/maintenance/6.1.0-WS-WAS-WSFEP-i5osPPC.zip
+
+3. Extract the contents to that directory.
+
+4. Modify the responsefile.WEBSV.txt file inside the WEBSRV folder to reflect your environment. In the example, the following flags were uncommented:
+
+-silent
+-OPT silentInstallLicenseAcceptance="true"
+-OPT disableOSPrereqChecking="true"
+-OPT installLocation=/QIBM/ProdData/WebSphere/AppServer/V61/ND (Note: This is the location where you have WAS 6.1 installed)
+-OPT traceFormat=ALL
+-OPT traceLevel=CONFIG
+
+5. From the i5/OS command line, enter the QSHELL environment by typing STRQSH on the command line and pressing Enter.
+
+6. Change directories to the location of the installation script in the WEBSRV folder from the image you downloaded:
+Example: cd /QIBM/ProdData/WebSphere/UpdateInstaller/V61/UPDI/maintenance/WEBSRV
+
+7. Execute the installation script and specify the path to the response file you modified earlier:
+Example: install -options /QIBM/ProdData/WebSphere/UpdateInstaller/V61/UPDI/maintenance/WEBSRV/responsefile.WEBSRV.txt
+
+This will install the Web services feature pack.
+
+You can verify that it was installed correctly by changing directories in QSHELL to your WebSphere installation directory:
+Example: cd /QIBM/ProdData/WebSphere/AppServer/V61/ND
+
+Execute the versionInfo script:
+Example: versionInfo
+
+You will see some data being printed in your QSHELL session and in that data you should see something similar to this:
+
+Installed Product 
+--------------------------------------------------------------------------------
+Name WebServices Feature Pack 
+Version 6.1.0.xx
+ID WEBSERVICES
+Build Level cf170819.04
+Build Date 5/15/08
+
+--------------------------------------------------------------------------------
+
+Now that you have installed the Web Services Feature Pack, you need to apply the latest maintenance pack for it, which you can find at the following URL:
+
+http://www-1.ibm.com/support/docview.wss?rs=180&uid=swg27008534 [http://www-1.ibm.com/support/docview.wss?rs=180&uid=swg27008534]
+
+Important Note:
+
+If the Web Services Feature Pack is installed on your system, you must download and install both WebSphere Application Server Fix Pack 19 and Web Services Feature Pack Fix Pack 19 together, or your Update Installer will not allow the installation to proceed. 
+
+When upgrading WebSphere Application Server and Web Services Feature Pack for Application Server, as well as Application Client products to version 6.1.0.19 or higher level, a mandatory Interim Fix must be installed prior to the installation of Fix Pack 6.1.0.19 or higher. The Update Installer will not allow you to upgrade WebSphere Application Server and Web Services Feature Pack to version 6.1.0.19 without first installing these Interim Fixes.
+
+Download Interim Fix PK53084 which is required to be installed while upgrading WebSphere Application Server and Web Services Feature Pack for Application Server to version 6.1.0.19 or higher level.
+
+Download Interim Fix PK53210 which is required to be installed while upgrading WebSphere Application Client and Web Services Feature Pack for Application Client to version 6.1.0.19 or higher level. 
+
+For instructions on how to install this fix pack, refer to the Rochester Support Center knowledgebase document New, How to Install the Web Services Fix Pack: 
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Operating System IBM i 7.1 Operating System IBM i 6.1 
+HISTORICAL NUMBER
+ 494507683

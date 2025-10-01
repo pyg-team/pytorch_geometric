@@ -1,0 +1,155 @@
+Title: IBM 6.1: Composite Application Manager for WebSphere Download Document for Solaris - United States
+
+Text:
+Installation DOWNLOADABLE FILES
+
+ABSTRACT
+ This describes how to download and assemble Composite Application Manager for WebSphere 6.1 components using the Passport Advantage® Online Web site. 
+
+DOWNLOAD DESCRIPTION
+
+
+[http://www.ibm.com/i/c.gif] IBM Tivoli Composite Application Manager for WebSphere helps increase the performance and availability of your business-critical applications by providing real-time problem detection, analysis and repair. The diagnostics provided at the method level can pinpoint code problems to help resolve problems quickly, and reduce support and operations costs. 
+
+Space requirements and supported platforms
+
+See Prerequisites: 
+
+Data Collectors and Monitoring Agents:
+http://publib.boulder.ibm.com/tividd/td/ITCAMWAS/prereq61/en_US/HTML/itcam6.html [http://publib.boulder.ibm.com/tividd/td/ITCAMWAS/prereq61/en_US/HTML/itcam6.html].
+
+Managing Server:
+http://publib.boulder.ibm.com/tividd/td/ITCAMMS/prereq61/en_US/HTML/itcam6.html [http://publib.boulder.ibm.com/tividd/td/ITCAMMS/prereq61/en_US/HTML/itcam6.html].
+
+Downloading and assembling the product
+
+ 1. Download all of the required parts, which are described by platform in the tabbed sections of this document. 
+ 2. Unpack each of the parts into a single temporary directory on your system. 
+ 3. Follow the instructions in the Quick Start Guide and the Installation and Configuration Guide [http://publib.boulder.ibm.com/infocenter/tivihelp/v3r1/index.jsp?toc=/ com.ibm.itcamrtt.doc/toc.xml] to install the product. 
+    
+    The Installation and Configuration Guide also provides an architectural overview of the product that defines the terms used in the following tables. 
+
+Links to other platforms:
+
+
+
+AIX [http://www-01.ibm.com/support/docview.wss?uid=swg24012582] HP-UX [http://www-01.ibm.com/support/docview.wss?uid=swg24014102] Linux [http://www-01.ibm.com/support/docview.wss?uid=swg24014115] Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24014104] [http://www.ibm.com/i/c.gif] [http://www.ibm.com/i/c.gif]  Assemblies
+
+ *  Assembly Electronic download
+   image number Required? IBM Tivoli Composite Application Manager for WebSphere and J2EE V6.1 eAssembly: Managing Server Components CR4MLML Yes IBM Tivoli Composite Application Manager for WebSphere V6.1 eAssembly: Data Collector Components CR4MKML Yes IBM Tivoli Composite Application Manager for WebSphere V6.1 eAssembly: DB2 UDB ESE V8.2 Component CR4MNML For embedded installations of DB2 with the Managing Server only IBM Tivoli Composite Application Manager for WebSphere V6.1 eAssembly: WAS V6.1 Component CR4MMML For embedded installations of WAS with the Managing Server only IBM Tivoli Composite Application Manager for WebSphere V6.1 eAssembly: ITM V6.1.0.3 Component CR4MPML Yes, if installing TEMA IBM Tivoli Composite Application Manager for WebSphere V6.1 Quick Start Guide (English and French) C96JTML.pdf Recommended 
+ * Required images
+ * To install IBM Tivoli Composite Application Manager for WebSphere and J2EE 6.1 for Solaris, download the following parts:
+ *  Electronic download
+   image number
+   
+   Description
+   
+   Required? C96K2EN.zip
+   
+   ITCAM for WebSphere and J2EE Managing Server for Solaris
+   
+   Yes. if your Managing Server runs on this Solaris platform C96JUEN.zip
+   
+   ITCAM for WebSphere: Data Collector for Windows
+   
+   If you plan to install Data Collector on these platforms C96JVEN.tar
+   
+   ITCAM for WebSphere: Data Collector for Unix
+   
+   If you plan to install Data Collector on these platforms C96JWEN.tar
+   
+   ITCAM for WebSphere: Data Collector for Linux on x86, zSeries, and POWER
+   
+   If you plan to install Data Collector on these platforms C96KHEN.zip
+   
+   ITCAM for WebSphere: Tivoli Enterprise Monitoring Agent (TEMA) for Windows
+   
+   If you plan to install ITCAM for WebSphere TEMA on these platforms C96KIEN.tar
+   
+   ITCAM for WebSphere: Tivoli Enterprise Monitoring Agent (TEMA) for Unix
+   
+   If you plan to install ITCAM for WebSphere TEMA on these platforms C96KJEN.tar 
+   
+   ITCAM for WebSphere: Tivoli Enterprise Monitoring Agent (TEMA) for Linux on x86
+   
+   If you plan to install ITCAM for WebSphere TEMA on these platforms C96KKEN.zip 
+   
+   ITCAM for J2EE: Tivoli Enterprise Monitoring Agent (TEMA) for Windows
+   
+   If you plan to install ITCAM for J2EE TEMA on these platforms C96KLEN.tar
+   
+   ITCAM for J2EE: Tivoli Enterprise Monitoring Agent (TEMA) for Unix
+   
+   If you plan to install ITCAM for J2EE TEMA on these platforms C96KMEN.tar
+   
+   ITCAM for J2EE: Tivoli Enterprise Monitoring Agent (TEMA) for Linux on x86 and POWER
+   
+   If you plan to install ITCAM for J2EE TEMA on these platforms C96KTEN.zip
+   
+   ITCAM for Webservers: Tivoli Enterprise Monitoring Agent (TEMA) for Windows
+   
+   If you plan to install ITCAM for Webservers TEMA on these platforms C96KUEN.tar
+   
+   ITCAM for Webservers: Tivoli Enterprise Monitoring Agent (TEMA) for Unix
+   
+   If you plan to install ITCAM for Webservers TEMA on these platforms C96KVEN.tar
+   
+   ITCAM for Webservers: Tivoli Enterprise Monitoring Agent (TEMA) for Linux on x86
+   
+   If you plan to install ITCAM for Webservers TEMA on these platforms 
+ * 
+ *  [http://www.ibm.com/i/c.gif] 
+ * 
+ * Optional images
+ * Optionally, you can download the following parts, as required by your environment:
+ *  Electronic download
+   image number
+   
+   Description
+   
+   C96K7EN.tar
+   
+   ITCAM for WebSphere and J2EE Managing Server: Language Support
+   
+   C96JXML.tar
+   
+   ITCAM for WebSphere Data Collector: Language Support
+   
+   C96JYML.tar
+   
+   IBM WebSphere Application Server: Community Edition
+   
+   C960GML.tar
+   
+   ITCAM for J2EE Data Collector: Language Support
+   
+   C96KNML.tar
+   
+   ITCAM for WebSphere: Tivoli Enterprise Management Agent: Language Support
+   
+   C96KPML.tar
+   
+   ITCAM for J2EE: Tivoli Enterprise Monitoring Agent (TEMA): Language Support
+   
+   C96KQML.tar
+   
+   WebServer Tivoli Enterprise Monitoring Agent (TEMA): Language Support
+   
+   
+
+[http://www.ibm.com/i/c.gif] PREREQUISITES
+View the Composite Application Manager detailed system requirements. 
+
+URL LANGUAGE SIZE(Bytes) Prerequisites [http://publib.boulder.ibm.com/infocenter/tivihelp/v3r1/index.jsp?toc=/com.ibm.itcamwas.doc/toc.xml] English 1 
+INSTALLATION INSTRUCTIONS
+Follow the instructions in the Quick start guide to install the product.
+
+URL LANGUAGE SIZE(Bytes) Quick Start Guide [http://publib.boulder.ibm.com/infocenter/tivihelp/v3r1/index.jsp?toc=/com.ibm.itcamwas.doc/toc.xml] English 1 
+DOWNLOAD PACKAGE
+
+
+Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options Passport Advantage Online Web site 11/22/2006 English 1 HTTP [http://www.ibm.com/software/howtobuy/passportadvantage/pao_customers.htm] 
+TECHNICAL SUPPORT
+ Passport Advantage Online support at
+http://www.ibm.com/software/howtobuy/passportadvantage/paocustomer/docs/en_US/ecare.html [http://www.ibm.com/software/howtobuy/passportadvantage/paocustomer/docs/en_US/ecare.html]
+http://www-306.ibm.com/software/sysmgmt/products/support/IBMTivoliCompositeApplicationManagerforWebSphere.html [http://www-306.ibm.com/software/sysmgmt/products/support/IBMTivoliCompositeApplicationManagerforWebSphere.html]

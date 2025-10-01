@@ -1,0 +1,22 @@
+Title: IBM Why am I seeing a "BLU failed at this line, Detected in file:sqlrl_table.C" message in the db2diag.log? - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Why am I seeing a "BLU failed at this line, Detected in file:sqlrl_table.C [file:sqlrl_table.C]" message in the db2diag.log? 
+
+CAUSE
+For example:
+FUNCTION: DB2 UDB, database utilities, sqluReportErrToDiag, probe:0
+MESSAGE : BLU failed at this line , 2892, ffffffff801a006d, Detected in
+file:sqlrl_table.C [file://sqlrl_table.C], Line:2892
+
+
+
+ANSWER
+This is a defect first reported in v10.5 FP6 when attempting to complete a CREATE TABLE statement, which should be successful. 
+
+APAR IT19793 has been opened to address this cosmetic defect and will be corrected in a future fixpack yet to be determined at this time. 
+
+The MESSAGE above is a cosmetic in nature and can be ignored too.

@@ -1,0 +1,31 @@
+Title: IBM AWSUI0766E and AWSUI0833E messages trying to connect a DWC to a TWSz controller - United States
+
+Text:
+5697WSZ01 TIVOWEBUI subsystem mismatch TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Trying to connect a TDWC to a controller and getting internal message EQQX145E 
+
+CAUSE
+TWSz server task is running a different TWSz release than the controller is running
+
+DIAGNOSING THE PROBLEM
+Messages seen in DWC: 
+
+AWSUI0766E Test connection to [TWSR] : failed. 
+AWSUI0833E The operation could not be completed. There has been a 
+communication failure. 
+The internal message is: EQQX145E THE SUBSYSTEM PROGRAM IS NOT OF THE 
+CORRECT RELEASE 
+
+
+RESOLVING THE PROBLEM
+The EQQX145E message is the key- it indicates that the TWSz server task is not running the 
+
+same release of TWSz as the controller task to which it connects. This was not evident from the JCL 
+
+as both the server and controller had the same SEQQLMD0 library name in the STEPLIB- however, 
+
+this DSNAME was an ALIAS and the ALIAS pointed to a back-level copy of SEQQLMD0 where the 
+
+server task was running.

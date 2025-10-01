@@ -1,0 +1,63 @@
+Title: IBM Can RFT and RPT reside on the same host? - United States
+
+Text:
+RFT; RPT; coexistence; coexist; packages; package locations; RFT and RPT on same host; 71RRT-RPTPLAN; 71RRT-RPTINS; 71RRT-RPTCONF; 71RRT-RPTREC; 71RRT-RPTUPLOAD; 71RRT-RPTPLAY; 71RRT-RPTTS; 71RRT-RFTPLAN; 71RRT-RFTINS; 71RRT-RFTCONF; 71RRT-RFTREC; 71RRT-RFTUPLOAD; 71RRT-RFTPLAY; 71RRT-RFTTS TECHNOTE (FAQ)
+
+QUESTION
+ Under what conditions can RFT (Rational Functional Tester) and RPT (Rational Performance Tester) reside on the same host? 
+
+ANSWER
+
+Before installing RFT and RPT on the same host, examine the requirements. There are two different scenarios: script creation and script playback.
+
+You use RFT workbench and RPT workbench to create scripts. The difference is that RFT workbench must reside on each T6 host where you want to playback RFT scripts. The scripts playback through RFT workbench.
+
+In contrast, RPT scripts play back on a T6 host under a copy of the RPT runtime engine. Each time you export a script from RPT, the ITCAM export plugin uploads a copy of the runtime package to the AMC (Application Management Console) -- if the AMC does not already have a copy of that runtime. Then, the AMC distributes the runtime packages to the agents that are playing back RPT scripts that require that runtime. 
+
+Each RPT script keeps track of its runtime package, and the location of that runtime package, in its properties file. Every time you update RPT workbench, you are implicitly creating a new runtime package. 
+
+Because RPT scripts run under a copy of the RPT runtime engine, you do not need to install a copy of RPT workbench on the T6 playback hosts. In fact, the best practice is to install RPT workbench on a dedicated host, and install T6 agents on separate hosts -- without RPT workbench. This approach ensures that T6 agents do not compete with RPT workbench for system resources like memory and CPU.
+
+For script creation, you can install RFT workbench and RPT workbench on the same host. Remember that RPT and RFT compete with each other for resources. Also, RFT requires exclusive use of the mouse and keyboard. So, installing RFT and RPT on the same host may not be ideal.
+
+
+Best Practices
+
+Here are the requirements for RFT and RPT to reside on the same host.
+
+1) If you use a given host only as a playback machine, it is best to avoid installing RPT workbench on that host. 
+
+2) Different RPT/RFT versions (for example, RPT 8.3 vs RFT 8.1) have different common libraries. They are versioned to avoid conflicts, but it is best to install them in a separate Rational package location anyway. The "package location" is the Rational term for the installation directory. For example, C:\Program Files\IBM\SDP.
+
+Use Installation Manager's View Installed Packages command to determine where RFT and RPT are installed on a given host (click Start > Programs > IBM Installation Manager > View Installed Packages). Install RFT and RPT in different package locations such as:
+
+Package Group Location: C:\Program Files\IBM\SDP 
+Package Group Location: C:\Program Files\IBM\SDP_1 
+
+When you install RFT and RPT on the same host, Installation Manager gives you the option of installing RTF or RPT under different package locations. Avoid installing RFT and RPT in a way that makes them share the same package location.
+
+3) If you intend to export scripts from RFT and RPT, you must install the ITCAM export plugin separately in RFT and in RPT.
+
+4) The T6 agent is a 32-bit application. On 64-bit platforms, the agent runs in 32-bit emulation mode. The T6 agent cannot run scripts created on a 64-bit installation of RPT workbench. At this time, there are no 64-bit implementations of RFT. 
+
+When in doubt, install RFT and RPT from the component part numbers identified in the "Getting started" > "Download product" topic on the ITCAM for Transactions Information Center web site. 
+
+5) Make sure your RFT and RPT scripts don't conflict with each other when they play back.
+
+RFT requires exclusive control of the mouse and keyboard: 
+
+
+ * Make sure that the RPT scripts playing back on this host are not impacted. In general, RPT scripts are not impacted, unless you are running SAP or Citrix scripts. 
+
+ * Using RPT on the RFT host to create a new script or run a test interferes with RFT script playbacks, and causes the RFT playbacks to fail.
+
+
+Note: RFT workbench uses scheduling controls that allow only one RFT script to run at a time. These RFT controls can also lock out all other scripts (such as RPT scripts) as well when RFT is running. RELATED INFORMATION
+ 64bit Installation option with RPT [http://www.ibm.com/support/docview.wss?uid=swg21673138]
+Incomplete uninstallation of Rational Integration Suppo [http://www.ibm.com/support/docview.wss?uid=swg21669454]
+
+
+
+
+HISTORICAL NUMBER
+ 67071.122.000

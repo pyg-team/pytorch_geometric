@@ -1,0 +1,103 @@
+Title: IBM Knowledge Collection:  Usage documents for IBM Integration Designer - United States
+
+Text:
+knowledgecollection; iid; ibm integration designer; usage EDUCATION
+
+ABSTRACT
+ This Knowledge Collection is a focused compilation of links to documents for using IBM Integration Designer. 
+
+CONTENT
+A Knowledge Collection is a focused compilation of links to documents that share a common theme. Knowledge Collections are navigation aids that organize content to help users quickly find relevant information. Knowledge Collections are not designed to be an all-inclusive list of all documents dealing with the specific theme.
+
+The applicable version is included in each entry.
+
+
+
+
+Usage documents for IBM Integration Designer 
+Other Knowledge Collections for IBM Integration Designer 
+
+
+
+
+
+Usage documents for IBM Integration Designer 
+
+You cannot see long descriptions in dialog boxes and wizards in IBM Integration Designer (1499353) [http://www.ibm.com/support/docview.wss?uid=swg21499353&acss=dakc] 
+Version: 7.5 
+In some dialog boxes and wizards in IBM Integration Designer, the entire description text might not be visible in the white description area. For example, the full description for a dialog box in the new integration solution wizard is "Organize related projects such as modules, mediation modules, and libraries to view the project relationships in the Solution Diagram or to perform common actions on a group of projects." However, the text in the white description area below the title bar seems to end at the word "perform" because the area is too small, and it is not obvious how to see the rest of the text.?This problem might particularly occur in locales where the text is longer in a translated language than in English. 
+
+Workaround for testing a process application module when it is disconnected from the IBM Process Center (1499982) [http://www.ibm.com/support/docview.wss?uid=swg21499982&acss=dakc] 
+Version: 7.5 
+When a process application is disconnected from the Process Center, you cannot test its modules in a local test environment. An error dialog box opens and displays a message that the process application is disconnected, and must be reconnected to the Process Center before you can run any tests on the test client. 
+
+Performance considerations for Human Task Management list widgets with IBM Integration Designer (1499983) [http://www.ibm.com/support/docview.wss?uid=swg21499983&acss=dakc] 
+Version: 7.5 
+If you are familiar with the performance characteristics of WebSphere Process Server, you might experience an out-of-the-box performance degradation. This degradation might occur when you use Human Task Management list widgets, such as Tasks, Processes and Task Definitions, in Business Space on a new installation of IBM Business Process Manager Version 7.5 run time. The same performance considerations apply if you use the Human Task Management widgets with only business process defintion (BPD) processes and human services on a single application server, or a cluster. 
+
+Common Base Events not emitted for ad hoc tasks with IBM Integration Designer (1500788) [http://www.ibm.com/support/docview.wss?uid=swg21500788&acss=dakc] 
+Version: 7.5 
+Events for the Common Base Event infrastructure are not emitted for ad hoc created human tasks. These events are human tasks that are dynamically created without a human task template being deployed and associated. 
+
+Installation manager cannot create profile with remote DB2 on z/OS (1508354) [http://www.ibm.com/support/docview.wss?uid=swg21508354&acss=dakc] 
+Version: 7.5 
+When using a remote IBM DB2 on z/OS, the Installation Manager for IBM Integration Designer cannot create the profile for IBM Business Process Manager V7.5 successfully. 
+
+Unable to choose Download remote resources option during local WSDL or XSD, or both import (1573883) [http://www.ibm.com/support/docview.wss?uid=swg21573883&acss=dakc] 
+Versions: 7.5, 7.5.0.1 and 7.5.1 
+Why is the Download remote resources option unavailable, and why do errors occur in my workspace, after import? 
+
+UDDI V3 registry compatibility in IBM WebSphere Integration Developer V7, IBM Integration Developer V7.5, IBM Integration Developer V7.5.1, and IBM Integration Developer V8.0 (1574351) [http://www.ibm.com/support/docview.wss?uid=swg21574351&acss=dakc] 
+Versions: 7.5, 7.5.0.1, 7.5.1, 7.5.1.1 and 8.0 
+Does WebSphere Integration Developer (WID) V7, IBM Integration Designer (IID) V7.5, or Integration Designer V8.0 support the UDDI V3 registry? 
+
+Console View shows garbled Japanese character (1585960) [http://www.ibm.com/support/docview.wss?uid=swg21585960&acss=dakc] 
+Versions: 7.5, 7.5.0.1 and 7.5.1 
+Users may experience garbled characters in console message when using IBM Integration Designer (IID) and Universal Test Enviorments (UTE) on Japanese system environment. 
+
+Unable to create WebSphere Enterprise Server Bus (WESB) server entry in IBM Integration Designer (IID) V8.0 Server View in Simplified or Traditional Chinese locale (1592521) [http://www.ibm.com/support/docview.wss?uid=swg21592521&acss=dakc] 
+Version: 8.0 
+When using IBM Integration Designer V8.0 in the Simplified or Traditional Chinese locale, you are unable to create a WebSphere Enterprise Server Bus server entry using IBM Integration Designer's New Server Wizard from the server view. Other server entries can be created successfully. 
+
+Debug as XSLT limitation in IBM Integration Designer (IID) (1600763) [http://www.ibm.com/support/docview.wss?uid=swg21600763&acss=dakc] 
+Version: 7.5.1 
+Why does nothing happen when I multi-select an XSLT file and the matching XML input file in the Project Explorer view, then right click and select Debug as -> XSL Transformation menu? 
+
+Opening IBM Integration Designer's (IID) Process Center perspective on Red Hat Enterprise Linux (RHEL) Server 6 x86-64 requires xulrunner 32bit library files (1608350) [http://www.ibm.com/support/docview.wss?uid=swg21608350&acss=dakc] 
+Versions: 7.5.0.1 and 7.5.1 
+When IID's Process Center perspective is opened on Red Hat Enterprise Linux (RHEL) Server 6 x86-64, xulrunner 32bit library files are required. 
+
+No more handles when running IBM Integration Designer (1610077) [http://www.ibm.com/support/docview.wss?uid=swg21610077&acss=dakc] 
+Version: 8.0 
+The following error occurs when starting IBM Integration Designer (IID): Error creating browser in ProcessCenterView No more handles Unknown Mozilla path (MOZILLA_FIVE_HOME not set) The Process Center perspective did not initialize correctly. 
+
+Migrating artifacts (1614518) [http://www.ibm.com/support/docview.wss?uid=swg21614518&acss=dakc] 
+Versions: 7.5.1 and 8.0 
+I'm importing a V7.5.1 Advanced Integration service into Integration Designer V8, and it prompts me to migrate the artifacts. Should I migrate the artifacts all at once or one at a time? 
+
+Functions or features of Rational Application Developer in IBM Integration Designer (1614522) [http://www.ibm.com/support/docview.wss?uid=swg21614522&acss=dakc] 
+Versions: 7.5, 7.5.0.1, 7.5.1, 7.5.1.1 and 8.0 
+Which functions or features in Rational Application Developer are provided in IBM Integration Designer? 
+
+IBM Integration Designer does not support all types of Non-Gregorian calendars (1615966) [http://www.ibm.com/support/docview.wss?uid=swg21615966&acss=dakc] 
+Version: 8.0.1 
+The Hijri calendar, civil and religious, is the only non-Gregorian calendar that IBM Integration Designer (IID) supports. Other non-Gregorian calendars, such as Hebrew, Thai Buddhist, Taiwan ROC, and Japanese Emperor are not supported. 
+
+How to configure an emulation task in a test case with a one-way operation (1631400) [http://www.ibm.com/support/docview.wss?uid=swg21631400&acss=dakc] 
+Versions: 7.5, 7.5.0.1, 7.5.1, 7.5.1.1, 8.0, 8.0.1 and 8.0.1.1 
+A user has created a project which contains two business processes (BP1 and BP2). The user wants to emulate the invocation of BP2, but it will not execute even though a "reference-emulation task" exists. 
+
+Frequently asked questions (FAQ) about IBM Integration Designer (updated April 2013) (7021835) [http://www.ibm.com/support/docview.wss?uid=swg27021835&acss=dakc] 
+Versions: 7.5, 7.5.0.1, 7.5.1, 8.0 and 8.0.1 
+The following list includes frequently asked questions (FAQ) about IBM Integration Designer to help you troubleshoot potential problems and enhance how you use the product. 
+
+
+Back to Top 
+
+Other Knowledge Collections for IBM Integration Designer 
+ * Knowledge Collection: Diagnostic documents for WebSphere Integration Developer and IBM Integration Designer (7035696) [http://www.ibm.com/support/docview.wss?uid=swg27035696]
+ * Knowledge Collection: Installation documents for IBM Integration Designer (7038392) [http://www.ibm.com/support/docview.wss?uid=swg27038392]
+
+
+
+Back to top

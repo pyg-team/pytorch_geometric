@@ -1,0 +1,55 @@
+Title: IBM FileNet Content Platform Engine reports CONTENT_CA_READ_FAILED errors caused by NFS Stale File Handle - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ On a cluster environment FileNet Content Platform Engine reports CONTENT_CA_READ_FAILED error messages when using a Fixed Storage Area, and when fetching documents shortly after creating them. 
+
+SYMPTOM
+In the P8 Server Error Log files, the following error message is shown:
+
+FNRCC0019E: CONTENT_CA_READ_FAILED: The read failed for objId={11111111-1111-1111-1111-111111111111}. 
+
+Message was: Stale NFS file handle
+at com.filenet.engine.content.GetContentHandler$GetContentState.read(GetContentHandler.java:1764)
+at com.filenet.engine.content.GetContentHandler.getContent(GetContentHandler.java:370)
+at com.filenet.engine.jca.impl.RequestBrokerImpl.getContent(RequestBrokerImpl.java:291)
+at com.filenet.engine.jca.impl.RequestBrokerImpl.getContent(RequestBrokerImpl.java:208)
+at com.filenet.engine.ejb.EngineCoreBean._getContent(EngineCoreBean.java:107)
+... 
+Caused by: 
+java.io.IOException: Stale NFS file handle
+at sun.nio.ch.FileDispatcherImpl.read0(Native Method)
+at sun.nio.ch.FileDispatcherImpl.read(FileDispatcherImpl.java:58)
+at sun.nio.ch.IOUtil.readIntoNativeBuffer(IOUtil.java:235)
+at sun.nio.ch.IOUtil.read(IOUtil.java:209)
+at sun.nio.ch.FileChannelImpl.read(FileChannelImpl.java:161)
+at com.filenet.engine.content.ExtendedFileInputStream.read(ExtendedFileInputStream.java:98)
+
+
+
+
+CAUSE
+In Fixed Storage Areas documents are archived onto some Fixed Storage Device. When this is completed, the document file is removed from the Staging Area of the Fixed Storage Area. 
+
+In a clustered environment when an attempt is made to read a document shortly after creation, it can happen that the archiving of the document to the Fixed Storage Device is not yet completed on one node, when the document file is opened on another node for reading it. 
+
+This error is logged, when the archiving operation completes while the document file is still being read.
+
+
+
+DIAGNOSING THE PROBLEM
+Enable Content Engine Tracing as outlined in referenced technote below, for generating information on the accesses to the document file, from the different nodes.
+
+
+
+RESOLVING THE PROBLEM
+Configure the Fixed Storage Area to use one of the secure delete operations, when removing documents from the Fixed Storage Area. 
+
+[/support/docview.wss?uid=swg21978688&aid=1] [/support/docview.wss?uid=swg21978688&aid=1]
+
+When using one of the secure delete operations for deleting documents from the Fixed Storage Area, Content Engine will try to acquire an exclusive lock on the document file, which will only succeed if the document file is not at the same time being read.
+
+RELATED INFORMATION
+ MustGather: FileNet Content Engine Document Storage [http://www.ibm.com/support/docview.wss?uid=swg21313968]

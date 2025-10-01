@@ -1,0 +1,38 @@
+Title: IBM New server option ADMINCOMMTIMEOUT - United States
+
+Text:
+ADMINCOMMTIMEOUT PRODUCT DOCUMENTATION
+
+ABSTRACT
+ The ADMINCOMMTIMEOUT option specifies how long the server waits for an expected administrative client message during an operation that causes a database update. 
+
+CONTENT
+If the length of time exceeds this time-out period, the server ends the session with the administrative client. You may want to increase the time-out value to prevent administrative client sessions from timing out.
+
+
+
+
+You can update this server option without stopping and restarting the server by using the SETOPT command. SeeSETOPT (Set a server option for dynamic update) [http://publib.boulder.ibm.com/infocenter/tsminfo/v6r2/topic/com.ibm.itsm.srv.ref.doc/r_cmd_setopt.html#r_cmd_setopt].
+
+
+Syntax
+[/support/docview.wss?uid=swg27019388&aid=1] [/support/docview.wss?uid=swg27019388&aid=1]
+
+Parameters 
+
+seconds
+Specifies the maximum number of seconds that a server waits for an administrative client response. The default value is 60. The minimum value is 1. 
+
+Examples
+admincommtimeout 60
+
+
+
+
+
+
+ORIGINAL PUBLICATION DATE
+ 2010/9/29 
+
+PRODUCT ALIAS/SYNONYM
+ ITSM TSM ADSM

@@ -1,0 +1,28 @@
+Title: IBM SSL Support for IBM Tivoli Identity Manager (ITIM) Adapters - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Which version of SSL is supported between ITIM and ITIM Adapters? 
+
+ANSWER
+All the IBM Tivoli Identity Manager (ITIM) agents/adapters for ITIM 4.6 will support TLS 1.0 as well as SSLv3 and below. As a result, unless explicitly told to use something else, they will negotiate a TLS session.
+On the ITIM 4.6 (and later) server side, it is possible to constrain the negotiation to use a specific protocol. This is done by adding the $ITIM/data/enRole.properties parameter:
+
+com.ibm.daml.jndi.DAMLContext.SSL_PROTOCOL=TLS
+
+The default for this option is "TLS". 
+
+Assuming you are using the default IBM JSSE
+com.ibm.daml.jndi.DAMLContext.JSSE_PROVIDER
+
+then other valid values would be: 
+
+
+
+
+Protocol Comment SSL SSL v3.0 protocol. Accepts SSLv3 hello encapsulated in a SSLv2 format hello. SSLv3 SSL v3.0 protocol. TLS TLS v1.0 protocol (defined in RFC 2246). Accepts TLSv1 hello encapsulated in an SSLv2 format hello. TLSv1 TLS v1.0 protocol (defined in RFC 2246). Accepts SSLv3 or TLSv1 hello encapsulated in an SSLv2 format hello. TLSv1.1 TLS v1.1 protocol (defined by RFC 4346). TLSv1.2 TLS v1.2 protocol (defined by RFC 5246). SSL_TLS Enables all SSL v3.0 and TLS v1.0 protocols. Accepts SSLv3 or TLSv1 hello encapsulated in an SSLv2 format hello. SSL_TLSv2 Enables all SSL v3.0 and TLS v1.0, v1.1 and v1.2 protocols. Accepts SSLv3 or TLSv1 hello encapsulated in an SSLv2 format hello. 
+
+as documented at 
+http://www-01.ibm.com/support/knowledgecenter/SSYKE2_7.0.0/com.ibm.java.security.component.71.doc/security-component/jsse2Docs/protocols.html [http://www-01.ibm.com/support/knowledgecenter/SSYKE2_7.0.0/com.ibm.java.security.component.71.doc/security-component/jsse2Docs/protocols.html]

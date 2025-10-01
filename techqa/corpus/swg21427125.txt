@@ -1,0 +1,44 @@
+Title: IBM Increase the Heap size for DVS testing in Rule Studio - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How do I increase the heap size of the JVM used to run Decision Validation Services (DVS) tests in Rule Studio? 
+
+CAUSE
+When running DVS tests from Rule Studio against a local Scenario Service Provider (SSP) service, the environment is subject to the memory limitations of the running Eclipse JVM. 
+
+You may encounter the following error: 
+
+ilog.rules.dvs.util.IlrDVSLogger error
+SEVERE: scenario provider or scenario execution threw exception !
+adding an error to the report java.lang.OutOfMemoryError: Java heap space
+
+
+ANSWER
+Use Java options, -Xms (initial heap size) and -Xmx (maximum heap size), to increase the heap size of the JVM used to launch the DVS test. 
+
+As you will be changing the default heap configuration of the JVM, we recommend that you designate a separate JRE for the DVS tests to avoid modifying the workspace default JVM options, which may impact other run configurations. 
+
+Follow the steps below: 
+
+ 1. In the DVS run configuration, under the JRE tab, select Alternate JRE. Click Installed JREs
+    [/support/docview.wss?uid=swg21427125&aid=1] [/support/docview.wss?uid=swg21427125&aid=1] 
+    
+ 2. Select a jdk of your choice and click Duplicate
+    [/support/docview.wss?uid=swg21427125&aid=2] [/support/docview.wss?uid=swg21427125&aid=2]
+    
+    
+ 3. Set Default VM arguments: use Java options, -Xms and -Xmx, to tune the JVM heap size. Name the new JRE. Click Finish. 
+    [/support/docview.wss?uid=swg21427125&aid=3] [/support/docview.wss?uid=swg21427125&aid=3]
+    
+    
+ 4. Click OK in the Preferences window. 
+ 5.  In the Run Configuration window, select the newly added JRE. Click Apply and Run.
+    [/support/docview.wss?uid=swg21427125&aid=4] [/support/docview.wss?uid=swg21427125&aid=4]
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration WebSphere ILOG JRules Modules:Rule Studio (Eclipse) Business Integration IBM Operational Decision Manager Modules:Rule Studio Platform Independent 7.5 Enterprise Business Integration IBM Operational Decision Manager Modules:Rule Studio Platform Independent 8.0 Enterprise

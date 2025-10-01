@@ -1,0 +1,180 @@
+Title: IBM PM84218: Manage Policy Set attachment option may be unavailable when JAX-WS client project is of type Java - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Rational Application Developer for WebSphere Software 9.0 [http://www-01.ibm.com/support/docview.wss?uid=swg24034833]
+Rational Software Architect 9.0 [http://www-01.ibm.com/support/docview.wss?uid=swg24034297]
+Rational Software Architect for WebSphere Software 9.0 [http://www-01.ibm.com/support/docview.wss?uid=swg24034298]
+Rational Software Architect 8.5.5 [http://www-01.ibm.com/support/docview.wss?uid=swg24035434]
+Rational Software Architect for WebSphere Software 8.5.5 [http://www-01.ibm.com/support/docview.wss?uid=swg24035436]
+Rational Application Developer for WebSphere Software 8.5.5 [http://www-01.ibm.com/support/docview.wss?uid=swg24035720]
+Rational Software Architect Fix Pack 1 (8.5.5.1) for 8.5.5 [http://www-01.ibm.com/support/docview.wss?uid=swg24036832]
+Rational Software Architect for WebSphere Software Fix Pack 1 (8.5.5.1) for 8.5.5 [http://www-01.ibm.com/support/docview.wss?uid=swg24036833]
+Rational Application Developer for WebSphere Software Fix Pack 1 (8.5.5.1) for 8.5.5 [http://www-01.ibm.com/support/docview.wss?uid=swg24037967]
+Rational Software Architect Fix Pack 2 (8.5.5.2) for 8.5.5 [http://www-01.ibm.com/support/docview.wss?uid=swg24038307]
+Rational Software Architect for WebSphere Software Fix Pack 2 (8.5.5.2) for 8.5.5 [http://www-01.ibm.com/support/docview.wss?uid=swg24038308]
+Rational Software Architect Fix Pack 3 (8.5.5.3) for 8.5.5 [http://www-01.ibm.com/support/docview.wss?uid=swg24039397]
+Rational Software Architect for WebSphere Software Fix Pack 3 (8.5.5.3) for 8.5.5 [http://www-01.ibm.com/support/docview.wss?uid=swg24039398]
+Rational Application Developer for WebSphere Software Fix Pack 2 (8.5.5.2) for 8.5.5 [http://www-01.ibm.com/support/docview.wss?uid=swg24039443]
+Rational Software Architect Fix Pack 4 (8.5.5.4) for 8.5.5 [http://www-01.ibm.com/support/docview.wss?uid=swg24041240]
+Rational Software Architect for WebSphere Software Fix Pack 4 (8.5.5.4) for 8.5.5 [http://www-01.ibm.com/support/docview.wss?uid=swg24041241]
+Rational Application Developer for WebSphere Software Fix Pack 3 (8.5.5.3) for 8.5.5 [http://www-01.ibm.com/support/docview.wss?uid=swg24041452]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Abstract:
+   
+   Attempts to Manage Policy Set attachment for a JAX-WS client
+   whose project type is 'Java' will fail, as the option may be
+   unavailable depending upon your runtime target.
+   
+   Problem:
+   
+   In some cases, you may experience an issue where you have JAX-WS
+   client defined in your workspace, whose project type is Java,
+   but you are unable to 'Manage Policy Set Attachments' for the
+   client.  This can occur when the intended runtime target for
+   your JAX-WS client is 'WebSphere v8.5'
+   
+   To reproduce:
+   --------------
+   (1) Create a new Java project
+   (2) Select 'File ? New ? Other...' from the menu bar
+   (3) In the 'New...' wizard, select 'Web Services ? Web Service
+   Client'; click 'Next'
+   (4) On the 'Web Services' page, specify the following:
+   (4.1) In the 'Service Definition' field, specify a WSDL file
+   (4.2) Under 'Configuration', ensure the Server runtime is
+   'WebSphere Application Server v8.5'
+   (4.3) Still under 'Configuration', ensure the Web service
+   runtime type is 'IBM WebSphere JAX-WS'
+   (4.4) Again, under 'Configuration', click the Client project
+   link and select the Java project you created in step 1 above;
+   accept all other defaults and click 'Finish'
+   (5) Once the wizard is complete, expand your Web service client
+   (Java) project's 'Services ? Clients' node, right-click on the
+   Web service client.  Note several options appear in the context
+   menu, but the 'Manage Policy Set Attachments' option does not
+   appear
+   
+   This is caused by a bug in the code logic of whether or not to
+   display the 'Manage Policy Set Attachment' option; this would
+   only occur in the case of targeting a Java project (i.e. non-Web
+   project) against WAS v8.5.
+   
+   Local fix:
+   
+   There is no known workaround at this time.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  In some cases, you may experience an issue where you have
+   JAX-WS client defined in your workspace, whose project type is
+   Java, but you are unable to "Manage Policy Set Attachments" for
+   the client.  This can occur when the intended runtime target
+   for your JAX-WS client is "WebSphere v8.5"
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The 'Manage Policy Set Attachments' action should appear now.
+   The fix for this APAR is included in Rational Application
+   Developer v8.5.5.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM84218
+   
+   
+ * REPORTED COMPONENT NAME
+   RATL APP DEV WI
+   
+   
+ * REPORTED COMPONENT ID
+   5724J1901
+   
+   
+ * REPORTED RELEASE
+   851
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-03-06
+   
+   
+ * CLOSED DATE
+   2013-10-15
+   
+   
+ * LAST MODIFIED DATE
+   2013-10-15
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   RATL APP DEV WI
+   
+   
+ * FIXED COMPONENT ID
+   5724J1901
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R900 PSY
+   UP

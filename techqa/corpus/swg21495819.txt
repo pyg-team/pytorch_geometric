@@ -1,0 +1,29 @@
+Title: IBM Explain the message "DVS servlet not yet loaded" when checking the availability of Decision Validation Services - United States
+
+Text:
+DVS servlet not yet loaded; DVS; SSP; testing TECHNOTE (FAQ)
+
+QUESTION
+ When testing the availability of Decision Validation Services (DVS) After logging in, you see a message similar to the following:
+
+About
+Version: ILOG JRules 7.1.0.0
+Patch level: Build #6 on 2010-04-07 11:58:12 AM Release Status: COMMERCIAL License information: STANDARD 
+=== DVS servlet not yet loaded ===
+
+What does "DVS servlet not yet loaded" mean? 
+
+CAUSE
+If the DVS servlet has not yet been loaded by the application server, this message is displayed. It indicates that no DVS scenario suites were executed, prior to testing the SSP installation.
+
+ANSWER
+This message indicates that the Decision Validation Services have not been used yet, and therefore no information is available. 
+
+You can only obtain the information regarding the status of DVS when following those steps [http://publib.boulder.ibm.com/infocenter/brjrules/v7r1/index.jsp?topic=/com.ibm.websphere.ilog.jrules.doc/Content/Business_Rules/Documentation/_pubskel/JRules/ps_JRules_Global283.html] after a run of DVS. 
+
+Once a DVS scenario suite is executed, the servlet is loaded by the application server and the expected information regarding the availability of Decision Services will be visible.
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Operational Decision Manager Platform Independent 7.5 Enterprise

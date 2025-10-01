@@ -1,0 +1,44 @@
+Title: IBM Download location of IBM Rational Software for Passport Advantage - United States
+
+Text:
+Rational; Telelogic; download; software; Passsport Advantage; PA Online; Legacy; Watchfire; Cognos; support TECHNOTE (FAQ)
+
+QUESTION
+ Where can you download IBM Rational software, for which you have an active Passport Advantage (PA) maintenance agreement? 
+
+CAUSE
+If you use the Passport Advantage (PA) or Passport Advantage Express (PAE) program, you can download and request the media of the latest version of your products through the Passport Advantage Online [http://www-01.ibm.com/software/howtobuy/passportadvantage/pao_customers.htm] (PAO) web site. 
+
+ANSWER
+To access the PA Online software download section for your site, you need the following things.
+
+
+
+
+ * An IBM User ID and password,
+   
+   
+ * An active maintenance agreement for the software you wish to download, 
+   
+   
+ * Access authorization from your site's Primary Contact.
+   
+   
+
+Notes 
+
+
+On Passport Advantage Online [http://www-01.ibm.com/software/howtobuy/passportadvantage/pao_customers.htm], you only find those products for which you currently have an active PA or PAE support agreement with IBM. 
+
+
+If you face any Passport Advantage Online issues, contact Passport Advantage support, eCustomer Care [http://www-112.ibm.com/software/howtobuy/passportadvantage/paocustomer/docs/en_US/ecare.html]. Select your region and contact the appropriate phone number. Email address is also available. 
+
+
+If you contact Passport Advantage Online support, you need to have your Proof Of Entitlement (POE) document ready. 
+
+See also technote 1622147 [http://www-01.ibm.com/support/docview.wss?uid=swg21622147]: How to download software from Passport Advantage Online website [http://www-01.ibm.com/support/docview.wss?uid=swg21622147]. 
+
+To obtain license keys for your Rational software review technote 1250433: [http://www-01.ibm.com/support/docview.wss?uid=swg21250433] How to get your IBM Rational license keys [http://www-01.ibm.com/support/docview.wss?uid=swg21250433]. RELATED INFORMATION
+#Passport Advantage program overview [http://www.ibm.com/software/howtobuy/passportadvantage/index.html]
+A Japanese translation is available [http://www.ibm.com/support/docview.wss?uid=swg21468474]
+A simplified Chinese translation is available [http://www.ibm.com/support/docview.wss?uid=swg21468790]

@@ -1,0 +1,27 @@
+Title: IBM Why do my jobs stuck pending for a long time? - United States
+
+Text:
+pending TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Why do my jobs stuck pending for a long time? 
+
+RESOLVING THE PROBLEM
+My jobs have been in a pending state for a long period of time. What is keeping the jobs from running?You can type "bjobs -lp " to find out the pending reason. 
+
+Usually what causes a job to pend for a long period of time is that the resource requirements are not met or LSF cannot find a matching host for your job. Since LSF has a default behavior of selecting the host with the same architecture, if you are submitting through a client host and you do not have a server host of the same type in your cluster, your job will pend forever. To solve this issue, you have two options: 
+1. Add RES_REQ = type==any to your lsb.queues file. 
+2. Add -R "select [type==any]" parameter to your bsub command line. 
+
+Both of the above options will allow LSF to select any type of host in the cluster instead of the same host type as the submission host. 
+
+Another common reason why jobs pend for a long time is that the scheduling threshold is set too low in the lsb.hosts or lsb.queues file. This will keep the job from getting dispatched. 
+
+For more details on how to setup load indices, refer to lsb.hosts and lsb.queues file in your reference guide. 
+
+
+
+
+ 
+
+Cross reference information Segment Product Component Platform Version Edition IBM Spectrum Computing IBM Spectrum LSF

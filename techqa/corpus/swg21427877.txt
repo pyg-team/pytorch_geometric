@@ -1,0 +1,23 @@
+Title: IBM Information Server Match Specification step fails to update Database - United States
+
+Text:
+MatchDesigner QualityStage Specification qsFreqCounts qsFreqValue TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Information Server Match Designer database fails to update. The following error will be encountered:
+
+##I IIS-DSEE-TDOD-00080 10:18:01(008) <QS_Freq_ODBC> Process meta data not available in database
+##E IIS-DSEE-TFIP-00034 10:18:01(011) <APT_RealFileExportOperator in QS_Freq_DS_FlatFile> Error when checking operator: Could not find input field "qsFreqCounts".
+##W IIS-DSEE-TFIP-00093 10:18:01(012) <Copy_Op> When checking operator: On output data set 1: The modify operator has a binding for the non-existent output field "qsFreqCounts".
+##W IIS-DSEE-TFIP-00093 10:18:01(013) <Copy_Op> When checking operator: On output data set 1: The modify operator has a binding for the non-existent output field "qsFreqValue".
+##E IIS-DSEE-TFIP-00034 10:18:01(014) <APT_RealFileExportOperator in QS_Freq_DS_FlatFile> Error when checking operator: Could not find input field "qsFreqValue". 
+
+RESOLVING THE PROBLEM
+When testing with the Match Designer all input files require a corresponding frequency file to be generated for use. 
+
+ * When dealing with a single file match the process requires a Data file and a Frequency file, 
+ * When dealing with 2 file matches the process requires an additional Reference file with it's corresponding Frequency file. 
+ * Information Server has a module specifically for the Match Frequency generation step. 
+ * Create a job with the Data or Reference file as input to the Match Frequency module. Select a predefined Match Specification or leave empty. If you use a Match Specification only the fields used in the match will have frequencies performed on them. If you leave the selection empty all fields on the input file will have frequencies performed on them. The output will create a Match Frequency file for use in the Match Designer stage. 
+ * Be sure not to the change the default column names on the output of the Match frequency stage. The match job is expecting the exact column names : qsFreqValue, qsFreqCounts, qsFreqColumnID, qsFreqHeaderFlag 
+ * Now the files are ready for use in the Match Designer GUI

@@ -1,0 +1,150 @@
+Title: IBM PI70244: CHANGING A USER SELECTOR DISPLAY TO ANOTHER DISPLAY TYPE IMPACTSFILTERING CRITERIA - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When changing the display type from user selector to multi-user
+   selector (or some other combination) impacts the search result.
+   
+   Test case 1 - multi user/group selector
+   
+   1. Create Administration -> Users, groups and domains ->
+   Workflow, reporting and Others -> Add group MG_NA, and 2 group
+   MG_CA and MG_US under MG_NA, create a user MG_U1 for MG_CA and
+   user MG_U2 for MG_US
+   2. Open Administration -> Users, groups and domains -> Security
+   Domains -> Associate MG_NA to group, Assign MG_NA to OpenPages
+   Modules - All Permission
+   3. Administration -> profile -> SOXTask -> Action Assignee ->
+   set to Multi user/group selector
+   4. Create Action item and set Action Assignee to MG_NA
+   5. Login as MG_U1
+   6. Open Remediation -> Action Items -> My Action Items (
+   existing filter) => noticed the record with MG_NA as Action
+   assignee does not return
+   
+   Expect the record with MG_NA as Action assignee return.
+   
+   Test case 2 - Single user/group selector
+   
+   1. Create Administration -> Users, groups and domains ->
+   Workflow, reporting and Others -> Add group MG_NA, and 2 group
+   MG_CA and MG_US under MG_NA, create a user MG_U1 for MG_CA and
+   user MG_U2 for MG_US
+   2. Open Administration -> Users, groups and domains -> Security
+   Domains -> Associate MG_NA to group, Assign MG_NA to OpenPages
+   Modules - All Permission
+   3. Administration -> profile -> LossEvent -> Owner -> set to
+   single user/group selector
+   4. Create Loss Event and set Owner e to MG_NA
+   5. Login as MG_U1
+   6. Open  Events -> Loss Event -> my losses filter  => noticed
+   the record with MG_NA as Owner does not return
+   
+   Workaround: resave the existing filter
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Go into the filter and save it again without making any changes.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Customers should download OpenPages 7.4 from Passport
+   Advantage. See the following document for details on obtaining
+   OpenPages 7.4:
+   http://www.ibm.com/support/docview.wss?uid=swg24044421 [http://www.ibm.com/support/docview.wss?uid=swg24044421]
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  We have addressed this issue with an update to our
+   documentation in the Admin Guide
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI70244
+   
+   
+ * REPORTED COMPONENT NAME
+   OPENPAGES GRC
+   
+   
+ * REPORTED COMPONENT ID
+   5725D5100
+   
+   
+ * REPORTED RELEASE
+   720
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-10-05
+   
+   
+ * CLOSED DATE
+   2018-03-21
+   
+   
+ * LAST MODIFIED DATE
+   2018-03-21
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

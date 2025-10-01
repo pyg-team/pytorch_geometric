@@ -1,0 +1,166 @@
+Title: IBM Renaming table which has a generated column fails with SQL0750N error on DB2 V9.1 or 9.5. - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ What is the workaround to rename table which has a generated column on DB2 V9.1 or V9.5 ? 
+
+CAUSE
+This is expected error due to the restriction until DB2 version 9.5.
+Since V9.7 and tables that are created on the version will not encounter this issue
+as there was a new feature/enhancement when executing RENAME statement.
+Until V9.5, renaming tables with generated columns cannot be done with one 'rename table' command.
+
+
+ANSWER
+In this case, 'rename table' cannot be done in one command directly.
+If it is possible in business operation and data perspective, 
+the following steps can be considered as the one of the options.
+- exporting data from the table.
+- Drop the table and recreate table with new name
+- Import or Load to new table.
+
+
+Or on a specific following scenario to achieve for a maintenance purpose 
+when it's necessary to move a table to a different tablespace,
+there are other series of steps that can be considered.
+(NOTE : 
+- All of this step and scenario should be considered with business/data restriction
+and tested in non-production system first. 
+- Following information is just reference scenario/steps. )
+
+<Scenario>
+- Moving a table with generated column to a different tablespace. 
+
+<Steps : Tested in DB2 V9.5>
+
+1. Create the original sample table with a generated column for test.
+The column 'COL3' has the 'generated' definition.
+
+CREATE TABLE ORG_TBL ( COL1 VARCHAR(24) , COL2 CHAR(2) , COL3 INTEGER NOT NULL GENERATED ALWAYS AS ( MOD(ASCII('I')+ASCII('M')+ASCII('X')+ ASCII(SUBSTR(COL2,1,1)) + ASCII(SUBSTR(COL2,2,1)),4) ) )
+
+2. Insert sample data.
+insert into ORG_TBL ( COL1 , COL2 ) values ( 'AAAAAAAAAAAAA' , 'BB' )
+
+3. Create new table using 'like' option.
+=> At this time, new table does not have 'generated' definition.
+
+create table NEW_TBL like ORG_TBL
+
+4. Move data to new table
+( NOTE : This is just sample command for quick test. 
+The work can be export/import/load for the same. )
+
+insert into NEW_TBL select * From ORG_TBL
+
+5. Check if both tables has same data.
+
+select * from ORG_TBL
+
+COL1 COL2 COL3
+------------------------ ------------ -----------
+AAAAAAAAAAAAA BB 2
+
+1 record(s) selected.
+
+select * from NEW_TBL
+
+COL1 COL2 COL3
+------------------------ ------------ -----------
+AAAAAAAAAAAAA BB 2
+
+1 record(s) selected.
+
+6. Table definition check.
+
+- Original table
+
+>db2look -d sample -e -z V95_04 -t ORG_TBL -nofed
+
+..
+CREATE TABLE "V95_04 "."ORG_TBL" (
+"COL1" VARCHAR(24) ,
+"COL2" CHAR(2) ,
+"COL3" INTEGER NOT NULL GENERATED ALWAYS AS ( MOD(ASCII('I')+ASCII('M')+ASCII('X')+ ASCII(SUBSTR(COL2,1,1)) + ASCII(SUBSTR(COL2,2,1)),4) ) )
+..
+
+- New table : new table does not have 'generated' definition for now.
+That means new table can be renamed.
+
+> db2look -d sample -e -z V95_04 -t NEW_TBL -nofed
+
+...
+CREATE TABLE "V95_04 "."NEW_TBL" (
+"COL1" VARCHAR(24) ,
+"COL2" CHAR(2) ,
+"COL3" INTEGER NOT NULL)
+
+7. Drop the original table.
+
+> db2 "drop table ORG_TBL"
+
+8. Rename new table to original table name.
+=> It can be done because there is no 'generated' definition at this time.
+
+> db2 "rename NEW_TBL to ORG_TBL"
+
+9. Try to alter table to add 'generated' definition.
+=> At this time, it will report error SQL20054N 
+because integrity checking.
+
+- Check db2look before altering.
+=> No 'generated' column for now.
+
+> db2look -d sample -e -z V95_04 -t ORG_TBL -nofed
+
+...
+CREATE TABLE "V95_04 "."ORG_TBL" (
+"COL1" VARCHAR(24) ,
+"COL2" CHAR(2) ,
+"COL3" INTEGER NOT NULL )
+
+...
+
+> db2 -tvf alter_col.db2
+alter table ORG_TBL alter column COL3 set GENERATED ALWAYS AS ( MOD(ASCII('I')+ASCII('M')+ASCII('X')+ ASCII(SUBSTR(COL2,1,1)) + ASCII(SUBSTR(COL2,2,1)),4) )
+DB21034E The command was processed as an SQL statement because it was not a
+valid Command Line Processor command. During SQL processing it returned:
+SQL20054N The table "V95_04.ORG_TBL" is in an invalid state for the
+operation. Reason code="22". SQLSTATE=55019
+
+db2 "? SQL20054N"
+
+22 The generated column expression cannot be added or altered
+because the table is not in check pending mode.
+
+22 Use SET INTEGRITY FOR "<table-name>" OFF before altering the
+table. Then alter the table and use SET INTEGRITY FOR
+"<table-name>" IMMEDIATE CHECKED FORCE GENERATED to generate
+the values for the new or altered column.
+
+
+10. Set integrity off for altering and set integrity again.
+
+> db2 "set integrity for ORG_TBL off"
+DB20000I The SQL command completed successfully.
+> db2 -tvf alter_col.db2
+alter table ORG_TBL alter column COL3 set GENERATED ALWAYS AS ( MOD(ASCII('I')+ASCII('M')+ASCII('X')+ ASCII(SUBSTR(COL2,1,1)) + ASCII(SUBSTR(COL2,2,1)),4) )
+DB20000I The SQL command completed successfully.
+
+> db2 "set integrity for ORG_TBL immediate checked"
+DB20000I The SQL command completed successfully.
+
+
+- Check db2look before altering.
+=> 'generated' definition is added as same as the original table.
+
+> db2look -d sample -e -z V95_04 -t ORG_TBL -nofed
+
+….
+CREATE TABLE "V95_04 "."ORG_TBL" (
+"COL1" VARCHAR(24) ,
+"COL2" CHAR(2) ,
+"COL3" INTEGER NOT NULL GENERATED ALWAYS AS ( MOD(ASCII('I')+ASCII('M')+ASCII('X')+ ASCII(SUBSTR(COL2,1,1)) + ASCII(SUBSTR(COL2,2,1)),4) ) )
+
+...

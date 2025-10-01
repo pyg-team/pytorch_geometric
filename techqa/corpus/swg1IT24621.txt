@@ -1,0 +1,137 @@
+Title: IBM IT24621: ADDRESS PROBLEMS WITH API CONNECT INTEGRATION - United States
+
+Text:
+  A FIX IS AVAILABLE
+Fix packs for DataPower Gateway version 7.7 [http://www-01.ibm.com/support/docview.wss?uid=swg24044502]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  ADDRESS PROBLEMS WITH API CONNECT INTEGRATION
+   
+   Error description
+   Several fixes for API Connect integration were added:
+     (1) When the operational state of the application domain
+   transitions to  up, its API Connect Gateway Service and Gateway
+   Peering objects do not correctly transition to up.
+     (2) After DataPower processes the configuration defined in
+   API Connect,  the SSL Client Profile on DataPower is not
+   equivalent to the TLS Client Profile defined for the gateway.
+     (3) Address problems with the connection for and processing of
+     configuration data between API Manager and DataPower Gateway
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Multiple API Connect integration fixes.
+   Fixed in 7.7.0.1
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix will be in 7.7.0.1
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT24621
+   
+   
+ * REPORTED COMPONENT NAME
+   DATAPOWER
+   
+   
+ * REPORTED COMPONENT ID
+   DP1234567
+   
+   
+ * REPORTED RELEASE
+   770
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2018-04-04
+   
+   
+ * CLOSED DATE
+   2018-04-04
+   
+   
+ * LAST MODIFIED DATE
+   2018-04-04
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  None
+   0
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   DATAPOWER
+   
+   
+ * FIXED COMPONENT ID
+   DP1234567
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R770 PSY
+   UP

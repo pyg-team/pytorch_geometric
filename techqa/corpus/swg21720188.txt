@@ -1,0 +1,49 @@
+Title: IBM ITCAM For SOA Agent Crashes  with Error KD40601E - United States
+
+Text:
+CAMSOAALL CAMSOAAGENT SOA Agent Crash KD40601E TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ ITCAM for SOA agent crashed with this error: 
+
+KD40601E NLS2 Error at line 130 in kd4strut.h. RC = 15 
+
+I followed the action in 
+
+http://www-01.ibm.com/support/docview.wss?uid=swg21615227 [http://www-01.ibm.com/support/docview.wss?uid=swg21615227] 
+
+SYMPTOM
+D4 Agent log shows following errors : 
+
+(55253E3B.0003-A24:kd4dclog.cpp,3885,"readSocodeMapFile") KD40331E Error 
+reading environment mapping table: 
+C:\IBM\ITM\TMAITM6\KD4\logs\KD4.DCA.CACHE\persist\44343a6130653262613436 
+3a756b7772686174726d7030342d5033415f43524d\KD43SO.tbl 
+
+ 
+(55253E3B.0004-A24:kd4dclog.cpp,3994,"readRelationshipFile") KD40329E 
+Error reading relationship table: 
+C:\IBM\ITM\TMAITM6\KD4\logs\KD4.DCA.CACHE\persist\44343a6130653262613436 
+3a756b7772686174726d7030342d5033415f43524d\KD43RS.tbl 
+
+
+CAUSE
+Metric logs are deleted but old "persist" directory is still exists and pointing to old information.
+
+
+RESOLVING THE PROBLEM
+ 
+
+ 1. Stop the agent. 
+2. Remove the following files/directories. 
+<ITMHOME>/.../KD4/logs/KD4.DCA.CACHE/persist 
+<ITMHOME>/..../KD4/logs/KD4.DCA.CACHE/*metric.log* 
+<ITMHOME>/..../KD4/logs/*.metric.log 
+
+3. Restart the agent.
+
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ ITCAM ITCAMfSOA

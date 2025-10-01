@@ -1,0 +1,29 @@
+Title: IBM Push notifications are received even if the app is disabled - United States
+
+Text:
+WL506; WL6002; WL61; WL62 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Push notifications are received even if the app is disabled. The problem occurs even after server migration to V7.1. 
+
+SYMPTOM
+An app that is created with IBM Worklight Foundation V6.2 or earlier (including IBM Worklight and IBM Mobile Foundation versions) continues to receive the Push notifications even if the app is disabled . The problem persists even after the migration to IBM MobileFirst Platform Foundation V7.1.
+
+
+RESOLVING THE PROBLEM
+To resolve the problem, complete the following steps after the migration: 
+
+ 1. On MobileFirst Server, enable the push app. 
+    
+    
+ 2. Disable the push app again.
+    
+    
+
+Push notifications are not received. 
+
+
+Note: This problem does not happen to the apps that are created with IBM MobileFirst Platform Foundation V6.3 or later.  
+
+
+Cross reference information Segment Product Component Platform Version Edition Mobile- Speech and Enterprise Access IBM MobileFirst Platform Foundation for iOS Not Applicable Apple iOS 7.1

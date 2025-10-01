@@ -1,0 +1,206 @@
+Title: IBM PK26490: JDBC EXCEPTION UNDER LOAD NO TRANSACTION AVAIL - United States
+
+Text:
+  FIXES ARE AVAILABLE
+6.1.0.1: WebSphere Application Server V6.1.0 Fix Pack 1 for HP-UX [http://www-01.ibm.com/support/docview.wss?uid=swg24012899]
+6.1.0.1: WebSphere Application Server V6.1.0 Fix Pack 1 for AIX [http://www-01.ibm.com/support/docview.wss?uid=swg24012944]
+6.1.0.1: WebSphere Application Server V6.1.0 Fix Pack 1 for Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24012919]
+6.1.0.1: WebSphere Application Server V6.1.0 Fix Pack 1 for Linux [http://www-01.ibm.com/support/docview.wss?uid=swg24012900]
+6.1.0.1: WebSphere Application Server V6.1.0 Fix Pack 1 for i5/OS [http://www-01.ibm.com/support/docview.wss?uid=swg24012945]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  This exception appears in the logs when run application.
+   
+   [6/2/06 15:34:24:657 EDT] 000000a1 DataStoreAdap E
+   DSRA0250E:
+   An exception was received by the Data Store Adapter. See
+   original
+   exception message: Action = LT_ROLLBACK is not allowed for the
+   current transaction state = NO_TRANSACTION_ACTIVE.
+   [6/2/06 15:34:24:706 EDT] 000000a1 LocalTransact E
+   J2CA0024E:
+   Method rollback, within transaction branch ID <null> of
+   resource
+   pool jdbc/SOADB, caught com.ibm.ws.exception.WsException:
+   DSRA0040E:
+   WebSphere internal error occurred. Please contact WebSphere
+   support
+   with the following data: Cannot rollback SPI local
+   transaction.
+   DSRA0250E: An exception was received by the Data Store
+   Adapter.
+   See original exception message: Action = LT_ROLLBACK is not
+   allowed
+   for the current transaction state = NO_TRANSACTION_ACTIVE.
+           at
+   com.ibm.ws.rsadapter.spi.WSRdbSpiLocalTransactionImpl.
+   rollback(WSRdbSpiLocalTransactionImpl.java:600)
+           at com.ibm.ejs.j2c.LocalTransactionWrapper.
+   rollback(LocalTransactionWrapper.java:373)
+           at com.ibm.ws.LocalTransaction.LocalTranCoordImpl.
+   cleanup(LocalTranCoordImpl.java:1109)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: WebSphere Application Server version 6.1     *
+   *                 users of JDBC and JCA.                       *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Exception javax.resource.spi.           *
+   *                      LocalTransactionException:              *
+   *                      DSRA0250E: An exception was received    *
+   *                      by the Data Store Adapter.              *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   In a stressed environment, an instance variable in the
+   connection managment code was being changed while it was
+   being referenced.  An inconsistent state resulted and the
+   wrong resolution control value was used.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The resolution control is now obtained each time by a static
+   method, rather than being cached in an instance variable.
+   
+   The fix for this APAR is currently targeted for inclusion
+   in fixpack 6.1.0.1.
+   Please refer to the recommended updates page for delivery
+   information:
+   http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK26490
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSPH APP SERV
+   
+   
+ * REPORTED COMPONENT ID
+   5724J0800
+   
+   
+ * REPORTED RELEASE
+   60W
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2006-06-13
+   
+   
+ * CLOSED DATE
+   2006-07-27
+   
+   
+ * LAST MODIFIED DATE
+   2007-10-17
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    PK46745
+   
+   
+
+MODULES/MACROS
+ *  J2C
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBSPH APP SERV
+   
+   
+ * FIXED COMPONENT ID
+   5724J0800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R60Z PSY
+   UP
+   
+   
+ * R61A PSY
+   UP
+   
+   
+ * R61H PSY
+   UP
+   
+   
+ * R61I PSY
+   UP
+   
+   
+ * R61P PSY
+   UP
+   
+   
+ * R61S PSY
+   UP
+   
+   
+ * R61W PSY
+   UP
+   
+   
+ * R61Z PSY
+   UP

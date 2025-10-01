@@ -1,0 +1,21 @@
+Title: IBM BigFix Remote Control Java Requirements with Websphere Application Server - United States
+
+Text:
+ PREVENTIVE SERVICE PLANNING
+
+ABSTRACT
+ IBM WebSphere Application Server 8.5.5 can be installed with Java SDK version 6.0. IBM BigFix Remote Control version 9.1.2 requires Java 7 or Java 8. 
+
+CONTENT
+IBM WebSphere Application Server 8.5.5 can be installed with Java SDK version 6.0. IBM BigFix Remote Control version 9.1.2 requires Java 7 or Java 8.
+
+When using WebSphere Application Server 8.5.5 with a standard profile, the supported WebSphere SDKs are:
+- IBM WebSphere SDK Java Technology Edition version 7.0
+- IBM WebSphere SDK Java Technology Edition version 7.1
+
+Installation instructions can be found here:
+http://www-01.ibm.com/support/knowledgecenter/SSEQTP_8.5.5/com.ibm.websphere.installation.base.doc/ae/tins_installation_jdk7_gui.html [http://www-01.ibm.com/support/knowledgecenter/SSEQTP_8.5.5/com.ibm.websphere.installation.base.doc/ae/tins_installation_jdk7_gui.html]
+It is strongly recommended to apply the latest WAS SDK fix pack, following these instructions:
+http://www-01.ibm.com/support/knowledgecenter/SSEQTP_8.5.5/com.ibm.websphere.installation.base.doc/ae/tins_upgrade_jdk7.html [http://www-01.ibm.com/support/knowledgecenter/SSEQTP_8.5.5/com.ibm.websphere.installation.base.doc/ae/tins_upgrade_jdk7.html]
+
+There is an IBM WebSphere SDK Java Technology Edition version 8, but this SDK is not supported for standard profiles on WebSphere version 8.5.5. It can only be used with the WebSphere Liberty Profile.

@@ -1,0 +1,37 @@
+Title: IBM Running "tftool2010.exe" gives a "java.io.IOException: error=2" error with Microsoft Team Foundation Server source config type on Linux - United States
+
+Text:
+tfs; mtfs; microsoft team foundation server; ucd; error=2; tftool2012.exe; tftool2008.exe; tftool2005.exe; ucd; linux; no such file; java.io.IOException; error=2 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Attempts to import version to a component using Microsoft Team Foundation Server (MTFS) as the source config type result in the error: "Cannot run program "tftool2010.exe": java.io.IOException: error=2, No such file or directory" appearing in the server log on a Linux installation of IBM UrbanCode Deploy (UCD). 
+
+SYMPTOM
+The following stack trace is shown in the deployserver.out under the directory: <ucd_install_dir>\var\log.
+
+
+
+2013-11-21 13:43:42,367 INFO http-8443-84 com.urbancode.ds.subsys.deploy.repo.integration.TfToolClient - Get TFS build info for: vstfs:///Build/Definition/8
+2013-11-21 13:43:42,369 ERROR http-8443-84 com.urbancode.ds.subsys.deploy.repo.integration.ManualIntegrationTask - Error on manual integration for 3d1324bd-b f23-4961-8a92-df601d12ea05
+java.io.IOException: Cannot run program "tftool2010.exe": java.io.IOException: error=2, No such file or directory
+at java.lang.ProcessBuilder.start(ProcessBuilder.java:470)
+at com.urbancode.ds.subsys.deploy.repo.integration.TfToolClient.getSpecificBuildInfo(TfToolClient.java:285)
+at com.urbancode.ds.subsys.deploy.repo.integration.TfsIntegrator.integrate(TfsIntegrator.java:140)
+at com.urbancode.ds.subsys.deploy.repo.integration.ManualIntegrationTask.run(ManualIntegrationTask.java:95)
+at com.urbancode.ds.web.rest.config.ComponentResource.runComponentIntegration(ComponentResource.java:468)
+at sun.reflect.GeneratedMethodAccessor305.invoke(Unknown Source) 
+CAUSE
+MTFS is a Microsoft Windows repository. You cannot use the MTFS source config, if your UrbanCode Deploy server is installed on a Linux machine. MTFS requires a client to retrieve those artifacts and the client must be a Windows base.
+
+
+RESOLVING THE PROBLEM
+SOLUTION 
+
+For versions older than IBM UrbanCode Deploy 6.0.1, the server does have to be on a Windows computer. 
+
+For 6.0.1 and above, only the agent must be on Windows, as the source config integrations now run on the agents and then push the files up to the server. As a result, there is no longer any requirement for the server to be installed on Windows in order to use the MTFS integration. 
+
+For older versions, install your UrbanCode Deploy server on Windows or use the UrbanCode Deploy Command Line Interface [http://pic.dhe.ibm.com/infocenter/ucdeploy/v6r0/index.jsp?topic=%2Fcom.ibm.udeploy.reference.doc%2Ftopics%2Fcli_ch.html] (CLI) to push the artifacts instead into the agents.
+
+RELATED INFORMATION
+#Microsoft Team Foundation Server with UCD 6.0.1 [http://pic.dhe.ibm.com/infocenter/ucdeploy/v6r0m1/index.jsp?topic=%2Fcom.ibm.udeploy.doc%2Ftopics%2Fcomp_create_TFS.html]

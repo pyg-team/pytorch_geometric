@@ -1,0 +1,84 @@
+Title: IBM Using MQSAUTHERRORS to generate WMQ FDC files related to RC 2035 (MQRC_NOT_AUTHORIZED) - United States
+
+Text:
+MQSAUTHERRORS; MQS_REPORT_NOAUTH TECHNOTE (FAQ)
+
+QUESTION
+ How do I enable and use the MQSAUTHERRORS environment variable to generate FDC files related to WebSphere MQ MQRC 2035 (MQRC_NOT_AUTHORIZED) errors? 
+
+ANSWER
+The environment variable MQSAUTHERRORS can be set to allow the queue manager to generate FDC files when errors related to the return code 2035 (MQRC_NOT_AUTHORIZED) are encountered.
+This environment variable only affects whether an FFST with Probe ID ZF039010 is written; all other FFSTs are produced irrespective of this environment variable. 
+
+
+This environment variable can be used in conjunction with MQS_REPORT_NOAUTH which adds appropriate entries related to this return code 2035 in the error logs of the queue manager. 
+
+For more details see:
+MQS_REPORT_NOAUTH environment variable can be used to better diagnose return code 2035 (MQRC_NOT_AUTHORIZED [http://www.ibm.com/support/docview.wss?rs=171&uid=swg21299319]) 
+
+Enabling 
+
+ 1. Export the environment variable. The value does NOT matter. The code just checks for the environment variable to be defined.
+    UNIX: export MQSAUTHERRORS=TRUE
+    Windows: set MQSAUTHERRORS=TRUE
+    OpenVMS: define/sys MQSAUTHERRORS TRUE 
+ 2. Start the queue manager. 
+ 3. Recreate the authorization failure. 
+ 4. Look for a new FDC file in /var/mqm/errors
+
+
+Usage Notes  * The environment variable can be added in the .profile or .bashrc file for the user "mqm". 
+ * You must export this environment variable prior to starting the queue manager. 
+ * The value is ignored, but it is a good practice to use a value that indicates that it is set, such as
+   TRUE. 
+ * To disable the reporting, you need to unset the environment variable and then to restart the queue manager.
+   UNIX: unset MQSAUTHERRORS
+   Windows: set MQSAUTHERRORS=
+   OpenVMS: deassign/sys MQSAUTHERRORS
+
+
+Expected Behavior  * No entries are added in the error log for the queue manager.
+
+ * The general AMQ error log has 2 entries:
+   AMQ6125: An internal WebSphere MQ error has occurred.
+   AMQ6184: An internal WebSphere MQ error has occurred on queue manager QueueManagerName.
+
+
+Scenario A 
+The userid used by the client exists in the host server, but it is NOT authorized. In this example is "userid1". There is one FDC generated with the following highlights: 
+
+Probe Id :- ZF039010 
+Component :- zfu_as_checkobjectauthority 
+Major Errorcode :- MQRC_NOT_AUTHORIZED 
+Probe Description :- AMQ6125: An internal WebSphere MQ error has occurred. 
+
+Note: The name of the userid who tried to access the queue manager is shown in a single line, after the "MQM Trace History" section of the FDC. 
+
+MQM Trace History 
+... 
+{ xcsFFST 
+< blank line > 
+0x425a4760 61746420 20202020 20202020 userid1 
+< blank line > 
+
+
+Scenario B 
+The userid used by the client does NOT exist in the host server. In this example is "userid2". 
+Notice the difference in "Major Errorcode" in this scenario, "MQRC_UNKNOWN_ENTITY", to the one in the Scenario A, "MQRC_NOT_AUTHORIZED". 
+
+Probe Id :- ZF039010 
+Component :- zfu_as_checkobjectauthority 
+Major Errorcode :- MQRC_UNKNOWN_ENTITY 
+Probe Description :- AMQ6125: An internal WebSphere MQ error has occurred. 
+
+Note: The name of the userid who tried to access the queue manager is shown in a single line, after the MQM Trace History 
+
+MQM Trace History 
+... 
+{ xcsFFST 
+< blank line > 
+0x425a4760 766C616D 706B696E 20202020 userid2 
+< blank line > 
+
+PRODUCT ALIAS/SYNONYM
+ WMQ WebSphere MQ

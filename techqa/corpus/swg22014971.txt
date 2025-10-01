@@ -1,0 +1,33 @@
+Title: IBM Invalid operation: result set is closed. ERRORCODE=-4470 - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+本文档仅适用于以下语言版本：
+ 简体中文 
+
+疑问
+ Java程序中怎么解决调用next() 或者 getXXX()时返回ERRORCODE=-4470错误的问题？ 
+
+答案
+ERRORCODE=-4470表示ResultSet对象已经被显式或者隐式关闭。 当ResultSet对象被关闭时，你调用next() 或者 getXXX()，就会收到如下的错误：
+Invalid operation: result set is closed. ERRORCODE=-4470, SQLSTATE=null
+
+一个ResultSet对象可以被显式地关闭， 其实就是调用它的close()方法。
+
+
+它还可以被隐式关闭。 下面这些情况下（当然不局限于以下所列情况）ResultSet对象会被隐式关闭： 
+
+1. 当queryCloseImplicit被设置成YES情况下，ResultSet里面所有结果行已被fetch;
+注意： 1）. 如果所连数据库默认是Db2 For LUW库， queryCloseImplicit默认是YES。 YES表示当ResultSet里面所有行被fetch后，ResultSet会被关闭。 
+2）. 如果是这种情况， 设置 allowNextOnExhaustedResultSet可以避免这个错误。
+
+2. 当resultSetHoldability = 2 且当前transaction被关闭（commit/rollback）时；
+注意： resultSetHoldability默认是1 - 即transaction关闭时，ResultSet不被关闭； 当然，当当前transaction是分布式transaction（即XA transaction）时， 它的默认值是2 - 即transaction关闭时，ResultSet也被关闭。
+
+3. 当对应的statement 对象被关闭。
+
+很多时候需要搜集JCC trace去检查为什么ResultSet对象在调用next() 或者 getXXX()前被关闭。
+
+相关信息
+ An US English translation is available [http://www.ibm.com/support/docview.wss?uid=swg22013011]

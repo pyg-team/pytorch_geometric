@@ -1,0 +1,252 @@
+Title: IBM PK90066: LAUNCHER STARTUP FAILURE . UNABLE TO GET SYSTEM STATUS . SOCKET ERROR : ERROR 221 (MSTATSOC.C:2036) - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Customer is  running WTX8.2.0.4 with Interim Fix Pack 2 on an
+   HP-UX PA-RISC
+   server, running OS version 11.11. 32 bit
+   
+   They have installed a WTX launcher at evnt_srv05
+   with a
+   listening port of 2263, port range of 34,200 - 34,499 and is
+   configured
+   to run as a Compound System. The launcher runs under a user
+   called
+   'dstx'.
+   When they try to start the Launcher, it goes to a status of
+   'Starting' and
+   no further.
+   Examination of the logs shows that the launcher is unable to
+   communicate with the system to determine whether it has started
+   successfully. However, triggered systems within the launcher do
+   work
+   correctly.
+   
+   The systems directory contains one system, msltest.msl , this
+   contains a
+   single map which moves a file from one location to another.
+   However, the
+   issue is not specific to any particular system/map.
+   
+   The attached files are as follows:
+   dtx.ini - The launcher config file
+   CompoundSystem06-16-09-02-08-58-PM.log,
+   CompoundSystem06-16-09-02-08-58-PM.txt,
+   Launcherlog6-16-09-2-08-34-PM.log - The logs generated when the
+   launcher
+   is started (I have enabled debugging)
+   ps.out - The output of doing a 'ps -efx | grep chkdstx' after
+   starting
+   the launcher.
+   netstat.out - The output of a 'netstat -a' command after
+   starting the
+   launcher.
+   The issue appears to be that when starting, the Compound System
+   tries to
+   open ports 34200, 34201 and 34202 for the control of the system,
+   but is
+   unable to.
+   (The bottom of CompoundSystem06-16-09-02-08-58-PM.log contains
+   the
+   following:
+   
+   DTXLN2106I - Tue Jun 16 14:09:08 2009 - tid:     1 inst:    -1 -
+   Ports :
+   status 34200, monitor 34201, control 34202 (mstatsoc.c:1053)
+   DTXLN0130T - Tue Jun 16 14:09:08 2009 - tid:     1 inst:    -1 -
+   Leaving
+   socket init :  (mstatsoc.c:1079)
+   DTXLN0127T - Tue Jun 16 14:09:08 2009 - tid:     1 inst:    -1 -
+   Entering init adapters :  (adptstuf.c:593)
+   DTXLN2146I - Tue Jun 16 14:09:08 2009 - tid:     1 inst:    -1 -
+   m4file
+   extras enabled :  (adptstuf.c:683)
+   DTXLN0128T - Tue Jun 16 14:09:08 2009 - tid:     1 inst:    -1 -
+   Leaving
+   init adapters :  (adptstuf.c:834)
+   DTXLN4105E - Tue Jun 16 14:09:08 2009 - tid:     5 inst:    -1 -
+   Socket
+   error : error 221 (mstatsoc.c:2853)
+   DTXLN4105E - Tue Jun 16 14:09:12 2009 - tid:     6 inst:    -1 -
+   Socket
+   error : error 221 (mstatsoc.c:1501)
+   DTXLN4105E - Tue Jun 16 14:09:12 2009 - tid:     7 inst:    -1 -
+   Socket
+   error : error 221 (mstatsoc.c:2036)
+   
+   I suspect the problem is whatever is causing the Socket error
+   221s.
+   
+   The output of netstat-a also shows that none of ports 34200,
+   34201 and
+   34202 are listening.
+   
+   When the launcher tries to esablish a connection to determine if
+   the
+   Compound System has started, it cannot open the port, and as a
+   result
+   the launcher remains in a status of 'Starting', see the bottom
+   of
+   Launcherlog6-16-09-2-08-34-PM.log.
+   
+   Jun 16, 2009 2:09:01 PM.
+   Cannot recognize if the system msltest.msl; has started. Reason:
+   Server
+   is unable to get the status of the system on port number 34,202.
+   
+   
+   Customer  have V8.0 and V8.1 Launchers on the same server which
+   work fine.  they
+   have also had V8.0 and V8.1 launchers running with the same
+   install dir,
+   user and port settings as the V8.2.0.4 launcher, and they have
+   all
+   worked successfully.
+   
+   Customer have also tried different port ranges and install
+   directories for
+   V8.2.0.4 launchers and had the same problem.
+   
+   It has previously been suggested that this problem can occur
+   when using
+   a clustered server with multiple IP addresses/network
+   interfaces.
+   However this server only has one network interface.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  WTX00031103
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Problem Description:
+   On some HPUX 11.11 system with older maintenance, launcher is
+   failing to open server sockets needed for WTX monitoring tools.
+   Getaddrinfo system call returns addrinfo for IPv6 AF family but
+   socket system call fails with 221 error   EPROTONOSUPPORT. The
+   problem is within the level of HPUX maintenance related to IPv6
+   support. In order to help customer who experience this
+   situation, WTX launcher provides special environment variable
+   setting:
+   HPUX_GETADDRINFO
+   If HPUX_GETADDRINFO is set, it will force additional checks and
+   will force IPv4 sockets in this case.
+   
+   Users Affected:
+   Users using WTX 8204 or older launcher on HPUX 11.11 systems
+   with older maintenance levels, missing full IPv6 support HPUX
+   patches.
+   
+   Platforms Affected:
+   1    HPUX(risc) (32BITS)
+   2    HPUX(risc) (64BITS)
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Added code in launcher communication layer that will, if
+   HPUX_GETADDRINFO is set, check can IPv6 family addr be used by
+   calling socket function as a workaround for getaddrinfo behavior
+   
+   Delivered in:
+   8.2.0.5, 8.3.0.0
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK90066
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSPHERE LAUNC
+   
+   
+ * REPORTED COMPONENT ID
+   5724M4011
+   
+   
+ * REPORTED RELEASE
+   820
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2009-06-29
+   
+   
+ * CLOSED DATE
+   2009-07-06
+   
+   
+ * LAST MODIFIED DATE
+   2009-07-06
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBSPHERE LAUNC
+   
+   
+ * FIXED COMPONENT ID
+   5724M4011
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R820 PSY
+   UP

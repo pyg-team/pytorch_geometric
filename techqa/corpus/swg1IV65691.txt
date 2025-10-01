@@ -1,0 +1,143 @@
+Title: IBM IV65691: USE OF MICROWAVELINKS.CSV IS NOT DOCUMENTED - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Product: Tivoli Network Manager
+   Version: 411
+   Component: GenericCsv Collector
+   
+   
+   The documentation discusses how to handle protocols and provide
+   an example of IP versus non-IP protocols.
+   
+   http://www-01.ibm.com/support/knowledgecenter/SSSHRK_4.1.1/com.i [http://www-01.ibm.com/support/knowledgecenter/SSSHRK_4.1.1/com.i]
+   bm.networkmanagerip.doc_4.1.1/itnm/ip/wip/disco/task/
+   nip_dsc_configurin gdevicep rotocolhandling.html?lang=en
+   
+   An example is needed for other protocols, such as microwave
+   links, showing the usage of the relevant files such as
+   microwaveLinks.csv.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  NA
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * All users                                                    *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * An example is needed for other protocols, such as microwave  *
+   * links, showing the usage of the relevant files such as       *
+   * microwaveLinks.csv.                                          *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Microwave link support is only available in the Perl CSV     *
+   * collector, and not on java CSV collector. The example data   *
+   * provided in the Perl CSV collector should be enough for the  *
+   * user to generate on his/her own.                             *
+   *                                                              *
+   * Add a note to the topic to indicate that Microwave link      *
+   * support is only available in the Perl CSV collector          *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Updated the following 4.1 topic and merged to equivalent topic
+   in 4.1.1 and 4.2.
+   http://www-01.ibm.com/support/knowledgecenter/SSSHRK_4.1.0/itnm/
+   ip/wip/disco/task/nmip_dsc_configuringdeviceprotocolhandling.htm [http://www-01.ibm.com/support/knowledgecenter/SSSHRK_4.1.0/itnm/ip/wip/disco/task/nmip_dsc_configuringdeviceprotocolhandling.htm]
+   l?lang=en
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV65691
+   
+   
+ * REPORTED COMPONENT NAME
+   TIV NETWK MGR I
+   
+   
+ * REPORTED COMPONENT ID
+   5724S4500
+   
+   
+ * REPORTED RELEASE
+   410
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-10-08
+   
+   
+ * CLOSED DATE
+   2014-12-17
+   
+   
+ * LAST MODIFIED DATE
+   2014-12-17
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

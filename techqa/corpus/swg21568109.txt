@@ -1,0 +1,43 @@
+Title: IBM First time login to Office Integration fails - United States
+
+Text:
+FIMO; BCS; App Int; Application Integration TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ User attempts login to FileNet Workplace XT Office Integration for the first time and receives an error 
+
+SYMPTOM
+When attempting to login the following error is received in the user interface: 
+
+Credentials Error: 0x80040794 - User Login Failed! 
+
+Following errors seen in the FileNetLog.txt: 
+
+ResultXml: <?xml version="1.0"?><response><errorcode>1940</errorcode><description>com.filenet.api.exception.EngineRuntimeException;The user is not authenticated. [Code=null]; OMFC/TheNetwork/NoOp//E_NOT_AUTHENTICATED</description></response>
+
+
+CAUSE
+The Generic JVM argument required for application integration setup in Workplace XT is either not in the JVM argument or is incorrect.
+
+This argument is referenced in the IBM FileNet Workplace XT 1.1.x.x Installation and Upgrade Guide under the following heading, "To configure WebSphere to support user tokens and WebDav connections for Workplace XT (for Application Integration, eForms, Records Manager, and others)"
+
+
+
+DIAGNOSING THE PROBLEM
+Unable to login to Office Integration
+
+
+
+RESOLVING THE PROBLEM
+Verify the following required JVM argument is in place, spelled properly and 8.3 notation is used where required: 
+
+-Djava.security.auth.login.config=D:\Progra~\IBM\FileNet\WebClient\CE_API\config\jaas.conf.WebSphere 
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Enterprise Content Management FileNet Content Manager Workplace XT Windows 1.1.4, 1.1.5 
+HISTORICAL NUMBER
+ 20842
+550
+000

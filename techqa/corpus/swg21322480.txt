@@ -1,0 +1,65 @@
+Title: IBM Memory error while trying to import a replica:  Out of memory: xdr_ez_string8 failed - United States
+
+Text:
+CC; Out of memory: xdr_ez_string8 failed; multitool: Warning: Version mismatch; software:6.0; packet:0.1; software:6; 0; packet:0; 1; VOB feature level 0; VOB feature level 1 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This technote explains how to resolve an error, Out of memory: xdr_ez_string8 failed that can occur when trying to import a new IBM® Rational® ClearCase MultiSite® (CC) replica. 
+
+SYMPTOM
+ 
+
+Trying to import and create a replica generates error: 
+
+
+Processing packet ./<replica name and date>
+multitool: Warning: Version mismatch, software:6.0, packet:0.1
+Out of memory: xdr_ez_string8 failed
+multitool: Error: Error decoding XDR information (file header)
+multitool: Error: Unable to create VOB replica: error detected by 
+ClearCase subsystem 
+multitool: Error: Error from VOB database:
+"/vob_stg/vob.vbs". 
+multitool: Error: Trouble opening VOB database: 
+"/vob_stg/vob.vbs". 
+multitool: Error: Error from VOB database:
+"/vob_stg/vob.vbs". 
+multitool: Error: Trouble opening VOB database:
+"/cchubvob_stg/vob.vbs". 
+cleartool: Error: /vobs/vobis not a registered VOB tag.
+
+CAUSE
+ 
+
+The error can be related to the old feature level 0 or 1 of the VOB.
+
+
+RESOLVING THE PROBLEM
+ 
+
+ 
+
+Confirm that there is no memory resource problem or a corrupted packet. 
+
+Raise the feature level of the exporting VOB and recreate the replica creation packet. 
+
+Refer to IBM Rational ClearCase MultiSite Administrator's Guide under the topic of Raising the Replica feature level [http://publib.boulder.ibm.com/infocenter/cchelp/v7r0m1/index.jsp?topic=/com.ibm.rational.clearcase.cc_ms_admin.doc/c_raising_replica_feat_lvls.htm] [http://publib.boulder.ibm.com/infocenter/cchelp/v7r0m1/index.jsp?topic=/com.ibm.rational.clearcase.cc_ms_admin.doc/c_raising_replica_feat_lvls.htm] [http://publib.boulder.ibm.com/infocenter/cchelp/v7r0m1/index.jsp?topic=/com.ibm.rational.clearcase.cc_admin.doc/topics/t_vobadm_fl_change.htm]for further information. 
+
+
+IMPORTANT: Before changing the feature level of a replica, make a backup of your VOBs as a feature level change is irreversible.
+
+
+Additional Information:
+Note that the IBM Rational ClearCase 7.0.1 Release Notes [http://publib.boulder.ibm.com/infocenter/cchelp/v7r0m1/index.jsp?topic=/com.ibm.rational.clearcase.help.doc/cc_ms_release_notes.htm] under the topic of Announcements and changes in the 7.0.0 release states the following: 
+
+===============================================================================
+No support for feature levels 0, 1, and 2 in next major release of Rational ClearCase software 
+
+Rational ClearCase 7.0 is the last major release to support VOB feature levels 0, 1, and 2. 
+
+===============================================================================
+
+
+
+RELATED INFORMATION
+#About Feature Levels and ClearCase [http://www.ibm.com/support/docview.wss?uid=swg21119269]

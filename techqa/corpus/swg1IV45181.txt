@@ -1,0 +1,218 @@
+Title: IBM IV45181: PERFORMANCE OVERHEAD DUE TO TRACE ALWAYS ENABLED FOR WEBSPHERE MQ V7.1/V7.5 JMS CLASSES IN WEBSPHERE APPLICATION SERVER V6.1 - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Fix Pack 7.1.0.4 for WebSphere MQ V7.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24036454]
+WebSphere MQ V7.5 Fix Pack 7.5.0.3 [http://www-01.ibm.com/support/docview.wss?uid=swg24036808]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  WebSphere Application Server V6.1 uses the WebSphere MQ JMS
+   classes indicated by the MQ_INSTALL_ROOT WebSphere variable.  If
+   you update this variable to point to WebSphere MQ V7.1 or V7.5
+   JMS classes, the performance of WebSphere MQ JMS may drop below
+   that of the WebSphere MQ V6.0 JMS classes which are shipped with
+   WebSphere Application Server V6.1.
+   The additional overhead is due to the WebSphere MQ JMS
+   classes executing trace routines, even when tracing has not
+   been enabled in the WebSphere Application Server administrative
+   console, or when the trace string is something like '*=info',
+   which should not cause any WebSphere MQ JMS tracing.
+   Thread dumps taken of the application server may show threads
+   which are in WebSphere MQ methods making calls to a class called
+   WAS6Tracer, for example:
+   .
+   Thread t@443: (state = BLOCKED)
+   - java.util.Hashtable.get(java.lang.Object)
+   - com.ibm.msg.client.commonservices.trace.Trace.traceable()
+   - com.ibm.msg.client.commonservices.trace.Trace.
+   methodEntryInternal(java.lang.Object.java.lang.String...)
+   - com.ibm.msg.client.commonservices.trace.Trace.entry(..)
+   - com.ibm.msg.client.wmq.factories.WAS6Tracer.traceData(...)
+   - com.ibm.msg.client.commonservices.trace.Trace.
+   traceDataInternal(int, java.lang.Object, ...)
+   - com.ibm.msg.client.commonservices.trace.Trace.data(...)
+   ...
+   .
+   Note that an analogous issue affecting the WebSphere MQ V7.0
+   JMS classes was addressed by APAR IZ60251 [http://www-01.ibm.com/support/docview.wss?uid=swg1IZ60251].
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  WebSphere MQ JMS tracing may be disabled entirely, eliminating
+   the unwanted overhead, by opening the WebSphere Application
+   Server V6.1 administrative console and navigating to
+   "Application Server > $ServerName > Process Definition >
+   Java Virtual Machine > Custom Properties", setting the property
+   shown below, and restarting the application server:
+   .
+     com.ibm.msg.client.commonservices.trace.standalone=true
+   .
+   While this property is in effect, WebSphere MQ JMS tracing
+   cannot be enabled through the WebSphere Application Server V6.1
+   administrative console.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   This issue affects users of WebSphere Application Server (WAS)
+   V6.1 that configure the application server to use the WebSphere
+   MQ (WMQ) V7.1 or V7.5 classes for Java Message Service (JMS) as
+   their JMS
+   provider.
+   
+   Platforms affected:
+   All Distributed (iSeries, all Unix and Windows) +Java +Java zOS
+   ****************************************************************
+   PROBLEM SUMMARY:
+   A logic error in the WebSphere MQ classes for JMS v7.1 and v7.5
+   meant that the trace specification provided by WebSphere
+   Application Server was not being
+   correctly interpreted. This caused the WebSphere MQ classes for
+   JMS to incorrectly enable tracing by default, regardless of the
+   trace specification. This
+   caused unnecessary performance and memory overheads when trace
+   should not have been enabled.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The WebSphere MQ V7.1 and V7.5 classes for JMS have been changed
+   so that tracing is disabled rather than enabled by default.
+   
+   To enable tracing within a WebSphere Application Server V6.1
+   environment, the trace string specified must include the trace
+   group jmsApi.
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following:
+   
+                      v7.1
+   Platform           Fix Pack 7.1.0.4
+   --------           --------------------
+   Windows            7.1.0.4
+   AIX                7.1.0.4
+   HP-UX (Itanium)    7.1.0.4
+   Solaris (SPARC)    7.1.0.4
+   Solaris (x86-64)   7.1.0.4
+   iSeries            7.1.0.4
+   Linux (x86)        7.1.0.4
+   Linux (x86-64)     7.1.0.4
+   Linux (zSeries)    7.1.0.4
+   Linux (Power)      7.1.0.4
+   zOS                7.1.0.4
+   
+   Version            v7.5
+   --------           --------------------
+   Fix available in:  7.5.0.3
+   
+   The latest available maintenance can be obtained from
+   'WebSphere MQ Recommended Fixes'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037]
+   
+   If the maintenance level is not yet available information on
+   its planned availability can be found in 'WebSphere MQ
+   Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV45181
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ SOL SPARC
+   
+   
+ * REPORTED COMPONENT ID
+   5724H7223
+   
+   
+ * REPORTED RELEASE
+   710
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-07-03
+   
+   
+ * CLOSED DATE
+   2013-08-09
+   
+   
+ * LAST MODIFIED DATE
+   2013-08-09
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ SOL SPARC
+   
+   
+ * FIXED COMPONENT ID
+   5724H7223
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R710 PSY
+   UP

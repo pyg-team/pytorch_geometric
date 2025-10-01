@@ -1,0 +1,107 @@
+Title: IBM QRadar: Event Rate (EPS) graph may not reflect the entire event load on the system - United States
+
+Text:
+EPS graph; statfilter; event per second; sourcemonitor; about eps graphs; Event Rate; Routing Rule; lower than license; statfilter; sourcemonitor TECHNOTE (FAQ)
+
+QUESTION
+ How does the QRadar Event Rate (EPS) graph on the System Monitoring Dashboard derive its values? 
+
+CAUSE
+QRadar reports event rates at various locations along its event pipeline. This can lead to confusion about the actual event load on the system and questions about licensing.
+
+Quick Links:
+
+
+ * The 'Event Rate (EPS)' Dashboard Graph in QRadar 
+ * Where do you find the StatFilter information in QRadar? 
+ * Understanding the EPS Statistics in QRadar
+
+
+ANSWER
+
+
+
+THE 'EVENT RATE (EPS)' DASHBOARD GRAPH IN QRADAR
+The QRadar Event Rate (EPS) graph on the System Monitoring Dashboard derives its values from the StatFilter data, which is the last component of the ECS-EC portion of the event pipeline before data enters the processing phase (ECS-EP). Both routing rules and the licensing components occur before StatsFilter values are calculated, so values plotted in the Event Rate (EPS) graph do not include data like events dropped by a routing rule from the event pipeline. This is a common question from administrators who are using routing rules to drop events, however, unwanted events that are purposefully dropped is not reflected in the default dashboard graph due to the data used to generate the graph. 
+[/support/docview.wss?uid=swg21984283&amp;aid=1]
+Figure 1: To view the search results that a graph is based on, click View in Log Activity.
+
+
+The Event Rate (EPS) graphs are based on a search which you can access by clicking on the “View in Log Activity” link present inside the Widget. When reviewing the results of the Event Rate (EPS) search in the Log Activity tab, you will notice that the search itself is filtering QRadar System Notifications that contain the phrase StatFilter in their payloads. 
+
+[/support/docview.wss?uid=swg21984283&aid=2] [/support/docview.wss?uid=swg21984283&aid=2]
+Figure 2: The search filters that make up graphed data in QRadar
+
+
+
+
+
+
+
+
+
+WHERE DO YOU FIND THE STATFILTER INFORMATION IN QRADAR?
+The QRadar System notifications in turn are based on the qradar.log file in the /var/log/ directory in your QRadar Appliances. To see the raw notifications themselves you can open an SSH session from the Console to the managed host and run the following command:
+
+
+
+grep StatFilter /var/log/qradar.log 
+
+
+
+The keyword administrators can use to view the event rate notification is StatFilter. The information used from the StatFilter notification data is used to generate the graph in Figure 1 and Figure 2. 
+
+The result will include many lines in the following form:
+
+Jun 12 16:03:09 ::ffff:172.16.77.29 [ecs-ec] [type=com.q1labs.semsources.filters.stat.StatFilter][parent=csd30-primary.q1labs.lab:ecs-ec/EC/Processor2]] com.q1labs.semsources.filters.stat.StatFilter: [INFO] [NOT:0000006000][172.16.77.29/- -] [-/- -] Events per second: 1s:5094,5094 (peak 7423,7423) (compression: 0%) 5s:5040,5040 (peak 5507,5507) (compression: 0%) 10s:5045,5045 (peak 5269,5269) (compression: 0%) 30s:5043,5043 (peak 5120,5120) (compression: 0%) 60s:5034,5034 (peak 5079,5079) (compression: 0%) 
+
+
+
+
+
+
+Important: An enhancement was made to the regular expression used to parse StatFilter notification as part of the Baseline Maintenance Extension [https://exchange.xforce.ibmcloud.com/hub/extension/IBMQRadar:IBMContentPackageInternalBaseMaint] for QRadar. Administrators on QRadar 7.2.6 and later should download and install the Baseline Maintenance Extension [https://exchange.xforce.ibmcloud.com/hub/extension/IBMQRadar:IBMContentPackageInternalBaseMaint] on their Console. Updated regex to StatFilter to use: +1s\:\d+\,\d+ \(peak \d+\,(\d+) 
+
+
+
+
+
+
+
+
+
+HOW TO VIEW RAW EVENT STATISTICS
+
+The event rate before licensing and forwarding can be also obtained by similarly reviewing the SourceMonitor values found in the same log file, which reflect the Event Rate earlier in the event processing pipeline. 
+
+To see SourceMonitor values, type: grep SourceMonitor /var/log/qradar.log 
+
+Note: The keyword administrators can use to view the log event rate notifications is SourceMonitor.
+
+
+
+The output shows the full information for the SourceMonitor logs:
+
+Jun 12 16:04:42 ::ffff:172.16.77.29 [ecs-ec] [1c438dc5-ae70-4799-a4d0-853e5481b5bb/SequentialEventDispatcher] com.q1labs.sem.monitors.SourceMonitor: [INFO] [NOT:0000006000][172.16.77.29/- -] [-/- -]Incoming raw event rate (5s: 8422.00 eps), (10s: 8482.10 eps), (15s: 8458.13 eps), (30s: 8459.87 eps), (60s: 8514.48 eps), (300s: 8496.89 eps), (900s: 8496.89 eps). Peak in the last 60s: 8778.20 eps. Max Seen 8903.40 eps. EC Throttles/5s (60s: 10.00). Total EC Throttles in the last 60s: 120. Total EC Throttles: 5442. License Threshold: 5024.00 
+
+
+
+These examples are intended to contrast the two EPS statistics and show that they provide quite different values even though they were sampled less than 60 seconds apart. The SourceMonitor counter measures 8514.48 (60 second average EPS), while StatFilter reports almost exactly the same period with an Event Rate of 5034 EPS. 
+
+The events being received in excess of the license rate are being buffered and processed at license rate as explained in Technote 1687020: QRadar: Event and Flow Burst Handling (Buffer) [http://www.ibm.com/support/docview.wss?uid=swg21687020]. When the actual event load exceeds your license capacity there will be other notifications indicating this but the Event Rate (EPS) graph which is based on the StatFilter data will not reflect this. Furthermore, if you have Routing Rules that drop certain types of events, the value reported by StatsFilter may be even lower than your license limit. This can lead to situations where you are receiving notifications indicating you are above your license rate even though the EPS graph shows values at or below the license rate. For further information about exceeding your license rate please see: Technote: 1622865: QRadar: What to expect when you are beyond your EPS license [http://www.ibm.com/support/docview.wss?uid=swg21622865].
+
+
+
+
+
+
+
+
+----- 
+
+Where do you find more information? 
+If you have additional questions or some of this content is not clear, you can see the QRadar forum or contact customer support for assistance: 
+• Online QRadar Customer Forums [https://www.ibm.com/developerworks/community/forums/html/category?id=33333333-0000-0000-0000-000000000528] 
+• Submit and manage your support tickets online 24x7 using IBM Service Request [http://www.ibm.com/software/support/servicerequest/quick_start.html] 
+• QRadar Downloads - IBM Fix Central [http://www.ibm.com/support/fixcentral/options?selection=Security+Systems;ibm/Other+software/IBM+Security+QRadar+SIEM] 
+• IBM Security Support videos - YouTube channel [https://ibm.biz/BdFjbG]

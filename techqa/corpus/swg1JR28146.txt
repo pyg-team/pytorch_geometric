@@ -1,0 +1,126 @@
+Title: IBM JR28146: OBTAIN THE LATEST TRANSLATIONS FOR LANGUAGES <INSERT HERE>" - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  obtain the latest translations for languages <insert here>".The
+   separate NLS iFix requires that all the PAK files are updated -
+   and due to the update installer requirement.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: WebSphere Process Server v6.1 Users          *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Users using Arabic and Czech locales    *
+   *                      will not have access to the latest      *
+   *                      translated files.                       *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   This was caused by the translation cycle continuing past the
+   6.1 code freeze, hence forcing into the iFix route.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Late translation files were built into PAK files used to
+   upgrade 6.1 installations. The target fixpack for these
+   updates is 6.1.0.1.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR28146
+   
+   
+ * REPORTED COMPONENT NAME
+   WEB PROC SERVER
+   
+   
+ * REPORTED COMPONENT ID
+   5724L0100
+   
+   
+ * REPORTED RELEASE
+   602
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2007-12-19
+   
+   
+ * CLOSED DATE
+   2008-01-30
+   
+   
+ * LAST MODIFIED DATE
+   2008-01-30
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEB PROC SERVER
+   
+   
+ * FIXED COMPONENT ID
+   5724L0100
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R610 PSY
+   UP

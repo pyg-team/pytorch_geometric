@@ -1,0 +1,16 @@
+Title: IBM Received Error 500: java.lang.NullPointerException on JMX Monitors after IBM Entrprise Content Management System Monitor (ECM SM) was upgraded to ECM SM 5.2 - United States
+
+Text:
+webservice JMXmonitor JMX war ear JPSMonConfJMXMon TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Received Error 500: java.lang.NullPointerException on JMX Monitors after IBM Entrprise Content Management System Monitor (ECM SM) was upgraded to ECM SM 5.2 
+
+CAUSE
+Ear or War file needs to be upgraded.
+
+DIAGNOSING THE PROBLEM
+Error 500: java.lang.NullPointerException received when trying to run or configure the JMX monitors.
+
+RESOLVING THE PROBLEM
+Upgrade ECM SM 5.2 with Fix Pack1. The insructions had changed in how to install the application. Get the Install Guide from the webconsole to get the latest FP1 version of the Install Guide. Follow the instructions in the section entitled, "How to deploy the APPLICATIONSERVER.JMX.MONITOR application as WebSphere Enterprise Application".

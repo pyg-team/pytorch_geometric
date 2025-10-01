@@ -1,0 +1,34 @@
+Title: IBM java.lang.NullPointerException in getConfiguredLabelResource error when accessing FileNet WorkplaceXT - United States
+
+Text:
+npe; configurablelabels.xml; nullpointer; xt logon TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ java.lang.NullPointerException in getConfiguredLabelResource error when accessing FileNet WorkplaceXT 
+
+SYMPTOM
+A java.lang.NullPointerException may be displayed when accessing the FileNet WorkplaceXT Browse view. The error stack will specifically indicate: 
+
+com.filenet.wcm.apps.server.util.prefs.LabelConfiguration.getConfiguredLabelResource, for example: 
+
+
+
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+
+
+CAUSE
+This error may be encountered if the WorkplaceXT deployment cannot load the ConfigurableLabels.xml configuration file. This file will is located in the WorkplaceXT configuration directory (default location is <install_dir>\IBM\FileNet\Config\Webclient but may be customized by changing the value of the configurationDirectory property in the WorkplaceXT web.xml deployment descriptor). 
+
+
+
+
+RESOLVING THE PROBLEM
+Check that the ConfigurableLabels.xml exists in the location indicated by web.xml and that the operating system user identity used to start the J2EE Application Server hosting WorkplaceXT has read/write access to this configuration file.

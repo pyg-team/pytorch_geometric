@@ -1,0 +1,82 @@
+Title: IBM APARs IT10385 and IT07291 introduce changes to XA handling for JMS and JDBC that require additional migration steps when upgrading to fix packs 10.0.0.6 and 9.0.0.6 or higher - United States
+
+Text:
+ PRODUCT DOCUMENTATION
+
+ABSTRACT
+ APARs IT10385 and IT07291 introduce changes to XA handling for JMS and JDBC that require additional migration steps when upgrading to fix packs 10.0.0.6 and 9.0.0.6 or higher
+
+
+CONTENT
+For all XA Resources:
+
+Because the shared memory state is a machine-wide resource it is possible for multiple queue managers to generate the same resource ID for different RM's managed by different Integration Nodes. For that reason we have clarified that only a single broker queue manager enabled for JDBC or JMS XA is supported on a particular system at any one time. Where one system is defined to be a single local copy of the /var/mqm filesystem which can be accessed by processes running in the same physical or virtual machine.
+Multiple queue managers running in separate virtual machines running on the same physical machine my be configured for JMS or JDBC XA.
+
+
+
+For JMS:
+
+The Execution Group XA listener for JMS is no longer started by default. In order to determine if the listener should be started the qm.ini of the Integration Node's queue manager is examined to see if there is a JMS Resource Manager entry present.
+
+JMS is now registered dynamically in XA transactions so that transactions not involving JMS providers are not blocked when a JMS provider is unavailable.
+
+A new dynamic switchfile DynJMSSwitch.dll (windows), DynJMSSwitch32.dll (windows) or DynJMSSwitch.so (unix) is shipped with the product to provide dynamic registration. In order to assist with backwards compatibility the original switch files are also shipped (JMSSwitch.dll, JMSSwitch32.dll or JMSSwitch.so), however these are copies of the dynamic switch file on windows or a symlink to the dynamic switch file on unix platforms.
+
+The name of the shared memory file used to store state between the MQ queue manager and the Integration Server has been changed to JMS_DYNXA_MMFV1. On unix platforms you will see this file created in the /var/mqm directory. 
+
+During XA recovery the only information that is available for JMS connection is the information passed in the XAOpen String. For that reason it is not possible to use isolated classloading for JMS Providers which need to perfrom XA recovery. Therefore the client jars for JMS providers which are enabled for Global Coordination must be located in the $MQSI_WORKPATH/shared-classes directory.
+
+
+For JDBC:
+
+The Execution Group XA listener for JDBC is no longer started by default. In order to determine if the listener should be started the qm.ini of the Integration Node's queue manager is examined to see if there is a JDBC Resource Manager entry present.
+
+The name of the shared memory file used to store state between the MQ queue manager and the Integration Server has been changed to JDBC_XA_SWITCH_SPMF3. On unix platforms you will see this file created in the /var/mqm directory.
+
+
+Migration steps (applicable to both JMS and JDBC):
+
+When moving to a new fixpack it is essential that the switch files shipped with the fixpack match the copies that will be used by the MQ queue manager. To do this follow these steps:
+
+
+ 1. Stop the Integration Node and Queue Manager 
+ 2. Install the new fixpack level 
+ 3. Check the qm.ini of the Queue Manager associated with the Integration Node and examine the SwitchFile property for JMS or JDBC resource manager entries.  1. If the SwitchFile entry points to a physical file in the IIB installation then update this path to point to the same file in the new fixpack installation, for example update:
+        
+        SwitchFile=/opt/ibm/mqsi/9.0.0.5/lib/libJMSSwitch.so
+        
+        to
+        
+        SwitchFile=/opt/ibm/mqsi/9.0.0.6/lib/libJMSSwitch.so
+        
+        
+     2. If the SwitchFile entry is an unqualified filename (for example jmsswit) and this name matches the name of a symlink in the MQ exits or exits64 directories on unix platform and this symlink points to a file in the IIB installation then update this symlink to point to the same file in the new IIB installation. For example:
+        
+        Update:
+        lrwxrwxrwx 1 user1 mqm 41 Jul 15 13:44 JMSSwit -> /opt/ibm/mqsi/9.0.0.5/lib/libJMSSwitch.so
+        
+        to:
+        lrwxrwxrwx 1 user1 mqm 41 Jul 15 13:45 JMSSwit -> /opt/ibm/mqsi/9.0.0.6/lib/libJMSSwitch.so
+        
+        
+     3. If the SwitchFile entry is an unqualified filename (for example JMSSwitch) and this name matches the name of a file in the MQ exits or exits64 directories then delete these files and replace them with the copies from the new fixpack installation.
+        
+        On windows platforms ensure when copying the new files that you follow the procedures listed in the relevant Knowledge Center topic below.
+        
+        v9 
+        https://www.ibm.com/support/knowledgecenter/SSMKHH_9.0.0/com.ibm.etools.mft.doc/bc19035_.htm [https://www.ibm.com/support/knowledgecenter/SSMKHH_9.0.0/com.ibm.etools.mft.doc/bc19035_.htm] , particularly step 6 which requires you to rename the 32bit switch file when placing it in the exits directory.
+        
+        v10
+        https://www.ibm.com/support/knowledgecenter/SSMKHH_10.0.0/com.ibm.etools.mft.doc/ac28620_.htm [https://www.ibm.com/support/knowledgecenter/SSMKHH_9.0.0/com.ibm.etools.mft.doc/bc19035_.htm] , particularly step 8 which requires you to rename the 32bit switch file when placing it in the exits directory.
+        
+    
+    
+ 4. Start the MQ queue manager 
+ 5. Start the Integration Node 
+
+
+
+
+ORIGINAL PUBLICATION DATE
+ 2016/8/12

@@ -1,0 +1,47 @@
+Title: IBM How to copy an IBM Datacap Taskmaster application using the Datacap Studio wizard - United States
+
+Text:
+Application Migration TECHNOTE (FAQ)
+
+QUESTION
+ How to copy an IBM Datacap Taskmaster application from one Datacap environment to another using the Datacap Studio application wizard, when the application already exists on the destination server. 
+
+ANSWER
+To copy over an application from one system to another (e.g. Development to Production, or vice versa), follow the detailed procedure below: 
+
+ 1. Make a copy of the needed application locally on the same machine (e.g. Development):  1. Start the Application wizard in Datacap Studio 
+     2. Select "Copy an existing RRS application" 
+     3. Select the application from the list (e.g. APT) 
+     4. Root folder should be default (i.e. c:\datacap, etc...) 
+     5. Rename copy, in order to create a new copy locally (APTcopy). Rename it differently from the original, as it will be renamed back to the original name on the destination system 
+     6. Click Next 
+     7. Message of success should be given
+    
+    
+ 2. Bring the copy made above to the destination system (e.g. Production):  1. Copy application folder from Development system (c:\datacap\APTcopy) 
+     2. Paste application folder just copied into Production system in the Datacap folder (i.e. c:\datacap) 
+     3. Add new entry name for said application in c:\datacap\datacap.xml file, and save the change: <app name="APTcopy" ref="C:\Datacap\APTcopy"></app> 
+     4. Start Taskmaster Application Manager 
+     5. Select newly added application and verify that all paths under the Applications and Taskmaster tabs are correct 
+     6. Test new application in Datacap Studio and/or start the application client
+    
+    
+ 3. While still in the destination system (e.g. Production), make a copy of the copied application (APTcopy) in step 2, and rename it back to the original name:  1. Start the Application wizard in Datacap Studio 
+     2. Select "Copy an existing RRS application" 
+     3. Select the application from the list (e.g. APTcopy) 
+     4. Root folder should be default (i.e. c:\datacap, etc...) 
+     5. Rename copy in order to create a new local copy (APT) (Before performing this step, as there might already be an existing application folder with the original name (APT), be sure to rename that folder as the original/backup (e.g. APTbackup), so that the Wizard will not send back a message indicating folder already exists, etc...) 
+     6. Click Next 
+     7. Message of success should be given
+    
+    
+
+
+After completing the steps above and confirming all is functioning properly, the copy folders (per the examples above) from both Development and Production (e.g. APTcopy, APTbackup) can either be saved, backed up, or deleted. 
+
+Note: Be sure to point the application to the local Access MDB files, as this cannot be performed while pointing to any other database type. Once complete, then point to the needed database. This is only meant to copy the application, not the database. Please follow the Knowledge Center on guidance in copying databases for Datacap applications: http://www.ibm.com/support/knowledgecenter/SSZRWV_8.1.0/com.ibm.dc.admin.doc/dcade006.htm [http://www.ibm.com/support/knowledgecenter/SSZRWV_8.1.0/com.ibm.dc.admin.doc/dcade006.htm] 
+
+HISTORICAL NUMBER
+ 02966
+L6Q
+000

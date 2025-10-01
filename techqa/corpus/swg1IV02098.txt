@@ -1,0 +1,244 @@
+Title: IBM IV02098: Recursive lock probe XY086002 FDC whilst extending a shared memory extent. - United States
+
+Text:
+  FIXES ARE AVAILABLE
+WebSphere MQ V7.0 Fix Pack 7.0.1.7 [http://www-01.ibm.com/support/docview.wss?uid=swg24030911]
+WebSphere MQ V7.0.1 for i5/OS Fix Pack 7.0.1.7 [http://www-01.ibm.com/support/docview.wss?uid=swg24030912]
+WebSphere MQ v7.0.1.7 Hypervisor for AIX [http://www-01.ibm.com/support/docview.wss?uid=swg24031715]
+WebSphere MQ V6.0 Fix Pack 6.0.2.12 [http://www-01.ibm.com/support/docview.wss?uid=swg24033317]
+WebSphere MQ V6.0 for iSeries Fix Pack 6.0.2.12 [http://www-01.ibm.com/support/docview.wss?uid=swg24033319]
+WebSphere MQ 6.0 for HP OpenVMS Alpha and Itanium - Fix Pack 6.0.2.12 [http://www-01.ibm.com/support/docview.wss?uid=swg24035627]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  After experiencing many attempts to start channels, numerous
+   FDCs with Probe IDs XY086002 and XY441001 are reported (note
+   that non-AIX platforms may report long lock wait FDCs rather
+   than probe XY086002 FDCs).
+   
+   Probe Id          :- XY086002
+   Application Name  :- MQM
+   Component         :- xllOSSpinLockWaitLock
+   Program Name      :- runmqchl_nd
+   Major Errorcode   :- STOP
+   Minor Errorcode   :- OK
+   Probe Type        :- HALT6109
+   Probe Severity    :- 1
+   Comment1          :- Recursive Lock
+   
+   MQM Function Stack
+   cccJobMonitor
+   cccGetPipeName
+   xcsInitialize
+   xcsConnectSharedSubpool
+   xcsAttachSharedSubpool
+   xlsThreadInitialization
+   xlsThreadPreInitialization
+   xcsAllocateQuickCell
+   xstQuickCellExtendBlock
+   xcsAllocateMemBlock
+   xstExtendSet
+   xstCreateExtent
+   xstGetNextExtentId
+   xcsAllocateMemBlock
+   xstExtendSet
+   xllSpinLockRequest
+   xcsFFST
+   
+   Probe Id          :- XY441001
+   Component         :- xstAddConnectedThread
+   Arith1            :- 2047 (0x7ff)
+   
+   MQM Function Stack
+   cccJobMonitor
+   cccGetPipeName
+   xcsInitialize
+   xcsConnectSharedSubpool
+   xcsAttachSharedSubpool
+   xlsThreadInitialization
+   xlsThreadPreInitialization
+   xcsAllocateQuickCell
+   xstQuickCellExtendBlock
+   xcsAllocateMemBlock
+   xstExtendSet
+   xstCreateExtent
+   xstGetNextExtentId
+   xcsFFST
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  End all qmgrs.  Clear all mqm IPC resources using amqiclen
+   command then restart qmgrs.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   A user may be affected by this problem if a great many channel
+   start requests fail, and the fix for APAR IZ75682 [http://www-01.ibm.com/support/docview.wss?uid=swg1IZ75682] (a shared
+   memory leak) is not in place. The problem could also be
+   encountered with "mqm" applications failing to connect (instead
+   of channel start failures).
+   
+   Platforms affected:
+   All Unix
+   
+   ****************************************************************
+   PROBLEM SUMMARY:
+   There is a theoretical, and rare, circumstance in the
+   management of queue manager shared memory where a lock may be
+   held during shared memory extension, then may be required again
+   for extension of a further aspect. That causes a deadlock on the
+   thread taking out the lock.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The lock handling of queue manager shared memory extension has
+   been corrected to avoid the possibility of attempting to take
+   out a lock that is already held.
+   
+   It is unlikely in practice that this problem could be
+   encountered subsequent to the fix of APAR IZ75682 [http://www-01.ibm.com/support/docview.wss?uid=swg1IZ75682]. That APAR
+   fixes a small shared memory leak that triggered the need to
+   extend queue manager shared memory.
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+                      v6.0
+   Platform           Fix Pack 6.0.2.12
+   --------           --------------------
+   AIX                U842074
+   HP-UX (PA-RISC)    U842208
+   HP-UX (Itanium)    U842213
+   Solaris (SPARC)    U842209
+   Solaris (x86-64)   U842216
+   Linux (x86)        U842210
+   Linux (x86-64)     U842215
+   Linux (zSeries)    U842211
+   Linux (Power)      U842212
+   Linux (s390x)      U842214
+   
+                      v7.0
+   Platform           Fix Pack 7.0.1.7
+   --------           --------------------
+   AIX                U843721
+   HP-UX (PA-RISC)    U844089
+   HP-UX (Itanium)    U844094
+   Solaris (SPARC)    U844090
+   Solaris (x86-64)   U844096
+   Linux (x86)        U844091
+   Linux (x86-64)     U844095
+   Linux (zSeries)    U844092
+   Linux (Power)      U844093
+   
+   The latest available maintenance can be obtained from
+   'WebSphere MQ Recommended Fixes'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037]
+   
+   If the maintenance level is not yet available, information on
+   its planned availability can be found in 'WebSphere MQ
+   Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV02098
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ AIX V6
+   
+   
+ * REPORTED COMPONENT ID
+   5724H7201
+   
+   
+ * REPORTED RELEASE
+   602
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-06-17
+   
+   
+ * CLOSED DATE
+   2011-07-04
+   
+   
+ * LAST MODIFIED DATE
+   2011-07-04
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ AIX V6
+   
+   
+ * FIXED COMPONENT ID
+   5724H7201
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R602 PSY
+   UP

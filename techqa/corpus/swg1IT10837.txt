@@ -1,0 +1,165 @@
+Title: IBM IT10837: WEBSPHERE MQ CHANNEL START FAILS WITH AMQ9637 WHEN USING A TLS 1.2 CIPHER RUNNING IN AN ORACLE JRE - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When trying to start a channel using a TLS cipher running in an
+   Oracle JRE the client certificate is not being sent, although
+   client authentication is enabled. Error AMQ9637 (Channel is
+   lacking a certificate) is logged in the queue manager error log.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   This issue affects users attempting a connection from a
+   WebSphere MQ Classes for Java or JMS client to a queue manager
+   secured with a TLS cipher, where the client is running in an
+   Oracle JVM, and the queue manager's server-connection channel
+   property SSLCAUTH is set to REQUIRED, meaning that client
+   authentication is enabled for the handshake.
+   
+   For WebSphere MQ versions 7.5 and 7.1 this issue only affects
+   TLS 1.2 ciphers.
+   
+   For IBM MQ version 8 this issue affects both TLS 1 and TLS 1.2
+   ciphers.
+   
+   
+   Platforms affected:
+   MultiPlatform
+   
+   ****************************************************************
+   PROBLEM DESCRIPTION:
+   The Oracle JVM did not create a default internal key manager
+   object for TLS socket connections, meaning that the client's
+   signed personal certificates were not available for client
+   authentication during the handshake, causing the connection
+   attempt to fail.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  An internal key manager object is now created for Oracle TLS
+   connections, so the client's signed personal certificates are
+   available during the handshake and the connection attempt
+   succeeds.
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+   Version    Maintenance Level
+   v7.1       7.1.0.8
+   v7.5       7.5.0.7
+   v8.0       8.0.0.5
+   
+   The latest available maintenance can be obtained from
+   'WebSphere MQ Recommended Fixes'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037]
+   
+   If the maintenance level is not yet available information on
+   its planned availability can be found in 'WebSphere MQ
+   Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT10837
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ WINDOWS V7
+   
+   
+ * REPORTED COMPONENT ID
+   5724H7220
+   
+   
+ * REPORTED RELEASE
+   710
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2015-08-21
+   
+   
+ * CLOSED DATE
+   2016-03-28
+   
+   
+ * LAST MODIFIED DATE
+   2016-03-28
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    IT10725
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ WINDOWS V7
+   
+   
+ * FIXED COMPONENT ID
+   5724H7220
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R710 PSY
+   UP

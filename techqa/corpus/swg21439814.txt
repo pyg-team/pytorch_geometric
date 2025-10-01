@@ -1,0 +1,29 @@
+Title: IBM Writing services for WebSphere Lombardi Edition and IBM Business Process Manager (BPM) that consume as little heap as possible - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ How do you write services so that they do not consume heap storage? Services that stay in memory are expensive. 
+
+RESOLVING THE PROBLEM
+How do I write services so they do not consume much heap?
+The service engine runs as a Stateful Session Bean. As a result, if a service is executed but does not complete, then it stays in memory until the bean times out. The default timeout is 2 hours. The memory is cleared by the application server when the bean either completes, fails, or times out.
+
+How does this relate to the Service Engine?
+If you have services that stop at coaches and do not get completed by the user, then those services stay in memory until the application server times out the bean. This problem is exasperated by tasks, such as those tasks that you see on the support site, that are services designed to present an inbox view or a never ending HTML user interface. In those cases, you can quickly run out of memory if you are not careful with clearing out variables. The solution to this problem is very simple. Clear out your variables by setting them to null. You might not be able to clear out all of the variables as some variables might be needed when the client clicks on a button and gets routed to other parts of the service. However, clear out as many variables as possible. The simplest and most complete place to clear out the variables is in the coach itself. Create a custom HTML block and include a Java™Script block that looks like the following example: 
+
+<#tw.local.resultSet = null;tw.local.html = null;//etc...#>
+
+This approach enables you to clear out the variables but still render the coach. The difference can be dramatic. For example, you might see that each service invocation of a customized in box solution is taking up 1MB of memory. However, when you clear up the variables, the memory might decrease to 6KB. In this scenario, you go from quickly running out of heap to only using 450MB of heap.
+
+This issue is not a problem for services that complete. After you reach an end state for the service, the bean is completed and the application server can sweep through the in-memory beans and clear out the memory. With that said, it is always a good practice tto set varaibles that you are not using to null. If you carry around a 2MB XML result set while a service is executing, that result set is not only consuming memory, but is being written to (and read from) the database each time the execution state is used.
+
+Be careful with nested services with coaches that do not end. If a parent service creates a large variable and the child service displays a coach that never ends, then the variable still exists even if you clear the variable in the child. This situation occurs because when a complex object is run in a child service, you are run it by reference. Setting the variable to null in the sub-service only sets the reference and not the original variable.
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Business Process Manager Standard Memory AIX, Linux, Solaris, Windows 8.5, 8.0.1, 8.0, 7.5.1, 7.5 Business Integration IBM Business Process Manager Express Memory Linux, Windows 8.5, 8.0.1, 8.0, 7.5.1, 7.5 Business Integration IBM Business Process Manager Advanced Memory AIX, Linux, Solaris, Windows 8.5, 8.0.1, 8.0, 7.5.1, 7.5 
+HISTORICAL NUMBER
+ 433

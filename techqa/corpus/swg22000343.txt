@@ -1,0 +1,13 @@
+Title: IBM Refining Search Results When Using Global Search for OpenPages - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How can I refine my search results when using the Global Search feature of OpenPages? 
+
+ANSWER
+See the related links section for a YouTube video on this topic.
+
+RELATED INFORMATION
+ VIDEO: Refining Search Results in OpenPages [https://www.youtube.com/watch?v=MERPxki25l8]

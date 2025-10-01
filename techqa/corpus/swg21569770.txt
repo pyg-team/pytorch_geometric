@@ -1,0 +1,26 @@
+Title: IBM Session attribute order of preference - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ What is the order of precedence when defining a SESSIONTIMEOUT? 
+
+ANSWER
+NPS offers the following session attributes: 
+
+ * DEFPRIORITY 
+ * MAXPRIORITY 
+ * ROWSETLIMIT 
+ * SESSIONTIMEOUT 
+ * QUERYTIMEOUT 
+
+
+To set the attribute values, NPS uses the following order of precedence rules: 
+ * If the attribute is set on the USER, use that value. 
+ * If the attribute is not set on the USER, use the most restrictive value of all GROUPS in which that user is a member. 
+
+ 
+
+HISTORICAL NUMBER
+ NZ435558

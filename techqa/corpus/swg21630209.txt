@@ -1,0 +1,105 @@
+Title: IBM How do I ensure that metadata and data are merged when using a forced-vse-key? - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ I am crawling a database for meta-data and then I enqueue a pdf file to add as the snippet using forced-vse-key. When I am converting the pdf file what do I need to do to ensure that the document create for the pdf is merged with the document for the metadata?
+
+I am able to get the snippet content node to add to the meta-data document if I exclude the document node and add the vse-key-normalized attribute. However if I output the document node for the pdf it will not merge with the original meta-data document. I need to make sure I am outputting a document node so that entity extraction works (couldn't get it to work without a document node). What do I need to do to make sure both documents combine? 
+
+ANSWER
+
+
+I'm not sure exactly what your code is doing (if you're still having problems please post it) but this works for me if I do the following (I'm using the API but it shouldn't matter much)
+
+
+
+First enqueue a url
+
+
+
+
+      
+       
+ 
+       
+        
+ 
+        
+         
+ 
+         
+          
+ 
+          
+           foo
+          
+          
+ 
+         
+         
+ 
+        
+        
+ 
+       
+       
+ 
+      
+
+
+
+
+Now enqueue a second url, but this time specify a forced-vse-key on the crawl-url and not anywhere else
+
+
+
+
+      
+       
+ 
+       
+        
+ 
+        
+         
+ 
+         
+          
+ 
+          
+           zed
+          
+          
+ 
+         
+         
+ 
+        
+        
+ 
+       
+       
+ 
+      
+
+
+
+
+this results in the 2nd url being combined with the first.
+
+
+
+There are actually some justifiable reasons for not wanting a node so getting entity extraction to work with that will probably be useful. Worse case you could strip to document node out after the entity extraction converter but that shouldn't be required. 
+
+
+
+Now if you don't care about the document node piece and the implications that has (like always forcing the data to show up in the index regardless of whether the metadata is successful, etc.) then it should be easy enough to get that working for you, too.
+
+You could (1) make sure that the metadata and the pdf are both enqueued with the same vse-key (the vse-key is the unique identifier for documents in the index) and different URLs (if they have the same URL the second will overwrite the first) or (2) not output the metadata, but instead just pass it on with the pdf enqueue in elements. 
+
+ 
+
+HISTORICAL NUMBER
+ 1266

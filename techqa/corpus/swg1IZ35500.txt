@@ -1,0 +1,151 @@
+Title: IBM IZ35500: OMNIBUS 7.2.1 GATEWAY ISSUE : SYBASE SUPPORT PATCH , GIVING     ERRORS REGARDING SYBASE 15 LIBRARIES WHEN EXECUTING NCO_G_XX - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Customer using :
+   
+   
+    OMNIbus 7.2.1 with IF0001
+   - Gateway: gateway-nco-g-snmp-3 Rev.0
+   - Sybase: gateway-sybase-support-1 Rev.0
+   
+   on solaris
+   
+   and is given error : Failed to allocate Server context.
+   
+   
+   
+   Netcool/OMNIbus SMP Gateway Server - Version 7.2.1
+   Copyright (C) 1994 - 2005, Micromuse Ltd.  All rights reserved.
+   
+   The context allocation routine failed when it tried to load
+   localization
+   files!!
+   One or more following problems may caused the failure
+   
+   Your sybase home directory is /opt/netcool/platform/solaris2.
+   Check the
+   environment variableSYBASE if it is not the one you want!
+   Cannot access file
+   /opt/netcool/platform/solaris2/locales/locales.dat
+   SNMP_GATE: Fatal Error: Failed to allocate server context
+   
+   [2]+  Exit 4                  $OMNIHOME/bin/nco_g_snmp -name
+   SNMP_GATE
+   [netcool]$
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  - rename /opt/netcool/platform/solaris2/charsets and make a
+   relative
+   symbolic link to $OMNIHOME/platform/solaris2/syb12/charsets;
+   - rename /opt/netcool/platform/solaris2/locales and make a
+   relative
+   symbolic link to $OMNIHOME/platform/solaris2/syb12/locales;
+   
+   Whith these the Gateway can start and looks like works
+   fine in 7.2.1
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   OMNIbus 7.2.1 users.
+   ****************************************************************
+   PROBLEM DESCRIPTION:
+   nco_gate gateways cannot be used with OMNIbus 7.2.1.
+   ****************************************************************
+   RECOMMENDATION:
+   Upgrade to latest GA version of gateway-sybase-support.
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ35500
+   
+   
+ * REPORTED COMPONENT NAME
+   OMNI SNMP FORW
+   
+   
+ * REPORTED COMPONENT ID
+   5724O71SP
+   
+   
+ * REPORTED RELEASE
+   100
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   YesHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-10-23
+   
+   
+ * CLOSED DATE
+   2009-01-20
+   
+   
+ * LAST MODIFIED DATE
+   2009-01-20
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R100 PSN UP
+   FIX

@@ -1,0 +1,34 @@
+Title: IBM Customizing the DotEdit Verify line items panel to handle large numbers of line items - United States
+
+Text:
+ PRODUCT DOCUMENTATION
+
+ABSTRACT
+ Handling large numbers of line items in the Verify task consumes a lot of memory, which can cause the application to hang, crash, or have issues displaying controls in the panel. You can add a scroll bar to the line items panel, which enables the application to load manageable portions of the line items at a time, instead of attempting to load all of the line items at once. This customization makes it possible to load and process thousands of line items without crashing or degrading performance. 
+
+CONTENT
+In Datacap Taskmaster Capture, Version 8.1 FP3, by default, the APT application that comes with Datacap Taskmaster Capture includes this scroll bar enhancement in the line items panel in the Verify task. 
+
+If you have custom DotEdit verification panels that need to handle large numbers of line items, you can add a vertical scroll bar by modifying a few properties in the panel designer. 
+
+
+Procedure 
+
+To add a scroll bar to the line items panel in the verification panel: 
+
+ 1. Close DotEdit if it is running. 
+ 2. In Microsoft Visual Studio, in Solution Explorer, open the custom verification panel that you want to modify. 
+ 3. Place the new Vertical Scroll Bar control on the panel in the lineitems section. 
+ 4. Set the Name property to scrLineitem, where Lineitem is the name of the line item field in Setup DCO. 
+ 5. Set the Tag property to Lineitem, also the name of the line item field in Setup DCO. 
+ 6. Set the Dock property to Right. 
+ 7. Save and rebuild the custom panel. 
+ 8. Redeploy and test the custom panel.
+
+
+
+What to do next 
+Verify that you can scroll line items in your custom panel by using the scroll bar, Alt+L, or by using the following keyboard shortcuts: 
+
+Table 1. Keyboard shortcuts to scroll line items in the verify pane Action Shortcut Scroll to the next line item Ctrl + Right Arrow Scroll to the previous line item Ctrl + Left Arrow Scroll to the next page of line items Ctrl + Shift, then press Right Arrow Scroll to the previous page of line items Ctrl + Shift, then press Left Arrow 
+Operators can use these shortcuts to scroll through line items in the Verify task.

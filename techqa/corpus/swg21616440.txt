@@ -1,0 +1,51 @@
+Title: IBM Manual Explore for AppScan Standard not loading any HTTPS pages - United States
+
+Text:
+SSL; empty; blank; page; Manual Explore; record; login; https; SSLv2; SSLv3; SSL V2; SSL V3; connect; hand shake; wire shark TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Attempts to manually explore HTTPS pages in IBM Security AppScan Standard result with a blank page being displayed. 
+
+SYMPTOM
+ 
+
+When manually exploring the application (or recording a login sequence) through HTTPS, AppScan browser shows a blank page. The same happens when using any external browser with proxy settings to AppScan. However, the same external browsers running as a stand alone, show correctly the pages.  
+
+The traffic log from Manual Explore may end with the following request/response:
+Request:
+GET / HTTP/1.1
+Response:
+HTTP/1.1 0 Unknown
+Content-Length: 0
+
+
+CAUSE
+AppScan is trying to negotiate the protocol by sending ClientHello in SSLV2 with a hint that can also communicate with protocols SSLV3 and TLSV1. However, the Server rejects clients sending requests with SSLV2 protocol. 
+
+
+
+DIAGNOSING THE PROBLEM
+The Whireshark tool may help diagnosing the problem. 
+
+In this specific case, the server was accepting only TLS 1.0 protocol and rejecting any other protocols.
+The Wireshark log shows that a stand alone Internet Explore (displaying correctly the pages) is using the TLS 1.0 protocol: 
+
+[/support/docview.wss?uid=swg21616440&aid=1] [/support/docview.wss?uid=swg21616440&aid=1] 
+
+ 
+
+AppScan is trying to negotiate the SSL version 2.0 protocol first, however, the server reject the connection with a "Handshake Failure": 
+
+[/support/docview.wss?uid=swg21616440&aid=2] [/support/docview.wss?uid=swg21616440&aid=2]
+
+
+
+RESOLVING THE PROBLEM
+ 
+
+Select the protocol accepted by the server with option: Tools -> Options -> SSL Support 
+
+
+For example, if your server supports only the TLS 1.0 protocol, choose as follows: 
+
+[/support/docview.wss?uid=swg21616440&amp;aid=3]

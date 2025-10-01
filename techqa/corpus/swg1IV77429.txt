@@ -1,0 +1,186 @@
+Title: IBM IV77429: THE CONTEXT IS AROUND CLICKJACKING - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  ERROR DESCRIPTION:Ø
+   The context is around clickjacking.  Per the customer's audit
+   findingrecommendation:
+   
+   " Configure the application to behave safely even when the
+   application is framed. The current best practice is outlined in
+   the following strategy:
+   
+    1. Declare a stylesheet that makes all DOM elements invisible,
+   resulting in no elements that can be clicked on or typed into
+   
+    2.  Include JavaScript code to detect whether the page is
+   framed
+   
+    3.  If and only if the page is not framed, the code removes
+   the stylesheet from the DOM causing the page to render and
+   display normally
+   
+    4. Otherwise, the code attempts to break out of the frame,
+   which may or may not be successful. Even if the code cannot
+   break out of the frame, the page remains "safe" as no elements
+   are rendered
+   Note that many frame breaking code examples will only attempt
+   to break out of the frame. With such defenses, if the code
+   fails to execute (e.g. attacker uses a security-restricted
+   iframe, victim disables JavaScript, etc), the page will
+   remain vulnerable to clickjacking. Implementing the complete
+   strategy above ensures that the application behaves safely even
+   if the application is framed and cannot break out of the frame."
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Spoken to Vincent. This platform bug applies to TEMA as well :
+   
+   http://bugs.sfolab.ibm.com/bugzilla/show_bug.cgi?id=63049 [http://bugs.sfolab.ibm.com/bugzilla/show_bug.cgi?id=63049]
+   
+   Context: https://www.owasp.org/index.php/Clickjacking [https://www.owasp.org/index.php/Clickjacking]
+   
+   This also came up in the security scan in bug 65102, so I'm
+   using this bug to
+   track the fix to Main and for 9.2 Patch 5, which should also
+   satisfy the
+   original enhancement request.
+   
+   The fix uses the X-Frame-Options header to restrict the ability
+   to frame any
+   successful responses with html content coming from webreports.
+   This is well
+   supported across browser versions
+   (https://developer.mozilla.org/en-US/docs/Web/HTTP/X-Frame-Optio
+   ns), so it
+   should be sufficient to prevent these sort of attacks in our
+   supported browsers
+   without needing frame breaking UI logic.
+   
+   Another consideration for X-Frame-Options is what policy to
+   apply. I've opted
+   for SAMEORIGIN in case there is somebody that needs webreports
+   in frames, so
+   they can possibly do something clever with a reverse proxy for
+   instance and
+   keep it working, but I'm happy to revisit if another option
+   would be better.
+   
+   A simple way to verify this is working is to create a html page
+   like the
+   following and check that webreports is not displayed through it:
+   
+   <html>
+   <body>
+   <iframe style="width: 90%; height: 90%"
+   src="http://webreportshostname/"/>
+   </body>
+   </html>
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Targeted by the end of the month, we're in final testing right
+   now.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV77429
+   
+   
+ * REPORTED COMPONENT NAME
+   TV EP MG SEC CF
+   
+   
+ * REPORTED COMPONENT ID
+   5725C43SM
+   
+   
+ * REPORTED RELEASE
+   920
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2015-09-24
+   
+   
+ * CLOSED DATE
+   2016-10-20
+   
+   
+ * LAST MODIFIED DATE
+   2016-10-20
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TV EP MG SEC CF
+   
+   
+ * FIXED COMPONENT ID
+   5725C43SM
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R810 PSY
+   UP

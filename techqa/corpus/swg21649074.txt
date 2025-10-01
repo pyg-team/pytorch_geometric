@@ -1,0 +1,33 @@
+Title: IBM DBRA TM1 worksheet function requires numeric element names to be enclosed in double quotes - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ A TM1® DBRA function requires that a numeric element name be enclosed in double quotes.
+
+For example,
+=DBRA("ServerName:DimensionName","123456","dimension 2") 
+is a valid DBRA function, as the element name "123456" is enclosed in double quotes.
+
+
+CAUSE
+If a DBRA function references another worksheet cell for a numeric element name, and the cell containing the element name is formatted as anything other than Text, the DBRA function fails. 
+
+For example, this DBRA function references cell D9 for a numeric element name:
+=DBRA("ServerName:DimensionName",D9,"dimension 2")
+
+If cell D9 is formatted as Number, or anything other than Text, the DBRA function will not return an attribute value.
+
+This issue can become exposed when you paste a numeric value into a worksheet cell that is referenced by a DBRA function for a numeric element name. 
+
+
+DIAGNOSING THE PROBLEM
+DBRA formula does not return attribute values.
+
+
+
+RESOLVING THE PROBLEM
+To work around this issue, ensure that any cell that is referenced by a DBRA function for an element name is formatted as Text. 
+
+You can also replace any DBRA formulas that include numeric element names with DBRW formulas that reference the }elementsattributes control cube for the dimension from which you want to retrieve attribute values. DBRW formulas do not require numeric element names to be enclosed in quotes, and can handle references to cells that are formatted as either Text or Number.

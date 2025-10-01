@@ -1,0 +1,147 @@
+Title: IBM PM35766: REPEATED RESTARTS OF THE SERVER HANG DURING SCA STARTUP. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Service Component Architecture (SCA) runtime code hangs after
+   repeated restarts of the WebSphere Application Server.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  Users of IBM WebSphere Application Server   *
+   *                  V7 Feature Pack for Service Component       *
+   *                  Architecture (SCA).                         *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Repeated restarts of the server can     *
+   *                      encounter a race condition in SCA       *
+   *                      causing server start to hang.           *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   Server start hangs in SCA code with the following exception:
+   
+   00000014 ThreadMonitor W   WSVR0605W: Thread "server.startup :
+   2" (00000018) has been active for 643796 milliseconds and may
+   be hung.  There is/a
+   re 1 thread(s) in total in the server that may be hung.
+           at java.util.HashMap.rehash(HashMap.java:706)
+           at java.util.HashMap.rehash(HashMap.java:743)
+           at java.util.HashMap.putImpl(HashMap.java:629)
+           at java.util.HashMap.put(HashMap.java:607)
+           at
+   com.ibm.ws.soa.sca.admin.runtime.impl.SCARuntimeImpl.stateChange
+   d(SCARuntimeImpl.java:317)
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A code fix was created that addressed a thread unsafe data
+   structure in the administration code of the Feature Pack for
+   SCA. This code was corrected to use a ConcurrentHashMap making
+   the code threadsafe and removing any possible race conditions
+   leading to the failure.
+   
+   The fix for this APAR is currently targeted for inclusion in
+   fix pack 1.0.1.11 of WebSphere Application Server v7 Feature
+   Pack for Service Component Architecture (SCA) Refresh Pack.
+   Please refer to the Recommended Updates page
+   for delivery information:
+   http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM35766
+   
+   
+ * REPORTED COMPONENT NAME
+   WAS SCA FEATURE
+   
+   
+ * REPORTED COMPONENT ID
+   5724J0854
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-03-28
+   
+   
+ * CLOSED DATE
+   2011-05-12
+   
+   
+ * LAST MODIFIED DATE
+   2011-05-12
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    PM40326 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM40326]
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WAS SCA FEATURE
+   
+   
+ * FIXED COMPONENT ID
+   5724J0854
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R700 PSY
+   UP

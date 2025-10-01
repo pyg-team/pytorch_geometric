@@ -1,0 +1,20 @@
+Title: IBM Known Issue: Support for IBM Case Manager forms integration with Google Chrome browser - United States
+
+Text:
+ RELEASE NOTES
+
+ABSTRACT
+ IBM Case Manager environments with forms application integration have limited support for Google Chrome browser 
+
+CONTENT
+If your IBM Case Manager environment is integrated with a forms application such as eForms or IBM Forms, Google Chrome browser has only limited support. 
+
+ * IBM Case Manager integrated with eForms does not support Google Chrome browser. 
+   
+   If you are using IBM Case Manager with eForms, use a different browser.
+
+ * IBM Case Manager integrated with IBM Forms can experience some issues with the PDF viewer of Google Chrome browser. 
+   
+   Google Chrome has a build-in PDF viewer that is enabled by default. When the PDF print dialog box of the IBM Form application opens, the content is rendered in the Google Chrome viewer. If you scroll in the viewer, the PDF document view can expand beyond the limit of the Form widget, covering other widget content. 
+   
+   You can avoid this issue by disabling the default PDF viewer in the Google Chrome browser.

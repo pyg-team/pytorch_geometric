@@ -1,0 +1,26 @@
+Title: IBM Warning # 209 when running a large syntax file. - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ I am running a very long syntax file with multiple GET DATA and SAVE OUTFILE commands. I can execute portions of the syntax independently but when I run the entire syntax I get warnings as shown below. How can I run this syntax as one with out errors?
+
+>Warning # 209
+>A truncation error occurred while writing to the command journal file.
+>Please check the contents of this file before using it as input to SPSS. 
+
+RESOLVING THE PROBLEM
+The syntax is exceeding the length of the journal file (60 KB). Please go to Edit -> Options -> File Locations tab. 
+In the Session Journal section there is an option for Record Syntax in Journal. 
+If journaling is on please chose the option to Overwrite rather than append. 
+Another option would be to turn journaling off by deselecting Record Syntax in Journal
+
+RELATED INFORMATION
+ Need more help? Our Statistics forum is Live! [https://developer.ibm.com/answers/topics/statistics.html?smartspace=predictive-analytics]
+
+
+ 
+
+HISTORICAL NUMBER
+ 71762

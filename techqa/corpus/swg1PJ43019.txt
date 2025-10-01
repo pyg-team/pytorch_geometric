@@ -1,0 +1,190 @@
+Title: IBM PJ43019: ACCE DOES NOT HANDLE REPLICATION MAPPING OF THE SAME CE CLASS TO MULTIPLE IS EXTERNAL REPOSITORIES CORRECTLY. - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Administration Console for Content Platform Engine (ACCE) does
+   not handle replication mapping of the same CE class to multiple
+   Image Service (IS) external repositories correctly.
+   
+   Configuration steps:
+   -Create same IS class and properties name on the 2 IS servers
+   (ISClass1, ISProp1, ISProp2, etc).
+   -On CE side via FileNet Enterprise Manager (FEM) or ACCE, add 2
+   Fix Content Devices (FCD) to connect to the 2 Image Services
+   (IS) servers
+   -Add the 2 External repositories to connect to each of the FCD
+   above (IS_REP1, IS_REP2)
+   -Add a CE class (CEClass1) to map to both of the above 2
+   external repositories
+   
+   Steps to Reproduce:
+   
+   Issue 1: Class mappings with same CE class show the same
+   External name in ACCE- OS - Replication Mapping tab.
+   
+   For class mappings added via FEM with same CE class added
+   previously, if you view it via ACCE- OS - Replication Mapping
+   tab, it shows both with CE class mapping property with the same
+   External name.
+   FEM reflects the correct External Repository name when you go
+   into the configuration of each class mapping 2 class mappings to
+   same CE class with different external respository which were
+   added via FEM.
+   Click on each of the Class mapping each class and BOTH show the
+   same External Repository.
+   It does not show one for each of the repository.
+   
+   Issue 2: Duplicate property names appear in the CE mapping
+   class.
+   
+   If you click on ACCE - OS - Replication mapping tab - select a
+   CE class mapping -Replication Property Mapping tab - you will
+   see all the property names are duplicated. It displays the
+   property mapping for both class mappings for same CE class when
+   it should only display the property mapping for the class
+   mapping selected. Removing the mapping can remove the wrong
+   property mapping for the other class mapping.
+   FEM does not show duplicate properties.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Use FileNet Enterprise Manager.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * Customers using 5.2.0.3-P8CPE-IF006 or 5.2.1.0-P8CPE and     *
+   * prior ACCE to manage replication mappings with multiple      *
+   * Image Services.                                              *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * Administration Console for Content Platform Engine (ACCE)    *
+   * does not handle replication mapping of the same CE class to  *
+   * multiple Image Service (IS) external repositories correctly. *
+   * The class mapping to the second IS repository may not be     *
+   * created.  The property mappings associated with a class      *
+   * mapping might be listed under the wrong class mapping.       *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Upgrade to 5.2.0.4-P8CPE-FP004 or 5.2.1.2-P8CPE-FP002 or     *
+   * later.                                                       *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fixed in 5.2.0.4-P8CPE-FP004 and 5.2.1.2-P8CPE-FP002 and higher.
+   When there are multiple IS external repositories with same set
+   of external classes, ACCE should allow multiple class mappings
+   between the same CPE class and the same IS class in different IS
+   repository.  The associated property mappings should be listed
+   correctly.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PJ43019
+   
+   
+ * REPORTED COMPONENT NAME
+   CONTENT ENGINE
+   
+   
+ * REPORTED COMPONENT ID
+   5724R8101
+   
+   
+ * REPORTED RELEASE
+   520
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-02-24
+   
+   
+ * CLOSED DATE
+   2015-06-15
+   
+   
+ * LAST MODIFIED DATE
+   2015-06-15
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CONTENT ENGINE
+   
+   
+ * FIXED COMPONENT ID
+   5724R8101
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R520 PSY
+   UP
+   
+   
+ * R521 PSY
+   UP

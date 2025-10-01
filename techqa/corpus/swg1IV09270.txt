@@ -1,0 +1,205 @@
+Title: IBM IV09270: BMXAA6772W - GROUP MEMBERS COULD NOT BE RETRIEVED FROM THE LDAP CONTEXT - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When synchronizing with LDAPSYNC users within a OU that contain
+   a "/" cannot be synchronized and receive the follow error.
+   
+   
+   [ERROR] BMXAA6752E - Group
+   synchronization could not be performed because of error
+   BMXAA6772W - Group members could not be retrieved from the LDAP
+   context.. The error count was 5.
+   psdi.security.ldap.LdapSyncException: BMXAA6772W - Group members
+   could not be retrieved from the LDAP context.
+   
+   It appears the slash is not being escaped
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Rename OU to not contain any slashes
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: Users who use ldapsync and have special      *
+   *                 characters such as "/" in group names.       *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: When synchronizing with LDAPSYNC users  *
+   *                      within a OU that contain                *
+   *                                                              *
+   *                      a "/" cannot be synchronized and        *
+   *                      receive the follow error.               *
+   *                                                              *
+   *                      ERROR  BMXAA6752E - Group               *
+   *                                                              *
+   *                      synchronization could not be performed  *
+   *                      because of error                        *
+   *                                                              *
+   *                      BMXAA6772W - Group members could not be *
+   *                      retrieved from the LDAP                 *
+   *                                                              *
+   *                      context.. The error count was 5.        *
+   *                                                              *
+   *                      psdi.security.ldap.LdapSyncException:   *
+   *                      BMXAA6772W - Group members              *
+   *                                                              *
+   *                      could not be retrieved from the LDAP    *
+   *                      context.                                *
+   *                                                              *
+   *                      It appears the slash is not being       *
+   *                      escaped                                 *
+   *                                                              *
+   *                                                              *
+   *                                                              *
+   *                                                              *
+   *                                                              *
+   *                      Apar created per Karen C                *
+   *                      reccomendation, please see.             *
+   *                                                              *
+   *                                                              *
+   *                                                              *
+   *                                                              *
+   *                                                              *
+   *                      See:                                    *
+   *                      http://bugs.sun.com/bugdatabase/view_bu *
+   *                      g.do?bug_id=4307193                     *
+   *                                                              *
+   *                                                              *
+   *                                                              *
+   *                                                              *
+   *                                                              *
+   *                      LOCAL FIX:                              *
+   *                                                              *
+   *                      Rename OU to not contain any slashes    *
+   *                                                              *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   *                                                              *
+   *                                                              *
+   *                                                              *
+   ****************************************************************
+   BMXAA6772W - GROUP MEMBERS COULD NOT BE RETRIEVED FROM THE LDAP
+   CONTEXT
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fixed by handling special characters.
+   
+   
+   
+   
+   
+   The fix for this APAR is contained in the following maintenance
+   package:
+   
+     | release\fix pack | REL 7.1.1.11 - BS
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV09270
+   
+   
+ * REPORTED COMPONENT NAME
+   PRODUCT INSTALL
+   
+   
+ * REPORTED COMPONENT ID
+   5724R46IT
+   
+   
+ * REPORTED RELEASE
+   710
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-10-17
+   
+   
+ * CLOSED DATE
+   2011-12-12
+   
+   
+ * LAST MODIFIED DATE
+   2011-12-12
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  MAXIMO
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   PRODUCT INSTALL
+   
+   
+ * FIXED COMPONENT ID
+   5724R46IT
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R710 PSY
+   UP

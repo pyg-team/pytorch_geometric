@@ -1,0 +1,47 @@
+Title: IBM Hung Threads and Performance Degradation While Uploading Large Numbers of Files - United States
+
+Text:
+ThreadMonitor; WSVR0605W; org.apache.commons.fileupload.util.Streams.copy; Rendition TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+End users experience significant performance degradation, or a hang coinciding with hung threads reported in the SystemOut.log of the Files JVM.
+
+CAUSE
+This can occur in large environments when there are a large number of concurrent file uploads.
+
+DIAGNOSING THE PROBLEM
+You see messages similar to the following in the Files JVM SystemOut.log:
+
+ThreadMonitor W WSVR0605W: Thread "WorkManager.FilesWorkManager : 123" (000002a2) has been active for 675548 milliseconds and may be hung. There is/are 56 thread(s) in total in the server that may be hung.
+at java.lang.Object.wait(Native Method) 
+
+ at java.lang.Object.wait(Object.java:196)
+at java.io.PipedInputStream.read(PipedInputStream.java:321)
+at java.io.PipedInputStream.read(PipedInputStream.java:372)
+at java.io.InputStream.read(InputStream.java:94)
+at org.apache.commons.fileupload.util.Streams.copy(Streams.java:94)
+at org.apache.commons.fileupload.util.Streams.copy(Streams.java:64)
+at com.ibm.lconn.filemanager.transaction.TransactionalFileFactory.fromInputStream(TransactionalFileFactory.java:164)
+at com.ibm.lconn.filemanager.transaction.TransactionalFileFactory.fromInputStream(TransactionalFileFactory.java:74)
+at com.ibm.lconn.share.platform.util.RenditionUtil.generateRendition(RenditionUtil.java:553)
+at com.ibm.lconn.share.platform.util.RenditionUtil.addRenditionsForMedia(RenditionUtil.java:474)
+at com.ibm.lconn.share.platform.util.RenditionUtil.createOrUpdateRenditions(RenditionUtil.java:412)
+at com.ibm.lconn.share.platform.util.RenditionUtil.generateRenditionsWithMedia(RenditionUtil.java:310)
+at com.ibm.lconn.share.platform.event.impl.RenditionEventHandler.handleMediaEvent(RenditionEventHandler.java:96)
+at sun.reflect.GeneratedMethodAccessor87.invoke(Unknown Source)
+at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:37)
+at java.lang.reflect.Method.invoke(Method.java:611)
+at com.ibm.lconn.share.platform.event.impl.AbstractListener.notify(AbstractListener.java:133)
+at com.ibm.lconn.share.platform.event.impl.AbstractListener.notifyAll(AbstractListener.java:107)
+at com.ibm.lconn.share.platform.event.impl.EventWork.runWork(EventWork.java:76)
+at com.ibm.lconn.share.platform.task.WorkItem.run(WorkItem.java:66)
+at com.ibm.ws.asynchbeans.J2EEContext$RunProxy.run(J2EEContext.java:265)
+at java.security.AccessController.doPrivileged(AccessController.java:229)
+at com.ibm.ws.asynchbeans.J2EEContext.run(J2EEContext.java:1165)
+at com.ibm.ws.asynchbeans.WorkWithExecutionContextImpl.go(WorkWithExecutionContextImpl.java:199)
+at com.ibm.ws.asynchbeans.CJWorkItemImpl.run(CJWorkItemImpl.java:236)
+at com.ibm.ws.util.ThreadPool$Worker.run(ThreadPool.java:1690)
+
+
+RESOLVING THE PROBLEM
+Change the FilesWorkManager maximum number of threads to equal that of the maximum number of WebContainer threads +2. For example, if the maximum number of WebContainer threads is 100, change the maximum number of FilesWorkManager threads to 102.

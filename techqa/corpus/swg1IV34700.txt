@@ -1,0 +1,159 @@
+Title: IBM IV34700: GARBAGE COLLECTOR ASSERT WITH AN OBJECT REFERENCE HALF ZEROED-OU T - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Error Message: 0000000000E7AD00: Object neither in heap nor
+   stack-allocated in thread Thread-22
+      0000000000E7AD00: O-Slot=0000000000E8AAD0
+      0000000000E7AD00: O-Slot value=00002B7E00000000
+      0000000000E7AD00: PC=00002B7E85C5297D
+      0000000000E7AD00: framesWalked=8
+      0000000000E7AD00: arg0EA=0000000000E8ACC0
+      0000000000E7AD00: walkSP=0000000000E8A900
+      0000000000E7AD00: literals=00002B7E88C86C48
+      0000000000E7AD00: jitInfo=00002B7E860EAED0
+      0000000000E7AD00: method=00002B7E88D40DB0
+   (org/apache/derby/impl/sql/compile/FromBaseTable.bindNonVTITable
+   s(Lorg/apache/derby/iapi/sql/dictionary/DataDictionary;Lorg/apac
+   he/derby/impl/sql/compile/FromList;)Lorg/apache/derby/impl/sql/c
+   ompile/ResultSetNode;) (JIT)
+      0000000000E7AD00: stack=0000000000E841B0-0000000000E8B210
+      16:03:28.106 0x814800    j9mm.479    *   ** ASSERTION FAILED
+   ** at ParallelScavenger.cpp:2390:
+   ((MM_StackSlotValidator(MM_StackSlotValidator::NOT_ON_HEAP,
+   *slotPtr, stackLocation, walkState).validate(_env)))
+   Note the "O-Slot value=00002B7E00000000".  This example is from
+   a little-endian platform, so the low-order half of this slot is
+   all zeros, while the high-order half looks like half a pointer.
+   On a big-endian platform, it might be the high-order half that
+   contains zeros.
+   .
+   Stack Trace: N/A
+   .
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  -Xjit:disableEscapeAnalysis
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Escape analysis sometimes used the wrong field information to
+   initialize a field of a stack-allocated object.  This allowed it
+   to generate a 4-byte store to initialize an 8-byte field, which
+   is incorrect.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This defect will be fixed in:
+   7.0.0 SR4
+   6.0.1 SR5
+   6.0.0 SR13
+   5.0.0 SR16
+   .
+   Escape analysis was fixed so it would always use the right field
+   information.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV34700
+   
+   
+ * REPORTED COMPONENT NAME
+   JAVA 5 JIT
+   
+   
+ * REPORTED COMPONENT ID
+   620500124
+   
+   
+ * REPORTED RELEASE
+   500
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-01-14
+   
+   
+ * CLOSED DATE
+   2013-01-14
+   
+   
+ * LAST MODIFIED DATE
+   2013-02-28
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    IV34699 [http://www-01.ibm.com/support/docview.wss?uid=swg1IV34699]
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   JAVA 5 JIT
+   
+   
+ * FIXED COMPONENT ID
+   620500124
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R500 PSY
+   UP

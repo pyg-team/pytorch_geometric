@@ -1,0 +1,39 @@
+Title: IBM Downloading IBM Decision Optimization Center V3.8 - United States
+
+Text:
+ODM Enterprise; ODM DOWNLOADABLE FILES
+
+ABSTRACT
+ This document describes how to download IBM Decision Optimization Center V3.8 eAssembly in the IBM Passport Advantage Online Web Site. 
+
+DOWNLOAD DESCRIPTION
+IBM Decision Optimization Center (previously known as ODM Enterprise) makes optimization technology accessible to business, enabling intelligent planning and scheduling decisions. It also offers a configurable and extensible platform for optimization-based planning and scheduling applications. 
+
+This document provides a list of the eAssembly images available in the eAssembly and describes how to download the eAssembly images from the IBM Passport Advantage Online Web site.
+
+
+For further information about this product, see the Decision Optimization [http://www-03.ibm.com/software/products/en/decision-optimization-center] page. 
+
+For product support, see IBM Decision Optimization Center Support [http://www-947.ibm.com/support/entry/portal/product/websphere/ibm_decision_optimization_center?productContext=-1562539103].
+
+DOWNLOAD PACKAGE
+
+
+ 1. Navigate your browser to the Find Downloads and Media [http://www.ibm.com/software/howtobuy/passportadvantage/paocustomer/sdma/SDMA?PO=DOWNLOAD_FIND_BY_PART_NUMBER] page on the IBM Passport Advantage Online Web site.
+ 2. Sign in using your IBM ID.
+ 3. Select the Find by part number search option under Download finder options.
+ 4. Search for each downloadable image by part number (parts are listed below).
+ 5. Download all of the parts you require.
+ 6. Unpack the Zip files into a separate directory on your system. The Developer Edition files will unpack into two folders, with an executable setup.bat file. 
+ 7. Clients and Servers eAssemblies will download as executable installers. The Clients installer contains IBM Decision Optimization Center Client Edition, IBM Decision Optimization Center Planner Edition, and IBM Decision Optimization Center Reviewer Edition, plus the option to install the local IBM Decision Optimization Center Optimization Engine. The Servers installer contains IBM Decision Optimization Center Data Server and IBM Decision Optimization Center Optimization Server.
+ 8. Launch the executable files of the parts you need and follow the on screen instructions to install the product.
+
+
+
+Assembly Part Number Assembly Description Images Image Description CRR43ML IBM Decision Optimization Center Developer Edition V3.8 Multiplatform Multilingual eAssembly CIX64ML IBM Decision Optimization Center V3.8 Quick Start Guide Multiplatform CIX65ML IBM Decision Optimization Center Developer Edition V3.8 for Windows 32 bits Multilingual CIX66ML IBM Decision Optimization Center Developer Edition V3.8 for Windows x86-64 Multilingual CRR44ML IBM Decision Optimization Center Clients V3.8 Multiplatform Multilingual eAssembly CIX64ML IBM Decision Optimization Center V3.8 Quick Start Guide Multiplatform CIX67ML IBM Decision Optimization Center Clients V3.8 for Windows 32 bits Multilingual CIX68ML IBM Decision Optimization Center Clients V3.8 for Windows x86-64 Multilingual CRR45ML IBM Decision Optimization Center Servers V3.8 Multiplatform Multilingual eAssembly CIX64ML IBM Decision Optimization Center V3.8 Quick Start Guide Multiplatform CIX69ML IBM Decision Optimization Center Servers V3.8 for Windows x86-64 Multilingual CIX6AML IBM Decision Optimization Center Servers V3.8 for AIX Multilingual CIX6BML IBM Decision Optimization Center Servers V3.8 for Linux x86-64 
+
+
+PRODUCT ALIAS/SYNONYM
+ ODM
+ODME
+IBM ILOG ODM Enterprise

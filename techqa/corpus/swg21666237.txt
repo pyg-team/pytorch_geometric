@@ -1,0 +1,40 @@
+Title: IBM How to confirm a potential False Negative vulnerability in AppScan Standard - United States
+
+Text:
+appscan; support; contact us; ibm support; watchfire support; ibm software support; ibm support; rational support; technical support; client support; ase; 1295428; ESR; SR; false positive; false negative; false; negative; positive TECHNOTE (FAQ)
+
+QUESTION
+ How do you confirm a potential False Negative issue for IBM Security AppScan Standard? 
+
+CAUSE
+You suspect that AppScan Standard is not reporting an existing vulnerability (a potential False Negative). 
+Note: The adaptive testing option set in the scan to reduce scan time, may cause some test to be omitted. You may check if you can reproduce the issue after turning off the option Scan Confguration -> Test Options -> Use Adaptive Testing based on application behavior.
+
+
+ANSWER
+Perform the following steps to generate proper data and to send it to IBM Support to confirm the issue. 
+
+ 
+
+ 1. In the Scan Configuration, enable the setting Scan Configuration > Test Options > Save Non-vulnerable Test Variant Information. 
+    Note: The size of the scan will be larger with this setting enabled, since AppScan is saving more data. In order to minimize the size of the scan, instead of scanning the entire application, you may scan only the pages on which you suspect the vulnerability.
+    
+    
+ 2. Run the scan.
+    
+    
+ 3. Upload the scan to the support ticket (as described in How to upload data to a support ticket [http://www.ibm.com/support/docview.wss?uid=swg21642587]) 
+    
+    
+ 4. Write explicitly (in the support ticket) which vulnerability is the potential False Negative and why you suspect to be a false negative. 
+    If you have data from another tool showing the vulnerability, upload the data to the ticket. 
+    
+
+
+
+Note: Alternatively, instead of uploading the scan, you can upload the False Negative Report, which you get as follows (however note that the scan file usually gives more information for clarifying the issue):  * open View > Non-vulnerable Variants > Non-vulnerable Variants 
+ * select the variant(s) in question 
+ * right click on it and select Report False Negative 
+
+RELATED INFORMATION
+ How to confirm a potential False Positive [http://www.ibm.com/support/docview.wss?uid=swg21295428]

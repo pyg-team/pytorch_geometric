@@ -1,0 +1,1976 @@
+Title: IBM Tivoli Log File Agent, Version 6.3.0 Fix Pack 02 (6.3.0-TIV-ITM_LFA-FP0002) - United States
+
+Text:
+ DOWNLOADABLE FILES
+
+ABSTRACT
+ This fix pack adds support for a Windows x86-64 bit (WIX64) and PowerPC little-endian Log File agent. In addition, it resolves the APARs and defects listed below. 
+
+DOWNLOAD DESCRIPTION
+
+
+
+(C) Copyright International Business Machines Corporation 2017.
+All rights reserved.
+
+Component: Tivoli® Log File Agent,
+Version 6.3.0
+
+Component ID: 5724C04LF
+
+Fix Pack: 0002, 6.3.0-TIV-ITM_LFA-FP0002
+
+Date: September 19, 2017
+
+Contents:
+
+1.0 General description
+2.0 Problems fixed
+3.0 Architecture and prerequisites
+4.0 Image directory contents
+5.0 Installation instructions
+6.0 Additional installation information
+7.0 Known problems and workarounds
+8.0 Additional product information
+9.0 Copyright and trademark information
+10.0 Notices
+
+
+1.0 General description
+===============
+This fix pack adds support for a Windows x86-64 bit (WIX64) and PowerPC 
+little-endian Log File agent. In addition, it resolves the APARs and 
+defects listed in the "Problems Fixed" section below and includes the
+superseded fixes listed in section 2.4.
+
+
+2.0 Problems fixed
+============
+The following problems are addressed by this fix.
+
+2.1 APARs
+-------------
+
+APAR: IV96363
+Abstract: AGENT CRASHES ON WINDOWS 2016 WHILE READING LOG
+Additional information: The agent crashes when a second file close
+attempt follows a successful close of the monitored log.
+Any subsequent I/O operations, such as fseek, fgets, fclose,
+etc, either on that thread or another thread using the same
+file handle may result in a failure or a crash because the
+file is no longer open or the handle is invalid. The failure
+sometimes results in an fgetpos failure with "errno 9 'Bad
+file descriptor'" and returns with a -1.
+
+This has been seen more prevalently on Windows 2016 but 
+might occur on other platforms. This is related to IV60331.
+
+On the agent system, with a minimum of the following trace:
+"ERROR (UNIT:kumpfile ALL) (UNIT:kum0fdp0 ALL)" enabled, the
+agent RAS1 log
+<hostname>_lo_[instance]_kloagent_<timestamp>-<nn>.log
+shows trace points similar to the following: 
+- - - 
+... 
+...:kum0fdp0.c,76,"KUM0_FileClose") IOE 5619070 file handle
+7C3AB428 File close successful
+...:kum0fdp0.c,111,"KUM0_FileClose") SEptr 5613548 local file 
+D:/Log/WAS/AppSrv01/nodeagent/SystemOut.log IOptr 5619070 
+7C3AB428 closed unsuccessfully
+...:kum0fdp0.c,82,"KUM0_FileClose") File close failed for IOE 
+@5619070, status code -1, errno 0 'No error'
+...:kum0fdp0.c,111,"KUM0_FileClose") SEptr 5613548 local file 
+D:/Log/WAS/AppSrv01/nodeagent/SystemOut.log IOptr 5619070 
+7C3AB428 closed unsuccessfully 
+... 
+- - - 
+
+APAR: IV95005
+Abstract: "DETECTED CODEPAGE CP943, USING CP932 INSTEAD TO MAP 
+BACKSLASH TO U+005C, NOT U+00A5 (YEN SYMBOL)" LOGGED ON
+EVERY READ
+Additional information: With a locale of Ja_JP (Shift-JIS) and
+ERROR level trace, when the data is in the local code page,
+the following message appears in agent RAS1 log for each
+monitored event processed: 
+"Detected codepage CP943, using CP932 instead to map
+backslash to U+005C, no U+00A5 (Yen symbol)". 
+
+This occurs on the agent system, with only ERROR trace
+enabled. The agent RAS1 log 
+<hostname>_lo_[instance]_kloagent_<timestamp>-<nn>.log 
+contains trace points similar to the following:
+- - - 
+... 
+kum0nget.c,438,"TranslateStringToUTF8") Detected codepage 
+CP943, using CP932 instead to map backslash to U+005C, not 
+U+00A5 (Yen symbol) 
+... 
+- - - 
+
+APAR: IV93401
+Abstract: USING REGEXLOGSOURCES TO MONITOR A REMOTE FILE FAILS
+WITH FILE NOT FOUND 
+Additional information: Using RegexLogSources to monitor a remote
+file fails with "*** Unable to obtain statistics for file 
+</LFA_test_logs/test_1.log> errno 2 'No such file or
+directory". This occurs right after the file has been found
+and matched. (Note: if the monitored file is also found
+locally, it will succeed and monitor the local file.) 
+Using the same file in LogSources results in a match. 
+
+On the agent system, with a minimum of the following trace:
+"ERROR (UNIT:kumpdcm2 ALL) (UNIT:kum0dir ALL)" enabled, the
+agent RAS1 log 
+<hostname>_lo_[instance]_kloagent_<timestamp>-<nn>.log shows 
+trace points similar to the following: 
+
+- - - 
+... 
+...:kumpdcm2.c,195,"KUMP_GetNextMember") Directory 7F3B3401C380 
+/LFA_test_logs matched <test_1.log> to pattern <^test_1.log$> 
+...:kumpdcm2.c,211,"KUMP_GetNextMember") Directory handle 
+7F3B3401C380 
+name /LFA_test_logs successfully matched <test_1.log> to pattern 
+<^test_1.log$> 
+...:kumpdcm2.c,217,"KUMP_GetNextMember") Exit: 0x0 
+...:kumpdcm2.c,301,"KUMP_GetNextMemberDouble") Retcode 0 
+Directory 
+/LFA_test_logs Member <test_1.log> matched ^test_1.log$ 
+...:kumpdcm2.c,330,"KUMP_GetNextMemberDouble") Directory 
+7F3B3401C380 
+/LFA_test_logs member successfully matched <test_1.log> pattern 
+<^test_1.log$> 
+...:kumpdcm2.c,335,"KUMP_GetNextMemberDouble") Exit: 0x0 
+...:kum0dir.c,143,"KUM0_stat_withMsgFlag") *** Unable to obtain 
+statistics for file </LFA_test_logs/test_1.log> errno 2 'No such 
+file or directory' 
+...:kum0dir.c,192,"KUM0_stat_withMsgFlag") Unsuccessfully stat 
+file 
+/LFA_test_logs/test_1.log size=0 access time=0, modification 
+time=0, 
+creation time=0 
+...:kumpdcm2.c,481,"KUMP_DetermineCurrentMonitorFileNameStrict") 
+File 
+/LFA_test_logs/test_1.log skipped, stat failed -1 
+... 
+- - - 
+
+APAR: IV89574
+Abstract: INVALID CHARACTERS SEEN IN THE TRACE "*****Error: 
+u_strFromUTF8 failed for string ... - <filename> .........,
+status 10 <U_INVALID_CHAR_FOUND>" 
+Additional information: In the agent RAS1 log, the trace points 
+"*****Error: u_strFromUTF8 failed for string ..... - 
+<filename> ..., status 10 <U_INVALID_CHAR_FOUND>" and 
+"*****Error: uregex_setText failed..." contain garbled or 
+invalid characters. The garbled characters are not in the
+events themselves. 
+
+Since these messages might occur when the agent is processing
+a directory listing in order to determine the current file
+to monitor as a result of a wildcard character in the 
+RegexLogSources parameter, if the <filename> that results 
+in this error is a file that should be monitored, then events
+would be lost as the file is not monitored. The <filename> 
+is in the directory for RegexLogSources. The additional 
+invalid characters are not seen in the file listing on the
+system. 
+
+This was discovered on Log File Agent V6.3 and later on 
+Windows, but also occurs on UNIX. 
+
+On the agent system, with a minimum of the following 
+trace enabled: "ERROR (UNIT:kum0regx ALL)", the agent RAS1
+log <hostname>_lo_[instance]_kloagent_<timestamp>-<nn>.log
+shows trace points similar to the following with some extra
+characters added ".lnk": 
+----- 
+...:kum0regx.c,286,"KUM0_IsRegExPatternMatch") 
+*****Error: u_strFromUTF8 failed for string ä«ä¨äOäèäìäjäì - 
+änäfäîän .lnkÙl ÙsÙw pRegEx @4D05810 status 10 <U_INVALID_CHAR_FOUND> 
+--- 
+
+APAR: IV79204
+Abstract: LOGS RE-READ FROM THE BEGINNING WHEN DAYLIGHT SAVING
+TIME (DST) ENDS
+Additional information: On Windows systems, when daylight saving
+time ends, log files might be re-read from the beginning
+resulting in old events being re-sent. This only occurs 
+when time is set back. 
+
+The agent falsely detects that the configuration (.conf) 
+and format (.fmt) file have changed when the system is
+configured to "Automatically adjust clock for Daylight 
+Saving time" and the file timestamps automatically change 
+triggering an agent reset. When NumEventsToCatchUp is set
+to -1, this series of events causes the log file to be
+re-read from the beginning. This was seen with IF0003 and
+IF0004 when monitoring log files on Windows operating 
+systems, but not with the Windows Event log. This problem
+did not occur on UNIX systems. 
+
+To resolve this issue you must install and use the Windows
+WIX64 (x86-64 bit) agent or specify NumEventsToCatchUp=-2
+in the configuration file as a work-around. 
+
+APAR: IV77403
+Abstract: WINDOWS EVENT LOG EVENTS ARRIVED DELAYED WHEN 
+NUMEVENTSTOCATCHUP IS USED 
+Additional information: With a large input load (for example,
+8004 events on each of 4 threads), Windows Event Log events
+arrive with a significant delay when NumEventsToCatchUp=-1
+is set in the conf file. The delay increases as the event
+backlog grows. It can be in the order of 5 minutes depending
+on CPU, etc. This is a result of the inherent overhead in
+maintaing the position (bookmark) in the Windows Event Log
+when NumEventsToCatchUp is set to -1 or n. 
+
+This is a follow-on to APAR IV63704. 
+
+APAR: IV76731
+Abstract: UNABLE TO RENAME FILE WHICH IS BEING MONITORED BY ITM
+LOG FILE AGENT 
+Additional information: On Windows systems, when the agent is
+monitoring an application log, the log file cannot be 
+renamed because the file is open or in use. When new
+records are added to the log, the agent opens the log, 
+reads the log and closes the log. However, when a large
+volume of events are written to the log file, the log file
+may remain open or in use due to operating system
+efficiencies. As a result, an attempt to rename the log 
+file may fail. This problem occurs more prevently with the
+WINNT 32-bit agent, when NumEventsToCatchUp is set to -1.
+
+To minimize occurrence of this issue, use the Windows (WIX64) 
+x86-64 bit Log File agent. 
+
+APAR: IV60331
+Abstract: RESETTING OF MULTIPLE CONF/FORMAT FILES CAUSES A CRASH
+Additional information: Updating multiple configuration (.conf) 
+or format (.fmt) files, usually via a script or a situation 
+that runs frequently, and causes the agent to reset might 
+result in a core or crash. This also might be more likely 
+to occur with multiple subnodes to monitor a large number
+of files, for example, 100 files. The root cause of the
+crash is closing a file which is already closed or no longer
+exists. 
+
+This has been seen, mainly on Linux, on agent start-up,
+shutdown or reset as a result of configuration file changes. 
+The problem was originally discovered in Log File Agent 
+v6.2.3.1.
+
+The <hostname>_lo_<#########>.log might contain information
+similar to the following: 
+
+*** glibc detected *** /opt/IBM/ITM/lx8266/lo/bin/kloagent: 
+double free 
+or corruption (out): 0x00007f222d727030 *** 
+======= Backtrace: ========= 
+/lib64/libc.so.6[0x3c158760e6] 
+/lib64/libc.so.6[0x3c15878c13] 
+/lib64/libc.so.6(fclose+0x14d)[0x3c1586674d] 
+/opt/IBM/ITM/lx8266/lo/lib/libkloudp.so(kum_fclose+0x97)[0x7f222 
+42a68db] 
+/opt/IBM/ITM/lx8266/lo/lib/libkloudp.so(KUMP_ReleaseIOResources+ 
+0x430)[0x7f2224275444] 
+/opt/IBM/ITM/lx8266/lo/lib/libkloudp.so(KUMP_ReleaseSourceResour 
+ce+0xae1)[0x7f22242799d1] 
+/opt/IBM/ITM/lx8266/lo/lib/libkloudp.so(KUMP_FileServer+0x7114)[ 
+0x7f2224250f30] 
+/opt/IBM/ITM/lx8266/lo/lib/libkloudp.so(+0xb9b56)[0x7f222427fb56 
+] 
+/lib64/libpthread.so.0[0x3c16007851] 
+/lib64/libc.so.6(clone+0x6d)[0x3c158e890d] 
+. . . 
+
+2.2 Defects
+--------------
+None.
+
+2.3 Enhancements 
+----------------------
+Enhancement: IV77403, IV76731
+Abstract: Add Support for Windows x86-64 bit (WIX64) Agent
+Additional Information: Support was added for Windows x86-64 bit
+(WIX64) agent. This addresses APARs IV76731 and IV77403.
+
+Enhancement: 216440
+Abstract: Add Support for PowerPC little-endian (PPCLE)
+Additional Information: Support was added for PowerPC little-endian.
+
+2.4 Superseded fixes
+-------------------------
+6.3.0-TIV-ITM_LFA-FP0001
+6.3.0-TIV-ITM_LFA-IF0005
+6.3.0-TIV-ITM_LFA-IF0004
+6.3.0-TIV-ITM_LFA-IF0003
+6.3.0-TIV-ITM_LFA-IF0002
+6.3.0-TIV-ITM_LFA-IF0001
+
+2.4 APARs and defects included from superseded fixes
+---------------------------------------------------------------
+
+6.3.0-TIV-ITM_LFA-FP0001
+------------------------ 
+APAR: IV82875
+Abstract: WINEVENTLOG REREAD FROM BEGINNING ON AGENT RESTART 
+Additional information: When monitoring Windows® Event Logs, the
+event log is re-read from the beginning when the agent is
+restarted, resulting in old events being sent. This occurs 
+on Microsoft Windows 2003 or 2008 systems with the following
+settings in the agent configuration file: 
+- WINEVENTLOGS=<named event logs> 
+- NumEventsToCatchUp=-2 
+- UseNewEventLogAPI=n (must be set on Windows 2008 systems) 
+
+Note: NumEventsToCatchUp=-2 is not supported for Windows
+Event logs. 
+
+Problem Determination: On the LO agent system, with a 
+minimum of the following trace specification:
+KBB_RAS1: ERROR (UNIT:WinLogQuery ALL) 
+the agent RAS1 log 
+<hostname>_lo_[instance]_kloagent_<timestamp>-<nn>.log shows 
+trace points similar to the following: 
+- - - 
+... 
+...:winlogqueryclass.cpp,2521,"WinLogQueryClass::
+EventStartInit") WARNING: numEventsToCatchUp is -2 but
+there aren't that many events. Starting with oldest instead 
+... 
+- - - 
+
+APAR: IV82170
+Abstract: SOME EVENTS ARE NOT DETECTED WHEN BOTH MULTI-LINE AND
+SINGLE-LINE FORMATS ARE USED 
+Additional information: When using a format file which contains
+both multi-line and single line formats, some events might
+not be detected and are discarded. In this case, the events
+which were discarded were single lines of data which matched
+the single line formats. The single lines were discarded
+because the number of lines remaining to be processed was
+less than or equal to (not greater than) the maximum number
+of lines in the multi-line format. 
+
+This problem was discovered using errpt, but it can occur
+with other pipes such as syslog, or with a monitored file. 
+It occurs on Log File Agent V6.3, up to Interim Fix 0005 
+and is platform independent.
+
+Problem Determination: On the LO agent system, with a 
+minimum of the following trace specification: 
+KBB_RAS1: ERROR (UNIT:logmonitor ALL)(UNIT:kumrmfr ALL)(UNIT:kumpfile ALL) 
+the agent RAS1 log 
+<hostname>_lo_[instance]_kloagent_<timestamp>-<nn>.log shows 
+all the lines are read into the buffer properly. Records
+are processed until the ReadCount is equal to the 
+AttributeSetCount, and then the next "File Data Record" is 
+empty, even though more unprocessed data was still in the
+buffer. 
+- - -
+... 
+...:kumprmfr.c,449,"KUMP_ReadMonitorFileUnicodeRecord") 
+<0x1111746D0,0x2FF> 
+... 
+...:kumprmfr.c,454,"KUMP_ReadMonitorFileUnicodeRecord") Read 
+767 bytes : 
+Elapsed Time: 0.000425 sec CPU Time: 231 usec 
+... 
+... 
+... 
+...:kumprmfr.c,1112,"KUMP_ReadMonitorFileUnicodeRecord") 
+DlmRecordMode 0 ReadCount 5 DlmRecordDetected 0 PEptr @11103E450
+ShutDownPending 0 AttributeSetCount 5 RecordSetWaitCount 0 
+FileMonitorFrequency 5 
+... 
+...:kumprmfr.c,1153,"KUMP_ReadMonitorFileUnicodeRecord") 
+File EOF switch set 
+...:kumprmfr.c,1182,"KUMP_ReadMonitorFileUnicodeRecord") Exit: 
+0x111941E8 
+...:kumpfile.c,594,"KUMP_FileServer") <0x1111941E8,0x0> 
+File Data Record: 
+... 
+- - -
+
+APAR: IV81364 
+Abstract: PROCESS PRIORITY CLASS SETTINGS NOT REFLECTED OR SET
+FOR LOG FILE AGENT PROCESS
+Additional information: After configuring the Process Priority
+class value, the agent process running on Red Hat Linux
+does not set the corresponding priority or niceness value
+for its process. The priority is set on the thread and not
+the process (PID).
+
+For example, after configuring the agent and setting the 
+ProcessPriorityClass in the configuration file or during 
+configuration to "D": 
+
+When the ps command is issued, the priority of the agent
+process remains same: 
+# ps -eo priority,nice,comm,args,pid,time | grep kloagent 
+20 0 kloagent /opt/IBM/ITMfLFA/lx8266/lo/ 27424 
+00:00:00 
+
+Problem Determination: On the LO agent system, with a 
+minimum of the following trace specification: 
+KBB_RAS1= ERROR (UNIT:logmonitor ALL) (UNIT:Utilities ALL)
+the agent RAS1 log 
+<hostname>_lo_[instance]_kloagent_<timestamp>-<nn>.log shows 
+trace points similar to the following: 
+- - -
+...
+...:logmonitorqueryclass.cpp,479,"setProcessPriority") New*
+conf file = /opt/IBM/ITM/config/test_lo.conf , fmt file = 
+/opt/IBM/ITM/config/test_lo.fmt in subnode NULL 
+...:logmonitorqueryclass.cpp,490,"setProcessPriority") New* 
+ProcessPriorityClass setting D found. 
+...:logmonitorqueryclass.cpp,532,"setProcessPriority") New* 
+set process priority value -5 
+...:utilities.cpp,517,"Utilities::setPriority") Active RAS1 
+Classes: EVERYT EVERYE EVERYU 
+...:utilities.cpp,517,"Utilities::setPriority") Entry 
+...:utilities.cpp,540,"Utilities::setPriority") Successfully
+set process priority to fffffffb 
+...:utilities.cpp,554,"Utilities::setPriority") Exit: 0x0 
+... 
+- - -
+
+Feature: 216423 
+Abstract: Add support for Linux PowerPC (lpp266) 
+Additional Information: The agent is now supported running on 
+Linux PowerPC Red Hat 7.1.
+
+Feature: 216820
+Abstract: Upgrade to Installer v6.2.3 FP0005
+Additional Information: Upgrade to an Installer which contains
+installer APAR IV67172 and provisional APAR IV65616 for 
+Red Hat Linux v7 support.
+
+The following error might have been seen when running
+install.sh:
+================================================ 
+ITM home directory "/opt/IBM/ITM" already exists.
+OK to use it [ 1-yes, 2-no; "1" is default ]? 1
+cut: fields and positions are numbered from 1
+Try 'cut --help' for more information.
+install.sh failure: KCI0766E could not find arch "" in a JRE version file.
+================================================ 
+
+6.3.0-TIV-ITM_LFA-IF0005
+------------------------ 
+APAR: IV78340
+Abstract: EVENT ARRIVAL DELAYED DUE TO CPU THROTTLING
+Additional information: After a system reboot which includes
+automatic start-up of a Log File Agent instance, events
+become increasingly delayed from minutes to as much as hours.
+The root cause of the delay is the CPU throttling, which
+occurs even when the Process maximum CPU percentage is
+configured at 100%, the default which indicates no CPU
+throttling, because at that point internally the maximum CPU
+is reset to zero. This can occur with only a light flow rate
+of events. 
+
+It was discovered on HP-UX and although, it is platform
+independent, it may be more prevalent on HP-UX. 
+
+Problem Determination: With a minimum of the following trace
+enabled: "KBB_RAS1=ERROR (UNIT:kumpcpu ALL) (UNIT:kumpscan ALL) 
+(UNIT:kumpinit ALL)", the agent RAS1 log 
+<hostname>_lo_[instance]_kloagent_<timestamp>-<nn>.log 
+contains trace points similar to the following: 
+- - - 
+... 
+...:kumpcpu.c,634,"KUMP_hpux_getcpucputime") cycles t 0 
+277079589 u 0 0 s 0 0 i 0 0 u 0 210142401 s 0 50284806 i 0 
+16652382 
+...:kumpcpu.c,486,"KUMP_GetCPUTimeDiff") cpu time diff 692698 
+second 0 277079589; first 0 0 
+...:kumpcpu.c,486,"KUMP_GetCPUTimeDiff") cpu time diff 692698 
+second 0 277079589; first 0 0 
+...:kumpcpu.c,486,"KUMP_GetCPUTimeDiff") cpu time diff 2003 
+second 0 277079589; first 0 276278019 
+...:kumpcpu.c,332,"KUMP_UpdateProcessTime") Process utilization
+0.000000%; Changing the dampening wait from 0 milliseconds to 1
+milliseconds 
+... 
+- - - 
+
+APAR: IV76119
+Abstract: REMOVAL OF RC4 CIPHER FROM REMOTE MONITORING
+Additional information: The arcfour (RC4) cipher algorithm, as used
+in the TLS protocol and SSL protocol, could allow a remote
+attacker to obtain sensitive information. Successful
+exploitation could allow an attacker to retrieve sensitive
+information. This vulnerability is commonly referred to as
+"Bar Mitzvah Attack" (CVE-2015-2808). Support for the arcfour
+cipher is being removed. 
+
+APAR: IV75776
+Abstract: UNABLE TO OBTAIN MONITORED FILE STATISTICS ERROR WHEN FILE
+NAME CONTAINS DOUBLE-BYTE CHARACTERS 
+Additional information: When monitoring a file which contains
+Japanese or double-byte characters in the filename, the
+message "Unable to obtain statistics for file < <filename> >
+errno 2 'No such file or directory'" is written to the agent
+log at approximately every poll interval cycle. However, the
+file exists and is correctly monitored. 
+
+This occurs on Log File Agent version 6.3.0 and is platform
+independent.
+
+Problem Determination: With a minimum of the following trace
+enabled: "KBB_RAS1=ERROR (UNIT:kum0dir ALL)", the agent RAS1
+log <hostname>_lo_[instance]_kloagent_<timestamp>-<nn>.log
+contains trace points similar to the following: 
+- - - 
+... 
+...:kum0dir.c,147,"KUM0_stat_withMsgFlag") *** Unable to obtain 
+statistics for file <C:/temp/[filename].log> errno 2 'No such 
+file or directory' 
+...:kum0dir.c,167,"KUM0_stat_withMsgFlag") Unsuccessfully stat 
+file C:/temp/[filename].log size=0 access time=0, modification 
+time=0, creation time=0 
+... 
+- - - 
+
+APAR: IV75603
+Abstract: BACKSLASH \ INCORRECTLY TRANSLATED ON WINDOWS WHEN SENT
+TO EIF
+Additional information: On Windows systems when the event is
+translated back from UTF-8 to the native code page shift-JIS
+(SJIS/943), in order to send the event to Event Integration
+Facility (EIF), the backslash character is incorrectly
+translated. The backslash character (0x5c) is translated to
+UTF-8 0xC2A5, and when it is translated back to the native
+code page, it is incorrectly translated to 0x1A which may
+show as a blank space or unprintable character. As a result
+of IV68698, code page 932 is used to translate the event to
+UTF-8, however code page 943 is still being used to translate
+the event from UTF-8 back to the native code page Shift-JIS.
+
+Example: 
+Log File Agent v6.3 GA <cache file> 
+70203_Base;msg='Tivoli [message]\[message]' 
+
+Log File Agent v6.3 and 6.3.0-TIV-ITM_LFA-IF0004
+<cache file> 
+70203_Base;msg='Tivoli [message] [message]' 
+
+APAR: IV75336
+Abstract: LFA ASSOCIATED WITH LOG ANALYSIS IS DROPPING EVENTS
+Additional information: The agent when associated with Log
+Analysis is dropping events. When sending large amounts of
+events to Event Integration Facility (EIF), the agent is
+unable to keep up. The message "WARNING: <1000> events
+already on queue, dropping the oldest one", where <1000>
+is the default MaxEventQueueDepth value, is seen in the 
+agent RAS1 log.
+
+APAR: IV74487
+Abstract: ABLE TO MONITOR FILES GREATER THAN 2GB ON 32-BIT
+LINUX
+Additional information: When attempting to monitor files greater
+than 2 gigabytes on a 32-bit Linux operating system, the
+file is not monitored and is not displayed in the Monitored
+File Workspace in the portal. A trace in the log shows
+"File too large". 
+
+Problem Determination: With a minimum of the following trace
+enabled: "KBB_RAS1: ERROR (UNIT:kum0fdp0 ALL) (UNIT:kumpstdio
+ALL)", the agent RAS1 log 
+<hostname>_lo_[instance]_kloagent_<timestamp>-<nn>.log 
+contains trace points similar to the following: 
+- - - 
+... 
+<timestamp>:kumpwfrm.c,261,"KUMP_WaitFileReadyForMonitor") *** 
+Unable to open file local file <filename...>, 
+Errno: 27, ErrorText: File too large, NO retry. Exiting 
+... 
+- - - 
+
+APAR: IV74480
+Abstract: COMPAREBYLASTUPDATE DOES NOT MONITOR THE MOST RECENT
+REMOTE FILE ACROSS MULTIPLE DIRECTORIES 
+Additional information: When monitoring a remote log file using
+regular expression meta characters (wildcard) in one directory
+pattern of the path, and using the FileComparisonMode of
+"CompareByLastUpdate", the most recent file from the most 
+recent directory is not monitored. Only the most recent 
+file in the first directory returned which matches the
+pattern, is monitored. 
+
+CompareByLastUpdate should monitor the file with the most 
+recent last update timestamp across all the directories. 
+
+This occurs on Log File Agent version 6.3.0 and appears to
+be platform independent. It does not occur for local files. 
+
+Problem Determination: With a minimum of the following trace
+enabled: "KBB_RAS1: ERROR (UNIT:kum0sshlib ALL) (UNIT:kumpdcm ALL)", 
+the agent RAS1 log 
+<hostname>_lo_[instance]_kloagent_<timestamp>-<nn>.log
+contains trace points similar to the following, where
+'test0420' is not the last or only directory to search: 
+- - - 
+... 
+<timestamp>:kumpdcm2.c,214,"KUMP_GetNextMember") Directory 
+handle 7FF138015DA0 name /<...>/pm_20150424 could not find any 
+(more) members to match pattern <^.*\.log$> 
+... 
+... 
+<timestamp>:kum0sshlib.c,2184,"ssh_session_sftp_readdir") 
+Invalid data connInfo 7FF13800AE50 pDPAB 7FF138006640 ssh_ctx 
+7FF134007630 sftp_handle NULL buffer 7FF15C1DEE70 buflen 257 
+PEptr 7FF134004140 
+... 
+- - - 
+
+APAR: IV72073 
+Abstract: PATH TO MONITORED FILE NAME STARTS WITH DOUBLE SLASHES (//)
+Additional information: Using the RegexLogSources option to
+monitor a file which contains a regular expression meta 
+character in the first directory of the path, the resulting
+monitored file name path starts with 2 forward slashes (//). 
+For example: RegexLogSources=/LFA_.*/ts_.*\.log , the File
+Name field contains "//LFA_test/ts_01.log". 
+
+The extra starting slash is a cosmetic issue only and does
+not cause any issues. The file is properly monitored. 
+The extra forward slash at the beginning of the path can
+be seen on the portal in the File Name field in the Monitored
+File Status on the Data Collection workspace or in the agent
+logs. 
+
+The problem exists on Log File Agent v6.3.0 and v6.2.3.2. 
+This problem is platform independent. 
+However on Windows systems, if you specify the drive letter 
+preceding the path in the RegexLogSources option, the problem 
+does not occur. 
+
+Problem Determination: 
+On the the portal in the File Name field of the Data Collection 
+workspace, the File Name field contains, for example, 
+//LFA_test_logs/ts_01.log 
+
+With a minimum of the following trace enabled: 
+"KBB_RAS1: ERROR (UNIT:kumpdcm ALL)", the agent RAS1 log 
+<hostname>_lo_[instance]_kloagent_<timestamp>-<nn>.log
+contains the double forward slashes: 
+- - -
+... 
+...:kumpdcm2.c,279,"KUMP_GetNextMemberDouble") Directory / 
+Member 
+LFA_test_logs matched ^LFA_.*$; FilePathSpec2 NULL; and will 
+now use //LFA_test_logs 
+...:kumpdcm2.c,161,"KUMP_GetNextMember") Entry 
+...:kumpdir.c,139,"KUMP_OpenDir") Successfully opened 
+directory //LFA_test_logs 7F1748059310 7F1748059390 
+...:kumpdcm2.c,179,"KUMP_GetNextMember") Directory handle 
+7F1748059310 name //LFA_test_logs was successfully opened 
+... 
+- - -
+
+APAR: IV71539 
+Abstract: %NNNN SYSTEM PARAMETERS NOT RESOLVED IN WINDOWS EVENT
+LOG EVENTS 
+Additional information: On Windows 2003, the Log File Agent does
+not resolve %nnnn system parameters in Windows Event Log
+events. Windows Event Viewer is able to resolve the %nnnn to
+the correct message. This problem might also be seen on
+Windows 2008, when "UseNewEventLogAPI=N" is set in the agent
+configuration file. 
+
+For example, the event is seen as: 
+DCOM got error "%1058" attempting to start the service 
+COMSysApp with arguments "" in order to run the server: 
+{7F19-11D2} 
+
+With a minimum of the following tracing enabled: 
+"KBB_RAS1: ERROR (UNIT:EventLog ALL)", the agent log 
+<hostname>_lo_[instance]_kloagent_<timestamp>-0<n>.log
+contains entries similar to the following: 
+- - -
+... 
+...:eventlog.cpp,1955,"ModifyParameter") Entry 
+...:eventlog.cpp,1969,"ModifyParameter") Scanning <DCOM 
+got error "%1058" attempting to start the service COMSysApp
+with arguments "" in order to run the server: 
+{7F19-11D2} > for replaceable parameters. 
+...:eventlog.cpp,2175,"ModifyParameter") No parameters to 
+format. 
+
+...:eventlog.cpp,2185,"ModifyParameter") Scan results 
+<DCOM got error "%1058" attempting to start the service 
+COMSysApp with arguments "" in order to run the server: 
+{7F19-11D2} > 
+...:eventlog.cpp,2192,"ModifyParameter") Exit 
+...:eventlog.cpp,1600,"DisplayRecord") Event Log Record: 
+<DCOM got error "%1058" attempting to start the service 
+COMSysApp with 
+arguments "" in order to run the server: 
+{7F19-11D2}> 
+...:eventlog.cpp,1607,"DisplayRecord") Exit 
+... 
+- - 
+
+APAR: IV79219
+Abstract: SHIP LIBKLOSSH-GSK8 LIBRARIES FOR z/LINUX 32-bit and 
+64-bit FOR REMOTE FILE PROCESSING. 
+Additional information: The libklossh-gsk8 library was not included
+and shipped for ls3263, ls3266, hp11, and hp116 interps.
+Defect 215184.
+
+Defect: 215412
+Abstract: Improve servicability of Windows File Notification 
+WaitForSingleObject trace message
+
+6.3.0-TIV-ITM_LFA-IF0004
+------------------------ 
+APAR: IV68698
+Abstract: WITH JAPANESE LOCALE, BACKSLASH CHARACTER IS WRONGLY
+TRANSLATED WHEN INCLUDED IN TAKE ACTION COMMAND STRING
+Additional information: When an event which is detected by the agent
+is output from a situation using a Take Action command, by a 
+redirection, etc.; a single-byte backslash character ("\") is
+displayed as a double-byte "middle point" character. 
+
+The character is correctly displayed in the portal indicating 
+that it is correctly read and translated by the agent when
+read from the monitored log file. 
+
+The problem only occurs when the attribute containing 
+backslash is used in a Take Action command. When the
+character is read from the monitored file, it is converted 
+from ibm-943_P15A-2003 to UTF-8 0xC2A5 - the UTF8
+representation of backslash\yen). When the take action is 
+performed either at the agent or the monitoring server, the
+agent translates the 0xC2A5 from UTF-8 to the native CP932
+which results in the 0xFCFC character code. 
+
+The problem exists on the Log File Agent version 6.3.0
+Interim Fix 0003 (6.3.0-TIV-ITM_LFA-IF0003) and earlier, with
+Japanese locale. It can occur on Windows and UNIX® platforms.
+
+Problem Determination: With the following trace enabled for 
+the LO agent: 
+KBB_RAS1= ERROR (UNIT:logmonitor all)(UNIT:kum0nget all) 
+(UNIT:kumprmfr ALL) (UNIT:task ALL)
+the agent log 
+<hostname>_lo_[instance]_kloagent_<timestamp>-<nn>.log 
+contains trace entries similar to the following: 
+- - - 
+... 
+(54B982FE.000A-B30:kum0nget.c,411,"TranslateStringToUTF8") Entry
+(54B982FE.000B-B30:kum0nget.c,419,"TranslateStringToUTF8") 
+Converting string buffer from ibm-943_P15A-2003 to UTF-8 
+... 
+(54B982FE.000F-B30:kumprmfr.c,449,"KUMP_ReadMonitorFileUnicodeRe
+cord") <0x5FD6678,0x19> 
++54B982FE.000F 00000000 2045206C 696E6461 C2A56C6D 
+6E6F61C2 .E.lmnoa..lmnoa. !!!! 
++54B982FE.000F 00000010 A56C6D6E 6F61200D 0A 
+... 
+... 
+(54B982FE.00BE-F20:tasklibrary.cpp,1531,"ConvertCommandToLocal")
+Converting UTF-8 command to codepage 932 
+... 
+(54B982FE.00DC-F20:tasklibrary.cpp,864,"executeTaskRequest") 
+Executing task cmd /c "echo lindaüülindaüülinda 
+>>c:\output.sit" 
+
+APAR: IV68574
+Abstract: IN TAKEACTION, COMMAND OF MULTI-BYTE CHARACTERS WHICH HAVE 0XBA 
+OR 0XBB IS TRANSLATED TO LOCAL CODE PAGE INCORRECTLY. 
+Additional information: In takeAction processing, multi-byte
+characters 0x82BA or 0x82BB in a command are translated to
+local code page incorrectly. They are incorrectly replaced 
+with "[" and "]", respectively. 
+
+The problem exists on Log File Agent v6.3.0 Interim Fix 0003 
+(6.3.0-TIV-ITM_LFA-IF0003) and earlier releases and is 
+platform independent. 
+
+Problem Determination: With the following trace enabled for
+the LO agent: 
+KBB_RAS1= ERROR (UNIT:Logmonitor ALL) (UNIT:Kumprmfr ALL) 
+(UNIT:kum0nget ALL) (UNIT:Task ALL) 
+the agent log 
+<hostname>_lo_[instance]_kloagent_<timestamp>-<nn>.log 
+contains trace entries similar to the following: 
+- - - 
+... 
+...:kum0nget.c,419,"TranslateStringToUTF8") Converting string
+buffer from ibm-943_P15A-2003 to UTF-8 
+...:kum0nget.c,482,"TranslateStringToUTF8") Buffersize 31158
+bytes; Translated size 4 ; Copied 31158 characters readBuffer
+1113EE3B0 
+...:kum0nget.c,498,"TranslateStringToUTF8") Exit: 0x113EE3B0 
+...:kum0nget.c,397,"KUM0_Fgets") Exit: 0x113EE3B0 
+...:kumprmfr.c,449,"KUMP_ReadMonitorFileUnicodeRecord") 
+<0x1113EE3B0,0x4> ? 
++5492C8B8.000A 00000000 E3819D0A 
+... !!!!!! 
+... 
+<< The event is submitted to EIF - it still looks correct >> 
+(5492C8B8.005F-1B:logmonitorqueryclass.cpp,2433,"LogMonitorQuery
+Class::setInstanceData") Submitting EIF event: 
++5492C8B8.005F SOTEST_Event;C1='ã '; 
+E89 << hex character values>> 
+31D 
+... 
+... 
+...:tasklibrary.cpp,1225,"actionCallback") Received Take 
+action. Cmd=<print -r ' ã '>>/LFA/49806/sotestout.txt >, 
+User=<sysadmin> 
+... 
+... 
+...:tasklibrary.cpp,1531,"ConvertCommandToLocal") Converting
+UTF-8 command to codepage 932 
+...:tasklibrary.cpp,1554,"ConvertCommandToLocal") Exit: 0x10F4BBF0
+... 
+... 
+<< However when it is translated back from UTF-8 to codepage 943
+it becomes incorrect:>> 
+...:tasklibrary.cpp,749,"executeTaskRequest") Entry 
+...:tasklibrary.cpp,791,"executeTaskRequest") 
+taskInfo.name = print 
+...:tasklibrary.cpp,841,"executeTaskRequest") Did 
+not find Task name 'print'. Going to run 'system' on the 
+request print -r ' ?] 
+'>>/LFA/49806/sotestout.txt . 
+...
+- - -
+
+APAR: IV68490
+Abstract: ALL EVENTS ARE NOT DETECTED AND SENT AS EXPECTED WHEN 
+TRANSLATING FROM A MULTI-BYTE CODE PAGE 
+Additional information: All events are not matched and sent to the 
+event receiver. The events that are received might contain
+garbled characters. Close examination of the agent log with
+tracing enabled, shows that parts of the events or lines are
+overwritten. 
+
+This only occurs when translating the data from a multi-byte 
+code page to UTF-8 and the conversion fails. The conversion 
+fails because the agent was unable to read all the bytes 
+required for a complete character into its buffer. This might 
+occur if a group of messages are sent or when a message 
+exceeds the maximum event size (EventMaxSize). Increasing the
+EventMaxSize might produce different results. 
+
+The problem exists on the following Log File Agent versions: 
+- 6.3.0 interim fix 0003 and earlier 
+- 6.2.3.2 and later 
+- 6.2.2.4 Interim Fix 07 and later. 
+It is platform independent. 
+
+Problem Determination: With the following trace enabled for
+the LO agent: 
+KBB_RAS1= ERROR (UNIT:logmonitor all)(UNIT:kum0nget all) 
+(UNIT:kumprmfr all) 
+the agent log 
+<hostname>_lo_[instance]_kloagent_<timestamp>-<nn>.log might 
+contain these error indicators: 
+"partial data", "RESIDUAL" , or "*****Error: u_strFromUTF8 
+failed for string". 
+
+Trace entries are similar to the following where the 
+translation buffer ends 0x1A and contains partial data. 
+- - -
+... 
+...:kum0nget.c,411,"TranslateStringToUTF8") Entry 
+...:kum0nget.c,417,"TranslateStringToUTF8") translateBuffer 
+allocated 865 bytes at 43075E0 
+...:kum0nget.c,419,"TranslateStringToUTF8") Converting string
+buffer from ibm-943_P15A-2003 to UTF-8 
+...:kum0nget.c,467,"TranslateStringToUTF8") Input buffer 
+43E31C3 of length 288 when translated into 43075E0 of 
+length 293 has partial data 
+...:kum0nget.c,469,"TranslateStringToUTF8") <0x43E31C3,0x120> 
++... 00000000 23232323 3C323031 342F3132 2F303120 
+. . . 
+. . . 
++... 00000100 3C313431 37343039 35343939 36383E20 
+<1417409549968>. 
++... 00000110 3C424541 2D303030 3030303E 203CE383 
+<BEA-000000>.<.. 
++... 00000120 A1E38388 1A <--- 
+..... !! 
+
+<< Note: When the failure occurs, the last three bytes of the 
+translated data are 0xEF 0xBF0 0xBD or the last byte is a 0x1A.>>
+
+...:kum0nget.c,479,"TranslateStringToUTF8") Buffersize 
+865 bytes; Translated size 292; Copied 865 characters to 
+readBuffer 43E31C3 RESIDUAL 1 <---- 
+!!!!!!!!!! 
+... 
+(...:kum0regx.c,286,"KUM0_IsRegExPatternMatch") 
+*****Error:u_strFromUTF8 failed for string 
+... 
+- - -
+
+APAR: IV67737
+Abstract: DUPLICATE EVENTS SENT BECAUSE LOG DETECTED AS SWITCHED OR 
+RE-CREATED 
+Additional information: After applying Log File Agent v6.3 IF0003 
+(6.3.0-TIV-ITM_LFA-IF0003) on AIX and Linux, with 
+NumEventsToCatchUp=-1 set in the conf file, the monitored log 
+is incorrectly detected as re-created or switched. The
+monitored log is re-read from the beginning, resulting in
+duplicate events. 
+
+This issue occurs on AIX, Linux. It does not exist on Windows 
+operating systems.
+
+Problem Determination: With a minimum of the following trace
+enabled for the LO agent: 
+KBB_RAS1= ERROR (UNIT:kumpfdp2 ALL) , the agent RAS1 log 
+<hostname>_lo_[instance]_kloagent_<timestamp>-<nn>.log shows
+trace points similar to the following: 
+- - - 
+... 
+...:kumpfdp2.c,778,"DoFileTailRestart") Retrieved old monitor 
+filename </tmp/test_lfa.txt> creation time <1411741772> last 
+modification time <1411741772> size <699> 
+... 
+...:kumpfdp2.c,792,"DoFileTailRestart") Comparing creation 
+time <1411743260> last modification time <1411743260> size <758>
+...:kumpfdp2.c,816,"DoFileTailRestart") Note: Monitorfile 
+/tmp/test_lfa.txt has been switched or re-created, updating 
+restart file 
+</opt/IBM/ITM/logs/LO_LFA01_LogfileEvents_LogfileEvents_tivoli85
+.rst> 
+...:kumpfdp2.c,834,"DoFileTailRestart") Per TailRestartFromTop
+parameter, restarting file monitoring from beginning of file
+</tmp/test_lfa.txt> 
+... 
+- - - 
+
+The file, listed above, is detected as re-recreated based on the
+file information returned by the operating system: 
+creation time modification time size 
+last <1411741772> <1411741772> <699> 
+current <1411743260> <1411743260 > <758> 
+
+APAR: IV67708
+Abstract: WINDOWS EVENT LOG EVENTS WITH %N RESULTS IN A MESSAGE OF 
+"NONE" 
+Additional information: The event msg field or slot might contain 
+a value of "None", when a Windows event log message contains
+a %n where n is a number in the event description field. 
+If the %n is not substituted, the Microsoft EvtFormatMessage
+API returns ERROR_EVT_UNRESOLVED_VALUE_INSERT (15029) which
+the agent treats as an error. As a result of the error, the 
+agent discards the event description and substitutes "None".
+
+Problem Determination: With a mininum of the following trace
+enabled for the LO agent: 
+KBB_RAS1= ERROR (UNIT:WinLogQuery ALL), the agent log 
+<hostname>_lo_[instance]_kloagent_<timestamp>-<nn>.log shows
+the "15029" error: 
+- - - 
+... 
+...:winlogqueryclass.cpp,932,"renderEvent") Rendering 
+message for event 
+...:winlogqueryclass.cpp,594,"renderEventString") Entry 
+...:winlogqueryclass.cpp,629,"renderEventString") 
+Retrieved metadata for provider MYEVENTSOURCE from hashmap 
+...:winlogqueryclass.cpp,676,"renderEventString") 
+EvtFormatMessage failed, error = 15029, evt handle = 0x00000002 
+...:winlogqueryclass.cpp,705,"renderEventString") Exit: 0x0 
+... 
+- - - 
+
+APAR: IV65900
+Abstract: LOG FILE AGENT WINDOWS EVENT LOG EVENT ID NOT DETECTED
+PROPERLY 
+Additional information: When the Windows Event log event ID is zero,
+Log File Agent shows a random event ID. 
+
+Problem Determination: With a mininum of the following trace
+enabled for the LO agent: 
+KBB_RAS1=ERROR (UNIT:WinLogQuery ALL) 
+the agent log 
+<hostname>_lo_[instance]_kloagent_<timestamp>-<nn>.log 
+contains the following trace point that shows an error
+ocurred:
+...:winlogqueryclass.cpp,799,"renderEvent") Error retrieving EventId
+
+APAR: IV65500
+Abstract: PROCESS PRIORITY NOT WORKING WITH SUBNODES 
+Additional information: The agent Process Priority Class setting
+does not work with subnodes when it is enabled through the 
+autodiscovery option. 
+
+During the agent configuration, when the conf file and format
+file are not specified and only the autodiscovery directory 
+and Process Priority Class are set, the Process Priority is not
+set properly for the agent. It takes the default value. 
+
+APAR: IV64093
+Abstract: EXCEPTION ACCESS VIOLATION WHEN EVENT EXCEEDS MAXIMUM 
+EVENT SIZE 
+Additional information: The kloagent process may terminate with an 
+Exception 0xC0000005 (ACCESS_VIOLATION), when the size of an
+event exceeds the maximum event size (EventMaxSize) and is
+truncated. The LO agent instance unexpectedly stops and goes
+offline. 
+
+The crash occurs when the truncation occurs on a boundary 
+condition, and the event is truncated at a single quote and 
+has no ending semi-colon. It only occurs in the mapping of 
+the attribute slots to CustomSlots when sending events to IBM
+Tivoli Monitoring from either a Windows event log or a file.
+
+Problem Determination: With a mininum of the following trace
+enabled for the LO agent: 
+KBB_RAS1= ERROR (UNIT:LogMonitorQuery ALL) (UNIT:WinLogQuery 
+ALL) (UNIT:kum0regx ALL) 
+the agent log 
+<hostname>_lo_[instance]_kloagent_<timestamp>-<nn>.log 
+contains the following trace points that show the size and
+data of the incoming event:
+... 
+...::winlogquerylist.cpp,1134,"writeEventDataToPipe") 
+Writing event of length ###### to pipe: 
+<contents of the log entry / event> 
+...:winlogquerylist.cpp,1145,"writeEventDataToPipe") 
+Node <.fmt stanza> wrote event to pipe for event log <logname>, 
+event size = XXXXX , bytes written = YYYYY 
+
+The following trace shows that the overall event exceeds
+EventMaxSize and will be truncated. The '16384 bytes' is the 
+ventMaxSize the agent is using.
+... 
+...:kum0regx.c,1152,"KUM0_PerformStringReplace") 
+Warning: Replacement string size ZZZZZ for attribute EIFEvent
+larger than available buffer, only copied 16384 bytes to .... 
+
+The following trace points show the access violation:
+...:logmonitorqueryclass.cpp,1812,"LogMonitorQueryClass: 
+:getSlotAttrAndValue") Entry 
+...:logmonitorqueryclass.cpp,1823,"LogMonitorQueryClass: 
+:getSlotAttrAndValue") No ; at end, <slotname>=' must be last 
+slot 
+... 
+...:kumpxtrt.c,51,"KUMP_PerformDataCallback") 
+*************************************************************** 
+...:kumpxtrt.c,52,"KUMP_PerformDataCallback") 
+***** Data Callback Execution Exception Handler ***** 
+...:kumpxtrt.c,56,"KUMP_PerformDataCallback") 
+***** Data Callback Function - EXCEPTION_ACCESS_VIOLATION ***** 
+...:kumpxtrt.c,62,"KUMP_PerformDataCallback") 
+*************************************************************** 
+...:kumpxtrt.c,65,"KUMP_PerformDataCallback") Exit: 0x0 
+
+Note: These entries might not be at the end of the log. 
+There will not be the corresponding exit trace point: 
+"LogMonitorQueryClass::getSlotAttrAndValue") Exit 
+
+See the APAR text for the .RAS file call stack information.
+
+APAR: IV63704
+Abstract: HEAVY WINDOWS EVENT LOG LOAD CAUSES DELAYS AND THE
+APPEARANCE OF HANGS 
+Additional information: A heavy Windows event log throughput causes
+delays in the events being displayed on the portal. 
+For example: when sending 1000 events per second per thread,
+on 4 threads, the delay in seeing the events on the portal
+might be as much as 30 minutes. The delay increases as the
+PollInterval increases. 
+
+The agent might also appear to hang if too many duplicate
+Windows Event log messages are received. 
+
+Problem Determination: With a mininum of the following trace
+enabled for the LO agent: 
+KBB_RAS1: ERROR (UNIT: WinLogQueryList ALL) (UNIT:kum0nget ALL) 
+(UNIT:kumpfdp6 FLOW DETAIL) 
+the agent log 
+<hostname>_lo_[instance]_kloagent_<timestamp>-<nn>.log 
+shows that the agent is continuing to monitor for incoming
+events but no new events are received. 
+- - - 
+... 
+...:winlogquerylist.cpp,1143,"writeEventDataToPipe") Records 
+written to pipe n writeResult=1 
+< where n is the number of events written to pipe > 
+... 
+... 
+< And the following sequence repeatedly even though new events are
+being sent. > 
+...:kumpfdp6.c,162,"WaitUntilNextSampleTime") >>>>> 
+WaitForSingleObject returned 258 for WaitFileHandle @78 
+...:kumpfdp6.c,233,"WaitUntilNextSampleTime") Exit: 0x1 
+...:kum0nget.c,122,"KUM0_Fgets") Entry 
+...:kum0nget.c,136,"KUM0_Fgets") read / actual BufferSize = 
+64146 / 192438, encoding = ibm-5348_P100-1997, convertToUTF8 = 1 
+...:kum0nget.c,308,"KUM0_Fgets") Using fgets() to get string 
+from file 
+...:kum0nget.c,355,"KUM0_Fgets") Pipe read returned no data 
+setting EOF 
+...:kum0nget.c,399,"KUM0_Fgets") Exit: 0x0 
+...
+- - - 
+
+APAR: IV21752
+Abstract: EIF: ERROR CODE 67 IS NOT HANDLED WHILE SENDING EVENTS 
+Additional information: If Error code 67 (Connection is broken) is
+seen while sending events to the Event Integration Facility
+(EIF) receiver, then the EIF sender ignores it and keeps 
+sending events forward, even though the events are not being
+received by the EIF receiver. 
+
+This APAR is included in this fix for the Log File Agent on
+Windows systems only. For UNIX/Linux systems, the fix is
+included in IBM Tivoli Monitoring Shared Libraries (TEMA)
+component of IBM Tivoli Monitoring version 6.2.3 Fix Pack 02
+or later. You must install the Shared Libraries (ax) component 
+separately from the agent.
+
+Enhancement: 212595 
+Abstract: Implement AESnnn-CTR ciphers for remote logs
+
+6.3.0-TIV-ITM_LFA-IF0003
+------------------------ 
+APAR: IV60491
+Abstract: SELINUX AUDIT LOG MESSAGES GENERATED WHEN USING IPV6 WITH
+LOG AGENT 
+Additional information: On Log File Agent v6.3 and prior releases, 
+running the agent on a Security-Enhanced Linux (SELinux)
+system using IPv6 with the SELinux security policy set to
+"enforcing" generates audit messages. The messages in the
+SELinux audit log /var/log/audit/audit.log are similar
+to the following where <hostname> is the system the agent is
+running on: 
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+type=AVC msg=audit(1389964628.602:213): avc: denied { write } 
+for pid=8121 comm="ifconfig" path="/opt/IBM/ITM/auditlogs/itm. 
+<hostname>_lz_audit.log" dev=dm-5 ino=4660 
+scontext=system_u:system_r: ifconfig_t:s0 
+tcontext=system_u:object_r:usr_t:s0 tclass=file 
+type=AVC msg=audit(1389964628.613:214): avc: denied { write } 
+for pid=8126 comm="ifconfig" 
+path="/opt/IBM/ITM/logs/<hostname>_lz_klzagent_52d92647-01.log" 
+dev=dm-5 ino=5066 scontext=system_u:system_r:ifconfig_t:s0 
+tcontext=system_u: object_r:usr_t:s0 tclass=file 
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+
+APAR: IV60333
+Abstract: EVENTS FROM WINDOWS EVENT LOG ARE INTERMITTENTLY NOT
+DETECTED.
+Additional information: Windows Event Log events are
+intermittently not detected and sent. With the UnmatchLog
+parameter specified, the event is also not saved in the
+UnmatchLog file. In previous occurrences, the missing event
+matches one of the format expressions and is sent. With
+tracing set as described below, after the initial rendering
+of the Windows Event Log event is seen in the agent log,
+there are no occurrences of the event in the log. 
+
+This is more likely to occur when monitoring more than one
+Windows Event Log (for example: Application, Security, 
+System, etc). 
+
+This problem occurs on Windows systems with Log File Agent 
+version 6.2.3.2 and 6.3. 
+
+APAR: IV59814
+Abstract:BLANK ARCFOUR ALGORITHM CAUSES JAVA CORE WITH REMOTE LOG
+FILE MONITORING 
+Additional information: The Log File Agent v6.3.0 might create Java®
+cores when attempting to use the Remote Log File monitoring
+feature which relies on SSH. The Java core is the result of a
+blank("") arcfour algorithm name for the cipher. 
+The problem was initially seen on Linux, but is platform
+independent.
+
+With a minimum of KBB_RAS1: ERROR (UNIT:kex ALL), the agent
+log <hostname>_lo_<instance>_kloagent_<timestamp>.log 
+ends with trace entries similar to the following: 
+- - - 
+... 
+(53444D90.04B8-40:kex.c,1880,"libssh2_kex_exchange") Entry
+(53444D90.04B9-40:kex.c,1030,"kexinit") Entry 
+- - - 
+
+APAR: IV42315
+Abstract: NUMEVENTSTOCATCHUP=-1 DOES NOT DETECT WHEN THE FILE HAS
+BEEN REPLACED 
+Additional information: On restart of the Log FiLe agent, when the
+configuration option NumEventsToCatchup is set to "-1", the
+agent does not detect that a monitored file has been replaced
+with a smaller file. The monitored file is not processed until
+the file reaches the size maintained in the restart file. It
+should result in the file being read from the beginning. 
+
+6.3.0-TIV-ITM_LFA-IF0002
+------------------------ 
+APAR: IV57736
+Abstract: LOG FILE AGENT MAY CORE, CRASH ON HP-UX WHEN 
+NUMEVENTSTOCATCHUP IS USED. 
+Additional information: On HP-UX, when the configuration option
+NumEventsToCatchUp is set to a value other than zero, the
+agent might core. The problem occurs on Log File Agent v6.3. 
+
+The core might show the following: 
+Core was generated by ´kloagent'. 
+Program terminated with signal 11, Segmentation fault. 
+SEGV_MAPERR - Address not mapped to object 
+........ 
+(gdb) where 
+#0 0xc000000010a30320:0 in UpdateRestartFileBaseFunction () at
+kumpfdp2.c:427 
+#1 0xc000000010a32760:0 in UpdateRestartFileWithStats () at 
+kumpfdp2.c:553 
+#2 0xc000000010a3d970:0 in DoFileTailRestart () at 
+kumpfdp2.c:893 
+#3 0xc000000010a90af0:0 in KUMP_FileServer () at kumpfile.c:23
+#4 0xc000000010b8eee0:0 in Task () at kumptask.c:35 
+#5 0xc0000000000fb140:0 in __pthread_bound_body+0x190 () 
+from /usr/lib/hpux64/libpthread.so.1 
+........ 
+
+With a minimum of "KBB_RAS1: ERROR (UNIT: kumpfdp2 ALL) 
+tracing, the agent log 
+<hostname>_lo_<instance>_kloagent_<timestamp>.log ends with 
+trace entries similar to the following: 
+- - - 
+... 
+...:kumpfdp2.c,173,"KUMP_ParseSingleRestartLine") Parsing 
+RecPtr 6000000000736F4F <735> 
+...:kumpfdp2.c,1250,"KUMP_ParseNumericString") Unsuccessfully 
+parsed <NULL> to value 735 
+...:kumpfdp2.c,200,"KUMP_ParseSingleRestartLine") Error: parsed
+location <NULL> file <735> creation <NULL> modification <NULL> 
+size <NULL> with RecPtr 6000000000736F53 
+...:kumpfdp2.c,427,"UpdateRestartFileBaseFunction") Note: 
+Required fields missing from restart file </opt/IBM/ITM/logs/L 
+O_default_LogfileEvents_hpia5.rst> 
+...:kumpfdp2.c,173,"KUMP_ParseSingleRestartLine") Parsing 
+RecPtr 6000000000736F53 <;> 
+...:kumpfdp2.c,200,"KUMP_ParseSingleRestartLine") Error: parsed
+location <NULL> file <NULL> creation <NULL> modification 
+<NULL> size <NULL> with RecPtr 5FFFFFFFA0736F52Page 34 of 35 
+...:kumpfdp2.c,427,"UpdateRestartFileBaseFunction") Note: 
+Required fields missing from restart file 
+</opt/IBM/ITM/logs/LO_default_LogfileEvents_hpia5.rst> 
+- - - 
+
+APAR: IV56299
+Abstract: A PERCENT SIGN (%) LITERAL IS NOT SUPPORTED IN FORMAT
+STATEMENT
+Additional information: When a percent sign (%) or a percent sign
+(%) followed by a literal other than the valid variables of s,
+t, n, is used in a FORMAT statement, it results in an "illegal
+variable" message and an incorrect regular expression. As a
+result, the record does not match as expected. 
+
+For example: 
+FORMAT 43866_Class10 
+43866_10 %s % %s* 
+. . .
+
+or 
+
+FORMAT 43866_30 
+%t %s %MIDDLEWR: %s 
+. . .
+
+With KBB_RAS1: ERROR, the the agent log 
+<hostname>_lo_<instance>_kloagent_<timestamp>.log contains
+trace entries similar to the following: 
+- - - 
+... 
+(5317981A.0002-12E0:lfaconfig.cpp,1042,"generateFormatFilter") 
+Format 
+for class 43866_Class10 contains illegal variable "%" in format
+expression "43866_10 %s % %s*" 
+(5317981A.0003-12E0:lfaconfig.cpp,1045,"generateFormatFilter") 
+Variable 
+of type not recognized 
+... 
+- - - 
+
+This problem occurs on Log File Agent v6.3 and prior releases.
+It is platform independent. 
+
+APAR: IV54710
+Abstract: WINDOWS EVENT LOG NOT MONITORED ON SOME WINDOWS 2012
+SYSTEMS AFTER INSTALLING 6.3.0-TIV-ITM_LFA-IF0001 
+Additional information: On some Windows 2012 systems, after
+installing Log File Agent v6.3 interim fix 0001
+(6.3.0-TIV-ITM_LFA-IF0001), Windows Event Log events are no
+longer monitored. The Data Collection Status workspace shows
+File Status: "231". 
+
+With a minimum of "KBB_RAS1: ERROR tracing, the agent log 
+<hostname>_lo_<instance>_kloagent_<timestamp>.log contains
+trace entries similar to the following: 
+- - - 
+... 
+...:kum0fdp0.c,162,"KUM0_DynamicFileOpen") 
+fopen(\\.\pipe\KLO_gail_LogfileEvents_evl(System), rb) returned
+NULL errno 231 'Unknown error' 
+... 
+- - - 
+
+APAR: IV53803
+Abstract: TACMD ADDSYSTEM OF LO AGENT FAILS WITH
+6.3.0-TIV-ITM_LFA-IF0001 
+Additional information: On Tivoli Enterprise Monitoring Server 
+v6.2.3 and beyond, when both the Log File Agent v6.3 (CIGM6ML)
+and the interim fix (6.3.0-TIV-ITM_LFA-IF0001) are in the
+depot, "tacmd AddSystem" fails because the interim fix 
+does not have a pre-requisite for LO version 06.30.00. The
+agent is not pushed to the endpoint. This only occurs with
+UNIX system targets.
+
+APAR: IV53568
+Abstract: ON WINDOWS FOR NUMEVENTSTOCATCHUP=-1 CREATES MULTIPLE
+ENTRIES FOR EACH LOGS IN .RST AND MISSES EVENTS 
+Additional information: If NumEventsToCatchUp=-1, the restart (.rst)
+file should be continuously updated. This file should contain
+the name of each log being monitored along with the last 
+position read from the log. There should only be one line for 
+each monitored log file. However, instead of replacing the
+line as it should, a new row is added. As a result, it is not
+able to resume at the file position it was at when the agent
+was stopped and events that occurred while the agent was
+stopped are missed.
+
+CPU performance issues might result from the excess processing 
+of the restart file. 
+
+APAR: IV52833
+Abstract: SOME LOG LINES WRITTEN IN SEPARATE PIECES ARE INTERMITTENTLY
+NOT SENT AS EVENTS
+Additional information: On Windows® systems, some single lines
+written to the monitored file in separate pieces are not sent
+and do not appear in the UnmatchLog, if one was specified.
+This might occur intermittently, when lines are written in
+multiple parts, particularly on Windows systems. 
+
+With a minimum of KBB_RAS1: ERROR, the agent log
+<hostname>_lo_<instance>_kloagent_<timestamp>.log contains a
+trace entry similar to the following: 
+- - - 
+...:kum0mpbc.c,50,"KUM0_MoveStringPointerByChar") 
+***** Input string is NULL
+- - - 
+
+APAR: IV52411
+Abstract: MULTI-LINE *DISCARD* FORMAT FILTER INTERMITTENTLY ALLOWS 
+RECORDS TO ESCAPE FILTER AND SHOWS UP IN THE PORTAL. 
+Additional information: A multi-line *DISCARD* format filter
+intermittently allows records to escape the filter and shows
+up in the portal.
+
+In addition, the handling of the end of the file (EOF) with
+saved data from a previous read is not handled correctly. 
+This allows multi-line records which are split by EOF to 
+escape. The agent is not correctly retrying its read attempts
+when it has a partial buffer and hits the EOF logic. 
+
+With a minimum of KBB_RAS1 with (UNIT:kum ALL) the agent log 
+<hostname>_lo_<instance>_kloagent_<timestamp>.log contains 
+trace entries similar to the following:
+- - - 
+. . . 
+(523B46FE.06DD-12:kum0regx.c,353,"KUM0_IsRegExPatternMatch") 
+Exit: 0x0 
+(523B46FE.06DE-12:kumpcapf.c,548,"KUMP_CheckAttributesPassFilter 
+s") Data <Sep 19 12:48:27 gisdev scsi: [ID 107833 kern.warning] 
+WARNING: /scsi_vhci/ssd@g600601602d301e0002f28a3e1ff9e111 
+(ssd63):
++523B46FE.06DE > AttrName <EIFEvent> failed MatchRegEx filter 
+1: <()^(.*Error for Command.*)\r?\n(.*)\r?\n(.*)\r?\n(.*)\r?\n
+(.*asymmetric.*)()> 
+. . . 
+- - - 
+
+6.3.0-TIV-ITM_LFA-IF0001
+------------------------
+APAR: IV48040
+Abstract: LOG FILE AGENT PROCESSING WINDOWS EVENT WHICH IS GREATER
+THAN 64K CAUSES THE AGENT TO LOOP AND NOT PROCESS ANY MORE
+EVENTS 
+Additional information: There were three issues found: 
+1)Event buffer size was limited to 64K. The event buffer
+size is increased to 128K. A WARNING message is also issued
+if an event exceeds the buffer size. 
+
+2)When the record is not processed because the buffer is too 
+small, the current event pointer is not incremented. On the 
+next pass, the same too-large event is read again, which
+fails again and no more events are processed.
+
+3)When numEventsToCatchUp is set to a value larger than the 
+number of records in the event log, the record number to read
+is calculated incorrectly.
+
+APAR: IV45784 
+Abstract: FILES CREATED AFTER KLO AGENT IS STARTED ARE NOT MONITORED
+Additional information: On a Windows® system, if the monitored file
+does not exist when the agent is started, the file is not
+monitored after it is created. There might not be an entry for
+the non-existent file in the Monitored File Status in the Data
+Collection Status workspace. 
+
+The agent agent must be re-started to recognize the file or
+the file must exist when the agent is started. 
+
+With a minimum of KBB_RAS1: ERROR, the agent log 
+<hostname>_lo_<instance>_kloagent_<timestamp>.log contains
+trace entries similar to the following: 
+- - - 
+... 
+...:kumpwfrm.c,261,"KUMP_WaitFileReadyForMonitor") *** 
+Unable to open file local file <filename>, Errno: 0,
+ErrorText: No error, NO retry. Exiting 
+...:kumpfdp5.c,231,"CheckFileExistAndReady") *** File 
+C:/lo/43866/43866.log -- initial monitoring setup failed
+<timestamp>:kumpfile.c,891,"KUMP_FileServer") >>>>> DP file
+server ThreadID F04 ended for local file C:/lo/43866/43866.log
+... 
+- - - 
+
+APAR: IV42745
+Abstract: SOME LINES WRITTEN IN PIECES ARE UNMATCHED AND PARTIALLY
+DISCARDED 
+Additional information: When a single line is written to the
+monitored file in separate pieces, sometimes the line does
+not match and is not sent as an event. This is because the
+latter or subsequent piece of the line is written to the same
+location in the internal read buffer and overwrites the
+initial piece of the line. The resulting partial line does
+not match the formats and is sent to the UnmatchLog, if one
+was specified in the configuration file. This might occur
+intermittently when lines are written in multiple parts,
+particularly on Windows systems. 
+
+With a minimum of KBB_RAS1: ERROR (UNIT:kumprmfr ALL), the
+agent log <hostname>_lo_<instance>_kloagent_<timestamp>.log
+contains trace entries similar to the following: 
+- - - 
+... 
+...:kumprmfr.c,1015,"KUMP_ReadMonitorFileUnicodeRecord") 
+SavedRec 51A6A58 14 <job6 started: > 
+... 
+...:kumprmfr.c,412,"KUMP_ReadMonitorFileUnicodeRecord") 
+<0x51A6A58,0x56> 4+5187EED2.026F 00000000 362F362F 
+32303133 2036363A 3636200D 6/6/2013.66:66.. 
+... 
+- - - 
+The second part of line is written to the same location in
+the buffer, in the above example 0x51A6A58, overwriting the
+first part of the line. 
+
+APAR: IV42699
+Abstract: LAST MATCHING LINE OF LOG IS NOT IMMEDIATELY SENT AS A
+MATCHING EVENT 
+Additional information: With record patterns that span multiple
+lines (RECORDSET patterns), the last matching line of a
+monitored file is not immediately sent as an event and it
+does not show up in the UnmatchLog, if one was specified.
+The amount of wait time till the event is actually sent is a
+factor of the PollInterval. 
+
+With a minimum of KBB_RAS1: ERROR (UNIT:kumprmfr ALL) 
+(UNIT:kumpfdp ALL), the agent log 
+<hostname>_lo_<instance>_kloagent_<timestamp>.log contains 
+trace entries similar to the following with the default 
+PollInterval of 5: 
+- - - 
+... 
+...:kumpfdp3.c,117,"OpenFileForMonitor") Assigned 
+RecordSetMaxWait = 5 seconds 
+... 
+...:kumprmfr.c,1090,"KUMP_ReadMonitorFileUnicodeRecord")
+Waiting for RECORDSET end delimiter, RecordSetWaitCount 1 
+MaxRecordSetWait limit 100 
+...:kumprmfr.c,1090,"KUMP_ReadMonitorFileUnicodeRecord")
+Waiting for RECORDSET end delimiter, RecordSetWaitCount 2 
+MaxRecordSetWait limit 100 
+... 
+...:kumprmfr.c,1090,"KUMP_ReadMonitorFileUnicodeRecord")
+Waiting for RECORDSET end delimiter, RecordSetWaitCount 99 
+MaxRecordSetWait limit 100 
+... 
+- - - 
+
+APAR: IV41215
+Abstract: BRACKET { IN FORMAT RESULTS IN LOAD METAFILE EXECUTION
+EXCEPTION
+Additional information: When an opening { bracket is used without a
+closing bracket } in a FORMAT statement of the format file,
+the agent log ends with a "Load Metafile Function - 
+EXCEPTION_ACCESS_VIOLATION" on agent start-up. 
+The agent process is still running but it is waiting for 
+initialization to complete successfully and is not monitoring. 
+The Data collection status Error Code is "No ERROR" but there
+is no entry in the Monitored File Status for the monitored
+file. This problem is platform independent. 
+
+With a minimum of "KBB_RAS1: ERROR tracing, the agent log
+<hostname>_lo_<instance>_kloagent_<timestamp>.log contains 
+trace entries similar to the following: 
+- - - 
+... 
+...:kumplmet.c,204,"KUMP_LoadMetafile") 
+*************************************************************** 
+...::kumplmet.c,205,"KUMP_LoadMetafile") ***** Load Metafile 
+Execution Exception Handler ***** 
+...:kumplmet.c,209,"KUMP_LoadMetafile") ***** Load Metafile 
+Function - EXCEPTION_ACCESS_VIOLATION ***** 
+...:kumplmet.c,215,"KUMP_LoadMetafile") 
+****************************************************************
+...:logmonitorqueryclass.cpp,4031,"LogMonitorQueryClass: 
+:completReset") Table LogfileEvents still waiting for kum to 
+initialize after 30 seconds 
+... 
+- - - 
+
+APAR: IV39967
+Abstract: RESTORED FILE IS NOT MONITORED AFTER CONF/FMT FILES
+MODIFIED
+Additional information: A restored log file is no longer monitored
+and no new events are processed, when the sequence of all the
+following events occur: 
+a) update the conf or fmt file to trigger reset processing, 
+b) remove the file, for example via un-mount, rename, delete, 
+move 
+c) wait for the 'File does not exist' status 
+d) restore the file. 
+The Data Collection workspace continues to show a File Status 
+of "FILE DOES NOT EXIST". 
+
+If the reset process (step a) is not triggered and only the
+file is removed, the file is re-discovered properly. If only
+the reset process (step a) is triggered, it also continues to 
+function properly. 
+Note: When the file is re-discovered after it is restored, it 
+is read from the beginning as a new file. This is not new 
+behavior with this APAR. 
+
+The root cause of this problem occurs on LFA v6.3, but the log 
+file is monitored when the file is restored. 
+
+APAR: IV37051
+Abstract: EVENTS INTERMITTENTLY NOT MATCHED WHEN LINE WRITTEN IN
+PIECES
+Additional information: When an application writes only part of the
+line and later writes the remainder of the line, the line
+intermittently matches as an event with no changes to the fmt
+file. This occurs more prevalently on Windows systems because
+the operating system notifies the agent when the file has
+changed. When the first part of the line is written, the agent
+is notified but the partial line does not match any formats.
+When the second part of the line is written, the agent is
+notified again but the remainder of the line does not match
+any formats. The two pieces of the line are treated as two
+lines, neither of which match and both pieces are written as
+two lines to the UnmatchLog, if one is configured. 
+
+Defect: 207998
+Abstract: Agent does not continue to retry on remote log, when 
+RC -3, because errno is zero.
+Additional information: When monitoring remote log files where the
+connection breaks; for example, the remote system shuts down
+or a network outage, the agent does not continually try
+to re-establish the connection. The remote file is not
+monitored. The Monitored File Status might not show a row
+for the file.
+
+With a minimum of "KBB_RAS1: ERROR tracing, the agent log
+<hostname>_lo_<instance>_kloagent_<timestamp>.log contains
+trace entries similar to the following: 
+- - - 
+...:session.c,243,"banner_send") Unable to send the banner
+...:session.c,245,"banner_send") -3 - Error sending banner
+to remote host
+...:session.c,691,"session_startup") -3 - Error sending banner
+to remote host
+...:kum0sshlib.c,1227,"ssh_session_connect") Failed to
+establish an SSH connection in 0 seconds for remote
+root@mypia.tivlab.austin.ibm.com:22 
+/opt/IBM/ITM/logs/^mypia_ux_kuxagent_.*\.log$
+mypia.ibm.com:22 socket 25 rc -3 errno 17 : 
+LIBSSH2_ERROR_BANNER_SEND
+...
+- - - 
+
+Defect: 206531
+Abstract: Failed to load GSKit library
+Additional information: When both GSKit version 7 and 8 are 
+installed on the same agent machine, either because of two
+IBM Tivoli Monitoring installs, or some other product that
+put a GSKit into the system /usr/lib directory, the wrong
+version of the library is loaded and the GSKit 
+initialization fails. This problem has only been seen on
+Linux®.
+
+Defect: 205184
+Abstract: Improve handling of files on re-mounted file systems
+
+Defect: 204120
+Abstract: Log agent crashes on Solaris due to mis-aligned integer
+Additional information: Agent crashes in KUMP_DoDPdataToDCH when it
+formats data from a buffer into integers and other formats,
+due to a copy of an odd-aligned integer. 
+
+Defect: 203012
+Abstract: LogSources wildcards match directories remote log -31 err
+Additional information: If a LogSources specifies a remote directory
+and not a remote file, the Monitored File Status shows "File
+Status" OK, "File Type" of "REGULAR FILE", "PIPE" or
+"UNKNOWN" and "Current File Size" 4096, but no files are
+monitored.
+
+Note: After the fix, when there are no wildcards in the
+directory path, it may still show Status" OK, "File Type"
+of "REGULAR FILE".
+
+
+3.0 Architecture and prerequisites
+======================
+This fix is supported on all operating systems listed in the Tivoli
+Log File Agent User's Guide, version 6.3.0.
+
+The following link is for the Tivoli operating system and application
+support matrix. Please refer to this matrix for the latest 
+certification information.
+Please refer to the IBM Software Product Compatibility Reports (SPCR)
+for the latest operating system certification information:
+http://publib.boulder.ibm.com/infocenter/prodguid/v1r0/clarity/index.html [http://publib.boulder.ibm.com/infocenter/prodguid/v1r0/clarity/index.html]
+
+3.1 Prerequisites for this fix
+--------------------------------
+The prerequisite level for this fix is as follows:
+- IBM Tivoli Monitoring, Version 6.2.2: Fix Pack 02 or higher
+(6.2.2-TIV-ITM-FP0002)
+
+This fix pack is a complete install image and as such, can be 
+installed on a pristine system. This fix is also cumulative, and can 
+be installed on any fix level for this version, release, and mod 
+level above the prerequisite. 
+
+For details, see the Troubleshooting Wiki:
+https://www.ibm.com/developerworks/mydeveloperworks/wikis/home?lang=en#/wiki/Tivoli%20Monitoring/page/Log%20File%20Agent [https://www.ibm.com/developerworks/mydeveloperworks/wikis/home?lang=en#/wiki/Tivoli%20Monitoring/page/Log%20File%20Agent]
+
+4.0 Image directory contents
+===================
+This fix image contains the following files:
+
+- 6.30-TIV-ITM_LFA-FP0002.tar.gz
+- 6.30-TIV-ITM_LFA-FP0002.README
+
+5.0 Installation instructions 
+==================
+
+5.1 Before installing the fix 
+-------------------------------
+- The prerequisites listed under section 3.1 entitled 'Prerequisites
+for this fix' must be installed before this fix can be installed.
+
+- For the purpose of this README, the symbol <CANDLEHOME> is the 
+IBM Tivoli Monitoring installation directory. The default value
+for CANDLEHOME is '/opt/IBM/ITM' on UNIX systems and 'C:\IBM\ITM'
+on Windows systems.
+
+- Before installing this fix on UNIX systems, set the environment 
+variable CANDLEHOME to the IBM Tivoli Monitoring installation
+directory.
+
+For example: 
+> CANDLEHOME=/opt/IBM/ITM
+> export CANDLEHOME 
+
+- Because there is no uninstall utility for this fix, make sure to
+perform a backup of your environment before installing this fix.
+
+- NOTE: Before installing the LO x86-64 bit agent, you must
+un-install the WINNT 32-bit version of the agent and the 32/64 
+bit compatibility package.
+
+
+5.2 Local agent update
+--------------------------
+For installation instructions, see the Log File Agent User's Guide
+v6.3.0: 
+http://www.ibm.com/support/knowledgecenter/SSTFXA_6.3.0/com.ibm.itm.doc_6.3/logfile/logfileagent_user.htm?lang=en [http://www.ibm.com/support/knowledgecenter/SSTFXA_6.3.0/com.ibm.itm.doc_6.3/logfile/logfileagent_user.htm?lang=en]
+
+Note: 
+1. The PowerPC little-endian installation image is located in the
+PPC_LE directory of the installation image. Invoke ./install.sh
+from this directory.
+
+2. On Windows systems, when the installation completes, the 
+Readme.txt displays "Welcome to IBM Tivoli Monitoring V6.2.3 Fix
+Pack 5." This is the installer level and Readme and is not an 
+error.
+
+5.3 Remote agent update
+----------------------------
+1. Transfer the archive file 6.3.0-TIV-ITM_LFA-FP0002.tar.gz to a
+temporary directory on the IBM Tivoli Enterprise Monitoring 
+Server system. For the purpose of this README, the symbol <TEMP>
+represents the fully qualified path to this directory. Note: On
+Windows systems, this path includes the drive letter.
+
+2. Expand the archive file using the "tar" command on UNIX systems or
+an extract utility on Windows systems. This step creates a directory
+structure that contains fixes for all of the supported platforms.
+
+3. To add the agent fix bundles into the remote deploy depot, use
+the "tacmd addBundles" command found in $CANDLEHOME/bin on UNIX
+systems or in %CANDLE_HOME%\bin on Windows systems. For more
+information on the "tacmd addBundles" command, see the IBM Tivoli
+Monitoring Administrator's Guide.
+
+Note: 
+1. The prerequisite Log File Agent bundles must also be in the
+depot, to ensure successful completion of the remote agent update.
+2. The 6.3.0-TIV-ITM_LFA-FP000<n> bundles must be removed from the
+depot, using the "tacmd removeBundles" command. 
+For example: tacmd removeBundles -t lo -v 06300000<n>
+
+On UNIX systems, 
+if the fix was expanded to <TEMP>/6.3.0-TIV-ITM_LFA-FP0002:
+> $CANDLEHOME/bin/tacmd addBundles -n 
+-i <TEMP>/6.3.0-TIV-ITM_LFA-FP0002 
+
+On Windows systems, 
+if the fix was expanded to <TEMP>\6.3.0-TIV-ITM_LFA-FP0002:
+> %CANDLE_HOME%\bin\tacmd addBundles -n 
+-i <TEMP>\6.3.0-TIV-ITM_LFA-FP0002 
+
+where:
+-n indicates that prerequisite bundles are not automatically
+added. The -n parameter must be used because the fix 
+directory does not contain any prerequisites that the fix
+might require. Please see Section 3.1 for the prerequisites
+for this fix.
+-i is the directory that contains the deployment bundles to be
+added to the depot. 
+
+4. To log in to the Tivoli Enterprise Monitoring server, and deploy
+the fix to the appropriate nodes where the agent is running, use
+the following "tacmd" commands. For more information on the 
+"tacmd login" and "tacmd updateAgent" commands, see the IBM Tivoli
+Monitoring Administrator's Guide.
+
+On UNIX systems: 
+> $CANDLEHOME/bin/tacmd login -s <server>
+-u <itmuser> 
+-p <password>
+
+> $CANDLEHOME/bin/tacmd listSystems
+
+The output shows the Managed System Name for the OS agent on the
+remote system to be updated. Use this value as the target of the
+"tacmd updateAgent" command.
+
+> $CANDLEHOME/bin/tacmd updateAgent -t lo 
+-n <Managed system name>
+-v 06300200
+
+On Windows systems:
+> %CANDLE_HOME%\bin\tacmd login -s <server>
+-u <itmuser> 
+-p <password>
+
+> %CANDLE_HOME%\bin\tacmd listSystems
+
+The output shows the Managed System Name for the OS agent on the
+remote system to be updated. Use this value as the target of the
+"tacmd updateAgent" command.
+
+> %CANDLE_HOME%\bin\tacmd updateAgent -t LO 
+-n <Managed system name> 
+-v 06300200
+
+Note:
+- The component (-t) for the "tacmd updateAgent" command is
+specified as two characters (LO), not three characters (KLO).
+- The node (-n) for the "tacmd updateAgent" command is the managed
+system name of the operating system (OS) agent to be updated.
+The target node for the "tacmd updateAgent" command is always
+an OS agent.
+
+5.2 Agent support update
+------------------------------
+Fix pack 6.3.0-TIV-ITM_LFA-FP0001 included new certificates 
+in the agent support files which need to be installed. If you have
+already installed these updates, there are no additional installation 
+steps. Otherwise, install the updates to the Tivoli Enterprise
+Monitoring Server, Tivoli Enterprise Portal Server, or Tivoli
+Enterprise Portal Desktop. For more information about installing 
+application support, see Installing and enabling application support
+in the IBM Tivoli Monitoring Installation and Setup Guide.
+
+6.0 Additional installation information
+========================
+
+6.1 Installation instructions for agent baroc file
+-----------------------------------------------------
+There are no updates to the baroc files included in this fix or any
+of the superseded fixes. No additional installation steps are
+required.
+
+6.2 Verifying the update
+----------------------------
+1. To verify the agent was updated correctly, use the "tacmd" command
+to view the agent's current version after the agent is restarted.
+You are required to log in to a Tivoli Enterprise Monitoring
+Server prior to viewing the agent version. 
+
+For example:
+On UNIX systems, where $CANDLEHOME is the IBM Tivoli Monitoring
+installation directory, the default location is '/opt/IBM/ITM'. 
+
+> $CANDLEHOME/bin/tacmd login -s <server>
+-u <itmuser> 
+-p <password>
+
+> $CANDLEHOME/bin/tacmd listSystems -t LO
+
+On Windows systems, where %CANDLE_HOME% is the IBM Tivoli
+Monitoring installation directory, the default location
+is 'C:\IBM\ITM'. 
+
+> %CANDLE_HOME%\bin\tacmd login -s <server>
+-u <itmuser> 
+-p <password>
+
+> %CANDLE_HOME%\bin\tacmd listSystems -t LO 
+
+Note: The component (-t) for the "tacmd listSystems" command is
+specified as two characters (LO), not three characters (KLO).
+
+When the agent update is successful, the agent version is: 
+06.30.02.00.
+
+After the agent is restarted, you can also use the GUI to verify
+the agent was successfully updated.
+
+For the agent on Windows systems, the version number is 
+06.30.02.00. 
+
+2. To verify the agent you are running contains the updates from the
+fix, see the following lines in the agent log 
+<hostname>_lo_<instance>_kloagent_<timestamp>.log located in
+$CANDLEHOME/logs on UNIX systems and
+%CANDLE_HOME%\tmaitm6\logs on Windows systems:
+
+<timestamp> Component: ira
+<timestamp> Driver: agent_fac_63:201709131450/4769716.3 
+<timestamp> Timestamp: Sep 13 2017 ...
+
+
+7.0 Known problems and workarounds
+=========================
+None.
+
+
+8.0 Additional product information
+======================
+None.
+
+
+9.0 Copyright and trademark information
+================================== 
+A current list of IBM trademarks is available on the Web at "Copyright
+and trademark information" at www.ibm.com/legal/copytrade.shtml [www.ibm.com/legal/copytrade.shtml].
+
+
+10.0 Notices
+=======
+INTERNATIONAL BUSINESS MACHINES CORPORATION PROVIDES THIS PUBLICATION
+"AS IS" WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESS OR IMPLIED,
+INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+NON-INFRINGEMENT, MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
+Some jurisdictions do not allow disclaimer of express or implied
+warranties in certain transactions, therefore, this statement may not
+apply to you.
+
+This information could include technical inaccuracies or typographical
+errors. Changes are periodically made to the information herein; these
+changes will be incorporated in new editions of the publication. IBM
+may make improvements and/or changes in the product(s) and/or the
+program(s) described in this publication at any time without notice.
+
+Microsoft, Windows, and Windows Server are trademarks of Microsoft
+Corporation in the United States, other countries, or both. 
+
+Java and all Java-based trademarks and logos are trademarks or
+registered trademarks of Oracle and/or its affiliates. 
+
+UNIX is a registered trademark of The Open Group in the United States 
+and other countries.
+
+Linux is a registered trademark of Linus Torvalds in the United States,
+other countries, or both.
+
+Other company, product, or service names may be trademarks or service
+marks of others.
+
+Third-Party License Terms and Conditions, Notices and Information
+-----------------------------------------------------------------
+The license agreement for this product refers you to this file for
+details concerning terms and conditions applicable to third party
+software code included in this product, and for certain notices and
+other information IBM must provide to you under its license to
+certain software code. The relevant terms and conditions, notices and
+other information are provided or referenced below. Please note that
+any non-English version of the licenses below is unofficial and is
+provided to you for your convenience only. The English version of the
+licenses below, provided as part of the English version of this file,
+is the official version.
+
+Notwithstanding the terms and conditions of any other agreement you
+may have with IBM or any of its related or affiliated entities
+(collectively "IBM"), the third party software code identified below
+are "Excluded Components" and are subject to the following terms and
+conditions:
+
+- the Excluded Components are provided on an "AS IS" basis
+- IBM DISCLAIMS ANY AND ALL EXPRESS AND IMPLIED WARRANTIES AND
+CONDITIONS WITH RESPECT TO THE EXCLUDED COMPONENTS, INCLUDING, BUT
+NOT LIMITED TO, THE WARRANTY OF NON-INFRINGEMENT OR INTERFERENCE
+AND THE IMPLIED WARRANTIES AND CONDITIONS OF MERCHANTABILITY AND
+FITNESS FOR A PARTICULAR PURPOSE
+- IBM will not be liable to you or indemnify you for any claims
+related to the Excluded Components
+- IBM will not be liable for any direct, indirect, incidental,
+special, exemplary, punitive or consequential damages with respect
+to the Excluded Components. 
+
+PREREQUISITES
+ The prerequisite level for this fix is as follows: 
+
+
+- IBM Tivoli Monitoring, Version 6.2.2: Fix Pack 02 or higher (6.2.2-TIV-ITM-FP0002).
+
+As this fix is cumulative, it can be installed on any fix level for this version, release, and mod level above the prerequisite. 
+
+INSTALLATION INSTRUCTIONS
+Please refer to the full README contained in the Download Description section above for general installation instructions.
+
+DOWNLOAD PACKAGE
+
+
+
+
+
+Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options 
+What is Fix Central(FC)? [https://www.ibm.com/support/fixcentral/help?page=swfaqs] 6.3.0-TIV-ITM_LFA-FP0002 25 Sep 2017 English 1796861216 FC [http://www.ibm.com/support/fixcentral/quickorder?fixids=6.3.0-TIV-ITM_LFA-FP0002&product=ibm/Tivoli/IBM Tivoli Monitoring&source=dbluesearch&platform=All] [ ] 
+PRODUCT ALIAS/SYNONYM
+ KLO
+log adapter 
+
+ [/support/docview.wss?uid=swg24043263&aid=1]Problems (APARS) fixed [/support/docview.wss?uid=swg24043263&aid=2]Problems (APARS) fixed
+IV96363, IV95005, IV93401, IV89574, IV82875, IV82170, IV81364, IV79219, IV79204, IV78340, IV77403, IV76731, IV76119, IV75776, IV75603, IV75336, IV74487, IV74480, IV72073, IV71539, IV68698, IV68574, IV68490, IV67737, IV67708, IV65900, IV65500, IV64093, IV63704, IV60491, IV60331, IV60333, IV59814, IV57736, IV56299, IV54710, IV53803, IV53568, IV52833, IV52411, IV48040, IV45784, IV42745, IV42699, IV42315, IV41215, IV39967, IV37051, IV21752

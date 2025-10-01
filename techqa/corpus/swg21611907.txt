@@ -1,0 +1,30 @@
+Title: IBM Must Gather: WebGUI fix pack install failures - United States
+
+Text:
+webgui; install; fix pack; mustgather; listiu.sh; listIU.sh; must-gather; web gui; Web GUI TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Data to collect in the case of a WebGUI fix pack installer failing to complete successfully. 
+
+RESOLVING THE PROBLEM
+Items to collect: 
+
+1. the response file from the install image (typically called sample_response.txt or sampleFP_response.txt)
+
+2. the output of running listIU.sh from the DE (Deployment Engine) of the installation
+- for installations installed as root this will be /usr/ibm/common/acsi/bin/listIU.sh
+- for non-root installations this will be $HOME/.acsi_<hostname>/bin/listIU.sh where $HOME refers to the user used to install
+
+3. tar of the DE logs
+- for root installations this is /usr/ibm/common/acsi/logs/*
+- for non-root installations this is $HOME/.acsi_<username>/logs/*
+
+4. tar of the TIP logs
+tar cfv tiplogs.tar tipv2/logs/*
+
+5. tar of the TIPProfile logs from ../profiles/TIPProfile/logs/*
+
+6. the installer log located directly under $HOME for a non-root user or in the / directory for root and typically called IBM_Tivoli_Netcool_OMNIbus_Web_GUI_<fpnumber>_Install-00.log
+
+7. tar of WebGUI package installer logs
+tar cfv installerlogs.tar netcool/omnibus_webgui/_uninst/OMNIbusWebGUIFP<n>/*

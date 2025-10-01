@@ -1,0 +1,179 @@
+Title: IBM OMEGAMON not processing messages from KQI* queues - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ While using OMEGAMON for Messaging, we found messages are not being processed from KQI.AGENT.REPLY QUEUE. Can you please explain the following 3 scenarios: 
+
+1) Master Broker DEV
+LPar: 1234/5678
+IIB Agent: OMEGQI
+MQ Agent: OMEGMQ
+Total IIB Brokers: 13 in each LPar
+
+On Queue Manager (QMGR) QMG1 under Lpar 1234 there are no consumer on KQI.AGENT.REPLY.QUEUE 
+QUEUE. Something is writing messages and has filled up the Q to 10,000 an now messages are spilling into the Dead Letter Queue (DLQ). 
+
+On QMGR QMG2 under Lpar 1234- it looks good in MQ. Active consumer on KQI.AGENT.REPLY.QUEUE. 
+
+On QMGR QMGA under Lpar 5678 no consumer on Queue KQI.AGENT.REPLY.QUEUE with few messages on it. 
+
+On QMGR QMGB under Lpar 5678 no consumer on Queue KQI.AGENT.REPLY.QUEUE with few messages 
+on it.
+
+On all these brokers, the Archive accounting statistics with output format XML, SMF and resource statistics are active. However, apart from QMG2BRK none of the other brokers are showing "Broker status events, resource statistics and msgflow statistics". 
+
+2) Master Broker Prod
+LPar: LPA1/LPA2/LPAA/MBB2
+Broker tasks: QMP1BRK(LPA1)/QMP2BRK(LPA2)/QMPABRK(LPA1) / QMPBBRK(LPA2)
+Number of brokers: 6/Lpar
+
+Similar to above issue the KQI.AGENT.REPLY.QUEUE shows IPPROCS on QMPABRK(LPAA) and QMPBBRK(LPAB) but no consumer for this queue on QMP1BRK(LPA1) and QMP2BRK(LPA2). However, we suspect that QMP1BRK and QMP2BRK are not configured (updating KQIXML member) in the agent and is causing this issue but would like to confirm this. 
+
+3) EPPLEX standalone
+LPar: LPOC and LPMB 
+Broker: CBP1BRK and CBP2BRK
+Number of brokers: 1/Lpar
+
+Following commands were issues successfully on both of these brokers:
+
+I) Enabling Archive Accounting statistic with xml,smf by customizing
+and submitting BIPCHMS.
+mqsichangeflowstats <brokername> -a -g -j -c active -n advanced -t
+basic -o xml,smf
+
+II) Activate resource statistics by customizing and submitting BIPCHRS
+mqsichangeresourcestats <brokername> -c active
+
+These brokers are activated with Archive accounting statistics but resource statistics are not showing up in OMEGAMON. 
+
+RESOLVING THE PROBLEM
+The analysis and solutions for each of the three scenarios are given below: 
+
+Scenario #1:
+The issue is due to the number of threads available to the agent being too few for the number of brokers.
+There are some error trace messages indicating "Add a pending thread" and other near messages indicate the threads would be the "Qmgr receiver", which is what opens and reads the agent reply queue on the broker's queue manager. So the parameter change maximumAgentCollectionThreads is required....
+
+Since you are monitoring more than 10 brokers in some IIB monitoring agents, you should add an agent parameter called maximumAgentCollectionThreads in the KQIXML member of &rhilev.RKANDATV. This parameter is not shipped in the base copy of KQIXML, so it needs to be added.
+
+The default value is 64, which is enough for 10 brokers. Each additional broker over 10 requires you to add 6 to the value for each broker. So, for example, for 13 brokers being monitored, you should
+make the value 82. There is not a problem with increasing this value on any agent, even if it is not monitoring so many brokers, so you can decide if 82 is appropriate for your site. 
+
+If you are modifying KQIXML in &rhilev.RKANDATV directly outside of PARMGEN, you would insert the parameter in the <KqiAGENT section of parameters, for example the environment below shows the parm
+maximumAgentCollectionThreads being insered: 
+
+<KqiAGENT version="730"
+agentid=""
+defaultRetainBrokerEvents="10"
+defaultRetainFlowEvents="10"
+retainProductEvents="10"
+discoveryInterval="86400"
+defaultStatisticInterval="60"
+defaultFlowEventInterval="15"
+defaultHistoricalAccountingType="ARCHIVE"
+defaultRetainRecentSnapshotSamples="15"
+defaultRetainRecentArchiveSamples="5"
+defaultRetainRecentResourceSamples="1"
+holdTimeForQuery="180"
+defaultReplyQueueName="KQI.AGENT.REPLY.QUEUE"
+defaultReplyQueueModel="SYSTEM.BROKER.MODEL.QUEUE"
+defaultCollectNodeData="NO"
+defaultTakeActionAuthUsers="*"
+maximumMessageLength="10240"
+defaultPersistentBrokerData="NO"
+defaultRefreshInterval="300"
+maximumAgentCollectionThreads="82"
+persistentDataPath="/u/temp/data"
+kqiUSSPath="/u/temp/kqi">
+<MonitorBroker name="BRK"
+alias="QMGRBRK"
+envfileDirectory="/wmqi/brokers/QMGRBRK">
+</MonitorBroker>
+....
+</KqiAGENT>
+
+Modify via PARMGEN, you should insert the parameter line in the
+<KqiAGENT section of parameters before the line " |XIAGENT| " in the
+KQIXML member of your related &hilev.TKANDATV dataset (note this is
+TKANDATV, not RKANDATV), as shown below in the line inserted for
+maximumAgentCollectionThreads. After that, when job KCIJ%USP runs, it
+will update the RKANDATV member with the new parameter, and the
+parameter will not disappear later out of RKANDATV when you re-run
+PARMGEN.
+
+<KqiAGENT version="730"
+maximumAgentCollectionThreads="82"
+|XIAGENT|
+defaultRetainBrokerEvents="|XIBERET|"
+defaultRetainFlowEvents="|XIFERET|"
+retainProductEvents="|XIPERET|"
+discoveryInterval="|XIDISINT|"
+defaultStatisticInterval="|XISTINT|"
+defaultFlowEventInterval="|XIFEINT|"
+defaultHistoricalAccountingType="|XIHACCTT|"
+defaultRetainRecentSnapshotSamples="|XISSRET|"
+defaultRetainRecentArchiveSamples="|XIASRET|"
+defaultRetainRecentResourceSamples="|XIRSRET|"
+holdTimeForQuery="|XIHTQRY|"
+defaultReplyQueueName="|XIREQNME|"
+defaultReplyQueueModel="|XIREQMDL|"
+defaultCollectNodeData="|XICOLNDD|"
+defaultTakeActionAuthUsers="|XIDUSERS|"
+maximumMessageLength="|XIMAXML|"
+defaultPersistentBrokerData="|XIPERBKD|"
+defaultRefreshInterval="|XIREFINT|"
+persistentDataPath="|XIPERDTP|"
+kqiUSSPath="|XIUSSPAT|">
+<MonitorBroker name="|XIMBNAME|"
+alias="|XIMBALIA|"
+envfileDirectory="|XIMBDIR|">
+</MonitorBroker>
+</KqiAGENT>
+
+This is the documentation link to description of the parameter:
+https://www.ibm.com/support/knowledgecenter/SSRLD6_7.3.0/kqi_userguide/r-kqiagent_maximumagentcollectionthreads.html [https://www.ibm.com/support/knowledgecenter/SSRLD6_7.3.0/kqi_userguide/r-kqiagent_maximumagentcollectionthreads.html]
+
+
+Scenario #2:
+Confirm that the brokers related to the KQI.AGENT.REPLY.QUEUE queues with 0 opens for input (no IPPROCS) are being monitored by the agent. When you update your agent parameters to add the required extra MonitorBroker section for each broker to be monitored, then queues will then be open for input by the agent as expected, and the IPPROCS value will become non-zero. So for this issue, you need to add statements like the following to your KQIXML for each broker to be monitored, and for PARMGEN, you would update your WCONFIG(KQI$XML) member as follows:
+
+<MonitorBroker name="CEP2BRK"
+alias="CEP2BRK"
+envfileDirectory="/opt/local/lpp/mqsi/home/CEP2BRK">
+</MonitorBroker>
+
+
+Scenario #3:
+The agents are getting a reason code of 2035 from the broker's queue manager when opening the agent's reply queue, which means it is not authorized for opening the KQI.AGENT.REPLY.QUEUE. This may be an authorization issue with the model queue being used to create the reply queue (SYSTEM.BROKER.MODEL.QUEUE), or it may be an authorization issue for the reply queue being created (KQI.AGENT.REPLY.QUEUE), so you have to check authorization for the agent's user ID for both. Please
+update the security specifications for the queue managers involved and restart the agent.
+
+These are the agent log messages that indicate the problem:
+
+agent log #1:
+2017.309 05:09:41.48 KQIA044W (kqiaqopn.023) Open failed for queue KQI.AGENT.REPLY.QUEUE on queue manager CBP1, reason code 2035.
+2017.309 05:09:41.49 KQIA038W (kqiaqrcv.003) Required queue KQI.AGENT.REPLY.QUEUE on CBP1 is failing to open with reason code 203
+2017.309 05:09:41.49 5; periodic open retry will occur.
+
+agent log #2:
+2017.309 05:10:47.00 KQIA044W (kqiaqopn.023) Open failed for queue
+KQI.AGENT.REPLY.QUEUE on queue manager CBP2, reason code 2035.
+2017.309 05:10:47.00 KQIA038W (kqiaqrcv.003) Required queue
+KQI.AGENT.REPLY.QUEUE on CBP2 is failing to open with reason code 203
+2017.309 05:10:47.00 5; periodic open retry will occur.
+
+Regarding the error messages given below from the logs with the mqsireport commands, the broker was not running when the commands were issued, so it cannot respond. The mqsireportbroker command works when the broker is not running, but the mqisreportflowstats and mqsireportresourcestats commands do not work when the broker is not running. The log gives a BIP8019E message for each of the 2 mqsireportflowstats commands and a BIP1919S message for the mqsireportresourcestats command, which is all for the same reason.
+
+BIP8019E: Integration node 'CBP1BRK' stopped.
+
+This integration node is stopped; the command you issued cannot be processed when an integration node is stopped. A previous command has been issued to stop this integration node, or this integration node has never been started. This integration node can be started, changed, or deleted.
+
+BIP1919S: The integration node 'CBP1BRK' cannot be reached. 
+
+Check that the integration node is running. The message was 'Failed to connect to the integration node. Return code: 0'.
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Systems and Asset Management Tivoli OMEGAMON XE for Messaging for z/OS IBM Tivoli OMEGAMON XE for WebSphere Message Broker Monitoring on z/OS z/OS 7.0, 7.0.1, 7.1.0, 7.3.0

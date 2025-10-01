@@ -1,0 +1,52 @@
+Title: IBM Page usage count error.  Map execution results in a mapreturn="18" - United States
+
+Text:
+page usage count error mapreturn 18 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When a map is executed, a map return code of 18, Page usage count error is encountered. 
+
+CAUSE
+An internal WebSphere® Transformation Extender (WTX) paging issue has been detected.
+
+RESOLVING THE PROBLEM
+The Page Usage Count Error is observed from either the Map Designer once the map is run 
+
+
+[/support/docview.wss?uid=swg21379449&amp;aid=1] 
+
+or in the Audit Log for the map that is executed. A message similar to the following will be in the respective audit log file when this error is detected:
+<ExecutionSummary MapStatus="Warning" mapreturn="18" ElapsedSec="563.2624" BurstRestartCount="0">
+<Message>Page usage count error</Message>
+<CommandLine>'C:\Program Files\IBM\WebSphere Transformation Extender 8.1\examples\Pagemap.mmc'</CommandLine> 
+
+As shown above in the Command Server execution window and in the audit log message, the Page Usage Count Error occurred in the map, Pagemap.mmc 
+
+If you encounter this error, follow the corrective action procedure described below: 
+
+ 
+
+Corrective Action: 
+
+Open a Problem Management Report (PMR) with the IBM® WebSphere Transformation Extender Technical Support Team to have a patch created for your environment. 
+
+For problem determination to begin on your PMR, follow one of the convenient methods below to submit diagnostic information to IBM WebSphere Transformation Extender Technical Support. 
+
+Submit your files to the IBM Enhanced Customer Data Repository (ECuRep) by way of e-mail, FTP, or Service Request (SR). To save time, you can use the IBM Support Assistant (ISA) to automate file submission. 
+
+Information on how to submit problems and files to IBM is found at: MustGather: Documentation required by WTX - Submitting documentation to the WTX support team [http://www-1.ibm.com/support/docview.wss?rs=2320&uid=swg21243454] 
+
+ 
+
+The files/information required by IBM to provide you with a problem resolution are: 
+
+ * Map source file (mms file that is producing the Page usage count error) 
+ * Type Trees (mtt file[s]) associated with the map source file 
+ * Input data file[s] for the map 
+ * Runtime operating system and version where this error is observed 
+ * WTX version information: MustGather: Directions for collecting WTX version information [http://www-1.ibm.com/support/docview.wss?rs=2320&uid=swg21243594] 
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ Ascential DataStage TX Mercator

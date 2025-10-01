@@ -1,0 +1,178 @@
+Title: IBM IZ57605: CLASSCASTEXCEPTION WHEN CREATING A WEBSPHERE MQ DURABLE SUBSCRIPTION USING THE RESOURCE ADAPTER - United States
+
+Text:
+  FIXES ARE AVAILABLE
+WebSphere MQ V7.0 Fix Pack 7.0.1.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24024528]
+WebSphere MQ V7.0.1 for i5/OS Fix Pack 7.0.1.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24025627]
+WebSphere MQ V7.0 Fix Pack 7.0.1.2 [http://www-01.ibm.com/support/docview.wss?uid=swg24026518]
+WebSphere MQ V7.0.1 for i5/OS Fix Pack 7.0.1.2 [http://www-01.ibm.com/support/docview.wss?uid=swg24026566]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When an application running In JBOSS application server tries to
+   take out a durable subscription to WebSphere MQ, the following
+   ClassCastException occurs:
+   
+   ERROR [DefaultMessageListenerContainer]
+   setup of JMS message listener invoker failed - trying to recover
+   java.lang.ClassCastException:
+   com.ibm.mq.connector.outbound.MQTopicProxy incompatible with
+   com.ibm.mq.jms.MQTopic
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Not Available.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   This issue affects applications using the WebSphere MQ V7
+   Resource Adapter that create a durable subscriber for a Topic
+   looked up from a JNDI namespace.
+   
+   Platforms affected:
+   All Distributed (iSeries, all Unix and Windows) +Java
+   ****************************************************************
+   PROBLEM SUMMARY:
+   The MQTopicProxy object mentioned in the ClassCastException is
+   a wrapper used by the WebSphere MQ Resource Adapter to hide some
+   of the internals of the JMS MQTopic. This object is bound into
+   a JNDI Namespace when a Topic is created.
+   
+   However, when the Topic is looked up, an MQTopic should be
+   returned rather than the internal MQTopicProxy.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The Resource Adapter has been modified to return MQTopic
+   objects from JNDI rather than MQTopicProxy objects.
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+                      v7.0
+   Platform           Fix Pack 7.0.1.1
+   --------           --------------------
+   Windows            U200310
+   AIX                U827232
+   HP-UX (PA-RISC)    U826485
+   HP-UX (Itanium)    U826884
+   Solaris (SPARC)    U827125
+   Solaris (x86-64)   U827374
+   iSeries            tbc_p700_0_1_1
+   Linux (x86)        U826321
+   Linux (x86-64)     U827231
+   Linux (zSeries)    U827105
+   Linux (Power)      U826779
+   
+   The latest available maintenance can be obtained from
+   'WebSphere MQ Recommended Fixes'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037]
+   
+   If the maintenance level is not yet available, information on
+   its planned availability can be found in 'WebSphere MQ
+   Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ57605
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ SOL X86-64
+   
+   
+ * REPORTED COMPONENT ID
+   5724H7231
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-08-10
+   
+   
+ * CLOSED DATE
+   2009-08-28
+   
+   
+ * LAST MODIFIED DATE
+   2009-08-28
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ SOL X86-64
+   
+   
+ * FIXED COMPONENT ID
+   5724H7231
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R700 PSY
+   UP

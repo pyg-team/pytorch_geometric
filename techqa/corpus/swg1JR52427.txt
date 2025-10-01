@@ -1,0 +1,167 @@
+Title: IBM JR52427: ACTION BUTTONS IN LEFT NAVIGATION SEARCH PANE ARE NOT RELOCATED - United States
+
+Text:
+  DIRECT LINKS TO FIXES
+IBM InfoSphere Master Data Management Collaboration Server Version 11.5.0, Fix Pack 5 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FInfoSphere+Master+Data+Management+Collaboration+Server&fixids=11.5.0.5-MDM-CE-FP05IF000&source=SAR]
+IBM InfoSphere Master Data Management Collaboration Server Version 11.4.0, Fix Pack 3 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FInfoSphere+Master+Data+Management+Collaboration+Server&fixids=11.4.0-WS-MDMCS-FP003&source=SAR]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Preface:
+   --------
+   Usage of the left navigation search pane and decreasing the
+   size of it.
+   
+   Current situation:
+   -------------------
+   The action buttons in the left nav search page are not
+   relocated when the size of the left pan is decreased
+   From a certain pane width a scrollbar is displayed.
+   With IE9 all buttons remains in 1 button line, with IE10 the
+   Delete button is shown in transparent mode in a second button
+   line.
+   
+   Desired situation:
+   ------------------
+   With IE9 and IE10 the buttons have to be relocated in more the
+   1 button line when size of the left navigation pane is
+   decreased.
+   The behaviour should be the same as it was before FP01 for 11.4.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * All InfoSphere Master Data Management Collaborative Edition  *
+   * implementations are affected by this issue.                  *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * Preface: -------- Usage of the left navigation search pane   *
+   * and decreasing the size of it. Current situation:            *
+   * ------------------- The action buttons in the left nav       *
+   * search page are not relocated when the size of the left pan  *
+   * is decreased From a certain pane width a scrollbar is        *
+   * displayed. With IE9 all buttons remains in 1 button line,    *
+   * with IE10 the Delete button is shown in transparent mode in  *
+   * a second button line. Desired situation: ------------------  *
+   * With IE9 and IE10 the buttons have to be relocated in more   *
+   * the 1 button line when size of the left navigation pane is   *
+   * decreased. The behaviour should be the same as it was before *
+   * FP01 for 11.4.                                               *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Customers facing this issue should apply IBM InfoSphere      *
+   * Master Data Management Collaboration Server Version 11.4.0,  *
+   * Fix Pack 3 to gain resolution for this problem.              *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This issue was fixed in IBM InfoSphere Master Data Management
+   Collaboration Server Version 11.4.0, Fix Pack 3 and is available
+   on the IBM Support site.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR52427
+   
+   
+ * REPORTED COMPONENT NAME
+   MDM SERVER FOR
+   
+   
+ * REPORTED COMPONENT ID
+   5724V5100
+   
+   
+ * REPORTED RELEASE
+   B40
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2015-01-29
+   
+   
+ * CLOSED DATE
+   2015-07-07
+   
+   
+ * LAST MODIFIED DATE
+   2015-07-07
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   MDM SERVER FOR
+   
+   
+ * FIXED COMPONENT ID
+   5724V5100
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * RB40 PSY
+   UP

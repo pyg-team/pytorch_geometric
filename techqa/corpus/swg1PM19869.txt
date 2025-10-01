@@ -1,0 +1,185 @@
+Title: IBM PM19869: UNABLE TO ASSEMBLE FMN0POPT, WHEN HSYSLIB1 & HSYSLIB2 VALUES ARE SPECIFIED IN QUOTES. - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  FM should:
+   
+   
+   1. Accept quotes in the FMN0POPI definition
+   
+   2. Regardless of whether quotes are used in the FMN0POPI
+      definition the RESET command should cause quotes to be
+      wrapped around the datasets.
+   
+   This applies to HLASM , PL/I and COBOL SYSLIBS.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  n/a
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All File Manager Users.                      *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: 1. The SYSLIB data set names as         *
+   *                      supplied in the FMN0POPT module are not *
+   *                      enclosed in quotes when displayed in    *
+   *                      the Compiler Option panels after the    *
+   *                      RESET command has been issued.          *
+   *                      2. The SYSLIB data set names as         *
+   *                      supplied in the FMN0POPT module are not *
+   *                      being correctly populated on the COBOL  *
+   *                      Compiler Option panel.                  *
+   *                      3. The installation compiler options    *
+   *                      are not used when a new user or         *
+   *                      File Manager FM is invoked with a new   *
+   *                      profile member.                         *
+   *                      4. The RESET command is ignored when    *
+   *                      issued from the Compiler Language       *
+   *                      Selection panel.                        *
+   ****************************************************************
+   * RECOMMENDATION: Apply the provided PTF.                      *
+   ****************************************************************
+   The data set names supplied in the FMN0POPT module are not being
+   enclosed in quotes prior to populating the panel variables when
+   the RESET command is issued on the Compiler Option panels.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The SYSLIB data set names in the Compiler Option panels will be
+   be enclosed in quotes when the RESET command is issued.
+   Installation values will be used if profile variables for the
+   value do not exist.
+   The RESET command will be detected when issued from the Compiler
+   Language Selection panel.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM19869
+   
+   
+ * REPORTED COMPONENT NAME
+   FILE MANAGER ZO
+   
+   
+ * REPORTED COMPONENT ID
+   5655V5200
+   
+   
+ * REPORTED RELEASE
+   A10
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2010-08-04
+   
+   
+ * CLOSED DATE
+   2010-10-29
+   
+   
+ * LAST MODIFIED DATE
+   2010-12-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  FMN0LVL  FMN1LVL  FMN2LVL  FMN3LVL
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   FILE MANAGER ZO
+   
+   
+ * FIXED COMPONENT ID
+   5655V5200
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * RA10 PSY UK61800 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK61800]
+   UP10/11/03 P F011
+   
+   
+ * RA12 PSY UK61805 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK61805]
+   UP10/11/03 P F011
+   
+   
+ * RA14 PSY UK61807 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK61807]
+   UP10/11/03 P F011
+   
+   
+ * RA16 PSY UK61809 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK61809]
+   UP10/11/03 P F011
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

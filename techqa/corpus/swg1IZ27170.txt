@@ -1,0 +1,153 @@
+Title: IBM IZ27170: SQL0423N  LOCATOR VARIABLE "" DOES NOT CURRENTLY REPRESENT ANY  VALUE. - United States
+
+Text:
+AIX SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Within a stored procedure that uses admin_cmd, sqlcode 3107 is
+   received.
+   Even if a sqlexception is inplace for this sqlcode, the
+   procedure fails with
+   
+   SQL0423N  Locator variable "" does not currently represent any
+   value.
+   SQLSTATE=0F001
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  n/a
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  USERS AFFECTED: All using admin_cmd.
+   
+   PROBLEM DESCRIPTION:
+   
+   Within a stored procedure that uses admin_cmd, sqlcode 3107 is
+   received.
+   Even if a sqlexception is inplace for this sqlcode, the
+   procedure fails with
+   
+   SQL0423N  Locator variable "" does not currently represent any
+   value.
+   SQLSTATE=0F001
+   
+   PROBLEM SUMMARY:
+   
+   see problem description.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The complete fix for this problem first appears in DB2 UDB
+   Version 8.1 FixPak 18.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ27170
+   
+   
+ * REPORTED COMPONENT NAME
+   DB2 UDB ESE AIX
+   
+   
+ * REPORTED COMPONENT ID
+   5765F4100
+   
+   
+ * REPORTED RELEASE
+   820
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-07-16
+   
+   
+ * CLOSED DATE
+   2009-09-11
+   
+   
+ * LAST MODIFIED DATE
+   2009-09-11
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   DB2 UDB ESE AIX
+   
+   
+ * FIXED COMPONENT ID
+   5765F4100
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R810 PSN
+   UP
+   
+   
+ * R820 PSN
+   UP
+   
+   
+ * R910 PSN
+   UP
+   
+   
+ * R950 PSN
+   UP

@@ -1,0 +1,202 @@
+Title: IBM PI36602: ESQL TIMESTAMPS DO NOT HANDLE SECONDS >59 CONSISTENTLY - United States
+
+Text:
+z/os  FIXES ARE AVAILABLE
+IBM Integration Bus V10.0 - Fix Pack 10.0.0.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24040056]
+WebSphere Message Broker V7.0 - Fix Pack 7.0.0.8 [http://www-01.ibm.com/support/docview.wss?uid=swg24041187]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When creating a TIMESTAMP variable in ESQL, and the seconds
+   value
+   is greater than 59, the product throws an exception.
+   
+   However, in the case where time is precisely 23:59:60, the
+   product
+   incorrectly tolerates the value. The resulting timestamp is then
+   rounded to
+   00:00:00.
+   
+   If there is a date part to the timestamp, this is not rounded.
+   A TIMESTAMP defined as '2015-06-30 23:59:60' will therefore be
+   rounded to '2015-06-30 00:00:00', which is 24 hours earlier
+   than desired.
+   
+   The product should explicitly disallow values greater than 59
+   (for seconds), when creating or casting timestamps in ESQL.
+   When dealing with timestamps that represent the time during a
+   leap second, you should take this into account within your ESQL
+   code.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   All users of WebSphere Message Broker and IBM Integration Bus
+   who format TIMESTAMPs in ESQL.
+   
+   
+   Platforms affected:
+   z/OS, MultiPlatform
+   
+   ****************************************************************
+   PROBLEM DESCRIPTION:
+   When creating a TIMESTAMP variable in ESQL, and the seconds
+   value is greater than 59, the product throws an exception.
+   
+   However, in the case where time is precisely 23:59:60, the
+   product incorrectly tolerates the value. The resulting timestamp
+   is then rounded to 00:00:00.
+   
+   If there is a date part to the timestamp, this is not rounded.
+   A TIMESTAMP defined as '2015-06-30 23:59:60' will therefore be
+   rounded to '2015-06-30 00:00:00', which is 24 hours earlier than
+   desired.
+   
+   The product should explicitly disallow values greater than 59
+   (for seconds), when creating or casting timestamps in ESQL.
+   
+   When dealing with timestamps that represent the time during a
+   leap second, you should take this into account within your ESQL
+   code.
+   
+   There are a number of resource name changes between WebSphere
+   Message Broker and IBM Integration Bus Version 9.0. For details
+   visit
+   http://pic.dhe.ibm.com/infocenter/wmbhelp/v9r0m0/topic/com.ibm.e
+   tools.mft.doc/bb23814_.htm [http://pic.dhe.ibm.com/infocenter/wmbhelp/v9r0m0/topic/com.ibm.etools.mft.doc/bb23814_.htm]
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The product now handles the value of 60 (as seconds)
+   consistently when creating or casting TIMESTAMPS, and throws an
+   exception.
+   
+   The product documentation page related to formatting and parsing
+   dateTimes as strings now explicitly states that seconds must be
+   in the range 0-59.
+   
+   If you wish to construct a TIMESTAMP representing the time
+   during a leap second, where the value being created or cast uses
+   the value 60 for seconds, you must handle this case within your
+   ESQL code.
+   
+   The CURRENT_ datetime functions (for example, CURRENT_TIME)
+   within the product will never produce a time where the seconds
+   value falls outside of the 0-59 range.
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+   Version    Maintenance Level
+   v7.0       7.0.0.8
+   v8.0       8.0.0.7
+   v9.0       9.0.0.6
+   v10.0      10.0.0.1
+   
+   The latest available maintenance can be obtained from:
+   http://www-01.ibm.com/support/docview.wss?rs=849&uid=swg27006041 [http://www-01.ibm.com/support/docview.wss?rs=849&uid=swg27006041]
+   
+   If the maintenance level is not yet available,information on
+   its planned availability can be found on:
+   http://www-1.ibm.com/support/docview.wss?rs=849&uid=swg27006308 [http://www-1.ibm.com/support/docview.wss?rs=849&uid=swg27006308]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI36602
+   
+   
+ * REPORTED COMPONENT NAME
+   WEB MB Z/OS
+   
+   
+ * REPORTED COMPONENT ID
+   5655V6000
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2015-03-09
+   
+   
+ * CLOSED DATE
+   2015-04-30
+   
+   
+ * LAST MODIFIED DATE
+   2016-03-16
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEB MB Z/OS
+   
+   
+ * FIXED COMPONENT ID
+   5655V6000
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R700 PSY
+   UP

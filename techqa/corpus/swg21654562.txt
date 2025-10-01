@@ -1,0 +1,57 @@
+Title: IBM InfoSphere MDM Collaboration Server with Global Data Synchronization (GDS) fails to start because of the MQJCA1008 error, mismatch of the WebSphere MQ jars. - United States
+
+Text:
+ResourceAdapter; J2CA0128E; configuration; upgrade TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When you attempt to start the InfoSphere MDM Collaboration Server with Global Data Synchronization (GDS) component it fails with MQJCA1008 error, mismatch of the WebSphere MQ jars. 
+
+SYMPTOM
+The WebSphere Application Server SystemOut.log file will have the following error: 
+
+"MQJCA1008: An incorrect version of the WebSphere MQ classes for JMS was found. Deployment failed, error code: MQJCA1008 The WebSphere MQ classes for Java Message Service (JMS) were found in the class path but were not the correct version. This error can occur if the application server finds an earlier version of the WebSphere MQ classes for JMS in the class path.
+The error can also occur if you do not configure WebSphere Application Server to use the correct version of the WebSphere MQ classes for JMS."
+
+The JMS stands for Java Message Service.
+
+
+CAUSE
+The WebSphere Application Server maintains its own versions of WebSphere MQ jars and may upgrade these WebSphere MQ jars when there is new WebSphere Application Server maintenance/major releases. One of the possible reasons for the above error is that various versions of these WebSphere MQ jars are maintained within WebSphere Application Server and these are sometimes not compatible with the WebSphere MQ client version supported for InfoSphere MDM Collaboration Server releases.
+
+
+RESOLVING THE PROBLEM
+As per the WebSphere MQ information center [http://publib.boulder.ibm.com/infocenter/wmqv7/v7r0/topic/com.ibm.mq.javadoc.doc/WMQJMSClasses/errorcodes.html] the explanation for the error MQJCA1008 is, 
+
+"The WebSphere MQ Java classes were found in the class path but were not the correct version."
+
+The MQJCA1008 error can occur if the application server finds an earlier version of the WebSphere MQ classes for JMS in the class path. The error can also occur if you do not configure WebSphere Application Server to use the correct version of the WebSphere MQ classes for JMS.
+
+In the InfoSphere MDM Collaboration Server v10.0 or higher, the WebSphere MQ v7.0.1.x or higher is supported with the product, refer product software requirements [http://pic.dhe.ibm.com/infocenter/mdm/v11r0/topic/com.ibm.swg.im.mdmhs.common.install.nav.doc/topics/pim_con_systemrequirements.html] for the supported versions. As per the instructions in the product information center [http://pic.dhe.ibm.com/infocenter/mdm/v10r0m0/topic/com.ibm.pim.ins.doc/pim_tsk_setting_gds_params.html] you need to create symbolic links for the three Websphere MQ jars (com.ibm.mq.jar, com.ibm.mqjms.jar, and dhbcore.jar) from the '$TOP/jars' to the Websphere MQ jars that is bundled with the WebSphere Application Server only when there is no conflict between the installed version of Websphere MQ client jars and the WebSphere MQ jars that are bundled with the WebSphere Application Server. 
+
+If the WebSphere MQ client installation jars fails for any reason, then try and use the various version of the WebSphere MQ jars bundled within the WebSphere Application Server at different locations in your environment. 
+
+Since InfoSphere MDM Collaboration Server classpath gets updated by running '$TOP/bin/configureEnv.sh' and the same classpath is set for the application server process deployed in WebSphere Application Server, the InfoSphere MDM Collaboration Server product do not modify anything under the WebSphere Application Server unless some specific version on WebSphere Application Server has been mandated by default for the use of a particular WebSphere MQ jar file, such as in InfoSphere MDM Collaboration Server product. 
+
+RELATED INFORMATION
+ instructions in the product information center [http://pic.dhe.ibm.com/infocenter/mdm/v10r0m0/topic/com.ibm.pim.ins.doc/pim_tsk_setting_gds_params.html]
+software requirements [http://www-01.ibm.com/support/docview.wss?uid=swg27035486]
+WebSphere MQ information center [http://publib.boulder.ibm.com/infocenter/wmqv7/v7r0/topic/com.ibm.mq.javadoc.doc/WMQJMSClasses/errorcodes.html]
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Information Management InfoSphere Master Data Management Server for Product Information Management Troubleshooting AIX, Linux 9.1 
+PRODUCT ALIAS/SYNONYM
+ MDMCE
+MDMCS
+MDMPIM
+MDM Server for PIM
+MDM Collaboration Server
+InfoSphere MDM Server for PIM
+InfoSphere MDM Collaboration Server
+InfoSphere Master Data Management Collaboration Server
+InfoSphere Master Data Management Collaborative Edition
+InfoSphere Master Data Management Server for Product Information Management
+GDS
+Global Data Synchronization

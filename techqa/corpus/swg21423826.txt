@@ -1,0 +1,147 @@
+Title: IBM TAI++ integration with WebSphere Application Server failing with message "Basic Authentication Failed" - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ You are unable to integrate the TAI++ with WebSphere Application Server. WebSphere Application Server logs show SSO failed “Basic Authentication” message. 
+
+SYMPTOM
+WebAuthentica E SECJ0126E: Trust Association failed during validation. The exception is com.ibm.websphere.security.WebTrustAssociationFailedException: Basic Authentication failed. 
+
+ at com.ibm.ws.security.web.TAMTrustAssociationInterceptorPlus.validateEstablishedTrust(TAMTrustAssociationInterceptorPlus.java:526)
+at com.ibm.ws.security.web.TAMTrustAssociationInterceptorPlus.negotiateValidateandEstablishTrust(TAMTrustAssociationInterceptorPlus.java:1528)
+at com.ibm.ws.security.web.TAIWrapper.negotiateAndValidateEstablishedTrust(TAIWrapper.java:102)
+at com.ibm.ws.security.web.WebAuthenticator.handleTrustAssociation(WebAuthenticator.java:277)
+at com.ibm.ws.security.web.WebAuthenticator.authenticate(WebAuthenticator.java:1451)
+at com.ibm.ws.security.web.WebAuthenticator.authenticate(WebAuthenticator.java:1373)
+at com.ibm.ws.security.web.WebCollaborator.authorize(WebCollaborator.java:664)
+at com.ibm.ws.security.web.EJSWebCollaborator.preInvoke(EJSWebCollaborator.java:318)
+at com.ibm.ws.webcontainer.webapp.WebAppSecurityCollaborator.preInvoke(WebAppSecurityCollaborator.java:141)
+at com.ibm.ws.wswebcontainer.extension.DefaultExtensionProcessor.securityPreInvoke(DefaultExtensionProcessor.java:172)
+at com.ibm.ws.webcontainer.extension.DefaultExtensionProcessor.handleRequest(DefaultExtensionProcessor.java:466)
+at com.ibm.ws.wswebcontainer.extension.DefaultExtensionProcessor.handleRequest(DefaultExtensionProcessor.java:113)
+at com.ibm.ws.webcontainer.webapp.WebApp.handleRequest(WebApp.java:3453)
+at com.ibm.ws.webcontainer.webapp.WebGroup.handleRequest(WebGroup.java:267)
+at com.ibm.ws.webcontainer.WebContainer.handleRequest(WebContainer.java:815)
+at com.ibm.ws.wswebcontainer.WebContainer.handleRequest(WebContainer.java:1466)
+at com.ibm.ws.webcontainer.channel.WCChannelLink.ready(WCChannelLink.java:119)
+at com.ibm.ws.http.channel.inbound.impl.HttpInboundLink.handleDiscrimination(HttpInboundLink.java:458)
+at com.ibm.ws.http.channel.inbound.impl.HttpInboundLink.handleNewInformation(HttpInboundLink.java:387)
+at com.ibm.ws.http.channel.inbound.impl.HttpInboundLink.ready(HttpInboundLink.java:267)
+at com.ibm.ws.ssl.channel.impl.SSLConnectionLink.determineNextChannel(SSLConnectionLink.java:1037)
+at com.ibm.ws.ssl.channel.impl.SSLConnectionLink$MyReadCompletedCallback.complete(SSLConnectionLink.java:644)
+at com.ibm.ws.ssl.channel.impl.SSLReadServiceContext$SSLReadCompletedCallback.complete(SSLReadServiceContext.java:1818)
+at com.ibm.ws.tcp.channel.impl.AioReadCompletionListener.futureCompleted(AioReadCompletionListener.java:165)
+at com.ibm.io.async.AbstractAsyncFuture.invokeCallback(AbstractAsyncFuture.java:217)
+at com.ibm.io.async.AsyncChannelFuture.fireCompletionActions(AsyncChannelFuture.java:161)
+at com.ibm.io.async.AsyncFuture.completed(AsyncFuture.java:136)
+at com.ibm.io.async.ResultHandler.complete(ResultHandler.java:196)
+at com.ibm.io.async.ResultHandler.runEventProcessingLoop(ResultHandler.java:751)
+at com.ibm.io.async.ResultHandler$2.run(ResultHandler.java:881)
+at com.ibm.ws.util.ThreadPool$Worker.run(ThreadPool.java:1473)
+
+WebCollaborat A SECJ0056E: Authentication failed for reason Basic Authentication failed.
+
+
+CAUSE
+TAM Authorization Server configuration was corrupted
+
+
+RESOLVING THE PROBLEM
+Reconfigure the TAM Authorization Server. You may need to reconfigure the “PDAcld” to resolve above issue. 
+
+Unconfigure Authorization Server
+
+#pdconfig
+
+Tivoli Access Manager Setup Menu
+
+1. Configure Package
+2. Unconfigure Package
+3. Display Configuration Status
+x. Exit
+
+Select the menu item [x]: 2
+
+Tivoli Access Manager Unconfiguration Menu
+
+
+1. Access Manager Runtime for Java Unconfiguration
+2. Access Manager Authorization Server Unconfiguration
+3. Access Manager Policy Server Unconfiguration
+4. Access Manager Runtime Unconfiguration
+x. Return to the Tivoli Access Manager Setup Menu
+
+
+Select the menu item [x]: 2
+Unconfiguring authorization server for domain: Default.
+Policy server host name [tam6base]:
+Policy server SSL port [7135]:
+Administrator ID [sec_master]:
+Administrator password: xxxxxxxxx
+
+* Unconfiguring the server.
+
+Unconfiguration of application "ivacld" for host "tam6base" is in progress.
+This might take several minutes.
+SSL unconfiguration for application "ivacld" has completed successfully.
+The package has been successfully unconfigured.
+
+
+Press Enter to continue.
+
+Configuring an Authorization Server
+
+#pdconfig
+
+Tivoli Access Manager Setup Menu
+
+1. Configure Package
+2. Unconfigure Package
+3. Display Configuration Status
+x. Exit
+
+Select the menu item [x]: 1
+
+Tivoli Access Manager Configuration Menu
+
+
+1. Access Manager Authorization Server Configuration
+2. Access Manager Runtime for Java Configuration
+x. Return to the Tivoli Access Manager Setup Menu
+
+
+Select the menu item [x]: 1
+Do you want to enable SSL between the
+Tivoli Access Manager authorization server and the LDAP server (y/n) [Yes]? n
+Domain [Default]:
+Policy server host name [tam6base]:
+Policy server SSL port [7135]:
+Administrator ID [sec_master]:
+Administrator password: xxxxxxxx
+Local host name [tam6base]:
+Administration request port [7137]:
+Authorization request port [7136]:
+
+* Configuring the server.
+
+Configuration of application "ivacld" for host "tam6base" is in progress.
+This might take several minutes.
+The specified action completed successfully.
+
+
+* Starting the server.
+
+
+Tivoli Access Manager authorization server v6.0.0.11 (Build 070620a)
+Copyright (C) IBM Corporation 1994-2003. All Rights Reserved.
+
+2011-03-16-07:27:22.267-08:00I----- 0x14C521D3 pdacld NOTICE mis ivcore ivacld.cpp 441 0x4163cdc0
+HPDMS0467I Server startup
+2011-03-16-07:27:22.267-08:00I----- 0x14C526F2 pdacld NOTICE mis ivmgrd ivacld.cpp 446 0x4163cdc0
+HPDMS1778I Loading configuration
+The package has been configured successfully.
+
+
+Press Enter to continue.

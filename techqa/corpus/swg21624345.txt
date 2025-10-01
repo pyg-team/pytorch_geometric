@@ -1,0 +1,106 @@
+Title: IBM EventReader error with empty Filter - United States
+
+Text:
+netcool; impact; netcool/impact; nci; event; reader; eventreader; omnibus; omnibuseventreader; error; syntax; lexical; warn; warning; filter; eventfilter; blank; empty; null TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ An error message is produced in the netcool.log by running an EventReader configured with a blank Filter, the associated Policy still runs as desired. 
+
+SYMPTOM
+ 
+
+The error message is found in the netcool.log file only and is of the format:
+
+WARN [EventFilter] EventFilter.getMatchingPoliciesForEvent: Could not parse the Expression:
+java.lang.RuntimeException:
+com.micromuse.common.parser.internal.core.ParseException: Encountered ";" at line 1, column 10.
+Was expecting one of:
+<INTEGER_LITERAL> ...
+<FLOAT_LITERAL> ...
+<DATETIME_LITERAL> ...
+<DATE_LITERAL> ...
+"-" ...
+"~" ...
+"!" ...
+"(" ...
+"{" ...
+"@" ...
+"true" ...
+"false" ...
+<IDENTIFIER> ...
+"\"" ...
+"\'" ...
+
+at com.micromuse.response.common.parser.IPLPolicy.getNode(IPLPolicy.java:106)
+at com.micromuse.response.common.parser.IPLPolicy.execute(IPLPolicy.java:54)
+at com.micromuse.response.common.parser.PolicyUtils.parse(PolicyUtils.java:96)
+at com.micromuse.response.common.parser.PolicyUtils.parse(PolicyUtils.java:114)
+at com.micromuse.response.common.parser.PolicyUtils.parseExpression(PolicyUtils.java:197)
+at com.micromuse.response.common.parser.PolicyUtils.testExpression(PolicyUtils.java:350)
+at com.micromuse.response.common.parser.PolicyUtils.testExpression(PolicyUtils.java:344)
+at com.micromuse.response.event.EventFilter.getMatchingPoliciesForEvent(EventFilter.java:271)
+at com.micromuse.response.service.AbstractEventReader.run(AbstractEventReader.java:524)
+at java.lang.Thread.run(Thread.java:736)
+Caused by: com.micromuse.common.parser.internal.core.ParseException:
+Encountered ";" at line 1, column 10.
+Was expecting one of:
+<INTEGER_LITERAL> ...
+<FLOAT_LITERAL> ...
+<DATETIME_LITERAL> ...
+<DATE_LITERAL> ...
+"-" ...
+"~" ...
+"!" ...
+"(" ...
+"{" ...
+"@" ...
+"true" ...
+"false" ...
+<IDENTIFIER> ...
+"\"" ...
+"\'" ...
+
+at java.lang.Throwable.<init>(Throwable.java:67)
+at com.micromuse.common.parser.internal.core.ParseException.<init>(ParseException.java:32)
+at com.micromuse.common.parser.internal.core.PolicyParser.generateParseException(PolicyParser.java:2831)
+at com.micromuse.common.parser.internal.core.PolicyParser.jj_consume_token(PolicyParser.java:2746)
+at com.micromuse.common.parser.internal.core.PolicyParser.UnaryExpression(PolicyParser.java:1391)
+at com.micromuse.common.parser.internal.core.PolicyParser.InExpression(PolicyParser.java:1215)
+at com.micromuse.common.parser.internal.core.PolicyParser.RegularExpression(PolicyParser.java:1139)
+at com.micromuse.common.parser.internal.core.PolicyParser.MultiplicativeExpression(PolicyParser.java:1035)
+at com.micromuse.common.parser.internal.core.PolicyParser.AdditiveExpression(PolicyParser.java:959)
+at com.micromuse.common.parser.internal.core.PolicyParser.RelationalExpression(PolicyParser.java:827)
+at com.micromuse.common.parser.internal.core.PolicyParser.EqualityExpression(PolicyParser.java:725)
+at com.micromuse.common.parser.internal.core.PolicyParser.AndExpression(PolicyParser.java:685)
+at com.micromuse.common.parser.internal.core.PolicyParser.ExclusiveOrExpression(PolicyParser.java:645)
+at com.micromuse.common.parser.internal.core.PolicyParser.InclusiveOrExpression(PolicyParser.java:605)
+at com.micromuse.common.parser.internal.core.PolicyParser.ConditionalAndExpression(PolicyParser.java:553)
+at com.micromuse.common.parser.internal.core.PolicyParser.ConditionalOrExpression(PolicyParser.java:512)
+at com.micromuse.common.parser.internal.core.PolicyParser.Expression(PolicyParser.java:476)
+at com.micromuse.common.parser.internal.core.PolicyParser.Assignment(PolicyParser.java:488)
+at com.micromuse.common.parser.internal.core.PolicyParser.StatementExpression(PolicyParser.java:2376)
+at com.micromuse.common.parser.internal.core.PolicyParser.Statement(PolicyParser.java:2263)
+at com.micromuse.common.parser.internal.core.PolicyParser.CompilationUnit(PolicyParser.java:113)
+at com.micromuse.response.common.parser.IPLPolicy.getNode(IPLPolicy.java:99)
+... 9 more
+
+
+CAUSE
+This has been identified as a product defect under APAR IV35827
+
+
+
+RESOLVING THE PROBLEM
+ 
+
+The error is seen in the netcool.log file, but not in the EventReader or PolicyLogger log files. Also, since it is only of "WARN" level it does not appear in the netcool-errors.log file. Obviously it is a syntax checker being invoked prior to the process being launched and this can't cope with a blank value preceding the delimiter used in the list of Filter values.
+
+This is currently being worked upon under APAR IV35827 [link below] and is fixed in IBM Tivoli Netcool/Impact V6.1.1 Fix Pack 1 (6.1.1-TIV-NCI-FP0001) [link below].
+
+I must take this opportunity to advise against the use of a blank Filter as this would lead to every event in the ObjectServer being processed repeatedly by the associated Policy upon insertion to the ObjectServer, DeDuplication and even Impact update. I would strongly urge to use of a flag field to mark an event as processed and/or its state or way-point within processing. Please see the TechNotes "Event flagging" [link below] and "Structured logging in Policies" [link below].
+
+RELATED INFORMATION
+ APAR IV35827 [http://www-01.ibm.com/support/docview.wss?uid=swg1IV35827]
+6.1.1-TIV-NCI-FP0001 [http://www-01.ibm.com/support/docview.wss?uid=swg24035816]
+Event flagging [http://www-01.ibm.com/support/docview.wss?uid=swg21626633]
+Structured logging in Policies [http://www-01.ibm.com/support/docview.wss?uid=swg21596180]

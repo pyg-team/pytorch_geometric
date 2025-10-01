@@ -1,0 +1,87 @@
+Title: IBM Creating non-UCM VOBs with ClearCase LT - United States
+
+Text:
+CCLT; base ClearCase; lt; base; vob; nonucm; 1151662 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This technote explains why a VOB is only created as a UCM component, and how to create a base ClearCase® VOB when using IBM® Rational® ClearCase LT® (CCLT). 
+
+CAUSE
+By default the ClearCase LT is designed to use UCM, thus the GUIs that help administer CCLT are designed to this end as well. 
+
+Using the VOB Creation Wizard only creates new VOBs with an AdminVOB Hyperlink to the Project VOB (which is created when CCLT is first installed). A describe of a VOB that was created from the wizard will display the Hyperlink related to the projects VOB (PVOB). 
+
+ * 
+ * 
+ * C:\>
+ * cleartool describe -long vob:\Wizard_vob
+ * 
+ * versioned object base "\Wizard_vob"
+   created 20-Dec-01.14:43:04 by jdoe.Domain Users@host1
+   VOB family feature level: 3
+   VOB storage host:pathname "host1:E:\ClearCaseStorage\VOBs\Wizard_vob.
+   database schema version: 54
+   VOB ownership:
+   owner RATIONAL\jdoe
+   group RATIONAL\Domain Users
+   Attributes:
+   FeatureLevel = 3
+   
+ * Hyperlinks:
+   AdminVOB@49@\Wizard_vob -> vob:\projects
+
+RESOLVING THE PROBLEM
+To create a VOB that is not a UCM component, you must use the command line, as this feature is not available from the GUI; since the GUI functionality is designed to create UCM components only. 
+
+1. Open a Command Prompt (Start > Run and type: cmd) 
+
+2. Use the cleartool mkvob command to create the VOB. 
+
+Note: Refer to IBM Rational ClearCase Command Reference on the topic of mkvob ( or run cleartool man mkvob) for more information. 
+
+ 
+
+Example: 
+
+ * 
+ * C:\>
+ * cleartool mkvob -tag \cc_new_base -stgloc VOBs
+ * 
+ * Comments for "E:\ClearCaseStorage\VOBs\cc_new_base.vbs":
+   This is base clearcase vob
+   Created versioned object base.
+   Host-local path: host1:E:\ClearCaseStorage\VOBs\cc_new_base.vbs
+   VOB ownership:
+   owner RATIONAL\jdoe
+   group RATIONAL\Domain Users
+   
+   VOBs have special data backup considerations. For more information on how to
+   back up your VOB properly, see the documentation for administering ClearCase.
+   If the backups aren't done properly, you are putting your data at risk!
+
+
+ * 
+ * C:\>
+ * cleartool describe -long vob:\cc_new_base
+ * 
+   versioned object base "\cc_new_base"
+   created 21-Dec-01.13:07:00 by jdoe.Domain Users@host1
+   VOB family feature level: 3
+   VOB storage host:pathname "host1:E:\ClearCaseStorage\VOBs\cc_new_base.vbs"
+   database schema version: 54
+   VOB ownership:
+   owner RATIONAL\jdoe
+   group RATIONAL\Domain Users
+   Attributes:
+   FeatureLevel = 3
+
+
+
+
+
+
+
+
+RELATED INFORMATION
+#Configuring a ClearCase LT Server on Windows [http://www.ibm.com/support/docview.wss?uid=swg21127689]
+Creating a snapshot view from CLI in ClearCase LT [http://www.ibm.com/support/docview.wss?uid=swg21121208]

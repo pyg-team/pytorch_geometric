@@ -1,0 +1,30 @@
+Title: IBM DFHSJ0215 JVMServer fails to install after applying preventative CICS maintenance - United States
+
+Text:
+DFHSJ0215 JVM Server OSGi framework DFHSJ0914 JVMSERVER DISABLED Language Environment Enclave LE LE/370 5655-S97 5655S97 5655S9700 R670 670 R700 700 HCI6700 5655-S97 5655S97 5655Y0400 R680 680 R800 800 HCI6800 5655-Y04 5655Y04 kixinfo TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ You install preventative maintenance to CICS Transaction Server for z/OS (CICS TS). Now when you install a JVMServer you receive DFHSJ0214 and DFHSJ0914 error messages. 
+
+SYMPTOM
+DFHSJ0215 [http://pic.dhe.ibm.com/infocenter/cicsts/v5r1/topic/com.ibm.cics.ts.messages.doc/DFHSJ/DFHSJ0215.html] The JVM Server jvmserver failed to initialize the OSGi framework. The JVM will be terminated. 
+
+DFHSJ0914 [http://pic.dhe.ibm.com/infocenter/cicsts/v5r1/topic/com.ibm.cics.ts.messages.doc/DFHSJ/DFHSJ0914E.html] JVMSERVER jvmserver is DISABLED because the Language Environment Enclave was not created.
+
+
+CAUSE
+zFS files not propagated to target environment(s)
+
+
+DIAGNOSING THE PROBLEM
+When you applied the maintenance, the zFS files were updated. However, due to a procedural error, these updated files were not rolled out to the target environments. Now that you are running JVM Servers, this has more of an impact.
+
+
+
+RESOLVING THE PROBLEM
+Ensure that the updated zFS files are propagated to the target environments when maintenance is applied to CICS.
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ CICS/TS CICS TS CICS Transaction Server

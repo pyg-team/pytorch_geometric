@@ -1,0 +1,124 @@
+Title: IBM PJ33048: ERROR WILL POP UP WHEN CLICKING THE PROPAGATE BUTTON WHEN ADDING PROPERTY DEFINITION TO A CLASS - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  In the FileNet Enterprise Manager, an error will come up when
+   adding a property definition to the "property definitions"
+   tab of a class.
+   The steps to reproduce the issue are as follow:
+   1. Logon the FEM and open an object store
+   2. Create a property template
+   3. Add the property template into the "property definition"
+   tab of the root Document class
+   4. Click apply and propagate button.
+   5. The error comes up.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  P8 users using Enterprise Manager (3.5, 4.0, 4.0.1)Problem occur
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Problem is fixed in P8 4.0.1 FP2 by a dialog that asks the user
+   if they want to apply any changes made to the class definitions.
+    Enterprise Manager will then call Save() on the object before a
+   ttempting to propagate changes to subclasses.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PJ33048
+   
+   
+ * REPORTED COMPONENT NAME
+   CONTENT ENGINE
+   
+   
+ * REPORTED COMPONENT ID
+   5724R8101
+   
+   
+ * REPORTED RELEASE
+   401
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-02-26
+   
+   
+ * CLOSED DATE
+   2008-03-21
+   
+   
+ * LAST MODIFIED DATE
+   2008-03-21
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CONTENT ENGINE
+   
+   
+ * FIXED COMPONENT ID
+   5724R8101
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R401 PSY
+   UP

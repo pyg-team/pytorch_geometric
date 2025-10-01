@@ -1,0 +1,25 @@
+Title: IBM Null error message thrown when installing 1.1.5.2-WPXT-FP002. - United States
+
+Text:
+null WorkplaceXT InstallShield TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Why is the installation of 1.1.5.2-WPXT-FP002 failing with a null error message? 
+
+SYMPTOM
+The web_client_install_log_1_1_5_2.txt shows the message: 
+
+Install, com.installshield.knowledgeworker.event.InstallScript, msg2, This is a GA installation of version: 1.1.5.2
+Install, com.installshield.product.actions.UninstallerJVMResolution, dbg.jvm, resolved to /opt/IBM
+/FileNet/WebClient/_WCjvm/jvm
+Install, com.installshield.product.service.product.PureJavaProductServiceImpl$Installer, err, java
+.lang.NullPointerException STACK_TRACE: 21 java.lang.NullPointerException
+at com.installshield.product.service.registry.PureJavaRegistryServiceImpl.getSoftwareObjectKeysWithParent(Unknown Source)
+at com.installshield.product.service.registry.PureJavaRegistryServiceImpl.updateSoftwareObjectKeyVersion(Unknown Source)
+- null
+
+
+RESOLVING THE PROBLEM
+1. Restore good backup copy of the _vpd files per http://www-01.ibm.com/support/docview.wss?uid=swg21967913 [http://www-01.ibm.com/support/docview.wss?uid=swg21967913] 
+
+2. If the backup copies do not resolve the issue, uninstall Workplace XT clean and reinstall XT 1.1.5 FP2 directly.

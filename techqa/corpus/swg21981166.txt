@@ -1,0 +1,37 @@
+Title: IBM Notes email upload to CPE 5.2.1.x FileNet Workplace XT does not open into IBM Notes - United States
+
+Text:
+Workplace XT; message/rfc822; IBM Lotus Notes TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ User saves an IBM Notes email with attachment as local file, then uploads it into CPE 5.2.1 server via Workplace XT 1.1.5, Add Document function. 
+
+Expectation: viewing this file in Workplace XT results in having it open in Lotus Notes with attachment. Instead, document opens in the browser without attachment when using the MS Internet Explorer browser. 
+
+SYMPTOM
+ 
+
+ * Document added with mime type message/rfc822. 
+ *  With the Firefox web browser, it opens into the email application when trying to bring document up to view in Workplace XT (WPXT). 
+ *  When trying to open the document with IE, it opens into the browser and not open in the email application.
+
+
+ENVIRONMENT
+Microsoft Internet Explorer
+IBM WebSphere application server
+Workplace XT 1.1.5.x
+
+
+RESOLVING THE PROBLEM
+Steps to resolve this issue: 
+
+ 1. Locate the Config directory for WPXT. 
+    - eg: /opt/FileNet/Config/WebClient 
+    c:\program files\FileNet\Config\WebClient
+    
+    
+ 2. Update the content_redir.properties and add the following line:
+    message/rfc822=/getContent?{QUERY_STRING}&mode=download
+    
+    
+ 3. Restart the JVM the WPXT is deployed on.

@@ -1,0 +1,55 @@
+Title: IBM System Requirements for WebSphere MQ Workflow V3.6.0.9 on z/OS - United States
+
+Text:
+ DETAILED SYSTEM REQUIREMENTS
+
+ABSTRACT
+ Supported hardware and software listing for Websphere MQ Workflow 3.6 on z/OS 
+
+CONTENT
+Operating System Software/Hardware 
+
+z/OS Servers for z/OS (included in 5655-BPM):
+
+Operating system: 
+z/OS V1 R4, or higher (5694-A01) [See note #1]
+
+Communication: One of the following:
+WebSphere MQ V5.3.1 (5655-F10), or higher, with Client Attachment Feature
+WebSphere MQ V6.0 (5655-L82), or higher, with Client Attachment Feature
+WebSphere MQ for z/OS V7.1 (5655-R36) or higher, with Client Attachment Feature
+
+Database:
+IBM DB2 Universal Database for z/OS V8.1 (5625-DB2), or higher
+IBM DB2 Universal Database for z/OS V9.1 (5635-DB2), or higher
+IBM DB2 Universal Database for z/OS V10.1 (5605-DB2), or higher [See note #2]
+
+For the development of programs using the Workflow APIs:
+IBM Enterprise COBOL for z/OS V3R2 (5655-G53), or higher
+IBM SDK for z/OS, Java 2 Technology Edition V1.4.1 or V1.4.2 (5655-I56)
+
+To use the External Call Interface: CICS Transaction Server for z/OS V2.3 (5697-E93), or higher
+
+To use the CPIC: IMS/ESA V7.1 (5655-B01), or higher
+
+
+Servers for z/OS:
+
+[See note #3]
+
+System: Machine requirements are those as defined for the operating system
+
+Clients for z/OS:
+
+System: To link a Web environment to a WebSphere MQ Workflow Server, the WebSphere MQ Workflow for z/OS client requires a computer system with sufficient main memory and mass storage to run: 
+
+
+Note #1: Websphere MQ Workflow for z/OS V3.6 SP9 was tested with z/OS V1R10 and previous.
+Note #2: IBM DB2 V10.1 for z/OS was tested with WebSphere MQ Workflow for z/OS V3.6 SP9 on the operating system z/OS V1R10.
+Note #3: Websphere MQ Workflow for z/OS 3.6 runs in 31 bit mode and supports Websphere MQ V6.0 on IPv4 networks only. 
+
+
+
+
+PRODUCT ALIAS/SYNONYM
+ fmc00wf fmc00inc fmc00doc

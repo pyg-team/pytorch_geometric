@@ -1,0 +1,160 @@
+Title: IBM JR38252: ENHANCE INFORMATION CENTER: MENTION "LIST VIEW", ITS INTENTION AND ITS LIMITATION - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Preface:
+   
+   1. In the left navigation pane you have the option to select
+      "List View" for the modules "catalogs", "hierarchies" and
+      "organizations" when opening the context menu with the
+      right mouse click.
+   
+   2. The idea behind the "List View" is to enable users to show
+      a summary of the module's content that can be navigated in.
+   
+      Example catalog: Imagine a category containing many hundred
+      items. In the regular left navigation pane you would see
+      the first 100 items but would not be able to navigate to
+      item number 101 in the left navigation pane.
+   
+      The "List View" allows you to see a limited number of items
+      only - but you have the opportunity to navigate within all
+      items in this specific category.
+   
+   3. Known limitation: the context menu for items and users the
+      context menu is disabled.
+   
+      a) In a catalog you cannot check out an item to a
+         collaboration area when using the "List View".
+   
+      b) In a catalog you cannot cut, copy, remove or delete an
+         item via the context menu when using the "List View".
+   
+      c) In a organization you cannot cut, copy or remove users
+         via the context menu when using the "List View".
+   
+   Current situation:
+      The Information center does not mention the existence of
+      the "List View" feature nor its intention as well as its
+      limitation.
+   
+   
+   Desired situation:
+      The Information Center should mention the existence of the
+      "List View" feature as well well as its intention and
+      limitation.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  n/a
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   All Master Data Management Server for Product Information
+   Management implementations are affected by this issue.
+   ****************************************************************
+   PROBLEM DESCRIPTION:
+   There was no documentation on the list view feature.
+   ****************************************************************
+   RECOMMENDATION:
+   IBM recommends that customers facing the issue reported by this
+   APAR look into the Information Center of  Master Data Management
+   Server for Product Information Management.
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Added documentation about the list view feature.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR38252
+   
+   
+ * REPORTED COMPONENT NAME
+   MDM SERVER FOR
+   
+   
+ * REPORTED COMPONENT ID
+   5724V5100
+   
+   
+ * REPORTED RELEASE
+   900
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-11-12
+   
+   
+ * CLOSED DATE
+   2011-03-28
+   
+   
+ * LAST MODIFIED DATE
+   2011-03-28
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

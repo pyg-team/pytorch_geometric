@@ -1,0 +1,128 @@
+Title: IBM IR53786: ibmslapd hangs - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Environment:
+   RHEL 3.0
+   ITDS 5.2
+   DB2 8.1 FP 5
+   Problem Description :
+   Customer used some scripts which genreate Samba users in the
+   LDAP tree.The command which we use is smbldap-useradd.
+   Customer ran smbldap-useradd testuser<xx> which is supposed to
+   look up users in LDAP,determine LDAP, determine the next
+   available UID for the user and then create the necessary
+   entries. This hung first time. So does the gententpasswd
+   command etc.
+   
+   There is an unusual code path taken by this script and hence
+   is hung in a call to pthread_mutex_lock
+   the mutex is left in a locked state.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  No work around /local fix
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Systems that have name resolution order configured to use ldap
+   authentication might cause ibmslapd to hang. This is because DB2
+   will use LDAP to authenticate, and LDAP must call DB2 to service
+   the request, creating in theory an infinite recursion, but in
+   actual practice leads to a resource deadlock.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Technote #1173490: Name resolution order can cause infinite
+   recursion
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IR53786
+   
+   
+ * REPORTED COMPONENT NAME
+   ITDS SERVER V5.
+   
+   
+ * REPORTED COMPONENT ID
+   5724E95S0
+   
+   
+ * REPORTED RELEASE
+   520
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2004-05-11
+   
+   
+ * CLOSED DATE
+   2004-07-02
+   
+   
+ * LAST MODIFIED DATE
+   2004-07-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

@@ -1,0 +1,167 @@
+Title: IBM HE12702: DATE RANGES IN DATA REQUESTS ARE MISLEADING - United States
+
+Text:
+  A FIX IS AVAILABLE
+Download IBM StoredIQ for Legal Version 2.0.3.2 [http://www-01.ibm.com/support/docview.wss?uid=swg24043874]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  One day difference between WebGui date ranges & CSV
+   import and export does not take time zone of user into account:
+   
+   The start date and the end date of a date range are stored as a
+   combined date and time representation that follows the ISO 8601
+   standard, that is, in the format YYYY-MM-DDT00:00:00+/-hh:mm,
+   where +/-hh:mm reflects the Coordinated Universal Time (UTC)
+   offset. In the user interface, date ranges in data
+   requests have, up to now, been shown according to the time zone
+   of the browser that you use to work with StoredIQ for Legal.
+   The dates have been displayed without a time. So, if a user in
+   Germany set a start date or an end date of 20 July 2017, it was
+   stored as 2017-07-20T00:00:00:00+02:00.
+   However, while users located in the same time zone or in a time
+   zone east of Germany saw 20 July 2017, users located in a time
+   zone west of Germany saw 19 July 2017.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:
+   * Users of StoredIQ for Legal v2.0.3.1
+   ****************************************************************
+   * PROBLEM DESCRIPTION:
+   * StoredIQ for Legal v2.0.3.1 stores dates and times in a UTC
+   * format including time zone information. On GUI input, the
+   * time zone information for date ranges in a data request is
+   * taken from the GUI's browser instance. In 2.0.3.1, when
+   * rendering a date range, time zone translation according to
+   * the user's browser instance took place and users in
+   * different time zones might have seen different dates with time
+   * zone information not explicitly shown.
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Code has been updated to fix the problem.
+   In V2.0.3.2, date range dates continue to be stored in UTC
+   format. However, when rendering such a date to the browser, no
+   time zone translation takes place. Instead, the time zone with
+   which the date was created is shown in the date range control.
+   
+   To ensure that all StoredIQ for Legal users see the same date
+   ranges in data requests, regardless of the time zone of their
+   browsers, the user interface shows the start date and the end
+   date as they were set, plus the UTC offset that represents the
+   time zone of that user who set the dates.
+   This means that if a German user selects 20 July 2017 as start
+   date, all StoredIQ for Legal users now see 20 July 2017
+   (UTC+2:00) as date notation.
+   In addition, the end dates of date ranges are stored with a
+   time setting of 23:59:59 to indicate the end of the day.
+   Existing end dates, which were set before the fix is
+   applied, are not changed.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   HE12702
+   
+   
+ * REPORTED COMPONENT NAME
+   SIQ EDISCOVERY
+   
+   
+ * REPORTED COMPONENT ID
+   5725W5302
+   
+   
+ * REPORTED RELEASE
+   203
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-07-25
+   
+   
+ * CLOSED DATE
+   2017-08-28
+   
+   
+ * LAST MODIFIED DATE
+   2017-09-07
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   SIQ EDISCOVERY
+   
+   
+ * FIXED COMPONENT ID
+   5725W5302
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R203 PSY
+   UP

@@ -1,0 +1,56 @@
+Title: IBM Operational Decision Manager V8.9.2 Mod Pack - United States
+
+Text:
+ DOWNLOAD
+
+ABSTRACT
+This mod pack updates Operational Decision Manager V8.9.0 to V8.9.2.
+
+DOWNLOAD DESCRIPTION
+This mod pack is entitled. Only customers who have purchased Operational Decision Manager V8.9.0 can use this mod pack.
+
+Downloading 
+For each Operational Decision Manager component:
+
+ 1. Download its file in the following table. Select the file for your operating system by changing <OS> to match your platform: AIX, HPUX, LIN_PPC, LIN_S390, LIN_X86, MAC, OS400, SOL_SPARC, SOL_X86, or WIN.
+ 2. Extract the contents of the downloaded file to a new folder. Use the corresponding folder name in the table.
+ 3. If you use WebSphere Application Server, download the profile templates for your component.
+
+
+Table of components 
+
+Component Download file Folder name (InstallDir) Note Decision Server Insights 8.9-WS-ODM_DSI-<OS>-RP002.zip DSI Only available for Linux (LIN) and Windows (WIN). Decision Center 8.9-WS-ODM_DC-<OS>-RP002.zip WDC For Windows and Linux, use <install path of ODM 8.9.0>/jdk/bin/jar xf to extract files in the WDC directory. Decision Server Rules 8.9-WS-ODM_DSR-<OS>-RP002.zip DSR Decision Center profile templates for WebSphere Application Server 8.9-WS-ODM_PTDC-RP002.zip WDC_PT Decision Server Rules profile templates for WebSphere Application Server 8.9-WS-ODM_PTR-RP002.zip DSR_PT Installing with IBM Installation Manager: 
+
+ 1. Launch IBM Installation Manager.
+ 2. Open File > Preferences > Repositories. 
+ 3. For each component:
+    a. Click Add Repository .
+    b. Browse to the extracted folder <InstallDir>/updates .
+    c. Select the repository.config file.
+ 4. Make sure the repositories are selected in Repositories .
+ 5. Click Apply to save your changes, and click OK to close Repositories .
+ 6. Click Update to update your installation.
+ 7. Follow the instructions in Installation Manager to complete the installation.
+
+
+Installing with the Installation Manager command line:
+
+ 1. Locate the imcl command under <IM installation>/eclipse/tools. 
+ 2. Run the commandimcl updateAll -repositories WDC/updates, DSR/updates -acceptLicense .
+
+ * Use the option -installDirectory <install path of ODM 8.9.0> to update a specific installation.
+ * If you update only one component, specify the repository accordingly.
+
+
+Applying the mod pack 
+After you install the mod pack, you might have to do additional steps to apply the mod pack in your environment. To complete the update, see When and how to apply a modification or fix pack [http://www-01.ibm.com/support/docview.wss?uid=swg21665766].
+
+PROBLEMS SOLVED
+Fix List for IBM Operational Decision Manager [http://www.ibm.com/support/docview.wss?uid=swg27023767]
+
+
+Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options 
+What is Fix Central(FC)? [https://www.ibm.com/support/fixcentral/help?page=swfaqs] 
+What is DD? [http://www6.software.ibm.com/dldirector/doc/DDfaq_en.html] ODM 8.9.2.0 AIX 28-Mar-18 Language Independent 4000000000 FC [https://www-945.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~WebSphere&product=ibm/WebSphere/WebSphere+Operational+Decision+Management&release=8.9.0.0&platform=AIX&function=textSearch&text=refresh+pack+8.9.2.0] [ ] DD ODM 8.9.2.0 HPUX 28-Mar-18 Language Independent 4000000000 FC [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~WebSphere&product=ibm/WebSphere/WebSphere+Operational+Decision+Management&release=8.9.0.0&platform=HPUX&function=textSearch&text=refresh+pack+8.9.2.0] [ ] DD ODM 8.9.2.0 Linux PPC 28-Mar-18 Language Independent 4000000000 FC [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~WebSphere&product=ibm/WebSphere/WebSphere+Operational+Decision+Management&release=8.9.0.0&platform=Linux+PPC&function=textSearch&text=refresh+pack+8.9.2.0] [ ] DD ODM 8.9.2.0 Linux x86 28-Mar-18 Language Independent 4000000000 FC [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~WebSphere&product=ibm/WebSphere/WebSphere+Operational+Decision+Management&release=8.9.0.0&platform=Linux+x86&function=textSearch&text=refresh+pack+8.9.2.0] [ ] DD ODM 8.9.2.0 Linux zSeries 28-Mar-18 Language Independent 4000000000 FC [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~WebSphere&product=ibm/WebSphere/WebSphere+Operational+Decision+Management&release=8.9.0.0&platform=Linux+zSeries&function=textSearch&text=refresh+pack+8.9.2.0] [ ] DD ODM 8.9.2.0 OS/400 28-Mar-18 Language Independent 4000000000 FC [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~WebSphere&product=ibm/WebSphere/WebSphere+Operational+Decision+Management&release=8.9.0.0&platform=OS/400&function=textSearch&text=refresh+pack+8.9.2.0] [ ] DD ODM 8.9.2.0 Solaris 32-bit SPARC 28-Mar-18 Language Independent 4000000000 FC [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~WebSphere&product=ibm/WebSphere/WebSphere+Operational+Decision+Management&release=8.9.0.0&platform=Solaris+32-bit,SPARC&function=textSearch&text=refresh+pack+8.9.2.0] [ ] DD ODM 8.9.2.0 Solaris 64-bit SPARC 28-Mar-18 Language Independent 4000000000 FC [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~WebSphere&product=ibm/WebSphere/WebSphere+Operational+Decision+Management&release=8.9.0.0&platform=Solaris+64-bit,SPARC&function=textSearch&text=refresh+pack+8.9.2.0] [ ] DD ODM 8.9.2.0 Solaris 32-bit x86 28-Mar-18 Language Independent 4000000000 FC [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~WebSphere&product=ibm/WebSphere/WebSphere+Operational+Decision+Management&release=8.9.0.0&platform=Solaris+32-bit,x86&function=textSearch&text=refresh+pack+8.9.2.0] [ ] DD ODM 8.9.2.0 Solaris 64-bit x86 28-Mar-18 Language Independent 4000000000 FC [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~WebSphere&product=ibm/WebSphere/WebSphere+Operational+Decision+Management&release=8.9.0.0&platform=Solaris+64-bit,x86&function=textSearch&text=refresh+pack+8.9.2.0] [ ] DD ODM 8.9.2.0 Windows 28-Mar-18 Language Independent 4000000000 FC [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~WebSphere&product=ibm/WebSphere/WebSphere+Operational+Decision+Management&release=8.9.0.0&platform=Windows&function=textSearch&text=refresh+pack+8.9.2.0] [ ] DD 
+ [data:image/gif;base64,R0lGODlhEAAQAPcAAAAAAP///zQYGVVMVMzEzNzU3NTM1Pz0/PTs9OTc5ExETby0vcS8xSQcKQQEDAwMHCwsPEREXDQ0REREVCQkLExMXHx8jIyMnKSktAwMDUxMUMTEzLS0vNTU3PT0/CAkPC80TDc8VBQcPCw0VNrc5EVMZFVcdKesvDxEXExUbMnM1Ons9Q0UJB0kNAQKFiw0RDxEVERMXExUZFRcamRsehUcJ0xbdCUsNzQ8SVxfZKestLe8xAwcNERUbFxshHV8hoWMlhwjLDxDTJyntJWcpZSjtAREhAQUJAwcLESExBQkNBwsPCQ0RCw8TDREVDxMXERUZExcbFxsfERMVGx4hExUXHyIlIyYpDQ1NldYWWdoaefo6VtodHuMnDxTZJukqwQcLAwkNBQsPDRMXERcbExkdHmEjIqUm29ydJeanCc0PGd0fKy0uQYUHDxBRAwcJBQkLBwsNCw8RDRETDxMVERUXExcZFVkbLzEyKWpq4iKiwSk5MzU1wQcJAwkLBQsNBw0PCQ8RCxETDRMVDxUXERcZKS0uev093d6e0xka9zk5lx0eYykqBQsLBQkJBwsLDRMTERcXDRERBwkJDxMTCo0NERUVCQsLExcXHKEhExUVLO8vBQVFcPMzERHR/P8/NTc3BscHDo8PISUkwQNDHyEgwwUESo1LD5NQTtEPPP89BgmGbK+swQOBCQsJEtVS1xlXGt1a+v06zZ+M1zZUyZVI1RdU6u2qlKkRMzUytTd0cTOwIyXg5yflLzIkdDdmsjYdzU3K3d5aVVWS2VmWqanmg0NBL+/srW1qszMw/z889zc1MTEwpWVlOTjuZiXienYOCwpDPX06ujm2aeSJtjVymVUGi0qJIWDgbSrpera0c3DvtbKxnRsapWLiUQ+Pffs6iALCGRcW6Scm18FBdAUFDYHB4QUFJYwLncnJgwEBFAhIeVwcKZTU+yWlsCMi/O6ulRMTN3U1Ly0tPz09N3c3L28vPz8/PT09NTU1MzMzLS0tCwsLCQkJAQEBP///yH5BAEAAP8ALAAAAAAQABAARwg7AP8JHEiwoMEkCJPsMWKQYMKGBhdmg1gwCcWDCS1eRLhw3sWPIDdqBJmRZMY9IhUa8UhRJcuLK0OCDAgAOw==]Problems (APARS) fixed [data:image/gif;base64,R0lGODlhEAAQAPcAAAAAAP///zQYGVVMVMzEzNzU3NTM1Pz0/PTs9OTc5ExETby0vcS8xSQcKQQEDAwMHCwsPEREXDQ0REREVCQkLExMXHx8jIyMnKSktAwMDUxMUMTEzLS0vNTU3PT0/CAkPC80TDc8VBQcPCw0VNrc5EVMZFVcdKesvDxEXExUbMnM1Ons9Q0UJB0kNAQKFiw0RDxEVERMXExUZFRcamRsehUcJ0xbdCUsNzQ8SVxfZKestLe8xAwcNERUbFxshHV8hoWMlhwjLDxDTJyntJWcpZSjtAREhAQUJAwcLESExBQkNBwsPCQ0RCw8TDREVDxMXERUZExcbFxsfERMVGx4hExUXHyIlIyYpDQ1NldYWWdoaefo6VtodHuMnDxTZJukqwQcLAwkNBQsPDRMXERcbExkdHmEjIqUm29ydJeanCc0PGd0fKy0uQYUHDxBRAwcJBQkLBwsNCw8RDRETDxMVERUXExcZFVkbLzEyKWpq4iKiwSk5MzU1wQcJAwkLBQsNBw0PCQ8RCxETDRMVDxUXERcZKS0uev093d6e0xka9zk5lx0eYykqBQsLBQkJBwsLDRMTERcXDRERBwkJDxMTCo0NERUVCQsLExcXHKEhExUVLO8vBQVFcPMzERHR/P8/NTc3BscHDo8PISUkwQNDHyEgwwUESo1LD5NQTtEPPP89BgmGbK+swQOBCQsJEtVS1xlXGt1a+v06zZ+M1zZUyZVI1RdU6u2qlKkRMzUytTd0cTOwIyXg5yflLzIkdDdmsjYdzU3K3d5aVVWS2VmWqanmg0NBL+/srW1qszMw/z889zc1MTEwpWVlOTjuZiXienYOCwpDPX06ujm2aeSJtjVymVUGi0qJIWDgbSrpera0c3DvtbKxnRsapWLiUQ+Pffs6iALCGRcW6Scm18FBdAUFDYHB4QUFJYwLncnJgwEBFAhIeVwcKZTU+yWlsCMi/O6ulRMTN3U1Ly0tPz09N3c3L28vPz8/PT09NTU1MzMzLS0tCwsLCQkJAQEBP///yH5BAEAAP8ALAAAAAAQABAARwg4AP8JHEiwoMEkCJPsMYLMoMOHECNKJJiwokIj9iAuxDOxo8ePAi1aXHhwJEaICPeI2AGypUuBAQEAOw==]Problems (APARS) fixed 
+RS02637 RS02648 RS02649 RS02768 RS02770 RS02806 RS02809 RS02811 RS02820 RS02822 RS02830 RS02831 RS02840 RS02844 RS02847 RS02853 RS02855 RS02856 RS02862 RS02865 RS02866 RS02878 RS02880 RS02881 RS02882 RS02885 RS02886 RS02887 RS02907 RS02909 RS02912 RS02913 RS02921 RS02922 RS02926 RS02927 RS02929 RS02930 RS02934 RS02935 RS02937 RS02942 RS02944 RS02947 RS02953 RS02955 RS02956 RS02957 RS02960 RS02962 RS02965 RS02966 RS02974 RS02979 RS02980 RS02988 RS02989 RS02999 RS03001 RS03004 RS03006 PI71387 PI83781 PI85082 PI85801 PI86451 PI88962 PI90345 PI93331 RS02739 RS02742 RS02760 RS02788 RS02804 RS02808 RS02812 RS02819 RS02823 RS02825 RS02836 RS02837 RS02849 RS02850 RS02854 RS02859 RS02861 RS02874 RS02875 RS02883 RS02925 RS02932 RS02938 RS02939 RS02940 RS02941 RS02943 RS02945 RS02954 RS02959 RS02973 RS02982 RS02983 RS02985 RS02986 RS02987 RS03010 RS03013 RS02701 RS02843 RS02848 RS02852 RS02888 RS02890 RS02894 RS02896 RS02898 RS02900 RS02901 RS02905 RS02914 RS02917 RS02919 RS02964 RS02981

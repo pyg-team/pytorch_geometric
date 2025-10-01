@@ -1,0 +1,23 @@
+Title: IBM In Connect:Direct for z/OS How can I list the Secure+ nodes in a batch job. - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How to list the Secure+ nodes in a batch job. 
+
+ANSWER
+No, you cannot accomplish this with a batch job, but it is possible to get a list of your Secure+ nodes using the IUI.
+
+First of all you will need to ensure that you have APAR/PTF PI33615/UI25199 applied to your system. This Small Programming Enhancement (SPE) introduced the feature of being able to clone your Secure+ PARMFILE to be used in another DTF. It also added a feature that allows you to get a list of your Secure+ nodes. You will have to save the list to a member of a PDS where you can process the data to create a report. 
+
+1. Log onto the IUI. 
+2. From the Primary Options Menu enter ADMIN.SA. 
+3. From the Secure+ Admin Tool Main Screen enter FO on the options line. 
+4. This will take you to the Secure+ Admin Tool: File Selection which should have the dataset name of your Secure+ PARMFILE. If it is correct enter 1 under File System Type and press enter. If it is not the correct dataset name for your Secure+ PARMFILE then enter the correct dataset name, enter 1 under File System Type, and press enter. 
+5. This will take you back to the Secure+ Admin Tool: Main Screen. 
+6. Place the cursor on File at the top of the page and press enter to get the drop down menu. 
+7. Select option 5 Report and press enter. 
+8. This will present you with a list of the nodes in your Secure+ PARMFILE. 
+9. To save this list to be referenced and used you will need to cut/paste it into a member in a PDS. 
+10. From there you can pull the information out with a program that you write to extract the desired information.

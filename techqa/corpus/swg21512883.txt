@@ -1,0 +1,15 @@
+Title: IBM Oracle JDBC Driver version 9.2.0.4.0 after upgrading to Oracle 9.2.0.6 - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Oracle JDBC Driver version 9.2.0.4.0 after upgrading to Oracle 9.2.0.6 
+
+RESOLVING THE PROBLEM
+After upgrading from Oracle 9.2.0.4 to Oracle 9.2.0.6, as part of the SOX Express 3.0.4 installation, the SOX Express about screen still shows the Database Driver as Oracle JDBC driver 9.2.0.4.0. This is correct because the JDBC driver that is installed with WebLogic 8.1 is Oracle JDBC driver 9.2.0.4.0. Do not attempt to upgrade the Database Driver. Leave it as Oracle JDBC driver 9.2.0.4.0.
+
+
+
+HISTORICAL NUMBER
+ 238

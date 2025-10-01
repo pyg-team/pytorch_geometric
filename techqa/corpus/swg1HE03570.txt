@@ -1,0 +1,149 @@
+Title: IBM HE03570: CATIA HANGS UPON CREATION OF A PROFILE CONTOURING OPERATION FOR THE GIVEN PROFILE WHEN NO BOTTOM PLANE IS SELECTED - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Scenario : -
+   1. Open a specific CATProcess in CATIA.
+   2. Expand the Process tree until you get to ???Profile
+   Contouring??? operation.
+   3. Open the definition of the ???Profile Contouring??? operation
+   .
+   4. Select the ???Geometry tab???.
+   5. Right click on the green square representing the ???Bottom:
+   Soft??? plane. Select ???Remove???. The square turns red.
+   6. Click on OK button of the operation???s window
+   RESULT : CATIA hangs.
+   EXPECTED RESULT : CATIA should not hang.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  empty
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Scenario : -
+   1. Open a specific CATProcess in CATIA.
+   2. Expand the Process tree until you get to ???Profile
+   Contouring??? operation.
+   3. Open the definition of the ???Profile Contouring??? operation
+   .
+   4. Select the ???Geometry tab???.
+   5. Right click on the green square representing the ???Bottom:
+   Soft??? plane. Select ???Remove???. The square turns red.
+   6. Click on OK button of the operation???s window
+   RESULT : CATIA hangs.
+   EXPECTED RESULT : CATIA should not hang.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  THIS PROBLEM WILL BE FIXED ON V5R21 GA level.
+   Additional Closure Information:
+   INCIDENT DIAGNOSIS:
+   CATIA hangs upon creation of a profile contouring operation
+   for the given profile when no bottom plane is selected.
+   CORRECTION EXPLANATION:
+   Profile contouring operation is not closed properly in this
+   particular scenario.The same has been fixed now.
+   BYPASS:
+   None
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   HE03570
+   
+   
+ * REPORTED COMPONENT NAME
+   CATIA V5 WIN 64
+   
+   
+ * REPORTED COMPONENT ID
+   569165000
+   
+   
+ * REPORTED RELEASE
+   520
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-01-21
+   
+   
+ * CLOSED DATE
+   2011-02-28
+   
+   
+ * LAST MODIFIED DATE
+   2011-02-28
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CATIA V5 WIN 64
+   
+   
+ * FIXED COMPONENT ID
+   569165000
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R521 PSN
+   UP

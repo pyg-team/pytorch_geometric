@@ -1,0 +1,77 @@
+Title: IBM How can I have my own IBM TRIRIGA log categories on system? - United States
+
+Text:
+TRILOGGING; log; CustomLogCategories TECHNOTE (FAQ)
+
+QUESTION
+ How can I create my own IBM TRIRIGA log categories on system so that I can trace specific class methods runs? 
+
+CAUSE
+Need to troubleshoot specific IBM TRIRIGA class methods runs with appropriate logging level. 
+
+ANSWER
+Whenever depth logging is required for specific TRIRIGA calls or methods, you may want to create your own custom logging category for it. Any Java call or method can be extensively logged. 
+
+
+After creating a custom logging category, you will be able to see and use it under IBM TRIRIGA Admin Console -> Platform Logging managed object. For implementing custom logging categories, please refer to the following instructions as a reference (example):
+
+NA01) Go to <IBM TRIRIGA Install DIR>/config;
+NA02) Create a backup copy (out of Tririga folder) for the file CustomLogCategories.xml;
+NA03) Open the file CustomLogCategories.xml for editing (use an editor with no formatting);
+NA04) Let us create two new categories for our example, just after the following text: 
+
+
+<!--
+Custom categories can be defined to show up on the Platform Loggers Administration page
+-->
+
+
+***NOTE 1: See that the delimiters "<!--" and "-->" will delimit a comment area, not considered when processing the xml file.
+
+
+***NOTE 2: Use the example included on the commented lines as a reference when creating your own custom logging categories.
+
+
+NA05) Add the following lines (make sure they will not be in a comment area): 
+
+
+<Category name="cc1" description="Custom Category">
+<Category description="BoPublishService">
+<Logger category="com.tririga.platform.metadata.service.BoPublishService"/>
+</Category>
+<Category description="ExternalNotificationSender">
+<Logger category="com.tririga.platform.notification.ExternalNotificationSender"/>
+</Category>
+</Category> 
+
+
+***NOTE 3: See that for our example we want to have more tracing information for any Java call to BoPublishService and ExternalNotificationSender code. 
+
+NA06) Save the file (make sure the XML file will have no syntax error, try to open it using a browser or any editor able to check XML syntax);
+NA07) Log in TRIRIGA Admin Console;
+NA08) Go to Platform Logging managed object;
+NA09) See that your custom categories have been included on the list, listed at the bottom of the page after the OOB ones. You will see parent category "Custom Category" with a check mark selection at the left side. Just below it you will see two check box fields called "BoPublishService" and "ExternalNotificationSender", because these are the names we gave to them above (Category Description).
+NA10) You may select the parent custom category ("Custom Category") or any of their child categories ("BoPublishService" and "ExternalNotificationSender") independently;
+NA11) Make sure you have DEBUG as the chosen logging level at the bottom of the screen and they click Apply;
+NA12) This is on-the-fly setting as well, and you can see in the server.log file the respective entries created for the specific custom logging categories we have implemented.
+
+
+Alternatively you can use the IBM TRIRIGA Admin Console -> Platform Logging -> Add a Logger category on the field “Add Manual Category” select the logging level. 
+
+The following logging level values are available below listed in the order of the level of tracing and debugging, from the highest one (more impact to system, more IO and log lines printed out) to the lowest one:
+
+
+1) TRACE
+2) DEBUG
+3) INFO
+4) WARN
+5) ERROR
+6) FATAL 
+
+[/support/docview.wss?uid=swg21685832&aid=1] [/support/docview.wss?uid=swg21685832&aid=1]
+
+If you restart your server (JVM) all checked up categories will be deselected by default (deactivated). The manual entries you have entered before will need to be included again if you need them. For the new categories entered on the “CustomLogCategories.xml” file, they will be there available, but unchecked after restarting JVM (Server). 
+
+
+RELATED INFORMATION
+#Where can IBM TRIRIGA system logs be found? [http://www-01.ibm.com/support/docview.wss?uid=swg21685463]

@@ -1,0 +1,152 @@
+Title: IBM PM54904: XMLLIB->XPATH FUNCTION FAILS TO RETURN RESULTS ON UNIX PLATFORMS - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Executing a map on a UNIX platform that uses the
+   XMLLIB->XPATH function does not return any results.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  WTXCQ - WTX00039720
+   TR / TR
+   Circumvention: None
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Users Affected:
+   WebSphere Transformation Extender customers using custom
+   functions and failing with module not found
+   
+   Problem Description:
+   XMLLIB->XPATH function fails on Unix platforms
+   
+   Platforms Affected:
+   1    AIX (32BITS)
+   2    AIX (64BITS)
+   3    HPUX(Itanium) (32 BITS)
+   4    HPUX(Itanium) (64 BITS)
+   5    HPUX(risc) (32BITS)
+   6    HPUX(risc) (64BITS)
+   7    LINUX (32 BITS)
+   8    LINUX (64 BITS)
+   9    Solaris (32BITS)
+   10    Solaris (64BITS)
+   11    z/USS (32 BITS)
+   12    zLinux (64 BITS)
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Corrected module name in call to XMLLIB, now WTX insures it is
+   in lower case.
+   
+   Delivered in:
+   8.3.0.5, 8.4.0.1
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM54904
+   
+   
+ * REPORTED COMPONENT NAME
+   WTX FOR INT SER
+   
+   
+ * REPORTED COMPONENT ID
+   5724M4010
+   
+   
+ * REPORTED RELEASE
+   830
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2011-12-22
+   
+   
+ * CLOSED DATE
+   2012-02-23
+   
+   
+ * LAST MODIFIED DATE
+   2014-02-28
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WTX FOR INT SER
+   
+   
+ * FIXED COMPONENT ID
+   5724M4010
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R820 PSY
+   UP
+   
+   
+ * R830 PSY
+   UP
+   
+   
+ * R840 PSY
+   UP

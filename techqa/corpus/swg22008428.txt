@@ -1,0 +1,126 @@
+Title: IBM Netezza on-demand snapshot - United States
+
+Text:
+sanjitc; sanjitc2017; snapshot; on-demand snapshot; ondemand snapshot; isodx TECHNOTE (FAQ)
+
+QUESTION
+ What is Netezza on-demand snapshot? 
+
+ANSWER
+Netezza on-demand snapshot is a manual process that captures basic system information. This information provides useful system insight to the IBM Netezza support team during a problem analysis. You can run this process any time without causing overhead to the system. The on-demand snapshot process captures certain command outputs, configuration files, system logs etc., and automatically upload those to an IBM repository server. It does not capture any logs that can contain user information, e.g., Postgres, DBOS logs etc. 
+
+It is highly encouraged that you capture an on-demand snapshot when open a Problem Management Report (PMR). You can help the IBM support to find a faster resolution to your problem by having the on-demand snapshot available when you open a PMR. 
+
+ 
+
+The on-demand snapshot process is available starting with NPS v.7.2.1.4 P1. It can also available with the Netezza Software Support Tool v.7.2.1.4 P1 and higher. 
+
+ 
+
+ 
+
+How to capture on-demand snapshot? 
+
+You should run the '/nz/support/bin/ondemand-nz-snapshot' shell script as user 'root' to capture the snapshot. It can take around 5 minutes to complete the entire process. 
+
+
+
+What all captured part of the on-demand snapshot? 
+
+Basic information about NPS: 
+
+Command Outputs Files - nzenv
+- nznpssysrevs 
+- nzrev 
+- nzstate 
+- nzstats 
+- nzds -detail 
+- nzds -issues 
+- nzhw -detail 
+- nzhw –issues
+- /nz/kit/bin/adm/tools/nznetw –all -sta
+- /nz/support/bin/nz_stats
+- /nz/support/bin/nz_health
+- nz_catalog_size
+- nzsession
+- ps -efww --forest
+- nzstats -type query -orient vertical - callHome.txt
+- bootsvr.log 
+- eventmgr*.log 
+- Netezza_System_Health_Check_Report_*.log
+- nzhealthcheck_daemon_*.log  
+
+Hardware related information: 
+
+Command Outputs Files - hostname 
+- /opt/nz-hwsupport/hts/mega_check.pl -c
+- /opt/nz-hwsupport/pts/san_tools.sh - /opt/nz-hwsupport/logs/netezza-02-h1/MISC/version.txt 
+- /opt/nz-hwsupport/version.txt  
+
+Host platform and firmware related information: 
+
+Command Outputs Files - /nzlocal/scripts/hpf_health
+- /nzlocal/scripts/hpfinfo
+- /nzlocal/scripts/modelCheck.sh
+- /nzlocal/scripts/whichHost
+- /sbin/modinfo be2net - /opt/nz/fdt/log/blade/bios/blade_bios_*.txt
+- /opt/nz/fdt/log/blade/bmc/blade_bmc_*.txt
+- /opt/nz/fdt/log/blade/diag/blade_diag_*.txt
+- /opt/nz/fdt/log/blade/ethernet/blade_ethernet_*.txt
+- /opt/nz/fdt/log/.DEBUG_firmware_updater_*.log
+- /opt/nz/fdt/log/.DEBUG_install_*.log
+- /opt/nz/fdt/log/firmware_updater_*.log 
+Cluster related information: 
+
+Command Outputs Files - cat /proc/drbd
+- crm_mon -Vn -1 
+- service drbd status 
+- service heartbeat status - /proc/drbd  
+
+Operating system commands outputs: 
+
+- arch 
+- arp -a 
+- cat /proc/cpuinfo 
+- cat /proc/drbd 
+- chkconfig --list
+- crontab -l
+- depmod -ve 
+- df -h 
+- dmesg
+- dmidecode -t1 
+- exportfs -v
+- fdisk -l
+- free 
+- free -m -t 
+- ifconfig -a 
+- ipcs -a - ipmitool fru
+- ipmitool 
+- ipmitool sel elist
+- iptables -t filter -L -n 
+- iptables -t mangle -L -n 
+- iptables -t nat -L -n 
+- last -200
+- ls -lAFR /etc/cron.* 
+- ls -lAFR /etc/rc?.d 
+- ls -lAFR /etc/xinetd.d 
+- lsmod 
+- lsof -b
+- lspci 
+- lspci -vv 
+- mii-tool 
+- modprobe -c - cat /proc/mounts
+- netstat -i 
+- netstat -nr 
+- ps -auxwwwe 
+- ps -elf
+- pstree 
+- rpcinfo -p
+- service drbd status 
+- service heartbeat status 
+- showmount -e 
+- sysctl -A 
+- uname -a 
+- uptime 
+- w 
+- who

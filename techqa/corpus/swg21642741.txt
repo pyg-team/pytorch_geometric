@@ -1,0 +1,36 @@
+Title: IBM Methodology to use my own Format in DVS Testing on Decision Center - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ I have created a new DVS format, using the DVS editor in Rule Designer.
+(For instance, to set a higher precision to be used when running my DVS tests).
+How can I use this new format when running DVS tests and simulations, in both Rule Designer and Decision Center? 
+
+CAUSE
+In Rule Designer, you cannot use this custom format for DVS testing and simulations, since you cannot set a specific DVS Project (with the custom format) when executing. This means that you will always rely on the default format. However, your custom format can be published to Decision Center, and can be used there for DVS testing and simulations.
+
+
+ANSWER
+Methodology to publish and use your own DVS format to Decision Center:
+
+1) Create your new DVS Project in Rule Designer.
+2) In this DVS Project Editor, select Repackage Ear, and repackage the ear file for the application server that you are using. For instance, if you are on WAS8, the ear files are jrules-teamserver-WAS8.ear and jrules-SSP-WAS8.ear.
+The 2 ear files should be re-generated.
+3) Re-publish your ear files to your application server. For instance, if you are using WebSphere Application Server 8.0, open the WAS Business Console, and go to Application -> Application Type -> WebSphere Enterprise Application. 
+There you will see the existing deployed ear files, including the ones above. 
+Select them and click on update, and select the new generated ear files to republish the repackaged ear files with your own DVS format. 
+4) Connect to Decision Center, and click Project Option in the Project tab.
+There, you will see that your format is available but not checked. 
+Check it. 
+5) Create a new Test Suite.
+In "Step 3. Scenario", among the different choices of format, your custom format will be available. 
+
+RELATED INFORMATION
+#DVS Format [http://pic.dhe.ibm.com/infocenter/dmanager/v8r0m1/index.jsp?topic=%2Fcom.ibm.wodm.dserver.rules.designer.test%2Ftopics%2Fcon_dvsformats.html]
+
+
+ 
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Decision Center Usability Platform Independent 8.5, 8.0.1, 8.0.0.1, 8.0, 7.5 Edition Independent

@@ -1,0 +1,29 @@
+Title: IBM In WMC. under job information, receiving message 'Variable <variable name> is over 10MB and is too large to log' - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ At runtime, receiving a warning message 'Variable "variable name" is over 10MB and is too large to log' in WMC under job information.
+
+
+
+SYMPTOM
+The logging level for the orchestration is set to 'All' and the variable has more than 10 MB of data
+
+
+CAUSE
+This is just a warning message stating that the size of the variable is more than 10 MB and it will not log it in the appliance as this will occupy disk space.
+
+RESOLVING THE PROBLEM
+This message can be safely ignored as long as the orchestration runs fine and is it recommended to keep the logging level for the orchestration to 'Error values' for the orchestration to avoid disk space issues.
+
+ 
+
+HISTORICAL NUMBER
+ 00000784 
+
+PRODUCT ALIAS/SYNONYM
+ Cast Iron Solution
+Cast Iron Operating System
+Cast Iron Studio

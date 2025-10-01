@@ -1,0 +1,38 @@
+Title: IBM The Map Editor is issuing an error when trying to import a COBOL Copybook with the COMP-3 format. (SCI98451) - United States
+
+Text:
+STERLINGPRI TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The Map Editor is issuing an error when trying to import a COBOL Copybook with the COMP-3 format. (SCI98451) 
+
+SYMPTOM
+Sterling Integrator Map Editor
+==============================================
+Unsupported numeric formats are present in the copybook
+file, have been converted to string values, and noted in the description and notes.
+Please make necessary changes.
+============================================== 
+The Map Editor is issuing an error when trying to import a COBOL Copybook with the COMP-3 format.
+
+
+CAUSE
+The Map Editor does not contain functionality for COBOL Copybooks with the 
+COMP-3 format present.
+
+RESOLVING THE PROBLEM
+The Map Editor in Release 4.1.1 Build 1974 now contains support for COBOL Copybooks with the COMP-3 format. After applying the latest patch a new Map Editor must be downloaded and installed to obtain the fix.
+
+ 
+
+HISTORICAL NUMBER
+ PRI24665 
+
+PRODUCT ALIAS/SYNONYM
+ 
+
+Fact
+
+
+Gentran Integration Suite, Release 4.1.1 
+SCI98451

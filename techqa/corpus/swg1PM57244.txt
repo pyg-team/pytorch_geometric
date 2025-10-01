@@ -1,0 +1,201 @@
+Title: IBM PM57244: FOLLOWING A DB2 CANCEL OF A DB2 THREAD BEING PROTECTED BY A CICS REGION, DFHAP0002 CODE 3255 . THEN LATER, CTHREAD MAX REACHED. - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  With a DB2 command, you cancelled some threads that were
+   owned by a CICS region.  These threads were protected threads
+   that were not being used by a CICS transaction.  At time of
+   cancel, CICS issues the following message / dump:
+   .
+   DFHAP0002 CICSAPPL A severe error (code X'3255') has occurred in
+   module DFHD2D2 .
+   .
+   Following that the CICS region is back to normal for a couple
+   hours until tasks in this CICS region, as well as in other
+   applications connected to DB2 start having SQL calls hang.  This
+   is caused by DB2 reaching cthread max .  That causes SQL calls
+   to hang while queued in QT* status in DB2 as there are no more
+   available threads.   An unusually large number of threads are
+   threads in TD status owned by the CICS region that issued the
+   DFHAP0002 message.
+   .
+   In the DFHAP0002 dump, the 'DB2=3' formatter shows that the
+   CSUB owned by the CEX2 task has as CSUB trace showing the
+   following as its last 2 entries:
+   .
+   1F00024C C1E2E2D6 00000000 00000000  *...<ASSO
+   2000024C 5CD9C5C3 0000004E 00E50013  *...<*REC
+   .
+   Those entries show a successful ASSOciate , followed by the
+   abend04E reason 00E50013 indicative of the cancel.
+   .
+   Then in a dump taken later after tasks have hung up, if you
+   find in the 'DB2=3' output on 00024C , you get lots of hits
+   like this one:
+   .
+   6300024C C1E2E2D6 00000000 00F31101 *...<ASSO.....3..
+   .
+   This shows task 24 trying and failing to associate to a
+   protected thread it wants to terminate.  The reason 00F31101
+   means that the D2 TCB (on which CEX2 is running) is already
+   associated to a different thread.  That thread would be the
+   one it successfully ASSOciated to just prior to the abend04E
+   reason 00E50013 caused by the cancel.  This prevents the CEX2
+   from terminating any protected threads.  Eventually that causes
+   DB2 to reach cthread max, at which point this CICS and other
+   DB2 applications start having SQL calls hanging in DB2 .
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All                                          *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Message 'DFHAP0002 A severe error error *
+   *                      (code X'3255') has occurred in module   *
+   *                      DFHD2D2' is received following the DB2  *
+   *                      cancel of a protected thread.           *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   A DB2 protected thread is in the process of being terminated by
+   CEX2. After successfully associating the D2 TCB to that thread,
+   a DB2 Cancel occurs. The cancel leads to the D2 TCB
+   suffering an abend04E, which subsequently causes the x'3255'
+   error within DFHD2D2. As a consequence, the DB2 subsystem can
+   reach its CTHREAD limit, causing the system to become
+   unresponsive.
+   Additional keywords: 04E S04E
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  DFHD2D2 has been amended such that, within its recovery routine,
+   if it has been called during a terminate_thread, a call to
+   issue_db2_dissociate is made.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  FIX AVAILABLE BY PTF ONLY
+   
+   
+    
+   
+   
+
+COMMENTS
+ *  ž**** PE13/01/04 FIX IN ERROR. SEE APAR PM79958 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM79958]  FOR DESCRIPTION
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM57244
+   
+   
+ * REPORTED COMPONENT NAME
+   CICSTS V3 Z/OS
+   
+   
+ * REPORTED COMPONENT ID
+   5655M1500
+   
+   
+ * REPORTED RELEASE
+   500
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-02-06
+   
+   
+ * CLOSED DATE
+   2012-03-27
+   
+   
+ * LAST MODIFIED DATE
+   2013-04-09
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    PM54748 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM54748]
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UK77437
+   
+   
+
+MODULES/MACROS
+ *     DESD2D2  DFHD2D2
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CICSTS V3 Z/OS
+   
+   
+ * FIXED COMPONENT ID
+   5655M1500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R500 PSY UK77437 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK77437]
+   UP12/04/11 P F204
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

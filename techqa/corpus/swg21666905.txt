@@ -1,0 +1,31 @@
+Title: IBM Attempting an action in an InfoSphere Business Glossary session results in "An unknown error has occurred" - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When attempting a search action from an open browser session that has timed out, the message "The value entered is not valid" is displayed. After refreshing the browser, the message "An unknown error has occurred" is displayed.
+
+The latter message might also be displayed when other actions are attempted in a timed-out session. 
+
+CAUSE
+The timeout value for IBM InfoSphere Business Glossary must match the timeout value for the IBM WebSphere Application Server instance that is used on the services tier.
+
+RESOLVING THE PROBLEM
+
+
+
+ 1. As the IBM Information Server administrator user, log into the Information Server web administration console:
+    http://<servername>:<port_number>/ibm/iis/console
+    
+ 2. In the Administration tab, navigate to Session Management > Active Sessions. Do not select a session. On the right, click Global Session Properties and in the Inactive Session Timeout field, type your desired timeout value in seconds (for example 600 for a 10 minute session).
+    
+ 3. Click Save and exit.
+    
+ 4. As the WebSphere Application Server administrator user, log into the WebSphere Application Server administration console:
+    https://<servername>:<port_number>/ibm/console
+    
+ 5. Navigate to Servers > Server Types > WebSphere application servers > server1. Under Container Settings > Web Container Settings, click Web container. Under Additional Properties, click Sesion management. Under Session timeout, select Set timeout and type your desired timeout value in minutes (for example 10 for 600 seconds).
+    
+ 6. Click OK and on the subsequent page, click Save directly to master configuration. 
+ 7. Restart the application server.

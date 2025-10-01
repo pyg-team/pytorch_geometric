@@ -1,0 +1,19 @@
+Title: IBM How to determine if a TIP server is part of a HA cluster - United States
+
+Text:
+TIPL2; TIPL2CONF; TIPL2HALB; Load balancing; high availability; Tivoli Integrated Portal; HA; TIP; HATool; modules; database TECHNOTE (FAQ)
+
+QUESTION
+ What steps can be used to determine if a Tivoli Integrated Portal server is part of a High Availability server group? 
+
+ANSWER
+Use the HATool.{bat|sh} command located in the <TIP HOME>/profiles/TIPProfile/bin/ha directory. The usage for that command is:
+HATool.{bat|sh} modules <db2 username> <db2 password>
+
+If this returns a list of modules, then HA is configured and the server is joined.
+If this returns empty, then HA is configured, but server is disjoined.
+If this throws Database Connection errors, then HA has never been configured on this server.
+
+See the following technical note for complete details on High Availability/load balancing configuration:
+
+http://pic.dhe.ibm.com/infocenter/tivihelp/v15r1/topic/com.ibm.tip.doc/ctip_config_ha_ovw.html [http://pic.dhe.ibm.com/infocenter/tivihelp/v15r1/topic/com.ibm.tip.doc/ctip_config_ha_ovw.html]

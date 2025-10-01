@@ -1,0 +1,139 @@
+Title: IBM IZ73156: NATIVE OOMS ON NON-ZOS 64-BIT JVMS USING -XCOMPRESSEDREFS CAUSED BY JAVA HEAP ALLOCATED IN 32-BIT SPACE - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Error Message: N/A
+   .
+   Stack Trace: N/A
+   .
+   All JVM allocations from native memory are occurring below the 4
+   GB memory mark.  When the heap is in this range as well this
+   leads to a out of memory error when in fact there is still
+   plenty of free native memory, just none in the 0-4GB region.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  This problem can occur on any non-zOS 64 bit JVM running in
+   compressed reference mode (using the -Xcompressedrefs option,
+   which was introduced in IBM Java 6.0).
+   
+   A compressed references JVM will make some native memory
+   requests in the 0-4GB range only, for performance reasons. When
+   this range is exhausted a native OutOfMemoryError will be
+   thrown with the detail message "native memory exhausted".
+   
+   Under some circumstances the Java Heap can be allocated in the
+   0-4GB range, reducing the amount of memory available for these
+   allocations and presenting the symptom earlier than necessary.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The JVM has been updated to include an option for specifying the
+   base memory address for the heap.
+   Example for starting at the 4GB memory mark
+   -Xgc:preferredHeapBase=0x100000000
+   If the heap cannot be allocated in a contiguous block at the
+   preferredHeapBase address specified, an error occurs detailing a
+   GC allocation failure startup.
+   
+   This defect will be fixed in:
+   6.0.0 SR7
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ73156
+   
+   
+ * REPORTED COMPONENT NAME
+   J9 COMMON CODE
+   
+   
+ * REPORTED COMPONENT ID
+   620700127
+   
+   
+ * REPORTED RELEASE
+   600
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-03-23
+   
+   
+ * CLOSED DATE
+   2011-05-20
+   
+   
+ * LAST MODIFIED DATE
+   2014-07-14
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   J9 COMMON CODE
+   
+   
+ * FIXED COMPONENT ID
+   620700127
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R600 PSY
+   UP

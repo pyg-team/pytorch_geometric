@@ -1,0 +1,144 @@
+Title: IBM PureData System for Analytics (Netezza): Maintenance tasks for optimal performance - United States
+
+Text:
+PDA puredata for analytics netezza N1001 N2001 N3001 striper mako twinfin performance groom reindex nz_catalog_size nz_groom nz_genstats statistics TECHNOTE (FAQ)
+
+QUESTION
+ For my PDA appliance what regular maintenance should I be carrying out to maintain optimal performance? 
+
+ANSWER
+The PureData for Analytics appliance tries to keep things as simple as possible for users and administrators alike, but there are a few regular housekeeping jobs that are key for good, sustained performance on your system. In this technote we will briefly outline what they are and the impact they can have. Many of these are covered in more detail in presentations available on the DataWorks Enzee forum which we will link to. 
+
+1. Statistics 
+
+The PDA appliance has a cost based optimizer, as do most relational database systems. The optimizer will make choices about how to execute queries based on the information it has about tables - the table statistics. 
+
+ 
+
+Some automatic statistics are generated as data flows into the system - notably minimum/maximum values for numeric/temporal datatypes regardless of the load method, and basic statistics will be generated when a CTAS operation is carried out on a significant volume of data (by default over 10,000 rows as defined by the parameter ctas_autostats_min_rows). Aside from that, the onus of collecting stats is on the application or DBA team. 
+
+ 
+
+There are a number of different types of statistics - you can read more about them, how they are collected and how accurate they are in this document: 
+
+https://www.ibm.com/developerworks/community/groups/service/html/communityview?communityUuid=9c8f1300-9ac0-4de5-80e6-0708f8e0260d#fullpageWidgetId=W9382f586cf7b_4d64_ae5e_fb6f156ee789&file=4764c60a-c992-474d-ac0c-a1bd875ef313 [https://www.ibm.com/developerworks/community/groups/service/html/communityview?communityUuid=9c8f1300-9ac0-4de5-80e6-0708f8e0260d] 
+
+ 
+
+Rule number 1: collect statistics! If you find you have slow running queries, the first step is to review the underlying tables and ensuring statistics are up to date. 
+
+ 
+
+2. Groom for reclaim 
+
+The groom command is something of a swiss-army knife of a command - it carries out several maintenance tasks on tables. The first of these is to physically delete logically deleted rows from tables. As tables are added to and deleted from over time these logical rows still take up space and their pages may need to be scanned and this can slow processing down. You can read more about this in some detail in this blog post: 
+
+https://www.ibm.com/developerworks/community/blogs/9c8f1300-9ac0-4de5-80e6-0708f8e0260d/entry/50_PureData_Nuggets_8_The_many_facets_of_GROOM_part_1_deleting_rows?lang=en [https://www.ibm.com/developerworks/community/blogs/9c8f1300-9ac0-4de5-80e6-0708f8e0260d/entry/50_PureData_Nuggets_8_The_many_facets_of_GROOM_part_1_deleting_rows?lang=en] 
+
+ 
+
+Rule number 2: Groom tables that are updates/deleted from regularly to ensure that they are not burdened with wasted space. 
+
+ 
+
+3. Groom for organized tables 
+
+The second thing that groom does for you is to take organized tables and order the data in them. Organized or clustered tables are tables that have had an ORGANIZE ON clause specified. This tells the system that you have an ideal order that you'd like the data to be stored in, based on between one and four columns. Just defining this does nothing - it's just metadata. However when you run a groom the system takes note of this and will reorder your data on disk, optimizing your zonemaps for query performance. 
+
+ 
+
+We talk in some detail about zonemaps (page 22) , clustered tables (page 26) and groom (page 42) in this best practices presentation: 
+
+https://www.ibm.com/developerworks/community/groups/service/html/communityview?communityUuid=9c8f1300-9ac0-4de5-80e6-0708f8e0260d#fullpageWidgetId=W9382f586cf7b_4d64_ae5e_fb6f156ee789&file=156107fe-d0cb-424c-93c0-0c25f01e5a9e [https://www.ibm.com/developerworks/community/groups/service/html/communityview?communityUuid=9c8f1300-9ac0-4de5-80e6-0708f8e0260d] 
+
+ 
+
+Rule number 3: If you have clustered tables, regularly organize the row order with groom to ensure that they are optimized for your queries. 
+
+ 
+
+4. Groom for versions 
+
+The final job of groom that we will discuss. When you ALTER a table to ADD or DROP columns, behind the scenes we keep the original table, and create a new version of the table with the new layout. As data is added to the table or updated, the new rows are stored in the new table version. As you query the table the system automatically carries out a UNION ALL join between the table versions. For very large tables this means that we can end up in a situation where we are having to process a UNION ALL join or significant data volumes which is far less efficient than querying a single table. 
+
+ 
+
+In order to deal with this there is a special invocation of groom - GROOM TABLE VERSIONS. This consolidates all the table data into the new format. It is advisable to do this as soon as possible after altering a table to avoid any performance implications. 
+
+ 
+
+Rule number 4: Always run GROOM VERSIONS on tables as soon as possible after they have been altered. 
+
+ 
+
+5. System catalog size and reindexing. 
+
+The PDA appliance stores user data on disks that are managed by the S-Blades. The system catalog data, including users, passwords, access rights and all other DDL, is stored on the host system in the /nz filesystem. Unlike user data areas, the system catalog is optimised for well defined queries returning a small set of rows based on key values - if you imagine the kinds of catalog tasks that are going on all the time implicitly such as looking up access rights, column definitions and the like you can quickly understand why this is the case. 
+
+Given these requirements, it's no surprise to learn that in the system catalog we make significant use of indexing to return the data we need quickly. As we add and remove objects from the catalog (for example by creating and dropping tables, views, external tables and any other permanent object type) we write to and delete from these system catalog tables... and their indexes. 
+
+When objects are dropped, we delete from the catalog tables and a background vacuum process runs to physically delete these rows - you can see these vacuum processes in the pg.log file. This happens automatically and needs no management. However what we do not do is delete from the indexes on these tables, and over time these indexes can get bloated with details about deleted rows and their performance will suffer. 
+
+ 
+
+You can monitor the size of your catalog with the nz_catalog_size script on the PDA host - this will indicate how much space is currently used. It is very difficult to define a rule around how big is 'too big' as this depends somewhat on the number of objects in each database and your performance requirements. The nz_catalog_size script does provide you with an indication of whether a reindex may be of benefit - the flag is set to 'yes' when the index size exceeds 250% of the base table size as in this example: 
+
+/nz/data TOTAL directory size: 3.7G
+==========================
+Catalogs: 771M + CORE files: 2.6G
++ CODE cache: 9.0M
++ HISTORY data: 185M
++ UDX files: 100M 
+
+ 
+
+Database (sorted by name) Size reindex ? Directory Path
+-------------------------------- ----- --------- --------------------------
+HISTORY_DATABASE 69M 163 /nz/data.1.0/base/202895
+MASTER_DB 69M 98 /nz/data.1.0/base/2
+PROD_DB 474M 258 (yes) /nz/data.1.0/base/200253
+SYSTEM 18M 95 /nz/data.1.0/base/1
+TEST_DB 69M 98 /nz/data.1.0/base/209304 
+
+Database (sorted by size) Size reindex ? Directory Path
+-------------------------------- ----- --------- --------------------------
+PROD_DB 474M 258 (yes) /nz/data.1.0/base/200253
+HISTORY_DATABASE 69M 163 /nz/data.1.0/base/202895
+MASTER_DB 69M 98 /nz/data.1.0/base/2
+TEST_DB 69M 98 /nz/data.1.0/base/209304
+SYSTEM 18M 95 /nz/data.1.0/base/1 
+
+
+CORE files Size
+--------------------------------------------------- -------------
+/nz/data.1.0/base/1/core.1277077968.17950 2,600,000,000 
+
+
+Files that are greater than the specified threshold Size
+--------------------------------------------------- ------------- 
+
+/nz/data.1.0/base/200253/5030 86,589,440
+200253=PROD_DB (DATABASE)
+5030=_T_ACTIONFRAG (SYSTEM TABLE) 
+
+/nz/data.1.0/base/200253/1249 132,399,104
+200253=PROD_DB (DATABASE)
+1249=_T_ATTRIBUTE (SYSTEM TABLE) 
+
+/nz/data.1.0/base/200253/5305 209,633,280
+200253=PROD_DB (DATABASE)
+5305=_I_ATTRIBUTE_RELID_ATTNAM (SYSTEM INDEX)
+
+If you determine a reindex is necessary, you can do this in one of two ways: 
+
+nz_manual_vacuum. This script requires the system to be offline and will reindex (and vacuum) all database areas in the system, after first taking a catalog backup. 
+
+nz_online_vacuum. Recent versions of NPS (7.2 and up) have added the capability to reindex databases with the system online. Each database you want to reindex has to have no connections to it when the reindex starts and will be unavailable for the duration of the reindex operation. Due to this requirement it is often easier to schedule downtime and carry out an offline reindex. 
+
+ 
+
+On top of these two manual processes, every time you restart the database service with nzstart it will review catalog index sizes and if required reindex them on startup. 
+
+ 
+
+Rule number 5: Monitor you catalog sizes. If required, reindex them for optimal performance.

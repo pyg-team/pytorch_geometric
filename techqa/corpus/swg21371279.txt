@@ -1,0 +1,38 @@
+Title: IBM Scheduled Cognos BI reports are stuck in Pending state - United States
+
+Text:
+deployment TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Schedules Cognos Business Intelligience reports are not running. Scheduled reports are stuck in "Pending" state forever. 
+
+- Renewing credentials does not resolve the issue. After credentials are renewed, user still receives the same error indicating that the credentials are invalid.
+
+- Enabling the "Run as the Owner" option does not resolve the issue 
+
+SYMPTOM
+The provided credentials are invalid.
+CNC-SEC-3403 The user account information is invalid, or it is missing in Content Manager. 
+CAM-AAA-0102 Unable to authenticate. The user must select a namespace.
+...
+Your session has expired.
+Select a namespace for authentication
+
+
+CAUSE
+Content Store corrupted.
+
+RESOLVING THE PROBLEM
+Dropping the NC* tables that use this script: 
+
+Steps:
+1. Stop the Cognos Service
+2. Take a physical backup of the Content Store or Notification database
+3. Select the appropriate folder for your content store or notification database type under <install>/configuration/schemas/delivery/<dbtype>/ 
+4. Run NC_DROP_<dbtype>.sql against the content store or notification database 
+4. Restart Cognos Services. 
+
+Should dropping the NC* tables not resolve the issue, then restore the content or notification store from the last backup version.
+
+RELATED INFORMATION
+ Cognos Analytics Equivalent [http://www.ibm.com/support/docview.wss?uid=swg22001203]

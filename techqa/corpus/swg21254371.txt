@@ -1,0 +1,110 @@
+Title: IBM How to enable a permanent license key over a temporary key in Rational Software Delivery Platform - Desktop Products - United States
+
+Text:
+rsa; rsm; rsd; RDA; RPT; RFT; RMT; RDBe; RAD; perm; permanent; temp; real; license; key; temporary; licensing; trial; ga; version; 1254371; SDP; RMC; Import Product Activation Kit; Configure Floating License Support TECHNOTE (FAQ)
+
+QUESTION
+ How do you change the trial download into a permanently licensed product after you have installed the evaluation version of an IBM Rational Software Development Platform desktop product, such as Rational Software Architect? 
+
+CAUSE
+Trial version of Rational software products can be converted to the permanent licensed products by applying/enabling the permanent license key over a evaluation key.
+
+ANSWER
+Follow the instructions below to install the activation kit or to enable floating license keys. The product activation kits contain the permanent license key for converting a trial Rational product. 
+
+After you download a product activation kit, you must import the kit from the download location by using IBM Installation Manager.
+
+
+Note: IBM Rational Method Composer uses the product activation kit, license keys and the IBM Installation Manager as of version 7.2 and 7.5, but it does not support floating license keys.
+
+
+To import an activation kit and enable the new license key 
+
+ 1. Start IBM Installation Manager. 
+    
+ 2. On the main page, click Manage Licenses. 
+    
+ 3. On the Install Packages page, select a package and click Import product enablement kit.
+    
+ 4. Click Next. 
+    Details for the selected package are displayed, including the current license kind and the version range to which the license applies. 
+    
+ 5. Browse to the path of the download location for the kit, then select the appropriate Java archive (JAR) file and click Open. 
+    
+ 6. Click Next. The Summary page displays the target install directory for the activation kit, the product the new license applies to, and version information.
+    
+ 7. Click Finish.
+
+
+
+
+
+
+
+To enable floating license keys 
+
+ 1. Start IBM Installation Manager. 
+    
+ 2. On the main page, click Manage Licenses. 
+    
+ 3. On the Install Packages page, select a version of a package, click Configure license servers, and click Next. 
+    
+ 4. On the License Servers page, select the Enable Rational Common Licensing check box. 
+    
+ 5. Configure one or more license server connections.  1. Click the Add button. 
+     2. In the Add Server window, in the Name field, type the host name of the license server. 
+     3. (Optional) In the Port field, type a value for environments where a firewall is used. Do not assign a value to this port unless your administrator instructs you to do so. 
+     4. Click OK. 
+     5. If your system administrator has given you the host names of additional license servers, repeat the steps to add each server. 
+        For a redundant license server configuration (in which three servers are used), type each host name in this format: hostname1, hostname2, hostname3. 
+        For each port number, type accordingly: host1port#, host2port#, host3port#.
+        
+    
+    
+ 6. Click Next. 
+    
+ 7. (Optional) Configure the license usage order for your custom packages. The order of licenses in the list determines the order in which your product attempts to obtain license keys for specific licenses. 
+    
+ 8. Click Finish.
+
+
+
+Note: The Manage Licenses wizard indicates whether the floating licenses configuration is successful. When you open the enabled product next, a connection is created to the license server to obtain a license key from the pool of available floating license keys. 
+
+For the latest version 
+
+To enable floating license keys 
+ 1. In IBM Installation Manager, go to Manage Licenses, then Select the product that you would like import 
+ 2. Select Configure Floating license support and click Next 
+ 3. Select Enable floating license enforcement and click on + button 
+ 4. Select Server type > Add Name > Add Port 
+ 5. Click on Test Connection > OK 
+ 6. Select Next > Finish 
+
+
+ 1. 
+
+To import an activation kit and enable the new license key  
+
+ 1.  Launch IBM Installation Manager. 
+ 2.  Click the Manage Licenses button. 
+ 3.  Highlight the product for which you are importing the activation kit. 
+ 4.  Click the Import product activation kit radio button. 
+ 5.  Click Next. 
+ 6.  Browse to the .jar file and click Next. 
+ 7.  After reading and accepting the license agreement click Finish. 
+ 8.  You should receive a message stating that the license import was successful. Click Finish 
+ 9.  You will now be back on the main page of the Installation Manager. 
+ 10. Click the Manage Licenses button. 
+ 11. Highlight the product for which you just imported the activation kit. 
+ 12. Click the Configure floating license support radio button. 
+ 13. Click Next. 
+ 14. Click the Disable floating license enforcement radio button. 
+ 15. Click Finish. 
+
+
+RELATED INFORMATION
+#1250404: Product Activation of Eclipse-based Rational P [http://www.ibm.com/support/docview.wss?uid=swg21250404]
+A Japanese translation is available [http://www.ibm.com/support/docview.wss?uid=swg21568947]
+A simplified Chinese translation is available [http://www.ibm.com/support/docview.wss?uid=swg21570367]
+A Korean translation is available [http://www.ibm.com/support/docview.wss?uid=swg21575178]

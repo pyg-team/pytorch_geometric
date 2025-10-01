@@ -1,0 +1,24 @@
+Title: IBM Why do I get the error "chdir(...) failed: no such file or directory"? - United States
+
+Text:
+chdir failed file directory non-uniform file name space TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Why do I get the error "chdir(...) failed: no such file or directory"? 
+
+RESOLVING THE PROBLEM
+A command may fail with the following error message due to a non-uniform file name space.
+
+chdir(...) failed: no such file or directoryYou are trying to execute a command remotely, where either your current working directory does not exist on the remote host, or your current working directory is mapped to a different name on the remote host.
+
+
+
+If your current working directory does not exist on a remote host, you should not execute commands remotely on that host. 
+
+On UNIX If the directory exists, but is mapped to a different name on the remote host, you have to create symbolic links to make them consistent.
+
+LSF can resolve most, but not all, problems using automount. The automount maps must be managed through NIS. Follow the instructions in your Release Notes for obtaining technical support if you are running automount and LSF is not able to locate directories on remote hosts.
+
+ 
+
+Cross reference information Segment Product Component Platform Version Edition IBM Spectrum Computing IBM Spectrum LSF

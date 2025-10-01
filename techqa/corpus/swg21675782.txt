@@ -1,0 +1,60 @@
+Title: IBM HTTP connections are redirected to the wrong HTTPS port when Process Portal is accessed in IBM Business Process Manager (BPM) - United States
+
+Text:
+SRVE0255E; HTTP port; HTTPS port; IBM Business Process Manager TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When you access Process Portal through the HTTP port of the proxy server in IBM BPM 8.5.0.x or 8.5.x, you are redirected to the wrong HTTPS port. 
+
+SYMPTOM
+When you attempt to access Process Portal through the HTTP port of the proxy server, you are incorrectly redirected to the HTTPS port of the cluster member instead of being correctly redirected to the HTTPS port of the proxy server. 
+
+The problem might result in the following error message:
+
+SRVE0255E: A WebGroup/Virtual Host to handle /ProcessPortal/jsp/index.jsp has not been defined
+
+
+CAUSE
+This problem occurs when IBM Business Process Manager profiles and the deployment environment were created in IBM Business Process Manager V8.5.0.x with a host name that contains uppercase letters. Then, the IBM Business Process Manager 8.5.0.x version of the configureProxyServer script is run. This situation results in host names that incorrectly contain uppercase letters in the rewrite rules of the proxy server and in the host aliases of the proxy virtual host.
+
+
+RESOLVING THE PROBLEM
+Note: This problem does not occur if you create the proxy server with the upgraded version of the configureProxyServer script that is included with IBM Business Process Manager 8.5.x. 
+
+
+However, if you have already run the earlier IBM Business Process Manager 8.5.0.x version of the script, you can avoid directly (and incorrectly) accessing the HTTPS port of the cluster member by completing the following steps:
+
+
+ 1. Access the HTTPS port of the proxy server.
+    
+    
+ 2. Modify the proxy server configuration by completing the following substeps:  1. In the administrative console, select Servers > All servers and then select the proxy server<de_name>.Proxy The <de_name> variable is the name of the IBM Business Process Manager deployment environment.
+        
+        
+     2. Select HTTP Proxy Server Settings > Rewriting rules and then note the settings in the From URL pattern and To URL pattern areas.
+        
+        
+     3. Create a new rule with the same URL patterns, but specify the host name using only lowercase letters.
+        
+        
+     4. Delete the old rule that contains the host names with uppercase letters.
+        
+        
+     5. Select Environment > Virtual hosts and then select the virtual host <de_name>.Proxy_host.
+        
+        
+     6. Select Host Aliases and then change all host name entries that contain uppercase letters to use only lowercase letters.
+        
+        
+     7. Save your changes and then synchronize the changes to the managed nodes.
+        
+        
+     8. Restart the proxy server <de_name>.Proxy and restart the clusters that belong to the IBM Business Process Manager deployment environment.
+    
+    
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Business Process Manager Standard Migration AIX, Linux, Linux zSeries, Solaris, Windows 8.5.6, 8.5.5, 8.5.0.1 Business Integration IBM Business Process Manager Express Migration Linux, Windows 8.5.6, 8.5.5, 8.5.0.1 
+PRODUCT ALIAS/SYNONYM
+ BPM

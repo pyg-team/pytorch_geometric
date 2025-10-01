@@ -1,0 +1,10 @@
+Title: IBM Is it possible to use Oracle 12c with IBM Enterprise Integrator for Domino 9.0.1? - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+Is it possible to use Oracle 12c with IBM Enterprise Integrator for Domino 9.0.1?
+
+ANSWER
+Yes, IBM Enterprise Integrator for Domino 9.0.1 supports Oracle 12c on platforms Windows 2008 / R2 / 2012, RHEL 6, SLES 11 and AIX 7.1 as native client and ODBC. You should install the Oracle 12c client as per Oracle documentation on the machine for using as native client. You can use Oracle 12c similarly as with earlier versions of Oracle.

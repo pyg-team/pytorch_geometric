@@ -1,0 +1,30 @@
+Title: IBM Socket applications hanging causing MAXTASK in CICS after upgrading to z/OS 1.13 - United States
+
+Text:
+MAXTASK MXT USERWAIT TCPIP EZACIC01 EZACIC02 EZACIC03 wait hangs hung hanging 5655M1500 R640 640 R400 400 HCI6400 R650 650 R500 500 HCI6500 5655-M15 5655M15 ; 5655S9700 R660 660 R600 600 HCI6600 R670 670 R700 700 HCI6700 5655-S97 5655S97 ; 5655Y0400 R680 680 R800 800 HCI6800 5655-Y04 5655Y04 KIXINFO TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Your CICS Transaction Server for z/OS (CICS TS) region is at MAXTASK (MXT) because many socket tasks are hung waiting for resource USERWAIT TCPIP. This occurs after upgrading to z/OS V1.13 from z/OS V1.11. You do have z/OS V1.13 PTF UA64875 applied. 
+
+CAUSE
+The EZACIC* TCP/IP socket modules are NOT all at the same release level of TCP/IP.
+
+DIAGNOSING THE PROBLEM
+The USERWAIT TCP/IP is issued out of the TCP/IP module EZACIC01 TRU00000 UK56202.
+
+The region was running with both z/OS V1.11 and V1.13 CICS sockets modules:
+
+
+ * EZACIC01 and EZACIC21 were each at PTF level UK56202 which is R1B0. 
+ * EZACIC03 was at R1D0 base as it should be. 
+ * EZACIC02. the CICS socket listener module, was at UK57930 which is also at R1B0 level.
+
+RESOLVING THE PROBLEM
+Ensure all your TCP/IP CICS sockets modules (EZACIC*) are at the z/OS V1.13 level.
+
+
+
+
+
+PRODUCT ALIAS/SYNONYM
+ CICS/TS CICS TS CICS Transaction Server

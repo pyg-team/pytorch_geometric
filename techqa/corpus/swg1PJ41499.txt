@@ -1,0 +1,146 @@
+Title: IBM PJ41499: ROLLING STORAGE POLICY NOT WORKING WHEN USING CEBI TO ADD DOCUMENT WITH MULTIP CONTENT ELEMENTS. - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Rolling storage policy not working when using CEBI to add
+   document with multip content elements.
+   
+   Error in p8_server_error.log:
+   
+   2013-05-29T11:27:28.547Z 19E719E7 ENG  FNRCC0141E - ERROR method
+   name: startNewElement principal name: Administrator Global
+   Transaction: false User Transaction: false Exception Info:
+   StorageArea [SA4] not open, Status value is [STANDBY].
+   com.filenet.api.exception.EngineRuntimeException: FNRCC0141E:
+   CONTENT_SA_STORAGE_AREA_NOT_OPEN: StorageArea [SA4] not open,
+   Status value is [STANDBY].
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * Customers using Content Engine MP_4.5.1 and creating         *
+   * documents with multiple content elements and using multiple  *
+   * storage areas with a rolling storage policy.                 *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * Creating a document with multiple content elements would     *
+   * fail to activate a new storage area in a rolling storage     *
+   * policy.                                                      *
+   * The first content element to be uploaded would correctly     *
+   * select a storage area and mark it for transition to OPEN.    *
+   * The next content uploaded would find the selected storage    *
+   * area, but find it not open, as the transition was not yet    *
+   * committed.                                                   *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Upgrade to Content Engine 4.5.1.8-P8CE-FP008.                *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Content Engine 4.5.1.8-P8CE-FP008 and later include a code fix
+   that will resolve this problem.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PJ41499
+   
+   
+ * REPORTED COMPONENT NAME
+   CONTENT ENGINE
+   
+   
+ * REPORTED COMPONENT ID
+   5724R8101
+   
+   
+ * REPORTED RELEASE
+   451
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-09-06
+   
+   
+ * CLOSED DATE
+   2014-04-21
+   
+   
+ * LAST MODIFIED DATE
+   2014-04-21
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    PJ41332 [http://www-01.ibm.com/support/docview.wss?uid=swg1PJ41332]
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CONTENT ENGINE
+   
+   
+ * FIXED COMPONENT ID
+   5724R8101
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R451 PSY
+   UP

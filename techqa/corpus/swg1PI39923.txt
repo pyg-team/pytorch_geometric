@@ -1,0 +1,144 @@
+Title: IBM PI39923: DATE FORMATS INCONSISTENT WHEN A REPORT IS RUN IN EXCEL 2007 DATA FORMAT. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The customer runs a report in HTML and they get data in the form
+   of MM DD, YYYY when in HTML. When run in Excel, it's the same.
+   When run in PDF, it's the same. When run in Excel 2007 Data, it
+   shows up the same way except the case when there are NULL values
+   at the beginning of the date columns. In this case, the format
+   shows up as YYYY-MM-DD.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Move to 10.2.2
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * All Users                                                    *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * See Error Description                                        *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Upgrade to IBM Cognos Business Intelligence 10.2.1 Fix Pack  *
+   * 9                                                            *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Code Fix
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+ *  A fix for this APAR is targeted for IBM COGNOS 10.2.1 BI Fix
+   Pack 9
+   
+   The Fix Pack Release Schedule can be found at
+   http://www.ibm.com/software/analytics/support/fixes/pbi_schedule
+   .html [http://www.ibm.com/software/analytics/support/fixes/pbi_schedule.html]
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI39923
+   
+   
+ * REPORTED COMPONENT NAME
+   COG ADMINISTRAT
+   
+   
+ * REPORTED COMPONENT ID
+   5724W12AD
+   
+   
+ * REPORTED RELEASE
+   A21
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-04-27
+   
+   
+ * CLOSED DATE
+   2015-11-04
+   
+   
+ * LAST MODIFIED DATE
+   2015-11-04
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   COG ADMINISTRAT
+   
+   
+ * FIXED COMPONENT ID
+   5724W12AD
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * RA22 PSN
+   UP

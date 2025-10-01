@@ -1,0 +1,43 @@
+Title: IBM How to resolve "Existing installation not found" when installing fixpack - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When you install fixpack of CPLEX Optimization Studio or Decision Optimization Center/ODM Enterprise, you might see error or warning "Existing installation not found" and the installer will terminate.
+
+This technote is only applicable for CPLEX Optimization Studio version 12.2 and above, and Decision Optimization Center/ODM Enterprise version 3.4 and above. 
+
+RESOLVING THE PROBLEM
+ 
+
+Note: Non-English users might be impacted by a bug that affects the detection of existing installation. To workaround it, please copy the .exe file in <ODME>\Developer\Uninstall folder and rename the new file as Uninstall.exe.
+
+Fixpacks are not full installers. They update an existing installation to the desired maintenance level and patch level with bug fixes and other enhancements.
+
+The version number of IBM product is usually in the form V.R.M.P (Version, Release, Maintenance, Patch/Fixpack). For IBM ILOG Optimization products, M has not been used, so it has been 0 for all releases. For a fixpack with version v.r.0.p, you need to install it on top of an installation of v.r.0.0 or an installation with an earlier fixpack applied.
+
+Before applying a fixpack, you need to download a full installer and complete its installation first:
+* For commercial customers, please download the full installer from IBM Passport Advantage website at:
+https://www.ibm.com/software/howtobuy/passportadvantage/pao_customers.htm [https://www-01.ibm.com/software/howtobuy/passportadvantage/pao_customers.htm]
+* For academic users, please search for the product after clicking the 'Download from the Software Catalog' link at:
+https://www.ibm.com/developerworks/university/software/get_software.html [https://www.ibm.com/developerworks/university/software/get_software.html]
+
+Besides version number consistency, please also note that there are several kinds of CPLEX Optimization Studio installers: one for commercial customers, one for academic users and one installer with CPLEX Enterprise Server (on some platforms). The installer for academic users usually has "aca" in its file name. The installer with CPLEX Enterprise Server usually has "CES" instead of "COS". The installer of the fixpack should also match your base installer.
+
+It has been reported that the fixpack installer might report this error even if you have a full installation. This could be caused by corrupted global registry file .com.zerog.registry.xml. You should follow these steps to resolve this issue:
+1. Uninstall the version you need to apply fixpack
+2. If you have tried to reinstall the product and fixpack, please rename the global registry file. If you have not tried to reinstall the product and fixpack yet, you can skip this step for now.
+* On Windows, the global registry is located in the hidden directory C:\Program Files\Zero G Registry\. On 64-bit Windows, for 32-bit version of ILOG products, the file is usually in the hidden directory C:\Program Files (x86)\Zero G Registry\.
+* On UNIX systems, if logged in as root, the global registry is located in the /var directory. If logged in as user, it is in the user's home directory.
+* On Mac OS X, it is located in /library/preferences/. 
+3. Reinstall the product. On Windows, you need to start the the full installer by right clicking the installer and choosing "Run as Administrator". (Please install the product to a directory with no non-ASCII characters or space characters in the path, or use the default installation directory if custom directory does not work. You can always copy the full installation to another directory later.)
+4. Apply the fixpack. On Windows, you need to start the fixpack installer by right clicking the installer and choosing "Run as Administrator".
+
+In case you are still having issues, please open a service request [https://www.ibm.com/support/servicerequest] (commercial users) or raise your issue on our online forum [https://www.ibm.com/developerworks/community/forums/html/category?id=33333333-0000-0000-0000-000000000260]. Leaving a comment is not an efficient way to resolve your issues, as the comments are anonymous.
+
+ 
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Analytics IBM Decision Optimization Center AIX, Windows 3.9.0, 3.8.0.2, 3.8.0.1, 3.8, 3.7.0.2, 3.7.0.1, 3.7, 3.6.0.1, 3.6, 3.5, 3.4.0.3, 3.4.0.2, 3.4.0.1, 3.4 Edition Independent

@@ -1,0 +1,21 @@
+Title: IBM Unexpected results when coding substitution variables in CICS VR skeleton - United States
+
+Text:
+substitution variables ; CICSVR JCL Job ; skeleton ; CICS VSAM Recovery ; ampersand ; && ; INCORROUT ; 4.2 5655P3000 R420 R42E R42K HCCV420 JCCV42E JCCV42K ; 4.3 R430 R43E R43K 5655-P30 5655P30 HCCV430 JCCV43E JCCV43K ; 5655Y2400 R510 R51E R51K 5655-Y24 ; HCCV510 JCCV51E JCCV51K ; R520 R52E R52K 5655-Y24 ; 5655Y24 HCCV520 JCCV52E JCCV52K TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ You want to know why when coding substitution variables in the CICS VSAM Recovery for z/OS (CICS VR) skeleton, you receive unexpected results. 
+
+CAUSE
+A single ampersand (&) was specified in front of the substitution variable. Therefore, it was interpreted as an ISPF dialog variable during ISPF processing.
+
+RESOLVING THE PROBLEM
+If you need to code substitution variables in the CICS VR skeleton JCL (also known as the default JCL or JOBCARD), you must include an additional ampersand (&) in front of the substitution variable. 
+
+
+For example, if on the JOBCARD you wish to have TSO notification go to the userid that submitted the job, you need to code NOTIFY=&&SYSUID rather than NOTIFY=&SYSUID as would normally be coded in JCL.
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ CICSVR CICS VR CICS/VR

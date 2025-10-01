@@ -1,0 +1,40 @@
+Title: IBM ICM folders: Sorting contents of a folder - United States
+
+Text:
+sort folder; sort contents; folder sort; sort DKFolder; DKFolder sort; dkSort TECHNOTE (FAQ)
+
+QUESTION
+ With my own Java™ application using the Java native APIs, I want to sort the contents in a folder by a time stamp (such as by using CREATETS). I can write a query to find all documents in a folder:
+(/itemtype[@ITEMID = "A............."]/OUTBOUNDLINK[@LINKTYPE = 
+\"DKFolder\"]/@TARGETITEMREF => *)
+
+but I cannot sort this query:
+(/itemtype[@ITEMID = "A............."]/OUTBOUNDLINK[@LINKTYPE = \"DKFolder\"]/@TARGETITEMREF => * SORTBY (@CREATETS ASCENDING) 
+
+because I get error DGL5000A. How is it possible to retrieve all documents and sort the results by a time stamp? 
+
+ANSWER
+If you are going to retrieve the attributes for the folder contents anyway, you probably should just specify a sort function on the DKFolder collection to sort based on the created time stamp DDO "property". Retrieve the attributes as optimally as possible using multi-item retrieve (and use DKRetrieveOptionsICM) and then use DKFolder::sort(dkSort,boolean sortOrder) or setSortFunction(dkSort). You pass an implementation object that extends the dkSort interface that determines how to sort.
+
+To retrieve attributes for all folder contents, use multi-item retrieve on the DKFolder collection, for example:
+
+// Suppose you have accessed the DKFolder collection "data item" value from your folder DDO
+// given DKFolder in variable "dkfolder".
+DKRetrieveOptionsICM dkRetrieveOptions = DKRetrieveOptionsICM.createInstance(dsICM);
+dkRetrieveOptions.baseAttributes(true);
+dsICM.retrieveObjects(dkfolder,dkRetrieveOptions.dkNVPair());
+
+// Suppose you have a dkSort implementation in a class named MySortSolution.
+dkSort mySortSolution = new MySortSolution();
+dkfolder.sort(mySortSolution,true);
+
+For the query solution mentioned in the question, try sorting by SYSROOTATTRS.CREATETS; that might meet your needs.
+
+Whether the query or retrieve solution is better depends on scaling factors. Initially, the query solution will be a little faster than a very optimal use of retrieve and in-memory sorting. However, as the number of item types and number of items increase in your system, the retrieve solution becomes the better solution by a decent margin. You might need to choose which is best for your current and future needs. 
+
+They key is to minimize the number of server calls needed. In-memory sorting should be a negligible issue. The one advantage to the query solution is if you have a large amount of folder contents and you only wanted the first 100. With the retrieve solution you must populate attributes and sort all in the folder. It is still recommend to use the retrieve solution as the best overall solution, but the query solution can be ideal in some cases.
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Enterprise Content Management Content Manager DB2 Information Integrator for Content AIX, Red Hat Linux, Solaris, Windows 8.1, 8.2, 8.3 All Editions

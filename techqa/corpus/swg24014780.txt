@@ -1,0 +1,59 @@
+Title: IBM Downloading and Installing WebSphere MQ for HP NonStop Server, V5.3.1 - United States
+
+Text:
+5.3.1 5.3.1.0 5.3 fix pack refresh pack fixpak fixpac fix paks fix packs csd01 csds fixes DOWNLOADABLE FILES
+
+ABSTRACT
+ This document describes how to download and install IBM WebSphere MQ for HP NonStop Server V5.3.1 installation images using the Passport Advantage web site. 
+
+DOWNLOAD DESCRIPTION
+The following downloads are available within the WebSphere MQ for HP NonStop Server V5.3 eAssembly (CRZVAML):
+
+WebSphere MQ for HP NonStop Server Integrity V5.3.1 (C91PYML)
+WebSphere MQ for HP NonStop Server S-series V5.3.1 (C91PVML)
+
+There are additional installation considerations which are especially important if you are upgrading from V5.3.0 to V5.3.1.
+
+PREREQUISITES
+For the HP NonStop Server hardware, you must install the following system
+software:
+
+- G06.25 or later
+- SPR T8306G10^ABG or later
+- SPR T8994G09^AAL or later
+- SPR T8397G00^ABC or later
+- SPR T1248G07^AAY or later
+- it is recommended to install at least the following additional SPRs:
+SPR T9050AQF
+
+For the HP Integrity NonStop Server hardware, you must install the following
+system software:
+
+- H06.05.01 or later
+- SPR T8306H01^ABJ or later
+- SPR T8994H01^AAM or later
+- SPR T8397H01^ABD or later
+
+
+For both platforms, any additional pre-requisites and recommended updates to system software are listed in the latest fix pack readme.
+
+URL LANGUAGE SIZE(Bytes) System requirements on HP NonStop Server (Integrity) [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006797] English 9999 System requirements on HP NonStop Server (S-Series) [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006796] English 9999 
+INSTALLATION INSTRUCTIONS
+1. Locate the WebSphere MQ for HP NonStop Server V5.3.1 eAssembly for your platform.
+2. Download the eAssembly.
+3. Unpack the eAssembly.
+4. If installing on a J Series operating system, obtain fixpack V5.3.1.9 or later and follow the instructions in the readme file accompanying the fixpack. Although fixpack V5.3.1.4 introduced support for the J series operating system, we recommend installing using the latest fixpack. For quad-core systems running the J series operating system (NB54000c or similar), fixpack V5.3.1.8 or later is mandatory.
+5. If installing on G or H series operating systems, follow the instructions in the Quick Beginnings Guide found on the WebSphere MQ Library page [http://www-306.ibm.com/software/integration/wmq/library/library53.html] to install the product. Refer to the product readme for any additional installation, migration, upgrade and configuration information and see the rest of this page for additional considerations, especially when upgrading from V5.3.0. Make certain that the installation script (instmqm) provided with WebSphere MQ for HP NonStop Server V5.3.1 or Websphere MQ for HP NonStop Server V5.3.1.9 or later is used to perform the installation. The structure of the MQ shared memory control and lock files has changed in V5.3.1 and if V5.3.0 versions of these files are used by V5.3.1, the results are unpredictable and will cause queue manager failures. These shared memory control and lock files are intended to be removed by instmqm during an upgrade, but under certain conditions, they are not and the error is undetected. This problem with instmqm has been corrected in V5.3.1.0 efix2 and later so that an installation will always fail if the shared memory files cannot be removed during an upgrade. It is recommended that customers download Websphere MQ for HP NonStop Server V5.3.1.9 or later fixpack (contact IBM support for location details) and extract the updated instmqm script from the archive to perform all V5.3.1 installations. If the V5.3.1.9 or later instmqm script is not used then the following manual procedure should be performed instead when upgrading a V5.3.0 installation to V5.3.1. a. Make certain that the MQ Guardian installation subvolume for executables has no open files. To do this, issue the command FUP LISTOPENS at the TACL prompt for all the files in the subvolume (for example, "FUP LISTOPENS $DATA01.WMQEXE.*"). If no output is displayed from the command, there are no open files. If there is output indicating files are open, locate the programs that are holding the files open and terminate them before beginning the upgrade using instmqm. b. Purge the MQ V5.3.0 shared memory control and lock files that are present in the Guardian installation subvolume for executables. These files can be identified by a prefix letter of C, L or S, followed by a single character CPU field (0 through 9, A through F) and then other alphanumeric characters. The following are examples of valid filenames of the shared memory control and lock files: C0000000 L0ALLSUB L0TRACE S0000000 One additional shared memory file must be purged in addition to those that match the pattern described above: SZ000100 Be careful NOT to accidentally delete any MQ product executables or libraries in the same subvolume. For example, there are several command line utility programs that begin with both the letter C and S (for example, CRTMQM and STRMQM). The product readme did not contain instructions to install the updated Entropy Daemon for SSL support. If you are using the WebSphere MQ SSL feature make sure to replace the daemon object code, amqjkdm0, with the new code found in /opt/mqm/bin. See the WebSphere MQ for HP NonStop Server V5.3.1 System Administration guide Chapter 11, "Configuring and running the entropy daemon" for further details. 
+
+URL LANGUAGE SIZE(Bytes) README [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27009173] English 9999 Fix list for 5.3.1 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27009174] English 9999 
+DOWNLOAD PACKAGE
+
+
+
+
+Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options IBM Passport Advantage 1/30/2007 US English 36552704 HTTP [http://www-306.ibm.com/software/howtobuy/passportadvantage/index.html] 
+PRODUCT ALIAS/SYNONYM
+ WebSphere MQ WMQ MQ Tandem NSK HP NonStop Integrity 
+
+ [/support/docview.wss?uid=swg24014780&aid=1]Problems (APARS) fixed [/support/docview.wss?uid=swg24014780&aid=2]Problems (APARS) fixed
+IC49282, IC50198, IC50339, IC50544, IC50685, IC50729, IC50761, IC50808, IC50821, IC51117, IC51349, IC51382, IC51418, IC49232 , IC49229, IC49243, IC49233, IC49327, IC49255, IC49269, IC49306, IC49425, IC49512, IC49570, IC49567, IC49566, IC49653, IC49694, IC49454, IC49492, IC49807, IC50459, IC50072, IC50790, IC50787, IC50877

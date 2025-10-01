@@ -1,0 +1,47 @@
+Title: IBM Websphere Application Server fails to start after SDK upgrade - United States
+
+Text:
+Wily AutoProbeConnector SDK SR SR5 SR6 appserver deployment manager deploymentmanager nodeagent upgrading SDK TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ An error occurs while starting the Deployment Manager, Nodeagent, or IBM WebSphere Application Server after upgrading the Java™ SDK:
+
+
+JVMXM008: Error occurred while initializing System ClassException in thread "main". Could not create the Java virtual machine.
+
+JVMCI161: FATAL ERROR in native method: Try to invoke an instance method as a static method
+at java.util.zip.ZipFile.<clinit>(ZipFile.java:79)
+at com.ibm.jvm.io.LocalizedInputStream.getZipFileInputStreamClass (Native Method)
+at com.ibm.jvm.io.LocalizedInputStream.<clinit> (LocalizedInputStream.java:82)
+at com.ibm.jvm.io.ConsoleInputStream.localize (ConsoleInputStream.java:86)
+at java.lang.System.initializeSystemClass(System.java:955)
+
+JVMDG218: JVM is not fully initialized - will not do dump processing. 
+
+CAUSE
+Wily Introspect that is configured with Websphere Application Server did not update the AutoProbeConnector.jar file with the current Java SDK information. 
+Whenever the Java SDK is updated, the AutoProbeConnector needs to be re-created for Wily.
+
+
+RESOLVING THE PROBLEM
+Perform the following from a command prompt: 
+
+
+C:\WebSphere\AppServer\wily532\connectors>C:\IBM\WebSphere\AppServer\java\
+bin\java -jar CreateAutoProbeConnector.jar -current -output AutoProbeConnector.jar
+
+Output should look like:
+
+8/12/05 10:58:33 AM PDT [INFO] [Creator] AutoProbe Connector Creation Utility Release 5.3.2 (Build 170311)
+8/12/05 10:58:33 AM PDT [INFO] [Creator] Using Java VM version "Classic VM 1.4.1" from IBM Corporation
+8/12/05 10:58:33 AM PDT [INFO] [Creator] Wily Technology Introscope Version 5
+8/12/05 10:58:33 AM PDT [INFO] [Creator] Copyright 1998 - 2005 Wily Technology, Inc. All Rights Reserved.
+8/12/05 10:58:33 AM PDT [INFO] [Creator] Introscope is a registered trademark of Wily Technology, Inc.
+The AutoProbe Connector was successfully created at C:\Work\IBM\WebSphere\AppServer\wily532\connectors\AutoProbeConnector.jar.
+
+After performing the above, restart the Deployment Manager, Nodeagent, or Application Server.
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Application Servers Runtimes for Java Technology Java SDK

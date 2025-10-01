@@ -1,0 +1,63 @@
+Title: IBM Manually removing a deleted WAS server entry from the TEP - United States
+
+Text:
+CAMADALL CAMADTEPDATA CAMADCONN CAMADUSE Manually removing deleted WAS server entry TEP TECHNOTE (FAQ)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ US English 
+
+QUESTION
+ My application server instance was removed before the Data Collector was unconfigured. There is now an entry in the TEP for this instance showing as Disconnected that cannot be cleared. 
+
+CAUSE
+As the un-configuration procedure was not run, the TEMA is not aware the app server instance no longer exists and will continue to display it as "Disconnected". Using the 'Clear Offline Entry' option will also not remove it.
+
+ANSWER
+Follow these manual steps to remove all references to the deleted application server instance before using the 'Clear Offline Entry' option in the TEP to clear it. 
+
+Steps : 
+
+(1) Recycle the TEMA. 
+
+The appserver instance is still displayed in the TEP and the status of the DC is shown as Disconnected (TEMA is not aware the appserver has been removed so this will be the default state) 
+
+ 
+
+(2) Go to $TEMA_HOME\TMAITM6\wasdc\<version>\runtime directory and remove the directory referring to the missing appserver instance ... 
+
+e.g. 'was61.node_name.server_name' 
+
+ 
+
+(3) Go to $TEMA_HOME\TMAITM6\wasdc\<version>\installer\configured and remove the directory referring to the missing appserver instance ... 
+
+e.g. 'was61.node_name.server_name' 
+
+ 
+
+(4) In the same directory, open 'WasConfiguredServers.xml' and remove the line that refers to the missing appserver instance - it will start and end with the following tag ....<instance..> ... </instance> 
+
+e.g. <instance id="C:\Program 
+Files\IBM\WebSphere\AppServer\profiles\AppSrv01|cells/soa-agent01Node01Cell/node 
+s/soa-agent01Node01/servers/server1"> 
+<node>CONFIG_FILE_STORE_DIR=C:/IBM/ITM/TMAITM6/wasdc/7.1\installer\configured\wa 
+s61.soa-agent01Node01.server1</node><node>WAS_BASEDIR=C:\Program 
+Files\IBM\WebSphere\AppServer</node></instance> 
+
+ 
+
+(5) Under $TEMA_HOME\TMAITM6 remove all the <server_name>_yn_ 
+<removed_appserver>_<application>.ctx files 
+
+(6) Under $TEMA_HOME\TMAITM6 remove the <server_name>_yn_<nodename>_<removed 
+server>.xml file 
+
+(7) Recycle the TEMA 
+
+(8) Clear offline entry in TEP - right click on the greyed out appserver instance name and select 'Clear Offline Entry' 
+Check the entry is no longer seen in the TEP 
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ ITCAM ITCAMfAD ITCAM4AD

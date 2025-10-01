@@ -1,0 +1,163 @@
+Title: IBM IO18661: After it is upgraded to 8.4.3, Content Manager text search may fail to find plain text document. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  After it is upgraded to IBM Content Manager 8.4.3, text search
+   query may fail to find plain text documents if the default CCSID
+   for the database is different from the one for the document's
+   code page.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Drop and recreate indexes for item types.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * 999                                                          *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * In Content Manager version 8.4.3, the handling of plain text *
+   * document is not correct if the following conditions are met: *
+   *                                                              *
+   * a/ the text index CCSID option that is specified in System   *
+   * Administration during creation of the text index is          *
+   * different from the database code page.                       *
+   * b/ The plain text document being imported has the CCSID the  *
+   * same as the CCSID option.                                    *
+   *                                                              *
+   * As an example, the use case that will encounter the problem  *
+   * is as follows: If the text index was created before version  *
+   * 8.4.3 with a local codepage CCSID such as Japanese while the *
+   * default database codepage is Unicode, after upgrading to     *
+   * 8,4,3, the new imported plain text document whose CCSID is   *
+   * Japanese will not be text indexed correctly.                 *
+   *                                                              *
+   * There are several changes in this fix:                       *
+   * a/ The environment variable IBMCCSID , which was used to     *
+   * identify the plain text document CCSID before, is dropped in *
+   * 8.4.3 since it is not needed . The reason is that the only   *
+   * supported CCSID of plain text document is that it is the     *
+   * same as the CCSID option of the text index when it is        *
+   * created.                                                     *
+   * b/ The CCSID option in Sysadmin client panel is re-activated *
+   * . It was incorrectly grayed out in 8.4.3                     *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * No                                                           *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The problem is now fixed in IBM Content Manager Version 8.4.3
+   Fixpack 4.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IO18661
+   
+   
+ * REPORTED COMPONENT NAME
+   SYSTEM ADMIN
+   
+   
+ * REPORTED COMPONENT ID
+   5724B1900
+   
+   
+ * REPORTED RELEASE
+   843
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-04-18
+   
+   
+ * CLOSED DATE
+   2014-07-31
+   
+   
+ * LAST MODIFIED DATE
+   2014-07-31
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  999
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   SYSTEM ADMIN
+   
+   
+ * FIXED COMPONENT ID
+   5724B1900
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R843 PSY
+   UP

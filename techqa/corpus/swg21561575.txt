@@ -1,0 +1,33 @@
+Title: IBM AS2 - Unable to send outbound batches - Error: Could not figure out algorithm type for algorith - United States
+
+Text:
+Interconnect; STERLINGTRB TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ AS2 - Unable to send outbound batches - Error: Could not figure out algorithm type for algorith 
+
+SYMPTOM
+
+
+Unable to send outbound AS2 Payload batches to Trading Partner.
+
+The .RQ file is not being created.
+
+Error Message Error: -- java.io.IOException: java.lang.IllegalArgumentException: Could not figure out algorithm type for algorithm 
+RSA/ECB/PKCS1_02Padding - no signature or key-agreement could be found for it
+EDIINT 14 Aug 2007 17:42:28,061 ERROR - process(): Exception caught: java.lang.NullPointerException
+
+
+RESOLVING THE PROBLEM
+Solution 
+
+The error seems to be cause by a incorrect password. The error basically states that the signature cannot be computed using the keycert. Therefore, it is suspected that the .RQ file was not created.
+
+Note: The password for the private key is only needed to be pass via the cmurefresh command if the default password which is "password" is not being used.
+
+The syntax for cmurefresh command: cmurefresh -S <passphrase> -N EDIINT
+
+ 
+
+HISTORICAL NUMBER
+ TRB1489

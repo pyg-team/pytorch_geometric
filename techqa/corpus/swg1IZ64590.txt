@@ -1,0 +1,148 @@
+Title: IBM IZ64590: THE MS EXCHANGE SERVER AGENT CRASHES WHILE RETRIEVING RECHABILITY DETAILS AND IT ALSO HAS A MEMORY LEAK. - United States
+
+Text:
+  FIXES ARE AVAILABLE
+IBM Tivoli Monitoring for Microsoft Exchange Server 6.2.0-TIV-ITM_EXCHG-IF0003 [http://www-01.ibm.com/support/docview.wss?uid=swg24025714]
+IBM Tivoli Monitoring for Microsoft Exchange Server 6.2.0-TIV-ITM_EXCHG-FP0002 [http://www-01.ibm.com/support/docview.wss?uid=swg24026720]
+IBM Tivoli Monitoring for Microsoft Exchange Server 6.2.0-TIV-ITM_EXCHG-IF0004 [http://www-01.ibm.com/support/docview.wss?uid=swg24026722]
+IBM Tivoli Monitoring for Microsoft Exchange Server 6.2.0.2-TIV-ITM_EXCHG-IF0002 [http://www-01.ibm.com/support/docview.wss?uid=swg24028375]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Environment:
+   
+   Microsoft Exchange Server Agent V6.2.0
+   
+   Problem Description:
+   The MS Exchange server Agent crashes while retrieving
+   rechability
+   details. The Agent has a memory leak what is affecting the
+   rechability results and ultimately the agent gets crashed after
+   some fix time interval.
+   
+   
+   Detailed Recreation Procedure:
+   Install and configure Microsoft Exchange Monitoring agent 6.2.0.
+   Keep the Agent for a long run with Reachability enabled along
+   with
+   HDC for all Attribute groups on.
+   
+   
+   Related Files and Output:
+   Observe the Agent behavior, it generally crashes after some fix
+   time
+   interval.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  THE MS EXCHANGE SERVER AGENT CRASHES WHILE RETRIEVING
+   RECHABILITY DETAILS AND IT ALSO HAS A MEMORY LEAK.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Now Exchange Server Agent Does not crash while retrieving
+   rechability details and also the related memory leak has been
+   eliminated.
+   
+   The fix for this APAR is contained in the following maintenance
+   packages:
+                        | interim fix | 6.2.0-TIV-ITM_EXCHG-IF0003
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ64590
+   
+   
+ * REPORTED COMPONENT NAME
+   ITMF MC EXCHANG
+   
+   
+ * REPORTED COMPONENT ID
+   5724B98EO
+   
+   
+ * REPORTED RELEASE
+   620
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-11-05
+   
+   
+ * CLOSED DATE
+   2010-02-02
+   
+   
+ * LAST MODIFIED DATE
+   2010-02-24
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ITMF MC EXCHANG
+   
+   
+ * FIXED COMPONENT ID
+   5724B98EO
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R620 PSY
+   UP

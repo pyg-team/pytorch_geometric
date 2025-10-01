@@ -1,0 +1,120 @@
+Title: IBM PM14292: 'Where' keyword in Usrprops doesn't filter in System Architect - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PERMANENT RESTRICTION.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When using the 'WHERE' keyword with a LISTOF property, the filte
+   r doesn't work as expected. The item is not listed after clickin
+   g on Choices. It will only show items if there is only 1 value i
+   n the ListOf property and that value matches the filter specifie
+   d in the WHERE clause in USRPROPS.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  If more than one value is listed in the LISTOF property,
+   then the WHERE keyword will not work as expected. The
+   CHOICES list will not list any items that contain multiple
+   items in the LISTOF property. It will only show items if
+   there is only 1 value in the ListOf property and that value
+   matches the filter specified in the WHERE clause in
+   USRPROPS.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This is a WAD.
+   The WHERE clause filters definitions based upon a property
+   value and not upon a string included in a property value.
+   In the case described in this report, the property value is
+   
+   ""My Program"
+   Program"
+   
+   therefore it is not the same thing as "Program"...
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM14292
+   
+   
+ * REPORTED COMPONENT NAME
+   TLOGIC SYS ARCH
+   
+   
+ * REPORTED COMPONENT ID
+   5724V68SA
+   
+   
+ * REPORTED RELEASE
+   B31
+   
+   
+ * STATUS
+   CLOSED PRS
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-05-11
+   
+   
+ * CLOSED DATE
+   2010-07-08
+   
+   
+ * LAST MODIFIED DATE
+   2010-07-08
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

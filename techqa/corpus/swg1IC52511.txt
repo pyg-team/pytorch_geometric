@@ -1,0 +1,184 @@
+Title: IBM IC52511: Exceptions thrown by Mediation Flow Component when using Global security and asynchronous message flows in WebSphere ESB V6.0.2 - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When using Global Security in conjunction with an application
+   which contains a Mediation Flow Component, which utilises
+   asynchronous message flows, the following exceptions are thrown
+   by the runtime server:
+   
+   CNTR0020E: EJB threw an unexpected (non-declared) exception
+   during invocation of method
+   "transactionNotSupportedActivitySessionSupports" on bean
+   "BeanId(MyApp#MyAppEJB.jar#Module, null)".
+   Exception data:
+   com.ibm.wsspi.sibx.mediation.flow.MediationRuntimeException:
+   CWSXM1023E: Exception when invoking flow action: CWSXM0105E: A
+   runtime error occured when saving context for a mediation flow
+   in mediation component XXXXXXX in module YYYYYYYY
+   
+   In addition you may also observe the following message:
+   
+   CWSIP0303E:  No user specified when creating a connection to
+   to secure messaging engine.
+   
+   The message flow fails once these exceptions are thrown.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: Users of WebSphere Enterprise Service Bus    *
+   *                 and WebSphere Process Server v6.0.2, where   *
+   *                 applications are being used which contain    *
+   *                 a Mediation Flow Component which utilises    *
+   *                 asynchronous 2-way message flows, in         *
+   *                 conjunction with WebSphere Global Security.  *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: When using a Mediation Flow Component   *
+   *                      to process an asynchronous message      *
+   *                      flow where WebSphere Global Security    *
+   *                      is enabled, exceptions are thrown by    *
+   *                      the runtime server, followed by the     *
+   *                      error message:                          *
+   *                                                              *
+   *                      CWSIP0303E: No user specified when      *
+   *                      creating a connection to secure         *
+   *                      messaging engine.                       *
+   *                                                              *
+   *                      Message processing fails when this      *
+   *                      event occurs.  It is caused by a        *
+   *                      program defect first introduced in      *
+   *                      v6.0.2.0.  You will notice that the     *
+   *                      application runs without error if       *
+   *                      WebSphere Global Security is            *
+   *                      switched off.                           *
+   ****************************************************************
+   * RECOMMENDATION: If you encounter this problem, There are     *
+   *                 two solutions to resolve the issue:          *
+   *                                                              *
+   *                 (1) Turn off WebSphere Global Security.      *
+   *                                                              *
+   *                 (2) Apply the fix associated with this       *
+   *                 APAR.  The fix is currently targetted to     *
+   *                 be included with v6.0.2 Fix Pack 2           *
+   *                 (6.0.2.2).                                   *
+   ****************************************************************
+   The only versions of the products WebSphere Enterprise Service
+   Bus and WebSphere Process Server which are affected by this
+   problem are v6.0.2.0 and v6.0.2.1.  The fix is currently
+   targetted to be included with v6.0.2 Fix Pack 2 (v6.0.2.2).
+   
+   Please note that similar program symptoms have been seen in
+   v6.0.1, and addressed by the APAR IC50776 which was included
+   in v6.0.1.5.  IC50776 is a separate problem, also associated
+   with WebSphere Global Security, and required a different code
+   fix to resolve.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This problem is resolved by the code changed associated
+   with this APAR.  There are no known side effects with
+   this fix.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC52511
+   
+   
+ * REPORTED COMPONENT NAME
+   WEB ESB FOR WIN
+   
+   
+ * REPORTED COMPONENT ID
+   5724I8200
+   
+   
+ * REPORTED RELEASE
+   200
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2007-04-20
+   
+   
+ * CLOSED DATE
+   2007-07-04
+   
+   
+ * LAST MODIFIED DATE
+   2007-07-04
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEB ESB FOR WIN
+   
+   
+ * FIXED COMPONENT ID
+   5724I8200
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R100 PSN
+   UP
+   
+   
+ * R200 PSY
+   UP

@@ -1,0 +1,191 @@
+Title: IBM IT12987: SCHEDULE CREATION IN CHINESE FAILS FOR VALID DATE RANGES - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+ DIRECT LINKS TO FIXES
+iSeries_Media_5020601_2 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FOther+software%2FSterling+B2B+Integrator&fixids=5.2.6.1-OtherSoftware-B2Bi-Iseries-IF0002&source=SAR]
+Media_IM_5020601_2 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FOther+software%2FSterling+File+Gateway&fixids=5.2.6.1-OtherSoftware-SFG-All-IF0002&source=SAR]
+iSeries_Media_5020601_2 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FOther+software%2FSterling+File+Gateway&fixids=5.2.6.1-OtherSoftware-SFG-Iseries-IF0002&source=SAR]
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  There are errors while configuring the schedules though the
+   time range entered is correct. Below are the scenarios:
+   
+   Scenario 1: Create a schedule based on timer, with default and
+   under schedule exclusions page if you choose anytime current
+   day and next day that is PM to AM it does not work. For
+   example, 10:00 PM to 12:00 AM,
+   where if you choose a time in the same day, such as
+   10:00 PM to 11:00 PM, it works.
+   
+   Scenario 2: Create a schedule based on "run daily" as below
+   in English locale:
+   Change the language in the My Account page to traditional
+   Chinese, and create the same schedule as above and it fails.
+   
+   Scenario 3: Create a schedule based on run daily as below.
+   When we choose 1:00 AM to 3:00 AM which is between the above
+   time range, it fails.
+   
+   Scenario 4: Create a schedule based on days of the week and
+   the configuration fails.
+   
+   Scenario 5: The scenario3 when created to run weekly in
+   Chinese fails while choosing the time range itself.
+   
+   Scenario 6: It is the same issue with run based on month.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  RTC 426949/SR/BR
+   No Workaround available
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Users Affected:
+   ALL
+   
+   
+   Problem Description:
+   There are errors while configuring the schedules though the time
+   range entered is correct. Below are the scenarios. Please refer
+   to the schedules.doc(it contains screenshots which are missing
+   here)
+   Scenario 1 : Create a schedule based on timer, next page go with
+   default and under schedule exclusions page if you choose anytime
+   current day and next day that is PM to AM it does not work, that
+   is for example 10:00 PM to 12:00 AM
+   where as if you choose a time in the same day, that is lets say
+   10:00 PM to 11:00 PM it works
+   Scenario 2 :  Create a schedule based on "run daily"  as below
+   in english locale
+   Change the language in the My Account page to traditional
+   chinese, and create the same schedule as above and it fails
+   Scenario 3 : Create a schedule based on run daily as below
+   When we choose 1:00 AM to 3:00 AM which between the above time
+   range, it fails
+   Scenario 4:  Create a schedule based on days of the week in
+   english
+   In chinese the same configuration fails
+   Scenario 5 :  The scenario3 when created  run weekly  in chinese
+   it would fail while choosing the time range itself
+   Scenario 6  :  It is the same issue with run based on  month
+   
+   Platforms Affected:
+   All
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The problem was in the comparison of the word 'every' written in
+   chinese. The properties file had incorrect translation for this
+   'every' word in chinese and so the behavior was unexpected.
+   Resolved the issue and now it works perfectly.
+   
+   
+   DELIVERED IN:
+   5020601_2
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT12987
+   
+   
+ * REPORTED COMPONENT NAME
+   STR B2B INTEGRA
+   
+   
+ * REPORTED COMPONENT ID
+   5725D0600
+   
+   
+ * REPORTED RELEASE
+   524
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-01-04
+   
+   
+ * CLOSED DATE
+   2016-04-14
+   
+   
+ * LAST MODIFIED DATE
+   2016-04-18
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   STR B2B INTEGRA
+   
+   
+ * FIXED COMPONENT ID
+   5725D0600
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R526 PSY
+   UP

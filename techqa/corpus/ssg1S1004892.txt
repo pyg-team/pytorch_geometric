@@ -1,0 +1,15 @@
+Title: IBM TS3100/TS3200 is not affected by the Bash vulnerabilities (CVE-2014-6271, CVE-2014-7169, CVE-2014-7186, CVE-2014-7187, CVE-2014-6277, and CVE-2014-6278)
+Flash (Alert) - United States
+
+Text:
+TS3100/TS3200; 3573 FLASH (ALERT)
+
+ABSTRACT
+ TS3100/TS3200 is not vulnerable to the Bash vulnerabilities that have been referred to as “Bash Bug” or “Shellshock” and the two memory corruption vulnerabilities. 
+
+CONTENT
+TS3100/TS3200 in all editions and all platforms is NOT vulnerable to the Bash vulnerabilities (CVE-2014-6271, CVE-2014-7169, CVE-2014-7186, CVE-2014-7187, CVE-2014-6277, and CVE-2014-6278).
+
+Remediation: No action required.
+
+Change History: September 29, 2014: original version published

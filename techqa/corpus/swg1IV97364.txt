@@ -1,0 +1,114 @@
+Title: IBM IV97364: THE "DETERMINING THE DISPLAYED FQDN"DOCUMENTATION IS OUT OF DATE. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The "Determining the displayed FQDN" documentation (
+   https://www.ibm.com/support/knowledgecenter/SSPLFC_7.3.0/com.ibm
+   .taddm.doc_7.3/AdminGuide/c_cmdb_fqdn.html [https://www.ibm.com/support/knowledgecenter/SSPLFC_7.3.0/com.ibm.taddm.doc_7.3/AdminGuide/c_cmdb_fqdn.html] ) describes 6 methods
+   for FQDN determination. But both code review and delivered APAR
+   IV68846 [http://www-01.ibm.com/support/docview.wss?uid=swg1IV68846] suggest that they are now 8 instead 6. The full
+   documentation section should be reviewed and corrected to
+   describe the current status.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  The "Determining the displayed FQDN" section in Admin guide
+   describes 6 methods for FQDN determination. However, there are
+   now 8 instead 6 methods. The two new methods should be added to
+   this section.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The section:
+   Administering > TADDM overview > Discovery process overview >
+   Determining the displayed FQDN
+   modified to add Method 7 and Method 8.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV97364
+   
+   
+ * REPORTED COMPONENT NAME
+   APP DEPENDENCY
+   
+   
+ * REPORTED COMPONENT ID
+   5724N5500
+   
+   
+ * REPORTED RELEASE
+   730
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-06-26
+   
+   
+ * CLOSED DATE
+   2018-04-03
+   
+   
+ * LAST MODIFIED DATE
+   2018-04-03
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

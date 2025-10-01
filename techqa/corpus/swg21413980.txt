@@ -1,0 +1,60 @@
+Title: IBM Out of memory error occurs on the start of WebSphere Process Server (WPS) on Solaris 64-bit machines - United States
+
+Text:
+v70rnotes; outofmemory; hang; hangs; out of memory TECHNOTE (FAQ)
+
+QUESTION
+ When you start WebSphere Process Server server on a Solaris 64-bit operating system, why is there an out of memory error and the server start process cannot complete? 
+
+CAUSE
+You want to know why you are seeing these exceptions:
+
+0000004e SystemErr R Exception in thread "Non-deferrable Alarm : 2" java.lang.OutOfMemoryError: PermGen space
+0000004f SystemErr R Exception in thread "Non-deferrable Alarm : 3" java.lang.OutOfMemoryError: PermGen space
+00000057 SystemErr R Exception in thread "Thread-53" java.lang.OutOfMemoryError: PermGen space.
+
+ANSWER
+To resolve the issue, increase the Java™ virtual machine (JVM) parameter MaxPermSize to 512M in the server.xml file of the created profile. Complete the following steps: 
+
+ 1. Open the install_root/profiles/profile_name/config/cells/cell_name/nodes/node_name/servers/server_name/server.xml file search for genericJvmArgument.
+    
+    
+ 2. Scroll down towards the end of the file and find the genericJvmArguments property within the jvmEntries attribute.
+    
+    
+ 3. Add -XX:MaxPermSize=512m as the last value for the genericJvmArguments parameter. For example:
+    <jvmEntries xmi:id="...genericJvmArguments="${IBMSCMX} ${IBMGCPOLICY_GENCON} -XX:MaxPermSize=512m">
+    
+    
+
+
+Alternatively, if the server starts successfully but then later runs out of memory, you can use the following steps to increase the MaxPermSize using the Administrative Console:  1. Log in to the Administration Console.
+    
+    
+ 2. Click Servers > Server Types > WebSphere application servers > WebSphere Process Server.
+    
+    
+ 3. Under Server Infrastructure, click Java and Process Management > Process Definitions > Additional Properties > Java Virtual Machine.
+    
+    
+ 4. In the Generic JVM arguments field, change the MaxPermSize value to -XX:MaxPermSize=numeric value, where numeric value is a quarter of the value entered for the Maximum Heap Size. For example, if your Maximum Heap Size is 3000 M, set MaxPermSize to 750 M. If your Maximum Heap Size is less than 2048 M, set MaxPermSize to 512 M. 
+    
+    
+    Important: If MaxPermSize does not exist in the Generic JVM arguments field, add it to the field but do not replace existing information in the Generic JVM arguments field with the MaxPermSize information.
+    
+    
+ 5. Click OK to save your changes.
+    
+    
+ 6. Click Save to save your changes to the master configuration.
+    
+    
+ 7. Log out of the Administration Console.
+    
+    
+ 8. Restart the your server. 
+
+
+
+PRODUCT ALIAS/SYNONYM
+ WPS

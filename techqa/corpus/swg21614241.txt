@@ -1,0 +1,78 @@
+Title: IBM DFHSJ1004 An exception has been thrown by the route method of class com/ibm/cics/router/Router running in JVMSERVER jvmserver Exception java.lang. ThreadDeath - United States
+
+Text:
+OSGi DFHSJ1004 com/ibm/cics/router/Router JVMSERVER Exception java.lang. ThreadDeath java.lang.threadeath javalangthreadeath DFHSJ1100 OSGi bundle JVM com.ibm.cics.server.examples.hello EXCEPTION_FROM_JVMSERVER 5655S9700 R670 670 R700 700 HCI6700 5655-S97 5655S97 kixinfo TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ You have successfully installed the CICS Java™ examples for CICS Transaction Server for z/OS (CICS TS) V4.2. When you try to add DB2 support to your JVM server as outlined in the Java Applications in CICS manual you receive the following symptoms when starting your CICS region. 
+
+SYMPTOM
+The CICS joblog MSGUSR contains these messages when the example OSGi bundles are trying to install:
+
+DFHSJ0919 JVMSERVER jvmserver is processing any queued OSGi bundles.
+
+DFHSJ1004 [http://pic.dhe.ibm.com/infocenter/cicsts/v4r2/topic/com.ibm.cics.ts.messages.doc/cics_mc/dfhsj/SJ1004.html] An exception has been thrown by the route method of class com/ibm/cics/router/Router running in JVMSERVER jvmserver. Exception 'java.lang. ThreadDeath'.
+
+DFHSJ1100 [http://pic.dhe.ibm.com/infocenter/cicsts/v4r2/topic/com.ibm.cics.ts.messages.doc/cics_mc/dfhsj/SJ1100.html] An attempt to install an OSGi bundle into JVM server jvmserver has failed. OSGi bundle symbolic name com.ibm.cics.server.examples.hello, version 1.0.0, reason code EXCEPTION_FROM_JVMSERVER.
+
+DFHSJ1004 An exception has been thrown by the route method of class com/ibm/cics/router/Router running in JVMSERVER jvmserver. Exception 'java.lang. ThreadDeath'.
+
+DFHSJ1100 An attempt to install an OSGi bundle into JVM server jvmserver has failed. OSGi bundle symbolic name com.ibm.cics.server.examples.jcics, version 1.0.0, reason code EXCEPTION_FROM_JVMSERVER.
+
+DFHSJ1004 An exception has been thrown by the route method of class com/ibm/cics/router/Router running in JVMSERVER jvmserver. Exception 'java.lang.ThreadDeath'.
+
+DFHSJ1100 An attempt to install an OSGi bundle into JVM server jvmserver has failed. OSGi bundle symbolic name com.ibm.cics.server.examples.web, version 1.0.0, reason code EXCEPTION_FROM_JVMSERVER.
+
+DFHSJ0915 JVMSERVER jvmserver is now enabled and is ready for use.
+
+
+CAUSE
+You do not have the correct level of DB2 maintenance applied for CICS TS 4.2 prerequisites. This causes the OSGi bundles from DB2 to not install correctly and keeps later bundles from installing.
+
+DIAGNOSING THE PROBLEM
+Review your JVM trace file. The file will be in your WORK_DIR (the same location as stdout and stderr and will be named *.dfhjvmtrc). The dfhjvmtrc file will show the state of the OSGI framework when you get the error.
+
+When looking at the dfhjvmtrc file you should see a NullPointerException occurring and you should also see entries in the list of bundles with null names (those are the non-OSGi DB2 bundles).
+
+Here is an example of the output from the dfhjvmtrc file showing the problem:
+
+date time GMT I Router-Init-Thread com.ibm.cics.router.Router: Bundles:
+0 org.eclipse.osgi 3.6.1.R36x_v20100806 ACTIVE
+1 org.eclipse.osgi.services 3.2.100.v20100503 ACTIVE
+2 org.eclipse.equinox.log 1.2.100.v20100503 ACTIVE
+3 com.ibm.cics.server 1.300.0 ACTIVE
+4 com.ibm.cics.ras 1.300.0 ACTIVE
+5 com.ibm.ras 1.300.0 ACTIVE
+6 com.ibm.record 1.0.0 ACTIVE
+7 com.ibm.cics.domains 1.300.0 ACTIVE
+8 com.ibm.cics.osgi 1.0.0 ACTIVE
+9 com.ibm.cics.osgi.impl 1.0.0 ACTIVE
+10 null 0.0.0 ACTIVE
+11 null 0.0.0 ACTIVE
+12 com.ibm.mq.osgi.java 7.1.0.1 ACTIVE
+date time GMT I Router-Init-Thread com.ibm.cics.router.Router: OSGi Framework started.
+date time GMT E INSTALL_OSGIBUNDLE:Thread-12 com.ibm.cics.osgi.impl: @Exception installBundle
+java.lang.NullPointerException
+at com.ibm.cics.osgi.impl.Controller.installBundle(Controller.java:573)
+at com.ibm.cics.osgi.impl.Controller.acceptRequest(Controller.java:177)
+at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:60)
+at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:37)
+at java.lang.reflect.Method.invoke(Method.java:611)
+at com.ibm.cics.router.Router.route(Router.java:577)
+
+RESOLVING THE PROBLEM
+Ensure you have the PTFs applied for your release(s) of the following DB2 APARs for OSGi:
+
+
+ * PM36832 [http://www.ibm.com/support/docview.wss?uid=swg1PM36832] IBM DB2 DRIVER FOR JDBC AND SQLJ RELEASE 3.62 GENERAL SERVICE
+   UK69732 for RA12, UK69733 for R812, and UK69734 for R912 
+ * PM36838 [http://www.ibm.com/support/docview.wss?uid=swg1PM36838] IBM DB2 DRIVER FOR JDBC AND SQLJ RELEASE 4.12 GENERAL SERVICE
+   UK69741 for RA12 and UK69742 for R912
+
+
+These APARs are listed as CICS TS 4.2 pre-reqs [http://www-01.ibm.com/support/docview.wss?uid=swg27020857]. The APAR text does not mention OSGi, but without the PTFs, the OSGi bundles from DB2 do not install correctly and this prevents later bundles from installing. 
+
+
+PRODUCT ALIAS/SYNONYM
+ CICS/TS CICS TS CICS Transaction Server

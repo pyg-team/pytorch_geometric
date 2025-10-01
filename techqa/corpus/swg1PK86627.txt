@@ -1,0 +1,138 @@
+Title: IBM PK86627: DATATRIM PROCESS IS FAILING WHEN IT TRIES TO DELETE REQUEST_DATA. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  For the request table, the datatrim process splits the entire
+   rows in
+   terms of timestamps. Now, it was found that more than the commit
+   count
+   set rows can be related to the same timestamp being deleted,
+   thereby
+   resulting in DB resource errors.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Suggested hotfix is to delete in steps of commit count.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: ITCAM Managing Server users who have very
+   * large request data collection in their database and/or do not
+   * run the datatrim job for a few days leading to accumulation
+   * of large amount of data in the Octigate database.
+   ****************************************************************
+   * PROBLEM DESCRIPTION:
+   * Database resource errors when the datatrim is run when there
+   * is a large accumulation of request data in the Octigate
+   * database due to datatrim not run for a long time (e.g. one
+   * week).
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix for this APAR is contained in the following maintenance
+   pakcage:
+   
+      | interim fix | 6.1.0.5-TIV-ITCAMfWAS_SVR-IF0005
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK86627
+   
+   
+ * REPORTED COMPONENT NAME
+   ITCAM WAS MGING
+   
+   
+ * REPORTED COMPONENT ID
+   5724L62MS
+   
+   
+ * REPORTED RELEASE
+   610
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-05-14
+   
+   
+ * CLOSED DATE
+   2009-09-27
+   
+   
+ * LAST MODIFIED DATE
+   2009-09-27
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ITCAM WAS MGING
+   
+   
+ * FIXED COMPONENT ID
+   5724L62MS
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R610 PSY
+   UP

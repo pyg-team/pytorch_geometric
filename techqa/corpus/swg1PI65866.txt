@@ -1,0 +1,182 @@
+Title: IBM PI65866: MQ V8 DOES NOT SUPPORT A TMF MQ CLIENT RUNNING ON HP NONSTOP SERVER. MESSAGE AMQ5378 OCCURS AT THE CLIENT. - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Starting the connection from a 'WebSphere MQ Client for HP
+   Integrity NonStop Server Version 8.0.0.1' with TMF Gateway
+   to MQ V8 on z/OS, the following message appears in the MQ Client
+   log:
+   
+   AMQ5378: Participation in TMF transactions is not supported by
+   queue manager 'CSQ1'
+   
+   EXPLANATION:
+   TMF/Gateway has detected WebSphere MQ for z/OS queue manager
+   'CSQ1' does not support participation in TMF transactions.
+   
+   ACTION:
+   The version of z/OS queue manager that you are connecting to
+   does not support the TMF Gateway, please upgrade to a supported
+   release.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  n/a
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All users of WebSphere MQ for z/OS Version 8 *
+   *                 Release 0 Modification 0.                    *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: When a HP Non-Stop TMF client connects  *
+   *                      to V8 MQ for z/OS, it fails to          *
+   *                      establish an XA transaction. The MQ     *
+   *                      client generates error message AMQ5378  *
+   *                      in the client error log.                *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   The MQ client HP Non-Stop TMF application connects to a MQ for
+   z/OS queue manager and requests to establish a transactional
+   session sending a flow of XA_OPEN and XA_INFO messages. The
+   XA_INFO message is a string with key/value pairs. The queue
+   manager fails to properly parse the string and identify the key
+   names responding to the client as it does not support HP
+   Non-Stop TMF. The parsing failure is related to the CCSID that
+   queue manager is running. In this case the queue manager was
+   running with CCSID 278 where the '@' has code-point xEC instead
+   of x7C expected by the queue manager.
+   
+   Queue managers running with any of the following CCSIDs can be
+   affected by this problem:
+   273, 277, 278, 280, 284, 290, 297, 803, 871, 935, 1026, 1122,
+   1141, 1142, 1143, 1144, 1145, 1147, 1149, 1157, 1388, 1390,
+   4899, 5026.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The queue manager converts the XA_INFO string from the CCSID of
+   the queue manager to a system CCSID used by the compiler. This
+   fixes the parsing of the XA_INFO string and the client can
+   initiate a TMF transaction with the queue manager.
+   000Y
+   CSQMXARH
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI65866
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ Z/OS 8
+   
+   
+ * REPORTED COMPONENT ID
+   5655W9700
+   
+   
+ * REPORTED RELEASE
+   000
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-07-14
+   
+   
+ * CLOSED DATE
+   2016-11-29
+   
+   
+ * LAST MODIFIED DATE
+   2017-02-01
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    PI72356 [http://www-01.ibm.com/support/docview.wss?uid=swg1PI72356] UI42947
+   
+   
+
+MODULES/MACROS
+ *  CSQMXARH
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ Z/OS 8
+   
+   
+ * FIXED COMPONENT ID
+   5655W9700
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R000 PSY UI42947 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI42947]
+   UP17/01/27 P F701
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

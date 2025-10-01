@@ -1,0 +1,146 @@
+Title: IBM JR42738: BPMPROCESSINSTANCESCLEANUP ADMIN COMMAND TO CLEANUP BPD INSTANCE DATA. - United States
+
+Text:
+  A FIX IS AVAILABLE
+Version 8.0 Refresh Pack 1 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24033777]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Provide BPMProcessInstancesCleanup wsadmin command to cleanup
+   business process instance data on process server. Process
+   instances which are in COMPLETED or FAILED or CANCELED state can
+   be cleaned using this command.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  BPM v8.0 concurrent iFix.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  No further details available.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A fix is available.
+   
+   On Fix Central (http://www.ibm.com/support/fixcentral), search
+   
+   for JR42738:
+   
+   1. Select IBM Business Process Manager with your edition from
+     the product selector, the installed version to the fix pack
+     level, and your platform, and then click Continue.
+   
+   2. Select APAR or SPR, enter JR42738, and click Continue.
+   
+   When you download fix packages, ensure that you also download
+   the readme file for each fix. Review each readme file for
+   additional installation instructions and information about the
+   fix.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  Not applicable
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR42738
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM ADVANCED
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9400
+   
+   
+ * REPORTED RELEASE
+   800
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-05-08
+   
+   
+ * CLOSED DATE
+   2014-12-11
+   
+   
+ * LAST MODIFIED DATE
+   2014-12-11
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   BPM STANDARD
+   
+   
+ * FIXED COMPONENT ID
+   5725C9500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R800 PSY
+   UP

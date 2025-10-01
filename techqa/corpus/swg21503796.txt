@@ -1,0 +1,51 @@
+Title: IBM No official support connecting to the Network License Manager through VPN - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ The Network License Administrator's Guide document section, "Installing the product on the local Desktop Computers" states the following: "Note: We do not officially support connecting to the network license manager through VPN." What exactly does this mean? 
+
+CAUSE
+Documentation phrase
+
+ANSWER
+This statement is trying to convey that IBM SPSS client products do not officially support connecting to Sentinel License Manager (SLM) installed on another machine and requesting license through VPN. SLM is not CPU intensive and does not require large amounts of data transfer. It simply needs to be available all the time for license verification. 
+
+Historically the scenario has gone something like:
+
+You have deployed Modeler 16.0 FP1 with Concurrent user
+licensing. You have internal and external clients trying to
+access a license token from this license manager. The external
+clients consistently cannot receive a license, though it seems
+clear their initial communication has succeeded and a license
+token actually has been checked out.
+
+The problem may be the MTU setting on your VPN. Safenet
+Sentinel RMS License Manager does two things with the client/LM
+communication:
+1) It pads the packets of its response to the client to 1460 bytes
+2) It sets a "Do not Fragment" bit.
+
+So if your MTU setting is less than 1460 bytes, your VPN will
+want to fragment the packet, but the "Do not fragment" bit is
+set and so it can't. The net effect is that the request for a
+token comes in, the LM responds, but neither the LM response to
+client nor the client acknowledgement it has the token gets back
+to the involved parties. After 300 seconds, both give up -- the
+LM thinking the client is no longer on the network, and the
+client thinking the LM doesn't exist.
+
+An Enhancement Request has been submitted to SafeNet to address
+this issue (our ECM00206067).
+
+RELATED INFORMATION
+ Need more help? Our Modeler forum is Live! [https://developer.ibm.com/answers/topics/modeler/?smartspace=predictive-analytics]
+Need more help? Our Licensing forum is Live! [https://developer.ibm.com/answers/topics/spsslicensing.html]
+
+
+ 
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Analytics SPSS Statistics Not Applicable Business Analytics SPSS Amos Windows Not Applicable

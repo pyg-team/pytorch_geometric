@@ -1,0 +1,52 @@
+Title: IBM "failed to create empty document" error shown when viewing images on IDM Web Services environment. - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ User may encounter "failed to create empty document" error message pops up when using IDM Viewer 4.0.2 JA version with FP5, FP6 and FP7. 
+
+SYMPTOM
+This would happen relatively highly frequent, successive access, and found for Japanese language version, but being thought of as potentially affecting other DBCS language versions. 
+
+When a user accesses to the images through IDM Web Services server using Microsoft Internet Explorer (IE) 6.0, below error message is shown up to the screen (the message is to be translated as "failed to create empty document" and a generic error message in MFC) : 
+
+
+[/support/docview.wss?uid=swg21448993&amp;aid=1] 
+
+ 
+
+When this starts to show up, the user may see it continuously, and fairly often, IDM (Desktop) Viewer program is launched in the background. The user have to kill all those errors using Windows Task Manager, in the end. 
+
+ 
+
+Re-launching IE can temporary work the issue around, but user will see this trouble again and again. 
+
+
+CAUSE
+This has not occurred for IDM Viewer 4.0.2 FP4 JA or earlier, since it had been fixed before. The direct cause is the existence of the hot-key character "(F)" in the IDM Web Viewer (idmview.exe) when the menu item labels are localized with Japanese language. 
+
+[/support/docview.wss?uid=swg21448993&amp;aid=2]
+
+Unfortunately, in the FP5, FP6 and FP7 (all for JA), this hot-key character (F) for File menu label revived as graphical user interface requirements, but without any internal resolutions to let this hot-key "(F)" effective. 
+
+Removing this hot-key character can apparently suppresses this issue. So the users of IDM Web Viewer 4.0.2 FP5, FP6 and FP7 (all for JA) are encouraged to upgrade their system to FP8 JA, where the IDM Web Viewer (idmview.exe) in this fix pack has dropped off this hot-key character "(F)". Please note upgrade requires server side as well, because unmatched version combinations between IDM Web Services server and client are not supported.
+
+
+
+RESOLVING THE PROBLEM
+Download IDM Desktop/Web Services 4.0.2 FP8 JA or later and apply to your system as described in the below. 
+
+ 
+
+ 1. Access our Fix Central Site:
+    http://www.ibm.com/support/fixcentral/ [http://www.ibm.com/support/fixcentral/] 
+ 2. Then make selections as below and proceed.  * Product Group: Information Management 
+     * Product: FileNet IDM Desktop and Web Services 
+     * Installed Version: 4.0.2.7 (*) 
+     * Platform: Windows
+    
+    
+ 3. Input your IBM ID and passwords if requested 
+ 4. Choose IDMDT-4.0.2-008-ja or later version (and corresponding readme file), then download it. 
+ 5. Follow the instruction in the readme file and upgrade your IDM Web Services server and client environment.

@@ -1,0 +1,90 @@
+Title: IBM How to set auto commit on a WebSphere Application Server Connection - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How do I set auto commit on a WebSphere Application Server Connection? 
+
+ANSWER
+Concerning auto commit, 
+Setting auto commit on a connection is a J2CA concept and is not necessarily a WebSphere Application Server concept. You do, however, set autoCommit on a connection ... by default auto commit in WebSphere Application Server is set to true, but you can set it to false, by calling connection.setAutoCommit(false) as is shown in the following URL [http://pic.dhe.ibm.com/infocenter/wasinfo/v7r0/index.jsp?topic=%2Fcom.ibm.websphere.nd.doc%2Finfo%2Fae%2Fae%2Fcdat_daexcp.html] and as shown below:
+
+//get a userTransaction
+javax.transaction.UserTransaction tran = getSessionContext().getUserTransaction();
+//retry indicates whether to retry or not
+//numOfRetries states how many retries have
+// been attempted
+boolean retry = false;
+int numOfRetries = 0;
+java.sql.Connection conn = null;
+java.sql.Statement stmt = null;
+do {
+try {
+//begin a transaction
+tran.begin();
+//Assumes that a datasource has already been obtained
+//from JNDI
+conn = ds.getConnection();
+conn.setAutoCommit(false);
+stmt = conn.createStatement();
+stmt.execute("INSERT INTO EMPLOYEES VALUES
+(0101, 'Bill', 'R', 'Smith')");
+tran.commit();
+retry = false;
+} catch(java.sql.SQLException sqlX)
+{
+// If the error indicates the connection is stale, then
+// rollback and retry the action
+if (com.ibm.websphere.rsadapter.WSCallHelper
+.getDataStoreHelper(ds)
+.isConnectionError(sqlX))
+{
+try {
+tran.rollback();
+} catch (java.lang.Exception e) {
+//deal with exception
+//in most cases, this can be ignored
+}
+if (numOfRetries < 2) {
+retry = true;
+numOfRetries++;
+} else {
+retry = false;
+}
+}
+else
+{
+//deal with other database exception
+retry = false
+}
+} finally {
+//always cleanup JDBC resources
+try {
+if(stmt != null) stmt.close();
+} catch (java.sql.SQLException sqle) {
+//usually can ignore
+}
+try {
+if(conn != null) conn.close();
+} catch (java.sql.SQLException sqle) {
+//usually can ignore
+}
+}
+} while (retry) ;
+
+. 
+The above means that you have to manually commit the connection ... 
+i.e. connection.commit() before you close the connection. 
+
+Further, you can only do this when you're outside of a global 
+transaction (in a Local Transaction Containment or LTC). 
+If you are within a global transaction, WebSphere Application Server 
+handles the commits for you.
+
+There is no data source custom property for autoCommit. To set this property in WebSphere Application Server, you need to call setAutoCommit on the connection, as shown above. 
+
+This information is not restricted to IBM WebSphere Application Server 
+but it is part of development using JAVA Enterprise Edition. 
+
+The Javadoc from ORACLE/Sun on auto commit...etc is located here. [http://docs.oracle.com/javase/1.5.0/docs/api/java/sql/Connection.html] :

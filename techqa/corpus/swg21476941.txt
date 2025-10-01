@@ -1,0 +1,23 @@
+Title: IBM Where I can find the Sentinel License Manager server that I can download and install? - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Where I can find the Sentinel License Manager server that I can download and install? 
+
+RESOLVING THE PROBLEM
+The Sentinel License Manager is available on the IBM Download site, www.ibm.com/software/passportadvantage 
+
+For all PassportAdvantage inquiries such as product search, download and login problems, please contact palogin@ie.ibm.com.
+
+RELATED INFORMATION
+ Need more help? Our Modeler forum is Live! [https://developer.ibm.com/answers/topics/modeler/?smartspace=predictive-analytics]
+Need more help? Our Licensing forum is Live! [https://developer.ibm.com/answers/topics/spsslicensing.html]
+Need more help? Our Licensing forum is Live! [https://developer.ibm.com/answers/topics/spsslicensing.html]
+
+
+ 
+
+HISTORICAL NUMBER
+ 89171

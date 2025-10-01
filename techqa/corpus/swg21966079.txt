@@ -1,0 +1,118 @@
+Title: IBM Mustgather: Information required by the support team to investigate Outofmemory (OOM) issues in IBM Sterling B2B Integrator (SBI) - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Mustgather: What is the information required by the support team to investigate Outofmemory (OOM) issues in IBM Sterling B2B Integrator (SBI)? 
+
+ANSWER
+Collecting troubleshooting data for problems with IBM Sterling B2B Integrator (SBI) before calling IBM Support will help familiarize you with the troubleshooting process and save your time.
+
+IBM support would need the following data to troubleshoot overall system slowness issues. If you encounter overall application slowness issues then collect the data as listed below and share with the IBM support team.
+
+IBM support will review this initial data collected and would ask further on specific information needed to troubleshoot the issue further. 
+
+Note: If you are running on a cluster environment then provide the below information from all the nodes. 
+
+
+Information needed on a few common questions to troubleshoot or narrow down the issue:
+
+
+ * When did this problem start happening? 
+ * How often does this problem occur? 
+ * Does this problem occurs with any pattern (Ex. When processing large files like > 150MB file, When running this specific BP, when more similar BP runs concurrently etc...)? 
+ * Are you able to reproduce this issue? 
+ * The OOM error occurred with any specific BP? 
+ * Any tuning has been done on the application recently? 
+ * Any fixpack install done on SBI application? 
+ * Any changes done on the operating system (OS) recently? 
+ * What is the Physical Memory available on the server? 
+ * Is SBI running on a dedicated server or there are other applications running as well? If there are other applications running then provide those details as well. 
+ * Are you running SBI on a VMWare host? If yes, what is memory allocated to the VM host and memory available on the server? 
+ * Any volume increase in the processing (new trading partner added, more documents coming into the application?) 
+
+Data needed for troubleshooting: 
+
+If you are experiencing the OOM issue currently then provide the below information as much as possible or whatever you are able to capture: 
+ * All the logs from <SBI_INSTALL>/logs directory. 
+ * Provide heapdump, javacore, snap file from <SBI_INSTALL>/noapp/bin directory that are generated during OOM if any. 
+ * Provide verbosegc logs if you have enabled it already. The verbosegc information will be written into <SBI_INSTALL>/noapp.log unless you have explicitly specified a location. 
+ * If the OOM happened with any specific BP then provide the following. 
+ *   *   1. The business process 
+       2. The business process execution screen shot 
+       3. The Primary Document 
+       4. The status report from the failed step
+      
+      
+   
+   
+
+ * Provide the Performance tuning wizard screen shot. Navigate to dashboard > Operations > System > Performance > tuning > View Performance configuration to capture the screen shot. 
+ * If the application did not recover from OOM automatically then verify if all the SBI processes are running. Capture this details using below commands.
+
+ *   *  ps -ef | grep java (UNIX/Linux) Verify if all the SBI services are running (Windows) 
+   
+   
+
+ * Check the queueWatcher and capture the heap memory usage details 
+ * Verify if SBI able to make connections to the database during OOM? You can verify this by running below command from <SBI_INSTALL>/bin directory. 
+ *   *   1. db_exec.cmd "select * from SI_VERSION" (Windows) 
+       2. db_exec.sh "select * from SI_VERSION" (UNIX/Linux)
+      
+      
+   
+   
+
+
+
+Other system resource related information: 
+ * What is the CPU utilization on the server during OOM? You can run the command to get basic details of CPU usage. Example:
+
+ *   *  top -H (LINUX) tprof -skex sleep 60 (AIX) ProcessExplorer in Windows (Refer - http://technet.microsoft.com/en-us/sysinternals/bb896653.aspx [http://technet.microsoft.com/en-us/sysinternals/bb896653.aspx]) 
+   
+   
+
+ * 
+ * 
+ * 
+ * https://www.ibm.com/developerworks/community/blogs/SterlingB2B/entry/Enabling_JMX_connection_in_IBM_Sterling_B2B_Integrator_and_monitoring_IBM_Sterling_B2B_Integrator_from_remote_machine_or_locally?lang=en
+
+ * What is the Physical Memory utilization on the server during OOM? You can get the physical memory usage using basic OS commands depending on the OS.
+
+
+Properties files needed: 
+
+Navigate to <SBI_INSTALL>/properties directory and provide the following files. 
+
+ *   *  tuning.properties customer_overrides.properties noapp.properties noapp.properties_platform_ifcresources_ext 
+   
+   
+
+Gather the dump_info (To Gather dump_info refer the below link). 
+
+See: How to run a dump_info [http://www.ibm.com/support/docview.wss?uid=swg21562125] 
+
+When you are rebooting the system make sure you have enabled the following to collect the below needed data points to troubleshoot the issue in case there is another occurrence of same issue (along with the above data points) 
+
+1. Enable Heapdump 
+2. Enable verbosegc logs 
+
+To enable you can follow the steps below. 
+
+Navigate to Administration > Operations > System > Performance Tuning > Edit performance tuning and turn on the flags for the below setting to ' true'. 
+
+[/support/docview.wss?uid=swg21966079&aid=1] [/support/docview.wss?uid=swg21966079&aid=1] 
+
+
+When you notice the issue again, if the OOM is system generated (systhrow) then the system will generate the heapdump and javacore and snap files automatically. If you are experiencing slowness or any performance issues then take few thread dumps (3-4) at 2 minutes interval during the issue time frame. 
+
+Enable DEBUG mode for the below logs: 
+
+1. noapp.log 
+2. system.log 
+3. wf.log 
+4. ops.log 
+5. opsserver.log 
+
+When you see the issue next time, provide all the above mentioned details to support. That would help the support team to troubleshoot the issue.

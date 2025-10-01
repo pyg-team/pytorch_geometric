@@ -1,0 +1,27 @@
+Title: IBM QRadar: SSH connections to QRadar using PuTTY may fail with a fatal error after upgrading to 7.2mr3 - United States
+
+Text:
+qradar; ssh; upgrade; putty TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ You may find that you receive a fatal error when attempting a SSH connection to QRadar using PuTTY after upgrading to QRadar 7.2mr3. 
+
+SYMPTOM
+After the upgrade, the following PuTTY exception may be received:
+
+PuTTY Fatal Error:
+Couldn't agree a client-to-server cipher (available: aes128-ctr,aes192-ctr,aes-256-ctr,arcfour256,arcfour128,arcfour)
+
+
+CAUSE
+An older version of PuTTY may be in use which does not support the cipher used by this version of QRadar. 
+
+RESOLVING THE PROBLEM
+Upgrading to PuTTY version .60 or later will address the issue.
+
+Where do you find more information? 
+
+
+
+
+[/support/docview.wss?uid=swg21687060&aid=1] [http://ibm.biz/QRadar-KC] [/support/docview.wss?uid=swg21687060&aid=2] [https://ibm.biz/qradarforums] [/support/docview.wss?uid=swg21687060&aid=3] [http://ibm.biz/qradarknowledge] [/support/docview.wss?uid=swg21687060&aid=4] [http://ibm.biz/SecSuptUTube] [/support/docview.wss?uid=swg21687060&aid=5] [http://ibm.biz/qradarsoftware] [/support/docview.wss?uid=swg21687060&aid=6] [http://ibm.biz/MyNotification] [/support/docview.wss?uid=swg21687060&aid=7] [http://ibm.biz/SuptRegQuikStart]

@@ -1,0 +1,24 @@
+Title: IBM Is it possible to use multiple outbound SMTP ports? - United States
+
+Text:
+smtp; multiple ports; outbound; mail; e-mail; email; messages; destination server; domino; use; configure; possible TECHNOTE (FAQ)
+
+QUESTION
+In Lotus® Domino®, you would like the ability to use multiple outbound SMTP ports.
+
+
+Is it possible to use multiple outbound SMTP ports?
+
+
+ANSWER
+An enhancement request for this new functionality has been submitted to Quality Engineering as SPR# DJOE567FV9. 
+
+Currently, it not possible to use more than one outbound SMTP port. 
+
+A workaround would be to redirect all SMTP traffic for a specific destination to an alternate server with the standard port (using a Foreign SMTP domain document). The alternate server must be configured to route outbound SMTP mail using the specific port as determined by the destination server.
+
+
+
+
+ * 
+ *

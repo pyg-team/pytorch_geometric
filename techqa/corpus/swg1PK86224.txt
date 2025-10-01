@@ -1,0 +1,185 @@
+Title: IBM PK86224: A SPUFI SELECT AGAINST THE UNICODE MQSERIES TABLE GETS          SQLCODE-331 (CHARACTER CONVERSION CANNOT BE PERFORMED). - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Below is the error description per the change team's analyis of
+   the doc:
+   .
+   I've reviewed my DSN1SDMP for this SQLCODE-331 and here are my
+   findings.
+   .
+   Actually, we're trying to convert value '600' (x'F6F0F0') in
+   column PRODLVL from CCSID 1208 to CCSID 37, but as you can see
+   the data showed in the dump is in EBCDIC and also it can be
+   confirmed from the LOAD data in SYSREC. So -331 is issued here
+   for the invalid mixed data.
+   .
+   7E3B2A69                F6F0F0   00800000 |          600.... |
+   .
+   From the DDL we can see, table "CSQ"."ADMIN_B_QSG" is defined
+   in UNICODE, so all the data should be stored in UNICODE. It's
+   strange to me that all the data unloaded is in EBCDIC.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All users of WebSphere MQ for z/OS Version 7 *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: SQL queries of the WebSphere MQ tables  *
+   *                      stored in DB2 end with SQLCODE -331     *
+   *                      The message issued is:                  *
+   *                      DSNT408I SQLCODE = -331, ERROR:         *
+   *                      CHARACTER CONVERSION CANNOT BE          *
+   *                      PERFORMED BECAUSE A STRING, POSITION 4, *
+   *                      CANNOT BE CONVERTED FROM                *
+   *                      1208 TO 1146, REASON 16 DSNT418I        *
+   *                      SQLSTATE   = 22021 SQLSTATE RETURN      *
+   *                      CODE DSNT415I SQLERRP    = DSNXROHB     *
+   *                      SQL PROCEDURE DETECTING ERROR           *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   Installation of WebSphere MQ for z/OS Version 7 was undertaken
+   using a version of DB2 for z/OS that supports UNICODE. The
+   DB2 values for APPENSCH and ENSCHEME have been set to UNICODE
+   and since the MQ supplied jobs for binding plans and creating
+   objects does not specify a value, this UNICODE value is
+   adopted for these binds and in these object definitions.
+   Thus the EBCDIC data that MQ stores in the tables is interpreted
+   by DB2 as UNICODE data.
+   MQ itself remains unaffected by this discrepancy as the plans
+   also adopt the installation defined default.
+   However, when using a program such as SPUFI, which is bound
+   using a plan specifying encoding of EBCDIC, the query of the MQ
+   tables using such a plan will also cause attempted conversion
+   from the UNICODE defined table storing the EBCDIC data. This
+   conversion fails with SQLCODE -331.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The WebSphere MQ for z/OS Version 7 supplied jobs to bind plans
+   used in accessing the tables stored in DB2 have been altered to
+   include ENCODING(EBCDIC). The jobs to define the databases,
+   tablespaces and tables that MQ uses have been altered where
+   required to include a CCSID EBCDIC statement.
+   000Y
+   CSQ45BPL
+   CSQ45CDB
+   CSQ45CTB
+   CSQ45CTS
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK86224
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ Z/OS V7
+   
+   
+ * REPORTED COMPONENT ID
+   5655R3600
+   
+   
+ * REPORTED RELEASE
+   000
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-05-08
+   
+   
+ * CLOSED DATE
+   2009-08-11
+   
+   
+ * LAST MODIFIED DATE
+   2009-10-03
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    PK85218 [http://www-01.ibm.com/support/docview.wss?uid=swg1PK85218]
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UK49058
+   
+   
+
+MODULES/MACROS
+ *  CSQ45BPL CSQ45CDB CSQ45CTB CSQ45CTS
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ Z/OS V7
+   
+   
+ * FIXED COMPONENT ID
+   5655R3600
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R000 PSY UK49058 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK49058]
+   UP09/09/05 P F909
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

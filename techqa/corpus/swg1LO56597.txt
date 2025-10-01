@@ -1,0 +1,148 @@
+Title: IBM LO56597: NOTES CLIENT CRASH 852 ON KVFILTER.KV_AUTORECFILE AND DUMP EVENT "SYSTHROW" (00040000) DETAIL "JAVA/LANG/OUTOFMEMORYERROR" - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Notes client crash 852 on  kvfilter.KV_AutoRecFile and Dump
+   Event "systhrow" (00040000) Detail "java/lang/OutOfMemoryError"
+   
+   ############################################################
+   ### FATAL THREAD 11/13 [ntaskldr:  2f3c:  366c]
+   ### FP=0x00000033, PC=0x041c908f, SP=0x041ae2a0
+   ### stkbase=041b0000, total stksize=262144, used stksize=7520
+   ### EAX=0x00000000, EBX=0x00000000, ECX=0x041affdc,
+   EDX=0x001f0002
+   ### ESI=0x04576308, EDI=0x00000000, CS=0x0000001b, SS=0x00000023
+   ### DS=0x00000023, ES=0x00000023, FS=0x0000003b, GS=0x00000000
+   Flags=0x00010246
+   Exception code: c000001d (ILLEGAL_INSTRUCTION)
+   ############################################################
+    [ 1] 0x041c908f kvfilter.KV_AutoRecFile+6223
+   
+   NULL
+   ----------------------------------------------------------------
+   --------
+   0SECTION       TITLE subcomponent dump routine
+   NULL           ===============================
+   1TISIGINFO     Dump Event "systhrow" (00040000) Detail
+   "java/lang/OutOfMemoryError" "Failed to create a thread: retVal
+   -1073741830, errno 12" received
+   1TIDATETIME    Date:                 2010/11/14 at 02:38:27
+   1TIFILENAME    Javacore filename:    C:/Documents and
+   Settings/srzbri/Local Settings/Application
+   Data/Lotus/Notes/Data/workspace/logs\javacore.20101114.023826.48
+   32.0003.
+   txt
+   1TIREQFLAGS    Request Flags: 0x81 (exclusive+preempt)
+   1TIPREPSTATE   Prep State: 0x14
+   (exclusive_vm_access+heap_prepared)
+   NULL
+   ----------------------------------------------------------------
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  none exist
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  This APAR is closed as FIN. We have deferred the fix to a
+    future release.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *  This APAR is associated with SPR# JFRA8BJETZ.
+   
+   This APAR is closed as FIN. We have deferred the fix to a
+    future release.
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   LO56597
+   
+   
+ * REPORTED COMPONENT NAME
+   NOTES CLIENT
+   
+   
+ * REPORTED COMPONENT ID
+   5724E6255
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-11-25
+   
+   
+ * CLOSED DATE
+   2011-03-16
+   
+   
+ * LAST MODIFIED DATE
+   2011-07-07
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R700 PSN
+   UP

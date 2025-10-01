@@ -1,0 +1,171 @@
+Title: IBM i NODEJS: Troubleshooting Recommendations - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ 
+Nodejs for the IBM i is an open source product included in 5733OPS.
+
+Downloadable from Entitled System Support: http://www-304.ibm.com/servers/eserver/ess/index.wss [http://www-304.ibm.com/servers/eserver/ess/index.wss]
+
+5733OPS F_MULTI_NLV_110_IBM_i_Open_Source_Solutions
+
+Current versions:
+node to v0.10.35
+npm to v1.4.28
+
+This documentation will provide some error codes and solutions for those using Nodejs for IBM i.
+
+
+
+RESOLVING THE PROBLEM
+ 
+
+NOTICE: THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED. 
+
+
+Nodejs for IBM i was released in January 2015. This open source software can be obtained from 5733OPS media. For additional information about Nodejs can be found in DCF N1020583 Nodejs Common Questions & Basic Facts: Database 'DCF Technotes (IBM i)', View 'Products', Document 'Nodejs Common Questions & Basic Facts.' [http://www-01.ibm.com/support/icons/doclink.gif] [http://www.ibm.com/support/docview.wss?uid=nas8N1020583] 
+
+ 
+
+List of common errors and solutions:
+
+
+ *  - [http://www.ibm.com/i/c.gif] Error: Cannot find module  
+   
+   This error is typically due to the location of your .js file. 
+   
+   
+   Running PASE and initiating command node test.js causing error [/support/docview.wss?uid=nas8N1020591&aid=1] [/support/docview.wss?uid=nas8N1020591&aid=1]
+   
+   Solution:Ensure that the file location in the stated command does exist. Typically it is easier to place your .js file in the same folder as the <Node Root>/bin folder. However you can provide the exact location in the CL as well example: node /home/myfolder/test.js. 
+   
+   
+   
+
+
+ *  - [http://www.ibm.com/i/c.gif] Error: 001-0078 Process ended by signal 5  
+   
+   This is typically due to the attempting to run Nodejs in QShell (STRQSH) rather than PASE. 
+   
+   
+   PASE commands entered npm -v and node -v both giving out error qsh:001-0078 Process ended by signal 5. [/support/docview.wss?uid=nas8N1020591&aid=2] [/support/docview.wss?uid=nas8N1020591&aid=2]
+   
+   Solution: Use PASE (call qp2term) rather than QShell for Nodejs scripts. You may attempt to change system valueQIBM_MULTI_THREADEDto 'Y'and test if you must use QShell.
+   
+   
+   
+
+
+ *  - [http://www.ibm.com/i/c.gif] Error: Unexpected string  
+   
+   This normally is due to invalid or incorrect string variables assigned inside of the .js script being called by Nodejs. 
+   
+   
+   Running PASE and invoking node test4.js command. This  returns unexected string error. [/support/docview.wss?uid=nas8N1020591&amp;aid=3]
+   
+   Solution: Verify that you have used the correct values for your string variables. 
+   
+   
+   
+
+
+ *  - [http://www.ibm.com/i/c.gif] Error: Object xxxx has no method 'xxxx'  
+   
+   Nodejs can invoke calls from installed packages (add-ons). There are standard add-ons included with Nodejs and these packages will attempt to call functions within those packages. If you attempt to call an invalid or erroneous (syntax error) functions you may receive this error. 
+   
+   
+   Running PASE and invoking node test.js command then causes Object class error for an unknown method given. [/support/docview.wss?uid=nas8N1020591&aid=4] [/support/docview.wss?uid=nas8N1020591&aid=4]
+   
+   Solution: Review the function that is being called and verify that function is indeed included with the API that is being used inside of Nodej. For a list of APIs you can review: http://nodejs.org/api/ [http://nodejs.org/api/]
+   
+   
+   
+
+
+ *  - [http://www.ibm.com/i/c.gif] Error: SQLSTATE=PAERR SQLCODE=-1  
+   
+   This error occurs typically when attempting to have a Nodejs application connect to a back end DB2 database using XML services.
+   
+   PASE command test.js executed and SQLSTATE=42705 SQLCODE--950 and database G [/support/docview.wss?uid=nas8N1020591&aid=5] [/support/docview.wss?uid=nas8N1020591&aid=5]
+   
+   Solution: Verify that we have these PTF installed on the System i:
+   
+   
+    * 
+    *  iOS Version PTF Product Description V7R2 SI56287 5770DG1 OSP-DB CREATE XMLSERVICE PROCEDURES V7R1 SI56296 5770DG1 OSP-DB CREATE XMLSERVICE PROCEDURES 
+   
+   If applying the PTF is not possible, running call QHTTPSVR/QPZ1XS13 can also overlay the XMLSERVICE tables which are missing. 
+   
+
+
+ *  - [http://www.ibm.com/i/c.gif] Error: listen EADDRINUSE  
+   
+   This issue is caused by either the port or IP already being in use with an existing connection. 
+   
+   
+   Executing node serverssl.js command while in PASE thus causing listen EADDRINUSE error. [/support/docview.wss?uid=nas8N1020591&aid=6] [/support/docview.wss?uid=nas8N1020591&aid=6]
+   Solution: Verify that your application isn't already running in a different PASE session. You can adjust your IP and port listener by editing your .js script:
+   
+   Example 
+   
+    * 
+    * app.listen(80, '192.168.0.101');
+   
+   
+   or  * 
+    * http.createServer(onRequest).listen(80,'192.168.0.101');
+   
+   
+   In this example we are using port 80 for IP 192.168.0.101. 
+   
+
+
+ *  - [http://www.ibm.com/i/c.gif] Error: Dependent module /usr/lib/libcrypto.a(libcryto.so.1) could not be loaded.  
+   
+   Nodejs is depended on SSH libraries to function properly. 
+   
+   
+   PASE command node -v and npm -v both fail with 0590-150 and 0590-152 error because of missing libcrypto.a library files. [/support/docview.wss?uid=nas8N1020591&aid=7] [/support/docview.wss?uid=nas8N1020591&aid=7]
+   
+   Solution: Ensure that PTF SI55522 has been installed and in good status. This normally is included with 5770DG1 groups (level 31). If the HTTP groups has not been applied since the install of 5733OPS, it is recommended that you reapply the HTTP groups. Verify in WRKPTFGRP if an IPL is required.
+   
+   For more information review DCF N1020583 Nodejs Common Questions & Basic Facts: Database 'DCF Technotes (IBM i)', View 'Products', Document 'Nodejs Common Questions & Basic Facts.' [http://www-01.ibm.com/support/icons/doclink.gif] [http://www.ibm.com/support/docview.wss?uid=nas8N1020583] 
+   
+   
+   
+
+
+ *  - [http://www.ibm.com/i/c.gif] Unexpected response:[1G [0J> [3G  
+   
+   This does not specify an error. However, verify the command you are using to invoke the "node" command. 
+   
+   
+   While in PASE we attempt node command and recieve not an error but response [1G [0J> [3G [/support/docview.wss?uid=nas8N1020591&aid=8] [/support/docview.wss?uid=nas8N1020591&aid=8]
+   
+   Solution: If attempting command "node -v" and you are receiving this error, we recommend that you verify PTF SI55763 for 5733OPS has been properly installed. If not ensure that you do have the latest HTTP groups applied as it is included in level 32 of the HTTP group. 
+   
+   For more information review DCF N1020583 Nodejs Common Questions & Basic Facts: Database 'DCF Technotes (IBM i)', View 'Products', Document 'Nodejs Common Questions & Basic Facts.' [http://www-01.ibm.com/support/icons/doclink.gif] [http://www.ibm.com/support/docview.wss?uid=nas8N1020583] 
+   
+   
+   
+
+
+ *  - [http://www.ibm.com/i/c.gif] Additional Considerations: 
+   Node as well the npm command uses temporary folders inside your /home/yourprofile/.npm/. You may find it helpful to clear out folder .npm folder and .rnd file when attempting to troubleshoot issues with node.js or npm.js commands. (The .rnd file may not exist. This file can be used by OpenSSL as well as the npm command.) 
+   
+   
+   [/support/docview.wss?uid=nas8N1020591&aid=9] [/support/docview.wss?uid=nas8N1020591&aid=9]
+   
+   
+   
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Operating System IBM i Operating System IBM i 7.2 Operating System IBM i 7.1 
+PRODUCT ALIAS/SYNONYM
+ NODEJS
+TROUBLESHOOTING
+ERROR

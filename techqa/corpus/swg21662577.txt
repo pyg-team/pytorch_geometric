@@ -1,0 +1,36 @@
+Title: IBM ITCAM for SOA v7.1.1 FP3 WMB Data Collector - SOA Header - United States
+
+Text:
+CAMSOAMBDC CAMSOAALL TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ How are the SOA message headers removed completely from the WMB Message flows? 
+
+SYMPTOM
+After disabling, recreating the message flows, and un-installing the SOA D4 agent, running with TT Data Collector, the SOA headers are still present in the WMB Message flows.
+
+
+RESOLVING THE PROBLEM
+1. Drop the entire WMB flow. Install a new fresh flow. Confirm SOA Agent is not installed at all in their system.
+
+2. Checked original SOA v7.2 FP1 install and configuration directories make sure no remaining files present.
+
+3. Enabled all KK3 UserExits on WMB Flows and Restarted WMB.
+Navigate to /opt/IBM/ITM_TT directory showing in WMB environment variables
+KKD3.dc.properties file there shows KD4 integration set to false
+‘default.kd4.enabled=false’ 
+
+4. Check for active SOA logs in /opt/IBM/ITM_TT KD4 log directories
+
+5. From /var/mqsi/common/profiles/KK3UserExitProfile.sh, 
+MQSI Exit Path set to /opt/IBM/IBM_TT
+
+6. Stop/Start WMB. 
+
+7. Result should be, No SOA in the header in the message flow.
+
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ ITCAM for SOA

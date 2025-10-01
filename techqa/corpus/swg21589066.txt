@@ -1,0 +1,53 @@
+Title: IBM Clarity Server - Error loading the web application: Internet Explorer has stopped working - United States
+
+Text:
+bex TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When loading Clarity in Internet Explorer, there is an error generated that causes Clarity to stop 
+
+SYMPTOM
+"Internet Explorer has stopped working" error when loading Clarity 
+
+Problem signature 
+
+Problem Event Name: BEX 
+
+Application Name: iexplore.exe 
+
+Application version: 8 
+
+Fault Module Name: StackHash_0a9e
+
+CAUSE
+The Windows Kernel monitors a program's execution. If the Kernel detects an attempt to run code from a memory page that is not marked executable, the Kernel halts execution of the program, resulting in a "crash." This is a security measure to help ensure that memory-related vulnerabilities (for example, buffer overflows) in the application cannot be exploited in order to execute arbitrary code. 
+
+For additional details check the Microsoft website: http://msdn.microsoft.com/en-us/library/dd371730%28v=VS.85%29.aspx [http://msdn.microsoft.com/en-us/library/dd371730%28v=VS.85%29.aspx]
+
+
+ENVIRONMENT
+IBM Clarity Server 7 
+
+Internet Explorer 8
+
+
+DIAGNOSING THE PROBLEM
+Open Internet Explorer and load Clarity. Internet Explorer stops working and generates the error.
+
+
+
+RESOLVING THE PROBLEM
+In order to solve this issue, there are 2 settings that need to be disabled in Internet Explorer using the steps below: 
+
+1. Open Internet Explorer
+2. Switch to the Advanced tab.
+3. Click the Reset Internet Explorer Settings button.
+4. Click Reset to confirm the operation.
+5. Click Close when the resetting process finished.
+6. Uncheck Enable third-party browser extensions option.
+7. Uncheck Enable memory protection to help mitigate online attacks in the Settings box
+8. Click Apply, click OK. 
+
+
+RELATED INFORMATION
+#Internet Explorer 8 - Data Execution Protection/NX [http://msdn.microsoft.com/en-us/library/dd371730%28v=VS.85%29.aspx]

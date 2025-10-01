@@ -1,0 +1,131 @@
+Title: IBM IJ02492: APM WAS DC VERSION DETAILS MISSING - United States
+
+Text:
+  READMES ARE AVAILABLE
+8.1.4.0-IBM-APM-SERVER-IF0003 [http://www-01.ibm.com/support/docview.wss?uid=isg400003715]
+8.1.4.0-IBM-APM-SERVER-IF0004 [http://www-01.ibm.com/support/docview.wss?uid=isg400003783]
+8.1.4.0-IBM-APM-SERVER-IF0005 [http://www-01.ibm.com/support/docview.wss?uid=isg400003892]
+8.1.4.0-IBM-APM-SERVER-IF0006 [http://www-01.ibm.com/support/docview.wss?uid=isg400004027]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  * Problem Description:
+   . APM tool not showing WAS DC version details in any of the
+        WAS dash page.
+         We need DC version details in
+          APM UI--->System Configuration--->Agent Configuration
+          ---> WebSphere page
+   
+      . Problem found in APM 8.1.4
+   
+   * Environment : APM Server
+   
+   * Recreation Procedure and messages that is in the log files :
+      After install MIN and WAS agent connected, there is no DC
+      version details in APM UI--->System Configuration--->Agent
+      Configuration ---> WebSphere page
+   
+   * Approver :
+     L3: YFS
+     L2: IS
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  n/a
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  The APAR fix is available in the 8.1.4.0-IBM-APM-SERVER-IF0003
+   interim fix.   See this link for details:
+   http://www-01.ibm.com/support/docview.wss?rs=0&uid=isg400003715 [http://www-01.ibm.com/support/docview.wss?rs=0&uid=isg400003715]
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IJ02492
+   
+   
+ * REPORTED COMPONENT NAME
+   MON AGENT WSA
+   
+   
+ * REPORTED COMPONENT ID
+   5725U05WA
+   
+   
+ * REPORTED RELEASE
+   730
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-12-12
+   
+   
+ * CLOSED DATE
+   2018-02-14
+   
+   
+ * LAST MODIFIED DATE
+   2018-02-14
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R730 PSY
+   UP

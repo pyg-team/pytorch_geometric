@@ -1,0 +1,50 @@
+Title: IBM Unable to load map for a WTX Map Node with "Use map from project" in a Subflow defined in an IIB 9.0 Library if the main Message flow is defined in an IIB Application - United States
+
+Text:
+WTX Map Node; mar file; Use map from project; Subflow; Library TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ A WebSphere Transformation Extender (WTX) map will fail to load from the deployed MAR file map location for a WTX Map Node with "Use map from project" in a Subflow defined in an IBM Integration Bus (IIB) 9.0 Library if the main Message flow is defined in an IIB Application. 
+
+SYMPTOM
+WTX map fails to load from the deployed MAR file map location.
+
+
+The IIB Service Trace indicates that the following path is being used for the location of the map being loaded, which is not the same as the actual location where the map is located.
+
+C:\ProgramData\Application Data\IBM\MQSI\components\IB9005\7e166b98-5501-0000-0080-cafcbc32a52a\config\19663b65-5801-0000-0080-aa6d00f05373\MAR\TEST_APP\TEST_LIB.WTX Map/ComplianceCheck/maps\a_LE\compliance_check.mmc
+
+The actual map location is:
+
+C:\ProgramData\IBM\MQSI\components\IB9005\7e166b98-5501-0000-0080-cafcbc32a52a\config\19663b65-5801-0000-0080-aa6d00f05373\MAR\TEST_LIB.mqsiLibrary\TEST_LIB\WTX Map\ComplianceCheck\maps\a_LE\compliance_check.mmc
+
+The following is an example of the IIB Service Trace error information.
+
+2016-11-14 18:53:19.342194 9552 _LoadMapTX file:TXInterface.cpp [file:TXInterface.cpp] line:784 message:1003.txmsgv841 'general logging' , 'Map status for C:\ProgramData\Application Data\IBM\MQSI\components\IB9005\7e166b98-5501-0000-0080-cafcbc32a52a\config\19663b65-5801-0000-0080-aa6d00f05373\MAR\TEST_APP\TEST_LIB.WTX Map/ComplianceCheck/maps\a_LE\compliance_check.mmc, Map does not exist (3). Error 2. Confirm map was deployed correctly.'
+2016-11-14 18:53:19.342194 9552 Error DTXMB1003E: WTX for WMB error for {1}:
+'Map status for C:\ProgramData\Application Data\IBM\MQSI\components\IB9005\7e166b98-5501-0000-0080-cafcbc32a52a\config\19663b65-5801-0000-0080-aa6d00f05373\MAR\TEST_APP\TEST_LIB.WTX Map/ComplianceCheck/maps\a_LE\compliance_check.mmc, Map does not exist (3). Error 2. Confirm map was deployed correctly.'
+Fix the error and restart the flow.
+
+
+CAUSE
+An incorrect path is used for the deployed MAR file map location relative to the IIB Application instead of relative to the IIB Library.
+
+
+ENVIRONMENT
+IBM Integration Bus (IIB) 9.0 and IBM WebSphere Transformation Extender (WTX) 8.4.1.
+
+
+
+DIAGNOSING THE PROBLEM
+Confirm whether an IIB Subflow is being used for the WTX Map Node with "Use map from project" defined. Enable and review the IIB Service Trace to confirm that the map load failure is due to an incorrect path for the compiled map.
+
+
+
+RESOLVING THE PROBLEM
+The problem has been determined to be product limitation for IIB 9.0 and earlier.
+
+The problem can be avoided by using the an external map location for the WTX Map Node.
+
+The IIB 10.0 version has been redesigned for handling subflows and libraries which resolves the problem.
+
+The problem may also be avoided by using the same Library for both main message flow and the subflow or defining the subflow at the Application level where the main message flow is defined.

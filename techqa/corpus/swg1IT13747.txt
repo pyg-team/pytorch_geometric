@@ -1,0 +1,147 @@
+Title: IBM IT13747: INVALID CONNECTION IN DATA MAPS WITH AN ORACLE STORED PROCEDURE CALL THAT RETURNS A SYS_REFCURSOR - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  A map that has a call to an Oracle Stored Procedure may have
+   errors such as the following:
+   
+     The Move input or output object
+   null[1]/SCHEMAX/TABLENAME/COLUMNNAME could not be found.
+   
+   When the map is opened in the Mapping Editor, connections for
+   the Stored Procedure do no connect to their original source.
+   The error occurs for a connection that comes from a
+   SYS_REFCURSOR.  The SYS_REFCURSOR is an OUT parameter of the
+   Stored Procedure.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  NA
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   All users of IBM Graphical Data Mapper V1.0 running maps that
+   call to an Oracle stored procedure which returns a
+   SYS_REFCURSOR.
+   
+   ****************************************************************
+   PROBLEM DESCRIPTION:
+   When a Graphical Data Map calls an Oracle stored procedure and
+   that procedure returns a SYS_RECURSOR, transformations may be
+   connected to the contents of the SYS_REFCURSOR.  Those
+   connections were not stored correctly in the .map file. As a
+   result the mappings are not restored when the map is reopened
+   and an invalid connection error may be reported for them.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The  Graphical Data Map editor is corrected to ensure that the
+   mappings with connections from SYS_REFCURSOR are stored
+   correctly in the .map file.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT13747
+   
+   
+ * REPORTED COMPONENT NAME
+   GRAPHICAL DATA
+   
+   
+ * REPORTED COMPONENT ID
+   AIMGDM000
+   
+   
+ * REPORTED RELEASE
+   105
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-02-11
+   
+   
+ * CLOSED DATE
+   2016-03-02
+   
+   
+ * LAST MODIFIED DATE
+   2016-03-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   GRAPHICAL DATA
+   
+   
+ * FIXED COMPONENT ID
+   AIMGDM000
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R105 PSY
+   UP

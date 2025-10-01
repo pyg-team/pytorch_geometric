@@ -1,0 +1,132 @@
+Title: IBM LO49005: SOME HOLIDAYS DO NOT SYNC TO DEVICE. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Customer reported that some Holidays are not syncing to thier
+   device.  The problem seems sporadic in nature, but happens
+   pretty frequently.  The customer is using Nokia devices and saw
+   the problem often on an E71.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  NA
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Customer reported some holidays did not sync to their Nokia
+   devcie.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The server was updated to handle the calendar entries correctly
+   so that the Nokia client would accept them.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  This fix will be included in Lotus Notes Traveler 8.5.1.2 and
+   all future releases.  See this technote for latest maint
+   information:
+   http://www.ibm.com/support/docview.wss?uid=swg24019529 [http://www.ibm.com/support/docview.wss?uid=swg24019529]
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   LO49005
+   
+   
+ * REPORTED COMPONENT NAME
+   LOTUS NOTES TRA
+   
+   
+ * REPORTED COMPONENT ID
+   5724E6204
+   
+   
+ * REPORTED RELEASE
+   851
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-02-18
+   
+   
+ * CLOSED DATE
+   2010-03-04
+   
+   
+ * LAST MODIFIED DATE
+   2010-03-04
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   LOTUS NOTES TRA
+   
+   
+ * FIXED COMPONENT ID
+   5724E6204
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R851 PSY
+   UP

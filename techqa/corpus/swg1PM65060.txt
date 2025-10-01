@@ -1,0 +1,235 @@
+Title: IBM PM65060: KYN TEMA FAILS TO START WITH THE FOLLOWING ERROR - APPLICATION EXCEPTION RAISED (SEVERITY 1), JAVA.LANG.STACKOVERFLOWERROR - United States
+
+Text:
+  FIXES ARE AVAILABLE
+7.1.0.3-TIV-ITCAMAD-IF0004: ITCAM for Application Diagnostics V7.1 FP3 IF4 [http://www-01.ibm.com/support/docview.wss?uid=swg24033735]
+7.1.0.3-TIV-ITCAMAD-IF0005: ITCAM for Application Diagnostics V7.1 FP3 IF5 [http://www-01.ibm.com/support/docview.wss?uid=swg24033938]
+7.1.0.3-TIV-ITCAMAD-IF0004: ITCAM for Application Diagnostics V7.1 FP3 IF6 [http://www-01.ibm.com/support/docview.wss?uid=swg24034668]
+7.1.0.3-TIV-ITCAMAD-IF0008: ITCAM for Application Diagnostics V7.1 FP3 IF8 [http://www-01.ibm.com/support/docview.wss?uid=swg24037994]
+ITCAM for J2EE V7.1.1 Fixes [http://www-01.ibm.com/support/docview.wss?uid=swg24040521]
+7.1.0-TIV-ITCAMAD-FP0004: ITCAM for Application Diagnostics V7.1 Fix Pack 4 [http://www-01.ibm.com/support/docview.wss?uid=swg24041705]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  TEMA does not start up and the following errors are seen in the
+   logs
+   
+   +4F6B3085.0000  at
+   com.ibm.tivoli.itcam.logger.impl.ITCAMTraceLogger.exception(ITCA
+   MTraceLo
+   gger.java:160)
+   +4F6B3085.0000  at
+   com.ibm.tivoli.monitoring.itcam.tema.config.ConfigManager.getHos
+   tName(Co
+   nfigManager.java:111)
+   +4F6B3085.0000  at
+   com.ibm.tivoli.monitoring.itcam.tema.config.ConfigManager.getHos
+   tName(Co
+   nfigManager.java:112)
+   +4F6B3085.0000  at
+   com.ibm.tivoli.monitoring.itcam.tema.config.ConfigManager.getHos
+   tName(Co
+   nfigManager.java:112)
+   ...
+   ..
+   .
+   (4F6B3085.0000-1:kwjreq.cpp,57,"KwjRequest::onException") ERROR:
+   Application exception raised (severity 1) ...
+   +4F6B3085.0000 java.lang.StackOverflowError
+   +4F6B3085.0000  at
+   java.io.FileNotFoundException.<init>(FileNotFoundException.java:
+   76)
+   +4F6B3085.0000  at java.io.FileOutputStream.openAppend(Native
+   Method)
+   +4F6B3085.0000  at
+   java.io.FileOutputStream.<init>(FileOutputStream.java:203)
+   +4F6B3085.0000  at
+   java.io.FileOutputStream.<init>(FileOutputStream.java:128)
+   +4F6B3085.0000  at
+   com.ibm.log.FileHandler.openFile(FileHandler.java:1089)
+   ...
+   ..
+   .
+   (4F90087A.001A-1:kwjjvm.cpp,509,"KwjJvm::load") Loading JVM
+   /IBM/ITM/JRE/aix523/bin/j9vm/libjvm.so
+   (4F90087A.001B-1:kwjjvm.cpp,319,"KwjJvm::start") JVM log:
+   ../../logs/KYN.Primary.1334839418.JVM.log
+   (4F90087C.0000-3:kwjclient.cpp,281,"kwjMessageHandler") Message
+   handler
+   started
+   (4F9008EB.0000-1:kwjreq.cpp,57,"KwjRequest::onException") ERROR:
+   Application exception raised (severity 1) ...
+   +4F9008EB.0000 java.lang.StackOverflowError
+   +4F9008EB.0000  at
+   
+   A check of hostname (in hosts file and from CLI) return the
+   correct value
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Confirm JRE used by TEMA is able to successfully resolve
+   hostname. If not reconfigure the TEMA to use an alternative
+   32-bit JRE where the following java call can successfully get
+   the hostname...
+   Inet4Address.getLocalHost().getHostName();
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: Users of ITCAM for Application Diagnostics
+   * 7.1 Agent for WebSphere where hostname cannot be determined
+   * by agent's JVM.
+   ****************************************************************
+   * PROBLEM DESCRIPTION:
+   * Monitoring Agent for WebSphere (yn) fails to start with
+   * following StackOverflowError message in logs:
+   *
+   * +4F6B3085.0000  at com.ibm.tivoli.itcam.logger.impl.ITCAMTrac
+   * eLogger.exception (ITCAMTraceLogger.java:160)
+   * +4F6B3085.0000  at com.ibm.tivoli.monitoring.itcam.tema.config
+   * .ConfigManager.getHostName(ConfigManager.java:111)
+   * +4F6B3085.0000  at com.ibm.tivoli.monitoring.itcam.tema.config
+   * .ConfigManager.getHostName(ConfigManager.java:112)
+   * ...
+   * ..
+   * .
+   * (4F6B3085.0000-1:kwjreq.cpp,57,"KwjRequest::onException")
+   * ERROR: Application exception raised (severity 1) ...
+   * +4F6B3085.0000 java.lang.StackOverflowError
+   * ...
+   * ..
+   * .
+   * (4F90087A.001A-1:kwjjvm.cpp,509,"KwjJvm::load") Loading JVM
+   * /IBM/ITM/JRE/aix523/bin/j9vm/libjvm.so
+   * (4F90087A.001B-1:kwjjvm.cpp,319,"KwjJvm::start") JVM log:
+   * ../../logs/KYN.Primary.1334839418.JVM.log
+   * (4F90087C.0000-3:kwjclient.cpp,281,"kwjMessageHandler")
+   * Message handler started
+   * (4F9008EB.0000-1:kwjreq.cpp,57,"KwjRequest::onException")
+   * ERROR: Application exception raised (severity 1) ...
+   * +4F9008EB.0000 java.lang.StackOverflowError
+   *
+   ****************************************************************
+   * RECOMMENDATION: Use ITCAM for AD 7.1.0.3 interim fix 3
+   * (7.1.0.3-TIV-ITCAMfAD-IF0003) or newer to resolve this issue.
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  In some cases JVM is not able to determine system hostname.
+   For example, this can happen when there is no entry in
+   /etc/hosts file that assigns system hostname to local ip
+   address. However, sometimes it is a JVM's issue. When such
+   situation occurred agent was unable to start and was
+   terminating with StackOverflowError.
+   
+   The fix for this APAR prevents from StackOverflowError when
+   there is an error while trying to determine system hostname.
+   Fix also introduces alternative method for hostname
+   determination.
+   
+   The fix for this APAR is contained in the following maintenance
+   packages:
+   
+     | interim fix | 7.1.0.3-TIV-ITCAMAD-IF0003
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM65060
+   
+   
+ * REPORTED COMPONENT NAME
+   TCAM AD WAS TEM
+   
+   
+ * REPORTED COMPONENT ID
+   5724Y92WD
+   
+   
+ * REPORTED RELEASE
+   710
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-05-21
+   
+   
+ * CLOSED DATE
+   2012-08-31
+   
+   
+ * LAST MODIFIED DATE
+   2012-08-31
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TCAM AD WAS TEM
+   
+   
+ * FIXED COMPONENT ID
+   5724Y92WD
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R710 PSY
+   UP

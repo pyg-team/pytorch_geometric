@@ -1,0 +1,84 @@
+Title: IBM Apache security vulnerabilities and how they affect the Rational Web Platform and CM Server - United States
+
+Text:
+1266155; CQ; CC; ReqPro; PjC; RWP; IHS; ClearQuest; ClearCase; RequisitePro; ProjectConsole; RequisiteWeb; Rational Web Platform; IBM HTTP Server; RATLC01032027; RATLC01017358; PK11929; CAN; CVE; mod_ssl; Apache; mod_rewrite; XSS; security; vulnerabilies; vulnerability TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+This technote describes how commonly reported security problems affect the IBM Rational Web Platform and Change Management (CM) Server. These platforms serve as Web interfaces for Rational ClearCase, Rational ClearQuest, Rational ProjectConsole, and Rational RequisitePro.
+
+SYMPTOM
+ 
+
+Version 7.x of the Rational Web Platform contains the IBM HTTP Server. This is utilized by RequisitePro and ProjectConsole, as well as ClearQuest and ClearCase in 7.0.x versions. Starting in version 7.1, ClearQuest and ClearCase use CM Server as a Web platform. This also utilizes IBM HTTP Server.
+
+Because IBM HTTP Server is based on the Apache HTTP Server, known software vulnerabilities which exist in native Apache, may trigger security warnings in some vulnerability scanning programs.
+
+
+
+CAUSE
+The IBM HTTP Server is based off of Apache version 2.0.47. Some vulnerability scanners only look at the server version string when assessing vulnerabilities, and might not be aware of different version and fix levels of IBM HTTP Server.
+
+
+
+DIAGNOSING THE PROBLEM
+ 
+
+Many of these Apache HTTP Server vulnerabilities do not apply to IBM HTTP Server, for several different reasons based on the vulnerability:
+
+
+ * IBM HTTP Server provides an alternate implementation of the Apache feature which contained the vulnerability 
+ * IBM HTTP Server does not provide the Apache feature which contained the vulnerability 
+ * IBM HTTP Server is based on a level of Apache which did not have the vulnerability 
+ * IBM HTTP Server fix packs or e-fixes contain the fix for the vulnerability
+
+
+Aside from the vulnerabilities addressed in the base Apache version, IBM HTTP Server addresses additional vulnerabilities in the form of fix packs. Starting with version 7.0.1 Rational products, IBM HTTP Server is packaged with an applied fix pack. 
+
+The applied fix packs address many of the common vulnerabilities that affect Apache, including variations of mod_rewrite and Cross-site Scripting ( XSS). These fixed vulnerabilities can be observed when viewing the version information of the IBM HTTP Server install on the server machine by running the command " Apache.exe -V/apachectl -V " from the following directories (assuming a default install path): 
+
+ * Microsoft® Windows®
+   
+   Version 7.0.0.x and 7.0.1.x: C:\Program Files\Rational\Common\rwp\IHS\bin Version 7.0.2.x, 7.0.3.x, 7.0.4.x, and 7.1.x: C:\Program Files\IBM\RationalSDLC\common\IHS\bin
+   
+   
+   
+   
+ * Linux® and UNIX®
+   
+   Version 7.0.0.x and 7.0.1.x: /opt/rational/common/rwp/IHS/bin
+   Version 7.0.2.x, 7.0.3.x, 7.0.4.x, and 7.1.x: /opt/IBM/RationalSDLC/common/IHS/bin
+
+
+
+These vulnerabilities are tracked using Common Vulnerabilities and Exposures ( CVE) IDs. More information and descriptions for these IDs can be found on the [http://cve.mitre.org] National Vulnerability Database [http://nvd.nist.gov]. If a scanner reports that IBM HTTP Server is vulnerable to one of the issues listed as fixed in above version output, the scanner is in error. It is not uncommon for some vulnerability scanning programs to use a proprietary cataloging system for these security problems. It is the responsibility of the security administrator using these programs to map these cataloging systems to the CVE standard. 
+
+Not included in the list of fixed CVEs are those that involve mod_ssl. IBM HTTP Server does not contain mod_ssl, and therefore is not subject to these security problems. 
+RESOLVING THE PROBLEM
+ 
+
+In order to assure that the Rational Web Platform server has the latest available vulnerability fixes, consider upgrading to the latest version of the Rational products. Additionally, it is also possible to apply fix packs directly to IBM HTTP Server, the base of which is located in the following directories by default:
+
+
+ * Microsoft Windows
+ * 
+ * 
+ * C:\Program Files\Rational\Common\rwp\IHS
+ * 
+ * 
+ * C:\Program Files\IBM\RationalSDLC\common\IHS
+ * 
+   Linux and UNIX
+   Version 7.0.0.x and 7.0.1.x: /opt/rational/common/rwp/IHS
+   Version 7.0.2.x, 7.0.3.x, 7.0.4.x, and 7.1.x: /opt/IBM/RationalSDLC/common/IHS
+
+
+
+Information on updating IBM HTTP Server for the Rational Web Platform is located in technote 1295608 [http://ibm.com/support/docview.wss?rs=988&uid=swg21295608]. You can verify the version to download the fix for, by using the previously mentioned command line call. It is recommended that the fix pack is applied to a test server first, in order to assure that the Rational Web Platform runs without problems. 
+
+For additional information regarding the IBM HTTP Server, refer to the IBM HTTP Server Questions and Answers [http://publib.boulder.ibm.com/httpserv/ihsdiag/questions.html] website. The topics " What release of Apache is IBM HTTP Server based on?" and " Is a specific Apache fix in my level of IBM HTTP Server?" cover additional information about the Apache core. 
+
+
+
+
+
+Cross Reference information Segment Product Component Platform Version Edition Software Development Rational ClearCase ClearCase Web (CCWeb) Software Development Rational ClearCase CM Server Software Development Rational ClearQuest CM Server Software Development Rational ClearQuest Web Java Server Software Development Rational ProjectConsole Web Server Software Development Rational RequisitePro RequisiteWeb Application Servers IBM HTTP Server Base Server

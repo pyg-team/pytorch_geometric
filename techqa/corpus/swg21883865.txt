@@ -1,0 +1,43 @@
+Title: IBM ITCAM for Microsoft AD agent is not starting - United States
+
+Text:
+5724C71AOTR; AD; monitoring; 5724B96MOTR; MSSQL TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When ITCAM for Active Directory agent is started, error KCICF5100E is displayed and the agent does not start. 
+
+SYMPTOM
+When agent is started using MTEMS panel, it shows following error: 
+
+[/support/docview.wss?uid=swg21883865&aid=1] [/support/docview.wss?uid=swg21883865&aid=1]
+
+
+CAUSE
+The agent is unable to find an SSL transport library in agent path, and therefore the agent process fails to launch.
+
+
+ENVIRONMENT
+Windows
+
+
+
+DIAGNOSING THE PROBLEM
+Host_3z_k3zcma_<hex>-01.log in ITMHOME\TMAITM6_x64 shows following messages, indicating that SPIPE protocol is being used for connection with TEMS, and SSL interface module is unavailable: 
+
+...
+(553A4BA4.039A-18D0:kbbssge.c,52,"BSS1_GetEnv") CT_CMSLIST="IP.SPIPE:#<tems-ipaddress>" 
+(553A4BA4.02C7-18D0:kdebprc.c,1306,"static_constructor") SSL interface module kdebe unavailable 
+
+... 
+(553A4BA6.06AD-18D0:kraaumsg.cpp,107,"CTRA_msg_no_transports") CTRA 
+Server: no transports available, ffffffff. Server shutting down 
+
+
+RESOLVING THE PROBLEM
+Copy kdebe.dll from C:\IBM\ITM\TMAITM6_x64 to C:\IBM\ITM\GSK8_x64\lib64. 
+
+Start the agent. 
+
+ 
+
+Note:The same problem can occur for the ITCAM MSSQL Server agent, and the same resolution applies in that case.

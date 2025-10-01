@@ -1,0 +1,37 @@
+Title: IBM Executing a query in the IBM i2 Analyze Intelligence Portal fails with socketTimeoutException: Read timed out - United States
+
+Text:
+i2A; i2Analyze; EIA; SocketTimeoutException; Read timed out TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Some queries that are run from the i2 Analyze Intelligence Portal and return a large result set may time out when a remote datasource is queried. 
+
+SYMPTOM
+A connection to a remote datasource is created using the connector creator. From the Intelligence Portal, some queries to a remote datasource are working fine. However, one of the queries is failing because it's trying to return a large result set. After the query runs for about one minute, a pop up appears containing an exception similar to the exception below. 
+
+Unknown error: java.lang.RuntimeException: java.net.SocketTimeoutException: Read timed out 
+System.ServiceModel.FaultException
+java.lang.RuntimeException: java.net.SocketTimeoutException: Read timed out en System.ServiceModel.Channels.ServiceChannel.HandleReply(ProxyOperationRuntime operation, ProxyRpc& rpc)
+en System.ServiceModel.Channels.ServiceChannel.EndCall(String action, Object[] outs, IAsyncResult result)
+en System.ServiceModel.ClientBase`1.ChannelBase`1.EndInvoke(String methodName, Object[] args, IAsyncResult result)
+en i2.Apollo.Services.Internal.ExternalDataSubsetExploration.AutoGen.ExternalDataSubsetExplorationServiceClient.ExternalDataSubsetExplorationServiceClientChannel.EndSearch(IAsyncResult result)
+en i2.Apollo.Services.Internal.ExternalDataSubsetExploration.AutoGen.ExternalDataSubsetExplorationServiceClient.i2.Apollo.Services.Internal.ExternalDataSubsetExploration.AutoGen.ExternalDataSubsetExplorationService.EndSearch(IAsyncResult result)
+en i2.Apollo.Services.Internal.ExternalDataSubsetExploration.AutoGen.ExternalDataSubsetExplorationServiceClient.i2.Apollo.Services.Internal.ExternalDataSubsetExplorationService.IExternalDataSubsetExplorationServiceInternals.EndSearch(IAsyncResult asyncResult)
+en i2.Apollo.Services.ExternalDataSubsetExplorationService.ExternalDataSubsetExplorationServiceFacade.CompleteAndMarshalSearch(IExternalDataSubsetExplorationServiceInternals client, IAsyncResult resultToken)
+en i2.Apollo.Services.AsynchronousCallCompleter`2.GetResponse(IAsyncResult asyncResult, TResult& successResult, Exception& failureException)
+
+
+CAUSE
+A large result set, example: 90,000 plus items, may take a while to return. In some cases this may cause the read timer in the onyx-server to expire and cause a socket read error to occur. The default timer value is one minute. This is more likely to occur if the Data Access on Demand (DAOD) connector is used.
+
+
+RESOLVING THE PROBLEM
+If there doesn't appear to be any network related issues, try adding the option below to the jvm.options file for the onyx-server. The time is in milli-seconds. The value below is an example. Try some values and see what value works best for your environment. 
+
+-Dwink.client.readTimeout=300000 
+
+ 
+
+The jvm.options file can be found in directory C:\IBM\i2analyze\deploy\wlp\usr\servers\onyx-server 
+
+This may vary if the install directory for i2 Analyze is different.

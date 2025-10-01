@@ -1,0 +1,225 @@
+Title: IBM PM21239: TCP "no delay" flag may not get set in Apache SOAP code used    by Application Server, causing communication delays. - United States
+
+Text:
+  FIXES ARE AVAILABLE
+7.0.0.17: Java SDK 1.6 SR9 FP1 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24029894]
+7.0.0.27: Java SDK 1.6 SR13 FP2 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24035324]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Slow performance of wsadmin script on WebSphere Application
+   Server v7.0. wsadmin takes 3+ minutes as compare to WebSphere
+   Application Server v6.1.
+   On WebSphere Application Server 7.0 no javacores were
+   generated, which indicated that the api is not being used in
+   the application to set the tcp_nodelay option.
+   
+   On WebSphere Application Server 6.1 we got a bunch of
+   javacores, and all were generated from the trigger, when the
+   setTcpNoDelay() is invoked. and they had the following stack.
+   
+   ============
+   3XMTHREADINFO      "main" (TID:0x000000011051E500,
+   sys_thread_t:0x00000001100161B0, state:R, native
+   ID:0x00000000000AB0DF)
+   prio=5
+   4XESTACKTRACE          at
+   java/net/Socket.setTcpNoDelay(Socket.java:889)
+   4XESTACKTRACE          at
+   org/apache/soap/util/net/HTTPUtils.buildSocket(Bytecode PC:278)
+   4XESTACKTRACE          at
+   org/apache/soap/util/net/HTTPUtils.post(Bytecode PC:27)
+   4XESTACKTRACE          at
+   org/apache/soap/transport/http/SOAPHTTPConnection.send(Bytecode
+   PC:274)
+   4XESTACKTRACE          at
+   org/apache/soap/rpc/Call.invoke(Bytecode
+   PC:111)
+   4XESTACKTRACE          at
+   com/ibm/ws/management/connector/soap/SOAPConnectorClient$4.run(S
+   OAPConne
+   ctorClient.java:308)
+   4XESTACKTRACE          at
+   com/ibm/ws/security/util/AccessController.doPrivileged(AccessCon
+   troller.
+   java:118)
+   .
+   .
+   .
+   ============
+   
+   the above stack shows that the follwoing code makes a call to
+   setTcpNoDelay()
+   
+   org/apache/soap/util/net/HTTPUtils.buildSocket
+   
+   This indicates that in WebSphere Application Server 6.1 the
+   SOAP code is setting the tcp_nodelay option, where as this is
+   not done in the WebSphere Application Server 7.0 SOAP code
+   and that is  the reason why there is a behavioral difference
+   between WebSphere Application Server 6.1 and WebSphere
+   Application Server 7.0
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  use soap_config.properties file under <WAS_HOME>/properties
+   with option: tcp.no.delay=true and ejb.cache.homes=false
+   
+   soap_config.properties file should contain:
+   
+   tcp.no.delay=true
+   ejb.cache.homes=false
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  All users of IBM WebSphere Application      *
+   *                  Server v7.0 who use SOAP                    *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: The TCP "no delay" flag may not get     *
+   *                      set in the Apache SOAP code used by     *
+   *                      Application Server, causing             *
+   *                      communication delays.                   *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   This APAR concerns the Apache SOAP code, spec version 2.3,
+   that is installed in plugins/com.ibm.ws.prereq.soap.jar and is
+   used for Application Server system management functions.
+   
+   A customer noted a significant delay when running a wsadmin
+   script in the AIX environment using WebSphere Application
+   Server 7.0. The same script ran very quickly in version 6.1.
+   
+   It turns out that the SOAP code in com.ibm.ws.prereq.soap.jar
+   attempts to load values from the file soap_config.properties
+   that resides in the same .jar. One of the values in this file
+   sets tcp.no.delay=true. In 6.1 and earlier versions, this
+   setting is loaded correctly. In version 7.0, packaging changes
+   were made that resulted in the SOAP code being unable to find
+   this .properties file. As a result, the tcpNoDelay value does
+   not get set when the Apache SOAP code creates a socket, and
+   may default to false, resulting in a slight delay for every
+   packet sent. Over the course of sending dozens or hundreds of
+   packets, this can result in significant delay.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The code was modified to correctly find the
+   soap_config.properties file located in
+   com.ibm.ws.prereq.soap.jar, causing the tcpNoDelay flag to be
+   set to true.
+   
+   The fix for this APAR is currently targeted for inclusion in
+   fix pack 7.0.0.17.  Please refer to the Recommended Updates
+   page for delivery information:
+   http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  Copy the file soap_config.properties (found in
+   plugins/com.ibm.ws.prereq.soap.jar) into
+   $USER_INSTALL_ROOT/properties
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM21239
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBS APP SERV N
+   
+   
+ * REPORTED COMPONENT ID
+   5724H8800
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-08-25
+   
+   
+ * CLOSED DATE
+   2010-11-18
+   
+   
+ * LAST MODIFIED DATE
+   2011-01-13
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBS APP SERV N
+   
+   
+ * FIXED COMPONENT ID
+   5724H8800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R700 PSY
+   UP

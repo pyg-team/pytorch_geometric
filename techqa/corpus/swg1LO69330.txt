@@ -1,0 +1,143 @@
+Title: IBM LO69330: PASSWORD DOES NOT SYNC AFTER WORKING SCHEDULED PASSWORD RESET - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PERMANENT RESTRICTION.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Single logon does not work as expected when scheduled password
+   reset set on Active Directory occurs and then change password
+   with OS.
+   Password does not sync after changing password with OS.
+   
+   Steps to reproduce:
+   1. Prepare an account on active directory and apply a group
+   policy.
+   In the group policy, set Maximum password age like 1 or 2 days.
+   2. Install and setup Notes client.
+   3. Close Notes client and OS.
+   4. After the Maximum password age is passed, start windows and
+   login.
+   Here, a prompt appears and requires to change login password.
+   5. After changing login password successfully, start Notes
+   Client.
+   Then following message appears.
+   
+   Message:
+   Your Windows password does not match your Notes password. You
+   may change your password at any time via File - Security -
+   User Security.  Wouldyou like to change your Notes password
+   immediately after logging in?
+   
+   This issue does not occur every time the password is expired.
+   It occasionally occurs.
+   When this issue occurs, user's ID file is also updated at the
+   time OS password is changed.
+   However, if a user tries to login with a new OS password after
+   a message above appears, an error generates and login fails.
+   If former password is used here, the user successfully login to
+   Notes.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  A programming error was found but will not be corrected. It
+    will be a permanent restriction.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A programming error was found but will not be corrected. It
+    will be a permanent restriction.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+ *  This APAR is associated with SPR# MYAA7GCBM8.
+   A programming error was found but will not be corrected. It
+    will be a permanent restriction.
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   LO69330
+   
+   
+ * REPORTED COMPONENT NAME
+   NOTES CLIENT
+   
+   
+ * REPORTED COMPONENT ID
+   5724E6255
+   
+   
+ * REPORTED RELEASE
+   851
+   
+   
+ * STATUS
+   CLOSED PRS
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-05-10
+   
+   
+ * CLOSED DATE
+   2014-08-01
+   
+   
+ * LAST MODIFIED DATE
+   2014-08-01
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

@@ -1,0 +1,141 @@
+Title: IBM IT06605: PUREAPPLICATION SYSTEM: NEW ARCHITECTURE VIRTUAL SYSTEM SCRIPT PACKAGE PARAMETER DEFAULT VALUES AND LOCKING NOT WORKING - United States
+
+Text:
+  A FIX IS AVAILABLE
+IBM PureApplication System Version 2.1.0.0 Interim Fix 1 [http://www-01.ibm.com/support/docview.wss?uid=swg24039268]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  While using new Virtual System patterns, behavior seen for
+   default values of script package parameters and locking of the
+   parameters in the pattern is different from what is seen in
+   Virtual System classic patterns.
+   
+   A script package that runs on deployment and on demand uses
+   expected values set and locked in the pattern during initial
+   deployment.  When run on demand, the locked values from the
+   deployment are ignored when showing which values will be used
+   in the GUI and the default values for the script package are
+   used instead.
+   
+   Actual execution of the script package shows that the default
+   values were actually used for all parameters during the 'on
+   demand' execution (instead of the desired values locked in the
+   pattern).
+   
+   Script package parameters that have been locked in the pattern
+   can be changed when using the "on demand" option within a new
+   Virtual System pattern (this is not allowed in Virtual System
+   classic patterns, as expected).  All parameters are offered in
+   the GUI for update when a new Virtual System pattern is used,
+   even if locked.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  A coding error prevented the new architecture virtual system
+   pattern script package parameters from being handled
+   correctly.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A code fix is being provided in PureApplication System version
+   2.1.0.0.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT06605
+   
+   
+ * REPORTED COMPONENT NAME
+   PAPP SYS 8382 I
+   
+   
+ * REPORTED COMPONENT ID
+   5725G3200
+   
+   
+ * REPORTED RELEASE
+   200
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-01-19
+   
+   
+ * CLOSED DATE
+   2015-03-20
+   
+   
+ * LAST MODIFIED DATE
+   2015-03-20
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   PAPP SYS 8382 I
+   
+   
+ * FIXED COMPONENT ID
+   5725G3200
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R210 PSY
+   UP

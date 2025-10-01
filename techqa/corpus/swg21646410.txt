@@ -1,0 +1,26 @@
+Title: IBM Operational Decision Manager support statement for virtual environments - United States
+
+Text:
+ NEWS
+
+ABSTRACT
+ Customers can employ various applications to provide an emulated or virtual operating environment in order to meet their needs, such as to provide production server consolidation, centralized management, or to host dynamic test environments. The virtual environment by design provides transparency to the operating systems, applications, and middleware that operate above it. What is the support policy regarding Operational Decision Manager (ODM) deployment on such virtualized environments? 
+
+CONTENT
+There are solutions providing this type of virtualized environment with product offerings from IBM, VMWare, Citrix, Microsoft, Hewlett-Packard, Xen, Docker and Oracle as well as many others not specifically mentioned here. Operational Decision Manager is not tested against each solution and configuration that is available.
+Operational Decision Manager complies with the Virtualization Policy for IBM Software [http://www-01.ibm.com/software/support/virtualization_policy.html] and you can verify the support using the Software Product Compatibility Reports. [http://pic.dhe.ibm.com/infocenter/prodguid/v1r0/clarity/index.jsp]Search for "IBM Decision Center" (8.5,8.6,8.7,8.8,8.9), "IBM Decision Server" (8.5,8.6) , "IBM Decision Server Standard" (8.7), "IBM Decision Server Advanced" (8.7) or "IBM Operational Decision Manager" (8.7.1,8.8,8.9) and your hypervisor versions to verify if they are covered under that policy. 
+If that is not the case, the below support statement applies.
+
+When a customer contacts IBM Remote Technical Support with a standard usage or defect related service request about a virtualized environment running a supported Operating System [http://www-01.ibm.com/support/docview.wss?uid=swg27023067], IBM will make commercially reasonable efforts to resolve the issue. ODM support will assume that the problem is common to both native and virtual environments. IBM may require the customer to recreate the problem in a native environment in order to proceed with the investigation. If the problem is unique to the emulated environment, then ODM support will expect the customer to work with the support organization for the virtualization or emulation product in question to provide resolution. If the support organization for the virtualization or emulation product is unable to resolve the problem, ODM support reserves the right to deem that version, release, or fix pack level of the virtualization or emulation product in question to be not supported. 
+
+This risk must be considered when deploying Operational Decision Manager in such an environment, and customers are encouraged to test problems themselves on a native installation of the operating system prior to contacting IBM support to exclude the virtual environment as a possible cause. 
+
+In addition, for performance related issues the customer should first make sure that the hypervisor is configured and tuned properly, and have an estimate of how much of the native performance/throughput is expected to be achieved in that specific virtualized environment. IBM technical support has no Performance benchmarking or tuning guidance available that is unique to such environments. Any additional memory or other hardware requirements must be accounted for when planning or deploying ODM in a virtualized environment. 
+
+Note: The support for Docker is limited to ODM 8.8 and ODM 8.9 components Decision Center and Rule Execution Server.
+
+
+
+CHANGE HISTORY
+
+Jan 25 2016 include statement for Docker support Apr 21 2017 update for 8.9 release

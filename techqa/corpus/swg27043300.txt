@@ -1,0 +1,19 @@
+Title: IBM Known Issue: Case Manager Client users might see an unexpected behavior for selecting a folder when adding documents to a case - United States
+
+Text:
+ RELEASE NOTES
+
+ABSTRACT
+ You can change a setting in your IBM Case Manager desktop to prevent the behavior that requires users to select a folder when adding case documents. 
+
+CONTENT
+You can configure a case type setting in Case Manager Builder to allow users to add documents from non-case management repositories. However, with this setting, users might also be required to select a folder when they add a case document. 
+
+Workaround:
+
+You can prevent this behavior of requiring the user to select a folder by changing the default setting in the IBM Case Manager desktop:
+
+1. As an administrator in IBM Content Navigator, navigate to Desktops > Case Manager and click the General tab.
+2. Expand the Desktop Configuration settings.
+3. Under Additional Settings, uncheck the setting Require users to save new documents and folders in a folder.
+4. Save your changes.

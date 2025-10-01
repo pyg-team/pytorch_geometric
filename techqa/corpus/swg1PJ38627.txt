@@ -1,0 +1,181 @@
+Title: IBM PJ38627: CE 4.0.1-012 - QUERY AGAINST A LARGE NUMBER OF DOCS TO WHICH USER HAS NO ACCESS KEEPS RUNNING AFTER TIMING OUT IN WORKPLACE - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  If a query that returns very large number of results is issued
+   by a user that does not have access to most or any of the
+   documents returned is issued from Workplace, the user receives a
+   timeout error but the query keeps iterating through results to
+   perform security pre-filtering.  This activity may take hours
+   and eventually the JVM runs out of memory.  MaxQueryTimeout
+   changed from 0 to 360 did not have effect.
+   
+   Exception displayed in Workplace after ~ 3 minutes indicates :
+   
+   TIMEOUT ERROR:
+   
+   Error Message:
+   com.filenet.api.exception.EngineRuntimeException;This operation
+   returned
+   because the timeout period expired. [Code=null] ... Object
+   Reference
+   [STORED_SEARCH:-100] ID "{GUID}" in
+   ObjectStore "CTFS_ECM";
+   OMFC/StoredSearch/ExecuteXML//E_TRANSACTION_TIMEOUT
+   
+   Exception Class:
+   com.filenet.wcm.api.TransactionTimeoutException
+   
+   The CE trace may contain hundreds of thousands of queries for
+   version series and skipping messages :
+   
+   DB   - SQL executed in 12 msecs: SQL: "SELECT epoch_id,
+   version_status, is_current, is_reserved, is_frozen,
+   storage_area_id, storage_location, content_last_accessed_date,
+   next_content_unique_id, create_date, content_referral_blob,
+   content_retention_date, object_id, object_class_id, security_id,
+   security_folder_id, version_series_id FROM DocVersion WHERE
+   (version_series_id = ? and (is_current=1 OR (is_reserved=1 AND
+   version_status=3)))" In-bindings: ({GUID})
+   2011-01-28T02:10:49.473Z 1DD46327 SRCH - Skipping object {GUID}
+   during search
+   
+   Steps to Reproduce:
+   1  Run a search from Workplace that returns a large number (
+   hundreds of thousands ) of results but the user executing the
+   search should not have any access to most or any of the
+   documents.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * All users issuing queries that hit large row counts but      *
+   * where the user has access to very limited results due to     *
+   * security restrictions.                                       *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * If a query that returns very large number of results is      *
+   * issued                                                       *
+   * by a user that does not have access to most or any of the    *
+   *                                                              *
+   * documents returned is issued from Workplace, the user        *
+   * receives a                                                   *
+   * timeout error but the query keeps iterating through results  *
+   * to                                                           *
+   * perform security pre-filtering.  This activity may take      *
+   * hours                                                        *
+   * and eventually the JVM runs out of memory.  MaxQueryTimeout  *
+   *                                                              *
+   * changed from 0 to 360 did not have effect.                   *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Customer should upgrade to 4.5.1.7-P8CE-FP007.               *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Added query timeout check to processing loop so that scenarios
+   where tens/hundreds of thousands of results are discarded due to
+   a lack of access are subject to timeouts as well - otherwise the
+   server can run out of resources looking for enough objects to
+   satisfy the request and take 60+ minutes doing so.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PJ38627
+   
+   
+ * REPORTED COMPONENT NAME
+   CONTENT ENGINE
+   
+   
+ * REPORTED COMPONENT ID
+   5724R8101
+   
+   
+ * REPORTED RELEASE
+   451
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-01-31
+   
+   
+ * CLOSED DATE
+   2011-10-21
+   
+   
+ * LAST MODIFIED DATE
+   2011-10-21
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    PJ38626 [http://www-01.ibm.com/support/docview.wss?uid=swg1PJ38626]
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CONTENT ENGINE
+   
+   
+ * FIXED COMPONENT ID
+   5724R8101
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R451 PSY
+   UP

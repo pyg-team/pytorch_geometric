@@ -1,0 +1,44 @@
+Title: IBM Get CYNVE0181E error during configuration of the server from the GUI. - United States
+
+Text:
+CYNVE0181E duplicate servers SERVERS octigate CAMADALL CAMADINST TECHNOTE (TROUBLESHOOTING)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ US English 
+
+PROBLEM(ABSTRACT)
+ Configuring a Server from the ITCAM MS console by applying configuration from the "Unconfigured DC" GUI menu may get the following error at the console: CYNVE0181E: One or more data collectors were unable to be configured. 
+
+SYMPTOM
+Can't configure the server/DC successfully from the GUI.
+
+
+CAUSE
+The root cause for this error may be one of the following: 
+
+ * The Kernel failed to update the database due to database errors. 
+ * At least one of the servers selected for configuration does not really exist. 
+ * There may be a row in the SERVERS table of octigate (ITCAM) database that has controllerid that is no longer valid.
+
+ENVIRONMENT
+ITCAM for AD 7.1 / ITCAM for WAS 6.1
+
+
+
+RESOLVING THE PROBLEM
+ 
+
+Please follow these instructions to resolve the problem:
+
+
+ * Check the kernel log (trace-kl1.log) in the MS logs directory and see if there are any SQL Exceptions or other database errors reported. If any database errors are seen, check your database documentation and resolve the database issue before attempting configuration again.
+
+ * At least one of the servers selected for configuration does not really exist. There may be a row in the SERVERS table of octigate (ITCAM) database that has a controllerid that is no longer valid. If you had selected a large number of servers to configure, try configuring a smaller number of servers to narrow down the search for the bad server entry.
+
+ * One by one, search for server names from the list - in the SERVERS table (app_server column) and note its controllerid. Check kernel status output for the controllerid. If this controllerid is not reporting to the Kernel, then the row is referring to a nonexistent DC, and can be deleted. After deletion of the bad server, reconfigure the server from the GUI again and see if it works.
+
+SERVERS.rtf [/support/docview.wss?uid=swg21451037&aid=2] [/support/docview.wss?uid=swg21451037&aid=1] 
+
+Cross reference information Segment Product Component Platform Version Edition Systems and Asset Management Tivoli Composite Application Manager for WebSphere ITCAM for WebSphere Managing Server AIX, HP-UX, Linux, Solaris, Windows 6.1 
+PRODUCT ALIAS/SYNONYM
+ ITCAM for WAS ITCAM for Application Diagnostics ITCAM ITCAMAD ITCAM4AD

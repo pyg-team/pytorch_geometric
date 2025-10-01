@@ -1,0 +1,46 @@
+Title: IBM Missing files in repository after deleting a package or fix with Packaging Utility - United States
+
+Text:
+RN1.5.2; RN1.5.3 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ You use IBM Packaging Utility to delete a package or fix from a repository. Then, you install a package or a fix from the same repository by using IBM Installation Manager. You receive an error that files cannot be found. 
+
+SYMPTOM
+You receive one of the following errors: 
+
+ * From the graphical user interface:
+
+ * Failed to find all installation files.
+   
+   Message ID: CRIMA1161E
+   
+   Installation Manager was unable to find all artifacts from input repository. A package has an issue that cannot be resolved by Installation Manager.
+   
+   Check the package repository for consistency. Otherwise, identify the package that has the issue by looking at the installation history. In Installation Manager, click File > Installation History. In console mode, enter S: View Installation History. Contact IBM customer support.
+   
+   'jar file <file name>' not found in <repository>.
+   
+   'zip file <file name>' not found in <repository>.
+ * 
+ * 
+ * From the command line or console mode:
+
+ * CRIMA1154E ERROR: Error installing.
+   
+   ERROR: 'jar file <file name>' not found in <repository>.
+   
+   ERROR: 'zip file <file name>' not found in <repository>.
+
+
+
+CAUSE
+Packaging Utility deletes additional files when you delete a package or fix from a repository. 
+
+
+
+RESOLVING THE PROBLEM
+This issue has been fixed in Packaging Utility version 1.6.
+
+
+To work around this issue, use Packaging Utility to recopy the affected package or fix from the original source to the repository that is missing files.

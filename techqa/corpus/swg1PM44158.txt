@@ -1,0 +1,158 @@
+Title: IBM PM44158: PAGE ATTRIBUTES: PROBLEMS WITH ALIGNMENT, FONT AND FONT SIZE OF MULTIPLE HEADER / FOOTER ROWS - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  You are working with IBM SPSS Statistics 19.0.0.1 and created
+   output. In the output viewer you click on Page attributes and
+   try to enter multiple rows in header and footer with different
+   fonts, font size and different alignment of the single rows
+   (e.g. one row left justified, the other centered and so on).
+   However, for the header it seems that you cannot justify the
+   lines on page attributes dialog. It seems they all stick on the
+   left.
+   When you click on OK and go to print preview however, you will
+   notice that the header rows are justified in the way you defined
+   whereas you will notice that there are no multiple rows
+   displayed for the footer.
+   Also the font settings and size are not reflected on the footer
+   but on header.
+   
+   This was reported to IBM SPSS Development and is expected to be
+   resolved with 19.0.0.2 FixPack.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * Users of IBM SPSS Statistics 19.0 working with multiple-row  *
+   * output page headers or footers.                              *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * You are working with IBM SPSS Statistics 19.0.0.1 and        *
+   * created                                                      *
+   * output. In the output viewer you click on Page attributes    *
+   * and                                                          *
+   * try to enter multiple rows in header and footer with         *
+   * different                                                    *
+   * fonts, font size and different alignment of the single rows  *
+   * (e.g. one row left justified, the other centered and so on). *
+   * However, for the header it seems that you cannot justify the *
+   * lines on page attributes dialog. It seems they all stick on  *
+   * the                                                          *
+   * left.                                                        *
+   * When you click on OK and go to print preview however, you    *
+   * will                                                         *
+   * notice that the header rows are justified in the way you     *
+   * defined                                                      *
+   * whereas you will notice that there are no multiple rows      *
+   * displayed for the footer.                                    *
+   * Also the font settings and size are not reflected on the     *
+   * footer                                                       *
+   * but on header.                                               *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Apply IBM SPSS Statistics 19.0 FixPack 2                     *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Apply IBM SPSS Statistics 19.0 FixPack 2
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM44158
+   
+   
+ * REPORTED COMPONENT NAME
+   SPSS STATISTICS
+   
+   
+ * REPORTED COMPONENT ID
+   5725A54ST
+   
+   
+ * REPORTED RELEASE
+   J00
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-07-21
+   
+   
+ * CLOSED DATE
+   2011-12-04
+   
+   
+ * LAST MODIFIED DATE
+   2011-12-04
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   SPSS STATISTICS
+   
+   
+ * FIXED COMPONENT ID
+   5725A54ST
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * RJ00 PSY
+   UP

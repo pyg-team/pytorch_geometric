@@ -1,0 +1,41 @@
+Title: IBM Security Bulletin: Vulnerability in GNU C Library(glibc) affects WebSphere DataPower XC10 Appliance(CVE-2015-7547) - Revised fix available - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ A GNU C Library(glibc) vulnerability with a stack based overflow was addressed by WebSphere DataPower XC10 Appliance. 
+
+On Friday March 11th 2016, a fix was published to resolve this security vulnerability. However, that fix needed revision. A corrected fix is now available. 
+
+VULNERABILITY DETAILS
+CVEID: CVE-2015-7547 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-7547]
+DESCRIPTION: GNU C Library (glibc) is vulnerable to a stack-based buffer overflow, caused by improper bounds checking by the nss_dns backend for the getaddrinfo() function when performing dual A/AAAA DNS queries. By sending a specially crafted DNS response, a remote attacker could overflow a buffer and execute arbitrary code on the system or cause the application to crash.
+CVSS Base Score: 8.1
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/110662 [https://exchange.xforce.ibmcloud.com/vulnerabilities/110662] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:H/A:H) 
+
+AFFECTED PRODUCTS AND VERSIONS
+WebSphere DataPower XC10 Appliance versions 2.1 and 2.5 at all firmware levels.
+
+REMEDIATION/FIXES
+Apply an interim fix, according to the table below. Interim fixes are associated with the original APAR that is documented in the table. Because these APAR references might be updated to more recent APARs, see the links in the table for the most recent interim fix information. 
+
+Product Version APAR Link to interim fix WebSphere DataPower XC10 Appliance V2.1 on appliance 9235-92X 2.1 IT13908 Refer to the Version 2.1 table in Recommended fixes for WebSphere DataPower XC10 Appliance [http://www-01.ibm.com/support/docview.wss?uid=swg27019704]. WebSphere DataPower XC10 Appliance V2.1 on appliance 7199-92X 2.1 IT13908 Refer to the Version 2.1 table in Recommended fixes for WebSphere DataPower XC10 Appliance [http://www-01.ibm.com/support/docview.wss?uid=swg27019704]. WebSphere DataPower XC10 Appliance V2.5 on appliance 7199-92X
+Version 2.5 with SSD drivers 
+Important: See More Information link and follow instructions to determine if you have an old or newer SSD driver on your appliance using the show ssd-version command. IT13908 Refer to the Version 2.5 table in Recommended fixes for WebSphere DataPower XC10 Appliance [http://www-01.ibm.com/support/docview.wss?uid=swg27019704]. WebSphere DataPower XC10 Appliance V2.5 virtual image 2.5 IT13908 Refer to the Version 2.5 table in Recommended fixes for WebSphere DataPower XC10 Appliance [http://www-01.ibm.com/support/docview.wss?uid=swg27019704]. GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v3 Guide [http://www.first.org/cvss/user-guide] 
+On-line Calculator v3 [http://www.first.org/cvss/calculator/3.0] RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/PSIRT] CHANGE HISTORY
+ 15 Mar 2016: Correct iFix URL links
+11 Mar 2016: Original version published 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.

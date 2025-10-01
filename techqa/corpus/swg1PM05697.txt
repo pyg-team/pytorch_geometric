@@ -1,0 +1,169 @@
+Title: IBM PM05697: THE WTX MQ ADAPTER IS UNABLE TO SET BINDING OPTIONS WHEN CONNECTING TO MQ WHICH CAN RESULT IN LAUNCHER CRASH. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  With the WebSphere Transformation Extender Launcher running,
+   WebSphereMQ produces AMQ6118 and AMQ6184 errors and a launcher
+   crash.
+   
+   
+   There is a problem on HP-UX in shared bindings mode in that MQ
+   uses pthread process shared primitives to pass control between
+   the application and the queue manager  The HP-UX implementation
+   of pthread process shared does not support the concept of robust
+   mutexes, which means that a shared binding application on HP-UX
+   that ends abruptly can lead to subsequent problems
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  WTXCQ - WTX00033013
+   TR / TR
+   Circumvention: None
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Users Affected:
+   Websphere Transformation Extender existing MQ users will not
+   encounter any changes to their existing MQ connection or
+   processing functionality.  Only users that set a newly defined
+   environment variable will invoke the new binding functionality
+   when connecting to MQ Series.
+   
+   Problem Description:
+   The WTX MQ adapter is unable to set binding options when
+   connecting to MQ.
+   
+   Platforms Affected:
+   All
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The WTX MQ adapter can now set binding options when connecting
+   to MQ Series.  In order to do this, the environment variable,
+   WTX_ADAPTER_MQS_CONN_OPTION, needs to be set to the appropriate
+   value.
+   
+   The syntax for doing this is as follows:
+   WTX_ADAPTER_MQS_CONN_OPTION=<decimal value> or 0x<hex value>
+   
+   For example, in order to use isolated binding, define the
+   following environment variable with a hex value before starting
+   WTX on a UNIX platform:
+   export WTX_ADAPTER_MQS_CONN_OPTION=0x00000200
+   
+   When this environment variable is not set, the trace file (if
+   enabled) will indicate how to enable it.  The message is output
+   only once if and only if the first connection has tracing
+   enabled.
+   
+   Delivered in:
+   8.1.0.6, 8.2.0.5, 8.3.0.1
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM05697
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSPHERE LAUNC
+   
+   
+ * REPORTED COMPONENT ID
+   5724M4011
+   
+   
+ * REPORTED RELEASE
+   820
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2010-01-21
+   
+   
+ * CLOSED DATE
+   2010-03-26
+   
+   
+ * LAST MODIFIED DATE
+   2010-04-08
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBSPHERE LAUNC
+   
+   
+ * FIXED COMPONENT ID
+   5724M4011
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R810 PSY
+   UP
+   
+   
+ * R820 PSY
+   UP
+   
+   
+ * R830 PSY
+   UP

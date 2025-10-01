@@ -1,0 +1,152 @@
+Title: IBM PK99127: Robot doesn't handle the shared resource execution correctly whe n executing Robot script via RQM on Linux. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PERMANENT RESTRICTION.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Robot doesn't handle the shared resource execution correctly, bu
+   t rather just passes the absolute share path to Robot for execut
+   ion. It works when RQM server is on a windows machine, when the
+   shared resource is accessible as a UNC share from the adapter as
+    well.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   This defect created based on the resolution from the
+   Escalation RATLC01491776.
+   This has been verified as a bug in the Robot adapter. It
+   doesn't handle the shared resource execution correctly, but
+   rather just passes the absolute share path to Robot for
+   execution. It works when RQM server is on a windows machine,
+   when the shared resource is accessible as a UNC share from
+   the adapter as well.
+   
+   Instead the Robot adapter should download the shared
+   resource from RQM and pass the downloaded file details to
+   Robot.
+   
+   
+   Robot Environment:
+   
+   Processor: Intel Pentium Dual Core 1.6 GHz
+   Memory: 1280 MB RAM
+   Operating System: Windows XP Service Pack2
+   Robot Version: 7.0.2.02
+   Browser: Mozilla Firefox 3.0.13
+   
+   RQM Environment:
+   
+   Processor: Intel Pentium Dual Core 1.6 GHz
+   Memory: 1280 MB RAM
+   Operating System: Suse Linux Enterprise Server 10 ? Kernel
+   2.6.16.21-0.25 (sem o SP2)
+   Browser: Mozilla Firefox 3.0.13
+   A JVM/JRE is the default of RQM 2.0
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  RQM 3.0 API supports download file and folders. This is a
+   regular API and not internal API. Robot adapter now uses
+   this API and fix will be available in Robot 7034
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK99127
+   
+   
+ * REPORTED COMPONENT NAME
+   RQM STD ED
+   
+   
+ * REPORTED COMPONENT ID
+   5724V1001
+   
+   
+ * REPORTED RELEASE
+   702
+   
+   
+ * STATUS
+   CLOSED PRS
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-10-20
+   
+   
+ * CLOSED DATE
+   2011-08-02
+   
+   
+ * LAST MODIFIED DATE
+   2011-08-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   RATIONAL ROBOT
+   
+   
+ * FIXED COMPONENT ID
+   5724G2400
+   
+   
+
+APPLICABLE COMPONENT LEVELS

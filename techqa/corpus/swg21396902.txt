@@ -1,0 +1,78 @@
+Title: IBM Content Collector Web Application start up problem: "First component in name afuConfigurationDatabase not found" - United States
+
+Text:
+configuration manager; web service; jndi; afuConfigurationDatabase TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ I cannot access my IBM® Content Collector web application. The SystemOut.log file is showing a javax.naming.NameNotFoundException: "jdbc/afuConfigurationDatabase: First component in name afuConfigurationDatabase not found". How can I resolve this? 
+
+SYMPTOM
+In the SystemOut.log file, the following errors can be seen: 
+
+
+[8/5/09 12:18:21:962 PDT] 00000013 ServletWrappe E Uncaught init() exception thrown by servlet Configuration
+
+[8/5/09 12:18:21:978 PDT] 00000013 ServletWrappe E Deregister the mbean because of uncaught init() exception thrown by servlet Configuration: javax.servlet.ServletException: Context: WTDOTAPPL05Node01Cell/nodes/WTDOTAPPL05Node01/servers/server1, name: jdbc/afuConfigurationDatabase: First component in name afuConfigurationDatabase not found.
+at com.ibm.afu.configuration.servlet.ConfigurationServlet.init(ConfigurationServlet.java:86)
+at com.ibm.ws.webcontainer.servlet.ServletWrapper.init(ServletWrapper.java:199)
+...
+at com.ibm.ws.util.ThreadPool$Worker.run(ThreadPool.java:1473)
+---- Begin backtrace for Nested Throwables
+javax.naming.NameNotFoundException: Context: WTDOTAPPL05Node01Cell/nodes/WTDOTAPPL05Node01/servers/server1, name: jdbc/afuConfigurationDatabase: First component in name afuConfigurationDatabase not found. [Root exception is org.omg.CosNaming.NamingContextPackage.NotFound: IDL:omg.org/CosNaming/NamingContext/NotFound:1.0]
+at com.ibm.ws.naming.jndicos.CNContextImpl.processNotFoundException(CNContextImpl.java:4730)
+at com.ibm.ws.naming.jndicos.CNContextImpl.doLookup(CNContextImpl.java:1907)
+at com.ibm.ws.naming.jndicos.CNContextImpl.doLookup(CNContextImpl.java:1862)
+at com.ibm.ws.naming.jndicos.CNContextImpl.lookupExt(CNContextImpl.java:1552)
+at com.ibm.ws.naming.jndicos.CNContextImpl.lookup(CNContextImpl.java:1354)
+at com.ibm.ws.naming.util.WsnInitCtx.lookup(WsnInitCtx.java:172)
+at javax.naming.InitialContext.lookup(InitialContext.java:363)
+at com.ibm.afu.configuration.servlet.ConfigurationServlet.init(ConfigurationServlet.java:79)
+at com.ibm.ws.webcontainer.servlet.ServletWrapper.init(ServletWrapper.java:199)
+...
+at com.ibm.ws.util.ThreadPool$Worker.run(ThreadPool.java:1473)
+Caused by: org.omg.CosNaming.NamingContextPackage.NotFound: IDL:omg.org/CosNaming/NamingContext/NotFound:1.0
+at com.ibm.ws.naming.ipcos.WsnOptimizedNamingImpl.do_resolve_complete_info(WsnOptimizedNamingImpl.java:543)
+at com.ibm.ws.naming.cosbase.WsnOptimizedNamingImplBase.resolve_complete_info(WsnOptimizedNamingImplBase.java:2215)
+... 30 more
+
+[8/5/09 12:18:21:978 PDT] 00000013 WebExtensionP E Error occured while preparing the servlet for initialization. 
+javax.servlet.ServletException: Context: WTDOTAPPL05Node01Cell/nodes/WTDOTAPPL05Node01/servers/server1, name: jdbc/afuConfigurationDatabase: First component in name afuConfigurationDatabase not found.
+at com.ibm.afu.configuration.servlet.ConfigurationServlet.init(ConfigurationServlet.java:86)
+at com.ibm.ws.webcontainer.servlet.ServletWrapper.init(ServletWrapper.java:199)
+...
+at com.ibm.ws.util.ThreadPool$Worker.run(ThreadPool.java:1473)
+---- Begin backtrace for Nested Throwables
+javax.naming.NameNotFoundException: Context: WTDOTAPPL05Node01Cell/nodes/WTDOTAPPL05Node01/servers/server1, name: jdbc/afuConfigurationDatabase: First component in name afuConfigurationDatabase not found. [Root exception is org.omg.CosNaming.NamingContextPackage.NotFound: IDL:omg.org/CosNaming/NamingContext/NotFound:1.0]
+at com.ibm.ws.naming.jndicos.CNContextImpl.processNotFoundException(CNContextImpl.java:4730)
+at com.ibm.ws.naming.jndicos.CNContextImpl.doLookup(CNContextImpl.java:1907)
+at com.ibm.ws.naming.jndicos.CNContextImpl.doLookup(CNContextImpl.java:1862)
+at com.ibm.ws.naming.jndicos.CNContextImpl.lookupExt(CNContextImpl.java:1552)
+at com.ibm.ws.naming.jndicos.CNContextImpl.lookup(CNContextImpl.java:1354)
+at com.ibm.ws.naming.util.WsnInitCtx.lookup(WsnInitCtx.java:172)
+at javax.naming.InitialContext.lookup(InitialContext.java:363)
+at com.ibm.afu.configuration.servlet.ConfigurationServlet.init(ConfigurationServlet.java:79)
+at com.ibm.ws.webcontainer.servlet.ServletWrapper.init(ServletWrapper.java:199)
+...
+at com.ibm.ws.util.ThreadPool$Worker.run(ThreadPool.java:1473)
+Caused by: org.omg.CosNaming.NamingContextPackage.NotFound: IDL:omg.org/CosNaming/NamingContext/NotFound:1.0
+at com.ibm.ws.naming.ipcos.WsnOptimizedNamingImpl.do_resolve_complete_info(WsnOptimizedNamingImpl.java:543)
+at com.ibm.ws.naming.cosbase.WsnOptimizedNamingImplBase.resolve_complete_info(WsnOptimizedNamingImplBase.java:2215)
+at com.ibm.WsnOptimizedNaming._NamingContextStub.resolve_complete_info(_NamingContextStub.java:536)
+at com.ibm.ws.naming.jndicos.CNContextImpl.cosResolve(CNContextImpl.java:4351)
+at com.ibm.ws.naming.jndicos.CNContextImpl.doLookup(CNContextImpl.java:1901)
+... 30 more
+
+
+CAUSE
+The jndi Datasource has not be created.
+
+
+
+RESOLVING THE PROBLEM
+Go back to Configuration Manager, re-save and validate the parameters under Email Services -> Configuration Web Service. If you have the parameters filled in, the save button will be greyed out. Re-enter the values and that should allow you to save again.
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Enterprise Content Management Content Collector Content Collector for File Systems Windows 2003 server 2.1

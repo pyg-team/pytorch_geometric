@@ -1,0 +1,114 @@
+Title: IBM PK70391; 6.1.0.17: CommonEventInfrastructure user name and password - United States
+
+Text:
+PK70391; PK70391; PK70391 DOWNLOADABLE FILES
+
+ABSTRACT
+ The Administrative Task used to configure CommonEventInfrastructure with Microsoft SQL Server fails when the database password contains MS DOS special characters, like a comma (,). 
+
+DOWNLOAD DESCRIPTION
+PK70391 resolves the following problem:
+
+
+
+
+
+ERROR DESCRIPTION: 
+
+Problem: 
+
+1. Install IBM WebSphere Process Server V6.1.2: WebSphere Application Server Network Deployment V6.1.0.17 and WebSphere Business Integration V6.1.2.0 on Microsoft Windows 2008 
+
+
+2. Create profiles with the profile wizard, select SqlServer as a Common Event Infrastructure (CEI) database product, set the user as "ceiuser" and set the user's password to "abc123," (the end character is a comma).
+
+
+3. Start the server, test event and event catalog datasources connection. The test connection operation fails for data source event on server server1 at node WIN2k81Node01 with the following exception: 
+
+java.sql.SQLException: [IBM][SQLServer JDBC Driver][SQLServer]Login failed for user 'ceiuser'.DSRA0010E: SQL State = 28000, Error Code = 18,456. View JVM logs for further details. 
+
+
+4. Set database user’s password to "abc123” (remove the comma) from the administrative console JAAS-J2C authentication data page. Test the event and event catalog connection once more and this operation will be performed successfully.
+
+
+5. Another way: skip step 4, open Microsoft SQL Server Management studio, and set ceiuser's password to "abc123," in the login properties dialog for ceiuser. Open the administrative console, test event and event catalog datasources and the connection test will be performed successfully.
+
+
+Based on the observations seen in step 4 and step 5, the password is not the original password that is set in the profiles wizard when CommonEventInfrastructure database scripts create the login user "ceiuser" in SqlServer.
+
+
+6.Try to execute cei db scripts in the command window, for instance: 
+
+cr_event_mssql.bat ceiuser abc123, server=WIN2K81 sauser=sa sapassword="abc123," 
+
+ we can get same results as the profiles wizard executing this scripts. Debug and trace cr_event_mssql.bat. The result is that variable userpassword is set to "abc123" but not "abc123,".
+
+Password "abc123," is compatible with Microsoft Windows 2008 default password policy.
+
+
+LOCAL FIX: 
+
+ 
+
+PROBLEM SUMMARY: 
+
+The configuration command fails because the MS DOS command prompt interpreter will fail. It will only read the first part of the string, the part in front of the special character, that was passed as password parameter. So basically it will pass the wrong password to the script that creates the CEI user in the database. But on the other hand, when the configurations are made via the same administrative task, the password for the CEI user is set as it was given. 
+
+This leads to an inconsistency between the password in the database and the password in the CEI configurations on WebSphere Application Server, which means that CEI will not be able to connect to the database because the password is wrong. 
+
+ 
+
+USERS AFFECTED: 
+
+Common Event Infrastructure (CEI) users on Microsoft Windows that configures CEI with MS SQLServer. 
+
+ 
+
+PROBLEM DESCRIPTION: 
+
+The CEI administrative task used for configuration with Microsoft SQL Server will fail when MS DOS special characters, like comma (,), are put in the passwords. This happens even if you quote the passwords. 
+
+ 
+
+RECOMMENDATION: 
+
+ 
+
+PROBLEM CONCLUSION: 
+
+Support for passwords containing MS DOS special characters (like comma (,)) was added to the CEI configuration with SQL Server administrative task. 
+
+ 
+The fix for this APAR is currently targeted for inclusion in Fix Pack 6.1.0.21. 
+
+ 
+
+Please refer to the recommended updates page for delivery information: 
+http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+
+PREREQUISITES
+Please download the UpdateInstaller below to install this fix.
+
+URL LANGUAGE SIZE(Bytes) UpdateInstaller [http://www.ibm.com/support/docview.wss?rs=180&uid=swg21205991] US English 7250000 
+INSTALLATION INSTRUCTIONS
+Please review the readme.txt for detailed installation instructions.
+
+URL LANGUAGE SIZE(Bytes) Readme [ftp://public.dhe.ibm.com/software/websphere/appserv/support/fixes/PK70391/readme.txt] US English 9590 
+DOWNLOAD PACKAGE
+
+
+Download package
+What is Fix Central (FC)? [http://www.ibm.com/systems/support/fixes/en/fixcentral/help/faq_sw.html]
+What is DD? [http://www6.software.ibm.com/dldirector/doc/DDfaq_en.html]
+
+Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options 6.1.0.17-WS-WAS-IFPK70391 09-24-2008 US English 18678 FC [http://www.ibm.com/support/fixcentral/quickorder?fixids=6.1.0.17-WS-WAS-IFPK70391&product=ibm%2FWebSphere%2FWebSphere%20Application%20Server&source=dbluesearch] FTP [ftp://public.dhe.ibm.com/software/websphere/appserv/support/fixes/PK70391/6.1.0.17-WS-WAS-IFPK70391.pak] DD 
+
+
+
+
+
+TECHNICAL SUPPORT
+ Contact IBM Support using SR (http://www-306.ibm.com/software/support/probsub.html [http://www-306.ibm.com/software/support/probsub.html]), visit the WebSphere Application Server Support Web site (http://www.ibm.com/software/webservers/appserv/was/support/ [http://www.ibm.com/software/webservers/appserv/was/support/]), or contact 1-800-IBM-SERV(U.S. only). 
+
+ [/support/docview.wss?uid=swg24021385&aid=1]Problems (APARS) fixed [/support/docview.wss?uid=swg24021385&aid=2]Problems (APARS) fixed
+PK70391

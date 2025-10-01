@@ -1,0 +1,60 @@
+Title: IBM Enterprise Content Manager Content Platform Engine (CPE)- Too many failed thumbnail requests - United States
+
+Text:
+thumbnail; subscription; filter expression; mimetype TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The default thumbnail generation subscription uses a filter expression that
+
+does not exclude common unsupported mime types. The failed thumbnail requests include mime types of application/java-archive, text/xml, application/pdf, and text/html. 
+
+SYMPTOM
+A typical LAST_FAILURE_REASON is: "Failed to generate thumbnail for
+file: [/fnsw/IBM/Websphere-v85/AppServer/profiles/AppSrv01/FileNet/ce-
+server1/content/{A77CE131-525D-4E86-BB17-B9D98A00DC3A}/FN{1A4F89BC-5DF0-
+4FE3-AE69-41EBB5334685}{99DC74CA-E2C5-403B-A9BB-2FE396CDBAFB}-0.jar ::
+mimetype<application/java-archive> extension<jar>], generation service
+return error code: [135: XOpenDisplay failed]."
+
+
+CAUSE
+Some mime types are not supported by ThumbnailGenerationService, but not excluded by the default thumbnail generation subscription, including so-far-mentioned
+
+application/java-archive
+text/xml
+application/pdf
+text/html
+video/x-msvideo
+
+ENVIRONMENT
+CPE 5.2.0.3 IF003
+
+DIAGNOSING THE PROBLEM
+Review p8 trace
+
+RESOLVING THE PROBLEM
+We want to add these into the filter expression to exclude so that future document (of these types) checkin won't trigger thumbnail generation subscription. When doing so, we'd like to be very careful because the following three types of pretty common to generate thumbnails.
+text/xml
+application/pdf
+text/html
+
+Recommend to remove them from the least so that we only add these two.
+application/java-archive
+video/x-msvideo
+
+In another word, the filter expression should look like this
+
+VersionStatus = 1 AND NOT MimeType IN (
+'application/iccxit',
+'application/x-filenet-rm-electronicrecord',
+'application/x-filenet-rm-emailrecord',
+'application/x-filenet-rm-physicalrecord',
+'application/x-filenet-workflowdefinition',
+'application/x-filenet-searchtemplate',
+'application/x-icn-documententrytemplate',
+'application/x-icn-folderentrytemplate',
+'application/java-archive',
+'video/x-msvideo'
+)
+
+This should work for future document checkin. For the failed ones, simply remove them from ThumbnailRequest table with Failure_count=3 (3 is the default retry count in my sytem). These are just failed requests and will never be processed again. When doing so, users might want to consult their DBA regarding how much it might take, whether the database server timeout may apply, etc, to make sure it doesn't impact their daily operation.

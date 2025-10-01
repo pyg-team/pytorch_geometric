@@ -1,0 +1,203 @@
+Title: IBM PI72336: ACTION PIN IS NOW OWNED BY ACTION - United States
+
+Text:
+  A FIX IS AVAILABLE
+IBM Rational Rhapsody 8.2.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24043638]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Description
+   
+   The customer is trying to extract information about object flows
+   from an activity diagram. They use action pins on actions to
+   type the object flows.
+   They cannot find a way to identify the action that owns an
+   action pin. The pin owner is shown as the activity, not the
+   action.
+   
+   See attached document that shows the issue
+   
+   Action Pins should be owned by the Action
+   
+   Research
+   
+   In the OMG SysML Guide, it is stated that action pins are owned
+   by their action
+   
+   "Starting an action:
+   &#226; &#162; An action starts when a token is placed on all of its
+   control inputs and all of its required inputs
+   (must meet minimum multiplicity of its input pins) and the
+   previous invoked activity has
+   completed
+   &#226; &#162; An action invokes an activity when it starts, and
+   passes the tokens from its input pins to the
+   input parameter nodes of the invoked activity"
+   
+   Use Case
+   
+   They want to identify the source of the object flow, which is
+   the action that has the action pin that provides the object
+   flow.
+   They also are interested in the action being discover-able in
+   ReporterPLUS, Rhapsody tables and RPE
+   
+   They want to be able to create information for documents that
+   shows that Function A has an output Message A of Pin A which it
+   provides to Pin B where it is consumed by Action B.
+   Right now they can create tables in ReporterPLUS that show that
+   Message A goes from Pin A to Pin B, but that's meaningless
+   without knowing that Pin A is owned by Function A and Pin B is
+   owned by Function B.
+   
+   The end game it to define the functional interfaces.
+   
+   
+   -----
+   
+   Escalation
+   https://l2l3-cmn-rtc.ratl.swg.usma.ibm.com:9443/ccm/web/projects
+   /Rational%20Escalation#action=com.ibm.team.workitem.viewWorkItem [https://l2l3-cmn-rtc.ratl.swg.usma.ibm.com:9443/ccm/web/projects/Rational%20Escalation#action=com.ibm.team.workitem.viewWorkItem]
+   &id=59267
+   
+   From Dev:
+   
+   10. Zvika Verzberger1 Nov 13, 2016 3:15 AM
+   In Rhapsody, all elements in statechart and activity diagram are
+   owned by the diagram.
+   The action is the parent of the pin.
+   Anyway, there is a defect here that prevent showing the parent
+   of an action.
+   Please open a defect.
+   We will find a way to solve this issue.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * Rhapsody                                                     *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * Action Pin is not owned by Action (table/matrix)             *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Displaying the owner of a Pin can be achieved by Tables using
+   Java code.
+   With 814, use the tables column type "User Defined Method" and
+   specify a plugin method that implements the required content.
+   See attached model for example of using a plugin method in a
+   table in 256683_814.zip
+   
+   With 815 the tables were improved, and now it is possible to
+   either use the 814 Java plugin, or use inline Java code.
+   See attached model for example of using user Java implementation
+   in 256683_815.zip
+   
+   For more details on using Java with tables see :
+   https://www.youtube.com/watch?v=9LveEQQwiqk&index=7&list=PLZGO0q [https://www.youtube.com/watch?v=9LveEQQwiqk&index=7&list=PLZGO0q]
+   YNSD4VrcVNWT5ltkBI8vbkMDY0Y
+   https://www.youtube.com/watch?v=omLjAkVHXt8&index=8&list=PLZGO0q [https://www.youtube.com/watch?v=omLjAkVHXt8&index=8&list=PLZGO0q]
+   YNSD4VrcVNWT5ltkBI8vbkMDY0Y
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI72336
+   
+   
+ * REPORTED COMPONENT NAME
+   TLOGIC RHAPSODY
+   
+   
+ * REPORTED COMPONENT ID
+   5724V74RP
+   
+   
+ * REPORTED RELEASE
+   813
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-11-14
+   
+   
+ * CLOSED DATE
+   2017-06-12
+   
+   
+ * LAST MODIFIED DATE
+   2017-06-12
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TLOGIC RHAPSODY
+   
+   
+ * FIXED COMPONENT ID
+   5724V74RP
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R813 PSN
+   UP

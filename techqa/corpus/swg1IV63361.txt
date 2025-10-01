@@ -1,0 +1,164 @@
+Title: IBM IV63361: INCORRECT PASSWORD FOR IEM CONSOLE IN ILMT WEB UI. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  I would like a simple change to the error message which is
+   already being
+   displayed to add there information that this issue could be
+   caused by
+   invalid credentials to IEM Server Console Operator.
+   I would recommend under this APAR to add some error handling to
+   differentiate between:
+   a) invalid credentials (most software is responding with
+   "unknown user",
+   "wrong password")
+   b) other, perhaps not handled error conditions ("unexpected
+   error, refer
+   to logs for more details")
+   
+   <Example) Missing an 'unzip' package on IEM server machine which
+   is prerequisite for VM Manager Tool.
+   While this was a customer mistake, because we have described in
+   our doc
+   that unzip package is required for vm manager tool to be
+   successfully
+   installed e.g. here:
+   http://pic.dhe.ibm.com/infocenter/tivihelp/v26r1/topic/com.ibm.l [http://pic.dhe.ibm.com/infocenter/tivihelp/v26r1/topic/com.ibm.l]
+   mt.doc_9
+   .0/com.ibm.license.mgmt.doc/admin/r_vmm_reqs.html
+   We could do more and better. For example we can modify the same
+   above
+   error message on UI and add there next potential cause of the
+   problem
+   (missing unzip package).
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  n/a
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * When an action cannot be completed because it cannot be sent
+   * to the Endpoint Manager server, it is not clear whether the
+   * problem is caused by invalid credentials or some other error.
+   * EXPECTED RESULTS:
+   * Error messages that are displayed when the action cannot be
+   * sent to the Endpoint Manager server indicate whether the
+   * problem occurs because of invalid credentials or due to some
+   * other error that needs to be checked in the log.
+   ****************************************************************
+   * RECOMMENDATION: Apply appropriate update when available.
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix for this APAR is contained in the following maintenance
+   packages:
+    | Update | SUA 9.0.1.1
+    | Update | ILMT 9.0.1.1
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV63361
+   
+   
+ * REPORTED COMPONENT NAME
+   LIC METRIC TOOL
+   
+   
+ * REPORTED COMPONENT ID
+   5724LMTEM
+   
+   
+ * REPORTED RELEASE
+   900
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-08-11
+   
+   
+ * CLOSED DATE
+   2014-11-04
+   
+   
+ * LAST MODIFIED DATE
+   2014-11-04
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   LIC METRIC TOOL
+   
+   
+ * FIXED COMPONENT ID
+   5724LMTEM
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R900 PSY
+   UP
+   
+   
+ * R901 PSY
+   UP

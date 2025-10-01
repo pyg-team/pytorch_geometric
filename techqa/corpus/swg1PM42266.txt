@@ -1,0 +1,205 @@
+Title: IBM PM42266: RESOURCES WITH @PRODUCES ARE NOT ASSOCIATED WITH CDI BEANS - United States
+
+Text:
+  FIXES ARE AVAILABLE
+8.0.0.2: WebSphere Application Server V8.0 Fix Pack 2 [http://www-01.ibm.com/support/docview.wss?uid=swg24031368]
+8.0.0.3: WebSphere Application Server V8.0 Fix Pack 3 [http://www-01.ibm.com/support/docview.wss?uid=swg24032315]
+8.0.0.4: WebSphere Application Server V8.0 Fix Pack 4 [http://www-01.ibm.com/support/docview.wss?uid=swg24033190]
+8.0.0.5: WebSphere Application Server V8.0 Fix Pack 5 [http://www-01.ibm.com/support/docview.wss?uid=swg24033754]
+8.0.0.6: WebSphere Application Server V8.0 Fix Pack 6 [http://www-01.ibm.com/support/docview.wss?uid=swg24034673]
+8.0.0.7: WebSphere Application Server V8.0 Fix Pack 7 [http://www-01.ibm.com/support/docview.wss?uid=swg24035457]
+8.0.0.8: WebSphere Application Server V8.0 Fix Pack 8 [http://www-01.ibm.com/support/docview.wss?uid=swg24036729]
+8.0.0.9: WebSphere Application Server V8.0 Fix Pack 9 [http://www-01.ibm.com/support/docview.wss?uid=swg24037574]
+8.0.0.10: WebSphere Application Server V8.0 Fix Pack 10 [http://www-01.ibm.com/support/docview.wss?uid=swg24039242]
+8.0.0.11: WebSphere Application Server V8.0 Fix Pack 11 [http://www-01.ibm.com/support/docview.wss?uid=swg24040425]
+8.0.0.12: WebSphere Application Server V8.0 Fix Pack 12 [http://www-01.ibm.com/support/docview.wss?uid=swg24041590]
+8.0.0.13: WebSphere Application Server V8.0 Fix Pack 13 [http://www-01.ibm.com/support/docview.wss?uid=swg24042746]
+8.0.0.14: WebSphere Application Server V8.0 Fix Pack 14 [http://www-01.ibm.com/support/docview.wss?uid=swg24044096]
+8.0.0.15: WebSphere Application Server V8.0 Fix Pack 15 [http://www-01.ibm.com/support/docview.wss?uid=swg24044734]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Resource references and ejb references, specified by their
+   respective annotations and paired with @Produces annotations,
+   are not merged into the managed bean deployment descriptor.
+   Instead, they are included in the Web Module deployment
+   descriptor. This occurs for archives which contain Contexts
+   and Dependency Injection (CDI) managed beans.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  All users of IBM WebSphere Application      *
+   *                  Server V8.0 deploying applications with     *
+   *                  resources using @Produces.                  *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Resources with @Produces are not        *
+   *                      associated with a CDI Bean. These       *
+   *                      resource can not be accessed by the     *
+   *                      CDI Bean.                               *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   Contexts and Dependency Injection  (CDI) Beans may identify
+   associated resources by using a paired @Produces annotation.
+   WebSphere Application Server incorrectly associates these
+   resources to Web content instead of CDI Beans when processing
+   Web Application modules.
+   For example:
+   //   @Produces
+   //   @My
+   //   @EJB
+   CalculatorRemote calculator;
+   The following annotations will be associated with a
+   CDI Bean when they are paired with @Produces:
+   * @Resource
+   * @PersistenceContext
+   * @PersistenceUnit
+   * @EJB
+   * @WebServiceRef
+   The Managed Beans Bindings resource is also used for recording
+   binding information for CDI Beans. If any resources with
+   @Produces require bindings, the Managed Beans Bindings resource
+   will need to be updated or the deployment command will need to
+   be adjusted. Adjusting the deployment command may be required
+   so that the Managed Beans Deployment Descriptor URI is
+   referenced.
+   Previous Command Fragment Example:
+   ...
+   -MapEJBRefToEJB [[ failover.war ""
+   failover.war,WEB-INF/web.xml
+   com.ibm.jcdi.test.conversations.MyProducers/statelessCalculatorB
+   ean com.ibm.jcdi.test.passivation.StatelessCalculatorRemote
+   cell/nodes/node1/servers/server1/ejb/myStatelessCalculatorRemote
+   ]
+   ...
+   Corrected Command Fragment Example:
+   ...
+   -MapEJBRefToEJB [[ failover.war ""
+   failover.war,WEB-INF/ibm-managed-beans.xml
+   com.ibm.jcdi.test.conversations.MyProducers/statelessCalculatorB
+   ean com.ibm.jcdi.test.passivation.StatelessCalculatorRemote
+   cell/nodes/node1/servers/server1/ejb/myStatelessCalculatorRemote
+   ]
+   ...
+   If the installation command is not updated, an error similar
+   to the one below may be displayed:
+   com.ibm.ws.scripting.ScriptingException: WASX7111E: Cannot
+   find a match for supplied option: "[failover.war, ,
+   failover.war,WEB-INF/web.xml,
+   com.ibm.jcdi.test.conversations.MyProducers/statelessCalculatorB
+   ean, com.ibm.jcdi.test.passivation.StatelessCalculatorRemote,
+   cell/nodes/node1/servers/server1/ejb/myStatelessCalculatorRemote
+   ]" for task "MapEJBRefToEJB"
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The internal component for processing annotations was updated
+   to recognize the existence of @Produces and correctly map the
+   associated resources. The component for binding resources was
+   also updated to support these resources being placed in the
+   Managed Beans Bindings resource. No workaround is available.
+   
+   The fix for this APAR is currently targeted for inclusion in
+   fix pack 8.0.0.2. Please refer to the Recommended
+   Updates page for delivery information:
+   http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM42266
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSPHERE APP S
+   
+   
+ * REPORTED COMPONENT ID
+   5724J0800
+   
+   
+ * REPORTED RELEASE
+   800
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-06-23
+   
+   
+ * CLOSED DATE
+   2011-11-02
+   
+   
+ * LAST MODIFIED DATE
+   2011-11-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBSPHERE APP S
+   
+   
+ * FIXED COMPONENT ID
+   5724J0800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R800 PSY
+   UP

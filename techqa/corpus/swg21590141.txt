@@ -1,0 +1,73 @@
+Title: IBM Portlet deployment fails with 'A composition unit with name already exists' - United States
+
+Text:
+EJPPH0019E; EJPPH0056E; deployment; war; uninstall TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Deploying a portlet war either using the Portal Manage Web Modules portlet or xmlaccess fails with a message 'A composition unit with name <appname> already exists' 
+
+SYMPTOM
+In the SystemOut.log, the following exceptions can be seen: 
+
+==================
+[4/2/12 14:32:44:549 EDT] 00000037 WAS5Admin E
+com.ibm.wps.pe.mgr.appserveradmin.WAS5Admin installImpl EJPPH0019E:
+Installation of Web module id from WAR file
+/opt/IBM/WebSphere/wp_profile/PortalServer/deployed/myApp.war failed
+(display name: PA_myApp, options: AppServerDeploymentData:
+id = id
+displayName = PA_myApp
+warfileName =
+/opt/IBM/WebSphere/wp_profile/PortalServer/deployed/myApp.war
+contextRoot = /cpb/PA_myApp
+fileLoader =
+DirectoryFileLoader(/opt/IBM/WebSphere/wp_profile/PortalServer/deployed/temp/myApp.war.32)
+).
+com.ibm.wps.pe.mgr.exceptions.AppServerWarInstallException: EJPPH0056E:
+The installation of portlet application
+/opt/IBM/WebSphere/wp_profile/PortalServer/deployed/myApp.war did not
+complete successfully. Please check the WAS log files for a possible
+explanation.
+at
+com.ibm.wps.pe.mgr.appserveradmin.WAS5Admin.installImpl(WAS5Admin.java:8
+79)
+at
+com.ibm.wps.pe.mgr.appserveradmin.WAS5Admin.access$300(WAS5Admin.java:80
+)
+.
+.
+.
+Caused by: com.ibm.wps.pe.mgr.exceptions.AppServerWarInstallException:
+EJPPH0000E: ADMA5016I: Installation of PA_myApp started.
+A composition unit with name PA_myApp already exists. Select
+a different application name. 
+
+==================
+
+
+CAUSE
+The key to this error is the message: "A composition unit with name PA_myApp already exists. Select
+a different application name." 
+
+This implies that the application is already deployed, at least partially, in the WAS configuration. This technote assumes that the application is not supposed to be deployed, or has previously been uninstalled, and you are seeing this problem. 
+
+
+RESOLVING THE PROBLEM
+To resolve the problem, follow these steps: 
+
+
+1. Check the following locations to see if the app directories exist:
+<profile root>/config/cells/cellname/applications/PA_myApp
+<profile root>/config/cells/cellname/blas/PA_myApp
+<profile root>/config/cells/cellname/cus/PA_myApp
+
+Remove any of the directories you see, where "PA_myApp" is your application name.
+
+2. If in a cluster, check the DMGR as well in the same locations.
+3. Clear the contents of the profile/wstemp directory (and on the DMGR as well if in a cluster).
+4. Restart the Portal Server (and DMGR if clustered) and reattempt the deployment.
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Organizational Productivity- Portals & Collaboration WebSphere Portal End of Support Products AIX, HP-UX, IBM i, Linux, Solaris 7.0, 6.1

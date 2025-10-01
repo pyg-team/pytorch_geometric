@@ -1,0 +1,194 @@
+Title: IBM JR44199: SRVC - USER CAN CREATE SNAPSHOTS WITH LENGTHS LONGER THAN 64 CHARACTERS WHICH RESULT IN AN ERROR. - United States
+
+Text:
+  A FIX IS AVAILABLE
+Version 7.5.1 Fix Pack 2 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24036462]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When entering a snapshot within a track, the new snapshot name
+   is a combination of the parent track plus new snapshot. Users
+   can enter snapshot names up to 64 characters in this field.
+   however, at this point of making a snapshot, the saved snapshot
+   name is track + snapshot, and the maxium length is still 64
+   characters. Text box needs to have a built in (64-track) lenth
+   which will vary with process app to proess app.
+   
+   Servicability
+   
+   1. create process app
+   2. create snapshot in authoring environment on the process
+   center
+   console side, not in the application it self. by pasting in a
+   string
+   which is longer than 64 characters
+   eg:
+   The quick brown fox jumps over the lazy dogThe quick brown fox
+   jumps
+   over the lazy dog
+   
+   3. text box truncates name to 64 characters
+   4. create track from this snapshot with a string greater than 64
+   characters. Name is truncated to 64 characters, and created
+   5. open the named track.
+   6. create a snapshot within this track
+   7. from this snapshot create a new worksapce which is exatly 64
+   characters. This will error out with an error such as the
+   following
+   
+   com.lombardisoftware.gwtcommon.client.RepositoryException:
+   com.lombardisoftware.client.delegate.BusinessDelegateException:
+   PreparedStatementCallback; uncategorized SQLException for SQL
+   [update LSW_SNAPSHOT set CREATED_ON = ?,NAME = ?,ACRONYM =
+   ?,DESCRIPTION = ?,SEQ_NUM = ?,ERROR_COUNTER = ?,ORIG_CREATED_ON
+   =
+   ?,ACTIVATED_ON = ?,ARCHIVED_ON = ?,REPOSITORY_BRANCH_ID =
+   ?,CREATED_BY_USER_ID = ?,BRANCH_ID = ?,PROJECT_ID =
+   ?,CHANGE_DATA =
+   ?,IS_ACTIVE = ?,IS_BLA_ACTIVE = ?,IS_STARTED = ?,IS_INSTALLED =
+   ?,IS_BLA_INSTALLED = ?,IS_TIP_DEPLOYED = ?,IS_DEFAULT =
+   ?,IS_ARCHIVED =
+   ? where SNAPSHOT_ID = ?];
+   SQL state [72000]; error code [12899]; ORA-12899: value too
+   large for
+   column "SUP231751PC"."LSW_SNAPSHOT"."NAME" (actual: 116,
+   maximum: 64);
+   nested exception is java.sql.SQLException: ORA-12899: value too
+   large
+   for column "SUP231751PC"."LSW_SNAPSHOT"."NAME" (actual: 116,
+   maximum:
+   64)
+   
+   Customer needs to use all 64 characters and cannot create
+   additional
+   workspaces.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Enter combined character length less than 64 characters.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  Business Process Manager Version 7.5.1.0    *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: SQL exception thrown when creating      *
+   *                      snapshots with name length longer       *
+   *                      than 64 characters                      *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   When creating snapshots with name length longer than 64
+   characters, the following exception is thrown:
+   'java.sql.SQLException: ORA-12899: value too large'
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The iFix prevents the SQL error and displays a meaningful
+   error message to the user.
+   
+   Install/Dependency information is available in the readme.txt
+   on FixCentral. When the user goes to the download files page
+   in FixCentral, the readme will be available with the fix
+   package as a separate download.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR44199
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM STANDARD
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9500
+   
+   
+ * REPORTED RELEASE
+   751
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-09-24
+   
+   
+ * CLOSED DATE
+   2013-04-29
+   
+   
+ * LAST MODIFIED DATE
+   2013-04-29
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   BPM STANDARD
+   
+   
+ * FIXED COMPONENT ID
+   5725C9500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R750 PSY
+   UP

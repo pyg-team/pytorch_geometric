@@ -1,0 +1,143 @@
+Title: IBM IZ28360: "SYSTEM PROPERTIES BEING RESET WHEN TEPS DATA LAYER API IS INITIALIZED" - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The TIP team needs a fix to address a problem in TEP they found.
+   Briefly, the TEP has 3 different places where we
+   programmatically insert additional system properties.  The
+   pattern we use is to first capture the current set of system
+   properties, insert the additional properties we need, then set
+   the updated set of properties back into the System object.  This
+   technique appears to have the unexpected side-effect of removing
+   and/or resetting system properties that already exist before the
+   update takes place.  Since TIP uses a number of system
+   properties to control and configure its operation, the reset
+   and/or loss of these properties when interfacing with the TEPS
+   Data Layer API is causing all sort of serious problems
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Java System properties are being lost when interfacing with
+   the TEPS Data Layer API.
+   
+   When using the TEPS Data Layer API, the construction of a
+   TEPDataProvider instance is resulting in the loss of any
+   previously established Java System properties.  Since these
+   properties are often crucial to the execution of the application
+   using the TEPS API, their removal is resulting in unexpected and
+   incorrect behavior in the consuming application.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The TEPS Data Layer API was modified to ensure that any new
+   properties added programmatically by that API layer does not
+   result in the loss of any existing System properties.
+   
+   The fix for this APAR is contained in the following maintenance
+   packages:
+    | fix pack | 6.2.0-TIV-ITM-FP0002
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ28360
+   
+   
+ * REPORTED COMPONENT NAME
+   TEPS
+   
+   
+ * REPORTED COMPONENT ID
+   5724C04PS
+   
+   
+ * REPORTED RELEASE
+   620
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-07-28
+   
+   
+ * CLOSED DATE
+   2008-10-30
+   
+   
+ * LAST MODIFIED DATE
+   2008-10-30
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TEP
+   
+   
+ * FIXED COMPONENT ID
+   5724C04EP
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R620 PSY
+   UP

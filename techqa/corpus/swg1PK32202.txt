@@ -1,0 +1,174 @@
+Title: IBM PK32202: Improvements are needed to the vendor-specific application programming interface (API) call data using the WSCALLHELPER - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The "Data access portability features" topic in the Version 6.x
+   information center does not tell you how to use the WSCallHelper
+   class for Java database connectivity (JDBC). The topic needs to
+   be improved to make the task easier to accomplish. Make the
+   information for the WSCallHelper class in the Javadoc more
+   easily accessible from the "Data access portability features"
+   topic. Lastly, the jdbcPass method call example is incorrect.
+   
+   The following APARs address problems in WebSphere Application
+   Server Version 6.0.x for WSCallHelper class processing:
+   PK06934 -- Add trusted method Array on class Oracle.SQL.Array
+   PK09641 -- Use Oracle specific method getNumber on resultSet
+   object
+   PK12998-- init method on Oracle.SQL.Struct class not permitted
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: Developers who want to use non-standard      *
+   *                 Java database connectivity (JDBC) classes    *
+   *                 with WebSphere Application Server            *
+   *                 Version 6.x.                                 *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: WebSphere Application Server cannot     *
+   *                      directly use non-standard JDBC          *
+   *                      objects. Within your applications,      *
+   *                      you must use the WSCallHelper class     *
+   *                      to exploit vendor-specific database     *
+   *                      methods and classes.                    *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   The "Data access portability features" topic in the Version
+   6.x information center does not clearly explain how to use the
+   jdbcPass WSCallHelper class method. However, the Application
+   Server requires the jdbcPass method for calling vendor
+   proprietary methods on data source connections.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The "Data access portability features" topic has been updated.
+   The code sample for using the jdbcPass method has been prefaced
+   with a clearer explanation. Also, a syntax error was fixed in
+   the code sample.
+   
+   The following code sample demonstrates how to use jdbcPass to
+   call the Oracle method XMLType.createXML on a connection. This
+   Oracle function creates an XML type object out of the XML data
+   that the database passes to your application.
+   XMLType poXML = (XMLType)(WSCallHelper.jdbcPass(XMLType.class,
+   "createXML", new Object[]{conn,poString},
+    new Class[]{java.sql.Connection.class, java.lang.String.class},
+   
+    new int[]{WSCallHelper.CONNECTION,WSCallHelper.IGNORE}));:
+   
+   Additionally, steps have been added to the topic to access the
+   WSCallHelper class application programming interface (API)
+   documentation, which provided more generic examples of using
+   the jdbcPass method. The following information has been added:
+   
+   For more examples of using jdbcPass and a complete list of
+   method parameters, see the API documentation for the
+   WSCallHelper class. In this information center, access the API
+   documentation with the following steps:
+   1. Click Reference > Developer API documentation > Application
+   programming interfaces.
+   2. Click com.ibm.websphere.rsadapter.
+   3. Under the Class Summary heading, click WSCallHelper.
+   The first section on jdbcPass discusses using the method to
+   call database static methods. The second section on jdbcPass
+   addresses database non-static methods.
+   
+   The modified documentation will be available in the next update
+   to the information centers, which is scheduled to occur on or
+   before December 31, 2006.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK32202
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSPH APP SERV
+   
+   
+ * REPORTED COMPONENT ID
+   5724J0800
+   
+   
+ * REPORTED RELEASE
+   60W
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2006-09-29
+   
+   
+ * CLOSED DATE
+   2006-10-23
+   
+   
+ * LAST MODIFIED DATE
+   2006-10-23
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

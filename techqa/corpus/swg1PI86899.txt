@@ -1,0 +1,281 @@
+Title: IBM PI86899: CORRECTIONS ARE NEEDED TO THE DOCUMENTATION IN THE KNOWLEDGE CENTER FOR IBM WEBSPHERE APPLICATION SERVER VERSION 9.0 - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  This APAR describes the issues that customers encountered with
+   IBM WebSphere Application Server Version 9.0.  These issues were
+   resolved as knowledge center updates in September, 2017.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  This APAR provides a cumulative list of     *
+   *                  the documentation issues for Sept., 2017    *
+   *                  that affect users of IBM WebSphere          *
+   *                  Application Server Version 9.0.             *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: The Knowledge Centers for WebSphere     *
+   *                      Application Server Version 9.0 need     *
+   *                      to reflect customer enhancement         *
+   *                      requests received in problem            *
+   *                      management records (PMRs). These        *
+   *                      enhancements can include fixing         *
+   *                      technical inaccuracies or clarifying    *
+   *                      vague information.                      *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   See the Problem conclusion section for a description of the
+   issues, which are described in customer PMRs, and the
+   documentation change or changes that will address these issues.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Note: As we update our knowledge centers, the following
+   Version 9.0 modifications will be available. To access the
+   latest on-line documentation, go to the product library page
+   at http://www.ibm.com/software/webservers/appserv/library and
+   select the version and product that is appropriate for your
+   WebSphere Application Server environment.
+   
+   The following Version 9.0 issues will be addressed:
+   
+   ID: 246615 (RTC)
+   Problem: WebSphere Application Server  V9.0 uses Jython 2.7 and
+   as such the Jython reserved keyword list is different than what
+   was is in Jython 2.1  The client moved up to V9.0 and certain
+   scripts failed even though they worked on an earlier release
+   and Jython 2.1.   The keyword, as,  is allowed in Jython 2.1,
+   but not in Jython 2.7.
+   Topic, Using wsadmin scripting with Jython, needs to be
+   updated.  The reserved keyword list needs to conform with
+   Jython 2.7.
+   Resolution: Topic, Using wsadmin scripting with Jython, is
+   updated.  There are three new reserved keywords that need to
+   be added to the topic:  as, with, yield.  Then this topic will
+   conform to Jython 2.7.
+   ------
+   
+   ID: 246233 (RTC), PI86899
+   Problem description: Topic, Multiple virtual hosts for
+   web modules is in need of an update. The term, virtual
+   host, is changed to, web module. Also, some of the step
+   directions are in error.  These documentation erros can lead
+   to misuse if the procedure is follows as is.
+   Resolution:
+   1) Topic, Multiple virtual hosts for
+   web modules, is updated.  The second sentence of Step 3b -
+   virtual host is changed to web module.  Step 3b mentions step
+   1 in the second sentence should refer to step 3a.  This second
+   sentence now reads:
+   If you selected more than one web module in step 3a:
+   
+   2) Topic ,Virtual hosts settings, is updated.
+   The second sentence of step 2, is updated to change, virtual
+   host, to ,web module - and now reads:
+   If you selected more than one web module in step 1:
+   
+   These topic updates also applies to version 7, 8, and 85.
+   ------
+   
+   ID: 246184 (RTC)
+   Problem: TPV logging script does not work if the topic,
+   Logging Tivoli Performance Viewer data using scripting, is
+   followed as documented.  The topic needs to be updated to
+   indicate particular presferences that need to be set as well
+   as to corroect the currently documented character string,
+   tpvOName, to tpvName.
+   Resolution:  Topic, Logging Tivoli Performance Viewer data
+   using scripting, is updated.
+   (1) Steps 5, 6, 7 are updated so that tpvOName is changed to
+   tpvName.
+   (2) At the end of Step, the topic now reads:
+   Make sure you add the following preferences:
+   - pref.setBufferSize(nnnn) - Sets the number of entries to
+   store in the buffer, where nnnn is an integer.  (Example:
+   pref.setBufferSize(1200) )
+   - pref.setLoggingDuration(nn) - Sets the logging duration.
+   This is how long in seconds logging will stay active once it
+   has been turned on, unless it is stopped manually by the user.
+    (Example: pref.setLoggingDuration (60) )
+   - pref.setRefreshRate(n)   - Sets the refresh rate in seconds,
+   the number of  seconds between requests for new data (Example:
+   pref.setRefreshRate(5) )
+   - pref.setLogFileSize(nnnnnnnn) - Sets the log file size in
+   bytes an individual log file can grow to. (Example:
+   pref.setLogFileSize(1000000) )
+   - pref.setNumLogFiles(n)     - Set the number of log files to
+   use while logging.   (Example: pref setNumLogFiles(3) )
+   
+   This update also applies to V7.0, V8.0, and V8.5.
+   ----
+   
+   ID: 246357 (RTC)
+   Problem: Topic, Enabling z/OS authorized services on Liberty
+   for z/OS, documents an example that is missing information and
+   when used, can lead to errors. Message CWWKB0118W appears in
+   the Liberty server messages.log after configuring a new named
+   angel. This server is not authorized to connect to the {0}
+   angel process. No authorized services will be loaded.  This
+   condition is caused by using the SAF definitions on the
+   knowledge center topic, Enabling z/OS authorized services on
+   Liberty for z/OS.
+   Resolution: Topic, Enabling z/OS authorized services on Liberty
+   for z/OS, is updated.  The second bullet in the procedure now
+   reads:
+   To create an unnamed angel server profile and enable a server
+   that is running as WLPUSER1 to connect to it, issue the
+   following commands:
+   
+   RDEF SERVER BBG.ANGEL UACC(NONE)
+   PERMIT BBG.ANGEL CLASS(SERVER) ACCESS(READ) ID(wlpuser1)
+   
+   [16.0.0.4 and later]To create a named angel server profile and
+   enable a server that is running as WLPUSER1 to connect to it,
+   issue the following commands:
+   
+   RDEF SERVER BBG.ANGEL.namedAngelName UACC(NONE)
+   PERMIT BBG.ANGEL.namedAngelName CLASS(SERVER) ACCESS(READ)
+   ID(WLPUSER1)
+   
+   The profile name that you specify for the namedAngelName
+   variable is the name of the new angel.
+   
+   [16.0.0.4 and later] You can use generic profiles such as
+   BBG.ANGEL.* to grant a user ID access to multiple angels.
+   ----
+   
+   ID: 246702
+   Problem: the PidWaiter creates a new thread every ping
+   interval. When there is no response beyond PingTimeout, the
+   thread sleep for 60 seconds and try to ping again.
+   The user could not understand from the knowledge center about
+   the time of sleep and retry while planning to design handling
+   of server fault. An update to the knowledge center is needed.
+   Resolution: Topic, Monitoring policy settings, is update - At
+   the end of the section, Automatic Restart, the following
+   paragraph is added:
+   For managed processes, a PidWaiter thread is dedicated to
+   monitor each managed process. After every ping interval, the
+   PidWaiter thread creates a new thread called the contact
+   thread. Every contact thread waits for a response from the
+   managed process up to the ping timeout value. If no response
+   is received by the time the ping timeout is reached or if
+   contact fails with an exception, the PidWaiter thread sleeps
+   for 60 seconds and then tries again. If there is no response
+   to the second attempt to create the contact thread and ping
+   the managed process, PidWaiter tries to restart the managed
+   process if Automatic Restart is set to true.
+   
+   This update also applies to V7.0, V8.0, and V8.5
+   -----
+   
+   ID: 246698 (RTC)
+   Problem: Websphere Applicaiton server 9.0 knowledge center is
+   missing a statement that WAS 9.0 can be installed using
+   installation manager in console mode.
+   Resolution: Topic, Installing the product offerings, is updated:
+   (1) About this task sentence now reads:
+   Depending on your operating system, you can install a product
+   using the Installation Manager GUI, command line, response
+   files, or console mode. Installation Manager performs the
+   following actions:
+   (2) An additional bullet is added which reads as a "link"
+   - Installing packages by using console mode
+   
+   ------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI86899
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSPHERE APP S
+   
+   
+ * REPORTED COMPONENT ID
+   5724J0800
+   
+   
+ * REPORTED RELEASE
+   900
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-09-06
+   
+   
+ * CLOSED DATE
+   2017-09-18
+   
+   
+ * LAST MODIFIED DATE
+   2018-01-06
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

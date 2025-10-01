@@ -1,0 +1,159 @@
+Title: IBM IT01564: SFTP UPLOAD FILE FAILED BUT STERLING B2B INTEGRATOR SHOWS IT IS SUCCESSFUL - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  ERROR DESCRIPTION:
+   Defect Description Template for Escalating PMRs
+   Environment Info
+   SI Build Number: 5020402
+   Problem Statement
+   SFTP upload file failed but si shows it is sucessfully
+   In SI,I create a sftp server adapt use FileSystem directly I
+   use sftp client to upload a file and shutdown the client before
+   the file tranfer successfully
+   When I go to the Communication Session page on SI,It shows the
+   file is transfer complte with no error.
+   Simulation Steps
+   Set SFTP Server adapter to use file system
+   Upload file
+   Cancel upload before end
+   Communication Sessions and SFTP Server logs show transfer is
+   complete
+   Supporting Documentation/Asset Location
+   See Handover document attached to case
+   Observations
+   Problem occurs only when file system is used, when the Mailbox
+   is used as the storage the shutdown of the client is recognised
+   and the upload marked as failed.
+   Expected Behavior
+   Behaviour should be the same as for the SFTP Server Adapter
+   Business Impact
+   Unable to determine if a file upload was truely successful or
+   not.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  LOCAL FIX:
+   No Workaround
+   STRRTC 421640
+   MW/MW
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *    SFTP upload file failed but SI B2B shows it is successfully
+   
+   
+   Platforms Affected: All
+   
+   Users Affected: All
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The events logging is corrected
+   
+   Delivered in 5020600
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT01564
+   
+   
+ * REPORTED COMPONENT NAME
+   STR B2B INTEGRA
+   
+   
+ * REPORTED COMPONENT ID
+   5725D0600
+   
+   
+ * REPORTED RELEASE
+   524
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-05-05
+   
+   
+ * CLOSED DATE
+   2015-01-16
+   
+   
+ * LAST MODIFIED DATE
+   2015-10-30
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   STR B2B INTEGRA
+   
+   
+ * FIXED COMPONENT ID
+   5725D0600
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R525 PSY
+   UP

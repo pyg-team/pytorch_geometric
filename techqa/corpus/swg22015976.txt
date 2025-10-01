@@ -1,0 +1,81 @@
+Title: IBM Security Bulletin: Vulnerability in Apache Commons FileUpload affects IBM Maximo Asset Management (CVE-2016-1000031) - United States
+
+Text:
+security SECURITY BULLETIN
+
+SUMMARY
+ Apache Commons FileUpload used by IBM Maximo Asset Management could allow a remote attacker to execute arbitrary code on the system, caused by deserialization of untrusted data in DiskFileItem class of the FileUpload library. A remote attacker could exploit this vulnerability to execute arbitrary code under the context of the current process. 
+
+VULNERABILITY DETAILS
+CVEID: CVE-2016-1000031 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2016-1000031]
+DESCRIPTION: Apache Commons FileUpload, as used in Novell NetIQ Sentinel and other products, could allow a remote attacker to execute arbitrary code on the system, caused by deserialization of untrusted data in DiskFileItem class of the FileUpload library. A remote attacker could exploit this vulnerability to execute arbitrary code under the context of the current process. 
+CVSS Base Score: 9.8
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/117957 [https://exchange.xforce.ibmcloud.com/vulnerabilities/117957] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:L)
+
+AFFECTED PRODUCTS AND VERSIONS
+The following Apache Commons FileUpload version is affected: 
+
+ * Apache Commons FileUpload 1.3.2 
+
+
+IBM supplied Apache Commons FileUpload with the following: 
+
+The 7.5.0.x and 7.6.0.x versions of Maximo Asset Management bundled Apache Commons FileUpload 1.3.2 
+
+This vulnerability affects the following versions of the IBM Maximo Asset Management core product, and all other IBM Maximo Industry Solution and IBM Control Desk products, regardless of their own version, if they are currently installed on top of an affected IBM Maximo Asset Management. * 
+
+
+Maximo Asset Management core product affected versions: 
+Maximo Asset Management 7.6, 7.5 
+Maximo Asset Management Essentials 7.5 
+
+Industry Solutions products affected if using an affected core version: 
+Maximo for Aviation 
+Maximo for Government 
+Maximo for Life Sciences 
+Maximo for Nuclear Power 
+Maximo for Oil and Gas 
+Maximo for Transportation 
+Maximo for Utilities 
+
+IBM Control Desk products affected if using an affected core version: 
+SmartCloud Control Desk 
+IBM Control Desk 
+Tivoli Integration Composer 
+
+* To determine the core product version, log in and view System Information. The core product version is the "Tivoli's process automation engine" version. Please consult the Product Coexistence Matrix [https://www.ibm.com/developerworks/community/wikis/home?lang=en#!/wiki/IBM%20Maximo%20Asset%20Management/page/Product%20compatibility] for a list of supported product combinations. REMEDIATION/FIXES
+The recommended solution is to download the appropriate Interim Fix or Fix Pack from Fix Central (What is Fix Central? [http://www.ibm.com/systems/support/fixes/en/fixcentral/help/faq_sw.html]) and apply for each affected product as soon as possible. Please see below for information on the fixes available for each product, version, and release. Follow the installation instructions in the ‘readme’ documentation provided with each fix pack or interim fix. 
+
+For Maximo Asset Management 7.6, 7.5: 
+
+VRM Fix Pack, Feature Pack, or Interim Fix Download 7.6.0 Maximo 7.6.0.9 Interim Fix:
+7.6.0.9-TIV-MBS-IFIX004 or latest Interim Fix available FixCentral [https://www-945.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~Tivoli&product=ibm/Tivoli/IBM+Maximo+Asset+Management&release=7.6.0.9&platform=All&function=all] 7.5.0 Maximo 7.5.0.11 Interim Fix:
+7.5.0.11-TIV-MBS-IFIX013 FixCentral [https://www-945.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~Tivoli&product=ibm/Tivoli/IBM+Maximo+Asset+Management&release=7.5.0.11&platform=All&function=all] WORKAROUNDS AND MITIGATIONS
+None
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v3 Guide [http://www.first.org/cvss/user-guide] 
+On-line Calculator v3 [http://www.first.org/cvss/calculator/3.0] 
+
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] 
+
+CHANGE HISTORY
+ 27 April 2018: Original version published 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY. 
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Systems and Asset Management Control Desk 7.5, 7.5.1, 7.5.1.1, 7.5.1.2, 7.5.3, 7.6.0, 7.6.0.1 Systems and Asset Management Maximo for Life Sciences 7.5, 7.6 Systems and Asset Management Maximo for Nuclear Power 7.5, 7.5.1, 7.6.0 Systems and Asset Management Maximo for Oil and Gas 7.5, 7.5.1, 7.6.0 Systems and Asset Management Maximo for Transportation 7.5, 7.5.1, 7.6.1, 7.6.2, 7.6.2.1, 7.6.2.2, 7.6.2.3, 7.6.2.4 Systems and Asset Management Maximo for Utilities 7.5, 7.6 Systems and Asset Management Tivoli Integration Composer 7.5 Systems and Asset Management IBM Maximo for Aviation 7.6, 7.6.1, 7.6.2, 7.6.2.1, 7.6.3 Systems and Asset Management Maximo for Government 7.5 Systems and Asset Management Maximo Asset Management Essentials 7.5

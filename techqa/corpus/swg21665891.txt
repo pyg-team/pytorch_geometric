@@ -1,0 +1,40 @@
+Title: IBM The utility 'db2move' with LOAD or IMPORT options may reject table rows with SQL3550W - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ How to troubleshoot SQL3550W while loading or importing data with the utility 'db2move' ? 
+
+SYMPTOM
+SQL3550W while loading or importing data with db2move.
+
+
+CAUSE
+The utility 'db2move' with LOAD/IMPORT option may reject the table rows if one or more columns of table are of type "GENERATED ALWAYS" with SQL3550W.
+
+DIAGNOSING THE PROBLEM
+ 
+
+With IMPORT option in "db2move" it is not possible to insert rows in GENERATED ALWAYS identity columns. Hence, if IMPORT gets SQL3550W, use explicit db2 LOAD command to insert rejected rows.
+
+For LOAD, an explicit, non NULL field value can be loaded into a GENERATED ALWAYS identity column only if the identityoverride file type modifier is used. 
+For non-identity GENERATED ALWAYS columns, the generatedoverride file type modifier can be used to load explicit, non NULL values into a row. If using these modifiers is not appropriate, the field value must be replaced with a NULL if LOAD is to accept the row.
+
+With current design of db2move command, we can not specify the modifiers in it, hence you need to perform LOAD explicitly. 
+
+
+RESOLVING THE PROBLEM
+After running 'db2move' with LOAD/IMPORT, please determine the list of tables which are getting the warning message - SQL3550W. We need to use LOAD command for all such tables with correct modifier values as follows: 
+
+If non NULL field value needs to be loaded into a GENERATED ALWAYS identity column, please use following LOAD command:
+db2 "load from <input_data_file>.IXF of IXF lobs from <input_lob_directory> modified by identityoverride insert into <schema_name>.<table_name>" 
+
+If non NULL filed value needs to be loaded into a non-identity GENERATED ALWAYS column, please use following LOAD command: 
+db2 "load from <input_data_file>.IXF of IXF lobs from <input_lob_directory> modified by generatedoverride insert into <schema_name>.<table_name>"
+
+You may add more LOAD command options as per your requirements.
+
+RELATED INFORMATION
+ The 'db2move' command [http://publib.boulder.ibm.com/infocenter/db2luw/v10r1/topic/com.ibm.db2.luw.admin.cmd.doc/doc/r0002079.html]
+Identity column in LOAD [http://publib.boulder.ibm.com/infocenter/db2luw/v10r1/topic/com.ibm.db2.luw.admin.dm.doc/doc/c0004591.html]

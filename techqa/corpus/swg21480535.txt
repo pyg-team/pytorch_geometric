@@ -1,0 +1,24 @@
+Title: IBM Sentinel LM: Error[92]: Failed to add license code "" to the license server on host "no-net". License code is invalid. - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ I am attempting to license my SPSS application via the SPSS License Authorization Wizard, but I am encountering the following error:
+
+Sentinel LM: Error[92]: Failed to add license code to the license server on host "no-net". License code is invalid.
+
+What does this mean? 
+
+ANSWER
+This error can be caused by mistyping your License or entering your authorization code in the license field. If you wish to enter an authorization code, please select the 'Back' button and choose 'Use Authorization via ... to get a License'. The available methods are Internet, Phone, or Email
+
+RELATED INFORMATION
+ Need more help? Our AMOS forum is Live! [https://developer.ibm.com/answers/search.html?f=&type=question&redirect=search%2Fsearch&sort=relevance&q=%2B[amos]]
+Need more help? Our Licensing forum is Live! [https://developer.ibm.com/answers/topics/spsslicensing.html]
+
+
+ 
+
+HISTORICAL NUMBER
+ 49226

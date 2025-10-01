@@ -1,0 +1,47 @@
+Title: IBM Migrating a WebSphere Server Configuration from WebSphere Studio - United States
+
+Text:
+RAD; WSAD; v5; v6; server; server configuration; migration; configuration; import; export; RSA; 1198086 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When loading a WebSphere® Studio (WSxD) version 5.x workspace with Rational® Application Developer (RAD), the WebSphere Application Server (WAS) version 5.x server projects are not migrated. The server configurations must be imported into new server projects in RAD. The instructions provided here for doing this are not documented in the version 6.0 Help Contents. 
+
+RESOLVING THE PROBLEM
+Servers and server configurations, typically WAS version 5.x, created in WSAD version 5.x are not automatically migrated into RAD version 6.x due to differences in format between the two products. However, it is possible to manually migrate the server configuration files so that datasources and other server specific files are not lost. To migrate a server configuration from a previous workspace, take the following steps:
+
+
+Note that in WSxD version 5.x it is necessary to first remove any EARs that have been added to a WebSphere Test Environment (WTE) version 5.x server configuration prior to migrating the workspace or importing the server configuration into a RAD version 6 workspace. 
+
+In RAD version 6: 
+
+ 1.  Go to Window > Preferences > Server and check the Create server resources in workspace preference. Click OK.
+     
+     Note: this step is optional and the user can safely ignore it. This step is included since the document is targeted for WSAD users moving to RAD and wanting to preserve the same behaviour as in WSAD. In WSAD, making the server configuration files visible when creating a new server configuration. 
+ 2.  Create a new Server project from File > New > Project.... 
+ 3.  Select Server > Server Project and click Next. 
+ 4.  Enter MyServers in the Project name field and click Finish. 
+ 5.  Select File > Import... 
+ 6.  Select Server Configuration and click Next. 
+ 7.  Enter MyConfigurationin the Server Configuration field 
+ 8.  Select MyServers in the Folder field. 
+ 9.  In the Configuration Type field, select the WebSphere server configuration version that you want to migrate. 
+ 10. Use the Browse button to locate the .wsc folder in your previous workspace that contains the server configuration to migrate. The .wsc folder might also be in your currently active Rational Application Developer workspace if it was previously a WebSphere Studio workspace. 
+ 11. Click Finish. 
+ 12. In the Servers view, right click and select New > Server.... 
+ 13. Select the corresponding server type and use the wizard to create a new server. Click Finish. 
+ 14. Right-click on the newly created server and select Switch Configuration > MyConfiguration. The new server now uses the migrated server configuration.
+     Note: The Switch Configuration server option does not exist for WAS version 6.x servers. 
+ 15. If required, add back to the new server any EARs that were removed from the server configuration in the WSxD version 5.x workspace and migrated into the RAD version 6 workspace.
+
+
+Although the steps here are given for a WebSphere server configuration, they will also work for Tomcat and other server configuration types that were present in WSAD version 5.x. 
+
+
+
+
+
+
+
+
+
+Cross Reference information Segment Product Component Platform Version Edition Software Development Rational Software Architect Integrated WebSphere Test Environment Windows, Linux 6.0, 6.0.0.1, 6.0.1.0, 6.0.1.1 Software Development WebSphere Studio Application Developer Server Linux, Windows 5.0, 5.0.1, 5.1, 5.1.1, 5.1.2

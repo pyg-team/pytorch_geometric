@@ -1,0 +1,166 @@
+Title: IBM PJ32689: TRANSFER OF A WORKFLOW RETURNS WITH A CORBA TIMEOUT WHEN USER FI ELDS ARE EXPOSED ON INBOX/TRACKER/DEFAULT ROSTER - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When trying to transfer any workflow or schema changes to the
+   Workflow server via the Process Configuration Console, the
+   following error message is provided
+   
+   Exception executing transfer WF RPC: ORB Timeout
+   org.omg.CORBA.NO_RESPONSE: Request 70230 timed out vmcid: IBM
+   minor code: B01 completed: Maybe org.omg.CORBA.NO_RESPONSE:
+   Request 70230 timed out vmcid: IBM minor code: B01 completed:
+   Maybe
+   
+   In looking at the server logs, the transfer completes, but it is
+   taking a significant amount of time.  This happens even when a
+   small workflow or minor change has been made to the workflow
+   database.
+   
+   The problem will occur if any number of fields are exposed on
+   either of the following queues, Inbox, Tracker, or
+   DefaultRoster.  The performance delay will increase as more and
+   more workitems are introduced into any of the aforementioned
+   queues .
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * This affects systems where the same field is exposed on      *
+   * Inbox / Tracker / DefaultRoster.                             *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * When trying to transfer any workflow or schema changes to    *
+   * the Workflow server via the Process Configuration Console,   *
+   * the following error message is provided                      *
+   *                                                              *
+   * Exception executing transfer WF RPC: ORB Timeout             *
+   * org.omg.CORBA.NO_RESPONSE: Request 70230 timed out vmcid:    *
+   * IBM minor code: B01 completed: Maybe                         *
+   * org.omg.CORBA.NO_RESPONSE: Request 70230 timed out vmcid:    *
+   * IBM minor code: B01 completed: Maybe                         *
+   *                                                              *
+   * In looking at the server logs, the transfer completes, but   *
+   * it is taking a significant amount of time.  This happens     *
+   * even when a small workflow or minor change has been made to  *
+   * the workflow database.                                       *
+   *                                                              *
+   * The problem will occur if any number of fields are exposed   *
+   * on either of the following queues, Inbox, Tracker, or        *
+   * DefaultRoster.  The performance delay will increase as more  *
+   * and more workitems are introduced into any of the            *
+   * aforementioned queues.                                       *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Install P8PE-4.0.2-001.002.                                  *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Made fix available in P8PE-4.0.2-001.002.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  P8PE-4.0.2-1013
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PJ32689
+   
+   
+ * REPORTED COMPONENT NAME
+   APPLICATION ENG
+   
+   
+ * REPORTED COMPONENT ID
+   5724R7610
+   
+   
+ * REPORTED RELEASE
+   400
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-01-16
+   
+   
+ * CLOSED DATE
+   2008-03-18
+   
+   
+ * LAST MODIFIED DATE
+   2009-11-26
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   APPLICATION ENG
+   
+   
+ * FIXED COMPONENT ID
+   5724R7610
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R400 PSY
+   UP

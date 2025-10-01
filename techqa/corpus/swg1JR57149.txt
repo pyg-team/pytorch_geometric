@@ -1,0 +1,187 @@
+Title: IBM JR57149: SECURITY APAR - CVE-2016-9693 - CAUSES MALICIOUS FILE DOWNLOAD AND RESTRICTS BYPASSING FILE TYPES IN IBM BPM - United States
+
+Text:
+  DIRECT LINKS TO FIXES
+bpm.8570.cf2017.03.delta.repository [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Standard&fixids=bpm.8570.cf2017.03.delta.repository&source=SAR]
+8.0.1.3-WS-BPM-IFJR57149 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Standard&fixids=8.0.1.3-WS-BPM-IFJR57149&source=SAR]
+8.5.6.2-WS-BPM-IFJR57149 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Standard&fixids=8.5.6.2-WS-BPM-IFJR57149&source=SAR]
+8.5.7.201612-WS-BPM-IFJR57149 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Standard&fixids=8.5.7.201612-WS-BPM-IFJR57149&source=SAR]
+8.5.5.0-WS-BPM-IFJR57149 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Standard&fixids=8.5.5.0-WS-BPM-IFJR57149&source=SAR]
+8.5.0.2-WS-BPM-IFJR57149 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Standard&fixids=8.5.0.2-WS-BPM-IFJR57149&source=SAR]
+Downloading IBM Business Process Manager V8.5.7 Cumulative Fix 2017.03 [http://www-01.ibm.com/support/docview.wss?uid=swg24043252]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  CVEID: CVE-2016-9693
+   DESCRIPTION: IBM Business Process Manager has a file download
+   capability that is vulnerable to a set of attacks. Ultimately,
+   an attacker can cause an unauthenticated victim to download a
+   malicious payload. An existing file type restriction can be
+   bypassed so that the payload might be considered executable and
+   cause damage on the victim's machine.
+   CVSS Base Score: 7.1
+   CVSS Temporal Score: See
+   https://exchange.xforce.ibmcloud.com/vulnerabilities/119517 for
+   the current score
+   CVSS Environmental Score*: Undefined
+   CVSS Vector: (CVSS:3.0/AV:N/AC:L/PR:N/UI:R/S:C/C:L/I:L/A:L)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Because of how the "download in CSV (comma separated values)
+   format" function in IBM BPM was implemented, a browser sends all
+   data to the server and expects the same data back as a
+   downloadable stream. The server-side URL is vulnerable because
+   of
+   
+   - insufficient authorization (available for anonymous users)
+   - insufficient file extension checking (possibility to bypass
+    the .csv file extension restriction)
+   - accepting GET requests that can easily be sent to victims in a
+    chat or email
+   
+   
+   PRODUCTS AFFECTED
+   IBM Business Process Manager (BPM) Advanced
+   IBM BPM Standard
+   IBM BPM Express
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A fix is available for the latest fix pack of all supported IBM
+   BPM releases: 7.5.1.2, 8.0.1.3, 8.5.0.2, 8.5.5.0, 8.5.6.0 CF02,
+   and 8.5.7.0 CF 2016.12. The fix will also be included in IBM BPM
+   8.5.7.0 CF 2017.03.
+   
+   This fix by default completely disables the vulnerable URL and
+   updates all IBM BPM product components that cause requests to
+   this URL to use the client-side JavaScript instead.
+   
+   On Fix Central (http://www.ibm.com/support/fixcentral), search
+   for JR57149:
+   
+   1. Select IBM Business Process Manager with your edition from
+     the product selector, the installed version to the fix pack
+     level, and your platform, and then click Continue.
+   
+   2. Select APAR or SPR, enter JR57149, and click Continue.
+   
+   When you download fix packages, ensure that you also download
+   the readme file for each fix. Review each readme file for
+   additional installation instructions and information about the
+   fix.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR57149
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM STANDARD
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9500
+   
+   
+ * REPORTED RELEASE
+   857
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-12-09
+   
+   
+ * CLOSED DATE
+   2017-02-24
+   
+   
+ * LAST MODIFIED DATE
+   2017-02-24
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   BPM STANDARD
+   
+   
+ * FIXED COMPONENT ID
+   5725C9500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R801 PSY
+   UP
+   
+   
+ * R850 PSY
+   UP
+   
+   
+ * R855 PSY
+   UP
+   
+   
+ * R856 PSY
+   UP
+   
+   
+ * R857 PSY
+   UP

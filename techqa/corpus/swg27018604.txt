@@ -1,0 +1,69 @@
+Title: IBM WebSphere Portal Express and WebSphere Portal Express Idle Stand-by per Install License Option Version 7.0 Quick Start Guide - United States
+
+Text:
+quick start; quickstart; idle stand by; idle standby; install; installing; license option; V7; 7.0; Portal 7.0; Portal 7; guide PRODUCT DOCUMENTATION
+
+ABSTRACT
+ IBM® WebSphere® Portal Express® offers the complete set of portal services necessary to deliver a single point of personalized interaction to applications, content, business processes, and people for a unified user experience. 
+
+CONTENT
+Step 1: Access the software and documentation
+
+
+
+
+Product software can be accessed from DVD or e-image, both available from Passport Advantage®. If you download your product from Passport Advantage, follow the directions in the download document at http://www.ibm.com/support/docview.wss?uid=swg24026542 [http://www.ibm.com/support/docview.wss?uid=swg24026542]. This product is available as a single product offering with multiple licensing options. Review the International Program License Agreement for a list of licensing options and their respective entitlements. 
+
+The product offering that you purchased includes limited entitlements to all or portions of the following other IBM programs: 
+
+IBM WebSphere Application Server Network Deployment, IBM DB2 Universal Database™ Workgroup Edition, IBM Tivoli® Directory Server, IBM Tivoli Directory Integrator Identity Edition, IBM Lotus® Web Content Management, IBM WebSphere Portlet Factory Designer, IBM Lotus Domino® Enterprise Server, IBM Lotus Sametime®, and IBM Lotus Quickr™ for WebSphere Portal. 
+
+For complete documentation, including installation instructions, see the WebSphere Portal information center at http://www.ibm.com/developerworks/websphere/zones/portal/proddoc.html [http://www.ibm.com/developerworks/websphere/zones/portal/proddoc.html]. 
+
+Step 2: Evaluate the hardware and system configuration 
+
+See the detailed system requirements document at http://www.ibm.com/support/docview.wss?uid=swg27007791 [http://www.ibm.com/support/docview.wss?uid=swg27007791]. 
+
+Step 3: Review the base architecture 
+
+The following diagram demonstrates the base architecture of WebSphere Portal Express: 
+
+Architecture of WebSphere Portal Express [/support/docview.wss?uid=swg27018604&amp;aid=1]
+Step 4: Install WebSphere Portal 
+
+The Quick installation scenario provides step-by-step instructions to help you quickly install a basic working instance of WebSphere Portal Express.
+1. You can either start the installation process from the appropriate DVD or downloaded product code for your operating system. 
+
+Navigate to the root directory and run the following commands: 
+
+ * IBM i: 
+ * To install locally from a QSH session of the IBM i console, run setup.sh. 
+ * To run the installer from the Microsoft® Windows® platform and install to a remote IBM i system, run setup.exe. 
+ * Linux®: Run ./setup.sh. 
+ * Windows: Run setup.exe.
+
+2. Follow the instructions in the installation pages. 
+3. To verify that WebSphere Portal is running open the following URL in a browser:http://example.com:port_number/wps/portal 
+where example.com is the fully qualified host name of the system that is running WebSphere Portal and port_number is the port number that is displayed on the confirmation page. For example, http://www.ibm.com:10039/wps/portal.
+4. Install any required fixes for WebSphere Application Server at this time. See Supported hardware and software for more information about required fixes that must be applied.
+More information 
+
+For more information, see the following resources: 
+
+ * WebSphere Portal Zone: http://www.ibm.com/developerworks/websphere/zones/portal/ [http://www.ibm.com/developerworks/websphere/zones/portal/] 
+ * Detailed system requirements: http://www.ibm.com/support/docview.wss?uid=swg27007791 [http://www.ibm.com/support/docview.wss?uid=swg27007791] 
+ * WebSphere Portal Information Center: http://www.ibm.com/developerworks/websphere/zones/portal/proddoc.html [http://www.ibm.com/developerworks/websphere/zones/portal/proddoc.html] 
+ * WebSphere Portal family wiki: http://www-10.lotus.com/ldd/portalwiki.nsf [http://www-10.lotus.com/ldd/portalwiki.nsf] 
+ * IBM Redbooks®: http://www.redbooks.ibm.com/ [http://www.redbooks.ibm.com/] 
+ * IBM Support: http://www.ibm.com/software/genservers/portal/support/ [http://www.ibm.com/software/genservers/portal/support/]
+
+
+
+
+IBM WebSphere Portal Express Version 7.0 Licensed Materials - Property of IBM. © Copyright IBM Corp. 2000, 2010. U.S. Government Users Restricted Rights - Use, duplication or disclosure restricted by GSA ADP Schedule Contract with IBM Corp. 
+
+IBM, the IBM logo, and ibm.com® are trademarks or registered trademarks of International Business Machines Corp., registered in many jurisdictions worldwide. Other product and service names might be trademarks of IBM or other companies. A current list of IBM trademarks is available on the Web at "Copyright and trademark information [http://www.ibm.com/legal/copytrade.shtml]" www.ibm.com/legal/copytrade.shtml. 
+
+The Quick Start Guide is available in these national language versions: 
+
+Language Quick Start Guide English wp70exp_quickstart_en.pdf [/support/docview.wss?uid=swg27018604&aid=3] [/support/docview.wss?uid=swg27018604&aid=2] Arabic wp70exp_quickstart_ar.pdf [/support/docview.wss?uid=swg27018604&aid=5] [/support/docview.wss?uid=swg27018604&aid=4] Brazilian Portuguese wp70exp_quickstart_pt_br.pdf [/support/docview.wss?uid=swg27018604&aid=7] [/support/docview.wss?uid=swg27018604&aid=6] Catalan wp70exp_quickstart_ca.pdf [/support/docview.wss?uid=swg27018604&aid=9] [/support/docview.wss?uid=swg27018604&aid=8] Croatian wp70exp_quickstart_hr.pdf [/support/docview.wss?uid=swg27018604&aid=11] [/support/docview.wss?uid=swg27018604&aid=10] Czech wp70exp_quickstart_cs.pdf [/support/docview.wss?uid=swg27018604&aid=13] [/support/docview.wss?uid=swg27018604&aid=12] Dutch wp70exp_quickstart_nl.pdf [/support/docview.wss?uid=swg27018604&aid=15] [/support/docview.wss?uid=swg27018604&aid=14] French wp70exp_quickstart_fr.pdf [/support/docview.wss?uid=swg27018604&aid=17] [/support/docview.wss?uid=swg27018604&aid=16] German wp70exp_quickstart_de.pdf [/support/docview.wss?uid=swg27018604&aid=19] [/support/docview.wss?uid=swg27018604&aid=18] Greek wp70exp_quickstart_el.pdf [/support/docview.wss?uid=swg27018604&aid=21] [/support/docview.wss?uid=swg27018604&aid=20] Hungarian wp70exp_quickstart_hu.pdf [/support/docview.wss?uid=swg27018604&aid=23] [/support/docview.wss?uid=swg27018604&aid=22] Korean wp70exp_quickstart_ko.pdf [/support/docview.wss?uid=swg27018604&aid=25] [/support/docview.wss?uid=swg27018604&aid=24] Polish wp70exp_quickstart_pl.pdf [/support/docview.wss?uid=swg27018604&aid=27] [/support/docview.wss?uid=swg27018604&aid=26] Portuguese wp70exp_quickstart_pt.pdf [/support/docview.wss?uid=swg27018604&aid=29] [/support/docview.wss?uid=swg27018604&aid=28] Romanian wp70exp_quickstart_ro.pdf [/support/docview.wss?uid=swg27018604&aid=31] [/support/docview.wss?uid=swg27018604&aid=30] Russian wp70exp_quickstart_ru.pdf [/support/docview.wss?uid=swg27018604&aid=33] [/support/docview.wss?uid=swg27018604&aid=32] Simplified Chinese wp70exp_quickstart_zh.pdf [/support/docview.wss?uid=swg27018604&aid=35] [/support/docview.wss?uid=swg27018604&aid=34] Slovakian wp70exp_quickstart_sk.pdf [/support/docview.wss?uid=swg27018604&aid=37] [/support/docview.wss?uid=swg27018604&aid=36] Slovenian wp70exp_quickstart_sl.pdf [/support/docview.wss?uid=swg27018604&aid=39] [/support/docview.wss?uid=swg27018604&aid=38] Spanish wp70exp_quickstart_es.pdf [/support/docview.wss?uid=swg27018604&aid=41] [/support/docview.wss?uid=swg27018604&aid=40] Thai wp70exp_quickstart_th.pdf [/support/docview.wss?uid=swg27018604&aid=43] [/support/docview.wss?uid=swg27018604&aid=42] Traditional Chinese wp70exp_quickstart_zh_tw.pdf [/support/docview.wss?uid=swg27018604&aid=45] [/support/docview.wss?uid=swg27018604&aid=44] Ukrainian wp70exp_quickstart_uk.pdf [/support/docview.wss?uid=swg27018604&aid=47] [/support/docview.wss?uid=swg27018604&aid=46]

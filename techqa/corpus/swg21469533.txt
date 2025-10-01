@@ -1,0 +1,99 @@
+Title: IBM CNX0104E Connection timed out when connecting to standalone CICS TS 4.1 region - United States
+
+Text:
+hostaddr ipaddress hostname resolver dns domain name server DFHXS1111 DFHWB0361 DFHAC2003 ; MSGDFHXS1111 MSGDFHWB0361 MSGDFHAC2003 CWWU ; connecting ; 5655S9700 R660 660 R600 600 HCI6600 5655-S97 5655S97 retention41 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ You are connecting your CICS Explorer V1.x for the first time to a stand-alone CICS Transaction Server for z/OS (CICS TS) V4.1 region. The connect request results in message CNX0104E Connection failed with exception Connection timed out: connect. 
+
+SYMPTOM
+CNX0104E Connection failed with exception Connection timed out: connect
+
+
+CAUSE
+Your CICS Explorer connection preference specified a hostname that did not get resolved on z/OS.
+
+ENVIRONMENT
+CICS Explorer V1.0.1.0_201009220955; CICS TS V4.1 standalone SMSS region; JRE 1.6.0 IBM J9 2.4 Windows XP; z/OS V1.11;
+
+DIAGNOSING THE PROBLEM
+You can follow these steps to diagnose the connection exception for your CICS Transaction Server for z/OS (CICS TS) V4.1 standalone SMSS region:
+
+
+ 
+
+ 1. From the CICS Explorer menu, click Window >Show View > Error Log and double-click on the CNX0104E enry to see the exception detail. If you collect the CICS Explorer Service Data, the .log file contains message: 
+    
+    ENTRY com.ibm.cics.core.ui 2 2 yyyy-mm-dd hh:mm:ss.mmm
+    MESSAGE CNX0104E Connection failed with exception Connection timed out: connect
+    STACK 0
+    com.ibm.cics.sm.comm.sm.SMConnectionException: 
+    java.net.ConnectException: Connection timed out: connect
+    
+    
+ 2. Review the CICS JESMSGLG and MSGUSR for the CICS TS standalone SMSS region where you want to connect, and confirm the DFH$WUTC TCPIPSERVICE and DFH$WUUR URIMAP installed successfully into region. If you created your own versions of DFH$WUTC and DFH$WUUR find those named resources in the logs. For example, you should see messages in MSGUSR similar to the following:
+    
+    DFHSO0133 [http://pic.dhe.ibm.com/infocenter/cicsts/v4r1/topic/com.ibm.cics.ts.messages.doc/cics_mc/dfhso/SO0133.html] date time applid TCPIPSERVICE DFH$WUTC has been installed.
+    DFHWB1560 [http://pic.dhe.ibm.com/infocenter/cicsts/v4r1/topic/com.ibm.cics.ts.messages.doc/cics_mc/dfhwb/WB1560.html] date time applid userid URIMAP DFH$WUUR has been created.
+    DFHAM4893 I [http://pic.dhe.ibm.com/infocenter/cicsts/v4r1/topic/com.ibm.cics.ts.messages.doc/cics_mc/dfham/AM4893I.html] date time applid Install for group DFH$WU has completed successfully.
+    
+    
+ 3. Verify that the TCPIPSERVICE opened successfully using the port you specified in your CICS Explorer Connection definition. In this example, port 01490 was specified and the CICS MSGUSR contains message:
+    
+    DFHSO0107 [http://pic.dhe.ibm.com/infocenter/cicsts/v4r1/topic/com.ibm.cics.ts.messages.doc/cics_mc/dfhso/SO0107.html] date time applid TCPIPSERVICE DFH$WUTC has been opened on port 01490 at IP address hostaddr.
+    
+    
+ 4. If the region was configured with system initialization table (SIT) option SEC=YES set for security, inspect the MSGUSR log for any security error messages for either the CWXN or CWWU transactions. In this instance, there were no security errors.
+    
+    
+ 5. Examine the MSGUSR for any other error or abend messages for the CWXN or CWWU transactions. If there are errors, review those error messages or abend codes to determine the possible cause. If there are no errors for CWXN or CWWU, continue diagnosis at Step 6.
+    
+    
+ 6. It is common when setting up your very first CICS Explorer connection to configure a basic TCPIPSERVICE without SSL. The CICS Explorer always attempts to first connect using https and in this configuration you will always see the following message in the MSGUSR:
+    
+    DFHWB0114 [http://pic.dhe.ibm.com/infocenter/cicsts/v4r1/topic/com.ibm.cics.ts.messages.doc/cics_mc/dfhwb/WB0114.html] date time applid CWXN A non-HTTP request has been received by an HTTP service. The request has been rejected. Host IP address: hostaddr. Client IP address: clientaddr.{ | TCPIPSERVICE: } tcpipservice
+    
+    If you did not receive the DFHWB0114 message, the request was not delivered to the CICS region. 
+    
+    
+ 7. From the CICS Explorer menu, click Explorer > Trace > Collect Service Data. Open the .zip file saved and open the cicsexplorer.trace.0.log file. Find the string "https://" to locate the url string passed to the host. In this example, the url is for hostname "MVSTEST" on port 01490.
+    
+    //MVSTEST:1490/CICSSystemManagement/CICSCICSManagingAddressSpace//
+    
+    If this request had made it to the CICS region, transaction CWXN would have been attached and message DFHWB0114 message would have been issued.
+    
+    
+ 8. At this point you should suspect a configuration problem with the host DNS [http://pic.dhe.ibm.com/infocenter/zos/v2r1/topic/com.ibm.zos.v2r1.halz002/dns_domain_name_servers.htm], the RESOVLER [http://pic.dhe.ibm.com/infocenter/zos/v2r1/topic/com.ibm.zos.v2r1.halz002/resolver.htm], or other host TCPIP configuration. To verify if you have a hostname resolution problem, go to the CICS Explorer menu and click Window > Preferences and then to navigate to the CICS Explorer > Connections and modify the connection hostname to specify the host ipaddress found in the DFHSO0107 message in MSGUSR and click Apply and then Connect. If this results in a successful connection, your CICS Explorer status area will contain message:
+    
+    CNX0100I Connected user userid to host hostaddr on port portnumber.
+    
+    
+ 9. If you successfully connect using the host ipaddress, then there is some type of hostname resolution problem which you need to diagnose with your network administrator.
+
+RESOLVING THE PROBLEM
+Change the Host name in the Connections: 
+
+ 1. Navigate to the CICS Explorer Connections by clicking on Windows > Preferences and then clicking on CICS Explorer > Connections
+    
+    
+ 2. Modify the connection "Host name" to specify the host ipaddress found in the DFHSO0107 message in MSGUSR
+    
+    
+ 3. Click Apply
+    
+    
+ 4. Click Connect. 
+
+
+If this results in a successful connection, your CICS Explorer status area will contain message: 
+
+CNX0100I Connected user userid to host hostaddr on port portnumber. 
+
+If you successfully connect using the host ipaddress, then there is some type of hostname resolution problem that you need to diagnose with your network administrator. Refer to Steps for resolving the hostname [http://pic.dhe.ibm.com/infocenter/zos/v2r1/topic/com.ibm.zos.v2r1.hald001/rslhstnme.htm#rslhstnme], in the z/OS V2.1 Communications Server IP Diagnosis Guide, to begin investigating why the hostname could not be resolved. RELATED INFORMATION
+#See other CNX0104E troubleshooting documents [http://www.ibm.com/search/csass/search?q=cnx0104e&sn=spe&lang=en&lo=&co=&filter=collection:stgsysx,dblue,ic,pubs,devrel1%20language:en%20ibmtaskid:SP&prod=J465571V80648A08::4.1]
+
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ CICS/TS CICS TS CICS Transaction Server

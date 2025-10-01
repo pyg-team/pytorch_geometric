@@ -1,0 +1,30 @@
+Title: IBM 6.2.0-TIV-ITCAM_J2EE_TEMA-FP005: ITCAM for J2EE TEMA V6.2 Fix Pack 5 - United States
+
+Text:
+ITCAM J2EE TEMA FP5 DOWNLOADABLE FILES
+
+ABSTRACT
+ IBM Tivoli Composite Application Manager for J2EE TEMA V6.2 Fix Pack 5, also known as Version 6.2.0.5 or 6.2.0-TIV-ITCAM_J2EE_TEMA-FP005. 
+
+DOWNLOAD DESCRIPTION
+This is a cumulative fix pack for IBM Tivoli Composite Application Manager for J2EE TEMA version 6.1 and 6.2. 
+
+This maintenance upgrades ITCAM for J2EE TEMA v6.1 to version 6.2.0.5.
+
+PREREQUISITES
+
+
+URL Description 6.1.0-TIV-ITCAM_J2EE_TEMA-FP004 [http://www-01.ibm.com/support/docview.wss?&uid=swg24022069] ITCAM for J2EE TEMA v6.1 Fix Pack 4 6.1.0-TIV-ITCAMfJ2EE_MP-FP0005 ITCAM for J2EE DC v6.1 Fix Pack 5 INSTALLATION INSTRUCTIONS
+Please refer to the README for installation and upgrade instructions.
+
+URL LANGUAGE SIZE(Bytes) README [http://www3.software.ibm.com/ibmdl/pub/software/tivoli_support/patches/patches_6.2.0/6.2.0-TIV-ITCAM_J2EE_TEMA-FP005/6.2.0-TIV-ITCAM_J2EE_TEMA-FP005.README] US English 7865 
+DOWNLOAD PACKAGE
+
+
+
+
+
+
+Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options 
+What is DD? [http://www6.software.ibm.com/dldirector/doc/DDfaq_en.html] AIX-Solaris 7/1/2010 US English 509614080 FTP [ftp://public.dhe.ibm.com/software/tivoli_support/patches/patches_6.2.0/6.2.0-TIV-ITCAM_J2EE_TEMA-FP005/6.2.0-TIV-ITCAM_J2EE_TEMA-AIX_Solaris-FP005.tar] DD HP-UX 7/1/2010 US English 381460480 FTP [ftp://public.dhe.ibm.com/software/tivoli_support/patches/patches_6.2.0/6.2.0-TIV-ITCAM_J2EE_TEMA-FP005/6.2.0-TIV-ITCAM_J2EE_TEMA-HPUX-FP005.tar] DD Linux 7/1/2010 US English 656783360 FTP [ftp://public.dhe.ibm.com/software/tivoli_support/patches/patches_6.2.0/6.2.0-TIV-ITCAM_J2EE_TEMA-FP005/6.2.0-TIV-ITCAM_J2EE_TEMA-Linux-FP005.tar] DD Windows 7/1/2010 US English 143759008 FTP [ftp://public.dhe.ibm.com/software/tivoli_support/patches/patches_6.2.0/6.2.0-TIV-ITCAM_J2EE_TEMA-FP005/6.2.0-TIV-ITCAM_J2EE_TEMA-Windows-FP005.zip] DD 
+Cross Reference information Segment Product Component Platform Version Edition Systems and Asset Management Tivoli Composite Application Manager for J2EE Solaris, AIX, HP-UX, Linux, Windows 6.1

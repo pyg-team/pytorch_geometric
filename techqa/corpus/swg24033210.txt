@@ -1,0 +1,61 @@
+Title: IBM Tivoli Storage Manager HSM for Windows Version 6.4 - United States
+
+Text:
+Windows HSM; 6.4; 6.4.0 DOWNLOADABLE FILES
+
+ABSTRACT
+ This document describes how to download and install IBM Tivoli Storage Manager HSM for Windows Version 6.4 from the Passport Advantage Online Web Site 
+
+DOWNLOAD DESCRIPTION
+This document describes how to download IBM Tivoli Storage Manager Version 6.4 installation images using the Passport Advantage Online Web site [http://www.ibm.com/software/howtobuy/passportadvantage/pao_customers.htm].
+
+
+The Version 6.4 IBM Tivoli Storage Manager HSM for Windows client migrates files from your local file system to storage and recalls them either automatically or selectively. Migrating files to a distributed storage device frees space for new data on your local file system, and takes advantage of lower-cost storage resources that are available in your network environment.
+
+More information
+To access a wide variety of technical resources for this product, see the Tivoli Storage Manager V6.4 product information [https://www.ibm.com/support/knowledgecenter/SSATMW_6.4.0/com.ibm.itsm.hsmwin.doc/t_tsmhsmw.html]. 
+
+
+Space requirements 
+
+ * 68 MB of disk space to download the part, plus 
+ * 67 MB of disk space to unpack the part. 
+ * 32 MB of disk space for the installed product, plus 23 MB for Microsoft redistributables.
+
+
+Downloading and assembling the product:  1. Download the part. The part number is listed in the "Downloadable parts" section of this document. 
+ 2. Unpack the downloaded part. 
+ 3. Follow the instructions in the IBM Tivoli Storage Manager HSM for Windows Quick Start Guide [http://www.ibm.com/support/docview.wss?&uid=swg27035889] to install the product. 
+
+
+
+Supported platforms:  * Windows 2008 Server 
+ * Windows 2012 Server 
+
+
+Downloadable parts:  * CB8LEML.iso
+
+PREREQUISITES
+The hardware and software requirements are explained in the following documents.
+
+URL LANGUAGE SIZE(Bytes) HW/SW requirements [http://www.ibm.com/support/docview.wss?&uid=swg21319299] English 1 
+INSTALLATION INSTRUCTIONS
+Retrieve a copy of the IBM Tivoli Storage Manager HSM for Windows Quick Start Guide. The Quick Start Guide is available with the product and included on the Quick Start CD. The Quick Start Guide is also available for download in PDF format in all supported languages at the Web site listed below. Follow the instructions in the IBM Tivoli Storage Manager HSM for Windows Quick Start Guide to install the product. 
+
+URL LANGUAGE SIZE(Bytes) TSM HSM for Windows 6.4 Quick Start Guide [http://www.ibm.com/support/docview.wss?&uid=swg27035889] English 1 
+DOWNLOAD PACKAGE
+
+
+
+
+
+Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options Log on to Passport Advantage online 16 Nov 2012 English 16000 HTTP [http://www.ibm.com/software/howtobuy/passportadvantage/pao_customers.htm] 
+TECHNICAL SUPPORT
+ 
+
+See the Passport Advantage Online support at eCustomer Care contact information [http://www.ibm.com/software/howtobuy/passportadvantage/paocustomer/docs/en_US/ecare.html].
+
+For additional information, go to the following Web sites: 
+
+ *  IBM Tivoli Storage Manager Support [http://www.ibm.com/support/entry/portal/Overview/Software/Tivoli/Tivoli_Storage_Manager] 
+ * HSM for Windows Support [http://www.ibm.com/software/sysmgmt/products/support/IBMTivoliStorageManagerHSMforWindows.html]

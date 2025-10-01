@@ -1,0 +1,142 @@
+Title: IBM IT11365: UPGRADE OF XC10 APPLIANCE FROM FIRMWARE LEVEL 2.1 TO FIRMWARE LEVEL 2.5 FAILS WITH "FAILED EXECUTING PRE INSTALL HOOK" - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Upgrade of XC10 Appliance from firmware level 2.1 to firmware
+   level 2.5 fails with "Failed executing pre install hook".
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  XC10 users upgrading from firmware level    *
+   *                  2.1 to firmware level 2.5.                  *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Upgrade of XC10 Appliance from          *
+   *                      firmware level 2.1 to firmware          *
+   *                      level 2.5 fails.                        *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   The failure occurs because the upgrade
+   process contains hooks that are looking for libraries in the
+   2.1 firmware.  The libraries exist in the 2.5 firmare, but
+   not in 2.1. The failure can be observed best when trying to
+   upgrade the firmware from the command line, where the following
+   message may be displayed:
+   ==============================
+   Console> firmware upgrade <FIRMWARE>
+   Upgrading firmware...
+   Failed executing pre install hook.
+   ==============================
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The hooks in the firmware upgrade process were updated to no
+   longer use the missing libaries.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT11365
+   
+   
+ * REPORTED COMPONENT NAME
+   WSDATAPOWER XC1
+   
+   
+ * REPORTED COMPONENT ID
+   5765H4200
+   
+   
+ * REPORTED RELEASE
+   250
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-09-25
+   
+   
+ * CLOSED DATE
+   2015-09-28
+   
+   
+ * LAST MODIFIED DATE
+   2015-09-28
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WSDATAPOWER XC1
+   
+   
+ * FIXED COMPONENT ID
+   5765H4200
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R210 PSY
+   UP
+   
+   
+ * R250 PSY
+   UP

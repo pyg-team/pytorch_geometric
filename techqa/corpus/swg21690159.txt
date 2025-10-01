@@ -1,0 +1,97 @@
+Title: IBM Knowledge Collection:  ECM Support Technical Exchanges - United States
+
+Text:
+Technical Exhanges; recordings NEWS
+
+ABSTRACT
+ The following Support Technical Exchanges for Enterprise Content Management are available for your viewing. 
+
+CONTENT
+The following Support Technical Exchanges for Enterprise Content Management are available for your viewing. Technical Exchange topics are targeted to enable clients to more effectively use our products and help them quickly troubleshoot and resolve problems. Topics are scheduled throughout the year on many IBM ECM products. Sessions are designed to address specific technical issues and provide in-depth but narrowly focused training in a 1 hour live, recorded webinar. 
+
+The following ECM Technical Exchange recordings can be viewed by our clients: 
+
+ 
+
+Content Collector 
+
+ * Usage of Script Connector in IBM Content Collector [http://www-01.ibm.com/support/docview.wss?uid=swg27046817]
+
+
+Case Manager 
+
+ * IBM Case Manager 5.2 Administration Overview and Best Practices Part 1 and Part 2 [http://www.ibm.com/support/docview.wss?uid=swg27043789] 
+ * IBM Case Manager 5.2 Configuring IBM Case Manager to support SSO through IBM Security Access Manager [http://www.ibm.com/support/docview.wss?uid=swg27043735] 
+ * IBM P8 BPM and Case Manager Workflow system: Administration Overview [http://www-01.ibm.com/support/docview.wss?uid=swg27045593] 
+
+
+Content Platform Engine (CPE) 
+
+ * Content Platform Engine 5.2 Integration with the IBM Virtual Member Manager (VMM) Provider [http://www.ibm.com/support/docview.wss?uid=swg27043167]
+
+
+Daeja 
+
+ * Daeja ViewONE Pro and Daeja ViewONE Virtual and Integration with FileNet ECM Systems [http://www.ibm.com/support/docview.wss?uid=swg27046423]
+
+
+Content Navigator 
+
+ * IBM Content Navigator Installation and Deployment (coming June 16th, 2016) [http://www-01.ibm.com/support/docview.wss?uid=swg27048146] 
+ * YouTube videos on ICN [https://www.youtube.com/results?search_query=ibm+content+navigator]
+
+
+Datacap 
+
+ 
+
+ * Setting up Application and Designing Custom Panels in IBM Datacap Navigator [http://www-01.ibm.com/support/docview.wss?uid=swg27047666] 
+ * ICN and Datacap Navigator installation and configuration [http://www.ibm.com/support/docview.wss?uid=swg27046279] [http://www-01.ibm.com/support/docview.wss?uid=swg27046186] 
+ * Advanced Rulerunner Configuration for IBM Datacap [http://www-01.ibm.com/support/docview.wss?uid=swg27046186] 
+ * Basic Rulerunner Configuration & Troubleshooting for IBM Datacap Taskmaster Capture [http://www-01.ibm.com/support/docview.wss?uid=swg21670499]
+
+
+FileNet Content Engine 
+
+ * FileNet P8 Content Engine - Centera Fixed Content Devices and Staging Areas (Storage Management) [http://www.ibm.com/support/docview.wss?uid=swg27045596] 
+
+
+FileNet P8  * Kerberos and SPNEGO Configuration with P8 [https://www-304.ibm.com/support/docview.wss?uid=swg27040442]
+
+
+IBM Content Manager 
+
+ * IBM Content Manager 8.4.3 to 8.5 Upgrade [ftp://public.dhe.ibm.com/software/is/ecm/techexch/ContentManager_8.4.3_to_8.5_upgrade.mp4]
+
+
+--------------------------------------------------------------------------------------------------------------------------- 
+
+ 
+
+FUTURE TOPICS 
+
+ 
+
+ * Content Search Services - troubleshooting and basic tuning (early 2016)
+
+ * SAML SSO with IHS WebSphere (early 2016)
+
+--------------------------------------------------------------------------------------------------------------------------- 
+
+[/support/docview.wss?uid=swg21690159&amp;aid=1] Send us your Request! If you would like to request a technical exchange on a particular ECM product topic, send us an email at: Request an ECM Technical Exchange [ecmsuppt@us.ibm.com?subject=RequestSTE] 
+
+Please let us know the following in the body of your email: 
+
+ * Product name: 
+ * Topic: 
+ * Your contact email address (so that we may follow up with you) 
+
+Thank you 
+---------------------------------------------------------------------------------------------------------------------------
+
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Enterprise Content Management Case Foundation Enterprise Content Management Case Manager Enterprise Content Management Content Collector Enterprise Content Management Content Manager Enterprise Content Management Content Manager OnDemand Enterprise Content Management Content Navigator Enterprise Content Management Datacap Taskmaster Capture Enterprise Content Management eDiscovery Analyzer Enterprise Content Management eDiscovery Manager Enterprise Content Management Enterprise Content Management System Monitor Enterprise Content Management Enterprise Records Enterprise Content Management FileNet Application Engine Enterprise Content Management FileNet Capture Enterprise Content Management FileNet Content Manager Enterprise Content Management FileNet Content Services Enterprise Content Management FileNet IDM Desktop/WEB Services/Open Client Enterprise Content Management FileNet Image Services Enterprise Content Management FileNet P8 Platform Enterprise Content Management FileNet Product Family Enterprise Content Management IBM Atlas Suite Enterprise Content Management IBM Navigator on Cloud Enterprise Content Management Solution for Compliance in a Regulated Environment (SCORE)

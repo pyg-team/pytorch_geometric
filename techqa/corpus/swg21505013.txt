@@ -1,0 +1,63 @@
+Title: IBM Session interference between web applications, unexpected logouts - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How to avoid being logged out of an active session upon switching tab between Rule Team Server, Rule Execution Server Management Console or the WebSphere Application Server Administrative Console ?
+How to avoid messages such as "Login failed. Check the user ID and password and try again." or "This user does not have the correct role" upon switching browser tab between Rule Team Server and the WebSphere Application Server console ?
+
+
+CAUSE
+By default the WebSphere Application Server is configured to feature Single Sign On. This allows to login once in a client browser and automatically be logged in as that user upon accessing any other web application from the same domain. But if the web applications that are accessed from the same browser have various role requirements that are not all satisfied by the user that logs in, it is expected that sessions will be invalidated and the user be asked to login again upon switching from one web application to the other.
+
+ANSWER
+Configure user accounts to have all necessary roles 
+
+In order to access from one client browser several web applications that are under the same security domain, the first option is to take advantage of the Single Sign On feature of the WebSphere Applications Server. It can be achieved by configuring user accounts to have all the roles required by the web applications to be accessed simultaneously by a given user. For instance, a user "johnDoe" could be configured to belong to the following groups: rtsAdministrator, rtsInstaller, resAdministrators, resDeployers, resMonitors. Using the credentials of this user it is then possible to start a browser session by logging in Rule Team Server (RTS) and then upon visiting a Rule Execution Server (RES) console URL to be automatically logged in with the "johnDoe" credentials, and then continue to have a session with RES and RTS respectively in a different tab of the same client browser. 
+
+Another example is in WebSphere Operational Decision Management 7.5 where the Sample Application Server profile is configured so that the console administrative user also belongs to the groups resAdministrators and rtsAdministrator : by logging as this user once in either the WebSphere Application Server administrative console, or Decision Center or the Decision Server management console, it is possible to access the other applications as that same user, without having to provide login credentials again. 
+
+Alternatively, it is possible with some browsers to keep several sessions entirely isolated from each other and prevent Single Sign On from occurring between them. Examples are shown below for Internet Explorer (IE) 8 and Firefox 3.6: 
+
+
+Enabling multiple sessions for IE 8 (tested on IE 8.0.6001.18702)
+
+1) Launch IE via shortcut
+2) In this window, login to RES using resAdmin
+3) Upon login, at the window's File menu, click on New Session. (Not New window)
+4) New session will create a new IE browser with new session. 
+5) In this new window, login to RTS using rtsAdmin
+6) Both windows should have separate session to navigate RES/RTS without interfering. 
+
+
+Enabling multiple sessions for Firefox (tested on Firefox 3.6.23)
+
+1) Right-click on the Firefox shortcut on your desktop and create a new shortcut.
+2) Rename the new shortcut to "Firefox Profiles"
+3) Right-click on the new shortcut and click on "Properties". The "properties" panel will be popped up.
+4) In the target field, add -no-remote -P to the end of "C:\Program Files\Mozilla Firefox\firefox.exe". There must be a space between the arguments. See below:
+
+[/support/docview.wss?uid=swg21505013&amp;aid=1]
+5) Once done, click Apply and then OK button
+6) This will create a shortcut that will launch Firefox with the profile option.
+7) Double-click on this new shortcut, the following widget will be displayed:
+[/support/docview.wss?uid=swg21505013&amp;aid=2]
+8) By default, one will have a default profile. 
+9) Now, create a new profile by clicking on Create Profile button.
+10) Click Next button and then enter a name e.g RTS
+11) Click on Finish to start the Firefox in a new window with new profile/session.
+12) In this window, enter the URL for RTS. E.g. http://localhost:9081/teamserver
+13) Login as rtsAdmin.
+14) Double-click again on this new shortcut created in Step 6.
+15) When the User profile panel is launched, create another new profile with the name: RES. 
+16) Click finish to create a new RES profile and a new Firefox window will be launched.
+17) In this new window, enter the URL for RES http://localhost:9081/res
+18) Login as resAdmin. 
+19) Switch back to the window with RTS login. One should be still able to navigate the RTS features without problem. The login to RES does not interfere with the RTS window now.
+20) Use this new shortcut to select and launch the Firefox browser according to the profiles setup.
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Operational Decision Manager Platform Independent 8.7, 8.6, 8.5, 8.0, 7.5

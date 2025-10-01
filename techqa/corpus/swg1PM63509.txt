@@ -1,0 +1,185 @@
+Title: IBM PM63509: WMQ Z/OS 6.0.0:DOC THE EXPIRE TIME OF FR FORGETTING ANYTHING ABOUT PR IS 90 DAYS. - United States
+
+Text:
+z/os SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Error Description￘
+   The expire time of FR forgetting anything about PR is 90 days.
+   So the information about "30 days" which is mentioned in
+   information center,should be corrected as "90 days".
+   
+   For MQ7.0.1
+   http://publib.boulder.ibm.com/infocenter/wmqv7/v7r0/index.jsp?to
+   pic=%2Fcom.ibm.mq.csqzah.doc%2Fqc12130_.htm [http://publib.boulder.ibm.com/infocenter/wmqv7/v7r0/index.jsp?topic=%2Fcom.ibm.mq.csqzah.doc%2Fqc12130_.htm]
+   
+   "Task 10: Removing a queue manager from
+   a cluster" ->8. Issue the REFRESH CLUSTER command ,it will look
+   like:
+   
+   -----------------
+   Note: In this scenario, you know that you no longer want to
+   carry out any inventory work at Toronto and so you know that
+   you can remove the TORONTO queue manager from the cluster
+   permanently. If you might want to reintroduce the TORONTO queue
+   manager to the cluster within 90 days,issue the REFRESH CLUSTER
+   command without the REPOS(YES) parameter:
+   REFRESH CLUSTER(INVENTORY)
+   -----------------
+   
+   For MQ 6:
+   http://publib.boulder.ibm.com/infocenter/wmqv6/v6r0/index.jsp?to
+   pic=%2Fcom.ibm.mq.csqzah.doc%2Fqc12220_.htm [http://publib.boulder.ibm.com/infocenter/wmqv6/v6r0/index.jsp?topic=%2Fcom.ibm.mq.csqzah.doc%2Fqc12220_.htm]
+   
+   "Task 10: Removing a queue manager from a cluster" ->8. Issue
+   the REFRESH CLUSTER command ,it will look like:
+   
+   -----------------
+   Attention: In this scenario, you know that you no longer want
+   to carry out any inventory work at Toronto and so you know that
+   you can remove the TORONTO queue manager from the cluster
+   permanently. If you might want to reintroduce the TORONTO queue
+   manager to the cluster within 90 days, issue the REFRESH
+   CLUSTER command without the REPOS(YES) parameter:
+   REFRESH CLUSTER(INVENTORY)
+   -----------------
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Local Fix￘
+   no.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All users of WebSphere MQ for z/OS Version 6 *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: The Clusters manual describes how to    *
+   *                      remove a queue manager from a cluster   *
+   *                      in Task 10 of the Advanced Tasks.       *
+   *                      However, it incorrectly states that the *
+   *                      type of REFRESH CLUSTER command to be   *
+   *                      issued is dependent on whether the      *
+   *                      queue-manager is likely to be           *
+   *                      reintroduced to the cluster within the  *
+   *                      next 30 days. This value should in fact *
+   *                      be 90 days and the Information Center   *
+   *                      should be updated.                      *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   The description in Task 10 needs to specify a value of 90 days
+   not 30 days when deciding on which REFRESH CLUSTER command to
+   use, i.e. REPOS(YES) or REPOS(NO).
+   
+   Specifically in the following section
+   http://publib.boulder.ibm.com/infocenter/wmqv6/v6r0/topic/com.i
+   bm.mq.csqzah.doc/qc12220_.htm [http://publib.boulder.ibm.com/infocenter/wmqv6/v6r0/topic/com.ibm.mq.csqzah.doc/qc12220_.htm]
+   
+   The text should look as follows:-
+   
+   8. Issue the REFRESH CLUSTER command
+   
+   Issue the REFRESH CLUSTER command to remove any auto-defined
+   cluster channels: REFRESH CLUSTER(INVENTORY) REPOS(YES)
+   Attention: In this scenario, you know that you no
+   longer want to carry out any inventory work at Toronto and so
+   you know that you can remove the TORONTO queue manager from the
+   cluster permanently. If you might want to reintroduce the
+   TORONTO queue manager to the cluster within 90 days, issue the
+   REFRESH CLUSTER command without the REPOS(YES) parameter:
+   REFRESH CLUSTER(INVENTORY)
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The Information Center has been changed to have the correct
+   value.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM63509
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ Z/OS V6
+   
+   
+ * REPORTED COMPONENT ID
+   5655L8200
+   
+   
+ * REPORTED RELEASE
+   000
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-04-28
+   
+   
+ * CLOSED DATE
+   2012-05-03
+   
+   
+ * LAST MODIFIED DATE
+   2012-05-03
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    PM63724 PM63725
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

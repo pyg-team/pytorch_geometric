@@ -1,0 +1,133 @@
+Title: IBM LO82166: ERROR "THE SPECIFIED NETWORK NAME IS NO LONGER AVAILABLE" OCCURS WHEN SWITCHING MS NODE - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  ENV:
+   
+   We use Windows Server 2008 R2 on all included Servers, Citrix
+   XenApp 6.5, Lotus Domino 9 and Lotus Notes 8.5.3 within the
+   Citrix sessions. The users are mostly working on thin clients,
+   so there is no local installation of Notes. Therefore we have
+   installed the notes\data components on the users home drive.
+   It's an network share which resists on an two node Microsoft
+   Cluster.
+   
+   DESC:
+   
+   Now the problem is, if we switch over from one MSCS node to
+   another, there is an interruption of nearly 40 seconds. Every
+   network share keeps connected and can be accessed after the
+   switchover is finished. But if the user tries to interact with
+   the Notes client (open e-mail, calender etc) he gets the error
+   message "The specified network name is no longer available"
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Restarting the Notes client. But this cannot be the solution.
+   I thought of something like increasing some kind of time out
+   value in notes.ini or the registry, if something like that
+   exists?
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  This APAR is closed as FIN. We have deferred the fix to a
+    future release.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *  This APAR is associated with SPR# YGAO9PELFY.
+   This APAR is closed as FIN. We have deferred the fix to a
+    future release.
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   LO82166
+   
+   
+ * REPORTED COMPONENT NAME
+   NOTES CLIENT
+   
+   
+ * REPORTED COMPONENT ID
+   5724E6255
+   
+   
+ * REPORTED RELEASE
+   853
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-09-29
+   
+   
+ * CLOSED DATE
+   2014-11-25
+   
+   
+ * LAST MODIFIED DATE
+   2014-11-25
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R853 PSN
+   UP

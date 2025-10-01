@@ -1,0 +1,46 @@
+Title: IBM 画像がHTML形式のレポートでは表示されるが、Excel/PDF形式では表示されない - United States
+
+Text:
+ TECHNOTE(トラブルシューティング)
+
+問題(概要)
+ レポートに画像を表示するようにしているが、HTML形式では表示されるのにExcel/PDF形式では表示されない。 
+
+原因
+画像のURLで指定されたパスは、ファイルの物理的な場所を参照します。 
+
+画像ファイルがWebサーバーにしか存在しない場合、ディスパッチャはWebサーバーのディレクトリ上で画像ファイルを探そうとしますが、アクセスが出来ない等でファイルが見つからない場合、画像がExcel/PDF形式のレポートに表示されません。
+
+
+
+解決方法
+画像のURLは以下のパターンで物理的な場所にマッピングされます。 
+
+使用するURLのパターンに応じて、ファイルをディスパッチャが稼働しているサーバーのフォルダーにも配置します。
+
+
+ * 相対パスが使用されている場合  *  ../samples/images/pic.jpg （".."で始まる場合）
+   
+   
+   ディスパッチャは以下のフォルダーを参照します。
+   
+   <c10 install>/webcontent/samples/images/pic.jpg
+
+ *  ./samples/images/pic.jpg ("."で始まる場合) 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+
+ * 絶対パスが使用されている場合
+
+/pictures/company_logo.gif、C:\\images\company_logo.gif、\\NAS\ci\company_logo.gif等 
+
+指定した絶対パスが使用されます。 関連情報
+ Images Don't Render in PDF/Excel [http://www.ibm.com/support/docview.wss?uid=swg21622751]
+Resolution of images in Cognos 8 and ReportNet [http://www.ibm.com/developerworks/data/library/cognos/page57.html]
+Images in IBM Cognos BI Reports and Analyses [http://www.ibm.com/developerworks/library/ba-pp-infrastructure-cognos_specific_page665/]

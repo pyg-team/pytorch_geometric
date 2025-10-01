@@ -1,0 +1,26 @@
+Title: IBM Components selection screen is not displayed when upgrading to Cognos Disclosure Management 10.2.4 from an earlier version - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The components selection screen in the installation wizard is not displayed when upgrading to Cognos Disclosure Management 10.2.4 from an earlier version. This screen is necessary to enable users to select additional components to install (XBRL or the Filing Plugin) if they do not already have it installed.
+
+This problem only occurs when upgrading to version 10.2.4. A new installation of Cognos Disclosure Management version 10.2.4 will display the components selection screen. Additionally, if a user already has XBRL or the Filing Plugin in version 10.2.3, the upgrade process will deploy the 10.2.4 versions of these components. Affected users are those with a typical installation of Cognos Disclosure Management without XBRL and the Filing Plugin. 
+
+SYMPTOM
+Cannot see the components selection screen when upgrading to Cognos Disclosure Management 10.2.4 from an earlier version. 
+
+
+RESOLVING THE PROBLEM
+To add additional components, follow these steps: 
+
+1. Click Start > Control Panel > Programs > Programs and Features and locate your installation of Cognos Disclosure Management in the list of Programs and Features. 
+
+2. Highlight IBM Cognos Disclosure Management and click Change. The installation wizard will open. 
+
+3. On the Program Maintenance window, select Modify and click Next. 
+
+4. Select the components you want to install and click Next. 
+
+5. Complete the installation.

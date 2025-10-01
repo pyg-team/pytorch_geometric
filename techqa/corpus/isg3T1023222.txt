@@ -1,0 +1,67 @@
+Title: IBM Array job submission keep retrying and never succeeds - United States
+
+Text:
+MAX_PEND_JOBS Pending job threshold reached TECHNOTE (FAQ)
+
+QUESTION
+ Array job submission keep retying with error:
+User <submission_username>: Pending job threshold reached. Retrying in 60 seconds... 
+
+CAUSE
+The size of the array job being submitted is larger than a configured pend job limit. For example,
+If there is a pend job limit of 500 is defined as:
+Begin User
+USER_NAME MAX_PEND_JOBS
+default 500
+End User
+
+An array job of size greater than 500 will never succeed and keep retrying forever:
+$ bsub -J "A[1-501]" sleep 100 
+
+User <submission_username>: Pending job threshold reached. Retrying in 60 seconds... 
+
+User <submission_username>: Pending job threshold reached. Retrying in 60 seconds... 
+
+User <submission_username>: Pending job threshold reached. Retrying in 60 seconds... 
+
+... 
+
+ 
+
+Currently this is an LSF designed behavior. 
+
+
+ANSWER
+To prevent such job submissions from retrying, there are two possible solutions: 
+
+ 
+
+Limit the number of retries through an LSF environment variable: 
+
+LSF allows specifying an environment variable called LSB_NTRIES in the job's submission environment. This variable determines how many times a job submission will retry before exiting. 
+
+ 
+
+Define this variable before submitting any array jobs to make sure For example, 
+
+$ setenv LSB_NTRIES 3 
+
+$ echo $LSB_NTRIES
+3 
+
+$ bsub -J "A[1-801]" sleep 343
+User <userA>: Pending job threshold reached. Retrying in 60 seconds...
+User <userA>: Pending job threshold reached. Retrying in 60 seconds...
+User <userA>: Pending job threshold reached. Job not submitted.
+
+One limitation of this solution is that the submission will exit after reaching $LSB_NTRIES regardless of if the array job pending due to too large a array size or the job submission has a chance of succeeding because its size is smaller than the pend job limit.
+
+
+Use an esub to reject job submission: 
+
+Create an esub that exits with $ELIM_ABORT_VALUE whenever it detects an array job size that is greater than a configured pend job limit.
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition IBM Spectrum Computing IBM Spectrum LSF

@@ -1,0 +1,178 @@
+Title: IBM JR27250: DEADLOCK DURING SERVER STARTUP - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Intermittently, starting the server may not complete
+   successfully.  The process may consume 100% of the CPU and
+   appears to be "hung".
+   The ThreadMonitor subsystem may indicate there are hung
+   threads
+   [05/06/07 05:13:37:944 BST] 0000000eThreadMonitor W
+   WSVR0605W: Thread "server.startup : 3" (00000025) has been
+   active for 617888 milliseconds and may be hung.  There is/are 1
+   thread(s) in total in the server that may be hung.
+   
+   
+   Analysis of the threads may indicate a deadlock with the
+   following signature:
+   
+   From the stacktrace for "server.startup : 4" it appears that
+   deadlockhappens when ContainerImpl.start() is catching some
+   exception at application start and trying to do an ObjectDump to
+   FFDC log.
+   
+   (pc)=09FF08DF  at  com/ibm/ws/sca/logging/impl/JSR47LogImpl.ffdc
+   (Ljava/lang/Throwable;Ljava/lang/String;Ljava/lang/String;Ljava/
+   lang/Object;)V
+       unwinding (old_esp=518FE74C old_eip=100DFC03)
+   old_mb=09FF0320
+   (pc)=0B8F98DF  at
+   com/ibm/ws/sca/internal/container/impl/ContainerImpl.start
+   ()Ljava/util/List;
+       unwinding (old_esp=518FE79C old_eip=100E0052)
+   old_mb=0B8F8948
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  A temporary quick patch has been created that
+   removes  the problematic code that outputs to the FFDC log and
+   will just throw an Exception instead.
+   
+   
+   This APAR will tack and develop a more permanent fix.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: WebSphere Process Server and WebSphere       *
+   *                 Enterprise Service Bus 6.0.1 and 6.0.2       *
+   *                 users.                                       *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: WebSphere Process Server instance is    *
+   *                      not starting up due to Hung threads.    *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   Starting WebSphere Process Server may not complete successfully
+   some times.  The process may consume 100% of the CPU and
+   appears to be "hung".
+   
+   Customer may see message similar to below:
+   
+   [05/06/07 05:13:37:944 BST] 0000000eThreadMonitor WWSVR0605W:
+   Thread "server.startup : 3" (00000025) has been active for
+   617888 milliseconds and may be hung.  There is/are 1 thread(s)
+   in total in the server that may be hung.
+   
+   This error happens due to contention for object locks
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Apply this interim fix to resolve the deadlock problem. Also
+   updating to WebSphere Process Server or WebSphere Enterprise
+   Service Bus 6.0.2.1 or higher.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR27250
+   
+   
+ * REPORTED COMPONENT NAME
+   WEB PROC SERVER
+   
+   
+ * REPORTED COMPONENT ID
+   5724L0100
+   
+   
+ * REPORTED RELEASE
+   600
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2007-08-10
+   
+   
+ * CLOSED DATE
+   2007-09-13
+   
+   
+ * LAST MODIFIED DATE
+   2007-09-13
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEB PROC SERVER
+   
+   
+ * FIXED COMPONENT ID
+   5724L0100
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R601 PSY
+   UP
+   
+   
+ * R602 PSY
+   UP

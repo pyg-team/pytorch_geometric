@@ -1,0 +1,102 @@
+Title: IBM "Hello World" Remote Java client for Rule Execution Server using EJB3 on WAS - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Sample to execute rules on Rule Execution Server deployed on WebSphere Application Server (WAS) from a Java stand-alone client using an EJB3 rule session. 
+
+ANSWER
+This sample presents the basic API ilog.rules.res.session to call the Rule Execution Server from a Java client using a remote rule session: 
+
+ 1. An IlrEJB3SessionFactory object is created in remote mode and is provided the default stateless remote JNDI name for WebSphere Application Server. 
+ 2. An IlrSessionRequest object generated from the session factory is used to set the path and input ruleset parameters and to enable ruleset execution trace on the client side. 
+ 3. An IlrStatelessSession object is created from the session factory and used to execute the rules. The IlrSessionRequest object is passed to the execute() method. 
+ 4. An IlrSessionResponse is retrieved and used to provide feedback about the execution such as the execution output and the number of rules executed.
+
+
+Note: The sample j2eerulesession [http://publib.boulder.ibm.com/infocenter/brjrules/v7r1/topic/com.ibm.websphere.ilog.jrules.doc/Content/Business_Rules/Documentation/_pubskel/JRules/ps_JRules_Global1754.html] included in the product distribution presents all the manners in which you can use the Rule Execution Server client API. 
+
+
+The sample (attached below) contains 5 Eclipse projects: 
+ * XOM : the Java project, which contains the class Person. 
+ * HelloWorld : the rule project, which takes a Person object as a parameter and contains a single rule, which prints the message "Hello " + the name of person + "!". 
+ * HelloWorldRuleApp : the RuleApp project to publish the HelloWorld ruleset to Rule Execution Server. 
+ * RES Configuration : the Rule Execution Server configuration project to set the target server. 
+ * RES7Client4WAS7_EJB3: the Java project for the Rule Execution Server client code to execute the HelloWorld ruleset on Rule Execution Server/WAS. 
+
+
+
+The client Java project contains Ant tasks ( build.xml) to package the application EAR, and, if WAS is local, generate the rule session client JAR. You might need to update the build.properties file which defines the home folder of JRules & WebSphere. You can either run those tasks from Eclipse or the command line ("ant usage"). 
+
+
+Before executing the sample, you must: 
+ 1. Install the core module of JRules or ODM Decision Server on the machine that will run the client.
+    
+ 2. Set up Rule Execution Server on the target server according to the JRules documentation [http://publib.boulder.ibm.com/infocenter/brjrules/v7r1/topic/com.ibm.websphere.ilog.jrules.install.doc/Content/Business_Rules/Documentation/_pubskel/JRules_Application_Servers/ps_Installing_JRules_IC36.html] at "WebSphere ILOG JRules BRMS V7.X: Java EE add-ons > Installing on WebSphere Application Server > Installing Rule Execution Server > Installing Rule Execution Server on WebSphere Application Server V7.0".
+
+
+To execute the sample: 
+ 1.  Download the attached file "RES Client 4 WAS.zip".
+     
+ 2.  Create a new workspace in Rule Studio/Rule Designer and import the projects from the zip file.
+     
+ 3.  Edit the RES Configuration project to target your WAS server with the required credentials.
+     
+ 4.  Deploy the HelloWorld ruleset with the HelloWorldRuleApp project using the Rule Execution Server configuration WebSphere.
+     
+ 5.  If the WAS instance is local: create a WAS_HOME variable in the Java Build Path of the RES7Client4WAS7_EJB3 project if it does not exist:  1. Right-click on the project and select Properties. 
+      2. Go to the Java Build Path, select the Libraries tab, the entry WAS_HOME/runtimes/com.ibm.ws.ejb.thinclient_7.0.0.jar and do Edit. 
+      3. Click "Variable", and do 'New'.  * Name: WAS_HOME 
+          * Path: root folder of a WAS installation (for example C:\Program Files\IBM\WebSphere\AppServer by default on Windows).
+         
+         
+      4. Do "Extentions..." and select the available com.ibm.ws.ejb.thinclient_V.R.M.jar under the \runtimes folder. 
+      5. Validate your changes.
+         
+     
+     
+ 6.  If the WAS instance is remote: copy the file com.ibm.ws.ejb.thinclient_V.RM.jar from the WAS V7 distribution under the folder <InstallDir>/runtimes to the client machine and add it to the Java Build Path of the RES7Client4WAS7_EJB3 project replacing the reference WAS_HOME/runtimes/com.ibm.ws.ejb.thinclient_V.R.M.jar .
+     
+ 7.  Edit the property java.naming.provider.url of the jndi.properties file in the src folder of the project RES7Client4WAS7_EJB3 to match the hostname and bootstrap port of the server hosting Rule Execution Server.
+     
+ 8.  Generate the sample application EAR to deploy to the server, using the Ant task 'ear': the EAR will contain the EJB3 rule sessions (jrules-res-session-ejb3-WASX.jar available under <JRulesInstallDir>\executionserver\applicationservers\WebSphereX ) as an EJB module, and a JAR containing the XOM class in a /lib folder at the root of the EAR (starting with Java EE 5 it makes it available to all modules of the EAR; otherwise, you can add a Class-Path attribute in the MANIFEST.MF of the EJB JAR to point to the XOM JAR).
+     
+ 9.  Deploy the resulting application EAR to WAS (default deployment settings).
+     
+ 10. Execute RESEJB3Client4WAS7 as a Java Application with Rules in Eclipse.
+
+
+
+
+The output on the client side is then: 
+
+created session IlrStatelessSessionEJB3 
+1 rule(s) fired. 
+Execution output=Hello Lolo! 
+
+
+The output on the server side in the trace.log (when trace is enabled [http://publib.boulder.ibm.com/infocenter/brjrules/v7r1/topic/com.ibm.websphere.ilog.jrules.install.doc/Content/Business_Rules/Documentation/_pubskel/JRules_Application_Servers/ps_Installing_JRules_IC98.html]) will be something like this: 
+
+Rule engine, set parameters (/HelloWorldRuleApp/1.0/HelloWorld/1.0). Measures: {Duration(ms)=0, TimeStamp(ms)=1296777891288} 
+Rule engine, execute ( /HelloWorldRuleApp /1.0/HelloWorld/1.0). Measures: {Duration(ms)=0, Number of rules fired(quantity)=1, Number of rules fired per millisecond(quantity/ms)=Infinity, Number of rules fired before this execution(quantity)=0, TimeStamp(ms)=1296777891288} 
+Execution result: {person=test.Person@29ca29ca} 
+
+
+
+Note: A client JAR for the JRules 7.1.1.1 EJB rule sessions generated with WAS 7.0 is provided in the build folder of the client project ( jrules-res-session-ejb3-WAS7_withStubs.jar). It contains the additional stub classes necessary for remote invocation over IIOP. 
+
+This client JAR must be regenerated if you use a version of JRules other than 7.1.1.1: 
+ * If the WAS instance is local: use the Ant task 'clientjar' (set WAS_HOME in build.properties) 
+ * If the WAS instance is remote: run the createEJBStubs [http://publib.boulder.ibm.com/infocenter/wasinfo/v7r0/topic/com.ibm.websphere.nd.multiplatform.doc/info/ae/ae/rejb_3stubscmd.html] command below on the EJB3 rule session JAR found under <JRules_OMD_InstallDir>\executionserver\applicationservers\WebSphereX from the machine where WAS is installed and copy the resulting jrules-res-session-ejb3-WASX_withStubs.jar back into the build folder of the client project :
+
+<WASInstallDir>\bin\createEJBStubs.bat jrules-res-session-ejb3-WASX.jar -newfile RELATED INFORMATION
+#Unable to reach RES using the EJB3 client API [http://www.ibm.com/support/docview.wss?uid=swg21586621]
+Using ODM EJB session factories [http://pic.dhe.ibm.com/infocenter/dmanager/v8r5m1/topic/com.ibm.odm.dserver.rules.res.developing/topics/tpc_res_dev_ejbfact_intro.html]
+Configuring RES 8.5 on WAS 8.X [http://pic.dhe.ibm.com/infocenter/dmanager/v8r5m1/topic/com.ibm.odm.distrib.config.was/config_ds_res_was8/con_res_was.html]
+
+
+RES client 4 WAS.zip [/support/docview.wss?uid=swg21461685&aid=2] [/support/docview.wss?uid=swg21461685&aid=1]
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Operational Decision Manager Platform Independent 8.5, 8.0, 7.5

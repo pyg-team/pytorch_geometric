@@ -1,0 +1,62 @@
+Title: IBM CSQC330E CSQCQCTL or CSQCAMON CICS TS is not supported or MQCONN "connecting" - United States
+
+Text:
+CSQC330E CSQC330 MSGCSQC330E CSQCQCTL ; CSQCAMON ; connecting fails ; connection failed ; MQ Adapter 5655M1500 R640 640 R400 400 HCI6400 R650 650 R500 500 HCI6500 5655-M15 5655M15 ; 5655S9700 R660 660 R600 600 HCI6600 R670 670 R700 700 HCI6700 5655-S97 5655S97 ; 5655Y0400 R680 680 R800 800 HCI6800 5655-Y04 5655Y04 KIXINFO kixdcfcic650 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ You receive message CSQC330E with either csect-name CSQCQCTL or CSQCAMON saying CICS TS V3.2 (or higher) is not supported. This occurs when trying to connect CICS Transaction Server for z/OS (CICS TS) to WebSphere MQ during CICS initialization. CEMT INQUIRE MQCONN might also show a status of "connecting", or "connected" but the CICS-MQ tasks CKAM and CKTI are not in the region. 
+
+SYMPTOM
+If the INITPARM=(CSQCPARM....) from CICS TS V3.1 is left in your CICS JCL, you receive the following series of messages when bringing up CICS TS V4.1: 
+
+DFHSI8440I applid Initiating connection to MQ.
+DFHMQ0336 I date time applid CONNECT received from a PLT program.
+DFHMQ0308 I date timeapplid Queue manager MQ0N is stopped. Connect request deferred.
+DFHSI8443 applid Connection to MQ not completed. Adapter is awaiting initialization of MQ.
+DFHSI1517 applid Control is being given to CICS.
+CSQC330E applid CSQCAMON CICS Transaction Server Version 4 Release 1.0 is not supported
+DFHMQ0341 date timeapplid STOP FORCE
+
+When starting CICS TS V3.2, the CSQC330E message will be similar to this:
+CSQC330E applid CSQCQCTL CICS Transaction Server Version 3 Release 2.0 is not supported.
+
+The csect-name in message CSQC330E will vary depending on the release of WebSphere MQ that you are using rather than the release of CICS TS you are using.
+
+If you remove the INITPARM from the JCL and define an MQCONN, but forget to remove the old group CSQCAT1 from the CICS region and install the new group DFHMQ, CEMT INQ MQCONN will show a status of "CONNECTING", or "CONNECTED" but the CICS-WebSphere MQ monitor tasks CKAM and CKTI will not be in the CICS region.
+
+
+CAUSE
+The wrong adapter is being used. The CICS-MQ adapter shipped with CICS must be used.
+
+
+RESOLVING THE PROBLEM
+To correct, ensure that: 
+
+ 1. CSD groups CSQCAT1 and CSQCKB are NOT installed for CICS TS 3.2 or higher, and that CSD group DFHMQ [http://pic.dhe.ibm.com/infocenter/cicsts/v5r1/topic/com.ibm.cics.ts.migration31.doc/dfhe5_rdo_new_ibm_dfhmq.html] is installed. If you copied the resource definitions from groups CSQCAT1 or CSQCKB into another group, make sure you remove the resources from all groups.
+    
+    
+ 2. WebSphere MQ libraries are AFTER CICS libraries in the CICS STEPLIB and DFHRPL concatenations.
+    
+    
+ 3. In CICS TS 4.1 (or higher), the INITPARM should no longer be in the CICS JCL. Instead, the MQCONN resource definition [http://pic.dhe.ibm.com/infocenter/cicsts/v5r1/topic/com.ibm.cics.ts.resourcedefinition.doc/resources/mqconn/dfha4_overview.html] specifies the attributes of the connection and the CICS system initialization table (SIT) parameter MQCONN=YES [http://pic.dhe.ibm.com/infocenter/cicsts/v5r1/topic/com.ibm.cics.ts.doc/dfha2/parameters/dfha2_mqconn2.html] specifies that you want to start the CICS-WebSphere MQ connection automatically at CICS initialization.
+    
+    In CICS TS V3.2, the INITPARM system initialization table (SIT) overrides should be changed from: 
+    INITPARM=(CSQCPARM='SN=xxxx,TN=yyy,IQ=zzzzz')
+    to
+    INITPARM=(DFHMQPRM='SN=xxxx,IQ=zzzzz')
+    
+
+
+For more details see Configuring CICS to use the WebSphere MQ transport [http://pic.dhe.ibm.com/infocenter/cicsts/v5r1/topic/com.ibm.cics.ts.webservices.doc/tasks/dfhws_configureMQ.html] in the CICS TS V5.1 information center if using CICS TS 4.1, 4.2, or 5.1; or Configuring CICS to use the WebSphere MQ transport [http://publib.boulder.ibm.com/infocenter/cicsts/v3r2/topic/com.ibm.cics.ts.webservices.doc/tasks/dfhws_configureMQ.html] in the CICS TS V3.2 information center if using CICS TS V3.2. RELATED INFORMATION
+#CSQC330E [http://publib.boulder.ibm.com/infocenter/wmqv7/v7r0/topic/com.ibm.mq.csqsao.doc/zm10940_.htm]
+Upgrading from 4.2: Upgrading the CICS-MQ connection [http://pic.dhe.ibm.com/infocenter/cicsts/v5r1/topic/com.ibm.cics.ts.migration42.doc/dfhe5_cicsmq.html]
+Upgrading from 3.2: Upgrading the CICS-MQ connection [http://pic.dhe.ibm.com/infocenter/cicsts/v5r1/topic/com.ibm.cics.ts.migration32.doc/dfhe5_cicsmq.html]
+Upgrading from 3.1: Upgrading the CICS-MQ connection [http://pic.dhe.ibm.com/infocenter/cicsts/v5r1/topic/com.ibm.cics.ts.migration31.doc/dfhe5_cicsmq.html]
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration WebSphere MQ z/OS 7.0, 6.0, 5.3.1 
+PRODUCT ALIAS/SYNONYM
+ CICS/TS CICS TS CICS Transaction Server

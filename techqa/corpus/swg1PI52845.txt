@@ -1,0 +1,280 @@
+Title: IBM PI52845: SSL HANDSHAKE FAILS DUE TO A JAVA.LANG.ILLEGALARGUMENTEXCEPTION. - United States
+
+Text:
+  FIXES ARE AVAILABLE
+8.5.5.9: WebSphere Application Server V8.5.5 Fix Pack 9 [http://www-01.ibm.com/support/docview.wss?uid=swg24041819]
+7.0.0.41: WebSphere Application Server V7.0 Fix Pack 41 [http://www-01.ibm.com/support/docview.wss?uid=swg24041931]
+8.5.5.10: WebSphere Application Server V8.5.5 Fix Pack 10 [http://www-01.ibm.com/support/docview.wss?uid=swg24042150]
+8.5.5.11: WebSphere Application Server V8.5.5 Fix Pack 11 [http://www-01.ibm.com/support/docview.wss?uid=swg24043005]
+8.0.0.13: WebSphere Application Server V8.0 Fix Pack 13 [http://www-01.ibm.com/support/docview.wss?uid=swg24042746]
+7.0.0.43: WebSphere Application Server V7.0 Fix Pack 43 [http://www-01.ibm.com/support/docview.wss?uid=swg24043400]
+8.5.5.12: WebSphere Application Server V8.5.5 Fix Pack 12 [http://www-01.ibm.com/support/docview.wss?uid=swg24043844]
+8.0.0.14: WebSphere Application Server V8.0 Fix Pack 14 [http://www-01.ibm.com/support/docview.wss?uid=swg24044096]
+8.5.5.13: WebSphere Application Server V8.5.5 Fix Pack 13 [http://www-01.ibm.com/support/docview.wss?uid=swg24044479]
+7.0.0.45: WebSphere Application Server V7.0 Fix Pack 45 [http://www-01.ibm.com/support/docview.wss?uid=swg24044551]
+8.0.0.15: WebSphere Application Server V8.0 Fix Pack 15 [http://www-01.ibm.com/support/docview.wss?uid=swg24044734]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Error occurs on the SSL of the SOAP request: WebContainer : 1
+   sent close_notify to Proxy causes the error of their
+   application.
+   ----
+   [10/23/15 22:34:23:053 JST] 0000001c TCPReadReques < read Exit
+   [10/23/15 22:34:23:053 JST] 0000001c TCPReadReques > read(1,0)
+   Entry
+   [10/23/15 22:34:23:053 JST] 0000001c TCPReadReques 3 Number of
+   bytes
+   requested: 1 exceeds space remaining in the buffers provided: 0
+   
+   [10/23/15 22:34:23:053 JST] 0000001c HttpOutboundL 3 Closing
+   this
+   outbound link:
+   com.ibm.ws.http.channel.outbound.impl.HttpOutboundLink@3c683c68
+   
+   com.ibm.ws.channel.framework.impl.OutboundVirtualConnectionImpl@
+   
+   3c4c3c4c
+   [10/23/15 22:34:23:053 JST] 0000001c SystemOut O WebContainer :
+   
+   1,
+   called closeOutbound()
+   [10/23/15 22:34:23:053 JST] 0000001c SystemOut O WebContainer :
+   
+   1,
+   closeOutboundInternal()
+   [10/23/15 22:34:23:053 JST] 0000001c SystemOut O WebContainer :
+   
+   1, SEND
+   TLSv1 ALERT: warning, description = close_notify
+   [10/23/15 22:34:23:053 JST] 0000001c SystemOut O WebContainer :
+   
+   1,
+   WRITE: TLSv1 Alert, length = 2
+   ----
+   This close_notify sent in the middle of SSL
+   handshake.
+   SSL handshake fails because of IllegalArgumentException inside
+   channel code.
+   Exception caught in oConn.connect
+   attempt:java.lang.IllegalArgumentException: Number of bytes
+   requested: 1 exceeds space remaining in the buffers provided: 0
+   
+   On this specific case the SSL handshake data seems to be a
+   considerable amount. When we issue the read for to the
+   TCPChannel the SSLChannel is not increasing the amount of the
+   net buffer to accommodate the data.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  IBM WebSphere Application Server Version    *
+   *                  7.0, 8.0, and 8.5.5 Full Profile and        *
+   *                  Liberty Profile                             *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: The SSL Handshake fails after an        *
+   *                      java.lang.IllegalArgumentException is   *
+   *                      thrown because the buffers do not       *
+   *                      expand to accommodate the data.         *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   The SSL Handshake fails after an IllegalArgumentException is
+   thrown because the buffers do not expand to accommodate the
+   SSL handshake data. A First Failure Data Capture (FFDC) is
+   generated during the SSL handshake. The FFDC is caused by the
+   IllegalArgumentException as demonstrated below:
+   [11/10/15 23:11:06:129 JST]     FFDC
+   Exception:java.lang.Exception
+   SourceId:com.ibm.ws.webservices.engine.transport.http.HttpOutbou
+   ndChannelConnection.connect
+   ProbeId:782
+   Reporter:com.ibm.ws.webservices.engine.transport.http.HttpsOutbo
+   undChannelConnection@3eaf3eaf
+   java.lang.Exception: java.lang.IllegalArgumentException:
+   Number of bytes requested: 1 exceeds space remaining in the
+   buffers provided: 0
+   at
+   com.ibm.ws.webservices.engine.transport.http.HttpOutboundChannel
+   Connection.connect(HttpOutboundChannelConnection.java:899)
+   at
+   com.ibm.ws.webservices.engine.transport.http.HttpsOutboundChanne
+   lConnection.connect(HttpsOutboundChannelConnection.java:210)
+   at
+   com.ibm.ws.webservices.engine.transport.http.HTTPSender.invoke(H
+   TTPSender.java:670)
+   ...
+   at
+   com.ibm.ws.webcontainer.WSWebContainer.handleRequest(WSWebContai
+   ner.java:1592)
+   at
+   com.ibm.ws.webcontainer.channel.WCChannelLink.ready(WCChannelLin
+   k.java:191)
+   ...
+   at
+   com.ibm.ws.http.channel.inbound.impl.HttpInboundLink.processRequ
+   est(HttpInboundLink.java:307)
+   at
+   com.ibm.ws.http.channel.inbound.impl.HttpICLReadCallback.complet
+   e(HttpICLReadCallback.java:84)
+   at
+   com.ibm.ws.tcp.channel.impl.AioReadCompletionListener.futureComp
+   leted(AioReadCompletionListener.java:175)
+   ...
+   at
+   com.ibm.io.async.ResultHandler$2.run(ResultHandler.java:905)
+   at
+   com.ibm.ws.util.ThreadPool$Worker.run(ThreadPool.java:1662)
+   Caused by: java.lang.IllegalArgumentException: Number of bytes
+   requested: 1 exceeds space remaining in the buffers provided: 0
+   at
+   com.ibm.ws.tcp.channel.impl.TCPReadRequestContextImpl.checkForEr
+   rors(TCPReadRequestContextImpl.java:284)
+   at
+   com.ibm.ws.tcp.channel.impl.TCPReadRequestContextImpl.read(TCPRe
+   adRequestContextImpl.java:80)
+   at
+   com.ibm.ws.ssl.channel.impl.SSLUtils.handleHandshake(SSLUtils.ja
+   va:955)
+   at
+   com.ibm.ws.ssl.channel.impl.SSLConnectionLink.readyOutbound(SSLC
+   onnectionLink.java:777)
+   at
+   com.ibm.ws.ssl.channel.impl.SSLConnectionLink.connect(SSLConnect
+   ionLink.java:995)
+   at
+   com.ibm.wsspi.channel.base.OutboundProtocolLink.connect(Outbound
+   ProtocolLink.java:87)
+   at
+   com.ibm.ws.http.channel.outbound.impl.HttpOutboundLink.connect(H
+   ttpOutboundLink.java:278)
+   at
+   com.ibm.ws.channel.framework.impl.OutboundVirtualConnectionImpl.
+   connect(OutboundVirtualConnectionImpl.java:79)
+   at
+   com.ibm.ws.webservices.engine.transport.http.HttpOutboundChannel
+   Connection.connect(HttpOutboundChannelConnection.java:881)
+   ... 102 more
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The SSL Channel was modified to expand the buffers as needed
+   by the SSL handshake.
+   
+   The fix for this APAR is currently targeted for inclusion in
+   fix packs 7.0.0.41, 8.0.0.13 and 8.5.5.9.  Please refer to the
+   Recommended Updates page for delivery information:
+   http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI52845
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSPHERE APP S
+   
+   
+ * REPORTED COMPONENT ID
+   5724J0800
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2015-11-19
+   
+   
+ * CLOSED DATE
+   2016-01-04
+   
+   
+ * LAST MODIFIED DATE
+   2016-11-18
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBSPHERE APP S
+   
+   
+ * FIXED COMPONENT ID
+   5724J0800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R700 PSY
+   UP
+   
+   
+ * R800 PSY
+   UP
+   
+   
+ * R850 PSY
+   UP

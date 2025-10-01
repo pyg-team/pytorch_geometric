@@ -1,0 +1,53 @@
+Title: IBM Resolving connector exceptions that cause IBM Content Navigator deployment to fail on a clustered high availability WebSphere Application Server environment - United States
+
+Text:
+ PRODUCT DOCUMENTATION
+
+ABSTRACT
+ IBM Content Navigator deployment fails on a clustered high availability WebSphere Application Server environment when the com.ibm.SOAP.requestTimeout property value is set too low. 
+
+CONTENT
+Problem 
+
+
+When you deploy IBM Content Navigator on a clustered high availability WebSphere Application Server environment, the deployment fails intermittently. 
+
+Symptom
+The deployment fails and an error message is displayed, for example: 
+
+WASX7017E: Exception received while running file "/opt/IBM/ECMClient/configure/tmp/deployapplication.tcl"; exception information: javax.management.JMRuntimeException: ADMN0034E: The service is unable to obtain a valid administrative client to connect process "oclv0210Node01" from process "dmgr", because of exception: com.ibm.websphere.management.exception.ConnectorException: ADMC0009E: The system failed to make the SOAP RPC call: invoke
+
+Cause
+The SOAP timeout causes the server connection to be lost. The timeout limit is not long enough to complete the IBM Content Navigator deployment task.
+
+Environment 
+WebSphere Application Server and WebSphere Application Server Network Deployment 
+
+Diagnosing the problem
+The deployment task in the IBM Content Navigator Configuration and Deployment Tool fails with a connector exception error message that includes the following content: 
+
+ConnectorException: ADMC0009E: The system failed to make the SOAP RPC call: invoke. 
+
+Resolving the problem
+First, you can try to work around the problem by stopping and restarting your WebSphere Application Server, including cluster members, node agents, and dmgr. Then, run the same task again. 
+
+If the problem persists, you can change the value of the com.ibm.SOAP.requestTimeout property on WebSphere Application Server. This property is not a required setting for WebSphere Application Server and changing it will affect all of the applications that are running under the same dmgr cell in your enterprise deployment. 
+
+The value that you choose for the property depends on several factors, such as the size and the number of the applications that are installed on the server, the speed of your machine, and the usage of your machine. 
+
+ * If you want to remove the timeout limit, you can set the property value to zero: com.ibm.SOAP.requestTimeout=0. 
+ * If you want to retain a timeout limit for your other applications, you can increase the value to allow the IBM Content Navigator deployment task to complete. For example, if your IBM Content Navigator deployment task fails with a property value setting of com.ibm.SOAP.requestTimeout=180, you can try it again with a setting of com.ibm.SOAP.requestTimeout=600.
+
+
+For more information about configuring the WebSphere Application Server SOAP request timeout property, see [http://pic.dhe.ibm.com/infocenter/wasinfo/v8r5/index.jsp?topic=%2Fcom.ibm.websphere.nd.multiplatform.doc%2Fae%2Fragt_rconnector_customp.html] http://www.ibm.com/support/knowledgecenter/SSAW57_8.5.5/com.ibm.websphere.nd.multiplatform.doc/ae/ragt_rconnector_customp.html [http://www.ibm.com/support/knowledgecenter/SSAW57_8.5.5/com.ibm.websphere.nd.multiplatform.doc/ae/ragt_rconnector_customp.html]. The following example shows how to change the SOAP request timeout property value by using a command prompt: 
+
+ 1. Edit the soap.client.props file that is in the dmgr_profile/properties directory. 
+ 2. Locate the line for com.ibm.SOAP.requestTimeout and modify its value. You can increase the timeout limit or remove the timeout limit by setting it to zero.
+
+
+The following example shows how to change the SOAP request timeout property value by using the administrative console:  1. Modify the com.ibm.SOAP.requestTimeout property by editing the soap.client.props file that is in theprofile_root/properties directory. 
+ 2. Change the requestTimeout custom property by using the administrative console. You can increase the timeout limit or remove the timeout limit by setting it to zero.  * For servers or cluster members, click Servers > Application servers > server_name > Server Infrastructure > Administration > Administration Services > Additional properties > JMX Connectors > SOAPConnector > Additional Properties > Custom properties, locate the requestTimeout custom property, and modify its value. 
+       
+     * For the deployment manager, click System administration > Deployment manager > Additional Properties > Administration Services > Additional properties > JMX Connectors > SOAPConnector > Additional Properties > Custom properties, locate the requestTimeout custom property, and modify its value. 
+       
+     * For the node agents, click System administration > Node agents > node_agent_name > Additional Properties > Administration Services > Additional properties > JMX Connectors > SOAPConnector > Additional Properties > Custom properties, locate the requestTimeout custom property, and modify its value.

@@ -1,0 +1,139 @@
+Title: IBM IV09557: THE MIB OF V4.0.2.0 INDICATES THAT DPSTATUSSYSTEMUSAGETABLETABLE IS OBSOLETED. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Problem Description :
+   
+    The MIB of v4.0.2.0 indicates that
+    dpStatusSystemUsageTableTable is obsoleted.
+   
+    dpStatusSystemUsageTableTable OBJECT-TYPE
+      SYNTAX      SEQUENCE OF DPStatusSystemUsageTableEntry
+      MAX-ACCESS  not-accessible
+      STATUS      obsolete
+      DESCRIPTION
+          "Component level system usage.
+          Note: this is obsoleted and is replaced by
+    dpStatusSystemUsage2Table as of release 4.0.1"
+   
+      ::= { dpStatus 201 }
+   
+    ITCAM Agent for WebSphere DataPower Appliance v6.3 requests
+    component level system usage from OID
+    1.3.6.1.4.1.14685.3.1.201.1.1-6.
+    This is obsoleted starting from firmware v4.0.1 released June
+    30,2011.  From firmware v4.0.1, there is no data returned for
+    these OIDs from the DataPower device.
+   
+    Because of this..
+    the "Performance Object Status" workspace showed Error Code "NO
+    INSTANCE RETURNED" of the SystemUsageTable attribute group.
+   
+   Approver : ZW
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  The problem was fixed on version 7.1 per Hong Liang@BN L3
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Need to close this Apar, cause the problem resolved in V7.1
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV09557
+   
+   
+ * REPORTED COMPONENT NAME
+   ITCAM SOA PLAT
+   
+   
+ * REPORTED COMPONENT ID
+   5724V0700
+   
+   
+ * REPORTED RELEASE
+   620
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   YesSpecatt / New Function
+   
+   
+ * SUBMITTED DATE
+   2011-10-24
+   
+   
+ * CLOSED DATE
+   2014-06-09
+   
+   
+ * LAST MODIFIED DATE
+   2014-06-09
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ITCAM SOA PLAT
+   
+   
+ * FIXED COMPONENT ID
+   5724V0700
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R710 PSY
+   UP

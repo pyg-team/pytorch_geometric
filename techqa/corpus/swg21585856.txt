@@ -1,0 +1,66 @@
+Title: IBM Need to use "endmqm -i" when stopping a WMQ queue manager that has a connection from a Listener Port in WebSphere Application Server - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ You try to stop a WebSphere MQ (WMQ) queue manager and issue "endmqm QmgrName".
+However, the queue manager goes into a quiescent state and it does not terminate because there is a pending connection from a WebSphere Application Server (WAS) Listener Port. 
+
+CAUSE
+See the following technote:
+IPPROCS or OPPROCS greater than 0 in a queue prevents normal termination of queue manager by "endmqm QmgrName" [http://www.ibm.com/support/docview.wss?uid=swg21504206] 
+
+
+ANSWER
+When the Listener Port in the WebSphere Application Server is active, it will have a "permanent" connection to the queue manager via the channel specified in the Connection Factory. In the example below, the WAS Listener Port is connected via the channel QM3 to a queue manager. 
+
+
+This runmqsc command shows that the channel QM3 is active, but at this point, we do not know which applications are using the channel.
+
+DISPLAY CHSTATUS(*)
+1 : DISPLAY CHSTATUS(*)
+AMQ8417: Display Channel Status details.
+CHANNEL(QM3) CHLTYPE(SVRCONN)
+CONNAME(9.37.x) CURRENT
+STATUS(RUNNING) SUBSTATE(RECEIVE)
+
+The following runmqsc command will show more details on the actual connections. 
+Look at the parameter APPLTAG to determine which connection is used by the Listener Port in WAS.
+
+display conn(*) where(CHANNEL eq QM3) all
+2 : display conn(*) where(CHANNEL eq QM3) all
+AMQ8276: Display Connection details.
+CONN(4DB86CEE20001D01)
+EXTCONN(414D5143514D33202020202020202020)
+TYPE(CONN)
+PID(10813666) TID(5)
+APPLDESC(WebSphere MQ Channel)
+APPLTAG(WebSphere MQ Client for Java)
+APPLTYPE(SYSTEM) ASTATE(STARTED)
+CHANNEL(QM3) CONNAME(9.37.x)
+CONNOPTS(MQCNO_HANDLE_SHARE_BLOCK,MQCNO_SHARED_BINDING)
+USERID(username) UOWLOG( )
+UOWSTDA( ) UOWSTTI( )
+UOWLOGDA( ) UOWLOGTI( )
+URTYPE(QMGR)
+EXTURID(XA_FORMATID[00000000] XA_GTRID[] XA_BQUAL[])
+QMURID(0.0) UOWSTATE(NONE)
+
+Note:
+This connection will prevent the queue manager from terminating when you issue: 
+endmqm QMgrName
+
+Solution:
+You will need to either:
+
+a) Stop the Listener Port (stopping the WAS server will stop the listener) or 
+
+b) Invoke an "immediate" stop of the queue manager with the -i flag which will stop the queue manager regardless of any active connections: 
+endmqm -i QMgrName
+
+
+
+
+PRODUCT ALIAS/SYNONYM
+ WMQ MQ MQSeries

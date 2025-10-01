@@ -1,0 +1,30 @@
+Title: IBM 'The system cannot find the path specified' error is received after migration when running the upgradeSchemaAll_MyWPS.bat command in IBM Business Process Manager (BPM) - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ After migrating, if you configured the Business Process Choreographer (BPC) Archive on your source environment, the BPC Archive database schema is not upgraded by the upgradeSchemaAll.sh/bat command in IBM Business Process Manager. 
+
+SYMPTOM
+You receive the "The system cannot find the path specified" error after following these steps when upgrading the database schema of the BPC Archive database: 
+
+ 1. Enter the Oracle SID for BPC Archive Database [orcl.orcBA00]:orcl 
+ 2. Enter the Oracle user[default=orcBA00] for connecting to the BPC Archive Database [orcl.orcBA00]: 
+ 3. Enter the Oracle password for connecting to the BPC Archive Database [orcl.orcBA00]:xxxxxx
+
+
+CAUSE
+The error was caused by the schema upgrade scripts of the BPC Archive not being correct in the upgradeSchemaAll.sh/bat command.
+
+RESOLVING THE PROBLEM
+Run the generated schema upgrade scripts for the BPC Archive manually. The scripts are located in the<BPM8550_deployment_manager_profile>/dbscripts/Upgrade/<De_Name>/<Database_type>/<BPC_Archive_Component>/ directory. 
+
+
+
+For more information about the sequence of running scripts, you can refer to the <BPM8550_deployment_manager_profile>/dbscripts/Upgrade/upgradeSchemaScriptsHelp_<De_name>.txt file.
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ BPM

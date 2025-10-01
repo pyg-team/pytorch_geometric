@@ -1,0 +1,55 @@
+Title: IBM An out of memory error occurs in the DB2 JDBC driver for WebSphere Process Server (WPS) after a database connection failure - United States
+
+Text:
+v612rnotes; OutOfMemory; DB2 driver; OOM; JDBC; IBM DB2; driver upgrade; IZ68122 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ An out of memory error can occur in WebSphere Process Server V6.1.2 due to a memory leak in the DB2 JDBC driver when the connectivity to a DB2 database server fails. 
+
+SYMPTOM
+The out of memory error generates the following messages: 
+
+java.lang.Object[10903] @ 0xc8265e48 43,632 959,262,112
+java.util.Vector @ 0x94580ca0 32 959,262,144
+class com.ibm.db2.jcc.b.ib @ 0x368732e8 28 959,273,924
+class com.ibm.db2.jcc.b.p @ 0x37bd6740 28 28
+<Java Local> com.ibm.ws.util.ThreadPool$Worker @ 0x34c4b800
+Thread 136 136
+com.ibm.oti.vm.BootstrapClassLoader @ 0x9000d8f0 System Class 
+104 64,928
+com.ibm.ws.bootstrap.ExtClassLoader @ 0x9124d7e0 » 128 100,144
+class com.ibm.db2.jcc.b.om @ 0x36728b38 » 28 364
+class com.ibm.db2.jcc.t4.xb @ 0x3672ca68 » 28 124
+class com.ibm.db2.jcc.b.bf @ 0x36870680 » 28 1,652
+class com.ibm.db2.jcc.b.jb @ 0x37178b78 » 28 124
+class com.ibm.db2.jcc.t4.b @ 0x37522008 » 
+
+
+CAUSE
+The memory leak is a known issue in the DB2 JDBC driver. It has been reported with the DB2 APAR IZ68122 [http://www.ibm.com/support/docview.wss?uid=swg1IZ68122]
+
+
+ENVIRONMENT
+This issue applies to WebSphere Process Server Version 6.1.2 with the 3.53.70 version of the JDBC driver.
+
+
+
+RESOLVING THE PROBLEM
+The problem has been resolved in later versions of the JDBC driver. Information on the latest DB2 JDBC drivers is available here [http://www.ibm.com/support/docview.wss?uid=swg21363866]. 
+
+
+
+You can upgrade the WebSphere Process Server JDBC driver to version 3.53.95 to prevent further out of memory errors. 
+
+
+To upgrade the JDBC driver, complete the following steps in the administrative console. 
+
+
+ 1. Download the JDBC driver files to your machine. 
+ 2. Back up the existing db2jcc.jar file, and then replace it with the version from the driver you just dowloaded. The directory path is ${UNIVERSAL_JDBC_DRIVER_PATH}. 
+ 3. Save the changes and then restart the server.
+
+
+
+Note: It is strongly recommended that you thoroughly test any applications that use JDBC after you update the driver before you deploy them into a production environment. RELATED INFORMATION
+#IBM WebSphere Process Server V6.1.2 Information Center [http://www.ibm.com/software/integration/wps/library/v612.html]

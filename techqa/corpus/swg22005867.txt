@@ -1,0 +1,42 @@
+Title: IBM Content Navigator Deployment tool may fail when deploying against WAS V9.0 - United States
+
+Text:
+WASX7444E; CMUI; deployment; navigator TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ IBM Content Navigator Deployment tool may fail when deploying against WAS V9.0 
+
+SYMPTOM
+1) Configure the IBM Content Navigator Web Application
+2) Build the Web Application
+3) Deploy the Web Application
+
+The 3rd step fails with the following error:
+
+WASX7444E: Invalid parameter value "" for parameter "config id" on
+command "modify"
+
+
+CAUSE
+This happens due to WAS missing out on adding the JAVA Persistence API Service tag to its server.xml of newly created server(s)
+
+ENVIRONMENT
+ICN V2.0.3, ICN V3.0.1, WAS V9.0
+
+DIAGNOSING THE PROBLEM
+Check for error WASX7444E: Invalid parameter value "" for parameter "config id" on
+command "modify" during deployment of ICN ear file using ICN CMUI.
+
+RESOLVING THE PROBLEM
+From WAS admin console perform the following:
+
+
+
+
+
+ * Application Servers -><server name> 
+ * Under Container Settings, Click Container Services 
+ * Go to Default Java Persistence API settings and just click Apply and then click Save without making any changes here. 
+   This will update the server.xml with JAVA Persistence API settings which are missing in a newly created application server's sever.xml in WAS V9.0.
+   
+ * Run the deploy task to deploy your new ICN ear file.

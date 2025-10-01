@@ -1,0 +1,56 @@
+Title: IBM Learning more about MQ Java Message Service (JMS) - United States
+
+Text:
+LearningMoreDocument TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Learning more about MQ Java™ Message Service (JMS) is the first step in the troubleshooting process. This document provides you with educational information that can help you learn more about this topic. 
+
+RESOLVING THE PROBLEM
+ 
+
+TAB NAVIGATION
+ * Learning more [http://www.ibm.com/support/docview.wss?uid=swg21245013]- selected tab,
+ * Troubleshooting [http://www.ibm.com/support/docview.wss?rs=180&uid=swg21230514]
+ * Collecting data [http://www.ibm.com/support/docview.wss?rs=180&uid=swg21153217]
+
+Getting background information on JMS 
+
+ * What is JMS?
+   The Java Message Service (JMS) is a Java API [http://www.oracle.com/technetwork/java/jms/index.html] that enables applications to asynchronously send and receive messages. WebSphere Application Server V7 and higher supports JMS 1.1. Messages are managed by an enterprise messaging system. WebSphere Application Server provides JMS Providers that are configured to access different types of enterprise messaging systems.
+   
+
+ * JMS Providers
+   WebSphere Application Server V7 and higher includes a Default JMS Provider, WebSphere MQ JMS Provider, and Generic JMS Provider.
+
+ * The Default JMS Provider, also known as SIBus Messaging, is built-in to WebSphere Application Server. The Default Messaging JMS Provider enables a service integration bus to act as a JMS provider. Service integration technologies [http://www.ibm.com/support/knowledgecenter/SSAW57_8.0.0/com.ibm.websphere.nd.doc/info/ae/ae/welc6tech_si.html] were introduced in V6 which has its own TroubleShooting document and MustGather [http://www-01.ibm.com/support/docview.wss?uid=swg21266769] document. 
+   
+   The WebSphere MQ JMS Provider enables applications to connect to external WebSphere MQ 7.0 systems. Older versions of WebSphere MQ are not supported. The WebSphere MQ Client must be installed on the same system as WebSphere Application Server in order to use the WebSphere MQ JMS Provider. 
+   
+   You can also create GenericJMS Providers to enable your applications to connect to any other messaging systems. The JMS resources (connection factories and destinations) are configured outside of WebSphere Application Server using the tools provided by the messaging system. Resources can then be created under a Generic JMS Provider to link to these resources. 
+   
+   
+ * Point-to-Point Messaging
+   Point-to-Point Messaging is one of the two messaging concepts supported by JMS. With this type of messaging, a message is sent to a queue, which is hosted by the messaging system. In WebSphere MQ, queues are defined on queue managers. There can only be one receiver for each message, so there is a one-to-one relationship between the sender and the receiver.
+
+
+ * Publish-Subscribe Messaging
+   The other messaging concept supported by JMS is Publish-Subscribe Messaging. In this case, a message is published on a topic. An additional software component, called a broker, is needed so that the messaging system can coordinate Publish-Subscribe Messaging. Multiple receivers can subscribe to a topic, so there is a one-to-many relationship between the publisher and the subscribers.
+
+
+ * JMS concepts
+   JMS connection factories are defined under the JMS Provider in the Administrative Console. Connection factories are resources bound to the JNDI namespace. An application can access a connection factory through JNDI and use it to create a connection to the messaging system. The JMS API requires a connection object and a session object to send and receive messages. The connections and sessions are pooled [http://www.ibm.com/support/docview.wss?rs=180&uid=swg21201242] and the pools are configured in the connection factory definition. A connection factory encapsulates the configuration information that is required to connect to a specific JMS provider. A JMS client uses a connection factory to create a connection to that JMS provider.
+   
+   JMS destinations are also defined under the JMS Provider in the Administrative Console. Destinations are also bound to the JNDI namespace. An application must access a destination through JNDI in order to send messages to, or receive messages from, a queue or topic. The specific queue or topic to be accessed is specified in the configuration of the destination. A destination encapsulates addressing information for a specific JMS provider. A JMS client uses a destination object to address a message to a specific destination on the underlying JMS provider.
+   
+   Message-driven beans (MDBs) are the J2EE standard for receiving messages. MDBs are a type of EJB which cannot be invoked by a standard EJB client, but instead are automatically invoked when a message arrives on a specific queue or topic. The message is passed to the onMessage method of the MDB, which can be written to process the message in any way that suits your needs.
+   
+   Listener ports are configured in the Administrative Console. Each listener port specifies a JMS connection factory and destination that are used to connect to a specific queue or topic. When an MDB is installed, a listener port is selected. When a message arrives on the queue or topic, the Message Listener Service will invoke the MDB that is associated with the listener port and pass the message to its onMessage method.
+   
+   Activation specifications are similar to listener ports. They are used by MDBs that receive messages from the Default Messaging JMS Provider,MQ JMS Provider or Generic JMS Provider. 
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Application Servers Runtimes for Java Technology Java SDK

@@ -1,0 +1,96 @@
+Title: IBM Cognos Business Intelligence 10.1.1 Supported Software Environments - United States
+
+Text:
+ PRODUCT DOCUMENTATION
+
+ABSTRACT
+ This document provides links to the Software Product Compatibility Reports for your product. These reports provide the up-to-date information about the supported environments and minimum requirements. 
+
+CONTENT
+
+
+The following reports are available from the Software Compatibilty Reports (http://www-969.ibm.com/software/reports/compatibility/clarity/index.jsp [http://www-969.ibm.com/software/reports/compatibility/clarity/index.jsp]) tool.
+
+
+TAB NAVIGATION
+ * 10.2.2 [http://www.ibm.com/support/docview.wss?uid=swg27042164]
+ * 10.2.1 [http://www.ibm.com/support/docview.wss?uid=swg27037784]
+ * 10.2 [http://www.ibm.com/support/docview.wss?uid=swg27027080]
+ * 10.1.1 [http://www.ibm.com/support/docview.wss?uid=swg27021368]
+ * 10.1 [http://www.ibm.com/support/docview.wss?uid=swg27019126]
+ * 8.4.1 [http://www.ibm.com/support/docview.wss?uid=swg27017522]
+
+IBM COGNOS BUSINESS INTELLIGENCE 10.1.1
+Click a link to view a report for your product. 
+
+Requirements by type Requirements by platform  * Operating Systems [http://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/osForProduct?deliverableId=1267644462529] 
+ * Software [http://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/prereqsForProduct?deliverableId=1267644462529] (including application servers, data sources, and web browers)
+ * Hypervisors [http://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/vesForProduct?deliverableId=1267644462529] 
+
+ * AIX [http://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1267644462529&osPlatform=AIX] 
+ * HP [http://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1267644462529&osPlatform=HP] 
+ * Linux [http://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1267644462529&osPlatform=Linux] 
+ * Mobile OS [http://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1267644462529&osPlatform=Mobile OS] 
+ * Solaris [http://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1267644462529&osPlatform=Solaris] 
+ * Windows [http://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1267644462529&osPlatform=Windows] 
+
+
+Notes:
+
+ * For some platforms, both 32- and 64-bit versions are available.
+ * IBM Cognos Business Intelligence 10.2 is compatible with IPv6. 
+
+
+ 
+
+IBM COGNOS BUSINESS INTELLIGENCE POWERPLAY 10.1.1
+Click a link to view a report for your product. 
+
+Requirements by type Requirements by platform  * Operating Systems [http://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/osForProduct?deliverableId=1369928615198] 
+ * Software [http://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/prereqsForProduct?deliverableId=1369928615198] 
+
+ * AIX [http://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1369928615198&osPlatform=AIX] 
+ * HP [http://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1369928615198&osPlatform=HP] 
+ * Linux [http://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1369928615198&osPlatform=Linux] 
+ * Solaris [http://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1369928615198&osPlatform=Solaris] 
+ * Windows [http://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1369928615198&osPlatform=Windows] 
+
+
+Notes:
+
+ * For some platforms, both 32- and 64-bit versions are available.
+ * IBM Cognos Business Intelligence PowerPlay 10.1.1 is compatible with IPv6. 
+
+
+IBM COGNOS DATA MANAGER 10.1.1
+Click a link to view a report for your product. 
+
+Requirements by type Requirements by platform  * Operating Systems [http://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/osForProduct?deliverableId=1365781691827] 
+ * Software [http://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/prereqsForProduct?deliverableId=1365781691827] 
+
+ * AIX [http://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1365781691827&osPlatform=AIX] 
+ * HP [http://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1365781691827&osPlatform=HP] 
+ * Linux [http://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1365781691827&osPlatform=Linux] 
+ * Solaris [http://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1365781691827&osPlatform=Solaris] 
+ * Windows [http://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=1365781691827&osPlatform=Windows] 
+
+
+Notes:
+
+ * For some platforms, both 32- and 64-bit versions are available.
+ * IBM Cognos Data Manager 10.2.1 is compatible with IPv6. 
+
+
+
+
+
+RELATED INFORMATION
+ Cognos BI 10.1.1 Fix List [http://www.ibm.com/support/docview.wss?uid=swg27021369]
+Download Cognos BI 10.1.1 [http://www.ibm.com/support/docview.wss?uid=swg24029297]
+Download Cognos BI 10.1.1 FP1 [http://www-01.ibm.com/support/docview.wss?uid=swg24033004]
+Download Cognos BI 10.1.1 FP2 [http://www.ibm.com/support/docview.wss?uid=swg24034609]
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Analytics Cognos Business Intelligence Data Manager AIX, HP-UX, Linux, Solaris, Windows 10.1.1 Business Analytics Cognos Business Intelligence PowerPlay AIX, HP-UX, Linux, Solaris, Windows 10.1.1

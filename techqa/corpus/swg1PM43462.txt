@@ -1,0 +1,223 @@
+Title: IBM PM43462: WHEN RUNNING WCT.SH GUI AS NON-ROOT, IT FAILS TO CONFIGURE IHS PLUGIN PROPERLY. - United States
+
+Text:
+  FIXES ARE AVAILABLE
+8.0.0.2: WebSphere Application Server V8.0 Fix Pack 2 [http://www-01.ibm.com/support/docview.wss?uid=swg24031368]
+8.0.0.3: WebSphere Application Server V8.0 Fix Pack 3 [http://www-01.ibm.com/support/docview.wss?uid=swg24032315]
+8.0.0.4: WebSphere Application Server V8.0 Fix Pack 4 [http://www-01.ibm.com/support/docview.wss?uid=swg24033190]
+8.0.0.5: WebSphere Application Server V8.0 Fix Pack 5 [http://www-01.ibm.com/support/docview.wss?uid=swg24033754]
+8.0.0.6: WebSphere Application Server V8.0 Fix Pack 6 [http://www-01.ibm.com/support/docview.wss?uid=swg24034673]
+8.0.0.7: WebSphere Application Server V8.0 Fix Pack 7 [http://www-01.ibm.com/support/docview.wss?uid=swg24035457]
+8.0.0.8: WebSphere Application Server V8.0 Fix Pack 8 [http://www-01.ibm.com/support/docview.wss?uid=swg24036729]
+8.0.0.9: WebSphere Application Server V8.0 Fix Pack 9 [http://www-01.ibm.com/support/docview.wss?uid=swg24037574]
+8.0.0.10: WebSphere Application Server V8.0 Fix Pack 10 [http://www-01.ibm.com/support/docview.wss?uid=swg24039242]
+8.0.0.11: WebSphere Application Server V8.0 Fix Pack 11 [http://www-01.ibm.com/support/docview.wss?uid=swg24040425]
+8.0.0.12: WebSphere Application Server V8.0 Fix Pack 12 [http://www-01.ibm.com/support/docview.wss?uid=swg24041590]
+8.0.0.13: WebSphere Application Server V8.0 Fix Pack 13 [http://www-01.ibm.com/support/docview.wss?uid=swg24042746]
+8.0.0.14: WebSphere Application Server V8.0 Fix Pack 14 [http://www-01.ibm.com/support/docview.wss?uid=swg24044096]
+8.0.0.15: WebSphere Application Server V8.0 Fix Pack 15 [http://www-01.ibm.com/support/docview.wss?uid=swg24044734]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Problem :
+   When running wct.sh GUI as non-root, it fails to configure the
+   IBM HTTP Server plugin properly.
+   
+   
+   
+   Here are the high-level steps:
+   
+   1) Install WebSphere Application Server V8.0 as root
+   2) Create a base profile AppSrv01
+   3) Afterwards, change all product directory to be owned by
+   non-root.
+   for example:
+   $ chown -R wasadm:staff /opt/IBM/WebSphere/
+   $ chown -R wasadm:staff /opt/IBM/HTTPServer/
+   4) Then test
+   /opt/IBM/WebSphere/Toolbox/WCT/wct.sh
+   by both root and non-root
+   
+   
+   When using the WCT to create the plugin configuration, the first
+   few screens will let you choose
+   
+   Screen #1) WebServer Selection  ( choose the type IHS, Apache,
+   Domino..)
+   Screen #2) WebServer Architecture ( 64-bit or 32-bit )
+   Screen #3) WebServer Configuration File Selection
+   ( path to httpd.conf, and httpd port )
+   ......
+   
+   
+   When running wct.sh with root, we can choose the "WebServer
+   Architecture" to be 64-bit , which customer is actually using
+   So the resulting httpd.conf will look like  LoadModule
+   was_ap22_module
+   /opt/IBM/WebSphere/Plugins/bin/64bits/mod_was_ap22_http.so
+   WebSpherePluginConfig
+   /opt/IBM/WebSphere/Plugins/config/webserver1/plugin-cfg.xml
+   
+   The problem here is when running wct.sh with non-root,Screen #2)
+   is not shown and so the architecture will be defaulted to
+   32-bit.
+   
+   
+   And the resulting httpd.conf will look like LoadModule
+   was_ap22_module
+   /opt/IBM/WebSphere/Plugins/bin/32bits/mod_was_ap22_http.so
+   WebSpherePluginConfig
+   /opt/IBM/WebSphere/Plugins/config/webserver1/plugin-cfg.xml
+   
+   While the IBM HTTP Server being installed is actually 64-bit ,
+   and so the IBM HTTP Server will fail to load the 32-bit
+   plugin.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  All users of IBM WebSphere Application      *
+   *                  Server V8.0                                 *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: When running wct.sh as non-root on an   *
+   *                      AIX system, it fails to configure a     *
+   *                      web server plug-in.                     *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   When running wct.sh as non-root on an AIX,it fails to configure
+   a
+   web server plug-in. This is because "bootinfo" command on AIX is
+   not executable by non-root users. The recommended command
+   replacement is "getconf".
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  When running wct.sh as non-root on an AIX,it fails to
+   configure a web server plug-in. This is because the
+   previous command used to determine the platform bit
+   info was "bootinfo". This command is deprecated and is not
+   executable by non-root users. This was the cause of this
+   problem.
+   
+   The fix uses the recommended command "getconf" to get the bit
+   info on AIX, and this command is executable by non-root users
+   as well.
+   
+   The fix for this APAR is currently targeted for inclusion in
+   fix pack 8.0.0.2.  Please refer to the Recommended Updates
+   page for delivery information:
+   http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  A test iFix has been created and uploaded to the iFix repository
+   
+   for customer feedback.
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM43462
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBS APP SERV N
+   
+   
+ * REPORTED COMPONENT ID
+   5724H8800
+   
+   
+ * REPORTED RELEASE
+   800
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-07-11
+   
+   
+ * CLOSED DATE
+   2011-08-31
+   
+   
+ * LAST MODIFIED DATE
+   2011-08-31
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBS APP SERV N
+   
+   
+ * FIXED COMPONENT ID
+   5724H8800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R800 PSY
+   UP

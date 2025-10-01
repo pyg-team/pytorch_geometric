@@ -1,0 +1,81 @@
+Title: IBM Security Bulletin: The IBM V840 product model number AE1 node is affected by vulnerabilities in Apache Tomcat - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ Security vulnerabilities have been discovered in Apache Tomcat 
+
+VULNERABILITY DETAILS
+CVE-ID: CVE-2013-4286, CVE-2013-4322, & CVE-2014-0033 
+
+DESCRIPTION: FlashSystem V840-AE1 uses Apache Tomcat. 
+
+FlashSystem V840-AE1 runs an Apache Tomcat web server which enables the systems’ browser-based administrative GUI. The version of Tomcat that runs in product code levels prior to 1.1.2.0 have the following vulnerabilities: 
+
+ 
+
+CVE-2013-4286 (Apache Tomcat HTTP request smuggling) 
+
+Apache Tomcat is vulnerable to HTTP request smuggling, caused by an incomplete fix related to the handling of malicious request. By sending a specially-crafted request in a Transfer-Encoding: chunked header and a Content-length header to the Apache HTTP server that will be reassembled with the original Content-Length header value, an attacker could exploit this vulnerability to poison the web cache, bypass web application firewall protection, and conduct XSS attacks. 
+
+CVSS v2 Base Score: 5.8
+CVSS Temporal Score: See http://xforce.iss.net/xforce/xfdb/91426 [http://xforce.iss.net/xforce/xfdb/91426]
+CVSS Vector: (AV:N/AC:M/AU:N/C:P/I:P/A:N) 
+
+ 
+
+CVE-2013-4322 (Apache Tomcat chunked transfer coding denial of service) 
+
+Apache Tomcat is vulnerable to a denial of service, caused by an incomplete fix related to the processing of chunked transfer coding without properly handling a large total amount of chunked data or whitespace characters in an HTTP header value. A remote attacker could exploit this vulnerability to cause a denial of service. 
+
+CVSS v2 Base Score: 4.3
+CVSS Temporal Score: See http://xforce.iss.net/xforce/xfdb/91625 [http://xforce.iss.net/xforce/xfdb/91625]
+CVSS Vector: (AV:N/AC:M/AU:N/C:N/I:N/A:P) 
+
+ 
+
+CVE-2014-0033 (Apache Tomcat disableURLRewriting session hijacking) 
+
+Apache Tomcat could allow a remote attacker to hijack a valid user's session, caused by an error even when disableURLRewriting is enabled. By persuading a victim to visit a specially-crafted link and log into the application, a remote attacker could exploit this vulnerability to hijack another user's account and possibly launch further attacks on the system. 
+
+CVSS v2 Base Score: 4.3
+CVSS Temporal Score: See http://xforce.iss.net/xforce/xfdb/ [http://xforce.iss.net/xforce/xfdb/] 91423
+CVSS Vector: (AV:N/AC:M/AU:N/C:P/I:N/A:N)
+
+AFFECTED PRODUCTS AND VERSIONS
+FlashSystem V840 including machine type models (all available code levels) 
+9846-AE1 & 9848-AE1
+
+REMEDIATION/FIXES
+ 
+
+Products VRMF APAR Remediation/First Fix 9846-AE1,
+9848-AE1, A code fix is now available, the VRMF of this code level is 1.1.2.2 N/A No work arounds or mitigations, other than applying this code fix, are known for this Apache Tomcat vulnerability WORKAROUNDS AND MITIGATIONS
+None known
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v2 Guide [http://www.first.org/cvss/v2/guide] 
+On-line Calculator v2 [http://nvd.nist.gov/CVSS-v2-Calculator] 
+On-line Calculator V2 [http://nvd.nist.gov/cvss.cfm?calculator&adv&version=2] RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] IBM Secure Engineering Web Portal [https://www-304.ibm.com/jct03001c/security/secure-engineering/] 
+IBM Product Security Incident Response Blog [https://www.ibm.com/blogs/PSIRT] ACKNOWLEDGEMENT
+None 
+
+CHANGE HISTORY
+ 15 July 2014 First Published
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+Disclaimer
+
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY. 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.

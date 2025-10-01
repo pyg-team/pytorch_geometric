@@ -1,0 +1,134 @@
+Title: IBM PI57765: STEPS TO INSTALL XL C++ ON LINUX ON POWER LE FAIL - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When I follow the instructions to install libxlc and libxlsmp I
+   get:
+   
+   yum install libxlc libxlsmp
+   Loaded plugins: product-id, refresh-packagekit, security,
+   subscription-manager
+   This system is not registered to Red Hat Subscription
+   Management. You
+   can use subscription-manager to register.
+   ibm-xlc-compiler-runtime | 2.9 kB 00:00
+   ibm-xlc-compiler-runtime/primary_db | 2.8 kB 00:00
+   http://public.dhe.ibm.com/software/server/POWER/Linux/rte/xlcpp/ [http://public.dhe.ibm.com/software/server/POWER/Linux/rte/xlcpp/]
+   le/rhel7/ibm-xlc-compiler-runtime.repo/repodata/repomd.xml:
+   [Errno 14] PYCURL
+   ERROR 22 - "The requested URL returned error: 404 Not Found"
+   Trying other mirror.
+   Error: Cannot retrieve repository metadata (repomd.xml) for
+   repository:
+   public.dhe.ibm.com_software_server_POWER_Linux_rte_xlcpp_le_rhel
+   7_ibm-xl
+   c-compiler-runtime.repo. Please verify its path and try again
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * This issue affects users who install SPSS Modeler Server on  *
+   * Linux Power LE (Little Endian) platform.                     *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * STEPS TO INSTALL XL C++ ON  LINUX ON POWER LE FAIL.          *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Please upgrade to IBM SPSS Modeler 18.1 to resolve this      *
+   * documentation issue.                                         *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This documentation issue has been resolved in IBM SPSS Modeler
+   18.1.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI57765
+   
+   
+ * REPORTED COMPONENT NAME
+   SPSS MODELER SV
+   
+   
+ * REPORTED COMPONENT ID
+   5725A65MS
+   
+   
+ * REPORTED RELEASE
+   H10
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-02-22
+   
+   
+ * CLOSED DATE
+   2017-06-21
+   
+   
+ * LAST MODIFIED DATE
+   2017-06-21
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

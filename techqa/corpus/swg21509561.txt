@@ -1,0 +1,81 @@
+Title: IBM Switching between primary and backup processes - United States
+
+Text:
+p2p; peer-to-peer; alternative; unavailable; toggle; process control; process automation; cold standby; standby TECHNOTE (FAQ)
+
+QUESTION
+ Peer-to-Peer alternative : What can be done when P2P is unavailable? 
+
+CAUSE
+Main causes are: 
+
+ * Not all probes support peer-to-peer 
+ * Not all EMS systems allow multiple connections
+
+ANSWER
+ 
+
+The Peer-to-Peer [p2p] features are not available for all probes and when there is only one event source or EMS available, peer-to-peer does not provide a solution. 
+
+For Peer-to-Peer to function, the master and slaves probe must be running at the same time, and be provided with identical event data, otherwise data will be lost, and in some cases failover and/or failback does not function as required. 
+
+ 
+
+The alternative to using the Peer-to-Peer functionality is to toggle between running a primary and back-up probe, such that the primary probe runs only when the back-up probe is not running and vice versa. This type of control can be managed in various ways, with the use of a custom process automation script being the easiest to implement. Once the script is installed on both systems and the primary and back-up process automation files configured, the script can be called manually, or via an external action in a custom failover/failback trigger. 
+
+ 
+
+Example script; 
+
+vi pa_control_mttrapd
+#! /bin/sh
+USER_PA=ncoadmin
+PASSWORD_PA=ECEDBJAGBJFHGD
+PRIMARY_PA=NCOP_PA
+BACKUP_PA=NCOB_PA
+PROCESS_P=MTTRAPD_P
+PROCESS_B=MTTRAPD_B
+export BACKUP_PA PRIMARY_PA USER_PA PASSWORD_PA PROCESS_B PROCESS_P
+case $1 in
+'start'|'failback')
+nco_pa_stop -server $BACKUP_PA -user $USER_PA -password ${PASSWORD_PA} -process $PROCESS_B
+nco_pa_start -server $PRIMARY_PA -user $USER_PA -password ${PASSWORD_PA} -process $PROCESS_P
+;;
+'failover')
+nco_pa_stop -server $PRIMARY_PA -user $USER_PA -password ${PASSWORD_PA} -process $PROCESS_P
+nco_pa_start -server $BACKUP_PA -user $USER_PA -password ${PASSWORD_PA} -process $PROCESS_B
+;;
+'stop')
+nco_pa_stop -server $BACKUP_PA -user $USER_PA -password ${PASSWORD_PA} -process $PROCESS_B
+nco_pa_stop -server $PRIMARY_PA -user $USER_PA -password ${PASSWORD_PA} -process $PROCESS_P
+;;
+'status')
+nco_pa_status -server $PRIMARY_PA -user $USER_PA -password ${PASSWORD_PA}
+nco_pa_status -server $BACKUP_PA -user $USER_PA -password ${PASSWORD_PA}
+;;
+*)
+echo " Usage : `basename $0` start|stop|failover|failback|status"
+exit 0
+;;
+esac
+exit 0
+:wq
+chmod 755 pa_control_mttrapd
+
+In this case the NCOP_PA.conf [primary] and NCOB_PA.conf [backup] files would be configured with the back-up processes as 'Non-Auto' and both files containing the required routing details so that the script can be run from either server;
+e.g.
+nco_routing
+{
+host 'primary.ibm.com' 'NCOP_PA' 'ncoadmin' 'ECEDBJAGBJFHGD'
+host 'backup.ibm.com' 'NCOB_PA' 'ncoadmin' 'ECEDBJAGBJFHGD'
+} 
+
+ 
+
+The down-side of this cold stand-by configuration is that there is a risk of event loss as the processes are stopped/started, along with the risk that the processes may not start/stop successfully under process automation, for any number of reasons. 
+
+ 
+
+Whenever possible Peer-to-Peer should be used to minimise event loss and maximise resilience.
+
+pa_control_mttrapd.txt [/support/docview.wss?uid=swg21509561&aid=2]pa_control_mttrapd.txt [/support/docview.wss?uid=swg21509561&aid=1]

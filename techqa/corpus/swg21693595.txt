@@ -1,0 +1,47 @@
+Title: IBM Maximo 7.6 Report Booklet - United States
+
+Text:
+report; 76; report booklet; maximo; ibmeam; TPAEREP; bi; analysis TECHNOTE (FAQ)
+
+QUESTION
+ What delivered BIRT reports are contained within the Maximo 7.6 release? 
+
+ANSWER
+A large variety of reports are delivered in Maximo Version 7.6. These reports span the variety of applications, and include Analysis, Drill Down, Hierarchical, and Graphical Reports.
+The booklet contains information on each report's file names, parameter, application toolbar settings, grouping, sorting and descriptions along with various other information. 
+
+To work with this booklet:
+
+1. Extract the file
+
+2. Access the Maximo 7.6 Report Listing_rev4.xls
+
+3. This file is setup as a workbook. The details on the worksheets included in the workbook are below
+
+Maximo 7.6 reports
+This lists the delivered reports, along with their descriptions, file names, and references to other information including parameters, templates, grouping, sorting and unique reporting functionality. To view the report, click on its report name to access a sample pdf of the report.
+
+Additional report descriptions
+Contains additional description, unique coding or best practices for executing reports highlighted from the first worksheet.
+
+Base 7.6 IS Reports
+Lists reports that are contained within the base product for specific Industry Solutions.
+
+Maximo 7.6 Updates
+For upgrading clients, this lists reports that were either added or retired in the 7.6 release
+
+For additional documentation for the BI features of Maximo 7.6, click here [https://www.ibm.com/developerworks/community/wikis/home?lang=en#!/wiki/IBM%20Maximo%20Asset%20Management/page/Maximo%2076%20BI%20Documentation]
+
+For recorded demos of the BI features with Maximo 7.6 click here [https://www.ibm.com/developerworks/community/wikis/home?lang=en#!/wiki/IBM%20Maximo%20Asset%20Management/page/Maximo%2076%20BI%20Recordings] and for Maximo 7.6 Cognos demo recordings, click here [https://www.ibm.com/developerworks/community/wikis/home?lang=en#!/wiki/IBM%20Maximo%20Asset%20Management/page/Maximo%2076%20Cognos%20BI%20Recordings]
+
+Revision History
+Rev 4 - December 2017
+Updates to include License usage reports, updates to various report descriptions and hyperlinks
+
+Rev 3 - February 2016
+Update to descriptions on 'Maximo 76 Updates' Worksheet
+
+Rev 2 - September 2015
+Updated to include new Invoice Report in 7.6.0.2 Release: Invoice Cost Variance for LIFO/FIFO Items
+
+Maximo76_ReportListing_rev4.zip [/support/docview.wss?uid=swg21693595&aid=2]Maximo76_ReportListing_rev4.zip [/support/docview.wss?uid=swg21693595&aid=1]

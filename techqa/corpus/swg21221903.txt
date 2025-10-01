@@ -1,0 +1,177 @@
+Title: IBM Version data file <source container> had the wrong length (expected: ##, found: ##) error during syncreplica - United States
+
+Text:
+expected; found; length; wrong; syncreplica; 1221903 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This technote explains what the error, Version data file had the wrong length expected: #, found #, means as it relates to the source container of an IBM® Rational® ClearCase MultiSite® VOB during synchronization and provides instructions to resolve the issue. 
+
+SYMPTOM
+ 
+
+The following excerpt is a complete look at the error generated during synchronization:
+
+%> multitool syncreplica -export -fship original
+Generating synchronization packet 
+/opt/rational/clearcase/shipping/ms_ship/ outgoing/sync_packet
+
+multitool: Error: multitool: Error: Version data file /host1/projects/vobstore/test.vbs/s/sdft/18/3f/
+d6b713d534ff11da91a800306e4b3826 had the wrong length (expected:605152, found: 605097).
+
+multitool: Error: multitool: Error: Please contact IBM Rational
+Customer Support for assistance.
+multitool: Error: multitool: Error: Could not get statistics of the version data file for this operation.
+503442:
+op= checkin
+replica_oid = e2190341.75f711d9.909b.00:30:6e:13:76:cd
+oplog_id= 284353
+op_time= 04-Oct-05.17:56:43UTC create_time= 04-Oct-05.17:56:43UTC
+version_oid= d6b713d5.34ff11da.91a8.00:30:6e:4b:38:26
+event comment= ""
+data size= 108 data= 0x40084b60
+ckout_ver_oid= 379b0970.350111da.8a59.00:11:43:07:44:eb
+multitool: Error: multitool: Error: Removing incomplete packet
+/opt/rational/clearcase/shipping/
+ms_ship/outgoing/sync_packet
+multitool: Error: Could not complete synchronization request: error detected by ClearCase subsystem.
+
+
+
+Note: This error has a positive number for the found value and references the source container (s/sdft) as the directory. 
+
+ * If the reference is to a source container (s/sdft) and the value of the found section is a zero refer to technote 1221902 [http://www-1.ibm.com/support/docview.wss?rs=984&uid=swg21221902].
+   
+   
+ * If the reference is to a cleartext container (c/cdft) and the value of the found section is a positive number or zero refer to technote 1221901 [http://www-1.ibm.com/support/docview.wss?rs=984&uid=swg21221901].
+
+
+CAUSE
+ 
+ClearCase keeps track of the size of element versions in the VOB database. If this record does not match the actual size of the file recorded by the file system, multitool syncreplica will fail. This was designed as a safe-guard against potential divergence and corruption. 
+
+
+If this type of error occurs frequently at your site, consult technote 1243172 for information on possible reasons for MultiSite Synchronization Error: Version data file had the wrong length.
+
+
+RESOLVING THE PROBLEM
+ 
+
+
+There are two general ways to deal with this problem:
+
+
+ * Remove the affected version 
+   Warning: This option should not be performed if the affected version is labeled, or is within a UCM Component VOB (CVOB).
+   
+   or
+   
+   
+ * Obtain special tools created by Rational support to resolve the problem.
+   Note: This option will cause a delay in resolution time as escalation report is required to be created, filed and reviewed before the tool can be distributed.
+
+
+
+A. Remove the affected version: 
+ 1. Identify the failing version by performing a cleartool describe -long on the version oid found in the error.
+    
+    From the error message: version_oid= 6b713d534ff11da91a800306e4b3826
+    
+    % cleartool describe -long oid:6b713d534ff11da91a800306e4b3826 
+    version "/vobs/exp-vob/bar.o@@/main/1"
+    created 03-Jul-01.13:24:58 by jdoe (jdoe@host1)
+    "made from flat file"
+    Element Protection:
+    User : jdoe : r-x
+    Group: clearuser : r-x
+    Other: : r-x
+    element type: text_file
+    predecessor version: /main/0
+    
+    
+ 2. Set to a view and cd into the VOB where the affected version is visible.
+    
+    
+ 3. Check to see if there is any data in the source container reported in the error message.
+    
+    Example: Set into a view and cd to the location of the affected file an open the contents for verification.
+     * UNIX - cat <path to version> 
+       
+     * Windows - type <path to version>
+       
+       
+    
+    
+ 4. If the affected version is the latest on the branch and you have mastership of that branch run the following commands to resolve the problem:
+     1. Checkout the version: cleartool co THE_OFFENDING_VERSION
+        
+        
+     2. Check it back in with the -identical switch: cleartool ci -ident THE_OFFENDING_VERSION
+        
+        
+     3. Remove the offending version
+         * If the affected version is the latest on the branch and does not have other metadata attached then use rmver: cleartool rmver THE_OFFENDING_VERSION
+           
+           
+         * If the affected version is not the latest on the branch and is not an interesting version then consider using the cleartool rmver -data THE_OFFENDING_VERSIONcommand in order to keep the metadata intact.
+           
+           Warning: The data in the version being removed will be lost.
+           
+           
+        
+        
+    
+    
+ 5. Retry the export: multitool syncreplica -export ...
+    
+    Note: If the above procedure fails that means you do not master the branch, or the version is NOT THE LATEST on the branch. In either case, you will need to obtain the tool from IBM Rational.
+
+
+
+
+
+
+B. To obtain the tool:
+
+Send support the following information to begin the escalation process to obtain the tool (named update_db_fstat) to be run on the exporting site (at each location if needed) to allow the replica to generate a sync packet: 
+ 1. The complete error message and the syntax that triggers it.
+    
+    
+ 2. Dump output: cleartool dump -long <THE_OFFENDING_VERSION>
+    
+    
+ 3. Describe output: cleartool describe -long <THE_OFFENDING_VERSION>
+    
+    
+ 4. A validation statement indicating that you have reviewed the contents of the affected version and that the contents of that version are good and the reported ("found") size is correct.
+    
+    Example: "I have reviewed the contents of the version data file <place version_oid here> and verified that the data in that file is correct and the size of the file reported as the "found" size in the error is the actual size of that version data file".
+    
+    Note: From the "cleartool describe" you can identify the user who made the checkin, who may be the best person to verify the content.
+    
+    
+ 5. ClearCase version of the VOB server: cleartool -ver & multitool -ver  * Specify the database schema version
+       
+       
+    
+    
+ 6. OS version: uname -a output on UNIX® or Start > Run type: winver on Windows®
+    
+    
+ 7. A dir or ls of the affected source directory
+    
+    Example:
+    /host1/projects/vobstore/test.vbs/s/sdft/18/3f/
+    
+    
+ 8. A describe of the VOB that contains the offending version
+    
+    Example:
+    
+    cleartool describe -long vob:<VOB-tag>
+
+
+Warning: **Do not use these or other Engineering tools for any problem version other than the one for which they were provided. Using them on additional versions risks database corruption within a VOB.**  
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Software Development Rational ClearCase Multitool

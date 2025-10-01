@@ -1,0 +1,39 @@
+Title: IBM Server-side group substitution: Configuring ClearCase to recognize more than 16 groups for a Linux/UNIX user account - United States
+
+Text:
+ClearCase; server-side group substitution PRODUCT DOCUMENTATION
+
+ABSTRACT
+ Beginning in release 9.0.0.4, ClearCase can recognize more than 16 groups per user account for certain operating system configurations. 
+
+CONTENT
+Server-side group substitution
+
+
+As of ClearCase release 9.0.0.4, the ClearCase administrator can configure VOB and view server hosts to recognize more than 16 groups per user account. 
+
+When the feature is enabled, ClearCase servers ignore the group list sent from a client and substitute a group list obtained from the local operating system. This behavior is modeled on that of the NFS servers in Solaris 11.3 (and later) and Linux kernel 2.6.21 (and later), 
+
+Because ClearCase uses NFS access to the VOB/view server hosts, the NFS servers on those hosts must also be configured to substitute the group list from the local operating system. 
+
+Supported configurations 
+
+ClearCase support for this feature is limited to the following configurations: 
+
+ * VOBs at feature level 8 or higher, with ACLs enabled 
+ * VOB, view, and/or CCRC WAN server running Solaris 11.3 or later  * VOB and view storage pools on directly-attached or SAN-attached storage on the server host (not on NAS) 
+    * Kernel configured to support extra groups: /etc/system should list the maximum number of groups per user account, such as:
+      set ngroups_max=128
+   
+   
+ * Dynamic or snapshot view clients running Linux, SLES 11 or later 
+ * Web or automatic view clients running a release compatible with 9.0.0.4 CCRC WAN server
+
+
+Enabling the server-side group substitution behavior Once the VOB/view/WAN servers are configured for more groups per user and running 9.0.0.4, the administrator can enable the feature by creating a text file /var/adm/rational/clearcase/server_group_lifetime 
+
+containing the number of seconds a server process should cache the group membership list of each user. The first time a process receives an RPC from a user, it queries the operating system for the user account's group list. Subsequent RPCs to the same process use the cached results until the entry expires. 
+
+If the server_group_lifetime file does not exist, or its value is 0, the server processes use the original behavior: using the list of groups provided by the RPC client. 
+
+After modifying the server_group_lifetime file, the administrator must restart ClearCase for the revised setting to take effect.

@@ -1,0 +1,27 @@
+Title: IBM Leading zeros lost when opening a CSV file created with Report Studio or Impromptu in Excel format - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When opening a CSV file created with Report Studio or Impromptu in Excel format, any zeros that were at the beginning of a value are lost. 
+
+RESOLVING THE PROBLEM
+Excel automatically removes the leading zeros of a value. To ensure that there are zeros on a fixed length number, right-click on the cell in Excel and click the Format?Cells option. Create a Custom Category that has a type of the specific number of zeros required.
+
+The CSV file can also be opened using notepad instead of Excel, this will show the leading zeros.
+
+Related Documents:
+
+KB 1017423: Leading zeros in CSV output are dropped when opening in Excel
+KB 1010182: Maintaining leading zeros (or spaces) of a field in a report exported to CSV
+
+RELATED INFORMATION
+ [\] KB 1017423: Leading zeros in CSV output are dropped when opening in Excel KB 1010182: Maintaining leading zeros (or spaces) of a field in a report exported to CSV
+
+
+ 
+
+Cross reference information Segment Product Component Platform Version Edition Business Analytics Cognos 8 Business Intelligence Report Studio Business Analytics Cognos ReportNet ReportNet Business Analytics Cognos Series 7 Impromptu 
+HISTORICAL NUMBER
+ 83316

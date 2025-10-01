@@ -1,0 +1,175 @@
+Title: IBM IV40476: THE MTTTRAP PROBE VERSION 15(AIX-NCO-P-MTTRAPD-15_0) FAILED TO LOAD MODULE - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Problem title
+   The mttrapd probe upgraded from version
+   10 to version 15 (aix-nco-p-mttrapd-15_0) and the upgrade
+   mttrapd failed to to load module successfully .
+   
+   When starting the probe, customer see the following warning:
+   Failed to load module successfully
+   
+   
+   
+   2013-04-04T15:21:53: Debug: D-UNK-000-000: Attempting API
+   interrogation
+   2013-04-04T15:21:53: Debug: D-UNK-000-000:
+   /opt/IBM/tivoli/netcool/platform/aix5/lib/libOpl.so
+   2013-04-04T15:21:53: Debug: D-ETC-004-032: Attempting to load
+   module
+   'libOpl' from path:
+   /opt/IBM/tivoli/netcool/platform/aix5/lib/libOpl.so
+   2013-04-04T15:21:53: Warning: W-UNK-000-000: Failed to load
+   module
+   successfully
+   2013-04-04T15:21:53: Information: I-UNK-000-000: Connecting ...
+   2013-04-04T15:21:53: Debug: D-UNK-000-000: Shutting down
+   Probewatch
+   heartbeat thread.
+   2013-04-04T15:21:53: Debug: D-UNK-000-000: Probewatch heartbeat
+   thread
+   is already shutdown.
+   2013-04-04T15:21:53: Debug: D-UNK-000-000: Stopping separate
+   communications threads if they are running.
+   2013-04-04T15:21:53: Debug: D-UNK-000-000: Running with single
+   threaded
+   communications.
+   2013-04-04T15:21:53: Debug: D-UNK-000-000: Reading
+   /opt/IBM/tivoli/netcool/etc/rules/snmptrap.test.rules
+   2013-04-04T15:21:53: Debug: D-UNK-000-000: Plain text rules file
+   detected.
+   2013-04-04T15:21:53: Debug: D-UNK-000-000: Setting target server
+   to
+   'AGG'.
+   2013-04-04T15:21:53: Debug: D-UNK-000-000: Setting default
+   target
+   server to 'AGG_P'.
+   2013-04-04T15:21:53: Debug: D-UNK-000-000: Default target backup
+   server
+   is 'AGG_B'.
+   
+   Though the module is present ....
+   
+   ls -la /opt/IBM/tivoli/netcool/platform/aix5/lib/libOpl.so
+   -r-xr-xr-x    1 netcool  ncoadmin     354148 Aug 29 2012
+   /opt/IBM/tivoli/netcool/platform/aix5/lib/libOpl.so
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Provided a test fix which resolved the issue.
+   14611.077.649.nco_p_mttrapd.gz
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * All users of nco_p_mttrapd.                                  *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * When starting the probe, customer see the following warning: *
+   * Failed to load module successfully                           *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Users need to upgrade to nco_p_mttrapd v15.1.                *
+   ****************************************************************
+   Probe need to recompiled with fix in libnsprobe partialbuild.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV40476
+   
+   
+ * REPORTED COMPONENT NAME
+   NETCOOL/OMNIBUS
+   
+   
+ * REPORTED COMPONENT ID
+   5724O4800
+   
+   
+ * REPORTED RELEASE
+   100
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-04-25
+   
+   
+ * CLOSED DATE
+   2013-06-10
+   
+   
+ * LAST MODIFIED DATE
+   2013-06-10
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   NC/OBUS MTTRAPD
+   
+   
+ * FIXED COMPONENT ID
+   5724P03MT
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R100 PSY
+   UP

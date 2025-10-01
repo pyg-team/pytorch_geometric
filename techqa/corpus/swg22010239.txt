@@ -1,0 +1,89 @@
+Title: IBM Disable SSLV3 on IBM Content Collector servers - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ As part of Vulnerability, we need to disable ssl v3 on ICC servers .
+
+
+ENVIRONMENT
+ ICC version 3.0.0.5
+OS: Windows 2008r2 enterprise ( 64 bit operating system).
+Exchange 2010 
+
+
+RESOLVING THE PROBLEM
+Start the WebSphere Application Server administrative console. In a browser, enter this web address, replacing serverName with the name of your web application server: 
+
+
+https://serverName:11043/ibm/console/login.do [https://servername:11043/ibm/console/login.do]
+
+1] Expand Security and click SSL certificate and key management.
+2] Under Related Items, click SSL configurations.
+3] Open the NodeDefaultSSLSettings configuration, and click Quality of protection (QoP) settings in the Additional Properties section.
+4] Select TLS from the list of protocols and click OK. Then, click
+5] Save to persist the change.
+6] Restart ICC Web Application Service.
+
+NOTE: The Protocol label SSL_TLS will not disable SSLv3. This means protocol supports SSLv3, TLS 1.0, TLS 1.1 and TLS 1.2. So select TLS, TLSv1, TLSv1.1 or TLSv1.2 only. Please refer attached screenshot for more info.
+
+
+How to check if SSLv3 is disabled:
+
+1. Install Openssl on windows machine (http://gnuwin32.sourceforge.net/packages/openssl.htm [http://gnuwin32.sourceforge.net/packages/openssl.htm])
+2. In command prompt run the below command
+
+openssl s_client -connect <machine_name>:<ssl_port> -ssl3
+
+3. You will see some error something like below if SSLv3 is disabled.
+
+Loading 'screen' into random state - done
+CONNECTED(00000170)
+7468:error:1409E0E5:SSL routines:SSL3_WRITE_BYTES:ssl handshake
+failure:./ssl/s3_pkt.c:530:
+
+4. If SSLv3 is enabled, and you run the same command. You will see an output something like below
+
+Loading 'screen' into random state - done
+CONNECTED(00000138)
+depth=0 /CN=<Host name>
+verify error:num=18:self signed certificate
+verify return:1
+depth=0 /CN=<Host name>
+verify return:1
+---
+Certificate chain
+0 s:/CN=<Host name>
+i:/CN=<Host name>
+---
+Server certificate
+-----BEGIN CERTIFICATE-----
+<Hash Code>
+-----END CERTIFICATE-----
+subject=/CN=<Host name>
+issuer=/CN=<Host name>
+---
+No client certificate CA names sent
+---
+SSL handshake has read 1104 bytes and written 302 bytes
+---
+New, TLSv1/SSLv3, Cipher is <Cipher code>
+Server public key is 1024 bit
+Compression: NONE
+Expansion: NONE
+SSL-Session:
+Protocol : SSLv3
+Cipher : <Cipher code>
+Session-ID: <Session-ID>
+
+Session-ID-ctx:
+Master-Key: <Master-Key>
+Key-Arg : None
+Start Time: 1509551204
+Timeout : 7200 (sec)
+Verify return code: 18 (self signed certificate)
+--- 
+
+RELATED INFORMATION
+ Security Bulletin: Vulnerability in SSLv3 affects IBM C [http://https://www-01.ibm.com/support/docview.wss?uid=swg21692480]

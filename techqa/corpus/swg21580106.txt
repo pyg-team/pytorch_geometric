@@ -1,0 +1,45 @@
+Title: IBM ITCAM4tx : ISM subnode applications missing in TEP AMC Internet Services workspace - United States
+
+Text:
+71AMCON-CONF; 71AMCON-WV; 71ISM-WV TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Using ITCAM for Tx with ISM agent monitoring solution, ISM subnode applications are missing in the TEP GUI, under AMC Application Management Console -> "Internet Services" list 
+
+SYMPTOM
+Looking at the TEP portal GUI, under the AMC T3 agent dashboard node -> Application Management Console -> "Internet Services", in the "All Internet Services profiles" workspace, it contains a list of Profiles. 
+
+But when selecting one of them, and mouse click on it, you get a popup window titled "Target not found" that says: 
+
+"KFWITM081E the link target can not be found, the link definition might be incorrect or the target is unavailable."
+
+
+CAUSE
+This link target that you used/selected is using actually AMC T3 agent monitoring data associated with the "internet Service profile", and collected by the ISM agent.
+
+
+DIAGNOSING THE PROBLEM
+- Check if your AMC Internet Services list is incomplete, several profiles (server subnodes actually corresponding to monitoring application data) are possibly missing. 
+
+- Check in the TEP under navigator view, at the bottom of it, if you see a message stating : 
+
+"KFWITM024I 1 Navigator update pending" 
+
+and check the Hub local time seen there, to compare it with the StartTime of some listed profiles. 
+
+- Under ISM node -> Internet Service Monitors -> Profile Statistics -> Profile 
+
+verify the !StartTime! of your profiles visible there, to cross check that StartTime are fairly recent for some listed profiles.
+
+
+RESOLVING THE PROBLEM
+This problem should be gone, after you waited long enough until the AMC agent will have been able to collect the actual first monitoring data from the ISM agent(s) for these "newly created/ started" ISM profiles. 
+
+ 
+
+If the AMC Data collection is set currently to 15 minutes, every time you create a new ISM profile, it will take up to 15 minutes before the monitoring data and its subnodes and monitoring results associated to this new profile will be available in the TEP workspaces.
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ itcam itcam for transactions itcam4tx itcamfortx internet services monitoring

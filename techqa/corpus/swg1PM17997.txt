@@ -1,0 +1,168 @@
+Title: IBM PM17997: 2046 (MQRC_OPTIONS_ERROR) RECEIVED WHEN CONNECTING TO MQ V6 FROM A JAVA APPLICATION USING THE MQ V701 JAVA COMPONENT. - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS UNREPRODUCIBLE IN NEXT RELEASE.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  If a Java application is configured to use the MQ Java
+   component at the 7.0.1 level, and it attempts to connect to
+   an MQ V6 queue manager, then the connect can fail with
+   2046 (MQRC_OPTIONS_ERROR).
+   com.ibm.mq.MQException: JMSCMQ0001: WebSphere MQ call failed
+   with compcode '2' ('MQCC_FAILED') reason '2046'
+   ('MQRC_OPTIONS_ERROR').
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All users of Websphere MQ for z/OS Version 6 *
+   *                 Release 0.                                   *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: An MQ Java application using the MQ     *
+   *                      V701 Java classes to connect to an MQ   *
+   *                      V6 queue manager, fails to connect to   *
+   *                      the queue manager with reason code      *
+   *                      2046 (MQRC_OPTIONS_ERROR).              *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   A Java application uses the MQ Java or MQ JMS interfaces to
+   access an MQ version 6 queue manager.
+   
+   If the application is configured to use the MQ version 7.0.1
+   Java classes, then the parameters used by the MQ Java code to
+   connect to the queue manager are not recognized as valid by
+   the MQ V6 connect processing. This causes the connect to fail
+   with reason code 2046 - MQRC_OPTIONS_ERROR.
+   
+   The failure results in a com.ibm.mq.MQException being thrown.
+   
+   com.ibm.mq.MQException: JMSCMQ0001: WebSphere MQ call failed
+   with compcode '2' ('MQCC_FAILED') reason '2046'
+   ('MQRC_OPTIONS_ERROR').
+   
+   For JMS applications, a JMSException is passed to the
+   application.
+   
+   com.ibm.msg.client.jms.DetailedJMSException: JMSWMQ0018:
+   JMSWMQ0018: Failed to connect to queue manager 'XXXX' with
+   connection mode 'Bindings' and host name 'localhost(1414)'.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *  The connection logic in CSQBCON has been altered to allow the
+   parameters passed by the MQ V7.0.1 Java interface.
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM17997
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ Z/OS V6
+   
+   
+ * REPORTED COMPONENT ID
+   5655L8200
+   
+   
+ * REPORTED RELEASE
+   000
+   
+   
+ * STATUS
+   CLOSED UR1
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-07-08
+   
+   
+ * CLOSED DATE
+   2010-07-14
+   
+   
+ * LAST MODIFIED DATE
+   2010-09-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UK58734
+   
+   
+
+MODULES/MACROS
+ *     CSQBCON
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ Z/OS V6
+   
+   
+ * FIXED COMPONENT ID
+   5655L8200
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R000 PSY UK58734 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK58734]
+   UP10/08/06 P F008
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

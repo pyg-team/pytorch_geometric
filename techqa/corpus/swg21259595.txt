@@ -1,0 +1,48 @@
+Title: IBM DFHPC0401 Abend ACN2 issued by III task after DFHDH0002 with code 0406 and 0C08 - United States
+
+Text:
+ACN2 ; ABEND ACN2; ABENDACN2; DFHPC0401; MSGDFHPC0401; DFHDH0002 0406 0C08 ; DFHDHRP DFHDHTM ; local catalog; DFHLCD; global catalog; DFHGCD; DFHRMUTL; DFHCCUTL; 5655M1500 R650 650 R500 500 HCI6500 5655-M15 5655M15 KIXINFO; kixdcfcic650 ; retention32 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ You are starting a CICS Transaction Server for z/OS (CICS TS) V3.2 region, and receive message DFHPC0401 reporting an abend ACN2 in the III task. This brings the region down. Prior to the abend, you also receive DFHDH0002 messages reporting a severe error code X'0406' in DFHDHTM and X'0C08' in DFHDHRP. CICS creates a dump for each DFHDH0002 message. 
+
+CAUSE
+The global (DFHGCD) and local (DFHLCD) catalogs are from a CICS TS V3.1 region.
+
+DIAGNOSING THE PROBLEM
+Prior to the DFHPC0401, the following messages were seen in the joblog:
+
+
+DFHRM0141 Recovery manager autostart override record is not present. Normal processing continues.
+DFHDH0002 A severe error (code X'0406') has occurred in module DFHDHTM. DFHME0116 682
+(Module:DFHMEME) CICS symptom string for message DFHDH0002 is
+PIDS/5655M1500 LVLS/868 MS/DFHDH0002 RIDS/DFHDHTM PTFS/HCI6500
+PRCS/00000406
+DFHDH0002 A severe error (code X'0C08') has occurred in module DFHDHRP.
+DFHDH0002 A severe error (code X'0406') has occurred in module DFHDHTM.
+DFHDH0002 A severe error (code X'0C08') has occurred in module DFHDHRP.
+DFHDH0002 A severe error (code X'0406') has occurred in module DFHDHTM.
+DFHDH0002 A severe error (code X'0C08') has occurred in module DFHDHRP.
+DFHDH0002 A severe error (code X'0406') has occurred in module DFHDHTM.
+DFHDH0002 A severe error (code X'0C08') has occurred in module DFHDHRP.
+DFHDH0101I Document domain initialization has ended.
+DFHWB0110I Web domain initialization has ended.
+DFHST0103 An SMF error has occurred with return code X'28'.
+DFHSI1502I CICS startup is Emergency.
+DFHAP1203I Language Environment is being initialized. 
+DFHAP1211I Language Environment initialization completed.
+DFHWB1007 Initializing CICS Web environment.
+DFHPC0401 Abend ACN2 issued by III task.
+
+Note: The messages for the dumps that were taken after each DFHDH0002 have been removed for all but the first DFHDH0002 message.
+
+
+RESOLVING THE PROBLEM
+Delete and redefine the local and global catalogs using the CICS TS V3.2 DFHCCUTL [http://publib.boulder.ibm.com/infocenter/cicsts/v3r2/index.jsp?topic=/com.ibm.cics.ts.doc/dfha2/topics/dfha2_def_local_catalog.html] utility for the DFHLCD and DFHRMUTL [http://publib.boulder.ibm.com/infocenter/cicsts/v3r2/index.jsp?topic=/com.ibm.cics.ts.doc/dfha2/topics/dfha2_def_global_catalog.html] for the DFHGCD.
+
+
+
+
+
+PRODUCT ALIAS/SYNONYM
+ CICS/TS CICS TS CICS Transaction Server

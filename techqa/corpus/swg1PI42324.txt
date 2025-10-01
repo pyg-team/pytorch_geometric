@@ -1,0 +1,187 @@
+Title: IBM PI42324: EXCEPTION INSERTING INTO DMH_MAP_FILE WITH SQLCODE=-803 WHEN POSTPROCESSING - United States
+
+Text:
+  DIRECT LINKS TO FIXES
+RAAz-6.1.0.8-Install-IMRepository [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FRational%2FIBM+Rational+Asset+Analyzer&fixids=RAAz-6.1.0.8-Install-IMRepository&source=SAR]
+RAAz-6.1.0.8-Install [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FRational%2FIBM+Rational+Asset+Analyzer&fixids=RAAz-6.1.0.8-Install&source=SAR]
+RAA-6.1.0.8-Install-IMRepository [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FRational%2FIBM+Rational+Asset+Analyzer&fixids=RAA-6.1.0.8-Install-IMRepository&source=SAR]
+RAA-6.1.0.8-Install [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FRational%2FIBM+Rational+Asset+Analyzer&fixids=RAA-6.1.0.8-Install&source=SAR]
+Rational Asset Analyzer for System z Fix Pack 8 (6.1.0.8) for 6.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24039669]
+Rational Asset Analyzer Fix Pack 8 (6.1.0.8) for 6.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24039670]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Message similar to the following may occur during
+   postprocessing when using a 6.1.0.7 update driver built before
+   June, 2015:
+   
+   Exception on prepared statement [INSERT INTO
+   $(SCHEMA).DMH_MAP_FILE (map_id, file_id) VALUES (?, ?)
+   (params=[-1,17929])]
+    Caused by: DB2 SQL Error: SQLCODE=-803, SQLSTATE=23505,
+   SQLERRMC=2;DMH.DMH_MAP_FILE, DRIVER=3.65.110
+    Caused by: DB2 SQL Error: SQLCODE=-803, SQLSTATE=23505,
+   SQLERRMC=2;DMH.DMH_MAP_FILE, DRIVER=3.65.110
+   com.ibm.dmh.db.SQLRuntimeException: Exception on prepared
+   statement [INSERT INTO $(SCHEMA).DMH_MAP_FILE (map_id, file_id)
+   VALUES (?, ?) (params=[-1,17929])]
+    Caused by: DB2 SQL Error: SQLCODE=-803, SQLSTATE=23505,
+   SQLERRMC=2;DMH.DMH_MAP_FILE, DRIVER=3.65.110
+    Caused by: DB2 SQL Error: SQLCODE=-803, SQLSTATE=23505,
+   SQLERRMC=2;DMH.DMH_MAP_FILE, DRIVER=3.65.110
+    at
+   sun.reflect.NativeConstructorAccessorImpl.newInstance0(Native
+   Method)
+    at
+   sun.reflect.NativeConstructorAccessorImpl.newInstance(NativeCons
+   tructorAccessorImpl.java:56)
+    at
+   sun.reflect.DelegatingConstructorAccessorImpl.newInstance(Delega
+   tingConstructorAccessorImpl.java:39)
+    at
+   java.lang.reflect.Constructor.newInstance(Constructor.java:527)
+    at
+   com.ibm.websphere.rsadapter.GenericDataStoreHelper.mapExceptionH
+   elper(GenericDataStoreHelper.java:617)
+    at
+   com.ibm.websphere.rsadapter.GenericDataStoreHelper.mapException(
+   GenericDataStoreHelper.java:676)
+    at
+   com.ibm.ws.rsadapter.AdapterUtil.mapException(AdapterUtil.java:2
+   265)
+    at
+   com.ibm.ws.rsadapter.jdbc.WSJdbcUtil.mapException(WSJdbcUtil.jav
+   a:1187)
+    at
+   com.ibm.ws.rsadapter.jdbc.WSJdbcPreparedStatement.executeUpdate(
+   WSJdbcPreparedStatement.java:813)
+    at
+   com.ibm.dmh.db.DbPreparedStatement.update(DbPreparedStatement.ja
+   va:246)
+    at com.ibm.dmh.db.DbAdmin.update(DbAdmin.java:1105)
+   
+   and analysis queue status goes to Not running, but leaving
+   items on the queue.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  none known.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  SQLCODE=-803 on INSERT into DMH_MAP_FILE during postprocessing
+   queue type 18, caused by incorrect map id being returned.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Corrected the code that inserts DMH_MAP rows so that it returns
+   the correct map id to be used later with the DMH_MAP_FILE table
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI42324
+   
+   
+ * REPORTED COMPONENT NAME
+   RATL ASSET ANAL
+   
+   
+ * REPORTED COMPONENT ID
+   5724V2700
+   
+   
+ * REPORTED RELEASE
+   610
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-06-03
+   
+   
+ * CLOSED DATE
+   2015-06-05
+   
+   
+ * LAST MODIFIED DATE
+   2015-06-05
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  aqp
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   RATL ASSET ANAL
+   
+   
+ * FIXED COMPONENT ID
+   5724V2700
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R610 PSY
+   UP

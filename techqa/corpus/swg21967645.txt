@@ -1,0 +1,64 @@
+Title: IBM After Rebooting the server, the server is not coming up - United States
+
+Text:
+WAS; recovery; restart TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Attempts to restart IBM Collaborative Lifecycle Management (CLM) application it fails with the CRJAZ1972E error in application server log. 
+
+SYMPTOM
+There are following two symptoms of the issue: 
+
+ * Attempting to display application admin page fails with timeout exception
+   
+   
+ * You see the following error in the <WAS-PROFILE>/logs/systemout.log file:
+   [ccm: AsynchronousTaskRunner-0 @@ 09:44] ERROR
+   com.ibm.team.enterprise.services.common - An error occurred
+   while running the migration task 'Migrate system definitions from EMF
+   to JFS'
+   com.ibm.team.repository.common.transport.TeamServiceRegistryException:
+   CRJAZ1972E The
+   "com.ibm.team.enterprise.zos.systemdefinition.migration.service.SystemDefinitionMigrationService" service failed to activate because a service
+   that it depends on, "com.ibm.teamz.dsdef.common.IDataSetDefinitionService", failed to be activated.
+   at
+   com.ibm.team.repository.common.transport.internal.registry.AbstractActivationManagerOwner.buildServicesMap(AbstractActivationManagerOwner.java:371)
+   at
+   com.ibm.team.repository.common.transport.internal.registry.AbstractActivationManagerOwner.doActivate(AbstractActivationManagerOwner.java:736)
+   at
+   com.ibm.team.repository.common.transport.internal.registry.ServiceProviderActivationManagerOwner.getService(ServiceProviderActivationManagerOwner.java:129)
+   ...
+   Caused by:
+   com.ibm.team.repository.common.transport.internal.registry.ServiceNotFoundCheckedException: CRJAZ1135I Failed to find the service
+   "com.ibm.team.repository.service.compatibility.internal.IJtsConfigurationStateService" with a matching filter "(validJtsConfig=true)". Use the administrative UI to verify that the server and applications are configured correctly.
+   at
+   com.ibm.team.repository.common.transport.internal.registry.ServiceProviderActivationManagerOwner.getService(ServiceProviderActivationManagerOwner.java:138)
+   at
+   com.ibm.team.repository.common.transport.internal.registry.OsgiServicesManager.getService(OsgiServicesManager.java:287)
+   at
+   com.ibm.team.repository.common.transport.internal.registry.OsgiServicesManager.getService(OsgiServicesManager.java:296)
+   
+   
+
+
+CAUSE
+Your IBM Websphere Application Server (WAS) temp directory is corrupted. The possible root cause of corruption might be forced termination of the WAS process.
+
+ENVIRONMENT
+WAS as application server
+
+
+
+RESOLVING THE PROBLEM
+WORKAROUND: 
+
+ 1. Stop WAS.
+    
+    
+ 2. Remove the contents from these directories under the profile root(e.g. <WAS_HOME>/<AppServer>/profiles/<Profile>), except for the noted help directory: temp, wstemp, workspace .
+    
+    
+    Note: Do not remove this directory, which is required for the CLM local help: temp/{jts_node}/{jts_server}/clmhelp_war .
+    
+    
+ 3. Restart WAS.

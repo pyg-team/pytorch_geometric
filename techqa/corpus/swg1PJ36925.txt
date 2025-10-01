@@ -1,0 +1,190 @@
+Title: IBM PJ36925: USERS EXPERIENCE EXCESSIVE DELAYS DURING FAILURE RECOVERY OF CONTENT ENGINE IN A WEBLOGIC MANAGED NODE CLUSTER - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Users experience excessive delays during failure recovery of
+   Content Engine (CE)
+   in a WebLogic managed node cluster
+                 2
+   Solaris Zones
+   WebLogic 9.2 SP3
+   8 managed WebLogic nodes (4 managed nodes on each Zone)
+   1 cluster for the 8 managed nodes.
+   1 Admin server on different server.
+   
+   Steps to Reproduce:
+   Setup 1 - WcmApiConfig.properties has all the nodes defined:
+   Scenarios:
+   1.  All nodes running - System works as expected, all nodes are
+   connected.
+   2.  All nodes on one server are down, system is still available
+   on the network - No slow down and system working as normal,
+   onlynodes on the running server is connected.
+   3.  Disconnect one server from the network (it is hard to
+   determine which node WL will go to next, but usually it
+   follows the order specified in WcmApiConfig.properties)
+   a.  next node WL will go to is still up - takes 2-3
+   minutes to log on
+   b.  next node WL will go to is on the disconnected
+   server -    takes 2-3 minutes and gets an error.
+   
+   Setup 2 - WcmApiConfig.properties has one node on each
+   server defined:
+   Scenarios:
+   1.  All nodes running - System works as expected, all
+   nodes are connected.
+   2.  All nodes on one server are down, system is still
+   available on the network - No slow down and system working as
+   normal, onlynodes on the running server is connected.
+   3.  Disconnect one server from the network -
+   a.  next node WL will go to is still up - takes a
+   little less  than a minute to log on
+   b.  next node WL will go to is on the disconnected
+   server -    takes 2-3 minutes and gets an error.
+   4.  All nodes specified in WcmApiConfig.properties is
+   down, the rest are up - Destination unreachable error
+   
+   Setup 3 - WcmApiConfig.properties has all nodes defined.
+   In    addition, 4 more dummy nodes are defined (i.e.
+   non-existing  nodes but pointing to an existing machine)
+   Scenarios:
+   1.  All nodes running - System works as expected,
+   all available nodes are connected.
+   2.  All nodes on one server are down, system is
+   still available on the network - No slow down and system working
+   as normal, onlynodes on the running server is connected.
+   3.  Disconnect one server from the network -
+   a.  next node WL will go to is still up - takes
+   3-5 minutes to log on
+   b.  next node WL will go to is on the
+   disconnected server -  takes 3-5 minutes and gets an error.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * P8CE systems in a cluster                                    *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * Users experience excessive delays during failure recovery of *
+   * Content Engine (CE). This is caused by one or more of the    *
+   * servers in the cluster being down. The customer may also     *
+   * experience error conditions if the system is configured to   *
+   * authenticate with the node that is down. The error will      *
+   * indicate that the server can not be reached and there is a   *
+   * tiime-out condition.                                         *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * To fix this problem upgrade to fix pack P8CE-4.0.1-012 or    *
+   * greater. And, configure the client to authentication with    *
+   * the application server it is running in. To configure the    *
+   * client the following command line parameter must be supplied *
+   * to the java virtual machine (of the content engine client) " *
+   * -Dcom.filenet.api.useLocalAuthentication=true".              *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  In P8CE-4.0.1-012 the Content Engine server client API was
+   changed to allow
+   authentication with the local application server and to properly
+   cache the connection information to the server.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PJ36925
+   
+   
+ * REPORTED COMPONENT NAME
+   CONTENT ENGINE
+   
+   
+ * REPORTED COMPONENT ID
+   5724R8101
+   
+   
+ * REPORTED RELEASE
+   401
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-10-09
+   
+   
+ * CLOSED DATE
+   2010-07-30
+   
+   
+ * LAST MODIFIED DATE
+   2010-07-30
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    PJ37379 [http://www-01.ibm.com/support/docview.wss?uid=swg1PJ37379]
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CONTENT ENGINE
+   
+   
+ * FIXED COMPONENT ID
+   5724R8101
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R401 PSY
+   UP

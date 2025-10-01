@@ -1,0 +1,151 @@
+Title: IBM RS02471: INSTALLATION OF ODM DS 8012 Z/LINUX FAILS DURING JRE INSTALL - CANNOT CREATE SYMBOLIC LINK "/OPT/IBM/ODM/JDK/BIN/JAVA" - United States
+
+Text:
+  A FIX IS AVAILABLE
+Operational Decision Manager V8.0.0.0: Interim Fix 60 [http://www-01.ibm.com/support/docview.wss?uid=swg24043039]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Installation of fixpack 2 for ODM Decision Server v8.0.1 on
+   z/Linux fails:
+   CRIMA1026E ERROR: Error during "install" phase:
+   CRIMA1026E ERROR:   Cannot create symbolic link
+   "/opt/IBM/ODM/jdk/bin/java" for target file
+   "/opt/IBM/ODM/jdk/jre/bin/java" A file with this name already
+   exists.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  - Install Decision Server AND Decision Center 8.0.1 (all
+   features from Decision Center can be deselected)
+   - Update Decision Center  with 7.5.0.4-WS-ODM_JDK-LINUX-IF050 (
+   package s390x)
+   - Update Decision Server and Decision Center to 8.0.1.2
+   
+   In the end you have Installed Packages:
+        1-. [X] Decision Center 8.0.1.2
+          2. [X] IBM&#171; Java&#214; SDK 6.0 SR16 FP20 6.0.16.20
+        3. [X] Decision Server 8.0.1.2
+   
+   Note: Installing Decision Center allows to apply the iFix.
+   Applying the iFix prevents the ODM 8.0.1.2 fixpack from
+   upgrading Java (hence works around the initial problem.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  When installing ODM DS 8012 z/Linux it fails during JRE
+   installation because of Java dependencies
+   which needs to be changed.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The code is fixed
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   RS02471
+   
+   
+ * REPORTED COMPONENT NAME
+   WS DECISION SVR
+   
+   
+ * REPORTED COMPONENT ID
+   5725B6901
+   
+   
+ * REPORTED RELEASE
+   800
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-08-25
+   
+   
+ * CLOSED DATE
+   2016-08-31
+   
+   
+ * LAST MODIFIED DATE
+   2016-08-31
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  999
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WS DECISION SVR
+   
+   
+ * FIXED COMPONENT ID
+   5725B6901
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R801 PSY
+   UP

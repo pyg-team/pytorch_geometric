@@ -1,0 +1,44 @@
+Title: IBM Optim 9.1 component installation fails with an "Eclipse p2 reconciler" error - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ If a shared class file used by Installation Manager is locked during installation of an Optim 9.1 component, the installation fails and Installation Manager displays the following error: Eclipse p2 reconciler return with error status=-1. 
+
+SYMPTOM
+Installation Manager displays the following error: 
+
+Eclipse p2 reconciler return with error status=-1 
+
+The Installation Manager log includes the following message:
+Eclipse p2 reconciler: JVMSHRC226E Error opening shared class cache file 
+JVMSHRC337E Platform error message: (5) Access is denied.
+JVMJ9VM015W Initialization error for library j9shr24(11):
+JVMJ9VM009E JDVMDllMain failed
+
+
+
+RESOLVING THE PROBLEM
+Locate the locked file, close Installation Manager, and delete the file. After the locked file is deleted, install the Optim component. You might need to delete any files in the target installation directory that remain after the failed installation. 
+
+
+To locate the and delete the locked file, complete the following steps:
+
+
+ 1. Open a command prompt to the Installation Manager jre directory.  * On Windows for example: C:\Program Files\IBM\Installation Manager\eclipse\jre_6.0.0.sr9_20110208_03. 
+     * On UNIX and Linux for example: /opt/IBM/InstallationManager/eclipse/jre_6.0.0.sr9_20110208_03 or (home)/IBM/InstallationManager/eclipse/jre_6.0.0.sr9_20110208_03.
+    
+    
+ 2. Enter the following command for the platform:  * On Windows: java -Xshareclasses:listAllCaches 
+     * On UNIX and Linux: ./java -Xshareclasses:listAllCaches
+    
+    
+ 3. Note the locked item from the resulting list, where IBMSDP_{username} is the name of the locked file.
+    
+    Cache name level persistent last detach time
+    
+    Compatible shared caches
+    IBMSDP_{username} Java6 32-bit yes In use 
+ 4. Close Installation Manager and delete the locked file, located in the following directories:  * On Windows: C:\Users\{username}\AppData\Local\javasharedresources\ 
+     * On UNIX and Linux: /tmp/javasharedresources

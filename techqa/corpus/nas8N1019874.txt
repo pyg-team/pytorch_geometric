@@ -1,0 +1,93 @@
+Title: IBM Version Mismatch - Save Area Version Mismatch - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ If a server that has been managed by a newer level HMC is later managed by an HMC at an older level, the downlevel HMC will show a state of "Version Mismatch" with reference code "Save Area Version Mismatch". To resolve this issue upgrade the downlevel HMC to a compatibile level (recommended) or initialize profile data. 
+
+CAUSE
+Connecting an HMC with an older code level to a server that has been managed, at least once, by a HMC at a newer code level. 
+
+Normally this state only occurs during upgrades of dual HMCs. After the first HMC has been upgraded, the downlevel HMC will temporarily show the save area version mismatch until it has been upgraded to a compatible level. 
+
+
+ENVIRONMENT
+HMC V7R7.8 and later
+
+
+
+DIAGNOSING THE PROBLEM
+Check for a state of "Version Mismatch" with reference code "Save Area Version Mismatch" 
+
+[/support/docview.wss?uid=nas8N1019874&aid=1] [/support/docview.wss?uid=nas8N1019874&aid=1]
+
+
+RESOLVING THE PROBLEM
+Background 
+
+The HMC uses a storage area located on each managed server to persist the server partition/profile configuration and PowerVM settings. This storage area is referred to as the "save area". As new PowerVM functions are introduced the format (or version) of the save area file is updated. The format of the file is upward compatible only. This implies that a save area file created at an older HMC release can be restored or migrated to a newer HMC level but an older HMC release cannot work with a save area at a newer version. When a downlevel HMC connects to a server with a save area file at a newer version, the HMC will block the management of the server and post a state of "Version Mismatch" with reference code "Save Area Version Mismatch". This indicates that the HMC code level does not know how to work with or manage the newer "save area" configuration file version. 
+
+Updates to the save area version normally occur on a HMC version or release boundary but can, in rare situations, occur in a service pack. Updates are documented in the release or service pack release notes that they occur in. The save area update occurs when the uplevel HMC connects to and authenticates to the server. 
+
+This versioning feature was introduced in HMC V7R7.8 and later and documented in the release notes:
+"3. When two HMCs manage the same server, both HMCs must be at the same version. Once the server is connected to the higher version of the management console, the partition configuration is migrated to the latest version. Lower management consoles will not be able to understand the data properly. Once the server is managed by N level of management console version, should you want to go back with N-1 management console version, then you must initialize the server. You can restore a backup taken at the older level or recreate the partitions. If the server is not initialized, partition configuration corruption can occur when you use lower levels of management consoles and Incomplete or Recovery state may be displayed as a result."
+
+Prior to HMC V7R7.8, managing a server with a downlevel HMC could cause corruption of the configuration file and unpredictable results that include a persistent or intermittent incomplete state or recovery state. 
+
+ 
+
+Problem Resolution
+Upgrade the downlevel hmc
+The recommended recovery is to upgrade the downlevel HMC. In the case of a server managed by dual HMCs, both HMCs must be upgraded if the uplevel HMC release contains a save area version update.
+
+The list of HMCs that have been connected can be found using the HMC or Advanced System Manager (ASM); 
+
+ * 
+ * 
+ * 
+
+Note: This list may not show all HMCs that have been connected in the past. The list can be cleared from ASM. 
+
+
+Factory Reset and rebuild/restore configuration. 
+If the user wishes to intentionally revert the HMCs to an older level, the recovery is to clear the partition configuration. Advanced System Manager (ASM) should be used to clear the configuration (not a profile initialize). 
+
+This procedure requires all partitions and the server to be powered off. The current configuration, including all partitions and partition profiles will be deleted. 
+
+1. (recommended) Backup the existing configuration 
+Use the uplevel HMC to backup the existing profile data 
+
+2. Check for a valid backup on the downlevel HMC 
+If the intent is to restore a profile backup from the downlevel HMC, use the following commands to list available backups on the hmc: 
+At V8R8.6 and earlier: ls -l /var/hsc/profiles/<serial> 
+At V8R8.7 and later: ls -l /data/hmc/profiles/<serial> 
+
+Additional backups of the profile configuration can be located in HMC Console backups, "pedbg" diagnostic logs from earlier service issues, or an earlier save upgrade data. 
+
+3. Shutdown all partitions 
+
+4. Reset firmware settings using Advanced System Manager (ASM) 
+a. Log into ASM 
+Use the HMC task Operations > Launch Advanced System Manager (ASM) 
+Log in as admin. 
+
+b. Power off the server 
+ASMI: Power/Restart Control > Power On/Off System. Click Save Settings and Power off. 
+
+c. Set server firmware start policy to Standby. 
+Use ASMI or HMC to set server firmware start policy to standby. 
+ASMI: Power/Restart Control > Power On/Off System. Set Server firmware start policy to Standby (User-Initiated). Click Save Settings. 
+
+d. Reset the server firmware settings. 
+ASMI: System Service Aids > Factory Configuration Select Reset the server firmware settings Confirm the reset. 
+When the task completes, the state of the server on the HMC will change to Recovery. 
+
+e. Power on to standby 
+Use HMC or ASMI 
+ASMI: Power/Restart Control > Power On/Off System. Click Save Settings and Power on. 
+
+5. Initialize, recover, or restore 
+The user can now perform a full restore of an existing profile backup (if available), initialize the server to manually recreate partitions or attempt to recover the HMCs last known copy of the partition configuration. 
+
+Note: At some older HMC fix levels, attempting to recover partition data will complete successfully, briefly show an operating state then go back into save area version mismatch. This is due to a problem where sections of the existing save area were incorrectly overwritten with data from the uplevel server while in save area version mismatch state.

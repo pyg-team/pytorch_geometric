@@ -1,0 +1,219 @@
+Title: IBM IV68036: CLARIFY THE EVENT INTEGRATION FACILITY (EIF) SUPPORT FOR USE OF SENDING EVENTS VIA SSL. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The IBM Tivoli Monitoring Administrator's Guide erroneously
+   documents that the Event Integration Facility (EIF) can be setup
+   to send events directly to Netcool/OMNIbus EIF receiver probe
+   using the Secure Sockets Layer (SSL) protocol.
+   
+   Sending private (autonomous) events from ITM using the Event
+   Integration Facility (EIF) does support the ability to use
+   TLS/SSL communication.  This communication requires an EIF
+   receiver that supports TLS/SSL communication.
+   
+   The ITM documentation states that events can be sent to a
+   Netcool/OMNIBus EIF receiver probe using TLS/SSL communication.
+   This is incorrect as the probe does not support TLS/SSL
+   communication.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  See conclusion below.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The documentation updates below are across ITM versions for 6.23
+   and 6.30.
+   
+    1.
+   http://www.ibm.com/support/knowledgecenter/SSTFXA_6.3.0.2/com.ib
+   m.itm.doc_6.3fp2/adminuse/eif_autonomy_ssl.htm [http://www.ibm.com/support/knowledgecenter/SSTFXA_6.3.0.2/com.ibm.itm.doc_6.3fp2/adminuse/eif_autonomy_ssl.htm]
+   
+   Sending private situation events by using TLS/SSL communication
+   
+   This wording is incorrect:
+   You can now send your private situation events to a
+   Netcool/OMNIbus EIF receiver probe using TLS/SSL communication.
+   The destination Netcool/OMNIbus Probe for Tivoli® EIF must be at
+   version 12.0 or later.
+   
+   Corrected wording:
+   You can now send your private situation events to an EIF
+   receiver that supports TLS/SSL communication.  The
+   Netcool/OMNIbus Probe for Tivoli EIF does not support TLS/SSL
+   for receiving events.
+   
+   2.
+   http://www.ibm.com/support/knowledgecenter/SSTFXA_6.3.0.2/com.ib
+   m.itm.doc_6.3fp2/adminuse/eif_autonomy_intro.htm [http://www.ibm.com/support/knowledgecenter/SSTFXA_6.3.0.2/com.ibm.itm.doc_6.3fp2/adminuse/eif_autonomy_intro.htm]
+   
+   This wording is incorrect:
+   You can now send your private situation events to a
+   Netcool/OMNIbus EIF receiver probe using TLS/SSL communication.
+   The destination Netcool/OMNIbus Probe for Tivoli EIF must be at
+   version 12.0 or later.
+   
+   Corrected wording:
+   You can now send your private situation events to an EIF
+   receiver that supports TLS/SSL communication.   The
+   Netcool/OMNIbus Probe for Tivoli EIF does not support TLS/SSL
+   for receiving events.
+   
+   3.
+   http://www.ibm.com/support/knowledgecenter/SSTFXA_6.3.0.2/com.ib
+   m.itm.doc_6.3fp2/install/multiagent_omni_install.htm [http://www.ibm.com/support/knowledgecenter/SSTFXA_6.3.0.2/com.ibm.itm.doc_6.3fp2/install/multiagent_omni_install.htm]
+   
+   
+   #7 incorrectly states:
+   Note: If an SSL connection will be used between the probe and a
+   monitoring agent, ensure that you have version 12.0 or later of
+   the probe.
+   
+   
+   4.
+   http://www.ibm.com/support/knowledgecenter/SSTFXA_6.3.0/com.ibm.
+   itm.doc_6.3/install/multiagent_singomni.htm [http://www.ibm.com/support/knowledgecenter/SSTFXA_6.3.0/com.ibm.itm.doc_6.3/install/multiagent_singomni.htm]
+   
+   Incorrect wording:
+   The Netcool/OMNIbus Probe for Tivoli EIF supports both SSL and
+   non-SSL connections with monitoring agents. If you want to use
+   an SSL connection, you must have version 12.0 or later of the
+   probe.
+   
+   Corrected wording:
+   The Netcool/OMNIbus Probe for Tivoli EIF supports non-SSL
+   connections with monitoring agents
+   
+   5.
+   http://www.ibm.com/support/knowledgecenter/SSTFXA_6.3.0.2/com.ib
+   m.itm.doc_6.3fp2/adminuse/eif_autonomy_ssl_certificate.htm [http://www.ibm.com/support/knowledgecenter/SSTFXA_6.3.0.2/com.ibm.itm.doc_6.3fp2/adminuse/eif_autonomy_ssl_certificate.htm]
+   
+   The following wording should be removed:
+   If the Netcool/Omnibus EIF probe uses a CA-signed digital
+   certificate and channel_nameSSLRequireClientAuthentication=YES
+   is specified in the probe?s configuration file, you must ensure
+   that the monitoring agent?s key database has imported a
+   corresponding CA-signed digital certificate.
+   
+   IBM Tivoli Monitoring requires a CMS-type key database, whereas
+   Netcool/OMNIbus requires a Java Key Store (JKS) database. The
+   keyfile.kdb CMS key database file is installed in the
+   install_dir\keyfiles directory. However, you cannot use this
+   database in its current form if you require a CA-signed digital
+   certificate when sending events over an SSL connection to the
+   Netcool/OMNIbus EIF probe.
+   
+   
+   6.
+   http://www.ibm.com/support/knowledgecenter/SSTFXA_6.3.0.2/com.ib
+   m.itm.doc_6.3fp2/install/omnibus_reqs.htm [http://www.ibm.com/support/knowledgecenter/SSTFXA_6.3.0.2/com.ibm.itm.doc_6.3fp2/install/omnibus_reqs.htm]
+   
+   The following line should be removed:
+   If you want to configure SSL between the probe and monitoring
+   agents, version 12.0 or later of the Netcool/OMNIbus Probe for
+   Tivoli EIF is required.
+   
+   7.
+   http://www.ibm.com/support/knowledgecenter/SSTFXA_6.3.0.2/com.ib
+   m.itm.doc_6.3fp2/adminuse/security_encryptintro.htm [http://www.ibm.com/support/knowledgecenter/SSTFXA_6.3.0.2/com.ibm.itm.doc_6.3fp2/adminuse/security_encryptintro.htm]
+   
+   The following lines should be removed:
+   Using TLS/SSL to secure communication between a monitoring agent
+    and the IBM IBM Tivoli Netcool/OMNIbus Probe for Tivoli EIF
+   Version 12 or later
+   
+   Use TLS/SSL for sending private situation events from monitoring
+    agents to the IBM Tivoli Netcool/OMNIbus Probe for Tivoli EIF.
+   For this interaction, client certificate authentication is
+   configured so that the probe uses certificates to authenticate
+   the monitoring agents (the clients).
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV68036
+   
+   
+ * REPORTED COMPONENT NAME
+   TEMA
+   
+   
+ * REPORTED COMPONENT ID
+   5724C04TE
+   
+   
+ * REPORTED RELEASE
+   630
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2014-12-18
+   
+   
+ * CLOSED DATE
+   2016-09-01
+   
+   
+ * LAST MODIFIED DATE
+   2016-09-01
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

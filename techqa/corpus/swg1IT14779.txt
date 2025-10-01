@@ -1,0 +1,140 @@
+Title: IBM IT14779: HOD PORTLET RESULTS IN ERROR WITH PORTALSERVER 8.5 - United States
+
+Text:
+  DIRECT LINK TO FIX
+HOD_12001_Update [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FRational%2FIBM+Host+On-Demand&fixids=HOD_12001_Update&source=SAR]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When the HOD portlet is used with the WebSphere Portal 8.5, an
+   exception is seen:
+    java.lang.NoSuchMethodError:
+   com/ibm/wps/portletservice/credentialvault/CredentialSlotConfig.
+   getCPIID()Lcom/ibm/wps/util/ObjectID;
+           at
+   com.ibm.wps.portlets.hodwps4.WpsHODPortlet.getCredentials
+   (WpsHODPortlet.java
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * All IBM Host On Demand users using WebSphere Portal Server   *
+   * 8.5.0.0                                                      *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * IBM Host On Demand Portlet comes up with an error regarding  *
+   * Credential Vaults when calling the standard IBM application  *
+   * Host On Demand  on WebSphere Portal V8.5.                    *
+   * This issue  happens in webshpere Portlet 8.5, as a few APIs  *
+   * were deprecated/removed from Portlet which IBM Host On       *
+   * Demand was using.                                            *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Users can upgrade IBM Host on Demand 12.0.0.1 to avoid this  *
+   * issue.                                                       *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  IBM Host On Demand 12.0.0.1 Uses new API form Portlet 8.5.0.0 to
+   avoid this issue.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT14779
+   
+   
+ * REPORTED COMPONENT NAME
+   HOD
+   
+   
+ * REPORTED COMPONENT ID
+   5733A5901
+   
+   
+ * REPORTED RELEASE
+   B00
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-04-13
+   
+   
+ * CLOSED DATE
+   2016-05-10
+   
+   
+ * LAST MODIFIED DATE
+   2016-05-10
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   HOD
+   
+   
+ * FIXED COMPONENT ID
+   5733A5901
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * RC00 PSY
+   UP

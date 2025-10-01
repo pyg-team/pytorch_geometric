@@ -1,0 +1,161 @@
+Title: IBM IV81513: "BESCLIENT_ARCHIVEMANAGER_MAXARCHIVESIZE" PROPERTY NOT CHECKED IN RELEVANCE CONDITIONS OF ILMT/BFI SCAN FIXLETS - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  In customer's environment capacity scan was failing at:
+   ---
+   continue if {(exists file (parameter "compressedfile" as
+   string) whose (size of it <= ((value of setting
+   "_BESClient_ArchiveManager_MaxArchiveSize" of client as string
+   ) as integer)))}
+   ---
+   It turned out that the"BESClient_ArchiveManager_MaxArchiveSize"
+   parameter was not set on the failing endpoint. Configuring it
+   to a value similar like on other endpoints resolved the problem.
+   In order to produce scan outputs, it is required to prepare
+   compressed archives. Without the parameter in question, the
+   scan task action was failing as it was not possible to compare
+   the size of output with the boundary parameter value.
+   If ILMT/BFI scan fixlets rely on specific parameters, relevance
+   conditions should check if this parameter exists/has the right
+   value.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Access IEM console, go to "Computers" section and access "Edit
+   Computer Settings" for the failing endpoint. Next click on the
+   "Add" button and create the
+   "BESClient_ArchiveManager_MaxArchiveSize" with value of
+   "52428800" or similar, like in case of other working endpoints.
+   Click on "OK" to confirm.
+   
+   Wait for the "Action: Change Multiple Settings" to complete. If
+   this is OK, then next retry "Run Capacity Scan and Upload
+   Results" action for the failing endpoint. This time it should
+   work.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * The capacity scan fails when the
+   * BESClient_ArchiveManager_MaxArchiveSize property does not
+   * exist on the endpoint.
+   * EXPECTED RESULTS:
+   * If the BESClient_ArchiveManager_MaxArchiveSize property does
+   * not exist on the endpoint, it is set during the capacity scan.
+   * The scan succeeds.
+   ****************************************************************
+   * RECOMMENDATION: Apply appropriate update when available.
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix for this APAR is contained in the following maintenance
+   packages:
+    | Update | BFI 9.2.3.0
+    | Update | ILMT 9.2.3.0
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV81513
+   
+   
+ * REPORTED COMPONENT NAME
+   LIC METRIC TOOL
+   
+   
+ * REPORTED COMPONENT ID
+   5724LMTEM
+   
+   
+ * REPORTED RELEASE
+   920
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-02-15
+   
+   
+ * CLOSED DATE
+   2016-04-05
+   
+   
+ * LAST MODIFIED DATE
+   2016-04-05
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   LIC METRIC TOOL
+   
+   
+ * FIXED COMPONENT ID
+   5724LMTEM
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R920 PSY
+   UP

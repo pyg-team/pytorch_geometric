@@ -1,0 +1,51 @@
+Title: IBM How to access the FOLD Feature on the printer hardware? - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ How to access the FOLD Feature on the printer hardware for printing IBM i5/OS reports? 
+
+RESOLVING THE PROBLEM
+How to access the FOLD Feature on the printer hardware for printing IBM i5/OS reports? 
+
+- Resolution:
+
+The only printer hardware FOLD feature the IBM i5/OS has support for is ZFOLD DDS keyword and that only works on IPDS configured printer writers. 
+note: IPDS is a hardware feature you purchase and install for connectivity with IBM i5/OS . You create a *LAN device for print with device type *IPDS (vs 3812 (non-ipds)) to communicate with the IPDS enabled printer hardware. 
+
+In the *IPDS device the AFP Advanced Function printing is required to be *YES for TCP/IP connected printers. 
+
+With AFP *YES you will need a PSF license for i5/OS. 
+
+There is no other i5/os programmed support for sending the FOLD feature request. Other options for consideration follows: 
+
+1) PC5250 printer emulation session configuration with no Host Print Transform might work if you have the FOLD feature setup and working from the windows driver assignment to the PC5250 printer emulation session. However, if you are printing i5/OS reports with any AFP resources that require *AFPDS spooled files, the pc5250 session with *NO transform will not work.
+
+2) WSCST (Workstation Customization) programming . We would have to pursue under a consulting agreement since it is custom programming to get a particular printer function working for which we have no standard support. 
+
+
+
+System i Programming DDS for Printer Files V6R1, which is available at:
+http://publib.boulder.ibm.com/infocenter/systems/scope/i5os/topic/rzakd/rzakd.pdf [http://publib.boulder.ibm.com/infocenter/systems/scope/i5os/topic/rzakd/rzakd.pdf]
+
+System i Programming DDS for Printer Files V5R4, which is available at:
+http://publib.boulder.ibm.com/infocenter/iseries/v5r4/topic/rzakd/rzakd.pdf [http://publib.boulder.ibm.com/infocenter/iseries/v5r4/topic/rzakd/rzakd.pdf]
+
+For detailed documentation on the tags used within the WSCST object source, refer to the following publications:
+
+OS/400 Workstation Customization Programming V6R1 (SC41-5605), which is available at:
+http://publib.boulder.ibm.com/infocenter/systems/scope/i5os/topic/books/sc415605.pdf [http://publib.boulder.ibm.com/infocenter/systems/scope/i5os/topic/books/sc415605.pdf]
+
+OS/400 Workstation Customization Programming V5R4 (SC41-5605), which is available at:
+http://publib.boulder.ibm.com/infocenter/iseries/v5r4/topic/books/sc415605.pdf [http://publib.boulder.ibm.com/infocenter/iseries/v5r4/topic/books/sc415605.pdf]
+
+
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Operating System IBM i 6.1 Operating System IBM i 7.1 
+HISTORICAL NUMBER
+ 627643801

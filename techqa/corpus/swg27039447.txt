@@ -1,0 +1,20 @@
+Title: IBM CMIS for Content Manager: New location for accessing IBM CMIS, Version 1 Fix Pack 3 - United States
+
+Text:
+ RELEASE NOTES
+
+ABSTRACT
+ IBM CMIS for Content Manager, Version 1 Fix Pack 3 is now bundled with IBM Content Navigator. Fix Pack 2 was not released prior to this fix pack. 
+
+CONTENT
+To access IBM CMIS for Content Manager, Version 1 Fix Pack 3, you must now install IBM Content Navigator. IBM CMIS for Content Manager and IBM Content Navigator are installed together by the installation program. You can configure and deploy each program separately. 
+
+
+For more information about installing this fix pack, see the IBM Content Navigator Release Notes [http://pic.dhe.ibm.com/infocenter/cmgmt/v8r4m0/topic/com.ibm.eucrelnotes.doc/eucrm001.htm].
+
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Enterprise Content Management Content Manager IBM Content Management Interoperability Services for Content Manager AIX, Linux, UNIX, Windows 8.4.3

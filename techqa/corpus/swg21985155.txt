@@ -1,0 +1,220 @@
+Title: IBM How to configure Content Platform Engine 5.2.1 and 5.5.x (Process Engine 5.3.x) email notification TLS encryption for Office 365 and Gmail SMTP servers - United States
+
+Text:
+notification; email encryption; email message templates; SSL TECHNOTE (FAQ)
+
+QUESTION
+ How do you configure TLS encryption in Content Platform Engine (CPE) 5.2.1 and 5.5.x (PE 5.3.x) for sending email notifications to the Office 365 or Gmail SMTP servers? 
+
+CAUSE
+Office 365 requires TLS encryption for emails. Gmail supports both SSL and TLS encryption.
+
+ANSWER
+SSL encryption for email notifications is supported starting with CPE 5.2.1. TLS encryption was added as a fully supported feature in CPE 5.2.1 Fix Pack 3 and higher. 
+
+Configure TLS email notification in CPE:
+
+User's Preferences:
+Change the user's email address to the target email address, for example: test23@gmail.com
+
+Either in Workplace XT (Preferences and then the Tasks section):
+[/support/docview.wss?uid=swg21985155&aid=1] [/support/docview.wss?uid=swg21985155&aid=1]
+
+
+OR
+
+Using the user's Navigator desktop, for example [http://www.ibm.com/]http://servername:port/navigator/?desktop=ECM [http://ecmdemo1:9080/navigator/?desktop=ECM]
+Open the "Open Work View" page (this must already be configured in Navigator)
+Click "Preferences"
+[/support/docview.wss?uid=swg21985155&amp;aid=2]
+
+
+The Navigator interface is basically the same as when accessed via Workplace XT -> Preferences:
+
+Configure the user's email address and the language in which the emails will be displayed, in addition to the user's Work Item Notifications preferences:
+[/support/docview.wss?uid=swg21985155&aid=3] [/support/docview.wss?uid=swg21985155&aid=3]
+
+
+
+Configure TLS in ACCE: 
+
+ 1. Logon to ACCE (IBM Administrative Console for Content Platform Engine) 
+ 2. On the Domain level, open the SMTP Subsystem tab
+
+ * 
+
+
+3. Configure: 
+SMTP host: STARTTLS:smtp.gmail.com - (for Gmail) OR 
+SMTP host: STARTTLS:smtp.office365.com - (for Office 365) 
+SMTP port: 587 
+Email from ID: WorkflowEngine *** (see note) 
+Default email reply-to ID: valid email address, ie, test23@gmail.com 
+Email login ID: valid email address, ie, test23@gmail.com 
+Email login password: <password for the email account> 
+
+4. Put a check in the Enable SSL checkbox 
+5. Save and then logout of ACCE 
+6. Restart WebSphere (this is important) 
+
+
+*** - NOTE: We have found that the Office 365 SMTP server may require a valid email address in this data field. The Gmail SMTP accepts the documented "WorkflowEngine" or similar text string, however, the Office 365 SMTP may throw a "501 5.1.7 Invalid address" error if anything but a valid email address is used. 
+
+================================= 
+
+Identify the security certificate: 
+Enable vwtrace for email notification 
+
+run vwtool 
+
+<vwtool::1>trace 
+
+Performed on all servers/single server (CR=a, s): a 
+
+Trace options currently SET are marked with a double-asterisk (**). 
+Current trace settings for server ECMDEMO1/server1: 
+
+... 
+
+Change tracing options? (CR=y/n): y 
+Turn off all tracing ? (y/CR=n): n 
+Extract new options from the traceOptions file ? (y/CR=n): n 
+Trace files will be saved in directory: C:\IBM\WebSphere\AppServer\profiles\AppSrv01\FileNet\server1 
+
+Enter number(s) of trace options to toggle. Multiple numbers may be entered separated by blanks. 
+Choice(s)? 3 8 9 
+
+ 1. Execute any workflow that is configured to send email notification. 
+ 2. Wait some minutes to allow the email notification process to attempt to send the email. 
+ 3. Open the pesvr_trace.log (the location is printed out in the vwtrace output) 
+ 4. Search for a string relative to the workflow. In the case of these examples, something like the following:
+
+To test23@gmail.com 
+
+
+Since the entire TLS configuration is not yet established, you should find an error indicating the email failed to send due to the TLS certification, similar to this, where (in red) you will see the required cert identified: 
+
+2016/05/25 19:14:11.678-0700 VWNotify1 PESecondary2 DB=CMTOS Reg#1 [Error] sendMessage: Email Logon test23@gmail.com, From WorkflowEngine, To test23@gmail.com, Subject Work Item:Email Test 004, Local en 
+; Exception: javax.mail.MessagingException: Could not convert socket to TLS; 
+nested exception is: 
+javax.net.ssl.SSLHandshakeException: com.ibm.jsse2.util.j: PKIX path building failed: java.security.cert.CertPathBuilderException: PKIXCertPathBuilderImpl could not build a valid CertPath.; internal cause is: 
+java.security.cert.CertPathValidatorException: The certificate issued by OU=Equifax Secure Certificate Authority, O=Equifax, C=US is not trusted; internal cause is: 
+java.security.cert.CertPathValidatorException: Certificate chaining error 
+at com.sun.mail.smtp.SMTPTransport.startTLS(SMTPTransport.java:1652) 
+at com.sun.mail.smtp.SMTPTransport.protocolConnect(SMTPTransport.java:534) 
+
+
+Search the CPE server's trust keystore for the offending certificate 
+ 1. Locate the plug-in trust keystore file. The file is named cacerts, and is located in the \lib\security subfolder where JRE is installed; for example, for the CPE server:
+
+Assuming JAVA_HOME = C:\IBM\WebSphere\AppServer\java 
+
+C:\IBM\WebSphere\AppServer\java\jre\lib\security\cacerts 
+
+2. Open a command window and navigate to the folder where the cacerts file is located. 
+C:\IBM\WebSphere\AppServer\java\jre\lib\security\ 
+
+NOTE: it is important to run the keytool commands from the "security" directory 
+
+3. To list existing certs: 
+C:\IBM\WebSphere\AppServer\java\jre\bin\keytool -keystore cacerts -storepass changeit -list> CertList.txt  * open the file, for example: notepad CertList.txt 
+ * Search for the certification
+
+
+In this example, the certificate is: 
+equifaxsecureca, Jul 18, 2003, trustedCertEntry, 
+Certificate fingerprint (MD5): ##:##:##:##:##:##:##:##:##:##:##:##:##:##:##:## 
+
+NOTE: the "equifaxsecureca" in this example is the alias that will be used when configuring WAS later. 
+
+ * If the certificate is not there, do the following: (If the certificate is there, drop to the "WAS Configuration" section, below)
+
+
+
+4. Export the certificate directly from the Windows PC's Java JRE applet (in Control Panel) 
+
+There are certainly any number of variations in specifics depending upon the computer configuration, but as an example:  * Within the Java applet, open Secure Site CA -> System -> Tab -> Equifax Equifax Secure Certificate Authority 
+ * Export the certificate to any name and folder on the PC, for example "EquifaxSecureCA.cert"
+
+
+
+5. On the CPE server, enter the following at the command line to run the JRE's keytool utility. 
+
+This imports the certificate. 
+C:\IBM\WebSphere\AppServer\java\jre\bin\keytool -import -file "<exportfilename>" -alias <alias> -keystore cacerts -storepass <password> 
+
+where 
+
+exportfilename is the full path and filename of the file you exported above. 
+alias is a unique name identifying the keystore entry. 
+password is the keystore password. The default password is changeit. 
+
+
+As an example: 
+C:\IBM\WebSphere\AppServer\java\jre\bin\keytool -import -file "C:\Temp\EquifaxSecureCA.cert" -alias equifaxsecureca -keystore cacerts -storepass changeit 
+
+
+Here's what it looks like in the command window: 
+C:\IBM\WebSphere\AppServer\java\jre\bin>keytool -import -file "C:\Temp\EquifaxSe 
+cureCA.cert" -alias equifaxsecureca -keystore cacerts -storepass changeit 
+Owner: OU=Equifax Secure Certificate Authority, O=Equifax, C=US 
+Issuer: OU=Equifax Secure Certificate Authority, O=Equifax, C=US 
+Serial number: ######### 
+Valid from: 8/22/98 9:41 AM until: 8/22/18 9:41 AM 
+Certificate fingerprints: 
+MD5: ##:##:##:##:##:##:##:##:##:##:##:##:##:##:##:## 
+SHA1: ##:##:##:##:##:##:##:##:##:##:##:##:##:##:##:##:##:##:##:## 
+Trust this certificate? [no]: y 
+Certificate was added to keystore 
+
+C:\IBM\WebSphere\AppServer\java\jre\bin> 
+
+
+If the certificate is already in the keystore, the tool will notify you. 
+
+
+
+WAS Configuration: 
+ * Configure the CPE's Websphere with the following settings in the WAS Admin Console:
+
+
+Go to Security -> SSL Certificate and Key Management -> Key stores and certificates ->NodedefaultTrustStore->Signer certificates 
+ * Click the "Retrieve from port" button
+
+
+NOTE: These instructions assume the Node level in WAS. You may need to do this at the Cell level depending upon your specific configuration. 
+
+
+For the Gmail SMTP server: 
+
+Host: smtp.gmail.com 
+Port: 465 (the SMTP server's SSL port) 
+Leave the default "NodeDefaultSSLSettings" for SSL configuration 
+Alias: equifaxsecureca (for example) 
+ * Click "Apply" then Save to the Master Configuration 
+ * Stop/Start WebSphere
+
+
+
+For the Office 365 SMTP server: 
+
+Host: smtp.office365.com 
+Port: 995 (the Office 365 SMTP server does not support SSL, but you have to use Port 995 in this step) 
+Leave the default "NodeDefaultSSLSettings" for SSL configuration 
+Alias: equifaxsecureca (for example) 
+ * Click "Apply" then Save to the Master Configuration 
+ * Stop/Start WebSphere
+
+
+
+NOTES:  * If using the "Retrieve from port" method does not work for you, an alternative is to use "Add" and import using the certificate file that is exported using the earlier instructions.
+
+ * Check for the email notifications to be successfully sent. If emails are not received within a few minutes, please run vwtrace to capture the trace data and see what errors/entries are documented, which should help move the troubleshooting forward.
+
+
+----------------------------------------------------------------------------------------------------------------------------------------------- 
+
+It is possible that customers may want to configure the CacheSyncFixupEmail workflow system property. This is not required, but is added here as an FYI. 
+
+Please see this KnowledgeCenter link to review how to set the CacheSyncFixupEmail property to synchronize email addresses in the workflow system environment records to match the email addresses found in the directory server.
+http://www.ibm.com/support/knowledgecenter/SSNW2F_5.2.1/com.ibm.p8.ce.admin.tasks.doc/bpfad031.htm [http://www.ibm.com/support/knowledgecenter/SSNW2F_5.2.1/com.ibm.p8.ce.admin.tasks.doc/bpfad031.htm].

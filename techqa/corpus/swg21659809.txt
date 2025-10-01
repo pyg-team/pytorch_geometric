@@ -1,0 +1,55 @@
+Title: IBM On Statistics 22 How to License local Add-on Module when getting Base from a Concurrent License - United States
+
+Text:
+Statistics 22 Add-On Module; Local Authorized License; Base Concurrent Network TECHNOTE (FAQ)
+
+QUESTION
+ In Statistics 22 how do I license a local Add-On Module on my local client?
+I am getting Statistics 22 base license from a Concurrent (Network) license. 
+
+ANSWER
+This resolution only applies to Statistics Clients who get their Statistics Base using a Concurrent (Network) License. 
+
+NOTE: The add on module(s) must be generated as 'Authorized User' authorization codes and must not include Base as an option.
+
+[Windows operating systems]
+Here are the instructions to change the permissions on the license file 'lservrc' & Activate the local add on module authorization code.
+1) Navigate to where you installed the local Statistics client
+Default: C:\Program Files\IBM\SPSS\Statistics\22
+2) Locate the licensing file 'lservrc' and uncheck the 'Read-only' option
+3) Locate and execute the law.exe program
+4) Follow the prompts and activate the local add on module.
+
+
+---------------------------------------------------------------------
+Macintosh operating systems]
+Note: For the Macintosh operating systems, both parts 1 & 2 need to be completed below:
+
+Part 1:
+Here are the instructions to change the permissions on the license file 'lservrc'.
+1) Start the Finder application
+2) In the Finder menu, click on Go->Applications
+3) Look for the "IBM" folder in the applications list and click on it, followed by the "SPSS", "Statistics" & "22" folders
+4) Double Click on the "22" folder
+5) Ctrl+click on SPSSStatistics.app. A pop-up menu will appear, click on "Show package contents"
+6) Double Click on Contents
+7) Double Click on Bin
+8) Locate the lservrc file and change the permissions for full Read & Write access. If this step cannot be completed successfully see your IT administrator as the next step will fail.
+
+Part 2:
+Here are the instructions to activate the local add on module authorization code, by using Terminal.
+1) Locate and launch the "Finder" application
+2) Within the Finder application locate and expand "Applications"
+3) Locate and expand "Utilities"
+4) Locate and launch the "Terminal" application
+5) Within Terminal Navigate to the IBM SPSS Statistics 22 installation directory and launch the licin.sh shell script as the 'root' user. Type the following commands: after each line press the "ENTER" key
+
+NOTE: When using the "sudo" command, you will be prompted for the computers administrator password.
+-- a) cd /Applications/IBM/SPSS/Statistics/22/SPSSStatistics.app/Contents/bin
+-- b) sudo ./licin.sh
+
+6) Follow the prompts and activate the local add on module.
+
+RELATED INFORMATION
+ Need more help? Our Statistics forum is Live! [https://developer.ibm.com/answers/topics/statistics.html?smartspace=predictive-analytics]
+Need more help? Our Licensing forum is Live! [https://developer.ibm.com/answers/topics/spsslicensing.html]

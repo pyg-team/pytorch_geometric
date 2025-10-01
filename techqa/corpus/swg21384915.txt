@@ -1,0 +1,36 @@
+Title: IBM CICS support news on Twitter - United States
+
+Text:
+cics twitter ; cics ; twitter ; cics tools ; cics tools twitter ; tweet ; IBM_CICS ; IBM CICS ; CTG CICS TG ; tweeting ; tweets ; ts 5655M1500 R640 640 R400 400 HCI6400 R650 650 R500 500 HCI6500 5655-M15 5655M15 5655S9700 R660 660 R600 600 HCI6600 5655-S97 5655S97 5655S9700 R670 670 R700 700 HCI6700 5655-S97 5655S97 5655Y0400 R680 680 R800 800 HCI6800 R690 690 R900 900 HCI6900 R700 700 R000 000 HCI7000 5655Y0401 5655-Y04 5655Y04 KIXINFO; cicsplex sm 5697E9301 5697-E93 5697E93 R300 R302 R230 FMID HCP2300 JCP2302 CPSM 5655M1501 R100 R102 R310 5655-M15 5655M15 HCP3100 JCP3102 5655M1500 R320 R50M JCI650M 5655S9700 R660 660 R600 600 R60M 60M HCI6600 JCI660M 5655-S97 5655S97 CPSM cpsmpddb vse cics ts 1.1.1 564805400 RB0P R411 R111 5648-054 5648054 vse 2.3 568602601 R14X R14V R14W R230 5686-026 5686026 bac 5697I9400 R110 5697-I94 5697I94 FMID HCBK100 R111 R11E R11K HCBK111 JCBK11E JCBK11K bep 5655J9900 R120 5655-J99 5655J99 FMID HCBM120 cm 5697I7800 R120 5697-I78 5697I78 FMID HCCK120 JCCK12E JCCK12K ia 5697J2300 R220 5697-J23 5697J23 FMID H274220 J27422K otto 5655I0500 R120 5655-I05 5655I05 FMID HOTO120 pa 5697N4000 R210 R21E R21K 5697-N40 5697N40 FMID H24D210 J24D211 J24D212 J24D213 5655U8700 R310 5655-U87 5655U87 FMID H24D310 J24D31E J24D31C J24D31K 5655U8701 5724B5601 5724B5604 R950 pm 5655I4600 R200 5655-I46 5655I46 FMID HCMZ200 vc 5655L6600 R100 5655-L66 5655L66 FMID HCVC100 vr 5655P3000 R420 R42E R42K 5655-P30 5655P30 FMID HCCV420 JCCV42E JCCV42K R430 R43E R43K HCCV430 JCCV43E JCCV43K vt 5697I7600 R200 5697-I76 5697I76 FMID HVID200 cl conference 5608A3100 R141 R410 R4IL R41I 5608-A31 5608A31 FMID MLC1410 MLC141I MLC141L clsuppersession 5608A2400 R147 R470 R471 R472 R473 R474 R475 5608-A24 5608A24 FMID MLS1470 MLS1471 MLS1472 MLS1473 MLS1474 MLS1475 ism 5655K0100 R300 5655-K01 5655K01 FMID HISZ300 5697N6100 R100 R10E R10K 5697-N61 5697N61 FMID HIQW100 JIQW101 sff 5655M1502 R200 200 HCIZ200 R300 300 HCIZ300 rexx 565508600 R110 REXX/CICS DEV SYS 565508700 R110 REXX/CICS RUNTIME F 565511200 R110 REXX/CICS COMMON soap 5697E9304 R100 100 HCAVI00 5697-E93 5697E93 TECHNOTE (FAQ)
+
+QUESTION
+ CICS Transaction Server (CICS TS) and CICS Tools support news is available on Twitter, a real-time short messaging service. You would like to know, how do you follow IBM_CICS on Twitter so you can stay informed about CICS and CICS Tools? 
+
+ANSWER
+To follow IBM_CICS on Twitter to find news, updates, and other information for the CICS products shortly after it is published:
+
+
+ 1. Set up a Twitter account at [/support/docview.wss?uid=swg21384915&amp;aid=1]https://twitter.com [https://www.ibm.com/links/?prompt=1&url=https://www.twitter.com]
+    
+    
+ 2. Go to [/support/docview.wss?uid=swg21384915&amp;aid=2]https://twitter.com/IBM_CICS [https://www.ibm.com/links/?prompt=1&url=https://www.twitter.com/IBM_CICS]
+    
+    
+ 3. Click on Follow under the IBM_CICS picture`
+    
+
+
+You might also want to follow TXSeries Support on Twitter: [/support/docview.wss?uid=swg21384915&amp;aid=3] https://twitter.com/txseries [https://www.ibm.com/links/?prompt=1&url=https://twitter.com/txseries]  
+
+For additional resources for the CICS products, see CICS Twitter, Blog, Facebook, You Tube, and Forum information [http://www.ibm.com/support/docview.wss?uid=swg21402518] 
+
+For a list of other available resources for both CICS and other z System Software products, see z Systems Software Support Social Media Channels [http://www.ibm.com/support/docview.wss?uid=swg21971161] 
+
+For Middleware products like WebSphere MQ and WebSphere Application Server, see Systems Middleware Support Social Media Channels [http://www.ibm.com/support/docview.wss?uid=swg21410956]. [http://www.ibm.com/support/docview.wss?uid=swg21410956]
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Host Transaction Processing CICS Batch Application Control for z/OS Documentation z/OS 1.1.1 Host Transaction Processing CICS Configuration Manager for z/OS Documentation z/OS 5.3, 5.2, 5.1 Host Transaction Processing CICS Interdependency Analyzer for z/OS Documentation z/OS 5.3, 5.2, 5.1 Host Transaction Processing CICS Online Transmission Time Optimizer Documentation z/OS 1.2 Host Transaction Processing CICS Performance Analyzer for z/OS Documentation z/OS 5.3, 5.2, 5.1 Host Transaction Processing CICS VSAM Recovery for z/OS z/OS 5.2, 5.1 Host Transaction Processing CICS VSAM Transparency for z/OS Documentation z/OS 2.1 Host Transaction Processing IBM CL/Conference Documentation z/OS 1.4.1 Host Transaction Processing IBM CL/SuperSession Documentation z/OS 1.4.7 Host Transaction Processing IBM Session Manager Documentation z/OS 3.2, 3.1, 2.2 Host Transaction Processing CICS Transaction Gateway for Multiplatforms Host Transaction Processing CICS Transaction Gateway for z/OS Host Transaction Processing CICS Deployment Assistant for z/OS Documentation z/OS 5.3, 5.2, 5.1 
+PRODUCT ALIAS/SYNONYM
+ CICS/TS CICS TS CICS Transaction Server

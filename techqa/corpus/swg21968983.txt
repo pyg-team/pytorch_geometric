@@ -1,0 +1,63 @@
+Title: IBM Disabling weak ciphers in SiteProtector - United States
+
+Text:
+SP; cipher TECHNOTE (FAQ)
+
+QUESTION
+ Is it possible to manually disable the use of certain ciphers in SiteProtector? 
+
+CAUSE
+Users may receive vulnerability scan reports stating that their SiteProtector servers are using weak ciphers.
+
+ANSWER
+The instructions in this article disable the use 3DES and RC4 from both the SiteProtector Web Server (port 3994) and the Agent Manager (port 3995). They also limit the TLS1.0, TLS1.1, TLS1.2 protocols so that only strong ciphers are being used.
+
+
+SiteProtector Web Server
+
+
+ 1. Open Windows Services on the server containing your SiteProtector Application Server and stop the SiteProtector Web Server service. 
+    
+ 2. Navigate to the \Program Files\ISS\SiteProtector\Application Server\webserver\IHS\conf directory.
+    
+ 3. Make a copy of the httpd.conf in the same directory and name the copy httpd.conf.backup. 
+    
+ 4. Open the httpd.conf file in a text editor and make the following changes:  * Add the following lines to the end of the file:
+       
+       SSLCipherSpec TLSv10 TLS_RSA_WITH_AES_128_CBC_SHA
+       SSLCipherSpec TLSv10 TLS_RSA_WITH_AES_256_CBC_SHA
+       SSLCipherSpec TLSv11 TLS_RSA_WITH_AES_128_CBC_SHA
+       SSLCipherSpec TLSv11 TLS_RSA_WITH_AES_256_CBC_SHA 
+     * Uncomment (remove the # sign at the beginning of) the following TLSv12 lines:
+       
+       SSLCipherSpec TLSv12 TLS_RSA_WITH_AES_128_GCM_SHA256
+       SSLCipherSpec TLSv12 TLS_RSA_WITH_AES_256_GCM_SHA384
+       SSLCipherSpec TLSv12 TLS_RSA_WITH_AES_128_CBC_SHA256
+       SSLCipherSpec TLSv12 TLS_RSA_WITH_AES_256_CBC_SHA256 
+       
+    
+    
+ 5. Start the SiteProtector Web Server service.
+
+
+Agent Manager 
+ 1. Open Windows Services on the server containing your Agent Manager and stop the issDaemon service. 
+    
+ 2. Navigate to the \Program Files\ISS\SiteProtector\Agent Manager directory.
+    
+ 3. Make a copy of the rsspdc.ini in the same directory and name the copy rsspdc.ini.backup. 
+    
+ 4. Open the original rsspdc.ini file in a text editor and add the following lines to the end of the file:
+    
+    httpsServer.tlsv10Ciphers=TLS_RSA_WITH_AES_128_CBC_SHA,TLS_RSA_WITH_AES_256_CBC_SHA
+    httpsServer.tlsv11Ciphers=TLS_RSA_WITH_AES_128_CBC_SHA,TLS_RSA_WITH_AES_256_CBC_SHA
+    httpsServer.tlsv12Ciphers=TLS_RSA_WITH_AES_128_CBC_SHA,TLS_RSA_WITH_AES_256_CBC_SHA,TLS_RSA_WITH_AES_128_GCM_SHA256,TLS_RSA_WITH_AES_256_GCM_SHA384,TLS_RSA_WITH_AES_128_CBC_SHA256,TLS_RSA_WITH_AES_256_CBC_SHA256,TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA,TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA,TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256,TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384,TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+    
+    Note: The line beginning with httpsServer.tlsv12Ciphers is quite long and will likely wrap on your screen. Ensure that you add it as a single line in the file. 
+    
+ 5. Start the issDaemon service.
+
+
+
+
+[/support/docview.wss?uid=swg21968983&aid=1] [https://ibm.biz/BdHdjw] [/support/docview.wss?uid=swg21968983&aid=2] [http://ibm.biz/InfraSecForumTechnote] [/support/docview.wss?uid=swg21968983&aid=3] [http://ibm.biz/SecSuptUTube] [/support/docview.wss?uid=swg21968983&aid=4] [http://ibm.biz/InfraSecFixes] [/support/docview.wss?uid=swg21968983&aid=5] [http://ibm.biz/FlexLicLogin] [/support/docview.wss?uid=swg21968983&aid=6] [http://ibm.biz/MyNotification] [/support/docview.wss?uid=swg21968983&aid=7] [http://ibm.biz/ContactSecSupport]

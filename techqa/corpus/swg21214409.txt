@@ -1,0 +1,27 @@
+Title: IBM SQLCODE189 returned on SELECT with a CAST function specifying a numeric CCSID value - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ The following SELECT statement is an example of what will cause error SQLCODE -189:
+
+SELECT CAST(m173_parm AS VARCHAR(10) CCSID 01141) AS PARM 
+FROM d$tt739u.t73vm173 WHERE m173_pgm_id = 'TESTUC'; 
+
+In this SELECT statement, DSNHDECP SCCSID=273 and the user is using the SELECT statement to choose from a UNICODE table with a cast to CCSID 1141 in it.
+
+This statement, however, will return the following error information:
+
+DSNT408I SQLCODE = -189, ERROR: CCSID 1141 IS INVALID 
+DSNT418I SQLSTATE = 22522 SQLSTATE RETURN CODE 
+DSNT415I SQLERRP = DSNXODTR SQL PROCEDURE DETECTING ERROR 
+DSNT416I SQLERRD = -110 0 0 -1 0 0 SQL DIAGNOSTIC INFORMATION 
+DSNT416I SQLERRD = X'FFFFFF92' X'00000000' X'00000000' X'FFFFFFFF' 
+X'00000000' X'00000000' SQL DIAGNOSTIC INFORMATION 
+
+CAUSE
+The statement specified 1141 in the CCSID clause for the CAST function when DECP has 273 specified. You cannot specify a numeric value for the CCSID that does not appear in DECP.
+
+ANSWER
+In DB2 for z/OS, you can CAST only to CCSID values that are specified in DSNHDECP.

@@ -1,0 +1,180 @@
+Title: IBM IV53626: WHEN TRYING TO USE THE MAINTENANCE FORECAST (CM) APPLICATION, WE GETTING THE ERROR: ORA-01795 - United States
+
+Text:
+ 
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Environment:
+   WebSphere 6.1
+   Maximo Base Service 7.1.1.8
+   Maximo Transportation 7.1.0.1
+   Maximo Asset Configuration Management 7.1.1.2
+   Maximo Calibration 7.1.1.0
+   TSRM 7.1.0.4
+   
+   Concerns/Problem:
+   When trying to use the Maintenance Forecast (CM) application, we
+   getting the below error:
+   java.sql.SQLException: ORA-01795: maximum number of expressions
+   in a list is 1000
+   
+   Steps to reprodiuce the issue:
+   Go to Maximo Maintenance Forecasting (CM)
+   Opent a forecast,
+   From the select action menu, open the "forecast Now",
+   error message pops up
+   BMXAA4210E Database error number 1795 has occurred.
+   
+   From the log file, find the below error message:
+   10 Dec 2013 15:02:30:642 [ERROR] ORA-01795: maximum number of
+   expressions in a list is 1000
+   
+   java.sql.SQLException: ORA-01795: maximum number of expressions
+   in a list is 1000
+   at
+   oracle.jdbc.driver.SQLStateMapping.newSQLException(SQLStateMappi
+   ng.java:74)
+   
+   at
+   oracle.jdbc.driver.DatabaseError.newSQLException(DatabaseError.j
+   ava:131)
+   at psdi.mbo.MboSet.count(MboSet.java:3206)
+   
+   at
+   psdi.plusa.app.maintforecast.PlusAMaintenanceForecast.forecastBy
+   Asset(Unknown Source)
+   
+   It seems this error maybe thrown because the sql that is used in
+   the code is utilizing a sql function (IN clause) that has a
+   built in limit of 1000.  This myabe causing that
+   particular sql to fail.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * When trying to use the MAINTENANCE FORECAST (CM)             *
+   * application, getting error : ORA-01795                       *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * Is not possible use action "Forecast Now" in MAINTENANCE     *
+   * FORECAST (CM) application.                                   *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Install the Interim Fix to correct this problem              *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Code modified to fix Database error  ORA-01795
+   The fix for this APAR is contained in the following maintenance
+   package:
+   	 | release\fix pack | Interim Fix for Release 750 Maximo Asset
+   Configuration Manager
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV53626
+   
+   
+ * REPORTED COMPONENT NAME
+   WORK & MTRL APP
+   
+   
+ * REPORTED COMPONENT ID
+   TIVOWRKMM
+   
+   
+ * REPORTED RELEASE
+   750
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2014-01-05
+   
+   
+ * CLOSED DATE
+   2014-02-10
+   
+   
+ * LAST MODIFIED DATE
+   2014-02-10
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  MAXIMO
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WORK & MTRL APP
+   
+   
+ * FIXED COMPONENT ID
+   TIVOWRKMM
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R750 PSY
+   UP

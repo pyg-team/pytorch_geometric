@@ -1,0 +1,48 @@
+Title: IBM Security Bulletin: IBM WebSphere MQ File Transfer Edition Web Gateway insufficient access control (CVE-2012-2206) - United States
+
+Text:
+ FLASH (ALERT)
+
+ABSTRACT
+ A low risk security vulnerability in the "Web Gateway" component of IBM WebSphere MQ File Transfer Edition may result in authenticated users being able to access other users' file transfers. 
+
+CONTENT
+CVE ID:CVE-2012-2206
+
+DESCRIPTION:
+When using the web gateway, an authenticated user is able to access other users' files without further access control if the URL of the file is known. The URL for a file contains non guessable elements.
+
+CVSS:
+CVSS Base Score: 3.5
+CVSS Temporal Score: Seehttps://exchange.xforce.ibmcloud.com/vulnerabilities/77095 [https://exchange.xforce.ibmcloud.com/vulnerabilities/77095]for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:M/Au:S/C:P/I:N/A:N)
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Flash. 
+
+AFFECTED PLATFORMS:
+Version 7.0.4 and all previous versions of WebSphere MQ File Transfer Edition running on all platforms are affected.
+
+REMEDIATION:The recommended solution is, for users of the web gateway in the affected products, to apply the fix for each named product as soon as practical. Please see below for information on the fixes available.
+
+FIX:
+For all affected versions of IBM WebSphere MQ File Transfer Edition:
+- Contact IBM Technical Support requesting an interim fix for APAR IC82761. Note that older releases of WebSphere MQ File Transfer Edition will first need to be upgraded to 7.0.4 or later. 
+
+WORKAROUND:
+None known; apply fixes.
+
+MITIGATION:
+- Do not use the web gateway component.
+
+REFERENCES:
+Complete CVSS Guide (http://www.first.org/cvss/v2/guide [http://www.first.org/cvss/v2/guide])
+On-line Calculator V2 (http://nvd.nist.gov/cvss.cfm?calculator&adv&version=2 [http://nvd.nist.gov/cvss.cfm?calculator&adv&version=2])
+X-Force Vulnerability Database (https://exchange.xforce.ibmcloud.com/vulnerabilities/77095 [https://exchange.xforce.ibmcloud.com/vulnerabilities/77095])
+CVE-2012-2206 (http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2012-2206 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2012-2206])
+
+CHANGE HISTORY:
+08 August 2012: Original Copy Published
+
+
+Note:According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.

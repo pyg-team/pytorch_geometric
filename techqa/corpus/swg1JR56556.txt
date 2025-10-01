@@ -1,0 +1,188 @@
+Title: IBM JR56556: YOU RECEIVE THE "INVALID OPERATION: RESULT SET IS CLOSED" ERROR WHILE PROCESSING A TRANSACTION - United States
+
+Text:
+  DIRECT LINKS TO FIXES
+8.0.1.3-WS-BPM-IFJR56556 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Standard&fixids=8.0.1.3-WS-BPM-IFJR56556&source=SAR]
+bpm.8570.cf2016.12.delta.repository [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Standard&fixids=bpm.8570.cf2016.12.delta.repository&source=SAR]
+Downloading IBM Business Process Manager V8.5.7 Cumulative Fix 2016.12 [http://www-01.ibm.com/support/docview.wss?uid=swg24043062]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  While processing a transaction, the following exception is
+   logged:
+   
+   [8/23/16 12:37:19:088 CEST] 000000b8 wle           E
+   CWLLG0594E: An exception occurred while initializing the
+   runnable thread.
+   Error:
+   com.lombardisoftware.core.TeamWorksException:
+   [jcc][t4][10120][10898][4.15.134] Invalid operation: result set
+   is closed. ERRORCODE=-4470, SQLSTATE=null
+   at com.lombardisoftware.core.TeamWorksException.
+     asTeamWorksException(TeamWorksException.java:136)
+   at com.lombardisoftware.component.common.workflow.
+     ExecutionContextHelper.getStoredSymbolTable
+     (ExecutionContextHelper.java:278)
+   at com.lombardisoftware.component.common.workflow.
+     ExecutionContext.getStoredTable
+     (ExecutionContext.java:849)
+   at com.lombardisoftware.server.ejb.workflow.
+     EJBWorkflowManagerBean.generateStayOnUiResult
+     (EJBWorkflowManagerBean.java:1749)
+   ...
+   
+   Caused by: com.ibm.db2.jcc.am.SqlException:
+   [jcc][t4][10120][10898][4.15.134] Invalid operation: result set
+   is closed. ERRORCODE=-4470, SQLSTATE=null
+    at com.ibm.db2.jcc.am.fd.a(fd.java:680)
+    at com.ibm.db2.jcc.am.fd.a(fd.java:60)
+   at com.ibm.db2.jcc.am.fd.a(fd.java:103)
+   at com.ibm.db2.jcc.am.ResultSet.checkForClosedResultSet
+     (ResultSet.java:4600)
+   at com.ibm.db2.jcc.am.ResultSet.findColumnX(ResultSet.java:1932)
+   at com.ibm.db2.jcc.am.ResultSet.getBytes(ResultSet.java:1711)
+   at com.ibm.ws.rsadapter.jdbc.WSJdbcResultSet.getBytes
+     (WSJdbcResultSet.java:913)
+   at com.lombardisoftware.component.common.workflow.
+     ExecutionContextHelper.getStoredSymbolTable
+     (ExecutionContextHelper.java:267)
+   ... 67 more
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  An entry is expected in the database table
+   LSW_STORED_SYMBOL_TABLE, which might temporarily not be present
+   and might cause the result set to be already closed when the
+   transaction tries to access it.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A fix that ensures a missing entry in the database table
+   LSW_STORED_SYMBOL_TABLE is accepted under certain circumstances
+   and is interpreted as an empty symbol table for the
+   corresponding task is available for IBM BPM V8.0.1.3 and will be
+   available in IBM BPM V8.5.7 cumulative fix 2016.12.
+   
+   For IBM BPM V8.0.1.3, search for JR56556 on Fix Central
+   (http://www.ibm.com/support/fixcentral):
+   
+   1. Select IBM Business Process Manager with your edition
+     from the product selector, the installed version to the fix
+     pack level, and your platform, and then click Continue.
+   
+   2. Select APAR or SPR, enter JR56556, and click Continue.
+   
+   For IBM BPM V8.5.7, determine whether the cumulative fix is
+   available by completing the following steps on Fix Central:
+   
+   1. On the Select product tab, select WebSphere as the product
+     group, IBM Business Process Manager with your edition from the
+     WebSphere options, All as the installed version, and All as
+     the platform, and then click Continue.
+   2. In the Text field, enter "cumulative fix", and click
+     Continue.
+   
+   If cumulative fix 2016.12 is available, download and install it.
+   When you download fix packages, ensure that you also download
+   the readme file for each fix. Review each readme file for
+   additional installation instructions and information about the
+   fix.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR56556
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM ADVANCED
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9400
+   
+   
+ * REPORTED RELEASE
+   801
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-09-02
+   
+   
+ * CLOSED DATE
+   2017-01-19
+   
+   
+ * LAST MODIFIED DATE
+   2017-01-19
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   BPM STANDARD
+   
+   
+ * FIXED COMPONENT ID
+   5725C9500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R801 PSY
+   UP

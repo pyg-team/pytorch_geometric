@@ -1,0 +1,46 @@
+Title: IBM Error "com.filenet.api.exception.EngineRuntimeException;The property identifier FormTemplate is not valid for class FormPolicy. [Code=null] ... " when creating IBM FileNet P8eForms form policy - United States
+
+Text:
+P8eF; Workflow Policy; Policy Creation TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Attempts to create IBM FileNet P8eForms form policy may result in the following error:
+
+com.filenet.api.exception.EngineRuntimeException;The property identifier FormTemplate is not valid for class FormPolicy. [Code=null] ... 
+
+SYMPTOM
+Cannot create form policies
+
+
+CAUSE
+The property "Form Template" is missing from class "Form Policy"
+
+ENVIRONMENT
+Microsoft Windows Server 2003, IBM WebSphere 6.1, Oracle 10g, eForms for P8 4.0.2
+
+RESOLVING THE PROBLEM
+Here is the procedure to resolve the issue:
+
+
+ 1. Browse to the Object Store and click on "Document Class" 
+ 2. Choose "Form Policy", right click and select "Properties" 
+ 3. Click on "Property Definitions" Tab and Click "Add/Remove" 
+ 4. Select "Show Object Type" and Select "Form Template" and move to the right 
+ 5. Click "Ok" 
+ 6. Select the "Form Template" property and choose "Edit" 
+ 7. Click on "More" Tab and do the following:  1. Click "Hidden" check box 
+     2. Set the Settability to: "Read/Write" 
+     3. Set the Required Class to: "ITX Form Template" 
+     4. Set the Reflective Property to: "Form Policy" 
+     5. Set the Delete Action to: "None" 
+    
+    
+ 8. Choose "Ok" 
+ 9. Choose "Apply" and then Click "OK"
+
+
+
+HISTORICAL NUMBER
+ 32926
+077
+649

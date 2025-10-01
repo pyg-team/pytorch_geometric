@@ -1,0 +1,62 @@
+Title: IBM Debugging tips for File content encoding while using Websphere Adapter for Flat File - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This technote outlines the correct process for configuring File content encoding to avoid file content encoding issues while using Websphere Adapter for Flat File. 
+
+SYMPTOM
+File content encoding issues are in the form of exceptions and can be observed in the trace.log file.
+
+
+CAUSE
+File content encoding issues can occur primarily due to the wrong file content encoding configuration settings.
+
+DIAGNOSING THE PROBLEM
+Following are the File content encoding exceptions that are displayed in the trace.log file: 
+
+1.) Caused by: commonj.connector.runtime.DataHandlerException: java.io.IOException: Invalid byte 2 of 3-byte UTF-8 sequence.
+at com.ibm.wbiserver.datahandler.xml.XMLDataHandler.transformInputStreamToDataObject(XMLDataHandler.java:372)
+at com.ibm.wbiserver.datahandler.xml.XMLDataHandler.transform(XMLDataHandler.java:81)
+at com.ibm.j2ca.extension.emd.runtime.ChildDataHandlerDataBindingInvoker.transformToDataObject(ChildDataHandlerDataBindingInvoker.java:101)
+at com.ibm.j2ca.extension.emd.runtime.EmbeddedNameFunctionSelector.generateEISFunctionName(EmbeddedNameFunctionSelector.java:98)
+... 22 more
+Caused by: java.io.IOException: Invalid byte 2 of 3-byte UTF-8 sequence.
+at com.ibm.ws.bo.service.BOXMLSerializerImpl.load(BOXMLSerializerImpl.java:310)
+at com.ibm.ws.bo.service.BOXMLSerializerImpl.readXMLDocumentWithOptions(BOXMLSerializerImpl.java:536)
+at com.ibm.wbiserver.datahandler.xml.XMLDataHandler.transformInputStreamToDataObject(XMLDataHandler.java:363)
+... 25 more
+
+2.) Caused by: java.lang.RuntimeException: An invalid XML character (Unicode: 0x3) was 
+found in the element content:PK 
+at org.eclipse.emf.ecore.xmi.impl.XMLSaveImpl$Escape.convertText(XMLSaveImpl.java:3101)
+at org.eclipse.emf.ecore.xmi.impl.XMLSaveImpl.getDatatypeValue(XMLSaveImpl.java:2758)
+at com.ibm.ws.bo.bomodel.util.BOXMLSaveImpl.getTrueType(BOXMLSaveImpl.java:550)
+
+
+
+RESOLVING THE PROBLEM
+If similar issues are encountered as shown in the above trace.log, the issue is most 
+
+ likely caused by the wrong file content encoding configuration settings while 
+using Websphere Adapter for FlatFile. 
+
+
+Change the file content encoding configuration settings to include the following:
+
+1.) java.io.IOException: Invalid byte 2 of 3-byte UTF-8 sequence: This exception error is 
+thrown when the event file contains special characters (For eg: Affrétement) and the event file is 
+not created with the UTF-8 encoding, a simple text file that is created .
+The following two options will help to resolve this issue:
+
+a.) The event file having the special character should be created using the UTF-8 encoding.
+OR
+b.) We suggest to use the File content encoding as iso-8859-1.
+
+
+2.) Caused by: java.lang.RuntimeException: An invalid XML character (Unicode: 0x3):
+This exception error is thrown when the event file that is processed is of binary form and the 
+file content encoding is configured as UTF-8. To resolve the issue, we suggest to configure 
+the File content encoding as BINARY instead of UTF-8 to process the binary
+files.

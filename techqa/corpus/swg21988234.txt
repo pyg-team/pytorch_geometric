@@ -1,0 +1,23 @@
+Title: IBM In a PureScale environment, WLB does not work for XA Applications using Java client. - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When running XA transaction from jcc application with IBM MQ as TM in pureScale environment, WLB does not work. 
+
+SYMPTOM
+Based on the following Knowledge Center document, it seems that WLB (transaction level load balancing) against purescale servers with jcc driver is supported. 
+
+Configuration of DB2 for Linux, UNIX, and Windows workload balancing support for Java clients
+http://www.ibm.com/support/knowledgecenter/SSEPGG_10.5.0/com.ibm.db2.luw.apdv.java.doc/src/tpc/imjcc_c0056603.html [http://www.ibm.com/support/knowledgecenter/SSEPGG_10.5.0/com.ibm.db2.luw.apdv.java.doc/src/tpc/imjcc_c0056603.html]
+
+However, when running XA transaction from jcc application with IBM MQ as TM in pureScale environment, WLB does not work.
+
+
+CAUSE
+This is a limitation in the current jdbc driver.
+
+DB2 jcc driver does not perform work load balancing (WLB), when the Transaction Manger uses Dual or Multi-transport model (for example: IBM MQ and IBM Lotus® Domino). 
+
+From jcc 3.72/4.22(which will be included in V11.1 FP1), the design will be changed and this limitation will be removed.

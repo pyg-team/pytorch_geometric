@@ -1,0 +1,57 @@
+Title: IBM Considerations for Directory Assistance performance optimization. - United States
+
+Text:
+Directory Assistance; da; large; designing; name lookups; names.nsf; directory; directories; domino server; mail routing; router; design; sessions; open; new; failover; users; tome out; processes; remote; response; connections TECHNOTE (FAQ)
+
+QUESTION
+What considerations should be taken into account when working with large directory infrastructures accessed through Directory Assistance?
+
+ANSWER
+Directory assistance provides the means by which Domino accesses additional directories beyond its primary directory.
+Directory assistance configurations can be defined to provide access to Notes and LDAP directories. Notes directories can be local to the server, and it is highly recommended to always use local replicas for any Notes directories defined in Directory Assistance. Accessing Notes directories across a network is much more resource intensive than replicating Notes databases.
+
+LDAP directories defined in directory assistance will always be on a remote server. When directories are on remote servers, network issues can greatly impact performance of directory lookups. 
+
+The following considerations should be taken into account when implementing Directory Assistance to connect to backend directories over directory assistance.. 
+
+1. Domino will connect to the first server listed in the DA configuration document. When there are a cluster of backend directory servers, it is advisable to specify a high availability load balancer/ IP sprayer which services the cluster. This will assure that Domino will consistently find a connection to the backend servers.
+
+2. Directory assistance maintains persistent connections; it will keep sessions to remote servers open for as long as possible. Sessions do not time out as per server_session_timeout. This is because deleting and creating a session is an expensive operation with regards to server resources.
+
+3. Directory Assistance name lookup sessions for remote directories are process based. If different processes perform name lookups, these will use separate sessions. If the same process does concurrent name lookups, new sessions will be created. However, current open sessions will be reused if they are free.
+
+4. If a remote directory server becomes unavailable, DA will mark the server "out of service" and attempt to connect to the next server defined in the configuration. There is a high processing overhead to re-establish sessions when DA moves connections to a different server. Clustered servers behind a load balancer/IP sprayer allows such situations to be avoided.
+
+5. Domino checks the status of servers marked "out of service" at approximately five minute intervals, 
+and will re-establish the connection if the server becomes available again.
+
+6. If the DA configuration is reloaded after an update (additional documents created or a change within one of the already existing documents), then all remote sessions will be deleted and recreated. The server console command which reloads the DA configuration is "show xdir reload"
+
+7. In addition to being used for authentication and addressing, name lookups are used for validation of user and server access to resources and databases. This means name lookups are performed very frequently against all enabled directories. 
+
+8. The default number of worker threads used by LDAP is 40. This can be increased with the notes.ini setting LDAPMaxWorkerThread, e.g. LDAPMaxWorkerThread=80
+
+9. LDAP search queries for lookups can be optimized for performance in a given environment by using custom search filters that have less complexity than those provided by default in the LDAP DA configuration documents. Assure that all searches are accessing indexed attributes on the remote servers. See "Configuring search filters in a Directory Assistance document for a remote LDAP directory" [https://www.ibm.com/support/knowledgecenter/en/SSKTMJ_9.0.1/admin/conf_configuringsearchfiltersinadirectoryassistancedocu_t.html] in Domino Administrator Help
+
+10. When LDAP client access is enabled in the DA configuration document, additional considerations should be made with regards to Notes directories. (1) Notes directories should be full text indexed to increase performance of queries made by LDAP clients against Domino servers. See Full-text indexing directories served by the LDAP service [https://www.ibm.com/support/knowledgecenter/SSKTMJ_9.0.1/admin/conf_fulltextindexingdirectoriesservedbytheldapservice_t.html] (2) LDAP access to a given secondary Domino directory is controlled by the "all servers" configuration document in the directory itself, not by the configuration document in the primary directory.
+
+11. Name lookup cache and LDAP query result cache can be increased using the notes.ini settings NLCACHE_SIZE and LDAP_QRCACHE_SIZE. The name lookup cache on the client should also be considered. These default to 16 MB.
+
+To set the cache size to 256 MB use:
+LDAP_QRCACHE_SIZE=268435456
+NLCACHE_SIZE=268435456
+
+For more information, see LDAP related Notes.ini variables [http://www.ibm.com/developerworks/lotus/library/ls-LDAP_INI/]
+
+
+
+
+
+
+
+
+For further details on optimizing performance for accessing LDAP directories through Directory Assistance, please refer to Domino LDAP Configuration Open Mic [http://www-01.ibm.com/support/docview.wss?uid=swg27042283] RELATED INFORMATION
+ Domino LDAP Configuration Open Mic - IBM [http://www-01.ibm.com/support/docview.wss?uid=swg27042283]
+Configuring search filters in Directory Assistance [https://www.ibm.com/support/knowledgecenter/en/SSKTMJ_9.0.1/admin/conf_configuringsearchfiltersinadirectoryassistancedocu_t.html]
+LDAP related Notes.ini variables [http://www.ibm.com/developerworks/lotus/library/ls-LDAP_INI/]
+Full-text indexing directories served by the LDAP servi [https://www.ibm.com/support/knowledgecenter/SSKTMJ_9.0.1/admin/conf_fulltextindexingdirectoriesservedbytheldapservice_t.html]

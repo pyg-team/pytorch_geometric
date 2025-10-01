@@ -1,0 +1,107 @@
+Title: IBM Security Bulletin: Power System Firmware is affected by openssl vulnerabilities(CVE-2013-4353, CVE -2013-6449) - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ Power System Firmware is affected by openssl vulnerabilities. 
+
+VULNERABILITY DETAILS
+
+CVE ID: CVE-2013-4353 [https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2013-4353]
+
+DESCRIPTION: A carefully crafted invalid TLS handshake could crash OpenSSL with a NULL pointer exception. A malicious server could use this flaw to crash a connecting client. This issue only affected OpenSSL 1.0.1 versions.
+
+CVSS Base Score: 5
+CVSS Temporal Score: See http://xforce.iss.net/xforce/xfdb/90201 [http://xforce.iss.net/xforce/xfdb/90201] for the current score 
+CVSS Environmental Score*: Undefined 
+CVSS Vector: (AV:N/AC:L/Au:N/C:N/I:N/A:P)
+
+
+
+CVE ID: CVE-2013-6449 [https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2013-6449]
+
+DESCRIPTION: A flaw in OpenSSL can cause an application using OpenSSL to crash when using TLS version 1.2. This issue only affected OpenSSL 1.0.1 versions.
+OpenSSL is vulnerable to a denial of service, caused by an error in the ssl_get_algorithm2 function. A remote attacker could exploit this vulnerability using specially-crafted traffic from a TLS 1.2 client to cause the daemon to crash. 
+
+CVSS Base Score: 4.3
+CVSS Temporal Score: See http://xforce.iss.net/xforce/xfdb/90068 [http://xforce.iss.net/xforce/xfdb/90068] for the current score 
+CVSS Environmental Score*: Undefined 
+CVSS Vector: (AV:N/AC:M/Au:N/C:N/I:N/A:P)
+
+AFFECTED PRODUCTS AND VERSIONS
+ 
+
+Firmware 770 Affected Platforms:
+IBM Power 780 (9179-MHC)
+IBM Power 770 (9117-MMC)
+IBM Power 760 (9109-RMD)
+IBM Power 750 (8408-E8D)
+IBM PowerLinux 7R4 (8248-L4T)
+IBM PowerLinux 7R2 (8246-L2D)
+IBM PowerLinux 7R2 (8246-L2T)
+IBM PowerLinux 7R1 (8246-L1D)
+IBM PowerLinux 7R1 (8246-L1T)
+IBM Power 740 (8205-E6D)
+IBM Power 730 (8231-E2D)
+IBM Power 720 (8202-E4D)
+IBM Power 720 (8202-40A)
+IBM Power 710 (8231-E1D)
+IBM Power 710 (8268-E1D) 
+
+Affected Firmware Versions (740)
+770.00: 01AL770_032_032
+770.10: 01Ax770_038_032
+770.20: 01Ax770_048_032
+770.21: 01Ax770_052_032 
+770.22: 01Ax770_055_032 
+770.31: 01Ax770_063_032
+
+
+Firmware 780 Affected Platforms:
+IBM Power 770 (9117-MMB)
+IBM Power 780 (9179-MHB)
+IBM Power 770 (9117-MMD)
+IBM Power 780 (9179-MHD)
+IBM Power ESE (8412-EAD)
+IBM Power 795 (9119-FHB)
+
+Affected Firmware Versions(780)
+780.00: 01Ax780_040_040
+780.01: 01Ax780_050_040
+780.02: 01Ax780_054_040
+
+
+
+REMEDIATION/FIXES
+
+Customers on Version 770, install 770.32: 01Ax770_076_032 or higher
+Customers on Version 780, install 780.10: 01Ax780_056_040 or higher
+
+WORKAROUNDS AND MITIGATIONS
+None known
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v2 Guide [http://www.first.org/cvss/v2/guide] 
+On-line Calculator v2 [http://nvd.nist.gov/CVSS-v2-Calculator] 
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] ACKNOWLEDGEMENT
+
+None 
+
+CHANGE HISTORY
+ 10/10/14: Information for Versions 770 and 780 is added 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Power Systems 9179 Power Systems 9117 Power Systems 9109 Power Systems 8408 Power Systems 8248 Power Systems 8246 Power Systems 8205 Power Systems 8202 Power Systems Power 710 (8231) Power Systems Power 730 (8231) Power Systems 8268 Power Systems 8412

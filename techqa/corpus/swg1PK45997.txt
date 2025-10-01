@@ -1,0 +1,159 @@
+Title: IBM PK45997: KO2CDFS2+F08 ABEND0C4-11 - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  CI0970: OMEGAMON SUBTASK ABEND CODE=840C4000
+   PSW=077D10008C8B60B4  TCB=007C4CF0
+   CI0971: PROGRAM NAME=KO2ACONB
+   IEA995I SYMPTOM DUMP OUTPUT  128
+   SYSTEM COMPLETION CODE=0C4  REASON CODE=00000011
+    TIME=13.05.59  SEQ=65428  CPU=0000  ASID=0251
+    PSW AT TIME OF ERROR  077D1000   8C8B60B4  ILC 2  INTC 11
+      NO ACTIVE MODULE FOUND
+      NAME=UNKNOWN
+      DATA AT PSW IS UNAVAILABLE AT THIS TIME
+      AR/GR 0: 007C4B40/00000000   1: 00000000/1344AFE4
+            2: 00000000/1343E048   3: 00000000/7F448900
+            4: 00000000/927971FA   5: 00000000/1343E000
+            6: 00000000/1344AFE4   7: 00000000/1343E080
+            8: 00000000/00000000   9: 00000000/00000008
+            A: 00000000/92796D10   B: 00000000/00000038
+            C: 00000000/12402390   D: 00000000/1344AF98
+            E: 00000000/8C8B60B4   F: 00000000/8BB517E2
+    END OF SYMPTOM DUMP
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: OMEGAMON XE for DB2 PE/DB2PM                 *
+   *                 users of component:                          *
+   *                 -   OMEGAMON Server                          *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: ABEND0C4 CSECT=O2CDFS OFFSET=000F08     *
+   ****************************************************************
+   * RECOMMENDATION: Apply the PTF                                *
+   ****************************************************************
+   Access to the number of DBAC threads queued due to MAXDBAT
+   was in error.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Correct access of the number of DBAC threads queued to
+   MAXDBAT.
+   KEYWORDS : ABEND0C9 ABEND0C4 APCB CDSF KO2ACONB
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK45997
+   
+   
+ * REPORTED COMPONENT NAME
+   OM XE DB2PE/PM
+   
+   
+ * REPORTED COMPONENT ID
+   5655OPE00
+   
+   
+ * REPORTED RELEASE
+   410
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2007-05-29
+   
+   
+ * CLOSED DATE
+   2007-07-03
+   
+   
+ * LAST MODIFIED DATE
+   2009-03-03
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  DUMM8KO2
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   OM XE DB2PE/PM
+   
+   
+ * FIXED COMPONENT ID
+   5655OPE00
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R410 PSN UK26784 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK26784]
+   UP07/07/06 P F707
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

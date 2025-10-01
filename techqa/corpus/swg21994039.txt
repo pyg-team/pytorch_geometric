@@ -1,0 +1,47 @@
+Title: IBM How to override the directory location for IBM P8 Content Platform Engine (CPE) logs. - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How to override the directory location for CPE logs. 
+
+CPE logs include perflog_config.properties, p8_server_error.log, p8_server_trace.log, GCD folder, pesvr_system.log, pesvr_trace.log and pedata folders. In some instances, it will also include the INSO folder, CSSTemp folders and perf.log.
+
+
+ANSWER
+Add the system property 'user.dir' in the JVM argument to the application server.
+For example, if you want to change the log location to 'c:\logs'
+A. JBoss Application Server: 
+
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+
+
+B. Oracle WebLogic Server:  * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+
+
+C. WebSphere Application Server:  * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ *

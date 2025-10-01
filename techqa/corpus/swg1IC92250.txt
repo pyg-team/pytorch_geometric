@@ -1,0 +1,205 @@
+Title: IBM IC92250: YOU MAY MEET SQL1227N ERROR WHEN HIGH2KEY AND LOW2KEY IS TIMESTAMP TYPE IN ORACLE MODE - United States
+
+Text:
+z/os  FIXES ARE AVAILABLE
+DB2 Version 9.7 Fix Pack 9 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24036646]
+DB2 Version 9.7 Fix Pack 9a for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24037559]
+DB2 Version 9.7 Fix Pack 10 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24038641]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Here is the reproducing scripts:
+   
+   1. Remote data source
+   create table t1(c1 int, C2 TIMESTAMP);
+   insert into t1 values(1,NULL);
+   insert into t1 values(2,current timestamp);
+   insert into t1 values(3,current timestamp +1 DAY);
+   insert into t1 values(4,current timestamp +2 DAY);
+   insert into t1 values(5,current timestamp +3 DAY);
+   RUNSTATS ON TABLE ADMINISTRATOR.t1 ON ALL COLUMNS AND INDEXES
+   ALL ALLOW WRITE ACCESS;
+   
+   
+   db2 => SELECT COLCARD, HIGH2KEY, LOW2KEY FROM SYSSTAT.COLUMNS
+   where TABNAME='T1' and COLNAME = 'C2'
+   
+   COLCARD              HIGH2KEY
+   
+   LOW2KEY
+   
+   
+   --------------------
+   ----------------------------------------------------------------
+   ----------------------------------------------------------------
+   ------
+   ----------------------------------------------------------------
+   ---------------------------------------------------
+   ---------------------------------------
+   ----------------------------------------------------------------
+   ----------------------------------------------------------------
+   ---------------------------
+   --------------------------------------------------
+                      5 '2013-05-03-23.25.14.832000'
+   
+   '2013-05-01-23.25.14.829000'
+   
+   
+   
+   
+   2. Federated database in oracle mode:
+   
+   connect to ora;
+   drop wrapper drda;
+   create wrapper drda;
+   create server v97db type db2/udb  version 9.7 wrapper drda
+   authorization "ADMINISTRATOR" password "xxxxxx"
+   options(dbname'TEST');
+   create user mapping for administrator server v97db
+   options(remote_authid 'ADMINISTRATOR',remote_password 'xxxxxx');
+   create nickname n1 for  v97db."ADMINISTRATOR"."T1";
+   call
+   sysproc.nnstat('V97DB','ADMINISTRATOR','N1',NULL,NULL,0,'<your_p
+   ath>\nnstat.txt::DIAG',?);
+   
+   Session.NNSTAT_Columns
+   ----schema----nickname----colname----card----high2key----low2key
+   ---overflow----
+   ADMINISTRATOR        | N1                   | C1
+   |          5 | 4                                        | 2
+   
+   ADMINISTRATOR        | N1                   | C2
+   |          5 | '2013-05-03-23.25.14.832000'             |
+   '2013-05-01-23.25.14.829000'
+   
+   
+   Session.NNSTAT_Indexes
+   ----tabschema----tabname----indschema----indname----nleaf----nle
+   vels---clusterratio----clusterfactor---firstkeycard---fullkeycar
+   d---
+   
+   
+   Done writing global temporary tables to log.
+   
+   
+   An attempt to select all the nicknames failed. An error was
+   returned when opening a cursor on syscat.taboptions.
+   nnstat.SQC, Line 1917 : SQL1227N  The catalog statistic
+   "'2013-05-03-23.25.14.832000'" for column "HIGH2KEY" is out of
+   range for its target column, has an invalid format, or is
+   inconsistent in relation to some other statistic. Reason Code =
+   "3".
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * Users who use NNSTAT in oracle mode                          *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * See Error Description                                        *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Upgrade to fix V9.7fp9                                       *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC92250
+   
+   
+ * REPORTED COMPONENT NAME
+   DB2 FOR LUW
+   
+   
+ * REPORTED COMPONENT ID
+   DB2FORLUW
+   
+   
+ * REPORTED RELEASE
+   970
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-05-13
+   
+   
+ * CLOSED DATE
+   2013-12-16
+   
+   
+ * LAST MODIFIED DATE
+   2013-12-16
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    IC96754 [http://www-01.ibm.com/support/docview.wss?uid=swg1IC96754]
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   DB2 FOR LUW
+   
+   
+ * FIXED COMPONENT ID
+   DB2FORLUW
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R970 PSN
+   UP
+   
+   
+ * R970 PSY
+   UP

@@ -1,0 +1,86 @@
+Title: IBM WebSphere Message Broker Toolkit Version 8.0.0.5 Interim Fix 001 - United States
+
+Text:
+fix pack fixpack service interim iFix download downloading download fixes maintenance package 8.0 800 DOWNLOADABLE FILES
+
+ABSTRACT
+ This is Interim Fix 001 for the IBM WebSphere Message Broker Toolkit Version 8.0.0.5. 
+
+DOWNLOAD DESCRIPTION
+ 
+
+Please note:
+SSLv3 is disabled by default in WebSphere Message Broker Toolkit 8.0.0.5 Interim Fix 1 and above, because SSLv3 is no longer considered secure due to the POODLE vulnerability. The following IBM security bulletin, published in October 2014, gives further details: http://www.ibm.com/support/docview.wss?uid=swg21687678 [http://www.ibm.com/support/docview.wss?uid=swg21687678] 
+
+All users must update any configuration using SSLv3 to use TLS, by following these steps:
+
+1. Update all secure MQ queue manager connections to use TLS instead of SSLv3 cipher specs. The following IBM security bulletin gives further details on the required MQ mitigations: http://www.ibm.com/support/docview.wss?uid=swg21687433 [http://www.ibm.com/support/docview.wss?uid=swg21687433] 
+
+2. Update any Java code to use TLS instead of SSLv3. The following IBM security bulletin gives further details about the usage and recommended mitigations for Java: http://www.ibm.com/support/docview.wss?uid=swg21688165 [http://www.ibm.com/support/docview.wss?uid=swg21688165] 
+
+It is strongly recommended that these changes are made to avoid the known security vulnerability in SSLv3. However, if it is not possible to use TLS communication, you can re-enable SSLv3 by following these steps:
+
+1. Edit the eclipse.ini file for the toolkit installation and add the following line:
+-Dcom.ibm.jsse2.disableSSLv3=false
+
+The eclipse.ini file is in the root directory of the toolkit installation. For example:
+c:\Program Files (x86)\IBM\WMBT800\eclipse.ini 
+
+2. Edit the java.security file for the toolkit installation and remove SSLv3 from the list of disabled algorithms:
+jdk.tls.disabledAlgorithms=
+
+The java.security file is in the jre lib\security directory of the toolkit installation. For example:
+c:\Program Files (x86)\IBM\WMBT800\jdk\jre\lib\security\java.security
+
+This interim fix contains fixes for the following problems:
+
+
+ 1. BAR/mqsicreatebar
+    APAR IT08397 [http://www-01.ibm.com/support/docview.wss?uid=swg1IT08397] BAR editor fails to show the flow contents 
+    
+ 2. ESQL
+    APAR IT06061 [http://www-01.ibm.com/support/docview.wss?uid=swg1IT06061] Toolkit hangs when setting a breakpoint on a WHEN clause of a CASE statement APAR IT06344 [http://www-01.ibm.com/support/docview.wss?uid=swg1IT06344] No error when the RETURNS clause in a CREATE statement is missing 
+    APAR IT08443 [http://www-01.ibm.com/support/docview.wss?uid=swg1IT08443] Unexpected error in CATALOG clause of ESQL THROW statement 
+    
+ 3. Message flow
+    APAR IT07755 [http://www-01.ibm.com/support/docview.wss?uid=swg1IT07755] Message parsing properties showing as blank when promoted 
+    
+ 4. Message model
+    APAR IT07813 [http://www-01.ibm.com/support/docview.wss?uid=swg1IT07813] Failure to update WSDL if schema is in an indirectly referenced library 
+    APAR IT08845 [http://www-01.ibm.com/support/docview.wss?uid=swg1IT08845] Quick start wizard does not show error messages 
+    
+ 5. Integration Nodes view
+    APAR IT05725 Toolkit cannot communicate with remote broker using TLS cipher 
+    
+ 6. JDK
+    APAR IT07802 Pick up JDK security vulnerability APAR IV68825 
+    APAR IT09095 WebSphere Message Broker Toolkit security JDK update - April 2015
+
+URL LANGUAGE SIZE(Bytes) IM 1.4.3 Product Documentation [http://publib.boulder.ibm.com/infocenter/install/v1r4/index.jsp] English 999 IM 1.4.3 Release and Download [http://www.ibm.com/support/docview.wss?uid=swg24028743] English 999 
+INSTALLATION INSTRUCTIONS
+To install the Toolkit fix pack, complete the following steps: 
+
+
+1. Click the HTTP link below to download the fix pack file. If you are using Internet Explorer with a medium-high security setting, you might have to click the HTTP link twice before you can download the file.
+
+2. Extract the contents of the downloaded zip file into a new local directory.
+
+3. Ensure that no Rational products are running, including the Message Broker Toolkit.
+
+4. Ensure that you have Installation Manager Version 1.4.3 or above installed.
+
+5. For more information about installing a fix pack, click the Installation instructions link in the following table:
+
+URL LANGUAGE SIZE(Bytes) Installation instructions [http://www.ibm.com/support/docview.wss?uid=swg27011490] English 9998 
+DOWNLOAD PACKAGE
+
+
+
+
+
+Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options MB Toolkit 8.0.0.5 IFix001 28 May 2015 Brazilian 233035547 HTTP [http://public.dhe.ibm.com/software/websphere/studiotools/wmbt/v80/zips/MB8005_800501.zip] 
+PRODUCT ALIAS/SYNONYM
+ MB WMB MBTK WMBTK 
+
+ [/support/docview.wss?uid=swg24040134&aid=1]Problems (APARS) fixed [/support/docview.wss?uid=swg24040134&aid=2]Problems (APARS) fixed
+IT08397, IT06061, IT06344, IT08443, IT07755, IT07813, IT08845, IT05725, IT07802, IT09095

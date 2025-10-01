@@ -1,0 +1,39 @@
+Title: IBM Error: The network name cannot be found, when accessing ClearQuest help - United States
+
+Text:
+Clear quest; help; network name cannot be found; 724593; RATLC00724593; 1177381 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This technote provides a solution for the error "The network name cannot be found" on the IBM® Rational® ClearQuest® client for Microsoft® Windows® and trying to access the Help menu. 
+
+CAUSE
+The full text of the error is: 
+
+
+file:///\doc\index.htm. The network name cannot be found.
+
+The Windows user does not have proper permissions. This has been reported as a defect and is being tracked by its APAR number IC41364.
+
+
+RESOLVING THE PROBLEM
+To resolve this issue, first check the permissions for the user. Permissions must be set properly in the registry. 
+
+ 1. Login as a local administrator and make sure the user's user group (For example,Power User) has full control on the following keys:
+    
+    HKEY_LOCAL_MACHINE/Software/Rational Software HKEY_USERS/.DEFAULT/Software/Rational Software
+    HKEY_CLASSES_ROOT/RationalSuite.ExtendedHelp
+    HKEY_CLASSES_ROOT/RationalSuite.ExtendedHelp.1
+    
+ 2. Give the users group full control on this folder:
+    
+    <Drive>:\Programfiles\rational\clearquest\doc
+    
+ 3. Clear the Internet Temporary files and Cookies.  1. In Internet Explorer click Tools > Internet Options 
+     2. On the General tab click Delete Cookies and click OK when prompted to Delete all cookies in the Temporary Internet Files folder. 
+     3. Click on Delete Files and then check the check box to Delete off-line content. 
+    
+    
+
+
+Note: This Solution contains information about modifying the registry. Before making any modifications to the registry, it is recommended that you make a backup of the existing registry. For more information describing how to back up the registry, refer to the Microsoft Knowledge Base Article - 322755: "HOW TO: Backup, Edit, and Restore the Registry in Windows 2000" at: 
+http://support.microsoft.com/default.aspx?scid=kb;EN-US;322755 [http://support.microsoft.com/default.aspx?scid=kb;EN-US;322755]

@@ -1,0 +1,230 @@
+Title: IBM PK57660: JAVA.LANG.CLASSCASTEXCEPTION FOR SAXPARSERFACTORYIMPL DURING CLUSTER START - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Java SDK 1.5 SR8 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24020073]
+Java SDK 1.5 SR8 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24021203]
+Java SDK 1.5 SR10 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24024201]
+6.1.0.31: Java SDK 1.5 SR11 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24026453]
+6.1.0.33: Java SDK 1.5 SR12 FP1 Cumulative Fix for WebSphere [http://www-01.ibm.com/support/docview.wss?uid=swg24027786]
+6.1.0.29: Java SDK 1.5 SR11 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24025191]
+6.1.0.35: Java SDK 1.5 SR12 FP2 Cumulative Fix for WebSphere [http://www-01.ibm.com/support/docview.wss?uid=swg24028574]
+6.1.0.37: Java SDK 1.5 SR12 FP3 Cumulative Fix for WebSphere [http://www-01.ibm.com/support/docview.wss?uid=swg24029525]
+6.1.0.39: Java SDK 1.5 SR12 FP4 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24030426]
+6.1.0.41: Java SDK 1.5 SR12 FP5 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24031035]
+6.1.0.43: Java SDK 1.5 SR13 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24031963]
+6.1.0.45: Java SDK 1.5 SR14 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24033270]
+6.1.0.47: WebSphere Application Server V6.1 Fix Pack 47 [http://www-01.ibm.com/support/docview.wss?uid=swg24035508]
+6.1.0.47: Java SDK 1.5 SR16 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24035649]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The cause of the problem is that the thread context class loader
+   is set
+   to an application class loader that has overriden the XML parser
+   implementation.  The application code calls SIB, which calls SM,
+   which
+   calls EMF to read an XML document, which uses the incompatible
+   XML
+   parser implementation, which causes a ClassCastException.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  non
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: IBM WebSphere Application Server version     *
+   *                 6.1 users.                                   *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: java.lang.ClassCastException during     *
+   *                      SAXParserFactoryImpl instance           *
+   *                      creation in WorkspaceHelper.java        *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   Customer has a cluster with two nodes with a service
+   integration bus (SIB) and a msssage engine running on each
+   node. He has a web application which attempts to send JMS
+   messages to the messsage engine running on the same server it
+   runs on. The application on one node can send but on the other
+   node it can not send due to this exception
+   
+   ADMG0003E: The system failed to load document
+   
+   com.ibm.websphere.management.exception.
+                       ConfigDocumentLoadException:
+   ADMG0003E: The system failed to load document
+   
+   cells/GLNetwork1/clusters/gtsscluster/sib-engines.xml
+   
+   at com.ibm.ws.management.configservice.
+    WorkspaceHelper.getDocAccessorInternal
+                            (WorkspaceHelper.java:176)
+   
+   
+   at com.ibm.ws.management.configservice.
+    WorkspaceHelper.getDocAccessor
+                            (WorkspaceHelper.java:127)
+   at com.ibm.ws.management.configservice.
+    WorkspaceHelper.getDocAccessor
+                            (WorkspaceHelper.java:118)
+   
+   ...
+   ...
+   
+   Caused by: java.lang.ClassCastException:
+   
+   org.apache.xerces.jaxp.SAXParserFactoryImpl incompatible
+   with javax.xml.parsers.SAXParserFactory
+   
+    at javax.xml.parsers.SAXParserFactory.
+                            newInstance(Unknown Source)
+    at org.eclipse.emf.ecore.xmi.impl.XMLLoadImpl.
+                            makeParser(XMLLoadImpl.java:299)
+    at org.eclipse.emf.ecore.xmi.impl.XMLLoadImpl.
+                            load(XMLLoadImpl.java:140)
+    at org.eclipse.emf.ecore.xmi.impl.XMLResourceImpl.
+                            doLoad(XMLResourceImpl.java:179)
+   
+    at org.eclipse.wst.common.internal.emf.resource.
+     CompatibilityXMIResourceImpl.basicDoLoad
+      (CompatibilityXMIResourceImpl.java:180)
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The source code has been modified to avoid the
+   ClassCastException during SAXParserFactory.newInstance() in
+   WorkspaceHelper class.
+   
+   The fix for this APAR is currently targeted for inclusion in
+   fix packs 6.0.2.29 & 6.1.0.17
+   Please refer to the recommended updates page for delivery
+   information:
+   http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK57660
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBS APP SERV N
+   
+   
+ * REPORTED COMPONENT ID
+   5724H8800
+   
+   
+ * REPORTED RELEASE
+   61I
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2007-12-05
+   
+   
+ * CLOSED DATE
+   2008-04-01
+   
+   
+ * LAST MODIFIED DATE
+   2008-08-15
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBS APP SERV N
+   
+   
+ * FIXED COMPONENT ID
+   5724H8800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R61A PSY
+   UP
+   
+   
+ * R61H PSY
+   UP
+   
+   
+ * R61I PSY
+   UP
+   
+   
+ * R61P PSY
+   UP
+   
+   
+ * R61S PSY
+   UP
+   
+   
+ * R61W PSY
+   UP
+   
+   
+ * R61Z PSY
+   UP

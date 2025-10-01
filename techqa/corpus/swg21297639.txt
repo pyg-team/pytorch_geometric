@@ -1,0 +1,155 @@
+Title: IBM Zone Configuration on Solaris 10 for TXSeries - United States
+
+Text:
+ FLASH (ALERT)
+
+ABSTRACT
+ This Document explains how to configure zone on Solaris 10 for TXSeries 
+
+CONTENT
+A) Zone configuration: 
+
+ -----------------------------
+
+(1) You need to have an IP Address for each Zone that you configure.
+
+(2) Creation of Zone:
+-----------------
+Connect to the Solaris 10 system as administrator.
+Choose the name for the zone.
+(a) Create a directory.(administrator's choice)
+# mkdir /u1/Zones/<zone name>
+(b) Change the directory permission to 700(i:e: drwx------)
+# chmod 700 /u1/Zones/<zone name>
+(c) To configure the Zone use Zonecfg command
+# zonecfg -z <zone name>
+By using above command, you will be taken into the zonecfg tool.(you might see an error/information message). The command prompt will appear as below.
+# zonecfg:<zone name>
+Now issue the following command.
+create
+set zonepath=/u1/Zones/<zone name>
+add net
+prompt will change to 
+# zonecfg:<zone name>:net>
+Issue the following command.
+set address=<new temp IP Address>
+set physical=<network interface card id/name> /*Use ifconfig -a command to get the interface card name.*/
+end 
+
+you will be return back to zonecfg prompt.
+# zonecfg:<zone name>
+Enter the following command
+set autoboot=true
+info /* this command will display some data and can be user for verification purpose */
+commit
+exit
+
+Now you are back to normal login/system prompt.
+(3) Installing and booting the Zone: (from login/command prompt)
+------------------------------------------------------------------------------------------
+Use zoneadm command to install the zone.
+# zoneadm -z <zone name> install
+output:--- Successfully installed zone <zone name>
+# zoneadm list -cv
+Status shown should be running. The value in ID column against the zone name should be '-'.
+
+# zoneadm -z <zone name> boot
+# zoneadm list -cv 
+Now the ID column should show as 1.
+(4) Allocating 40% CPU share to <zone name> zone:
+-------------------------------------------------------------------------
+If you are creating multiple zones, share the resources appropriately.
+
+from login/system prompt issue the following command.
+# zonecfg -z <zone name>
+You will be taken into zonecfg tool and issue the following commands.
+#zonecfg:<zone name>: >
+add rctl /* prompt chanes to */
+#zonecfg:<zone name>:rctl
+set name=zone.cpu-shares
+set value=(priv=privileged,limit=40,action=none)
+end
+/* you are back to zonecfg tool */
+Issue the following command.
+verify
+commit
+exit
+You are back to login prompt.
+Reboot the zone:
+# zoneadm -z <zone name> reboot
+View the cpu information:
+# prctl -i zone <zone name>
+
+(5) Allocating 60% CPU share to Global zone:
+---------------------------------------------------------------
+From the login/system prompt issue the following command.
+# prctl -r -n zone.cpu-shares -v 60 -i process $$
+# prctl -i zone global
+
+If you want the above allocation to be effective after system reboot then,
+edit the file /etc/init.d/zoneshares
+
+# cd /etc/init.d
+#vi zoneshares
+
+Add the following lines to the zoneshares file,
+
+#!/usr/bin/ksh
+/usr/bin/prctrl -r -n zone.cpu-shares -v 60 -i process $$
+exit 0
+
+From command prompt:
+#ln -s /etc/init/d/cpushares /etc/rc3.d/s99cpushares
+
+With the above steps zone setup, install configuration finishes.
+
+(6) Operations with zone:
+--------------------------------
+
+Setting password, hostname(etc) for the zone:-
+---------------------------------------------------------------------
+Setting zone to be globally available. We can see <zone name> is up and running. 
+Now we login for the first time to the console, so we can answer system identification questions such as timezone,
+
+
+# zlogin -C <zone name> /* connect to zone console */
+User ID will be root, Think about the password you want to keep. 
+
+set all the parameters properly as applicable.
+Come out from zone console login once again using following command.
+# zlogin -c/. <zone name>
+You are connected to the zone you have created. Global zone is not visible now.
+To verify issue uname -a command or hostname command.
+"/." is the logout parameter.
+Add appropriate network_no and netmask in zones /etc/netmasks file.
+Edit zone /etc/default/login file, comment #CONSOLE=/dev/console line.
+
+(7) Install and Configure TXSeries (TXSeries 6.1or 6.2 ) in the zone:
+--------------------------------------------------------------------------------------------------
+
+(A) Connect to the zone with the zone IP Address or the hostname for the zone.
+login as root.
+Install TXSeries 6.1 or TXSeries 6.2.
+
+(B) For security purpose the device files are not shared across the zones. If you want to access the device files i:e writable to device files,
+LOFS(loop back file system) feature to access those.
+From global zone issue the following commands:
+# mkdir /var/storage
+# zonecfg -z <zone name>
+# zonecfg:<zone name>:> add fs
+# zonecfg:<zone name>:fs> set dir=/dev/dsk
+# zonecfg:<zone name>:fs> set special=/var/storage
+# zonecfg:<zone name>:fs> set type=lofs
+# zonecfg:<zone name>:fs> end
+# zonecfg:<zone name>:> commit
+# zonecfg:<zone name>:> exit
+
+Now You are able to read/write and execute the files from /dev/dsk.
+Create another lofs for /dev/rdsk.
+Create sfs server and region. 
+Start sfs server and region.
+
+(8) Some useful Zone commands:
+--------------------------
+For starting, stoping , rebooting use zoneadm command.
+For delete zone use zonecfg command.

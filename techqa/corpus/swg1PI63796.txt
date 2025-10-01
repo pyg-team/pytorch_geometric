@@ -1,0 +1,163 @@
+Title: IBM PI63796: ADD SUPPORT FOR OMEGAMON XE FOR IMS ON Z/OS V5.3 ATF ENHANCED SUMMARY RECORD - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS NEW FUNCTION.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Add support for the OMEGAMON XE for IMS on z/OS V5.3 ATF
+   Enhanced Summary record introduced by Omegamon APAR OA50499 [http://www-01.ibm.com/support/docview.wss?uid=swg1OA50499].
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: Users of IMS Problem Investigator V2.4       *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Support for OMEGAMON XE for IMS on z/OS *
+   *                      V5.3 ATF Enhanced Summary record.       *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   Add support for the OMEGAMON XE for IMS on z/OS V5.3 ATF
+   Enhanced Summary record introduced by APAR OA50499 [http://www-01.ibm.com/support/docview.wss?uid=swg1OA50499].
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *  1. Add support to IMS PI ATF Knowledge Module (KM) for the
+      OMEGAMON V5.3 ATF Enhanced Summary record introduced by
+      APAR OA50499 [http://www-01.ibm.com/support/docview.wss?uid=swg1OA50499].
+   
+   2. Add support for the OMEGAMON V5.3 ATF Enhanced Summary
+      record as written to the IMS log:
+   
+        Specification of ATF User log record code in IMS PI options
+   
+        Add IMS KM for ATF Enhanced Summary record using ATF log
+        record code as supplied above.
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI63796
+   
+   
+ * REPORTED COMPONENT NAME
+   IMS PROBLEM INV
+   
+   
+ * REPORTED COMPONENT ID
+   5655K5000
+   
+   
+ * REPORTED RELEASE
+   240
+   
+   
+ * STATUS
+   CLOSED UR1
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   YesSpecatt / New Function / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-06-08
+   
+   
+ * CLOSED DATE
+   2016-06-22
+   
+   
+ * LAST MODIFIED DATE
+   2016-07-04
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    006PC16 UI38849
+   
+   
+
+MODULES/MACROS
+ *     ALZ#ATLS ALZ#CMDL ALZ#OMCX ALZ#OMLC ALZ#OMLS
+   ALZ#PROF ALZAL01Y ALZAT01Y ALZBATCH ALZBRAPI ALZBRFMT ALZBRMIO
+   ALZBRPRE ALZBRXCM ALZCA01A ALZCDOLI ALZDBRC  ALZDBRCA ALZDBRCD
+   ALZDBRCF ALZDBRCJ ALZDBRCM ALZDBRCR ALZDBRCT ALZDBRCX ALZFLDRV
+   ALZIMSPA ALZLCAT  ALZLFINI ALZLFMER ALZLINFO ALZLRFIL ALZOMLC
+   ALZPRDBJ ALZPRDRV ALZPROF  ALZPROMC ALZPROML ALZPRSUB ALZRXDSP
+   ALZSCRBA ALZSCRBB ALZSCRBC ALZSCRBD ALZSCRBE ALZSDAPI ALZSDDEC
+   ALZSDRD4 ALZSDSAV ALZTRACK ALZTUTRK ALZXPORT ALZ0A07A ALZ0A07B
+   ALZ0A07C ALZ0A07D ALZ0A07E ALZ0A08A ALZ0A08B ALZ0A08C ALZ0A08D
+   ALZ0A08E ALZ0B01S ALZ01A   ALZ01B   ALZ01C   ALZ01D   ALZ01E
+   ALZ0701S ALZ0702S ALZ31A   ALZ31B   ALZ31C   ALZ31D   ALZ31E
+   ALZ32A   ALZ32B   ALZ32C   ALZ32D   ALZ32E   ALZ35A   ALZ35B
+   ALZ35C   ALZ35D   ALZ35E   ALZ36A   ALZ36B   ALZ36C   ALZ36D
+   ALZ36E   ALZ37A   ALZ37B   ALZ37C   ALZ37D   ALZ37E   ALZ38A
+   ALZ38B   ALZ38C   ALZ38D   ALZ38E   H28T240J
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   IMS PROBLEM INV
+   
+   
+ * FIXED COMPONENT ID
+   5655K5000
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R240 PSY UI38849 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI38849]
+   UP16/06/24 P F606
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

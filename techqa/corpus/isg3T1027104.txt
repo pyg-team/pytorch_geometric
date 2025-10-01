@@ -1,0 +1,50 @@
+Title: IBM XCF Signaling Help - United States
+
+Text:
+ 
+
+
+
+
+
+
+
+Select CFSizer page: Choose one CFSizer APPC BatchPipes CICS Communications server DB2 DFSMShsm Common Recall Queue Enhanced Catalog Sharing GRS Health Checker IBM Sessions Manager IMS InfoSphere JES LOGREC MQSeries OEM Operlog RACF RRS SMF TAPE VSAM RLS WLM XCF 
+Implementing signaling through coupling facility structures provides significant advantages in systems management and recovery and thus provides enhanced availability for sysplex systems.
+
+To calculate the size of an XCF list structure for signaling provide the following input data:
+
+Number of Systems The maximum number of systems for which the primary sysplex couple data set was formatted (i.e., the MAXSYSTEM value that was specified when the couple data set was formatted using IXCL1DSU).
+
+Classlen CLASSLEN for the transport class to which the customer has assigned the structure (for pathout). CLASSLEN default is 956, but its value can range from 1 to 62464.
+
+XCF CLASSLEN Background Information
+
+The following information is provided as additional background information on CLASSLEN.
+
+Specifying the Lengths of Messages for the Transport Class
+
+Specify the length of the messages for which the signaling service should optimize in a transport class on the CLASSLEN keyword of the CLASSDEF statement in the Couplexx parmlib member or, after IPL, on the SETXCF START,CLASSDEF or the SETXCF MODIFY,CLASSDEF command.
+
+Transport classes are defined independently for each system in the sysplex.
+
+      CLASSDEF
+                 CLASS(class-name)
+                 CLASSLEN(class-length)
+                 GROUP(group-name ,group-name ...)
+                 MAXMSG(max-messages)
+
+
+The class length determines the size of the XCF message buffers used to hold messages sent in that transport class. The system selects the smallest buffer that will hold messages of the size specified on the CLASSLEN keyword. In general, specify a class length equal to the length of the messages most frequently sent by the group(s) in the transport class.
+
+Specify the length of the messages (CLASSLEN) for a transport class based on the group(s) you assign to the transport class. Therefore, you must know the characteristics of the messages the groups send.
+
+Selecting an appropriate class length involves making compromises between storage use and signaling performance. If messages are usually shorter than the message buffer, storage is wasted; if longer, performance is degraded.
+
+A message whose length does not exceed the buffer length receives the best performance the signaling service can provide. Messages longer than the buffer length might require additional processing, such as the preparation of additional message buffer space or the sending of additional signals to deliver the oversized messages.
+
+If there are many messages longer than the buffer length and the message traffic patterns warrant it, the signaling service dynamically increases the size of the buffers in the class to avoid the additional processing overhead to deliver these messages. This dynamic adjustment of buffer sizes means that specifying a small class length does not necessarily mean that larger signals will suffer performance degradation. However, if increasing the buffer size would cause the signaling service to exceed the maximum message buffer space allowed for messages in a particular transport class for a particular receiving system, these adjustments are not made.
+
+If a message buffer is too small for a particular message request, the request incurs additional overhead because XCF must format a larger message buffer. If a message buffer is too large for a particular message request, central storage is wasted. XCF adjusts the size of the buffers in a particular transport class on a system by system basis based on the actual message traffic.
+
+The RMF "XCF Activity Report" provides data that can be useful for evaluating message buffer sizes. This report provides data about the message buffer size for each remote system, by transport class.

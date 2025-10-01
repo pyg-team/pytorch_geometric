@@ -1,0 +1,20 @@
+Title: IBM Static references domain drop-down list displays the elements names instead of the verbalization in Excel scenario files - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When using a static references domain in your BOM, if a ruleset parameter uses it, the Excel scenario file generated will contain a column such that you can populate the ruleset parameter attribute from a drop-down list.
+
+When clicking on the drop-down list to display the BOM domain possible values, you will notice that the values proposed are the names of the domain elements, and not the verbalization. 
+
+SYMPTOM
+For instance, if, in your domain, you have an element "ELEMENT1" verbalized as "Element one", when in the Excel scenario file you click on the drop-down list to see all possible values, you will see the element name ELEMENT1 instead of its verbalization "Element one". 
+
+
+RESOLVING THE PROBLEM
+This is a known limitation. This limitation does not affect the the execution of the Decision Validation Services (DVS) scenario, meaning that even if you used the domain element names in the scenario sheet, but have the verbalization in your rules, the result will be correct.
+
+ 
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Operational Decision Manager General 8.5, 8.0, 7.5

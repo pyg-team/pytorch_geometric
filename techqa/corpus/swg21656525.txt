@@ -1,0 +1,40 @@
+Title: IBM TIP upgrade failed with error: BIRTExtension not a valid Logical component - United States
+
+Text:
+TIPL2INST; install fails; BIRTExtension not valid Logical component TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Upgrade of Tivoli Integrated Portal 2.2.0.11 was failing with errors:
+SEVERE : COIException in: addLogicalComponentTarget(BIRTExtension,localhost):BIRTExtension is 
+probably not a valid Logical component. Please check with your deployment Model 
+
+SYMPTOM
+The IA log may have below errors: 
+
+CompSEVERE : COIException in: addLogicalonentTarget(BIRTExtension,localhost):BIRTExtension is probably not a valid Logical component. Please check with your deployment Model (from 
+com.ibm.ac.coi.ext.ia.COIWrapperPluginImpl.buildLogicalComponentInstances) 
+FINER : THROW (from om.ibm.ac.coi.ext.ia.COIWrapperPluginImpl.addLogicalComponentTarget) 
+Caused by: com.ibm.ac.coi.ext.ia.COIWrapperException: COIException in:
+addLogicalComponentTarget(BIRTExtension,localhost):BIRTExtension is
+probably not a valid Logical component. Please check with your
+deployment Model 
+
+at: com.ibm.ac.coi.ext.ia.COIWrapperPluginImpl.buildLogicalComponentInstance 
+s(COIWrapperPluginImpl.java:700) 
+
+
+CAUSE
+The BIRTExtension is installed by the product which is deployed with TIP, not TIP itself. If you try to install BIRTExtension while installing TIP fix pack the upgrade may fail with above errors.
+
+
+RESOLVING THE PROBLEM
+This can typically happen if you are using a response file for installation of TIP fix pack. The response file have following lines as an example. These lines tell the installer what components to install. 
+
+ 
+
+#IAGLOBAL_COI_SELECTED_LOGICAL_COMPONENTS=Common,TIPFinal,BIRTExtension
+#IAGLOBAL_COI_SELECTED_LOGICAL_COMPONENTS=Common,TIPFinal 
+
+ 
+
+If you have un-commented the first line then comment out that line and un-comment the second line which does not have BIRTExtension (or remove ,BIRTExtension from the first line) . After this try installation again.

@@ -1,0 +1,150 @@
+Title: IBM IV37415: WRT UNINSTALL DOCUMENTATION INCORRECT - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The Installation and Configuration Guide provides instructions
+   on how to uninstall the low-level Web Response Monitor before
+   you uninstall the Web Response Time monitoring agent.
+   
+   Manually uninstalling the Web Response Monitor before
+   uninstalling the Web Response Time agent
+   
+   1. Stop the Web Response Time monitoring agent.
+   
+   2. From a command prompt, navigate to the wrm_images\install
+   directory, typically located at
+   
+   %CANDLE_HOME%\tmaitm6\wrm_images\install
+   
+   3. Run the following command:
+   
+   setup.exe /s
+   /f1%CANDLE_HOME%\tmaitm6\wrm_images\install\remove.iss
+   /zuninstall /verbose\uninstall_wrm.log
+   
+   4. After this command completes, proceed with the uninstallation
+   of the Web Response Time monitoring agent.
+   
+   The syntax of the setup.exe command in step 3 is incorrect. The
+   setup.exe command syntax should read as follows:
+   
+   setup.exe /s%CANDLE_HOME%\tmaitm6\wrm_images\install\remove.iss
+   /zuninstall /verbose\uninstall_wrm.log
+   
+   The complete path of the remove.iss file immediately follows the
+   /s parameter. Note that a space must precede the /zuninstall and
+   /verbose parameters. In the example shown for the /verbose
+   parameter, the uninstall_wrm.log is written to the Windows root
+   directory.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Enter setup.exe command with correct syntax.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:
+   ****************************************************************
+   * PROBLEM DESCRIPTION:
+   * Incorrect instructions for manually uninstalling WRM.
+   ****************************************************************
+   * RECOMMENDATION:
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  * Docs fixed in 7.4 documentation. Section has been removed
+   * since 7.4 does not install a separate WRM component. This
+   * was done as part of APAR IV69045 [http://www-01.ibm.com/support/docview.wss?uid=swg1IV69045]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV37415
+   
+   
+ * REPORTED COMPONENT NAME
+   ITCAM TRANSACT
+   
+   
+ * REPORTED COMPONENT ID
+   5724S79WB
+   
+   
+ * REPORTED RELEASE
+   730
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2013-03-01
+   
+   
+ * CLOSED DATE
+   2016-01-07
+   
+   
+ * LAST MODIFIED DATE
+   2016-01-07
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

@@ -1,0 +1,216 @@
+Title: IBM PK39771: WSDL2JAVA SHOULD NOT GENERATE DEPLOYMENT CODE FOR WRAPPED PATTERN WHEN AN OPERATION INPUT MESSAGE HAS MORE THAN ONE PART. - United States
+
+Text:
+  A FIX IS AVAILABLE
+PK40712; 6.1.0.9: wsws3204e generated on WSDL2Java due to indirect XSD file [http://www-01.ibm.com/support/docview.wss?uid=swg24015413]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  ESR: When changing WSDL to make a SOAP header explicit, the
+   generated Web Service client adds additional tags causing the We
+   bService to throw errors when it does not recognize the SOAP mes
+   sage.  If the lines of the WSDL are commented out so the header
+   is implicit, there are no additional tags.  The header needs to
+   be explicit so that the values can be modified programatically.
+   Here is what the bad Web Service with the explicit header.
+   Notice "PutMessage" is listed twice:
+    <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.
+    org/soap/envelope/" xmlns:soapenc="http://schemas.xmlsoap.
+    org/soap/encoding/"
+   xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:
+    xsi="http://www.w3.org/2001/XMLSchema-instance"><soapenv:Header
+   ><p586:
+    payloadManifest xmlns:p586="http://www.starstandards.
+    org/webservices/2005/10/transport"><p586:manifest
+   contentID="Content0"
+    element="ProcessPartsOrder"
+   namespaceURI="http://www.starstandards.
+    org/STAR" version="2.01"/></p586:payloadManifest></soapenv:
+    Header><soapenv:Body><PutMessage><p586:PutMessage
+   xmlns:p586="http:
+    //www.starstandards.org/webservices/2005/10/transport"><q0:payl
+   oad
+    xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
+   xmlns:
+    soapenc="http://schemas.xmlsoap.org/soap/encoding/"
+   xmlns:xsd="http:
+    //www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.
+    org/2001/XMLSchema-instance"
+   xmlns:p586="http://www.starstandards.
+    org/webservices/2005/10/transport"
+   xmlns:q0="http://www.starstandards.
+    org/webservices/2005/10/transport"
+   xmlns:SOAP-ENV="http://schemas.
+    xmlsoap.org/soap/envelope/"><q0:content id="Content0"
+    ><ProcessPartsOrder xmlns="http://www.starstandards.org/STAR"
+   xmlns:oa="
+    http://www.openapplications.org/oagis"
+   xmlns:xsi="http://www.w3.
+    org/2001/XMLSchema-instance"><ApplicationArea.......
+   .
+   WSDL2Java should not generate deployment code for wrapped
+   pattern when an operation input message has more than one part.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: WebSphere Application Server version 6.0.2   *
+   *                 users of web services                        *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: WSDL2Java incorrectly detects           *
+   *                      document/literal/wrapped pattern        *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   A WSDL defines three operations: all but one use the .NET
+   document/literal/wrapped pattern. The last operation defined
+   contains more than one part in its input message; therefore,
+   it should not be considered as a document/literal/wrapped
+   operation, yet WSDL2Java erroneously detects it as such. It
+   will generate client deployment code that identifies the
+   operation request message as document/literal/wrapped, when
+   really, it is only document/literal.
+   
+   At runtime, this faulty checking for the wrapped pattern
+   results in the child element of SOAP Body being serialized
+   twice, which is not correct.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fixed WSDL2Java to generate the correct deployment code.
+   
+   The fix for this APAR is currently targeted for inclusion in
+   fixpack 6.0.2.21.  Please refer to the Recommended
+   Updates page for delivery information:
+   http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK39771
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSPH APP SERV
+   
+   
+ * REPORTED COMPONENT ID
+   5724J0800
+   
+   
+ * REPORTED RELEASE
+   60W
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2007-02-20
+   
+   
+ * CLOSED DATE
+   2007-03-22
+   
+   
+ * LAST MODIFIED DATE
+   2007-07-10
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  WEBSRVC
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBSPH APP SERV
+   
+   
+ * FIXED COMPONENT ID
+   5724J0800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R60A PSY
+   UP
+   
+   
+ * R60H PSY
+   UP
+   
+   
+ * R60I PSY
+   UP
+   
+   
+ * R60P PSY
+   UP
+   
+   
+ * R60S PSY
+   UP
+   
+   
+ * R60W PSY
+   UP
+   
+   
+ * R60Z PSY
+   UP

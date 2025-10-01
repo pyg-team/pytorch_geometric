@@ -1,0 +1,206 @@
+Title: IBM PK81256: TROUBLE INSTALLING CICS IA EXPLORER. CONNECTION FAILED. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  As part of setting up CICS IA V2.2, you run the CIUJCLCR sample
+   job to define the TCPIPSERVICE CIUCPORT.  You specify the host
+   name and port number in the CICS IA V2.2 IA Explorer instead
+   of the values for the DB2 subsystems' DDF resulting in the
+   client connection failure.
+   .
+   Additional Symptom(s) Search Keyword(s):
+   .
+   The CICS IA client connection view contains the following
+   message text:
+   .
+   Connection failed: [ibm][db2][jcc][t4][2034][11148] Execution
+   failed due to a distribution protocol error that caused
+   deallocation of the conversation.
+   A DRDA Data Stream Syntax Error was detected.  Reason: 0x3.
+   .
+   If you view the CICS IA error log from the Help -> About drop
+   down there will be an exception entry as follows:
+   .
+   !ENTRY com.ibm.cics.ia.runtime 0 4 yyyy-mm-dd hh:mm:ss.ttt
+   !MESSAGE Unable to execute SELECT DISTINCT OBJECT FROM
+   xxxxxxx.CIU_RESOURCE WHERE TYPE = 'PROGRAM' ORDER BY OBJECT
+   !STACK 0
+   com.ibm.db2.jcc.c.DisconnectException:
+   [ibm][db2][jcc][t4][2034][11148]
+   Execution failed due to a distribution protocol error that
+   caused deallocation of the conversation.
+   .
+   A DRDA Data Stream Syntax Error was detected.  Reason: 0x3.
+   The CICS MSGUSR also contains message:
+   .
+   DFHWB0114 mm/dd/yyyy hh:mm:ss applid   CWXN A non-HTTP request
+             has been received by an HTTP service.  The request
+             has been rejected.
+             Host IP address: n.nn.nnn.nnn. Client IP address:
+             n.nn.nnn.nnn. TCPIPSERVICE: tcpipservice
+   .
+   
+   The CICS auxtrace contains entries:
+   .
+   nnnnn QR    SO 0D0C SOSO  EXIT  RECEIVE
+   nnnnn QR    SO 0202 SOCK  EXIT  RECEIVE/OK
+   nnnnn QR    WB 0501 WBSR  EXIT  RECEIVE/EXCEPTION
+                  NON_HTTP_DATA,,,NO,
+   .
+   where nnnnn is the CICS task number.
+   KIXREVPAD
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Issue a FIND command for DB2 DDF message from the MVS console:
+   .
+   DSNL004I csect DDF START COMPLETE LOCATION locname LU
+   netname.luname GENERICLU netname.gluname DOMAIN domain TCPPORT
+   tcpport SECPORT secport RESPORT resport
+   .
+   Use the 'locname', 'netname.luname', 'domain', and 'tcpport'
+   values to specify the connection preferences in the CICS IA
+   Explorer.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All CICS IA V2.2 users wishing to use the    *
+   *                 new IA Explorer.                             *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: CICS IA V2.2 shipped configuration      *
+   *                      options and sample jobs for using       *
+   *                      the IA Client shipped in IA V2.1        *
+   *                      These caused the user confusion         *
+   *                      when attempting to use the new IA       *
+   *                      Explorer shipped with IA V2.2.          *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   The configuration exec was updated to remove the 'TCPIP Port'
+   number required for IA V2.1 client.
+   
+   The following sample jobs were removed:
+   
+   CIUJCLCD
+   CIUJCLCR
+   CIUJCLC2
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  All options and sample jobs associated with the IA V2.1 client
+   have been removed.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK81256
+   
+   
+ * REPORTED COMPONENT NAME
+   CICS INTER ANAL
+   
+   
+ * REPORTED COMPONENT ID
+   5697J2300
+   
+   
+ * REPORTED RELEASE
+   220
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-02-24
+   
+   
+ * CLOSED DATE
+   2009-02-25
+   
+   
+ * LAST MODIFIED DATE
+   2009-04-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UK44344 UK44345
+   
+   
+
+MODULES/MACROS
+ *  CIUCHGM  CIUCNFH1 CIUCNF01 CIUJCLCD CIUJCLCR
+   CIUJCLC2
+   
+   
+    
+   
+   
+
+Publications Referenced SC34679002 FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CICS INTER ANAL
+   
+   
+ * FIXED COMPONENT ID
+   5697J2300
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R22K PSY UK44345
+   UP09/03/05 P F903
+   
+   
+ * R220 PSY UK44344
+   UP09/03/05 P F903

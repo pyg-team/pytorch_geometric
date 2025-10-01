@@ -1,0 +1,104 @@
+Title: IBM Cannot delete a report in the queue - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Merge with KB 84167 and 81049
+
+DESCRIPTION
+
+How to delete a running report from the queue or a hung report and it's impserver.exe process.
+
+SOLUTION
+
+Change the Order of Report Processing 
+If a report has already started to run, you cannot stop it by using Delete. If the report process is hung, you can stop it using either the Task Manager or the FKILL utility in Windows or the kill command in UNIX. 
+
+Monitor and Stop Report Processes 
+Once you know the process ID of a report process, you can monitor the CPU resources it uses. All report processes are called impserver. 
+The following characteristics of a process may indicate a problem: 
+
+·a report is taking longer than usual, or expected, to run 
+·the CPU time used by the report is much greater than the usual elapsed time of the same report 
+·the report is using no CPU when the system is not busy 
+·the report is generating multiple impserver processes 
+
+If it is not clear that there is a problem, 
+and if you can wait, the best thing to do is leave the process running and check on it later. 
+When you have no option but to stop the process that is running the report, you must first identify it by Process ID, and then stop it using either the Task Manager in Windows or the kill command in UNIX. Monitoring or stopping a report process must be done on the Impromptu Web Reports server computer where the report is running. 
+
+For more information about stopping specific processes, see the documentation for your operating system. 
+Steps to Identify Server and Process ID 
+Open the Server Administration utility. 
+Click Queues. 
+Locate the report in the right pane. Make note of the server on which it is running. 
+To see the report's property sheet, select the report, click Edit, and click Properties. Make note of its Process ID. 
+
+Notes 
+·Stopping an impserver process should be considered a last resort. It may, in some cases, make report processing unstable. Whenever you stop an 
+impserver process, monitor the next few reports that are processed on that Impromptu Web Reports server. If report processes start failing, you may have to disable the Impromptu Web Reports server where you stopped the report. To be safe, after stopping a process reboot the computer at the next convenient opportunity. 
+·You can stop processes in Windows Task Manager only if you are logged on to the account that the associated Windows service uses. An alternative is to use a Kill utility such as the one from the Windows NT 4.0 Resource Kit. See windows FKILL procedure below.
+
+From the IWR Server, perform the following steps:
+
+1. Open the Services dialog box and stop all IWR Services in this order: 
+* Impromptu Web COM Service
+* Impromptu Web Service Manager
+* ObjectStore Cache Manager 
+* ObjectStore Server
+2. Launch NT Task Manager
+3. Go to the Processes Tab
+4. Find the Impserver.exe process. Write down the Process number
+5. Use KILL utility (e.g. FKIL) to kill 
+the process.
+6. Restart the IWR Services
+7. Open the Services dialog box. Click the refresh button and all IWR services should now be started.
+
+The report should now be deleted. 
+
+RESOLVING THE PROBLEM
+ange the Order of Report Processing 
+If a report has already started to run, you cannot stop it by using Delete. If the report process is hung, you can stop it using either the Task Manager or the FKILL utility in Windows or the kill command in UNIX. 
+
+Monitor and Stop Report Processes 
+Once you know the process ID of a report process, you can monitor the CPU resources it uses. All report processes are called impserver. 
+The following characteristics of a process may indicate a problem: 
+
+·a report is taking longer than usual, or expected, to run 
+·the CPU time used by the report is much greater than the usual elapsed time of the same report 
+·the report is using no CPU when the system is not busy 
+·the report is generating multiple impserver processes 
+
+If it is not clear that there is a problem, and if you can wait, the best thing to do is leave the process running and check on it later. 
+When you have no option but to stop the process that is running the report, you must first identify it by Process ID, and then stop it using either the Task Manager in Windows or the kill command in UNIX. Monitoring or stopping a report process must be done on the Impromptu Web Reports server computer where the report is running. 
+
+For more information about stopping specific processes, see the documentation for your operating system. 
+Steps to Identify Server and Process ID 
+Open the Server Administration utility. 
+Click Queues. 
+Locate the report in the right pane. Make note of the server on which it is running. 
+To see the report's property sheet, select the report, click Edit, and click Properties. Make note of its Process ID. 
+
+Notes 
+·Stopping an impserver process should be considered a last resort. It may, in some cases, make report processing unstable. Whenever you stop an impserver process, monitor the next few reports that are processed on that Impromptu Web Reports server. If report processes start failing, you may have to disable the Impromptu Web Reports server where you stopped the report. To be safe, after stopping a process reboot the computer at the next convenient opportunity. 
+·You can stop processes in Windows Task Manager only if you are logged on to the account that the associated Windows service uses. An alternative is to use a Kill utility such as the one from the Windows NT 4.0 Resource Kit. See windows FKILL procedure below.
+
+From the IWR Server, perform the following Steps:1. Open the Services dialog box and stop all IWR Services in this order: 
+* Impromptu Web COM Service
+* Impromptu Web Service Manager
+* ObjectStore Cache Manager 
+* ObjectStore Server
+2. Launch NT Task Manager
+3. Go to the Processes Tab
+4. Find the Impserver.exe process. Write down the Process number
+5. Use KILL utility (e.g. FKIL) to kill the process.
+6. Restart the IWR Services
+7. Open the Services dialog box. Click the refresh button and all IWR services should now be started.
+
+The report should now be deleted.
+
+
+
+HISTORICAL NUMBER
+ 118267

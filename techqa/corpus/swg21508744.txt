@@ -1,0 +1,37 @@
+Title: IBM Recommendations for fine-tuning the performance of the eDiscovery Analyzer server - United States
+
+Text:
+performance; tuning; out of memory; slowness; high CPU utilization; low memory TECHNOTE (FAQ)
+
+QUESTION
+ How do I fine tune the performance of my eDiscovery Analyzer server to make better use of memory, CPU utilization, and file I/O operations? 
+
+CAUSE
+Running multiple operations at the same time can cause eDiscovery Analyzer to perform slowly. This can result in high CPU utilization and OutOfMemory error messages being generated (visible in the error log).
+
+ANSWER
+Operations such as indexing and searching multiple cases concurrently, or indexing documents with large attachments, can consume many of the machine resources allocated to the eDiscovery Analyzer server. These are some guidelines and recommendations for optimizing the performance of the eDiscovery Analyzer server, 
+
+I. Disabling cases for search
+
+Cases should be set to "Enable for Search" only when they are being actively searched. If a case is no longer planned to be searched, disable this option. A case that is enabled for search causes the eDiscovery Analyzer server to create an in-memory cache of the search result data for that case. This, in turn, consumes substantial amounts of memory proportional to the number of documents in the case.
+
+The "Enable for Search" option should be disabled for all cases when a case is being indexed. This is especially true when indexing cases containing a large number of documents or large sized documents or attachments. Generally, a large case is one that contains 500,000 documents or more. 
+
+Disabling cases for search whenever possible is also recommended when running the eDiscovery Analyzer server on low end hardware, such as virtual machines, or small hardware setups as described in the system requirements documentation.
+
+II. Receiving OutOfMemory error messages in the System error log
+
+If "OutOfMemory" errors show up in the error log during case indexing, it is recommend that you restart eDiscovery Analyzer and disable all search-enabled cases before continuing indexing.
+
+For large cases (such as those containing a large number of documents or those with documents with large attachments and content), refer to the following technotes (links are provided in the Related information section): 
+
+
+ * "Limiting the number of attachments to prevent an out of memory (OOM) error on the indexing server" 
+ * "Configuring eDiscovery Analyzer to handle large numbers of unique categories (facets).
+
+
+OutOfMemory errors can also occur if you index multiple cases at the same time. For information about the impact of indexing cases concurrently, see the technote titled "Indexing multiple cases at the same time causes slow processing". RELATED INFORMATION
+ Indexing multiple cases at the same time causes slow... [https://www.ibm.com/support/docview.wss?uid=swg21366229]
+Limiting the number of attachments to prevent an OOM... [https://www.ibm.com/support/docview.wss?uid=swg21507177]
+Configuring eDiscovery Analyzer to handle large... [https://www.ibm.com/support/docview.wss?uid=swg21391363]

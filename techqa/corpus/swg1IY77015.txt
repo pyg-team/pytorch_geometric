@@ -1,0 +1,251 @@
+Title: IBM IY77015: 16970 - STANDARD ACCOUNT REPORT DOES NOT SHOW ALL ACCOUNTS IF BUSINESS UNIT IS 'ORGANIZATION' AND LARGE NUMBER OF PEOPLE AND - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS RETURNED (APAR CANNOT BE RESOLVED WITHOUT ADDITIONAL INFO FROM IBM OR CUSTOMER.)
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Start ------- ITIM Problem Description Format Insert
+   ------------
+   
+   Title: Standard Account report does not show all accounts if
+   business unit is 'Organization' and large number of people and
+   accounts.
+   
+   Problem description:
+   Customer is attempting to run a standard account report on a
+   particular
+   service and from the organization (tenant) level.  Not all of
+   the
+   known accounts within the organization are displayed.
+   
+   
+   There are 12,369 people in his ou=people container, and 2474
+   accounts in
+   his ou=accounts container.  Three individuals within the
+   ou=people have
+   accounts for the service being queried.  If the customer
+   navigates to
+   Provisioning > manage services, selects the particular service
+   and then displays the 'accounts', he can identify the three
+   owned
+   accounts (see attachments for screenshot)..
+   When he runs the account report it seems to complete  but only
+   contains two of the three accounts displayed (see screenshot in
+   attachments)..
+   
+   
+   The customer is running itim 4.5.1 fp42 on AIX 530.  He has 2gb
+   of
+   memory, and a jvm size set to 512,768.  My recreation of the
+   problem
+   (using customer's directory data loaded on my system - see
+   attachments)
+   - to which the attachments relate, is Windows 2000, 2gb of
+   memory, and
+   jvm set to 512,768).  I ran my test two ways - one with the
+   directory
+   co-located with WAS on my machine - another with the directory
+   located
+   on a different machine.  The same errant behavior was observed.
+   
+   
+   Itim log contains the following entry coincident with the
+   "completion"
+   of
+   the report: (full itim.log and WAS logs in attachments).
+   
+   [2005-09-28 14:37:52,099:Alarm :
+   1]<DEBUG:com.ibm.itim.webclient.util.EJBHttpSessionUnbinder>[EJB
+   HttpSess
+   ionUnbinder.valueBound] remote exception:
+   java.rmi.NoSuchObjectException: CORBA OBJECT_NOT_EXIST 0x0 No;
+   nested
+   exception is:
+           org.omg.CORBA.OBJECT_NOT_EXIST:
+   com.ibm.ejs.container.SessionBeanTimeoutException: Stateful bean
+   BeanId(enRole#api_ejb.jar#enroleejb.SearchAuthorityHome,
+   1069df4ece8)
+   timed out.  minor code: 0  completed: No
+   org.omg.CORBA.OBJECT_NOT_EXIST:
+   com.ibm.ejs.container.SessionBeanTimeoutException: Stateful bean
+   BeanId(enRole#api_ejb.jar#enroleejb.SearchAuthorityHome,
+   1069df4ece8)
+   timed out.  minor code: 0  completed: No
+           a
+   
+   
+   Observation:
+   
+   
+   From observing the contents of the itim.log it appears that this
+   report
+   is
+   functioning like:
+   
+   1) Search for all people in the specified organization (i.e.)
+   tenant
+   2) For each person, search for all accounts owned by that person
+   and
+   then check the results to see if the account read matches the
+   requested
+   service.
+   
+   A more efficient approach might be to:
+   
+   1) Search for all accounts matching the required service dn.
+   2) Using the owner information in each account, locate the
+   related
+      person forinclusion in the report.
+   
+   
+   Customer Recreate
+   
+   Y
+   
+   
+   Desired behavior
+   
+   Wants a complete account report specifying the organization as
+   the type
+   filter.
+   
+   
+   Steps to duplicate
+   
+   
+   1) Recreate the customer's directory using materials provided in
+   the
+      attachments (or ECUREP
+      /:/proj/PMR/1/0/10490,379,000/10490.379.000.diags_29Sep05.zip
+      (contains their ids51 ldap /etc directory and a full ldif).
+   
+   2) Id/password is ITIM MANAGER/secret
+   3) Initiate an Account report selecting racf as the service type
+   and
+   selecting 'MVS - INGT Test System' as the service
+   'Organization' as the business unit and selecting "ING" (the
+   only
+   tenant).
+   selecting the tenant ING>
+   4) Submit the report.
+   5) Observe only two accounts displayed.
+   6) Observe error in itim.log.
+   
+   Logging options set for this test were:
+   
+     log4j.category.com.ibm.itim.dataservices.model=DEBUG
+     log4j.category.com.ibm.itim.dataservices.ldap=DEBUG
+     log4j.category.com.ibm.itim.report=DEBUG
+     log4j.category.com.ibm.itim.webclient=DEBUG
+     log4j.category.com.ibm.itim.remoteservices=DEBUG
+   
+   
+   
+   Environment:
+   
+   Operating System :  Aix 5.3
+   ITIM version :  4.5.1 fp42
+   Cluster: n
+   Database server : db2 81
+   Directory server : ids 51
+   WebServer : WAS 5.02
+   Other:
+   
+   
+   
+   End  ------- ITIM Problem Description Format Insert ------------
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  16970
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *   Required information not recieved.
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   IY77015
+   
+   
+ * REPORTED COMPONENT NAME
+   IBM TIV IDENT M
+   
+   
+ * REPORTED COMPONENT ID
+   5724C3402
+   
+   
+ * REPORTED RELEASE
+   451
+   
+   
+ * STATUS
+   CLOSED RET
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2005-09-29
+   
+   
+ * CLOSED DATE
+   2005-10-14
+   
+   
+ * LAST MODIFIED DATE
+   2005-10-14
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

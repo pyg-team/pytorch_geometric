@@ -1,0 +1,20 @@
+Title: IBM 300 second license key lifetime in Sentinel does not seem to be enforced - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ I have installed the Sentinel License Manager for Windows and SPSS for Windows as a network installation. If an SPSS workstation uses a license token from the license manager and disconnects from the network, it can still work with SPSS. The license appears to be available on the client system until the client's SPSS session has ended. Is this by design? The license manager reports that there is a key lifetime of 300 seconds, yet the license is retained beyond that on the client machine. 
+
+RESOLVING THE PROBLEM
+This is by design. The SPSS client does obtain its network license upon launch of the application, and keeps it for the duration of the session (until the SPSS application is closed). So, if a user loses connectivity with the License Manager, they won't have any danger of losing their work - they should be able to finish their SPSS session normally. If connectivity remains lost for 5 minutes (300 seconds), the License Manager will clean up and reclaim the license, adding it to the pool of available license tokens. However, as soon as connectivity is restored and the client and License Manager can communicate again, the client will automatically reclaim its license token, and the License Manager will recognize the license as "in use" once more. So, during this process, the end-user suffers no negative effects, and the client and License Manager silently work things out between themselves
+
+RELATED INFORMATION
+ Need more help? Our Statistics forum is Live! [https://developer.ibm.com/answers/topics/statistics.html?smartspace=predictive-analytics]
+Need more help? Our Licensing forum is Live! [https://developer.ibm.com/answers/topics/spsslicensing.html]
+
+
+ 
+
+HISTORICAL NUMBER
+ 70364

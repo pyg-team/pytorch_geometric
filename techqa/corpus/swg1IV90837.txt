@@ -1,0 +1,128 @@
+Title: IBM IV90837: IN TRIRIGA PLATFORM 3.5.1.2 EXPORTS TO EXCEL ARE NO LONGER FORMATTED. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Excel file exports are no longer formatted as they were.
+   Previously exports would have formatting such as a bold query
+   name on the first line, wider columns, text wrap, etc.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  NA
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Need to add formatting to match old xls format with new xlsx
+   export method.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  When exporting excel files from report manager, the title and
+   header row are now in bold font, and the column widths are
+   adjusted to fit all values in each column. If a cell value is
+   too big, the value will be word-wrapped. Also, the gridlines
+   have been removed again, to resemble the look from releases
+   prior to 3.5.1.
+    This is targeted to the 2h2016
+   mod release as well as the 3.5.1.3 fix pack.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV90837
+   
+   
+ * REPORTED COMPONENT NAME
+   TRI APP PLTFM R
+   
+   
+ * REPORTED COMPONENT ID
+   5725F26RE
+   
+   
+ * REPORTED RELEASE
+   351
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-11-17
+   
+   
+ * CLOSED DATE
+   2016-11-28
+   
+   
+ * LAST MODIFIED DATE
+   2016-11-28
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  999
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R351 PSY
+   UP

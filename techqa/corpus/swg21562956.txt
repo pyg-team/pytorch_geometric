@@ -1,0 +1,165 @@
+Title: IBM How to install WebSphere MQ version 7.0.x (or higher) jars in SI/GIS - United States
+
+Text:
+Extensions;Adapters;Installation; STERLINGHTG TECHNOTE (FAQ)
+
+QUESTION
+ How to install WebSphere MQ version 7.0.x (or higher) jars in SI/GIS 
+
+ANSWER
+
+
+To install MQ 7.0.x(or higher) jar files in SI/GIS, all jar files located beneath the directory of the WebSphere your_install_dir/java/lib 
+MUST be run through the install3rdparty script, not just the com.ibm.mq.jar file as noted in the section ‘Installing the WebSphere MQ Adapter’ 
+at the documentation located in the Sterling SI/GIS official documentation. A formal documentation update will be forth coming. 
+This only includes the jar files contained in the WebSphere your_install_dir/java/lib directory, but not any subdirectories beneath /lib.
+
+The jar files to be installed as third party files vary with the different versions of WebSphere MQ.
+You can view the list of jar files from your_install_dir/java/lib on the WebSphere MQ server. For MQ version 7.0.x and above,
+all jar files contained in the WebSphere your_install_dir/java/lib directory should be installed using the SI/GIS install3rdParty utility.
+
+Note: The WebSphere MQ adapter may work with previous versions of the WebSphere MQ classes for Java,
+however it was designed for use with the version 5.3.x or higher. In all cases, the version of the WebSphere MQ jar file(s)
+installed to the application MUST match the version running on the WebSphere MQ server.
+
+
+PREREQUISITES:
+The instructions below assume all of the following prerequisites have been met:
+-SterlingIntegrator/GentranIntegrationSuite has viable database & file system backups
+-The SI/GIS user account that the application runs with is the account performing the below instructions
+-The WebSphere MQ Server is accessible to obtain the MQ 7.0.x (or higher) files necessary for the install
+
+
+
+INSTRUCTIONS:
+To install the WebSphere MQ adapter (below version 7.0.x):
+
+1) From the computer where the WebSphere MQ server is installed, copy the com.ibm.mq.jar file to a directory on your local server.
+
+2) From the directory on your local server, copy the com.ibm.mq.jar file to a directory on the host computer where Application is installed.
+
+3) Shut down SI/GIS if it is running.
+
+4) From the bin directory where SI/GIS is installed, install the vendor library package (com.ibm.mq.jar) by running
+the install3rdParty script. Use the WebSphere MQ server version number and the path and name of the
+directory that you used in step 2 to enter commands similar to the following examples:
+
+
+ * 
+ * On a UNIX\Linux system, enter:
+   
+   install3rdParty.sh ibm 5_3 -j directory/com.ibm.mq.jar
+   
+   
+ * 
+ * On a Windows system, enter:
+   
+   install3rdParty.cmd ibm 5_3 -j directory/com.ibm.mq.jar
+
+
+
+5) Restart Application.
+
+
+
+To install the WebSphere MQ adapter (above version 7.0.x):
+
+1) From the computer where the WebSphere MQ server is installed, copy ALL the jar files in the your_install_dir/java/lib directory
+to a directory on your local server. No files located in subdirectories beneath the WebSphere your_install_dir/java/lib location need to be copied over.
+
+2) From the directory on your local server, copy the jar files to a directory on the host computer where SI/GIS is installed.
+
+3) Shut down SI/GIS if it is running.
+
+4) From the bin directory where SI/GIS is installed, install ALL the vendor library packages by running the install3rdParty
+script included with the application. Use the WebSphere MQ server version number and the path and name of the directory that was used
+in step 2 to enter commands similar to the following examples (Please note: the exact names & number of the
+vendor's filenames appearing in the list below may vary):
+
+
+ * 
+ * On a UNIX\Linux system, enter:
+   
+   install3rdParty.sh ibm 7_0 -j directory/com.ibm.mq.commonservices.jar
+   
+   install3rdParty.sh ibm 7_0 -j directory/com.ibm.mq.defaultconfig.jar
+   
+   install3rdParty.sh ibm 7_0 -j directory/com.ibm.mq.fta.jar
+   
+   install3rdParty.sh ibm 7_0 -j directory/com.ibm.mq.headers.jar
+   
+   install3rdParty.sh ibm 7_0 -j directory/com.ibm.mq.jar
+   
+   install3rdParty.sh ibm 7_0 -j directory/com.ibm.mq.jmqi.jar
+   
+   install3rdParty.sh ibm 7_0 -j directory/com.ibm.mq.jms.Nojndi.jar
+   
+   install3rdParty.sh ibm 7_0 -j directory/com.ibm.mq.pcf.jar
+   
+   install3rdParty.sh ibm 7_0 -j directory/com.ibm.mq.postcard.jar
+   
+   install3rdParty.sh ibm 7_0 -j directory/com.ibm.mq.soap.jar
+   
+   install3rdParty.sh ibm 7_0 -j directory/com.ibm.mq.tools.ras.jar
+   
+   install3rdParty.sh ibm 7_0 -j directory/com.ibm.mqetclient.jar
+   
+   
+   
+ * 
+ * On a Windows system, enter:
+   
+   install3rdParty.cmd ibm 7_0 -j directory/com.ibm.mq.commonservices.jar
+   
+   install3rdParty.cmd ibm 7_0 -j directory/com.ibm.mq.defaultconfig.jar
+   
+   install3rdParty.cmd ibm 7_0 -j directory/com.ibm.mq.fta.jar
+   
+   install3rdParty.cmd ibm 7_0 -j directory/com.ibm.mq.headers.jar
+   
+   install3rdParty.cmd ibm 7_0 -j directory/com.ibm.mq.jar
+   
+   install3rdParty.cmd ibm 7_0 -j directory/com.ibm.mq.jmqi.jar
+   
+   install3rdParty.cmd ibm 7_0 -j directory/com.ibm.mq.jms.Nojndi.jar
+   
+   install3rdParty.cmd ibm 7_0 -j directory/com.ibm.mq.pcf.jar
+   
+   install3rdParty.cmd ibm 7_0 -j directory/com.ibm.mq.postcard.jar
+   
+   install3rdParty.cmd ibm 7_0 -j directory/com.ibm.mq.soap.jar
+   
+   install3rdParty.cmd ibm 7_0 -j directory/com.ibm.mq.tools.ras.jar
+   
+   install3rdParty.cmd ibm 7_0 -j directory/com.ibm.mqetclient.jar
+   
+   
+
+5) Restart Application.
+
+ 
+
+VERIFICATION:
+There is currently no successful completion message upon successfully applying the jar files.
+To verify the install3rdParty update applied to the product successfully, open the property files in your SI/GIS install directory here:
+/properties/dynamicclasspath.cfg.in
+/properties/dynamicclasspath.cfg
+
+and confirm several entries of 
+VENDOR_JAR=\some\file\path\some.ibm.mq.jarfile.jar
+
+that match the jar files applied in the instructions above.
+
+
+FACT:
+Sterling Integrator, Release 5.0
+Gentran Integration Suite, Release 4.3
+IBM WebSphere MQ, stateful adapter, MQMD
+install3rdParty, com.ibm.mq.jar
+NFX3876, NFX7425
+
+ 
+
+Cross reference information Segment Product Component Platform Version Edition Commerce Sterling B2B Integrator Adapters 
+HISTORICAL NUMBER
+ HTG2743

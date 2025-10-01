@@ -1,0 +1,148 @@
+Title: IBM QMGTOOLS: Performance/Miscellaneous Data Collection - Query Performance - United States
+
+Text:
+PERFM; PerfMustGather; QUERY TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ DB2 UDB Database queries are experiencing poor performance. The following MustGather tool will assist you in collecting the critical data to troubleshoot issues with DB2 UDB database query performance. 
+
+RESOLVING THE PROBLEM
+Diagnosing the problem 
+
+The Query Performance MustGather tool provides an automated tool for collecting Query Performance MustGather documents described in document N1012249, MustGather: General SQL Query Performance: Database 'DCF Technotes (IBM i)', View 'Products', Document 'MustGather: General SQL Query Performance ' [http://www-01.ibm.com/support/icons/doclink.gif] [</font></b>http://www-01.ibm.com/support/docview.wss?uid=nas8N1012249].
+
+When executed, the tool will automatically gather a series of data which include the following:
+
+o Plan Cache Snapshot
+o Full Plan Cache (output from CALL PGM(QQQOOOCACH) PARM('P') Dump)
+o Database Monitor 
+
+
+Resolving the problem
+
+For all DB2 UDB Database query performance issues on the IBM i server, please follow the instructions below to collect the MustGather information needed by IBM Support to help diagnose the cause of and resolve your issue.
+
+QMGTOOLS - Database query performance specific MustGather tool execution instructions:
+
+1. If the QMGTOOLS toolkit has not yet been installed, you should refer to document N1011297, MustGather: How To Obtain and Install QMGTOOLS: [http://www-912.ibm.com/s_dir/slkbase.NSF/DocNumber/614354368]Database 'DCF Technotes (IBM i)', View 'Products', Document 'MustGather: How To Obtain and Install QMGTOOLS' [http://www-01.ibm.com/support/icons/doclink.gif] [</font></b>http://www-01.ibm.com/support/docview.wss?uid=nas8N1011297] for information on how to download and install the QMGTOOLS toolkit on your IBM i server.
+
+2. Add the QMGTOOLS library to your library list.
+
+ADDLIBLE QMGTOOLS
+
+3. Go to the QMGTOOLS main menu.
+
+GO MG
+
+4. Enter option 2 and press b to select the "Performance/Misc data collection" menu.
+
+5. Enter option 4 and press ENTER to select the "Query Performance" MustGather toolkit.
+
+6. Enter option 1 and press ENTER to begin the MustGather process for Query Performance.
+
+7. Press ENTER to accept the defaults unless instructed by IBM Support to change specific parameter values.
+
+8. Here is an example of the "Query Performance Must Gather" parameters and options available.
+
+
+Screen shot showing the QMGTOOLS/QRYPFMG CL command [/support/docview.wss?uid=nas8N1010401&aid=1] [/support/docview.wss?uid=nas8N1010401&aid=1]
+
+
+
+Caution: A long-running and/or large DBMON can negatively impact system performance. If possible, narrow the scope of the issue and start the DBMON, shortly before the performance issue begins. Generally, a 30-60 minute, 6000-8000 MB trace size is fine. If, for any reason, you need to end the DBMON immediately, use the QMGTOOLS Query Performance menu (GO MG, option 2, option 4, option 2) or the QMGTOOLS/DBMONEND command to end the DBMON. The DBMON will end immediately and the remaining data collection will proceed normally. 
+Screen shot showing the Database monitor parameters on the QMGTOOLS/QRYPFMG CL command [/support/docview.wss?uid=nas8N1010401&aid=2] [/support/docview.wss?uid=nas8N1010401&aid=2]
+
+9. Finding the data. 
+Once the main collector job, called QRYPFCOL and the optional QRYPFDBMON job (which is used to collect the Database Monitor) complete, SAVFs will be created in the in the default QTILIB library (Note: the SAVFs will be in the library that was specified on the SAVLIB pararmeter of the QRYPFMG CL command). The SAVF names should start with QPF*.
+
+If a DBMON and/or Plan Cache Snapshot was collected, the SAVF name will start with QPFL*. If a Plan Cache Dump was requested, the SAVF name will start with QPFI*
+
+Screen shot showing the SAVFs in the QTILIB library: [/support/docview.wss?uid=nas8N1010401&aid=3] [/support/docview.wss?uid=nas8N1010401&aid=3]
+
+
+Collecting and sending diagnostic information to the IBM i Global Support Center
+
+You should refer to document N1019224, MustGather: Instructions for Sending Data to IBM i Support: [http://www-912.ibm.com/s_dir/slkbase.NSF/DocNumber/331795903]Database 'DCF Technotes (IBM i)', View 'Products', Document 'MustGather: Instructions for Sending Data to IBM i Support' [http://www-01.ibm.com/support/icons/doclink.gif] [</font></b>http://www-01.ibm.com/support/docview.wss?uid=nas8N1019224] for detailed information on uploading diagnostic information to IBM.
+
+Additional information on How to Email or FTP the SAVF to IBM. 
+ *  - [http://www.ibm.com/i/c.gif] Using the Service Request (SR) Tool if the file size is 2 GB or less 
+   
+   If you have an existing PMR 
+   
+   1. Sign on to the SR tool at the following URL:
+   http://www.ibm.com/support/entry/portal/open_service_request [http://www.ibm.com/support/entry/portal/open_service_request]
+   2. On the Welcome page, enter the PMR number in the Enter a report number field and click Go.
+   
+   3. Scroll down to the Attach Relevant File field.
+   
+   4. Click Browse to locate the log or trace file that you want to submit to IBM Support.
+   
+   5. Click Submit to transfer your file to IBM Technical Support through FTP (ECuRep) and associated with this PMR.
+   
+   If you are opening a new PMR
+   
+   1. Sign on to the SR tool at the following URL:
+   http://www.ibm.com/support/entry/portal/open_service_request [http://www.ibm.com/support/entry/portal/open_service_request]
+   
+   2. Select Open a new service request.
+   
+   3. Follow the steps to create a Service Request until you have come to the final page prior to submitting your request.
+   
+   4. Scroll down to the Attach additional files section.
+   
+   5. Click Browse to start adding files to your PMR. Note that there is a 2GB limit per file.
+   
+   6. Click Submit when you are done adding files and are ready to submit your PMR to IBM Service. If the data you will be submitting is less than 20 MBs and you would like to e-mail the data to IBM, use the following information. You can send an e-mail to ibmi_support@ecurep.ibm.com using the instructions from http://www-01.ibm.com/software/support/exchangeinfo.html#email [http://www-01.ibm.com/software/support/exchangeinfo.html#email]. 
+   
+   
+   
+
+
+
+ *  - [http://www.ibm.com/i/c.gif] Using FTP if the file size is greater then 2 GB 
+   
+   You can refer to this link for full instructions: http://www-01.ibm.com/software/support/exchangeinfo.html#ecurep [http://www-01.ibm.com/software/support/exchangeinfo.html#ecurep]
+   
+   Use the following for the performance data:
+   
+   For North / South America locations, type and enter: 
+   ftp testcase.boulder.ibm.com PORT(*DFT) SECCNN(*SSL)
+   
+   For all other locations, type and enter: ftp ftp.ecurep.ibm.com
+   
+   1. Login as anonymous. Enter your e-mail address as the password.
+   
+   NOTE: At some point in time, IBM will remove anonymous login. Refer to this URL for information to obtain an IBM ID and password.
+   
+   http://www-01.ibm.com/support/docview.wss?uid=nas8N1022576 [http://www-01.ibm.com/support/docview.wss?uid=nas8N1022576]
+   
+   2. Type and enter: cd /toibm/os400
+   
+   3. Type and enter the following command to enable binary mode for the FTP session: bin
+   
+   4. Enter your PMR record information and data identifier: 
+   
+   xxxxx.bbb.ccc.idr.JW1.savf
+   
+   Where:
+   xxxxx is the PMR number
+   bbb is the Branch
+   ccc is the Country code [http://www.ibm.com/de/support/ecurep/country.html] [http://www.ibm.com/de/support/ecurep/country.html] 
+   idr is the file identifier
+   DB is the data identifier (this should be incremented if additional save files are sent, DB1, DB2, DB3, etc)
+   .savf is the file extension
+   
+   Example for a green screen command line:
+   put yourlib/yoursavf 12345.379.000.idr.DB.savf 
+   
+   
+   
+
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Operating System IBM i 7.2 Operating System IBM i 7.1 Operating System IBM i 6.1 
+HISTORICAL NUMBER
+ 669054932

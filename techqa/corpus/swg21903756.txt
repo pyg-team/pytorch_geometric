@@ -1,0 +1,30 @@
+Title: IBM DataPower Gateways and NTP leap second - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How does the IBM DataPower Gateway process NTP leap second events? 
+
+CAUSE
+The International Earth Rotation and Reference Systems Service (IERS) periodically declares the need for a leap second. The NTP server operator then decides whether to insert or propagate the leap second or simply absorb the leap second as a change in the reference time.
+This document is not intended to describe a leap second itself; rather it is to describe how the DataPower Gateway processes a leap second. If you need additional information on leap seconds, there are Internet resources.
+
+
+ANSWER
+The DataPower Simple Network Time Protocol (SNTP) configuration includes a "refresh interval" that has a default value of 900 seconds. With each refresh interval timer event, the NTP client processes a single transaction with the NTP server. 
+
+
+When a leap second occurs, the NTP server or servers used by the DataPower Gateway might insert the leap second indicator into the NTP protocol header. This insertion is designed to stage the leap second event ahead of time. When the NTP server sets this signal in the NTP response, NTP clients can choose to add or remove 1 second at the midnight crossing on June 30 or December 31. The NTP server administrator can decide to enable this property weeks or days before the event. The DataPower Gateway SNTP implementation ignores the leap second indicator and continues normal operation.
+
+After the leap second event occurs, the DataPower Gateway SNTP implementation refreshes the current time reference from the NTP server and make corrections as needed. If the NTP server has corrected its own time, then the reference time passed to the DataPower Gateway includes all or a portion of the correction. If the correction on the NTP server is incomplete at the time of first request from DataPower Gateway following the event, then the full correction does not take place on the DataPower Gateway until the correction has fully completed on the NTP server. 
+
+The DataPower Gateway absorbs leap seconds as they are absorbed by the NTP server or servers and communicated as the reference time in responses sent to the DataPower Gateway. 
+
+The DataPower Gateway logs the time change at the "info" log level as in the following example log message:
+
+7:59:07 PM system information 207 0x80e0031f ntp-service (NTP Service): NTP time adjustment of 1000097 microseconds 
+
+This message reflects the 1 second change that is introduced by the leap second on an NTP server that used a step correction to implement leap second.
+
+Note: The DataPower Gateway SNTP implementation uses slew correction for offsets of 0.5 seconds or less and step corrections when offset is greater than 0.5 seconds. If the NTP server uses step correction to process leap second event, then this results in a step correction in DataPower Gateway.

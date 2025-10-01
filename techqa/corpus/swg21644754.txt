@@ -1,0 +1,31 @@
+Title: IBM Why am I getting a Load API test failed error message when I try to create instance or when I try and map a table ? - United States
+
+Text:
+3025; SQL3025N; filename ; invalid; load api; test; failed TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ We receive the following error message when we try and create a new CDC instance or when an instance exist and we try to map tables:
+
+
+
+Load API test failed and returned the following error A SQL exception
+
+has occurred. The SQL error code is '-3025'. The SQL state is: .
+
+The error message is:
+
+SQL3025N A parameter specifying a filename or path is not valid.
+
+
+CAUSE
+The permissions for the path for bulk load for each instance are not set correctly
+
+ENVIRONMENT
+DB2
+
+RESOLVING THE PROBLEM
+Verify that the database instance owners have access to folders that make up the path for the bulk load for the CDC instance. The same level of access may be required across all folders, for example if the bulk load path looks something like:
+
+ABC / DEF / GHI
+
+If folders DEF and GHI are accessible by the DB instance owner and ABC is not, it may still cause this problem.

@@ -1,0 +1,193 @@
+Title: IBM PI61112: IBM SPSS STATISTICS 24: EXTENSION BUNDLE NOT INSTALLED TO DEFINED MENU LOCATION - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  You have installed IBM SPSS Statistics 24 and the  Statistics 24
+   Custom Dialog Builder Interim Fix 001 from fixcentral
+   http://www-933.ibm.com/support/fixcentral/ [http://www-933.ibm.com/support/fixcentral/]
+   Launch release 24 after installation of the IF001
+   Click Extensions -  Install Local Extension Bundle and locate a
+   self-created custom dialog *.spe file.
+   Click open and you are informed that the Dialog self-created
+   custom dialog was successfully  installed to menu Custom > <your
+   dialog name>
+   Restart Statistics 24 and see on which menu the dialog is
+   installed to
+   
+   You notice:
+   The menu location for the dialog is wrong. It is installed to
+   Extensions menu instead to a menu CUSTOM as defined on the spe
+   file.
+   If you open the *.spe file from Customer in release 24 with
+   Extensions - Custom dialog Builder for Extensions you see that
+   the menu location for this dialog was set to a menu CUSTOM
+   between GRAPHS and UTILITIES menu BUT in fact it is installed to
+   EXTENSIONS  menu
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  This issue will be addressed in the next Fix Pack. Please refer
+   to the Fix Pack schedule at
+   https://www.ibm.com/software/analytics/support/fixes/pbi_schedul
+   e.html [https://www.ibm.com/software/analytics/support/fixes/pbi_schedule.html] for information on upcoming Fix Packs
+   If you encounter the issue described above and it is not
+   possible for you to wait for the next FixPack please open a
+   Service Request with IBM SPSS Technical Support.
+   An Interim Fix was developed to address the issue.
+   Please contact Technical Support with reference to APAR PI61112
+   and technote 1982551 about about Interim Fix 002 for IBM SPSS
+   Statistics 24.0.0.0.
+   
+   Note: Interim fixes are limited corrections to specific issues
+   reported by one or more customers.
+   They are normally sent only to customers who have reported one
+   of the corrected problems, and who require
+   an immediate correction. Interim Fixes do not address customer
+   enhancement requests, and not all defect
+   corrections can be delivered as Interim Fixes. Due to their
+   urgency Interim Fixes undergo only targeted
+   testing of specific fixes, not full regression testing. If the
+   fix is not urgently required, you may prefer
+   to wait for a scheduled Fix Pack Release, which will be fully
+   regression tested. Interim Fix
+   corrections, once fully regression tested, are automatically
+   included in a future Fix Pack.
+   PLEASE NOTE: The fix will only apply to NEW CDBs. For existing
+   CDB that show the issue the user will need to:
+   1) Open the SPE file
+   2) open the menu editor dialog
+   3) Hit OK
+   4) Save\Save As the dialog.
+   Now if you install this dialog it will install to the Custom
+   menu.
+   There is no other way to fix the existing CDBs as there is an
+   error in how they saved to the Custom location.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * see APAR text                                                *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * This issue has been addressed in IBM SPSS Statistics 24 Fix  *
+   * Pack 1. Please upgrade to this FixPack level.                *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * This issue has been addressed in IBM SPSS Statistics 24 Fix  *
+   * Pack 1. Please upgrade to this FixPack level.                *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This issue has been addressed in IBM SPSS Statistics 24 Fix Pack
+   1. Please upgrade to this FixPack level.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI61112
+   
+   
+ * REPORTED COMPONENT NAME
+   SPSS STATISTICS
+   
+   
+ * REPORTED COMPONENT ID
+   5725A54ST
+   
+   
+ * REPORTED RELEASE
+   O00
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-04-20
+   
+   
+ * CLOSED DATE
+   2016-09-27
+   
+   
+ * LAST MODIFIED DATE
+   2016-09-27
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   SPSS STATISTICS
+   
+   
+ * FIXED COMPONENT ID
+   5725A54ST
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * RO00 PSN
+   UP
+   
+   
+ * RO00 PSY
+   UP

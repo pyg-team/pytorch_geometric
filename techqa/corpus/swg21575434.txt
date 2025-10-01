@@ -1,0 +1,25 @@
+Title: IBM Rebuild Deployment Engine - United States
+
+Text:
+DEL2; rebuild deployment engine got deleted TECHNOTE (FAQ)
+
+QUESTION
+ Is it possible to rebuild Deployment Engine if DE files got deleted? 
+
+CAUSE
+DE related files got deleted by mistake.
+
+ANSWER
+During the installation of an application Deployment Engine related files get stored in the following directories. The location of these files depend on platform and the user Id used to install the application. If these files get deleted for any reason then it is not possible to rebuild them. 
+
+Unix root user:
+/usr/ibm/common/acsi/bin
+Non-root user:
+$HOME/.acsi_<username>
+Windows:
+%ProgramFiles%\IBM\Common\acsi
+
+
+In addition, it is not possible to convert DE to use a different user id than what was used to install the application initially. It means you can not copy DE files from one installation to another and manipulate them to rebuild the lost DE files. 
+
+The only option to fix this issue is to restore the files from backup or re-install the application.

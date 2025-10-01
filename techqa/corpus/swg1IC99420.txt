@@ -1,0 +1,131 @@
+Title: IBM IC99420: OPTIM PERFORMANCE MANAGER - WEB CONSOLE DOES NOT OPEN ANY DASHBOARDS, SHOWS BLANK PAGE - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Web console does not open any dashboards, shows blank page
+   Flash modules in browser cache from prior OPM versions are not
+   upward compatible
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  (A) fully clear the browser cache ("Everything" not just the
+       last few days)
+   (B) force a cache refresh / clean reload:
+       - Press and hold Shift and left-click the Reload button
+       - Press "Ctrl + F5" or press "Ctrl + Shift + R" (Windows,
+         Linux)
+       - Press "Command + Shift + R" (MAC)
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  First fixed in Interim fix 7356 for InfoSphere Optim Performance
+   Manager Version 5.3
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Closing PER
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC99420
+   
+   
+ * REPORTED COMPONENT NAME
+   OPT PER MGR DB2
+   
+   
+ * REPORTED COMPONENT ID
+   5724Y9400
+   
+   
+ * REPORTED RELEASE
+   530
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-02-17
+   
+   
+ * CLOSED DATE
+   2014-04-10
+   
+   
+ * LAST MODIFIED DATE
+   2014-04-10
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   OPT PER MGR DB2
+   
+   
+ * FIXED COMPONENT ID
+   5724Y9400
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R530 PSY
+   UP

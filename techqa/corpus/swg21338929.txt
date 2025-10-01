@@ -1,0 +1,22 @@
+Title: IBM Two dispatchers running when looking at server administration - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ There are two dispatchers in Server Administration UI.
+One with the hostname and port number, while the other one uses the fully qualified name of the host and port. The second one does not process any requests.
+Trying to stop and unregister the second dispatcher seems to be successful, but re-login and going back to server admin screen shows that it is not removed. The cogserver.log and pogo_yyyy-mm-dd.log indicates TARGET_GUID_MISMATCH.
+How do I cleanup this ghost dispatcher? 
+
+SYMPTOM
+Received request from a dispatcher that knows me by a different GUID.It sent GUID="47". My GUID is "1". This likely means I am registered in more than one ContentStore. Will reply with a fault.
+2015-06-15 11:40:21.067 ERROR [om.cognos.p2plb.clerver.LoadBalanceHandler] Servlet.Engine.Transports : 5: Failed to forward non-affine request to node: hostname:9083/p2pd/servlet/dispatch
+2015-06-15 11:40:21.300 ERROR [ com.cognos.p2plb.model.NodeHospital] Thread-20: Ping of sick dispatcher hostname:9083/p2pd/servlet/dispatch failed. Error code = TARGET_GUID_MISMATCH
+2015-06-15 11:44:55.848 ERROR [om.cognos.p2plb.clerver.LoadBalanceHandler] Servlet.Engine.Transports : 0: Failed to forward non-affine request to node: hostname:9083/p2pd/servlet/dispatch
+
+
+RESOLVING THE PROBLEM
+DNS entry is using the full machine name instead of the short name for the server.
+
+Change the host names to the fully qualified name in cognos configuration will remove the extra dispatcher.

@@ -1,0 +1,28 @@
+Title: IBM Maps using xmllib or mathlib functions fail with "Exit call failed" error message - United States
+
+Text:
+xmllib mathlib function design studio exit call failed TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When a WebSphere® Transformation Extender (WTX) map that incorporates a xmllib or mathlib function is run, an error of "Exit call failed" is generated in non-Windows environments. 
+
+CAUSE
+The incorrect case for the xmllib or mathlib functions are used in a map rule
+
+DIAGNOSING THE PROBLEM
+When used in conjunction with the FAIL function, a map that uses these xmllib or mathlib functions will produce an "Exit call failed" or a message specified by the FAIL argument in an audit log.
+
+RESOLVING THE PROBLEM
+To resolve this issue:
+
+
+
+
+ 1. Edit the map appropriate map rule to ensure that lower case xmllib or mathlib function names are being used. 
+ 2. Rebuild the map for the desired runtime platform 
+ 3. Deploy the compiled map to the runtime platform
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ Ascential Mercator DataStage TX

@@ -1,0 +1,215 @@
+Title: IBM IT18493: INSTALLER FAILS WITH: BPCIN0053E AN ERROR OCCURRED WHEN CREATINGTHE DATABASE DATABASE REPOSITORY. - United States
+
+Text:
+AIX  FIXES ARE AVAILABLE
+IBM Spectrum Control V5.2.14 (May 2017) [http://www-01.ibm.com/support/docview.wss?uid=swg24043414]
+IBM Spectrum Control V5.2.15 (August 2017) [http://www-01.ibm.com/support/docview.wss?uid=swg24043749]
+IBM Spectrum Control V5.2.15.2 (November 2017) [http://www-01.ibm.com/support/docview.wss?uid=swg24044286]
+IBM Spectrum Control V5.2.16 (March 2018) [http://www-01.ibm.com/support/docview.wss?uid=swg24044454]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Installer fails to create Database Repository to grant
+   permissions error on DB2 instance owner resulting in:
+   
+   DB2 SQL Error: SQLCODE=-551, SQLSTATE=42501
+   
+   trace/lax.out install logs will show similar results:
+   
+   16-12-20 16:07:46.751-0500 INFO 2016-12-20 16:07:46.707-0500
+   INFO&#160; Entry DB2ConnectionUtil executeQueryselect tabname from
+   syscat.tables where tabschema = 'TPC' and type in ('S','T')
+    [java] 2016-12-20 16:07:46.759-0500 INFO&#160; Exit
+   DB2ConnectionUtil executeQuery
+   2016-12-20 16:07:46.796-0500 INFO 2016-12-20 16:07:46.759-0500
+   INFO Exit DB2ConnectionUtil executeQuery
+    [java] 2016-12-20 16:07:46.760-0500 INFO DB2ConnectionUtil
+   executeUpdate grant control on table
+   TPC.T_SAAS_DEMO_SERVER_USERS to user "DB2INST1"
+   2016-12-20 16:07:46.796-0500 INFO 2016-12-20 16:07:46.760-0500
+   INFO DB2ConnectionUtil executeUpdate grant control on table
+   TPC.T_SAAS_DEMO_SERVER_USERS to user "DB2INST1"
+    [java] 2016-12-20 16:07:46.784-0500 INFO&#160; Entry
+   DB2ConnectionUtil closeDbResources
+   2016-12-20 16:07:46.796-0500 INFO 2016-12-20 16:07:46.784-0500
+   INFO Entry DB2ConnectionUtil closeDbResources
+   [java] 2016-12-20 16:07:46.785-0500 INFO&#160; Exit
+   DB2ConnectionUtil closeDbResources
+   2016-12-20 16:07:46.796-0500 INFO 2016-12-20 16:07:46.785-0500
+   INFO Exit DB2ConnectionUtil closeDbResources
+    [java] 2016-12-20 16:07:46.785-0500 ERROR
+   GrantControlOnTables main Error granting control on tables.
+   2016-12-20 16:07:46.796-0500 INFO 2016-12-20 16:07:46.785-0500
+   ERROR GrantControlOnTables main Error granting control on
+   tables.
+    [java] com.ibm.db2.jcc.am.SqlSyntaxErrorException: DB2 SQL
+   Error: SQLCODE=-551, SQLSTATE=42501,
+   SQLERRMC=DB2INST1;GRANT;TPC.T_SAAS_DEMO_SERVER_USERS,
+   DRIVER=4.19.49
+   2016-12-20 16:07:46.797-0500 INFO
+   com.ibm.db2.jcc.am.SqlSyntaxErrorException: DB2 SQL Error:
+   SQLCODE=-551, SQLSTATE=42501,
+   SQLERRMC=DB2INST1;GRANT;TPC.T_SAAS_DEMO_SERVER_USERS,
+   DRIVER=4.19.49
+    [java] at com.ibm.db2.jcc.am.kd.a(Unknown Source)
+   
+   RECREATE STEPS:  Source db2 instance owner profile and run
+   Product Installer
+   ________________________________________________________________
+   The defect is against component:  Install and Upgrade
+   SC Server/Manager build/release:  5.2.12
+   SC Server OS:   RHELinux 6.8
+   ________________________________________________________________
+   Problem as described by customer: Unable to install product
+   Initial customer impact (low/med/high): Med
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  TBD
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * IBM Spectrum Control 5.2.x users                             *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * Installer fails to create Database Repository to grant       *
+   * permissions error on DB2 instance owner resulting in a DB2   *
+   * SQL error.                                                   *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Apply fix maintenance when available                         *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix for this APAR is targeted for the following maintenance
+   package:
+   
+   | refresh pack | 5.2-TIV-TPC-RP0014 - target May 2017
+   
+   Fixed in IBM Spectrum Control 5.2.14
+   
+   http://www.ibm.com/support/docview.wss?&uid=swg21320822 [http://www.ibm.com/support/docview.wss?&uid=swg21320822]
+   
+   The target dates for future refresh packs do not represent a
+   formal commitment by IBM. The dates are subject to change
+   without notice.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT18493
+   
+   
+ * REPORTED COMPONENT NAME
+   TPC ADVANCED
+   
+   
+ * REPORTED COMPONENT ID
+   5608TPCA0
+   
+   
+ * REPORTED RELEASE
+   529
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-12-23
+   
+   
+ * CLOSED DATE
+   2017-04-25
+   
+   
+ * LAST MODIFIED DATE
+   2017-04-25
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TPC ADVANCED
+   
+   
+ * FIXED COMPONENT ID
+   5608TPCA0
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R529 PSY
+   UP
+   
+   
+ * R52A PSY
+   UP
+   
+   
+ * R52B PSY
+   UP
+   
+   
+ * R52C PSY
+   UP
+   
+   
+ * R52D PSY
+   UP

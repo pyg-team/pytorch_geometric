@@ -1,0 +1,23 @@
+Title: IBM SDA does not work for TEPS support files on ITCAM for SOA 7.2 FP1 ifix 5 - United States
+
+Text:
+SDA TEPS "support files" SOA 7.2 FP1 ifix 5 TECHNOTE (FAQ)
+
+QUESTION
+ Why is my product support not being updated on TEPS (It's updated on TEMS) - from 7.2.0.1-TIV-ITCAMSOA-AIX-IF0005.tar. 
+
+CAUSE
+ SOA includes an SDA package for the TEMS but not for TEPS.
+
+ANSWER
+Basically, it is working as it is coded for this version. 
+
+ User has to manually apply SOA 7.2 FP1 ifix 5 support files on TEPS. 
+
+ Doc Apar IV77933 is created to provide this information. 
+
+ 
+
+NOTE: 
+All version of ITCAM for SOA 7.2 requires to apply support files manually on TEPS. 
+None of the 7.2 installers include SDA support for TEPS. It is not limited to 7.2.0.1-TIV-ITCAMSOA-IF0005.

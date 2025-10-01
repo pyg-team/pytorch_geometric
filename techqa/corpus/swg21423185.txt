@@ -1,0 +1,38 @@
+Title: IBM Resolving 250 and 86 memory errors in Red Brick - United States
+
+Text:
+error 250; fatal 86; out of memory; Red Brick out of memory TECHNOTE (FAQ)
+
+QUESTION
+ When you run a Red Brick Query or Red Brick load ; how can memory errors 250 and 86 be resolved? Either or both of these memory errors occur:
+
+** FATAL ** (86) Insufficient memory is available to continue
+
+Error 250: There is not enough memory available to execute the statement.. 
+
+CAUSE
+Red Brick is functioning properly. When the operating system refuses a request for memory, Red Brick returns error 250 or 86. Red Brick returns these errors for two reasons: 
+
+ * The system is out of memory. 
+ * The Red Brick memory request exceeds current memory allocated.
+
+
+You will get error 250 or 86 whenever the initial rbwsvr process size plus the Query Memory Limit (QML) [http://publib.boulder.ibm.com/infocenter/rbhelp/v6r3/index.jsp?topic=/com.ibm.redbrick.doc6.3/sqlrg/sqlrg131.htm] used is greater than the process data segment size. 
+
+If Red Brick can initially determine how much memory an operation will require, it will request the memory immediately. When the operating system denies this request, Red Brick returns error 250. 
+
+Red Brick cannot always determine the amount of memory it needs for a query. While Red Brick runs this type of query, it requests memory as needed. Red Brick returns error 86 when the sum of these requests exceeds the process data segment size. 
+ANSWER
+Lower the values of QML or Index Tempspace Threshold (ITT) [http://publib.boulder.ibm.com/infocenter/rbhelp/v6r3/index.jsp?topic=/com.ibm.redbrick.doc6.3/sqlrg/sqlrg116.htm]. Run Red Brick loads with OPTIMIZE OFF [http://publib.boulder.ibm.com/infocenter/rbhelp/v6r3/index.jsp?topic=%2Fcom.ibm.redbrick.doc6.3%2Ftmu%2Ftmu34.htm]. A suggested maximum value for QML is 10 megabyte (MB) less than the process data segment size. The 10 MB difference provides for the initial rbwsvr process plus extra memory that Red Brick uses to compile complex queries. 
+
+ 
+
+
+Increase swap space on UNIX and Linux computers to twice real memory. Even though a system is configured with sufficient swap space, "out of memory" errors can occur if insufficient swap space is available for the process stack and the data when a swap occurs. Verify paging file size for Windows computers. See "Configuring operating-system parameters [http://publib.boulder.ibm.com/infocenter/rbhelp/v6r3/index.jsp?topic=/com.ibm.redbrick.doc6.3/instlwin/instlnt14.htm] ". 
+
+ 
+If possible, increase the process data segment size as a long-term solution. 
+
+Tip: For more information regarding process data segment size, see the your operating system documentation.
+
+Important: If these items do not resolve the problem, then search for other articles on memory problems. If you cannot find a resolution, contact your local technical support office. [http://www.ibm.com/planetwide/]

@@ -1,0 +1,43 @@
+Title: IBM Change Employee Retention Portal application context root for Oracle WebLogic 11g application server? - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How to change the Employee Retention Portal (aka Atlas Portal) application context root when the application is deployed on the Oracle WebLogic 11g application server? 
+
+CAUSE
+When the Employee Retention Portal application (aka Atlas Portal) was deployed on older versions of the WebLogic application server, the deployment steps allowed you to set the application context root as "AtlasPortal" to match the instructions in the Deployment Guide. With Oracle WebLogic 11g application server, the deployment automatically sets the context root to "Portal". This may cause issues with people who were familiar with the URL from previous versions that used "AtlasPortal" as the context root.
+
+ANSWER
+For Oracle WebLogic 11g application server, in order to change the application context root you need to modify the weblogic.xml file contained within the AtlasPortal.war file before deploying it. 
+
+1. Copy the AtlasPortal.war to a temp directory. 
+
+2. Use the Java jar command to unzip the contents of the file. 
+
+jar xf AtlasPortal.war 
+
+3. Modify the weblogic.xml under the directory WEB-INF. Update the following two properties to have a value of "AtlasPortal" versus "Portal" 
+
+[original] 
+
+ <wls:cookie-path>/Portal</wls:cookie-path> 
+
+<wls:context-root>Portal</wls:context-root> 
+
+[new] 
+
+ <wls:cookie-path>/AtlasPortal</wls:cookie-path> 
+
+<wls:context-root>AtlasPortal</wls:context-root> 
+
+4. Use the Java jar command to repackage the file. 
+
+jar cf AtlasPortal.war * 
+
+5. Stop and delete the existing Atlas Portal application deployed in WebLogic. 
+
+6. Deploy the Atlas Portal application using the new AtlasPortal.war file. 
+
+7. Restart the WebLogic server.

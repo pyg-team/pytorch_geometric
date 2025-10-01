@@ -1,0 +1,217 @@
+Title: IBM IC48923: HTML REPORTS CONFUSING - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS RETURNED (APAR CANNOT BE RESOLVED WITHOUT ADDITIONAL INFO FROM IBM OR CUSTOMER.)
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  THIS IS A DEFECT ON DESIGN OF THE HTML REPORTS.
+   
+   I have created a RFE RATLC00144658, but it was resolved,
+   probable because misunderstanding of the
+   problem. This is a defect
+   on the entire design of the HTML Reports (and the other Test
+   results).  The reports are not intuitive, they are confusing and
+   difficult to read.  The customer writes:
+   
+   The HTML reports issues are collectively one defect or
+   problem, not an enhancement.
+   Reading the HTML report in my web browser is very confusing.
+   
+   Below are specific issues that the customer also reports. I have
+   created separate RFEs for each detailed issue, but again the
+   problem is that the HTML Reports are not intuitive and difficult
+   to follow. It would be worth to redesign it.
+   
+   The customer is: Girard Jason <jason.g@motorola.com>
+   
+   
+   A number of specific issues that are reported in different RFEs:
+   
+   Hello,
+   I am validating RT's ability to clearly generate/present HTML
+   reports,
+   and am using version 2003.06.13 on Solaris.
+   I have a parent C++ project, containing 3 C sub-projects, and 2
+   C++
+   sub-projects. All 5 projects are relatively simple in nature. A
+   couple
+   projects involve the same unit/file under test, but in one
+   project being
+   tested with stubbing, and one without stubbing. I built and
+   executed
+   the projects from the parent project in the RT GUI.
+   
+   Attached is a zip file with the artifacts from the parent
+   project:
+   "Container". I exported the HTML report for the entire parent
+   project's
+   contents. I noticed several things out of place or incorrect in
+   the
+   reports that are generated. I am also attaching a zip file of
+   one of
+   the sub-projects, Add_c.
+   
+   First, in the first C sub-project, called "Add_c", I have only
+   one test
+   case in the .ptu file; however, the Performance Profile iin the
+   RT GUI s
+   showing 5 tests...why? The same question applies regarding the
+   Memory
+   Profile...it is showing 5 tests.
+   
+   Second, from the base directory's index.html file, I clicked the
+   link to
+   "Performance Profile". This took me to the Qvi/index.html file.
+   There are some problems here. Again, the 5 tests in some
+   projects is
+   showing up. Also, the numbering is very odd...once the bold
+   number gets
+   to 9, the next number is 01, then it goes to 11, then 21, then
+   31, and
+   when it gets to 91, it goes to 02, 12, and so on.
+   In addition to this, there needs to be a separator of some kind
+   in the
+   Performance Profile HTML page, so I know which results are
+   coming from
+   which sub-projects/nodes.
+   
+   Going back to the main index.html page, when I click on the
+   "Code
+   Coverage" link, it displays several files from among the
+   projects/nodes. It is not clear which files were covered by
+   which
+   projects/nodes...this needs to be separated/labeled as such.
+   The same comment applies to the data displayed from the "Rates
+   Table"
+   link in the upper right.
+   
+   Going back to the main index.html page, when I clicked on the
+   "Test"
+   link, the table is showing a bunch of "Test.xrd" links, which is
+   ok, as
+   each test node in each sub-project was named "Test", but the
+   table
+   should at least spell out which Test.xrd came from which
+   project/node.
+   Also, I noticed that some of the Test.xrd are hyperlinked to the
+   SAME
+   file (i.e. addx1.html) while the results in the table are
+   different.
+   
+   Going back to the main index.html page, when I clicked on the
+   "Memory
+   Profile" link, the same comments apply as for the "Performance
+   Profile"
+   regarding the apparent duplication of tests, numbering
+   weirdness, and
+   separation/labeling of projects/nodes.
+   
+   I am requesting to put this as a high priority fix, as it will
+   impact
+   our ability to make heads or tails of the HTML reports.
+   
+   Thanks,
+   Jason
+   
+   The following files have been added to GSA for PMR#:
+   42287-122-000
+   
+   \\pokgsa.ibm.com\pokgsa\projects\s\swg_rational_supp_na\42287-12
+   2-000\3-10-2006.13.4.10\add_c.tar.gz
+   \\pokgsa.ibm.com\pokgsa\projects\s\swg_rational_supp_na\42287-12
+   2-000\3-10-2006.13.4.10\Container.tar.gz
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  To use the existing (confusing) reports.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *  This entry needs to be split in several ones.
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC48923
+   
+   
+ * REPORTED COMPONENT NAME
+   RATL TEST RT VX
+   
+   
+ * REPORTED COMPONENT ID
+   5724F5700
+   
+   
+ * REPORTED RELEASE
+   ALL
+   
+   
+ * STATUS
+   CLOSED RET
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2006-03-23
+   
+   
+ * CLOSED DATE
+   2007-07-20
+   
+   
+ * LAST MODIFIED DATE
+   2007-07-20
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

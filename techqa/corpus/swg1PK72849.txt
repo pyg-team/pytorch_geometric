@@ -1,0 +1,206 @@
+Title: IBM PK72849: ADMINISTRATIVE CONSOLE HTTP 404 - FILE NOT FOUND                /APPLICATIONDEPLOYMENTDETAIL - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Problem Description:
+   
+   Tried to change a Resources Reference bindings for an installed
+   applciation under: Enterprise Applications > APP_NAME > Map
+   resource references to resources. If we point to a resource
+   which is out of scope, then we are presented the "Application
+   Resource Warnings" page with message ADMA8019E: The resources
+   that are assigned to the application are beyond the deployment
+   target scope...".
+   
+   From this page we can't move forward; we always receive "HTTP
+   404 - File not found /applicationDeploymentDetail" error if we
+   select either the Continue or Cancel buttons.
+   
+   FFDC shows the following Stack Exception:
+   
+   ---------------------------------------
+   key = java.io.FileNotFoundException
+   com.ibm.ws.webcontainer.servlet.FilterProxyServlet.dispatch 312
+   Exception = java.io.FileNotFoundException
+   Source =
+   com.ibm.ws.webcontainer.servlet.FilterProxyServlet.dispatch
+   probeid = 312
+   Stack Dump = java.io.FileNotFoundException:
+   /applicationDeploymentDetail
+   at
+   com.ibm.ws.webcontainer.extension.DefaultExtensionProcessor.hand
+   leRequest(DefaultExtensionProcessor.java:438)
+   at
+   com.ibm.ws.webcontainer.webapp.WebAppRequestDispatcher.forward(W
+   ebAppRequestDispatcher.java:347)
+   at
+   org.apache.struts.action.RequestProcessor.doForward(RequestProce
+   ssor.java:1070)
+   at
+   org.apache.struts.tiles.TilesRequestProcessor.doForward(TilesReq
+   uestProcessor.java:273)
+   ---------------------------------------------
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Note: even though an exception is being thrown when the ok or
+   cancel is clicked, the data will be saved correctly.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  WebSphere Application Server V6.0.2 users   *
+   *                  deploying applications with resources.      *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: During application edit, leaving the    *
+   *                      resource warnings panel generates an    *
+   *                      HTTP 404 /applicationDeploymentDetail   *
+   *                      not found.                              *
+   ****************************************************************
+   * RECOMMENDATION:  Even though the console cannot navigate     *
+   *                  past the resource warnings panel, the data  *
+   *                  entered was saved.  You can navigate using  *
+   *                  the left navigation pane to get back to     *
+   *                  your application detail.                    *
+   ****************************************************************
+   When editing applications with resources, if the resource
+   warnings panel is displayed, you cannot navigate properly by
+   pressing Continue or Cancel. When you press Continue or
+   Cancel, you see an HTTP 404 message saying
+   /applicationDeploymentDetail is not found.  At this point you
+   can only navigate through the left navigation pane, but the
+   data you just entered was not lost.  The fix for this APAR
+   also includes the fix for PK44872 [http://www-01.ibm.com/support/docview.wss?uid=swg1PK44872]. This problem would prevent
+   the resource warnings panel from being displayed unless an
+   application had been installed during this user's console
+   session. PK44872 [http://www-01.ibm.com/support/docview.wss?uid=swg1PK44872] results in a NullPointerException.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Code was corrected to allow you to navigate without error.
+   
+   The fix for this APAR is currently targeted for inclusion in
+   fixpack 6.0.2.33.  Please refer to the Recommended
+   Updates page for delivery information:
+   http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK72849
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBS APP SERV N
+   
+   
+ * REPORTED COMPONENT ID
+   5724H8800
+   
+   
+ * REPORTED RELEASE
+   60A
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-09-25
+   
+   
+ * CLOSED DATE
+   2008-10-15
+   
+   
+ * LAST MODIFIED DATE
+   2008-11-11
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBS APP SERV N
+   
+   
+ * FIXED COMPONENT ID
+   5724H8800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R60A PSY
+   UP
+   
+   
+ * R60H PSY
+   UP
+   
+   
+ * R60I PSY
+   UP
+   
+   
+ * R60P PSY
+   UP
+   
+   
+ * R60S PSY
+   UP
+   
+   
+ * R60W PSY
+   UP

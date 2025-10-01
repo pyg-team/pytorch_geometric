@@ -1,0 +1,29 @@
+Title: IBM Error CTGWA0130E occurring when applying FP 2 for JazzSM - United States
+
+Text:
+DASHL2; DASHL2INST; CTGWA0130E; Fail to undeploy ; war module; isc.ear; FP02 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ During the install of Fix Pack 2 for Jazz for Service Management 1.1, the following error is occurring: 
+
+Error: "CTGWA0130E Fail to undeploy a war module from isc.ear" 
+
+CAUSE
+Some of the XML files in WEB-INF get corrupted.
+
+DIAGNOSING THE PROBLEM
+In the Console logs, check the undeployRave.err for errors like this: 
+
+ 
+com.ibm.websphere.management.exception.AdminException: ADMA0167E: File 
+dash.ravewidget.war does not exist for delete operation. 
+
+
+
+
+RESOLVING THE PROBLEM
+The issue is fixed in DASH 3.1.1 and prevents it from occurring in future Fix Pack installs. 
+
+DASH 3.1.1 is part of JazzSM 1.1.1, which can be downloaded from IBM FixCentral: 
+
+http://www-933.ibm.com/support/fixcentral/swg/selectFix?product=ibm%2FTivoli%2FJazz+for+Service+Management&fixids=1.1.1-TIV-JazzSM-multi&source=dbluesearch&function=fixId&parent=ibm/Tivoli [http://www-933.ibm.com/support/fixcentral/swg/selectFix?product=ibm%2FTivoli%2FJazz+for+Service+Management&fixids=1.1.1-TIV-JazzSM-multi&source=dbluesearch&function=fixId&parent=ibm/Tivoli]

@@ -1,0 +1,97 @@
+Title: IBM QRadar: Sharing Dashboards Items - United States
+
+Text:
+Adding dashboard items; widgets; sharing searches; sharing dashboards TECHNOTE (FAQ)
+
+QUESTION
+ How do I create and share a custom Dashboard Item that can be shared with other users? 
+
+ANSWER
+To create a Dashboard Item that can be shared with other users, there are three main steps that need to be taken: 
+
+ 1. Create and share the Search Criteria, that the Dashboard Item will use. 
+ 2. Have Users modify the shared Search Criteria for use on their Dashboards. 
+ 3. Have Users add the shared Search Criteria as a Dashboard Item.
+
+
+
+CREATE AND SHARE THE SEARCH CRITERIA, THAT THE DASHBOARD ITEM WILL USE
+
+The following steps can be used to create a search that can be used as a Dashboard Item for all users: 
+
+Note: The user account initiating this process must be in the Admin User Role. Only users in the Admin User Role have the ability to share saved Search Criteria. 
+ 1. Choose one of the following options:  * Click the Log Activity tab. 
+     * Click the Network Activity tab.
+       
+    
+    
+ 2. Perform a search that is Grouped By at least one field.
+    
+ 3. Click Save Criteria.
+    
+ 4. Enter values for the following parameters: 
+    
+    Parameter Description Search Name Type the unique name that you want to assign to this search criteria. You will provide this Search Name to other users that might want to use the search for their Dashboard Item. Assign Search to Group(s) Select the check box for the group you want to assign this saved search. If you do not select a group, this saved search is assigned to the Other group by default. For more information, see Managing search groups [https://www.ibm.com/support/knowledgecenter/en/SS42VS_7.3.1/com.ibm.qradar.doc/c_qradar_manage_search.html]. Manage Groups If you want to manage search groups, click Manage Groups. For more information, see Managing search groups [https://www.ibm.com/support/knowledgecenter/en/SS42VS_7.3.1/com.ibm.qradar.doc/c_qradar_manage_search.html]. Timespan options: Choose one of the following options:  *  Last Interval (auto refresh) - Select this option to filter your search results while in auto-refresh mode. The Log Activity and Network Activity tabs refreshes at one-minute intervals to display the most recent information. Recent - Select this option and, from this list box, select the time range that you want to filter for. Specific Interval - Select this option and, from the calendar, select the date and time range you want to filter for. 
+    
+    Include in my Quick Searches If you want to include this search in your Quick Search list box on the toolbar, select this check box. Include in my Dashboard This check box must be checked, to include the data from your saved search on the Dashboard tab. For more information about the Dashboard tab, see Dashboard management [https://www.ibm.com/support/knowledgecenter/en/SS42VS_7.3.1/com.ibm.qradar.doc/c_qradar_dboard_manage.html].
+    Note: This parameter is only displayed if the search is grouped. Set as Default If you want to set this search as your default search, select this check box. Share with Everyone This check box must be checked to share the search criteria with all users. 
+    
+ 5. Click OK.
+    
+
+
+
+HAVE USERS MODIFY THE SHARED SEARCH CRITERIA FOR USE ON THEIR DASHBOARDS
+
+The following steps are required by the Users that want to use the previously shared Search Criteria as a Dashboard Item: 
+
+ 1. Choose one of the following options:  * To add a Flow search Dashboard Item, click the Network Activity tab. 
+     * To add an Event search Dashboard Item, click the Log Activity tab.
+       
+       Note: If the Log Activity, or Network Activity tabs are not visible, the User does not have proper permissions to view searches assigned to their User account. 
+       
+    
+    
+ 2. Navigate to Search > New Search.
+    
+ 3. Select the Search Name of the shared search, that was provided by the User in the Admin Role, from the Available Saved Searches list. 
+    
+ 4. Click the Load icon.
+    
+ 5. Click any of the Search icons. The search results are displayed.
+    
+ 6. Click Save Criteria.
+    
+ 7. Check the Include in my Dashboard check box.
+    
+ 8. Click OK.
+    
+    
+
+
+HAVE USERS ADD THE SHARED SEARCH CRITERIA AS A DASHBOARD ITEM
+
+Each user that wants to add the shared search as a Dashboard Item will need to do the following: 
+
+ 1. Click the Dashboard tab.
+    
+ 2. In the Show Dashboard list, select the Dashboard you want to add the new Dashboard Item to.
+    
+ 3. Choose one of the following options:  * To add a Log Activity search Dashboard Item, navigate to Add Item > Log Activity > Event Searches. 
+     * To add a Network Activity search Dashboard Item, navigate to Add Item > Network Activity > Flow Searches. 
+       
+    
+    
+ 4. Select the Search Name of the shared search, that was provided by the User in the Admin Role, from the list. The new Dashboard Item will now be added to the Dashboard that you are currently on.
+
+
+
+
+Where do you find more information? 
+
+
+[/support/docview.wss?uid=swg21679314&aid=1] [http://ibm.biz/QRadar-KC] [/support/docview.wss?uid=swg21679314&aid=2] [https://ibm.biz/qradarforums] [/support/docview.wss?uid=swg21679314&aid=3] [http://ibm.biz/qradarknowledge] [/support/docview.wss?uid=swg21679314&aid=4] [http://ibm.biz/SecSuptUTube] [/support/docview.wss?uid=swg21679314&aid=5] [http://ibm.biz/qradarsoftware] [/support/docview.wss?uid=swg21679314&aid=6] [http://ibm.biz/MyNotification] [/support/docview.wss?uid=swg21679314&aid=7] [http://ibm.biz/SuptRegQuikStart] 
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Security IBM QRadar SIEM

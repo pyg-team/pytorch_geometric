@@ -1,0 +1,71 @@
+Title: IBM Recommended fixes for WebSphere Extended Deployment - United States
+
+Text:
+recommended updates; recommended updates; recommended updates; recommendations; prerequisites; required; RecommendedFixesDocument PRODUCT DOCUMENTATION
+
+ABSTRACT
+ This document provides a comprehensive list of recommended and generally available (GA) fixes for IBM WebSphere Extended Deployment, along with a list of previously delivered updates. 
+
+Tables are organized by version in the order they were released. These lists include Fix Packs, Cumulative Fixes, and Interim Fixes. 
+
+CONTENT
+ 
+
+[http://www.ibm.com/i/v14/rules/dotted_blue_rule_443.gif] [/support/docview.wss?uid=swg27005709&amp;aid=1] Version 6.1 [/support/docview.wss?uid=swg27005709&amp;aid=2] Version 6.0 [http://www.ibm.com/i/v14/rules/dotted_blue_rule_443.gif] 
+
+The WebSphere Extended Deployment suite of application infrastructure products include the following components:  * WebSphere Virtual Enterprise
+   
+   
+ * WebSphere eXtreme Scale
+   
+   
+ * WebSphere Extended Deployment Compute Grid
+
+
+Note: WebSphere eXtreme Scale is not included in the product suite for Version 6.1.1 and later. 
+
+
+Version 6.1 Fix Level Released Comments Version 6.1.1 Fix Pack 5 [http://www.ibm.com/support/docview.wss?uid=swg24032448] 6.1.1.5 15 JUNE 2012 [/support/docview.wss?uid=swg27005709&amp;aid=3] Version 6.1.1 Fix Pack 4 [http://www.ibm.com/support/docview.wss?rs=3023&uid=swg24030547] 6.1.1.4 5 AUG 2011 [/support/docview.wss?uid=swg27005709&amp;aid=3] Version 6.1.1 Fix Pack 3 [http://www.ibm.com/support/docview.wss?rs=3023&uid=swg24028454] 6.1.1.3 7 DEC 2010 [/support/docview.wss?uid=swg27005709&amp;aid=3] Version 6.1.1 Fix Pack 2 [http://www.ibm.com/support/docview.wss?rs=3023&uid=swg24027109] 6.1.1.2 18 JUNE 2010 [/support/docview.wss?uid=swg27005709&amp;aid=3] Version 6.1.1.0 Interim Fix Bundle 01 [http://www.ibm.com/support/docview.wss?rs=3023&uid=swg24024922]
+
+Prerequisite:
+WebSphere Application Server V6.1 Interim Fixes [http://www.ibm.com/support/docview.wss?rs=3023&uid=swg24018185] 6.1.1.0 11 DEC 2009 [/support/docview.wss?uid=swg27005709&amp;aid=3] Refresh Pack 1 [http://www.ibm.com/support/docview.wss?rs=3023&uid=swg24024123]
+
+Prerequisite:
+WebSphere Application Server V6.1 Interim Fixes [http://www.ibm.com/support/docview.wss?rs=3023&uid=swg24018185] 6.1.1.0 28 AUG 2009 Download the full installer from Passport Advantage [https://www-112.ibm.com/software/howtobuy/passportadvantage/paocustomer/Login?abu=https%3A%2F%2Fwww-112.ibm.com%3A443%2Fsoftware%2Fhowtobuy%2Fpassportadvantage%2Fpaocustomer%2Fpassporthome.nsf%2Fpassportadvantage%3FOpenAgent] Fix Pack 5 [http://www.ibm.com/support/docview.wss?rs=3023&uid=swg24020719]
+
+Prerequisite:
+WebSphere Application Server V6.1 Interim Fixes [http://www.ibm.com/support/docview.wss?rs=3023&uid=swg24018185] 6.1.0.5 19 DEC 2008 [/support/docview.wss?uid=swg27005709&amp;aid=3] Fix Pack 4 [http://www.ibm.com/support/docview.wss?rs=3023&uid=swg24020238]
+
+Prerequisite:
+WebSphere Application Server V6.1 Interim Fixes [http://www.ibm.com/support/docview.wss?rs=3023&uid=swg24018185] 6.1.0.4 4 SEP 2008 [/support/docview.wss?uid=swg27005709&amp;aid=3] Fix Pack 3 [http://www-1.ibm.com/support/docview.wss?rs=3023&uid=swg24018893]
+
+Prerequisite:
+WebSphere Application Server V6.1 Interim Fixes [http://www.ibm.com/support/docview.wss?rs=3023&uid=swg24018185] 6.1.0.3 31 JUL 2008 [/support/docview.wss?uid=swg27005709&amp;aid=3] Fix Pack 2 [http://www.ibm.com/support/docview.wss?rs=3023&uid=swg24018644]
+
+Prerequisite:
+WebSphere Application Server V6.1 Interim Fixes [http://www.ibm.com/support/docview.wss?rs=3023&uid=swg24018185] 6.1.0.2 24 APR 2008 [/support/docview.wss?uid=swg27005709&amp;aid=3] Release 6.1 [https://www-112.ibm.com/software/howtobuy/passportadvantage/paocustomer/Login?abu=https%3A%2F%2Fwww-112.ibm.com%3A443%2Fsoftware%2Fhowtobuy%2Fpassportadvantage%2Fpaocustomer%2Fpassporthome.nsf%2Fpassportadvantage%3FOpenAgent]
+
+Prerequisite:
+WebSphere Application Server V6.1 Interim Fixes [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27009588] 6.1 30 APR 2007 Download from Passport Advantage [https://www-112.ibm.com/software/howtobuy/passportadvantage/paocustomer/Login?abu=https%3A%2F%2Fwww-112.ibm.com%3A443%2Fsoftware%2Fhowtobuy%2Fpassportadvantage%2Fpaocustomer%2Fpassporthome.nsf%2Fpassportadvantage%3FOpenAgent] Other V6.1 tools and fixes Released Comments V6.1 Update Installer tool to install WebSphere Extended Deployment [http://www.ibm.com/support/docview.wss?rs=180&uid=swg24012718] 15 JUN 2007 Installation instructions [http://publib.boulder.ibm.com/infocenter/wasinfo/v6r1/index.jsp?topic=/com.ibm.websphere.nd.doc/info/ae/ae/tins_updi_install.html] Additional information Update strategy for WebSphere Application Server V6.1 [http://www.ibm.com/support/docview.wss?rs=180&context=SSEQTP&q1=Update+Strategy&uid=swg27009276&loc=en_US&cs=utf-8&lang=en]
+Recommended fixes for WebSphere Application Server [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+Required WebSphere Application Server V6.1 Interim Fixes [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27009588] 
+[/support/docview.wss?uid=swg27005709&amp;aid=4] Back to Top 
+
+Version 6.0 Fix Level Released Comments Fix Pack 7 [http://www.ibm.com/support/docview.wss?rs=3023&uid=swg24024712] 6.0.2.7 16 OCT 2009 [/support/docview.wss?uid=swg27005709&amp;aid=3] Fix Pack 6 [http://www.ibm.com/support/docview.wss?rs=3023&uid=swg24022362] 6.0.2.6 12 MAR 2009 [/support/docview.wss?uid=swg27005709&amp;aid=3] Fix Pack 5 [http://www.ibm.com/support/docview.wss?rs=3023&uid=swg24020667] 6.0.2.5 3 OCT 2008 [/support/docview.wss?uid=swg27005709&amp;aid=3] Fix Pack 4 [http://www.ibm.com/support/docview.wss?rs=3023&uid=swg24020166] 6.0.2.4 14 AUG 2008 [/support/docview.wss?uid=swg27005709&amp;aid=3] Fix Pack 2 [http://www.ibm.com/support/docview.wss?rs=3023&uid=swg24018645] 6.0.2.2 20 MAR 2008 [/support/docview.wss?uid=swg27005709&amp;aid=3] Fix Pack 1 [http://www.ibm.com/support/docview.wss?rs=3023&uid=swg24016214] 6.0.2.1 29 JUN 2007 [/support/docview.wss?uid=swg27005709&amp;aid=3] Refresh Pack 2 [http://www.ibm.com/support/docview.wss?rs=3023&uid=swg24013086] 6.0.2 17 AUG 2006 [/support/docview.wss?uid=swg27005709&amp;aid=3] Release 6.0 6.0 29 JUL 2005 Download from [https://www-112.ibm.com/software/howtobuy/passportadvantage/paocustomer/Login?abu=https%3A%2F%2Fwww-112.ibm.com%3A443%2Fsoftware%2Fhowtobuy%2Fpassportadvantage%2Fpaocustomer%2Fpassporthome.nsf%2Fpassportadvantage%3FOpenAgent]
+Passport Advantage [https://www-112.ibm.com/software/howtobuy/passportadvantage/paocustomer/Login?abu=https%3A%2F%2Fwww-112.ibm.com%3A443%2Fsoftware%2Fhowtobuy%2Fpassportadvantage%2Fpaocustomer%2Fpassporthome.nsf%2Fpassportadvantage%3FOpenAgent] Other V6.0 tools and fixes Released Comments V6.1 Update Installer tool - installing on releases of WebSphere Application Server V6.1 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg24012718] 15 JUN 2007 Installation instructions [http://publib.boulder.ibm.com/infocenter/wasinfo/v6r1/index.jsp?topic=/com.ibm.websphere.nd.doc/info/ae/ae/tins_updi_install.html] V6.0 Update Installer tool - installing on releases of WebSphere Application Server V6.0.2 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg24008401] 14 AUG 2006 Readme [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27006162] Additional information Update strategy for WebSphere Application Server V6.0 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg21191989]
+Recommended fixes for WebSphere Application Server [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980] 
+[/support/docview.wss?uid=swg27005709&amp;aid=5] Back to Top 
+
+Change history
+Last updated: 5 August 2011 
+
+ * 5 Aug 2011: Updated for Version 6.1.1 Fix Pack 4
+
+
+
+ORIGINAL PUBLICATION DATE
+ 2004/10/24 
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Application Servers WebSphere eXtreme Scale General AIX, HP-UX, Linux, Solaris, Windows 6.1 Application Servers WebSphere Virtual Enterprise General AIX, HP-UX, Linux, Solaris, Windows 6.1.1

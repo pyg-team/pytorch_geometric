@@ -1,0 +1,133 @@
+Title: IBM PM86476: [WI 246950] The Plan Statistics widget has additional problems. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  APAR for defect 246950.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   Initial investigation is pointing to
+   com.ibm.team.apt.shared.ui.internal.structure.QuickQueryGrou
+   pProvider.getGroupId, where we split on space to create the
+   expression segments, and in the case of something like
+   state:"In Progress", we end up creating "state:"In" and
+   "Progress"" as two separate entities, which of course do not
+   match anything. ?I will investigate further today to see if
+   this is definitely causing the issue.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Initial investigation is pointing to
+   com.ibm.team.apt.shared.ui.internal.structure.QuickQueryGrou
+   pProvider.getGroupId, where we split on space to create the
+   expression segments, and in the case of something like
+   state:"In Progress", we end up creating "state:"In" and
+   "Progress"" as two separate entities, which of course do not
+   match anything. ?I will investigate further today to see if
+   this is definitely causing the issue.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM86476
+   
+   
+ * REPORTED COMPONENT NAME
+   RATL TEAM CONCE
+   
+   
+ * REPORTED COMPONENT ID
+   5724V0400
+   
+   
+ * REPORTED RELEASE
+   301
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-04-05
+   
+   
+ * CLOSED DATE
+   2013-06-18
+   
+   
+ * LAST MODIFIED DATE
+   2013-06-18
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   RATL TEAM CONCE
+   
+   
+ * FIXED COMPONENT ID
+   5724V0400
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R301 PSN
+   UP

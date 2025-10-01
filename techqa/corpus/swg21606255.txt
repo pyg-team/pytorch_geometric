@@ -1,0 +1,16 @@
+Title: IBM ISCDC - How do I configure replication with relative record number? - United States
+
+Text:
+&CNTRRN; Relative record number; CDC; TS; Change data capture; Transformation server; Primary key TECHNOTE (FAQ)
+
+QUESTION
+ My table has no defined key on as/400 so I would like to use the RRN value. Is this possible? 
+
+ANSWER
+Yes, RRN can be used for your key. 
+
+For iSeries to iSeries replication, when setting the replication method check the 'use relative record' option.
+
+For non 400 targets, in addition to the setting above, you need to define an additional target column as int. and set it as the primary key then map the new column to the journal control &CNTRRN. 
+
+Please note, a re-org of the source table will result in a refresh as the key's will be re-sequenced.

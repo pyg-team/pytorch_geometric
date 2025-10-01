@@ -1,0 +1,177 @@
+Title: IBM PQ70681: CMPL COBOL/SQL COPROCESSOR DOES NOT GENERATE CODE IF A SQL STATEMENT IS FLAGGED WITH A WARNING ERROR - DSNH206I - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When the SQL statement coprocessor returns a warning message
+   to COBOL for a particular SQL statement, COBOL does not
+   generate the necessary code for the SQL statement. The DB2
+   Coprocessor is returning several warning messages (DSNH206I).
+   As a result, DELETE, SELECT, INSERT and UPDATE statements
+   which receive these warning msgs are ignored by COBOL.
+   .
+   For example
+   IGYDS0209-W DSNH206I (followed by the SQL error text) did not
+   generate executable instructions and caused a program to fail
+   at runtime.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Use DB2 PreProcessor as a separate step.
+   **
+   ADDITIONAL KEYWORDS:
+   MSGIGYDS0209-W MSGDSNH206I IGYDS0209 DSNH206 MSGIGYDS0209
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: Users of Enterprise COBOL for z/OS & OS/390  *
+   *                 using SQL compiler option (integrated SQL    *
+   *                 coprocessor) compiling programs that have    *
+   *                 SQL statements that receive warning messages *
+   *                                                              *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: When the SQL statement coprocessor      *
+   *                      returns a warning message to COBOL for  *
+   *                      a particular SQL statement, COBOL does  *
+   *                      not generate the necessary code for the *
+   *                      SQL statement. The DB2 Coprocessor can  *
+   *                      return several warning messages, such   *
+   *                      as DSNH206I and DSNH521I. As a result   *
+   *                      DELETE, SELECT, INSERT and UPDATE       *
+   *                      statements which receive these warning  *
+   *                      msgs are ignored by the COBOL compiler. *
+   *                                                              *
+   ****************************************************************
+   * RECOMMENDATION: Apply the provided PTF                       *
+   *                                                              *
+   ****************************************************************
+   The compiler was not differentiating between different non-zero
+   return codes from DB2.  Any non-zero return code caused the
+   SQL statement to be skipped.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  IGYSSQL was changed to generate code even if DB2 returns with
+   RC=4 for warning messages.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PQ70681
+   
+   
+ * REPORTED COMPONENT NAME
+   ENT COBOL FOR Z
+   
+   
+ * REPORTED COMPONENT ID
+   5655G5300
+   
+   
+ * REPORTED RELEASE
+   310
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2003-02-05
+   
+   
+ * CLOSED DATE
+   2003-02-19
+   
+   
+ * LAST MODIFIED DATE
+   2003-03-05
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    PQ67568
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UQ74264 UQ74265
+   
+   
+
+MODULES/MACROS
+ *     IGYSSQL
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ENT COBOL FOR Z
+   
+   
+ * FIXED COMPONENT ID
+   5655G5300
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R310 PSY UQ74264 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UQ74264]
+   UP03/02/24 P F302
+   
+   
+ * R320 PSY UQ74265 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UQ74265]
+   UP03/02/24 P F302
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

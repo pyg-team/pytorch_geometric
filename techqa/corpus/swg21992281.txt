@@ -1,0 +1,16 @@
+Title: IBM Code a RUNTASK 'mv' for a file with special characters in the name in Sterling Connect:Direct for Unix - United States
+
+Text:
+sterling Connect:direct; unix; sample; example; process; sysopts; special characters; C:D; CDu TECHNOTE (FAQ)
+
+QUESTION
+ In IBM Sterling Connect:Direct for UNIX, how do you code a RUN TASK step in a process to run on a UNIX node, that performs a move ('mv') command on files that have names containing special characters, for example $file1? 
+
+CAUSE
+The $ in the filename will cause the UNIX shell in which the RUN TASK step runs to interpret $file1 as a variable rather than a file called $file1, unless enclosed in single quotes.
+
+ANSWER
+Enclose the file's name in single quotes in the RUN TASK step's sysopts statement, for example as in this example which renames a file from $file1 to $file2:
+
+
+sysopts="mv path/to/'$file2' path/to/'$file1'"

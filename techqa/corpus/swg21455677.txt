@@ -1,0 +1,50 @@
+Title: IBM Rational Team Concert License Keys cannot be installed in the same package group - United States
+
+Text:
+1455677; RTC; IM; license keys; trial; RTC server TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+This technote explains why license keys cannot be installed with the IBM Rational Team Concert Eclipse Client. Error messages indicating this "cannot coexist in the same package group." or "requires components supplied by other packages." indicate that the user is attempting to install the license keys package with the Eclipse Client or some other Rational Team Concert package.
+
+SYMPTOM
+When trying to install "Rational Team Concert Required Base License Keys, including Trials". An error messages indicating the feature"cannot coexist in the same package group." or "requires components supplied by other packages." appears. 
+
+User sees error message as shown below: 
+
+ 
+
+[/support/docview.wss?uid=swg21455677&aid=1] [/support/docview.wss?uid=swg21455677&aid=1] 
+
+ 
+
+[/support/docview.wss?uid=swg21455677&aid=2] [/support/docview.wss?uid=swg21455677&aid=2]
+
+
+
+CAUSE
+The Installation Manager package named "Rational Team Concert Required Base License Keys, including Trials" is meant to be installed with the "Jazz Team Server and CCM Application" (the Rational Team Concert server installation package). 
+
+The package containing license keys needs to be installed into a package group that does contain the Rational Team Concert server.
+
+
+
+ENVIRONMENT
+Installation Manager on any platform (Microsoft Windows, Linux or UNIX).
+
+
+
+DIAGNOSING THE PROBLEM
+Look for presence of error messages shown above in Symptom Section
+
+
+
+RESOLVING THE PROBLEM
+Install the Installation Manager package containing the license keys is selected for installation into a package group that also contains the server.
+
+
+
+Leverage the Jazz Community Jazz and Rational Team Concert have an active community that can provide you with additional resources. Browse and contribute to the User forums, contribute to the Team Blog and review the Team wiki.
+Refer to technote 1319600 [http://ibm.com/support/docview.wss?uid=swg21319600] for details and links. 
+
+RELATED INFORMATION
+#Jazz.net Work Item 137095 [https://jazz.net/jazz/resource/itemName/com.ibm.team.workitem.WorkItem/137095]

@@ -1,0 +1,179 @@
+Title: IBM IC44574: TSM SERVER IS ERRONEOUSLY DENYING SCHEDULED SESSIONS FROM STARTING (ANR2571W) - United States
+
+Text:
+AIX SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The TSM Server may reject scheduled sessions from starting with
+   the following message:
+   .
+      ANR2571W Scheduled session from node NODEA (WinNT) has been
+      denied, scheduled sessions are not currently available.
+   .
+   The error is generated because the TSM Server erroneously
+   believes that the maximum number of scheduled sessions permitted
+   has been reached.  This can be confirmed by issuing the SHOW
+   CSVARS command on the TSM Server which will show that the "Sch
+   Sessions in use" value is close, or equal, to the "Max Scheduled
+   Sessions" value.  The problem is caused by a specific condition
+   that causes the TSM Server to incorrectly increment the number
+   of active scheduled sessions.  This condition can usually be
+   identified by occurrences of the following error message in the
+   activity log:
+   .
+      ANR0425W Session 999 for node NODEB (SUN SOLARIS) refused -
+      password has expired.
+   .
+   Each occurrence of the ANR0425W message can cause the count of
+   active scheduled sessions to increase, but only if each of the
+   following is true about the node that the ANR0425W errors are
+   being generated for (ie. NODEB):
+   .
+   
+      - passwordaccess is generate
+      - schedmode is prompted
+      - sessioninitiation is serveronly
+   .
+   Reviewing the activity log will show that the TSM Server
+   attempts to contact the node to start a scheduled operation, but
+   the session is refused with the ANR0425W message.  The client
+   would then generate a new password and attempt to send this
+   password to the TSM Server, however, because the
+   sessioninitiation option is set to serveronly, the client is
+   unable to send the new password to the TSM Server and, thus, the
+   password is not reset.  The Server will continue to prompt the
+   client for the duration of the schedule window, with each
+   attempt to contact the client failing with the ANR0425W message
+   yet increasing the count of active scheduled sessions until all
+   scheduled sessions fail with the ANR2571W message.
+   .
+   Platforms affected: All 5.2 TSM Servers
+   .
+   Initial Impact: Low
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  1. Recycle the TSM Server to clear the count of active scheduled
+      sessions.
+   2. Review the actlog for the node responsible for the ANR0425W
+      message.
+   3. Manually reset the password for the problem node.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All TSM server platforms using TSM           *
+   *                 scheduler.                                   *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: See Error Description.                  *
+   ****************************************************************
+   * RECOMMENDATION: See Local Fix for workaround or apply        *
+   *                 fixing level when available. This problem    *
+   *                 is currently projected to be fixed in        *
+   *                 levels 5.2.5 and 5.3.1. Note that this is    *
+   *                 subject to change at the discretion of       *
+   *                 IBM.                                         *
+   ****************************************************************
+   The count of the active scheduled sessions is not reset when
+   a scheduled client session is refused because the password
+   has expired.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The server code has been modified to properly reset the count
+   of the active scheduled sessions.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC44574
+   
+   
+ * REPORTED COMPONENT NAME
+   TSM SERVER 510
+   
+   
+ * REPORTED COMPONENT ID
+   5698ISMSV
+   
+   
+ * REPORTED RELEASE
+   52W
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2005-02-02
+   
+   
+ * CLOSED DATE
+   2005-02-18
+   
+   
+ * LAST MODIFIED DATE
+   2005-02-18
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R52A PSY
+   UP
+   
+   
+ * R53A PSY
+   UP

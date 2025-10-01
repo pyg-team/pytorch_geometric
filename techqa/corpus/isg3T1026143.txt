@@ -1,0 +1,55 @@
+Title: IBM Etherchannel failover will not fail back to primary in certain Environments - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Etherchannel failover will not fail back to primary but it can failover to secondary.
+
+
+
+SYMPTOM
+In certain network environments such as Cisco ACI SDN switches
+an NIB etherchannel may not be able to recover to the primary
+adapter even if forced.
+
+
+CAUSE
+The issue is related to how the ACI handles broadcast and ARP broadcast requests. By default, the fabric does not flood ARP requests to all bridge domain members. It handles ARP broadcasts as unicast packets and sends them to the correct to the endpoint. The ACI does this to reduce overhead for broadcast traffic across the fabric. In this case, where ARP is being used only to generate return packets as a test of network availability, this function may prevent the failover from occurring, because the failover interface sees an inactive connection as its request has not been returned as expected. This is why when we pull the cable failover occurs, but there are no connections when the NIC is not active. 
+
+DIAGNOSING THE PROBLEM
+The unique aspect of the AIX NIB is the way a failback to the primary/main adapter
+is done. A failback to primary is not completed(pending) until the driver gets at least 
+one packet on the inactive primary adapter port. To ensure this, the active backup 
+port sends out arp broadcast packets although any packet hitting the primary adapter 
+port is sufficient to complete the transition back to active primary. 
+
+The problem in customer environment is that when the backup adapter is active, the primary
+adapter does not get a single packet. Not even broadcast or stray gateway control packets.
+So the failback to primary is forever pending. Notice the stats below where ent0 is the
+primary adapter and ent4 is the backup. 
+
+entstat_ent8.before:ETHERNET STATISTICS (ent8) :
+entstat_ent8.before:Packets: 203379057 Packets: 260198994
+entstat_ent8.before:Packets Dropped: 0 Packets Dropped: 1
+entstat_ent8.before:ETHERNET STATISTICS (ent0) :
+entstat_ent8.before:Packets: 197435248 Packets: 252710262 <<<< 
+entstat_ent8.before:Packets Dropped: 0 Packets Dropped: 0
+entstat_ent8.before:ETHERNET STATISTICS (ent4) :
+entstat_ent8.before:Packets: 5943819 Packets: 7488742
+entstat_ent8.before:Packets Dropped: 0 Packets Dropped: 1
+
+entstat_ent8.after:ETHERNET STATISTICS (ent8) :
+entstat_ent8.after:Packets: 203606270 Packets: 260476841
+entstat_ent8.after:Packets Dropped: 0 Packets Dropped: 1
+entstat_ent8.after:ETHERNET STATISTICS (ent0) :
+entstat_ent8.after:Packets: 197435248 Packets: 252710262 <<<< no change! 
+entstat_ent8.after:Packets Dropped: 0 Packets Dropped: 0
+entstat_ent8.after:ETHERNET STATISTICS (ent4) :
+entstat_ent8.after:Packets: 6171048 Packets: 7766607
+entstat_ent8.after:Packets Dropped: 0 Packets Dropped: 1
+
+
+
+RESOLVING THE PROBLEM
+In order to make this failover function work, request customer to enable unknown unicast and ARP flooding for this bridge domain.

@@ -1,0 +1,61 @@
+Title: IBM Downloading IBM Business Process Manager Version 8.5.7 Cumulative Fix 2017.06 - United States
+
+Text:
+ DOWNLOADABLE FILES
+
+ABSTRACT
+ This download is Version 8.5.7 Cumulative Fix 2017.06 (V8.5.7 CF2017.06) for the IBM Business Process Manager products. 
+
+DOWNLOAD DESCRIPTION
+ 
+
+TAB NAVIGATION
+ * Fix list [http://www.ibm.com/support/docview.wss?uid=swg27049933]
+ * What's new [http://www.ibm.com/support/docview.wss?uid=swg27049910]
+ * Downloading the cumulative fix [http://www.ibm.com/support/docview.wss?uid=swg24043591]- selected tab,
+ * Installing the cumulative fix [http://www.ibm.com/support/docview.wss?uid=swg27049857]
+ * Upgrading profiles [http://www.ibm.com/support/docview.wss?uid=swg27049858]
+ * Post-upgrade tasks [http://www.ibm.com/support/docview.wss?uid=swg27049932]
+
+The download link in the Change History section links to the download package required to install V8.5.7 CF2017.06 for the following products on all applicable operating systems: 
+
+ * IBM Business Process Manager Standard 
+ * IBM Business Process Manager Advanced 
+ * IBM Business Process Manager Advanced - Process Server 
+ * IBM Business Process Manager Express
+
+
+After you download the package, see the Installation Instructions. 
+Note: This page includes only the downloads for the IBM BPM V8.5.7 cumulative fix. For other downloads that might be needed for the upgrade, see Downloading the repositories to the local system [http://www.ibm.com/support/docview.wss?uid=swg27049857#download]. 
+If you have Internet access on the system where you are installing the cumulative fix, you do not need to manually download the download packages. IBM Installation Manager will find the cumulative fix in the live repository. 
+
+A separate download is not available for IBM Process Designer. You can update IBM Process Designer from the Process Center after installing the appropriate refresh pack. 
+
+For the list of fixed APARs, see the Fix List [http://www.ibm.com/support/docview.wss?uid=swg27039722#fp8570_5]. 
+
+INSTALLATION INSTRUCTIONS
+The following links contain the installation and upgrade instructions for the cumulative fix. Read these documents before you install the fix. 
+
+
+
+
+URL LANGUAGE SIZE(Bytes) Installing the cumulative fix [http://www.ibm.com/support/docview.wss?uid=swg27049857] English 140000 Upgrading profiles [http://www.ibm.com/support/docview.wss?uid=swg27049858] English 150000 Post-upgrade tasks [http://www.ibm.com/support/docview.wss?uid=swg27049932] English 100000 Process Federation Server [http://www.ibm.com/support/docview.wss?uid=swg24043726] English 100000 
+DOWNLOAD PACKAGE
+IBM Business Process Manager V8.5.7 Cumulative Fix 2017.06
+
+
+HOW CRITICAL IS THIS FIX?
+Recommended
+
+
+
+CHANGE HISTORY
+Fifth cumulative fix for the IBM Business Process Manager Version 8.5.7 products
+
+
+
+Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options 
+What is Fix Central(FC)? [https://www.ibm.com/support/fixcentral/help?page=swfaqs] IBM BPM 857 CF2017.06 23 Jun 2017 English 2359466454 FC [http://www.ibm.com/support/fixcentral/swg/quickorder?parent=ibm%2FWebSphere&product=ibm/WebSphere/IBM+Business+Process+Manager+Standard&release=All&platform=All&function=fixId&fixids=bpm.8570.cf2017.06.delta.repository&includeSupersedes=0&source=fc] [ ] 
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Business Process Manager Standard General AIX, Linux, Solaris, Windows 8.5.7.CF201706, 8.5.7 Business Integration IBM Business Process Manager Express General Linux, Windows 8.5.7.CF201706, 8.5.7 
+PRODUCT ALIAS/SYNONYM
+ BPM

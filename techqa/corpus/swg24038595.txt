@@ -1,0 +1,59 @@
+Title: IBM Download IBM Content Navigator Version 2.0.3 Fix Pack 1 - United States
+
+Text:
+ DOWNLOADABLE FILES
+
+ABSTRACT
+ This document describes how to download and install IBM Content Navigator, Version 2.0.3 Fix Pack 1 
+
+DOWNLOAD DESCRIPTION
+IBM Content Navigator, Version 2.0.3 Fix Pack 1 provides important fixes for IBM Content Navigator, Version 2.0.3, IBM Content Navigator for Microsoft Office, Version 2.0.3. and IBM Navigator Sync, Version 2.0.3.
+
+
+
+
+
+ABOUT THE FIX PACK
+
+IBM Content Navigator, Version 2.0.3 Fix Pack 1 includes changes for the following APARs: 
+IO21860, IO21887, IO21891, IO21906, IO21907, IO21914, IO21934, IO22008, IO22014, IO22021, IO22022, IO22023, IO22031, IO22044, IO22048, IO22091, IO22092, IO22095, IO22122, IO22150, IO22224, IO22229, IO22255, IO22260, IO22282, IO22285, IO22314, IO22333, IO22341 In addition, the fix pack includes new features and functionality, which are described in the fix pack readme [http://www.ibm.com/support/knowledgecenter/SSEUEX_2.0.3/readme/icn_fixpack2.0.3.100_readme.html]. 
+
+INSTALLATION INSTRUCTIONS
+To download the fix pack:
+
+
+ 1. Go to Fix Central [http://www.ibm.com/support/fixcentral/swg/quickorder?parent=Enterprise+Content+Management&product=ibm/Other+software/Content+Navigator&release=2.0.2&platform=All&function=all&source=fc]. You must log in to continue. 
+ 2. Select the fix pack download for your operating system:  * For AIX, the fix pack download is named 2.0.3-ICN-FP001_AIX. 
+     * For Linux, the fix pack download is named 2.0.3-ICN-FP001_LINUX. 
+     * For Linux for System z, the fix pack download is named 2.0.3-ICN-FP001_zLINUX. 
+     * For Windows, the fix pack download is named 2.0.3-ICN-FP001_WIN. 
+     * For IBM Content Navigator for Microsoft Office, the package is named 2.0.3-NMO-FP001_WIN. 
+     * For IBM Navigator Sync (previously IBM Content Navigator Sync), the package is named 2.0.3-NSY-FP001_WIN.
+    
+    
+ 3. Save the file to a temporary directory on the workstation where IBM Content Navigator is installed. 
+ 4. Extract the contents of the file.
+
+
+To install the fix pack, see IBM Content Navigator Version 2.0.3 Fix Pack 1 Readme [http://www.ibm.com/support/knowledgecenter/SSEUEX_2.0.3/readme/icn_fixpack2.0.3.100_readme.html] in IBM Knowledge Center. DOWNLOAD PACKAGE
+
+
+
+HOW CRITICAL IS THIS FIX?
+For the list of APARs that are fixed in this fix pack, see IBM Content Navigator Version 2.0.3 Fix Pack 1 Readme [http://www.ibm.com/support/knowledgecenter/SSEUEX_2.0.3/readme/icn_fixpack2.0.3.100_readme.html] in IBM Knowledge Center. 
+
+
+For detailed information about an APAR, enter the APAR number in the Search field at the top of the page. If the search does not return any results, the details of the APAR are not available through the product support portal.
+
+
+
+KNOWN SIDE EFFECTS
+For the list of known problems, restrictions, and limitations, see IBM Content Navigator Version 2.0.3 Fix Pack 1 Readme [http://www.ibm.com/support/knowledgecenter/SSEUEX_2.0.3/readme/icn_fixpack2.0.3.100_readme.html] in IBM Knowledge Center.
+
+
+
+
+
+Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options IBM Content Navigator 2.0.3.1 (AIX) 31 Oct 2014 English 1141872640 HTTP [http://www.ibm.com/support/fixcentral/swg/selectFixes?parent=Enterprise+Content+Management&product=ibm/Other+software/Content+Navigator&release=2.0.3&platform=AIX&function=all] IBM Content Navigator 2.0.3.1 (Linux) 31 Oct 2014 English 1281996800 HTTP [http://www.ibm.com/support/fixcentral/swg/selectFixes?parent=Enterprise+Content+Management&product=ibm/Other+software/Content+Navigator&release=2.0.3&platform=Linux&function=all] IBM Content Navigator 2.0.3.1 (zLinux) 31 Oct 2014 English 1582202880 HTTP [http://www.ibm.com/support/fixcentral/swg/selectFixes?parent=Enterprise+Content+Management&product=ibm/Other+software/Content+Navigator&release=2.0.3&platform=Linux+zSeries&function=all] IBM Content Navigator 2.0.3.1 (Windows) 31 Oct 2014 English 1040326833 HTTP [http://www.ibm.com/support/fixcentral/swg/selectFixes?parent=Enterprise+Content+Management&product=ibm/Other+software/Content+Navigator&release=2.0.3&platform=Windows&function=all] IBM Content Navigator for Microsoft Office 2.0.3.1 31 Oct 2014 US English 68715096 HTTP [http://www.ibm.com/support/fixcentral/swg/selectFixes?parent=Enterprise+Content+Management&product=ibm/Other+software/Content+Navigator&release=2.0.3&platform=Windows&function=all] IBM Navigator Sync 2.0.3.1 31 Oct 2014 UK English 21712472 HTTP [http://www.ibm.com/support/fixcentral/swg/selectFixes?parent=Enterprise+Content+Management&product=ibm/Other+software/Content+Navigator&release=2.0.3&platform=Windows&function=all] 
+ [/support/docview.wss?uid=swg24038595&aid=1]Problems (APARS) fixed [/support/docview.wss?uid=swg24038595&aid=2]Problems (APARS) fixed
+IO21860, IO21887, IO21891, IO21906, IO21907, IO21914, IO21934, IO22008, IO22014, IO22021, IO22022, IO22023, IO22031, IO22044, IO22048, IO22091, IO22092, IO22095, IO22122, IO22150, IO22224, IO22229, IO22255, IO22260, IO22282, IO22285, IO22314, IO22333, IO22341

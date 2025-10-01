@@ -1,0 +1,49 @@
+Title: IBM CSQ2004E CSQ2QCP0 ERROR USING QUEUE, MQRC=2035 - United States
+
+Text:
+MQRC reason code 2035 MQFB feedback 298 replyto replytoq TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ An application puts a message to an IMS Bridge queue with an MQMD.UserIdentifier or MQIIH.Authenticator that is invalid, or does not exist. 
+
+That message goes to the Dead Letter Queue ( DLQ ) as expected, but the exception report also goes to the DLQ rather than to the application. You would like for the application to receive the reply with the exception report 
+
+CAUSE
+298 = MQFB_NOT_AUTHORIZED_FOR_IMS means:
+The user ID contained in the message descriptor MQMD, or the password contained in the Authenticator field in the MQIIH structure, failed the validation performed by the IMS bridge. As a result the message was not passed to IMS.
+
+ENVIRONMENT
+In the reported case, the application flow is: a message starts from a UNIX server. It goes to the Mainframe queue manager and into IMS via OTMA. The response goes back to mainframe queue manager and then to the UNIX server.
+
+In this error scenario, the userid passed in the message header is INVALID, i.e. not defined to the security product (ACF2 in this case).
+
+As expected, this results in the following:
+ACF01004 LOGONID ABC123 NOT FOUND
+CSQ2005I CSQ1 CSQ2QCP0 ERROR PROCESSING MESSAGE, FEEDBACK=298, XCFGNAME=MQGRP XCFMNAME=IMN1OTMA TPIPE=QCT801
+
+The message is put to the DLQ.
+
+Following that error, the bridge then attempts to put a response (indicating a security violation) on the the REPLY-TO queue, which results in the following:
+ACF01004 LOGONID ABC123 NOT FOUND
+CSQ2004E CSQ1 CSQ2QCP0 ERROR USING QUEUE <queue> MQRC=2035
+
+This REPLY message is then also put to the DLQ.
+
+Final Result:
+1) two messages are on the DLQ
+2) the application on the UNIX never receives any response message and times out. ( 2033 MQRC_NO_MSG_AVAILABLE).
+
+On another queue manager, with QUEUE security disabled (the NO.QUEUE.CHECKS profile switch defined), the first error still occurs as expected, but the second error (the 2035 on the REPLY-TO queue) does NOT happen and the UNIX application receives a response indicating the OTMA transaction failed due to a security violation.
+
+RESOLVING THE PROBLEM
+IBM MQ is working as designed regarding the reply as indicated in the topics
+If the message cannot be put to the IMS queue [https://www.ibm.com/support/knowledgecenter/SSFKSJ_9.0.0/com.ibm.mq.dev.doc/q023220_.html] 
+and 
+Security checking done by the IMS bridge [https://www.ibm.com/support/knowledgecenter/SSFKSJ_9.0.0/com.ibm.mq.sec.doc/q012260_.html]. 
+
+Define the userid to the external security manager to allow both the request and report message to be delivered.
+
+
+
+PRODUCT ALIAS/SYNONYM
+ IBM MQ WebSphere MQ WMQ

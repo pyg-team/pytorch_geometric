@@ -1,0 +1,58 @@
+Title: IBM What is CSQ45BPK? - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ What is CSQ45BPK and how do I use it? 
+
+ANSWER
+PM60589 [http://www.ibm.com/support/docview.wss?uid=swg1PM60589] for WebSphere MQ (WMQ) 7.1.0 and PM65422 [http://www.ibm.com/support/docview.wss?uid=swg1PM65422] for WMQ 7.0.1 implemented a change to use the DB2 pre-compile VERSION(AUTO) option. The change exists in base code for IBM MQ V8 and above.
+
+The use of VERSION(AUTO) means that a BIND PACKAGE of the collection matching the DBRM is all that is needed to add a new package version to the relevant plan when a new DBRM is shipped in MQ maintenance. 
+
+CSQ45BPK was added to SCSQPROC to bind the DB2 packages. When this job is run, the queue manager will not need to be shut down and will not require SUSPEND QMGR FACILITY(DB2) because the BIND PACKAGE will be for a new version of the plan, different from the one that the queue manager is currently using.
+
+Following PM60589 for WMQ 7.1.0 only CSQ45BPK needs to be run when maintenance is applied.
+
+While CSQ45BPL and CSQ45GEX do need to be run following the apply of the PTF for PM65422 for WMQ 7.0.1, this is a one time run only because this APAR fixes new plan names permanently for each application plan. Future maintenance for WMQ 7.0.1, following PM65422, will not require these jobs to be run again. If DBRMs are shipped in such maintenance only CSQ45BPK will be required to be run. 
+
+CSQ45BPL and CSQ45GEX will still need to be run at installation of each release of base MQ because the plan and package names are version-specific. After these APARs, MQ maintenance will not require new plan names
+
+
+Hold data:
+++ HOLD(UK78376) SYS FMID(HMS7100) REASON(ACTION) DATE(12130) 
+COMMENT
+(This PTF requires additional steps after successful APPLY processing.
+
+ALL customers running in a Queue Sharing Environment MUST use 
+the following job to bind new package versions using the updated
+DBRM provided in this PTF:
+
+CSQ45BPK will be added to hlq.SCSQPROC and must then be 
+customized and run.
+---------------- ABOVE COMMENT ADDED BY PM60589 ----------------).
+
+
+++ HOLD(UK82506) SYS FMID(HMS7010) REASON(DB2BIND) DATE(12284) 
+COMMENT
+(This PTF requires additional steps after successful APPLY processing.
+
+ALL customers running in a Queue Sharing Environment MUST run 
+the following updated jobs to bind new DB2 application plans and 
+to establish collection names to contain the package versions 
+using the updated DBRM provided in this PTF: 
+
+1. CSQ45BPL will be replaced and must then be customized and run 
+2. CSQ45GEX will be replaced and must then be customized and run 
+These members will be replaced in hlq.SCSQPROC 
+---------------- ABOVE COMMENT ADDED BY PM65422 ----------------)
+
+RELATED INFORMATION
+ Redbook: DB2 9 for z/OS: Packages Revisited [http://www.redbooks.ibm.com/abstracts/sg247688.html?Open]
+
+
+
+
+PRODUCT ALIAS/SYNONYM
+ IBM MQ WebSphere MQ WMQ

@@ -1,0 +1,28 @@
+Title: IBM XML encoding and native schema Type Trees - United States
+
+Text:
+XML encoding; native schema; native type tree; type tree; native schema type tree; encoding; XML TECHNOTE (FAQ)
+
+QUESTION
+ Why am I unable to use 2 different encodings on the same native schema WebSphere Transformation Extender (WTX) type tree? 
+
+CAUSE
+When using the same native XML type tree for multiple inputs, outputs, or as input and output, the encoding must be the same for all occurrences. 
+The native XML type tree uses the encoding as the Data Language for all the elements in that XML type tree. On input, the encoding is dynamically set by the value of “encoding” in the XML header, and on output it is the value that the user moves into encoding. If no value is present “UTF-8” is the default.
+
+WTX uses the Data dictionary method of defining elements. This means that a particular element in a particular type tree is defined the same wherever it is used in a WTX map.
+
+This is not an issue with a regular type tree since its data language is set when the map is compiled. However with a native schema type tree, the encoding is set dynamically.
+
+This can lead to problems if the encoding is set to 2 different values in 2 different places in WTX. For example, using the same native schema type tree on input where the data is UTF-8, then setting the encoding to UTF-16 on output. This is not supported and will not work. The data will not be converted properly.
+
+
+
+
+ANSWER
+The work around is to copy the topmost schema to a new name and use it on output. For example, use the new name on output, the original name on input.
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ Ascential DataStage TX Mercator

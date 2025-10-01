@@ -1,0 +1,30 @@
+Title: IBM Setting a variable in DotEdit to prevent Image View from returning focus to the first page (Main_Page) - United States
+
+Text:
+DotEdit Image View focus jumping to first page; 112573; DotEdit Image View page changing when the field is clicked PRODUCT DOCUMENTATION
+
+ABSTRACT
+ By default, the Image View panel in DotEdit automatically puts focus on the first page (the main page) of a multiple-page document if the operator clicks a field that is associated with the main page. When you click a field on a trailing page and the field is associated with the main page, or the field does not have a zone location, focus jumps back to the first page. To keep focus on the current page, you can specify a setting to prevent focus from automatically returning to the first page. 
+
+CONTENT
+About this task
+
+
+You can add a new variable (hr_SyncImg) that works hierarchically in the document hierarchy level that you want. You can set the variable at the field level, page level, document level, or batch level. 
+
+This variable can be defined at a parent level, so that you do not need to set it individually for every field on every individual page. This variable can also be defined at the field level so that the default behavior is overriden on a field-by-field basis. 
+
+ 
+
+Procedure 
+
+ * To set the Image View to maintain focus on the current page while the operator is working with fields on the page, and prevent the Image View panel from jumping back to the main page, use the following variable: hr_SyncImg = 0
+   
+   
+
+
+ * To set the Image View to maintain focus on the current page only when clicking a field that does not have a zone location, use the following variable: hr_SyncImg = 2 
+   
+   For example, use this variable if you want to suppress Image View from jumping back to the first page only if the coordinates are (0,0,0,0) or the field coordinates are missing. 
+   
+   If you use this variable, syncing to the main page can still occur when you click a field that has a zone location and the field is associated with the main page.

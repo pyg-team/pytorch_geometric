@@ -1,0 +1,106 @@
+Title: IBM '(0x800A0005): Invalid procedure call or argument' when saving inside "Data Entry" due to invalid owner of stored procedures - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ User clicks "Company - Data Entry - Reported Values". User opens a 'Data Entry' form. User changes some values, and tries to save. User receives error message. 
+
+SYMPTOM
+The screen error varies slightly, depending on the operating system/environment. 
+
+ 
+32-bit Windows:
+ControllerForms
+Description: System.Web.Services.Protocols.SoapException: Server was unable to process request. ---> System.Runtime.InteropServices.COMException (0x800A0005): Invalid procedure call or argument
+at FrDataEntryRepValBT.DataEntryRepValTClass.SaveDataEntryForm(String sGuid, String sUser, Object bOnlyBalanceControl, String sPeriod, String sAct, String sCompany, String sCurrType, String sConsType, String sGroup, String sForm, String sDim1, String sDim2, String sDim3, String sDim4, String sJournalType, Int32 lSubm, Recordset rsPeriods, Recordset rsFormData, Recordset rsICdetails, Recordset rsComments, Recordset rsPerInfoPeriodised, Recordset rsPerInfoCBOBAcc, Recordset rsPerInfoCB, Recordset rsPerInfoRefWPS, Recordset rsCellInfo, Recordset rsUnlocked, Recordset rsBlobData, Recordset rsBlobInfoData)
+at Cognos.Controller.Proxy.CCRWS.DataEntryRepValT_SaveDataEntryForm(String sGuid, String sUser, Object bOnlyBalanceControl, String sPeriod, String sAct, String sCompany, String sCurrType, String sConsType, String sGroup, String sForm, String sDim1, String sDim2, String sDim3, String sDim4, String sJournalType, Int32 lSubm, DataSet rsPeriods, DataSet rsFormData, DataSet rsICdetails, DataSet rsComments, DataSet rsPerInfoPeriodised, DataSet rsPerInfoCBOBAcc, DataSet rsPerInfoCB, DataSet rsPerInfoRefWPS, DataSet rsCellInfo, DataSet rsUnlocked, DataSet rsBlobData, DataSet rsBlobInfoData)
+--- End of inner exception stack trace ---
+at Cognos.Controller.ControllerForms.clsDataEntry.PerformSave()
+at Cognos.Controller.ControllerForms.clsDataEntry.XLWBev_BeforeSave(Workbook Wb, Boolean SaveAsUi, Boolean& Cancel)
+
+Windows 7 or Windows 2008 (64bit)
+ControllerForms12
+Description: System.Web.Services.Protocols.SoapException: Server was unable to process request. ---> System.Runtime.InteropServices.COMException (0x800A0005): Invalid procedure call or argument
+
+In addition, there are events recorded inside the Event Viewer (application server), such as:
+Event Type: Warning
+Event Source: VBRuntime
+Event Category: None
+Event ID: 1
+Date: 2/29/2012
+Time: 11:37:19 AM
+User: N/A
+Computer: SERVERNAME
+Description:
+The VB Application identified by the event source logged this Application FrSrvFunc: Thread ID: 980 ,Logged: Error occured at 2/29/2012 11:37:19 AM in FrSrvFunc, Error No=-2147217865, Source=Microsoft SQL Native Client, Description=Invalid object name 'Xhappening'., HelpFile= HelpContext=0
+
+Event Source: VBRuntime
+The VB Application identified by the event source logged this Application FrDataEntryRepValBT: Thread ID: 980 ,Logged: Error occured at 2/29/2012 11:37:19 AM in FrDataEntryRepValBT, Error No=0, Source=FrDataEntryRepValBT.DataEntryRepValT.SaveDataEntryForm, Description=, HelpFile= HelpContext=0
+
+Event Source: Cognos Controller
+Event Category: None
+Source: ControllerForms
+Description: System.Web.Services.Protocols.SoapException: Server was unable to process request. ---> System.Runtime.InteropServices.COMException (0x800A0005): Invalid procedure call or argument
+at <....>
+
+CAUSE
+There are many potential causes for the "(0x800A0005): Invalid procedure call or argument" error when using Data Entry 
+
+ * For more examples, see separate IBM Technote #1347873
+
+
+This Technote specifically relates to the scenario where the cause is that the database contains one (or more) stored procedures which have the incorrect schema owner.  * For more information on this topic, see separate IBM Technote #1442534
+
+ENVIRONMENT
+Controller database hosted on Microsoft SQL server.
+
+
+
+DIAGNOSING THE PROBLEM
+Use following SQL script to find all stored procedures with the 'wrong' schema owner 
+
+ 
+
+ * select 'exec sp_changeobjectowner [' + rtrim(c.name) + '.' + rtrim(a.name) + '],
+ * 
+ * ''
+ * <SQL_Login_Name
+ * >'''
+ * 
+ * from sysobjects a, sysusers c where a.type = 'P' and a.uid = c.uid 
+
+RESOLVING THE PROBLEM
+Modify the database so that all the stored procedures are owned by the same (correct) SQL login (user ID), for example 'fastnet'. 
+
+ 
+
+Steps:
+WARNING: Before continuing, as a precaution please ensure the database has been backed up.
+
+NOTE: 
+
+ * The following method generates SQL statements which contain preformatted sp_changeobjectowner scripts for each user table, stored procedure and view in the database 
+ * The method then executes these scripts to change the owner 
+ * The following instructions are based on SQL 2005/2008 and Controller 10.1 
+ * Please change all references to 'username_to_be_used' to the new object owner (for example 'controller' or 'fastnet') that you want to change it to 
+ * To be clear username_to_be_used is preceded by two single quotes and then three single quotes. 
+
+
+Changing the database stored procedure owner: 
+ 1. Right-click on the Controller database, and choose 'New Query' 
+ 2. Copy and paste SQL commands (see below) into the blank/white window 
+ 3. Click "Execute". You will see many new entries appear inside the 'results' Window. 
+ 4. Delete the SQL Statement #2 text from the Window that we have been using (so it is now blank again) 
+ 5. Right-click on the 'results' Windows and choose select all (to highlight all items in the results grid) 
+ 6. Right-click and choose copy, to copy all of the the resulting text (from the results grid) and then paste it into the "query" Windows 
+ 7. Click "Execute" (to run all these multiple scripts). 
+
+
+
+select 'exec sp_changeobjectowner [' + rtrim(c.name) + '.' + rtrim(a.name) + '], 
+''username_to_be_used''' 
+from sysobjects a, sysusers c where a.type = 'P' and a.uid = c.uid 
+RELATED INFORMATION
+#1347873 - ** Troubleshooting** Error '(0x800A0005): Inv [http://www.ibm.com/support/docview.wss?uid=swg21347873]
+1442534 - "Msg 208 Level 16 State 1 Procedure usp_tr [http://www.ibm.com/support/docview.wss?uid=swg21442534]

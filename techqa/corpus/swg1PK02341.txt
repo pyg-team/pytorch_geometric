@@ -1,0 +1,154 @@
+Title: IBM PK02341: WSL EDIT AND WSL SHOW EDIT DISPLAY DIFFERENT VALUES INSIDE QUOTED STRING FOR WSL BUILT BY COMPARE - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Using a Work Statement List ( WSL) built by Object Comparison
+   Tool, the new WSL EDIT displays contents inside a quoted string
+   differently than SHOW EDIT.
+   .
+   DDL used for the source input to Compare contains statements
+   for COMMENT on column of table which have many blanks at the
+   end.  When this comment is placed in a WSL by Object Compare
+   and then directly EDITed in the WSL, 0d15 / x'0d15' / CR NL
+   characters are embedded inside the quoted comment string.
+   They are displayed using hex on and were not part of the
+   original comment.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: Users of DB2 Object Comparison Tool, who     *
+   *                 use WSL, may be affected.                    *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: When generating a WSL and if WSL has    *
+   *                      comment on a table (or any other quoted *
+   *                      string), which spans across multiple 72 *
+   *                      byte lines, blanks at the each line in  *
+   *                      the quoted string are being truncated   *
+   *                      and carriage return characters          *
+   *                      (X'0D15') are being inserted as part    *
+   *                      of the  quoted string.                  *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   See Problem Description.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  PK02341 fix and PK03154 fix need to be in the same PTF.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK02341
+   
+   
+ * REPORTED COMPONENT NAME
+   DB2 OBJECT COMP
+   
+   
+ * REPORTED COMPONENT ID
+   5697G6400
+   
+   
+ * REPORTED RELEASE
+   310
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2005-03-10
+   
+   
+ * CLOSED DATE
+   2005-06-29
+   
+   
+ * LAST MODIFIED DATE
+   2005-08-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *     GOCGAJOB
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   DB2 OBJECT COMP
+   
+   
+ * FIXED COMPONENT ID
+   5697G6400
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R310 PSY UK05021 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK05021]
+   UP05/07/18 P F507
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

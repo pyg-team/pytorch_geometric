@@ -1,0 +1,32 @@
+Title: IBM Not all IC transactions are eliminated on the top group level - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ After running consolidation with status there are still some uneliminated amounts on the consolidated top group on an intercompany account. 
+
+SYMPTOM
+The control table has been set up, including the difference posting section, but still not all transactions are eliminated.
+
+
+CAUSE
+There are intercompany transactions reported against a counter company that is not connected to the top group, either directly or via sub group(s).
+
+DIAGNOSING THE PROBLEM
+One way of finding intercompany transactions that will remain uneliminated is to run the reconciliation report under Group/Reconcile/Intercompany balances with the option “Only transactions within own group” unticked. Then you will get a section at the end of the report with “Balances with other companies”. 
+
+However, to get a company included in that report it has to be connected to a group (can be any group including a "dummy" group" created specifically for this purpose), according to the selected consolidation type. 
+
+
+RESOLVING THE PROBLEM
+Adjust the reported values on the intercompany account so that only correct company codes within the group are used as counter companies. 
+
+You can also remove the tick in the checkbox for “valid counterpart” under Maintain/Company structure/Define, for companies that should not be available to use in the counter company selection.
+
+
+
+
+HISTORICAL NUMBER
+ 11-114972371
+11-116157291

@@ -1,0 +1,149 @@
+Title: IBM LO52147: TODAY BUTTON SPORADICALLY DOESN'T WORK IN CALENDAR NAVIGATOR - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  This happens to me sporadically -- maybe once every one or two
+   weeks.   I
+   believe it happens when I restore my Thinkpad from standby and
+   Notes was
+   running (don't know 100% whether related to that or not).
+   
+   It might be related to the current date changing.
+   
+   Scenario:
+   
+   1) I started up my PC this morning (restoring from standby) --
+   today is Monday,
+   March 22.
+   2) Switch to calendar view (which was already opened in a tab)
+   -- showing
+   weekly view for last week March 15-March21 (because last I was
+   there was
+   yesterday on Sunday).
+   3) Click on "Today" button on calendar picker in top left of
+   Notes.    I do not
+   remember whether the today text has updated to "March 22" or
+   not.   NOTHING
+   HAPPENS
+   4) Keep clicking on today -- nothing happens -- it does not move
+   the calendar
+   to March 22-March 28.   BUG
+   5) Then I click on some date in the calendar picker forcing the
+   week to move,
+   like March 4 or something like that.  Works fine.
+   6) After that, the Today button works fine.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  A programming error was found and will be corrected in a future
+    release.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A programming error was found and will be corrected in a future
+    release.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+ *  This APAR is associated with SPR# JEIN83SJNF.
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   LO52147
+   
+   
+ * REPORTED COMPONENT NAME
+   DOMINO SERVER
+   
+   
+ * REPORTED COMPONENT ID
+   5724E6200
+   
+   
+ * REPORTED RELEASE
+   850
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-05-28
+   
+   
+ * CLOSED DATE
+   2010-08-23
+   
+   
+ * LAST MODIFIED DATE
+   2010-08-23
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   DOMINO SERVER
+   
+   
+ * FIXED COMPONENT ID
+   5724E6200
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R850 PSN
+   UP

@@ -1,0 +1,67 @@
+Title: IBM Security Bulletin: Multiple vulnerabilities in IBM InfoSphere Optim Data Growth Solution for JD Edwards EnterpriseOne (CVE-2013-5433) - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ Vulnerabilities exist in the IBM® InfoSphere® Optim™ Data Growth Solution for JD Edwards EnterpriseOne product that could be exploited by an attacker because of hard-coded database credentials. 
+
+VULNERABILITY DETAILS
+CVE ID: CVE-2013-5433 [http://www.cve.mitre.org/cgi-bin/cvename.cgi?name=2013-5433]
+DESCRIPTION: The Optim Data Growth Solution for JD Edwards EnterpriseOne product may contain hard-coded database credentials. To exploit this vulnerability, an attacker does not need any specialized access conditions but does need to authenticate.
+
+CVSS:
+CVSS Base Score: 3.5
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/87639 [https://exchange.xforce.ibmcloud.com/vulnerabilities/87639] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:M/Au:S/C:P/I:N/A:N)
+
+
+AFFECTED PRODUCTS:
+Versions 3.0 through 9.1 of IBM InfoSphere Optim Data Growth Solution for JD Edwards EnterpriseOne are affected. 
+
+
+REMEDIATION: : The recommendation is to leave the password value blank in the XML file, and the Optim Data Growth Solution for JD Edwards EnterpriseOne product will prompt the user to enter the password during runtime. 
+
+Please refer to updated installation guides corresponding to your version. 
+
+
+Fix:
+For all versions:
+- Apply the iFix (link to iFix [http://www-933.ibm.com/support/fixcentral/swg/downloadFixes?product=ibm/Information+Management/Optim&release=OracleApps.9.1.0&platform=All&function=fixId&fixids=JDE-09.01.00-004&includeRequisites=1&includeSupersedes=0&downloadMethod=http])
+
+Workaround(s) & MITIGATION(s): 
+None known, apply fixes
+
+
+REFERENCES: 
+
+· Complete CVSS Guide [http://www.first.org/cvss/v2/guide]
+· On-line Calculator V2 [http://nvd.nist.gov/cvss.cfm?calculator&adv&version=2] 
+
+RELATED INFORMATION: 
+· IBM Secure Engineering Web Portal [https://www-304.ibm.com/jct03001c/security/secure-engineering/]
+· IBM Product Security Incident Response Blog [https://www.ibm.com/blogs/psirt]
+
+
+CHANGE HISTORY: 
+18-NOV-2013: Draft created
+07-MAR-2014: Updated Summary and hyperlinks
+02-JUN-2014: Updated that fix is for All versions of Optim JD Edwards
+29-July-2014: Updated iFix link
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v2 Guide [http://www.first.org/cvss/v2/guide] 
+On-line Calculator v2 [http://nvd.nist.gov/CVSS-v2-Calculator] 
+
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.

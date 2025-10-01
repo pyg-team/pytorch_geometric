@@ -1,0 +1,154 @@
+Title: IBM HD59502: ENOVIA SESSION TIME-OUT IS NOT HANDLED CORRECTLY - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DUPLICATE OF ANOTHER APAR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  ENOVIA SESSION TIME-OUT IS NOT HANDLED
+   CORRECTLY
+   .
+   ABSTRACT: ENOVIA Session Time-out Not Handled
+   Correctly.........
+   .
+   Environment:
+   Client OS and level: _____xp __
+   Server OS and level: ___aix5.3.0____
+   Database and level: __oracle____
+   .
+   Scenario:
+   1. ORBIX Session time-out set to 3300000 (55
+   minutes)
+   2. Start LCA
+   3. Wait for time-out
+   .
+   Observed behavior:
+   Just starting LCA does not seem to respect the
+   time-out parameter 3300000.
+   When you activate an application and start some
+   interaction it appears to respect the time-out.
+   Log files will be attached when they have cleared
+   our security process.
+   We cannot stabilize our production environment
+   with this type of application behavior that does not
+   correspond with the configuration that we have put
+   in place.
+   .
+   ORBIX timeout at the site is set to 55 minutes.
+   Sessions are timing out in 20 minutes.
+   What is controlling this unconfigured time-out.
+   User cannot save work after timeout, resulting in
+   hunderds of hours of lost time due to rework.
+   'Server Manager Session Timeout retreived from
+   environments variables:3300000 ms'
+   and 'CATSrvKeepAlive is defined' appears in the
+   trace files.
+   At the time of this report our time-out was set to 55
+   minutes.
+   The documented procedure was followed for
+   implementing this change.
+   As you can tell in our log files, this is the time being
+   reported by the server.
+   At this time, we have increased our time out to 5
+   hours.
+   .
+   The server, which we are using, is behind a firewall.
+   .
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *  THE PROBLEM HAS BEEN FOUND TO BE ANOTHER
+   SYMPTOM OF THE PROBLEM REPORTED IN HD59881 [http://www-01.ibm.com/support/docview.wss?uid=swg1HD59881]
+   .
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   HD59502
+   
+   
+ * REPORTED COMPONENT NAME
+   ENOVIA LCA AIX
+   
+   
+ * REPORTED COMPONENT ID
+   569101700
+   
+   
+ * REPORTED RELEASE
+   516
+   
+   
+ * STATUS
+   CLOSED DUB
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2006-11-23
+   
+   
+ * CLOSED DATE
+   2006-12-21
+   
+   
+ * LAST MODIFIED DATE
+   2006-12-22
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ENOVIA 3D-COM S
+   
+   
+ * FIXED COMPONENT ID
+   569104600
+   
+   
+
+APPLICABLE COMPONENT LEVELS

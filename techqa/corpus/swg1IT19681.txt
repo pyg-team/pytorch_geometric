@@ -1,0 +1,164 @@
+Title: IBM IT19681: TOOLKIT UNABLE TO CONNECT WHEN USING WEB ADMIN WITH TLSV1.2 - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  If you restrict the webadmin interface on V10 to TLSV1.2
+   only, then the toolkit cannot connect to the broker.
+   
+   You cannot select the TLSV1.2 via the remote connection
+   wizard.  This apar will provide a drop-down list of protocols
+   from which to select.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Add the following to a .broker file:
+   
+    sslIncludeProtocols="TLSv1.2"
+   
+   and then use that .broker file to create a remote connection to
+   the broker.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   All users of IBM Integration Toolkit V10 with remote SSL
+   connections to a node.
+   
+   
+   Platforms affected:
+   Linux on x86-64 platform, Windows on x86-64 platform
+   
+   ****************************************************************
+   PROBLEM DESCRIPTION:
+   There is no way of setting the SSL protocol when connecting to a
+   remote node.   If the
+   node has a a higher level of protocol then the connection will
+   fail.
+   You can create a .broker file and set the protocol in there but
+   you cannot do this via
+   the remote connection wizard.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The remote connection will set the SSL protocol correctly when
+   connecting.
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+   Version    Maintenance Level
+   v10.0      10.0.0.9
+   
+   The latest available maintenance can be obtained from:
+   http://www-01.ibm.com/support/docview.wss?rs=849&uid=swg27006041 [http://www-01.ibm.com/support/docview.wss?rs=849&uid=swg27006041]
+   
+   If the maintenance level is not yet available,information on
+   its planned availability can be found on:
+   http://www-1.ibm.com/support/docview.wss?rs=849&uid=swg27006308 [http://www-1.ibm.com/support/docview.wss?rs=849&uid=swg27006308]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT19681
+   
+   
+ * REPORTED COMPONENT NAME
+   IIB TOOLKIT
+   
+   
+ * REPORTED COMPONENT ID
+   5724J0541
+   
+   
+ * REPORTED RELEASE
+   A00
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-03-14
+   
+   
+ * CLOSED DATE
+   2017-05-25
+   
+   
+ * LAST MODIFIED DATE
+   2017-05-25
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   IIB TOOLKIT
+   
+   
+ * FIXED COMPONENT ID
+   5724J0541
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * RA00 PSY
+   UP

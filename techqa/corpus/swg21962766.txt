@@ -1,0 +1,44 @@
+Title: IBM How to find non-CBT tables that need grooming? - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Similar to the script /nz/kit/bin/adm/tools/cbts_needing_groom, how to find non-CBT tables that need grooming? 
+
+SYMPTOM
+Grooming takes time and resources hence to work more efficiently you chose to groom tables differently depending if they are CBT or non-CBT. For CBT (clustered base tables) you use the /nz/kit/bin/adm/tools/cbts_needing_groom script. But for non-CBT?
+
+
+ENVIRONMENT
+IBM PureData System for Analytics
+
+RESOLVING THE PROBLEM
+CBT tables are listed in the _V_TABLE_ORGANIZE_COLUMN view. You can join the _V_TABLE with _V_TABLE_ORGANIZE_COLUMN to get the list of CBT vs NON-CBT, for example:
+
+select a.objid, tablename, schema, nvl2(b.objid, 'CBT', 'NON-CBT') CBT_TABLE
+from _V_TABLE a LEFT JOIN (select distinct objid from _V_TABLE_ORGANIZE_COLUMN) b
+on a.objid = b.objid 
+
+You can use the below SQL to identify Non-CBTs and pass it as an input to the nz_groom command using the "-in" option:
+
+
+select tablename from _v_table where objid NOT IN (select objid from _v_table_organize_column);
+
+With nz_groom -scan command:
+
+[nz@xyz2 ~]$ export TEST_DB_NAME=TESTDB;
+[nz@xyz2 ~]$ nz_groom $TEST_DB_NAME -scan -in `nzsql -d $TEST_DB_NAME -A -t -c "select tablename from _v_table where objid NOT IN (select objid from _v_table_organize_column) and objtype = 'TABLE';"`
+
+With the -scan/-records arguments, you can use -rows, -percent and -size to define thresholds. For instance to show Non-CBT tables with >= 1M reclaimable rows, you can use the below:
+
+[nz@xyz2 ~]$ nz_groom $TEST_DB_NAME -scan -rows 1000000 -in `nzsql -d $TEST_DB_NAME -A -t -c "select tablename from _v_table where objid NOT IN (select objid from _v_table_organize_column) and objtype = 'TABLE';"`
+
+Please lookup "nz_groom --help" for syntax and other usage options.
+
+For CBTs, use the cbts_needing_groom script, or just use objid IN in the above SQL to generate the list of CBTs.
+
+
+
+PRODUCT ALIAS/SYNONYM
+ pda netezza

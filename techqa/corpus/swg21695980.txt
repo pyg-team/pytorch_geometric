@@ -1,0 +1,40 @@
+Title: IBM Fail to deploy FileNet Content Engine 5.2.1 via Configuration Manager command line - United States
+
+Text:
+CMUI; Deployment; CPE; OpenFailureException; Silent TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ We need to deploy IBM FileNet Content Platform Engine 5.2.1 on a Linux server by using the Configuration Manager command line. The deploy application task failed. 
+
+SYMPTOM
+Fail to run the following command to deploy CPE: 
+
+ * 
+ * 
+ * 
+ * 
+
+Error message found in SystemErr.log: 
+
+[2/2/YY 8:34:17:679 PST] 000008ab IscTaskProvid E IscTaskProvider provideServerInstallExtentions CWLAA1031E: Exception=org.eclipse.jst.j2ee.commonarchivecore.internal.exception.OpenFailureException: IWAE0037E Could not open /tmp/app3583178992861716215.ear 
+CAUSE
+It is required to have the same user who starts the J2EE application server to execute the deployment script.
+
+
+ENVIRONMENT
+Linux
+
+
+
+DIAGNOSING THE PROBLEM
+Scenario: 
+
+ * User A is responsible to run the J2EE application server 
+ * User B is responsible to execute the deployment script
+
+
+After User B executed the script, the file "app3583178992861716215.ear" is generated under %tmp% folder and it's permission is set as read and execute only by User B. As a result, the application server is not able to read the file as it's run by User A.
+
+
+RESOLVING THE PROBLEM
+Login as the same user who starts the application server to execute the deployment script.

@@ -1,0 +1,31 @@
+Title: IBM How to use the BAPI stage to communicate with Unicode SAP systems - United States
+
+Text:
+packs81relnotes; packs85relnotes; conn85relnotes; conn81relnotes TECHNOTE (FAQ)
+
+QUESTION
+ How can I set up a DataStage job using the BAPI stage for exchanging data with a Unicode SAP system? 
+
+ANSWER
+Character Encoding
+- DataStage communicates with SAP using the UTF-16 encoding.
+- In UTF-16, each character (symbol) is encoded by 2 bytes of data. The byte order (big-endian vs. little-endian) is dependent on the hardware and OS of the DataStage platform. In general, Intel architectures are little-endian, while most, but not all, Unix/RISC machines are big-endian.
+- UTF-16LE (also called “Unicode”) uses little-endian encoding (the least significant byte first).
+- UTF-16BE (also called “Unicode BigEndian”) uses big-endian encoding (the most significant byte first).
+- When the connection is initiated DataStage, the SAP system will detect the byte ordering of the platform and all communication will use that ordering.
+- The byte order is displayed in the DataStage job log as “Partner code page:” followed by UNICODE for UTF-16BE or CODEUNI for UTF-16LE.
+
+NLS (National Language Support) Settings
+- It is recommended to set the NLS map for the BAPI stage to UTF8.
+- The NLS setting for other stages should be set appropriately (e.g. UTF-16LE for reading/writing a sequential file containing Unicode data).
+
+File Encodings
+- The input file for import parameters needs to be encoded using UTF-16 and should begin with a byte order mark (BOM). If there is no byte order mark, the DataStage platform native byte ordering is assumed.
+- The BAPI log files are written using the UTF-16 encoding with the platform native byte ordering. Multiple BAPI call results are placed on new lines with the sequence number appended in front.
+- Line terminators for the written logs are LF (Line Feed, 0x0A) for BE platforms and CRLF (Carriage Return + Line Feed, 0x0D0A) for LE platforms. This can be reversed by setting the environment variable DS_SAP_ALT_NL to 1. This causes the BAPI stage to use CRLF on BE platforms and LF on LE platforms. When this variable is set, the message “Alternate NL selected for RETURN” is displayed in the job log.
+- Setting the environment variable DS_SAP_CONV_EXP_STRUCT to 1 causes the log files for export to be written using UTF-8 encoding.
+
+Other Notes
+- It is not recommended to delete any columns after selecting the BAPI in the BAPI Explorer. This may result in unpredictable behavior.
+- An easy way to work with Unicode files is using Windows Notepad (files can be saved using various encodings). The resulting files can then be transferred to a Unix system using e.g. FTP in binary mode.
+- There is also an easy way to verify a file's encoding using Windows Notepad: open the file, then click Save As. The file encoding will be displayed in the Encoding box (again, files from UNIX systems can be transferred using FTP in binary mode).

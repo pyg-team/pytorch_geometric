@@ -1,0 +1,144 @@
+Title: IBM PI07084: REMOTE GDC EXTRACT FAILS ON UNIX - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  While extracting the DC 7.2 home by using tacmd (remote
+   install/config) below:
+   tacmd executecommand -m <managedsystem> -c
+   "/opt/IBM/ITM/.../yn/wasdc/7.2/gdc_extract.sh -d
+   /opt/IBM/ITM/dchome/7.2.0.0.1 /opt/IBM/ITM/.../yn/wasdc/7.2
+   gdc.tar.gz" -o -e
+   it fails as follows:
+   + [ 1 -eq 0 ]
+   + exit_error 1 CFG5057E 'CFG5057E Failed to extract files from
+   archive'
+   + rc=1
+   + msgid=CFG5057E
+   + message_text='CFG5057E Failed to extract files from archive'
+   + [ -f /opt/IBM/ITM/lx8266/yn/wasdc/7.2/installbundle.jar ]
+   + /opt/IBM/ITM/JRE/lx8266/bin/java -cp
+   /opt/IBM/ITM/lx8266/yn/wasdc/7.2/installbundle.jar
+   com.ibm.tivoli.itcam.install.common.resources.MessagePrinter
+   CFG5057E 'CFG5057E Failed to extract files from archive'
+   + [ -d /tmp/tempdir_21574 ]
+   + rm -rf /tmp/tempdir_21574
+   + exit 1
+   'NoneType' object has no attribute 'endswith'
+   CFG5057E Extraction of gdc_extract.py failed
+   Users Affected
+   ----------------
+   Remote UNIX systems with converged data collector v7.2 for
+   ITCAM APD, WAS, SOA and TT.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  See Error Description.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix for this APAR is contained in the following
+   maintenance packages:
+   | interim fix | 7.2.0.0-TIV-ITCAMAD_WS-IF0005
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI07084
+   
+   
+ * REPORTED COMPONENT NAME
+   ITCAM WAS DIST
+   
+   
+ * REPORTED COMPONENT ID
+   5724L6200
+   
+   
+ * REPORTED RELEASE
+   720
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-11-28
+   
+   
+ * CLOSED DATE
+   2014-09-04
+   
+   
+ * LAST MODIFIED DATE
+   2014-09-04
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ITCAM WAS DIST
+   
+   
+ * FIXED COMPONENT ID
+   5724L6200
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R720 PSY
+   UP

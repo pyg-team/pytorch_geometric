@@ -1,0 +1,263 @@
+Title: IBM IZ94549: DBCS CHARACTERS RESULTS IN DB2 ERROR DURING DATA SYNCH - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  **********************************************
+   **********************************************
+   Title:
+   DBCS characters results in DB2 error during data synch
+   
+   Description:
+   If the Provisioning Policy entitlement parameter value contains
+   DBCS character and the length of the attribute value is greater
+   than or equal to 4000 characters then exception -
+   "com.ibm.db2.jcc.b.jm: DB2 SQL Error: SQLCODE=-302,
+   SQLSTATE=22001" occurs and the table is not populated with
+   correct values.
+   
+   <Trace Level="MIN">
+    <Time Millis="1296050602436"> 2011.01.27
+   00:03:22.436+10:00</Time>
+    <Server Format="IP">**********</Server>
+    <ProductId>CTGIM</ProductId>
+    <Component>com.ibm.itim.apps.ejb.adhocreport</Component>
+    <ProductInstance>server1</ProductInstance>
+    <LogText><![CDATA[DB2 SQL Error: SQLCODE=-302, SQLSTATE=22001,
+   SQLERRMC=null, DRIVER=3.50.152]]></LogText>
+    <Source
+   FileName="com.ibm.itim.apps.ejb.adhocreport.SynchronizationHelpe
+   r" Method="populateParsedEntitlements"/>
+    <Thread>SIBJMSRAThreadPool : 123</Thread>
+    <Exception><![CDATA[com.ibm.db2.jcc.b.jm: DB2 SQL Error:
+   SQLCODE=-302, SQLSTATE=22001, SQLERRMC=null, DRIVER=3.50.152^M
+           at java.sql.SQLException.<init>(SQLException.java:59)^M
+           at com.ibm.db2.jcc.b.jm.<init>(jm.java:23)^M
+           at com.ibm.db2.jcc.b.wc.a(wc.java:563)^M
+           at com.ibm.db2.jcc.b.wc.a(wc.java:57)^M
+           at com.ibm.db2.jcc.b.wc.a(wc.java:126)^M
+           at com.ibm.db2.jcc.b.tk.b(tk.java:1593)^M
+           at com.ibm.db2.jcc.b.tk.c(tk.java:1576)^M
+           at com.ibm.db2.jcc.t4.db.k(db.java:353)^M
+           at com.ibm.db2.jcc.t4.db.a(db.java:59)^M
+           at com.ibm.db2.jcc.t4.t.a(t.java:50)^M
+           at com.ibm.db2.jcc.t4.tb.b(tb.java:200)^M
+           at com.ibm.db2.jcc.b.uk.Gb(uk.java:2355)^M
+           at com.ibm.db2.jcc.b.uk.e(uk.java:3129)^M
+           at com.ibm.db2.jcc.b.uk.e(uk.java:3238)^M
+           at com.ibm.db2.jcc.b.uk.zb(uk.java:568)^M
+           at com.ibm.db2.jcc.b.uk.executeUpdate(uk.java:551)^M
+           at
+   com.ibm.ws.rsadapter.jdbc.WSJdbcPreparedStatement.pmiExecuteUpda
+   te(WSJdbcPreparedStatement.java:1172)^M
+           at
+   com.ibm.ws.rsadapter.jdbc.WSJdbcPreparedStatement.executeUpdate(
+   WSJdbcPreparedStatement.java:813)^M
+           at
+   com.ibm.itim.apps.ejb.adhocreport.SynchronizationHelper.populate
+   ParsedEntitlements(SynchronizationHelper.java:1464)^M
+           at
+   com.ibm.itim.apps.ejb.adhocreport.synchronization.AdhocSynchroni
+   zationManagerBean.populateDatabase(AdhocSynchronizationManagerBe
+   an.java:2176)^M
+           at
+   com.ibm.itim.apps.ejb.adhocreport.synchronization.AdhocSynchroni
+   zationManagerBean.stageData(AdhocSynchronizationManagerBean.java
+   :908)^M
+           at
+   com.ibm.itim.apps.ejb.adhocreport.synchronization.AdhocSynchroni
+   zationManagerBean.synchronizeData(AdhocSynchronizationManagerBea
+   n.java:323)^M
+           at
+   com.ibm.itim.apps.ejb.adhocreport.synchronization.EJSLocalStatel
+   esswf_ejb_enroleejb_AdhocSynchroniz_49ec2565.synchronizeData(Unk
+   nown Source)^M
+           at
+   com.ibm.itim.adhocreport.synchronization.AdhocSyncDataMessageRec
+   eiver.onMessage(AdhocSyncDataMessageReceiver.java:98)^M
+           at
+   com.ibm.itim.messaging.mdb.MessageHandlerBean.handleMessage(Mess
+   ageHandlerBean.java:136)^M
+           at
+   com.ibm.itim.messaging.mdb.EJSLocalStatelessenroleejb_BeanManage
+   dMessageHand_9f57a42d.handleMessage(Unknown Source)^M
+           at
+   com.ibm.itim.messaging.mdb.NonTransactedMessageListenerBean.onMe
+   ssage(NonTransactedMessageListenerBean.java:171)^M
+           at
+   com.ibm.ejs.container.MessageEndpointHandler.invokeMdbMethod(Mes
+   sageEndpointHandler.java:1092)^M
+           at
+   com.ibm.ejs.container.MessageEndpointHandler.invoke(MessageEndpo
+   intHandler.java:777)^M
+           at $Proxy50.onMessage(Unknown Source)^M
+           at
+   com.ibm.ws.sib.api.jmsra.impl.JmsJcaEndpointInvokerImpl.invokeEn
+   dpoint(JmsJcaEndpointInvokerImpl.java:233)^M
+           at
+   com.ibm.ws.sib.ra.inbound.impl.SibRaDispatcher.dispatch(SibRaDis
+   patcher.java:900)^M
+           at
+   com.ibm.ws.sib.ra.inbound.impl.SibRaSingleProcessListener$SibRaW
+   ork.run(SibRaSingleProcessListener.java:550)^M
+           at
+   com.ibm.ejs.j2c.work.WorkProxy.run(WorkProxy.java:399)^M
+           at
+   com.ibm.ws.util.ThreadPool$Worker.run(ThreadPool.java:1550)^M
+   ]]></Exception>
+   </Trace>
+   
+   Can Customer Recreate: Yes (L2 also recreated)
+   
+   ITIM Server Version - 5.1 with FP3 (5.1.0.4 on L2)
+   Agent Version -  n/a
+   
+   Server Environment
+   
+   Single server OR Cluster server: Single
+   
+   Operating System   : Windows 2008 (AIX5.3 on L2)
+   
+   Desired Behavior:
+   Data synchronization will be successfully done and customer can
+   generate report.
+   
+   Steps to Duplicate:
+   1. Create provisioning policy against any service (ex. PosixAIX)
+   2. Create provisioning parameter as javascript.
+   3. Write over 4000 bytes in javascript area.
+   4. Insert DBCS into javascript at the top.
+   <example>
+   var a="??";
+   //1234567890123456789012345678901234567890
+   ...(repeat 100 times)
+   return "hello";
+   5. Execute data synchronization
+   6. Check msg.log and trace.log
+   **********************************************
+   **********************************************
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Do not put DBCS in the first 4000 bytes
+   Such as putting 4000 bytes comment at the top
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Users affected:
+   Customers using DBCS characters in a Provisioning Policy
+   entitlement.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This fix for this APAR is contained in the
+   following maintenance packages:
+   | Interim Fix | 5.1.0.5-TIV-TIM-IF0025
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ94549
+   
+   
+ * REPORTED COMPONENT NAME
+   IBM TIV IDENT M
+   
+   
+ * REPORTED COMPONENT ID
+   5724C3405
+   
+   
+ * REPORTED RELEASE
+   510
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-02-06
+   
+   
+ * CLOSED DATE
+   2011-03-08
+   
+   
+ * LAST MODIFIED DATE
+   2011-03-08
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  SERVER
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   IBM TIV IDENT M
+   
+   
+ * FIXED COMPONENT ID
+   5724C3405
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R510 PSY
+   UP

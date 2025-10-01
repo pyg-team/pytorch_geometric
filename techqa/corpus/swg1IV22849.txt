@@ -1,0 +1,152 @@
+Title: IBM IV22849: MICROSOFT EXCHANGE SERVER AGENT CRASHES WHILE FETCHING THE MAILBOX DETAILS ATTRIBUTE GROUP DATA. - United States
+
+Text:
+  A FIX IS AVAILABLE
+ITCAM for Microsoft(R) App: Exchange Server 6.2.3-TIV-ITM_EXCHG-IF0009 [http://www-01.ibm.com/support/docview.wss?uid=swg24033709]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Environment:
+   Microsoft Exchange Server Agent 6.2.3, 64 bit
+   Microsoft Exchange Server 2007
+   
+   
+   Problem Description:
+   When Microsoft Exchange Server Agent 6.2.3, 64 bit is configured
+   to collect mailbox details on Microsoft Exchange Server 2007.
+   Agent crash is observed sometimes while fetching mailbox details
+   attribute group data from portal.
+   
+   
+   Detailed Recreation Procedure:
+   Install and configure Microsoft Exchange Server agent 6.2.3, 64
+   bit on Microsoft Exchange Server 2007 with Mailbox Details
+   Collection enabled. Sometimes there are some garbage lines
+   appended at the end of "MailBox_Details.log" file. If such
+   garbage lines are there in "MailBox_Details.log" file then agent
+   crashes while fetching mailbox details attribute group data from
+   portal.
+   
+   
+   Related Files and Output:
+   1. Log file created by kexcma.exe named *kexcma*.log
+   2. Mailbox Details log file "MailBox_Details.log"
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Exchange Server agent crashes while fetching the mailbox
+   details attribute group data.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Now Exchange Server agent will not crash while
+   fetching the mailbox details attribute group data.
+   
+   The fix for this APAR is contained in the following maintenance
+   packages:
+      | interim fix | 6.2.3-TIV-ITM_EXCHG-IF0007
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV22849
+   
+   
+ * REPORTED COMPONENT NAME
+   ITMF MC EXCHANG
+   
+   
+ * REPORTED COMPONENT ID
+   5724B98EO
+   
+   
+ * REPORTED RELEASE
+   623
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-06-13
+   
+   
+ * CLOSED DATE
+   2012-07-24
+   
+   
+ * LAST MODIFIED DATE
+   2012-07-24
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ITMF MC EXCHANG
+   
+   
+ * FIXED COMPONENT ID
+   5724B98EO
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R623 PSY
+   UP

@@ -1,0 +1,75 @@
+Title: IBM Performance Tuning for the Data Dictionary Cache - United States
+
+Text:
+DD_HASHSIZE DD_HASHMAX TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This article describes the Dictionary Cache and how to monitor and tune it. 
+
+RESOLVING THE PROBLEM
+
+INTRODUCTION
+
+The data dictionary cache is possibly the most important cache for IBM Informix Dynamic Server. This dictionary cache retrieves and caches information about the tables accessed by Informix. This includes information such as column names, data types, indexes, and extents. Although Informix also places the actual pages for the system catalog tables, also known as partition pages, in the buffer pool, the dictionary cache is always used and generally presents a huge performance advantage for repeated access to the table information.
+
+There are two onconfig parameters that affect the tuning of the Data Dictionary Cache. These two variables are:
+
+
+ * DD_HASHSIZE
+ * 
+ * DD_HASHMAX
+
+
+DD_HASHSIZE specifies the number of hash buckets or lists in the data dictionary cache, while DD_HASHMAX specifies the number of table entries per hash bucket. The default values for each are as follows: 
+ * DD_HASHSIZE
+ * 31
+ * 
+ * DD_HASHMAX
+ * 10
+
+
+This means that there are 31 Buckets and each bucket can contain 10 tables, which in turn means that the instance can cache only 310 tables before it runs out of memory. 
+
+If Informix runs out of memory in the dictionary cache to add additional entries, you will have one primary problem which is: 
+
+1. Performance: If your Data Dictionary cache is too small for your instance you are constantly swapping out one table in the cache for another, thus wasting I/O and causing performance degradation. 
+
+
+
+STEPS 
+
+There are two different tuning methods: one simple, and one slightly complicated method. 
+
+The Simple Method 
+
+Calculate the number of tables the instance will have, and divide it by the number of tables you want to have per bucket. IBM recommends that you keep a moderately low number, between 4 and 10, for DDHASHMAX. So for an instance that has 2000 tables, the simple approach would be to have the following values: 
+ * DD_HASHSIZE
+ * 200
+ * 
+ * DD_HASHMAX
+ * 10
+
+
+The drawback to the above approach is that you will be wasting memory if Informix will not have to cache every table in the instance. 
+
+The Slightly Complicated Method 
+
+Look at the number of tables of each database that are actually being accessed. Look for tables that are most often being accessed and only count them towards the cache. After that add a buffer amount to get the total value. A good rule of thumb being at least modulas(%) 10 of the total number of tables. 
+
+So for an instance that has 2000 tables, and you find out that only 45% of the tables are regularly hit by queries, inserts, updates, or deletes, the total value you would want for the cache would be: 
+ * 
+
+
+That would give you the following values in our onconfig file; 
+ * DD_HASHSIZE
+ * 110
+ * 
+ * DD_HASHMAX 
+ * 1
+ * 0
+
+
+Please note that while the IBM documentation recommends a prime number for DDHASHISIZE, testing has proved that a prime number is not in fact required. 
+
+Note: The method of monitoring your Data Dictionary cache is with the following Informix onstat command: 
+ * onstat –g dic

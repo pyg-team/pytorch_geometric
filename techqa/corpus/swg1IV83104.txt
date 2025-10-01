@@ -1,0 +1,232 @@
+Title: IBM IV83104: GET ERROR: "SPECIFY VALUE IN ORGANIZATION FAILED" IN THE SR APPLICATION - United States
+
+Text:
+ 
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  STEPS TO REPRODUCE:
+   
+   1 login as maxadmin
+   2 Go to application designer and add sr.siteid to the createsr
+   application
+   enter SITEID in the lookup field
+   save
+   3 go to create Service Request application
+   4 enter BEDFORD in the site field
+   5 use the asset lookup to locate asset 1001 (change Filter By
+   to ALL)
+   6 after asset field has been populated with asset 1001
+   location has been populated with MOFLOOR1
+   7 click the lookup icon besides affected user field
+   8 select  KELLER from the lookup
+   9 get error: BMXAA4198E - The GL attribute GLACCOUNT on object
+   {1}
+   requires an organization. Specify a value in the Organization
+   field.
+   
+   NOTE: When I populate PERSON.LOCATIONSITE against particular
+   Person
+   then this issue is not happening.
+   
+   CURRENT ERRONEOUS RESULT: when PERSON.LOCATIONSITE is null, get
+   error
+   BMXAA4198E - The GL attribute GLACCOUNT on object {1}
+   requires an organization. Specify a value in the Organization
+   field.
+   
+   EXPECTED RESULT: No error message should be thrown.
+   
+   
+   Below are the child issues/errors which was triggered from above
+   GLACCOUNT issue. So, all have impact on the application
+   behavior.
+   
+   1 - Asset's and Location's description disappearing after
+   change the
+   affected user
+   2 - BMXAA5577e - Specify a site for the asset or location
+   
+   STEPS:
+   1. login as wilson/wilson
+   go to the People application, bring up Rogers
+   populate the person's site field with MCLEAN
+   save
+   2. go to Self Service module > Service Request > Create Service
+   Request
+   application
+   3. Click Select Value besides the asset field
+   select asset 11470
+   location Repair has been automatically populated
+   4. click the lookup besides the affected user field
+   select ROGERS
+   tab out
+   Notice that both asset's and location's description disappeared
+   
+   ACTUAL RESULT:  asset's description and location's description
+   disappeared
+   
+   EXPECTED RESULT: asset's description and location's description
+   should NOT disappeared
+   
+   5. click Submit
+   
+   Service Request 1181 has been submitted.
+   
+   6. go back to the People application, bring up ROGERS
+   remove the Person's site
+   save
+   
+   7. go to create service request application
+   enter asset 11470
+   change the affected uesr from wilson to ROGERS
+   click Submit
+   get error: BMXAA5577E - Specify a site for the asset or location
+   
+   ACTUAL RESULT: get error message when PERSON.LOCATIONSITE is
+   null. When the user populate PERSON.LOCATIONSITE against
+   particular Person then this issue is not happening.
+   
+   EXPECTED RESULT: No error message should popup.  SR.ASSETSITEID
+   should have populated with ASSET.SITEID rather its making null
+   when PERSON.LOCATIONSITE is null.
+   
+   
+   ADDITIONAL INFO: replicated in 7.5.0.7 maxdemo and 7.5.0.10
+   maxdemo
+   
+   ENVIRONMENT (SYSTEM INFO):
+   TPAE 7.5.0.7
+   Scheduler 7.5.2
+   Calibration 7.5.0.0
+   TPAE Integration Framework 7.5.1.2
+   no SCCD
+   Oracle database
+   
+   
+   ERFORMANCE ISSUE: N/A
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * All Maximo users                                             *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * GET ERROR: "SPECIFY VALUE IN ORGANIZATION FAILED" IN THE SR  *
+   * APPLICATION                                                  *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Install the latest Fix Pack                                  *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  GET ERROR: "SPECIFY VALUE IN ORGANIZATION FAILED" IN THE SR
+   APPLICATION
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV83104
+   
+   
+ * REPORTED COMPONENT NAME
+   WORK & MTRL APP
+   
+   
+ * REPORTED COMPONENT ID
+   TIVOWRKMM
+   
+   
+ * REPORTED RELEASE
+   750
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-03-28
+   
+   
+ * CLOSED DATE
+   2016-06-01
+   
+   
+ * LAST MODIFIED DATE
+   2016-06-01
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  MAXIMO
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WORK & MTRL APP
+   
+   
+ * FIXED COMPONENT ID
+   TIVOWRKMM
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R750 PSY
+   UP

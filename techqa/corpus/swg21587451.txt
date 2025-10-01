@@ -1,0 +1,14 @@
+Title: IBM Saving internal state on an IBM WebSphere DataPower SOA Appliance - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ If a Customer Support Engineer asks me to send in (or look at) DataPower internal state, how do I do that? 
+
+ANSWER
+If you need to provide internal state, here are the options: 
+
+ * On firmware 3.8.1 and above, in the CLI, enter the commands "config;save internal-state" to generate a temporary:/// internal-state file. 
+   
+ * On firmware 4.0.* and above, "Include Internal State" is an option on the Administration > Device > Failure Notification page, which will put internal-state into any failure-generated error report (under the title "QRef Status"). If your DataPower appliance has not restarted itself, however, you will need the CLI commands above to generate a separate internal-state file in the temporary:/// directory.

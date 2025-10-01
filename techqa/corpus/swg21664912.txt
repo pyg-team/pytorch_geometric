@@ -1,0 +1,35 @@
+Title: IBM Does InfoSphere DataStage support array processing for MySQL? - United States
+
+Text:
+MySQL array processing performance TECHNOTE (FAQ)
+
+QUESTION
+ Relocating the MySQL DB server machine far from the Information Server machine, the same DataStage server job with ODBC plugin stage showed much poorer insert/update performance. The performance did not get better even after increasing the array size greater than 1. Why is this happening? 
+
+CAUSE
+InfoSphere DataStage uses MySQL Wire Protocol driver from DataDirect to connect to MySQL server. This driver supports array processing API, but internally it simulates array processing by executing a prepared SQL statement multiple times.
+
+ANSWER
+ 
+
+MySQL driver supports array processing API. ODBC functions like SQLPrepare(), SQLSetStmtAttr, SQLExecute(), etc are used for array processing. DataDirect MySQL driver supports those functions. 
+
+ 
+
+But the driver cannot do proper array processing due to MySQL limitation. In proper array processing, the ODBC driver processes the entire content of arrays of parameters in a single SQLExecute() call and then sends all the data in the arrays of parameters using one network roundtrip. For this to be successful, the DBMS must support parameter arrays natively, but MySQL does not have this feature. 
+
+When the DBMS does not support parameter arrays, an ODBC driver can simulate array processing by executing an SQL statement once for each set of parameter values. And this is what the DataDirect MySQL driver actually does. 
+
+Since the MySQL server does not support arrays of parameters, DataDirect MySQL driver processes the array by preparing the SQL statement once for reuse then sending the values in array that many times. So, setting array size greater than 1 will not result in any performance gain because the number of network roundtrips to the DB server does not decrease. 
+
+ 
+
+Note: 
+
+ 1. The above is true for DataDirect MySQL driver version 7.1, which is the latest version as of Feb. 2014, and lower. 
+ 2. The decreased insert/update performance after relocating MySQL server further away from the Information Server is caused by increased networking overhead. 
+ 3. To load large volume of data to MySQL quickly, consider generating the data file using a DataStage job and then bulk loading the file using mysqlimport [https://dev.mysql.com/doc/refman/5.0/en/mysqlimport.html] program or a "LOAD DATA INFILE ..." [http://dev.mysql.com/doc/refman/5.1/en/load-data.html] statement.
+
+RELATED INFORMATION
+#Arrays of Parameter Values [http://msdn.microsoft.com/en-us/library/ms713841%28v=vs.85%29.aspx]
+Functions that Optimize ODBC Performance [http://www.datadirect.com/resources/resource-library/odbc-developer-center/odbc-tutorials/designing-performance-optimized-odbc-applications/select-functions-that-optimize-performance]

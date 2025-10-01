@@ -1,0 +1,10 @@
+Title: IBM OMEGAMON XE MQ Monitoring Agent Issue the ALTER QLOCAL Command - United States
+
+Text:
+ALTER QLOCAL command event TECHNOTE (FAQ)
+
+QUESTION
+ We have the OMEGAMON XE for Messaging on zOS. The agent is configured to monitor all the queue managers (QMGRS) on the same lpar, however, we can see the agent sometimes issues the 'alter Qlocal' command on a QMGR. Why is the agent issuing this command? 
+
+ANSWER
+When a queue full event occurs, WebSphere MQ will disable the event. To ensure that subsequent queue full events will occur, the OMEGAMON XE for Messaging agent will re-enable the queue full event once it determines the queue is no longer full via an ALTER QL(qname) QDPMAXEV(ENABLED) command. Other than Take Action commands, this is the only ALTER command that the OMEGAMON XE for Messaging agent will issue.

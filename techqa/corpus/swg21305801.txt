@@ -1,0 +1,62 @@
+Title: IBM 0F4 RC=00000024 RSN=1E04000A during CICS VR startup with new release of z/OS - United States
+
+Text:
+CICSVR ; CICS/VR ; ABENDS0F4 ; ABEND0F4 ; 0F4 ; RC00000024 ; RC24 ; RSN1E04000A ; REASON1E04000A ; 5655P3000 5655-P30 5655P30 5655P3000 R410 R420 R42E R42K R430 R43E R43K FMID HCCV410 HCCV420 JCCV42E JCCV42K HCCV430 JCCV43E JCCV43K ; 5655Y2400 R510 R51E R51K FMID HCCV510 JCCV51E JCCV51K R520 R52E R52K 5655-Y24 ; 5655Y24 FMID HCCV520 JCCV52E JCCV52K kixinfo TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Your CICS VSAM Recovery for z/OS (CICS VR) address space is not starting after you upgrade to a new release of z/OS. You do not see the DWW messages, like DWW590I and DWW014I, usually seen during CICS VR startup. When you enter the command V SMS,CICSVR,ACTIVE, you get an SVC DUMP ABND=0F4,RC=00000024,RSN=1E04000A (abend0F4 RC24 00000024 1E04000A). 
+
+SYMPTOM
+IEA794I SVC DUMP HAS CAPTURED:
+DUMPID=001 REQUESTED BY JOB (*MASTER*)
+DUMP TITLE=COMPID=?????,CSECT=????????+FFFF,DATE=????????,MAINT
+ID=????????,ABND=0F4,RC=00000024,RSN=1E04000A
+
+You do not see these messages:
+DWW590I CICSVR CONTROL SERVICE REQUEST IS ACCEPTED
+DWW014I CICSVR SERVER ADDRESS SPACE IS NOW ACTIVE
+or any of the other DWW messages usually seen during CICS VR startup.
+
+If you enter command "DISPLAY A,L", it does not show an active address space CICSVR.
+
+
+CAUSE
+CICS VR did not automatically start due to the concatenation of the SDWWDLPA datasets and the way the control structures are built by NIP.
+
+
+The LPALST by default points to SYS1.SDWWDLPA which contains dummy module DWW1VS00. This module is part of SMS startup when CICS VR is absent. When CICS VR is installed, it needs to have its own module DWW1VS00.
+
+If CICS VR is unable to find its own version of DWW1VS00, you get abend 0F4 with RC 00000024 and RSN 1E04000A. The reason code 1E04000A internally equates to the following: 
+
+x1E = DFSMS subcomponent ARSC_ID_SAC, the SAC subcomponent is SSF Subsystem Access Control 
+x04 = Module ID, IGWFSNSA_ID, for SAC None Such Abend 
+x000A = SAC_NONE_SUCH_ABEND_CALLED
+
+
+DIAGNOSING THE PROBLEM
+Since CICS VR never tried to start on z/OS there was no 0F4 ABEND, until you tried to force start it. 
+
+All of the target libraries that contain load modules must follow these rules: 
+
+ * The data set can be in the LPA. 
+ * If CICS VR server is not used, it is not required for the data set to be in the LPA. 
+ * The data set can be in the LNKLST. 
+ * If CICS VR server is not used, it is not required for the data set to be APF-authorized.
+
+RESOLVING THE PROBLEM
+Place dataset DWW.SDWWLPA ahead of the DFSMS supplied &hlq.SDWWDLPA dataset in the LPA concatenation sequence.
+
+DFSMS builds control structures in memory during NIP based on the LPA members at IPL time. Therefore, you will also need to perform an IPL to load the new DWW1VS00. CICS VR depends on DFSMS. Cycling CICS VR will not reload this module. DFSMS will use the old image of DWW1VS00 (dummy) until an IPL reloads it.
+
+You can enter the following command to see if DWW1VS00 is available: 
+
+D PROG,LPA,MODNAME=DWW1VS00
+
+The dummy SMS module has the length of 460 bytes, but the length of the CICS VR DWW1VS00 should be equal to the length of the module in the DWW.SDWWLPA data set. For example:
+MODULE ENTRY PT LOAD PT LENGTH DIAG
+P DWW1VS00 82631BA0 02631BA0 0001B9B8 079F9870
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ CICSVR CICS VR CICS/VR

@@ -1,0 +1,42 @@
+Title: IBM Spooled File is Stuck in PRT Status - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ A spooled file is stuck in PRT status and cannot be deleted, even though it has successfully printed. Ending the writer and holding the spooled file has not helped the situation. 
+
+RESOLVING THE PROBLEM
+Occasionally, a spooled file will get stuck in PRT (Printing) status and cannot be deleted, even though it has successfully printed. Ending the writer and holding the spooled file does not help to clear the situation. 
+
+When a spooled file is in PRT (Printing) status, it means that the writer has successfully sent all of the print data to the printer, but has not received a response back from the printer that the entire spooled file has printed. The operating system keeps the spooled file in the output queue in PRT status in case something happens to the printer while a portion of the spooled file is still in the printer buffer.
+
+If the spooled file has finished printing, it can typically be removed from the output queue by doing the following:
+
+
+
+1. Use the End Writer (ENDWTR) command with the When to end writer (OPTION) parameter set to *IMMED to end the writer immediately. For example:
+
+ENDWTR WTR(writer-name) OPTION(*IMMED) 2. Run the Work with Output Queue (WRKOUTQ) command with the Output (OUTPUT) parameter set to *PRINT. For example:
+
+WRKOUTQ OUTQ(library-name/output-queue-name) OUTPUT(*PRINT)
+
+Note: Special code has been added to clean up the index of the output queue when OUTPUT(*PRINT) is specified on the WRKOUTQ command. 3. If running IBM i 6.1, IBM i 7.1 or IBM i 7.2, run the Start Spool Reclaim (STRSPLRCL) command to repair this particular output queue or all output queues in a given auxiliary storage pool (ASP), as well as any spooled files that are left in unrecoverable states. For example:
+
+STRSPLRCL OUTQ(library-name/outq-name) ASPGRP(*)
+
+STRSPLRCL OUTQ(*ALL) ASPGRP(*)
+
+Note: QSPFIXUP is no longer supported in V6R1M0 (R610) i5/OS and has been replaced by the Start Spool Reclaim (STRSPLRCL) command. The STRSPLRCL command can be used to repair output queues and spooled files that are left in unrecoverable states. It can be run for a single output queue, a set of output queues using a generic name (such as PRT*), or for all output queues in the auxiliary storage pool (ASP) defined by the ASP group (ASPGRP) parameter. 4. If running 5.4 (V5R4M0 or R540) i5/OS, next call the QSPFIXUP program to have the system go through all spooled files on the system and verifying that they are in the correct status. For example:
+
+CALL PGM(QSPFIXUP) 5. At this point, any spooled files that it finds in PRT status will be either deleted or put into SAV (Saved) status, depending on the value of the Save spooled file (SAVE) parameter in the spooled file attributes. If not, another option would be to delete or move all other spooled files in that particular output queue, then using the Clear Output Queue (CLROUTQ) command to clear the output queue of all remaining spooled files. For example:
+
+CLROUTQ OUTQ(library-name/output-queue-name) 
+Note: If this is a recurring problem, download and apply the latest recommended fixes for Print. The list of PTFs can be found on the Recommended Fixes Web site, which is available at: 
+
+http://www-912.ibm.com/s_dir/slkbase.nsf/recommendedfixes [http://www-912.ibm.com/s_dir/slkbase.nsf/recommendedfixes]  
+
+
+Cross reference information Segment Product Component Platform Version Edition Operating System IBM i 7.2 Operating System IBM i 7.1 Operating System IBM i 6.1 
+HISTORICAL NUMBER
+ 24012730

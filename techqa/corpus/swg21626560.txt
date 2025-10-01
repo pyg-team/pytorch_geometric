@@ -1,0 +1,69 @@
+Title: IBM DSRA8200W DSRA9542W messages and incorrect driver name when using DB2 JCC Driver - United States
+
+Text:
+DB2 driver TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Using WebSphere Application Server version 7.0.0.21, running an application that uses a data sources created from a "DB2 Using IBM JCC Driver" (using db2jcc4.jar), getting these messages below in SystemOut.log, although Test Connection working successfully. Note that one of the messages says "IBM DB2 JDBC Universal Driver" (which is from the db2jcc.jar)
+
+
+
+InternalDB2Un W DSRA8200W: DataSource Configuration: DSRA8020E: Warning: The property 'useJDBC4ColumnNameAndLabelSemantics' does not exist on the DataSource class 
+
+
+
+com.ibm.db2.jcc.DB2ConnectionPoolDataSource.
+
+DSConfigurati W DSRA8200W: DataSource Configuration: DSRA8020E: Warning: The property 'useJDBC4ColumnNameAndLabelSemantics' does not exist on the DataSource class 
+
+
+
+com.ibm.db2.jcc.DB2ConnectionPoolDataSource.
+
+PrivExAction W J2CA0144W: No mappingConfigAlias found for ConnectionFactory or DataSource jdbc/myDataSource.
+
+WSRdbDataSour W DSRA9542W: The JDBC Driver that is configured with the data source for the Application Server does not support the extending data source properties feature. The 
+
+
+
+Application Server will not honor the extended data source properties.
+
+InternalGener I DSRA8203I: Database product name : DB2/LINUXX8664
+
+InternalGener I DSRA8204I: Database product version : SQL09075
+
+InternalGener I DSRA8205I: JDBC driver name : IBM DB2 JDBC Universal Driver Architecture
+
+InternalGener I DSRA8206I: JDBC driver version : 3.6.60
+
+InternalDB2Un I DSRA8212I: DataStoreHelper name is: com.ibm.websphere.rsadapter.DB2UniversalDataStoreHelper@9ca09ca.
+
+WSRdbDataSour I DSRA8208I: JDBC driver type : 4
+
+
+
+Please refer to:
+
+
+
+Data source minimum required settings for DB2 with the application server on AIX, HP-UX, Linux, Solaris, or Windows
+
+http://pic.dhe.ibm.com/infocenter/wasinfo/v7r0/index.jsp?topic=/com.ibm.websphere.nd.doc/info/ae/ae/rdat_minreqdb2dist.html [http://pic.dhe.ibm.com/infocenter/wasinfo/v7r0/index.jsp?topic=/com.ibm.websphere.nd.doc/info/ae/ae/rdat_minreqdb2dist.html]
+
+
+SYMPTOM
+Warning and incorrect messages.
+
+
+CAUSE
+The JCC driver db2jcc4.jar was placed in the same folder where the Universal driver db2jcc.jar had been. The db2jcc.jar was loaded instead of the db2jcc4.jar, which created the messages.
+
+
+RESOLVING THE PROBLEM
+Remove the db2jcc.jar, restart the server. The new JCC driver should be picked up: 
+
+InternalGener I DSRA8204I: Database product version : SQL09075 
+InternalGener I DSRA8205I: JDBC driver name : IBM Data Server Driver for JDBC and SQLJ 
+InternalGener I DSRA8206I: JDBC driver version : 4.8.87 
+InternalDB2Un I DSRA8212I: DataStoreHelper name is: com.ibm.websphere.rsadapter.DB2UniversalDataStoreHelper@32ac32ac. 
+WSRdbDataSour I DSRA8208I: JDBC driver type : 4

@@ -1,0 +1,118 @@
+Title: IBM JR47698: DOC : INFOCENTER EXPLAINS FEATURES NOT ON DEPLOYMENT ENVIORMENT PAGE - United States
+
+Text:
+  A FIX IS AVAILABLE
+Version 8.5.0 Fix Pack 1 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24035702]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  "Modifying the deployment topology"
+   (http://pic.dhe.ibm.com/infocenter/dmndhelp/v8r5m0/topic/com.ibm
+   .wbpm.admin.doc/topics/tadm_view_top_lay.html) explains some
+   options that are not available. The Delete and Remove options
+   are not available on the Deployment Environment Topology screen.
+   
+   Mentions of these options should be removed from the topic.
+   
+   PRODUCTS AFFECTED
+   IBM Business Process Manager (BPM) Advanced
+   IBM BPM Standard
+   IBM BPM Express
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  No additional information is available.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The content will be updated the next time the documentation is
+   refreshed.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR47698
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM ADVANCED
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9400
+   
+   
+ * REPORTED RELEASE
+   850
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-09-06
+   
+   
+ * CLOSED DATE
+   2014-11-11
+   
+   
+ * LAST MODIFIED DATE
+   2014-11-11
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

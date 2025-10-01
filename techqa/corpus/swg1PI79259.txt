@@ -1,0 +1,206 @@
+Title: IBM PI79259: MQ: THE DELETION OF A SHARED QUEUE DOESN'T CORRECTLY UPDATE THE CLUSTER CACHE CAUSING HIGH CPU. - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The problem is as follows:
+   .
+   Two queue managers (QMA and QMB) are members
+   of a QSG and are also members of a cluster.
+   The QSG has a shared queue (SQ1) which is defined
+   as being in the cluster. This results in both
+   queue managers advertising an instance of that
+   queue to other members of the cluster.
+   .
+   SQ1 is then deleted. This should cause both
+   queue managers to send an update to the cluster
+   to notify other members that the queue manager
+   no longer hosts an instance of that clustered
+   queue. However, for shared queues this update
+   does not happen (at least, not straight away).
+   .
+   The result of this is that the cluster cache
+   on each qmgr has two records for the queue
+   (one for each qmgr), but neither has an instance
+   of the queue to put messages to.
+   .
+   When a message is put with a queue name
+   SQ1 on QMA, it detects that there isn't a local
+   queue instance, so it uses the cluster cache to
+   resolve the location of the queue name.
+   As no local instance exists, it selects the only
+   other entry for the queue (QMB) and puts the
+   message to the SYSTEM.CLUSTER.TRANSMIT.QUEUE to
+   be sent to QMB.
+   .
+   When the message is sent over the channel,
+   QMB also detects that there is no local instance
+   of the queue, so goes to the cluster cache and
+   determines that QMA is the only available instance.
+   .
+   The message loops between the two qmgrs. This
+   causes high CPU, and if the message is persistent
+   then it also causes the high logging volume
+   seen by the customer.
+   .
+   Additional Symptom(s) Search Keyword(s):
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Restart the QMQRs. The cache did get updated after the queue
+   managers were restarted.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * All users of IBM MQ for z/OS Version 9 Release 0             *
+   * Modification 0.                                              *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * Deleting a shared cluster queue may result in the cluster    *
+   * definitions for the shared queue remaining in the cluster    *
+   * after a successful shared queue delete.                      *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   If multiple members of a QSG are also members of the same
+   cluster, when a shared cluster queue is deleted, the cluster
+   records for the queue may continue to exist in the cluster. This
+   can result in the cluster hosting records for queues which no
+   longer are valid. If messages are put to one of these queues,
+   cluster resolution will attempt to put the message to another
+   QMGR in the cluster where the queue was previously hosted, which
+   results in further cluster resolution and subsequent puts to
+   other cluster QMGRs, which can result in infinite loop of
+   cluster resolution and puts to other QMGRs. This is due to
+   shared queue deletes not correctly broadcasting the delete of
+   the cluster queue in this case.
+   
+   The looping between QMGRs can result in high CPU usage on all
+   the QMGRs involved. If the message put was persistent, this will
+   also result in high logging volumes. When this scenario is
+   encountered, a cancel may be required to stop the QMGR.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Shared queue delete broadcast for cluster queues has been
+   corrected to ensure cluster records are correctly deleted when a
+   delete shared queue command is issued.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI79259
+   
+   
+ * REPORTED COMPONENT NAME
+   MQ Z/OS V9
+   
+   
+ * REPORTED COMPONENT ID
+   5655MQ900
+   
+   
+ * REPORTED RELEASE
+   000
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   YesHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-04-03
+   
+   
+ * CLOSED DATE
+   2017-04-20
+   
+   
+ * LAST MODIFIED DATE
+   2017-09-16
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    PI76942 [http://www-01.ibm.com/support/docview.wss?uid=swg1PI76942]
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UI46582
+   
+   
+
+MODULES/MACROS
+ *  CSQMUQLC none
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   MQ Z/OS V9
+   
+   
+ * FIXED COMPONENT ID
+   5655MQ900
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R000 PSY UI46582 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI46582]
+   UP17/05/19 P F705 ¢
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

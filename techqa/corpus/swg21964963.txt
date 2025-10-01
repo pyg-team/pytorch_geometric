@@ -1,0 +1,157 @@
+Title: IBM How to profile a RIT Test or RTVS Stub - United States
+
+Text:
+rit; performance; stubs; RIT-Agent TECHNOTE (FAQ)
+
+QUESTION
+ How can you profile an IBM Rational Integration Tester (RIT) test or an IBM Rational Test Virtualization Server (RTVS) stub? 
+
+ANSWER
+Introduction 
+
+This document details some basic techniques for finding performance problems occurring within test or stubs constructed in IBM Rational Integration Tester, including stubs running in RIT-Agent as part of IBM Rational Test Virtualization Server. 
+
+ 
+
+Can this help me profile my system under test? 
+
+ 
+
+No, this article relates only to profiling the performance of code written in the RIT 4GL. 
+
+ 
+
+It does not document techniques for profiling your system under test. If you wish to profile your system under test, you may wish to check out IBM Rational Performance Tester [http://www-03.ibm.com/software/products/en/performance] (suggested for new performance testing projects) or IBM Rational Performance Test Server (suggested for testers looking to reuse their existing RIT skills set in performance testing). 
+
+ 
+
+Creating a profiler 
+
+ 
+
+The 4GL for building tests and stubs supplied with RIT does not provide the features needed to build a profiler. Although a profiler could technically be built with RIT in ECMAScript, the execution of the ECMAScript would impact the performance and skew the results. The best choice is therefore to build a sample profiler as a custom function. 
+
+ 
+
+For the purpose of this article we will build a profiler which can be called in three ways: 
+
+ 
+
+ * Profile( start ) clears the profile data and adds a profile point named "start", to be called at the start of the test or stub iteration. 
+ * Profile( <point> ) adds a named <point> to the execution. This happens when profile is called with any string other than "start". 
+ * Profile() adds a final profile point, returns the profile report, and clears the profile data.
+
+
+This is a very simple profiler. It is not intended that profile points are placed inside loops with many iterations. No attempt is make to amalgamate multiple profile points with identical names. 
+
+ 
+
+Details of how to compile the profiler are given later in this article. 
+
+ 
+
+Using the Example Profiler 
+
+ 
+
+These steps may be followed to make use of the profiler: 
+
+ 
+
+ * Deploy the JAR file inside the project in the sub-folder Functions/plugins/ 
+   
+ * Then run Tools > Functions > Reload Custom Functions from RIT (or just restart RIT).
+   
+ * Create a tag %%Profile%% in the test or stub. 
+ * Add a series of LEGACY function actions as follows:
+   
+   
+   Profiler( start )
+   // Actions to profile go here
+   Profiler( two )
+   // Actions to profile go here
+   Profiler( three )
+   // Actions to profile go here
+   setTag( Profile , Profiler() )
+   
+   
+   
+   The first function action should be the first action of the stub, and should take the parameter start.
+   
+ * Immediately after the setTag(...) action should be a log action which outputs the contents of %%Profile%% (with the default logging level of INFO). Those two actions should be the last actions of the test or stub (other than the final message action in a stub).
+
+
+
+Understanding the output 
+
+This will produce output such as: 
+ * PROFILE: [start(1) 109 ms][two(1) 203 ms][three(1) 203 ms][Total 515 ms]
+
+
+This output will appear in the console belonging to the test or stub when run in RIT or the RIT-Agent logs when run on RIT-Agent. 
+
+Each time (given in milliseconds "ms") refers to the delay between the named profiler point and the next profiler point. Note that the last call to Profiler() in the setTag(...) is the final profile point. The total time is given at the end. 
+
+The number in brackets details the number of tasks being profiled at the time the profile point was reached. This is unlikely to be of interest to RIT users, but can be very useful for RTVS users, as it is akin to the number of active workers. (For a stub under heavy load this should tend towards the number of workers defined.) 
+
+Reviewing these numbers can reveal patterns in the performance. For example is will show whether the system starts quickly and then slows down, or slows down only at times when many workers are active, and can show which sections of the test or stub take longest or vary most in their execution times. 
+
+
+Can I profile my ECMAScript this way? 
+
+You should always put independent profiler calls in legacy function actions because if ECMAScript function actions are used, the invocation and tidy up of the ECMAScript engine may significantly change the performance behavior being profiled. 
+
+However if your code contains existing ECMAScript and you wish to place profile points within the ECMAScript, that is fine. In ECMAScript you will need to quote the name of your profile point, for example: 
+ * Profiler( 'four' )
+
+
+Placing profile points within loops with ECMAScript should be done sparingly just as for loops created with the RIT 4GL actions. 
+
+Always use legacy function actions for the first and last calls to Profile(). 
+
+
+Building the Example Profiler 
+
+The environment variable RIT_GHTESTER_JAR should be configured on the computer doing the build to point to an instance of the com.ghc.ghTester plugin. Point this to an instance of this file on your computer. For example: 
+
+ * 
+   RIT_GHTESTER_JAR=C:/Program Files (x86)/IBM/IMShared/plugins/com.ghc.ghTester_1.860.3.v20141216_1619.jar
+   
+
+
+(This plugin is used at compile time, but is not linked into the custom function. It is therefore generally best to use the oldest version of the plugin available on the host computer.) 
+
+The custom function can be built using Apache Ant [http://ant.apache.org/]. Extract the source code to a folder and run: 
+
+ * 
+   ant -file buildProfiler.xml
+   
+
+
+The output (and a new .zip file of the source code) will then be found in the sub-folder Functions\plugins. 
+
+
+Extending the Example Profiler  
+
+To extend the profiler it is generally better to create an Eclipse [http://www.eclipse.org/] project (as detailed in RIT Custom Functions [http://www-01.ibm.com/support/docview.wss?uid=swg21654482]) and then to paste in the contents of the .zip. 
+
+ 
+
+Note that the only reference to the profile data kept by the profiler is via a WeakHashMap against a key of the current thread object. No reference is held by the test or stub. Think carefully if you consider altering this as it would be easy to introduce a memory leak here (and hence cause additional performance problems). 
+
+ 
+
+ 
+
+Associated Resources 
+
+
+
+DISCLAIMER: 
+All source code and/or binaries attached to this document are referred to here as "the Program". IBM is not providing program services of any kind for the Program. IBM is providing the Program on an "AS IS" basis without warranty of any kind. IBM WILL NOT BE LIABLE FOR ANY ACTUAL, DIRECT, SPECIAL, INCIDENTAL, OR INDIRECT DAMAGES OR FOR ANY ECONOMIC CONSEQUENTIAL DAMAGES (INCLUDING LOST PROFITS OR SAVINGS), EVEN IF IBM, OR ITS RESELLER, HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES. 
+
+Below are the example profiler detailed in this article.
+
+ExampleCustomFunctions_1.0.1.jar.src.zip [/support/docview.wss?uid=swg21964963&aid=2]ExampleCustomFunctions_1.0.1.jar.src.zip [/support/docview.wss?uid=swg21964963&aid=1] 
+
+ExampleCustomFunctions_1.0.1.jar.zip [/support/docview.wss?uid=swg21964963&aid=4]ExampleCustomFunctions_1.0.1.jar.zip [/support/docview.wss?uid=swg21964963&aid=3]

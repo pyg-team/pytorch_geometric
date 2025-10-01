@@ -1,0 +1,48 @@
+Title: IBM Validate branched certification path support - United States
+
+Text:
+382change xa xs xi xb xm TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Prior to version 3.8.2, the DataPower appliance does not return consistent results when a ValCred contains multiple certificates with the same subject DN, or certificates that have the same DN in their subject and issuer name fields, but which are not trusted roots. 
+
+SYMPTOM
+The Validation Credential contains the right certificates for a successful validation, but the DataPower appliance certificate validation might fail.
+
+
+CAUSE
+Prior to 3.8.2, there were two reasons that validation might not work as expected when a Validation Credential contained multiple certificates with the same subject DN. 
+
+ * The appliance attempted only the first certificate in the Validation Credential that matched the issuer DN of the certificate being validated and denied the request if that first attempt failed. 
+ * The appliance considered a certificate to be self-signed when the issuer DN was the same as the certificate subject DN even if the signing and subject keys differed.
+
+ENVIRONMENT
+A Validation Credential object is defined to guide the validation behavior. In PKIX mode, a certificate is trusted if and only if a Validation Credential object contains the necessary certificates to construct a certificate chain to the certificate from a root CA. In legacy mode, a certificate is trusted if the Validation Credential object contains the certificate itself or the certificate of its CA. 
+
+
+A certificate is either self-signed or signed by a signing authority. When the X.509 certificate is used by the public key cryptography, you want to make sure that certificate is from a trusted entity, and might run into this issue. Here are a few examples:
+
+
+ * If a CA certificate has expired, the trust relationship can be branched to another CA certificate on the same level. In this case, multiple certificates might have the same subject DN. 
+ * The same customer might want to use different PKI key pairs for different purposes. In this case, multiple certificates might have same subject DN with different key. 
+ * A CA issues itself a user certificate for testing purposes. In this case, the same subject DN has multiple certificates with different key.
+
+
+The branched certificate paths are used when those multiple certificates are configured for certificate validation and different PKI paths might exist. 
+
+RESOLVING THE PROBLEM
+In DataPower appliance version 3.8.2, branched certification paths are supported in the following three cases: 
+
+ 
+
+ * For SSL mutual authentication to restrict certain SSL client's certificates 
+ * For digital signature verification to trust certain signature issuers 
+ * Custom use of the dp:validate-certificate() extension function
+
+
+No configuration changes are needed to enable this support. You can have as many certificates in the same Validation Credential object as desired. The last certificate on the Validation Credential list is attempted first. Therefore, it is more efficient when the Validation Credential certificate list is configured in the order that those certificates appear in a trust-chain: 
+ * Add the Root CA first, then add the intermediate CA issued by Root CA, and so on 
+ * Till add the last CA certificate on the chain
+
+
+The DataPower appliance checks if the Validation Credential contains a valid path or not for the decision.

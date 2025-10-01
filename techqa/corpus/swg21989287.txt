@@ -1,0 +1,46 @@
+Title: IBM Future support for Maximo Asset Management 7.5 Java applets - United States
+
+Text:
+TPAESCHED; TPAESPATIAL; TPAEWORKFLOW; TPAEAPPDESIGNER. FLASH (ALERT)
+
+ABSTRACT
+ Impact of developments in Java applet support for the use of applets in IBM Maximo Asset Management 7.5. 
+
+CONTENT
+Browser developers and Oracle, the developer of Java, will be phasing out support and development of Java applets in the near future.
+
+Oracle Java, Standard Edition
+
+Maximo 7.5 Java applets use Java Runtime Environment (JRE) 1.7 or 1.8. Oracle ended public updates of Java 7 [https://java.com/en/download/faq/java_7.xml] at the end of April 2015.
+
+Web browsers
+
+The Mozilla Foundation announced in late 2015 [https://blog.mozilla.org/futurereleases/2015/10/08/npapi-plugins-in-firefox/] that, as of the end of 2016, the current version of Firefox will no longer support the use of the Java plugin.
+
+Microsoft Internet Explorer 11 will be supported by Microsoft for the life of Windows 7, Windows 8.1, and Windows 10. (At this time, Maximo 7.5 is not supported on Windows 8.1 or Windows 10.)
+
+Neither Google Chrome, which ended support of the Java plugin [http://www.java.com/en/download/faq/chrome.xml] with version 45 (September 2015) nor Microsoft Edge, which does not support plugins, are supported for use with Maximo 7.5.
+
+In addition, Oracle announced in January 2016 [https://blogs.oracle.com/java-platform-group/entry/moving_to_a_plugin_free] that Java 9 will deprecate (no longer include) the Java browser plug-in.
+
+Future Maximo 7.5 development and Java applets
+
+For compatibility of specific versions of Java Runtime Environment with Maximo 7.5, see the Maximo Platform Configuration Matrix [http://www.ibm.com/support/docview.wss?rs=3214&uid=swg27014419].
+
+IBM will not be deprecating Maximo 7.5 Java applets and replacing their functionality with newer supported technology, as is the case with Maximo 7.6. Maximo 7.5 will be compatible with Java Developer Kit (JDK) 8 when Fix Pack 7.5.0.11 is released in Q4 2016.
+
+As of Maximo Asset Management Fix pack 7.5.0.10, the following applications require the Java plugin: Workflow Designer, Direct Print, Scheduler and Asset Topology
+
+Impact and Remediation
+
+If you intend to continue using Maximo 7.5 applets with Mozilla Firefox after releases of that browser have removed Java plugin support, you must not allow Firefox to upgrade to versions past 40.
+
+You can continue to use Microsoft Internet Explorer 11 with Java 7 and 8.
+
+Maximo Asset Management 7.6
+Maximo Asset Management 7.6.0.6, to be released in Q4 2016, will replace all Java applets with newer, supported technology.
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Systems and Asset Management Maximo Asset Management System: Object Platform Independent 7.5

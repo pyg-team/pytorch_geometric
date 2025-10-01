@@ -1,0 +1,133 @@
+Title: IBM Rational Asset Analyzer Fix Pack 2 (6.1.0.2) for 6.1 - United States
+
+Text:
+fixpack; fix pack; fixpacks; fix; service pack; fixes; upgrade DOWNLOADABLE FILES
+
+ABSTRACT
+ IBM Rational Asset Analyzer 6.1.0.2 has been made generally available and contains fixes to version 6.1 including all predecessor fix packs. 
+
+DOWNLOAD DESCRIPTION
+ 
+
+Table of Contents Sections Description  * What's new
+
+The Change history section provides an overview on what is new in this release with a description of any new functions or enhancements when applicable.
+
+ * Impact assessment
+
+The How critical is this fix section provides information related to the impact of this release to allow you to assess how your environment may be affected.
+
+ * Prerequisites
+
+The Prerequisites section provides important information to review prior to the installation of this release.
+
+ * Download package
+
+The Download package section provides the direct link to obtain the download package for installation in your environment.
+
+ * Installation instructions
+
+The Installation instructions section provides the installation instructions necessary to apply this release into your environment.
+
+ * Known problems
+
+The Known side effects section contains a link to the known problems (open defects) identified at the time of this release.
+
+Supporting Documentation Document Description  * Detailed System Requirements [http://www.ibm.com/support/docview.wss?uid=swg27036581]
+
+Click to review the detailed system requirements information for a complete list of hardware requirements, supported operating systems, prerequisites and optional supported software, with component-level details and operating system restrictions.
+
+ * Information Center [http://pic.dhe.ibm.com/infocenter/rassan/v6r1/index.jsp]
+
+The information center provides you with user assistance for the product. You can view, browse, and search online information related to the product. You can also visit the IBM Product information [http://www.ibm.com/support/publications/us/library/index.shtml#letter_R] page to browse for additional information centers.
+
+ * Fix List [http://www.ibm.com/support/docview.wss?uid=swg27021389]
+
+Click to review a complete list of the defects (APARs) resolved in this release including a list of resolved defects for the entire version family.
+
+PREREQUISITES
+ 
+
+Prerequisites include: Version of IBM Installation Manager required: IBM Installation Manager 1.6.2 [http://www.ibm.com/support/docview.wss?uid=swg27025142].
+
+Rational Asset Analyzer 6.1 [http://www.ibm.com/support/docview.wss?uid=swg24034622].
+
+Back to top
+
+INSTALLATION INSTRUCTIONS
+ 
+
+Review the installation guide: Use the Update wizard in IBM Installation Manager to install this update.
+
+Click the link to the Install instructions provided below.
+
+Back to top
+
+URL LANGUAGE SIZE(Bytes) Installing Rational Asset Analyzer [http://pic.dhe.ibm.com/infocenter/rassan/v6r1/topic/com.ibm.install.raav6006.doc/topics/c_installingproduct.html] English 10 
+DOWNLOAD PACKAGE
+ 
+
+The following sections provide detailed information related to this release.
+
+HOW CRITICAL IS THIS FIX?
+ 
+
+Impact Assessment Impact Description Corrective This is a maintenance release. It contains fixes for client-reported and internally found defects.
+
+Test Results
+
+Close [x]
+
+DEFINITIONS
+Regression: An error in the Maintenance Delivery Vehicle [http://www.ibm.com/support/docview.wss?uid=swg27008656] (MDV) that produces incorrect or unexpected behavior causing a supported feature to stop functioning as designed. 
+This includes: 
+
+ * Coding errors that cause a regression
+ * Documentation or packaging problems that cause a regression
+ * Errors reported in a new function delivered in a MDV that cause a regression
+
+Incomplete: An error in the MDV has not regressed, but does not work as designed. 
+This includes: 
+
+ * Fixed APARs which did not solve the original problem but did not break anything new
+ * APARs reporting documentation errors, such as readme errors, that cause problems applying an MDV but do not lead to a regression
+
+
+
+
+Notes:  * Regression and incomplete APARs are considered fix-in-error or MDV-in-error
+ * Definitions above apply only to valid APARs that result in product fixes (APARs returned as working-as-designed are not assessed for being fix-in-error)
+ * Issues in major releases due to new functionality do not apply in this definition
+
+There are no known issues to report.
+
+Back to top
+
+PROBLEMS SOLVED
+ Click the Fix List link in the table of contents above to review a list of the problems solved in this release.
+
+KNOWN SIDE EFFECTS
+ 
+
+The following defects were not resolved in this release: Review the following list of open defects.
+
+APAR Description PI05054 [http://www.ibm.com/support/docview.wss?uid=swg1PI05054] Help. RAAz web GUI application works fine, that is. only Help is affected. PI05072 [http://www.ibm.com/support/docview.wss?uid=swg1PI05072] Installation if LOG_FILE environment variable is set in Windows. P107126 COBOL code scanned into RAA has 0 line count and missing some metrics and BRM information. PI07139 [http://www.ibm.com/support/docview.wss?uid=swg1PI07139] Scanning some PL/I code, RAAz appears to loop and never finish. PI07344 [http://www.ibm.com/support/docview.wss?uid=swg1PI07344] DBD scanning of IMS index is erroneous. PM82862 [http://www.ibm.com/support/docview.wss?uid=swg1PM82862] DMH5219E message returned when using RAA if directives are placed incorrectly in httpd.conf. PM86768 [http://www.ibm.com/support/docview.wss?uid=swg1PM86768] RAA for System z produces sun.io.MalformedInputExecption exception viewing source with some '0E' or '0F' character. PM90795 [http://www.ibm.com/support/docview.wss?uid=swg1PM90795] Memory leak in RAA 6.0.0.11 during container analysis step when scanning assets. PM91402 [http://www.ibm.com/support/docview.wss?uid=swg1PM91402] SQL1060N user "SYSTEM" does not have the connect privilege SQLSTATE=08004. PM93465 [http://www.ibm.com/support/docview.wss?uid=swg1PM93465] CRIMA1071E message presented when installing RAA Eclipse plug-in for RDz into RDz with 64-bit architecture. PM93563 [http://www.ibm.com/support/docview.wss?uid=swg1PM93563] Java not listed as a prerequisite for installing RAA for System z v6.0. PM94342 [http://www.ibm.com/support/docview.wss?uid=swg1PM94342] RAAz 6.0 remote components on Japanese language machine. PM96483 [http://www.ibm.com/support/docview.wss?uid=swg1PM96483] COBOL inventory process seems to hang when scanning certain assets. Back to top
+
+
+CHANGE HISTORY
+ 
+
+What's new No new features or functions.
+
+For information about the new features and enhancements in Rational Asset Analyzer 6.1, review What's new in Rational Asset Analyzer [http://pic.dhe.ibm.com/infocenter/rassan/v6r1/topic/com.ibm.raa.product.doc/topics/whatsnew.html].
+
+Click the link in the Download Options column:
+
+Back to top
+
+
+
+Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options 
+What is Fix Central(FC)? [https://www.ibm.com/support/fixcentral/help?page=swfaqs] Rational Asset Analyzer 6.1.0.2 downloads 6 Dec 2013 English 1 FC [http://www-933.ibm.com/support/fixcentral/swg/quickorder?parent=ibm~Rational&product=ibm/Rational/IBM+Rational+Asset+Analyzer&release=6.1.0.2&platform=Windows&function=all&source=fc] [ ] 
+ [/support/docview.wss?uid=swg24036592&aid=1]Problems (APARS) fixed [/support/docview.wss?uid=swg24036592&aid=2]Problems (APARS) fixed
+PI05529, PI06804, PM35287, PM67012, PM81948, PM96390, PM96661, PM96847, PM98045, PM99687, PM64930, PM75708, PM80545, PM84231, PM89759, PM90504, PM92697, PM93104, PM93107, PM93111, PM93115

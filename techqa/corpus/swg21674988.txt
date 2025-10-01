@@ -1,0 +1,225 @@
+Title: IBM SPSS Statistics 23.0 までのライセンス認証手順 - Authorized User (シングルライセンス・サイトライセンス) - United States
+
+Text:
+ 技術情報(FAQS)
+
+質問
+ SPSS Statistics 23.0 までのAuthorized User (シングルライセンス・サイトライセンス)のライセンス認証を、再度行う手順を教えてください。 
+
+回答
+
+SPSS Statistics のインストール時、あるいはオプションのライセンスを追加する時、ライセンス認証を実施してライセンスを登録・有効化します。 各OSにおける「ライセンス認証ウィザード」の起動からライセンス認証までをご案内します。
+
+
+1. ライセンス認証ウィザードを起動します。
+
+[Windows 10 の場合]
+以下のライセンス認証ウィザードを右クリックして[その他]->[管理者として実行]をクリックしてください。
+
+・SPSS Statistics 23
+[スタート]->[IBM SPSS Statistics]->[IBM SPSS Statistics 23 ライセンス認証ウィザード]
+
+[Windows 8 の場合]
+スタートの画面上で右クリックしてください。画面右下に「すべてのアプリ」アイコンが表示されましたら、それをクリックしてください。 以下のライセンス認証ウィザードを右クリックして[管理者として実行]をクリックしてください。
+・SPSS Statistics 23 [IBM SPSS Statistics 23 ライセンス認証ウィザード]
+・SPSS Statistics 22 [IBM SPSS Statistics 22 ライセンス認証ウィザード]
+・SPSS Statistics 21 [IBM SPSS Statistics 21 ライセンス認証ウィザード]
+
+[Windows 8.1 の場合]
+[スタート]->[下矢印]をクリックしてください。以下のライセンス認証ウィザードを右クリックして[管理者として実行]をクリックしてください。
+・SPSS Statistics 23 [IBM SPSS Statistics 23 ライセンス認証ウィザード]
+・SPSS Statistics 22 [IBM SPSS Statistics 22 ライセンス認証ウィザード]
+・SPSS Statistics 21 [IBM SPSS Statistics 21 ライセンス認証ウィザード]
+
+[Window 7, Vistaの場合]
+以下のライセンス認証ウィザードを右クリックして[管理者として実行]をクリックしてください。
+
+・SPSS Statistics 23
+[スタート]->[すべてのプログラム]->[IBM SPSS Statistics]->[IBM SPSS Statistics 23 ライセンス認証ウィザード]
+
+・SPSS Statistics 22
+[スタート]->[すべてのプログラム]->[IBM SPSS Statistics]->[IBM SPSS Statistics 22 ライセンス認証ウィザード]
+
+・SPSS Statistics 21
+[スタート]->[すべてのプログラム]->[IBM SPSS Statistics]->[IBM SPSS Statistics 21 ライセンス認証ウィザード]
+
+・SPSS Statistics 20
+[スタート]->[すべてのプログラム]->[IBM SPSS Statistics]->[IBM SPSS Statistics 20 ライセンス認証ウィザード]
+
+・SPSS Statistics 19
+[スタート]->[すべてのプログラム]->[IBM SPSS Statistics]->[IBM SPSS Statistics 19 ライセンス認証ウィザード]
+
+・PASW Statistics 18
+[スタート]->[すべてのプログラム]->[SPSS Inc]->[PASW Statistics 18]->[PASW Statistics 18 ライセンス認証ウィザード] 
+
+
+[Mac OSの場合]
+以下のライセンス認証ウィザードをダブルクリックして起動します。
+
+・SPSS Statistics 23
+[アプリケーション]->[IBM]->[SPSS]->[Statistics]->[23]->[SPSS Statistics License Authorization Wizard]
+
+・SPSS Statistics 22
+[アプリケーション]->[IBM]->[SPSS]->[Statistics]->[22]->[SPSS Statistics License Authorization Wizard]
+
+・SPSS Statistics 21
+[アプリケーション]->[IBM]->[SPSS]->[Statistics]->[21]->[SPSS Statistics License Authorization Wizard]
+
+・SPSS Statistics 20
+[アプリケーション]->[IBM]->[SPSS]->[Statistics]->[20]->[SPSS Statistics License Authorization Wizard]
+
+・SPSS Statistics 19
+[アプリケーション]->[IBM]->[SPSS]->[Statistics]->[19]->[SPSS Statistics License Authorization Wizard]
+
+・PASW Statistics 18
+[アプリケーション]->[SPSSInc]->[PASWStatistics18]->[PASW Statistics License Authorization Wizard]
+
+
+
+2.[ライセンス状況]画面は次へ進んでください。
+[/support/docview.wss?uid=swg21674988&aid=1] [/support/docview.wss?uid=swg21674988&aid=1]
+
+
+3.[製品認証]画面では、「今すぐライセンスを適用する」を選択し、次へ進みます。
+インターネットへ未接続のオフライン環境の場合は、「認証コード」と「ロックコード*」を
+ライセンス担当(spsscs@jp.ibm.com) へ連絡してください。ライセンスコードをお知らせいたします。
+* ロックコード:下記例では 4-xxxxx 
+[/support/docview.wss?uid=swg21674988&aid=2] [/support/docview.wss?uid=swg21674988&aid=2]
+
+
+4. [コードを入力]画面で、「認証コード(英数字20桁)」or「ライセンスコード（＃を含め＃まで）」を入力し、次へ進みます。
+認証コードが複数ある場合は、「追加のコードを入力」をクリックして複数回入力してください。
+プロキシサーバーをご使用の環境では、「プロキシサーバー経由でインターネットに接続」をクリックして、
+プロキシサーバーの情報とログイン設定を行ってください。
+[/support/docview.wss?uid=swg21674988&aid=3] [/support/docview.wss?uid=swg21674988&aid=3]
+
+
+5.[インターネット認証状況]画面で、緑色の文字で「すべてのコードを正常に処理しました」と表示されましたら、次へ進み、完了します。
+ここでエラーになった場合は、手順 7へお進みください。
+[/support/docview.wss?uid=swg21674988&aid=4] [/support/docview.wss?uid=swg21674988&aid=4]
+
+
+6.[ライセンスの取得が完了しました]画面でライセンス認証ができていることを確認しましたら、
+「完了」をクリックして終了します。
+起動確認は、手順14へお進みください。
+[/support/docview.wss?uid=swg21674988&aid=5] [/support/docview.wss?uid=swg21674988&aid=5]
+
+
+7. エラーになった場合。ライセンス認証エラーには、2種類(以下のA. B. )あります。
+A. ネットワークの通信状況などにより、インターネット認証が失敗してしまった場合
+B. ライセンスの認証が可能な回数に達しているため、新たにライセンス認証できない場合
+
+A. ネットワークの通信状況などにより、インターネット認証が失敗してしまった場合は、
+次へ進み、電子メール認証へお進みください。
+[/support/docview.wss?uid=swg21674988&aid=6] [/support/docview.wss?uid=swg21674988&aid=6]
+
+
+B.以下のようにライセンス認証の認証可能数まで認証されており、新たにライセンス認証できない場合は、「完了」をクリックして終了してください。
+このエラーの場合、以下のサイトより認証コードの履歴削除を申請してください。
+http://www-01.ibm.com/support/docview.wss?uid=swg21969385 [http://www-01.ibm.com/support/docview.wss?uid=swg21969385]
+[/support/docview.wss?uid=swg21674988&aid=7] [/support/docview.wss?uid=swg21674988&aid=7]
+
+
+8.[電子メール認証]
+ここでは、「Webによる電子メール」を選択する方法をご案内します。
+「Webによる電子メール」を選択し、次へ進みます。
+「デスクトップ電子メール」も選択可能です。
+[/support/docview.wss?uid=swg21674988&aid=8] [/support/docview.wss?uid=swg21674988&aid=8]
+
+
+9. [製品認証電子メール]
+メールの件名に「License Authorization」と入力します。[コピー]ボタンをクリックし、メール本文へ貼りつけます。
+表示された3)の「spssls@us.ibm.com」は、現在使用できないため、
+SPSS製品 ライセンス認証のお問い合わせ窓口 [http://www.ibm.com/support/docview.wss?uid=swg21685486](spsscs@jp.ibm.com)へ送付ください。
+なお、平日 9時～17時 1営業日以内に順次ご案内となりますのでご了承ください。
+[/support/docview.wss?uid=swg21674988&aid=9] [/support/docview.wss?uid=swg21674988&aid=9]
+
+
+10.[電子メールの送信]画面で、「ライセンスコードを入力」をクリックします。
+[/support/docview.wss?uid=swg21674988&aid=10] [/support/docview.wss?uid=swg21674988&aid=10]
+
+
+11.自動返信されてきたメールに記載されている「ライセンスコード（＃まで、＃を含む）」を[ライセンスコード入力欄]に貼りつけて、次へお進みください。
+[/support/docview.wss?uid=swg21674988&aid=11] [/support/docview.wss?uid=swg21674988&aid=11]
+
+
+12.[ライセンスのインストール状況]画面で、緑色の文字で「すべてのコードを正常に処理しました」と表示されましたら、次へ進み、完了します。
+[/support/docview.wss?uid=swg21674988&aid=12] [/support/docview.wss?uid=swg21674988&aid=12]
+
+
+13.[ライセンスの取得が完了しました]画面でライセンス認証ができていることを確認しましたら、
+「完了」をクリックして終了します。
+[/support/docview.wss?uid=swg21674988&aid=13] [/support/docview.wss?uid=swg21674988&aid=13]
+
+
+14. SPSS Statistics の起動確認
+
+[Windows 10 の場合]
+以下のStatisticsをクリックしてください。
+
+・SPSS Statistics 23
+[スタート]->[IBM SPSS Statistics]->[IBM SPSS Statistics 23]
+
+
+[Windows 8 の場合]
+スタートの画面上で右クリックしてください。画面右下に「すべてのアプリ」アイコンが表示されましたら、それをクリックしてください。以下のStatisticsをクリックしてください。
+
+・SPSS Statistics 23 [IBM SPSS Statistics 23]
+・SPSS Statistics 22 [IBM SPSS Statistics 22]
+・SPSS Statistics 21 [IBM SPSS Statistics 21]
+
+
+[Windows 8.1 の場合]
+[スタート]->[下矢印]をクリックしてください。以下のStatisticsをクリックしてください。
+
+・SPSS Statistics 23 [IBM SPSS Statistics 23]
+・SPSS Statistics 22 [IBM SPSS Statistics 22]
+・SPSS Statistics 21 [IBM SPSS Statistics 21]
+
+
+[Window 7, Vistaの場合]
+以下のStatisticsをクリックしてください。
+
+・SPSS Statistics 23
+[スタート]->[すべてのプログラム]->[IBM SPSS Statistics]->[IBM SPSS Statistics 23]
+
+・SPSS Statistics 22
+[スタート]->[すべてのプログラム]->[IBM SPSS Statistics]->[IBM SPSS Statistics 22]
+
+・SPSS Statistics 21
+[スタート]->[すべてのプログラム]->[IBM SPSS Statistics]->[IBM SPSS Statistics 21]
+
+・SPSS Statistics 20
+[スタート]->[すべてのプログラム]->[IBM SPSS Statistics]->[IBM SPSS Statistics 20]
+
+・SPSS Statistics 19
+[スタート]->[すべてのプログラム]->[IBM SPSS Statistics]->[IBM SPSS Statistics 19]
+
+・PASW Statistics 18
+[スタート]->[すべてのプログラム]->[SPSS Inc]->[PASW Statistics 18]->[PASW Statistics 18] 
+
+
+[Mac OSの場合]
+以下のStatisticsをダブルクリックしてください。
+
+・SPSS Statistics 23
+[アプリケーション]->[IBM]->[SPSS]->[Statistics]->[23]->[SPSSStatistics]
+
+・SPSS Statistics 22
+[アプリケーション]->[IBM]->[SPSS]->[Statistics]->[22]->[SPSSStatistics]
+
+・SPSS Statistics 21
+[アプリケーション]->[IBM]->[SPSS]->[Statistics]->[21]->[SPSS Statistics]
+
+・SPSS Statistics 20
+[アプリケーション]->[IBM]->[SPSS]->[Statistics]->[20]->[SPSS Statistics]
+
+・SPSS Statistics 19
+[アプリケーション]->[IBM]->[SPSS]->[Statistics]->[19]->[SPSS Statistics]
+
+・PASW Statistics 18
+[アプリケーション]->[SPSSInc]->[PASWStatistics18]->[PASWStatistics18.0]
+
+
+関連情報
+ Need more help? Our Statistics forum is Live! [https://developer.ibm.com/answers/topics/statistics.html?smartspace=predictive-analytics]

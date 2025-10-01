@@ -1,0 +1,86 @@
+Title: IBM How to resolve IBM InfoSphere DataStage Operations Console ODBQueryApp error on checking availability of database operation function DSODB.RunMajorStatus - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ If IBM InfoSphere DataStage Operations Console server process ODBQueryApp fails to start with the error below, how do you resolve?
+
+ERROR com.ibm.datastage.runtime.odbqapp.server.ODBQueryAppSocketServer.main(ODBQueryAppSocketServer.java:261) - Error checking availability of database operation functions. ...
+ERROR com.ibm.datastage.runtime.odbqapp.server.ODBQueryAppSocketServer.main(ODBQueryAppSocketServer.java:262) - Unable to verify that the operations database functions have been installed into the database.
+Please check that you have run all the required manual post installation scripts following any update such as a patch or feature pack installation.
+
+
+CAUSE
+The possible causes for this error (unlikely to be intermittent)*:
+- The operations database schema does not exist or has not been set up correctly on the database server.
+- The operations database schema name is incorrectly specified in the DSODB/DSODBConnect.cfg file.
+- The user specified in the DSODBConnect.cfg file does not have appropriate privileges to access the operations database schema.
+- The expected function RunMajorStatus does not exist due to an incorrect version of the schema.
+
+
+ANSWER
+You can run DSAppWatcher.sh -test command to find out the cause and resolve as follows: 
+
+
+1. If the command fails to retrieve the schema version number
+For example,
+/opt/IBM/InformationServer/Server/DSODB/bin/DSAppWatcher.sh -test
+DSODB is turned ON in the DSODBConfig.cfg file. 
+
+ *  Link Monitoring is OFF.
+ * 
+ *  Job Run Usage is ON.
+ * 
+ *  Resource Monitoring is ON.
+
+Checking Database Connection:  *  Driver: com.ibm.db2.jcc.DB2Driver
+ * 
+ *  Connection URL: jdbc:db2://localhost:50000/xmeta
+ *  Successfully loaded the database driver. 
+   Successfully connected to the database. 
+ *  Schema: DSODB
+
+Error: Unable to retrieve the schema version number. Please check your DSODB database has been set up correctly, the schema name is correct and your user in the DSODBConnect.cfg file has appropriate database privileges. 
+Test Failed. 
+
+Resolution:  1. Check the Operations Console database has been set up correctly as documented here [http://www.ibm.com/support/knowledgecenter/en/SSZJPZ_11.5.0/com.ibm.swg.im.iis.ds.monitor.doc/topics/createconfigodb.html]. Note that In 8.7, Operations Console database schema creation requires manual steps. From 9.1 onwards, the installer only offers schema creation in DB2 when the database server resides on the same machine where the install is being run. The installer currently does not support schema creation in Oracle and SQL Server. 
+ 2. Ensure the schema name in the DSODBConnect.cfg file is correct. 
+ 3. Check the user in the DSODBConnect.cfg file has appropriate database privileges.
+
+ * 
+ * here
+ * 
+ * 
+ * 
+
+
+2. If the command returns schema version number 1 
+For example, 
+/opt/IBM/InformationServer/Server/DSODB/bin/DSAppWatcher.sh -test 
+DSODB is turned ON in the DSODBConfig.cfg file.  *  Link Monitoring is OFF. 
+ * 
+ *  Job Run Usage is ON. 
+ * 
+ *  Resource Monitoring is ON. 
+
+Checking Database Connection:  *  Driver: com.ibm.db2.jcc.DB2Driver
+ * 
+ *  Connection URL: jdbc:db2://localhost:50000/xmeta
+ *  Successfully loaded the database driver. 
+   Successfully connected to the database. 
+ *  Schema: DSODB
+
+Error: The schema version number in the database (1) does not match that expected by the applications (2). 
+Please upgrade the DSODB database. 
+Test Failed. 
+
+Resolution:  1. For IIS 9.1, run the generated dsodb_upgrade_87to91.sql script file to upgrade the schema.
+
+For example, DB2: 
+db2 -l dsodb_upgrade.log -stf dsodb_upgrade_87to91.sql 
+
+2. For IIS 8.7, perform a manual step required to update the operations database schema content as explained in Technote 1617361 [http://www.ibm.com/support/docview.wss?uid=swg21617361]. 
+
+
+*Note that If ODBQueryApp fails intermittently, the error in the DSODB/logs/odbqapp*.log is likely different. For example, the native out-of-memory error "Failed to create a thread" as explained in technote 1701446 [http://www-01.ibm.com/support/docview.wss?uid=swg21701446].

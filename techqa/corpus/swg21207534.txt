@@ -1,0 +1,210 @@
+Title: IBM Understanding, Tuning, and Testing the InetAddress Class and Cache - United States
+
+Text:
+DNS; caching; TTL; InetAddress TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The java.net.InetAddress class provides methods to resolve hostnames to their IP addresses. This class also has a cache where successful and unsuccessful hostname resolutions may be stored. The following provides information on this class and this cache in the context of a WebSphere Application Server environment. 
+
+RESOLVING THE PROBLEM
+#background 
+
+ * Background 
+ * InetAddress Cache Default Behavior 
+ * InetAddress Cache Tuning 
+ * Caching InetAddress.getLocalHost() Results 
+ * Performance Issues with InetAddress Resolutions 
+ * Recommendations 
+ * Testcases: Inspecting Configuration & Behavior
+
+
+
+
+
+
+Background 
+
+The InetAddress class provides methods to resolve hostnames to their IP addresses. These methods rely on the operating system to perform resolution. The operating system will attempt to resolve a given hostname by executing a lookup on either a file, a DNS server, or some other name service. Once the operating system completes the lookup, it will pass the result back to the JVM. The result, successful or unsuccessful, may then be stored in the InetAddress Cache. 
+
+How the operating system performs the resolution is not controlled by the JVM, and the JVM does not directly query any file, DNS server, or name service. Further, the JVM does not cache the address of any DNS server that might be used in the lookup process, and the JVM is not involved in DNS failover. Finally, the InetAddress Cache may not be the only name service cache involved; many operating systems have their own name service cache that may be used. 
+
+
+
+
+
+InetAddress Cache Default Behavior 
+
+The default behavior for the InetAddress Cache varies depending on what version of Java is being used and therefore what version of WebSphere Application Server is being used. 
+
+For WebSphere Application Server 6.1 (Java 5):  * 
+ * 
+ * 
+
+
+For WebSphere Application Server 7.0, 8.0, 8.5, 8.5.5 (Java 6 and 7):  * 
+ * 
+ * 
+ * 
+ * 
+
+
+
+
+
+
+InetAddress Cache Tuning 
+
+The InetAddress Cache can be tuned in two ways: the time to cache successful name resolutions and the time to cache unsuccessful name resolutions can both be modified. When tuning the InetAddress Cache, values are expressed as integers with a unit of seconds. A value of -1 is interpreted as 'cache forever', and a value of 0 is interpreted as 'never cache'. 
+
+There are two different methods by which the InetAddress Cache can be tuned: 
+
+Method One: Security Properties via java.security file  * 
+ * 
+ * successful name resolutions
+ * 
+ * 
+ * 
+ * 
+ * 
+ *  networkaddress.cache.ttl= value 
+ * 
+ * 
+ * unsuccessful name resolutions
+ * 
+ * 
+ * 
+ * 
+ * 
+ *  networkaddress.cache.negative.ttl= value 
+
+
+Method Two: System Properties via Generic JVM arguments  * 
+ * 
+ * successful name resolutions
+ * 
+ * 
+ * 
+ * 
+ * 
+ *  -Dsun.net.inetaddr.ttl= value 
+ * 
+ * 
+ * unsuccessful name resolutions
+ * 
+ * 
+ * 
+ * 
+ * 
+ *  -Dsun.net.inetaddr.negative.ttl= value 
+
+
+Note: Security Properties set by the java.security file take precedence over System Properties set by Generic JVM arguments. 
+
+To disable address caching for Web services, you need to set an additional JVM custom property disableWSAddressCaching to true. Use this property to disable address caching for Web services. If your system typically runs with lots of client threads, and you encounter lock contention on the wsAddrCache cache, you can set this custom property to true, to prevent caching of the Web services data. If you specify networkaddress.cache.ttl with a value of zero or any other positive integer, this property must be set to true to avoid caching of an IP address in the webservice engine.
+
+
+
+
+
+
+Caching InetAddress.getLocalHost() Results 
+
+The InetAddress class contains a method called getLocalHost. This method is used to return the local host as an InetAddress object. By default, the result of executing the getLocalHost method will not be cached. 
+
+To reverse the default behavior and cache the result of getLocalHost, add the following Generic JVM argument: 
+
+
+
+ * -Dcom.ibm.cacheLocalHost=true
+
+
+This tuning will improve performance but is only advised if the local host address will not change. Please note that this tuning is only available on the IBM Java SDK. As such, this tuning is only available with WebSphere Application Server on AIX, Linux, and Windows. This tuning is not available with WebSphere Application Server on Solaris or HP-UX. 
+
+
+
+
+
+Performance Issues with InetAddress Resolutions 
+
+By default, InetAddress resolutions requiring the network will be carried out over IPv6 if the operating system supports both IPv4 and IPv6. However, if the name service does not support IPv6, then a performance issue may be perceived as the doomed IPv6 query must first timeout before a successful IPv4 query can be made. 
+
+To reverse the default behavior and use IPv4 over IPv6, add the following Generic JVM argument: 
+
+ * -Djava.net.preferIPv4Stack=true
+
+
+
+
+
+
+Recommendations 
+
+As every environment is different, recommendations beyond those provided above are not available. When tuning parameters such as these, consider the following: 
+
+ * Reliability of the name service (file, DNS server, etc) 
+ * Impact of name service traffic (DNS or otherwise) on the network 
+ * Lease time for dynamic IP addresses 
+ * DNS time-to-live value 
+ * Operating system cache of name service results
+
+
+This list is by no means exhaustive. 
+
+
+
+
+
+Testcases: Inspecting Configuration & Behavior 
+
+In some situations, it may be necessary to inspect the configuration or behavior of the InetAddress Cache within a running JVM; the following describes methodologies that may be helpful. 
+
+Both cases below make use of either the attached JSP (InetAddressInfoTest.jsp) or the attached application (InetAddressInfoTest.ear). Functionally, the JSP and the application are identical. The JSP is the preferred choice for most scenarios given its simplicity. However, if Java 2 Security is enabled, then the application is suggested over the JSP as the application is pre-configured with the necessary security permissions to allow successful execution.  * 
+ * InetAddressInfoTest.jsp [/support/docview.wss?uid=swg21207534&amp;aid=2]InetAddressInfoTest.jsp
+ * InetAddressInfoTest.ear [/support/docview.wss?uid=swg21207534&amp;aid=4]InetAddressInfoTest.ear
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+
+
+Inspecting Configuration:  * 
+ * 
+ * 
+ * Security Property: networkaddress.cache.ttl = null; default: null 
+   Security Property: networkaddress.cache.negative.ttl = 10; default: 10 
+   System Property: sun.net.inetaddr.ttl = null; default: null 
+   System Property: sun.net.inetaddr.negative.ttl = null; default: null 
+   System Property: com.ibm.cacheLocalHost = null; default: null 
+   System Property: java.net.preferIPv4Stack = null; default: null 
+
+
+Inspecting Behavior:  * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * "Using packet trace tools iptrace, snoop, tcpdump, wireshark, and nettl" 
+   http://www.IBM.com/support/docview.wss?uid=swg21175744 [http://www.IBM.com/support/docview.wss?uid=swg21175744] 
+
+
+
+
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Application Servers Runtimes for Java Technology Java SDK

@@ -1,0 +1,87 @@
+Title: IBM New TCA install will not register in TPM UI - United States
+
+Text:
+TCA register agentmanager tpm TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ A newly installed TCA is not shown in the TPM UI under provisioning computers. 
+
+DIAGNOSING THE PROBLEM
+This can be caused by various issues, but lets use this technote to illustrate the basic troubleshooting approach. 
+
+In this technote, the TPM server and TCA are both Linux, so pathing is for linux. Other OS pathing may need tweaking. 
+
+ 
+
+ * Set the console.log at debug
+
+
+First, the console.log on the tpm server needs to be debug. 
+/opt/IBM/tivoli/tpm/config/log4j.prop 
+Change 3 lines to DEBUG from INFO (copy and comment works well) 
+#log4j.category.com.thinkdynamics=INFO, consolefile, errorfile 
+log4j.category.com.thinkdynamics=DEBUG, consolefile, errorfile 
+
+#log4j.category.com.ibm.tivoli=INFO, consolefile, errorfile 
+log4j.category.com.ibm.tivoli=DEBUG, consolefile, errorfile 
+
+#log4j.appender.consolefile.threshold=INFO 
+log4j.appender.consolefile.threshold=DEBUG 
+
+Save the log4j.prop file - A TPM restart is not necessary. 
+
+ * Run configure.sh on the TCA endpoint
+
+cd /opt/tivoli/ep/runtime/agent/toolkit/bin 
+
+configure.sh -amhost <tpm-server hostname> -passwd <agentmanager password> -port 9510 -jport 9514 -nport 9515 -name <TCA hostname> -force 
+
+We expect success here, and a good way to verify is to ensure that new cert files came down, so check timestamp on the files in this directory: 
+/opt/tivoli/ep/runtime/agent/cert 
+
+The configure.sh causes the TCA to re-register with the AgentManager, and the AgentManager tells the TPM engine that a change has been made for this TCA by updating a database table. 
+Information about this is in the console.log at debug level. 
+
+Before leaving the endpoint, we need the uuid value from 
+/opt/tivoli/ep/runtime/agent/subagents/cdsclient.properties 
+
+We will use that to find our traces in the console.log on the TPM server. 
+
+ * Checking the TPM console.log 
+
+Every 30 seconds the Discovery Engine Worker wakes up and checks the database table for any work to do. When it finds the message from the AgentManager it will process it. 
+
+A "good" set of traces in the console.log will look like this: 
+2013-09-27 13:33:04,082 DEBUG [Discovery engine worker 0] ( Queue.java:165) engine.Queue: Locked GUID: 7495407, timestamp: 1380303184078 
+2013-09-27 13:33:04,089 DEBUG [Discovery engine worker 0] ( Queue.java:175) engine.Queue: Selected message 7495412 about taskId null , jobIdnull 
+2013-09-27 13:33:04,091 DEBUG [Discovery engine worker 0] ( Queue.java:178) engine.Queue: Selected 1 messages for GUID 7495407 
+2013-09-27 13:33:04,092 DEBUG [Discovery engine worker 0] (DiscoveryWorker.java:137) engine.DiscoveryWorker: Commited selectMessagesAndLockGuid 
+2013-09-27 13:33:04,188 DEBUG [Discovery engine worker 0] (DcmDeviceIntegrator.java:1184) util.DcmDeviceIntegrator: guid is not a deviceID 
+2013-09-27 13:33:04,189 DEBUG [Discovery engine worker 0] (AgentDiscoveryWorker.java:100) agent.AgentDiscoveryWorker: This is an agent discovery message 
+2013-09-27 13:33:04,895 DEBUG [Discovery engine worker 0] (AgentManagerQueryUtil.java:183) cascommon.AgentManagerQueryUtil: 
+--------------- AGENT [051806044607393fb7138f72e5f9a13f] --------------- 
+
+Note : the 051806044607393fb7138f72e5f9a13f number will match the value of the uuid in the cdsclient.properties file on the tca. 
+
+Notice these good traces say "guid is not a deviceID" that indicates the this uuid/tca has not registered before and will be processed normally. 
+
+However, you might see a trace like this: 
+"discovered agent with guid 051806044607393fb7138f72e5f9a13f is for server id 4215292" (some value). This indicates that guid/uuid is already associated with a registered TCA, and might be an issue. 
+ * TPM UI StartCenter "Data Model Object Finder"
+
+Insert the value (eg) 4215292 and see if some other computer is already defined in the DCM as 4215292. 
+If yes, then using the computer name shown, bring it up in the provisioning computers application and check the values assigned to it, especially the IP address and hostname. 
+
+If you have found another computer already registered, then you have found the reason why your new TCA cannot complete registration. 
+RESOLVING THE PROBLEM
+For this case, compare the uuid values on each TCA in this file: 
+
+/opt/tivoli/ep/runtime/agent/subagents/cdsclient.properties
+
+Each uuid must be unique. If you find the rare case where they are not unique, an uninstall/reinstall of one of the TCA will be required. After the reinstall, check the uuid value, if different you will probably see the TCA register correctly and it will be seen in the StartCenter Provisioning Computers.
+
+Another thing that can cause a computer to not be shown in the StartCenter Provisioning Computers is a TCA that has had the hostname changed. Using the technique above compare the IP address and uuids of the computers. The disparity should become obvious and a reinstall of one of the TCA should fix it.
+
+Lastly, you might find it necessary to flush out any DNS ambiguities by using nslookup to do forward and reverse lookups on the hostname/ipaddress of the TPMserver and the TCA (from the command lines of the TCA and TPM server).
+
+Although this technote might not cover every situation, it gives some ideas and best practices to use in troubleshooting a TCA which is missing from the TPM UI.

@@ -1,0 +1,94 @@
+Title: IBM Running Tomcat as a service results in RQM logs generated in the wrong location - United States
+
+Text:
+rqm; tomcat; tomcat service; logging; jazz logging; jazz logs; logs TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ After configuring Tomcat to run as a Microsoft Windows service, the log files for IBM Rational Quality Manager (RQM) no longer appear in the RQM installation directory. 
+
+CAUSE
+Tomcat reads the log4j.properties file to determine where to write the logs. 
+
+By default, the logs are written to ..\server\logs
+
+When RQM is started using a shortcut, the root directory is the RQM installation directory (C:\IBM\JazzTeamServer)
+
+When Tomcat is started as a Windows service, the root directory is C:\WINDOWS\system32
+
+
+RESOLVING THE PROBLEM
+You will need to edit the log4j.properties files in order to fix this issue. 
+
+Note: These changes will not take effect until after the service has been restarted.
+
+RQM 2.0.x 
+
+ 1. Open the <RQM_Install_Dir>\server\conf\jazz\log4j.properties file in a text editor
+    
+    
+ 2. Search for any instance of log4j.appender.file.File
+    
+    
+ 3. Change the value to an absolute file path of your choice. 
+    
+    If the directory is in Program Files, use PROGRA~1 
+    
+    For example:
+    log4j.appender.file.File=C:/PROGRA~1/IBM/RQM201/server/logs/jazz.log
+    
+    Note: Make note of the forward slash (/) in the path.
+    
+    
+ 4. Save the file
+    
+    
+ 5. Start the service again and ensure that the logs are being written to the location you specified and step 3
+
+
+ 
+
+RQM 3.x 
+
+Since RQM 3.x comes bundled with other applications, you will need to edit multiple log4j.properties files. 
+
+In the instructions below, you will substitue the <app name> variable with the application directory name (for example: jts, ccm, qm, rm, admin) and the <app name.log> variable with each application log file (for example: jts.log, ccm.log, qm.log, rm.log, admin.log).
+
+
+ 1. Open the <JazzInstallDir>\server\conf\<app name>\log4j.properties file in a text editor
+    
+    
+ 2. Search for any instance of log4j.appender.file.File
+    
+    
+ 3. Change the value to an absolute file path of your choice. 
+    
+    If the directory is in Program Files, use PROGRA~1
+    
+    For example, change the log4j.appender.file.File=logs/<app name.log> entry to
+    
+    log4j.appender.file.File=C:/PROGRA~1/IBM/JazzTeamServer/server/logs/<app name.log>
+    
+    Note: Make note of the forward slash (/) in the path.
+    
+    
+ 4. Search for any instance of log4j.appender.etl.File
+    
+    
+ 5. Change the value to an absolute file path of your choice. 
+    
+    If the directory is in Program Files, use PROGRA~1
+    
+    For example, change the log4j.appender.etl.File=logs/<app name.log> entry to
+    
+    log4j.appender.etl.File=C:/PROGRA~1/IBM/JazzTeamServer/server/logs/<app name-etl.log>
+    
+    Note: Make note of the forward slash (/) in the path.
+    
+    
+ 6. Save the file
+    
+    
+ 7. Repeat until you have edited all of the log4j.properties files
+    
+    
+ 8. Start the service again and ensure that the logs are being written to the location specified in steps 3 and 5

@@ -1,0 +1,14 @@
+Title: IBM InfoSphere Optim Data Growth and Test Data Management Solutions for JD Edwards are not affected by the OpenSSL Heartbleed vulnerability (CVE-2014-0160) - United States
+
+Text:
+ FLASH (ALERT)
+
+ABSTRACT
+ IBM® InfoSphere® Optim™ Data Growth and Test Data Management Solutions for JD Edwards in all editions and all platforms are NOT vulnerable to the OpenSSL Heartbleed vulnerability (CVE-2014-0160). 
+
+CONTENT
+Optim Data Growth and Test Data Management Solutions for JD Edwards in all editions and all platforms are NOT vulnerable to the OpenSSL Heartbleed vulnerability (CVE-2014-0160). While Optim Data Growth and Test Data Management Solutions for JD Edwards make use of the OpenSSL library for other functionality, they do not use OpenSSL for SSL/TLS. 
+
+Remediation: No action required. 
+
+Change History: 25 April 2014: original document published.

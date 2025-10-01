@@ -1,0 +1,17 @@
+Title: IBM Workplace XT installation fails with error on Red Hat - United States
+
+Text:
+workplace XT installation installer install graphical mode -console or -silent flag RHEL Red Hat Enterprise Linux TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Workplace XT (WPXT) installer does not run correctly in GUI mode in a Red Hat Enterprise Linux (RHEL) environment and displays the error message below. The installation appears to finish but it is not complete. 
+
+SYMPTOM
+The installer is unable to run in graphical mode. Try running the installer with the -console or -silent flag
+
+
+CAUSE
+On RHEL, all libraries required to run a Swing based Java application are not installed by default.
+
+RESOLVING THE PROBLEM
+To resolve this problem on RHEL, ensure that the RPM package libXp-1.0.0-8.i386.rpm is installed.

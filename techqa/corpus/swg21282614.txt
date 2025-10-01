@@ -1,0 +1,161 @@
+Title: IBM TroubleShooting: JavaServer Pages (JSP) problems - United States
+
+Text:
+JSPs; TroubleShootingDocument; troublehooting TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Troubleshooting JSP problems for WebSphere® Application Server. This should help address common issues with this component before calling IBM support and save you time. 
+
+RESOLVING THE PROBLEM
+The following are some examples of common JSP problems and some basic information on how to resolve them: 
+
+ * java.io.FileNotFoundException: JSPG0036E: Failed to find resource
+   If the browser displays a JSPG0036E: Failed to find resource message, the JSP processor cannot find the specified JSP page in the Web module, as shown below.
+   
+   java.io.FileNotFoundException: JSPG0036F: Failed to find /Tests/index.jsp
+   at com.ibm.ws.jsp.webcontainerext.JSPExtensionProcessor.findWrapper (JSPExtensionProcessor.java:246)
+   at com.ibm.ws.jsp.webcontainerext.JSPExtensionProcessor.handleRequest (JSPExtentionProcessor.java:228)
+   ... 
+   Take following steps to verify URL being requested order to debug this exception:
+   
+   To determine the URL of the installed application, you need to use the administrative console to view the configuration of a number of items. The format of the URL is as follows:
+   
+   http://host:port/context_root/resource_name 
+   Finding <host>:<port>
+   When a Web module is installed, a virtual host is associated with it. To find the virtual host using the WebSphere Application Server administrative console:  1. Select Applications > Application type > WebSphere Enterprise Applications.
+       
+       
+    2. Select the application name to open the details page.
+       
+       In the Web module Properties section, click Virtual hosts.
+       
+       
+    3. Note the virtual hosts that are used by the specified application Web module.
+   
+   
+   To find the host and port numbers that are valid for the virtual host:  1. Select Environment > Virtual Hosts.
+       
+       
+    2. Choose the virtual host, and then under Additional Properties, click Host Aliases.
+       
+       
+    3. The list contains the host name and port combinations that can be used to access this virtual host. The host name column should contain values that are registered in a DNS server as a host name for the WebSphere Application Server. An asterisk (*) in the host column indicates that any name can be used. In this case, use the server host name.
+   
+   
+   Finding <context_root>
+   The context root is the Web application root and is used to identify the application in the URI. To find the context root:  1. In the WebSphere Application Server administrative console, click Applications > Application type > WebSphere Enterprise Applications.
+       
+       
+    2. Select the target application, then under Detail Properties, click View Deployment Descriptor.
+       
+       
+    3. Review the <context-root> tag for the specified Web module in the related deployment descriptor tag.
+   
+   
+   Finding <resource_name>
+   To find the initial file for the application (for example, index.jsp), you can look at the welcome file list in the Web deployment descriptor. As per J2EE specification, JSP files should reside under web module root or under sub directory other than META-INF and WEB-INF.
+   
+   For example:  * Web module root :
+      
+      install_root\profiles\profile_name\installedApps<CELL>\<EAR>\<WAR> 
+      
+   
+   In the preceding case, the index.jsp file should reside uner Web_module_root/Test directory. If not, than it explains this error message. 
+   
+ * JSP not reloading
+   If, after modifying and saving a JSP file, the change does not show up in the browser, you need to check the reload settings in the Web module configuration and the JSP runtime reload settings. For the JSPs, the Web container reloads a Web module only when the IBM extension reloadingEnabled in the ibm-web-ext.xmi file is set to true.
+   
+   The following is an example of web module reloading settings in the ibm-web-ext.xmi file:
+   
+   <webappext:WebAppExtension xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:webappext="webappext.xmi" xmi:id="WebAppExtension_1109270589179" reloadInterval="3" reloadingEnabled="true" fileServingEnabled="true"> 
+   Location of the ibm-web-ext.xmi file :
+   
+   install_root\profiles\profile_name\config\cells\cell_name
+   \applications\<EAR>\deployments\app_name\<WAR>\WEB-INF\ibm-web-ext.xmi 
+   Configuring JSP runtime reloading:
+   You have the ability to modify the JSP processor behavior for different JSP stages (such as development, testing, or production environments). This done by configuring specific attributes in the IBM Web module extensions that affect the JSP runtime reload behavior.
+   
+   JSP files can be translated and compiled at runtime when the JSP file or its dependencies are modified. This is known as JSP reloading. JSP reloading is enabled through the reloadEnabled JSP engine parameter in the ibm-web-ext.xmi configuration file.
+   
+   The JSP engine settings are stored in the ibm-web.ext.xmi file, as shown 
+   <jspAttributes xmi:id="JSPAttribute_1" name="reloadEnabled" value="true"/>
+   <jspAttributes xmi:id="JSPAttribute_9" name="reloadInterval" value="3"/> 
+   
+ * Encoding and internationalization issues
+   Encoding and internationalization problems usually showup as garbage characters in Web pages and input from user interpreted incorrectly. Double Byte Character Set (DBCS) character processing is a common issue for encoding problems. DBCS is used for languages such a Chinese, Korean, and Japanese, where a single byte is not sufficient to represent all characters in the alphabet. Proper coding and configuration usually resolves these problems. For JSP pages, page encoding is the character encoding in which the file is encoded. For JSP pages in standard syntax, the page encoding is determined from the following sources:  1. The pageEncoding attribute of the page directive of the page 
+    2. The charset value of the contentType attribute of the page directive
+   
+   
+   If none of these is provided, ISO-8859-1 is used as the default page encoding.
+   
+   Page directive implementation in JSP code:
+   
+   <HTML>
+   <HEAD>
+   <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="ISO-8859-15" %>
+   <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+   <TITLE>Receiving parameters</TITLE>
+   </HEAD>
+   <BODY>
+   <H1>
+   Your data is <%= request.getParameter("name") %>
+   </H1>
+   </BODY>
+   </HTML> 
+   The pageEncoding and contentType attributes determine the page character encoding of only the file that physically contains the page directive. 
+   
+ * java.lang.IllegalStateException
+   This exception is thrown when attempt is made to modify HttpServletResponse object after it has been committed.
+   
+   If you have written something in the response buffer, you cannot forward a page:
+   
+   [7/8/05 20:36:25:694 ART] 0000004f ServletWrappe E SRVE0068E: Could not invoke the service() method on servlet TestServlet. Exception thrown : java.lang.IllegalStateException
+   at com.ibm.ws.webcontainer.webapp.WebAppDispatcherContext.sendRedirect(WebAppDispatcherContext.java:486)
+   at com.ibm.ws.webcontainer.srt.SRTServletResponse.sendRedirect(SRTServletResponse.java:810)
+   ...
+   [7/8/05 20:36:25:784 ART] 0000004f SRTServletRes W WARNING: Cannot set status. Response already committed. 
+   Calls to the following methods, after a committing response, will cause the java.lang.IllegalStateException error to occur:  1. setBufferSize(0) 
+    2. reset() 
+    3. resetBuffer() 
+    4. sendError() 
+    5. sendRedirect() 
+    6. RequestDispatcher.forward() or performing jsp:forward
+   
+   
+   Two other common variants of this exception are: 
+   java.lang.IllegalStateException: Header already sent 
+   One or more headers have been committed to the client, so you cannot set that header again. 
+   java.lang.IllegalStateException: OutputStream already obtained 
+   In case of JSP, the default output stream has always been created when the JSP has been translated to servlet. Creating and associating another output stream is the reason for this problem. The following piece of code will describe the reason for this error condition: 
+   try
+   {
+   lStream = pResponse.getOutputStream();
+   lStream.write(lDocument);
+   lStream.flush();
+   }
+   catch (java.io.IOException ioe)
+   {
+   logger.error("Exception writing ... to page output stream.");
+   }
+   finally
+   {
+   try
+   {
+   if (lStream != null)
+   {
+   lStream.close();
+   }
+   }
+   catch (java.io.IOException ioe)
+   {
+   logger.error("Exception closing page output stream.");
+   }
+   } 
+   Two output streams cannot be associated with one JSP file. 
+   
+
+What to do next 
+If the preceding troubleshooting steps did not help solve your problem, see the MustGather [http://www.ibm.com/support/docview.wss?rs=180&uid=swg21255205] for JSP problems.  
+
+
+Cross reference information Segment Product Component Platform Version Edition Application Servers Runtimes for Java Technology Java SDK

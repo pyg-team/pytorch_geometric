@@ -1,0 +1,104 @@
+Title: IBM Transformation Extender Advanced Deenvelope process fails with a "-2: java.lang.Exception: EDI syntax registration must occur prior to provider registration" message - United States
+
+Text:
+registration edi deevnelope TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The IBM Transformation Extender Advanced Deenvelope process fails with a "-2: java.lang.Exception: EDI syntax registration must occur prior to provider registration" message. 
+
+CAUSE
+The SPE_INSTALL_DIR value is not set properly and/or the packs.properties file cannot be located. 
+
+RESOLVING THE PROBLEM
+Their are two items you will need to review. These are the value of the SPE_INSTALL_DIR variable and the presensce of the packs.properties file.
+
+
+
+
+SPE_INSTALL_DIR 
+
+To investigate the SPE_INSTALL_DIR aspect of this issue, you need to first identify how the IBM Transformation Extender Advanced (ITXA) Deenvelope process is being initiated. 
+
+ * 
+ * ITXA is called from the IBM Transformation Extender Launcher or Design Studio using the SPE adapter with the -DEENVELOPE or -DENV option: 
+ * If ITXA is called from the IBM Transformation Extender (ITX) Launcher or Design Studio using the SPE adapter with the -DEENVELOPE or -DENV option, then review the content of the dtx.ini file located in the ITX installation directory for Windows environments or the config subdirectory for UNIX installations, Check the value associated with the SPE_INSTALL_DIR parameter, looking for invalid characters and / or an invalid path. This value needs to reference where ITXA is installed and it must have read permission for the ITXA user. 
+ * Example for a Windows installation: SPE_INSTALL_DIR=C:\IBM\Standards Processing Engine 9.0.0 
+ * Example for a UNIX installation: SPE_INSTALL_DIR=/opt/ibm/StandardsProcessingEngine9.0 
+ * If needed, correct this value to reference the proper ITXA (SPE) installation directory location and restart the Design Studio and/or Launcher.
+   
+   
+   ITXA is called from the IBM Transformation Extender Command Server using the SPE adapter with the -DEENVELOPE or -DENV option: 
+ * If ITXA is called from the IBM Transformation Extender (ITX) Command Server using the SPE adapter with the -DEENVELOPE or -DENV option, then edit the speconsole.bat (Windows) or spesetup.sh (UNIX) file which is located in the ITXA bin subdirectory and review the value associated with 
+ *  
+   Windows: set SPE_INSTALL_DIR=<path> UNIX: SPE_INSTALL_DIR=<path> 
+   
+   
+ * 
+ * 
+ * In a UNIX environment, you want to identify the first occurrence of SPE_INSTALL_DIR= to see what it's value is. 
+ *  
+ * After making any necessary change, restart ITXA: 
+ *  
+   Windows:  * 
+    * Start --> All Programs --> IBM Standards Processing Engine 9.0 --> SPE Console Window 9.0
+   
+   
+   UNIX:  * 
+    * 
+    *  
+      Type: unset InSPEEnv Change directory to the bin subdirectory of your ITXA install and type:
+      
+      . ./spesetup.sh 
+   
+   
+ * 
+ * 
+ * ITXA is called from a Business Process within Sterling B2B Integrator using the Deenvelope Service
+ * If ITXA is called from a Business Process within Sterling B2B Integrator (B2Bi) using the Deenvelope Service call then edit the speconsole.bat (Windows) or spesetup.sh (UNIX) file which is located in the ITXA bin subdirectory and review the value associated with 
+ *  
+   Windows: set SPE_INSTALL_DIR=<path> UNIX: SPE_INSTALL_DIR=<path> 
+   
+   
+ * 
+ * and check this <path> value for validity. If needed, correct this <path> value to reference the proper ITXA (SPE) installation directory location. 
+ * In a UNIX environment, you want to identify the first occurrence of SPE_INSTALL_DIR= to see what it's value is. 
+ * After making any necessary change, restart Sterling B2Bi 
+ * Windows: 
+ *  
+   From a DOS Command Prompt window, change directory to the B2Bi install\bin subdirectory of your B2Bi installation and type: stopwindowsservice and once the service has been stopped, type: startwindowsservice 
+ * 
+ * 
+ *  
+   From a UNIX command prompt window change directory to the B2Bi install/bin subdirectory of your B2Bi installation and type: hardstop.sh and once the service has been stopped, type: run.sh 
+ * 
+ * 
+ * ITXA is called from an execution group in a IBM Integration Bus message flow using a De-envelope node.
+ *  If ITXA is called from an IBM Integration Bus (IIB) message flow that contains a De-envelope node, then review the content of the speiib900.cmd (Windows), speiib900.sh (UNIX) file looking for the value associated with 
+ *  
+   Windows:  * 
+    * set SPE_INSTALL_DIR=<path>
+    * Located in the directory specified by the %MQSI_WORKPATH% environment variable.
+   
+   
+   UNIX:  * 
+    * SPE_INSTALL_DIR=<path>
+    * Located in the directory specified by the $MQSI_WORKPATH environment variable.
+   
+   
+   
+ * 
+ * 
+ * In a UNIX environment, you want to identify the first occurrence of SPE_INSTALL_DIR= to see what it's <path> value is. 
+ * Restart IIB.
+
+
+packs.properties 
+
+ * 
+ * Click here
+ * 
+
+
+
+PRODUCT ALIAS/SYNONYM
+ WTX SPE ITX ITXA Standards Processing Engine B2Bi IIB Launcher Design Studio

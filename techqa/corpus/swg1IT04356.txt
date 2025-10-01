@@ -1,0 +1,137 @@
+Title: IBM IT04356: LOW PERFORMANCE OF QUERIES ON ADMSINTABINFO - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+DB2 Version 10.1 Fix Pack 6 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24043366]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Queries on ADMSINTABINFO are slow even if all TCBs are loaded in
+   memory already.
+   
+   I set DBHEAP to 40000, should be able to store 20000 tables' TCB
+   info, actually about 10000 tables in that db.
+   Check with "db2pd -db testdb -tcb" to make sure all tables TCB
+   was in DBHEAP.
+   
+   time db2 "select tabname from sysibmadm.admintabinfo where
+   reorg_pending='Y'"
+   
+   TABNAME
+   ----------------------------------------------------------------
+   ----------------------------------------------------------------
+   ADMIN99
+   ADMIN999
+   
+     2 record(s) selected.
+   
+   real    2m48.74s
+   user    0m0.01s
+   sys     0m0.01s
+   
+   I still saw bufferpool data read as below
+   
+   Buffer pool data logical reads             = 337188
+   Buffer pool data physical reads            = 323543
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * ALL                                                          *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * See Error Description                                        *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Upgrade to DB2 V10.1fp5.                                     *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT04356
+   
+   
+ * REPORTED COMPONENT NAME
+   DB2 FOR LUW
+   
+   
+ * REPORTED COMPONENT ID
+   DB2FORLUW
+   
+   
+ * REPORTED RELEASE
+   A10
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-09-12
+   
+   
+ * CLOSED DATE
+   2015-07-15
+   
+   
+ * LAST MODIFIED DATE
+   2015-07-15
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    IT03500 [http://www-01.ibm.com/support/docview.wss?uid=swg1IT03500]
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * RA10 PSN
+   UP

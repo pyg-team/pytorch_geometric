@@ -1,0 +1,135 @@
+Title: IBM LI79894: FAIL TO ADD DATAPOWER GATEWAY ON LINUX - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When trying to add Datapower Gateway on linux by CMC, it fails
+   with following error:
+   --------------
+   Firmware update failed. Error log:
+   Loading firmware failed: Key decryption error:
+   Error decrypting ephemeral key
+   (admin:default:saml-artifact:xxx.xxx.xxx.xxx):
+   (config-flash)# boot image accept-license api-mgmt-mods.scrypt4
+   Error ID: 59f7319a0cf29ae47a278e28
+   --------------
+   
+   APIC tries to enable AppOpt feature on gateway, but it does not
+   work well and causes this error.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  The workaround is adding AO feature manually before trying to
+   add gateway. Please contact IBM support to get AO activation
+   tool.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  When trying to add a DataPower gateway that does not have the AO
+   module to the CMC, the gateway fails to be added.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix is available in v5.0.8.1.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   LI79894
+   
+   
+ * REPORTED COMPONENT NAME
+   API CONNECT ENT
+   
+   
+ * REPORTED COMPONENT ID
+   5725Z2201
+   
+   
+ * REPORTED RELEASE
+   50X
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-11-09
+   
+   
+ * CLOSED DATE
+   2018-01-12
+   
+   
+ * LAST MODIFIED DATE
+   2018-01-12
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   API CONNECT ENT
+   
+   
+ * FIXED COMPONENT ID
+   5725Z2201
+   
+   
+
+APPLICABLE COMPONENT LEVELS

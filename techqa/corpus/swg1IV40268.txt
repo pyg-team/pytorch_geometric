@@ -1,0 +1,159 @@
+Title: IBM IV40268: AMQ9636: 'SSL DISTINGUISHED NAME DOES NOT MATCH PEER NAME' ERROR WHEN USING SSL/TLS CHANNELS WITH MULTI-INSTANCE QUEUE MANAGERS. - United States
+
+Text:
+  A FIX IS AVAILABLE
+Fix Pack 8.0.0.1 for WebSphere MQ V8.0 [http://www-01.ibm.com/support/docview.wss?uid=swg24038219]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  In a multi-instance WebSphere MQ 7.x queue manager configuration
+   multiple entries are specified for the CONNAME for the SENDER
+   channel. If The channels are SSL/TLS encrypted with SSLPEER set,
+   the following  error is recorded in the MQ error logs when a
+   failover is forced by  stopping the receiver channel for the
+   'active' queue manager.
+   'AMQ9636: SSL distinguished name does not match peer name,
+   channel aaaaa.to.bbbb'.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   Users that are using multi-instance queue managers and has
+   multiple entries in the CONNAME for a sender channel that is
+   SSL/TLS encrypted with a SSLPEER name set.
+   
+   Platforms affected:
+   All Distributed (iSeries, all Unix and Windows)
+   ****************************************************************
+   PROBLEM SUMMARY:
+   When the first connection in the CONNAME list was used, the
+   SSLPEER name was expanded with the values of that channel. When
+   that connection failed then the next channel in the CONNAME list
+   was used. The SSLPEER name was not reset to the configured value
+   so SSLPEER name from the first channel was checked against the
+   second channel which resulted in the AMQ9636 error.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The code has been fixed to reset the SSLPEER name to the
+   configured value when a different channel in the CONNAME list is
+   used.
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+   Version    Maintenance Level
+   v7.0       7.0.1.13
+   v7.1       7.1.0.7
+   v7.5       7.5.0.5
+   v8.0       8.0.0.1
+   
+   The latest available maintenance can be obtained from
+   'WebSphere MQ Recommended Fixes'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037]
+   
+   If the maintenance level is not yet available information on
+   its planned availability can be found in 'WebSphere MQ
+   Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV40268
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ LIN X86 V7
+   
+   
+ * REPORTED COMPONENT ID
+   5724H7224
+   
+   
+ * REPORTED RELEASE
+   710
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-04-22
+   
+   
+ * CLOSED DATE
+   2013-06-11
+   
+   
+ * LAST MODIFIED DATE
+   2015-01-05
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ LIN X86 V7
+   
+   
+ * FIXED COMPONENT ID
+   5724H7224
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R710 PSY
+   UP

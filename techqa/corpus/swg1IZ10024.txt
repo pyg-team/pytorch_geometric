@@ -1,0 +1,157 @@
+Title: IBM IZ10024: NCP_MODEL_TO_MYSQL SHOULD SET UP TABLES TO DO CASE SENSITIVE STRING COMPARISONS - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Two devices with the same name, but different case, show as
+   different devices with the same IP address. For example a device
+   called "Arouter" and a device called "arouter" will be displayed
+   correctly in the Network View, but each will have the same IP
+   address.
+   
+   The default behaviour of MySQL is to make case insensitive table
+   comparisons.  The change to the code is to make the comparisons
+   sensitive to case.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  The customer where this issue was observed, agreed to modifying
+   the name as a workaround to the problem.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: Users where two or more devices have names   *
+   *                 that differ only in the case of the letters. *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Two devices called Mahadthai and        *
+   *                      MahadThai were being corrupted when     *
+   *                      displayed in Topoviz.  They were        *
+   *                      showing as two separate icons, but the  *
+   *                      details were the same for both.  In the *
+   *                      back end server processes, the two      *
+   *                      devices had different details.          *
+   ****************************************************************
+   * RECOMMENDATION: It is best to avoid giving two different     *
+   *                 devices names that only differ in by the     *
+   *                 case of the letters.  (Since DNS is not case *
+   *                 sensitive, this can only be done by using    *
+   *                 sysName naming.)                             *
+   ****************************************************************
+   By default, MySQL does case insensitive string comparisons.
+   This could lead to more data than expected being returned by
+   queries that do string comparisons.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  ncp_model_to_mysql has been altered to create tables using an
+   option that tells MySQL to do case sensitive string
+   comparisons.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ10024
+   
+   
+ * REPORTED COMPONENT NAME
+   NC/PREC TPL SV
+   
+   
+ * REPORTED COMPONENT ID
+   5724O6000
+   
+   
+ * REPORTED RELEASE
+   360
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2007-12-05
+   
+   
+ * CLOSED DATE
+   2007-12-19
+   
+   
+ * LAST MODIFIED DATE
+   2007-12-19
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *     NETCOOL
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   NC/PREC TPL SV
+   
+   
+ * FIXED COMPONENT ID
+   5724O6000
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R360 PSY
+   UP

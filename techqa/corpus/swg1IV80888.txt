@@ -1,0 +1,128 @@
+Title: IBM IV80888: WSRR ECLIPSE PLUGIN: ENABLE SUPPORT FOR TLS V1.1 AND V1.2 CONNECTIONS - United States
+
+Text:
+  A FIX IS AVAILABLE
+WebSphere Service Registry and Repository V8.5.6 Fix Pack 1 [http://www-01.ibm.com/support/docview.wss?uid=swg24043121]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  WSRR Eclipse plugin cannot connect to servers that require TLS
+   v1.1 or v1.2 connections.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   All users of the Eclipse plugin for IBM WebSphere Service
+   Registry and Repository V8.5
+   
+   ****************************************************************
+   PROBLEM DESCRIPTION:
+   The Eclipse plugin does not support connections requiring the
+   TLS V1.1 nor V1.2 protocol.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The Eclipse plugin was updated to support TLS V1.1 and V1.2
+   connections.
+   
+   This fix is targeted for inclusion in WSRR V8.5.6.1
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV80888
+   
+   
+ * REPORTED COMPONENT NAME
+   SERVICE REGISTR
+   
+   
+ * REPORTED COMPONENT ID
+   5724N7200
+   
+   
+ * REPORTED RELEASE
+   850
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-01-28
+   
+   
+ * CLOSED DATE
+   2016-11-29
+   
+   
+ * LAST MODIFIED DATE
+   2016-11-29
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   SERVICE REGISTR
+   
+   
+ * FIXED COMPONENT ID
+   5724N7200
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R850 PSY
+   UP

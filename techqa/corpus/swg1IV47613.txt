@@ -1,0 +1,222 @@
+Title: IBM IV47613: ABAP DUMPS DUE TO OVERFLOW IN /IBMMON/ITM_CCMS_ALERTS (ALERT UNIQUE ID) - United States
+
+Text:
+  FIXES ARE AVAILABLE
+ITCAM Agent for SAP Applications, 7.1.1-TIV-ITM_SAP-IF0001 [http://www-01.ibm.com/support/docview.wss?uid=swg24036988]
+ITCAM Agent for SAP Applications, 7.1.0-TIV-ITM_SAP-FP0002 [http://www-01.ibm.com/support/docview.wss?uid=swg24038686]
+ITCAM Agent for SAP Applications, 7.1.1-TIV-ITM_SAP-FP0003 [http://www-01.ibm.com/support/docview.wss?uid=swg24043404]
+ITCAM Agent for SAP Applications, 7.1.1.3-TIV-ITM_SAP-IF0001 [http://www-01.ibm.com/support/docview.wss?uid=swg24043820]
+ITCAM Agent for SAP Applications,7.1.1-TIV-ITM_SAP-FP0004 [http://www-01.ibm.com/support/docview.wss?uid=swg24044289]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Environment
+   SAP agent, 7.1
+   SAP Basis version 701 and 702
+   
+   PROBLEM
+   Overflow condition causes ABAP dumps during CCMS log
+   processing by SAP agent. This occurs when the Alert Unique
+   Number exceeds 10 digit length.
+   in ABAP program "/IBMMON/SAPLITM6" in "/IBMMON/ITM_CCMS_ALERTS":
+   
+   Short text
+       Overflow when converting from 2160022548
+   Error analysis
+   An exception occurred that is explained in detail below.
+   The exception, which is assigned to class
+   'CX_SY_CONVERSION_OVERFLOW', was not caught in procedure
+   "/IBMMON/ITM_CCMS_ALERTS" "(FUNCTION)", nor was it propagated by
+   a RAISING clause.
+   Information on where terminated
+       Termination occurred in the ABAP program "/IBMMON/SAPLITM6"
+   - in "/IBMMON/ITM_CCMS_ALERTS".
+       The main program was "SAPMSSY1 ".
+   
+       In the source code you have the termination point in line
+   611 of the (Include) program "/IBMMON/LITM6U59".
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  To continue using the agent, disable CCMS alert monitoring
+   functionality.
+   
+   Steps to disable CCMS alerts function module:
+   No change on agent side.
+   SAP Side:
+   1) Transaction Code: SE16
+   2) Give the table name as: /IBMMON/ITM_CNFG
+   3) Click on Function key F5 or create entries button.
+   4) Add the entry of /IBMMON/ITM_ALERTS and NO.
+   5) And click on Save.
+   
+   To check if the entry is stored:
+   Transaction Code: SE11
+   Give the table name as: /IBMMON/ITM_CNFG
+   Click on Function key F7.
+   
+   And then F8 and the entry will be visible here.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Overflow condition causes ABAP dumps during CCMS log
+   processing by SAP agent. This occurs when the Alert Unique
+   Number exceeds 10 digit length.
+   in ABAP program "/IBMMON/SAPLITM6" in "/IBMMON/ITM_CCMS_ALERTS":
+   
+   Short text
+       Overflow when converting from 2160022548
+   Error analysis
+   An exception occurred that is explained in detail below.
+   The exception, which is assigned to class
+   'CX_SY_CONVERSION_OVERFLOW', was not caught in procedure
+   "/IBMMON/ITM_CCMS_ALERTS" "(FUNCTION)", nor was it propagated by
+   a RAISING clause.
+   Information on where terminated
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fix will be available in sap agent versions 620 IF0017, 710
+   FP1-IF02
+   and 711 IF01 or IF02.
+   
+   620 Version:
+   The formal fix for this APAR is contained in the following
+   package:
+   IBM(R) Tivoli(R) Monitoring Applications: mySAP Agent
+   
+    Version 6.2.0
+   Component ID: 5724B97SO
+   
+   Interim Pack: 0017, 6.2.0-TIV-ITM_SAP-IF0017
+   
+   
+   710 Version:
+   The formal fix for this APAR is contained in the following
+   package:
+   IBM(R) Tivoli(R) Composite Application Manager Agent for SAP
+   Applications,
+    Version 7.1.0
+   Component ID: 5724B97SO
+   
+   Interim Pack: 0001, 7.1.0.1-TIV-ITM_SAP-IF0002
+   
+   Date: Q1, 2014
+   
+   711 Version:
+   The formal fix for this APAR is contained in the following
+   package:
+   IBM(R) Tivoli(R) Composite Application Manager Agent for SAP
+   Applications,
+    Version 7.1.1
+   Component ID: 5724B97SO
+   
+   Interim Pack: 0001, 7.1.1-TIV-ITM_SAP-IF0001
+   or
+   Interim Pack: 0001, 7.1.1-TIV-ITM_SAP-IF0002
+   Date: Q1, 2014
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV47613
+   
+   
+ * REPORTED COMPONENT NAME
+   ITMF APPL - SAP
+   
+   
+ * REPORTED COMPONENT ID
+   5724B97SO
+   
+   
+ * REPORTED RELEASE
+   710
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   YesHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-08-28
+   
+   
+ * CLOSED DATE
+   2013-11-13
+   
+   
+ * LAST MODIFIED DATE
+   2013-11-13
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ITMF APPL - SAP
+   
+   
+ * FIXED COMPONENT ID
+   5724B97SO
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R620 PSY
+   UP
+   
+   
+ * R710 PSY
+   UP

@@ -1,0 +1,32 @@
+Title: IBM Alcatel 5620 SAM probe does not perform a FULL Resynchronisation - United States
+
+Text:
+nco_p_alcatel_5620_sam_v5; nco_p_alcatel_5620_sam_v6; nco_p_alcatel_5620_sam_v7; nco_p_alcatel_5620_sam_v8; nco_p_alcatel_5620_sam_v9; alcatel; sam; RecoveryFile; recoveryfile; recovery file; MTOSI_osTime; Resynchronisation; event time; AlcatelSamRecovery TECHNOTE (FAQ)
+
+QUESTION
+ Alcatel 5620 SAM probe : Why is a FULL resynchronization not happening? 
+
+CAUSE
+
+The filename given in the 'RecoveryFile' property exists and is not allowing a full synchronisation to be performed;
+e.g.
+$OMNIHOME/var/AlcatelSamRecovery
+
+
+
+ANSWER
+To avoid retrieving all active alarms every time the probe sends a resynchronization request, the probe stores the timestamp (MTOSI_osTime) of the real-time alarms from the JMS. Should the probe restart, it uses this real-time event time to resynchronize from, i.e. the last recorded MTOSI_osTime. 
+
+This allows the probe to query active alarms that were created since the last set of active alarms were processed.
+
+The file used to store this information is specified by the RecoveryFile which is written to as events are processed. The first time the probe is run, the recovery file doesn't exist so the probe sends a full resynchronization request.
+
+Therefore to enable FULL Resynchronisation the RecoveryFile must be removed before the probe is started.
+
+From the manual;
+
+RecoveryFile | -recoveryfile
+Name of the recovery file in which the probe stores the timestamp of the last keepAlive event read before disconnecting from the Alcatel 5620 SAM server. The probe uses this when reconnecting to the server. 
+The default is /$OMNIHOME/var/AlcatelSamRecovery.
+
+Note: If you have more than one Alcatel SAM probe running on the same system, the RecoveryFile must be set uniquely for each probe.

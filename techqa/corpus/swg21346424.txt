@@ -1,0 +1,17 @@
+Title: IBM Can you set column widths and wrap text in Contributor ? - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Can you set column widths and wrap text in Contributor grid ?
+If you resize column the text will not wrap , it is hidden. 
+
+RESOLVING THE PROBLEM
+You can resize columns, but it is not possible to save the new width in the current version (7.3).
+
+ 
+
+Cross reference information Segment Product Component Platform Version Edition Business Analytics Cognos 8 Planning Contributor 8.1 
+HISTORICAL NUMBER
+ 1027085

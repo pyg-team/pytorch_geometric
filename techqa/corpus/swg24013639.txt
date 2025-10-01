@@ -1,0 +1,59 @@
+Title: IBM IA9L:  WebSphere MB V6 Client for WSRR - Services version - United States
+
+Text:
+Nodes; cache; meta-data; service; WSRR; WebSphere Service Registry and Repository; router; transcoder DOWNLOADABLE FILES
+
+ABSTRACT
+ The WebSphere Message Broker V6.0 Client for WebSphere Service Registry and Repository provides a means of querying the service registry. 
+
+DOWNLOAD DESCRIPTION
+PLEASE NOTE:
+This SupportPac has been superseded by IA9Q. Please use the link in the download table to access the webpage and code.
+
+The WebSphere Service Registry and Repository (WSRR) is the repository of record for the services meta-data for the ESB. This SupportPac provides WMB standard interfaces (nodes) for accessing WSRR, provides three levels of caching, and WSRR synchronized cache update.
+
+The IA9L SupportPac (WMB Client for WSRR) has been largely superseded by a product extension SupportPac, IA9Q. The IA9Q is a Category 3 SupportPac and will be merged into the product base in the WMB 6.1 timeframe. The IA9Q SupportPac is the recommended WMB Client for WSRR, to access it click on the link below in the downloads table.
+
+The IA9L SupportPac will be updated in the near future, as most of its functionality became IA9Q. Once updated IA9L will contain only the pattern of use nodes, SRxxxxVirtualService nodes. 
+
+POSSIBLE USES
+Implementation of a services registry, as part of a Service Oriented Architecture, where WebSphere Message Broker has been selected as the Enterprise Services Bus.
+
+SKILL LEVEL REQUIRED
+Normal WebSphere Message Broker development skills.
+
+DELIVERY
+This SupportPac has been superseded by IA9Q. Please use the link in the download table to access the web page and code.
+
+NEW IN THIS RELEASE
+1. Documentation updates relating to installation.
+2. Update to scripts and readme files making it easier to install sample data.
+
+DETAILS
+Authors: IBM China Software Development Laboratory, IBM Enterprise Integration Solutions
+Category: 1
+Released: 29Sep06
+Last updated: 31Oct06
+Current Version: 1.0.1
+»Please note that the version number shown in the right-hand pane is the version of the MQ or WBI product that this SupportPac applies to. The date is the last web page refresh. 
+
+To view the complete portfolio of WebSphere MQ SupportPacs please visit the WebSphere MQ SupportPacs homepage:
+http://www-306.ibm.com/software/integration/support/supportpacs [http://www-306.ibm.com/software/integration/support/supportpacs]
+
+PREREQUISITES
+• WebSphere Service Registry and Repository Version 1.0
+• WebSphere Message Broker Version 6.0 Fix Pack 2 or later.
+
+INSTALLATION INSTRUCTIONS
+Not applicable.
+
+DOWNLOAD PACKAGE
+
+
+Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options About Category 1 SupportPacs 31/10/2006 US English 111 HTTP [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27007195&loc=en_US&cs=utf-8&lang=en] SupportPac IA9Q 19/01/2007 US English 1540803 HTTP [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg24014652&loc=en_US&cs=utf-8&lang=en] 
+TECHNICAL SUPPORT
+ This SupportPac is supplied under the standard terms and conditions provided by the International Program License Agreement (IPLA) and thus, carry program defect service. 
+
+If you encounter what you believe to be a defect with the SupportPac you may request Program Services, by reporting the problem via the same defect reporting channel you use for the WebSphere MQ or WebSphere Business Integration product/s with which you are using the SupportPac. These products must themselves have service support.
+
+Please read the license file that accompanies it, to determine if you want to use it. No proof of Entitlement or License Information is required to use this SupportPac.

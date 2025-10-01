@@ -1,0 +1,140 @@
+Title: IBM PM31979: CONTENT ARE NOT SYNCHRONIZED BETWEEN CLUSTER NODES - United States
+
+Text:
+  FIXES ARE AVAILABLE
+6.1.0.6 Download: WebSphere Portal and WCM V6.1.0 fix pack 6 [http://www-01.ibm.com/support/docview.wss?uid=swg24030970]
+7.0.0.2 Download: WebSphere Portal and WCM V7.0 fix pack 2 [http://www-01.ibm.com/support/docview.wss?uid=swg24031676]
+Fixes integrated in WebSphere Portal 7.0.0.1 & 7.0.0.2 Combined Cumulative Fixes [http://www-01.ibm.com/support/docview.wss?uid=swg24029452]
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  WCM content is not updated on one of the cluster member. This
+   makes the data inconsistent.
+   
+   The fix resolves this issue.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  This APAR is concerned with Navigator components only. The
+   scenario is as follows
+   
+   1. Set up a clsuter with two nodes. The cluster must also be the
+   subscriber in a syndicator-subscriber pair. For convenience of
+   testing, you can syndicate to one of the nodes (say , NodeA) in
+   the cluster.
+   2. Create a navigator which displays some items and syndicate it
+   to the cluster. Make sure you can view it correctly by hitting
+   both nodes of the cluster directly.
+   3. Now clear the navigator cache on NodeA only by running the
+   clearcache.jsp or by restarting the node. Make sure you do not
+   render the navigator now on either nodes.
+   4. Now make an update to the navigator results on the syndicator
+   and let the syndication go through. So we basically want NodeA
+   to process this syndication update when its navigator cache is
+   empty.
+   5. Wait for few minutes (to ensure the cache has been
+   replicated) and render the navigator on NodeB.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The cache removal messages are now sent even if the cache on
+   NodeA ia empty.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM31979
+   
+   
+ * REPORTED COMPONENT NAME
+   LOTUS WEB CONT
+   
+   
+ * REPORTED COMPONENT ID
+   5724I2900
+   
+   
+ * REPORTED RELEASE
+   61C
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-02-07
+   
+   
+ * CLOSED DATE
+   2011-03-21
+   
+   
+ * LAST MODIFIED DATE
+   2011-03-21
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   LOTUS WEB CONT
+   
+   
+ * FIXED COMPONENT ID
+   5724I2900
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R61C PSY
+   UP
+   
+   
+ * R700 PSY
+   UP

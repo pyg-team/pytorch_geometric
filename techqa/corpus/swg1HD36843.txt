@@ -1,0 +1,263 @@
+Title: IBM HD36843: CANNOT CUT AN INSTANCE FROM A NHA IF THE SAME CHILD INSTANCE IS LOCKED BY SOMEONE ELSE - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS UNREPRODUCIBLE IN NEXT RELEASE.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  CANNOT CUT AN INSTANCE FROM A NHA IF THE
+   SAME CHILD INSTANCE IS LOCKED BY SOMEONE
+   ELSE.
+   .
+   Problem Description-CANNOT CUT AN INSTANCE
+   FROM A NHA IF THE SAME CHILD INSTANCE IS
+   LOCKED BY SOMEONE ELSE.
+   .
+   SCENARIO :
+   Starting structure
+   PRC
+   |_ASSY1
+   | |_ASSY3
+   | |_PART1
+   | |_PART2
+   | |_PART3
+   |
+   |_ASSY2
+   |_ASSY3
+   |_PART1
+   |_PART2
+   |_PART3
+   1) We lock the parts as shown in the below
+   2) User1 cut the the PART3 on which he have the
+   lock
+   PRC
+   |_ASSY1
+   | |_ASSY3 (lock usage+reference user1)
+   | |_PART1
+   | |_PART2
+   | |_PART3 (lock usage user1) <--- CUT (MOVE)
+   |
+   |_ASSY2
+   |_ASSY3 (lock reference user1)
+   |_PART1
+   |_PART2
+   |_PART3 (lock usage user2)
+   3) The system give the following error message
+   For the cut: "Instance lock by some other user"
+   .
+   ERROR MESSAGE(S) : "Instance lock by some
+   other user"
+   .
+   SEVERITY JUSTIFICATION :
+   There is no viable way to identify which usage is
+   being lock by another user, other then loading all
+   the usages.
+   This could greatly impact concurrent engineering if
+   some locks (that grant no modification authority to
+   the owner), prevent the work of other users who
+   have, in theory, met all the conditions to do a
+   change.
+   .
+   Actual result -Its not authorized for the creator to
+   cut a part whose other usage has been locked by
+   some other user,whereas the creator haslocked the
+   reference of the parent assembly.
+   .
+   EXPECTED RESULT:
+   We should be able to modify an assembly if we
+   have the lock on the assembly's reference and
+   since just other usage of the part is locked by
+   some other user, the creator of the part is not able
+   to perform cut in his original assembly.
+   .
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  CANNOT CUT AN INSTANCE FROM A NHA IF THE SAME CHILD INSTANCE IS
+   LOCKED BY SOMEONE ELSE
+   CANNOT CUT AN INSTANCE FROM A NHA IF THE
+   SAME CHILD INSTANCE IS LOCKED BY SOMEONE
+   ELSE.
+   .
+   Problem Description-CANNOT CUT AN INSTANCE
+   FROM A NHA IF THE SAME CHILD INSTANCE IS
+   LOCKED BY SOMEONE ELSE.
+   .
+   SCENARIO :
+   Starting structure
+   PRC
+   |_ASSY1
+   | |_ASSY3
+   | |_PART1
+   | |_PART2
+   | |_PART3
+   |
+   |_ASSY2
+   |_ASSY3
+   |_PART1
+   |_PART2
+   |_PART3
+   1) We lock the parts as shown in the below
+   2) User1 cut the the PART3 on which he have the
+   lock
+   PRC
+   |_ASSY1
+   | |_ASSY3 (lock usage+reference user1)
+   | |_PART1
+   | |_PART2
+   | |_PART3 (lock usage user1) <--- CUT (MOVE)
+   |
+   |_ASSY2
+   |_ASSY3 (lock reference user1)
+   |_PART1
+   |_PART2
+   |_PART3 (lock usage user2)
+   3) The system give the following error message
+   For the cut: "Instance lock by some other user"
+   .
+   ERROR MESSAGE(S) : "Instance lock by some
+   other user"
+   .
+   SEVERITY JUSTIFICATION :
+   There is no viable way to identify which usage is
+   being lock by another user, other then loading all
+   the usages.
+   This could greatly impact concurrent engineering if
+   some locks (that grant no modification authority to
+   the owner), prevent the work of other users who
+   have, in theory, met all the conditions to do a
+   change.
+   .
+   Actual result -Its not authorized for the creator to
+   cut a part whose other usage has been locked by
+   some other user,whereas the creator haslocked the
+   reference of the parent assembly.
+   .
+   EXPECTED RESULT:
+   We should be able to modify an assembly if we
+   have the lock on the assembly's reference and
+   since just other usage of the part is locked by
+   some other user, the creator of the part is not able
+   to perform cut in his original assembly.
+   .
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *  THE PROBLEM WAS SUBMITTED ON :
+   ENOVIA VERSION 5 RELEASE 14.
+   THIS PROBLEM IS NOT REPRODUCIBLE ON :
+   ENOVIA VERSION 5 RELEASE 15 GA level AND ON
+   V5R14SP06.
+   .
+   In an unconfigured case (IR does not specify
+   whether prod structure is conf/unconfig ......but IR
+   is recreatable only in unconfig case)
+   cut fails with an info msg that Instance is locked by
+   some other User.
+   This is a bad message but is working as
+   designed . In an unconf case , cut of the ii leads to
+   a delete of the AR . In PS model ,
+   prior to deleting the AR , we check to see that none
+   of the instances pointing to the AR are locked . If
+   they are , then do not allow delete as seen in our
+   scenario.
+   In config case , the cut succeeds. This is OK
+   because nothing is actually changed on the AR ,
+   just the effectivity pointing to the AR .
+   .
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   HD36843
+   
+   
+ * REPORTED COMPONENT NAME
+   ENOVIA LCA AIX
+   
+   
+ * REPORTED COMPONENT ID
+   569101700
+   
+   
+ * REPORTED RELEASE
+   514
+   
+   
+ * STATUS
+   CLOSED UR1
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2005-03-17
+   
+   
+ * CLOSED DATE
+   2005-03-24
+   
+   
+ * LAST MODIFIED DATE
+   2009-06-24
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ENOVIA LCA AIX
+   
+   
+ * FIXED COMPONENT ID
+   569101700
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R514 PSN SP51406
+   UP05/05/13 N 1000

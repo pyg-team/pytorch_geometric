@@ -1,0 +1,50 @@
+Title: IBM DASH servers in HA cluster: user roles, pages do not replicate/synchronize - United States
+
+Text:
+TIPL2CONF HA roles pages synchronize PKIX path validation failed certificate not trusted TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ User roles and pages fails to replicate across severs in a high availability cluster in Dashboard Application Service Hub (DASH) if server-to-server trust is not enabled. 
+
+SYMPTOM
+You may see below errors in <JazzSM-HOME>/profile/logs/server1/SystemOut.log. The following error message suggests that the certificates presented by below the server is not trusted: 
+
+CN=server5, OU=Root Certificate, OU=JazzSMNode01Cell, OU=JazzSMNode01, O=IBM, C=US 
+
+
+
+6/5/14 9:46:38:041 EDT] 00002843 NotifyNodeThr W com.ibm.isc.ha.notifications.NotifyNodeThread notifyWithGet IOException for URL: https://server5:16311/ISCHA/NotificationServlet?notificationName=/applications/isc.ear/deployments/isc/isclite.war/WEB-INF/tipRoleUser.dat;/applications/isc.ear/deployments/isc/isclite.war/WEB-INF/tipRoleGroup.dat;&signature=MCwCFHFmBlSXaOD8zj1Ek94NdhRfXEmcAhQXPr7SEj1fbl7_bhkDfK9L8KbBaA** Message: com.ibm.jsse2.util.h: 
+
+PKIX path validation failed: java.security.cert.CertPathValidatorException: The certificate issued by CN=server5, OU=Root Certificate, OU=JazzSMNode01Cell, OU=JazzSMNode01, O=IBM, C=US is not trusted; internal cause is: 
+java.security.cert.CertPathValidatorException: Signature does not match.
+javax.net.ssl.SSLHandshakeException: com.ibm.jsse2.util.h: PKIX path validation failed: java.security.cert.CertPathValidatorException: The certificate issued by CN=server5, OU=Root Certificate, OU=JazzSMNode01Cell, OU=JazzSMNode01, O=IBM, C=US is not trusted; internal cause is: 
+java.security.cert.CertPathValidatorException: Signature does not match.
+
+
+CAUSE
+Above error can occur if the trust association between the servers is missing. See below URL for details on this subject:
+http://www-01.ibm.com/support/knowledgecenter/SSGSPN_9.2.0/com.ibm.tivoli.itws.doc_9.2/distr/src_ad/ttip_config_loadbal_trust.htm?lang=en [http://www-01.ibm.com/support/knowledgecenter/SSGSPN_9.2.0/com.ibm.tivoli.itws.doc_9.2/distr/src_ad/ttip_config_loadbal_trust.htm?lang=en] 
+
+
+RESOLVING THE PROBLEM
+Log into the WebSphere Administrative console on the server where you are seeing above errors. 
+Expand Security and click "SSL certificate and key management." 
+
+ 1.  Under Related Items: Click on "Key stores and certificates" 
+ 2.  Under Related Items, click "Key stores and certificates" and then click the NodeDefaultTrustStore key store. 
+ 3.  Under Additional Properties, click "Signer certificates" 
+ 4.  Click on "Retrieve From Port" button. 
+ 5.  In the Host field, enter the host name of the other server in the HA cluster. 
+     In the Port field enter port number for the other server (https port). As shown in above the error message may have contain host name and port number (in this case it is server5 and 16311 respectively). 
+     In Alias you can have any string (just use server name as alias for clarity: server5). 
+ 6.  Click Retrieve Signer Information. 
+ 7.  Verify that the certificate information is for a certificate that you can trust. 
+ 8.  Click Apply and Save. 
+ 9.  Restart DASH server. 
+ 10. After this create a page or assign some additional roles to a user and see those get replicated to other server. You may have to wait for pages to replicate or logout from DASH and login again.
+     
+     Repeat above steps on other nodes in the cluster if you are seeing same errors on other server(s). You will to specify correct host name. 
+
+
+If issue is still present and above errors still appears in SystemOut.log then follow below technote (Section: Collecting data manually) and collect the logs for further investigation. 
+https://www-304.ibm.com/support/docview.wss?uid=swg21162961 [https://www-304.ibm.com/support/docview.wss?uid=swg21162961]

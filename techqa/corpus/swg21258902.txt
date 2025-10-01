@@ -1,0 +1,33 @@
+Title: IBM Rational Software Architect crashes with JVM terminated exit code = 255 - United States
+
+Text:
+RSA; RSM; RSD; RAD; RDA; Radeon; ATI; terminated; exit; code; 255; 1258902 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This technote provides a solution for one possible cause of an Eclipse shell crash on IBM Rational Software Architect (RSA), Rational Software Modeler (RSM), Rational Application Developer for WebSphere Software (RAD), Rational Systems Developer (RSD) or Rational Data Architect (RDA). 
+
+CAUSE
+There is a known issue with the primary release version of the Radeon x300 ATI and Radeon x600 ATI video drivers. 
+Incompatibility with the original releases of this video driver causes the Eclipse shell to crash with the following error:
+
+JVM terminated exit code = 255 
+
+image
+[/support/docview.wss?uid=swg21258902&aid=1] [/support/docview.wss?uid=swg21258902&aid=1]
+
+
+RESOLVING THE PROBLEM
+In order to resolve this issue, all users who are encountering the problem with this particular video driver and video card installed, should upgrade to the latest video driver available from the manufacturer's Web site at: http://support.amd.com/en-us/download [http://support.amd.com/en-us/download] 
+
+Be sure to follow the manufacturer's installation instructions and recommendations. 
+
+If updating the video driver does not resolve this issue, review the related technote below for steps on repairing the Eclipse shell and the workspace settings.
+
+RELATED INFORMATION
+#Recreating the Plug-in Cache and workspace [http://www.ibm.com/support/docview.wss?uid=swg21238679]
+
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Software Development Rational Software Modeler Eclipse Software Development Rational Systems Developer Eclipse Data & Information Management Rational Data Architect Eclipse Software Development Rational Application Developer for WebSphere Software Eclipse

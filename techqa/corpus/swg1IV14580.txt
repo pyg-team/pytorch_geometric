@@ -1,0 +1,164 @@
+Title: IBM IV14580: AGGREGATED COMMAND SET FOR CISCO SWITCH FAILING. ITNCM JAVA API TO ADD MULTIPLE VLAN TO THE "SWITCHPORT TRUNK ALLOWED" - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The aggregation is "overwriting" the parms on the interface
+   lines because there is bounding that says only one line on the
+   interface of "switchport trunk allowed vlan add".  If you do
+   the config change directly on the device, you can type in this
+   same line once for vlan add 108 and then again for vlan 109 and
+   the device consolidates them onto a single line.
+   
+    switchport trunk allowed vlan add 108,109
+   
+   This might be a better way for the customer to put in this
+   change - putting both vlans in the switchport on a single line
+   rather sending in aggregated command sets.  It's sort of a
+   funky command since what you put in doesn't show up in the
+   config the way you enter it.  The device adds the vlans are
+   added into the existing line(s) based on numeric order and if
+   there are too many to fit on the first line, it pushes them out
+   to a second line in the config using the "add" keyword.  The
+   way the schema handles this on import or sync is by putting the
+   vlans of all the lines into a single line (without the "add"
+   keyword).
+   
+   I've come up with a schema structure that works for putting in
+   multiple "add" lines in a single UOW. Since the structure has
+   changed, they'll have to recreate their command set.  This
+   structure will allow them to put in a single vlan per command
+   or multiple vlans either comma separated or ranges using dashes.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Nonr without API code changes
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * ITNCM customers using the                                    *
+   * cisco_switch_mexx_me340x-metroipaccessk9-m.122-35-se3        *
+   * SmartModel Driver.                                           *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * Only one line on the interface of "switchport trunk allowed  *
+   * vlan add"                                                    *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Upgrade to Drivers 15 when available                         *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Modified the Cisco mexx SmartModel driver to allow multiple
+   entries for "switchport"
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV14580
+   
+   
+ * REPORTED COMPONENT NAME
+   N/C CONFIG MGR(
+   
+   
+ * REPORTED COMPONENT ID
+   5724Z3100
+   
+   
+ * REPORTED RELEASE
+   620
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-02-01
+   
+   
+ * CLOSED DATE
+   2012-02-03
+   
+   
+ * LAST MODIFIED DATE
+   2012-02-03
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   N/C CONFIG MGR(
+   
+   
+ * FIXED COMPONENT ID
+   5724Z3100
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R620 PSY
+   UP
+   
+   
+ * R630 PSY
+   UP

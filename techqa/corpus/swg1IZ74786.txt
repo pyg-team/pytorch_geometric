@@ -1,0 +1,363 @@
+Title: IBM IZ74786: APAR FOR 7.2 FIX PACK 2 FEATURES - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  ABSTRACT
+   APAR for 7.2 Fix Pack 2 Features
+   
+   DETAILS
+   
+   Feature 1;
+   Customer is running at half TADDM memory spec and running in
+   DEBUG will sometimes push the system to OOM. This is because
+   we are logging many large outputs, such as lsof results. We
+   are planning to make changes to the logging design to allow
+   us to truncate results to the logger at a certain
+   configueable number of bytes for customers in this type
+   of situation.
+   
+   As a workaround, customer should only use debug when necessary
+   and only set it on a per JVM basis.
+   
+   Feature 2;
+   MQ server sensor command need to be externalize.
+   Fix provide 3 new properties which all add sudo for MQ command:
+   com.collation.discover.agent.MqServerAgent.verisonCommand
+   property allow add sudo for mq version command. eg
+   com.collation.discover.agent.MqServerAgent.verisonCommand=sudo
+   -u mqm
+   command enable add sudo MQ status command (dspmq)
+   com.collation.discover.agent.MqServerAgent.statusCommand
+   Enable add sudo to MQSeries commands (runmqsc)
+   com.collation.discover.agent.MqServerAgent.mqscCommand
+   
+   Each of property may be narrow to os name or particular IP. eg.
+   com.collation.discover.agent.MqServerAgent.mqscCommand.Linux.1.2
+   .3.4=sudo -u mqm
+   
+   Feature 3;
+   Change this message from DEBUG to TRACE to prevent excessive log
+   growth;
+   DEBUG ip.SystemSigner - calculateAddressSpace(10.1.2.3) ->
+   null (no anchor zone)
+   
+   
+   Feature 4:
+   The com.collation.platform.os.WindowsOs.AutoDeploy property is
+   not scoped, and user cannot set this property for a particular
+   ip address
+   
+   Feature 5
+   
+   Enable hardware address for virtual IP in Linux.
+   
+   This feature is to enable the discovery of hw addresses for
+   virtual interfaces for Linux.
+   By default, the hw address for virtual interfaces is not
+   discovered, the new collation property:
+   
+   com.collation.discover.agent.ignoreVirtualMAC (default set to
+   true)
+   
+   allows to discover the hw address.
+   
+   
+   Feature 6
+   
+   Externalize serial number on power linux.
+   The following command is used to get serial number:
+   cat /proc/device-tree/system-id | cut -c 7-13"
+   
+   In some case cat needs sudo.
+    The following will be added to collation.properties;
+   
+   com.collation.discover.agent.command.cat
+   
+   Example to specify cat with sudo:
+   com.collation.discover.agent.command.cat.1.2.3.4=sudo cat
+   where 1.2.3.4 should be replace with valid IP address of the
+   target.
+   
+   Feature 7
+   
+   The ITM API does not return any data to the TADDM
+   sensor.
+   
+   This function has been redesigned in 7.2 FP2.  The code sets a
+   much
+   shorter timeout and repeats the query in smaller batches to
+   determine
+   which endpoints are unresponsive. Whatever data is returned by
+   the
+   queries is made available to TADDM.
+   
+   Feature 8;
+   
+   ITM Scope Sensor Changes:
+   
+   Highlights of the changes:
+   
+   Java Runtime Environment (JRE) is no longer required on each ITM
+   endpoint to be discovered.  Target machine requirements are now:
+   
+   1. Windows discovery targets must have Microsoft .Net Framework
+   1.1 or later installed.
+   2 .Linux and UNIX systems must have a Portable Operating System
+   Interface (POSIX) compliant uuencode and uudecode commands
+   installed.
+   
+   Support bundle KD7 has an updated version string reflecting its
+   current version: 072002000. The bundle is no longer required on
+   Unix targets, only on Windows.   Users must redeploy the latest
+   KD7 bundle to all Windows endpoints.  The KD7 bundle need not be
+   removed from Unix targets.
+   
+   The TEPS custom queries used by the sensor have changed.  There
+   are now 7 queries instead of 3.  Follow the updated sensor
+   reference instructions to install the new queries before
+   attempting to run the sensor.
+   
+   
+   
+   This APAR will be updated as new features are added to the Fix
+   Pack.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  In the meantime, can you point customer to the doc on
+   logging on
+   a per JVM level? We will have to be careful about turning
+   discover
+   JVM in debug at this customer for large discoveries. We
+   recommend they
+   use INFO mode. In the event debug logs are needed, they should
+   only
+   enable DEBUG for the necessary JVM and if discover, preferably
+   use
+   smaller scopes unless they get more memory added.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  7.2 Feature APAR;
+   
+   Feature 1;
+   Due to large logging outputs and running in DEBUG can sometimes
+   cause TADDM to run OutOf Memory.
+   This is because we are logging large outputs, like lsof. Changes
+   were made to the logging design
+   to allow truncation of the results to the logger at a certain
+   configurable number of bytes.
+   
+   Feature 2;
+   MQ server sensor command need to be externalized.
+   This fix provides 3 new properties which all add sudo for MQ
+   command:
+   com.collation.discover.agent.MqServerAgent.versionCommand
+   property allow add sudo for mq version command. eg
+   com.collation.discover.agent.MqServerAgent.versionCommand=sudo
+   -u mqm
+   command enable add sudo MQ status command (dspmq)
+   com.collation.discover.agent.MqServerAgent.statusCommand
+   Enable add sudo to MQSeries commands (runmqsc)
+   com.collation.discover.agent.MqServerAgent.mqscCommand
+   
+   Each of property may be narrow to os name or particular IP. eg.
+   com.collation.discover.agent.MqServerAgent.mqscCommand.Linux.1.2
+   .3.4=sudo -u mqm
+   
+   Feature 3;
+   Change this message from DEBUG to TRACE to prevent excessive log
+   growth;
+   DEBUG ip.SystemSigner - calculateAddressSpace(10.1.2.3) ->
+   null (no anchor zone)
+   
+   
+   Feature 4:
+   The com.collation.platform.os.WindowsOs.AutoDeploy property is
+   not scoped, and user cannot set this property for a particular
+   ip address
+   
+   Feature 5
+   
+   Enable hardware address for virtual IP in Linux.
+   
+   This feature is to enable the discovery of hw addresses for
+   virtual interfaces for Linux.
+   By default, the hw address for virtual interfaces is not
+   discovered, the new collation property:
+   
+   com.collation.discover.agent.ignoreVirtualMAC (default set to
+   true)
+   
+   is added to discover the hw address.
+   
+   
+   Feature 6
+   
+   Externalize serial number on power linux.
+   The following command is used to get serial number:
+   cat /proc/device-tree/system-id | cut -c 7-13"
+   
+   In some case cat needs sudo.
+    The following will be added to collation.properties;
+   
+   com.collation.discover.agent.command.cat
+   
+   Example to specify cat with sudo:
+   com.collation.discover.agent.command.cat.1.2.3.4=sudo cat
+   where 1.2.3.4 should be replace with valid IP address of the
+   target.
+   
+   Feature 7
+   
+   The ITM API does not return any data to the TADDM sensor.
+   
+   This function has been redesigned in 7.2 FP2.  The code sets a
+   much shorter timeout and repeats the query in smaller batches to
+   determine which endpoints are unresponsive. Whatever data is
+   returned by
+   the queries is made available to TADDM.
+   
+   Feature 8;
+   
+   ITM Scope Sensor Changes:
+   
+   Documentation for the ITM Scope Sensor is updated and available
+   from Tivoli Documentation Central at
+   http://www.ibm.com/developerworks/wikis/display/tivolidoccentral [http://www.ibm.com/developerworks/wikis/display/tivolidoccentral]
+   /Tivoli+Application+Dependency+Discovery+Manager.
+   
+   Search for "IBM Tivoli Monitoring Scope sensor" in the Sensor
+   Reference for 7.2 Sensor Interim Feature 1 and Fix Pack 2.
+   
+   Highlights of the changes:
+   
+   Java Runtime Environment (JRE) is no longer required on each ITM
+   endpoint to be discovered.  Target machine requirements are now:
+   
+   1. Windows discovery targets must have Microsoft .Net Framework
+   1.1 or later installed.
+   2 .Linux and UNIX systems must have a Portable Operating System
+   Interface (POSIX) compliant uuencode and uudecode commands
+   installed.
+   
+   Support bundle KD7 has an updated version string reflecting its
+   current version: 072002000. The bundle is no longer required on
+   Unix targets, only on Windows.   Users must redeploy the latest
+   KD7 bundle to all Windows endpoints.  The KD7 bundle need not be
+   removed from Unix targets.
+   
+   The TEPS custom queries used by the sensor have changed.  There
+   are now 7 queries instead of 3.  Follow the updated sensor
+   reference instructions to install the new queries before
+   attempting to run the sensor.
+   
+   Other changes to the ITM sensor include APAR and internal defect
+   fixes to improve reliability and performance.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix for this APAR is contained in the following
+   maintenance packages:
+   | Fix Pack | 7.2.0.0-TIV-ITADDM-FP0002
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ74786
+   
+   
+ * REPORTED COMPONENT NAME
+   APP DEPENDENCY
+   
+   
+ * REPORTED COMPONENT ID
+   5724N5500
+   
+   
+ * REPORTED RELEASE
+   712
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-04-19
+   
+   
+ * CLOSED DATE
+   2010-07-29
+   
+   
+ * LAST MODIFIED DATE
+   2010-07-29
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   APP DEPENDENCY
+   
+   
+ * FIXED COMPONENT ID
+   5724N5500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R720 PSY
+   UP

@@ -1,0 +1,29 @@
+Title: IBM Performance issues with "Context Filter" Excel Reports - United States
+
+Text:
+HTTPS; Apache; IBM HTTP Server; IHS TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When attempting to run report with context filters to Excel or PDF formats from Analysis Studio, execution times ran very slow. Running to HTML, XML or CSV showed no signs of any such issues. Removing these filters greatly improves the Excel & PDF performance. Issue also occurs with the Cognos Sample report, "Combine Filters Sample". 
+
+CAUSE
+Firewall blocking communications between the Dispatcher and Gateway on port 443. 
+
+When running a report with row or column filters in PDF, Excel 2002 and Excel 2007 formats, the Dispatcher EAR that does not contain static content, tries to contact the Gateways passing through the Load Balancer on port 443. Since the firewall is blocking this communication, the Dispatcher waits several timeout intervals before returning the reports without the static content stored on the Gateways, hence the slow performance. The problem is not encountered with HTML because the static content in such a case are included directly on the Gateways, and in XML and CSV the static content is not included.
+
+
+ENVIRONMENT
+Environment setup has a load balancer in front of two Gateways with SSL configured. Dispatcher and ContentManager are running in two separated Websphere 7.0 profiles on the same server.
+
+
+
+RESOLVING THE PROBLEM
+Ensure that the firewall is updated to allow traffic between the Dispatcher and the Gateway on the relevant port (443 in this example). This will allow the Context Filter reports to export to Excel and PDF as normal.
+
+
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Analytics Cognos Business Intelligence Analysis Studio Linux 10.1.1 All Editions

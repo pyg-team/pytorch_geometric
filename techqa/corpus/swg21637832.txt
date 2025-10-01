@@ -1,0 +1,34 @@
+Title: IBM Cognos Contributor in Citrix Streaming environment - no known issues - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Although there are no known issues, Contributor in a Citrix Streaming environment is not supported because it has not been fully tested. 
+
+CAUSE
+Contributor in a Citrix Streaming environment is not supported because it has not been fully tested. The following environment has been tested and there were no issues caused by the environment and further, in general, at the time of writing, there are no known issues introduced as a result of running Contributor in a Citrix Streaming environment. 
+
+Citrix XenApps 6.0
+Streaming Profiler Tool 6.7 
+Windows 2008 R2
+Office 2010 + SP1
+Planning 10.1.1 + FP2
+IE 8
+IIS 7.5
+
+
+In the Citrix Streaming environment the client machine is represented by a Citrix Streaming Profiler Package. Just as Contributor requires that Excel is installed on the client machine for Contributor Excel related features, such as Print to Excel, Export to Excel and Quick Export to work, then Excel is required inside the package for Contributor features related to Excel to work. Please adhere to Microsoft Excel/Office licensing requirements.
+
+
+Method
+Create a Citrix Streaming Profiler Package.
+- include Contributor Client installation
+- add an Internet browser as the Executable to run when the Streaming Package is invoked
+- for example - Internet Explorer
+- set the browser initial URL as required, for example - to point to a default server
+- optionally, if Excel related Contributor features are required - add Excel to the package.
+
+
+ENVIRONMENT
+Citrix XenApps 6.0, Streaming Profiler 6.7, Windows 2008 R2, Office 2010

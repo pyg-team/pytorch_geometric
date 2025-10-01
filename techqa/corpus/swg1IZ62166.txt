@@ -1,0 +1,132 @@
+Title: IBM IZ62166: NEED TO DOCUMENT TEC DATABASE SUPPORT PREREQS - United States
+
+Text:
+AIX SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Framework patch 90 is required for Oracle 10g support.
+   Update the fix pack documentation to show:
+   Notes:
+   -Microsoft SQL Server 7.0 is no longer supported.
+   -IBM Tivoli Enterprise Data Warehouse Version 1.2 support is
+   available as 1.3.0.0-TIV-TEC_WEP-IF0001.
+   -TEC does not support DB2 on z/OS.
+   -4.1.1-TMF-0090 provides the RIM support required for Oracle 10g
+   -4.1.1-TMF-0098 provides the RIM support required for Oracle 11g
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: TEC customers using Oracle 10g or 11g.
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Need to document that Framework patch 90
+   is required for Oracle 10g support.
+   ****************************************************************
+   * RECOMMENDATION: Read the documentation update below.
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Update the fix pack README document in two sections as follows:
+   
+   Under 'Software requirements' around page 20, add a note that
+   Framework patch 4.1.1-TMF-0090 is required for Oracle 10g
+   support
+   
+   Under 'Supported databases' around page 24, add the note below
+   for Oracle 10g and update the note for Oracle 11g:
+       - 4.1.1-TMF-0090 provides the RIM support required for
+   Oracle 10g
+       - 4.1.1-TMF-0098 and 4.1.1-TMF-0099 provide the RIM support
+   required for Oracle 11g
+   
+   The fix for this APAR is contained in the following maintenance
+   package:
+     | Interim Fix | 3.9.0.8-TIV-TEC-IF0121
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ62166
+   
+   
+ * REPORTED COMPONENT NAME
+   TIVOLI ENT.CONS
+   
+   
+ * REPORTED COMPONENT ID
+   5698TEC00
+   
+   
+ * REPORTED RELEASE
+   390
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-09-29
+   
+   
+ * CLOSED DATE
+   2009-10-30
+   
+   
+ * LAST MODIFIED DATE
+   2009-10-30
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

@@ -1,0 +1,52 @@
+Title: IBM TroubleShooting: WebSphere Application Server Toolkit EJBDeploy problems - United States
+
+Text:
+EJB;EJBDeploy TROUBLESHOOTING
+
+PROBLEM
+Troubleshooting EJBDeploy problems in WebSphere Application Server. This should help address common issues with this component before calling IBM support and save you time.
+
+RESOLVING THE PROBLEM
+ 
+
+TAB NAVIGATION
+ * Learn more [http://www.ibm.com/support/docview.wss?uid=swg21994741]
+ * Troubleshoot- selected tab, 
+ * Collect data [http://www.ibm.com/support/docview.wss?uid=swg21260603]
+
+
+Preliminary TroubleShooting steps to help resolve EJBDeploy problems 
+
+Step Explanation 1) Clean EJBDeploy Cache EJBDeploy creates an OSGi cache in the file system which may become corrupted. This cache is commonly located in the <was-install>/deploytool/itp/configuration folder, or if you run ejbdeploy from a profile it will be in the <profile-installation>/configuration/ejbdeploy folder. A normal run of ejbdeploy will tell you the configuration path after the build number in the out log file. To clean the cache, delete all the folders inside the mentioned paths, be careful not to delete the file config.ini if it exists on the path. View the following technote for additional info on cleaning the ejbdeploy cache: EJBDeploy command Exceptions on WebSphere Application Server and Eclipse OSGI cache purge issues [http://www-01.ibm.com/support/docview.wss?uid=swg21382867] 2) Ensure the Ulimit value is correctly set on Unix based systems Ulimit is a value that establishes the number of files that can be open at the same time. This value can be set at user level, console level or system level. The default level may need to be increased for ejbdeploy to run properly. Check out the How to determine the ulimit settings of a running WebSphere Application Server process on Linux technote [http://www-01.ibm.com/support/docview.wss?uid=swg21407889]. 3) Ensure the project being deployed works Ensure all required libraries are included, there are no references to code that has been removed and there are no compilation errors in the project. 
+Common EJBDeploy Issues and Their Solutions 
+The following are a list of common issues found with the ejbdeploy operation [http://www.ibm.com/support/knowledgecenter/SSRTLW_9.1.0/com.ibm.ejbdeploy.doc/topics/regenc.html] and their corresponding solutions:
+
+Issue Symptom Resolution When using Java 8 there are problems during EJBDeploy execution or when running EJB 2.x (or lower) applications on the server. One or more of these symptoms are seen on WebSphere 8.5.5.9 or higher when running with Java 8:
+
+- Attempting to execute EJBDeploy throws an exception stating that Java 8 is not supported
+
+- Attempting to deploy EJB 2.x (or lower) application in the administration console does not show the option to deploy EJBs
+
+- When running a deployed EJB 2.x (or lower) application, there are errors about missing classes whose names are prefixed with "EJS*" Running JDK 1.8 with tWAS version 8.5.5.9 or lower is a known limitation [http://www.ibm.com/support/knowledgecenter/SSAW57_8.5.5/com.ibm.websphere.nd.doc/ae/rtrb_ejbdeploy390.html].
+
+- Use PI73197 iFix [http://www.ibm.com/support/docview.wss?uid=swg24043474] which provides an EJBDeploy that supports Java 8 and Java 7 on WebSphere 8.5.5.9, 8.5.5.10,8.5.5.11,8.5.5.12
+and 8.5.5.13
+Note : This EJBDeploy does not support Java 6 however.
+
+PI73197:Enable Java 8 Support for EJBDeploy on WebSphere Application Server [http://www.ibm.com/support/docview.wss?uid=swg24043474]
+
+- Use EJBDeploy with Java 7 or lower to deploy your application, and then run that deployed application on the server configured with Java 8
+
+- Upgrade your WebSphere to version 9 or version 8.5.5.14 where EJBDeploy is supported for use with Java 8
+
+Null Pointer Exception in BootLoader when Loading org.eclipse.core.runtime.platform. When running EJBDeploy in the command line or through a WAS admin console or ANT task, the following exception occurs:
+Could not load BootLoader methods java.lang.NullPointerException Take the <WAS_HOME>/deploytool/itp folder of a working WAS installation and replace it in the non-working environment. Maximo rebuild time Increased or timed out after applying the latest Maximo 7.5.0.1 Spatial IFix. When applying the Latest Spatial iFix, the rebuild time takes very long to the point where the build will timeout or the build time doubles. There are 3 possible solutions. Follow the instructions in each technote depending to the customer scenario:
+
+1. If there is a Time out exception: follow indications specified in Maximo Spatial Asset Management 7.5.0.1 fix pack out of memory problem [http://www-01.ibm.com/support/docview.wss?uid=swg21693421]
+
+2. If customer does not require to use Local Map API: switch to Remote Map as specified in the Switching Between Spatial Local and Remote Map - 7.5 [http://www-01.ibm.com/support/docview.wss?uid=swg21696144] technote
+
+3. Customer requires Local Map API and avoid extended build time: see directions in Alternate Way to Include the Spatial Map API From IFIX to Avoid Extended Build Time [http://www-01.ibm.com/support/docview.wss?uid=swg21696155] technote. RMIC command fails during the EJBDeploy operation. The EJBDeploy operation produces the following exception message:
+DeployEJBTask I ADMA0158I: [EJBDeploy] SEVERE: Error generating RMI code: RMIC command failed on project: xxxxxx with message: This exception maybe the result of the execution of EJBDeploy and the RMI compiler on a single JVM. To invoke the RMI compilation on a separate JVM, add the - EJBDEPLOY_SYSTEM_CALL_RMIC flag to the command used to invoke EJBDEPLOY in <WAS_HOME/deploytool/itp/ejbdeploy.[sh|bat 
+What to do Next? 
+If the preceding troubleshooting steps did not solve your problem, see the MustGather [http://www.ibm.com/support/docview.wss?uid=swg21260603] for EJBDeploy to continue investigation.

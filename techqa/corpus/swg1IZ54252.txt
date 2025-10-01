@@ -1,0 +1,167 @@
+Title: IBM IZ54252: ROUTE OF IZ47455 - 35806 - FEBRUARY DATES WRONGLY SET ON CUSTOMIZED PERSON FORMS WHEN USING SSUI - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  In ITIM v4.6 FP68 when using SSUI, if you try to set a February
+   date in a date field in a person form and your system date is
+   one of the latest days of any month, the February date is set to
+   a month after.
+   
+   Steps to reproduce:
+   
+   1. Place 2 attributes of date type on a person form
+   
+   2. Set the host operating system date to 01.30.2009
+   
+   
+   
+   3. Set the the first date attribute on person form to
+   01/30/2009, and the second to 2/4/2009 (4th of february), and
+   press submit in the SSUI.
+   
+   
+   4. You will see that the second attributes is set to 3/4/2009
+   (it is postponed of 1 month).
+   
+   I reproduced the problem in my environment and I found out that:
+   
+   - on the 29th, 30th, and 31st of any month (system date), if you
+   set in the  SSUI the date attribute to any February date, that
+   date is postponed of one month.
+   
+   It does not depend by the first or second attribute. It always
+   happens with February dates.
+   
+   I could reproduce the problem by setting the system date to Jan
+   30th, 31st, March 29th, 30th, 31st, April 30st (I didn't do
+   other test)
+   The problem did not occur when I set system date to Jan 28th,
+   Feb 28th, March 28th.
+   
+   ----
+   
+   In customer environment the problem occurred also
+   today,
+   March 31th by setting date to April 3rd in the SSUI, it became
+   May 3rd.
+   
+   ----
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Users affected:
+   Customers using the ITIM Self Service UI and setting a February
+   date.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This fix for this APAR is contained in the
+   following maintenance packages:
+   | Interim fix | 5.0.0.6-TIV-TIM-IF0028
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ54252
+   
+   
+ * REPORTED COMPONENT NAME
+   IBM TIV IDENT M
+   
+   
+ * REPORTED COMPONENT ID
+   5724C3404
+   
+   
+ * REPORTED RELEASE
+   500
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-06-29
+   
+   
+ * CLOSED DATE
+   2009-06-29
+   
+   
+ * LAST MODIFIED DATE
+   2009-07-31
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    IZ47455 [http://www-01.ibm.com/support/docview.wss?uid=swg1IZ47455]
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    IZ56436 [http://www-01.ibm.com/support/docview.wss?uid=swg1IZ56436]
+   
+   
+
+MODULES/MACROS
+ *  SSUI
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   IBM TIV IDENT M
+   
+   
+ * FIXED COMPONENT ID
+   5724C3404
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R500 PSY
+   UP

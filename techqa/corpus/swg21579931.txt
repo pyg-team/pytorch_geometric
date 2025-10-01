@@ -1,0 +1,62 @@
+Title: IBM How to configure a single ICM as part of the Cluster - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+How to configure a single ICM as part of the Cluster
+
+ANSWER
+In Lotus Domino® you have already Domino1 and Domino2 in Cluster. Now you plan to setup ICM on Domino2. 
+
+How to Setup ICM on Domino2 ? 
+
+1. Open the server document of Domino2, and click Edit Server. 
+
+2. Click the Server Tasks - Internet Cluster Manager tab 
+
+3. Complete the field as shown in the below screen shot. RED indicated the cluster name.
+[/support/docview.wss?uid=swg21579931&aid=1] [/support/docview.wss?uid=swg21579931&aid=1] 
+
+Note: When the ICM starts, it looks at the Server document on the server on which it is running to find the ICM cluster name and its network address. It then obtains the host name and port settings from the same Server document or from the Server document specified in the field "Obtain ICM configuration from."
+If you run the ICM on the same system as a Domino Web server, you must avoid IP address or port number conflicts. The best approach is to assign the ICM its own IP address. You can also have the ICM share an IP address with the Web server if you specify different port numbers for the ICM and the other protocols on the Web server. 
+
+4. Perform the above step 2 and 3 for Domino1 server as well. 
+
+5. In this case, now both the servers Domino1 and Domino2 will be listening HTTP protocol on port 80. As ICM also uses Port 80, hence Http port has to be changed to port other than port 80 for example 8080, 
+
+ 
+
+6. Change the http port for both Domino1 and Domino 2 to 8080. Open Server document and Edit Server -> Ports -> Internet Ports and change the TCP/IP port number from 80 to 8080 as shown below. 
+
+ [/support/docview.wss?uid=swg21579931&amp;aid=2] 
+
+7. Now Load ICM task on Domino2, by issuing command "Load ICM" on Domino 2 Server Console. It should start without any error as follows. 
+
+
+[/support/docview.wss?uid=swg21579931&amp;aid=3]
+8. Start the HTTP task on both the server Domino1 and Domino2. Monitor the HTTP task to see if any any error it reports. Once started will show as below.
+
+[/support/docview.wss?uid=swg21579931&aid=4] [/support/docview.wss?uid=swg21579931&aid=4]
+9. Now try to access the URL, ICMRed.acmem.com in a web browser and then issue the command on Domino2 Server console, "Show Stat ICM". It should show both servers as available as shown below.
+
+[/support/docview.wss?uid=swg21579931&amp;aid=5]
+
+10. Now, to test if ICM is working fine, stop the Http task on Domino2. Issue command "Show Stat ICM" on Domino2 server console. Output will show as 
+[/support/docview.wss?uid=swg21579931&amp;aid=6]
+
+As Http as been stopped on Domino2, status for Domino2 shows as "No HTTP SERVER", while for Domino1, it shows as available.
+
+11. Now try to open URL "ICMred.acme.com/names.nsf" in a web browser after authentication, It will redirect to Domino1 on port 8080 as shown below.
+
+[/support/docview.wss?uid=swg21579931&amp;aid=7]
+
+12. Now start Http task on Domino2. Issue command "Show stat ICM". Status will again show available for both Domino1 and Domino2.
+
+[/support/docview.wss?uid=swg21579931&amp;aid=8]
+
+
+
+
+ * 
+ *

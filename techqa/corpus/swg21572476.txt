@@ -1,0 +1,48 @@
+Title: IBM ClearQuest silent installation on SUSE fails with java.io.IOException error - United States
+
+Text:
+1572476; CQ; suse; silent; install; Error during "install" phase; Action CoreAction; adminDir; tempDir; failed; java.io.IOException; Exit status TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This technote explains how to resolve a "java.io.IOException" error that can occur when silently installing IBM Rational ClearQuest on SUSE Linux. 
+
+SYMPTOM
+Attempts to silently install Rational ClearQuest 7.1.2.3 result in this error on SUSE Linux Enterprise 11 SP1 64-bit: 
+
+
+ERROR: Error during "install" phase:
+ERROR: Action CoreAction (install /opt/ibm/RationalSDLC
+adminDir=/var/adm/rational tempDir=/var/tmp 27000@<license_server>
+<mailto :27000@<license_server>> ) failed: java.io.IOException: Exit status
+-1
+from command: /opt/ibm/RationalSDLC/clearquest/bin/cqreg initialize
+-force
+-associate /opt/ibm/RationalSDLC/clearquest/CQDB_rgys/cqdb_registry
+stderr:
+stdout:
+Exit status -1 from command:
+/opt/ibm/RationalSDLC/clearquest/bin/cqreg
+initialize -force
+-associate /opt/ibm/RationalSDLC/clearquest/CQDB_rgys/cqdb_registry
+stderr:
+stdout:
+
+
+
+CAUSE
+The problem occurs when using the flag "noexec" on the file system. The default mount options for file systems on SUSE Linux Enterprise server now includes the noexec flag. This stops any form of shell script from being run. Any shell script called returns a "permission denied" error. 
+
+
+This occurs even if the permission is correct. This also applies to the root user. The install tries to run the Rational ClearQuest shell script, but the operating system does not allow that to happen.
+
+
+DIAGNOSING THE PROBLEM
+With debug enabled for IBM Installation Manager logs, you find errors like this 
+
+
+java.io.IOException: Cannot run program "/opt/ibm/RationalSDLC/clearquest/bin/cqreg" (in directory "/opt/ibm/RationalSDLC/clearquest"): java.io.IOException: error=13, Permission denied
+
+
+
+RESOLVING THE PROBLEM
+Remove the "noexec" flag from the /opt/ibm file system. Try the install of Rational ClearQuest again.

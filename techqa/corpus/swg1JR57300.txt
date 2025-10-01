@@ -1,0 +1,205 @@
+Title: IBM JR57300: IBM BPM DOESN'T ENFORCE THE USE OF SECURE HTTPS TO SEVERAL BROWSER-TARGETED WEB MODULES - United States
+
+Text:
+  DIRECT LINKS TO FIXES
+bpm.8570.cf2017.03.delta.repository [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Standard&fixids=bpm.8570.cf2017.03.delta.repository&source=SAR]
+Downloading IBM Business Process Manager V8.5.7 Cumulative Fix 2017.03 [http://www-01.ibm.com/support/docview.wss?uid=swg24043252]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  IBM Business Process Manager (BPM) does not enforce the use of
+   secure HTTPS for several browser-targeted web modules. A client
+   can connect to IBM BPM by using non-secure HTTP and, thus, cause
+   the following concerns:
+   
+   -A security concern because almost all interactions with IBM BPM
+   require authentication; therefore, almost all requests sent to
+   IBM BPM contain some kind of credential, such as a cookie that
+   allows impersonation of the user until expiration (2h by
+   default) or a user name password that might be valid for much
+   longer.
+   
+   -A functional concern because browsers make new HTML5 features
+   available only for secure connections. The use of "mixed
+   content" (where some content of a web site is loaded over
+   non-secure HTTP and some other resources are loaded over secure
+   HTTPS) frequently causes trouble, such as silently failing Ajax
+   requests or missing stylesheets.
+   
+   Because non-secure access by using HTTP was possible, IBM BPM
+   did not set the Secure flag for cookies, such as JSESSIONID and
+   LtpaToken2, by default. This secure flag restricts clients to
+   submit these cookies only over a secure connection and is often
+   flagged as a weakness in vulnerability scans or penetration
+   tests.
+   
+   PRODUCTS AFFECTED
+   IBM BPM Advanced
+   IBM BPM Standard
+   IBM BPM Express
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  No additional information is available.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A fix will be included in IBM BPM V8.5.7 cumulative fix 2017.03
+   that
+   
+   -Enforces the use of secure HTTPS for browser targeting web
+   applications.
+   This enforcement is achieved by modifying the web deployment
+   descriptor of the applications, specifically by adding a
+   user-data constraint with a requirement of CONFIDENTIAL. As a
+   result, a non-secure HTTP request results in a HTTP 302 response
+   that redirects the client to the secure equivalent of the URL.
+   For example, a request to http://bpm.customer.com:9080/teamworks [http://bpm.customer.com:9080/teamworks]
+   would be redirected to https://bpm.customer.com:9443/teamworks. [https://bpm.customer.com:9443/teamworks.]
+   
+   Browsers and some programmatic HTTP client libraries follow
+   these redirects automatically so, for them, this change is
+   transparent. However, because a the redirect target is a secure
+   URL, the client must trust the HTTPS certificate of the server,
+   which might require adding IBM BPM's signer certificate into the
+   client's truststore.
+   
+   Some clients, such as SOAP clients, do not follow this redirect
+   automatically. Therefore, SOAP web services are excluded from
+   HTTPS enforcement by default. If you have other programmatic
+   clients that use non secure HTTP to connect to IBM BPM and do
+   not follow redirects automatically, you must update the
+   configuration of these clients to use a secure connection
+   instead.
+   
+   SCA modules in IBM BPM Advanced are unchanged.
+   
+   -Sets useHTTPSURLPrefixes to true during the cumulative fix
+   upgrade from IBM BPM V8.5.0.0.
+   There are several scenarios in which IBM BPM must calculate a
+   URL for clients to contact IBM BPM. The exact URL might need to
+   be different, depending on the type (and network location) of
+   the client. The useHTTPSURLPrefixes configuration setting
+   determines whether URLs are generated with a non-secure http:// [http://]
+   or secure https:// prefix. This setting has been set to true
+   (https://) for new installations since IBM BPM V8.5.0.1.
+   However, for environments that were initially created with BPM
+   V8.5.0.0 the value was preserved; so some IBM BPM environments
+   might have calculated http:// URLs. With this fix, we set the
+   value of useHTTPSURLPrefixes to true by default, even for
+   upgraded environments.
+   
+   -Sets the secure flag for LTPA and for session cookies.
+   Because all clients connect to IBM BPM securely with this fix
+   installed, IBM BPM can set the secure flag for LTPA and for
+   session cookies. This flag tells browsers to submit these
+   (sensitive) cookies over secure connections only.
+   
+   -Introduces AdminTask.configureBPMTransportSecurity,
+   As explained in the first bullet, HTTPS enforcement is achieved
+   by changes to the web deployment descriptors of various web
+   modules. Modifying deployment descriptors is not supported, but
+   if you temporarily must reenable non-secure HTTP access because
+   some programmatic clients have non-secure connections and they
+   cannot be updated immediately, this AdminTask allows you to
+   reconfigure these deployment descriptors to allow non secure
+   HTTP access.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR57300
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM STANDARD
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9500
+   
+   
+ * REPORTED RELEASE
+   857
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-01-23
+   
+   
+ * CLOSED DATE
+   2017-03-24
+   
+   
+ * LAST MODIFIED DATE
+   2017-03-24
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   BPM STANDARD
+   
+   
+ * FIXED COMPONENT ID
+   5725C9500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R857 PSY
+   UP

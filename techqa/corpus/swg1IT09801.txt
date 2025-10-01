@@ -1,0 +1,118 @@
+Title: IBM IT09801: TRACEBACK ERROR IS GENERATED WHEN EVENT LOG DOWNLOAD LINK IS SELECTED FROM THE STOREDIQ DATASERVER ADMINISTRATION DASHBOAR - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Traceback error is generated when Event log Download link is
+   selected from the StoredIQ DataServer Administration Dashboard.
+   
+   When the Event log Download link is selected from the 7.6.0.3
+   Data Server Administration Dashboard an error traceback is
+   generated stating NameError: global name 're' is not defined.
+   This issue has been reproduced in 7.6.0.4 environment as well.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Use shell commands to obtain log.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Fixed in 7.6.0.5 release.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT09801
+   
+   
+ * REPORTED COMPONENT NAME
+   PLATFORM
+   
+   
+ * REPORTED COMPONENT ID
+   5725M8401
+   
+   
+ * REPORTED RELEASE
+   760
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-07-01
+   
+   
+ * CLOSED DATE
+   2015-09-29
+   
+   
+ * LAST MODIFIED DATE
+   2015-09-29
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  N/A
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R760 PSY
+   UP

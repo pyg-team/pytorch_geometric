@@ -1,0 +1,31 @@
+Title: IBM DFHDS0001 0C1 or 0C4 in DFHDSDS3 at offset 0946 - United States
+
+Text:
+ABEND 0C1 ABEND 0C4 ABENDS0C1 ABEND S0C1 ABENDS0C4 ABEND S0C4 x'0946' 0946 DFHDSDS3 MSGDFHKE1800 Isogon Corporation TICTOC CDS Can Do Systems Tichaci 5697E9300 R300 300 R630 630 HCI6300 5697-E93 5697E93 5655M1500 R640 640 R400 400 R650 650 R500 500 HCI6400 HCI6500 5655-M15 5655M15 kixinfo retention32 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Your CICS Transaction Server for z/OS region receive message DFHDS0001 An abend (code 0C4/AKEA) has occurred at offset x'0946' in module DFHDSDS3. After the message, CICS ends abnormally with message DFHKE1800. You also notice the same circumstances but with an abend 0C1 on a different run of CICS. You are using the IBM Application Time Facility (ATF) for z/OS which was previously known as TICTOC. 
+
+CAUSE
+The 0C1 abend is the result of a bad branch to a CICS module. The PSW points into ATF module TICHACI.
+
+DIAGNOSING THE PROBLEM
+You can use Locating the PSW for a program check in a CICS system dump [http://www.ibm.com/support/docview.wss?uid=swg21176381] to find in what module the 0C4 or 0C1 occurred. You should see an eyecatcher similar to the one below:
+
+2022DF80 C0240B01 80000000 051047F0 C182E3C9 |...........0AbTI|
+2022DF90 C3E3D6C3 61D4E5E2 40E5C5D9 E2C9D6D5 |CTOC/MVS VERSION|
+2022DFA0 40F24BF8 4BF6F0F0 40D7D9D6 C7D9C1D4 | 2.8.600 PROGRAM|
+2022DFB0 40E3C9C3 C8C1C3C9 4040C1E2 E2C5D4C2 | TICHACI ASSEMB|
+2022DFC0 D3C5C440 F0F361F2 F661F9F8 40F2F24B |LED 03/26/98 22.|
+2022DFD0 F1F34060 404DC35D 40C3D6D7 E8D9C9C7 |13 - (C) COPYRIG|
+2022DFE0 C8E340C3 C1D540C4 D640E2E8 E2E3C5D4 |HT CAN DO SYSTEM|
+2022DFF0 E2404DC3 C4E25D6B 40C9D5C3 4B6B40F1 |S (CDS), INC., 1|
+
+RESOLVING THE PROBLEM
+Apply IBM (ATF) fix numbers PMR0680, PMR0695 and PMR0696. These fixes are in the attachment below under Related Information. [http://www.ibm.com/software/awdtools/tictoc/]
+
+ATF Post286DPMRs.zip [/support/docview.wss?uid=swg21178607&aid=2] [/support/docview.wss?uid=swg21178607&aid=1]
+
+Cross reference information Segment Product Component Platform Version Edition Host Transaction Processing CICS Transaction Server Independent Software Vendor Software Development Application Time Facility for z/OS Application Time Facilty zSeries 2.8.6 
+PRODUCT ALIAS/SYNONYM
+ CICS/TS CICS TS CICS Transaction Server

@@ -1,0 +1,38 @@
+Title: IBM Importing large amounts of data into IBM i2 Analyst's Notebook can cause a Unhandled Exception error. - United States
+
+Text:
+ANB; i2 ANB; ANBP; ANP; i2 ANP; i2 ANBP; outofmemory; system.outofmemoryexception TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Attempts to import large amounts of data containing over 20,000 entities and / or links results in the error Microsoft .NET Framework Unhandled Exception. 
+
+SYMPTOM
+"Unhandled exception has occurred in a component in your application. If you click Continue, the application will ignore this error and attempt to continue."
+
+Exception of type "System.OutOfMemoryException" was thrown. 
+
+[/support/docview.wss?uid=swg21903175&amp;aid=1]
+
+
+CAUSE
+While Analyst's Notebook does have the ability to process large amounts of data on its own, the import process is limited to using a maximum amount of RAM of 2GB. If the computer that is performing the import only has 2GB installed, this amount must be shared by the operating system, running applications and the Analyst's Notebook importer. If the import is so large that it requires the full amount of 2GB, this will cause the application to crash, rather than the operating system crash.
+
+
+ENVIRONMENT
+Windows PC with 2GB of RAM
+
+
+
+RESOLVING THE PROBLEM
+Determine how much RAM is installed on the system performing the import.
+1. Click the Start Button / Globe
+2. Locate the "Control Panel" link and click.
+3. Within Control Panel, choose "System and Security"
+4. On the resulting window, choose the heading "System"
+5. Take note of the value listed next to "Installed memory (RAM):"
+
+If this value is 2GB or less, consult your IT department to discuss upgrading to the operating systems RAM limit.
+
+If this value is above 2GB, consider changing or reducing the amount of data being imported at one time onto the chart surface. 
+
+You can reduce the size of the data being imported by removing unncessary information from Excel Spreadsheets such as blank rows, formula fields, and titles/headings. It may also become necessary to split the Excel Workbook into multiple sheets and import each one separately.

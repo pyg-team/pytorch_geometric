@@ -1,0 +1,136 @@
+Title: IBM IO23645: REFINE BEHAVIOR: "SHOW SCANNER SETTINGS" OPTION SHOULD NOT BE RESET WHEN SCANNING - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+ DIRECT LINK TO FIX
+IBM Datacap 9.0 Fix Pack 3 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FDatacap+Taskmaster+Capture&fixids=9.0.0.3-Datacap-WIN-FP003&source=SAR]
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The behavior is originally consistent with TMWeb, but it confuse
+   the customer:
+   When user check "Show scanner settings" option, then scan some
+   files, in this case, "Show scanner settings" unchecked
+   automatically.
+   So I refine the behavior: Anything that the user can change on
+   the tab is expected to be remembered the next time the Scanner
+   is run, if the Save button is pressed.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * windows user                                                 *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * See Error Description                                        *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Upgrade to Datacap Navigator9.0 FP3                          *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Datacap Navigator9.0 FP3 contains this fix.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IO23645
+   
+   
+ * REPORTED COMPONENT NAME
+   DATACAP NAVIGAT
+   
+   
+ * REPORTED COMPONENT ID
+   5725C1503
+   
+   
+ * REPORTED RELEASE
+   900
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-08-04
+   
+   
+ * CLOSED DATE
+   2015-08-05
+   
+   
+ * LAST MODIFIED DATE
+   2015-08-05
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   DATACAP NAVIGAT
+   
+   
+ * FIXED COMPONENT ID
+   5725C1503
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R900 PSY
+   UP

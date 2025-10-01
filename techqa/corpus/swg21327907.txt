@@ -1,0 +1,51 @@
+Title: IBM Builds failing with kernel: nfsd: too many open TCP sockets errors - United States
+
+Text:
+CC; nfsd: too many open TCP sockets; consider increasing the number of nfsd; threads; RPCNFSDCOUNT; too many open TCP sockets TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This technote explains how to resolve an error, kernel: nfsd: too many open TCP sockets that can occur when using IBM Rational ClearCase (CC). 
+
+SYMPTOM
+ 
+
+Builds are failing with the following error:
+kernel: nfsd: too many open TCP sockets errors 
+
+
+In an environment that is using a Solaris 10 client/build system with a RHEL 4.5 vob server there are times when builds run fine, however, there are increasing failures building where the following error messages are found in the dmesg:
+
+nfsd: too many open TCP sockets, consider increasing the number of nfsd 
+
+threads 
+
+nfsd: last TCP connect from 1.1.1.1:894 
+
+nfsd: too many open TCP sockets, consider increasing the number of nfsd 
+
+threads 
+
+nfsd: last TCP connect from 1.1.1.1:905 
+
+nfsd: too many open TCP sockets, consider increasing the number of nfsd 
+
+threads 
+
+nfsd: last TCP connect from 1.1.1.1:902
+
+
+
+CAUSE
+ 
+
+One possible cause for this issue is as follows:
+
+In /etc/init.d/nfs on the Linux system, there is a variable called RPCNFSDCOUNT which had it's value set to 8. This was found to cause a bottleneck of RPC calls between the Linux and Solaris systems. 
+
+
+RESOLVING THE PROBLEM
+ 
+
+ 
+
+After raising the value of the RPCNFSDCOUNT variable to 16, the problems were not seen again.

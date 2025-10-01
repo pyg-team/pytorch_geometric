@@ -1,0 +1,70 @@
+Title: IBM Knowledge Collection: PureData System for Analytics Netezza Platform Software (NPS) Upgrades - United States
+
+Text:
+ RECOMMENDED RESOURCES
+
+ABSTRACT
+ A focused compilation of links to documents and resources to help you plan and perform your upgrade of IBM PureData System for Analytics Netezza Platform Software. 
+
+CONTENT
+The Netezza Platform Software(NPS) upgrade process is a robust, single command operation. IBM Support is pleased to announce that beginning July 1st 2016, every PureData System for Analytics customer, will now have the option to perform and manage NPS upgrades autonomously. This provides greater flexibility to our customers and improves customer's self sufficiency to perform NPS upgrades. 
+Please note that IBM Support will continue to be available via PMR to perform any upgrade related activities including NPS only upgrades. This is purely an added value extended to our customers around NPS upgrades, providing an alternate option without wait time.
+
+FDT, HPF and OS upgrades will continue to be performed by IBM support and the process for logging a ticket and booking a slot for those remains unchanged. 
+
+You can refer to the below comprehensive step-by-step procedure for NPS upgrade alongside known issues, FAQs and the video guidance provided. If you experience issues you are unable to resolve with reference provided or using the IBM Support Portal [https://www-947.ibm.com/support/entry/myportal/product/information_management/puredata_system_for_analytics?productContext=-1708477406]or IBM Knowledge Center [http://www.ibm.com/support/knowledgecenter/SSULQD/SSULQD_welcome.html] then please log a PMR with IBM support for further assistance. 
+
+Planning for an upgrade: 
+
+1. IBM PureData System for Analytics Upgrades Frequently Asked Questions [http://www-01.ibm.com/support/docview.wss?uid=swg21626217]
+Answers common frequently asked questions including rough estimates for upgrade duration. 
+
+2. IBM PureData System for Analytics Netezza Platform Software Releases [http://www-01.ibm.com/support/docview.wss?uid=swg27024235]
+Lists the latest software releases for IBM PureData System for Analytics appliances. 
+
+3. IBM PureData System for Analytics Netezza Platform Software Fixpack Release Schedule [http://www-01.ibm.com/support/docview.wss?uid=swg21654541] 
+Lists the 2016 Schedule of Fixpacks and Patches for each Software Release of the IBM PureData System for Analytics Netezza Platform Software. 
+
+4. IBM PureData System for Analytics Netezza Platform Software Final Fix (FF) Dates [http://www-01.ibm.com/support/docview.wss?uid=swg21654526]
+Lists the final fix (FF) release dates for the IBM PureData System for Analytics Netezza Platform Software versions. 
+
+5. IBM PureData System for Analytics: NPS Compatibility Matrix [http://www-01.ibm.com/support/docview.wss?uid=swg21984493]
+Shows required levels of FDT, HPF and RedHat versions needed to upgrade to a desired NPS version for respective models. 
+
+6. IBM PureData System for Analytics: Platform Upgrade Matrix [http://www.ibm.com/support/docview.wss?uid=swg21699206] 
+Shows required levels of NPS versions needed to upgrade to a desired FDT, HPF or an RHEL version for respective models. 
+
+7. IBM PureData System for Analytics Netezza Platform Software (NPS) Upgrade Download Details [http://www-01.ibm.com/support/docview.wss?uid=swg21984769]
+Specifies where to download software needed and what particular packages are needed for your NPS upgrade.
+
+Pre-checks for an NPS Upgrade: 
+
+NPS Upgrade precheck for PureData System for Analytics [http://www-01.ibm.com/support/docview.wss?uid=swg21981703]
+Provides steps to follow to complete a pre-check prior to your NPS upgrade. It is advisable to carry out the pre-check 5-7 days prior to actual upgrade, so any issues encountered can be addressed before the planned upgrade. 
+
+Performing an NPS upgrade: 
+
+Upgrading the PureData System for Analytics Netezza Platform Software (NPS) [http://www-01.ibm.com/support/docview.wss?uid=swg21679136]
+Provides a step-by-step procedure to perform an NPS upgrade. 
+
+Common Pitfalls/Unforeseen Failure Scenarios: 
+If you experience issues you are unable to resolve with reference provided or using the IBM Support Portal [https://www-947.ibm.com/support/entry/myportal/product/information_management/puredata_system_for_analytics?productContext=-1708477406]or IBM Knowledge Center, [http://www.ibm.com/support/knowledgecenter/SSULQD/SSULQD_welcome.html] then please log a PMR with IBM support for further assistance. 
+
+Workarounds and Solutions for Common Errors faced during PureData System for Analytics Netezza Platform Software (NPS) Upgrade [http://www-01.ibm.com/support/docview.wss?uid=swg21984592] 
+Outlines and categorizes few issues that occur during the three stages of a NPS Upgrade and how to resolve them.
+
+The below two documents describes what information should be collected if an NPS upgrade fails: 
+
+1. IBM Must Gather: PureData System for Analytics NPS Upgrade Fails and nzstart Succeeds [http://www-01.ibm.com/support/docview.wss?uid=swg21982736]
+Outlines what information should be collected for a PMR when a NPS upgrade fails and the system rolls back to original NPS level. 
+
+2. IBM Must Gather: PureData System for Analytics NPS Upgrade Fails and nzstart Fails [http://www-01.ibm.com/support/docview.wss?uid=swg21982735]
+Outlines what information should be collected for a PMR when an NPS upgrade fails and system is unable to start. 
+
+
+Important Note: 
+
+ * Perform Pre-Upgrade Checks 5-7 days before the actual upgrade. 
+ * Fix any critical hardware issues prior to the upgrade. 
+ * A NPS upgrade takes approximately 1 hour to complete if your catalog is 10GB or less. DO NOT INTERRUPT an upgrade in progress even is going over expected completion time. Let it run it's course. 
+ * If NPS upgrade fails, please open a PMR with IBM PureData System for Analytics Support.

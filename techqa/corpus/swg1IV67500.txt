@@ -1,0 +1,181 @@
+Title: IBM IV67500: MXASSET PROCESSING CLASS DOES NOT RECOGNIZES A NEW GL ACCOUNT WHEN MOVING AN ASSET RECORD. - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  In the Assets application, the user has the option to move an
+   Asset using many parameters, for instance "To Site", To
+   Location", "To Parent" and "TO Glaccount"
+   
+   In the MIF, the processing class is only sensitive for Location
+   and Parent changes. If the user chooses to change only the
+   GLACCOUNT, the Asset is not moved.  But if the users changes
+   both Location and GL Account, the Asset is moved and the new GL
+   Account is set.
+   
+   Basically, a change on TLOAMNEWGLACCOUNT is not recognized by
+   itself.
+   
+   The processing class must be changed to make the
+   TLOAMNEWGLACCOUNT sensitive for changes and call the MBO
+   methods.
+   
+   Steps to reproduce:
+   
+   Go to > Integration > Object Structures > MXASSET
+   Select Action > Exclude / Include fields
+   
+   Make sure the Non-Persistent TLOAMNEWGLACCOUNT is added to the
+   schema.
+   
+   Save
+   
+   Go to > Integration > External System > ExtSys1 > Enterprise
+   Services Tab
+   Pick up the MXASSETInterface
+   Create a CSV file and Import the Sample below:
+   
+   EXTSYS1,MXASSETInterface,AddChange
+   ASSETNUM,AS_SITEID,MOVEMEMO,TLOAMNEWGLACCOUNT,NEWORGID,AS_LOCATI
+   ON
+   1002,BEDFORD,Changing GL Account,6000-200-000,EAGLENA,MOFLOOR2
+   
+   
+   Make sure the value on TLOAMNEWGLACCOUNT is different from the
+   current Asset GL Account value.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  n/a
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * MAXIMO Users importing asset glaccount data                  *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * MXASSET PROCESSING CLASS DOES NOT RECOGNIZES A NEW GL        *
+   * ACCOUNT                                                      *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Apply fixpack Release 7.5.0.8 of Base Services or request an *
+   * interim fix                                                  *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix for this APAR is contained in the following maintenance
+   package of Release 7.5.0.8 of Base Services
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV67500
+   
+   
+ * REPORTED COMPONENT NAME
+   INTEGRATION
+   
+   
+ * REPORTED COMPONENT ID
+   5724R46I1
+   
+   
+ * REPORTED RELEASE
+   750
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-12-03
+   
+   
+ * CLOSED DATE
+   2015-02-03
+   
+   
+ * LAST MODIFIED DATE
+   2015-02-03
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  MAXIMO
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   INTEGRATION
+   
+   
+ * FIXED COMPONENT ID
+   5724R46I1
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R750 PSY
+   UP

@@ -1,0 +1,149 @@
+Title: IBM PI05100: SYNDICATION: PROJECT STATE NOT UPDATED WHEN GOING FROM PENDING T O ACTIVE - United States
+
+Text:
+  A FIX IS AVAILABLE
+Fixes integrated in WebSphere Portal 7.0.0.1 & 7.0.0.2 Combined Cumulative Fixes [http://www-01.ibm.com/support/docview.wss?uid=swg24029452]
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Summary: when a project state changes from Pending to Active on
+   the syndicator, the change is not refrected on the subscriber.
+   Repo Steps:
+   
+   0. Create a library with default items.
+   1. Set up syndication between a 7002 and an 8001 server with
+   7002 being the syndicator to syndicate the library.
+   2. On the syndicator, create a Project with Publish Option being
+   Manual and with a Text Component using the 3 stage workflow in
+   the library
+   3. Approve the text component and observe that the project's
+   state changes from Active to Syndicating to Pending.
+   4. Wait for syndication to complete and check that the Project
+   is also in Pending state on the subscriber.
+   5. On the syndicator, reject the project item and observe that
+   the project's state changes back to Pending.
+   6. Wait for syndication to complete and check the project state
+   on the subscriber => still in Pending state.
+   Opened for release 7002
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  When project was set to Active state, the lastModified date
+   wasn't changed, so project on syndicator and project on
+   subscriber has the same last modified date. The subscriber won't
+   update project when the last modifed date is the same.
+   Making sure lastModified date of the project is updated fix this
+   issue.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  When a project state changes from Pending to Active on the
+   syndicator, the change is not refrected on the subscriber.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  When project was set to Active state, the lastModified date
+   wasn't changed, so project on syndicator and project on
+   subscriber has the same last modified date. The subscriber
+   won't
+   update project when the last modifed date is the same.
+   Making sure lastModified date of the project is updated fix
+   this
+   issue.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI05100
+   
+   
+ * REPORTED COMPONENT NAME
+   LOTUS WEB CONT
+   
+   
+ * REPORTED COMPONENT ID
+   5724I2900
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-10-29
+   
+   
+ * CLOSED DATE
+   2013-11-12
+   
+   
+ * LAST MODIFIED DATE
+   2013-11-12
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   LOTUS WEB CONT
+   
+   
+ * FIXED COMPONENT ID
+   5724I2900
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R700 PSY
+   UP

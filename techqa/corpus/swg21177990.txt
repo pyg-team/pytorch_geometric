@@ -1,0 +1,90 @@
+Title: IBM Resolving a DSRA8040I from the data source test connection due to a NullPointerException - United States
+
+Text:
+DSRA8040I; data source; Test Connection; java.lang.NullPointerException TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When testing the connection to a configured data source, the test fails with a DSRA8040I message logged in the SystemOut.log. 
+
+CAUSE
+Excerpt of error message when using Oracle JDBC Driver: 
+
+[9/12/13 18:19:17:875 CEST] 6f21a83c DataSourceCon E DSRA8040I:
+Failed to connect to the DataSource. Encountered:
+java.lang.NullPointerException
+at oracle.jdbc.dbaccess.DBError.addSqlWarning(DBError.java:801) 
+Excerpt of error message when using DB2 JDBC Driver: 
+
+[9/13/13 11:45:29:992 EDT] 11d75b9 DataSourceCon E DSRA8040I:
+
+Failed to connect to the DataSource. Encountered :
+java.lang.NullPointerException
+at
+COM.ibm.db2.jdbc.app.SQLExceptionGenerator.throw_SQLException
+(SQLExceptionGenerator.java:173)
+at
+COM.ibm.db2.jdbc.app.SQLExceptionGenerator.check_return_code
+(SQLExceptionGenerator.java:438)
+at
+COM.ibm.db2.jdbc.app.DB2Connection.connect(DB2Connection.java:502)
+at
+COM.ibm.db2.jdbc.app.DB2Connection.<init>(DB2Connection.java:407)
+at
+COM.ibm.db2.jdbc.app.DB2ReusableConnection.<init>
+(DB2ReusableConnection.java:74)
+at
+COM.ibm.db2.jdbc.DB2PooledConnection.getConnection
+(DB2PooledConnection.java:188)
+at
+com.ibm.ws.rsadapter.DSConfigurationHelper.testConnectionForGUI
+(DSConfigurationHelper.java:1917) 
+Note: This problem might also have an associated java.lang.UnsatisfiedLinkError that identifies a JDBC library in the SystemErr.log file. 
+
+Some causes for the problem are:  * The required Native Library Path is not defined or is incorrectly defined. 
+ * Custom Properties defining the data source are incorrect. 
+ * There is a mismatch between the JDBC driver and database levels.
+
+RESOLVING THE PROBLEM
+Solutions to the preceding causes: 
+
+
+
+
+ * The required Native Library Path is not defined or incorrectly defined
+   The type 2 JDBC Driver (for example: DB2 JDBC Driver, Oracle OCI Driver) requires the native library path. If the native library path is not defined or is incorrectly defined, the NullPointerException might occur when testing the connection to the data source. This problem occurs mostly on UNIX® platforms.
+   
+   To fix the problem:
+    1. Check the classpath variable for the JDBC provider. From the JDBC Providers panel, review the classpath setting. If an IBM® WebSphere® Managed variable is referenced, as in the following,
+       
+       ${DB2_JDBC_DRIVER_PATH}/db2java.zip
+       
+       confirm that the variable is set correctly. If the classpath name is hard-coded, then confirm that the path specified is correct.
+       
+       
+       [/support/docview.wss?uid=swg21177990&aid=1] [/support/docview.wss?uid=swg21177990&aid=1]
+       
+       
+    2. Check that the WebSphere Managed Variable is set correctly. From the administrative console, click Environment, then click Manage WebSphere Variables. Confirm that the managed variable is set to the location that contains the driver.
+       
+       Note: DB2_JDBC_DRIVER_PATH is used for Legacy Type 2 drivers. DB2UNIVERSAL_JDBC_DRIVER_PATH is used for Type 4 JCC (Universal) drivers
+       
+       
+       [/support/docview.wss?uid=swg21177990&aid=2] [/support/docview.wss?uid=swg21177990&aid=2]
+       
+       
+    3. Check the operating system environment for the WebSphere Application Server user to ensure that the user has access to the libraries needed for the DB driver. The easiest way to do this is to source the db2profile in your setupCmdLine.sh or startserver.sh script. This is done by adding a line to invoke the db2profile in the startServer or, for a UNIX system, add the following line:
+       
+       ./home/db2inst1/sqllib/db2profile 
+       [/support/docview.wss?uid=swg21177990&amp;aid=3] 
+   
+   
+   
+
+ * Custom Properties defined for the data source are incorrect
+   Make sure you provide only the values for the required custom properties. For example, when using DB2 JDBC Provider, the only required custom property for the data source is databaseName. So providing the value for the databaseName is sufficient to connect to the database. If you provide a value for custom property portNumber (which is not required), the NullPointerException might occur.
+   
+   
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Application Servers Runtimes for Java Technology Java SDK

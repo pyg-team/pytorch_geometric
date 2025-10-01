@@ -1,0 +1,183 @@
+Title: IBM IV11954: FP13 FOR MYSAP AGENT BREAKS THE LANGUAGE PACK - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  A problem with ITM for MySAP agent. After applying IF013 it
+   breaks language pack.
+   Only shows MySAP workspaces in English. Previous  to that it was
+   working fine showing in all languages.
+   Steps to reproduce this issue.
+   1) Install a TEPS and TEMS with Language support(in customers
+   case  it is Brasil- Portuguese)
+   2) Then apply app support for SAP agent at any version prior to
+   IF13, the TEPS will display the SAP workpsaces in the correct
+   language.
+   3) If you apply 6.2.0-TIV-ITM_SAP-IF0013 app support and
+   restart TEPS the SAP agent display goes back to english
+   
+   Operating System:                         Linux
+   Operating System Version/Release:         redhat linux 5
+   Product with Version/Release:             tivoli monitoring
+   agent 6.2
+   Stand-alone or Bundle:                   Stand-alone
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Provided test fix to customer based on latest mySAP
+   Agent IFix13.
+   Download Link
+   https://jpngsa.ibm.com/projects/a/aabsm_lp/APARfix/PMR89258,499, [https://jpngsa.ibm.com/projects/a/aabsm_lp/APARfix/PMR89258,499,]
+   000/.
+   The file name is MYSAP620_LPFP.zip
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ERROR DESCRIPTION:
+   A problem with ITM for MySAP agent. After applying IF013 it
+   breaks language pack.
+   Only shows MySAP workspaces in English. Previous  to that it was
+   working fine showing in all languages.
+   Steps to reproduce this issue.
+   1) Install a TEPS and TEMS with Language support(in customers
+   case  it is Brasil- Portuguese)
+   2) Then apply app support for SAP agent at any version prior to
+   IF13, the TEPS will display the SAP workpsaces in the correct
+   language.
+   3) If you apply 6.2.0-TIV-ITM_SAP-IF0013 app support and
+   restart TEPS the SAP agent display goes back to english
+   
+   Operating System:                         Linux
+   Operating System Version/Release:         redhat linux 5
+   Product with Version/Release:             tivoli monitoring
+   agent 6.2
+   Stand-alone or Bundle:                   Stand-alone
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The formal fix for this APAR is contained in the following
+   package:
+   Component: IBM(R) Tivoli(R) Monitoring for Applications: mySAP
+   Agent, Version 6.2.0
+   Component ID: 5724B97SO
+   Interim Fix: 6.2.0-TIV-ITM_SAP-LP-IF0001
+   Date: 09 January, 2012
+   
+   DCF Link:
+   http://www-01.ibm.com/support/docview.wss?uid=swg24031655 [http://www-01.ibm.com/support/docview.wss?uid=swg24031655]
+   
+   Also available on FixCentral.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  LOCAL FIX:
+   Provided test fix to customer based on latest mySAP
+   Agent IFix13.
+   Download Link
+   https://jpngsa.ibm.com/projects/a/aabsm_lp/APARfix/PMR89258,499, [https://jpngsa.ibm.com/projects/a/aabsm_lp/APARfix/PMR89258,499,]
+   000/.
+   The file name is MYSAP620_LPFP.zip
+   
+   This resolved customer issue and closed PMR after that.
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV11954
+   
+   
+ * REPORTED COMPONENT NAME
+   ITMF APPL - SAP
+   
+   
+ * REPORTED COMPONENT ID
+   5724B97SO
+   
+   
+ * REPORTED RELEASE
+   620
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-12-12
+   
+   
+ * CLOSED DATE
+   2012-01-09
+   
+   
+ * LAST MODIFIED DATE
+   2012-01-09
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ITMF APPL - SAP
+   
+   
+ * FIXED COMPONENT ID
+   5724B97SO
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R620 PSY
+   UP

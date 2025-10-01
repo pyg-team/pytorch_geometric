@@ -1,0 +1,36 @@
+Title: IBM Recovering only VSAM spheres updated by a particular CICS application with CICS VR - United States
+
+Text:
+Recover VSAM spheres ; selecting ; select ; include ; including datasets ; data sets ; CICSVR ; CICS VSAM Recovery ; 5655P3000 R420 R42E R42K HCCV420 JCCV42E JCCV42K R430 R43E R43K 5655-P30 5655P30 FMID HCCV430 JCCV43E JCCV43K ; 5655Y2400 R510 R51E R51K 5655-Y24 ; 5655Y24 FMID HCCV510 JCCV51E JCCV51K TECHNOTE (FAQ)
+
+QUESTION
+ How would you recover all VSAM spheres updated by a particular CICS application? How do you list only the data sets that need recovery on the CICS VSAM Recovery (CICS VR) sphere list? Most spheres in need of recovery follow the same naming convention, but there are a few data sets that do not. 
+
+ANSWER
+Do the following to recover the VSAM spheres: 
+
+ 1. Create a sequential data set for use with the CICS VR Data Set List feature.
+    
+    
+ 2. Add a record to this data set that defines the naming convention that most of the spheres to be recovered use. Use the wild card characters "*" and "%". 
+    
+    
+ 3. Add a record for each sphere that needs recovery but that does not match the previously entered naming convention. The records should indicate the full name of the sphere. 
+    
+    
+ 4. Enter the name of the sequential data set in the "Data Set Name" field of the CICS VR VSAM sphere list include secondary window [http://pic.dhe.ibm.com/infocenter/cicsts/v5r1/topic/com.ibm.cics.cvr.doc/dwwug/dwwug00070.html]. 
+    
+    
+ 5. Create and submit a recovery job for the spheres.
+
+
+For example, to only list the VSAM spheres updated by an accounting application on the VSAM sphere list, add the following records to a sequential data set: 
+
+ACCOUNT.APPLIC1.DATASET%.* 
+EXAMPLE.DATASET.TWO 
+EXAMPLE.DATASET.THREE 
+
+All CICS VR registered VSAM spheres that match the first record's naming convention along with spheres EXAMPLE.DATASET.TWO and EXAMPLE.DATASET.THREE will appear on the VSAM sphere list and will be selected.  
+
+PRODUCT ALIAS/SYNONYM
+ CICSVR CICS VR CICS/VR

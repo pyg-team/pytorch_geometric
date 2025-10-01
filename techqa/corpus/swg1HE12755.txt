@@ -1,0 +1,162 @@
+Title: IBM HE12755: ICC CANNOT USE TWO CROSS P8 CONNECTION SETS TO THE SAME P8 REPOSITORY/OBJECT STORE(ARCHIVE THROUGH ONE AND VIEW FROM OTHER) - United States
+
+Text:
+  DIRECT LINKS TO FIXES
+4.0.1.8-IBM-ICC-FP008 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FContent+Collector&fixids=4.0.1.8-IBM-ICC-FP008&source=SAR]
+IBM Content Collector V4.0.1 Fix Pack 8 [http://www-01.ibm.com/support/docview.wss?uid=swg24044436]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  This problem was reported ICC 4.0.1.2 .
+   
+   The problem occurs when the end user creates two identical
+   backend P8 connection sets (the only difference is P8 connection
+   names, e.g., connection_1 and connection_2). Both connections
+   points to the  same FileNet P8 repository/Object Store and use
+   the same credential when specifying P8 connection in ICC
+   Configuration Manager.
+   
+   In this scenario, one needs to use connection_1 to
+   archive/ingestion and same connection_1 to view  OR connection_2
+   to archive/ingestino and same  connection_2 to view (no cross).
+   When trying to use connection_1 to archive and connection_2 to
+   view (cross), it does not work. The functionality seems to be
+   broken.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Contact IBM support team.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  This problem was reported ICC 4.0.1.2 .
+   
+   The problem occurs when the end user creates two identical
+   backend P8 connection sets (the only difference is P8 connection
+   names, e.g., connection_1 and connection_2). Both connections
+   points to the  same FileNet P8 repository/Object Store and use
+   the same credential when specifying P8 connection in ICC
+   Configuration Manager.
+   
+   In this scenario, one needs to use connection_1 to
+   archive/ingestion and same connection_1 to view  OR connection_2
+   to archive/ingestino and same  connection_2 to view (no cross).
+   When trying to use connection_1 to archive and connection_2 to
+   view (cross), it does not work. The functionality seems to be
+   broken.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This problem has been fixed starting with IBM Content Collector
+   4.0.1 Fix Pack 8.
+   It is now possible to configure multiple P8 connections pointing
+   to the same FileNet P8 repository and same Object Store using
+   different ports. One can use cross connections for
+   archival/ingestion and view purpose. To avail this feature, add
+   the system environment variable AFU_DISABLE_REPOSITORY_DETECTION
+   and set its value to 1.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  4.0.1.2-IBM-ICC-Server-LA011
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   HE12755
+   
+   
+ * REPORTED COMPONENT NAME
+   ICC FOR EMAIL
+   
+   
+ * REPORTED COMPONENT ID
+   5724V5700
+   
+   
+ * REPORTED RELEASE
+   401
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-11-14
+   
+   
+ * CLOSED DATE
+   2018-02-07
+   
+   
+ * LAST MODIFIED DATE
+   2018-02-07
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ICC FOR EMAIL
+   
+   
+ * FIXED COMPONENT ID
+   5724V5700
+   
+   
+
+APPLICABLE COMPONENT LEVELS

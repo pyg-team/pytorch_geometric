@@ -1,0 +1,170 @@
+Title: IBM PM82411: Memory leak observed in Rhapsody 8.0 - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Rational Rhapsody Fix Pack 2 (8.0.2) for 8.0 [http://www-01.ibm.com/support/docview.wss?uid=swg24034499]
+Rational Rhapsody 8.0.6 [http://www-01.ibm.com/support/docview.wss?uid=swg24037021]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Headline:
+   Memory leak observed in Rhapsody 8.0
+   
+   
+   Abstract:
+   Attempts to use Rhapsody continuously for some hours results in
+   Performance Issue
+   
+   
+   Error_description:
+   Rhapsody slows down considerably after using for a few hours on
+   Windows XP. The reason is analysed to the fact that it keeps
+   occupying more and more memory after subsequent
+   actions....Finally it reaches a stage when even simple actions
+   such as performing an 'Add to Model' or moving the cursor takes
+   2 minutes.
+   
+   Steps to Reproduce:
+   Try1:
+   I opened C++ model ?HomeAlarmWithPorts?. Memory used by Rhapsody
+   = 17452 Kb.
+   I open then OMD named: ?home alarm overview?. Memory used by
+   Rhapsody = 27172 Kb.
+   I close this OMD. Memory used by Rhapsody = 27160 Kb.
+   I open again the same OMD (home alarm overview). Memory used by
+   Rhapsody = 27204 Kb.
+   I close again this OMD. Memory used by Rhapsody = 27164 Kb.
+   I open again OMD named : home alarm overview. Memory used by
+   Rhapsody = 27392 Kb.
+   I close again this OMD. Memory used by Rhapsody = 27380 Kb.
+   
+   Try2:
+   Tried to reproduce with a simple sample model and the results
+   are more bad. Memory used shows as high as 47,000Kb while
+   Rhapsody is launched..Opening a model shoots to 99,300 Kb.
+   Closing the model brings it down to only 99,100Kb. Next time we
+   open a model, it increases from 99,100 to 1,03,000 and so on...
+   
+   The cycle keeps increasing.
+   
+   This is potentially a big problem if huge models are opened.
+   
+   
+   
+   Workaround:
+   High risk for Rhapsody to crash.
+   Decreases work efficiency.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   Memory leak observed in Rhapsody 8.0
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fixed in 8.0.2
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM82411
+   
+   
+ * REPORTED COMPONENT NAME
+   TLOGIC RHAPSODY
+   
+   
+ * REPORTED COMPONENT ID
+   5724V74RP
+   
+   
+ * REPORTED RELEASE
+   753
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-02-08
+   
+   
+ * CLOSED DATE
+   2013-03-21
+   
+   
+ * LAST MODIFIED DATE
+   2013-03-21
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TLOGIC RHAPSODY
+   
+   
+ * FIXED COMPONENT ID
+   5724V74RP
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R753 PSN
+   UP

@@ -1,0 +1,37 @@
+Title: IBM Domino Administrator Client still attempts to connect to servers with "Refresh Server Bookmarks" option disabled. - United States
+
+Text:
+Unable to retrieve list of servers from; in domain; server is not responding; refresh server bookmarks; Admin Client; Domino Administrator; bookmark; domain TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+Administrator has configured multiple domains, and their corresponding domain bookmarks. Not all of these domains are configured with the same Admin Notes ID. Therefore, the option "Refresh Server Bookmarks" was disabled to prevent the Domino Administrator client from attempting to refresh the bookmarks, and connect to these servers. 
+
+However, each time the Admin client starts, it attempts to connect to these domains, and this action results in the following errors: 
+
+ 
+
+"Unable to retrieve list of servers from '<server name>/<org>' in Domain '<Domino domain>'" 
+
+"The server is not responding. The server may be down or you maybe experiencing network problems..."
+
+
+SYMPTOM
+Domino Administrator client still connects to servers although the option "Refresh Server Bookmarks" is disabled
+
+
+CAUSE
+This problem was previously reported to Quality Engineering in SPR MROE6HHP8T, and was later fixed in 7.0. However, the problem has returned in Domino Administrator builds 8.5.1 and 8.5.2. 
+
+The cause was determined to be the bookmark.nsf. Both the bookmark.nsf and the domadmin.nsf contained their own list of servers. The error dialog, which contains the server name, is actually the servers that do not exist in the domadmin.nsf, but do exist in the bookmark.nsf. 
+
+
+ENVIRONMENT
+Domino Administrator Client 8.5.1 and 8.5.2 
+
+Windows XP/Vista/7
+
+
+RESOLVING THE PROBLEM
+This problem has been reported again to Quality Engineering in SPR TMDS8CBVY4 and is currently under investigation. 
+
+As a workaround, you can recreate the local bookmark.nsf to resolve the issue.

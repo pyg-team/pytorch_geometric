@@ -1,0 +1,53 @@
+Title: IBM ICM Data Definition - Event log - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ 
+I am trying to understand how to create application specific events 
+(entries in ICM library server event log table) using the ICM Java API. 
+The DKDatastoreICM class has a writeEvent(DKEventDefICM aEvent) method, 
+yet I do not see how to create a valid DKEventDefICM object. If I create
+one using its constructor then I have no way to set Code or ItemId. 
+Please provide information on how to do this 
+
+
+ANSWER
+There are two tables that record event logs: the system administration event log and the item event log . You need to enable event logging before you can get any event log information.
+To enable tracing and logging, start the system administration client, and click Library Server Parameters > Configurations > Library Server Configuration. On the Log and Trace page, select Allow system administrator event logging and click OK.
+
+The item event log was recorded by an item type. You must turn on the itemEventFlag for this item type.
+
+To enable logging for an item type, start the system administration client, and click Data Modeling > Item Types. Then right-click on the item type and click Properties > Logging. Enable logging on any combination of actions: create, update, read or delete. 
+
+To define a new event definition object, you must create a ddo first, as shown. The following sample tells you how to define a new DKEventDefICM object:
+
+//creating an item to a existing item type
+DKDDO ddo = dsICM.createDDO(ITNAME, DKConstant.DK_CM_ITEM);
+Object obj = new String(ITEMVALUE);
+ddo.setData((short)1, obj);
+//Add this item to the datastore
+dsICM.addObject(ddo);
+
+// Get item id from ddo
+String itemID = ddo.getPid().getPrimaryId();
+
+//Creating user defined event
+DKEventDefICM anEvent = new DKEventDefICM(dsICM);
+anEvent.setCode(1000);
+anEvent.setItemId(itemID);
+anEvent.setEventData1("Add item action");
+anEvent.setEventData2("Add this item to item type " + ITNAME);
+dsICM.writeEvent(anEvent); // add this user defined event to datastore
+
+You must have item ID information to query the item event log table. 
+
+To list all item event logs, call datastore.listEvents(itemID, maxResults). Specify 0 for maxResults if you want to list all event logs from the database. 
+
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Enterprise Content Management Content Manager Logs and Traces AIX, Linux, Solaris, UNIX, Windows 2000, Windows NT 8.1, 8.2, 8.3 All Editions, Edition Independent, Enterprise

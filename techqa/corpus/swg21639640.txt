@@ -1,0 +1,28 @@
+Title: IBM Some versions of IBM Business Process Manager (BPM) and IBM Business Monitor do not support certain Java versions running with WebSphere Application Server Network Deployment V8.5 - United States
+
+Text:
+ibpma85relnotes; ibpms85relnotes; ibpme85relnotes; iid85relnotes; ibpma8501relnotes; ibpms8501relnotes; ibpme8501relnotes; iid8501relnotes TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Java 6™ on WebSphere Application Server V8.5 reaches end of service (EOS) in April 2018. For more information, see the "Software withdrawal and service discontinuance: IBM WebSphere Application Server V7 and V8 and select IBM WebSphere products and part numbers - Some replacements available" announcement (http://www.ibm.com/common/ssi/ShowDoc.wss?docURL=/common/ssi/rep_ca/3/897/ENUS916-143/index.html&request_locale=en [http://www.ibm.com/common/ssi/ShowDoc.wss?docURL=/common/ssi/rep_ca/3/897/ENUS916-143/index.html&request_locale=en]). 
+
+Extended support is not offered for Java 6, so you should use Java 7 or Java 8 instead. If Java 7 is not supported on your current version, you must upgrade to IBM Business Process Manager (BPM) V8.5.7 and IBM Business Monitor V8.5.7. If Java 8 is not supported on your current version, you must upgrade to IBM BPM V8.6.
+
+IBM BPM zOS V8.5.0.2 supports Java 7.1 (IBM WebSphere Application Server V8.5.5.5 as a prerequisite). 
+
+IBM Process Designer in IBM BPM V8.5.7.0 CF 2017.03 or later versions is bundled with Java 7. 
+
+RESOLVING THE PROBLEM
+Use the appropriate Java version for the version of IBM BPM or IBM Business Monitor you are using: 
+
+Product version Supported Java version IBM BPM V8.6 Java 8* IBM BPM V8.5.7.0 Java 6 or Java 7* IBM BPM V8.5.6.0 Java 6 or Java 7* IBM BPM V8.5.5.0 Java 6 IBM BPM V8.5.0.x Java 6 [/support/docview.wss?uid=swg21639640&amp;aid=1] [/support/docview.wss?uid=swg21639640&amp;aid=1] IBM Business Monitor V8.5.7.0 Java 6 or Java 7* Business Monitor V8.5.6.0 Java 6 or Java 7* Business Monitor V8.5.5.0 Java 6 [/support/docview.wss?uid=swg21639640&amp;aid=1] [/support/docview.wss?uid=swg21639640&amp;aid=1] *Java snippets, Java conditions, and Java expressions in BPEL processes must use Java 6 constructs instead of Java 7 or Java 8 constructs. 
+For more information, see the following resources: 
+ * Verify Java SDK version shipped with IBM WebSphere Application Server fix packs [http://www.ibm.com/support/docview.wss?uid=swg27005002] 
+ * Support for Java 6 with Business Process Manager and Business Monitor ending April 2018 [http://www.ibm.com/support/docview.wss?uid=swg21999583] 
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Business Process Manager Standard Installation / Configuration AIX, Linux, Solaris, Windows 8.5.7, 8.5.6, 8.5.5, 8.5.0.2, 8.5.0.1, 8.5 Business Integration IBM Business Process Manager Express Installation / Configuration Linux, Windows 8.5.7, 8.5.6, 8.5.5, 8.5.0.2, 8.5.0.1, 8.5 Business Integration IBM Business Monitor Installation AIX, Linux, Solaris, Windows, z/OS 8.5.7, 8.5.6, 8.5.5 Business Integration IBM Business Process Manager Advanced Installation / Configuration AIX, Linux, Solaris, Windows, z/OS 8.5.7, 8.5.6, 8.5.5, 8.5.0.2, 8.5.0.1, 8.5 Business Integration IBM Business Process Manager Family Installation / Configuration AIX, Linux, Windows 8.6.0.0 IBM Business Process Manager Server Express 
+PRODUCT ALIAS/SYNONYM
+ BPM
+Monitor

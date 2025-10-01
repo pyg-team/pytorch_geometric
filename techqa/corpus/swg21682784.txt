@@ -1,0 +1,27 @@
+Title: IBM Not able to install Portal 7.0 on AIX 7.1.  Error message EJPIC0007E - United States
+
+Text:
+install; EJPIC0007E TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+When trying to install Portal 7.0 on AIX 7.1 the following Error Message occurred...EJPIC0007E: operating
+system prerequisite check failed.
+
+SYMPTOM
+When trying to install Portal 7.0 on AIX 7.1 the following Error Message occurred...
+EJPIC0007E: operating system prerequisite check failed.
+
+
+CAUSE
+When Portal 7.0 was released it did not support AIX 7.1 because AIX 7.1 had not been released yet. Portal provides an official Support Statement for the scenario where older versions of Portal are attempted to be installed on newer version of the OS 
+
+http://pic.dhe.ibm.com/infocenter/wpdoc/v6r1/index.jsp?topic=%2Fcom.ibm.wp.ent.doc_v6101%2Foverview%2Finst_req_supt.html [http://pic.dhe.ibm.com/infocenter/wpdoc/v6r1/index.jsp?topic=%2Fcom.ibm.wp.ent.doc_v6101%2Foverview%2Finst_req_supt.html]
+
+ENVIRONMENT
+Portal 7.0x
+AIX 7.1
+
+RESOLVING THE PROBLEM
+Retry the installation passing in the pre-req skip flag:
+
+./install.sh -W dependency.useValidation=false

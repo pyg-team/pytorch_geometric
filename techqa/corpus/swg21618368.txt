@@ -1,0 +1,79 @@
+Title: IBM Migration build errors: Project '.JETEmitters' is missing required library: ...\SDPShared\plugins\org.eclipse.jst.j2ee ... - United States
+
+Text:
+jetemitters; jetemitter; EMF Core/JET utility; customize view; view menu; SDPShared; IBMIMShared TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ After migrating a JEE5.0 project and member projects from IBM Rational Application Developer (RAD) v7.5.x to RAD 8.5 on another machine, there are build errors on the .JETEmitters project: Project '.JETEmitters' is missing required library: 'C:\Program Files\IBM\SDPShared\plugins\org.eclipse.jst.j2ee ... '. How can this be resolved? 
+
+SYMPTOM
+The .JETEmitters project has build errors, as shown in the Markers view:
+Project '.JETEmitters' is missing required library: 'C:\Program 
+Files\IBM\SDPShared\plugins\org.eclipse.jst.j2ee_1.1.202.v200808272200.jar'
+Project '.JETEmitters' is missing required library: 'C:\Program 
+Files\IBM\SDPShared\plugins\org.eclipse.jst.j2ee.ejb_1.1.201.v200807310600.jar'
+Project '.JETEmitters' is missing required library: 'C:\Program 
+Files\IBM\SDPShared\plugins\org.eclipse.jst.j2ee.web_1.1.201.v200807290757.jar'
+
+
+CAUSE
+The error occurs because the project .JETEmitters has carried over this .classpath information:
+
+//--- .classpath file:
+: <?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+<classpathentry kind="src" path="src"/>
+<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+<classpathentry kind="lib" path="C:/Program Files/IBM/SDPShared/plugins/org.eclipse.jst.j2ee_1.1.202.v200808272200.jar"/>
+<classpathentry kind="lib" path="C:/Program Files/IBM/SDPShared/plugins/org.eclipse.jst.j2ee.web_1.1.201.v200807290757.jar"/>
+<classpathentry kind="lib" path="C:/Program Files/IBM/SDPShared/plugins/org.eclipse.jst.j2ee.ejb_1.1.201.v200807310600.jar"/>
+<classpathentry kind="output" path="bin"/>
+</classpath>
+//---
+in which there are references to jars in an IBM Installation Manager (IM) Shared Directory: 
+"C:/Program Files/IBM/SDPShared/"
+which no longer exists. On the new machine when installing IBM Installation Manager and RAD 8.5 and IBM WebSphere Application Server (WAS) 8.0, a new IM Shared Directory was created: C:\Program Files (x86)\IBM\IBMIMShared.
+Even if the directory was the same, the plugin versions might change.
+
+ENVIRONMENT
+Migrated a RAD v7.5.x JEE 5.0 EAR plus member projects targeting WAS v7.0.0.x
+from a Microsoft Windows XP machine using a Project Interchange (PI) into RAD v8.5 on a new Windows 7 64-bit machine targeting WAS 8.0.0.4.
+
+DIAGNOSING THE PROBLEM
+The problem is with migrated projects involving workspaces from other machines containing a .JETEmitters project. This project causes build errors and prevents building after a migration since its .classpath file refers to plugins that do not exist on the current machine.
+
+RESOLVING THE PROBLEM
+The .JETEmitters project is normally hidden in most views such as the Java EE: Enterprise Explorer view. It can be safely removed in any RAD v8.+ since it is not needed or even generated for new artifacts. To remove this project: 
+
+
+
+
+
+ 1. Make the .JETEmitters project visible (in RAD 7.5.x or any 8.x). 
+    For example using RAD v8.0.x, in the JEE Enterprise Explorer view, in its toolbar at the far right, select the "View Menu" ( triangle icon pointing down) > Customize View... 
+    [/support/docview.wss?uid=swg21618368&amp;aid=1] 
+ 2. Uncheck .JETEmitters
+    This will make the project visible in the Enterprise Explorer view.
+    [/support/docview.wss?uid=swg21618368&amp;aid=2]
+    Note: it might also be necessary to uncheck: .*resources 
+ 3. Delete the project .JETEmitters (and select from the workspace).
+    
+
+
+The build errors will no longer be present. 
+
+
+Background on .JETEmitters project: 
+
+Eclipse EMF Jet utility, and the by-product .JETEmitters project has been used in RAD v6, RAD v7.0.0.x [Eclipse WTP (Web Tools project) 1.5.x J2EE Tools] and RAD v7.5.x (Eclipse WTP 3.0.x JEE Tools), to generate servlet and ejb bean classes from the J2EE/JEE wizards. The .JETEmitters project is generated the first time you create a Java EE artifact (Servlet, EJB bean, etc). The .JETEmitters project contains only system code that is not included in the assembled deployment units (.war, .jar, .ear) and is not executed on the target platform. 
+
+It is not normally recommended to delete the .JETEmitters project in RAD v7.5.x or earlier if it is not causing any problems. However, deleting this project should be fine. In RAD 7.5 and earlier it is only used to temporarily create class templates. It will be recreated next time any classes are created. 
+
+In Eclipse WTP 3.0.3+ the use of a .JETEmitters project was made optional. as mentioned in: 
+Bug 249347 - [hotbug] Make .JETEmitter project optional [https://bugs.eclipse.org/bugs/show_bug.cgi?id=249347] 
+
+As of Eclipse WTP 3.1, this was made official: 
+Eclipse Web Tools Platform 3.1 - New and Noteworthy [http://www.eclipse.org/webtools/releases/3.1.0/newandnoteworthy/javaee.php] 
+-> No more hidden .JETEmitter project in workspace 
+
+RAD v8 (Eclipse/IES 3.6.x + WTP 3.2.x) and future RAD versions no longer make use of a .JETEmitters project and it can be deleted. The EMF Core/JET utility is still used under the covers, for generating the source code of Java EE artifacts, such as Servlets and EJBs. Any associated activity is hidden in a relevant {workspace folder}/.metadata/.plugins/{some Eclipse JEE/WTP plugin}, and would not affect any project build or runtime behavior.

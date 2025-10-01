@@ -1,0 +1,67 @@
+Title: IBM Communication SEND jobs are failing in Sterling Gentran:Server for iSeries - United States
+
+Text:
+outbound communication failure; unable to send any data out TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ All Sending Communication jobs are failing. Message Center job detail has FTP Client Session bypassed do to pre-processor error. Joblog entry has INVALID KEY ERROR5 ON OUTDTA 
+
+SYMPTOM
+LBE7607 Message: 5 ON OUTDTA IN EBDI068F: 10000
+LBE7607 Message: 5 ON OUTDTA IN EBDI070FTP: 10000
+FTP Client Session bypassed do to pre-processor error
+
+
+CAUSE
+A batch file written to the outbound queue with a batch sequence number greater than 999999.
+Lack of communication queue maintenance (PRGALL; PRGOBQ). 
+The program listed in the joblog message cannot handle the 7 digit batch sequence number and outbound communication is unable to start because a batch number cannot be properly assigned.
+
+ENVIRONMENT
+communication failure
+
+DIAGNOSING THE PROBLEM
+Message Center for the STRCOMSSN Job Detail view
+162400 - SNDPGMMSG MSG 'FTP Client Session bypassed do to pre-processor error, see joblog'
+
+
+
+
+Joblog entry:
+LBE7607 Information 80 <date/time stamp> 680539 QLRADRTN QSYS 02BB *EXT *N
+Message . . . . : INVALID KEY ERROR5 ON OUTDTA IN EBDI070FTP: 1000000
+Cause . . . . . : This is the output from a DISPLAY statement.
+
+
+RESOLVING THE PROBLEM
+1. A purge of the outbound communication queue is needed immediately.
+2. Delete the batch file with the 1000000 batch sequence number, or put it on HOLD.
+3. Download and install the most recent cumulative fix for your Release of Gentran:Server [http://www.ibm.com/support/docview.wss?uid=swg21963155] 
+
+
+This fix was added in 3.5.35 AND 3.6.011
+EBDI002 Program - Outbound Editor 
+When the outbound process has utilized all 999,999 batches of data, it would write out a batch sequence of 1,000,000. A new error message 572 has been added to the PRCTRNOUT and notifies the user that they must run a PRGOBQ in order to continue processing.
+
+Alternatively, a SQL Query can be used to locate and remove the batch file greater than 999999, from both OUTCTL and OUTDTA files. This DOES NOT replace the purging process that MUST be performed. The purge is the only way to free up batch sequence numbers.
+A. To find that batch greater or equal to 1,000,000 using SQL query
+Command Line command: 
+STRSQL and then press enter
+copy and paste this SQL string: 
+Select * from OUTCTL where OQCBSQ > 999999
+If the SELECT query returns any records, they will have to be removed.
+copy and paste this SQL string: 
+Delete from OUTCTL where OQCBSQ > 999999
+
+B. Repeat the SQL query for the Data portion of the Outbound Queue
+Command Line command: 
+STRSQL and then press enter
+copy and paste this SQL string: 
+Select * from OUTDTA where OQDBSQ > 999999
+If the SELECT query returns any records, they will have to be removed.
+copy and paste this SQL string: 
+Delete from OUTDTA where OQDBSQ > 999999
+
+Reference information:
+OQCBSQ = Outbound Queue Control Batch Sequence
+OQDBSQ = Outbound Queue Data Batch Sequence

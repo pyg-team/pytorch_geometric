@@ -1,0 +1,31 @@
+Title: IBM Download IBM Enterprise Content Management System Monitor 5.2 - United States
+
+Text:
+ DOWNLOADABLE FILES
+
+ABSTRACT
+ This document describes how to download IBM Enterprise Content Management Version 5.2 by using the Passport Advantage Online Web site. 
+
+PREREQUISITES
+Ensure that your system meets the software, hardware, and operating system requirements for installing IBM Enterprise Content Management System Monitor V5.2. 
+
+For more information, see the IBM Enterprise Content Management System Monitor Hardware and Software Guide.
+
+URL LANGUAGE SIZE(Bytes) System Monitor Hardware and Software Requirements [http://www-05.ibm.com/e-business/linkweb/publications/servlet/pbi.wss?CTY=US&FNC=SRX&PBL=SC27-4905-00] English 1790000 
+INSTALLATION INSTRUCTIONS
+For installation instructions, see the Installation Guide available on the Product Documentation for IBM Enterprise Content Management System Monitor [http://www.ibm.com/support/docview.wss?rs=86&uid=swg27043748] page.
+
+URL LANGUAGE SIZE(Bytes) Installation Guide [http://www-05.ibm.com/e-business/linkweb/publications/servlet/pbi.wss?CTY=US&FNC=SRX&PBL=GC27-4907-00] English 14360000 
+DOWNLOAD PACKAGE
+From a browser, navigate to the Find Downloads and Media page on the IBM Passport Advantage Online Web site [http://www.ibm.com/software/howtobuy/passportadvantage/pao_customers.htm]. You must log on to continue. 
+
+ 1. Select the Find by part number search option under Download finder options. 
+ 2. Search for following part numbers and download the images.
+
+
+IBM Enterprise Content Management System Monitor V5.2 Component Description eSD Part Number IBM Enterprise Content Management System Monitor V5.2 Multiplatform English eAssembly CRTH7EN IBM Enterprise Content Management System Monitor V5.2 for Windows CN1YAEN IBM Enterprise Content Management System Monitor V5.2 for AIX® CN1Y9EN IBM Enterprise Content Management System Monitor V5.2 for HP Itanium CN1YBEN IBM Enterprise Content Management System Monitor V5.2 for Solaris CN1YCEN IBM Enterprise Content Management System Monitor V5.2 for Linux on Intel CN1YDEN IBM Enterprise Content Management System Monitor V5.1 for Linux on PPC CN1YEEN 
+
+
+TECHNICAL SUPPORT
+ IBM Enterprise Content Management System Monitor Support 
+http://www-947.ibm.com/support/entry/portal/product/enterprise_content_management/enterprise_content_management_system_monitor/ [http://www-947.ibm.com/support/entry/portal/product/enterprise_content_management/enterprise_content_management_system_monitor/]

@@ -1,0 +1,35 @@
+Title: IBM Configuring Single Sign-on in DASH - United States
+
+Text:
+DASHL2; DASHL2FAQ; SSO TECHNOTE (FAQ)
+
+QUESTION
+ What are all of the configuration requirements for single sign-on to work between DASH and applications deployed in other Websphere instances? 
+
+ANSWER
+For all systems involved in your SSO configuration, you must ensure the following:
+
+1. The following items under Security > Global Security > Web Security > Single Sign-on (SSO) must be checked:
+Enabled - Required
+Domain name - Required. 
+
+Note: The domain name values specified under the "Domain name" field must be identical in both the source and destination Websphere instances.
+
+
+2. The LTPA keys must be shared among the participating Websphere instances involved.
+
+To export the keys follow this procedure:http://www-01.ibm.com/support/knowledgecenter/SSEKCU_1.1.1.0/com.ibm.psc.doc_1.1.1.0/config/as_t_config_export_keys.html?lang=en [http://www-01.ibm.com/support/knowledgecenter/SSEKCU_1.1.1.0/com.ibm.psc.doc_1.1.1.0/config/as_t_config_export_keys.html?lang=en]
+
+To import the keys to the other server(s) follow this procedure:http://www-01.ibm.com/support/knowledgecenter/SSEKCU_1.1.1.0/com.ibm.psc.doc_1.1.1.0/config/as_t_config_import_keys.html?lang=en [http://www-01.ibm.com/support/knowledgecenter/SSEKCU_1.1.1.0/com.ibm.psc.doc_1.1.1.0/config/as_t_config_import_keys.html?lang=en]
+
+3. The Federated Repository Realm Name must be the same on both the source and destination Websphere instances. Check the realm name under Security > Global Security, and then click on the "Configure" button next to the repository dropdown box.
+
+
+4. Both the source and destination Websphere instances must have the same LDAP user repository configurations in their respective Federated Repositories. Compare the LDAP connection properties for each Websphere instance (admin console) under:
+
+Security > Global Security, click the "Configure" button next to the "Available Realm definitions" dropdown. Click the link for the LDAP configuration in the "Identifier" column of the "Repositories in the realm" table.
+
+
+5. Finally, ensure the application URL to access the Websphere application (like DASH, WebGUI, or APMU) specifies the fully qualified hostname (FQDN) for the server. SSO will only work when web applications are accessed using the FQDN. 
+
+Note: Ensure that a new browser instances are used when testing SSO to prevent interference from cached session cookies. Be sure to clear your cookies from cache and restart between tests.

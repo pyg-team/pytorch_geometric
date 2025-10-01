@@ -1,0 +1,186 @@
+Title: IBM PM87058: DFHSM0001 AN ABEND (CODE ---/AKEC) HAS OCCURRED AT OFFSET X'FFFF'IN MODULE DFHS2GF - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  You are receiving the following DFHSM0001 message when your
+   application is in a loop,
+   DFHSM0001 An abend (code ---/AKEC) has occurred at offset
+   X'FFFF' in module DFHS2GF.
+   
+   .
+   Trace shows the following trace exception entry:
+   SM 4217 S2GF
+      *EXC* - Freemain_length_overlays_next_SCF -
+              FUNCTION(FREEMAIN)
+              SUBPOOL_TOKEN(00000048_40604134 ,
+                            00000000_00000065)
+              ADDRESS(00000048_80004000)
+              FREE_LENGTH(1000)
+              REMARK(CSDB)
+   .
+   Kernel error table also shows ABEND (---/0999) occurred
+   in DFHKETIX at offset x'0D02' for the same task.
+   .
+   Systrace shows PSW addresses are all at different places before
+   abend999 or x3E7 occurred,
+   Additional symptoms:
+   You may also receive the following error, after the initial
+   DHFSM0001 error:
+   DFHTS0001 An abend (code 0C4/AKEA) has occurred at
+             offset X'1AA6' in module DFHTSQR.
+   After this, the region appears to hang, with tasks
+   suspended in LMQUEUE waits for a SUBPOOL lock.
+   You may also see the following exception trace entry:
+   SM 4203 S2GF  *EXC* Recovery_entered ** Decode of
+                       parameter list failed
+   Additional Keywords:
+   Hang Hung Abend0C4 0C4 TS0001
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All CICS users.                              *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: abendAKEC occurs in DFHS2GF when an     *
+   *                      application task runs away.             *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   An application contains a loop which repeats to write records
+   into TSQ main storage. DFHS2GF GETMAIN is frequently called to
+   obtain storage. DFHKEDOM KEDCL64 is used here for AMODE 64
+   DFHS2GF domain call which forgets to clear KERNLOOP in the new
+   stack. When DFHS2GF GETMAIN is executing and the residual data
+   at location KERNLOOP is b'1', DFHKETIX pops and calls DFHKEES
+   IDENTIFY_CONTROLLER to identify the most recent stack entry
+   whose KERNLOOP is b'1' as the loop controller. So DFHS2GF
+   stack is identified incorrectly resulting in an abend AKEC
+   rather than an abend AICA.
+   Additional keywords: abend999. abendAKEC, msgDFHSM0001
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  DFHKEDOM KEDCL64 and KEDCF64 have been changed to clear
+   KERNFLG2 in the new stack for AMODE 64 domain call.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  FIX AVAILABLE BY PTF ONLY
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM87058
+   
+   
+ * REPORTED COMPONENT NAME
+   CICS TS Z/OS V4
+   
+   
+ * REPORTED COMPONENT ID
+   5655S9700
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-04-15
+   
+   
+ * CLOSED DATE
+   2013-06-23
+   
+   
+ * LAST MODIFIED DATE
+   2013-08-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    PM87778 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM87778] UK95528
+   
+   
+
+MODULES/MACROS
+ *     DFHKEDOM
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CICS TS Z/OS V4
+   
+   
+ * FIXED COMPONENT ID
+   5655S9700
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R700 PSY UK95528 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK95528]
+   UP13/07/06 P F307
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

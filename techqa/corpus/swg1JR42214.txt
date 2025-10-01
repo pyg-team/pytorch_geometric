@@ -1,0 +1,142 @@
+Title: IBM JR42214: THE <WEB-IMAGES> <PREFIX> TAG DOES NOT WORK IN BPM 7.5 - United States
+
+Text:
+  A FIX IS AVAILABLE
+Version 7.5.1 Fix Pack 1 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24033036]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  In configuration files, you can specify the hostname for
+   images.  This is used to offload images to a secondary server
+   away from the main process server.
+   
+    <web-images>
+        <prefix>SERVER</prefix>
+    </web-images>
+   
+   This function does not work in Business Process Manager V7.5. It
+   was previously working in WebSphere Lombardi Edition V7.2.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  Users of BPM Express, BPM Standard and BPM  *
+   *                  Advanced.                                   *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: In configuration files, you can specify *
+   *                      the hostname for images.  This is used  *
+   *                      to offload images to a secondary server *
+   *                      away from the main process server.      *
+   *                                                              *
+   *                      <web-images>                            *
+   *                          <prefix>SERVER</prefix>             *
+   *                      </web-images>                           *
+   *                                                              *
+   *                      This function does not work in Business *
+   *                      Process Manager V7.5.  It worked in     *
+   *                      WebSphere Lombardi Edition V7.2.        *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   In configuration files, you can specify the hostname for
+   images.  This is used to offload images to a secondary server
+   away from the main process server.
+   
+    <web-images>
+        <prefix>SERVER</prefix>
+    </web-images>
+   
+   This function does not work in Business Process Manager V7.5. It
+   was previously working in WebSphere Lombardi Edition V7.2.
+   
+   This problem will be resolved in a future fix pack on
+   Business Process Manager V7.5.1.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR42214
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM EXPRESS
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9600
+   
+   
+ * REPORTED RELEASE
+   750
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-03-13
+   
+   
+ * CLOSED DATE
+   2012-06-09
+   
+   
+ * LAST MODIFIED DATE
+   2012-06-09
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R751 PSY
+   UP

@@ -1,0 +1,131 @@
+Title: IBM JR38864: USER WITH BLANK PASSWORD IS ALLOWED TO LOGIN WHEN USING LDAP SIMPLE BIND AUTHENTICATION - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS USER ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Setting up MS Active directory for authenticating users through
+   LDAP using simple bind, the following tests are performed
+   
+   LDAP Account valid, password valid, in role. - Allows log in.
+   LDAP Account valid, blank password, in role. - Allows log in
+   LDAP Account invalid, blank password, not in role.  - Does not
+   allow log in.
+   LDAP Account valid, password invalid, in role. - Does not allow
+   log in.
+   LDAP Account valid, blank password, not in role. - Does not
+   allow log in.
+   LDAP Account valid, password valid, not in role. - Does not
+   allow log in
+   
+   The only unexpected scenario is that an user, who has the
+   desired role with blank password is also allowed to log in. This
+   behavior needs to be properly addressed.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Use other type of bind method
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *  It should be entirely LDAP server responsibility to manage
+   authentication and client should  not add its own mechanism in
+   between. There are situations where a customer might want few
+   users an access without passwd and configure LDAP to do that...
+   changing client's logic would simply override this.
+   In cases like yours however, if you can not enforce such policy
+   at the server side (which is generally recommended), we would
+   recommend to modify your login scripts to suit the specific
+   needs that  you have (that's the very reason PIM login mechanism
+   is written in scripts and exposed, so that it can be tweaked
+   easily per implementation) . In this context, I have reviewed
+   your change and it looks good to me.
+   Rolling such changes in the product would create confusion among
+   others who otherwise expect the behavior similar to LDAP server.
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR38864
+   
+   
+ * REPORTED COMPONENT NAME
+   MDM SERVER FOR
+   
+   
+ * REPORTED COMPONENT ID
+   5724V5100
+   
+   
+ * REPORTED RELEASE
+   900
+   
+   
+ * STATUS
+   CLOSED USE
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-02-09
+   
+   
+ * CLOSED DATE
+   2011-03-24
+   
+   
+ * LAST MODIFIED DATE
+   2011-03-24
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

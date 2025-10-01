@@ -1,0 +1,24 @@
+Title: IBM Can the Sentinel RMS License Manager bundled with a previous version of SPSS software manage the network licenses of a later release? - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ We have the Sentinel RMS License Manager that was bundled with an earlier release of SPSS software and are now going to upgrade to the latest or a later version. 
+
+We would like to know whether the License Manager we have installed that came bundled with a previous version of SPSS software can manage the network licenses for later version or do we need to install the later version of Sentinel RMS License Manager bundled in the media that comes with the later version of SPSS software. 
+
+RESOLVING THE PROBLEM
+The Sentinel RMS License Manager bundled with the later version of SPSS software (i.e. Statistics 18.0/Modeler 13.0) can manage previous versions (i.e. Statistics 17.0/Clementine 12.0). However, a Sentinel RMS License Manager bundled with a previous version cannot manage the network licensing of a later version.
+
+You will need to un-install the earlier version of Sentinel RMS License Manager and install the Sentinel RMS License Manager bundled with the later version of SPSS software.
+
+RELATED INFORMATION
+ Need more help? Our Modeler forum is Live! [https://developer.ibm.com/answers/topics/modeler/?smartspace=predictive-analytics]
+Need more help? Our Licensing forum is Live! [https://developer.ibm.com/answers/topics/spsslicensing.html]
+
+
+ 
+
+HISTORICAL NUMBER
+ 87052

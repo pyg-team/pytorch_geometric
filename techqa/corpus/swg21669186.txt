@@ -1,0 +1,43 @@
+Title: IBM CCRC WAN server does not function after reboot - United States
+
+Text:
+WebSphere; IHS; upgrade; startup; WAN Server; 8.0.x TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ IBM Rational WAN Server might stop functioning after reboot of the server. 
+
+SYMPTOM
+CCRC clients are unable to connect after the WAN Server was rebooted.
+System booted up fine, but the WAS and IHS servers did not start automatically. 
+
+
+CAUSE
+Unlike the 7.1.X install, the startup scripts for WAS and IHS are not configured on the server.
+
+ENVIRONMENT
+Recent install of WAS 8.5 and CCRC WAN server 8.0.x on a server.
+After the initial install, your clients were able to connect via CTE client. 
+
+
+After the WAN Server was rebooted, the clients cannot connect.
+
+
+DIAGNOSING THE PROBLEM
+Check if WebSphere is running with ps -af | grep Web 
+
+Check if WAN Server is running with 
+
+ps -af | grep ccrc
+
+
+RESOLVING THE PROBLEM
+If you want to have WebSphere and IHS to start automatically, you will have to add scripts to start.
+
+cd /opt/ibm/RationalSDLC/common/ccrcprofile/bin
+./startServer.sh server1
+then ihs
+/opt/IBM/HTTPServer/bin/apachectl start 
+
+ 
+
+You can, if you wish, copy the ewas_boot and ihs_boot files from the 7.1 installation and use them to start WebSphere and IHS.

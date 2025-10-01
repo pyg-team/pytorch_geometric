@@ -1,0 +1,111 @@
+Title: IBM Operating AppScan Source in FIPS 140-2 mode on OS X - United States
+
+Text:
+162556; AppScan; AppScan Source; FIPS; Federal Information Processing; 140-2; OS X; NSS; Mozilla; Network Security Services; compliance; validation; validated TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ On OS X platforms that are supported by IBM Security AppScan Source, manual steps are needed to operate in Federal Information Processing Standard (FIPS) 140-2 mode. These steps are described in this document. In addition, the document covers enabling and disabling FIPS 140-2 mode - and how to determine if AppScan Source is running in FIPS 140-2 mode. 
+
+RESOLVING THE PROBLEM
+The OS X Java Development Kit (JDK) requires an external FIPS 140-2 validated cryptographic module in order to correctly enable FIPS compliance for AppScan Source. This document provides example steps for using the open source Mozilla Network Security Services (NSS) as that external cryptographic module. 
+
+Prerequisites: 
+
+ * Ensure that Xcode and its command line tools are installed.
+   Note: AppScan Source supports Xcode Versions 4.4 through 4.6. 
+ * Ensure that MacPorts (available at http://www.macports.org/ [http://www.macports.org/]) is installed. 
+ * After installing MacPorts, install NSS by issuing these commands:
+   sudo port install sqlite3
+   sudo port install nss 
+ * Configure NSS by following these steps:  1. Create a folder and, inside that folder, create a configuration file with a .config or .cfg extension (for example, nss-client.config). 
+    2. Open the configuration file in an editor and enter only these contents in it:
+       name = nss-client
+       nssLibraryDirectory = /opt/local/lib/nss
+       nssDbMode=noDb 
+    3. Save the configuration file.
+       Note: The file must not be saved as rich text format.
+   
+   
+
+Enable FIPS 140-2 mode in AppScan Source: 
+
+ 1. Ensure that AppScan Source is not running. 
+ 2. Open <data_dir>/config/ounce.ozsettings (where <data_dir> is the location of your AppScan Source program data) and locate the fips_mode setting. By default, the setting looks like this:
+    <Setting
+    description_id=""
+    name="fips_mode"
+    read_only="false"
+    default_value="1"
+    value="1"
+    description="FIPS Mode"
+    type="text"
+    display_name="FIPS Mode"
+    display_name_id=""
+    available_values=""
+    hidden="false"
+    force_upgrade="false"
+    /> 
+ 3. In the setting, ensure that the value attribute is set to value="1". This attribute setting indicates that FIPS is enabled. 
+ 4. In a Terminal window, change directory to <install_dir>/jre/lib/security (where <install_dir> is the location of your AppScan Source installation) and then create a backup of the java.security and java.security.fips files (for example, to back up java.security, 
+    issue a cp java.security java.security.bkp command). 
+ 5. Delete the java.security file and then rename java.security.fips to java.security. 
+ 6. Edit java.security (the file that was previously named java.security.fips) and locate this line:
+    security.provider.2=sun.security.pkcs11.SunPKCS11 /Users/Shared/NSS/nss-client.cfg
+    Note that this line refers to an NSS configuration file. Edit this line so that it refers to the NSS configuration file (including its path) that you created in the Prerequisites section above.
+
+
+To disable FIPS 140-2 mode, change the fips_mode setting so that value="0" - and restore the java.security and java.security.fips files to their initial state. 
+
+ 
+
+Configure certificates for publishing to AppScan Enterprise Console: 
+
+Using a self-signed root certificate for your AppScan Enterprise Server will not allow you to publish assessments to the AppScan Enterprise Console. To be able to publish assessments to the AppScan Enterprise Console, you must manually save the AppScan Enterprise Server certificate to your Java KeyStore. 
+
+ 1. Enter the URL for your AppScan Enterprise Server instance (for example, https://my_server:9443/asc/) in Safari. 
+ 2. When prompted to verify the identity of the web site, choose the Always trust option. 
+ 3. Open the OS X Keychain Access utility and locate the certificate that was added for your AppScan Enterprise Server instance. 
+ 4. Right-click the certificate and select the Export option, making note of the location and file name that the certificate is exported to. 
+ 5. In a Terminal window, set your environment by issuing these commands:
+    export JAVA_HOME=/Applications/AppScanSource.app/jre
+    export PATH=$JAVA_HOME/bin: $PATH 
+ 6. In a Terminal window, change directory to the location that the certificate was exported to in Step 4 - and then save the AppScan Enterprise Server certificate to your Java KeyStore by issuing this command:
+    keytool -importcert -trustcacerts -file <certificate> -alias appscan -keystore <data_dir>/config/cacertspersonal -storepass changeit
+    where:  * <certificate> is the file name of the exported certificate created in Step 4. 
+     * <data_dir> is the location of your AppScan Source program data. By default, the location on OS X is /Users/Shared/AppScanSource.
+    
+    
+
+How to determine if AppScan Source is operating in FIPS 140-2 mode: 
+
+ 1. Open <data_dir>/config/ounce.ozsettings (where <data_dir> is the location of your AppScan Source program data) and modify the log_level setting so that its value is 3 (Info). By default, the setting looks like this:
+    <Setting
+    name="log_level"
+    default_value="5"
+    description="Error log level"
+    type="list"
+    value="5"
+    display_name="Log level"
+    available_values="1:Trace,2:Debug,3:Info,4:Warn,5:Error,6:Fatal"
+    />
+    Modify the setting so that value="3". 
+ 2. Launch AppScan Source and run a scan. 
+ 3. Open <data_dir>/logs/scanner_exceptions.log, where you will notice these log entries, which are indicators that AppScan Source is operating in FIPS 140-2 mode:
+    02/01/13 11:10:57 Info(30082) from PlService.cpp(276)
+    Current FIPS Mode: 1
+    
+    ....
+    
+    02/01/13 11:12:05 Info(60015) from AppScanServerClient.cpp(91)
+    FIPS initialiazed correctly for client
+    
+    02/01/13 11:12:05 Info(30082) from AppScanServerClient.cpp(94)
+    Current FIPS Mode from Client: 1 
+ 4. Open <data_dir>/logs/osa.log. Entries marked as Java FIPS are indicators that AppScan Source is operating in FPS 140-2 mode. For example:
+    Java FIPS: com.ibm.jsse2.usefupsprovider: null
+    Java FIPS: SSL Context does not exists
+    Java FIPS: SecureRandom provider: SunPKCS11-nss-client version 1.7
+
+RELATED INFORMATION
+ Operating in FIPS 140-2 mode on Windows and Linux [http://www.ibm.com/support/docview.wss?uid=swg21626684]
+Background information [http://www.ibm.com/support/docview.wss?uid=swg21626701]

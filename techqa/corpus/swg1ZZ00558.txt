@@ -1,0 +1,156 @@
+Title: IBM ZZ00558: DURING SOFTLAYER IMAGE RESTORE, THE VM STATUS IN IWD IS CHANGED TO DELETED IN IWD UNTIL THE IMAGE RESTORE COMPLETES. - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  During restoration VM status changed to deleted in IWD until
+   restoration completes, as this captured Image is not registered
+   or known to IWD/PCG we are requesting status from Openstack/PCG
+   with ID 0 and hence it is failing.
+   
+   
+   
+   API exception occurs when SL image restore takes place:
+   
+   GET
+   https://api.service.softlayer.com/rest/v3/SoftLayer_Account/Priv [https://api.service.softlayer.com/rest/v3/SoftLayer_Account/Priv]
+   
+   ateBlockDeviceTemplateGroups/0.json?objectMask=mask[tagReference
+   
+   s,children[blockDevices[diskImage[softwareReferences[softwareDes
+   
+   c ription]]]]]
+   
+   The ID is 0.json so it is bound to fail.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  During restoration VM status changed to deleted in IWD until
+   restoration completes, as this captured Image is not registered
+   or known to IWD/PCG we are requesting status from Openstack/PCG
+   with ID 0 and hence it is failing.
+   
+   
+   
+   API exception occurs when SL image restore takes place:
+   
+   GET
+   https://api.service.softlayer.com/rest/v3/SoftLayer_Account/Priv [https://api.service.softlayer.com/rest/v3/SoftLayer_Account/Priv]
+   
+   ateBlockDeviceTemplateGroups/0.json?objectMask=mask[tagReference
+   
+   s,children[blockDevices[diskImage[softwareReferences[softwareDes
+   
+   c ription]]]]]
+   
+   The ID is 0.json so it is bound to fail.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The defect will be fixed in ICO 2.4.0.4 and ICO 2.5.0.2
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   ZZ00558
+   
+   
+ * REPORTED COMPONENT NAME
+   SMRTCLOUD ORCHS
+   
+   
+ * REPORTED COMPONENT ID
+   5725H2800
+   
+   
+ * REPORTED RELEASE
+   240
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-03-21
+   
+   
+ * CLOSED DATE
+   2016-06-29
+   
+   
+ * LAST MODIFIED DATE
+   2016-06-29
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   SMRTCLOUD ORCHS
+   
+   
+ * FIXED COMPONENT ID
+   5725H2800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R240 PSY
+   UP
+   
+   
+ * R250 PSY
+   UP

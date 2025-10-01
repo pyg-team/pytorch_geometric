@@ -1,0 +1,74 @@
+Title: IBM Delayed SEA Failover - United States
+
+Text:
+KnowledgeCollection TECHNOTE (FAQ)
+
+QUESTION
+ Why is my Shared Ethernet Adapter (SEA) failover delayed? 
+
+CAUSE
+Spanning tree is turned on at the switch port with portfast disabled. 
+
+NOTE: Design Change Request (DCR) MR0104075819 has been opened for this known issue.
+
+
+ANSWER
+SEA failover, from primary to backup, the delay is sometimes due to Spanning Tree Protocol being enabled on the switch ports. 
+
+
+To ensure prompt recovery times when you enable the Spanning Tree Protocol on the switch ports connected to the physical adapters of the Shared Ethernet Adapter, you can also enable the portfast option on those ports. The portfast option allows the switch to immediately forward packets on the port without first completing the Spanning Tree Protocol. (Spanning Tree Protocol blocks the port completely until it is finished.)
+
+On SEA failback, from backup to primary, there is an additional issue:
+
+The switches are sometimes not ready to read transmit and receive packets even after declaring the link as up. Hence, it leads to packet loss. This type of problem can be avoided or reduce failback time by disabling Spanning Tree Protocol all together.
+
+Here are the 5 supported methods to test SEA failover:
+
+Scenario 1, Manual SEA Failover
+On VIO server:
+$ lsdev -type adapter
+or 
+$ oem_setup_env 
+# lsdev -Cc adapter |grep ent --> Note which ent is the SEA 
+# entstat -d entX | grep State --> Check for the state (PRIMARY, or BACKUP)
+
+Set ha_mode to standby on primary VIOS with chdev command:
+# chdev -l entX -a ha_mode=standby
+or
+$ chdev -dev -attr ha_mode=standby
+
+Reset it back to auto and the SEA should fail back to the primary VIOS:
+# chdev -l entX -a ha_mode=auto
+or
+$ chdev -dev -attr ha_mode=auto
+
+
+Scenario 2, Primary VIOS Shutdown
+Reboot the primary VIOS for fail over to backup SEA adapter.
+When the primary VIOS is up again, it should fail back to the primary SEA adapter.
+
+Scenario 3, Primary VIOS Error
+Deactivate primary VIOS from the HMC for fail over to backup SEA adapter.
+Activate the primary VIOS for the fail back to the primary SEA adapter again.
+
+Scenario 4, Physical Link Failure
+Unplug the cable of the physical ethernet adapter on primary VIOS for the failover to the backup VIOS.
+Replug the cable of the physical ethernet adapter on primary VIOS for the failback to the primary VIOS.
+
+Scenario 5, Reverse Boot Sequence
+Shut down both the VIO servers.
+Activate the VIOS with backup SEA until the adapter becomes active.
+Activate the VIOS with primary SEA. The configuration should fail back to
+the primary SEA. 
+
+NOTE: When we force a manual failover in Scenario 1, we bring down the link to the switch connected to VIO1, thus asking the switch to modify its MAC tables accordingly. The backup VIOS is able to take over immediately since it is up and running but was just not being used as yet. Now, during failback, the same situation occurs. Less delay happens because we forced the failover while the primary VIOS is up and running.
+
+In Scenario 2, when primary VIO1 is shutdown, the failover is also immediate. However, the failback to VIO 1 takes more time because the switch connected to VIO1 takes more time to start requeing packets.
+
+The fact that the delay is shorter for manual failover and longer for VIOS shutdown, implies that the delay is happening because some switches don't start transmitting and receiving packets for some time even after declaring that the link as up. From IBM's side, if the link is up when TCPIP is started, then we assume the switch is ready to start sending and receiving packets even though it may not actually be ready.
+
+
+RELATED INFORMATION
+#How to Setup SEA Failover on DUAL VIO Servers [http://www-01.ibm.com/support/docview.wss?uid=isg3T1011040]
+Shared Ethernet Adapter failover [http://publib.boulder.ibm.com/infocenter/powersys/v3r1m5/index.jsp?topic=/iphb1/iphb1_vios_sea_failover.htm]
+Spanning Tree PortFast BPDU uard Enhancement [http://www.cisco.com/en/US/tech/tk389/tk621/technologies_tech_note09186a008009482f.shtml]

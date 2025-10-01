@@ -1,0 +1,141 @@
+Title: IBM IZ28260: ALCATEL SAM PROBE, CLARITY FOR JMS FILER AND JMS ID NEEDED - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The default value for 'PersistentJmsId' is : "netcool@127.0.0.1"
+   The default value for 'JmsFilter' is : "ALA_clientId in
+   ('netcool@127.0.0.1','') and ALA_category not in ('STATISTICS',
+   'ACCOUNTING')"
+   Note that the default value of the 'PersistentJmsId' is part of
+   the default value of the 'JmsFilter' (in red above). This is to
+   allow all notifications intended to 'netcool@127.0.0.1' to be
+   received by the probe.
+   
+   If the default value of the 'PersistentJmsId' property is
+   updated, it is important to update the value of the 'JmsFilter'
+   accordingly otherwise the probe will miss some events (typically
+   the start-up SystemInfoEvent) and as a result won't behave
+   correctly.
+   A symptom of such behaviour will be the regular appearance of
+   this debug message in the logfile : "Debug: SAM: Sleeping until
+   receiving the Sam server's data?.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Set JMS filter and JMS ID to have the same IP or host name and
+   not a combination of local host and ip/host
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All users of Probe for Alcatel 5620 SAM.     *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: The usage of the filtering properties   *
+   *                      requires clarifying.                    *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   *                                                              *
+   ****************************************************************
+   The following note will be added to the Enabling durable
+   subscriptions section:
+   
+   Note: The JMSTopic connects to the subscriber specified by the
+   PersistentJmsID property. Make sure that the same JMS ID value
+   specified iusing the  PersistentJmsID property is part of the
+   JMSTopic property value.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The product documentation will be updated with the next release
+   of the probe.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ28260
+   
+   
+ * REPORTED COMPONENT NAME
+   ALCATEL SAM V4
+   
+   
+ * REPORTED COMPONENT ID
+   5724P17AV
+   
+   
+ * REPORTED RELEASE
+   100
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-07-28
+   
+   
+ * CLOSED DATE
+   2008-08-27
+   
+   
+ * LAST MODIFIED DATE
+   2008-08-27
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+Publications Referenced SC23766303 FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

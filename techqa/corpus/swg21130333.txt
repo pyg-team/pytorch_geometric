@@ -1,0 +1,47 @@
+Title: IBM Disk free space is always 500MB when in a ClearCase dynamic view - United States
+
+Text:
+MVFS; free space; volume size; increase; 500MB; diskspace; freespace; 1130333 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When installing software packages within the Multi-Version File System (MVFS) in an IBM® Rational® ClearCase® dynamic view, you will see various installation errors if your software package requires more than 500MB of free disk space. 
+
+CAUSE
+The MVFS [http://www-1.ibm.com/support/docview.wss?&rs=984&uid=swg21230196] always states there is 500 MB of free space, even when the disk volume where your view storage directory may in fact have more free space. 
+
+The reason for this behavior is because the MVFS does not know whether the application needs to know how much disk space is available for view storage or for VOB storage. 
+
+The MVFS always returns a constant equal to 500 MB, so that the application always tries the operation, thus, MVFS never causes an operation that may succeed to fail. 
+
+Change request (RFE) RATLC00606905 has been submitted to increase the value that the MVFS [http://www-1.ibm.com/support/docview.wss?&rs=984&uid=swg21230196] reports for disk free space within a view drive. 
+
+
+RESOLVING THE PROBLEM
+This functionality has been changed in ClearCase 7.0 [http://www-1.ibm.com/support/docview.wss?rs=984&uid=swg24012293]. 
+
+
+The view storage reported sizes have been increased to larger defaults, and the ability to change this reported size has been added to the ClearCase Control Panel (ClearCase Properties). 
+
+ 
+
+WORKAROUNDS: 
+
+To workaround this limitation, do one of the following: 
+
+ * Use a snapshot view.
+   
+   
+ * Map a network drive to a share that contains a directory structure that emulates the VOB structure. 
+   
+   This could be easily achieved by creating a snapshot view and sharing it out and mapping a drive to the snapshot view and then installing your software into the snapshot view. Once the installation is complete, disconnect that drive and map a dynamic view to the same drive letter and copy the installed software into the dynamic view and add whatever files into source control. If the install depends on any registry paths, they will be identical as long as the original drive letter used to map to the snapshot view is the same that you later use for the dynamic view.
+   
+   
+ * Change the behavior of your installation to not check for disk space
+
+
+
+
+
+
+RELATED INFORMATION
+#Known limitations for the MVFS on Microsoft Windows [http://www.ibm.com/support/docview.wss?uid=swg21146865]

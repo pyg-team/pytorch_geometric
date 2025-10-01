@@ -1,0 +1,146 @@
+Title: IBM Troubleshooting TLSv1.2 issues in IBM Docs 2.0 - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+After the use of TLSv1.2 with IBM Docs is forced, in SystemOut.log and trace.log for IBM Docs, SystemOut.log shows the following log: 
+
+ 
+[2/21/17 8:48:34:805 PST] 000000f8 HttpClientCre I SSL context initialized and HTTPS registered.
+[2/21/17 8:48:34:836 PST] 000000f8 HttpMethodDir I org.apache.commons.httpclient.HttpMethodDirector executeWithRetry I/O exception (javax.net.ssl.SSLHandshakeException) caught when processing request: Received fatal alert: handshake_failure
+[2/21/17 8:48:34:844 PST] 000000f8 HttpMethodDir I org.apache.commons.httpclient.HttpMethodDirector executeWithRetry Retrying request
+[2/21/17 8:48:34:853 PST] 000000f8 HttpMethodDir I org.apache.commons.httpclient.HttpMethodDirector executeWithRetry I/O exception (javax.net.ssl.SSLHandshakeException) caught when processing request: Received fatal alert: handshake_failure
+[2/21/17 8:48:34:855 PST] 000000f8 HttpMethodDir I org.apache.commons.httpclient.HttpMethodDirector executeWithRetry Retrying request
+[2/21/17 8:48:34:865 PST] 000000f8 HttpMethodDir I org.apache.commons.httpclient.HttpMethodDirector executeWithRetry I/O exception (javax.net.ssl.SSLHandshakeException) caught when processing request: Received fatal alert: handshake_failure
+[2/21/17 8:48:34:870 PST] 000000f8 HttpMethodDir I org.apache.commons.httpclient.HttpMethodDirector executeWithRetry Retrying request
+[2/21/17 8:48:34:883 PST] 000000f8 HttpMethodDir I org.apache.commons.httpclient.HttpMethodDirector executeWithRetry I/O exception (javax.net.ssl.SSLHandshakeException) caught when processing request: Received fatal alert: handshake_failure
+[2/21/17 8:48:34:885 PST] 000000f8 HttpMethodDir I org.apache.commons.httpclient.HttpMethodDirector executeWithRetry Retrying request
+[2/21/17 8:48:34:909 PST] 000000f8 DocumentDraft E Cannot connect to repository server(SSL issue, etc.)
+com.ibm.docs.repository.RepositoryAccessException: Exception occurred with error code: CLFAD1004, message: Cannot connect to repository server(SSL issue, etc.), and additional data: {"docUri":"eab5541f-8b2f-4666-42ce-7148b1082c95"}
+at com.ibm.docs.repository.files.LCFilesQCSRepository.getDocument(LCFilesQCSRepository.java:386)
+at com.ibm.concord.document.services.DocumentEntryUtil.getEntry(DocumentEntryUtil.java:143)
+at com.ibm.concord.document.services.DocumentEntryUtil.getCombiedDocEntry(DocumentEntryUtil.java:79)
+at com.ibm.concord.document.services.DocumentEntryUtil.getEntry(DocumentEntryUtil.java:178)
+at com.ibm.concord.services.rest.handlers.docsvr.DocumentDraftHandler.doGet(DocumentDraftHandler.java:95)
+at com.ibm.concord.services.rest.Service.doGet(Service.java:212)
+at javax.servlet.http.HttpServlet.service(HttpServlet.java:575)
+at com.ibm.concord.services.rest.Service.service(Service.java:136)
+at javax.servlet.http.HttpServlet.service(HttpServlet.java:668)
+at com.ibm.ws.webcontainer.servlet.ServletWrapper.service(ServletWrapper.java:1232)
+at com.ibm.ws.webcontainer.servlet.ServletWrapper.handleRequest(ServletWrapper.java:781)
+at com.ibm.ws.webcontainer.servlet.ServletWrapper.handleRequest(ServletWrapper.java:480)
+at com.ibm.ws.webcontainer.servlet.ServletWrapperImpl.handleRequest(ServletWrapperImpl.java:178)
+at com.ibm.ws.webcontainer.filter.WebAppFilterChain.invokeTarget(WebAppFilterChain.java:136)
+at com.ibm.ws.webcontainer.filter.WebAppFilterChain.doFilter(WebAppFilterChain.java:97)
+at com.ibm.concord.filters.EntitlementFilter.doFilter(EntitlementFilter.java:72)
+at com.ibm.ws.webcontainer.filter.FilterInstanceWrapper.doFilter(FilterInstanceWrapper.java:195)
+at com.ibm.ws.webcontainer.filter.WebAppFilterChain.doFilter(WebAppFilterChain.java:91)
+at com.ibm.docs.authentication.filters.LotusConnectionsAuth.doFilter(LotusConnectionsAuth.java:412)
+at com.ibm.docs.authentication.filters.LotusConnectionsAuth.doFilter(LotusConnectionsAuth.java:165)
+at com.ibm.concord.filters.SessionUserFilter.doFilter(SessionUserFilter.java:87)
+at com.ibm.ws.webcontainer.filter.FilterInstanceWrapper.doFilter(FilterInstanceWrapper.java:195)
+at com.ibm.ws.webcontainer.filter.WebAppFilterChain.doFilter(WebAppFilterChain.java:91)
+at com.ibm.concord.filters.HttpSettingsFilter.doFilter(HttpSettingsFilter.java:85)
+at com.ibm.ws.webcontainer.filter.FilterInstanceWrapper.doFilter(FilterInstanceWrapper.java:195)
+at com.ibm.ws.webcontainer.filter.WebAppFilterChain.doFilter(WebAppFilterChain.java:91)
+at com.ibm.ws.webcontainer.filter.WebAppFilterManager.doFilter(WebAppFilterManager.java:967)
+at com.ibm.ws.webcontainer.filter.WebAppFilterManager.invokeFilters(WebAppFilterManager.java:1107)
+at com.ibm.ws.webcontainer.webapp.WebApp.handleRequest(WebApp.java:3926)
+at com.ibm.ws.webcontainer.webapp.WebGroup.handleRequest(WebGroup.java:304)
+at com.ibm.ws.webcontainer.WebContainer.handleRequest(WebContainer.java:1007)
+at com.ibm.ws.webcontainer.WSWebContainer.handleRequest(WSWebContainer.java:1817)
+at com.ibm.ws.webcontainer.channel.WCChannelLink.ready(WCChannelLink.java:200)
+at com.ibm.ws.http.channel.inbound.impl.HttpInboundLink.handleDiscrimination(HttpInboundLink.java:463)
+at com.ibm.ws.http.channel.inbound.impl.HttpInboundLink.handleNewRequest(HttpInboundLink.java:530)
+at com.ibm.ws.http.channel.inbound.impl.HttpInboundLink.processRequest(HttpInboundLink.java:316)
+at com.ibm.ws.http.channel.inbound.impl.HttpICLReadCallback.complete(HttpICLReadCallback.java:88)
+at com.ibm.ws.ssl.channel.impl.SSLReadServiceContext$SSLReadCompletedCallback.complete(SSLReadServiceContext.java:1818)
+at com.ibm.ws.tcp.channel.impl.AioReadCompletionListener.futureCompleted(AioReadCompletionListener.java:175)
+at com.ibm.io.async.AbstractAsyncFuture.invokeCallback(AbstractAsyncFuture.java:217)
+at com.ibm.io.async.AsyncChannelFuture.fireCompletionActions(AsyncChannelFuture.java:161)
+at com.ibm.io.async.AsyncFuture.completed(AsyncFuture.java:138)
+at com.ibm.io.async.ResultHandler.complete(ResultHandler.java:204)
+at com.ibm.io.async.ResultHandler.runEventProcessingLoop(ResultHandler.java:775)
+at com.ibm.io.async.ResultHandler$2.run(ResultHandler.java:905)
+at com.ibm.ws.util.ThreadPool$Worker.run(ThreadPool.java:1881)
+Caused by: javax.net.ssl.SSLHandshakeException: Received fatal alert: handshake_failure
+at com.ibm.jsse2.p.a(p.java:36)
+at com.ibm.jsse2.p.a(p.java:23)
+at com.ibm.jsse2.SSLSocketImpl.b(SSLSocketImpl.java:789)
+at com.ibm.jsse2.SSLSocketImpl.a(SSLSocketImpl.java:397)
+at com.ibm.jsse2.SSLSocketImpl.h(SSLSocketImpl.java:320)
+at com.ibm.jsse2.SSLSocketImpl.a(SSLSocketImpl.java:609)
+at com.ibm.jsse2.l.write(l.java:24)
+at java.io.BufferedOutputStream.flushBuffer(BufferedOutputStream.java:76)
+at java.io.BufferedOutputStream.flush(BufferedOutputStream.java:134)
+at org.apache.commons.httpclient.HttpConnection.flushRequestOutputStream(HttpConnection.java:828)
+at org.apache.commons.httpclient.MultiThreadedHttpConnectionManager$HttpConnectionAdapter.flushRequestOutputStream(MultiThreadedHttpConnectionManager.java:1565)
+at org.apache.commons.httpclient.HttpMethodBase.writeRequest(HttpMethodBase.java:2116)
+at org.apache.commons.httpclient.HttpMethodBase.execute(HttpMethodBase.java:1096)
+at org.apache.commons.httpclient.HttpMethodDirector.executeWithRetry(HttpMethodDirector.java:398)
+at org.apache.commons.httpclient.HttpMethodDirector.executeMethod(HttpMethodDirector.java:171)
+at org.apache.commons.httpclient.HttpClient.executeMethod(HttpClient.java:397)
+at com.ibm.connections.httpClient.ServerToServerHttpClient.executeMethod(ServerToServerHttpClient.java:181)
+at com.ibm.docs.repository.files.LCFilesQCSRepository.getDocument(LCFilesQCSRepository.java:368)
+... 45 more
+
+
+trace.log :
+
+[2/22/17 9:00:52:887 PST] 00000117 SystemOut O WebContainer : 1, READ: TLSv1.2 Alert, length = 2
+[2/22/17 9:00:52:887 PST] 00000117 SystemOut O WebContainer : 1, RECV TLSv1 ALERT: fatal, handshake_failure
+[2/22/17 9:00:52:888 PST] 00000117 SystemOut O WebContainer : 1, called closeSocket()
+[2/22/17 9:00:52:888 PST] 00000117 SystemOut O WebContainer : 1, handling exception: javax.net.ssl.SSLHandshakeException: Received fatal alert: handshake_failure
+
+
+CAUSE
+This is caused by not enabling TLSv1.2 in IBM Docs while forcing the use of TLSv1.2 in HttpServer. 
+
+
+
+RESOLVING THE PROBLEM
+1. Use the following link to enable TLS1.2 for IBM Docs: 
+
+https://meisenzahl.org/2016/10/26/using-tls-1-2-only-configuration-with-ibm-connections/ [https://meisenzahl.org/2016/10/26/using-tls-1-2-only-configuration-with-ibm-connections/]
+
+2. Upgrade to IBM Docs 2.0 iFix 007.
+3. For ECM integration, do the following steps in your environment: 
+
+ * 
+ * 
+ * 
+ * <?xml version="1.0" encoding="UTF-8"?>
+ * 
+ * <config id="LotusConnections" xmlns="
+ * 
+ * 
+ * 
+ * xmlns:sloc="
+ * http://www.ibm.com/service-location [http://www.ibm.com/service-location]
+ * " xmlns:tns="
+ * 
+ * 
+ * 
+ * xmlns:xsi="
+ * http://www.w3.org/2001/XMLSchema-instance [http://www.w3.org/2001/XMLSchema-instance]
+ * " xsi:schemaLocation="
+ * 
+ * 
+ * 
+ * <properties>
+ * 
+ * <genericProperty name="com.ibm.connections.SSLProtocol">TLSv1.2</genericProperty>
+ * 
+ * </properties>
+ * 
+ * </config>
+ * 
+ * 
+ * 
+ * 
+ * 
+
+
+4. If you still don't see the Edit in IBM Docs button in Files, see the following technote: 
+http://www-01.ibm.com/support/docview.wss?uid=swg21997328 [http://www-01.ibm.com/support/docview.wss?uid=swg21997328]

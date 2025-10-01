@@ -1,0 +1,24 @@
+Title: IBM A type 4 JCC driver connection returns an OverlappingFileLockException - United States
+
+Text:
+JCC; JDBC; Connect; DB2Driver; OverlappingFileLockException TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ An application using the IBM Data Server Driver for JDBC and SQLJ commonly referred to as the JCC driver in type 4 mode encounters an OverlappingFileLockException when connecting to a DB2 database. 
+
+SYMPTOM
+An application using the IBM Data Server Driver for JDBC and SQLJ commonly referred to as the JCC driver in type 4 mode receives an OverlappingFileLockException when attempting to connect to a DB2 database.
+
+
+CAUSE
+The driver obtains a file lock during a connection. In cases where there is more than one instance of the com.ibm.db2.jcc.DB2Driver class in the JVM the two instances could attempt to get a lock on the file at the same time. 
+
+DIAGNOSING THE PROBLEM
+Verify if there are two or more instances of the com.ibm.db2.jcc.DB2Driver class being loaded into a single JVM process. For example does each of the application's threads have a class loader and consequently each thread loads its own instance of the class into the same JVM.
+
+RESOLVING THE PROBLEM
+The IBM Data Server Driver for JDBC and SQLJ does not support loading more than one instance of the com.ibm.db2.jcc.DB2Driver class in a single JVM process. It will be necessary to modify the application so that it loads only one instance of the com.ibm.db2.jcc.DB2Driver class per process. The driver does support more than one thread using a single instance of the com.ibm.db2.DB2Driver class.
+
+RELATED INFORMATION
+ Connecting to data sources using the DriverManager [http://publib.boulder.ibm.com/infocenter/db2luw/v10r1/topic/com.ibm.db2.luw.apdv.java.doc/src/tpc/imjcc_tjvjcccn.html]
+Methods of the DB2Driver Class [http://publib.boulder.ibm.com/infocenter/db2luw/v10r1/topic/com.ibm.db2.luw.apdv.java.doc/src/tpc/imjcc_rjv00011.html]

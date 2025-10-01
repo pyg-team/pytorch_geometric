@@ -1,0 +1,36 @@
+Title: IBM C&DS job schedules are no longer running. - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Jobs schedules suddenly stopped working on the Collaboration and Deployment Server. 
+
+SYMPTOM
+Errors seen in the logs:
+[9/11/12 10:00:38:776 CDT] 00000004 ConnectionEve W J2CA0206W: A
+connection error occurred. To help determine the problem, enable the
+Diagnose Connection Usage option on the Connection Factory or Data
+Source.This is the multithreaded access detection option.
+[9/11/12 10:00:38:778 CDT] 00000004 ConnectionEve A J2CA0056I: The
+Connection Manager received a fatal connection error from the Resource
+Adapter for resource jdbc/DefaultEJBTimerDataSource. The exception is:
+java.sql.SQLNonTransientConnectionException: No current connection.:
+java.sql.SQLException: No current connection.
+[9/11/12 10:00:38:779 CDT] 00000004 WSRdbXaResour E DSRA0304E:
+XAException occurred. XAException contents and details are: The cause
+is : null.
+[9/11/12 10:00:38:780 CDT] 00000004 WSRdbXaResour E DSRA0302E:
+XAException occurred. Error code is: XA_RBOTHER (104). Exception is:
+<null>
+
+
+RESOLVING THE PROBLEM
+The WebSphere server is normally started by a non-root user. At some point during the day the WebSphere server was started as root. It created two lock files. When WebSphere was started by the original user the lock files still existed and had ownership of root. The non-root user did not have access to these files. Once ownership of those files were changed to the non-root user, the issue was resolved.
+
+Location of the files: <WebSphere profiles dir>/<C&DS profile>/databases/EJBTimers/<C&DS server name>/EJBTimerDB
+
+Name of the files: db.lck, dbex.lck
+
+RELATED INFORMATION
+ Need more help? Our C&DS forum is Live! [https://developer.ibm.com/answers/topics/collaboration.html?smartspace=predictive-analytics]

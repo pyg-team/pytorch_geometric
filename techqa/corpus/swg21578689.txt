@@ -1,0 +1,36 @@
+Title: IBM Running of the IBM Tivoli Monitoring DLA results in OutOfMemoryError message - United States
+
+Text:
+Monitoring DLA; error message; out of memory; Java heap TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The Tmsdla program abnormally ends with a message similar to the following message:
+JVMDUMP006I Processing dump event "systhrow", 
+detail "java/lang/OutOfMemoryError" - please wait. 
+
+CAUSE
+Either or both of the following situations can cause the Java heap to be exhausted, which results in the OutOfMemoryError message and the creation of heapdump and javacore files: 
+
+ * The system on which the Tmsdla program is running is low on memory.
+   
+ * The monitored enterprise is extremely large.
+   
+   
+
+
+RESOLVING THE PROBLEM
+If you observe symptoms of heap memory exhaustion using the default maximum Java heap size of 256 MB, update the value for the maximum Java heap size in the respective Tmsdla startup script (using increments of 64 MB) until the problem is resolved.
+
+Startup script on Windows systems Update the %ITM_HOME%\CNPS\tmsdla.bat file. Startup script on non-Windows systems Update the $ITM_HOME/arch/cq/bin/tmsdla.sh file. To update the value in the startup script, complete the following steps:  1.  Search for the following parameters (near the end of the file): 
+    java -Xms64m -Xmx256m  The Xms64m parameter specifies the starting size of the Java heap (64 MB), and the Xmx256m parameter specifies the maximum size of the Java heap (256 MB).
+    
+    
+ 2.  Increment the Xmx256m parameter by 64 MB (for example, change it to Xmx320m), and save the file.
+    Note: Ensure that the system on which the Tmsdla program runs has enough memory to process the maximum heap size that is defined in the Tmsdla startup script. 
+ 3. Run the Tmsdla program. 
+ 4. If the OutOfMemoryError message reoccurs, repeat this process of incrementing the maximum heap size by 64 MB (examples of additional values to try include 384 MB and 448 MB). 
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ TADDM

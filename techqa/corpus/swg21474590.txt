@@ -1,0 +1,70 @@
+Title: IBM Omnibus 7.3.x install on AIX fails with Tivoli Configuration Manager - United States
+
+Text:
+Deployment Engine; DE; wscanhw; ConfigFile_1; Omnibus; netcool TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Installing Omnibus 7.3.x on AIX system with a Tivoli Inventory scan, the install fails. 
+
+SYMPTOM
+From the Omnibus install log: 
+
+ <errorMessages> 
+
+ <errorMessage>[com.ibm.ac.si.ap.action.ActionException: , 
+
+com.ibm.ac.common.hosts.CreationFailedException: : ]</errorMessage> 
+
+ </errorMessages> 
+
+ <actionErrorEvents> 
+
+ <actionErrorEvent actionID="ConfigFile_1" 
+
+actionName="addFile">ACUCME1100E </actionErrorEvent> 
+
+ </actionErrorEvents> 
+
+
+CAUSE
+CIT directory used by Tivoli Inventory was not complete. 
+
+
+DIAGNOSING THE PROBLEM
+In the DE_HOME/logs/de_trace.log, the wscanhw program fails - 
+
+Caused by: com.ibm.ac.si.ap.action.ExternalCommandActionException: 
+
+ACUOSI0050E External command action failed with return code 18. 
+
+Invocation string: [/usr/ibm/common/acsi/bin/wscanhw, -o, 
+
+/tmp/collector356.tmp, -c, 
+
+/usr/ibm/common/acsi/dat/config/scanconfig.xml] 
+
+ at 
+
+com.ibm.ac.tp.basehost.ActionHandler.handlePhase(ActionHandler.java:233) 
+
+ ... 35 more 
+
+ 
+
+2011-03-24 13:09:54.915-05:00 1 ActionProcessorExceptionParms 
+
+ActionProcessorExceptionParms ews-pgh1-esmdr IP 
+
+rootException = com.ibm.ac.si.ap.action.ExternalCommandActionException: 
+
+ACUOSI0050E External command action failed with return code 18. 
+
+Invocation string: [/usr/ibm/common/acsi/bin/wscanhw, -o, 
+
+/tmp/collector356.tmp, -c, 
+
+/usr/ibm/common/acsi/dat/config/scanconfig.xml] 
+
+
+RESOLVING THE PROBLEM
+Check the global CIT configuration file /etc/cit/cit.ini. The directory listed should have Tivoli Inventory binaries and be readable by the user installing DE. Move the file /etc/cit/cit.ini to /etc/cit/cit.ini.old. Uninstall Omnibus and run the installation again.

@@ -1,0 +1,18 @@
+Title: IBM Admin credentials validation fails during JazzSM 1.1.2.1 update - United States
+
+Text:
+DASHL2; validate; validation; credentials; primary admin user; JazzSM; TWS; DWC TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The step to validate the admin user credentials when applying JazzSM 1.1.2.1 to a TWS/DWC 9.3/JazzSM 1.1.2 install hangs for several minutes and then fails indicating the credentials are incorrect. 
+
+CAUSE
+The validation check is failing to detect all application ports are active. It waits 5 minutes for all ports to become active and then times out. The TWS/DWC migration script "tdwcUpgrade" changes the default host name value for the "endPointName="IPC_CONNECTOR_ADDRESS" entry in the <JazzSM Home>/profile/config/cells/JazzSMNode01Cell/nodes/JazzSMNode01/serverindex.xml file from "${LOCALHOST_NAME}" to the fully qualified host name for the DASH server. That change affects how the port status appears in the netstat output. So, even though the port is active it does not appear active to the JazzSM installer.
+
+DIAGNOSING THE PROBLEM
+Review the serverindex.xml file for the host value specified for the "endPointName="IPC_CONNECTOR_ADDRESS" entry to see if it is set to the FQDN for the DASH host. 
+
+RESOLVING THE PROBLEM
+TWS Support indicates the FQDN value is necessary. To address the issue the host value for the "endPointName="IPC_CONNECTOR_ADDRESS" entry in the <JazzSM Home>/profile/config/cells/JazzSMNode01Cell/nodes/JazzSMNode01/serverindex.xml can be changed to "localhost", and then retry the JazzSM 1.1.2.1 update. After the install is complete, the hostname value for the "endPointName="IPC_CONNECTOR_ADDRESS" entry can be set back to the DASH host's FQDN.
+
+Note: The instance must be restarted for any changes to the serverindex.xml to take effect.

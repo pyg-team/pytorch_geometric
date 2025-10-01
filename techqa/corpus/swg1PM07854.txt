@@ -1,0 +1,142 @@
+Title: IBM PM07854: LARGE CHARACTER ARRAYS FROM BODYCONTENTIMPL ARE CONSUMING THE HEAP, CAUSING OUTOFMEMORY. - United States
+
+Text:
+z/os SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DUPLICATE OF ANOTHER APAR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  On z/OS, the symptom is we had a lot of char arrays
+   (900M) and a lot of  java/lang/Strings (1.5M).
+   .
+   There were a lot of Strings containing
+   SQL commands the high char arrays storage was
+   caused by a lot of Strings..
+   .
+   char arrays storage were used by java/lang/StringBuffer.
+   Here are the top 30 high usage objects and they are
+   all char arrays.
+   Size       Id         Class
+   ----       --         -----
+   38973144   863e49ab8   array of char
+   24187744   866374990   array of char
+   22986552   87edc33f0   array of char
+   22986552   873a44798   array of char
+   .
+   They belongs to apache.
+   org/apache/jasper/runtime/PageContextImpl.outs
+       [Lorg/apache/jasper/runtime/BodyContentImpl;
+   org/apache/jasper/runtime/BodyContentImpl.strBuffer
+        Ljava/lang/StringBuffer;
+   java/lang/StringBuffer.value
+   .
+   A large hashmap referencing large character arrays is consuming
+   the heap, resulting in OutOfMemory occurrences.  The large
+   character arrays are referenced by:
+   
+   org.apache.jasper.runtime.BodyContentImpl
+   .
+   In a different scenario, we saw the following
+   in the heapdump analysis.
+   .
+   char arrays under
+   com.ibm.ws.util.ThreadPool$ZOSWorker
+   -> org.apache.jasper.runtime.JspFactoryImpl$2
+   (-> java.lang.StringBuffer)
+   * 37.7 MB
+   * 37.5 MB
+   * 27.6 MB
+   .
+   com.ibm.ws.webcontainer.httpsession.MemorySessionContext
+   -> com.ibm.ws.webcontainer.httpsession.SessionSimpleHashMap
+   .
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *  PM07854 is a sysroute of APAR PK95332 [http://www-01.ibm.com/support/docview.wss?uid=swg1PK95332]. PM07854 is being closed
+   DUP of APAR PM04118 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM04118] because PM04118 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM04118] documents the delivery
+   of APAR PK95332 [http://www-01.ibm.com/support/docview.wss?uid=swg1PK95332] in Service Level (Fix Pack) 6.1.0.29 of
+   WebSphere Application Server V6.1.0 for z/OS.
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM07854
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSPHERE FOR Z
+   
+   
+ * REPORTED COMPONENT ID
+   5655I3500
+   
+   
+ * REPORTED RELEASE
+   610
+   
+   
+ * STATUS
+   CLOSED DUA
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-02-17
+   
+   
+ * CLOSED DATE
+   2010-04-05
+   
+   
+ * LAST MODIFIED DATE
+   2010-04-05
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    PK95332 [http://www-01.ibm.com/support/docview.wss?uid=swg1PK95332]
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

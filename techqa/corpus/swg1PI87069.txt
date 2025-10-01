@@ -1,0 +1,162 @@
+Title: IBM PI87069: WHEN RUNNING WITH JAVA8, EBCDIC STRINGS DATA CONVERSION SHOWS WRONG BEHAVIOR. - United States
+
+Text:
+z/os  FIXES ARE AVAILABLE
+8.5.5.13: WebSphere Application Server V8.5.5 Fix Pack 13 [http://www-01.ibm.com/support/docview.wss?uid=swg24044479]
+9.0.0.7: WebSphere Application Server traditional V9.0 Fix Pack 7 [http://www-01.ibm.com/support/docview.wss?uid=swg24044620]
+7.0.0.45: WebSphere Application Server V7.0 Fix Pack 45 [http://www-01.ibm.com/support/docview.wss?uid=swg24044551]
+8.0.0.15: WebSphere Application Server V8.0 Fix Pack 15 [http://www-01.ibm.com/support/docview.wss?uid=swg24044734]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  In data marshalling library shipped in WAS (marshall.jar), it
+   has been using the same code to convert DBCS EBCDIC strings
+   to/from COBOL/C/PL/I programs running on z/OS (MVS) ever since
+   Java 2.  The issue comes in when using Java 8 and a 'null'
+   terminated string on the host that needs to be converted to a
+   Java string on the client.
+   
+   This is expected behavior from IBM JDK 8 which is inline with
+   the Cp935 converter specification.
+   
+   Older JDK releases (before IBM Java 8) use IO converters and the
+   behavior observed with those releases is due to a bug with IO
+   converters.
+   
+   This means the marhall.jar needs to provide a
+   -Dsome.java.system.property so that the Java 8 behavior can be
+   tolerated by existing applications.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  n/a
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  All users of IBM WebSphere Application      *
+   *                  Server V8.5                                 *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Data marshalling null terminated DBCS   *
+   *                      EBCDIC strings contain Unicode          *
+   *                      replacement characters                  *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   Running under Java 8, using the marshall.jar library to data
+   marshall null terminated DBCS EBCDIC strings from
+   COBOL/C/PL/I programs running on z/OS, the strings are returned
+   with Unicode replacement characters where the null characters
+   are in the data stream. Prior to Java 8, the null characters
+   were removed from the returned string.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A behavior change the Java 8 runtime has been accounted for,
+   and a fix is provided.
+   
+   The fix for this APAR is currently targeted for inclusion in
+   fix pack 8.5.5.13.  Please refer to the Recommended Updates
+   page for delivery information:
+   http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI87069
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSPHERE FOR Z
+   
+   
+ * REPORTED COMPONENT ID
+   5655I3500
+   
+   
+ * REPORTED RELEASE
+   850
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-09-12
+   
+   
+ * CLOSED DATE
+   2018-01-24
+   
+   
+ * LAST MODIFIED DATE
+   2018-03-07
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    PI94823 [http://www-01.ibm.com/support/docview.wss?uid=swg1PI94823]
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBSPHERE FOR Z
+   
+   
+ * FIXED COMPONENT ID
+   5655I3500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R850 PSY
+   UP

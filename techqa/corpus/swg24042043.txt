@@ -1,0 +1,48 @@
+Title: IBM Downloading IBM Care Management 6.2 - United States
+
+Text:
+ DOWNLOADABLE FILES
+
+ABSTRACT
+ This document describes how to download and assemble IBM Care Management 6.2 using the Passport Advantage® Online Web site. 
+
+DOWNLOAD DESCRIPTION
+
+
+
+
+DOWNLOADING FROM PASSPORT ADVANTAGE
+IBM Care Management 6.2 is a software bundle consisting of a number of separately installed IBM products. After proof of entitlement, download any or all of the images listed here. 
+
+To obtain the download images:
+
+ 1.  Navigate to the Find Downloads and Media web page on the IBM Passport Advantage website.
+ 2.  Under Download finder options, select the Find by part number search option.
+ 3.  Search for each downloadable image by download name.
+ 4.  Download all required parts. You must create a temporary directory for each download.
+ 5.  Use a file extracting utility that supports large file extractions to extract each of the parts into a single, temporary directory on your system.
+ 6.  To install, read the installation instructions and associated release notes for all the products in the software bundle that you are entitled to. 
+ 7. Read the IBM Care Management release notes on the IBM Support Portal [http://www-01.ibm.com/support/docview.wss?uid=swg27048019].
+
+Download part numbers 
+
+Download Part Number IBM Care Management V6.2.0 Quick Start Guide Multilingual CNB2MML  *  - [http://www.ibm.com/i/c.gif] IBM Care Management Coordinator V6.2.0 Download Part Number IBM Care Management Coordinator V6.2.0 Multilingual eAssembly CJ04XML IBM Curam Social Program Management V6.2.0 for IBM Care Management V6.2.0 MultiPlatform Multilingual eAssembly CJ04YML IBM WebSphere Application Server V8.5.5 for IBM Curam Social Program Management Platform V6.2.0 for IBM Care Management V6.2.0 Multiplatform Multilingual eAssembly CJ04ZML IBM DB2 V10.5 for IBM Curam Social Program Management Platform V6.2.0 for IBM Care Management v6.2.0 Multiplatform Multilingual eAssembly CJ050ML IBM Integration Bus V10.0 for IBM Care Management V6.2.0 MultiPlatform Multilingual eAssembly CJ05AML IBM Integration Bus Connectivity Pack for Healthcare V4.0 for IBM Care Management V6.2.0 MultiPlatform Multilingual eAssembly CJ05BML Note - if you have entitlement to IBM Care Management Coordinator V6.2.0, you will also be able to download the Patient Overview asset [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=Smarter%2BCities&product=ibm/Other+software/IBM+Care+Management&release=All&platform=All&function=all] from Fix Central. 
+   
+   
+ *  - [http://www.ibm.com/i/c.gif] IBM Care Management Public Access V6.2.0 Download Part Number IBM Care Management Public Access V6.2.0 Multilingual eAssembly CJ051ML IBM Curam Social Program Management V6.2.0 for IBM Care Management v6.2.0 MultiPlatform Multilingual eAssembly CJ052ML IBM WebSphere Application Server V8.5.5 for IBM Curam Social Program Management Platform V6.2.0 for IBM Care Management V6.2.0 Multiplatform Multilingual eAssembly CJ05CML IBM DB2 V10.5 for IBM Curam Social Program Management Platform V6.2.0 for IBM Care Management V6.2.0 Multiplatform Multilingual eAssembly CJ053ML IBM Integration Bus V10.0 for IBM Care Management V6.2.0 MultiPlatform Multilingual eAssembly CJ05DML IBM Integration Bus Connectivity Pack for Healthcare V4.0 for IBM Care Management V6.2.0 MultiPlatform Multilingual eAssembly CJ05EML Back to top
+   
+   
+ *  - [http://www.ibm.com/i/c.gif] IBM Care Management Analyst V6.2.0 Download Part Number IBM Care Management Analyst V6.2.0 Multilingual eAssembly CJ04RML IBM Watson Explorer Advanced Edition V11.0 for IBM Care Management V6.2.0 Multiplatform Multilingual eAssembly CJ04SML IBM Integration Bus V10.0 for IBM Care Management v6.2.0 Multiplatform Multilingual eAssembly CJ04TML IBM Integration Bus Connectivity Pack for Healthcare V4.0 for IBM Care Management v6.2.0 Multiplatform Multilingual eAssembly CJ04UML IBM Content Intgrtr 8.6 for IBM Watson Explorer Advanced Edition V11.0 for IBM Care Management v6.2.0 Multiplatform Multilingual eAssembly CJ04VML IBM WebSphere Application Server V8.5.5 for IBM Watson Explorer Advanced Edition V11.0 for IBM Care Management v6.2.0 Multiplatform Multilingual eAssembly CJ04WML Note - if you have entitlement to IBM Care Management Analyst V6.2.0, you will also be able to download the IBM Care Management Healthcare Annotators V6.2.0 component [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=Smarter%2BCities&product=ibm/Other+software/IBM+Care+Management&release=All&platform=All&function=all] from Fix Central. 
+   
+   Back to top
+   
+   
+ *  - [http://www.ibm.com/i/c.gif] IBM Care Management Healthcare Annotators V6.2.0 Download Part Number IBM Care Management Healthcare Annotators V6.2.0 Multiplatform Multilingual eAssembly CJ05KML Back to top
+   
+   
+ *  Back to top
+   
+   
+
+PREREQUISITES
+IBM Care Management Supported Prerequisites [http://www-01.ibm.com/support/docview.wss?uid=swg27047975]

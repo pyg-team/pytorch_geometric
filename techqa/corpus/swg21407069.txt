@@ -1,0 +1,101 @@
+Title: IBM Collecting Data : ITCAM for SOA 7.1.1 and 7.2 - United States
+
+Text:
+CAMSOAALL CAMSOACD "collecting Data" MustGather ITCAM SOA ITCAMfSOA ITCAM4SOA 7.1.1 7.1 7.2 Log logs trace traces d4 TECHNOTE (FAQ)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ US English 
+
+QUESTION
+ What ITCAM for SOA logs are required for Problem Determination ? 
+
+ANSWER
+
+Information/document required for SOA problem determination
+
+
+Please provide the following information from the environment having the problem: 
+
+ 1. All platforms (operating systems) related to the issue. 
+ 2. Version of ITCAM for SOA. 
+ 3. Name and Version of the App Server (ex: WebSphere 6.1) 
+ 4. Result of the following command from all the platforms listed in 1 above From "<ITM_HOME>/bin" directory, 
+    **Windows : "kincinfo -i" 
+    **Unix : "cinfo -i" 
+ 5. Helpful snapshot if appropriate 
+ 6. Logs : Send DC and TEMA logs. 
+
+ * 
+
+
+Abbreviations and Definitions: [/support/docview.wss?uid=swg21407069&amp;aid=1] [/support/docview.wss?uid=swg21407069&amp;aid=1] DC Data Collector TEMA Tivoli Enterprise Monitoring Agent (ITCAM for SOA Agent) TEP
+TEMS
+TCOR
+SDMS
+DP
+ITM Tivoli Enterprise Portal
+Tivoli Enterprise Monitoring Server
+Tivoli Common Object Repository
+SOA Domain Management Server
+Data Power
+IBM Tivoli Monitoring 
+Problem Occurring : Collect Doc for : SDMS and Topology View  * DC log and the Description of what you expect the view to show 
+ *  If "performance summary" NOT working, send TEMA logs using following link -
+
+http://www-01.ibm.com/support/docview.wss?uid=swg21422604&collections=technotes:hpmrs [http://www-01.ibm.com/support/docview.wss?uid=swg21422604&collections=technotes:hpmrs] (for TEMA logs)
+ *  If "operational flow" NOT working, send SDMS and related TEPS logs using following link - 
+
+http://www-01.ibm.com/support/docview.wss?uid=swg21422496&collections=technotes:hpmrs [http://www-01.ibm.com/support/docview.wss?uid=swg21422496&collections=technotes:hpmrs] (for SDMS logs)
+
+http://www-01.ibm.com/support/docview.wss?uid=swg21422652&collections=technotes:hpmrs [http://www-01.ibm.com/support/docview.wss?uid=swg21422652&collections=technotes:hpmrs] (for related TEPS logs) History Data not available  * TEMA log 
+ * TEPS log 
+ * Warehouse Proxy Agent log 
+ * TEMS log,
+
+If SOA is not directly connected to a HUB, then send Remote TEMS log DLA 
+(Discovery Library Adapter)  *  DC log and TEMA log 
+ *  SDMS log and TCORE log
+
+ITM (TEMS, TEPS)  *  TEMA log 
+ *  TEPS and TEMS log
+
+Data Power Appliance  *  Send the requested logs described in following link -http://www.ibm.com/support/docview.wss?&uid=swg21305909 [http://www.ibm.com/support/docview.wss?&uid=swg21305909]
+
+
+
+Collecting Data Collector (DC) Data Note : 
+1. Please turn on UpdateTracing_610 takeAction to collect DC trace, if possible. 
+Click this for the UpdateTracing_610 takeAction instruction => 
+http://www.ibm.com/support/docview.wss?uid=swg21408921 [http://www.ibm.com/support/docview.wss?uid=swg21408921] 
+
+2. Zip/Tar up following directory from SOA installed machine of your specific platform. 
+
+** Windows Location <ITM_HOME>\TMAITM6\KD4\logs and all its subdirectories
+<ITM_HOME>\TMAITM6\ KD4\config 
+** UNIX, Linux and z/OS Location <ITM_HOME>/<os>/d4/KD4/logs and all its subdirectories 
+<ITM_HOME>/<os>/d4/KD4/config 
+
+Collecting Monitoring Agents (TEMA) Data 
+Note : Zip/Tar up following directory from SOA installed machine of your specific platform. 
+
+** Both Windows and Unix Location <ITM_HOME>\logs\<hostname>_d4_<timestamp>*.log files 
+
+Collecting ITM TEMS and TEPS Data 
+Note : Use following provided link to get the data for your specific ITM component error case. 
+
+All ITM V6 Components http://www.ibm.com/support/docview.wss?&uid=swg21266383 [http://www.ibm.com/support/docview.wss?&uid=swg21266383] TEMS ** Windows, Linux, Unix, z/OS 
+http://www.ibm.com/support/docview.wss?&uid=swg21269622 [http://www.ibm.com/support/docview.wss?&uid=swg21269622] TEPS ** Windows, Linux, Unix 
+http://www.ibm.com/support/docview.wss?uid=swg21297524 [http://www.ibm.com/support/docview.wss?uid=swg21297524] TEP ** Windows : <ITM_HOME>\CNP\logs
+** Linux/UNIX : <ITM_HOME>/<os>/cj/logs 
+
+Collecting TCORE and SDMS Data 
+Note : Zip/Tar up following directory from TEPS installed machine of your specific platform. 
+
+** Windows Location <ITM_HOME>\CNPSJ\profiles\ITMProfiles|logs\ITMServer\SystemOut.log and SystemErr.log 
+** UNIX, Linux Location <ITM_HOME>/<platform>/iw/profiles/ITMProfile/logs/ITMServer/SystemOut.log and SystemErr.log 
+
+Collecting for ITCAM for SOA and WebSphere DataPower Problem Determination 
+Data Power http://www.ibm.com/support/docview.wss?&uid=swg21305909 [http://www.ibm.com/support/docview.wss?&uid=swg21305909]  
+
+PRODUCT ALIAS/SYNONYM
+ ITCAM for SOA

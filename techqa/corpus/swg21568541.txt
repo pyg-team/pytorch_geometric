@@ -1,0 +1,17 @@
+Title: IBM WebSphere Adapter for Flat Files V7 not moving files from Staging Directory to Output Directory - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ IBM WebSphere Adapter for Flat Files Version 7 not moving files from Staging Directory to Output Directory when doing outbound operations 
+
+SYMPTOM
+The application is using a FlatFile adapter to write files to a NFS mounted directory. Using overwrite operation in the FlatFile adapter, the files are not moved back to the Output directory.
+
+
+CAUSE
+This has been identified as a product defect under APAR JR40810.
+
+RESOLVING THE PROBLEM
+Contact IBM support for the IBM WebSphere Adapter for interim fix level of the WebSphere Adapter for Flat Files 7.0.0.4_IF02, or wait for APAR JR40810 to be released in a fix pack release of the adapter.

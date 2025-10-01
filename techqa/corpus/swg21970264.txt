@@ -1,0 +1,36 @@
+Title: IBM Oracle Database Server 12c is supported with IBM FileNet Image Services - United States
+
+Text:
+Oracle 12c; oracle database server; oracle database; oracle client; database server TECHNOTE (FAQ)
+
+QUESTION
+ Is Oracle 12c supported with FileNet Image Services? 
+
+CAUSE
+Image Services, a 32-bit application, now supports Oracle Database 12c (12.1.0.2 and 12.2.0) on Windows (32-bit and 64-bit), AIX (64-bit), Solaris (64-bit), and HP-UX Itanium. The support for HP-UX PA-RISC (64-bit) is only available on Image Services 4.1.2. Image Services 4.2.0 does no longer support HP-UX PA-RISC.
+
+The supported editions are Oracle Client, Enterprise, and Standard on version 12.1.0.2, 12.2.0, and its patch sets. 
+
+Oracle does not support 32-bit Oracle Database server on Windows x64. For Image Services support of a local Oracle database on Windows 64-bit server, refer to Technote # 1397958 [http://www-01.ibm.com/support/docview.wss?uid=swg21397958] for the specific procedure. 
+
+For Oracle database remote to the Image Services server, Oracle Client 32-bit (NOT the Instant Client) is required to be installed on the Image Services server. 
+
+The main difference between this Oracle release and the previous ones are that the 32-bit library $ORACLE_HOME/lib32 is not released with the database server on all UNIX platforms. Therefore, if Oracle database is collocated with Image Services server, the Image Services requires an Oracle Instant Client Package - Basic 32-bit to be installed in the $ORACLE_HOME/lib32 directory. The 64-bit Oracle Instant Client is not supported. Oracle Instant Client is released as a separate package downloadable from the Oracle website. 
+
+In the past, Image Services always required installing the same version of the Oracle Instance Client that matches the installed Oracle Database version. However, when configuring with the Oracle 12c Database it is recommended to use the Oracle 11.2.0.x Instant Client instead. This is primarily because Image Services would fail to load a specific shared library that links to the Oracle 12c Instant Client package. Applying Oracle 11.2.0.x Instant Client package has been validated as a workaround. 
+
+
+ANSWER
+On all UNIX platforms if Oracle database is collocated with Image Services server, Oracle Instant Client Package - Basic 32-bit is required:
+
+
+ *  Download Oracle Instant Client for the specific platform (32-bit). Image Services requires Instant Client Package - Basic.
+   After Instant Client Package - Basic (32-bit) for Version 11.2.0.x is downloaded, login as the Oracle user or the user who installed Oracle 11gR2 software. Unzip the package into $ORACLE_HOME/lib32 directory, where $ORACLE_HOME is the path Oracle 11gR2 software installed.
+   For Solaris and HP-UX platforms, make a soft link to $ORACLE_HOME/lib32/libclntsh.so.11.1 
+ * cd $ORACLE_HOME/lib32 
+   ln -s libclntsh.so.11.1 libclntsh.so 
+   
+
+It is important to run fn_setup_rdb -f (for fresh installations) or fn_setup_rdb -u (for upgrades) after the Oracle database is setup/upgraded. 
+
+It is also important to update .profile or .cshrc to reflect the new ORACLE_HOME for Image Services users on UNIX platforms.

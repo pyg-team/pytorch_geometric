@@ -1,0 +1,40 @@
+Title: IBM Passwords stored in the secure storage area are shown in plain text - United States
+
+Text:
+RTC; password; plan text; encryption TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Attempts to enable password storing in the IBM Rational Team Concert Eclipse client results in the passwords being stored in a secure storage area in plain text. 
+
+SYMPTOM
+When logging into the Jazz Repository, 'Remember my password' is selected and the password is shown as encrypted. 
+
+image
+[/support/docview.wss?uid=swg21498736&aid=1] [/support/docview.wss?uid=swg21498736&aid=1] 
+
+ 
+
+The saved passwords are found under Preferences -> General -> Security -> Secure Storage and will be shown in plain text.
+
+
+image
+[/support/docview.wss?uid=swg21498736&aid=2] [/support/docview.wss?uid=swg21498736&aid=2]
+
+
+
+CAUSE
+The encryption is set to false, therefore passwords will not be encrypted in the Secure Storage Area. 
+
+ 
+
+This behavior was documented on jazz.net in Task 112627: PasswordUtil needs to encrypt password. [https://jazz.net/jazz/web/projects/Jazz%20Foundation#action=com.ibm.team.workitem.viewWorkItem&id=112627]
+
+
+RESOLVING THE PROBLEM
+To resolve this problem, upgrade the eclipse client to Rational Team Concert 3.0 iFix 1 [https://jazz.net/downloads/rational-team-concert/releases/3.0iFix1] or later. 
+
+
+
+
+Leverage the Jazz Community Jazz and Rational Team Concert have an active community that can provide you with additional resources. Browse and contribute to the User forums, contribute to the Team Blog and review the Team wiki.
+Refer to technote 1319600 [http://ibm.com/support/docview.wss?uid=swg21319600] for details and links.

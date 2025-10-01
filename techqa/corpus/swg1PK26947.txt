@@ -1,0 +1,238 @@
+Title: IBM PK26947: MESSAGE CSQM064I ISSUED REPEATEDLY IF UNABLE TO PUT THE MESSAGE TO THE DESTINATION QUEUE OR THE DEAD LETTER QUEUE. IGQ QSG - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  There are two QMgrs in a QSG, and activated the intragroup
+   queuing.
+   The two QMgrs do not have a dead letter queue assigned.
+   There is a queue on QMgr A which is not shared.
+   From QMgr B a message is put to a queue in QMgr A via a Qremote
+   definition. The Qremote definition point a queue on QMgr A
+   which does not exist. The message goes through IGQ tranmit queue
+   but cannot be delivered. The message appears to disappear and
+   CSQM064I is issued repeatedly.
+   .
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All users of Websphere MQ for z/OS           *
+   *                 Version 6 Release 0 Modification 0           *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Messages are lost when the Intra Group  *
+   *                      Queuing Agent tries to put messages     *
+   *                      to the dead letter queue when this is   *
+   *                      defined on the Queue Manager object as  *
+   *                      either SYSTEM.QSG.TRANSMIT.QUEUE or     *
+   *                      it is undefined.                        *
+   ****************************************************************
+   * RECOMMENDATION: Ensure the Dead Letter Queue as defined on   *
+   *                 the Queue Manager object has a valid queue   *
+   *                 definition.                                  *
+   ****************************************************************
+   The Intra Group Queueing Agent fails to put a message to the
+   intended target queue so instead tries to put it to the dead
+   letter queue. The inquire of the Queue Manager object is
+   successful and a value obtained for the name of the dead letter.
+   A later test of this value means that no processing is performed
+   on the message if the DLQ value is either
+   SYSTEM.QSG.TRANSMIT.QUEUE or it is undefined and thus blank.
+   This processing is then bypassed and the message is discarded.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  If the DLQ value on the Queue Manager object is either blank or
+   SYSTEM.QSG.TRANSMIT.QUEUE when an attempt is made to place a
+   message on the DLQ, then the attempted put will be returned as
+   invalid, the get from the s.q.t.q and subsequent put will be
+   backed out, and the processing of IGQ will go into retry.
+   This will be indicated to user by IGQ task issuing message
+   CSQM063E.
+   .
+   Messages and Codes Manual should be updated to include the
+   following.
+   .
+   CSQM063E csect specified Dead Letter Queue name unacceptable.
+   
+   Explanation:The Intra Group Queuing Agent (IGQ) has attempted
+   to put a persistent message on the Dead Letter Queue that is
+   specified on the Queue Manager object. The Dead Letter Queue
+   specified is SYSTEM.QSG.TRANSMIT.QUEUE or there is no Dead
+   Letter Queue name specified.
+   .
+   Severity: 4
+   .
+   System Action: The put of the message to the Dead Letter Queue
+   is backed out, the message is placed back on the
+   SYSTEM.QSG.TRANSMIT.QUEUE and the Intra Group Queueing agent
+   will go into retry.
+   .
+   System Programmer Response: Ensure the Queue Manager object has
+   a Dead Letter queue specified which is neither blank nor
+   SYSTEM.QSG.TRANSMIT.QUEUE. Examine the the message to determine
+   the reason for its placement on the Dead Letter Queue.
+   000Y
+   001Y
+   002Y
+   003Y
+   004Y
+   CSQFMDIC
+   CSQFMDIE
+   CSQFMDIK
+   CSQFMDIU
+   CSQFMDTA
+   CSQFMTXC
+   CSQFMTXE
+   CSQFMTXK
+   CSQFMTXU
+   CSQFXTXC
+   CSQFXTXE
+   CSQFXTXK
+   CSQFXTXU
+   CSQMINTC
+   CSQMMNUM
+   CSQMPRUM
+   CSQMPTDQ
+   CSQMPTRP
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  *********
+   * HIPER *
+   *********
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK26947
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ Z/OS V6
+   
+   
+ * REPORTED COMPONENT ID
+   5655L8200
+   
+   
+ * REPORTED RELEASE
+   000
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   YesHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2006-06-23
+   
+   
+ * CLOSED DATE
+   2006-07-13
+   
+   
+ * LAST MODIFIED DATE
+   2006-09-05
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    PK25458
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UK16129 UK16146 UK16158 UK16159 UK16163
+   
+   
+
+MODULES/MACROS
+ *     CSQFMDIC CSQFMDIE CSQFMDIK CSQFMDIU CSQFMDTA
+   CSQFMTXC CSQFMTXE CSQFMTXK CSQFMTXU CSQFXTXC CSQFXTXE CSQFXTXK
+   CSQFXTXU CSQMINTC CSQMMNUM CSQMPRUM CSQMPTDQ CSQMPTRP
+   
+   
+    
+   
+   
+
+Publications Referenced GC34660200 FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ Z/OS V6
+   
+   
+ * FIXED COMPONENT ID
+   5655L8200
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R000 PSY UK16129 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK16129]
+   UP06/08/05 P F608
+   
+   
+ * R001 PSY UK16146 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK16146]
+   UP06/08/05 P F608
+   
+   
+ * R002 PSY UK16158 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK16158]
+   UP06/08/05 P F608
+   
+   
+ * R003 PSY UK16159 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK16159]
+   UP06/08/05 P F608
+   
+   
+ * R004 PSY UK16163 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK16163]
+   UP06/08/05 P F608
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

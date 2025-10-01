@@ -1,0 +1,47 @@
+Title: IBM Security Bulletin: Vulnerabilities in OpenSSL affect IBM WebSphere Cast Iron (CVE-2015-1790) - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ OpenSSL vulnerabilities were disclosed on June 11, 2015 by the OpenSSL Project. OpenSSL is used by IBM WebSphere Cast Iron has addressed the applicable CVEs. 
+
+VULNERABILITY DETAILS
+CVEID: CVE-2015-1790 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-1790]
+DESCRIPTION: OpenSSL is vulnerable to a denial of service, caused by the improper handling of missing inner EncryptedContent by the PKCS#7 parsing code. An attacker could exploit this vulnerability using specially crafted ASN.1-encoded PKCS#7 blobs with missing content to trigger a NULL pointer dereference.
+CVSS Base Score: 5
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/103780 [https://exchange.xforce.ibmcloud.com/vulnerabilities/103780] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:M/Au:N/C:P/I:N/A:N) 
+
+AFFECTED PRODUCTS AND VERSIONS
+This vulnerability affects all versions of the product
+WebSphere Cast Iron v 7.5.0.x,
+WebSphere Cast Iron v 7.0.0.x,
+WebSphere Cast Iron v 6.4.0.x
+WebSphere Cast Iron v 6.3.0.x
+WebSphere Cast Iron v 6.1.0.x 
+
+REMEDIATION/FIXES
+ 
+
+Product VRMF APAR Remediation/First Fix Cast Iron Appliance 7.5.* LI78661 iFix 7.5.0.0-CUMUIFIX-001 [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~WebSphere&product=ibm/WebSphere/WebSphere+Cast+Iron+Cloud+integration&release=7.0.0.2&platform=All&function=fixId&fixids=7.5.0.0-WS-WCI-20150731-1155_H12_64-CUMUIFIX-001.scrypt2,7.5.0.0-WS-WCI-20150731-1155_H12_64-CUMUIFIX-001.vcrypt2,7.5.0.0-WS-WCI-20150731-1155_H12_64-CUMUIFIX-001.32bit.sc-linux,7.5.0.0-WS-WCI-20150731-1155_H12_64-CUMUIFIX-001.32bit.sc-win,7.5.0.0-WS-WCI-20150731-1155_H12_64-CUMUIFIX-001.sc-linux,7.5.0.0-WS-WCI-20150731-1155_H12_64-CUMUIFIX-001.sc-win,7.5.0.0-WS-WCI-20150731-1155_H11_64-CUMUIFIX-001.32bit.studio,7.5.0.0-WS-WCI-20150731-1155_H11_64-CUMUIFIX-001.studio&includeSupersedes=0] Cast Iron Appliance 7.0.* LI78661 iFix 7.0.0.2-CUMUIFIX-016 [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~WebSphere&product=ibm/WebSphere/WebSphere+Cast+Iron+Cloud+integration&release=7.0.0.2&platform=All&function=fixId&fixids=7.0.0.2-WS-WCI-20150713-1805_H8_64-CUMUIFIX-016.scrypt2,7.0.0.2-WS-WCI-20150713-1805_H8_64-CUMUIFIX-016.vcrypt2,7.0.0.2-WS-WCI-20150713-1805_H8_64-CUMUIFIX-016.32bit.sc-linux,7.0.0.2-WS-WCI-20150713-1805_H8_64-CUMUIFIX-016.32bit.sc-win,7.0.0.2-WS-WCI-20150713-1805_H8_64-CUMUIFIX-016.sc-linux,7.0.0.2-WS-WCI-20150713-1805_H8_64-CUMUIFIX-016.sc-win,7.0.0.2-WS-WCI-20150713-1805_H11_64-CUMUIFIX-016.32bit.studio,7.0.0.2-WS-WCI-20150713-1805_H11_64-CUMUIFIX-016.studio&includeSupersedes=0] Cast Iron Appliance 6.4.0.x LI78661 iFix 6.4.0.1-CUMUIFIX-031 [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~WebSphere&product=ibm/WebSphere/WebSphere+Cast+Iron+Cloud+integration&release=6.4.0.1&platform=All&function=fixId&fixids=6.4.0.1-WS-WCI-20150715-1335_H4-CUMUIFIX-031.scrypt2,6.4.0.1-WS-WCI-20150715-1335_H4-CUMUIFIX-031.vcrypt2,6.4.0.1-WS-WCI-20150625-1151_H5-CUMUIFIX-031.studio&includeSupersedes=0] Cast Iron Appliance 6.3.0.x LI78661 iFix 6.3.0.2-CUMUIFIX-016 [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~WebSphere&product=ibm/WebSphere/WebSphere+Cast+Iron+Cloud+integration&release=6.3.0.2&platform=All&function=fixId&fixids=6.3.0.2-WS-WCI-20150716-1106_H6-CUMUIFIX-016.scrypt2,6.3.0.2-WS-WCI-20150716-1106_H6-CUMUIFIX-016.vcrypt2,6.3.0.2-WS-WCI-20150716-1106_H3-CUMUIFIX-016.studio&includeSupersedes=0] Cast Iron Appliance 6.1.0.x LI78661 iFix 6.1.0.15-CUMUIFIX-022 [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~WebSphere&product=ibm/WebSphere/WebSphere+Cast+Iron+Cloud+integration&release=6.1.0.15&platform=All&function=fixId&fixids=6.1.0.15-WS-WCI-20150720-0705_H6-CUMUIFIX-022.scrypt2,6.1.0.15-WS-WCI-20150720-0705_H6-CUMUIFIX-022.vcrypt2,6.1.0.15-WS-WCI-20150720-0706_H5-CUMUIFIX-022.studio&includeSupersedes=0] WORKAROUNDS AND MITIGATIONS
+Customers on Cast Iron v6.0.0.x should contact IBM Support for migrating to one of the remediated releases.
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v2 Guide [http://www.first.org/cvss/v2/guide] 
+On-line Calculator v2 [http://nvd.nist.gov/CVSS-v2-Calculator] RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/PSIRT] ACKNOWLEDGEMENT
+None 
+
+CHANGE HISTORY
+ 10 September 2015: Original Version Published 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.

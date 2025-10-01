@@ -1,0 +1,32 @@
+Title: IBM Portal 8 installation fails with error CRIMA1076E and missing setupCmdLine - United States
+
+Text:
+CRIMA1076E; setupCmdLine.sh; setupCmdLine.bat; installProfileTemplates.sh; installProfileTemplates.bat TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+When installing WebSphere Portal v8 silently, the installation fails when executing the installProfileTemplates script. 
+
+SYMPTOM
+In the IBM Installation Manager logs, you see the following error:
+
+==========================
+ERROR CRIMA1076E 04:27.03 Error executing the /opt/IBM/WebSphere/PortalServer/profileTemplates/installPortalTemplates.sh command: status=99. For more information, see the agent log file: /var/ibm/InstallationManager/logs/native/20121211_0935a.log The installation operation failed due to an error executing the exec command.An issue has occurred with the package that cannot be resolved by Installation Manager. Identify the package that has the issue. Contact IBM Support.
+==========================
+
+In the native log referenced in the error (in this case, /var/ibm/InstallationManager/logs/native/20121211_0935a.log), we find the root cause:
+
+=====================
+The appserver directory at /opt/IBM/WebSphere/AppServer exists.
+/opt/IBM/WebSphere/AppServer/bin/setupCmdLine.sh not found
+=====================
+
+
+CAUSE
+In this case, a previous Portal installation attempt failed after it successfully installed WebSphere Application Server. 
+
+The user then deleted the AppServer directory but did not uninstall it from IBM Installation Manager. On the next Portal installation attempt, IBM Installation Manager skipped the WAS installation since it was still registered within Installation Manager. 
+
+RESOLVING THE PROBLEM
+To resolve the problem, you can attempt to uninstall the WebSphere Application Server from IBM Installation Manager. If the installation fails because the AppServer directory is missing or incomplete, you can reinstall IBM Installation Manager to completely clean its registry.
+
+NOTE: If you have other products installed by the same IBM Installation Manager, do not reinstall IIM without first consulting with IBM support. Reinstalling IBM Installation Manager can break products that have previously been installed.

@@ -1,0 +1,61 @@
+Title: IBM Security Information and Event Management (SIEM) software integration - United States
+
+Text:
+SIEM; Security Information and Event Management; SFG; Sterling File Gateway; SSP; Sterling Integrator; SI TECHNOTE (FAQ)
+
+QUESTION
+ Does Sterling FileGateway (SFG) or Sterling Secure Proxy (SSP) integrate with Security Information and Event Management (SIEM) software?
+
+
+Some additional questions pertaining to writing log information to the syslogs from SSP and SFG/SBI.
+
+1. If we choose to write to the syslogs does the information get written to both the syslogs and our current application logs?
+
+2. Any idea of additional overhead, performance hit or degradation when the syslogs are being written to as well as the regular application logs?
+
+3. Is the same information written to the syslogs that we see in the audit/secureproxy/perimeter server logs? 
+
+ANSWER
+The IBM SIEM team response is the following:
+QRadar does not have interfaces (parsers, primarily) with names that match any of the examples in the preceding text.
+
+Depending on the wire protocol needed to obtain event log data from those sources, and the kind of parsing that would be required to fit that data into QRadar's model, it might be possible to create a Log Source eXtension ("LSX").
+
+However, that is completely the customer responsibility, IBM support does not engage in that activity. It could also be an activity that is in-scope for Lab Services.
+
+Creating one or more LSXs is a nontrivial undertaking.
+
+
+Q&A regarding syslogs
+
+From the SI side:
+
+1. The syslogs may not capture everything you are expecting. The syslog will get its information from the system.log. It does not look like it will capture things from the http.log like if there is a BP queue threshold. It does not look like the syslog is a catch all log if that is what is expected. 
+
+2. With turning logging on there is a possibility of a performance hit because with logs in debug it is writing more information out. We cannot guarantee that additional overhead will not occur.
+
+
+From the SSP side:
+
+1. If we choose to write to the syslogs does the information get written to both the syslogs and our current application logs?
+
+**** Yes it does, we still write out information our logs depending on your logging level settings.
+
+2. Any idea of additional overhead, performance hit or degradation when the syslogs are being written to as well as the regular application logs?
+
+**** Not sure if there is a lot of overhead, but we are writing data out so that does take away from available resources.
+
+3. Is the same information written to the syslogs that we see in the audit/secureproxy/perimeter server logs?
+
+**** This is unclear as we have not seen this to be true. You would have to check to verify.
+
+
+RELATED INFORMATION
+ Sterling Secure Proxy overview [https://www.ibm.com/support/knowledgecenter/SS6PNW_3.4.2/com.ibm.help.ssp.admin.doc/ssp_log_secproxlogparam.html]
+
+
+ 
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Commerce Sterling File Gateway Not Applicable Platform Independent All All Editions Commerce Sterling Secure Proxy Not Applicable Platform Independent 3.4.3, 3.4.2, 3.4.1, 3.4, 3.3.1, 3.3 All Editions

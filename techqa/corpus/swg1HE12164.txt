@@ -1,0 +1,180 @@
+Title: IBM HE12164: When afuIndexer is run in continuous mode, the Content Manager indexing tool sometimes deletes the generated XML files - United States
+
+Text:
+  A FIX IS AVAILABLE
+IBM Content Collector V4.0.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24038842]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Sometimes, when the IBM Content Collector indexer for text
+   search tool called afuIndexer is run in continuous mode, the
+   generated XML files for some items are deleted. As a
+   consequence, not all items can be processed by Net Search
+   Extender. When Net Search Extender updates the index, the
+   following message is logged in the Net Search Extender event
+   table for those items that could not be processed:
+   
+   NSE: Message: CTE0100 A DB2 operation failed. DB2 information:
+   "01H99" "[IBM][CLI Driver][DB2/NT] SQL0462W  Routine "*ETCHFILE"
+   (specific name "") has returned a warning SQLSTATE, with
+   diagnostic text "XML: ERR 2:
+   C:\ICCINDEXERDATA\XML\xxxx\afu#A100100xxxxxxxxx".
+   SQLSTATE=01H99  ".
+   
+   This error message is also displayed on the console and added to
+   the indexer log file.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  If multiple instances of afuIndexer are running in parallel,
+   each instance running against a different item type, there is no
+    workaround except to run afuIndexer in batch mode and not in
+   continuous mode.
+   
+   If only one instance of afuIndexer is run against one item type
+   at a time, a workaround exists by defining the following indexer
+   configuration option in the indexer configuration file for the
+   item type:
+   XmlDeleteFilesAfterNseProcessing = false
+   Setting this configuration option to false stops afuIndexer from
+   deleting the generated XML files periodically. However, if
+   afuIndexer is shutdown, the XML directory must be deleted
+   manually, for example by running the following command:
+   rm -fR <GenXmlDirectory>/*
+   
+   Note: Deleting the generated subdirectory structure in the
+   directory that is specified by the configuration option
+   GenXmlDirectory is not a problem because the next time
+   afuIndexer is started it automatically re-creates the necessary
+   subdirectory structure.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Sometimes, when the IBM Content Collector indexer for text
+   search tool afuIndexer is run in continuous mode, the generated
+   XML files for some items are deleted. As a consequence, not all
+   items can be processed by Net Search Extender. When Net Search
+   Extender updates the index, a message is logged in the Net
+   Search Extender event table for those items that could not be
+   processed. The same message is also displayed on the console and
+    added to the indexer log file.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Starting with IBM Content Collector 4.0.0.2 LA011 and IBM
+   Content Collector 4.0.1 afuIndexer was corrected to prevent
+   deleting the generated XML files when run in continuous mode.
+   
+   The Content Manager 8 Indexing Component of Content Collector
+   4.0.1 can also be used with Content Collector 4.0.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  4.0.0.2-IBM-ICC-CM8Text-LA011
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   HE12164
+   
+   
+ * REPORTED COMPONENT NAME
+   ICC FOR EMAIL
+   
+   
+ * REPORTED COMPONENT ID
+   5724V5700
+   
+   
+ * REPORTED RELEASE
+   400
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-07-29
+   
+   
+ * CLOSED DATE
+   2015-03-12
+   
+   
+ * LAST MODIFIED DATE
+   2015-03-12
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ICC FOR EMAIL
+   
+   
+ * FIXED COMPONENT ID
+   5724V5700
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R400 PSY
+   UP
+   
+   
+ * R401 PSY
+   UP

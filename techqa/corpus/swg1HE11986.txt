@@ -1,0 +1,151 @@
+Title: IBM HE11986: SYSTEMPROCESSLOG TABLE IS FILLED UP WITH THE NOTICE SENDING PROCESS WITH ERROR "ERROR WHILE SENDING NOTICES - SMTP FAILU - United States
+
+Text:
+  DIRECT LINKS TO FIXES
+6.0.1-ATLAS-WINDOWS-FP0007 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FGlobal+Retention+Policy+and+Schedule+Management&fixids=6.0.1-ATLAS-WINDOWS-FP0007&source=SAR]
+6.0.1-ATLAS-SOLARIS-FP0007 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FGlobal+Retention+Policy+and+Schedule+Management&fixids=6.0.1-ATLAS-SOLARIS-FP0007&source=SAR]
+6.0.1-ATLAS-LINUX-FP0007 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FGlobal+Retention+Policy+and+Schedule+Management&fixids=6.0.1-ATLAS-LINUX-FP0007&source=SAR]
+6.0.1-ATLAS-FP0007-README.pdf [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FGlobal+Retention+Policy+and+Schedule+Management&fixids=6.0.1-ATLAS-FP0007-README&source=SAR]
+Download IBM Atlas Suite V6.0.1 Fix Pack 7 [http://www-01.ibm.com/support/docview.wss?uid=swg24039392]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  A hold notice is setup with  an autoreminder. An original
+   Notice is sent successfuly to a custodian. The custodian is
+   later deleted from the notice or the email changed to an
+   invalid one. The Autoreminder is kicked off as scheduled and
+   goes into an Error state for this custodian. This causes the
+   Noticesender task to keep trying to send the notice to the
+   custodian which fills up the systemprocess log table with clob
+   data.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Suspend the notice in question
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  If a notice recipient has an invalid email ID, each time the
+   Notice Sender Task is run, an SMTP error is logged in the
+   SystemProcessLog table, resulting in too many log messages.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The log message is improved and redundant messages are no
+   longer logged.
+   This fix is available now from FixCentral in fixpack 6.0.1.7.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  A hot fix was delievered on 01/21/2014 to the customer.
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   HE11986
+   
+   
+ * REPORTED COMPONENT NAME
+   ATLAS EDISCOVER
+   
+   
+ * REPORTED COMPONENT ID
+   5725D7500
+   
+   
+ * REPORTED RELEASE
+   601
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-12-06
+   
+   
+ * CLOSED DATE
+   2015-03-11
+   
+   
+ * LAST MODIFIED DATE
+   2015-03-11
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  SMTP
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ATLAS EDISCOVER
+   
+   
+ * FIXED COMPONENT ID
+   5725D7500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R601 PSY
+   UP

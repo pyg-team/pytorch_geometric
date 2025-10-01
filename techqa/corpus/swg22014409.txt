@@ -1,0 +1,143 @@
+Title: IBM Collect troubleshooting data for the IBM Infosphere Master Data Management - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ You are having a problem with the IBM Master Data Management (MDM) products. You would like to know what information you must collect (MustGather) so that the IBM Master Data Management Support team can diagnose your problem. If you gather this documentation before contacting support, it will expedite the troubleshooting process and save you time. 
+
+ANSWER
+
+Collect the following troubleshooting data if you need help from IBM Master Data Management Support to resolve the problem
+
+Diagnosing the problem :
+
+Start the problem analysis:
+Review the SystemOut.log file at WAS_Home​​/profiles/​​profile​​_​​name​​/​​logs​​/server​​_​​name and look for error messages that have been logged around the time stamp when the issue showed up.
+Search the appropriate product support site from the following list for known problems using symptoms such as the message number and error codes:
+
+IBM Master Data Management Knowledge Center [https://www.ibm.com/support/knowledgecenter/SSWSR9]
+IBM Master Data Management Fix Central [https://www-945.ibm.com/support/fixcentral/]
+IBM Master Data Management developer Works [https://www.ibm.com/developerworks/community/wikis/home?lang=en#!/wiki/W2c3ebf603f05_4460_8e8b_a26780b35b45]
+IBM Master Data Management dWAnswers [https://developer.ibm.com/answers/topics/mdm-migration/]
+
+
+ * Use the IBM Support Assistant to search for known problems in the product documentation, forums, technotes, and so on. 
+ * Search the IBM dW Answers or IBM Master Data Management developerWorks community pages for known problems. 
+ *  If a fix is found that fits the symptoms, search Fix Central for the appropriate interim fix.
+
+
+Resolving the problem : 
+
+Collect the following troubleshooting data if you need help from IBM Infosphere Master Data Management Support to resolve the problem. 
+
+General diagnostic information : 
+
+1. What is the business impact impacting project milestones? What is your project deadline or go live date ? 
+
+2. Identifying the problem: 
+
+A. Detailed problem description 
+B. What portion(s) of the application was running at the time of the issue? 
+C. Has this worked in the past? When did the issue start happening? 
+D. How many environments do you have? i.e. dev, test, prod 
+- do you have this issue in all your environments? 
+- can you reproduce this issue in your another (non-production) environment? (please note, 
+don't turn on debug mode in production, because debug mode will impact the performance or 
+collect sensitive data unless suggested otherwise after further investigation) 
+- Is this working in any of your other environments? (If it's working in one environment and not in another environment, please provide information to compare the two environment (configuration, versions, ifix level, same customization, etc.)) 
+- Have you seen this issue on a different environment(dev/test/qa) ? 
+E. What steps have already been tried to resolve the issue ? 
+F. What changes have been made recently when the issue started occurring ? 
+G. Was new functionality is recently added to the application? 
+H. Was the software or hardware recently upgraded? 
+I. Has MDM application (or particular transaction or workload) always been slow? If not, did it slow down when more users were added ? More data? New scenario? 
+
+
+3. Complete stack information : 
+
+MDM Version and Fix level 
+OS version 
+Application Server version and type (WAS) 
+Database Type and version 
+JDK and its SR version 
+Security enabled/disabled ? if enabled, at what level ? 
+Properties.jar 
+Clusters/Instances ? 
+Any other applications installed along side MDM on the same WAS instance? 
+Database server has anything other running than MDM ? 
+
+4. Overall architecture and components 
+Servers involved (application server, database server, third party servers that might connect to MDM/WCC) (Best if shown as a diagram) 
+
+5. Is this issue reproducible ? 
+A. Detailed steps to reproduce the issue along with request/response xmls(if RMI or SOAP) 
+B. Does it appear to happen at certain times of day? Under specific conditions(high load, during a database backup, etc)? 
+C. Can the issue be recreated using OOTB transactions ? 
+
+6. Please send us all logs for WebSphere and MDM/WCC (WAS_Home\AppServer_Home\profiles\Profile_Home\logs) 
+Include a timestamp of when the error occurred 
+Any performance summary reports as a result of testing ? 
+
+
+Component-specific diagnostic information : 
+
+Section 1 : MustGather: Installation issues for InfoSphere MDM11 and higher [http://www-01.ibm.com/support/docview.wss?uid=swg21967803] 
+Section 2 : MustGather: Read first Performance data collection for InfoSphere MDM [http://www-01.ibm.com/support/docview.wss?uid=swg21700894] 
+Section 3 : Data Collection Using the MDM Assistant Tool (MAT) [http://www-01.ibm.com/support/docview.wss?uid=swg21700482] 
+Section 4 : System requirements for InfoSphere Master Data Management [http://www-01.ibm.com/support/docview.wss?uid=swg27035486] 
+
+Section 5: UI Based (DSUI, Stewardship Center) 
+
+UI log set to debug 
+UI properties files 
+Screen-shots showing error and actions leading to error 
+Is it customized ? 
+can the customization be removed and the issue is still happening? 
+When error occurs in DSUI, what is the result ? 
+if run the corresponding transaction through RMI call to MDM backend directly is it the same issue? 
+What is the browser version ? 
+Is there any javascript error? 
+User authenticated in the app has the permissions (or in correct group)? 
+Is security enabled? 
+How the app was installed? Via Installation Manager or simple deploy (attention: this last option is not correct way) 
+
+For stewardship Center, please submit the following : 
+
+1. BPM version and iFix level 
+2. WAS logs from the time of the issue (System.Out, System.Err) with timestamp 
+3. BPM logs from the time of the issue (BPM_home\profiles\DmgrProfile\logs and BPM_home\profiles\Node1Profile\logs) 
+4. MDMBPMIntegration.properties file (DataStewardshipAndGovernance_Home\mdmg\install\properties) 
+
+If ISC installation issue ,please provide the install folder under DataStewardshipAndGovernance_Home\mdmg 
+
+
+Section 6: Workbench Based 
+
+Exported project file 
+Workbench version 
+
+Section 7: Event Manager 
+
+Log file for Event Manager client and Event Manager server (both on debug mode) 
+Event Manager properties 
+Event Manager scripts 
+What messaging provider is using (MQ or WAS default messaging provider) ? 
+Any load balancer setup ? 
+
+Section 8: Batch processor 
+
+Batch log set to debug 
+batch.proprties, batch_extension.properties 
+runbatch.sh 
+batch input file (or sample) 
+Is batch processor deployed in the same machine as MDM server ? 
+How many concurrent users are used ? 
+
+RELATED INFORMATION
+ Data Collection Using the MDM Assistant Tool (MAT) [http://www-01.ibm.com/support/docview.wss?uid=swg21700482]
+MustGather: Installation issues for InfoSphere MDM11 an [http://www-01.ibm.com/support/docview.wss?uid=swg21967803]
+MustGather: Read first Performance data collection for [http://www-01.ibm.com/support/docview.wss?uid=swg21700894]
+Send data on FTP [http://www-05.ibm.com/de/support/ecurep/send.html]
+IBM Services [https://www-304.ibm.com/support/docview.wss?uid=swg21264419]
+IBM Software Compatibility Report [http://www-01.ibm.com/support/docview.wss?uid=swg27035486]

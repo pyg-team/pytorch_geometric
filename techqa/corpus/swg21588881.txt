@@ -1,0 +1,46 @@
+Title: IBM Reclaiming disk space from DB2 XMeta tablespace after deleting projects - United States
+
+Text:
+automatic storage xmeta reduce recover diskspace disk space TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The DB2 XMeta database has grown over time as more development projects were created. After deleting all the old projects, the tablesize of the XMeta database has not reduced. The disk space occupied by the DB2 XMeta database is still the same. What DB2 commands can be run to reduce the XMeta tablespace on the hard disk? 
+
+SYMPTOM
+Deleting projects from the DS Administrator frees space on the XMeta database but this does not translate into a reduction in the XMeta tablespace occupied on the hard disk.
+
+
+ENVIRONMENT
+Xmeta database built on DB2 V9.1
+
+DIAGNOSING THE PROBLEM
+Login as the DB2 instance owner (eg db2inst1) and then connect to the XMeta database, 
+
+
+Run the commands: 
+
+'db2 update monitor switches using bufferpool on lock on sort on statement on table on timestamp on uow on' 
+
+ and 
+
+'db2 get snapshot for all on xmeta > /tmp/xmeta_all_out.txt' 
+
+Check in the output file, xmeta_all_out.txt' if Automatic Storage is enabled. If it is enabled, it will look something like: 
+
+Number of automatic storage paths = 1 
+
+Automatic storage path = /home/db2inst1
+
+
+RESOLVING THE PROBLEM
+With DB2 V9.1, if Automatic Storage is enabled, there is no method to reduce the size of the tablespace already allocated to a database. The database will reuse all free and available space before starting to increase its size. 
+
+The DB2 V9.1 software shipped with the Information Server V8.1 install is set to be created with Automatic Storage so that customers do not require a dedicated DBA to manage the DB2 database. It will expand as required, automatically. 
+
+In DB2 V9.5 and higher, a 'reduce' command was added so that tablespaces could be shrunk with Automatic Storage enabled. Run the command 
+
+ 'db2 alter tablespace <tablespace_name> reduce' 
+
+to recover the diskspace. 
+
+Please ensure that all users have exited the tablespace that is being reduced prior to running the command above.

@@ -1,0 +1,20 @@
+Title: IBM Using IBM Datacap, why does the no batch node found error appear when pressing the Done button for Web Scan? - United States
+
+Text:
+IE; Internet Explorer; TMWeb; scanning TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Why does the "no batch node found" error appear when pressing the Done button for Web Scan? 
+
+SYMPTOM
+When this error message appears, the scanners will not work until IIS is recycled.
+
+
+CAUSE
+The IE option "Do not save encrypted pages to disk." is set.
+
+RESOLVING THE PROBLEM
+1. On the scan station IE Browser, select the menu item Internet Options, and check the box labelled "Do not save encrypted pages to disk." 
+
+ 
+2. Apply the change, restart all of the browsers.

@@ -1,0 +1,156 @@
+Title: IBM IV64072: MINIMUM REQUIREMENT FOR MTTRAPD PROBE - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Descritpion.txt says the following
+   
+   Mttrapd probe version Gaed version 18 has the following
+   descriptions
+   
+   Patch Dependencies
+   ~~~~~~~~~~~~~~~~~~
+           common-libncrypt-1_0 for Netcool/OMNIbus 7.0 - 7.2
+           libncrypt-1_0_7 for Netcool/OMNIbus 7.2.1 and 7.3.0
+           libncrypt-2_0_7 for Netcool/OMNIbus 7.3.1
+           FP10 for AIX Omnibus 7.3.0
+           FP13 for AIX Omnibus 7.2.1
+           FP10 for Windows Omnibus 7.3.0
+           FP13 for Windows Omnibus 7.2.1
+   
+   
+   Where in "  libncrypt-2_0_7 for Netcool/OMNIbus 7.3.1" is
+   achieved by applying 7.3.1 fixpack 5
+   
+   And Minimum requirement should  be for Omnibus 7.3.1
+   
+   Fixpack 5 for omnibus 7.3.1
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  n/a
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * All users of nco_p_mttrapd in AIX and Windows                *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * Description.txt says the following                           *
+   *                                                              *
+   * Mttrapd probe version Gaed version 18 has the following      *
+   * descriptions                                                 *
+   *                                                              *
+   * Patch Dependencies                                           *
+   * ~~~~~~~~~~~~~~~~~~                                           *
+   *         common-libncrypt-1_0 for Netcool/OMNIbus 7.0 - 7.2   *
+   *         libncrypt-1_0_7 for Netcool/OMNIbus 7.2.1 and 7.3.0  *
+   *         libncrypt-2_0_7 for Netcool/OMNIbus 7.3.1            *
+   *         FP10 for AIX Omnibus 7.3.0                           *
+   *         FP13 for AIX Omnibus 7.2.1                           *
+   *         FP10 for Windows Omnibus 7.3.0                       *
+   *         FP13 for Windows Omnibus 7.2.1                       *
+   *                                                              *
+   *                                                              *
+   * Where in "  libncrypt-2_0_7 for Netcool/OMNIbus 7.3.1" is    *
+   * achieved by applying 7.3.1 fixpack 5                         *
+   *                                                              *
+   * And Minimum requirement should  be for Omnibus 7.3.1         *
+   *                                                              *
+   * Fixpack 5 for omnibus 7.3.1                                  *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Refer to Description.txt or README from Test-fix version     *
+   * 18.1.3                                                       *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV64072
+   
+   
+ * REPORTED COMPONENT NAME
+   NC/OBUS MTTRAPD
+   
+   
+ * REPORTED COMPONENT ID
+   5724P03MT
+   
+   
+ * REPORTED RELEASE
+   100
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-08-28
+   
+   
+ * CLOSED DATE
+   2014-09-22
+   
+   
+ * LAST MODIFIED DATE
+   2014-09-22
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R100 PSY
+   UP

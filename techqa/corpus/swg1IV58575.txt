@@ -1,0 +1,143 @@
+Title: IBM IV58575: VI AGENT UNABLE TO GET DATA FOR DATASTORES ATTRIBUTE GROUP - United States
+
+Text:
+  DIRECT LINKS TO FIXES
+7.2.0-TIV-ITM_VMWVI-FP0003 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Monitoring+for+Virtual+Servers&fixids=7.2.0-TIV-ITM_VMWVI-FP0003&source=SAR]
+7.2.0.2-TIV-ITM_VMWVI-IF0003 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Monitoring+for+Virtual+Servers&fixids=7.2.0.2-TIV-ITM_VMWVI-IF0003&source=SAR]
+IBM Tivoli Monitoring for Virtual Servers:VMware VI 7.2.0.2-TIV-ITM_VMWVI-IF0002 [http://www-01.ibm.com/support/docview.wss?uid=swg24037388]
+IBM(R) Tivoli(R) Monitoring for Virtual Environments: VMware VI 7.2.0.2-TIV-ITM_VMWVI-IF0003 [http://www-01.ibm.com/support/docview.wss?uid=swg24039291]
+IBM(R) Tivoli(R) Monitoring for Virtual Environments: VMware VI 7.2.0-TIV-ITM_VMWVI-FP0003 [http://www-01.ibm.com/support/docview.wss?uid=swg24040186]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Approver Initials: Venkata
+   Severity:            3
+   Reported Release:  720
+   Product:            VMWare VI agent
+   Compid:            5724L92VI
+   
+   Description:
+   The VI agent  was not able to collect the data for the
+   Datastores as a result no data appeared on the TEP for the
+   Datastores workspace. This issue occurred because a null check
+   was missing in the Datastores attribute group.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  NO
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  The VI agent was not able to collect the data for the
+   Datastores as a result no data appeared on the TEP for the
+   Datastores workspace. This issue occurred because a null check
+   was missing in the Datastores attribute group.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Null check was missing in the data provider for the Datastores
+   Attributegroup.
+   The fix for this APAR is contained in the following maintenance
+   packages:
+   Interim Fix: 0002, 7.2.0.2-TIV-ITM_VMWVI-IF0002
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV58575
+   
+   
+ * REPORTED COMPONENT NAME
+   ITMF VE VM WARE
+   
+   
+ * REPORTED COMPONENT ID
+   5724L92VI
+   
+   
+ * REPORTED RELEASE
+   720
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-04-02
+   
+   
+ * CLOSED DATE
+   2014-04-19
+   
+   
+ * LAST MODIFIED DATE
+   2014-04-19
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ITMF VE VM WARE
+   
+   
+ * FIXED COMPONENT ID
+   5724L92VI
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R720 PSY
+   UP

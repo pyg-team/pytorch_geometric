@@ -1,0 +1,211 @@
+Title: IBM PK93789: WHEN EXECUTING A COMMAND IN A BATCH SPOC WITH THE SAME USER VALUE AS THE IMSID, IMS IS DEREGISTERD FOR THAT COMMAND - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When the CSLUSPOC JCL is running with a USER= value
+   equal to the IMSID, executing a command,
+   the IMSID is no longer registered for that command, and if we
+   replay the same batch, the following message is issued :
+   "The system required to process this command is not registered."
+   The problem disappears after recycling IMS or OM.
+   
+   The SCI PLEX trace in a dump shows the following entries :
+    SCREG: Register begin   SR60 01010100 01000089 C9D4F1F0
+              40404040  191D0B28 00000000 085 142205.903293  IM10
+    SCREG: Register begin   SRGS 01010100 0100000E C9D4F1F0
+               40404040 00000000 1C8CEC00 085 142205.903318  IM10
+    SCREG: Register end     SRGS 01010100 0300000E C9D4F1F0
+               40404040 00000000 1C8CEC00 085 142205.903474  IM10
+    ....
+    SCDRG: Deregister begin SRGS 04010100 0100000E C9D4F1F0
+              40404040  00000000 1C8CEC00 085 142205.942576  IM10
+    INSVC: SCI int sv flow  SHRX 41010000 0200001B 1C87A910
+               80000000 00000000 1C8CEC00 085 142205.942704
+    SCDRG: Deregister end   SRGS 04010100 0300000E C9D4F1F0
+               40404040 00000000 1C8CEC00 085 142205.944027  IM10
+    *
+    In that case, IM10 is the USER= and so, it seems that SCI has
+   been confused between the IMSID and the USER.
+    That would explain why the command has no client registered
+   after this.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Recycle IMS or OM / specify a different user name than the
+   IMSID.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All V11 OM and SCI users                     *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: IMS is inadvertently de-registered from *
+   *                      OM for command processing               *
+   ****************************************************************
+   * RECOMMENDATION: INSTALL CORRECTIVE SERVICE FOR APAR/PTF      *
+   ****************************************************************
+   When the CSLUSPOC JCL is running with a USER= value set to the
+   same value as the IMSID and executing a command, the IMS
+   subsystem that has the IMSID is inadvertently de-registered from
+   command processing with OM.  Thus, if subsequent commands are
+   submitted thru OM and destined for the IMS that was just de-
+   registered from OM, the following message is issued by OM:
+   
+   "The system required to process this command is not registered."
+   
+   In this specific case, IM10 is the USER= on the CSLUSPOC JCL and
+   IMSID=IM10 for the IMS subsystem acting as a command processing
+   client to OM.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  GEN:
+   KEYWORDS:
+   
+   *** END IMS KEYWORDS ***
+   If an IMS with ID IMS1 comes up and registers its commands, and
+   then a non-authorized client registers with MBRNAME=IMS1, when
+   that non-auth client terminates, SCI will notify OM of the
+   member termination.  The problem is that SCI was not correctly
+   managing the nfxp_auth bit in the SCI Notify Exit parameter
+   list.  SCI was turning on nfxp_auth for the target member (OM in
+   this case), not the subject member (the OM non-auth client in
+   this case) which caused the OM SCI Notify Exit (CSLOXNF0) to
+   process the termination of the non-auth OM client and perform
+   deregister.  The OM SCI Notify Exit checks bit nfxp_auth at the
+   beginning and ignores the notify if nfxp_auth is off.
+   
+   In processing the deregistration of the non-auth OM client, OM
+   saw that the member name is IMS1, and deregistered the commands
+   for IMS IMS1 -- even though it was a non-authorized client named
+   IMS1 that deregistered.
+   
+   Authorized SCI clients must have a unique name among all of the
+   other authorized clients.  Non-auth clients do not need a unique
+   name, and thus you get this result.
+   
+   CSLSNXS0
+   Code has been added to set nfxp_auth for the subject member, not
+   the target member
+   
+   CSLOREG0
+   Code has been added to ignore a CSLOMDRG API request if the
+   client is not authorized
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK93789
+   
+   
+ * REPORTED COMPONENT NAME
+   IMS V11
+   
+   
+ * REPORTED COMPONENT ID
+   5635A0200
+   
+   
+ * REPORTED RELEASE
+   100
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2009-08-13
+   
+   
+ * CLOSED DATE
+   2009-08-20
+   
+   
+ * LAST MODIFIED DATE
+   2009-09-21
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    PK89909 [http://www-01.ibm.com/support/docview.wss?uid=swg1PK89909]
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UK49441
+   
+   
+
+MODULES/MACROS
+ *  CSLOREG0 CSLSNXS0
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   IMS V11
+   
+   
+ * FIXED COMPONENT ID
+   5635A0200
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R100 PSY UK49441 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK49441]
+   UP09/08/22 P F908
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

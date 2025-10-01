@@ -1,0 +1,189 @@
+Title: IBM ZZ00666: CONFIGURATION FOR ICO IN PRODUCTION | DEVELOPMENT MODE DOES NOT APPLY THE REVERT TO THE HUMAN SERVICE. - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  In an ICO environment set to production mode using this
+   procedure:
+   --------------------------------------
+   To configure production mode, IBM Cloud Orchestrator must be
+   manually configured to activate a snapshot instead of using the
+   latest version of code which is the case in Development Mode.
+   1. Log in to the Business Process Manager user interface as an
+   administrator user:
+   https://ico_server_fqdn:9043/ibm/console [https://ico_server_fqdn:9043/ibm/console]
+   where ico_server_fqdn is the fully qualified domain name of the
+   IBM Cloud Orchestrator Server.
+   2. In the console navigation tree, click Servers > Server Types
+   > WebSphere application servers > server_name.
+   3. In the Java and Process Management category in the Server
+   Infrastructure section, click Process definition > Java Virtual
+   Machine > Custom properties.
+   4. Click New to create a new variable called
+   ORCHESTRATOR_DEVELOPMENT_MODE.
+   To specify production mode, set the value of the
+   ORCHESTRATOR_DEVELOPMENT_MODE variable to false.
+   5. Set the description of the ORCHESTRATOR_DEVELOPMENT_MODE
+   variable to Activate Production Mode.
+   6. Restart the Business Process Manager server.
+   --------------------------------------
+   In the Process Admin, Installed Apps, we see that out snapshot
+   is activated and Default. No other snapshot versions are
+   active.
+   When we make a change to a coach and save, this change is
+   immediately visible in the ICO UI thus not respecting the
+   'production mode'.   We would expect that only active snapshots
+   is used and that changes are only.
+   Also when we activating+defaulting to an older snapshot and
+   deactivate
+   the current, still the new code is used.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  revert the code change manually.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  In an ICO environment set to production mode using this
+   procedure:
+   --------------------------------------
+   To configure production mode, IBM Cloud Orchestrator must be
+   manually configured to activate a snapshot instead of using the
+   latest version of code which is the case in Development Mode.
+   1. Log in to the Business Process Manager user interface as an
+   administrator user:
+   https://ico_server_fqdn:9043/ibm/console [https://ico_server_fqdn:9043/ibm/console]
+   where ico_server_fqdn is the fully qualified domain name of the
+   IBM Cloud Orchestrator Server.
+   2. In the console navigation tree, click Servers > Server Types
+   > WebSphere application servers > server_name.
+   3. In the Java and Process Management category in the Server
+   Infrastructure section, click Process definition > Java Virtual
+   Machine > Custom properties.
+   4. Click New to create a new variable called
+   ORCHESTRATOR_DEVELOPMENT_MODE.
+   To specify production mode, set the value of the
+   ORCHESTRATOR_DEVELOPMENT_MODE variable to false.
+   5. Set the description of the ORCHESTRATOR_DEVELOPMENT_MODE
+   variable to Activate Production Mode.
+   6. Restart the Business Process Manager server.
+   --------------------------------------
+   In the Process Admin, Installed Apps, we see that out snapshot
+   is activated and Default. No other snapshot versions are
+   active.
+   When we make a change to a coach and save, this change is
+   immediately visible in the ICO UI thus not respecting the
+   'production mode'.   We would expect that only active snapshots
+   is used and that changes are only.
+   Also when we activating+defaulting to an older snapshot and
+   deactivate
+   the current, still the new code is used.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  LA fix provided for ICO 2.5.0.2 and ICO 2.5.0.4. The fix will be
+   available implicitly in future ICO releases.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   ZZ00666
+   
+   
+ * REPORTED COMPONENT NAME
+   SMRTCLOUD ORCHS
+   
+   
+ * REPORTED COMPONENT ID
+   5725H2800
+   
+   
+ * REPORTED RELEASE
+   250
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-08-14
+   
+   
+ * CLOSED DATE
+   2017-08-22
+   
+   
+ * LAST MODIFIED DATE
+   2017-08-22
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   SMRTCLOUD ORCHS
+   
+   
+ * FIXED COMPONENT ID
+   5725H2800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R250 PSY
+   UP

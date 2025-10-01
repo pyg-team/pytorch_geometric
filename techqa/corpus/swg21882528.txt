@@ -1,0 +1,86 @@
+Title: IBM Security Bulletin: Multiple vulnerabilities in IBM Tivoli System Automation Application Manager shipped with IBM Cloud Orchestrator and IBM SmartCloud Orchestrator - United States
+
+Text:
+CVE-2016-0359; CVE-2016-3426; CVE-2016-3427; CVE-2016-0306; CVE-2016-0466; CVE-2015-7575; CVE-2016-0448; CVE-2015-5254; CVE-2014-3566; CVE-2014-6457; CVE-2014-6593; CVE-2015-0410; CVE-2015-0138; CVE-2015-2808; CVE-2014-3600; CVE-2014-3612; CVE-2014-8110; CVE-2015-4000; CVE-2015-1885; CVE-2015-1927; CVE-2015-1946; CVE-2015-1920; CVE-2015-2613; CVE-2015-2601; CVE-2015-2625; CVE-2015-1931; CVE-2015-4749; CVE-2015-3183; CVE-2015-1283; CVE-2015-7450; CVE-2015-2017 Old Change History * 08 February 2016: Added new bulletin about (CVE-2015-2017) * 15 December 2015: Added new bulletin about CVE-2015-7450 * 19 October 2015: Added new bulletins about CVE-2015-3183 * 20 August 2015: Added new bulletins for IBM Java SDK July 2015; including Logjam * 31 July 2015: Added link to Diffie-Hellman and Apache ActiveMQ SECURITY BULLETIN
+
+SUMMARY
+ IBM Tivoli System Automation Application Manager is shipped as a component of IBM Cloud Orchestrator, IBM Cloud Orchestrator Enterprise, IBM SmartCloud Orchestrator, and IBM SmartCloud Orchestrator Enterprise. Information about security vulnerabilities affecting IBM Tivoli System Automation Application Manager has been published in security bulletins. 
+
+VULNERABILITY DETAILS
+Consult the following security bulletins for IBM Tivoli System Automation Application Manager for vulnerability details and information about fixes: 
+
+ * Security Bulletin: A security vulnerability has been identified in WebSphere Application Server shipped with IBM Tivoli System Automation Application Manager (CVE-2016-0359) [http://www-01.ibm.com/support/docview.wss?uid=swg21986467]
+
+ * Security Bulletin: Multiple security vulnerabilities have been identified in WebSphere Application Server shipped with IBM Tivoli System Automation Application Manager (CVE-2016-3426, CVE-2016-3427) [http://www-01.ibm.com/support/docview.wss?uid=swg21982644]
+
+ * Security Bulletin: A security vulnerability has been identified in WebSphere Application Server shipped with IBM Tivoli System Automation Application Manager (CVE-2016-0306) [http://www-01.ibm.com/support/docview.wss?uid=swg21981988]
+
+ * Security Bulletin: Multiple vulnerabilities in IBM Java SDK affect IBM Tivoli System Automation Application Manager (CVE-2016-0466, CVE-2015-7575, CVE-2016-0448) [http://www-01.ibm.com/support/docview.wss?uid=swg21977129]
+
+ * Security Bulletin: A vulnerability in Apache ActiveMQ affects IBM Tivoli System Automation Application Manager (CVE-2015-5254) [http://www-01.ibm.com/support/docview.wss?uid=swg21977546]
+
+ * Security Bulletin: A security vulnerability has been identified in WebSphere Application Server shipped with IBM Tivoli System Automation Application Manager (CVE-2015-2017) [http://www-01.ibm.com/support/docview.wss?uid=swg21970551] 
+
+ * Security Bulletin: A security vulnerability has been identified in WebSphere Application Server shipped with IBM Tivoli System Automation Application Manager (CVE-2015-7450) [http://www.ibm.com/support/docview.wss?uid=swg21971113]
+   
+   
+ * Security Bulletin: A security vulnerability has been identified in WebSphere Application Server shipped with IBM Tivoli System Automation Application Manager (CVE-2015-3183) [http://www.ibm.com/support/docview.wss?uid=swg21967198]
+   
+   
+ * Security Bulletin: A security vulnerability has been identified in WebSphere Application Server shipped with IBM Tivoli System Automation Application Manager (CVE-2015-1283) [http://www.ibm.com/support/docview.wss?uid=swg21967200]
+   
+   
+ * Security Bulletin: Multiple vulnerabilities in IBM Java SDK including Logjam affect IBM Tivoli System Automation Application Manager (CVE-2015-4000, CVE-2015-2613, CVE-2015-2601, CVE-2015-2625, CVE-2015-1931, CVE-2015-4749) [http://www.ibm.com/support/docview.wss?uid=swg21963331]
+   
+   
+ * Security Bulletin: A security vulnerability has been identified in WebSphere Application Server 8.5 shipped with IBM Tivoli System Automation Application Manager 4.1 (CVE-2015-1946) [http://www.ibm.com/support/docview.wss?uid=swg21963233]
+   
+   
+ * Security Bulletin: A security vulnerability has been identified in WebSphere Application Server 8.5 shipped with IBM Tivoli System Automation Application Manager 4.1 (CVE-2015-1927) [http://www.ibm.com/support/docview.wss?uid=swg21963673]
+   
+   
+ * Security Bulletin: A security vulnerability has been identified in WebSphere Application Server 8.5 shipped with IBM Tivoli System Automation Application Manager 4.1 (CVE-2015-1885) [http://www.ibm.com/support/docview.wss?uid=swg21963672]
+   
+   
+ * Security Bulletin: Vulnerability in Diffie-Hellman ciphers affects IBM Tivoli System Automation Application Manager (CVE-2015-4000) [http://www.ibm.com/support/docview.wss?uid=swg21960859]
+   
+   
+ * Security Bulletin: A security vulnerability has been identified in WebSphere Application Server 8.5 shipped with IBM Tivoli System Automation Application Manager 4.1 (CVE-2015-1920) [http://www.ibm.com/support/docview.wss?uid=swg21957955]
+   
+   
+ * Security Bulletin: Multiple vulnerabilities in IBM Java SDK affect IBM Tivoli System Automation Application Manager (CVE-2014-3566, CVE-2014-6457)
+   
+ * Security Bulletin: Multiple vulnerabilities in IBM Java SDK affect IBM Tivoli System Automation Application Manager (CVE-2014-6593, CVE-2015-0410, CVE-2015-0138) [http://www.ibm.com/support/docview.wss?uid=swg21698238]
+   
+   
+ *  [http://www.ibm.com/support/docview.wss?uid=swg21698238] [http://www.ibm.com/support/docview.wss?uid=swg21691929]Security Bulletin: Vulnerability in RC4 stream cipher affects IBM Tivoli System Automation Application Manager (CVE-2015-2808) [http://www.ibm.com/support/docview.wss?uid=swg21882751]
+
+AFFECTED PRODUCTS AND VERSIONS
+ 
+
+Principal Product and Version Affected Supporting Product and Version IBM Cloud Orchestrator 2.5, 2.4, 2.4.0.3, 2.4.0.2, and 2.4.0.1 IBM Cloud Orchestrator Enterprise 2.5.0.2, 2.5.0.1, 2.4, 2.4.0.3, 2.4.0.2 and 2.4.0.1
+
+IBM Tivoli System Automation Application Manager 4.1 IBM SmartCloud Orchestrator 2.3 and 2.3.0.1 IBM SmartCloud Orchestrator Enterprise 2.3 and 2.3.0.1
+
+IBM Tivoli System Automation Application Manager 3.2.2 GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v2 Guide [http://www.first.org/cvss/v2/guide] 
+On-line Calculator v2 [http://nvd.nist.gov/CVSS-v2-Calculator] 
+Complete CVSS v3 Guide [http://www.first.org/cvss/user-guide] 
+On-line Calculator v3 [http://www.first.org/cvss/calculator/3.0] 
+
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] 
+
+CHANGE HISTORY
+ * 7 July 2016: Last update new bulletin
+* 20 May 2016: Updated New Bulletins
+* 30 April 2015: Original copy published 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.

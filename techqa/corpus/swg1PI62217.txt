@@ -1,0 +1,203 @@
+Title: IBM PI62217: CICS HANGS AT SHUTDOWN AFTER RECEIVING DFHSJ0005 AN UNEXPECTED ABEND HAS OCCURRED ON THE INITIAL PTHREAD TCB ... - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  You are shutting down CICS TS and receive an error message
+   indicating a catastrophic failure in the JVM:
+   DFHSJ0005 AN UNEXPECTED ABEND HAS OCCURRED ON THE INITIAL
+   PTHREAD TCB FOR JVMSERVER: serv
+   You attempt to CANCEL the address space, which is ineffective.
+   A FORCE sucessfully brings the address space down.
+   .
+   Upon inspecting the JVM Error file, you fine one entry:
+   Exception in thread "Router-Shutdown-Thread"
+   java/lang/NoClassDefFoundError:
+   com.ibm.ws.kernel.boot.EmbeddedServerImpl$StopOperation
+    .at com/ibm/ws/kernel/boot/EmbeddedServerImpl.stop
+   (EmbeddedServerImpl.java).
+   .at
+   com/ibm/cics/router/wlp/internal/LibertyServerImpl.stopServer
+   (LibertyServerImpl.java).
+    .at com/ibm/cics/router/Router.shutdownOSGi (Router.java).
+   .at
+   com/ibm/cics/router/Router.main (Router.java).
+    .at
+   com/ibm/cics/router/wlp/internal/LibertyServerImpl.stopServer
+   (LibertyServerImpl.java).
+    .at com/ibm/cics/router/Router.shutdownOSGi
+   (Router.java)..at
+   com/ibm/cics/router/Router.main (Router.java).
+   Additional Symptom(s) Search Keyword(s): KIXREVCTC
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  FORCE address space manually after CICS hangs
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * All CICS Users                                               *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * A03 abend during shutdown caused by Liberty JVMSERVER        *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * .                                                            *
+   ****************************************************************
+   During the execution of CICS the CICS zFS and Java zFS
+   directories are unmounted.  This causes the running Liberty JVM
+   server to potentially experience issues.  During shutdown of the
+   CICS region the Liberty JVM server abends with an AJ04
+   ClassNotFoundException attempting to load the Liberty shutdown
+   classes.  The CICS shutdown continues and ends with an A03 abend
+   and possibly the CICS region hanging.
+   
+   Additional Keywords: AbendA03 msgDFHSJ0005 DFHSJ0005
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  DFHSJDM has been updated so that if during SJ domain quiecse
+   there is still a JVM server in a disabling state the TP TCB for
+   that JVM server will be removed.  DFHSJIN has been updated to
+   timeout if terminate_jvm fails to stop the JVMSERVER.  With
+   these changes there is still the potential for an DFHSJ0005
+   and/or a KERNDUMP being produced.
+   
+   The CICS Transaction Server for z/OS Version 5 Release 3, CICS
+   Messages and Codes Vol 2, GC34-7419-00, Chapter 4. DFH Messages
+   - DFHN to DFHz, section DFHSJnnnn messages has been altered as
+   follows:
+   .
+   Message DFHSJ0212 has been updated to add an extra insert value
+   of TERMINATION_TIMED_OUT.  The explaination has been updated to
+   add the following for this value:
+   .
+   TERMINATION_TIMED_OUT
+   TERMINATE_JVM timed out.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI62217
+   
+   
+ * REPORTED COMPONENT NAME
+   CICS TS Z/OS V5
+   
+   
+ * REPORTED COMPONENT ID
+   5655Y0400
+   
+   
+ * REPORTED RELEASE
+   000
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-05-10
+   
+   
+ * CLOSED DATE
+   2016-10-20
+   
+   
+ * LAST MODIFIED DATE
+   2016-11-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UI41873 UI41872 UI41874
+   
+   
+
+MODULES/MACROS
+ *  DFHSJSC
+   
+   
+    
+   
+   
+
+Publications Referenced GC34741900 FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CICS TS Z/OS V5
+   
+   
+ * FIXED COMPONENT ID
+   5655Y0400
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R000 PSY UI41872 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI41872]
+   UP16/11/02 P F610
+   
+   
+ * R003 PSY UI41874 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI41874]
+   UP16/11/02 P F610
+   
+   
+ * R00D PSY UI41873 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI41873]
+   UP16/11/02 P F610
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

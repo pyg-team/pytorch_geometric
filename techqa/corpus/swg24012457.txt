@@ -1,0 +1,90 @@
+Title: IBM IS02:  WebSphere Message Broker Explorer Plug-in - United States
+
+Text:
+is02; MQ Explorer; Execution Group; Flow; Admin; User DOWNLOADABLE FILES
+
+ABSTRACT
+ This SupportPac provides a mechanism for a “WebSphere Message Broker Administrator” to view all their Brokers from within the WebSphere MQ Explorer Eclipse view. 
+
+DOWNLOAD DESCRIPTION
+This SupportPac plug-in enhances the WebSphere MQ Explorer with the ability to administer a WebSphere Message Broker network. 
+
+Possible Uses
+• After installation you can administer your brokers from within the WebSphere MQ Explorer.
+
+
+• Display presence and real- time status of local and remote broker instances in the WebSphere MQ Explorer navigator view.
+• Brokers are visualised side by side with WebSphere MQ queue managers.
+• All brokers have equivalent content pages providing information and help.
+• Local brokers can be created and deleted without command line intervention.
+• Brokers, execution groups and message flows can be started, stopped, deleted and created.
+• Ability to see which queue manager has an associated broker and vice versa.
+• Ability to deploy to a broker archive (BAR) file to multiple execution groups in a single step.
+• Start, stop, create, and delete execution groups and message flows.
+• Display and delete message flow resources in the navigator view.
+• Determine which queue managers are associated with brokers, and the name of the queue manager that is associated with each broker.
+• View and manage the broker's administration log.
+• Customize the broker explorer in the Preference pages.
+• View WebSphere Message Broker message flow statistics
+• View WebSphere Message Broker resource statistics (WMB v7 and above only)
+• Create and Manage configurable services (WMB v7 and above only)
+• Display the administration queue of a broker (WMB v7 and above only)
+
+Skill Level Required
+WebSphere MQ Explorer user.
+
+New in this Release
+• Updated for WebSphere Message Broker Explorer v8.0.0.4.
+
+Details
+Author: WebSphere Message Broker Development, Hursley
+Category: 3
+Released: 09 Jun 2006 (as category 2)
+Last updated: 31Mar14
+Current SupportPac Version: WebSphere Message Broker Explorer V8.0.0.4
+»Please note that the version number shown in the right-hand pane is the version of the WebSphere MQ or WebSphere MB product that this SupportPac applies to. The date is the last webpage refresh. 
+
+To view the complete portfolio of WebSphere MQ SupportPacs please visit the WebSphere MQ SupportPacs homepage. [http://www-306.ibm.com/software/integration/support/supportpacs]
+
+PREREQUISITES
+• WebSphere MQ V6 or V7 MQ Explorer is required to run the plug-in. 
+• WebSphere Message Broker Runtime V6.0 or above
+
+URL LANGUAGE SIZE(Bytes) WebSphere Message Broker Explorer v7.0 Fix List [http://www-01.ibm.com/support/docview.wss?&uid=swg27019226] US English 111 
+INSTALLATION INSTRUCTIONS
+Select which download to use depending on your WebSphere Message Broker and WebSphere MQ Explorer environment:
+(MQExplorer environment should match the MQ runtime environment) 
+
+[/support/docview.wss?uid=swg24012457&amp;aid=1] WebSphere Message Broker WebSphere MQ Explorer
+environment Download package required is02v3_wmqv6 V6, V6.1 V6 is02v3_wmqv6.zip
+is02v3_wmqv6_shellshare.zip is02v4_wmqv7 V6.1 V7.0.1 is02v4_wmqv7.zip WMB Explorer v7.0.0.6 V7 V7.0.1 Windows:
+7.0.0-WS-MBX-WINIA32-FP0005.exe
+Linux:
+7.0.0-WS-MBX-LINUXIA32-FP0005.bin WMB Explorer v8.0.0.4 V8 V7.0.1, V7.1, V7.5 Windows:
+8.0.0-WS-MBX-WINIA32-FP0004.exe
+Linux:
+8.0.0-WS-MBX-LINUXIA32-FP0004.bin 
+NB: You can only install one is02 into each WebSphere MQ Explorer 
+
+For is02v3_wmqv6 and is02v4_wmqv7 download the is02v3_wmqv6.pdf or is02v4_wmqv7.pdf below and go to the installation instructions on page 2. 
+
+For WMB Explorer execute the standalone installer. 
+
+is02v3_wmqv6_shellshare.zip can only shell share with the WebSphere Message Broker V6 Tooling as this uses Eclipse 302 and this is a prerequisite of is02v3. URL LANGUAGE SIZE(Bytes) is02v3_wmqv6.pdf [ftp://public.dhe.ibm.com/software/integration/support/supportpacs/individual/is02v3_wmqv6.pdf] US English 646836 is02v4_wmqv7.pdf [ftp://public.dhe.ibm.com/software/integration/support/supportpacs/individual/is02v4_wmqv7.pdf] US English 643162 
+DOWNLOAD PACKAGE
+
+
+
+
+Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options is02v3_wmqv6.zip 05 Jul 2007 US English 42177922 HTTPS [https://www14.software.ibm.com/webapp/iwm/web/preLogin.do?lang=en_US&source=swg-wsmbeps] is02v3_wmqv6_shellshare.zip 05 Jul 2007 US English 21485033 HTTPS [https://www14.software.ibm.com/webapp/iwm/web/preLogin.do?lang=en_US&source=swg-wsmbeps] is02v4_wmqv7.zip 23 Jul 2012 US English 21726024 HTTPS [https://www14.software.ibm.com/webapp/iwm/web/preLogin.do?lang=en_US&source=swg-wsmbeps] 7.0.0-WS-MBX-WINIA32-FP0006.exe 01 Aug 2013 US English 192413992 HTTP [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?product=ibm/WebSphere/WebSphere+Message+Broker&release=7.0.0.6&platform=Windows+32-bit,+x86&function=all&useReleaseAsTarget=true] 7.0.0-WS-MBX-LINUXIA32-FP0006.bin 01 Aug 2013 US English 178889031 HTTP [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?product=ibm/WebSphere/WebSphere+Message+Broker&release=7.0.0.6&platform=Linux+32-bit,x86&function=all&useReleaseAsTarget=true] 8.0.0-WS-MBX-WINIA32-FP0004.exe 31 Mar 2014 US English 166087872 HTTP [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~WebSphere&product=ibm/WebSphere/WebSphere+Message+Broker&release=8.0.0.4&platform=Windows+32-bit,+x86&function=all&useReleaseAsTarget=true] 8.0.0-WS-MBX-LINUXIA32-FP0004.bin 31 Mar 2014 US English 152700187 HTTP [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~WebSphere&product=ibm/WebSphere/WebSphere+Message+Broker&release=8.0.0.4&platform=Linux+32-bit,x86&function=all&useReleaseAsTarget=true] 
+TECHNICAL SUPPORT
+ Category 3 WebSphere MQ SupportPacs are supplied under the standard terms and conditions provided by the International Program License Agreement (IPLA) and thus carry program defect service. 
+
+Please read the license files that accompany the SupportPac to ensure you understand the conditions under which the SupportPac is provided. No Proof of Entitlement is required for this SupportPac. 
+
+If you encounter what you believe to be a defect with the SupportPac you may request Program Services by reporting the problem via the same defect reporting channel you employ for the WebSphere MQ server product with which you are using the SupportPac. 
+
+This SupportPac has service support for as long as the WebSphere Message Broker V6 or later remains in service. Refer to the WebSphere product lifecycle pages [http://www-01.ibm.com/software/websphere/support/lifecycle/] for the relevant service information. It is only supported with MQ platforms which are themselves supported. 
+
+PRODUCT ALIAS/SYNONYM
+ WMB MB

@@ -1,0 +1,20 @@
+Title: IBM CSLD task does not start properly on AIX® - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Under AIX the CSLD task does not properly start up. Instead it displays only the startup window and then returns to the command prompt without any further error message. 
+
+ANSWER
+The Lotus Notes run-time environment is not configured correctly, therefore CSLD is not able to initialize a session with Lotus Notes® and exit routines. 
+
+To get CSLD to work properly on AIX®, make sure that: 
+
+ * The location of the notes.ini file is included in the PATH environment variable. Restriction: On AIX, passing an alternate .ini file on CSLD task startup is not supported. Unfortunately, this restriction is not documented. 
+ * The location of the names.nsf file is in NOTES_DATA_DIR
+
+
+To simplify this setup, CSLD provides the shell script notesenv.sh, which you can adapt to your environment as follows. For each CSLD instance:  * Make sure that the following files are located in an extra directory (in the following referenced as directory A): names.nsf, .ID file, and notes.ini. 
+ * Set the NOTES_DATA_DIR environment variable to point to directory A. 
+ * Add directory A to the PATH environment variable.

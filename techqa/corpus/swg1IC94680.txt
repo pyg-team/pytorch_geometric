@@ -1,0 +1,153 @@
+Title: IBM IC94680: SCC IS NOT PULLING ALL THE INFORMATION FROM C:E/UNIX NODE ON A CONSISTENT BASIS - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  There is a Problem when a lot of records come in at once (or at
+   least a lot of activity is monitored); the database seems to
+   hit a limit and start over on the seq_num, causing "duplicate
+   record" errors.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  STRRTC - 388036
+   SF / SF
+   Circumvention: None
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Description of issue: SCC is not pulling all the statistics
+   information from C:E/UNIX node on a consistent basis. C:E Unix
+   has no way to uniquely identify a statistics record, so SCC
+   attempts to cover this by assigning seq numbers.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Description of fix: Increased the sequence number range (for
+   each second) from 10,000 to 100,000 for each CE Unix record
+   category (ACD, RCD, OFF) and revised the logic which requests
+   stat records from CEU to properly maintain record positioning
+   between requests.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  Description of issue:  SCC is not pulling all the statistics
+   information from C:E/UNIX node on a consistent basis.  C:E Unix
+   has no way to uniquely identify a statistics record, so SCC
+   attempts to cover this by assigning seq numbers.
+   
+   Description of fix:  Increased the sequence number range (for
+   each second) from 10,000 to 100,000 for each CE Unix record
+   category (ACD, RCD, OFF) and revised the logic which requests
+   stat records from CEU to properly maintain record positioning
+   between requests.
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC94680
+   
+   
+ * REPORTED COMPONENT NAME
+   STR CONTROL CEN
+   
+   
+ * REPORTED COMPONENT ID
+   5725D0200
+   
+   
+ * REPORTED RELEASE
+   541
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-08-06
+   
+   
+ * CLOSED DATE
+   2013-11-11
+   
+   
+ * LAST MODIFIED DATE
+   2013-11-11
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   STR CONTROL CEN
+   
+   
+ * FIXED COMPONENT ID
+   5725D0200
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R540 PSY
+   UP
+   
+   
+ * R541 PSY
+   UP
+   
+   
+ * R542 PSY
+   UP

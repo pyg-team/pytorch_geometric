@@ -1,0 +1,51 @@
+Title: IBM Best Practices:  Preparing IASP (Independent ASP) prior to IPL - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This document will provide some Best Practices to prepare an IASP prior to IPL. 
+
+ENVIRONMENT
+Any IBM i system with an IASP
+
+RESOLVING THE PROBLEM
+In today's IBM i environments, many users are leveraging IASPs (Independent Auxiliary Storage Pools) for various reasons. Most common use cases include PowerHA to have the ability to switch an IASP between sites or to perform flashcopies. 
+
+
+Currently there are no hard requirements when getting ready to IPL a system that currently has an IASP. 
+
+The purpose of this document is to provide some high level Best Practices to prepare a system with an IASP for an IPL. 
+
+1. Plan the IPL window 
+
+2. Start bringing down jobs and applications as desired 
+
+3. Ensure there are no jobs active in the IASP by using the WRKASPJOB command 
+
+ a. May need to run command SETASPGRP *NONE 
+
+4. Vary off the IASP 
+
+5. If the system is a member of a cluster, properly end cluster components as needed. 
+
+ a. If a Production node, use commands ENDCRG, ENDCAD and ENDCLUNOD 
+
+ b. If some other node role, use command ENDCLUNOD 
+
+6. Bring the system to a restricted state by using commands: ENDHOSTSVR *ALL and ENDTCPSVR *ALL, delay 5 minutes, ENDTCP, delay 5 minutes, and then ENDSBS *ALL *IMMED 
+
+7. IPL the system 
+
+ 
+
+*NOTES: 
+
+1. In some rare cases, if an IASP vary off should hang that would be the only exception where a partition could be forced to shut down before successfully varying off the IASP. This would result in an ABNORMAL IPL and should probably be followed with a Normal IPL before varying the IASP back on. 
+
+2. In R720 with SI60255 and R730 with SI60256 applied, the IASP process will wait up to 10 minutes for system jobs to end and will post CPF9898 once a minute to QSYSOPR during this time if that's the case.
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Operating System IBM i 7.3 Operating System IBM i 7.2 Operating System IBM i 7.1

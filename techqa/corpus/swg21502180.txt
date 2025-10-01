@@ -1,0 +1,62 @@
+Title: IBM Creating users in Host On-Demand 11.0.3 on z/OS fails with Java exceptions - United States
+
+Text:
+HOD; zos; 11.0.3 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Attempts to create new users in IBM Rational Host On-Demand 11.0.3 on z/OS result in the Java exception "java.io.FileNotFoundException" and the the ID is not created. 
+
+SYMPTOM
+The Rational Host On-Demand administrator is unable to add new users with blank passwords on z/OS. 
+
+The following exceptions can be found in the Java console: 
+
+java.io.FileNotFoundException: http://<servername>/<alias>/config.properties 
+
+and 
+
+Exception occurred during event dispatching: java.lang.NullPointerException
+at com.ibm.eNetwork.HODUtil.services.config.client.EditUserWindow.isBlankPwdAllow
+
+
+
+CAUSE
+In Host On-Demand 11.0.3, a new function was included which required a parameter to be added in the config.properties file called AllowBlankPassword={yes|no}. This forced the config.properties to be required which in previous levels of Host On-Demand on z/OS it was not. 
+
+ * The first Java exception is thrown if the config.properties.ascii file does not exist in the /usr/lpp/HOD/hostondemand/HOD directory. 
+ * The second Java exception is thrown when the parameter AllowBlankPassword is not available.
+
+ENVIRONMENT
+Host On-Demand 11.0.3 on z/OS
+
+
+
+RESOLVING THE PROBLEM
+Apply the following steps to resolve the issue: 
+
+ 1. Copy the sample config.properties.ascii file to the publish directory /usr/lpp/HOD/hostondemand/HOD
+    
+    Note: A sample config.properties.ascii file can be found in the following directory:
+    /usr/lpp/HOD/hostondemand/HOD/hod. 
+    
+    This sample includes the new parameter required to allow blank passwords for Host On-Demand user IDs, AllowBlankPassword=YES. 
+    
+    
+ 2. Open the config.properties.ascii file with an ascii text editor
+    
+    
+ 3. Change the AllowBlankPassword option to the file  * Specify yes if you wish to allow blank passwords:
+       AllowBlankPassword=YES 
+     * Specify no if you do not wish to allow blank passwords:
+       AllowBlankPassword=NO 
+       
+       
+    
+    
+ 4. Save and close the file. 
+ 5. Cancel and restart the Host On-Demand server. 
+    
+
+
+Notes:  * If a config.properties.ascii file exists, but does not include the AllowBlankPassword parameter, the second exception (listed above) will be thrown when a new user ID is attempted to be created and the password fields are left blank. The ID does not get created. 
+ * If the password fields are not blank when creating the ID, it gets created and no exception is thrown.

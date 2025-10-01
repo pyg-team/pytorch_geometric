@@ -1,0 +1,51 @@
+Title: IBM Problem launching Android Emulator with Worklight Studio 5.0 - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Attempts to launch the Android emulator (virtual device) from IBM Worklight Studio results in the error "Launching <your app> has encountered a problem". 
+
+SYMPTOM
+The full error message is as follows:
+
+"Launching <your app> has encountered a problem.
+Errors occurred during the build.
+Errors running builder 'Android Package Builder' on project '<your project name>'.
+sun.security.x509.X500Name"
+
+
+
+
+Steps to reproduce: 
+
+ * Try to open your Google Android project as "Android Application" within Worklight Studio. 1. Right click the Android generated project corresponding to your Android application 
+   
+   2. Select Run As > Android Application
+   
+   
+
+
+ * You may also receive similar errors when trying to access other Google Android Development Tools plugin features from Worklight Studio.
+
+
+CAUSE
+Google's Android Development Tools plugin for Eclipse requires Oracle JRE in order to run properly.
+
+RESOLVING THE PROBLEM
+When you install IBM Worklight Studio using Installation Manager, the install process will ask for the location of the Oracle JRE and it will create a Windows shortcut or a Linux / UNIX shell script to properly launch Worklight Studio with the proper JRE settings. 
+
+
+When developing mobile applications for Android, you must always launch Worklight Studio using the provided shortcut / script to ensure that the Eclipse platform is executed using Oracle JRE, to satisfy Google's ADT plugin requirements.
+
+On Windows platforms you should launch Worklight Studio from either one of two ways: 
+
+ * Navigate to Start > All Programs > IBM Software Delivery Platform > IBM Worklight Studio v5.0 > IBM Worklight Studio 
+ * With file explorer or a command prompt, execute <install_dir>/SDP/Worklight.cmd
+
+
+On UNIX/Linux platforms you should launch Worklight Studio from the shell script:  * Open a terminal and execute <install_dir>/SPD/Worklight.sh
+
+ 
+
+Cross reference information Segment Product Component Platform Version Edition Mobile- Speech and Enterprise Access IBM Mobile Foundation Studio Google Android, Linux, Linux Red Hat - xSeries, Linux SUSE - xSeries, Mac OS X, Windows 5.0 Consumer, Enterprise

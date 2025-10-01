@@ -1,0 +1,145 @@
+Title: IBM IV28668: LOCKOUT FOR INVALID LOGINS ON SOAP SERVER DOES NOT WORK ON ZOS SYSTEMS - United States
+
+Text:
+  FIXES ARE AVAILABLE
+IBM Tivoli Monitoring 6.2.3 Fix Pack 5 (6.2.3-TIV-ITM-FP0005) [http://www-01.ibm.com/support/docview.wss?uid=swg24035801]
+IBM Tivoli Monitoring 6.2.3 Fix Pack 4 (6.2.3-TIV-ITM-FP0004) [http://www-01.ibm.com/support/docview.wss?uid=swg24034252]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Starting from 623 FP1 there is a security mechanism in place
+   that implements a lockout of access to SOAP server after a
+   number (that can be configured with an environment variable) of
+   invalid logins.
+   
+   This mechanism does not work on zOS systems.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Monitoring servers on z/OS do not support credential lockout.
+   
+   
+   Starting with release 6.22 FP7 and 6.23 FP1 of the monitoring
+   server, it is possible to specify the maximum number of log-on
+   attempts that a user may make with any particular credential.
+   If a user attempts to authenticate with an incorrect password
+   more than the configuration value KDHS_MAX_FAILED_LOGINS the
+   credential is locked for the time period specified by the
+   configuration value KDHS_ACCOUNT_LOCKOUT_PERIOD.  Unsuccessful
+   attempts to log-on onto the monitoring server are counted from
+   when the credential is created.  The failed attempts do not need
+   to happen within a minimum time period.  There is no maximum
+   time after which a failed attempt is no longer counted.  If
+   either configuration value is changed, the new value is not
+   applied until the monitoring server is restarted.  This feature
+   was not implemented for z/OS monitoring servers.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Proper return code handling is now implemented in the monitoring
+   server's SOAP module such that the credential lockout feature is
+   now supported on all platforms, including z/OS.
+   
+   
+   The fix for this APAR is contained in the following maintenance
+   packages:
+   
+     | fix pack | 6.2.3-TIV-ITM-FP0004
+     | release | 6.3.0-TIV-ITM
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV28668
+   
+   
+ * REPORTED COMPONENT NAME
+   TEMS
+   
+   
+ * REPORTED COMPONENT ID
+   5724C04MS
+   
+   
+ * REPORTED RELEASE
+   622
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-09-26
+   
+   
+ * CLOSED DATE
+   2013-01-02
+   
+   
+ * LAST MODIFIED DATE
+   2013-10-09
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R623 PSY
+   UP

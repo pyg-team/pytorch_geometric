@@ -1,0 +1,163 @@
+Title: IBM IV69631: WATCHDOG DOES NOT UPDATE USERNAME FOR MONITORED AGENT - United States
+
+Text:
+  FIXES ARE AVAILABLE
+IBM Tivoli Monitoring: Unix(R) OS Agent 6.3.0.5-TIV-ITM_UNIX-IF0001 [http://www-01.ibm.com/support/docview.wss?uid=swg24040403]
+IBM Tivoli Monitoring 6.3.0 Fix Pack 6 (6.3.0-TIV-ITM-FP0006) [http://www-01.ibm.com/support/docview.wss?uid=swg24040390]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Approver:         MK
+   
+   Environment:      ITM 623
+   
+   Problem Description:
+   When Watchdog is monitoring a non-OS agent and that agent is
+   restarted with a different userid, the Watchdog workspace
+   does not update the userid.   This works correctly on Windows.
+   
+   Recreate:
+   To recreate problem you need set watchdog to watch non-OS
+   agent. Then change run as user. Start non-OS agent with new
+   user. Check AMS worksapce and you will see that User Name
+   workspace is not updated with new user. When you restart UX
+   agent then AMS workspaces is updated with new user.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  User Name field not updated when agent restarted with different
+   userid.
+   
+   
+   When Watchdog is monitoring a non-OS agent and that agent is
+   restarted with a different userid, the Watchdog workspace
+   Agents' Runtime Status does not update the User Name for the
+   process.   This works correctly on Windows.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Code has been updated to update the userid.
+   The fix for this APAR will be contained in the following
+   maintenance packages:
+   
+   | FixPack    | 6.3.0-TIV-ITM-FP0006
+   | InterimFix | 6.3.0.5-TIV-ITM_UNIX-IF0001
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV69631
+   
+   
+ * REPORTED COMPONENT NAME
+   ITM AGENT UNIX
+   
+   
+ * REPORTED COMPONENT ID
+   5724C040U
+   
+   
+ * REPORTED RELEASE
+   623
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-02-19
+   
+   
+ * CLOSED DATE
+   2015-08-06
+   
+   
+ * LAST MODIFIED DATE
+   2015-12-10
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ITM AGENT UNIX
+   
+   
+ * FIXED COMPONENT ID
+   5724C040U
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R630 PSY
+   UP
+   
+   
+ * R610 PSN
+   UP
+   
+   
+ * R620 PSN
+   UP
+   
+   
+ * R621 PSN
+   UP
+   
+   
+ * R622 PSN
+   UP
+   
+   
+ * R623 PSN
+   UP

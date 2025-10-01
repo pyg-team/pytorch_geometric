@@ -1,0 +1,141 @@
+Title: IBM IV26847: DOC APAR: CLARIFY HOW UNIX OS AGENT SUPPORTS WPAR - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Severity: 4
+   Approver: GDC
+   Compid: 5724C040U
+   Release: 6.2.3
+   Abstract: clarify how Unix OS Agent supports WPAR
+   Environment: The Monitoring Agent for Unix OS 6.2.3
+   
+   Problem Description: ITM Unix OS Agent User's Guide contains the
+   following info about WPAR support:
+   
+    "Ability to remotely deploy application agents that support
+     workload partitioning (WPAR) environments. To use this
+     capability, install the Monitoring Agent for UNIX OS on
+     all the WPARs that will be targets of remote deployment
+     operations. Then run the tacmd addsystem command,
+     specifying as the node the WPAR managed system."
+   
+   This test needs to be changed in order to clarify that OS Agent
+   is supported on WPAR just to use the remote deploy functionality
+   and it cannot be used to collect metrics.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Install Unix OS agent on the LPAR to collect metrics for WPAR
+   instances running under the LPAR.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  CLARIFY HOW UNIX OS AGENT SUPPORTS WPAR
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  ITM Unix OS Agent User's Guide contains the
+   
+   following info about WPAR support:
+   
+    "Ability to remotely deploy application agents that support
+     workload partitioning (WPAR) environments. To use this
+     capability, install the Monitoring Agent for UNIX OS on
+     all the WPARs that will be targets of remote deployment
+     operations. Then run the tacmd addsystem command,
+     specifying as the node the WPAR managed system."
+   
+   This test needs to be changed in order to clarify that OS Agent
+   is supported on WPAR just to use the remote deploy functionality
+   and it cannot be used to collect metrics.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV26847
+   
+   
+ * REPORTED COMPONENT NAME
+   ITM AGENT UNIX
+   
+   
+ * REPORTED COMPONENT ID
+   5724C040U
+   
+   
+ * REPORTED RELEASE
+   623
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-08-22
+   
+   
+ * CLOSED DATE
+   2012-08-30
+   
+   
+ * LAST MODIFIED DATE
+   2012-08-30
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

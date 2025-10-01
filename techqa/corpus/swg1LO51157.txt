@@ -1,0 +1,157 @@
+Title: IBM LO51157: ACTIVEX CONTROL CAN NOT BE INSTALLED ON WINDOWS 7 - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  I clean installed a Windows 7 Ultimate 32bit on my test client.
+   When log on
+   iNotes with IE8 which is default installed for the first time,
+   and open iNotes
+   Preferences or create a new mail message, I was prompted to
+   install ActiveX
+   control which is correct behavior, but after I confirm to
+   install and follow
+   the steps to install the control, it always prompts a dialog box
+   like below,
+   which said "The installation of Lotus iNotes 8.5 Control has
+   been blocked or
+   declined by the user."   To check the IE8 add-on, there is no
+   iNotes control
+   installed.
+   
+   
+   I have tried several ways as below but still can not resolve the
+   problem.
+   1. Uncheck "Turn on pop-up blocker" in IE8 Internet Options
+   2. Add the server I accessed to allowed site in Security tab in
+   IE8 Internet
+   Options
+   3. Change UAC setting on Windows 7
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  A programming error was found and will be corrected in a future
+    release.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A programming error was found and will be corrected in a future
+    release.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+ *  This APAR is associated with SPR# NBJC7WU7WY
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   LO51157
+   
+   
+ * REPORTED COMPONENT NAME
+   DOMINO SERVER
+   
+   
+ * REPORTED COMPONENT ID
+   5724E6200
+   
+   
+ * REPORTED RELEASE
+   850
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-04-26
+   
+   
+ * CLOSED DATE
+   2010-05-07
+   
+   
+ * LAST MODIFIED DATE
+   2010-05-09
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  NA
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   DOMINO SERVER
+   
+   
+ * FIXED COMPONENT ID
+   5724E6200
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R850 PSN
+   UP

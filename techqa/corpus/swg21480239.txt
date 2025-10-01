@@ -1,0 +1,27 @@
+Title: IBM Outer Joins not allowed in queries containing more than two tables. - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ I have SPSS for Windows. I am trying to create an ODBC query using the Database Wizard. I want to read data from three tables, so in step 2, I drag all three tables over. But, in step 3, if I try to change the join type by double clicking on the join, I receive this error message:
+
+"Outer Joins not allowed in queries containing more than two tables."
+
+It appears if I want to join more than two tables, I can only perform inner joins. Is that right? 
+
+RESOLVING THE PROBLEM
+The Database Wizard interface is only capable performing an outer join between two tables. We apologize for the inconvenience, and we have filed this issue as an enhancement request with SPSS Development. 
+
+However, if you write your own SQL query, you can join more than two tables at a time while performing an outer join. The SQL required to perform such joins can be complex, and may depend on the database you are connecting to.
+
+For information on how to implement user created SQL statements in SPSS, please see resolution # 21450
+
+RELATED INFORMATION
+ Need more help? Our Statistics forum is Live! [https://developer.ibm.com/answers/topics/statistics.html?smartspace=predictive-analytics]
+
+
+ 
+
+HISTORICAL NUMBER
+ 40575

@@ -1,0 +1,59 @@
+Title: IBM Invalid IBM iSeries User Information Stored Using Microsoft Windows XP Professional 'Manage My Network Passwords' Can Cause IBM iSeries NetServer Network Drives to Fail to Connect - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ User information stored using Microsoft Windows XP Professional's 'Manage my network passwords' function can cause IBM iSeries NetServer resources to become inaccessible if that information does not match a valid IBM iSeries user profile and password. 
+
+RESOLVING THE PROBLEM
+Microsoft Windows will normally attempt to use the Windows network or desktop user profile and password to log on IBM iSeries NetServer when mapping an iSeries NetServer network drive. If a matching profile exists on the IBM System i system, the passwords will be checked. If the passwords match, the drive will be mapped with no prompting. If the passwords do not match, iSeries NetServer will prompt the user to type a password. 
+
+Although this Technote was written about Windows XP options, Windows 7 and above work much the same way.
+
+Windows XP Professional has an additional option for storing a user profile and password that can be used on a network drive connection. This option is called Manage my network passwords. Information on how to set up network passwords can be found in the Windows XP Professional Help Text by searching on Manage my network passwords and in Windows 7 Help Text by searching on Credential Manager or by reviewing the following Microsoft Articles:
+
+Note: Windows 7 and Windows 8 include the same option, but beginning with Window 7 the option is called Credential Manager.
+
+Note: These Microsoft documents were available at the time this document was written; however, IBM cannot guarantee the availability of this information in the future.
+
+Microsoft Knowledgebase Article 306541, How to Manage Stored User Names and Passwords on a Computer That Is Not in a Domain in Windows XP
+
+Microsoft Knowledgebase Article 306992, How to Manage Stored User Names and Passwords on a Computer in a Domain in Windows XP
+
+In either document, refer to the section titled How to Manage Stored User Names and Passwords.
+
+General information was also found in:
+
+Microsoft Knowledgebase Article 281660, Behavior of stored user names and passwords
+
+Microsoft Article titled, Manage stored passwords, certificates, and other credentials
+
+Information can also be found by searching Microsoft sites for the words: Windows 7 Credential Manager
+
+For additional information on setting up a user profile to access a new network resource (such as iSeries NetServer), open Windows XP Professional Help and Support Center (accessible from the Windows Start button or by left-clicking on the Windows XP desktop and then pressing the F1 key), search for stored user names and passwords or manage my network passwords.
+
+In most cases, setting up a specific user profile and password for a network connection is a good option and resolves potential problems when mapping iSeries NetServer network drives. Refer to the following IBM Technote:
+
+N1019212, Connecting a NetServer Drive Automatically When Microsoft Windows XP Password or Windows 7 Password Is Different Than the IBM System i Password: [http://www-01.ibm.com/support/docview.wss?uid=nas8N1019212] 
+
+However, this option can also be the cause of problems later on, for example: 
+
+o The password has changed on the iSeries family; however, it has not been changed in the Manage my network passwords screen for this network resource. o The profile used in the Manage my network passwords screen for the network resource no longer exists on the iSeries family. According to Microsoft Knowledgebase Article 281660 , Behavior of stored user names and passwords, keys are created for user names and passwords in one of two ways. 
+
+DYNAMIC keys are created when a user accesses a share. Some examples are: o A user has logged on the network or PC desktop with a user profile that exists on the iSeries family and has a matching password on the iSeries family. The user accesses the share without being prompted. o A user has logged on the network or PC desktop with a user profile that does not exist on the iSeries family or that exists on the iSeries family, but has a different password there. The user attempts to access a share, is prompted, and types a valid iSeries family user profile and password. o A user accesses a share by using the Connect as a different user option from the Map Network Drive GUI screen. MANUAL keys are created by using the Stored User Names and Password tool in Windows XP Professional Control Panel, as described in the Microsoft Knowledgebase Articles referenced in this document or in the Microsoft Windows XP Professional help text. 
+
+When manual keys are created, options are available that allow the key to be created for the following: o The current logon session - the key is available for the life of the session and is gone after the user has logged off of the session. o The user account on the computer - the key is stored on the PC and is persistent (existing across reboots), which allows it to be used any time the user logs on the PC. o For a domain user, for this user account on any computer - the key is the same as in the second option, but it also gets written to the roaming profile that allows the account to use it when the user is logged on any PC in the domain. If a dynamic key is created or if a manual key is created for only the current logon session, no problems will arise when the password for this profile is changed on the iSeries family or when the iSeries family profile is deleted. 
+
+If a manual key is created for the user account on the computer or for the domain user account on any computer (stored in the roaming profile), information stored in that key can cause connection problems if the profile and password in the key no longer match a profile and password on the System i system. This condition can cause the user to be prompted to enter a user profile and password to make the connection. In at least one case, this condition has been known to cause the error message the network resource is not available or you are not authorized to the network resource to be displayed without a prompt screen. As a result, the network resource can not be accessed by drilling down through My Network Places and attempting to automatically access the resource. The network resource can still be accessed by going to any Map Network Drive GUI screen and taking the option to Connect as a different user and typing in a valid iSeries family user profile and password. Once this step has been taken, the resource can be accessed by means of My Network Places until the user profile logs off the current session. 
+
+Note: 1. These options (Stored User Names and Passwords and Manage my network passwords) are Microsoft Windows XP Professional functions. IBM does not support this function and can not provide detailed assistance with it. Additional support must be requested from Microsoft. 2. Windows XP Home Edition does not provide the same support for network functions that Windows XP Professional provides. These steps do not appear to be available in Windows XP Home Edition. 3. In Windows XP and Windows 7, the Manage my network passwords GUI screen can be opened from the DOS command prompt by running the following command:
+
+rundll32.exe keymgr.dll, KRShowKeyMgr 
+
+This same command might work for other versions of Windows; however, IBM has not confirmed it on any versions other than those listed.  
+
+
+Cross reference information Segment Product Component Platform Version Edition Operating System IBM i 6.1 Operating System IBM i 7.1 
+HISTORICAL NUMBER
+ 377522568

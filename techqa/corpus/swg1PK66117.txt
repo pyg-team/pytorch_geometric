@@ -1,0 +1,191 @@
+Title: IBM PK66117: UNABLE TO PREVIEW COMPONENT REFERENCES (ELEMENTS) ON A DRAFT ITEM VIA A JSP. - United States
+
+Text:
+  FIXES ARE AVAILABLE
+6.1.0.1 Download: WebSphere Portal and Web Content Management V6.1, fix pack 1 [http://www-01.ibm.com/support/docview.wss?uid=swg24020387]
+6.1.0.2 Download: WebSphere Portal and Web Content Management V6.1, fix pack 2 [http://www-01.ibm.com/support/docview.wss?uid=swg24022898]
+6.1.0.3 Download: WebSphere Portal and WCM V6.1 fix pack 3, 6.1.5 feature pack [http://www-01.ibm.com/support/docview.wss?uid=swg24025054]
+6.1.0.4 Download: WebSphere Portal and WCM V6.1.0 fix pack 4 & 6.1.5 fix pack 1 [http://www-01.ibm.com/support/docview.wss?uid=swg24026394]
+6.1.0.5 Download: WebSphere Portal and WCM V6.1.0 fix pack 5 [http://www-01.ibm.com/support/docview.wss?uid=swg24027475]
+6.1.0.6 Download: WebSphere Portal and WCM V6.1.0 fix pack 6 [http://www-01.ibm.com/support/docview.wss?uid=swg24030970]
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Unable to preview Component References (Elements) on a Draft
+   item via a JSP, and exception is thrown:
+   
+   Following exceptions in SystemOut.log:
+   
+   [5/8/08 12:51:12:438 IST] 00000062 SystemOut     O Rendering
+   context retrieved
+   [5/8/08 12:51:12:438 IST] 00000062 SystemOut     O Rendering
+   context updated
+   [5/8/08 12:51:12:438 IST] 00000062 SystemOut     O Component
+   found - Tile 1
+   [5/8/08 12:51:12:438 IST] 00000062 SystemOut     O Component
+   Reference not null - rendering
+   [5/8/08 12:51:21:078 IST] 00000062 ContentServic E   Unable to
+   locate Dynamic workspace for draft with id
+   93920000499cd5828d1dcd1c43713f7f and draftWorkspace
+   93920000499cd5828d1dcd1c43713f7f
+   [5/8/08 12:51:21:078 IST] 00000062 Cmpnt         W   IWKPC1085X:
+   Exception while rendering component: inline class
+   com.aptrix.pluto.cmpnt.CmpntReference - Exception:
+   com.ibm.workplace.wcm.services.content.ItemNotFoundException:
+   Item with identity {93920000499cd5828d1dcd1c43713f7f,
+   com.aptrix.pluto.control.Controllable} could not be found.
+   
+   com.ibm.workplace.wcm.services.content.ItemNotFoundException:
+   Item with identity {93920000499cd5828d1dcd1c43713f7f,
+   com.aptrix.pluto.control.Controllable} could not be found.
+    at
+   com.ibm.workplace.wcm.services.content.ContentServiceImpl.getImp
+   l(ContentServiceImpl.java:1788)
+    at
+   com.ibm.workplace.wcm.services.content.ContentServiceImpl.getDra
+   ftLazy(ContentServiceImpl.java:1552)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  The preview of a draft content item does not work correctly, if
+   it references non-draft components and if these components are
+   rendered via the WCM API, e.g. inside a JSP. The following
+   exception is logged:
+   
+   [21/04/08 14:39:24:890 EST] 0000005a ContentServic E Unable to
+   locate Dynamic workspace for draft with id
+   2d9c52804961e145a4e9bf6203175193 and draftWorkspace
+   2d9c52804961e145a4e9bf6203175193
+   [21/04/08 14:39:24:921 EST] 0000005a Cmpnt W IWKPC1085X:
+   Exception while rendering component: inline class
+   com.aptrix.pluto.cmpnt.CmpntReference - Exception:
+   com.ibm.workplace.wcm.services.content.ItemNotFoundException:
+   Item with identity {2d9c52804961e145a4e9bf6203175193,
+   com.aptrix.pluto.control.Controllable} could not be found.
+   at
+   com.ibm.workplace.wcm.services.content.ContentServiceImpl.getImp
+   l(ContentServiceImpl.java:1788)
+   
+   The rendering output does not contain the components. Rendering
+   works fine, after the content item is moved to live state.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fixed the code in CmpntReference to check if a draft component
+   exist before using the draft workspace. Otherwise, the regular
+   user workspace is used.
+   
+   Affected Users: All Users
+   
+   Requisites:
+      pre-requisite Portal Component: WCM 6.0.1.3 GA build 22.5
+      pre-requisite interim fixes: PK66814 [http://www-01.ibm.com/support/docview.wss?uid=swg1PK66814] (these also pre-req:
+   Fixed the code in CmpntReference to check if a draft component
+   exist before using the draft workspace. Otherwise, the regular
+   user workspace is used.)
+   
+   Platform Specific: No
+   
+   A fix is available from Fix Central:
+   
+   http://www.ibm.com/eserver/support/fixes/fixcentral/swgquickord
+   er?brandid=2&productid=Workplace%20Web%20Content%20Management&fi [http://www.ibm.com/eserver/support/fixes/fixcentral/swgquickorder?brandid=2&productid=Workplace%20Web%20Content%20Management&fi]
+   xes=6.0.1.3-WCM-PK66117
+   
+   You may need to type or paste the complete address into your Web
+   browser.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK66117
+   
+   
+ * REPORTED COMPONENT NAME
+   WRKPLC WEB CON
+   
+   
+ * REPORTED COMPONENT ID
+   5724I2900
+   
+   
+ * REPORTED RELEASE
+   60G
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-05-16
+   
+   
+ * CLOSED DATE
+   2008-06-26
+   
+   
+ * LAST MODIFIED DATE
+   2008-06-26
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WRKPLC WEB CON
+   
+   
+ * FIXED COMPONENT ID
+   5724I2900
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R60G PSY
+   UP

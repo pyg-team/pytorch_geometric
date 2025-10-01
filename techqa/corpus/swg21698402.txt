@@ -1,0 +1,112 @@
+Title: IBM Some users cannot be populated as PROF_PHYSICAL_DELIVERY_OFFICE limited to 32 characters - United States
+
+Text:
+idmdi.log; Profiles; peopledb; populate; PROF_PHYSICAL_DELIVERY_OFFICE; varchar; 32; limit; too long; TDI; populate_from_dn_file; 'SQLCODE=-433'; 22001 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+Some users cannot be populated from Microsoft® Active Directory by running
+populate_from_dn_file.sh
+
+SYMPTOM
+Relevant log in ibmdi.log:
+2015-02-15 10:58:13,515 INFO
+[org.springframework.jdbc.support.SQLErrorCodesFactory] - SQLErrorCodes
+loaded: [DB2, Derby, H2, HSQL, Informix, MS-SQL, MySQL, Oracle,
+PostgreSQL, Sybase]
+2015-02-15 10:58:13,519 ERROR
+[com.ibm.lconn.profiles.api.tdi.connectors.ProfileConnector] -
+CLFRN1254E: An error occurred while performing findEntry: john.doe.
+2015-02-15 10:58:13,520 ERROR
+[AssemblyLine.AssemblyLines/populate_from_dns_file.1] -
+!com.ibm.lconn.profiles.api.tdi.service.TDIException: CLFRN1254E: An
+error occurred while performing findEntry: john.doe.!
+
+
+
+CAUSE
+In database schema, PROF_PHYSICAL_DELIVERY_OFFICE is VARCHAR(32) 
+
+Office value "Somewhere in the planet has a long name" is too long.. SQLCODE=-433,
+SQLSTATE=22001, DRIVER=4.18.60
+
+
+ENVIRONMENT
+Connections 5.0 
+
+TDI 7.1.1 FP3 
+
+DB2 10.1 
+
+Redhat Enterprise Linux 6.4
+
+
+DIAGNOSING THE PROBLEM
+Message: CLFRN1254E: An error occurred while performing findEntry:
+{0}
+Cause: This is a Profiles Tivoli Directory Integrator connector
+error message. An error occurred when searching for an entry in the
+Profiles database. The connector lookup mode did not find any matches.
+Solution: If you are using a supplied connector, examine the log files
+for more information. Set an appropriate debug property for more tracing
+information. 
+
+1. Add the following lines in TDI/profiles_tdi.properties 
+
+source_ldap_debug=true
+tds_changelog_debug=true
+sync_updates_clean_temp_files=false 
+
+ 
+
+2. Modify the following lines in etc/log4j.properties: 
+
+Original: 
+
+log4j.rootCategory=INFO, Default 
+
+Modified: 
+
+log4j.rootCategory=DEBUG, Default 
+
+
+3. Reproduce the issue and review following files:
+map_dbrepos_to_source.properties
+map_dbrepos_from_source.properties
+profiles_tdi.xml
+profiles_tdi.properties
+ibmdi.log
+populateDBfromDNfile.log
+ProcessTDSChanges.log
+ProcessADChanges.log
+MonitorDraftUpdates.log
+Collect.dns 
+
+ 
+
+In ibmdi.log, following entries are relevant to the user who failed to be populated from Microsoft® Active Directory: 
+
+2015-02-15 12:12:20,250 DEBUG [java.sql.Connection] - {conn-134101} Preparing Statement: insert into EMPINST.EMPLOYEE ( PROF_KEY, TENANT_KEY, PROF_STATE, PROF_MODE, PROF_LAST_UPDATE ,PROF_UID, PROF_UID_LOWER ,PROF_MAIL, PROF_MAIL_LOWER ,PROF_GUID ,PROF_SOURCE_UID, PROF_SRC_UID_LOWER ,PROF_DISPLAY_NAME ,PROF_GIVEN_NAME ,PROF_SURNAME ,PROF_ISO_COUNTRY_CODE ,PROF_TELEPHONE_NUMBER , PROF_PHYSICAL_DELIVERY_OFFICE ,PROF_DESCRIPTION ,PROF_SOURCE_URL ) values ( ?, ?, ?, ?, ? ,?, ? ,?, ? ,? ,?, ? ,? ,? ,? ,? ,? ,? ,? ,? ) 
+2015-02-15 12:12:20,250 DEBUG [org.springframework.transaction.support.TransactionSynchronizationManager] - Retrieved value [org.springframework.jdbc.datasource.ConnectionHolder@48e048e0] for key [org.apache.commons.dbcp.BasicDataSource@342d342d] bound to thread [AssemblyLines/populate_from_dns_file]
+2015-02-15 12:12:20,250 DEBUG [java.sql.PreparedStatement] - {pstm-134102} Executing Statement: insert into EMPINST.EMPLOYEE ( PROF_KEY, TENANT_KEY, PROF_STATE, PROF_MODE, PROF_LAST_UPDATE ,PROF_UID, PROF_UID_LOWER ,PROF_MAIL, PROF_MAIL_LOWER ,PROF_GUID ,PROF_SOURCE_UID, PROF_SRC_UID_LOWER ,PROF_DISPLAY_NAME ,PROF_GIVEN_NAME ,PROF_SURNAME ,PROF_ISO_COUNTRY_CODE ,PROF_TELEPHONE_NUMBER , PROF_PHYSICAL_DELIVERY_OFFICE ,PROF_DESCRIPTION ,PROF_SOURCE_URL ) values ( ?, ?, ?, ?, ? ,?, ? ,?, ? ,? ,?, ? ,? ,? ,? ,? ,? ,? ,? ,? ) 
+2015-02-15 12:12:20,250 DEBUG [java.sql.PreparedStatement] - {pstm-134102} Parameters: [3e0ca52b-969b-402a-9998-94cf4e770c73, 00000000-0000-0000-0000-040508202233, 0, 0, 2015-02-15 12:12:20.25, john.doe, john.doe, john.doe@acme.com, john.doe@acme.com, 4C582C7A-95B8-4D21-AB83-1C8D085013E9, CN=ACNC John Doe,OU=NC Plant,OU=NC Manufacturing Department,OU=China,OU=APAC,OU=acmeUsers,DC=acme,DC=com, cn=acme john doe,ou=nc plant,ou=nc manufacturing department,ou=china,ou=apac,ou=acmeusers,dc=acme,dc=com, acnc john doe, doe, john, 0, 022-22221111, Somewhere in the planet has a long name, johndoe nc, ldap://ncdc01.acme.com:389/OU=acmeUsers,DC=acme,DC=com?(&(cn=NC*)(objectclass=user))]
+2015-02-15 12:12:20,250 DEBUG [java.sql.PreparedStatement] - {pstm-134102} Types: [java.lang.String, java.lang.String, java.lang.Integer, java.lang.Integer, java.sql.Timestamp, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String]
+2015-02-15 12:12:20,252 DEBUG [org.springframework.jdbc.support.SQLErrorCodeSQLExceptionTranslator] - Unable to translate SQLException with Error code '-302', will now try the fallback translator
+2015-02-15 12:12:20,252 DEBUG [org.springframework.jdbc.support.SQLStateSQLExceptionTranslator] - Extracted SQL state class '22' from value '22001'
+2015-02-15 12:12:20,252 DEBUG [org.springframework.transaction.support.TransactionSynchronizationManager] - Retrieved value [org.springframework.jdbc.datasource.ConnectionHolder@48e048e0] for key [org.apache.commons.dbcp.BasicDataSource@342d342d] bound to thread [AssemblyLines/populate_from_dns_file]
+2015-02-15 12:12:20,252 DEBUG [org.springframework.transaction.interceptor.TransactionInterceptor] - Completing transaction for [com.ibm.lconn.profiles.internal.service.TDIProfileService.create] after exception: org.springframework.dao.DataIntegrityViolationException: SqlMapClient operation; SQL []; 
+--- The error occurred while applying a parameter map. 
+--- Check the Profile.createProfile-InlineParameterMap. 
+--- Check the statement (update failed). 
+--- Cause: com.ibm.db2.jcc.am.SqlDataException: DB2 SQL Error: SQLCODE=-302, SQLSTATE=22001, SQLERRMC=null, DRIVER=3.65.97; nested exception is com.ibatis.common.jdbc.exception.NestedSQLException: 
+--- The error occurred while applying a parameter map. 
+--- Check the Profile.createProfile-InlineParameterMap. 
+--- Check the statement (update failed). 
+--- Cause: com.ibm.db2.jcc.am.SqlDataException: DB2 SQL Error: SQLCODE=-302, SQLSTATE=22001, SQLERRMC=null, DRIVER=3.65.97
+
+
+
+RESOLVING THE PROBLEM
+An enhancement request for increasing the limit has been raised under APAR LO33688 for development consideration for a future release. 
+
+
+As a workaround, use an extension attribute for profiles for storing the value of the office location. For more information, refer to "Populating custom extension attributes [http://www-01.ibm.com/support/knowledgecenter/SSYGQH_5.0.0/admin/customize/t_admin_profiles_populate_ext_attributes.dita]" and "Enabling custom extension attributes for Profiles [http://www-01.ibm.com/support/knowledgecenter/SSYGQH_5.0.0/admin/customize/t_admin_profiles_enable_custom_fields.dita]" topics in the Connections Knowledge Center.

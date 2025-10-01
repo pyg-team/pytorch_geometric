@@ -1,0 +1,154 @@
+Title: IBM PJ37333: UNABLE TO QUERY WITH SINGLE QUOTE AROUND THE GUID IN WHERE CLAUSE. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Per our ECM Help, we instruct users to use single quotes around
+   GUIDs when performing queries.
+   
+   <guid> ::= [<single_quote>]
+   '{'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx'}' [<single_quote>]
+   
+   However, with "Force case insensitive searches for property
+   values" (FCIS) enabled for the object store, it doesn't work.
+   
+   Steps to reproduce:
+   -----------------------
+   1)  In FEM, make sure you have a known (an existing) GUID and
+   issue a query with single quotes around the GUID.  For example,
+   
+   SELECT [MajorVersionNumber], [MinorVersionNumber] FROM
+   [WorkflowDefinition] WHERE ([Id] =
+   '{8E8558FA-7630-4338-AA71-59903700006C}')
+   
+   2)  You will see that "0 object returned."
+   
+   Expected results:  1 object returned.
+   
+   Actual results:  0 object returned.
+   
+   Since FCIS is enabled, CE is adding a LOWER() function to the
+   GUID, making the search to return no result.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  A local fix to this issue is to avoid using the single quotes
+   around the GUID
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * P8 CE users running Query                                    *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * UNABLE TO QUERY WITH SINGLE QUOTE AROUND THE GUID IN WHERE   *
+   * CLAUSE.                                                      *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Upgrade CE Server to 4.5.1.2-P8CE-FP002                      *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This issue is fixed in 4.5.1.2-P8CE-FP002
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PJ37333
+   
+   
+ * REPORTED COMPONENT NAME
+   CONTENT ENGINE
+   
+   
+ * REPORTED COMPONENT ID
+   5724R8101
+   
+   
+ * REPORTED RELEASE
+   451
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-01-25
+   
+   
+ * CLOSED DATE
+   2010-04-13
+   
+   
+ * LAST MODIFIED DATE
+   2010-04-13
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    PJ37332 [http://www-01.ibm.com/support/docview.wss?uid=swg1PJ37332]
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CONTENT ENGINE
+   
+   
+ * FIXED COMPONENT ID
+   5724R8101
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R451 PSY
+   UP

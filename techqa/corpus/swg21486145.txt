@@ -1,0 +1,34 @@
+Title: IBM Installation of the Sentinel License Manager from the Modeler Client media/download produces an incorrect lock code - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ After installing the Sentinel RMS License Manager from the Modeler Client media/download, user is not able to produce a valid licence during the licencing phase. This is due to the fact that the lock code being produced by the License Manager (LM) is: 1F-*****.
+
+From previous experience, lock codes must always start with: 10-*; 4-*; or 100-*.
+A licence code does get generated, however when starting up Modeler Client it fails with Licencing Error: 18.
+
+Manually editing the 'echoid.dat' file does not change the 1F lock code of the LM.
+
+
+
+RESOLVING THE PROBLEM
+Please remove the current Sentinel RMS License Manager (LM) and download the latest version from the IBM Passport Advantage website here [http://www.ibm.com/software/passportadvantage].
+
+Please note that you will need to be authorised by your Site/Primary contact in order to login and download IBM SPSS software and utilities.
+
+After installing the latest version, you should now be presented with a 10-* lock code, which can generate a valid licence for your product. Please remember to restart the Sentinel LM service after a licence is generated before starting up the client application. 
+
+
+
+
+RELATED INFORMATION
+ Need more help? Our Modeler forum is Live! [https://developer.ibm.com/answers/topics/modeler/?smartspace=predictive-analytics]
+Need more help? Our Licensing forum is Live! [https://developer.ibm.com/answers/topics/spsslicensing.html]
+
+
+ 
+
+HISTORICAL NUMBER
+ 93086

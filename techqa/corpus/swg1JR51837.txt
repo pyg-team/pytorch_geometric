@@ -1,0 +1,147 @@
+Title: IBM JR51837: WEBSPHERE BUSINESS MODELER JAVA VERSION MUST BE UPDATED SO THAT SSLV3 IS DISABLED BY DEFAULT - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+ DIRECT LINKS TO FIXES
+7.0.0.4-WB-ModelerBas-IFJR51837 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+WebSphere+Business+Modeler+Basic&fixids=7.0.0.4-WB-ModelerBas-IFJR51837&source=SAR]
+7.0.0.4-WB-ModelerAdv-IFJR51837 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+WebSphere+Business+Modeler+Advanced&fixids=7.0.0.4-WB-ModelerAdv-IFJR51837&source=SAR]
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  In IBM WebSphere Business Modeler Advanced or WebSphere Business
+   Modeler Basic, you are vulnerable to a POODLE attack if you do
+   not update your JDK. For more information, see "Security
+   Bulletin: Vulnerability in SSLv3 affects WebSphere Process
+   Server, WebSphere Business Compass, and WebSphere Business
+   Modeler Publishing Server (CVE-2014-3566)"
+   (http://www.ibm.com/support/docview.wss?uid=swg21689918).
+   
+   PRODUCTS AFFECTED:
+   WebSphere Business Modeler Advanced
+   WebSphere Business Modeler Basic
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  No additional information is available.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A fix is available for IBM WebSphere Business Modeler Advanced
+   and WebSphere Business Modeler Basic V7.0.0.4 that upgrades the
+   JRE to fix the security vulnerability from a POODLE attack by
+   disabling SSLv3 and using TLS by default.
+   
+   On Fix Central (http://www.ibm.com/support/fixcentral), search
+   for JR51837:
+   
+       1. Select IBM WebSphere Business Modeler with your edition
+   from the product selector, the installed version to the fix pack
+   level, and your platform, and then click Continue.
+       2. Select APAR or SPR, enter JR51837, and click Continue.
+   
+   When you download fix packages, ensure that you also download
+   the readme file for each fix. Review each readme file for
+   additional installation instructions and information about the
+   fix.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR51837
+   
+   
+ * REPORTED COMPONENT NAME
+   WBI MODELER AE
+   
+   
+ * REPORTED COMPONENT ID
+   5724I7500
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-11-20
+   
+   
+ * CLOSED DATE
+   2014-11-21
+   
+   
+ * LAST MODIFIED DATE
+   2014-11-21
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WBI MODELER AE
+   
+   
+ * FIXED COMPONENT ID
+   5724I7500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R700 PSY
+   UP

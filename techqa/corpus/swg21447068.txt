@@ -1,0 +1,56 @@
+Title: IBM NoSuchMethodError or NullPointerException on myfaces library when accessing RES console - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Attempts to access JRules RES console result in nosuchmethoderror on myfaces class on WebSphere Application Server 7 
+
+SYMPTOM
+After deploying Rule Execution Server (RES) on WebSphere Application Server 7, the following error is thrown while accessing the RES console: 
+
+com.ibm.ws.webcontainer.servlet.ServletWrapper service SRVE0068E: 
+Uncaught exception created in one of the service methods of the servlet /login.jsp in application ILOG Rule Execution Server. 
+Exception created : com.ibm.websphere.servlet.error.ServletErrorReport: java.lang. NoSuchMethodError: org/apache/myfaces/taglib/core/ViewTag.setJspId
+
+OR
+
+java.lang.NullPointerException
+at org.apache.myfaces.taglib.core.ViewTag.doStartTag(ViewTag.java:78)
+at com.ibm._jsp._login._jspService(_login.java:153)
+at com.ibm.ws.jsp.runtime.HttpJspBase.service(HttpJspBase.java:98)
+at javax.servlet.http.HttpServlet.service(HttpServlet.java:831)
+at com.ibm.ws.webcontainer.servlet.ServletWrapper.service(ServletWrapper.java:1583) 
+
+... 
+
+CAUSE
+This is due to conflicting version between the myfaces library in WebSphere Application Server 7 and the one packaged within JRules. The class in question is org/apache/myfaces/taglib/core/ViewTag.
+
+
+
+ENVIRONMENT
+WebSphere Application Server 7
+
+
+
+RESOLVING THE PROBLEM
+ 
+
+ 1. Ensure the classloading policy for the RES application has been set to parent LAST 
+ 2. Stop the RES Console application 
+ 3. Stop the server on which RES is installed 
+ 4. Delete the folder ILOG_Rule_Execution_Server under the temp directory, for example, <WASProfile>/temp/<nodeName>/<serverName>/ILOG_Rule_Execution_Server 
+ 5. Restart the server and application. 
+    
+
+Note that deleting the temp directory is a critical step. 
+RELATED INFORMATION
+#Conflicts with MyFaces library in RTS/DC [http://www-01.ibm.com/support/docview.wss?uid=swg21441414]
+
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Operational Decision Manager Platform Independent 7.5 Enterprise

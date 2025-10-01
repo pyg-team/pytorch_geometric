@@ -1,0 +1,158 @@
+Title: IBM PI60146: Connection sharing can not be controlled in Liberty when using direct lookup - United States
+
+Text:
+  A FIX IS AVAILABLE
+17.0.0.1: WebSphere Application Server Liberty 17.0.0.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24043339]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Shared DB connections in the  background threads will cause
+   connection "leak" (increase and stick to
+   number of threads). One possible fix would be disable the
+   shared DB  connection by default in the concurrent1.0
+   package,
+   or at least make it  an easy configuration option,
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  All users of IBM WebSphere Application      *
+   *                  Server Liberty - Java 2 Connectivity (J2C)  *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Connection sharing can not be           *
+   *                      controlled in WebSphere Application     *
+   *                      Server Liberty when using direct        *
+   *                      lookup                                  *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   WebSphere Application Server Liberty does not have the
+   capability to override the default connection sharing behavior
+   when using direct lookups.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This APAR adds the property enableSharingForDirectLookups on the
+   ConnectionManager to allow the connection sharing to be
+   controlled. If set to true, which is the default, connections
+   are shared. If set to false, connections are unshared.  This
+   property will only affect resources accessed through direct
+   lookup.
+   
+   The fix for this APAR is currently targeted for inclusion in fix
+   pack 17.0.0.1.  Please refer to the Recommended Updates page for
+   delivery information:
+   http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  The connection sharing can be controlled by using indirect
+   lookup, either using a resource reference or resource
+   injection.
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI60146
+   
+   
+ * REPORTED COMPONENT NAME
+   WAS LIBERTY COR
+   
+   
+ * REPORTED COMPONENT ID
+   5725L2900
+   
+   
+ * REPORTED RELEASE
+   855
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-04-03
+   
+   
+ * CLOSED DATE
+   2017-02-07
+   
+   
+ * LAST MODIFIED DATE
+   2017-02-07
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WAS LIBERTY COR
+   
+   
+ * FIXED COMPONENT ID
+   5725L2900
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R855 PSY
+   UP

@@ -1,0 +1,36 @@
+Title: IBM Message SSL004 and Message SSL007 - An Error Encountered During the Handshake Phase - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Message SSL004 and Message SSL007 Certificate does not conform to algorithm constraints. 
+
+SYMPTOM
+When trying to connect using SSL, an error message appears with both Message SSL004 and Message SSL007. 
+
+
+CAUSE
+One of the certificates being used is signed with an algorithm that is in the disable list for java.
+
+DIAGNOSING THE PROBLEM
+Message SSL004 states An error was encountered during the handshake phase of establishing a secure connection (java.security.cert.CertificateException: Certificates do not conform to algorithm constraints). 
+
+Message SSL007 states An error occurred with an SSL certificate.(Certificates does not conform to the algorithm constraints.)
+
+Taking a Trace Connection Communication Trace (TRCCNN) will show the SSL handshake, what certificates are being used, and what algorithm the certificates use. Instructions on how to take the trace can be found at the following URL:
+http://www-01.ibm.com/support/docview.wss?uid=nas8N1016231 [http://www-01.ibm.com/support/docview.wss?uid=nas8N1016231] )
+
+The java.security file will have the following three lines that need to be reviewed:
+
+jdk.certpath.disabledAlgorithms=MD2, RSA keySize < 1024
+jdk.tls.disabledAlgorithms=SSLv3
+login.configuration.provider=com.sun.security.auth.login.ConfigFile
+
+Comparing the above to the certificates will usually reveal that one of the certificates was using MD2, and the disabled algorithms contained the MD2.
+
+Note: Most common is an old Verisign Root CA that has an md2 algorithm.
+
+
+RESOLVING THE PROBLEM
+You will either need to remove the algorithm from the java.security file or get a newer certificate.

@@ -1,0 +1,145 @@
+Title: IBM PI22693: RATIONAL DEVELOPER FOR SYSTEM Z V8.5.X CLIENT MAY HANG WHEN USING SOFTWARE ANALYZER - United States
+
+Text:
+  A FIX IS AVAILABLE
+Rational Developer for System z Fix Pack 7 (8.5.1.7) for 8.5.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24042742]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Abstract: Rational Developer for System z V8.5.x client may hang
+   when using Software Analyzer
+   
+   If Software Analyzer it run on a COBOL program which contains
+   COPYBOOK statements it may cause the client to hang.
+   
+   Steps to recreate:
+   1. Open a COBOL file from your remote systems view with either
+   LPEX or the COBOL editor.
+   2. Right click in the editor and click Software Analyzer.
+   3. Observe hang issue.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Using local projects may resolve the issue.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  If Software Analyzer is run on a COBOL program which contains
+   COPYBOOK statements it may cause the client to hang.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Code was updated to avoid downloading non-cached copybooks
+   during code review parse. This change causes the code review to
+   avoid the code path that causes the hang. Note that copybooks
+   will not be updated during code review, so if a user wants to
+   include copybooks in the code review analysis, the copybooks
+   should be loaded and cached (for example, by opening the program
+   that includes the copybooks in an editor) prior to running the
+   analysis.
+   
+   The problem listed in this APAR has been resolved with
+   IBM Rational Developer for System z V8.5.1.6 Fix Pack which
+   is available from the Recommended Fixes support download page:
+   http://www-1.ibm.com/support/docview.wss?rs=2294&uid=swg27006335 [http://www-1.ibm.com/support/docview.wss?rs=2294&uid=swg27006335]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI22693
+   
+   
+ * REPORTED COMPONENT NAME
+   RATL DEV FOR SY
+   
+   
+ * REPORTED COMPONENT ID
+   5724T0700
+   
+   
+ * REPORTED RELEASE
+   851
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-07-24
+   
+   
+ * CLOSED DATE
+   2015-02-04
+   
+   
+ * LAST MODIFIED DATE
+   2015-02-04
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   RATL DEV FOR SY
+   
+   
+ * FIXED COMPONENT ID
+   5724T0700
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R851 PSY
+   UP

@@ -1,0 +1,94 @@
+Title: IBM Multiple system toolkits cause java.lang.NullPointerException in IBM Business Process Manager (BPM) - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Two system toolkits exist in the same process application. This scenario causes a conflict as you cannot have two system toolkits in the same process application. Development stops as a java.lang.NullPointerException continuously displays. 
+
+CAUSE
+When you copy any asset from a process application with system toolkits prior to Version 7.5.1 to a process application with the V7.5.1 system toolkit, the older toolkit is added to the process application. When you select to remove a dependency for Version 7.5.0.1 or other toolkit, an error is displayed that you cannot remove a dependency on a system toolkit.
+
+RESOLVING THE PROBLEM
+If you recently encountered this issue, the best solution is to apply APAR JR41389 in IBM Fix Central [http://www-933.ibm.com/support/fixcentral/] and re-import your application into the environment with a new snapshot. If you have already done extensive development with two toolkits, then you will need to complete the following manual steps. 
+
+CAUTION: Solving this issue requires direct modification to the database. Back up your database before using this fix. 
+
+Time to complete: 1-2 hours, depending on how many validation errors occur after removing the IBM Business Process Manager 7.5.1 toolkit. 
+
+To resolve this problem, complete the following steps: 
+
+ 1.  Stop the process center server.
+     
+     
+ 2.  Run the following SQL code:
+     
+     UPDATE LSW_PROJECT_DEPENDENCY SET IS_SYSTEM = 'F' WHERE NAME = 'TWSYS' 
+     
+     UPDATE LSW_PROJECT SET is_system = 'F' WHERE PROJECT_ID= '1b351583-e5cb-43b7-baee-340a63130ea7'
+     
+     
+ 3.  Start the process center.
+     
+     
+ 4.  Open the application. You will have the null pointer exception. Now, you can remove system toolkits. At this point, you have the option of removing the TWSYS 7.5.1 or the second toolkit. Generally, it is better to remove the V7.5.1 toolkit. Right-click to remove the 7.5.1 dependency. When the application is imported into the IBM Business Process Manager 7.5.1 product, most of the assets are linked to the older system toolkit, not the new TWSYS 7.5.1. Removing Version 7.5.1 generally creates less validation errors in the process application.
+     
+     
+     You will see the number of validation errors increase. These errors are all going to be items from the system toolkit that now does not have a reference. This information includes variables, exposed users, and stock connectors. 
+ 5.  Go through the list of validation problems and reconnect all assets to the appropriate system toolkit. 
+     
+     
+     Here are some examples:
+     
+     System Group is not reachable: re-expose it to your system toolkit.
+     [/support/docview.wss?uid=swg21576147&amp;aid=1]
+     
+     
+     Custom variable: re-link it to the new system data
+     [/support/docview.wss?uid=swg21576147&aid=2] [/support/docview.wss?uid=swg21576147&aid=2]
+     
+     
+ 6.  Fix all validation errors before proceeding. First, start with the complex variables. Then, fix other assets. In some cases, you might have to re-construct some assets. After fixing the variables and stock connectors in an asset, if there are still validation errors, flow lines might need to be reconnected or the whole asset might need to be re-created.
+     
+     
+ 7.  Upgrade the system toolkit to Version 7.5.1.
+     
+     
+ 8.  Take a new snapshot of the application.
+     
+     
+ 9.  Stop the Business Process Manager server. 
+     
+     
+ 10. Reverse the previous SQL statements.
+     
+     UPDATE LSW_PROJECT_DEPENDENCY SET IS_SYSTEM = 'T' WHERE NAME = 'TWSYS' 
+     
+     UPDATE LSW_PROJECT SET IS_SYSTEM = 'T' WHERE PROJECT_ID= '1b351583-e5cb-43b7-baee-340a63130ea7'
+     
+     
+ 11. Start the Business Process Manager servers for the reverted system toolkit settings to take effect.
+     
+     
+
+
+How to Prevent future multiple toolkit problems 
+
+Complete the following steps: 
+
+ 1. Search for APAR JR41389 in IBM Fix Central [http://www-933.ibm.com/support/fixcentral/] for your product (IBM Business Process Manager Standard, IBM Business Process Manager Express, or IBM Business Process Manager Advanced) and your operating system. 
+    
+    
+ 2. Install the fix pack with the Installation Manager. 
+    
+    
+
+
+Notes:  * When you import an application to a IBM Business Process Manager V7.5.1 system, upgrade the application system toolkit to 7.5.1 before you start any development work. Imported toolkits will continue to function. However, they might be on a lower system toolkit.
+   
+   
+ * After you upgrade a Process Center to V7.5.1, upgrade all application system toolkits to Version 7.5.1 before you start any development work. 
+
+ 
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Business Process Manager Advanced General AIX, Linux, Windows 7.5.1 Business Integration IBM Business Process Manager Express General Linux 7.5.1

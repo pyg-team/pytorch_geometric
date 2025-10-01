@@ -1,0 +1,65 @@
+Title: IBM PureData for Analytics (Netezza) nzload command cannot load some datetime formats - United States
+
+Text:
+nzload; netezza; to_timestamp; date; time; datetime format; datedelim; timedelim TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ 
+nzload can load most date and datetime formats, but using a separator other than a space between the date and time parts, or the time and meridian (i.e. AM or PM) throws errors.
+
+
+SYMPTOM
+ 
+
+If you have a table with a datetime column like this 
+create table dtime (dtm1 datetime) ;
+
+and then you create a control file like this
+DATAFILE dtm.dat
+{
+TableName dtime
+outputdir /nzscratch/iii
+logfile dtm.log
+badfile dtm.bad
+maxerrors 99
+delimiter '|'
+datestyle MonDY
+datedelim '_'
+timestyle 12hour
+timedelim '_'
+}
+
+and have a dtm.dat file that contains
+Aug_1_2013_1_34_17_PM|
+
+then this command "nzload -cf dtm.ctl" will get this error:
+1: 1(11) [1, TIMESTAMP] date but no time, "Aug_15_2013"[_]
+
+Even when I put a space between the 2013 and the 1_34, nzload still rejects 
+the row with this error:
+1: 1(19) [1, TIMESTAMP] expected AM or PM, "Aug_15_2013 1_34_17"[_]
+
+
+CAUSE
+ 
+
+nzload does not expect the date and time parts to be separated by an 
+underscore, or in fact by anything other than a space or a null. 
+The datedelim variable is for the delimiter between the different parts 
+(year, month, day) of the date, and not used to parse anything before or 
+after the date.
+
+nzload also does not expect the end of the time parts and the meridian 
+(i.e. AM or PM) to be separated by an underscore, or anything other than a 
+space or a null. The timedelim variable is for the delimiter between the different 
+parts (hour, minute, second) of the time, and not before or after it.
+
+
+
+
+RESOLVING THE PROBLEM
+ 
+
+Enhancement Request 72743 will extend the datedelim variable use in our code to also be an acceptable value for the character between the date and time parts in a datetime, and extend the timedelim variable likewise to also be an acceptable value for the character between the seconds field and the meridian in a time or datetime.
+
+Until that is implemented you will will have to load datetimes in this format with another tool like the to_timestamp function in an insert statement. If you must load with nzload then you will have to force your source data unload to put a space between the date and time, and another between time and meridian (or use a 24 hour time format and eliminate the meridian).

@@ -1,0 +1,186 @@
+Title: IBM PM70288: PORTAL V8 CF 01 UPGRADE FAILS IN CLUSTER WHEN LOCAL DMGR WAS CREATED MANUALLY - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When a user has created a Portal v8 cluster using a local DMGR,
+   and the DMGR was created manually (instead of during Portal
+   installation or using IIM -> Modify), the cumulative fix 01
+   installation fails during the CONFIG-WP-PTF-CF configuration
+   script:
+   ======================
+   upgrade.wp.vwat.manager:
+   [xmlaccess] EJPXB0006I: Connecting to URL
+   http://localhost:10039/wps/config/ [http://localhost:10039/wps/config/]
+   [xmlaccess] EJPXB0002I: Reading input file
+   /opt/IBM/WebSphere/PortalServer/bp/wp.vwat.manager/config/templa
+   tes/UpgradeManagerPortlet.xml
+   [xmlaccess] <?xml version="1.0" encoding="UTF-8"?>
+   [xmlaccess] <!-- IBM WebSphere Portal/8.0 build
+   wp800CF01_001_54 exported on Tue Jul 31 13:28:41 CEST 2012 from
+   my.hostname.com/127.0.0.1 -->
+   [xmlaccess] <request build="wp800CF01_001_54" type="update"
+   version="8.0.0.0"
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:noNamespaceSchemaLocation="PortalConfig_8.0.0.xsd">
+   [xmlaccess]     <status element="[web-app
+   Z1_CGAH47L00GP790IDB90MNI08T3
+   uid=com.ibm.wps.vwat.portlet.manager.VWAManagerPortlet.296e76713
+   3.webmod]" result="failed">
+   [xmlaccess]         <message id="EJPXA0043E">EJPXA0043E: An
+   error occurred while creating or updating the
+   resource.</message>
+   [xmlaccess]         <message id="EJPPD0015E">EJPPD0015E:
+   Portlet application manager failed when user xmlaccess
+   scripting user executed command UpdateWebApplication.</message>
+   [xmlaccess]         <message id="EJPPE0001E">EJPPE0001E:
+   Instantiation of the WebSphere Application Server
+   administration manager failed.</message>
+   [xmlaccess]         <message id="EJPPH0007E">EJPPH0007E:
+   Instantiation of the administration module for Portal context
+   failed.</message>
+   [xmlaccess]         <message id="EJPPH0010E">EJPPH0010E: Failed
+   to retrieve and initialize administration runtime variables
+   from Application Server.</message>
+   [xmlaccess]
+   <message>com.ibm.websphere.management.exception.ConnectorNotAvai
+   lableException</message>
+   ======================
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Install the CF silently and add this flag to the response file:
+   
+   <data
+   key='user.wp.dmgr.profilename,com.ibm.websphere.PORTAL.SERVER.v8
+   0' value='<dmgr_profile_name>'/>
+   
+   where <dmgr_profile_name> is your actual DMGR profile name.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  A code fix for this issue is integrated into the 8.0.0.0
+   Combined Cumulative Fix 002 (PM69633 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM69633]) which is available from
+   Fix Central:
+   
+   http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent
+   =ibm~WebSphere&product=ibm/WebSphere/WebSphere+Portal&release=8. [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~WebSphere&product=ibm/WebSphere/WebSphere+Portal&release=8.]
+   0.0.0&platform=All&function=aparId&apars=PM69633
+   
+   
+   You might need to type or paste the complete address into your
+   Web browser.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A code fix for this issue is integrated into the 8.0.0.0
+   Combined Cumulative Fix 002 (PM69633 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM69633]) which is available from
+   Fix Central:
+   
+   http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent
+   =ibm~WebSphere&product=ibm/WebSphere/WebSphere+Portal&release=8. [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~WebSphere&product=ibm/WebSphere/WebSphere+Portal&release=8.]
+   0.0.0&platform=All&function=aparId&apars=PM69633
+   
+   
+   You might need to type or paste the complete address into your
+   Web browser.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM70288
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSPHERE PORTA
+   
+   
+ * REPORTED COMPONENT ID
+   5724E7600
+   
+   
+ * REPORTED RELEASE
+   800
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-08-03
+   
+   
+ * CLOSED DATE
+   2012-12-17
+   
+   
+ * LAST MODIFIED DATE
+   2012-12-17
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBSPHERE PORTA
+   
+   
+ * FIXED COMPONENT ID
+   5724E7600
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R800 PSY
+   UP

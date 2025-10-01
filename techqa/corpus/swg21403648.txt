@@ -1,0 +1,71 @@
+Title: IBM KFWITM354E message occurs when accessing a TEP historical view - United States
+
+Text:
+KFWITM354E KFWITM220E ; large memory model; LMM historical TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ <KFWITM354E The Time Span request terminated with the following message>. 
+and 
+<KFWITM220E Request failed during execution> 
+occur when accessing an historical view containing a lot of entries. 
+
+CAUSE
+TEPS is running out of resources.
+
+DIAGNOSING THE PROBLEM
+When the TEP view containing historical data (older than 24 hours) is accessed, queries like these are executed on the TEPS (see *_cq_*.log files): 
+
+KfwServices: Fri Jul 17 17:06:25 HKG 2009: JDBC: SELECT "Services_Inventory_610".WRITETIME "WRITETIME",....etc etc
+
+At about the same time in the SystemOut.log from eWAS you can find:
+
+[7/17/09 17:06:25:200 GMT+08:00] 0000086d SystemOut O Waiting for server shutdown...
+[7/17/09 17:06:25:505 GMT+08:00] 0000086d SystemOut O Waiting for server shutdown...
+[7/17/09 17:06:25:805 GMT+08:00] 0000086d SystemOut O Waiting for server shutdown...
+
+Also SystemOut.log file for the eWAS component shows the following OutOfMemory exceptions just before the queries were run:
+
+[7/17/09 16:57:40:934 GMT+08:00] 00000025 ExceptionUtil E CNTR0020E: EJB threw an unexpected (non-declared) exception during invocation of method "retrieveSituationData" on bean "BeanId(KD4SDMS#kd4sdmsejb.jar#ITMAccess, null)". Exception data: java.lang.OutOfMemoryError
+at java.lang.Class.getInterfaces(Native Method)
+....
+[7/17/09 16:57:42:629 GMT+08:00] 00000024 TimerImpl E ASYN0012E: Alarm/Timer threw exception commonj.work.WorkCompletedException: java.lang.RuntimeException: java.lang.OutOfMemoryError
+at com.ibm.ws.asynchbeans.J2EEContext.run(J2EEContext.java:1120)
+...
+Caused by: java.lang.RuntimeException: java.lang.OutOfMemoryError
+at com.ibm.websphere.security.auth.WSSubject.doAs(WSSubject.java:124)
+at com.ibm.ws.asynchbeans.J2EEContext$DoAsProxy.run(J2EEContext.java:328)
+at java.security.AccessController.doPrivileged(AccessController.java:246)
+at com.ibm.ws.asynchbeans.J2EEContext.run(J2EEContext.java:1111)
+... 4 more
+Caused by: java.lang.OutOfMemoryError
+at java.lang.Class.forNameImpl(Native Method)
+at java.lang.Class.forName(Class.java:163)
+....
+
+Finally the TEP log file (in this case it is Java WebStart log file javawsxxx.log) shows:
+
+Friday, July 17, 2009 5:07:35 PM GMT+08:00(4a603f57.208b4c80-(null)Thread-148:DataBus,0,"DataBus.getResult(Query,PBasedRequest,boolean,boolean)") EXCEPTION: SystemException from pullSequence(...), About to check the pipeline through the Server.
+(4a603f57.208b4c80-(null)Thread-148:DataBus,0,"DataBus.getResult(Query,PBasedRequest,boolean,boolean)") EXCEPTION: org.omg.CORBA.NO_RESOURCES: vmcid: OMG minor code: C completed: No
+
+All of this means that an out of memory condition at the TEPS is being experienced.
+
+
+RESOLVING THE PROBLEM
+Implementing the Large Memory Model (LMM) solves the problem. 
+
+ 
+If the TEPS is running as 32-bit version (according to "cinfo -i" command) follow the instructions according to chapter "Increasing virtual memory on AIX for large environments" in the ITM Installation Guide in order to get relief:
+http://publib.boulder.ibm.com/infocenter/tivihelp/v15r1/topic/com.ibm.itm.doc_6.2.2fp2/cfg_aix_lrgmry.htm?path=3_1_2_0_6_1_2#cfg_aix_lrgmry [http://publib.boulder.ibm.com/infocenter/tivihelp/v15r1/topic/com.ibm.itm.doc_6.2.2fp2/cfg_aix_lrgmry.htm?path=3_1_2_0_6_1_2#cfg_aix_lrgmry] 
+
+If after the changes of the memory parameters, the TEP display is completely empty, (just the menu bar is visible) and the cq_KfwServices logs deliver tons of "SQL1224N ...SQLSTATE=55032.... ERROR: unable to establish database connection to ..." 
+then obviously a syntax problem or typo occurred during memory configuration setting of EXTSHM=ON.
+You need to ensure that there is no blank or further character after line EXTSHM=ON in $CANDLEHOME/config/cq.ini file
+In order to see clearly for example a blank character, check the not editable $CANDLEHOME/config/cq.config and watch out for EXTSHM line like: EXTSHM='ON '.
+In this example there is a blank after N, which will fail. It should be EXTSHM='ON' ! So edit $CANDLEHOME/config/cq.ini accordingly and restart the TEPS.
+
+Furthermore an additional problem might also be the medium page support (64kb) introduced in DB2 v9.1 and exploited by Power5+ architecture or higher on AIX. 
+In order to disable medium page support set: 
+db2set DB2_MEDIUM_PAGE_SUPPORT=FALSE 
+<restart DB2 instance> 
+
+Then check TEPS behavior.

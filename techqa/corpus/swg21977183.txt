@@ -1,0 +1,84 @@
+Title: IBM 【セキュリティ情報】IBM MQ Telemetry (遠隔測定) (MQXR) 安全でないパスワード  (CVE-2015-2012) - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ IBM MQ Telemetry (遠隔測定) (MQXR)サービスは、SSL/ TLS接続を使用するように設定することができます。 キーストアにアクセスするために使用するパスフレーズは、プロパティファイルにテキストとして書き込まれているため、読み込み可能です。 
+
+VULNERABILITY DETAILS
+脆弱性の詳細：
+CVEID: CVE-2015-2012 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-2012]
+DESCRIPTION: IBM WebSphere MQ stores the MQXR keystore password in clear text in a world readable file.
+CVSS Base Score: 2.1
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/103923 [https://exchange.xforce.ibmcloud.com/vulnerabilities/103923] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:L/AC:L/Au:N/C:P/I:N/A:N) 
+
+AFFECTED PRODUCTS AND VERSIONS
+影響のある製品・バージョン： 
+
+次の製品に影響があります。 
+
+ 
+
+IBM WebSphere MQ 8.0 
+
+ * IBM WebSphere MQ 8.0.0.3 およびそれ以前の保守レベル
+
+
+IBM WebSphere MQ 7.5  * IBM WebSphere MQ 7.5.0.5 およびそれ以前の保守レベル
+
+
+IBM WebSphere MQ 7.1  * IBM WebSphere MQ 7.1.0.6 およびそれ以前の保守レベル
+
+REMEDIATION/FIXES
+修正策： 
+
+
+IBM WebSphere MQ 8.0 
+
+ *  [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~WebSphere&product=ibm/WebSphere/WebSphere+MQ&release=8.0&platform=All&function=aparId&apars=IT13023]fixpack 8.0.0.4 [http://www-01.ibm.com/support/docview.wss?uid=swg21969244] を導入してください。
+
+
+IBM WebSphere MQ 7.5  * Interim fix IT09866 [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~WebSphere&product=ibm/WebSphere/WebSphere+MQ&release=7.5.0.5&platform=All&function=aparId&apars=IT09866] を導入してください。
+
+
+IBM WebSphere MQ 7.1  * l [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~WebSphere&product=ibm/WebSphere/WebSphere+MQ&release=7.1&platform=All&function=aparId&apars=IV77604]fixpack 7.1.0.7 [http://www-01.ibm.com/support/docview.wss?uid=swg21965293] を導入してください。
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v3 Guide [http://www.first.org/cvss/user-guide] 
+On-line Calculator v3 [http://www.first.org/cvss/calculator/3.0] 
+
+参照情報： 
+[IBMサイト] 
+この文書は、米国 IBM 社の資料を翻訳した参考文書です。翻訳元の文書は、以下のリンクよりご参照ください。 
+Security Bulletin: IBM WebSphere MQ MQXR insecure passwords (CVE-2015-2012) [http://www.ibm.com/support/docview.wss?uid=swg21968399] 
+
+公開済みのフィックスパックについては、以下のサイトよりご利用いただけます。 
+Recommended fixes for WebSphere MQ [http://www-01.ibm.com/support/docview.wss?rs=171&uid=swg27006037] 
+
+フィックス・パックの公開予定については、以下のサイトよりご確認いただけます。 
+WebSphere MQ planned maintenance release dates [http://www-01.ibm.com/support/docview.wss?rs=171&uid=swg27006309] 
+
+[CVSS情報] 
+独立行政法人 情報処理推進機構: 共通脆弱性評価システムCVSS概説 [http://www.ipa.go.jp/security/vuln/CVSS.html] 
+JVN iPedia: CVSS計算ソフトウェア日本語版 [http://jvndb.jvn.jp/cvss/ja.html] 
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] 
+関連情報： 
+. 
+【お問合せ先】 
+技術的な内容に関して、サービス契約のあるお客様はIBMサービス・ラインにお問い合わせください。 
+IBM サービス・ライン [http://www.ibm.com/jp/news/20070420001.html] 
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY. 
+
+関連情報
+ An US English translation is available [http://www.ibm.com/support/docview.wss?uid=swg21968399 ]

@@ -1,0 +1,13 @@
+Title: IBM Inspector - User Access Question - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ We have a couple of user accounts set up in our Initiate engine that are strictly used for API access. We discovered that these user accounts, although they are for "internal", behind the scenes use, can be used to log into Inspector, Web Reports etc...
+
+Question:
+We are in the process of setting up an LDAP security group for these specific API user accounts and were wondering if there is a specific permission/operation/interaction that can be removed that will take away all access to Inspector and other initiate web apps? I'm sure there is but I can't recall what it may be. 
+
+RESOLVING THE PROBLEM
+Disabling the USRGETINFO permission still allows a MEMPUT interaction via API but stops a user from logging into Inspector.

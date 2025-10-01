@@ -1,0 +1,54 @@
+Title: IBM Error installing Analytic Server 3.0 - United States
+
+Text:
+as_user metastore kerberos analytic server principal KDC keytab TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Getting error message:
+
+
+
+SPARK_MODULE_DIR :
+
+Exception in thread "main" java.lang.NoClassDefFoundError: org/apache/hadoop/fs/FSDataOutputStream
+
+at java.lang.Class.getDeclaredMethods0(Native Method) 
+
+SYMPTOM
+Following error message is seen in the hdfsUpdate.log when attempting to installl Analytic Server 3.0:
+
+SPARK_MODULE_DIR :
+Exception in thread "main" java.lang.NoClassDefFoundError: org/apache/hadoop/fs/FSDataOutputStream
+at java.lang.Class.getDeclaredMethods0(Native Method)
+at java.lang.Class.privateGetDeclaredMethods(Class.java:2570)
+at java.lang.Class.getMethod0(Class.java:2813)
+
+
+CAUSE
+Customer ended up manually creating the as_user principal in the Kerberos KDC and manually extracting the keytab for as_user and putting on the Analytic Server host. After doing this the metastore installed successfully when they chose the option to reinstall in Ambari.
+
+ENVIRONMENT
+Linux
+
+DIAGNOSING THE PROBLEM
+The following error messages were seen in our hdfsUpdate.log:
+
+log4j:ERROR setFile(null,true) call failed.
+java.io.FileNotFoundException: /applications/ibm/spss/logs/as.log (No such file or directory)
+
+log4j:ERROR setFile(null,true) call failed.
+java.io.FileNotFoundException: /applications/ibm/spss/logs/as_trace.log (No such file or directory)
+
+com.spss.ae.filesystem.exception.FileSystemException: Unable to initialize the file system access.
+at com.spss.ae.hdfs.auth.impl.HdfsAuth.authWithKeytab(HdfsAuth.java:245)
+at com.spss.ae.hdfs.auth.impl.HdfsAuth.auth(HdfsAuth.java:112)
+at com.spss.ae.fstools.FsShell.main(FsShell.java:86)
+Caused by: javax.security.auth.login.LoginException: Unable to obtain password from user
+
+
+
+RESOLVING THE PROBLEM
+The last error seem specific to as_user's access. The customer indicated that there was no keytab on the system (trvlapp1365 is the dedicated node for AS) for as_user. In addition, there is no principal for as_user within the KDC. The customer went into the Ambari 2.2 Console and under Admin => Kerberos, he clicked on the button to regenerate keytabs. He was able to monitor the process and saw that when it got to the AS node (trvlapp1365) is returned NONE. For some reason, Ambari (HDP 2.4) is not generating the principal and keytab for as_user. As a result, the customer will attempt to add the as_user principal (addprinc) to the KDC and see if that will generate the keytab. The current state of Analytic Server is Installed. The current state of Analytic Metastore is Install Failed. the customer then reinstalled the Analytic Metastore portion. 
+
+RELATED INFORMATION
+ Need more help? Our Analytic Server forum is Live! [https://developer.ibm.com/answers/search.html?f=&type=question&redirect=search%2Fsearch&sort=relevance&q=%2B[spss]%2B[modeler]%2B[bigdata]]

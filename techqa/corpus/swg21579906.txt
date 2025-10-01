@@ -1,0 +1,34 @@
+Title: IBM How do I optimize applications for maximum performance in IBM Datacap Taskmaster Capture? - United States
+
+Text:
+performance optimize speed maximize TECHNOTE (FAQ)
+
+QUESTION
+ How can Datacap Taskmaster applications be configured to process the maximum number of images in the minimum amount of time? 
+
+CAUSE
+On sites that process large volumes of images, it becomes very important that the application process each image as quickly as possible. However, the applications that come with Datacap Taskmaster install are designed to handle a wide variety of situations for many different customers. Batches processed through the standard applications therefore go through many steps, not all of which are necessarily required for a specific installation. For this reason, it is important to go through every task in the application to determine the optimal configuration for the site.
+
+ANSWER
+General 
+
+ * Keep the latest version and fix pack installed. IBM regularly makes revisions that improve performance, so having the latest fix pack installed insures that the application will run as quickly as possible. 
+ * Turn off all logging. 
+
+
+Scan  * Use the SetFastMode action when possible.
+
+
+Image Enhancement  * Don't use Image Enhancement unless testing shows a need. 
+ * If Image Enhancement is needed, only enable the type of enhancement needed, as each type of enhancement made to an image increases the processing time.
+
+
+Barcode Detection  * Use or define a field within which barcode detection needs to occur. Then attach the barcode detection rule to the field, not to the form. This eliminates the barcode engine from having to analyze the entire page. 
+ * Configure BAR/P in the Zones tab of Datacap Studio for the field, specifying only the barcode types, quantity, and orientations that might occur. 
+ * The Barcode_P engine has an internal image enhancement step. For some applications, this enhancement can be eliminated without lowering the successful detection rate. Test by adding the following action prior to barcode detection being performed.  * rrs_set(0,@P.bp_enhance)
+   
+   
+
+
+Additional Documentation 
+For more information on how to make these and other performance enhancements, see Application Development using IBM Datacap Taskmaster Capture [http://www.elink.ibmlink.ibm.com/publications/servlet/pbi.wss?CTY=US&FNC=SRX&PBL=SC19-3251-01].

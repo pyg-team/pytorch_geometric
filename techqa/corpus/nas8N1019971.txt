@@ -1,0 +1,76 @@
+Title: IBM Enabling TLS 1.2 Security for Telnet on IBM i v7.1 - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How can I enable high transport security for an IBM i application like Telnet? 
+
+CAUSE
+Security
+
+ANSWER
+Like all client/server applications, we must consider both the client and the server. 
+
+First, on the Client Side, verify that the client is capable of TLS 1.2. If not, then enabling the server for TLS 1.2 will not have any effect. 
+
+ 
+
+On the IBM iOS side, verify that Technology Refresh 6 or newer has been installed by confirming the *INSTALLED Level of the SF99707 Group PTF.
+
+
+Step 1) Enter the command CHGSYSVAL QSSLPCL and remove *OPSYS (which equates to *SSLV3 and *TLSV1). Then list the protocols that are desired to be supported. To just add the latest TLS protocol support, enter:
+
+*TLSV1.2
+*TLSV1.1
+*TLSV1
+*SSLV3 
+
+ Note: Ensure that the protocol lists are concurrent. Do not skip a protocol.
+
+
+Step 2) Enter the command DSPSYSVAL QSSLCSLCTL and verify it is set to *OPSYS. If set to *USRDFN, then the SSL Administration for this system is customizing the list of ciphers. If this is the case, enter CHGSYSVAL QSSLCSL to verify the ciphers supported and include the new ciphers:
+
+
+ *RSA_AES_256_CBC_SHA256 
+
+ *RSA_AES_128_CBC_SHA256 
+
+ 
+
+Step 3) Open Digital Certificate Manager (DCM) from the IBM i Tasks option on the Welcome Panel of the IBM Navigator for i port 2001 interface, and log into the *SYSTEM keystore.
+
+
+Step 4) From the left navigation pane, expand Manage Applications and then select Update Application Definition.
+
+
+Step 5) Select the Server radio button and then select the Continue button.
+
+
+Step 6) in the list of Server Applications, find and select the radio button for IBM i TCP/IP Telnet Server and then select the Update Application Definition button.
+
+
+Step 7) Change the SSL Protocols from *PGM to Define Protocols Suppored. Check the protocols desired for this application to support or use. This list should match or be a subset of the QSSLPCL System Value. For example: TLS 1.2, TLS 1.1, TLS 1.0 and SSLV3.
+
+
+Step 8) Change SSL Cipher Specification Options from *PGM to Define Cipher Specification List. The first six ciphers in the list should be enabled and are a good starting point. But you may want to set RSA_AES_256_CBC_SHA256 and RSA_AES_128_CBC_SHA256 as the first two in the list. RSA_AES_128_CBC_SHA is a good cipher to have listed third as it supports more than just the TLS 1.2 protocol.
+
+
+Step 10) At the bottom of the screen, click the Apply button.
+
+
+At the next restart of the Telnet Server, it will be enabled for TLS 1.2 and prefer the TLS 1.2 specific ciphers. 
+
+ 
+
+Access for Windows is enabled for TLS 1.2 in Service Pack SI50567 for IBM i Access for Windows r7.1. You could also test the Telnet Server by using the IBM i v7.1 Telnet Client. The same system values have to be set to enable TLS 1.2 protocols and ciphers. But in DCM, update the Application Definition, chose Application type of "Client", then the IBM i Telnet Client and make the same protocol and cipher changes. Start a new interactive job and telnet to the destination telnet server. (If an interactive job is running before the DCM configuration change, end it and restart)
+
+RELATED INFORMATION
+ Enabling iSeries Access Host Servers [ http://www-01.ibm.com/support/docview.wss?uid=nas8N1020017]
+
+
+ 
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Operating System IBM i Communications-TCP IBM i 7.1 Standard Operating System IBM i 7.1 IBM i 7.1 Standard

@@ -1,0 +1,29 @@
+Title: IBM Application Health Summary workspace is blank - United States
+
+Text:
+ITCAM; monitoring; apps; CAMADALL; CAMADTEPDATA TECHNOTE (FAQ)
+
+QUESTION
+ The WAS Admin Console shows there are applications present and running, but these are not visible in the Application Health Summary ITCAM workspace. 
+
+ANSWER
+If the relevant provided out of the box situations are not being used, it is possible that the applications have not yet been discovered and enabled for monitoring.
+
+Check in the Application Configuration workspace (found by right clicking on the Application Health navigator icon and selecting Application Registry) to see if the status of the application is set to "Enabled".
+
+You can try to associate the WasAppDiscovered situation with the Application Health navigator item, e.g. this way:
+
+(1) Right click on Application Health navigator item in the TEP 
+(2) Select 'Situations' and then select 'WebSphere App Server' 
+(3) Click on the icon to set Situation filter criteria (4 downward pointing arrows icon) 
+(4) Tick the box 'Eligible for association' and select OK 
+(5) Right click on WasAppDiscovered and select 'Associate' 
+(6) Ok the situations box and close
+
+You should be able to see all discovered applications at once in the Application Health Summary view at this point.
+
+Alternatively you can run the Take Action Set_Application_Monitoring on specific applications this way: 
+
+- Access the TEP, select the Navigator item "Application Health". Right click on this navigator item and select workspaces and then the workspace "Application Registry". 
+- Right click on the applications that are presented and have a status of disabled or discovered in the view then select "take action". 
+- Select the take action "Set_Application_Monitoring". All of the values for the take action will be filled in automatically. Change the value Mon_Status from 0 to 1 to enable Application monitoring.

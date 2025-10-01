@@ -1,0 +1,183 @@
+Title: IBM IC84826: MIGRATION FAILS IF IN-FLIGHT INSTANCE HAS A TOKEN JUST PASSED AN ACTIVITY WITH CHECKED "CLEAN STATE" - United States
+
+Text:
+  A FIX IS AVAILABLE
+WebSphere Lombardi Edition Version 7.2.0 Fix Pack 4 [http://www-01.ibm.com/support/docview.wss?uid=swg24032945]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  THU-10764: CLONE of WLE-4308
+   The customer has *offline* runtime server and uses "Clean State"
+   with services in BPDs intensively.
+   It is not possible to migrate an in-flight instance to another
+   snapshot if it has a token just passed such activity with "Clean
+   State" checked.
+   
+   Steps to reproduce:
+   
+   1. Prepare an environment with offline server. All steps bottom
+   should be done on offline server, you do not need Process Center
+   itself.
+   
+   2. Use attached packages to install snapshots S5 and then S6 on
+   offline server (packed for name "OfflineTest" if this important
+   - I believe it isn't). There are the same snapshots as in
+   WLE-4306.
+   --> S5 is installed as default, both S5 and S6 are active
+   
+   3. Launch 2 instances of the "Main BPD" using Portal Favorites
+   links ("Main BPD" is exposed as startable for all users).
+   
+   ~~> _Note that "DHS" has "Clean State" checked, and "Normal DHS"
+   does not._
+   
+   4. Complete first Default Human Service in one of these
+   instances, so the token is on "Normal DHS" as on attached
+   screenshot. Do not touch another instance.
+   
+   5. Go to ProcessAdmin console -> Installed Apps -> PMR
+   03235,SGC,821 offline deployment (P03235) - S6 -> Migrate
+   In-Flight Data
+   
+   6. Select S5 snapshot and press "Migrate"
+   ==> Only "not touched" instance migrates
+   ==> The instance with a token on "Normal DHS" is still in S5
+   snapshot
+   ==> tw-error.log contains an error:
+   {panel}2011-05-17 11:14:35,646 [WebContainer : 4] ERROR
+   com.lombardisoftware.server.ejb.runtime.RuntimeServicesCore -
+   Migration failure. Log the error and move on to next instance.
+   com.lombardisoftware.core.TeamWorksException:
+   java.lang.NullPointerException
+   at
+   com.lombardisoftware.core.TeamWorksException.asTeamWorksExceptio
+   n(TeamWorksException.java:129)
+   at
+   com.lombardisoftware.bpd.runtime.engine.BPDInstanceDAO.migrateTa
+   sk(BPDInstanceDAO.java:538)
+   at
+   com.lombardisoftware.bpd.runtime.engine.BPDInstanceDAO.migrateTo
+   NewSnapshot(BPDInstanceDAO.java:369)
+   at
+   com.lombardisoftware.server.ejb.runtime.RuntimeServicesCore$15.r
+   un(RuntimeServicesCore.java:1302)
+   [...........]
+   Caused by: java.lang.NullPointerException
+   at
+   com.lombardisoftware.bpd.runtime.engine.BPDInstanceDAO.migrateTa
+   sk(BPDInstanceDAO.java:483)
+   ... 90 more{panel}
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  clear most huge variables from JS blocks at the end of a service
+   instead of using "Clean State"
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  NA
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Formal Fix provided to the customer
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC84826
+   
+   
+ * REPORTED COMPONENT NAME
+   WS LOMBARDI EDI
+   
+   
+ * REPORTED COMPONENT ID
+   5725A0900
+   
+   
+ * REPORTED RELEASE
+   720
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-06-22
+   
+   
+ * CLOSED DATE
+   2012-12-31
+   
+   
+ * LAST MODIFIED DATE
+   2012-12-31
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WS LOMBARDI EDI
+   
+   
+ * FIXED COMPONENT ID
+   5725A0900
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R720 PSY
+   UP

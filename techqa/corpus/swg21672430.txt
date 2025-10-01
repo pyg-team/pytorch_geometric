@@ -1,0 +1,23 @@
+Title: IBM Tivoli Common Reporting (TCR) 3.1 installation failure via. IBM Installation Manager (IIM) - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When installing TCR (via. IIM) as a root user the install fails with the following messages. 
+
+ERROR [main] com.ibm.cic.agent.core.application.HeadlessApplication run 
+The Installation Manager cannot be started. The registry information does not exist or does not match with this executable. This may happen if you are trying to run Installation Manager installed by another user. 
+
+CAUSE
+IIM was installed by non-root user and is being activated by a root user for the current TCR install and hence the issue. 
+
+ENVIRONMENT
+JazzSM 1.1.0
+
+RESOLVING THE PROBLEM
+Install IIM as root user. Then proceed with the TCR install as a root user.
+
+ 
+
+Cross reference information Segment Product Component Platform Version Edition Systems and Asset Management IBM Tivoli Monitoring V6

@@ -1,0 +1,14 @@
+Title: IBM How can I check my CCSIDs for FTP? - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ We transfer data using FTP from the workstation (ASCII) to the mainframe (EBCDIC), before loading it into DB2. How can I tell which CCSID is being used for the conversion to EBCDIC? 
+
+ANSWER
+You can tell which CCSID is being used for the conversion to the mainframe by looking at your z/OS ® settings. 
+
+For information about using ftp to transfer files, look in the z/OS Communications Server IP Configuration Guide, Version 1 Release 6, which can be found at, http://publibz.boulder.ibm.com/epubs/pdf/f1a1b341.pdf [http://publibz.boulder.ibm.com/epubs/pdf/f1a1b341.pdf].
+
+[http://gwareview.software.ibm.com/software/data/db2/zos/exHome.html]In chapter 11, "Transferring files using ftp," there is a section titled, "Translation of Data," which can be found on page 570 of the pdf (or page 532 of the book). On page 571, under the heading, "Code page conversions for the data connection," the book states, "For the transfer of data on the data connection, ftp supports all single-byte conversions available through iconv. For example, iconv supports conversions between IBM-1047 and IBM-850, so conversions between IBM-1047 and IBM-850 are available for data transfer."

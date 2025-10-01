@@ -1,0 +1,76 @@
+Title: IBM Open Mic Webcast: IBM Verse Offline - 20 April  2016 [presentation, videos + audio + Q&A attached] - United States
+
+Text:
+lste_webcast STEwebcastDocument WEBCAST
+
+ABSTRACT
+ Verse Offline is a new feature within IBM Verse that syncs the last seven days of email in all folders, seven days of preceding calendar events, and 30 days of future events. This session will detail this new feature and how to make the most of it. 
+
+CONTENT
+ 
+
+ * Topic: IBM Verse Offline 
+ * Date: Wednesday, April 20, 2016
+
+Presentation OpenMic_VerseOffline_042016.pdf [/support/docview.wss?uid=swg27047829&aid=2]OpenMic_VerseOffline_042016.pdf [/support/docview.wss?uid=swg27047829&aid=1] 
+
+
+Audio OpenMic_VerseOffline_042016.mp3 [/support/docview.wss?uid=swg27047829&aid=4]OpenMic_VerseOffline_042016.mp3 [/support/docview.wss?uid=swg27047829&aid=3] 
+
+
+Videos Full video: ftp://public.dhe.ibm.com/software/lotus/info/verse/OpenMic_VerseOffline_Apr2016.mp4 [ftp://public.dhe.ibm.com/software/lotus/info/verse/OpenMic_VerseOffline_Apr2016.mp4] 
+
+Setting up IBM Verse Offline: YouTube [https://youtu.be/uok__PMfsoA] | IBM Media Center [https://mediacenter.ibm.com/media/t/1_tap8sx5d] 
+
+IBM Verse Offline Troubleshooting: YouTube [https://youtu.be/4UklgTV-ASM]| IBM Media Center [https://mediacenter.ibm.com/media/t/1_uchow40u] 
+
+
+Q&A written transcript 
+Q: Are there any plans for using authentication or SSO tokens for the local offline encryption anytime in the future? 
+A: We have been discussing that since the beginning :-). The online authentication requires a network connection but when the user is working offline we can't know that there is a network connection. And, some customers require the online authentication to be done via a VPN which makes the possibility more complicated. 
+
+Q: Are there any plans to get access to attachments in offline mode? 
+A: Attachments support is on the list :-) Attachments is a frequent request. 
+
+Q: Can the users control how much offline data is stored? Last 90 days only? 
+A: Not currently, but we do plan to allow the amount of data to be more than 7 days and also controllable by user. 
+
+
+Q: Is it possible for two users to use the same machine and same browser to go offline? I mean, both will have their own data stored on the browser/machine without any conflict. Is that the correct understanding? 
+A: Yes, that is correct. Just to add to that, each user has his/her own local database encrypted using his/her own encryption key. 
+
+
+Q: Is there any plan to have IBM Verse as a Desktop Client like Outlook? 
+A: Verse is a browser based client. Currently there is no plan to have a Verse desktop client. We plan to continuously enhance the Verse offline support. The gaps between a web app and desktop app are becoming smaller and smaller. 
+
+Q: Do browser logs show synching done? 
+A: We do log sync progress in the browser console. 
+
+Q: Is there any unforeseen issue with edits on repeating meeting in offline mode? 
+A: I haven't seen any issues with edits on repeating meetings, if you have a use case that's causing problems can you report an issue? 
+
+Q: Where do we look for logs for offline setup failure? 
+A: Just regular browser console logging is used. So if there are problems, if users can collect the browser log that can be helpful to Support in diagnosing problems. 
+
+Q: Is this feature [offline] forseen for the future Verse on-premises? 
+A: No, we do not currently have a plan for an offline feature in an on-premises version of Verse. 
+
+
+
+
+Resource highlights from the session: 
+
+Documentation: How do I use Verse without an Internet connection? https://apps.na.collabserv.com/help/topic/com.ibm.cloud.verse.doc/faq_offline.html [https://apps.na.collabserv.com/help/topic/com.ibm.cloud.verse.doc/faq_offline.html] 
+
+Admin documentation: Allow users to work offline - http://www.ibm.com/support/knowledgecenter/SSPS94/service/topics/cfg_prevent_verse_offline_t.dita [http://www.ibm.com/support/knowledgecenter/SSPS94/service/topics/cfg_prevent_verse_offline_t.dita] 
+
+IBM Verse Offline Frequently Asked Questions 
+http://www.ibm.com/support/docview.wss?uid=swg21978542 [http://www.ibm.com/support/docview.wss?uid=swg21978542] 
+
+
+About Open Mic Webcasts IBM Collaboration Solutions (Lotus) Support wants to help you take full advantage of your products. Join us for our Open Mic Webcast series as technical experts share their knowledge and answer your questions. These webcasts are designed to address specific topics and provide an in-depth and focused technical exchange in a convenient webcast format. For more information about our Open Mic webcasts, visit the IBM Collaboration Solutions Support Open Mics [http://www.ibm.com/software/lotus/support/lotus-open-mics/] page. 
+
+
+
+ORIGINAL PUBLICATION DATE
+ 2016/3/29

@@ -1,0 +1,111 @@
+Title: IBM PI56440: SPECIFIC FONTS ARE NOT DISPLAYED WHEN THE REPORT IS EXPORTED IN EXCEL 2007 OR PDF FORMATS - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS VENDOR SOLUTION.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Using specific fonts in reports when exporting them in Excel
+   2007 format, the fonts are replaced by the default font. With
+   the PDF format, if the fonts are embedded there is no issue, if
+   not the following message in Adobe Reader is displayed  :
+   "Cannot extract the embedded font 'EDLZWL+<fontname>'. Some
+   characters may not display or print correctly."
+   
+   There is no problem in HTML or Excel 2002 formats.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *  This is not a Cognos product issue, rather an issue with the
+   ParisineTTSymboles font supplied.
+   The ParisineTTSymboles font only contains 24 glyphs which is not
+   enough for substitution of all characters in a text. IBM Cognos
+   rendering engine for Excel 2007 defaults to Arial font if no
+   substitute glyph's found.
+   When running in HTML format, or rendering in PDF, the browser
+   and Adobe PDF reader only use characters the ParisineTTSymboles
+   font has substitute for.
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI56440
+   
+   
+ * REPORTED COMPONENT NAME
+   COG ADMINISTRAT
+   
+   
+ * REPORTED COMPONENT ID
+   5724W12AD
+   
+   
+ * REPORTED RELEASE
+   A21
+   
+   
+ * STATUS
+   CLOSED ISV
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-02-02
+   
+   
+ * CLOSED DATE
+   2017-06-13
+   
+   
+ * LAST MODIFIED DATE
+   2017-06-13
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

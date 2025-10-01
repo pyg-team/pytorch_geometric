@@ -1,0 +1,42 @@
+Title: IBM Error when executing DVS test from RTS:  "Host and port appear to be responsive but the service "/testing/repositoryService" does not exist." - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When I run a DVS test from RTS, I get the following error: "Host and port appear to be responsive but the service "/testing/repositoryService" does not exist."
+
+
+RESOLVING THE PROBLEM
+ 
+
+This might be due to user errors in configuration. For example, you could have set the URL of the Rule Execution Server to be 'http://<host>:<port>/testing' instead of 'http://<host>:<port>/res" in the RTS configuration. 
+
+. When you add a new server to the RTS configuration ( Websphere ILOG Rule Team Server online help > Configure: Manage your project configuration > Managing servers [http://publib.boulder.ibm.com/infocenter/brdotnet/v7r0m2/index.jsp?topic=/com.ibm.websphere.ilog.brdotnet.doc/Content/Business_Rules/Documentation/_pubskel/Rules_for_DotNET/ps_RFDN_Global716.html]), make sure you specify the URL of the Rule Execution Server (e.g.: http://localhost:8080/res). 
+
+A common mistake is to specify the URL of the SSP server (e.g.: http://localhost:8080/testing), which leads to the error above. 
+
+ 
+
+This error could also indicate that the SSP is not correctly deployed or configured. 
+
+Please check that the SSP is correctly deployed and configured. 
+
+Examine the application server logs for error messages which indicate the root of the problem. For example, you could have multiple SSPs deployed and different XOMs integrated into different SSPs. In that case, make sure that you have one SSP deployed and active, and all the XOMs are integrated within it. 
+
+ 
+
+Also note that the SSP and the RES management console are expected to be deployed on the same server outside the cluster, and no other SSP should be deployed inside the cluster, See Clustering Decision Validation Services [http://www.ibm.com/support/docview.wss?uid=swg21425487] for more details. 
+
+ 
+
+If these recommendations do not help, please contact IBM support with a description of your set up and the server logs. 
+
+ 
+
+ 
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Operational Decision Manager Platform Independent 8.6, 8.5, 8.0, 7.5 Enterprise

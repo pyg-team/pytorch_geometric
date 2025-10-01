@@ -1,0 +1,108 @@
+Title: IBM validate-database-driver task failed due to a corrupt wkplc_comp.properties file - United States
+
+Text:
+validate-database-driver task failed; Portal task failed; Portal build failed TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+During the install process, running the validate-database-driver task to access a Remote database throws the following exception: 
+
+BUILD FAILED
+...../PortalServer/base/wp.db.impl/config/includes
+/wp.db.impl_cfg.xml:659: The following error occurred while executing
+this line:
+...../PortalServer/base/wp.db.impl/config/includes
+/wp.db.impl_cfg.xml:664: Wrong usage of the sqlproc task! - dbdomain
+release is wrong
+
+Reviewing the systemOut log, we see the following exception:
+
+sqlproc] action: validate-db-driver
+[sqlproc] _________________________________________________________
+[sqlproc] DbDomain: release
+[sqlproc] _________________________________________________________
+[sqlproc] Task Usage:
+[sqlproc] 1. You need to specify for the dbdomain release
+[sqlproc] the following properties:
+[sqlproc] in the
+/opt/WebSphere/Portal6/wp_profile/ConfigEngine/properties/null
+file:
+[sqlproc] release.DbType
+[sqlproc] release.DbSchema
+[sqlproc] release.DbUrl
+[sqlproc] release.DbUser
+[sqlproc] release.DbPassword
+[sqlproc] and in the
+/opt/WebSphere/Portal6/wp_profile/ConfigEngine/properties/wkplc_db
+type.properties file:
+[sqlproc] your_dbtype.DbDriver
+[sqlproc] your_dbtype.DbLibrary
+[sqlproc] your_dbtype.JdbcProviderName
+[sqlproc] 2. Instead of the dbdomain attribute use the dbtype,
+dbdriver,
+[sqlproc] dbdriverds, dburl, dbuser, dbpassword attributes and the
+[sqlproc] classpath element
+[sqlproc] Sample usage:
+[sqlproc] <sqlproc action="execute-sql-scripts"
+dbtype="YOUR_DBTYPE"
+[sqlproc] dbdriver="YOUR_DBDRIVER" dburl="YOUR_DBURL"
+[sqlproc] dbuser="YOUR_DBUSER"
+dbpassword="YOUR_DBPASSWORD"
+[sqlproc] <jvmparam name="SOME_JVM_SETTING"
+value="YOUR_VALUE">
+[sqlproc] <classpath>
+[sqlproc] <pathelement path="YOUR_DBLIBRARY"/>
+[sqlproc] </classpath>
+[sqlproc] <sqlfiles dir="DIRECTORY_TO_SQL_FILES">
+[sqlproc] <include name="SQL_FILES"/>
+[sqlproc] </sqlfiles>
+[sqlproc] </sqlproc>
+[sqlproc] Values for the action attribute could be:
+[sqlproc] print-usage -> prints this message
+[sqlproc] validate-db-settings -> specify the dbdomains comma
+[sqlproc] seperated in the dbdomain attribute
+[sqlproc] validate-db-driver
+[sqlproc] validate-db-connection
+[sqlproc] execute-sql-scripts -> the fileset element needs
+[sqlproc] to be used for sql files
+[sqlproc] exist-database -> the errorcondtionproperty element
+needs
+[sqlproc] to be used for the propertyname of the errorcode
+property
+[sqlproc] _________________________________________________________
+Target finished: action-validate-database-driver-dbdomain
+Target finished: validate-database-driver
+
+It appears that the task is having issues reading/finding the wkplc_comp.properties file.
+
+
+SYMPTOM
+When running the validate-database-driver task, the sub task validate-db-driver fails stating that it is unable to find the wkplc_comp.properties files. 
+
+
+[sqlproc] in the ....../wp_profile/ConfigEngine/properties/null
+
+
+CAUSE
+The cause of this issue, is Portal is unable to read the properties file as the wkplc_comp.properties file was saved as a RTF file after being updated by the user.
+
+
+
+DIAGNOSING THE PROBLEM
+Checking the properties dump of the configTrace.log for release domain, the data appears corrupted: 
+
+
+r e l e a s e . A d m i n U r l =R e p l a c e W i t h Y o u r A d m i nU r l
+r e l e a s e . D B A . D b P a s s w o r d =<removed>
+r e l e a s e . D B A . D b U s e r =<removed>
+r e l e a s e . D a t a S o u r c e N a m e =<removed>
+
+The wkplc_comp.properties is also twice the size of a regular wkplc_comp.properties file.
+
+
+
+RESOLVING THE PROBLEM
+You can either: 
+
+1. Replace the properties file with a backup and update the appropriate attributes before rerunning the task. 
+
+2. Saving the properties files as non-RTF text and then rerun the task.

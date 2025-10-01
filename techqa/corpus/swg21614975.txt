@@ -1,0 +1,30 @@
+Title: IBM Rational Asset Analyzer Eclipse plug-in for Rational Developer for System "scan now" button is unavailable - United States
+
+Text:
+RAAi; RSE conn not found on specified host; RDz; greyed out; grayed out TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ In the IBM Rational Asset Analyzer Eclipse plug-in for Rational Developer for System z (RAAi), after a connection is made to RAA server i, the "scan now" button is not available (grayed out). 
+The message "connected, but no source viewing (RSE conn not found on specified host)" appears in Asset Analyzer properties. 
+
+SYMPTOM
+Here is how the problem manifests in preferences[/support/docview.wss?uid=swg21614975&aid=1] [/support/docview.wss?uid=swg21614975&aid=1] 
+
+The "scan now" button is greyed out even with the server showing connected. 
+[/support/docview.wss?uid=swg21614975&aid=2] [/support/docview.wss?uid=swg21614975&aid=2]
+
+
+
+RESOLVING THE PROBLEM
+"Scan now" is only available when the RD/z plugin is run on the same machine where RAA is installed; that is, in a local connection. 
+
+
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Software Development Rational Asset Analyzer for System z z/OS 6.0.0.10, 6.0.0.11 All Editions 
+PRODUCT ALIAS/SYNONYM
+ RAAi
+RAA

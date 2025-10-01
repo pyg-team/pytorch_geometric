@@ -1,0 +1,145 @@
+Title: IBM Change DataSourceProperties for Oracle from type2 to type4 - United States
+
+Text:
+type2; type4; oracle; change; sid; service_name TECHNOTE (FAQ)
+
+QUESTION
+ How do you change Oracle from type2 to type4 in the DataSourceProperties file? 
+
+ANSWER
+DataSourceProperties Procedures (See general instructions below for use of general utilities)
+
+1. Logon as root
+
+2. Change to TWSHome/TWA/wastools directory
+
+3. Execute showDataSourceProperties.sh and redirect output to a file:
+./showDataSourceProperties.sh > DataSourceProperties.txt
+
+4. Edit DataSourceProperties.txt file. Check the start of the file. The command might have written a message from the application server (WASX7357I:) at the beginning of the file. Delete this message.
+
+5. Change line:
+OracleType2JndiName=jdbc/twsdb
+to
+OracleType2JndiName=jdbc/twsdb_old
+
+6. Change line
+OracleType4JndiName=
+to
+OracleType4JndiName=jdbc/twsdb
+
+7. Set:
+OracleType4URL=jdbc:oracle:thin:@//localhost:1521/<ORCL>
+
+where:
+
+localhost must be replaced with the hostname or ip address of the ORACLE server
+
+1521 must be replaced with the real port number of the ORACLE listener on the ORACLE server 
+
+<ORCL> must be replaced with the database instance name (SID or SERVICE_NAME) that is connected to TWS.
+
+
+If you do not know how to set the parameters specified above, you can find this information in the file <ORACLE_HOME>\NETWORK\ADMIN\tnsnames.ora on the machine where the TWS master is installed.
+
+You should find a section like this:
+
+<hostname> =
+(DESCRIPTION =
+(ADDRESS_LIST =
+(ADDRESS = (PROTOCOL = TCP)(HOST = xxxxxxxxxx)(PORT = yyyy))
+)
+(CONNECT_DATA =
+(SERVICE_NAME = zzzz)
+)
+)
+where
+xxxxxxxxxx is the hostname
+yyyy is the port number (1521 above)
+zzzz is the DB instance name (ORCL above)
+
+NOTE: 
+
+ * If connected to an Oracle DB on a "rack", then SERVICE_NAME is used. 
+ * If connected to an Oracle DB on a standalone workstation, then use SID.
+
+
+8. Save file DataSourceProperties.txt 
+
+9. Stop the WebSphere® Application Server using the conman stopappserver command 
+
+10. Run changeDataSourceProperties.sh DataSourceProperties.txt 
+
+11. Start the WebSphere Application Server using the conman startappserver command (see Starting and stopping the application server and appservman) 
+
+12. Verify that the change has been implemented by executing command and verifying output. 
+
+./showDataSourceProperties.sh 
+
+
+
+General Utilities Procedures: 
+
+This section documents a common procedure that you are advised to follow when using the following utilities: 
+
+* changeDataSourceProperties 
+* changeHostProperties 
+* changeSecurityProperties 
+
+To avoid the risk of changing a configuration value inadvertently, you should follow a procedure that creates a file containing the current properties, edit it to the values you require, and apply the changes. The details are as follows: 
+
+1. Log on to the computer where Tivoli Workload Scheduler is installed as the following user: 
+
+UNIX® 
+root 
+Windows® 
+Any user in the Administrators group. 
+
+2. Access the directory: <TWA_home>/wastools 
+
+3. Stop the WebSphere® Application Server using the conman stopappserver command (see Starting and stopping the application server and appservman) 
+
+4. From that same directory run the following script to create a file containing the current properties: 
+
+UNIX 
+show<property_type>Properties.sh > my_file_name 
+Windows 
+show<property_type>Properties.bat > my_file_name 
+
+where <property_type> is one of the following: 
+* DataSource 
+* Host 
+* Security 
+
+5. Edit my_file_name with a text editor. Check the start of the file. The command might have written a message from the application server (WASX7357I:) at the beginning of the file. Delete this message. 
+
+6. Change the value of the configuration parameters, according to your requirements. You do not need to supply all of the parameters in the file. 
+
+7. Save the file my_file_name. 
+
+8. Run the script: 
+
+Windows 
+change<property_type>Properties.bat my_file_name 
+UNIX 
+change<property_type>Properties.sh my_file_name 
+
+where <property_type> is the same as used in step 4, and my_file_name is the fully qualified path of the file containing the new parameters. 
+
+The properties are updated, according to the rules given in the descriptions of each property type. 
+
+9. Start the WebSphere Application Server using the conman startappserver command (see Starting and stopping the application server and appservman) 
+
+10. Verify that the change has been implemented by executing command and verifying output. 
+
+./showDataSourceProperties.sh RELATED INFORMATION
+ Starting and stopping TWS processes on a workstation [http://publib.boulder.ibm.com/infocenter/tivihelp/v3r1/topic/com.ibm.tivoli.itws.doc/awsrgmst31.htm#dqx2startstop]
+
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ Maestro
+TWS
+IWS
+TWA

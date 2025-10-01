@@ -1,0 +1,206 @@
+Title: IBM PJ36926: Excessive delays occur during failure recovery in a WebLogic managed node cluster - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Users experience excessive delays during failure recovery in a
+   WebLogic managed node cluster
+   
+   2  Solaris Zones
+   WebLogic 9.2 SP3
+   8 managed WebLogic nodes (4 managed nodes on each Zone)
+   1 cluster for the 8 managed nodes.
+   1 Admin server on different server.
+   
+   Setup 1 - WcmApiConfig.properties has all the nodes defined:
+   Scenarios:
+   1.  All nodes running - System works as expected, all nodes are
+   connected.
+   2.  All nodes on one server are down, system is still available
+   on the network - No slow down and system working as normal,
+   onlynodes on the running server is connected.
+      3.  Disconnect one server from the network (it is hard to
+     determine which node WL will go to next, but usually it
+   follows the order specified in WcmApiConfig.properties)
+    a.  next node WL will go to is still up - takes 2-3
+   minutes to log on
+       b.  next node WL will go to is on the disconnected
+   server -    takes 2-3 minutes and gets an error.
+   
+      Setup 2 - WcmApiConfig.properties has one node on each
+   server  defined:
+    Scenarios:
+          1.  All nodes running - System works as expected, all
+   nodes are connected.
+     2.  All nodes on one server are down, system is still
+   available on the network - No slow down and system working as
+   normal, onlynodes on the running server is connected.
+       3.  Disconnect one server from the network -
+       a.  next node WL will go to is still up - takes a
+   little less  than a minute to log on
+         b.  next node WL will go to is on the disconnected
+   server -    takes 2-3 minutes and gets an error.
+       4.  All nodes specified in WcmApiConfig.properties is
+   down, the rest are up - Destination unreachable error
+   
+    Setup 3 - WcmApiConfig.properties has all nodes defined.
+    In    addition, 4 more dummy nodes are defined (i.e.
+   non-existing  nodes but pointing to an existing machine)
+     Scenarios:
+           1.  All nodes running - System works as expected,
+   all available nodes are connected.
+         2.  All nodes on one server are down, system is
+   still available on the network - No slow down and system working
+   as normal, onlynodes on the running server is connected.
+          3.  Disconnect one server from the network -
+          a.  next node WL will go to is still up - takes
+   3-5 minutes to log on
+           b.  next node WL will go to is on the
+   disconnected server -  takes 3-5 minutes and gets an error.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * Users of a Workplace Weblogic HA deployment.                 *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * Users experience excessive delays during failure recovery in *
+   * a Weblogic managed node cluster.                             *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Install or upgrade to both 4.0.2.6-P8AE-FP006 or later and   *
+   * 4.5.1.2-P8CE-FP002 or later.                                 *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This fix requires both 4.0.2.6-P8AE-FP006 and Content Engine fix
+   pack P8CE-4.0.1-012 or 4.5.1.2-P8CE-FP002.
+   Additionally, the Application Engine administrator must modify
+   
+   startWebLogic.sh/.bin. In the java invoke line to start
+   WebLogic, add:
+   
+   -Dcom.filenet.api.useLocalAuthentication=true. Example:
+   ${JAVA_HOME}/bin/java ${JAVA_VM} ${MEM_ARGS} ${JAVA_OPTIONS}
+   -Dcom.filenet.api.useLocalAuthentication=true
+   Dweblogic.Name=${SERVER_NAME}
+   -Djava.security.policy=${WL_HOME}/server/lib/weblogic.policy
+   ${PROXY_SETTINGS} ${SERVER_CLASS}
+   
+   If container-managed security is not already configured on the
+   Application Engine, it is necessary to complete the
+   
+   instructions from the IBM FileNet P8 Platform Installation and
+   Upgrade Guide entitled 'To configure Application Engine
+   (WebLogic 8.1.x)' or 'To configure Application Engine (WebLogic
+   9.2 and WebLogic 10)' where the first step begins "If you
+   
+   selected Container-Managed Authentication during the
+   installation".
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+ *  This was opened prematurely.  A second APAR was opened and is
+   tracking this issue for P8 Content Engine
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   PJ36926
+   
+   
+ * REPORTED COMPONENT NAME
+   APPLICATION ENG
+   
+   
+ * REPORTED COMPONENT ID
+   5724R7610
+   
+   
+ * REPORTED RELEASE
+   402
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-10-09
+   
+   
+ * CLOSED DATE
+   2010-02-26
+   
+   
+ * LAST MODIFIED DATE
+   2010-02-26
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   APPLICATION ENG
+   
+   
+ * FIXED COMPONENT ID
+   5724R7610
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R402 PSN
+   UP

@@ -1,0 +1,127 @@
+Title: IBM IT04707: THE TYPE FILTERING CHECK BOXES ON THE EVENTS PAGE DO NOT STAY CHECKED AFTER BEING SELECTED - United States
+
+Text:
+  A FIX IS AVAILABLE
+IBM PureApplication System Version 2.0.0.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24038445]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  On the PureApplication Systems V2.0.0.0 System Console > Events
+   page, the check boxes inside of the Type filtering pull down
+   menu do not stay checked after being selected.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  User can still click on the text instead of the check box.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  On the PureApplication Systems V2.0.0.0 System Console > Events
+   page, the check boxes inside of the Type filtering pull down
+   menu do not stay checked after being selected.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A fix is being provided in PureApplication System version
+   2.0.0.1 to fix the check box issue.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT04707
+   
+   
+ * REPORTED COMPONENT NAME
+   PAPP SYS 8382 I
+   
+   
+ * REPORTED COMPONENT ID
+   5725G3200
+   
+   
+ * REPORTED RELEASE
+   110
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-10-02
+   
+   
+ * CLOSED DATE
+   2014-11-19
+   
+   
+ * LAST MODIFIED DATE
+   2014-11-19
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   PAPP SYS 8382 I
+   
+   
+ * FIXED COMPONENT ID
+   5725G3200
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R200 PSY
+   UP

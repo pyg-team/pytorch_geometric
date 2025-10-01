@@ -1,0 +1,35 @@
+Title: IBM How to format server trace using ARSTFMT on Content Manager OnDemand 8.5.x.x and 9.0.x.x  on Windows platform - United States
+
+Text:
+server trace; ARSTFMT; Content Manager OnDemand TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Formatting CMOD V8.5.x.x and 9.0.x.x Server traces on Windows platform 
+
+SYMPTOM
+CMOD Server trace output is unreadable
+
+
+CAUSE
+In CMOD V8.5.0.0 and later, the trace file is written in binary. To convert the trace file from its binary format, use the ARSTFMT command found in the bin directory of your OnDemand server V8.5 and later installation.
+
+ENVIRONMENT
+Windows
+
+RESOLVING THE PROBLEM
+Open command prompt - navigate to the CMOD\9.0\bin directory and issue ARSTFMT as follows:
+
+arstfmt -i C:\Users\IBM_ADMIN\path\to\file -o C:\Users\IBM_ADMIN\path\to\file\name.txt
+
+
+
+
+where the C:\Users\IBM_ADMIN\path\to\file is the unreadable trace file and C:\Users\IBM_ADMIN\path\to\file\name.txt is the name of the formatted trace file. 
+
+ 
+
+
+
+RELATED INFORMATION
+ Enable ODWEK tracing [http://www-01.ibm.com/support/docview.wss?uid=swg21240220]
+How to enable trace in Content Manager OnDemand server [http://www-01.ibm.com/support/docview.wss?uid=swg21330810]

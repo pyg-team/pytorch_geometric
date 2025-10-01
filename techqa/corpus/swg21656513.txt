@@ -1,0 +1,34 @@
+Title: IBM Upgrade process to add Extended Oracle support for Database Connectivity does not work for some appliances - United States
+
+Text:
+601limitation xg xi xib ve Extended Oracle support for Database Connectivity FAN Oracle RAC fast application notification license TECHNOTE (FAQ)
+
+QUESTION
+ The normal process to add a field upgrade feature does not work for Extended Oracle support for Database Connectivity on appliances that did not ship with firmware version 6.0.1 or later pre-installed. How do you add support for this feature on these appliances? 
+
+CAUSE
+Appliances that do not ship with firmware version 6.0.1 or later do not have the correct feature license.
+
+ANSWER
+Extended Oracle support for Database Connectivity includes support for Oracle RAC Fast Application Notification. Support is available for DataPower appliances that meet the following criteria: 
+
+ * The following machine types: 7199 (2426-42X, 2426-43X, 2426-62X, 2426-63X ), 7198 (2426-32X, 2426-33X), or 4195 (2426-4BX) 
+ * The following appliances: WebSphere DataPower Integration Appliance XG45, WebSphere DataPower Integration Appliance XI52, or WebSphere DataPower Integration Blade XI50B 
+ * Firmware version 6.0.1.0 or later 
+ * Appliances with the Database Connectivity feature (DCO)
+
+
+Normally, you can upgrade a license feature without needing to contact IBM Support.  * For appliances purchased through Passport Advantage, you would obtain the upgrade through Passport Advantage [http://www.ibm.com/software/lotus/passportadvantage/] 
+ * For pre-Passport Advantage appliances, you would use the following technote: Upgrading a DataPower appliance to add a field upgrade feature [http://www.ibm.com/support/docview.wss?uid=swg21507058].
+
+
+However, if your appliance was not shipped with firmware version 6.0.1.0 or later pre-installed, you must contact IBM Support [http://www.ibm.com/support/docview.wss?uid=swg21236322] to enable Extended Oracle support for Database Connectivity. 
+
+If your appliance was shipped with 6.0.1.0 or later pre-installed, you can use the normal process for your appliance machine type to add the Extended Oracle support for Database Connectivity. RELATED INFORMATION
+#Upgrading a DataPower appliance to add a field upgrade [http://www.ibm.com/support/docview.wss?uid=swg21507058]
+
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration WebSphere DataPower Service Gateway XG45 Firmware 6.0.1.0 All Editions Business Integration WebSphere DataPower Integration Blade XI50B 6.0.1.0

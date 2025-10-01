@@ -1,0 +1,15 @@
+Title: IBM WebSphere MQ Series v7.0 and  WebSphere Partner Gateway v6.2 compatibility - United States
+
+Text:
+MQ WMQ v7.0 v7 v700 700 7 7.0 version TECHNOTE (FAQ)
+
+QUESTION
+ Is WebSphere MQ Series v7.0 supported on WebSphere Partner Gateway v6.2? 
+
+ANSWER
+While IBM has not officially tested nor supports WPG 6.2 with the use of WMQ version 7.0, we do understand the need and reasons for such. IBM WPG support is planning this testing, however we do not have an estimated time when it will be complete or when the official statement will be released. 
+
+
+Since other products frequently ship fixes, updates, and new releases, testing every configuration is not possible by the IBM WPG support team. While IBM support understands that client may have a need to upgrade, you may install and run with updates to supported product minimum levels, but only if those updates are forward compatible (meaning that they are above the minimum requirements defined by WPG). Users should note that they are running at their own risk if they are using a fix, update, or new release other then what is claimed by IBM WPG Support. If an issue was found IBM WPG support will provide best effort in determining and resolving the issue. The client should complete thorough testing before deploying such changes, and have a back out plan in case of serious incident.
+
+As of WPG 6.2.1, WPG officially supports WMQ 7.0.1.3

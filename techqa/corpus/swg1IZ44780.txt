@@ -1,0 +1,125 @@
+Title: IBM IZ44780: WRONG BEHAVIOR OF BPC ADMIN CONSOLE REPAIRED WITH BPEUPGRADE.JACL. - United States
+
+Text:
+  FIXES ARE AVAILABLE
+WebSphere Process Server V6.2.0 Fix Pack 1 (V6.2.0.1) [http://www-01.ibm.com/support/docview.wss?uid=swg24022185]
+WebSphere Enterprise Service Bus V6.2.0 Fix Pack 1 (6.2.0.1) [http://www-01.ibm.com/support/docview.wss?uid=swg24022868]
+WebSphere Enterprise Service Bus V6.2.0 Fix Pack 2 (6.2.0.2) [http://www-01.ibm.com/support/docview.wss?uid=swg24024407]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Wrong behavior of BPC Admin Console definition on a cluster leve
+   instead of Server and Node level.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  This update improves the robustness of bpeupgrade.jacl to let it
+   tolerate the following non-standard configurations:
+   1. A jdbc/BPEDB data source defined at node scope for vertical
+   clusters
+   2. Duplicate JDBC provider names in the same scope
+   3. Duplicate data source names within the JDBC provider where
+   the jdbc/BPEDB data source is defined
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Problem fixed with V620 FP1
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ44780
+   
+   
+ * REPORTED COMPONENT NAME
+   BUS PRC CHOREOG
+   
+   
+ * REPORTED COMPONENT ID
+   5655FLW11
+   
+   
+ * REPORTED RELEASE
+   620
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-02-26
+   
+   
+ * CLOSED DATE
+   2009-04-21
+   
+   
+ * LAST MODIFIED DATE
+   2009-04-21
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    IZ44778
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   BUS PRC CHOREOG
+   
+   
+ * FIXED COMPONENT ID
+   5655FLW11
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R620 PSY
+   UP

@@ -1,0 +1,279 @@
+Title: IBM PM97812: FACESMESSAGES CREATED IN THE PROCESSEVENT METHOD ARE NOT RENDERED IN A JSF 2.0 PORTLET PROJECT. - United States
+
+Text:
+  FIXES ARE AVAILABLE
+8.0.0.9: WebSphere Application Server V8.0 Fix Pack 9 [http://www-01.ibm.com/support/docview.wss?uid=swg24037574]
+8.5.5.3: WebSphere Application Server V8.5.5 Fix Pack 3 [http://www-01.ibm.com/support/docview.wss?uid=swg24038133]
+8.5.5.4: WebSphere Application Server V8.5.5 Fix Pack 4 [http://www-01.ibm.com/support/docview.wss?uid=swg24038539]
+8.0.0.10: WebSphere Application Server V8.0 Fix Pack 10 [http://www-01.ibm.com/support/docview.wss?uid=swg24039242]
+8.5.5.5: WebSphere Application Server V8.5.5 Fix Pack 5 [http://www-01.ibm.com/support/docview.wss?uid=swg24039425]
+8.5.5.6: WebSphere Application Server V8.5.5 Fix Pack 6 [http://www-01.ibm.com/support/docview.wss?uid=swg24040035]
+8.0.0.11: WebSphere Application Server V8.0 Fix Pack 11 [http://www-01.ibm.com/support/docview.wss?uid=swg24040425]
+8.5.5.7: WebSphere Application Server V8.5.5 Fix Pack 7 [http://www-01.ibm.com/support/docview.wss?uid=swg24040533]
+8.5.5.8: WebSphere Application Server V8.5.5 Fix Pack 8 [http://www-01.ibm.com/support/docview.wss?uid=swg24041178]
+8.0.0.12: WebSphere Application Server V8.0 Fix Pack 12 [http://www-01.ibm.com/support/docview.wss?uid=swg24041590]
+8.5.5.9: WebSphere Application Server V8.5.5 Fix Pack 9 [http://www-01.ibm.com/support/docview.wss?uid=swg24041819]
+8.5.5.10: WebSphere Application Server V8.5.5 Fix Pack 10 [http://www-01.ibm.com/support/docview.wss?uid=swg24042150]
+8.5.5.11: WebSphere Application Server V8.5.5 Fix Pack 11 [http://www-01.ibm.com/support/docview.wss?uid=swg24043005]
+8.0.0.13: WebSphere Application Server V8.0 Fix Pack 13 [http://www-01.ibm.com/support/docview.wss?uid=swg24042746]
+8.5.5.12: WebSphere Application Server V8.5.5 Fix Pack 12 [http://www-01.ibm.com/support/docview.wss?uid=swg24043844]
+8.0.0.14: WebSphere Application Server V8.0 Fix Pack 14 [http://www-01.ibm.com/support/docview.wss?uid=swg24044096]
+8.5.5.13: WebSphere Application Server V8.5.5 Fix Pack 13 [http://www-01.ibm.com/support/docview.wss?uid=swg24044479]
+8.0.0.15: WebSphere Application Server V8.0 Fix Pack 15 [http://www-01.ibm.com/support/docview.wss?uid=swg24044734]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  I am developing a portlet which uses Faces 2.0 on WPS 8. In
+   different cases i want to add FacesMessages to the
+   FacesContext to display in the portlet using the h:messages-Tag.
+   
+   
+   
+   But i have some cases, where i have to add the messages from
+   the processAction and processEvent-Method.
+   
+   
+   In processAction i have tried to add FacesMessage using the
+   getFacesContext(PortletRequestWrapper, PortletResponseWrapper,
+   Lifecycle)-Method which is in class com.ibm.faces20.portlet.
+   FacesPortlet. This does not work and the messages are not
+   displayed.
+   
+   
+   For this case i found a solution which works for me.
+   
+   
+   
+   I am adding the FacesMessages to PortletSession (in example a
+   list) and adding the Messages in Method
+   saveFacesMessage(FacesContext) to the context.
+   
+   
+   
+   public void processAction(ActionRequest request, ActionResponse
+   
+   response) throws PortletException {
+   
+   messages.add(new FacesMessage(FacesMessage.SEVERITY_ERROR,
+   "Fehler
+   Action", "Fehler Action"););
+   
+   super.processAction(request, response);
+   
+   }
+   
+   
+   
+   @Override
+   
+   protected void saveFacesMessages(FacesContext context) {
+   
+   for (FacesMessage facesMessage : messages) {
+   
+   context.addMessage(null, facesMessage);
+   
+   }
+   
+   messages.clear();
+   
+   super.saveFacesMessages(context);
+   
+   }
+   
+   
+   
+   My problem is the case, when i call the portlet using JSR286
+   Events.
+   In this case the processEvent-Method is called.
+   
+   
+   
+   I tried it the same way to add FacesMessage like in
+   processAction:
+   
+   
+   @Override
+   
+   public void processEvent(EventRequest eventRequest,
+   EventResponse
+   eventResponse) throws PortletException,
+   
+   IOException {
+   
+   messages.add(fm);
+   
+   super.processEvent(eventRequest, eventResponse);
+   
+   }
+   
+   but this solution does not work, and i get a the following
+   warning in log:
+   
+   There are some unhandled FacesMessages, this means not every
+   FacesMessage had a chance to be rendered.
+   
+   
+   
+   When i try to display the FacesMessages manually (not using h:
+   messages), i noticed, that there are two methods to read the
+   facesmessage from context.
+   
+   
+   
+   Iterator<FacesMessage> getMessages()
+   
+   List<FacesMessage> getMessageList()
+   
+   
+   
+   Adding FacesMessage in processAction or by FacesValidator both
+   methods return the same Message. Everything is ok.
+   
+   
+   
+   Adding FacesMessage in processEvent the method getMessageList()
+   returns the FacesMessage, getMessages() returns a NullIterator.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  None available
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  IBM WebSphere Application Server users      *
+   *                  using JSR 286 events in a JSF 2.0 portlet   *
+   *                  on WebSphere Portal Server version 8.0      *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: FacesMessages created in the            *
+   *                      processEvent method are not rendered    *
+   *                      in a JSF 2.0 portlet project.           *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   The JSF 2.0 portlet bridge code needs to be updated to invoke
+   super.processEvent method before saving parameters.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Faces Messages were not restored  in processEvent call. The
+   JSF 2.0 Portlet Bridge was updated to persist the faces
+   messages in render parameters in processEvent.
+   The fix will not be active until the following context-param
+   is added and its value is set as true in the web.xml:
+   
+   <context-param>
+    <param-name>com.ibm.faces.portlet.PROCESSEVENT_RETAIN_RENDERPAR
+   AM</param-name>
+    <param-value>true</param-value>
+   </context-param>
+   
+   The fix for this APAR is currently targeted for inclusion in
+   fix packs 8.0.0.9 and 8.5.5.3.  Please refer to the
+   Recommended Updates page for delivery information:
+   http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM97812
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSPHERE APP S
+   
+   
+ * REPORTED COMPONENT ID
+   5724J0800
+   
+   
+ * REPORTED RELEASE
+   800
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-09-25
+   
+   
+ * CLOSED DATE
+   2014-03-28
+   
+   
+ * LAST MODIFIED DATE
+   2014-10-29
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBSPHERE APP S
+   
+   
+ * FIXED COMPONENT ID
+   5724J0800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R800 PSY
+   UP
+   
+   
+ * R850 PSY
+   UP

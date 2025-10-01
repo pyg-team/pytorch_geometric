@@ -1,0 +1,66 @@
+Title: IBM Export from RPT does not export the runtime - "runtime version null" - United States
+
+Text:
+upload; 71RRT-RPTINS; 71RRT-RPTUPLOAD; 71RRT-RPTTS; 71RRT-RPTPLAN; Rational Integration Support; BWMRT0101E; BWMPB0106E BWMRT0106E failed to extract the runtime for the robotic script. runtime version null TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Using the Export -> Other-> ITCAM for Transaction option exports the script, but it does not export the runtime. 
+
+CAUSE
+The extensions needed for the runtime export are not installed on the RPT workbench
+
+ENVIRONMENT
+ITCAM for Transactions does not support RPT 8.5. To verify any RPT version compatibility, see the Related URLs for the Support Matrix.
+
+DIAGNOSING THE PROBLEM
+Review the RPT options installed for the RPT workbench by viewing IBM Installation Manager, the Modify option.
+
+RESOLVING THE PROBLEM
+
+
+
+
+
+ * If you installed the RPT version supplied with ITCAM for Transactions, use IBM Installation Manager to Modify the options you have installed if they do not match the packages below.
+   
+ * ITCAM for Transactions 7.4.0.1 currently supports the RPT 8.6 32bit architecture. If you have installed RPT 8.6 or RPT 9.0 64bit architecture, this is not supported. Remove this installation and then install the 32bit version.
+   Verify the architecture through IBM Installation Manager. Click on Update and select IBM Software Delivery Platform. Check the Architecture value.
+   [/support/docview.wss?uid=swg21650489&aid=1] [/support/docview.wss?uid=swg21650489&aid=1] 
+    * These are the required packages for RPT to successfully export a test and runtime to ITCAM.[/support/docview.wss?uid=swg21650489&aid=2] [/support/docview.wss?uid=swg21650489&aid=2]
+      
+    * If you attempt to export a test script from RPT 64bit to the AMC (Application Management Console) t3 agent, these messages appear in the C:\Users\Administrator\IBM\rationalsdp\workspace_rptse\.metadata\.log file : 
+      
+      !ENTRY com.ibm.tivoli.rpt.sdk.transperf.eclipse
+      !MESSAGE Failed to bundle runtime
+      !STACK 0
+      com.ibm.rational.test.lt.execution.ExecutionBundleException
+      
+      These messages appear in the C:\ProgramData\IBM\tivoli\common\BWM\logs\trace-eclipse.log file : 
+      ERROR 
+      com.ibm.tivoli.transperf.eclipse.assets.ProviderHelper.public static
+      String getFileName(File f) - file should not be null
+      
+      MID
+      com.ibm.tivoli.transperf.eclipse.rational.util.TestProperties.setProperty
+      (Properties configurableProperties) - Entry, parm 1 ={runtimeLocation=RPTRUNTIMES/null.zip
+      
+    * These messages appear in the trace-robotic logs and on the TEP console if the script runs:
+      BWMRT0101E 
+      BWMRT0106E
+      
+      [/support/docview.wss?uid=swg21650489&aid=3] [/support/docview.wss?uid=swg21650489&aid=3]
+   
+   
+
+RELATED INFORMATION
+ ITCAM RPT Support Matrix [https://www.ibm.com/developerworks/community/wikis/home?lang=en#!/wiki/Tivoli%20Composite%20Application%20Manager/page/ITCAM%20RPT%20RFT%20Robot%20Support%20Matrix]
+Current and planned support of RPT [https://www.ibm.com/developerworks/community/blogs/0587adbc-8477-431f-8c68-9226adea11ed/entry/itcamft_how2_rpt_versions]
+
+
+
+
+HISTORICAL NUMBER
+ 01600.172.672 
+
+PRODUCT ALIAS/SYNONYM
+ itcam4t

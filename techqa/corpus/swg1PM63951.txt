@@ -1,0 +1,218 @@
+Title: IBM PM63951: [Light] 'the copies of all process of a plug-in' does not show the Workflow after closing RMC and reopen it - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Rational Method Composer 7.5.2 [http://www-01.ibm.com/support/docview.wss?uid=swg24032821]
+Rational Method Composer Fix Pack 1 (7.5.2.1) for 7.5.2 [http://www-01.ibm.com/support/docview.wss?uid=swg24034139]
+Rational Method Composer Fix Pack 2 (7.5.2.2) for 7.5.2 [http://www-01.ibm.com/support/docview.wss?uid=swg24036841]
+Rational Method Composer Fix Pack 3 (7.5.2.3) for 7.5.2 [http://www-01.ibm.com/support/docview.wss?uid=swg24039752]
+Rational Method Composer Fix Pack 4 (7.5.2.4) for 7.5.2 [http://www-01.ibm.com/support/docview.wss?uid=swg24043137]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  'the copies of all process of a plug-in' does not show the
+   Workflow after closing RMC and reopen it, here an instance
+   'the copies of all process of the process.standard_RUP.base-ibm'
+   does not show the Workflow
+   
+   Steps to reproduce the issue:
+   
+   1. Steps using the customer library called
+   '45441.800.624.lib.7.5.1.2.prac-Q12012'and attached:
+   - create a new plug-in in a package example
+   process.standard_rup.
+   - select the process.standard_rup package and right click and
+   select the 'New Method plug-in' item, it opens the window.
+   - select the 'Create from existing method plug-in or package'
+   option
+   - next as default, the name of the plug-in is showed without the
+   name of the package in front, like process.standard_rup_2 (as in
+   point 2) but there is the plug-in name only that a rename in
+   'XXX' for example
+   - the new plug-in 'XXX' will be created on the tree root becasue
+   not specified any path by defaul as I said
+   - a new configuration called 'standard_rup_ibm_2' is created
+   - In this new plug-in XXX I open any process and select the
+   'Open Activity Diagram' function in the workbreak down
+   structure, no problem I can see the diagram.
+   - close RMC
+   - open again RMC and select any process in the new plug-in 'XXX'
+   - Select the 'Open Activity Diagram' function in the 'workbreak
+   down structure' of a process and the diagram does not exist
+   anymore and the message  'No diagram file exist for this
+   process. Do you want to create one?' is showed.
+   
+   
+   If RMC crashes when publishing the site or RMC is closed then
+   next time you open it and select the 'Open Activity Diagram'
+   function in the 'workbreak down structure' of a process the
+   diagram does not exist anymore and the message  'No diagram file
+   exist for this process. Do you want to create one?'  is showed.
+   This after any copy in the process.
+   
+   After the publishing the site does not have anymore the workflow
+   in the 'Delivery processes-?Standard RUP' because it is
+   connected with the missing diagram.
+   see picture called 'standard RUP published default site' the one
+   from the default site of RUP provided with RMC
+   see picture called 'standard RUP published by customer library'
+   to see what the customer does not see in the published site as
+   result of the missing diagram
+   
+   Note: If I check the new configuration created
+   'standard_rup_ibm_2' in 'plug-in and package selection' tab I do
+   not see checked the plug-in  'base-ibm' I used as copy but I
+   have the plug-in created 'XXX' checked
+   If I check the configuration 'standard_rup_ibm' in plug-in and
+   package selection I do see checked the plug-in  'base-ibm' I
+   used as copy
+   
+   Customer used this library we provided with he fixed issue in
+   the plug-in unlocked(he exported all his plugins and imported
+   them into this provided library with locked plugin.)
+   http://public.dhe.ibm.com/software/rationalsdp/v7/rmc/7512/pract [http://public.dhe.ibm.com/software/rationalsdp/v7/rmc/7512/pract]
+   ice_library/lib.7.5.1.2.prac.zip
+   
+   
+   
+   2.  I did the same steps using the prac7.5.2.1 default library.
+   
+   -selecting the process/standard_rup package I create a new
+   plug-in from 'base-ibm' with the same option 'Create from
+   existing method plug-in or package' (the package name shows by
+   default process.standard_rup_2). The new plug-in created is
+   called process.standard_rup_2.base_ibm.  A new package called
+   'standard_rup_2' is created
+   - In this new plug-in base_ibm I open any process and select the
+   'Open Activity Diagram' function in the workbreak down
+   structure, no problem I can see the diagram.
+   - close RMC
+   - open again RMC and select any process in the new plug-in
+   'base_ibm'
+   - Select the 'Open Activity Diagram' function in the 'workbreak
+   down structure' of a process and the diagram does not exist
+   anymore and the message  'No diagram file exist for this
+   process. Do you want to create one?' is showed.
+   
+   After the publishing the site does not have anymore the workflow
+   in the 'Delivery processes-?Standard RUP' because it is
+   connected with the missing diagram.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   see note
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  RMC 7.5.2 provides a fix for this issue in standard single
+   location libraries which are the most  common cases. For
+   workspace library cases, we created a work item
+   "RATLC00434318: Handle process diagram copy for new plugin
+   based on old plugin of a ws lib",  and will fix it in the
+   future release.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM63951
+   
+   
+ * REPORTED COMPONENT NAME
+   RATL METHOD CMP
+   
+   
+ * REPORTED COMPONENT ID
+   5724G5201
+   
+   
+ * REPORTED RELEASE
+   751
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-05-04
+   
+   
+ * CLOSED DATE
+   2012-07-02
+   
+   
+ * LAST MODIFIED DATE
+   2012-07-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   RATL METHOD CMP
+   
+   
+ * FIXED COMPONENT ID
+   5724G5201
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R751 PSN
+   UP

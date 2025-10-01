@@ -1,0 +1,194 @@
+Title: IBM PJ39703: DYNAMIC PICKLIST'S ICON IMAGES NOT SHOW UP - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Description of Problem (full details)
+   When the Picklist is Dynamic, and 'BPF Metadata cache' is set to
+   'True' and the the 'Enable dynamic Pick List Caching' is set to
+   False, the Icon's images is not showed from the BPF application
+   for that Inbasket
+   
+   
+   How long has the problem been occurring (recent changes)? :
+   Always
+   
+   Does this occur on more than one station / server? : Y
+   
+   Is there a workaround? : Use the Static Picklist or set the
+   cache to False
+   
+   What is the impact to the customer/system? : can't move to PROD
+   because of this issue
+   
+   Can the problem be replicated on an internal system?  Y
+   By Who (L3, Support, etc..)
+   
+   Below is detailed reproduce steps for the problem, this problem
+   has been confirmed by both customer and L2?
+   Steps to Reproduce:
+   
+   1. Configure a static Picklist with ICON images, in the
+   customer's ENV, the static Picklist is "BMOPriority"
+   
+   2. Use SQL to Create a dynamic Picklist based on the  static
+   Picklist is "BMOPriority", in the customer's ENV, the SQL is
+   "select  CODE,DESCRIPTION,ICON, ACTIVE ,PICK_LIST_ITEM_ID as ID
+   from pick_lists_items where Pick_list_id =43 order by CODE
+   DESC", and the dynamic Picklist is named "BMO Priority(Sorted)"
+   
+   3. Set the 'Enable BPF metadata Cache' to 'True' and Set the
+   'Enable dynamic Pick List Caching' to False
+   
+   4. Create a Application field use the dynamic Picklist created
+   at step2 and add the field to a Case as a case field, in the
+   customer's ENV, the Application field is "BMOPriority"
+   
+   5. Configure an Inbasket in BPF explorer, set the Application
+   field which created at step 4 to the Browser Fields and set the
+   pick list display Behavior to "icon". In the customer's ENV, the
+   Inbasket is 'Await adviceDirectManagerApproval'
+   
+   6. Restart the BPF Web Application.
+   
+   7. Log on BPF Web App, go the inbasket Configured at step 5,
+   make sure there are some cases in this inbasket and the case
+   field which create at step 4 has value. And then refresh the
+   page(click "F5"), verify the ICON can be display or not.
+   
+   
+   Actual Results: Icon images not show on BPF web application
+   
+   Expected Results: Icon images should show up
+   
+   
+   Are there any similar or related Defects? If Y provide ECMDB #s
+   
+   What logs were collected and where are they located?
+   
+   Configuration/Environment : BPF 4.1.0-004
+   Server OS : Windows server 2008 64 bit R2
+   Client OS :
+   Database :Oracle 11g, Remote
+   Network:
+   App Server :WebSphere  6.1.0.31
+   Browser :
+   Note if non US Language:
+   Other Product Component Versions:
+   
+   Non Web Environment  Y or N
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * BPF Web Application users                                    *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * DYNAMIC PICKLIST'S ICON IMAGES NOT SHOW UP                   *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Apply the BPF-4.1.0-008 GA FixPack.                          *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The issue is fixed in BPF-4.1.0-008.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PJ39703
+   
+   
+ * REPORTED COMPONENT NAME
+   PROCESS ENGINE
+   
+   
+ * REPORTED COMPONENT ID
+   5724R7607
+   
+   
+ * REPORTED RELEASE
+   410
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-11-21
+   
+   
+ * CLOSED DATE
+   2012-05-29
+   
+   
+ * LAST MODIFIED DATE
+   2012-05-29
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   BUS PROC FRAMEW
+   
+   
+ * FIXED COMPONENT ID
+   5724R7500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R410 PSY
+   UP

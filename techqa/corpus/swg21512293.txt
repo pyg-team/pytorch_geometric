@@ -1,0 +1,79 @@
+Title: IBM Error reading XML, FailedEventRuntimeException, CWLAG0302E, and CWLAG0300E messages are seen when browsing events in the failed event manager for WebSphere Process Server - United States
+
+Text:
+Error reading XML; FailedEventRuntimeException; CWLAG0302E; CWLAG0300E; Failed Event Manager; v70rnotes TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The failed event manager throws "Error reading XML" exceptions when you click a failed event in the search result within the administrative console. 
+
+SYMPTOM
+The following sequence of errors can be seen in the administrative console: 
+
+Error 500
+
+An error occurred while processing request:
+
+Message: com.ibm.wbiserver.manualrecovery.exceptions.
+FailedEventRuntimeException: Error reading XML 
+
+com.ibm.wbiserver.manualrecovery.exceptions. 
+FailedEventRuntimeException: Error reading XML 
+at com.ibm.wbiserver.manualrecovery.FailedEventWithParametersImpl.
+restoreParameters(FailedEventWithParametersImpl.java:440)
+... 
+
+ 
+
+The deployment manager SystemOut.log file might show the following exceptions: 
+
+ 
+
+[1/01/11 0:00:46:342 CEST] 0000003a RemoteProfile W CWLAG0302E: The remote Artifact Loader cannot query the application SampleApp. The error is java.io.IOException: java.security.PrivilegedActionException: java.io.FileNotFoundException: https://www.sampleurl123.net:9447/RemoteALWeb/QueryServlet?appName=SampleApp.
+[1/01/11 0:00:46:343 CEST] 0000003a RemoteProfile E CWLAG0300E: The Artifact Loader cannot find the application "SampleApp" in the same cell. The error is No app found error..
+
+
+The actual failed event manager runtime exception is as follows:
+
+[1/01/11 0:00:47:249 CEST] 0000003a servlet E com.ibm.ws.webcontainer.servlet.ServletWrapper service SRVE0068E: Uncaught exception created in one of the service methods of the servlet action in application isclite. Exception created : javax.servlet.ServletException: com.ibm.wbiserver.manualrecovery.exceptions.FailedEventRuntimeException: Error reading XML
+at org.apache.struts.action.RequestProcessor.processException(Unknown Source)
+at org.apache.struts.action.RequestProcessor.processActionPerform(Unknown Source)
+at org.apache.struts.action.RequestProcessor.process(Unknown Source)
+at org.apache.struts.action.ActionServlet.process(Unknown Source)
+at org.apache.struts.action.ActionServlet.doGet(Unknown Source)
+at javax.servlet.http.HttpServlet.service(HttpServlet.java:718)
+at javax.servlet.http.HttpServlet.service(HttpServlet.java:831)
+...
+
+
+
+
+CAUSE
+The problem is caused by missing host name aliases for the application target cluster members in the list of virtual hosts. This problem is very similar to the problem with Business Process Choreographer Explorer, which is described in following Technote: 
+
+
+Error reading XML and CWLAG0302E when instances are created in Business Process Choreographer Explorer [http://www.ibm.com/support/docview.wss?uid=swg21432411]
+
+
+RESOLVING THE PROBLEM
+To resolve the problem, complete the following steps to add the HTTP/HTTPS ports of the application target cluster members to the list of virtual hosts: 
+
+ 
+
+ 1. In the administrative console, go to Environment > Virtual Hosts > default_host > Host Aliases.
+    
+    
+ 2. On the Host Aliases page, add the missing host names and port assignments.
+    
+    
+ 3. Synchronize the changes to the nodes and restart the topology for settings to take effect.
+
+
+
+You can now browse failed events in the failed event manager. RELATED INFORMATION
+#WebSphere Process Server 7.0 Information Center [http://publib.boulder.ibm.com/infocenter/dmndhelp/v7r0mx/index.jsp?topic=/com.ibm.websphere.wps.doc/welcome_wps.html]
+
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ WPS

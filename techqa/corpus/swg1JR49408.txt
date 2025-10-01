@@ -1,0 +1,205 @@
+Title: IBM JR49408: PERFORMANCE ISSUE CAUSED BY BPM CACHES RESET IN ALL CLUSTER MEMBERS - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Version 8.5 Refresh Pack 5 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24037683]
+Download Version 8.0.1 Fix Pack 3 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24037734]
+Version 8.5.0 Fix Pack 2 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24040683]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When creating a new (e.g. ad-hoc) group, significant performance
+   overhead can be observed, in case a large number of groups
+   exists in the BPM system.
+       A java stack of the thread experiencing the problem will
+   contain this call
+   Group cache reset frequently.
+   
+   ***************
+   ...
+   at
+   com/lombardisoftware/servlet/util/GroupCache.doResetCache(GroupC
+   ache.java:48(Compiled Code))
+   at
+   com/lombardisoftware/core/cache/LocalCache.resetCache(LocalCache
+   .java:210(Compiled Code))
+   at
+   com/lombardisoftware/servlet/util/CacheManager.doReset(CacheMana
+   ger.java:333(Compiled Code))
+   at
+   com/lombardisoftware/server/ejb/cache/CacheRequestListenerCore$P
+   roxyCacheManager.doReset(CacheRequestListenerCore.java:96(Compil
+   ed Code))
+   at
+   com/lombardisoftware/server/ejb/cache/CacheMessengerCore.process
+   CacheCommand(CacheMessengerCore.java:90(Compiled Code))
+   .
+   .----------------------------------
+   [1/21/13 7:40:16:804 GMT] 0000002a ThreadMonitor W   WSVR0605W:
+   Thread
+   "SIBJMSRAThreadPool : 46" (0000009b) has been active for 606375
+   milliseconds and may be hung.  There is/are 2 thread(s) in total
+   in the
+   server that may be hung.
+    at java.lang.Object.wait(Native Method)
+    at java.lang.Object.wait(Object.java:167)
+    at
+   com.lombardisoftware.core.cache.LocalCache.resetCache(LocalCache
+   .java:199)
+    at
+   com.lombardisoftware.servlet.util.CacheManager.doReset(CacheMana
+   ger.java:216)
+    at
+   com.lombardisoftware.server.ejb.cache.CacheRequestListenerCore$P
+   roxyCacheManager.doReset(CacheRequestListenerCore.java:96)
+    at
+   com.lombardisoftware.server.ejb.cache.CacheMessengerCore.process
+   CacheCommand(CacheMessengerCore.java:90)
+    at
+   com.lombardisoftware.server.ejb.cache.CacheRequestListenerCore.o
+   nMessage(CacheRequestListenerCore.java:67)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  No
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  When creating a new (e.g. ad-hoc) group, group related caches
+   get reset and one of them gets preloaded with available groups.
+   If the number of groups is large, a significant performance
+   degradation can occur.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Upon group creation, no cache reset is triggered any more. Cache
+   resets are now limited to group (property) updates.  In
+   addition, resets are limited to the concerned groups and no
+   preload is done as consequence of a cache reset.
+   
+   FIX AVAILABILITY:
+   iFix for 7.5.1.1 is/will be available on Fix Central; search for
+   APAR JR49408 at http://www.ibm.com/support/fixcentral/ [http://www.ibm.com/support/fixcentral/]
+   iFix for 7.5.1.2 is/will be available on Fix Central; search for
+   APAR JR49408 at http://www.ibm.com/support/fixcentral/ [http://www.ibm.com/support/fixcentral/]
+   iFix for 8.0.1.1 is/will be available on Fix Central; search for
+   APAR JR49408 at http://www.ibm.com/support/fixcentral/ [http://www.ibm.com/support/fixcentral/]
+   iFix for 8.0.1.2 is/will be available on Fix Central; search for
+   APAR JR49408 at http://www.ibm.com/support/fixcentral/ [http://www.ibm.com/support/fixcentral/]
+   iFix for 8.5.0.1 is/will be available on Fix Central; search for
+   APAR JR49408 at http://www.ibm.com/support/fixcentral/ [http://www.ibm.com/support/fixcentral/]
+   Fix is also targetted for inclusion in next fixpack for
+   BPM V7.5.1, BPM V8.0.1
+   
+   When obtaining any of the above fixes, be sure to download the
+   accompanying readme, for itself, and any prerequisite fixes, and
+   review them thoroughly.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR49408
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM ADVANCED
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9400
+   
+   
+ * REPORTED RELEASE
+   801
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-02-21
+   
+   
+ * CLOSED DATE
+   2014-05-21
+   
+   
+ * LAST MODIFIED DATE
+   2015-06-15
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   BPM STANDARD
+   
+   
+ * FIXED COMPONENT ID
+   5725C9500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R751 PSY
+   UP
+   
+   
+ * R801 PSY
+   UP
+   
+   
+ * R850 PSY
+   UP

@@ -1,0 +1,132 @@
+Title: IBM IZ92214: WRONG ATTRIBUTE SYBASE_STATISTICS_SUMMARY.CURRENT\LOGONS - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Environment: Sybase Agent 06.20,
+   OS: All
+   
+   
+   The attribute Sybase_Statistics_Summary.Current\Logons includes
+   both user and non-use connections, it should only include user
+   connections.
+   
+   Detailed Recreation Procedure:
+   1) Open new connection to Sybase database server until cannot
+   open.
+   2) Log in TEP -> Servers navigator node -> Server Statistics
+   workspace
+   -> Statistics summary view .
+   3) The value of 'Current\Logons' is bigger than 'Max
+   User\Connections\Allowed', and value of 'Pct Max\Logons\Active'
+   is bigger than 100%.
+   
+   Related Files and Output:
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Modifed code in CMVC. The formal fix 6.2.0-TIV-ITM_SYB-IF0009
+   is planed to be delivered at the end of Mar. 2011.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Modifed code in CMVC. The formal fix 6.2.0-TIV-ITM_SYB-IF0009
+   is planed to be delivered at the end of Mar. 2011.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ92214
+   
+   
+ * REPORTED COMPONENT NAME
+   TIV MON SYBASE
+   
+   
+ * REPORTED COMPONENT ID
+   5724B96SO
+   
+   
+ * REPORTED RELEASE
+   620
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-01-13
+   
+   
+ * CLOSED DATE
+   2011-03-13
+   
+   
+ * LAST MODIFIED DATE
+   2011-03-13
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TIV MON SYBASE
+   
+   
+ * FIXED COMPONENT ID
+   5724B96SO
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R620 PSY
+   UP

@@ -1,0 +1,33 @@
+Title: IBM How to configure the IBM i Access Host Servers for SSL Only - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How to configure the IBM i Access Host Servers for SSL communications only? 
+
+CAUSE
+Each IBM i Access client can be configured as to whether is connects over a non-secure or secure SSL/TLS communication link. In some environments, It may be desirable to limit IBM i Access Family connections to secure SSL/TLS communications only from the IBM i OS so that clients not configured for secure connections will not be able to connect.
+
+ANSWER
+IBM i Access Family clients (IBM i Access for Windows and IBM i Access Client Solution) connect using the following ports: 
+
+PC function Server Name Non-Secure TCP port Secure SSL/TLS TCP port [/support/docview.wss?uid=nas8N1021130&amp;aid=1] as-svrmap 449 - License Management as-central 8470 9470 Database Access as-database 8471 9471 Data Queue as-dtaq 8472 9472 Network Drive as-netdrive 8473 9473 Network Print as-netprt 8474 9474 Remote Command as-rmtcmd 8475 9475 Security as-rmtcmd 8476 9476 5250 Emulation telnet 23 992 
+The Telnet Server can be limited to only using the Secure 992 port using command CHGTELNA and changing the option Allow Secure Sockets Layer to *ONLY: 
+
+After change is done, the Telnet server starts only port 992. 
+
+[/support/docview.wss?uid=nas8N1021130&aid=2] [/support/docview.wss?uid=nas8N1021130&aid=2] 
+
+Server port mapper (port 449) is used by both, secure and non-secure communications. The data transferred by this port is software related and does not contain any customer information. 
+
+The other IBM i Access Host Servers do not have an attribute or parameter that can be set to only start the secure ports for communications, but there is a way this can be accomplished. You can shut down the IBM i Access Host Server non-secure ports using i/OS Work with Port Restriction command : 
+(CFGTCP opt.4): 
+
+The following shows how to configure a TCP/IP Port Restriction for the IBM i Access Host Server non-secure ports of 8470-8746 so that the user profile of QSECOFR is the only profile that can start up a TCP/IP Service on those ports. Since the IBM i Access Host Servers start under the QUSER user profile they won't be allowed to start on these non-secure ports. The next time that TCP/IP Servers are started the IBM i Access Host Servers will only start on the secure 9470-9476 ports. 
+
+[/support/docview.wss?uid=nas8N1021130&aid=3] [/support/docview.wss?uid=nas8N1021130&aid=3] 
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Operating System IBM i 7.1 Operating System IBM i 7.3 Operating System IBM i 7.2 Operating System IBM i 6.1

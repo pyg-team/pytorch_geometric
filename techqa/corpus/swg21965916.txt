@@ -1,0 +1,32 @@
+Title: IBM How to hide unrequired/duplicated data items and measures from a Cognos Framework Manager Package. - United States
+
+Text:
+Unwanted; unecessary; data; item; object; measure TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Customer had published duplicate items from the Model which were confusing Report Authors using Cognos Studios or Cognos Workspace Advanced because of conflicting data types and duplicate names. 
+
+ENVIRONMENT
+Cognos BI Server, Framework Manager (all versions)
+
+DIAGNOSING THE PROBLEM
+Duplicate/unrequired data items and measured will be seen in Cognos Studios and Workspace Advanced.
+
+RESOLVING THE PROBLEM
+Duplicate/unrequired data items need to be hidden from view in the Package and republished.
+
+
+More information can be found in the Framework Manager documentation: 
+
+1) Open the model in Framework Manager. 
+
+2) Right click the existing package. 
+
+3) Select 'Edit definitions'. 
+
+4) Click on the 'Dimensions/Hierarchy' and click on the 'selection icon' until it displays a half green triangle. This will 'hide' the 'Hierarchy/Dimension' from the user. 
+
+5) Publish the Model, and allow it to over write the existing Model.
+
+RELATED INFORMATION
+ Relevant Framework Manager Documentation [http://www-01.ibm.com/support/knowledgecenter/SSEP7J_10.2.2/com.ibm.swg.ba.cognos.ug_fm.10.2.2.doc/t_ug_fm_mdfy_pkg.html%23ug_fm_mdfy_pkg]

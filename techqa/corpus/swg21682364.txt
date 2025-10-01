@@ -1,0 +1,33 @@
+Title: IBM Configuring the session timeout value in IBM Endpoint Manager for Remote Control - United States
+
+Text:
+session timeout; web.xml.logged out TECHNOTE (FAQ)
+
+QUESTION
+ When I am logged on to the IBM Endpoint Manager for Remote Control server and there is no activity, I am logged out after a period of time. How can I increase this time interval? 
+
+CAUSE
+A default time period of 30 minutes is set in the WEB. XML file that is installed with the server. 
+
+ANSWER
+You can increase the timeout value by editing the WEB. XML file. 
+
+For a server that is installed by using the server installer, the file is in the following directory,
+\[server installation directory]\wlp\usr\servers\trcserver\apps\TRCAPP.ear\trc.war\WEB-INF
+
+For a server that is installed on a Linux operating system 
+/[server installation directory]/wlp/usr/servers/trcserver/apps/TRCAPP.ear/trc.war/WEB-INF
+
+For a server that is installed on WebSphere Application Server version 8.5
+\[server installation directory]\trc_war.ear\trc.war\WEB-INF 
+
+
+
+ 1. Edit the WEB. XML file, 
+ 2. Edit the following property
+    <session-config> 
+    <session-timeout>30</session-timeout> 
+    </session-config> 
+ 3. Set the timeout value to the number of minutes you require. 
+ 4. Save the file. 
+ 5. Restart the server service.

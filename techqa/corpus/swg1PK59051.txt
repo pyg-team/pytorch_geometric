@@ -1,0 +1,227 @@
+Title: IBM PK59051: HA MANAGER ATTEMPTS TO ACTIVATE A MESSAGING EENGINE, WHICH FAILS IMMEDIATLY IF THE DATABASE IS UNAVAILABLE - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Java SDK 1.5 SR8 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24020073]
+Java SDK 1.5 SR8 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24021203]
+Java SDK 1.5 SR10 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24024201]
+6.1.0.31: Java SDK 1.5 SR11 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24026453]
+6.1.0.33: Java SDK 1.5 SR12 FP1 Cumulative Fix for WebSphere [http://www-01.ibm.com/support/docview.wss?uid=swg24027786]
+6.1.0.29: Java SDK 1.5 SR11 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24025191]
+6.1.0.35: Java SDK 1.5 SR12 FP2 Cumulative Fix for WebSphere [http://www-01.ibm.com/support/docview.wss?uid=swg24028574]
+6.1.0.37: Java SDK 1.5 SR12 FP3 Cumulative Fix for WebSphere [http://www-01.ibm.com/support/docview.wss?uid=swg24029525]
+6.1.0.39: Java SDK 1.5 SR12 FP4 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24030426]
+6.1.0.41: Java SDK 1.5 SR12 FP5 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24031035]
+6.1.0.43: Java SDK 1.5 SR13 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24031963]
+6.1.0.45: Java SDK 1.5 SR14 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24033270]
+6.1.0.47: WebSphere Application Server V6.1 Fix Pack 47 [http://www-01.ibm.com/support/docview.wss?uid=swg24035508]
+6.1.0.47: Java SDK 1.5 SR16 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24035649]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When HA manager attempts to activate a messaging engine on an
+   application server, and the database hosting the message store
+   is unavailable, the activation fails immediately.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Restart the application servers that can host
+   the messaging engine, or use the coregroup runtime panels to
+   remove the disabled status.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: Users of the default messaging provider in   *
+   *                                                     WebSpher *
+   *                 e Application Server V6.0 or V6.1            *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: When a messaging engine in a            *
+   *                      service integration bus is              *
+   *                      requested to start on an application    *
+   *                      server by the High Availability         *
+   *                      manager, and the database hosting       *
+   *                      a datastore is unavailable, the         *
+   *                      start fails immediately.                *
+   *                                                              *
+   *                      Manual intervention may then be         *
+   *                      required to restart the messaging       *
+   *                      engine.                                 *
+   *                                                              *
+   *                      The messaging engine should have        *
+   *                      instead delayed reporting the failure   *
+   *                      to start for a period of time, to       *
+   *                      give the database an opportunity to     *
+   *                      recover.                                *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   *                                                              *
+   ****************************************************************
+   When a cluster is added as a member of a service integration
+   bus, the High Availability Manager of WebSphere Application
+   Server is responsible for starting and stopping the
+   messaging engines on available application servers.
+   
+   When the application server where a messaging engine is
+   running is stopped, the messaging engine will be
+   automatically started on another eligible application
+   server, or restarted by the High Availability Manager
+   once the application server has been restarted.
+   
+   The problem was that if the database hosting the datastore
+   for the messaging engine was unavailable at the time
+   this activation happened, the messaging engine would
+   immediately fail to activate.
+   
+   Instead, it should have waited for a period of time
+   (default 15mins) for the database to become available
+   before reporting a failure to activate to the high
+   availability manager.
+   
+   This is because when activation of a messaging engine (by the
+   High Availability Manager) fails, that application server
+   becomes 'disabled' as a location for that messaging engine to
+   run. The following message is produced when this occurs:
+   CWSID0039E:  HAManager-initiated activation has failed,
+               messaging engine <ME_NAME> will be disabled
+   
+   This 'disabled' status has to be removed manually, either by
+   restarting the application server or by using the
+   administrative console.
+   
+   The current status of a messaging engine and the available
+   locations can be viewed/controlled in the administrative
+   console using the following panel:
+   Servers -> Core groups -> Core group settings ->
+    <core_group_name> -> Runtime -> [Show Groups] ->
+    <high_availability_group_name>
+   
+   A related issue can also occur for Server members of a
+   Service Integration Bus. In this case, the messaging engine
+   starts as part of application server startup - there is only
+   one place the messaging engine is eligable to start so
+   the High Availability Manager is not involved.
+   If the database is unavailable at server startup the
+   messaging engine enters may enter stopped state and need to
+   be started manually - even if the database becomes available
+   shortly after startup of the Application Server.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This APAR ensures that a messaging engine does not report
+   an activation failure to the High Availability Manager
+   immediately. Instead, it waits the configured amount of time
+   (default 15mins) for the datastore to become available.
+   This time period includes the time required to establish
+   a connection to the database, and obtain the table locks
+   required.
+   
+   The following messaging engine tuning parameters can be used
+   to configure this behaviour:
+   
+   sib.msgstore.jdbcInitialDatasourceWaitTimeout
+    The maximum duration to wait in milliseconds
+   
+   sib.msgstore.jdbcStaleConnectionRetryDelay
+    The time in milliseconds to wait between attempts to connect
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK59051
+   
+   
+ * REPORTED COMPONENT NAME
+   PLAT MSG COM
+   
+   
+ * REPORTED COMPONENT ID
+   620400101
+   
+   
+ * REPORTED RELEASE
+   100
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-01-09
+   
+   
+ * CLOSED DATE
+   2008-03-14
+   
+   
+ * LAST MODIFIED DATE
+   2008-06-24
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   PLAT MSG COM
+   
+   
+ * FIXED COMPONENT ID
+   620400101
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R100 PSY
+   UP

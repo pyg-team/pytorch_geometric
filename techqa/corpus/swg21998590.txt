@@ -1,0 +1,55 @@
+Title: IBM Security Bulletin: IBM WebSphere Application Server Liberty Profile vulnerabilities affect IBM Tivoli Application Dependency Discovery Manager (TADDM) (CVE-2016-3092, CVE-2016-5986) - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ IBM WebSphere Application Server Liberty Profile as embedded in TADDM is potentially vulnerable to a denial of service caused by an error in the Apache Commons FileUpload component. 
+It is also potentially vulnerable to a remote attack where the attacker could obtain sensitive information as a consequence of improperly handled responses under certain circumstances.
+
+
+VULNERABILITY DETAILS
+CVEID: CVE-2016-5986 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2016-5986]
+DESCRIPTION: IBM WebSphere Application Server and IBM WebSphere Application Server Liberty could allow a remote attacker to obtain sensitive information, caused by the improper handling of responses under certain conditions. An attacker could exploit this vulnerability to gain server identification information.
+CVSS Base Score: 3.7
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/116556 [https://exchange.xforce.ibmcloud.com/vulnerabilities/116556] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:N/AC:H/PR:N/UI:N/S:U/C:L/I:N/A:N)
+
+CVEID: CVE-2016-3092 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2016-3092]
+DESCRIPTION: Apache Tomcat is vulnerable to a denial of service, caused by an error in the Apache Commons FileUpload component. By sending file upload requests, an attacker could exploit this vulnerability to cause the server to become unresponsive.
+CVSS Base Score: 5.3
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/114336 [https://exchange.xforce.ibmcloud.com/vulnerabilities/114336] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:L)
+
+AFFECTED PRODUCTS AND VERSIONS
+TADDM 7.3.0.1-7.3.0.3
+
+REMEDIATION/FIXES
+There is an eFix prepared on top of TADDM 7.3.0 FixPack 3 
+
+Fix VRMF APAR How to acquire fix efix_wlp8558_PI67093_PI65853_FP320160323.zip 7.3.0.3 None Download eFix [ftp://ftp.ecurep.ibm.com/fromibm/tivoli/efix_wlp8558_PI67093_PI65853_FP320160323.zip] 
+Please get familiar with eFix readme in etc/<efix_name>_readme.txt 
+Note that the eFix requires manual deletion of the external/wlp directory. WORKAROUNDS AND MITIGATIONS
+The solution is to patch the embedded WebSphere Application Server Liberty Profile 8.5.5.8 with WebSphere patch P167093 and PI65853 [http://www-01.ibm.com/support/docview.wss?uid=swg24042465]
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v3 Guide [http://www.first.org/cvss/user-guide] 
+On-line Calculator v3 [http://www.first.org/cvss/calculator/3.0] 
+Security Bulletin: Potential Information Disclosure vulnerability in WebSphere Application Server (CVE-2016-5986) [http://www-01.ibm.com/support/docview.wss?uid=swg21990056] 
+Security Bulletin: Apache Commons FileUpload Vulnerability affects WebSphere Application Server (CVE-2016-3092) [http://www-01.ibm.com/support/docview.wss?uid=swg21987864] 
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] 
+
+CHANGE HISTORY
+ 14 Feb 2017: original document published 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.

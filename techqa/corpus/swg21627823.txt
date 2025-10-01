@@ -1,0 +1,42 @@
+Title: IBM Tivoli Integrated Portal install fails with ACUOSI0050E error - United States
+
+Text:
+ACUOSI0050E; External; command; action; failed; TIPL2INST; tipadmin; password; special; characters TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ TIP install fails because of a special character in the TIPADMIN user password.
+ACUOSI0050E External command action failed with return code 1. 
+
+SYMPTOM
+Fatal error in the TIPInstaller-00.log file:
+
+ACUOSI0050E External command action failed with return code 1. Invocation string:
+[Fatal Error] :11:574: Element type "ks" must be followed by either attribute specifications, ">" or "/>".
+
+
+CAUSE
+Special characters in the password used for user TIPADMIN. In this case the tipadmin password contained a "<'" character, followed by "ks" 
+
+i.e. ****<ks****
+
+2013-03-06 13:32:28.716-05:00 : STDERR : [Fatal Error] :11:574: Element type "ks" must be followed by either attribute specifications, ">" or "/>".
+
+
+ENVIRONMENT
+Tivoli Integrated Portal install, all versions. 
+
+
+
+DIAGNOSING THE PROBLEM
+The overall install failed with return code of -1. 
+The TIPInstaller-00.log may show errors such as this:
+ACUOSI0050E External command action failed with return code 1. Invocation string: 
+STDERR : [Fatal Error] :11:574: Element type "ks" must be followed by either attribute specifications, ">" or "/>".
+
+
+
+
+
+RESOLVING THE PROBLEM
+The TIPADMIN password must be changed to contain no special characters, in this case the "<" character, additional special characters are mentioned in this Technote:
+http://www-01.ibm.com/support/docview.wss?uid=swg21605483 [http://www-01.ibm.com/support/docview.wss?uid=swg21605483].

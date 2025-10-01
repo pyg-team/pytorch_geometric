@@ -1,0 +1,139 @@
+Title: IBM IV72265: KQI AGENT HAS A CONCURRENCY ISSUE WHEN PROCESSES DATA RECEIVED FROM JAVA SUB-PROCESS. - United States
+
+Text:
+  DIRECT LINKS TO FIXES
+ITCAM Agents for WebSphere Messaging Version 7.1.0 Fix Pack 01 Interim fix 04 (7.1.0.1-TIV-XEforMsg-IF0004) [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Composite+Application+Manager+for+Applications&fixids=7.1.0.1-TIV-XEforMsg-IF0004&source=SAR]
+ITCAM Agents for WebSphere Messaging Version 7.3.0 Fix Pack 01 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Composite+Application+Manager+for+Applications&fixids=7.3.0-TIV-XEforMsg-FP0001&source=SAR]
+ITCAM Agents for WebSphere Messaging Version 7.3.0 Fix Pack 01 (7.3.0-TIV-XEforMsg-FP0001) [http://www-01.ibm.com/support/docview.wss?uid=swg24040581]
+ITCAM Agents for WebSphere Messaging Version 7.1.0 Fix Pack 01 Interim fix 04 (7.1.0.1-TIV-XEforMsg-IF0004) [http://www-01.ibm.com/support/docview.wss?uid=swg24041867]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Abstract:
+   KQI agent has a concurrency issue when processes data received
+   from java
+   sub-process.
+   This issue that may cause "Signal Memory Access Violation" and
+   agent
+   down.
+   Users Affected:
+   WebSphere Message Broker Monitoring Agent users
+   Environment:
+   All platforms.
+   Problem Description:
+   If there are multiple units of response data received from java
+   sub-process (read from pipe) at the same time, the receive queue
+   in main
+   process may be accessed by two thread concurrently.
+   One of them may remove the data while another is still using it.
+   Signal
+   11 is received from function "KQI_Sub_Process::run()".
+   The related call stack in core file is shown as below.
+   #0  0x082687c1 in RWCString::index(char const*, unsigned int,
+   unsigned
+   int, RWCString::caseCompare) const ()
+   #1  0x081c18e1 in RWCString::contains(char const*,
+   RWCString::caseCompare) const ()
+   #2  0x081bf124 in KQI_Sub_Process::run() ()
+   #3  0x081c3e14 in KQI_Thread::callRun() ()
+   #4  0x081c3cec in KQI_Thread::dispatchThread(void*) ()
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  KQI agent has a concurrency issue when processes data received
+   from java sub-process.
+   This issue that may cause "Signal Memory Access Violation" and
+   agent down.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV72265
+   
+   
+ * REPORTED COMPONENT NAME
+   ITCAM WMB
+   
+   
+ * REPORTED COMPONENT ID
+   5724N13MB
+   
+   
+ * REPORTED RELEASE
+   710
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2015-04-16
+   
+   
+ * CLOSED DATE
+   2015-06-05
+   
+   
+ * LAST MODIFIED DATE
+   2015-06-05
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R710 PSY
+   UP
+   
+   
+ * R730 PSY
+   UP

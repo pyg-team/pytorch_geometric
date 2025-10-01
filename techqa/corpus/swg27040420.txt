@@ -1,0 +1,21 @@
+Title: IBM Detailed system requirements for IBM InfoSphere Optim Data Privacy Enterprise Edition for z/OS for Oracle Applications v9.2 - United States
+
+Text:
+ DETAILED SYSTEM REQUIREMENTS
+
+ABSTRACT
+ The system requirements for IBM® InfoSphere® Optim™ Data Privacy Enterprise Edition for z/OS for Oracle Applications v9.2 are compiled in this document. 
+
+CONTENT
+
+
+Use the following links to view the system requirements for each product included in version 9.2 of IBM InfoSphere Optim Data Privacy Enterprise Edition for z/OS for Oracle Applications.
+
+ *  IBM InfoSphere Optim Test Data Management Solution for PeopleSoft Enterprise v9.1 with Data Masking Option [http://www.ibm.com/support/docview.wss?uid=swg27024608]
+ *  IBM InfoSphere Optim Test Data Management Solution for Siebel CRM v9.1 and Optim Test Data Management Solution for Siebel CRM v9.1 with Data Masking Option [http://www.ibm.com/support/docview.wss?uid=swg27024490]
+ *  IBM InfoSphere Optim Solution for z/OS v7.2 [http://www.ibm.com/support/docview.wss?uid=swg27036953]
+ *  IBM InfoSphere Optim Data Growth Solution v9.1 [http://www.ibm.com/support/docview.wss?uid=swg27036215]
+ *  IBM InfoSphere Optim Application Retirement Solution v9.1 [http://www.ibm.com/support/docview.wss?uid=swg27036215]
+ * IBM InfoSphere Optim Archive Enterprise Edition for z/OS Non-Relational Connectors v9.2
+ *  IBM InfoSphere Federation Server v9.7 [http://www.ibm.com/support/docview.wss?uid=swg27015299] IBM InfoSphere Classic Federation Server for z/OS v10.1 [http://www.ibm.com/support/docview.wss?uid=swg27021357] 
+ *  IBM InfoSphere Optim Masking on Demand v9.1 [http://www.ibm.com/support/docview.wss?uid=swg27036212]

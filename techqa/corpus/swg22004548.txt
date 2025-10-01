@@ -1,0 +1,63 @@
+Title: IBM GL Account Merge Issue After Changing GL Account Structure - United States
+
+Text:
+TPAEINVENTORY TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ After performing a change in the GL Account structure, you may have an issue in GL Account merging. 
+
+SYMPTOM
+Please consider the following system configuration and dataset:
+1. "Automatically create usage documents for new reservations?" option selected.
+2. A Location record associated to the GL Account 6000-200-000.
+3. An Item record associated to a Commodity Group whose GL Account is ????-???-610.
+
+Steps to replicate the problem:
+
+1. Go to Work Order Tracking
+
+2. Create a WO against the Location in question. Note that the GL Account field is filled in with the Location GL Account, 6000-200-000.
+
+3. Go to Plans tab > Materials sub-tab, click on New Row button, enter the Item in question and save WO.
+
+4. Approve WO and take note note of its number
+
+5. Go to Inventory Usage application
+
+6. Bring up the Inventory Usage record created for the WO above
+
+The problem is: The GL Debit Account field shows the Location GL Account, 6000-200-000.
+
+The expected result is: The GL Debit Account field should show a GL Account built by the merge of both Location and Item Commodity Group GL Accounts: 6000-200-610.
+
+
+RESOLVING THE PROBLEM
+Suggestion I:
+
+1. Go to Chart of Accounts application.
+
+2. More Actions > Update Database.
+
+3. From Update Database dialog, select the option "Overwrite Accounts With Old Defaults?" and click OK.
+
+
+Suggestion II:
+
+The MAXVARS related to GL Validation do affect whether the merge is performed. In particular, DISABLEGLSWITCH must be set to false and GLCHECKCOA set to true by running the procedure below:
+
+Procedure: 
+
+1. Using Maximo Database Configuration application, please ensure that no database configuration changes are pending. 
+
+2. Stop the Maximo application server. 
+
+3. Back up the Maximo database. 
+
+4. Run the following 02 updates using a SQL tool: 
+UPDATE MAXVARS SET VARVALUE = 0 WHERE VARNAME = 'DISABLEGLSWITCH'; 
+UPDATE MAXVARS SET VARVALUE = 1 WHERE VARNAME = 'GLCHECKCOA'; 
+
+5. Restart the Maximo application server. 
+
+
+If the problem still persists even after trying all the suggestions above, please contact IBM Maximo Support.

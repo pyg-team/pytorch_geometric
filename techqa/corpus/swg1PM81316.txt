@@ -1,0 +1,154 @@
+Title: IBM PM81316: ITEM MOVE BETWEEN TWO SYNDICATED LIBRARIES NOT WORKING - United States
+
+Text:
+  A FIX IS AVAILABLE
+Fixes integrated in WebSphere Portal 8.0.0.0 Cumulative Fixes [http://www-01.ibm.com/support/docview.wss?uid=swg24033155]
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When two libraries are being syndicated, moving an item from the
+   1st library into the 2nd library causes the item to go missing
+   completely on the subscriber after the update completes.
+   
+   1. Create a 2 empty libraries.
+   2. Create an All Items syndication pair to syndicate both
+   libraries.
+   3. On the syndicator, create a top level site area item in the
+   1st library.
+   4. Wait until the syndication completes and verify item exists
+   on the subscriber.
+   5. On the syndicator, move the item into the root of the 2nd
+   library.
+   6. Wait until the syndication update completes.
+   
+   On the subscriber server, the item is not there in either
+   libraries!
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Entries for preset folders are not created in eventlog table
+   when creating libary
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Item move between two syndicated libraries not working
+   
+   When two libraries are being syndicated, moving an item from the
+   1st library into the 2nd library causes the item to go missing
+   completely on the subscriber after the update completes.
+   
+   1. Create a 2 empty libraries.
+   2. Create an All Items syndication pair to syndicate both
+   libraries.
+   3. On the syndicator, create a top level site area item in the
+   1st library.
+   4. Wait until the syndication completes and verify item exists
+   on the subscriber.
+   5. On the syndicator, move the item into the root of the 2nd
+   library.
+   6. Wait until the syndication update completes.
+   
+   On the subscriber server, the item is not there in either
+   libraries!
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Entries for preset folders are not created in eventlog table
+   when creating libary
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM81316
+   
+   
+ * REPORTED COMPONENT NAME
+   LOTUS WEB CONT
+   
+   
+ * REPORTED COMPONENT ID
+   5724I2900
+   
+   
+ * REPORTED RELEASE
+   800
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-01-24
+   
+   
+ * CLOSED DATE
+   2013-01-24
+   
+   
+ * LAST MODIFIED DATE
+   2013-01-24
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   LOTUS WEB CONT
+   
+   
+ * FIXED COMPONENT ID
+   5724I2900
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R800 PSY
+   UP

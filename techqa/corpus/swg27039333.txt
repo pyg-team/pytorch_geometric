@@ -1,0 +1,100 @@
+Title: IBM Tivoli Storage Manager for Mail: Data Protection for IBM Domino V7.1 Documentation Updates - United States
+
+Text:
+TSM DP for IBM Domino V7.1 PRODUCT DOCUMENTATION
+
+ABSTRACT
+ This document contains documentation updates for IBM® Tivoli® Storage Manager for Mail: Data Protection for IBM Domino Version 7.1. 
+
+CONTENT
+Beginning with Version 7.1.3, IBM Tivoli Storage Manager for Mail: Data Protection for Microsoft Lotus Domino is now IBM Spectrum Protect for Mail: Data Protection for Microsoft Lotus Domino. 
+
+
+Some applications such as the software fulfillment systems and IBM License Metric Tool use the new product name. However, the software and its product documentation continue to use the Tivoli Storage Manager product name. 
+
+To learn more about the rebranding transition, see http://www.ibm.com/support/docview.wss?uid=swg21963634. [http://www.ibm.com/support/docview.wss?uid=swg21963634]
+
+-----------------------------------------------------------------------------------------------------------------------------------
+
+Data Protection for IBM® Domino can back up transaction logs from a Domino server that has archival logging enabled. It is not possible to back up transaction logs from a Domino server that has circular or linear loop logging enabled.
+
+This document contains updates to describe sample backup strategies when the following types of transaction logging are enabled on the Domino server. 
+
+ * Archival 
+ * Circular 
+ * Linear-looped 
+
+The Sample strategies section of the "NSF backup strategy" topic has been revised. The following content replaces the content originally published for V7.1.0. 
+
+NSF backup strategy -> Sample strategies -> Full backup plus transaction log archives 
+
+Archival Logging 
+
+For large Domino installations, it is often not practical to back up entire databases with each regular backup. With archival logging, you can capture changes to all logged databases in archived transaction log files. It is therefore not necessary to run full database backups as often, thereby reducing the burdens on network and storage resources. To implement this strategy: 
+ * Archive transaction logs regularly by running the archivelog command. For the selected databases, the archivelog command captures changes to all logged databases in between full backups, and records those changes to a log file. Old archived logs are deleted, freeing up space for new log data and ensuring that the log file never gets full. 
+ * Run regular Incremental backups by running the incremental command. This backs up logged databases with changed DBIIDs as well as new and changed unlogged databases. 
+ * Run occasional Selective backups of all logged databases by running the selective command. This reduces the number of transaction log files to be processed during a restore operation. 
+ * To allow nonessential transaction log files to expire, run the inactivatelog command (following Selective backups).
+
+
+To restore a database to its most recent state, restore the most recent database backup and specify /applylogs. All the necessary archived transaction log files are restored so that updates for the database can be applied. 
+
+NSF backup strategy -> Sample strategies -> Full backup with circular (or linear-looped) logging 
+
+If your Domino server is configured for circular or linear-looped logging, transaction logs are not backed up and changes to logged databases are not captured using archived transaction logs. The server writes log data sequentially to the log file. When the file reaches capacity, the server loops back to the beginning of the log file and overwrites the oldest log data with the new log data. 
+For Domino servers configured in these modes, use the following backup strategies: 
+ *  For logged databases, run regular Selective backups by running the selective command with the /Loggedonly option enabled. 
+ *  For unlogged databases, run regular Incremental backups by running the incremental command to back up new and changed databases, and to deactivate backups of deleted databases. If unlogged databases change frequently, increase the frequency of your incremental backups. 
+
+
+----------------------------------------------------------------------------------------------------------------------------------- 
+(IT12633 ) Correction to the command name for the command used to allow nonessential transaction logs to expire 
+
+The "NSF backup strategy" topic has been revised to correct an erroneous command name mentioned in the Sample strategies -> Full backup plus transaction log archives -> Full backup plus transaction log archives (with archival logging) section of the document. 
+
+The following statement has been updated: 
+
+BEFORE: 
+"To allow nonessential transaction log files to expire, run the inarchivelogs command (following Selective backups)." 
+
+AFTER: 
+"To allow nonessential transaction log files to expire, run the inactivatelogs command (following Selective backups)." 
+
+The amended information will be published with the next release of IBM Tivoli Storage Manager for Mail: Data Protection for Lotus Domino UNIX, and Linux and IBM Tivoli Storage Manager for Mail: Data Protection for Lotus Domino for Windows. 
+
+----------------------------------------------------------------------------------------------------------------------------------- 
+(I T12286 ) Known Issue - GUID change messages logged in activity log when using Tivoli Storage Manager Client Acceptor Service (CAD) managed scheduler with Data Protection for IBM Domino on a 32-bit Windows system 
+
+If you are using the Tivoli Storage Manager Client Acceptor Service (CAD) managed scheduler with Data Protection for IBM® Domino® on a 32-bit Windows system, ANR16391 messages are logged in the activity log each time the scheduler runs. 
+
+This occurs because the globally unique identifier (GUID) for the scheduler service is 64-bit and the GUID for a Windows system using 32-bit Data Protection for IBM® Domino® is 32-bit and Tivoli Storage Manager stores different GUIDs for 32-bit versus 64-bit applications. 
+
+To prevent this, you can update the GUID for 32-bit Tivoli Storage Manager applications with the 64-bit GUID manually in the Windows registry. In Windows, this GUID is stored in the registry under the following location. 
+
+HKEY_LOCAL_MACHINE\SOFTWARE\Tivoli\Guid\Tivguid 
+
+To manually update the GUID for 32-bit Tivoli Storage Manager applications with the 64-bit GUID, perform the following steps on your systems that run Data Protection for IBM® Domino® on Windows and the Tivoli Storage Manager Client Acceptor Service (CAD) managed scheduler: 
+
+1. Open the Windows registry by clicking Start > Run. Enter REGEDIT. 
+2. Browse to HKEY_LOCAL_MACHINE->SOFTWARE->Tivoli->Guid->Tivguid. 
+3. Copy the 16-byte binary value. 
+4. Browse to HKEY_LOCAL_MACHINE->SOFTWARE->Wow6432Node->Tivoli->Guid->Tivguid and delete the existing value found there. 
+5. Paste the 16-byte binary value you copied in step 3. 
+
+For more information, see also http://www.ibm.com/support/docview.wss?uid=swg21616058 [http://www.ibm.com/support/docview.wss?uid=swg21616058]. 
+
+----------------------------------------------------------------------------------------------------------------------------------- 
+(IT20974) - Clarification about running manual or scheduled operations during a restore operation to an alternate server 
+
+In the Data Protection for IBM Domino documentation, the Restoring NSF databases to an alternate server topic describes the procedure for restoring an NSF database to an alternate server. As stated in the procedure, when you install an IBM Domino server on an alternate system, this server must be stopped during the restore operation. 
+
+However, all operations, both manual and scheduled, which interact with this IBM Domino server must also be stopped during the alternate restore operation. For example, scheduled operations that could manipulate the IBM Domino loggerID, such as the archivelog process, cannot be run on the alternate server during the restore operation. The Restoring NSF databases to an alternate server topic is updated with this clarification as follows. 
+
+Before: 
+1. Install Domino server on a separate system.  * The level of Domino server that is installed must be the same as on the production server. Do not configure this Domino server. 
+ * If you are using an existing Domino server, make sure that the server is stopped.
+
+
+After: 
+1. Install the Domino server on a separate system.  * The level of the Domino server that is installed must be the same as that on the production server. Do not configure this Domino server. 
+ * If you are using an existing Domino server, make sure that the server is stopped. Ensure that all other manual and scheduled operations, which interact with the server, are also suspended or stopped.

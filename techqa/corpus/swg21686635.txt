@@ -1,0 +1,20 @@
+Title: IBM (参考) IBM Notes/Domino は Bash 脆弱性の影響はありません (CVE-2014-6271, CVE-2014-7169, CVE-2014-7186, CVE-2014-7187, CVE-2014-6277, CVE-2014-6278) - United States
+
+Text:
+ 技術情報(FAQS)
+
+質問
+IBM Notes/Domino は "Bash Bug" や "Shellshock" といわれている、Bash の脆弱性および 2 つのメモリ破損に関する脆弱性の影響はありますか。
+
+回答
+
+すべてのバージョン、すべてのプラットフォームの IBM Notes/Domino は、2014 年 9 月に報告された Bash の脆弱性 (CVE-2014-6271, CVE-2014-7169, CVE-2014-7186, CVE-2014-7187, CVE-2014-6277, CVE-2014-6278) の影響はありません。
+
+注：IBM としては、お客様にオペレーティングシステムを含むすべての環境の Bash のリリースをご確認いただき、適切な軽減策や修正を適用していただくことを推奨します。詳細については、オペレーティングシステムのプロバイダーにご確認ください。
+
+
+関連文書
+原文：
+(英文)「IBM Notes and Domino not affected by the Bash vulnerabilities (CVE-2014-6271, CVE-2014-7169, CVE-2014-7186, CVE-2014-7187, CVE-2014-6277, and CVE-2014-6278)」(Technote #1686493) [http://www.ibm.com/support/docview.wss?uid=swg21686493]
+
+この文書は、米国 IBM 社の資料を翻訳した参考文書です。日本語環境での検証は行っておりませんのでご注意ください。翻訳元の文書は、関連文書のリンクよりご参照ください。

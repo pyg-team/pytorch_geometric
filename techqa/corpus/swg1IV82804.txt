@@ -1,0 +1,179 @@
+Title: IBM IV82804: USAGEMATCH DATA IMPORT STEP MIGHT CAUSE HUGE TEMP SPACE DB2 DATABASEON - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  ERROR DESCRIPTION:
+   Having BigFix Inventory runing on DB2 database it might happen
+   that
+   database queries
+   might have calculated exectuion plan requiring extensive
+   temporary
+   space. It happens
+   periodically, so subsequent data import might pass.
+   
+   
+   INFO: ETL from IEM Production - SAM::UsageMatch
+   (0x00000006C4398350 - 0x00000006C4D3A28C): Failed
+   ERROR: Sequel::DatabaseError:
+   Java::ComIbmDb2JccAm::SqlException: The
+   file system is full.. SQLCODE=-968, SQLSTATE=57011,
+   DRIVER=4.14.111
+   
+   ****************************************************************
+   ********
+   *********
+   AFFECTED AREA:
+   
+   UsageMatch Data Import Ste
+   
+   ****************************************************************
+   ********
+   *********
+   EXPECTED RESULTS:
+   
+   Step should perform stable and within provided
+   
+   ****************************************************************
+   ********
+   *********
+   RECOMMENDATION:
+   
+   Apply the appropriate application patch update, unitl release
+   add extra
+   disk space
+   or rerun the data import. There is possible to schedule multiple
+   imports.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Fix is needed
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * When BigFix Inventory is using DB2, the database queries
+   * might calculate execution plan that requires extensive
+   * temporary space. It happens periodically, so subsequent
+   * data import might pass. When the problem occurs, the
+   * following error can be found in the logs:
+   * ERROR: Sequel::DatabaseError:
+   * Java::ComIbmDb2JccAm::SqlException:
+   * The file system is full.. SQLCODE=-968, SQLSTATE=57011,
+   * DRIVER=4.14.111
+   * EXPECTED RESULTS:
+   * The problem does not occur.
+   ****************************************************************
+   * RECOMMENDATION: Apply appropriate update when available.
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix for this APAR is contained in the following maintenance
+   packages:
+    | Update | BFI 9.2.3.0
+    | Update | ILMT 9.2.3.0
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV82804
+   
+   
+ * REPORTED COMPONENT NAME
+   IEM SW USE ANL
+   
+   
+ * REPORTED COMPONENT ID
+   5725F57MT
+   
+   
+ * REPORTED RELEASE
+   910
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-03-21
+   
+   
+ * CLOSED DATE
+   2016-04-05
+   
+   
+ * LAST MODIFIED DATE
+   2016-04-05
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   IEM SW USE ANL
+   
+   
+ * FIXED COMPONENT ID
+   5725F57MT
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R910 PSY
+   UP

@@ -1,0 +1,230 @@
+Title: IBM IT01744: REGRESSION CAUSED BY IC86562 FOR PRE-EXISTING HA BROKERS - United States
+
+Text:
+  A FIX IS AVAILABLE
+IBM Integration Bus V9.0 - Fix Pack 9.0.0.2 [http://www-01.ibm.com/support/docview.wss?uid=swg24037877]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  After installing APAR IC86562 [http://www-01.ibm.com/support/docview.wss?uid=swg1IC86562] or WebSphere Message Broker
+   version 8.0.0.4 some mqsi commands give unexpected results when
+   performed for a pre-existing multi-instance or high availability
+   broker.
+   
+   mqsilist returns BIP1054E: The broker  is not running.
+   
+   mqsistop does not complete and broker processes are still
+   running which need to be manually stopped.
+   
+   Additional Symptom(s) Search Keyword(s): HA, multi-instance,
+   mqsilist, mqsistop , IC86562 [http://www-01.ibm.com/support/docview.wss?uid=swg1IC86562]
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  On UNIX and Linux platforms:
+     1. Create a directory called "CurrentVersion" under the local
+   broker registry:
+            /registry/CurrentVersion
+         For example:
+             /var/mqsi/registry/MyBroker/CurrentVersion/
+   
+         Ensure that the directory permissions are set to read and
+   write for group mqbrkrs.
+   
+     2. Create a file called "AdminAgentPID" in the local broker
+   registry.
+         For example
+             touch
+   /var/mqsi/registry/MyBroker/CurrentVersion/AdminAgentPID
+   
+         Ensure that the file permissions are set to read and write
+   for group mqbrkrs
+   
+   On a Windows platforms:
+    1. Create a directory called "CurrentVersion" under the local
+   broker registry:
+          \registry\\CurrentVersion
+        For example
+           C:\ProgramData\IBM\MQSI\registry\MyBroker\CurrentVersion
+   
+         Ensure that the directory permissions are set to read and
+   write for group mqbrkrs
+   
+    2. Create a file called "AdminAgentPID" in the local broker
+   registry.
+         For example enter this DOS command:
+             type nul >
+   C:\ProgramData\IBM\MQSI\registry\MyBroker\CurrentVersion\AdminAg
+   entPID
+   
+        Ensure that the file permissions are set to read and write
+   for group mqbrkrs.
+   
+   In all cases run mqsistop and mqsistart for the broker.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   All users of WebSphere Message Broker V8.0 and IBM Integration
+   Bus V9.0 who use multi-instance brokers or brokers configured to
+   run as part of a high availability environment.
+   
+   
+   Platforms affected:
+   MultiPlatform
+   
+   ****************************************************************
+   PROBLEM DESCRIPTION:
+   APAR IC86562 [http://www-01.ibm.com/support/docview.wss?uid=swg1IC86562] stores the process identifier for the product's
+   administration agent component in the local registry for
+   multi-instance brokers. Previously this information was stored
+   in the broker registry on the shared directory.
+   
+   Brokers that were created before the APAR was applied, or before
+   installing the product level 8.0.0.4 did not have the directory
+   structure in the local registry to store or reference the
+   process identifier of the administration agent component. The
+   process identifier is needed by the mqsilist command to
+   correctly report the status of a broker. It is also used by
+   mqsistop to stop the broker processes.
+   
+   
+   
+   
+   
+   
+   
+   There are a number of resource name changes between WebSphere
+   Message Broker and IBM Integration Bus Version 9.0. For details
+   visit
+   http://pic.dhe.ibm.com/infocenter/wmbhelp/v9r0m0/topic/com.ibm.e
+   tools.mft.doc/bb23814_.htm [http://pic.dhe.ibm.com/infocenter/wmbhelp/v9r0m0/topic/com.ibm.etools.mft.doc/bb23814_.htm]
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The product now stores the process identifier of the
+   administration agent component in the local broker registry for
+   multi-instance and high availability brokers that were created
+   prior to applying APAR IC86562 [http://www-01.ibm.com/support/docview.wss?uid=swg1IC86562] or installing product level
+   8.0.0.4.
+   
+   No manual intervention is required either before or after
+   applying this APAR.
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+   Version    Maintenance Level
+   v8.0       8.0.0.5
+   v9.0       9.0.0.2
+   v7.0       7.0.0.7
+   
+   The latest available maintenance can be obtained from:
+   http://www-01.ibm.com/support/docview.wss?rs=849&uid=swg27006041 [http://www-01.ibm.com/support/docview.wss?rs=849&uid=swg27006041]
+   
+   If the maintenance level is not yet available, information on
+   its planned availability can be found on:
+   http://www-1.ibm.com/support/docview.wss?rs=849&uid=swg27006308 [http://www-1.ibm.com/support/docview.wss?rs=849&uid=swg27006308]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT01744
+   
+   
+ * REPORTED COMPONENT NAME
+   WEB MESSAGE BRO
+   
+   
+ * REPORTED COMPONENT ID
+   5724J0520
+   
+   
+ * REPORTED RELEASE
+   800
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-05-12
+   
+   
+ * CLOSED DATE
+   2014-05-28
+   
+   
+ * LAST MODIFIED DATE
+   2014-10-22
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEB MESSAGE BRO
+   
+   
+ * FIXED COMPONENT ID
+   5724J0520
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R800 PSY
+   UP

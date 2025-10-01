@@ -1,0 +1,123 @@
+Title: IBM PK75026: CATEGORY ID NOT RECOGNIZED IN TAXONOMY WHEN ATTEMPTING TO UPDATE USER PROFILES - United States
+
+Text:
+  FIXES ARE AVAILABLE
+6.1.0.2 Download: WebSphere Portal and Web Content Management V6.1, fix pack 2 [http://www-01.ibm.com/support/docview.wss?uid=swg24022898]
+6.1.0.3 Download: WebSphere Portal and WCM V6.1 fix pack 3, 6.1.5 feature pack [http://www-01.ibm.com/support/docview.wss?uid=swg24025054]
+6.1.0.4 Download: WebSphere Portal and WCM V6.1.0 fix pack 4 & 6.1.5 fix pack 1 [http://www-01.ibm.com/support/docview.wss?uid=swg24026394]
+6.1.0.5 Download: WebSphere Portal and WCM V6.1.0 fix pack 5 [http://www-01.ibm.com/support/docview.wss?uid=swg24027475]
+6.1.0.6 Download: WebSphere Portal and WCM V6.1.0 fix pack 6 [http://www-01.ibm.com/support/docview.wss?uid=swg24030970]
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When using Websphere Portal 6.0.1.4 to connect to WCM content
+   running on WCM 6.1.0.0 using a WCM 6.1 Remote Rendering Portlet,
+   you try to set or change the User Profile through the
+   AJPECatSelect module and it fails with IWKPL1179X (unable to
+   retreive category) and IWKPY1015X (Unauthorised access) errors
+   shown in SystemOut.log file.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  CATEGORY ID NOT RECOGNIZED IN TAXONOMY WHEN ATTEMPTING TO UPDATE
+   USER PROFILES, unauthorized access in the SystemOut.log
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Changed the level of access that WCM uses to check access to the
+   category.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK75026
+   
+   
+ * REPORTED COMPONENT NAME
+   LOTUS WEB CONT
+   
+   
+ * REPORTED COMPONENT ID
+   5724I2900
+   
+   
+ * REPORTED RELEASE
+   610
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-11-05
+   
+   
+ * CLOSED DATE
+   2008-11-06
+   
+   
+ * LAST MODIFIED DATE
+   2009-11-04
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   LOTUS WEB CONT
+   
+   
+ * FIXED COMPONENT ID
+   5724I2900
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R610 PSY
+   UP

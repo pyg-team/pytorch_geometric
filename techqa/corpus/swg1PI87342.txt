@@ -1,0 +1,133 @@
+Title: IBM PI87342: URBANCODE RELEASE CLIENT APPLICATION DOES NOT START IN A CDI 1.0CONTAINER - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS SUGGESTION FOR FUTURE RELEASE.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The UrbanCode Release 6.1.2 jar file: ucr-plugin-util.jar can be
+   used to create UrbanCode Release plug-ins. If it is used to
+   create a UrbanCode Release client application that runs in a CDI
+   (Context and Dependency Injection) 1.0 container, it causes
+   errors that prevent the aplication from starting.
+   
+   Using a WebService application on IBM WebSphere Application
+   Server 8.5.5.9 with Java 8 and a version of Java EE that
+   includes CDI 1.0, the following error occurs at startup:
+   
+   [9/1/17 18:44:51:081 CEST] 0000008b AnnotatedElem E
+   AnnotatedElementFactory error Unable to create AnnotatedType for
+   class
+   :
+   [com.jayway.restassured.mapper.factory.Jackson2ObjectMapperFacto
+   ry].
+   Exception cause : [java.lang.ClassNotFoundException:
+   com.fasterxml.jackson.databind.ObjectMapper]
+   java.lang.TypeNotPresentException:
+   Type com.fasterxml.jackson.databind.ObjectMapper not present
+   
+   [9/1/17 18:44:55:566 CEST] 0000008b BeansDeployer E
+   BeansDeployer deploy
+   java.lang.RuntimeException:
+   java.lang.ArrayIndexOutOfBoundsException
+   
+   This is due to the following issue:
+   
+   https://github.com/google/guava/issues/1527 [https://github.com/google/guava/issues/1527]
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Remove the file beans.xml from the root of the archive:
+   ucr-plugin-util.jar
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *  This occurs in a very rare scenario and has an easy local fix,
+   thus the benefit gained from fixing does not warrant the
+   resources to fix the issue.
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI87342
+   
+   
+ * REPORTED COMPONENT NAME
+   UC RELEASE
+   
+   
+ * REPORTED COMPONENT ID
+   5725M5500
+   
+   
+ * REPORTED RELEASE
+   612
+   
+   
+ * STATUS
+   CLOSED SUG
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-09-14
+   
+   
+ * CLOSED DATE
+   2018-01-18
+   
+   
+ * LAST MODIFIED DATE
+   2018-01-18
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

@@ -1,0 +1,208 @@
+Title: IBM IZ09692: PROBLEM W/ ADDSYSTEM VIA CLI - MQ AGENT - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  ESR: Omegamon XE for Messaging v. 6.0.1
+   All TEMS and TEPS are Windows 2003
+   Agents are Solaris and AIX
+   After Deploying the MQ agents to Managed Systems from the CLI
+   using
+   tacmd addSystem, the Managed System Name of the MQ agents is
+   simply the
+   hostname.  No ::MQ is appended to the end.
+   The full command line used to deploy the agent is as follows:
+   tacmd addSystem -t MQ -n stnavapp01:KUX -p _UNIX_STARTUP_.
+   Username=candle INSTANCE=MQSTNAVAPP01
+   Once the agent is installed it reports to the TEMS as follows:
+   tacmd listsystems -t MQ
+   ...
+   stnavapp01                  MQ           06.01.00.XX Y
+   ...
+   If the MQ agent is deployed manually via the TEP, the Managed
+   System
+   Name is correct.
+   i.e.:
+   BD1ST03::MQ                 MQ           06.01.00.XX N
+   I see that the AGENT.NAME parameter can be passed to the
+   addSystem
+   command, however according to the documentation, this will only
+   affect
+   the middle quantifier of the name and will not append the ::MQ
+   to the
+   end.
+   .
+   Severity explanation
+   Deployment of product is halted completely
+   .
+   Recent changes to the system
+   .
+   Corrective actions already taken
+   .
+   Values in input variables when problem occurred
+   Command used to preform install:
+   tacmd addSystem -t MQ -n stnavapp01:KUX -p _UNIX_STARTUP_.
+   Username=candle INSTANCE=MQSTNAVAPP01
+   Where MQSTNAVAPP01 = the QueueMgr Name, and stnavapp01::KUX is
+   the OS
+   agent of the system
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  I am going to try a few more options that I found in the output
+   of
+   ?tacmd describeSystemType ?t MQ?, however when I put these
+   parameters in
+   to the addSystem command, I receive a timeout error.  I have set
+   the
+   TACMD_TIMEOUT variable larger, but I am still receiving the
+   error.
+   Which timeout value should I increase to get past this problem?
+   
+   Regards,
+   Jay
+   
+   C:\Documents and Settings\slayj>tacmd addsystem -t MQ -n
+   chadvappoms02:KUX -p INSTANCE=MQITAPPOMS02
+   AGENT.NAME=MQITAPPOMS02
+   STARTM
+   ON.HISTORY=NO STARTMON.SAMPINT=10 QACCESS.MSGAUTHUSERS=sysadmin
+   QACCESS.MSGACCOUNT=sysadmin QACCESS.MSGACCESS=DESC
+   
+   KUICAR010I: The agent type mq is being deployed.
+   
+   KUICAR020E: The addSystem command did not complete because a
+   deployment
+   error occurred. Refer to the following error returned from
+    the server:
+   
+   The monitoring server encountered an error while deploying the
+   managed
+   system.
+   
+   The kuiras1.log file may provide more information about this
+   error. If
+   you require further assistance resolving the error, contact
+    IBM Software Support.
+   
+   A timeout occurred while waiting for an agent task to complete
+   on
+   chadvappoms02.
+   
+   The agent task did not complete within the configured time out
+   period.
+   
+   Verify that the target system is online. Increase the time out
+   value and
+   try the operation again.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  In ITM's user guide, there is an appendix which explains how to
+   use tacmd addSystem and tacmd addBundles with examples. We will
+   also provide a detailed description for these commands and some
+   good examples in fix pack 1 installation guide, just like ITM
+   did.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This documentation fix will be available in fix pack 1
+   installation guide.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ09692
+   
+   
+ * REPORTED COMPONENT NAME
+   CMI - AGENT FMW
+   
+   
+ * REPORTED COMPONENT ID
+   5724K0901
+   
+   
+ * REPORTED RELEASE
+   600
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2007-11-29
+   
+   
+ * CLOSED DATE
+   2008-06-02
+   
+   
+ * LAST MODIFIED DATE
+   2008-06-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   OMG XE MSG DIST
+   
+   
+ * FIXED COMPONENT ID
+   5724N1300
+   
+   
+
+APPLICABLE COMPONENT LEVELS

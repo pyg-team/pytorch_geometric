@@ -1,0 +1,357 @@
+Title: IBM IZ09311: SCRIPT PREREQCHECK DOES NOT THROW APPROPRIATE ERROR MESSAGES FOR SA MP LICENSE ISSUES. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  PMR Number: 20501,057,649
+   
+   BE Support Engineer: CJ
+   
+   Change Team Engineer: WS
+   
+   
+   
+   SAMP: 2.2.0.4
+   
+   Customer/Recreate Environment:
+   Scenario: 2.1.1.2 version is installed with a full license
+   installed.
+   2.2.0.4 is attempted to install with a try-and-buy license in
+   the
+   installation package.  The following is the result of the
+   installSAM
+   logs:
+   
+   prereqSAM: >>> Prequisite check log started : Wed Nov 21
+   10:50:02 EST
+   2007
+   prereqSAM:  OPTIONS         = ''
+   prereqSAM:  OPT_SILENT      = 0
+   prereqSAM:  OPT_NOLICCHECK  = 0
+   prereqSAM: Detected operating system:  Linux
+   prereqSAM: Detected architecture:  i386
+   prereqSAM: Detected distribution:  SUSE
+   prereqSAM: Supported operating system versions:  SUSE Linux i386
+   - 9.0
+   10.1
+   prereqSAM: Detected operating system version:
+   SUSE LINUX Enterprise Server 9 (i586)
+   VERSION = 9
+   prereqSAM: rpm package and version installed:  'ksh'
+   prereqSAM: Using default prerequisite checking on the following
+   rpm
+   package:  perl perl
+   prereqSAM: Using default prerequisite checking on the following
+   rpm
+   package:  'perl'
+   prereqSAM: rpm package and version installed:  'perl-5.8.3-32.1'
+   prereqSAM: Using default prerequisite checking on the following
+   rpm
+   package:  pam libpam.so*
+   prereqSAM: Using default prerequisite checking on the following
+   rpm
+   package:  'pam'
+   prereqSAM: rpm package and version installed:  'pam-0.77-221.1'
+   prereqSAM: Error: Prerequisite checking for the ITSAMP
+   installation
+   failed:  Linux i386 SUSE
+   SUSE LINUX Enterprise Server 9 (i586)
+   VERSION = 9
+   prereqSAM: Most severe error code returned:  20
+   prereqSAM: One or more prerequisite packages have an incorrect
+   version
+   prereqSAM: Explanation of all error codes:
+    - 20 - prereqSAM: One or more prerequisite packages have an
+   incorrect
+   version.
+    - 21 - prereqSAM: One or more prerequisite packages were not
+   found
+   installed.
+    - 22 - prereqSAM: The operating system has a version that is
+   not
+   supported.
+    - 23 - prereqSAM: Unable to perform prerequisite checking.
+   prereqSAM: <<< Prequisite check log ended : Wed Nov 21 10:50:06
+   EST 20
+   
+   There is no actual error message thrown for the license issue,
+   the way
+   it appears now is that the OS level and some packages are
+   incorrect an
+   the customer/support staff would have to attempt to check all
+   the
+   pre-requisite packages to try and determine what the situation
+   was.
+   
+   Same testing situation but with a correct logic in place throws
+   the
+   following error (rest of log left out):
+   
+   prereqSAM: Error: Installed package sam has a too-low version
+   for
+   upgrade: 2.1.1.0-06083 < 2.2.0.0
+   
+   
+   Problem Description: prereqcheck does not correctly throw a
+   error when any license issue is found.
+   
+   
+   
+   Collected Information: The original prereqcheck output:
+   
+   salx1:/space/clark # cat prereqSAM.4.log
+   prereqSAM: >>> Prequisite check log started : Wed Nov 21
+   10:50:02 EST 2007
+   prereqSAM:  OPTIONS         = ''
+   prereqSAM:  OPT_SILENT      = 0
+   prereqSAM:  OPT_NOLICCHECK  = 0
+   prereqSAM: Detected operating system:  Linux
+   prereqSAM: Detected architecture:  i386
+   prereqSAM: Detected distribution:  SUSE
+   prereqSAM: Supported operating system versions:  SUSE Linux i386
+   - 9.0 10.1
+   prereqSAM: Detected operating system version:
+   SUSE LINUX Enterprise Server 9 (i586)
+   VERSION = 9
+   prereqSAM: rpm package and version installed:  'ksh'
+   prereqSAM: Using default prerequisite checking on the following
+   rpm package:  perl perl
+   prereqSAM: Using default prerequisite checking on the following
+   rpm package:  'perl'
+   prereqSAM: rpm package and version installed:  'perl-5.8.3-32.1'
+   prereqSAM: Using default prerequisite checking on the following
+   rpm package:  pam libpam.so*
+   prereqSAM: Using default prerequisite checking on the following
+   rpm package:  'pam'
+   prereqSAM: rpm package and version installed:  'pam-0.77-221.1'
+   prereqSAM: Error: Prerequisite checking for the ITSAMP
+   installation failed:  Linux i386 SUSE
+   SUSE LINUX Enterprise Server 9 (i586)
+   VERSION = 9
+   prereqSAM: Most severe error code returned:  20
+   prereqSAM: One or more prerequisite packages have an incorrect
+   version.
+   prereqSAM: Explanation of all error codes:
+    - 20 - prereqSAM: One or more prerequisite packages have an
+   incorrect version.
+    - 21 - prereqSAM: One or more prerequisite packages were not
+   found installed.
+    - 22 - prereqSAM: The operating system has a version that is
+   not supported.
+    - 23 - prereqSAM: Unable to perform prerequisite checking.
+   prereqSAM: <<< Prequisite check log ended : Wed Nov 21 10:50:06
+   EST 2007
+   
+   After the logic is fixed:
+   salx2:/SAM2204Base # cat /tmp/prereqSAM.5.log
+   prereqSAM: >>> Prequisite check log started : Wed Nov 21
+   11:31:45 EST 2007
+   prereqSAM:  OPTIONS         = ''
+   prereqSAM:  OPT_SILENT      = 0
+   prereqSAM:  OPT_NOLICCHECK  = 0
+   prereqSAM: Detected operating system:  Linux
+   prereqSAM: Detected architecture:  i386
+   prereqSAM: Detected distribution:  SUSE
+   prereqSAM: Supported operating system versions:  SUSE Linux i386
+   - 9.0 10.1
+   prereqSAM: Detected operating system version:
+   SUSE LINUX Enterprise Server 9 (i586)
+   VERSION = 9
+   prereqSAM: rpm package and version installed:  'ksh'
+   prereqSAM: Using default prerequisite checking on the following
+   rpm package:  perl perl
+   prereqSAM: Using default prerequisite checking on the following
+   rpm package:  'perl'
+   prereqSAM: rpm package and version installed:  'perl-5.8.3-32.1'
+   prereqSAM: Using default prerequisite checking on the following
+   rpm package:  pam libpam.so*
+   prereqSAM: Using default prerequisite checking on the following
+   rpm package:  'pam'
+   prereqSAM: rpm package and version installed:  'pam-0.77-221.1'
+   prereqSAM: Error: Installed package sam has a too-low version
+   for upgrade:  2.1.1.0-06083 < 2.2.0.0
+   prereqSAM: Error: Prerequisite checking for the ITSAMP
+   installation failed:  Linux i386 SUSE
+   SUSE LINUX Enterprise Server 9 (i586)
+   VERSION = 9
+   prereqSAM: Most severe error code returned:  20
+   prereqSAM: One or more prerequisite packages have an incorrect
+   version.
+   prereqSAM: Explanation of all error codes:
+    - 20 - prereqSAM: One or more prerequisite packages have an
+   incorrect version.
+    - 21 - prereqSAM: One or more prerequisite packages were not
+   found installed.
+    - 22 - prereqSAM: The operating system has a version that is
+   not supported.
+    - 23 - prereqSAM: Unable to perform prerequisite checking.
+   prereqSAM: <<< Prequisite check log ended : Wed Nov 21 11:31:48
+   EST 2007
+   
+   Recreate Steps/Expected Results:
+   2.1.1.0 installed from either Extreme Lev download site or from
+   Passport Advantage and running with full license.  Download any
+   FP upgrade to a higher version of SA MP (2.2.x.x or 2.3.x.x)
+   from www.ibm.com and it comes with a try-and-buy license.
+   Running the prereqcheck right now will not throw an error
+   message based on the licenses.
+   
+   
+   Expected/Correct information:
+   The script should throw a descriptive error message something
+   like this:
+   
+   Error: Cannot overwrite full license with Try-and-Buy license.
+   and/or:
+   Error: Cannot perform upgrade with a service pack of a higher
+   version/release
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Line 1308 in the prereqcheck script should be changed as
+   follows:
+   What is says now: if [ $PIRC -eq 0 ]
+   What is should say: if [ $PIRC -ne 0 ]
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *   It is not possible to install an update of
+   System
+    Automation containing a try-and-buy license
+   over an
+    installation with a full license using
+   installSAM,
+    so installSAM (prereqSAM) will always reject
+   such an
+    upgrade.
+   Due to a wrong logic in the prereqSAM script, which is called
+    by installSAM, the following misleading error is returned:
+    prereqSAM: Most severe error code returned: 20
+    prereqSAM: One or more prerequisite packages have an incorrect
+   version
+    This is wrong and needs to be corrected to show an appropriate
+    error message.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *   The internal handling has been adjusted to
+   address this
+    issue. Now prereqSAM will display the
+   following message,
+    if an upgrade of System Automation is
+   attempted, where a
+    full license of System Automation is
+   installed, and the
+    upgrade package does only contain a
+   try-and-buy license:
+   THE OFFICIAL FIX WILL BE INCLUDED IN FIXPACK 5 OF
+    SYSTEM AUTOMATION V2.2.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *   Line 1308 in the prereqcheck script should be
+   changed as follows:
+    What is says now: if   $PIRC -eq 0
+    What is should say: if   $PIRC -ne 0
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ09311
+   
+   
+ * REPORTED COMPONENT NAME
+   SA MULTIPLATFOR
+   
+   
+ * REPORTED COMPONENT ID
+   5724M0000
+   
+   
+ * REPORTED RELEASE
+   220
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2007-11-23
+   
+   
+ * CLOSED DATE
+   2007-12-10
+   
+   
+ * LAST MODIFIED DATE
+   2007-12-10
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   SA MULTIPLATFOR
+   
+   
+ * FIXED COMPONENT ID
+   5724M0000
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R220 PSY
+   UP

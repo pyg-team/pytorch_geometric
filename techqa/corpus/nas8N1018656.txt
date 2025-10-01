@@ -1,0 +1,79 @@
+Title: IBM Job Table Capacity (Recovering from SRCB9003610) - United States
+
+Text:
+JOB; job; JOBLOG; JOBQ; OUTQ; B9003610; 3610 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ System job tables have a maximum capacity. If this capacity is reached, the system can crash. This document explains procedures for preventing or recovering from job table capacity issues. 
+
+RESOLVING THE PROBLEM
+Background Information 
+
+The maximum amount of job structures that can be created on the system is controlled by the system value QMAXJOB. This system value has a system limitation maximum value of 485,000. The default value is 163,520. The entries in the job tables (in other words, job structures) can be broken down into active jobs, jobs in JobQ status, jobs in Job Log Pending status, and spooled files from jobs in OutQ status. The job table entries contain information about the job such as run parameters, statistics, spooled file information, and so on. 
+
+CPI1468 - System job tables nearing capacity
+
+The system sends this message when the number of entries in the system job tables approaches the maximum number allowed (specified in QMAXJOB). When you see this message, you want to immediately increase QMAXJOB system value. There is no set number that should be used; however, you should increase it by at least 50,000 to allow time to investigate what is filling up the job tables. Do not increase this to the system limitation of 485000. It is best to increase it in increments so there is room to recover, if they do fill up. Also, do not sign off of your current interactive session. As long as you have access to an active interactive job, you will be able to investigate the cause and take actions to correct it without an IPL. Once QMAXJOB is increased and the system is out of immediate danger, follow the instructions below the Investigating Cause of Increased Job Table Usage section. 
+
+Recovering from srcB9003610
+
+This indicates the system cannot start because it has reached the maximum job table capacity. A manual IPL is required to recover from this SRC. To recover, follow these steps: 
+
+1. Put the system in manual mode if it is in normal mode. Document N1010050, Manual IPL [http://www-01.ibm.com/support/docview.wss?uid=nas8N1010050], has step-by-step manual IPL instructions. 2. Start a manual IPL. 3. When the manual IPL reaches the IPL OPTIONS screen, do not exit the screen without first changing Define or Change System at IPL to Y. 4. Once this is set, the next screen will be the Define or Change the System at IPL Menu. You can access the same menu on your system and follow along with the user by typing GO IPLDEFINE 5. Use Option 3. System value commands, and then Option 3. Work with system values to increase QMAXJOB by 50,000 jobs. This will be enough to allow the system to complete the IPL 6. It is best to go back and display the system value (Option 1) to verify that it is changed. 7. You may also want to start the system to restricted state while you investigate the cause of the increased job table usage. From the Define or Change the System at IPL menu, change the Start This Device Only or Start to Restricted State to a Y. Then exit the IPL Define menu and complete the IPL. Once the IPL completes and the user has a command line, you should follow the instructions below in the section Investigating Cause of Increased Job Table Usage 
+
+
+Investigating Cause of Increased Job Table Usage 
+
+DSPJOBTBL is the command that details job table usage. Pressing F11 will break down the In Use entries to four categories: Active, JobQ, OutQ, Joblog Pending. In almost every case, you will see that one of these categories makes up the overwhelming majority of in-use entries. Once you have identified which classification that is, you should use the appropriate PD to find the root of the problem: 
+
+ *  - [http://www.ibm.com/i/c.gif] Active Jobs  If the job tables are being filled with Active jobs, that is a good indication that a runaway job is submitting a huge amount of jobs. Use the WRKACTJOB command to find the jobs (there should be so many, it should be very obvious what the job names are). Look in the job log for message CPI1125; this should tell you the name of the job that submitted this job. If they are all being submitted by the same job, investigate and end it if necessary. Sometimes you will see one job submits the next. In this case, hold the Job Queue and clear it out to break the chain. If the jobs are user-written or third-party applications, advise the customer to discuss the behavior with their support. 
+   
+   
+
+ *  - [http://www.ibm.com/i/c.gif] JobQ  Use the WRKJOBQ command to identify the JobQ with the highest volume. Go into the JobQ and see what jobs are filling it up. Type 5 to work with one of the jobs, then 1. Display job status attributes. Page down and you will have a Submitted By job. Repeat for other jobs in the Job Q. If they were all submitted by the same job, investigate that job and end it if appropriate. 
+   
+   
+
+ *  - [http://www.ibm.com/i/c.gif] OutQ  This is by far the most common reason for job tables reaching capacity. There are two ways a system fills up with spooled file job structures. Either a runaway job creates a huge amount of spooled files in a short time, or the spooled files have built up over time due to lack of cleanup. You should start with WRKOUTQ. Identify the OutQ with the highest volume. Type 5 to work with that OutQ and press F11. This will show the job that created the spooled files and the creation date/time. If the bulk of the spooled files were created by the same job in a short time, that job is the root issue and should be investigated. If the bulk of the spooled files were created over time by different jobs, this is an issue with spooled file cleanup. If the spooled files are user files in user output queues, you should talk to the user about cleaning them up. If there are mostly joblogs, there are a few things that could cause them not to be cleaned up by our Cleanup routine. In order for the joblogs to be cleaned up: o They must be in QEZJOBLOG or QEZDEBUG. o Cleanup must be enabled. To verify that Cleanup is enabled, use GO CLEANUP Option 1 and verify Allow Cleanup = Y. o The QSYSSCD job must be active. If it is not, it can be started with STRCLNUP OPTION(*SCHED). If it fails, look into its joblog for clues. 
+   
+   
+
+ *  - [http://www.ibm.com/i/c.gif] Job Log Pending  WRKJOBLOG PERIOD((*AVAIL *BEGIN)) will show all pending joblogs. Joblogs are sent to pend status based on the LOGOUTPUT parameter in the Job Description. These jobs are eligible for Cleanup routine, so if they are building up, either Cleanup is not running (see the OutQ section above) or they are being created/ended at a very rapid pace. If they are being created/ended, contact proper support for the job (user support for user jobs or the Support Center team for IBM jobs). 
+   
+   
+
+
+
+Cleaning up the Job Tables 
+
+Once the cause of the growth has been identified (per the section above), we want to be sure to remove any unnecessary entries in the job tables. Take the appropriate action for each entry type: 
+
+ *  - [http://www.ibm.com/i/c.gif]Active Job  Ending the jobs will remove them from the job tables. The only thing to watch is once they end, they may leave a joblog behind. If that is the case, follow the OutQ section. 
+   
+   
+
+ *  - [http://www.ibm.com/i/c.gif] JobQ  Once you have investigated the source of the jobs in the JobQ (per the section above), simply removing the entries from the JobQ with a CLRJOBQ or using Option 4 to remove specific jobs. If they are leaving spooled files behind, go to the OutQ section below. 
+   
+   
+
+ *  - [http://www.ibm.com/i/c.gif] OutQ  Removing the spooled files will free up the job structures. If they are user spooled files, be sure to leave this step up to the user. If they are IBM spooled files, be sure they are not needed for diagnostic reasons before clearing. If they are joblogs, it is a good idea to save at least a couple of them, in case future PD is needed. If you have made changes that make the spooled files eligible for cleanup, you can STRCLNUP *IMMED and let the Cleanup task do its maintenance. 
+   
+   
+
+ *  - [http://www.ibm.com/i/c.gif] Job Log Pending  From WRKJOBLOG, an Option 4 will delete the pending joblogs. Because this could be tedious for a large number, the Remove Pending Job Log (QWTRMVJL) API was created to remove large quantities. You should refer to document N1018808, Removing Pending Job Logs [http://www-01.ibm.com/support/docview.wss?uid=nas8N1018808], for examples of how to use the API. 
+   
+   
+
+
+
+Compressing the Job Tables 
+
+Deleting the job that was occupying a job table entry does not remove the job table entry. It switches it from In Use to Available. Once additional job tables are created (each table holds 16352), they are not automatically destroyed when no jobs are in them. Compressing the job tables will move all jobs to the minimal amount of tables and remove the unused tables and entries. This does not have to be done right away, and may not be necessary at all. The main reason for compressing the tables is that fragmented job tables cause commands such as WRKUSRJOB and WRKSBMJOB to perform poorly. If this is the case, compression may be required. To compress the tables, use CHGIPLA to set CPRJOBTBL to *NEXT just before doing an IPL(On releases before R540, you need to use *NORMAL for the parameter and after the IPL completes change it back to the original value). 
+
+
+Important Note: Compressing job tables can make the IPL take much longer.  
+
+
+Cross reference information Segment Product Component Platform Version Edition Operating System IBM i 6.1 Operating System IBM i 7.1 Operating System IBM i 7.3 Operating System IBM i 7.2 
+HISTORICAL NUMBER
+ 511837209

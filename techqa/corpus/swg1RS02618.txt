@@ -1,0 +1,161 @@
+Title: IBM RS02618: RULESET ARCHIVE CANNOT BE BUILT WITH DECISION ENGINE, THROWING GBRET0010E - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Operational Decison Manager z/OS 8.8.1.2 Fix Pack [http://www-01.ibm.com/support/docview.wss?uid=swg24043654]
+Operational Decision Manager V8.8.1.2 Fix Pack [http://www-01.ibm.com/support/docview.wss?uid=swg24043530]
+Operational Decision Manager V8.9.0.1 Fix Pack [http://www-01.ibm.com/support/docview.wss?uid=swg24043671]
+Operational Decison Manager z/OS 8.9.0.1 Fix Pack [http://www-01.ibm.com/support/docview.wss?uid=swg24043670]
+Operational Decision Manager V8.9.1 Download Document [http://www-01.ibm.com/support/docview.wss?uid=swg24044122]
+Operational Decision Manager V8.9.1 Mod Pack [http://www-01.ibm.com/support/docview.wss?uid=swg24044253]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  In ODM 8.8.1, after switching to Decision Engine mode, failing
+   to deploy a ruleApp to RES.
+   The generation of the ruleset archive fails with the following
+   error displayed in RD deployment report:
+   
+   RuleApp Build Status An exception occurred during RuleApp
+   archive creation.An exception occurred during RuleApp archive
+   creation.
+   RuleApp Deployment The deployment was prevented because an
+   unexpected failure occurred in an earlier phase.The deployment
+   was prevented because an unexpected failure occurred in an
+   earlier phase.
+   Deployment finished with errors
+   
+   Rule Designer workspace .log contains:
+   GBRET0010E: Failed to retrieve access to type 'com.ibm.rules.
+   engine.runtime.EngineData' in a body of type 'com.ibm.rules.
+   generated.EngineDataClass'
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  An easy workaround is to initialize the value in the ruleflow.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  The problem is due to the value used in the initialisation of a
+   variable in a variable set. The value itself is a b2x
+   expression which is not recognized during the ruleset
+   compilation
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The code is fixed
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  Replace the reference to b2x variable with an actual value
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   RS02618
+   
+   
+ * REPORTED COMPONENT NAME
+   WDS FOR RULES
+   
+   
+ * REPORTED COMPONENT ID
+   5725B6903
+   
+   
+ * REPORTED RELEASE
+   881
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-01-24
+   
+   
+ * CLOSED DATE
+   2017-01-29
+   
+   
+ * LAST MODIFIED DATE
+   2017-01-29
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  999
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WDS FOR RULES
+   
+   
+ * FIXED COMPONENT ID
+   5725B6903
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R881 PSY
+   UP

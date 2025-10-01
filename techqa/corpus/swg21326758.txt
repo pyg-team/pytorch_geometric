@@ -1,0 +1,60 @@
+Title: IBM Upgrading a previous Rational RequisitePro project to 7.1 can produce a confusing reference to an upgrade wizard - United States
+
+Text:
+Upgrade wizard; Upgrade project; RSA; RSM; RSD; RAD; Rational Software Architect; Rational Systems Developer; Rational Software Modeler; Rational Application Developer; RN7.1; SRX; Microsoft Access TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ In the Rational® Software Architect (RSA), Rational Software Modeler (RSM), Rational Systems Developer (RSD) or Rational Application Developer (RAD) products, when you try to open a Rational RequisitePro® project that was created in a previous version of Rational RequisitePro, you might receive an error message. This message prompts you to use an upgrade wizard that is applicable only for Microsoft® Access® project databases, and it might be difficult to locate. 
+
+SYMPTOM
+The following error is displayed when you open the project: 
+
+Error: Unable to open the selected project (project name). This project was created with an older version of RequisitePro. This project must be upgraded using the RequisitePro Upgrade Wizard before use.
+
+
+
+CAUSE
+RSA, RSM, RSD and RAD include an upgrade wizard called RequisitePro Upgrade that does not upgrade Rational RequisitePro projects. This wizard is not the one that the error message describes.
+
+
+
+ENVIRONMENT
+Rational RequisitePro 7.1 
+
+ * A Rational RequisitePro project created in a version older than 7.1 
+ * RSA/RSM/RSD/RAD, any version
+
+RESOLVING THE PROBLEM
+Use the RequisitePro Database Upgrade wizard to upgrade projects that use the Microsoft Access database. This wizard is installed by default at this location: 
+
+C:\Program Files\IBM\RationalSDLC\RequisitePro\bin\RqDbUpgradeWiz.exe. 
+
+To upgrade projects that use an IBM® DB2®, Oracle®, or Microsoft SQL Server® database, use the scripts that are documented in the IBM Rational RequisitePro Installation and Upgrade Guide in the section "Upgrading Rational RequisitePro projects and databases to version 7.1." See the related information links in the section below. 
+
+
+The online help also has instructions for using the RequisitePro Database Upgrade wizard. See "Upgrading projects" and "Database Upgrade Wizard: Introduction" at the related information links below.
+
+Consult your Rational RequisitePro administrator or the installation and upgrade guide for more information about upgrading projects. 
+
+The error message no longer invokes the incorrect wizard when using the integration with Rational RequisitePro, version 7.1.0.1. 
+
+
+
+
+
+
+
+
+
+RELATED INFORMATION
+#Requisite Pro installation documentation [http://publib.boulder.ibm.com/infocenter/reqpro/v7r1m0/]
+Upgrading projects [http://publib.boulder.ibm.com/infocenter/reqpro/v7r1m0/topic/com.ibm.reqpro.help/administering/databases/t_perform_db_conversions.html]
+Database Upgrade Wizard: Introduction [http://publib.boulder.ibm.com/infocenter/reqpro/v7r1m0/topic/com.ibm.reqpro.help/reference/wizards/database_upgrade_wiz/r_duw_introduction.html]
+Upgrading Rational RequisitePro projects and databases [http://publib.boulder.ibm.com/infocenter/reqpro/v7r1m0/topic/com.ibm.rational.reqpro.install_upgrade.doc/c_upgrade_existing_projects.html]
+
+
+
+
+
+
+Cross Reference information Segment Product Component Platform Version Edition Software Development Rational Software Architect RequisitePro Integration Windows 7.0.0.5, 7.0.0.6, 7.0.0.7, 7.0.0.8 All Editions Software Development Rational Software Modeler RequisitePro Integration Windows 7.0.5, 7.0.5.1, 7.0.5.2, 7.0.5.3, 7.5, 7.5.1 All Editions Software Development Rational Systems Developer RequisitePro Integration Windows 7.0.5, 7.0.5.1, 7.0.5.2, 7.0.5.3 All Editions Software Development Rational Software Architect for WebSphere Software Integrations: IBM Windows 7.5, 7.5.1 All Editions Software Development Rational Software Architect RealTime Edition Not Applicable Windows 7.5 Software Development Rational Software Architect Standard Edition Integrations: IBM Windows All Editions Software Development Rational Application Developer for WebSphere Software RequisitePro Integration Windows 7.0.0.5, 7.0.0.6, 7.0.0.7, 7.0.0.8, 7.5, 7.5.1 All Editions

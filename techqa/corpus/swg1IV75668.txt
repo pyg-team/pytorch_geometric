@@ -1,0 +1,176 @@
+Title: IBM IV75668: 7.3.0 FIX PACK 2 FEATURE APAR - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  This APAR describes a summary of features planned for 730 FP2.
+   We will also include a list of internal defects included once
+   available.
+   
+   Business application composition enhancements;
+      Performance improvements
+      Missing dependencies
+      Handling not discovered Business App components
+      Adding filtering to Data Management Portal UI ﾯ Discovery ﾯ
+      Grouping Patterns
+   Simplified model (addressing gaps, examples,best practices)
+   Documentation improvements
+   Top priority discovery enhancements
+      SAP HANA
+      .NET 4.x support
+      New approach to Windows discovery (TaddmTool replacement)
+      CSTs for IBM products
+      LDOM discovery
+      Enhanced script-based discovery for Windows (WAS)
+      Ubuntu 14 discovery
+      Secure connection to Sybase
+   Currency
+      Oracle 12c
+      Ubuntu LE p8, Ubuntu LE x86
+      RHEL p8 LE, RHEL p8 BE
+   Cognos model improvements
+   Discovery load balancing
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  NA
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  This APAR describes a summary of features planned for 730 FP2.
+   We will also include a list of internal defects included once
+   available.
+   
+   Business application composition enhancements;
+      Performance improvements
+      Missing dependencies
+      Handling not discovered Business App components
+      Adding filtering to Data Management Portal UI ¯ Discovery
+      Grouping Patterns
+   Simplified model (addressing gaps, examples,best practices)
+   Documentation improvements
+   Top priority discovery enhancements
+      SAP HANA
+      .NET 4.x support
+      New approach to Windows discovery (TaddmTool replacement)
+      CSTs for IBM products
+      LDOM discovery
+      Enhanced script-based discovery for Windows (WAS)
+      Ubuntu 14 discovery
+      Secure connection to Sybase
+   Currency
+      Oracle 12c
+      Ubuntu LE p8, Ubuntu LE x86
+      RHEL p8 LE, RHEL p8 BE
+   Cognos model improvements
+   Discovery load balancing
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix for this APAR is contained in the following maintenance
+   packages:
+   | Fix Pack | 7.3.0-TIV-ITADDM-FP0002
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV75668
+   
+   
+ * REPORTED COMPONENT NAME
+   APP DEPENDENCY
+   
+   
+ * REPORTED COMPONENT ID
+   5724N5500
+   
+   
+ * REPORTED RELEASE
+   722
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-07-31
+   
+   
+ * CLOSED DATE
+   2015-10-23
+   
+   
+ * LAST MODIFIED DATE
+   2015-10-23
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   APP DEPENDENCY
+   
+   
+ * FIXED COMPONENT ID
+   5724N5500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R730 PSY
+   UP

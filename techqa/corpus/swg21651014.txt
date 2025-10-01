@@ -1,0 +1,19 @@
+Title: IBM RFCACL authorizations for MySAP agent - United States
+
+Text:
+S_RFCACL authorization object solution manager remote satellite systems monitor alerts TECHNOTE (FAQ)
+
+QUESTION
+ The SAP agent requires a RFCACL * authorization object to monitor the SAP Solution Manager. Can lower permissions be used if only Solution Manager attribute groups are monitored? 
+
+ANSWER
+S_RFCACL object is used for authorization check of RFC users of trusted systems. With RFC from a trusted system to a trusting system, passwords are no longer sent for logging on to the trusting system.
+However, the user being used for the logon must have the corresponding authorization object S_RFCACL in the trusting system. In the context of SAP Agent monitoring Solution Manager, the Solution Manager system is connected to various remote or satellite systems. The communication that happens on between Solution Manager and satellite systems, is a trusted system connection.
+Solution Manager gets data from its satellite systems (managed systems).
+When SAP Agent monitors Solution Manager, it collects data from Solution Manager itself and its satellite systems.
+In order to see data from Solution Manager and satellite systems , S_RFCACL authorization is needed. Without this authorization , TEP will not show data for early watch alerts, business process monitoring alerts, system alerts, etc...
+
+
+
+PRODUCT ALIAS/SYNONYM
+ itm itcam tivoli monitoring composite application manager for applications sap mysap

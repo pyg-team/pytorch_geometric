@@ -1,0 +1,177 @@
+Title: IBM WebSphere DataPower Web Services Management (WSM) Agent Status - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ What options are there for monitoring data collection between DataPower and ITCAM SOA? What is important to look for in the WSM Agent Status? 
+
+Here is an example of the show wsm-agent-status:
+
+Active Subscribers: 1
+Polled Subscribers: 0
+Records Seen: 1049
+Records Lost: 0
+Pending Records: 3
+Complete Records: 87
+Memory Used: 63 kbytes
+
+
+CAUSE
+When an operation is processed by a DataPower Web Service Proxy (WSP), and Web Services Management is enabled for the XML Management Interface on DataPower, metadata about the operation is written to a Web Services Management (WSM) Buffer in DataPower memory. When the operation response has been processed, the metadata is designated as a Complete Record, ready for collection by the ITCAM for SOA data collector. The metadata for the operation will eventually be displayed in Tivoli Enterprise Portal (TEP). 
+If the metrics for the operation are not displayed in TEP, the first step in analysis from the DataPower perspective is to confirm that DataPower is recording the transaction in the WSM buffer.
+
+When a transaction is processed by a DataPower WSP, the Records Seen should increment by 1. The Records Seen is the number of transactions for which DataPower has recorded data in the WSM buffer. 
+
+The Complete Records is the number of transactions ready to be collected. By refreshing the status very quickly, you may see the Complete Records increment by 1. However, this update will be missed if the status is refreshed too slowly. This happens because the Complete Records count is reduced each time the ITCAM for SOA data collector collects records.
+
+If the Records Seen does not increment by 1 when a transaction is processed, check for each of these symptoms:
+
+
+ * Confirm the DataPower WSM Agent object Buffering Mode option is Buffer
+   
+   This setting is the primary root cause for DataPower and ITCAM for SOA issues.
+   IBM WebSphere DataPower SOA appliance configuration option Buffering Mode = Buffer for ITCAM SOA data collection
+   http://www.ibm.com/support/docview.wss?uid=swg21394557 [http://www.ibm.com/support/docview.wss?uid=swg21394557]
+
+ * Confirm traffic is reaching the DataPower
+   Use the DataPower probe or logs to confirm that DataPower processed the transaction. 
+   
+ * Confirm the WS-Management Endpoint checkbox is checked in the DataPower XML Management Interface object
+
+ * 
+ * 
+ * http://www.ibm.com/support/docview.wss?uid=swg27018064
+ * 
+ * 
+ * 
+ * 
+ * http://publib.boulder.ibm.com/infocenter/tivihelp/v3r1/index.jsp?topic=%2Fcom.ibm.itcamsoa.doc%2Fkd4inmst146.htm
+ * 
+ *  Confirm that the DataPower WSM buffer is not full (This will not happen in firmware 6.0 and up) 
+ * 
+ * 
+
+ *  Confirm the Complete Record count is less than the maximum 
+ * If the Complete record count is 3000; the Buffer Mode option above may have value Discard instead of Buffer. Please re-review the information above. 
+   Confirm the Pending Record count is less than 100 
+ * WebSphere DataPower and ITCAM SOA - WSM agent pending records 
+   http://www.ibm.com/support/docview.wss?uid=swg21568404 [http://www.ibm.com/support/docview.wss?uid=swg21568404] 
+ *  Confirm the Memory used is less than 6400 Kbytes 
+ * IC67671: "MEMORY USED" COUNTER FOR WSM-AGENT GRADUALLY INCREASES OVER TIME 
+   http://www.ibm.com/support/docview.wss?uid=swg1IC67671 [http://www.ibm.com/support/docview.wss?uid=swg1IC67671] 
+ * If the service receiving traffic is a Multi-protocol gateway, confirm that custom WSM stylesheets have been added
+
+ * 
+ * 
+ * http://www.ibm.com/support/docview.wss?uid=swg27021649
+ * 
+ * 
+ * 
+ * 
+ * https://www-304.ibm.com/support/docview.wss?uid=swg21447044
+ * 
+ * Confirm that the service is a Web Service Proxy or Multi-Protocol Gateway. Other DataPower services cannot be monitored by ITCAM for SOA.
+
+
+ANSWER
+There are several ways to monitor the WSM Agent status. The WSM agent status is unique to each domain; if the output contains all zeroes confirm that the current domain is not the default domain. 
+
+ 
+
+ * Highly Recommended during development and test: Open an SSH session with DataPower, for example with a tool like PuTTY, and issue these commands: 
+   switch domain ddddd (where ddddd is your application domain)
+   show wsm-agent
+   show wsm-agent-status 
+   
+   The Web Services Management Agent configuration appears as follows:
+   
+   wsm-agent: default [up]
+   ------------------
+   admin-state enabled
+   max-records 3000 records
+   max-memory 64000 KB
+   capture-mode faults
+   buffer-mode buffer
+   
+   The WSM Agent Status appears as follows:
+   
+   Active Subscribers: 1
+   Polled Subscribers: 0
+   Records Seen: 35682
+   Records Lost: 0
+   Pending Records: 9
+   Complete Records: 237
+   Memory Used: 257 kbytes 
+   
+    
+   
+   This method is highly recommended because 
+   
+    * The WSM agent status changes each time a transaction is processed and each time ITCAM SOA collects data. It is very difficult to for a person monitor status quickly enough to notice status changes in anything other than an SSH session. 
+    * The simple text output from the CLI commands above is more easily reviewed by DataPower support than screen captures. 
+    * You can incorporate the commands above into a script to monitor the WSM agent status over time, in the same way you can put commands that monitor CPU and other status into a script:
+   
+    * 
+    * 
+    * http://www.ibm.com/support/docview.wss?uid=swg21377610
+   
+   
+    * 
+    * 
+    * http://www.ibm.com/support/docview.wss?uid=swg21568404
+   
+   
+ * WSM Agent status is available in the DataPower Web GUI 
+   Choose Objects > Web Services Management
+   Choose Status > WSM Agent Status
+   
+ * An XML Management Interface request to check the WSM status with a SOAP request like the following can be handy during development and test. 
+   
+   <?xml version="1.0" encoding="UTF-8"?>
+   <env:Envelope
+   xmlns:env="http://schemas.xmlsoap.org/soap/envelope/">
+   <env:Body>
+   <dp:request domain="mydomain"
+   xmlns:dp="http://www.datapower.com/schemas/management">
+   <dp:get-status class="WSMAgentStatus"/>
+   <dp:get-status class="WSMAgentSpoolers"/>
+   </dp:request>
+   </env:Body>
+   </env:Envelope>
+   
+   A SOAP request to a WSP, followed by a SOAP request to the XML Management Interface can allow a developer or tester to see the response from the WSP followed by the WSM Agent status. That is, a tester can see the WSP response followed by confirmation that the transaction created a Complete Record ready for ITCAM SOA data collection.  
+   
+   
+ * Highly Recommended for production: WSM Agent status can be monitored with SNMP. 
+   
+   SNMP monitoring might be especially useful for the Records Lost count in production or load test. Records Lost are transactions processed by DataPower but not reflected in the metrics in TEP; they indicate that the TEP metrics will not be too low; for example, if Records Seen is 1000 and Records Lost is 100, the TEP will show that 1000 transactions where processed, rather than the 1100 transactions that were actually processed. 
+   
+   The SNMP OID dpStatusWSMAgentStatusRecordsLost in the DataPower drStatusMIB shows the current status of Lost records. A command line the following could be used to retrieve the Records Lost value:
+
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * Community Associated Domain Mode Remote Host
+ * 
+ * Publicd1 domain1 read-only 0.0.0.0/0
+ * 
+ * 
+ * 
+
+ * 
+ * 
+ * 
+ * 
+ * Another option for monitoring that is not based on the DataPower WSM agent status is to monitor ITCAM for SOA data collection frequency with an ITM situation. Consider setting an ITM Situation to fire if the ETMSGCOUNT (Elapsed Time Message Count) column in the Services Inventory table (KD42IT) table is zero. This situation should fire within five minutes of data collection stopping. Also consider tailoring the situation to add the names of operations that are expected to be continually creating metrics, the Situation does not fire on an operation that is expected to be used infrequently. 
+
+RELATED INFORMATION
+#Monitoring WebSphere DataPower SOA Appliances [http://www.ibm.com/developerworks/websphere/library/techarticles/1003_rasmussen/1003_rasmussen.html]

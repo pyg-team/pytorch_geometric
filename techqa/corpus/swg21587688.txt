@@ -1,0 +1,64 @@
+Title: IBM An exception thrown in the data handler for a WebSphere MQ import binding causes a ServiceTimeoutRuntimeException for WebSphere Process Server (WPS) - United States
+
+Text:
+ServiceTimeoutRuntimeException; mediation flow; v70rnotes; v62rnotes:; v61rnotes; v612rnotes; failed message recovery mode:MQ binding; data handler TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ In a service component architecture (SCA) module, a mediation flow component invokes a WebSphere MQ import binding to send and receive MQ messages. When the MQ binding receives an MQ response message, the MQ binding data handler processes the message. If an exception, such as an IOException, occurs in the data handler, a ServiceTimeoutRuntimeException is found in the SystemOut.log file. 
+
+SYMPTOM
+The following example shows an exception stack thrown from the data handler: 
+
+[11/12/28 14:45:47:062 JST] 0000005f MQ Z com.ibm.ws.sca.internal.mq.ReadingBindingHelper com.ibm.ws.sca.internal.mq.ReadingBindingHelper.initializeBodyDataBinding#004 Exception: java.io.IOException
+at sample.handler.DataHandler.read(DataHandler.java:35)
+at com.ibm.ws.sca.internal.mq.ReadingBindingHelper.initializeBodyDataBinding(ReadingBindingHelper.java:470)
+at com.ibm.wsspi.sca.mq.inbound.MQResponseListenerImpl.sendResponse(MQResponseListenerImpl.java:783)
+at com.ibm.wsspi.sca.mq.inbound.MQResponseListenerImpl.response_invoke(MQResponseListenerImpl.java:462)
+at com.ibm.wsspi.sca.mq.inbound.MQResponseListenerImpl.onMessage(MQResponseListenerImpl.java:295)
+at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:60)
+at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:37)
+at java.lang.reflect.Method.invoke(Method.java:611)
+at com.ibm.ws.container.binding.jms.TransactionalMessageEndpoint.invokeBusinessMethod(TransactionalMessageEndpoint.java:381)
+at com.ibm.ws.container.binding.jms.TransactionalMessageEndpoint.invoke(TransactionalMessageEndpoint.java:458)
+at $Proxy78.onMessage(Unknown Source)
+at com.ibm.mq.connector.inbound.MessageEndpointWrapper.onMessage(MessageEndpointWrapper.java:131)
+
+The following exception stack is found in the SystemOut.log file later:
+
+com.ibm.websphere.sca.ServiceTimeoutRuntimeException: A response does not arrive within the designated wait time. Please adjust the timeout parameter value for the invokeResponse() invocation, or the Transaction Manager timeout setting if longer wait time is needed.
+at com.ibm.ws.sca.internal.async.sib.SIBAsyncHandler.throwTimeoutException(SIBAsyncHandler.java:1109)
+at com.ibm.ws.sca.internal.async.sib.SIBAsyncHandler.receiveResponse(SIBAsyncHandler.java:345)
+at com.ibm.ws.sca.internal.async.handler.AsyncSourceHandler.processMessage(AsyncSourceHandler.java:406)
+at com.ibm.ws.sca.internal.message.impl.MessageDispatcherImpl.processMessage(MessageDispatcherImpl.java:1756)
+at com.ibm.ws.sca.internal.message.impl.ManagedMessageImpl.process(ManagedMessageImpl.java:971)
+at com.ibm.ws.sca.uow.handler.UOWNativeWASStrategyImpl.transactionLocalActivitySessionFalse(UOWNativeWASStrategyImpl.java:1318)
+at com.ibm.ws.sca.uow.handler.UOWNativeWASStrategyImpl.deliverAsyncAtCall(UOWNativeWASStrategyImpl.java:85)
+at com.ibm.ws.sca.uow.handler.DeliverAsyncAtUOWNativeHandler.processMessage(DeliverAsyncAtUOWNativeHandler.java:72)
+at com.ibm.ws.sca.internal.message.impl.MessageDispatcherImpl.processMessage(MessageDispatcherImpl.java:1756)
+at com.ibm.ws.sca.internal.message.impl.ManagedMessageImpl.process(ManagedMessageImpl.java:971)
+at com.ibm.ws.sibx.mediation.flowaction.impl.sca.SCAInvocationAction.invokeResponse(SCAInvocationAction.java:636)
+
+
+CAUSE
+Because mediation flows invoke primitive calls on a WebSphere MQ import binding by using SCA asynchronous invocation, when an MQ binding receives an MQ response message, an SCA message is sent to the SCA module queue to have the mediation flow continue processing. However, if an exception is thrown in the data handler for the MQ import binding, the SCA message cannot be sent to the SCA module queue and a ServiceTimeoutRuntimeException is thrown. Until the ServiceTimeoutRuntimeException is thrown, the mediation flow cannot do anything and is not notified of the failure.
+
+In a WebSphere MQ binding, you can set the failed message recovery mode property to one of the following options:
+
+
+ * Allow the binding to manage the recovery for failed messages 
+ * Rely on the transport-specific recovery for failed messages
+
+
+If the recovery mode property has been set to allow binding to manage recovery for failed messages, a failed event is generated when the exception is thrown. 
+
+If the recovery mode property has been set to rely on transport-specific recovery for failed messages, a failed event is not generated when the exception is thrown; instead, the MQ message is returned to the MQ queue. You must configure MQ to handle this situation. 
+
+The ServiceTimeoutRuntimeException exception occurs regardless of the option that you select. 
+RESOLVING THE PROBLEM
+A ServiceTimeoutRuntimeException is thrown when an exception is thrown from the MQ binding data handler. This scenario occurs as designed. To avoid the ServiceTimeoutRuntimeException, you must resolve the exception in the data handler.
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ WPS

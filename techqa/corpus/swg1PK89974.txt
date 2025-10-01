@@ -1,0 +1,233 @@
+Title: IBM PK89974: PE44337-F903 CIU2201S CICS LOAD FAILED RESP=27 RESP2=1          RCODE=01000000                             09/08/18 PTF PECHANGE - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  This APAR covers two problems:
+   PE44337-F903 and PE46102-F905.
+   
+   PE44337-F903
+   After applying PTF UK44337 for APAR PK73193 [http://www-01.ibm.com/support/docview.wss?uid=swg1PK73193], existing CICS IA
+   users may receive the following messages when starting CICS IA
+   if they have not updated the CICS region options DEFAULTS to
+   specify a resource prefix table value.  If the user has not
+   created their own resource prefix table, they can specify a
+   value of CIUPFXTB in the DEFAULTS record or the individual CICS
+   region options.
+   .
+   CIU2204I  mm/dd/yy hh:mm:ss <applid> CINT being used by <userid>
+   CIU2240I  mm/dd/yy hh:mm:ss <applid> EXEC CICS ENABLE EXIT for
+                                program CIUXDUMM, EXIT XICEXP OK
+   CIU2201S  mm/dd/yy hh:mm:ss <applid> CICS LOAD          failed
+                                        RESP=27 RESP2=1
+                                        RCODE=01000000
+   CIU2218S  mm/dd/yy hh:mm:ss <applid> CINT has abended IUZA in
+                               program  CIUA110C
+   CIU2105I  mm/dd/yy hh:mm:ss <applid> CINT session has ended
+   .
+   CIUA110C successfully does a LOAD for CIUXTRAN and CIUXPROG,
+   but receives a PGMIDERR when loading low values.  The low value
+   should have been the LOAD for the default resource prefix table
+   name of CIUPFXTB or the user specified resource prefix table.
+   The name should be in AUGW_RESLIST_NAME and is specified on the
+   AUGW_RESLIST_NAME for the call to the GET_XLIST routine.
+   .
+   
+   CIUA000C should read the DEFAULTS control record and if it
+   exists and the AUCR_GEN2_OPTIONS field at x'21C' is zeros, it
+   should rewrite the record using the CIUPFXTB default value.
+   .
+   Additional Symptom(s) Search Keyword(s): PK73193 [http://www-01.ibm.com/support/docview.wss?uid=swg1PK73193] TSQUEUE TSQ
+   UK44337 ABENDUIUZA ABENDIUZA blanks null  KIXREVPAD
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  1) Run the CINT transaction.
+   2) Choose option 2 to configure region options.
+   3) On screen CIU200 choose option 6 for General options.
+   4) On screen CIU260 specify the default value CIUPFXTB
+      in the Resource prefix list input field.
+   
+   PE46102-F905
+   After applying PTF UK46102 or UK48312 user may receive the
+   message CIU2246W with zero value of dataspace percent full.
+       CIU3305I  08/19/09 08:00:16 CICSNA32 CINB save started -
+                 because of TIME
+       CIU3306I  08/19/09 08:00:16 CICSNA32 CINB save ended - 0
+                 records saved
+       CIU2246W  08/19/09 08:00:16 CICSNA32 CICSIA dataspace is 0
+                 percent full
+   However, displaying the statistics shows the actual value.
+   For example:
+      Table dataspace name . . . : 00000INT    86.3 % full
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All CICS IA Version 2.2 users.               *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   *                      PE44337-F903                            *
+   *                      The problem is caused by new fields     *
+   *                      being added to the existing control     *
+   *                      record and these fields were not        *
+   *                      set to the default values . In this     *
+   *                      case a Resource Prefix List program     *
+   *                      name was added. This was not set to     *
+   *                      the default value and left as blanks.   *
+   *                      On CICS IA startup we tried to LOAD     *
+   *                      this blank program name.                *
+   *                                                              *
+   *                      PE46102-F905                            *
+   *                      The message CIU2246W is issued when the *
+   *                      the dataspace used is greater then 85%  *
+   *                      but the value of percent full in the    *
+   *                      message is zero.                        *
+   ****************************************************************
+   * RECOMMENDATION: Apply the PTF.                               *
+   ****************************************************************
+   PE44337-F903
+   A new procedure has been added,it checks the contents of
+   the control record for values that have not been set. If any
+   values have not been set then it sets it to the default value.
+   
+   PE46102-F905
+   The DSP_CALC routine in CIUCINB1 pass to the message manager
+   CIUMSGCS zero value to insert into CIU2246W message.
+   This is due to passing an incorrect insert length value of 3 in
+   field CIUM2_I_SUB_1_LEN. The CIUM2_I_SUB_1 field points
+   to STATS_DSPACE_FULL which is a fullword BIN(32).
+   After UK46102 or UK48312, the first 3 bytes of the
+   STATS_DSPACE_FULL will always be 000000 as the last byte
+   will be x'64' or less.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  UK39133 UK44337 UK46102 UK48312
+   
+   PE44337-F903
+   During the first read the control record the values of the
+   fields are checked and abnormal values are replaced by defaults.
+   
+   PE46102-F905
+   Code has been changed to display the correct value
+   of STATS_DSPACE_FULL with 1 decimal place.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+ *  &#158;**** PE09/12/02 FIX IN ERROR. SEE APAR PM02302 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM02302]  FOR DESCRIPTION
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK89974
+   
+   
+ * REPORTED COMPONENT NAME
+   CICS INTER ANAL
+   
+   
+ * REPORTED COMPONENT ID
+   5697J2300
+   
+   
+ * REPORTED RELEASE
+   220
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   YesPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-06-26
+   
+   
+ * CLOSED DATE
+   2009-09-14
+   
+   
+ * LAST MODIFIED DATE
+   2009-12-04
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UK50116 UK50117
+   
+   
+
+MODULES/MACROS
+ *  CIUA000C CIUA100C CIUA110C CIUA200C CIUCINB1
+   CIUINDEX CIUMSGE  CIUMSGK
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CICS INTER ANAL
+   
+   
+ * FIXED COMPONENT ID
+   5697J2300
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R22K PSY UK50117
+   UP09/09/22 P F909
+   
+   
+ * R220 PSY UK50116
+   UP09/09/22 P F909

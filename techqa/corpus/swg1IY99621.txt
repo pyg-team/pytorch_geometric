@@ -1,0 +1,191 @@
+Title: IBM IY99621: ABSTRACT: STALE EPHEMERAL LB ENTRIES LEAD TO CONNECTION ERRORS - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Customer Rep: Fission Lin
+   
+   Problem: Agents connect to remote TEMS 3 not viewed
+   
+   Action Taken:
+   
+   Please open an apar with the following severity and information:
+   
+   *===============================================================
+   ==
+   Compid:  5724C04MS
+   
+   Abstract: stale ephemeral lb entries lead to connection errors.
+   
+   Environment:
+   All supported Tivoli platforms at tepfp5, d7121a.
+   
+   Problem Description:
+    a remote TEMS attached via ephemeral pipe will
+   leave "stale" GLB entries (of the form "0.0.0.n")
+   at the HUB if the remote TEMS re-registers without
+   an intervening normal shutdown (where it explicitly
+   unregisters the problem entries).  Once this occurs, the
+   HUB will find the stale entries first, and cause distributed
+   requests to that REMOTE to fail with connection errors even
+   though the remote and any attached agents appear online.
+   
+   Detailed Recreation Procedure:
+   Connect a remote TEMS to a HUB using the ephemeral keyword
+   (KDE_TRANSPORT=...IP.PIPE EPHEMERAL:Y ...) in the configuration
+   of the remote TEMS.  Once the remote TEMS has connected to the
+   HUB and registered with the GLB, force a situation distribution
+   to that remote TEMS.  Having then a situation distributed to the
+   remote TEMS, crash that remote TEMS and restart it.  Once
+   restarted, the HUB will experience comm failures trying to
+   again distribute a situation to that remote TEMS.  The comm
+   errors will be associated with the old remote TEMS address.
+   
+   Related Files and Output:
+   The RAS1 log for the HUB will show communication failures to the
+   remote TEMS with an address with an ephemeral address (of the
+   form "0.0.0.n") which is not the address registered by that
+   remote:
+   
+   KDSRU001   Remote request communication failure to destination
+              *HUB ip.pipe:0.0.0.1.1918..
+   
+   Approver:
+   nic
+   *===============================================================
+   ==
+   
+   Action Planned: Proceed with defect resolution.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  n/a
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  A remote TEMS attached via ephemeral pipe will
+   leave "stale" GLB entries (of the form "0.0.0.n")
+   at the HUB if the remote TEMS re-registers without
+   an intervening normal shutdown (where it explicitly
+   unregisters the problem entries). Typically this
+   occurs when a remote TEMS crashes after connecting
+   to the HUB.  Once this crash happens, the HUB will find
+   old, stale remote TEMS entries first, and cause distributed
+   requests to that REMOTE to fail with connection errors
+   (these errors will contain the stale TEMS address) even
+   though the remote and any attached agents appear online.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Code in Basic Services was changed to remove all ephemeral
+   addresses on behalf of the remote TEMS when NETWORK and
+   INTERFACE compare flags are set on the same call.  Code in
+   the TEMS was changed to (re)register the remote TEMS address
+   with each heartbeat, thus maintaining currency.
+   
+   The fix for this APAR will be included in the following
+   maintenance vehicle:
+       | fix pack | 6.1.0.6-TIV-ITM-IF0001
+   
+   Note: Search the IBM Technical support web site for maintenance
+   package availability
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IY99621
+   
+   
+ * REPORTED COMPONENT NAME
+   TEMS
+   
+   
+ * REPORTED COMPONENT ID
+   5724C04MS
+   
+   
+ * REPORTED RELEASE
+   610
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2007-06-05
+   
+   
+ * CLOSED DATE
+   2007-12-14
+   
+   
+ * LAST MODIFIED DATE
+   2007-12-14
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    OA22688 [http://www-01.ibm.com/support/docview.wss?uid=swg1OA22688]
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TEMS
+   
+   
+ * FIXED COMPONENT ID
+   5724C04MS
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R610 PSY
+   UP

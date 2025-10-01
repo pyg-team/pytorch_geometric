@@ -1,0 +1,90 @@
+Title: IBM Priority property and migration from JRules 6.x to 7.x - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How should I migrate the priority property used in JRules 6.x to JRules 7.x ?
+
+
+ANSWER
+Note: if you are using 7.5 or later version, a migration from JRules 6.x requires that you first migrate to JRules 7.0 or 7.1 as indicated in Migrating from JRules [http://pic.dhe.ibm.com/infocenter/dmanager/v7r5/topic/com.ibm.decisions.migrating.jrules/Content/Business_Rules/_pubskel/Infocenter_Primary/ps_Decisions_Rules_Migrating37.html] 
+
+Because there were some changes in the way the priority property of the rules is supported between JRules 6.x and 7.x, a migration requires particular attention to this property otherwise issues may arise, such as: 
+
+
+1. upon migrating the RTS database getting SQL errors such as:
+
+"PRIORITY_EXT" is not valid in the context where it is used
+
+( for an example of a more detailed error message see: SQL Error when executing RTS database migration script from version 6.7 to 7.0 [http://www.ibm.com/support/docview.wss?uid=swg21420519] )
+
+2. in RTS installation manager, upon executing the generated SQL script getting errors such as: 
+
+ORA-00904: "RULEARTIFACT"."PRIORITY_EXT": invalid identifier
+
+3. when configuring Rule Studio preferences to point to a custom rule extension model an error dialog with a message such as :
+
+Unexpected or Invalid File 
+The extension model definition is invalid.
+
+
+In JRules V7 the priority attribute in IlrTechnicalRule has been moved to the IlrRule super class. This change hides custom priority attributes from subclasses such as IlrBusinessRule and its subclasses when you migrate your model. In particular the default rule model extension in JRules V7 no longer contains a "priority" property extension in the .brmx file as it is already part of the model.
+
+The README file that comes with JRules 7.1.1 installations contains a note about the steps involved for migrating the priority property, a similar text is presented below. The README is an HTML file that can be found at the root of the installation of the product.
+
+Rule Team Server migration of priority property
+
+If you defined a custom priority property in IlrBusinessRule or a subclass, using one of the default extensions for example, you must rename this extended attribute in your custom class before you run the migration tool. For example, if your default extension model includes:
+
+<add-property className="BusinessRule"> 
+<property extractable="true" name="priority" type="String"> 
+<annotation id="column-name" value="priority_ext"/> 
+</property> 
+</add-property>
+
+Change the model before migration to:
+
+<add-property className="BusinessRule"> 
+<property extractable="true" name="myPriority" type="String"> 
+<annotation id="column-name" value="priority_ext"/> 
+</property> 
+</add-property>
+
+In JRules 6.x, upload the modified model using Upload Only in the Rule Team Server Installation Manager. In JRules V7, use the same model to create the new Rule Team Server schema. The custom priority property on your business rules is stored in a new myPriority custom property that can then be copied to the JRules V7 priority property, which is now part of the base rule model. 
+
+An example of such a query that can be run to transfer the priority values from myPriorityto priority is:
+
+Find all business rules 
+Do 
+set the priority of each business rule to the my priority of each business rule
+
+[note: myPriority is automatically verbalized as "my priority" in this example]
+
+Proceed to run the query using with Run Queryand then apply the actions on the listed rules with the link →Apply Actions.
+
+Once the migration has been completed and the priority values have been transferred you can revert your rule model extension to contain no custom priority property, and in this case the declaration in the .brmxfile is reduced to the following (assuming you have no other custom properties added to the BusinessRule class):
+
+<add-property className="BusinessRule"/> 
+
+Rule Studio migration of priority property
+
+If you have not been specifying any specific rule model extension with JRules 6.x (that is if you have been using the default built-in rule extension model) then you do not need to make modifications either to the rule model extension used by JRules 7.x.
+
+If you have developed a custom rule model extension with JRules 6.x then it is possible you derived it from the default extension model that contained an explicit declaration of a priority property extension of this form: 
+
+<add-property className="BusinessRule"> 
+<property extractable="true" name="priority" type="String"> 
+<annotation id="column-name" value="priority_ext"/> 
+</property> 
+</add-property>
+
+As explained in introduction, in JRules 7.x this property is part of the model and should not be declared as an extension anymore, so your custom rule extension model may need to be modified to remove this declaration, for example with the following (assuming no other property extension to the BusinessRule class):
+
+<add-property className="BusinessRule"/> 
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Operational Decision Manager Platform Independent 8.5, 8.0, 7.5 Enterprise

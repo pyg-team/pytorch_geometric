@@ -1,0 +1,13 @@
+Title: IBM When importing persons through a CSV file, how do I map user's manager ID? - United States
+
+Text:
+csv; atlas; import TECHNOTE (FAQ)
+
+QUESTION
+ When importing persons through a CSV file using Atlas, how do I map user's manager ID ? 
+
+CAUSE
+CSV Import does not have any property to map the manager ID.
+
+ANSWER
+Currently CSV Import does not have the functionality to map the manager ID of a user.

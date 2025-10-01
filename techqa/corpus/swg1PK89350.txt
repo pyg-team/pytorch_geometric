@@ -1,0 +1,260 @@
+Title: IBM PK89350: BMP NEVER ENDED DUE TO DB QUIESCED CONDITION - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  IMS abnormally terminated while UPDATE START(QUIESCE) waited for
+   all I/O complete for DEDB AREA. After /ERE, AREA status became
+   QUIESCED. Then restarted BMP never ended.
+   .
+   < SCENARIO >
+   1. DDLT(UPDATE CMFL01)
+       => I/O PENDING  <-------- RESERVE ADS I/O (OTHREAD)
+   2. UPDATE AREA NAME(CMFL01) START(QUIESCE) OPTION(NOHOLD)
+      /DIS AREA CMFL01
+       => QUIESCING
+   3. F CSL11PA1,STOP
+   ...
+   4. S CSL11PA1
+   5. /ERE.   (1st time)
+   6. /DIS AREA CMFL01
+       => QUIESCED
+   7. DDLT(GHU/REPL/SYNC)
+       => NEVER END     => due to DMACDBQS flag on.
+          *********
+   8. UPDATE AREA NAME(CMFL01) STOP(QUISCE)
+      => IMP1        00000010   00004124
+                                  Same type process in progress
+   9. LIST.RECON
+       DBDS for CMFL01
+         QUIESCE IN PROGRESS   =YES
+         QUIESCE HELD          =NO
+   10. /STO REG 1 ABDUMP
+      => ABEND0C4 ( PMR 12204,69C,760 )
+   11. /ERE.   (2nd time)
+   12. LIST.RECON
+       DBDS for CMFL01
+         QUIESCE IN PROGRESS   =YES
+         QUIESCE HELD          =NO
+   13. /DIS AREA CMFL01
+       => QUIESCED
+   14. UPDATE AREA NAME(CMFL01) STOP(QUISCE)
+       => CMFL01   IMP1        0
+   15. LIST.RECON
+       DBDS for CMFL01
+         QUIESCE IN PROGRESS   =NO
+         QUIESCE HELD          =NO
+   ----------------------------------------------------------------
+   BMP region is waiting in DBFSLOG0 - CHECKDBQ rotuine with
+   following module flow.
+   SAP AT 0F41B040              FLG-C0040002 00800021 DPNO-00001389
+                   POST-00000000 ECB-0FD48060 TYPE-DPST
+   DFSTMS00+SP53+1110+03/11/09+14.02PK81037 A        +108A
+   DFSFXC30+SP53+1110+05/15/09+02.14PK84765 B        +0E94
+   DBFSYN1004/13/0915.15PK82524 1234A5B              +026C
+   DBFSLOG004/28/09PK83562 AB12                      +0482
+   DBFSLOG0-CHECKDBQ                                 +0096
+   DBFXSL3012/30/0810.33KB60008 12                   +????
+   ---------------------------------------------------------------
+   R8=A(DMAC)
+     DMACDBQC=10368040 ; EPST address of BMP region.
+     DMACFLQ1=40 => DMACDBQS
+   Due to this DMACDBQS flag remains on, DBFSLOG0 waited in
+   CHECKDBQ routine.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: ALL IMS V11 USERS OF THE DATABASE            *
+   *                 QUIESCE FUNCTION THAT HAVE DEDB              *
+   *                 DATABASES                                    *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: AFTER EMERGENCY RESTART, BMP KEEPS      *
+   *                      WAITING DUE TO DB QUIESCED CONDITION.   *
+   *                      /STOP REG ABDUMP CAUSED IMS ABENDS0C4.  *
+   ****************************************************************
+   * RECOMMENDATION: INSTALL CORRECTIVE SERVICE FOR APAR/PTF      *
+   *                                                              *
+   *                 IN THIS SCENARIO, IMS WAS CANCELLED BEFORE   *
+   *                 THE QUIESCE PROCESS FOR AN AREA COULD        *
+   *                 COMPLETE. THE AREA WAS IN A 'QUIESCING'      *
+   *                 STATUS. SINCE THE QUIESCE PROCESS DID NOT    *
+   *                 COMPLETE, THERE WAS NO COMMUNICATION BACK    *
+   *                 TO RM. RM WAS STILL WAITING FOR A            *
+   *                 NOTIFICATION OF QUIESCE COMPLETE SO A        *
+   *                 STOP(QUIESCE) COMMAND IS NOT ALLOWED.        *
+   *                 THE CONDITION CODE INDICATED THAT A          *
+   *                 'SAME TYPE PROCESS IN PROGRESS'.             *
+   *                 AT THIS TIME, THE RM MUST BE RE-CYCLED       *
+   *                 TO RE-ESTABLISH PROPER COMMUNICATION         *
+   *                 WITH IMS.                                    *
+   ****************************************************************
+   A DATABASE QUIESCE COMMAND WAS ISSUED TO A DEDB AREA. THE
+   QUIESCE COMMAND DID NOT FINISH AND RESULTED IN A SYSTEM
+   HANG CONDITION. A SUBSEQUENT /STO REGION COMMAND ABENDED
+   WITH 0C4.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  GEN:
+   KEYWORDS:
+   
+   *** END IMS KEYWORDS ***
+   CODE CHANGED IN THE FOLLOWING MODULES:
+   
+   DBFDBQ50:
+      THE ADDRESS OF THE QLE IS SAVED IN THE DMACQLE
+      POINTER. IT IS USED BY /STO REGION PROCESSING.
+   
+   DBFSLOG0:
+      PRIOR TO ISSUING THE DBFSLEEP MACRO TO WAIT FOR THE
+      QUIESCE PROCESS TO COMPLETE, THE SAPSINFP AND EPSTW1SY
+      BIT ARE RESET SO THAT A /STO REGION ABDUMP COMMAND
+      DOESN'T CAUSE THE CONTROL REGION TO ABEND WITH A U113
+      ABEND. THE ADDRESS OF THE QLE IN THE DMACQLE FIELD
+      IS SAVED IN PSTDECB1 FOR /STO REGION PROCESSING.
+      AFTER RETURN FROM DBFSLEEP, THESE FLAGS ARE RESET.
+      ADDED CHECK FOR A REGION THAT IS BEING STOPPED.
+      IN THIS CASE, THE PROCESS IS ABORTED.
+   
+   DBFSMP10:
+      SAME CODE AS DBFSLOG0. THIS MODULES HANDLES THE
+      QUIESCE WAIT PROCESSING FOR SDEP SEGMENT INSERTS.
+      PRIOR TO ISSUING THE DBFSLEEP MACRO TO WAIT FOR THE
+      QUIESCE PROCESS TO COMPLETE, THE SAPSINFP AND EPSTW1SY
+      BIT ARE RESET SO THAT A /STO REGION ABDUMP COMMAND
+      DOESN'T CAUSE THE CONTROL REGION TO ABEND WITH A U113
+      ABEND. THE ADDRESS OF THE QLE IN THE DMACQLE FIELD
+      IS SAVED IN PSTDECB1 FOR /STO REGION PROCESSING.
+      AFTER RETURN FROM DBFSLEEP, THESE FLAGS ARE RESET.
+      ADDED CHECK FOR A REGION THAT IS BEING STOPPED.
+      IN THIS CASE, THE PROCESS IS ABORTED.
+   
+   DBFEPST:
+      DELETED FLAG EPSTW4QC. IF BITS ARE ON IN THIS FLAG
+      BYTE, DBFATRM0 WILL ABEND THE CONTROL REGION WITH U113
+      ON A /STO REGION ABDUMP COMMAND. THERE IS A FLAG
+      PSTQPSTW THAT INDICATES THAT WE ARE WAITING FOR QUIESCE.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  *********
+   * HIPER *
+   *********
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK89350
+   
+   
+ * REPORTED COMPONENT NAME
+   IMS V11
+   
+   
+ * REPORTED COMPONENT ID
+   5635A0200
+   
+   
+ * REPORTED RELEASE
+   100
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   YesHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2009-06-19
+   
+   
+ * CLOSED DATE
+   2009-07-23
+   
+   
+ * LAST MODIFIED DATE
+   2010-01-04
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UK48579
+   
+   
+
+MODULES/MACROS
+ *  DBFDBQ50 DBFEPST  DBFSLOG0 DBFSMP10 DFSSTOP0
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   IMS V11
+   
+   
+ * FIXED COMPONENT ID
+   5635A0200
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R100 PSY UK48579 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK48579]
+   UP09/07/28 P F907 Ž
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

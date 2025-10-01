@@ -1,0 +1,176 @@
+Title: IBM PK53911: DELETE OPERATION DURING INSERT - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When doing an EXPLAIN on a query with an INSERT the SQL PA
+   Explain report states the following:
+   A DELETE operation has been requested to remove rows from a
+   table.
+   ADDITIONAL SYMPTOMS:
+   1. DSNT408I SQLCODE = -104, ERROR:  ILLEGAL SYMBOL ".1". SOME
+      SYMBOLS THAT MIGHT BE LEGAL ARE: + - AS
+      DSNT418I SQLSTATE   = 42601 SQLSTATE RETURN CODE
+      DSNT415I SQLERRP    = DSNHPARS SQL PROCEDURE DETECTING ERROR
+      This occurred because the parser was inserting a qualifier
+      in a join predicate.
+   2. ANL3099E A terminal processing error has occurred.
+      PLI Error Code =   8094.
+      ANL Error Code =      0.
+       & Return Code =     16.
+      SQL PA  Program terminates with unrecoverable error.
+      Possible cause:
+      Protection exception - check authid/RACF permissions
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: Users of DB2 SQL Performance Analyzer.       *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: When doing an EXPLAIN on a query with   *
+   *                      an INSERT the SQL PA Explain report     *
+   *                      states the following:                   *
+   *                      A DELETE operation has been requested   *
+   *                      to remove rows from a table.            *
+   *                      ADDITIONAL SYMPTOMS:                    *
+   *                      1. DSNT408I SQLCODE = -104, ERROR:      *
+   *                      ILLEGAL SYMBOL ".1". SOME SYMBOLS THAT  *
+   *                      MIGHT BE LEGAL ARE: + - AS              *
+   *                      DSNT418I SQLSTATE   = 42601 SQLSTATE    *
+   *                      RETURN CODE                             *
+   *                      DSNT415I SQLERRP    = DSNHPARS SQL      *
+   *                      PROCEDURE DETECTING ERROR               *
+   *                      This occurred because the parser was    *
+   *                      inserting a qualifier in a join         *
+   *                      predicate.                              *
+   *                      2. ANL3099E A terminal processing       *
+   *                      error has occurred.                     *
+   *                      PLI Error Code =   8094.                *
+   *                      ANL Error Code =      0.                *
+   *                      & Return Code =     16.                 *
+   *                      SQL PA  Program terminates with         *
+   *                      unrecoverable error.                    *
+   ****************************************************************
+   * RECOMMENDATION: APPLY the PTF.                               *
+   ****************************************************************
+   Code has been changed to correct this condition.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  APPLY the PTF.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK53911
+   
+   
+ * REPORTED COMPONENT NAME
+   DB2 SQL PERF AN
+   
+   
+ * REPORTED COMPONENT ID
+   5697F5701
+   
+   
+ * REPORTED RELEASE
+   310
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2007-10-02
+   
+   
+ * CLOSED DATE
+   2007-11-26
+   
+   
+ * LAST MODIFIED DATE
+   2007-12-03
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UK31592
+   
+   
+
+MODULES/MACROS
+ *     ANLPGM31 ANLPRC3C ANLPRC3R ANLPRE3C ANLPRE3R
+   ANLQMF31
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   DB2 SQL PERF AN
+   
+   
+ * FIXED COMPONENT ID
+   5697F5701
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R310 PSY UK31592 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK31592]
+   UP07/11/28 P F711
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

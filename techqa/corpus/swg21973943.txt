@@ -1,0 +1,35 @@
+Title: IBM Data Servers returns "Results are empty" - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When creating a new Data Module based on a Data Server, there are no schemas listed. Instead "Results are empty" is displayed.
+The data server can however be successfully tested either when setup or in Administration Console. 
+
+SYMPTOM
+"Results are empty".
+
+
+CAUSE
+The connection to the datasource could not be established or accessing metadata, like the list of schemas, failed.
+
+ENVIRONMENT
+IBM Cognos Analytics 11
+
+DIAGNOSING THE PROBLEM
+"Results are empty" is displayed, instead of listing schemas available in the data server.
+
+
+[/support/docview.wss?uid=swg21973943&aid=1] [/support/docview.wss?uid=swg21973943&aid=1]
+
+
+RESOLVING THE PROBLEM
+One or more of the below list might apply to your environment: 
+
+ 1. The connection to the relational datasources requires the appropriate JDBC driver files to be copied into the ..\drivers directory in the main installation directory. This needs to be repeated on every dispatcher with Query Service enabled. A restart of the Cognos Analytics 11 service is required. 
+ 2. The Oracle 11.2.0.3 ojdbc6.jar was copied into the ../drivers directory, but the "Results are empty" message is still shown. Exchange the ojdbc6.jar with a compatible ojdbc7.jar. A restart of the Cognos Analytics 11 service is required. 
+ 3. Multiple driver files of the same vendor were copied to the ../drivers location (ie. ojdbc6.jar & ojdbc7.jar for Oracle was present). Make sure only one driver file is present per vendor, and that the driver version file is compatible with Java 8. A restart of the Cognos Analytics 11 service is required.
+
+RELATED INFORMATION
+ Link to Documentation [http://www-01.ibm.com/support/knowledgecenter/SSEP7J_11.0.0/com.ibm.swg.ba.cognos.bi_install_faq.11.0.0.doc/c_inst_crit_config.html]

@@ -1,0 +1,34 @@
+Title: IBM Attempt to generate a document results in error java.io.UnsupportedEncodingException: UTF_8 - United States
+
+Text:
+Web Application; Document Genaration; Document Builder; UnsupportedEncodingException TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When generating a document in IBM Rational Publishing Engine (RPE) Web App, it shows an error "java.io.UnsupportedEncodingException: UTF_8" in Apache Tomcat window. 
+
+CAUSE
+It is most likely caused by version incompatibility of Tomcat or Java Runtime Environment (JRE).
+
+ENVIRONMENT
+Rational Publishing Engine (RPE) Web App (aka. Document Builder) on Apache Tomcat
+
+RESOLVING THE PROBLEM
+Use IBM Java Runtime Environment (JRE) embedded in RPE installation for running Apache Tomcat. For example, create/modify setenv.bat file in [Tomcat_Inst_Dir]\bin\, and add following line: 
+
+set "JRE_HOME=C:\Program Files (x86)\IBM\Rational\Publishing Engine\jre"
+
+
+If RPE is not installed, try to find other IBM JRE installed in this server. As there is no standalone product of IBM JRE for Windows, you may need to use IBM JRE which is bundled with other IBM application (eg. IBM Websphere Application Server, Installation Manager, Eclipse). IBM JRE version 1.7.0 (32-bit or 64-bit) with the latest fixpack is preferable. Oracle JRE often does not work for running Web App. 
+
+ 
+
+If problem persists, upgrade Tomcat to version 8. 
+
+RELATED INFORMATION
+ Java Runtime Environment (JRE) [https://www.ibm.com/support/knowledgecenter/SS6RHZ_2.1.2/com.ibm.rational.pe.install.doc/topics/c_java.html]
+
+
+
+
+PRODUCT ALIAS/SYNONYM
+ RPE

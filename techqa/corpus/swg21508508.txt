@@ -1,0 +1,43 @@
+Title: IBM ConfigEngine task wp-add-property fails with 'AccessControlException: Access denied' message - United States
+
+Text:
+wp-add-property; ConfigEngine; task; fails; fail; error; AccessControlException; Access denied; add property TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+In IBM WebSphere Portal, the wp-add-property ConfigEngine task fails with the following error message: 
+
+[wplc-add-property] com.ibm.websphere.wim.exception.WIMSystemException:
+CWWIM4508E Virtual member manager failed to write to the
+'/apps/authoring/WebSphere/wp_profile/config/cells/authoring/wim/config/wimconfig.xml' file: 'Access denied (java.io.FilePermission
+/apps/authoring/WebSphere/wp_profile/config/cells/authoring/wim/config/wimconfig.xml write)'.
+[wplc-add-property] at
+com.ibm.ws.wim.util.DataGraphHelper.saveDataGraph(DataGraphHelper.java:182)
+..........
+[wplc-add-property] Caused by: java.security.AccessControlException:
+Access denied (java.io.FilePermission
+/apps/authoring/WebSphere/wp_profile/config/cells/authoring/wim/config/wimconfig.xml write)
+[wplc-add-property] at
+java.security.AccessController.checkPermission(AccessController.java:108)
+
+
+
+CAUSE
+This can occur if Java 2 security is enabled.
+
+
+
+RESOLVING THE PROBLEM
+To work around this issue: 
+
+
+1. From the Admin Console --> Security --> Global Security, uncheck "Use Java 2 security to restrict application access to local resources".
+
+2. Restart the application for the changes to take effect.
+
+3. Run the wp-add-property task again.
+
+
+
+
+ * 
+ *

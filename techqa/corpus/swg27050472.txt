@@ -1,0 +1,125 @@
+Title: IBM Archive of July, 2017 BigFix products and License Metric Tool technical support newsletter - United States
+
+Text:
+31-July-2017; self help; newsletter; troubleshooting; FAQs; administration; technical support; problem solving; documentation NEWSLETTER
+
+ABSTRACT
+ Client self assist - Technical Support Information for IBM BigFix and IBM License Usage administrators and users
+Mail date: July 31, 2017 
+
+CONTENT
+
+
+
+Product Releases and News 
+
+ * Reminder: End of Life for BigFix v9.1 coming up on September 30th, 2017
+ * 
+ * 
+ * 
+ * As of July 1: Go to dW Answers for ILMT Support for all but Severity 1 issues
+ * 
+ * 
+ * https://www.ibm.com/developerworks/community/forums/html/forum?id=11111111-0000-0000-0000-000000002453
+ * 
+ * 
+ * BigFix 9.5 Patch 6 is now available
+ * 
+ * 
+ * 
+ * BigFix 9.2 Patch 11 is now available
+ * 
+ * 
+ * 
+ * Patches for RHEL: RHSM Download Plug-in and RHSM Download Cacher updated (version 1.0.2.0)
+ * 
+ * 
+ * 
+ * July 2017 Software Catalog Update for ILMT 9.x - 2017-07-18
+ * 
+ * 
+ * 
+ * What’s new in BigFix Inventory 9.2.8
+ * 
+ * 
+ * 
+ * Install or upgrade ILMT/BFI to version 9.2.8 - 19 July 2017
+ * 
+ * 
+ * 
+ * 
+ *  Helpful Content  *  Use BigFix Patch Management to protect your devices from Petya ransomware [https://www.ibm.com/developerworks/community/blogs/a1a33778-88b7-452a-9133-c955812f8910/entry/Use_BigFix_Patch_Management_to_protect_your_devices_from_Petya_ransomware?lang=en&acss=danl_4568_web] 
+      Microsoft released MS17-010 in March to address the vulnerabilities (CVE-2017-0144 and CVE-2017-0145) that the Petya ransomware exploits to spread across networks. Consequently, BigFix has previously released the corresponding the Fixlets. 
+      Troubleshooting RHSM Download Plug-in and Download Cacher [https://www.ibm.com/developerworks/community/wikis/home?lang=en&acss=danl_4568_web#!/wiki/Tivoli%20Endpoint%20Manager/page/Troubleshooting%20RHSM%20Download%20Plug-in%20and%20Download%20Cacher] 
+      Refer to two parts of information in this section: 1: Reference logs for troubleshooting RHSM enhancements, and 2: RHSM troubleshooting checklist 
+      Server error: Database connection error in IBM Endpoint Manager (BigFix) [http://www.ibm.com/support/docview.wss?uid=swg21669070&acss=danl_4568_web] 
+      Database Error: The database being connected to has a database version of "Enterprise 5.34", and this application requires a database version of "Enterprise 4.31". 
+      After upgrade BFI/LMT server to version 9.2.7 LDAP authentication may not work in for some older LDAP types [http://aimrtp1.rtp.raleigh.ibm.com:8080/:%20http://www.ibm.com/support/docview.wss?uid=swg22001375&acss=danl_4568_web] 
+      Users are no longer able to login to BFI/LMT server web console using domain accounts,but it was working before the upgrade. 
+      CODIN0531E The db2fenc1 user name already exists on the system and cannot be used by the installer. [http://www.ibm.com/support/docview.wss?uid=swg22003992&acss=danl_4568_web] 
+      The All-In-One ILMT installation on Linux server failed with the error above. 
+      IBM License Metric Tool 9.2 - Supported Operating Systems [http://www.ibm.com/support/docview.wss?uid=swg22003907&acss=danl_4568_web] 
+      This document provides information about operating systems supported by each component of License Metric Tool. The information is sorted by operating system and by component. 
+   
+   
+
+Community Events  *  Next Open Mic: More on relevance checks in ILMT and BFI - Wednesday, 23 August 2017 [http://www.ibm.com/support/docview.wss?uid=swg27050130&acss=danl_4568_web] 
+   Join members of the IBM License Metric Tool (ILMT) and IBM BigFix Inventory Support team as they delve further into the topic of relevance checks. After a presentation, attendees will be given an opportunity to ask questions of the panel of experts. 
+   Open Mic replay on ILMT/BFI Maintenance: Keeping the tool current - 15 June 2017 (Includes link to video; presentation is attached) [http://www.ibm.com/support/docview.wss?uid=swg27049964&acss=danl_4568_web] 
+   Members of the IBM License Metric Tool (ILMT) and IBM BigFix Inventory Support team shared information on maintaining the license tool. 
+   Support technical exchanges for IBM Security(all support technical exchanges) [https://www.ibm.com/support/home/exchanges-listing/I223734M49477F57/IBM%20Security%20(all%20support%20technical%20exchanges)/group?acss=danl_4568_web] 
+   Future and past 
+
+[/support/docview.wss?uid=swg27050472&amp;aid=1] Getting Help  *  My Notifications [http://www-01.ibm.com/software/support/einfo.html?acss=danl_4568_web] 
+   Subscribe to My Notifications to be alerted about product releases, patches and fixes, APARs, and the announcements or updates of Security Bulletins. 
+   IBM Support Agent Tool (beta) provides answers to your support questions for IBM License Metric Tool [http://www.ibm.com/support/docview.wss?uid=swg21990238&acss=danl_4568_web] 
+   IBM is improving the quality of your experience with support and is helping you quickly get answers to your questions about IBM License Metric Tool. Try the newest IBM Support Agent today! 
+
+IBM Security Learning Academy  *  IBM Security Learning Academy [https://www.securitylearningacademy.com/] 
+   This site provides FREE technical training for IBM Security products. You can explore the course catalog and build your own curriculum by enrolling in courses. 
+   Find roadmaps for all BigFix and ILMT offerings here [https://www.securitylearningacademy.com/local/navigator/index.php?level=embf01] 
+   Course: Enforcing PCI Standards with IBM BigFix Compliance [https://www.securitylearningacademy.com/enrol/index.php?id=1391] 
+   This lab addresses compliance through the creation of custom check lists, check list deployment, compliance review, and remediation of non-compliant systems. 
+
+Social Media  * 
+ * Tags for use in dW Answers
+ * 
+ * 
+ *  Tagged with bigfix [https://developer.ibm.com/answers/topics/bigfix.html?acss=danl_4568_web] 
+   Tagged with ilmt [https://developer.ibm.com/answers/topics/ilmt.html?acss=danl_4568_web] 
+ * 
+ * IBM Security Support on YouTube
+ * 
+ * 
+ * 
+ * See the playlist for BigFix (formerly Endpoint Manager) videos
+ * 
+ * See the playlist for ILMT and BigFix Inventory
+
+
+
+[/support/docview.wss?uid=swg27050472&aid=2] [https://www.facebook.com/pages/IBM-Security-Support/221766828033861] [/support/docview.wss?uid=swg27050472&aid=3] [https://twitter.com/AskIBMSecurity] [/support/docview.wss?uid=swg27050472&aid=4] [https://www.youtube.com/user/IBMSecuritySupport] 
+
+
+
+To subscribe to the BigFix and License Metric Tool support mailing list, send an e-mail to isssprt@us.ibm.com with the EXACT subject line: 
+snl subscribe Endpoint And Mobility Management 
+
+
+
+ORIGINAL PUBLICATION DATE
+ 2017/7/31 
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Security IBM BigFix Compliance Security IBM BigFix Detect Security IBM BigFix Inventory Security IBM BigFix Lifecycle Security IBM BigFix Patch Security IBM BigFix Platform Security IBM BigFix Protection Security IBM Endpoint Manager for Software Use Analysis Security IBM License Metric Tool Security Tivoli Asset Discovery for Distributed Security Tivoli Endpoint Manager for Core Protection Security Tivoli Endpoint Manager for Lifecycle Management Security Tivoli Endpoint Manager for Patch Management Security Tivoli Endpoint Manager for Power Management Security Tivoli Endpoint Manager for Security and Compliance PRODUCT ALIAS/SYNONYM
+ BigFix Endpoint Manager
+IBM BigFix
+IBM Endpoint Manager
+IEM
+TEM
+Tivoli Endpoint Manager
+ILMT
+LMT
+SUA
+TAD4D

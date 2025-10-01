@@ -1,0 +1,64 @@
+Title: IBM How to encrypt GIS LDAP password on SI \properties\authentication_policies.properties? - United States
+
+Text:
+STERLINGHTG TECHNOTE (FAQ)
+
+QUESTION
+ How to encrypt GIS LDAP password on SI \properties\authentication_policies.properties? 
+
+ANSWER
+
+
+Encrypt password using SI \bin\encrypt_string.[sh/cmd] 
+See parameter authentication_1.credentials on example below, please.
+
+
+This has been tested with a freeware LDAP name OpenDS.
+
+
+#
+# CS Brasil
+#
+
+authentication_1.className=com.sterlingcommerce.woodstock.security.LDAPAuthentication
+authentication_1.display_name=SPOWXL26000796
+
+
+## enable ldap authentication (true, false) default=false
+
+authentication_1.enabled=true
+
+## jndi parameters for ldap connections
+authentication_1.jndi_factory=com.sun.jndi.ldap.LdapCtxFactory
+#This is the server name we are connecting to
+authentication_1.server=SPOWXL26000796
+#The port we are connecting to 
+authentication_1.port=389 
+authentication_1.security_type=simple
+
+
+
+
+#The principle is basically what we use to login to the LDAP server so that we can do lookups, for this server it is Adminstrator but we have to use the full path to the user
+authentication_1.principle=cn=Directory Manager
+#This is the user password
+# authentication_1.credentials=sterling
+
+authentication_1.credentials=ENCRYPTED:rO0ABXQABkRFU2VkZXVyAAJbQqzzF/gGCFTgAgAAeHAAAAAIZI8eHHsc5/JzcgARamF2YS5sYW5nLkludGVnZXIS4qCk94GHOAIAAUkABXZhbHVleHIAEGphdmEubGFuZy5OdW1iZXKGrJUdC5TgiwIAAHhwAAAAZXVxAH4AAQAAABAxyf/7od8VvzwKitE8HVot
+
+
+## comment out or leave as blank on this property if the server is not going to use SSL for the security protocol.
+## authentication_1.security_protocol=ssl
+
+## search parameters for user password
+authentication_1.password_attribute=userPassword
+#The search root is basically where GIS will be looking for users. The search is done by matching the login with the field called uid in ldap
+authentication_1.search_root=dc=example,dc=com
+authentication_1.search_filter=(uid=<userid>)
+authentication_1.with_user_bind=false
+
+
+ 
+
+HISTORICAL NUMBER
+ HTG2999

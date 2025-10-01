@@ -1,0 +1,159 @@
+Title: IBM RS01731: CLASSCASTEXCEPTION WHEN SETTING A BIGDECIMAL TO AN INTEGER VALUE - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Assigning an Integer value to a BigDecimal variable may cause a
+   ClassCastException such as:
+   Error while executing ruleset: java.lang.ClassCastException:
+   java.lang.Integer incompatible with java.math.BigDecimal
+   com.ibm.rules.engine.util.EngineExecutionException: java.lang.
+   ClassCastException: java.lang.Integer incompatible with java.
+   math.BigDecimal
+   Caused by: java.lang.ClassCastException: java.lang.Integer
+   incompatible with java.math.BigDecimal
+       at com.ibm.rules.generated.ruleflow.mainflow$003emyrule.
+   FASTEngine.rule_myrule0(Unknown Source)
+       at com.ibm.rules.generated.ruleflow.mainflow$003emyrule.
+   FASTEngine.executeRule(Unknown Source)
+       at com.ibm.rules.generated.ruleflow.mainflow$003emyrule.
+   FASTEngine.execute(Unknown Source)
+       at com.ibm.rules.generated.fastpath.AbstractFastEngine.
+   execute(Unknown Source)
+       at com.ibm.rules.generated.ruleflow.mainflow$003emyrule.
+   Task.run(Unknown Source)
+       at com.ibm.rules.generated.ruleflow.mainflow.Task.body(
+   Unknown Source)
+       at com.ibm.rules.generated.ruleflow.mainflow.Task.run(
+   Unknown Source)
+       at com.ibm.rules.generated.ruleflow.
+   AbstractGeneratedRuleflowEngine.execute(Unknown Source)
+       at com.ibm.rules.generated.ruleflow.
+   AbstractGeneratedRuleflowEngine.execute(Unknown Source)
+       at com.ibm.rules.studio.rve.launch.main.RveRulesetMain.main(
+   RveRulesetMain.java:67)
+   This may happen with a BAL rule such as:
+   then
+       set myBigDecimal to my integer ;
+   Where "my integer" is a static method returning an Integer
+   value and myBigDecimal is a variable of type BigDecimal.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  when converting simple type to BigDecimal and BigInteger a cast
+   cannot be used and an explicit operation is required. The
+   generated code does not handle properly this use case.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The code is fixed
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   RS01731
+   
+   
+ * REPORTED COMPONENT NAME
+   WS DECISION SVR
+   
+   
+ * REPORTED COMPONENT ID
+   5725B6901
+   
+   
+ * REPORTED RELEASE
+   851
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-09-03
+   
+   
+ * CLOSED DATE
+   2014-09-12
+   
+   
+ * LAST MODIFIED DATE
+   2014-09-12
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  999
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WS DECISION SVR
+   
+   
+ * FIXED COMPONENT ID
+   5725B6901
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R851 PSY
+   UP

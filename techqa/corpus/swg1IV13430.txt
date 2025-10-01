@@ -1,0 +1,159 @@
+Title: IBM IV13430: SITUATION SHOW PROBLEM STATUS WHEN ATTRIBUTES WITH ENUM VALUES HAVING IMBEDDED BLANKS USED IN SITUAITON FORMULA - United States
+
+Text:
+  A FIX IS AVAILABLE
+IBM Tivoli Monitoring 6.2.2 Fix Pack 9 (6.2.2-TIV-ITM-FP0009) [http://www-01.ibm.com/support/docview.wss?uid=swg24032067]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Problem Description:
+   When using i5OS Inactive Job table for situations,
+   there are ENUM attributes with imbedded blanks causing the
+   situation to fail to work.
+   
+   Problem: Blanks are not allowed for ENUM values.  There are
+   several ENUM values in the i5OS Inactive Job table (as well as
+   other tables) that should use an underscore '_' rather than
+   blanks as separators.
+   
+   Recreation steps:
+   1) Create situation on Tivoli Enterprise Portal using the
+     formula with EndReason attribute from i5OS Inactive Job
+     attribute group. For example
+     (#'KA4INACJOB.ENDREASON' == 'Abnormal)
+   2) Start the situation
+   3) Critical event with red icon will be displayed for the
+      situation. Blue X indicating Problem status will be displayed
+      in the event.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  The i5OS situation status is shown as "Problem" in the Situation
+   Event Console and Message Log.  A blue X icon is also displayed
+   indicating a problem with the situation.  This occurs when
+   certain attribute values are selected from the formula editor
+   pull down list.  Values in the pull down list are defined in an
+   internal table.  Some of these defined values contain characters
+   which cannot be processed in the situation formula.  The result
+   is that the situation fails to start and is not distributed.
+   
+   The i5OS tables and attributes affected by this problem are:
+   
+   Table, Attribute
+   ----------------
+   i5OS Inactive Job, End Reason
+   
+   i5OS History Log, Type (message type)
+   
+   i5OS Job Log, Type (message type)
+   
+   i5OS Management Central, Monitor Type
+   i5OS Management Central, Metric
+   i5OS Management Central, Event Type
+   i5OS Management Central, Message Type
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The internal table has been modified to remove characters in
+   defined attribute values that cannot be processed in the
+   situation formula.  The text seen by the user in the pull down
+   list for the affected attributes remains the same.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV13430
+   
+   
+ * REPORTED COMPONENT NAME
+   ITM AGENT ISERI
+   
+   
+ * REPORTED COMPONENT ID
+   5724C04A4
+   
+   
+ * REPORTED RELEASE
+   622
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-01-18
+   
+   
+ * CLOSED DATE
+   2012-06-21
+   
+   
+ * LAST MODIFIED DATE
+   2012-06-21
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ITM AGENT ISERI
+   
+   
+ * FIXED COMPONENT ID
+   5724C04A4
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R622 PSY
+   UP

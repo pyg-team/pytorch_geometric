@@ -1,0 +1,44 @@
+Title: IBM Replace the ODBC or Oracle Gateway with the newer JDBC Gateway - United States
+
+Text:
+replace gateway; database gateway upgrade; convert database schema TECHNOTE (FAQ)
+
+QUESTION
+ How do I replace the existing Oracle or ODBC Gateway with the newer JDBC Gateway? 
+
+ANSWER
+To replace the ODBC or Oracle Gateway with the one for JDBC, you only need to 
+install and configure the JDBC Gateway so it connects to your database. 
+The current Gateway database schema should work with the newer gateway with no 
+changes required. 
+
+Please see the following which is in the JDBC Gateway documentation: 
+
+"If you are using the Gateway for JDBC as a replacement for the Gateway 
+for Oracle or the Gateway for ODBC, your existing target database 
+configuration might not require any changes. Otherwise, you must install
+the gateway-nco-g-jdbc-reporting-scripts library." 
+
+If you need them, the scripts can be downloaded from Passport Advantage,
+using the search string "gateway-nco-g-jdbc-reporting-scripts". 
+
+The gateway-nco-g-jdbc-reporting-scripts patch does not include the 
+gateway. The gateway itself is a separate download. 
+
+The purpose of the gateway-nco-g-jdbc-reporting-scripts is to build the 
+Reporter tables in the target database instance. 
+
+After you install the gateway-nco-g-jdbc-reporting-scripts on the system, 
+you will still need to run the relevant [dbtype].reporter.sql script it contains, 
+on an existing database to create the destination tables that the gateway will
+be configured to connect to. 
+
+You only need to do this however if you want to change/replace the existing 
+Reporter Schema in the database, as the JDBC Gateway can work with what you 
+already have right now, once you have configured it (the gateway) with the 
+appropriate connection details.
+
+Please see the full gateway documentation, which lists all the steps you need to configure and install the gateway for OMNIbus v7.x and v8.1, and also explains how the gateway works at the link below.
+
+RELATED INFORMATION
+ JDBC Gateway Documentation [https://www.ibm.com/support/knowledgecenter/SSSHTQ/jdbcgw-pdf.pdf]

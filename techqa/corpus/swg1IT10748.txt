@@ -1,0 +1,154 @@
+Title: IBM IT10748: PROVIDE NEW JDBCORA12.DLL TO ADD COMPATIBILITY WITH ORACLE 12C FOR WEBSPHERE MQ WINDOWS SERVER INSTALLATION - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The jdbcora11.dll shipped with MQ  is not compatible with
+   Oracle 12c.  This apar provides a compatible JDBC switch load
+   file
+   for Oracle 12c to be used if MQ is the transaction
+   coordinator.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   Users of IBM MQ 7.5 and 8.0 who would like to configure MQ to
+   coordinate transactions with an Oracle 12c database using JDBC
+   on Windows.
+   
+   
+   Platforms affected:
+   Windows
+   
+   ****************************************************************
+   PROBLEM DESCRIPTION:
+   Previously MQ did not ship a library to support JDBC connections
+   to an Oracle 12c database on Windows.  This meant that is was
+   not possible for MQ to coordinate JDBC transactions with an
+   Oracle 12c database.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A new file "jdbcora12.dll" is supplied with the IBM MQ 7.5 and
+   8.0 Windows server installation image to support JDBC
+   connections to an Oracle 12c database.
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+   Version    Maintenance Level
+   v7.5       7.5.0.7
+   v8.0       8.0.0.5
+   
+   The latest available maintenance can be obtained from
+   'WebSphere MQ Recommended Fixes'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037]
+   
+   If the maintenance level is not yet available information on
+   its planned availability can be found in 'WebSphere MQ
+   Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT10748
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ BASE MULTIP
+   
+   
+ * REPORTED COMPONENT ID
+   5724H7241
+   
+   
+ * REPORTED RELEASE
+   750
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2015-08-17
+   
+   
+ * CLOSED DATE
+   2016-01-29
+   
+   
+ * LAST MODIFIED DATE
+   2016-01-29
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ BASE MULTIP
+   
+   
+ * FIXED COMPONENT ID
+   5724H7241
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R750 PSY
+   UP

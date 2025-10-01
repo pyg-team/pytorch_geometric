@@ -1,0 +1,132 @@
+Title: IBM IZ47227: IMPACT SERVER CONTINUES TO RUN OUT OF MEMORY WHEN USING THE UPDATEEVENTQUEUE IN THE POLICY. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Impact server continues to run out of memory when using the
+   UpdateEventQueue in the policy.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  L3 has provided customer with Test Fix and work around for the
+   time being.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   All IBM Netcool/Impact users who are using UpdateEventQueue
+   funtion in an EventReader
+   ****************************************************************
+   PROBLEM DESCRIPTION:
+   Impact server continues to run out of heap memory when
+   UpdateEventQueue is used to update the queue in  large number of
+   events.
+   ****************************************************************
+   RECOMMENDATION:
+   Update to IBM Netcool/Impact version 4.2.0.1-TIV-NCI-IF0005
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The issue is addressed in IBM Netcool/Impact Fix Pack 5
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ47227
+   
+   
+ * REPORTED COMPONENT NAME
+   NETCOOL/IMPACT
+   
+   
+ * REPORTED COMPONENT ID
+   5724O59IS
+   
+   
+ * REPORTED RELEASE
+   402
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-03-20
+   
+   
+ * CLOSED DATE
+   2009-08-27
+   
+   
+ * LAST MODIFIED DATE
+   2009-08-27
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   NETCOOL/IMPACT
+   
+   
+ * FIXED COMPONENT ID
+   5724O59IS
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R402 PSN
+   UP

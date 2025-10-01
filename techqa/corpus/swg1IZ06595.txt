@@ -1,0 +1,332 @@
+Title: IBM IZ06595: INSTALLER DOESN'T CORRECTLY HANDLE A DISTRIBUTED ENVIRONMENT WHERE WEBAPPS ON ONE MACHINE AND CORE COMPONENT ON ANOTHER. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Support Engineer: GBH
+   Change Team Eng:  WB
+   
+   Environment:
+   SERVER_B  (we installed this one first):
+          MySQL Server
+          WebTop/Web Applications
+   --> We said YES to it automatically creating the NCIM databases.
+   
+   SERVER_A:
+          MySQL Server
+          Network Mgr Core Components  (Network Manager IP Server)
+          Collectors
+   --> We said NO to it automatically creating the NCIM databases.
+       We pointed it to the NCIM Database on SERVER_B
+   --> The installer didn't ask where the other databases were
+       located !
+   
+   
+   Problem Description:
+   When installing Topoviz (NM IP Web component) onto SERVER_B, if
+   you don't select 'core components', it doesn't create all the
+   necessary databases needed by the GUIs. Webtop complains that
+   some database (such as ncmonitor) is missing.
+   
+   On SERVER_B, the following output shows the missing ncmonitor
+   database:
+   
+   bash-3.00$ pwd
+   /opt/netcool/platform/solaris2/mysql5.0/data
+   bash-3.00$ ls -l
+   total 73824
+   -rw-rw----   1 netcadm  ncoadmin    1101 Sep 18 13:36
+   camkseao008-nm1.err
+   -rw-rw----   1 netcadm  ncoadmin       6 Sep 18 13:36
+   camkseao008-nm1.pid
+   -rw-rw----   1 netcadm  ncoadmin 5242880 Sep 19 09:07
+   ib_logfile0
+   -rw-rw----   1 netcadm  ncoadmin 5242880 Sep 18 13:39
+   ib_logfile1
+   -rw-rw----   1 netcadm  ncoadmin 27262976 Sep 19 09:07 ibdata1
+   drwxr-xr-x   2 netcadm  ncoadmin    1536 Sep 19 08:23 mysql
+   drwx------   2 netcadm  ncoadmin    1024 Sep 18 13:38 ncim
+   drwx------   2 netcadm  ncoadmin    1024 Sep 18 13:39 ncpgui
+   drwxr-xr-x   2 netcadm  ncoadmin     512 Sep 18 13:36 test
+   
+   
+   Here's log from NMIP
+   
+   ::::::::::::::
+   ncp_ncogate.GOM.log
+   ::::::::::::::
+   ncp_ncogate ( Netcool/Precision to ObjectServer Gateway )
+   Copyright (C) 1997 - 2007 By IBM Corporation.  All Rights
+   Reserved.  See
+   product license for details.
+   
+   Netcool/Precision Version 3.7 (Build 13) created by lfredric at
+   11:44:40
+   Wed Jul 18 BST 2007
+   
+   Wed Sep 19 08:08:16 2007 Warning: Cannot connect to database
+   found in
+   file CNcpDbPoller.cc at line 162
+   Poller failed to connect to external database: Access denied for
+   user
+   'ncim'@'%' to database 'ncmonitor'
+   Wed Sep 19 08:08:16 2007 Info: A generic warning has occurred
+   found in
+   file CNcpDbPoller.cc at line 94
+   Failed to create connected DB poller
+   Wed Sep 19 08:08:16 2007 Warning: Cannot connect to database
+   found in
+   file CNcpDbPoller.cc at line 162
+   Poller failed to connect to external database: Access denied for
+   user
+   'ncim'@'%' to database 'ncmonitor'
+   ncp_ncogate[27202] Becoming Primary for tier 1
+   Attempting topology download...done.
+   Wed Sep 19 08:08:16 2007 Warning: Cannot connect to database
+   found in
+   file CNcpDbPoller.cc at line 162
+   Poller failed to connect to external database: Access denied for
+   user
+   'ncim'@'%' to database 'ncmonitor'
+   Connected to PRIMARY ObjectServer.
+   Connected to PRIMARY ObjectServer.
+   
+   
+   So current installer doesn't seem to be able to handle
+   separating the webapps and core component onto separate
+   machines.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Here are the high level steps to deploy a distributed
+   environment where the webapps and core component are on
+   different machines:
+   1. On Server B
+    - Install Security Server
+    - Install Web Applications & MySQL
+     ./INSTALL -console
+      --> de-selected "Core components" and "Collectors".
+      --> Everything else was left selected.
+   
+   2. On Server A
+    - Install "Core Components" and "Collectors"
+     ./INSTALL -console
+      --> de-selected everything except "Core Components" and
+          "Collectors"
+      --> specified Server B as the remote host to be used as the
+          central database
+   
+   3. On Server B
+    - Manually installed "ncp_schema"
+      --> ncpkg -install ncp_schemas.npm
+    - Manually created databases/tables in MySQL DB and manually
+      populated the databases ($NCHOME/precision/scripts/sql/mysql)
+      --> drop_mysql_databases.sh
+      --> create_mysql_databases.sh
+      --> populate_mysql_databases.sh
+   
+   4. On Server A
+    - Modified the DbLogins.NCOMS.cfg file ... changed the
+      hostname to point to Server B instead of localhost/Server A
+      --> $NCHOME/etc/precision/DbLogins.NCOMS.cfg
+        * value of "m_Hostname" would say "ServerA" or "localhost"
+          and would need to be changed to "ServerB"
+        * repeat for at least schemas "ncim" & "ncmonitor"
+   
+   
+   An alternative is to install "core" component on both servers as
+   this will allow the ncim schema to be included as part of the
+   install process on Server B and thus allow the ncim databases to
+   be created. Though will still need to adjust the
+   DbLogins.NCOMS.cfg file on Server A to ensure it is configured
+   to point to the remote databases located on Server B.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: ALL that are doing DISTRIBUTED installations *
+   *                 of ITNM                                      *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Distributed installations of            *
+   *                      ITNM/Precision IP would not function as *
+   *                      they should. For example, if only the   *
+   *                      Web Applications packages of precision  *
+   *                      are installed on SERVER-B (with the     *
+   *                      Core Components on SERVER-A) then the   *
+   *                      product would not function properly     *
+   *                      because certain databases (ncmib and    *
+   *                      ncmonitor) would not be created on the  *
+   *                      WebApps server, SERVER-B                *
+   ****************************************************************
+   * RECOMMENDATION: None                                         *
+   ****************************************************************
+   Distributed installations of ITNM/Precision IP would not
+   function as they should. For example, if only the Web
+   Applications packages of precision are installed on SERVER-B
+   (with the Core Components on SERVER-A) then the product would
+   not function properly because certain databases (ncmib and
+   ncmonitor) would not be created on the WebApps server,
+   SERVER-B.  (Also, ncim.chassis and other tables were not
+   created at install time either.) This problem would previously
+   have had to be fixed by manual intervention to fix the the SQL
+   databases.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  To fix the issue, once you have installed the baseline
+   WebApplications package (on SERVER-B), immediately apply this
+   fixpack to your installation (of the Web Applications package
+   on SERVER-B).
+   
+   CAVEAT when using this fixpack: There is one situation in which
+   this fixpack will lead to a new problem, but this situation is
+   considered unlikely to occur in practice. This problem will
+   occur if and when the customer changes his/her mind and does
+   the following steps:
+   
+   
+   
+   Customer does a distributed install with Webapps only on
+   SERVERB
+   
+   STEP 1) Installs Webapps baseline on SERVERB STEP 2) Installs
+   our Fixpack 2 on SERVERB STEP 3) Installs Core components on
+   SERVERA and patches it as necessary
+   
+   Everything will be OK so far.  It will all work just fine, with
+   Core components on SERVERA say.  This distributed set-up will
+   work just fine.
+   
+   A problem will occur ONLY if the customer, a week later say,
+   changes his/her mind and decides s/he wants the core components
+   on SERVERB after all, instead of on SERVERA.  i.e. the customer
+   no longer wants a distributed installation of ITNM/PrecisionIP.
+   
+   STEP 4 ) Installs baseline Core components on SERVERB
+   
+   At this point, SERVERB's BACKEND PRECISION WILL BE BROKEN IN
+   THE SENSE THAT THE BACKEND DATABASES WILL NOT BE CORRECTLY
+   CONFIGURED ON SERVERB  THE CUSTOMER WILL NOW HAVE TO DO SOME
+   MANUAL CONFIGURATION OF THEIR DATABASES (e.g. RUN SOME SCRIPTS
+   MANUALLY)
+   
+   The reason STEP 4) results in a broken backend is because the
+   Fixpack2 that was applied to SERVERB in STEP 2) installs a
+   cut-down version of ncp_schemas, cut-down compared with the
+   baseline ncp_schemas that gets installed for the Core
+   Components on SERVERA in STEP 3)   This cut-down version is
+   fine for a WEBAPPS-only server, but not fine for Core
+   Components server; baseline core components MUST be installed
+   BEFORE the fixpack2 is ever installed on a given server.
+   
+   So, to conclude, there is only a problem with the fixpack if
+   the customer CHANGES from a distrbuted installation to an
+   all-on-one-machine installation.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ06595
+   
+   
+ * REPORTED COMPONENT NAME
+   NC/PREC TPL SV
+   
+   
+ * REPORTED COMPONENT ID
+   5724O6000
+   
+   
+ * REPORTED RELEASE
+   370
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2007-10-16
+   
+   
+ * CLOSED DATE
+   2008-01-04
+   
+   
+ * LAST MODIFIED DATE
+   2008-01-04
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  NETCOOL
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   NC/PREC TPL SV
+   
+   
+ * FIXED COMPONENT ID
+   5724O6000
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R370 PSY
+   UP

@@ -1,0 +1,68 @@
+Title: IBM Adding users in Tivoli Common Reporting for Tivoli Storage Manager - United States
+
+Text:
+JazzSM user adding TCR ITM roles smadmin permission privilege TECHNOTE (FAQ)
+
+QUESTION
+ How can a new user be added in a Tivoli Common Reporting for Tivoli Storage Manager installation? 
+
+CAUSE
+In some cases it may necessary to add different users to manage the Monitoring and Reporting suite for Tivoli Storage Manager.
+
+ANSWER
+By default the JazzSM for Service Management is installed with the default administrator "smadmin".
+This user belongs to a role having full permissions and may not be appropriate to access both Chart View and Administration panels. 
+
+It can be useful instead to add users without the administrator role, but who are able to create/view charts and access the Tivoli Common reporting console. 
+
+This can be achieved in the following way: 
+
+1. Open the JazzSM interface via the browser:
+
+https://<ITM hostname or IP address>:16311/ibm/console 
+
+ 
+
+and login using the "smadmin" user credentials. 
+
+ 
+
+2. Once logged in, click on the "Console Settings" icon in the bottom left side and choose "WebSphere Administrative Console" :
+[/support/docview.wss?uid=swg21696449&amp;aid=1]
+
+
+
+3. In the new web page click the button "Launch WebSphere administrative console":
+[/support/docview.wss?uid=swg21696449&amp;aid=2] 
+
+
+
+4. A new web page is opened. Expand on the left side "Users and Groups" and click on "Manage Users".
+On the right panel, the list of existing users will be displayed:
+[/support/docview.wss?uid=swg21696449&aid=3] [/support/docview.wss?uid=swg21696449&aid=3]
+
+
+
+5. Click on "Create..." button and insert all the necessary information for creating the user.
+Once done the new user will be listed in the main page of the WebSphere Administrative Console:
+[/support/docview.wss?uid=swg21696449&aid=4] [/support/docview.wss?uid=swg21696449&aid=4]
+6. Go back to the IBM Dashboard for JazzSM and click again on the "Console Settings" icon in the bottom left side and choose "User Roles":
+[/support/docview.wss?uid=swg21696449&amp;aid=5]
+
+
+
+7. In the right panel, click on the button "search" for obtaining the list of the available users. Then click on the user to which the roles must be granted:
+[/support/docview.wss?uid=swg21696449&aid=6] [/support/docview.wss?uid=swg21696449&aid=6]
+
+
+
+8. A new page will all the available roles will be displayed. Assign to the chosen user, all roles except the "administrator" role.
+
+
+
+9. Click Save and logout
+
+
+
+10. Login to the JazzSM dashboard with the new user just created. 
+The roles assigned are enough to manage chart and creating reports inside the Tivoli Common Reporting.

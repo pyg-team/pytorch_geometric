@@ -1,0 +1,37 @@
+Title: IBM How do I change a custodian's confirmation response to a legal hold notice? - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When a custodian enters an incorrect value for a confirmation response to a legal hold notice sent from Atlas, how can I change the response value? 
+
+RESOLVING THE PROBLEM
+The recommended approach is to remove the custodian from being a recipient of the legal hold notice. Then re-add the custodian in order to send them a new issuance of the hold notice. The custodian can then respond again. 
+
+Below is an alternate approach that directly modifies the database to alter the custodian's original response. This approach should only be taken if the legal team does not agree to resend the legal hold notice. The legal team should be fully aware that this database update does not provide any audit trail / history about the change in the application. The change should be fully documented based on your company's procedures. 
+
+Execute the following SQL updates to the Atlas database as the "PSSAPL" user. This will change a custodian's response from the negative "No" to the positive "Yes" response for the legal hold notice. 
+
+update matterperformer 
+set noticestatus='Accepted' 
+where noticeid = <noticeid>
+and emailid like '<email>' <-- email of the user whose response you would like fixed
+
+update noticeremindersent
+set status = 'Accepted'
+where noticeid = <noticeid>
+and emailid like '<email>' <-- email of the user whose response you would like fixed
+
+select p.lastname || ', ' || p.firstname, clog.* from confirmation_logging clog, noticeremindersent nrs, person p
+where clog.noticereminderid = nrs.noticereminderid
+and clog.userid = p.personid
+and nrs.noticeid = <noticeid>
+and p.email like '<email>' <-- email of the user who submitted the original response
+and confirmation_value = 0;
+
+Get confirmation_logging_id from above.
+
+update confirmation_logging 
+set confirmation_value = 1
+where confirmation_logging_id = <id_from_previous_query>

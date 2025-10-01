@@ -1,0 +1,49 @@
+Title: IBM Management Console Error: Application "com.datamirror.ts.client.DmClientApplication" could not be found in the registry. - United States
+
+Text:
+DmClientApplication; registry; MC; java TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ I am getting the following error after installing MC 10.2.x
+
+
+
+java.lang.RuntimeException: 
+
+Application "com.datamirror.ts.client.DmClientApplication" could not be 
+
+found in the registry. 
+
+
+
+I previously had MC 6.5.2 installed and running without error. 
+
+SYMPTOM
+java.lang.RuntimeException: Application "com.datamirror.ts.client.DmClientApplication" could not be found in the registry. The applications available are: org.eclipse.ant.core.antRunner, org.eclipse.equinox.app.error, org.eclipse.help.base.infocenterApplication, org.eclipse.help.base.helpApplication, org.eclipse.help.base.indexTool, org.eclipse.update.core.standaloneUpdate, org.eclipse.update.core.siteOptimizer.
+at org.eclipse.equinox.internal.app.EclipseAppContainer.startDefaultApp(EclipseAppContainer.java:248)
+at org.eclipse.equinox.internal.app.MainApplicationLauncher.run(MainApplicationLauncher.java:29)
+at org.eclipse.core.runtime.internal.adaptor.EclipseAppLauncher.runApplication(EclipseAppLauncher.java:110)
+at org.eclipse.core.runtime.internal.adaptor.EclipseAppLauncher.start(EclipseAppLauncher.java:79)
+at org.eclipse.core.runtime.adaptor.EclipseStarter.run(EclipseStarter.java:369)
+at org.eclipse.core.runtime.adaptor.EclipseStarter.run(EclipseStarter.java:179)
+at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:60)
+at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:37)
+at java.lang.reflect.Method.invoke(Method.java:611)
+at org.eclipse.equinox.launcher.Main.invokeFramework(Main.java:620)
+at org.eclipse.equinox.launcher.Main.basicRun(Main.java:575)
+at org.eclipse.equinox.launcher.Main.run(Main.java:1408)
+at org.eclipse.equinox.launcher.Main.main(Main.java:1384)
+
+
+CAUSE
+Cached information from old version
+
+RESOLVING THE PROBLEM
+This error can be seen if a newer MC version (ie. 10.2) was installed and then it was decided to go back to an older MC version (ie. 6.5.2). MC caches certain information in a folder, C:\Users\<install user>\AppData\Roaming\IBM\Management Console\ (by default), that conflicts with the current installed version. 
+
+In order to fix this you can delete the contents of this folder (configuration, database and workspace) to start fresh. 
+
+You might want to back up the "database" folder (or just not delete it) if you have MC project settings that you want to keep. 
+
+After removing the contents a reboot is recommended before running the new install again.

@@ -1,0 +1,35 @@
+Title: IBM Issue with Decision Center behind Proxy Server or Load Balancer - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When accessing Decision Center (Rule Team Server) via a Proxy Server or a Load Balancer, the value of the Decision parameter (teamserver.server.port) is defined using an internal port number which results in a wrong permalink. Rule Solution for Office will report a "Failed to connect remote server" error when the user tries to check in the modifications in RuleDoc back to the Decision Center as a wrong port number is used. 
+
+CAUSE
+The problem happens when Decision Center is deployed on WebSphere Application Server behind a proxy server or a load balancer. 
+
+Decision Center uses request.getServerPort() method to retrieve the port value and set to teamserver.server.port. It is expected that this method returns the port number from the request host header first, as compliant to Java Servlet Specification Version 2.4 API. However in WebSphere Application Server, the getServerPort() method returns the port number from the request URL first instead. 
+
+
+RESOLVING THE PROBLEM
+To resolve this issue, you must set the trusthostheaderport and the com.ibm.ws.webcontainer.extractHostHeaderPort custom property to true to return the port number from the request host header first. 
+
+
+Complete the following steps for each server in your cluster from the administrative console: 
+
+
+ 1.  Click WebSphere Application Servers > server_name. 
+ 2.  Click Web Container Settings > Custom Properties 
+ 3.  Add the following properties: 
+
+ * Name: trusthostheaderport
+   Value: true 
+
+ * Name: com.ibm.ws.webcontainer.extractHostHeaderPort
+   Value: true 
+
+
+Save the configuration. Restart the server or servers for the modification to take effect. 
+
+For more information about the above settings, refer to Web Container Custom Properties [http://pic.dhe.ibm.com/infocenter/wasinfo/v8r0/topic/com.ibm.websphere.nd.doc/info/ae/ae/rweb_custom_props.html#returningtheportnumberfromtherequesthostheaderfirst] of WebSphere Application Server documentation.

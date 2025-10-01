@@ -1,0 +1,129 @@
+Title: IBM PM98562: INCONSISTENT TM1 VIEWS FOR DIFFERENT USER ACCOUNTS - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Inconsistent TM1 views for different user accounts.??We have
+   found a scenario where a context element is selected by a user
+   account in the ADMIN group. When an account not in the ADMIN
+   group looks at the same view, they see the next element in the
+   dimension. The non-admin account does have read access to the
+   dimension and element. The non-admin account can set the view to
+   use the same element in the context dimension that the ADMIN
+   account selected. The non-admin account only has write access to
+   the cube so they cannot save the view.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * All Users                                                    *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * See error description.                                       *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Upgrade to TM1 10.1 RP1 FP2                                  *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Code Fix
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM98562
+   
+   
+ * REPORTED COMPONENT NAME
+   TM1 SERVER
+   
+   
+ * REPORTED COMPONENT ID
+   5724W49SE
+   
+   
+ * REPORTED RELEASE
+   A11
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-10-07
+   
+   
+ * CLOSED DATE
+   2013-11-06
+   
+   
+ * LAST MODIFIED DATE
+   2013-11-06
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TM1 SERVER
+   
+   
+ * FIXED COMPONENT ID
+   5724W49SE
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * RA11 PSN
+   UP

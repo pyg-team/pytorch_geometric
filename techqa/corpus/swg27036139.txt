@@ -1,0 +1,216 @@
+Title: IBM Frequently asked questions (FAQ) about IBM WebSphere Lombardi Edition (updated October 2012) - United States
+
+Text:
+ EDUCATION
+
+ABSTRACT
+ The following list includes frequently asked questions (FAQ) about IBM WebSphere Lombardi Edition to help you troubleshoot potential problems and enhance how you use the product. 
+
+CONTENT
+Do you have ideas for other FAQ about WebSphere Lombardi Edition? Give us your feedback in the Rate this page section. Additional FAQ documents are available in the Related information section. 
+
+
+
+
+
+FAQ table of contents
+
+
+ * Applications
+ * Clusters
+ * Configuration
+ * Databases
+ * Installation and Uninstall
+ * Migration
+ * Performance
+ * Ports
+ * Security
+ * Tasks
+ * Toolkits
+ * WSDL
+ * Other Questions
+
+
+
+
+APPLICATIONS
+
+
+How do I deploy modified applications in WebSphere Lombardi Edition 7.1? (1444180) [http://www.ibm.com/support/docview.wss?uid=swg21444180&acss=dakc] 
+
+Back to top
+
+
+
+CLUSTERS
+
+
+How and why do I configure a secondary schema for additional nodes in my clustered environment? (1460193) [http://www.ibm.com/support/docview.wss?uid=swg21460193&acss=dakc] 
+
+How do I install a clustered WebSphere Lombardi Edition 7.1 or 7.2 environment? (1460358) [http://www.ibm.com/support/docview.wss?uid=swg21460358&acss=dakc] 
+
+
+Back to top
+
+
+
+CONFIGURATION
+
+
+What are the proper filters that you need to configure in the WebSphere Integrated Solutions Console to allow Teamworks for SharePoint/Teamworks for Office to properly function? (1497092) [http://www.ibm.com/support/docview.wss?uid=swg21497092&acss=dakc] 
+
+How do I change the font type in a WebSphere Lombardi Edition report? (1497156) [http://www.ibm.com/support/docview.wss?uid=swg21497156&acss=dakc] 
+
+How do I configure my messaging engines for failover in WebSphere Lombardi Edition V7.1 and 7.2? (1502592) [http://www.ibm.com/support/docview.wss?uid=swg21502592&acss=dakc] 
+
+Back to top
+
+
+
+DATABASES
+
+
+Because WebSphere Lombardi Edition (WLE) 7.x uses Spring to make its database calls, how do I turn up Spring logging so that I can view the SQL and the parameters passed into that SQL? (1461918) [http://www.ibm.com/support/docview.wss?uid=swg21461918&acss=dakc] 
+
+What is the difference between the functional_task_id, task_id, system_task_id, and system_functional_task_id in the performance server database? What is the difference between the functional_task_id and the task_id? (1439657) [http://www.ibm.com/support/docview.wss?uid=swg21439657&acss=dakc] 
+
+Which versions of DB2 are supported with WebSphere Lombardi Edition 7.1? (1443840) [http://www.ibm.com/support/docview.wss?uid=swg21443840&acss=dakc] 
+
+How do you configure a data source in WebSphere Lombardi Edition V7.1? (1444016) [http://www.ibm.com/support/docview.wss?uid=swg21444016&acss=dakc] 
+
+How do you change the database password on WebSphere Lombardi Edition (WLE) 7.1 Simple Install? (1447788) [http://www.ibm.com/support/docview.wss?uid=swg21447788&acss=dakc] 
+
+What are the required DB2 settings to use with WebSphere Lombardi Edition 7.1.0? (1452637) [http://www.ibm.com/support/docview.wss?uid=swg21452637&acss=dakc] 
+
+What Oracle version should I be on if I want to run WebSphere Lombardi Edition? (1462314) [http://www.ibm.com/support/docview.wss?uid=swg21462314&acss=dakc] 
+
+How do you recreate databases in Teamworks 7.0.x and WebSphere Lombardi Edition? (1497392) [http://www.ibm.com/support/docview.wss?uid=swg21497392&acss=dakc] 
+
+How do you change your database passwords with full installations of WebSphere Lombardi Edition Version 7.1 or 7.2? (1501938) [http://www.ibm.com/support/docview.wss?uid=swg21501938&acss=dakc] 
+
+Back to top
+
+
+
+INSTALLATION AND UNINSTALL
+
+
+What fix packs are available for WebSphere Lombardi Edition 7.1 and 7.2 and what fixes do they provide? (7022274) [http://www.ibm.com/support/docview.wss?uid=swg27022274&acss=dakc] 
+
+When you set up a cluster installation with a load balancer are sticky sessions required? (1507056) [http://www.ibm.com/support/docview.wss?uid=swg21507056&acss=dakc] 
+
+Which system libraries or applications should be pre-installed on a WebSphere Lombardi Edition server on Linux operating systems? (1498998) [http://www.ibm.com/support/docview.wss?uid=swg21498998&acss=dakc] 
+
+Back to top
+
+
+
+MIGRATION
+
+
+What versions of WebSphere Process Server and WebSphere Lombardi Edition can you migrate to the IBM Business Process Manager products using migration tools? (1610883) [http://www.ibm.com/support/docview.wss?uid=swg21610883&acss=dakc] 
+
+Back to top
+
+
+
+PERFORMANCE
+
+
+How do I tune my runtime servers for production level performance? (1446648) [http://www.ibm.com/support/docview.wss?uid=swg21446648&acss=dakc] 
+
+How can you tell if the performance server successfully loaded the definitions sent from the process server? (1439858) [http://www.ibm.com/support/docview.wss?uid=swg21439858&acss=dakc] 
+
+Back to top
+
+
+
+PORTS
+
+
+What ports are related to WebSphere Lombardi Edition 7.1? (1448251) [http://www.ibm.com/support/docview.wss?uid=swg21448251&acss=dakc] 
+
+Back to top
+
+
+
+SECURITY
+
+
+How do I configure a client on Windows 7 to successfully authenticate with Kerberos? (1445694) [http://www.ibm.com/support/docview.wss?uid=swg21445694&acss=dakc] 
+
+What steps do you need to follow to get Single Sign-On (Kerberos) working within WebSphere Lombardi Edition Version 7.1/7.2? (1448203) [http://www.ibm.com/support/docview.wss?uid=swg21448203&acss=dakc] 
+
+How do you change the heartbeat user (repository-server-designated-user) password on runtime server and process center after system has registered? (Teamworks 7.0.1 and WebSphere Lombardi Edition 7.1) (1452197) [http://www.ibm.com/support/docview.wss?uid=swg21452197&acss=dakc] 
+
+How do I configure HTTPS for WebSphere Lombardi Edition using an SSL certificate from a certificate authority in a standalone WebSphere Lombardi Edition environment? (1452291) [http://www.ibm.com/support/docview.wss?uid=swg21452291&acss=dakc] 
+
+How can I restrict the users who can deploy process applications or view the Process Inspector? (1497231) [http://www.ibm.com/support/docview.wss?uid=swg21497231&acss=dakc] 
+
+Back to top
+
+
+
+TASKS
+
+
+How is the "at Risk" status of a task calculated? (1439654) [http://www.ibm.com/support/docview.wss?uid=swg21439654&acss=dakc] 
+
+Back to top
+
+
+
+TOOLKITS
+
+
+How does the Start Message Event behave in a Toolkit? (1447860) [http://www.ibm.com/support/docview.wss?uid=swg21447860&acss=dakc] 
+
+Back to top
+
+
+
+WSDL
+
+
+How do I test my WSDL against WS-I standards to check if my WSDL is WS-I compliant? (1439805) [http://www.ibm.com/support/docview.wss?uid=swg21439805&acss=dakc] 
+
+How do you change the default namespace in the Teamworks INBOUND Web Services? That is, the namespace in the WSDL generated for Teamworks Services that you have exposed as Web Services. (1439872) [http://www.ibm.com/support/docview.wss?uid=swg21439872&acss=dakc] 
+
+Back to top
+
+
+
+OTHER QUESTIONS
+
+
+What are the end of service (EOS) dates for Lombardi Teamworks and WebSphere Lombardi Edition? [http://www.ibm.com/software/support/lifecycleapp/PLCSearch.wss?q=Lombardi&scope=S962652E67398D77-X007925I73652A47&ibm-view-btn.x=0&ibm-view-btn.y=0&sort=P] 
+
+How are Saved Searches ordered in the Portal and can I change where my Saved Search displays in the list? (1439791) [http://www.ibm.com/support/docview.wss?uid=swg21439791&acss=dakc] 
+
+How do you move the online runtime server to offline and back if needed? (1445620) [http://www.ibm.com/support/docview.wss?uid=swg21445620&acss=dakc] 
+
+Why is the tw.system.step.error null if it is accessed in the custom exception handler and the exception handler is implemented as a standalone activity? (1577426) [http://www.ibm.com/support/docview.wss?uid=swg21577426&acss=dakc] 
+
+How do you use SOAPUI to test WebAPI operations in Teamworks and WebSphere Lombardi Edition? (1444296) [http://www.ibm.com/support/docview.wss?uid=swg21444296&acss=dakc] 
+
+What are the differences between WebSphere Process Server, WebSphere Lombardi Edition, IBM Business Process Manager V7.5, and IBM Business Process Manager V8.0? [http://www.ibm.com/software/integration/business-process-manager/versions/] 
+
+Back to top
+
+
+
+RELATED INFORMATION
+ * FAQ - Business Space powered by WebSphere [http://www.ibm.com/support/docview.wss?uid=swg27020117] 
+ * FAQ - IBM Business Monitor [http://www.ibm.com/support/docview.wss?uid=swg27017940] 
+ * FAQ - IBM Business Process Manager [http://www.ibm.com/support/docview.wss?uid=swg27021829] 
+ * FAQ - IBM Integration Designer [http://www.ibm.com/support/docview.wss?uid=swg27021835] 
+ * FAQ - WebSphere Decision Center [http://www.ibm.com/support/docview.wss?uid=swg27023698] 
+ * FAQ - WebSphere Decision Server Events [http://www.ibm.com/support/docview.wss?uid=swg27023697] 
+ * FAQ - WebSphere Decision Server Rules [http://www.ibm.com/support/docview.wss?uid=swg27023696] 
+ * FAQ - WebSphere ILOG JRules [http://www.ibm.com/support/docview.wss?uid=swg27023694] 
+ * FAQ - WebSphere ILOG Decision Validation Services [http://www.ibm.com/support/docview.wss?uid=swg27023725] 
+ * FAQ - WebSphere ILOG Rule Team Server [http://www.ibm.com/support/docview.wss?uid=swg27023695] 
+ * FAQ - WebSphere Process Server [http://www.ibm.com/support/docview.wss?uid=swg27018084]
+
+
+Back to top

@@ -1,0 +1,36 @@
+Title: IBM Withdrawal of support for the IBM WebSphere DataPower SOA Appliances 3.7.3 firmware levels - United States
+
+Text:
+ FLASH (ALERT)
+
+ABSTRACT
+ On 31 December 2011, IBM withdrew support for the WebSphere DataPower SOA Appliances XA35, XS40, XI50, XB60 and XM70 3.7.3 firmware levels. 
+
+CONTENT
+On 31 December 2011, IBM withdrew firmware support for the following WebSphere DataPower SOA Appliances : 
+
+ * XA35 firmware level 3.7.3 
+ * XS40 firmware level 3.7.3 
+ * XI50 firmware level 3.7.3 
+ * XB60 firmware level 3.7.3 
+ * XM70 firmware level 3.7.3 
+
+
+Remote Technical assistance (Q&A, usage) as well as fixpack support provided through the IBM firmware services and support organization were withdrawn for the XA35, XS40, XI50 , XB60 and XM70 3.7.3 firmware levels. 
+
+Customers running 3.7.3 (or any earlier version) are advised to plan to upgrade to the latest supported releases of WebSphere DataPower firmware in order to continue receiving technical support as well as proactively avoiding problems that are already resolved. 
+
+
+
+Refer to Supported Firmware versions and recommended upgrade levels [http://www-01.ibm.com/support/docview.wss?uid=swg21237631] for more information.
+
+
+
+IBM recommends that users consider applying the latest version of the firmware. Specific enhancements around serviceability, usability, and reporting were made to these levels beyond typical release improvements. Of course, in the case of upgrading firmware for any critical embedded system, IBM recommends that users test their configurations and surrounding applications before moving into production.
+
+
+
+In addition, refer to the following documents: 
+
+ * IBM WebSphere DataPower Appliance Support Lifecycle [http://www.ibm.com/support/docview.wss?rs=2362&uid=swg21246298] 
+ * Critical updates for IBM WebSphere DataPower SOA appliances [http://www-01.ibm.com/support/docview.wss?rs=2362&uid=swg21390112] (for guidance when migration to a later firmware level)

@@ -1,0 +1,216 @@
+Title: IBM IT13767: WEBSPHERE MQ CLASSES FOR JAVA AND CLASSES FOR JMS FDC WITH PROBEID MP005001 DOES NOT CONTAIN QUEUE MANAGER NAME - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  If an application using the WebSphere MQ classes for Java or
+   classes for JMS connects to a queue manager that has the
+   Advanced Message Security (AMS) component installed, and there
+   is an issue accessing the policy data held on that queue
+   manager, the WebSphere MQ classes for Java and classes for JMS
+   will generate an FDC containing the following information:
+   Source Class   :-
+   com.ibm.mq.ese.intercept.JmqiOpenInterceptorImpl
+   Source Method  :- processExceptionAfterOpen
+   ProbeID     :- MP005001
+   The FDC does not give any information about the queue manager
+   that it was accessing when the issue occurred. This means that,
+   if the application is connecting to multiple queue managers, it
+   is not possible to determine from the FDC which queue manager
+   should be looked at to investigate the issue.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   This issue affects users of:
+   
+   - The WebSphere MQ V7.5 classes for Java.
+   - The WebSphere MQ V7.5 classes for JMS.
+   - The WebSphere MQ V7.5 resource adapter.
+   
+   - The IBM MQ V8 classes for Java.
+   - The IBM MQ V8 classes for JMS.
+   - The IBM MQ V8 resource adapter.
+   
+   who have applications which connect to queue managers that have
+   the Advanced Message Service (AMS) component installed.
+   
+   
+   Platforms affected:
+   MultiPlatform
+   
+   ****************************************************************
+   PROBLEM DESCRIPTION:
+   If an application using the WebSphere MQ classes for Java,
+   classes for JMS or the resource adapter connected to a queue
+   manager which had the Advanced Message Security (AMS) component
+   installed, and encountered an issue while accessing AMS policy
+   data, an FDC file was generated with the following information:
+   
+   Source Class   :-
+   com.ibm.mq.ese.intercept.JmqiOpenInterceptorImpl
+   Source Method  :- processExceptionAfterOpen
+   ProbeID     :- MP005001
+   
+   The FDC also contained details of the exception that occurred
+   while reading the AMS policy data.
+   
+   If the application was connecting to multiple queue managers,
+   then it was not possible to identify which queue manager the
+   application was communicating with when the issue occurred.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The WebSphere MQ classes for Java, classes for JMS and resource
+   adapter have been updated so that, if an exception is thrown
+   while accessing AMS policy data, the FDC that is generated will
+   also include:
+   
+   - The name of the queue manager that an application was getting
+   the AMS policy data from when the issue occurred.
+   - The unique identifier (UID) for the queue manager.
+   
+   
+   An example of the new FDC that will now be generated, which
+   shows the queue manager name and UID, is shown below:
+   
+   ****************************************************************
+   ******
+   Source Class     :-
+   com.ibm.mq.ese.intercept.JmqiOpenInterceptorImpl
+   Source Method    :- processExceptionAfterOpen
+   ProbeID          :- MP005001
+   
+                                         Data
+                                         ----
+   
+   |   Queue manager Uid   :-  myQMGR_2013-12-23_11.04.10
+   |   Queue manager name  :-  myQMGR
+   |   exception           :-  ExceptionDepth is 3
+   |   exception           :-
+   |   |   Cause:1       :-  The IBM WebSphere MQ Advanced Message
+   Security Java interceptor failed to obtain the security policy.
+   Reason Code: '3013'
+   
+   ****************************************************************
+   ******
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+   Version    Maintenance Level
+   v7.5       7.5.0.7
+   v8.0       8.0.0.5
+   
+   The latest available maintenance can be obtained from
+   'WebSphere MQ Recommended Fixes'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037]
+   
+   If the maintenance level is not yet available information on
+   its planned availability can be found in 'WebSphere MQ
+   Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT13767
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ BASE MULTIP
+   
+   
+ * REPORTED COMPONENT ID
+   5724H7241
+   
+   
+ * REPORTED RELEASE
+   750
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-02-12
+   
+   
+ * CLOSED DATE
+   2016-02-21
+   
+   
+ * LAST MODIFIED DATE
+   2016-02-21
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ BASE MULTIP
+   
+   
+ * FIXED COMPONENT ID
+   5724H7241
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R750 PSY
+   UP

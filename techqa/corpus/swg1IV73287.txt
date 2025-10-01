@@ -1,0 +1,188 @@
+Title: IBM IV73287: DEPRECATION OF WEAK CIPHERSPECS IN WEBSPHERE MQ V7 QUEUE MANAGERS - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  This APAR covers changes to the WebSphere MQ Queue Manager to
+   disallow the use of CipherSpecs which
+   specify cryptographic algorithms or protocols that are now
+   considered to be
+   broken or weak.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   This affects users of WebSphere MQ 7.0.1, 7.1 and 7.5 who are
+   using SSL/TLS security on queue manager channels.
+   
+   
+   Platforms affected:
+   MultiPlatform
+   
+   ****************************************************************
+   PROBLEM DESCRIPTION:
+   In line with industry security guidelines and research,
+   WebSphere MQ now considers the following CipherSpecs to be weak:
+   
+   RC4_SHA_US
+   RC4_MD5_US
+   TRIPLE_DES_SHA_US
+   DES_SHA_EXPORT1024
+   RC4_56_SHA_EXPORT1024
+   RC4_MD5_EXPORT
+   RC2_MD5_EXPORT
+   DES_SHA_EXPORT
+   TLS_RSA_WITH_DES_CBC_SHA
+   NULL_SHA
+   NULL_MD5
+   FIPS_WITH_DES_CBC_SHA
+   FIPS_WITH_3DES_EDE_CBC_SHA
+   TLS_RSA_WITH_NULL_SHA256
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The CipherSpecs identified in the list above will no longer be
+   permitted by default when initiating MQ channels.
+   
+   Attempting to start a channel instance using one of these
+   CipherSpecs will result in AMQ9635, AMQ9773 (7.0.1 only) or
+   AMQ9788 (7.1 and 7.5 only) messages in the queue manager's error
+   log.
+   
+   
+   If a return to the previous behavior is required, the
+   CipherSpecs may be re-enabled within the SSL stanza of the
+   qm.ini file as follows:
+   
+   SSL:
+      AllowWeakCipherSpec=Yes
+   
+   
+   
+   Alternatively, these CipherSpecs may be re-enabled by setting or
+   exporting the following environment variable to any value:
+   
+   AMQ_SSL_WEAK_CIPHER_ENABLE
+   
+   The variable should be set/exported within the environment used
+   to start the queue manager. Defining this environment variable
+   enables the CipherSpecs regardless of the value specified in the
+   qm.ini file.
+   
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+   Version    Maintenance Level
+   v7.0       7.0.1.13
+   v7.1       7.1.0.7
+   v7.5       7.5.0.6
+   
+   The latest available maintenance can be obtained from
+   'WebSphere MQ Recommended Fixes'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037]
+   
+   If the maintenance level is not yet available information on
+   its planned availability can be found in 'WebSphere MQ
+   Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV73287
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ LIN X86 V7
+   
+   
+ * REPORTED COMPONENT ID
+   5724H7224
+   
+   
+ * REPORTED RELEASE
+   701
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   YesHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2015-05-14
+   
+   
+ * CLOSED DATE
+   2015-08-03
+   
+   
+ * LAST MODIFIED DATE
+   2016-10-13
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ LIN X86 V7
+   
+   
+ * FIXED COMPONENT ID
+   5724H7224
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R701 PSY
+   UP

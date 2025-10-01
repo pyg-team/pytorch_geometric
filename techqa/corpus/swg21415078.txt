@@ -1,0 +1,37 @@
+Title: IBM WebSphere DataPower SOA Appliances: Only one member of the SLM Peer Group applies the SLM settings - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Why does only one of my WebSphere DataPower SOA Appliances SLM Peer Group members apply the SLM settings? 
+
+ANSWER
+There are a few possibilities that should be explored with your configuration and environment. 
+
+In order to resolve this problem, check that all the criteria below is met: 
+
+ 1. The XML Management Interface has to be enabled on both devices 
+ 2. Ensure that the URLs in the peer group are correct 
+ 3. When using hostnames in the peer group URLs, make sure you have a working DNS configuration 
+ 4. The SLM policy needs to be identical on both appliances. If they do not match, the peering will not work. 
+ 5. If you are receiving this error: 
+    
+    [network][error] : tid(47): Host connection could not be established
+    [network][error] : tid(47): Host connection failed to establish: SLM_PEER : tcp port 5550
+    
+    Ensure that there is no firewall in between the appliances blocking the port for the XML Management Interface. 
+ 6. Review the XML Management Interface configuration and check the advanced tab, to ensure, the default user agent is not used, or if used, that it has been set up with an SSL Proxy Profile. 
+    
+
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+   
+
+If the above listed steps do not resolve your issue, contact the IBM WebSphere DataPower Level 2 support and provide a complete description of the problem, including the following: 
+ *  List of steps to recreate problem Capture images of the screen to help describe the steps Error messages Any changes to installed firmware version Exported Error Report Export of the Configuration Sample Request to trigger the SLM policy Screenshots of the XML Management Interface Configuration

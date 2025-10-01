@@ -1,0 +1,65 @@
+Title: IBM How to collect data from IBM Datacap Taskmaster Capture Clients and Servers - United States
+
+Text:
+collecting data mustgather TECHNOTE (FAQ)
+
+QUESTION
+ How to collect data from IBM Datacap Taskmaster Clients and Servers. 
+
+ANSWER
+How to confirm the version of Taskmaster 
+
+ 1. Open the version.txt file (by default it is located in c:\Datacap). 
+ 2. Version.txt will not only contain the version information, but also the specific build number.
+    
+
+[/support/docview.wss?uid=swg21504200&aid=1] [/support/docview.wss?uid=swg21504200&aid=1] 
+Issues encountered with the Taskmaster Server 
+
+ 1. Turn on both the Microsoft Windows Event logging and Datacap Tracing. Start -> All Programs -> Datacap -> Taskmaster Server -> Taskmaster Server Manager. 
+ 2. Click on the Logging Tab 
+ 3. System event log - If the issue is 100% reproducible (not intermittent), move Messaging Level to Info, critical, and serious. Once reproduced, send Windows Event Logs and move Messaging Level back to Critical Only. If the issue is very intermittent, set Messaging Level to Serious and Critical first.
+    
+    [/support/docview.wss?uid=swg21504200&amp;aid=2] 
+ 4. Datacap log - Verify that Output to file has been checked and the correct path has been specified in the text box. Note: moving the slider 2 notches from All is sufficient for troubleshooting. The All setting is for Datacap L3/Development.
+    
+    [/support/docview.wss?uid=swg21504200&amp;aid=3]
+
+
+
+Issues encountered with the Taskmaster Client  1. From Taskmaster Client Settings -> General -> Log Options…
+    
+    [/support/docview.wss?uid=swg21504200&aid=4] [/support/docview.wss?uid=swg21504200&aid=4] 
+ 2. From the Advanced tab, clicking Write into debug table will write batch information to the Engine DB. This will have useful batch information (i.e. batch phase status).
+    
+    [/support/docview.wss?uid=swg21504200&amp;aid=5] 
+ 3. Click on the Log tab and verify that Enable log file has been checked. Remember that there will be multiple Taskmaster Client log files for a distributed Taskmaster Capture system (i.e. PC #1 is the Scanning station, PC #2 is the Rulerunner station, PC #3 is the Verify station, etc.). Collect all pertinent Taskmaster Client logs.
+    
+    [/support/docview.wss?uid=swg21504200&amp;aid=6]
+
+
+Note: Enable flush buffer for advanced troubleshooting. 
+Issues encountered with the Taskmaster Client 
+
+ 1. From the Taskmaster Client, go to Settings->Workflow or click on the Key button.
+    
+    [/support/docview.wss?uid=swg21504200&aid=7] [/support/docview.wss?uid=swg21504200&aid=7]
+    
+ 2. Select the Task in question and click on Setup…
+    
+    [/support/docview.wss?uid=swg21504200&aid=8] [/support/docview.wss?uid=swg21504200&aid=8] 
+ 3. The Task setup/settings will be displayed by Batch Pilot. Confirm that the arrow is pointing at the task in question, and then go to File->Task Settings…
+    
+    [/support/docview.wss?uid=swg21504200&aid=9] [/support/docview.wss?uid=swg21504200&aid=9] 
+ 4. In the Log tab of the task, make a note of the name of the task log (i.e. VScan.log) and make sure that the Severity is 2 notches from All.
+    
+    [/support/docview.wss?uid=swg21504200&aid=10] [/support/docview.wss?uid=swg21504200&aid=10] 
+ 5. Also, if submitting the log to IBM, please send the Task log (i.e. VScan.log), the RRS log (i.e. vscan_rrs.log) and the corresponding DCO xml file (i.e. rrsvscan.xml).
+
+
+
+DCO XML file [/support/docview.wss?uid=swg21504200&aid=11] [/support/docview.wss?uid=swg21504200&aid=11] 
+
+Task’s RRS file: 
+
+[/support/docview.wss?uid=swg21504200&aid=12] [/support/docview.wss?uid=swg21504200&aid=12]

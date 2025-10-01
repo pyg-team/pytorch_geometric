@@ -1,0 +1,143 @@
+Title: IBM HE12290: With IBM Content Collector 4.0, opening another person's calendar is no longer possible although read access is granted - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+ DIRECT LINK TO FIX
+4.0.0.3-IBM-ICC-Server-IF004 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FContent+Collector&fixids=4.0.0.3-IBM-ICC-Server-IF004&source=SAR]
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  After the Domino template is enabled for IBM Content Collector
+   4.0, it is no longer possible to open another person's calendar
+   although read access to the calender is granted. Instead, the
+   error message "You are not authorized to perform this
+   operation." is displayed.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  n/a
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Starting with IBM Content Collector 4.0, automatic document
+   retrieval is also supported for delegate users. This function
+   requires running a specific Java agent. If the delegate user did
+    not have the required access rights to run the agent, the
+   described error occurred.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Starting with this fix, IBM Content Collector checks the access
+   rights of delegate users. If they have only read access to the
+   agent, the agent is not run, and automatic document retrieval is
+    not enabled for those delegate users.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  4.0.0.3-IBM-ICC-Server-IF004
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   HE12290
+   
+   
+ * REPORTED COMPONENT NAME
+   ICC FOR EMAIL
+   
+   
+ * REPORTED COMPONENT ID
+   5724V5700
+   
+   
+ * REPORTED RELEASE
+   400
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2015-03-20
+   
+   
+ * CLOSED DATE
+   2016-01-14
+   
+   
+ * LAST MODIFIED DATE
+   2016-01-14
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    HE12456 [http://www-01.ibm.com/support/docview.wss?uid=swg1HE12456]
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ICC FOR EMAIL
+   
+   
+ * FIXED COMPONENT ID
+   5724V5700
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R400 PSY
+   UP

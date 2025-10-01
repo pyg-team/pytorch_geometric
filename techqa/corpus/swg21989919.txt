@@ -1,0 +1,28 @@
+Title: IBM Custodian Status in a Atlas Preservation  or Collection Plan - United States
+
+Text:
+Atlas Preservation Plan status TECHNOTE (FAQ)
+
+QUESTION
+ What are the various custodian status in a Preservation or Collection Plan? 
+
+CAUSE
+ Custom Process using a custom query was only looking at "On Hold" status to perform a release and ignoring other status
+
+ANSWER
+ 
+
+Status for custodians in a Atlas Preservation or Collection Plan are as follows: 
+
+ 1.  Not Executed 
+ 2.  Failed 
+ 3.  Release 
+ 4.  Inactive 
+ 5.  Complete 
+ 6.  On Hold 
+ 7.  Completed 
+ 8.  Collected 
+ 9.  Hold Failed 
+ 10. Completion Failed 
+ 11. Released 
+ 12. Release Failed

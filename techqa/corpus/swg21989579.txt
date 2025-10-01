@@ -1,0 +1,13 @@
+Title: IBM Optim Connection Manager returns "org.apache.jasper.JasperException: java.util.MissingResourceException: Can't find bundle for base name com.ibm.nex.dsi.ui.nls.resources, locale en" - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ When installed on Solaris, why does the Optim Connection Manager return the "org.apache.jasper.JasperException: java.util.MissingResourceException: Can't find bundle for base name com.ibm.nex.dsi.ui.nls.resources, locale en" error message? 
+
+CAUSE
+When the LANG environment variable is not set or is set to C, this error occurs.
+
+ANSWER
+To fix this issue, set the LANG environment variable to en_US (LANG=en_US).

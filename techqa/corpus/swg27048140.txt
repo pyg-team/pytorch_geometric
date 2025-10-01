@@ -1,0 +1,23 @@
+Title: IBM Detailed hardware and software requirements for Sterling Warehouse Management System - United States
+
+Text:
+ DETAILED SYSTEM REQUIREMENTS
+
+ABSTRACT
+ This document contains system requirements for Sterling Warehouse Management System 
+
+CONTENT
+The detailed system requirements information is available through the Software Product Compatibility Reports [http://publib.boulder.ibm.com/infocenter/prodguid/v1r0/clarity/index.jsp] web site. This web site provides you with the ability to dynamically generate operating system, prerequisite, server virtualization environment, translation, end of service, and detailed system requirements reports for your specific product, release, and operating system. 
+
+
+
+
+
+This document describes the minimum product levels that need to be installed before opening a problem report with IBM® Software Support. Because, other products frequently ship fixes, updates, and new releases, testing every configuration is not possible. In general and unless otherwise stated, you can install and run with updates to supported products if those updates are forward compatible.
+
+The following links provide detailed system requirements for Sterling Warehouse Management System version 9.5: 
+
+ * AIX [http://www-969.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=D8E3D900AC8B11E4BF417B0BC8E5108A&osPlatforms=AIX] 
+ * Linux [http://www-969.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=D8E3D900AC8B11E4BF417B0BC8E5108A&osPlatforms=Linux] 
+ * Mobile OS [http://www-969.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=D8E3D900AC8B11E4BF417B0BC8E5108A&osPlatforms=Mobile%20OS] 
+ * Windows [http://www-969.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=D8E3D900AC8B11E4BF417B0BC8E5108A&osPlatforms=Windows]

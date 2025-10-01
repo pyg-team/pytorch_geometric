@@ -1,0 +1,49 @@
+Title: IBM Non-Admin users unable to see Comment on the Organization Hierarchy - United States
+
+Text:
+TRIRIGA; TRIPORTFOLIO; TRIORGANIZATION; IOTWATSON; ICWMS TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ TRIRIGA Users that have non-administrative credentials cannot view/add/edit a comment 
+
+SYMPTOM
+[/support/docview.wss?uid=swg22002964&aid=1] [/support/docview.wss?uid=swg22002964&aid=1] 
+
+Image 1 shows that an Admin User can see the comments on the Notes and Documents Tab
+
+
+[/support/docview.wss?uid=swg22002964&aid=2] [/support/docview.wss?uid=swg22002964&aid=2]
+
+Image 2 shows that a Non-Admin User cannot see the comments using the same Organization Record
+
+
+CAUSE
+1. Root Cause: The Default WorkGroup has no OrgName / Scope access set.
+2. When a comment is initially added, it has no OrgAccess set. After the Parent Org is changed / activated, a wokrflow called and updates the OrgName field of the comment records. This is what causes the comment to become lost.
+
+
+ENVIRONMENT
+10.5.1/3.5.1.3
+
+
+
+DIAGNOSING THE PROBLEM
+a. Login to TRIRIGA as Non-Admin user.
+b. Navigate to Portfolio>Organizations.
+c. Open any form under Organizations Module. 
+d. Go to Notes and Documents Tab.
+e. Revise form and add comment under Comments section.
+f. Save and then Activate form. 
+g. User unable to see recently added comment.
+
+
+
+
+RESOLVING THE PROBLEM
+
+This has been identified as a product defect under APAR IV95414
+
+IV95414: NON-ADMIN USERS UNABLE TO SEE CREATED COMMENT FOR
+ORGANIZATIONS THAT DO NOT HAVE ORGNAME / SCOPE SET.
+
+http://www-01.ibm.com/support/docview.wss?crawler=1&uid=swg1IV95414 [http://www-01.ibm.com/support/docview.wss?crawler=1&uid=swg1IV95414]

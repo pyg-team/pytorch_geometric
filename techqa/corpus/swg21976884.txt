@@ -1,0 +1,76 @@
+Title: IBM JOBTASK's OWNERGROUP value is incorrect when importing a Job Plan with JOBTASK - United States
+
+Text:
+TPAEINTEGRATION; alias TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ JOBTASK's OWNERGROUP value is not set correctly when a Job Plan value is imported with JOBTASK using a flatfile import. 
+
+RESOLVING THE PROBLEM
+Steps to replicate: 
+
+1. Go to the Object Structures application.
+
+2. Create a new Object Structure. 
+
+ Object Structure : MYJP1 
+
+ Consumed by : INTEGRATION
+Source Objects: 
+- 1. JOBPLAN 
+- 2. JOBTASK - Parent : JOBPLAN - Relationship : JOBTASK 
+Support Flat Structure? : checked. 
+
+ Save the record. 
+
+
+Alias Conflict? becomes checked. You need to change the conflicted attributes' alias.
+
+3. Select Action --> Add/Modify Alias 
+
+ For example, the OWNERGROUP field exists in JOBPLAN and JOBTASK. 
+
+ So you need to change the alias for the JOBTASK's OWNERGROUP field from OWNERGROUP to a different name such as "OWNERGROUP_T" . 
+
+
+[/support/docview.wss?uid=swg21976884&aid=1] [/support/docview.wss?uid=swg21976884&aid=1]
+
+
+Please make sure that Alias Conflict? is unchecked. 
+
+[/support/docview.wss?uid=swg21976884&aid=2] [/support/docview.wss?uid=swg21976884&aid=2]
+
+
+4. Go to the Enterprise Service application. 
+
+Create a new Enterprise Service using the object structure 'MYJP1'. 
+
+
+
+[/support/docview.wss?uid=swg21976884&aid=3] [/support/docview.wss?uid=swg21976884&aid=3]
+
+
+5. Go to the External System application 
+
+ Open EXTSYS1 - Go to 'Enterprise Services' Tab 
+
+ Add 'MYJP1' enterprise service 
+
+ 
+Now import data using the data below:
+EXTSYS1,MYJP1,AddChange,EN
+AMCREW,ASSIGNEDOWNERGROUP,CALENDAR,CLASSSTRUCTUREID,CREWID,CREWWORKGROUP,DESCRIPTION,DOWNTIME,FLOWACTION,FLOWACTIONASSIST,FLOWCONTROLLED,FNCONOFFSET,HASNESTEDJP,INCTASKSINSCHED,INTERRUPTIBLE,JOBPLANID,JPDURATION,JPNUM,LABORCODE,LAUNCHENTRYNAME,ORGID,OWNER,OWNERGROUP,PERSONGROUP,PLUSCCHANGEBY,PLUSCCHANGEDATE,PLUSCREVCOM,PLUSCREVNUM,PLUSCSTATUSDATE,PRIORITY,REQASSTDWNTIME,SITEID,STATUS,STCONOFFSET,SUPERVISOR,SUSPENDFLOW,TASKTYPE,TEMPLATETYPE,TESTFIELD1,ASSIGNEDOWNERGROUP_T,CLASSSTRUCTUREID_T,CONDITIONNUM,DESCRIPTION_T,FLOWACTION_T,FLOWACTIONASSIST_T,FLOWCONTROLLED_T,JO1,JO2,JO3,JO4,JO5,JO6,JO7,JO8,JOBPLANID_T,JOBTASKID,JPTASK,LAUNCHENTRYNAME_T,METERNAME,NESTEDJOBPLANID,NESTEDJPNUM,OWNER_T,OWNERGROUP_TASK,PLUSCJPREVNUM,PLUSCNESTEDJPREVNUM,PLUSCREVSTATUS,PREDECESSORTASKS,SUSPENDFLOW_T,TASKDURATION,TASKSEQUENCE,TASKTYPE_T
+,,,,,,JP2TEST,0,,0,0,,0,1,0,335,0.0,JP2TEST,,,,,MAINT,,MAXADMIN,2016-02-12T11:48:53+11:00,,0,2016-02-12T11:48:53+11:00,,0,,ACTIVE,,,0,,ACTIVITY,,,,,test,,0,0,,,,,,,,,335,569,10,,,,,,SAFETY,0,0,,,0,0.0,,
+,,,,,,JP2TEST,0,,0,0,,0,1,0,335,0.0,JP2TEST,,,,,MAINT,,MAXADMIN,2016-02-12T11:48:53+11:00,,0,2016-02-12T11:48:53+11:00,,0,,ACTIVE,,,0,,ACTIVITY,,,,,test2,,0,0,,,,,,,,,335,570,20,,,,,,MAINT,0,0,,,0,0.0,,
+
+
+According to the data above, 
+JOBPLAN's OWNERGROUP is MAINT, 
+JOBTASK 10 's OWNERGROUP is SAFETY 
+and JOBTASK 20's OWNERGROUP is MAINT. 
+
+But when importing data, you can see that all JOBTASKs' s OWNERGROUP values are set with 'MAINT' unexpectedly. 
+
+This problem occurs because the alias forJOBTASK's OWNERGROUP (OWNERGROUP_TASK) in the data file is mismatched with the alias (OWNERGROUP_T) defined in the Object Structure. 
+
+The problem will be fixed after matching the alias.

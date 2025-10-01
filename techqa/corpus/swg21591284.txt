@@ -1,0 +1,29 @@
+Title: IBM Auto Populate the GL Account Code Associated With Labor - United States
+
+Text:
+TPAE; GL Account; Labor Reporting; TPAEWORK TECHNOTE (FAQ)
+
+QUESTION
+ Is it possible to configure Maximo 7.X versions so that GL Accounts can be associated with Labor codes, and subsequently auto-populated in the Labor Reporting application? 
+
+CAUSE
+In Maximo 7.1.X, the functionality has been changed. In previous versions, the Person and Labor records could be set up to have specific GL Accounts associated that would populate in the Labor Reporting module.
+
+ANSWER
+With the implementation of the configuration that is described here, you will be able to specify 
+
+the GL Account for a Labor record, and it will populate on the Labor Reporting record for the Labor. 
+1. Go To System Configuration | Platform Configuration | Application Designer 2. In the Application field enter "labor" and press Enter 
+3. Click on LABOR 
+4. Click on the Crafts tab 
+-Add a textbox to the Crafts section: 
+5. Click on the Control Palette button (7th button in from the right on the toolbar) 6. Click on the Textbox control to highlight it and then drag it onto the form to place it under the Craft field 
+(it can be placed anywhere) 
+7. With the new Textbox control highlighted, click on the Control Properties button (6th button in from the right on the toolbar) 
+8. In the Label field enter "GL Account" 
+9. In the Attribute field click on Select Value 
+10. In the Attribute field of the Select Value dialog, enter "glaccount" and press Enter 11. In the Object field enter "laborcraftrate" and press enter 
+12. Click on GLACCOUNT (where the Object is LABORCRAFTRATE) 
+13. In the Lookup field enter "GLNAVIGATOR" (enter this in all uppercase, no quotes) 14. Save the record 
+15. Close the Textbox Properties dialog box by clicking on the X in the top right corner of it 
+This will allow you to enter and modify the GL Account value for any Labor. in the Labor application, on the Crafts tab, you will now see the GL Account field.

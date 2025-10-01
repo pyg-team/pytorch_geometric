@@ -1,0 +1,62 @@
+Title: IBM Java Build Path Properties and J2EE Java JAR Dependencies synchronization, and .classpath content - United States
+
+Text:
+WSAD; Java Build Path; Java JAR Dependencies; synchronization; J2EE project; J2EE; project; bugzilla; RAD; MANIFEST.MF; .classpath; classpath; build; dependency; dependencies; 1145014; J2EE Module Dependencies; pmr "62014 122 000"; 62014122000 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ There is a connection between setting the Java™ JAR dependencies and the automatic placement of resources in the Java Build Path of a J2EE/EJB project. The Java Build Path GUI does not always reflect what is in the .classpath of WebSphere® Studio Application Developer (WSAD) v5.1.1. 
+
+RESOLVING THE PROBLEM
+Background 
+
+ * 
+ * 
+ * 
+ * 
+ * 
+ * Java JAR Dependencies
+ * 
+ *  Switch to the J2EE perspective > J2EE Hierarchy view > right-click the desired module, and click Open With > JAR Dependency Editor. 
+   Alternately, in the J2EE perspective > Project (J2EE) Navigator, right-click the desired project, and select Properties>Java JAR Dependencies. 
+ * 
+ * 
+ *  Java Build Path 
+ * 
+ *  Switch to the J2EE perspective > Project (J2EE) Navigator > right-click the desired project, and select Properties>Java Build Path 
+ * 
+ * Similar functionality exists in the Project Explorer view of the J2EE Perspective in Rational® Application Developer (RAD) v6.x+. In RAD v6.x, the WSAD v5.x J2EE Hierarchy and Project Navigator views are merged into one Project Explorer view. For RAD v7.0, the WSAD v512/RAD v6 J2EE project property Java Jar Dependencies was changed to J2EE Module Dependencies.
+
+
+
+
+
+Is there a connection between setting the Java JAR dependencies and the automatic placement of resources in the Java Build Path of a J2EE/EJB project? 
+
+Setting Java JAR Dependencies updates the MANIFEST.MF file of the project, used by the runtime classloaders, and the Java Build Path (.classpath file) of the project for development/build time compilation. This way you do not have to edit both and keep them in sync. There is no automatic synchronization other than the actions driven from the Java JAR dependencies property page or editor, with one exception: When a cross module EJB reference is added, the ejb tools automatically add the Java JAR dependency. 
+
+Why doesn't the Java Build Path GUI always reflect what is in the .classpath? 
+
+Prior to WSAD v5.1.2 (Eclipse 2.1) there were refresh anomalies when switching between Java Build Path and Java JAR Dependencies wizard while making updates to the two preference pages. These pages were not synchronized. Generally if editing one, it is safest to hit OK and close and reopen the dialog before editing another. This issue was originally connected with resolved Eclipse (eclipse.org) bugzilla # 32378 "Java Build Path properties page ". This was created to provide the hooks to keep them synchronized and should lead to improved synchronization in future releases of Application Developer. The bugzilla was fixed in Eclipse 2.1 on which WSAD v5.1.2 was based, resulting in less synchronization issues. 
+
+ 
+
+Note: 
+
+It is recommended that you always use the Java JAR dependencies instead of the Java Build Path , unless you are editing the source folders or you have an external dependency to a runtime library (for example, xerces.jar). Avoid adding entries to the Java Build Path ( .classpath file) when there is the possibility of duplicate entries resulting from later adding the same entry as a Java Jar dependency.
+
+
+
+
+
+
+
+RELATED INFORMATION
+#Eclipse Bugzilla Bug: 32378 [https://bugs.eclipse.org/bugs/show_bug.cgi?id=32378]
+Eclipse Bugs (Bugzilla) [https://bugs.eclipse.org/bugs/]
+
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration WebSphere Studio Application Developer Integration Edition EJB Tools Windows, Linux 5.0, 5.0.1 All Editions Software Development WebSphere Studio Enterprise Developer - Windows 5.0.1 All Editions Software Development Rational Application Developer for WebSphere Software - 6.0, 6.0.0.1, 6.0.1, 6.0.1.1, 6.0.1.2, 7.0, 7.0.0.1, 7.0.0.2, 7.0.0.3 Software Development Rational Software Architect - 6.0, 6.0.0.1, 6.0.1, 6.0.1.1, 6.0.1.2, 7.0, 7.0.0.1, 7.0.0.2, 7.0.0.3 Software Development Rational Software Architect -

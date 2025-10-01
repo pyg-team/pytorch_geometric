@@ -1,0 +1,39 @@
+Title: IBM Can you determine how many users are accessing your Domino HTTP server? - United States
+
+Text:
+Internet; Web Server; user hits; user count; hit count; number of users; web users; web access; show users PRODUCT DOCUMENTATION
+
+ABSTRACT
+ How can you tell how many users are accessing your Lotus Domino Web server? 
+
+CONTENT
+How can you tell how many users are accessing your Domino Web server? In general, you cannot determine the precise number of users currently hitting your Web server. HTTP is a sessionless protocol, so knowing an exact number of users is not possible. An enhancement request to provide functionality for statistics collection for tracking the number of Web users over time by name has been submitted to Quality Engineering as SPR# MBUY6ACKP6. In contrast, Notes clients create a session with the server and so the number of open sessions can be easily determined (using "show users" on the console). 
+
+There are, however, some methods you can use to get an idea of how many users are accessing your Web server.
+
+Domino Web Server Log (DOMLOG.NSF)
+
+One way to determine generally how many users are hitting your server is to use the Domino Web Server log (DOMLOG.NSF). Domlog registers each request coming into the server and the IP address from which it came. You can sort these log entries by time. Select any time period you like and determine how many different IP addresses made requests in that time period. This count can tell you how many users hit the server in that time period if you assume one IP address per user.
+
+Caveats:
+
+
+ * The assumption of one IP address per user is not valid in certain cases. If users make requests through a proxy, Domlog registers only the proxy's IP address. There could be one user or thousands of users coming through that proxy, so the assumption is invalid in that case. Also, if your Web server is being reverse proxied, all external requests are logged as coming from the reverse proxy's IP address. This also invalidates the assumption of one user per IP address as all users appear to come from the reverse proxy. 
+ * The Domlog does not provide real-time information. You have to review the Domlog, pick a range of time and then manually count the number of unique IP addresses.
+
+
+Session Authentication 
+
+Another way to estimate the number of users hitting the server is to use session-based authentication. In this case, session refers to Domino's session cookie mechanism for authentication. It is not the same as a session in the protocol sense (HTTP is still always sessionless). In session authentication any user that is prompted for authentication and successfully logs in is given a cookie. Domino logs the cookie and the user who has it. Issuing the command "Tell http show users" tells you how many users currently have received cookies. This can give you a general idea of how many users are accessing the system. 
+
+There are several reasons, however, why using session authentication does not give a precise, instantaneous record of how many users are accessing the system, as follows: 
+ * This process applies only to users who have logged in. If the server allows anonymous connections, all anonymous users are not counted by this process. 
+ * The cookie is valid for a specified amount of time (default of 30 minutes). So, the number of users being tracked by Domino is how many different users have provided credentials in the last x minutes, where x is the timeout period (for instance in the last 30 minutes if the timeout is 30 minutes). So, if someone logs in, hits one page, and then closes the browser, that user is considered "live" for 30 more minutes (that is, the time from their last hit to the server). This extra "live" time can be prevented only by having the users log out (namely, issue a request ending with ?logout). But to assume an accurate count, you have to rely on the users to log out in that scenario. 
+ * Finally, if a user receives one cookie, closes the browser (or opens a different browser type on the same machine or any browser on a second machine) and logs in again before the timeout on the first session, the user receives a new cookie and is counted twice by Domino.
+
+
+Custom methods 
+You can create mechanisms to track user activity, such as a custom cookie and logging mechanism, by using a custom DSAPI filter. 
+
+Determining number of hits 
+What is usually more important to know is how many hits your server receives in a given time period. You can use a "Show stat" command to determine number of hits. Domino provides statistics for the last one minute, five minutes, hour, and day. It also tells you the peak number of hits and when they occurred for each of these time periods. Note that number of hits does not necessarily allow you to draw conclusions about the load on the server. Some requests are more intensive than others, so these stats can only give you general ideas about the load.

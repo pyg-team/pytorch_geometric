@@ -1,0 +1,54 @@
+Title: IBM Rational Application Developer V9 Passport Advantage e-assembly part numbers for Host Access Transformation Services V9.0 - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ What e-assembly part numbers should be downloaded from Passport Advantage to install Host Access Transformation Services V9, Rational Application Developer for Websphere V9, Websphere Application Server V8.5. 
+
+CAUSE
+Entitled clients can download Rational Application Developer for Websphere for HATS from Passport Advantage. 
+However, when you review media pack search results, it may be difficult to recognize which e-assemblies represent the core product Rational Development Environments for HATS and which additional e-assemblies are required or optional.
+
+
+
+ANSWER
+ 
+
+HATS v9.0 is a plugin to Rational Application Developer for WebSphere and multiple products need to be downloaded/installed in order install HATS:
+
+IBM Rational HATS V9.0 Trial for Multi platform Multilingual eAssembly (CRNR5ML)
+IBM Rational HATS V9.0 for 5250 on Multi platform Multilingual eAssembly (CRNR6ML) 
+IBM Rational HATS V9.0 for 5250 on IBM i Multilingual eAssembly (CRNR7ML)
+
+IBM Rational Application Developer for WebSphere Software V9.0 Core Part 4 Multiplatform Multilingual (CIMD8ML )
+IBM Rational Application Developer for WebSphere Software V9.0 Core Part 3 Multiplatform Multilingual (CIMD7ML ) 
+IBM Rational Application Developer for WebSphere Software V9.0 Core Part 2 Multiplatform Multilingual (CIMD6ML )
+IBM Rational Application Developer for WebSphere Software V9.0 Core Part 1 Multiplatform Multilingual (CIMD5ML )
+IBM Rational Application Developer for WebSphere Software V9.0 Master Set Up Multiplatform Multilingual (CIMD4ML ) 
+
+IBM Rational Application Developer for WebSphere Software V9.0 Multiplatform Multilingual - WebSphere Application Server V8.5.5 Test Environment Multiplatform Multilingual - Part 2 (Optional) (CIME4ML )
+IBM Rational Application Developer for WebSphere Software V9.0 Multiplatform Multilingual - WebSphere Application Server V8.5.5 Test Environment Multiplatform Multilingual - Part 1 (Optional) (CIME3ML )
+
+
+To download Rational Application Developer for HATS V9 from Passport Advantage, perform the following steps: 
+
+1. Logon to Passport Advantage
+
+
+2. Select Software Downloads and Media Access
+
+
+3. Select the Download Finder
+
+
+4. Select Find by description or part number 
+
+
+5. Select the Product Description and All radio buttons and enter Rational Application Developer for WebSphere in the description field, or enter the part numbers from above.
+
+
+6. Select Continue.
+
+
+7. Expand the eAssemblies and you will see your entitled software

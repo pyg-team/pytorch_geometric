@@ -1,0 +1,322 @@
+Title: IBM IV92366: FIELD TAB OUT SKIPS TO BROWSER URL. ISSUE FOR MULTILINE TEXT BOX. - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  when adding Multiline text box with a condition to
+   display "SUBMIT" button. Field Tab out skips to browser URL
+   Issue for Multiline text box.
+   
+   Application effected
+   ====================
+   USER INTERFACE
+   
+   L2 ACTION TAKEN
+   =================
+   I had a remote session with the client and I have reproduced
+   the second use case scenario which was reported by client after
+   applying LAFIX_IV87825 [http://www-01.ibm.com/support/docview.wss?uid=swg1IV87825]_7605-20160611 in the original PMR:
+   78173,001,754.
+   
+   Basically client is saying this APAR: IV87825 [http://www-01.ibm.com/support/docview.wss?uid=swg1IV87825] hasn't fixed all
+   possible use case scenarios. i.e when adding Multiline text box
+   with a condition to display "SUBMIT" button. Field Tab out
+   skips to browser URL Issue for Multiline text box.
+   
+   Here is the detailed description of the use case which is not
+   fixed by LAFIX_IV87825 [http://www-01.ibm.com/support/docview.wss?uid=swg1IV87825]_7605-20160611
+   
+   Steps to reproduce
+   ==================
+   
+   I have been able to reproduce the same behaviour in 7605.
+   
+   1. Copy the following code and past after line 105 in out of box
+   CREATESR.XML -->Save changes and Import via App Designer
+   
+   <section
+   id="pk1_srlinespecification_ticketspectable_1_griddetails"label=
+   "Details
+   ">
+   <sectionrow
+   id="pk1_srspecifications_specifications_table_2_griddetails1_row
+   ">
+   <sectioncol
+   id="pk1_srspecifications_specifications_table_2_griddetails1_row
+   _col1">
+   <section
+   id="pk1_srspecifications_specifications_table_2_griddetails1_row
+   _col1_se
+   c">
+   <statictext align="LEFT" id="1271777939048" label="Please Read:
+   Is this
+   a correct Address"/>
+   <textbox dataattribute="REPORTEDPRIORITY" hidelabel="true"
+   id="pk1_12718659528792" lookup="valuelist"/>
+   </section>
+   <section id="pk1_1271865952879">
+   <buttongroup align="CENTER" id="pk1_1271932837796"
+   labelalign="CENTER">
+   <pushbutton id="pk1_1271932837812" label="View Work History"/>
+   </buttongroup>
+   </section>
+   <section id="pk1_1295358839078" sigoption="BGHIDE1">
+   <sectionrow id="pk1_12953588390782">
+   <sectioncol id="pk1_1295358839094">
+   <section id="pk1_12953588390942">
+   <statictext align="LEFT" id="1295358839110" label="Please Read:
+   Do you
+   want to continue with no gas job set up"/>
+   <textbox dataattribute="INTERNALPRIORITY" hidelabel="true"
+   id="pk1_12953588391102" lookup="valuelist"/>
+   </section>
+   </sectioncol>
+   <sectioncol id="PK1_1295358839125"/>
+   </sectionrow>
+   </section>
+   </sectioncol>
+   </sectionrow>
+   </section>
+   <section id="1271867412139" sigoption="BGHIDE2">
+   <sectionrow id="1271867412155">
+   <sectioncol id="12718674121552">
+   <section id="12718674121702">
+   <statictext align="LEFT" id="1272140339440" label="Has there
+   been a gas
+   outage in the area?"/>
+   <textbox dataattribute="CINUM" hidelabel="true"
+   id="12718674121703"
+   lookup="valuelist"/>
+   </section>
+   </sectioncol>
+   </sectionrow>
+   </section>
+   
+   2.Create two conditions in Conditional Expression Manager :
+   
+   Name: BGHIDE1
+   Type: EXPRESSION
+   Expression: :REPORTEDPRIORITY =1
+   
+   Name: BGHIDE2
+   Type: EXPRESSION
+   Expression: :INTERNALPRIORITY =2
+   
+   3. In App Designer create two new sigoptions BGHIDE1 and BGHIDE2
+   
+   4. Grant access for new sigoptions in Security Groups MAXADMIN
+   and add these conditions created at step 2: BGHIDE1 and BGHIDE2
+   
+   Make sure "Always Synchronous?" is enabled in App designer for
+   CREATSR.
+   
+   5. Go to App Designer-->CREATESR--> Highlight presentation -->
+   Bring up Presentation Properties and Check the box for "Always
+   Synchronous?"
+   
+   6. Go to Self Service-->Service Request--> Create Service
+   Request
+   
+   7. Under Details SECTION - in "Please Read: Is this a correct
+   Address" field Enter 1 and tab out
+   
+   8. You see the second field "Please Read: Do you want to
+   continue with no gas job set up" is DISPLAYED
+   
+   ORIGINAL PROBLEM
+   =================
+   9. Enter 2 and tab out, you see the focus of the cursor moved
+   to Maximo URL rather than displaying the 3rd field.
+   
+   10. Now move the cursor in any other field. i.e Details field.
+   
+   You will see the 3rd field is finally displayed.
+   
+   THIS ORGINAL PROBLEM IS NOW RESOLVED WITH
+   LAFIX_IV87825 [http://www-01.ibm.com/support/docview.wss?uid=swg1IV87825]_7605-20160611 -HOWEVER THE LAFIX HASN'T RESOLVED
+   ALL POSSIBLE USE CASES - HERE IS THE CONTINUATION OF THE USE
+   CASE WHICH NEED TO BE RESOLVED.
+   
+   11. Create new condition BGHIDE3 (DESCRIPTION_LONGDESCRIPTION
+   is not null)
+   
+   12. Open Application Designer --> Open CREATESR application.
+   
+   13. Create new signature option named BGHIDE3.
+   
+   14. Add a Multiline text box and bind it to
+   SR.DESCRIPTION_LONGDESCRIPTION in Create Service Request
+   application below SR.INTERNALPRIORITY Field. (Note we are
+   updating the same section which we created to recreate the
+   issue earlier)
+   
+   15. Copy/past SECTION Buttongroup below Multiline text box &
+   Apply the sig option BGHIDE3 on the "SUBMIT" button section.
+   
+   16. Save the record.
+   
+   17. Go to Security Group and open Create Service Request
+   application.
+   
+   18. Apply condition BGHIDE3 on signature option BGHIDE3, grant
+   access and save the record.
+   
+   To Test the new use case bug with Multiline text box
+   =====================================================
+   19. Navigate to Create Service Request application
+   
+   20. Create a new record.
+   
+   21. Enter value ?1? in first field (SR.REPORTEDPRIORITY)
+   and tab out. This will display second/next field
+   (SR.INTERNALPRIORITY).
+   
+   22. Enter value ?2? in field 2(SR.INTERNALPRIORITY ) and
+   tab out, it will then display the third field (Multi Line text
+   box - SR.DESCRIPTION_LONGDESCRIPTION). Works fine till here with
+   LAFIX_IV87825 [http://www-01.ibm.com/support/docview.wss?uid=swg1IV87825]_7605-20160611
+   
+   23.  Now, enter text in third field (Multi Line text box -
+   SR.DESCRIPTION_LONGDESCRIPTION ) and then tab out. (Note
+   We have a condition to display "SUBMIT" button when value is
+   entered in SR.DESCRIPTION_LONGDESCRIPTION field)
+   
+   Expected result: On tab out, next field/button should be visible
+   i.e."SUBMIT" button.
+   
+   Actual Result: On tab out, next field (i.e.button) is not
+   visible, and tab out reference switches to browser URL.
+   Sometimes, you have to click on the field and tab out multiple
+   times or wait long period for the next field to appear.
+   
+   
+   Customer Product Version #
+   ========================
+   TPAE 7605
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  n/a
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * N/A                                                          *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * FIELD TAB OUT SKIPS TO BROWSER URL. ISSUE FOR MULTILINE      *
+   * TEXTBOX.                                                     *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Added support for textarea in setLastEditableField() method and
+   call hideShowElement() from section.jsp when visibility changes
+   on the section
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV92366
+   
+   
+ * REPORTED COMPONENT NAME
+   SYSTEM CONFIG
+   
+   
+ * REPORTED COMPONENT ID
+   5724R46S1
+   
+   
+ * REPORTED RELEASE
+   760
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-01-18
+   
+   
+ * CLOSED DATE
+   2017-02-11
+   
+   
+ * LAST MODIFIED DATE
+   2017-02-11
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   SYSTEM CONFIG
+   
+   
+ * FIXED COMPONENT ID
+   5724R46S1
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R760 PSY
+   UP

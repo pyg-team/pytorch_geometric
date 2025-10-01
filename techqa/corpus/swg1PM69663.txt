@@ -1,0 +1,163 @@
+Title: IBM PM69663: USING RESPONSE FILE IN WIZARD MODE, IM IGNORES X64 BIT SELECTION(RAD8.5) - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Headline:
+   Using Response File in Wizard Mode, IM ignores x64 bit selection
+   (RAD8.5)
+   
+   APAR Error Description:
+   Abstract: Attempting to use response file in order to install
+   x64 bit verion of Rational Application Developer for WebSphere
+   Software V8.5 using Installation Manager 1.5.2 in Wizard Mode,
+   results in 32 bit installation regardless of the x64 bit
+   selection
+   Problem:
+   1.First you create a response file (either directly or by using
+   Installation Manager 1.5.2 to capture your choices)
+   2.In your response file, you select x64 bit architecture for
+   Rational Application Developer for WebSphere Software v8.5
+   3.Using the created response file, you try to install the
+   software in Wizard Mode.
+   4.Installation Manager ignores the x64 bit architecture
+   selection and attempts to install RAD 8.5 x32 bit.
+   
+   Local fix:
+   There is no known workaround at this time
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   This problem only effects the execution of the IBM
+   Installation Manager when invoked in "wizard mode" when the
+   Installation Manager is invoked using the -mode wizard
+   command line argument along with the -input responseFile
+   This problem does not effect the execution of the
+   Installation Manager in non-GUI (silent) mode using the same
+   response file. This problem does not effect console mode.
+   
+   If the ?profile? element contains a nested ?data
+   key='cic.selector.arch' value='XYZ'/? it will be ignored and
+   potentially the wrong profile will be chosen and it will not
+   be possible to change this value in the gui.
+   
+   For example:
+   ?profile id='IBM Software Delivery Platform_1'
+   installLocation='C:\Program Files\RAD 8.5'?
+     ?data key='cic.selector.arch' value='x86_64'/?
+   ?/profile?
+   
+   Work around:
+   1. Install silently using the response file
+   2. Do not start the Installation Manager with the parameters
+   -mode wizard -input responseFile
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This problem has been fixed in the IBM Installation Manager
+   version 1.6.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM69663
+   
+   
+ * REPORTED COMPONENT NAME
+   RATL APP DEV WI
+   
+   
+ * REPORTED COMPONENT ID
+   5724J1901
+   
+   
+ * REPORTED RELEASE
+   850
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-07-26
+   
+   
+ * CLOSED DATE
+   2012-09-17
+   
+   
+ * LAST MODIFIED DATE
+   2012-09-17
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   RATL APP DEV WI
+   
+   
+ * FIXED COMPONENT ID
+   5724J1901
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R850 PSN
+   UP

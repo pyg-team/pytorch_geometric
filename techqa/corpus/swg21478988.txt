@@ -1,0 +1,36 @@
+Title: IBM SPSS ODBC import from Sybase gives this error: The context allocation routine failed when it tried to load localization files - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ I'm using SPSS for Windows to import some data from a Sybase database. My Data Source appears to be configured correctly because I can use it with a different application, but when I try it with SPSS I get the following set of error messages: 
+
+Connect failed!
+The context allocation routine failed when it tried to load localization files!!
+
+One or more following problems may caused the failure
+
+Your sybase home directory is c:\sybase. Check the environment variable SYBASE if it is not the one you want!
+Using locale name "English_United States.1252" defined in environment variable LC_ALL
+Locale name "English_United States.1252" doesn't exist in your c:\sybase\locales\locales.dat file
+
+Any ideas why this is happening? 
+
+RESOLVING THE PROBLEM
+There are many different locale definitions, and the locales.dat file gives Sybase the instructions for how to treat any specific locale name -- mapping it to a default locale and code page.
+
+Open your locales.dat file in Notepad and locate the platform you are operating on. Insert this line in the list of locales:
+
+locale = English_United States.1252, us_english, cp1252
+
+and then save the file, taking care to preserve the filename and type. Now try the ODBC import again
+
+RELATED INFORMATION
+ Need more help? Our Statistics forum is Live! [https://developer.ibm.com/answers/topics/statistics.html?smartspace=predictive-analytics]
+
+
+ 
+
+HISTORICAL NUMBER
+ 71605

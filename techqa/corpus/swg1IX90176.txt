@@ -1,0 +1,190 @@
+Title: IBM IX90176: JAVA.IO.INVALIDOBJECTEXCEPTION: JAVAX.MANAGEMENT.MALFORMEDOBJECT NAMEEXCEPTION - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Error Message: Exception org.omg.CORBA.MARSHAL: Unable to read
+   value from underlying bridge :
+   javax.management.MalformedObjectNameException: Key properties
+   cannot be empty  vmcid: IBM  minor code: 89A  completed: No"
+   .
+   Stack Trace: CORBA MARSHAL 0x4942f89a No; nested exception is:
+   org.omg.CORBA.MARSHAL: Unable to read value from underlying
+   bridge : javax.management.MalformedObjectNameException: Key
+   properties cannot be empty  vmcid: IBM  minor code: 89A
+   completed: No"
+   <OSB>2/15/16 19:52:52:115 EST<CSB> 00000001 AbstractShell E
+   WASX7120E: Diagnostic information from exception with text
+   "com.ibm.websphere.management.exception.ConnectorException
+   java.rmi.MarshalException: java.rmi.MarshalException: CORBA
+   MARSHAL 0x4942f89a No; nested exception is:
+   org.omg.CORBA.MARSHAL: Unable to read value from underlying
+   bridge : javax.management.MalformedObjectNameException: Key
+   properties cannot be empty  vmcid: IBM  minor code: 89A
+   completed: No
+   " follows:
+   com.ibm.websphere.management.exception.ConnectorException:
+   RemoteException received
+   at
+   com.ibm.ws.management.connector.rmi.RMIConnectorClient.handleRem
+   oteException(RMIConnectorClient.java:369)
+   at
+   com.ibm.ws.management.connector.rmi.RMIConnectorClient.getServer
+   MBean(RMIConnectorClient.java:1185)
+   at
+   com.ibm.ws.management.AdminClientImpl.getServerMBean(AdminClient
+   Impl.java:127)
+   at
+   com.ibm.ws.scripting.CommonScriptingObject.connectToAdminService
+   (CommonScriptingObject.java:129)
+   at
+   com.ibm.ws.scripting.CommonScriptingObject.<init>(CommonScriptin
+   gObject.java:104)
+   at
+   com.ibm.ws.scripting.AdminControlClient.<init>(AdminControlClien
+   t.java:170)
+   at
+   com.ibm.ws.scripting.AbstractShell.createControlClient(AbstractS
+   hell.java:1288)
+   at
+   com.ibm.ws.scripting.AbstractShell.run(AbstractShell.java:2244)
+   at com.ibm.ws.scripting.WasxShell.main(WasxShell.java:1172)
+   Caused by: java.rmi.MarshalException: CORBA MARSHAL 0x4942f89a
+   No; nested exception is:
+   org.omg.CORBA.MARSHAL: Unable to read value from underlying
+   bridge : javax.management.MalformedObjectNameException: Key
+   properties cannot be empty  vmcid: IBM  minor code: 89A
+   completed: No
+   at
+   com.ibm.CORBA.iiop.UtilDelegateImpl.mapSystemException(UtilDeleg
+   ateImpl.java:281)
+   at javax.rmi.CORBA.Util.mapSystemException(Util.java:78)
+   at
+   com.ibm.ws.management.connector.rmi._RMIConnector_Stub.getServer
+   MBeanWithContext(Unknown Source)
+   at
+   com.ibm.ws.management.connector.rmi.RMIConnectorClient.getServer
+   MBean(RMIConnectorClient.java:1173)
+   .
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  While marshalling (serializing) object of type
+   javax.management.ObjectName, org.omg.CORBA.MARSHAL exception was
+   thrown
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  ORB code has been fixed to serialize the object
+   javax.management.ObjectName successfully.
+   .
+   This APAR will be fixed in the following Java Releases:
+      8    SR3 FP11  (8.0.3.11)
+   .
+   Contact your IBM Product's Service Team for these Service
+   Refreshes and Fix Packs.
+   For those running stand-alone, information about the available
+   Service Refreshes and Fix Packs can be found at:
+              https://www.ibm.com/developerworks/java/jdk/ [https://www.ibm.com/developerworks/java/jdk/]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IX90176
+   
+   
+ * REPORTED COMPONENT NAME
+   ORB
+   
+   
+ * REPORTED COMPONENT ID
+   620700123
+   
+   
+ * REPORTED RELEASE
+   270
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-07-19
+   
+   
+ * CLOSED DATE
+   2016-07-19
+   
+   
+ * LAST MODIFIED DATE
+   2016-09-13
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ORB
+   
+   
+ * FIXED COMPONENT ID
+   620700123
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R270 PSY
+   UP

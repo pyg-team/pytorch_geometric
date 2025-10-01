@@ -1,0 +1,137 @@
+Title: IBM RS02478: INCORRECT APPLICATION NAME LISTED IN TSK_WAS_DEPLOY_DVS_ARCH. HTML - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  In the page:
+   http://www.ibm.com/support/knowledgecenter/en/SSQP76_8.8.0/com. [http://www.ibm.com/support/knowledgecenter/en/SSQP76_8.8.0/com.]
+   ibm.odm.distrib.config.was/config_dc_websphere/tsk_was_deploy_
+   dvs_arch.html (and corresponding page for older version), we
+   have:
+   
+   19. In the side pane, open Applications  > Application Types >
+   WebSphere enterprise applications, and click jrules-ssp-WAS85
+   
+   However, when following the installation as described in this
+   document, there is no WebSphere Enterprise Application with
+   such name.
+   This is the name of the ear file that is being used to install
+   the
+   DVS related application, but it is being set with an
+   Application Name
+   "Testing and Simulation" and when we reach the step9, we
+   get this Application Name ("Testing and Simulation") being
+   displayed instead of "jrules-ssp-WAS85"
+   Note that in 8.5, the Application Name being set was different (
+   
+   "Decision Validation Services" instead of "Testing and
+   Simulation", but the same issue occurs. There is no "jrules-ssp-
+   WAS85" or
+   "jrules-ssp-WAS8" to click on.
+   
+   In the same page, in 20-21-22-23 we set the class loader to
+   "Parent Last" for the
+   two modules.
+   But we don't set it for the the parent application. A check
+   should be performed to confirm that
+   Parent Last is also being set too. This should be performed
+   between 19. and 20., by
+   clicking on the "Class loading and update detection" before
+   clicking on the "Manage Modules".
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  The docunentation needs to be improved as detailled in the
+   description
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The documentation is updated
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   RS02478
+   
+   
+ * REPORTED COMPONENT NAME
+   WS DECISION CTR
+   
+   
+ * REPORTED COMPONENT ID
+   5725B6900
+   
+   
+ * REPORTED RELEASE
+   851
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-08-30
+   
+   
+ * CLOSED DATE
+   2016-08-31
+   
+   
+ * LAST MODIFIED DATE
+   2016-08-31
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

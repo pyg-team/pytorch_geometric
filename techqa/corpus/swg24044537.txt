@@ -1,0 +1,32 @@
+Title: IBM Download IBM Enterprise Content Management System Monitor 5.5 - United States
+
+Text:
+ DOWNLOADABLE FILES
+
+ABSTRACT
+ This document describes how to download IBM Enterprise Content Management Version 5.5 by using the Passport Advantage Online Web site. 
+
+PREREQUISITES
+Ensure that your system meets the software, hardware, and operating system requirements for installing IBM Enterprise Content Management System Monitor V5.5.
+
+
+For more information, see the Installation Guide
+
+URL LANGUAGE SIZE(Bytes) Installation Guide [https://www-05.ibm.com/e-business/linkweb/publications/servlet/pbi.wss?CTY=US&FNC=SRX&PBL=SC27-9241-00] English 3900000 
+DOWNLOAD PACKAGE
+ 
+
+ 1. From a browser, navigate to the Find Downloads and Media page on the IBM Passport Advantage Online Web site [http://www.ibm.com/software/howtobuy/passportadvantage/pao_customers.htm]. You must log on to continue. 
+ 2. Select the Find by part number search option under Download finder options. 
+ 3. Search for following part numbers and download the images.
+
+
+IBM Enterprise Content Management System Monitor V5.5 
+
+
+Component Description eSD Part Number IBM ECM System Monitor 5.5 ML En eAssy CJ3CHEN IBM Enterprise Content Management System Monitor V5.5 for Windows CNR7WEN IBM Enterprise Content Management System Monitor V5.5 for AIX® CNR7XEN IBM Enterprise Content Management System Monitor V5.5 for HP Itanium CNR7YEN IBM Enterprise Content Management System Monitor V5.5 for Solaris CNR7ZEN IBM Enterprise Content Management System Monitor V5.5 for Linux on Intel CNR80EN IBM Enterprise Content Management System Monitor V5.5 for Linux on PPC CNR81EN IBM Enterprise Content Management System Monitor V5.5 for Linux on s390x CNR82EN 
+
+
+TECHNICAL SUPPORT
+ IBM Enterprise Content Management System Monitor Support 
+http://www-947.ibm.com/support/entry/portal/product/enterprise_content_management/enterprise_content_management_system_monitor/ [http://www-947.ibm.com/support/entry/portal/product/enterprise_content_management/enterprise_content_management_system_monitor/]

@@ -1,0 +1,298 @@
+Title: IBM HD44534: IMPORT LDAP USER ERROR - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Hi.
+   1. On Lotus Domino, create a new user with Middle
+   name:
+   First Name: Mateo
+   Middle Name: S
+   Last Name: Arenaza
+   ShortName: msarenaza
+   2. Check the user
+   3. On System Configuration Editor, on
+   "LDAP_User_Import.accountNameLDAPFieldName"
+   key, verify you have CN.
+   This setting depends on your environment!! We
+   need CN on uppercase.
+   4. On Smarteam, open the Import LDAP users tool,
+   and complete according
+   to your environment. Click Next.
+   5. Click on the user you want to import.
+   Verify that the import tool recognizes: User Name
+   ="Mateo S Arenaza,
+   Mateo Arenaza" (Even the CN = "CN=Mateo S
+   Arenaza,O=CUSTOMER")
+   6. Import it to SmarTeam.
+   7. Check the Authentication Manager settings. (This
+   settings have been
+   validated with Smarteam R&D for usage of Lotus
+   Domino LDAP
+   Authentication, and R14sp7 HF5).
+   Check you're using ShortName as Search Attribute.
+   8. Try Logging in to Smarteam Editor with the
+   ShortName (msarenaza), and
+   you'll get:
+   SmarTeam Error
+   Error No. 00256
+   Illegal Login 'msarenaza'. Access has been denied.
+   Reason: User is
+   not defined in the database.
+   9. Open the User Maintenance, and edit the new
+   user:
+   Check that imported Login Attribute is: Mateo S
+   Arenaza, Mateo
+   Arenaza Hint: If on Domino Server, you open a
+   command line, and go to
+   c:\Lotus\Domino, and executes: ldapsearch -h
+   testdomino -p 389 -D
+   username -w pswd -v "(objectClass=*)" dn cn
+   ShortName (where username
+   and pswd are domino user and pswd) You'll get
+   among other info:
+   CN=Mateo S Arenaza,O=CUSTOMER cn=Mateo S
+   Arenaza cn=Mateo Arenaza
+   shortname=msarenaza So seems that when
+   querying Smarteam queries
+   LDAP, it returns two cn?s, and the Translation
+   Utility transforms it
+   to Mateo S Arenaza, Mateo Arenaza.
+   Workaround: Smarteam showed us a workaround
+   for this. We have to trim
+   the Login to Mateo S Arenaza
+   With this methodology, we can Login to Smarteam
+   with this user.
+   But this methodology has two drawbacks:
+   - Almost whole LDAP users have Middlenames. The
+   workaround is usefull
+   only as short term solution. Implementation will
+   grow, and start
+   working with hundreds of users, and the
+   workaround will be
+   painfull for IT.
+   - It generates problems on Import LDAP Users
+   tool:
+   -Open again the Import LDAP Users tool, and fill
+   the fields.
+   -Check that as we modified Login Attribute, it does
+   not
+   recognize that the user exist in Smarteam. With
+   hundreds of
+   users on Smarteam DB (and thousands on LDAP
+   server, as they
+   have now!!), this workaround will also be
+   problematic.
+   Thanks
+   Baruch
+   .
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Import LDAP User error
+   Hi.
+   1. On Lotus Domino, create a new user with Middle
+   name:
+   First Name: Mateo
+   Middle Name: S
+   Last Name: Arenaza
+   ShortName: msarenaza
+   2. Check the user
+   3. On System Configuration Editor, on
+   "LDAP_User_Import.accountNameLDAPFieldName"
+   key, verify you have CN.
+   This setting depends on your environment!! We
+   need CN on uppercase.
+   4. On Smarteam, open the Import LDAP users tool,
+   and complete according
+   to your environment. Click Next.
+   5. Click on the user you want to import.
+   Verify that the import tool recognizes: User Name
+   ="Mateo S Arenaza,
+   Mateo Arenaza" (Even the CN = "CN=Mateo S
+   Arenaza,O=CARDIX")
+   6. Import it to SmarTeam.
+   7. Check the Authentication Manager settings. (This
+   settings have been
+   validated with Smarteam R&D for usage of Lotus
+   Domino LDAP
+   Authentication, and R14sp7 HF5).
+   Check you're using ShortName as Search Attribute.
+   8. Try Logging in to Smarteam Editor with the
+   ShortName (msarenaza), and
+   you'll get:
+   SmarTeam Error
+   Error No. 00256
+   Illegal Login 'msarenaza'. Access has been denied.
+   Reason: User is
+   not defined in the database.
+   9. Open the User Maintenance, and edit the new
+   user:
+   Check that imported Login Attribute is: Mateo S
+   Arenaza, Mateo
+   Arenaza Hint: If on Domino Server, you open a
+   command line, and go to
+   c:\Lotus\Domino, and executes: ldapsearch -h
+   testdomino -p 389 -D
+   username -w pswd -v "(objectClass=*)" dn cn
+   ShortName (where username
+   and pswd are domino user and pswd) You'll get
+   among other info:
+   CN=Mateo S Arenaza,O=CARDIX cn=Mateo S
+   Arenaza cn=Mateo Arenaza
+   shortname=msarenaza So seems that when
+   querying Smarteam queries
+   LDAP, it returns two cn?s, and the Translation
+   Utility transforms it
+   to Mateo S Arenaza, Mateo Arenaza.
+   Workaround: Smarteam showed us a workaround
+   for this. We have to trim
+   the Login to Mateo S Arenaza
+   With this methodology, we can Login to Smarteam
+   with this user.
+   But this methodology has two drawbacks:
+   - Almost whole LDAP users have Middlenames. The
+   workaround is usefull
+   only as short term solution. Implementation will
+   grow, and start
+   working with hundreds of users, and the
+   workaround will be
+   painfull for IT.
+   - It generates problems on Import LDAP Users
+   tool:
+   -Open again the Import LDAP Users tool, and fill
+   the fields.
+   -Check that as we modified Login Attribute, it does
+   not
+   recognize that the user exist in Smarteam. With
+   hundreds of
+   users on Smarteam DB (and thousands on LDAP
+   server, as they
+   have now!!), this workaround will also be
+   problematic.
+   Thanks
+   Baruch
+   .
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  THIS PROBLEM WILL BE FIXED ON SMARTEAM
+   VERSION 5 RELEASE 19 SP02 LEVEL.
+   NOTE THAT THIS PROBLEM WILL ALSO BE FIXED
+   ON V5R18SP08
+   Default TEXTAREA value goes here
+   .
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   HD44534
+   
+   
+ * REPORTED COMPONENT NAME
+   SMARTEAM NT>XP
+   
+   
+ * REPORTED COMPONENT ID
+   569199970
+   
+   
+ * REPORTED RELEASE
+   514
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2005-09-18
+   
+   
+ * CLOSED DATE
+   2008-11-10
+   
+   
+ * LAST MODIFIED DATE
+   2009-02-24
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   SMARTEAM NT>XP
+   
+   
+ * FIXED COMPONENT ID
+   569199970
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R516 PSN
+   UP
+   
+   
+ * R514 PSN
+   UP
+   
+   
+ * R517 PSN
+   UP
+   
+   
+ * R515 PSN
+   UP
+   
+   
+ * R518 PSN SP51808
+   UP09/02/24 I 1000

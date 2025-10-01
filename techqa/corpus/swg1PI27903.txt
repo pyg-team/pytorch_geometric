@@ -1,0 +1,294 @@
+Title: IBM PI27903: CREATE TABLE CAUSED THE DUPLICATE 'C' ENTRIES IN SYSCOPY AND DBD ERRORS - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  With zparm: RRF=DISABLE and IMPDSDEF=NO, below CREATE TABLE DDL
+   will insert duplicate 'C' entries in SYSCOPY, and cause DBD
+   errors.
+   
+   CREATE TABLE table_name
+   
+      (C1          VARGRAPHIC(119) NOT NULL,
+       C2          SMALLINT NOT NULL WITH DEFAULT 0,
+       C3          DBCLOB(500 M) WITH DEFAULT NULL ,
+                   INLINE LENGTH 2000)
+      PARTITION BY SIZE EVERY 64G
+      AUDIT NONE
+      DATA CAPTURE NONE
+      CCSID      UNICODE
+      BUFFERPOOL BP16K0
+      NOT VOLATILE
+      APPEND NO  ;  COMMIT;
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  n/a
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All DB2 10 for z/OS and DB2 11 for z/OS      *
+   *                 users of LOB.                                *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: When executing CREATE TABLE with a LOB  *
+   *                      column in an implicitly defined table   *
+   *                      space on RRF disabled DB2 system        *
+   *                      (RRF = OFF), an extra base table record *
+   *                      will be inserted into SYSIBM.SYSCOPY    *
+   *                      catalog table.                          *
+   *                                                              *
+   *                      If a REPAIR DBD DIAGNOSE/TEST utility   *
+   *                      job is executed against the database    *
+   *                      where the newly created table resides,  *
+   *                      errors will be reported.                *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   When executing CREATE TABLE with a LOB column in an implicitly
+   defined table space on RRF disabled DB2 system (RRF = OFF), an
+   extra base table record is incorrectly inserted into SYSIBM.
+   SYSCOPY catalog table.
+   
+   If a REPAIR DBD DIAGNOSE/TEST utility job is executed against
+   the database where the newly created table resides, errors will
+   be reported. Following are the sample error message:
+   
+   DSNU922I    DSNUEDDR - OBD X'0001' MISSING IN REBUILT  DBD
+   DSNU913I    DSNUEDDR - OBD X'0001' COMPARISON COMPLETE -- 1
+                            ERRORS WERE FOUND
+   
+   DSNU922I    DSNUEDDR - OBD X'0002' MISSING IN REBUILT  DBD
+   DSNU913I    DSNUEDDR - OBD X'0002' COMPARISON COMPLETE -- 1
+                            ERRORS WERE FOUND
+   
+   DSNU915I    DSNUEDLO - OBD X'0001' E-X'00000F3C' R-X'00000000'
+                            A FILE OBD IS MISSING IN THE REBUILT
+                            DBD
+   DSNU915I    DSNUEDLO - OBD X'0002' E-X'00000E04' R-X'00000000'
+                            A FILE PAGESET OBD IS MISSING IN THE
+                            REBUILT DBD
+   DSNU915I    DSNUEDLO - OBD X'0003' E-X'00000D84' R-X'00000F3C'
+                            A FILE OBD FOR TABLESPACE MYTBRLOB
+   DSNU915I    DSNUEDLO - OBD X'0004' E-X'00000C4C' R-X'00000E04'
+                            A FILE PAGESET OBD FOR TABLESPACE
+                            MYTBRLOB
+   DSNU915I    DSNUEDLO - OBD X'0005' E-X'00000AC4' R-X'00000C7C'
+                            A RECORD-TYPE OBD IN TABLESPACE
+                            MYTBRLOB
+   DSNU915I    DSNUEDLO - OBD X'0006' E-X'000009C4' R-X'00000B7C'
+                            AN INDEX FANSET OBD FOR INDEX
+                            MYTB1UZ1
+   DSNU915I    DSNUEDLO - OBD X'0007' E-X'000008C8' R-X'00000A80'
+                            AN INDEX PAGESET OBD FOR INDEX
+                            MYTB1UZ1
+   DSNU915I    DSNUEDLO - OBD X'0008' E-X'00000848' R-X'00000A00'
+                            A FILE OBD FOR TABLESPACE LLYD1KXJ
+   DSNU915I    DSNUEDLO - OBD X'0009' E-X'00000710' R-X'000008C8'
+                            A FILE PAGESET OBD FOR TABLESPACE
+                            LLYD1KXJ
+   DSNU915I    DSNUEDLO - OBD X'000A' E-X'000005AC' R-X'00000764'
+                            A RECORD-TYPE OBD IN TABLESPACE
+                            LLYD1KXJ
+   DSNU915I    DSNUEDLO - OBD X'000B' E-X'00000544' R-X'000006FC'
+                            AN AUX. RELATIONSHIP OBD IN TABLE
+                            MYTB_LOB
+   DSNU915I    DSNUEDLO - OBD X'000C' E-X'00000438' R-X'000005F0'
+                            AN INDEX FANSET OBD FOR INDEX
+                            IMYTBRST
+   DSNU915I    DSNUEDLO - OBD X'000D' E-X'0000033C' R-X'000004F4'
+                            AN INDEX PAGESET OBD FOR INDEX
+                            IMYTBRST
+   DSNU912I    DSNUEDLO - OBD LISTING COMPLETE -- 2 ERRORS WERE
+                            FOUND
+   
+   
+   There may be other unexpected symptoms.
+   
+   When DB2 creates the implicitly defined table space for the base
+   table with a LOB column in it, DB2 accidentally inserts an extra
+   base table record in SYSCOPY catalog table if the RRF (REORDERED
+   ROW FORMAT) is disabled. This extra SYSCOPY record, its
+   START_RBA, ICTIME, and TIMESTAMP column value are slightly
+   different than the previous inserted record.
+   
+   Following is an example of such failing scenario:
+   1. Create a table with a LOB column in an implicitly defined
+      table space:
+   
+      CREATE TABLE MYTB_LOB
+         (REPORT_KEY     VARGRAPHIC(119) NOT NULL WITH DEFAULT ' ',
+          STATUS_TEXT    CLOB(500 M) WITH DEFAULT NULL
+                                     INLINE LENGTH 2000,
+        CONSTRAINT REPORT_KEY
+        PRIMARY KEY (REPORT_KEY))
+         PARTITION BY SIZE EVERY 64G
+        AUDIT NONE
+          DATA CAPTURE NONE
+          CCSID      UNICODE
+          BUFFERPOOL BP16K0
+          NOT VOLATILE
+          APPEND NO  !
+   
+   2. An extra row can be found in the SYSCOPY catalog table:
+   
+      SELECT *
+        FROM SYSIBM.SYSCOPY
+       WHERE DBNAME  = (SELECT DBNAME
+                          FROM SYSIBM.SYSTABLES
+                         WHERE NAME = 'MYTB_LOB')
+      !
+   
+   3. Executing a REPAIR DBD DIAGNOSE/TEST utility job, errors
+      will be reported
+   
+      REPAIR DBD DIAGNOSE DATABASE  DSN00009
+   
+   Applying APAR PI27903 will not remove the existing extra
+   record in SYSCOPY catalog table. If needed, user could either
+   1. DROP the affected tables, then recreate them to remove the
+      extra row in SYSCOPY table.
+   2. Or execute a utility MODIFY RECOVERY job to remove it:
+      MODIFY RECOVERY TABLESPACE database-name.table-space-name
+        DELETE AGE(*)
+      Then execute a utility REPAIR DBD REBUILD job to fix the
+      DBD error:
+        REPAIR DBD REBUILD DATABASE database-name
+   
+   
+   Please note, if user elects the option 2, after the MODIFY
+   RECOVERY TABLESPACE job executed, the extra SYSCOPY record is
+   removed. However, the REPAIR DBD DIAGNOSE/TEST job still reports
+   error. In order to fix it, users needs to execute the REPAIR DBD
+   REBUILD job to correct it.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  DB2 has been modified to not insert an extra base table space
+   record in SYSCOPY catalog table when creating an implicitly
+   defined table space for a table with a LOB column in it in the
+   RRF disabled system.
+   
+   Additional keywords: SQLCREATE SQLLOB
+                        REPAIRDBD
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI27903
+   
+   
+ * REPORTED COMPONENT NAME
+   DB2 OS/390 & Z/
+   
+   
+ * REPORTED COMPONENT ID
+   5740XYR00
+   
+   
+ * REPORTED RELEASE
+   A10
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-10-19
+   
+   
+ * CLOSED DATE
+   2014-12-29
+   
+   
+ * LAST MODIFIED DATE
+   2015-02-03
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UI24164 UI24165
+   
+   
+
+MODULES/MACROS
+ *  DSNXICTS
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   DB2 OS/390 & Z/
+   
+   
+ * FIXED COMPONENT ID
+   5740XYR00
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * RA10 PSY UI24164 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI24164]
+   UP15/01/14 P F501
+   
+   
+ * RB10 PSY UI24165 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI24165]
+   UP15/01/14 P F501
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

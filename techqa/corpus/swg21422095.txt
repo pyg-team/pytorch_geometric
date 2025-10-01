@@ -1,0 +1,14 @@
+Title: IBM Retrieve operation fails with fixed width data handler and delimited data handler for WebSphere Adapter for FTP V6.1 and WebSphere Adapter for FlatFile V6.1 - United States
+
+Text:
+Fixed width data handler; Delimited data handler; FTP adapter v6.1; Flat File adapter v6.1; retrieve; retrieve operation; data transformation TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When trying to retrieve a file with data transformation using a delimited data handler, or a fixed width data handler for FTP Adapter or FlatFile adapter, the operation fails and Adapter throws a data binding exception. 
+
+SYMPTOM
+The Adapter throws a data binding exception when the retrieve operation with a data transformation is performed using a delimited data handler or a fixed width data handler.
+
+
+RESOLVING THE PROBLEM
+This is a known limitation with WebSphere Adapter for FTP V6.1 and with WebSphere Adapter for Flat File V6.1.

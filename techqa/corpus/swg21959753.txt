@@ -1,0 +1,39 @@
+Title: IBM Reporting potential security concerns for IBM Cúram Social Program Management - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ What should be provided when reporting a possible security concern for IBM Cúram Social Program Management? 
+
+ANSWER
+Please note that we request that customers do not sent full unchecked reports from security tools unless it is requested specifically. There are three main reasons we make this request: 
+
+ * Security scans will likely contain a number of false-positives; 
+ * Customers should remove any issue reported against their custom code first; 
+ * If the customer version of Cúram is not at the latest fix/ifix, existing security bulletins may already have resolved some of the issues reported by the scan. 
+
+
+Preparation Work 
+ * Review the document "How to analyze security scans from static analysis tools on Cúram Social Program Management [http://www-01.ibm.com/support/docview.wss?uid=swg21679460]". 
+ * Review IBM Cúram security bulletins [https://www-947.ibm.com/support/entry/myportal/alerts/smarter_cities/c%C3%BAram_social_program_management?productContext=126398811] to ensure that you are on a version of Cúram with the appropriate security fixes applied. If you have problems with the direct link provided here, see the section "How to access Cúram Security Bulletins" below for information on how to access the bulletins. 
+ * If the issue you wish to report has been resolved in a later release, but for certain business reasons you are not able to take on the release which includes the fix, please refer to the document "IBM Smarter Care and Social Programs Policy for Backporting Fixes [http://www.ibm.com/support/docview.wss?uid=swg21697853]" for information on requesting a backport. 
+
+
+Information Required 
+
+If the triage steps have been performed and no fix is available, please include the following information in a PMR:  * Confirm the vulnerability: Static analysis tools report issues generically, and with varying degrees of accuracy. Additionally, they do not have the context that a human reviewer provides. In many cases, the tools flag areas that might be of concern, but do not confirm the presence or not of a vulnerability. 
+ * Has the issue been confirmed by the tool to definitely be a vulnerability? Some vulnerabilities can be confirmed very well by static analysis tools 
+ * If not confirmed by the tool, has any manual verification, e.g. penetration testing been performed to confirm a vulnerability is present? 
+ * If the vulnerability cannot be confirmed by the above means, please:  * Explain why it cannot be confirmed 
+    * Explain why, without confirmation, it is still suspected that a vulnerability is present 
+    * Explain what is at risk from the issue? (Confidentiality, Availability, Integrity) 
+    * Explain the steps would an attacker need to take to make use of the issue
+   
+   
+
+How to access Cúram Security Bulletins 
+ * Go to the support portal in Support and Downloads on ibm.com [http://www.ibm.com/]. 
+ * Click Browser for a product. 
+ * The Cúram product should be found under the Smarter Cities section. 
+ * Click Flashes, Alerts and Bulletins.

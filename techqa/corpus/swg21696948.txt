@@ -1,0 +1,35 @@
+Title: IBM Error when attempting to uninstall Deployment Engine - United States
+
+Text:
+TIPL2INST; DEL2INST; uninstall failed; remove; lockNotAllowedException; ACUINI0026I TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ During an attempt to remove an instance of Deployment Engine, a lockNotAllowedException error is occurring. 
+
+SYMPTOM
+When performing the following command: 
+
+si_inst.bat -r -f 
+
+This error occurs: 
+ACUINI0026I Uninstall of Deployment Engine failed
+Causes: com.ibm.ac.si.install.InstallException:;com.ibm.ac.si.runtime.lock.lockNotAllowedException:lock_not_allowed
+
+
+CAUSE
+A lock file is present, preventing the removal from being successful.
+
+
+DIAGNOSING THE PROBLEM
+Check for lock files under C:\program files\IBM\Common\acsi\logs
+
+
+
+RESOLVING THE PROBLEM
+Delete the lock files in this location 
+
+ C:\program files\IBM\Common\acsi\logs
+
+Then retry the si_inst.bat -r -f command to remove DE. 
+
+Please note: Removing the Deployment Engine is only advised to clean up a fresh install, with no other IBM products present.

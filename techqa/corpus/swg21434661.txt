@@ -1,0 +1,33 @@
+Title: IBM New events that are no longer seen from sensors in SiteProtector - United States
+
+Text:
+SiteProtector; SP; events not showing; no new events TECHNOTE (FAQ)
+
+QUESTION
+ Why have you stopped seeing new events from your sensors in SiteProtector? 
+
+ANSWER
+Users of SiteProtector might find that they are not seeing new events from their sensors (e.g. Network Sensor, Server Sensor, IPS). This article explains how to troubleshoot this. 
+
+If you were previously seeing new events in SiteProtector and they are no longer being displayed in Sensor Analysis, please check the following items:
+
+
+ * Ensure the Database status is Active. 
+ * Look at the Database properties to make sure that the DB is not full, nor are there rows waiting. This might indicate a backlog of events. There might be numerous reasons events are backlogged (too many events trying to be processed, a problem with the DB processing events, etc.) 
+ * Ensure the SQL Server Agent service is running. 
+ * You can check the database loading statistics by entering "exec iss_db_Load_stats" into a query against the RealSecureDB. This shows you the number of rows processed, rows waiting, and the avg. post process time. This time should be under 10 sec. If it is a high number, there might be a problem on the DB and events are not being processed quickly enough. The event collectors will also shut down automatically if the total rows waiting reaches 500k. This gives the DB a chance to catch up. 
+ * Ensure the Event Collector and Agent Manager 
+   the sensor reports to is in an Active state 
+ * In Analysis view, ensure that you are looking at Event Analysis views. You can also hit F7 or View > Clear Filters to reset to default filter views. 
+ * Ensure that the sensor in question is online and Active.
+
+
+
+
+
+
+[/support/docview.wss?uid=swg21434661&aid=1] [https://ibm.biz/BdHdjw] [/support/docview.wss?uid=swg21434661&aid=2] [http://ibm.biz/InfraSecForumTechnote] [/support/docview.wss?uid=swg21434661&aid=3] [http://ibm.biz/SecSuptUTube] [/support/docview.wss?uid=swg21434661&aid=4] [http://ibm.biz/InfraSecFixes] [/support/docview.wss?uid=swg21434661&aid=5] [http://ibm.biz/FlexLicLogin] [/support/docview.wss?uid=swg21434661&aid=6] [http://ibm.biz/MyNotification] [/support/docview.wss?uid=swg21434661&aid=7] [http://ibm.biz/ContactSecSupport] 
+
+
+HISTORICAL NUMBER
+ 2118

@@ -1,0 +1,211 @@
+Title: IBM PI43616: Opening a diagram in XT results in Security Warning from Java about unsigned - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Attempts to open a diagram in IBM Rational System Architect XT
+   (SAXT) results in a Security Warning dialog.
+   
+   CONFIGURATION
+   SAXT 11.4.3.3 build 60
+   Microsoft Windows Server 2008 R2 32 bit
+   Microsoft Internet Explorer (IE) 9.0.39
+   Oracle JRE Version 8 Update 45 (build 1.8.0_45-b15)
+   
+   SYMPTOM
+   The full error message is:
+   Security Warning
+   Do you want to run this application?
+   (!) An application is requesting permission to load a resource
+   from location below.
+   Location: http://SERVER [http://SERVER]
+   More Information
+   Click Cancel to block loading such resources or Run to allow it
+   to allow them to load.
+   [Run] [Cancel]
+   
+   Additional Information:
+   No message with Oracle Java 7.
+   The message is coming from Oracle Java 8.
+   If you press Cancel then look at the Java console it states:
+   "user declines loading unsigned boxcursor.png and magnifier.png"
+   
+   If you click on "more information" you get a dialog as follows:
+   Clicking Run allows the application to run with limited
+   access that is intended to protect your personal files and
+   other resources on your computer. The application
+   cannot access these resources (for example, the web
+   cam and microphone) without asking for your permission.
+   Clicking Cancel prevents the application from running.
+   The publisher name is unknown. It is recommended not
+   to run this application unless your are familiar with its
+   source.
+   There is no digital signature for this application.
+   
+   Notes:
+   - The diagram will still load and open regardless of clicking
+     Run or Cancel.
+   
+   - For the very first time you login to SAXT and open a diagram
+     there is first the usual Java dialog about trusting and you
+   tick
+     that and press OK.
+     This gets bypassed on subsequent attempts, just leaving the
+     error as described, Security Warning (aka the second dialog)
+     which shows next.
+   
+   - On subsequent attempts the error as described occurs only for
+     opening diagrams that you did not open before. That is, just
+     one dialog, the Security Warning as described.
+   
+   - The the pie charts from the Commercial Questions or Health of
+     Architecture reports are also impacted by the issues
+   described.
+   
+   Steps to reproduce:
+   1. Set up as above
+   2. Login to SAXT
+   3. Open the XT Explorer
+   4. Expand the diagrams
+   5. Click on a diagram
+   
+   Expected Result:
+   The Diagram to open with no dialogs.
+   
+   Unexpected Result:
+   The Security Warning dialog as described.
+   
+   CAUSE
+   Everything is signed as expected, but not image files as
+   described. IBM Cannot sign the images, it would have to be built
+   into a jar file and signed, that is not possible here.
+   
+   WORKAROUND
+   Procedure:
+   1. Go to SAXT install "\IP" folder
+   2. Rename boxcursor.png and magnifier.png to something else
+   3. Test following the steps to reproduce
+   
+   Note using the Workaround: This doesn't hurt functionality. It
+   just keeps the mouse from turning into a box instead of a
+   pointer in the pan & zoom box.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * None                                                         *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * When attempting to open a diagram in Rational System         *
+   * Architect XT, it results in a Security Warning.              *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Rational System Architect 11.4.3.5 has been fixed to open
+   diagram with no dialogs or warnings.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI43616
+   
+   
+ * REPORTED COMPONENT NAME
+   TLOGIC SYS ARCH
+   
+   
+ * REPORTED COMPONENT ID
+   5724V68SX
+   
+   
+ * REPORTED RELEASE
+   B43
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-06-23
+   
+   
+ * CLOSED DATE
+   2015-09-25
+   
+   
+ * LAST MODIFIED DATE
+   2015-09-25
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TLOGIC SYS ARCH
+   
+   
+ * FIXED COMPONENT ID
+   5724V68SX
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * RB43 PSN
+   UP
+   
+   
+ * RB43 PSY
+   UP

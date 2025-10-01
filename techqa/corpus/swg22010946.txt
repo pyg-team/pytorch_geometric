@@ -1,0 +1,48 @@
+Title: IBM Security Bulletin: Security vulnerabilities have been identified in IBM DB2 shipped with IBM Predictive Maintenance and Quality - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ IBM DB2 is shipped with IBM Predictive Maintenance and Quality. Information about some security vulnerabilities affecting IBM DB2 have been published their respective security bulletins. 
+
+VULNERABILITY DETAILS
+
+Refer to the security bulletin(s) listed in the Remediation/Fixes section.
+
+AFFECTED PRODUCTS AND VERSIONS
+ 
+
+IBM Predictive Maintenance and Quality 2.5.3 – 2.6.1 
+
+IBM IoT Predictive Maintenance and Optimization 1.0.0 – 1.0.1
+
+REMEDIATION/FIXES
+Refer to the following security bulletins for vulnerability details and information about fixes addressed by IBM DB2 which is/are shipped with IBM Predictive Maintenance and Quality. 
+
+Principal Product and Version(s) Affected Supporting Product and Version Affected Supporting Product Security Bulletin IBM Predictive Maintenance and Quality 2.5.3 – 2.6.1
+IBM IoT Predictive Maintenance and Optimization 1.0.0 – 1.0.1 IBM DB2 Enterprise Server Edition V10.5 Privilege escalation vulnerabilities affect IBM® Db2® (CVE-2017-1439, CVE-2017-1451) [http://www-01.ibm.com/support/docview.wss?uid=swg22006061]
+
+IBM® Db2® vulnerability allows local user to overwrite Db2 files. (CVE-2017-1452) [http://www-01.ibm.com/support/docview.wss?uid=swg22006109]
+
+IBM® Db2® is affected by denial of service vulnerability in the Db2 Connect Server (CVE-2017-1519) [http://www-01.ibm.com/support/docview.wss?uid=swg22007183]
+
+IBM® Db2® is vulnerable to an unauthorized command that allows the database to be activated when authentication type is CLIENT (CVE-2017-1520) [http://www-01.ibm.com/support/docview.wss?uid=swg22007186] GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v2 Guide [http://www.first.org/cvss/v2/guide] 
+On-line Calculator v2 [http://nvd.nist.gov/CVSS-v2-Calculator] 
+
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] 
+
+CHANGE HISTORY
+ 24 Nov 2017: Original Version Published
+05 Dec 2017: formate update 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.

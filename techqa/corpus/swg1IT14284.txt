@@ -1,0 +1,140 @@
+Title: IBM IT14284: PUREAPPLICATION SYSTEM: SQL ERROR OCCURS WHEN SAVING AN EVENT FILTER IN THE CONSOLE - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The user attempted to create a filter with 6 types on the Events
+   page in the console.
+   
+   1. Go to System > Event
+   2. Click the Filter icon next to the dropdown box
+   3. In the Build Filter windows,
+       a. Click + icon (Add filter) to create new filter
+       b. Enter some name for the Add filter field
+       c. Click the Type dropdown box, un-select the "Select
+          all" option to clear out all the pre selected options
+       d. Then select the following 9 options:
+   
+            Chassis Management Module
+            Chassis Network Switch
+            Chassis SAN Switch
+             Flex Chassis
+             Management Node
+             PureApplication Service
+             PureApplicaiton System
+             PureApplication Systems Manager
+             Switch
+   
+        e. Click Save
+   
+   You get the following error:
+   CWPZC9021E: failed; Caused by:
+   com.ibm.db2.jcc.am.SqlDataException: DB2 SQL Error:
+   SQLCODE=-302, SQLSTATE=22001, SQLERRMC=null, DRIVER=4.14.113
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  The DB2 table column width for the event filters was too small.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A code fix is being provided in PureApplication System version
+   2.2.0.0.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT14284
+   
+   
+ * REPORTED COMPONENT NAME
+   PAPP SYS 8382 I
+   
+   
+ * REPORTED COMPONENT ID
+   5725G3200
+   
+   
+ * REPORTED RELEASE
+   212
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-03-11
+   
+   
+ * CLOSED DATE
+   2016-03-11
+   
+   
+ * LAST MODIFIED DATE
+   2016-03-11
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   PAPP SYS 8382 I
+   
+   
+ * FIXED COMPONENT ID
+   5725G3200
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R220 PSY
+   UP

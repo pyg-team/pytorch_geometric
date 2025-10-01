@@ -1,0 +1,24 @@
+Title: IBM The "Show layout tools" option is not showing - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+I am trying to change the portlet width using below link and I followed steps, to make the "Show layout tools" option appear but the option is still not showing. 
+
+Optimizing the page layout for the Tags portlet
+https://www.ibm.com/support/knowledgecenter/SSYGQH_5.0.0/connectors/admin/connections_portlet_tags_layout_3011.html [https://www.ibm.com/support/knowledgecenter/SSYGQH_5.0.0/connectors/admin/connections_portlet_tags_layout_3011.html] 
+
+How do I get this option to appear properly ?
+
+
+ANSWER
+In order to see the "Show layout tools", the page(s) in question should have been created with the page type of "Standard Portal layout" and make sure the following has been done:
+
+From the Websphere Portal Administration console: 
+
+ * Under Portlet Management > Portlets > Edit Layout portlet > Configure Portlet icon > set "showAdvancedOption" to yes 
+ * Under Portal User Interface > Manage Pages > Content Root > Page Customizer > Content > click on Edit page layout (pencil icon) > From the Edit Layout drop down arrow > click on Configure and/or Edit shared settings > check that "Show toggle link for "Show layout tools/hide layout tools" is selected 
+
+
+Layout tools are available for Portal pages with the type "Standard Portal layout". Typically when page is created the default page type is Static. The page type cannot be changed after it is created. If you want to change the page type after you create it, you need to delete the existing page and create a new page of the required type.

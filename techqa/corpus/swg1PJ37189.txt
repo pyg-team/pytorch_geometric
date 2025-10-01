@@ -1,0 +1,148 @@
+Title: IBM PJ37189: "IS EMPTY" or "IS NOT EMPTY" search criteria for string properti es returns all documents, regardless of the property value. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When using "is empty" or "is not empty" search criteria for a
+   string property in Advanced Search, all documents are returned
+   and the search criteria is disregarded.
+   
+   How long has the problem been occurring (any recent changes)?
+   Since Workplace XT 1.1.4.2
+   
+   Is there a workaround?
+   Search Template works
+   
+   What is the impact to the customer/system?
+   Cannot use "is empty" or "is not empty" in Advanced Search
+   
+   Steps to Reproduce:
+   1 Go to Advanced Search.
+   2 Select "is empty" or "is not empty" operator for a string
+   property criterion.
+   3 Search.
+   
+   Actual Results: All documents are returned when no other
+   property criterion is specified.
+   Expected Results: Only documents with proper values are
+   returned.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * Users searching for documents that have empty or non-empty   *
+   * string properties.                                           *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * All documents are returned when searching for a string       *
+   * property that is empty or is not empty.                      *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Upgrade to 1.1.4.4-WPXT-FP004 or higher.                     *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  In 1.1.4.4-WPXT-FP004, search results will contain the
+   
+   documents that have an empty or non-empty string property as
+   specified by the search criteria.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PJ37189
+   
+   
+ * REPORTED COMPONENT NAME
+   WORKPLACE XT
+   
+   
+ * REPORTED COMPONENT ID
+   5724R7611
+   
+   
+ * REPORTED RELEASE
+   114
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-12-14
+   
+   
+ * CLOSED DATE
+   2010-02-24
+   
+   
+ * LAST MODIFIED DATE
+   2010-02-24
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WORKPLACE XT
+   
+   
+ * FIXED COMPONENT ID
+   5724R7611
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R114 PSY
+   UP

@@ -1,0 +1,202 @@
+Title: IBM PQ52777: ABEND0C4 AT +X'2A' INTO CSECT WDFMPATH WITHIN ASMIDF ON STORE OFF OF REG15 AS REG15 CONTAINS ZERO'S. - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Using the following IDF commands leads to 0C4:
+   DISASM ICOUNT STMTSTEP. ICOUNT command fails to correctly
+   set PATH ON leading to error.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Issue PATH ON prior to ICOUNT command.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All.                                         *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: If an ICOUNT command is issued followed *
+   *                      by a STEP or STMTSTEP command, then IDF *
+   *                      may terminate with the following        *
+   *                      message:                                *
+   *                      MSGASMMAI466S "Abend code x'000C4000'   *
+   *                      within the debugger"                    *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   1. When an ICOUNT command is issued without a preceding PATH ON
+      command, then IDF may issue message ASMMAI466S followed by
+      ASMMAI400S (MSGASMMAI400S).  The PSW at the time of the
+      interrupt specifies an address which is x'24' beyond the
+      address in register 12.  The instruction causing the
+      interrupt is:
+            ST   1,0(6,15)
+      with registers 6 and 15 containing the value zero.
+   2. TSO users may also find that their TSO session appears to
+      be unresponsive after such an abend, requiring operator
+      action to cancel the TSO session.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The HLASM Toolkit Feature Interactive Debug Facility has been
+   modified to:
+   1. Automatically set the PATH option ON if the ICOUNT command
+      is issued without a prior PATH ON command.
+   2. For TSO users, if an abend occurs within IDF itself, such
+      that ASMMAI466S is issued, then IDF will attempt to perform
+      normal termination and cleanup of the session.
+      If a subsequent failure occurs while the cleanup is in
+      progress, then in order to avoid a recursive cleanup loop,
+      termination is aborted which may result in an unresponsive
+      TSO session.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PQ52777
+   
+   
+ * REPORTED COMPONENT NAME
+   HLASM TOOLKIT
+   
+   
+ * REPORTED COMPONENT ID
+   569623401
+   
+   
+ * REPORTED RELEASE
+   13A
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2001-09-25
+   
+   
+ * CLOSED DATE
+   2001-12-11
+   
+   
+ * LAST MODIFIED DATE
+   2002-03-08
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UQ60965 UQ60966 UQ60967 UQ60968 UQ60969 UQ60970 UQ60971 UQ60972
+   UQ60973
+   
+   
+
+MODULES/MACROS
+ *  ASMMSTRT ASMMSUB4 ASMMTSMA WDFMCOM
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   HLASM TOOLKIT
+   
+   
+ * FIXED COMPONENT ID
+   569623401
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R1IM PSY UQ60971 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UQ60971]
+   UP01/12/12 I 1000
+   
+   
+ * R12A PSY UQ60965 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UQ60965]
+   UP01/12/13 P F112
+   
+   
+ * R13A PSY UQ60966 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UQ60966]
+   UP01/12/13 P F112
+   
+   
+ * R14A PSY UQ60967 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UQ60967]
+   UP01/12/13 P F112
+   
+   
+ * R3IM PSY UQ60972 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UQ60972]
+   UP01/12/12 I 1000
+   
+   
+ * R32A PSY UQ60968 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UQ60968]
+   UP01/12/13 P 0112
+   
+   
+ * R33A PSY UQ60969 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UQ60969]
+   UP01/12/13 P 0112
+   
+   
+ * R34A PSY UQ60970 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UQ60970]
+   UP01/12/13 P 0112
+   
+   
+ * R4IM PSY UQ60973 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UQ60973]
+   UP01/12/12 I 1000
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

@@ -1,0 +1,27 @@
+Title: IBM GDPR readiness and IBM CICS - United States
+
+Text:
+GDPR ; CICS Transaction Server ; CICS Tools ; 5655S9700 R660 660 R600 600 HCI6600 R670 670 R700 700 HCI6700 5655-S97 5655S97 ; 5655Y0400 R680 680 R800 800 HCI6800 R690 690 R900 900 HCI6900 R700 700 R000 000 HCI7000 R710 710 R100 100 HCI7100 5655Y0401 5655-Y04 5655Y04 ; 5655VSE00 RB3P R220 220 RB2P R210 210 5655-VSE 5655VSE 564805401 RCOP; 564805400 RB0P R411 R111 5648-054 5648054 KIXINFO TECHNOTE (FAQ)
+
+QUESTION
+ What is IBM's position with regard to IBM CICS Transaction Server and its family of products and the European Union's new General Data Protection Regulation (GDPR) that goes into effect in May 2018? 
+
+ANSWER
+As stated on the IBM GDPR web page [https://ibm.com/gdpr]:
+
+IBM Commits to GDPR Readiness
+
+IBM currently complies with privacy laws around the world. IBM is also preparing to comply with the European Union's new General Data Protection Regulation (GDPR) which will go into effect in May 2018. IBM has established a global project to prepare for GDPR, both for our internal processes and for our commercial offerings. IBM recognises that our customers will rely on IBM's offerings and technical assistance to achieve GDPR compliance within their own organisations and IBM is well-positioned to meet this critical need. 
+
+As part of its GDPR project, IBM is enhancing its ongoing commitment to privacy by design. IBM is working to embed data protection principles even more deeply into its business processes, with the objective that technical and organisational security measures limit, by default, the amount and use of personal data to what is specifically required. This work will also strengthen controls already in place to limit access to personal data, including with respect to mobile applications that rely on sensible default settings to prevent personal data from being inadvertently shared with others. 
+
+How can IBM help on your journey to GDPR readiness?
+
+IBM offers comprehensive solutions, services and expertise to help support your journey to GDPR readiness...
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Host Transaction Processing CICS Batch Application Control for z/OS Capability z/OS 1.1.1 Host Transaction Processing CICS Configuration Manager for z/OS Capability z/OS 5.4, 5.3, 5.2, 5.1 Host Transaction Processing CICS Interdependency Analyzer for z/OS Capability z/OS 5.3, 5.2, 5.1 Host Transaction Processing CICS Online Transmission Time Optimizer Maintenance z/OS 1.2 Host Transaction Processing CICS Performance Analyzer for z/OS New Function APAR z/OS 5.4, 5.3, 5.2, 5.1 Host Transaction Processing CICS VSAM Recovery for z/OS z/OS 5.2, 5.1 Host Transaction Processing CICS VSAM Transparency for z/OS Capability z/OS 2.1 Host Transaction Processing IBM CL/Conference Capability z/OS 1.4.1 Host Transaction Processing IBM CL/SuperSession Capability z/OS 1.4.7, 2.1 Host Transaction Processing IBM Session Manager Maintenance z/OS 3.2, 3.1, 2.2 Host Transaction Processing CICS Deployment Assistant for z/OS Capability z/OS 5.3, 5.2, 5.1 
+PRODUCT ALIAS/SYNONYM
+ CICS/VSE CICS VSE CICS/TS CICS TS CICS Transaction Server CICSBAC CICS BAC CBEP CICS BEP CICSCM CICS CM CICSDA CICS DA CICSIA CICS IA CICSPA CICS PA CICSPM CICS PM CICSVC CICS VC CICSVR CICS VR CICS/VR CICSVT CICS VT CICS/VT ISM LS147 LC141 CICSOTTO CICS OTTO

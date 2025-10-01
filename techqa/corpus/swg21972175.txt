@@ -1,0 +1,18 @@
+Title: IBM Are there any configurable timeout values for SOMA connections to the ITCAM for SOA DataPower agent? - United States
+
+Text:
+DataPower agent DP appliance SOMA timeout values KBN_DP_READ_TIMEOUT bn.ini CAMD4ALL instance TECHNOTE (FAQ)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ US English 
+
+QUESTION
+ Are there any configurable timeout values for SOMA connections to the ITCAM for SOA DataPower agent? 
+
+ANSWER
+The ITCAM for SOA DataPower agent code has two timeout values for SOMA connection. One is for connection timeout, one's value is hardcoded with 5000 milliseconds. If the timeout expires before the connection can be established, a java.net.SocketTimeoutException is raised. The other timeout is for a read timeout, this is defined in the config file bn.ini/bn_<instanceName>.config, the parameter is called "KBN_DP_READ_TIMEOUT". The default vaule is 60 seconds. If the timeout expires before there is data available for read, a java.net.SocketTimeoutException is raised.
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ ITCAM for SOA ITCAM for DataPower agent

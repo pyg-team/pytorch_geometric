@@ -1,0 +1,130 @@
+Title: IBM PI46419: SAMPLE COM.TELELOGIC.RHAPSODY.WFI.RHAPSODYLISTENERSEXAMPLE IS OUT OF DATE - United States
+
+Text:
+  A FIX IS AVAILABLE
+IBM Rational Rhapsody 8.2 [http://www-01.ibm.com/support/docview.wss?uid=swg24042928]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Sample Samples\JavaAPI
+   Samples\com.telelogic.rhapsody.wfi.rhapsodyListenersExample
+   should be corrected - there are 14 occurrences of 'telelogic' in
+   the sample itself and in 1 in the sample name. 'telelogic'
+   should be replaced into 'ibm.rational' (?)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * Rhapsody users                                               *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * SAMPLE COM.TELELOGIC.RHAPSODY.WFI.RHAPSODYLISTENERSEXAMPLE   *
+   * IS                                                           *
+   * OUT OF DATE                                                  *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fixed in Rhapsody 8.2 - Fixed by fixing the path of the classes.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI46419
+   
+   
+ * REPORTED COMPONENT NAME
+   TLOGIC RHAPSODY
+   
+   
+ * REPORTED COMPONENT ID
+   5724V74RP
+   
+   
+ * REPORTED RELEASE
+   805
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2015-08-06
+   
+   
+ * CLOSED DATE
+   2016-12-05
+   
+   
+ * LAST MODIFIED DATE
+   2016-12-05
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TLOGIC RHAPSODY
+   
+   
+ * FIXED COMPONENT ID
+   5724V74RP
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R750 PSN
+   UP

@@ -1,0 +1,152 @@
+Title: IBM IT17437: NEW OPTION TO AVOID REMOVAL OF MQ DATA WHEN DELETING MQ PURE VIRTUAL SYSTEM INSTANCE - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  By default the Virtual Application Instance deployment ID is
+   used in the MQ data directory path and MQ data is removed when
+   updating the IBM MQ Virtual System Instance.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   This affects users of IBM Pure Application System
+   
+   
+   Platforms affected:
+   MultiPlatform
+   
+   ****************************************************************
+   PROBLEM DESCRIPTION:
+   By default the MQ Data directory includes the deployment id so
+   that Queue Manager log directories are separated for each
+   deployed instanced. On deletion of the Virtual Instance the MQ
+   data tree is deleted as part of the clean-up.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  IBM MQ Pattern now includes an option so that the user may elect
+   to manage their MQ data directory manually. If is option is
+   selected, then the IBM MQ data directory will be set to the
+   value specified in the pattern (the deployment Id will not be
+   used) and the GPFS directory structures will not be deleted when
+   the Virtual Instance is deleted.
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+   Version    Maintenance Level
+   v8.0       8.0.0.6
+   
+   The latest available maintenance can be obtained from
+   'WebSphere MQ Recommended Fixes'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037]
+   
+   If the maintenance level is not yet available information on
+   its planned availability can be found in 'WebSphere MQ
+   Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT17437
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ BASE MULTIP
+   
+   
+ * REPORTED COMPONENT ID
+   5724H7251
+   
+   
+ * REPORTED RELEASE
+   800
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   YesSpecatt / New Function / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-10-11
+   
+   
+ * CLOSED DATE
+   2016-10-25
+   
+   
+ * LAST MODIFIED DATE
+   2017-03-10
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ BASE MULTIP
+   
+   
+ * FIXED COMPONENT ID
+   5724H7251
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R800 PSY
+   UP

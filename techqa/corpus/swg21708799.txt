@@ -1,0 +1,51 @@
+Title: IBM Excel error when opening same report as Excel 2007 output more
+than once using Internet Explorer - United States
+
+Text:
+RSVP.EXCEL_FILENAME_TIME_SUFFIX TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Following error is thrown when opening a following excel 2007 report (with preceding report/s already open):
+'A document with the name "<ReportName.xlsx" is already open. You cannot open two documents with the same name, even if the documents are in different folders. To open the second document, either close the document that's currently open, or rename one of the documents' 
+
+SYMPTOM
+When opening same excel report multiple times (with the previous report/s still open in excel), the first Excel 2007 report can be viewed but thereafter Excel returns an error on opening 
+
+
+CAUSE
+An Advanced property needs to be set on the server. 
+
+ENVIRONMENT
+Windows
+
+RESOLVING THE PROBLEM
+RSVP.EXCEL_FILENAME_TIME_SUFFIX needs to be set to TRUE for report service on the dispatcher
+
+
+
+
+1.Open IBM Cognos Administration
+(a) for IBM Cognos BI 10.x: through IBM Cognos connection.
+(b) for IBM Cognos Analytics 11.x: through Manage -> Administration Console 
+2. Once opened, navigate the the configuration tab.
+3. On the left hand menu select "Dispatchers and Services"
+4. Click on the dispatcher
+5. You will then be presented with a list of the services, towards the bottom there will be a "ReportService" and to the right hand side click "More..."
+6. Select "Set properties"
+7. Click the "Settings" tab
+8. Then from the list of options select "Edit.." from the Enviroment - Advanced settings row.
+9. Click the over-ride checkbox at the top if not grid lines are displayed, however this may not be the case.
+10. In the parameter box paste in the following string RSVP.EXCEL_FILENAME_TIME_SUFFIX
+11. In the value box paste in the following string TRUE
+
+RELATED INFORMATION
+ Report service and batch report service advanced settin [http://www-01.ibm.com/support/knowledgecenter/SSEP7J_10.2.2/com.ibm.swg.ba.cognos.dg_sdk.10.2.2.doc/r_reportService_adv_settings.html%23reportService_adv_settings]
+Advanced settings configuration [http://www-01.ibm.com/support/knowledgecenter/SSEP7J_10.2.2/com.ibm.swg.ba.cognos.ug_cra.10.2.2.doc/c_configuringadvancedsettings_admin.html]
+11.x: Advanced settings configuration [https://www.ibm.com/support/knowledgecenter/SSEP7J_11.0.0/com.ibm.swg.ba.cognos.ug_cra.doc/c_configuringadvancedsettings_admin.html]
+11.x: Report service and batch report service advanced [https://www.ibm.com/support/knowledgecenter/en/SSEP7J_11.0.0/com.ibm.swg.ba.cognos.ug_cra.doc/r_reportService_adv_settings.html]
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Analytics Cognos Analytics Administration and Configuration v11x 11.0.7, 11.0.6

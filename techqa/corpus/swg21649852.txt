@@ -1,0 +1,48 @@
+Title: IBM NNM7 probe : SNMPMode : Processing SNMPv1 or SNMPv2c alarms - United States
+
+Text:
+SNMPMode; nco_p_nnm7; SNMPv1; SNMPv2; SNMPv2c TECHNOTE (FAQ)
+
+QUESTION
+ NNM7 probe : Why are some NNM alarms ignored? 
+
+CAUSE
+The NMM7 probe processes events as SNMPv1 alarms by default. 
+SNMPMode : 0
+
+
+ANSWER
+The NNM7 probe processes events as either SNMPv1 or SNMPv2c alarms, but not both. 
+
+
+The NNM API is able to translate between SNMPv1 and SNMPV2c for most of the data but does not translate SNMPv2c informs to SNMPv1, and may not be able to translate all traps into one form or the other. 
+
+If only one SNMP type of event is required set the SNMPMode [0|1] property as required, and discard events in the probes rules file based upon the events SNMP_Version token value. 
+
+If both SNMP types of alarms need to be processed, then it is recommended that two NNM7 probes are used, with the SNMPMode property being set to 0 in one probe and SNMPMode to 1 in the other. 
+
+The probe will receive events with SNMP_Version set to "2c" and "1" regardless of the SNMPMode setting, as filtering is not performed by the probe outside of the NNM API functionality which accessed via the NNMfilter probe property. 
+
+The example rules file logic for event processing is given below:
+
+if (int(%SNMPMode) == 1 && match($SNMP_Version,"2c") ) 
+{ 
+# For processing SNMPv2c traps only this probe will discard everything else 
+log(warn,"Processing SNMPv2c - " + %SNMPMode + " : " + $SNMP_Version) 
+# Add SNMPv2c rules file processing here
+} 
+else if (int(%SNMPMode) == 0 && match($SNMP_Version,"1") ) 
+{ 
+. 
+# For processing SNMPv1 traps only this probe will discard everything else 
+log(warn,"Processing SNMPv1 - " + %SNMPMode + " : " + $SNMP_Version) 
+# Add SNMPv1 rules file processing here
+} 
+else 
+{ 
+log(warn,"DISCARD : Unexpected values") 
+discard 
+} 
+
+RELATED INFORMATION
+ Configuring the NNMfilter property on the NNM probe [http://www-01.ibm.com/support/docview.wss?uid=swg21308328]

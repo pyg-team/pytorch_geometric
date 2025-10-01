@@ -1,0 +1,31 @@
+Title: IBM TPMfOSd  WinPE reports There is not enough space on the disk. - United States
+
+Text:
+unattended cloning pre execution environment TECHNOTE (FAQ)
+
+QUESTION
+ After creating new WinPE deployment engines, The WinPE environment during deployments is reporting that there is not enough space on the disk. Why is this occurring?
+
+
+
+
+CAUSE
+This problem is the result of the WinPE scratch-space being too small.
+
+
+
+ANSWER
+While running the command startnet.cmd in the WinPE environment, the following message could appear: There is not enough space on the disk. After this message is displayed, a reboot could be performed. It is very likely that WinPE scratch space is insufficient. Scratch space setting represents the amount of writable space available on the Windows PE system volume when booted in RAM disk mode. By default, Windows PE allocates 32 MB of memory to allocate to the Windows PE work space. Valid values are 32, 64, 128, 256, and 512. The WinPE scratch space might provide insufficient space to copy all the required drivers software modules on the specific target model. To use the WinPE driver injection by the Binding Grid for a specific target model to inject a set of software modules requires an amount of space greater then 32Mb. The WinPE involved must be created with an appropriate quantity of scratch space. 
+
+To customize scratch space, go to the table Settings, look for the record where Type = "WPECREAT". The ini file will be named something similar starting with radset_sttngsfr. For example, radset-sttngsfrRTPSPEC9.ini. Edit the INI file, located in the <DATADIR>/global/schemes directory by changing the value assigned to the ScratchSpace , as shown in the following example: :
+
+[Task]
+type="WPECREAT"
+
+[Settings]
+StartEnv="*"
+TftpBlockSize="1432"
+TftpWindowSize="4"
+ScratchSpace="32"
+
+It is not necessary to restart the server or the Web Interface extension, you can just recreate WinPE engines.

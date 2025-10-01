@@ -1,0 +1,49 @@
+Title: IBM Silently installing ClearCase 7.1 as equivalent to installing by siteprep in pre 7.1 versions - United States
+
+Text:
+1375571; CC; ClearCase 7.1; ClearCase 7; 1; siteprep; site_prep; silent install; silent installation; Installation Manager; Packaging Utility TECHNOTE (FAQ)
+
+QUESTION
+ What is the IBM Rational ClearCase (CC) 7.1 equivalent to installing by siteprep in pre-7.1 versions? 
+
+ANSWER
+ 
+
+ClearCase 7.1 uses Installation Manager and siteprep is no longer available.
+
+Silent install using a response file is a similar method to using siteprep.
+
+The steps below point to the appropriate sections of the ClearCase 7.1 installation documentation and will help you to install ClearCase 7.1 (siteprep style).
+
+
+
+ 1. Verifying and extracting electronic images [https://publib.boulder.ibm.com/infocenter/cchelp/v7r1m0/index.jsp?topic=/com.ibm.rational.clearcase.cc_ms_install.doc/topics/t_extract_verify_files.htm]
+    
+ 2. Installing the Packaging Utility
+     * From the Enterprise Deployment DVD [https://publib.boulder.ibm.com/infocenter/cchelp/v7r1m0/index.jsp?topic=/com.ibm.rational.clearcase.cc_ms_install.doc/topics/t_pu_install.htm] 
+     * Download: IBM Packaging Utility, Version 1.3 [http://www-01.ibm.com/support/docview.wss?uid=swg24022097]
+       
+       
+    
+    
+ 3. Copying product packages using Packaging Utility [https://publib.boulder.ibm.com/infocenter/cchelp/v7r1m0/index.jsp?topic=/com.ibm.rational.clearcase.cc_ms_install.doc/topics/t_deploy_package_rsar.htm]
+    
+    
+    
+ 4. Recording a response file using Installation Manager without installing [https://publib.boulder.ibm.com/infocenter/cchelp/v7r1m0/topic/com.ibm.rational.clearcase.cc_ms_install.doc/topics/t_installerresponsefile11_rsar.htm]
+    
+    
+ 5. Install Installation Manager from all clients: IBM Installation Manager tasks [https://publib.boulder.ibm.com/infocenter/cchelp/v7r1m0/index.jsp?topic=/com.ibm.rational.clearcase.cc_ms_install.doc/topics/t_install_agent.htm]
+    
+    
+ 6. Setting repository preferences in Installation Manager [https://publib.boulder.ibm.com/infocenter/cchelp/v7r1m0/index.jsp?topic=/com.ibm.rational.clearcase.cc_ms_install.doc/topics/t_specifying_repository_locations.htm]
+    
+    
+ 7. Installing and running Installation Manager in silent mode [https://publib.boulder.ibm.com/infocenter/cchelp/v7r1m0/index.jsp?topic=/com.ibm.rational.clearcase.cc_ms_install.doc/topics/t_running%20_im_silently11_rsar.htm]
+    
+    
+
+
+RELATED INFORMATION
+#IBM Installation Manager Version 1.3 [http://www.ibm.com/support/docview.wss?uid=swg24022098]
+IBM Packaging Utility Version 1.3 [http://www.ibm.com/support/docview.wss?uid=swg24022097]

@@ -1,0 +1,47 @@
+Title: IBM Downloading IBM SPSS Amos 21 - United States
+
+Text:
+ DOWNLOADABLE FILES
+
+ABSTRACT
+ Downloading IBM SPSS Amos 21 
+
+DOWNLOAD DESCRIPTION
+IBM® SPSS® Amos™ is an easy-to-use structural equation modeling (SEM) program that tests relationships between observed and latent (unobserved) variables to quickly test hypotheses and confirm relationships. 
+
+Release notes [http://www.ibm.com/support/docview.wss?uid=swg27035758]
+PDF installation documents and user's guide [http://www.ibm.com/support/docview.wss?uid=swg27025132] 
+
+To download a product, go to the IBM Passport Advantage® Web Site [http://www.ibm.com/software/howtobuy/passportadvantage/paocustomer/sdma/SDMA?PO=DOWNLOAD_FIND_BY_PART_NUMBER] and then:
+
+
+ 1.  Do one of the following:
+     If you are a returning customer, sign in.
+     If you are a new customer, register. 
+ 2.  If the Software download & media access window appears, click I agree. 
+ 3.  In the Find downloads & media window, click Download finder. 
+ 4.  Under Download finder, select the download you want, and click Continue. 
+ 5.  Under Select criteria, select a language and one or more platforms. 
+ 6.  Under Download options, select the options you want, and click Continue. 
+ 7.  Under Review “Current version” downloads, expand Current version and under Description, select the download you want, expand it and select the items you want. 
+ 8.  If applicable, under Select optional downloads, expand and select the items you want. 
+ 9.  Under Review downloading specifics, update the Download method or the Download location, if you want, and then click I agree, and click Download now. 
+ 10. In the Initial Setup dialog, change the Default download location, if you want. 
+ 11. If you are prompted, click OK to create the directory where you want the downloaded items to be stored. 
+ 12. Click OK to begin the download.
+
+
+When the download has finished, Download complete appears in the Download Director dialog. The required and optional parts for each product are listed and described in detail. There is an option to download each licensed eAssembly. Each eAssembly contains all of the required and optional downloads needed for a particular product and platform combination.
+
+
+
+Downloading and assembling the product  * 
+ * 
+ * 
+ * 
+ * 
+ * 
+
+[/support/docview.wss?uid=swg24032237&amp;aid=1] The following table list all the parts available for IBM SPSS Amos 21.0 
+
+Parts and Platforms Part Number Required/ Optional IBM SPSS Amos 21.0 Microsoft Windows Multilingual eAssembly CRJJ4ML [/support/docview.wss?uid=swg24032237&amp;aid=1] IBM SPSS Amos Quick Start Guide 21.0 Multilingual CI7P0ML Optional IBM SPSS Amos Client 21.0 Microsoft Windows Multilingual CI9TCML Required IBM SPSS Amos Documentation 21.0 English CI9TDEN Optional IBM SPSS Amos Documentation 21.0 Japanese CI9TEJA Optional [/support/docview.wss?uid=swg24032237&amp;aid=1] [/support/docview.wss?uid=swg24032237&amp;aid=1] [/support/docview.wss?uid=swg24032237&amp;aid=1] IBM SPSS Amos for Trial 21.0 Microsoft Windows Multilingual eAssembly CRJK1ML [/support/docview.wss?uid=swg24032237&amp;aid=1] IBM SPSS Amos 21.0 for Trial Microsoft Windows Multilingual CI9WXML Required

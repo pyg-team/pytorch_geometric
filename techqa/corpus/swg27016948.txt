@@ -1,0 +1,391 @@
+Title: IBM Configuring the IBM HTTP Server load balancer and Change Management Server for SSL-only access - United States
+
+Text:
+7016948; IBM HTTP Server; IHS; load balancer; IHS load balancer; CCRC; ClearCase Remote Client; SSL; secure socket layer; CM Server; Change Management Server PRODUCT DOCUMENTATION
+
+ABSTRACT
+ This document describes how to configure the IBM HTTP Server (IHS) load balancer and Change Management Server (CM Server) for SSL-only access by using a self-signed certificate and matching private key. 
+
+CONTENT
+ 
+
+The examples in this document use the Sun Solaris 10 and Microsoft Windows 2008 x64 platforms. You might need to alter the path and file names to conform to your environment.
+
+Procedure 
+
+1. Enable administrative and application security by using the WebSphere Application Server administrative console: 
+
+ * 
+ *  Security 
+ * 
+ * Secure administration, applications, and infrastructure
+ * 
+ * 
+ * 
+ *   * 
+    * Enable administrative security
+    * 
+    * Administrative security
+    * 
+    * 
+    * 
+    * Enable application security
+    * 
+    * Application security
+    * 
+    * 
+    * 
+    * Use Java 2 security to restrict application access to local resources
+    * 
+    * Java 2 security
+    * 
+    * 
+    * 
+    * Security Configuration Wizard
+    * 
+   
+   
+ * 
+ *   * 
+    * Enable application security
+    * 
+    * Next
+    * 
+    * 
+    * 
+    * Federated repositories
+    * 
+    * Next.
+    * 
+    * 
+    * Primary administrative user name
+    * 
+    * Password
+    * 
+    * Confirm password 
+    * 
+    * Next.
+    * 
+    * 
+    * Finish
+    * 
+   
+   
+
+
+2. Use the ikeyman utility to update the default SSL certificates. The default SSL file, key.p12, is located in the following directory: 
+ * On Sun Solaris 10: 
+ *  
+ * 
+ * 
+ * 
+ * 
+ * On Microsoft Windows 2008 x64: 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * : 
+ * · Expand Security. 
+   · Select SSL certificate and key management. 
+   · Select Manage endpoint security configurations. 
+   · Select Outbound. 
+   · Select dfltCell. 
+   · Select Nodes. 
+   · Select dfltNode. 
+   · Select servers. 
+   · Select server1. 
+   · Select HTTP. 
+   · Select Manage certificates. 
+   
+ * 
+ * · Use the ikeyman utility to extract and export the default certificate to hostname.p12, where hostname corresponds to the host name from which you are extracting and exporting the certificate. 
+   · For certificate extraction, use binary DER (distinguished encoding rules) formatted data and save the certificate to a file named hostname.der.  * 
+    * Stash file
+    * 
+    * 
+    * 
+   
+   
+
+
+3. Modify plugin-cfg.xml on all CM Server hosts: 
+ * 
+ *  
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+
+ * 
+ *  On Sun Solaris 10 
+ * 
+ * 
+ * <Transport Hostname="localhost" Port="12443" Protocol="https"> 
+   <Property Name="keyring" value="/opt/IBM/RationalSDLC/common/IHS/key.kdb"/> 
+   <Property Name="stashfile" value="/opt/IBM/RationalSDLC/common/IHS/key.sth"/> 
+   </Transport> 
+
+ * 
+ *  Microsoft Windows 2008 x64 
+ * 
+ * 
+ * <Transport Hostname="localhost" Port="12443" Protocol="https"> 
+   <Property Name="keyring" value="C:/PROGRA~2/IBM/RATION~1/common/IHS/key.kdb "/> 
+   <Property Name="stashfile" value="C:/PROGRA~1/IBM/RATION~1/common/IHS/key.sth"/> 
+   </Transport> 
+
+
+4. Copy the SSL certificate from each CM Server to the HTTP load balancer host and create the key database file:  * 
+ * hostname
+ * 
+ * hostname
+ * 
+ * 
+ * 
+ * 
+ * ikeyman
+ * 
+ * · On Sun Solaris 10: /opt/IBM/RationalSDLC/common/IHS/key.kdb 
+   
+   · On Microsoft Windows 2008 x64: C:\ProgramFiles\IBM\RationalSDLC\common\IHS\key.kdb 
+   
+ * 
+
+
+5. Edit the httpd.conf file on the HTTP load balancer host:  * 
+ * · On Sun Solaris 10 (where the default location of the httpd.conf file is /opt/IBM/RationalSDLC/common/IHS/httpd.conf):  * <VirtualHost *:80> 
+      ServerName hostname 
+      RewriteEngine on 
+      RewriteCond %{SERVER_PORT} !^443$ 
+      RewriteRule ^(.*) https:// hostname$1 [R] 
+      RewriteLogLevel 0 
+      RewriteLog "/opt/IBM/RationalSDLC/common/IHS/logs/rewrite.log" 
+      </VirtualHost> 
+   
+   
+
+ * · On Microsoft Windows 2008 x64 (where the default location of the httpd.conf file is C:\Program files\IBM\RationalSDLC\common\IHS\httpd.conf) 
+
+ *   * 
+    * 
+    * 
+    * hostname
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * hostname
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+   
+   
+ * 
+ * 
+
+ *   * 
+   
+   
+
+
+6. Verify that the KeyFile line is not commented out in the ssl.conf file: 
+ * 
+ * On Sun Solaris 10, 
+ * 
+ * 
+ * 
+ * 
+ * On Microsoft Windows 2008 x64
+ * 
+ *  
+ * 
+
+
+7. Use the WebSphere Application Server administrative console (https:// hostname:12043/ibm/console) to disable port 12080:  * 
+ * Servers 
+ * 
+ * Application servers
+ * 
+ * 
+ * 
+ * server1 
+ * 
+ * 
+ * 
+ * Web Container Settings
+ * 
+ * Web container transport chains
+ * 
+ * 
+ * 
+ * WCInboundDefault
+ * 
+ * 
+ * 
+ * Enabled
+ * 
+ * 
+ * 
+ * Apply
+ * 
+ * Save
+ * 
+
+
+8. Either reboot the system or restart WebSphere Application Server and IHS to complete the configuration changes. 
+
+
+Expected Results The following results are expected after configuring the IHS load balancer and CM Server for SSL-only access:
+
+· http://CMServer-hostname/TeamWeb/services/Team 
+
+ * 
+ * 
+ * 
+ * CMServer-hostname
+ * 
+ * 
+
+· http://IHS-load-balancer-hostname/TeamWeb/services/Team  * 
+ * 
+ * 
+ * 
+
+· http:// CMServer-hostname:12060/ibm/console  * 
+ * 
+ * 
+ * CMServer-hostname:
+ * 
+ * 
+
+· http:// CMServer-hostname:12080/TeamWeb/services/Team fails. 
+
+· https:// CMServer-hostname:12043/ibm/console functions. 
+
+· https:// CMServer-hostname:12443/TeamWeb/services/Team functions. 
+
+· https:// CMServer-hostname:443/TeamWeb/services/Team  * 
+ * 
+ * 
+ * CMServer-hostname
+ * 
+
+
+· http:// CMServer-hostname/ccrc/update  * 
+ * 
+ * 
+ * CMServer-hostname
+ * 
+
+
+· https:// CMServer-hostname /ccrc/update functions. 
+
+· An authentication window opens when you run wsadmin.sh on Solaris or wsadmin.bat on Windows. 
+
+
+Troubleshooting Tips · Review the http_plugin.log file for errors. 
+
+· Set TRACE=on in the httpd.conf file. 
+
+ 
+
+Using Rational Performance Tester (RPT) to test an IHS load-balanced configuration that uses SSL 
+
+This section describes how to use Rational Performance Tester (RPT) to test an IHS load-balanced configuration that uses SSL. The examples in this section assume that you are running RPT 7.0.2 on a Linux system. 
+
+1. Copy or FTP in the hostname.der files from the CM Servers to the RPT workbench.
+
+2. Perform the following steps on the RPT workbench:
+
+
+ * 
+ * Windows > Preferences
+ * 
+ * 
+ * 
+ * Agent Controller
+ * 
+ *   * 
+    * 
+    * 
+    * Apply
+    * 
+    * OK
+    * 
+   
+   
+
+
+3. Run the following commands in a command prompt window for each agent controller:  * 
+ * 
+ * SDP70Shared-directory
+ * 
+ * 
+ * 
+ * 
+ * SDP70Shared-directory
+ * 
+ * 
+ * For example, run the following command in a csh shell: 
+   setenv JAVA_HOME /opt/IBM/SDP70Shared/AgentController/jre 
+ * 
+ * 
+ * label-for-CMServer-SSL-certificate-file
+ * 
+ * hostname
+ * 
+ * Procedure
+ * 
+ * label-for-CMServer-SSL-certificate-file 
+ * 
+
+ * $JAVA_HOME/bin/keytool –import –alias label-for-CMServer-SSL-certificate-file hostname.der -keystore 
+   
+   $JAVA_HOME/lib/security/cacerts 
+   
+ * 
+
+Using ClearCase Remote Client (CCRC) to access SSL-enabled systems 
+
+Perform the following steps to use CCRC to access an SSL-enabled host.
+
+1. Copy the hostname.der files from each CM Server to the SSL-enabled CCRC host. 
+
+2. Set the environmental variable JAVA_HOME to the Java directory that is created when the CCRC component is installed (by default, /opt/ibm/RationalDSLC/clearcase/java).
+
+3. Import the SSL keys that you exported from the CM Servers into the keystore by running the following commands, where the variables label-for-CMServer-SSL-certificate-file and hostname.der are the label and file that you created in Step 2.b of the Procedure section of this document. In most cases, label-for-CMServer-SSL-certificate-file is the default label, unless you changed it in Step 2.b to something more descriptive:
+
+
+ * 
+ * label-associated-with-CMServer-SSL-certificate-file hostname.
+ * 
+ * 
+ * 
+ * 
+
+
+4. Repeat Step 3 for each CM Server hostname.der file that you copied to the HTTP load balancer host in Step 4 of the Procedure section of this document. 
+
+5. On Solaris, define a default browser. This ensures that there is a place in which to display the authentication window to accept the SSL certificates when a CM Server is accessed for the first time. 
+
+Known problems with CCRC See http://www.ibm.com/support/docview.wss?rs=984&context=SSSH27&dc=DB560&dc=DB520&uid=swg21383150&loc=en_US&cs=UTF-8&lang=en&rss=ct984rational [http://www-01.ibm.com/support/docview.wss?rs=984&context=SSSH27&dc=DB560&dc=DB520&uid=swg21383150&loc=en_US&cs=UTF-8&lang=en&rss=ct984rational].
+
+
+
+
+PRODUCT ALIAS/SYNONYM
+ ClearCase

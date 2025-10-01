@@ -1,0 +1,27 @@
+Title: IBM Is there any impact to Maximo application performance when running IBM Tivoli Monitoring (ITM) for Maximo Agent? - United States
+
+Text:
+TPAEPERFORMANCE; ITM; Maximo; Agent; Performance; queries TECHNOTE (FAQ)
+
+QUESTION
+ Need to install ITM for working with Maximo. Is there any impact to Maximo application performance when running IBM Tivoli Monitoring (ITM) for Maximo Agent? 
+
+CAUSE
+Need to monitor Maximo Asset Management solution using ITM.
+
+ANSWER
+The impact on performance should be minimal and irrelevant for Out of the box queries, graphs and reports available for the ITM for Maximo Agent.
+
+If you have added complex customized reports and queries this must be reviewed in the light of the impact it can bring to system for collecting such data from application (specially SQL queries). 
+
+The Agent will be performing some data collection on the JVMs' WebSphere servers at the specified log directory for the instance (*Log file dir field under tab Log Configuration at Agent Configuration). 
+
+If it needs to read the WebSphere logs it will add some I-O work to that JVM's server. This should not impact performance significantly. Same for network once this data needs to be brought from the server along the network sub-nets, but these packages and frequency they are brought should not be a problem. 
+
+The agent will need to collect information from application and then it will be addressing SQL queries to the database adding some load (we expect it to be minimal). 
+
+Each ITM for Maximo Agent instance will connect to a log directory associated to a specific JVM and then to a system you want to monitor. The more instances you have the more is the load to the system from ITM runs, graphs, SQL queries and reports. This might not be a problem if few or single , but if you have way too many we may start seeing some degradation on performance coming from ITM mainly if the auto-refresh is set to a very short interval.
+
+Due to auto-refresh for graphs setting on ITM you will see that database connections may climb till it gets to certain number of connections and stay at this point. This is very sensitive behavior to the auto-refresh interval you set for graphs so you need to set an optimized value for your business needs for monitoring the environment. 
+
+This tuning may be done based on the “Optimizing queriers” section from page 325 on from the the installation guide for ITM "Version 6.2.2 Fix Pack 2" at link http://pic.dhe.ibm.com/infocenter/tivihelp/v15r1/topic/com.ibm.itm.doc_6.2.2fp2/itm_install.pdf [http://pic.dhe.ibm.com/infocenter/tivihelp/v15r1/topic/com.ibm.itm.doc_6.2.2fp2/itm_install.pdf].

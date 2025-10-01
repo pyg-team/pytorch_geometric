@@ -1,0 +1,159 @@
+Title: IBM PK66629: MQ MESSAGE LOST WHEN LAUNCHER SERVICE IS STOPPED . - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Customer  use Windows service dependencies to ensure that
+   Oracle, MQ and WTX
+   each pause if the other service fails. Until Mctr 6.7 this
+   worked ok
+   and messages were never lost.
+   While testing WTX 8.2.0.1 we have found that messages are lost
+   each
+   time a "net stop" is issued when reading and writing simple
+   persistent
+   mq messages. It is not always possible to issue a -pausesystem
+   -all
+   command.
+   
+   Test Case :
+   A test case is attached.
+   1. Put 500 messages on a queue (100kb each in my tests)
+   Write_MQ_Msg
+   2. Deploy the attached map/system to read and write those
+   messages. Write_MQ_Msg2
+   the map trigger  a queue and put messages in another queue .
+   Map concurent instance is set to 1
+   3. While its processing issue a net stop for the Launcher
+   service
+   I have to run this 4 time to reproduce the message lost .
+   
+   I'm attaching also Launcher Logs with Debug activate and last
+   map execution failure while stopping the launcher with command
+   net stop "IBM WebSphere Transformation Extender 8.2 Launcher"
+   
+   Customer is running 8.2.0.1 (16)
+   I have reproduce the issue using 8.2.0.2 (52)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  WTX00026293
+   EJ/EJ
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Fixed a problem where launcher system on Windows during service
+   STOP operation can result with lost MQ messages  if maps that
+   use MQS GET commands are active at the time of service STOP
+   request.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fixed a problem where launcher system on Windows during service
+   STOP operation can result with lost MQ messages  if maps that
+   use MQS GET commands are active at the time of service STOP
+   request.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK66629
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSPHERE LAUNC
+   
+   
+ * REPORTED COMPONENT ID
+   5724M4011
+   
+   
+ * REPORTED RELEASE
+   820
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2008-05-27
+   
+   
+ * CLOSED DATE
+   2008-07-29
+   
+   
+ * LAST MODIFIED DATE
+   2008-07-29
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBSPHERE LAUNC
+   
+   
+ * FIXED COMPONENT ID
+   5724M4011
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R810 PSY
+   UP
+   
+   
+ * R820 PSY
+   UP

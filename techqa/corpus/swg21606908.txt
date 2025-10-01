@@ -1,0 +1,56 @@
+Title: IBM LDAP configuration especially when Active Directory is used as LDAP server - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ We would like to configure embedded application server login settings to enable user authentication with LDAP. (Note that we are not using WebSphere Application Server.)
+
+When we are using Active Directory as LDAP server, the default configuration does not work even if we input correct user name and password in search/text miner application login page.
+
+How do you configure embedded application server login settings when using Active Directory as LDAP server? 
+
+SYMPTOM
+You will see FFQM0104E when trying to login to search application (or text miner application) with correct user name and password even.
+
+
+ENVIRONMENT
+Using Active Directory as LDAP server.
+
+DIAGNOSING THE PROBLEM
+Use ldifde utility on Active Directory server, or ldapsearch utility to see how the LDAP server is configured. 
+
+For example, run ldifde utility like as follows would results "export.ldf" file:
+
+ldifde -m -f export.ldf -s <target LDAP server name> -d "cn=users,dc=example,dc=com" -b BIND_USERNAME DOMAINNAME PASSWORD
+
+Or, you can get the same sort of result using ldapsearch utility:
+
+ldapsearch -h <target LDAP server name> -D <bind user name> -W <bind user password> -b "cn=users,dc=example,dc=com"
+
+Those command would show LDAP search result with filter like objectClass=*, thus you can confirm which object/attribute should be used for user authentication in the administration console.
+
+
+
+RESOLVING THE PROBLEM
+Generally speaking, when you are using Active Directory as LDAP server, specify following values in the administration console, not use all default values. 
+
+
+Note: This is nothing but an example thus you must use your own environment value, especially DC component value. In this example, we use "dc=example,dc=com" as domain name.
+
+
+ 1. BaseDN : cn=Users,dc=example,dc=com 
+ 2. User ID attribute : sAMAccountName 
+ 3. Object class for user entries : person (this is the default value) 
+ 4. Base DN for group entries : dc=example,dc=com 
+ 5. Group ID attribute : cn 
+ 6. Member attribute in group entries : member 
+ 7. Object class for group entries : group
+
+
+
+Also, make sure to specify "Use credentials to access to the LDAP server" with proper user name and password to perform bind with that user privilege.  
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Watson Group OmniFind Enterprise Edition Not Applicable AIX, Linux, Windows, Linux on System z 9.1

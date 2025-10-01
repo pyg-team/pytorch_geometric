@@ -1,0 +1,118 @@
+Title: IBM DataPower File system explained - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ What is included in the encrypted and temporary directories in the 9235/9004 and 7199/7198 IBM WebSphere DataPower SOA Appliances? 
+
+ANSWER
+The IBM WebSphere DataPower SOA Appliance file system is split into several sections when viewing the "show filesystem" CLI command or Status -> Filesystem Information in the WebGUI:
+Encrypted space, Temporary space and Internal space.
+
+
+ * Encrypted Space:
+
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * Knowledge Collection: Firmware upgrades for the IBM WebSphere DataPower SOA Appliances 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * config
+ * 
+ * flash
+ * 
+ * boot delete
+ * 
+ * y
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * M/T 9235
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * M/T 7199
+ * 
+ * 
+ * 
+ * 
+ * M/T 7198
+ * 
+ * 
+ * 
+ * NOTES:
+ * 
+ * 
+ * Setting up and troubleshooting the RAID Array on a 9235 device with optional hard drives 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * Temporary and Internal Space
+   The "temporary" and "internal" space are not persisted storage and the files will be lost if the appliance is rebooted or powered down but will not be cleared if use the "Reload" option.
+   
+   The temporary space includes these user accessible directories: temporary, image, export and logtemp 
+   The internal space is not accessible by the user.
+   
+   Both the "temporary" and "internal" space are also used for various processing actions during operation.
+
+
+NOTES: 
+1) It is not possible to account for all the space displayed in the "show filesystem" output by adding the file sizes as there are internal files as well as the "rollback image" that are not visible to the user. 
+
+2) In the M/T 7199 and 7198 the "temporary" and "internal" space listed in the "show filesystem" output will vary by firmware release. This is due to how the available memory is utilized in each release. 
+
+Examples: 
+
+The 4.0.1.x firmware: 
+xi52# show filesystem 
+
+Free Encrypted Space: 14318 Mbytes 
+Total Encrypted Space: 15100 Mbytes 
+Free Temporary Space: 175 Mbytes 
+Total Temporary Space: 242 Mbytes 
+Free Internal Space: 349 Mbytes 
+Total Internal Space: 350 Mbytes 
+
+The 4.0.2.x firmware: 
+xi52# show filesystem 
+
+Free Encrypted Space: 14434 Mbytes 
+Total Encrypted Space: 15100 Mbytes 
+Free Temporary Space: 3905 Mbytes 
+Total Temporary Space: 3937 Mbytes 
+Free Internal Space: 1021 Mbytes 
+Total Internal Space: 1024 Mbytes 
+
+
+Additional References: 
+Operations Planning [http://www.ibm.com/support/docview.wss?uid=swg21469163] technote 
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration WebSphere DataPower Integration Appliance XI52 4.0.2, 4.0.1, 4.0 All Editions Business Integration WebSphere DataPower B2B Appliance XB62 4.0.2, 4.0.1, 4.0 All Editions Business Integration WebSphere DataPower Integration Blade XI50B 4.0.2, 4.0.1, 4.0, 3.8.2, 3.8.1 Edition Independent Business Integration WebSphere DataPower Service Gateway XG45 4.0.2, 5.0.0 All Editions

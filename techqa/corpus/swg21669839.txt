@@ -1,0 +1,83 @@
+Title: IBM Security Bulletin: IBM WebSphere MQ (Paho MQTT and HP-NSS clients) are affected by a vulnerability in OpenSSL (CVE-2014-0160) - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ A security vulnerability has been discovered in OpenSSL. 
+
+VULNERABILITY DETAILS
+CVE ID: CVE-2014-0160 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-0160]
+DESCRIPTION:
+OpenSSL could allow a remote attacker to obtain sensitive information, caused by an error in the TLS/DTLS heartbeat functionality. An attacker could exploit this vulnerability to expose 64k of private memory and retrieve secret keys. An attacker can repeatedly expose additional 64k chunks of memory. This vulnerability can be remotely exploited, authentication is not required and the exploit is not complex. An exploit can only partially affect the confidentially, but not integrity or availability.
+
+CVSS:
+CVSS Base Score: 5
+CVSS Temporal Score: See http://xforce.iss.net/xforce/xfdb/92322 [http://xforce.iss.net/xforce/xfdb/92322] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:L/Au:N/C:P/I:N/A:N)
+
+Warning: We strongly encourage you to take action as soon as possible as potential implications to your environment may be more serious than indicated by the CVSS score.
+
+AFFECTED PRODUCTS AND VERSIONS
+This vulnerability is known to affect the following offerings; 
+
+ * Support Pac MAT1 - WebSphere MQ client for HP Integrity NonStop Server 
+ * Support Pac MA9B - IBM Mobile Messaging and M2M Client Pack - Eclipse Paho MQTT C Client libraries for Linux & Windows platforms only
+
+
+Note that the Paho MQTT C client libraries provided for Linux and Windows platforms in IBM WebSphere MQ 7.1 and IBM WebSphere MQ 7.5 are also affected. 
+
+This vulnerability does NOT affect any version or release of the following on any other platforms:  * IBM WebSphere MQ Client 
+ * IBM WebSphere MQ Server 
+ * IBM WebSphere MQ Managed File Transfer 
+ * IBM WebSphere MQ Advanced Message Security
+
+
+Note that IBM Java JSSE does not use OpenSSL and so it is NOT affected by this vulnerability. REMEDIATION/FIXES
+Both the HP Integrity NonStop Server MQ client and Paho MQTT C clients for Linux and Windows platforms have been updated to use OpenSSL 1.0.1g, which contains a fix for the heartbleed vulnerability. 
+
+ * A refreshed install image for the HP Integrity NonStop Server MQ client can be downloaded from Fix Central here [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?product=ibm/WebSphere/WebSphere+MQ&release=7.1&platform=All&function=fixId&fixids=MQ-7100-hpns-ia64-OpenSSL101g&includeSupersedes=0]. 
+ * A refreshed zip file containg the Paho MQTT C client can be downloaded from Fix Central here [http://www-933.ibm.com/support/fixcentral/swg/quickorder?product=ibm/WebSphere/WebSphere+MQ&release=7.5&platform=All&function=fixId&fixids=1.0.0.3-WS-MQCP-MA9B-OpenSSL101g&includeSupersedes=0]. 
+
+
+After applying the fix(es), additional steps are recommended for CVE-2014-0160  * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+
+
+Warning: Your environment may require additional fixes for other products, including non-IBM products. Please replace the SSL certificates and reset the user credentials after applying the necessary fixes to your environment. WORKAROUNDS AND MITIGATIONS
+The C client libraries provided by the MA9B Support Pac can also be rebuilt from source and linked against OpenSSL 1.0.1g using the following instructions [http://pic.dhe.ibm.com/infocenter/wmqv7/v7r5/topic/com.ibm.mm.tc.doc/tc10155_.htm].
+
+REFERENCES
+Complete CVSS Guide [http://www.first.org/cvss/cvss-guide.html] 
+On-line Calculator V2 [http://nvd.nist.gov/cvss.cfm?calculator&adv&version=2] [https://www-304.ibm.com/support/docview.wss?uid=swg21496117&wv=1] OpenSSL Project vulnerability website [http://www.openssl.org/news/vulnerabilities.html] 
+Heartbleed [http://heartbleed.com/] RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/PSIRT] ACKNOWLEDGEMENT
+None 
+
+CHANGE HISTORY
+ 9th April 2014 - Original Copy Published
+11th April 2014 - Links to fix central added, CVSS score updated
+12th April 2014 - Updated description to indicate an attacker can repeated use exploit 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.
+
+RELATED INFORMATION
+#A Japanese translation is available [http://www.ibm.com/support/docview.wss?uid=swg21669903]
+
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ WMQ MQ

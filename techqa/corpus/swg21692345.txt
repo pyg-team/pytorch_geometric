@@ -1,0 +1,61 @@
+Title: IBM Security Bulletin: Multiple vulnerabilities in IBM Java SDK affect WebSphere Service Registry and Repository October 2014 CPU - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ There are multiple vulnerabilities in IBM® SDK Java™ Technology Edition that is shipped with IBM WebSphere Service Registry and Repository. This also includes a fix for the Padding Oracle On Downgraded Legacy Encryption (POODLE) SSLv3 vulnerability (CVE-2014-3566). These issues were disclosed as part of the IBM Java SDK updates in October 2014. 
+
+VULNERABILITY DETAILS
+The following advisories are included in the IBM® SDK Java™ Technology Edition and WebSphere Application Server may be vulnerable to them. 
+CVEID:CVE-2014-6593 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-6593]
+DESCRIPTION:An unspecified vulnerability related to the JSSE component has partial confidentiality impact, partial integrity impact, and no availability impact.
+CVSS Base Score: 4
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/100153 [https://exchange.xforce.ibmcloud.com/vulnerabilities/100153] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:H/Au:N/C:P/I:P/A:N)
+
+CVEID:CVE-2015-0400 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-0400]
+DESCRIPTION:An unspecified vulnerability related to the Libraries component could allow a remote attacker to obtain sensitive information.
+CVSS Base Score: 5
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/100149 [https://exchange.xforce.ibmcloud.com/vulnerabilities/100149] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:L/Au:N/C:P/I:N/A:N) 
+
+CVEID:CVE-2015-0410 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-0410]
+DESCRIPTION:An unspecified vulnerability related to the Security component could allow a remote attacker to cause a denial of service.
+CVSS Base Score: 5
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/100151 [https://exchange.xforce.ibmcloud.com/vulnerabilities/100151] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:L/Au:N/C:N/I:N/A:P) 
+
+AFFECTED PRODUCTS AND VERSIONS
+WebSphere Service Registry and Repository 6.3, 7.0, 7.5, 8.0, 8.5 
+
+WebSphere Service Registry and Repository Studio 8.5
+
+REMEDIATION/FIXES
+To fix the WebSphere Service Registry and Repository server, please apply the fix indicated in the WebSphere Application Server bulletin at http://www.ibm.com/support/docview.wss?uid=swg21687740 [http://www-01.ibm.com/support/docview.wss?uid=swg21687740] 
+
+ 
+
+If you wish to also apply a fix to WebSphere Service Registry and Repository Studio, please either contact IBM support for a fix, or replace Studio's bundled JRE with the updated JRE version 6 SR16-FP2. The fixed JRE can be downloaded from https://www.ibm.com/developerworks/java/jdk/ [https://www.ibm.com/developerworks/java/jdk/].
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+IMPORTANT NOTE
+ IBM strongly suggests that all System z customers be subscribed to the System z Security Portal to receive the latest critical System z security and integrity service. If you are not subscribed, see the instructions on the System z Security web site [http://www.ibm.com/systems/z/solutions/security_subintegrity.html]. Security and integrity APARs and associated fixes will be posted to this portal. IBM suggests reviewing the CVSS scores and applying all security or integrity fixes as soon as possible to minimize any potential risk. 
+
+REFERENCES
+Complete CVSS v2 Guide [http://www.first.org/cvss/v2/guide] 
+On-line Calculator v2 [http://nvd.nist.gov/CVSS-v2-Calculator] 
+
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.

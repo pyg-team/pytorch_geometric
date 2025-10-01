@@ -1,0 +1,57 @@
+Title: IBM JDBC を利用した XA 環境下で ADMIN_CMD('load from ...') を実行すると SQL30090N が返る - United States
+
+Text:
+ 技術情報(FAQS)
+
+質問
+ なぜ JDBC を利用した XA 環境下で ADMIN_CMD('load from ...') を実行すると SQL30090N が返るのですか？ 
+
+原因
+既知の DB2 の制限事項です。
+
+回答
+以下は実行した際の JDBCトレース、jdbctrace.log の出力例です。 
+
+-------------------
+[jcc] BEGIN TRACE_DIAGNOSTICS
+[jcc][Thread:WebContainer : 0][SQLWarning@2cab0b03] java.sql.SQLWarning
+[jcc][Thread:WebContainer : 0][SQLWarning@2cab0b03][Sqlca@f3177864] DB2 SQLCA from server
+[jcc][Thread:WebContainer : 0][SQLWarning@2cab0b03][Sqlca@f3177864] SqlCode = 20397
+[jcc][Thread:WebContainer : 0][SQLWarning@2cab0b03][Sqlca@f3177864] SqlErrd = { 0, 2, 0, 0, 0, 0 }
+[jcc][Thread:WebContainer : 0][SQLWarning@2cab0b03][Sqlca@f3177864] SqlErrmc = SYSPROC.ADMIN_CMD;SQL30090;
+[jcc][Thread:WebContainer : 0][SQLWarning@2cab0b03][Sqlca@f3177864] SqlErrmcTokens = { SYSPROC.ADMIN_CMD, SQL30090, }
+[jcc][Thread:WebContainer : 0][SQLWarning@2cab0b03][Sqlca@f3177864] SqlErrp = DB2LOAD
+[jcc][Thread:WebContainer : 0][SQLWarning@2cab0b03][Sqlca@f3177864] SqlState = 01H52
+[jcc][Thread:WebContainer : 0][SQLWarning@2cab0b03][Sqlca@f3177864] SqlWarn =
+[jcc][Thread:WebContainer : 0][SQLWarning@2cab0b03] SQL state = 01H52
+[jcc][Thread:WebContainer : 0][SQLWarning@2cab0b03] Error code = 20397
+[jcc][Thread:WebContainer : 0][SQLWarning@2cab0b03] Tokens = SYSPROC.ADMIN_CMD;SQL30090;
+[jcc][Thread:WebContainer : 0][SQLWarning@2cab0b03] Stack trace follows
+com.ibm.db2.jcc.am.SqlWarning: DB2 SQL Warning: SQLCODE=20397, SQLSTATE=01H52, 
+SQLERRMC=SYSPROC.ADMIN_CMD;SQL30090;^@, DRIVER=4.19.49
+-------------------
+
+症状: 
+
+ * 実行時に exception は発生せず ADMIN_CMD('load from ...') は問題なく終了しますが、データはロードされません。 
+ * XA 環境ではない場合には ADMIN_CMD('load from ...') は問題なく終了しデータはロードされます。 
+ * jJDBC トレースを取得すると、上記の例のように 20397 (SQL20397W) と SQL30090 (SQL30090N) が書かれます。
+
+
+原因: 
+この症状は LOAD コマンドがその作業の最初の部分に内部的に commit を実施することに起因してます。 
+この LOAD コマンドの内部的な commit は XA 環境下では SQL30090N エラーを返します。 
+この期待される動作によって ADMIN_CMD('load from ...') は XA 環境下では正常に動作しません。 
+
+回避策: 
+残念ながら、回避策はありません、XA 環境下で ADMIN_CMD('load from ...') を行うことはできません。 
+
+注: 
+この挙動は将来断り無く変更されることがあります。このテックノートの内容が有効か否かは上記の手順を実行することにより確認できます。 
+将来のリリースにてデザイン変更を希望される場合には弊社担当営業へリクエストいただくことが可能です。 
+英語になりますが、お客様ご自身で機能拡張のリクエストがこちらのサイトから可能です https://www.ibm.com/developerworks/rfe/ [https://www.ibm.com/developerworks/rfe/] 関連情報
+ ADMIN_CMD('load from ...') using JDBC in XA transaction [http://www.ibm.com/support/docview.wss?uid=swg21988939]
+LOAD コマンド (ADMIN_CMD プロシージャーを使用) [https://www.ibm.com/support/knowledgecenter/ja/SSEPGG_10.5.0/com.ibm.db2.luw.sql.rtn.doc/doc/r0023577.html ]
+SQL30090N 操作がアプリケーション実行環境で無効です。 [https://www.ibm.com/support/knowledgecenter/ja/SSEPGG_10.5.0/com.ibm.db2.luw.messages.sql.doc/doc/msql30090n.html ]
+アプリケーションを変更せずに JDBC トレースを採取する方法 [http://www.ibm.com/support/docview.wss?uid=swg21992718]
+An US English translation is available [http://www.ibm.com/support/docview.wss?uid=swg21988939]

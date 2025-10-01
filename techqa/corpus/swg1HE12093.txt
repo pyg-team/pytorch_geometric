@@ -1,0 +1,153 @@
+Title: IBM HE12093: UNABLE TO ADD CUSTODIANS TO A PUBLISHED PRESERAVATION PLAN WITH ALL EXISTING CUSTODIANS ON HOLD - United States
+
+Text:
+  DIRECT LINKS TO FIXES
+6.0.1-ATLAS-WINDOWS-FP0007 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FGlobal+Retention+Policy+and+Schedule+Management&fixids=6.0.1-ATLAS-WINDOWS-FP0007&source=SAR]
+6.0.1-ATLAS-SOLARIS-FP0007 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FGlobal+Retention+Policy+and+Schedule+Management&fixids=6.0.1-ATLAS-SOLARIS-FP0007&source=SAR]
+6.0.1-ATLAS-LINUX-FP0007 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FGlobal+Retention+Policy+and+Schedule+Management&fixids=6.0.1-ATLAS-LINUX-FP0007&source=SAR]
+6.0.1-ATLAS-FP0007-README.pdf [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FGlobal+Retention+Policy+and+Schedule+Management&fixids=6.0.1-ATLAS-FP0007-README&source=SAR]
+Download IBM Atlas Suite V6.0.1 Fix Pack 7 [http://www-01.ibm.com/support/docview.wss?uid=swg24039392]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  In a  Published Manual Preservation Plan having all
+   the existing custodians on Hold, there is no ability to add new
+   custodians to the plan without suspending the Plan
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Click on Plan Details tab for the Preservation Plan > Click
+   Request
+   Suspend. This suspends the Plan
+   
+   Click on Custodians tab,  the Add Custodians button is
+   enabled. The custodians can be added to the Plan
+   
+   Click on Plan Details tab > Click Publish/Resume Button.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Custodians cannot be added to a published preservation plan
+   when all existing custodians are on hold.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A new configuration parameter is added to control whether new
+   custodians can be added to a preservation plan that is on hold.
+   The component parameter is LEGACY_BEHAVIOR_CONFIGURATION.
+   ALLOW_CUSTODIANS_ADDED_TO_ONHOLD_PRESERVATION_PLAN. If the
+   parameter is set to YES, new custodians can be added to
+   preservation plans that are on hold. If the parameter is set to
+   NO, new custodians cannot be added to preservation plans that
+   are on hold. The default is NO.
+   This fix is available now from FixCentral in fixpack 6.0.1.7.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   HE12093
+   
+   
+ * REPORTED COMPONENT NAME
+   ATLAS EDISCOVER
+   
+   
+ * REPORTED COMPONENT ID
+   5725D7500
+   
+   
+ * REPORTED RELEASE
+   601
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-05-13
+   
+   
+ * CLOSED DATE
+   2015-03-11
+   
+   
+ * LAST MODIFIED DATE
+   2015-03-11
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *     None
+   Plan
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ATLAS EDISCOVER
+   
+   
+ * FIXED COMPONENT ID
+   5725D7500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R601 PSY
+   UP

@@ -1,0 +1,42 @@
+Title: IBM WebSphere Portal v8 ConfigEngine scripts fail with 'java.lang.reflect.UndeclaredThrowableException' - United States
+
+Text:
+UndeclaredThrowableException; BSFException; com.ibm.bsf.BSFException; wsadmin TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ WebSphere Portal v8 ConfigEngine scripts fail with 'java.lang.reflect.UndeclaredThrowableException' during wsadmin execution 
+
+SYMPTOM
+An example of the error is as follows: 
+
+======================
+[wsadmin] WASX7209I: Connected to process "WebSphere_Portal" on node myNode using SOAP connector; The type of process is: ManagedProcess
+[wsadmin] WASX7303I: The following options are passed to the scripting environment and are available as arguments that are stored in the argv variable: "[/opt/IBM/WebSphere/wp_profile/ConfigEngine, __NO__VP__ID__, ZipFileClassPath=${ZipFileClassPath}, ZipFilePath=/opt/IBM/WebSphere/PortalServer/theme/wp.theme.modules/common/config/static/staticResources.zip, TargetURI=dav:fs-type1/, UpdateMode=merge]"
+[wsadmin] WASX7017E: Exception received while running file "/opt/IBM/WebSphere/PortalServer/base/wp.services.impl/config/was/wp_WebdavDeployZipFile.jacl"; exception information: com.ibm.bsf.BSFException: error while eval'ing Jacl expression:
+[wsadmin] java.lang.reflect.UndeclaredThrowableException
+[wsadmin] while executing
+[wsadmin] "$Portal login $PortalAdminId $PortalAdminPwd"
+[wsadmin] [01/31/13 14:10:32.030 EST] WASX7093I
+======================
+
+
+CAUSE
+This can happen in a cluster where the DMGR profile is local to the primary Portal profile and has not been configured properly for a cluster. 
+
+When setting up a Portal cluster, you are required to take a file from the Portal environment called "filesForDmgr.zip" and extract it into the DMGR profile. This is required only when the DMGR profile does not share the same AppServer binaries as the Portal profile (in other words, a remote DMGR profile). 
+
+Extracting this 'filesForDmgr.zip' file places a wp.base.jar file in the AppServer/plugins directory. In the local DMGR scenario, this jar file will conflict with the wp.base.jar file in the Portal files here:
+
+PortalServer/base/wp.base/shared/app/wp.base.jar 
+
+ 
+
+This conflict causes the above problem.
+
+
+RESOLVING THE PROBLEM
+To resolve the problem, perform the following steps: 
+
+
+1. Remove the wp.base.jar from the AppServer/plugins directory.
+2. Re-execute the failed ConfigEngine script.

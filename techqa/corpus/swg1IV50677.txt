@@ -1,0 +1,183 @@
+Title: IBM IV50677: HITTING ENTER ON THE LIST SCREEN WHEN USING IE 10 CAUSES THE ADVANCED SEARCH SCREEN TO APPEAR. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  STEPS TO REPRODUCE:
+   
+   
+   1)
+   
+   Access SCCD 7.5.1 with IE 10.  Log into Maximo - Ensure tivoli13
+   skin
+   is being used.  Go To - Work Orders - Work Order Tracking - hit
+   Enter -
+   you will be returned to the Start Center.
+   
+   2)
+   
+   Access SCCD 7.5.1 with IE 10.  Log into Maximo - Go To - System
+   Configuration - Platform Configuration - System Properties -
+   filter for
+   the following properties:
+   
+   mxe.webclient.systemNavBar - set to 0
+   mxe.webclient.homeButtonHeaders - set to 0
+   mxe.webclient.gotoButtonHeaders - set to 0
+   
+   Sign out - Sign back into Maximo.
+   
+   Go To - Work Orders - Work Order Tracking - hit enter - the
+   Advanced
+   search screen will appear.  Will be unable to 'exit' the dialog.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  na
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * All Maximo Users on IE 10.                                   *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * Pressing Enter key on the list screen when using IE 10       *
+   * causes the advanced search screen to appear.                 *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Upgrade to latest release.                                   *
+   ****************************************************************
+   STEPS TO REPRODUCE:
+   1) Access SCCD 7.5.1 with IE 10.  Log into Maximo - Ensure
+   tivoli13 skin is being used.  Go To - Work Orders - Work Order
+   Tracking - hit Enter - you will be returned to the Start Center.
+   
+   2) Access SCCD 7.5.1 with IE 10.  Log into Maximo - Go To -
+   System Configuration - Platform Configuration - System
+   Properties - filter for the following properties:
+   mxe.webclient.systemNavBar - set to 0
+   mxe.webclient.homeButtonHeaders - set to 0
+   mxe.webclient.gotoButtonHeaders - set to 0
+   Sign out - Sign back into Maximo.
+   
+   Go To - Work Orders - Work Order Tracking - hit enter - the
+   Advanced search screen will appear.  Will be unable to 'exit'
+   the dialog.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The Enter key will no longer return user to start center or open
+   advanced search dialog while using IE 10.
+   
+   The fix for this APAR is contained in the following maintenance
+   package:
+   	 | release\fix pack | Interim Fix for Release 7.5.0.4 TPAE
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV50677
+   
+   
+ * REPORTED COMPONENT NAME
+   ADMIN & SECURIT
+   
+   
+ * REPORTED COMPONENT ID
+   TIVOADMIN
+   
+   
+ * REPORTED RELEASE
+   750
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2013-10-11
+   
+   
+ * CLOSED DATE
+   2013-10-17
+   
+   
+ * LAST MODIFIED DATE
+   2013-10-17
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  MAXIMO
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ADMIN & SECURIT
+   
+   
+ * FIXED COMPONENT ID
+   TIVOADMIN
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R750 PSY
+   UP

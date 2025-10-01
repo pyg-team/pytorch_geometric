@@ -1,0 +1,21 @@
+Title: IBM Rule Team Server/Decision Center does not use the Intellirule editor for rules that are created from templates - United States
+
+Text:
+template; editor; freeze; RTS; BAL; Intellirule; guided TECHNOTE (FAQ)
+
+QUESTION
+ Why does Rule Team Server (RTS)/Decision Center use the guided editor for rules that are created from templates even when the RTS/Decision Center settings are defined to use the Intellirule editor? 
+
+CAUSE
+The Intellirule editor does not allow you to freeze sections of BAL rules, so it would allow a user to modify sections that were frozen in the template.
+
+ANSWER
+The Intellirule editor is therefore not made available in RTS/Decision Center for rules created from templates, to guaranty that frozen sections will not be changed by business users.
+
+RELATED INFORMATION
+ ODM V8.0.1 doc on working with templates [http://pic.dhe.ibm.com/infocenter/dmanager/v8r0m1/topic/com.ibm.wodm.dserver.rules.designer.dev/authoring_topics/tpc_templates_intro.html]
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Operational Decision Manager Platform Independent 8.5, 8.0, 7.5

@@ -1,0 +1,36 @@
+Title: IBM errorHandler messages displayed in the user interface - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When using the IBM® Work Optimization for Water Utilities user interface, errorHandler messages are displayed.
+
+
+
+SYMPTOM
+One of the following messages is displayed: 
+
+errorHandler.notAuthorized=No authorization provide to use a service. Please contact system administrator
+.
+errorHandler.internalError=An internal error has occurred in a called service. Please contact system administrator. 
+
+errorHandler.unknownError=An unexpected error has occurred in a service. Please contact system administrator.
+
+
+CAUSE
+The database used by IBM Work Optimization for Water Utilities is unavailable.
+
+
+DIAGNOSING THE PROBLEM
+On the IBM Intelligent Operation Center portal server, review the SystemErr.log and SystemOut.log in the /opt/IBM/WebSphere/wp_profile/logs/WebSphere_Portal directory for a message similar to the following: 
+
+
+[11/6/11 1:40:43:059 EDT] 0000003a SystemErr R com.ibm.iss.water.exceptions.WaterServiceException: com.ibm.websphere.ce.cm.StaleConnectionException: [jcc][t4][2043][11550][4.7.85] Exception java.net.ConnectException: Error opening socket to server localhost/127.0.0.1 on port 50,000 with message: Connection refused: connect. ERRORCODE=-4499, SQLSTATE=08001DSRA0010E: SQL State =
+08001, Error Code = -4,499
+
+
+RESOLVING THE PROBLEM
+If this message is found in the log, IBM Work Optimization for Water Utilities cannot communicate with the database. The IBM Intelligent Operations database server, or the database itself, might be down. 
+
+Restore connectivity to the database server, restart the database or restart the database server as required.

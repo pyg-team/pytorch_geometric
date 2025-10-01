@@ -1,0 +1,39 @@
+Title: IBM Portal Server configuration fails. - United States
+
+Text:
+teps config SECJ0281E TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ On Windows, when configuring the portal server (TEPS), the following error occurs:
+Ldap connection cannot be configured
+INST_COMP_PLUGIN_RETURN_CODE:000 
+
+SYMPTOM
+Unable to login to the portal server, error in the systemoutlog 
+
+[3/17/16 12:28:28:855 EDT] 00000000 UserRegistryC E 
+SECJ0281E: Error creating user registry object. 
+The exception is 
+com.ibm.websphere.wim.exception.InitializationException: 
+CWWIM4507E Virtual member manager failed to read the 
+'E:/IBM/ITM/CNPS\ITMFileRegistry.xml' file: 'Premature end of file.'. 
+
+
+CAUSE
+zero byte ITMFileRegistry.xml file
+
+
+RESOLVING THE PROBLEM
+1) Stop the TEPS if it is already started 
+
+2) Open a Command Prompt window and change directories to the 
+<ITMHOME>\CNPS directory 
+3) Run the BuildPresentation.bat script 
+4) Once the script finishes, start the TEPS 
+
+ 
+
+HISTORICAL NUMBER
+ 48306
+057
+649

@@ -1,0 +1,55 @@
+Title: IBM What Is the Purpose of the Notes Cache.NDK file? - United States
+
+Text:
+cache ndk; cache dsk; store; data; info; information; what is stored; function; performance; nd6; nd 6; notes/domino 6.x TECHNOTE (FAQ)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ English 
+
+QUESTION
+What is the Notes Cache.ndk file and what does it do?
+
+ANSWER
+This special file contains design elements (forms, subforms, and LotusScript libraries) of databases located on a Notes server, in addition to cross-replica journaling information. Storing these items in this file helps improve client performance when accessing databases located on a Notes server and automates the process of read-mark synchronization.
+Important points about the Cache.ndk file include the following:
+
+1. The Cache.ndk is created automatically whenever Notes starts, if the file does not already exist. Therefore, if this file is deleted, it will be recreated the next time the Notes Client is started.
+
+2. The Cache.ndk is actually a Notes database with no built-in forms or views. Therefore, this file can be compacted to recover unused space. The Compact option for the Cache.ndk is found on the Information tab of the Workspace Properties dialog box (right-click any part of the Notes Workspace and select Workspace Properties from the pop-up menu). Note that compacting the Cache.ndk in this manner also compacts the Desktop8.ndk. Also, the value in the Size field that appears on the Information tab reflects the combined size of the Cache.ndk and the Desktop8.ndk.
+
+3. The Cache.ndk, by default, is located in the Notes data directory. There are, however, two methods for relocating the file: (1) the database redirection file and (2) a NOTES.INI redirection parameter. 
+
+4. To achieve reasonable balance between cache performance and disk-space consumption, the default maximum size of the Cache.ndk is set at 30MB. 
+
+You can limit the size of the cache.ndk from the workspace. Right-click any of the Workspace tabs or any blank part of the Workspace, and select Workspace Properties from the menu. The Workspace Properties dialog box appears. On the Information tab, there is an option "Use no more than 30 MB locally for server based design elements such as forms and sub-forms".
+
+[/support/docview.wss?uid=swg21155947&amp;aid=1]
+
+You can increase or decrease the maximum size of the Cache.ndk with this option; however, this setting is stored in the Cache.ndk itself. If this file is deleted, the file will be recreated the next time Notes starts, with the default size limit of 30 MB.
+
+5. Contains all design elements (the design note itself, forms, subforms, navigators, scripts, etc.) for a database which are cached locally in the Cache.ndk. For multiple replicas, only 1 copy of the design element is cached if they are the same. This speeds up access to commonly used design elements. When a database is opened, it is determined whether the design elements need to be re-cached from the database, based on an internal time stamp.
+
+The Cache.ndk also contains the unread journal which is used to coordinate unread information across multiple replicas when accessed from the same client
+
+How to Specify a Different Location for the Cache File:
+The Cache.ndk can be placed in a directory other than the Data directory, if desired. You can add the following line to the NOTES.INI file: 
+
+ * 
+ * 
+
+
+If the file does not already exist in the newly specified directory, the file will be created. If there is an existing Cache.ndk in the Data directory, the Cache.ndk will not be propagated. Note, however, that when you enable the CACHE= parameter to redirect the Cache file to a directory other than the Notes Data directory, a "File Does not Exist" error can occur. Refer to the document titled "File Does not Exist' Error After Using CACHE= to Redirect Cache.ndk File" (#1090872) for additional information. 
+
+In releases prior to those cited above, the Cache.ndk file can reside only in the Notes data directory. The data directory is identified in the NOTES.INI file with the following parameter: 
+ * 
+
+
+where the path is the DOS path to the data directory. 
+RELATED INFORMATION
+ A simplified Chinese translation is available [http://www.ibm.com/support/docview.wss?uid=swg21602463]
+
+
+
+
+HISTORICAL NUMBER
+ 160491

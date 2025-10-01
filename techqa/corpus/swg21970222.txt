@@ -1,0 +1,42 @@
+Title: IBM ADF field length changes are not taking effect after compiling the DT map. - United States
+
+Text:
+referesh c.s. isn't refreshed is not refreshing old new perform transform TECHNOTE (FAQ)
+
+QUESTION
+ I need to change the length of some fields in data format. I have changed the length and recompiled the Data Transformation (DT) map but the new length is not taking effect at runtime. I am running WDI via the Advanced MQ adapter. 
+
+I successfully changed one field in test so I also tried to import this data format in production rather then just changing the length in production but still to no avail. 
+
+Why would this happen? 
+
+ANSWER
+ The DT map translator will use the control string from memory/cache while the same active translator continues to be used to service the same queue. WDI Data Transformation processing does cache various artifacts until termination, including control strings. This is done by design for performance reasons. Buffering Control Strings is a significant performance enhancement to DT that was introduced with many other innovations in DT that were not present in the older Send/Receive processor. 
+
+With the WDI Advanced MQ adapter, the termination of the translator is dependent upon an idle time interval setting. As per this technote: Explanation of properties in wdi.properties and Queue Trigger [http://www.ibm.com/support/docview.wss?uid=swg21498562]
+Attributes for WDI Advanced Adapter [http://www.ibm.com/support/docview.wss?uid=swg21498562]
+
+waitinterval:
+This specifies the default number of milliseconds each translator
+should wait for input before they become idle. When data arrives on
+an input queue one or more translators will be assigned to the queue.
+They will continue to consume data arriving on that queue until it is
+empty. The waitinterval property determines how long they will
+monitor that queue before they become idle and can be reassigned to
+another queue. If this value is less than or equal to 60, it is
+treated as a number of seconds rather than milliseconds. This is
+overridden by the Timeout() value specified in the trigger message.
+The default value is 5000 milliseconds.
+
+The "waitinterval" parameter would be set in your wdi.properties file. As for the "Timeout()" override, this would show under WMQ queue properties for your input queue. You can display your WMQ queue definition via MQ Explorer or via command prompt "runmqsc" command, then:
+DISPLAY QLOCAL(<your_queue_name>)
+
+The TRIGDATA (Trigger data) is where "Timeout()" would be.
+
+While lowering the interval may help to reduce the frequency of the issue by perhaps idling the translator more frequently, it will not guarantee against a queue with a constant message load. Furthermore, changes to this interval may have an adverse impact on performance.
+
+Thus, our recommendation is to deploy WDI changed objects into the production environment during a scheduled maintenance window while the adapter is down, i.e. 
+wdishutdown -> deploy changed objects via export/import -> wdiserver
+
+
+Note: the Send/Receive map translator always goes to the database to read the Control String, hence this situation is only applicable to the DT translator.

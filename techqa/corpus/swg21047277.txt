@@ -1,0 +1,16 @@
+Title: IBM Exporting data with DB2 Web Query Tool is providing unexpected results - United States
+
+Text:
+5655E7101; WQT TECHNOTE (FAQ)
+
+QUESTION
+ The function to export data with the DB2® Web Query Tool might not work when you use Internet Explorer V5.5 when it runs Service Pack 1. 
+
+ANSWER
+When you use Internet Explorer V5.5 with Service Pack 1 installed, the function to export data with the DB2 Web Query Tool might not give you the results you expect. 
+
+For example, when you export a result set that is called DEPARTMENT and you choose "Display", the tool functions without incident. However, when you download the results of the query in a specific format (html, text, and so on), you will get a download file called FrameSet.htm, regardless of what you name the file. Normally, if you export the file as XML, the file is called export.xml not FrameSet.htm. After the file is downloaded and opened, the content of the file is a view of the logon page rather than the results in XML format. 
+
+To avoid receiving unexpected results, install Service Pack 2 when you run Internet Explorer V5.5. After you install Service Pack 2, the export data function will work as designed. 
+
+Note: Currently, the data export function provides unexpected results with Internet Explorer V5.5 running Service Pack 1. Other versions of the product function as expected.

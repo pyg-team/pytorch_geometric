@@ -1,0 +1,25 @@
+Title: IBM Map directories used by the WTX Map primitive in WebSphere Transformation Extender for WebSphere ESB - United States
+
+Text:
+WTX; TX TECHNOTE (FAQ)
+
+QUESTION
+ What directories does the WTX Map Primitive use in IBM® WebSphere® Transformation Extender for WebSphere Enterprise Service Bus? 
+
+ANSWER
+For maps that are 
+
+ * Specified by Use map from project setting 
+ * Set in the service message object (SMO) mapServerLocation property 
+ * Set in the SMO and overridden at runtime 
+
+
+The home directory is: 
+
+< WESBserver >/temp/WTX/< flowName >/< mediationName > 
+
+where < WESBserver> is the server name under the profiles directory in the WebSphere Enterprise Service Bus or WebSphere Process Server installation location. 
+
+The directory of the WebSphere Transformation Extender map's default audit log, trace log, and workspace is 
+
+< WESBserver >/logs/WTX/< flowName >/< mediationName >

@@ -1,0 +1,108 @@
+Title: IBM System Properties to Monitor and Troubleshoot Performance - United States
+
+Text:
+MustGatherDocument; TPAEPERFORMANCE; TPAELOGGING; debug; performance; memory; logging; troubleshooting; mbo; properties; configuration; log; critical; must gather; mustgather; information to collect TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ How mxe.db.LogSQLTimeLimit, mxe.db.FetchResultLogLimit, MBOCount, mxe.db.logSQLPlan, and mxe.db.sqlTableScanExclude properties are set to troubleshoot or monitor performance and memory usage in Maximo and TPAE applications 
+
+CAUSE
+Clarifying documentation
+
+RESOLVING THE PROBLEM
+There are five helpful properties that can be used to troubleshoot and monitor Maximo Asset Management performance. The implementation of these properties has changed over different versions of Maximo. All the implementations are covered here. 
+
+IBM has internal tools for analyzing logs. The results of these analysis are substantially enhanced when the properties described here are enabled. To have a log analyzed, submit the SystemOut, maximo, or any TPAE appender log to a PMR, and request an analysis using the tools. The resulting reports can be provided upon request.
+
+Follow the procedures below to enabled logging for Maximo 7 and related applications, such as Control Desk..
+
+1. Open the Logging application.
+
+[/support/docview.wss?uid=swg21291250&aid=1] [/support/docview.wss?uid=swg21291250&aid=1]
+
+2. Set the Root Logger in Logging to INFO and change the Appender to Rolling.
+
+[/support/docview.wss?uid=swg21291250&amp;aid=2]
+
+[/support/docview.wss?uid=swg21291250&amp;aid=3]
+
+[/support/docview.wss?uid=swg21291250&aid=4] [/support/docview.wss?uid=swg21291250&aid=4]
+
+3. Set the Rolling Appender to a file size of 20 (megabytes) and Backup Index to 24.
+
+[/support/docview.wss?uid=swg21291250&amp;aid=5]
+
+[/support/docview.wss?uid=swg21291250&aid=6] [/support/docview.wss?uid=swg21291250&aid=6]
+
+4. Apply the settings
+
+[/support/docview.wss?uid=swg21291250&amp;aid=7]
+
+5. Set the following properties in the System Properties Application
+
+[/support/docview.wss?uid=swg21291250&aid=8] [/support/docview.wss?uid=swg21291250&aid=8]
+
+a) mxe.db.logSQLTimeLimit=1000
+
+[/support/docview.wss?uid=swg21291250&amp;aid=9]
+
+b) mxe.mbocount=1
+
+[/support/docview.wss?uid=swg21291250&amp;aid=10]
+
+c) mxe.db.fetchResultLogLimit=200
+
+Note: The default value for this is 1000 but in cases where memory is being exhausted by MBO in memory, 1000 may not be sufficient to capture the process responsible for loading the objects. See the description below.
+
+[/support/docview.wss?uid=swg21291250&amp;aid=11]
+
+6. After setting each of the above three properties, select the property, and then choose Select Action or Common Actions, then Live Refresh
+
+[/support/docview.wss?uid=swg21291250&aid=12] [/support/docview.wss?uid=swg21291250&aid=12]
+
+
+[/support/docview.wss?uid=swg21291250&amp;aid=13]
+
+
+
+
+
+
+Performance Note: Using the FetchResultLogLimit, LogSQLTimeLimit, and MBOCount properties have minimal to no impact on performance. IBM recommends that these three settings remain turned on at all times to assist with debugging when a problem arises that needs troubleshooting events captured by logging. However, the mxe.db.logSQLPlan and mxe.db.sqlTableScanExclude properties (Oracle database only) can impact performance and should only be used on a temporary basis or written to a separate logging server. 
+
+mxe.db.fetchResultLogLimit - This property is used to capture the number of objects an MBO loads while it is processing. It is common for an MBO to load several thousand objects temporarily and then release them; however, loading 60,000 or more objects may indicate a problem. The number associated with this property is the number of objects that should be loaded before a log entry is made. If this is set to 1000, log entries will be made as 1000, 2000, 3000, etc objects are loaded into any single MBO set. For troubleshooting performance and memory problems, this value should be set to 200. When performance and memory are not an issue, this value should be set to 1000. This property does not impact performance but may impact log readability. 
+
+Note: IBM has internal tools for analyzing large logs to extract the results of these debug properties. The amount of data in the log should not be a concern when troubleshooting performance and stability problems; however, there is a limit. Setting root loggers to DEBUG level may have a performance impact. We recommended against routinely setting loggers to DEBUG unless specifically requested by IBM support. Setting root loggers to DEBUG should not be confused with setting these specific "debug" properties. These three properties should be left on at all times in all environments. 
+
+mxe.db.logSQLTimeLimit - This property is used to capture SQL statements that take longer than the specified amount of time to return. Databases should be able to return most SQL statements in under one second. When there is a perceived performance problem, setting this property can capture long running SQL and help determine if database tuning is required. The number associated with this property is milliseconds. 1000 is equal to 1 second. This property does not impact performance but the smaller the value the more SQL Statements will appear in the logs. This can affect log readability. 
+
+mxe.mbocount - This property is used to capture snapshot intervals of memory usage. The mbocount is useful in identifying trends of memory usage and release. Typically a log would show objects growing and shrinking as usage differed on the server. If objects never get released or continually grow over time, this is an indicator of a memory leak. Many things including bad data, custom code, incorrect environment configuration, and bugs can cause memory leaks. The most important thing about fixing a memory leak is identifying it. This property does not impact performance. 
+
+mxe.db.logSQLPlan - This property is only available in when Oracle is used as the Maximo database. This property logs the execution plan for all SQL statements which contains a full table scan. The mxe.db.logSQLPlan property is dependant on the mxe.db.sqlTableScanExclude property. This property can affect performance and should only be used on a temporary basis or on a separate logging server. 
+
+mxe.db.sqlTableScanExclude - This property is only available when Oracle is used as the Maximo database. This property provides exclude criteria for the mxe.db.logSQLPlan property. Tables which do not have indexes and are intended to use a full table scans may be excluded from logging using this property. Table names are separated by commas and must be entered in upper case. This property can affect performance and should only be used on a temporary basis or on a separate logging server. 
+
+For additional details on the first three System properties, see the links in the Related information section below. 
+
+
+
+
+
+
+In Maximo 5.2, these properties are modified in MXServer.properties. In Maximo 6.2, these properties are modified in maximo.properties. 
+
+In Maximo 6, logging with these properties will only occur if the logging.properties is set properly for application logging. This means both the maximo.properties and the logging.properties must be checked for proper settings. At a minimum, the following properties must be set in the logging.properties file: 
+
+Logging.properties 
+log4j.rootLogger=ERROR, A1, A2 
+log4j.logger.maximo=INFO RELATED INFORMATION
+ Understanding the fetchResultLogLimit Property [http://www.ibm.com/support/docview.wss?uid=swg21426084]
+Understanding the logSQLTimeLimit Property [http://www.ibm.com/support/docview.wss?uid=swg21426051]
+Understanding the MBOCount Debug Property [http://www.ibm.com/support/docview.wss?uid=swg21425963]
+
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Systems and Asset Management Tivoli Asset Management for IT All Systems and Asset Management Maximo Asset Management Essentials All Systems and Asset Management Tivoli Asset Management Systems and Asset Management Tivoli Change and Configuration Management Database Systems and Asset Management Tivoli Service Request Manager Systems and Asset Management Tivoli Service Automation Manager Systems and Asset Management Control Desk

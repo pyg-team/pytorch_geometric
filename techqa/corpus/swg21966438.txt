@@ -1,0 +1,27 @@
+Title: IBM How to disable the long description Rich Text editor in Work Log - United States
+
+Text:
+TPAECUSTOMIZATION; rich text; long description; work log; TPAEUI TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Disabling the long description Rich Text Editor in Workorder Worklog 
+
+RESOLVING THE PROBLEM
+You need to modify the Library.xml file as follows: 
+
+Go to -> System Configuration -> Platform Configuration -> Application Designer 
+In Application Designer, select the Export System XML action in dropdown menu,
+export the Library.XML file and save it locally. 
+Open the Library.xml and search for 'sec15' and replace the entire line 
+with the following: 
+
+Here is the section that is currently in the xml 
+
+<richtexteditor dataattribute="description_longdescription" height="100" id="worklog_tb_details_sec15" width="660"/> 
+
+Replace it with this 
+
+<richtexteditor dataattribute="description_longdescription" height="100" id="worklog_tb_details_sec15" width="640" plugins="[]" extra_plugins="[]"/> 
+
+Save the file and import the Library.xml back to the system 
+Stop and restart MXServer for changes of Library.xml to take effect.

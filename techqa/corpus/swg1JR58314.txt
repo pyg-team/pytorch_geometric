@@ -1,0 +1,195 @@
+Title: IBM JR58314: A CUMULATIVE FIX IS AVAILABLE FOR IBM INTEGRATION DESIGNER V8.5.7.0 - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+ DIRECT LINKS TO FIXES
+8.5.7.0-WS-IID-IFJR58797 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Integration+Designer&fixids=8.5.7.0-WS-IID-IFJR58797&source=SAR]
+8.5.7.0-WS-IID-IFJR58314 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Integration+Designer&fixids=8.5.7.0-WS-IID-IFJR58314&source=SAR]
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  This cumulative fix includes interim fixes. It also enables you
+   to use both the IBM BPM V8.6.0 and V8.5.7 servers.
+   
+   The cumulative fix included supercedes the following APAR fixes:
+   
+   JR55508 [http://www-01.ibm.com/support/docview.wss?uid=swg1JR55508]: YOU CANNOT IMPORT A CSV FILE FOR A RELATIONSHIP
+   INSTANCE
+   
+   JR55689 [http://www-01.ibm.com/support/docview.wss?uid=swg1JR55689]: YOU RECEIVE IMPORT ERRORS DURING THE BUILD PROCESS
+   
+   JR55833 [http://www-01.ibm.com/support/docview.wss?uid=swg1JR55833]: YOU RECEIVE AN EXCEPTION WHEN A NAMESPACE'S PREFIX IS
+   USED IN AN ASSIGN TRANSFORMATION WITH A CAST OF THE ITEM
+   
+   JR55856 [http://www-01.ibm.com/support/docview.wss?uid=swg1JR55856]: SECURITY APAR CVE-2016-3427 - VULNERABILITY IN IBM SDK
+   FOR JAVA SHIPPED
+   
+   JR56232 [http://www-01.ibm.com/support/docview.wss?uid=swg1JR56232]: SECURITY CONSTRAINT NAME FROM DEPLOYMENT EDITOR IS NOT
+   INCLUDED IN THE WEB.XML FILE
+   
+   JR56387 [http://www-01.ibm.com/support/docview.wss?uid=swg1JR56387]: IBM INTEGRATION DESIGNER UPDATE OF IBM SDK JAVA
+   TECHNOLOGY EDITION
+   
+   JR56494 [http://www-01.ibm.com/support/docview.wss?uid=swg1JR56494]: IBM INTEGRATION DESIGNER AND IBM PROCESS CENTER CANNOT
+   CONNECT
+   
+   JR57372 [http://www-01.ibm.com/support/docview.wss?uid=swg1JR57372]: THE COMPONENT TEST EXPLORER DOESN'T SHOW DEPLOYED TEST
+   PROJECTS
+   
+   JR57502 [http://www-01.ibm.com/support/docview.wss?uid=swg1JR57502]: SECURITY APAR - MULTIPLE VULNERABILITIES IN IBM JAVA
+   SDK AFFECT IBM INTEGRATION DESIGNER
+   
+   JR57890 [http://www-01.ibm.com/support/docview.wss?uid=swg1JR57890]: CTRL+ KEYBOARD ACTIONS DON'T WORK FOR VISUAL SNIPPETS
+   IN IBM INTEGRATION DESIGNER V8.5.7
+   
+   JR58017 [http://www-01.ibm.com/support/docview.wss?uid=swg1JR58017]: MEDIATION SUB FLOW EDITOR ERROR AFTER UPGRADE TO IID
+   8.5.7
+   
+   
+   This cumulative fix also contains
+   
+   JR58314: COMPATABILITY UPDATE TO ENABLE IID 8.5.7.0 TO WORK WITH
+   BOTH BPM 8.6.0 AND BPM 8.5.7 SERVERS
+   
+   which depends on JR58322 [http://www-01.ibm.com/support/docview.wss?uid=swg1JR58322]: UPDATE TO THE 8.5.7.0 RUNTIME STUB TO
+   MAKE JAVA 7 THE DEFAULT JRE.
+   
+   PRODUCTS AFFECTED
+   Integration Designer
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  No additional information is available.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A cumulative fix will be available for Integration Designer
+   V8.5.7.
+   
+   This cumulative fix
+   
+   -sets Integration Designer projects to Java 1.7 if they aren't
+   already set to that. Specifically, it will set the server
+   runtime environment, project facets, and Java compiler level for
+   each project in the workspace to Java 1.7.
+   
+   -introduces IBM Process Center V8.6 and IBM Process Server V8.6
+   server types. These server types are provided as a convenience.
+   Because the WebSphere Application Server level hasn't changed,
+   the V8.5.7 and V8.6 versions of the server types are
+   interchangable, which means you can use either server type to
+   connect to an 8.5.7 or 8.6 Process Center or Process Server. The
+   only significant difference between the server types is the name
+   used to identify them. Note that there is no new version of the
+   IBM Process Server on Process Center server. As with the other
+   server types, the existing server version will work with a V8.6
+   online Process Server.
+   
+   -does not update an existing IBM Process Server instance in the
+   Servers view. If the unit test environment has been upgraded to
+   V8.6, you may rename the existing Process Server instance to
+   reflect the different server level, or you can create a new IBM
+   Process Server V8.6 in the Servers view.
+   
+   -updates an existing IBM Process Center by changing the version
+   name to 8.6.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR58314
+   
+   
+ * REPORTED COMPONENT NAME
+   INTEGRATION DES
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9702
+   
+   
+ * REPORTED RELEASE
+   857
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-09-08
+   
+   
+ * CLOSED DATE
+   2017-09-21
+   
+   
+ * LAST MODIFIED DATE
+   2017-10-27
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    JR58322 [http://www-01.ibm.com/support/docview.wss?uid=swg1JR58322]
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   INTEGRATION DES
+   
+   
+ * FIXED COMPONENT ID
+   5725C9702
+   
+   
+
+APPLICABLE COMPONENT LEVELS

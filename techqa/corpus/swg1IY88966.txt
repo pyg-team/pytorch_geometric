@@ -1,0 +1,163 @@
+Title: IBM IY88966: MTEMS CONSOLE DOES NOT ACCURATELY READ ENVIRONMENTAL FILES, IN THIS EXAMPLE ERROR IS WITH KSYENV - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Environment:  6.1.0-TIV-ITM-FP0003
+   
+   Recreation:
+   
+   1.  Configure the settings in the KSYENV file to this:
+   
+   KSYENV settings:
+   KSY_USE_DEFAULTS=Y
+   KSY_DEFAULT_COLLECTION_INTERVAL=15
+   KSY_DEFAULT_COLLECTION_LOCATION=A
+   KSY_DEFAULT_WAREHOUSE_INTERVAL=1
+   KSY_DEFAULT_AGGREGATION=week,hour
+   KSY_DEFAULT_PRUNING=week.3.year,hour.14.day,raw.2.day
+   
+   2.  Save the setting and close the S&P agent configuration from
+   the MTEMS GUI.
+   
+   3.  select the S&P agent to reconfigure again.
+   
+   When reconfiguring the Warehouse Summarization and Pruning Agent
+   through the "Manage Tivoli Enterprise Monitoring Services", and
+   arrived in the "Configure Summarization and Pruning Agent"
+   window, in the Defaults tab, in the Summarization settings
+   section, the Daily checkbox is checked.
+   
+   This shouldn't be the case, seen the settings in KSYENV. When
+   clicking on the Reload button, the Daily checkbox becomes
+   unchecked, while Weekly and Hourly remain checked, thus the
+   correct settings will be shown.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  no workaround available.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  When reconfiguring the Warehouse Summarization and Pruning Agent
+   through the "Manage Tivoli Enterprise Monitoring Services", the
+   Summarization setting checkboxes do not reflect what's in KSYENV
+   (sy.ini) in the Defaults tab of the "Configure Summarization and
+   Pruning Agent dialog.  Instead, the default hiarachy takes
+   precedence.  In other words, if Weekly had been checked and
+   Daily unchecked per what was originally stored in KSYENV, upon
+   reconfiguring, the Daily checkbox would also be checked because
+   Weekly had been checked.  This is correct behavoir when manually
+   checking a checkbox, but is incorrect behavoir when
+   reconfiguring from what was saved in the KSYENV file.
+   
+   Clicking the Reload button forces KSYENV to be
+   reloaded and correctly reflect the saved configuration.
+   
+   Since the defaults configuration is only used when S&P is
+   started for the very first time, reconfigure has no effect on
+   exisiting agents and would only effect any new unique agents
+   that are installed after reconfiguration.
+   
+   This APAR is being closed FIN with concurrence from the
+   submitting customer.  This means that a solution to this APAR is
+   expected to be delivered from IBM in a release (if any) to be
+   available within the next 18 months.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IY88966
+   
+   
+ * REPORTED COMPONENT NAME
+   OMEG DIST INSTA
+   
+   
+ * REPORTED COMPONENT ID
+   5608A41CI
+   
+   
+ * REPORTED RELEASE
+   610
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2006-08-29
+   
+   
+ * CLOSED DATE
+   2007-04-23
+   
+   
+ * LAST MODIFIED DATE
+   2007-04-23
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TEMA
+   
+   
+ * FIXED COMPONENT ID
+   5724C04TE
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R610 PSN
+   UP

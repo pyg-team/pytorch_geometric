@@ -1,0 +1,134 @@
+Title: IBM IT09309: DATAPOWER APPLIANCE SHOWS HIGH LATENCY IN DNS RESOLUTION - United States
+
+Text:
+  A FIX IS AVAILABLE
+Fix packs for DataPower Gateway version 7.2 [http://www-01.ibm.com/support/docview.wss?uid=swg24039783]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The DataPower appliance shows higher than expected latency
+   connecting to IPv4 addresses resolved via DNS that might
+   be caused by slow IPv6 DNS server responses.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Affected are Datapower configurations using DNS resolution in
+   environments where responses to IPv6 address (AAAA) queries have
+   higher latency than responses to IPv4 address (A) queries. This
+   is a common situation in many corporate networks that do not use
+   IPv6.
+   
+   Datapower queries both A and AAAA DNS records whenever it is
+   resolving a DNS name, waiting for both responses to come
+   back (or time out). Thus the latency of a DNS query from
+   Datapower is determined by the slower of both responses,
+   regardless of the actual need for IPv6 address.
+   
+   The fix introduces a new control in DNS settings: "Force IP
+   Preference", that can be used to restrict the DNS query to the
+   preferred address family, avoiding the latency of querying the
+   alternate address. By default, the feature is off to preserve
+   compatibility with earlier releases.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix is available in 7.2.0.0.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT09309
+   
+   
+ * REPORTED COMPONENT NAME
+   DATAPOWER
+   
+   
+ * REPORTED COMPONENT ID
+   DP1234567
+   
+   
+ * REPORTED RELEASE
+   600
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-06-08
+   
+   
+ * CLOSED DATE
+   2015-06-19
+   
+   
+ * LAST MODIFIED DATE
+   2015-06-19
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   DATAPOWER
+   
+   
+ * FIXED COMPONENT ID
+   DP1234567
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R720 PSN
+   UP

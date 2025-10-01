@@ -1,0 +1,23 @@
+Title: IBM Mapping system variables (date and time) to an external DB2 table on a z/OS (mainframe) host throws a SQL error after upgrading from Sterling B2B Integrator 5.2.4 to 5.2.6 - United States
+
+Text:
+AIX DB2 z/OS external table date time mapping TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Mapping system variables (date and time) to an external DB2 table on a z/OS mainframe host throws a SQL error: DB2 SQL Error: SQLCODE=-180, SQLSTATE=22007, SQLERRMC=*N, DRIVER=4.11.77. These same mappings worked without issue in Sterling B2B Integrator 5.2.4 
+
+SYMPTOM
+ DB2 SQL Error: SQLCODE=-180, SQLSTATE=22007, SQLERRMC=*N, DRIVER=4.11.77
+
+
+CAUSE
+Unknown - the DB2 driver was the correct one and other than the upgrade, nothing else had changed.
+
+ENVIRONMENT
+AIX host mapping to an external DB2 table on a mainframe
+
+DIAGNOSING THE PROBLEM
+ DB2 SQL Error: SQLCODE=-180, SQLSTATE=22007, SQLERRMC=*N, DRIVER=4.11.77
+
+RESOLVING THE PROBLEM
+The simplest solution is to remove the system variable mappings from the Sterling B2B Integrator map(s). Then, alter the DB2 table so that the date field defaults to the current date and the time field defaults to the current time. This provides the same end result.

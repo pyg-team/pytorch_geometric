@@ -1,0 +1,30 @@
+Title: IBM Known issues in WebSphere Cast Iron Cloud integration fix pack 7.0.0.2 - United States
+
+Text:
+ RELEASE NOTES
+
+ABSTRACT
+ Links to technotes detailing known issues in WebSphere Cast Iron Cloud integration fix pack 7.0.0.2 
+
+CONTENT
+
+
+TAB NAVIGATION
+ * Overview [http://www.ibm.com/support/docview.wss?uid=swg21686987]- selected tab,
+ * Included Fixes [http://www.ibm.com/support/docview.wss?uid=swg27043839]
+ * Known Issues [http://www.ibm.com/support/docview.wss?uid=swg27043840]
+ * Download Links [http://www.ibm.com/support/docview.wss?uid=swg24038515]
+
+ 
+
+Following is a list of known issues in version 7.0.0.2: 
+
+ * Data types such as BLOB, CLOB, RAW, STRUCT, and ARRAY are not supported in Oracle E-Business Suite Connector in IBM WebSphere Cast Iron version 7.0 [http://www-01.ibm.com/support/docview.wss?uid=swg21654751] 
+ * Upgrade from IBM WebSphere Cast Iron v6.0.x to v7.x fails. [http://www-01.ibm.com/support/docview.wss?uid=swg21656303] 
+ * Exception thrown when using 32-bit sapjco3.dll with 64-bit IBM WebSphere Cast Iron Studio and vice versa [http://www-01.ibm.com/support/docview.wss?uid=swg21654465] 
+ * Project tab appears blank when you create a new project in WebSphere Cast Iron Studio [http://www-01.ibm.com/support/docview.wss?uid=swg21654464] 
+ * How to figure out whether the installed IBM WebSphere Cast Iron Studio v7.0 is 32-bit or 64-bit [http://www-01.ibm.com/support/docview.wss?uid=swg21654461] 
+ * IBM WebSphere Cast Iron Database connector with Google Cloud SQL - FAQs [http://www-01.ibm.com/support/docview.wss?uid=swg21654092] 
+ * In IBM WebSphere Cast Iron, digest authentication does not work with HTTP endpoint Tomcat server [http://www-01.ibm.com/support/docview.wss?uid=swg21654333] 
+ * IndexOutOfBoundsException in HTTP Send Response activity in IBM WebSphere Cast Iron [http://www-01.ibm.com/support/docview.wss?uid=swg21654332] 
+ * Issues with TLS/Web browser versions, when working with Web Management Console [http://www-01.ibm.com/support/docview.wss?uid=swg21654227]Back to top

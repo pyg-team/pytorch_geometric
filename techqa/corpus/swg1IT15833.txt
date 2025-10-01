@@ -1,0 +1,250 @@
+Title: IBM IT15833: Java client application using security exit gets MQRC=2035 when connecting to MQ V7 queue manager - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  After migration of an MQ client from version 7 to version 8, the
+   Java
+   client application can no longer connect to a remote version 7
+   queue
+   manager.
+   
+   The Java application receives a MQRC_NOT_AUTHORIZED (MQRC 2035)
+   error.
+   
+   It has been noted the error occurs only when application uses a
+   security exit.
+   
+   Additional symptom:
+   If the application is connecting to an HP Non Stop Server queue
+   manager, the following FDC may be produced:
+   
+   Product Long Name   :- WebSphere MQ for HP NonStop Server
+   Probe Id            :- RM046000
+   Component           :- rriMQIServer
+   Program Name        :- /MDL/mqver3/opt/mqm/bin/amqrmppa_r
+   Major Errorcode     :- rrcE_PROTOCOL_ERROR
+   Probe Description   :- AMQ9504: A protocol error was detected
+                          for channel ''.
+   +--------------------------------------------------------------+
+   MQM Function Stack
+   rriMQIServer
+   xcsFFST
+   
+   
+   If an application is connecting to a Windows v7 queue manager,
+   then the following FDC may be produced:
+   
+   Probe Id          :- XY314146
+   Component         :- xcsTimedLookupAccountSid
+   Process Name      :- C:\Program Files (x86)\IBM\WebSphere MQ\
+                      bin\amqzlaa0.exe
+   Major Errorcode   :- xecF_E_UNEXPECTED_SYSTEM_RC
+   Probe Description :- AMQ6119: An internal WebSphere MQ error
+                        has occurred (WinNT error 87 from
+                        LookupAccountSid.)
+   Comment1          :- WinNT error 87 from LookupAccountSid.
+   Comment2          :- The parameter is incorrect.
+   +-------------------------------------------------------------+
+   MQM Function Stack
+   zlaMainThread
+   zlaProcessMessage
+   zlaProcessSPIRequest
+   zlaSPIAdoptUser
+   zsqSPIAdoptUser
+   kpiSPIAdoptUser
+   kqiAuthenticateUser
+   gpiAuthenticateUser
+   zfu_as_AuthenticateUser
+   xcsTimedLookupAccountSid
+   xcsFFST
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   This issue affects users of the:
+   
+     - IBM MQ V8 classes for JMS
+     - IBM MQ V8 classes for Java
+     - IBM MQ V8 JCA Resource Adapter
+   
+     - IBM MQ V9 classes for JMS
+     - IBM MQ V9 classes for Java
+     - IBM MQ V9 JCA Resource Adapter
+   
+   that have applications that connect to pre-version 8 queue
+   managers that use security exits to perform user authentication
+   but do not create an MQCSP structure.
+   
+   
+   Platforms affected:
+   MultiPlatform
+   
+   ****************************************************************
+   PROBLEM DESCRIPTION:
+   When an IBM MQ classes for JMS or classes for Java application
+   was connecting to a pre-version 8 MQ queue manager, and the
+   application used a client side channel security exit, a default
+   MQCSP structure would be flowed to the queue manager to
+   authenticate the credentials (username and password) it
+   contained.   The default MQCSP structure would also be passed to
+   the client side security exit in the MQCXP or MQChannelExit
+   object.  This occurred even though MQCSP authentication mode was
+   not enabled, meaning that "compatibility mode" connection
+   authenticate should have been used.
+   
+   The MQCSP structure flow from the classes for JMS / classes for
+   Java resulted in the queue manager attempting to authenticate
+   the user identifier supplied in the MQCSP.  If the user
+   identifier cannot be authenticated by the queue manager then the
+   MQ reason code 2035 (MQRC_NOT_AUTHORIZED) would be returned to
+   the classes for JMS / classes for Java and the connection
+   attempt rejected.  This would occur despite the channel security
+   exit pair successfully authenticating the user identifier passed
+   in the application.
+   
+   For reference, the following MQ Knowledge Center link describes
+   connection authentication with regard to MQCSP structures and
+   the classes for JMS / classes for Java:
+   
+   https://www.ibm.com/support/knowledgecenter/SSFKSJ_9.0.0/com.ibm
+   .mq.sec.doc/q118680_.htm [https://www.ibm.com/support/knowledgecenter/SSFKSJ_9.0.0/com.ibm.mq.sec.doc/q118680_.htm]
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The IBM MQ classes for JMS and classes for Java product code has
+   been updated such that when the application is connecting to a
+   queue manager using the CLIENT transport mode, a default MQCSP
+   is only created if MQCSP authentication mode has been enabled.
+    When the compatibility connection authentication is used, a
+   default MQCSP object is not passed to the client side channel
+   security exit and is not flowed to the queue manager during the
+   process of establishing a connection to the queue manager.  If
+   the security exit itself creates an MQCSP that is returned to
+   the classes for JMS / classes for Java in an MQCXP or
+   MQChannelExit object, then this is flowed to the queue manager
+   for authentication.
+   
+   This APAR also updates the MQ classes for JMS such that an MQCSP
+   structure is created and passed to the queue manager for
+   BINDINGS transport mode connections where, at least, a username
+   has been provided by the application.  This ensures the
+   behaviour of the MQ classes for JMS is consistent with that of
+   the MQ classes for Java.
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+   Version    Maintenance Level
+   v8.0       8.0.0.6
+   v9.0 CD    9.0.1
+   v9.0 LTS   9.0.0.1
+   
+   The latest available maintenance can be obtained from
+   'WebSphere MQ Recommended Fixes'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037]
+   
+   If the maintenance level is not yet available information on
+   its planned availability can be found in 'WebSphere MQ
+   Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT15833
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ BASE MULTIP
+   
+   
+ * REPORTED COMPONENT ID
+   5724H7251
+   
+   
+ * REPORTED RELEASE
+   800
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-06-23
+   
+   
+ * CLOSED DATE
+   2016-08-30
+   
+   
+ * LAST MODIFIED DATE
+   2017-06-24
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ BASE MULTIP
+   
+   
+ * FIXED COMPONENT ID
+   5724H7251
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R800 PSY
+   UP

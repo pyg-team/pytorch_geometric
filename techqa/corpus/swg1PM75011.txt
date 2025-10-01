@@ -1,0 +1,174 @@
+Title: IBM PM75011: HOT STANDBY FEATURE OF INFOSPHERE CDC FOR Z/OS NOT WORKING AS WAS DESIGNED. - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  InfoSphere CDC for z/OS was designed to allow multiple copies to
+   be started using the same meta-data.  The first copy would be
+   the active instance.  The second and subsequent copies would be
+   "hot standby" instances.  A hot standby instance would
+   initialize, but not process any subscriptions until the active
+   instance had ended.  Then a hot standby instance would become
+   the active instance and any other hot standby instances would
+   remain so.  Coupled with the subscription persistency feature,
+   this would provide almost immediate fail-over for subscriptions.
+   
+   The hot standby capability is not functional, the hot standby
+   instances become dormant when they detect an active instance,
+   but do not promote one of their members to active state when the
+   current active instance ends.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  None available.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: Users of InfoSphere CDC for z/OS who need to *
+   *                 implement an automated FailOver capability.  *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: The FailOver capability of InfoSphere   *
+   *                      CDC for z/OS is not implemented as it   *
+   *                      was designed.  A second instance that   *
+   *                      is using the same meta-data becomes     *
+   *                      dormant, but does not become active     *
+   *                      after the first instance using the      *
+   *                      meta-data, or the system on which it is *
+   *                      executing, fails.                       *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   The FailOver capability in InfoSphere CDC for z/OS is not
+   functioning as it was designed to do.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Logic to implement serialization of access to the meta-data has
+   been extended to issue messages indicating the state of the
+   access by the instance, to accept and process a new keyword on
+   the SHUTDOWN command, and to detect the loss of the instance
+   that was actively using the meta-data, and act upon it.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM75011
+   
+   
+ * REPORTED COMPONENT NAME
+   INFO SRVR CDC Z
+   
+   
+ * REPORTED COMPONENT ID
+   5655U7600
+   
+   
+ * REPORTED RELEASE
+   650
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-10-15
+   
+   
+ * CLOSED DATE
+   2012-11-29
+   
+   
+ * LAST MODIFIED DATE
+   2013-02-04
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UK83872
+   
+   
+
+MODULES/MACROS
+ *  CHCDSCDB CHCDSCIQ CHCDSCPF CHCMBARA CHCMBCHS
+   CHCMBCHT CHCMBDAN CHCMBDES CHCMBDEU CHCMBELL CHCMBENG CHCMBENP
+   CHCMBENU CHCMBESP CHCMBFIN CHCMBFRA CHCMBFRB CHCMBFRC CHCMBFRS
+   CHCMBHEB CHCMBISL CHCMBITA CHCMBITS CHCMBJPN CHCMBKOR CHCMBNLB
+   CHCMBNLD CHCMBNOR CHCMBPTB CHCMBPTG CHCMBRMS CHCMBRUS CHCMBSVE
+   CHCMBTHA CHCMBTRK CHCMBZZZ CHCMKCOM CHCOSCIQ CHCRSSSV CHCRSSSW
+   CHCSVBCS HCHC650  CHCDSCDB
+   
+   
+    
+   
+   
+
+Publications Referenced GI11788002 FIX INFORMATION
+ * FIXED COMPONENT NAME
+   INFO SRVR CDC Z
+   
+   
+ * FIXED COMPONENT ID
+   5655U7600
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R650 PSY UK83872 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK83872]
+   UP13/01/09 P F301
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

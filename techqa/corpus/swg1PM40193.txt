@@ -1,0 +1,177 @@
+Title: IBM PM40193: SQLCODEN478 DROP ON OBJECT TYPE PROCEDURE CANNOT BE PROCESSED BECAUSE OBJECT OF TYPE TRIGGER IS DEPENDENT ON IT. - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The DB2 Object Comparison Tool for z/OS APPLY jobs fails
+   with a return code / RC=8 and a message:
+   DROP SPECIFIC FUNCTION . ;
+   error on DROP command, EXECUTE function
+   DNT408I SQLCODE = -478, ERROR: DROP OR REVOKE ON OBJECT TYPE
+   PROCEDURE CANNOT BE PROCESSED BECAUSE OBJECT .
+   OF TYPE TRIGGER IS DEPENDENT ON IT
+   DSNT418I SQLSTATE = 42893 SQLSTATE RETURN CODE
+   DSNT415I SQLERRP = DSNXIDRT SQL PROCEDURE DETECTING ERROR
+   DSNT416I SQLERRD    = 30  0  0  -1  0  0 SQL DIAGNOSTIC
+   INFORMATION
+   DSNT416I SQLERRD    = X'0000001E'  X'00000000'  X'00000000'
+   X'FFFFFFFF'
+            X'00000000'  X'00000000' SQL DIAGNOSTIC INFORMATION
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: Users of the DB2 Object Comparison Tool      *
+   *                 for z/OS who change DB2 functions and        *
+   *                 procedures on which Triggers depend.         *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: A DROP of a function or procedure may   *
+   *                      fail with SQLCODEN478 / SQLCODE=-478:   *
+   *                                                              *
+   *                      DSNT408I SQLCODE = -478, ERROR:         *
+   *                      DROP OR REVOKE ON OBJECT TYPE           *
+   *                      FUNCTION  CANNOT  BE PROCESSED          *
+   *                      BECAUSE OBJECT >schema<.>trigger<       *
+   *                      OF TYPE TRIGGER IS DEPENDEN ON IT       *
+   *                      DSNT418I SQLSTATE = 42893 SQLSTATE      *
+   *                      RETURN CODE                             *
+   *                      DSNT415I SQLERRP = DSNXIDRT SQL         *
+   *                      PROCEDURE DETECTING ERROR               *
+   *                                                              *
+   *                      if a trigger depends upon the function  *
+   *                      or procedure.  DB2 Object Comparison    *
+   *                      Tool did not recognize the dependency   *
+   *                      and was attempting to drop the          *
+   *                      independent object before the           *
+   *                      dependency was removed.                 *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   When a trigger depends upon a function or procedure that is
+   to be dropped, the trigger will be dropped first.  The
+   function or procedure will be dropped after the trigger.
+   The function or procedure will be recreated, and then
+   the trigger will be recreated.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The DB2 Object Comparison Tool has been corrected. The user
+   must ensure that all triggers that depend on functions or
+   procedures that may be dropped and recreated are included in
+   the DB2 Object Compare run.  As an aid to this requirement,
+   triggers have been added to the group of schema objects.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM40193
+   
+   
+ * REPORTED COMPONENT NAME
+   DB2 ADMIN TOOL
+   
+   
+ * REPORTED COMPONENT ID
+   568851500
+   
+   
+ * REPORTED RELEASE
+   720
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-05-26
+   
+   
+ * CLOSED DATE
+   2012-02-16
+   
+   
+ * LAST MODIFIED DATE
+   2012-03-01
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UK76289
+   
+   
+
+MODULES/MACROS
+ *     GOCDB2
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   DB2 ADMIN TOOL
+   
+   
+ * FIXED COMPONENT ID
+   568851500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * RA10 PSY UK76289 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK76289]
+   UP12/02/18 P F202
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

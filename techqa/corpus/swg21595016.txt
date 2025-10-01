@@ -1,0 +1,104 @@
+Title: IBM Questions about using publish/subscribe with WebSphere MQ classes for JMS - United States
+
+Text:
+providerversion TECHNOTE (FAQ)
+
+QUESTION
+ Here are some questions and answers about WebSphere MQ Publish/Subscribe options with JMS classes : 
+
+ANSWER
+
+Question 1:
+
+What system queues are used by the WebSphere MQ classes for JMS and the WebSphere MQ Publish/Subscribe Engine (Broker)?
+
+Answer 1:
+
+When an application uses the WebSphere MQ V7 classes for JMS in WebSphere MQ messaging provider migration mode [http://www.ibm.com/support/knowledgecenter/SSFKSJ_7.1.0/com.ibm.mq.doc/jm41140_.htm] to perform publish/subscribe operations, the classes for JMS use a number of system queues when interacting with the Publish/Subscribe Engine.
+
+The actual queues which are used depends upon the value of the SUBSTORE property for the Topic Connection Factory that the application is using:
+
+
+ *  If SUBSTORE is set to QUEUE:
+
+ * 
+ * Requests to register and deregister publishers and subscribers are put to this queue. 
+ * 
+ * 
+ * When a JMS application publishes a message, the publish request is put onto this queue. The Publish/Subscribe Engine then picks the request up and processes it. 
+ * 
+ * 
+ * Information about durable subscriptions are stored in the messages that are put to the queue. 
+ * 
+ * 
+ * When an application takes out a JMS subscription, a message with data MQJMS_PS_JVM_STATUS_MSGbackout is put to the queue outside of syncpoint and then gotten within syncpoint. A message with data MQJMS_PS_JVM_STATUS_MSGcommit is put to the queue within syncpoint. While the application is active, there will therefore be uncommitted messages (UNCOM will be YES in DISPLAY QSTATUS). 
+   
+   STATREFRESHINT in the Connection Factory is the interval between refreshes of the long running transaction that detects when a subscriber loses its connection to the queue manager. The default is 60000 milliseconds (1 minute). 
+   
+   Depending on whether the application terminates normally or abnormally, one of the messages will be removed from the queue, and one will be committed, meaning it is available for processing. 
+   
+   The next time a Topic Connection is created from a Topic Connection Factory that has the SUBSTORE property set to QUEUE, the message on this queue will be picked up and the WebSphere MQ classes for JMS will perform some cleanup of the subscription that the message was created for. 
+
+
+ *  If SUBSTORE is set to BROKER or MIGRATE:
+
+ * 
+ * Requests to register and deregister publishers and subscribers are put to this queue. 
+ * 
+ * 
+ * When a JMS application publishes a message, the publish request is put onto this queue. The Publish/Subscribe Engine then picks the request up and processes it. 
+ * 
+ * 
+ * Whenever an application sends a request to the WebSphere MQ Publish/Subscribe Engine (to register a subscriber or publish a message, for example), the WebSphere MQ classes for JMS will request a response from the Publish/Subscribe Engine to confirm that the request was processed successfully. 
+   
+   The response messages are put onto this queue, where they are picked up and processed by the WebSphere MQ classes for JMS. 
+
+
+
+When the SUBSTORE property is set to BROKER or MIGRATE, information about durable and non-durable subscribers that are created by applications using the WebSphere MQ classes for JMS is stored internally by the WebSphere MQ Publish/Subscribe Engine. 
+
+If the SUBSTORE property is set to QUEUE, then information about non-durable subscriptions is stored "in memory" by the Publish/Subscribe Engine. Details about durable subscriptions are stored in messages on the SYSTEM.JMS.ADMIN.QUEUE. 
+
+
+
+Question 2: 
+
+How does the WebSphere MQ for z/OS V7 Publish/Subscribe Engine store information about subscriptions? 
+
+Answer 2: 
+
+WebSphere MQ V7 for z/OS has an area in memory that is called "MatchSpace", which stores a structure made of topic and subscription nodes. These nodes are linked together. The topics point to the subscriptions and the subscriptions point to the topics. The MatchSpace is created during queue manager restart or when the queue manager property PSMODE changes from DISABLED. The administrative topic objects and the durable subscriptions are used to populate the MatchSpace. When new subscriptions (both durable and non-durable) are created, the MatchSpace is updated. 
+
+Durable subscriptions are stored in the SYSTEM.DURABLE.SUBSCRIBER.QUEUE. 
+
+Administrative subscriptions (durable), which are not MQ objects, are also stored in this queue. 
+
+Administrative topics are defined as MQ objects, and are stored in PAGESET 0 and DB2 if they are shared objects. 
+
+Retained publications are stored in the SYSTEM.RETAINED.PUB.QUEUE. 
+
+Remote clustered topics and remote proxy subscriptions are stored in the SYSTEM.CLUSTER.REPOSITORY.QUEUE. 
+
+
+
+Question 3: 
+
+What effect does changing the WebSphere MQ V7 queue manager property PSMODE have on the way the WebSphere MQ Publish/Subscribe Engine stores subscription information? 
+
+Answer 3: 
+
+PSMODE(DISABLED) stops the WebSphere MQ V7 Publish/Subscribe Engine. All publish/subscribe activity is suspended. 
+
+PSMODE(ENABLED) starts the Publish/Subscribe Engine and the QPUBSUB daemon. 
+
+PSMODE(COMPAT) starts the Publish/Subscribe Engine but not the QPUBSUB daemon. This mode is used with Message Broker 6.1, when the Message Broker Publish/Subscribe Engine is still active and has not migrated to use the WebSphere MQ V7 Publish/Subscribe Engine. 
+
+The QPUBSUB daemon processes the Publish/Subscribe API commands based on queues that were supported in previous versions of Message Broker and the WebSphere MQ V6 Publish/Subscribe Engine (broker). 
+RELATED INFORMATION
+#Intro to WebSphere MQ publish/subscribe messaging [http://www.ibm.com/support/knowledgecenter/SSFKSJ_7.1.0/com.ibm.mq.doc/ps10320_.htm]
+
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ WebSphere MQ WMQ pubsub pub/sub pub-sub

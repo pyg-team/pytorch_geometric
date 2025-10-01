@@ -1,0 +1,248 @@
+Title: IBM IT11291: IBM MQ 8.0 JMSWMQ2001: FAILED TO CLOSE DESTINATION 'MY_QUEUE', USING A READ AHEAD CLOSE POLICY. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  An IBM MQ classes for JMS application has a MessageConsumer
+   configured
+   to consume messages asynchronously through use of the method
+   call:
+   
+      MessageConsumer.setMessageListener(MessageListener)
+   
+   While messages are being delivered to the MessageListener the
+   application
+   stops the Connection and closes the MessageConsumer by
+   simultaneously
+   issuing the method calls:
+   
+       Connection.stop();
+       MessageConsumer.close();
+   
+   (where the JMS Connection which is stopped is the Connection
+   which created
+   the Session which in turn was used to create the
+   MessageConsumer).
+   
+   Occasionally, the MessageConsumer.close() method call is
+   delayed by a period of 30 seconds, after which the following
+   exception is
+   thrown back to the application:
+   
+    com.ibm.msg.client.jms.DetailedJMSException: JMSWMQ2001:
+    Failed to close destination 'MY_QUEUE', using a read ahead
+   close policy.
+   
+    WebSphere MQ classes for JMS attempted to close a WebSphere MQ
+    destination, but encountered an error. The close call has
+    timed out when trying to deliver all messages on the read ahead
+   queue.
+    Check that your message listener is not looping. You may be
+    able to perform the close() later.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   Users of the IBM MQ V8 Classes for JMS who have an application
+   which uses a remote client connection to a Queue Manager, uses a
+   MessageListener to receive messages asynchronously, and which
+   calls the following methods (either concurrently or one after
+   another in this order):
+   
+     - Connection.stop()
+     - MessageConsumer.close()
+   
+   Where:
+     - The JMS Connection that is being stopped is the Connection
+   which created the Session which created the MessageConsumer that
+   is being closed.
+     - The MessageConsumer that is being closed has a
+   MessageListener which is receiving messages at the time the
+   Connection is stopped.
+   
+   
+   Platforms affected:
+   MultiPlatform
+   
+   ****************************************************************
+   PROBLEM DESCRIPTION:
+   An application was using MQ classes for JMS to receive messages
+   asynchronously.  When the connection was started the
+   MessageConsumer's MessageListener requested a message from the
+   queue manager and stored that message in an internal buffer
+   while waiting to deliver it to the MessageListener's onMessage()
+   method.
+   The problem occurred when the application stopped the
+   MessageConsumer's JMS Connection and then closed the
+   MessageConsumer while there was a message on the read ahead
+   queue.
+   
+   Note that the internal buffer is called the remote proxy or
+   read-ahead queue but the processing described here should not be
+   confused with the MQ READ_AHEAD feature which allows multiple
+   non-persistent messages to be delivered to a client and stored
+   on the read-ahead queue in advance of the application requesting
+   them.  The READ_AHEAD feature can be enabled or disabled for a
+   Destination.  However when the MQ classes for JMS are delivering
+   messages asynchronously they always use a limited form of
+   read-ahead to read a single message and store it on the
+   read-ahead queue pending delivery to the application.  This
+   happens regardless of the status of the READ_AHEAD feature on
+   the Destination.   In this situation  READ_AHEAD was disabled on
+   the Destination.
+   
+   The problem occurred because while the MQ Classes for JMS were
+   processing the MessageConsumer.Close() they sent a MQCLOSE call
+   to the queue manager to close the MessageConsumer's Destination
+   using the MQCO_QUIESCE option.  The queue manager determined
+   that the application hadn't processed all the messages it had
+   been sent and returned a warning of MQRC_READ_AHEAD_MSGS (2458)
+   to tell the MQ Classes for JMS to deliver the message to the
+   application.
+   
+   The MQ classes for JMS then delayed the completion of the
+   MessageConsumer.Close() method call for 30 seconds in order to
+   give time for the RemoteDispatchThread to deliver the message,
+   but the message could not be delivered because the Connection
+   had been stopped by the Connection.stop() method call.
+   
+   After the MessageConsumer had waited for 30 seconds and still
+   hadn't delivered the message then the MQ Classes for JMS threw
+   an exception: "JMSWMQ2001: Failed to close destination
+   'MY_QUEUE', using a read ahead close policy. ".
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  It is correct that the MQ Classes for JMS are not allowed to
+   deliver the message after the connection has stopped because
+   section 4.3.4 of the JMS Specification ["Pausing Delivery of
+   Incoming Messages"] forbids the delivery of messages while a
+   Connection is stopped.
+   
+   The MQ classes for JMS have therefore been updated to ensure
+   that any messages in the read ahead queue are delivered before
+   the Connection.stop() method completes, so when
+   MessageConsumer.close() is invoked after Connection.stop() the
+   situation cannot arise where there are messages awaiting
+   delivery during the MessageConsumer.close().
+   
+   Users applying the fix for this APAR are advised to apply the
+   fix for APAR IT12243 [http://www-01.ibm.com/support/docview.wss?uid=swg1IT12243] which addresses a related issue on the
+   Queue manager that can lead to intermittent loss of a
+   non-persistent message when MessageConsumer.close() is invoked
+   during asynchronous message delivery.
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+   Version    Maintenance Level
+   v8.0       8.0.0.5
+   
+   The latest available maintenance can be obtained from
+   'WebSphere MQ Recommended Fixes'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037]
+   
+   If the maintenance level is not yet available information on
+   its planned availability can be found in 'WebSphere MQ
+   Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT11291
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ BASE MULTIP
+   
+   
+ * REPORTED COMPONENT ID
+   5724H7251
+   
+   
+ * REPORTED RELEASE
+   800
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2015-09-17
+   
+   
+ * CLOSED DATE
+   2016-03-15
+   
+   
+ * LAST MODIFIED DATE
+   2016-03-15
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ BASE MULTIP
+   
+   
+ * FIXED COMPONENT ID
+   5724H7251
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R800 PSY
+   UP

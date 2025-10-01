@@ -1,0 +1,60 @@
+Title: IBM Long filenames cannot be added to lost+found during syncreplica -import - United States
+
+Text:
+CC; multisite; import; lost; found; lost+found; multi-site; long file name; file name too long TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This technote explains how to resolve an issue that can occur where importing a IBM® Rational® ClearCase MultiSite® (CC) packet fails when attempting to move files with long filenames to the lost+found directory. 
+
+SYMPTOM
+ 
+
+Importing a MultiSite packet that attempts to replay operations that move files to the lost+found directory fails when the file names are long. 
+
+The following is an example of the errors that appear in the sync log:
+
+multitool: Warning: Moving object to vob lost+found directory as "delivery_PFLIB_delivery_PFLIB_delivery_PFLIB_delivery_PFLIB_delivery_PFLIB_delivery_PFLIB_delivery_PFLIB_delivery_PFLIB_delivery_PFLIB_delivery_PFLIB_delivery_PFLIB_delivery_PFLIB_delivery_PFLIB_delivery_PFLIB_BldSrc_UNIX_mountp_proto.h.30f56a0c802b11dd8050003048306040".
+multitool: Error: Database identifier (dbid) not found in database: "<vob-tag>".
+multitool: Error: Unable to replay oplog entry 292403: reference to non-existent ClearCase object.
+292403:
+op= uncheckout
+replica_oid= 94b2f78a.78ec11d2.ac93.00:01:80:80:ce:17 (cm_devl)
+oplog_id= 118173
+op_time= 2008-09-11T22:34:25Z create_time= 2008-09-11T22:34:25Z
+data size= 20 data= 0x54988
+------------
+ckout_ver_oid= 48f3736e.7fe011dd.9e02.00:30:48:30:60:40 (*no view*)
+
+
+CAUSE
+
+An uncheckout (or rmver) of a directory at the remote (exporting) site caused the elements to be moved into the lost+found directory. When that occurred, the OID (object identifier) was appended to the file name as part of normal processing. However, this created a file name which was greater than 256 characters because the file name was already long. This long file name with the added OID is what caused the import to fail.
+
+
+
+RESOLVING THE PROBLEM
+ 
+
+
+The following is a recovery procedure that can be used to resolve this issue: 
+
+
+1. Identify the directory where the files with long names were added (ckout_ver_oid value taken from the import error message): 
+
+cleartool desc oid:<ckout_ver_oid> 
+
+2. Ensure the directory is visible in your view (edcs) and cd into that directory
+
+3. Create a temporary branch off the directory:
+
+cleartool mkbrtype -c "workaround for import problem" PMR55063 
+cleartool mkbranch -nc PMR55063 .@@/main/0 
+
+3. Merge the original checked out directory to the new checked out directory on that branch and check in the new version:
+
+cleartool merge -to . -nc -narrows .@@/<branch_of_step1>/<version_of_step1>
+cleartool checkin -nc . 
+
+4. Reimport the packet. 
+
+5. This time, when the original directory version is unchecked out , the elements with the long names are NOT sent to lost+found, because they have a home on the new branch.

@@ -1,0 +1,37 @@
+Title: IBM DB2 UDB refuses the SQL operation after an SQLException error with a 911 or 913 SQLCODE - United States
+
+Text:
+v61rnotes TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ You might receive an SQLException error with a 911 SQLCODE message, which is a deadlock, or a 913 SQLCODE message, which is a lock time-out. These situations change the state of the XA connections code to XA_PENDING_ROLLBACK. 
+
+If you attempt any SQL requests after receiving the exception, you might receive an SQLException error with a 4497 SQLCODE message. In some cases, you will not receive the 4497 SQLCODE message. 
+
+CAUSE
+The XA_PENDING_ROLLBACK state was added by DB2 Version 8 Fix Pack 10 for XA Connections only. This DB2 Universal Database (UDB) change was made to ensure global data integrity. 
+
+This change might affect applications that attempt to retry the SQL operation that resulted in the lock time-out. For example, executing the following operations might cause the error:
+
+ 1.  Update your data.
+ 2. 
+ 3.  Retry the update when you receive the SQLException with SQLCODE of 911 or 913.
+
+The following error message occurs: 
+
+com.ibm.db2.jcc.am.SqlException: Application must execute a rollback. The unit of work has already been rolled back in the database but other resource managers involved in this unit of work might not. To ensure integrity of this application, all SQL requests will be rejected until the application issues a rollback.
+
+
+RESOLVING THE PROBLEM
+If you receive an SQLException error with an SQLCODE of 911 or 913, your XA code might be in the XA_PENDING_ROLLBACK state. Call the XAResource.rollback method to reset this state. 
+
+To avoid future deadlocks and lock time-outs, adjust the database configuration LOCKTIMEOUT value accordingly.
+
+RELATED INFORMATION
+ Version 6.1 Release Notes [http://www14.software.ibm.com/webapp/wsbroker/redirect?version=pix&product=was-nd-dist&topic=relnotes]
+
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Application Servers Runtimes for Java Technology Java SDK

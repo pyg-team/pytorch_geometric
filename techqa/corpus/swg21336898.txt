@@ -1,0 +1,20 @@
+Title: IBM When is support for Impromptu 6.0.xxx going to end ? - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When is support for Impromptu 6.0.xxx going to end? 
+
+RESOLVING THE PROBLEM
+Termination of support for Impromptu 6.0 has not yet been determined. 
+It is listed as "TBA" on the Cognos support website.
+
+For information on when specific products will cease to be supported by development please refer to the following HTML document:
+
+http://support.cognos.com/support/products/supported_products.h tml
+
+ 
+
+HISTORICAL NUMBER
+ 107159

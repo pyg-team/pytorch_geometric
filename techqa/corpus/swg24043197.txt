@@ -1,0 +1,79 @@
+Title: IBM Operational Decision Manager V8.8.0.1: Interim Fix 38 - United States
+
+Text:
+ DOWNLOADABLE FILES
+
+ABSTRACT
+ This interim fix provides a solution for several APARs. 
+
+DOWNLOAD DESCRIPTION
+The following list shows the components in Operational Decision Manager that are directly affected by this interim fix:
+
+
+ * Decision Center 
+
+
+You can find more information on the problems in the following APAR description:  * PI65495 [http://www.ibm.com/support/docview.wss?uid=swg1PI65495]: DVS REPORTS ARE SAVED IN DC USING A LONG RUNNING TRANSACTION WHICH MAY CAUSE TIMEOUT ERRORS 
+ * PI71775: PERFORMANCE ISSUE BUILDING RULE IRL IN COBOL PROJECTS. 
+ * RS02298 [http://www.ibm.com/support/docview.wss?uid=swg1RS02298]: OUT OF MEMORY DISPLAYING TEST REPORT WITH EXECUTION DETAILS WHEN RUNNING DVS TEST WITH 1800 SCENARIOS 
+ * RS02299 [http://www.ibm.com/support/docview.wss?uid=swg1RS02299]: PERFORMANCE ISSUE COMPLETING A DECISION SERVICE CHANGE ACTIVITY 
+ * RS02319 [http://www.ibm.com/support/docview.wss?uid=swg1RS02319]: Cannot generate RuleApp IlrBuildException: null when using a custom value translator 
+ * RS02320 [http://www.ibm.com/support/docview.wss?uid=swg1RS02320]: PERFORMANCE ISSUE WHEN GENERATING A RULEAPP ARCHIVE WITH A LARGE NUMBER OF PACKAGES AND RULES 
+ * RS02335 [http://www.ibm.com/support/docview.wss?uid=swg1RS02335]: ISSUE SYNCING TO DECISION CENTER 
+ * RS02336 [http://www.ibm.com/support/docview.wss?uid=swg1RS02336]: UNEXPECTED ERROR IN RTS USING BREADCRUMBS 
+ * RS02338 [http://www.ibm.com/support/docview.wss?uid=swg1RS02338]: SYNCHRONIZATION WITH ANT TASK FAILS (NO ERROR) FOR MY GOVERNANCE PROJECT 
+ * RS02340 [http://www.ibm.com/support/docview.wss?uid=swg1RS02340]: ENTERPRISE CONSOLE DECISION TABLE EDITOR PERFORMANCE ISSUE WITH MANY VARIABLE REFERENCES 
+ * RS02347 [http://www.ibm.com/support/docview.wss?uid=swg1RS02347]: EMPTY DECISION SERVICE PROJECT CREATED FROM DECISION CENTER 
+ * RS02348 [http://www.ibm.com/support/docview.wss?uid=swg1RS02348]: CANNOT PUBLISH EVENT OBJECT CONTAINED IN A FOLDER TO DC BRANCHES 
+ * RS02352 [http://www.ibm.com/support/docview.wss?uid=swg1RS02352]: UNEXPECTED ERROR PANEL BEFORE DISPLAYING LIST OF DIFFERENCES BETWEEN TWO BRANCHES TO MERGE 
+ * RS02355 [http://www.ibm.com/support/docview.wss?uid=swg1RS02355]: CANNOT DROP A BRANCH IF IT CONTAINS A DELETED TESTSUITE 
+ * RS02356 [http://www.ibm.com/support/docview.wss?uid=swg1RS02356]: PERFORMANCE ISSUE COMPLETING A DECISION SERVICE CHANGE ACTIVITY 
+ * RS02373 [http://www.ibm.com/support/docview.wss?uid=swg1RS02373]: ODM 8.8 - PERFORMANCE ISSUE WITH PROJECT EXPORT 
+ * RS02376 [http://www.ibm.com/support/docview.wss?uid=swg1RS02376]: ERROR "ORA-01000 : MAXIMUM OPEN CURSORS EXCEEDED" MAY BE THROWN IF THE REPOSITORY CONTAINS A LARGE SET OF BASELINES 
+ * RS02381 [http://www.ibm.com/support/docview.wss?uid=swg1RS02381]: CONCURRENTMODIFICATIONEXCEPTION WHEN CREATING A NEW PROJECT FROM DC 
+ * RS02382 [http://www.ibm.com/support/docview.wss?uid=swg1RS02382]: NPE WHEN COMPARING 2 DTS IF ONE CONTAINS NO DEFINITION 
+ * RS02431 [http://www.ibm.com/support/docview.wss?uid=swg1RS02431]: CUSTOM EXTRACTOR VALIDATOR NOT USED IN SOME CONFIGURATION IN THE BC 
+ * RS02438: ENCRYPT LDAP CONNECTION PASSWORD IN DECISION CENTER DATABASE 
+ * RS02445 [http://www.ibm.com/support/docview.wss?uid=swg1RS02445]: ELEMENT VERBALIZED WITH "<...>" IS NOT DISPLAYED. 
+ * RS02446 [http://www.ibm.com/support/docview.wss?uid=swg1RS02446]: CHECKBOX FOR BOOLEAN VALUE NOT CHECKED WHEN TRUE 
+ * RS02448 [http://www.ibm.com/support/docview.wss?uid=swg1RS02448]: DVS REPORTS ARE SAVED IN DC USING A LONG RUNNING TRANSACTION WHICH MAY CAUSE TIMEOUT ERRORS 
+ * RS02466 [http://www.ibm.com/support/docview.wss?uid=swg1RS02466]: RULES ARE IN ERROR IN A NEWLY CREATED BRANCH 
+ * RS02470 [http://www.ibm.com/support/docview.wss?uid=swg1RS02470]: [DVS] ILRINITIALIZATIONEXCEPTION IF THE OUT PARAMETER LISTS IS LARGER THAN 256 CHARACTERS 
+ * RS02473 [http://www.ibm.com/support/docview.wss?uid=swg1RS02473]: UNEXPECTED EXCEPTION INDEXOUTOFBOUNDSEXCEPTION IN DECISION CENTER BUSINESS CONSOLE 
+ * RS02476 [http://www.ibm.com/support/docview.wss?uid=swg1RS02476]: BRANCH MERGE MAY RAISE SQL ERROR LOCALBRANCH.ID IS UNKNOWN WITH MYSQL AND ORACLE SERVERS 
+ * RS02495 [http://www.ibm.com/support/docview.wss?uid=swg1RS02495]: BRANCH MERGE MAY RAISE SQL ERROR: INITIALVALUE"."PROJECT" -- INVALID IDENTIFIER 
+ * RS02510 [http://www.ibm.com/support/docview.wss?uid=swg1RS02510]: RESTORING A SNAPSHOT IN A BRANCH DOES NOT WORK WHEN HAVING DEPENDANT PROJECT 
+ * RS02514 [http://www.ibm.com/support/docview.wss?uid=swg1RS02514]: IMPORT/EXPORT TOOL DOES NOT HANDLE DATE TIMEZONE 
+ * RS02515 [http://www.ibm.com/support/docview.wss?uid=swg1RS02515]: PERFORMANCE ISSUE RUNNING THE APPLYMERGE OPERATION 
+ * RS02528 [http://www.ibm.com/support/docview.wss?uid=swg1RS02528]: CONCURRENCY ISSUES WHILE RUNNING DVS TESTSUITES 
+ * RS02532 [http://www.ibm.com/support/docview.wss?uid=swg1RS02532]: CANNOT EDIT A QUERY CONTAINED IN A PROJECT'S DEPENDENCY PROJECT 
+ * RS02535 [http://www.ibm.com/support/docview.wss?uid=swg1RS02535]: 19745: UNAUTHORIZED ACCESS TO JAVA SERVLETS SOURCE CODE 
+ * RS02538 [http://www.ibm.com/support/docview.wss?uid=swg1RS02538]: GBRDR0001E WHEN SYNC A MODIFIED PROJECT FROM RD TO DC 
+ * RS02540 [http://www.ibm.com/support/docview.wss?uid=swg1RS02540]: DECISION TABLE DATA MOVES TO DIFFERENT CELLS IN BUSINESS CONSOLE 
+ * RS02549: WARNING MESSAGE DISPLAYS HTML MARKUP FOR JAPANESE INSTEAD OF JAPANESE CHARACTERS... 
+ * RS02550: "UNEXPECTED ERROR" WHEN COMPARING SNAPSHOTS WITH A PROJECT HAVING NEW DEPENDENCIES 
+ * RS02553 [http://www.ibm.com/support/docview.wss?uid=swg1RS02553]: PERFORMANCE ISSUE WITH ORACLE 12 WHILE MERGING BRANCHES 
+ * RS02554 [http://www.ibm.com/support/docview.wss?uid=swg1RS02554]: MIGRATION FROM DC 8.0 TO 8.8 OR 8.8.1 DOES NOT CLEANUP MIGRATION FLAG ADDED IN USERSETTING TABLE 
+ * RS02556: MIGRATION SCRIPTS TO ODM 8.8 MIGRATE LOCK TABLE INCORRECTLY 
+ * RS02557: GBRDR0001E WHEN SYNC A MODIFIED PROJECT FROM RD TO DC WITH NEW DEPENDENCY 
+ * RS02558 [http://www.ibm.com/support/docview.wss?uid=swg1RS02558]: TRANSLATION IS DISPLAYING HTML MARKUP INSTEAD OF TRANSLATION
+
+N.B.: This interim fix supersedes previous ones on this component: IF034, IF032, IF027, IF025 and IF013. 
+
+SEE ALSO
+Operational Decision Manager Interim Fixes [http://www.ibm.com/support/docview.wss?uid=swg21640630] 
+
+INSTALLATION INSTRUCTIONS
+Follow the instructions in the readme.
+
+URL LANGUAGE SIZE(Bytes) Readme [http://download4.boulder.ibm.com/sar/CMA/WSA/06mim/1/Readme.html] English 2334 
+DOWNLOAD PACKAGE
+
+
+
+
+Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options 
+What is Fix Central(FC)? [https://www.ibm.com/support/fixcentral/help?page=swfaqs] 
+What is DD? [http://www6.software.ibm.com/dldirector/doc/DDfaq_en.html] 8.8.0.1-WS-ODM_DC-IF038 13-Dec-16 Language Independent 47280000 FC [https://www-945.ibm.com/support/fixcentral/swg/downloadFixes?parent=ibm%2FWebSphere&product=ibm/WebSphere/WebSphere+Operational+Decision+Management&release=All&platform=All&function=fixId&fixids=8.8.0.1-WS-ODM_DC-IF038&includeRequisites=1&includeSupersed] [ ] DD 
+ [/support/docview.wss?uid=swg24043197&aid=1]Problems (APARS) fixed [/support/docview.wss?uid=swg24043197&aid=2]Problems (APARS) fixed
+PI65495 PI71775 RS02298 RS02299 RS02319 RS02320 RS02335 RS02336 RS02338 RS02340 RS02347 RS02348 RS02352 RS02355 RS02356 RS02373 RS02376 RS02381 RS02382 RS02431 RS02438 RS02445 RS02446 RS02448 RS02466 RS02470 RS02473 RS02476 RS02495 , RS02510 RS02514 RS02515 RS02528 RS02532 RS02535 RS02538 RS02540 RS02549 RS02550 RS02553 RS02554 RS02556 RS02557 RS02558

@@ -1,0 +1,37 @@
+Title: IBM Installation Manager hangs while being installed on AIX 64-bit systems - United States
+
+Text:
+aix; IM; install; 64-bit; 64 bit; hang; eclipse; bugzilla TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+IBM Installation Manager hangs while being installed on AIX 64-bit systems.
+
+SYMPTOM
+The hang situation may occur in the following cases: 
+
+ 1. While IBM Installation Manager is being installed on AIX 64-bit systems, a hang situation occurs as soon as IBM Installation Manager install wizard is launched. 
+ 2. While IBM Installation Manager is being used to install another product or fix pack such as Websphere Application Server fix packs (such as SCA feature pack)
+
+
+CAUSE
+This issue has been recognized as an issue in Eclipse platform. 
+
+
+The following bug reports are already opened in Eclipse Bugzilla responsible for the hang issue:
+
+https://bugs.eclipse.org/bugs/show_bug.cgi?id=305991 [https://bugs.eclipse.org/bugs/show_bug.cgi?id=305991]
+https://bugs.eclipse.org/bugs/show_bug.cgi?id=36806 [https://bugs.eclipse.org/bugs/show_bug.cgi?id=36806] 
+
+This situation is caused by the fact that Eclipse requires confirmations from X (Reflection X is being used while interacting with AIX system) very often that particular operation succeeded, which as such freezes the UI execution until the confirmation is received.
+
+
+RESOLVING THE PROBLEM
+This issue has been resolved in Installation Manager version 1.4 [http://www.ibm.com/support/docview.wss?rs=3352&uid=swg24026183]. 
+
+
+Upgrading to 1.4 will resolve this issue and allow the installation to complete as expected. 
+
+
+RELATED INFORMATION
+#Installing IM silently [http://publib.boulder.ibm.com/infocenter/install/v1r2/index.jsp?topic=/com.ibm.silentinstall12.doc/topics/c_silent_over_IMinst.html]
+Installing RAD silently [http://www.ibm.com/developerworks/rational/library/edge/08/apr08/naqvi/index.html]

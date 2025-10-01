@@ -1,0 +1,192 @@
+Title: IBM IV65773: EEZJ0604W AND EEZF0006E A JAVA.RMI.REMOTEEXCEPTION: CORBA NO_MEMORY - United States
+
+Text:
+  DIRECT LINKS TO FIXES
+4.1.0-TIV-SAAMR-Windows-FP0001 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+System+Automation+Application+Manager&fixids=4.1.0-TIV-SAAMR-Windows-FP0001&source=SAR]
+4.1.0-TIV-SAAMR-LinuxS390-FP0001 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+System+Automation+Application+Manager&fixids=4.1.0-TIV-SAAMR-LinuxS390-FP0001&source=SAR]
+4.1.0-TIV-SAAMR-LinuxPPC-FP0001 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+System+Automation+Application+Manager&fixids=4.1.0-TIV-SAAMR-LinuxPPC-FP0001&source=SAR]
+4.1.0-TIV-SAAMR-LinuxI386-FP0001 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+System+Automation+Application+Manager&fixids=4.1.0-TIV-SAAMR-LinuxI386-FP0001&source=SAR]
+4.1.0-TIV-SAAMR-AIX-FP0001 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+System+Automation+Application+Manager&fixids=4.1.0-TIV-SAAMR-AIX-FP0001&source=SAR]
+4.1.0-TIV-SAAMA-Windows-FP0001 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+System+Automation+Application+Manager&fixids=4.1.0-TIV-SAAMA-Windows-FP0001&source=SAR]
+4.1.0-TIV-SAAMA-Solaris-FP0001 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+System+Automation+Application+Manager&fixids=4.1.0-TIV-SAAMA-Solaris-FP0001&source=SAR]
+4.1.0-TIV-SAAMA-AIX-FP0001 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+System+Automation+Application+Manager&fixids=4.1.0-TIV-SAAMA-AIX-FP0001&source=SAR]
+4.1.0-TIV-SAAM-LinuxS390-FP0001 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+System+Automation+Application+Manager&fixids=4.1.0-TIV-SAAM-LinuxS390-FP0001&source=SAR]
+4.1.0-TIV-SAAM-LinuxI386-FP0001 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+System+Automation+Application+Manager&fixids=4.1.0-TIV-SAAM-LinuxI386-FP0001&source=SAR]
+4.1.0-TIV-SAAM-AIX-FP0001 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+System+Automation+Application+Manager&fixids=4.1.0-TIV-SAAM-AIX-FP0001&source=SAR]
+4.1.0-TIV-SAAM-FP0001, Tivoli System Automation Application Manager [http://www-01.ibm.com/support/docview.wss?uid=swg24037860]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  an endless loop leads to hanging threads and process crash due
+   to Out Of Memory situation.
+   The SystemOut.log shows
+    EEZMDBMsg  E  EEZEventHandlerBean processResAddedEvent
+      EEZJ0107E Forwarding an event to the end-to-end automation
+      domain TSAAM_Test failed.
+      Details about the exception:
+       com.ibm.eez.sdk.exceptions.EEZConnectionFailedException:
+       EEZF0006E A java.rmi.RemoteException: CORBA NO_MEMORY
+       0x4942f982 No; nested exception is:
+        org.omg.CORBA.NO_MEMORY:
+        >> SERVER (id=12345678, host=xx.xx.xx.xx) TRACE START:
+        >>   org.omg.CORBA.NO_MEMORY: Unable to read value from
+           underlying bridge : Java heap space  vmcid: IBM
+        minor code: 982 completed: No
+      >>  at com.ibm.rmi.iiop.CDRReader.read_value
+         (CDRReader.java:2429)
+      >>  at com.ibm.eez.dmn.client._EEZDaemon_Tie.handleEvent
+         (_EEZDaemon_Tie.java:587)
+     ...
+    Threads hang:
+    EEZAsyncMsg   W  EEZThreadMessenger logThreadNumMessage
+     EEZJ0604W There are 4 active threads that are managed by
+     component EEZWatchdogSessionBean and may be hung.
+   
+    ... number increases
+   
+    EEZAsyncMsg   W  EEZThreadMessenger logThreadNumMessage
+     EEZJ0604W There are 369 active threads that are managed by
+     component EEZWatchdogSessionBean and may be hung.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: Tivoli System Automation Application Manager
+   * (SA AM) 4.1 users
+   ****************************************************************
+   * PROBLEM DESCRIPTION:
+   * The SA AM automation engine might end up in an infinite loop,
+   * making the communication to the first level automation domains
+   * impossible. The WebSphere Application server 'SystemOut.log'
+   * shows an EEZConnectionFailedException:
+   *   com.ibm.eez.sdk.exceptions.EEZConnectionFailedException:
+   *   EEZF0006E A java.rmi.RemoteException: CORBA NO_MEMORY
+   *   0x4942f982 No; nested exception is:
+   *    org.omg.CORBA.NO_MEMORY:
+   *    >> SERVER (id=12345678, host=xx.xx.xx.xx) TRACE START:
+   *    >>   org.omg.CORBA.NO_MEMORY: Unable to read value from
+   *     underlying bridge : Java heap space  vmcid: IBM
+   *     minor code: 982 completed: No
+   *    >>  at com.ibm.rmi.iiop.CDRReader.read_value
+   *     (CDRReader.java:2429)
+   *    >>  at com.ibm.eez.dmn.client._EEZDaemon_Tie.handleEvent
+   *     (_EEZDaemon_Tie.java:587)
+   *
+   * The SA AM traces do show the message with ID CHRM1058I, and a
+   * resource reference which has its ObservedState switching
+   * between 'WasOnline' and 'Online'.
+   ****************************************************************
+   * RECOMMENDATION:
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The internal automation Engine (Logic deck) has been adjusted to
+   address this issue. The trigger to enter the infinite loop has
+   been removed.
+   .
+   The official fix for this problem is included in Tivoli System
+   Automation Application Manager 4.1 fix pack 1.
+   | 4.1.0-TIV-SAAM-FP0001 |
+   .
+   Additional Search Keywords
+   .
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV65773
+   
+   
+ * REPORTED COMPONENT NAME
+   SYS AUTO APPLI
+   
+   
+ * REPORTED COMPONENT ID
+   5724S9200
+   
+   
+ * REPORTED RELEASE
+   410
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-10-13
+   
+   
+ * CLOSED DATE
+   2014-12-16
+   
+   
+ * LAST MODIFIED DATE
+   2014-12-16
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   SYS AUTO APPLI
+   
+   
+ * FIXED COMPONENT ID
+   5724S9200
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R410 PSY
+   UP

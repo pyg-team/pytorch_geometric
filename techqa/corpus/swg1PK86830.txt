@@ -1,0 +1,239 @@
+Title: IBM PK86830: PE39133 IA EXPLORER PROGRAM TAB 'USED BY' DISPLAYS CORRUPT REGIONS - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  PE39133-F809
+   After applying PTF UK39133 for newfunction APAR PK69265 [http://www-01.ibm.com/support/docview.wss?uid=swg1PK69265] , users
+   collecting dependency data for CICS webservices using the
+   XWSPRROO global user exit will have invalid collection data.
+   Users of the IA Explorer clicking the "Used by Programs" and
+   "All Regions" from the Program tab will see the last 4 bytes
+   of the CICS applid displaying as garbled data.
+   .
+   If the CINT transaction is used to PAUSE or STOP the dependency
+   collector, the result will be messages:
+   .
+   CIU2202S  mm/dd/yy hh:mm:ss applid   VSAM Control file CIUCNTL
+                               READ failed RESP=13 RESP2=80
+                               failed RESP=13 RESP2=80
+   CIU2218S  mm/dd/yy hh:mm:ss applid   CINT has abended IUZB in
+                               program CIUA120C
+   .
+   
+   The PTF failed to recompile and ship the CIUX65W1 XWSPRROO
+   Webservices GLUE with the new IMS GWA updates added to
+   copybook CIUCINGD.
+   .
+   The collected dependency data in the VSAM files and updated
+   DB2 tables will have the last 4 bytes of the APPLID as binary
+   values if collecting webservices dependency data after UK39133.
+   When CIUX65W1 saves fields in the GWA and later invokes the
+   CALL_MOD subroutine included in copybook CIUX65SC , it overlays
+   various fields in the GWA at the wrong offsets.  When the
+   CALL_MOD subroutine is called, it saves AUGW_EIB_ADDRESS
+   which overlays the last 4 bytes of the AUGW_APPLID field due
+   to the mismatch in the GWA copybook.  When CIUCINB2 is
+   performing save activity, it uses the now corrupted AUGW_APPLID
+   field to build the VSAM record keys.
+   .
+   Additional Symptom(s) Search Keyword(s): garbled invalid
+   corrupted region applid EIB overlay overlayed
+   KIXREVSWM
+   .
+   Users may also receive abend messages similar to the
+   following:
+   .
+   DFHAP0701 applid An abend (code 0C4/AKEA) has occurred in exit
+                    program CIUX65W1 at exit point XWSPRROO.
+   DFHAP0001 applid An abend (code 0C4/AKEA) has occurred at offset
+                    X'0000198C' in module CIUX65W1.
+   DFHME0116 applid nnn
+   nnn (Module:DFHMEME) CICS symptom string for message DFHAP0001
+   nnn is PIDS/5655M1500 LVLS/650 MS/DFHAP0001 RIDS/DFHSRP
+   nnn PTFS/HCI6500 AB/S00C4 AB/UAKEA RIDS/CIUX65W1 ADRS/0000198C
+   DFHDU0205 applid A SYSTEM DUMP FOR DUMPCODE: AP0001, WAS
+                    SUPPRESSED BY THE DUMP TABLE OPTION FOR THIS
+                    DUMPCODE
+   DFHAP0701 applid An abend (code ---/ASRA) has occurred in exit
+                    program CIUX65W1 at exit point XWSPRROO.
+   DFHAP0001 applid An abend (code ---/ASRA) has occurred at offset
+                    X'14B6' in module DFHAPEX.
+   DFHME0116 applid nnn
+   nnn (Module:DFHMEME) CICS symptom string for message DFHAP0001
+   nnn is PIDS/5655M1500 LVLS/650 MS/DFHAP0001 RIDS/DFHAPEX
+   nnn PTFS/UK33060 AB/UASRA RIDS/DFHAPEX ADRS/000014B6
+   DFHDU0205 applid A SYSTEM DUMP FOR DUMPCODE: AP0001, WAS
+                    SUPPRESSED BY THE DUMP TABLE OPTION FOR THIS
+                    DUMPCODE
+   .
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All CICS IA Version 2.2 users.               *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: When CIUX65W1 saves fields in the GWA   *
+   *                      and later invokes the CALL_MOD          *
+   *                      subroutine it overlays various fields   *
+   *                      in the GWA at the wrong offsets.        *
+   *                      When the CALL_MOD subroutine is called, *
+   *                      it saves AUGW_EIB_ADDRESS which         *
+   *                      overlays the last 4 bytes of the        *
+   *                      AUGW_APPLID field due to the mismatch   *
+   *                      in the GWA copybook.                    *
+   *                      When CIUCINB2 is performing save        *
+   *                      activity, it uses the now corrupted     *
+   *                      AUGW_APPLID field to build the VSAM     *
+   *                      record keys.                            *
+   *                      The reason is that the PTF UK39133      *
+   *                      failed to recompile and ship the        *
+   *                      CIUX65W1 XWSPRROO Webservices GLUE with *
+   *                      the new IMS GWA updates added to        *
+   *                      copybook CIUCINGD.                      *
+   *                      The result is that you may now have     *
+   *                      some VSAM records with a corrupt APPLID *
+   *                      field and DB2 rows with a corrupt       *
+   *                      APPLID column. This would be the case   *
+   *                      if you had the CIUX65W1 XWSPRR00        *
+   *                      Webservices GLUE active for collecting  *
+   *                      Webservices data and with UK39133       *
+   *                      applied.                                *
+   *                      The corruption is to the last 4 bytes   *
+   *                      of the APPLID field which would appear  *
+   *                      as garbage when viewed.                 *
+   *                                                              *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   *                 Apply the PTF and perform HOLD ACTION.       *
+   *                                                              *
+   ****************************************************************
+   
+   New sample job and DB2 SQL definition have been provided
+   to clean up CICS IA VSAM files and the CICS IA data base.
+   The job is:
+   CIUJRPRV - repairing or deleting any VSAM records with
+   corrupt APPLID names.
+   The DB2 SQL definition is:
+   CIURPRDB - deleting DB2 rows with corrupt APPLID names.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  UK39133
+   
+   The APAR PK69265 [http://www-01.ibm.com/support/docview.wss?uid=swg1PK69265] is missing a recompiled version of CIUX65W1.
+   The CIUX65W1 has now been recompiled successfully.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  *********
+   * HIPER *
+   *********
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK86830
+   
+   
+ * REPORTED COMPONENT NAME
+   CICS INTER ANAL
+   
+   
+ * REPORTED COMPONENT ID
+   5697J2300
+   
+   
+ * REPORTED RELEASE
+   220
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   YesPE
+   
+   
+ * HIPER
+   YesHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2009-05-18
+   
+   
+ * CLOSED DATE
+   2009-07-13
+   
+   
+ * LAST MODIFIED DATE
+   2009-08-03
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UK48312
+   
+   
+
+MODULES/MACROS
+ *  CIUJRPRV CIURPRDB CIURPRVS CIUX65W1 H274220J
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CICS INTER ANAL
+   
+   
+ * FIXED COMPONENT ID
+   5697J2300
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R220 PSY UK48312
+   UP09/07/17 P F907 «

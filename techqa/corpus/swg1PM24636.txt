@@ -1,0 +1,207 @@
+Title: IBM PM24636: Perl API setValue function can corrupt HTML and XML tags - United States
+
+Text:
+  FIXES ARE AVAILABLE
+IBM Rational Change iFix 5.2.0.4.03 [http://www-01.ibm.com/support/docview.wss?uid=swg24028369]
+IBM Rational Change iFix 5.2.0.4.04 [http://www-01.ibm.com/support/docview.wss?uid=swg24028870]
+IBM Rational Change iFix 5.2.0.4.05 [http://www-01.ibm.com/support/docview.wss?uid=swg24029209]
+IBM Rational Change iFix 5.2.0.4.06 [http://www-01.ibm.com/support/docview.wss?uid=swg24029643]
+IBM Rational Change iFix 5.2.0.4.07 [http://www-01.ibm.com/support/docview.wss?uid=swg24030082]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Perl API setValue function can corrupt html and xml tags.
+   
+   Steps to reproduce:
+   
+   1. Create a CR that contains a html tags, such as including a
+   URL link.
+   
+   
+   2. Use the perl API to extract the problem_description of the
+   new CR.
+   
+           my $tmp = $csapi-?GetCRData($aUser, '185',
+   'problem_description');
+           my $tmpstr = $tmp-?getXmlData();
+   
+   
+   3. Extract the problem_description in to a variable:
+   
+           my $description =
+   $tmp-?getDataObjectByName('problem_description')-?getValue();
+   
+   
+   4. Print the desctiption. Note the URL with tags is printed
+   correctly. For example:
+   
+   ?a href='http://www.ibm.com/' target='_blank'?IBM?/a?
+   
+   
+   5. Return to the perl API script and using setValue, set the
+   problem_description to be exactly the same as when it was
+   extracted using the $description variable:
+   
+   
+   $tmp-?getDataObjectByName('problem_description')-?setValue($desc
+   ription);
+   
+   
+   6. Then re-extract the problem_description
+   
+           my $newDescription =
+   $tmp-?getDataObjectByName('problem_description')-?getValue();
+   
+   
+   7. Then print out the variable again. Note the output is now
+   corrupted:
+   
+   ?amp;lt;a href='http://www.ibm.com/'
+   target='_blank'?amp;gt;IBM?amp;lt;/a?amp;gt;
+   
+   
+   
+   Impact:
+   
+   1. If a user includes a URL as a link in a problem_description,
+   this is corrupted if the CR is copied and the
+   problem_description needs to be manipulated with the perl API.
+   
+   2. If a user creates a CR which includes xml or html tags as
+   part of the problem_description, this is corrupted if the CR is
+   copied and the problem_description needs to be manipulated with
+   the perl API.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   Perl API setValue function can corrupt HTML and XML tags
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The .setValue API was changed to not modify the values it is
+   given. For plain text attributes (CCM_STRING, CCM_TEXT,
+   etc.) this means the value you set will be seen exactly as
+   is when viewed on the web. Setting the value
+   "?b?Example?/b?" will display that value (angle brackets and
+   'b's included).
+   
+   For CCM_EXTENDED_TEXT attributes, values are also saved
+   as-is, but when viewed in the web client, will be rendered
+   as HTML. This means setting a value to "?b?Example?/b?" will
+   result on the word "Example" being shown in bold text.
+   Reading this value through the Perl API will still return
+   the raw value though (i.e., "?b?Example?/b?"). If you wish
+   to literally see the angled brackets in the web interface
+   you must HTML/XML escape the values first, before calling
+   .setValue. This can be done with
+   ChangeSynergy::util::xmlEncode.
+   
+   Note that CCM_EXTENDED_TEXT supports a limited set of HTML
+   tags and unsupported, un-escaped HTML tags (e.g., ?script?
+   tags) will be discarded.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM24636
+   
+   
+ * REPORTED COMPONENT NAME
+   TLOGIC CHANGE
+   
+   
+ * REPORTED COMPONENT ID
+   5724V87CG
+   
+   
+ * REPORTED RELEASE
+   520
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-10-15
+   
+   
+ * CLOSED DATE
+   2010-10-23
+   
+   
+ * LAST MODIFIED DATE
+   2010-10-23
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TLOGIC CHANGE
+   
+   
+ * FIXED COMPONENT ID
+   5724V87CG
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R520 PSN
+   UP

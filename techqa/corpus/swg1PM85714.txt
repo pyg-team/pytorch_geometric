@@ -1,0 +1,173 @@
+Title: IBM PM85714: UNABLE TO DEFINE AND EXECUTE A STATISTICS INTEGRATION NODE FROM MODELER IN SAME SESSION WITH 1 CONCURRENT USER STATS LICENSE - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  You have a Statistics 21 installation that uses a single
+   concurrent user license. You are using the Statistics
+   functionality within that installation from the Modeler 15
+   Statistics integration nodes after defining the connection using
+   the Statistics license location utility as documented.
+   
+   In a Modeler client session you add a Statistics integration
+   node (eg. Statistics transform node) to the stream and invoke
+   the edit dialog of the node. This allows you you define the
+   procedure within the node without any issues. However if you
+   then attempt to execute a terminal node from this node you see
+   an error:
+   
+   "No records recieved" or:
+   "IBM SPSS Statistics Transform Node Error: Can't find valid
+   license in:
+   C:\Program Files\IBM\SPSS\Statistics\21"
+   
+   If you save the stream, restart Modeler Client, load the stream
+   into the new Modeler session and execute the terminal node
+   without editing any Statistics nodes within the stream, you see
+   the output expected rather than an execution error.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * Those using Modeler's integration with Statistics, where the *
+   * Statistics install is a concurrent user install with 1       *
+   * concurrent user, and the user is trying to define a          *
+   * Statistics integration node within Modeler and then execute  *
+   * the node within the same Modeler session                     *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * You have a Statistics 21 installation that uses a single     *
+   * concurrent user license. You are using the Statistics        *
+   * functionality within that installation from the Modeler 15   *
+   * Statistics integration nodes after defining the connection   *
+   * using                                                        *
+   * the Statistics license location utility as documented.       *
+   *                                                              *
+   * In a Modeler client session you add a Statistics integration *
+   * node (eg. Statistics transform node) to the stream and       *
+   * invoke                                                       *
+   * the edit dialog of the node. This allows you you define the  *
+   * procedure within the node without any issues. However if you *
+   * then attempt to execute a terminal node from this node you   *
+   * see                                                          *
+   * an error:                                                    *
+   *                                                              *
+   * "No records recieved" or:                                    *
+   * "IBM SPSS Statistics Transform Node Error: Can't find valid  *
+   * license in:                                                  *
+   * C:\Program Files\IBM\SPSS\Statistics\21"                     *
+   *                                                              *
+   * If you save the stream, restart Modeler Client, load the     *
+   * stream                                                       *
+   * into the new Modeler session and execute the terminal node   *
+   * without editing any Statistics nodes within the stream, you  *
+   * see                                                          *
+   * the output expected rather than an execution error.          *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Please upgrade to IBM SPSS Modeler 15 FP2 in which this      *
+   * issue is resolved.                                           *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This issue has been addressed in IBM SPSS Modeler 15 Fix Pack 2
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM85714
+   
+   
+ * REPORTED COMPONENT NAME
+   SPSS MODELER
+   
+   
+ * REPORTED COMPONENT ID
+   5725A64MD
+   
+   
+ * REPORTED RELEASE
+   F00
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-03-27
+   
+   
+ * CLOSED DATE
+   2013-05-28
+   
+   
+ * LAST MODIFIED DATE
+   2013-05-28
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   SPSS MODELER
+   
+   
+ * FIXED COMPONENT ID
+   5725A64MD
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * RF00 PSN
+   UP

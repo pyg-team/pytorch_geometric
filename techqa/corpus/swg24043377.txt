@@ -1,0 +1,31 @@
+Title: IBM WebSphere MQ for HP NonStop Server V5.3.1 fix pack 5.3.1.13 - United States
+
+Text:
+Refresh Pack refresh pack Fix Pack fix pack WMQ maintenance fixes recommended updates csd fixpac csd 5.3.1 5.3.1.13 5.3 NonStop Tandem DOWNLOADABLE FILES
+
+ABSTRACT
+ This is Fix Pack 5.3.1.13 for WebSphere MQ for HP NonStop Server v5.3.1 
+
+DOWNLOAD DESCRIPTION
+Fix pack 5.3.1.13 is the Thirteenth cumulative fix pack maintenance for WebSphere MQ V5.3.1 for HP NonStop Server (PTF IP23075). 
+
+
+
+This fix pack is cumulative and includes all service performed on 5.3.1 since the original release.
+
+The link in the download section below links to a download for fix pack 5.3.1.13 for WebSphere MQ V5.3.1 for HP NonStop Server. You will be asked to register before being presented with a set of downloadable files.
+
+URL LANGUAGE SIZE(Bytes) System Requirements: WebSphere MQ HP NSS 5.3 Integrity [http://www.ibm.com/support/docview.wss?&uid=swg27006797] English 9999 
+URL LANGUAGE SIZE(Bytes) Fix list for 5.3.1.13 [http://www.ibm.com/support/docview.wss?&uid=swg27009174] English 9999 Readme for 5.3.1.13 [http://www-01.ibm.com/support/docview.wss?uid=swg27049472] English 9999 
+DOWNLOAD PACKAGE
+
+
+
+
+Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options 
+What is Fix Central(FC)? [https://www.ibm.com/support/fixcentral/help?page=swfaqs] Fix Pack 5.3.1.13 27 Feb 2017 English 59145229 FC [http://www.ibm.com/support/fixcentral/swg/quickorder?product=ibm/WebSphere/WebSphere+MQ&release=All&platform=HP+NonStop&function=fixId&fixids=5.3.1.13-WS-MQ-HPNSS-FP013&source=fc] [ ] 
+PRODUCT ALIAS/SYNONYM
+ WMQ MQ 
+
+ [/support/docview.wss?uid=swg24043377&aid=1]Problems (APARS) fixed [/support/docview.wss?uid=swg24043377&aid=2]Problems (APARS) fixed
+IT18593, IT18625, IT18692, IT18729, IT18767, IT18769, IT18770,

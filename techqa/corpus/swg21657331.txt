@@ -1,0 +1,43 @@
+Title: IBM Database can get huge when frequent changes are done for big shared objects - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When big shared business objects are used by long living processes and are saved frequently, then the DB tables for persisting these changes may grow quite large. 
+
+SYMPTOM
+DB tables BPM_SHARED_OBJECT_INSTANCE and BPM_SHARED_OBJECT_VALUE have big size
+
+
+CAUSE
+Imagine an environment where these 5 conditions are met: 
+
+ 1. Shared objects are used by a business process 
+ 2. The shared objects are big 
+ 3. Frequent changes are done to the shared objects 
+ 4. There are many instances of the business process 
+ 5. The business process instances have a long life time
+
+In this case, the database responsible for persisting the data, in particular the table BPM_SHARED_OBJECT_INSTANCE may grow quite large. This is because each save operation internally creates a new version of the business object that is persisted in addition to the existing versions; note that this versioning approach is done intentionally to handle concurrent updates of the same business object instance by several business processes appropriately. 
+In addition, the table BPM_SHARED_OBJECT_VALUE which keeps track of the actual deltas between changes may grow large as well. 
+
+Note: A completed process instance is kept in the system until it is finally deleted, so the life time does not end with the completion but rather with the deletion of the process instance. 
+
+DIAGNOSING THE PROBLEM
+DB tables BPM_SHARED_OBJECT_INSTANCE and BPM_SHARED_OBJECT_VALUE have many records and a big size.
+
+
+
+RESOLVING THE PROBLEM
+There is no way to purge older versions of a business object without endangering consistency of the persisted data. 
+
+Therefore, the only way is to avoid that all of the 5 conditions described above are met at the same time.
+
+For example, if shared objects are used in processes having a long life time and doing a huge number of updates, but the size of the shared objects is small, then the size of the DB will still grow, but not too much since the size of the objects is small. 
+
+If the process has a short life time, all shared objects created by the process instance will get removed from the DB when the process instance is deleted. But be aware that deleting a shared object that is still used by another process instance may lead to errors in the other process instance, due to the invalid reference to the no longer existing object. 
+
+If the number of updates is small, the size of the DB does still grow, but not too much since the number of objects is small.
+
+To achieve smallest growth of the DB, it is helpful to model small shared objects, and to use them in processes with short life time, and to do only a small number of updates.

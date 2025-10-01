@@ -1,0 +1,20 @@
+Title: IBM Network Licence error 4109 on check out - United States
+
+Text:
+Modeler AMOS spss Sentinel RMS TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When you try checking out a licence (aka commute a licence) to use a computer off the network where the network licence manager is located you receive an error 4109 message. The application functions normally when connected to the network. 
+
+SYMPTOM
+Error 4109 only appears when trying to commute the licence, otherwise the application functions correctly when using the application and obtaining the concurrent licence from the Sentinel RMS Licence Manager.
+
+
+CAUSE
+If you have an environment variable of LSHOST or LSFORCEHOST listed in your environment variables you will need to confirm it is pointing to the correct server.
+
+RESOLVING THE PROBLEM
+Remove the LSHOST or LSFORCEHOST environment variables if they exist for the computer you wish to commute the licence for off network usage.
+
+RELATED INFORMATION
+ Need more help? Our Statistics forum is Live! [https://developer.ibm.com/answers/topics/statistics.html?smartspace=predictive-analytics]

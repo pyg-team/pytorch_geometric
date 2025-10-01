@@ -1,0 +1,19 @@
+Title: IBM Why do I get rc=7405 in Library Server log when I delete item by using IBM Content Manager API? - United States
+
+Text:
+rc=7405; Library Server TECHNOTE (FAQ)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ English 
+
+QUESTION
+ Why do I get rc=7405 in Library Server log when I delete item by using IBM Content Manager API? 
+
+CAUSE
+RC=7405 could be returned due to many different scenarios. Here is one of the scenario. The error RC=7405 is used for Library Server internal reference of code logic. It simply says that the item is not checked out and Library Server can go ahead to check out the item. When Library Server modifies an item (update or delete), item needs to be checked out first to prevent the operation on the same item from other users. Before performing the checkout, Library Server needs to make sure that the item is not currently checked out, when Library Server gets this rc=7405 from internal function, Library Server knows that it is OK to check out the item.
+
+ANSWER
+1. The sample Library Server log as follows.
+ICMPLSDD TX_isItemCheckedOut 02929 12/27 00:55:35.141 GMT ;27005534588061 8d:13bd9db6da4:X7ffb ICMADMIN Exit return rc=7405 
+
+2. "rc=7405" is not a real error, just flag used for internal reference only in this particular case. You can ignore it if you can successfully delete item without other error.

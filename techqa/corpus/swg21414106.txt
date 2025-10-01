@@ -1,0 +1,104 @@
+Title: IBM When and How to use Federation Server Server Option db2_maximal_pushdown - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ When should I use Federation Server internal server option db2_maximal_pushdown? 
+
+CAUSE
+db2_maximal_pushdown is an internal server option often used to resolve performance problems.
+
+ANSWER
+db2_maximal_pushdown is an internal server option widely used to resolve performance problems of Infosphere Federation Server. However, it is important to know its best practice, limitation and side effects when advising customer to enable it. 
+
+When to use it?
+Poor performance of a federated query (i.e. query involving nickname) is usually caused by some part of the query not getting pushed down (maybe predicate, head expression, grouping, sorting, nickname join, etc) to remote server. That means that part of query is computed locally, which causes excessive rows being retrieved from remote servers to federation server, or local sorting. 
+
+Examining the query plan for a SQL with performance problem, if there is some part of query not pushed down, the cause might be:
+
+1. This is a decision of PDA (Pushdownability Analysis) component. PDA considered the possibility of pushdown for this part of query, and found that, there is no counterpart on remote server for this part of the query. Pushing down this part of the query could lead to inconsistent result or error message from the remote server.
+
+2. This is a decision of the Optimizer. There is counterpart on remote server can do the same thing for this part of query. But the Optimizer considered it more efficient if computing it locally (e.g. sometime, this means less amount of intermediate result that need retrieved from the remote server).
+
+Using db2_maximal_pushdown you can easily determine which of the above two is the real cause: 
+
+Enable it to 'Y',
+alter server <server_name> options(db2_maximal_pushdown 'Y')
+Then explain the query plan and see if everything is pushed down as expected. If so, and the performance problem is gone along with the pushed down plan, we could then conclude, not pushing down is a (incorrect) Optimizer decision. This is usually caused by incorrect nickname/local table stats.
+
+If the plan does not get changed, we know that, PDA made the decision of not pushing down. This is usually caused by incorrect server option settings or different capacity/semantics between federation and remote server. We may have to correct the server option settings or re-code the SQL query.
+
+On the other hand, there is a small possibility that, even with correct stats and server option settings, we didn't get an desirable pushed down plan, unless we set db2_maximal_pushdown to 'Y'. This is another scenario where db2_maximal_pushdown can be used. In such case, we may set it to 'Y' as a temporary fix of the performance problem, but we don't recommend to do so as a regular fix (see "Side effects" below).
+
+
+Limitations:
+When db2_maximal_pushdown is 'Y', The Optimizer will make sure following things:
+1. The final plan is a plan with minimum number of SHIP operators in its plan tree. This means the joins belonging to the same server have been pushed down.
+2. Among all plans that have the same minimum number of SHIP operators, the final plan is one with maximum number of remote MATE operator (expression computation operator for remote server) in its plan tree. This means group/sort/head-expression belonging to the remote server have been pushed down.
+
+However, with db2_maximal_pushdown, the Optimizer may fail to get an expected plan in following cases:
+
+1. Cartesian product join
+If there is Cartesian product join (that is two nickname joining without any join predicate) in the query, the join may not get pushed down, since the Optimizer tries to avoid remote Cartesian product join, even when db2_maximal_pushdown is on. What is worse, Optimizer's algorithm on avoiding remote Cartesian product join may produce poor query plans when db2_maximal_pushdown is set. So please try NOT to set db2_maximal_pushdown when Cartesian product join is present.
+
+2. Correlated subquery
+A correlated subquery (i.e. a subquery that has correlation to its upper query), which is present in head expression (i.e. select-list) or predicate (i.e. where-clause), is considered as Cartesian product join. The Optimizer may not produce a pushed down plan when db2_maximal_pushdown is on. And it may even produce worse plans than those produced when db2_maximal_pushdown is not set. Please try NOT to set db2_maximal_pushdown when correlated subquery is present.
+
+3. Join between nickname and local tables
+
+db2_maximal_pushdown couldn't affect join method choice for a join between nickname and local table. Do not resort to db2_maximal_pushdown for better join method for such a join. For example, in a WLAN environment you may want the Optimizer to favor a hash join:
+
+HSJN
+/ \
+Scan Ship
+| |
+T1 N1
+
+over a nested loop join:
+
+NLJN
+/ \
+Scan Ship
+| |
+T1 N1
+
+Nickname N1 is not very large in size. In actual run, HSJN performed much better then the NLJN. The reason was that, in HSJN, all nickname data was retrieved from remote server at one time and the remote statement was executed only once. On the contrary, in NLJN, a bind-in index join was used, SHIP was executed for each of the outer rows and retrieved intermediate result set from remote server every time. However, the Optimizer might still choose the NLJN, but you may want the HSJN. In such a case, setting db2_maximal_pushdown may NOT make a difference, since it only affects number of SHIP/MATE in the plan. The solution might be dropping the nickname index on N1 or manually decrease cardinality stats of N1.
+
+Side effects:
+Setting db2_maximal_pushdown may lead to bad plan for a join of two nickname from the same server. E.g. before setting it, you may see a query plan like:
+
+1000 
+>NLJOIN 
+/--------+---------\ 
+100 100 
+SHIP SHIP 
+| |
+N1 N2 
+
+This is a non-pushdown plan, and with this plan, federation server only needs to fetch 200 rows from remote server and performs the join locally. After setting db2_maximal_pushdown to 'Y', you will see a pushed down plan is chosen by the Optimizer instead:
+
+1000 
+SHIP 
+| 
+1000 
+>NLJOIN 
+/--------+---------\ 
+100 100
+N1 N2 
+
+
+With this plan, 1000 rows will be fetched from remote server, which makes the performance worse. So please be cautious when setting db2_maximal_pushdown. 
+
+Since setting db2_maximal_pushdown will affect ALL queries on that server, it may result in mixed effects: when it is making one query perform better, it may make others' performance worse.
+
+You can use following commands to minimize its effect to only one connection session without affecting queries in other connection sessions:
+
+--temporarily setting the option to 'Y'
+set server option db2_maximal_pushdown to 'Y' for server servername
+
+--perform the query
+...
+
+--setting it back to 'N'
+set server option db2_maximal_pushdown to 'N' for server servername

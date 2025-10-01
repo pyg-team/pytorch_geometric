@@ -1,0 +1,66 @@
+Title: IBM Known issues when configuring IBM Case Manager with Single Sign On (SSO) using Tivoli Access Manager - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This technote will cover known issues when configuring IBM Case Manager with Single Sign On (SSO) using Tivoli Access Manager (TAM) and how to resolve those issues. 
+
+RESOLVING THE PROBLEM
+ 
+
+1) BMWIW0006E / BMWIW0011E error 
+
+ 
+
+With Single Sign On configured for IBM Case Manager using Tivoli Access Manager, after successfully logging in Case Client the following error will be shown:
+
+
+
+BMWIW0006W: The widget 'endpoint://com.ibm.acm.client.widgets/catalog/iwidget/Toolbar.xml' cannot display correctly. Error details: 'BMWIW0011E: The resource support.js : syntax error could not be loaded.'.
+BMWIW0006W: The widget 'endpoint://com.ibm.acm.client.widgets/catalog/iwidget/Inbasket.xml' cannot display correctly. Error details: 'BMWIW0011E: The resource support.js : syntax error could not be loaded.'.
+
+
+If Firefox browser is used, with the FireBug plugin, the console will show:
+
+
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+
+
+
+To resolve the issue, check the following: 
+
+1. Ensure that transparent junctions for all the paths for IBM Case Manager are created as mentioned in the technote: Configure IBM Case Manager for SSO with Tivoli Access Manager. [http://www-01.ibm.com/support/docview.wss?uid=swg21599394] [http://www.ibm.com/support/docview.wss?uid=swg21599394] 
+
+2. Ensure that the options provided for creating transparent junctions is exactly same as what is mentioned in the above technote. In particular, do not use the -j option when creating junctions as the -j option is used for Scripting Support. IBM Case Manager uses transparent path junction and does not need the function of Scripting Support. If the -j option is used then the content-type header for the support.js response will identify it as text/html instead of a JAVA script and result in the error. 
+
+PRODUCT ALIAS/SYNONYM
+ Advanced Case Management
+Case Manager
+IBM Case Manager

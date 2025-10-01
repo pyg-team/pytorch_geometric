@@ -1,0 +1,15 @@
+Title: IBM On Premise MFP: Oracle 12c support - United States
+
+Text:
+oracle 12c support TECHNOTE (FAQ)
+
+QUESTION
+ From which MaaS OnPrem version is supported Oracle 12C? 
+
+ANSWER
+Oracle 12C is supported starting from MaaS OnPrem v.2.4.0.
+
+
+
+PRODUCT ALIAS/SYNONYM
+ IBM MaaS360 Mobile Device Management

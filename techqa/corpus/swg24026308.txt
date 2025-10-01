@@ -1,0 +1,88 @@
+Title: IBM PK97186; 7.0.0.7: Unable to configure Informix with DB2/JCC driver on CEI - United States
+
+Text:
+PK97186; PK97186; PK97186 DOWNLOADABLE FILES
+
+ABSTRACT
+ The configuration of the Common Event Infrastructure with Informix database does not support IBM Data Server Driver for JDBC. 
+
+DOWNLOAD DESCRIPTION
+PK97186 resolves the following problem:
+
+
+
+
+ERROR DESCRIPTION: 
+
+Common Event Infrastructure (CEI) data sources are still being configured with com.ibm.websphere.rsadapter.InformixDataStoreHelper instead of com.ibm.websphere.rsadapter.InformixJccDataStoreHelper 
+
+ 
+
+USERS AFFECTED: 
+
+IBM WebSphere Application Server users who does configure Common Event Infrastructure with an Informix database. 
+
+ 
+
+PROBLEM DESCRIPTION: 
+
+The configuration of the Common Event Infrastructure with Informix database does not support IBM Data Server Driver for JDBC. 
+
+ 
+
+PROBLEM SUMMARY: 
+
+The automatic configuration process of Common Event Infrastructure with an Informix database creates the WebSphere Application Server data source based on the Informix JDBC Driver (XA) driver version (considered as the default). 
+
+Common Event Infrastructure configuration supports the data source to be configured with a JDBC provider based on Informix Using IBM DB2 JDBC Universal Driver or Informix Using IBM JCC Driver as well. If the users need to base their data source on one of the above options, they will be able to do so by using a manual procedure via the Administrative Console. The automatic configuration process for Common Event Infrastructure should support these cases as well. 
+
+ 
+
+LOCAL FIX: 
+
+None 
+
+ 
+
+RECOMMENDATION: 
+
+None 
+
+ 
+
+PROBLEM CONCLUSION: 
+
+The automatic configuration process with Informix database has been changed by adding to the configEventServiceInformixDB configuration Admin Task a new optional parameter -jdbcDriverVersion that will accept the following possible/acceptable values jta / 3.0 / 4.0. By using the ‘jta’ value it will configure the JDBC provider to use Informix JDBC Driver for JTA/XA. The usage of ‘3.0’ value will determine the configuration of the JDBC provider to be based on the Informix Using IBM DB2 JDBC Universal Driver (XA) version whereas using the 4.0 value will produce the JDBC provider based on the Informix Using IBM JCC Driver (XA) version. 
+
+The introduced behavior is: 
+
+ 1. -jdbcDriverVersion not specified in the AdminTask - The configuration will be performed using 'Informix JDBC Driver (XA)', therefore Informix JDBC Driver for JTA/XA driver version. 
+ 2. -jdbcDriverVersion specified but no value supplied - Will raise an exception as -jdbcDriverVersion needs a parameter, then if the user goes so far as to use the parameter but does NOT supply a value, we give an error stating like in the following example "CEIIN0739E No value was specified for the jdbcDriverVersion parameter". 
+ 3. -jdbcDriverVersion specified with the 'jta' value supplied - The configuration will be performed using 'Informix JDBC Driver for JTA/XA'. 
+ 4. -jdbcDriverVersion specified with the '3.0' value supplied - The configuration will be performed using 'Informix Using IBM DB2 JDBC Universal Driver'. 
+ 5. -jdbcDriverVersion specified with the '4.0' value supplied - The configuration will be performed using 'Informix Using IBM JCC Driver (XA)', therefore based on the provider that supports JDBC 4.0 specification using the IBM Data Server Driver for JDBC and SQLJ version. 
+ 6. -jdbcDriverVersion specified with a value OTHER than jta, 3.0 or 4.0 - Will raise an exception like in the following example: "CEIIN0701E The parameter jdbcDriverVersion contains the value <wrong_value>, which is not valid. Valid values are: jta, 3.0, 4.0.". 
+    
+    
+    The fix for this APAR is currently targeted for inclusion in fix pack 7.0.0.9. Please refer to the Recommended Updates page for delivery information: 
+    http://www.ibm.com/support/docview.wss?uid=swg27004980 [http://www.ibm.com/support/docview.wss?uid=swg27004980]
+
+PREREQUISITES
+Download the UpdateInstaller below to install this fix.
+
+URL LANGUAGE SIZE(Bytes) UpdateInstaller [http://www.ibm.com/support/docview.wss?uid=swg21205991] US English 7250000 
+INSTALLATION INSTRUCTIONS
+Review the readme.txt for detailed installation instructions.
+
+URL LANGUAGE SIZE(Bytes) Readme [ftp://public.dhe.ibm.com/software/websphere/appserv/support/fixes/PK97186/readme.txt] US English 9048 
+DOWNLOAD PACKAGE
+
+
+
+Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options 
+What is Fix Central(FC)? [https://www.ibm.com/support/fixcentral/help?page=swfaqs] 7.0.0.7-WS-WAS-MultiOS-IFPK97186 03-30-2010 US English 36190 HTTP [http://www.ibm.com/support/fixcentral/quickorder?fixids=7.0.0.7-WS-WAS-MultiOS-IFPK97186&product=ibm%2FWebSphere%2FWebSphere%20Application%20Server&source=dbluesearch] 
+TECHNICAL SUPPORT
+ Contact IBM Support using SR (http://www.ibm.com/software/support/probsub.html [http://www.ibm.com/software/support/probsub.html]), visit the WebSphere Application Server support web site (http://www.ibm.com/support/entry/portal/Overview/Software/WebSphere/WebSphere_Application_Server [http://www.ibm.com/support/entry/portal/Overview/Software/WebSphere/WebSphere_Application_Server]), or contact 1-800-IBM-SERV (U.S. only). 
+
+ [/support/docview.wss?uid=swg24026308&aid=1]Problems (APARS) fixed [/support/docview.wss?uid=swg24026308&aid=2]Problems (APARS) fixed
+PK97186

@@ -1,0 +1,165 @@
+Title: IBM IT09774: CHANGED NUM_IOSERVERS=AUTOMATIC BEHAVIOUR FOR DB2_WORKLOAD=SAP - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+DB2 Version 10.1 Fix Pack 6 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24043366]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  LOB values that exceed the inline length are not stored in the
+   base row of the table. Instead, they are stored separately in
+   the LOB table object. LOB values in the LOB table object are not
+   buffered but read by the DB2 engine directly from disk when
+   requested. This is called a direct read operation.
+   
+   Reading and writing larger LOB values from and to disk can be
+   time consuming. Therefore the DB2 agent decides based on the
+   size of the LOB value if the direct read is performed by the DB2
+   agent itself or if it is delegated to the DB2 prefetchers to
+   benefit from the ability to read in parallel.
+   
+   If the LOB read is delegated to the prefetchers the agent has to
+   wait for the completion of the prefetch work before it can
+   continue. This can lead to a significant wait time if the
+   prefetch subsystem is very busy and unable to service the LOB
+   prefetch request.
+   
+   Customers on DB2 10.1 and higher are more likely to experience
+   wait times during LOB prefetch during periods of high workload
+   because of increased prefetch work from the smart prefetching
+   capability. On these releases, NUM_IOSERVER=AUTOMATIC can be too
+   low for large systems with high workload when many LOB values
+   need to be read or written.
+   
+   The following changes are effective under DB2_WORKLOAD=SAP:
+   1) NUM_IOSERVER=AUTOMATIC is changed to 104 to ensure that
+   sufficient prefetchers and prefetch queues are available.
+   2) The threshold for the size of a LOB to be prefetched has been
+   changed from one extent to the fixed value of 96K.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Manually set the database configuration paramater NUM_IOSERVER
+   to 104.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * ALL                                                          *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * See Error Description                                        *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Upgrade to DB2 Version 10.1 Fix Pack 6.                      *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  First fixed in DB2 Version 10.1 Fix Pack 6.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT09774
+   
+   
+ * REPORTED COMPONENT NAME
+   DB2 FOR LUW
+   
+   
+ * REPORTED COMPONENT ID
+   DB2FORLUW
+   
+   
+ * REPORTED RELEASE
+   A10
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-06-30
+   
+   
+ * CLOSED DATE
+   2015-07-13
+   
+   
+ * LAST MODIFIED DATE
+   2015-07-13
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    IT09928 IT09990 [http://www-01.ibm.com/support/docview.wss?uid=swg1IT09990]
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   DB2 FOR LUW
+   
+   
+ * FIXED COMPONENT ID
+   DB2FORLUW
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * RA10 PSN
+   UP
+   
+   
+ * RA50 PSN
+   UP

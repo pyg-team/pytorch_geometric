@@ -1,0 +1,42 @@
+Title: IBM Sterling 9.4 Enterprise Edition fails to install - United States
+
+Text:
+Installation; 9.4 fails TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Sterling 9.4 Enterprise Edition fails to install 
+
+SYMPTOM
+The installation does not proceed.
+
+
+CAUSE
+A directory /mw/sterling/Foundation/silent5255841294838697077.txt prevents the installation.
+
+ENVIRONMENT
+Linux
+
+DIAGNOSING THE PROBLEM
+Very shortly after starting install, you might see a failure and cannot tell why. 
+
+
+export JAVA_HOME first.
+
+uhqtster06 [pts/1] # more Install20150601_0808.log
+Reading properties
+Finished reading properties
+Installing to: /mw/sterling/Foundation
+Languages: en
+Silent file: /mw/sterling/Foundation/silent5255841294838697077.txt
+Unpacking: /mw/IBM/SDPShared/files/SMCFS_9.4.0.jar
+
+
+RESOLVING THE PROBLEM
+Directory mw/sterling/Foundation already exists. 
+
+If no other progress after the problem was initially logged, here are the steps to follow:
+
+
+ 1. Remove or rename the current installation directory. 
+ 2. Delete SDPShared directory created by IBM install manager during SSFS 9.2 installation. 
+ 3. Under IBM Installation Manager installation directory, modify installRegistry.xml and installed.xml by deleting entries for IBM Sterling Selling and Fulfillment Suite.

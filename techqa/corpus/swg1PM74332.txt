@@ -1,0 +1,252 @@
+Title: IBM PM74332: J2EE WEBLOGIC DATA COLLECTOR CANNOT CONNECT TO MANAGING SERVER - United States
+
+Text:
+  FIXES ARE AVAILABLE
+7.1.0.3-TIV-ITCAMAD-IF0007: ITCAM for Application Diagnostics V7.1 FP3 IF7 [http://www-01.ibm.com/support/docview.wss?uid=swg24034668]
+7.1.0.3-TIV-ITCAMAD-IF0008: ITCAM for Application Diagnostics V7.1 FP3 IF8 [http://www-01.ibm.com/support/docview.wss?uid=swg24037994]
+7.1.0-TIV-ITCAMAD-FP0004: ITCAM for Application Diagnostics V7.1 Fix Pack 4 [http://www-01.ibm.com/support/docview.wss?uid=swg24041705]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The Data Collector (DC) does not connect to the Managing Server
+   (MS) because the DC can't recover if it starts before the admin
+   service is available. In addition, an error can be found in the
+   trace-dc-ParentLast.log on the DC:
+   
+   <Trace Level="ERROR">
+    <Time Millis="1347674481393"> 2012-09-14
+   21:01:21.393-05:00</Time>
+    <Server Format="IP"><hostname></Server>
+    <ProductId>CYN</ProductId>
+    <Component>CYN.trc.toolkit.ai.management.Base</Component>
+    <ProductInstance>16197</ProductInstance>
+    <LogText><![CDATA[]]></LogText>
+    <Source
+   FileName="com.ibm.tivoli.itcam.toolkit.ai.management.Base$1"
+   Method="initialize()"/>
+    <Thread>ITCAM Toolkit AsynchrounousTriggerWaiter</Thread>
+    <Exception><![CDATA[javax.management.RuntimeMBeanException:
+   MBean getAttribute failed: java.lang.IllegalStateException:
+   Admin server identity is unavailable. The managed server may not
+   be connected to the admin server
+    at
+   weblogic.management.jmx.modelmbean.WLSModelMBean.getAttribute(WL
+   SModelMBean.java:553)
+    at
+   com.sun.jmx.interceptor.DefaultMBeanServerInterceptor.getAttribu
+   te(DefaultMBeanServerInterceptor.java:666)
+    at
+   com.sun.jmx.mbeanserver.JmxMBeanServer.getAttribute(JmxMBeanServ
+   er.java:638)
+    at
+   weblogic.management.jmx.mbeanserver.WLSMBeanServerInterceptorBas
+   e$12.run(WLSMBeanServerInterceptorBase.java:324)
+    at java.security.AccessController.doPrivileged(Native Method)
+    at
+   weblogic.management.jmx.mbeanserver.WLSMBeanServerInterceptorBas
+   e.getAttribute(WLSMBeanServerInterceptorBase.java:322)
+    at
+   weblogic.management.mbeanservers.compatibility.internal.Compatib
+   ilityInterceptor.getAttribute(CompatibilityInterceptor.java:41)
+    at
+   weblogic.management.jmx.mbeanserver.WLSMBeanServerInterceptorBas
+   e$12.run(WLSMBeanServerInterceptorBase.java:324)
+    at java.security.AccessController.doPrivileged(Native Method)
+    at
+   weblogic.management.jmx.mbeanserver.WLSMBeanServerInterceptorBas
+   e.getAttribute(WLSMBeanServerInterceptorBase.java:322)
+    at
+   weblogic.management.mbeanservers.internal.SecurityInterceptor.ge
+   tAttribute(SecurityInterceptor.java:298)
+    at
+   weblogic.management.jmx.mbeanserver.WLSMBeanServer.getAttribute(
+   WLSMBeanServer.java:266)
+    at
+   weblogic.management.mbeanservers.compatibility.internal.RemoteMB
+   eanServerImpl.getAttribute(RemoteMBeanServerImpl.java:98)
+    at
+   weblogic.management.mbeanservers.compatibility.internal.MBeanPro
+   xy.getAttribute(MBeanProxy.java:302)
+    at
+   weblogic.management.mbeanservers.compatibility.internal.MBeanPro
+   xy.invoke(MBeanProxy.java:110)
+    at $Proxy149.getAdminServerListenPort(Unknown Source)
+    at
+   com.ibm.tivoli.itcam.wls.sdc.WeblogicServer.getAdminServerPort(W
+   eblogicServer.java:150)
+    at
+   com.cyanea.probe.ProbeSystem.initialize(ProbeSystem.java:1562)
+    at
+   com.ibm.tivoli.itcam.dc.BootstrapService.start(BootstrapService.
+   java:211)
+    at
+   com.ibm.tivoli.itcam.toolkit.ai.management.Base$1.run(Base.java:
+   202)
+    at java.security.AccessController.doPrivileged(Native Method)
+    at
+   com.ibm.tivoli.itcam.toolkit.ai.management.Base.initialize(Base.
+   java:150)
+    at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+    at
+   sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessor
+   Impl.java:39)
+    at
+   sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethod
+   AccessorImpl.java:25)
+    at java.lang.reflect.Method.invoke(Method.java:597)
+    at
+   com.ibm.tivoli.itcam.toolkit.ai.bcm.BcmAnchor.eventPostProcessor
+   (BcmAnchor.java:1454)
+    at
+   com.ibm.tivoli.itcam.toolkit.ai.bcm.bootstrap.AsynchrounousTrigg
+   erWaiter$WaiterThread.run(AsynchrounousTriggerWaiter.java:181)
+   Caused by: java.lang.IllegalStateException: Admin server
+   identity is unavailable. The managed server may not be connected
+   to the admin server
+    at
+   weblogic.t3.srvr.ServerRuntime.getAdminServerListenPort(ServerRu
+   ntime.java:823)
+    at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+    at
+   sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessor
+   Impl.java:39)
+    at
+   sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethod
+   AccessorImpl.java:25)
+    at java.lang.reflect.Method.invoke(Method.java:597)
+    at
+   weblogic.management.jmx.modelmbean.WLSModelMBean.getAttribute(WL
+   SModelMBean.java:525)
+    ... 27 more
+   ]]></Exception>
+    <Principal><hostname>/<ipaddr></Principal>
+   </Trace>
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:
+   *
+   * ITCAM for J2EE users who use this tool to monitor WebLogic
+   * application servers.
+   *
+   ****************************************************************
+   *
+   * PROBLEM DESCRIPTION:
+   *
+   * When a WebLogic server instance is started before the admin
+   * server is available (or not started), it fails to connect to
+   * the ITCAM Managing server due to connect exception with the
+   * admin service.
+   *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This APAR corrects the Managing server connect logic so that it
+   continues with the connection process even when the WebLogic
+   admin server is not available.
+   
+   The fix for this APAR is contained in the following maintenance
+   release:
+   
+     | Interim fix | 6.1.0.6-TIV-ITCAMfJ2EE_MP-IF0004
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM74332
+   
+   
+ * REPORTED COMPONENT NAME
+   TCAM AD WAS DC
+   
+   
+ * REPORTED COMPONENT ID
+   5724Y92DC
+   
+   
+ * REPORTED RELEASE
+   710
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-10-04
+   
+   
+ * CLOSED DATE
+   2013-01-28
+   
+   
+ * LAST MODIFIED DATE
+   2013-05-09
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TCAM AD WAS DC
+   
+   
+ * FIXED COMPONENT ID
+   5724Y92DC
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R710 PSY
+   UP

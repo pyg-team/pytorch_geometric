@@ -1,0 +1,38 @@
+Title: IBM Get the source and destination file name from statistics records when using DMDSSIOX - Sterling Connect:Direct for z/OS - United States
+
+Text:
+DMDSSIOX MULTI.COPY.STAT.RCD M2 MC TECHNOTE (FAQ)
+
+QUESTION
+ How do you get the source and destination file names from statistics when using the IOEXIT DMDSSIOX when they are not present in the CT records? 
+
+CAUSE
+DMDSSIOX is an IOEXIT that calls the DFHSMS utility ADRDSSU. Because of this the COPY step executing this exit passes the source and destination files names in PARMS or SYSOPTS. The file names in these are not written to the CT record. This information is not written to the statistics files unless the MULTI.COPY.STAT.RCD initialization parameter is coded.
+
+ANSWER
+The source and destination files names are not written to the statistics file unless the MULTI.COPY.STAT.RCD initialization parameter is coded. Then based on the value coded in MULTI.COPY.STAT.RCD will determine what statistics record this information is written to. 
+
+MULTI.COPY.STAT.RCD=not set | CT | MC | M2
+
+This parameter creates statistics records for files copied using the DMDSSIOX I/O exit and is particularly useful with the wildcard feature, which can produce large numbers of files. When this parameter is set, a message is sent to the console each time the DMDSSIOX I/O exit copies a file, regardless of what other types of statistics records are being generated. 
+
+By default, this initialization parameter is not set. 
+
+Values:
+
+Not set - No file completion statistics records are created and no console messages are produced.
+
+CT - Produces a Copy Termination type of statistics record.
+
+MC - Produces a PDS Member Copy type of statistics record, which replaces the member name with the file name provided by the ADRDSSU utility.
+
+M2 - Produces a “multiple copy” type of statistics record, which shows the file name, current return code, bytes processed as reported by the IBM ADRDSSU utility, and normal Step information.
+
+
+Modifiable through MODIFY INITPARMS command: YES
+
+See also: 
+
+Sterling Connect:Direct for z/OS V5.2.0 > System Administration > Global Initialization Parameters [https://www.ibm.com/support/knowledgecenter/SSFGBN_5.2.0/com.ibm.help.cdzos.admin.doc/ZOS_MULTI_COPY_STAT_RCD.html] 
+
+Sterling Connect:Direct for z/OS V5.2.0 > User Guide > Utility Programs [https://www.ibm.com/support/knowledgecenter/SSFGBN_5.2.0/com.ibm.help.cdzos.user.doc/ZOS_Utility_Programs.html]

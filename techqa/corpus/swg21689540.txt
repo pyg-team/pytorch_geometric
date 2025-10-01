@@ -1,0 +1,74 @@
+Title: IBM SDK Reporting output format of CSV for IBM Cognos product - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Why does IBM Cognos BI product when reports are run as CSV format, and output is saved a file name ends in a type of XLS ? 
+
+CAUSE
+The IBM Cognos CSV output format is actually an Microsoft Excel CSV format, hence the file extension will be XLS.
+
+ANSWER
+This is the correct functionality of the product for CSV file formats. 
+
+Check the file types in the Windows OS for the .CSV format.
+You find it as : CSV = Microsoft Excel Comma Separated Value file.
+
+For display in the browser, which is basically what IBM Cognos software needs to do, the mime type is set as application/vnd.ms-excel , for both the CSV and the XLS format that IBM Cognos has implemented.
+Output files in the IBM Cognos System of reports runs with the CSV format, are encoded in this Mime type, so that they open correctly in Microsoft Excel helper application in the Browser, and will have the XLS extension when viewed or saved.
+
+If an SDK Software Application is used to do RunAt() , it schedules a report rather then run the report. 
+Therefore the report output extension when stored on the Content Manager system will be in the XLS format.
+
+With the SDK it is of course possible to run the report, and then retrieve the output setting and name the file extension to CSV when saving to the file system.
+You can do the same when a report is run interactively with the browser, by saving the output to the file system, changing the random generated_file_name.xls to your_name.csv.
+
+To do so is incorrect , since any such files and output should have been saved as your_name.xls , the default format from IBM Cognos.
+
+The Rationale :
+The CSV format and extension is a very basic format 
+
+From Wikipedia Sources :
+CSV is a delimited data format that has fields / columns separated by the comma character and records / rows separated by newlines. Fields that contain a special character (comma, newline, or double quote), must be enclosed in double quotes. 
+If a line contains a single entry which is the empty string, it may be enclosed in double quotes. If a field's value contains a double quote character it is escaped by placing another double quote character next to it. The CSV file format does not require a specific character encoding, byte order, or line terminator format.
+==
+
+The IBM Cognos Reason :
+The format that IBM Cognos considers "CSV" is in actuality not an International Standard CSV format, and therefore can not fall in that type category.
+It is based on the Mime Type of application/vnd.ms-excel and is therefore an Excel file type. 
+Excel file types are .XLS by default , and to open the file from IBM Cognos properly in Excel, the extension .XLS is being used so that the Browser understands to open the file in Excel Helper, or other Spreadsheet type of applications for the browser.
+
+IBM Cognos CSV has the following Additional options , and therefore cannot be considered a "true" CSV format , and can be opened with Microsoft Excel, MSWindows Wordpad , StarOffice, OpenOffice, LibreOffice and many other programs and utilities.
+
+From the IBM Cognos BI Administration and Security guide on the Internal CSV format :
+
+Reports saved in delimited text (CSV) format open in the application associated with the.csv file type, usually Microsoft Excel, Microsoft Windows Wordpad, or Star Office.
+Reports saved in CSV format are :
+
+- Designed to support Unicode data across many client operating systems and tools.
+- UTF-16 Little Endian data-encoded.
+- Include a BOM (Byte Order Mark) at the beginning of the file.
+- Tab-Delimited by default, not comma delimited.
+- not using enclosed strings in quotation marks.
+- using a new line character to delimit rows.
+- showing only the results of a report query. Page layout items, such as titles, images, and paramDisplay values do not appear in this output.
+
+You can modify the CSV output format for the whole system to suit your environment in IBM Cognos via System Wide Advanced Parameters.
+For more information about customizing the functionality of IBM Cognos , see "Modify Properties for the CSV Output Format" in the Cognos Administration and Security Guide.
+
+When running reports through the SDK, the correct action is to use the API to make a convertCSV() function to convert the result output from IBM Cognos in the "CSV" format (XLS) , to be a true CSV format, with the file extension of .CSV that is expected.
+
+This would include requesting the Report Service to deliver the output in UTF-8, changing the Tab-Delimiters to Comma Delimiters, and removing the Byte Order Mark of two Characters that are at the front in the file as a minimum.
+Depending on your target application needs, other items may also need to be addressed in SDK code.
+
+See the attached SDK Sample link as a start for such a project.
+
+RELATED INFORMATION
+ SDK Sample to retrieve report results in PDF or CSV For [http://www.ibm.com/support/docview.wss?uid=swg21343829]
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Analytics Cognos Analytics Software Development Kit (SDK) v11x Platform Independent 11.0 Edition Independent

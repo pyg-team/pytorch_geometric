@@ -1,0 +1,205 @@
+Title: IBM PM52570: CICS DOES NOT AUTOMATICALLY RECONNECT TO THE MQ QUEUE MANAGER AFTER THE MQ QM IS STOPPED AND RESTARTED W 12/01/24 PTF PEREMOVE - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  After applying PTF UK68064 , CICS no longer reconnects to
+   the MQ queue manager when the queue manager is stopped and
+   restarted while CICS remains up.
+   .
+   Here is an example of the messages issued by CICS when the
+   queue manager is stopped:
+   .
+   DFHMQ0341 I STOP requested by alert monitor CKAM.
+   DFHMQ0107 I A request to end CKTI has been received. CKTI ended.
+   DFHMQ0334 I Adapter shutdown successful.
+   DFHMQ0342 I CONNECT received from alert monitor.
+   DFHMQ0324 I All queue managers in queue sharing group MQSG are
+   inactive.
+   DFHMQ0308 I Queue manager MQM1 is stopped. Connect request
+   deferred.
+   DFHMQ0364 I Monitor terminated normally.
+   .
+   The last of those messages, DFHMQ0364 , is the one that
+   shouldn't be occurring.  It shows that the Alert Monitor task,
+   CKAM , is terminated.  But that task should not be terminated
+   at this point.  It is the task that would be able to detect
+   when the Queue Manager is restarted.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Back off UK68064
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All CICS users.                              *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: A customer using a CICS/MQ Queue        *
+   *                      Sharing Group (QSG) sees messages       *
+   *                      DFHMQ0324 and DFHMQ0308 during startup  *
+   *                      even though the QSG Queue Manager is    *
+   *                      available.  Additionally an attempt to  *
+   *                      perform a warm shutdown of CICS is      *
+   *                      unsuccessful and when a Queue Manager   *
+   *                      attached to a CICS System is brought    *
+   *                      down, it does not automatically         *
+   *                      re-connect to the CICS system when it   *
+   *                      is brought back up again.               *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   Whilst re-starting a CICS region which attaches to WMQ via a
+   QSG, even though there is a QSG queue manager running and
+   available, DFHMQCON issues message DFHMQ0324 indicated that it
+   could not find an available queue manager.  This module then
+   issues a series of DFHMQ0308 messages, and occasionally the
+   CKAM task abends AEIP, before eventually DFHMQCON completes a
+   successful reconnect to the Queue Manager.  Additionally, a
+   warm keypoint sometimes cannot be taken at shutdown because the
+   shutdown assist transaction CESD is required to purge the CKAM
+   task.
+   
+   Also when the WMQ Queue Manager has been shutdown and
+   restarted, DFHMQMON may not reactivate the adapter connection
+   because the CKAM task was inadvertently purged during shutdown.
+   
+   Additional keywords: ABENDAEIP, msgDFHMQ0324, msgMQ0324,
+   msg0324, msgDFHMQ0308, msgMQ0308, msg0308, DFHMQ0364,
+   msgDFHMQ0364, msgMQ0364, msg0364, hang.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  DFHMQCON has been modified such that following the two calls to
+   EXEC CICS START TRANID(CKAM), a new clause is added to ensure a
+   second CKAM task which would prevent a successful warm shutdown
+   is not inadvertently started.
+   
+   In module DFHMQDSC, procedure disconnect_from_mqm, has been
+   modified such that dfhmqloa.cNoOfPendingEve is set to zero if
+   and only if CICS is shutting down.  This ensures that the
+   automatic reconnect to the Queue Manager is successful on Queue
+   Manager restart.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  FIX AVAILABLE BY PTF ONLY
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM52570
+   
+   
+ * REPORTED COMPONENT NAME
+   CICS TS Z/OS V4
+   
+   
+ * REPORTED COMPONENT ID
+   5655S9700
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-11-21
+   
+   
+ * CLOSED DATE
+   2012-02-09
+   
+   
+ * LAST MODIFIED DATE
+   2012-03-01
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    PM46338 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM46338]
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UK75952
+   
+   
+
+MODULES/MACROS
+ *     DFHMQCON DFHMQDSC
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CICS TS Z/OS V4
+   
+   
+ * FIXED COMPONENT ID
+   5655S9700
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R700 PSY UK75952 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK75952]
+   UP12/02/18 P F202
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

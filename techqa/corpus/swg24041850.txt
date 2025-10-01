@@ -1,0 +1,29 @@
+Title: IBM WebSphere Transformation Extender with Command Server V8.4.1.4 - United States
+
+Text:
+WebSphere Transformation Extender; WebSphere TX; WTX; ITX DOWNLOADABLE FILES
+
+ABSTRACT
+ This document describes how to download IBM® WebSphere® Transformation Extender with Command Server V8.4.1.4. 
+
+DOWNLOAD DESCRIPTION
+IBM WebSphere Transformation Extender with Command Server provides the core WebSphere Transformation Extender engine and additional components that you use to deploy a batch-file processing engine called from a command script or job control language (JCL). It extends an existing application and infrastructure with minimal intrusion.
+
+PREREQUISITES
+See the system requirements for the supported hardware and software:
+
+URL LANGUAGE SIZE(Bytes) IBM Transformation Extender system requirements [http://www.ibm.com/support/docview.wss?uid=swg27045341] English 10 
+INSTALLATION INSTRUCTIONS
+After you download the code package, follow the instructions in the release notes to install the product:
+
+URL LANGUAGE SIZE(Bytes) IBM Transformation Extender release notes [http://www.ibm.com/support/docview.wss?&uid=swg27008337#841] English 10 
+DOWNLOAD PACKAGE
+Entitled customers can download the code package from Fix Central:
+
+Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options Fix Central 11 Mar 2016 English 180000 HTTP [http://www.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~Other%2Bsoftware&product=ibm/WebSphere/WebSphere+Transformation+Extender&release=8.4.1.4&platform=All&function=all&useReleaseAsTarget=true] 
+TECHNICAL SUPPORT
+ Get support through the following links:
+
+Fix Central support: http://www.ibm.com/systems/support/fixes/en/fixcentral/help/index.html [http://www.ibm.com/systems/support/fixes/en/fixcentral/help/index.html]
+
+Transformation Extender support: http://www.ibm.com/software/integration/wdatastagetx/support [http://www.ibm.com/software/integration/wdatastagetx/support]

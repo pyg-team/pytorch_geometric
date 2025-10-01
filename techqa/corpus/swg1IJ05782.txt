@@ -1,0 +1,145 @@
+Title: IBM IJ05782: HELP IN JAPANESE LANGUAGE FOR "TIVOLI WORKLOAD SCHEDULE" IS NOT AVAILABLE. - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Environment:
+   DWC: 9.2.0 GA on RHEL       -> Japanese help is available
+   DWC: 9.2.0 + FP0001 on RHEL -> Japanese help is NOT available
+   DWC: 9.2.0 + FP0002 on RHEL -> Japanese help is NOT available
+   Browser language : ja
+   
+   There are 2 methods to display help and the phenomenon persists
+   on both methods.
+   1: Click ? mark on the bottom of TDWC task bar, then InfoCenter.
+   2: Click ? mark on top right on each window
+   
+   Notes:
+   confirming help resources for Japanese is missing on FP0002.
+   
+   /opt/IBM/JazzSM/profile/installedApps/JazzSMNode01Cell/isc.ear/T
+   WSWebUI.war/help/plugins/com.ibm.tws.WebUI.help.doc/nl/ja
+   
+   Case 1:
+     DWC 9.2.0 GA:
+     copy FP0002 ja directory data to GA.
+     -> TWS help becomes English.
+   
+   Case 2:
+     DWC 9.2.0 FP0002:
+     copy GA ja directory data to FP0002.
+     -> TWS help becomes Japanese.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Use English help.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  see apar description
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This apar will be fixed    9.2.0-TIV-TDWC-FP0004
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IJ05782
+   
+   
+ * REPORTED COMPONENT NAME
+   TIV DYN WKLD CN
+   
+   
+ * REPORTED COMPONENT ID
+   TIVOWEBUI
+   
+   
+ * REPORTED RELEASE
+   920
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2018-04-16
+   
+   
+ * CLOSED DATE
+   2018-07-13
+   
+   
+ * LAST MODIFIED DATE
+   2018-07-13
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TIV DYN WKLD CN
+   
+   
+ * FIXED COMPONENT ID
+   TIVOWEBUI
+   
+   
+
+APPLICABLE COMPONENT LEVELS

@@ -1,0 +1,18 @@
+Title: IBM Installing and deploying the IBM Content Navigator mobile samples - United States
+
+Text:
+ PRODUCT DOCUMENTATION
+
+ABSTRACT
+ In addition to the mobile application that is available in the Apple app store, two IBM Content Navigator mobile sample assets are available. These samples demonstrate how to add mobile enterprise content management capabilities to the IBM Content Navigator server.
+
+The sample mobile projects are functioning solutions that provide guidance on how to implement several features that might be necessary in a mobile scenario, for example, browsing a repository, searching for content, working with favorites, using external apps to edit content, and so on. 
+
+CONTENT
+Review the attached document for information about installing and deploying the mobile sample application and the mobile sample plug-in. 
+
+
+IBM Content Navigator - Mobile Samples Installation and Deployment Guide v2.pdf is the most recent version of this document, which includes instructions for downloading the sample code from the Content Navigator open source project on JazzHub.
+
+
+IBM Content Navigator - Mobile Samples Installation and Deployment Guide v2.pdf [/support/docview.wss?uid=swg27038925&aid=2]IBM Content Navigator - Mobile Samples Installation and Deployment Guide v2.pdf [/support/docview.wss?uid=swg27038925&aid=1]

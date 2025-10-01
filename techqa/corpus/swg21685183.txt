@@ -1,0 +1,20 @@
+Title: IBM Sudo in the Pure Data System for Analytics Appliance - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Why is sudo required in the PureData System for Analytics 
+
+CAUSE
+Customer System Administrator a lot of times want to know why we require the use of sudo and specifically the lines mentioned below.
+
+ANSWER
+The script /nz/kit/bin/adm/nzauth is used to copy LDAP configuration files, regardless of whether LDAP is configured or not. Since the LDAP files reside under /etc (i.e. /etc/ldap.conf and /etc/pam.d/netezza_nps) root access is need to access these files. Normally, the nz user and thus nzstart can access these files as a result of the following lines in the /etc/sudoers: 
+
+
+# NPS setup -- do not edit below this line -- initarp
+nz ALL = NOPASSWD: /usr/local/sbin/nzinitarp
+nz ALL = NOPASSWD: /nzlocal/scripts/rpc/spapwr.sh
+nz ALL = NOPASSWD: /nz/kit/bin/adm/nzauth
+nz ALL = NOPASSWD: /sbin/clustat

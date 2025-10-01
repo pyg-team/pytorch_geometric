@@ -1,0 +1,78 @@
+Title: IBM Job abends retrieving SAP job log - United States
+
+Text:
+retrieve; joblog; spoollist TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ SAP extended agent jobs abend in Tivoli Workload Scheduler (TWS) for Applications with exit status 134 even though they run successfully in SAP. 
+
+SYMPTOM
+[XALOG] - INFO: semaphore key=0xc9c5c28 (211573800) 
+
+Sun Mar 18 05:37:29 2012 
+
++++ EEWO1007I The job status has been set to EXEC: ABCINVC INVOICING 01234500 
+
++++ EEWO1048I Retrieving the joblog of a job:: ABCINVC INVOICING, 01234500 
+
+=============================================================== 
+
+= Exit Status : 134 
+
+= System Time (Seconds) : 1 Elapsed Time (Minutes) : 60 
+
+= User Time (Seconds) : 3 
+
+= Sun 03/18/12 06:38:12 CST
+
+
+CAUSE
+The retrieval and appending of job logs to the stdlist is time-consuming for jobs that produce large logs.
+
+
+RESOLVING THE PROBLEM
+o Disable the default spool list or job log retrieval settings and manually change the job definitions. Disable the spool list retrieval and enable it on only those job definitions that need to be enabled. 
+
+See the information documented at this link for enabling or disabling SAP job logs, SAP process chain logs, SAP BW InfoPackage logs, or SAP spool lists: 
+
+http://publib.boulder.ibm.com/infocenter/tivihelp/v3r1/topic/com.ibm.tivoli.itwsfa.doc_8.4.0.2/awsaumst126.htm?path=86_5_0_2_7_2_0_2#sapcomopt [http://publib.boulder.ibm.com/infocenter/tivihelp/v3r1/topic/com.ibm.tivoli.itwsfa.doc_8.4.0.2/awsaumst126.htm?path=86_5_0_2_7_2_0_2#sapcomopt] 
+
+ 
+
+o Set the 134 return code to zero. 
+
+The job will still try to get the job log (which it will not be able to do since it is too large), but it will not trigger an "abend" in TWS. To do this, change the r3batch script to set the return code of 134 to 0 (zero). Replace the line: 
+
+exit $RET_VALUE 
+
+With: 
+
+if [ $RET_VALUE -eq 134 ] 
+
+then 
+
+ echo %JS 
+
+ return 0 
+
+fi 
+
+exit $RET_VALUE 
+
+ 
+
+o Create a new extended agent just for the intercepted jobs that are abending. In this way all the intercepted jobs will not retrieve the spool list, but the other jobs that need the spoollist enabled will still retrieve them. 
+
+ 1. Create a new extended agent CPU definition for the same SAP system (example: XA2) and copy the same options file into the new XA2_r3batch.opts. 
+
+ 2. In this new option file, put "retrieve_spoollist=off" 
+
+ 3. Change the Interception Collector job, to use this new extended agent instead of the original one.
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ TWS4APPS
+Maestro
+TWS
+TWA

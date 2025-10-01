@@ -1,0 +1,54 @@
+Title: IBM PM78680; SPSS Modeler Premium - Text Analytics SSL Spoofing - United States
+
+Text:
+SPSS Modeler Premium; SPSS Text Analytics DOWNLOADABLE FILES
+
+ABSTRACT
+ This Interim Fix addresses an important product correction for SPSS Modeler Premium - Text Analytics 14.2.0.x. 
+
+DOWNLOAD DESCRIPTION
+USERS AFFECTED:
+Interactive users of Text Analytics Server version 14.2.0.x from the IBM SPSS Modeler Premium product with the SSL option enabled (default is disabled).
+
+
+This issue does NOT affect SPSS Collaboration and Deployment Services job executions against a Text Analytics Server.
+
+PROBLEM DESCRIPTION:
+When using Text Analytics Server version 14.2.0.x from the IBM SPSS Modeler Premium product with the SSL option enabled (default is disabled), an SSL connection can be established without verifying the hostname of the target connection against the name on the SSL certificate. This could make the connection vulnerable to a man-in-the-middle attack.
+
+RECOMMENDATION:
+Apply the SPSS Modeler Premium (Text Analytics) 14.2 Interim Fix (14.2-IM-STA142TASC-All-IF007) below.
+
+PREREQUISITES
+This Interim Fix can only be installed over existing installations of IBM SPSS Text Analytics version 14.2.0.x.
+
+INSTALLATION INSTRUCTIONS
+How to apply the interim fix: 
+
+Note: This interim fix applies only to IBM SPSS Text Analytics version 14.2.0.x. The corresponding fix for IBM SPSS Text Analytics version 15 is included in the SPSS Modeler 15.0 Fix Pack 1 - Premium Add-ons [http://www.ibm.com/support/docview.wss?uid=swg24033946] [http://www.ibm.com/support/docview.wss?uid=swg24033946].
+
+1) Close all running Modeler products
+
+2) Rename (by adding .original to the original name) the “commons-httpclient-3.1.jar” files located in the following directories within the installation directory of Text Analytics Client and Server (and Batch if applicable):
+
+<modeler_server_install_directory>\ext\bin\spss.TMWBServer\lib\commons-httpclient-3.1.jar.original
+<modeler_client_install_directory>\ext\lib\spss.TMWBClient\lib\commons-httpclient-3.1.jar.original
+
+3) Copy the “commons-httpclient-3.1.jar” files provided in the Interim Fix package into the directory: 
+
+<modeler_server_install_directory>\ext\bin\spss.TMWBServer\lib\
+<modeler_client_install_directory>\ext\lib\spss.TMWBClient\lib\
+
+
+IMPORTANT NOTE:
+Applying this interim fix will introduce SSL verification using the IP address of the TA Server. If your current SSL certificate has been generated with anything other than the IP address of the server then you will need to regenerate the certificate with the Server's IP address in the CN field after applying this interim fix. If you do not do this SSL verification will fail.
+
+DOWNLOAD PACKAGE
+
+
+
+
+
+Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options SPSS Modeler Text Analytics 14.2 Interim Fix 7 11 Dec 2012 Language Independent 286935 HTTP [http://www.ibm.com/support/fixcentral/swg/quickorder?parent=ibm~Information+Management&product=ibm/Information+Management/SPSS+Text+Analytics&function=fixId&fixids=14.2-IM-STA142TASC-All-IF007&source=fc] 
+ [/support/docview.wss?uid=swg24034025&aid=1]Problems (APARS) fixed [/support/docview.wss?uid=swg24034025&aid=2]Problems (APARS) fixed
+PM78680, IBM SPSS Modeler Premium - Text Analytics SSL Spoofing

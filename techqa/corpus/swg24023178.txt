@@ -1,0 +1,59 @@
+Title: IBM Rational TTCN Suite 6.3 - United States
+
+Text:
+telelogic; tlog; download; installer; TTCN DOWNLOADABLE FILES
+
+ABSTRACT
+ IBM Rational TTCN Suite 6.3 download for general availability release 
+
+DOWNLOAD DESCRIPTION
+
+
+TAB NAVIGATION
+ * 6.3- selected tab,
+ * Passport Advantage [http://ibm.com/software/howtobuy/passportadvantage/index.html]
+
+
+
+
+
+IBM Rational TTCN 6.3 is a full product download.
+ * Passport Advantage customers
+   Passport Advantage and Passport Advantage Express customers are required to sign in to Passport Advantage Online [https://www.ibm.com/software/howtobuy/softwareandservices/passportadvantage] to access the actual files.
+ * 
+ * Non-Passport Advantage customers
+   If you or your organization did not purchase your software and support through Passport Advantage or Passport Advantage Express, you are required to sign in to the new IBM Software Group OEM Portal [https://www.ibm.com/software/howtobuy/softwareandservices/oem] to access the actual files. This includes customers with Flexible Contract Type (FCT) license purchases and IBM Business Partners.
+   For assistance with the IBM Software Group OEM Portal, please visit eCustomer care [https://www.ibm.com/software/howtobuy/passportadvantage/paocustomer/docs/en_US/ecare.html].
+
+
+
+
+PREREQUISITES
+
+
+Supporting Documentation To view, browse, and search on-line information related to this product, visit the Information Center [http://publib.boulder.ibm.com/infocenter/rsdp/v1r0m0/index.jsp].
+
+INSTALLATION INSTRUCTIONS
+Use the link below to download and install Windows, Linux or Solaris Rational TTCN Suite 6.3
+
+DOWNLOAD PACKAGE
+
+
+Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options Passport Advantage 2009-06-02 English 10 HTTP [http://www.ibm.com/software/howtobuy/passportadvantage/pao_customers.htm] 
+TECHNICAL SUPPORT
+ 
+
+IBM Software Support Handbook For contact information, guidelines and reference materials that you need when you require support, review the IBM Software Support Handbook [http://techsupport.services.ibm.com/guides/handbook.html].
+
+
+
+Support Page For FAQs, lists of known problems and fixes, and other support information, on the IBM Rational Support Page [http://ibm.com/software/rational/support/index.html], select your product support page from the list.
+
+
+
+Support Information Before you contact IBM Rational Software Support, gather the background information that you need to describe the problem. When you describe a problem to an IBM software support specialist, be as specific as possible and include all relevant background information so that the specialist can help you solve the problem efficiently. To save time, know the answers to these questions:
+
+ * What software versions were you running when the problem occurred?
+ * Do you have logs, traces, or messages that are related to the problem?
+ * Can you reproduce the problem? If so, what steps do you take to reproduce it?
+ * Is there a workaround for the problem? If so, be prepared to describe the workaround.

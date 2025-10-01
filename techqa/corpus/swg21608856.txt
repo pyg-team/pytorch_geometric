@@ -1,0 +1,107 @@
+Title: IBM How to review and verify VMM attribute mappings - United States
+
+Text:
+VMM; Virtual Member Manager; attribute; attributes; LDAP; mapping; PersonAccount; Group TECHNOTE (FAQ)
+
+QUESTION
+How can I verify the attribute mappings configured in a WebSphere Portal or Quickr server?
+
+ANSWER
+There are two methods to verify or review the Virtual Member Manager (VMM) attribute mappings in a WebSphere Portal environment.
+1. Run the ConfigEngine task wp-query-attribute-config from the <wp_profile_root>/ConfigEngine directory.
+
+AIX example:
+
+ConfigEngine.sh wp-query-attribute-config -DWasPassword=password
+
+The output of this task is a file called availableAttributes.html that is written to the directory <wp_profile_root>/ConfigEngine/log.
+
+The HTML file will list the properties and corresponding mapping (if any) in table format for the VMM entities PersonAccount (users) and Group.
+
+2. If wp-query-attribute-config fails or the HTML file does not contain the expected output, you can review the mappings manually by visual inspection of the VMM XML configuration files.
+
+Standard Attributes
+
+a. Open the file <wp_profile_root>/config/cells/<cell>/wim/config/wimconfig.xml
+
+b. Look for the XML that begins with<config:attributeConfiguration>. Under this block or stanza all of the attribute mappings will be listed.
+
+For each attribute entry, "name" refers to the attribute in the repository (usually an LDAP) and "propertyName" refers to the "VMM name" for the property or attribute.
+
+For example:
+
+<config:attributes name="userPassword" propertyName="password"/>
+<config:attributes name="krbPrincipalName" propertyName="kerberosId">
+<config:entityTypes>PersonAccount</config:entityTypes>
+</config:attributes>
+
+password is mapped to userPassword and kerberosId is mapped to krbPrincipalName for PersonAccount (users).
+
+<config:attributes name="postalAddress" propertyName="homePostalAddress">
+<config:entityTypes>PersonAccount</config:entityTypes>
+<config:entityTypes>Group</config:entityTypes>
+</config:attributes>
+
+homePostalAddress is mapped to repository property postalAddress for both users and groups.
+
+<config:attributes name="mail" propertyName="ibm-primaryEmail">
+<config:entityTypes>PersonAccount</config:entityTypes>
+</config:attributes>
+
+ibm-primaryEmail is mapped to mail in the repository.
+
+Unsupported attributes 
+
+If any property has been marked or set as "not supported" the property will appear at the end of the attributeConfiguration section. An property that is not supported will not be used by VMM and no query should be sent by VMM to the repository to fetch a non-supported attribute or its value.
+
+All of the properties in the list below are marked as not supported.
+
+<config:propertiesNotSupported name="homeAddress"/>
+<config:propertiesNotSupported name="businessAddress"/>
+<config:propertiesNotSupported name="countryName"/>
+<config:propertiesNotSupported name="c"/>
+<config:propertiesNotSupported name="viewIdentifiers"/>
+<config:propertiesNotSupported name="identifier"/>
+<config:propertiesNotSupported name="localityName"/>
+<config:propertiesNotSupported name="stateOrProvinceName"/>
+<config:propertiesNotSupported name="createTimestamp"/>
+<config:propertiesNotSupported name="entitlementInfo"/>
+<config:propertiesNotSupported name="modifyTimestamp"/>
+<config:propertiesNotSupported name="displayName"/>
+<config:propertiesNotSupported name="principalName"/>
+
+Custom attributes
+
+If you have installed the LA ("lookaside") enterprise application WIMSYSTEM.ear by running the ConfigEngine task wp-la-install-ear and have added custom attributes to the configuration, these attributes are written to file wimxmlextension.xml in <wp_profile_root>/config/cells/<cell>/wim/model.
+
+Sample entries for custom properties are shown below:
+
+<wim:propertySchema nsURI="http://www.ibm.com/websphere/wim" dataType="String" multiValued="false" propertyName="EmployeeID">
+<wim:applicableEntityTypeNames>PersonAccount
+</wim:applicableEntityTypeNames>
+</wim:propertySchema>
+
+<wim:propertySchema nsURI="http://www.ibm.com/websphere/wim" dataType="String" multiValued="false" propertyName="region">
+<wim:applicableEntityTypeNames>PersonAccount
+</wim:applicableEntityTypeNames>
+</wim:propertySchema>
+
+Troubleshooting
+
+Follow the Portal User Management Architecture (PUMA) Collecting Data document for the version of Portal in use. Refer to the links below in the Related URLs section.
+
+Notes
+
+1. Custom properties do not have to be mapped in VMM provided they are referred to by the attribute name as it appears in wimxmlextension.xml and an entry for the attribute exists in the file.
+
+2, In some configurations, VMM may send a query for properties marked as NotSupported if a Property Extension database is configured.
+
+3. If the property is known to VMM by default (the list of attributes VMM uses by default depends on the repository type) and the property is referenced by its actual name in the Portal (such as in custom code that you have written), then there is no need to map the property to another name in VMM. 
+
+For example, if you use IBM Directory Server you do not need to create a mapping for uid in VMM unless you intend to use uid under a different name. This means that uid does not need to be mapped "to itself", however, it is not an error to do so.
+
+4. See the WebSphere Application Server documentation [http://www-01.ibm.com/software/webservers/appserv/was/library/] for more information about the default attribute set for each repository type.
+
+RELATED INFORMATION
+ PUMA 6.1 [http://www-01.ibm.com/support/docview.wss?rs=688&uid=swg21312815]
+PUMA 7.0 and later [http://www-01.ibm.com/support/docview.wss?uid=swg21592792]

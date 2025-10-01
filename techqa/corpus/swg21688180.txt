@@ -1,0 +1,120 @@
+Title: IBM Netcool Web GUI run waapi commands from a remote server - United States
+
+Text:
+WAAPIClient; SSL; Error; No trusted; certificate; found; waapi; remote; server TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ User get below error when attempts to run the waapi tool with SSL enabled:
+
+WAAPIClient: SSL Error - com.ibm.jsse2.util.h: No trusted certificate 
+found 
+
+SYMPTOM
+You may get this error on the screen while executing waapi command : 
+
+WAAPIClient: SSL Error - com.ibm.jsse2.util.h: No trusted certificate 
+found 
+
+The waapi.log may show below errors: 
+
+
+com.ibm.jsse2.util.h: No trusted certificate found
+javax.net.ssl.SSLHandshakeException: com.ibm.jsse2.util.h: No trusted certificate found
+
+
+
+CAUSE
+This error can occur if you try to run a waapi command from a remote server while SSL is enabled by setting below property to "on" in waapi.init file:
+
+waapi.secure:on
+
+
+RESOLVING THE PROBLEM
+Suppose you want to execute a waapi command on server A from server B while ssl is enabled in waapi. (For example; you like to create a filter by executing a waapi command from server Web GUI B on server WebGUI A). It can be accomplished by following below steps:
+
+1. On server A, Login toTivoli Integrated Portal GUI, extract the default truststore signer certificate. 
+
+ * 
+ * 
+ * 
+ * Settings > WebSphere Admin Console
+ * 
+ * Launch WebSphere Admin Console
+ * 
+ * 
+ * 
+ * Security > SSL certificate and key management > Key stores and certificates > NodeDefaultKeyStore > Personal certificates
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+
+
+2. Using the Tivoli Integrated Portal Ikeyman utility, add the new certificate to the WAAPI truststore.  * 
+ * 
+ * 
+ * tip_home_dir
+ * 
+ * 
+ * 
+ * KeyDatabaseFile > New
+ * 
+ * PKCS 
+ * 
+ * 
+ * 
+ * webgui-home
+ * 
+ * 
+ * 
+ * WebAS
+ * 
+ * Ok
+ * 
+ * 
+ * 
+ * Signer Certificates
+ * 
+ * Add
+ * 
+ * 
+ * 
+ * /tmp/tipcert.arm
+ * 
+
+
+3. Copy waapiTruststore.p12 from server A to server B. This file can be copied into any dir (eg; webgui-home/waapi/etc). 4. Edit the waapi.init file on Server B. 
+
+ * 
+ * 
+ * webgui-home
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * webgui-home
+ * 
+ * /waapiTruststore.p12
+ * 
+ * 
+ * 
+ * WebAS
+ * 
+ * 
+ * 
+ * 
+ * 
+ *  waapi.password:tipadmin
+
+
+5) Run following command on server B for test purposes. All the users which have access to server A should be displayed 
+$ cd webgui-home/waapi/bin 
+$ runwaapi -file ../etc/samples/list_user.xml For more details on this topic see below URL: 
+
+http://www-01.ibm.com/support/knowledgecenter/api/content/SSSHTQ_7.3.1/com.ibm.netcool_OMNIbus.doc_7.3.1/webtop/wip/task/web_con_creatingawaapisslconnection.html [http://www-01.ibm.com/support/knowledgecenter/api/content/SSSHTQ_7.3.1/com.ibm.netcool_OMNIbus.doc_7.3.1/webtop/wip/task/web_con_creatingawaapisslconnection.html]

@@ -1,0 +1,30 @@
+Title: IBM Clarification for the Classification indicators “Generate Description” and “Use Classification” - United States
+
+Text:
+TPAECLASS; Classification; Use Classification TECHNOTE (FAQ)
+
+QUESTION
+ In the Classifications application, you will see two checkboxes, “Generate Description” and “Use Classification”. What do these two boxes actually control? 
+
+ANSWER
+The 'Generate Description?' checkbox
+- If you tick this checkbox, Maximo will overwrite the object (asset/item/location)'s description using this classification parents' descriptions (this will copy the actual classification path).
+If this checkbox is not ticked, then Maximo will not overwrite the object's description field.
+
+The 'Use Classification?' checkbox
+- If you tick this checkbox and you also tick the "Generate Description" checkbox, Maximo will copy this Classification parents' descriptions and the description of this Classification to the object (asset/item/location)'s description field.
+- If this checkbox is not ticked but the "Generate Description" is ticked, then Maximo will overwrite the object (asset/item/location)'s description field using this Classification's parents' descriptions only.
+
+For example (On Maximo demo): 
+
+Classification = DOM
+Parent Classification = TUBING
+Classification Path = TUBING \ DOM
+DOM description = Drawing over a Mandrel
+TUBING description = Tubing
+
+- If you did not tick the "Generate Description" checkbox, it does not matter if you ticked the "Use Classification" checkbox or not, Maximo will NOT overwrite the object (asset/item/location) description field.
+
+- If you ticked the "Generate Description" checkbox, but did not tick "Use Classification" when saving, Maximo will overwrite the object description to "Tubing" (example).
+
+- If you ticked both "Generate Description" and "Use Classification" checkboxes, when saving, Maximo will overwrite the object description to "Tubing, Drawing over a Mandrel" (example).

@@ -1,0 +1,25 @@
+Title: IBM FileNet P8 Content Engine (CE) Apache Debug Logging - United States
+
+Text:
+Apache; httpd.conf; LogLevel TECHNOTE (FAQ)
+
+QUESTION
+ How do I use Apache Debug Logging to troubleshoot FileNet P8 Content Engine issues? 
+
+CAUSE
+The Apache HTTP Server, by default, logs diagnostic information and errors that it encounters while processing requests. This error log, typically named error.log, is a key place to look when a problem occurs during server start up or server operation as the log will often include details regarding the failure. Additionally, the Apache server access log records all requests processed by the server.
+
+ANSWER
+The httpd.conf LogLevelparameter adjusts the verbosity of the messages recorded in the logs. 
+
+The httpd.conf file is located in the Program Files\Apache Group\Apache2\conf directory. The default level, “warn”, logs warning messages. When troubleshooting an issue, set the LogLevel to “debug”, which will log all levels of messages.
+
+# LogLevel: Control the number of messages logged to the error.log.
+# Possible values include: debug, info, notice, warn, error, crit,
+# alert, emerg.
+#
+LogLevel debug
+
+Data to collect: The error log and access log files, by default located in the ..\Program Files\Apache Group\logs directory, and the httpd.conf file. Include a description of any known circumstances leading up to the issue along with any server error logs. Also document the time at which the issue occurred.
+
+For more information: See the Apache website. [http://httpd.apache.org/docs/2.0/mod/core.html#loglevel]

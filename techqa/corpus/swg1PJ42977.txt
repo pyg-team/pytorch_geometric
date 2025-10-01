@@ -1,0 +1,261 @@
+Title: IBM PJ42977: CONTENT ENGINE RETRY ISSUES WHEN THE MSAR SURFACE IS NOT AVAILABLE ON IMAGE SERVICES - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Content Engine retry issues when the MSAR surface is not
+   available on Image Services.
+   
+   Customer has run into is some invalid status checking that the
+   CFS-IS code is currently doing.  In particular, there are two
+   constants that are incorrect as defined in
+   FN_IS_RPC_DOC_Service.
+   
+   When the problem is occurring the Content Engine logs the
+   following error multiple times for the same document id that
+   resides on the Image Services server.  CE performs
+   numerous retries for the same document id.
+   
+   2015-01-30T22:53:08.553Z 57B757B7 ENG  FNRCE0179E - ERROR method
+   name: open principal name: YFU3055 Global Transaction: false
+   User Transaction: false Exception Info: Fixed Content Provider
+   open operation failed.  Provider: [ImageServicesFCP(174)]
+   SeqNum: [1]  Referral: [version(hex)=20001; checksum(hex)=a5e;
+   mode=1; flags=0;
+   contentId={2E5B2EAE-6C5D-42E8-9DFD-A9DE69D96FB1};
+   docNum=844443799; numContentElements=2; seqNum[0]=page[1];
+   seqNum[1]=page[2]; ]
+   com.filenet.api.exception.EngineRuntimeException:
+   CONTENT_FCP_OPERATION_FAILED_ON_OPEN: Fixed Content Provider
+   open operation failed.  Provider: [ImageServicesFCP(174)]
+   SeqNum: [1]  Referral: [version(hex)=20001; checksum(hex)=a5e;
+   mode=1; flags=0;
+   contentId={2E5B2EAE-6C5D-42E8-9DFD-A9DE69D96FB1};
+   docNum=844443799; numContentElements=2; seqNum[0]=page[1];
+   seqNum[1]=page[2]; ]
+       at
+   com.filenet.engine.content.fcprovider.is.ImageServicesFCP.open(I
+   mageServicesFCP.java:777)
+       at
+   com.filenet.engine.content.FixedContentInputStream.initialize(Fi
+   xedContentInputStream.java:356)
+       at
+   com.filenet.engine.content.FixedContentInputStream.read(FixedCon
+   tentInputStream.java:139)
+       at
+   com.filenet.engine.content.TimeToLiveInputStream.read(TimeToLive
+   InputStream.java:375)
+       at
+   com.filenet.engine.content.GetContentHandler$GetContentState.rea
+   d(GetContentHandler.java:941)
+       at
+   com.filenet.engine.content.GetContentHandler.getContent(GetConte
+   ntHandler.java:206)
+       at
+   com.filenet.engine.jca.impl.RequestBrokerImpl.getContent(Request
+   BrokerImpl.java:250)
+       at
+   com.filenet.engine.jca.impl.RequestBrokerImpl.getContent(Request
+   BrokerImpl.java:169)
+       at
+   com.filenet.engine.ejb.EngineCoreBean._getContent(EngineCoreBean
+   .java:102)
+       at
+   com.filenet.engine.ejb.EngineCoreBean.getContent(EngineCoreBean.
+   java:72)
+       at
+   com.filenet.engine.ejb.EJSLocalStatelessEngineCore_22877cb1.getC
+   ontent(Unknown Source)
+       at
+   com.filenet.engine.ejb.EngineBean.getContent(EngineBean.java:241
+   )
+       at
+   com.filenet.apiimpl.transport.ejbstubs.EJSRemoteStatelessEngine_
+   2e64c374.getContent(Unknown Source)
+       at
+   com.filenet.apiimpl.transport.ejbstubs._EJSRemoteStatelessEngine
+   _2e64c374_Tie.getContent(_EJSRemoteStatelessEngine_2e64c374_Tie.
+   java:224)
+       at
+   com.filenet.apiimpl.transport.ejbstubs._EJSRemoteStatelessEngine
+   _2e64c374_Tie._invoke(_EJSRemoteStatelessEngine_2e64c374_Tie.jav
+   a:100)
+       at
+   com.ibm.CORBA.iiop.ServerDelegate.dispatchInvokeHandler(ServerDe
+   legate.java:585)
+       at
+   com.ibm.CORBA.iiop.ServerDelegate.dispatch(ServerDelegate.java:4
+   61)
+       at com.ibm.rmi.iiop.ORB.process(ORB.java:533)
+       at com.ibm.CORBA.iiop.ORB.process(ORB.java:1574)
+       at
+   com.ibm.rmi.iiop.Connection.respondTo(Connection.java:2956)
+       at com.ibm.rmi.iiop.Connection.doWork(Connection.java:2823)
+       at
+   com.ibm.rmi.iiop.WorkUnitImpl.doWork(WorkUnitImpl.java:65)
+       at com.ibm.ejs.oa.pool.PooledThread.run(ThreadPool.java:118)
+       at
+   com.ibm.ws.util.ThreadPool$Worker.run(ThreadPool.java:1656)
+   Caused by:
+   com.filenet.api.exception.EngineRuntimeException:
+   CONTENT_FCP_CE_OPEN_FAILED: Content element open failed.
+   Adaptor: [SSIAdaptor(174)]; FCD Id:
+   [{E613E29C-CC63-4D57-8AC4-CBA6E11D5952}]]; IMS Name:
+   [DefaultIMS:Farm_Prod:FileNet]; DocNum [844,443,799]; Page [2].
+       at
+   com.filenet.engine.content.fcprovider.is.SSIAdaptor.open(SSIAdap
+   tor.java:273)
+       at
+   com.filenet.engine.content.fcprovider.is.ImageServicesFCP.open(I
+   mageServicesFCP.java:767)
+       ... 23 more
+   Caused by:
+   IS_SSI_8129: : SSI: Exception creating new SSI_CE object
+   IS_SSI_8203: : SSI_CE: CSM.migrateFromOD() returned error
+   <132,3,2>
+       at
+   com.filenet.engine.is.ssi.SSI.getContentElt(SSI.java:1467)
+       at
+   com.filenet.engine.content.fcprovider.is.SSIAdaptor.open(SSIAdap
+   tor.java:264)
+       ... 24 more
+   Caused by:
+   IS_SSI_8203: : SSI_CE: CSM.migrateFromOD() returned error
+   <132,3,2>
+       at com.filenet.engine.is.ssi.SSI_CE.<init>(SSI_CE.java:313)
+       at
+   com.filenet.engine.is.ssi.SSI.getContentElt(SSI.java:1457)
+       ... 25 more
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * Customers using Content Engine 5.0.0.2-P8CE-FP002 or earlier *
+   * who retrieve content that has been federated from Image      *
+   * Services                                                     *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * An incorrect error was being reported when attempting to     *
+   * retrieve content for a document that has been federated from *
+   * Image Services and that content is located on a storage      *
+   * device that is offline or disabled for reading. This error   *
+   * was also inappropriately being retried multiple times        *
+   * resulting in multiple errors in the log. The incorrect error *
+   * was IS_SSI_8209: : SSI_CE: Timeout polling CSM cache for     *
+   * content element. The correct error is IS_SSI_8205: : SSI_CE: *
+   * the required surface is not available.                       *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Upgrade to 5.0.0.3-P8CE-FP003 or later                       *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fixed in 5.0.0.3-P8CE-FP003 and later.  The problem was resolved
+   by adding logic to check for the correct return code when the
+   Content Engine attempts to retrieve content from Image Services
+   fail due to the Image Services content storage surface being
+   unavailable.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PJ42977
+   
+   
+ * REPORTED COMPONENT NAME
+   CONTENT ENGINE
+   
+   
+ * REPORTED COMPONENT ID
+   5724R8101
+   
+   
+ * REPORTED RELEASE
+   500
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-02-10
+   
+   
+ * CLOSED DATE
+   2015-05-21
+   
+   
+ * LAST MODIFIED DATE
+   2015-05-21
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    PJ42976 [http://www-01.ibm.com/support/docview.wss?uid=swg1PJ42976]
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CONTENT ENGINE
+   
+   
+ * FIXED COMPONENT ID
+   5724R8101
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R500 PSY
+   UP

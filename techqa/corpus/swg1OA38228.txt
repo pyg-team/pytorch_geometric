@@ -1,0 +1,158 @@
+Title: IBM OA38228: AGENT FAILS TO DISCARD EVENTS FOR STOPPED SITUATION. - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Agent fails to discard events for stopped situation.
+   
+   Situation events remain stored in persistent files on the
+   agent, if situation is stopped while agent is running in
+   autonomous mode.
+   
+   Symptoms: Persistent files <hostname><pc>_autoattr.asa
+   are present in the agent CTIRA_SIT_PATH after it reconnects
+   to TEMS.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Delete <hostname><pc>_autoattr.asa file and recycle ITM agent.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All TEMS users.                              *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: AGENT FAILS TO DISCARD EVENTS FOR A     *
+   *                      STOPPED SITUATION.                      *
+   ****************************************************************
+   * RECOMMENDATION: Apply the PTF.                               *
+   ****************************************************************
+   Agent fails to discard events collected in autonomous mode
+   for a stopped or modified situation. Situation events remain
+   stored in persistent files on the agent if a situation is
+   stopped while an agent is running in autonomous mode.
+   Symptom: Presence of persistent files
+   <hostname><pc>_autoattr.asa in the agent  directory when
+   agent is connected to the monitoring server.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Agent framework now discards events for stopped or modified
+   situations.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   OA38228
+   
+   
+ * REPORTED COMPONENT NAME
+   MGMT SERVER DS
+   
+   
+ * REPORTED COMPONENT ID
+   5608A2800
+   
+   
+ * REPORTED RELEASE
+   622
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-12-01
+   
+   
+ * CLOSED DATE
+   2011-12-05
+   
+   
+ * LAST MODIFIED DATE
+   2012-01-01
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    IV04585 [http://www-01.ibm.com/support/docview.wss?uid=swg1IV04585]
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    OA38947 [http://www-01.ibm.com/support/docview.wss?uid=swg1OA38947]
+   
+   
+
+MODULES/MACROS
+ *  KDSMAIN
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   MGMT SERVER DS
+   
+   
+ * FIXED COMPONENT ID
+   5608A2800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R622 PSY UA63440 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UA63440]
+   UP11/12/17 P F112
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

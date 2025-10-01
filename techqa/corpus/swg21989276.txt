@@ -1,0 +1,55 @@
+Title: IBM How do I identify my SPSS product Release version? - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ I would like to check/determine my SPSS product Release version. How do I do that? 
+
+ANSWER
+How to determine the Release version of the product 
+
+Statistics Desktop/Client - Windows Operating Systems 
+
+ 1. Open Statistics. 
+ 2. Select the 'Help' menu. 
+ 3. Select the 'About' menu option. 
+ 4. The Release version information will display in the lower left corner of the window. Example: 23.0.0.2
+
+
+Statistics Desktop/Client - Mac Operating Systems  1. Open Statistics 
+ 2. Select the 'SPSS Statistics' menu. 
+ 3. Select the 'About SPSS Statistics' menu entry. 
+ 4. The Release version information will display in the lower left corner of the window. Example: 23.0.0.2
+    
+
+Modeler Desktop/Client - Windows Operating Systems  1. Open Modeler. 
+ 2. Select the 'Help' menu. 
+ 3. Select the 'About' menu option. 
+ 4. Select the 'Additional Details' button. 
+ 5. The Release version information will display in the upper left of the window. Example: 16.0.0.2
+
+
+License Manager - Windows Operating Systems  1. Open an Administrator Command Prompt on the License Manager host. 
+ 2. Change directory to the License Manager installation directory. 
+ 3. Execute the following command: lsver 
+ 4. The response with the indicate the License Manager version.
+
+
+License Manager - Unix/Linux/MacOS  1. Open a terminal on the License Manager host. 
+ 2. Initiate a super-user (sudo) or root instance. 
+ 3. Change directory to the License Manager installation directory. 
+ 4. Execute the following command: ./lsver 
+ 5. The response with the indicate the License Manager version.
+
+
+How To Interpret the Release version information with regard to Fix Packs 
+
+The Release version is given in 5-digit value. Example: 23.0.0.0. The first two digits indicate the product version. Example: A value of '23' indicates version 23 of the product. The last digit indicates the Release version. A value of '0' indicates no Fix Pack has been applied; a value of '1' indicates Fix Pack 1 of the product version has been applied; a value of '2' indicates Fix Pack 2 has been applied. This pattern repeats for any Fix Pack that has been applied. RELATED INFORMATION
+ Need more help? Our Statistics forum is Live! [https://developer.ibm.com/answers/topics/statistics.html?smartspace=predictive-analytics]
+
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Analytics SPSS Modeler Platform Independent Not Applicable All Editions

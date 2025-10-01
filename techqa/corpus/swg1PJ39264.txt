@@ -1,0 +1,139 @@
+Title: IBM PJ39264: SEARCH TEMPLATES WITH MORE THAN 9 SORT LEVELS ARE NOT SORTED PROPERLY IN WORKPLACE XT - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Search templates with more than 9 sort levels are not sorted
+   properly in Workplace XT. For example, if a search template has
+   10 sort levels, the 10th sort field is incorrectly placed in the
+   2nd sort level.
+   
+   Steps to reproduce:
+   1. Create a search template with 10 sort levels.
+   2. Open the search template in Workplace XT and execute the
+   search.
+   3. The search results are not sorted properly. The 10th sort
+   property is actually used as the 2nd sort level.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * Search templates with more than 9 sort levels                *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * Search templates with more than 9 sort levels are not sorted *
+   * properly in Workplace XT.                                    *
+   * For example, if a search template has 10 sort levels, the    *
+   * 10th sort field is incorrectly placed in the 2nd sort level. *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Upgrade to the Workplace XT fixpack 1.1.5.2-WPXT-FP002.      *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The problems is fixed in the Workplace XT fixpak
+   1.1.5.2-WPXT-FP002.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PJ39264
+   
+   
+ * REPORTED COMPONENT NAME
+   APPLICATION ENG
+   
+   
+ * REPORTED COMPONENT ID
+   5724R7610
+   
+   
+ * REPORTED RELEASE
+   115
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-07-22
+   
+   
+ * CLOSED DATE
+   2014-07-22
+   
+   
+ * LAST MODIFIED DATE
+   2014-07-22
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WORKPLACE XT
+   
+   
+ * FIXED COMPONENT ID
+   5724R7611
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R115 PSY
+   UP

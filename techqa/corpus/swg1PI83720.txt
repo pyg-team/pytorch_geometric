@@ -1,0 +1,193 @@
+Title: IBM PI83720: SQLERROR -925 DURING COMMIT OF NON-COORDINATED DATABASE WORK ON WORK FLOW INTERACTS WITH MQ NODE AFTER PERFORMING THE DATABASE - United States
+
+Text:
+z/os SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The following SQLERROR may be seen on zOS when a flow performs
+   some non-coordinated database work in an ESQL node
+   before performing any MQ work in the flow:
+   
+   
+   +BIP2322E MQXXBRK EG1 44 DATABASE ERROR: SQL STATE '2D521';
+   NATIVE ERROR CODE '-926'; ERROR TEXT '{DB2 FOR OS/390}{ODBC
+   DRIVER}
+   {DSN10015}   DSNT408I SQLCODE = -926, ERROR:  ROLLBACK NOT VALID
+   IN
+   IMS, CICS OR RRSAF ENVIRONMENT
+   DSNT418I SQLSTATE   = 2D521 SQLSTATE RETURN CODE
+   DSNT415I SQLERRP    = DSNXEEZ SQL PROCEDURE DETECTING ERROR
+   DSNT416I SQLERRD    = -120  0  0  -1  0  0 SQL DIAGNOSTIC
+   INFORMATION
+   DSNT416I SQLERRD    = X'FFFFFF88' X'00000000' X'00000000'
+   X'FFFFFFFF'
+                         X'00000000' X'00000000'
+   
+   For instance this could occur if a flow starts with a timeout
+   node running in automatic mode,
+   which then propagates to an ESQL Compute node which performs
+   some database work with commit set to yes,
+   which then propagates to an MQOutput node
+   when a message is put to a queue.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   All users of IBM Integration Bus V10 on z/OS who use MQ nodes
+   and perform non-coordinated database work.
+   
+   
+   Platforms affected:
+   z/OS
+   
+   ****************************************************************
+   PROBLEM DESCRIPTION:
+   The following SQLERROR may be seen on zOS when a flow performs
+   some non-coordinated database work in an ESQL node before
+   performing any MQ work in the flow:
+   
+   +BIP2322E MQXXBRK EG1 44 DATABASE ERROR: SQL STATE '2D521';
+   NATIVE ERROR CODE '-926'; ERROR TEXT '{DB2 FOR OS/390}{ODBC
+   DRIVER}
+   {DSN10015}   DSNT408I SQLCODE = -926, ERROR:  ROLLBACK NOT VALID
+   IN
+   IMS, CICS OR RRSAF ENVIRONMENT
+   DSNT418I SQLSTATE   = 2D521 SQLSTATE RETURN CODE
+   DSNT415I SQLERRP    = DSNXEEZ SQL PROCEDURE DETECTING ERROR
+   DSNT416I SQLERRD    = -120  0  0  -1  0  0 SQL DIAGNOSTIC
+   INFORMATION
+   DSNT416I SQLERRD    = X'FFFFFF88' X'00000000' X'00000000'
+   X'FFFFFFFF'
+                         X'00000000' X'00000000'
+   
+   This is because the product was connecting to MQ when the
+   private RRS context for the non-coordinated database work was in
+   place instead of the global one. This then leads to MQ
+   performing transaction work under the wrong
+   context and leads to later errors from DB2.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The product has changed to ensure the correct RRS context is in
+   place before connecting to MQ.
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+   Version    Maintenance Level
+   v10.0      10.0.0.13
+   v11.0      11.0.0.1
+   
+   The latest available maintenance can be obtained from:
+   http://www-01.ibm.com/support/docview.wss?rs=849&uid=swg27006041 [http://www-01.ibm.com/support/docview.wss?rs=849&uid=swg27006041]
+   
+   If the maintenance level is not yet available,information on
+   its planned availability can be found on:
+   http://www-1.ibm.com/support/docview.wss?rs=849&uid=swg27006308 [http://www-1.ibm.com/support/docview.wss?rs=849&uid=swg27006308]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI83720
+   
+   
+ * REPORTED COMPONENT NAME
+   IIB Z/OS
+   
+   
+ * REPORTED COMPONENT ID
+   5655AB100
+   
+   
+ * REPORTED RELEASE
+   A00
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-06-28
+   
+   
+ * CLOSED DATE
+   2018-06-12
+   
+   
+ * LAST MODIFIED DATE
+   2018-06-13
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   IIB Z/OS
+   
+   
+ * FIXED COMPONENT ID
+   5655AB100
+   
+   
+
+APPLICABLE COMPONENT LEVELS

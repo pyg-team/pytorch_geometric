@@ -1,0 +1,33 @@
+Title: IBM Rational Functional Tester (8.2.2) - The recorder might hang while trying to record the close action on 64 bit Internet Explorer. - United States
+
+Text:
+RN8.2.2.1; Browser Crash; IE 64-bit TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Rational Functional Tester(RFT) 8.2.2 - Internet Explorer 64 bit shows "Internet Explorer has stopped working" and the system/recorder hangs if the browser is closed while the recorder is running. This problem is seen on some systems and not all. 
+
+CAUSE
+The dialog box "Internet Explorer has stopped working " comes up as a result of an invalid internal IBM JDK function call and causes the browser to become unresponsive. When this dialog comes up, if the recorder is running , it will cause the recorder/system to hang as well .
+
+ENVIRONMENT
+Windows 7 (64-bit)
+
+DIAGNOSING THE PROBLEM
+The analysis of the crash dumps generated show that the crash happens in module that is part of IBM JDK. This JDK is bundled with RFT is used to dynamically enable the browser. The issue is currently being investigated by JDK team to identify the problem
+
+RESOLVING THE PROBLEM
+
+
+
+
+
+
+There is no fix available for this problem as of now as the problem is still under investigation. 
+
+Although the problem appears to emanating from the IBM JDK used , this tech-note is created to document the possible workarounds that can be used by RFT users. 
+
+Following workarounds can be considered to avoid the issue. 
+
+1.Install 64-bit Sun-JRE and make sure it is associated with the browser. 
+
+2.Launch the application with a 32- bit version of the Internet Explorer.
